@@ -17,12 +17,15 @@ extern "C"{
 #define FAULT_FLAG_POSTEXCEPTION (1 << FAULT_STAGE_POST)
 #define FAULT_FLAG_PREEXCEPTION (1 << FAULT_STAGE_PRE)
 
-#define FAULT_FLAG_DRAW_SEPARATOR (1 << 2)
-#define FAULT_FLAG_DRAW_CALLBACK_INFO (1 << 3)
+#define FAULT_FLAG_SKIP_DRAW_SEPARATOR (1 << 2)
+#define FAULT_FLAG_SKIP_DRAW_CALLBACK_INFO (1 << 3)
+
+#define FAULT_PAD_READ_SUCCESS 0
+#define FAULT_PAD_READ_FAILED -1
 
 typedef struct { 
 	fault_client* next;
-	FaultCallBack callback;
+	FaultCallback callback;
 	const char* msg;
 	u32 param;
 	u8 priority;
@@ -37,15 +40,15 @@ typedef struct {
 
 typedef void (*FaultCallback)(const char* msg, u32 param);
 
-void fault_AddClientEx(fault_client* client, FaultCallback callback, const char* msg, u32 param, u8 priority, u8 flags);
-void fault_AddClient(fault_client* client, FaultCallback callback, const char* msg, u32 param);
-void fault_Printf(const char* msg, ...);
-void fault_DrawUpdate();
-void fault_WaitTime(u32 waitTime);
-int fault_ReadPad(u32* param_1, u32 param_2);
-void fault_CallBackFunc(int stage);
+extern void fault_AddClientEx(fault_client* client, FaultCallback callback, const char* msg, u32 param, u8 priority, u8 flags);
+extern void fault_AddClient(fault_client* client, FaultCallback callback, const char* msg, u32 param);
+static void fault_Printf(const char* msg, ...);
+static void fault_DrawUpdate();
+extern void fault_WaitTime(u32 waitTime);
+extern int fault_ReadPad(u32* outTriggers, u32* outButtons);
+static void fault_CallBackFunc(int stage);
 
-void fault_Init();
+extern void fault_Init();
 static void my_PreExceptionCallback();
 static void my_PostExceptionCallback();
 #ifdef __cplusplus
