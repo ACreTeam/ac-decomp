@@ -2624,7 +2624,23 @@ global:
     0x8009ae00: __save_fpr
     0x8009ae4c: __restore_fpr
     0x8009ae98: __save_gpr
-    0x8009aee4: __restore_gpr
+    0x8009aeb8: _savegpr_22
+    0x8009aebc: _savegpr_23
+    0x8009aec0: _savegpr_24
+    0x8009aec4: _savegpr_25
+    0x8009aec8: _savegpr_26
+    0x8009aecc: _savegpr_27
+    0x8009aed0: _savegpr_28
+    0x8009aed4: _savegpr_29
+    0x8009aee4: __restore_gpr    
+    0x8009af04: _restgpr_22
+    0x8009af08: _restgpr_23
+    0x8009af0c: _restgpr_24
+    0x8009af10: _restgpr_25
+    0x8009af14: _restgpr_26
+    0x8009af18: _restgpr_27
+    0x8009af1c: _restgpr_28
+    0x8009af20: _restgpr_29
     0x8009af30: __div2u
     0x8009b01c: __div2i
     0x8009b154: __mod2u

@@ -8,13 +8,16 @@
 extern "C" {
 #endif
 
+void OSPanic(const char *file, int line, const char *message, ...);
 void OSReport(const char*, ...);
 void OSVReport(const char* format, va_list list);
+
+#define OSErrorLine(line, ...) \
+    OSPanic(__FILE__, line, __VA_ARGS__)
 
 asm BOOL OSDisableInterrupts(void);
 asm BOOL OSEnableInterrupts(void);
 asm BOOL OSRestoreInterrupts(BOOL level);
-
 
 void __RAS_OSDisableInterrupts_begin(void);
 void __RAS_OSDisableInterrupts_end(void);
