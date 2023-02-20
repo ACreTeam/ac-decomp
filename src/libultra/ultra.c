@@ -1,7 +1,7 @@
 #include "libultra/libultra.h"
 #include "_mem.h"
-#include "dolphin/OS/os.h"
-#include "dolphin/OS/OSTime.h"
+#include "dolphin/os.h"
+#include "dolphin/os/OSTime.h"
 
 extern OSTime __osTimeOffset;
 

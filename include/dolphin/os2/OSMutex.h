@@ -6,7 +6,7 @@ extern "C"
 {
 #endif
 
-#include "dolphin/OS/OSThread.h"
+#include "dolphin/os/OSThread.h"
 
     struct OSMutex
     {
