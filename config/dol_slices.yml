@@ -11,18 +11,18 @@ JSystem/JKernel/JKRHeap.cpp:
     .sbss: [0x802186d8, 0x80218700]
 dolphin/BASE/ppcarch.c:
     .text: [0x8007867c, 0x80078718]
-dolphin/OS/OSArena.c:
+dolphin/os/OSArena.c:
     .text: [0x8007988c, 0x800798ac]
     .sdata: [0x80218178, 0x80218180]
     .sbss: [0x802188f8, 0x80218900]
-#dolphin/OS/OSCache.c:
+#dolphin/os/OSCache.c:
 #    .text: [0x80079b40, 0x8007a01c]
 #    .data: [0x800dfa00, 0x800dfc30]
-# OS/OSDisableInterrupts.c:
+#dolphin/os/OSDisableInterrupts.c:
     # .text: [0x8007ac24, 0x8007ac38]
-dolphin/OS/OSEnableInterrupts.c:
+dolphin/os/OSEnableInterrupts.c:
     .text: [0x8007ac38, 0x8007ac4c]
-dolphin/OS/OSRestoreInterrupts.c:
+dolphin/os/OSRestoreInterrupts.c:
     .text: [0x8007ac4c, 0x8007ac70]
 MSL_C/rand.c:
     .text: [0x8009f46c, 0x8009f494]
