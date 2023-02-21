@@ -332,7 +332,21 @@ SDK_CFLAG = [
 ALIGN16_CFLAG = [
     "-func_align 16",
 ]
+JSYSTEM_BASE = [
+    "-lang=c++",
+    "-inline on",
+    "-fp fmadd",
+    "-fp_contract on",
+    "-pool off",
+    "-Cpp_exceptions off",
+    "-RTTI on",
+    "-char signed",
+    "-enum int",
+    "-sym on", # might also be on for base flags?
+    "-O4,s" # in mkdd some libraries use O4,p, might be the case here too
+]
 
+JSYSTEM_CFLAGS = ' '.join(JSYSTEM_BASE + LOCAL_CFLAGS)
 DOL_CFLAGS = ' '.join(BASE_DOL_CFLAGS + LOCAL_CFLAGS)
 SDK_FLAGS = ' '.join(SDK_CFLAG + LOCAL_CFLAGS)
 ALIGN16 = ' '.join(BASE_DOL_CFLAGS + LOCAL_CFLAGS + ALIGN16_CFLAG)

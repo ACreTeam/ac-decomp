@@ -1,8 +1,8 @@
-#include "dolphin/OS/OSError.h"
-#include "dolphin/OS/OSContext.h"
+#include "dolphin/os/OSError.h"
+#include "dolphin/os/OSContext.h"
 #include "dolphin/BASE/ppcarch.h"
 #include "dolphin/dsp/dsp.h"
-#include "dolphin/OS/OSTime.h"
+#include "dolphin/os/OSTime.h"
 
 OSErrorHandler __OSErrorTable[16];
 
