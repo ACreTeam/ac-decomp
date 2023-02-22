@@ -4,6 +4,8 @@
 #    .text: [0x8005B210, 0x8005B238]
 libforest/ReconfigBATs.c:
     .text: [0x8005adac, 0x8005aed4]
+libc64/afprint.c:
+    .text: [0x8005cbdc, 0x8005cc14]
 JSystem/JKernel/JKRHeap.cpp:
     .text: [0x80063748, 0x80064028]
     .data: [0x800ddf20, 0x800ddf98]
