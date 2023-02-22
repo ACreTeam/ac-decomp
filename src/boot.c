@@ -1,6 +1,6 @@
 #include "boot.h"
 
-static u8 nintendo_hi_0[0x9900];
+static u8 nintendo_hi_0[0x9900]; // This should be nintendo_hi_0.aw
 extern u32 *StringTable;
 
 u32 soundArenaAlloc(void){
@@ -15,7 +15,7 @@ u32 convert_partial_address(u32 add){
     //TODO
 }
 
-int LoadStringTable(char table){ https://decomp.me/scratch/7syDa
+int LoadStringTable(char table){ //https://decomp.me/scratch/7syDa
     
     OSReport("ストリングテーブル読み込み開始\n");
     osGetTime();
@@ -46,11 +46,13 @@ OSDVDFatalError();
 }
 
 void sound_initial(void){ 
+
 Na_InitAudio(audioFatalCallback, 0, 0, nintendo_hi_0, 0x66a0, 0);
 OSReport("sizeof(nintendo_hi_0)=%08x\n", 0x9900);
 OSReport("実際のnintendo_hi_0.awのサイズ=%08x \n", 0x66a0);
 OSReport("ニンテンド\x81\x5B発生タイムラグまで寝てます(%dms)\x1B\x5B\x6D\n", 0x9c4);
 msleep(0x9c4);
+
 }
 
 }

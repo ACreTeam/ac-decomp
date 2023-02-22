@@ -1,7 +1,7 @@
-libultra/gfxprint/gfxprint_locate.c:
-    .text: [0x8005B1EC, 0x8005B210]
-libultra/gfxprint/gfxprint_locate8x8.c:
-    .text: [0x8005B210, 0x8005B238]
+#libultra/gfxprint/gfxprint_locate.c:
+#    .text: [0x8005B1EC, 0x8005B210]
+#libultra/gfxprint/gfxprint_locate8x8.c:
+#    .text: [0x8005B210, 0x8005B238]
 libforest/ReconfigBATs.c:
     .text: [0x8005adac, 0x8005aed4]
 JSystem/JKernel/JKRHeap.cpp:
