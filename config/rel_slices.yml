@@ -21,3 +21,5 @@ m_room_type/mRmTp_FtrItemNo2FtrIdx.c:
     # .text: [0x8040eb38, 0x8040f008]
     # .bss: [0x812f9670, 0x812f9680]
     # .data: [0x8065F9F0, 0x8065FA20]
+sys_vimgr.c:
+    .text: [0x803703F8, 0x80370418]

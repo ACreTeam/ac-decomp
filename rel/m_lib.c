@@ -1,5 +1,7 @@
 #include "m_lib.h"
 
+
+
 void mem_copy(u8* arg0, u8* arg1, u32 arg2) {
     while (arg2 != 0) {
         *arg0 = *arg1;
@@ -330,4 +332,40 @@ u32 none_proc1(void){
 
 void none_proc2(void){
     //stub
+}
+
+// f32 check_percent_abs(s32 arg0, f32 arg8, f32 arg9, f32 argA, f32 argB)
+// f32 get_percent_forAccelBrake(f32 arg8, f32 arg9, f32 argA, f32 argB, f32 argC)
+
+
+void Game_play_Projection_Trans(game_play* play, Vec3f* src, Vec3f* dest) {
+    f32 w;
+
+    Matrix_mult(&play->unk_200C, 0);
+    Matrix_Position(src, dest);
+    w = play->unk_200C.ww + (
+          (play->unk_200C.wx * src->x) 
+        + (play->unk_200C.wy * src->y) 
+        + (play->unk_200C.wz * src->z));
+    dest->x = 160.0f + ((dest->x / w) * 160.0f);
+    dest->y = 120.0f - ((dest->y / w) * 120.0f);
+}
+
+f32 get_percent(s32 arg0, s32 arg1, s32 arg2) {
+    f32 temp_f0;
+    f32 var_f2;
+
+    var_f2 = 1.0f;
+    if (arg2 < arg1) {
+        var_f2 = 0.0f;
+    } else if (arg2 < arg0) {
+        temp_f0 = (f32) (arg0 - arg1);
+        if (temp_f0 != 0.0f) {
+            var_f2 = (f32) (arg2 - arg1) / temp_f0;
+            if (var_f2 > 1.0f) {
+                var_f2 = 1.0f;
+            }
+        }
+    }
+    return var_f2;
 }
