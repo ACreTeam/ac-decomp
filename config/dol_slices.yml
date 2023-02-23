@@ -11,6 +11,8 @@ JSystem/JKernel/JKRHeap.cpp:
     .data: [0x800ddf20, 0x800ddf98]
     .sdata: [0x80217e58, 0x80217e80]
     .sbss: [0x802186d8, 0x80218700]
+JSystem/JKernel/JKRDisposer.cpp:
+    .text: [0x80065aa0, 0x80065b8c]
 dolphin/BASE/ppcarch.c:
     .text: [0x8007867c, 0x80078718]
 dolphin/os/OSArena.c:
