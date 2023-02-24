@@ -6,6 +6,20 @@ libforest/ReconfigBATs.c:
     .text: [0x8005adac, 0x8005aed4]
 libc64/aprintf.c:
     .text: [0x8005cbdc, 0x8005cc14]
+libultra/xldtob.c:
+    .text: [0x8005e918, 0x8005f2a0]
+    .rodata: [0x800ab110, 0x800ab158]
+    .sdata: [0x80217df8, 0x80217e08]
+    sdata2: [0x80219210, 0x80219230]
+libultra/xlitob.c:
+    .text: [0x8005f2a0, 0x8005f4cc]
+    .data: [0x800ddb60, 0x800ddb88]
+libultra/xprintf.c:
+    .text: [0x8005f4cc, 0x8005ff74]
+    .rodata: [0x800ab158, 0x800ab170]
+    .data: [0x800ddb88, 0x800ddd20]
+    .sdata: [0x80217e08, 0x80217e10]
+    .sdata2: [0x80219230, 0x80219238]
 JSystem/JKernel/JKRHeap.cpp:
     .text: [0x80063748, 0x80064028]
     .data: [0x800ddf20, 0x800ddf98]
