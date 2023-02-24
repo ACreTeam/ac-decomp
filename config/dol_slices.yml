@@ -10,7 +10,7 @@ libultra/xldtob.c:
     .text: [0x8005e918, 0x8005f2a0]
     .rodata: [0x800ab110, 0x800ab158]
     .sdata: [0x80217df8, 0x80217e08]
-    sdata2: [0x80219210, 0x80219230]
+    .sdata2: [0x80219210, 0x80219230]
 libultra/xlitob.c:
     .text: [0x8005f2a0, 0x8005f4cc]
     .data: [0x800ddb60, 0x800ddb88]
