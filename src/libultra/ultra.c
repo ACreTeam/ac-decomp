@@ -1,5 +1,5 @@
 #include "libultra/libultra.h"
-#include "_mem.h"
+#include <string.h>
 #include "dolphin/os.h"
 #include "dolphin/os/OSTime.h"
 

@@ -296,6 +296,7 @@ REL_SDATA2_SIZE = 0
 
 CFLAGS = [
     "-O4",
+    "-char unsigned",
 ]
 CPLFLAGS =[
     "-lang=c++",
