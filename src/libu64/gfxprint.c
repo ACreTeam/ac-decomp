@@ -1,4 +1,4 @@
-#include "libultra/gfxprint.h"
+#include "libu64/gfxprint.h"
 #include "libc64/aprintf.h"
 
 static u8 gfxprint_font[] = {
