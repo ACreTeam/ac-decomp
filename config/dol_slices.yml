@@ -1,25 +1,38 @@
-#libultra/gfxprint/gfxprint_locate.c:
-#    .text: [0x8005B1EC, 0x8005B210]
-#libultra/gfxprint/gfxprint_locate8x8.c:
-#    .text: [0x8005B210, 0x8005B238]
+jaudio_NES/dummyprobe.c:
+    .text: [0x800083f8, 0x80008400]
+#jaudio_NES/verysimple.c:
+#    .text: [0x80008400, 0x80008480]
+#    .sdata: [0x80217b80, 0x80217b88]
 libforest/ReconfigBATs.c:
     .text: [0x8005adac, 0x8005aed4]
+#libu64/gfxprint.c: specify ranges later
 libc64/aprintf.c:
     .text: [0x8005cbdc, 0x8005cc14]
-libultra/xldtob.c:
-    .text: [0x8005e918, 0x8005f2a0]
-    .rodata: [0x800ab110, 0x800ab158]
-    .sdata: [0x80217df8, 0x80217e08]
-    .sdata2: [0x80219210, 0x80219230]
-libultra/xlitob.c:
-    .text: [0x8005f2a0, 0x8005f4cc]
-    .data: [0x800ddb60, 0x800ddb88]
-libultra/xprintf.c:
-    .text: [0x8005f4cc, 0x8005ff74]
-    .rodata: [0x800ab158, 0x800ab170]
-    .data: [0x800ddb88, 0x800ddd20]
-    .sdata: [0x80217e08, 0x80217e10]
-    .sdata2: [0x80219230, 0x80219238]
+#libultra/ultra.c:                  won't link
+#    .text: [0x8005d01c, 0x8005d15c]
+#    .bss: [0x80206f60, 0x80206fa0]
+#libultra/gu/scale.c:
+#    .text: [0x8005e7d4, 0x8005e860]
+#    .sdata2: [0x80219208, 0x80219210]
+#libultra/gu/translate.c:
+#    .text: [0x8005e8ac, 0x8005e918]
+libultra/gu/sins.c:
+    .text: [0x8005e860, 0x8005e8ac]
+    .data: [0x800dd360, 0x800ddb60]
+#libultra/xldtob.c:
+#    .text: [0x8005e918, 0x8005f2a0]
+#    .rodata: [0x800ab110, 0x800ab158]
+#    .sdata: [0x80217df8, 0x80217e08]
+#    .sdata2: [0x80219210, 0x80219230]
+#libultra/xlitob.c:
+#    .text: [0x8005f2a0, 0x8005f4cc]
+#    .data: [0x800ddb60, 0x800ddb88]
+#libultra/xprintf.c:
+#    .text: [0x8005f4cc, 0x8005ff74]
+#    .rodata: [0x800ab158, 0x800ab170]
+#    .data: [0x800ddb88, 0x800ddd20]
+#    .sdata: [0x80217e08, 0x80217e10]
+#    .sdata2: [0x80219230, 0x80219238]
 JSystem/JKernel/JKRHeap.cpp:
     .text: [0x80063748, 0x80064028]
     .data: [0x800ddf20, 0x800ddf98]
@@ -47,20 +60,9 @@ dolphin/os/OSRestoreInterrupts.c:
 MSL_C/rand.c:
     .text: [0x8009f46c, 0x8009f494]
     .sdata: [0x80218260, 0x80218268]
-#libultra/ultra.c:                  won't link
-#    .text: [0x8005d01c, 0x8005d15c]
-#    .bss: [0x80206f60, 0x80206fa0]
-libultra/gu/sins.c:
-    .text: [0x8005e860, 0x8005e8ac]
-    .data: [0x800dd360, 0x800ddb60]
 dolphin/odenotstub/odenotstub.c:
     .text: [0x800a9770, 0x800a9780]
 dolphin/amcstubs/AmcExi2Stubs.c:
     .text: [0x800a8cc0, 0x800a8cf0]
 dolphin/gx/GXStubs.c:
     .text: [0x800998d4, 0x800998d8]
-jaudio_NES/dummyprobe.c:
-    .text: [0x800083f8, 0x80008400]
-#jaudio_NES/verysimple.c:
-#    .text: [0x80008400, 0x80008480]
-#    .sdata: [0x80217b80, 0x80217b88]

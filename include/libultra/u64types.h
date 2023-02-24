@@ -15,4 +15,8 @@ typedef union {
   rgba8888_t c;
 } rgba8888;
 
+typedef struct {
+    float m[4][4];
+} Mtx;
+
 #endif
