@@ -95,8 +95,36 @@ void fault_callback_scroll(void){
 //TODO
 }
 
-void adjustOSArena(){ //https://decomp.me/scratch/LdpbQ
-// To Finish
+void adjustOSArena(void) {
+
+    void* arenalo = OSGetArenaLo(); 
+    void* arenahi = OSGetArenaHi();
+
+    OSReport("ARENA %08x-%08x\x1B\x5B\x6B\n", arenalo, arenahi);
+
+    if(arenahi > (void*)0x81800000) { 
+        if(!(osAppNMIBuffer[15] & 0x80)){
+        OSReport("搭載メモリが 24MB を超えていますが、24MB に限定します。\x1B\x5B\x6D\n");
+        arenahi = (void*)0x817ffa80;
+        }
+
+        else if(arenahi > (void*)0x82000000){
+            OSReport("搭載メモリが 32MB を超えています。\x1B\x5B\x6D\n");
+            arenahi = (void*)0x81e00000;
+        }
+        
+        else {
+            OSReport("搭載メモリが 32MB を超えていますが、32MB に限定します。\x1B\x5B\x6B\n");
+        }
+    }
+    else {
+        OSReport("搭載メモリが 24MB 以下なので動かない事がありえます。\x1B\x5B\x6D\n");
+    }
+        
+    OSSetArenaHi(arenahi);
+    OSReport("ARENA %08x-%08x\x1B\x5B\x6B\n", arenalo, arenahi);
+    
+    bzero(arenalo, ((u32)arenahi - (u32)arenalo));
 }
 
 int main(int argc, const char **argv){ //https://decomp.me/scratch/frpgE

@@ -10,6 +10,7 @@ global:
     0x80003490: memcpy
     0x800034e0: TRK_memset
     0x80003510: TRK_memcpy
+    0x80003534: gTRKInterruptVectorTable
     0x80005468: __TRK_reset
     0x800056c0: soundArenaAlloc
     0x800056c8: search_partial_address
@@ -2624,6 +2625,7 @@ global:
     0x8009ae00: __save_fpr
     0x8009ae4c: __restore_fpr
     0x8009ae98: __save_gpr
+    0x8009aeb4: _savegpr_21
     0x8009aeb8: _savegpr_22
     0x8009aebc: _savegpr_23
     0x8009aec0: _savegpr_24
@@ -2632,7 +2634,8 @@ global:
     0x8009aecc: _savegpr_27
     0x8009aed0: _savegpr_28
     0x8009aed4: _savegpr_29
-    0x8009aee4: __restore_gpr    
+    0x8009aee4: __restore_gpr
+    0x8009af00: _restgpr_21   
     0x8009af04: _restgpr_22
     0x8009af08: _restgpr_23
     0x8009af0c: _restgpr_24

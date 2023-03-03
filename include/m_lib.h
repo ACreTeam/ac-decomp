@@ -56,11 +56,11 @@ void rgba_t_move(rgba_t*, rgba_t*);
 u32 none_proc1(void);
 void none_proc2(void);
 
-void _Game_play_isPause(u32 //IDK);
+void _Game_play_isPause(u32); //IDK
 
 //Unsure
 //?? check_percent_abs();
 //?? get_percent_forAccelBrake();
-void Game_play_Projection_Trans(game_play*, Vec3f*, Vec3f);
+//void Game_play_Projection_Trans(game_play*, Vec3f*, Vec3f);
 f32 get_percent(s32, s32, s32);
 #endif
