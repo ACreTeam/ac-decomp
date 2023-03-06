@@ -1,4 +1,4 @@
-#include "rand.h"
+#include "MSL_C/rand.h"
 
 static u32 next = 1;
 

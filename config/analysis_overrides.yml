@@ -2,8 +2,8 @@ blocked_pointers:
   - 0x800A8440
   - 0x800A8514
 forced_types:
-    0x80003534: ENTRY
-    0x80005468: ENTRY
+    0x80003534: FUNCTION
+    0x80005468: FUNCTION
     0x8003ab3c: ENTRY
     0x8003ab70: ENTRY
     0x8003ab70: ENTRY

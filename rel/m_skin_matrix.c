@@ -1,5 +1,8 @@
 #include "m_skin_matrix.h"
 #include "m_lib.h"
+
+#include "orderfloats/80643310_80643318.inc"
+
 void Skin_Matrix_PrjMulVector(MtxF* mf, Vec3f* src, Vec3f* xyzDest, f32* wDest) {
     xyzDest->x = mf->xw + ((src->x * mf->xx) + (src->y * mf->xy) + (src->z * mf->xz));
     xyzDest->y = mf->yw + ((src->x * mf->yx) + (src->y * mf->yy) + (src->z * mf->yz));
@@ -210,4 +213,23 @@ void Skin_Matrix_SetRotateXyz_s(MtxF* mf, s16 x, s16 y, s16 z) {
     } else {
         mf->zy = 0;
     }
+}
+
+void Skin_Matrix_SetTranslate(MtxF* mf, f32 x, f32 y, f32 z) {
+    mf->yx = 0.0f;
+    mf->zx = 0.0f;
+    mf->wx = 0.0f;
+    mf->xy = 0.0f;
+    mf->zy = 0.0f;
+    mf->wy = 0.0f;
+    mf->xz = 0.0f;
+    mf->yz = 0.0f;
+    mf->wz = 0.0f;
+    mf->xx = 1.0f;
+    mf->yy = 1.0f;
+    mf->zz = 1.0f;
+    mf->ww = 1.0f;
+    mf->xw = x;
+    mf->yw = y;
+    mf->zw = z;
 }

@@ -4,7 +4,7 @@ m_room_type/mRmTp_FtrItemNo2FtrIdx.c:
     .text: [0x803E7878, 0x803E78BC]
 #m_skin_matrix.c:
 #    .text: [0x803f1528, 0x803f1bb4]
-#    .rodata: [0x80643310, 0x80643318]
+#   .rodata: [0x80643310, 0x80643318]
 #zurumode/zerucheck_init.c:
 #    .text: [0x8040eb38, 0x8040EB50] 
 #zurumode/zerucheck_key_check.c:

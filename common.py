@@ -297,6 +297,7 @@ REL_SDATA2_SIZE = 0
 CFLAGS = [
     "-O4",
     "-char unsigned",
+    "-fp hard"
 ]
 CPLFLAGS =[
     "-lang=c++",
@@ -357,7 +358,6 @@ EXTERNAL_DOL_CFLAGS = ' '.join(BASE_DOL_CFLAGS)
 EXTERNAL_REL_CFLAGS = ' '.join(BASE_REL_CFLAGS)
 
 LDFLAGS = ' '.join([
-    "-fp hard",
     "-maxerrors 1",
     "-mapunused"
 ])

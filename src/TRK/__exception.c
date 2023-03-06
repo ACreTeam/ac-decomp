@@ -1,9 +1,18 @@
+/*I will bother with fill/skip later, and I forgor how to .ascii (it's not that)*/
 #include "types.h"
-
-__declspec(section ".init")asm void gTRKInterruptVectorTable(void){
-    nofralloc
-
-    .ascii "Metrowerks Target Resident Kernel for PowerP"
+__declspec(section ".init") asm void gTRKInterruptVectorTable(void){
+nofralloc
+/* 80003534 4D657472 */ .4byte      0x4d657472
+/* 80003538 6F776572 */ xoris       r23, r27, 0x6572
+/* 8000353C 6B732054 */ xori        r19, r27, 0x2054
+/* 80003540 61726765 */ ori         r18, r11, 0x6765
+/* 80003544 74205265 */ andis.      r0, r1, 0x5265
+/* 80003548 73696465 */ andi.       r9, r27, 0x6465
+/* 8000354C 6E74204B */ xoris       r20, r19, 0x204b
+/* 80003550 65726E65 */ oris        r18, r11, 0x6e65
+/* 80003554 6C20666F */ xoris       r0, r1, 0x666f
+/* 80003558 7220506F */ andi.       r0, r17, 0x506f
+/* 8000355C 77657250 */ andis.      r5, r27, 0x7250
 /* 80003560 43000000 */ .4byte      0x43000000
 /* 80003564 00000000 */ .4byte      0x00000000
 /* 80003568 00000000 */ .4byte      0x00000000
@@ -1998,7 +2007,7 @@ lbl_80004764:
 
 __declspec(section ".init") asm void __TRK_reset(void){
     nofralloc
-    /* 80005468 9421FFE0 */ stwu        r1, -0x20(r1)
+/* 80005468 9421FFE0 */ stwu        r1, -0x20(r1)
 /* 8000546C 7C0802A6 */ mflr        r0
 /* 80005470 3C608021 */ lis         r3, lc_base@ha
 /* 80005474 90010024 */ stw         r0, 0x24(r1)
