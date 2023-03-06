@@ -33,9 +33,9 @@ typedef struct ExtabIndexInfo {
     u32 codeSize;    // at 0x10
 } ExtabIndexInfo;
 
-__declspec(section ".init") extern const RomSection _rom_copy_info[];
-__declspec(section ".init") extern const BssSection _bss_init_info[];
-__declspec(section ".init") extern const ExtabIndexInfo _eti_init_info[];
+__declspec(section ".init") extern  RomSection _rom_copy_info[];
+__declspec(section ".init") extern  BssSection _bss_init_info[];
+__declspec(section ".init") extern  ExtabIndexInfo _eti_init_info[];
 
 #ifdef __cplusplus
 }

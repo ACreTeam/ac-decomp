@@ -28,6 +28,7 @@ global:
     0x80005cf0: fault_callback_vimode
     0x80005dc0: fault_callback_scroll
     0x80006004: adjustOSArena
+    0x800060f8: main
     0x8000663c: ReportDiskID__Fv
     0x8000665c: JW_UpdateVideoMode
     0x800067b4: JW_SetProgressiveMode
@@ -7895,6 +7896,7 @@ global:
     0x80407A78: lbRk_HarvestMoonDay
     0x80407AE8: mainproc
     0x80407C70: entry
+    0x80407CB9: foresta_main
     0x80407CF4: padmgr_LockSerialMesgQ
     0x80407D30: padmgr_UnlockSerialMesgQ
     0x80407D64: padmgr_LockContData
@@ -52864,10 +52866,10 @@ src/dvdfs.c:
     0x802189d8: BootInfo
 src/OSResetSW.c:
     0x80218938: LastState
-src/boot.c:
-    0x800060f8: main
-rel/main.c:
-    0x80407CB9: main
+#src/boot.c:
+#    0x800060f8: main
+#rel/main.c:
+#    0x80407CB9: main
 rel/ac_quest_talk_island.c:
     0x8048D769: aQMgr_init_normal_info
     0x8048D7A5: aQMgr_set_number_free_str

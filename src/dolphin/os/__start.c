@@ -6,6 +6,8 @@
 __declspec(section ".init")void __init_registers(void);
 __declspec(section ".init")void __init_data(void);
 
+int main(int argc, char **argv);
+
 __declspec(section ".init") void __check_pad3(void){
     if((*(u16*)0x800030E4 & 0xEEF) == 0xEEF){
         OSResetSystem(0,0,0);
@@ -117,26 +119,22 @@ __declspec(section ".init") asm void __init_registers(void){
     ori r13, r13, 0xFB80
     blr
 }
-
-__declspec(section ".init") static void __copy_rom_section(void* dst, const void* src, size_t size){
-    if (size == 0 || dst == src){
-        return;
-    }
-
+void __copy_rom_section(void* dst, const void* src, size_t size){
+    if (size && (dst != src)) {
     memcpy(dst, src, size);
-    (dst, size);
+    __flush_cache(dst, size);
+    }
 }
 
-__declspec(section ".init") static void __init_bss_section(void* dst, size_t size){
-    if(size == 0){
-        return;
-    }
+void __init_bss_section(void* dst, size_t size){
+    if (size) {
     memset(dst, 0, size);
+    }
 }
 
 __declspec(section ".init") static void __init_data(void){
-    const RomSection* rs;
-    const BssSection* bs;
+    RomSection* rs;
+    BssSection* bs;
 
     rs = _rom_copy_info;
     while (1) {

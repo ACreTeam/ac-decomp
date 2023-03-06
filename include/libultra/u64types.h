@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+typedef u64 OSTime;
+
 typedef struct {
   u32 r:8;
   u32 g:8;
