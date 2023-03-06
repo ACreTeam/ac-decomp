@@ -1,5 +1,7 @@
 .include "macros.inc"
 .section .init, "ax"
+.global gTRKInterruptVectorTable
+gTRKInterruptVectorTable:
 
 /* 80003534 4D657472 */ .4byte      0x4d657472
 /* 80003538 6F776572 */ xoris       r23, r27, 0x6572
@@ -16,7 +18,7 @@
 
 .fill 0xD0
 
-b __TRKreset
+b __TRK_reset
     
 .fill 0xFC
 /* 80004580 00000680  7C 51 43 A6 */	mtspr 0x111, r2
