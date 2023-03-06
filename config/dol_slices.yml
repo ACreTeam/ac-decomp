@@ -7,7 +7,7 @@ runtime/__mem.c:
     .init: [0x800033a8, 0x800034e0]
 #TRK/mem_TRK.c:
 #    .init: [0x800034e0, 0x80003510]
-#TRK/__exception.c:
+#asm/__exception.s:
 #    .init: [0x80003534, 0x8000556C]
 jaudio_NES/dummyprobe.c:
     .text: [0x800083f8, 0x80008400]
