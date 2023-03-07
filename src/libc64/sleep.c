@@ -1,0 +1,18 @@
+#include "sleep.h"
+#include "dolphin/os/OSAlarm.h"
+#include "dolphin/os/OSTimer.h"
+#include "dolphin/os/OSThread.h"
+
+void csleep(OSTime c){
+    OSMessage msg;
+    OSMessageQueue mq;
+    OSTimer timer;
+
+    osCreateMesgQueue(&mq, &msg, 1);
+    osSetTimer(&timer, c, 0, &mq, NULL);
+    osRecvMesg(&mq, NULL, 1);
+}
+
+void msleep(u32 ms){
+    csleep((OS_MSEC_TO_TICKS((OSTime)ms)));
+}

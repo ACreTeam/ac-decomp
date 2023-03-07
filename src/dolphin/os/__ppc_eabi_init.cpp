@@ -1,7 +1,7 @@
 #include "types.h"
 #include "dolphin/os.h"
 #include "dolphin/BASE/ppcarch.h"
-#include "init.h"
+#include "dolphin/os/__ppc_eabi_init.h"
 
 #ifdef __cplusplus
 extern "C" {
