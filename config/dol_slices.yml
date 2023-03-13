@@ -1,8 +1,8 @@
 #dolphin/os/__start.c:
 #    .init: [0x80003100, 0x80003354]
-#dolphin/os/__ppc_eabi_init.cpp:
-#    .init: [0x80003354, 0x800033a8]
-#    .text: [0x8007FDFC, 0x8007fe90]
+dolphin/__ppc_eabi_init.cpp:
+    .init: [0x80003354, 0x800033a8]
+    .text: [0x8007fdfc, 0x8007fe90]
 runtime/__mem.c:
     .init: [0x800033a8, 0x800034e0]
 TRK/mem_TRK.c:
@@ -69,6 +69,56 @@ JSystem/JKernel/JKRDisposer.cpp:
     .text: [0x80065aa0, 0x80065b8c]
     .data: [0x800de3a8, 0x800de3c0]
     .sdata: [0x80217ec0, 0x80217ec8]
+#JSystem/JKernel/JKRThread.cpp: # JKRThread linkage disabled until we can resolve the order of RTTI strings in .data
+#    .text: [0x80065b8c, 0x80065ef0]
+#    .ctors: [0x800a978c, 0x800a9790]
+#    .data: [0x800de3c0, 0x800de3f8]
+#    .bss: [0x80207008, 0x80207020]
+#    .sdata: [0x80217ec8, 0x80217ed8]
+JSystem/JKernel/JKRThread2.cpp: # This exists to fix ordering. It is a hack. AC was likely compiled with CW GC 1.3.
+    .text: [0x80065ef0, 0x80065ef8]
+JSystem/JKernel/JKRAramHeap.cpp:
+    .text: [0x80066e84, 0x80067258]
+    .ctors: [0x800a9794, 0x800a9798]
+    .data: [0x800de4c0, 0x800de4f0]
+    .bss: [0x80207038, 0x80207050]
+    .sdata: [0x80217ef8, 0x80217f08]
+JSystem/JKernel/JKRAramBlock.cpp:
+    .text: [0x80067258, 0x800674c8]
+    .data: [0x800de4f0, 0x800de510]
+    .sdata: [0x80217f08, 0x80217f10]
+JSystem/JKernel/JKRAramPiece.cpp:
+    .text: [0x800674c8, 0x80067a88]
+    .ctors: [0x800a9798, 0x800a979c]
+    .data: [0x800de510, 0x800de568]
+    .bss: [0x80207050, 0x80207080]
+    .sdata: [0x80217f10, 0x80217f18]
+JSystem/JKernel/JKRDvdFile.cpp:
+    .text: [0x8006b8a4, 0x8006be0c]
+    .ctors: [0x800a97a0, 0x800a97a4]
+    .data: [0x800deba8, 0x800dec30]
+    .bss: [0x80207098, 0x802070b0]
+    .sdata: [0x80218008, 0x80218028]
+JSystem/JKernel/JKRDvdRipper.cpp:
+    .text: [0x8006be0c, 0x8006c8fc]
+    .ctors: [0x800a97a4, 0x800a97a8]
+    .data: [0x800dec30, 0x800dec90]
+    .bss: [0x802070b0, 0x802070c8]
+    .sdata: [0x80218028, 0x80218030]
+    .sbss: [0x80218778, 0x802187a8]
+JSystem/JKernel/JKRDecomp.cpp:
+    .text: [0x8006d608, 0x8006dd58]
+    .data: [0x800dec90, 0x800ded18]
+    .sdata: [0x80218038, 0x80218050]
+    .sbss: [0x802187e8, 0x802187f0]
+JSystem/JSupport/JSUInputStream.cpp:
+    .text: [0x8006e168, 0x8006e3e4]
+    .data: [0x800ded18, 0x800dedb8]
+    .sdata: [0x80218050, 0x80218068]
+#JSystem/JSupport/JSUFileStream.cpp: # JSUFileStream linkage disabled until we can resolve order of RTTI strings in .data
+#    .text: [0x8006e3e4, 0x8006e604]
+#    .data: [0x800dedb8, 0x800dee60]
+#    .sdata: [0x80218068, 0x80218088]
 dolphin/BASE/ppcarch.c:
     .text: [0x8007867c, 0x80078718]
 dolphin/os/OSArena.c:

@@ -37,4 +37,8 @@ typedef u32 unknown;
 #define FALSE 0
 #define NULL ((void*)0)
 #define nullptr 0
+
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+
 #endif

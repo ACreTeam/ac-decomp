@@ -1,4 +1,4 @@
-#include "JSystem/JUT/JUTAssertion.h"
+#include "JSystem/JUtility/JUTAssertion.h"
 #include "JSystem/JKernel/JKRHeap.h"
 #include "dolphin/os.h"
 #include "dolphin/os/OSArena.h"

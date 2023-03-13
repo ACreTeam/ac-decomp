@@ -197,6 +197,7 @@ ELF2REL = f"{PYTHON} {PPCDIS}/elf2rel.py"
 SLICES = f"{PYTHON} {PPCDIS}/slices.py"
 PROGRESS = f"{PYTHON} {PPCDIS}/progress.py"
 SYMBOLS = f"{PYTHON} {PPCDIS}/symbols.py"
+FORCEFILESGEN = f"{PYTHON} {PPCDIS}/forcefilesgen.py"
 
 # Codewarrior
 TOOLS = "tools"
@@ -258,6 +259,7 @@ REL_RELOCS = f"{BUILDDIR}/rel_relocs.pickle"
 
 # Linker
 DOL_LCF_TEMPLATE = f"{CONFIG}/dol.lcf"
+DOL_LCF_TEMP = f"{BUILDDIR}/dol_temp.lcf"
 DOL_LCF = f"{BUILDDIR}/dol.lcf"
 REL_LCF = f"{CONFIG}/rel.lcf"
 
@@ -291,7 +293,7 @@ CPPFLAGS = ' '.join([
     f"-I {BUILD_INCDIR}"
 ])
 
-DOL_SDATA2_SIZE = 4
+DOL_SDATA2_SIZE = 8
 REL_SDATA2_SIZE = 0
 
 CFLAGS = [
@@ -305,7 +307,7 @@ CPLFLAGS =[
 ]
 BASE_DOL_CFLAGS = CFLAGS + [
     "-inline all",
-    "-sdata 4",
+    "-sdata 8",
     f"-sdata2 {DOL_SDATA2_SIZE}"
 ]
 BASE_REL_CFLAGS = CFLAGS + [
@@ -325,10 +327,15 @@ LOCAL_CFLAGS = [
     f"-i {BUILD_INCDIR}"
 ]
 
+PREPROCESSOR_CFLAGS = [
+    "-E",
+    "-P"
+]
+
 SDK_CFLAG = [
     "-O4,p",
     "-inline all",
-    "-sdata 4",
+    "-sdata 8",
     f"-sdata2 {DOL_SDATA2_SIZE}"
 ]
 ALIGN16_CFLAG = [
@@ -339,7 +346,7 @@ JSYSTEM_BASE = [
     "-inline on",
     "-fp fmadd",
     "-fp_contract on",
-    "-pool off",
+    #"-pool off", # this is wrong
     "-Cpp_exceptions off",
     "-RTTI on",
     "-char signed",
@@ -356,6 +363,7 @@ DOL_CPPFLAGS = ' '.join(CPLFLAGS + BASE_DOL_CFLAGS + LOCAL_CFLAGS)
 REL_CFLAGS = ' '.join(BASE_REL_CFLAGS + LOCAL_CFLAGS)
 EXTERNAL_DOL_CFLAGS = ' '.join(BASE_DOL_CFLAGS)
 EXTERNAL_REL_CFLAGS = ' '.join(BASE_REL_CFLAGS)
+PREPROCESS_CFLAGS = ' '.join(PREPROCESSOR_CFLAGS)
 
 LDFLAGS = ' '.join([
     "-maxerrors 1",

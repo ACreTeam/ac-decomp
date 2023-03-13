@@ -88,6 +88,7 @@ n.variable("devkitppc", c.DEVKITPPC)
 n.variable("as", c.AS)
 n.variable("cpp", c.CPP)
 n.variable("iconv", c.ICONV)
+n.variable("forcefilesgen", c.FORCEFILESGEN)
 n.newline()
 
 ##############
@@ -225,6 +226,12 @@ n.rule(
     "iconv",
     command = "$iconv $in $out",
     description = "iconv $in",
+)
+
+n.rule(
+    "forcefiles",
+    command = "$forcefilesgen $in $out $forcefiles",
+    description = "LCF FORCEFILES generation $in"
 )
 
 ##########
@@ -484,6 +491,7 @@ class Source(ABC):
         self.src_path = src_path
         self.o_path = o_path
         self.o_stem = o_path[:-2]
+        self.i_path = o_path[:-2] + ".i"
         self.gen_includes = gen_includes
 
   def build(self):
@@ -510,6 +518,10 @@ class GenAsmSource(Source):
         name = f"{section}_{start:x}_{end:x}.s"
         src_path = f"$builddir/asm/{name}"
         super().__init__(False, src_path, src_path + ".o")
+
+        # Add ctors to forcefiles
+        if section == ".ctors":
+            forcefiles.append(name + ".o")
         
 
     def build(self):
@@ -577,7 +589,7 @@ class CSource(Source):
         if path.startswith("src/dolphin/"):
             self.cflags = c.SDK_FLAGS
             self.cc = c.OCC
-        elif path.startswith("src/JSystem/JKernel/"):
+        elif path.startswith("src/JSystem/"):
             self.cflags = c.JSYSTEM_CFLAGS
             self.cc = c.CC
         elif path.startswith("src/jaudio_NES"):
@@ -601,6 +613,18 @@ class CSource(Source):
             rule="iconv",
             inputs=self.src_path
         )
+        #n.build(
+        #    self.o_path,
+        #    rule = "cc",
+        #    inputs = self.iconv_path,
+        #    implicit = [inc.path for inc in self.gen_includes],
+        #    variables = {
+        #        "cc" : self.cc,
+        #        "cflags" : self.cflags + ' ' + c.PREPROCESS_CFLAGS
+        #    }
+        #)
+        #print(self.i_path)
+        
         n.build(
             self.o_path,
             rule = "cc",
@@ -648,6 +672,8 @@ def make_asm_list(path: str, asm_includes: List[AsmInclude]):
             ],
             f
         )
+
+forcefiles = []
 
 dol_sources = load_sources(c.DOL_CTX)
 dol_gen_includes = find_gen_includes(dol_sources)
@@ -710,9 +736,18 @@ for source in rel_sources:
 GenAsmSource.batch_build(rel_gen_asm)
 
 n.build(
-    c.DOL_LCF,
+    c.DOL_LCF_TEMP,
     rule="forceactivegen",
     inputs=[c.DOL_LCF_TEMPLATE, c.DOL_YML, c.DOL_LABELS, c.GAME_SYMBOLS, c.EXTERNS]
+)
+
+n.build(
+    c.DOL_LCF,
+    rule="forcefiles",
+    inputs=c.DOL_LCF_TEMP,
+    variables={
+        "forcefiles" : ' '.join(forcefiles)
+    }
 )
 
 n.build(

@@ -3,10 +3,16 @@
 
 #include "types.h"
 #include "dolphin/os/OSContext.h"
+#include "dolphin/os/OSMessage.h"
 #include "va_args.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// __ppc_eabi_init
+extern void __OSPSInit();
+extern void __OSFPRInit();
+extern void __OSCacheInit();
 
 void OSPanic(const char *file, int line, const char *message, ...);
 void OSReport(const char*, ...);

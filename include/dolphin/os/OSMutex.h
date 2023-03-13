@@ -8,26 +8,26 @@ extern "C"
 
 #include "dolphin/os/OSThread.h"
 
-    struct OSMutex
-    {
-        OSThreadQueue queue;
-        OSThread *thread; // the current owner
-        s32 count;        // lock count
-        OSMutexLink link; // for OSThread.queueMutex
-    };
+struct OSMutex
+{
+    OSThreadQueue queue;
+    OSThread *thread; // the current owner
+    s32 count;        // lock count
+    OSMutexLink link; // for OSThread.queueMutex
+};
 
-    struct OSCond
-    {
-        OSThreadQueue queue;
-    };
+struct OSCond
+{
+    OSThreadQueue queue;
+};
 
-    void OSInitMutex(OSMutex *mutex);
-    void OSLockMutex(OSMutex *mutex);
-    void OSUnlockMutex(OSMutex *mutex);
-    BOOL OSTryLockMutex(OSMutex *mutex);
-    void OSInitCond(OSCond *cond);
-    void OSWaitCond(OSCond *cond, OSMutex *mutex);
-    void OSSignalCond(OSCond *cond);
+void OSInitMutex(OSMutex *mutex);
+void OSLockMutex(OSMutex *mutex);
+void OSUnlockMutex(OSMutex *mutex);
+BOOL OSTryLockMutex(OSMutex *mutex);
+void OSInitCond(OSCond *cond);
+void OSWaitCond(OSCond *cond, OSMutex *mutex);
+void OSSignalCond(OSCond *cond);
 
 #ifdef __cplusplus
 }

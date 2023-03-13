@@ -35,6 +35,12 @@ SECTIONS
 FORCEACTIVE {
     PPCDIS_FORCEACTIVE
 }
+
+FORCEFILES
+{
+	PPCDIS_FORCEFILES
+}
+
 __dummy_str = 0;
 __dummy_float = 0;
 __dummy_double = 0;

@@ -20,4 +20,5 @@ section_defs:
     - name: .sdata2
     bss:
     - name: .bss
+      balign: 4
     - name: .sbss
