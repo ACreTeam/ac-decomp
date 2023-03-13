@@ -11,6 +11,7 @@ import pickle
 import re
 from io import StringIO
 
+from sys import executable as PYTHON, platform
 from typing import List, Tuple
 from ninja_syntax import Writer
 
@@ -251,7 +252,22 @@ class Asset:
             for binary, bdat in c.load_from_yaml(yml_path).items()
             for asset, adat in bdat.items()
         }
+
+    def dump(self):
+        print(f"Ripping {self.path} from main.dol")
+        os.system(
+            f"{PYTHON} {c.PPCDIS}/assetrip.py {c.DOL_YML} 0x{self.start:x} {self.end:x} {c.ASSETS}/{self.path}")
+   
 assets = Asset.load(c.ASSETS_YML)
+
+
+##############
+# Rip Assets #
+##############
+
+for asset in assets.values():
+    Asset.dump(asset)
+
 
 
 ###########
