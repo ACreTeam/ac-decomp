@@ -1,5 +1,5 @@
 #include <stdlib.h> /* lldiv & lldiv_t */
-#include <string.h> /* memcpy */
+#include "_mem.h" /* memcpy */
 #include "libultra/xprintf.h"
 
 #define BUFF_LEN 0x18

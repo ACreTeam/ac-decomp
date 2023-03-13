@@ -1,5 +1,5 @@
 #include <stdlib.h> /* ldiv & ldiv_t */
-#include <string.h> /* memcpy */
+#include "_mem.h" /* memcpy */
 
 #include "xprintf.h"
 
