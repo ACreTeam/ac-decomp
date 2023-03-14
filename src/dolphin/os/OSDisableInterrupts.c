@@ -1,4 +1,4 @@
-#include "dolphin/os/os.h"
+#include "dolphin/os/OSInterrupt.h"
 
 asm BOOL OSDisableInterrupts(void){
     nofralloc

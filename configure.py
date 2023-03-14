@@ -256,8 +256,12 @@ class Asset:
     def dump(self):
         print(f"Ripping {self.path} from main.dol")
         os.system(
-            f"{PYTHON} {c.PPCDIS}/assetrip.py {c.DOL_YML} 0x{self.start:x} {self.end:x} {c.ASSETS}/{self.path}")
-   
+            f"{PYTHON} {c.PPCDIS}/assetrip.py {c.DOL_YML} 0x{self.start:x} {self.end:x} {c.ASSETS}/{self.path}"
+            )
+        print(f"Converting {self.path} from main.dol")
+        os.system(
+            f"{PYTHON} {c.PPCDIS}/assetinc.py {c.ASSETS}/{self.path} {c.ASSETS}/{self.path}.inc"
+        ) 
 assets = Asset.load(c.ASSETS_YML)
 
 

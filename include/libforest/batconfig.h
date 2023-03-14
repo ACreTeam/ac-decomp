@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "dolphin/os/OSMemory.h"
-#include "dolphin/os.h"
+#include "dolphin/os/OSInterrupt.h"
 
 asm void Config24MB();
 asm void Config48MB();

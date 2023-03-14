@@ -9,11 +9,23 @@ TRK/mem_TRK.c:
     .init: [0x800034e0, 0x80003534]
 asm/__exception.s:
     .init: [0x80003534, 0x80005468]
+version.c:
+    .data: [0x800b05e8, 0x800b0608]
 jaudio_NES/dummyprobe.c:
     .text: [0x800083f8, 0x80008400]
 #jaudio_NES/verysimple.c:
 #    .text: [0x80008400, 0x80008480]
 #    .sdata: [0x80217b80, 0x80217b88]
+#libforest/osreport.c: //see why it doesn't match
+#    .text: [0x8005a654, 0x8005a92c]
+#    .data: [0x800dc6d8, 0x800dc738]
+#    .bss: [0x80206f08, 0x80206f20]
+#    .sbss: [0x80218618, 0x80218628]
+#libforest/fault.c:
+#    .text: [0x8005a92c, 0x8005adac]
+#    .data: [0x800dc738, 0x800dc7c8]
+#    .bss: [0x80206f20, 0x80206f30]
+#    .sbss: [0x80218628, 0x80218630]
 libforest/ReconfigBATs.c:
     .text: [0x8005adac, 0x8005aed4]
 #libu64/debug.c: //not match
