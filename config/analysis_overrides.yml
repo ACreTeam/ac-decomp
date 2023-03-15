@@ -352,7 +352,7 @@ forced_types:
     0x80078fcc: ENTRY
     0x8007ac24: ENTRY
     0x8007ac34: ENTRY
-    0x8007db20: ENTRY
+#    0x8007db20: ENTRY
     0x8007db3c: ENTRY
     0x8009ae2c: ENTRY
     0x8009ae34: ENTRY

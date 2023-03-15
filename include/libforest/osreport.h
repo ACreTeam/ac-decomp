@@ -1,19 +1,39 @@
-#ifndef LIB_OS_REPORT_H
-#define LIB_OS_REPORT_H
+#ifndef OSREPORT_H
+#define OSREPORT_H
 
 #include "types.h"
 #include "va_args.h"
+#include "dolphin/os/OSMutex.h"
+#include "dolphin/os/OSThread.h"
 
-void OSReportDisable(void);
-void OSReportEnable(void);
+#define DEBUG_MODE 0
+#define RETAIL_MODE 1
 
-void OSVReport(const char*, va_list);
+/* Causes DSI exception */
+#define OSThrow() (*(int*)0 = 0)
 
-void OSReport(const char*,...);
-void OSPanic(const char*, u32, const char*,...);
+extern void my_fopen(); /* @unused */
+extern void my_fgets(); /* @unused */
+extern void my_fclose(); /* @unused */
+extern void print_section(); /* @unused */
+extern void* OSGetCallerPC(); /* @unused */
+extern void OSDumpStackTrace(); /* @unused */
+extern s32 OSGetActiveThreadID(); /* @unused */
+extern void OSReportMonopoly(); /* @unused */
 
-void OSChangeBootMode(u32);
+extern void OSReportDisable();
+extern void OSReportEnable();
+//void OSVReport(const char* fmt, va_list list);
+//void OSReport(const char* fmt, ...);
+//void OSPanic(const char* file, u32 line, const char* fmt, ...);
+extern void OSChangeBootMode(u32 mode);
+extern void OSDVDFatalError();
 
-void OSDVDFatalError(void);
+#define OSChangeToRetail() (OSChangeBootMode(RETAIL_MODE))
+#define OSChangeToDebug() (OSChangeBootMode(DEBUG_MODE))
+
+static BOOL __OSReport_disable;
+static OSThread* __OSReport_MonopolyThread;
+static u8 print_mutex_initialized;
 
 #endif

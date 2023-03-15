@@ -203,13 +203,19 @@ FORCEFILESGEN = f"{PYTHON} {PPCDIS}/forcefilesgen.py"
 TOOLS = "tools"
 CODEWARRIOR = os.path.join(TOOLS, "1.3.2")
 SDK_CW = os.path.join(TOOLS, "1.2.5")
+HOTFIX_CW = os.path.join(TOOLS, "1.2.5e")
 CC = os.path.join(CODEWARRIOR, "mwcceppc.exe")
 OCC = os.path.join(SDK_CW, "mwcceppc.exe")
+PROFILE = os.path.join(HOTFIX_CW, "mwcceppc.exe")
 LD = os.path.join(CODEWARRIOR, "mwldeppc.exe")
 if platform != "win32":
     CC = f"wibo {CC}"
     OCC = f"wibo {OCC}"
     LD = f"wibo {LD}"
+
+# Frank
+FRANKLITE = "tools/franklite.py"
+FRANK = "tools/frank.py"
 
 # DevkitPPC
 DEVKITPPC = os.environ.get("DEVKITPPC")
@@ -306,7 +312,7 @@ CPLFLAGS =[
     "-O0"
 ]
 BASE_DOL_CFLAGS = CFLAGS + [
-    "-inline all",
+    "-inline on",
     "-sdata 8",
     f"-sdata2 {DOL_SDATA2_SIZE}"
 ]

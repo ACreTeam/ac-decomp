@@ -1,1 +1,4 @@
 trim_ctors: true
+
+symbol_aligns:
+  0x80207458: 8 # align RunQueue to 0x001251d8

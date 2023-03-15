@@ -38,6 +38,18 @@ typedef u32 unknown;
 #define NULL ((void*)0)
 #define nullptr 0
 
+#define AT_ADDRESS(x) : (x)
+
+#ifndef ATTRIBUTE_ALIGN
+#if defined(__MWERKS__) || defined(__GNUC__)
+#define ATTRIBUTE_ALIGN(num) __attribute__((aligned(num)))
+#elif defined(_MSC_VER)
+#define ATTRIBUTE_ALIGN(num)
+#else
+#error unknown compiler
+#endif
+#endif
+
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
