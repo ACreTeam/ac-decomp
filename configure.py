@@ -274,28 +274,7 @@ class Asset:
             for binary, bdat in c.load_from_yaml(yml_path).items()
             for asset, adat in bdat.items()
         }
-
-    def dump(self):
-        print(f"Ripping {self.path} from main.dol")
-        os.system(
-            f"{PYTHON} {c.PPCDIS}/assetrip.py {c.DOL_YML} 0x{self.start:x} {self.end:x} {c.ASSETS}/{self.path}"
-            )
-        print(f"Converting {self.path} from main.dol")
-        os.system(
-            f"{PYTHON} {c.PPCDIS}/assetinc.py {c.ASSETS}/{self.path} {c.ASSETS}/{self.path}.inc"
-        ) 
 assets = Asset.load(c.ASSETS_YML)
-
-
-##############
-# Rip Assets #
-##############
-
-for asset in assets.values():
-    Asset.dump(asset)
-
-
-
 ###########
 # Sources #
 ###########

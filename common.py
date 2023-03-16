@@ -211,6 +211,7 @@ LD = os.path.join(CODEWARRIOR, "mwldeppc.exe")
 if platform != "win32":
     CC = f"wibo {CC}"
     OCC = f"wibo {OCC}"
+    PROFILE = f"wibo {PROFILE}"
     LD = f"wibo {LD}"
 
 # Frank
