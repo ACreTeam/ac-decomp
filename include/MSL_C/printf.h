@@ -5,7 +5,7 @@
 #include "va_args.h"
 
 
-void vprintf(const char*, va_list);
-void print(const char*, ...);
+extern void vprintf(const char*, va_list);
+extern void printf(const char*, ...);
 
 #endif

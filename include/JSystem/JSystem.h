@@ -2,6 +2,7 @@
 #define JSYSTEM_H
 
 #include "dolphin/os.h"
+#include "libforest/osreport.h"
 #include "JSystem/JKernel/JKRAram.h"
 //#include "JSystem/JUtility/JUTException.h"
 

@@ -5,18 +5,18 @@
 extern "C" {
 #endif
 
-asm void DCEnable(void);
-asm void DCInvalidateRange(void*, u32);
-asm void DCFlushRange(void*, u32);
-asm void DCStoreRange(void*, u32);
-asm void DCFlushRangeNoSync(void*, u32);
-asm void DCStoreRangeNoSync(void*, u32);
-asm void DCZeroRange(void*, u32);
-asm void DCTouchRange(void*, u32 len);
-asm void ICInvalidateRange(void*, u32);
-asm void ICFlashInvalidate(void);
-asm void ICEnable(void);
-asm void LCDisable(void);
+void DCEnable(void);
+void DCInvalidateRange(void*, u32);
+void DCFlushRange(void*, u32);
+void DCStoreRange(void*, u32);
+void DCFlushRangeNoSync(void*, u32);
+void DCStoreRangeNoSync(void*, u32);
+void DCZeroRange(void*, u32);
+void DCTouchRange(void*, u32 len);
+void ICInvalidateRange(void*, u32);
+void ICFlashInvalidate(void);
+void ICEnable(void);
+void LCDisable(void);
 
 //void L2GlobalInvalidate(void);
 
