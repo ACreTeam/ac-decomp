@@ -9,9 +9,6 @@
 #include "JSystem/JKernel/JKRThread.h"
 #include "JSystem/JSupport/JSUList.h"
 
-#define ALIGN_PREV(u, align) (u & (~(align-1)))
-#define ALIGN_NEXT(u, align) ((u + (align-1)) & (~(align-1)))
-
 #define ARAM_GROUP_ID_ALL 0
 #define ARAM_GROUP_ID_DEFAULT 0xFF
 

@@ -638,6 +638,7 @@ class CSource(Source):
             rule="iconv",
             inputs=self.src_path
         )
+
         #n.build(
         #    self.o_path,
         #    rule = "cc",
@@ -648,8 +649,8 @@ class CSource(Source):
         #        "cflags" : self.cflags + ' ' + c.PREPROCESS_CFLAGS
         #    }
         #)
-        #print(self.i_path)
-        
+        #return;
+    
         if self.frank == True:
             #print(f"python3 franklite.py {self.o_path} {self.o_path}")
             n.build(

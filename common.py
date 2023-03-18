@@ -226,6 +226,10 @@ CPP = os.path.join(DEVKITPPC, "bin", "powerpc-eabi-cpp")
 
 ICONV = f"{PYTHON} tools/sjis.py" # TODO: get actual iconv working(?)
 
+# N64 SDK path for GBI
+N64SDK = os.environ.get("N64_SDK")
+assert N64SDK != None, "N64_SDK is not defined as a system environment variable"
+
 #########
 # Files #
 #########
@@ -290,14 +294,16 @@ ASFLAGS = ' '.join([
     "-m gekko",
     f"-I {INCDIR}",
     f"-I {PPCDIS_INCDIR}",
-    f"-I orig"
+    f"-I orig",
+    f"-I {N64SDK}/ultra/usr/include"
 ])
 
 CPPFLAGS = ' '.join([
     "-nostdinc",
     f"-I {INCDIR}",
     f"-I {PPCDIS_INCDIR}",
-    f"-I {BUILD_INCDIR}"
+    f"-I {BUILD_INCDIR}",
+    f"-I {N64SDK}/ultra/usr/include"
 ])
 
 DOL_SDATA2_SIZE = 8
@@ -308,9 +314,13 @@ CFLAGS = [
     "-char unsigned",
     "-fp hard"
 ]
-CPLFLAGS =[
+CPLFLAGS = [
     "-lang=c++",
     "-O0"
+]
+REL_DEFINES = [
+    "-d _LANGUAGE_C",
+    "-d F3DEX_GBI_2"
 ]
 BASE_DOL_CFLAGS = CFLAGS + [
     "-inline on",
@@ -321,7 +331,7 @@ BASE_REL_CFLAGS = CFLAGS + [
      "-sdata 0",
      f"-sdata2 {REL_SDATA2_SIZE}",
      "-pool off"
-]
+] + REL_DEFINES
 
 LOCAL_CFLAGS = [
     "-nostdinc",
@@ -331,7 +341,8 @@ LOCAL_CFLAGS = [
     "-I-",
     f"-i {INCDIR}",
     f"-i {PPCDIS_INCDIR}",
-    f"-i {BUILD_INCDIR}"
+    f"-i {BUILD_INCDIR}",
+   f"-ir {N64SDK}/ultra/usr/include"
 ]
 
 PREPROCESSOR_CFLAGS = [
