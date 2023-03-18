@@ -7,6 +7,10 @@ m_room_type/mRmTp_FtrItemNo2FtrIdx.c:
 #   .rodata: [0x80643310, 0x80643318]
 sys_stacks.c:
     .bss: [0x812F5670, 0x812F9670]
+THA_GA.c:
+    .text: [0x80404AE0, 0x80404B40]
+TwoHeadArena.c:
+    .text: [0x80404B40, 0x80404C68]
 gfxalloc.c:
     .text: [0x804054b0, 0x80405518]
 #zurumode/zerucheck_init.c:

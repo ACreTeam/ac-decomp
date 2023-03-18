@@ -13,6 +13,6 @@ void osWritebackDCache(void* vaddr, u32 nbytes);
 u32 osGetCount(void);
 OSTime osGetTime(void);
 
-static s32 osAppNMIBuffer[15]; 
+extern s32 osAppNMIBuffer[]; 
 
 #endif
