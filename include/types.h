@@ -40,6 +40,9 @@ typedef u32 unknown;
 
 #define AT_ADDRESS(x) : (x)
 
+#define ALIGN_PREV(u, align) (u & (~(align-1)))
+#define ALIGN_NEXT(u, align) ((u + (align-1)) & (~(align-1)))
+
 #ifndef ATTRIBUTE_ALIGN
 #if defined(__MWERKS__) || defined(__GNUC__)
 #define ATTRIBUTE_ALIGN(num) __attribute__((aligned(num)))
