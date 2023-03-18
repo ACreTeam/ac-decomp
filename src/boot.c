@@ -1,5 +1,5 @@
 #include "boot.h"
-
+#include "terminal.h"
 static u8 nintendo_hi_0[0x9900]; // This should be nintendo_hi_0.aw
 extern u32 *StringTable;
 
@@ -50,7 +50,7 @@ void sound_initial(void){
 Na_InitAudio(audioFatalCallback, 0, 0, nintendo_hi_0, 0x66a0, 0);
 OSReport("sizeof(nintendo_hi_0)=%08x\n", 0x9900);
 OSReport("実際のnintendo_hi_0.awのサイズ=%08x \n", 0x66a0);
-OSReport("ニンテンド\x81\x5B発生タイムラグまで寝てます(%dms)\x1B\x5B\x6D\n", 0x9c4);
+OSReport("ニンテンド\x81%x発生タイムラグまで寝てます(%dms)%x/n", VT_CSI, VT_RST, 0x9c4);
 msleep(0x9c4);
 
 }
@@ -100,29 +100,29 @@ void adjustOSArena(void) {
     void* arenalo = OSGetArenaLo(); 
     void* arenahi = OSGetArenaHi();
 
-    OSReport("ARENA %08x-%08x\x1B\x5B\x6B\n", arenalo, arenahi);
+    OSReport("ARENA %08x-%08x\%x/n", VT_RST, arenalo, arenahi);
 
     if(arenahi > (void*)0x81800000) { 
         if(!(osAppNMIBuffer[15] & 0x80)){
-        OSReport("搭載メモリが 24MB を超えていますが、24MB に限定します。\x1B\x5B\x6D\n");
+        OSReport("搭載メモリが 24MB を超えていますが、24MB に限定します。%x/n", VT_RST);
         arenahi = (void*)0x817ffa80;
         }
 
         else if(arenahi > (void*)0x82000000){
-            OSReport("搭載メモリが 32MB を超えています。\x1B\x5B\x6D\n");
+            OSReport("搭載メモリが 32MB を超えています。%x/n", VST_RST);
             arenahi = (void*)0x81e00000;
         }
         
         else {
-            OSReport("搭載メモリが 32MB を超えていますが、32MB に限定します。\x1B\x5B\x6B\n");
+            OSReport("搭載メモリが 32MB を超えていますが、32MB に限定します。%x/n", VT_RST);
         }
     }
     else {
-        OSReport("搭載メモリが 24MB 以下なので動かない事がありえます。\x1B\x5B\x6D\n");
+        OSReport("搭載メモリが 24MB 以下なので動かない事がありえます。%x/n", VT_RST);
     }
         
     OSSetArenaHi(arenahi);
-    OSReport("ARENA %08x-%08x\x1B\x5B\x6B\n", arenalo, arenahi);
+    OSReport("ARENA %08x-%08x%x/n", VT_RST, arenalo, arenahi);
     
     bzero(arenalo, ((u32)arenahi - (u32)arenalo));
 }

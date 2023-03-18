@@ -1,4 +1,5 @@
 #include "fault.h"
+#include "terminal.h"
 __declspec(section ".sdata") static fault* this;
 static fault fault_class;
 
@@ -45,7 +46,7 @@ extern void fault_AddClientEx(fault_client* client, FaultCallback callback, cons
 exit:
     OSRestoreInterrupts(enable);
     if (client_exists != FALSE) {
-        OSReport("\x1b[41;37mfault_AddClient: %08x は既にリスト中にある\n\x1b[m", client);
+        OSReport(VTCOL(RED,WHITE)"fault_AddClient: %08x は既にリスト中にある\n%x",VT_RST, client);
     }
 }
 
