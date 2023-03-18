@@ -3,8 +3,6 @@
 
 #include "types.h"
 
-typedef u64 OSTime;
-
 typedef struct {
   u32 r:8;
   u32 g:8;
@@ -17,9 +15,11 @@ typedef union {
   rgba8888_t c;
 } rgba8888;
 
+/*
 typedef struct {
     float m[4][4];
 } Mtx;
+*/
 
 typedef float MtxF_t[4][4];
 typedef union {

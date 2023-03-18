@@ -2,8 +2,8 @@
 #define GFXPRINT_H
 
 #include "types.h"
-#include "u64types.h"
-#include <PR/gbi.h>
+#include "libultra/u64types.h"
+#include "PR/mbi.h"
 #include "va_args.h"
 
 #ifdef __cplusplus
@@ -45,7 +45,10 @@ typedef struct gfxprint_obj  {
 } gfxprint_t;
 
 /* Default gfxprint flag values set in game_ct func, default value is 0x40 (GFXPRINT_FLAG_HIGHRES on) */
-extern u8 __gfxprint_default_flags;
+static u8 __gfxprint_default_flags;
+
+extern u16 gfxprint_moji_tlut[];
+extern u8 gfxprint_font[];
 
 /* Macros for quickly checking state of gfxprint struct */
 #define gfxprint_isFlagOn(this, flag) ((this->flags & flag) != 0)
@@ -79,7 +82,7 @@ extern u8 __gfxprint_default_flags;
 
 static void gfxprint_setup(gfxprint_t* this);
 static void gfxprint_putc1(gfxprint_t* this, char c);
-static gfxprint_t* gfxprint_prout(gfxprint_t* this, const char* buffer, size_t n);
+static void* gfxprint_prout(void* this, const char* buffer, int n);
 
 extern void gfxprint_color(gfxprint_t* this, u32 r, u32 g, u32 b, u32 a);
 

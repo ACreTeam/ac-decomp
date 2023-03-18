@@ -32,6 +32,12 @@ libforest/ReconfigBATs.c:
 #    .text: [0x8005aed4, 0x8005af30]
 #    .data: [0x800dc7c8, 0x800dc7f0]
 #libu64/gfxprint.c: specify ranges later
+libu64/gfxprint.c:
+    .text: [0x8005af30, 0x8005b9a8]
+    .data: [0x800dc7f0, 0x800dc810]
+    .sbss: [0x80218630, 0x80218638]
+libu64/gfxprint_data.c:
+    .data: [0x800dc810, 0x800dd090]
 libc64/aprintf.c:
     .text: [0x8005cbdc, 0x8005cc14]
 #libc64/math64.c: //not match

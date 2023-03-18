@@ -1,6 +1,6 @@
 #ifndef GU_H
 #define GU_H
-#include <PR/gbi.h">
+#include "PR/mbi.h"
 #include "types.h"
 #include "libultra/u64types.h"
 

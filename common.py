@@ -318,15 +318,17 @@ CPLFLAGS = [
     "-lang=c++",
     "-O0"
 ]
-REL_DEFINES = [
+COMMON_DEFINES = [
     "-d _LANGUAGE_C",
     "-d F3DEX_GBI_2"
 ]
+DOL_DEFINES = COMMON_DEFINES + []
+REL_DEFINES = COMMON_DEFINES + []
 BASE_DOL_CFLAGS = CFLAGS + [
     "-inline on",
     "-sdata 8",
     f"-sdata2 {DOL_SDATA2_SIZE}"
-]
+] + DOL_DEFINES
 BASE_REL_CFLAGS = CFLAGS + [
      "-sdata 0",
      f"-sdata2 {REL_SDATA2_SIZE}",
