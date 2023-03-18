@@ -16,6 +16,8 @@ Use `--recursive` when cloning to have ppcdis in the repository.
 - Decompress **foresta.rel.szs** with yaz0 found in *tools/*.
 - Place **main.dol** and **foresta.rel** in *dump/*.
 - Place CodeWarrior 1.3.2 in *tools/1.3.2/*, 1.2.5 in *tools/1.2.5/* and 1.2.5e in *tools/1.2.5e/*.
+- Set the `N64_SDK` environmental variables with the path of your libultra or equivalent headers.
+	- Headers should be at `$N64_SDK/ultra/usr/include`.
 - Install DevkitPPC, Ninja and Python:
     - **Only tested with DevkitPPC r41 and Python 3.8.10**, however other versions should work fine.
 - Install Python modules from requirements.txt (`pip install -r requirements.txt`)
