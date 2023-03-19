@@ -53,9 +53,9 @@ libc64/qrand.c:
 #libc64/malloc.c:
 #    .text: [0x8005cf08, 0x8005d01c]
 #    .bss: [0x80206F30, 0x80206F60]
-#libultra/ultra.c:                  won't link
-#    .text: [0x8005d01c, 0x8005d15c]
-#    .bss: [0x80206f60, 0x80206fa0]
+libultra/ultra.c:
+    .text: [0x8005d01c, 0x8005d15c]
+    .bss: [0x80206f60, 0x80206fa0]
 #libultra/gu/scale.c:
 #    .text: [0x8005e7d4, 0x8005e860]
 #    .sdata2: [0x80219208, 0x80219210]
