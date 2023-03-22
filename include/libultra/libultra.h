@@ -14,5 +14,6 @@ u32 osGetCount(void);
 OSTime osGetTime(void);
 
 extern s32 osAppNMIBuffer[]; 
+extern int osShutdown;
 
 #endif

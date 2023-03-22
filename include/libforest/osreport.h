@@ -32,8 +32,4 @@ extern void OSDVDFatalError();
 #define OSChangeToRetail() (OSChangeBootMode(RETAIL_MODE))
 #define OSChangeToDebug() (OSChangeBootMode(DEBUG_MODE))
 
-static BOOL __OSReport_disable;
-static OSThread* __OSReport_MonopolyThread;
-static u8 print_mutex_initialized;
-
 #endif
