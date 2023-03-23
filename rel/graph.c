@@ -110,17 +110,40 @@ static int graph_draw_finish(GRAPH* this) {
 
   if (*(u16*)GET_DYNAMIC_OFS(SYSDYNAMIC_EPILOG_OFS) != SYSDYNAMIC_END_MAGIC) {
     _dbg_hungup(__FILE__, 425);
-    err = 1;
+    err = TRUE;
   }
 
-  err = THA_GA_isCrash(&this->line_translucent_thaga) != 0;
-  err = THA_GA_isCrash(&this->overlay_thaga) != 0;
-  err = THA_GA_isCrash(&this->line_opaque_thaga) != 0;
-  err = THA_GA_isCrash(&this->polygon_opaque_thaga) != 0;
-  err = THA_GA_isCrash(&this->polygon_translucent_thaga) != 0;
-  err = THA_GA_isCrash(&this->font_thaga) != 0;
-  err = THA_GA_isCrash(&this->shadow_thaga) != 0;
-  err = THA_GA_isCrash(&this->light_thaga) != 0;
+  if (THA_GA_isCrash(&this->line_translucent_thaga)) {
+    err = TRUE;
+  }
+
+  if (THA_GA_isCrash(&this->overlay_thaga)) {
+		err = TRUE;
+	}
+
+  if (THA_GA_isCrash(&this->line_opaque_thaga)) {
+		err = TRUE;
+	}
+
+  if (THA_GA_isCrash(&this->polygon_opaque_thaga)) {
+		err = TRUE;
+	}
+
+  if (THA_GA_isCrash(&this->polygon_translucent_thaga)) {
+		err = TRUE;
+	}
+
+  if (THA_GA_isCrash(&this->font_thaga)) {
+		err = TRUE;
+	}
+
+  if (THA_GA_isCrash(&this->shadow_thaga)) {
+		err = TRUE;
+	}
+
+  if (THA_GA_isCrash(&this->light_thaga)) {
+		err = TRUE;
+	}
 
   return err;
 }
@@ -184,8 +207,6 @@ static void graph_main(GRAPH* this, GAME* game) {
 }
 
 extern void graph_proc(void* arg) {
-  int i;
-
   DLFTBL_GAME* dlftbl = &game_dlftbls[0];
   graph_ct(&graph_class);
   
@@ -199,7 +220,7 @@ extern void graph_proc(void* arg) {
     //emu64_refresh();
     GRAPH_SET_DOING_POINT(&graph_class, GAME_CT_FINISHED);
 
-    for (i; i = game_is_doing(game); i != 0) {
+    while (game_is_doing(game)) {
       if (!dvderr_draw()) {
         graph_main(&graph_class, game);
       }
