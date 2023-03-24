@@ -9,7 +9,6 @@
 extern "C" {
 #endif
 
-#define MAXCONTROLLERS 4
 #define PADMSGBUFCNT 8
 
 typedef struct {
