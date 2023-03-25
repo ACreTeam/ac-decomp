@@ -2,7 +2,7 @@
 #define SYS_UCODE_H
 
 #include "types.h"
-#include "mbi.h"
+#include "PR/mbi.h"
 
 #ifdef __cplusplus
 extern "C" {

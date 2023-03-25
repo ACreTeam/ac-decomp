@@ -2,6 +2,7 @@
 #define SYS_DYNAMIC_H
 
 #include "types.h"
+#include "PR/mbi.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,43 +11,47 @@ extern "C" {
 #define SYSDYNAMIC_START_MAGIC 0x1234
 #define SYSDYNAMIC_END_MAGIC 0x5678
 
-#define DYNAMIC_HEADER_SIZE 8
-#define DYNAMIC_EPILOG_SIZE 8
+#define SHADOW_SIZE 512
+#define LIGHT_SIZE 256
+#define LINE_XLU_SIZE 9952
+#define OVERLAY_SIZE 2048
+#define LINE_OPA_SIZE 1024
+#define WORK_SIZE 128
+#define UNK_BUF0_SIZE 32
+#define POLY_OPA_SIZE 1792
+#define POLY_XLU_SIZE 512
+#define FONT_SIZE 256
 
-#define SHADOW_SIZE 0x1000
-#define LIGHT_SIZE 0x800
-#define LINE_XLU_SIZE 0x13700
-#define OVERLAY_SIZE 0x4000
-#define LINE_OPA_SIZE 0x2000
-#define WORK_SIZE 0x400
-#define UNK_BUF0_SIZE 0x100
-#define POLY_OPA_SIZE 0x3800
-#define POLY_XLU_SIZE 0x1000
-#define FONT_SIZE 0x800
+typedef struct dynamic_s {
+    u16 start_magic;
+    
+    Gfx line_xlu[LINE_XLU_SIZE];
+    Gfx overlay[OVERLAY_SIZE];
+    Gfx line_opa[LINE_OPA_SIZE];
+    Gfx work[WORK_SIZE];
+    Gfx unused[UNK_BUF0_SIZE];
+    Gfx poly_opa[POLY_OPA_SIZE];
+    Gfx poly_xlu[POLY_XLU_SIZE];
+    Gfx font[FONT_SIZE];
+    Gfx shadow[SHADOW_SIZE];
+    Gfx light[LIGHT_SIZE];
+    u16 end_magic;
+    
+} dynamic_t;
 
-#define SYSDYNAMIC_START (0)
-#define SYSDYNAMIC_HEADER_OFS (SYSDYNAMIC_START)
-#define LINE_XLU_OFS (SYSDYNAMIC_HEADER_OFS + DYNAMIC_HEADER_SIZE)
-#define OVERLAY_OFS (LINE_XLU_OFS + LINE_XLU_SIZE)
-#define LINE_OPA_OFS (OVERLAY_OFS + OVERLAY_SIZE)
-#define WORK_OFS (LINE_OPA_OFS + LINE_OPA_SIZE)
-#define UNUSED_OFS (WORK_OFS + WORK_SIZE)
-#define POLY_OPA_OFS (UNUSED_OFS + UNK_BUF0_SIZE)
-#define POLY_XLU_OFS (POLY_OPA_OFS + POLY_OPA_SIZE)
-#define FONT_OFS (POLY_XLU_OFS + POLY_XLU_SIZE)
-#define SHADOW_OFS (FONT_OFS + FONT_SIZE)
-#define LIGHT_OFS (SHADOW_OFS + SHADOW_SIZE)
-#define SYSDYNAMIC_EPILOG_OFS (LIGHT_OFS + LIGHT_SIZE)
-#define SYSDYNAMIC_END (SYSDYNAMIC_EPILOG_OFS + DYNAMIC_EPILOG_SIZE)
+extern dynamic_t sys_dynamic;
 
-/* 0x20410 bytes */
-#define DYNAMIC_SIZE \
-  (DYNAMIC_HEADER_SIZE + SHADOW_SIZE + LIGHT_SIZE + LINE_XLU_SIZE + OVERLAY_SIZE + LINE_OPA_SIZE + \
-   WORK_SIZE + UNK_BUF0_SIZE + POLY_OPA_SIZE + POLY_XLU_SIZE + FONT_SIZE + DYNAMIC_EPILOG_SIZE)
+#define SYSDYNAMIC_OPEN() \
+do { \
+  dynamic_t* __dyn = &sys_dynamic;\
+while (0)
 
-static u8 sys_dynamic[DYNAMIC_SIZE];
+#define SYSDYNAMIC_CLOSE() \
+  (void)__dyn; \
+} while (0)
 
-#define GET_DYNAMIC_OFS(ofs) (&sys_dynamic[(ofs)])
+#define SYSDYNAMIC_CHECK_START() (__dyn->start_magic == SYSDYNAMIC_START_MAGIC)
+#define SYSDYNAMIC_CHECK_END() (__dyn->end_magic == SYSDYNAMIC_END_MAGIC)
 
 #ifdef __cplusplus
 };

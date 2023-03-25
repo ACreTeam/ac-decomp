@@ -2,7 +2,7 @@
 #define GRAPH_H
 
 #include "types.h"
-#include "mbi.h"
+#include "PR/mbi.h"
 #include "THA_GA.h"
 #include "dolphin/os/OSMessage.h"
 
@@ -29,7 +29,7 @@ typedef enum {
   GRAPH_DOING_TASK_SET_FINISHED,
   GRAPH_DOING_AUDIO,
   GRAPH_DOING_AUDIO_FINISHED,
-  GRAPH_DOING_18, /* This is unused? Can't find it anywhere. Perhaps only used in DnM. */
+  GRAPH_DOING_GAME_18, /* Not sure what this is, relevant code removed */
   GRAPH_DOING_GAME_DT,
   GRAPH_DOING_GAME_DT_FINISHED,
   GRAPH_DOING_DT,
@@ -77,14 +77,14 @@ typedef struct graph_s {
   /* 0x0349 */ u8 _unk349;
   /* 0x034A */ u8 need_viupdate;
   /* 0x034B */ u8 cfb_bank;
-  /* 0x034C */ void (*taskEndCallback)(GRAPH*, void*);
+  /* 0x034C */ void (*taskEndCallback)(struct graph_s*, void*);
   /* 0x0350 */ void* taskEndData;
   /* 0x0354 */ f32 vixscale;
   /* 0x0358 */ f32 viyscale;
   /* 0x035C */ Gfx* last_dl;
   /* 0x0360 */ Gfx* Gfx_list10; /* shadow */
   /* 0x0364 */ Gfx* Gfx_list11; /* light */
-} GRAPH;
+} GRAPH ATTRIBUTE_ALIGN(8); // one of the missing structs is likely aligned to 8 bytes.
 
 extern void graph_proc(void* arg);
 extern void graph_ct(GRAPH* this);
@@ -128,6 +128,7 @@ extern void graph_dt(GRAPH* this);
 #define NOW_SHADOW_DISP (Gfx*)NOW_DISP(&__graph->shadow_thaga)
 #define NOW_LIGHT_DISP (Gfx*)NOW_DISP(&__graph->light_thaga)
 
+extern u8 SoftResetEnable;
 extern GRAPH graph_class;
 
 #ifdef __cplusplus

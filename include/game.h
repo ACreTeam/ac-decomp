@@ -5,7 +5,7 @@
 #include "TwoHeadArena.h"
 #include "graph.h"
 #include "gamealloc.h"
-#include "pad.h"
+#include "libu64/pad.h"
 #include "m_controller.h"
 
 #ifdef __cplusplus
@@ -28,20 +28,20 @@ typedef struct game_s {
   /* 0x009E */ u8 disable_display;
   /* 0x009F */ u8 doing;
   /* 0x00A0 */ u32 frame_counter;
-  /* 0x00A4 */ u8 disable_prenmi;
+  /* 0x00A4 */ int disable_prenmi;
   /* 0x00A8 */ MCON mcon;
 } GAME;
 
-extern void game_ct(GAME* game);
+extern void game_ct(GAME*, void (*)(GAME*), GRAPH*);
 extern void game_dt(GAME* game);
 extern void game_main(GAME* game);
-extern u8 game_is_doing(GAME* game);
+extern int game_is_doing(GAME* game);
 extern void (*game_get_next_game_init(GAME* game))(GAME*);
 
 #define GAME_NEXT_GAME(game, init_name, class_name) \
 do { \
   GAME* g = (game); \
-  g->next_game_init = init_name##_init; \
+  g->next_game_init = (void (*)(struct game_s*))init_name##_init; \
   g->next_game_class_size = sizeof(GAME_##class_name); \
 } while (0)
 

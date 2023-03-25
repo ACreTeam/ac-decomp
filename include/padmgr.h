@@ -4,6 +4,7 @@
 #include "types.h"
 #include "irqmgr.h"
 #include "libu64/pad.h"
+#include "dolphin/os/OSMessage.h"
 
 #ifdef __cplusplus
 extern "C" {
