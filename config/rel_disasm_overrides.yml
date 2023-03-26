@@ -2,4 +2,5 @@ trim_ctors: true
 trim_dtors: true
 symbol_aligns:
     0x8064d500 : 0x20
-    0x8125a7c0 : 0x20
+    0x8125a7c0 : 0x20 # construct_skip
+    0x81361820 : 0x20 # S_back_title_timer

@@ -52509,6 +52509,9 @@ global:
     0x812F31DC: game_GameFrame_2F
     0x812F31E0: game_GameFrame__1F
     0x812F31E4: game_class_p
+    0x812F31E8: frame
+    0x812F31EC: SoftResetEnable
+    0x812F31F0: skip_frame
     0x812F31F8: graph_class
     0x812F3560: ResetStatus
     0x812F3568: ResetTime

@@ -13,25 +13,20 @@ TwoHeadArena.c:
     .text: [0x80404B40, 0x80404C68]
 gfxalloc.c:
     .text: [0x804054b0, 0x80405518]
-#zurumode/zerucheck_init.c:
-#    .text: [0x8040eb38, 0x8040EB50] 
-#zurumode/zerucheck_key_check.c:
-#    .text: [0x8040EB50, 0x8040EDA8]
-#zurumode/zurumode_cleanup.c:
-#    .text: [0x8040efc4, 0x8040f008]
-# zurumode/zurumode_init.c:
-    # .text: [0x8040ef58, 0x8040efc4]
-    # .bss: [0x812f9670, 0x812f9680]
-#zurumode/zurumode_update.c:
-    #.text: [0x8040EDA8, 0x8040ee74]
-# zurumode/zurumode.c:
-    # .text: [0x8040eb38, 0x8040f008]
-    # .bss: [0x812f9670, 0x812f9680]
-    # .data: [0x8065F9F0, 0x8065FA20]
+graph.c:
+    .text: [0x80405518, 0x80405EC8]
+    .data: [0x8065ECA8, 0x8065ECB0]
+    .bss: [0x812F31E8, 0x812F3560]
+zurumode.c:
+    .text: [0x8040eb38, 0x8040f008]
+    .bss: [0x812f9670, 0x812f9680]
+    .data: [0x8065F9F0, 0x8065FA30]
 m_random_field/mRF_MakePerfectBit.c:
     .text: [0x8050B1AC, 0x8050B1D4]
 m_random_field/mRF_GetRandomStepMode.c:
     .text: [0x8050B284, 0x8050B2C0]
+sys_dynamic.c:
+    .bss: [0x813413F8, 0x81361820]
 # ac_aprilfool_control/aPC_actor_dt.c: common_data is pure bs, 
     # .text: [0x805153f0, 0x8051542C]
 

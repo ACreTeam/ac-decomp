@@ -4,7 +4,10 @@
 
 #include "MSL_C/printf.h"
 
-OSMutex print_mutex;
+static BOOL __OSReport_disable;
+static OSThread* __OSReport_MonopolyThread;
+static u8 print_mutex_initialized;
+static OSMutex print_mutex;
 
 extern void OSReportDisable() {
     __OSReport_disable = TRUE;

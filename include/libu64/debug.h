@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-void _dbg_hungup(const char*, s32);
+extern void _dbg_hungup(const char* file, int line);
 
 #endif

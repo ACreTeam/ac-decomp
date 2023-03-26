@@ -4,8 +4,10 @@
 #include "types.h"
 
 #include "dolphin/os.h"
-//#include "JSystem/JUT/JUTAssertion.h"
-//#include "JSystem/JUT/JUTDbPrint.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct zuru_keycheck {
   u8 state;
@@ -14,28 +16,13 @@ typedef struct zuru_keycheck {
   u8 zurumode_enabled;
 } zuru_keycheck;
 
-typedef struct {
-    u8 pad_pattern;
-    void (*callback)(void*);
-    void* callback_param;
-    void (*callback2)(void*);
-    void* callback2_param;
-} padmgr;
-
-extern padmgr padmgr_class;
-
 extern s32 zurumode_flag;
-void zurumode_cleanup(void);
-int zerucheck_init(zuru_keycheck* key_check);
-s32 zurumode_update(void);
-void zurumode_callback(void* padmgr);
-int zerucheck_key_check(zuru_keycheck* key_check, u32 controller);
+
+extern void zurumode_cleanup(void);
+extern void zurumode_init(void);
 
 #define ZURUMODE_RESET 0
 #define ZURUMODE_PROGRESSING 1
-
-#define OS_APP_NMI_ZURUMODE_IDX 15
-
 
 #define BUTTON_NONE 0x0000
 #define BUTTON_CRIGHT 0x0001
@@ -75,5 +62,9 @@ enum zurumode_stage {
 
   ZURUMODE_STAGE_FINAL_e = ZURUMODE_STAGE_11_e
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
