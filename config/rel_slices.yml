@@ -22,6 +22,10 @@ lb_rtc.c:
     .rodata: [0x806436F8, 0x806437A0]
     .data: [0x8065ECD0, 0x8065ECD8]
     .bss: [0x812F4CB0, 0x812F4CC0]
+lb_reki.c:
+    .text: [0x8040752C, 0x80407AE8]
+    .rodata: [0x806437A0, 0x806437C0]
+    .data: [0x8065ECD8, 0x8065F110]
 zurumode.c:
     .text: [0x8040eb38, 0x8040f008]
     .bss: [0x812f9670, 0x812f9680]

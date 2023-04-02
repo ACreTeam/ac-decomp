@@ -1,6 +1,47 @@
+/*
+ * lb_rtc.c
+ *
+ * This source file contains a set of functions for handling
+ * date and time calculations and conversions in the context of the lbRTC system.
+ * The lbRTC system is designed to manage timekeeping and manipulation of date-times.
+ *
+ * Functions in this file include (but are not limited to):
+ *
+ * - lbRTC_HardTime: Retrieve the hardware time.
+ * - lbRTC_IsAbnormal: Check if the lbRTC system is in an abnormal state.
+ * - lbRTC_Sampling: Perform a sampling operation on the lbRTC system.
+ * - lbRTC_SetTime: Set the current time in the lbRTC system.
+ * - lbRTC_GetTime: Get the current time from the lbRTC system.
+ * - lbRTC_GetDaysByMonth: Get the number of days in a given month and year.
+ * - lbRTC_IsEqualDate: Check if two dates are equal.
+ * - lbRTC_IsEqualTime: Check if two times are equal.
+ * - lbRTC_IsOverTime: Check if one time is greater than another time.
+ * - lbRTC_IsOverRTC: Check if the given time is greater than the current time.
+ * - lbRTC_IntervalTime: Calculate the interval between two times.
+ * - lbRTC_GetIntervalDays: Calculate the interval between two times in days.
+ * - lbRTC_GetIntervalDays2: Calculate the interval between two times (date only) in days.
+ * - lbRTC_Add_YY: Add years to a time.
+ * - lbRTC_Add_MM: Add months to a time.
+ * - lbRTC_Add_DD: Add days to a time.
+ * - lbRTC_Add_hh: Add hours to a time.
+ * - lbRTC_Add_mm: Add minutes to a time.
+ * - lbRTC_Add_ss: Add seconds to a time.
+ * - lbRTC_Add_Date: Add a time duration to a time.
+ * - lbRTC_Sub_YY: Subtract years from a time.
+ * - lbRTC_Sub_MM: Subtract months from a time.
+ * - lbRTC_Sub_DD: Subtract days from a time.
+ * - lbRTC_Sub_hh: Subtract hours from a time.
+ * - lbRTC_Sub_mm: Subtract minutes from a time.
+ * - lbRTC_Sub_ss: Subtract seconds from a time.
+ * - lbRTC_Week: Calculate the day of the week for a given date.
+ * - lbRTC_TimeCopy: Copy one time structure to another.
+ * - lbRTC_IsValidTime: Check if the given time is valid.
+ * - lbRTC_time_c_save_data_check: Check if the given time from save data is valid.
+ * - lbRTC_Weekly_day: Calculate the day of the week for a given date, considering weeks and the desired day of the week.
+ */
+
 #include "lb_rtc.h"
 
-#include "lb_reki.h"
 #include "m_common_data.h"
 #include "m_lib.h"
 #include "types.h"
