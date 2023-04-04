@@ -2,11 +2,11 @@ sys_vimgr.c:
     .text: [0x803703F8, 0x80370418]
 m_room_type/mRmTp_FtrItemNo2FtrIdx.c:
     .text: [0x803E7878, 0x803E78BC]
-m_time.c:
-    .text: [0x803F33DC, 0x803F3E58]
-    .rodata: [0x806433B0, 0x806433D8]
-    .data: [0x8065E378, 0x8065E438]
-    .bss: [0x81294008, 0x81294018]
+#m_time.c: # unlinked until function callers that reorder local static variables are implemented.
+#    .text: [0x803F33DC, 0x803F3E58]
+#    .rodata: [0x806433B0, 0x806433D8]
+#    .data: [0x8065E378, 0x8065E438]
+#    .bss: [0x8129F410, 0x8129F420]
 #m_skin_matrix.c:
 #    .text: [0x803f1528, 0x803f1bb4]
 #   .rodata: [0x80643310, 0x80643318]

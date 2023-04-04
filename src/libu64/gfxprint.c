@@ -3,7 +3,7 @@
 #include "libultra/libultra.h"
 #include "libc64/aprintf.h"
 
-static u8 __gfxprint_default_flags;
+u8 __gfxprint_default_flags;
 
 static void gfxprint_setup(gfxprint_t* this) {
   int i;

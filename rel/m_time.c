@@ -9,6 +9,9 @@
 #include "m_kabu_manager.h"
 #include "zurumode.h"
 
+static int debug_disp;
+static u8 l_renew_is;
+
 const lbRTC_time_c mTM_rtcTime_clear_code = {
   0xFF, 0xFF, 0xFF,
   0xFF, 0xFF, 0xFF,
@@ -118,9 +121,6 @@ static mTM_calendar_term_t mTM_calender[mTM_TERM_NUM] = {
     0x0050, 0x0025
   }
 };
-
-static u8 l_renew_is;
-static int debug_disp;
 
 /**
  * Get the index of the current term based on the current date and climate.
