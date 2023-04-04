@@ -1,3 +1,36 @@
+/**
+ * @file m_time.c
+ * @brief Time management functions for handling various time-related operations.
+ *
+ * This file contains functions to manage and manipulate time values, including
+ * - Getting the term index
+ * - Checking and setting renewal time flags
+ * - Converting date and time structures
+ * - Updating renewal time values
+ * - Displaying debug time information
+ * - Controlling time steps
+ * - Initializing and updating time-related values
+ * - Checking and adjusting RTC time limits
+ *
+ * Functions in this file are used to perform operations on time values,
+ * handle debug displays, and manage the real-time clock (RTC) time.
+ *
+ * Functions:
+ * - mTM_get_termIdx(): Get the term index based on the current date
+ * - mTM_check_renew_time(): Check if the renewal time flag is set
+ * - mTM_off_renew_time(): Clear the renewal time flag
+ * - mTM_set_renew_is(): Set all renewal time flags
+ * - mTM_set_renew_time(): Update the renewal time values
+ * - mTM_ymd_2_time(): Convert YMD date structure to time structure
+ * - mTM_renewal_renew_time(): Update renewal time if the current date is different from the saved date
+ * - mTM_disp_time(): Display the current time in debug mode
+ * - mTM_TimeStepControl(): Control the time step based on input conditions
+ * - mTM_time_init(): Initialize time-related values
+ * - mTM_time(): Update time-related values and handle debug display
+ * - mTM_rtcTime_limit_check(): Check if the RTC time is within the allowed limits and adjust if necessary
+ */
+
+
 #include "m_time.h"
 
 #include "game.h"
