@@ -12,8 +12,8 @@ extern "C" {
 typedef struct time_s {
   u32 season;
   u32 term_idx;
-  s16 bg_item_profile;
-  s16 bg_item_bank;
+  s16 bgitem_profile;
+  s16 bgitem_bank;
   int now_sec;
   lbRTC_time_c rtc_time;
   s16 rad_min; /* clock hand radial position for mins */
@@ -28,9 +28,11 @@ typedef struct time_s {
 } Time_c;
 
 typedef struct Save_s {
-  u8 _tmp0[0x22528];
-  OSTime time_delta;
-  u8 _tmp1[0x3AD0];
+  u8 _tmp0[0x20F14];
+  /* 0x020F14 */ lbRTC_ymd_t renew_time;
+  u8 _tmp1[0x1610];
+  /* 0x022528 */ OSTime time_delta;
+  u8 _tmp2[0x3AD0];
 } Save_t;
 
 typedef union save_u {
