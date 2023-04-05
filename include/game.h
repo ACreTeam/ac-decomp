@@ -56,6 +56,8 @@ extern void game_get_controller(GAME* game);
 
 extern GAME* game_class_p;
 
+extern GAME* gamePT;
+
 #ifdef __cplusplus
 };
 #endif

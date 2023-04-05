@@ -45,7 +45,7 @@ typedef struct gfxprint_obj  {
 } gfxprint_t;
 
 /* Default gfxprint flag values set in game_ct func, default value is 0x40 (GFXPRINT_FLAG_HIGHRES on) */
-static u8 __gfxprint_default_flags;
+extern u8 __gfxprint_default_flags;
 
 extern u16 gfxprint_moji_tlut[];
 extern u8 gfxprint_font[];

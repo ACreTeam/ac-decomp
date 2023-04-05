@@ -52479,6 +52479,7 @@ global:
     0x8129F408: S_tdemo_frame
     0x8129F40C: S_titledemo_to_play
     0x8129F410: debug_disp
+    0x8129F414: l_renew_is
     0x8129F420: S_watch_my_step
     0x8129F450: S_navigate
     0x8129F45C: S_mybell_conf
