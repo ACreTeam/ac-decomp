@@ -520,8 +520,6 @@ extern void mFont_CulcOrthoMatrix(Mtx* m);
 extern void mFont_SetMatrix(GRAPH* graph, int mode);
 extern void mFont_UnSetMatrix(GRAPH* graph, int mode);
 extern void mFont_Main_start(GRAPH* graph);
-extern f32 mFont_Get_NextCharRectX(int c, f32 x, f32 ofs_r, f32 ofs_l, int cut, f32 scale_x);
-extern f32 mFont_Get_NextCharRectY(int c, f32 y, f32 ofs_t, f32 ofs_b, f32 scale_y);
 extern void mFontSentence_set(mFontSentence* this, u8* sentence_p, int len, u32 flags, xy_t* pos, int line_type, xy_t* scale, rgba_t* color, int se_voice_pos, u8 voice_idx, u8 voice2_idx, u8 voice3_idx, s16 voice_se_character_idx);
 extern void mFontSentence_gppDraw(mFontSentence* this, GAME* game, Gfx** gfx_pp);
 extern f32 mFont_SetMarkChar(GAME* game, u8 mark_type, f32 x, f32 y, int r, int g, int b, int a, int revert_flag, f32 scale_x, f32 scale_y, int mode);
