@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_actor_type.h"
+#include "m_land_h.h"
 #include "lb_rtc.h"
 
 #ifdef __cplusplus
@@ -28,11 +29,13 @@ typedef struct time_s {
 } Time_c;
 
 typedef struct Save_s {
-  u8 _tmp0[0x20F14];
+  u8 _tmp0[0x9120];
+  /* 0x009120 */ mLd_land_info_c land_info;
+  u8 _tmp1[0x17DE8];
   /* 0x020F14 */ lbRTC_ymd_t renew_time;
-  u8 _tmp1[0x1610];
+  u8 _tmp2[0x1610];
   /* 0x022528 */ OSTime time_delta;
-  u8 _tmp2[0x3AD0];
+  u8 _tmp3[0x3AD0];
 } Save_t;
 
 typedef union save_u {

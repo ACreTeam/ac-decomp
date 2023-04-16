@@ -308,7 +308,7 @@ static void mTM_disp_time(int unused) {
   if (Common_Get(time.disp) == TRUE) {
     gfxprint_t gfxprint;
     GRAPH* g;
-    Gfx* line_xlu;
+    Gfx* poly_opaque;
     Gfx* line_opa;
     Gfx* gfx_temp;
 
@@ -317,10 +317,10 @@ static void mTM_disp_time(int unused) {
     
     OPEN_DISP(g);
 
-    line_xlu = NOW_LINE_XLU_DISP;
-    gfx_temp = gfxopen(line_xlu);
+    poly_opaque = NOW_POLY_OPA_DISP;
+    gfx_temp = gfxopen(poly_opaque);
     
-    gSPDisplayList(NOW_LINE_OPA_DISP++, gfx_temp);
+    gSPDisplayList(NOW_OVERLAY_DISP++, gfx_temp);
 
     /* Debug mode draw time in format: YYYY MM/DD hh:mm ss */
     gfxprint_open(&gfxprint, gfx_temp);
@@ -340,8 +340,8 @@ static void mTM_disp_time(int unused) {
 
     gfx_temp = gfxprint_close(&gfxprint);
     gSPEndDisplayList(gfx_temp++);
-    gfxclose(line_xlu, gfx_temp);
-    NOW_LINE_XLU_DISP = gfx_temp;
+    gfxclose(poly_opaque, gfx_temp);
+    SET_POLY_OPA_DISP(gfx_temp);
     gfxprint_cleanup(&gfxprint);
 
     CLOSE_DISP(g);

@@ -2,7 +2,7 @@
 #define GFXPRINT_H
 
 #include "types.h"
-#include "libultra/u64types.h"
+#include "libu64/u64types.h"
 #include "PR/mbi.h"
 #include "va_args.h"
 

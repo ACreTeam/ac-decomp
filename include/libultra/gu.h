@@ -2,7 +2,7 @@
 #define GU_H
 #include "PR/mbi.h"
 #include "types.h"
-#include "libultra/u64types.h"
+#include "libultra/ultratypes.h"
 
 
 inline void guTranslateF(float m[4][4], float x, float y, float z){
