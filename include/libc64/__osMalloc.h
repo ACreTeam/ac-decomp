@@ -5,7 +5,7 @@
 #include "dolphin/os/OSTime.h"
 #include "libultra/osThread.h"
 #include "libultra/osMesg.h"
-#include "libultra/u64types.h"
+#include "libultra/ultratypes.h"
 
 struct ArenaNode;
 

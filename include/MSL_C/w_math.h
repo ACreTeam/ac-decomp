@@ -19,6 +19,15 @@ inline float sqrtf(float x)
 	return x;
 }
 
+extern inline double fabs(double x)
+{
+   return __fabs(x) ;
+}
+
+inline float fabsf(float x) {
+	return (float)fabs((double)x);
+}
+
 f64 atan2(f64, f64);
 f64 acos(f32);
 

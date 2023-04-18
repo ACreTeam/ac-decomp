@@ -39,36 +39,37 @@ typedef enum {
 #define GRAPH_MSG_BUF_COUNT 8
 
 typedef struct graph_s {
-  /* 0x0000 */ Gfx* Gfx_list00; /* line translucent */
-  /* 0x0004 */ Gfx* Gfx_list01; /* overlay */
+  /* 0x0000 */ Gfx* Gfx_list00; /* polygon opaque */
+  /* 0x0004 */ Gfx* Gfx_list01; /* polygon translucent */
   /* 0x0008 */ void* DepthBuffer;
   /* 0x000C */ Gfx* Gfx_list03; /* unused */
-  /* 0x0010 */ Gfx* Gfx_list04; /* line opaque */
-  /* 0x0014 */ Gfx* Gfx_list07; /* polygon opaque */
-  /* 0x0018 */ Gfx* Gfx_list08; /* polygon translucent */
-  /* 0x001C */ Gfx* Gfx_list09; /* font */
+  /* 0x0010 */ Gfx* Gfx_list04; /* overlay */
+  /* 0x0014 */ Gfx* Gfx_list07; /* font */
+  /* 0x0018 */ Gfx* Gfx_list08; /* shadow */
+  /* 0x001C */ Gfx* Gfx_list09; /* light */
   /* 0x0020 */ Gfx* gfxsave;
   /* 0x0024 */ u8 _unk24[32];
   /* 0x0044 */ OSMessage graphReplyMesgBuf[GRAPH_MSG_BUF_COUNT];
   /* 0x0064 */ OSMessageQueue* schedMesgQueue;
   /* 0x0068 */ OSMessageQueue graphReplyMesgQueue;
-  /* 0x0088 */ u8 _unused_ossctask00p[0x50]; /* real type = OSScTask */
-  /* 0x00D8 */ u8 _unused_ossctask01p[0x50]; /* real type = OSScTask */
-  /* 0x0128 */ u8 _unused_ossctask02p[0x50]; /* real type = OSScTask */
-  /* 0x0178 */ u8 _unk178[0x48]; /* If graphReplyMesgQueue is N64 type, this may be another OSScTask */
+  /* 0x0088 */ u8 _unused_ossctask00p[0x68]; /* real type = OSScTask */
+  /* 0x00F0 */ u8 _unused_ossctask01p[0x68]; /* real type = OSScTask */
+  /* 0x0158 */ u8 _unused_ossctask02p[0x68]; /* real type = OSScTask */
   /* 0x01C0 */ Gfx* Gfx_list05; /* work */
   /* 0x01C4 */ THA_GA work_thaga;
-  /* 0x01D4 */ u8 _unk1D4[0xDC]; /* Maybe related to more OSScTask stuff? */
-  /* 0x02B0 */ void* scheduler; /* Actually points to OSSched struct, only used in DnM? */
-  /* 0x02B4 */ void* vimode; /* Actually points to OSViMode struct, not used in AC. */
-  /* 0x02B8 */ THA_GA line_opaque_thaga;
-  /* 0x02C8 */ THA_GA line_translucent_thaga;
-  /* 0x02D8 */ THA_GA overlay_thaga;
-  /* 0x02E8 */ THA_GA polygon_opaque_thaga;
-  /* 0x02F8 */ THA_GA polygon_translucent_thaga;
-  /* 0x0308 */ THA_GA font_thaga;
-  /* 0x0318 */ THA_GA shadow_thaga;
-  /* 0x0328 */ THA_GA light_thaga;
+  /* 0x01D4 */ u8 _unk1D4[0xBC]; /* Maybe related to more OSScTask stuff? */
+  /* 0x0290 */ void* scheduler; /* Actually points to OSSched struct, only used in DnM? */
+  /* 0x0294 */ void* vimode; /* Actually points to OSViMode struct, not used in AC. */
+  /* 0x0298 */ THA_GA line_opaque_thaga;
+  /* 0x02A8 */ THA_GA line_translucent_thaga;
+  /* 0x02B8 */ THA_GA overlay_thaga;
+  /* 0x02C8 */ THA_GA polygon_opaque_thaga;
+  /* 0x02D8 */ THA_GA polygon_translucent_thaga;
+  /* 0x02E8 */ THA_GA font_thaga;
+  /* 0x02F8 */ THA_GA shadow_thaga;
+  /* 0x0308 */ THA_GA light_thaga;
+  /* 0x0318 */ THA_GA new0_thaga;
+  /* 0x0328 */ THA_GA new1_thaga;
   /* 0x0338 */ int frame_counter;
   /* 0x033C */ u16* frameBuffer;
   /* 0x0340 */ u16* renderBuffer;
@@ -82,8 +83,8 @@ typedef struct graph_s {
   /* 0x0354 */ f32 vixscale;
   /* 0x0358 */ f32 viyscale;
   /* 0x035C */ Gfx* last_dl;
-  /* 0x0360 */ Gfx* Gfx_list10; /* shadow */
-  /* 0x0364 */ Gfx* Gfx_list11; /* light */
+  /* 0x0360 */ Gfx* Gfx_list10; /* new0 (highlight/reflections?) */
+  /* 0x0364 */ Gfx* Gfx_list11; /* new1 (highlight/reflections?) */
 } GRAPH ATTRIBUTE_ALIGN(8); // one of the missing structs is likely aligned to 8 bytes.
 
 extern void graph_proc(void* arg);
@@ -107,9 +108,8 @@ extern void graph_dt(GRAPH* this);
 
 #define NEXT_DISP(thaga) ((thaga)->thaGfx.head_p++)
 #define NOW_DISP(thaga) ((thaga)->thaGfx.head_p)
+#define SET_DISP(thaga, p) ((thaga)->tha.head_p = (char*)(p))
 
-#define NEXT_LINE_XLU_DISP NEXT_DISP(&__graph->line_translucent_thaga)
-#define NEXT_LINE_OPA_DISP NEXT_DISP(&__graph->line_opaque_thaga)
 #define NEXT_POLY_OPA_DISP NEXT_DISP(&__graph->polygon_opaque_thaga)
 #define NEXT_POLY_XLU_DISP NEXT_DISP(&__graph->polygon_translucent_thaga)
 #define NEXT_OVERLAY_DISP NEXT_DISP(&__graph->overlay_thaga)
@@ -117,9 +117,9 @@ extern void graph_dt(GRAPH* this);
 #define NEXT_FONT_DISP NEXT_DISP(&__graph->font_thaga)
 #define NEXT_SHADOW_DISP NEXT_DISP(&__graph->shadow_thaga)
 #define NEXT_LIGHT_DISP	NEXT_DISP(&__graph->light_thaga)
+#define NEXT_NEW0_DISP NEXT_DISP(&__graph->new0_thaga)
+#define NEXT_NEW1_DISP NEXT_DISP(&__graph->new1_thaga)
 
-#define NOW_LINE_XLU_DISP (Gfx*)NOW_DISP(&__graph->line_translucent_thaga)
-#define NOW_LINE_OPA_DISP (Gfx*)NOW_DISP(&__graph->line_opaque_thaga)
 #define NOW_POLY_OPA_DISP (Gfx*)NOW_DISP(&__graph->polygon_opaque_thaga)
 #define NOW_POLY_XLU_DISP (Gfx*)NOW_DISP(&__graph->polygon_translucent_thaga)
 #define NOW_OVERLAY_DISP (Gfx*)NOW_DISP(&__graph->overlay_thaga)
@@ -127,6 +127,21 @@ extern void graph_dt(GRAPH* this);
 #define NOW_FONT_DISP (Gfx*)NOW_DISP(&__graph->font_thaga)
 #define NOW_SHADOW_DISP (Gfx*)NOW_DISP(&__graph->shadow_thaga)
 #define NOW_LIGHT_DISP (Gfx*)NOW_DISP(&__graph->light_thaga)
+#define NOW_NEW0_DISP (Gfx*)NOW_DISP(&__graph->new0_thaga)
+#define NOW_NEW1_DISP (Gfx*)NOW_DISP(&__graph->new1_thaga)
+
+#define SET_POLY_OPA_DISP(p) SET_DISP(&__graph->polygon_opaque_thaga, p)
+#define SET_POLY_XLU_DISP(p) SET_DISP(&__graph->polygon_translucent_thaga, p)
+#define SET_OVERLAY_DISP(p) SET_DISP(&__graph->overlay_thaga, p)
+#define SET_WORK_DISP(p) SET_DISP(&__graph->work_thaga, p)
+#define SET_FONT_DISP(p) SET_DISP(&__graph->font_thaga, p)
+#define SET_SHADOW_DISP(p) SET_DISP(&__graph->shadow_thaga, p)
+#define SET_LIGHT_DISP(p) SET_DISP(&__graph->light_thaga, p)
+#define SET_NEW0_DISP(p) SET_DISP(&__graph->new0_thaga, p)
+#define SET_NEW1_DISP(p) SET_DISP(&__graph->new1_thaga, p)
+
+#define GRAPH_ALLOC(graph, size) ((void*)((graph)->polygon_opaque_thaga.tha.tail_p = (char*)((int)(graph)->polygon_opaque_thaga.tha.tail_p - (int)(size))))
+#define GRAPH_ALLOC_TYPE(graph, type, num) (GRAPH_ALLOC(graph, sizeof(type) * (num)))
 
 extern u8 SoftResetEnable;
 extern GRAPH graph_class;

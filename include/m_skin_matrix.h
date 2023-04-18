@@ -1,7 +1,7 @@
 #ifndef SKIN_MATRIX_H
 #define SKIN_MATRIX_H
 
-#include "libultra/u64types.h"
+#include "libultra/ultratypes.h"
 
 #ifdef __cplusplus
 extern "C"{
