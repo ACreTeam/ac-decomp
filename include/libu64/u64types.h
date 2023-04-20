@@ -3,10 +3,6 @@
 
 #include "types.h"
 
-typedef struct xyz_s {
-  f32 x, y, z;
-} xyz_t;
-
 typedef struct {
   u32 r:8;
   u32 g:8;
