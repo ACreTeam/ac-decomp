@@ -19,7 +19,7 @@ typedef struct ucode_info_s {
 #define UCODE_TYPE_SPRITE_DATA 4
 
 extern long long int gspF3DZEX2_NoN_PosLight_fifoDataStart[];
-extern long long int gspF3DZEX2_Non_PosLight_fifoTextStart[];
+extern long long int gspF3DZEX2_NoN_PosLight_fifoTextStart[];
 
 extern long long int gspS2DEX2_fifoDataStart[];
 extern long long int gspS2DEX2_fifoTextStart[];

@@ -38,6 +38,9 @@ zurumode.c:
     .text: [0x8040eb38, 0x8040f008]
     .bss: [0x812f9670, 0x812f9680]
     .data: [0x8065F9F0, 0x8065FA30]
+sys_ucode.c:
+    .text: [0x8040F008, 0x8040F048]
+    .data: [0x8065FA30, 0x8065FA40]
 m_random_field/mRF_MakePerfectBit.c:
     .text: [0x8050B1AC, 0x8050B1D4]
 m_random_field/mRF_GetRandomStepMode.c:
