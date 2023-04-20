@@ -7,7 +7,8 @@
 extern "C" {
 #endif
 
-extern void mCD_PrintErrInfo(gfxprint_t* gfxprint);
+extern void mFRm_PrintSavedDebug(gfxprint_t* gfxprint);
+extern void mFRm_display_errInfo(gfxprint_t* gfxprint);
 
 #ifdef __cplusplus
 }
