@@ -1,5 +1,8 @@
 sys_vimgr.c:
     .text: [0x803703F8, 0x80370418]
+#m_malloc.c: #can't find zelda_arena
+#    .text: [0x803BC510, 0x803BC70C]
+#    .bss: [0x81297CA0, 0x81297CD0]
 m_room_type/mRmTp_FtrItemNo2FtrIdx.c:
     .text: [0x803E7878, 0x803E78BC]
 #m_time.c: # unlinked until function callers that reorder local static variables are implemented.

@@ -32,11 +32,36 @@ typedef struct ArenaNode {
     /* 0x28 */ u8 unk_28[0x30-0x28]; // probably padding
 } ArenaNode; // size = 0x30
 
-void* __osMalloc(Arena*, size_t);
-void __osFree(Arena*, void*);
-void __osDisplayArena(Arena*);
-void __osGetFreeArena(Arena*, u32*, u32*, u32*);
+void setDebugInfo(ArenaNode*, const char*, s32, Arena*);
+void arena_lock_init(Arena*);
+void arena_lock(Arena*);
+void arena_unlock(Arena*);
+ArenaNode* get_block_next(ArenaNode*);
+ArenaNode* get_block_prev(ArenaNode*);
+ArenaNode* search_last_block(Arena*);
 void __osMallocInit(Arena*, void*, u32);
+void __osMallocAddBlock(Arena*, void*, s32);
+void destroy_all_block(Arena*);
 void __osMallocCleanup(Arena*);
+BOOL __osMallocIsInitialized(Arena*);
+void __osMalloc_FreeBlockTest(Arena*, ArenaNode*);
+void* __osMallocALign_NoLock(Arena*, u32, u32);
+void* __osMalloc_NoLock(Arena*, u32);
+void* __osMallocAlign(Arena*, u32, u32);
+void* __osMalloc(Arena*, u32);
+void* __osMallocR(Arena*, u32);
+void __osFree_NoLock(Arena*, void*);
+void __osFree(Arena*, void*);
+void* __osRealloc(Arena*, void*, u32);
+int __osAnalayzeArena(Arena*, u32*);
+void __osGetFreeArena(Arena*, u32*, u32*, u32*);
+u32 __osGetTotalFreeSize(Arena*);
+u32 __osGetFreeSize(Arena*);
+u32 __osGetMemBlockSize(Arena*, void*);
+void __osDisplayArena(Arena*);
+int __osCheckArena(Arena*);
+
+
+
 
 #endif

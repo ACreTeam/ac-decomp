@@ -52430,7 +52430,6 @@ global:
     0x81297A68: l_mEnv_electric_light
     0x81297B10: S_get_light_list
     0x81297B18: light_list_buf
-    0x81297CA0: zelda_arena
     0x81297D28: l_ml_mail
     0x81297E80: Msg_table_rom_start
     0x81297E84: Msg_rom_start
@@ -58166,6 +58165,8 @@ rel/dataobject.obj:
     0x81106D80: rom_train_3_pal
 rel/irqmgr.c:
     0x812F357C: this
+rel/m_malloc.c:
+    0x81297CA0: zelda_arena
 foresta.rel:
     0x80641254: _ctors
     0x80641258: _dtors
