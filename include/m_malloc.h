@@ -2,7 +2,7 @@
 #define M_MALLOC_H
 #include "libc64/__osMalloc.h"
 
-extern Arena zelda_arena; 
+Arena zelda_arena; 
 
 
 void zelda_malloc_align(u32,u32);
