@@ -1,6 +1,6 @@
 /**
  * @file m_debug_hayakawa.c
- * @brief Debug module for handling various debug features for Kendo Hayakawa.
+ * @brief Debug module for handling various debug features for Kenzo Hayakawa.
  *
  * This module provides functions related to debugging in the application.
  * The functions support displaying pad inputs, drawing safety frames, and handling
