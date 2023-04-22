@@ -11,6 +11,11 @@ extern "C" {
 
 extern void debug_hayakawa_draw(GRAPH* graph);
 extern void debug_hayakawa_move(pad_t* pad);
+extern int hreg_init_check(const int n);
+
+#define HREG_STATE_IDX 80
+#define HREG_STATE_ARGS_START 81
+#define HREG_STATE_ARGS_COUNT 14
 
 #ifdef __cplusplus
 }

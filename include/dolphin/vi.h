@@ -8,7 +8,8 @@ extern "C" {
 #endif
 
 void VISetBlack(BOOL);
-extern void VIWaitForRetrace();
+void VIWaitForRetrace();
+void VIConfigurePan(u16 x_origin, u16 y_origin, u16 width, u16 height);
 
 #ifdef __cplusplus
 };

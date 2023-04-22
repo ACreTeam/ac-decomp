@@ -61,7 +61,7 @@ u32 __osGetMemBlockSize(Arena*, void*);
 void __osDisplayArena(Arena*);
 int __osCheckArena(Arena*);
 
-
+extern int __osMalloc_FreeBlockTest_Enable;
 
 
 #endif

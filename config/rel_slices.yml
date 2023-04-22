@@ -1,5 +1,9 @@
 sys_vimgr.c:
     .text: [0x803703F8, 0x80370418]
+m_debug_hayakawa.c:
+    .text: [0x803965E4, 0x803973E8]
+    .rodata: [0x80641D50, 0x80641D90]
+    .data: [0x80651328, 0x80651358]
 #m_malloc.c: #can't find zelda_arena
 #    .text: [0x803BC510, 0x803BC70C]
 #    .bss: [0x81297CA0, 0x81297CD0]

@@ -68,8 +68,8 @@ typedef struct graph_s {
   /* 0x02E8 */ THA_GA font_thaga;
   /* 0x02F8 */ THA_GA shadow_thaga;
   /* 0x0308 */ THA_GA light_thaga;
-  /* 0x0318 */ THA_GA new0_thaga;
-  /* 0x0328 */ THA_GA new1_thaga;
+  /* 0x0318 */ THA_GA bg_opaque_thaga;
+  /* 0x0328 */ THA_GA bg_translucent_thaga;
   /* 0x0338 */ int frame_counter;
   /* 0x033C */ u16* frameBuffer;
   /* 0x0340 */ u16* renderBuffer;
@@ -117,8 +117,8 @@ extern void graph_dt(GRAPH* this);
 #define NEXT_FONT_DISP NEXT_DISP(&__graph->font_thaga)
 #define NEXT_SHADOW_DISP NEXT_DISP(&__graph->shadow_thaga)
 #define NEXT_LIGHT_DISP	NEXT_DISP(&__graph->light_thaga)
-#define NEXT_NEW0_DISP NEXT_DISP(&__graph->new0_thaga)
-#define NEXT_NEW1_DISP NEXT_DISP(&__graph->new1_thaga)
+#define NEXT_BG_OPA_DISP NEXT_DISP(&__graph->bg_opaque_thaga)
+#define NEXT_BG_XLU_DISP NEXT_DISP(&__graph->bg_translucent_thaga)
 
 #define NOW_POLY_OPA_DISP (Gfx*)NOW_DISP(&__graph->polygon_opaque_thaga)
 #define NOW_POLY_XLU_DISP (Gfx*)NOW_DISP(&__graph->polygon_translucent_thaga)
@@ -127,8 +127,8 @@ extern void graph_dt(GRAPH* this);
 #define NOW_FONT_DISP (Gfx*)NOW_DISP(&__graph->font_thaga)
 #define NOW_SHADOW_DISP (Gfx*)NOW_DISP(&__graph->shadow_thaga)
 #define NOW_LIGHT_DISP (Gfx*)NOW_DISP(&__graph->light_thaga)
-#define NOW_NEW0_DISP (Gfx*)NOW_DISP(&__graph->new0_thaga)
-#define NOW_NEW1_DISP (Gfx*)NOW_DISP(&__graph->new1_thaga)
+#define NOW_BG_OPA_DISP (Gfx*)NOW_DISP(&__graph->bg_opaque_thaga)
+#define NOW_BG_XLU_DISP (Gfx*)NOW_DISP(&__graph->bg_translucent_thaga)
 
 #define SET_POLY_OPA_DISP(p) SET_DISP(&__graph->polygon_opaque_thaga, p)
 #define SET_POLY_XLU_DISP(p) SET_DISP(&__graph->polygon_translucent_thaga, p)
@@ -137,8 +137,8 @@ extern void graph_dt(GRAPH* this);
 #define SET_FONT_DISP(p) SET_DISP(&__graph->font_thaga, p)
 #define SET_SHADOW_DISP(p) SET_DISP(&__graph->shadow_thaga, p)
 #define SET_LIGHT_DISP(p) SET_DISP(&__graph->light_thaga, p)
-#define SET_NEW0_DISP(p) SET_DISP(&__graph->new0_thaga, p)
-#define SET_NEW1_DISP(p) SET_DISP(&__graph->new1_thaga, p)
+#define SET_BG_OPA_DISP(p) SET_DISP(&__graph->bg_opaque_thaga, p)
+#define SET_BG_XLU_DISP(p) SET_DISP(&__graph->bg_translucent_thaga, p)
 
 #define GRAPH_ALLOC(graph, size) ((void*)((graph)->polygon_opaque_thaga.tha.tail_p = (char*)((int)(graph)->polygon_opaque_thaga.tha.tail_p - (int)(size))))
 #define GRAPH_ALLOC_TYPE(graph, type, num) (GRAPH_ALLOC(graph, sizeof(type) * (num)))

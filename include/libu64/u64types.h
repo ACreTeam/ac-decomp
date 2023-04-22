@@ -3,6 +3,10 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
   u32 r:8;
   u32 g:8;
@@ -14,5 +18,9 @@ typedef union {
   u32 rgba8888;
   rgba8888_t c;
 } rgba8888;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

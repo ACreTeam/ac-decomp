@@ -40,8 +40,8 @@ static void graph_setup_double_buffer(GRAPH* this) {
   sys_dynamic.start_magic = SYSDYNAMIC_START_MAGIC;
   sys_dynamic.end_magic = SYSDYNAMIC_END_MAGIC;
 
-  CONSTRUCT_THA_GA(&this->new0_thaga, new0, NEW0);
-  CONSTRUCT_THA_GA(&this->new1_thaga, new1, NEW1);
+  CONSTRUCT_THA_GA(&this->bg_opaque_thaga, new0, NEW0);
+  CONSTRUCT_THA_GA(&this->bg_translucent_thaga, new1, NEW1);
   CONSTRUCT_THA_GA(&this->polygon_opaque_thaga, poly_opa, POLY_OPA);
   CONSTRUCT_THA_GA(&this->polygon_translucent_thaga, poly_xlu, POLY_XLU);
   CONSTRUCT_THA_GA(&this->overlay_thaga, overlay, OVERLAY);
@@ -139,9 +139,9 @@ static int graph_draw_finish(GRAPH* this) {
   OPEN_DISP(this);
 
   gSPBranchList(NOW_WORK_DISP++, this->Gfx_list10);
-  gSPBranchList(NOW_NEW0_DISP++, this->Gfx_list08);
+  gSPBranchList(NOW_BG_OPA_DISP++, this->Gfx_list08);
   gSPBranchList(NOW_SHADOW_DISP++, this->Gfx_list11);
-  gSPBranchList(NOW_NEW1_DISP++, this->Gfx_list00);
+  gSPBranchList(NOW_BG_XLU_DISP++, this->Gfx_list00);
   gSPBranchList(NOW_POLY_OPA_DISP++, this->Gfx_list01);
   gSPBranchList(NOW_POLY_XLU_DISP++, this->Gfx_list09);
   gSPBranchList(NOW_LIGHT_DISP++, this->Gfx_list07);
@@ -188,11 +188,11 @@ static int graph_draw_finish(GRAPH* this) {
     err = TRUE;
   }
 
-  if (THA_GA_isCrash(&this->new0_thaga)) {
+  if (THA_GA_isCrash(&this->bg_opaque_thaga)) {
     err = TRUE;
   }
 
-  if (THA_GA_isCrash(&this->new1_thaga)) {
+  if (THA_GA_isCrash(&this->bg_translucent_thaga)) {
     err = TRUE;
   }
 

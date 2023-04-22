@@ -10,6 +10,8 @@ extern "C" {
 
 #define APPNMI_FLAGS_IDX 15
 
+#define APPNMI_GETVAL() (osAppNMIBuffer[APPNMI_FLAGS_IDX])
+
 #define APPNMI_SET(v) (osAppNMIBuffer[APPNMI_FLAGS_IDX] |= v)
 #define APPNMI_CLR(v) (osAppNMIBuffer[APPNMI_FLAGS_IDX] &= ~v)
 #define APPNMI_GET(v) (osAppNMIBuffer[APPNMI_FLAGS_IDX] & v)
@@ -53,8 +55,6 @@ extern "C" {
 #define APPNMI_HOTRESET_CLR() (osAppNMIBuffer[APPNMI_FLAGS_IDX] &= ~0x200)
 #define APPNMI_HOTRESET_GET() (osAppNMIBuffer[APPNMI_FLAGS_IDX] & 0x200)
 #define APPNMI_HOTRESET_FLP() (osAppNMIBuffer[APPNMI_FLAGS_IDX] ^= 0x200)
-
-#define APPNMI_
 
 #ifdef __cplusplus
 }

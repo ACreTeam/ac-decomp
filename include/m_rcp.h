@@ -9,6 +9,8 @@ extern "C" {
 #endif
 
 extern Gfx* gfx_gSPTextureRectangle1(Gfx* gfx, u32 ulx, u32 uly, u32 lrx, u32 lry, int tile, int s, int t, int dsdx, int dtdy);
+extern Gfx* gfx_gDPFillRectangle1(Gfx* gfx, u32 ulx, u32 uly, u32 lrx, u32 lry);
+extern Gfx* gfx_gDPFillRectangleF(Gfx* gfx, u32 ulx, u32 uly, u32 lrx, u32 lry);
 
 #ifdef __cplusplus
 }
