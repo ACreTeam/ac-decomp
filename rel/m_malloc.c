@@ -37,10 +37,10 @@ void zelda_AddBlockArena(void* start, u32 size){
     __osMallocAddBlock(&zelda_arena,start, size);
 }
 
-void zelda_CleanupArena(void){
+void zelda_CleanupArena() {
     __osMallocCleanup(&zelda_arena);
 }
 
-void zelda_MallocIsInitalized(void){
-     __osMallocIsInitalized(&zelda_arena);
+extern int zelda_MallocIsInitalized() {
+    return __osMallocIsInitalized(&zelda_arena);
 }

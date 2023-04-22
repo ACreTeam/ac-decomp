@@ -40,6 +40,29 @@ extern void __OSCacheInit();
 void OSResetSystem(u32, u32, u32); // goes in reset, but eh
 void OSInit(void);
 
+#define OS_CONSOLE_RETAIL4     0x00000004
+#define OS_CONSOLE_RETAIL3     0x00000003
+#define OS_CONSOLE_RETAIL2     0x00000002
+#define OS_CONSOLE_RETAIL1     0x00000001
+#define OS_CONSOLE_RETAIL      0x00000000
+#define OS_CONSOLE_DEVHW4      0x10000007
+#define OS_CONSOLE_DEVHW3      0x10000006
+#define OS_CONSOLE_DEVHW2      0x10000005
+#define OS_CONSOLE_DEVHW1      0x10000004
+#define OS_CONSOLE_MINNOW      0x10000003
+#define OS_CONSOLE_ARTHUR      0x10000002
+#define OS_CONSOLE_PC_EMULATOR 0x10000001
+#define OS_CONSOLE_EMULATOR    0x10000000
+#define OS_CONSOLE_DEVELOPMENT 0x10000000
+#define OS_CONSOLE_DEVKIT      0x10000000
+#define OS_CONSOLE_TDEVKIT     0x20000000
+
+#define OS_CONSOLE_DEV_MASK    0x10000000
+
+u32 OSGetConsoleType();
+#define OS_CONSOLE_IS_DEV() ((OSGetConsoleType() & OS_CONSOLE_DEV_MASK) != 0)
+
+
 
 typedef void (*OSExceptionHandler)(u8, OSContext*);
 OSExceptionHandler __OSSetExceptionHandler(u8, OSExceptionHandler);

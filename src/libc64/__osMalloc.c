@@ -1,0 +1,1 @@
+int __osMalloc_FreeBlockTest_Enable;

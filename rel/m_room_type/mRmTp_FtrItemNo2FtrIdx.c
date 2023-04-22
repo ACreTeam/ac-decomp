@@ -1,4 +1,4 @@
-#include "roomtype.h"
+#include "m_room_type.h"
 
 #define FTR_NO_2_FTR_IDX(f) ((f) >> 2)
 #define NUM_FTR_IN_TYPE (FTR_NO_2_FTR_IDX(0x1000))

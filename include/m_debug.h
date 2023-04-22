@@ -55,6 +55,8 @@ typedef enum {
 #define DEBUG_REG_SIZE 16
 #define DEBUG_REG_GROUP 6
 
+#define DEBUG_REG_COUNT (DEBUG_REG_SIZE * DEBUG_REG_GROUP * DEBUG_REG_MAX)
+
 typedef struct debug_mode_s {
   u8 mode;
   u8 type;

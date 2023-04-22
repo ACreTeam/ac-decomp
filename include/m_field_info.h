@@ -2,6 +2,7 @@
 #define M_FIELD_INFO_H
 
 #include "types.h"
+#include "libu64/gfxprint.h"
 
 
 #ifdef __cplusplus
@@ -20,6 +21,9 @@ enum {
 };
 
 extern int mFI_GetClimate();
+
+extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
+extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);
 
 #ifdef __cplusplus
 }
