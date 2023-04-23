@@ -6,7 +6,7 @@
 #include "dolphin/os/OSCache.h"
 
 int bcmp (void *v1, void *v2, u32 size);
-void bcopy(void *dst, void *src, size_t n);
+void bcopy(void *src, void *dst, size_t n);
 void bzero(void *ptr, size_t size);
 void osSyncPrintf(const char* fmt, ...);
 void osWritebackDCache(void* vaddr, u32 nbytes);

@@ -10,6 +10,7 @@ extern "C" {
 
 #define mLd_BITMASK 0x3000
 #define mLd_CHECK_ID(id) (((id) & mLd_BITMASK) == mLd_BITMASK)
+#define mLd_CHECK_LAND_ID(id) (((id) & 0xFF00) == mLd_BITMASK)
 
 #define NATIVE 0
 #define FOREIGN 1
