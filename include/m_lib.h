@@ -70,7 +70,7 @@ extern int none_proc1();
 extern void none_proc2(ACTOR* actor, GAME* game);
 
 extern int _Game_play_isPause(GAME_PLAY* play);
-extern f32 check_percent_abs(f32 x, f32 min, f32 max, f32 scale, s32 shift_by_min);
+extern f32 check_percent_abs(f32 x, f32 min, f32 max, f32 scale, int shift_by_min);
 extern f32 get_percent_forAccelBrake(f32 now, f32 start, f32 end, f32 accelerate, f32 brake);
 extern void Game_play_Projection_Trans(GAME_PLAY* play, xyz_t* wpos, xyz_t* screen_pos);
 

@@ -51,9 +51,6 @@
 /**
  * @brief Copy memory from the source buffer to the destination buffer.
  *
- * This function copies the specified number of bytes from the source buffer
- * to the destination buffer.
- *
  * @param dst Pointer to the destination buffer.
  * @param src Pointer to the source buffer.
  * @param size Number of bytes to copy.
@@ -69,9 +66,6 @@ extern void mem_copy(u8* dst, u8* src, size_t size) {
 /**
  * @brief Clear memory in the destination buffer by setting it to the specified value.
  *
- * This function sets the specified number of bytes in the destination buffer
- * to the provided value.
- *
  * @param dst Pointer to the destination buffer.
  * @param size Number of bytes to clear.
  * @param val Value to set each byte in the destination buffer.
@@ -86,9 +80,6 @@ extern void mem_clear(u8* dst, size_t size, u8 val) {
 
 /**
  * @brief Compare two memory buffers for equality.
- *
- * This function compares the specified number of bytes between two memory
- * buffers. If they are equal, the function returns TRUE, otherwise FALSE.
  *
  * @param p1 Pointer to the first memory buffer.
  * @param p2 Pointer to the second memory buffer.
@@ -107,10 +98,7 @@ extern int mem_cmp(u8* p1, u8* p2, size_t size) {
 }
 
 /**
- * @brief Calculate the cosine of the given angle.
- *
- * This function calculates the cosine of the given angle (in s16 format)
- * and returns the result as a floating-point value.
+ * @brief Calculate the cosine of the given s16 angle.
  *
  * @param angle Angle in s16 format.
  * @return Cosine of the angle as a floating-point value.
@@ -118,10 +106,7 @@ extern int mem_cmp(u8* p1, u8* p2, size_t size) {
 extern f32 cos_s(s16 angle) { return coss(angle) * SHT_MINV; }
 
 /**
- * @brief Calculate the sine of the given angle.
- *
- * This function calculates the sine of the given angle (in s16 format)
- * and returns the result as a floating-point value.
+ * @brief Calculate the sine of the given s16 angle.
  *
  * @param angle Angle in s16 format.
  * @return Sine of the angle as a floating-point value.
@@ -289,15 +274,11 @@ extern int chase_angle2(s16* const pValue, const s16 limit, const s16 step) {
 }
 
 /**
- * @brief Interpolate between a floating-point value and a target value using a specified step.
+ * @brief Interpolate between a float and a target using a step.
  *
- * This function updates the value, moving it towards the target value
- * by a specified fraction of the difference between the current value and the target.
- * If the step is less than or equal to zero, the value is set directly to the target value.
- *
- * @param pValue Pointer to the floating-point value to be updated.
- * @param arg1 Target value to interpolate.
- * @param step Step value used to control the interpolation speed.
+ * @param pValue Pointer to the float to be updated.
+ * @param arg1 Target value for interpolation.
+ * @param step Step value for interpolation speed.
  */
 extern void inter_float(f32* const pValue, const f32 arg1, const int step) {
   if (step <= 0) {
@@ -325,13 +306,10 @@ extern s16 get_random_timer(const s16 base, const s16 range) {
 }
 
 /**
- * @brief Move the content of an xyz_t structure to another xyz_t structure.
+ * @brief Copy an xyz_t to another xyz_t.
  *
- * This function copies the x, y, and z values from the source xyz_t structure
- * to the destination xyz_t structure.
- *
- * @param dest Pointer to the destination xyz_t structure.
- * @param src Pointer to the source xyz_t structure.
+ * @param dest Destination xyz_t structure.
+ * @param src Source xyz_t structure.
  */
 extern void xyz_t_move(xyz_t* const dest, const xyz_t* const src) {
   dest->x = src->x;
@@ -341,9 +319,6 @@ extern void xyz_t_move(xyz_t* const dest, const xyz_t* const src) {
 
 /**
  * @brief Move the content of an s_xyz structure to an xyz_t structure.
- *
- * This function copies the x, y, and z values from the source s_xyz structure
- * to the destination xyz_t structure, converting the values to floating-point.
  *
  * @param dest Pointer to the destination xyz_t structure.
  * @param src Pointer to the source s_xyz structure.
@@ -355,15 +330,13 @@ extern void xyz_t_move_s_xyz(xyz_t* const dest, const s_xyz* const src) {
 }
 
 /**
- * @brief Add two xyz_t structures element-wise and store the result in another xyz_t structure.
+ * @brief Add two xyz_t structures element-wise.
  *
- * This function adds the corresponding x, y, and z values of the two input xyz_t structures
- * and stores the result in the output xyz_t structure.
- *
- * @param augend Pointer to the first xyz_t structure (augend).
- * @param addend Pointer to the second xyz_t structure (addend).
- * @param total Pointer to the output xyz_t structure where the result will be stored.
+ * @param augend First input xyz_t structure.
+ * @param addend Second input xyz_t structure.
+ * @param total Output xyz_t structure for the result.
  */
+
 extern void xyz_t_add(const xyz_t* const augend, const xyz_t* const addend,
                       xyz_t* const total) {
   total->x = augend->x + addend->x;
@@ -372,14 +345,11 @@ extern void xyz_t_add(const xyz_t* const augend, const xyz_t* const addend,
 }
 
 /**
- * @brief Subtract two xyz_t structures element-wise and store the result in another xyz_t structure.
+ * @brief Subtract two xyz_t structures element-wise.
  *
- * This function subtracts the corresponding x, y, and z values of the second input xyz_t structure
- * from the first input xyz_t structure and stores the result in the output xyz_t structure.
- *
- * @param minuend Pointer to the first xyz_t structure (minuend).
- * @param subtrahend Pointer to the second xyz_t structure (subtrahend).
- * @param diff Pointer to the output xyz_t structure where the result will be stored.
+ * @param minuend First input xyz_t structure.
+ * @param subtrahend Second input xyz_t structure.
+ * @param diff Output xyz_t structure for the result.
  */
 extern void xyz_t_sub(const xyz_t* const minuend, const xyz_t* const subtrahend,
                       xyz_t* const diff) {
@@ -389,13 +359,10 @@ extern void xyz_t_sub(const xyz_t* const minuend, const xyz_t* const subtrahend,
 }
 
 /**
- * @brief Multiply an xyz_t structure by a scalar value.
+ * @brief Multiply an xyz_t by a scalar.
  *
- * This function multiplies the x, y, and z values of the input xyz_t structure
- * by the specified scalar value, updating the input structure in-place.
- *
- * @param multiplicand Pointer to the xyz_t structure to be multiplied.
- * @param multiplier Scalar value to multiply the xyz_t structure by.
+ * @param multiplicand Input xyz_t structure.
+ * @param multiplier Scalar value.
  */
 extern void xyz_t_mult_v(xyz_t* const multiplicand, const f32 multiplier) {
   multiplicand->x *= multiplier;
@@ -405,9 +372,6 @@ extern void xyz_t_mult_v(xyz_t* const multiplicand, const f32 multiplier) {
 
 /**
  * @brief Calculate the Euclidean distance between two xyz_t structures.
- *
- * This function computes the Euclidean distance between the input position and target
- * xyz_t structures, returning the result as a floating-point value.
  *
  * @param pos Pointer to the first xyz_t structure representing the position.
  * @param target Pointer to the second xyz_t structure representing the target position.
@@ -425,9 +389,6 @@ extern f32 search_position_distance(const xyz_t* const pos,
 /**
  * @brief Calculate the Euclidean distance between two xyz_t structures in the XZ plane.
  *
- * This function computes the Euclidean distance between the input position and target
- * xyz_t structures in the XZ plane, ignoring the Y component, returning the result as a floating-point value.
- *
  * @param pos Pointer to the first xyz_t structure representing the position.
  * @param target Pointer to the second xyz_t structure representing the target position.
  * @return The Euclidean distance between the two xyz_t structures in the XZ plane.
@@ -443,9 +404,6 @@ extern f32 search_position_distanceXZ(const xyz_t* const pos,
 /**
  * @brief Calculate the angle in the Y axis between two xyz_t structures.
  *
- * This function computes the angle in the Y axis between the input position and target
- * xyz_t structures using the atans_table function.
- *
  * @param pos Pointer to the first xyz_t structure representing the position.
  * @param target Pointer to the second xyz_t structure representing the target position.
  * @return The angle in the Y axis between the two xyz_t structures.
@@ -460,9 +418,6 @@ extern s16 search_position_angleY(const xyz_t* const pos,
 
 /**
  * @brief Calculate the angle in the X axis between two xyz_t structures.
- *
- * This function computes the angle in the X axis between the input position and target
- * xyz_t structures using the atans_table function.
  *
  * @param pos Pointer to the first xyz_t structure representing the position.
  * @param target Pointer to the second xyz_t structure representing the target position.
@@ -563,9 +518,6 @@ extern void add_calc2(f32* pValue, f32 target, f32 fraction, f32 maxStep) {
 
 /**
  * @brief Subtract a calculated value from a variable based on a fraction with a maximum step limit.
- *
- * This function subtracts a calculated step size from the input variable based on the fraction.
- * The step size is limited by the maximum step value.
  *
  * @param pValue Pointer to the input variable.
  * @param fraction Fraction to use in the step size calculation.
@@ -687,9 +639,7 @@ extern s16 add_calc_short_angle3(s16* pValue, s16 target, f32 fraction,
 }
 
 /**
- * @brief Move the RGBA color value from a source to a destination variable.
- *
- * This function copies the RGBA color value from the source variable to the destination variable.
+ * @brief Copy RBGA color from one rgba_t to another.
  *
  * @param dest Pointer to the destination rgba_t variable.
  * @param src Pointer to the source rgba_t variable.
@@ -702,19 +652,14 @@ extern void rgba_t_move(rgba_t* dest, const rgba_t* const src) {
 }
 
 /**
- * @brief A function that always returns 0.
- *
- * This function returns 0 without performing any operations.
+ * @brief A general purpose no-op function.
  *
  * @return 0
  */
 extern int none_proc1() { return 0; }
 
 /**
- * @brief A function that performs no operation.
- *
- * This function performs no operation, serving as a placeholder
- * or no-op function.
+ * @brief No-op function meant for use in actor profiles.
  *
  * @param actor Pointer to an ACTOR structure.
  * @param game Pointer to a GAME structure.
@@ -723,8 +668,6 @@ extern void none_proc2(ACTOR* actor, GAME* game) {}
 
 /**
  * @brief Check if the game is in pause state.
- *
- * This function checks if the game is in the pause state and returns the result.
  *
  * @param play Pointer to a GAME_PLAY structure.
  * @return TRUE if the game is in pause state, FALSE otherwise.
@@ -746,7 +689,7 @@ extern int _Game_play_isPause(GAME_PLAY* play) { return (play->isPause != 0); }
  * @return Scaled percentage of the input value within the specified range.
  */
 extern f32 check_percent_abs(f32 x, f32 min, f32 max, f32 scale,
-                             s32 shift_by_min) {
+                             int shift_by_min) {
   if ((-min <= x) && (x <= min)) {
     return 0.0f;
   }
@@ -771,7 +714,7 @@ extern f32 check_percent_abs(f32 x, f32 min, f32 max, f32 scale,
  * @brief Calculate the percentage of completion based on acceleration and braking values.
  *
  * This function calculates the percentage of completion using the current position, start and end positions,
- * acceleration and braking distances.
+ * acceleration and braking distances using quadratic easing.
  *
  * @param now Current position value.
  * @param start Start position value.
@@ -828,9 +771,6 @@ extern f32 get_percent_forAccelBrake(f32 now, f32 start, f32 end,
 /**
  * @brief Project a 3D world position onto a 2D screen position.
  *
- * This function projects a 3D world position onto a 2D screen position using the provided
- * game play matrix.
- *
  * @param play Pointer to a GAME_PLAY structure.
  * @param wpos Pointer to the 3D world position (xyz_t).
  * @param screen_pos Pointer to the resulting 2D screen position (xyz_t).
@@ -851,9 +791,6 @@ extern void Game_play_Projection_Trans(GAME_PLAY* play, xyz_t* wpos,
 
 /**
  * @brief Calculate the percentage of the input value within the specified range.
- *
- * This function calculates the percentage of the input value within the specified range.
- * The range is defined by the minimum and maximum integer values.
  *
  * @param max Maximum value for the range.
  * @param min Minimum value for the range.
