@@ -517,7 +517,7 @@ extern void add_calc2(f32* pValue, f32 target, f32 fraction, f32 maxStep) {
 }
 
 /**
- * @brief Subtract a calculated value from a variable based on a fraction with a maximum step limit.
+ * @brief Subtract a calculated value from a variable based by a fractionial percent with a maximum step limit.
  *
  * @param pValue Pointer to the input variable.
  * @param fraction Fraction to use in the step size calculation.
