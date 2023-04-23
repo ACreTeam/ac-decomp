@@ -1,5 +1,5 @@
-#ifndef U64TYPES_H
-#define U64TYPES_H
+#ifndef ULTRATYPES_H
+#define ULTRATYPES_H
 
 #include "types.h"
 

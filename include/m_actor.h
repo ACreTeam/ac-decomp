@@ -9,6 +9,7 @@ extern "C" {
 
 typedef struct actor_s {
   /* TODO ... */
+  u8 _tmp;
 } ACTOR;
 
 #ifdef __cplusplus
