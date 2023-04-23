@@ -54,9 +54,13 @@ do { \
 
 extern void game_get_controller(GAME* game);
 
-extern GAME* game_class_p;
-
 extern GAME* gamePT;
+
+extern GAME* game_class_p;
+extern u8 game_GameFrame;
+extern float game_GameFrameF;
+extern float game_GameFrame_2F;
+extern float game_GameFrame__1F;
 
 #ifdef __cplusplus
 };

@@ -10,6 +10,9 @@ extern "C" {
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 
+#define SCREEN_WIDTH_F ((f32)SCREEN_WIDTH)
+#define SCREEN_HEIGHT_F ((f32)SCREEN_HEIGHT)
+
 extern int ScreenWidth;
 extern int ScreenHeight;
 
