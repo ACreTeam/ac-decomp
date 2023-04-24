@@ -2,7 +2,7 @@
 #define M_HOME_H
 
 #include "types.h"
-#include "m_field_info.h"
+#include "m_field_make.h"
 #include "m_actor_type.h"
 #include "m_personal_id.h"
 #include "audio.h"
@@ -62,7 +62,7 @@ typedef struct home_goki_s {
 
 /* sizeof(mHm_lyr_c) == 0x228 */
 typedef struct home_layer_s {
-  /* 0x000 */ mActor_name_t items[UT_X_NUM][UT_Z_NUM]; /* Furniture item actors */
+  /* 0x000 */ mActor_name_t items[UT_Z_NUM][UT_X_NUM]; /* Furniture item actors */
   /* 0x200 */ u64 ftr_switch; /* Bitfield for controlling which furniture items are active, max of 64 */
   /* 0x208 */ u32 unk_208[8]; /* Only referenced in mISL_gc_to_agb_layer */
 } mHm_lyr_c;
