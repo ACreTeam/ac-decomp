@@ -9,6 +9,9 @@
 extern "C" {
 #endif
 
+#define UT_X_NUM 16 /* Spaces per block (acre) in x direction */
+#define UT_Z_NUM 16 /* Spaces per block (acre) in z direction */
+
 /* Not sure about these other than the island one */
 enum {
   mFI_CLIMATE_0,
