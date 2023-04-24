@@ -47,6 +47,7 @@
 #include "m_actor.h"
 #include "m_play.h"
 #include "main.h"
+#include "MSL_C/w_math.h"
 
 /**
  * @brief Copy memory from the source buffer to the destination buffer.

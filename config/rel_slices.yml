@@ -4,9 +4,12 @@ m_debug_hayakawa.c:
     .text: [0x803965E4, 0x803973E8]
     .rodata: [0x80641D50, 0x80641D90]
     .data: [0x80651328, 0x80651358]
-#m_malloc.c: #can't find zelda_arena
-#    .text: [0x803BC510, 0x803BC70C]
-#    .bss: [0x81297CA0, 0x81297CD0]
+m_malloc.c:
+    .text: [0x803BC510, 0x803BC70C]
+    .bss: [0x81297CA0, 0x81297CD0]
+#m_lib.c: #sqrtf statics
+#    .text: [0x803BAB0C, 0x803BB960]
+#    .rodata: [0x80642640, 0x80642680]
 m_room_type/mRmTp_FtrItemNo2FtrIdx.c:
     .text: [0x803E7878, 0x803E78BC]
 #m_time.c: # unlinked until function callers that reorder local static variables are implemented.

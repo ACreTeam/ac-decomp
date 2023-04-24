@@ -16,7 +16,8 @@ typedef struct Arena {
     /* 0x20 */ u8 unk_20;
     /* 0x21 */ u8 isInit;
     /* 0x22 */ u8 flag;
-} Arena; // size = 0x24
+    /* 0x24 */ u8 pad[0x2C-0x24];
+} Arena; // size = 0x2C
 
 typedef struct ArenaNode {
     /* 0x00 */ s16 magic;
