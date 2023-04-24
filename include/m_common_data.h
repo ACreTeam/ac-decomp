@@ -39,7 +39,8 @@ typedef struct Save_s {
   /* 0x000018 */ u8 now_npc_max; /* current number of villagers living in town (see mNpc_(Add/Sub)NowNpcMax) */
   /* 0x000019 */ u8 remove_animal_idx; /* index of the villager which is scheduled to leave town, 0xFF when none selected */
   /* 0x00001A */ u16 copy_protect; /* 'unique' value between [1, 65520] used for copy protection (see mCD_get_land_copyProtect) */
-  /* 0x00001C */ u8 _tmp0[0x9104]; /* Private_c struct [4] goes here starting at 0x20 */
+  /* 0x00001C */ u8 pad_1C[4];
+  /* 0x000020 */ Private_c private[PLAYER_NUM];
   /* 0x009120 */ mLd_land_info_c land_info; /* town name & id */
   /* 0x00912C */ u8 _tmp1[0xBBC]; /* notice board info goes here */
   /* 0x009CE8 */ mHm_hs_c homes[PLAYER_NUM]; /* player house data */

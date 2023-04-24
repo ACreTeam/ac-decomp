@@ -2,6 +2,7 @@
 #define M_NPC_H
 
 #include "types.h"
+#include "m_npc_personal_id.h"
 #include "libu64/gfxprint.h"
 #include "m_actor_type.h"
 #include "m_land_h.h"
@@ -22,15 +23,18 @@ extern "C" {
 #define ANIMAL_MEMORY_NUM 7
 #define ANIMAL_CATCHPHRASE_LEN 10
 #define ANIMAL_HP_MAIL_NUM 4
+#define ANIMAL_NAME_LEN PLAYER_NAME_LEN
 
-/* sizeof(AnmPersonalID_c) == 0xE */
-typedef struct animal_personal_id_s {
-  /* 0x00 */ mActor_name_t npc_id; /* id */
-  /* 0x02 */ u16 land_id; /* town id */
-  /* 0x04 */ u8 land_name[LAND_NAME_SIZE]; /* town name */
-  /* 0x0C */ u8 name_id; /* lower byte of the id */
-  /* 0x0D */ u8 looks; /* internal name for personality */
-} AnmPersonalID_c;
+/* sizeof(Anmremail_c) == 0x16 */
+typedef struct animal_remail_s {
+  lbRTC_ymd_t date; /* date sent */
+  u8 name[ANIMAL_NAME_LEN]; /* villager name */
+  u8 land_name[LAND_NAME_SIZE]; /* town name */
+  struct {
+    u8 password_letter:1; /* is mail normal or password */
+    u8 looks:7; /* personality */
+  } flags;
+} Anmremail_c;
 
 /* sizeof(Anmplmail_c) == 0x104 */
 typedef struct animal_player_maiL_s {
