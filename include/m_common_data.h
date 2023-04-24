@@ -6,6 +6,8 @@
 #include "m_land_h.h"
 #include "lb_rtc.h"
 #include "m_flashrom.h"
+#include "m_home.h"
+#include "m_private.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,15 +34,17 @@ typedef struct time_s {
 typedef struct Save_s {
   /* 0x000000 */ mFRm_chk_t save_check;
   /* 0x000014 */ int scene_no;
-  u8 _tmp0[0x9108];
+  /* 0x000018 */ u8 _tmp0[0x9108];
   /* 0x009120 */ mLd_land_info_c land_info;
-  u8 _tmp1[0x17DE8];
+  /* 0x00912C */ u8 _tmp1[0xBBC];
+  /* 0x009CE8 */ mHm_hs_c homes[PLAYER_NUM];
+  /* 0x0137A8 */ u8 _tmp2[0xD76C];
   /* 0x020F14 */ lbRTC_ymd_t renew_time;
-  u8 _tmp2[0x476];
+  /* 0x020F18 */ u8 _tmp3[0x476];
   /* 0x02138E */ u8 saved_rom_debug;
-  u8 _tmp3[0x1199];
+  /* 0x02138F */ u8 _tmp4[0x1199];
   /* 0x022528 */ OSTime time_delta;
-  u8 _tmp4[0x3AD0];
+  /* 0x022530 */ u8 _tmp5[0x3AD0];
 } Save_t;
 
 typedef union save_u {
