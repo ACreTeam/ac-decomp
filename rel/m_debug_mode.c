@@ -26,6 +26,7 @@
 #include "dolphin/dvd.h"
 #include "libjsys/jsyswrapper.h"
 #include "boot.h"
+#include "m_common_data.h"
 
 #define DEBUG_MODE_PRINT_BUF_COUNT 6
 #define DEBUG_MODE_PRINT_OUTPUT_X 26
@@ -589,8 +590,38 @@ static void Debug_mode_zelda_malloc_info_output(gfxprint_t* gfxprint) {
 }
 #pragma pool_data reset
 
+/* sizeof(haniwa_tempo_data) == 6 */
+typedef struct {
+  /* 0x00 */ TempoBeat_c Gt;
+  /* 0x02 */ TempoBeat_c BS;
+  /* 0x04 */ TempoBeat_c AS;
+} haniwa_tempo_data;
+
+static haniwa_tempo_data tempo_data[PLAYER_NUM] = {
+  { {0, 0}, {0, 0}, {0, 0} }, /* House 0 */
+  { {0, 0}, {0, 0}, {0, 0} }, /* House 1 */
+  { {0, 0}, {0, 0}, {0, 0} }, /* House 2 */
+  { {0, 0}, {0, 0}, {0, 0} }  /* House 3 */
+};
+
 static void DebugHaniwaTempo(gfxprint_t* gfxprint) {
-  /* TODO: this requires implementing m_home & m_house */
+  int i;
+  for (i = 0; i < PLAYER_NUM; i++) {
+    gfxprint_color(gfxprint, 250, 200, 200, 255);
+    gfxprint_locate8x8(gfxprint, 3, 23 + i);
+    gfxprint_printf(
+      gfxprint,
+      "S%d,%dGt%d,%dBS%d,%dAS%d,%d",
+      Save_Get(homes[i].haniwa_tempo.tempo),
+      Save_Get(homes[i].haniwa_tempo.beat),
+      tempo_data[i].Gt.tempo,
+      tempo_data[i].Gt.beat,
+      tempo_data[i].BS.tempo,
+      tempo_data[i].BS.beat,
+      tempo_data[i].AS.tempo,
+      tempo_data[i].AS.beat
+    );
+  }
 }
 
 #define GFXLIST_RESERVED_SIZE (int)(512 * sizeof(Gfx)) /* requires 0x1000 bytes, or 512 free Gfx */

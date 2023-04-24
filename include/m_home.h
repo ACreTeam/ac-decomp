@@ -86,7 +86,7 @@ typedef struct home_floor_s {
 typedef struct home_s {
   /* 0x0000 */ PersonalID_c ownerID; /* owner player's ID */
   /* 0x0014 */ u8 unk_14[6];
-  /* 0x001A */ u8 haniwa_tempo[2]; /* unsure about this */
+  /* 0x001A */ TempoBeat_c haniwa_tempo; /* unsure about this */
   /* 0x001C */ lbRTC_ymd_t hra_mark_time; /* last HRA judge date */
   /* 0x0020 */ u32 hra_mark_info; /* bitfield of HRA info pulled when HRA mails letter */
   /* 0x0024 */ struct {
