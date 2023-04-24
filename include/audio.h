@@ -7,6 +7,12 @@
 extern "C" {
 #endif
 
+/* sizeof(TempoBeat_c) == 2 */
+typedef struct audio_tempo_beat_s {
+  /* 0x00 */ u8 tempo;
+  /* 0x01 */ s8 beat;
+} TempoBeat_c;
+
 extern void sAdo_GameFrame();
 extern void sAdo_SoftReset();
 

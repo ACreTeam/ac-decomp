@@ -30,8 +30,8 @@ typedef int (save_check_proc)(void);
 
 extern void mFRm_set_msg_idx(int idx);
 extern int mFRm_get_msg_idx();
-extern u16 mFRm_ReturnCheckSum(u16* data, s32 size);
-extern u16 mFRm_GetFlatCheckSum(u16* data, s32 size, s16 now_checksum);
+extern u16 mFRm_ReturnCheckSum(u16* data, int size);
+extern u16 mFRm_GetFlatCheckSum(u16* data, int size, u16 now_checksum);
 extern int mFRm_CheckSaveData_ID(mFRm_chk_t* save_check);
 extern int mFRm_CheckSaveData_common(mFRm_chk_t* save_check, u16 land_id);
 extern int mFRm_CheckSaveData();

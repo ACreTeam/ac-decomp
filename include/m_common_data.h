@@ -6,6 +6,10 @@
 #include "m_land_h.h"
 #include "lb_rtc.h"
 #include "m_flashrom.h"
+#include "m_home.h"
+#include "m_private.h"
+#include "m_npc.h"
+#include "m_field_make.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -30,17 +34,32 @@ typedef struct time_s {
 } Time_c;
 
 typedef struct Save_s {
-  /* 0x000000 */ mFRm_chk_t save_check;
-  /* 0x000014 */ int scene_no;
-  u8 _tmp0[0x9108];
-  /* 0x009120 */ mLd_land_info_c land_info;
-  u8 _tmp1[0x17DE8];
-  /* 0x020F14 */ lbRTC_ymd_t renew_time;
-  u8 _tmp2[0x476];
-  /* 0x02138E */ u8 saved_rom_debug;
-  u8 _tmp3[0x1199];
-  /* 0x022528 */ OSTime time_delta;
-  u8 _tmp4[0x3AD0];
+  /* 0x000000 */ mFRm_chk_t save_check; /* save information */
+  /* 0x000014 */ int scene_no; /* current 'scene' id */
+  /* 0x000018 */ u8 now_npc_max; /* current number of villagers living in town (see mNpc_(Add/Sub)NowNpcMax) */
+  /* 0x000019 */ u8 remove_animal_idx; /* index of the villager which is scheduled to leave town, 0xFF when none selected */
+  /* 0x00001A */ u16 copy_protect; /* 'unique' value between [1, 65520] used for copy protection (see mCD_get_land_copyProtect) */
+  /* 0x00001C */ u8 _tmp0[0x9104]; /* Private_c struct [4] goes here starting at 0x20 */
+  /* 0x009120 */ mLd_land_info_c land_info; /* town name & id */
+  /* 0x00912C */ u8 _tmp1[0xBBC]; /* notice board info goes here */
+  /* 0x009CE8 */ mHm_hs_c homes[PLAYER_NUM]; /* player house data */
+  /* 0x0137A8 */ mFM_fg_c fg[FG_BLOCK_Z_NUM][FG_BLOCK_X_NUM]; /* fg items (fg = foreground?) */
+  /* 0x0173A8 */ mFM_combination_c combi_table[BLOCK_Z_NUM][BLOCK_X_NUM]; /* acre 'combination' data */
+  /* 0x017438 */ Animal_c animals[ANIMAL_NUM_MAX]; /* villagers in town */
+  /* 0x020330 */ AnmPersonalID_c last_removed_animal_id; /* ID of last villager who left town */
+  /* 0x02033E */ u8 _tmp3[0xBD6];
+  /* 0x020F14 */ lbRTC_ymd_t renew_time; /* next renew date */
+  /* 0x020F18 */ u8 station_type; /* train station type */
+  /* 0x020F19 */ u8 weather; /* upper nibble is intensity, lower nibble is type */
+  /* 0x020F1A */ u8 save_exist; /* unsure, set in mCD_SaveHome_bg_set_data (1) & mCD_SaveHome_bg (bss) */
+  /* 0x020F1B */ u8 npc_force_go_home; /* when set to 1, forces the 'm_go_home' code to activate */
+  /* 0x020F1C */ u16 deposit[FG_BLOCK_X_NUM * FG_BLOCK_Z_NUM][UT_Z_NUM]; /* flags for which items are buried around town */
+  /* 0x0212DC */ lbRTC_time_c last_grow_time; /* last time that a new villager moved into town */
+  /* 0x0212E4 */ u8 _tmp4[0xAA];
+  /* 0x02138E */ u8 saved_rom_debug; /* flag to set save to 'debug rom' mode */
+  /* 0x02138F */ u8 _tmp5[0x1199];
+  /* 0x022528 */ OSTime time_delta; /* time delta against GC RTC */
+  /* 0x022530 */ u8 _tmp6[0x3AD0];
 } Save_t;
 
 typedef union save_u {
@@ -50,7 +69,7 @@ typedef union save_u {
 
 typedef struct common_data_s {
   /* 0x000000 */ Save save;
-  /* 0x026000 */ u8 game_1_patu;
+  /* 0x026000 */ u8 game_started;
   /* 0x026001 */ u8 field_type;
   /* 0x026002 */ u8 field_draw_type;
   /* 0x026003 */ u8 player_no;

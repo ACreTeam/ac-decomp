@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "game.h"
+#include "libultra/ultratypes.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,7 +13,10 @@ extern "C" {
 typedef struct game_play_s {
   /* 0x0000 */ GAME game;
   // TODO: finish
-  /* 0x00E0 */ u8 _temp[0x2520];
+  /* 0x00E0 */ u8 d[0x1CC0];
+  /* 0x1DA0*/  int isPause;
+  /* 0x1DA4*/ u8 _temp[0x268];
+  /* 0x200C*/ MtxF matrix;
 } GAME_PLAY;
 
 extern void play_init(GAME_PLAY* play);
