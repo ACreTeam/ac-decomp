@@ -10,6 +10,13 @@
 #include "m_private.h"
 #include "m_npc.h"
 #include "m_field_make.h"
+#include "m_notice.h"
+#include "m_shop.h"
+#include "m_kabu_manager.h"
+#include "m_post_office.h"
+#include "m_police_box.h"
+#include "m_snowman.h"
+#include "m_config.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,15 +47,27 @@ typedef struct Save_s {
   /* 0x000019 */ u8 remove_animal_idx; /* index of the villager which is scheduled to leave town, 0xFF when none selected */
   /* 0x00001A */ u16 copy_protect; /* 'unique' value between [1, 65520] used for copy protection (see mCD_get_land_copyProtect) */
   /* 0x00001C */ u8 pad_1C[4];
-  /* 0x000020 */ Private_c private[PLAYER_NUM];
+  /* 0x000020 */ Private_c private[PLAYER_NUM]; /* player data */
   /* 0x009120 */ mLd_land_info_c land_info; /* town name & id */
-  /* 0x00912C */ u8 _tmp1[0xBBC]; /* notice board info goes here */
+  /* 0x00912C */ mNtc_board_post_c noticeboard[mNtc_BOARD_POST_COUNT]; /* noticeboard posts */
+  /* 0x009CE4 */ u8 pad_9CE4[4];
   /* 0x009CE8 */ mHm_hs_c homes[PLAYER_NUM]; /* player house data */
   /* 0x0137A8 */ mFM_fg_c fg[FG_BLOCK_Z_NUM][FG_BLOCK_X_NUM]; /* fg items (fg = foreground?) */
   /* 0x0173A8 */ mFM_combination_c combi_table[BLOCK_Z_NUM][BLOCK_X_NUM]; /* acre 'combination' data */
   /* 0x017438 */ Animal_c animals[ANIMAL_NUM_MAX]; /* villagers in town */
   /* 0x020330 */ AnmPersonalID_c last_removed_animal_id; /* ID of last villager who left town */
-  /* 0x02033E */ u8 _tmp3[0xBD6];
+  /* 0x020340 */ Shop_c shop; /* Nook's shop */
+  /* 0x020480 */ Kabu_price_c kabu_price_schedule; /* Stalk Market info */
+  /* 0x020498 */ u8 _tmp3[0x1F0]; /* saved events go here, but have a lot of structs in a union so holding off */
+  /* 0x020688 */ mActor_name_t fruit; /* town fruit type */
+  /* 0x02068A */ u8 house_arrangement; /* 2 bits for each player for the # of house they own */
+  /* 0x02068B */ u8 num_statues; /* number of statues built for players who have paid off their debts */
+  /* 0x02068C */ lbRTC_time_c all_grow_renew_time; /* renewal time for fg items handled by mAgrw_RenewalFgItem_ovl */
+  /* 0x020694 */ PostOffice_c post_office; /* post office data */
+  /* 0x020ED0 */ PoliceBox_c police_box; /* police station lost & found */
+  /* 0x020EF8 */ mSN_snowman_save_c snowmen; /* saved snowmen data */
+  /* 0x020F08 */ u64 melody; /* town tune, each nibble is a note (16 notes) */
+  /* 0x020F10 */ Config_c config; /* saved config for sound mode, voice mode, and vibration */
   /* 0x020F14 */ lbRTC_ymd_t renew_time; /* next renew date */
   /* 0x020F18 */ u8 station_type; /* train station type */
   /* 0x020F19 */ u8 weather; /* upper nibble is intensity, lower nibble is type */
