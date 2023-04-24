@@ -6,7 +6,7 @@
  * and memory operations. These functions include:
  *
  * - mem_copy(): Copy memory from one location to another.
- * - mem_clear(): Clear a memory area.
+ * - mem_clear(): Clear (set) a memory area to a given value.
  * - mem_cmp(): Compare two memory areas.
  * - cos_s(): Calculate the cosine of a short angle.
  * - sin_s(): Calculate the sine of a short angle.
@@ -402,11 +402,11 @@ extern f32 search_position_distanceXZ(const xyz_t* const pos,
 }
 
 /**
- * @brief Calculate the angle in the Y axis between two xyz_t structures.
+ * @brief Calculate the angle in the Y axis (yaw) between two xyz_t positions.
  *
- * @param pos Pointer to the first xyz_t structure representing the position.
+ * @param pos Pointer to the first xyz_t structure representing the current position.
  * @param target Pointer to the second xyz_t structure representing the target position.
- * @return The angle in the Y axis between the two xyz_t structures.
+ * @return The angle in the Y axis (yaw) between the two xyz_t positions.
  */
 extern s16 search_position_angleY(const xyz_t* const pos,
                                   const xyz_t* const target) {
@@ -417,11 +417,11 @@ extern s16 search_position_angleY(const xyz_t* const pos,
 }
 
 /**
- * @brief Calculate the angle in the X axis between two xyz_t structures.
+ * @brief Calculate the angle in the X axis (pitch) between two xyz_t positions.
  *
- * @param pos Pointer to the first xyz_t structure representing the position.
+ * @param pos Pointer to the first xyz_t structure representing the current position.
  * @param target Pointer to the second xyz_t structure representing the target position.
- * @return The angle in the X axis between the two xyz_t structures.
+ * @return The angle in the X axis (pitch) between the two xyz_t structures.
  */
 extern s16 search_position_angleX(const xyz_t* const pos,
                                   const xyz_t* const target) {
@@ -517,7 +517,7 @@ extern void add_calc2(f32* pValue, f32 target, f32 fraction, f32 maxStep) {
 }
 
 /**
- * @brief Subtract a calculated value from a variable by a fractionial percent with a maximum step limit.
+ * @brief Step a variable towards 0 by a fixed fraction, with a specified maximum possible step.
  *
  * @param pValue Pointer to the input variable.
  * @param fraction Fraction to use in the step size calculation.
@@ -676,10 +676,11 @@ extern int _Game_play_isPause(GAME_PLAY* play) { return (play->isPause != 0); }
 
 /**
  * @brief Calculate a percentage with respect to minimum and maximum values, and apply scaling.
- *
- * This function calculates a percentage with respect to given minimum and maximum values.
- * The percentage is then scaled by the provided scale factor. If shift_by_min is set,
- * the percentage is shifted by the minimum value.
+ * 
+ * - If `x` is closer to 0 than `min`, return 0
+ * - If `x` is further from 0 than `max`, return the sign of `x`
+ * - Otherwise, scale `x` by `scale` and return it.
+ * If `shift_by_min`, move `x` by  `min` towards 0 before scaling it.
  *
  * @param x Input value to check.
  * @param min Minimum value for the range.
@@ -719,12 +720,12 @@ extern f32 check_percent_abs(f32 x, f32 min, f32 max, f32 scale,
  * @param now Current position value.
  * @param start Start position value.
  * @param end End position value.
- * @param accelerate Acceleration distance.
- * @param brake Braking distance.
+ * @param accelerateDist Acceleration distance.
+ * @param brakeDist Braking distance.
  * @return Percentage of completion.
  */
-extern f32 get_percent_forAccelBrake(f32 now, f32 start, f32 end,
-                                     f32 accelerate, f32 brake) {
+extern f32 get_percent_forAccelBrake(const f32 now, const f32 start, const f32 end,
+                                     const f32 accelerateDist, const f32 brakeDist) {
   f32 percent;
   f32 total_delta;
   f32 now_delta;
@@ -738,31 +739,31 @@ extern f32 get_percent_forAccelBrake(f32 now, f32 start, f32 end,
   }
   total_delta = end - start;
   now_delta = now - start;
-  if (total_delta < (accelerate + brake)) {
+  if (total_delta < (accelerateDist + brakeDist)) {
     return 0.0f;
   }
 
-  step = 1.0f / (((2.0f * total_delta) - accelerate) - brake);
-  if (accelerate != 0.0f) {
-    if (now_delta <= accelerate) {
+  step = 1.0f / (((2.0f * total_delta) - accelerateDist) - brakeDist);
+  if (accelerateDist != 0.0f) {
+    if (now_delta <= accelerateDist) {
       percent = (now_delta * (step * now_delta));
-      percent /= accelerate;
+      percent /= accelerateDist;
       return percent;
     }
-    percent = step * accelerate;
+    percent = step * accelerateDist;
   } else {
     percent = 0.0f;
   }
-  if (now_delta <= (total_delta - brake)) {
-    percent += (step * 2.0f) * (now_delta - accelerate);
+  if (now_delta <= (total_delta - brakeDist)) {
+    percent += (step * 2.0f) * (now_delta - accelerateDist);
     return percent;
   }
-  percent += (2.0f * step * ((total_delta - accelerate) - brake));
-  if (brake != 0.0f) {
-    percent += step * brake;
+  percent += (2.0f * step * ((total_delta - accelerateDist) - brakeDist));
+  if (brakeDist != 0.0f) {
+    percent += step * brakeDist;
     if (now_delta < total_delta) {
       f32 diff = total_delta - now_delta;
-      percent -= step * diff * diff / brake;
+      percent -= step * diff * diff / brakeDist;
     }
   }
   return percent;
@@ -775,7 +776,7 @@ extern f32 get_percent_forAccelBrake(f32 now, f32 start, f32 end,
  * @param wpos Pointer to the 3D world position (xyz_t).
  * @param screen_pos Pointer to the resulting 2D screen position (xyz_t).
  */
-extern void Game_play_Projection_Trans(GAME_PLAY* play, xyz_t* wpos,
+extern void Game_play_Projection_Trans(GAME_PLAY* const play, xyz_t* wpos,
                                        xyz_t* screen_pos) {
   f32 w;
 
@@ -797,17 +798,17 @@ extern void Game_play_Projection_Trans(GAME_PLAY* play, xyz_t* wpos,
  * @param x Input value to check.
  * @return Percentage of the input value within the specified range.
  */
-extern f32 get_percent(int max, int min, int x) {
-  f32 check;
+extern f32 get_percent(const int max, const int min, const int x) {
+  f32 total_delta;
   f32 percent;
 
   percent = 1.0f;
   if (x < min) {
     percent = 0.0f;
   } else if (x < max) {
-    check = (f32)(max - min);
-    if (check != 0.0f) {
-      percent = (f32)(x - min) / check;
+    total_delta = max - min;
+    if (total_delta != 0.0f) {
+      percent = (f32)(x - min) / total_delta;
       if (percent > 1.0f) {
         percent = 1.0f;
       }

@@ -11,7 +11,7 @@ extern "C" {
 
 #define SHT_MAX 32767.0f
 #define SHT_MINV (1.0f / SHT_MAX)
-#define ABS(x) ((x) >= 0) ? (x) : -(x)
+#define ABS(x) (((x) >= 0) ? (x) : -(x))
 #define SQ(x) ((x)*(x))
 
 typedef struct xy_s {
@@ -71,10 +71,10 @@ extern void none_proc2(ACTOR* actor, GAME* game);
 
 extern int _Game_play_isPause(GAME_PLAY* play);
 extern f32 check_percent_abs(f32 x, f32 min, f32 max, f32 scale, int shift_by_min);
-extern f32 get_percent_forAccelBrake(f32 now, f32 start, f32 end, f32 accelerate, f32 brake);
-extern void Game_play_Projection_Trans(GAME_PLAY* play, xyz_t* wpos, xyz_t* screen_pos);
+extern f32 get_percent_forAccelBrake(const f32 now, const f32 start, const f32 end, const f32 accelerateDist, const f32 brakeDist);
+extern void Game_play_Projection_Trans(GAME_PLAY* const play, xyz_t* wpos, xyz_t* screen_pos);
 
-extern f32 get_percent(int max, int min, int x);
+extern f32 get_percent(const int max, const int min, const int x);
 
 #ifdef __cplusplus
 }
