@@ -5,7 +5,7 @@
 #include "m_lib.h"
 #include "graph.h"
 #include "game.h"
-#include "gbi_extensions.h"
+#include "libforest/gbi_extensions.h"
 
 #ifdef __cplusplus
 extern "C" {

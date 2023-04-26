@@ -111,6 +111,20 @@ typedef struct animal_s {
   /* 0x000 */ u8 unused[24]; /* unknown usage/unused */
 } Animal_c;
 
+/*
+  Struct for keeping track of an event where a villager can briefly return to your town after
+  moving away to another town. The time limit seems to be 60 days, and the villager will only
+  appear once per player during that time if the player talks to them.
+*/
+
+/* sizeof(Anmret_c) == 0xC */
+typedef struct animal_return_s {
+  /* 0x00 */ mActor_name_t npc_id; /* id of the villager who left */
+  /* 0x02 */ u8 talk_bit; /* which players have already interacted with this villager */
+  /* 0x03 */ u8 exist; /* if the villager exists */
+  /* 0x04 */ lbRTC_time_c renew_time; /* time that this struct was updated */
+} Anmret_c;
+
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);
 

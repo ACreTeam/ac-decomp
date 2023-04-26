@@ -6,7 +6,7 @@
 #include "m_land_h.h"
 #include "lb_rtc.h"
 #include "m_flashrom.h"
-#include "m_home.h"
+#include "m_home_h.h"
 #include "m_private.h"
 #include "m_npc.h"
 #include "m_field_make.h"
@@ -77,9 +77,13 @@ typedef struct Save_s {
   /* 0x0212DC */ lbRTC_time_c last_grow_time; /* last time that a new villager moved into town */
   /* 0x0212E4 */ u8 _tmp4[0xAA];
   /* 0x02138E */ u8 saved_rom_debug; /* flag to set save to 'debug rom' mode */
-  /* 0x02138F */ u8 _tmp5[0x1199];
+  /* 0x02138F */ u8 _tmp5[0x11];
+  /* 0x0213A0 */ u8 keep_house_size[PLAYER_NUM]; /* saved flags for house sizes */
+  /* 0x0213A4 */ u8 _tmp6[0x1184];
   /* 0x022528 */ OSTime time_delta; /* time delta against GC RTC */
-  /* 0x022530 */ u8 _tmp6[0x3AD0];
+  /* 0x022530 */ u8 _tmp7[0x1C30];
+  /* 0x024160 */ Anmret_c return_animal; /* information about villager which moved back in to your town after moving to someone else's town */
+  /* 0x02416C */ u8 _tmp8[0x1E94];
 } Save_t;
 
 typedef union save_u {
@@ -97,6 +101,8 @@ typedef struct common_data_s {
   /* 0x026008 */ int player_data_mode;
   /* 0x02600C */ u8 _clip[0x104]; /* Temporary, clip is a struct with size 0x104 */
   /* 0x026110 */ Time_c time;
+  /* 0x02613C */ Private_c* now_private;
+  /* 0x026140 */ mHm_hs_c* now_home;
 } common_data_t;
 
 extern common_data_t common_data;

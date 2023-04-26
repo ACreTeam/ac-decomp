@@ -18,9 +18,6 @@ extern "C" {
 #define G_SETCOMBINE_TEV 0xD0
 #define G_SETTILE_DOLPHIN 0xD2
 
-#define G_OFF 0
-#define G_ON 1
-
 #define G_FIRST_CMD G_SETTEXEDGEALPHA
 
 /* Triangle/Quad vertex bit size */
@@ -209,7 +206,7 @@ typedef struct {
     unsigned int d1:3;
     unsigned int Ab1:3;
     unsigned int Ad1:3;
-} Gsetcombine;
+} Gsetcombine_new;
 
 typedef struct {
     int cmd:8; /* 0xCF */
@@ -367,6 +364,7 @@ typedef struct {
     unsigned int alpha1:3;
 } combiner_tev_alpha;
 
+/*
 static combiner_tev_alpha tbla[8] = {
     { 0, TEV_ALPHA_COMBINED, 0, TEV_ALPHA_ONE },
     { 0, TEV_ALPHA_TEXEL0, 0, TEV_ALPHA_TEXEL0 },
@@ -412,6 +410,7 @@ static combiner_tev_color tblc[32] = {
     { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
     { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO }
 };
+*/
 
 /* New Command Macros */
 #define gsDPParam2(cmd, tag, param, extra) \
