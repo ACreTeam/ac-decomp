@@ -13,6 +13,7 @@
 #include "m_personal_id.h"
 #include "m_private.h"
 
+/* upstairs room base unit layout */
 static mActor_name_t l_player_room_2_utinfo[UT_X_NUM * UT_Z_NUM] = {
   RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
   RSV_WALL_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO, RSV_WALL_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
@@ -32,6 +33,7 @@ static mActor_name_t l_player_room_2_utinfo[UT_X_NUM * UT_Z_NUM] = {
      EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO
 };
 
+/* basement room base unit layout */
 static mActor_name_t l_player_room_bm_utinfo[UT_X_NUM * UT_Z_NUM] = {
   RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
   RSV_WALL_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO, RSV_WALL_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
@@ -51,6 +53,7 @@ static mActor_name_t l_player_room_bm_utinfo[UT_X_NUM * UT_Z_NUM] = {
      EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO
 };
 
+/* small main room base unit layout */
 static mActor_name_t l_proom_s_tmp[UT_X_NUM * UT_Z_NUM] = {
   RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO,    EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
   RSV_WALL_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO, RSV_WALL_NO,    EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
@@ -70,6 +73,7 @@ static mActor_name_t l_proom_s_tmp[UT_X_NUM * UT_Z_NUM] = {
      EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO
 };
 
+/* medium main room base unit layout */
 static mActor_name_t l_proom_m_tmp[UT_X_NUM * UT_Z_NUM] = {
   RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
   RSV_WALL_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO, RSV_WALL_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
@@ -89,6 +93,7 @@ static mActor_name_t l_proom_m_tmp[UT_X_NUM * UT_Z_NUM] = {
      EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO
 };
 
+/* large main room base unit layout */
 static mActor_name_t l_proom_l_tmp[UT_X_NUM * UT_Z_NUM] = {
   RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
   RSV_WALL_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO, RSV_WALL_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
@@ -108,6 +113,7 @@ static mActor_name_t l_proom_l_tmp[UT_X_NUM * UT_Z_NUM] = {
      EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO
 };
 
+/* island cottage base unit layout */
 static mActor_name_t l_proom_cottage_tmp[UT_X_NUM * UT_Z_NUM] = {
   RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, RSV_WALL_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
   RSV_WALL_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO,    EMPTY_NO, RSV_WALL_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO, EMPTY_NO,
@@ -129,7 +135,14 @@ static mActor_name_t l_proom_cottage_tmp[UT_X_NUM * UT_Z_NUM] = {
 
 #define HANIWA_MSG_LINES 4
 
+// TODO: fix me
 #pragma pool_data on
+
+/**
+ * @brief Clears the save data for a given home.
+ * 
+ * @param home_no Index of the home which will be cleared (0-3).
+ **/
 extern void mHm_ClearHomeInfo(int home_no) {
   static int haniwa_msg[HANIWA_MSG_LINES] = { 0x76A, 0x76B, 0x76C, 0x76D }; /* These are probably defines somewhere from auto-gen */
 
@@ -185,6 +198,9 @@ extern void mHm_ClearHomeInfo(int home_no) {
 }
 #pragma pool_data reset
 
+/**
+ * @brief Clears save data for all homes.
+ **/
 extern void mHm_ClearAllHomeInfo() {
   int i;
 
@@ -193,6 +209,9 @@ extern void mHm_ClearAllHomeInfo() {
   }
 }
 
+/**
+ * @brief Sets common_data's 'now_home' pointer to the current player's home.
+ **/
 extern void mHm_SetNowHome() {
   mHm_hs_c* now_home = NULL;
 
@@ -212,6 +231,7 @@ typedef struct {
   /* 0x0C */ mActor_name_t item;
 } mHm_player_room_default_data_c;
 
+/* list of default properties for each house */
 static mHm_player_room_default_data_c l_mHm_player_room_default_data[PLAYER_NUM] = {
   {  3, 38, 4, 1, FTR_TAPEDECK }, /* Top-left house, stone wall & old flooring */
   { 41, 42, 4, 1, FTR_TAPEDECK }, /* Top-right house, wood panelling & steel flooring */
@@ -219,6 +239,11 @@ static mHm_player_room_default_data_c l_mHm_player_room_default_data[PLAYER_NUM]
   { 42, 34, 4, 1, FTR_TAPEDECK }  /* Bottom-right house, concrete wall & charcoal tile */
 };
 
+/**
+ * @brief Sets the default data for a given home.
+ * 
+ * @param home_no Index of the home which will receive the default data
+ **/
 extern void mHm_SetDefaultPlayerRoomData(int home_no) {
   int i;
 
@@ -235,10 +260,23 @@ extern void mHm_SetDefaultPlayerRoomData(int home_no) {
   }
 }
 
+/**
+ * @brief Initializes the home's owner id to the given player's id.
+ * 
+ * @param home Pointer to the mHm_hs_c home which will be updated
+ * @param player_no Index of the player whose id will be used
+ **/
 extern void mHm_InitHomeInfo(mHm_hs_c* home, int player_no) {
   mPr_CopyPersonalID(&home->ownerID, Save_GetPointer(private[player_no].player_ID));
 }
 
+/**
+ * @brief Sets/clears the wall and door layout for a given room.
+ * 
+ * @param dst Pointer to the room item actor data
+ * @param roomtype Type of room to select correct room data (0-3)
+ * @param set when TRUE copy data, when FALSE clear data
+ **/
 static void mHm_ChangeWallDoorFG(mActor_name_t* dst, int roomtype, int set) {
   static mActor_name_t* player_room_tmp_table[mHm_ROOMTYPE_NUM] = {
     l_proom_s_tmp,      /* small room layout (default) */
@@ -270,14 +308,32 @@ static void mHm_ChangeWallDoorFG(mActor_name_t* dst, int roomtype, int set) {
   }
 }
 
+/**
+ * @brief Clears the wall & door data for a room.
+ * 
+ * @param items Pointer to the room actor items
+ * @param roomtype Type of room to clear
+ **/
 static void mHm_EraseWallDoor(mActor_name_t* items, int roomtype) {
   mHm_ChangeWallDoorFG(items, roomtype, FALSE);
 }
 
+/**
+ * @brief Sets the wall & door data for a room.
+ * 
+ * @param items Pointer to the room actor items
+ * @param roomtype Type of room to clear
+ **/
 static void mHm_SetWallDoor(mActor_name_t* items, int roomtype) {
   mHm_ChangeWallDoorFG(items, roomtype, TRUE);
 }
 
+/**
+ * @brief Updates the wall & door data for the main room.
+ * 
+ * @param home Pointer to the mHm_hs_c home to update
+ * @param home_size Size of the home (0-4, but only 1-4 should be used for this function)
+ **/
 static void mHm_RehouseWallDoor(mHm_hs_c* home, int home_size) {
   static int room_size[mHm_HOMESIZE_NUM] = {
     mHm_ROOMTYPE_SMALL,  /* mHm_HOMESIZE_SMALL */
@@ -308,6 +364,9 @@ static void mHm_RehouseWallDoor(mHm_hs_c* home, int home_size) {
   (home)->size_info.upgrade_order_date.month != (rtc_time)->month || \
   (home)->size_info.upgrade_order_date.year != (rtc_time)->year)
 
+/**
+ * @brief Check if any house should be updated, and if so, update it.
+ **/
 extern void mHm_CheckRehouseOrder() {
   mHm_hs_c* home = Save_Get(homes);
   lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
@@ -351,6 +410,12 @@ extern void mHm_CheckRehouseOrder() {
   }
 }
 
+/**
+ * @brief Stores the player's current house size for later.
+ * 
+ * @param player_no Index of the player whose house size will be saved
+ * @return TRUE/FALSE house size was kept
+ **/
 extern int mHm_KeepHouseSize(u8 player_no) {
   int arrange_idx;
   mHm_hs_c* home;
@@ -375,16 +440,12 @@ extern int mHm_KeepHouseSize(u8 player_no) {
   return res;
 }
 
-typedef union {
-    u8 raw;
-    struct {
-        u8 unused:1;
-        u8 renew:1;
-        u8 next_size:3;
-        u8 size:3;
-    } bits;
-} keep_u;
-
+/**
+ * @brief Checks whether the kept house size for a player is the same as the actual size.
+ * 
+ * @param player_no The index of the player whose house will be checked
+ * @returns TRUE/FALSE house size and keep house size are the same
+ **/
 extern int mHm_CheckKeepHouseSize(u8 player_no) {
   int arrange_idx;
   mHm_hs_c* home;
@@ -406,6 +467,12 @@ extern int mHm_CheckKeepHouseSize(u8 player_no) {
   return res;
 }
 
+/**
+ * @brief Updates player house flags to include basement
+ * 
+ * @param home_no Index of the house whose basement flag will be enabled
+ * @return TRUE/FALSE was flag set
+ **/
 extern int mHm_SetBasement(u8 home_no) {
   if (home_no < PLAYER_NUM) {
     mHm_flg_c* flags = Save_GetPointer(homes[home_no].flags);
@@ -418,6 +485,11 @@ extern int mHm_SetBasement(u8 home_no) {
   return FALSE;
 }
 
+/**
+ * @brief Sets the default island cottage data
+ * 
+ * @param cottage Pointer to the mHm_cottage_c cottage which will receive the default data
+ **/
 static void mHm_SetDefaultCottageData(mHm_cottage_c* cottage) {
   if (cottage == NULL) {
     return;
@@ -432,6 +504,11 @@ static void mHm_SetDefaultCottageData(mHm_cottage_c* cottage) {
   cottage->room.layer_main.items[6][6] = FTR_BLUEALOHASHIRT;
 }
 
+/**
+ * @brief Initialize an mHm_cottage_c cottage.
+ * 
+ * @param cottage Pointer to the mHm_cottage_c which will be initialized
+ **/
 extern void mHm_InitCottage(mHm_cottage_c* cottage) {
   if (cottage != NULL) {
     bzero(cottage, sizeof(mHm_cottage_c));
