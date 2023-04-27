@@ -15,6 +15,19 @@ extern "C" {
 #endif
 
 #define PLAYER_NUM 4
+#define FOREIGNER_NUM 1
+#define TOTAL_PLAYER_NUM (PLAYER_NUM + FOREIGNER_NUM)
+
+enum {
+  mPr_PLAYER_0,
+  mPr_PLAYER_1,
+  mPr_PLAYER_2,
+  mPr_PLAYER_3,
+  mPr_FOREIGNER,
+
+  mPr_PLAYER_NUM
+};
+
 #define mPr_POCKETS_SLOT_COUNT 15
 #define mPr_INVENTORY_MAIL_COUNT 10
 #define mPr_DELIVERY_QUEST_NUM mPr_POCKETS_SLOT_COUNT

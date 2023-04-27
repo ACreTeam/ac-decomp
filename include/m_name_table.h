@@ -10,6 +10,36 @@
 extern "C" {
 #endif
 
+enum {
+  NAME_TYPE_ITEM0,  /* Scenery items */
+  NAME_TYPE_FTR0,   /* Furniture 0 */
+  NAME_TYPE_ITEM1,  /* Obtainable items */
+  NAME_TYPE_FTR1,   /* Furniture 1 */
+  NAME_TYPE_WARP,   /* Loading zones */
+  NAME_TYPE_STRUCT, /* Structures */
+  NAME_TYPE_PAD6,   /* Unused? */
+  NAME_TYPE_PAD7,   /* Unused? */
+  NAME_TYPE_ITEM2,  /* Misc items */
+  NAME_TYPE_ACTOR,  /* Actors */
+  NAME_TYPE_PROPS,  /* Props */
+  NAME_TYPE_PADB,   /* Unused? */
+  NAME_TYPE_PADC,   /* Unused? */
+  NAME_TYPE_SPNPC,  /* Special NPCs */
+  NAME_TYPE_NPC,    /* Villager NPCs */
+  NAME_TYPE_PAD15,  /* Unused? */
+
+  NAME_TYPE_NUM
+};
+
+/* Retrieve the item actor's category */
+#define ITEM_NAME_GET_TYPE(n) (((n) & 0xF000) >> 12)
+
+#define ITEM_IS_FTR(n) \
+  (ITEM_NAME_GET_TYPE(n) == NAME_TYPE_FTR0 || ITEM_NAME_GET_TYPE(n) == NAME_TYPE_FTR1)
+
+#define GET_NAME_ITEM0_CATEGORY(f) (((f)&0x800) >> 11)
+#define GET_NAME_ITEM1_CATEGORY(f) (((f)&0xF00) >> 8)
+
 #define EMPTY_NO 0x0000
 
 #define FTR_REDALOHASHIRT 0x1814

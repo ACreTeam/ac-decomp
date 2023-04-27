@@ -20892,6 +20892,7 @@ global:
     0x8069C078: Room_Sunshine_Posthouse_Profile
     0x8069C0A0: Room_Sunshine_Museum_Profile
     0x8069C0C8: Room_Sunshine_Minsect_Profile
+    0x8069C0F0: mMkRm_ftr_info # this one lives in m_huusui_room_ovl.c
     0x8069CAD4: mHsRm_unit_max
     0x8069CAE4: mHsRm_unit_value
     0x8069CAF0: mMkRm_series_info
