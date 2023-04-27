@@ -25,6 +25,8 @@ extern "C" {
 #define ANIMAL_HP_MAIL_NUM 4
 #define ANIMAL_NAME_LEN PLAYER_NAME_LEN
 
+#define mNpc_ISLAND_FTR_SAVE_NUM 4
+
 /* sizeof(Anmremail_c) == 0x16 */
 typedef struct animal_remail_s {
   lbRTC_ymd_t date; /* date sent */
@@ -68,17 +70,34 @@ typedef struct animal_letter_info_s {
   u8 bit5_7:3; /* seemingly unused */
 } Anmlet_c;
 
+/* sizeof(Anmlnd_c) == 0xA */
+typedef struct animal_land_mem_s {
+  /* 0x00 */ u8 name[LAND_NAME_SIZE];
+  /* 0x08 */ u16 id;
+} Anmlnd_c;
+
+/* sizeof(memuni_U) == 0x12 */
+typedef union {
+  Anmlnd_c land; /* size = 0xA */
+  u32 check; /* size = 4 */
+} memuni_u;
+
 /* sizeof(Anmmem_c) == 0x138 */
 typedef struct animal_memory_s {
   /* 0x000 */ PersonalID_c memory_player_id; /* personal id of the player memory belongs to */
   /* 0x014 */ lbRTC_time_c last_speak_time; /* time the player last spoke to this villager */
-  /* 0x01C */ u8 land_name[LAND_NAME_SIZE]; /* memory origin land name */
-  /* 0x024 */ u16 land_id; /* memory origin land id */
+  /* 0x01C */ memuni_u memuni; /* union between town NPC land memory & islander player action memory */
   /* 0x028 */ u64 saved_town_tune; /* memory origin town tune */
   /* 0x030 */ s8 friendship; /* friendship with the player */
   /* 0x031 */ Anmlet_c letter_info; /* saved letter flags */
   /* 0x032 */ Anmplmail_c letter; /* saved letter */
 } Anmmem_c;
+
+/* sizeof(anmuni) == 8 */
+typedef union {
+  u8 previous_land_name[LAND_NAME_SIZE];
+  mActor_name_t island_ftr[mNpc_ISLAND_FTR_SAVE_NUM];
+} anmuni_u;
 
 /* sizeof(AnmHPMail_c) == 0x1C */
 typedef struct animal_password_mail_s {
@@ -94,7 +113,7 @@ typedef struct animal_s {
   /* 0x89D */ u8 catchphrase[ANIMAL_CATCHPHRASE_LEN]; /* may be called 'word_ending' */
   /* 0x8A8 */ mQst_contest_c contest_quest; /* current contest quest information */
   /* 0x8D0 */ u8 parent_name[PLAYER_NAME_LEN]; /* name of the player who 'spawned' the villager in, unsure why this is tracked */
-  /* 0x8D8 */ u8 previous_land_name[LAND_NAME_SIZE]; /* name of the last town the villager lived in */
+  /* 0x8D8 */ anmuni_u anmuni; /* name of the last town the villager lived in or saved island ftr */
   /* 0x8E0 */ u16 previous_land_id; /* id of the previous town the villager lived in */
   /* 0x8E2 */ u8 mood; /* probably called 'feel' based on code */
   /* 0x8E3 */ u8 mood_time; /* probably called 'feel_tim' based on code */
@@ -104,12 +123,27 @@ typedef struct animal_s {
   /* 0x8E9 */ u8 moved_in; /* TRUE when the villager moved in after town creation, FALSE if they started out in town */
   /* 0x8EA */ u8 removing; /* TRUE when the villager is leaving town, FALSE otherwise */
   /* 0x8EB */ s8 cloth_original_id; /* 0xFF when not wearing an Able Sister's pattern, otherwise 0-3 indicating which pattern */
-  /* 0x8EC */ s8 umbrella_id; /* 0xFF when no umbrella, 0-31 when a standard umbrella, 32-35 when using an Able Sister's pattern */
+  /* 0x8EC */ s8 umbrella_id; /* 0xFF when no umbrella, 0-31 when a standard umbrella, 32-35 when using an Able Sister's pattern
+  /* 0x8ED */ u8 unk_8ED; /* Exists according to mISL_gc_to_agb_animal, but seems unused in practice */
   /* 0x8EE */ mActor_name_t present_cloth; /* The most recently received shirt from a letter which the villager may change into */
   /* 0x8F0 */ u8 animal_relations[ANIMAL_NUM_MAX]; /* relationships between all villagers in town, starts at 128 which is neutral */
   /* 0x900 */ AnmHPMail_c hp_mail[ANIMAL_HP_MAIL_NUM]; /* mail password info storage */
   /* 0x000 */ u8 unused[24]; /* unknown usage/unused */
 } Animal_c;
+
+/*
+  Struct for keeping track of an event where a villager can briefly return to your town after
+  moving away to another town. The time limit seems to be 60 days, and the villager will only
+  appear once per player during that time if the player talks to them.
+*/
+
+/* sizeof(Anmret_c) == 0xC */
+typedef struct animal_return_s {
+  /* 0x00 */ mActor_name_t npc_id; /* id of the villager who left */
+  /* 0x02 */ u8 talk_bit; /* which players have already interacted with this villager */
+  /* 0x03 */ u8 exist; /* if the villager exists */
+  /* 0x04 */ lbRTC_time_c renew_time; /* time that this struct was updated */
+} Anmret_c;
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);

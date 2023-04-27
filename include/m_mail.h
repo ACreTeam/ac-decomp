@@ -59,6 +59,9 @@ typedef struct mail_s {
   /* 0x02E */ Mail_ct_c content;
 } Mail_c;
 
+extern int mMl_strlen(u8* str, int maxlen, u8 check_char);
+extern void mMl_clear_mail_box(Mail_c* mail_box, int count);
+
 #ifdef __cplusplus
 }
 #endif

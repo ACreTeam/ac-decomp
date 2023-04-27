@@ -4,6 +4,11 @@ m_debug_hayakawa.c:
     .text: [0x803965E4, 0x803973E8]
     .rodata: [0x80641D50, 0x80641D90]
     .data: [0x80651328, 0x80651358]
+m_home.c:
+    .text: [0x803B2E88, 0x803B3688]
+    .data: [0x806546C8, 0x80655340]
+m_house.c:
+    .text: [0x803B3688, 0x803B3880]
 m_kabu_manager.c:
     .text: [0x803B5CC4, 0x803B6280]
     .rodata: [0x80642480, 0x806424C0]

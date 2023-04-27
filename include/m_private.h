@@ -160,6 +160,10 @@ extern s16 mPr_GetGoodsPower();
 extern s16 mPr_GetMoneyPower();
 
 extern void mPr_PrintMapInfo_debug(gfxprint_t* gfxprint);
+extern int mPr_NullCheckPersonalID(PersonalID_c* pid);
+extern int mPr_CheckCmpPersonalID(PersonalID_c* pid_a, PersonalID_c* pid_b);
+extern void mPr_ClearPersonalID(PersonalID_c* pid);
+extern void mPr_CopyPersonalID(PersonalID_c* dst, PersonalID_c* src);
 
 #ifdef __cplusplus
 }
