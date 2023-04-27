@@ -17,6 +17,7 @@
 #include "m_police_box.h"
 #include "m_snowman.h"
 #include "m_config.h"
+#include "m_island.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -81,9 +82,11 @@ typedef struct Save_s {
   /* 0x0213A0 */ u8 keep_house_size[PLAYER_NUM]; /* saved flags for house sizes */
   /* 0x0213A4 */ u8 _tmp6[0x1184];
   /* 0x022528 */ OSTime time_delta; /* time delta against GC RTC */
-  /* 0x022530 */ u8 _tmp7[0x1C30];
+  /* 0x022530 */ u8 _tmp7[0x10];
+  /* 0x022540 */ Island_c island; /* island data */
+  /* 0x023E40 */ u8 _tmp8[0x320];
   /* 0x024160 */ Anmret_c return_animal; /* information about villager which moved back in to your town after moving to someone else's town */
-  /* 0x02416C */ u8 _tmp8[0x1E94];
+  /* 0x02416C */ u8 _tmp9[0x1E94];
 } Save_t;
 
 typedef union save_u {
