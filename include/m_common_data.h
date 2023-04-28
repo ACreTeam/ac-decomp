@@ -106,6 +106,9 @@ typedef struct common_data_s {
   /* 0x026110 */ Time_c time;
   /* 0x02613C */ Private_c* now_private;
   /* 0x026140 */ mHm_hs_c* now_home;
+  /* 0x026144 */ u8 tmp0[0x23E8];
+  /* 0x02852C */ s16 money_power;
+  /* 0x02852E */ s16 goods_power;
 } common_data_t;
 
 extern common_data_t common_data;

@@ -3,26 +3,32 @@
 
 #include "types.h"
 #include "libu64/gfxprint.h"
+#include "m_actor_type.h"
+
+#define mRmTp_FTR_UNIT_MAX 4
 
 enum {
-  FG_ITEM0_TYPE,
-  FG_FTR0_TYPE,
-  FG_ITEM1_TYPE,
-  FG_FTR1_TYPE,
-  FG_NXGT0_TYPE,
-  FG_STRUCTURE_TYPE,
-  FG_PAD6_TYPE,
-  FG_PAD7_TYPE,
-  FG_ITEM2_TYPE,
-  FG_ACTOR_TYPE,
-  FG_PROPS_TYPE,
-  FG_PAD11_TYPE,
-  FG_PAD12_TYPE,
-  FG_SP_NPC_TYPE,
-  FG_NPC_TYPE,
-  FG_DONT_TYPE,
-  FG_TYPE_NUM
+  mRmTp_FTRSIZE_1x1, /* x */
+  mRmTp_FTRSIZE_1x2, /* yy OR y */
+                     /*       y */
+  mRmTp_FTRSIZE_2x2, /* zz */
+                     /* zz */
+  mRmTp_FTRSIZE_NUM
 };
+
+typedef struct room_type_place_info_one_s {
+  int exists;
+  int ut_x;
+  int ut_z;
+} mRmTp_FtrPlaceInfoOne_t;
+
+typedef struct room_type_place_info_s {
+  mRmTp_FtrPlaceInfoOne_t units[mRmTp_FTR_UNIT_MAX];
+} mRmTp_FtrPlaceInfo_t;
+
+#define FTR_NUM 1266
+
+#define FTR_GET_ROTATION(f) ((f) & 3)
 
 // TEMPORARY. Should be generated with .decl files
 #define ITEM0_NO_START 0x0000
@@ -51,11 +57,10 @@ enum {
 
 #define FTR1_NO_START 0x3000
 
-#define GET_FG_ITEM0_CATEGORY(f) (((f)&0x800) >> 11)
-#define GET_FG_ITEM1_CATEGORY(f) (((f)&0xF00) >> 8)
-#define GET_FG_TYPE(f) (((f)&0xF000) >> 12)
-
 extern void mRmTp_DrawFamicomInfo(gfxprint_t* gfxprint);
 extern void mRmTp_MakeFamicom_Fdebug();
+
+extern int mRmTp_FtrItemNo2FtrIdx(mActor_name_t ftr_item_no);
+extern int mRmTp_GetFurnitureData(mActor_name_t ftr, int ut_x, int ut_z, mRmTp_FtrPlaceInfo_t* place_info);
 
 #endif

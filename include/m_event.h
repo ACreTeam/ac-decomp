@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+extern int mEv_CheckFirstJob();
+
 extern void mEv_debug_print4f(gfxprint_t* gfxprint);
 extern void mEv_sp_debug_print4f(gfxprint_t* gfxprint);
 

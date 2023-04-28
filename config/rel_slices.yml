@@ -4,6 +4,8 @@ m_debug_hayakawa.c:
     .text: [0x803965E4, 0x803973E8]
     .rodata: [0x80641D50, 0x80641D90]
     .data: [0x80651328, 0x80651358]
+m_huusui_room.c:
+    .text: [0x803B1908, 0x803B1968]
 m_home.c:
     .text: [0x803B2E88, 0x803B3688]
     .data: [0x806546C8, 0x80655340]
@@ -60,6 +62,10 @@ zurumode.c:
 sys_ucode.c:
     .text: [0x8040F008, 0x8040F048]
     .data: [0x8065FA30, 0x8065FA40]
+m_huusui_room_ovl.c:
+    .text: [0x804D1BBC, 0x804D2164]
+    .rodata: [0x80646558, 0x806465C8]
+    .data: [0x8069C0F0, 0x8069CAF0]
 m_random_field/mRF_MakePerfectBit.c:
     .text: [0x8050B1AC, 0x8050B1D4]
 m_random_field/mRF_GetRandomStepMode.c:
