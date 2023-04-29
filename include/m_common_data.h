@@ -94,6 +94,7 @@ typedef union save_u {
   u8 raw[0x26000]; /* Temp to force length */
 } Save;
 
+/* sizeof(common_data_t) == 0x2DC00 */
 typedef struct common_data_s {
   /* 0x000000 */ Save save;
   /* 0x026000 */ u8 game_started;
@@ -109,6 +110,9 @@ typedef struct common_data_s {
   /* 0x026144 */ u8 tmp0[0x23E8];
   /* 0x02852C */ s16 money_power;
   /* 0x02852E */ s16 goods_power;
+  /* 0x028530 */ u8 tmp1[0x5680];
+  /* 0x02DBB0 */ s16 can_look_goki_count;
+  /* 0x02DBB2 */ u8 tmp2[0x4E];
 } common_data_t;
 
 extern common_data_t common_data;

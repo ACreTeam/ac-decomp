@@ -6,6 +6,7 @@
 #include "lb_rtc.h"
 #include "m_personal_id.h"
 #include "m_actor_type.h"
+#include "game.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,14 +16,81 @@ extern "C" {
 #define mSP_GOODS_COUNT 39
 #define mSP_LOTTERY_ITEM_COUNT 3
 
+/* item list groups */
 enum {
-  mSP_LIST_FURNITURE,
-  mSP_LIST_PAPER,
-  mSP_LIST_CLOTH,
-  mSP_LIST_CARPET,
-  mSP_LIST_WALLPAPER,
+  mSP_LIST_A,                 /* A priority list */
+  mSP_LIST_B,                 /* B priority list */
+  mSP_LIST_C,                 /* C priority list */
+  mSP_LIST_EVENT,             /* event list */
+  mSP_LIST_TRAIN,             /*  */
+  mSP_LIST_LOTTERY,           /* lottery list */
+  mSP_LIST_HALLOWEEN,         /* halloween theme list */
+  mSP_LIST_PRESENT,           /*  */
+  mSP_LIST_CHRISTMAS,
+  mSP_LIST_SNOW,
+  mSP_LIST_HALLOWEEN2,
+  mSP_LIST_JONASON,
+  mSP_LIST_POSTOFFICE,
+  mSP_LIST_NINTENDO64,
+  mSP_LIST_SPECIALPRESENT,
+  mSP_LIST_ISLAND,
+  mSP_LIST_HOMEPAGE,
+  mSP_LIST_EVENTPRESENTCHUMON,
+  mSP_LIST_KAMAKURA,
+  mSP_LIST_ISLANDFAMICOM,
+  mSP_LIST_HARVEST,
+  mSP_LIST_MARIO,
+  mSP_LIST_TENT,
+  mSP_LIST_DUMMY23,
+  mSP_LIST_DUMMY24,
+  mSP_LIST_DUMMY25,
+  mSP_LIST_DUMMY26,
+  mSP_LIST_DUMMY27,
+  mSP_LIST_DUMMY28,
+  mSP_LIST_DUMMY29,
 
-  mSP_LIST_MAX
+  mSP_LIST_NUM
+};
+
+/* item List types */
+enum {
+  mSP_LISTTYPE_COMMON,            /* common ABC priority list */
+  mSP_LISTTYPE_UNCOMMON,          /* uncommon ABC priority list */
+  mSP_LISTTYPE_RARE,              /* rare ABC priority list */
+  mSP_LISTTYPE_EVENT,             /* event list */
+  mSP_LISTTYPE_TRAIN,             /*  */
+  mSP_LISTTYPE_LOTTERY,           /* lottery list */
+  mSP_LISTTYPE_HALLOWEEN,         /* halloween theme list */
+  mSP_LISTTYPE_PRESENT,           /*  */
+  mSP_LISTTYPE_ABC,               /* ABC */
+  mSP_LISTTYPE_CHRISTMAS,
+  mSP_LISTTYPE_SNOW,
+  mSP_LISTTYPE_HALLOWEEN2,
+  mSP_LISTTYPE_JONASON,
+  mSP_LISTTYPE_POSTOFFICE,
+  mSP_LISTTYPE_NINTENDO64,
+  mSP_LISTTYPE_SPECIALPRESENT,
+  mSP_LISTTYPE_ISLAND,
+  mSP_LISTTYPE_HOMEPAGE,
+  mSP_LISTTYPE_EVENTPRESENTCHUMON,
+  mSP_LISTTYPE_KAMAKURA,
+  mSP_LISTTYPE_ISLANDFAMICOM,
+  mSP_LISTTYPE_HARVEST,
+  mSP_LISTTYPE_MARIO,
+  mSP_LISTTYPE_TENT,
+
+  mSP_LISTTYPE_NUM
+};
+
+/* item list kinds */
+enum {
+  mSP_KIND_FURNITURE,
+  mSP_KIND_PAPER,
+  mSP_KIND_CLOTH,
+  mSP_KIND_CARPET,
+  mSP_KIND_WALLPAPER,
+
+  mSP_KIND_MAX
 };
 
 /* sizeof(mSP_goods_priority_list_c) == 1 */
@@ -35,7 +103,7 @@ typedef struct shop_goods_priority_list_s {
 
 /* sizeof(Shop_c) == 0x140 */
 typedef struct shop_s {
-  /* 0x000 */ mSP_goods_priority_list_c priority_lists[mSP_LIST_MAX]; /* ABC list rarity (known internally as priority) */
+  /* 0x000 */ mSP_goods_priority_list_c priority_lists[mSP_KIND_MAX]; /* ABC list rarity (known internally as priority) */
   /* 0x006 */ PersonalID_c unused_ids[mSP_PERSONAL_ID_COUNT]; /* unused personal ids */
   /* 0x0CE */ mActor_name_t items[mSP_GOODS_COUNT]; /* standard shop items */
   /* 0x11C */ mActor_name_t rare_item; /* spotlight rare item taken from rare furniture ABC list */
@@ -56,6 +124,8 @@ typedef struct shop_s {
 } Shop_c;
 
 extern void mSP_PrintNowShopSalesSum(gfxprint_t* gfxprint);
+extern void mSP_SelectRandomItem_New(GAME* unused, mActor_name_t* item_tbl, int item_tbl_count, mActor_name_t* goods_exist_tbl, int goods_exist_tbl_count, int category, int list_type, int get_uncollected_item);
+extern void mSP_RandomUmbSelect(mActor_name_t* item_buf, int item_buf_count);
 
 extern void mItemDebug_ItemDebugMain();
 extern void mItemDebug_ItemDebugDraw(gfxprint_t* gfxprint);

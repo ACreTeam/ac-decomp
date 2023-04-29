@@ -85,6 +85,7 @@ typedef struct home_wall_floor_s {
 typedef struct home_goki_s {
   /* 0x00 */ lbRTC_time_c time; /* last time updated */
   /* 0x08 */ u8 num; /* number of cockroaches in the house */
+  /* 0x09 */ u8 pad; /* unused outside of being initalized to 0 */
 } mHm_goki_c;
 
 /* sizeof(mHm_lyr_c) == 0x228 */
