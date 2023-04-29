@@ -4,6 +4,7 @@
 #include "types.h"
 #include "dolphin/os/OSTime.h"
 #include "dolphin/os/OSTimer.h"
+#include "dolphin/os/OSMessage.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,16 +32,33 @@ typedef struct {
   irqmgr_mesg_t msgDelayPreNMI;
   OSMessageQueue _msgQueue;
   OSMessage _msgBuf[IRQMGR_MESSAGES_MAX];
-  OSThread thread;
-  irqmgr_client_t* clients;
-  u8 prenmi;
+
+  union {
+    OSThread thread;
+    struct {
+      u8 unused[sizeof(OSThread) - 2 * sizeof(void*)];
+      irqmgr_client_t* clients;
+      u8 prenmi;
+    };
+  };
+
   OSTime prenmi_time;
   OSTimer timer;
   OSTime retraceTime;
 } irqmgr_t;
 
+extern void irqmgr_AddClient(irqmgr_client_t* client, OSMessageQueue* msgqueue);
+/* @unused extern void irqmgr_RemoveClient(irqmgr_client_t* client) */
+extern void CreateIRQManager(void* stack, size_t stack_size, int priority, u8 retracecount);
+
+/* probably declared in os_vi.h */
+extern void osViSetEvent(OSMessageQueue* mesgq, OSMessage msg, u32 retcount);
+
 extern volatile int ResetStatus;
 extern volatile OSTime ResetTime;
+extern volatile OSTime RetraceTime;
+extern volatile int RetraceCount;
+extern irqmgr_t irqmgr_class;
 
 #ifdef __cplusplus
 };

@@ -52,6 +52,10 @@ graph.c:
     .text: [0x80405518, 0x80405EC8]
     .data: [0x8065ECA8, 0x8065ECB0]
     .bss: [0x812F31E8, 0x812F3560]
+#irqmgr.c:
+#    .text: [0x80405EC8, 0x80406480]
+#    .data: [0x8065ECB0, 0x8065ECD0]
+#    .bss: [0x812F3560, 0x812F4CB0]
 lb_rtc.c:
     .text: [0x80406480, 0x8040752C]
     .rodata: [0x806436F8, 0x806437A0]

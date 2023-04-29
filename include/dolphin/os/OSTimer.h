@@ -5,6 +5,7 @@
 
 #include "types.h"
 #include "dolphin/os/OSAlarm.h"
+#include "dolphin/os/OSMessage.h"
 
 #ifdef __cplusplus
 extern "C" {
