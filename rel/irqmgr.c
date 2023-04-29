@@ -1,5 +1,8 @@
 #include "irqmgr.h"
 #include "libultra/os_thread.h"
+#include "libultra/libultra.h"
+#include "libultra/os_timer.h"
+#include "libultra/osMesg.h"
 #include "dolphin/os.h"
 #include "dolphin/os/OSMessage.h"
 #include "dolphin/os/OSTime.h"
