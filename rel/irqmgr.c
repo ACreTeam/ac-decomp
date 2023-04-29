@@ -7,7 +7,7 @@
 #include "dolphin/os/OSMessage.h"
 #include "dolphin/os/OSTime.h"
 
-#define MSEC(x) OSMicrosecondsToTicks((x) * (OSTime)1000)
+#define MSEC(x) OSMicrosecondsToTicks(((u64)(x)) * (u64)1000)
 
 volatile int ResetStatus;             // 0x00
 volatile OSTime ResetTime;    // 0x08
