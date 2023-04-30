@@ -56,4 +56,10 @@ typedef u32 unknown;
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
+/* ARGB8 color format (32 bits) to RGB5A3 color format (16 bits) */
+#define ARGB8_to_RGB5A3(argb8) \
+  ((u16)(((argb8) & 0xFF000000) >= 0xE0000000 ? \
+   /* Fully opaque, 5 bits per color channel */ (0x8000 | ((((argb8) >> 16) & 0xF8) << 7) | ((((argb8) >> 8) & 0xF8) << 2) | (((argb8) & 0xFF) >> 3)) : \
+   /* 3 bits of transparency, 4 bits per color channel */ (((((argb8) >> 24) & 0xE0) << 7) | ((((argb8) >> 16) & 0xF0) << 4) | (((argb8) >> 8) & 0xF0) | (((argb8) & 0xF0) >> 4))))
+
 #endif

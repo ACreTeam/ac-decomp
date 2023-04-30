@@ -12,6 +12,8 @@ extern void JW_EndFrame();
 extern void JW_JUTReport(int x, int y, int show_count, const char* fmt, ...);
 extern void JW_SetLowResoMode(BOOL enable);
 extern void JW_SetProgressiveMode(BOOL enable);
+extern u32 JW_GetAramAddress(int resource_no);
+extern u8* _JW_GetResourceAram(u32 aram_addr, u8* dst, size_t size);
 
 extern void* JC_JFWSystem_getSystemConsole();
 extern void* JC_JFWSystem_getRootHeap();
