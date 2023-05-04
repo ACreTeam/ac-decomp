@@ -6,6 +6,10 @@ m_debug_hayakawa.c:
     .text: [0x803965E4, 0x803973E8]
     .rodata: [0x80641D50, 0x80641D90]
     .data: [0x80651328, 0x80651358]
+m_fbdemo.c:
+    .text: [0x803A0350, 0x803A0ABC]
+    .rodata: [0x80641F40, 0x80641F60]
+    .data: [0x80652AA0, 0x80652AD0]
 m_huusui_room.c:
     .text: [0x803B1908, 0x803B1968]
 m_home.c:

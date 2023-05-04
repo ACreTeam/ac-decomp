@@ -42,7 +42,7 @@ void _Putfld(_Pft*, va_list, u8, u8*);
 
 /* These functions seem to have 04,p enabled */
 #pragma optimize_for_size off
-s32 _Printf(void* (*pfn)(void*, const char*, int), void* arg, const char* fmt,
+int _Printf(void* (*pfn)(void*, const char*, int), void* arg, const char* fmt,
             va_list ap) {
   /* Unused static variables to match position of locals */
   static int unused0;

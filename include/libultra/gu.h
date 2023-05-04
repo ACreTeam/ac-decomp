@@ -4,6 +4,7 @@
 #include "types.h"
 #include "libultra/ultratypes.h"
 
+void guMtxIdentF(float mf[4][4]);
 
 inline void guTranslateF(float m[4][4], float x, float y, float z){
     guMtxIdentF(m);
@@ -21,7 +22,7 @@ inline void guScaleF(float mf[4][4], float x, float y, float z) {
 }
 
 void guMtxF2L(float mf[4][4], Mtx *m);
-void guMtxIdentF(float mf[4][4]);
+
 void guTranslate(Mtx *m, float x, float y, float z);
 void guScale(Mtx *m, float x, float y, float z);
 
