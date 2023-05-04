@@ -16,6 +16,12 @@ typedef struct {
   /* 0x12 */ OSContPad off;
 } pad_t;
 
+
+int pad_physical_stick_x(pad_t*);
+int pad_physical_stick_y(pad_t*);
+void pad_set_logical_stick(pad_t*, int, int);
+void pad_correct_stick(pad_t*);
+
 #ifdef __cplusplus
 }
 #endif
