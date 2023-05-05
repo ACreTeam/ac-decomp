@@ -19,6 +19,13 @@ typedef union {
   rgba8888_t c;
 } rgba8888;
 
+typedef union {
+    struct {
+        u8 r, g, b, a;
+    };
+    u32 rgba;
+} Color_RGBA8_u32;
+
 #ifdef __cplusplus
 }
 #endif

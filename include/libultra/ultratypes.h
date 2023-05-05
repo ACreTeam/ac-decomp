@@ -3,13 +3,10 @@
 
 #include "types.h"
 
-/*
-typedef struct {
-    float m[4][4];
-} Mtx;
-*/
-
 typedef float MtxF_t[4][4];
+
+
+
 typedef union {
     struct {
 

@@ -5,3 +5,10 @@ config/dol.yml:
         addrs: [0x800b05f4, 0x800b0608]
     nintendo_hi_0.aw:
         addrs: [0x800c3140, 0x800cca40]
+config/rel.yml:
+    wipe1_v:
+        addrs: [0x80652AD0, 0x80652C60]
+    g_wipe1_txt:
+        addrs: [0x80652C60, 0x80653460]
+    wipe1_modelT:
+        addrs: [0x80653460, 0x80653558]

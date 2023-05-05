@@ -10,6 +10,14 @@ m_fbdemo.c:
     .text: [0x803A0350, 0x803A0ABC]
     .rodata: [0x80641F40, 0x80641F60]
     .data: [0x80652AA0, 0x80652AD0]
+#m_fbdemo_wipe1.c: some rodata is 8 bytes long, when it should be 4
+#    .text: [0x803A0F00, 0x803A12F8]
+#    .rodata: [0x80641FA0, 0x80641FC0]
+#    .data: [0x80652AD0, 0x80653558]
+#m_fbdemo_fade.c: data content mismatch
+#    .text: [0x803A12F8, 0x803A1508]
+#    .rodata: [0x80641FC0, 0x80641FD8]
+#    .data: [0x80653558, 0x806535A0]
 m_huusui_room.c:
     .text: [0x803B1908, 0x803B1968]
 m_home.c:

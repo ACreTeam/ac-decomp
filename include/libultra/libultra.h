@@ -5,6 +5,9 @@
 #include "dolphin/os/OSTime.h"
 #include "dolphin/os/OSCache.h"
 
+#define N64_SCREEN_HEIGHT 240
+#define N64_SCREEN_WIDTH 320
+
 int bcmp (void *v1, void *v2, u32 size);
 void bcopy(void *src, void *dst, size_t n);
 void bzero(void *ptr, size_t size);
