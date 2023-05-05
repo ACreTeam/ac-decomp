@@ -21,9 +21,9 @@ typedef struct {
 
 extern TransitionWipe* fbdemo_wipe1_init(TransitionWipe*);
 extern void fbdemo_wipe1_move(TransitionWipe*, int);
-extern void fbdemo_wipe1_draw(TransitionWipe* Gfx**);
+extern void fbdemo_wipe1_draw(TransitionWipe*, Gfx**);
 extern void fbdemo_wipe1_startup(TransitionWipe*);
 extern void fbdemo_wipe1_settype(TransitionWipe*, int);
 extern void fbdemo_wipe1_setcolor_rgba8888(TransitionWipe*, u32);
-extern void fbdemo_wipe1_is_finish(TransitionWipe*);
+extern u8 fbdemo_wipe1_is_finish(TransitionWipe*);
 #endif

@@ -21,6 +21,6 @@ extern void fbdemo_fade_move(TransitionFade*, int);
 extern void fbdemo_fade_startup(TransitionFade*);
 extern void fbdemo_fade_settype(TransitionFade*, int);
 extern void fbdemo_fade_setcolor_rgba8888(TransitionFade*, u32);
-extern void fbdemo_fade_is_finish(TransitionFade*);
+extern u8 fbdemo_fade_is_finish(TransitionFade*);
 
 #endif
