@@ -152,7 +152,6 @@ typedef struct private_s {
   /* 0x11DC */ mPr_map_info_c maps[mPr_FOREIGN_MAP_COUNT]; /* maps 'collected' for foreign towns */
 
   /* 0x122C */ u32 bank_account; /* probably 'deposit' interally */
-  /* 0x1230 */ u8 unused_1230[16];
   /* 0x1240 */ mNW_original_design_c my_org[mPr_ORIGINAL_DESIGN_COUNT]; /* Able Sisters' designs */
   /* 0x2340 */ u8 my_org_no_table[mPr_ORIGINAL_DESIGN_COUNT]; /* order of designs */
   /* 0x2348 */ u32 state_flags; /* TODO: this might be a bitfield/struct, also document bits */

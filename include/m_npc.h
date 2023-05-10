@@ -145,6 +145,10 @@ typedef struct animal_return_s {
   /* 0x04 */ lbRTC_time_c renew_time; /* time that this struct was updated */
 } Anmret_c;
 
+/* anm_id could also just be a Animal_c pointer */
+extern void mNpc_GetNpcWorldNameAnm(u8* name, AnmPersonalID_c* anm_id);
+extern int mNpc_CheckFreeAnimalPersonalID(AnmPersonalID_c* anm_id);
+
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);
 

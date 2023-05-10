@@ -44,7 +44,7 @@ typedef struct {
   /* 0x00AC */ irqmgr_client_t irqclient;
   /* 0x00B4 */ u32 _unk0; /* maybe additional value in irqmgr_client_t? */
   /* 0x00B8 */ OSThread thread;
-  /* 0x03D0 */ u8 _tmp[0x58]; //pad_t pads[MAXCONTROLLERS]; // TODO: figure out what's going on here.
+  /* 0x03C8 */ u8 _tmp[0x60]; //pad_t pads[MAXCONTROLLERS]; // TODO: figure out what's going on here.
   /* 0x0428 */ OSContPad n64_pads[MAXCONTROLLERS]; /* Converted from PADStatus via JUTGamePad */
   /* 0x0440 */ u8 num_controllers;
   /* 0x0441 */ u8 device_type[4];
