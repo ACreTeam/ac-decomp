@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 typedef u16 mActor_name_t;
+typedef struct actor_s ACTOR;
 
 #ifdef __cplusplus
 }
