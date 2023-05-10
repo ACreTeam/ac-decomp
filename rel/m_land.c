@@ -234,7 +234,7 @@ extern int mLd_PlayerManKindCheckNo(u8 player_no) {
 
 /**
  * @brief Checks if the current player is a foreigner.
- * @return TRYE if the current player is a foreigner, FALSE otherwise.
+ * @return TRUE if the current player is a foreigner, FALSE otherwise.
  */
 extern int mLd_PlayerManKindCheck() {
   return mLd_PlayerManKindCheckNo(Common_Get(player_no));
