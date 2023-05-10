@@ -96,8 +96,22 @@ enum events {
   mEv_SPECL_DESIGNER_COMPLETE = (int)mEv_SET(mEv_SPECL_EVENT, 0)
 };
 
+enum week_type {
+  mEv_WEEKTYPE_NONE,
+  mEv_WEEKTYPE_1ST,
+  mEv_WEEKTYPE_2ND,
+  mEv_WEEKTYPE_3RD,
+  mEv_WEEKTYPE_4TH,
+  mEv_WEEKTYPE_5TH,
+  mEv_WEEKTYPE_LAST,
+  mEv_WEEKTYPE_SPECIAL
+};
+
 extern int mEv_CheckFirstJob();
 extern int mEv_CheckArbeit();
+extern int mEv_CheckTitleDemo();
+
+extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
 
 extern void mEv_debug_print4f(gfxprint_t* gfxprint);
 extern void mEv_sp_debug_print4f(gfxprint_t* gfxprint);

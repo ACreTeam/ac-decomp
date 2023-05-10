@@ -88,7 +88,7 @@ extern int mFont_UnintToString(
   int last_figure;
 
   int l = figure - figure_start;
-  u8 fill_char = fill_zero ? CHAR_ZERO : CHAR_SPACE ;
+  u8 fill_char = fill_zero ? CHAR_ZERO : CHAR_SPACE;
   u8 left_fill_char = fill_zero && !left_cut ? CHAR_ZERO : CHAR_SPACE;
 
   cur_num = num;

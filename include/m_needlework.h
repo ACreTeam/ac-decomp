@@ -24,9 +24,8 @@ extern "C" {
 typedef struct original_data_s {
   /* 0x000 */ u8 name[mNW_ORIGINAL_DESIGN_NAME_LEN];
   /* 0x010 */ u8 palette;
-  /* 0x011 */ u8 pad[15];
 
-  /* 0x020 */ u8 design[mNW_DESIGN_TEX_SIZE];
+  /* 0x020 */ u8 design[mNW_DESIGN_TEX_SIZE] ATTRIBUTE_ALIGN(32); /* this is aligned to 32 bytes for ARAM transfer */
 } mNW_original_design_c;
 
 /* sizeof(mNW_needlework_c) == 0x1100 */

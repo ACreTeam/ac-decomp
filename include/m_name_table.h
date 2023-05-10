@@ -55,6 +55,8 @@ enum {
 #define ITM_SHOVEL 0x2202
 #define ITM_ROD 0x2203
 
+#define ITM_PITFALL 0x2512
+
 #define ITM_ENV_START 0x2900
 #define ITM_SAPLING ITM_ENV_START
 #define ITM_CEDAR_SAPLING 0x2901
