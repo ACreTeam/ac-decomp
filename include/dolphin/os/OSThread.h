@@ -67,9 +67,6 @@ struct OSThread
 
     u8 *stackBase; // the thread's designated stack (high address)
     u32 *stackEnd; // last word of stack (low address)
-
-    s32 error; // error state of thread
-    void* specific[2]; // data specific to this thread (set by programmer)
 };
 
 // Thread states

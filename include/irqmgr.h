@@ -32,16 +32,9 @@ typedef struct {
   irqmgr_mesg_t msgDelayPreNMI;
   OSMessageQueue _msgQueue;
   OSMessage _msgBuf[IRQMGR_MESSAGES_MAX];
-
-  union {
-    OSThread thread;
-    struct {
-      u8 unused[sizeof(OSThread) - 2 * sizeof(void*)];
-      irqmgr_client_t* clients;
-      u8 prenmi;
-    };
-  };
-
+  OSThread thread;
+  irqmgr_client_t* clients;
+  u8 prenmi;
   OSTime prenmi_time;
   OSTimer timer;
   OSTime retraceTime;

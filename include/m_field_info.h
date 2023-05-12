@@ -9,6 +9,9 @@
 extern "C" {
 #endif
 
+#define mFI_ROW_TO_CHARSTR(row) ((row) + 'A')
+#define mFI_COL_TO_CHARSTR(col) ((col) + '0')
+
 enum field_type {
   mFI_FIELDTYPE_FG,
   mFI_FIELDTYPE_1,
@@ -21,8 +24,9 @@ enum field_type {
   mFI_FIELDTYPE_NUM
 };
 
-#define mFI_TO_FIELD_ID(type, index) ((type << 12) | index)
-#define mFI_GET_TYPE (field_id) (field_id & 0xF000)
+#define mFI_TO_FIELD_ID(type, index) (((type) << 12) | (index))
+#define mFI_GET_TYPE(field_id) ((field_id) & 0xF000)
+#define mFI_TYPE(type) ((type) << 12)
 
 enum field_room {
   /* TODO: others */
@@ -55,6 +59,7 @@ extern mActor_name_t mFI_GetFieldId();
 extern int mFI_GetClimate();
 extern mActor_name_t* mFI_BkNumtoUtFGTop(int block_x, int block_z);
 extern void mFI_ClearDeposit(int block_x, int block_z);
+extern int mFI_SetTreasure(int* block_x, int* block_z, mActor_name_t item_no);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);

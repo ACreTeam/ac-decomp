@@ -19,6 +19,8 @@
 #include "m_config.h"
 #include "m_island.h"
 #include "m_needlework.h"
+#include "m_museum_display.h"
+#include "m_lib.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,6 +43,18 @@ typedef struct time_s {
   int add_sec;
   int add_idx;
 } Time_c;
+
+/* sizeof(PlusBridge_c) == 8 */
+typedef struct plus_bridge_s {
+  /* 0x00 */ u8 block_x;
+  /* 0x01 */ u8 block_z;
+  /* 0x02 */ struct {
+    u8 exists:1;
+    u8 pending:1;
+    u8 pad:6;
+  };
+  /* 0x04 */ lbRTC_ymd_t build_date;
+} PlusBridge_c;
 
 typedef struct Save_s {
   /* 0x000000 */ mFRm_chk_t save_check; /* save information */
@@ -77,24 +91,38 @@ typedef struct Save_s {
   /* 0x020F1B */ u8 npc_force_go_home; /* when set to 1, forces the 'm_go_home' code to activate */
   /* 0x020F1C */ u16 deposit[FG_BLOCK_X_NUM * FG_BLOCK_Z_NUM][UT_Z_NUM]; /* flags for which items are buried around town */
   /* 0x0212DC */ lbRTC_time_c last_grow_time; /* last time that a new villager moved into town */
-  /* 0x0212E4 */ u8 _tmp4[0xAA];
+  /* 0x0212E4 */ u8 _tmp4[0x02137E - 0x0212E4];
+  /* 0x02137E */ lbRTC_time_c treasure_buried_time; /* last time treasure was actually buried */
+  /* 0x021386 */ lbRTC_time_c treasure_checked_time; /* last time check to bury treasure was executed */
   /* 0x02138E */ u8 saved_rom_debug; /* flag to set save to 'debug rom' mode */
-  /* 0x02138F */ u8 _tmp5[0x11];
+  /* 0x02138F */ u8 snowman_year; /* year last snowman was built */
+  /* 0x021390 */ u8 snowman_month; /* month last snowman was built */
+  /* 0x021391 */ u8 snowman_day; /* day last snowman was built */
+  /* 0x021392 */ u8 snowman_hour; /* hour last snowman was built */
+  /* 0x021393 */ u8 haniwa_scheduled; /* when set, gyroids will be spwaned */
+  /* 0x021394 */ u8 dust_flag; /* set by field assessment for too much 'dust' (garbage) around town, causes immediate fail of town ranking */
+  /* 0x021395 */ u8 clear_grass; /* set by Wisp, removes all weeds */
+  /* 0x021396 */ lbRTC_ymd_t event_year_ymd; /* might not exist and just be lbRTC_year_t */
+  /* 0x02139A */ u8 unused_2139A[6];
   /* 0x0213A0 */ u8 keep_house_size[PLAYER_NUM]; /* saved flags for house sizes */
-  /* 0x0213A4 */ u8 _tmp6[0x21400 - 0x213A4];
+  /* 0x0213A4 */ lbRTC_ymd_t force_remove_date; /* last time the NPC force remove timer was updated */
+  /* 0x0213A8 */ mMmd_info_c museum_display; /* museum display bits */
+  /* 0x0213E7 */ u8 _tmp6[0x213F0 - 0x213E7];
+  /* 0x0213F0 */ PlusBridge_c plus_bridge; /* additional bridge info */
   /* 0x021400 */ mNW_needlework_c needlework; /* Able Sisters' designs */
   /* 0x022500 */ u8 _tmp7[0x22528 - 0x22500];
   /* 0x022528 */ OSTime time_delta; /* time delta against GC RTC */
-  /* 0x022530 */ u8 _tmp8[0x10];
   /* 0x022540 */ Island_c island; /* island data */
   /* 0x023E40 */ u8 _tmp9[0x320];
   /* 0x024160 */ Anmret_c return_animal; /* information about villager which moved back in to your town after moving to someone else's town */
-  /* 0x02416C */ u8 _tmp10[0x1E94];
+  /* 0x02416C */ u8 _tmp10[0x241A0 - 0x2416C];
+  /* 0x0241A0 */ lbRTC_time_c saved_auto_nwrite_time; /* save data notice time used for fishing tourney results? */
+  /* 0x0241A8 */ u8 _tmp11[0x26000 - 0x241A8];
 } Save_t;
 
 typedef union save_u {
   Save_t save;
-  u8 raw[0x26000]; /* Temp to force length */
+  //u8 raw[0x26000]; /* Temp to force length */
 } Save;
 
 /* sizeof(common_data_t) == 0x2DC00 */
@@ -116,9 +144,27 @@ typedef struct common_data_s {
   /* 0x02614F */ u8 tmp34[0x2852C - 0x2614F];
   /* 0x02852C */ s16 money_power;
   /* 0x02852E */ s16 goods_power;
-  /* 0x028530 */ u8 tmp1[0x5680];
+  /* 0x028530 */ u8 tmp1[0x28879 - 0x28530];
+  /* 0x028879 */ u8 auto_nwrite_count;
+  /* 0x02887A */ lbRTC_year_t auto_nwrite_year;
+  /* 0x02887C */ u8 save_error_type; /* set to one of the mFRm_ERROR_* states when save is invalid */
+  /* 0x02887D */ u8 train_coming_flag; /* set when the train is coming */
+  /* 0x02887E */ u8 buried_treasure_flag; /* when set, treasure cannot be buried */
+  /* 0x02887F */ u8 tmp2[0x2DB40 - 0x2887F];
+  /* 0x02DB40 */ u8 auto_nwrite_set; /* when true, saved nwrite time will be utilized. Seems to be used to keep same date for fishing tourney stuff. */
+  /* 0x02DB41 */ u8 tmp3[0x2DBB0 - 0x2DB41];
   /* 0x02DBB0 */ s16 can_look_goki_count;
-  /* 0x02DBB2 */ u8 tmp2[0x4E];
+  /* 0x02DBB4 */ f32 rainbow_opacity; /* current opacity of rainbow (0.0f - 1.0f) */
+  /* 0x02DBB8 */ u32 event_flags[7]; /* TODO: make array size a definition/enum */
+  /* 0x02DBD4 */ xyz_t* pluss_bridge_pos; /* position of extra bridge */
+  /* 0x02DBD8 */ lbRTC_time_c auto_nwrite_time; /* cached notice time used for fishing tourney results? */
+  /* 0x02DBE0 */ u8 rhythym_updated;
+  /* 0x02DBE1 */ u8 _2dbe1;
+  /* 0x02DBE2 */ u8 hem_visible; /* controls farley's visiblilty during cutscene? */
+  /* 0x02DBE4 */ u8* carde_program_p; /* pointer to current e-Reader program data */
+  /* 0x02DBE8 */ size_t carde_program_size; /* size of current e-Reader program data */
+  /* 0x02DBEC */ int unk_nook_present_count; /* something possibly to do withhanding over password present? */
+  /* 0x02DBF0 */ u8 pad[16];
 } common_data_t;
 
 extern common_data_t common_data;

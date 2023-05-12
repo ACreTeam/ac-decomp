@@ -126,6 +126,7 @@ typedef struct shop_s {
 extern void mSP_PrintNowShopSalesSum(gfxprint_t* gfxprint);
 extern void mSP_SelectRandomItem_New(GAME* unused, mActor_name_t* item_tbl, int item_tbl_count, mActor_name_t* goods_exist_tbl, int goods_exist_tbl_count, int category, int list_type, int get_uncollected_item);
 extern void mSP_RandomUmbSelect(mActor_name_t* item_buf, int item_buf_count);
+extern int mSP_GetShopLevel();
 
 extern void mItemDebug_ItemDebugMain();
 extern void mItemDebug_ItemDebugDraw(gfxprint_t* gfxprint);

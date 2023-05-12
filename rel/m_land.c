@@ -221,7 +221,7 @@ extern u16 mLd_MakeLandId() {
 /**
  * @brief Checks if a player is a foreigner based on their player number.
  * @param player_no The player number.
- * @return FOREIGN if the player is a foreigner, NATIVE otherwise.
+ * @return TRUE if the player is a foreigner, FALSE otherwise.
  */
 extern int mLd_PlayerManKindCheckNo(u8 player_no) {
   int foreigner = TRUE;
@@ -234,7 +234,7 @@ extern int mLd_PlayerManKindCheckNo(u8 player_no) {
 
 /**
  * @brief Checks if the current player is a foreigner.
- * @return FOREIGN if the current player is a foreigner, NATIVE otherwise.
+ * @return TRUE if the current player is a foreigner, FALSE otherwise.
  */
 extern int mLd_PlayerManKindCheck() {
   return mLd_PlayerManKindCheckNo(Common_Get(player_no));
