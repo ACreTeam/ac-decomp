@@ -2626,6 +2626,10 @@ global:
     0x8009ad7c: __ptmf_scall
     0x8009ada4: __cvt_fp2unsigned
     0x8009ae00: __save_fpr
+    0x8009ae2c: _savefpr_25
+    0x8009ae34: _savefpr_27
+    0x8009ae38: _savefpr_28
+    0x8009ae3c: _savefpr_29
     0x8009ae4c: __restore_fpr
     0x8009ae98: __save_gpr
     0x8009ae9c: _savegpr_15
