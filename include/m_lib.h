@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "m_play.h"
-#include "m_actor.h"
+#include "m_actor_type.h"
 
 #ifdef __cplusplus
 extern "C" {
