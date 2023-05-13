@@ -10,5 +10,3 @@ config/rel.yml:
         addrs: [0x80652AD0, 0x80652C60]
     g_wipe1_txt:
         addrs: [0x80652C60, 0x80653460]
-    wipe1_modelT:
-        addrs: [0x80653460, 0x80653558]

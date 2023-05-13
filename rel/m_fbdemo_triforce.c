@@ -16,7 +16,7 @@ void fbdemo_triforce_startup(TransitionTriforce* this){
         this->txt = 0x224;
     }
 
-    guPerspective(&this->perspmtx, &this->normal, 60.0f, 1.33f, 10.0f, 12800.0f, 1.0f);
+    guPerspective(&this->perspmtx, &this->normal, 60.0f, 4.0f/3.0f, 10.0f, 12800.0f, 1.0f);
     guLookAt(&this->lookatmtx, 0.0f,0.0f, 400.0f, 0.0f, 0.0f, 0.0f, 0.0f,1.0f, 0.0f);
 }
 
