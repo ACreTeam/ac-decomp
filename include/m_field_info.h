@@ -55,10 +55,21 @@ enum {
   mFI_CLIMATE_NUM
 };
 
+/* sizeof(mFI_unit_c) == 0x14 */
+typedef struct location_info_s {
+  /* 0x00 */ int block_x;
+  /* 0x04 */ int block_z;
+  /* 0x08 */ int unit_x;
+  /* 0x0C */ int unit_z;
+  /* 0x10 */ mActor_name_t* block_data;
+} mFI_unit_c;
+
+extern int mFI_CheckFieldData();
 extern mActor_name_t mFI_GetFieldId();
 extern int mFI_GetClimate();
 extern mActor_name_t* mFI_BkNumtoUtFGTop(int block_x, int block_z);
 extern void mFI_ClearDeposit(int block_x, int block_z);
+extern void mFI_GetSpecialBlockNum(int* block_pos_tbl, u32* kind_list, int kind_num);
 extern int mFI_SetTreasure(int* block_x, int* block_z, mActor_name_t item_no);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
