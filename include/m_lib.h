@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "m_play.h"
-#include "m_actor.h"
+#include "m_actor_type.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,11 +18,11 @@ typedef struct xy_s {
     f32 x, y;
 } xy_t;
 
-typedef struct xyz_t {
+typedef struct xyz_s {
     f32 x, y, z;
 } xyz_t;
 
-typedef struct s_xyz {
+typedef struct s_xyz_s {
     s16 x, y, z;
 } s_xyz;
 
