@@ -21,6 +21,7 @@
 #include "m_needlework.h"
 #include "m_museum_display.h"
 #include "m_lib.h"
+#include "m_field_assessment.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -115,9 +116,11 @@ typedef struct Save_s {
   /* 0x022540 */ Island_c island; /* island data */
   /* 0x023E40 */ u8 _tmp9[0x320];
   /* 0x024160 */ Anmret_c return_animal; /* information about villager which moved back in to your town after moving to someone else's town */
-  /* 0x02416C */ u8 _tmp10[0x241A0 - 0x2416C];
+  /* 0x02416C */ u8 _tmp10[0x24178 - 0x2416C];
+  /* 0x024178 */ mFAs_GoodField_c good_field; /* field assessment last info */
+  /* 0x024184 */ u8 _tmp11[0x241A0 - 0x24184];
   /* 0x0241A0 */ lbRTC_time_c saved_auto_nwrite_time; /* save data notice time used for fishing tourney results? */
-  /* 0x0241A8 */ u8 _tmp11[0x26000 - 0x241A8];
+  /* 0x0241A8 */ u8 _tmp12[0x26000 - 0x241A8];
 } Save_t;
 
 typedef union save_u {

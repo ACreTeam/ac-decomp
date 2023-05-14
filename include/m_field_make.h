@@ -10,12 +10,21 @@ extern "C" {
 
 #define BLOCK_X_NUM 7
 #define BLOCK_Z_NUM 10
+#define BLOCK_TOTAL_NUM (BLOCK_X_NUM * BLOCK_Z_NUM)
 
 #define FG_BLOCK_X_NUM (BLOCK_X_NUM - 2) /* 5 */
 #define FG_BLOCK_Z_NUM (BLOCK_Z_NUM - 4) /* 6 */
+#define FG_BLOCK_TOTAL_NUM (FG_BLOCK_X_NUM * FG_BLOCK_Z_NUM)
 
 #define UT_X_NUM 16 /* Spaces per block (acre) in x direction */
 #define UT_Z_NUM 16 /* Spaces per block (acre) in z direction */
+#define UT_TOTAL_NUM (UT_X_NUM * UT_Z_NUM)
+
+#define IDX_2_UT_X(idx) ((idx) & (UT_X_NUM - 1))
+#define IDX_2_UT_Z(idx) (((idx) / UT_X_NUM) & (UT_Z_NUM - 1))
+
+#define FGIDX_2_BLOCK_X(idx) ((idx) % FG_BLOCK_X_NUM + 1)
+#define FGIDX_2_BLOCK_Z(idx) ((idx) / FG_BLOCK_X_NUM + 1)
 
 /* sizeof(mFM_combination_c) == 2 */
 typedef struct block_combination_s {

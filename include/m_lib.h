@@ -18,11 +18,11 @@ typedef struct xy_s {
     f32 x, y;
 } xy_t;
 
-typedef struct xyz_t {
+typedef struct xyz_s {
     f32 x, y, z;
 } xyz_t;
 
-typedef struct s_xyz {
+typedef struct s_xyz_s {
     s16 x, y, z;
 } s_xyz;
 

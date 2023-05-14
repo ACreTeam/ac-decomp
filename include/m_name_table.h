@@ -33,16 +33,207 @@ enum {
 
 /* Retrieve the item actor's category */
 #define ITEM_NAME_GET_TYPE(n) (((n) & 0xF000) >> 12)
+#define ITEM_NAME_GET_CAT(n) (((n) & 0x0F00) >> 8)
 
 #define ITEM_IS_FTR(n) \
   (ITEM_NAME_GET_TYPE(n) == NAME_TYPE_FTR0 || ITEM_NAME_GET_TYPE(n) == NAME_TYPE_FTR1)
 
 #define ITEM_IS_ITEM1(n) (ITEM_NAME_GET_TYPE(n) == NAME_TYPE_ITEM1)
 
-#define GET_NAME_ITEM0_CATEGORY(f) (((f) & 0x0800) >> 11)
+#define GET_NAME_ITEM0_CATEGORY(f) (((f) & 0x0800) >> 11) /* enviornmental or static background objects */
 #define GET_NAME_ITEM1_CATEGORY(f) (((f) & 0x0F00) >> 8)
 
+#define IS_ITEM_FLOWER(item) ((item) >= FLOWER_LEAVES_PANSIES0 && (item) <= FLOWER_TULIP2)
+#define IS_ITEM_TREE(item) \
+  (((item) >= TREE_SAPLING && (item) <= TREE_30000BELLS) || \
+   ((item) >= TREE_100BELLS_SAPLING && (item) <= TREE_PALM_FRUIT) || \
+   ((item) >= CEDAR_TREE_SAPLING && (item) <= CEDAR_TREE) || \
+   ((item) >= GOLD_TREE_SAPLING && (item) <= GOLD_TREE) || \
+   ((item) == DEAD_SAPLING) || \
+   ((item) == DEAD_PALM_SAPLING) || \
+   ((item) == DEAD_CEDAR_SAPLING) || \
+   ((item) == DEAD_GOLD_SAPLING) \
+  )
+
+#define IS_ITEM_GROWN_TREE(item) \
+  (((item) == TREE) || \
+   ((item) == TREE_1000BELLS) || \
+   ((item) == TREE_10000BELLS) || \
+   ((item) == TREE_30000BELLS) || \
+   ((item) == TREE_100BELLS) || \
+   ((item) == CEDAR_TREE) || \
+   ((item) == GOLD_TREE_SHOVEL || (item) == GOLD_TREE) || \
+   ((item) == TREE_APPLE_NOFRUIT_0 || (item) == TREE_APPLE_NOFRUIT_1 || (item) == TREE_APPLE_NOFRUIT_2 || (item) == TREE_APPLE_FRUIT) || \
+   ((item) == TREE_ORANGE_NOFRUIT_0 || (item) == TREE_ORANGE_NOFRUIT_1 || (item) == TREE_ORANGE_NOFRUIT_2 || (item) == TREE_ORANGE_FRUIT) || \
+   ((item) == TREE_PEACH_NOFRUIT_0 || (item) == TREE_PEACH_NOFRUIT_1 || (item) == TREE_PEACH_NOFRUIT_2 || (item) == TREE_PEACH_FRUIT) || \
+   ((item) == TREE_PEAR_NOFRUIT_0 || (item) == TREE_PEAR_NOFRUIT_1 || (item) == TREE_PEAR_NOFRUIT_2 || (item) == TREE_PEAR_FRUIT) || \
+   ((item) == TREE_CHERRY_NOFRUIT_0 || (item) == TREE_CHERRY_NOFRUIT_1 || (item) == TREE_CHERRY_NOFRUIT_2 || (item) == TREE_CHERRY_FRUIT) || \
+   ((item) == TREE_PALM_NOFRUIT_0 || (item) == TREE_PALM_NOFRUIT_1 || (item) == TREE_PALM_NOFRUIT_2 || (item) == TREE_PALM_FRUIT) || \
+   ((item) == TREE_BEES) || \
+   ((item) == TREE_FTR) || \
+   ((item) == TREE_LIGHTS) || \
+   ((item) == TREE_PRESENT) || \
+   ((item) == TREE_BELLS) || \
+   ((item) == CEDAR_TREE_BELLS) || \
+   ((item) == CEDAR_TREE_FTR) || \
+   ((item) == CEDAR_TREE_BEES) || \
+   ((item) == CEDAR_TREE_LIGHTS) || \
+   ((item) == GOLD_TREE_BELLS) || \
+   ((item) == GOLD_TREE_FTR) || \
+   ((item) == GOLD_TREE_BEES) \
+  )
+
+#define IS_ITEM_GRASS(item) ((item) >= GRASS_A && (item) <= GRASS_C) /* aka IS_ITEM_WEED */
+
+#define BG_CATEGORY 0
+#define ENV_CATEGORY 8
+
 #define EMPTY_NO 0x0000
+
+#define GRASS_A 0x0008
+#define GRASS_B (GRASS_A + 1)
+#define GRASS_C (GRASS_B + 1)
+
+#define TREE_BEES 0x005E
+#define TREE_FTR (TREE_BEES + 1)
+#define TREE_LIGHTS (TREE_FTR + 1)
+#define TREE_PRESENT (TREE_LIGHTS + 1)
+#define TREE_BELLS 0x0069
+
+#define CEDAR_TREE_BELLS 0x0078
+#define CEDAR_TREE_FTR (CEDAR_TREE_BELLS + 1)
+#define CEDAR_TREE_BEES (CEDAR_TREE_FTR + 1)
+
+#define GOLD_TREE_BELLS 0x007F
+#define GOLD_TREE_FTR (GOLD_TREE_BELLS + 1)
+#define GOLD_TREE_BEES (GOLD_TREE_FTR + 1)
+#define CEDAR_TREE_LIGHTS (GOLD_TREE_BEES + 1)
+
+/* begin environmental/nature objects */
+#define ENV_START 0x0800
+/* tree */
+#define TREE_SAPLING ENV_START
+#define TREE_S0 (TREE_SAPLING + 1)
+#define TREE_S1 (TREE_S0 + 1)
+#define TREE_S2 (TREE_S1 + 1)
+#define TREE (TREE_S2 + 1) /* fully grown */
+/* apple tree */
+#define TREE_APPLE_SAPLING (TREE + 1)
+#define TREE_APPLE_S0 (TREE_APPLE_SAPLING + 1)
+#define TREE_APPLE_S1 (TREE_APPLE_S0 + 1)
+#define TREE_APPLE_S2 (TREE_APPLE_S1 + 1)
+#define TREE_APPLE_NOFRUIT_0 (TREE_APPLE_S2 + 1) /* fully grown, no fruit */
+#define TREE_APPLE_NOFRUIT_1 (TREE_APPLE_NOFRUIT_0 + 1)
+#define TREE_APPLE_NOFRUIT_2 (TREE_APPLE_NOFRUIT_1 + 1)
+#define TREE_APPLE_FRUIT (TREE_APPLE_NOFRUIT_2 + 1)
+/* orange tree */
+#define TREE_ORANGE_SAPLING (TREE_APPLE_FRUIT + 1)
+#define TREE_ORANGE_S0 (TREE_ORANGE_SAPLING + 1)
+#define TREE_ORANGE_S1 (TREE_ORANGE_S0 + 1)
+#define TREE_ORANGE_S2 (TREE_ORANGE_S1 + 1) /* fully grown, no fruit */
+#define TREE_ORANGE_NOFRUIT_0 (TREE_ORANGE_S2 + 1)
+#define TREE_ORANGE_NOFRUIT_1 (TREE_ORANGE_NOFRUIT_0 + 1)
+#define TREE_ORANGE_NOFRUIT_2 (TREE_ORANGE_NOFRUIT_1 + 1)
+#define TREE_ORANGE_FRUIT (TREE_ORANGE_NOFRUIT_2 + 1)
+/* peach tree */
+#define TREE_PEACH_SAPLING (TREE_ORANGE_FRUIT + 1)
+#define TREE_PEACH_S0 (TREE_PEACH_SAPLING + 1)
+#define TREE_PEACH_S1 (TREE_PEACH_S0 + 1)
+#define TREE_PEACH_S2 (TREE_PEACH_S1 + 1)
+#define TREE_PEACH_NOFRUIT_0 (TREE_PEACH_S2 + 1) /* fully grown, no fruit */
+#define TREE_PEACH_NOFRUIT_1 (TREE_PEACH_NOFRUIT_0 + 1)
+#define TREE_PEACH_NOFRUIT_2 (TREE_PEACH_NOFRUIT_1 + 1)
+#define TREE_PEACH_FRUIT (TREE_PEACH_NOFRUIT_2 + 1)
+/* pear tree */
+#define TREE_PEAR_SAPLING (TREE_PEACH_FRUIT + 1)
+#define TREE_PEAR_S0 (TREE_PEAR_SAPLING + 1)
+#define TREE_PEAR_S1 (TREE_PEAR_S0 + 1)
+#define TREE_PEAR_S2 (TREE_PEAR_S1 + 1)
+#define TREE_PEAR_NOFRUIT_0 (TREE_PEAR_S2 + 1) /* fully grown, no fruit */
+#define TREE_PEAR_NOFRUIT_1 (TREE_PEAR_NOFRUIT_0 + 1)
+#define TREE_PEAR_NOFRUIT_2 (TREE_PEAR_NOFRUIT_1 + 1)
+#define TREE_PEAR_FRUIT (TREE_PEAR_NOFRUIT_2 + 1)
+/* cherry tree */
+#define TREE_CHERRY_SAPLING (TREE_PEAR_FRUIT + 1)
+#define TREE_CHERRY_S0 (TREE_CHERRY_SAPLING + 1)
+#define TREE_CHERRY_S1 (TREE_CHERRY_S0 + 1)
+#define TREE_CHERRY_S2 (TREE_CHERRY_S1 + 1)
+#define TREE_CHERRY_NOFRUIT_0 (TREE_CHERRY_S2 + 1) /* fully grown, no fruit */
+#define TREE_CHERRY_NOFRUIT_1 (TREE_CHERRY_NOFRUIT_0 + 1)
+#define TREE_CHERRY_NOFRUIT_2 (TREE_CHERRY_NOFRUIT_1 + 1)
+#define TREE_CHERRY_FRUIT (TREE_CHERRY_NOFRUIT_2 + 1)
+/* money tree (1,000 Bells) */
+#define TREE_1000BELLS_SAPLING (TREE_CHERRY_FRUIT + 1)
+#define TREE_1000BELLS_S0 (TREE_1000BELLS_SAPLING + 1)
+#define TREE_1000BELLS_S1 (TREE_1000BELLS_S0 + 1)
+#define TREE_1000BELLS_S2 (TREE_1000BELLS_S1 + 1)
+#define TREE_1000BELLS (TREE_1000BELLS_S2 + 1) /* fully grown w/ bells */
+/* money tree (10,000 Bells) */
+#define TREE_10000BELLS_SAPLING (TREE_1000BELLS + 1)
+#define TREE_10000BELLS_S0 (TREE_10000BELLS_SAPLING + 1)
+#define TREE_10000BELLS_S1 (TREE_10000BELLS_S0 + 1)
+#define TREE_10000BELLS_S2 (TREE_10000BELLS_S1 + 1)
+#define TREE_10000BELLS (TREE_10000BELLS_S2 + 1) /* fully grown w/ bells */
+/* money tree (30,000 Bells) */
+#define TREE_30000BELLS_SAPLING (TREE_10000BELLS + 1)
+#define TREE_30000BELLS_S0 (TREE_30000BELLS_SAPLING + 1)
+#define TREE_30000BELLS_S1 (TREE_30000BELLS_S0 + 1)
+#define TREE_30000BELLS_S2 (TREE_30000BELLS_S1 + 1)
+#define TREE_30000BELLS (TREE_30000BELLS_S2 + 1) /* fully grown w/ bells */
+/* flower leaves (unused growth stage) */
+#define FLOWER_LEAVES_PANSIES0 (TREE_30000BELLS + 1) /* white */
+#define FLOWER_LEAVES_PANSIES1 (FLOWER_LEAVES_PANSIES0 + 1) /* purple */
+#define FLOWER_LEAVES_PANSIES2 (FLOWER_LEAVES_PANSIES1 + 1) /* yellow */
+#define FLOWER_LEAVES_COSMOS0 (FLOWER_LEAVES_PANSIES2 + 1) /* yellow */
+#define FLOWER_LEAVES_COSMOS1 (FLOWER_LEAVES_COSMOS0 + 1) /* purple */
+#define FLOWER_LEAVES_COSMOS2 (FLOWER_LEAVES_COSMOS1 + 1) /* blue */
+#define FLOWER_LEAVES_TULIP0 (FLOWER_LEAVES_COSMOS2 + 1) /* red */
+#define FLOWER_LEAVES_TULIP1 (FLOWER_LEAVES_TULIP0 + 1) /* white */
+#define FLOWER_LEAVES_TULIP2 (FLOWER_LEAVES_TULIP1 + 1) /* yellow */
+/* flowers */
+#define FLOWER_PANSIES0 (FLOWER_LEAVES_TULIP2 + 1) /* white */
+#define FLOWER_PANSIES1 (FLOWER_PANSIES0 + 1) /* purple */
+#define FLOWER_PANSIES2 (FLOWER_PANSIES1 + 1) /* yellow */
+#define FLOWER_COSMOS0 (FLOWER_PANSIES2 + 1) /* yellow */
+#define FLOWER_COSMOS1 (FLOWER_COSMOS0 + 1) /* purple */
+#define FLOWER_COSMOS2 (FLOWER_COSMOS1 + 1) /* blue */
+#define FLOWER_TULIP0 (FLOWER_COSMOS2 + 1) /* red */
+#define FLOWER_TULIP1 (FLOWER_TULIP0 + 1) /* white */
+#define FLOWER_TULIP2 (FLOWER_TULIP1 + 1) /* yellow */
+/* dead sapling */
+#define DEAD_SAPLING (FLOWER_TULIP2 + 1)
+/* money tree (100 Bells) */
+#define TREE_100BELLS_SAPLING (DEAD_SAPLING + 1)
+#define TREE_100BELLS_S0 (TREE_100BELLS_SAPLING + 1)
+#define TREE_100BELLS_S1 (TREE_100BELLS_S0 + 1)
+#define TREE_100BELLS_S2 (TREE_100BELLS_S1 + 1)
+#define TREE_100BELLS (TREE_100BELLS_S2 + 1) /* fully grown w/ bells */
+/* palm tree */
+#define TREE_PALM_SAPLING (TREE_100BELLS + 1)
+#define TREE_PALM_S0 (TREE_PALM_SAPLING + 1)
+#define TREE_PALM_S1 (TREE_PALM_S0 + 1)
+#define TREE_PALM_S2 (TREE_PALM_S1 + 1)
+#define TREE_PALM_NOFRUIT_0 (TREE_PALM_S2 + 1) /* fully grown, no fruit */
+#define TREE_PALM_NOFRUIT_1 (TREE_PALM_NOFRUIT_0 + 1)
+#define TREE_PALM_NOFRUIT_2 (TREE_PALM_NOFRUIT_1 + 1)
+#define TREE_PALM_FRUIT (TREE_PALM_NOFRUIT_2 + 1)
+#define DEAD_PALM_SAPLING (TREE_PALM_FRUIT + 1)
+/* cedar tree */
+#define CEDAR_TREE_SAPLING (DEAD_PALM_SAPLING + 1)
+#define CEDAR_TREE_S0 (CEDAR_TREE_SAPLING + 1)
+#define CEDAR_TREE_S1 (CEDAR_TREE_S0 + 1)
+#define CEDAR_TREE_S2 (CEDAR_TREE_S1 + 1)
+#define CEDAR_TREE (CEDAR_TREE_S2 + 1) /* fully grown */
+#define DEAD_CEDAR_SAPLING (CEDAR_TREE + 1)
+/* gold tree */
+#define GOLD_TREE_SAPLING (DEAD_CEDAR_SAPLING + 1)
+#define GOLD_TREE_S0 (GOLD_TREE_SAPLING + 1)
+#define GOLD_TREE_S1 (GOLD_TREE_S0 + 1)
+#define GOLD_TREE_S2 (GOLD_TREE_S1 + 1)
+#define GOLD_TREE_SHOVEL (GOLD_TREE_S2 + 1) /* fully grown w/ golden shovel */
+#define GOLD_TREE (GOLD_TREE_SHOVEL + 1) /* fully grown */
+#define DEAD_GOLD_SAPLING (GOLD_TREE + 1)
+/* end of environmental objects */
 
 #define FTR_REDALOHASHIRT 0x1814
 #define FTR_BLUEALOHASHIRT 0x1818
@@ -55,6 +246,9 @@ enum {
 #define ITM_SHOVEL 0x2202
 #define ITM_ROD 0x2203
 
+#define ITM_DUST0_EMPTY_CAN 0x250E
+#define ITM_DUST1_BOOT 0x250F
+#define ITM_DUST2_OLD_TIRE 0x2510
 #define ITM_PITFALL 0x2512
 
 #define ITM_ENV_START 0x2900
