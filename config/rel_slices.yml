@@ -38,6 +38,11 @@ m_malloc.c:
 #m_lib.c: #sqrtf statics
 #    .text: [0x803BAB0C, 0x803BB960]
 #    .rodata: [0x80642640, 0x80642680]
+m_mushroom.c:
+    .text: [0x803C8090, 0x803C90A8]
+    .rodata: [0x80642950, 0x80642960]
+    .data: [0x8065A3F8, 0x8065A430]
+    .bss: [0x81298B40, 0x81298F60]
 m_needlework.c:
     .text: [0x803C98EC, 0x803C9F7C]
     .data: [0x8065ABC0, 0x8065AE30]

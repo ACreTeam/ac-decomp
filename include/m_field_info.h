@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "libu64/gfxprint.h"
+#include "m_lib.h"
 
 
 #ifdef __cplusplus
@@ -69,8 +70,12 @@ extern mActor_name_t mFI_GetFieldId();
 extern int mFI_GetClimate();
 extern mActor_name_t* mFI_BkNumtoUtFGTop(int block_x, int block_z);
 extern void mFI_ClearDeposit(int block_x, int block_z);
+extern int mFI_GetLineDeposit(u16* deposit, int ut_x);
 extern void mFI_GetSpecialBlockNum(int* block_pos_tbl, u32* kind_list, int kind_num);
 extern int mFI_SetTreasure(int* block_x, int* block_z, mActor_name_t item_no);
+extern void mFI_SetFGUpData();
+extern int mFI_ClearBlockItemRandom_common(mActor_name_t item_no, int count, mActor_name_t* fg_items, u16* deposit, int include_deposited);
+extern void mFI_Wpos2BlockNum(int* block_x, int* block_z, xyz_t world_pos);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);
