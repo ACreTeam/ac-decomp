@@ -352,6 +352,14 @@ extern void mMsr_FirstClearMushroom() {
   mMsr_Rtc2MushTime(mush_time, rtc_time);
 }
 
+/**
+ * @brief Gets number of mushrooms that should be placed
+ * 
+ * @param mush_time Pointer to the next mushroom update time
+ * @param rtc_time Pointer to the current RTC time
+ * @param active Flag that force-controls whether mushrooms should be placed or not
+ * 
+ **/
 static int mMsr_GetMushroomNum(const lbRTC_time_c* mush_time, const lbRTC_time_c* rtc_time, u8 active) {
   int mushroom_num = 0;
   if (active == TRUE || lbRTC_IsEqualTime(rtc_time, mush_time, lbRTC_CHECK_DAYS | lbRTC_CHECK_MONTHS | lbRTC_CHECK_YEARS) == FALSE) {
