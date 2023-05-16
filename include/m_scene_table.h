@@ -14,6 +14,7 @@ extern "C" {
 
 enum scene_table {
   /* TODO: finish */
+  SCENE_FG = 0x07, /* outdoors/FG */
   SCENE_ISLAND_COTTAGE = 0x2F,
   /* TODO: finish */
 };

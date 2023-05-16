@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "libu64/gfxprint.h"
+#include "m_time.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -107,9 +108,22 @@ enum week_type {
   mEv_WEEKTYPE_SPECIAL
 };
 
+enum event_table {
+  mEv_EVENT_MUSHROOM_SEASON = 47
+};
+
+#define mEv_STATUS_ACTIVE     (1 << 0) /* event is active */
+#define mEv_STATUS_STOP       (1 << 1) /* event is stopped */
+#define mEv_STATUS_SHOW       (1 << 2) /* event is shown */
+#define mEv_STATUS_PLAYSOUND  (1 << 3) /* event should play sound */
+#define mEv_STATUS_RUN        (1 << 4) /* event should run */
+#define mEv_STATUS_ERROR      (1 << 5) /* event is in error state */
+#define mEv_STATUS_TALK       (1 << 6) /* event requires talking to player */
+
 extern int mEv_CheckFirstJob();
 extern int mEv_CheckArbeit();
 extern int mEv_CheckTitleDemo();
+extern int mEv_check_status(int event, s16 status);
 
 extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
 
