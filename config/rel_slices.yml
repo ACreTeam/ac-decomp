@@ -96,6 +96,10 @@ zurumode.c:
 sys_ucode.c:
     .text: [0x8040F008, 0x8040F048]
     .data: [0x8065FA30, 0x8065FA40]
+ac_set_manager.c:
+    .text: [0x80496AB8, 0x80496F50]
+    .rodata: [0x80644DB8, 0x80644DC8]
+    .data: [0x8068BBE0, 0x8068BC18]
 m_huusui_room_ovl.c:
     .text: [0x804D1BBC, 0x804D2164]
     .rodata: [0x80646558, 0x806465C8]
