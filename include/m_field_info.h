@@ -45,6 +45,14 @@ enum field_room {
   ((field_id) == mFI_FIELD_PLAYER0_ROOM || (field_id) == mFI_FIELD_PLAYER1_ROOM || \
    (field_id) == mFI_FIELD_PLAYER2_ROOM || (field_id) == mFI_FIELD_PLAYER3_ROOM)
 
+/* "wade" between acres (acre transition) */
+enum player_wade_state {
+  mFI_WADE_NONE,
+  mFI_WADE_START,
+  mFI_WADE_INPROGRESS,
+  mFI_WADE_END
+};
+
 /* Not sure about these other than the island one */
 enum {
   mFI_CLIMATE_0,
@@ -75,7 +83,8 @@ extern void mFI_GetSpecialBlockNum(int* block_pos_tbl, u32* kind_list, int kind_
 extern int mFI_SetTreasure(int* block_x, int* block_z, mActor_name_t item_no);
 extern void mFI_SetFGUpData();
 extern int mFI_ClearBlockItemRandom_common(mActor_name_t item_no, int count, mActor_name_t* fg_items, u16* deposit, int include_deposited);
-extern void mFI_Wpos2BlockNum(int* block_x, int* block_z, xyz_t world_pos);
+extern int mFI_Wpos2BlockNum(int* block_x, int* block_z, xyz_t world_pos);
+extern int mFI_CheckPlayerWade(int wade_state);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);

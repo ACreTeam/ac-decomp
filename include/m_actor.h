@@ -12,6 +12,26 @@ extern "C" {
 
 typedef void (*mActor_proc)(ACTOR*, GAME*);
 
+#define ACTOR_STATE_NO_MOVE_WHILE_CULLED (1 << 4)
+#define ACTOR_STATE_NO_DRAW_WHILE_CULLED (1 << 5)
+#define ACTOR_STATE_CAN_MOVE_IN_DEMO_SCENES (1 << 29)
+
+#define ACTOR_OBJ_BANK_NONE 0
+#define ACTOR_OBJ_BANK_3 3 /* TODO: rename, also likely an enum */
+
+enum actor_part {
+  ACTOR_PART_FG,
+  ACTOR_PART_ITEM,
+  ACTOR_PART_PLAYER,
+  ACTOR_PART_NPC,
+  ACTOR_PART_4, /* TODO: figure this one out */
+  ACTOR_PART_BG,
+  ACTOR_PART_EFFECT,
+  ACTOR_PART_CONTROL,
+
+  ACTOR_PART_NUM
+};
+
 /* sizeof(ACTOR_PROFILE) == 0x24 */
 typedef struct actor_profile_s {
   /* 0x00 */ s16 id; /* unique actor type ID */
@@ -104,6 +124,8 @@ struct actor_s {
   /* 0x16C */ mActor_proc sv_proc; /* save */
   /* 0x170 */ void* dlftbl; /* display list function table */
 };
+
+#define mActor_NONE_PROC1 ((mActor_proc)none_proc1)
 
 #ifdef __cplusplus
 }

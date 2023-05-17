@@ -1,0 +1,75 @@
+#ifndef AC_SET_MANAGER_H
+#define AC_SET_MANAGER_H
+
+#include "types.h"
+#include "m_actor.h"
+#include "m_play.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct actor_set_manager_s SET_MANAGER;
+
+#define aSetMgr_SET_OVERLAY_BUF_SIZE 0x4000
+#define aSetMgr_KEEP_SIZE 0x354
+
+#define aSetMgr_WAIT_TIME 5 // wait time between aSetMgr_move_check_wait -> aSetMgr_move_set
+
+typedef void (*aSetMgr_ovl_proc)(SET_MANAGER*, GAME_PLAY*);
+
+enum set_overlay_type {
+  aSetMgr_OVERLAY_BEGIN = 0,
+
+  aSetMgr_OVERLAY_INSECT = aSetMgr_OVERLAY_BEGIN,
+  aSetMgr_OVERLAY_GYOEI,
+
+  aSetMgr_OVERLAY_NUM
+};
+
+enum set_manager_move_proc_type {
+  aSetMgr_MOVE_move_check_set,
+  aSetMgr_MOVE_move_check_wait,
+  aSetMgr_MOVE_move_set,
+
+  aSetMgr_MOVE_PROC_NUM
+};
+
+/* sizeof(aSetMgr_keep_c) == 0x354 */
+typedef struct actor_set_manager_keep_s {
+  /* 0x000 */ u8 unk[aSetMgr_KEEP_SIZE];
+} aSetMgr_keep_c;
+
+/* sizeof(aSetMgr_set_ovl_c) == 0x4004 */
+typedef struct actor_set_manager_ovl_s {
+  /* 0x0000 */ u8 buf[aSetMgr_SET_OVERLAY_BUF_SIZE];
+  /* 0x4000 */ aSetMgr_ovl_proc ovl_proc;
+} aSetMgr_set_ovl_c;
+
+/* sizeof(aSetMgr_player_pos) == 0x18 */
+typedef struct actor_set_manager_player_pos_s {
+  /* 0x00 */ int next_bx, next_bz;
+  /* 0x08 */ int now_bx, now_bz;
+  /* 0x10 */ int last_bx, last_bz;
+} aSetMgr_player_pos_c;
+
+/* sizeof(SET_MANAGER) == 0x44F0 */
+struct actor_set_manager_s {
+  /* 0x0000 */ ACTOR actor_class;
+  /* 0x0174 */ u8 move_proc;
+  /* 0x0175 */ u8 next_move_proc;
+  /* 0x0176 */ u8 set_ovl_type;
+  /* 0x0178 */ aSetMgr_set_ovl_c set_overlay;
+  /* 0x417C */ int unk_417C;
+  /* 0x4180 */ aSetMgr_player_pos_c player_pos;
+  /* 0x4198 */ aSetMgr_keep_c keep;
+  /* 0x44EC */ s16 wait_timer;
+};
+
+extern ACTOR_PROFILE Set_Manager_Profile;
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
