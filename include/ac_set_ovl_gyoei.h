@@ -87,7 +87,7 @@ enum fish_type {
 /* number of terms in a given month */
 enum fish_term {
   aSOG_TERM_0,
-  aSOG_TERM1,
+  aSOG_TERM_1,
 
   aSOG_TERM_NUM
 };
