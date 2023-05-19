@@ -10,9 +10,9 @@ m_fbdemo.c:
     .text: [0x803A0350, 0x803A0ABC]
     .rodata: [0x80641F40, 0x80641F60]
     .data: [0x80652AA0, 0x80652AD0]
-#m_fbdemo_triforce.c: #relocs mismatch
-#    .text: [0x803A0ABC, 0x803A0F00]
-#    .rodata: [0x80641F60, 0x80641FA0]
+m_fbdemo_triforce.c:
+    .text: [0x803A0ABC, 0x803A0F00]
+    .rodata: [0x80641F60, 0x80641FA0]
 m_fbdemo_wipe1.c:
      .text: [0x803A0F00, 0x803A12F8]
      .rodata: [0x80641FA0, 0x80641FC0]

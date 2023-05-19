@@ -34,7 +34,7 @@ void fbdemo_triforce_move(TransitionTriforce* this, int updaterate){
         d = 0.5f * (14.0f + (12.0f * t));
     }
     else{
-        d = 0.5f * (14.0f + (16.0f * t));
+        d = 0.5f * (16.0f + (12.0f * t));
     }
 
     if(this->direction != 0){
