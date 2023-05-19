@@ -4,11 +4,19 @@
 #include "types.h"
 #include "libu64/gfxprint.h"
 #include "m_lib.h"
+#include "m_collision_bg.h"
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* acre unit world size */
+#define mFI_UT_WORLDSIZE_X 40
+#define mFI_UT_WORLDSIZE_Z 40
+
+#define mFI_UT_WORLDSIZE_X_F ((f32)mFI_UT_WORLDSIZE_X)
+#define mFI_UT_WORLDSIZE_Z_F ((f32)mFI_UT_WORLDSIZE_Z)
 
 #define mFI_ROW_TO_CHARSTR(row) ((row) + 'A')
 #define mFI_COL_TO_CHARSTR(col) ((col) + '0')
@@ -85,6 +93,10 @@ extern void mFI_SetFGUpData();
 extern int mFI_ClearBlockItemRandom_common(mActor_name_t item_no, int count, mActor_name_t* fg_items, u16* deposit, int include_deposited);
 extern int mFI_Wpos2BlockNum(int* block_x, int* block_z, xyz_t world_pos);
 extern int mFI_CheckPlayerWade(int wade_state);
+extern void mFI_BkandUtNum2Wpos(xyz_t* wpos_p, int block_x, int block_z, int ut_x, int ut_z);
+extern void mFI_BkandUtNum2CenterWpos(xyz_t* wpos_p, int block_x, int block_z, int ut_x, int ut_z);
+extern mCoBG_Collision_u* mFI_GetBkNum2ColTop(int block_x, int block_z);
+extern u32 mFI_BkNum2BlockKind(int block_x, int block_z);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);

@@ -23,6 +23,7 @@
 #include "m_lib.h"
 #include "m_field_assessment.h"
 #include "m_mushroom.h"
+#include "m_clip.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -119,7 +120,11 @@ typedef struct Save_s {
   /* 0x022540 */ Island_c island; /* island data */
   /* 0x023E40 */ u8 _tmp9[0x320];
   /* 0x024160 */ Anmret_c return_animal; /* information about villager which moved back in to your town after moving to someone else's town */
-  /* 0x02416C */ u8 _tmp10[0x24178 - 0x2416C];
+  /* 0x02416C */ u8 _tmp10[0x24174 - 0x2416C];
+  /* 0x024174 */ u8 insect_term; /* current insect term idx */
+  /* 0x024175 */ u8 insect_term_transition_offset; /* days offset from end of term to begin transition */
+  /* 0x024176 */ u8 gyoei_term; /* current fish term idx */
+  /* 0x024177 */ u8 gyoei_term_transition_offset; /* days offset from end of term to begin transition */
   /* 0x024178 */ mFAs_GoodField_c good_field; /* field assessment last info */
   /* 0x024184 */ u8 _tmp11[0x241A0 - 0x24184];
   /* 0x0241A0 */ lbRTC_time_c saved_auto_nwrite_time; /* save data notice time used for fishing tourney results? */
@@ -140,7 +145,7 @@ typedef struct common_data_s {
   /* 0x026003 */ u8 player_no;
   /* 0x026004 */ int last_scene_no;
   /* 0x026008 */ int player_data_mode;
-  /* 0x02600C */ u8 _clip[0x104]; /* Temporary, clip is a struct with size 0x104 */
+  /* 0x02600C */ Clip_c clip;
   /* 0x026110 */ Time_c time;
   /* 0x02613C */ Private_c* now_private;
   /* 0x026140 */ mHm_hs_c* now_home;
