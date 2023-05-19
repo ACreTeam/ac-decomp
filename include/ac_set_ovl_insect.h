@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-extern void aSOI_insect_set(SET_MANAGER* set_manager, GAME_PLAY* play);
+extern int aSOI_insect_set(SET_MANAGER* set_manager, GAME_PLAY* play);
 
 #ifdef __cplusplus
 }

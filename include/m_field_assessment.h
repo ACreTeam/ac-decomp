@@ -47,6 +47,12 @@ typedef struct good_field_s {
   /* 0x08 */ int perfect_day_streak; /* number of days in a row the town is "perfect" */
 } mFAs_GoodField_c;
 
+
+extern void mFAs_ClearGoodField();
+extern int mFAs_CheckGoodField();
+extern int mFAs_GetFieldRank_Condition(int* rank, int* block_x, int* block_z);
+extern void mFAs_SetFieldRank();
+extern int mFAs_GetFieldRank();
 extern void mFAs_PrintFieldAssessment(gfxprint_t* gfxprint);
 
 #ifdef __cplusplus

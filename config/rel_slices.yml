@@ -100,6 +100,11 @@ ac_set_manager.c:
     .text: [0x80496AB8, 0x80496F50]
     .rodata: [0x80644DB8, 0x80644DC8]
     .data: [0x8068BBE0, 0x8068BC18]
+ac_set_ovl_gyoei.c:
+    .text: [0x804995D4, 0x8049A9E4]
+    .rodata: [0x80644DD0, 0x80644E00]
+    .data: [0x8068BCF0, 0x8068CDE8]
+    .bss: [0x812FCD00, 0x812FD048]
 m_huusui_room_ovl.c:
     .text: [0x804D1BBC, 0x804D2164]
     .rodata: [0x80646558, 0x806465C8]

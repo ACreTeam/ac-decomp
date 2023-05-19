@@ -109,7 +109,9 @@ enum week_type {
 };
 
 enum event_table {
-  mEv_EVENT_MUSHROOM_SEASON = 47
+  mEv_EVENT_FISHING_TOURNEY_1 = 29,
+  mEv_EVENT_MUSHROOM_SEASON = 47,
+  mEv_EVENT_FISHING_TOURNEY_2 = 54,
 };
 
 #define mEv_STATUS_ACTIVE     (1 << 0) /* event is active */

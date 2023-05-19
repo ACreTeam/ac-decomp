@@ -16,7 +16,21 @@ typedef struct actor_set_manager_s SET_MANAGER;
 
 #define aSetMgr_WAIT_TIME 5 // wait time between aSetMgr_move_check_wait -> aSetMgr_move_set
 
-typedef void (*aSetMgr_ovl_proc)(SET_MANAGER*, GAME_PLAY*);
+#define aSetMgr_GYOEI_NUM 40
+
+/* sizeof(aSOG_gyoei_spawn_info_weight_f_c) == 8 */
+typedef struct gyoei_spawn_info_weight_f_s {
+  /* 0x00 */ s16 type;
+  /* 0x02 */ u8 spawn_area;
+  /* 0x04 */ f32 spawn_weight;
+} aSOG_gyoei_spawn_info_weight_f_c;
+
+typedef struct gyoei_keep_s {
+  /* 0x000 */ aSOG_gyoei_spawn_info_weight_f_c spawn_weights[aSetMgr_GYOEI_NUM];
+  /* 0x140 */ int possible_gyoei_num;
+} aSOG_gyoei_keep_c;
+
+typedef int (*aSetMgr_ovl_proc)(SET_MANAGER*, GAME_PLAY*);
 
 enum set_overlay_type {
   aSetMgr_OVERLAY_BEGIN = 0,
@@ -37,7 +51,8 @@ enum set_manager_move_proc_type {
 
 /* sizeof(aSetMgr_keep_c) == 0x354 */
 typedef struct actor_set_manager_keep_s {
-  /* 0x000 */ u8 unk[aSetMgr_KEEP_SIZE];
+  /* 0x000 */ u8 unk[0x210];
+  /* 0x210 */ aSOG_gyoei_keep_c gyoei_keep;
 } aSetMgr_keep_c;
 
 /* sizeof(aSetMgr_set_ovl_c) == 0x4004 */
@@ -48,7 +63,7 @@ typedef struct actor_set_manager_ovl_s {
 
 /* sizeof(aSetMgr_player_pos) == 0x18 */
 typedef struct actor_set_manager_player_pos_s {
-  /* 0x00 */ int next_bx, next_bz;
+  /* 0x00 */ int next_bx, next_bz; // TODO: there's a good chance these are structs
   /* 0x08 */ int now_bx, now_bz;
   /* 0x10 */ int last_bx, last_bz;
 } aSetMgr_player_pos_c;
