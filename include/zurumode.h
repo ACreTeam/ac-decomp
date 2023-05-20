@@ -2,7 +2,7 @@
 #define ZURUMODE_H
 
 #include "types.h"
-
+#include "m_controller.h"
 #include "dolphin/os.h"
 
 #ifdef __cplusplus
@@ -23,24 +23,6 @@ extern void zurumode_init(void);
 
 #define ZURUMODE_RESET 0
 #define ZURUMODE_PROGRESSING 1
-
-#define BUTTON_NONE 0x0000
-#define BUTTON_CRIGHT 0x0001
-#define BUTTON_CLEFT 0x0002
-#define BUTTON_CDOWN 0x0004
-#define BUTTON_CUP 0x0008
-#define BUTTON_R 0x0010
-#define BUTTON_L 0x0020
-#define BUTTON_X 0x0040
-#define BUTTON_Y 0x0080
-#define BUTTON_DRIGHT 0x0100
-#define BUTTON_DLEFT 0x0200
-#define BUTTON_DDOWN 0x0400
-#define BUTTON_DUP 0x0800
-#define BUTTON_START 0x1000
-#define BUTTON_Z 0x2000
-#define BUTTON_B 0x4000
-#define BUTTON_A 0x8000
 
 enum zurumode_stage {
   ZURUMODE_STAGE_BEGIN_e = 0,
