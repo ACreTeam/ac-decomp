@@ -615,6 +615,10 @@ class CSource(Source):
             self.cflags = c.JSYSTEM_CFLAGS
             self.cc = c.CC
             self.frank = False
+        elif path == "src/boot.c":
+            self.cflags = c.DOL_BOOT_CFLAGS
+            self.cc = c.CC
+            self.frank = False
         elif path.startswith("src/jaudio_NES"):
             self.cc = c.CC
             self.cflags = c.DOL_CPPFLAGS

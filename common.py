@@ -320,7 +320,9 @@ CPLFLAGS = [
 ]
 COMMON_DEFINES = [
     "-d _LANGUAGE_C",
-    "-d F3DEX_GBI_2"
+    "-d F3DEX_GBI_2",
+    "-d NDEBUG",
+    "-d DEBUG=0"
 ]
 DOL_DEFINES = COMMON_DEFINES + []
 REL_DEFINES = COMMON_DEFINES + []
@@ -328,6 +330,11 @@ BASE_DOL_CFLAGS = CFLAGS + [
     "-inline on",
     "-sdata 8",
     f"-sdata2 {DOL_SDATA2_SIZE}"
+] + DOL_DEFINES
+BOOT_CFLAGS = CFLAGS + [
+    "-inline on",
+    "-sdata 0",
+    "-sdata2 0"
 ] + DOL_DEFINES
 BASE_REL_CFLAGS = CFLAGS + [
      "-sdata 0",
@@ -377,6 +384,7 @@ JSYSTEM_BASE = [
 
 JSYSTEM_CFLAGS = ' '.join(JSYSTEM_BASE + LOCAL_CFLAGS)
 DOL_CFLAGS = ' '.join(BASE_DOL_CFLAGS + LOCAL_CFLAGS)
+DOL_BOOT_CFLAGS = ' '.join(BOOT_CFLAGS + LOCAL_CFLAGS); # TODO: this uses C++ but there's some issues with ppcdis, real flags: ' '.join(CPLFLAGS + BOOT_CFLAGS + LOCAL_CFLAGS);
 SDK_FLAGS = ' '.join(SDK_CFLAG + LOCAL_CFLAGS)
 ALIGN16 = ' '.join(BASE_DOL_CFLAGS + LOCAL_CFLAGS + ALIGN16_CFLAG)
 DOL_CPPFLAGS = ' '.join(CPLFLAGS + BASE_DOL_CFLAGS + LOCAL_CFLAGS)

@@ -6,6 +6,7 @@
 #include "dolphin/os/OSInterrupt.h"
 #include "dolphin/os/OSMessage.h"
 #include "libforest/osreport.h" /* OSReport funcs */
+#include "dolphin/os/OSReset.h"
 #include "va_args.h"
 
 #ifdef __cplusplus
@@ -37,7 +38,7 @@ extern void __OSCacheInit();
 #define DOLPHIN_ASSERT(assertion)
 #endif
 
-void OSResetSystem(u32, u32, u32); // goes in reset, but eh
+//void OSResetSystem(u32, u32, u32); // goes in reset, but eh
 void OSInit(void);
 
 #define OS_CONSOLE_RETAIL4     0x00000004

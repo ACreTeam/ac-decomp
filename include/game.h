@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "types.h"
+#include "game_h.h"
 #include "TwoHeadArena.h"
 #include "graph.h"
 #include "gamealloc.h"
@@ -13,7 +14,7 @@ extern "C" {
 #endif
 
 /* sizeof(struct game_s) == 0xE0 */
-typedef struct game_s {
+struct game_s {
   /* 0x0000 */ GRAPH* graph;
   /* 0x0004 */ void (*exec)(struct game_s* );
   /* 0x0008 */ void (*cleanup)(struct game_s*);
@@ -30,7 +31,7 @@ typedef struct game_s {
   /* 0x00A0 */ u32 frame_counter;
   /* 0x00A4 */ int disable_prenmi;
   /* 0x00A8 */ MCON mcon;
-} GAME;
+};
 
 extern void game_ct(GAME*, void (*)(GAME*), GRAPH*);
 extern void game_dt(GAME* game);

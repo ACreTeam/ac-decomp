@@ -3719,6 +3719,8 @@ global:
     0x80218660: __osDisableShutdownTime
     0x80218668: __osDisableShutdownLevel
     0x80218670: __osShutdownTime
+    0x80218680: __osResetSwitchPressed
+    0x80218681: __osResetKeyStep
     0x80218688: __osContinitialized
     0x80218690: rootHeap__9JFWSystem
     0x80218694: systemHeap__9JFWSystem

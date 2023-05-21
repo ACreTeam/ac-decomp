@@ -10,6 +10,7 @@ extern "C" {
 #endif
 
 extern BOOL dvderr_draw();
+extern void dvderr_init();
 
 #ifdef __cplusplus
 };

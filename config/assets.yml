@@ -3,7 +3,7 @@ config/dol.yml:
         addrs: [0x800b05e8, 0x800b05f4]
     __DateTime__:
         addrs: [0x800b05f4, 0x800b0608]
-    nintendo_hi_0.aw:
+    nintendo_hi_0:
         addrs: [0x800c3140, 0x800cca40]
 config/rel.yml:
     wipe1_v:

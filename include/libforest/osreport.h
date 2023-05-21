@@ -6,6 +6,10 @@
 #include "dolphin/os/OSMutex.h"
 #include "dolphin/os/OSThread.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define DEBUG_MODE 0
 #define RETAIL_MODE 1
 
@@ -31,5 +35,9 @@ extern void OSDVDFatalError();
 
 #define OSChangeToRetail() (OSChangeBootMode(RETAIL_MODE))
 #define OSChangeToDebug() (OSChangeBootMode(DEBUG_MODE))
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
