@@ -8,6 +8,11 @@
 #define N64_SCREEN_HEIGHT 240
 #define N64_SCREEN_WIDTH 320
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int bcmp (void *v1, void *v2, u32 size);
 void bcopy(void *src, void *dst, size_t n);
 void bzero(void *ptr, size_t size);
@@ -18,5 +23,10 @@ OSTime osGetTime(void);
 
 extern s32 osAppNMIBuffer[]; 
 extern int osShutdown;
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

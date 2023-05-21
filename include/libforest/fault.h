@@ -23,14 +23,17 @@ extern "C"{
 #define FAULT_PAD_READ_SUCCESS 0
 #define FAULT_PAD_READ_FAILED -1
 
-typedef struct { 
+typedef void (*FaultCallback)(const char* msg, u32 param);
+typedef struct fault_client_s fault_client;
+
+struct fault_client_s { 
 	fault_client* next;
 	FaultCallback callback;
 	const char* msg;
 	u32 param;
 	u8 priority;
 	u8 flags;
-} fault_client;
+};
 
 typedef struct {
 	u8 _0, _1, _2, _3;
@@ -38,11 +41,10 @@ typedef struct {
 	fault_client* first_client;
 } fault;
 
-typedef void (*FaultCallback)(const char* msg, u32 param);
 
 extern void fault_AddClientEx(fault_client* client, FaultCallback callback, const char* msg, u32 param, u8 priority, u8 flags);
 extern void fault_AddClient(fault_client* client, FaultCallback callback, const char* msg, u32 param);
-static void fault_Printf(const char* msg, ...);
+extern void fault_Printf(const char* msg, ...);
 static void fault_DrawUpdate();
 extern void fault_WaitTime(u32 waitTime);
 extern int fault_ReadPad(u32* outTriggers, u32* outButtons);

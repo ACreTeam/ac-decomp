@@ -5,6 +5,10 @@
 #include "dolphin/os/OSException.h"
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef s16 __OSInterrupt;
 typedef u32 OSInterruptMask;
 
@@ -123,5 +127,10 @@ u32 __OSUnmaskInterrupts(u32);
 
 u32 SetInterruptMask(OSInterruptMask mask, OSInterruptMask current);
 void __OSDispatchInterrupt(OSException exception, OSContext* context);
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

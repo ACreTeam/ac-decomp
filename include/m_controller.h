@@ -2,6 +2,7 @@
 #define M_CONTROLLER_H
 
 #include "types.h"
+#include "game_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,6 +46,23 @@ typedef struct controller_s {
   /* 0x30 */ f32 last_adjusted_pY;
   /* 0x34 */ f32 last_adjusted_pR;
 } MCON;
+
+#define STICK_MIN 9.899495f
+#define STICK_MAX 61.0f
+#define STICK_UNCORRECTED_SCALE (1.0f / STICK_MAX)
+#define STICK_CORRECTED_SCALE (1.0f / (STICK_MAX - STICK_MIN))
+
+extern void mCon_ct();
+extern void mCon_dt();
+extern void mCon_calc(MCON* mcon, f32 stick_x, f32 stick_y);
+extern void mCon_main(GAME* game);
+
+extern int chkButton(u16 button);
+extern u16 getButton();
+extern int chkTrigger(u16 button);
+extern u16 getTrigger();
+extern int getJoystick_X();
+extern int getJoystick_Y();
 
 #ifdef __cplusplus
 }

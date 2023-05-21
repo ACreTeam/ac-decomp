@@ -54,7 +54,7 @@ extern void fault_AddClient(fault_client* client, FaultCallback callback, const 
     fault_AddClientEx(client, callback, msg, param, FAULT_MIN_PRIORITY, FAULT_FLAG_POSTEXCEPTION);
 }
 
-static void fault_Printf(const char* fmt, ...) {
+extern void fault_Printf(const char* fmt, ...) {
     void* console;
 
     console = JC_JUTException_getConsole();

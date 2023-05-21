@@ -9,6 +9,11 @@ TRK/mem_TRK.c:
     .init: [0x800034e0, 0x80003534]
 asm/__exception.s:
     .init: [0x80003534, 0x80005468]
+boot.c:
+    .text: [0x800056c0, 0x8000663c]
+    .rodata: [0x800a97e0, 0x800a97e8]
+    .data: [0x800af860, 0x800afe50]
+    .bss: [0x800e2280, 0x800e2318]
 version.c:
     .data: [0x800b05e8, 0x800b0608]
 jaudio_NES/dummyprobe.c:

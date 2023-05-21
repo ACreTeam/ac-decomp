@@ -2,16 +2,11 @@
 #define JKRDVDRIPPER_H
 
 #include "types.h"
+#include "JSystem/JKernel/JKREnum.h"
 #include "JSystem/JKernel/JKRDvdFile.h"
 
 #define SZP_BUFFERSIZE 1024
 #define REF_BUFFERSIZE 0x1120
-
-enum JKRExpandSwitch {
-  EXPAND_SWITCH_DEFAULT, /* Do nothing? treated same as 2 */
-  EXPAND_SWITCH_DECOMPRESS, /* Check for compression and decompress */
-  EXPAND_SWITCH_NONE /* Do nothing */
-};
 
 struct SZPHeader {
   u32 magic;
