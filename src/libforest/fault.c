@@ -1,6 +1,8 @@
 #include "fault.h"
 #include "terminal.h"
-__declspec(section ".sdata") static fault* this;
+#include "va_args.h"
+
+/*__declspec(section ".sdata")*/ static fault* this;
 static fault fault_class;
 
 extern void fault_AddClientEx(fault_client* client, FaultCallback callback, const char* msg, u32 param, u8 priority, u8 flags) {
@@ -46,7 +48,7 @@ extern void fault_AddClientEx(fault_client* client, FaultCallback callback, cons
 exit:
     OSRestoreInterrupts(enable);
     if (client_exists != FALSE) {
-        OSReport(VTCOL(RED,WHITE)"fault_AddClient: %08x は既にリスト中にある\n%x",VT_RST, client);
+        OSReport(VT_COL(VT_COLOR_RED,VT_COLOR_WHITE) "fault_AddClient: %08x は既にリスト中にある\n%x" VT_RST, client);
     }
 }
 

@@ -3,6 +3,7 @@ blocked_pointers:
   - 0x800A8514
 blocked_targets:
   - 0x800A97E0 # boot.c local static const tbl, also start of .rodata
+  - 0x80008000
 forced_types:
     0x80003534: FUNCTION
     0x80005468: FUNCTION

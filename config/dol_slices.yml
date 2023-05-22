@@ -16,6 +16,11 @@ boot.c:
     .bss: [0x800e2280, 0x800e2318]
 version.c:
     .data: [0x800b05e8, 0x800b0608]
+dvderr.c:
+    .text: [0x80007e58, 0x800083f8]
+    .rodata: [0x800a97f8, 0x800a9838]
+    .data: [0x800b0a60, 0x800b9140]
+    .bss: [0x800e2790, 0x800e2b88]
 jaudio_NES/dummyprobe.c:
     .text: [0x800083f8, 0x80008400]
 #jaudio_NES/verysimple.c:

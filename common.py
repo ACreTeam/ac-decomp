@@ -224,6 +224,9 @@ AS = os.path.join(DEVKITPPC, "bin", "powerpc-eabi-as")
 OBJDUMP = os.path.join(DEVKITPPC, "bin", "powerpc-eabi-objdump")
 CPP = os.path.join(DEVKITPPC, "bin", "powerpc-eabi-cpp")
 
+# Asset Converters
+VTXDIS = f"{PYTHON} {TOOLS}/converters/vtxdis.py"
+
 ICONV = f"{PYTHON} tools/sjis.py" # TODO: get actual iconv working(?)
 
 # N64 SDK path for GBI
@@ -336,6 +339,12 @@ BOOT_CFLAGS = CFLAGS + [
     "-sdata 0",
     "-sdata2 0"
 ] + DOL_DEFINES
+DVDERR_CFLAGS = CFLAGS + [
+    "-inline on",
+    "-sdata 0",
+    "-sdata2 0",
+    "-pool off"
+] + DOL_DEFINES
 BASE_REL_CFLAGS = CFLAGS + [
      "-sdata 0",
      f"-sdata2 {REL_SDATA2_SIZE}",
@@ -384,7 +393,8 @@ JSYSTEM_BASE = [
 
 JSYSTEM_CFLAGS = ' '.join(JSYSTEM_BASE + LOCAL_CFLAGS)
 DOL_CFLAGS = ' '.join(BASE_DOL_CFLAGS + LOCAL_CFLAGS)
-DOL_BOOT_CFLAGS = ' '.join(BOOT_CFLAGS + LOCAL_CFLAGS); # TODO: this uses C++ but there's some issues with ppcdis, real flags: ' '.join(CPLFLAGS + BOOT_CFLAGS + LOCAL_CFLAGS);
+DOL_BOOT_CFLAGS = ' '.join(BOOT_CFLAGS + LOCAL_CFLAGS) # TODO: this uses C++ but there's some issues with ppcdis, real flags: ' '.join(CPLFLAGS + BOOT_CFLAGS + LOCAL_CFLAGS);
+DOL_DVDERR_CFLAGS = ' '.join(DVDERR_CFLAGS + LOCAL_CFLAGS)
 SDK_FLAGS = ' '.join(SDK_CFLAG + LOCAL_CFLAGS)
 ALIGN16 = ' '.join(BASE_DOL_CFLAGS + LOCAL_CFLAGS + ALIGN16_CFLAG)
 DOL_CPPFLAGS = ' '.join(CPLFLAGS + BASE_DOL_CFLAGS + LOCAL_CFLAGS)

@@ -5,7 +5,7 @@
 #include "m_rcp.h"
 
 
-u8 wipe1_v[] = {
+Vtx wipe1_v[] = {
 #include "assets/wipe1_v.inc"
 };
 
@@ -26,7 +26,7 @@ Gfx wipe1_modelT[] = {
     gsDPSetTextureLUT(G_TT_NONE),
     gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
     gsSPDisplayList(0x08000000),
-    gsSPVertex(wipe1_v, 25, 0),
+    gsSPVertex(&wipe1_v[0], 25, 0),
     gsSP2Triangles(0, 1, 2, 0, 1, 3, 4, 0),
     gsSP2Triangles(5, 6, 7, 0, 6, 8, 9, 0),
     gsSP2Triangles(8, 10, 11, 0, 10, 12, 13, 0),
