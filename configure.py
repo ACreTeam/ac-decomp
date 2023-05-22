@@ -92,6 +92,7 @@ n.variable("as", c.AS)
 n.variable("cpp", c.CPP)
 n.variable("iconv", c.ICONV)
 n.variable("forcefilesgen", c.FORCEFILESGEN)
+n.variable("vtxdis", c.VTXDIS)
 n.newline()
 
 ##############
@@ -257,6 +258,12 @@ n.rule(
     description = "LCF FORCEFILES generation $in"
 )
 
+n.rule(
+    "vtxdis",
+    command = "$vtxdis $in $out",
+    description = "vtxdis.py $in $out"
+)
+
 ##########
 # Assets #
 ##########
@@ -265,12 +272,13 @@ n.rule(
 class Asset:
     binary: str
     path: str
+    convtype: str
     start: int
     end: int
 
     def load(yml_path: str):
         return {
-            asset : Asset(binary, asset, *adat["addrs"])
+            asset : Asset(binary, asset, adat.get("type", "u8"), *adat["addrs"])
             for binary, bdat in c.load_from_yaml(yml_path).items()
             for asset, adat in bdat.items()
         }
@@ -496,11 +504,19 @@ class AssetInclude(GeneratedInclude):
                     "addrs" : f"{inc.asset.start:x} {inc.asset.end:x}"
                 }
             )
-            n.build(
-                inc.path,
-                rule="assetinc",
-                inputs=inc.asset_path
-            )
+
+            if inc.asset.convtype == "vtx":
+                n.build(
+                    inc.path,
+                    rule="vtxdis",
+                    inputs=inc.asset_path
+                )
+            else:
+                n.build(
+                    inc.path,
+                    rule="assetinc",
+                    inputs=inc.asset_path
+                )
 
     def __repr__(self):
         return f"AssetInclude({self.asset})"
@@ -617,6 +633,10 @@ class CSource(Source):
             self.frank = False
         elif path == "src/boot.c":
             self.cflags = c.DOL_BOOT_CFLAGS
+            self.cc = c.CC
+            self.frank = False
+        elif path == "src/dvderr.c":
+            self.cflags = c.DOL_DVDERR_CFLAGS
             self.cc = c.CC
             self.frank = False
         elif path.startswith("src/jaudio_NES"):

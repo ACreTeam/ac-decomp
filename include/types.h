@@ -62,4 +62,6 @@ typedef u32 unknown;
    /* Fully opaque, 5 bits per color channel */ (0x8000 | ((((argb8) >> 16) & 0xF8) << 7) | ((((argb8) >> 8) & 0xF8) << 2) | (((argb8) & 0xFF) >> 3)) : \
    /* 3 bits of transparency, 4 bits per color channel */ (((((argb8) >> 24) & 0xE0) << 7) | ((((argb8) >> 16) & 0xF0) << 4) | (((argb8) >> 8) & 0xF0) | (((argb8) & 0xF0) >> 4))))
 
+#define GPACK_RGB5A3(r, g, b, a) ARGB8_to_RGB5A3((((a) & 0xFF) << 24) | (((r) & 0xFF) << 16) | (((g) & 0xFF) << 8) | ((b) & 0xFF))
+
 #endif

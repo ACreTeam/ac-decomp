@@ -4,6 +4,7 @@
 #include "types.h"
 #include "dolphin/os/OSTime.h"
 #include "dolphin/os/OSCache.h"
+#include "libultra/gu.h"
 
 #define N64_SCREEN_HEIGHT 240
 #define N64_SCREEN_WIDTH 320
