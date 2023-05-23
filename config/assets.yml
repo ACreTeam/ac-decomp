@@ -1,90 +1,147 @@
 config/dol.yml:
-    __Creator__:
-        addrs: [0x800b05e8, 0x800b05f4]
-    __DateTime__:
-        addrs: [0x800b05f4, 0x800b0608]
-    # dvderr.c
-    dvd_keikoku_moji1_1_tex:
-        addrs: [0x800b0a60, 0x800b0f60]
-    dvd_keikoku_moji1_2_tex:
-        addrs: [0x800b0f60, 0x800b1460]
-    dvd_keikoku_moji1_3_tex:
-        addrs: [0x800b1460, 0x800b1660]
-    dvd_keikoku_moji1_4_tex:
-        addrs: [0x800b1660, 0x800b1c60]
-    ctl_att_w1_tex:
-        addrs: [0x800b1c60, 0x800b2060]
-    ctl_att_w2_tex:
-        addrs: [0x800b2060, 0x800b2460]
-    ctl_att_w3_tex:
-        addrs: [0x800b2460, 0x800b2860]
-    ctl_att_w4_tex:
-        addrs: [0x800b2860, 0x800b2c60]
-    ctl_att_w5_tex:
-        addrs: [0x800b2c60, 0x800b3060]
-    ctl_att_w6_tex:
-        addrs: [0x800b3060, 0x800b30e0]
-    dvd_keikoku1_v:
-        addrs: [0x800b30e0, 0x800b34a0]
-        type: "vtx"
-    dvd_keikoku_moji2_tex:
-        addrs: [0x800b3640, 0x800b38c0]
-    dvd_keikoku_moji2_2_tex:
-        addrs: [0x800b38c0, 0x800b3ec0]
-    dvd_keikoku_moji2_3_tex:
-        addrs: [0x800b3ec0, 0x800b3f40]
-    dvd_keikoku2_v:
-        addrs: [0x800b3f40, 0x800b42c0]
-        type: "vtx"
-    dvd_keikoku_moji4_tex:
-        addrs: [0x800b4440, 0x800b46c0]
-    dvd_keikoku_moji3_1_tex:
-        addrs: [0x800b46c0, 0x800b4cc0]
-    dvd_keikoku_moji3_2_tex:
-        addrs: [0x800b4cc0, 0x800b4f40]
-    dvd_keikoku_moji3_3_tex:
-        addrs: [0x800b4f40, 0x800b4fc0]
-    dvd_keikoku3_v:
-        addrs: [0x800b4fc0, 0x800b5400]
-        type: "vtx"
-    dvd_keikoku_moji5_tex:
-        addrs: [0x800b55a0, 0x800b58a0]
-    dvd_keikoku_moji6_2_tex:
-        addrs: [0x800b58a0, 0x800b5d20]
-    dvd_keikoku_moji6_3_tex:
-        addrs: [0x800b5d20, 0x800b5fa0]
-    dvd_keikoku_moji6_tex:
-        addrs: [0x800b5fa0, 0x800b63a0]
-    dvd_keikoku_moji6_1_tex:
-        addrs: [0x800b63a0, 0x800b6920]
-    dvd_keikoku_moji6_new1_tex:
-        addrs: [0x800b6920, 0x800b6b20]
-    dvd_keikoku_moji6_new2_tex:
-        addrs: [0x800b6b20, 0x800b6d20]
-    dvd_keikoku4_v:
-        addrs: [0x800b6d20, 0x800b71a0]
-        type: "vtx"
-    dvd_keikoku_moji7_tex:
-        addrs: [0x800b7380, 0x800b7880]
-    dvd_keikoku_moji8_tex:
-        addrs: [0x800b7880, 0x800b7c80]
-    dvd_keikoku_moji10_tex:
-        addrs: [0x800b7c80, 0x800b7e80]
-    dvd_keikoku_moji11_tex:
-        addrs: [0x800b7e80, 0x800b8300]
-    dvd_keikoku_moji12_tex:
-        addrs: [0x800b8300, 0x800b8580]
-    dvd_keikoku_moji9_tex:
-        addrs: [0x800b8580, 0x800b8a80]
-    dvd_keikoku5_v:
-        addrs: [0x800b8a80, 0x800b8ec0]
-        type: "vtx"
+  __Creator__:
+    addrs: [0x800b05e8, 0x800b05f4]
+  __DateTime__:
+    addrs: [0x800b05f4, 0x800b0608]
+  # dvderr.c
+  dvd_keikoku_moji1_1_tex:
+    addrs: [0x800b0a60, 0x800b0f60]
+  dvd_keikoku_moji1_2_tex:
+    addrs: [0x800b0f60, 0x800b1460]
+  dvd_keikoku_moji1_3_tex:
+    addrs: [0x800b1460, 0x800b1660]
+  dvd_keikoku_moji1_4_tex:
+    addrs: [0x800b1660, 0x800b1c60]
+  ctl_att_w1_tex:
+    addrs: [0x800b1c60, 0x800b2060]
+  ctl_att_w2_tex:
+    addrs: [0x800b2060, 0x800b2460]
+  ctl_att_w3_tex:
+    addrs: [0x800b2460, 0x800b2860]
+  ctl_att_w4_tex:
+    addrs: [0x800b2860, 0x800b2c60]
+  ctl_att_w5_tex:
+    addrs: [0x800b2c60, 0x800b3060]
+  ctl_att_w6_tex:
+    addrs: [0x800b3060, 0x800b30e0]
+  dvd_keikoku1_v:
+    addrs: [0x800b30e0, 0x800b34a0]
+    type: vtx
+  dvd_keikoku_moji2_tex:
+    addrs: [0x800b3640, 0x800b38c0]
+  dvd_keikoku_moji2_2_tex:
+    addrs: [0x800b38c0, 0x800b3ec0]
+  dvd_keikoku_moji2_3_tex:
+    addrs: [0x800b3ec0, 0x800b3f40]
+  dvd_keikoku2_v:
+    addrs: [0x800b3f40, 0x800b42c0]
+    type: vtx
+  dvd_keikoku_moji4_tex:
+    addrs: [0x800b4440, 0x800b46c0]
+  dvd_keikoku_moji3_1_tex:
+    addrs: [0x800b46c0, 0x800b4cc0]
+  dvd_keikoku_moji3_2_tex:
+    addrs: [0x800b4cc0, 0x800b4f40]
+  dvd_keikoku_moji3_3_tex:
+    addrs: [0x800b4f40, 0x800b4fc0]
+  dvd_keikoku3_v:
+    addrs: [0x800b4fc0, 0x800b5400]
+    type: vtx
+  dvd_keikoku_moji5_tex:
+    addrs: [0x800b55a0, 0x800b58a0]
+  dvd_keikoku_moji6_2_tex:
+    addrs: [0x800b58a0, 0x800b5d20]
+  dvd_keikoku_moji6_3_tex:
+    addrs: [0x800b5d20, 0x800b5fa0]
+  dvd_keikoku_moji6_tex:
+    addrs: [0x800b5fa0, 0x800b63a0]
+  dvd_keikoku_moji6_1_tex:
+    addrs: [0x800b63a0, 0x800b6920]
+  dvd_keikoku_moji6_new1_tex:
+    addrs: [0x800b6920, 0x800b6b20]
+  dvd_keikoku_moji6_new2_tex:
+    addrs: [0x800b6b20, 0x800b6d20]
+  dvd_keikoku4_v:
+    addrs: [0x800b6d20, 0x800b71a0]
+    type: vtx
+  dvd_keikoku_moji7_tex:
+    addrs: [0x800b7380, 0x800b7880]
+  dvd_keikoku_moji8_tex:
+    addrs: [0x800b7880, 0x800b7c80]
+  dvd_keikoku_moji10_tex:
+    addrs: [0x800b7c80, 0x800b7e80]
+  dvd_keikoku_moji11_tex:
+    addrs: [0x800b7e80, 0x800b8300]
+  dvd_keikoku_moji12_tex:
+    addrs: [0x800b8300, 0x800b8580]
+  dvd_keikoku_moji9_tex:
+    addrs: [0x800b8580, 0x800b8a80]
+  dvd_keikoku5_v:
+    addrs: [0x800b8a80, 0x800b8ec0]
+    type: vtx
 
-    nintendo_hi_0:
-        addrs: [0x800c3140, 0x800cca40]
+  nintendo_hi_0:
+    addrs: [0x800c3140, 0x800cca40]
+
+  # initial_menu.c
+  bootdata/gam_win_moji1_tex:
+    addrs: [0x800b9140, 0x800b93c0]
+  bootdata/gam_win_moji2_tex:
+    addrs: [0x800b93c0, 0x800b98c0]
+  bootdata/yes:
+    addrs: [0x800b98c0, 0x800b99c0]
+  bootdata/no:
+    addrs: [0x800b99c0, 0x800b9a40]
+  bootdata/att_win_waku1_tex:
+    addrs: [0x800b9a40, 0x800b9e40]
+  bootdata/att_win_waku2_tex:
+    addrs: [0x800b9e40, 0x800ba240]
+  bootdata/att_win_waku3_tex:
+    addrs: [0x800ba240, 0x800ba640]
+  bootdata/att_win_waku4_tex:
+    addrs: [0x800ba640, 0x800baa40]
+  bootdata/att_win_waku5_tex:
+    addrs: [0x800baa40, 0x800bae40]
+  bootdata/att_win_waku6_tex:
+    addrs: [0x800bae40, 0x800baec0]
+  bootdata/gam_win1_v:
+    addrs: [0x800baec0, 0x800bb2b0]
+    type: vtx
+  bootdata/gam_win_moji3_tex:
+    addrs: [0x800bb500, 0x800bba00]
+  bootdata/gam_win_moji4_tex:
+    addrs: [0x800bba00, 0x800bbf00]
+  bootdata/att_win_waku1_tex_1:
+    addrs: [0x800bbf00, 0x800bc300]
+  bootdata/att_win_waku2_tex_1:
+    addrs: [0x800bc300, 0x800bc700]
+  bootdata/att_win_waku3_tex_1:
+    addrs: [0x800bc700, 0x800bcb00]
+  bootdata/att_win_waku4_tex_1:
+    addrs: [0x800bcb00, 0x800bcf00]
+  bootdata/att_win_waku5_tex_1:
+    addrs: [0x800bcf00, 0x800bd300]
+  bootdata/att_win_waku6_tex_1:
+    addrs: [0x800bd300, 0x800bd380]
+  bootdata/gam_win2_v:
+    addrs: [0x800bd380, 0x800bd6c0]
+    type: vtx
+  bootdata/gam_win_moji3_tex_1:
+    addrs: [0x800bd820, 0x800bdd20]
+  bootdata/gam_win_moji5_tex:
+    addrs: [0x800bdd20, 0x800be0a0]
+  bootdata/gam_win3_v:
+    addrs: [0x800be0a0, 0x800be3e0]
+    type: vtx
+  bootdata/nintendo_376x104:
+    addrs: [0x800be460, 0x800c30c0]
+  bootdata/logo_nin_v:
+    addrs: [0x800c30c0, 0x800c3100]
+    type: vtx
+
 config/rel.yml:
-    wipe1_v:
-        addrs: [0x80652AD0, 0x80652C60]
-        type: "vtx"
-    g_wipe1_txt:
-        addrs: [0x80652C60, 0x80653460]
+  wipe1_v:
+    addrs: [0x80652AD0, 0x80652C60]
+    type: vtx
+  g_wipe1_txt:
+    addrs: [0x80652C60, 0x80653460]

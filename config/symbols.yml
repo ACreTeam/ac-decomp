@@ -11,7 +11,6 @@ global:
     0x800034e0: TRK_memset
     0x80003510: TRK_memcpy
     0x80003534: gTRKInterruptVectorTable
-    0x80003534: gTRKInterruptVectorTable
     0x80005468: __TRK_reset
     0x800056c0: soundArenaAlloc
     0x800056c8: search_partial_address
@@ -29,7 +28,6 @@ global:
     0x80005cf0: fault_callback_vimode
     0x80005dc0: fault_callback_scroll
     0x80006004: adjustOSArena
-    0x800060f8: main
     0x800060f8: main
     0x8000663c: ReportDiskID__Fv
     0x8000665c: JW_UpdateVideoMode

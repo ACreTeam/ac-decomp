@@ -328,7 +328,9 @@ COMMON_DEFINES = [
     "-d DEBUG=0"
 ]
 DOL_DEFINES = COMMON_DEFINES + []
-REL_DEFINES = COMMON_DEFINES + []
+REL_DEFINES = COMMON_DEFINES + [ 
+    "-d OPTIMIZED_SQRTF"
+]
 BASE_DOL_CFLAGS = CFLAGS + [
     "-inline on",
     "-sdata 8",

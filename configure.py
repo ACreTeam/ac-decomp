@@ -631,7 +631,7 @@ class CSource(Source):
             self.cflags = c.JSYSTEM_CFLAGS
             self.cc = c.CC
             self.frank = False
-        elif path == "src/boot.c":
+        elif path.startswith("src/bootdata/") or path == "src/boot.c" or path == "src/initial_menu.c":
             self.cflags = c.DOL_BOOT_CFLAGS
             self.cc = c.CC
             self.frank = False
