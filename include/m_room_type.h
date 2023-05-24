@@ -60,6 +60,7 @@ typedef struct room_type_place_info_s {
 extern void mRmTp_DrawFamicomInfo(gfxprint_t* gfxprint);
 extern void mRmTp_MakeFamicom_Fdebug();
 
+extern mActor_name_t mRmTp_FtrItemNo2Item1ItemNo(mActor_name_t ftr_item_no, void* unused); /* second paramter is probably GAME*? */
 extern int mRmTp_FtrItemNo2FtrIdx(mActor_name_t ftr_item_no);
 extern int mRmTp_GetFurnitureData(mActor_name_t ftr, int ut_x, int ut_z, mRmTp_FtrPlaceInfo_t* place_info);
 
