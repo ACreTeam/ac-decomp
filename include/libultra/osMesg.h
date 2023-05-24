@@ -18,6 +18,6 @@ typedef struct OSMesgQueue {
 
 extern void osCreateMesgQueue(OSMessageQueue* mq ,OSMessage msg, int flags);
 extern int osSendMesg(OSMessageQueue* mq, OSMessage msg, int flags);
-extern int osRecvMesg(OSMessageQueue* mq, OSMessage msg, int flags);
+extern int osRecvMesg(OSMessageQueue* mq, OSMessage* msg, int flags);
 
 #endif

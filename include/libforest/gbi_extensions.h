@@ -20,6 +20,8 @@ extern "C" {
 
 #define G_FIRST_CMD G_SETTEXEDGEALPHA
 
+#define G_CC_BLENDPRIMDECALA 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0
+
 /* Triangle/Quad vertex bit size */
 #define POLY_5b 0 /* 5 bits per vertex index (0 - 31) */
 #define POLY_7b 1 /* 7 bits per vertex index (0 - 127) */
@@ -578,6 +580,12 @@ do { \
   (u32)(_SHIFTL(G_SPECIAL_1, 24, 8) | _SHIFTL(type, 16, 8) | _SHIFTL(mode, 0, 16)), \
   (u32)0 \
 }}
+
+#define G_DL_GXDL 2
+
+/* Macro for calling GC formatted display lists from N64 lists */
+#define gGXCallDisplayList(pkt, dl, nbytes) gDma1p(pkt, G_DL, dl, nbytes, G_DL_GXDL)
+#define gsGXCallDisplayList(dl, nbytes) gsDma1p(pkt, G_DL, dl, nbytes, G_DL_GXDL)
 
 #ifdef __cplusplus
 }

@@ -10,6 +10,7 @@ extern "C" {
 
 extern void osCreateThread2(OSThread* t, int id, void(*entry)(void*), void* arg, void* stack_pointer, size_t stack_size, OSPriority priority);
 extern void osStartThread(OSThread* t);
+extern void osDestroyThread(OSThread* t);
 
 #ifdef __cplusplus
 }

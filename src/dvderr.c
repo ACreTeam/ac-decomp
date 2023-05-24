@@ -8,8 +8,6 @@
 #include "dolphin/vi.h"
 #include "dolphin/gx.h"
 
-#define G_CC_DVDERR 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0
-
 /* imports */
 static u8 dvd_keikoku_moji1_1_tex[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/dvd_keikoku_moji1_1_tex.inc"
@@ -49,7 +47,7 @@ static Vtx dvd_keikoku1_v[] = {
 static Gfx keikoku1_dvd_att_moji_model[] = {
   /* init */
   gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
-  gsDPSetCombineMode(G_CC_DVDERR, G_CC_PASS2),
+  gsDPSetCombineMode(G_CC_BLENDPRIMDECALA, G_CC_PASS2),
   gsDPSetPrimColor(0, 255, 235, 235, 255, 255),
   gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_XLU_INTER2),
   
@@ -89,7 +87,7 @@ static Gfx keikoku1_dvd_att_moji_model[] = {
 
 static Gfx keikoku1_dvd_att_winT_model[] = {
   gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
-  gsDPSetCombineMode(G_CC_DVDERR, G_CC_PASS2),
+  gsDPSetCombineMode(G_CC_BLENDPRIMDECALA, G_CC_PASS2),
   gsDPSetPrimColor(0, 255, 100, 0, 170, 255),
   gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_ZB_XLU_SURF2),
   
@@ -192,7 +190,7 @@ static Vtx dvd_keikoku2_v[] = {
 };
 static Gfx keikoku2_dvd_att_moji_model[] = {
   gsSPTexture(0, 0, 0, 0, G_ON),
-  gsDPSetCombineMode(G_CC_DVDERR, G_CC_PASS2),
+  gsDPSetCombineMode(G_CC_BLENDPRIMDECALA, G_CC_PASS2),
   gsDPSetPrimColor(0, 255, 235, 235, 255, 255),
   gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_XLU_INTER2),
   gsDPLoadTextureBlock_4b_Dolphin(dvd_keikoku_moji2_3_tex, G_IM_FMT_I, 16, 16, 15, GX_MIRROR, GX_MIRROR, 0, 0),
@@ -223,7 +221,7 @@ static Gfx keikoku2_dvd_att_moji_model[] = {
 
 static Gfx keikoku2_dvd_att_winT_model[] = {
   gsSPTexture(0, 0, 0, 0, G_ON),
-  gsDPSetCombineMode(G_CC_DVDERR, G_CC_PASS2),
+  gsDPSetCombineMode(G_CC_BLENDPRIMDECALA, G_CC_PASS2),
   gsDPSetPrimColor(0, 255, 100, 0, 170, 255),
   gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_ZB_XLU_SURF2),
   gsDPLoadTextureBlock_4b_Dolphin(ctl_att_w6_tex, G_IM_FMT_I, 16, 16, 15, GX_MIRROR, GX_MIRROR, 0, 0),
@@ -322,7 +320,7 @@ static Vtx dvd_keikoku3_v[] = {
 };
 static Gfx keikoku3_dvd_att_moji_model[] = {
   gsSPTexture(0, 0, 0, 0, G_ON),
-  gsDPSetCombineMode(G_CC_DVDERR, G_CC_PASS2),
+  gsDPSetCombineMode(G_CC_BLENDPRIMDECALA, G_CC_PASS2),
   gsDPSetPrimColor(0, 255, 235, 235, 255, 255),
   gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_XLU_INTER2),
   gsDPLoadTextureBlock_4b_Dolphin(dvd_keikoku_moji3_3_tex, G_IM_FMT_I, 16, 16, 15, GX_MIRROR, GX_MIRROR, 0, 0),
@@ -372,7 +370,7 @@ static Gfx keikoku3_dvd_att_moji_model[] = {
 
 static Gfx keikoku3_dvd_att_winT_model[] = {
   gsSPTexture(0, 0, 0, 0, G_ON),
-  gsDPSetCombineMode(G_CC_DVDERR, G_CC_PASS2),
+  gsDPSetCombineMode(G_CC_BLENDPRIMDECALA, G_CC_PASS2),
   gsDPSetPrimColor(0, 255, 100, 0, 170, 255),
   gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_ZB_XLU_SURF2),
   gsDPLoadTextureBlock_4b_Dolphin(ctl_att_w6_tex, G_IM_FMT_I, 16, 16, 15, GX_MIRROR, GX_MIRROR, 0, 0),
@@ -480,7 +478,7 @@ static Vtx dvd_keikoku4_v[] = {
 };
 static Gfx keikoku4_dvd_att_moji_model[] = {
   gsSPTexture(0, 0, 0, 0, G_ON),
-  gsDPSetCombineMode(G_CC_DVDERR, G_CC_PASS2),
+  gsDPSetCombineMode(G_CC_BLENDPRIMDECALA, G_CC_PASS2),
   gsDPSetPrimColor(0, 255, 235, 235, 255, 255),
   gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_XLU_INTER2),
   gsDPLoadTextureBlock_4b_Dolphin(dvd_keikoku_moji6_new2_tex, G_IM_FMT_I, 64, 16, 15, GX_CLAMP, GX_CLAMP, 0, 0),
@@ -539,7 +537,7 @@ static Gfx keikoku4_dvd_att_moji_model[] = {
 
 static Gfx keikoku4_dvd_att_winT_model[] = {
   gsSPTexture(0, 0, 0, 0, G_ON),
-  gsDPSetCombineMode(G_CC_DVDERR, G_CC_PASS2),
+  gsDPSetCombineMode(G_CC_BLENDPRIMDECALA, G_CC_PASS2),
   gsDPSetPrimColor(0, 255, 100, 0, 170, 255),
   gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_ZB_XLU_SURF2),
   gsDPLoadTextureBlock_4b_Dolphin(ctl_att_w6_tex, G_IM_FMT_I, 16, 16, 15, GX_MIRROR, GX_MIRROR, 0, 0),
@@ -644,7 +642,7 @@ static Vtx dvd_keikoku5_v[] = {
 };
 static Gfx keikoku5_dvd_att_moji_model[] = {
   gsSPTexture(0, 0, 0, 0, G_ON),
-  gsDPSetCombineMode(G_CC_DVDERR, G_CC_PASS2),
+  gsDPSetCombineMode(G_CC_BLENDPRIMDECALA, G_CC_PASS2),
   gsDPSetPrimColor(0, 255, 235, 235, 255, 255),
   gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_XLU_INTER2),
   gsDPLoadTextureBlock_4b_Dolphin(dvd_keikoku_moji9_tex, G_IM_FMT_I, 160, 16, 15, GX_CLAMP, GX_CLAMP, 0, 0),
@@ -696,7 +694,7 @@ static Gfx keikoku5_dvd_att_moji_model[] = {
 
 static Gfx keikoku5_dvd_att_winT_model[] = {
   gsSPTexture(0, 0, 0, 0, G_ON),
-  gsDPSetCombineMode(G_CC_DVDERR, G_CC_PASS2),
+  gsDPSetCombineMode(G_CC_BLENDPRIMDECALA, G_CC_PASS2),
   gsDPSetPrimColor(0, 255, 100, 0, 170, 255),
   gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_ZB_XLU_SURF2),
   gsDPLoadTextureBlock_4b_Dolphin(ctl_att_w6_tex, G_IM_FMT_I, 16, 16, 15, GX_MIRROR, GX_MIRROR, 0, 0),

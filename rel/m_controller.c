@@ -3,6 +3,7 @@
 #include "m_lib.h"
 #include "m_event.h"
 #include "MSL_C/w_math.h"
+#include "sys_math.h"
 
 /**
  * @brief Constructor for MCON.

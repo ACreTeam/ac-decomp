@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "JSystem/JKernel/JKREnum.h"
+#include "JSystem/JUtility/JUTEnum.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,11 +23,16 @@ extern void JW_SetProgressiveMode(BOOL enable);
 extern u32 JW_GetAramAddress(int resource_no);
 extern u8* _JW_GetResourceAram(u32 aram_addr, u8* dst, size_t size);
 extern void JW_SetFamicomMode(int enabled);
+extern void JW_SetLogoMode(int mode);
 extern void JW_Cleanup();
 
 extern void* JC_JFWSystem_getSystemConsole();
 extern void* JC_JFWSystem_getRootHeap();
 extern void* JC_JFWSystem_getSystemHeap();
+
+extern void* JC_JFWDisplay_getManager();
+extern void JC_JFWDisplay_startFadeOut(void* manager, int len);
+extern void JC_JFWDisplay_startFadeIn(void* manager, int len);
 
 extern int JC_JKRHeap_dump(void* heap);
 extern s32 JC_JKRHeap_getTotalFreeSize(void* heap);
@@ -72,6 +78,12 @@ extern void JC_JUTException_setMapFile(const char* path);
 
 extern void JC_JUTAssertion_changeDevice(int device);
 extern void JC_JUTAssertion_changeDisplayTime(int displayTime);
+
+extern void JC_JUTGamePad_read();
+
+extern u32 JW_JUTGamepad_getButton();
+extern u32 JW_JUTGamepad_getTrigger();
+extern u32 JW_JUTGamepad_getErrorStatus();
 
 #ifdef __cplusplus
 }
