@@ -24,6 +24,7 @@
 #include "m_field_assessment.h"
 #include "m_mushroom.h"
 #include "m_clip.h"
+#include "m_scene.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -152,20 +153,35 @@ typedef struct common_data_s {
   /* 0x026144 */ u8 tmp0[0x2614D - 0x26144];
   /* 0x02614D */ u8 transFadeDuration;
   /* 0x02614E */ u8 transWipeSpeed;
-  /* 0x02614F */ u8 tmp34[0x2666C - 0x2614F];
+  /* 0x02614F */ u8 wipeType; /* maybe unused? */
+  /* 0x02614F */ u8 _26150[0x26164 - 0x26150];
+  /* 0x026164 */ mNpc_NpcList_c npclist[ANIMAL_NUM_MAX];
+  /* 0x0264AC */ mNpc_NpcList_c unk_264AC; // fits exact size of npc list struct, seems unused
+  /* 0x0264E4 */ mNpc_NpcList_c island_npclist[1]; // TODO: define for island npc count
+  /* 0x02651C */ mActor_name_t house_owner_name;
+  /* 0x02651E */ mActor_name_t last_field_id;
+  /* 0x026520 */ u8 in_initial_block; /* when TRUE, the player is in the acre which they exited a building. FALSE otherwise. */
+  /* 0x026521 */ u8 submenu_disabled; /* when set, submenus cannot be accessed from start button */
+  /* 0x026522 */ u8 _26522[0x2666C - 0x26522];
   /* 0x02666C */ s16 weather;
   /* 0x02666E */ s16 weather_intensity;
   /* 0x026670 */ lbRTC_time_c weather_time;
-  /* 0x026678 */ u8 _26678[0x2852C - 0x26678];
+  /* 0x026678 */ u8 _26678[0x266A4 - 0x26678];
+  /* 0x0266A4 */ int scene_from_title_demo; /* next scene to be loaded when title demo finishes */
+  /* 0x0266A8 */ u8 _266A8[0x2852C - 0x266A8];
   /* 0x02852C */ s16 money_power;
   /* 0x02852E */ s16 goods_power;
-  /* 0x028530 */ u8 tmp1[0x28879 - 0x28530];
+  /* 0x028530 */ Door_data_c door_data; /* misc door data */
+  /* 0x028544 */ Door_data_c structure_exit_door_data; /* door data for when exiting a building */
+  /* 0x028558 */ u8 tmp1[0x28879 - 0x28558];
   /* 0x028879 */ u8 auto_nwrite_count;
   /* 0x02887A */ lbRTC_year_t auto_nwrite_year;
   /* 0x02887C */ u8 save_error_type; /* set to one of the mFRm_ERROR_* states when save is invalid */
   /* 0x02887D */ u8 train_coming_flag; /* set when the train is coming */
   /* 0x02887E */ u8 buried_treasure_flag; /* when set, treasure cannot be buried */
-  /* 0x02887F */ u8 tmp2[0x2DB40 - 0x2887F];
+  /* 0x02887F */ u8 tmp2[0x288A0 - 0x2887F];
+  /* 0x0288A0 */ u8 pad_connected; /* is gamepad 0 connected? */
+  /* 0x0288A1 */ u8 _288a1[0x02DB40 - 0x0288A1];
   /* 0x02DB40 */ u8 auto_nwrite_set; /* when true, saved nwrite time will be utilized. Seems to be used to keep same date for fishing tourney stuff. */
   /* 0x02DB41 */ u8 tmp3[0x2DBB0 - 0x2DB41];
   /* 0x02DBB0 */ s16 can_look_goki_count;
@@ -191,6 +207,8 @@ extern common_data_t common_data;
 #define Save_Get(name) (Common_Get(save.save.name))
 #define Save_GetPointer(name) (Common_GetPointer(save.save.name))
 #define Save_Set(name, value) (Common_Set(save.save.name, value))
+
+extern void common_data_reinit();
 
 #ifdef __cplusplus
 }

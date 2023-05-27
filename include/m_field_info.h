@@ -84,6 +84,7 @@ typedef struct location_info_s {
 extern int mFI_CheckFieldData();
 extern mActor_name_t mFI_GetFieldId();
 extern int mFI_GetClimate();
+extern void mFI_SetClimate(int climate);
 extern mActor_name_t* mFI_BkNumtoUtFGTop(int block_x, int block_z);
 extern void mFI_ClearDeposit(int block_x, int block_z);
 extern int mFI_GetLineDeposit(u16* deposit, int ut_x);

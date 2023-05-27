@@ -1,5 +1,5 @@
-#ifndef MATH_H
-#define MATH_H
+#ifndef LIB_C_MATH_H
+#define LIB_C_MATH_H
 
 #include "types.h"
 

@@ -10,6 +10,7 @@
 #include "lb_rtc.h"
 #include "m_personal_id.h"
 #include "m_quest.h"
+#include "m_lib.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -145,9 +146,47 @@ typedef struct animal_return_s {
   /* 0x04 */ lbRTC_time_c renew_time; /* time that this struct was updated */
 } Anmret_c;
 
+typedef struct demo_npc_s {
+  mActor_name_t npc_name; /* villager id, E0XX */
+  u32 block_x, block_z; /* spawn acre */
+  u32 ut_x, ut_z; /* spawn unit in acre */
+} mNpc_demo_npc_c;
+
+typedef struct {
+  u8 type;
+  u8 palette;
+  u8 wall_id;
+  u8 floor_id;
+  mActor_name_t main_layer_id;
+  mActor_name_t secondary_layer_id;
+} mNpc_NpcHouseData_c;
+
+typedef struct npc_conversation_s {
+  u8 beesting:1; // talk to player about their beesting
+  u8 unk:7;
+} mNpc_NpcConversation_c;
+
+typedef struct npc_list_s {
+  mActor_name_t name;
+  mActor_name_t field_name;
+  xyz_t house_position;
+  xyz_t position;
+  u8 appear_flag;
+  mNpc_NpcConversation_c conversation_flags;
+  mQst_base_c quest_info;
+  mNpc_NpcHouseData_c house_data;
+  mActor_name_t reward_furniture;
+} mNpc_NpcList_c;
+
 /* anm_id could also just be a Animal_c pointer */
 extern void mNpc_GetNpcWorldNameAnm(u8* name, AnmPersonalID_c* anm_id);
 extern int mNpc_CheckFreeAnimalPersonalID(AnmPersonalID_c* anm_id);
+extern void mNpc_SetAnimalTitleDemo(mNpc_demo_npc_c* demo_npc, Animal_c* animal, GAME* game);
+extern void mNpc_SetNpcList(mNpc_NpcList_c* npc_list, Animal_c* animal, int max, int unused);
+extern void mNpc_ClearCacheName();
+extern void mNpc_ClearInAnimal();
+extern void mNpc_FirstClearGoodbyMail();
+extern void mNpc_ClearIslandNpcRoomData();
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);

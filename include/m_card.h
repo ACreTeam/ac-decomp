@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 extern void mCD_PrintErrInfo(gfxprint_t* gfxprint);
+extern void mCD_InitAll();
 
 #ifdef __cplusplus
 }

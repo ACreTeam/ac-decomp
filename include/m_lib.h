@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_play.h"
 #include "m_actor_type.h"
+#include "MSL_C/math.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,6 +14,18 @@ extern "C" {
 #define SHT_MINV (1.0f / SHT_MAX)
 #define ABS(x) (((x) >= 0) ? (x) : -(x))
 #define SQ(x) ((x)*(x))
+
+/* radians -> short angle */
+#define RAD2SHORT_ANGLE(rad) ((s16)(int)((rad) * (65536.0f / (2.0f * F_PI))))
+
+/* short angle -> radians */
+#define SHORT2RAD_ANGLE(s) ((((f32)(s)) / (65536.0f / (2.0f * F_PI))))
+
+/* degrees -> short angle */
+#define DEG2SHORT_ANGLE(deg) ((s16)((deg) * (65536.0f / 360.0f)))
+
+/* short angle -> degrees */
+#define SHORT2DEG_ANGLE(s) ((((f32)(s)) / (65536.0f / 360.0f)))
 
 typedef struct xy_s {
     f32 x, y;
