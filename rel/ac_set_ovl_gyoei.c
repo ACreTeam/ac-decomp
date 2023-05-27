@@ -1948,7 +1948,7 @@ static void aSOG_add_kaseki_range_data(aSOG_gyoei_keep_c* keep, int time_no, int
   static aSOG_gyoei_spawn_info_weight_f_c kaseki_data = FISH_SPAWN(COELACANTH, SEA, 2.0f);
 
   /* Only the current term, while raining, and not during 9am-3:59pm */
-  if (is_next_term == FALSE && mEnv_NowWeather() == mEv_WEATHER_RAIN && time_no != aSOG_TIME_2) {
+  if (is_next_term == FALSE && mEnv_NowWeather() == mEnv_WEATHER_RAIN && time_no != aSOG_TIME_2) {
     keep->spawn_weights[keep->possible_gyoei_num] = kaseki_data;
     keep->possible_gyoei_num++;
   }

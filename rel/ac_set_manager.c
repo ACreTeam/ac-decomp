@@ -113,7 +113,7 @@ static int aSetMgr_ovl(aSetMgr_set_ovl_c* set_ovl, int type) {
  * @param keep Pointer to the SET_MANAGER's internal aSetMgr_keep_c structure
  **/
 static void aSetMgr_clear_keep(aSetMgr_keep_c* keep) {
-  bzero(keep, aSetMgr_KEEP_SIZE);
+  bzero(keep, sizeof(aSetMgr_keep_c));
 }
 
 /**

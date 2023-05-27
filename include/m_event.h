@@ -112,6 +112,7 @@ enum event_table {
   mEv_EVENT_FISHING_TOURNEY_1 = 29,
   mEv_EVENT_MUSHROOM_SEASON = 47,
   mEv_EVENT_FISHING_TOURNEY_2 = 54,
+  mEv_EVENT_GHOST = 64,
 };
 
 #define mEv_STATUS_ACTIVE     (1 << 0) /* event is active */
@@ -122,10 +123,24 @@ enum event_table {
 #define mEv_STATUS_ERROR      (1 << 5) /* event is in error state */
 #define mEv_STATUS_TALK       (1 << 6) /* event requires talking to player */
 
+#define mEv_GHOST_HITODAMA_NUM 5
+typedef struct ghost_spirit_block_data_s {
+  u8 block_x[mEv_GHOST_HITODAMA_NUM];
+  u8 block_z[mEv_GHOST_HITODAMA_NUM];
+} mEv_gst_hitodama_block_c;
+
+#define mEv_GHOST_FLAG_ACTIVE 0x4000 // TODO: do these live in the ghost actor itself?
+typedef struct ghost_common_s {
+  mEv_gst_hitodama_block_c hitodama_block_data;
+  u16 flags;
+  u8 _0C[0x2C - 0x0C];
+} mEv_gst_common_c;
+
 extern int mEv_CheckFirstJob();
 extern int mEv_CheckArbeit();
 extern int mEv_CheckTitleDemo();
 extern int mEv_check_status(int event, s16 status);
+extern s8* mEv_get_common_area(int type, s8 id);
 
 extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
 

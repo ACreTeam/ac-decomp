@@ -87,6 +87,7 @@ extern int mFI_GetClimate();
 extern mActor_name_t* mFI_BkNumtoUtFGTop(int block_x, int block_z);
 extern void mFI_ClearDeposit(int block_x, int block_z);
 extern int mFI_GetLineDeposit(u16* deposit, int ut_x);
+extern u16* mFI_GetDepositP(int block_x, int block_z);
 extern void mFI_GetSpecialBlockNum(int* block_pos_tbl, u32* kind_list, int kind_num);
 extern int mFI_SetTreasure(int* block_x, int* block_z, mActor_name_t item_no);
 extern void mFI_SetFGUpData();
@@ -97,6 +98,8 @@ extern void mFI_BkandUtNum2Wpos(xyz_t* wpos_p, int block_x, int block_z, int ut_
 extern void mFI_BkandUtNum2CenterWpos(xyz_t* wpos_p, int block_x, int block_z, int ut_x, int ut_z);
 extern mCoBG_Collision_u* mFI_GetBkNum2ColTop(int block_x, int block_z);
 extern u32 mFI_BkNum2BlockKind(int block_x, int block_z);
+extern int mFI_BlockKind2BkNum(int* block_x, int* block_z, u32 block_kind);
+extern int mFI_GetBlockUtNum2FG(mActor_name_t* fg_item, int block_x, int block_z, int ut_x, int ut_z);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);

@@ -12,7 +12,24 @@ extern "C" {
 typedef struct actor_set_manager_s SET_MANAGER;
 
 #define aSetMgr_SET_OVERLAY_BUF_SIZE 0x4000
-#define aSetMgr_KEEP_SIZE 0x354
+
+#define aSetMgr_INSECT_SPAWN_INFO_COUNT 43
+
+/* sizeof(aSOI_insect_spawn_info_f_c) == 0xC */
+typedef struct insect_spawn_info_f_s {
+  int type;
+  u8 spawn_area;
+  float weight;
+} aSOI_insect_spawn_info_f_c;
+
+/* sizeof(aSOI_insect_keep_c) == 0x210 */
+typedef struct insect_keep_s {
+  aSOI_insect_spawn_info_f_c spawn_info[aSetMgr_INSECT_SPAWN_INFO_COUNT]; // devs forgot to update aSetMgr_INSECT_SPAWN_INFO_SIZE or something lol
+  int now_month;
+  int now_term;
+  u8 info_num;
+  u8 spawn_type;
+} aSOI_insect_keep_c;
 
 #define aSetMgr_WAIT_TIME 5 // wait time between aSetMgr_move_check_wait -> aSetMgr_move_set
 
@@ -51,7 +68,7 @@ enum set_manager_move_proc_type {
 
 /* sizeof(aSetMgr_keep_c) == 0x354 */
 typedef struct actor_set_manager_keep_s {
-  /* 0x000 */ u8 unk[0x210];
+  /* 0x000 */ aSOI_insect_keep_c insect_keep;
   /* 0x210 */ aSOG_gyoei_keep_c gyoei_keep;
 } aSetMgr_keep_c;
 
