@@ -1,5 +1,5 @@
-#ifndef M_VIBCTL_H
-#define M_VIBCTL_H
+#ifndef M_CPAK_H
+#define M_CPAK_H
 
 #include "types.h"
 
@@ -7,8 +7,7 @@
 extern "C" {
 #endif
 
-extern void mVibctl_reset();
-extern void mVibctl_init0();
+extern int mCPk_InitPak(int pak_idx);
 
 #ifdef __cplusplus
 }

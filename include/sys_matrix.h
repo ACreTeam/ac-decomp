@@ -16,6 +16,7 @@ extern void Matrix_push();
 extern void Matrix_pull();
 extern void Matrix_get(MtxF* m);
 extern void Matrix_put(MtxF* m);
+extern void new_Matrix(GAME* game);
 
 #ifdef __cplusplus
 }

@@ -53,7 +53,11 @@ do { \
   GAME_NEXT_GAME(t_game, init_name, class_name); \
 } while (0)
 
+extern void SetGameFrame(int frame);
+
 extern void game_get_controller(GAME* game);
+extern void game_debug_draw_last(GAME* game, GRAPH* graph);
+extern void game_draw_last(GRAPH* graph);
 
 extern GAME* gamePT;
 

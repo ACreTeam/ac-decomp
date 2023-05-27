@@ -369,6 +369,23 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define EXIT_DOOR 0x4080
 
+#define NPC_START 0xE000
+#define NPC_BOB NPC_START
+// TODO: Finish
+#define NPC_JOEY 0xE048
+#define NPC_PAOLO 0xE04C
+#define NPC_JANE 0xE061
+#define NPC_CARRIE 0xE06F
+#define NPC_SAMSON 0xE07D
+#define NPC_BUZZ 0xE08C
+#define NPC_CUBE 0xE093
+#define NPC_RASHER 0xE09B
+#define NPC_TANK 0xE0AA
+#define NPC_VESTA 0xE0AD
+#define NPC_TYBALT 0xE0B6
+#define NPC_LOBO 0xE0B9
+#define NPC_BIFF 0xE0C2
+
 #define RSV_DOOR 0xFE1B
 #define RSV_WALL_NO 0xFFFE /* interior wall item, no collision */
 #define RSV_NO 0xFFFF /* reserved space, can't interact but no collision */

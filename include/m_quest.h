@@ -114,6 +114,7 @@ typedef struct quest_errand_s {
 } mQst_errand_c;
 
 extern void mQst_PrintQuestInfo(gfxprint_t* gfxprint);
+extern void mQst_ClearGrabItemInfo();
 
 #ifdef __cplusplus
 }

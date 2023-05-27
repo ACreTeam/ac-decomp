@@ -19,6 +19,8 @@ extern void mMsg_Set_free_str(M_MSG_WINDOW* msg, int free_str_no, u8* str, size_
 
 extern void mMsg_debug_draw(gfxprint_t* gfxprint);
 
+extern void mMsg_aram_init();
+
 #ifdef __cplusplus
 }
 #endif

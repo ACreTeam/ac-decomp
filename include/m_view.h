@@ -43,6 +43,8 @@ typedef struct view_s {
   int _unused_pad0;
 } View;
 
+extern void initView(View* view, GRAPH* graph);
+
 #ifdef __cplusplus
 }
 #endif

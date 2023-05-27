@@ -1,5 +1,5 @@
-#ifndef M_VIBCTL_H
-#define M_VIBCTL_H
+#ifndef M_BG_ITEM_H
+#define M_BG_ITEM_H
 
 #include "types.h"
 
@@ -7,8 +7,7 @@
 extern "C" {
 #endif
 
-extern void mVibctl_reset();
-extern void mVibctl_init0();
+extern void mBI_ct();
 
 #ifdef __cplusplus
 }

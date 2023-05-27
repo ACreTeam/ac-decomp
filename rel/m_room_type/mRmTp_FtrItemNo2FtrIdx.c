@@ -12,5 +12,5 @@ extern int mRmTp_FtrItemNo2FtrIdx(u16 ftr_no) {
     return FTR_NO_2_FTR_IDX(ftr_no - FTR1_NO_START) + NUM_FTR_IN_TYPE;
   }
 
-  return NULL_NO;
+  return EMPTY_NO;
 }

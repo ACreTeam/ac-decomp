@@ -143,6 +143,10 @@ extern int mEv_check_status(int event, s16 status);
 extern s8* mEv_get_common_area(int type, s8 id);
 
 extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
+extern void mEv_ClearEventInfo();
+
+extern int mEv_CheckTitleDemo();
+extern void mEv_SetTitleDemo(int titledemo_no);
 
 extern void mEv_debug_print4f(gfxprint_t* gfxprint);
 extern void mEv_sp_debug_print4f(gfxprint_t* gfxprint);

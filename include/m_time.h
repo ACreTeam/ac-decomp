@@ -76,6 +76,8 @@ extern const lbRTC_time_c mTM_rtcTime_default_code;
 #define mTM_IsTimeCleared(time) (lbRTC_IsEqualTime((time), &mTM_rtcTime_clear_code, lbRTC_CHECK_ALL) == TRUE)
 #define mTM_AreTimesEqual(t0, t1) (lbRTC_IsEqualTime(t0, t1, lbRTC_CHECK_ALL))
 
+extern void mTM_set_season();
+
 #ifdef __cplusplus
 }
 #endif

@@ -43,6 +43,8 @@ typedef struct island_s {
   /* 0x18E3 */ u8 unused_18E3[29]; /* unused */
 } Island_c;
 
+extern void mISL_ClearKeepIsland();
+
 #ifdef __cplusplus
 }
 #endif

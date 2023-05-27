@@ -32,7 +32,6 @@ typedef struct room_type_place_info_s {
 
 // TEMPORARY. Should be generated with .decl files
 #define ITEM0_NO_START 0x0000
-#define NULL_NO ITEM0_NO_START
 #define ITEM0_1_NO_START ITEM0_NO_START + 0x800
 
 #define FTR0_NO_START 0x1000
