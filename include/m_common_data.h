@@ -152,7 +152,11 @@ typedef struct common_data_s {
   /* 0x026144 */ u8 tmp0[0x2614D - 0x26144];
   /* 0x02614D */ u8 transFadeDuration;
   /* 0x02614E */ u8 transWipeSpeed;
-  /* 0x02614F */ u8 tmp34[0x2852C - 0x2614F];
+  /* 0x02614F */ u8 tmp34[0x2666C - 0x2614F];
+  /* 0x02666C */ s16 weather;
+  /* 0x02666E */ s16 weather_intensity;
+  /* 0x026670 */ lbRTC_time_c weather_time;
+  /* 0x026678 */ u8 _26678[0x2852C - 0x26678];
   /* 0x02852C */ s16 money_power;
   /* 0x02852E */ s16 goods_power;
   /* 0x028530 */ u8 tmp1[0x28879 - 0x28530];

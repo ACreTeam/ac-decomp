@@ -143,6 +143,12 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define TREE_PRESENT (TREE_LIGHTS + 1)
 #define TREE_BELLS 0x0069
 
+#define ROCK_A 0x0063
+#define ROCK_B (ROCK_A + 1)
+#define ROCK_C (ROCK_B + 1)
+#define ROCK_D (ROCK_C + 1)
+#define ROCK_E (ROCK_D + 1)
+
 #define CEDAR_TREE_BELLS 0x0078
 #define CEDAR_TREE_FTR (CEDAR_TREE_BELLS + 1)
 #define CEDAR_TREE_BEES (CEDAR_TREE_FTR + 1)
@@ -333,6 +339,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITM_FOOD_START 0x2800
 
 #define ITM_FOOD_MUSHROOM 0x2805
+#define ITM_FOOD_CANDY 0x2806
 
 #define ITM_ENV_START 0x2900
 #define ITM_SAPLING ITM_ENV_START
@@ -348,6 +355,11 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITEM_YELLOW_TULIP_BAG 0x290A
 
 #define ITM_COLLEGERULE 0x2B00
+
+#define ITM_KABU_10 0x2F00
+#define ITM_KABU_50 0x2F01
+#define ITM_KABU_100 0x2F02
+#define ITM_KABU_SPOILED 0x2F03
 
 #define FTR_ORANGEBOX 0x30F8
 

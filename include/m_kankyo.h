@@ -8,13 +8,13 @@ extern "C" {
 #endif
 
 enum weather {
-  mEv_WEATHER_CLEAR,
-  mEv_WEATHER_RAIN,
-  mEv_WEATHER_SNOW,
-  mEv_WEATHER_SAKURA,
-  mEv_WEATHER_LEAVES,
+  mEnv_WEATHER_CLEAR,
+  mEnv_WEATHER_RAIN,
+  mEnv_WEATHER_SNOW,
+  mEnv_WEATHER_SAKURA,
+  mEnv_WEATHER_LEAVES,
   
-  mEv_WEATHER_NUM
+  mEnv_WEATHER_NUM
 };
 
 extern int mEnv_NowWeather();
