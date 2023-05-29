@@ -13,14 +13,14 @@ typedef struct {
     /* 0x008 */ s16 frame;
     /* 0x00A */ u16 unkA;
     /* 0x00C */ u16 timer;
-} TransitionFade; // size = 0x10
+} fbdemo_fade; // size = 0x10
 
 
-extern TransitionFade* fbdemo_fade_init(TransitionFade*);
-extern void fbdemo_fade_move(TransitionFade*, int);
-extern void fbdemo_fade_startup(TransitionFade*);
-extern void fbdemo_fade_settype(TransitionFade*, int);
-extern void fbdemo_fade_setcolor_rgba8888(TransitionFade*, u32);
-extern u8 fbdemo_fade_is_finish(TransitionFade*);
+extern fbdemo_fade* fbdemo_fade_init(fbdemo_fade*);
+extern void fbdemo_fade_move(fbdemo_fade*, int);
+extern void fbdemo_fade_startup(fbdemo_fade*);
+extern void fbdemo_fade_settype(fbdemo_fade*, int);
+extern void fbdemo_fade_setcolor_rgba8888(fbdemo_fade*, u32);
+extern u8 fbdemo_fade_is_finish(fbdemo_fade*);
 
 #endif

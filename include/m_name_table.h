@@ -329,6 +329,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITM_AXE 0x2201
 #define ITM_SHOVEL 0x2202
 #define ITM_ROD 0x2203
+#define ITM_GELATO_UMBRELLA 0x2204
 
 #define ITM_DUST0_EMPTY_CAN 0x250E
 #define ITM_DUST1_BOOT 0x250F

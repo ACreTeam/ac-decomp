@@ -16,14 +16,14 @@ typedef struct {
     /* 0x018 */ Mtx projection;
     /* 0x058 */ Mtx lookAt;
     /* 0x098 */ Mtx modelView[2][3];
-} TransitionWipe; // size = 0x218
+} fbdemo_wipe1; // size = 0x218
 
 
-extern TransitionWipe* fbdemo_wipe1_init(TransitionWipe*);
-extern void fbdemo_wipe1_move(TransitionWipe*, int);
-extern void fbdemo_wipe1_draw(TransitionWipe*, Gfx**);
-extern void fbdemo_wipe1_startup(TransitionWipe*);
-extern void fbdemo_wipe1_settype(TransitionWipe*, int);
-extern void fbdemo_wipe1_setcolor_rgba8888(TransitionWipe*, u32);
-extern u8 fbdemo_wipe1_is_finish(TransitionWipe*);
+extern fbdemo_wipe1* fbdemo_wipe1_init(fbdemo_wipe1*);
+extern void fbdemo_wipe1_move(fbdemo_wipe1*, int);
+extern void fbdemo_wipe1_draw(fbdemo_wipe1*, Gfx**);
+extern void fbdemo_wipe1_startup(fbdemo_wipe1*);
+extern void fbdemo_wipe1_settype(fbdemo_wipe1*, int);
+extern void fbdemo_wipe1_setcolor_rgba8888(fbdemo_wipe1*, u32);
+extern u8 fbdemo_wipe1_is_finish(fbdemo_wipe1*);
 #endif
