@@ -9,12 +9,18 @@
 extern "C" {
 #endif
 
+enum resource_index {
+  /* TODO: finish */
+  RESOURCE_MY_ORIGINAL = 27,
+};
+
 extern void JW_Init();
 extern void JW_Init2();
 extern void* JW_Alloc(size_t size, int align);
 extern void JW_Free(void* ptr);
 extern s32 JW_Resize(void* ptr, size_t new_size);
 extern size_t JW_GetMemBlockSize(void* ptr);
+extern size_t JW_GetResSizeFileNo(int file_no);
 extern void JW_BeginFrame();
 extern void JW_EndFrame();
 extern void JW_JUTReport(int x, int y, int show_count, const char* fmt, ...);

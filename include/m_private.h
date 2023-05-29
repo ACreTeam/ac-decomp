@@ -28,6 +28,9 @@ enum {
   mPr_PLAYER_NUM
 };
 
+#define mPr_ECARD_NUM 367
+#define mPr_ECARD_LETTER_NUM ((mPr_ECARD_NUM + 7) / 8) // 46
+
 #define mPr_POCKETS_SLOT_COUNT 15
 #define mPr_INVENTORY_MAIL_COUNT 10
 #define mPr_DELIVERY_QUEST_NUM mPr_POCKETS_SLOT_COUNT
@@ -95,7 +98,7 @@ typedef struct player_sunburn_s {
 /* sizeof(mPr_carde_data_c) == 0x32 */
 typedef struct player_ecard_data_s {
   /* 0x00 */ lbRTC_ymd_t letter_send_date; /* date the latest eCard letter was sent */
-  /* 0x04 */ u8 card_letters_sent[46]; /* bitfield keeping track of which eCard letters have been sent to the player [0, 366] */
+  /* 0x04 */ u8 card_letters_sent[mPr_ECARD_LETTER_NUM]; /* bitfield keeping track of which eCard letters have been sent to the player [0, 366] */
 } mPr_carde_data_c;
 
 typedef struct private_s {
