@@ -133,3 +133,14 @@ sys_dynamic.c:
 # ac_aprilfool_control/aPC_actor_dt.c: common_data is pure bs, 
     # .text: [0x805153f0, 0x8051542C]
 
+# dataobject.obj files
+data/titledemo/pact0.c:
+    .data: [0x80C411D8, 0x80C42038]
+data/titledemo/pact1.c:
+    .data: [0x80C42038, 0x80C42E98]
+data/titledemo/pact2.c:
+    .data: [0x80C42E98, 0x80C43D18]
+data/titledemo/pact3.c:
+    .data: [0x80C43D18, 0x80C44B98]
+data/titledemo/pact4.c:
+    .data: [0x80C44B98, 0x80C45A08]

@@ -179,7 +179,15 @@ typedef struct common_data_s {
   /* 0x02887C */ u8 save_error_type; /* set to one of the mFRm_ERROR_* states when save is invalid */
   /* 0x02887D */ u8 train_coming_flag; /* set when the train is coming */
   /* 0x02887E */ u8 buried_treasure_flag; /* when set, treasure cannot be buried */
-  /* 0x02887F */ u8 tmp2[0x288A0 - 0x2887F];
+  /* 0x02887F */ u8 spnpc_first_talk_flags;
+  /* 0x028880 */ u8 needlework_first_talk_flags;
+  /* 0x028882 */ u16 event_notification_active;
+  /* 0x028884 */ lbRTC_time_c newly_set_time; /* time set by player in time adjust menu */
+  /* 0x02888C */ lbRTC_time_c old_time; /* time before being changed by the player */
+  /* 0x028894 */ s16 balloon_state; /* balloon's current state */
+  /* 0x028896 */ s16 balloon_last_spawn_min; /* last minute the balloon was spawned */
+  /* 0x028898 */ f32 balloon_spawn_percent; /* chance that a balloon will spawn */
+  /* 0x02889C */ int nook_shop_state; /* adjusted based on any current events happening to Nook's shop */
   /* 0x0288A0 */ u8 pad_connected; /* is gamepad 0 connected? */
   /* 0x0288A1 */ u8 _288a1[0x02DB40 - 0x0288A1];
   /* 0x02DB40 */ u8 auto_nwrite_set; /* when true, saved nwrite time will be utilized. Seems to be used to keep same date for fishing tourney stuff. */

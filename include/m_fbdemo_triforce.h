@@ -16,14 +16,14 @@ typedef struct {
     /* 0x0E*/  u8 temp2[2]; 
     /* 0x10 */ Mtx perspmtx;
     /* 0x50 */ Mtx lookatmtx;
-} TransitionTriforce; // size = 0x90;
+} fbdemo_triforce; // size = 0x90;
 
-extern void fbdemo_triforce_startup(TransitionTriforce*);
-extern TransitionTriforce* fbdemo_triforce_init(TransitionTriforce*);
-extern void fbdemo_triforce_move(TransitionTriforce*, int);
-extern void fbdemo_triforce_draw(TransitionTriforce*, Gfx**);
-extern s8 fbdemo_triforce_is_finish(TransitionTriforce*);
-extern void fbdemo_triforce_settype(TransitionTriforce*, int);
+extern void fbdemo_triforce_startup(fbdemo_triforce*);
+extern fbdemo_triforce* fbdemo_triforce_init(fbdemo_triforce*);
+extern void fbdemo_triforce_move(fbdemo_triforce*, int);
+extern void fbdemo_triforce_draw(fbdemo_triforce*, Gfx**);
+extern s8 fbdemo_triforce_is_finish(fbdemo_triforce*);
+extern void fbdemo_triforce_settype(fbdemo_triforce*, int);
 extern void fbdemo_fade_setcolor_rgba8888(void);
 
 
