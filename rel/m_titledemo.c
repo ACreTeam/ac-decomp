@@ -79,6 +79,7 @@ static u16 get_tdemo_keydata(int frame) {
 #define mTD_KEYDATA_STICKX(d) (((s16)(d) & 0xFE00) / 512)
 #define mTD_KEYDATA_STICKY(d) (((s16)((d) << 8) & 0xFE00) / 512)
 
+/* @nonmatching */
 static void set_player_demo_keydata(int frame) {
   u16 keydata0;
   u16 keydata1;
