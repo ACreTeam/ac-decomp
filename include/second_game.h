@@ -13,8 +13,8 @@ typedef struct second_game_s {
   /* 0x00 */ GAME game;
 } GAME_SECOND;
 
-extern void second_game_init(GAME_SECOND second);
-extern void second_game_cleanup(GAME_SECOND* second);
+extern void second_game_init(GAME* game);
+extern void second_game_cleanup(GAME* game);
 
 #ifdef __cplusplus
 }

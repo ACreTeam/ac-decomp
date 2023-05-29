@@ -52674,6 +52674,9 @@ global:
     0x81361828: fbdemo
     0x81361920: gxbuf
     0x81361A60: prbuf
+    0x8148DA60: sound_ok
+    0x8148DA61: contpad_ok
+    0x8148DA62: frame_count
     0x8148DA68: famicom_done
     0x8148DA6C: famicom_done_countdown
     0x8148DA70: freeXfbBase

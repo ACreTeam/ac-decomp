@@ -9,6 +9,7 @@
 #include "libultra/shutdown.h"
 #include "libultra/os_timer.h"
 #include "libultra/os_thread.h"
+#include "libultra/initialize.h"
 
 #define N64_SCREEN_HEIGHT 240
 #define N64_SCREEN_WIDTH 320
