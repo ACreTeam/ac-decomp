@@ -9,6 +9,9 @@ m_debug_hayakawa.c:
     .text: [0x803965E4, 0x803973E8]
     .rodata: [0x80641D50, 0x80641D90]
     .data: [0x80651328, 0x80651358]
+m_eappli.c:
+    .text: [0x8039A5E0, 0x8039A960]
+    .bss: [0x81295150, 0x81295550]
 m_fbdemo.c:
     .text: [0x803A0350, 0x803A0ABC]
     .rodata: [0x80641F40, 0x80641F60]

@@ -10,15 +10,15 @@ extern "C" {
 
 extern Arena zelda_arena; 
 
-extern void zelda_malloc_align(u32,u32);
-extern void zelda_malloc(u32);
-extern void zelda_malloc_r(u32);
+extern void* zelda_malloc_align(size_t,u32);
+extern void* zelda_malloc(size_t);
+extern void* zelda_malloc_r(size_t);
 extern void zelda_free(void*);
 extern void zelda_GetFreeArena(size_t* max, size_t* free, size_t* alloc);
-extern u32 zelda_GetTotalFreeSize(void);
-extern u32 zelda_GetMemBlockSize(void*);
-extern void zelda_InitArena(void*, u32);
-extern void zelda_AddBlockArena(void*, u32);
+extern size_t zelda_GetTotalFreeSize(void);
+extern size_t zelda_GetMemBlockSize(void*);
+extern void zelda_InitArena(void*, size_t);
+extern void zelda_AddBlockArena(void*, size_t);
 extern void zelda_CleanupArena(void);
 extern int zelda_MallocIsInitalized();
 
