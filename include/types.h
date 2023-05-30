@@ -53,6 +53,8 @@ typedef u32 unknown;
 #endif
 #endif
 
+#define ARRAY_SIZE(arr, type) (sizeof(arr) / sizeof(type))
+
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 

@@ -279,6 +279,9 @@ extern "C" {
 #define mFont_MARKTYPE_CHOICE 4
 #define mFont_MARKTYPE_TOTAL 5
 
+#define mFont_MODE_POLY 0
+#define mFont_MODE_FONT 1
+
 enum {
   mFont_CONT_CODE_BEGIN = 0,
   mFont_CONT_CODE_LAST = mFont_CONT_CODE_BEGIN,

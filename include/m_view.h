@@ -11,6 +11,12 @@
 extern "C" {
 #endif
 
+#define VIEW_UPDATE_LOOKAT (1 << 0) // 1
+#define VIEW_UPDATE_SCISSOR (1 << 1) // 2
+#define VIEW_UPDATE_PERSPECTIVE (1 << 2) // 4
+#define VIEW_UPDATE_ORTHOGRAPHIC (1 << 3) // 8
+#define VIEW_UPDATE_ALL (VIEW_UPDATE_LOOKAT | VIEW_UPDATE_SCISSOR | VIEW_UPDATE_PERSPECTIVE | VIEW_UPDATE_ORTHOGRAPHIC) // 15
+
 /* sizeof(struct view_s) == 0x120 */
 typedef struct view_s {
   GRAPH* graph;
@@ -44,6 +50,7 @@ typedef struct view_s {
 } View;
 
 extern void initView(View* view, GRAPH* graph);
+extern void showView(View* view, int flags);
 
 #ifdef __cplusplus
 }

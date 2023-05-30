@@ -132,7 +132,7 @@ typedef struct private_s {
   /* 0x1088 */ u16 cloth_idx; /* index value for texture? */
   /* 0x108A */ mActor_name_t cloth; /* shirt item */
 
-  /* 0x108C */ AnmPersonalID_c stored_anm_id; /* not sure what the function of this is */
+  /* 0x108C */ AnmPersonalID_c stored_anm_id; /* foriegn animal personal ID leftover from N64? */
 
   /* 0x109A */ mPr_destiny_c destiny; /* player fortune, seemingly called destiny */
   /* 0x10A4 */ mPr_birthday_c birthday; /* player birthday */
