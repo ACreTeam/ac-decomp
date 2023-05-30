@@ -12,6 +12,15 @@ extern "C" {
 
 #define PADMSGBUFCNT 8
 
+enum pads {
+  PAD0,
+  PAD1,
+  PAD2,
+  PAD3,
+
+  PAD_NUM
+};
+
 typedef struct {
   u8 last_intensity;
   u8 now_intensity;
@@ -53,6 +62,8 @@ typedef struct {
 } padmgr;
 
 extern padmgr padmgr_class;
+
+extern int padmgr_isConnectedController(int pad);
 
 #define padmgr_setClient(callback, param) \
 do { \
