@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 
+extern void mVibctl_ct();
 extern void mVibctl_reset();
 extern void mVibctl_init0();
 

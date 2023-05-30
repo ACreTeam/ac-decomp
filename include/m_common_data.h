@@ -216,6 +216,7 @@ extern common_data_t common_data;
 #define Save_GetPointer(name) (Common_GetPointer(save.save.name))
 #define Save_Set(name, value) (Common_Set(save.save.name, value))
 
+extern void common_data_init();
 extern void common_data_reinit();
 
 #ifdef __cplusplus
