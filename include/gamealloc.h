@@ -21,6 +21,8 @@ typedef struct gameAlloc_s {
   /* 0x10 */ GameAllocList* tail;
 } GameAlloc;
 
+extern void* gamealloc_malloc(GameAlloc* gamealloc, size_t size);
+
 #ifdef __cplusplus
 };
 #endif
