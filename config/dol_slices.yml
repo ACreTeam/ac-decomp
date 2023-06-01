@@ -41,6 +41,10 @@ jaudio_NES/dummyprobe.c:
 #jaudio_NES/verysimple.c:
 #    .text: [0x80008400, 0x80008480]
 #    .sdata: [0x80217b80, 0x80217b88]
+GBA2/JoyBoot.c:
+    .text: [0x80049788, 0x8004ae00]
+    .data: [0x800daa08, 0x800daaa0]
+    .bss: [0x801f7180, 0x801f71c0]
 libforest/osreport.c:
     .text: [0x8005a654, 0x8005a92c]
     .data: [0x800dc6d8, 0x800dc738]
