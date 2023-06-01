@@ -341,6 +341,11 @@ BOOT_CFLAGS = CFLAGS + [
     "-sdata 0",
     "-sdata2 0"
 ] + DOL_DEFINES
+DOL_CFLAGS_NO_SDATA = CFLAGS + [
+    "-inline on",
+    "-sdata 0",
+    "-sdata2 0"
+] + DOL_DEFINES
 DVDERR_CFLAGS = CFLAGS + [
     "-inline on",
     "-sdata 0",
@@ -395,8 +400,9 @@ JSYSTEM_BASE = [
 
 JSYSTEM_CFLAGS = ' '.join(JSYSTEM_BASE + LOCAL_CFLAGS)
 DOL_CFLAGS = ' '.join(BASE_DOL_CFLAGS + LOCAL_CFLAGS)
-DOL_BOOT_CFLAGS = ' '.join(BOOT_CFLAGS + LOCAL_CFLAGS) # TODO: this uses C++ but there's some issues with ppcdis, real flags: ' '.join(CPLFLAGS + BOOT_CFLAGS + LOCAL_CFLAGS);
+DOL_BOOT_CFLAGS = ' '.join(BOOT_CFLAGS + LOCAL_CFLAGS)
 DOL_DVDERR_CFLAGS = ' '.join(DVDERR_CFLAGS + LOCAL_CFLAGS)
+DOL_CFLAGS_SDATA0_CFLAGS = ' '.join(DOL_CFLAGS_NO_SDATA + LOCAL_CFLAGS)
 SDK_FLAGS = ' '.join(SDK_CFLAG + LOCAL_CFLAGS)
 ALIGN16 = ' '.join(BASE_DOL_CFLAGS + LOCAL_CFLAGS + ALIGN16_CFLAG)
 DOL_CPPFLAGS = ' '.join(CPLFLAGS + BASE_DOL_CFLAGS + LOCAL_CFLAGS)

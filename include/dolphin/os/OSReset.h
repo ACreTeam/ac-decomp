@@ -13,6 +13,19 @@ extern "C" {
 #define OS_RESET_HOTRESET 1 /* Soft reset */
 #define OS_RESET_SHUTDOWN 2
 
+typedef BOOL (*OSResetFunction)(BOOL final);
+typedef struct OSResetFunctionInfo OSResetFunctionInfo;
+
+struct OSResetFunctionInfo {
+  // public
+  OSResetFunction func;
+  u32 priority;
+
+  // private
+  OSResetFunctionInfo* next;
+  OSResetFunctionInfo* prev;
+};
+
 u32 OSGetResetCode();
 void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu);
 BOOL OSGetResetSwitchState();

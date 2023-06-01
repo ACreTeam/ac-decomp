@@ -22,6 +22,9 @@ typedef struct gameAlloc_s {
 } GameAlloc;
 
 extern void* gamealloc_malloc(GameAlloc* gamealloc, size_t size);
+extern void gamealloc_free(GameAlloc* gamealloc, void* ptr);
+extern void gamealloc_cleanup(GameAlloc* gamealloc);
+extern void gamealloc_init(GameAlloc* gamealloc);
 
 #ifdef __cplusplus
 };
