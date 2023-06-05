@@ -16,6 +16,49 @@ enum {
   mRmTp_FTRSIZE_NUM
 };
 
+enum birth_type {
+  mRmTp_BIRTH_TYPE_GRP_A = 0,
+  mRmTp_BIRTH_TYPE_GRP_B = 1,
+  mRmTp_BIRTH_TYPE_GRP_C = 2,
+  mRmTp_BIRTH_TYPE_EVENT = 3,
+  mRmTp_BIRTH_TYPE_BIRTHDAY = 4,
+  mRmTp_BIRTH_TYPE_HALLOWEEN = 5,
+  mRmTp_BIRTH_TYPE_HANIWA = 6,
+  mRmTp_BIRTH_TYPE_LOTTERY = 7,
+  mRmTp_BIRTH_TYPE_FTR_CLOTH = 8,
+  mRmTp_BIRTH_TYPE_FTR_UMBRELLA = 9,
+  mRmTp_BIRTH_TYPE_FTR_INSECT = 10,
+  mRmTp_BIRTH_TYPE_FTR_FISH = 11,
+  mRmTp_BIRTH_TYPE_SINGLE_FOSSIL = 12,
+  mRmTp_BIRTH_TYPE_MULTI_FOSSIL = 13,
+  mRmTp_BIRTH_TYPE_XMAS = 14,
+  mRmTp_BIRTH_TYPE_SANTA = 15,
+  mRmTp_BIRTH_TYPE_UNOBTAINABLE = 16,
+  mRmTp_BIRTH_TYPE_SNOWMAN = 17,
+  mRmTp_BIRTH_TYPE_HALLOWEEN_TRICK = 18,
+  mRmTp_BIRTH_TYPE_POST_OFFICE = 19,
+  mRmTp_BIRTH_TYPE_MARK_ROOM = 20,
+  mRmTp_BIRTH_TYPE_SONCHO = 21,
+  mRmTp_BIRTH_TYPE_JONASON = 22,
+  mRmTp_BIRTH_TYPE_UNUSED_23 = 23,
+  mRmTp_BIRTH_TYPE_FAMICOM_EREADER = 24,
+  mRmTp_BIRTH_TYPE_ISLAND = 25,
+  mRmTp_BIRTH_TYPE_FAMICOM_ISLAND = 26,
+  mRmTp_BIRTH_TYPE_MY_ORIGINAL = 27,
+  mRmTp_BIRTH_TYPE_FAMICOM_CODE = 28,
+  mRmTp_BIRTH_TYPE_MUSEUM = 29,
+  mRmTp_BIRTH_TYPE_SONCHO_LIGHTHOUSE_QUEST = 30,
+  mRmTp_BIRTH_TYPE_FTR_DIARY = 31,
+  mRmTp_BIRTH_TYPE_GROUNDHOG = 32,
+  mRmTp_BIRTH_TYPE_KAMAKURA = 33,
+  mRmTp_BIRTH_TYPE_NINTENDO_CODE = 34,
+  mRmTp_BIRTH_TYPE_HARVEST_FESTIVAL = 35,
+  mRmTp_BIRTH_TYPE_UNUSED_36 = 36,
+  mRmTp_BIRTH_TYPE_SUMMER_CAMPER = 37,
+
+  mRmTp_BIRTH_TYPE_NUM
+};
+
 typedef struct room_type_place_info_one_s {
   int exists;
   int ut_x;
@@ -61,6 +104,8 @@ extern void mRmTp_MakeFamicom_Fdebug();
 
 extern mActor_name_t mRmTp_FtrItemNo2Item1ItemNo(mActor_name_t ftr_item_no, void* unused); /* second paramter is probably GAME*? */
 extern int mRmTp_FtrItemNo2FtrIdx(mActor_name_t ftr_item_no);
+extern mActor_name_t mRmTp_FtrIdx2FtrItemNo(int ftr_idx, int rotation);
 extern int mRmTp_GetFurnitureData(mActor_name_t ftr, int ut_x, int ut_z, mRmTp_FtrPlaceInfo_t* place_info);
+extern u8 mRmTp_FurnitureIdx2FurnitureKind(int ftr_idx);
 
 #endif
