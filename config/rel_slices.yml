@@ -1,5 +1,8 @@
 sys_vimgr.c:
     .text: [0x803703F8, 0x80370418]
+#c_keyframe.c:
+#    .text: [0x80370418, 0x80372C8C]
+#    .rodata: [0x80641260, 0x806412A8]
 m_cockroach.c:
     .text: [0x80385430, 0x80385A80]
 m_controller.c: # TODO: uncomment when fsqrt's $localstatic$ issue is resolved

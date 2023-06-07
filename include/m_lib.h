@@ -10,7 +10,12 @@
 extern "C" {
 #endif
 
-#define SHT_MAX 32767.0f
+#define SHT_MIN_S -32768 /* 0x8000 */
+#define SHT_MAX_S  32767 /* 0x7FFF */
+
+#define SHT_MIN ((f32)SHT_MIN_S)
+#define SHT_MAX ((f32)SHT_MAX_S)
+
 #define SHT_MINV (1.0f / SHT_MAX)
 #define ABS(x) (((x) >= 0) ? (x) : -(x))
 #define SQ(x) ((x)*(x))
