@@ -1,6 +1,9 @@
 #include "c_keyframe.h"
 #include "libultra/libultra.h"
 #include "MSL_C/w_math.h"
+#include "sys_matrix.h"
+#include "graph.h"
+#include "sys_math3d.h"
 
 static void cKF_FrameControl_zeroClera(cKF_FrameControl_c* frame_control) {
   bzero(frame_control, sizeof(cKF_FrameControl_c));
@@ -54,7 +57,7 @@ static int cKF_FrameControl_passCheck(cKF_FrameControl_c* fc, f32 current, f32* 
     return 0;
 } 
 
-static int cKF_FrameControl_passCheck_now(cKF_FrameControl_c* fc, f32 current, f32* out){
+extern int cKF_FrameControl_passCheck_now(cKF_FrameControl_c* fc, f32 current, f32* out){
     f32 cur = fc->current_frame;
     f32 speed;
     int ret = 0;
@@ -72,7 +75,7 @@ static int cKF_FrameControl_passCheck_now(cKF_FrameControl_c* fc, f32 current, f
     return ret;
 } 
 
-static int cKF_FrameControl_stop_proc(cKF_FrameControl_c* fc) {
+extern int cKF_FrameControl_stop_proc(cKF_FrameControl_c* fc) {
     f32 out;
 
     if (fc->current_frame == fc->end_frame) {
@@ -163,13 +166,13 @@ static s16 cKF_KeyCalc(s16 index, s16 next_index, s16* data_src,f32 frame) {
 
             sub = s_vec[i].x - s_vec[j].x;   
 
-            if(!(fabsf(sub) < cKF_EPSILON)){
-                key = (0.5 + cKF_HermitCalc((frame - s_vec[j].x) / sub,
-                            sub * cKF_FRAMETIME,
+            if(!(fabsf(sub) < 0.008f)){
+                key = (cKF_HermitCalc((frame - s_vec[j].x) / sub,
+                            sub * 0.0333333350718f,
                             s_vec[j].y,
                             s_vec[i].y,
                             s_vec[j].z,
-                            s_vec[i].z));
+                            s_vec[i].z) +1.75);
             return key; 
             }
             else{
@@ -270,7 +273,7 @@ static void cKF_SkeletonInfo_R_morphJoint(cKF_SkeletonInfo_R_c* keyframe) {
     s_xyz* current_joint = keyframe->current_joint;
     s_xyz* target_joint = keyframe->target_joint;
 
-    if (!(fabsf(keyframe->morph_counter) < cKF_EPSILON)) {
+    if (!(fabsf(keyframe->morph_counter) < 0.008f)) {
         step = 0.5f / fabsf(keyframe->morph_counter);
     } else {
         step = 0.0f;
@@ -348,7 +351,7 @@ inline s16* cKF_Animation_R_getDataTable(cKF_Animation_R_c* keyframe)
   return keyframe->data_table;
 }
 
-extern int cKF_Animation_R_play(cKF_SkeletonInfo_R_c* keyframe) {
+extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
     int ret;
     int s;
     s_xyz *c_joint;
@@ -363,7 +366,7 @@ extern int cKF_Animation_R_play(cKF_SkeletonInfo_R_c* keyframe) {
     int t = 0;
     
     int index = 0;
-    s16* joint = (fabsf(keyframe->morph_counter) < cKF_EPSILON) ? &keyframe->current_joint->x : &keyframe->target_joint->x;
+    s16* joint = (fabsf(keyframe->morph_counter) < 0.008f) ? &keyframe->current_joint->x : &keyframe->target_joint->x;
     int joint_num = 32;
     
     s16* an_fix_tbl = cKF_Animation_R_getFixedTable(keyframe->animation);
@@ -415,7 +418,7 @@ extern int cKF_Animation_R_play(cKF_SkeletonInfo_R_c* keyframe) {
     
         if(keyframe->rotation_diff_table != NULL){
         
-            c_joint = (fabsf(keyframe->morph_counter) < cKF_EPSILON) ? keyframe->current_joint : keyframe->target_joint;
+            c_joint = (fabsf(keyframe->morph_counter) < 0.008f) ? keyframe->current_joint : keyframe->target_joint;
             
             
             c_joint += 1;
@@ -431,7 +434,7 @@ extern int cKF_Animation_R_play(cKF_SkeletonInfo_R_c* keyframe) {
             }
         }
 
-    if(fabsf(keyframe->morph_counter) < cKF_EPSILON){
+    if(fabsf(keyframe->morph_counter) < 0.008f){
         ret = cKF_FrameControl_play(&keyframe->frame_control);
     }else if (keyframe->morph_counter > 0.0f){
         cKF_SkeletonInfo_R_morphJoint(keyframe);
@@ -502,7 +505,7 @@ extern void cKF_Si3_draw_SV_R_child(GAME* game, cKF_SkeletonInfo_R_c* keyframe, 
     }
     graph = game->graph;
 
-    OPEN_DISPS(graph);
+    OPEN_DISP(graph);
     Matrix_push();
     joint_m = skel_c_joint->model;
     mjoint_m = joint_m;
@@ -513,23 +516,23 @@ extern void cKF_Si3_draw_SV_R_child(GAME* game, cKF_SkeletonInfo_R_c* keyframe, 
     if(mjoint_m != NULL){
         _Matrix_to_Mtx(*mtxpp);
         if(joint_f & 1){
-            gSPMatrix(POLY_XLU_DISP++, *mtxpp, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-            gSPDisplayList(POLY_XLU_DISP++, mjoint_m);
+            gSPMatrix(NOW_POLY_XLU_DISP++, *mtxpp, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPDisplayList(NOW_POLY_XLU_DISP++, mjoint_m);
         }
         else{
-            gSPMatrix(POLY_OPA_DISP++, *mtxpp, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-            gSPDisplayList(POLY_OPA_DISP++, mjoint_m);
+            gSPMatrix(NOW_POLY_OPA_DISP++, *mtxpp, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPDisplayList(NOW_POLY_OPA_DISP++, mjoint_m);
         }
         *mtxpp+=1;
     }
     else if(joint_m != NULL){
             _Matrix_to_Mtx(*mtxpp);
-            gSPMatrix(POLY_OPA_DISP++, *mtxpp, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPMatrix(NOW_POLY_OPA_DISP++, *mtxpp, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             *mtxpp+=1;
         } 
     }
 
-    CLOSE_DISPS(graph);
+    CLOSE_DISP(graph);
 
     if(postrender_callback!= NULL){
         postrender_callback(game,keyframe,*joint_num, &mjoint_m, &joint_f, arg, &joint1, &def_joint);
@@ -551,14 +554,14 @@ extern void cKF_Si3_draw_R_SV(GAME* game, cKF_SkeletonInfo_R_c* keyframe, Mtx* m
     
     
     GRAPH* graph = game->graph;
-    OPEN_DISPS(graph);
+    OPEN_DISP(graph);
 
     /* TODO: these should probably be made into a custom macro somewhere */
-    gSPSegment(POLY_OPA_DISP++, G_MWO_SEGMENT_D, mtx_p); // Load matrix (opaque)
-    gSPSegment(POLY_XLU_DISP++, G_MWO_SEGMENT_D, mtx_p); // Load matrix (translucent)
+    gSPSegment(NOW_POLY_OPA_DISP++, G_MWO_SEGMENT_D, mtx_p); // Load matrix (opaque)
+    gSPSegment(NOW_POLY_XLU_DISP++, G_MWO_SEGMENT_D, mtx_p); // Load matrix (translucent)
     
     
-    CLOSE_DISPS(graph);
+    CLOSE_DISP(graph);
     joint_num = 0;
     
     cKF_Si3_draw_SV_R_child(game, keyframe, &joint_num, prerender_callback, postrender_callback, arg, &mtx_p);
@@ -762,7 +765,7 @@ extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1, cKF_Skel
     if((info1 == NULL) || (info2 == NULL) || (flag == NULL)){
         return 0;
     }
-    joint = (fabsf(info1->morph_counter) < cKF_EPSILON) ? &info1->current_joint->x : &info1->target_joint->x;
+    joint = (fabsf(info1->morph_counter) < 0.008f) ? &info1->current_joint->x : &info1->target_joint->x;
         
     if(info1 != NULL){
         cKF_SkeletonInfo_R_combine_work_set(&combine3, info1);
@@ -777,7 +780,7 @@ extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1, cKF_Skel
 
     if(info1->rotation_diff_table != NULL){
         
-            applyjoint = (fabsf(info1->morph_counter) < cKF_EPSILON) ? info1->current_joint : info1->target_joint;
+            applyjoint = (fabsf(info1->morph_counter) < 0.008f) ? info1->current_joint : info1->target_joint;
             
             
             applyjoint += 1;
@@ -792,7 +795,7 @@ extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1, cKF_Skel
             
             }
     }
-    if(fabsf(info1->morph_counter) < cKF_EPSILON){
+    if(fabsf(info1->morph_counter) < 0.008f){
         cKF_FrameControl_play(&info2->frame_control);
         return cKF_FrameControl_play(&info1->frame_control);
     }
@@ -833,7 +836,7 @@ s8* flag){
         return;
     }
       
-        joint = (fabsf(info1->morph_counter) < cKF_EPSILON) ? &info1->current_joint->x : &info1->target_joint->x;
+        joint = (fabsf(info1->morph_counter) < 0.008f) ? &info1->current_joint->x : &info1->target_joint->x;
 
         if(info1 != NULL){
             cKF_SkeletonInfo_R_combine_work_set(&combine3, info1);
@@ -851,7 +854,7 @@ s8* flag){
 
         if(info1->rotation_diff_table != NULL){
         
-            applyjoint = (fabsf(info1->morph_counter) < cKF_EPSILON) ? info1->current_joint : info1->target_joint;
+            applyjoint = (fabsf(info1->morph_counter) < 0.008f) ? info1->current_joint : info1->target_joint;
             
             
             applyjoint += 1;
@@ -866,7 +869,7 @@ s8* flag){
             
             }
         }
-        if(fabsf(info1->morph_counter) < cKF_EPSILON){
+        if(fabsf(info1->morph_counter) < 0.008f){
             *arg1 = cKF_FrameControl_play(&info1->frame_control);
             *arg2 = cKF_FrameControl_play(&info2->frame_control);
             *arg3 = cKF_FrameControl_play(&info3->frame_control);

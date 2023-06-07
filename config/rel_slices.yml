@@ -5,7 +5,7 @@ sys_vimgr.c:
 #    .rodata: [0x80641260, 0x806412A8]
 m_cockroach.c:
     .text: [0x80385430, 0x80385A80]
-m_controller.c: # TODO: uncomment when fsqrt's $localstatic$ issue is resolved
+m_controller.c:
     .text: [0x80395BE8, 0x80396120]
     .rodata: [0x80641D20, 0x80641D50]
 m_debug_hayakawa.c:

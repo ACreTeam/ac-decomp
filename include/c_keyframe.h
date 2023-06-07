@@ -105,7 +105,7 @@ f32 current_frame, f32 frame_speed, f32 morph_counter,int mode,s_xyz* rotation_d
 
 extern int cKF_Animation_R_play(cKF_SkeletonInfo_R_c* keyframe);
 
-extern void cKF_Si3_draw_SV_R_child(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int* joint_num, cKF_draw_callback prerender_callback, cKF_draw_callback postrender_callback, void* arg, Mtx** mtxpp)
+extern void cKF_Si3_draw_SV_R_child(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int* joint_num, cKF_draw_callback prerender_callback, cKF_draw_callback postrender_callback, void* arg, Mtx** mtxpp);
 extern void cKF_Si3_draw_R_SV(GAME* game, cKF_SkeletonInfo_R_c* keyframe, Mtx* mtxp, cKF_draw_callback prerender_callback, cKF_draw_callback postrender_callback, void* arg);
 
 extern void cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(cKF_SkeletonInfo_R_c* keyframe, cKF_Animation_R_c* animation, s_xyz* rotation_diff_table, f32 frame_speed, f32 morph_counter);
@@ -122,7 +122,7 @@ extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1, cKF_Skel
 extern void cKF_SkeletonInfo_R_T_combine_play(int* arg1, int* arg2, int* arg3,cKF_SkeletonInfo_R_c* info1, cKF_SkeletonInfo_R_c* info2, cKF_SkeletonInfo_R_c* info3,s8* flag);
 extern void cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(f32 transx, f32 transy, f32 transz, cKF_SkeletonInfo_R_c* keyframe, s16 anglex, s16 angley, s16 anglez);
 extern void cKF_SkeletonInfo_R_AnimationMove_ct_base(f32 counter, xyz_t* basepos, xyz_t* correctpos, s16 ybase, s16 yidle, cKF_SkeletonInfo_R_c* keyframe, int animation_flag);
-extern void cKF_SkeletonInfo_R_AnimationMove_dt(cKF_SkeletonInfo_R_c* keyframe)
+extern void cKF_SkeletonInfo_R_AnimationMove_dt(cKF_SkeletonInfo_R_c* keyframe);
 extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s_xyz* sbase, xyz_t* move, s16 yidle, cKF_SkeletonInfo_R_c* keyframe);
 
 extern void cKF_SkeletonInfo_R_AnimationMove_CulcTransToWorld(f32 calcx, f32 calcy, f32 calcz, xyz_t* base, xyz_t* calcp, s16 val, xyz_t* trans, cKF_SkeletonInfo_R_c* keyframe, int animation_flag);

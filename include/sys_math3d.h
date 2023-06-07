@@ -10,7 +10,8 @@ extern "C" {
 
 extern xyz_t ZeroVec;
 
-extern 
 #ifdef __cplusplus
 }
+
+#endif
 #endif
