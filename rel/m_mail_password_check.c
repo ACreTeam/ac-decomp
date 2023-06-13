@@ -1023,7 +1023,7 @@ static int mMpswd_check_present_famicom(mActor_name_t item) {
   return res;
 }
 
-static int mMpswd_check_present_user(mActor_name_t item) {
+extern int mMpswd_check_present_user(mActor_name_t item) {
   mActor_name_t full_stack_item;
   u32 price = 0;
   int res = FALSE;

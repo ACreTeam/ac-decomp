@@ -106,6 +106,6 @@ extern mActor_name_t mRmTp_FtrItemNo2Item1ItemNo(mActor_name_t ftr_item_no, void
 extern int mRmTp_FtrItemNo2FtrIdx(mActor_name_t ftr_item_no);
 extern mActor_name_t mRmTp_FtrIdx2FtrItemNo(int ftr_idx, int rotation);
 extern int mRmTp_GetFurnitureData(mActor_name_t ftr, int ut_x, int ut_z, mRmTp_FtrPlaceInfo_t* place_info);
-extern u8 mRmTp_FurnitureIdx2FurnitureKind(int ftr_idx);
+extern int mRmTp_FurnitureIdx2FurnitureKind(int ftr_idx);
 
 #endif

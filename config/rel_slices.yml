@@ -44,6 +44,9 @@ m_kabu_manager.c:
 m_malloc.c:
     .text: [0x803BC510, 0x803BC70C]
     .bss: [0x81297CA0, 0x81297CD0]
+m_mail_password_check.c:
+    .text: [0x803BD250, 0x803BEC9C]
+    .data: [0x806566C0, 0x806571D8]
 #m_lib.c: #sqrtf statics
 #    .text: [0x803BAB0C, 0x803BB960]
 #    .rodata: [0x80642640, 0x80642680]

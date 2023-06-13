@@ -66,6 +66,7 @@ extern int mMpswd_decode_code(u8* password_data, u8* password_str);
 extern int mMpswd_restore_code(u8* body, u8* password);
 extern void mMpswd_password(u8* password_data, mMpswd_password_c* password);
 extern int mMpswd_password_zuru_check(mMpswd_password_c* password);
+extern int mMpswd_check_present_user(mActor_name_t item);
 extern int mMpswd_check_present(mMpswd_password_c* password);
 extern mActor_name_t mMpswd_get_sp_npc_num(int sp_npc);
 extern int mMpswd_check_npc_code(mMpswd_password_c* password);
