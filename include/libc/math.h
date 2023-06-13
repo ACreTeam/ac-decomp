@@ -8,6 +8,7 @@
 #define M_PI 3.14159265358979323846f
 
 s16 sins(u16);
+s16 coss(u16);
 
 f32 fatan2(f32, f32);
 

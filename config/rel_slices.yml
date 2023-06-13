@@ -50,9 +50,9 @@ m_malloc.c:
 m_mail_password_check.c:
     .text: [0x803BD250, 0x803BEC9C]
     .data: [0x806566C0, 0x806571D8]
-#m_lib.c: #sqrtf statics
-#    .text: [0x803BAB0C, 0x803BB960]
-#    .rodata: [0x80642640, 0x80642680]
+m_lib.c:
+    .text: [0x803BAB0C, 0x803BB960]
+    .rodata: [0x80642640, 0x80642680]
 m_mushroom.c:
     .text: [0x803C8090, 0x803C90A8]
     .rodata: [0x80642950, 0x80642960]
