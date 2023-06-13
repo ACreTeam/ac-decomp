@@ -21,8 +21,8 @@ extern void new_Matrix(GAME* game);
 
 extern void Matrix_softcv3_mult(xyz_t* src, s_xyz* dest);
 extern Mtx* _MtxF_to_Mtx(MtxF* src, Mtx* dest);
-
-
+extern void Matrix_mult(MtxF* m, s8 flag);
+extern void Matrix_Position(xyz_t* wpos, xyz_t* screen_pos);
 
 #ifdef __cplusplus
 }

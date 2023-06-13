@@ -47,7 +47,12 @@
 #include "m_actor.h"
 #include "m_play.h"
 #include "main.h"
+#include "libultra/libultra.h"
 #include "MSL_C/w_math.h"
+#include "libc64/qrand.h"
+#include "sys_matrix.h"
+#include "sys_math.h"
+#include "sys_math3d.h"
 
 /**
  * @brief Copy memory from the source buffer to the destination buffer.
