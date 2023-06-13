@@ -20,6 +20,8 @@ extern "C" {
 #define mNpc_GET_TYPE(npc_id) ((npc_id) & 0xF000)
 #define mNpc_IS_SPECIAL(npc_id) (mNpc_GET_TYPE(npc_id) == 0xD000)
 
+#define NPC_NUM 236
+
 #define ANIMAL_NUM_MAX 15 /* Maximum number of villagers possible in town */
 #define ANIMAL_MEMORY_NUM 7
 #define ANIMAL_CATCHPHRASE_LEN 10

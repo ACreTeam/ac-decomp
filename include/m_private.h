@@ -179,7 +179,8 @@ extern int mPr_NullCheckPersonalID(PersonalID_c* pid);
 extern int mPr_CheckCmpPersonalID(PersonalID_c* pid_a, PersonalID_c* pid_b);
 extern void mPr_ClearPersonalID(PersonalID_c* pid);
 extern void mPr_CopyPersonalID(PersonalID_c* dst, PersonalID_c* src);
-extern void mPr_ClearPrivateInfo(Private_c* private);
+extern void mPr_ClearPrivateInfo(Private_c* private_data);
+extern int mPr_CheckCmpPlayerName(u8* str0, u8* str1);
 extern void mPr_RandomSetPlayerData_title_demo();
 
 #ifdef __cplusplus
