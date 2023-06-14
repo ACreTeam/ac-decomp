@@ -5,6 +5,7 @@
 #include "m_play.h"
 #include "m_actor_type.h"
 #include "MSL_C/math.h"
+#include "PR/mbi.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -90,7 +91,7 @@ extern void none_proc2(ACTOR* actor, GAME* game);
 extern int _Game_play_isPause(GAME_PLAY* play);
 extern f32 check_percent_abs(f32 x, f32 min, f32 max, f32 scale, int shift_by_min);
 extern f32 get_percent_forAccelBrake(const f32 now, const f32 start, const f32 end, const f32 accelerateDist, const f32 brakeDist);
-extern void Game_play_Projection_Trans(GAME_PLAY* const play, xyz_t* wpos, xyz_t* screen_pos);
+extern void Game_play_Projection_Trans(GAME_PLAY* const play, MtxF* matrix, xyz_t* screen_pos);
 
 extern f32 get_percent(const int max, const int min, const int x);
 

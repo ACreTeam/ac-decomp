@@ -782,16 +782,16 @@ extern f32 get_percent_forAccelBrake(const f32 now, const f32 start, const f32 e
  * @param wpos Pointer to the 3D world position (xyz_t).
  * @param screen_pos Pointer to the resulting 2D screen position (xyz_t).
  */
-extern void Game_play_Projection_Trans(GAME_PLAY* const play, xyz_t* wpos,
+extern void Game_play_Projection_Trans(GAME_PLAY* const play, MtxF* matrix,
                                        xyz_t* screen_pos) {
   f32 w;
 
   Matrix_mult(&play->matrix, 0);
-  Matrix_Position(wpos, screen_pos);
+  Matrix_Position(matrix, screen_pos);
   w = play->matrix.ww +
-      ((play->matrix.wx * wpos->x) +
-       (play->matrix.wy * wpos->y) +
-       (play->matrix.wz * wpos->z));
+      ((play->matrix.wx * matrix->xx) +
+       (play->matrix.wy * matrix->yx) +
+       (play->matrix.wz * matrix->zx));
   screen_pos->x = (SCREEN_WIDTH_F / 2.0f) + ((screen_pos->x / w) * (SCREEN_WIDTH_F / 2.0f));
   screen_pos->y = (SCREEN_HEIGHT_F / 2.0f) - ((screen_pos->y / w) * (SCREEN_HEIGHT_F / 2.0f));
 }
