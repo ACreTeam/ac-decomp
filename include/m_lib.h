@@ -2,10 +2,11 @@
 #define M_LIB_H
 
 #include "types.h"
-#include "m_play.h"
+#include "m_play_h.h"
 #include "m_actor_type.h"
 #include "MSL_C/math.h"
-#include "PR/mbi.h"
+#include "libu64/u64types.h"
+#include "game.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -32,18 +33,6 @@ extern "C" {
 
 /* short angle -> degrees */
 #define SHORT2DEG_ANGLE(s) ((((f32)(s)) / (65536.0f / 360.0f)))
-
-typedef struct xy_s {
-    f32 x, y;
-} xy_t;
-
-typedef struct xyz_s {
-    f32 x, y, z;
-} xyz_t;
-
-typedef struct s_xyz_s {
-    s16 x, y, z;
-} s_xyz;
 
 typedef struct rgba_t { //can be put in other place
     u8 r, g, b, a;

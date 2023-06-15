@@ -21,6 +21,8 @@ extern void mMsg_debug_draw(gfxprint_t* gfxprint);
 
 extern void mMsg_aram_init();
 
+extern int mMsg_Check_MainHide(M_MSG_WINDOW* msg);
+
 #ifdef __cplusplus
 }
 #endif

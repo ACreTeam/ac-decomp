@@ -33,6 +33,15 @@ enum field_type {
   mFI_FIELDTYPE_NUM
 };
 
+enum field_type2 {
+  mFI_FIELDTYPE2_FG,
+  mFI_FIELDTYPE2_PLAYER_ROOM,
+  mFI_FIELDTYPE2_NPC_ROOM,
+  mFI_FIELDTYPE2_ROOM,
+
+  mFI_FIELDTYPE2_NUM
+};
+
 #define mFI_TO_FIELD_ID(type, index) (((type) << 12) | (index))
 #define mFI_GET_TYPE(field_id) ((field_id) & 0xF000)
 #define mFI_TYPE(type) ((type) << 12)

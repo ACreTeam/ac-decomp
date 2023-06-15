@@ -137,6 +137,7 @@ typedef struct ghost_common_s {
 } mEv_gst_common_c;
 
 extern int mEv_CheckFirstJob();
+extern int mEv_CheckFirstIntro();
 extern int mEv_CheckArbeit();
 extern int mEv_CheckTitleDemo();
 extern int mEv_check_status(int event, s16 status);
