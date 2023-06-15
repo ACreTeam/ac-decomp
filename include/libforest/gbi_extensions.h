@@ -581,6 +581,38 @@ do { \
   (u32)0 \
 }}
 
+//Helpful macro for defining values of a Matrix
+
+#define qs1616(e) ((s32)((e) * 0x00010000))
+
+#define IPART(x) ((qs1616(x) >> 16) & 0xFFFF)
+#define FPART(x) (qs1616(x) & 0xFFFF)
+
+#define gdSPDefMtx(     \
+        xx, yx, zx, wx, \
+        xy, yy, zy, wy, \
+        xz, yz, zz, wz, \
+        xw, yw, zw, ww) \
+    {{                                  \
+        (IPART(xx) << 0x10) | IPART(xy),  \
+        (IPART(xz) << 0x10) | IPART(xw),  \
+        (IPART(yx) << 0x10) | IPART(yy),  \
+        (IPART(yz) << 0x10) | IPART(yw),  \
+        (IPART(zx) << 0x10) | IPART(zy),  \
+        (IPART(zz) << 0x10) | IPART(zw),  \
+        (IPART(wx) << 0x10) | IPART(wy),  \
+        (IPART(wz) << 0x10) | IPART(ww),  \
+        (FPART(xx) << 0x10) | FPART(xy),  \
+        (FPART(xz) << 0x10) | FPART(xw),  \
+        (FPART(yx) << 0x10) | FPART(yy),  \
+        (FPART(yz) << 0x10) | FPART(yw),  \
+        (FPART(zx) << 0x10) | FPART(zy),  \
+        (FPART(zz) << 0x10) | FPART(zw),  \
+        (FPART(wx) << 0x10) | FPART(wy),  \
+        (FPART(wz) << 0x10) | FPART(ww),  \
+    }}
+
+
 #define G_DL_GXDL 2
 
 /* Macro for calling GC formatted display lists from N64 lists */
