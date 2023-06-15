@@ -3,8 +3,11 @@
 
 #include "types.h"
 #include "libu64/u64types.h"
-#include "m_lib.h"
 #include "libc/math.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 //gotta put these somewhere else
 #define TRUNCF_BINANG(f) (s16)(s32)(f)
@@ -16,7 +19,11 @@ typedef struct rect_s {
   int l, r;
 } rect;
 
-void radianxy_by_2pos(xyz_t* dest, xyz_t* sub, xyz_t* min);
-s_xyz sanglexy_by_2pos(xyz_t* sub, xyz_t* min); 
+extern void radianxy_by_2pos(xyz_t* dest, xyz_t* sub, xyz_t* min);
+extern s_xyz sanglexy_by_2pos(xyz_t* sub, xyz_t* min); 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

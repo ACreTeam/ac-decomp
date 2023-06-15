@@ -30,6 +30,7 @@
 #include "libjsys/jsyswrapper.h"
 #include "libc64/qrand.h"
 #include "m_common_data.h"
+#include "m_play.h"
 
 static int mTR_first_flag = TRUE;
 

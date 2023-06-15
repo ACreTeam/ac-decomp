@@ -28,6 +28,14 @@ enum {
   mPr_PLAYER_NUM
 };
 
+enum {
+  mPr_ITEM_COND_NORMAL,
+  mPr_ITEM_COND_PRESENT,
+  mPr_ITEM_COND_QUEST,
+  
+  mPr_ITEM_COND_NUM
+};
+
 #define mPr_ECARD_NUM 367
 #define mPr_ECARD_LETTER_NUM ((mPr_ECARD_NUM + 7) / 8) // 46
 
@@ -182,6 +190,7 @@ extern void mPr_CopyPersonalID(PersonalID_c* dst, PersonalID_c* src);
 extern void mPr_ClearPrivateInfo(Private_c* private_data);
 extern int mPr_CheckCmpPlayerName(u8* str0, u8* str1);
 extern void mPr_RandomSetPlayerData_title_demo();
+extern int mPr_GetPossessionItemSumWithCond(Private_c* priv, mActor_name_t item_no, u32 cond);
 
 #ifdef __cplusplus
 }

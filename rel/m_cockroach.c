@@ -86,7 +86,7 @@ extern void mCkRh_InitGokiSaveData_AllRoom() {
  * @param scene_id The current scene id
  **/
 extern void mCkRh_SetGoingOutCottageTime(int scene_id) {
-  if (scene_id == SCENE_ISLAND_COTTAGE) {
+  if (scene_id == SCENE_COTTAGE_MY) {
     Save_Set(island.cottage.goki.time.year, Common_Get(time.rtc_time.year));
     Save_Set(island.cottage.goki.time.month, Common_Get(time.rtc_time.month));
     Save_Set(island.cottage.goki.time.day, Common_Get(time.rtc_time.day));
@@ -212,7 +212,7 @@ extern int mCkRh_PlussGokiN_NowRoom(int count, int scene_no) {
       return TRUE;
     }
   }
-  else if (scene_no == SCENE_ISLAND_COTTAGE) {
+  else if (scene_no == SCENE_COTTAGE_MY) {
     u8* goki_num = Save_GetPointer(island.cottage.goki.num);
     *goki_num = mCkRh_GokiFamilyCount2Good(count + *goki_num);
   }
@@ -237,7 +237,7 @@ extern int mCkRh_MinusGokiN_NowRoom(int count, int scene_id) {
       return TRUE;
     }
   }
-  else if (scene_id == SCENE_ISLAND_COTTAGE) {
+  else if (scene_id == SCENE_COTTAGE_MY) {
     u8* goki_num = Save_GetPointer(island.cottage.goki.num);
     *goki_num = mCkRh_GokiFamilyCount2Good(*goki_num - count);
   }
@@ -258,7 +258,7 @@ extern int mCkRh_NowSceneGokiFamilyCount() {
   if (mFI_IS_PLAYER_ROOM(fieldid)) {
     return Save_Get(homes[mFI_GET_PLAYER_ROOM_NO(fieldid)].goki.num);
   }
-  else if (Save_Get(scene_no) == SCENE_ISLAND_COTTAGE) {
+  else if (Save_Get(scene_no) == SCENE_COTTAGE_MY) {
     return Save_Get(island.cottage.goki.num);
   }
 
