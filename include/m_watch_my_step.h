@@ -30,7 +30,7 @@ extern Gfx mny_win_beruT_model[];
 extern Gfx mny_win_mojiT_model[];
 
 extern void watch_my_step_ct();
-extern void watch_my_step_move(GAME_PLAY* play)
+extern void watch_my_step_move(GAME_PLAY* play);
 extern void watch_my_step_draw(GAME_PLAY* play);
 
 #ifdef __cplusplus
