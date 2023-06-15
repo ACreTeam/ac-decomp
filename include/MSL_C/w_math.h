@@ -38,6 +38,8 @@ extern inline float sqrtf(float x)
 #endif
 
 // hack to get some functions matching where the static const locals are needed
+// disabled until static const locals are resolved
+/*
 extern inline float sqrtf2(float x)
 {
 	static const double _half=.5;
@@ -54,6 +56,7 @@ extern inline float sqrtf2(float x)
 	}
 	return x;
 }
+*/
 
 extern inline double fabs(double x)
 {
