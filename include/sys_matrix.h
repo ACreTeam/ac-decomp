@@ -31,7 +31,7 @@ extern void Matrix_softcv3_load(s_xyz* src, f32 x, f32 y, f32 z);
 extern Mtx* _MtxF_to_Mtx(MtxF* src, Mtx* dest);
 extern Mtx* _Matrix_to_Mtx(Mtx* dest);
 extern Mtx* _Matrix_to_Mtx_new(GRAPH* graph);
-extern void Matrix_Position(MtxF* matrix, xyz_t* screen_pos);
+extern void Matrix_Position(xyz_t* old_pos, xyz_t* new_pos);
 extern void Matrix_Position_Zero(xyz_t* screen_pos);
 extern void Matrix_Position_VecX(xyz_t* screen_pos, f32 x);
 extern void Matrix_Position_VecZ(xyz_t* screen_pos, f32 x);

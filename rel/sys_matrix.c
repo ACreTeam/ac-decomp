@@ -617,12 +617,12 @@ Mtx* _Matrix_to_Mtx_new(GRAPH* graph){
     
 }
 
-void Matrix_Position(MtxF* m, xyz_t* v){
+void Matrix_Position(xyz_t* old_pos, xyz_t* new_pos){
     MtxF* curm = Matrix_now;
     
-    v->x = (curm->xx * m->xx) + (curm->xy * m->yx) + (curm->xz * m->zx) + curm->xw;
-    v->y = (curm->yx * m->xx) + (curm->yy * m->yx) + (curm->yz * m->zx) + curm->yw;
-    v->z = (curm->zx * m->xx) + (curm->zy * m->yx) + (curm->zz * m->zx) + curm->zw;
+    new_pos->x = (curm->xx * old_pos->x) + (curm->xy * old_pos->y) + (curm->xz * old_pos->z) + curm->xw;
+    new_pos->y = (curm->yx * old_pos->x) + (curm->yy * old_pos->y) + (curm->yz * old_pos->z) + curm->yw;
+    new_pos->z = (curm->zx * old_pos->x) + (curm->zy * old_pos->y) + (curm->zz * old_pos->z) + curm->zw;
 }
 
 void Matrix_Position_Zero(xyz_t* v){
