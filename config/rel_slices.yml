@@ -108,6 +108,13 @@ lb_reki.c:
     .text: [0x8040752C, 0x80407AE8]
     .rodata: [0x806437A0, 0x806437C0]
     .data: [0x8065ECD8, 0x8065F110]
+#sys_math.c:
+#    .text: [0x80408940, 0x80408A44]
+#    .rodata: [0x806437C0, 0x806437D0]
+sys_math_atan.c:
+    .text: [0x8040C06C, 0x8040C284]
+    .rodata: [0x80643810, 0x80643828]
+    .data: [0x8065F168, 0x8065f970]
 sys_matrix.c:
     .text: [0x8040C284, 0x8040EB38]
     .rodata: [0x80643828, 0x80643860]
