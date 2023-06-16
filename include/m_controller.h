@@ -26,6 +26,8 @@ extern "C" {
 #define BUTTON_B 0x4000
 #define BUTTON_A 0x8000
 
+#define CHECK_BTN_ALL(state, combo) (~((state) | ~(combo)) == 0)
+
 /* sizeof(struct controller_s) == 0x38 */
 typedef struct controller_s {
   /* 0x00 */ f32 move_pX;
