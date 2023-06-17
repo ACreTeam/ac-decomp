@@ -466,6 +466,10 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define EXIT_DOOR 0x4080
 
+#define TRAIN_STATION 0x5809
+#define TRAIN0 0x580A
+#define TRAIN1 0x580B
+
 #define SP_NPC_START 0xD000
 #define SP_NPC_ARTIST (SP_NPC_START + 0) // D000
 #define SP_NPC_BROKER (SP_NPC_START + 1) // D001

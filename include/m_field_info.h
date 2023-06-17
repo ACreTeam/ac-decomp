@@ -90,6 +90,16 @@ typedef struct location_info_s {
   /* 0x10 */ mActor_name_t* block_data;
 } mFI_unit_c;
 
+typedef struct block_table_s {
+  s8 block_x;
+  s8 block_z;
+
+  f32 pos_x;
+  f32 pos_z;
+
+  mActor_name_t* items;
+} mFI_block_tbl_c;
+
 extern int mFI_CheckFieldData();
 extern mActor_name_t mFI_GetFieldId();
 extern int mFI_GetClimate();

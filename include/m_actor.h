@@ -127,6 +127,19 @@ struct actor_s {
 
 #define mActor_NONE_PROC1 ((mActor_proc)none_proc1)
 
+typedef struct actor_list_s {
+  int num_actors;
+  ACTOR* actor;
+} Actor_list;
+
+typedef struct actor_info_s {
+  int total_num;
+  Actor_list list[ACTOR_PART_NUM];
+} Actor_info;
+
+extern void Actor_delete(ACTOR* actor);
+extern ACTOR* Actor_info_fgName_search(Actor_info* actor_info, mActor_name_t fg_name, int part);
+
 #ifdef __cplusplus
 }
 #endif

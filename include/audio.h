@@ -22,6 +22,9 @@ extern void sAdo_SysLevStart(u8 id);
 
 extern void sAdo_SysTrgStart(u16 id);
 
+extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 distance1, u32 ongenNum2, u16 angle2, f32 distance2);
+extern void sAdos_KishaStatusTrg(u8 state);
+
 /* Not sure about the last param name */
 extern void sAdo_VoiceSe(u8 num, u8 num2, u8 num3, s16 character_idx, u8 scale, u8 mode);
 
