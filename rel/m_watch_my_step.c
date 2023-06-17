@@ -62,18 +62,12 @@ typedef struct mybell_confirmation_s {
 
 static mWt_mybell_confirmation_c S_mybell_conf;
 
-static void navigate_camera_ct();
-static void mWt_mybell_confirmation_ct();
-
 extern void watch_my_step_ct() {
   bzero(&S_watch_my_step, sizeof(mWt_watch_my_step_c));
   S_watch_my_step.item_no = EMPTY_NO;
   navigate_camera_ct();
   mWt_mybell_confirmation_ct();
 }
-
-static void navigate_camera_move(GAME_PLAY* play);
-static void mWt_mybell_confirmation_move(GAME_PLAY* play);
 
 extern void watch_my_step_move(GAME_PLAY* play) {
   mActor_name_t window_item;
@@ -195,9 +189,6 @@ extern void watch_my_step_move(GAME_PLAY* play) {
     }
   }
 }
-
-static void navigate_camera_draw(GAME_PLAY*);
-static void mWt_mybell_confirmation_draw(GAME_PLAY*);
 
 // TODO: @nonmatching
 extern void watch_my_step_draw(GAME_PLAY* play) {
