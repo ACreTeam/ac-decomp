@@ -678,7 +678,7 @@ extern void none_proc2(ACTOR* actor, GAME* game) {}
  * @param play Pointer to a GAME_PLAY structure.
  * @return TRUE if the game is in pause state, FALSE otherwise.
  */
-extern int _Game_play_isPause(GAME_PLAY* play) { return (play->isPause != 0); }
+extern int _Game_play_isPause(GAME_PLAY* play) { return (play->pause.enabled != 0); }
 
 /**
  * @brief Calculate a percentage with respect to minimum and maximum values, and apply scaling.

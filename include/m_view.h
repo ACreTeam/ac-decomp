@@ -11,6 +11,7 @@
 extern "C" {
 #endif
 
+#define VIEW_UPDATE_NONE 0
 #define VIEW_UPDATE_LOOKAT (1 << 0) // 1
 #define VIEW_UPDATE_SCISSOR (1 << 1) // 2
 #define VIEW_UPDATE_PERSPECTIVE (1 << 2) // 4
@@ -50,7 +51,15 @@ typedef struct view_s {
 } View;
 
 extern void initView(View* view, GRAPH* graph);
-extern void showView(View* view, int flags);
+extern void setLookAtView(View* view, xyz_t* eye, xyz_t* center, xyz_t* up);
+extern void setScaleView(View* view, f32 scale);
+extern void setPerspectiveView(View* view, f32 fovY, f32 near, f32 far);
+extern void setScissorView(View* view, rect* screen);
+extern int stretchViewInit(View* view);
+extern int showView(View* view, int flags);
+extern int showPerspectiveView(View* view);
+extern int showOrthoView(View* view);
+extern int showView1(View* view, int flag_mask, Gfx** gfx_p);
 
 #ifdef __cplusplus
 }

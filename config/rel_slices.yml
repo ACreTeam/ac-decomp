@@ -62,6 +62,9 @@ m_needlework.c:
     .text: [0x803C98EC, 0x803C9F7C]
     .data: [0x8065ABC0, 0x8065AE30]
     .bss: [0x81298F60, 0x81299180]
+m_olib.c:
+    .text: [0x803D88E8, 0x803D8A34]
+    .rodata: [0x80642A00, 0x80642A10]
 m_pause.c:
     .text: [0x803D8A34, 0x803D8AEC]
 m_police_box.c:
@@ -78,11 +81,11 @@ m_room_type/mRmTp_FtrItemNo2FtrIdx.c:
 #m_skin_matrix.c:
 #    .text: [0x803f1528, 0x803f1bb4]
 #   .rodata: [0x80643310, 0x80643318]
+m_view.c:
+    .text: [0x803F3E58, 0x803F4E08]
+    .rodata: [0x806433D8, 0x80643408]
 sys_stacks.c:
     .bss: [0x812F5670, 0x812F9670]
-m_olib.c:
-    .text: [0x803D88E8, 0x803D8A34]
-    .rodata: [0x80642A00, 0x80642A10]
 THA_GA.c:
     .text: [0x80404AE0, 0x80404B40]
 TwoHeadArena.c:

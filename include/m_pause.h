@@ -11,7 +11,7 @@ extern "C" {
 typedef struct pause_t{
    int enabled;
    int timer;
-}pause_t; // size = 0x8
+} pause_t; // size = 0x8
 
 
 void Pause_ct(pause_t* pause);

@@ -7,6 +7,7 @@
 #include "m_view.h"
 #include "m_camera2.h"
 #include "m_submenu.h"
+#include "m_pause.h"
 #include "m_play_h.h"
 
 #ifdef __cplusplus
@@ -21,8 +22,8 @@ struct game_play_s {
   /* 0x1A68 */ View view;
   /* 0x1B88 */ Camera2 camera;
   /* 0x1CC0 */ u8 _1CC0[0x1DA0 - 0x1CC0];
-  /* 0x1DA0 */ int isPause;
-  /* 0x1DA4 */ u8 _1DA4[0x1DEC - 0x1DA4];
+  /* 0x1DA0 */ pause_t pause;
+  /* 0x1DA8 */ u8 _1DA8[0x1DEC - 0x1DA8];
   /* 0x1DEC */ Submenu submenu;
   /* 0x1FA4 */ u8 _1FA4[0x200C - 0x1FA4];
   /* 0x200C */ MtxF matrix;
