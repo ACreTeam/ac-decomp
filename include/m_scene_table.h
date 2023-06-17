@@ -7,6 +7,15 @@
 extern "C" {
 #endif
 
+enum field_draw_type {
+  FIELD_DRAW_TYPE_OUTDOORS,
+  FIELD_DRAW_TYPE_INDOORS,
+  FIELD_DRAW_TYPE_TRAIN,
+  FIELD_DRAW_TYPE_PLAYER_SELECT,
+
+  FIELD_DRAW_TYPE_NUM
+};
+
 /*
   TODO: is this right? I assume so based on file names but
   there may be a better place for this

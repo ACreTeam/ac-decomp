@@ -162,7 +162,9 @@ typedef struct common_data_s {
   /* 0x02651E */ mActor_name_t last_field_id;
   /* 0x026520 */ u8 in_initial_block; /* when TRUE, the player is in the acre which they exited a building. FALSE otherwise. */
   /* 0x026521 */ u8 submenu_disabled; /* when set, submenus cannot be accessed from start button */
-  /* 0x026522 */ u8 _26522[0x2666C - 0x26522];
+  /* 0x026522 */ u8 sunlight_flag;
+  /* 0x026523 */ u8 train_flag;
+  /* 0x026522 */ u8 _26524[0x2666C - 0x26524];
   /* 0x02666C */ s16 weather;
   /* 0x02666E */ s16 weather_intensity;
   /* 0x026670 */ lbRTC_time_c weather_time;
@@ -173,11 +175,27 @@ typedef struct common_data_s {
   /* 0x02852E */ s16 goods_power;
   /* 0x028530 */ Door_data_c door_data; /* misc door data */
   /* 0x028544 */ Door_data_c structure_exit_door_data; /* door data for when exiting a building */
-  /* 0x028558 */ u8 tmp1[0x28879 - 0x28558];
+  /* 0x028558 */ u8 tmp1[0x02883E - 0x28558];
+  /* 0x02883E */ u8 train_coming_flag; /* state tracker for when train is going to spawn/has spawned */
+  /* 0x02883F */ u8 train_exists_flag; /* state tracker for when train exists */
+  /* 0x028840 */ u8 train_control_state; /* current train state */
+  /* 0x028841 */ u8 train_last_control_state; /* previous train state */
+  /* 0x028842 */ u8 train_signal;
+  /* 0x028843 */ u8 train_day;
+  /* 0x028844 */ u8 train_action;
+  /* 0x028845 */ u8 train_timer;
+  /* 0x028848 */ u32 train_start_timer;
+  /* 0x02884C */ f32 train_speed;
+  /* 0x028850 */ xyz_t train_position;
+  /* 0x02885C */ f32 train_mic_distance1;
+  /* 0x028860 */ f32 train_mic_distance2;
+  /* 0x028864 */ u16 train_angleY1;
+  /* 0x028866 */ u16 train_angleY2;
+  /* 0x028868 */ u8 _028868[0x028879 - 0x028868];
   /* 0x028879 */ u8 auto_nwrite_count;
   /* 0x02887A */ lbRTC_year_t auto_nwrite_year;
   /* 0x02887C */ u8 save_error_type; /* set to one of the mFRm_ERROR_* states when save is invalid */
-  /* 0x02887D */ u8 train_coming_flag; /* set when the train is coming */
+  /* 0x02887D */ u8 train_approaching_flag; /* set when the train is coming */
   /* 0x02887E */ u8 buried_treasure_flag; /* when set, treasure cannot be buried */
   /* 0x02887F */ u8 spnpc_first_talk_flags;
   /* 0x028880 */ u8 needlework_first_talk_flags;
