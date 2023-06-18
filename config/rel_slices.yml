@@ -86,6 +86,10 @@ m_view.c:
     .rodata: [0x806433D8, 0x80643408]
 sys_stacks.c:
     .bss: [0x812F5670, 0x812F9670]
+m_vibctl.c:
+    .text: [0x8040387C, 0x804040F0]
+    .rodata: [0x80643550, 0x806436C8]
+    .bss: [0x812F3098, 0x812F31B8]
 THA_GA.c:
     .text: [0x80404AE0, 0x80404B40]
 TwoHeadArena.c:
