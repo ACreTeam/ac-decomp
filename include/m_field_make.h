@@ -37,6 +37,13 @@ typedef struct fg_items_s {
   /* 0x000 */ mActor_name_t items[UT_Z_NUM][UT_X_NUM];
 } mFM_fg_c;
 
+/* sizeof (mFM_combo_info_c) == 6 */
+typedef struct block_combo_s {
+  /* 0x00 */ mActor_name_t bg_id;
+  /* 0x02 */ mActor_name_t fg_id;
+  /* 0x05 */ u8 type;
+} mFM_combo_info_c;
+
 #ifdef __cplusplus
 }
 #endif

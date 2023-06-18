@@ -58,6 +58,7 @@ extern f32 mCoBG_GetBgY_AngleS_FromWpos(s_xyz* angle_to_ground, xyz_t wpos, f32 
 extern int mCoBG_CheckWaterAttribute_OutOfSea(u32 attribute);
 extern int mCoBG_CheckHole_OrgAttr(u32 attribute);
 extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos2(xyz_t wpos, f32 foot_dist);
+extern int mCoBG_Attribute2CheckPlant(u32 attribute, const xyz_t* wpos);
 
 extern f32 mCoBG_GetWaterHeight_File(xyz_t wpos, char* file, int line);
 #define mCoBG_GetWaterHeight(wpos) mCoBG_GetWaterHeight_File(wpos, __FILE__, __LINE__)

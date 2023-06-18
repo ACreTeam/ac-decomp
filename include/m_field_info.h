@@ -21,6 +21,8 @@ extern "C" {
 #define mFI_ROW_TO_CHARSTR(row) ((row) + 'A')
 #define mFI_COL_TO_CHARSTR(col) ((col) + '0')
 
+#define mFI_NUM_SOUND_SOURCES 6
+
 enum field_type {
   mFI_FIELDTYPE_FG,
   mFI_FIELDTYPE_1,
@@ -100,6 +102,15 @@ typedef struct block_table_s {
   mActor_name_t* items;
 } mFI_block_tbl_c;
 
+enum {
+  mFI_SOUND_SOURCE_POND = 3, // TODO: might not be correct name
+};
+
+typedef struct sound_source_info_s {
+  s16 kind;
+  xyz_t wpos;
+} mFI_sound_source_info_c;
+
 extern int mFI_CheckFieldData();
 extern mActor_name_t mFI_GetFieldId();
 extern int mFI_GetClimate();
@@ -120,6 +131,12 @@ extern mCoBG_Collision_u* mFI_GetBkNum2ColTop(int block_x, int block_z);
 extern u32 mFI_BkNum2BlockKind(int block_x, int block_z);
 extern int mFI_BlockKind2BkNum(int* block_x, int* block_z, u32 block_kind);
 extern int mFI_GetBlockUtNum2FG(mActor_name_t* fg_item, int block_x, int block_z, int ut_x, int ut_z);
+extern void mFI_UtNum2CenterWpos(xyz_t* wpos, int ut_x, int ut_z);
+extern u8 mFI_GetBlockXMax();
+extern u8 mFI_GetBlockZMax();
+extern u8 mFI_BkNum2BlockType();
+extern mFI_sound_source_info_c* mFI_GetSoundSourcePBlockNum(int block_x,int block_z);
+extern int mFI_Wpos2UtNum(int* ut_x, int* ut_z, xyz_t wpos);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);
