@@ -15,6 +15,7 @@ typedef struct MessageBuffer {
 } MessageBuffer;
 
 MessageBuffer* TRKGetBuffer(int);
+void TRKReleaseBuffer(int);
 
 #ifdef __cplusplus
 }

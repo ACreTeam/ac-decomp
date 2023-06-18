@@ -191,6 +191,9 @@ MSL_C/rand.c:
     .sdata: [0x80218260, 0x80218268]
 TRK/mainloop.c:
     .text: [0x800A1FF4, 0x800A20EC]
+TRK/nubevent.c:
+    .text: [0x800A20EC, 0x800A2314]
+    .bss: [0x802095C8, 0x802095F0]
 dolphin/odenotstub/odenotstub.c:
     .text: [0x800a9770, 0x800a9780]
 dolphin/amcstubs/AmcExi2Stubs.c:
