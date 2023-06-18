@@ -647,7 +647,7 @@ class CSource(Source):
             self.cc = c.CC
             self.cflags = c.DOL_CPPFLAGS
             self.frank = False
-        elif path == "src/TRK/mainloop.c" or path == "src/TRK/nubevent.c" or path == "src/TRK/nubinit.c": 
+        elif path == "src/TRK/mainloop.c" or path == "src/TRK/nubevent.c" or path == "src/TRK/nubinit.c" or path == "src/TRK/dispatch.c": 
             self.cc = c.CC
             self.cflags = c.DOL_TRK_CFLAGS
             self.frank = False

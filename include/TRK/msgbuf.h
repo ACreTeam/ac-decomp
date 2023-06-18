@@ -17,6 +17,8 @@ typedef struct MessageBuffer {
 MessageBuffer* TRKGetBuffer(int);
 void TRKReleaseBuffer(int);
 TRKResult TRKInitializeMessageBuffers();
+void TRKSetBufferPosition(MessageBuffer*, u32);
+void TRKReadBuffer1_ui8(MessageBuffer*, u8*);
 
 #ifdef __cplusplus
 }

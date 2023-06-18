@@ -194,10 +194,14 @@ TRK/mainloop.c:
 TRK/nubevent.c:
     .text: [0x800A20EC, 0x800A2314]
     .bss: [0x802095C8, 0x802095F0]
-#TRK/nubinit.c: #breaks .init and .text
+#TRK/nubinit.c: #things break, fix later
 #    .text: [0x800A2314, 0x800A2494]
 #    .rodata: [0x800AF750, 0x800AF770]
 #    .bss: [0x802095F0, 0x802095F8]
+#TRK/dispatch.c:
+#    .text: [0x800A34F4, 0x800A3590]
+#    .data: [0x800E2128, 0x800E21B0]
+#    .bss: [0x8020AFC0, 0x8020AFC8]
 dolphin/odenotstub/odenotstub.c:
     .text: [0x800a9770, 0x800a9780]
 dolphin/amcstubs/AmcExi2Stubs.c:
