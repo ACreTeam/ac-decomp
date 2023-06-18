@@ -25,14 +25,8 @@ TRKResult TRKDoContinue(MessageBuffer*);
 TRKResult TRKDoStep(MessageBuffer*);
 TRKResult TRKDoStop(MessageBuffer*);
 
-
-
-
-
-
-
-
-
+BOOL GetTRKConnected();
+void SetTRKConnected(BOOL);
 
 #ifdef __cplusplus
 }

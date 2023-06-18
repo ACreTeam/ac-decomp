@@ -5,7 +5,7 @@ dolphin/__ppc_eabi_init.cpp:
     .text: [0x8007fdfc, 0x8007fe90]
 runtime/__mem.c:
     .init: [0x800033a8, 0x800034e0]
-TRK/mem_TRK.c:
+TRK/init/mem_TRK.c:
     .init: [0x800034e0, 0x80003534]
 asm/__exception.s:
     .init: [0x80003534, 0x80005468]
@@ -198,6 +198,8 @@ TRK/nubevent.c:
 #    .text: [0x800A2314, 0x800A2494]
 #    .rodata: [0x800AF750, 0x800AF770]
 #    .bss: [0x802095F0, 0x802095F8]
+#TRK/usr_put.c:
+#    .text: [0x800A3468, 0x800A34F4]
 #TRK/dispatch.c:
 #    .text: [0x800A34F4, 0x800A3590]
 #    .data: [0x800E2128, 0x800E21B0]
