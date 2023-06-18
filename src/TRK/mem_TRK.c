@@ -1,4 +1,4 @@
-#include "TRK/dolphin_trk.h"
+#include "TRK/_mem_trk.h"
 
 __declspec(section ".init") void* TRK_memset(void* dst, int val, size_t size){
     TRK_fill_mem(dst, val, size);

@@ -647,6 +647,10 @@ class CSource(Source):
             self.cc = c.CC
             self.cflags = c.DOL_CPPFLAGS
             self.frank = False
+        elif path == "src/TRK/mainloop.c":
+            self.cc = c.CC
+            self.cflags = c.DOL_TRK_CFLAGS
+            self.frank = False
         else:
             self.cflags = ctx.cflags
             self.cc = c.CC

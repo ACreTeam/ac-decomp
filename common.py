@@ -352,6 +352,14 @@ DVDERR_CFLAGS = CFLAGS + [
     "-sdata2 0",
     "-pool off"
 ] + DOL_DEFINES
+TRK_CFLAGS = [
+    "-O4,p",
+    "-sdata 0",
+    "-fp hard",
+    "-enum int",
+    "-char unsigned",
+    "-inline deferred"
+] + DOL_DEFINES
 BASE_REL_CFLAGS = CFLAGS + [
      "-sdata 0",
      f"-sdata2 {REL_SDATA2_SIZE}",
@@ -403,6 +411,7 @@ DOL_CFLAGS = ' '.join(BASE_DOL_CFLAGS + LOCAL_CFLAGS)
 DOL_BOOT_CFLAGS = ' '.join(BOOT_CFLAGS + LOCAL_CFLAGS)
 DOL_DVDERR_CFLAGS = ' '.join(DVDERR_CFLAGS + LOCAL_CFLAGS)
 DOL_CFLAGS_SDATA0_CFLAGS = ' '.join(DOL_CFLAGS_NO_SDATA + LOCAL_CFLAGS)
+DOL_TRK_CFLAGS = ' '.join(TRK_CFLAGS + LOCAL_CFLAGS)
 SDK_FLAGS = ' '.join(SDK_CFLAG + LOCAL_CFLAGS)
 ALIGN16 = ' '.join(BASE_DOL_CFLAGS + LOCAL_CFLAGS + ALIGN16_CFLAG)
 DOL_CPPFLAGS = ' '.join(CPLFLAGS + BASE_DOL_CFLAGS + LOCAL_CFLAGS)
