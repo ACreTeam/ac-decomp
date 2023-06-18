@@ -9,6 +9,7 @@ extern "C" {
 #endif
 
 TRKResult TRKDispatchMessage(MessageBuffer* mBuf);
+TRKResult TRKInitializeDispatcher();
 
 #ifdef __cplusplus
 }

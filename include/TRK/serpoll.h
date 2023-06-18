@@ -6,6 +6,8 @@ extern "C" {
 #endif
 
 void TRKGetInput();
+TRKResult TRKInitializeSerialHandler();
+TRKResult TRKTerminateSerialHandler();
 
 extern u8* gTRKInputPendingPtr;
 

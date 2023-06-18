@@ -194,6 +194,10 @@ TRK/mainloop.c:
 TRK/nubevent.c:
     .text: [0x800A20EC, 0x800A2314]
     .bss: [0x802095C8, 0x802095F0]
+#TRK/nubinit.c: #breaks .init and .text
+#    .text: [0x800A2314, 0x800A2494]
+#    .rodata: [0x800AF750, 0x800AF770]
+#    .bss: [0x802095F0, 0x802095F8]
 dolphin/odenotstub/odenotstub.c:
     .text: [0x800a9770, 0x800a9780]
 dolphin/amcstubs/AmcExi2Stubs.c:

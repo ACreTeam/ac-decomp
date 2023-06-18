@@ -355,10 +355,12 @@ DVDERR_CFLAGS = CFLAGS + [
 TRK_CFLAGS = [
     "-O4,p",
     "-sdata 0",
+    "-sdata2 0",
     "-fp hard",
     "-enum int",
     "-char unsigned",
-    "-inline deferred"
+    "-inline deferred",
+    "-rostr"
 ] + DOL_DEFINES
 BASE_REL_CFLAGS = CFLAGS + [
      "-sdata 0",

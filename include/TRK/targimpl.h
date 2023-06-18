@@ -10,6 +10,7 @@ void TRKTargeInterrupt(TRKEvent*);
 void TRKTargetSupportRequest();
 BOOL TRKTargetStopped();
 void TRKTargetContinue();
+void TRKTargetSetInputPendingPtr(void*);
 
 #ifdef __cplusplus
 }
