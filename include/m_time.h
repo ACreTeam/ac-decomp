@@ -61,6 +61,8 @@ enum {
 #define mTM_SECONDS_IN_HALFDAY 12*60*60
 #define mTM_SECONDS_IN_DAY 24*60*60
 
+#define mTM_MINUTES_IN_HOUR 60
+
 typedef struct time_calendar_term_s {
   lbRTC_month_t month;
   lbRTC_day_t day;

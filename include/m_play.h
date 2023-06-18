@@ -8,6 +8,7 @@
 #include "m_camera2.h"
 #include "m_submenu.h"
 #include "m_pause.h"
+#include "m_field_info.h"
 #include "m_play_h.h"
 
 #ifdef __cplusplus
@@ -18,12 +19,15 @@ extern "C" {
 struct game_play_s {
   /* 0x0000 */ GAME game;
   // TODO: finish
-  /* 0x00E0 */ u8 _00E0[0x1A68 - 0x00E0];
+  /* 0x00E0 */ int _00E0;
+  /* 0x00E4 */ mFI_block_tbl_c block_table;
+  /* 0x00F4 */ mFI_block_tbl_c last_block_table;
+  /* 0x0104 */ u8 _0104[0x1A68 - 0x0104];
   /* 0x1A68 */ View view;
   /* 0x1B88 */ Camera2 camera;
   /* 0x1CC0 */ u8 _1CC0[0x1DA0 - 0x1CC0];
   /* 0x1DA0 */ pause_t pause;
-  /* 0x1DA8 */ u8 _1DA8[0x1DEC - 0x1DA8];
+  /* 0x1DA8 */ Actor_info actor_info;
   /* 0x1DEC */ Submenu submenu;
   /* 0x1FA4 */ u8 _1FA4[0x200C - 0x1FA4];
   /* 0x200C */ MtxF matrix;
