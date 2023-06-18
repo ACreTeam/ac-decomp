@@ -187,10 +187,10 @@ typedef struct common_data_s {
   /* 0x028848 */ u32 train_start_timer;
   /* 0x02884C */ f32 train_speed;
   /* 0x028850 */ xyz_t train_position;
-  /* 0x02885C */ f32 train_mic_distance1;
-  /* 0x028860 */ f32 train_mic_distance2;
-  /* 0x028864 */ u16 train_angleY1;
-  /* 0x028866 */ u16 train_angleY2;
+  /* 0x02885C */ f32 unused_02885C;
+  /* 0x028860 */ f32 unused_028860;
+  /* 0x028864 */ u16 unused_028864;
+  /* 0x028866 */ u16 unused_028866;
   /* 0x028868 */ u8 _028868[0x028879 - 0x028868];
   /* 0x028879 */ u8 auto_nwrite_count;
   /* 0x02887A */ lbRTC_year_t auto_nwrite_year;
