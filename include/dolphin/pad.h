@@ -7,6 +7,10 @@
 extern "C" {
 #endif
 
+#define PAD_MOTOR_STOP 0
+#define PAD_MOTOR_RUMBLE 1
+#define PAD_MOTOR_STOP_HARD 2
+
 #define PAD_BUTTON_LEFT 0x0001
 #define PAD_BUTTON_RIGHT 0x0002
 #define PAD_BUTTON_DOWN 0x0004

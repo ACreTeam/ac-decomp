@@ -22,8 +22,8 @@ enum pads {
 };
 
 typedef struct {
-  u8 last_intensity;
-  u8 now_intensity;
+  u8 last_command; // PAD_MOTOR_*
+  u8 now_command; // PAD_MOTOR_*
   u8 frames;
   u8 _pad;
 } Motor_t;
@@ -64,18 +64,21 @@ typedef struct {
 extern padmgr padmgr_class;
 
 extern int padmgr_isConnectedController(int pad);
+extern void padmgr_force_stop_ON();
+extern void padmgr_force_stop_OFF();
+extern void padmgr_RumbleSet(int pad, int intensity);
 
-#define padmgr_setClient(callback, param) \
+#define padmgr_setClient(callback_proc, param) \
 do { \
   padmgr* mgr = &padmgr_class; \
-  mgr->callback = callback; \
+  mgr->callback = callback_proc; \
   mgr->callback_param = param; \
 } while (0)
 
-#define padmgr_removeClient(callback, param) \
+#define padmgr_removeClient(callback_proc, param) \
 do { \
   padmgr* mgr = &padmgr_class; \
-  if (mgr->callback == (callback) && mgr->callback_param == (param)) { \
+  if (mgr->callback == (callback_proc) && mgr->callback_param == (param)) { \
     mgr->callback = NULL; \
     mgr->callback_param = NULL; \
   } \
