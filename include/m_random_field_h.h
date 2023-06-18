@@ -1,5 +1,5 @@
-#ifndef M_RANDOM_FIELD_H
-#define M_RANDOM_FIELD_H
+#ifndef M_RANDOM_FIELD_H_H
+#define M_RANDOM_FIELD_H_H
 
 #include "types.h"
 
@@ -31,13 +31,13 @@ extern "C" {
 #define mRF_BLOCKKIND_OCEAN (1 << 20)
 #define mRF_BLOCKKIND_ISLAND (1 << 21)
 #define mRF_BLOCKKIND_OFFING (1 << 22)
-#define mRF_BLOCKKIND_23 (1 << 23)
-#define mRF_BLOCKKIND_24 (1 << 24)
-#define mRF_BLOCKKIND_25 (1 << 25)
-#define mRF_BLOCKKIND_26 (1 << 26)
-#define mRF_BLOCKKIND_27 (1 << 27)
-#define mRF_BLOCKKIND_28 (1 << 28)
-#define mRF_BLOCKKIND_29 (1 << 29)
+#define mRF_BLOCKKIND_RIVER0 (1 << 23)
+#define mRF_BLOCKKIND_RIVER1 (1 << 24)
+#define mRF_BLOCKKIND_RIVER2 (1 << 25)
+#define mRF_BLOCKKIND_RIVER3 (1 << 26)
+#define mRF_BLOCKKIND_RIVER4 (1 << 27)
+#define mRF_BLOCKKIND_RIVER5 (1 << 28)
+#define mRF_BLOCKKIND_RIVER6 (1 << 29)
 #define mRF_BLOCKKIND_DOCK (1 << 30)
 #define mRF_BLOCKKIND_ISLAND_LEFT (1 << 31)
 
