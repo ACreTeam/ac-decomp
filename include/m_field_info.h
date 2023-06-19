@@ -137,6 +137,7 @@ extern u8 mFI_GetBlockZMax();
 extern u8 mFI_BkNum2BlockType();
 extern mFI_sound_source_info_c* mFI_GetSoundSourcePBlockNum(int block_x,int block_z);
 extern int mFI_Wpos2UtNum(int* ut_x, int* ut_z, xyz_t wpos);
+extern void mFI_ClearFieldData();
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);

@@ -182,6 +182,7 @@ typedef struct private_s {
 extern s16 mPr_GetGoodsPower();
 extern s16 mPr_GetMoneyPower();
 
+extern int mPr_CheckPrivate(Private_c* private_p);
 extern void mPr_PrintMapInfo_debug(gfxprint_t* gfxprint);
 extern int mPr_NullCheckPersonalID(PersonalID_c* pid);
 extern int mPr_CheckCmpPersonalID(PersonalID_c* pid_a, PersonalID_c* pid_b);
@@ -191,6 +192,7 @@ extern void mPr_ClearPrivateInfo(Private_c* private_data);
 extern int mPr_CheckCmpPlayerName(u8* str0, u8* str1);
 extern void mPr_RandomSetPlayerData_title_demo();
 extern int mPr_GetPossessionItemSumWithCond(Private_c* priv, mActor_name_t item_no, u32 cond);
+extern void mPr_CopyPlayerName(u8* dst, Private_c* private_p);
 
 #ifdef __cplusplus
 }
