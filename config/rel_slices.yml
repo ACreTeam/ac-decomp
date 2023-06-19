@@ -171,6 +171,10 @@ m_trademark.c:
     .text: [0x8062B848, 0x8062C048]
     .rodata: [0x8064D1C0, 0x8064D1C8]
     .data: [0x806D4958, 0x806D4B18]
+player_select.c:
+    .text: [0x8062C048, 0x8062CA5C]
+    .rodata: [0x8064D1C8, 0x8064D1F8]
+    .data: [0x806D4B18, 0x806D4B80]
 save_menu.c:
     .text: [0x8062CA5C, 0x8062D39C]
     .rodata: [0x8064D1F8, 0x8064D318]
