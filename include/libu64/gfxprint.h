@@ -25,6 +25,14 @@ extern "C"{
 #define GFXPRINT_KANA_MODE_KATAKANA 0
 #define GFXPRINT_KANA_MODE_HIRAGANA 1
 
+#define GFXPRINT_CLEAR_GRADIENT_CHAR "\x8A"
+#define GFXPRINT_ENABLE_GRADIENT_CHAR "\x8B"
+
+#define GFXPRINT_KATAKANA_MODE_CHAR "\x8C"
+#define GFXPRINT_HIRAGANA_MODE_CHAR "\x8D"
+
+#define GFXPRINT_UNUSED_CHAR "\x8E"
+
 /* NOTE: this should be a void return type but we're going to use a void* for readibility */
 typedef void* (*PrintCallback)(void*, const char*, int);
 typedef struct gfxprint_obj  {

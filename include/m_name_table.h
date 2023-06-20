@@ -420,6 +420,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITM_TOOL_END (ITM_LEAF_FAN + 1)
 
 #define ITM_CLOTH_START 0x2400
+#define ITM_CLOTH000 ITM_CLOTH_START
+#define ITM_CLOTH001 (ITM_CLOTH_START + 1)
 #define ITM_CLOTH_END 0x24FF
 
 #define ITM_DUST0_EMPTY_CAN 0x250E

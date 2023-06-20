@@ -191,6 +191,8 @@ extern void mNpc_FirstClearGoodbyMail();
 extern void mNpc_ClearIslandNpcRoomData();
 extern void mNpc_CopyAnimalPersonalID(AnmPersonalID_c* dst, AnmPersonalID_c* src);
 extern AnmPersonalID_c* mNpc_GetOtherAnimalPersonalID(AnmPersonalID_c* ids, int num_ids);
+extern void mNpc_ClearEventNpc();
+extern void mNpc_ClearMaskNpc();
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);

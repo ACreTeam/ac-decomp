@@ -150,7 +150,8 @@ typedef struct common_data_s {
   /* 0x026110 */ Time_c time;
   /* 0x02613C */ Private_c* now_private;
   /* 0x026140 */ mHm_hs_c* now_home;
-  /* 0x026144 */ u8 tmp0[0x2614D - 0x26144];
+  /* 0x026144 */ u8 map_flag;
+  /* 0x026145 */ u8 tmp0[0x2614D - 0x26145];
   /* 0x02614D */ u8 transFadeDuration;
   /* 0x02614E */ u8 transWipeSpeed;
   /* 0x02614F */ u8 wipeType; /* maybe unused? */
@@ -175,7 +176,15 @@ typedef struct common_data_s {
   /* 0x02852E */ s16 goods_power;
   /* 0x028530 */ Door_data_c door_data; /* misc door data */
   /* 0x028544 */ Door_data_c structure_exit_door_data; /* door data for when exiting a building */
-  /* 0x028558 */ u8 tmp1[0x02883E - 0x28558];
+  /* 0x028558 */ u8 tmp1[0x0285C0 - 0x028558];
+  /* 0x0285C0 */ s8 player_decoy_flag;
+  /* 0x0285C1 */ u8 _285C1[0x028838 - 0x0285C1];
+  /* 0x028838 */ s8 player_bee_swell_flag;
+  /* 0x028839 */ s8 player_bee_chase_flag;
+  /* 0x02883A */ u8 goki_shocked_flag;
+  /* 0x02883B */ u8 time_changed_flag;
+  /* 0x02883C */ u8 unable_to_wade_flag;
+  /* 0x02883D */ u8 _02883D;
   /* 0x02883E */ u8 train_coming_flag; /* state tracker for when train is going to spawn/has spawned */
   /* 0x02883F */ u8 train_exists_flag; /* state tracker for when train exists */
   /* 0x028840 */ u8 train_control_state; /* current train state */
@@ -209,7 +218,9 @@ typedef struct common_data_s {
   /* 0x0288A0 */ u8 pad_connected; /* is gamepad 0 connected? */
   /* 0x0288A1 */ u8 _288a1[0x02DB40 - 0x0288A1];
   /* 0x02DB40 */ u8 auto_nwrite_set; /* when true, saved nwrite time will be utilized. Seems to be used to keep same date for fishing tourney stuff. */
-  /* 0x02DB41 */ u8 tmp3[0x2DBB0 - 0x2DB41];
+  /* 0x02DB42 */ u16 select_last_select_no;
+  /* 0x02DB44 */ u16 select_last_top_no;
+  /* 0x02DB46 */ u8 tmp3[0x2DBB0 - 0x2DB46];
   /* 0x02DBB0 */ s16 can_look_goki_count;
   /* 0x02DBB4 */ f32 rainbow_opacity; /* current opacity of rainbow (0.0f - 1.0f) */
   /* 0x02DBB8 */ u32 event_flags[7]; /* TODO: make array size a definition/enum */
