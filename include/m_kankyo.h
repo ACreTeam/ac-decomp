@@ -17,6 +17,15 @@ enum weather {
   mEnv_WEATHER_NUM
 };
 
+enum weather_intensity {
+  mEnv_WEATHER_INTENSITY_NONE,
+  mEnv_WEATHER_INTENSITY_LIGHT,
+  mEnv_WEATHER_INTENSITY_NORMAL,
+  mEnv_WEATHER_INTENSITY_HEAVY,
+
+  mEnv_WEATHER_INTENSITY_NUM,
+};
+
 extern int mEnv_NowWeather();
 
 #ifdef __cplusplus

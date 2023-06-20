@@ -71,6 +71,8 @@ typedef struct time_calendar_term_s {
   s16 bgitem_bank;
 } mTM_calendar_term_t;
 
+extern void mTM_set_renew_time(lbRTC_ymd_t* renew_time, lbRTC_time_c* rtc_time);
+
 extern const lbRTC_time_c mTM_rtcTime_clear_code;
 extern const lbRTC_ymd_t mTM_rtcTime_ymd_clear_code;
 extern const lbRTC_time_c mTM_rtcTime_default_code;

@@ -36,6 +36,26 @@ enum {
   mPr_ITEM_COND_NUM
 };
 
+enum {
+  mPr_SEX_MALE,
+  mPr_SEX_FEMALE,
+
+  mPr_SEX_NUM
+};
+
+enum {
+  mPr_FACE_TYPE0,
+  mPr_FACE_TYPE1,
+  mPr_FACE_TYPE2,
+  mPr_FACE_TYPE3,
+  mPr_FACE_TYPE4,
+  mPr_FACE_TYPE5,
+  mPr_FACE_TYPE6,
+  mPr_FACE_TYPE7,
+
+  mPr_FACE_TYPE_NUM
+};
+
 #define mPr_ECARD_NUM 367
 #define mPr_ECARD_LETTER_NUM ((mPr_ECARD_NUM + 7) / 8) // 46
 
@@ -47,8 +67,23 @@ enum {
 #define mPr_FOREIGN_MAP_COUNT 8
 #define mPr_ORIGINAL_DESIGN_COUNT 8
 
-#define mPr_SUNBURN_MIN_RANK 0
-#define mPr_SUNBURN_MAX_RANK 8
+enum {
+  mPr_SUNBURN_RANK_MIN,
+
+  mPr_SUNBURN_RANK0 = mPr_SUNBURN_RANK_MIN,
+  mPr_SUNBURN_RANK1,
+  mPr_SUNBURN_RANK2,
+  mPr_SUNBURN_RANK3,
+  mPr_SUNBURN_RANK4,
+  mPr_SUNBURN_RANK5,
+  mPr_SUNBURN_RANK6,
+  mPr_SUNBURN_RANK7,
+  mPr_SUNBURN_RANK8,
+  
+  mPr_SUNBURN_RANK_MAX = mPr_SUNBURN_RANK8,
+
+  mPr_SUNBURN_RANK_NUM
+};
 
 enum {
   mPr_DESTINY_NORMAL,     /* standard fortune state */

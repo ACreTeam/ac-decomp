@@ -21,6 +21,8 @@ enum field_draw_type {
   there may be a better place for this
 */
 
+#define SCENE_INVALID -1
+
 enum scene_table {
   SCENE_TEST1,
   SCENE_TEST2,
@@ -31,25 +33,51 @@ enum scene_table {
   SCENE_NPC_HOUSE, /* npc house interior */
   SCENE_FG, /* outdoors/FG */
   SCENE_RANDOM_NPC_TEST,
-  SCENE_SHOP0 = 0x09, /* nook's cranny */
-  SCENE_BROKER_SHOP = 0x0C, /* crazy redd's tent */
-  SCENE_POST_OFFICE = 0x0E, /* post office */
-  SCENE_START_DEMO = 0x0F, /* after player select */
-  SCENE_START_DEMO2 = 0x10, /*  */
-  SCENE_BUGGY = 0x12,
-  SCENE_PLAYERSELECT = 0x13,
-  SCENE_CONVENI = 0x17, /* nook 'n' go */
-  SCENE_SUPER = 0x18, /* nookway */
-  SCENE_DEPART = 0x19, /* nookington's 1st floor */
-  SCENE_DEPART_2 = 0x1D, /* nookington's 2nd floor */
-  SCENE_TITLE_DEMO = 0x21, /* title screen demo */
-  SCENE_PLAYERSELECT_SAVE = 0x22,
-  SCENE_MUSEUM_ENTRANCE = 0x23,
-  SCENE_MUSEUM_ROOM = 0x24,
-  SCENE_NEEDLEWORK = 0x2E, /* able sister's */
-  SCENE_COTTAGE_MY = 0x2F,
-  SCENE_COTTAGE_NPC = 0x30,
-  /* TODO: finish */
+  SCENE_SHOP0, /* nook's cranny */
+  SCENE_BG_TEST_NO_RIVER,
+  SCENE_BG_TEST_RIVER,
+  SCENE_BROKER_SHOP, /* crazy redd's tent */
+  SCENE_FIELD_TOOL_INSIDE,
+  SCENE_POST_OFFICE, /* post office */
+  SCENE_START_DEMO, /* after player select */
+  SCENE_START_DEMO2, /*  */
+  SCENE_POLICE_BOX,
+  SCENE_BUGGY,
+  SCENE_PLAYERSELECT,
+  SCENE_MY_ROOM_S,
+  SCENE_MY_ROOM_M,
+  SCENE_MY_ROOM_L,
+  SCENE_CONVENI, /* nook 'n' go */
+  SCENE_SUPER, /* nookway */
+  SCENE_DEPART, /* nookington's 1st floor */
+  SCENE_TEST5,
+  SCENE_PLAYERSELECT_2,
+  SCENE_PLAYERSELECT_3,
+  SCENE_DEPART_2, /* nookington's 2nd floor */
+  SCENE_EVENT_ANNOUNCEMENT,
+  SCENE_KAMAKURA,
+  SCENE_FIELD_TOOL,
+  SCENE_TITLE_DEMO, /* title screen demo */
+  SCENE_PLAYERSELECT_SAVE,
+  SCENE_MUSEUM_ENTRANCE,
+  SCENE_MUSEUM_ROOM_PAINTING,
+  SCENE_MUSEUM_ROOM_FOSSIL,
+  SCENE_MUSEUM_ROOM_INSECT,
+  SCENE_MUSEUM_ROOM_FISH,
+  SCENE_MY_ROOM_LL1,
+  SCENE_MY_ROOM_LL2,
+  SCENE_MY_ROOM_BASEMENT_S,
+  SCENE_MY_ROOM_BASEMENT_M,
+  SCENE_MY_ROOM_BASEMENT_L,
+  SCENE_MY_ROOM_BASEMENT_LL1,
+  SCENE_NEEDLEWORK, /* able sister's */
+  SCENE_COTTAGE_MY,
+  SCENE_COTTAGE_NPC,
+  SCENE_START_DEMO3,
+  SCENE_LIGHTHOUSE,
+  SCENE_TENT,
+
+  SCENE_NUM
 };
 
 #ifdef __cplusplus
