@@ -332,7 +332,7 @@ static void select_pass(GAME_SELECT* select) {
     (*nf_p->next_play_proc)((GAME*)select, nf_p->scene_no);
   }
 
-  Common_Set(scene_from_title_demo, SCENE_INVALID);
+  Common_Set(scene_from_title_demo, -1);
 }
 
 static int select_start_proc(GAME_SELECT* select) {

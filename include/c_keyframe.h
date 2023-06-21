@@ -103,7 +103,7 @@ extern void cKF_SkeletonInfo_R_init_standard_repeat_morph(cKF_SkeletonInfo_R_c* 
 extern void cKF_SkeletonInfo_R_init(cKF_SkeletonInfo_R_c* keyframe, cKF_Skeleton_R_c* skeleton, cKF_Animation_R_c* animation, f32 start_frame, f32 end_frame, 
 f32 current_frame, f32 frame_speed, f32 morph_counter,int mode,s_xyz* rotation_diff_table);
 
-extern int cKF_Animation_R_play(cKF_SkeletonInfo_R_c* keyframe);
+extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe);
 
 extern void cKF_Si3_draw_SV_R_child(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int* joint_num, cKF_draw_callback prerender_callback, cKF_draw_callback postrender_callback, void* arg, Mtx** mtxpp);
 extern void cKF_Si3_draw_R_SV(GAME* game, cKF_SkeletonInfo_R_c* keyframe, Mtx* mtxp, cKF_draw_callback prerender_callback, cKF_draw_callback postrender_callback, void* arg);

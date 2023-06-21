@@ -5,6 +5,7 @@
 #include "ac_gyoei_h.h"
 #include "ac_insect_h.h"
 #include "ac_structure.h"
+#include "ac_animal_logo.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,7 +19,9 @@ typedef struct clip_s {
   /* 0x08C */ aSTR_Clip_c* structure_clip;
   /* 0x090 */ void* _090[(0x0AC - 0x090) / sizeof(void*)];
   /* 0x0AC */ aGYO_Clip_c* gyo_clip;
-  /* 0x0B0 */ void* _0B0[(0x104 - 0x0B0) / sizeof(void*)];
+  /* 0x0B0 */ void* _0B0[(0x0DC - 0x0B0) / sizeof(void*)];
+  /* 0x0DC */ aAL_Clip_c* animal_logo_clip;
+  /* 0x0E0 */ void* _0E0[(0x104 - 0x0E0) / sizeof(void*)];
 } Clip_c;
 
 #ifdef __cplusplus

@@ -71,7 +71,18 @@ typedef struct time_calendar_term_s {
   s16 bgitem_bank;
 } mTM_calendar_term_t;
 
-extern void mTM_set_renew_time(lbRTC_ymd_t* renew_time, lbRTC_time_c* rtc_time);
+extern void mTM_set_season_com(int term_idx);
+extern void mTM_set_season();
+extern int mTM_check_renew_time(u8 renew_flag);
+extern void mTM_off_renew_time(u8 renew_flag);
+extern void mTM_set_renew_is();
+extern void mTM_set_renew_time(lbRTC_ymd_t* renew_time, const lbRTC_time_c* time);
+extern void mTM_ymd_2_time(lbRTC_time_c* time, const lbRTC_ymd_t* ymd);
+extern void mTM_renewal_renew_time();
+extern void mTM_clear_renew_is();
+extern void mTM_rtcTime_limit_check();
+extern void mTM_time();
+extern void mTM_time_init();
 
 extern const lbRTC_time_c mTM_rtcTime_clear_code;
 extern const lbRTC_ymd_t mTM_rtcTime_ymd_clear_code;
@@ -80,7 +91,6 @@ extern const lbRTC_time_c mTM_rtcTime_default_code;
 #define mTM_IsTimeCleared(time) (lbRTC_IsEqualTime((time), &mTM_rtcTime_clear_code, lbRTC_CHECK_ALL) == TRUE)
 #define mTM_AreTimesEqual(t0, t1) (lbRTC_IsEqualTime(t0, t1, lbRTC_CHECK_ALL))
 
-extern void mTM_set_season();
 
 #ifdef __cplusplus
 }
