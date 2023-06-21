@@ -21,8 +21,6 @@ enum field_draw_type {
   there may be a better place for this
 */
 
-#define SCENE_INVALID -1
-
 enum scene_table {
   SCENE_TEST1,
   SCENE_TEST2,

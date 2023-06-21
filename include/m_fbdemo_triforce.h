@@ -24,7 +24,7 @@ extern void fbdemo_triforce_move(fbdemo_triforce*, int);
 extern void fbdemo_triforce_draw(fbdemo_triforce*, Gfx**);
 extern s8 fbdemo_triforce_is_finish(fbdemo_triforce*);
 extern void fbdemo_triforce_settype(fbdemo_triforce*, int);
-extern void fbdemo_fade_setcolor_rgba8888(void);
+extern void fbdemo_triforce_setcolor_rgba8888(void);
 
 
 #endif
