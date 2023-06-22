@@ -10,7 +10,9 @@
 #include "m_pause.h"
 #include "m_field_info.h"
 #include "m_fbdemo_wipe.h"
+#include "m_collision_obj.h"
 #include "m_play_h.h"
+#include "m_scene.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,7 +25,8 @@ struct game_play_s {
   /* 0x00E0 */ int _00E0;
   /* 0x00E4 */ mFI_block_tbl_c block_table;
   /* 0x00F4 */ mFI_block_tbl_c last_block_table;
-  /* 0x0104 */ u8 _0104[0x1A68 - 0x0104];
+  /* 0x0104 */ u8 _0104[0x0110 - 0x0104];
+  /* 0x0110 */ Object_Exchange_c object_exchange;
   /* 0x1A68 */ View view;
   /* 0x1B88 */ Camera2 camera;
   /* 0x1CC0 */ u8 _1CC0[0x1DA0 - 0x1CC0];
@@ -38,10 +41,10 @@ struct game_play_s {
   /* 0x20D1 */ u8 fb_wipe_type;
   /* 0x20D2 */ u8 fb_mode;
   /* 0x20D3 */ u8 fb_wipe_mode;
-  /* 0x20D4 */ //int _20D4;
   /* 0x20D8 */ fbdemo_wipe fbdemo_wipe;
   /* 0x2318 */ fbdemo_fade color_fade;
-  /* 0x2328 */ u8 _2328[0x2600 - 0x2328];
+  /* 0x2328 */ CollisionCheck_c collision_check;
+  /* 0x23F8 */ u8 _23F8[0x2600 - 0x23F8];
 };
 
 

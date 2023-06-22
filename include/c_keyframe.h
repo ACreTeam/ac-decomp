@@ -93,7 +93,7 @@ extern f32 cKF_HermitCalc(f32 t, f32 tension, f32 p0, f32 p1, f32 m0, f32 m1);
 extern void cKF_SkeletonInfo_subRotInterpolation(f32 t, s16* out, s16 rot1, s16 rot2);
 
 extern void cKF_SkeletonInfo_R_ct(cKF_SkeletonInfo_R_c* keyframe, cKF_Skeleton_R_c* skeleton, cKF_Animation_R_c* animation, s_xyz* work_table, s_xyz* target_table);
-extern void cKF_SkeletonInfo_R_dt();
+extern void cKF_SkeletonInfo_R_dt(cKF_SkeletonInfo_R_c* keyframe);
 
 extern void cKF_SkeletonInfo_R_init_standard_stop(cKF_SkeletonInfo_R_c* keyframe, cKF_Animation_R_c* animation, s_xyz* rotation_diff_table);
 extern void cKF_SkeletonInfo_R_init_standard_stop_morph(cKF_SkeletonInfo_R_c* keyframe, cKF_Animation_R_c* animation, s_xyz* rotation_diff_table, f32 morph);

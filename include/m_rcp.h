@@ -16,6 +16,7 @@ extern Gfx* gfx_tex_scroll2(Gfx** gfxpp, u32 x, u32 y, int width, int height);
 extern void DisplayList_initialize(GRAPH* graph, u32 clear_r, u32 clear_g, u32 clear_b, GAME* game);
 extern void fade_black_draw(Gfx** gfxpp, u32 alpha);
 extern void rect_moji(GRAPH* graph);
+extern void _texture_z_light_fog_prim(GRAPH* graph);
 
 #ifdef __cplusplus
 }
