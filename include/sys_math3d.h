@@ -8,6 +8,13 @@
 extern "C" {
 #endif
 
+typedef struct math_3d_pipe_s {
+  s16 radius;
+  s16 height;
+  s16 offset;
+  s_xyz center;
+} Math3D_pipe_c;
+
 extern f32 Math3DVecLength(xyz_t* vec);
 
 extern xyz_t ZeroVec;

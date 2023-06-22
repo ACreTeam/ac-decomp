@@ -20,6 +20,20 @@ typedef struct door_data_s {
   u8 pad[3]; // possibly necessary due to struct copy
 } Door_data_c;
 
+#define mSc_OBJECT_BANK_NUM 70
+
+typedef struct object_bank_s {
+  s16 bank_id;
+  char* ram_start;
+  // TODO: others
+  u8 _08[0x5C - 8];
+} Object_Bank_c;
+
+typedef struct object_exchange_s {
+  Object_Bank_c banks[mSc_OBJECT_BANK_NUM];
+  u8 _1928[0x1958-0x1928];
+} Object_Exchange_c;
+
 #ifdef __cplusplus
 }
 #endif

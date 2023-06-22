@@ -18,6 +18,7 @@ typedef void (*mActor_proc)(ACTOR*, GAME*);
 
 #define ACTOR_OBJ_BANK_NONE 0
 #define ACTOR_OBJ_BANK_3 3 /* TODO: rename, also likely an enum */
+#define ACTOR_OBJ_BANK_12 12
 
 enum actor_part {
   ACTOR_PART_FG,
@@ -139,6 +140,7 @@ typedef struct actor_info_s {
 
 extern void Actor_delete(ACTOR* actor);
 extern ACTOR* Actor_info_fgName_search(Actor_info* actor_info, mActor_name_t fg_name, int part);
+extern void Actor_world_to_eye(ACTOR* actor, f32 eye_height);
 
 #ifdef __cplusplus
 }

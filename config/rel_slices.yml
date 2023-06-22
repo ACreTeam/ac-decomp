@@ -138,6 +138,11 @@ zurumode.c:
 sys_ucode.c:
     .text: [0x8040F008, 0x8040F048]
     .data: [0x8065FA30, 0x8065FA40]
+ac_sample.c:
+    .text: [0x8040F048, 0x8040F614]
+    .rodata: [0x80643860, 0x80643868]
+    .data: [0x8065FA40, 0x8065FAA0]
+    .bss: [0x812F96A0, 0x812F96E0]
 ac_animal_logo.c:
     .text: [0x804104AC, 0x804117D4]
     .rodata: [0x80643918, 0x80643A88]

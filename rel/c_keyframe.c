@@ -227,7 +227,7 @@ extern void cKF_SkeletonInfo_R_ct(cKF_SkeletonInfo_R_c* keyframe,
   keyframe->target_joint = target_table;
 }
 
-extern void cKF_SkeletonInfo_R_dt() {}
+extern void cKF_SkeletonInfo_R_dt(cKF_SkeletonInfo_R_c* keyframe) {}
 
 extern void cKF_SkeletonInfo_R_init_standard_stop(
     cKF_SkeletonInfo_R_c* keyframe, cKF_Animation_R_c* animation,
