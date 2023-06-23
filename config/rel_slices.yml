@@ -3,6 +3,10 @@ sys_vimgr.c:
 c_keyframe.c:
     .text: [0x80370418, 0x80372C8C]
     .rodata: [0x80641260, 0x806412A8]
+m_actor_dlftbls.c:
+    .text: [0x8037619C, 0x803761BC]
+    .data: [0x8064D628, 0x8064F4E8]
+    .bss: [0x8125A828, 0x8125A830]
 m_cockroach.c:
     .text: [0x80385430, 0x80385A80]
 m_controller.c:

@@ -34,6 +34,8 @@ struct effect_control_s {
 };
 
 
+extern ACTOR_PROFILE Effect_Control_Profile;
+
 #ifdef __cplusplus
 }
 #endif

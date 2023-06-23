@@ -7,7 +7,7 @@ extern "C" {
 #endif
 
 TRKResult usr_put_initialize();
-TRKResult usr_put_serial(const char*);
+TRKResult usr_puts_serial(const char*);
 
 #ifdef __cplusplus
 }

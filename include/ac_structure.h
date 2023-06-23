@@ -15,6 +15,8 @@ typedef struct actor_structure_clip_s {
   aSTR_SETUP_ACTOR_PROC setup_actor_proc;
 } aSTR_Clip_c;
 
+extern ACTOR_PROFILE Structure_Profile;
+
 #ifdef __cplusplus
 }
 #endif
