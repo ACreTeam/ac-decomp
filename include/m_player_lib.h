@@ -14,6 +14,8 @@ extern void mPlib_SetData2_controller_data_for_title_demo(mActor_name_t tool);
 extern void mPlib_request_main_invade_type1(GAME_PLAY* play);
 extern mActor_name_t mPlib_Get_itemNo_forWindow();
 extern int mPlib_check_able_change_camera_normal_index();
+extern void mPlib_request_main_refuse_type1(GAME_PLAY* play);
+extern void mPlib_request_main_wait_type3(GAME_PLAY* play);
 
 #ifdef __cplusplus
 }

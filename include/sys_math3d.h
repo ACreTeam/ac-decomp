@@ -16,6 +16,9 @@ typedef struct math_3d_pipe_s {
 } Math3D_pipe_c;
 
 extern f32 Math3DVecLength(xyz_t* vec);
+extern void sMath_RotateX(xyz_t* pos, f32 rad);
+extern void sMath_RotateY(xyz_t* pos, f32 rad);
+extern void sMath_RotateZ(xyz_t* pos, f32 rad);
 
 extern xyz_t ZeroVec;
 
