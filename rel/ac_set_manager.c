@@ -267,7 +267,7 @@ static void aSetMgr_dt(ACTOR* actor, GAME* game) { }
 
 /* actor profile for SET_MANAGER */ 
 ACTOR_PROFILE Set_Manager_Profile = {
-  0x72, /* TODO: replace with enum */
+  mAc_PROFILE_SET_MANAGER,
   ACTOR_PART_CONTROL, /* control actor type */
   ACTOR_STATE_NO_MOVE_WHILE_CULLED | ACTOR_STATE_NO_DRAW_WHILE_CULLED | ACTOR_STATE_CAN_MOVE_IN_DEMO_SCENES,
   EMPTY_NO,
