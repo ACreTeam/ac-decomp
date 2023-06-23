@@ -24,15 +24,23 @@ extern "C" {
 
 /* radians -> short angle */
 #define RAD2SHORT_ANGLE(rad) ((s16)(int)((rad) * (65536.0f / (2.0f * F_PI))))
+#define RAD2SHORTANGLE(rad)	((s16)((32768.0f / F_PI) * ((f32)(rad))))
 
 /* short angle -> radians */
 #define SHORT2RAD_ANGLE(s) ((((f32)(s)) / (65536.0f / (2.0f * F_PI))))
+#define SHORTANGLE2RAD(sangle)	((F_PI / 32768.0f) * ((f32)(sangle)))
 
 /* degrees -> short angle */
 #define DEG2SHORT_ANGLE(deg) ((s16)((deg) * (65536.0f / 360.0f)))
 
 /* short angle -> degrees */
 #define SHORT2DEG_ANGLE(s) ((((f32)(s)) / (65536.0f / 360.0f)))
+
+/* radians -> degrees */
+#define RAD2DEG(rad) ((180.0f / F_PI) * (rad))
+
+/* degrees -> radians */
+#define DEG2RAD(deg) ((F_PI / 180.0f) * (deg))
 
 typedef struct rgba_t { //can be put in other place
     u8 r, g, b, a;

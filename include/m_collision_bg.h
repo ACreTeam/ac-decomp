@@ -51,14 +51,47 @@ typedef union collision_bg_u {
   mCoBG_CollisionData_c data;
 } mCoBG_Collision_u;
 
+typedef struct collision_bg_check_result_s {
+  u32 on_ground:1;
+  u32 hit_attribute_wall:5;
+  u32 hit_wall:5;
+  u32 hit_wall_count:3;
+  u32 unk_flag0:1;
+  u32 unit_attribute:6;
+  u32 is_on_move_bg_obj:1;
+  u32 is_in_water:1;
+  u32 unk_flag1:1;
+  u32 unk_flag2:1;
+  u32 unk_flag3:1;
+  u32 unk_flag4:1;
+  u32 unk_flag5:1;
+  u32 unk_flag6:4;
+} mCoBG_CheckResult_c;
+
+typedef struct wall_info_s {
+  s16 angleY;
+  s16 type;
+} mCoBG_WallInfo_c;
+
+typedef struct collision_bg_check_s {
+  mCoBG_Collision_u collision_units[5];
+  mCoBG_CheckResult_c result;
+  f32 wall_top_y;
+  f32 wall_bottom_y;
+  f32 ground_y;
+  mCoBG_WallInfo_c wall_info[2];
+  s16 in_front_wall_angle_y;
+} mCoBG_Check_c;
+
 extern u32 mCoBG_Wpos2BgAttribute_Original(xyz_t wpos);
 extern u32 mCoBG_Wpos2Attribute(xyz_t wpos, char* is_diggable);
 extern int mCoBG_CheckWaterAttribute(u32 attribute);
-extern f32 mCoBG_GetBgY_AngleS_FromWpos(s_xyz* angle_to_ground, xyz_t wpos, f32 offset);
+extern f32 mCoBG_GetBgY_AngleS_FromWpos(s_xyz* angle_to_ground, xyz_t wpos, f32 offset_y);
 extern int mCoBG_CheckWaterAttribute_OutOfSea(u32 attribute);
 extern int mCoBG_CheckHole_OrgAttr(u32 attribute);
 extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos2(xyz_t wpos, f32 foot_dist);
 extern int mCoBG_Attribute2CheckPlant(u32 attribute, const xyz_t* wpos);
+extern void mCoBG_BgCheckControll(xyz_t* reverse_pos, ACTOR* actor, f32 check_range, f32 offset_y, s16 wall_attr_check, s16 no_reverse, s16 check_type);
 
 extern f32 mCoBG_GetWaterHeight_File(xyz_t wpos, char* file, int line);
 #define mCoBG_GetWaterHeight(wpos) mCoBG_GetWaterHeight_File(wpos, __FILE__, __LINE__)

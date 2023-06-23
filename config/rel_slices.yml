@@ -143,6 +143,10 @@ ac_sample.c:
     .rodata: [0x80643860, 0x80643868]
     .data: [0x8065FA40, 0x8065FAA0]
     .bss: [0x812F96A0, 0x812F96E0]
+ac_airplane.c:
+    .text: [0x8040F614, 0x804104AC]
+    .rodata: [0x80643868, 0x80643918]
+    .data: [0x8065FAA0, 0x8065FB68]
 ac_animal_logo.c:
     .text: [0x804104AC, 0x804117D4]
     .rodata: [0x80643918, 0x80643A88]

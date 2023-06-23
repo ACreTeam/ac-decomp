@@ -5,6 +5,8 @@
 #include "m_actor_type.h"
 #include "game.h"
 #include "m_lib.h"
+#include "m_lights.h"
+#include "m_collision_bg.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,6 +20,7 @@ typedef void (*mActor_proc)(ACTOR*, GAME*);
 
 #define ACTOR_OBJ_BANK_NONE 0
 #define ACTOR_OBJ_BANK_3 3 /* TODO: rename, also likely an enum */
+#define ACTOR_OBJ_BANK_7 7
 #define ACTOR_OBJ_BANK_12 12
 
 enum actor_part {
@@ -48,7 +51,7 @@ typedef struct actor_profile_s {
   /* 0x20 */ mActor_proc sv_proc; /* save */
 } ACTOR_PROFILE;
 
-typedef void (*mActor_shadow_proc)(ACTOR*, void*, GAME_PLAY*); /* TODO: void* is actually LightsN*, see m_lights */
+typedef void (*mActor_shadow_proc)(ACTOR*, LightsN*, GAME_PLAY*);
 
 /* sizeof(Shape_Info) == 0x48 */
 typedef struct actor_shape_info_s {
@@ -95,8 +98,7 @@ struct actor_s {
   /* 0x078 */ f32 gravity; /* gravity acting on actor */
   /* 0x07C */ f32 max_velocity_y; /* maximum y velocity possible due to gravity, usually -20.0f */
   /* 0x080 */ f32 ground_y; /* vertical position of ground underneath actor */
-  /* 0x084 */ u8 bg_collision_data[0xB2-0x84]; /* actor collision data, TODO: implement, mCoBG */
-  /* 0x0B2 */ u8 unused_b2[2];
+  /* 0x084 */ mCoBG_Check_c bg_collision_check; /* background object collision info with actor */
   /* 0x0B4 */ u8 unknown_b4; /* some sort of flag */
   /* 0x0B5 */ u8 drawn; /* was drawn flag, TRUE = actor was drawn, FALSE = actor was not drawn */
   /* 0x0B6 */ s16 player_angle_y; /* Y angle (yaw) between actor and player actor */
@@ -141,6 +143,11 @@ typedef struct actor_info_s {
 extern void Actor_delete(ACTOR* actor);
 extern ACTOR* Actor_info_fgName_search(Actor_info* actor_info, mActor_name_t fg_name, int part);
 extern void Actor_world_to_eye(ACTOR* actor, f32 eye_height);
+extern void Shape_Info_init(ACTOR* actor, f32 y_ofs, mActor_shadow_proc shadow_proc, f32 shadow_sizeX, f32 shadow_sizeZ);
+extern void Actor_position_moveF(ACTOR* actor);
+
+extern void mAc_ActorShadowCircle(ACTOR* actor, LightsN* lightsN, GAME_PLAY* play);
+extern void mAc_ActorShadowEllipse(ACTOR* actor, LightsN* lightsN, GAME_PLAY* play);
 
 #ifdef __cplusplus
 }
