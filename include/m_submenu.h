@@ -12,6 +12,8 @@
 extern "C" {
 #endif
 
+typedef struct submenu_s Submenu;
+
 enum {
   mSM_PROCESS_WAIT,
   mSM_PROCESS_PREWAIT,
@@ -30,8 +32,8 @@ typedef struct submenu_item_s {
 typedef void (*SUBMENU_PROC)(Submenu*);
 typedef void (*SUBMENU_GAME_PROC)(Submenu*, GAME*);
 
-/* sizeof (Submenu) == 0x1B8 */
-typedef struct submenu_s {
+/* sizeof (struct submenu_s) == 0x1B8 */
+struct submenu_s {
   /* 0x000 */ int mode;
   /* 0x004 */ int menu_type;
   /* 0x008 */ int current_menu_type;
@@ -62,7 +64,7 @@ typedef struct submenu_s {
   /* 0x178 */ s16 item_num; /* number of items in the item array */
   /* 0x17A */ s16 selected_item_num; /* number of selected items in the item array */
   /* 0x17C */ Submenu_Item_c items[mPr_POCKETS_SLOT_COUNT]; /* item buffer, entries are only set when an item is selected by the player */
-} Submenu;
+};
 
 #ifdef __cplusplus
 }
