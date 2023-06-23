@@ -2,7 +2,7 @@
 #define M_ACTOR_DLFTBLS_H
 
 #include "types.h"
-#include "m_actor.h"
+#include "m_actor_type.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,10 +21,11 @@ typedef struct actor_dfltbl_s {
   s8 unk2; // unused in AC
 } ACTOR_DFLTBL;
 
+extern int actor_dlftbls_num;
 extern ACTOR_DFLTBL actor_dlftbls[];
-void actor_dlftbls_init();
-void actor_dlftbls_cleanup();
 
+extern void actor_dlftbls_init();
+extern void actor_dlftbls_cleanup();
 
 #ifdef __cplusplus
 }

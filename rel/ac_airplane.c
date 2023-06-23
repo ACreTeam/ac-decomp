@@ -19,7 +19,7 @@ static void Airplane_Actor_draw(ACTOR* actor, GAME* game);
 /* TODO: ct, dt, & draw go in this TU, while all others go in a separate TU. Probably something like ac_airplane_move.c_inc */
 
 ACTOR_PROFILE Airplane_Profile = {
-  0x05, // TODO: enum
+  mAc_PROFILE_AIRPLANE,
   ACTOR_PART_BG,
   ACTOR_STATE_NO_MOVE_WHILE_CULLED | ACTOR_STATE_NO_DRAW_WHILE_CULLED,
   ETC_AIRPLANE,

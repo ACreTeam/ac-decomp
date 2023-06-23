@@ -181,7 +181,7 @@ static void Ac_Sample_Actor_draw(ACTOR* actor, GAME* game) {
 }
 
 ACTOR_PROFILE Sample_Profile = {
-  0x02, // TODO: enum
+  mAc_PROFILE_SAMPLE,
   ACTOR_PART_BG,
   0,
   MISC_ACTOR_SAMPLE,

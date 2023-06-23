@@ -54,7 +54,7 @@ static void aAL_actor_move(ACTOR* actor, GAME* game);
 static void aAL_actor_draw(ACTOR* actor, GAME* game);
 
 ACTOR_PROFILE Animal_Logo_Profile = {
-  0xAB, // TODO: replace with enum
+  mAc_PROFILE_ANIMAL_LOGO,
   ACTOR_PART_BG,
   ACTOR_STATE_NO_MOVE_WHILE_CULLED | ACTOR_STATE_NO_DRAW_WHILE_CULLED,
   EMPTY_NO,
