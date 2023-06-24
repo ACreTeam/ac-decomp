@@ -14,6 +14,7 @@ extern "C" {
 
 typedef void (*mActor_proc)(ACTOR*, GAME*);
 
+#define ACTOR_STATE_NONE 0
 #define ACTOR_STATE_NO_MOVE_WHILE_CULLED (1 << 4)
 #define ACTOR_STATE_NO_DRAW_WHILE_CULLED (1 << 5)
 #define ACTOR_STATE_CAN_MOVE_IN_DEMO_SCENES (1 << 29)

@@ -157,6 +157,15 @@ ac_animal_logo.c:
     .data: [0x8065FB68, 0x8065FBA8]
 ac_animal_logo_misc.c:
     .text: [0x804117D4, 0x80411A60]
+ac_boxManager.c:
+    .text: [0x80415BD8,0x80415BE8]
+    .data: [0x806818A0, 0x806818C8]
+ac_boxMove.c:
+    .text: [0x80415BE8, 0x80415BF8]
+    .data: [0x806818C8, 0x806818F0]
+ac_boxTrick01.c:
+    .text: [0x80415BF8, 0x80415C04]
+    .data: [0x806818F0, 0x80681918]
 ac_set_manager.c:
     .text: [0x80496AB8, 0x80496F50]
     .rodata: [0x80644DB8, 0x80644DC8]

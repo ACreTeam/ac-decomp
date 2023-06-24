@@ -8,7 +8,14 @@
 extern "C" {
 #endif
 
+typedef struct box_trick01_s{
+    ACTOR actor_class;
+    u8 pad[0x17C - 0x174];
+}BOXTRICK01_ACTOR;
+
+
 extern ACTOR_PROFILE BoxTrick01_Profile;
+
 
 #ifdef __cplusplus
 }
