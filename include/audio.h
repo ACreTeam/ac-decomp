@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "audio_defs.h"
+#include "m_lib.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,6 +22,8 @@ extern void sAdo_SysLevStop(u8 id);
 extern void sAdo_SysLevStart(u8 id);
 
 extern void sAdo_SysTrgStart(u16 id);
+
+extern void sAdo_OngenTrgStart(u16 id, xyz_t* pos);
 
 extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 distance1, u32 ongenNum2, u16 angle2, f32 distance2);
 extern void sAdos_KishaStatusTrg(u8 state);

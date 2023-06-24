@@ -89,6 +89,8 @@ typedef int (*cKF_draw_callback)(GAME*, cKF_SkeletonInfo_R_c*, int, Gfx**, u8*, 
 #define cKF_FRAMETIME (1.0f / cKF_FRAMERATE)
 #define cKF_EPSILON 0.008f
 
+extern int cKF_FrameControl_passCheck_now(cKF_FrameControl_c* fc, f32 current);
+
 extern f32 cKF_HermitCalc(f32 t, f32 tension, f32 p0, f32 p1, f32 m0, f32 m1);
 extern void cKF_SkeletonInfo_subRotInterpolation(f32 t, s16* out, s16 rot1, s16 rot2);
 

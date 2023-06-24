@@ -59,8 +59,7 @@ static int cKF_FrameControl_passCheck(cKF_FrameControl_c* fc, f32 current,
   return 0;
 }
 
-extern int cKF_FrameControl_passCheck_now(cKF_FrameControl_c* fc, f32 current,
-                                          f32* out) {
+extern int cKF_FrameControl_passCheck_now(cKF_FrameControl_c* fc, f32 current) {
   f32 cur = fc->current_frame;
   f32 speed;
   int ret = 0;

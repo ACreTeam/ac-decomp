@@ -478,6 +478,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define MISC_ACTOR_START 0x9000
 #define MISC_ACTOR_SAMPLE MISC_ACTOR_START
 
+#define TRAIN_DOOR 0xA011
+
 #define SP_NPC_START 0xD000
 #define SP_NPC_ARTIST (SP_NPC_START + 0) // D000
 #define SP_NPC_BROKER (SP_NPC_START + 1) // D001
