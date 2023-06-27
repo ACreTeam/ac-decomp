@@ -25,6 +25,9 @@ extern "C" {
 
 #define FGIDX_2_BLOCK_X(idx) ((idx) % FG_BLOCK_X_NUM + 1)
 #define FGIDX_2_BLOCK_Z(idx) ((idx) / FG_BLOCK_X_NUM + 1)
+#define FGBLOCKXZ_2_FGIDX(x, z) ((z) * FG_BLOCK_X_NUM + (x))
+
+#define BLOCKXZ_2_BLOCKIDX(x, z) ((z) * BLOCK_X_NUM + (x))
 
 /* sizeof(mFM_combination_c) == 2 */
 typedef struct block_combination_s {
@@ -43,6 +46,9 @@ typedef struct block_combo_s {
   /* 0x02 */ mActor_name_t fg_id;
   /* 0x05 */ u8 type;
 } mFM_combo_info_c;
+
+extern u8* g_block_type_p;
+extern int* g_block_kind_p;
 
 #ifdef __cplusplus
 }

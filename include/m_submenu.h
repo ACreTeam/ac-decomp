@@ -24,6 +24,43 @@ enum {
   mSM_PROCESS_NUM
 };
 
+enum submenu_overlay {
+  mSM_OVL_NONE,
+  
+  mSM_OVL_INVENTORY,
+  mSM_OVL_HBOARD,
+  mSM_OVL_TIMEIN,
+  mSM_OVL_LEDIT,
+  mSM_OVL_MAP,
+  mSM_OVL_NOTICE,
+  mSM_OVL_REPAY,
+  mSM_OVL_MSCORE,
+  mSM_OVL_BIRTHDAY,
+  mSM_OVL_EDITOR,
+  mSM_OVL_MAILBOX,
+  mSM_OVL_BOARD,
+  mSM_OVL_ADDRESS,
+  mSM_OVL_HANIWA,
+  mSM_OVL_EDITENDCHK,
+  mSM_OVL_WARNING,
+  mSM_OVL_CPMAIL,
+  mSM_OVL_CPWARNING,
+  mSM_OVL_CPEDIT,
+  mSM_OVL_CATALOG,
+  mSM_OVL_MUSIC,
+  mSM_OVL_BANK,
+  mSM_OVL_NEEDLEWORK,
+  mSM_OVL_CPORIGINAL,
+  mSM_OVL_DESIGN,
+  mSM_OVL_GBA,
+  mSM_OVL_DIARY,
+  mSM_OVL_CALENDAR,
+  mSM_OVL_PASSWORDMAKE,
+  mSM_OVL_PASSWORDCHK,
+
+  mSM_OVL_NUM
+};
+
 typedef struct submenu_item_s {
   mActor_name_t item;
   u8 slot_no;

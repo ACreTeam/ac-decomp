@@ -8,6 +8,15 @@
 extern "C" {
 #endif
 
+enum field_layer {
+  mCoBG_LAYER0,
+  mCoBG_LAYER1,
+  mCoBG_LAYER2,
+  mCoBG_LAYER3,
+
+  mCoBG_LAYER_NUM
+};
+
 enum background_attribute {
   /* TODO: finish */
   mCoBG_ATTRIBUTE_GRASS0,
@@ -92,6 +101,7 @@ extern int mCoBG_CheckHole_OrgAttr(u32 attribute);
 extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos2(xyz_t wpos, f32 foot_dist);
 extern int mCoBG_Attribute2CheckPlant(u32 attribute, const xyz_t* wpos);
 extern void mCoBG_BgCheckControll(xyz_t* reverse_pos, ACTOR* actor, f32 check_range, f32 offset_y, s16 wall_attr_check, s16 no_reverse, s16 check_type);
+extern int mCoBG_Height2GetLayer(f32 height);
 
 extern f32 mCoBG_GetWaterHeight_File(xyz_t wpos, char* file, int line);
 #define mCoBG_GetWaterHeight(wpos) mCoBG_GetWaterHeight_File(wpos, __FILE__, __LINE__)
