@@ -197,6 +197,8 @@ extern int mNpc_SearchAnimalinfo(Animal_c* animal, mActor_name_t npc_name, int c
 extern int mNpc_RegistEventNpc(mActor_name_t actor_name, mActor_name_t tex_name, mActor_name_t npc_name, mActor_name_t cloth_name);
 extern void mNpc_ClearAnimalInfo(Animal_c* animal_p);
 extern Animal_c* mNpc_GetInAnimalP();
+extern int mNpc_GetLooks2Sex(int looks);
+extern int mNpc_CheckFreeAnimalInfo(Animal_c* animal);
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);
