@@ -103,6 +103,8 @@ struct submenu_s {
   /* 0x17C */ Submenu_Item_c items[mPr_POCKETS_SLOT_COUNT]; /* item buffer, entries are only set when an item is selected by the player */
 };
 
+extern void mSM_open_submenu(Submenu* submenu, int menu_type, int arg0, int arg1);
+
 #ifdef __cplusplus
 }
 #endif

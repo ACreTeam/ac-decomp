@@ -468,6 +468,11 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define EXIT_DOOR 0x4080
 
+#define STRUCTURE_START 0x5800
+#define HOUSE0 (STRUCTURE_START)
+#define HOUSE1 (HOUSE0 + 1)
+#define HOUSE2 (HOUSE1 + 1)
+#define HOUSE3 (HOUSE2 + 1)
 #define TRAIN_STATION 0x5809
 #define TRAIN0 0x580A
 #define TRAIN1 0x580B
@@ -480,6 +485,15 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define MISC_ACTOR_START 0x9000
 #define MISC_ACTOR_SAMPLE MISC_ACTOR_START
 
+#define ACTOR_PROP_START 0xA000
+#define ACTOR_PROP_MAILBOX0 (ACTOR_PROP_START)
+#define ACTOR_PROP_MAILBOX1 (ACTOR_PROP_MAILBOX0 + 1)
+#define ACTOR_PROP_MAILBOX2 (ACTOR_PROP_MAILBOX1 + 1)
+#define ACTOR_PROP_MAILBOX3 (ACTOR_PROP_MAILBOX2 + 1)
+#define ACTOR_PROP_HANIWA0 (ACTOR_PROP_MAILBOX3 + 1)
+#define ACTOR_PROP_HANIWA1 (ACTOR_PROP_HANIWA0 + 1)
+#define ACTOR_PROP_HANIWA2 (ACTOR_PROP_HANIWA1 + 1)
+#define ACTOR_PROP_HANIWA3 (ACTOR_PROP_HANIWA2 + 1)
 #define TRAIN_DOOR 0xA011
 
 #define SP_NPC_START 0xD000
@@ -574,6 +588,12 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define NPC_TYBALT 0xE0B6
 #define NPC_LOBO 0xE0B9
 #define NPC_BIFF 0xE0C2
+
+#define DUMMY_START 0xF000
+#define DUMMY_HANIWA0 0xF0FB
+#define DUMMY_HANIWA1 (DUMMY_HANIWA0 + 1)
+#define DUMMY_HANIWA2 (DUMMY_HANIWA2 + 1)
+#define DUMMY_HANIWA3 (DUMMY_HANIWA2 + 1)
 
 #define RSV_DOOR 0xFE1B
 #define RSV_WALL_NO 0xFFFE /* interior wall item, no collision */

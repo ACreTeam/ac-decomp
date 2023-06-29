@@ -16,6 +16,9 @@ extern mActor_name_t mPlib_Get_itemNo_forWindow();
 extern int mPlib_check_able_change_camera_normal_index();
 extern void mPlib_request_main_refuse_type1(GAME_PLAY* play);
 extern void mPlib_request_main_wait_type3(GAME_PLAY* play);
+extern void mPlib_Set_able_force_speak_label(ACTOR* actor);
+extern int mPlib_request_main_demo_walk_type1(GAME* game, f32 goal_x, f32 goal_z, f32 speed, int flag);
+extern void mPlib_Set_goal_player_demo_walk(f32 goal_x, f32 goal_z, f32 speed);
 
 #ifdef __cplusplus
 }

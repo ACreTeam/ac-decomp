@@ -71,11 +71,36 @@ typedef struct collision_check_s {
   ClObj_c* collider_table[Cl_COLLIDER_NUM];
 } CollisionCheck_c;
 
+/* This appears to again be copy-paste from OoT? */
+typedef struct status_s {
+  xyz_t collision_vec;
+  s16 radius;
+  s16 height;
+  s16 offset;
+
+  u8 weight;
+  u8 hp;
+  u8 damage;
+
+  u8 damage_effect;
+  u8 at_hit_effect;
+  u8 ac_hit_effect;
+} Status_c;
+
+typedef struct status_data_s {
+  u8 health; // assuming this is inherited from OoT, seems largely unused
+  s16 radius;
+  s16 height;
+  s16 offset;
+  u8 weight;
+} StatusData_c;
+
 extern void ClObjPipe_ct(GAME_PLAY* play, ClObjPipe_c* pipe);
 extern void ClObjPipe_dt(GAME_PLAY* play, ClObjPipe_c* pipe);
 extern void ClObjPipe_set5(GAME_PLAY* play, ClObjPipe_c* pipe, ACTOR* owner, ClObjPipeData_c* data);
 extern void CollisionCheck_Uty_ActorWorldPosSetPipeC(ACTOR* actor, ClObjPipe_c* col_pipe);
 extern int CollisionCheck_setOC(GAME_PLAY* play, CollisionCheck_c* collision_check, ClObj_c* col_obj);
+extern void CollisionCheck_Status_set3(Status_c* status, StatusData_c* data);
 
 #ifdef __cplusplus
 }

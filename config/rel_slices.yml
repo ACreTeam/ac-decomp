@@ -166,6 +166,10 @@ ac_boxMove.c:
 ac_boxTrick01.c:
     .text: [0x80415BF8, 0x80415C04]
     .data: [0x806818F0, 0x80681918]
+ac_haniwa.c:
+    .text: [0x80427624, 0x80428F64]
+    .rodata: [0x806440B8, 0x806440F8]
+    .data: [0x80683D08, 0x80683E98]
 ac_set_manager.c:
     .text: [0x80496AB8, 0x80496F50]
     .rodata: [0x80644DB8, 0x80644DC8]
