@@ -2,6 +2,7 @@
 #define M_PRIVATE_H
 
 #include "types.h"
+#include "m_private_h.h"
 #include "libu64/gfxprint.h"
 #include "m_personal_id.h"
 #include "m_npc.h"
@@ -17,6 +18,8 @@ extern "C" {
 #define PLAYER_NUM 4
 #define FOREIGNER_NUM 1
 #define TOTAL_PLAYER_NUM (PLAYER_NUM + FOREIGNER_NUM)
+
+#define mPr_WALLET_MAX 99999
 
 enum {
   mPr_PLAYER_0,
@@ -144,7 +147,7 @@ typedef struct player_ecard_data_s {
   /* 0x04 */ u8 card_letters_sent[mPr_ECARD_LETTER_NUM]; /* bitfield keeping track of which eCard letters have been sent to the player [0, 366] */
 } mPr_carde_data_c;
 
-typedef struct private_s {
+struct private_s {
   /* 0x0000 */ PersonalID_c player_ID; /* player's id info */
   /* 0x0014 */ s8 gender; /* gender/sex of player */
   /* 0x0015 */ s8 face; /* face type of player */
@@ -212,7 +215,7 @@ typedef struct private_s {
   /* 0x23DC */ u32 soncho_trophy_field1; /* remaining tortimer event flags */
   /* 0x23E0 */ mPr_carde_data_c ecard_letter_data; /* info relating to scanned e-Card letters */
   /* 0x2412 */ u8 unused_2412[46];
-} Private_c;
+};
 
 extern s16 mPr_GetGoodsPower();
 extern s16 mPr_GetMoneyPower();
@@ -227,6 +230,7 @@ extern void mPr_ClearPrivateInfo(Private_c* private_data);
 extern int mPr_CheckCmpPlayerName(u8* str0, u8* str1);
 extern void mPr_RandomSetPlayerData_title_demo();
 extern int mPr_GetPossessionItemSumWithCond(Private_c* priv, mActor_name_t item_no, u32 cond);
+extern int mPr_SetFreePossessionItem(Private_c* priv, mActor_name_t item_no, u32 cond);
 extern void mPr_CopyPlayerName(u8* dst, Private_c* private_p);
 
 #ifdef __cplusplus

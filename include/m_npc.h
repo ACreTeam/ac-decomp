@@ -11,6 +11,7 @@
 #include "m_personal_id.h"
 #include "m_quest.h"
 #include "m_lib.h"
+#include "m_private_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -199,6 +200,7 @@ extern void mNpc_ClearAnimalInfo(Animal_c* animal_p);
 extern Animal_c* mNpc_GetInAnimalP();
 extern int mNpc_GetLooks2Sex(int looks);
 extern int mNpc_CheckFreeAnimalInfo(Animal_c* animal);
+extern int mNpc_GetFriendAnimalNum(Private_c* private_p);
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);

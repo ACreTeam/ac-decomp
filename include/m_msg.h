@@ -19,6 +19,15 @@ extern void mMsg_aram_init();
 extern int mMsg_Check_MainHide(mMsg_Window_c* msg);
 extern void mMsg_Set_item_str(mMsg_Window_c* msg_win, int str_no, u8* item_str, int str_len);
 extern void mMsg_Set_mail_str(mMsg_Window_c* msg_win, int str_no, u8* str, int str_len);
+extern void mMsg_Set_continue_msg_num(mMsg_Window_c* msg_win, int continue_msg_num);
+extern int mMsg_Check_MainNormalContinue(mMsg_Window_c* msg_win);
+extern int mMsg_Check_main_wait(mMsg_Window_c* msg_win);
+extern int mMsg_ChangeMsgData(mMsg_Window_c* msg_win, int msg_no);
+extern void mMsg_Set_ForceNext(mMsg_Window_c* msg_win);
+extern int mMsg_Check_not_series_main_wait(mMsg_Window_c* msg_win);
+extern int mMsg_Check_MainDisappear(mMsg_Window_c* msg_win);
+extern void mMsg_request_main_disappear_wait_type1(mMsg_Window_c* msg_win);
+extern void mMsg_request_main_appear_wait_type1(mMsg_Window_c* msg_win);
 
 #ifdef __cplusplus
 }

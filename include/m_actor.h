@@ -7,6 +7,8 @@
 #include "m_lib.h"
 #include "m_lights.h"
 #include "m_collision_bg.h"
+#include "m_collision_obj.h"
+#include "libforest/gbi_extensions.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -356,7 +358,7 @@ struct actor_s {
   /* 0x0B8 */ f32 player_distance; /* distance between actor and player actor (squared magnitude) */
   /* 0x0BC */ f32 player_distance_xz; /* distance between actor and player actor on XZ plane (magnitude) */
   /* 0x0C0 */ f32 player_distance_y; /* distance between actor and player actor on Y plane */
-  /* 0x0C4 */ u8 status_data[0xDC-0xC4]; /* TODO: implement, see m_collision_obj */
+  /* 0x0C4 */ Status_c status_data; /* collider info, lots of leftover stuff from OoT */
   /* 0x0DC */ Shape_Info shape_info;
   /* 0x124 */ xyz_t camera_position; /* camera position relative to actor position */
   /* 0x130 */ f32 camera_w; /* camera projection W value */
