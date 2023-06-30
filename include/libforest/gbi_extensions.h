@@ -476,6 +476,19 @@ do { \
     /*_gfx->words.w1 = 0;*/ /* bug? they don't set the second word */ \
 }}
 
+#define gDPSetTileSize_Dolphin(pkt, tile, s, t, width, height)		\
+do { \
+    Gfx* _gfx = (Gfx*)(pkt); \
+    _gfx->words.w0 = _SHIFTL(G_SETTILESIZE, 24, 8) | _SHIFTL(s, 10, 14) | _SHIFTL(width - 1, 0, 10); \
+    _gfx->words.w1 = _SHIFTL(1, 31, 1) | _SHIFTL(tile, 24, 3) | _SHIFTL(t, 10, 14) | _SHIFTL(height - 1, 0, 10); \
+} while (0)
+
+#define gsDPSetTileSize_Dolphin(tile, s, t, width, height)		\
+{{									\
+	_SHIFTL(G_SETTILESIZE, 24, 8) | _SHIFTL(s, 10, 14) | _SHIFTL(width - 1, 0, 10),	\
+	_SHIFTL(1, 31, 1) | _SHIFTL(tile, 24, 3) | _SHIFTL(t, 10, 14) | _SHIFTL(height - 1, 0, 10)\
+}}
+
 #define G_DOLPHIN_TLUT_DEFAULT_MODE 15 // used almost always? CI palettes are forced to GX_TF_RGB5A3
 #define gsDPLoadTextureBlock_4b_Dolphin(timg, fmt, w, h, pal, ws, wt, ss, st) \
     gsDPSetTextureImage_Dolphin(fmt, G_IM_SIZ_4b, h, w, timg), \

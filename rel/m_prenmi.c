@@ -41,7 +41,7 @@ static void prenmi_draw(GAME_PRENMI* prenmi) {
 
   // adjust size
   y_pos = (1.0f - (timer / (f32)PRENMI_TIMER)) * -15.0f + 127.0f;
-  gfx = gfx_gSPTextureRectangle1(gfx, 0, (y_pos * 4.0f), 0x500, ((y_pos + 1.0f) * 4.0f), 0, 0, 0, 0, 0);
+  gfx = gfx_gSPTextureRectangle1(gfx, 0, (u32)(y_pos * 4.0f), 0x500, (u32)((y_pos + 1.0f) * 4.0f), 0, 0, 0, 0, 0);
   
   gDPPipeSync(gfx++);
   SET_POLY_OPA_DISP(gfx);

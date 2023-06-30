@@ -79,6 +79,10 @@ m_random_field.c:
     .text: [0x803E4B20, 0x803E50E4]
     .rodata: [0x80643218, 0x80643240]
     .data: [0x8065C098, 0x8065C588]
+m_rcp.c:
+    .text: [0x803E50E4, 0x803E5D04]
+    .data: [0x8065C588, 0x8065C910]
+    .bss: [0x8129F2E8, 0x8129F2F0]
 m_room_type/mRmTp_FtrItemNo2FtrIdx.c:
     .text: [0x803E7878, 0x803E78BC]
 #m_time.c: # unlinked until function callers that reorder local static variables are implemented.
