@@ -253,7 +253,7 @@
   {0,0,NULL,NULL,NULL,NULL,0,0,0,0}
 
 
-ACTOR_DFLTBL actor_dlftbls[] = {
+ACTOR_DLFTBL actor_dlftbls[] = {
   MAKE_ACTOR_DLF(Player),
   MAKE_ACTOR_DLF(BgItem),
   MAKE_ACTOR_DLF(Sample),

@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-typedef struct actor_dfltbl_s {
+typedef struct actor_dlftbl_s {
   u32 rom_start; // unused in AC
   u32 rom_end; // unused in AC
   u8* ram_start; // used only with a check, but never set in AC
@@ -19,10 +19,10 @@ typedef struct actor_dfltbl_s {
   u16 flags; // related to memory pinning but functionally useless in AC since alloc_buf is never allocated
   s8 num_actors; // number of this type of actor that currently exist
   s8 unk2; // unused in AC
-} ACTOR_DFLTBL;
+} ACTOR_DLFTBL;
 
 extern int actor_dlftbls_num;
-extern ACTOR_DFLTBL actor_dlftbls[];
+extern ACTOR_DLFTBL actor_dlftbls[];
 
 extern void actor_dlftbls_init();
 extern void actor_dlftbls_cleanup();

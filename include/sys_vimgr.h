@@ -4,6 +4,6 @@
 #include "types.h"
 #include "dolphin/vi.h"
 
-void viBlack(BOOL);
+extern void viBlack(int black);
 
 #endif
