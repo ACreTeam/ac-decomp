@@ -1,5 +1,5 @@
 #include "sys_vimgr.h"
 
-void viBlack(BOOL black){
-    VISetBlack(black);
+extern void viBlack(int black) {
+  VISetBlack(black);
 }

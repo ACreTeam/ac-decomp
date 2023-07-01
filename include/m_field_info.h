@@ -50,6 +50,7 @@ enum field_type2 {
 
 enum field_room {
   /* TODO: others */
+  mFI_FIELD_FG = mFI_TO_FIELD_ID(mFI_FIELDTYPE_FG, 0),
 
   mFI_FIELD_PLAYER0_ROOM = mFI_TO_FIELD_ID(mFI_FIELDTYPE_PLAYER_ROOM, 0),
   mFI_FIELD_PLAYER1_ROOM,
