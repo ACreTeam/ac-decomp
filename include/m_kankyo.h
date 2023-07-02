@@ -26,6 +26,12 @@ enum weather_intensity {
   mEnv_WEATHER_INTENSITY_NUM,
 };
 
+typedef struct kankyo_s{
+    /*0x00 */ u8 pad[0x9A];
+    /*0x9A */ u8 ambientColor[3];
+    /*0x9E */ u8 pad2[0x32];  
+}Kankyo;
+
 extern int mEnv_NowWeather();
 
 #ifdef __cplusplus
