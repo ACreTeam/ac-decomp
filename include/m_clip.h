@@ -2,6 +2,7 @@
 #define M_CLIP_H
 
 #include "types.h"
+#include "ac_train0.h"
 #include "ac_gyoei_h.h"
 #include "ac_insect_h.h"
 #include "ac_structure.h"
@@ -16,7 +17,9 @@ extern "C" {
 
 /* sizeof(Clip_c) == 0x104 */
 typedef struct clip_s {
-  /* 0x000 */ void* _000[(0x074 - 0x000) / sizeof(void*)];
+  /* 0x000 */ void* _000[(0x040 - 0x000) / sizeof(void*)];
+  /* 0x040 */ aTR0_Clip_c* train0_clip;
+  /* 0x044 */ void* _044[(0x074 - 0x044) / sizeof(void*)];
   /* 0x074 */ bIT_Clip_c* bg_item_clip;
   /* 0x078 */ void* _078;
   /* 0x07C */ aINS_Clip_c* insect_clip;

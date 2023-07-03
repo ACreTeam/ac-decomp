@@ -566,6 +566,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ETC_AIRPLANE ETC_START
 #define ETC_BOXTRICK (ETC_START + 4)
 #define ETC_BOXMANAGER (ETC_START + 5)
+#define ETC_TRAIN_WINDOW (ETC_START + 17)
 
 #define MISC_ACTOR_START 0x9000
 #define MISC_ACTOR_SAMPLE MISC_ACTOR_START

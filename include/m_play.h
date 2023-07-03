@@ -7,6 +7,8 @@
 #include "m_view.h"
 #include "m_camera2.h"
 #include "m_submenu.h"
+#include "m_kankyo.h"
+#include "m_lights.h"
 #include "m_pause.h"
 #include "m_field_info.h"
 #include "m_fbdemo_wipe.h"
@@ -29,7 +31,8 @@ struct game_play_s {
   /* 0x0110 */ Object_Exchange_c object_exchange;
   /* 0x1A68 */ View view;
   /* 0x1B88 */ Camera2 camera;
-  /* 0x1CC0 */ u8 _1CC0[0x1DA0 - 0x1CC0];
+  /* 0x1CC0 */ Kankyo kankyo; 
+  /* 0x1D90 */ Global_light global_light;
   /* 0x1DA0 */ pause_t pause;
   /* 0x1DA8 */ Actor_info actor_info;
   /* 0x1DEC */ Submenu submenu;

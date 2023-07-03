@@ -21,6 +21,7 @@ extern void sMath_RotateY(xyz_t* pos, f32 rad);
 extern void sMath_RotateZ(xyz_t* pos, f32 rad);
 
 extern xyz_t ZeroVec;
+extern s_xyz ZeroSVec;
 
 #ifdef __cplusplus
 }

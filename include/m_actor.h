@@ -28,6 +28,7 @@ typedef void (*mActor_proc)(ACTOR*, GAME*);
 #define ACTOR_OBJ_BANK_7 7
 #define ACTOR_OBJ_BANK_11 11
 #define ACTOR_OBJ_BANK_12 12
+#define ACTOR_OBJ_BANK_41 41
 
 enum actor_part {
   ACTOR_PART_FG,

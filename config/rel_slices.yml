@@ -192,6 +192,10 @@ ac_train_door.c:
     .text: [0x804AC2D8, 0x804AC510]
     .rodata: [0x80645F98, 0x80645FA8]
     .data: [0x8068F5C0, 0x8068F600]
+ac_train_window.c:
+    .text: [0x804AC510, 0x804AD428]
+    .rodata: [0x80645FA8, 0x80645FF8]
+    .data: [0x8068F600, 0x8068F830]
 m_huusui_room_ovl.c:
     .text: [0x804D1BBC, 0x804D2164]
     .rodata: [0x80646558, 0x806465C8]
@@ -209,6 +213,14 @@ ac_structure.c:
     .rodata: [0x8064AC30, 0x8064AC38]
     .data: [0x806C6C00, 0x806C6ED0]
     .bss: [0x813280F0, 0x8133DEB0]
+ac_train0.c:
+    .text: [0x805BFC28, 0x805C0614]
+    .rodata: [0x8064AD28, 0x8064AD80]
+    .data: [0x806C72D0, 0x806C7300]
+ac_train1.c:
+    .text: [0x805C0614, 0x805C0CC8]
+    .rodata: [0x8064AD80, 0x8064ADB0]
+    .data: [0x806C7300, 0x806C7388]
 m_select.c:
     .text: [0x80627F88, 0x80629CA8]
     .rodata: [0x8064D1B0, 0x8064D1B8]
