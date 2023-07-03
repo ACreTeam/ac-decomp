@@ -19,6 +19,7 @@ extern void mPlib_request_main_wait_type3(GAME_PLAY* play);
 extern void mPlib_Set_able_force_speak_label(ACTOR* actor);
 extern int mPlib_request_main_demo_walk_type1(GAME* game, f32 goal_x, f32 goal_z, f32 speed, int flag);
 extern void mPlib_Set_goal_player_demo_walk(f32 goal_x, f32 goal_z, f32 speed);
+extern void mPlib_Set_able_hand_all_item_in_demo(s8 enable);
 
 #ifdef __cplusplus
 }

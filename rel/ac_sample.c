@@ -72,8 +72,8 @@ static void Ac_Sample_Actor_main_wait(SAMPLE_ACTOR* actor, GAME_PLAY* play) {
   Actor_world_to_eye((ACTOR*)actor, 48.0f);
   Ac_Sample_Excute_Corect(actor, play);
 
-  if (mDemo_Check(7, (ACTOR*)actor) == FALSE) {
-    mDemo_Request(7, (ACTOR*)actor, &Ac_Sample_Actor_wait_demo_ct);
+  if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)actor) == FALSE) {
+    mDemo_Request(mDemo_TYPE_TALK, (ACTOR*)actor, &Ac_Sample_Actor_wait_demo_ct);
   }
   else {
     actor->main_action = 1;
@@ -85,7 +85,7 @@ static void Ac_Sample_Actor_main_talk(SAMPLE_ACTOR* actor, GAME_PLAY* play) {
   Actor_world_to_eye((ACTOR*)actor, 48.0f);
   Ac_Sample_Excute_Corect(actor, play);
 
-  if (mDemo_Check(7, (ACTOR*)actor)) {
+  if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)actor)) {
     s16 angle = add_calc_short_angle2(&actor->actor_class.shape_info.rotation.y, actor->actor_class.player_angle_y, 1.0f, 5000, 100);
     actor->actor_class.world_rotation.y = actor->actor_class.shape_info.rotation.y;
 

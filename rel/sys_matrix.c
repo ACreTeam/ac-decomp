@@ -382,45 +382,45 @@ void Matrix_rotateXYZ(s16 x, s16 y, s16 z, int mode){
     }
 }
 
-void Matrix_softcv3_mult(xyz_t* src, s_xyz* dest) {
+void Matrix_softcv3_mult(xyz_t* pos, s_xyz* rot) {
     MtxF* curm = Matrix_now;
     f32 sin, cos;
     f32 fp, st2;
 
-    sin = sin_s(dest->z);
-    cos = cos_s(dest->z);
+    sin = sin_s(rot->z);
+    cos = cos_s(rot->z);
 
     fp = curm->xx;
     st2 = curm->xy;
     
-    curm->xw = curm->xw + (fp * src->x + st2 * src->y + curm->xz * src->z);
+    curm->xw = curm->xw + (fp * pos->x + st2 * pos->y + curm->xz * pos->z);
     curm->xx = (fp * cos) + (st2 * sin); 
     curm->xy = -(fp * sin) + (st2 * cos); 
 
     fp = curm->yx;
     st2 = curm->yy;
     
-    curm->yw = curm->yw + (fp * src->x + st2 * src->y + curm->yz * src->z);
+    curm->yw = curm->yw + (fp * pos->x + st2 * pos->y + curm->yz * pos->z);
     curm->yx = (fp * cos) + (st2 * sin);
     curm->yy = -(fp * sin) + (st2 * cos);
 
     fp = curm->zx;
     st2 = curm->zy;
     
-    curm->zw = curm->zw + (curm->zx * src->x + curm->zy * src->y + curm->zz * src->z);
+    curm->zw = curm->zw + (curm->zx * pos->x + curm->zy * pos->y + curm->zz * pos->z);
     curm->zx = (fp * cos) + (st2 * sin);
     curm->zy = -(fp * sin) + (st2 * cos);
 
     fp = curm->wx;
     st2 = curm->wy;
-    curm->ww = curm->ww + (curm->wx * src->x + curm->wy * src->y + curm->wz * src->z);
+    curm->ww = curm->ww + (curm->wx * pos->x + curm->wy * pos->y + curm->wz * pos->z);
     curm->wx = (fp * cos) + (st2 * sin);
     curm->wy = -(fp * sin) + (st2 * cos);
 
-    if(dest->y != 0){
+    if(rot->y != 0){
         
-        sin = sin_s(dest->y);
-        cos = cos_s(dest->y);
+        sin = sin_s(rot->y);
+        cos = cos_s(rot->y);
             
         fp = curm->xx;
         st2 = curm->xz;
@@ -445,9 +445,9 @@ void Matrix_softcv3_mult(xyz_t* src, s_xyz* dest) {
     }
 
     
-    if(dest->x != 0){
-        sin = sin_s(dest->x);
-        cos = cos_s(dest->x);        
+    if(rot->x != 0){
+        sin = sin_s(rot->x);
+        cos = cos_s(rot->x);        
             
         fp = curm->xy;
         st2 = curm->xz;

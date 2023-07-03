@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_actor.h"
 #include "m_actor_dlftbls.h"
+#include "c_keyframe.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,7 +35,7 @@ enum structure_type {
   aSTR_TYPE_POLICE_BOX,
   aSTR_TYPE_FALLS,
   aSTR_TYPE_FALLSESW,
-  aSTR_TYPE_SIGN,
+  aSTR_TYPE_RESERVE,
   aSTR_TYPE_SHRINE,
   aSTR_TYPE_BRSHOP,
   aSTR_TYPE_BUGGY,
@@ -73,6 +74,109 @@ enum structure_type {
   aSTR_TYPE_NUM
 };
 
+enum structure_palette {
+  aSTR_PAL_HOUSE1_A,
+  aSTR_PAL_HOUSE1_B,
+  aSTR_PAL_HOUSE1_C,
+  aSTR_PAL_HOUSE1_D,
+  aSTR_PAL_HOUSE1_E,
+  aSTR_PAL_HOUSE2_A,
+  aSTR_PAL_HOUSE2_B,
+  aSTR_PAL_HOUSE2_C,
+  aSTR_PAL_HOUSE2_D,
+  aSTR_PAL_HOUSE2_E,
+  aSTR_PAL_HOUSE3_A,
+  aSTR_PAL_HOUSE3_B,
+  aSTR_PAL_HOUSE3_C,
+  aSTR_PAL_HOUSE3_D,
+  aSTR_PAL_HOUSE3_E,
+  aSTR_PAL_HOUSE4_A,
+  aSTR_PAL_HOUSE4_B,
+  aSTR_PAL_HOUSE4_C,
+  aSTR_PAL_HOUSE4_D,
+  aSTR_PAL_HOUSE4_E,
+  aSTR_PAL_HOUSE5_A,
+  aSTR_PAL_HOUSE5_B,
+  aSTR_PAL_HOUSE5_C,
+  aSTR_PAL_HOUSE5_D,
+  aSTR_PAL_HOUSE5_E,
+  aSTR_PAL_MYHOME_A,
+  aSTR_PAL_MYHOME_B,
+  aSTR_PAL_MYHOME_C,
+  aSTR_PAL_MYHOME_D,
+  aSTR_PAL_MYHOME_E,
+  aSTR_PAL_MYHOME_F,
+  aSTR_PAL_MYHOME_G,
+  aSTR_PAL_MYHOME_H,
+  aSTR_PAL_MYHOME_I,
+  aSTR_PAL_MYHOME_J,
+  aSTR_PAL_MYHOME_K,
+  aSTR_PAL_MYHOME_L,
+  aSTR_PAL_SHOP1,
+  aSTR_PAL_SHOP2,
+  aSTR_PAL_SHOP3,
+  aSTR_PAL_SHOP4,
+  aSTR_PAL_POST_OFFICE,
+  aSTR_PAL_STATION1_A,
+  aSTR_PAL_STATION1_B,
+  aSTR_PAL_STATION1_C,
+  aSTR_PAL_STATION1_D,
+  aSTR_PAL_STATION1_E,
+  aSTR_PAL_STATION2_A,
+  aSTR_PAL_STATION2_B,
+  aSTR_PAL_STATION2_C,
+  aSTR_PAL_STATION2_D,
+  aSTR_PAL_STATION2_E,
+  aSTR_PAL_STATION3_A,
+  aSTR_PAL_STATION3_B,
+  aSTR_PAL_STATION3_C,
+  aSTR_PAL_STATION3_D,
+  aSTR_PAL_STATION3_E,
+  aSTR_PAL_TRAIN1_A1,
+  aSTR_PAL_TRAIN1_A2,
+  aSTR_PAL_POLICE_BOX,
+  aSTR_PAL_FALLS,
+  aSTR_PAL_FALLSESW,
+  aSTR_PAL_RESERVE,
+  aSTR_PAL_SHRINE,
+  aSTR_PAL_BR_SHOP,
+  aSTR_PAL_BUGGY,
+  aSTR_PAL_S_CAR,
+  aSTR_PAL_KAMAKURA,
+  aSTR_PAL_GOZA,
+  aSTR_PAL_RADIO,
+  aSTR_PAL_YATAI,
+  aSTR_PAL_TUKIMI,
+  aSTR_PAL_TUKIMI2,
+  aSTR_PAL_MIKUJI,
+  aSTR_PAL_COUNT,
+  aSTR_PAL_COUNT02,
+  aSTR_PAL_KAGO_R,
+  aSTR_PAL_KAGO_W,
+  aSTR_PAL_TURI,
+  aSTR_PAL_TURI2,
+  aSTR_PAL_KOINOBORI_A,
+  aSTR_PAL_DUMP,
+  aSTR_PAL_WINDMILL_A,
+  aSTR_PAL_WINDMILL_B,
+  aSTR_PAL_WINDMILL_C,
+  aSTR_PAL_WINDMILL_D,
+  aSTR_PAL_WINDMILL_E,
+  aSTR_PAL_01_LOTUS,
+  aSTR_PAL_MIKANBOX,
+  aSTR_PAL_DOUZOU_DAI,
+  aSTR_PAL_TOUDAI,
+  aSTR_PAL_MUSEUM,
+  aSTR_PAL_BRIDGE_A,
+  aSTR_PAL_TAILOR,
+  aSTR_PAL_FLAG,
+  aSTR_PAL_BOAT,
+  aSTR_PAL_MYHOME_ISLAND,
+  aSTR_PAL_HOUSE_I,
+
+  aSTR_PAL_NUM
+};
+
 typedef struct actor_structure_control_s STRUCTURE_CONTROL_ACTOR;
 typedef struct actor_structure_s STRUCTURE_ACTOR;
 
@@ -83,11 +187,35 @@ typedef STRUCTURE_ACTOR* (*aSTR_GET_ACTOR_AREA_PROC)();
 typedef void (*aSTR_FREE_ACTOR_AREA_PROC)(STRUCTURE_ACTOR*);
 typedef u16* (*aSTR_GET_PAL_SEGMENT_PROC)(s16);
 
+typedef void (*aSTR_MOVE_PROC)(ACTOR*, GAME*);
+
 struct actor_structure_s {
   ACTOR actor_class;
-  u8 _174[0x2B0 - 0x174];
+  int keyframe_state;
+  cKF_SkeletonInfo_R_c keyframe;
+  int keyframe_saved_keyframe;
+  s_xyz work_area[15];
+  s_xyz morph_area[15];
+  aSTR_MOVE_PROC action_proc;
+  int _2A4;
+  int structure_type; /* aSTR_TYPE_* */
+  int structure_pal; /* aSTR_PAL_* */
   int request_type;
-  u8 _2B4[0x2DC - 0x2B4];
+  int action;
+
+  /* general purpose members with unique usage between structure actors */
+  int arg0;
+  int arg1;
+  int arg2;
+  int arg3;
+
+  /* general purpose float members with unique usage between structure actors*/
+  f32 arg0_f;
+  f32 arg1_f;
+  f32 arg2_f;
+  f32 arg3_f;
+
+  u32 season;
 };
 
 typedef struct actor_overlay_info_s {

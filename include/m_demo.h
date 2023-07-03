@@ -8,6 +8,43 @@
 extern "C" {
 #endif
 
+enum demo_type {
+  mDemo_TYPE_NONE,
+  mDemo_TYPE_SCROLL,
+  mDemo_TYPE_2,
+  mDemo_TYPE_DOOR,
+  mDemo_TYPE_4,
+  mDemo_TYPE_SCROLL2,
+  mDemo_TYPE_DOOR2,
+  mDemo_TYPE_TALK,
+  mDemo_TYPE_SPEAK,
+  mDemo_TYPE_REPORT,
+  mDemo_TYPE_SPEECH,
+  mDemo_TYPE_OUTDOOR,
+  mDemo_TYPE_12,
+  mDemo_TYPE_EVENTMSG,
+  mDemo_TYPE_EVENTMSG2,
+  mDemo_TYPE_15,
+  mDemo_TYPE_SCROLL3,
+
+  mDemo_TYPE_NUM
+};
+
+enum demo_order_type {
+  mDemo_ORDER_PLAYER,
+  mDemo_ORDER_1,
+  mDemo_ORDER_2,
+  mDemo_ORDER_3,
+  mDemo_ORDER_NPC0,
+  mDemo_ORDER_NPC1,
+  mDemo_ORDER_NPC2,
+  mDemo_ORDER_7,
+  mDemo_ORDER_8,
+  mDemo_ORDER_QUEST,
+
+  mDemo_ORDER_NUM
+};
+
 typedef void (*mDemo_REQUEST_PROC)(ACTOR*);
 
 typedef struct demo_clip_s {
@@ -33,6 +70,10 @@ extern ACTOR* mDemo_Get_talk_actor();
 extern void mDemo_Set_OrderValue(int type, int idx, u16 value);
 extern u16 mDemo_Get_OrderValue(int type, int idx);
 extern void mDemo_Set_talk_return_demo_wait(u8 value);
+extern void mDemo_Set_talk_turn(u8 value);
+extern void mDemo_Set_talk_display_name(u8 value);
+extern void mDemo_Set_camera(u8 value);
+extern void mDemo_Set_talk_window_color(rgba_t* color);
 
 #ifdef __cplusplus
 }

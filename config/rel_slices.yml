@@ -200,6 +200,10 @@ m_random_field/mRF_MakePerfectBit.c:
     .text: [0x8050B1AC, 0x8050B1D4]
 m_random_field/mRF_GetRandomStepMode.c:
     .text: [0x8050B284, 0x8050B2C0]
+ac_douzou.c:
+    .text: [0x805AD6D8, 0x805AE704]
+    .rodata: [0x8064A7C0, 0x8064A7E8]
+    .data: [0x806C4DF0, 0x806C5018]
 ac_structure.c:
     .text: [0x805BCA00, 0x805BD06C]
     .rodata: [0x8064AC30, 0x8064AC38]

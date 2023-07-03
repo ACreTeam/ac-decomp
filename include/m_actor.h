@@ -20,6 +20,7 @@ typedef void (*mActor_proc)(ACTOR*, GAME*);
 #define ACTOR_STATE_NONE 0
 #define ACTOR_STATE_NO_MOVE_WHILE_CULLED (1 << 4)
 #define ACTOR_STATE_NO_DRAW_WHILE_CULLED (1 << 5)
+#define ACTOR_STATE_11 (1 << 11)
 #define ACTOR_STATE_CAN_MOVE_IN_DEMO_SCENES (1 << 29)
 
 #define ACTOR_OBJ_BANK_NONE 0
@@ -400,6 +401,7 @@ extern void Actor_world_to_eye(ACTOR* actor, f32 eye_height);
 extern void Shape_Info_init(ACTOR* actor, f32 y_ofs, mActor_shadow_proc shadow_proc, f32 shadow_sizeX, f32 shadow_sizeZ);
 extern void Actor_position_moveF(ACTOR* actor);
 extern ACTOR* Actor_info_make_actor(Actor_info* actor_info, GAME* game, s16 profile, f32 x, f32 y, f32 z, short rot_x, short rot_y, short rot_z, s8 block_x, s8 block_z, s16 mvactor_list_no, mActor_name_t actor_name, s16 arg, s8 npc_idx, int data_bank);
+extern void Setpos_HiliteReflect_init(xyz_t* wpos, GAME_PLAY* play);
 
 extern void mAc_ActorShadowCircle(ACTOR* actor, LightsN* lightsN, GAME_PLAY* play);
 extern void mAc_ActorShadowEllipse(ACTOR* actor, LightsN* lightsN, GAME_PLAY* play);

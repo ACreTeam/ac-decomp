@@ -358,13 +358,13 @@ static void aHNW_dance(ACTOR* actor, GAME* game) {
     aHNW_setupAction(actor, game, aHNW_ACTION_WAIT);
   }
   else {
-    if (mDemo_Check(7, (ACTOR*)haniwa) == TRUE && mDemo_Check_ListenAble() == FALSE) {
+    if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)haniwa) == TRUE && mDemo_Check_ListenAble() == FALSE) {
       int msg_idx = aHNW_decide_msg_idx_dance(actor);
       mDemo_Set_ListenAble();
       aHNW_setupAction(actor, game, next_act_idx[msg_idx]);
     }
     else if (aHNW_check_house_door((ACTOR*)haniwa, game) == FALSE) {
-      mDemo_Request(7, (ACTOR*)haniwa, &aHNW_set_talk_info_dance);
+      mDemo_Request(mDemo_TYPE_TALK, (ACTOR*)haniwa, &aHNW_set_talk_info_dance);
     }
   }
 }
@@ -382,7 +382,7 @@ static void aHNW_check_proceeds(ACTOR* actor, GAME* game) {
 
   HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
 
-  if (mDemo_Get_OrderValue(4, 9)) {
+  if (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9)) {
     int house_idx = haniwa->house_idx;
     Haniwa_c* house_haniwa = &Save_Get(homes[house_idx]).haniwa;
     int handover_state;
@@ -397,7 +397,7 @@ static void aHNW_check_proceeds(ACTOR* actor, GAME* game) {
 
     mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg_no[handover_state]);
     aHNW_setupAction(actor, game, next_act_idx[handover_state]);
-    mDemo_Set_OrderValue(4, 9, 0);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
   }
 }
 
@@ -405,7 +405,7 @@ static void aHNW_talk_with_master(ACTOR* actor, GAME* game) {
   HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
   mMsg_Window_c* msg_win = mMsg_Get_base_window_p();
 
-  if (mDemo_Get_OrderValue(4, 9) && mMsg_Check_MainNormalContinue(msg_win) == TRUE) {
+  if (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9) && mMsg_Check_MainNormalContinue(msg_win) == TRUE) {
     int action = -1;
 
     switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
@@ -436,7 +436,7 @@ static void aHNW_talk_with_master(ACTOR* actor, GAME* game) {
     }
 
     if (action != -1) {
-      mDemo_Set_OrderValue(4, 9, 0);
+      mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
       aHNW_setupAction(actor, game, action);
     }
   }
@@ -446,7 +446,7 @@ static void aHNW_talk_with_master2(ACTOR* actor, GAME* game) {
   HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
   mMsg_Window_c* msg_win = mMsg_Get_base_window_p();
 
-  if (mDemo_Get_OrderValue(4, 9) && mMsg_Check_MainNormalContinue(msg_win) == TRUE) {
+  if (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9) && mMsg_Check_MainNormalContinue(msg_win) == TRUE) {
     int action = -1;
 
     switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
@@ -477,14 +477,14 @@ static void aHNW_talk_with_master2(ACTOR* actor, GAME* game) {
     }
 
     if (action != -1) {
-      mDemo_Set_OrderValue(4, 9, 0);
+      mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
       aHNW_setupAction(actor, game, action);
     }
   }
 }
 
 static void aHNW_talk_end_wait(ACTOR* actor, GAME* game) {
-  if (mDemo_Check(7, actor) == FALSE) {
+  if (mDemo_Check(mDemo_TYPE_TALK, actor) == FALSE) {
     aHNW_setupAction(actor, game, aHNW_ACTION_DANCE);
   }
 }
@@ -555,7 +555,7 @@ static void aHNW_menu_end_wait(ACTOR* actor, GAME* game) {
 static void aHNW_talk_with_guest(ACTOR* actor, GAME* game) {
   HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
 
-  if (mDemo_Get_OrderValue(4, 0)) {
+  if (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0)) {
     mMsg_Window_c* msg_win = mMsg_Get_base_window_p();
     if (mMsg_Check_MainNormalContinue(msg_win) == TRUE) {
       int action = -1;
@@ -582,7 +582,7 @@ static void aHNW_talk_with_guest(ACTOR* actor, GAME* game) {
       }
 
       if (action != -1) {
-        mDemo_Set_OrderValue(4, 0, 0);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0, 0);
         aHNW_setupAction(actor, game, action);
       }
     }
@@ -613,7 +613,7 @@ static void aHNW_menu_end_wait_for_guest(ACTOR* actor, GAME* game) {
 static void aHNW_save_check(ACTOR* actor, GAME* game) {
   HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
   mMsg_Window_c* msg_win = mMsg_Get_base_window_p();
-  int order_value = mDemo_Get_OrderValue(4, 9);
+  int order_value = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
   int action = -1;
 
   if (order_value && mMsg_Check_MainNormalContinue(msg_win) == TRUE) {
@@ -635,7 +635,7 @@ static void aHNW_save_check(ACTOR* actor, GAME* game) {
     }
 
     if (action != -1) {
-      mDemo_Set_OrderValue(4, 9, 0);
+      mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
       aHNW_setupAction(actor, game, action);
     }
   }
@@ -644,7 +644,7 @@ static void aHNW_save_check(ACTOR* actor, GAME* game) {
 static void aHNW_roof_check(ACTOR* actor, GAME* game) {
   HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
   mMsg_Window_c* msg_win = mMsg_Get_base_window_p();
-  int order_value = mDemo_Get_OrderValue(4, 9);
+  int order_value = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
   int action = -1;
 
   if (order_value && mMsg_Check_MainNormalContinue(msg_win) == TRUE) {
@@ -672,7 +672,7 @@ static void aHNW_roof_check(ACTOR* actor, GAME* game) {
     }
 
     if (action != -1) {
-      mDemo_Set_OrderValue(4, 9, 0);
+      mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
       aHNW_setupAction(actor, game, action);
     }
   }
@@ -686,7 +686,7 @@ static void aHNW_save_end_wait(ACTOR* actor, GAME* game) {
     mBGMPsComp_make_ps_demo(0x41, 0x168);
   }
 
-  if (mDemo_Check(7, actor) == FALSE) {
+  if (mDemo_Check(mDemo_TYPE_TALK, actor) == FALSE) {
     aHNW_setupAction(actor, game, aHNW_ACTION_PL_APPROACH_DOOR);
     aHNW_set_save_permission();
   }

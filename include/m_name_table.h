@@ -677,8 +677,9 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define DUMMY_START 0xF000
 #define DUMMY_HANIWA0 0xF0FB
 #define DUMMY_HANIWA1 (DUMMY_HANIWA0 + 1)
-#define DUMMY_HANIWA2 (DUMMY_HANIWA2 + 1)
+#define DUMMY_HANIWA2 (DUMMY_HANIWA1 + 1)
 #define DUMMY_HANIWA3 (DUMMY_HANIWA2 + 1)
+#define DUMMY_DOUZOU 0xF11D
 
 #define RSV_DOOR 0xFE1B
 #define RSV_WALL_NO 0xFFFE /* interior wall item, no collision */
