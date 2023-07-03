@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_actor.h"
+#include "ac_structure.h"
 
 #ifdef __cplusplus
 extern "C" {

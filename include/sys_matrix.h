@@ -26,7 +26,7 @@ extern void Matrix_RotateX(s16 x, int flag);
 extern void Matrix_RotateY(s16 x, int flag);
 extern void Matrix_RotateZ(s16 x, int flag);
 extern void Matrix_rotateXYZ(s16 x, s16 y, s16 z, int flag);
-extern void Matrix_softcv3_mult(xyz_t* src, s_xyz* dest);
+extern void Matrix_softcv3_mult(xyz_t* pos, s_xyz* rot);
 extern void Matrix_softcv3_load(s_xyz* src, f32 x, f32 y, f32 z);
 extern Mtx* _MtxF_to_Mtx(MtxF* src, Mtx* dest);
 extern Mtx* _Matrix_to_Mtx(Mtx* dest);

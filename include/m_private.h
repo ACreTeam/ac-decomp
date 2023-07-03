@@ -232,6 +232,7 @@ extern void mPr_RandomSetPlayerData_title_demo();
 extern int mPr_GetPossessionItemSumWithCond(Private_c* priv, mActor_name_t item_no, u32 cond);
 extern int mPr_SetFreePossessionItem(Private_c* priv, mActor_name_t item_no, u32 cond);
 extern void mPr_CopyPlayerName(u8* dst, Private_c* private_p);
+extern int mPr_GetPlayerName(u8* buf, int player_no);
 
 #ifdef __cplusplus
 }
