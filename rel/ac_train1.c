@@ -146,13 +146,13 @@ static void aTR1_passenger_ctrl(ACTOR* actor){
         rot.x = ZeroSVec.x;
         rot.y = ZeroSVec.y;
         rot.z = ZeroSVec.z;
-        get_player_actor_withoutCheck((GAME_PLAY*)gamePT)->update_Rot_Pos_actor_proc(gamePT, &pos, &rot, 46);
+        get_player_actor_withoutCheck((GAME_PLAY*)gamePT)->Set_force_position_angle_proc(gamePT, &pos, &rot, mPlayer_FORCE_POSITION_ANGLE_POSX | mPlayer_FORCE_POSITION_ANGLE_POSY | mPlayer_FORCE_POSITION_ANGLE_POSZ | mPlayer_FORCE_POSITION_ANGLE_ROTY);
     }
     else if(train1->player_pass_leaving == 1){
         pos.x = train1->actor_class.world_position.x + 2.0f;
         pos.y = train1->actor_class.world_position.y + 16.0f;
         pos.z = train1->actor_class.world_position.z + 20.0f;
-        get_player_actor_withoutCheck((GAME_PLAY*)gamePT)->update_Rot_Pos_actor_proc(gamePT, &pos, NULL, 14);
+        get_player_actor_withoutCheck((GAME_PLAY*)gamePT)->Set_force_position_angle_proc(gamePT, &pos, NULL, mPlayer_FORCE_POSITION_ANGLE_POSX | mPlayer_FORCE_POSITION_ANGLE_POSY | mPlayer_FORCE_POSITION_ANGLE_POSZ);
         
     }
 }
