@@ -336,7 +336,7 @@ typedef struct {
     unsigned char col[3];
     unsigned char kc;
     unsigned char colc[3];
-    unsigned char k1;
+    unsigned char kl;
     signed short pos[3]; /* position of light */
     unsigned char kq;
 } Light_pos_t;

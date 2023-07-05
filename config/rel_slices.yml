@@ -48,6 +48,10 @@ m_kabu_manager.c:
     .text: [0x803B5CC4, 0x803B6280]
     .rodata: [0x80642480, 0x806424C0]
     .data: [0x80655D48, 0x80655D78]
+m_lights.c:
+    .text: [0x803BB960, 0x803BC510]
+    .rodata: [0x80642680, 0x806426D8]
+    .bss: [0x81297B18, 0x81297CA0]
 m_malloc.c:
     .text: [0x803BC510, 0x803BC70C]
     .bss: [0x81297CA0, 0x81297CD0]
