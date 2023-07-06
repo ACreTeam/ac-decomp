@@ -416,7 +416,7 @@ static void mMP_set_house_data(mMP_Overlay_c* map_ovl, mSM_MenuInfo_c* menu) {
     if (mPr_CheckPrivate(priv) == TRUE &&
       (Common_Get(now_private) != priv || mEv_CheckFirstIntro() == FALSE)
     ) {
-      mPr_CopyPlayerName(resident_p->name, priv);
+      mPr_CopyPlayerName(resident_p->name, priv->player_ID.player_name);
       resident_p->sex = priv->gender;
       resident_p->house_layer = 0;
       resident_p->house_idx = 0;

@@ -104,6 +104,8 @@ struct submenu_s {
 };
 
 extern void mSM_open_submenu(Submenu* submenu, int menu_type, int arg0, int arg1);
+extern int mSM_CHECK_ALL_FISH_GET();
+extern int mSM_CHECK_ALL_INSECT_GET();
 
 #ifdef __cplusplus
 }

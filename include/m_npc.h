@@ -201,6 +201,10 @@ extern Animal_c* mNpc_GetInAnimalP();
 extern int mNpc_GetLooks2Sex(int looks);
 extern int mNpc_CheckFreeAnimalInfo(Animal_c* animal);
 extern int mNpc_GetFriendAnimalNum(Private_c* private_p);
+extern int mNpc_GetLooks(mActor_name_t npc_name);
+extern void mNpc_LoadNpcNameString(u8* buf, u8 idx);
+extern u8 mNpc_GetPaperType();
+extern void mMl_set_mail_name_npcinfo(Mail_nm_c* mail_name, AnmPersonalID_c* anm_pid);
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);

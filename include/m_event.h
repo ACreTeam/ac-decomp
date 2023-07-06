@@ -109,6 +109,8 @@ enum week_type {
 };
 
 enum event_table {
+  mEv_EVENT_MOTHERS_DAY = 23,
+  mEv_EVENT_FATHERS_DAY = 26,
   mEv_EVENT_FISHING_TOURNEY_1 = 29,
   mEv_EVENT_MUSHROOM_SEASON = 47,
   mEv_EVENT_FISHING_TOURNEY_2 = 54,

@@ -4,7 +4,7 @@
 #include "types.h"
 #include "m_play_h.h"
 #include "m_actor_type.h"
-#include "MSL_C/math.h"
+#include "sys_math.h"
 #include "libu64/u64types.h"
 #include "game.h"
 

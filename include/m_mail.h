@@ -61,6 +61,10 @@ typedef struct mail_s {
 
 extern int mMl_strlen(u8* str, int maxlen, u8 check_char);
 extern void mMl_clear_mail_box(Mail_c* mail_box, int count);
+extern void mMl_clear_mail(Mail_c* mail);
+extern void mMl_set_to_plname(Mail_c* mail, PersonalID_c* pid);
+extern int mMl_chk_mail_free_space(Mail_c* mailbox, int count);
+extern void mMl_copy_mail(Mail_c* dst, Mail_c* src);
 
 #ifdef __cplusplus
 }
