@@ -95,7 +95,7 @@ typedef struct Save_s {
   /* 0x020F1B */ u8 npc_force_go_home; /* when set to 1, forces the 'm_go_home' code to activate */
   /* 0x020F1C */ u16 deposit[FG_BLOCK_X_NUM * FG_BLOCK_Z_NUM][UT_Z_NUM]; /* flags for which items are buried around town */
   /* 0x0212DC */ lbRTC_time_c last_grow_time; /* last time that a new villager moved into town */
-  /* 0x0212E4 */ u8 _tmp4[0x02131C - 0x0212E4];
+  /* 0x0212E4 */ mPr_mother_mail_info_c mother_mail[PLAYER_NUM]; /* info on when mom sent player letters and what event was sent */
   /* 0x02131C */ mMsr_MushTime_c mushroom_time; /* last time mushroom season info was updated */
   /* 0x021322 */ u8 _tmp21322[0x02137E - 0x021322];
   /* 0x02137E */ lbRTC_time_c treasure_buried_time; /* last time treasure was actually buried */

@@ -91,6 +91,8 @@ extern const lbRTC_time_c mTM_rtcTime_default_code;
 #define mTM_IsTimeCleared(time) (lbRTC_IsEqualTime((time), &mTM_rtcTime_clear_code, lbRTC_CHECK_ALL) == TRUE)
 #define mTM_AreTimesEqual(t0, t1) (lbRTC_IsEqualTime(t0, t1, lbRTC_CHECK_ALL))
 
+#define mTM_CheckCmpYMDEqual(ymd0, ymd1) ((ymd0)->year == (ymd1)->year && (ymd0)->month == (ymd1)->month && (ymd0)->day == (ymd1)->day)
+#define mTM_CheckCmpYMDClear(ymd0) ((ymd0)->year == mTM_rtcTime_ymd_clear_code.year || (ymd0)->month == mTM_rtcTime_ymd_clear_code.month || (ymd0)->day == mTM_rtcTime_ymd_clear_code.day)
 
 #ifdef __cplusplus
 }

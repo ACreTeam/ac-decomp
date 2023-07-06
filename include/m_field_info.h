@@ -142,6 +142,7 @@ extern void mFI_ClearFieldData();
 extern int mFI_SetFG_common(mActor_name_t item, xyz_t wpos, int update);
 extern mActor_name_t* mFI_GetUnitFG(xyz_t wpos);
 extern void mFI_Wpos2DepositOFF(xyz_t wpos);
+extern mActor_name_t mFI_GetOtherFruit();
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);

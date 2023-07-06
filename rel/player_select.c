@@ -293,7 +293,7 @@ extern void player_select_init(GAME* game) {
       u8* name = player_select->player_names[i];
 
       if (mPr_CheckPrivate(private_p) == TRUE) {
-        mPr_CopyPlayerName(name, private_p);
+        mPr_CopyPlayerName(name, private_p->player_ID.player_name);
 
         if (private_p->exists == FALSE) {
           mem_copy(name + PLAYER_NAME_LEN, l_gaishutu_str, 10);

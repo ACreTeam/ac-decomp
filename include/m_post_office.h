@@ -11,6 +11,14 @@ extern "C" {
 
 #define mPO_MAIL_STORAGE_SIZE 5
 
+enum {
+  mPO_SENDTYPE_MAIL,
+  mPO_SENDTYPE_LEAFLET,
+  mPO_SENDTYPE_EVENT_LEAFLET,
+
+  mPO_SENDTYPE_NUM
+};
+
 /* sizeof(PostOffice_c) == 0x83C */
 typedef struct post_office_s {
   /* 0x000 */ s16 keep_mail_sum_players; /* sum of stored mail from players, see mPO_get_keep_mail_sum */
@@ -32,6 +40,9 @@ typedef struct post_office_s {
 
   /* 0x834 */ lbRTC_time_c delivery_time; /* time when Pete should 'deliver' the mail */
 } PostOffice_c;
+
+extern int mPO_get_keep_mail_sum();
+extern int mPO_receipt_proc(Mail_c* mail, int type);
 
 #ifdef __cplusplus
 }

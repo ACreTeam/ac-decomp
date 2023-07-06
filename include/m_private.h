@@ -70,6 +70,8 @@ enum {
 #define mPr_FOREIGN_MAP_COUNT 8
 #define mPr_ORIGINAL_DESIGN_COUNT 8
 
+#define mPr_GET_ITEM_COND(all_cond, slot_no) (((all_cond) >> (2 * (slot_no))) & 3)
+
 enum {
   mPr_SUNBURN_RANK_MIN,
 
@@ -147,6 +149,20 @@ typedef struct player_ecard_data_s {
   /* 0x04 */ u8 card_letters_sent[mPr_ECARD_LETTER_NUM]; /* bitfield keeping track of which eCard letters have been sent to the player [0, 366] */
 } mPr_carde_data_c;
 
+#define mPr_MOTHER_MAIL_NORMAL_NUM 7
+#define mPr_MOTHER_MAIL_MONTHLY_NUM 2
+
+typedef struct private_mother_mail_data_s {
+  u8 normal[mPr_MOTHER_MAIL_NORMAL_NUM];
+  u8 monthly[mPr_MOTHER_MAIL_MONTHLY_NUM];
+  u8 august; // unique byte for month of august
+} mPr_mother_mail_data_c;
+
+typedef struct private_mother_mail_info_s {
+  lbRTC_ymd_t date;
+  mPr_mother_mail_data_c data;
+} mPr_mother_mail_info_c;
+
 struct private_s {
   /* 0x0000 */ PersonalID_c player_ID; /* player's id info */
   /* 0x0014 */ s8 gender; /* gender/sex of player */
@@ -217,22 +233,68 @@ struct private_s {
   /* 0x2412 */ u8 unused_2412[46];
 };
 
-extern s16 mPr_GetGoodsPower();
-extern s16 mPr_GetMoneyPower();
-
-extern int mPr_CheckPrivate(Private_c* private_p);
-extern void mPr_PrintMapInfo_debug(gfxprint_t* gfxprint);
-extern int mPr_NullCheckPersonalID(PersonalID_c* pid);
-extern int mPr_CheckCmpPersonalID(PersonalID_c* pid_a, PersonalID_c* pid_b);
-extern void mPr_ClearPersonalID(PersonalID_c* pid);
-extern void mPr_CopyPersonalID(PersonalID_c* dst, PersonalID_c* src);
-extern void mPr_ClearPrivateInfo(Private_c* private_data);
-extern int mPr_CheckCmpPlayerName(u8* str0, u8* str1);
-extern void mPr_RandomSetPlayerData_title_demo();
-extern int mPr_GetPossessionItemSumWithCond(Private_c* priv, mActor_name_t item_no, u32 cond);
-extern int mPr_SetFreePossessionItem(Private_c* priv, mActor_name_t item_no, u32 cond);
-extern void mPr_CopyPlayerName(u8* dst, Private_c* private_p);
+extern void mPr_ClearPlayerName(u8* buf);
+extern void mPr_CopyPlayerName(u8* dst, u8* src);
+extern int mPr_NullCheckPlayerName(u8* name_p);
+extern int mPr_CheckCmpPlayerName(u8* name0, u8* name1);
 extern int mPr_GetPlayerName(u8* buf, int player_no);
+extern int mPr_NullCheckPersonalID(PersonalID_c* pid);
+extern void mPr_ClearPersonalID(PersonalID_c* pid);
+extern void mPr_ClearAnyPersonalID(PersonalID_c* pid, int count);
+extern void mPr_CopyPersonalID(PersonalID_c* dst, PersonalID_c* src);
+extern int mPr_CheckCmpPersonalID(PersonalID_c* pid0, PersonalID_c* pid1);
+extern void mPr_ClearPrivateBirthday(mPr_birthday_c* birthday);
+extern void mPr_ClearAnimalMemory(mPr_animal_memory_c* memory);
+extern void mPr_ClearPrivateInfo(Private_c* private_info);
+extern void mPr_SetNowPrivateCloth();
+extern void mPr_InitPrivateInfo(Private_c* priv);
+extern void mPr_CopyPrivateInfo(Private_c* dst, Private_c* src);
+extern int mPr_CheckPrivate(Private_c* priv);
+extern int mPr_CheckCmpPrivate(Private_c* priv0, Private_c* priv1);
+extern int mPr_GetPrivateIdx(PersonalID_c* pid);
+extern int mPr_GetPossessionItemIdx(Private_c* priv, mActor_name_t item);
+extern int mPr_GetPossessionItemIdxWithCond(Private_c* priv, mActor_name_t item, u32 cond);
+extern int mPr_GetPossessionItemIdxFGTypeWithCond_cancel(Private_c* priv, mActor_name_t fg_type, u32 cond, mActor_name_t cancel_item);
+extern int mPr_GetPossessionItemIdxItem1Category(Private_c* priv, u8 item1_type);
+extern int mPr_GetPossessionItemIdxItem1CategoryWithCond_cancel(Private_c* priv, u8 item1_type, u32 cond, mActor_name_t cancel_item);
+extern int mPr_GetPossessionItemIdxKindWithCond(Private_c* priv, mActor_name_t kind_start, mActor_name_t kind_end, u32 cond);
+extern int mPr_GetPossessionItemSum(Private_c* priv, mActor_name_t item);
+extern int mPr_GetPossessionItemSumWithCond(Private_c* priv, mActor_name_t item, u32 cond);
+extern int mPr_GetPossessionItemSumFGTypeWithCond_cancel(Private_c* priv, mActor_name_t fg_type, u32 cond, mActor_name_t cancel_item);
+extern int mPr_GetPossessionItemSumItemCategoryWithCond_cancel(Private_c* priv, u8 item1_type, u32 cond, mActor_name_t cancel_item);
+extern int mPr_GetPossessionItemSumItemCategoryWithCond(Private_c* priv, u8 item1_type, u32 cond);
+extern int mPr_GetPossessionItemSumKindWithCond(Private_c* priv, mActor_name_t kind_start, mActor_name_t kind_end, u32 cond);
+extern void mPr_SetItemCollectBit(mActor_name_t item);
+extern mActor_name_t mPr_DummyPresentToTruePresent();
+extern void mPr_SetPossessionItem(Private_c* priv, int idx, mActor_name_t item, u32 cond);
+extern int mPr_SetFreePossessionItem(Private_c* priv, mActor_name_t item, u32 cond);
+extern void mPr_AddFirstJobHint(Private_c* priv);
+extern int mPr_GetFirstJobHintTime(Private_c* priv);
+extern int mPr_CheckFirstJobHint(Private_c* priv);
+extern s16 mPr_GetMoneyPower();
+extern s16 mPr_GetGoodsPower();
+extern int mPr_CheckMuseumAddress(Private_c* priv);
+extern int mPr_CheckMuseumInfoMail(Private_c* priv);
+extern Private_c* mPr_GetForeignerP();
+extern int mPr_LoadPak_and_SetPrivateInfo2(Private_c* unused_private, u8 player_no);
+extern void mPr_ClearMotherMailInfo(mPr_mother_mail_info_c* mother_mail);
+extern void mPr_SendMailFromMother();
+extern void mPr_SendForeingerAnimalMail(Private_c* priv);
+extern void mPr_StartSetCompleteTalkInfo();
+extern void mPr_SetFishCompleteTalk();
+extern int mPr_CheckFishCompleteTalk(u8 player_no);
+extern void mPr_SetInsectCompleteTalk();
+extern int mPr_CheckInsectCompleteTalk(u8 player_no);
+extern int mPr_GetFishCompTalkPermission();
+extern int mPr_GetInsectCompTalkPermission();
+extern void mPr_ClearMapInfo(mPr_map_info_c* map_info, int max);
+extern int mPr_GetThisLandMapIdx(mPr_map_info_c* map_info, int max);
+extern void mPr_SetNewMap(mPr_map_info_c* map_info, int max);
+extern void mPr_RenewalMapInfo(mPr_map_info_c* map_info, int max, mLd_land_info_c* land_info);
+extern void mPr_RandomSetPlayerData_title_demo();
+extern void mPr_PrintMapInfo_debug(gfxprint_t* gfxprint);
+
+extern Private_c g_foreigner_private;
 
 #ifdef __cplusplus
 }
