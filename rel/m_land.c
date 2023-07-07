@@ -168,7 +168,7 @@ extern int mLd_AddMuraString(u8* name, int name_len) {
  * @brief Gets the town name with "Mura" (むら/村) added.
  * @param buf Buffer to store the town name with "Mura" (むら/村) added.
  */
-extern void mLd_GetLandNameStringAddMura(u8* buf) {
+extern int mLd_GetLandNameStringAddMura(u8* buf) {
   int mura_size;
   
   u8* name = mLd_GetLandName();
@@ -179,6 +179,8 @@ extern void mLd_GetLandNameStringAddMura(u8* buf) {
   for (mura_size; mura_size < LAND_NAME_MURA_SIZE; mura_size++) {
     buf[mura_size] = CHAR_SPACE;
   }
+
+  return mura_size;
 }
 
 /**

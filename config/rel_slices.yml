@@ -55,6 +55,10 @@ m_lights.c:
 m_malloc.c:
     .text: [0x803BC510, 0x803BC70C]
     .bss: [0x81297CA0, 0x81297CD0]
+m_mail.c:
+    .text: [0x803BC70C, 0x803BD230]
+    .data: [0x80656670, 0x806566C0]
+    .bss: [0x81297CD0, 0x81297E68]
 m_mail_password_check.c:
     .text: [0x803BD250, 0x803BEC9C]
     .data: [0x806566C0, 0x806571D8]

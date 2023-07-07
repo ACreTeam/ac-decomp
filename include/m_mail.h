@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_personal_id.h"
+#include "m_npc_personal_id.h"
 #include "m_actor_type.h"
 
 #ifdef __cplusplus
@@ -13,12 +14,27 @@ extern "C" {
 #define MAIL_FOOTER_LEN 32
 #define MAIL_BODY_LEN 192
 
+#define MAIL_FOOTER2_LEN 48
+#define MAIL_HEADER2_LEN (MAIL_FOOTER2_LEN - PLAYER_NAME_LEN)
+
+#define mMl_POSTOFFICE_GIFT_NUM 4
+
 enum {
   mMl_NAME_TYPE_PLAYER,
   mMl_NAME_TYPE_NPC,
   mMl_NAME_TYPE_MUSEUM,
 
   mMl_TYPE_CLEAR = 0xFF
+};
+
+enum {
+  mMl_FONT_0,
+  mMl_FONT_SEND,
+  mMl_FONT_2,
+  mMl_FONT_3,
+  mMl_FONT_4,
+
+  mMl_FONT_NUM
 };
 
 /* sizeof(Mail_nm_c) == 0x16 */
@@ -59,12 +75,29 @@ typedef struct mail_s {
   /* 0x02E */ Mail_ct_c content;
 } Mail_c;
 
-extern int mMl_strlen(u8* str, int maxlen, u8 check_char);
-extern void mMl_clear_mail_box(Mail_c* mail_box, int count);
+extern int mMl_strlen(u8* str, int size, u8 end_char);
+extern int mMl_strlen2(int* found, u8* str, int size, u8 end_char);
+extern void mMl_clear_mail_header(Mail_hdr_c* header);
 extern void mMl_clear_mail(Mail_c* mail);
+extern void mMl_clear_mail_box(Mail_c* mail, int num);
+extern int mMl_check_not_used_mail(Mail_c* mail);
+extern void mMl_copy_header_name(Mail_c* dst, Mail_c* src);
 extern void mMl_set_to_plname(Mail_c* mail, PersonalID_c* pid);
-extern int mMl_chk_mail_free_space(Mail_c* mailbox, int count);
+extern void mMl_set_playername(Mail_c* mail, PersonalID_c* pid);
+extern void mMl_init_mail(Mail_c* mail, PersonalID_c* pid);
+extern int mMl_chk_mail_free_space(Mail_c* mail, int num);
+extern int mMl_count_use_mail_space(Mail_c* mail, int num);
 extern void mMl_copy_mail(Mail_c* dst, Mail_c* src);
+extern void mMl_clear_mail_header_common(Mail_hs_c* header);
+extern void mMl_set_mail_name_npcinfo(Mail_nm_c* name, AnmPersonalID_c* anm_pid);
+extern int mMl_get_npcinfo_from_mail_name(AnmPersonalID_c* anm_pid, Mail_nm_c* name);
+extern int mMl_hunt_for_send_address(Mail_c* mail);
+extern int mMl_check_send_mail(Mail_c* mail);
+extern int mMl_check_set_present_myself(Mail_c* mail);
+extern int mMl_send_mail_box(PersonalID_c* recipient_pid, int player_no, Mail_c* mail, mActor_name_t present, mActor_name_t paper, int mail_no, u8* sender_name, u32 proc_type);
+extern int mMl_send_mail_postoffice(PersonalID_c* recipient_pid, int player_no, mActor_name_t present, mActor_name_t paper, int mail_no, u8* sender_name, u32 proc_type, u8 mail_type);
+extern int mMl_send_mail(PersonalID_c* recipient_pid, int player_no, mActor_name_t present, mActor_name_t paper, int mail_no, u8* sender_name, u32 proc_type);
+extern void mMl_start_send_mail();
 
 #ifdef __cplusplus
 }

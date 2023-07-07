@@ -24,7 +24,7 @@ extern int mLd_CheckCmpLand(u8* name_a, u16 id_a, u8* name_b, u16 id_b);
 extern void mLd_ClearLandName(u8* name);
 extern void mLd_CopyLandName(u8* dst, u8* src);
 extern int mLd_AddMuraString(u8* name, int name_len);
-extern void mLd_GetLandNameStringAddMura(u8* buf);
+extern int mLd_GetLandNameStringAddMura(u8* buf);
 extern void mLd_SetFreeStrLandMuraName(u8* name, int free_str_no);
 extern u8* mLd_GetLandName();
 extern u16 mLd_MakeLandId();
