@@ -21,6 +21,12 @@ extern "C" {
 
 #define mPr_WALLET_MAX 99999
 
+#define mPr_FLAG_POSTOFFICE_GIFT0 (1 << 2) // 1,000,000 Bells
+#define mPr_FLAG_POSTOFFICE_GIFT1 (1 << 3) // 10,000,000 Bells
+#define mPr_FLAG_POSTOFFICE_GIFT2 (1 << 4) // 100,000,000 Bells
+#define mPr_FLAG_POSTOFFICE_GIFT3 (1 << 5) // 999,999,999 Bells
+
+
 enum {
   mPr_PLAYER_0,
   mPr_PLAYER_1,
