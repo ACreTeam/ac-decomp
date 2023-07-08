@@ -202,7 +202,10 @@ typedef struct common_data_s {
   /* 0x028866 */ u16 unused_028866;
   /* 0x028868 */ u8 reset_flag;
   /* 0x028869 */ u8 reset_type;
-  /* 0x02886A */ u8 _02886A[0x028879 - 0x02886A];
+  /* 0x02886A */ u8 force_mail_delivery_flag;
+  /* 0x02886B */ u8 post_girl_npc_type;
+  /* 0x02886C */ xyz_t ball_pos;
+  /* 0x028878 */ u8 ball_type;
   /* 0x028879 */ u8 auto_nwrite_count;
   /* 0x02887A */ lbRTC_year_t auto_nwrite_year;
   /* 0x02887C */ u8 save_error_type; /* set to one of the mFRm_ERROR_* states when save is invalid */

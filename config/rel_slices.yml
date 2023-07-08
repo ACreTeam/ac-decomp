@@ -83,6 +83,9 @@ m_police_box.c:
     .text: [0x803DE8A0, 0x803DEE38]
     .rodata: [0x806431C8, 0x806431D8]
     .data: [0x8065BE98, 0x8065BEF0]
+m_post_office.c:
+    .text: [0x803DEE38, 0x803DFF7C]
+    .data: [0x8065BEF0, 0x8065BF00]
 m_private.c:
     .text: [0x803DFF7C, 0x803E2990]
     .rodata: [0x806431D8, 0x80643208]

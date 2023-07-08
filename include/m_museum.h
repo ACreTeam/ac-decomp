@@ -32,6 +32,8 @@ typedef struct museum_mail_info_s {
   mMsm_remail_info_c remail_info; /* remail info */
 } mMsm_mail_info_c;
 
+extern void mMsm_SendMuseumMail(Mail_c* mail);
+
 #ifdef __cplusplus
 }
 #endif

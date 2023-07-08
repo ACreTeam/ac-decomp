@@ -10,13 +10,7 @@
 extern "C" {
 #endif
 
-typedef int (*aTR0_SETUP_ACTOR_PROC)(GAME_PLAY*, mActor_name_t,int,int,int,int,int,int,int);
-
-typedef struct ac_train0_clip_s{
-    aTR0_SETUP_ACTOR_PROC setup_actor_proc;
-}aTR0_Clip_c;
-
-typedef struct train0_s{
+typedef struct train0_s {
     ACTOR actor_class;
     int steam_available;
     cKF_SkeletonInfo_R_c keyframe;
@@ -32,7 +26,7 @@ typedef struct train0_s{
     f32 tr1_pos;
     f32 tr_speed;
     u8 pad6[0x2D8 - 0x2CC];
-}TRAIN0_ACTOR;
+} TRAIN0_ACTOR;
 
 extern ACTOR_PROFILE Train0_Profile;
 

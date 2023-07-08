@@ -10,6 +10,7 @@ extern "C" {
 #endif
 
 #define mPO_MAIL_STORAGE_SIZE 5
+#define mPO_DELIVER_ALL_HOUSES -1
 
 enum {
   mPO_SENDTYPE_MAIL,

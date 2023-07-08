@@ -205,6 +205,8 @@ extern int mNpc_GetLooks(mActor_name_t npc_name);
 extern void mNpc_LoadNpcNameString(u8* buf, u8 idx);
 extern u8 mNpc_GetPaperType();
 extern void mMl_set_mail_name_npcinfo(Mail_nm_c* mail_name, AnmPersonalID_c* anm_pid);
+extern int mNpc_ReceiveHPMail(Mail_c* hp_mail);
+extern void mNpc_SendMailtoNpc(Mail_c* mail);
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);

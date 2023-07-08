@@ -865,6 +865,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITM_CALLIGRAPHY_PAD 0x2B0F
 #define ITM_DIARY_END 0x2B10
 
+#define ITM_TICKET_START 0x2C00
+
 #define ITM_KABU_10 0x2F00
 #define ITM_KABU_50 0x2F01
 #define ITM_KABU_100 0x2F02
