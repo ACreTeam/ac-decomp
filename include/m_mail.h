@@ -37,6 +37,11 @@ enum {
   mMl_FONT_NUM
 };
 
+enum {
+  mMl_TYPE_SHOP_SALE_LEAFLET = 2,
+  mMl_TYPE_BROKER_SALE_LEAFLET = 3
+};
+
 /* sizeof(Mail_nm_c) == 0x16 */
 typedef struct mail_nm_s {
   /* 0x00 */ PersonalID_c personalID;

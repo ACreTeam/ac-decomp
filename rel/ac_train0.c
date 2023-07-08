@@ -72,7 +72,7 @@ static void aTR0_ctrl_engineer(ACTOR* actor, GAME* game){
 
     if(ac_p == NULL){
 
-        if((*Common_Get(clip.train0_clip)->setup_actor_proc)(play, SP_NPC_ENGINEER, -1,-1,-1,-1,-1,0,0) == 1){
+        if((*Common_Get(clip.npc_clip)->setupActor_proc)(play, SP_NPC_ENGINEER, -1,-1,-1,-1,-1,0,0) == 1){
             train0->tr_actor_p = Actor_info_fgName_search(&play->actor_info, SP_NPC_ENGINEER, ACTOR_PART_4);
         }
     }

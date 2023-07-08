@@ -115,6 +115,8 @@ enum event_table {
   mEv_EVENT_MUSHROOM_SEASON = 47,
   mEv_EVENT_FISHING_TOURNEY_2 = 54,
   mEv_EVENT_GHOST = 64,
+  mEv_EVENT_BROKER_SALE = 75,
+  mEv_EVENT_SHOP_SALE = 78,
 };
 
 #define mEv_STATUS_ACTIVE     (1 << 0) /* event is active */
@@ -144,6 +146,8 @@ extern int mEv_CheckArbeit();
 extern int mEv_CheckTitleDemo();
 extern int mEv_check_status(int event, s16 status);
 extern s8* mEv_get_common_area(int type, s8 id);
+extern int mEv_ArbeitPlayer(u32 player_no);
+extern u16 mEv_get_special_event_type();
 
 extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
 extern void mEv_ClearEventInfo();
