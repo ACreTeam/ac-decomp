@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_mail.h"
 #include "lb_rtc.h"
+#include "m_play_h.h"
 
 #ifdef __cplusplus
 extern "C" {
