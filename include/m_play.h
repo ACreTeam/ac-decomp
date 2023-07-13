@@ -39,7 +39,9 @@ struct game_play_s {
   /* 0x1FA4 */ u8 _1FA4[0x2008 - 0x1FA4];
   /* 0x2008 */ int next_scene_no;
   /* 0x200C */ MtxF matrix;
-  /* 0x204C */ u8 _204C[0x20D0-0x204C];
+  /* 0x204C */ u8 _204C[0x2090 - 0x204C];
+  /* 0x2090 */ u32 game_frame;
+  /* 0x2094 */ u8 _2094[0x20D0 - 0x2094];
   /* 0x20D0 */ u8 fb_fade_type;
   /* 0x20D1 */ u8 fb_wipe_type;
   /* 0x20D2 */ u8 fb_mode;

@@ -112,6 +112,8 @@ typedef struct sound_source_info_s {
   xyz_t wpos;
 } mFI_sound_source_info_c;
 
+
+
 extern int mFI_CheckFieldData();
 extern mActor_name_t mFI_GetFieldId();
 extern int mFI_GetClimate();
