@@ -161,13 +161,13 @@ u16 aTrainWindow_tree_pal_table[15][16]= {
 }
 };
 
-u8 aTrainWindow_out_cloud[4] = {
-    0,254,
-    64,64
+EVW_ANIME_SCROLL aTrainWindow_out_cloud = {
+    0, -2,
+    64, 64
 };
 
 EVW_ANIME_DATA aTrainWindow_evw_anime_data = {
-    -512, 0, &aTrainWindow_out_cloud
+    -2, EVW_ANIME_TYPE_SCROLL1, &aTrainWindow_out_cloud
 };
 
 static void Train_Window_Actor_ct(ACTOR*, GAME*);
@@ -567,6 +567,7 @@ static void aTrainWindow_SetTreeTextureScroll(ACTOR* actor, GAME* game){
 }
 
 static void Train_Window_Actor_draw(ACTOR* actor, GAME* game){
+    GAME_PLAY* play = (GAME_PLAY*)game;
     TRAIN_WINDOW_ACTOR* window = (TRAIN_WINDOW_ACTOR* )actor;
     
     GRAPH* graph = game->graph;
@@ -585,7 +586,7 @@ static void Train_Window_Actor_draw(ACTOR* actor, GAME* game){
     if(window->draw_type(actor,game) != 0){
         aTrainWindow_SetLightPrimColorDetail(game, 0,0,0,127,255,(u8)window->xlu_alpha);
         gSPSegment(NOW_POLY_XLU_DISP++,10, window->current_pallete); 
-        Evw_Anime_Set(game, &aTrainWindow_evw_anime_data); 
+        Evw_Anime_Set(play, &aTrainWindow_evw_anime_data); 
         aTrainWindow_SetLightPrimColorDetail(game,0,0,0,43,255,window->xlu_alpha);
         gSPDisplayList(NOW_POLY_OPA_DISP++,rom_train_out_tunnel_model);
         aTrainWindow_SetLightPrimColorDetail(game,0,0,0,127,255,window->xlu_alpha);

@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_actor_type.h"
+#include "libforest/gbi_extensions.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,6 +30,8 @@ extern "C" {
 
 #define BLOCKXZ_2_BLOCKIDX(x, z) ((z) * BLOCK_X_NUM + (x))
 
+#define mFM_VISIBLE_BLOCK_NUM 4 /* number of visible blocks (nearest to the Player) */
+
 /* sizeof(mFM_combination_c) == 2 */
 typedef struct block_combination_s {
   /* 0x00 */ u16 combination_type:14; /* acre type index */
@@ -46,6 +49,42 @@ typedef struct block_combo_s {
   /* 0x02 */ mActor_name_t fg_id;
   /* 0x05 */ u8 type;
 } mFM_combo_info_c;
+
+typedef struct field_display_list_info_s {
+  int block_x;
+  int block_z;
+  u8* display_list;
+} mFM_field_draw_info_c;
+
+typedef struct field_pal_s {
+  u16* earth_pal;
+  u16* cliff_pal;
+  u16* bush_pal;
+  u16* flower0_pal;
+  u16* flower1_pal;
+  u16* flower2_pal;
+  u16* grass_pal;
+  u16* tree_pal;
+  u16* cedar_tree_pal; // probably?
+  u16* palm_tree_pal;
+  u16* golden_tree_pal;
+} mFM_field_pal_c;
+
+typedef struct field_bg_info_s {
+  mFM_combination_c bg_id;
+  Gfx* oapque_gfx;
+  Gfx* translucent_gfx;
+
+} mFM_bg_info_c;
+
+typedef struct field_info_s {
+  mActor_name_t field_id;
+  u32 _04; // only set, never read?
+  mFM_field_draw_info_c bg_draw_info[mFM_VISIBLE_BLOCK_NUM];
+  u8* bg_display_list_p[mFM_VISIBLE_BLOCK_NUM];
+  mFM_field_pal_c field_palette;
+
+} mFM_fdinfo_c;
 
 extern u8* g_block_type_p;
 extern int* g_block_kind_p;
