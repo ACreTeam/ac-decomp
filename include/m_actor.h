@@ -289,7 +289,9 @@ enum actor_profile_table {
   mAc_PROFILE_NPC_HEM,
   mAc_PROFILE_TENT,
   mAc_PROFILE_PTERMINAL,
-  mAc_PROFILE_MSCORE_CONTROL
+  mAc_PROFILE_MSCORE_CONTROL,
+
+  mAc_PROFILE_NUM
 };
 
 /* sizeof(ACTOR_PROFILE) == 0x24 */

@@ -10,11 +10,11 @@ extern void common_data_reinit(){
     state = Common_Get(pad_connected);
 
     bzero(&common_data, sizeof(common_data));
-    Common_Set(wipeType, 255);
+    Common_Set(wipeType, -1);
     Common_Set(game_started,1);
     Common_Set(last_scene_no, -1);
-    Common_Set(demo_profiles[0], 246);
-    Common_Set(demo_profiles[1], 246);
+    Common_Set(demo_profiles[0], mAc_PROFILE_NUM); /* cleared state */
+    Common_Set(demo_profiles[1], mAc_PROFILE_NUM); /* cleared state */
     Common_Set(pad_connected, state);
 
     mFRm_ClearSaveCheckData(Save_GetPointer(save_check));
