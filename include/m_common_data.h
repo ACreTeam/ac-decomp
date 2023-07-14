@@ -250,6 +250,9 @@ extern common_data_t common_data;
 #define Save_GetPointer(name) (Common_GetPointer(save.save.name))
 #define Save_Set(name, value) (Common_Set(save.save.name, value))
 
+/* Useful for returning fg item data as a pointer to mActor_name_t */
+#define Save_GetFG() Save_Get(fg[0][0].items[0])
+
 extern void common_data_init();
 extern void common_data_reinit();
 
