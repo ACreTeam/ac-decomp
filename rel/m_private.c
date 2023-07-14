@@ -694,8 +694,8 @@ extern s16 mPr_GetMoneyPower() {
     }
   }
 
-  if (money_power < -80) {
-    money_power = -80;
+  if (money_power < mPr_MONEY_POWER_MIN) {
+    money_power = mPr_MONEY_POWER_MIN;
   }
 
   return money_power;
@@ -721,12 +721,12 @@ extern s16 mPr_GetGoodsPower() {
     }
   }
 
-  if (goods_power > 50) {
-    return 50;
+  if (goods_power > mPr_GOODS_POWER_MAX) {
+    return mPr_GOODS_POWER_MAX;
   }
   
-  if (goods_power < -30) {
-    goods_power = -30;
+  if (goods_power < mPr_GOODS_POWER_MIN) {
+    goods_power = mPr_GOODS_POWER_MIN;
   }
 
   return goods_power;
