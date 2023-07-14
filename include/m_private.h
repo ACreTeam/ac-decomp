@@ -26,6 +26,10 @@ extern "C" {
 #define mPr_FLAG_POSTOFFICE_GIFT2 (1 << 4) // 100,000,000 Bells
 #define mPr_FLAG_POSTOFFICE_GIFT3 (1 << 5) // 999,999,999 Bells
 
+#define mPr_MONEY_POWER_MIN -80
+
+#define mPr_GOODS_POWER_MIN -30
+#define mPr_GOODS_POWER_MAX 50
 
 enum {
   mPr_PLAYER_0,
