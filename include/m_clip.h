@@ -36,6 +36,8 @@ typedef struct clip_s {
   /* 0x0E0 */ void* _0E0[(0x104 - 0x0E0) / sizeof(void*)];
 } Clip_c;
 
+extern void clip_clear();
+
 #ifdef __cplusplus
 }
 #endif
