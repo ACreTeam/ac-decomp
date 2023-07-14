@@ -112,6 +112,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define IS_ITEM_GRASS(item) ((item) >= GRASS_A && (item) <= GRASS_C) /* aka IS_ITEM_WEED */
 
+#define IS_ITEM_HANIWA(item) ((item) >= HANIWA_START && (item) <= HANIWA_END)
+
 #define BG_CATEGORY 0
 #define ENV_CATEGORY 8
 
@@ -333,6 +335,10 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define FTR_DRACAENA_EAST 0x13B1
 #define FTR_DRACAENA_NORTH 0x13B2
 #define FTR_DRACAENA_WEST 0x13B3
+
+#define HANIWA_START 0x15B0
+//
+#define HANIWA_END 0x17AB
 
 #define FTR_CLOTH_MANNIQUIN000_SOUTH 0x17AC
 

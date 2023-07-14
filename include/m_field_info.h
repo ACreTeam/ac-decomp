@@ -146,6 +146,8 @@ extern mActor_name_t* mFI_GetUnitFG(xyz_t wpos);
 extern void mFI_Wpos2DepositOFF(xyz_t wpos);
 extern mActor_name_t mFI_GetOtherFruit();
 extern int mFI_Wpos2UtNum_inBlock(int* ut_x, int* ut_z, xyz_t wpos);
+extern int mFI_GetItemNumInBlock(mActor_name_t item_no, mActor_name_t* block_items);
+extern int mFI_BkNum2WposXZ(f32* wpos_x, f32* wpos_z, int block_x, int block_z);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);
