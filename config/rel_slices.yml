@@ -13,6 +13,8 @@ m_actor_dlftbls.c:
     .bss: [0x8125A828, 0x8125A830]
 m_cockroach.c:
     .text: [0x80385430, 0x80385A80]
+m_common_data.c:
+    .text: [0x80395B24, 0x80395BE8]
 m_controller.c:
     .text: [0x80395BE8, 0x80396120]
     .rodata: [0x80641D20, 0x80641D50]

@@ -176,7 +176,9 @@ typedef struct common_data_s {
   /* 0x02852E */ s16 goods_power;
   /* 0x028530 */ Door_data_c door_data; /* misc door data */
   /* 0x028544 */ Door_data_c structure_exit_door_data; /* door data for when exiting a building */
-  /* 0x028558 */ u8 tmp1[0x0285C0 - 0x028558];
+  /* 0x028558 */ u8 tmp1[0x028592 - 0x028558];
+  /* 0x028592 */ mActor_name_t demo_profiles[2];
+  /* 0x028596 */ u8 _28596[0x285C0 - 0x28596];
   /* 0x0285C0 */ s8 player_decoy_flag;
   /* 0x0285C1 */ u8 _285C1[0x028838 - 0x0285C1];
   /* 0x028838 */ s8 player_bee_swell_flag;
@@ -250,8 +252,9 @@ extern common_data_t common_data;
 #define Save_GetPointer(name) (Common_GetPointer(save.save.name))
 #define Save_Set(name, value) (Common_Set(save.save.name, value))
 
-extern void common_data_init();
 extern void common_data_reinit();
+extern void common_data_init();
+extern void common_data_clear();
 
 #ifdef __cplusplus
 }
