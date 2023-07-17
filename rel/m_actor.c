@@ -20,8 +20,17 @@
 #include "m_common_data.h"
 
 #ifdef MUST_MATCH
-#include "../tools/ppcdis/include/ppcdis.h" // "ppcdis.h" produces the same error
-#include "orderstrings/8064d600_8064d604.inc"
+#include "ppcdis.h"
+
+void _savefpr_29();
+void _restfpr_29();
+//#include "orderstrings/8064d600_8064d604.inc"
+static char lbl_8064d600[] = "";
+//#include "orderfloats/806412e8_806412f0.inc"
+asm void FORCESTRIP order_floats_806412e8() {
+    lfs f1, 1.0;
+    lfs f1, 0.5;
+}
 #endif
 
 extern void Actor_world_to_eye(ACTOR* actor, f32 eye_height) {
