@@ -66,4 +66,11 @@ typedef u32 unknown;
 
 #define GPACK_RGB5A3(r, g, b, a) ARGB8_to_RGB5A3((((a) & 0xFF) << 24) | (((r) & 0xFF) << 16) | (((g) & 0xFF) << 8) | ((b) & 0xFF))
 
+#pragma section RX "forcestrip"
+#ifndef __INTELLISENSE__ 
+    #define FORCESTRIP __declspec(section "forcestrip")
+#else
+    #define FORCESTRIP
+#endif
+
 #endif
