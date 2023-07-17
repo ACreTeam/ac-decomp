@@ -141,7 +141,7 @@ n.rule(
 
 n.rule(
     "disasm_single",
-    command = "$disassembler $in $out -j $addr -q $disasmflags",
+    command = "$disassembler $in $out -f $addr -q -i $disasmflags",
     description = "ppcdis function disassembly $addr"
 )
 

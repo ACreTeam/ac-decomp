@@ -19,6 +19,11 @@
 #include "m_malloc.h"
 #include "m_common_data.h"
 
+#ifdef MUST_MATCH
+#include "../tools/ppcdis/include/ppcdis.h" // "ppcdis.h" produces the same error
+#include "orderstrings/8064d600_8064d604.inc"
+#endif
+
 extern void Actor_world_to_eye(ACTOR* actor, f32 eye_height) {
   /* Update position */
   actor->eye.position.x = actor->world.position.x;
