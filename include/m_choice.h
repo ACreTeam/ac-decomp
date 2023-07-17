@@ -2,6 +2,7 @@
 #define M_CHOICE_H
 
 #include "types.h"
+#include "m_lib.h"
 
 #ifdef __cplusplus
 extern "C" {

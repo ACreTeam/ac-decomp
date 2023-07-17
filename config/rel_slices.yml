@@ -121,6 +121,9 @@ m_rcp.c:
     .bss: [0x8129F2E8, 0x8129F2F0]
 m_room_type/mRmTp_FtrItemNo2FtrIdx.c:
     .text: [0x803E7878, 0x803E78BC]
+m_string.c:
+    .text: [0x803EED30, 0x803EF290]
+    .bss: [0x8129F320, 0x8129F400]
 #m_time.c: # unlinked until function callers that reorder local static variables are implemented.
 #    .text: [0x803F33DC, 0x803F3E58]
 #    .rodata: [0x806433B0, 0x806433D8]
