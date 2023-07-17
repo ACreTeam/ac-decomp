@@ -415,7 +415,7 @@ static int mPO_make_post_man(GAME_PLAY* play) {
           ACTOR* post_office_structure = Actor_info_fgName_search(&play->actor_info, POST_OFFICE, ACTOR_PART_ITEM);
 
           if (post_office_structure != NULL) {
-            mFI_Wpos2UtNum_inBlock(&post_utx, &post_utz, post_office_structure->world_position);
+            mFI_Wpos2UtNum_inBlock(&post_utx, &post_utz, post_office_structure->world.position);
             spawned_postman = (*Common_Get(clip).npc_clip->setupActor_proc)(play, SP_NPC_POST_MAN, -1, -1, 1, play->block_table.block_x, play->block_table.block_z, post_utx - 3, post_utz);
 
             if (spawned_postman == TRUE) {

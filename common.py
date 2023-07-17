@@ -325,7 +325,8 @@ COMMON_DEFINES = [
     "-d _LANGUAGE_C",
     "-d F3DEX_GBI_2",
     "-d NDEBUG",
-    "-d DEBUG=0"
+    "-d DEBUG=0",
+    "-d MUST_MATCH"
 ]
 DOL_DEFINES = COMMON_DEFINES + []
 REL_DEFINES = COMMON_DEFINES + [ 

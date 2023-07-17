@@ -39,7 +39,7 @@ static void aTR0_actor_ct(ACTOR* actor, GAME* GAME){
         1.0f, 25.0f, 1.0f, 0.5f, 0.0f, 1, NULL);
     cKF_SkeletonInfo_R_play(&train0->keyframe);
     train0->actor_class.cull_width = 600.0f;
-    train0->actor_class.world_rotation.y = 16384;
+    train0->actor_class.world.angle.y = 16384;
     train0->tr_action = 5;
 }
 
@@ -49,7 +49,7 @@ static void aTR0_actor_dt(ACTOR* actor, GAME* game){
 
     xyz_t tr_home_pos;
 
-    tr_home_pos = train0->actor_class.home_position;
+    tr_home_pos = train0->actor_class.home.position;
 
     mFI_SetFG_common(0, tr_home_pos, 0);
 
@@ -73,13 +73,13 @@ static void aTR0_ctrl_engineer(ACTOR* actor, GAME* game){
     if(ac_p == NULL){
 
         if((*Common_Get(clip.npc_clip)->setupActor_proc)(play, SP_NPC_ENGINEER, -1,-1,-1,-1,-1,0,0) == 1){
-            train0->tr_actor_p = Actor_info_fgName_search(&play->actor_info, SP_NPC_ENGINEER, ACTOR_PART_4);
+            train0->tr_actor_p = Actor_info_fgName_search(&play->actor_info, SP_NPC_ENGINEER, ACTOR_PART_NPC);
         }
     }
     else{
-        ac_p->world_position.x = -40.0f + train0->actor_class.world_position.x;
-        ac_p->world_position.y = 47.0f + train0->actor_class.world_position.y;
-        ac_p->world_position.z = 20.0f + train0->actor_class.world_position.z;
+        ac_p->world.position.x = -40.0f + train0->actor_class.world.position.x;
+        ac_p->world.position.y = 47.0f + train0->actor_class.world.position.y;
+        ac_p->world.position.z = 20.0f + train0->actor_class.world.position.z;
     }
 }
 
@@ -97,7 +97,7 @@ static void aTR0_set_effect(ACTOR* actor, GAME* game){
         else{
             train0->effect_num = 12;
         }
-        xyz_t_move(&pos, &train0->actor_class.world_position);
+        xyz_t_move(&pos, &train0->actor_class.world.position);
         pos.x += 36.0f;
         pos.y += 110.0f;
 
@@ -119,9 +119,9 @@ static void aTR0_steam_work_sub(ACTOR* actor, GAME* game, int x_idx){
     static f32 setX[] = {15.0f, 22.0f};
     static s16 angl[] = {0xd000, 0x0400};
 
-    pos.x = train0->actor_class.world_position.x + setX[x_idx];
-    pos.y = train0->actor_class.world_position.y + 21.0f;
-    pos.z = train0->actor_class.world_position.z + 42.0f;
+    pos.x = train0->actor_class.world.position.x + setX[x_idx];
+    pos.y = train0->actor_class.world.position.y + 21.0f;
+    pos.z = train0->actor_class.world.position.z + 42.0f;
     unk2c0 = train0->unk2c0;
     if(mEv_CheckTitleDemo() == 0){
             clip_pos = pos;
@@ -169,7 +169,7 @@ static void aTR0_ctrl_back_car(ACTOR* actor){
     TRAIN0_ACTOR* train0 = (TRAIN0_ACTOR*)actor;
 
     f32 tr_back_calc = train0->tr1_pos;
-    f32 base_x_pos = -125.0f + train0->actor_class.world_position.x; 
+    f32 base_x_pos = -125.0f + train0->actor_class.world.position.x; 
     tr_back_calc +=  0.5f * train0->tr_speed;
 
     if((tr_back_calc - base_x_pos) > 2.0f){
@@ -208,8 +208,8 @@ static void aTR0_move(ACTOR* actor){
         train0->tr_action = Common_Get(train_action);
     }
     pos = Common_Get(train_position);
-    train0->actor_class.world_position.x = pos.x;
-    train0->actor_class.world_position.z = pos.z;
+    train0->actor_class.world.position.x = pos.x;
+    train0->actor_class.world.position.z = pos.z;
     train0->actor_class.speed = Common_Get(train_speed);
 }
 
@@ -222,7 +222,7 @@ static void aTR0_delcheck(ACTOR* actor,GAME* game){
     int abs_x;
     xyz_t pos;
 
-    pos = train0->actor_class.world_position;
+    pos = train0->actor_class.world.position;
     
     mFI_Wpos2BlockNum(&x,&z,pos);
     x -= play->block_table.block_x;
@@ -251,7 +251,7 @@ static void aTR0_actor_move(ACTOR* actor, GAME* game){
     }
 
     if(mEv_CheckTitleDemo() == 1){
-        train0->tr1_pos = -125.0f + train0->actor_class.world_position.x;
+        train0->tr1_pos = -125.0f + train0->actor_class.world.position.x;
     }
     else{
         aTR0_ctrl_back_car(actor);
@@ -284,8 +284,8 @@ static void aTR0_actor_draw(ACTOR* actor, GAME* game){
     if (mtx != NULL){
         _texture_z_light_fog_prim_npc(graph);
         Matrix_push();
-        Matrix_translate(train0->tr1_pos, train0->actor_class.world_position.y, 
-            train0->actor_class.world_position.z, 0);
+        Matrix_translate(train0->tr1_pos, train0->actor_class.world.position.y, 
+            train0->actor_class.world.position.z, 0);
         Matrix_scale(train0->actor_class.scale.x, train0->actor_class.scale.y, 
             train0->actor_class.scale.z, 1);
 

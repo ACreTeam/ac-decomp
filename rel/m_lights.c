@@ -157,7 +157,7 @@ static void LightsN__point_proc(LightsN* lights, LightParams* lightInfo, xyz_t* 
     }
 }
 
-static void LightsN__P_point_proc(LightsN* lights, LightParams* lightInfo, xyz_t*){
+static void LightsN__P_point_proc(LightsN* lights, LightParams* lightInfo, xyz_t* pos){
 
     f32 rad;
     xyz_t point;
@@ -303,9 +303,8 @@ static void Global_light_fog_set(Global_light* glight, u8 r, u8 g, u8 b, s16 nea
 }
 
 
-extern void Global_light_read(Global_light* glight, GRAPH* graph){
-
-    new_LightsN(graph, glight->ambientColor[0], glight->ambientColor[1], glight->ambientColor[2]);
+extern LightsN* Global_light_read(Global_light* glight, GRAPH* graph){
+    return new_LightsN(graph, glight->ambientColor[0], glight->ambientColor[1], glight->ambientColor[2]);
 }
 
 static void Global_light_list_ct(Global_light* glight){
@@ -313,7 +312,7 @@ static void Global_light_list_ct(Global_light* glight){
     glight->list = NULL;
 }
 
-extern void Global_light_list_new(GAME_PLAY*, Global_light* glight, Lights* light){
+extern void Global_light_list_new(GAME_PLAY* play, Global_light* glight, Lights* light){
 
     LightNode* clight;
 

@@ -66,7 +66,7 @@ static void aDOU_keep_item(ACTOR* actor) {
 
   for (i = 0; i < mHS_HOUSE_NUM; i++) {
     if (aDOU_set_check(i)) {
-      xyz_t_move(&wpos, &actor->world_position);
+      xyz_t_move(&wpos, &actor->world.position);
       wpos.x += xpostbl[i];
       wpos.z += zpostbl[i];
       KeepItem(wpos);
@@ -98,7 +98,7 @@ static int aDOU_setEffect_sub(ACTOR* actor, GAME* game, int house_no, int color)
   Matrix_push();
 
   /* Initialize base position */
-  xyz_t_move(&wpos, &actor->world_position);
+  xyz_t_move(&wpos, &actor->world.position);
   wpos.x += xpostbl[house_no];
   wpos.z += zpostbl[house_no];
   Matrix_translate(wpos.x, wpos.y, wpos.z, 0);
@@ -163,7 +163,7 @@ static void aDOU_set_bgOffset(ACTOR* actor, int height) {
   int i;
   for (i = 0; i < mHS_HOUSE_NUM; i++) {
     if (aDOU_set_check(i)) { 
-      xyz_t_move(&wpos, &actor->home_position);
+      xyz_t_move(&wpos, &actor->home.position);
       wpos.x += xpostbl[i];
       wpos.z += zpostbl[i];
 
@@ -212,11 +212,11 @@ static void aDOU_wait(ACTOR* actor, GAME* game) {
   if (mDemo_Check(mDemo_TYPE_SPEAK, actor) == TRUE) {
     i = douzou->arg2;
 
-    xyz_t_move(&wpos, &actor->world_position);
+    xyz_t_move(&wpos, &actor->world.position);
     wpos.x += xpostbl[i];
     wpos.z += zpostbl[i];
 
-    target = search_position_angleY(&player->actor_class.world_position, &wpos);
+    target = search_position_angleY(&player->actor_class.world.position, &wpos);
     now_angle = player->actor_class.shape_info.rotation.y;
     add_calc_short_angle2(&now_angle, target, 0.3f, 0x1000, 0);
     target_rot.x = player->actor_class.shape_info.rotation.x;
@@ -232,15 +232,15 @@ static void aDOU_wait(ACTOR* actor, GAME* game) {
         f32 dist_xz;
         s16 angle_y;
 
-        xyz_t_move(&t_wpos, &actor->world_position);
+        xyz_t_move(&t_wpos, &actor->world.position);
 
         for (i = 0; i < mHS_HOUSE_NUM; i++) {
           if (aDOU_set_check(i)) {
             wpos.x = t_wpos.x + xpostbl[i];
             wpos.z = t_wpos.z + zpostbl[i];
 
-            dist_xz = search_position_distanceXZ(&player->actor_class.world_position, &wpos);
-            now_angle = search_position_angleY(&wpos, &player->actor_class.world_position);
+            dist_xz = search_position_distanceXZ(&player->actor_class.world.position, &wpos);
+            now_angle = search_position_angleY(&wpos, &player->actor_class.world.position);
 
         
             if (dist_xz > 50.0f) {
@@ -291,7 +291,7 @@ static void aDOU_actor_move(ACTOR* actor, GAME* game) {
 }
 
 static void aDOU_actor_init(ACTOR* actor, GAME* game) {
-  mFI_SetFG_common(DUMMY_DOUZOU, actor->home_position, FALSE);
+  mFI_SetFG_common(DUMMY_DOUZOU, actor->home.position, FALSE);
   aDOU_actor_move(actor, game);
   actor->mv_proc = &aDOU_actor_move;
 }

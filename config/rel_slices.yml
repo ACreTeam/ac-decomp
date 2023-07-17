@@ -12,6 +12,11 @@ m_all_grow.c:
     .rodata: [0x806412C0, 0x806412E8]
     .data: [0x8064D598, 0x8064D600]
     .bss: [0x8125A7C8, 0x8125A7E8]
+m_actor.c:
+    .text: [0x803742B8, 0x8037619C]
+    .rodata: [0x806412E8, 0x80641328]
+    .data: [0x8064D600, 0x8064D628]
+    .bss: [0x8125A7E8, 0x8125A828]
 m_actor_dlftbls.c:
     .text: [0x8037619C, 0x803761BC]
     .data: [0x8064D628, 0x8064F4E8]

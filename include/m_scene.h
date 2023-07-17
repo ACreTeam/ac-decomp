@@ -26,13 +26,21 @@ typedef struct object_bank_s {
   s16 bank_id;
   char* ram_start;
   // TODO: others
-  u8 _08[0x5C - 8];
+  u8 _08[0x58 - 0x08];
+  s16 num_exist;
+  u8 _0x5A[0x5C - 0x5A];
 } Object_Bank_c;
 
 typedef struct object_exchange_s {
   Object_Bank_c banks[mSc_OBJECT_BANK_NUM];
-  u8 _1928[0x1958-0x1928];
+  int _1928;
+  int _192C;
+  int exchange_id;
+  u8 _1934[0x1958-0x1934];
 } Object_Exchange_c;
+
+extern int mSc_bank_regist_check(Object_Exchange_c* exchange, s16 bank_id);
+extern void mSc_regist_initial_exchange_bank(GAME_PLAY* play);
 
 #ifdef __cplusplus
 }

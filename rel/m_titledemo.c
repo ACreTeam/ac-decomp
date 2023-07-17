@@ -61,7 +61,7 @@ static void mTD_player_keydata_init(GAME_PLAY* play) {
     angle = get_demo_header(mEv_CheckTitleDemo() - 1, mTD_HEADER_ROTATION);
 
     player->actor_class.shape_info.rotation.y = angle;
-    player->actor_class.world_rotation.y = angle;
+    player->actor_class.world.angle.y = angle;
   }
 
   S_tdemo_frame = 0;

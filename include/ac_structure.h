@@ -223,7 +223,6 @@ typedef struct actor_overlay_info_s {
   int used;
 } aSTR_Overlay_info_c;
 
-// TODO: finish clip
 typedef struct actor_structure_clip_s {
   aSTR_SETUP_ACTOR_PROC setup_actor_proc;
   aSTR_GET_OVERLAY_AREA_PROC get_overlay_area_proc;

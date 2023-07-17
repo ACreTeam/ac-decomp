@@ -133,7 +133,7 @@ static void aDOU_actor_draw(ACTOR* actor, GAME* game) {
       {
         xyz_t wpos;
 
-        xyz_t_move(&wpos, &actor->world_position);
+        xyz_t_move(&wpos, &actor->world.position);
         wpos.x += xpostbl[i];
         wpos.z += zpostbl[i];
 

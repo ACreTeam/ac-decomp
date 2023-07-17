@@ -8,6 +8,7 @@
 #include "m_lights.h"
 #include "m_collision_bg.h"
 #include "m_collision_obj.h"
+#include "m_actor_dlftbls.h"
 #include "libforest/gbi_extensions.h"
 
 #ifdef __cplusplus
@@ -17,10 +18,16 @@ extern "C" {
 typedef void (*mActor_proc)(ACTOR*, GAME*);
 #define NONE_ACTOR_PROC ((mActor_proc)&none_proc1)
 
+#define mAc_MAX_ACTORS 200
+
 #define ACTOR_STATE_NONE 0
 #define ACTOR_STATE_NO_MOVE_WHILE_CULLED (1 << 4)
 #define ACTOR_STATE_NO_DRAW_WHILE_CULLED (1 << 5)
-#define ACTOR_STATE_11 (1 << 11)
+#define ACTOR_STATE_NO_CULL (1 << 6)
+#define ACTOR_STATE_INVISIBLE (1 << 7)
+#define ACTOR_STATE_TA_SET (1 << 11)
+#define ACTOR_STATE_LIGHTING (1 << 22) // does lighting NOT affect this actor?
+#define ACTOR_STATE_24 (1 << 24)
 #define ACTOR_STATE_CAN_MOVE_IN_DEMO_SCENES (1 << 29)
 
 #define ACTOR_OBJ_BANK_NONE 0
@@ -34,8 +41,8 @@ enum actor_part {
   ACTOR_PART_FG,
   ACTOR_PART_ITEM,
   ACTOR_PART_PLAYER,
+  ACTOR_PART_3, /* Thought this was for NPCs but maybe not? */
   ACTOR_PART_NPC,
-  ACTOR_PART_4, /* TODO: figure this one out */
   ACTOR_PART_BG,
   ACTOR_PART_EFFECT,
   ACTOR_PART_CONTROL,
@@ -340,16 +347,13 @@ struct actor_s {
   /* 0x008 */ s8 block_x;
   /* 0x009 */ s8 block_z;
   /* 0x00A */ s16 move_actor_list_idx; /* used in aBC_setupCommonMvActor */
-  /* 0x00C */ xyz_t home_position; /* actor 'home' pos */
-  /* 0x018 */ s_xyz home_rotation; /* actor 'home' rotation */
+  /* 0x00C */ PositionAngle home; /* Home position & rotation */
   /* 0x020 */ u32 state_bitfield; /* bitfield of current actor state */
   /* 0x024 */ s16 actor_specific; /* actor specific temp data */
   /* 0x026 */ s16 data_bank_id; /* data bank id actor is in */
-  /* 0x028 */ xyz_t world_position;
-  /* 0x034 */ s_xyz world_rotation;
+  /* 0x028 */ PositionAngle world; /* World position & rotation */
   /* 0x03C */ xyz_t last_world_position; /* previous actor world position */
-  /* 0x048 */ xyz_t eye_position; /* actor "eyes" (head/lookat) world position */
-  /* 0x054 */ s_xyz eye_rotation; /* actor "eyes" (head/lookat) world rotation */
+  /* 0x048 */ PositionAngle eye; /* actor "eyes" (head/lookat) world position & rotation */
   /* 0x05C */ xyz_t scale; /* actor size */
   /* 0x068 */ xyz_t position_speed; /* actor movement velocity (see Actor_position_speed_set) */
   /* 0x074 */ f32 speed; /* movement speed */
@@ -383,7 +387,7 @@ struct actor_s {
   /* 0x164 */ mActor_proc mv_proc; /* move */
   /* 0x168 */ mActor_proc dw_proc; /* draw */
   /* 0x16C */ mActor_proc sv_proc; /* save */
-  /* 0x170 */ void* dlftbl; /* display list function table */
+  /* 0x170 */ ACTOR_DLFTBL* dlftbl; /* display list function table */
 };
 
 #define mActor_NONE_PROC1 ((mActor_proc)none_proc1)
@@ -398,13 +402,47 @@ typedef struct actor_info_s {
   Actor_list list[ACTOR_PART_NUM];
 } Actor_info;
 
-extern void Actor_delete(ACTOR* actor);
-extern ACTOR* Actor_info_fgName_search(Actor_info* actor_info, mActor_name_t fg_name, int part);
+typedef struct actor_data_s {
+  s16 profile;
+  s_xyz position;
+  s_xyz rotation;
+  s16 arg;
+} Actor_data;
+
 extern void Actor_world_to_eye(ACTOR* actor, f32 eye_height);
-extern void Shape_Info_init(ACTOR* actor, f32 y_ofs, mActor_shadow_proc shadow_proc, f32 shadow_sizeX, f32 shadow_sizeZ);
+extern void Actor_position_move(ACTOR* actor);
+extern void Actor_position_speed_set(ACTOR* actor);
 extern void Actor_position_moveF(ACTOR* actor);
-extern ACTOR* Actor_info_make_actor(Actor_info* actor_info, GAME* game, s16 profile, f32 x, f32 y, f32 z, short rot_x, short rot_y, short rot_z, s8 block_x, s8 block_z, s16 mvactor_list_no, mActor_name_t actor_name, s16 arg, s8 npc_idx, int data_bank);
-extern void Setpos_HiliteReflect_init(xyz_t* wpos, GAME_PLAY* play);
+extern int Actor_player_look_direction_check(ACTOR* actor, s16 angle, GAME_PLAY* play);
+extern void Shape_Info_init(ACTOR* actor, f32 ofs_y, mActor_shadow_proc shadow_proc, f32 shadow_size_x, f32 shadow_size_z);
+extern void Actor_delete(ACTOR* actor);
+extern int Actor_draw_actor_no_culling_check(ACTOR* actor);
+extern int Actor_draw_actor_no_culling_check2(ACTOR* actor, xyz_t* camera_pos, f32 camera_w);
+extern void Actor_info_ct(GAME* game, Actor_info* actor_info, Actor_data* player_data);
+extern void Actor_info_dt(Actor_info* actor_info, GAME_PLAY* play);
+extern void Actor_info_call_actor(GAME_PLAY* play, Actor_info* actor_info);
+extern void Actor_info_draw_actor(GAME_PLAY* play, Actor_info* actor_info);
+extern void Actor_free_overlay_area(ACTOR_DLFTBL* dlftbl);
+extern void Actor_get_overlay_area(ACTOR_DLFTBL* dlftbl, int unused, size_t alloc_size);
+extern void Actor_init_actor_class(ACTOR* actor, ACTOR_PROFILE* profile, ACTOR_DLFTBL* dlftbl, GAME_PLAY* play, int bank_idx, f32 x, f32 y, f32 z, s16 rot_x, s16 rot_y, s16 rot_z, s8 block_x, s8 block_z, s16 move_actor_list_idx, mActor_name_t name_id, s16 arg);
+#ifndef MUST_MATCH
+extern ACTOR* Actor_info_make_actor(Actor_info* actor_info, GAME* game, s16 profile_no, f32 x, f32 y, f32 z, s16 rot_x, s16 rot_y, s16 rot_z, s8 block_x, s8 block_z, s16 move_actor_list_idx, mActor_name_t name_id, s16 arg, s8 npc_info_idx, int data_bank_idx);
+#else
+extern asm ACTOR* Actor_info_make_actor(Actor_info* actor_info, GAME* game, s16 profile_no, f32 x, f32 y, f32 z, s16 rot_x, s16 rot_y, s16 rot_z, s8 block_x, s8 block_z, s16 move_actor_list_idx, mActor_name_t name_id, s16 arg, s8 npc_info_idx, int data_bank_idx);
+#endif
+extern ACTOR* Actor_info_make_child_actor(Actor_info* actor_info, ACTOR* parent_actor, GAME* game, s16 profile, f32 x, f32 y, f32 z, s16 rot_x, s16 rot_y, s16 rot_z, s16 move_actor_list_idx, mActor_name_t name_id, s16 arg, int data_bank_idx);
+extern void restore_fgdata_all(GAME_PLAY* play);
+extern void Actor_info_save_actor(GAME_PLAY* play);
+extern ACTOR* Actor_info_delete(Actor_info* actor_info, ACTOR* actor, GAME* game);
+extern ACTOR* Actor_info_name_search_sub(ACTOR* actor, s16 name);
+extern ACTOR* Actor_info_name_search(Actor_info* actor_info, s16 name, int part);
+extern ACTOR* Actor_info_fgName_search_sub(ACTOR* actor, mActor_name_t fgName);
+extern ACTOR* Actor_info_fgName_search(Actor_info* actor_info, mActor_name_t fgName, int part);
+extern Gfx* HiliteReflect_new(xyz_t* pos, xyz_t* eye, xyz_t* light_direction, GRAPH* graph, Gfx* gfx, Hilite** hilite);
+extern Hilite* HiliteReflect_init(xyz_t* pos, xyz_t* eye, xyz_t* light_direction, GRAPH* graph);
+extern Hilite* HiliteReflect_xlu_init(xyz_t* pos, xyz_t* eye, xyz_t* light_direction, GRAPH* graph);
+extern void Setpos_HiliteReflect_init(xyz_t* pos, GAME_PLAY* play);
+extern void Setpos_HiliteReflect_xlu_init(xyz_t* pos, GAME_PLAY* play);
 
 extern void mAc_ActorShadowCircle(ACTOR* actor, LightsN* lightsN, GAME_PLAY* play);
 extern void mAc_ActorShadowEllipse(ACTOR* actor, LightsN* lightsN, GAME_PLAY* play);

@@ -52,7 +52,7 @@ static void aTRD_set_door_SE(ACTOR* actor){
     for(i = 0; i < 2; i++){
 
         if(cKF_FrameControl_passCheck_now(&traindoor->keyframe.frame_control,chk_pat[i]) != 0){
-            sAdo_OngenTrgStart(se_no[i], &traindoor->actor_class.world_position);
+            sAdo_OngenTrgStart(se_no[i], &traindoor->actor_class.world.position);
             return;
         }
     }

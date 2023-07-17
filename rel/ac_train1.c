@@ -44,7 +44,7 @@ static void aTR1_actor_ct(ACTOR* actor, GAME* game){
     cKF_SkeletonInfo_R_ct(&train1->keyframe, &cKF_bs_r_obj_train1_3, NULL, train1->work, train1->morph);
     aTR1_setupAction((ACTOR*)train1, 5);
     train1->anim_state = cKF_SkeletonInfo_R_play(&train1->keyframe);
-    actor->world_rotation.y = 0x4000;
+    actor->world.angle.y = 0x4000;
     train1->tr_speed = 1.0f;
 }
 
@@ -54,7 +54,7 @@ static void aTR1_actor_dt(ACTOR* actor, GAME* game){
 
     xyz_t tr_home_pos;
 
-    tr_home_pos = train1->actor_class.home_position;
+    tr_home_pos = train1->actor_class.home.position;
 
     mFI_SetFG_common(EMPTY_NO, tr_home_pos, FALSE);
     cKF_SkeletonInfo_R_dt(&train1->keyframe);
@@ -63,7 +63,7 @@ static void aTR1_actor_dt(ACTOR* actor, GAME* game){
 static void aTR1_OngenTrgStart(ACTOR* actor, u16 id){
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
 
-    sAdo_OngenTrgStart(id, &train1->actor_class.world_position);
+    sAdo_OngenTrgStart(id, &train1->actor_class.world.position);
 }
 
 static f32 calc_speed1(ACTOR* actor0, ACTOR* actor1) {
@@ -96,22 +96,22 @@ static void aTR1_position_move(ACTOR* actor){
     f32 tr_back_calc;
     f32 base_x_pos;
     
-    tr_back_calc = train1->actor_class.world_position.x;
+    tr_back_calc = train1->actor_class.world.position.x;
     base_x_pos = -125.0f + train0->tr1_pos;
     tr_back_calc += 0.5f * train1->actor_class.speed;
     
     diff = tr_back_calc - base_x_pos;
     if((diff) <= 0.0f){
         train1->actor_class.speed = calc_speed1(actor->parent_actor, actor);
-        train1->actor_class.world_position.x = base_x_pos;
+        train1->actor_class.world.position.x = base_x_pos;
     }
     else if((diff) > 2.0f){
         train1->actor_class.speed = calc_speed2(actor->parent_actor);
-        train1->actor_class.world_position.x = 2.0f + base_x_pos;
+        train1->actor_class.world.position.x = 2.0f + base_x_pos;
     }
     else{
         chase_f(&train1->actor_class.speed, 0.0f, 0.0025f);
-        train1->actor_class.world_position.x = tr_back_calc;
+        train1->actor_class.world.position.x = tr_back_calc;
     }
 }
 
@@ -140,18 +140,18 @@ static void aTR1_passenger_ctrl(ACTOR* actor){
     s_xyz rot;
 
     if(train1->player_pass_exists == 1){
-        pos.x = train1->actor_class.world_position.x + 60.0f;
-        pos.y = train1->actor_class.world_position.y + 20.0f;
-        pos.z = train1->actor_class.world_position.z + 20.0f;
+        pos.x = train1->actor_class.world.position.x + 60.0f;
+        pos.y = train1->actor_class.world.position.y + 20.0f;
+        pos.z = train1->actor_class.world.position.z + 20.0f;
         rot.x = ZeroSVec.x;
         rot.y = ZeroSVec.y;
         rot.z = ZeroSVec.z;
         get_player_actor_withoutCheck((GAME_PLAY*)gamePT)->Set_force_position_angle_proc(gamePT, &pos, &rot, mPlayer_FORCE_POSITION_ANGLE_POSX | mPlayer_FORCE_POSITION_ANGLE_POSY | mPlayer_FORCE_POSITION_ANGLE_POSZ | mPlayer_FORCE_POSITION_ANGLE_ROTY);
     }
     else if(train1->player_pass_leaving == 1){
-        pos.x = train1->actor_class.world_position.x + 2.0f;
-        pos.y = train1->actor_class.world_position.y + 16.0f;
-        pos.z = train1->actor_class.world_position.z + 20.0f;
+        pos.x = train1->actor_class.world.position.x + 2.0f;
+        pos.y = train1->actor_class.world.position.y + 16.0f;
+        pos.z = train1->actor_class.world.position.z + 20.0f;
         get_player_actor_withoutCheck((GAME_PLAY*)gamePT)->Set_force_position_angle_proc(gamePT, &pos, NULL, mPlayer_FORCE_POSITION_ANGLE_POSX | mPlayer_FORCE_POSITION_ANGLE_POSY | mPlayer_FORCE_POSITION_ANGLE_POSZ);
         
     }
