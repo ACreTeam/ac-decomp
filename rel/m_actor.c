@@ -26,12 +26,13 @@ void _savefpr_29();
 void _restfpr_29();
 //#include "orderstrings/8064d600_8064d604.inc"
 static char lbl_8064d600[] = "";
-//#include "orderfloats/806412e8_806412f0.inc"
-asm void FORCESTRIP order_floats_806412e8() {
-    lfs f1, 1.0;
-    lfs f1, 0.5;
-}
 #endif
+
+/* @unused | necessary for proper float ordering*/
+extern void __declspec(section "forcestrip") projection_pos_set(GAME_PLAY* play, xyz_t* pos, xyz_t* proj_pos, f32* proj_w) {
+  Skin_Matrix_PrjMulVector(&play->projection_matrix, pos, proj_pos, proj_w);
+  *proj_w = *proj_w < 1.0f ? 1.0f : 1.0f / *proj_w;
+}
 
 extern void Actor_world_to_eye(ACTOR* actor, f32 eye_height) {
   /* Update position */

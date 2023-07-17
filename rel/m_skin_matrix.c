@@ -3,7 +3,7 @@
 
 #include "orderfloats/80643310_80643318.inc"
 
-void Skin_Matrix_PrjMulVector(MtxF* mf, Vec3f* src, Vec3f* xyzDest, f32* wDest) {
+void Skin_Matrix_PrjMulVector(MtxF* mf, xyz_t* src, xyz_t* xyzDest, f32* wDest) {
     xyzDest->x = mf->xw + ((src->x * mf->xx) + (src->y * mf->xy) + (src->z * mf->xz));
     xyzDest->y = mf->yw + ((src->x * mf->yx) + (src->y * mf->yy) + (src->z * mf->yz));
     xyzDest->z = mf->zw + ((src->x * mf->zx) + (src->y * mf->zy) + (src->z * mf->zz));
