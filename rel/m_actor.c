@@ -28,11 +28,13 @@ void _restfpr_29();
 static char lbl_8064d600[] = "";
 #endif
 
+#ifdef MUST_MATCH
 /* @unused | necessary for proper float ordering*/
 extern void __declspec(section "forcestrip") projection_pos_set(GAME_PLAY* play, xyz_t* pos, xyz_t* proj_pos, f32* proj_w) {
   Skin_Matrix_PrjMulVector(&play->projection_matrix, pos, proj_pos, proj_w);
   *proj_w = *proj_w < 1.0f ? 1.0f : 1.0f / *proj_w;
 }
+#endif
 
 extern void Actor_world_to_eye(ACTOR* actor, f32 eye_height) {
   /* Update position */

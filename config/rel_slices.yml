@@ -126,9 +126,9 @@ m_room_type/mRmTp_FtrItemNo2FtrIdx.c:
 #    .rodata: [0x806433B0, 0x806433D8]
 #    .data: [0x8065E378, 0x8065E438]
 #    .bss: [0x8129F410, 0x8129F420]
-#m_skin_matrix.c:
-#    .text: [0x803f1528, 0x803f1bb4]
-#   .rodata: [0x80643310, 0x80643318]
+m_skin_matrix.c:
+    .text: [0x803f1528, 0x803f1bb4]
+    .rodata: [0x80643310, 0x80643318]
 m_view.c:
     .text: [0x803F3E58, 0x803F4E08]
     .rodata: [0x806433D8, 0x80643408]
