@@ -786,12 +786,12 @@ extern void Game_play_Projection_Trans(GAME_PLAY* const play, xyz_t* world_pos,
                                        xyz_t* screen_pos) {
   f32 w;
 
-  Matrix_mult(&play->matrix, 0);
+  Matrix_mult(&play->projection_matrix, 0);
   Matrix_Position(world_pos, screen_pos);
-  w = play->matrix.ww +
-      ((play->matrix.wx * world_pos->x) +
-       (play->matrix.wy * world_pos->y) +
-       (play->matrix.wz * world_pos->z));
+  w = play->projection_matrix.ww +
+      ((play->projection_matrix.wx * world_pos->x) +
+       (play->projection_matrix.wy * world_pos->y) +
+       (play->projection_matrix.wz * world_pos->z));
   screen_pos->x = (SCREEN_WIDTH_F / 2.0f) + ((screen_pos->x / w) * (SCREEN_WIDTH_F / 2.0f));
   screen_pos->y = (SCREEN_HEIGHT_F / 2.0f) - ((screen_pos->y / w) * (SCREEN_HEIGHT_F / 2.0f));
 }

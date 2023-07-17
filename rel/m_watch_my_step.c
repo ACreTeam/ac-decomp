@@ -131,7 +131,7 @@ extern void watch_my_step_move(GAME_PLAY* play) {
     }
 
     if (S_watch_my_step.mode != 0) {
-      xyz_t position = player_actor->actor_class.world_position;
+      xyz_t position = player_actor->actor_class.world.position;
       xyz_t screen_pos;
       position.y += 30.0f;
 

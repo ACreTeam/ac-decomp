@@ -27,7 +27,7 @@ static void mTRC_SetMicPos(GAME_PLAY* play, xyz_t* mic_pos) {
   }
   else {
     if (player != NULL) {
-      xyz_t_move(&pos, &player->actor_class.world_position);
+      xyz_t_move(&pos, &player->actor_class.world.position);
     }
     else {
       xyz_t_move(&pos, &ZeroVec);
@@ -467,7 +467,7 @@ static void mTRC_trainSet(GAME_PLAY* play) {
         xyz_pos.z = xz_pos.z;
         xyz_pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(xyz_pos, 0.0f);
 
-        xyz_t_move(&train_actor->world_position, &xyz_pos);
+        xyz_t_move(&train_actor->world.position, &xyz_pos);
       }
 
       x -= 250.0f;
@@ -484,7 +484,7 @@ static void mTRC_trainSet(GAME_PLAY* play) {
         xyz_pos.z = 740.0f;
         xyz_pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(xyz_pos, 0.0f);
 
-        xyz_t_move(&caboose_actor->world_position, &xyz_pos);
+        xyz_t_move(&caboose_actor->world.position, &xyz_pos);
       }
 
       Common_Set(train_flag, FALSE);

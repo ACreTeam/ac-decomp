@@ -20,11 +20,13 @@
 extern "C" {
 #endif
 
+typedef int (*DRAW_CHK_PROC)(ACTOR*, GAME_PLAY*);
+
 /* sizeof(struct game_play_s) == 0x2600 */
 struct game_play_s {
   /* 0x0000 */ GAME game;
   // TODO: finish
-  /* 0x00E0 */ int _00E0;
+  /* 0x00E0 */ s16 scene_id;
   /* 0x00E4 */ mFI_block_tbl_c block_table;
   /* 0x00F4 */ mFI_block_tbl_c last_block_table;
   /* 0x0104 */ u8 _0104[0x0110 - 0x0104];
@@ -38,10 +40,20 @@ struct game_play_s {
   /* 0x1DEC */ Submenu submenu;
   /* 0x1FA4 */ u8 _1FA4[0x2008 - 0x1FA4];
   /* 0x2008 */ int next_scene_no;
-  /* 0x200C */ MtxF matrix;
-  /* 0x204C */ u8 _204C[0x2090 - 0x204C];
+  /* 0x200C */ MtxF projection_matrix;
+  /* 0x204C */ MtxF mtx_204C;
+  /* 0x208C */ int _208C;
   /* 0x2090 */ u32 game_frame;
-  /* 0x2094 */ u8 _2094[0x20D0 - 0x2094];
+  /* 0x2094 */ u8 _2094;
+  /* 0x2095 */ u8 actor_data_num;
+  /* 0x2096 */ u8 ctrl_actor_data_num;
+  /* 0x2097 */ u8 obj_bank_data_num;
+  /* 0x2098 */ Actor_data* player_data;
+  /* 0x209C */ Actor_data* actor_data;
+  /* 0x20A0 */ s16* ctrl_actor_data;
+  /* 0x20A4 */ s16* obj_bank_data;
+  /* 0x20A8 */ int _20A8;
+  /* 0x20AC */ u8 _20AC[0x20D0 - 0x20AC];
   /* 0x20D0 */ u8 fb_fade_type;
   /* 0x20D1 */ u8 fb_wipe_type;
   /* 0x20D2 */ u8 fb_mode;
@@ -49,7 +61,8 @@ struct game_play_s {
   /* 0x20D8 */ fbdemo_wipe fbdemo_wipe;
   /* 0x2318 */ fbdemo_fade color_fade;
   /* 0x2328 */ CollisionCheck_c collision_check;
-  /* 0x23F8 */ u8 _23F8[0x2600 - 0x23F8];
+  /* 0x23F8 */ DRAW_CHK_PROC draw_chk_proc; // only used by mikanbox actor
+  /* 0x23FC */ u8 _23FC[0x2600 - 0x23FC];
 };
 
 

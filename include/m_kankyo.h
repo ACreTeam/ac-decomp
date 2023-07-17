@@ -2,6 +2,7 @@
 #define M_KANKYO_H
 
 #include "types.h"
+#include "m_lights.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,11 +27,20 @@ enum weather_intensity {
   mEnv_WEATHER_INTENSITY_NUM,
 };
 
-typedef struct kankyo_s{
-    /*0x00 */ u8 pad[0x9A];
-    /*0x9A */ u8 ambientColor[3];
-    /*0x9E */ u8 pad2[0x32];  
-}Kankyo;
+typedef void (*NATURE_PROC)(ACTOR*);
+
+typedef struct nature_s {
+  NATURE_PROC proc;
+  void* arg;
+} Nature;
+
+typedef struct kankyo_s {
+  /* 0x00 */ Lights sun_light;
+  /* 0x0E */ u8 pad[0x9A - 0x0E];
+  /* 0x9A */ u8 ambientColor[3];
+  /* 0x9E */ u8 pad2[0xC8 - 0x9E];  
+  /* 0xC8 */ Nature nature;
+} Kankyo;
 
 extern int mEnv_NowWeather();
 

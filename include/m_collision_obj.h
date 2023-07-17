@@ -101,6 +101,8 @@ extern void ClObjPipe_set5(GAME_PLAY* play, ClObjPipe_c* pipe, ACTOR* owner, ClO
 extern void CollisionCheck_Uty_ActorWorldPosSetPipeC(ACTOR* actor, ClObjPipe_c* col_pipe);
 extern int CollisionCheck_setOC(GAME_PLAY* play, CollisionCheck_c* collision_check, ClObj_c* col_obj);
 extern void CollisionCheck_Status_set3(Status_c* status, StatusData_c* data);
+extern void CollisionCheck_Status_ct(Status_c* status);
+extern void CollisionCheck_Status_Clear(Status_c* status);
 
 #ifdef __cplusplus
 }

@@ -148,6 +148,9 @@ extern mActor_name_t mFI_GetOtherFruit();
 extern int mFI_Wpos2UtNum_inBlock(int* ut_x, int* ut_z, xyz_t wpos);
 extern int mFI_GetItemNumInBlock(mActor_name_t item_no, mActor_name_t* block_items);
 extern int mFI_BkNum2WposXZ(f32* wpos_x, f32* wpos_z, int block_x, int block_z);
+extern void mFI_SetBearActor(GAME_PLAY* play, xyz_t wpos, int update_before_block_table);
+extern void mFI_FieldMove(xyz_t player_wpos);
+extern int mFI_search_unit_around(xyz_t* wpos, mActor_name_t item);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);

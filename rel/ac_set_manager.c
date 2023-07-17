@@ -19,7 +19,7 @@ static int aSetMgr_get_player_block(int* bx, int* bz, GAME_PLAY* play) {
   PLAYER_ACTOR* player_actor = get_player_actor_withoutCheck(play);
 
   if (player_actor != NULL) {
-    res = mFI_Wpos2BlockNum(bx, bz, player_actor->actor_class.world_position);
+    res = mFI_Wpos2BlockNum(bx, bz, player_actor->actor_class.world.position);
   }
 
   return res;

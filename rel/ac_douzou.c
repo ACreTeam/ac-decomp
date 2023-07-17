@@ -13,7 +13,7 @@ static void aDOU_actor_draw(ACTOR*, GAME*);
 ACTOR_PROFILE Douzou_Profile = {
   mAc_PROFILE_DOUZOU,
   ACTOR_PART_ITEM,
-  ACTOR_STATE_11,
+  ACTOR_STATE_TA_SET,
   DOUZOU,
   ACTOR_OBJ_BANK_3,
   sizeof(STRUCTURE_ACTOR),
@@ -172,11 +172,11 @@ static void aDOU_actor_ct(ACTOR* actor, GAME* game) {
   cKF_SkeletonInfo_R_ct(&douzou->keyframe, skl[douzou->season == mTM_SEASON_WINTER], NULL, douzou->work_area, douzou->morph_area);
   aDOU_set_bgOffset(actor, 1);
 
-  wpos.x = actor->world_position.x + xpostbl[0];
-  wpos.y = actor->world_position.y;
-  wpos.z = actor->world_position.z + zpostbl[0];
+  wpos.x = actor->world.position.x + xpostbl[0];
+  wpos.y = actor->world.position.y;
+  wpos.z = actor->world.position.z + zpostbl[0];
 
-  actor->world_position.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(wpos, 0.0f);
+  actor->world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(wpos, 0.0f);
   actor->cull_width = 850.0f;
   actor->cull_radius = 850.0f;
 

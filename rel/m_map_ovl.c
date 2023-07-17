@@ -591,7 +591,7 @@ static void mMP_set_init_data(mMP_Overlay_c* map_ovl, mSM_MenuInfo_c* menu_info)
     mFI_Wpos2BlockNum(&block_x, &block_z, pos);
   }
   else {
-    mFI_Wpos2BlockNum(&block_x, &block_z, player->actor_class.world_position);
+    mFI_Wpos2BlockNum(&block_x, &block_z, player->actor_class.world.position);
   }
 
   map_ovl->player_bx = block_x - 1;

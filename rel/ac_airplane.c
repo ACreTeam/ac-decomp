@@ -43,7 +43,7 @@ static void Airplane_Actor_ct(ACTOR* actor, GAME* game) {
   airplane->y_speed = 0.0f;
   airplane->actor_class.speed = airplane->speed;
   
-  airplane->rotY = RAD2DEG(SHORTANGLE2RAD((f32)actor->world_rotation.y));
+  airplane->rotY = RAD2DEG(SHORTANGLE2RAD((f32)actor->world.angle.y));
   airplane->rotY_goal = airplane->rotY;
   airplane->rotY_min = airplane->rotY;
   airplane->rotZ = 0.0f;
@@ -54,7 +54,7 @@ static void Airplane_Actor_ct(ACTOR* actor, GAME* game) {
   airplane->wind_change_frame = 0;
   airplane->wind = NULL;
 
-  actor->world_position.y = mCoBG_GetBgY_AngleS_FromWpos(NULL, actor->world_position, -5.5f);
+  actor->world.position.y = mCoBG_GetBgY_AngleS_FromWpos(NULL, actor->world.position, -5.5f);
 }
 
 static void Airplane_Actor_dt(ACTOR* actor, GAME* game) { }
@@ -105,7 +105,7 @@ static void aAp_GroundFriction(ACTOR* actor, GAME* game) {
       if (airplane->ground_timer >= 5) {
         airplane->ground_timer = 0;
 
-        (*Common_Get(clip.effect_clip)->effect_make_proc)(eEC_EFFECT_DUST, actor->world_position, 1, actor->world_rotation.y, game, actor->npc_id, 0, 8);
+        (*Common_Get(clip.effect_clip)->effect_make_proc)(eEC_EFFECT_DUST, actor->world.position, 1, actor->world.angle.y, game, actor->npc_id, 0, 8);
       }
 
       airplane->ground_timer++;
@@ -196,9 +196,9 @@ static void aAp_StartFlyMove(ACTOR* actor, GAME* game) {
 
     goal_angle_random_tbl = adjusted_y > 50 ? goal_angle_random2 : goal_angle_random;
 
-    actor->world_position.y = player->actor_class.world_position.y + 25.0f;
-    actor->world_position.x = player->actor_class.world_position.x;
-    actor->world_position.z = player->actor_class.world_position.z;
+    actor->world.position.y = player->actor_class.world.position.y + 25.0f;
+    actor->world.position.x = player->actor_class.world.position.x;
+    actor->world.position.z = player->actor_class.world.position.z;
 
     airplane->rotY = RAD2DEG(SHORTANGLE2RAD(player->actor_class.shape_info.rotation.y));
     airplane->rotY_goal = airplane->rotY + (RAD2DEG(SHORTANGLE2RAD(goal_angle_random_tbl[goal])));
@@ -226,10 +226,10 @@ static void aAp_FallFlyMove(ACTOR* actor, GAME* game) {
   aAp_RubberMove(&airplane->rotX, 60.0f, 0.04f);
   aAp_RubberMove(&airplane->speed, 5.0f, 0.02f);
 
-  actor->world_position.y -= 0.15f;
+  actor->world.position.y -= 0.15f;
 
   if (actor->bg_collision_check.result.on_ground) {
-    Common_Get(clip.effect_clip)->effect_make_proc(eEC_EFFECT_DUST, actor->world_position, 1, actor->world_rotation.y, game, actor->npc_id, 0, 8);
+    Common_Get(clip.effect_clip)->effect_make_proc(eEC_EFFECT_DUST, actor->world.position, 1, actor->world.angle.y, game, actor->npc_id, 0, 8);
     airplane->status = aAp_STATUS_STOP_FLY_MOVE;
   }
 }
@@ -239,10 +239,10 @@ static void aAp_FallFlyMove2(ACTOR* actor, GAME* game) {
   aAp_RubberMove(&airplane->rotX, 70.0f, 0.15f);
   aAp_RubberMove(&airplane->speed, 10.0f, 0.02f);
 
-  actor->world_position.y -= 0.15f;
+  actor->world.position.y -= 0.15f;
 
   if (actor->bg_collision_check.result.on_ground) {
-    Common_Get(clip.effect_clip)->effect_make_proc(eEC_EFFECT_DUST, actor->world_position, 1, actor->world_rotation.y, game, actor->npc_id, 0, 8);
+    Common_Get(clip.effect_clip)->effect_make_proc(eEC_EFFECT_DUST, actor->world.position, 1, actor->world.angle.y, game, actor->npc_id, 0, 8);
     airplane->status = aAp_STATUS_STOP_FLY_MOVE;
   }
 }
@@ -302,8 +302,8 @@ static void aAp_CommonHandle(ACTOR* actor, AIRPLANE_ACTOR* airplane, GAME* game)
   actor->speed = airplane->speed * cosf_table(DEG2RAD(airplane->rotX));
   airplane->y_speed = airplane->speed * sinf_table(DEG2RAD(airplane->rotX));
 
-  actor->world_position.y -= airplane->y_speed;
-  actor->world_rotation.y = RAD2SHORTANGLE(DEG2RAD(airplane->rotY));
+  actor->world.position.y -= airplane->y_speed;
+  actor->world.angle.y = RAD2SHORTANGLE(DEG2RAD(airplane->rotY));
   actor->shape_info.rotation.y = RAD2SHORTANGLE(DEG2RAD(airplane->rotY));
 
   Actor_position_moveF(actor);

@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 extern void mBI_ct();
+extern void mBI_move(GAME_PLAY* play);
 
 #ifdef __cplusplus
 }

@@ -87,7 +87,7 @@ static void Ac_Sample_Actor_main_talk(SAMPLE_ACTOR* actor, GAME_PLAY* play) {
 
   if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)actor)) {
     s16 angle = add_calc_short_angle2(&actor->actor_class.shape_info.rotation.y, actor->actor_class.player_angle_y, 1.0f, 5000, 100);
-    actor->actor_class.world_rotation.y = actor->actor_class.shape_info.rotation.y;
+    actor->actor_class.world.angle.y = actor->actor_class.shape_info.rotation.y;
 
     if (mDemo_Check_ListenAble() == FALSE && mDemo_Check_DiffAngle_forTalk(angle)) {
       mDemo_Set_ListenAble();

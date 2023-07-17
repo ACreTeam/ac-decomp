@@ -723,7 +723,7 @@ static void aHNW_pl_approach_door(ACTOR* actor, GAME* game) {
 
   if (player != NULL) {
     int house_idx = haniwa->house_idx;
-    int stage = ((chk_posX[house_idx] - player->actor_class.world_position.x) * chk_val[house_idx]) <= 0.0f;
+    int stage = ((chk_posX[house_idx] - player->actor_class.world.position.x) * chk_val[house_idx]) <= 0.0f;
     xyz_t* goal = goal_pos[house_idx] + stage;
 
     if (haniwa->player_approach_door_stage != stage && mPlib_request_main_demo_walk_type1(game, goal->x, goal->z, 3.0f, FALSE)) {
@@ -736,11 +736,11 @@ static void aHNW_pl_approach_door(ACTOR* actor, GAME* game) {
       MY_HOUSE_ACTOR* house_actor = (MY_HOUSE_ACTOR*)Actor_info_fgName_search(&play->actor_info, HOUSE0 + haniwa->house_idx, ACTOR_PART_ITEM);
 
       if (house_actor != NULL) {
-        house_actor->actor_class.world_rotation.z = 1;
+        house_actor->actor_class.world.angle.z = 1;
         aHNW_setupAction(actor, game, aHNW_ACTION_WAIT);
       }
     }
-    else if (stage == 1 && search_position_distanceXZ(goal, &player->actor_class.world_position) < 3.0f) {
+    else if (stage == 1 && search_position_distanceXZ(goal, &player->actor_class.world.position) < 3.0f) {
       aHNW_setupAction(actor, game, aHNW_ACTION_DOOR_OPEN_WAIT);
     }
   }
@@ -776,7 +776,7 @@ static void aHNW_door_open_timer(ACTOR* actor, GAME* game) {
     else {
       haniwa->door_approach_frame++;
       if (haniwa->door_approach_frame > 80) {
-        house_actor->actor_class.world_rotation.z = 1;
+        house_actor->actor_class.world.angle.z = 1;
         aHNW_setupAction(actor, game, aHNW_ACTION_WAIT);
       }
     }
@@ -960,7 +960,7 @@ static void aHNW_actor_init(ACTOR* actor, GAME* game) {
   HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
   int house_idx = haniwa->house_idx;
 
-  mFI_SetFG_common((mActor_name_t)(house_idx + DUMMY_HANIWA0), actor->world_position, FALSE);
+  mFI_SetFG_common((mActor_name_t)(house_idx + DUMMY_HANIWA0), actor->world.position, FALSE);
   actor->mv_proc = &aHNW_actor_move;
   actor->dw_proc = &aHNW_actor_draw;
   aHNW_setupAction((ACTOR*)haniwa, game, aHNW_ACTION_WAIT); // weird that we have to re-cast to ACTOR so fequently for matches

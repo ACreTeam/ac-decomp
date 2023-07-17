@@ -17,10 +17,16 @@ extern "C" {
 typedef void (*mActor_proc)(ACTOR*, GAME*);
 #define NONE_ACTOR_PROC ((mActor_proc)&none_proc1)
 
+#define mAc_MAX_ACTORS 200
+
 #define ACTOR_STATE_NONE 0
 #define ACTOR_STATE_NO_MOVE_WHILE_CULLED (1 << 4)
 #define ACTOR_STATE_NO_DRAW_WHILE_CULLED (1 << 5)
-#define ACTOR_STATE_11 (1 << 11)
+#define ACTOR_STATE_NO_CULL (1 << 6)
+#define ACTOR_STATE_INVISIBLE (1 << 7)
+#define ACTOR_STATE_TA_SET (1 << 11)
+#define ACTOR_STATE_LIGHTING (1 << 22) // does lighting NOT affect this actor?
+#define ACTOR_STATE_24 (1 << 24)
 #define ACTOR_STATE_CAN_MOVE_IN_DEMO_SCENES (1 << 29)
 
 #define ACTOR_OBJ_BANK_NONE 0
@@ -34,8 +40,8 @@ enum actor_part {
   ACTOR_PART_FG,
   ACTOR_PART_ITEM,
   ACTOR_PART_PLAYER,
+  ACTOR_PART_3, /* Thought this was for NPCs but maybe not? */
   ACTOR_PART_NPC,
-  ACTOR_PART_4, /* TODO: figure this one out */
   ACTOR_PART_BG,
   ACTOR_PART_EFFECT,
   ACTOR_PART_CONTROL,
@@ -340,16 +346,13 @@ struct actor_s {
   /* 0x008 */ s8 block_x;
   /* 0x009 */ s8 block_z;
   /* 0x00A */ s16 move_actor_list_idx; /* used in aBC_setupCommonMvActor */
-  /* 0x00C */ xyz_t home_position; /* actor 'home' pos */
-  /* 0x018 */ s_xyz home_rotation; /* actor 'home' rotation */
+  /* 0x00C */ PositionAngle home; /* Home position & rotation */
   /* 0x020 */ u32 state_bitfield; /* bitfield of current actor state */
   /* 0x024 */ s16 actor_specific; /* actor specific temp data */
   /* 0x026 */ s16 data_bank_id; /* data bank id actor is in */
-  /* 0x028 */ xyz_t world_position;
-  /* 0x034 */ s_xyz world_rotation;
+  /* 0x028 */ PositionAngle world; /* World position & rotation */
   /* 0x03C */ xyz_t last_world_position; /* previous actor world position */
-  /* 0x048 */ xyz_t eye_position; /* actor "eyes" (head/lookat) world position */
-  /* 0x054 */ s_xyz eye_rotation; /* actor "eyes" (head/lookat) world rotation */
+  /* 0x048 */ PositionAngle eye; /* actor "eyes" (head/lookat) world position & rotation */
   /* 0x05C */ xyz_t scale; /* actor size */
   /* 0x068 */ xyz_t position_speed; /* actor movement velocity (see Actor_position_speed_set) */
   /* 0x074 */ f32 speed; /* movement speed */
@@ -398,10 +401,17 @@ typedef struct actor_info_s {
   Actor_list list[ACTOR_PART_NUM];
 } Actor_info;
 
+typedef struct actor_data_s {
+  s16 profile;
+  s_xyz position;
+  s_xyz rotation;
+  s16 arg;
+} Actor_data;
+
 extern void Actor_delete(ACTOR* actor);
 extern ACTOR* Actor_info_fgName_search(Actor_info* actor_info, mActor_name_t fg_name, int part);
 extern void Actor_world_to_eye(ACTOR* actor, f32 eye_height);
-extern void Shape_Info_init(ACTOR* actor, f32 y_ofs, mActor_shadow_proc shadow_proc, f32 shadow_sizeX, f32 shadow_sizeZ);
+extern void Shape_Info_init(ACTOR* actor, f32 ofs_y, mActor_shadow_proc shadow_proc, f32 shadow_size_x, f32 shadow_size_z);
 extern void Actor_position_moveF(ACTOR* actor);
 extern ACTOR* Actor_info_make_actor(Actor_info* actor_info, GAME* game, s16 profile, f32 x, f32 y, f32 z, short rot_x, short rot_y, short rot_z, s8 block_x, s8 block_z, s16 mvactor_list_no, mActor_name_t actor_name, s16 arg, s8 npc_idx, int data_bank);
 extern void Setpos_HiliteReflect_init(xyz_t* wpos, GAME_PLAY* play);

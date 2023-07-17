@@ -46,6 +46,11 @@ typedef struct rgba_t { //can be put in other place
     u8 r, g, b, a;
 } rgba_t;
 
+typedef struct {
+    xyz_t position;
+    s_xyz angle;
+} PositionAngle;
+
 extern void mem_copy(u8* dst, u8* src, size_t size);
 extern void mem_clear(u8* dst, size_t size, u8 val);
 extern int mem_cmp(u8* p1, u8* p2, size_t size);
