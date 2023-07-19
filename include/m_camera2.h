@@ -324,6 +324,9 @@ typedef struct camera_s {
   xyz_t unused[2]; // potentially unused, idk if it's even xyz_t
 } Camera2;
 
+
+xyz_t* Camera2_getMicPos_p(GAME_PLAY*);
+
 #ifdef __cplusplus
 }
 #endif

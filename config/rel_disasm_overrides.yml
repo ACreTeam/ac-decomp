@@ -5,3 +5,4 @@ symbol_aligns:
     0x81295C80 : 0x20 # .bss m_handbill.o
     0x8125a7c0 : 0x20 # construct_skip
     0x81361820 : 0x20 # S_back_title_timer
+    0x806D4D40: 32 # align fFTR_myhome_off_pal_table to 32 bytes

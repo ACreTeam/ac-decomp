@@ -286,6 +286,11 @@ save_menu.c:
 m_prenmi.c:
     .text: [0x8062D8FC, 0x8062DC04]
     .rodata: [0x8064D318, 0x8064D340]
+audio.c:
+    .text: [0x8062DC04, 0x8062E96C]
+    .rodata: [0x8064D340, 0x8064D360]
+    .data: [0x806D4CB0,0x806D4D40]
+    .bss: [0x8148DA78,0x8148DA7C]
 sys_dynamic.c:
     .bss: [0x813413F8, 0x81361820]
 # ac_aprilfool_control/aPC_actor_dt.c: common_data is pure bs, 
