@@ -27,6 +27,7 @@ enum {
 
 extern void mSDI_StartInitAfter(GAME* game, int renewal_reserve_flag, int malloc_flag);
 extern int mSDI_StartInitBefore(GAME* game, int player_no, int init_mode, int malloc_flag);
+extern int mSDI_StartDataInit(GAME* game, int player_no, int init_mode);
 
 #ifdef __cplusplus
 }

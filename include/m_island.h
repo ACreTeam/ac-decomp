@@ -44,6 +44,7 @@ typedef struct island_s {
 } Island_c;
 
 extern void mISL_ClearKeepIsland();
+extern void mISL_init(Island_c* island);
 
 #ifdef __cplusplus
 }

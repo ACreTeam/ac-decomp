@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_actor_type.h"
 #include "libforest/gbi_extensions.h"
+#include "game_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -88,6 +89,9 @@ typedef struct field_info_s {
 
 extern u8* g_block_type_p;
 extern int* g_block_kind_p;
+
+extern void mFM_DecideBgTexIdx(u8* bg_tex_idx);
+extern void mFM_InitFgCombiSaveData(GAME* game);
 
 #ifdef __cplusplus
 }

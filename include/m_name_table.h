@@ -331,6 +331,11 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define FTR_PAPA_BEAR_NORTH 0x10EA
 #define FTR_PAPA_BEAR_WEST 0x10EB
 
+#define FTR_BIRTHDAY_CAKE 0x11FC
+#define FTR_BIRTHDAY_CAKE_EAST 0x11FD
+#define FTR_BIRTHDAY_CAKE_NORTH 0x11FE
+#define FTR_BIRTHDAY_CAKE_WEST 0x11FF
+
 #define FTR_DRACAENA 0x13B0
 #define FTR_DRACAENA_EAST 0x13B1
 #define FTR_DRACAENA_NORTH 0x13B2
@@ -367,11 +372,6 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define FTR_UMBRELLA00_SOUTH 0x1D08
 
 #define FTR_UMBRELLA31_WEST 0x1D87
-
-#define FTR_BIRTHDAY_CAKE 0x11FC
-#define FTR_BIRTHDAY_CAKE_EAST 0x11FD
-#define FTR_BIRTHDAY_CAKE_NORTH 0x11FE
-#define FTR_BIRTHDAY_CAKE_WEST 0x11FF
 
 #define FTR_TAPEDECK 0x1E58
 
@@ -884,7 +884,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define FTR_ORANGEBOX 0x30F8
 
-#define FTR_COLLEGERULE_SOUTH 0x30FC
+#define FTR_COLLEGERULE 0x30FC
 
 #define FTR_CALLIGRAPHY_PAD_WEST 0x313B
 

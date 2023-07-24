@@ -25,7 +25,7 @@ enum {
   mTRC_ACTION_NUM
 };
 
-extern void mTRC_init();
+extern void mTRC_init(GAME* game);
 extern void mTRC_move(GAME_PLAY* play);
 
 #ifdef __cplusplus

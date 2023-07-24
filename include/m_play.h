@@ -11,6 +11,7 @@
 #include "m_lights.h"
 #include "m_pause.h"
 #include "m_field_info.h"
+#include "m_event.h"
 #include "m_fbdemo_wipe.h"
 #include "m_collision_obj.h"
 #include "m_play_h.h"
@@ -53,7 +54,7 @@ struct game_play_s {
   /* 0x20A0 */ s16* ctrl_actor_data;
   /* 0x20A4 */ s16* obj_bank_data;
   /* 0x20A8 */ int _20A8;
-  /* 0x20AC */ u8 _20AC[0x20D0 - 0x20AC];
+  /* 0x20AC */ Event_c event;
   /* 0x20D0 */ u8 fb_fade_type;
   /* 0x20D1 */ u8 fb_wipe_type;
   /* 0x20D2 */ u8 fb_mode;

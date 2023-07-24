@@ -1047,7 +1047,7 @@ extern int mMpswd_check_present_user(mActor_name_t item) {
       }
       else if ( // TODO: furniture index values need to be declared in some header file as defines
         (mRmTp_FtrItemNo2FtrIdx(item) >= 0x3FC && mRmTp_FtrItemNo2FtrIdx(item) <= 0x403) || // balloons
-        (item >= FTR_COLLEGERULE_SOUTH && item <= FTR_CALLIGRAPHY_PAD_WEST) || // diaries
+        (item >= FTR_COLLEGERULE && item <= FTR_CALLIGRAPHY_PAD_WEST) || // diaries
         (mRmTp_FtrItemNo2FtrIdx(item) >= 0x453 && mRmTp_FtrItemNo2FtrIdx(item) <= 0x45A) || // fans
         (mRmTp_FtrItemNo2FtrIdx(item) >= 0x45B && mRmTp_FtrItemNo2FtrIdx(item) <= 0x462) || // pinwheels
         (mRmTp_FtrItemNo2FtrIdx(item) >= 0x44F && mRmTp_FtrItemNo2FtrIdx(item) <= 0x452) || // golden tools

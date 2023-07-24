@@ -113,6 +113,12 @@ typedef struct quest_errand_s {
   /* 0x2C */ mQst_errand_info_u info; /* errand type-specific data */
 } mQst_errand_c;
 
+/* 'Not Saved' Quest */
+typedef struct not_saved_quest_s {
+  int work;
+  u8 h;
+} mQst_not_saved_c;
+
 extern void mQst_PrintQuestInfo(gfxprint_t* gfxprint);
 extern void mQst_ClearGrabItemInfo();
 

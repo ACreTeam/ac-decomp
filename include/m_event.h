@@ -3,6 +3,8 @@
 
 #include "types.h"
 #include "libu64/gfxprint.h"
+#include "m_personal_id.h"
+#include "m_private.h"
 #include "m_time.h"
 
 #ifdef __cplusplus
@@ -140,6 +142,95 @@ typedef struct ghost_common_s {
   u8 _0C[0x2C - 0x0C];
 } mEv_gst_common_c;
 
+#define mEv_DESGINER_NUM 3
+
+typedef struct kabu_peddler_event_s {
+  PersonalID_c spoken_pids[TOTAL_PLAYER_NUM];
+} mEv_kabu_peddler_c;
+
+typedef struct dozaemon_event_s {
+  u32 flags;
+} mEv_dozaemon_c;
+
+typedef union {
+  mEv_kabu_peddler_c kabu_peddler;
+  mEv_dozaemon_c dozaemon;
+} mEv_weekly_u;
+
+typedef struct bargin_event_s {
+  lbRTC_time_c start_time;
+  lbRTC_time_c end_time;
+  mActor_name_t items[5];
+  int kind;
+} mEv_bargin_c;
+
+typedef struct designer_event_s {
+  PersonalID_c pids[mEv_DESGINER_NUM];
+  int used;
+  mActor_name_t gifted_cloths[mEv_DESGINER_NUM];
+} mEv_designer_c;
+
+typedef struct broker_event_s {
+  PersonalID_c pid[2];
+  lbRTC_time_c end_time;
+  int used;
+  mActor_name_t sold_items[2];
+  mActor_name_t items[3];
+} mEv_broker_c;
+
+typedef struct artist_event_s {
+  PersonalID_c pids[2];
+  int used;
+  mActor_name_t walls[2];
+} mEv_artist_c;
+
+typedef struct arabian_event_s {
+  int used;
+  mActor_name_t carpet;
+} mEv_arabian_c;
+
+typedef struct gypsy_event_s {
+  int _00;
+  int block_z;
+  int block_x;
+  int ut_z;
+  int ut_x;
+} mEv_gypsy_c;
+
+typedef union {
+  mEv_bargin_c bargin;
+  mEv_designer_c designer;
+  mEv_broker_c broker;
+  mEv_artist_c artist;
+  mEv_arabian_c arabian;
+  mEv_gypsy_c gypsy;
+} mEv_special_u;
+
+typedef struct special_event_s {
+  lbRTC_time_c scheduled;
+  u32 type;
+  mEv_special_u;
+} mEv_special_c;
+
+typedef struct save_event_data_s {
+  mEv_special_c special;
+  mEv_weekly_u weekly;
+  u32 flags;
+} mEv_event_save_c;
+
+typedef struct event_s {
+  u8 day;
+  u8 hour;
+  u8 _02;
+  u8 state;
+  u8 month;
+  u8 year;
+  s16 changed_num;
+  int block_z;
+  int block_x;
+  int unused[5];
+} Event_c;
+
 extern int mEv_CheckFirstJob();
 extern int mEv_CheckFirstIntro();
 extern int mEv_CheckArbeit();
@@ -148,9 +239,13 @@ extern int mEv_check_status(int event, s16 status);
 extern s8* mEv_get_common_area(int type, s8 id);
 extern int mEv_ArbeitPlayer(u32 player_no);
 extern u16 mEv_get_special_event_type();
+mEv_ClearEventSaveInfo(mEv_event_save_c* event_save_data);
 
 extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
 extern void mEv_ClearEventInfo();
+
+extern void mEv_init(Event_c* event);
+extern void mEv_2nd_init(Event_c* event);
 
 extern int mEv_CheckTitleDemo();
 extern void mEv_SetTitleDemo(int titledemo_no);
