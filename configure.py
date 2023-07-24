@@ -82,8 +82,6 @@ n.variable("elf2dol", c.ELF2DOL)
 n.variable("elf2rel", c.ELF2REL)
 n.variable("codewarrior", c.CODEWARRIOR)
 n.variable("cc", c.CC)
-n.variable("franklite", c.FRANKLITE)
-n.variable("frank", c.FRANK)
 n.variable("occ", c.OCC)
 n.variable("align16", c.ALIGN16)
 n.variable("ld", c.LD)
@@ -210,24 +208,6 @@ n.rule(
     "cc",
     command = mwcc_cmd,
     description = "CC $in",
-    deps = "gcc",
-    depfile = "$out.d"
-)
-
-n.rule(
-    "franklite",
-    command = f"{mwcc_cmd} && $python $franklite $basefile $basefile",
-    description = "FRANKLITE $out",
-    deps = "gcc",
-    depfile = "$basefile.d"
-)
-
-n.rule(
-    "frank",
-    command = f"{mwcc_cmd} " +
-        f"&& {c.PROFILE} $cflags -c $in -o $out.profile " +
-        f"&& $python $frank $out $out.profile $out ",
-    description = "FRANK $out",
     deps = "gcc",
     depfile = "$out.d"
 )
@@ -626,35 +606,27 @@ class CSource(Source):
         if path.startswith("src/dolphin/"):
             self.cflags = c.SDK_FLAGS
             self.cc = c.OCC
-            self.frank = True
         elif path.startswith("src/JSystem/"):
             self.cflags = c.JSYSTEM_CFLAGS
             self.cc = c.CC
-            self.frank = False
         elif path.startswith("src/GBA2/"):
             self.cflags = c.DOL_CFLAGS_SDATA0_CFLAGS
             self.cc = c.CC
-            self.frank = False
         elif path.startswith("src/bootdata/") or path == "src/boot.c" or path == "src/initial_menu.c":
             self.cflags = c.DOL_BOOT_CFLAGS
             self.cc = c.CC
-            self.frank = False
         elif path == "src/dvderr.c":
             self.cflags = c.DOL_DVDERR_CFLAGS
             self.cc = c.CC
-            self.frank = False
         elif path.startswith("src/jaudio_NES"):
             self.cc = c.CC
             self.cflags = c.DOL_CPPFLAGS
-            self.frank = False
         elif path.startswith("src/TRK") and not path.startswith("src/TRK/init"): 
             self.cc = c.CC
             self.cflags = c.DOL_TRK_CFLAGS
-            self.frank = False
         else:
             self.cflags = ctx.cflags
             self.cc = c.CC
-            self.frank = False
         self.iconv_path = f"$builddir/iconv/{path}"
 
  # Find generated includes
@@ -671,42 +643,17 @@ class CSource(Source):
             inputs=self.src_path
         )
 
-        #n.build(
-        #    self.o_path,
-        #    rule = "cc",
-        #    inputs = self.iconv_path,
-        #    implicit = [inc.path for inc in self.gen_includes],
-        #    variables = {
-        #        "cc" : self.cc,
-        #        "cflags" : self.cflags + ' ' + c.PREPROCESS_CFLAGS
-        #    }
-        #)
-        #return;
-    
-        if self.frank == True:
-            #print(f"python3 franklite.py {self.o_path} {self.o_path}")
-            n.build(
-                self.o_path,
-                rule = "frank",
-                inputs = self.iconv_path,
-                implicit = [inc.path for inc in self.gen_includes],
-                variables = {
-                    "cc" : self.cc,
-                    "cflags" : self.cflags,
-                    #"basefile" : self.o_path
-                }
-            )
-        else:
-            n.build(
-                self.o_path,
-                rule = "cc",
-                inputs = self.iconv_path,
-                implicit = [inc.path for inc in self.gen_includes],
-                variables = {
-                    "cc" : self.cc,
-                    "cflags" : self.cflags
-                }
-            )
+        n.build(
+            self.o_path,
+            rule = "cc",
+            inputs = self.iconv_path,
+            implicit = [inc.path for inc in self.gen_includes],
+            variables = {
+                "cc" : self.cc,
+                "cflags" : self.cflags
+            }
+        )
+
         # Optional manual debug target
         n.build(
             self.s_path,
