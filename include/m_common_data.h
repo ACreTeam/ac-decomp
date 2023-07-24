@@ -24,7 +24,10 @@
 #include "m_field_assessment.h"
 #include "m_mushroom.h"
 #include "m_clip.h"
+#include "m_event.h"
 #include "m_scene.h"
+#include "m_npc_walk.h"
+#include "m_mask_cat.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -78,7 +81,8 @@ typedef struct Save_s {
   /* 0x020330 */ AnmPersonalID_c last_removed_animal_id; /* ID of last villager who left town */
   /* 0x020340 */ Shop_c shop; /* Nook's shop */
   /* 0x020480 */ Kabu_price_c kabu_price_schedule; /* Stalk Market info */
-  /* 0x020498 */ u8 _tmp3[0x1F0]; /* saved events go here, but have a lot of structs in a union so holding off */
+  /* 0x020498 */ mEv_event_save_c event_save_data;
+  /* 0x020554 */ u8 _20554[0x20688 - 0x20554]; /* active event data? */
   /* 0x020688 */ mActor_name_t fruit; /* town fruit type */
   /* 0x02068A */ u8 house_arrangement; /* 2 bits for each player for the # of house they own */
   /* 0x02068B */ u8 num_statues; /* number of statues built for players who have paid off their debts */
@@ -119,7 +123,8 @@ typedef struct Save_s {
   /* 0x022500 */ u8 _tmp7[0x22528 - 0x22500];
   /* 0x022528 */ OSTime time_delta; /* time delta against GC RTC */
   /* 0x022540 */ Island_c island; /* island data */
-  /* 0x023E40 */ u8 _tmp9[0x320];
+  /* 0x023E40 */ u8 _23E40[0x23F20 - 0x23E40];
+  /* 0x023F20 */ MaskCat_c mask_cat;
   /* 0x024160 */ Anmret_c return_animal; /* information about villager which moved back in to your town after moving to someone else's town */
   /* 0x02416C */ u8 _tmp10[0x24174 - 0x2416C];
   /* 0x024174 */ u8 insect_term; /* current insect term idx */
@@ -127,9 +132,12 @@ typedef struct Save_s {
   /* 0x024176 */ u8 gyoei_term; /* current fish term idx */
   /* 0x024177 */ u8 gyoei_term_transition_offset; /* days offset from end of term to begin transition */
   /* 0x024178 */ mFAs_GoodField_c good_field; /* field assessment last info */
-  /* 0x024184 */ u8 _tmp11[0x241A0 - 0x24184];
+  /* 0x024184 */ u8 bg_tex_idx; /* Grass type */
+  /* 0x024185 */ u8 _24185[0x2418A - 0x24185];
+  /* 0x02418A */ u8 town_day;
+  /* 0x02418B */ u8 _2418B[0x241A0 - 0x2418B];
   /* 0x0241A0 */ lbRTC_time_c saved_auto_nwrite_time; /* save data notice time used for fishing tourney results? */
-  /* 0x0241A8 */ u8 _tmp12[0x26000 - 0x241A8];
+  /* 0x0241A8 */ u8 _241A8[0x26000 - 0x241A8];
 } Save_t;
 
 typedef union save_u {
@@ -151,7 +159,8 @@ typedef struct common_data_s {
   /* 0x02613C */ Private_c* now_private;
   /* 0x026140 */ mHm_hs_c* now_home;
   /* 0x026144 */ u8 map_flag;
-  /* 0x026145 */ u8 tmp0[0x2614D - 0x26145];
+  /* 0x026145 */ u8 fish_location;
+  /* 0x026146 */ u8 tmp0[0x2614D - 0x26146];
   /* 0x02614D */ u8 transFadeDuration;
   /* 0x02614E */ u8 transWipeSpeed;
   /* 0x02614F */ u8 wipeType; /* maybe unused? */
@@ -171,9 +180,12 @@ typedef struct common_data_s {
   /* 0x02666C */ s16 weather;
   /* 0x02666E */ s16 weather_intensity;
   /* 0x026670 */ lbRTC_time_c weather_time;
-  /* 0x026678 */ u8 _26678[0x266A4 - 0x26678];
+  /* 0x026678 */ u8 _26678[0x2669C - 0x26678];
+  /* 0x02669C */ mQst_not_saved_c quest;
   /* 0x0266A4 */ int scene_from_title_demo; /* next scene to be loaded when title demo finishes */
-  /* 0x0266A8 */ u8 _266A8[0x2852C - 0x266A8];
+  /* 0x0266A8 */ u8 _266A8[0x267A8 - 0x266A8];
+  /* 0x0267A8 */ mNpc_walk_c npc_walk;
+  /* 0x026838 */ u8 _26838[0x2852C - 0x26838];
   /* 0x02852C */ s16 money_power;
   /* 0x02852E */ s16 goods_power;
   /* 0x028530 */ Door_data_c door_data; /* misc door data */

@@ -109,5 +109,6 @@ extern int mRmTp_GetFurnitureData(mActor_name_t ftr, int ut_x, int ut_z, mRmTp_F
 extern int mRmTp_FurnitureIdx2FurnitureKind(int ftr_idx);
 extern int mRmTp_PleaseDrawLightSwitch();
 extern mActor_name_t mRmTp_Item1ItemNo2FtrItemNo_AtPlayerRoom(mActor_name_t item_no, int flag);
+extern void mRmTp_SetDefaultLightSwitchData(int state);
 
 #endif

@@ -500,7 +500,7 @@ static void mTRC_trainSet(GAME_PLAY* play) {
   }
 }
 
-extern void mTRC_init() {
+extern void mTRC_init(GAME* game) {
   Common_Set(train_start_timer, mTRC_get_depart_time());
   Common_Set(train_coming_flag, 0);
   Common_Set(train_exists_flag, FALSE);

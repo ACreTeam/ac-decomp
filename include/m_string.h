@@ -16,6 +16,10 @@ extern "C" {
 #define mString_DAY_START 0x64E
 #define mString_MONTH_START 0x66D
 #define mString_ARTICLE_START 0x737
+#define mString_HANIWA_MSG0 0x76A
+#define mString_HANIWA_MSG1 0x76B
+#define mString_HANIWA_MSG2 0x76C
+#define mString_HANIWA_MSG3 0x76D
 
 
 extern void mString_aram_init();
