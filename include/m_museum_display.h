@@ -28,14 +28,50 @@ enum {
   mMmd_DISPLAY_NUM
 };
 
+enum {
+  mMmd_DONATOR_NONE,
+  mMmd_DONATOR_PLAYER1,
+  mMmd_DONATOR_PLAYER2,
+  mMmd_DONATOR_PLAYER3,
+  mMmd_DONATOR_PLAYER4,
+  mMmd_DONATOR_DELETED_PLAYER,
+
+  mMmd_DONATOR_NUM
+};
+
+enum {
+  mMmd_CATEGORY_FOSSIL,
+  mMmd_CATEGORY_ART,
+  mMmd_CATEGORY_INSECT,
+  mMmd_CATEGORY_FISH,
+
+  mMmd_CATEGORY_NUM
+};
+
 /* 4 bits per donatable item */
 #define mMmd_BIT_INFO(info, category, index) \
-  (((info).category[(index) / 2] >> (((index) & 1) << 2)) & 0x0F)
+  (((info).category##_bit[(index) >> 1] >> (((index) & 1) << 2)) & 0x0F)
 
 #define mMmd_ART_BIT(info, index) mMmd_BIT_INFO(info, art, index)
 #define mMmd_INSECT_BIT(info, index) mMmd_BIT_INFO(info, insect, index)
 #define mMmd_FISH_BIT(info, index) mMmd_BIT_INFO(info, fish, index)
 #define mMmd_FOSSIL_BIT(info, index) mMmd_BIT_INFO(info, fossil, index)
+
+#define mMmd_BIT_CLR(info, category, index) \
+  ((info).category##_bit[(index) >> 1] &= ~(0b1111 << (((index) & 1) * 4)))
+
+#define mMmd_FOSSIL_CLR(info, index) mMmd_BIT_CLR(info, fossil, index)
+#define mMmd_ART_CLR(info, index) mMmd_BIT_CLR(info, art, index)
+#define mMmd_INSECT_CLR(info, index) mMmd_BIT_CLR(info, insect, index)
+#define mMmd_FISH_CLR(info, index) mMmd_BIT_CLR(info, fish, index)
+
+#define mMmd_BIT_SET(info, category, index, value) \
+  ((info).category##_bit[(index) >> 1] |= (((value) & 0b1111) << (((index) & 1)) * 4))
+
+#define mMmd_FOSSIL_SET(info, index, value) mMmd_BIT_SET(info, fossil, index, value)
+#define mMmd_ART_SET(info, index, value) mMmd_BIT_SET(info, art, index, value)
+#define mMmd_INSECT_SET(info, index, value) mMmd_BIT_SET(info, insect, index, value)
+#define mMmd_FISH_SET(info, index, value) mMmd_BIT_SET(info, fish, index, value)
 
 /* sizeof(mMmd_info_c) == 0x3F */
 typedef struct museum_display_info_s {
@@ -45,8 +81,18 @@ typedef struct museum_display_info_s {
   /* 0x2A */ u8 insect_bit[mMmd_INSECT_BIT_NUM];
 } mMmd_info_c;
 
-extern int mMmd_GetDisplayInfo(mActor_name_t item);
+extern int mMmd_FossilInfo(int fossil_no);
+extern int mMmd_ArtInfo(int art_no);
+extern int mMmd_InsectInfo(int insect_no);
+extern int mMmd_FishInfo(int fish_no);
+extern void mMmd_SetFossil(int fossil_no);
+extern void mMmd_SetArt(int art_no);
+extern void mMmd_SetInsect(int insect_no);
+extern void mMmd_SetFish(int fish_no);
+extern mMmd_GetDisplayInfo(mActor_name_t item);
 extern int mMmd_RequestMuseumDisplay(mActor_name_t item);
+extern void mMmd_MakeMuseumDisplayData();
+extern void mMmd_DeletePresentedByPlayer(u8 player_no);
 extern int mMmd_CountDisplayedFossil();
 extern int mMmd_CountDisplayedArt();
 extern int mMmd_CountDisplayedInsect();
