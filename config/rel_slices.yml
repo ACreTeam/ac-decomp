@@ -90,6 +90,9 @@ m_museum.c:
     .rodata: [0x80642938, 0x80642950]
     .data: [0x8065A280, 0x8065A308]
     .bss: [0x81298A00, 0x81298B40]
+m_museum_display.c:
+    .text: [0x803C74C0, 0x803C8090]
+    .data: [0x8065A308, 0x8065A3F8]
 m_mushroom.c:
     .text: [0x803C8090, 0x803C90A8]
     .rodata: [0x80642950, 0x80642960]

@@ -59,6 +59,15 @@ enum birth_type {
   mRmTp_BIRTH_TYPE_NUM
 };
 
+enum {
+  mRmTp_DIRECT_SOUTH,
+  mRmTp_DIRECT_EAST,
+  mRmTp_DIRECT_NORTH,
+  mRmTp_DIRECT_WEST,
+
+  mRmTp_DIRECT_NUM
+};
+
 typedef struct room_type_place_info_one_s {
   int exists;
   int ut_x;
@@ -72,6 +81,9 @@ typedef struct room_type_place_info_s {
 #define FTR_NUM 1266
 
 #define FTR_GET_ROTATION(f) ((f) & 3)
+#define FTR_IDX_2_NO(f) ((f) >> 2)
+#define FTR_NO_2_IDX(f) ((f) << 2)
+#define FTR_NO_ROT_2_IDX(f, rot) (FTR_NO_2_IDX(f) | ((rot) & 3))
 
 // TEMPORARY. Should be generated with .decl files
 #define ITEM0_NO_START 0x0000
