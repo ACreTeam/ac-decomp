@@ -85,6 +85,11 @@ m_mail_password_check.c:
 m_lib.c:
     .text: [0x803BAB0C, 0x803BB960]
     .rodata: [0x80642640, 0x80642680]
+m_museum.c:
+    .text: [0x803C6228, 0x803C74C0]
+    .rodata: [0x80642938, 0x80642950]
+    .data: [0x8065A280, 0x8065A308]
+    .bss: [0x81298A00, 0x81298B40]
 m_mushroom.c:
     .text: [0x803C8090, 0x803C90A8]
     .rodata: [0x80642950, 0x80642960]

@@ -148,7 +148,7 @@ extern void mPr_ClearPrivateInfo(Private_c* private_info) {
   mNpc_ClearRemail(&private_info->remail);
   mPr_ClearAnimalMemory(&private_info->animal_memory);
   mPr_ClearMapInfo(private_info->maps, mPr_FOREIGN_MAP_COUNT);
-  mMsm_ClearRecord(&private_info->museum_mail_info);
+  mMsm_ClearRecord(&private_info->museum_record);
   private_info->state_flags = 1;
 }
 
@@ -735,7 +735,7 @@ extern s16 mPr_GetGoodsPower() {
 extern int mPr_CheckMuseumAddress(Private_c* priv) {
   int res = FALSE;
 
-  if (priv != NULL && priv->museum_mail_info.contacted) {
+  if (priv != NULL && priv->museum_record.contacted) {
     res = TRUE;
   }
 
@@ -745,7 +745,7 @@ extern int mPr_CheckMuseumAddress(Private_c* priv) {
 extern int mPr_CheckMuseumInfoMail(Private_c* priv) {
   int res = FALSE;
 
-  if (priv != NULL && priv->museum_mail_info.send_info_mail) {
+  if (priv != NULL && priv->museum_record.send_info_mail) {
     res = TRUE;
   }
 
@@ -790,7 +790,7 @@ extern int mPr_LoadPak_and_SetPrivateInfo2(Private_c* unused_private, u8 player_
         house = Save_GetPointer(homes[mHS_get_arrange_idx(i)]);
         loan = priv->inventory.loan;
 
-        g_foreigner_private.museum_mail_info.contacted = priv->museum_mail_info.contacted;
+        g_foreigner_private.museum_record.contacted = priv->museum_record.contacted;
         mPr_CopyPrivateInfo(priv, &g_foreigner_private);
 
         if (mHm_CheckKeepHouseSize(i) == FALSE || house->size_info.next_size == mHm_HOMESIZE_STATUE) {

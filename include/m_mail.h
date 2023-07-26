@@ -19,6 +19,8 @@ extern "C" {
 
 #define mMl_POSTOFFICE_GIFT_NUM 4
 
+#define mMl_MUSEUM_INFO_MAIL_NO 189 // TODO: enum?
+
 enum {
   mMl_NAME_TYPE_PLAYER,
   mMl_NAME_TYPE_NPC,
@@ -38,6 +40,15 @@ enum {
 };
 
 enum {
+  mMl_DATA,
+  mMl_DATA2,
+
+  mMl_DATA_NUM
+};
+
+enum {
+  mMl_TYPE_MUSEUM = 0,
+  mMl_TYPE_1 = 1,
   mMl_TYPE_SHOP_SALE_LEAFLET = 2,
   mMl_TYPE_BROKER_SALE_LEAFLET = 3
 };
