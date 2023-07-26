@@ -142,6 +142,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define GRASS_B (GRASS_A + 1)
 #define GRASS_C (GRASS_B + 1)
 
+#define BURIED_PITFALL0 0x002A
+
 #define TREE_BEES 0x005E
 #define TREE_FTR (TREE_BEES + 1)
 #define TREE_LIGHTS (TREE_FTR + 1)
@@ -374,6 +376,10 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define FTR_UMBRELLA31_WEST 0x1D87
 
 #define FTR_TAPEDECK 0x1E58
+
+#define FTR_DINO_TRICERA_SKULL 0x1EEC
+
+#define FTR_DINO_TRILOBITE_WEST 0x1F4F
 
 #define FTR_PIGGY_BANK 0x1FAC
 
@@ -881,6 +887,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define FTR1_START 0x3000
 
 #define FTR_POST_MODEL 0x3020
+
+#define FTR_MUSEUM_MODEL 0x3030
 
 #define FTR_ORANGEBOX 0x30F8
 

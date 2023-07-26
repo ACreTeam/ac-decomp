@@ -25,6 +25,8 @@ extern "C" {
 #define mPr_FLAG_POSTOFFICE_GIFT1 (1 << 3) // 10,000,000 Bells
 #define mPr_FLAG_POSTOFFICE_GIFT2 (1 << 4) // 100,000,000 Bells
 #define mPr_FLAG_POSTOFFICE_GIFT3 (1 << 5) // 999,999,999 Bells
+#define mPr_FLAG_MUSEUM_COMP_HANDBILL_SCHEDULED (1 << 6) // player is scheduled to receive completion letter & reward
+#define mPr_FLAG_MUSEUM_COMP_HANDBILL_RECEIVED (1 << 7) // player has received the completion letter & reward
 
 #define mPr_MONEY_POWER_MIN -80
 
@@ -178,7 +180,7 @@ struct private_s {
   /* 0x0014 */ s8 gender; /* gender/sex of player */
   /* 0x0015 */ s8 face; /* face type of player */
   /* 0x0016 */ u8 reset_count; /* times player has reset */
-  /* 0x0017 */ mMsm_mail_info_c museum_mail_info; /* museum items & remail info */
+  /* 0x0017 */ mMsm_record_c museum_record; /* museum items & remail info */
 
   /* must be a struct due to alignment of first member */
   /* 0x0068 */ struct {

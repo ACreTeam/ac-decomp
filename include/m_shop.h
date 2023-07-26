@@ -129,6 +129,7 @@ extern void mSP_RandomUmbSelect(mActor_name_t* item_buf, int item_buf_count);
 extern int mSP_GetShopLevel();
 extern u32 mSP_ItemNo2ItemPrice(mActor_name_t item_no);
 extern int mSP_SearchItemCategoryPriority(mActor_name_t item_no, int category, int priority, GAME* unused); // not sure if it's actually a GAME*
+extern mActor_name_t mSP_RandomOneFossilSelect(int multi_fossil);
 
 extern void mItemDebug_ItemDebugMain();
 extern void mItemDebug_ItemDebugDraw(gfxprint_t* gfxprint);

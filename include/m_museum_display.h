@@ -2,6 +2,7 @@
 #define M_MUSEUM_DISPLAY_H
 
 #include "types.h"
+#include "m_actor_type.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,6 +14,19 @@ extern "C" {
 #define mMmd_ART_BIT_NUM 8
 #define mMmd_FISH_BIT_NUM 21
 #define mMmd_INSECT_BIT_NUM 21
+
+#define mMmd_FOSSIL_NUM 25
+#define mMmd_ART_NUM 15
+#define mMmd_INSECT_NUM 40
+#define mMmd_FISH_NUM 40
+
+enum {
+  mMmd_DISPLAY_CANNOT_DONATE, /* Item cannot be donated */
+  mMmd_DISPLAY_CAN_DONATE, /* Item can be donated */
+  mMmd_DISPLAY_ALREADY_DONATED, /* Item has already been donated */
+
+  mMmd_DISPLAY_NUM
+};
 
 /* 4 bits per donatable item */
 #define mMmd_BIT_INFO(info, category, index) \
@@ -30,6 +44,13 @@ typedef struct museum_display_info_s {
   /* 0x15 */ u8 fish_bit[mMmd_FISH_BIT_NUM];
   /* 0x2A */ u8 insect_bit[mMmd_INSECT_BIT_NUM];
 } mMmd_info_c;
+
+extern int mMmd_GetDisplayInfo(mActor_name_t item);
+extern int mMmd_RequestMuseumDisplay(mActor_name_t item);
+extern int mMmd_CountDisplayedFossil();
+extern int mMmd_CountDisplayedArt();
+extern int mMmd_CountDisplayedInsect();
+extern int mMmd_CountDisplayedFish();
 
 #ifdef __cplusplus
 }
