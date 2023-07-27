@@ -122,7 +122,12 @@ static u8 str_a_table[] = {
   CHAR_v, CHAR_e,
   CHAR_v, CHAR_o,
   CHAR_w, CHAR_a,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_b_table[] = {
@@ -175,7 +180,12 @@ static u8 str_b_table[] = {
   CHAR_u, CHAR_t,
   CHAR_u, CHAR_y,
   CHAR_y, CHAR_SPACE,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_c_table[] = {
@@ -223,6 +233,10 @@ static u8 str_c_table[] = {
   CHAR_u, CHAR_r,
   CHAR_u, CHAR_s,
   CHAR_u, CHAR_t,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_d_table[] = {
@@ -275,7 +289,12 @@ static u8 str_d_table[] = {
   CHAR_u, CHAR_r,
   CHAR_u, CHAR_s,
   CHAR_u, CHAR_t,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_e_table[] = {
@@ -307,6 +326,10 @@ static u8 str_e_table[] = {
   CHAR_x, CHAR_e,
   CHAR_x, CHAR_p,
   CHAR_y, CHAR_e,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_f_table[] = {
@@ -349,7 +372,12 @@ static u8 str_f_table[] = {
   CHAR_u, CHAR_l,
   CHAR_u, CHAR_n,
   CHAR_u, CHAR_t,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_g_table[] = {
@@ -379,6 +407,10 @@ static u8 str_g_table[] = {
   CHAR_u, CHAR_e,
   CHAR_u, CHAR_i,
   CHAR_u, CHAR_n,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_h_table[] = {
@@ -418,6 +450,10 @@ static u8 str_h_table[] = {
   CHAR_u, CHAR_n,
   CHAR_u, CHAR_r,
   CHAR_u, CHAR_s,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_i_table[] = {
@@ -440,7 +476,12 @@ static u8 str_i_table[] = {
   CHAR_s, CHAR_l,
   CHAR_t, CHAR_SPACE,
   CHAR_t, CHAR_s,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_j_table[] = {
@@ -453,7 +494,12 @@ static u8 str_j_table[] = {
   CHAR_u, CHAR_m,
   CHAR_u, CHAR_n,
   CHAR_u, CHAR_s,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_k_table[] = {
@@ -467,6 +513,10 @@ static u8 str_k_table[] = {
   CHAR_n, CHAR_e,
   CHAR_n, CHAR_i,
   CHAR_n, CHAR_o,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_l_table[] = {
@@ -510,6 +560,10 @@ static u8 str_l_table[] = {
   CHAR_o, CHAR_w,
   CHAR_u, CHAR_n,
   CHAR_y, CHAR_i,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_m_table[] = {
@@ -551,6 +605,10 @@ static u8 str_m_table[] = {
   CHAR_u, CHAR_s,
   CHAR_y, CHAR_SPACE,
   CHAR_y, CHAR_s,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_n_table[] = {
@@ -578,6 +636,10 @@ static u8 str_n_table[] = {
   CHAR_o, CHAR_v,
   CHAR_o, CHAR_w,
   CHAR_u, CHAR_m,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_o_table[] = {
@@ -606,7 +668,12 @@ static u8 str_o_table[] = {
   CHAR_u, CHAR_t,
   CHAR_v, CHAR_e,
   CHAR_w, CHAR_n,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_p_table[] = {
@@ -648,13 +715,22 @@ static u8 str_p_table[] = {
   CHAR_u, CHAR_r,
   CHAR_u, CHAR_s,
   CHAR_u, CHAR_t,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_q_table[] = {
   CHAR_u, CHAR_a,
   CHAR_u, CHAR_e,
   CHAR_u, CHAR_i,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_r_table[] = {
@@ -692,6 +768,10 @@ static u8 str_r_table[] = {
   CHAR_u, CHAR_l,
   CHAR_u, CHAR_n,
   CHAR_u, CHAR_s,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_s_table[] = {
@@ -782,7 +862,12 @@ static u8 str_s_table[] = {
   CHAR_w, CHAR_i,
   CHAR_w, CHAR_u,
   CHAR_y, CHAR_s,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_t_table[] = {
@@ -837,7 +922,12 @@ static u8 str_t_table[] = {
   CHAR_w, CHAR_o,
   CHAR_y, CHAR_i,
   CHAR_y, CHAR_p,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_u_table[] = {
@@ -852,7 +942,12 @@ static u8 str_u_table[] = {
   CHAR_s, CHAR_SPACE,
   CHAR_s, CHAR_e,
   CHAR_s, CHAR_u,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_v_table[] = {
@@ -866,6 +961,10 @@ static u8 str_v_table[] = {
   CHAR_o, CHAR_i,
   CHAR_o, CHAR_l,
   CHAR_o, CHAR_t,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_w_table[] = {
@@ -909,6 +1008,10 @@ static u8 str_w_table[] = {
   CHAR_o, CHAR_u,
   CHAR_r, CHAR_i,
   CHAR_r, CHAR_o,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_x_table[] = {
@@ -923,11 +1026,20 @@ static u8 str_y_table[] = {
   CHAR_e, CHAR_s,
   CHAR_e, CHAR_t,
   CHAR_o, CHAR_u,
+
+  #ifndef BUGFIXES
   0, 0
+  #else
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static u8 str_z_table[] = {
   CHAR_e, CHAR_r,
+
+  #ifdef BUGFIXES
+  CHAR_CONTROL_CODE, 0
+  #endif
 };
 
 static mMck_cmp_str_table_c cmp_str_table_c[26] = {
@@ -969,6 +1081,13 @@ static int mMck_cmp_key(u8* str) {
     u8* str_table = cmp_str_table_c[i].str_table;
 
     if (char0 == cmp_str_table_c[i].trigger_lower || char0 == cmp_str_table_c[i].trigger_upper) {
+
+      /* 
+      BUG: in the NTSC-U (US version) of AC, the string tables are missing the control code character (0x7F).
+      The game will continue processing data as syllable values until it either reaches an unrelated 0x7F byte,
+      or it finds two consecutive bytes which satisfies the current syllable pair.
+      */
+     
       for (str_table; str_table[0] != CHAR_CONTROL_CODE; str_table = mMck_next_key(str_table)) {
         if (char1 == str_table[0] && char2 == str_table[1]) {
           return TRUE; /* Valid 3-letter (syllable?) match found */
