@@ -33,7 +33,7 @@ extern void sAdo_PlayerStatusLevel(f32 speed, int p);
 /* Not sure about the last param name */
 extern void sAdo_VoiceSe(u8 num, u8 num2, u8 num3, s16 character_idx, u8 scale, u8 mode);
 
-extern void sAdo_Inst(s8 num, void* p);
+extern void sAdo_Inst(u16 num, u8* p);
 extern void sAdo_MessageStatus(u8 status);
 extern void sAdo_MessageSpeed(u8 speed);
 extern u8 sAdo_MessageSpeedGet();

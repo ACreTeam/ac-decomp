@@ -104,6 +104,9 @@ m_needlework.c:
     .text: [0x803C98EC, 0x803C9F7C]
     .data: [0x8065ABC0, 0x8065AE30]
     .bss: [0x81298F60, 0x81299180]
+m_npc_schedule.c:
+    .text: [0x803D7570, 0x803D7890]
+    .data: [0x8065B638, 0x8065B7F0]
 m_olib.c:
     .text: [0x803D88E8, 0x803D8A34]
     .rodata: [0x80642A00, 0x80642A10]

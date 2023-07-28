@@ -28,10 +28,13 @@
 #include "m_scene.h"
 #include "m_npc_walk.h"
 #include "m_mask_cat.h"
+#include "m_npc_schedule_h.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define SCHEDULE_NUM ANIMAL_NUM_MAX + mISL_ISLANDER_NUM
 
 typedef struct time_s {
   u32 season;
@@ -183,7 +186,7 @@ typedef struct common_data_s {
   /* 0x026678 */ u8 _26678[0x2669C - 0x26678];
   /* 0x02669C */ mQst_not_saved_c quest;
   /* 0x0266A4 */ int scene_from_title_demo; /* next scene to be loaded when title demo finishes */
-  /* 0x0266A8 */ u8 _266A8[0x267A8 - 0x266A8];
+  /* 0x0266A8 */ mNPS_schedule_c npc_schedule[SCHEDULE_NUM];
   /* 0x0267A8 */ mNpc_walk_c npc_walk;
   /* 0x026838 */ u8 _26838[0x2852C - 0x26838];
   /* 0x02852C */ s16 money_power;

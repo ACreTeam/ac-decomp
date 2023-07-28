@@ -7,7 +7,7 @@
  extern "C"{
 #endif
 
-extern void Na_Inst(s8, void*);
+extern void Na_Inst(u16, u8*);
 extern void Na_FurnitureInst(int,s8,s32,u16,f32);
 extern int Na_InstCountGet();
 

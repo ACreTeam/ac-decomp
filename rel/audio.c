@@ -106,8 +106,7 @@ extern void sAdo_VoiceSe(u8 num, u8 num2, u8 num3, s16 character_idx, u8 scale, 
     Na_VoiceSe(num,num2,num3,character_idx, scale, mode);
 }
 
-extern void sAdo_Inst(s8 num, void* p){
-
+extern void sAdo_Inst(u16 num, u8* p){
     Na_Inst(num,p);
 }
 
