@@ -9,6 +9,17 @@
 extern "C" {
 #endif
 
+enum {
+  mNpc_LOOKS_GIRL,
+  mNpc_LOOKS_KO_GIRL,
+  mNpc_LOOKS_BOY,
+  mNpc_LOOKS_SPORT_MAN,
+  mNpc_LOOKS_GRIM_MAN,
+  mNpc_LOOKS_NANIWA_LADY,
+
+  mNpc_LOOKS_NUM
+};
+
 /* sizeof(AnmPersonalID_c) == 0xE */
 typedef struct animal_personal_id_s {
   /* 0x00 */ mActor_name_t npc_id; /* id */

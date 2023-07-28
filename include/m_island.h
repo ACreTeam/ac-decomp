@@ -13,6 +13,8 @@
 extern "C" {
 #endif
 
+#define mISL_ISLANDER_NUM 1
+
 #define mISL_ISLAND_NAME_LEN 8
 
 #define mISL_FG_BLOCK_X_NUM 2
