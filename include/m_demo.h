@@ -74,6 +74,7 @@ extern void mDemo_Set_talk_turn(u8 value);
 extern void mDemo_Set_talk_display_name(u8 value);
 extern void mDemo_Set_camera(u8 value);
 extern void mDemo_Set_talk_window_color(rgba_t* color);
+extern int mDemo_CheckDemo();
 
 #ifdef __cplusplus
 }
