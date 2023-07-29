@@ -21,7 +21,7 @@ typedef struct goal_data_s {
 typedef struct goal_data_table_s {
   mNpcW_GoalData_c* data_p;
   int count;
-} mNpc_GoalDataTable_c;
+} mNpcW_GoalDataTable_c;
 
 enum {
   mNpcW_GOAL_SHRINE,    /* Shrine/Wishing Well acre */
@@ -32,15 +32,50 @@ enum {
   mNpcW_GOAL_NUM
 };
 
+enum {
+  mNpcW_GOAL_BLOCK_SHRINE,
+  mNpcW_GOAL_BLOCK_HOME,
+
+  mNpcW_GOAL_BLOCK_NUM
+};
+
+/* TODO: figure out remaining enums */
+enum {
+  mNpcW_APPEAR_STATUS_0,
+  mNpcW_APPEAR_STATUS_1,
+
+  mNpcW_APPEAR_STATUS_NUM
+};
+
+enum {
+  mNpcW_APPEAR_WAY_UP,
+  mNpcW_APPEAR_WAY_DOWN,
+  mNpcW_APPEAR_WAY_LEFT,
+  mNpcW_APPEAR_WAY_RIGHT,
+
+  mNpcW_APPEAR_WAY_NUM
+};
+
+/* TODO: figure out remaining enums */
+enum {
+  mNpcW_INFO_STATUS_0,
+  mNpcW_INFO_STATUS_WALKING,
+  mNpcW_INFO_STATUS_2,
+  mNpcW_INFO_STATUS_3,
+  mNpcW_INFO_STATUS_4,
+
+  mNpcW_INFO_STATUS_NUM
+};
+
 typedef struct npc_walk_appear_s {
-  u8 state;
-  u8 target_direction;
+  u8 status;
+  u8 way;
 } mNpcW_appear_c;
 
 typedef struct npc_walk_information_s {
   AnmPersonalID_c id;
   int idx;
-  u8 state;
+  u8 status;
   u8 goal_type;
   u8 goal_block_x;
   u8 goal_block_z;
@@ -53,6 +88,16 @@ typedef struct npc_walk_s {
   u8 used_info_num;
   u8 info_max;
 } mNpc_walk_c;
+
+extern void mNpcW_ClearNpcWalkInfo(mNpcW_info_c* info, int num);
+extern int mNpcW_GetNpcWalkInfoIdx(mNpcW_info_c* info, int num, AnmPersonalID_c* anm_id);
+extern int mNpcW_ChangeNpcWalk(mNpc_walk_c* walk, mNpcW_info_c* info);
+extern void mNpcW_SetGoalBlock(mNpcW_info_c* info);
+extern void mNpcW_InitNpcWalk(mNpc_walk_c* walk);
+extern int mNpcW_GetAppearStatusWay(u8* status, u8* way, Animal_c* animal);
+extern int* mNpcW_GetArriveStayCountP(int idx);
+extern int mNpcW_GetWalkInfoStatusGoalAnimalIdx(int* status, int* goal, int idx);
+extern int mNpcW_GetNearGate(int* target_ut_x, int* target_ut_z, int block_x, int block_z, int ut_x, int ut_z);
 
 #ifdef __cplusplus
 }
