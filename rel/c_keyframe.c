@@ -79,17 +79,17 @@ extern int cKF_FrameControl_stop_proc(cKF_FrameControl_c* fc) {
   f32 out;
 
   if (fc->current_frame == fc->end_frame) {
-    return 1;
+    return cKF_STATE_STOPPED;
   }
   if (cKF_FrameControl_passCheck(fc, fc->end_frame, &out)) {
     fc->current_frame = fc->end_frame;
-    return 1;
+    return cKF_STATE_STOPPED;
   }
   if (cKF_FrameControl_passCheck(fc, fc->start_frame, &out)) {
     fc->current_frame = fc->end_frame;
-    return 1;
+    return cKF_STATE_STOPPED;
   }
-  return 0;
+  return cKF_STATE_NONE;
 }
 
 static int cKF_FrameControl_repeat_proc(cKF_FrameControl_c* fc) {
@@ -97,13 +97,13 @@ static int cKF_FrameControl_repeat_proc(cKF_FrameControl_c* fc) {
 
   if (cKF_FrameControl_passCheck(fc, fc->end_frame, &out)) {
     fc->current_frame = fc->start_frame + out;
-    return 2;
+    return cKF_STATE_CONTINUE;
   }
   if (cKF_FrameControl_passCheck(fc, fc->start_frame, &out)) {
     fc->current_frame = fc->end_frame + out;
-    return 2;
+    return cKF_STATE_CONTINUE;
   }
-  return 0;
+  return cKF_STATE_NONE;
 }
 
 static int cKF_FrameControl_play(cKF_FrameControl_c* fc) {
@@ -116,7 +116,7 @@ static int cKF_FrameControl_play(cKF_FrameControl_c* fc) {
     rec = cKF_FrameControl_repeat_proc(fc);
   }
 
-  if (rec == 0) {
+  if (rec == cKF_STATE_NONE) {
     frame = (fc->start_frame < fc->end_frame) ? fc->speed : -fc->speed;
     fc->current_frame += frame;
   }
@@ -447,7 +447,7 @@ extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
     if (keyframe->morph_counter <= 0.0f) {
       keyframe->morph_counter = 0.0f;
     }
-    ret = 0;
+    ret = cKF_STATE_NONE;
   } else {
     cKF_SkeletonInfo_R_morphJoint(keyframe);
     keyframe->morph_counter += 0.5f;

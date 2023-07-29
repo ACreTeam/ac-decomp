@@ -20,6 +20,15 @@ typedef struct player_actor_s PLAYER_ACTOR;
 #define mPlayer_FORCE_POSITION_ANGLE_ROTY (1 << 5)
 #define mPlayer_FORCE_POSITION_ANGLE_ROTZ (1 << 6)
 
+enum {
+  mPlayer_ADDRESSABLE_TRUE,
+  mPlayer_ADDRESSABLE_FALSE_MOVEMENT,
+  mPlayer_ADDRESSABLE_FALSE_TALKING,
+  mPlayer_ADDRESSABLE_FALSE_USING_TOOL,
+
+  mPlayer_ADDRESSABLE_NUM
+};
+
 /* sizeof(struct player_actor_s) == 0x13A8 */
 struct player_actor_s {
   /* 0x0000 */ ACTOR actor_class;

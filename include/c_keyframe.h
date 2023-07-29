@@ -10,6 +10,14 @@
 extern "C" {
 #endif
 
+enum {
+  cKF_STATE_NONE,
+  cKF_STATE_STOPPED,
+  cKF_STATE_CONTINUE,
+
+  cKF_STATE_NUM
+};
+
 typedef struct joint_s {
   Gfx* model;
   u8 child;

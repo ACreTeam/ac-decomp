@@ -22,6 +22,7 @@ extern int mPlib_request_main_demo_walk_type1(GAME* game, f32 goal_x, f32 goal_z
 extern void mPlib_Set_goal_player_demo_walk(f32 goal_x, f32 goal_z, f32 speed);
 extern void mPlib_Set_able_hand_all_item_in_demo(s8 enable);
 extern void mPlib_change_player_cloth_info_lv2(Private_c* priv, mActor_name_t cloth_name);
+extern int mPlib_Get_address_able_display();
 
 #ifdef __cplusplus
 }
