@@ -210,6 +210,8 @@ extern void mNpc_SendMailtoNpc(Mail_c* mail);
 extern void mNpc_SetNpcinfo(ACTOR* actor, s8 npc_info_idx);
 extern void mNpc_InitNpcAllInfo(int malloc_flag);
 extern void mNpc_SetRemoveAnimalNo(u8* remove_animal_no, Animal_c* animals, int remove_no);
+extern void mNpc_ClearAnimalPersonalID(AnmPersonalID_c* id);
+extern int mNpc_CheckCmpAnimalPersonalID(AnmPersonalID_c* id0, AnmPersonalID_c* id1);
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);

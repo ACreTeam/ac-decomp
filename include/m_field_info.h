@@ -137,7 +137,7 @@ extern int mFI_GetBlockUtNum2FG(mActor_name_t* fg_item, int block_x, int block_z
 extern void mFI_UtNum2CenterWpos(xyz_t* wpos, int ut_x, int ut_z);
 extern u8 mFI_GetBlockXMax();
 extern u8 mFI_GetBlockZMax();
-extern u8 mFI_BkNum2BlockType();
+extern u8 mFI_BkNum2BlockType(int block_x, int block_z);
 extern mFI_sound_source_info_c* mFI_GetSoundSourcePBlockNum(int block_x,int block_z);
 extern int mFI_Wpos2UtNum(int* ut_x, int* ut_z, xyz_t wpos);
 extern void mFI_ClearFieldData();

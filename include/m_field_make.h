@@ -18,8 +18,9 @@ extern "C" {
 #define FG_BLOCK_Z_NUM (BLOCK_Z_NUM - 4) /* 6 */
 #define FG_BLOCK_TOTAL_NUM (FG_BLOCK_X_NUM * FG_BLOCK_Z_NUM)
 
-#define UT_X_NUM 16 /* Spaces per block (acre) in x direction */
-#define UT_Z_NUM 16 /* Spaces per block (acre) in z direction */
+#define UT_BASE_NUM 16
+#define UT_X_NUM UT_BASE_NUM /* Spaces per block (acre) in x direction */
+#define UT_Z_NUM UT_BASE_NUM /* Spaces per block (acre) in z direction */
 #define UT_TOTAL_NUM (UT_X_NUM * UT_Z_NUM)
 
 #define IDX_2_UT_X(idx) ((idx) & (UT_X_NUM - 1))
