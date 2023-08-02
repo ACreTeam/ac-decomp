@@ -193,6 +193,10 @@ lb_reki.c:
     .text: [0x8040752C, 0x80407AE8]
     .rodata: [0x806437A0, 0x806437C0]
     .data: [0x8065ECD8, 0x8065F110]
+#main.c:
+#    .text: [0x80407AE8, 0x80407CF4]
+#    .data: [0x8065F110, 0x8065F138]
+#    .bss: [0x812F4CC0, 0x812F5038]
 #sys_math.c:
 #    .text: [0x80408940, 0x80408A44]
 #    .rodata: [0x806437C0, 0x806437D0]

@@ -47,6 +47,7 @@ enum resource_index {
 
 extern void JW_Init();
 extern void JW_Init2();
+extern void JW_Init3();
 extern void* JW_Alloc(size_t size, int align);
 extern void JW_Free(void* ptr);
 extern s32 JW_Resize(void* ptr, size_t new_size);
@@ -70,6 +71,9 @@ extern void* JC_JFWSystem_getSystemHeap();
 extern void* JC_JFWDisplay_getManager();
 extern void JC_JFWDisplay_startFadeOut(void* manager, int len);
 extern void JC_JFWDisplay_startFadeIn(void* manager, int len);
+
+extern void JC_JKRAramHeap_dump(void* heap);
+extern void* JC_JKRAram_getAramHeap();
 
 extern int JC_JKRHeap_dump(void* heap);
 extern s32 JC_JKRHeap_getTotalFreeSize(void* heap);

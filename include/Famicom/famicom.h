@@ -70,6 +70,7 @@ typedef struct famicom_common_s {
 
 typedef u8 (*FAMICOM_GETSAVECHAN_PROC)(int* player_no, int* slot_card_result);
 extern void famicom_setCallback_getSaveChan(FAMICOM_GETSAVECHAN_PROC getSaveChan_proc);
+extern int famicom_mount_archive();
 extern int famicom_mount_archive_end_check();
 
 #ifdef __cplusplus

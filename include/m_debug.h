@@ -76,6 +76,7 @@ extern Debug_mode* debug_mode;
 #define GETREG(reg, idx) ((s16)(REGADDR(reg, idx)))
 #define SETREG(reg, idx, val) (REGADDR(reg, idx) = (val))
 
+extern void new_Debug_mode();
 #ifdef __cplusplus
 };
 #endif

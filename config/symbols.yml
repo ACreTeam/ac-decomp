@@ -7917,7 +7917,7 @@ global:
     0x80407A78: lbRk_HarvestMoonDay
     0x80407AE8: mainproc
     0x80407C70: entry
-    0x80407CB9: foresta_main
+    0x80407CB8: foresta_main
     0x80407CF4: padmgr_LockSerialMesgQ
     0x80407D30: padmgr_UnlockSerialMesgQ
     0x80407D64: padmgr_LockContData

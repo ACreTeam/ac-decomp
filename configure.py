@@ -23,8 +23,7 @@ import common as c
 
 # Check CodeWarrior was added
 assert os.path.exists("tools/1.3.2/mwcceppc.exe") and \
-    os.path.exists("tools/1.2.5/mwcceppc.exe") and \
-       os.path.exists("tools/1.3.2/mwldeppc.exe"), \
+    os.path.exists("tools/1.2.5n/mwcceppc.exe"), \
        "Error: Codewarrior not found!"
 
 # Check binaries were added

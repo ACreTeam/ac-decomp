@@ -1,12 +1,34 @@
 #include "main.h"
+
 #include "boot.h"
+#include "irqmgr.h"
+#include "sys_stacks.h"
+#include "graph.h"
+#include "libultra/osMesg.h"
+#include "libultra/os_thread.h"
+#include "libjsys/jsyswrapper.h"
+#include "m_card.h"
+#include "_mem.h"
+#include "padmgr.h"
+#include "libultra/setthreadpri.h"
+#include "m_msg.h"
+#include "Famicom/famicom.h"
+#include "m_debug.h"
+#include "libforest/osreport.h"
 
 //TODO: actually add all the stacks and headers
 
-void mainproc (void* val){ 
-    static OSMessageQueue l_serialMsgQ;
-    static OSMessage serialMsgBuf;
-    IrqMgrClient irqClient;
+static OSMessageQueue l_serialMsgQ;
+static OSMessage serialMsgBuf;
+extern OSThread graphThread;
+extern u8 SegmentBaseAddress[0x40];
+
+int ScreenHeight = SCREEN_HEIGHT;
+int ScreenWidth = SCREEN_WIDTH;
+
+extern void mainproc (void* val){ 
+
+    irqmgr_client_t irqClient;
     OSMessageQueue irqMgrMsgQueue;
     OSMessage irqMsgBuf[10];
     OSMessage msg;
@@ -33,7 +55,7 @@ void mainproc (void* val){
     JW_EndFrame();
     
     osStartThread(&graphThread);
-    osSetThreadPri(0, 5);
+    osSetThreadPri(NULL, 5);
 
     JW_Init3();
     mMsg_aram_init2();
@@ -41,7 +63,7 @@ void mainproc (void* val){
     famicom_mount_archive();
     
     JC_JKRAramHeap_dump(JC_JKRAram_getAramHeap());
-    osSetThreadPri(0, 13);
+    osSetThreadPri(NULL, 13);
 
     do {
         msg = NULL;
@@ -55,19 +77,19 @@ void mainproc (void* val){
 
 
 
-u32 entry(void) { // TODO: debug_mode struct thing
-    padmgr_Init(0);
+u32 entry(void) {
+    padmgr_Init(NULL);
     new_Debug_mode();
     
-    debug_mode.idk = 0;
-    mainproc(0);
+    SETREG(SREG, 0, 0);
+    mainproc(NULL);
 
     return 0;
 }
 
 
 
-void main_foresta(void){
+void foresta_main(void){
     OSReport("どうぶつの森 main2 開始");
-    HotStartEntry = (u32)&entry;
+    HotStartEntry = &entry;
 }
