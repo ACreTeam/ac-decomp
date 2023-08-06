@@ -14,18 +14,20 @@
 #include "m_msg.h"
 #include "Famicom/famicom.h"
 #include "m_debug.h"
-#include "libforest/osreport.h"
+#include "dolphin/os.h"
 
 //TODO: actually add all the stacks and headers
 
-static OSMessageQueue l_serialMsgQ;
+OSThread graphThread;
 static OSMessage serialMsgBuf;
-extern OSThread graphThread;
-extern u8 SegmentBaseAddress[0x40];
+static OSMessageQueue l_serialMsgQ;
+u8 SegmentBaseAddress[0x40];
 
-int ScreenHeight = SCREEN_HEIGHT;
+
 int ScreenWidth = SCREEN_WIDTH;
+int ScreenHeight = SCREEN_HEIGHT;
 
+#pragma pool_data on
 extern void mainproc (void* val){ 
 
     irqmgr_client_t irqClient;
@@ -74,7 +76,7 @@ extern void mainproc (void* val){
         osRecvMesg(&irqMgrMsgQueue, &msg, 1);
     } while (msg != NULL);
 }
-
+#pragma pool_data reset
 
 
 u32 entry(void) {
@@ -90,6 +92,6 @@ u32 entry(void) {
 
 
 void foresta_main(void){
-    OSReport("どうぶつの森 main2 開始");
+    OSReport("どうぶつの森 main2 開始\n");
     HotStartEntry = &entry;
 }
