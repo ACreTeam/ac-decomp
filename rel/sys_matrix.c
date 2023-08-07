@@ -6,10 +6,6 @@
 #include "MSL_C/w_math.h"
 #include "libforest/gbi_extensions.h"
 
-MtxF* Matrix_now;
-MtxF* Matrix_stack;
-
-
 Mtx Mtx_clear = gdSPDefMtx(
     1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
@@ -24,6 +20,13 @@ MtxF MtxF_clear = { {
     {0.0f, 0.0f, 0.0f, 1.0f},
 } };
 
+static MtxF* Matrix_now;
+static MtxF* Matrix_stack;
+
+BSS_ORDER_GROUP_START
+    BSS_ORDER_ITEM(Matrix_stack)
+    BSS_ORDER_ITEM(Matrix_now)
+BSS_ORDER_GROUP_END
 
 void new_Matrix(GAME* game){
    Matrix_now =  THA_alloc16(&game->tha, 0x500);

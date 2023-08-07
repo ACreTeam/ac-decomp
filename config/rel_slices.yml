@@ -151,11 +151,11 @@ m_start_data_init.c:
 m_string.c:
     .text: [0x803EED30, 0x803EF290]
     .bss: [0x8129F320, 0x8129F400]
-#m_time.c: # unlinked until function callers that reorder local static variables are implemented.
-#    .text: [0x803F33DC, 0x803F3E58]
-#    .rodata: [0x806433B0, 0x806433D8]
-#    .data: [0x8065E378, 0x8065E438]
-#    .bss: [0x8129F410, 0x8129F420]
+m_time.c:
+    .text: [0x803F33DC, 0x803F3E58]
+    .rodata: [0x806433B0, 0x806433D8]
+    .data: [0x8065E378, 0x8065E438]
+    .bss: [0x8129F410, 0x8129F420]
 m_skin_matrix.c:
     .text: [0x803f1528, 0x803f1bb4]
     .rodata: [0x80643310, 0x80643318]
@@ -290,6 +290,11 @@ ac_train1.c:
     .text: [0x805C0614, 0x805C0CC8]
     .rodata: [0x8064AD80, 0x8064ADB0]
     .data: [0x806C7300, 0x806C7388]
+m_bank_ovl.c:
+    .text: [0x805C38E4, 0x805C4714]
+    .rodata: [0x8064AE58, 0x8064AE90]
+    .data: [0x806C7B90, 0x806C7BE0]
+    .bss: [0x8133E0A8, 0x8133E0C0]
 m_select.c:
     .text: [0x80627F88, 0x80629CA8]
     .rodata: [0x8064D1B0, 0x8064D1B8]

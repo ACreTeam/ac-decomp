@@ -1,6 +1,12 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include "../tools/ppcdis/include/ppcdis.h"
+
+#ifdef IS_REL
+//#pragma section const_type sconst_type ".rodata" ".rodata" data_mode=far_abs code_mode=pc_rel
+#endif
+
 typedef signed char s8;
 typedef signed short s16;
 typedef signed long s32;
@@ -71,6 +77,16 @@ typedef u32 unknown;
     #define FORCESTRIP __declspec(section "forcestrip")
 #else
     #define FORCESTRIP
+#endif
+
+#if !defined(__INTELLISENSE__) && defined(MUST_MATCH)
+    #define BSS_ORDER_GROUP_START FORCESTRIP ORDER_BSS_DATA {
+    #define BSS_ORDER_GROUP_END }
+    #define BSS_ORDER_ITEM(v) ORDER_BSS(v)
+#else
+    #define BSS_ORDER_GROUP_START
+    #define BSS_ORDER_GROUP_END
+    #define BSS_ORDER_ITEM(v)
 #endif
 
 #endif

@@ -45,6 +45,11 @@
 static int debug_disp;
 static u8 l_renew_is;
 
+BSS_ORDER_GROUP_START
+  BSS_ORDER_ITEM(debug_disp)
+  BSS_ORDER_ITEM(l_renew_is)
+BSS_ORDER_GROUP_END
+
 const lbRTC_time_c mTM_rtcTime_clear_code = {
   0xFF, 0xFF, 0xFF,
   0xFF, 0xFF, 0xFF,
@@ -259,7 +264,7 @@ extern void mTM_set_renew_time(lbRTC_ymd_t* renew_time, const lbRTC_time_c* time
  * @param time Pointer to the lbRTC_time_c struct where the converted time will be stored.
  * @param ymd Pointer to the lbRTC_ymd_t struct containing the date to be converted.
  */
-extern void mTM_ymd_2_time(lbRTC_time_c* time, const lbRTC_ymd_t* ymd) {
+extern void mTM_ymd_2_time(lbRTC_time_c* time, lbRTC_ymd_t* ymd) {
   time->year = ymd->year;
   time->month = ymd->month;
   time->day = ymd->day;
