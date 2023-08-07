@@ -113,6 +113,10 @@ struct map_overlay_s {
   int unk_3F4;
 };
 
+extern void mMP_map_ovl_set_proc(Submenu* submenu);
+extern void mMP_map_ovl_construct(Submenu* submenu);
+extern void mMP_map_ovl_destruct(Submenu* submenu);
+
 #ifdef __cplusplus
 }
 #endif
