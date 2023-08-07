@@ -202,12 +202,15 @@ FORCEFILESGEN = f"{PYTHON} {PPCDIS}/forcefilesgen.py"
 # Codewarrior
 TOOLS = "tools"
 CODEWARRIOR = os.path.join(TOOLS, "1.3.2")
+CODEWARRIOR_RODATA_POOL_FIX = os.path.join(TOOLS, "1.3.2r")
 SDK_CW = os.path.join(TOOLS, "1.2.5n")
 CC = os.path.join(CODEWARRIOR, "mwcceppc.exe")
+CC_R = os.path.join(CODEWARRIOR_RODATA_POOL_FIX, "mwcceppc.exe")
 OCC = os.path.join(SDK_CW, "mwcceppc.exe")
 LD = os.path.join(CODEWARRIOR, "mwldeppc.exe")
 if platform != "win32":
     CC = f"wibo {CC}"
+    CC_R = f"wibo {CC_R}"
     OCC = f"wibo {OCC}"
     LD = f"wibo {LD}"
 
@@ -323,7 +326,8 @@ COMMON_DEFINES = [
 ]
 DOL_DEFINES = COMMON_DEFINES + []
 REL_DEFINES = COMMON_DEFINES + [ 
-    "-d OPTIMIZED_SQRTF"
+    "-d OPTIMIZED_SQRTF",
+    "-d IS_REL"
 ]
 BASE_DOL_CFLAGS = CFLAGS + [
     "-inline on",
@@ -359,7 +363,7 @@ TRK_CFLAGS = [
 BASE_REL_CFLAGS = CFLAGS + [
      "-sdata 0",
      f"-sdata2 {REL_SDATA2_SIZE}",
-     "-pool off",
+     #"-pool off",
      "-sym on"
 ] + REL_DEFINES
 

@@ -112,7 +112,7 @@ extern int lbRTC_IsOverTime(const lbRTC_time_c* t0, const lbRTC_time_c* t1);
 extern int lbRTC_IsOverRTC(const lbRTC_time_c* time);
 extern int lbRTC_IntervalTime(const lbRTC_time_c* time0, const lbRTC_time_c* time1);
 extern int lbRTC_GetIntervalDays(const lbRTC_time_c* t0, const lbRTC_time_c* t1);
-extern int lbRTC_GetIntervalDays2(const lbRTC_ymd_t* ymd0, const lbRTC_ymd_t* ymd1);
+extern int lbRTC_GetIntervalDays2(lbRTC_ymd_t* ymd0, lbRTC_ymd_t* ymd1);
 extern void lbRTC_Add_YY(lbRTC_time_c* time, int year);
 extern void lbRTC_Add_MM(lbRTC_time_c* time, int month);
 extern void lbRTC_Add_DD(lbRTC_time_c* time, int day);

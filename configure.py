@@ -80,7 +80,7 @@ n.variable("forceactivegen", c.FORCEACTIVEGEN)
 n.variable("elf2dol", c.ELF2DOL)
 n.variable("elf2rel", c.ELF2REL)
 n.variable("codewarrior", c.CODEWARRIOR)
-n.variable("cc", c.CC)
+n.variable("cc", c.CC_R)
 n.variable("occ", c.OCC)
 n.variable("align16", c.ALIGN16)
 n.variable("ld", c.LD)
@@ -625,7 +625,7 @@ class CSource(Source):
             self.cflags = c.DOL_TRK_CFLAGS
         else:
             self.cflags = ctx.cflags
-            self.cc = c.CC
+            self.cc = c.CC_R
         self.iconv_path = f"$builddir/iconv/{path}"
 
  # Find generated includes
@@ -633,7 +633,7 @@ class CSource(Source):
             gen_includes = GeneratedInclude.find(ctx, path, f.read())
 
         self.s_path = f"$builddir/{path}.s"
-        super().__init__(True, path, f"$builddir/{path}.o", gen_includes)
+        super().__init__(True, path, f"$builddir/{os.path.splitext(path)[0]}.o", gen_includes)
         
     def build(self):
         n.build(

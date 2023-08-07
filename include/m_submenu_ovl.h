@@ -7,7 +7,9 @@
 #include "graph.h"
 #include "m_mail.h"
 #include "PR/mbi.h"
+#include "PreRender.h"
 #include "m_map_ovl_h.h"
+#include "m_bank_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,6 +77,8 @@ typedef void (*mSM_DRAW_MAIL_PROC)(GRAPH*, f32, f32, f32, Mail_c*, int, int);
 typedef void (*mSM_SETUP_VIEW_PROC)(Submenu*, GRAPH*, int);
 typedef void (*mSM_CHANGE_VIEW_PROC)(GRAPH*, f32, f32, f32, s16, int, int);
 
+typedef void (*mSM_MOVE_PROC)(Submenu*, mSM_MenuInfo_c*);
+
 /* sizeof(struct submenu_overlay_s) == 0xA04 */
 struct submenu_overlay_s {
   /* TODO: finish */
@@ -95,7 +99,9 @@ struct submenu_overlay_s {
   /* 0x96C */ mSM_CHANGE_VIEW_PROC change_view_proc;
   /* 0x970 */ u8 _940[0x9B4 - 0x970];
   /* 0x9B4 */ mMP_Overlay_c* map_ovl;
-  /* 0x9B8 */ u8 _9B8[0xA00 - 0x9B8];
+  /* 0x9B8 */ u8 _9B8[0x9D4 - 0x9B8];
+  /* 0x9D4 */ mBN_Overlay_c* bank_ovl;
+  /* 0x9D8 */ u8 _9D8[0xA00 - 0x9D8];
   /* 0xA00 */ Mtx* projection_matrix;
 };
 

@@ -618,7 +618,7 @@ extern int lbRTC_GetIntervalDays(const lbRTC_time_c* t0, const lbRTC_time_c* t1)
  * @param ymd1 Pointer to the second lbRTC_ymd_t structure.
  * @return Number of days between the two given dates, negative if ymd0 is greater than ymd1.
  */
-extern int lbRTC_GetIntervalDays2(const lbRTC_ymd_t* ymd0, const lbRTC_ymd_t* ymd1) {
+extern int lbRTC_GetIntervalDays2(lbRTC_ymd_t* ymd0, lbRTC_ymd_t* ymd1) {
   lbRTC_time_c t0, t1;
   int equality;
 
