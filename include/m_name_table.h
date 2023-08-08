@@ -142,6 +142,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define GRASS_B (GRASS_A + 1)
 #define GRASS_C (GRASS_B + 1)
 
+
 #define BURIED_PITFALL0 0x002A
 
 #define TREE_BEES 0x005E
