@@ -71,6 +71,7 @@ extern void* JC_JFWSystem_getSystemHeap();
 extern void* JC_JFWDisplay_getManager();
 extern void JC_JFWDisplay_startFadeOut(void* manager, int len);
 extern void JC_JFWDisplay_startFadeIn(void* manager, int len);
+extern void JC_JFWDisplay_setFrameRate(void* manager, u16 framerate);
 
 extern void JC_JKRAramHeap_dump(void* heap);
 extern void* JC_JKRAram_getAramHeap();

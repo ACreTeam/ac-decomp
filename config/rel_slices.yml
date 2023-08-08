@@ -172,6 +172,11 @@ THA_GA.c:
     .text: [0x80404AE0, 0x80404B40]
 TwoHeadArena.c:
     .text: [0x80404B40, 0x80404C68]
+game.c:
+    .text: [0x80404C68, 0x80405370]
+    .rodata: [0x806436E8, 0x806436F8]
+    .data: [0x8065ECA0, 0x8065ECA8]
+    .bss: [0x812F31B8, 0x812F31E8]
 gamealloc.c:
     .text: [0x80405370, 0x804054B0]
 gfxalloc.c:

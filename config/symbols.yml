@@ -52511,6 +52511,7 @@ global:
     0x812F31BC: last_now_button
     0x812F31C4: last_on_trigger
     0x812F31CC: last_button
+    0x812F31D4: game_GameFrame
     0x812F31D8: game_GameFrameF
     0x812F31DC: game_GameFrame_2F
     0x812F31E0: game_GameFrame__1F

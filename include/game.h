@@ -33,17 +33,21 @@ struct game_s {
   /* 0x00A8 */ MCON mcon;
 };
 
-extern void game_ct(GAME*, void (*)(GAME*), GRAPH*);
-extern void game_dt(GAME* game);
-extern void game_main(GAME* game);
-extern int game_is_doing(GAME* game);
-extern void (*game_get_next_game_init(GAME* game))(GAME*);
+#define GAME_HYRAL_SIZE (0x100000)
+#define GAME_FRAME (1)
 
 #define GAME_NEXT_GAME(game, init_name, class_name) \
 do { \
   GAME* g = (game); \
   g->next_game_init = (void (*)(struct game_s*))init_name##_init; \
   g->next_game_class_size = sizeof(GAME_##class_name); \
+} while (0)
+
+#define GAME_NEXT_GAME_NULL(game) \
+do { \
+  GAME* _game = (game); \
+  _game->next_game_init = NULL; \
+  _game->next_game_class_size = 0; \
 } while (0)
 
 #define GAME_GOTO_NEXT(game, init_name, class_name) \
@@ -53,11 +57,24 @@ do { \
   GAME_NEXT_GAME(t_game, init_name, class_name); \
 } while (0)
 
-extern void SetGameFrame(int frame);
-
-extern void game_get_controller(GAME* game);
-extern void game_debug_draw_last(GAME* game, GRAPH* graph);
+extern void game_debug_draw_last(GAME* this, GRAPH* graph);
 extern void game_draw_last(GRAPH* graph);
+extern void game_get_controller(GAME* this);
+extern void SetGameFrame(int frame);
+extern void game_main(GAME* this);
+extern void game_resize_hyral(GAME* this, int size);
+extern void game_ct(GAME* this, void (*init)(GAME*), GRAPH* graph);
+extern void game_dt(GAME* this);
+extern void (*game_get_next_game_init(GAME* this))(GAME*);
+#ifndef MUST_MATCH
+extern size_t game_get_next_game_class_size(GAME* this);
+#endif
+extern int game_is_doing(GAME* this);
+extern int game_getFreeBytes(GAME* this);
+extern void game_goto_next_game_play(GAME* this);
+#ifndef MUST_MATCH
+extern void game_goto_next_game_famicom_emu(GAME* this);
+#endif
 
 extern GAME* gamePT;
 
