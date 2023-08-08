@@ -79,6 +79,12 @@ typedef u32 unknown;
     #define FORCESTRIP
 #endif
 
+#ifdef MUST_MATCH
+    #define MATCH_FORCESTRIP FORCESTRIP
+#else
+    #define MATCH_FORCESTRIP
+#endif
+
 #if !defined(__INTELLISENSE__) && defined(MUST_MATCH)
     #define BSS_ORDER_GROUP_START FORCESTRIP ORDER_BSS_DATA {
     #define BSS_ORDER_GROUP_END }
