@@ -2,6 +2,8 @@
 #define M_SNOWMAN_H
 
 #include "types.h"
+#include "m_lib.h"
+#include "m_actor_type.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,6 +23,21 @@ typedef struct snowman_data_s {
 typedef struct snowman_save_data_s {
   /* 0x00 */ mSN_snowman_data_c snowmen_data[mSN_SAVE_COUNT];
 } mSN_snowman_save_c;
+
+/* sizeof(mSN_snowman_info_c) == 0xC */
+typedef struct snowman_info_s{
+  /* 0x00 */ int scale;
+  /* 0x04 */ xyz_t pos;
+}mSN_snowman_info_c;
+
+extern int mSN_check_life(mActor_name_t* ac, int idx);
+extern int mSN_ClearSnowmanData(mActor_name_t* ac, int idx);
+extern int mSN_ClearSnowman(mActor_name_t* ac);
+extern int mSN_MeltSnowman(mActor_name_t* ac, int days);
+extern int mSN_get_free_space();
+extern void mSN_regist_snowman_society(mSN_snowman_info_c* info);
+extern void mSN_decide_msg();
+extern void mSN_snowman_init();
 
 #ifdef __cplusplus
 }

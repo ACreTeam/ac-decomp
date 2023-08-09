@@ -159,6 +159,9 @@ m_time.c:
 m_skin_matrix.c:
     .text: [0x803f1528, 0x803f1bb4]
     .rodata: [0x80643310, 0x80643318]
+m_snowman.c:
+    .text: [0x803F1BB4, 0x803F1F94]
+    .rodata: [0x80643318, 0x80643330]
 m_view.c:
     .text: [0x803F3E58, 0x803F4E08]
     .rodata: [0x806433D8, 0x80643408]
