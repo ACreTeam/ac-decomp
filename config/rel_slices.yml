@@ -1,3 +1,7 @@
+executor.c:
+    .text: [0x803702A8, 0x803703F8]
+    .data: [0x8064D500, 0x8064D580]
+    .bss: [0x8125A7C0, 0x8125A7C8]
 sys_vimgr.c:
     .text: [0x803703F8, 0x80370418]
 c_keyframe.c:
