@@ -5,6 +5,7 @@
 #include "m_time.h"
 #include "m_field_info.h"
 #include "m_field_make.h"
+#include "m_island.h"
 #include "m_private.h"
 
 #ifdef __cplusplus
@@ -157,9 +158,13 @@ typedef struct carp_info_s {
   u8 villager_house_blocks;
 } mAGrw_CarpInfo_c;
 
-extern void mAGrw_SearchDump(mFI_unit_c* dump_info);
+extern void mAGrw_ClearMoneyStoneShineGround();
+extern void mAGrw_ClearAllShine_Stone();
+extern void mAGrw_RestoreStoneShine(int player_no);
 extern void mAGrw_SetHideUtInfo(u16* hide, mActor_name_t* items);
-extern void mAGrw_RenewalFgItem_ovl(lbRTC_time_c* time, int* haniwa_scheduled);
+extern void mAGrw_SearchDump(mFI_unit_c* dump_info);
+extern void mAGrw_SpoilKabuIsland(Island_c* island);
+extern void mAGrw_RenewalFgItem_ovl(lbRTC_time_c* now_time, int* deposit_haniwa);
 
 #ifdef __cplusplus
 }
