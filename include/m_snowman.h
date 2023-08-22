@@ -22,6 +22,9 @@ typedef struct snowman_save_data_s {
   /* 0x00 */ mSN_snowman_data_c snowmen_data[mSN_SAVE_COUNT];
 } mSN_snowman_save_c;
 
+extern int mSN_MeltSnowman(mActor_name_t* item, int past_days);
+extern int mSN_ClearSnowman(mActor_name_t* item);
+
 #ifdef __cplusplus
 }
 #endif

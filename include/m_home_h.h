@@ -16,6 +16,7 @@ extern "C" {
 #define HOME_MAILBOX_SIZE 10
 #define HANIWA_ITEM_HOLD_NUM 4
 #define HANIWA_MESSAGE_LEN 128
+#define mHm_LAYER_NUM 4
 
 enum {
   mHm_ROOM_MAIN,

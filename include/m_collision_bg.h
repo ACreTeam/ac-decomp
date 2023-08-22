@@ -43,6 +43,16 @@ enum background_attribute {
   mCoBG_ATTRIBUTE_SEA,
 };
 
+enum {
+  mCoBG_PLANT0 = 0, /* Stay a sapling */
+  mCoBG_PLANT1 = 1, /* Grow until the first stage of growth */
+  mCoBG_PLANT2 = 2, /* Grow until the second stage of growth */
+  mCoBG_PLANT3 = 3, /* Grow until the third stage of growth */
+  mCoBG_PLANT4 = 4, /* Fully grow */
+
+  mCoBG_KILL_PLANT = 7 /* No growth, all plants die on this unit  */
+};
+
 /* sizeof(mCoBG_CollisionData_c) == 4*/
 typedef struct collision_bg_data_s {
   /* 1------- -------- -------- -------- */ u32 shape:1; /* collision shape */

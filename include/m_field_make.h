@@ -93,6 +93,7 @@ extern int* g_block_kind_p;
 
 extern void mFM_DecideBgTexIdx(u8* bg_tex_idx);
 extern void mFM_InitFgCombiSaveData(GAME* game);
+extern mActor_name_t mFM_GetReserveName(int block_x, int block_z);
 
 #ifdef __cplusplus
 }

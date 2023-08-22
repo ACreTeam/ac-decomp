@@ -282,6 +282,11 @@ m_random_field/mRF_GetRandomStepMode.c:
 m_mail_check_ovl.c:
     .text: [0x8050F06C, 0x8050F838]
     .data: [0x8069F320, 0x8069FA40]
+m_all_grow_ovl.c:
+    .text: [0x8050F848, 0x80515340]
+    .rodata: [0x80649098, 0x80649110]
+    .data: [0x8069FA68, 0x8069FD08]
+    .bss: [0x813013E0, 0x81301820]
 ac_douzou.c:
     .text: [0x805AD6D8, 0x805AE704]
     .rodata: [0x8064A7C0, 0x8064A7E8]
