@@ -29,6 +29,7 @@
 #include "m_npc_walk.h"
 #include "m_mask_cat.h"
 #include "m_npc_schedule_h.h"
+#include "m_all_grow.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -126,7 +127,8 @@ typedef struct Save_s {
   /* 0x022500 */ u8 _tmp7[0x22528 - 0x22500];
   /* 0x022528 */ OSTime time_delta; /* time delta against GC RTC */
   /* 0x022540 */ Island_c island; /* island data */
-  /* 0x023E40 */ u8 _23E40[0x23F20 - 0x23E40];
+  /* 0x023E40 */ mAGrw_AllGrow_c allgrow_ss_pos_info;
+  /* 0x023E68 */ u8 _23E68[0x23F20 - 0x23E68];
   /* 0x023F20 */ MaskCat_c mask_cat;
   /* 0x024160 */ Anmret_c return_animal; /* information about villager which moved back in to your town after moving to someone else's town */
   /* 0x02416C */ u8 _tmp10[0x24174 - 0x2416C];

@@ -21028,6 +21028,7 @@ global:
     0x8069FB6C: l_magrw_bee_table
     0x8069FB74: l_magrw_ftr_table
     0x8069FB7C: l_magrw_smn_table
+    0x8069FC6C: check_fg #check_fg$2016
     0x8069FD08: Aprilfool_Control_Profile
     0x8069FD88: Groundhog_Control_Profile
     0x8069FDD0: Mscore_Control_Profile

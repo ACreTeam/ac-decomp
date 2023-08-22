@@ -52,7 +52,18 @@ enum {
   ITEM1_CAT_NUM
 };
 
+enum {
+  mNT_TREE_TYPE_NORMAL,
+  mNT_TREE_TYPE_PALM,
+  mNT_TREE_TYPE_CEDAR,
+  mNT_TREE_TYPE_GOLD,
+
+  mNT_TREE_TYPE_NUM
+};
+
 extern int mNT_check_unknown(mActor_name_t item_no);
+extern int FGTreeType_check(mActor_name_t tree);
+extern mActor_name_t bg_item_fg_sub_tree_grow(mActor_name_t tree, int past_days, int check_plant);
 
 /* Retrieve the item actor's category */
 #define ITEM_NAME_GET_TYPE(n) (((n) & 0xF000) >> 12)
@@ -71,6 +82,21 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define GET_NAME_ITEM1_CATEGORY(f) (((f) & 0x0F00) >> 8)
 
 #define IS_ITEM_FLOWER(item) ((item) >= FLOWER_LEAVES_PANSIES0 && (item) <= FLOWER_TULIP2)
+#define IS_ITEM_ALIVE_TREE(item) \
+  (((item) >= TREE_SAPLING && (item) <= TREE_30000BELLS) || \
+   ((item) >= TREE_100BELLS_SAPLING && (item) <= TREE_PALM_FRUIT) || \
+   ((item) >= CEDAR_TREE_SAPLING && (item) <= CEDAR_TREE) || \
+   ((item) >= GOLD_TREE_SAPLING && (item) <= GOLD_TREE) \
+  )
+
+#define IS_ITEM_DEAD_SAPLING(item) \
+  (((item) == DEAD_SAPLING) || \
+   ((item) == DEAD_PALM_SAPLING) || \
+   ((item) == DEAD_CEDAR_SAPLING) || \
+   ((item) == DEAD_GOLD_SAPLING) \
+  )
+
+/*
 #define IS_ITEM_TREE(item) \
   (((item) >= TREE_SAPLING && (item) <= TREE_30000BELLS) || \
    ((item) >= TREE_100BELLS_SAPLING && (item) <= TREE_PALM_FRUIT) || \
@@ -81,6 +107,9 @@ extern int mNT_check_unknown(mActor_name_t item_no);
    ((item) == DEAD_CEDAR_SAPLING) || \
    ((item) == DEAD_GOLD_SAPLING) \
   )
+*/
+
+#define IS_ITEM_TREE(item) (IS_ITEM_ALIVE_TREE(item) || IS_ITEM_DEAD_SAPLING(item))
 
 #define IS_ITEM_GROWN_TREE(item) \
   (((item) == TREE) || \
@@ -137,19 +166,31 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define KABU_NUM 4
 
 #define EMPTY_NO 0x0000
-
+#define TREE_STUMP001 (EMPTY_NO + 1)
+#define TREE_STUMP002 (EMPTY_NO + 2)
+#define TREE_STUMP003 (EMPTY_NO + 3)
+#define TREE_STUMP004 (EMPTY_NO + 4)
+#define FENCE0 (EMPTY_NO + 5)
+#define FENCE1 (EMPTY_NO + 6)
+#define MESSAGE_BOARD0 0x0007
 #define GRASS_A 0x0008
 #define GRASS_B (GRASS_A + 1)
 #define GRASS_C (GRASS_B + 1)
+#define MESSAGE_BOARD1 0x000B
+#define MAP_BOARD0 0x000C
+#define MAP_BOARD1 0x000D
+#define MUSIC_BOARD0 0x000E
+#define MUSIC_BOARD1 0x000F
 
 
 #define BURIED_PITFALL0 0x002A
+
+#define SHINE_SPOT 0x005C
 
 #define TREE_BEES 0x005E
 #define TREE_FTR (TREE_BEES + 1)
 #define TREE_LIGHTS (TREE_FTR + 1)
 #define TREE_PRESENT (TREE_LIGHTS + 1)
-#define TREE_BELLS 0x0069
 
 #define ROCK_A 0x0063
 #define ROCK_B (ROCK_A + 1)
@@ -157,9 +198,34 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ROCK_D (ROCK_C + 1)
 #define ROCK_E (ROCK_D + 1)
 
+#define FLOWER_SEED 0x0068
+#define TREE_BELLS 0x0069
+
+#define MONEY_ROCK_A 0x006A
+#define MONEY_ROCK_B (MONEY_ROCK_A + 1)
+#define MONEY_ROCK_C (MONEY_ROCK_B + 1)
+#define MONEY_ROCK_D (MONEY_ROCK_C + 1)
+#define MONEY_ROCK_E (MONEY_ROCK_D + 1)
+
+#define MONEY_FLOWER_SEED 0x006F
+
+#define TREE_PALM_STUMP001 (EMPTY_NO + 112)
+#define TREE_PALM_STUMP002 (EMPTY_NO + 113)
+#define TREE_PALM_STUMP003 (EMPTY_NO + 114)
+#define TREE_PALM_STUMP004 (EMPTY_NO + 115)
+#define CEDAR_TREE_STUMP001 (EMPTY_NO + 116)
+#define CEDAR_TREE_STUMP002 (EMPTY_NO + 117)
+#define CEDAR_TREE_STUMP003 (EMPTY_NO + 118)
+#define CEDAR_TREE_STUMP004 (EMPTY_NO + 119)
+
 #define CEDAR_TREE_BELLS 0x0078
 #define CEDAR_TREE_FTR (CEDAR_TREE_BELLS + 1)
 #define CEDAR_TREE_BEES (CEDAR_TREE_FTR + 1)
+
+#define GOLD_TREE_STUMP001 (EMPTY_NO + 123)
+#define GOLD_TREE_STUMP002 (EMPTY_NO + 124)
+#define GOLD_TREE_STUMP003 (EMPTY_NO + 125)
+#define GOLD_TREE_STUMP004 (EMPTY_NO + 126)
 
 #define GOLD_TREE_BELLS 0x007F
 #define GOLD_TREE_FTR (GOLD_TREE_BELLS + 1)
@@ -1037,7 +1103,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define WATERFALL_SOUTH (POLICE_STATION + 1)
 #define WATERFALL_EAST (WATERFALL_SOUTH + 1)
 #define WATERFALL_WEST (WATERFALL_EAST + 1)
-#define SIGN00 (WATERFALL_WEST + 1)
+#define SIGN00 (STRUCTURE_START + 16)
 #define SIGN01 (SIGN00 + 1)
 #define SIGN02 (SIGN01 + 1)
 #define SIGN03 (SIGN02 + 1)

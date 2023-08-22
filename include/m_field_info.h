@@ -154,6 +154,7 @@ extern int mFI_search_unit_around(xyz_t* wpos, mActor_name_t item);
 extern void mFI_BlockDepositOFF(u16* deposit, int ut_x, int ut_z);
 extern void mFI_PullTanukiPathTrees();
 extern int mFI_CheckBlockKind_OR(int block_x, int block_z, u32 kind);
+extern void mFI_GetIslandBlockNumX(int* island_block_x_nums);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);
