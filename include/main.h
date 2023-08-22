@@ -20,6 +20,8 @@ extern int ScreenHeight;
 extern OSThread graphThread;
 extern u8 SegmentBaseAddress[0x40];
 
+void foresta_main();
+
 #ifdef __cplusplus
 }
 #endif

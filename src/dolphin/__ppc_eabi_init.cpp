@@ -1,17 +1,13 @@
 #include "types.h"
 #include "dolphin/os.h"
 #include "dolphin/PPCArch.h"
-
+#include "dolphin/os/__ppc_eabi_init.h"
 #ifdef __cplusplus
 extern "C" {
 #endif
-typedef void (*voidfunctionptr)(void); // pointer to function returning void
-__declspec(section ".ctors") extern voidfunctionptr _ctors[];
-__declspec(section ".dtors") extern voidfunctionptr _dtors[];
 
 static void __init_cpp(void);
 
-// clang-format off
 __declspec(section ".init") asm void __init_hardware(void) {
     nofralloc
     mfmsr r0
@@ -24,7 +20,7 @@ __declspec(section ".init") asm void __init_hardware(void) {
     blr
 }
 
-__declspec(section ".init") asm void __flush_cache(void) {
+__declspec(section ".init") asm void __flush_cache(void*, size_t) {
 	nofralloc
 	lis r5, 0xFFFFFFF1@h
 	ori r5, r5, 0xFFFFFFF1@l
@@ -41,7 +37,6 @@ loop:
 	isync 
 	blr
 }
-// clang-format on
 
 
 void __init_user(void) { __init_cpp(); }

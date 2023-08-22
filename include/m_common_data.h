@@ -190,7 +190,8 @@ typedef struct common_data_s {
   /* 0x0266A4 */ int scene_from_title_demo; /* next scene to be loaded when title demo finishes */
   /* 0x0266A8 */ mNPS_schedule_c npc_schedule[SCHEDULE_NUM];
   /* 0x0267A8 */ mNpc_walk_c npc_walk;
-  /* 0x026838 */ u8 _26838[0x2852C - 0x26838];
+  /* 0x026838 */ u8 _26838[0x28528 - 0x26838];
+  /* 0x028528 */ int snowman_msg_id;
   /* 0x02852C */ s16 money_power;
   /* 0x02852E */ s16 goods_power;
   /* 0x028530 */ Door_data_c door_data; /* misc door data */

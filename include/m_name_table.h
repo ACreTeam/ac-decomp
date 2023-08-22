@@ -182,6 +182,7 @@ extern mActor_name_t bg_item_fg_sub_tree_grow(mActor_name_t tree, int past_days,
 #define MUSIC_BOARD0 0x000E
 #define MUSIC_BOARD1 0x000F
 
+
 #define BURIED_PITFALL0 0x002A
 
 #define SHINE_SPOT 0x005C
@@ -1189,6 +1190,15 @@ extern mActor_name_t bg_item_fg_sub_tree_grow(mActor_name_t tree, int past_days,
 #define ACTOR_PROP_HANIWA1 (ACTOR_PROP_HANIWA0 + 1)
 #define ACTOR_PROP_HANIWA2 (ACTOR_PROP_HANIWA1 + 1)
 #define ACTOR_PROP_HANIWA3 (ACTOR_PROP_HANIWA2 + 1)
+#define SNOWMAN0 (ACTOR_PROP_HANIWA3 + 1)
+#define SNOWMAN1 (SNOWMAN0 + 1)
+#define SNOWMAN2 (SNOWMAN1 + 1)
+#define SNOWMAN3 (SNOWMAN2 + 1)
+#define SNOWMAN4 (SNOWMAN3 + 1)
+#define SNOWMAN5 (SNOWMAN4 + 1)
+#define SNOWMAN6 (SNOWMAN5 + 1)
+#define SNOWMAN7 (SNOWMAN6 + 1)
+#define SNOWMAN8 (SNOWMAN7 + 1)
 #define TRAIN_DOOR 0xA011
 
 #define SP_NPC_START 0xD000
