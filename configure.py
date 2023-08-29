@@ -776,7 +776,8 @@ n.build(
     implicit_outputs=c.DOL_MAP,
     variables={
         "map" : c.DOL_MAP,
-        "lcf" : c.DOL_LCF
+        "lcf" : c.DOL_LCF,
+        "ldflags": c.DOL_LDFLAGS
     }
 )
 

@@ -421,9 +421,16 @@ EXTERNAL_DOL_CFLAGS = ' '.join(BASE_DOL_CFLAGS)
 EXTERNAL_REL_CFLAGS = ' '.join(BASE_REL_CFLAGS)
 PREPROCESS_CFLAGS = ' '.join(PREPROCESSOR_CFLAGS)
 
-LDFLAGS = ' '.join([
+DOL_LDFLAGS = ' '.join([
     "-maxerrors 1",
     "-mapunused"
+])
+
+LDFLAGS = ' '.join([
+    "-maxerrors 1",
+    "-mapunused",
+    "-opt_partial",
+    "-strip_partial"
 ])
 
 PPCDIS_ANALYSIS_FLAGS = ' '.join([

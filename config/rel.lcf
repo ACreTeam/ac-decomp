@@ -15,6 +15,9 @@ SECTIONS {
 }
 FORCEFILES {
 }
+FORCEACTIVE {
+    _prolog _epilog _unresolved
+}
 
 __dummy_str = 0;
 __dummy_float = 0;

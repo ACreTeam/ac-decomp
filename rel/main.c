@@ -15,6 +15,7 @@
 #include "Famicom/famicom.h"
 #include "m_debug.h"
 #include "dolphin/os.h"
+#include "libforest/osreport.h"
 
 //TODO: actually add all the stacks and headers
 
