@@ -3,6 +3,10 @@
 
 #include "types.h"
 
+#if defined(__INTELLISENSE__) && defined(__cplusplus)
+#define __builtin_va_info(v) /* definition for IDEs */
+#endif
+
 typedef struct __va_list_struct {
     char gpr;
     char fpr;

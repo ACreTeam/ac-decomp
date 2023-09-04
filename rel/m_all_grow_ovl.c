@@ -3186,8 +3186,11 @@ static void mAGrw_SetGrass(lbRTC_time_c* now_time, lbRTC_time_c* grow_time, u16*
   }
 }
 #else
+#pragma push
+#pragma force_active on
 extern f64 lbl_806490a8;
 REL_SYMBOL_AT(lbl_806490a8, 0x806490A8);
+#pragma pop
 
 static asm void mAGrw_SetGrass(lbRTC_time_c* now_time, lbRTC_time_c* grow_time, u16* cancel) {
   #include "asm/8051497c.s"
