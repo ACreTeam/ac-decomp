@@ -2,7 +2,7 @@
 #define M_COLLISION_OBJ_H
 
 #include "types.h"
-#include "m_actor.h"
+#include "m_actor_type.h"
 #include "sys_math3d.h"
 #include "m_play_h.h"
 
@@ -17,6 +17,15 @@ enum collision_type {
 
   ClObj_TYPE_NUM
 };
+
+enum weight{
+  MASS_IMMOVABLE,
+  MASS_HEAVY,
+  MASS_NORMAL
+};
+
+#define MASSTYPE_IMMOVABLE 0XFF
+#define MASSTYPE_HEAVY 0XFE
 
 typedef struct collision_obj_s {
   ACTOR* owner_actor; // actor which owns this collision object
@@ -64,6 +73,55 @@ typedef struct collision_obj_pipe_data_s {
   ClObjPipeAttrData_c attribute_data;
 } ClObjPipeData_c;
 
+typedef struct collision_check_tris_element_attr_data_s{
+  xyz_t vtx[3];
+}ClObjTrisElemAttrData_c;
+
+typedef struct collision_check_tris_element_data_s{
+  ClObjElemData_c element;
+  ClObjTrisElemAttrData_c data;
+}ClObjTrisElemData_c;
+
+typedef struct collision_check_tris_element_s{
+    Math3D_triangle_c tri;
+    xyz_t t;
+}ClObjTrisElemAttr_c;
+
+typedef struct collision_tris_elem_s{
+  ClObjElem_c element;
+  ClObjTrisElemAttr_c attribute;
+}ClObjTrisElem_c;
+
+typedef struct collision_tris_s {
+  ClObj_c collision_obj;
+  int count;
+  ClObjTrisElem_c* elements;
+} ClObjTris_c;
+
+typedef struct ClObjTris_Init {
+  ClObjData_c data;
+  int count;
+  ClObjTrisElemData_c* elem_data;
+} ClObjTrisData_c;
+
+typedef struct collision_obj_joint_sphere_elem_attribute_s{
+    Math3D_sphere_c s1;
+    Math3D_sphere_c s2;
+    f32 unk8;
+    u8 unk14;
+}ClObjJntSphElemAttr_c; 
+
+typedef struct collision_joint_sphere_elem_s{
+  ClObjElem_c element;
+  ClObjJntSphElemAttr_c attribute;
+}ClObjJntSphElem_c;
+
+typedef struct collision_joint_sphere_s {
+   ClObj_c collision_obj;
+   int count;
+   ClObjJntSphElem_c* elements;
+}ClObjJntSph_c;
+
 #define Cl_COLLIDER_NUM 50
 typedef struct collision_check_s {
   u16 flags;
@@ -95,14 +153,74 @@ typedef struct status_data_s {
   u8 weight;
 } StatusData_c;
 
-extern void ClObjPipe_ct(GAME_PLAY* play, ClObjPipe_c* pipe);
-extern void ClObjPipe_dt(GAME_PLAY* play, ClObjPipe_c* pipe);
-extern void ClObjPipe_set5(GAME_PLAY* play, ClObjPipe_c* pipe, ACTOR* owner, ClObjPipeData_c* data);
-extern void CollisionCheck_Uty_ActorWorldPosSetPipeC(ACTOR* actor, ClObjPipe_c* col_pipe);
-extern int CollisionCheck_setOC(GAME_PLAY* play, CollisionCheck_c* collision_check, ClObj_c* col_obj);
-extern void CollisionCheck_Status_set3(Status_c* status, StatusData_c* data);
-extern void CollisionCheck_Status_ct(Status_c* status);
-extern void CollisionCheck_Status_Clear(Status_c* status);
+typedef struct mco_work_s {
+  int count;
+  ClObj_c* colliders[10];
+} McoWork;
+
+extern McoWork mco_work;
+
+
+typedef void (*CollisionOCFunction)(GAME_PLAY*, CollisionCheck_c*, ClObj_c*,ClObj_c*);
+typedef int (*CollisionOCClear)(GAME_PLAY*, ClObj_c*);
+typedef int (*CollisionClearFunction)(GAME_PLAY*, ClObj_c*);
+
+extern void CollisionCheck_workTrisElemCenter(ClObjTrisElem_c *, xyz_t *);
+extern int ClObj_ct(GAME_PLAY *, ClObj_c *);
+extern int ClObj_dt(GAME_PLAY *, ClObj_c *);
+extern int ClObj_set4(GAME_PLAY *, ClObj_c *, ACTOR *, ClObjData_c *);
+extern void ClObj_OCClear(GAME_PLAY *, ClObj_c *);
+extern int ClObjElem_ct(ClObjElem_c *);
+extern int ClObjElem_set(ClObjElem_c *, ClObjElemData_c *);
+extern void ClObjElem_OCClear(GAME_PLAY *, ClObjElem_c *);
+extern int ClObjJntSphElem_OCClear(GAME_PLAY *, ClObjJntSphElem_c *);
+extern int ClObjJntSph_OCClear(GAME_PLAY *, ClObj_c *);
+extern int ClObjPipeAttr_ct(GAME_PLAY *, ClObjPipeAttr_c *);
+extern int ClObjPipeAttr_dt(GAME_PLAY *, ClObjPipeAttr_c *);
+extern int ClObjPipeAttr_set(GAME_PLAY *, ClObjPipeAttr_c *, ClObjPipeAttr_c *);
+extern int ClObjPipe_ct(GAME_PLAY *, ClObjPipe_c *);
+extern int ClObjPipe_dt(GAME_PLAY *, ClObjPipe_c *);
+extern int ClObjPipe_set5(GAME_PLAY *, ClObjPipe_c *, ACTOR *, ClObjPipeData_c *);
+extern int ClObjPipe_OCClear(GAME_PLAY *, ClObj_c *);
+extern int ClObjTrisElemAttr_ct(GAME_PLAY *, ClObjTrisElemAttr_c *);
+extern int ClObjTrisElemAttr_dt(GAME_PLAY *, ClObjTrisElemAttr_c *);
+extern int ClObjTrisElemAttr_set(GAME_PLAY *, ClObjTrisElemAttr_c *, ClObjTrisElemAttrData_c *);
+extern int ClObjTrisElem_ct(GAME_PLAY *, ClObjTrisElem_c *);
+extern int ClObjTrisElem_dt(GAME_PLAY *, ClObjTrisElem_c *);
+extern int ClObjTrisElem_set(GAME_PLAY *, ClObjTrisElem_c *, ClObjTrisElemData_c *);
+extern int ClObjTrisElem_OCClear(GAME_PLAY *, ClObjTrisElem_c *);
+extern int ClObjTris_ct(GAME_PLAY *, ClObjTris_c *);
+extern int ClObjTris_dt_nzf(GAME_PLAY *, ClObjTris_c *);
+extern int ClObjTris_set5_nzm(GAME_PLAY *, ClObjTris_c *, ACTOR *, ClObjTrisData_c *, ClObjTrisElem_c *);
+extern int ClObjTris_OCClear(GAME_PLAY *, ClObj_c *);
+extern void CollisionCheck_ct(GAME_PLAY *, CollisionCheck_c *);
+extern void CollisionCheck_dt(GAME_PLAY *, CollisionCheck_c *);
+extern void CollisionCheck_clear(GAME_PLAY *, CollisionCheck_c *);
+extern int CollisionCheck_setOC(GAME_PLAY *, CollisionCheck_c *, ClObj_c *);
+extern int get_type(u8);
+extern void CollisionCheck_setOC_HitInfo(ClObj_c *, ClObjElem_c *, xyz_t *, ClObj_c *, ClObjElem_c *, xyz_t *, f32);
+extern void CollisionCheck_OC_JntSph_Vs_JntSph(GAME_PLAY *, CollisionCheck_c *, ClObj_c *, ClObj_c *);
+extern void CollisionCheck_OC_JntSph_Vs_Pipe(GAME_PLAY *, CollisionCheck_c *, ClObj_c *, ClObj_c *);
+extern void CollisionCheck_OC_Pipe_Vs_JntSph(GAME_PLAY *, CollisionCheck_c *, ClObj_c *, ClObj_c *);
+extern void CollisionCheck_OC_Pipe_Vs_Pipe(GAME_PLAY *, CollisionCheck_c *, ClObj_c *, ClObj_c *);
+extern int CollisionCheck_Check1ClObjNoOC(ClObj_c *);
+extern int CollisionCheck_Check2ClObjNoOC(ClObj_c *, ClObj_c *);
+extern void CollisionCheck_OC(GAME_PLAY *, CollisionCheck_c *);
+extern void CollisionCheck_setOCC_HitInfo(GAME_PLAY *, ClObj_c *, ClObjTrisElem_c *, xyz_t *, ClObj_c *, ClObjElem_c *, xyz_t *, xyz_t *);
+extern void CollisionCheck_OCC_Tris_Vs_JntSph(GAME_PLAY *, CollisionCheck_c *, ClObjTris_c *, ClObjJntSph_c *);
+extern void CollisionCheck_OCC_Tris_Vs_Pipe(GAME_PLAY *, CollisionCheck_c *, ClObjTris_c *, ClObjPipe_c *);
+extern int CollisionCheck_Check1ClObjNoOCC(ClObj_c *);
+extern void CollisionCheck_OCC(GAME_PLAY *, CollisionCheck_c *);
+extern int ClObjTrisElem_OCCClear(GAME_PLAY *, ClObjTrisElem_c *);
+extern int ClObj_OCCClear(GAME_PLAY *, ClObj_c *);
+extern int ClObjTris_OCCClear(GAME_PLAY *, ClObj_c *);
+extern int CollisionCheck_setOCC(GAME_PLAY *, CollisionCheck_c *, ClObj_c *);
+extern void CollisionCheck_Status_ct(Status_c *);
+extern void CollisionCheck_Status_Clear(Status_c *);
+extern void CollisionCheck_Status_set3(Status_c *, StatusData_c *);
+extern int CollisionCheck_Uty_ActorWorldPosSetPipeC(ACTOR *, ClObjPipe_c *);
+
+ 
 
 #ifdef __cplusplus
 }

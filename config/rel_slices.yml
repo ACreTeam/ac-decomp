@@ -32,6 +32,11 @@ m_banti.c:
     .bss: [0x8125A830, 0x8125AC80]
 m_cockroach.c:
     .text: [0x80385430, 0x80385A80]
+m_collision_obj.c:
+    .text: [0x80394518, 0x80395B24]
+    .rodata: [0x80641CE8, 0x80641D20]
+    .data: [0x80651208,0x806512D8]
+    .bss: [0x812663D0, 0x81266400]
 m_common_data.c:
     .text: [0x80395B24, 0x80395BE8]
 m_controller.c:
