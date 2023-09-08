@@ -17,6 +17,8 @@ typedef struct notice_board_post_s {
   /* 0xC0 */ lbRTC_time_c post_time; /* date-time of post */
 } mNtc_board_post_c;
 
+extern void mNtc_set_auto_nwrite_data();
+
 #ifdef __cplusplus
 }
 #endif

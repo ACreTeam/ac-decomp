@@ -340,6 +340,13 @@ first_game.c:
     .text: [0x80629CA8, 0x80629D4C]
 sys_romcheck.c:
     .text: [0x80629D4C, 0x80629D8C]
+sys_dynamic.c:
+    .bss: [0x813413F8, 0x81361820]
+m_play.c:
+    .text: [0x80629D8C,0x8062B630]
+    .rodata: [0x8064D1B8, 0x8064D1C0]
+    .data: [0x806D46D0, 0x806D4958]
+    .bss: [0x81361820, 0x8148DA60]
 second_game.c:
     .text: [0x8062B630, 0x8062B848]
     .bss: [0x8148DA60, 0x8148DA68]
@@ -363,10 +370,6 @@ audio.c:
     .rodata: [0x8064D340, 0x8064D360]
     .data: [0x806D4CB0,0x806D4D40]
     .bss: [0x8148DA78,0x8148DA7C]
-sys_dynamic.c:
-    .bss: [0x813413F8, 0x81361820]
-# ac_aprilfool_control/aPC_actor_dt.c: common_data is pure bs, 
-    # .text: [0x805153f0, 0x8051542C]
 
 # dataobject.obj files
 data/titledemo/pact0.c:

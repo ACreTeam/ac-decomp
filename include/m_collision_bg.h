@@ -116,6 +116,12 @@ extern void mCoBG_SetPlussOffset(xyz_t wpos, s16 offset, s16 new_attrib);
 extern int mCoBG_GetLayer(const xyz_t* wpos); 
 extern int mCoBG_BnumUnum2HoleNumber(int block_x, int block_z, int ut_x, int ut_z);
 
+extern void mCoBG_InitMoveBgData();
+extern void mCoBG_InitBlockBgCheckMode();
+extern void mCoBG_InitDecalCircle();
+
+extern void mCoBG_CalcTimerDecalCircle();
+
 extern f32 mCoBG_GetWaterHeight_File(xyz_t wpos, char* file, int line);
 #define mCoBG_GetWaterHeight(wpos) mCoBG_GetWaterHeight_File(wpos, __FILE__, __LINE__)
 

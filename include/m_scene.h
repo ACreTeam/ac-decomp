@@ -2,7 +2,6 @@
 #define M_SCENE_H
 
 #include "types.h"
-#include "m_scene_table.h"
 #include "m_lib.h"
 
 #ifdef __cplusplus
@@ -39,8 +38,71 @@ typedef struct object_exchange_s {
   u8 _1934[0x1958-0x1934];
 } Object_Exchange_c;
 
+typedef struct scene_status_s{
+    u8 unk0[0x13];
+    u8 unk13;
+}Scene_status_c;
+
+extern Scene_status_c test01_info;
+extern Scene_status_c test02_info;
+extern Scene_status_c test03_info;
+extern Scene_status_c water_test_info;
+extern Scene_status_c test_step01_info;
+extern Scene_status_c test04_info;
+extern Scene_status_c npc_room01_info;
+extern Scene_status_c test_fd_npc_land_info;
+extern Scene_status_c field_tool_field_info;
+extern Scene_status_c shop01_info;
+extern Scene_status_c BG_TEST01_info;
+extern Scene_status_c BG_TEST01_XLU_info;
+extern Scene_status_c broker_shop_info;
+extern Scene_status_c fg_tool_in_info;
+extern Scene_status_c post_office_info;
+extern Scene_status_c start_demo1_info;
+extern Scene_status_c start_demo2_info;
+extern Scene_status_c police_box_info;
+extern Scene_status_c buggy_info;
+extern Scene_status_c player_select_info;
+extern Scene_status_c player_room_s_info;
+extern Scene_status_c player_room_m_info;
+extern Scene_status_c player_room_l_info;
+extern Scene_status_c shop02_info;
+extern Scene_status_c shop03_info;
+extern Scene_status_c shop04_1f_info;
+extern Scene_status_c test05_info;
+extern Scene_status_c PLAYER_SELECT2_info;
+extern Scene_status_c PLAYER_SELECT3_info;
+extern Scene_status_c shop04_2f_info;
+extern Scene_status_c event_notification_info;
+extern Scene_status_c kamakura_info;
+extern Scene_status_c field_tool_field_info;
+extern Scene_status_c title_demo_info;
+extern Scene_status_c PLAYER_SELECT4_info;
+extern Scene_status_c museum_entrance_info;
+extern Scene_status_c museum_picture_info;
+extern Scene_status_c museum_fossil_info;
+extern Scene_status_c museum_insect_info;
+extern Scene_status_c museum_fish_info;
+extern Scene_status_c player_room_ll1_info;
+extern Scene_status_c player_room_ll2_info;
+extern Scene_status_c p_room_bm_s_info;
+extern Scene_status_c p_room_bm_m_info;
+extern Scene_status_c p_room_bm_l_info;
+extern Scene_status_c p_room_bm_ll1_info;
+extern Scene_status_c NEEDLEWORK_info;
+extern Scene_status_c player_room_island_info;
+extern Scene_status_c npc_room_island_info;
+extern Scene_status_c start_demo3_info;
+extern Scene_status_c lighthouse_info;
+extern Scene_status_c tent_info;
+
 extern int mSc_bank_regist_check(Object_Exchange_c* exchange, s16 bank_id);
 extern void mSc_regist_initial_exchange_bank(GAME_PLAY* play);
+extern void mSc_dmacopy_data_bank(Object_Exchange_c*);
+extern void mSc_data_bank_ct(GAME_PLAY*, Object_Exchange_c*);
+extern void Door_info_ct(Door_data_c**);
+extern void Scene_ct(GAME_PLAY*, void*);
+extern void mSc_decide_exchange_bank(Object_Exchange_c*);
 
 #ifdef __cplusplus
 }

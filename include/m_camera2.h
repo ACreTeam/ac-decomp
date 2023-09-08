@@ -326,6 +326,10 @@ typedef struct camera_s {
 
 
 xyz_t* Camera2_getMicPos_p(GAME_PLAY*);
+void Camera2_ClearActorTalking_Cull(GAME_PLAY*);
+void Camera2_process(GAME_PLAY*);
+void Init_Camera2(GAME_PLAY*);
+void Camera2_draw(GAME_PLAY*);
 
 #ifdef __cplusplus
 }

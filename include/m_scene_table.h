@@ -2,6 +2,7 @@
 #define M_SCENE_TABLE_H
 
 #include "types.h"
+#include "m_scene.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,6 +78,9 @@ enum scene_table {
 
   SCENE_NUM
 };
+
+
+extern Scene_status_c scene_data_status[SCENE_NUM];
 
 #ifdef __cplusplus
 }

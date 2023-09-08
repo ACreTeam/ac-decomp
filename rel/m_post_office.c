@@ -14,6 +14,7 @@
 #include "m_play.h"
 #include "libultra/libultra.h"
 #include "m_common_data.h"
+#include "m_scene_table.h"
 
 static int mPO_keep_contents(Mail_c* mail) {
   int res = FALSE;

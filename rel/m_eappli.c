@@ -3,7 +3,7 @@
 #include "m_common_data.h"
 #include "m_private.h"
 #include "lb_rtc.h"
-#include "m_scene.h"
+#include "m_scene_table.h"
 #include "m_malloc.h"
 #include "libjsys/jsyswrapper.h"
 

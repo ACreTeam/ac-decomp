@@ -2,7 +2,7 @@
 
 #include "m_name_table.h"
 #include "m_room_type.h"
-#include "m_scene.h"
+#include "m_scene_table.h"
 #include "m_common_data.h"
 
 extern int mMmd_FossilInfo(int fossil_no) {

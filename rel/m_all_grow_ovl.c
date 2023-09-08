@@ -10,6 +10,7 @@
 #include "m_house.h"
 #include "m_snowman.h"
 #include "m_shop.h"
+#include "m_scene_table.h"
 
 #ifdef MUST_MATCH
 #include "ppcdis.h"

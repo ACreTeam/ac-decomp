@@ -20,7 +20,7 @@ enum {
 
 extern int fuusen_DEBUG_mode_flag;
 
-extern void Balloon_init();
+extern void Balloon_init(GAME_PLAY*);
 extern void Balloon_make_fuusen(GAME_PLAY* play);
 extern void Balloon_chk_make_fuusen(GAME_PLAY* play);
 extern void Balloon_move(GAME_PLAY* play);

@@ -4,7 +4,7 @@
 #include "m_collision_bg.h"
 #include "m_field_info.h"
 #include "m_common_data.h"
-#include "m_scene.h"
+#include "m_scene_table.h"
 
 extern void mRF_MakeRandomField(mFM_combination_c* combi_table, mFM_combo_info_c* combo_info, int combo_count, GAME* game) {
   mRF_MakeRandomField_ovl(combi_table, combo_info, combo_count, game);

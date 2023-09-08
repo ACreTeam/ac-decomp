@@ -13,6 +13,8 @@ typedef struct game_famicom_emu_s {
   /* 0x00 */ GAME game;
 } GAME_FAMICOM_EMU;
 
+extern void* my_malloc_func[];
+
 extern void famicom_emu_init(GAME_FAMICOM_EMU* famicom_emu);
 extern void famicom_emu_cleanup(GAME_FAMICOM_EMU* famicom_emu);
 

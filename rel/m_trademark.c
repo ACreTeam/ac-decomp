@@ -1,6 +1,6 @@
 #include "m_trademark.h"
 
-#include "m_scene.h"
+#include "m_scene_table.h"
 #include "m_name_table.h"
 #include "m_npc.h"
 #include "m_kankyo.h"

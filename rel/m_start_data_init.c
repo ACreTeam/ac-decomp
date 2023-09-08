@@ -7,7 +7,7 @@
 #include "m_font.h"
 #include "m_field_info.h"
 #include "m_field_make.h"
-#include "m_scene.h"
+#include "m_scene_table.h"
 #include "libultra/libultra.h"
 #include "m_cockroach.h"
 #include "m_melody.h"

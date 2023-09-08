@@ -91,8 +91,8 @@ extern void sAdo_OngenTrgStartSpeed(f32 speed, u16 s1, xyz_t* pos);
 extern void sAdo_TrgSeEcho(u8 b);
 extern void sAdo_LevSeEcho(u8 b);
 
-extern void sAdo_BgmFadeoutCheck();
-extern void sAdo_SeFadeoutCheck();
+extern u8 sAdo_BgmFadeoutCheck();
+extern u8 sAdo_SeFadeoutCheck();
 
 extern void sAdo_RoomType(u8 type);
 extern void sAdo_Museum(u8 type);

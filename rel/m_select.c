@@ -6,7 +6,7 @@
 #include "m_kabu_manager.h"
 #include "m_font.h"
 #include "m_time.h"
-#include "m_scene.h"
+#include "m_scene_table.h"
 #include "m_controller.h"
 #include "m_kankyo.h"
 #include "audio.h"

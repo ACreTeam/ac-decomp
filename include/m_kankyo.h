@@ -42,7 +42,11 @@ typedef struct kankyo_s {
   /* 0xC8 */ Nature nature;
 } Kankyo;
 
+extern void Global_kankyo_ct(GAME_PLAY*, Kankyo*);
 extern int mEnv_NowWeather();
+extern int mEnv_WindMove();
+extern void mEnv_ManagePointLight(GAME_PLAY*, Kankyo*, Global_light*);
+extern void Global_kankyo_set(GAME_PLAY*, Kankyo*, Global_light*);
 
 #ifdef __cplusplus
 }

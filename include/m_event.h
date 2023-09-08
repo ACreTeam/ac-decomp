@@ -240,7 +240,7 @@ extern int mEv_check_status(int event, s16 status);
 extern s8* mEv_get_common_area(int type, s8 id);
 extern int mEv_ArbeitPlayer(u32 player_no);
 extern u16 mEv_get_special_event_type();
-mEv_ClearEventSaveInfo(mEv_event_save_c* event_save_data);
+extern int mEv_ClearEventSaveInfo(mEv_event_save_c* event_save_data);
 
 extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
 extern void mEv_ClearEventInfo();
@@ -248,11 +248,15 @@ extern void mEv_ClearEventInfo();
 extern void mEv_init(Event_c* event);
 extern void mEv_2nd_init(Event_c* event);
 
+extern void mEv_run(Event_c* event);
+extern void mEv_finish(Event_c* event);
+
 extern int mEv_CheckTitleDemo();
 extern void mEv_SetTitleDemo(int titledemo_no);
 
 extern void mEv_debug_print4f(gfxprint_t* gfxprint);
 extern void mEv_sp_debug_print4f(gfxprint_t* gfxprint);
+
 
 #ifdef __cplusplus
 }

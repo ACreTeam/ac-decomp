@@ -323,7 +323,7 @@ extern void Actor_info_ct(GAME* game, Actor_info* actor_info, Actor_data* player
   bzero(actor_info, sizeof(Actor_info));
   actor_dlftbls_init();
 
-  Matrix_copy_MtxF(&play->mtx_204C, &MtxF_clear);
+  Matrix_copy_MtxF(&play->billboard_matrix, &MtxF_clear);
   Matrix_copy_MtxF(&play->projection_matrix, &MtxF_clear);
 
   /* Reset the actor dlf table info */

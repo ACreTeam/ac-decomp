@@ -200,7 +200,9 @@ typedef struct common_data_s {
   /* 0x028592 */ s16 demo_profiles[mDemo_CLIP_TYPE_NUM - 1];
   /* 0x028596 */ u8 _28596[0x285C0 - 0x28596];
   /* 0x0285C0 */ s8 player_decoy_flag;
-  /* 0x0285C1 */ u8 _285C1[0x028838 - 0x0285C1];
+  /* 0x0285C1 */ u8 _285C1[0x0285C6 - 0x0285C1];
+  /* 0x0285C6 */ u8 event_id;
+  /* 0x0285C7 */ u8 _285C3[0x028838 - 0x0285C7];
   /* 0x028838 */ s8 player_bee_swell_flag;
   /* 0x028839 */ s8 player_bee_chase_flag;
   /* 0x02883A */ u8 goki_shocked_flag;
