@@ -1,5 +1,8 @@
+#include "libc64/sprintf.h"
+
 #include "libultra/xprintf.h"
 #include "_mem.h"
+
 
 static void* proutPrintf(void* dst, const char* fmt, size_t size) {
     return (void*)((u8*)memcpy(dst, fmt, size) + size);

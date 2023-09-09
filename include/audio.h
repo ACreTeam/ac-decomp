@@ -73,7 +73,7 @@ extern void sAdo_BgmCrossfadeStart(u8 b);
 
 extern void sAdo_SubGameStart();
 extern void sAdo_SubGameEnd();
-extern u8 sAdo_SubGameOK();
+extern int sAdo_SubGameOK();
 
 extern void sAdo_Tenki(u8 mode);
 

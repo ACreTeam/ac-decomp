@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_lib.h"
+#include "famicom_emu.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -103,6 +104,8 @@ extern void mSc_data_bank_ct(GAME_PLAY*, Object_Exchange_c*);
 extern void Door_info_ct(Door_data_c**);
 extern void Scene_ct(GAME_PLAY*, void*);
 extern void mSc_decide_exchange_bank(Object_Exchange_c*);
+extern void return_emu_game(GAME*);
+
 
 #ifdef __cplusplus
 }

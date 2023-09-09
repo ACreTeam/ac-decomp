@@ -281,7 +281,7 @@ extern void sAdo_SubGameEnd(){
     Na_SubGameEnd();
 }
 
-extern u8 sAdo_SubGameOK(){
+extern int sAdo_SubGameOK(){
 
     return Na_SubGameOK();
 }

@@ -202,7 +202,10 @@ typedef struct common_data_s {
   /* 0x0285C0 */ s8 player_decoy_flag;
   /* 0x0285C1 */ u8 _285C1[0x0285C6 - 0x0285C1];
   /* 0x0285C6 */ u8 event_id;
-  /* 0x0285C7 */ u8 _285C3[0x028838 - 0x0285C7];
+  /* 0x0285C7 */ u8 _285C3[0x0287F8 - 0x0285C7];
+  /* 0x0287F8 */ s8 current_famicom_rom;
+  /* 0x0287F9 */ s8 famicom_287F9;
+  /* 0x0287FA */ u8 _287FA[0x28838 - 0x0287FA]; 
   /* 0x028838 */ s8 player_bee_swell_flag;
   /* 0x028839 */ s8 player_bee_chase_flag;
   /* 0x02883A */ u8 goki_shocked_flag;
@@ -249,7 +252,8 @@ typedef struct common_data_s {
   /* 0x02DB40 */ u8 auto_nwrite_set; /* when true, saved nwrite time will be utilized. Seems to be used to keep same date for fishing tourney stuff. */
   /* 0x02DB42 */ u16 select_last_select_no;
   /* 0x02DB44 */ u16 select_last_top_no;
-  /* 0x02DB46 */ u8 tmp3[0x2DBB0 - 0x2DB46];
+  /* 0x02DB46 */ u8 tmp3[0x2DBAC - 0x2DB46];
+  /* 0X02DBAC */ int famicom_2DBAC;
   /* 0x02DBB0 */ s16 can_look_goki_count;
   /* 0x02DBB4 */ f32 rainbow_opacity; /* current opacity of rainbow (0.0f - 1.0f) */
   /* 0x02DBB8 */ u32 event_flags[7]; /* TODO: make array size a definition/enum */
