@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_lights.h"
+#include "game.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,7 +39,9 @@ typedef struct kankyo_s {
   /* 0x00 */ Lights sun_light;
   /* 0x0E */ u8 pad[0x9A - 0x0E];
   /* 0x9A */ u8 ambientColor[3];
-  /* 0x9E */ u8 pad2[0xC8 - 0x9E];  
+  /* 0x9E */ u8 pad2[0xC0 - 0x9E];
+  /* 0xC0 */ f32 unkC0;
+  /* 0xC4 */ u8 unkC4;
   /* 0xC8 */ Nature nature;
 } Kankyo;
 
@@ -47,7 +50,7 @@ extern int mEnv_NowWeather();
 extern int mEnv_WindMove();
 extern void mEnv_ManagePointLight(GAME_PLAY*, Kankyo*, Global_light*);
 extern void Global_kankyo_set(GAME_PLAY*, Kankyo*, Global_light*);
-
+extern void mEnv_GetShadowPrimColor_Light(u8*,u8*,u8*,GAME*);
 #ifdef __cplusplus
 }
 #endif

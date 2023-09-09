@@ -106,6 +106,7 @@ extern u32 mCoBG_Wpos2BgAttribute_Original(xyz_t wpos);
 extern u32 mCoBG_Wpos2Attribute(xyz_t wpos, char* is_diggable);
 extern int mCoBG_CheckWaterAttribute(u32 attribute);
 extern f32 mCoBG_GetBgY_AngleS_FromWpos(s_xyz* angle_to_ground, xyz_t wpos, f32 offset_y);
+extern f32 mCoBG_GetShadowBgY_AngleS_FromWpos(f32, s_xyz*, xyz_t);
 extern int mCoBG_CheckWaterAttribute_OutOfSea(u32 attribute);
 extern int mCoBG_CheckHole_OrgAttr(u32 attribute);
 extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos2(xyz_t wpos, f32 foot_dist);

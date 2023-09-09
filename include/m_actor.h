@@ -339,6 +339,22 @@ typedef struct actor_shape_info_s {
   /* 0x2F */ u8 unused_2F[0x48-0x2F];
 } Shape_Info;
 
+typedef struct actor_shadow_s{
+    /* 0x00 */ xyz_t position;
+    /* 0x0C */ f32 groundY;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ f32 unk1C;
+    /* 0x20 */ s16 unk20;
+    /* 0x22 */ s16 unk22;
+    /* 0x24 */ s16 unk24; 
+    /* 0x26 */ s16 unk26;
+    /* 0x28 */ char pad28[0xC];
+    /* 0x34 */ int unk34;
+    /* 0x38 */ int kind;
+}Shadow_Info;
+
 /* sizeof(struct actor_s) == 0x174 */
 struct actor_s {
   /* 0x000 */ s16 id; /* unique actor type ID */
@@ -446,8 +462,6 @@ extern Hilite* HiliteReflect_xlu_init(xyz_t* pos, xyz_t* eye, xyz_t* light_direc
 extern void Setpos_HiliteReflect_init(xyz_t* pos, GAME_PLAY* play);
 extern void Setpos_HiliteReflect_xlu_init(xyz_t* pos, GAME_PLAY* play);
 
-extern void mAc_ActorShadowCircle(ACTOR* actor, LightsN* lightsN, GAME_PLAY* play);
-extern void mAc_ActorShadowEllipse(ACTOR* actor, LightsN* lightsN, GAME_PLAY* play);
 
 #ifdef __cplusplus
 }
