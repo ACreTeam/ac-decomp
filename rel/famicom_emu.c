@@ -169,7 +169,7 @@ void famicom_emu_init(GAME_FAMICOM_EMU* famicom){
     manager = JC_JFWDisplay_getManager();
     render = JC_JFWDisplay_getRenderMode(manager); 
     freeXfbBase = JC_JFWDisplay_changeToSingleXfb(manager, 1);
-    freeXfbSize = render->efbHeight * render->viXOrigin * sizeof(u16);
+    freeXfbSize = render->fbWidth * render->xfbHeight * sizeof(u16);
 
     my_alloc_init(famicom, freeXfbBase, freeXfbSize);
 
@@ -180,7 +180,7 @@ void famicom_emu_init(GAME_FAMICOM_EMU* famicom){
 }
 
 
-void famicom_emu_cleanup(GAME*){
+void famicom_emu_cleanup(GAME* game){
 
     JC_JFWDisplay_startFadeIn(JC_JFWDisplay_getManager(), 1);
 
