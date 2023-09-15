@@ -7,6 +7,7 @@
 #include "m_player_lib.h"
 #include "m_room_type.h"
 #include "m_collision_bg.h"
+#include "m_scene_table.h"
 #include "m_common_data.h"
 
 #ifdef MUST_MATCH
