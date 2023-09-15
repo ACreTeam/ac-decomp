@@ -212,6 +212,10 @@ extern void mNpc_InitNpcAllInfo(int malloc_flag);
 extern void mNpc_SetRemoveAnimalNo(u8* remove_animal_no, Animal_c* animals, int remove_no);
 extern void mNpc_ClearAnimalPersonalID(AnmPersonalID_c* id);
 extern int mNpc_CheckCmpAnimalPersonalID(AnmPersonalID_c* id0, AnmPersonalID_c* id1);
+extern int mNpc_SearchAnimalPersonalID(AnmPersonalID_c* id);
+extern void mNpc_GetActorWorldName(u8* buf, mActor_name_t id);
+extern u8 mNpc_CheckNormalMail_length(int* len, u8* body);
+extern mActor_name_t mNpc_GetNpcFurniture(AnmPersonalID_c* pid);
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);
