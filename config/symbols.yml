@@ -2629,6 +2629,9 @@ global:
     0x8009ae38: _savefpr_28
     0x8009ae3c: _savefpr_29
     0x8009ae4c: __restore_fpr
+    0x8009ae78: _restfpr_25
+    0x8009ae80: _restfpr_27
+    0x8009ae84: _restfpr_28
     0x8009ae88: _restfpr_29
     0x8009ae98: __save_gpr
     0x8009ae9c: _savegpr_15

@@ -144,7 +144,7 @@ n.rule(
 
 n.rule(
     "jumptable",
-    command = "$disassembler $in $out -j $addr -q $disassembler",
+    command = "$disassembler $in $out -j $addr -q $disasmflags",
     description = "Jumptable $addr"
 )
 
@@ -414,7 +414,7 @@ class FloatInclude(GeneratedInclude):
         # Build
         for inc in includes:
             sda = "--sda " if ctx.sdata2_threshold >= 4 else ""
-            asm = "" if inc.manual else "--asm"
+            asm = "" if inc.manual else "" #--asm
             n.build(
                 inc.path,
                 rule="orderfloats",

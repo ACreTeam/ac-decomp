@@ -116,6 +116,9 @@ extern int mCoBG_Height2GetLayer(f32 height);
 extern void mCoBG_SetPlussOffset(xyz_t wpos, s16 offset, s16 new_attrib);
 extern int mCoBG_GetLayer(const xyz_t* wpos); 
 extern int mCoBG_BnumUnum2HoleNumber(int block_x, int block_z, int ut_x, int ut_z);
+extern u32 mCoBG_UtNum2BgAttr(int ut_x, int ut_z);
+extern f32 mCoBG_UtNum2UtCenterY(int ut_x, int ut_z);
+extern int mCoBG_CheckCliffAttr(u32 attribute);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();

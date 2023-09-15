@@ -52,6 +52,10 @@ enum field_room {
   /* TODO: others */
   mFI_FIELD_FG = mFI_TO_FIELD_ID(mFI_FIELDTYPE_FG, 0),
 
+  mFI_FIELD_ROOM0 = mFI_TO_FIELD_ID(mFI_FIELDTYPE_ROOM, 0),
+
+  mFI_FIELD_NPCROOM0 = mFI_TO_FIELD_ID(mFI_FIELDTYPE_NPC_ROOM, 0),
+
   mFI_FIELD_PLAYER0_ROOM = mFI_TO_FIELD_ID(mFI_FIELDTYPE_PLAYER_ROOM, 0),
   mFI_FIELD_PLAYER1_ROOM,
   mFI_FIELD_PLAYER2_ROOM,
@@ -155,6 +159,10 @@ extern void mFI_BlockDepositOFF(u16* deposit, int ut_x, int ut_z);
 extern void mFI_PullTanukiPathTrees();
 extern int mFI_CheckBlockKind_OR(int block_x, int block_z, u32 kind);
 extern void mFI_GetIslandBlockNumX(int* island_block_x_nums);
+extern void mFI_LposInBKtoWpos(xyz_t* wpos, xyz_t lpos, int block_x, int block_z);
+extern f32 mFI_GetBlockWidth();
+extern f32 mFI_GetBlockHeight();
+extern int mFI_Wpos2BkandUtNuminBlock(int* block_x, int* block_z, int* ut_x, int* ut_z, xyz_t wpos);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);

@@ -34,13 +34,15 @@ extern f32 Math3DVecLength(xyz_t* vec);
 extern void sMath_RotateX(xyz_t* pos, f32 rad);
 extern void sMath_RotateY(xyz_t* pos, f32 rad);
 extern void sMath_RotateZ(xyz_t* pos, f32 rad);
+extern f32 Math3d_normalizeXyz_t(xyz_t* vec);
+extern f32 Math3DLength(xyz_t* v0, xyz_t* v1);
+extern void Math3DInDivPos2(xyz_t* v0, xyz_t* v1, xyz_t* v2, f32 percent);
 extern void Math3DPlane(xyz_t* va, xyz_t* vb, xyz_t* vc, f32* nox, f32* noy, f32* noz, f32* odist);
 extern int Math3D_sphereCrossSphere_cl(Math3D_sphere_c* a, Math3D_sphere_c* b, f32* in);
 extern int Math3D_sphereVsPipe_cl(Math3D_sphere_c* s, Math3D_pipe_c* c, f32* in);
 extern int Math3D_pipeVsPipe_cl(Math3D_pipe_c* a, Math3D_pipe_c* b , f32* d);
 extern int Math3D_sphereCrossTriangle3_cp(Math3D_sphere_c* s, Math3D_triangle_c* tri, xyz_t* ip);
 extern int Math3D_pipeCrossTriangle_cp(Math3D_pipe_c* c,Math3D_triangle_c* tri, xyz_t* in);
-
 
 extern xyz_t ZeroVec;
 extern s_xyz ZeroSVec;

@@ -122,5 +122,6 @@ extern int mRmTp_FurnitureIdx2FurnitureKind(int ftr_idx);
 extern int mRmTp_PleaseDrawLightSwitch();
 extern mActor_name_t mRmTp_Item1ItemNo2FtrItemNo_AtPlayerRoom(mActor_name_t item_no, int flag);
 extern void mRmTp_SetDefaultLightSwitchData(int state);
+extern int mRmTp_GetEntranceBasePosition(xyz_t* pos);
 
 #endif
