@@ -13,6 +13,10 @@ extern "C" {
 
 #define SQRTF(f) (__frsqrte(f))
 
+extern double sin(double deg);
+extern double cos(double deg);
+extern double tan(double deg);
+
 #ifdef __cplusplus
 }
 #endif

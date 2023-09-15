@@ -19,6 +19,9 @@ extern f32 Math3DVecLength(xyz_t* vec);
 extern void sMath_RotateX(xyz_t* pos, f32 rad);
 extern void sMath_RotateY(xyz_t* pos, f32 rad);
 extern void sMath_RotateZ(xyz_t* pos, f32 rad);
+extern f32 Math3d_normalizeXyz_t(xyz_t* vec);
+extern f32 Math3DLength(xyz_t* v0, xyz_t* v1);
+extern void Math3DInDivPos2(xyz_t* v0, xyz_t* v1, xyz_t* v2, f32 percent);
 
 extern xyz_t ZeroVec;
 extern s_xyz ZeroSVec;

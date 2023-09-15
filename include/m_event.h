@@ -118,6 +118,7 @@ enum event_table {
   mEv_EVENT_HALLOWEEN = 49,
   mEv_EVENT_FISHING_TOURNEY_2 = 54,
   mEv_EVENT_GHOST = 64,
+  mEv_EVENT_KK_SLIDER = 71,
   mEv_EVENT_BROKER_SALE = 75,
   mEv_EVENT_SHOP_SALE = 78,
 };
@@ -238,6 +239,7 @@ extern int mEv_CheckArbeit();
 extern int mEv_CheckTitleDemo();
 extern int mEv_check_status(int event, s16 status);
 extern s8* mEv_get_common_area(int type, s8 id);
+extern s8* mEv_get_save_area(int type, s8 id);
 extern int mEv_ArbeitPlayer(u32 player_no);
 extern u16 mEv_get_special_event_type();
 mEv_ClearEventSaveInfo(mEv_event_save_c* event_save_data);
