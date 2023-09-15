@@ -9,6 +9,7 @@
 #include "m_time.h"
 #include "m_titledemo.h"
 #include "m_event.h"
+#include "m_scene_table.h"
 
 extern void flash_rom_and_player_info_clear() {
   Save* save = Common_GetPointer(save);

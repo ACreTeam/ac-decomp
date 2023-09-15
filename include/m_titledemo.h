@@ -25,6 +25,7 @@ extern u16 pact4_head_table[];
 
 extern int mTD_demono_get();
 extern void title_demo_move(GAME_PLAY* play);
+extern void mTD_player_keydata_init(GAME_PLAY* play);
 extern void mTD_rtc_set();
 extern void mTD_rtc_reserve();
 extern int mTD_get_titledemo_no();

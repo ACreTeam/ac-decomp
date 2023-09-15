@@ -106,6 +106,7 @@ extern u32 mCoBG_Wpos2BgAttribute_Original(xyz_t wpos);
 extern u32 mCoBG_Wpos2Attribute(xyz_t wpos, char* is_diggable);
 extern int mCoBG_CheckWaterAttribute(u32 attribute);
 extern f32 mCoBG_GetBgY_AngleS_FromWpos(s_xyz* angle_to_ground, xyz_t wpos, f32 offset_y);
+extern f32 mCoBG_GetShadowBgY_AngleS_FromWpos(f32, s_xyz*, xyz_t);
 extern int mCoBG_CheckWaterAttribute_OutOfSea(u32 attribute);
 extern int mCoBG_CheckHole_OrgAttr(u32 attribute);
 extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos2(xyz_t wpos, f32 foot_dist);
@@ -118,6 +119,12 @@ extern int mCoBG_BnumUnum2HoleNumber(int block_x, int block_z, int ut_x, int ut_
 extern u32 mCoBG_UtNum2BgAttr(int ut_x, int ut_z);
 extern f32 mCoBG_UtNum2UtCenterY(int ut_x, int ut_z);
 extern int mCoBG_CheckCliffAttr(u32 attribute);
+
+extern void mCoBG_InitMoveBgData();
+extern void mCoBG_InitBlockBgCheckMode();
+extern void mCoBG_InitDecalCircle();
+
+extern void mCoBG_CalcTimerDecalCircle();
 
 extern f32 mCoBG_GetWaterHeight_File(xyz_t wpos, char* file, int line);
 #define mCoBG_GetWaterHeight(wpos) mCoBG_GetWaterHeight_File(wpos, __FILE__, __LINE__)

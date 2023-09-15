@@ -3,6 +3,7 @@
 #include "libc64/malloc.h"
 #include "libc64/sleep.h"
 #include "libultra/gu.h"
+#include "m_play.h"
 
 Gfx fbdemo_gfx_init[] = {
     gsDPPipeSync(),
@@ -19,7 +20,7 @@ Gfx fbdemo_gfx_init[] = {
     gsSPEndDisplayList(),
 };
 
-extern void fbdemo_init_gfx(fbdemo* this) {
+extern void fbdemo_init_gfx(fbdemo_c* this) {
   int col;
   int col2;
   int colTex;
@@ -87,7 +88,7 @@ extern void fbdemo_init_gfx(fbdemo* this) {
   gSPEndDisplayList(gfx++);
 }
 
-extern void fbdemo_init_data(fbdemo* this) {
+extern void fbdemo_init_data(fbdemo_c* this) {
   int col;
   int row;
 
@@ -99,7 +100,7 @@ extern void fbdemo_init_data(fbdemo* this) {
   }
 }
 
-extern void fbdemo_cleanup(fbdemo* this) {
+extern void fbdemo_cleanup(fbdemo_c* this) {
   msleep(100);
 
   if (this->vtxData != NULL) {
@@ -120,7 +121,7 @@ extern void fbdemo_cleanup(fbdemo* this) {
   }
 }
 
-extern fbdemo* fbdemo_init(fbdemo* this, int cols, int rows) {
+extern fbdemo_c* fbdemo_init(fbdemo_c* this, int cols, int rows) {
   s32 gridsize;
 
   bzero(this, sizeof(fbdemo));
@@ -168,7 +169,7 @@ extern fbdemo* fbdemo_init(fbdemo* this, int cols, int rows) {
   return this;
 }
 
-extern void fbdemo_update(fbdemo* this) {
+extern void fbdemo_update(fbdemo_c* this) {
   int col;
   int row;
   Vtx* vtx;
@@ -186,7 +187,7 @@ extern void fbdemo_update(fbdemo* this) {
   }
 }
 
-void fbdemo_draw(fbdemo* this, Gfx** gfxP) {
+void fbdemo_draw(fbdemo_c* this, Gfx** gfxP) {
   Gfx* gfx = *gfxP;
 
   gSPDisplayList(gfx++, fbdemo_gfx_init);
@@ -204,4 +205,4 @@ void fbdemo_draw(fbdemo* this, Gfx** gfxP) {
   *gfxP = gfx;
 }
 
-extern void fbdemo_move(fbdemo* this) {}
+extern void fbdemo_move(fbdemo_c* this) {}

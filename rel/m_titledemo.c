@@ -40,7 +40,7 @@ extern int mTD_demono_get() {
   return S_now_demono;
 }
 
-static void mTD_player_keydata_init(GAME_PLAY* play) {
+extern void mTD_player_keydata_init(GAME_PLAY* play) {
   PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
 
   if (mEv_CheckTitleDemo() > 0) {

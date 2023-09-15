@@ -60,6 +60,8 @@ enum demo_clip_type {
   mDemo_CLIP_TYPE_NUM
 };
 
+extern void mDemo_Init(GAME_PLAY*);
+extern void mDemo_Main(GAME_PLAY*);
 extern int mDemo_Request(int type, ACTOR* actor, mDemo_REQUEST_PROC request_proc);
 extern void mDemo_Set_msg_num(int msg_num);
 extern int mDemo_Check(int type, ACTOR* actor);
@@ -75,6 +77,7 @@ extern void mDemo_Set_talk_display_name(u8 value);
 extern void mDemo_Set_camera(u8 value);
 extern void mDemo_Set_talk_window_color(rgba_t* color);
 extern int mDemo_CheckDemo();
+extern void mDemo_stock_clear();
 
 #ifdef __cplusplus
 }

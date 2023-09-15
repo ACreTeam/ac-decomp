@@ -25,11 +25,19 @@ m_actor_dlftbls.c:
     .text: [0x8037619C, 0x803761BC]
     .data: [0x8064D628, 0x8064F4E8]
     .bss: [0x8125A828, 0x8125A830]
+m_actor_shadow.c:
+    .text: [0x803761BC, 0x80377114]
+    .rodata: [0x80641328, 0x80641388]
+    .data: [0x8064F4E8, 0x8064F548]
 m_banti.c:
     .text: [0x80377114, 0x80378858]
     .rodata: [0x80641388, 0x806413E0]
     .data: [0x8064F548, 0x8064F658]
     .bss: [0x8125A830, 0x8125AC80]
+m_bg_item.c:
+    .text: [0x80378858, 0x803789F8]
+    .rodata: [0x806413E0, 0x806413F0]
+    .bss: [0x81263080, 0x81263088]
 m_calendar.c:
     .text: [0x8037D190, 0x8037DA54]
 m_camera2.c:
@@ -38,6 +46,11 @@ m_camera2.c:
     .data: [0x8064F818, 0x8064F860]
 m_cockroach.c:
     .text: [0x80385430, 0x80385A80]
+m_collision_obj.c:
+    .text: [0x80394518, 0x80395B24]
+    .rodata: [0x80641CE8, 0x80641D20]
+    .data: [0x80651208,0x806512D8]
+    .bss: [0x812663D0, 0x81266400]
 m_common_data.c:
     .text: [0x80395B24, 0x80395BE8]
 m_controller.c:
@@ -339,6 +352,13 @@ first_game.c:
     .text: [0x80629CA8, 0x80629D4C]
 sys_romcheck.c:
     .text: [0x80629D4C, 0x80629D8C]
+sys_dynamic.c:
+    .bss: [0x813413F8, 0x81361820]
+m_play.c:
+    .text: [0x80629D8C,0x8062B630]
+    .rodata: [0x8064D1B8, 0x8064D1C0]
+    .data: [0x806D46D0, 0x806D4958]
+    .bss: [0x81361820, 0x8148DA60]
 second_game.c:
     .text: [0x8062B630, 0x8062B848]
     .bss: [0x8148DA60, 0x8148DA68]
@@ -354,6 +374,10 @@ save_menu.c:
     .text: [0x8062CA5C, 0x8062D39C]
     .rodata: [0x8064D1F8, 0x8064D318]
     .data: [0x806D4B80, 0x806D4B98]
+famicom_emu.c:
+    .text: [0x8062D39C, 0x8062D8FC]
+    .data: [0x806D4B98, 0x806D4CB0]
+    .bss: [0x8148DA68, 0x8148DA78]
 m_prenmi.c:
     .text: [0x8062D8FC, 0x8062DC04]
     .rodata: [0x8064D318, 0x8064D340]
@@ -362,10 +386,6 @@ audio.c:
     .rodata: [0x8064D340, 0x8064D360]
     .data: [0x806D4CB0,0x806D4D40]
     .bss: [0x8148DA78,0x8148DA7C]
-sys_dynamic.c:
-    .bss: [0x813413F8, 0x81361820]
-# ac_aprilfool_control/aPC_actor_dt.c: common_data is pure bs, 
-    # .text: [0x805153f0, 0x8051542C]
 
 # dataobject.obj files
 data/titledemo/pact0.c:

@@ -281,7 +281,7 @@ extern void sAdo_SubGameEnd(){
     Na_SubGameEnd();
 }
 
-extern u8 sAdo_SubGameOK(){
+extern int sAdo_SubGameOK(){
 
     return Na_SubGameOK();
 }
@@ -341,12 +341,12 @@ extern void sAdo_LevSeEcho(u8 b){
     Na_LevSeEcho(b);
 }
 
-extern void sAdo_BgmFadeoutCheck(){
+extern u8 sAdo_BgmFadeoutCheck(){
 
     Na_BgmFadeoutCheck();
 }
 
-extern void sAdo_SeFadeoutCheck(){
+extern u8 sAdo_SeFadeoutCheck(){
 
     Na_SeFadeoutCheck();
 }

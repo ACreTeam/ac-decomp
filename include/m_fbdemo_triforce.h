@@ -26,5 +26,4 @@ extern s8 fbdemo_triforce_is_finish(fbdemo_triforce*);
 extern void fbdemo_triforce_settype(fbdemo_triforce*, int);
 extern void fbdemo_triforce_setcolor_rgba8888(void);
 
-
 #endif

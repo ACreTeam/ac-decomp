@@ -9,6 +9,7 @@
 #include "m_collision_bg.h"
 #include "zurumode.h"
 #include "m_common_data.h"
+#include "m_scene_table.h"
 
 static mActor_name_t l_tree_max_table[mAGrw_FRUIT_NUM] = {
   TREE_APPLE_FRUIT,

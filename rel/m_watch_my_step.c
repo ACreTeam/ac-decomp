@@ -16,7 +16,7 @@
 #include "m_room_type.h"
 #include "m_msg.h"
 #include "audio.h"
-#include "m_scene.h"
+#include "m_scene_table.h"
 #include "m_private.h"
 
 typedef struct watch_my_step_s {

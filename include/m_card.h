@@ -16,6 +16,7 @@ extern void mCD_init_card();
 extern void mCD_PrintErrInfo(gfxprint_t* gfxprint);
 extern void mCD_InitAll();
 extern void mCD_LoadLand();
+extern void mCD_toNextLand();
 
 #ifdef __cplusplus
 }

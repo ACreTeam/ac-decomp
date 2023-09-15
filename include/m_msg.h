@@ -218,6 +218,10 @@ struct message_window_s {
 extern int mMsg_Get_Length_String(u8* buf, size_t buf_size);
 extern mMsg_Window_c* mMsg_Get_base_window_p();
 extern void mMsg_Set_free_str(mMsg_Window_c* msg, int free_str_no, u8* str, int str_size);
+extern void mMsg_ct(GAME_PLAY*);
+extern void mMsg_dt(GAME_PLAY*);
+extern void mMsg_Main(GAME_PLAY*);
+extern void mMsg_Draw(GAME_PLAY*);
 extern void mMsg_debug_draw(gfxprint_t* gfxprint);
 extern void mMsg_aram_init();
 extern void mMsg_aram_init2();

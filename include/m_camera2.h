@@ -327,7 +327,6 @@ typedef struct camera_s {
   xyz_t offset_center;
 } Camera2;
 
-
 extern s16 getCamera2AngleY(GAME_PLAY* play);
 extern int Camera2_change_priority(GAME_PLAY* play, int priority);
 extern xyz_t* Camera2_getEyePos_p();

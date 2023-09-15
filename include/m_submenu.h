@@ -104,6 +104,13 @@ struct submenu_s {
 };
 
 extern void mSM_open_submenu(Submenu* submenu, int menu_type, int arg0, int arg1);
+extern void mSM_submenu_dt(Submenu*);
+extern void mSM_submenu_ovlptr_cleanup(Submenu*);
+extern void mSM_submenu_ovlptr_init(GAME_PLAY*);
+extern void mSM_submenu_ct(Submenu*);
+extern void mSM_submenu_ctrl(GAME_PLAY*);
+extern void mSM_submenu_move(Submenu*);
+extern void mSM_submenu_draw(Submenu*, GAME_PLAY*);
 extern int mSM_CHECK_ALL_FISH_GET();
 extern int mSM_CHECK_ALL_INSECT_GET();
 

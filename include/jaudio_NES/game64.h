@@ -36,7 +36,7 @@ extern void Na_MDPlayerPos(u16,u16,u16,int, f32);
 extern void Na_BGMVolume(f32,u16);
 extern void Na_SubGameStart();
 extern void Na_SubGameEnd();
-extern int Na_SubGameOK();
+extern u8 Na_SubGameOK();
 extern void Na_Tenki(u8);
 extern void Na_KishaStatusTrg(u8);
 extern void Na_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 distance1, u32 ongenNum2, u16 angle2, f32 distance2);

@@ -16,12 +16,14 @@
 #include "m_collision_obj.h"
 #include "m_play_h.h"
 #include "m_scene.h"
+#include "PreRender.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef int (*DRAW_CHK_PROC)(ACTOR*, GAME_PLAY*);
+typedef void (*PLAY_WIPE_PROC)(GAME_PLAY*);
 
 /* sizeof(struct game_play_s) == 0x2600 */
 struct game_play_s {
@@ -30,7 +32,8 @@ struct game_play_s {
   /* 0x00E0 */ s16 scene_id;
   /* 0x00E4 */ mFI_block_tbl_c block_table;
   /* 0x00F4 */ mFI_block_tbl_c last_block_table;
-  /* 0x0104 */ u8 _0104[0x0110 - 0x0104];
+  /* 0x0104 */ u8 _0104[0x010C - 0x0104];
+  /* 0x010C */ Scene_status_c* current_scene_data;
   /* 0x0110 */ Object_Exchange_c object_exchange;
   /* 0x1A68 */ View view;
   /* 0x1B88 */ Camera2 camera;
@@ -39,12 +42,16 @@ struct game_play_s {
   /* 0x1DA0 */ pause_t pause;
   /* 0x1DA8 */ Actor_info actor_info;
   /* 0x1DEC */ Submenu submenu;
-  /* 0x1FA4 */ u8 _1FA4[0x2008 - 0x1FA4];
+  /* 0x1FA4 */ s8 unk1FA4;
+  /* 0x1FA8 */ u8 _1FA4[0x1FB8 - 0x1FA8];
+  /* 0x1FB8 */ PreRender prerender;
+  /* 0x2000 */ Door_data_c* door_data;
+  /* 0x2004 */ int _2004; 
   /* 0x2008 */ int next_scene_no;
   /* 0x200C */ MtxF projection_matrix;
-  /* 0x204C */ MtxF mtx_204C;
-  /* 0x208C */ int _208C;
-  /* 0x2090 */ u32 game_frame;
+  /* 0x204C */ MtxF billboard_matrix;
+  /* 0x208C */ Mtx* _208C;
+  /* 0x2090 */ u32 game_frame; 
   /* 0x2094 */ u8 _2094;
   /* 0x2095 */ u8 actor_data_num;
   /* 0x2096 */ u8 ctrl_actor_data_num;
@@ -63,12 +70,45 @@ struct game_play_s {
   /* 0x2318 */ fbdemo_fade color_fade;
   /* 0x2328 */ CollisionCheck_c collision_check;
   /* 0x23F8 */ DRAW_CHK_PROC draw_chk_proc; // only used by mikanbox actor
-  /* 0x23FC */ u8 _23FC[0x2600 - 0x23FC];
+  /* 0x23FC */ u32 fade_color_value;
+  /* 0x2400 */ Scene_status_c* scene_data_2400;
+  /* 0x2404 */ u8 _2400[0x2600 - 0x2404];
 };
 
+extern fbdemo_c fbdemo;
 
-extern void play_init(GAME_PLAY* play);
-extern void play_cleanup(GAME_PLAY* play);
+extern void Game_play_Reset_destiny();
+extern void event_title_flag_on();
+extern void event_title_flag_off();
+extern void Game_play_camera_proc(GAME_PLAY *);
+extern void Game_play_fbdemo_wipe_destroy(GAME_PLAY *);
+extern void Game_play_fbdemo_wipe_create_sub(GAME_PLAY *);
+extern void Game_play_fbdemo_wipe_create(GAME_PLAY *);
+extern void Game_play_fbdemo_wipe_init(GAME_PLAY *);
+extern void Game_play_fbdemo_fade_in_move_end(GAME_PLAY *);
+extern void Game_play_fbdemo_fade_out_start_emu_move_end(GAME_PLAY *);
+extern void Game_play_fbdemo_fade_out_game_end_move_end(GAME_PLAY *);
+extern void Game_play_change_scene_move_end(GAME_PLAY *);
+extern void Game_play_fbdemo_wipe_move(GAME_PLAY *);
+extern void Game_play_fbdemo_wipe_proc(GAME_PLAY *);
+extern Gfx* game_play_set_fog(GAME_PLAY *, Gfx *);
+extern void Game_play_fbdemo_proc(GAME_PLAY *);
+extern void play_cleanup(GAME *);
+extern void VR_Box_ct(GAME_PLAY *);
+extern void play_init(GAME *);
+extern void Game_play_move_fbdemo_not_move(GAME_PLAY *);
+extern void Game_play_move(GAME_PLAY *);
+extern void setupFog(GAME_PLAY *, GRAPH *);
+extern void setupViewer(GAME_PLAY *);
+extern void setupViewMatrix(GAME_PLAY *, GRAPH *, GRAPH *);
+extern void copy_efb_to_texture(Gfx **, void *);
+extern int makeBumpTexture(GAME_PLAY *, GRAPH *, GRAPH *);
+extern void draw_version(GRAPH *);
+extern void Game_play_draw(GAME *);
+extern void play_main(GAME *);
+extern void Gameplay_Scene_Init(GAME_PLAY *);
+extern u8 mPl_SceneNo2SoundRoomType(int);
+extern void Gameplay_Scene_Read(GAME_PLAY *, s16);
 
 #ifdef __cplusplus
 }

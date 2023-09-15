@@ -3338,6 +3338,7 @@ global:
     0x801ef128: FREE_SEQP_QUEUE
     0x801ef580: commentImageBuffer
     0x801f4dc4: famicomCommon
+    0x801f4dc0: save_game_image
     0x801f4e7c: famicomCommonSave
     0x801f683c: nesrom_filename_ptrs
     0x801f6840: nesrom_filename_strbuf

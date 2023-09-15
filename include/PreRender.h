@@ -27,6 +27,11 @@ typedef struct prerender_s {
   u8 _24[0x24];
 } PreRender;
 
+extern void PreRender_setup_savebuf(PreRender* render, int arg1, int arg2, int arg3, int arg4, int arg5);
+extern void PreRender_init(PreRender* render);
+extern void PreRender_setup_renderbuf(PreRender* render, int arg1, int arg2, void* arg3, void* arg4);
+extern void PreRender_cleanup(PreRender* render);
+
 #ifdef __cplusplus
 }
 #endif
