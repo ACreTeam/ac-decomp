@@ -82,7 +82,8 @@ enum {
 #define mPr_FOREIGN_MAP_COUNT 8
 #define mPr_ORIGINAL_DESIGN_COUNT 8
 
-#define mPr_GET_ITEM_COND(all_cond, slot_no) (((all_cond) >> (2 * (slot_no))) & 3)
+#define mPr_GET_ITEM_COND(all_cond, slot_no) (((all_cond) >> (((u32)(slot_no)) << 1)) & mPr_ITEM_COND_NUM)
+#define mPr_SET_ITEM_COND(all_cond, slot_no, cond) (((all_cond) & ~((u32)mPr_ITEM_COND_NUM << ((u32)(slot_no) << 1))) | ((u32)(cond) << ((u32)(i) << 1)))
 
 enum {
   mPr_SUNBURN_RANK_MIN,

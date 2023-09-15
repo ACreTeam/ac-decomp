@@ -163,6 +163,7 @@ extern void mFI_LposInBKtoWpos(xyz_t* wpos, xyz_t lpos, int block_x, int block_z
 extern f32 mFI_GetBlockWidth();
 extern f32 mFI_GetBlockHeight();
 extern int mFI_Wpos2BkandUtNuminBlock(int* block_x, int* block_z, int* ut_x, int* ut_z, xyz_t wpos);
+extern int mFI_GetItemNumOnBlockInField(int block_x, int block_z, mActor_name_t start_item, mActor_name_t end_item);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);

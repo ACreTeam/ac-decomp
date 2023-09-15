@@ -243,6 +243,7 @@ extern s8* mEv_get_save_area(int type, s8 id);
 extern int mEv_ArbeitPlayer(u32 player_no);
 extern u16 mEv_get_special_event_type();
 extern int mEv_ClearEventSaveInfo(mEv_event_save_c* event_save_data);
+extern void mEv_EventON(u32 event_kind);
 
 extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
 extern void mEv_ClearEventInfo();
