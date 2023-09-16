@@ -1,0 +1,244 @@
+static int sChk_lbRTC_ymd_c_NSW(lbRTC_ymd_c* ymd) {
+  int res = FALSE;
+
+  if (ymd->year < GAME_YEAR_MIN + 1 || ymd->year > GAME_YEAR_MAX - 1) {
+    res = TRUE;
+  }
+
+  if (ymd->month == 0 || ymd->month > lbRTC_MONTHS_MAX) {
+    res = TRUE;
+  }
+
+  if (ymd->day == 0 || ymd->day > 31) {
+    res = TRUE;
+  }
+
+  if (res == TRUE) {
+    if (ymd->year == 0 && ymd->month == 0 && ymd->day == 0) {
+      res = FALSE;
+    }
+    else if (ymd->year == mTM_rtcTime_ymd_clear_code.year && ymd->month == mTM_rtcTime_ymd_clear_code.month && ymd->day == mTM_rtcTime_ymd_clear_code.day) {
+      res = FALSE;
+    }
+    
+    if (res == TRUE) {
+      mFRm_set_errInfo(l_mfrm_err_info, 91, l_mfrm_now_color);
+    }
+  }
+
+  return res;
+}
+
+static int sCck_CheckSaveData_radiocard_NSW(Private_c* priv) {
+  mPr_day_day_c* radiocard_p = &priv->radiocard;
+  int res;
+
+  if (sChk_lbRTC_ymd_c_NSW(&radiocard_p->last_date)) {
+    mFRm_ERRORLINE(112);
+    res = TRUE;
+  }
+  else if (radiocard_p->days > mPr_RADIOCARD_MAX_DAYS) {
+    mFRm_ERRORLINE(121);
+    res = TRUE;
+  }
+  else {
+    res = FALSE;
+  }
+
+  return res;
+}
+
+static int sCck_CheckSaveData_calendar_NSW(Private_c* priv) {
+  int res;
+
+  if (priv->calendar.edit > 1) {
+    mFRm_ERRORLINE(143);
+    res = TRUE;
+  }
+  else if (priv->calendar.pad_63 != 0) {
+    mFRm_ERRORLINE(151);
+    res = TRUE;
+  }
+  else if (
+    (
+      priv->calendar.year < GAME_YEAR_MIN + 1 || priv->calendar.year > GAME_YEAR_MAX - 1 ||
+      priv->calendar.month == 0 || priv->calendar.month > lbRTC_DECEMBER
+    ) &&
+    (priv->calendar.year != 0 || priv->calendar.month != 0)
+  ) {
+    mFRm_ERRORLINE(164);
+    res = TRUE;
+  }
+  else {
+    res = FALSE;
+  }
+
+  return res;
+}
+
+static int sCck_CheckSaveData_deposit_NSW(Private_c* priv) {
+  int res;
+  int deposit = priv->bank_account;
+
+  if (deposit < 0 || deposit > mPr_DEPOSIT_MAX) {
+    mFRm_ERRORLINE(184);
+    res = TRUE;
+  }
+  else {
+    res = FALSE;
+  }
+
+  return res;
+}
+
+static int sCck_CheckSaveData_nw_visitor_NSW(Private_c* priv) {
+  mPr_day_day_c* nw_visitor_p = &priv->nw_visitor;
+  int res;
+
+  if (sChk_lbRTC_ymd_c_NSW(&nw_visitor_p->last_date) != FALSE && nw_visitor_p->last_date.year != 0) {
+    mFRm_ERRORLINE(204);
+    res = TRUE;
+  }
+  else {
+    res = FALSE;
+  }
+
+  return res;
+}
+
+static int sCck_CheckSaveData_my_org_no_table_NSW(Private_c* priv) {
+  u8 my_org_no;
+  int field = 0;
+  int total = 0;
+  u8* my_org_no_table = priv->my_org_no_table;
+  int i;
+  int res;
+
+  for (i = 0; i < mPr_ORIGINAL_DESIGN_COUNT; i++) {
+    my_org_no = my_org_no_table[i];
+
+    if (my_org_no >= mPr_ORIGINAL_DESIGN_COUNT) {
+      return TRUE;
+    }
+
+    total += my_org_no;
+    field |= (u16)(1 << my_org_no); 
+  }
+
+  if ((u16)field != (u16)((1 << mPr_ORIGINAL_DESIGN_COUNT) - 1) && total != 0) {
+    mFRm_ERRORLINE(239);
+    res = TRUE;
+  }
+  else {
+    res = FALSE;
+  }
+
+  return res;
+}
+
+static int sCck_CheckSaveData_bridge_NSW() {
+  PlusBridge_c* bridge = Save_GetPointer(bridge);
+
+  if (sChk_lbRTC_ymd_c_NSW(&bridge->build_date)) {
+    mFRm_ERRORLINE(259);
+    return TRUE;
+  }
+  else if (bridge->exists || bridge->pending) {
+    if (
+      bridge->block_x == 0 || bridge->block_x > FG_BLOCK_X_NUM ||
+      bridge->block_z == 0 || bridge->block_z > FG_BLOCK_Z_NUM
+    ) {
+      mFRm_ERRORLINE(271);
+      return TRUE;
+    }
+  }
+  else if (bridge->block_x != 0 || bridge->block_z != 0) {
+    mFRm_ERRORLINE(280);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static int sCck_CheckSaveData_fishRecord_NSW() {
+  mFR_record_c* record;
+  lbRTC_ymd_c ymd;
+  int i;
+
+  for (i = 0; i < mFR_RECORD_NUM; i++) {
+    record = Save_Get(fishRecord + i);
+    mTM_set_renew_time(&ymd, &record->time);
+
+    if (record->size < 0) {
+      mFRm_ERRORLINE(307);
+      return TRUE;
+    }
+
+    if (record->size != 0 && sChk_lbRTC_ymd_c_NSW(&ymd) == TRUE) {
+      mFRm_ERRORLINE(316);
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+static int sCck_CheckSaveData_Anmret_NSW() {
+  Anmret_c* anmret = Save_GetPointer(return_animal);
+  int res;
+  lbRTC_ymd_c ymd;
+
+  if (anmret->npc_id != EMPTY_NO && ITEM_NAME_GET_TYPE(anmret->npc_id) != NAME_TYPE_NPC) {
+    mFRm_ERRORLINE(339);
+    res = TRUE;
+  }
+  else {
+    mTM_set_renew_time(&ymd, &anmret->renew_time);
+
+    if (sChk_lbRTC_ymd_c_NSW(&ymd) == TRUE) {
+      mFRm_ERRORLINE(349);
+      res = TRUE;
+    }
+    else {
+      res = FALSE;
+    }
+  }
+
+  return res;
+}
+
+static int sCck_CheckSaveData_LightHouse_NSW() {
+  int res;
+
+  if (sChk_lbRTC_ymd_c_NSW(&Save_Get(LightHouse).renew_time) == TRUE) {
+    mFRm_ERRORLINE(368);
+    res = TRUE;
+  }
+  else {
+    res = FALSE;
+  }
+
+  return res;
+}
+
+static int sChk_CheckSaveData_NSW() {
+  int res = FALSE;
+  int i;
+
+  for (i = 0; i < PLAYER_NUM; i++) {
+    Private_c* priv = Save_Get(private) + i;
+
+    res |= sCck_CheckSaveData_radiocard_NSW(priv);
+    res |= sCck_CheckSaveData_calendar_NSW(priv);
+    res |= sCck_CheckSaveData_deposit_NSW(priv);
+    res |= sCck_CheckSaveData_nw_visitor_NSW(priv);
+    res |= sCck_CheckSaveData_my_org_no_table_NSW(priv);
+  }
+
+  res |= sCck_CheckSaveData_bridge_NSW();
+  res |= sCck_CheckSaveData_fishRecord_NSW();
+  res |= sCck_CheckSaveData_Anmret_NSW();
+  res |= sCck_CheckSaveData_LightHouse_NSW();
+
+  return res;
+}

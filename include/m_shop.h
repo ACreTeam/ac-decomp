@@ -93,6 +93,14 @@ enum {
   mSP_KIND_MAX
 };
 
+enum {
+  mSP_PRIORITY_COMMON,
+  mSP_PRIORITY_UNCOMMON,
+  mSP_PRIORITY_RARE,
+
+  mSP_PRIORITY_NUM
+};
+
 /* sizeof(mSP_goods_priority_list_c) == 1 */
 typedef struct shop_goods_priority_list_s {
   u8 a:2; /* list A rarity */

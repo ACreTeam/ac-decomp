@@ -36,6 +36,7 @@
 #include "m_common_data.h"
 #include "m_time.h"
 #include "m_land.h"
+#include "m_name_table.h"
 #include "zurumode.h"
 
 static int l_mfrm_msg_idx;
@@ -43,14 +44,11 @@ static int l_mfrm_now_color;
 static mFRm_err_info_c l_mfrm_err_info[mFRm_ERROR_INFO_NUM];
 static int l_mfrm_err_debug[] = {0, 0, 0, 0, 0, 0};
 
-/* Predeclaration for save check functions */
-static int sChk_check_save_data();
-static int sChk_check_save_gen();
-static int sChk_CheckSaveData_MYK();
-static int sChk_CheckSaveData_NSW();
-static int sChk_check_save_take();
-static int sChk_CheckSaveData_YSD();
-static int sChk_CheckSaveData_komatu();
+BSS_ORDER_GROUP_START
+  BSS_ORDER_ITEM(l_mfrm_msg_idx);
+  BSS_ORDER_ITEM(l_mfrm_now_color);
+  BSS_ORDER_ITEM(l_mfrm_err_info);
+BSS_ORDER_GROUP_END
 
 /**
  * @brief Set the current message index value.
@@ -72,6 +70,16 @@ extern void mFRm_set_msg_idx(int idx) {
  */
 extern int mFRm_get_msg_idx() {
   return l_mfrm_msg_idx;
+}
+
+/* @fabricated - necessary for including some strings in .data */
+extern MATCH_FORCESTRIP void mFRm_PrintErrInfo(gfxprint_t* gfxprint) {
+  gfxprint_printf(gfxprint, "N");
+  gfxprint_printf(gfxprint, "A");
+  gfxprint_printf(gfxprint, "W");
+  gfxprint_printf(gfxprint, "R");
+  gfxprint_printf(gfxprint, "C");
+  gfxprint_printf(gfxprint, "O");
 }
 
 /**
@@ -225,6 +233,17 @@ extern void mFRm_PrintSavedDebug(gfxprint_t* gfxprint) {
   }
 }
 
+/* Color table for displaying error information */
+static u32 l_mfrm_color_table[7][3] = {
+  {  0,   0,   0}, /* Black */
+  {255,   0,   0}, /* Red */
+  {255, 255, 255}, /* White */
+  {  0, 190,   0}, /* Green */
+  {100, 100, 100}, /* Gray */
+  {  0,   0, 255}, /* Blue */
+  {255,   0, 255}  /* Magenta */
+};
+
 /**
  * @brief Clear the error information.
  * 
@@ -312,6 +331,17 @@ static int mFRm_get_errInfoNum(mFRm_err_info_c* err_info, int count) {
   return ret;
 }
 
+#define mFRm_ERRORLINE(line) mFRm_set_errInfo(l_mfrm_err_info, (line), l_mfrm_now_color)
+#define mFRm_ERROR() mFRm_ERRORLINE(__LINE__)
+
+#include "../rel/save_check.c_inc"
+#include "../rel/save_check_gen.c_inc"
+#include "../rel/save_check_MYK.c_inc"
+#include "../rel/save_check_NSW.c_inc"
+#include "../rel/save_check_take.c_inc"
+#include "../rel/save_check_YSD.c_inc"
+#include "../rel/save_check_komatu.c_inc"
+
 /**
  * @brief Perform save data checks.
  * 
@@ -343,19 +373,6 @@ extern void mFRm_save_data_check() {
   }
 }
 
-/* Color table for displaying error information */
-static u32 l_mfrm_color_table[7][3] = {
-  {  0,   0,   0}, /* Black */
-  {255,   0,   0}, /* Red */
-  {255, 255, 255}, /* White */
-  {  0, 190,   0}, /* Green */
-  {100, 100, 100}, /* Gray */
-  {  0,   0, 255}, /* Blue */
-  {255,   0, 255}  /* Magenta */
-};
-
-/* This needs pool_data on */
-#pragma pool_data on
 /**
  * @brief Display error information on the screen.
  * 
@@ -406,4 +423,3 @@ extern void mFRm_display_errInfo(gfxprint_t* gfxprint) {
     }
   }
 }
-#pragma pool_data reset

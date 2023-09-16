@@ -16,8 +16,9 @@ enum {
   mNpc_LOOKS_SPORT_MAN,
   mNpc_LOOKS_GRIM_MAN,
   mNpc_LOOKS_NANIWA_LADY,
+  mNpc_LOOKS_UNSET,
 
-  mNpc_LOOKS_NUM
+  mNpc_LOOKS_NUM = mNpc_LOOKS_UNSET
 };
 
 /* sizeof(AnmPersonalID_c) == 0xE */

@@ -20,6 +20,27 @@ extern "C" {
 #define mNW_DESIGN_TEX_SIZE (mNW_ORIGINAL_DESIGN_HEIGHT * (mNW_ORIGINAL_DESIGN_WIDTH / 2)) /* total texture data size */
 #define mNW_PALETTE_COUNT 16 /* number of design palettes */
 
+enum {
+  mNW_PALETTE0,
+  mNW_PALETTE1,
+  mNW_PALETTE2,
+  mNW_PALETTE3,
+  mNW_PALETTE4,
+  mNW_PALETTE5,
+  mNW_PALETTE6,
+  mNW_PALETTE7,
+  mNW_PALETTE8,
+  mNW_PALETTE9,
+  mNW_PALETTE10,
+  mNW_PALETTE11,
+  mNW_PALETTE12,
+  mNW_PALETTE13,
+  mNW_PALETTE14,
+  mNW_PALETTE15,
+
+  mNW_PALETTE_NUM
+};
+
 /* sizeof(mNW_original_design_c) == 0x220 */
 typedef struct original_data_s {
   /* 0x000 */ u8 name[mNW_ORIGINAL_DESIGN_NAME_LEN];

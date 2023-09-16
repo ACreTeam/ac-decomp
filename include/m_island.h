@@ -20,6 +20,8 @@ extern "C" {
 #define mISL_FG_BLOCK_X_NUM 2
 #define mISL_FG_BLOCK_Z_NUM 1
 
+#define mISL_BLOCK_X0 4
+#define mISL_BLOCK_X1 5
 #define mISL_BLOCK_Z 8
 
 enum {

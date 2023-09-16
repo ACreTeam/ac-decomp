@@ -101,7 +101,7 @@ static void mCD_calendar_clear_day(mCD_player_calendar_c* calendar, lbRTC_year_t
 
       case lbRTC_SEPTEMBER:
       {
-        lbRTC_ymd_t harvest_moon_day;
+        lbRTC_ymd_c harvest_moon_day;
 
         lbRk_HarvestMoonDay(&harvest_moon_day, year);
 
@@ -114,7 +114,7 @@ static void mCD_calendar_clear_day(mCD_player_calendar_c* calendar, lbRTC_year_t
 
       case lbRTC_OCTOBER:
       {
-        lbRTC_ymd_t harvest_moon_day;
+        lbRTC_ymd_c harvest_moon_day;
 
         lbRk_HarvestMoonDay(&harvest_moon_day, year);
 

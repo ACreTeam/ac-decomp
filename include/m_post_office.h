@@ -13,6 +13,8 @@ extern "C" {
 #define mPO_MAIL_STORAGE_SIZE 5
 #define mPO_DELIVER_ALL_HOUSES -1
 
+#define mPO_KEEP_MAIL_PLAYERS_MAX 10
+
 enum {
   mPO_SENDTYPE_MAIL,
   mPO_SENDTYPE_LEAFLET,

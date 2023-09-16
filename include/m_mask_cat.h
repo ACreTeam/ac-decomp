@@ -9,6 +9,8 @@
 extern "C" {
 #endif
 
+#define mMC_TALK_IDX_MAX 10
+
 typedef struct mask_cat_s {
   mNW_original_design_c design;
   u8 palette_no;

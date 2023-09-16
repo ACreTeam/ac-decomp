@@ -1,0 +1,75 @@
+static int sChk_CheckSaveData_komatu() {
+  int i;
+  int j;
+
+  for (i = 0; i < PLAYER_NUM; i++) {
+    Private_c* priv = Save_Get(private) + i;
+
+    {
+      const u8 gender = priv->gender;
+      if (gender > mPr_SEX_FEMALE) {
+        return TRUE;
+      }
+    }
+
+    {
+      s8 face = priv->face;
+      if (face < 0 || face >= mPr_FACE_TYPE_NUM) {
+        return TRUE;
+      }
+    }
+
+    {
+      mPr_cloth_c* cloth = &priv->cloth;
+      u16 idx = cloth->idx;
+      mActor_name_t item;
+    
+      if (idx >= (256 + 8) || idx == 255) {
+        return TRUE;
+      }
+
+      item = cloth->item;
+      if (item != EMPTY_NO) {
+        int valid_cloth = item == RSV_CLOTH || (item >= ITM_CLOTH000 && item < ITM_CLOTH_END);
+      
+        if (valid_cloth == FALSE) {
+          return TRUE;
+        }
+      }
+    }
+
+    {
+      mPr_destiny_c* destiny = &priv->destiny;
+    
+      if (destiny->type >= mPr_DESTINY_NUM) {
+        return TRUE;
+      }
+    }
+
+    {
+      mPr_sunburn_c* sunburn = &priv->sunburn;
+      s8 t = sunburn->rank;
+      s8 t2;
+    
+      if (t < 0 || t >= mPr_SUNBURN_RANK_NUM) {
+        return TRUE;
+      }
+
+      t2 = sunburn->rankdown_days;
+      if (t2 < 0 || t2 > 2) {
+        return TRUE;
+      }
+    }
+
+    {
+      u8 golden_items_collected = priv->golden_items_collected; 
+      for (j = 4; j < 8; j++) {
+        if (golden_items_collected & ((u8)(1 << j))) {
+          return TRUE;
+        }
+      }
+    }
+  }
+
+  return FALSE;
+}

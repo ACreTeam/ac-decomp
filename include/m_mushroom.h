@@ -11,7 +11,7 @@ extern "C" {
 #define mMsr_ACTIVE_HOUR 8
 #define mMsr_NUM_MUSHROOMS 5
 
-/* sizeof(mMsr_Mushtime_c) == 6 */
+/* sizeof(mMsr_time_c) == 6 */
 typedef struct mushroom_time_s {
   /* 0x00 */ u16 year:12;
   /* 0x01 */ u16 month:4;
@@ -22,7 +22,7 @@ typedef struct mushroom_time_s {
   /* 0x04 */ u8 hour_quarter:4;
   /* 0x04 */ u8 active:1; /* probably a better name for this */
   /* 0x04 */ u8 pad2:3;
-} mMsr_MushTime_c;
+} mMsr_time_c;
 
 extern void mMsr_FirstClearMushroom();
 extern void mMsr_SetMushroom(xyz_t player_pos);

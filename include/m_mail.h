@@ -26,7 +26,8 @@ enum {
   mMl_NAME_TYPE_NPC,
   mMl_NAME_TYPE_MUSEUM,
 
-  mMl_TYPE_CLEAR = 0xFF
+  mMl_NAME_TYPE_NUM,
+  mMl_NAME_TYPE_CLEAR = 0xFF
 };
 
 enum {
@@ -50,7 +51,9 @@ enum {
   mMl_TYPE_MUSEUM = 0,
   mMl_TYPE_1 = 1,
   mMl_TYPE_SHOP_SALE_LEAFLET = 2,
-  mMl_TYPE_BROKER_SALE_LEAFLET = 3
+  mMl_TYPE_BROKER_SALE_LEAFLET = 3,
+
+  mMl_TYPE_12 = 12
 };
 
 /* sizeof(Mail_nm_c) == 0x16 */

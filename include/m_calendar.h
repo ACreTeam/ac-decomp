@@ -22,6 +22,7 @@ typedef struct calendar_player_info_s {
   /* 0x30 */ u32 event_days[lbRTC_MONTHS_MAX]; /* bitfield of events where 1 bit represents an event was on that day */
   /* 0x60 */ u16 event_flags; /* flags for specific event days the player played on */
   /* 0x62 */ u8 edit; /* unsure, might have something to do with saving an edit */
+  /* 0x63 */ u8 pad_63; /* only checked in save data validation? */
   /* 0x64 */ lbRTC_year_t year; /* year calendar was last updated */
   /* 0x66 */ lbRTC_month_t month; /* month calendar was last updated */
 } mCD_player_calendar_c;

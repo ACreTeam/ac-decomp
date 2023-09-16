@@ -18,6 +18,9 @@ enum {
   Kabu_TRADE_MARKET_TYPE_NUM
 };
 
+#define Kabu_PRICE_MIN 10
+#define Kabu_PRICE_MAX 2000
+
 /* sizeof(Kabu_price_c) == 0x18 */
 typedef struct kabu_price_s {
   /* 0x00 */ u16 daily_price[lbRTC_WEEKDAYS_MAX];

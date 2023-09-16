@@ -9,8 +9,16 @@
 extern "C" {
 #endif
 
-extern void mEv_fishRecord_holder(PersonalID_c* winner_pid, u32* winning_size, lbRTC_ymd_t* contest_date);
-extern int mEv_fishday(lbRTC_ymd_t* dates, lbRTC_time_c* now_time);
+#define mFR_RECORD_NUM 5
+
+typedef struct fishrecord_s {
+  PersonalID_c pid;
+  lbRTC_time_c time;
+  int size;
+} mFR_record_c;
+
+extern void mEv_fishRecord_holder(PersonalID_c* winner_pid, u32* winning_size, lbRTC_ymd_c* contest_date);
+extern int mEv_fishday(lbRTC_ymd_c* dates, lbRTC_time_c* now_time);
 extern void mFR_fishmail();
 
 #ifdef __cplusplus

@@ -31,9 +31,23 @@ extern "C" {
 
 #define mNpc_ISLAND_FTR_SAVE_NUM 4
 
+enum {
+  mNpc_MOOD_0,
+  mNpc_MOOD_1,
+  mNpc_MOOD_2,
+  mNpc_MOOD_3,
+  mNpc_MOOD_4,
+  mNpc_MOOD_5,
+  mNpc_MOOD_6,
+  mNpc_MOOD_7,
+  mNpc_MOOD_8,
+
+  mNpc_MOOD_NUM
+};
+
 /* sizeof(Anmremail_c) == 0x16 */
 typedef struct animal_remail_s {
-  lbRTC_ymd_t date; /* date sent */
+  lbRTC_ymd_c date; /* date sent */
   u8 name[ANIMAL_NAME_LEN]; /* villager name */
   u8 land_name[LAND_NAME_SIZE]; /* town name */
   struct {
@@ -52,7 +66,7 @@ typedef struct animal_player_maiL_s {
   /* 0x01D */ u8 body[MAIL_BODY_LEN];
   /* 0x0DD */ u8 footer[MAIL_FOOTER_LEN];
   /* 0x0FD */ u8 pad0; /* likely pad */
-  /* 0x0FE */ lbRTC_ymd_t date; /* sent date */
+  /* 0x0FE */ lbRTC_ymd_c date; /* sent date */
 } Anmplmail_c;
 
 /* sizeof(Anmhome_c) == 5 */

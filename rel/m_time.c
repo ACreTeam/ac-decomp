@@ -56,7 +56,7 @@ const lbRTC_time_c mTM_rtcTime_clear_code = {
   0xFFFF
 };
 
-const lbRTC_ymd_t mTM_rtcTime_ymd_clear_code = {
+const lbRTC_ymd_c mTM_rtcTime_ymd_clear_code = {
   0xFFFF,
   0xFF, 0xFF
 };
@@ -249,22 +249,22 @@ extern void mTM_set_renew_is() {
 /**
  * Set the renewal time based on the given lbRTC_time_c struct.
  *
- * @param renew_time Pointer to the lbRTC_ymd_t struct where the renewal time will be stored.
+ * @param renew_time Pointer to the lbRTC_ymd_c struct where the renewal time will be stored.
  * @param time Pointer to the lbRTC_time_c struct from which the renewal time will be taken.
  */
-extern void mTM_set_renew_time(lbRTC_ymd_t* renew_time, const lbRTC_time_c* time) {
+extern void mTM_set_renew_time(lbRTC_ymd_c* renew_time, const lbRTC_time_c* time) {
   renew_time->year = time->year;
   renew_time->month = time->month;
   renew_time->day = time->day;
 }
 
 /**
- * Convert lbRTC_ymd_t to lbRTC_time_c, setting time to midnight and calculating the weekday.
+ * Convert lbRTC_ymd_c to lbRTC_time_c, setting time to midnight and calculating the weekday.
  *
  * @param time Pointer to the lbRTC_time_c struct where the converted time will be stored.
- * @param ymd Pointer to the lbRTC_ymd_t struct containing the date to be converted.
+ * @param ymd Pointer to the lbRTC_ymd_c struct containing the date to be converted.
  */
-extern void mTM_ymd_2_time(lbRTC_time_c* time, lbRTC_ymd_t* ymd) {
+extern void mTM_ymd_2_time(lbRTC_time_c* time, lbRTC_ymd_c* ymd) {
   time->year = ymd->year;
   time->month = ymd->month;
   time->day = ymd->day;
@@ -278,7 +278,7 @@ extern void mTM_ymd_2_time(lbRTC_time_c* time, lbRTC_ymd_t* ymd) {
  * Check if the renewal time has changed, and if so, update the renewal time and set renewal flags.
  */
 extern void mTM_renewal_renew_time() {
-  lbRTC_ymd_t* renew_time = Save_GetPointer(renew_time);
+  lbRTC_ymd_c* renew_time = Save_GetPointer(renew_time);
   const lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
     
   // Check if the renewal time has changed

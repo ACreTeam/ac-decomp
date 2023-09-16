@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "libu64/gfxprint.h"
+#include "m_time.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,7 +56,7 @@ extern void mFRm_SetSaveCheckData(mFRm_chk_t* save_check);
 extern void mFRm_PrintSavedDebug(gfxprint_t* gfxprint);
 extern void mFRm_clear_err_info();
 extern void mFRm_save_data_check();
-extern void mFRm_display_errInfo(gfxprint_t* gfxprint);  
+extern void mFRm_display_errInfo(gfxprint_t* gfxprint);
   
 #ifdef __cplusplus
 }
