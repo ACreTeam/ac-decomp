@@ -22,11 +22,11 @@ extern "C" {
 
 #define lbRk_KYUU_DAY_START 1
 
-extern int lbRk_ToSeiyouReki(lbRTC_ymd_t* seiyo_ymd, const lbRTC_ymd_t* kyuu_ymd);
-extern int lbRk_ToKyuuReki(lbRTC_ymd_t* kyuu_ymd, const lbRTC_ymd_t* seiyo_ymd);
+extern int lbRk_ToSeiyouReki(lbRTC_ymd_c* seiyo_ymd, const lbRTC_ymd_c* kyuu_ymd);
+extern int lbRk_ToKyuuReki(lbRTC_ymd_c* kyuu_ymd, const lbRTC_ymd_c* seiyo_ymd);
 extern int lbRk_VernalEquinoxDay(int year);
 extern int lbRk_AutumnalEquinoxDay(int year);
-extern void lbRk_HarvestMoonDay(lbRTC_ymd_t* harvest_moon_day, int year);
+extern void lbRk_HarvestMoonDay(lbRTC_ymd_c* harvest_moon_day, int year);
 
 #ifdef __cplusplus
 }

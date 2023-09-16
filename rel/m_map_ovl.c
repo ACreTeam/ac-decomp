@@ -561,9 +561,9 @@ static void mMP_make_max_no_table(int* max_no_table, int count) {
       if (mMP_check_bg_kind(type) == TRUE) {
         max_no_table[0] = type;
 
-        if (Save_Get(plus_bridge.exists) &&
-            Save_Get(plus_bridge.block_x) == bx &&
-            Save_Get(plus_bridge.block_z) == bz &&
+        if (Save_Get(bridge.exists) &&
+            Save_Get(bridge.block_x) == bx &&
+            Save_Get(bridge.block_z) == bz &&
             pluss_bridge[type] != 0xFF
         ) {
           max_no_table[0] = pluss_bridge[type];

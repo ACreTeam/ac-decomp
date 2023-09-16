@@ -438,13 +438,13 @@ static void mNtc_set_auto_nwrite_common_string() {
   mHandbill_Set_free_str(1, shop_name, 16);
 }
 
-static void mNtc_set_auto_nwrite_fishing_string(const lbRTC_ymd_t* date) {
+static void mNtc_set_auto_nwrite_fishing_string(const lbRTC_ymd_c* date) {
   u8 month_str[] = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
   u8 day_str[] = { ' ', ' ', ' ', ' ' };
   u8 size_str[] = { ' ', ' ' };
   PersonalID_c winner_pid;
   u32 size;
-  lbRTC_ymd_t win_date = *date;
+  lbRTC_ymd_c win_date = *date;
 
   mEv_fishRecord_holder(&winner_pid, &size, &win_date);
   mFont_UnintToString(size_str, 2, size, 2, 0, 0, TRUE);
@@ -457,7 +457,7 @@ static void mNtc_set_auto_nwrite_fishing_string(const lbRTC_ymd_t* date) {
 }
 
 static void mNtc_set_auto_nwrite_string(lbRTC_year_t year) {
-  lbRTC_ymd_t harvest_moon_date;
+  lbRTC_ymd_c harvest_moon_date;
   int autumnal_equi_day;
   int len;
   u8 buf[28];
@@ -483,11 +483,11 @@ extern void mNtc_auto_nwrite_time_ct() {
 }
 
 /* TODO: better understand this function & refactor */
-static int mNtc_get_fishing_day(lbRTC_ymd_t* ymds, u16* dates, lbRTC_time_c* time, u16* fishing_term_date) {
+static int mNtc_get_fishing_day(lbRTC_ymd_c* ymds, u16* dates, lbRTC_time_c* time, u16* fishing_term_date) {
   int notice_year;
   int notice_hour;
   lbRTC_time_c time_temp;
-  lbRTC_ymd_t ymd_buf[5];
+  lbRTC_ymd_c ymd_buf[5];
   int valid_count = 0;
   int i;
 
@@ -517,7 +517,7 @@ static int mNtc_get_fishing_day(lbRTC_ymd_t* ymds, u16* dates, lbRTC_time_c* tim
   }
 
   for (i = 0; i < 5; i++) {
-    lbRTC_ymd_t* ymd = ymd_buf + i;
+    lbRTC_ymd_c* ymd = ymd_buf + i;
     u16 month_day = (ymd_buf[i].month << 8) + ymd_buf[i].day;
 
     if (ymd->year > notice_year  ||
@@ -563,7 +563,7 @@ static void mNtc_decide_nwrite_data(
   int* fishing_day,
   u16 fishing_term_date,
   lbRTC_year_t fishing_term_year,
-  lbRTC_ymd_t* ymds,
+  lbRTC_ymd_c* ymds,
   u16* month_days
 ) {
 
@@ -609,7 +609,7 @@ static void mNtc_decide_nwrite_data(
 
 // @nonmatching
 /* TODO: match */
-static void mNtc_set_auto_nwrite(int write_count, u8* nwrite_nums, lbRTC_year_t* nwrite_years, int fishing_day, lbRTC_ymd_t* ymds, u16* month_days) {
+static void mNtc_set_auto_nwrite(int write_count, u8* nwrite_nums, lbRTC_year_t* nwrite_years, int fishing_day, lbRTC_ymd_c* ymds, u16* month_days) {
   mNtc_board_post_c post;
   lbRTC_year_t now_year;
   int header_back_pos;
@@ -628,8 +628,8 @@ static void mNtc_set_auto_nwrite(int write_count, u8* nwrite_nums, lbRTC_year_t*
   for (write_count; write_count < 5; write_count++) {
     /* write 'fishing day' info */
     if (nwrite_nums[write_count] == mNtc_FISHING_DAY_NUM && nwrite_years[write_count] == mNtc_FISHING_DAY_YEAR) {
-      lbRTC_ymd_t* post_date = ymds + fishing_day;
-      lbRTC_ymd_t temp;
+      lbRTC_ymd_c* post_date = ymds + fishing_day;
+      lbRTC_ymd_c temp;
       int id;
       post.post_time.year = post_date->year;
       post.post_time.month = mNtc_GET_MONTH(month_days[fishing_day]);
@@ -674,7 +674,7 @@ extern void mNtc_set_auto_nwrite_data() {
   u8 now_nwrite_num;
   lbRTC_time_c rtc_time;
   u8 set_nwrite_nums[5];
-  lbRTC_ymd_t nwrite_ymds[mNtc_NWRITE_NUM];
+  lbRTC_ymd_c nwrite_ymds[mNtc_NWRITE_NUM];
   u16 nwrite_dates[mNtc_NWRITE_NUM];
   lbRTC_year_t set_nwrite_years[mNtc_NWRITE_NUM];
   int write_count;

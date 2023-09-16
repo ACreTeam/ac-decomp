@@ -20,6 +20,7 @@ extern "C" {
 #define TOTAL_PLAYER_NUM (PLAYER_NUM + FOREIGNER_NUM)
 
 #define mPr_WALLET_MAX 99999
+#define mPr_DEPOSIT_MAX 999999999
 
 #define mPr_FLAG_POSTOFFICE_GIFT0 (1 << 2) // 1,000,000 Bells
 #define mPr_FLAG_POSTOFFICE_GIFT1 (1 << 3) // 10,000,000 Bells
@@ -81,6 +82,7 @@ enum {
 #define mPr_CATALOG_ORDER_NUM 5
 #define mPr_FOREIGN_MAP_COUNT 8
 #define mPr_ORIGINAL_DESIGN_COUNT 8
+#define mPr_RADIOCARD_MAX_DAYS 13
 
 #define mPr_GET_ITEM_COND(all_cond, slot_no) (((all_cond) >> (((u32)(slot_no)) << 1)) & mPr_ITEM_COND_NUM)
 #define mPr_SET_ITEM_COND(all_cond, slot_no, cond) (((all_cond) & ~((u32)mPr_ITEM_COND_NUM << ((u32)(slot_no) << 1))) | ((u32)(cond) << ((u32)(i) << 1)))
@@ -109,7 +111,9 @@ enum {
   mPr_DESTINY_UNPOPULAR,  /* bad luck with villagers */
   mPr_DESTINY_BAD_LUCK,   /* bad luck in general */
   mPr_DESTINY_MONEY_LUCK, /* good money luck */
-  mPr_DESTINY_GOODS_LUCK  /* good goods/item luck */
+  mPr_DESTINY_GOODS_LUCK, /* good goods/item luck */
+
+  mPr_DESTINY_NUM
 };
 
 /* sizeof(mPr_destiny_c) == 0xA */
@@ -145,20 +149,20 @@ typedef struct player_map_s {
 
 /* sizeof(mPr_day_day_c) == 6 */
 typedef struct player_day_day_s {
-  /* 0x00 */ lbRTC_ymd_t last_date; /* last date modified */
+  /* 0x00 */ lbRTC_ymd_c last_date; /* last date modified */
   /* 0x04 */ u8 days; /* number of unique days */
 } mPr_day_day_c;
 
 /* sizeof(mPr_sunburn_c) == 6 */
 typedef struct player_sunburn_s {
-  /* 0x00 */ lbRTC_ymd_t last_changed_date; /* last date that the sunburn rank changed */
+  /* 0x00 */ lbRTC_ymd_c last_changed_date; /* last date that the sunburn rank changed */
   /* 0x04 */ s8 rank; /* level of sunburn, 0-8 */
   /* 0x05 */ s8 rankdown_days; /* days until sunburn rank decreases */
 } mPr_sunburn_c;
 
 /* sizeof(mPr_carde_data_c) == 0x32 */
 typedef struct player_ecard_data_s {
-  /* 0x00 */ lbRTC_ymd_t letter_send_date; /* date the latest eCard letter was sent */
+  /* 0x00 */ lbRTC_ymd_c letter_send_date; /* date the latest eCard letter was sent */
   /* 0x04 */ u8 card_letters_sent[mPr_ECARD_LETTER_NUM]; /* bitfield keeping track of which eCard letters have been sent to the player [0, 366] */
 } mPr_carde_data_c;
 
@@ -172,9 +176,14 @@ typedef struct private_mother_mail_data_s {
 } mPr_mother_mail_data_c;
 
 typedef struct private_mother_mail_info_s {
-  lbRTC_ymd_t date;
+  lbRTC_ymd_c date;
   mPr_mother_mail_data_c data;
 } mPr_mother_mail_info_c;
+
+typedef struct private_cloth_s {
+  u16 idx;
+  mActor_name_t item;
+} mPr_cloth_c;
 
 struct private_s {
   /* 0x0000 */ PersonalID_c player_ID; /* player's id info */
@@ -204,8 +213,9 @@ struct private_s {
   /* 0x1086 */ u8 exists; /* 0/1 if player exists or not */
   /* 0x1087 */ u8 hint_count; /* total hints heard from villagers (initial dialog) */
 
-  /* 0x1088 */ u16 cloth_idx; /* index value for texture? */
-  /* 0x108A */ mActor_name_t cloth; /* shirt item */
+  /* 0x1088 */ mPr_cloth_c cloth;
+  /* 0x1088 */ //u16 cloth_idx; /* index value for texture? */
+  /* 0x108A */ //mActor_name_t cloth; /* shirt item */
 
   /* 0x108C */ AnmPersonalID_c stored_anm_id; /* foriegn animal personal ID leftover from N64? */
 
@@ -235,12 +245,12 @@ struct private_s {
   /* 0x2348 */ u32 state_flags; /* TODO: this might be a bitfield/struct, also document bits */
   /* 0x234C */ mCD_player_calendar_c calendar; /* player calendar data */
   /* 0x23B4 */ u32 soncho_trophy_field0; /* first 28 tortimer event flags */
-  /* 0x23B8 */ mPr_day_day_c needlework_day; /* info for how many unique days the player has talked to Sable */
-  /* 0x23BE */ mPr_day_day_c radio_day; /* radio stamp days */
+  /* 0x23B8 */ mPr_day_day_c nw_visitor; /* info for how many unique days the player has talked to Sable */
+  /* 0x23BE */ mPr_day_day_c radiocard; /* radio stamp days */
   /* 0x23C4 */ mPr_sunburn_c sunburn; /* sunburn state */
   /* 0x23CA */ u8 unused_23CA[14]; /* seemingly unused data */
   /* 0x23D8 */ mActor_name_t birthday_present_npc; /* npc id of the 'best friend' villger who will gift the player a present on their birthday (at the door) */
-  /* 0x23DA */ u16 golden_items_collected; /* bitfield tracking which golden items the player has received */
+  /* 0x23DA */ u8 golden_items_collected; /* bitfield tracking which golden items the player has received */
   /* 0x23DC */ u32 soncho_trophy_field1; /* remaining tortimer event flags */
   /* 0x23E0 */ mPr_carde_data_c ecard_letter_data; /* info relating to scanned e-Card letters */
   /* 0x2412 */ u8 unused_2412[46];

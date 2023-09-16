@@ -30,6 +30,7 @@
 #include "m_mask_cat.h"
 #include "m_npc_schedule_h.h"
 #include "m_all_grow.h"
+#include "m_fishrecord.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -56,7 +57,7 @@ typedef struct time_s {
 } Time_c;
 
 /* sizeof(PlusBridge_c) == 8 */
-typedef struct plus_bridge_s {
+typedef struct bridge_s {
   /* 0x00 */ u8 block_x;
   /* 0x01 */ u8 block_z;
   /* 0x02 */ struct {
@@ -64,8 +65,15 @@ typedef struct plus_bridge_s {
     u8 pending:1;
     u8 pad:6;
   };
-  /* 0x04 */ lbRTC_ymd_t build_date;
+  /* 0x04 */ lbRTC_ymd_c build_date;
 } PlusBridge_c;
+
+typedef struct lighthouse_s {
+  lbRTC_ymd_c renew_time;
+  u8 players_switch_on;
+  u8 players_quest_started;
+  u8 players_completed;
+} LightHouse_c;
 
 typedef struct Save_s {
   /* 0x000000 */ mFRm_chk_t save_check; /* save information */
@@ -96,7 +104,7 @@ typedef struct Save_s {
   /* 0x020EF8 */ mSN_snowman_save_c snowmen; /* saved snowmen data */
   /* 0x020F08 */ u64 melody; /* town tune, each nibble is a note (16 notes) */
   /* 0x020F10 */ Config_c config; /* saved config for sound mode, voice mode, and vibration */
-  /* 0x020F14 */ lbRTC_ymd_t renew_time; /* next renew date */
+  /* 0x020F14 */ lbRTC_ymd_c renew_time; /* next renew date */
   /* 0x020F18 */ u8 station_type; /* train station type */
   /* 0x020F19 */ u8 weather; /* upper nibble is intensity, lower nibble is type */
   /* 0x020F1A */ u8 save_exist; /* unsure, set in mCD_SaveHome_bg_set_data (1) & mCD_SaveHome_bg (bss) */
@@ -104,8 +112,13 @@ typedef struct Save_s {
   /* 0x020F1C */ u16 deposit[FG_BLOCK_X_NUM * FG_BLOCK_Z_NUM][UT_Z_NUM]; /* flags for which items are buried around town */
   /* 0x0212DC */ lbRTC_time_c last_grow_time; /* last time that a new villager moved into town */
   /* 0x0212E4 */ mPr_mother_mail_info_c mother_mail[PLAYER_NUM]; /* info on when mom sent player letters and what event was sent */
-  /* 0x02131C */ mMsr_MushTime_c mushroom_time; /* last time mushroom season info was updated */
-  /* 0x021322 */ u8 _tmp21322[0x02137E - 0x021322];
+  /* 0x02131C */ mMsr_time_c mushroom_time; /* last time mushroom season info was updated */
+  /* 0x021322 */ lbRTC_ymd_c _021322;
+  /* 0x021326 */ u16 _021326[20];
+  /* 0x02134E */ u8 npc_used_tbl[32];
+  /* 0x02136E */ lbRTC_time_c _02136E;
+  /* 0x021376 */ u8 cheated_flag;
+  /* 0x021377 */ u8 _021377[7]; 
   /* 0x02137E */ lbRTC_time_c treasure_buried_time; /* last time treasure was actually buried */
   /* 0x021386 */ lbRTC_time_c treasure_checked_time; /* last time check to bury treasure was executed */
   /* 0x02138E */ u8 saved_rom_debug; /* flag to set save to 'debug rom' mode */
@@ -116,22 +129,22 @@ typedef struct Save_s {
   /* 0x021393 */ u8 haniwa_scheduled; /* when set, gyroids will be spwaned */
   /* 0x021394 */ u8 dust_flag; /* set by field assessment for too much 'dust' (garbage) around town, causes immediate fail of town ranking */
   /* 0x021395 */ u8 clear_grass; /* set by Wisp, removes all weeds */
-  /* 0x021396 */ lbRTC_ymd_t event_year_ymd; /* might not exist and just be lbRTC_year_t */
+  /* 0x021396 */ lbRTC_ymd_c event_year_ymd; /* might not exist and just be lbRTC_year_t */
   /* 0x02139A */ u8 unused_2139A[6];
   /* 0x0213A0 */ u8 keep_house_size[PLAYER_NUM]; /* saved flags for house sizes */
-  /* 0x0213A4 */ lbRTC_ymd_t force_remove_date; /* last time the NPC force remove timer was updated */
+  /* 0x0213A4 */ lbRTC_ymd_c force_remove_date; /* last time the NPC force remove timer was updated */
   /* 0x0213A8 */ mMmd_info_c museum_display; /* museum display bits */
   /* 0x0213E7 */ u8 _tmp6[0x213F0 - 0x213E7];
-  /* 0x0213F0 */ PlusBridge_c plus_bridge; /* additional bridge info */
+  /* 0x0213F0 */ PlusBridge_c bridge; /* additional bridge info */
   /* 0x021400 */ mNW_needlework_c needlework; /* Able Sisters' designs */
   /* 0x022500 */ u8 _tmp7[0x22528 - 0x22500];
   /* 0x022528 */ OSTime time_delta; /* time delta against GC RTC */
   /* 0x022540 */ Island_c island; /* island data */
   /* 0x023E40 */ mAGrw_AllGrow_c allgrow_ss_pos_info;
-  /* 0x023E68 */ u8 _23E68[0x23F20 - 0x23E68];
+  /* 0x023E68 */ mFR_record_c fishRecord[mFR_RECORD_NUM];
   /* 0x023F20 */ MaskCat_c mask_cat;
   /* 0x024160 */ Anmret_c return_animal; /* information about villager which moved back in to your town after moving to someone else's town */
-  /* 0x02416C */ u8 _tmp10[0x24174 - 0x2416C];
+  /* 0x02416C */ LightHouse_c LightHouse; /* info for tracking the light house quest */
   /* 0x024174 */ u8 insect_term; /* current insect term idx */
   /* 0x024175 */ u8 insect_term_transition_offset; /* days offset from end of term to begin transition */
   /* 0x024176 */ u8 gyoei_term; /* current fish term idx */

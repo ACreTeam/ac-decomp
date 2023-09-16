@@ -45,6 +45,32 @@ enum {
   mHm_HOMESIZE_NUM
 };
 
+enum {
+  mHm_HANIWA_TRADE_0,
+  mHm_HANIWA_TRADE_1,
+  mHm_HANIWA_TRADE_2,
+  mHm_HANIWA_TRADE_3,
+  
+  mHm_HANIWA_TRADE_NUM
+};
+
+enum {
+  mHm_OUTLOOK_PAL_0,
+  mHm_OUTLOOK_PAL_1,
+  mHm_OUTLOOK_PAL_2,
+  mHm_OUTLOOK_PAL_3,
+  mHm_OUTLOOK_PAL_4,
+  mHm_OUTLOOK_PAL_5,
+  mHm_OUTLOOK_PAL_6,
+  mHm_OUTLOOK_PAL_7,
+  mHm_OUTLOOK_PAL_8,
+  mHm_OUTLOOK_PAL_9,
+  mHm_OUTLOOK_PAL_10,
+  mHm_OUTLOOK_PAL_11,
+
+  mHm_OUTLOOK_PAL_NUM
+};
+
 /* sizeof(mHm_rmsz_c) == 6 */
 typedef struct home_size_info_s {
   /* 0x00 */ struct {
@@ -128,7 +154,7 @@ typedef struct home_s {
   /* 0x0000 */ PersonalID_c ownerID; /* owner player's ID */
   /* 0x0014 */ u8 unk_14[6];
   /* 0x001A */ TempoBeat_c haniwa_tempo; /* unsure about this */
-  /* 0x001C */ lbRTC_ymd_t hra_mark_time; /* last HRA judge date */
+  /* 0x001C */ lbRTC_ymd_c hra_mark_time; /* last HRA judge date */
   /* 0x0020 */ u32 hra_mark_info; /* bitfield of HRA info pulled when HRA mails letter */
   /* 0x0024 */ mHm_flg_c flags;
   /* 0x0026 */ mHm_rmsz_c size_info; /* home size info */

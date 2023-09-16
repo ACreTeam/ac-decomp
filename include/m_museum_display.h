@@ -51,6 +51,8 @@ enum {
 /* 4 bits per donatable item */
 #define mMmd_BIT_INFO(info, category, index) \
   (((info).category##_bit[(index) >> 1] >> (((index) & 1) << 2)) & 0x0F)
+#define mMmd_BIT_INFO2(bitfield, index) \
+  (((bitfield)[(index) >> 1] >> (((index) & 1) << 2)) & 0x0F)
 
 #define mMmd_ART_BIT(info, index) mMmd_BIT_INFO(info, art, index)
 #define mMmd_INSECT_BIT(info, index) mMmd_BIT_INFO(info, insect, index)

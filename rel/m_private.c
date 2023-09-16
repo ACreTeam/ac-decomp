@@ -1204,7 +1204,7 @@ extern void mPr_SendMailFromMother() {
     
   if (mLd_PlayerManKindCheckNo(player_no) == FALSE && priv != NULL && mPr_NullCheckPersonalID(&priv->player_ID) == FALSE) {
     mPr_mother_mail_info_c* mother_mail = Save_GetPointer(mother_mail[player_no]);
-    lbRTC_ymd_t* mail_date = &mother_mail->date;
+    lbRTC_ymd_c* mail_date = &mother_mail->date;
 
     if (mail_date->year != mTM_rtcTime_ymd_clear_code.year && mail_date->month != mTM_rtcTime_ymd_clear_code.month && mail_date->day != mTM_rtcTime_ymd_clear_code.day) {
       if (mail_date->year != rtc_time->year || mail_date->month != rtc_time->month || mail_date->day != rtc_time->day) {

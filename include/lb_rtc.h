@@ -33,11 +33,13 @@ typedef struct lbRTC_datetime_s {
   lbRTC_year_t year;
 } lbRTC_time_c; /* Name leaked in lbRTC_time_c_save_data_check */
 
+typedef lbRTC_time_c OSRTCTime;
+
 typedef struct lbRTC_ymd_s {
   lbRTC_year_t year;
   lbRTC_month_t month;
   lbRTC_day_t day;
-} lbRTC_ymd_t; /* Name leaked in mTM_ymd_2_time */
+} lbRTC_ymd_c; /* Name leaked in mTM_ymd_2_time */
 
 enum WEEKDAYS {
   lbRTC_WEEKDAYS_BEGIN = 0,
@@ -112,7 +114,7 @@ extern int lbRTC_IsOverTime(const lbRTC_time_c* t0, const lbRTC_time_c* t1);
 extern int lbRTC_IsOverRTC(const lbRTC_time_c* time);
 extern int lbRTC_IntervalTime(const lbRTC_time_c* time0, const lbRTC_time_c* time1);
 extern int lbRTC_GetIntervalDays(const lbRTC_time_c* t0, const lbRTC_time_c* t1);
-extern int lbRTC_GetIntervalDays2(lbRTC_ymd_t* ymd0, lbRTC_ymd_t* ymd1);
+extern int lbRTC_GetIntervalDays2(lbRTC_ymd_c* ymd0, lbRTC_ymd_c* ymd1);
 extern void lbRTC_Add_YY(lbRTC_time_c* time, int year);
 extern void lbRTC_Add_MM(lbRTC_time_c* time, int month);
 extern void lbRTC_Add_DD(lbRTC_time_c* time, int day);

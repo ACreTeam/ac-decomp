@@ -28,7 +28,7 @@ typedef struct snowman_save_data_s {
 typedef struct snowman_info_s{
   /* 0x00 */ int scale;
   /* 0x04 */ xyz_t pos;
-}mSN_snowman_info_c;
+} mSN_snowman_info_c;
 
 extern int mSN_check_life(mActor_name_t* ac, int idx);
 extern int mSN_ClearSnowmanData(mActor_name_t* ac, int idx);

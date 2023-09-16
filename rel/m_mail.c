@@ -56,10 +56,10 @@ extern int mMl_strlen2(int* found, u8* str, int size, u8 end_char) {
 
 extern void mMl_clear_mail_header(Mail_hdr_c* header) {
   mPr_ClearPersonalID(&header->recipient.personalID);
-  header->recipient.type = mMl_TYPE_CLEAR;
+  header->recipient.type = mMl_NAME_TYPE_CLEAR;
 
   mPr_ClearPersonalID(&header->sender.personalID);
-  header->sender.type = mMl_TYPE_CLEAR;
+  header->sender.type = mMl_NAME_TYPE_CLEAR;
 }
 
 extern void mMl_clear_mail(Mail_c* mail) {

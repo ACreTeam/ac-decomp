@@ -28,6 +28,9 @@ enum weather_intensity {
   mEnv_WEATHER_INTENSITY_NUM,
 };
 
+#define mEnv_SAVE_GET_WEATHER_TYPE(w) (((w) & 0xF0) >> 4)
+#define mEnv_SAVE_GET_WEATHER_INTENSITY(w) ((w) & 0xF)
+
 typedef void (*NATURE_PROC)(ACTOR*);
 
 typedef struct nature_s {

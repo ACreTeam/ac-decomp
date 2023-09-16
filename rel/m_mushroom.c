@@ -15,12 +15,12 @@
 static lbRTC_time_c l_mmsr_zeto_time = { 0, 0, 0, 0, 0, 0, 0 };
 
 /**
- * @brief Converts a saved time in mMsr_MushTime_c format into its lbRTC_time_c representation.
+ * @brief Converts a saved time in mMsr_time_c format into its lbRTC_time_c representation.
  * 
  * @param dst The destination lbRTC_time_c
- * @param src The source mMsr_MushTime_c
+ * @param src The source mMsr_time_c
  **/
-static void mMsr_Mushtime2Rtc(lbRTC_time_c* dst, const mMsr_MushTime_c* src) {
+static void mMsr_Mushtime2Rtc(lbRTC_time_c* dst, const mMsr_time_c* src) {
   dst->year = src->year;
   dst->month = src->month;
   dst->day = src->day;
@@ -31,12 +31,12 @@ static void mMsr_Mushtime2Rtc(lbRTC_time_c* dst, const mMsr_MushTime_c* src) {
 }
 
 /**
- * @brief Converts time in lbRTC_time_c format into its mMsr_MushTime_c representation.
+ * @brief Converts time in lbRTC_time_c format into its mMsr_time_c representation.
  * 
- * @param dst The destination mMsr_MushTime_c
+ * @param dst The destination mMsr_time_c
  * @param src The source lbRTC_time_c
  **/
-static void mMsr_Rtc2MushTime(mMsr_MushTime_c* dst, const lbRTC_time_c* src) {
+static void mMsr_Rtc2MushTime(mMsr_time_c* dst, const lbRTC_time_c* src) {
   dst->year = src->year;
   dst->month = src->month;
   dst->day = src->day;
@@ -332,7 +332,7 @@ static void mMsr_ClearMushrooms(int clear_num, int block_x, int block_z) {
 extern void mMsr_FirstClearMushroom() {
   int first_clear_num;
   lbRTC_time_c mush_rtc_time;
-  mMsr_MushTime_c* mush_time = Save_GetPointer(mushroom_time);
+  mMsr_time_c* mush_time = Save_GetPointer(mushroom_time);
   const lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
   
   mMsr_Mushtime2Rtc(&mush_rtc_time, mush_time);
@@ -668,7 +668,7 @@ static void mMsr_SetMushroomNum(int mushroom_num, int player_bx, int player_bz) 
 extern void mMsr_SetMushroom(xyz_t player_pos) {
   int player_bx, player_bz;
   lbRTC_time_c mush_rtc;
-  mMsr_MushTime_c* mush_time = Save_GetPointer(mushroom_time);
+  mMsr_time_c* mush_time = Save_GetPointer(mushroom_time);
   const lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
 
   mMsr_Mushtime2Rtc(&mush_rtc, mush_time);

@@ -218,7 +218,7 @@ static int lbRk_KyuurekiDays(int year, int month) {
  * @param kyuu_ymd The input date in the kyuureki calendar.
  * @return TRUE if the conversion is successful, FALSE if the input date is invalid.
  */
-extern int lbRk_ToSeiyouReki(lbRTC_ymd_t* seiyo_ymd, const lbRTC_ymd_t* kyuu_ymd) {
+extern int lbRk_ToSeiyouReki(lbRTC_ymd_c* seiyo_ymd, const lbRTC_ymd_c* kyuu_ymd) {
   int seireki_days;
   int year;
   int month;
@@ -275,9 +275,9 @@ extern int lbRk_ToSeiyouReki(lbRTC_ymd_t* seiyo_ymd, const lbRTC_ymd_t* kyuu_ymd
  * @param seiyo_ymd The input date in the Gregorian calendar.
  * @return TRUE if the conversion is successful, FALSE if the input date is invalid.
  */
-extern int lbRk_ToKyuuReki(lbRTC_ymd_t* kyuu_ymd, const lbRTC_ymd_t* seiyo_ymd) {
-  lbRTC_ymd_t kyuu_date = (lbRTC_ymd_t){lbRk_YEAR_MIN, lbRk_KYUU_MONTH_START, lbRk_KYUU_DAY_START};
-  lbRTC_ymd_t seyio_date;
+extern int lbRk_ToKyuuReki(lbRTC_ymd_c* kyuu_ymd, const lbRTC_ymd_c* seiyo_ymd) {
+  lbRTC_ymd_c kyuu_date = (lbRTC_ymd_c){lbRk_YEAR_MIN, lbRk_KYUU_MONTH_START, lbRk_KYUU_DAY_START};
+  lbRTC_ymd_c seyio_date;
 
   while (TRUE) {
     // Attempt to convert the current kyuureki date to Gregorian date
@@ -355,7 +355,7 @@ extern int lbRk_AutumnalEquinoxDay(int year) {
  * @param harvest_moon_day The output Harvest Moon Day in the Gregorian calendar.
  * @param year The input year.
  */
-extern void lbRk_HarvestMoonDay(lbRTC_ymd_t* harvest_moon_day, int year) {
+extern void lbRk_HarvestMoonDay(lbRTC_ymd_c* harvest_moon_day, int year) {
   /* Array of precomputed Seiyo Reki (Gregorian calendar)
      Havest Moon Day dates. */
   static lbRk_date_t ev_day[lbRk_HARVEST_MOON_YEAR_NUM] = {
@@ -390,7 +390,7 @@ extern void lbRk_HarvestMoonDay(lbRTC_ymd_t* harvest_moon_day, int year) {
     /* 2030 */ {9, 11}
   };
 
-  lbRTC_ymd_t kyuu_ymd;
+  lbRTC_ymd_c kyuu_ymd;
 
   // If the year is within the pre-calculated range, use the stored values
   if ((year >= lbRk_HARVEST_MOON_YEAR_MIN) && (year < lbRk_HARVEST_MOON_YEAR_MAX + 1)) {

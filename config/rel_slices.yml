@@ -78,6 +78,10 @@ m_fbdemo_fade.c:
     .text: [0x803A12F8, 0x803A1508]
     .rodata: [0x80641FC0, 0x80641FD8]
     .data: [0x80653558, 0x806535A0]
+m_flashrom.c:
+    .text: [0x803AC5C8, 0x803AF48C]
+    .data: [0x80654188, 0x80654298]
+    .bss: [0x81295BD8, 0x81295C30]
 m_fuusen.c:
     .text: [0x803B15E0, 0x803B1908]
     .rodata: [0x80642258, 0x80642288]

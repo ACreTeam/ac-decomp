@@ -437,7 +437,7 @@ static int select_check_A_button_swell(GAME_SELECT* select) {
 }
 
 static int select_check_A_button_sunburn(GAME_SELECT* select) {
-  lbRTC_ymd_t renew_time;
+  lbRTC_ymd_c renew_time;
   mPr_sunburn_c sunburn = Common_Get(now_private)->sunburn;
   
   mTM_set_renew_time(&renew_time, Common_GetPointer(time.rtc_time));
@@ -819,7 +819,7 @@ static void select_move_cloth_sel(GAME_SELECT* select) {
     select->status = 1;
   }
   else {
-    int cloth = Common_Get(now_private)->cloth - ITM_CLOTH001; // shouldn't this be CLOTH000?
+    int cloth = Common_Get(now_private)->cloth.item - ITM_CLOTH001; // shouldn't this be CLOTH000?
     int adjust = (chkButton(BUTTON_B)) ? 10 : 1;
 
     if (chkButton(BUTTON_DDOWN)) {
@@ -856,7 +856,7 @@ static void select_move_cloth_sel(GAME_SELECT* select) {
       cloth -= CLOTH_NUM;
     }
 
-    Common_Get(now_private)->cloth = ITM_CLOTH001 + cloth;
+    Common_Get(now_private)->cloth.item = ITM_CLOTH001 + cloth;
   }
 }
 
@@ -1082,7 +1082,7 @@ static void select_print_cloth(gfxprint_t* gfxprint, GAME_SELECT* select) {
     gfxprint_color(gfxprint, 255, 180, 180, 255);
   }
 
-  gfxprint_printf(gfxprint, "ﾌｸ    :%03d", Common_Get(now_private)->cloth - ITM_CLOTH_START);
+  gfxprint_printf(gfxprint, "ﾌｸ    :%03d", Common_Get(now_private)->cloth.item - ITM_CLOTH_START);
 }
 
 static void select_print_swell(gfxprint_t* gfxprint, GAME_SELECT* select) {

@@ -1302,6 +1302,7 @@ extern mActor_name_t bg_item_fg_sub_tree_grow(mActor_name_t tree, int past_days,
 #define DUMMY_DOUZOU 0xF11D
 
 #define RSV_DOOR 0xFE1B
+#define RSV_CLOTH 0xFE20
 #define RSV_WALL_NO 0xFFFE /* interior wall item, no collision */
 #define RSV_NO 0xFFFF /* reserved space, can't interact but no collision */
 

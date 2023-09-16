@@ -300,7 +300,7 @@ extern lbRTC_day_t lbRTC_GetDaysByMonth(lbRTC_year_t year, lbRTC_month_t month) 
 
 typedef union {
   int raw;
-  lbRTC_ymd_t ymd;
+  lbRTC_ymd_c ymd;
 } ymd_u;
 
 /**
@@ -608,17 +608,17 @@ extern int lbRTC_GetIntervalDays(const lbRTC_time_c* t0, const lbRTC_time_c* t1)
 }
 
 /**
- * @brief Calculate the number of days between two dates using lbRTC_ymd_t structures.
+ * @brief Calculate the number of days between two dates using lbRTC_ymd_c structures.
  *
- * This function calculates the number of days between two given lbRTC_ymd_t
+ * This function calculates the number of days between two given lbRTC_ymd_c
  * structures. It returns the interval in days as an integer. If ymd0 is greater than
  * ymd1, the interval will be negative.
  *
- * @param ymd0 Pointer to the first lbRTC_ymd_t structure.
- * @param ymd1 Pointer to the second lbRTC_ymd_t structure.
+ * @param ymd0 Pointer to the first lbRTC_ymd_c structure.
+ * @param ymd1 Pointer to the second lbRTC_ymd_c structure.
  * @return Number of days between the two given dates, negative if ymd0 is greater than ymd1.
  */
-extern int lbRTC_GetIntervalDays2(lbRTC_ymd_t* ymd0, lbRTC_ymd_t* ymd1) {
+extern int lbRTC_GetIntervalDays2(lbRTC_ymd_c* ymd0, lbRTC_ymd_c* ymd1) {
   lbRTC_time_c t0, t1;
   int equality;
 
