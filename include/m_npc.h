@@ -230,6 +230,8 @@ extern int mNpc_SearchAnimalPersonalID(AnmPersonalID_c* id);
 extern void mNpc_GetActorWorldName(u8* buf, mActor_name_t id);
 extern u8 mNpc_CheckNormalMail_length(int* len, u8* body);
 extern mActor_name_t mNpc_GetNpcFurniture(AnmPersonalID_c* pid);
+extern void mNpc_GetNpcWorldNameTableNo(u8* buf, mActor_name_t name_id);
+extern void mNpc_GetRandomAnimalName(u8* buf);
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);

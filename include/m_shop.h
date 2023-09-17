@@ -139,6 +139,7 @@ extern u32 mSP_ItemNo2ItemPrice(mActor_name_t item_no);
 extern int mSP_SearchItemCategoryPriority(mActor_name_t item_no, int category, int priority, GAME* unused); // not sure if it's actually a GAME*
 extern mActor_name_t mSP_RandomOneFossilSelect(int multi_fossil);
 extern mActor_name_t mSP_RandomHaniwaSelect(mActor_name_t* item_buf, int num);
+extern mActor_name_t mSP_SelectFishginPresent(int player_no);
 
 extern void mItemDebug_ItemDebugMain();
 extern void mItemDebug_ItemDebugDraw(gfxprint_t* gfxprint);

@@ -17,6 +17,14 @@ typedef struct fishrecord_s {
   int size;
 } mFR_record_c;
 
+enum {
+  mFR_SIZE_SMALL,
+  mFR_SIZE_MEDIUM,
+  mFR_SIZE_LARGE,
+
+  mFR_SIZE_NUM
+};
+
 extern void mEv_fishRecord_holder(PersonalID_c* winner_pid, u32* winning_size, lbRTC_ymd_c* contest_date);
 extern int mEv_fishday(lbRTC_ymd_c* dates, lbRTC_time_c* now_time);
 extern void mFR_fishmail();
