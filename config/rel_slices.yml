@@ -312,6 +312,18 @@ ac_t_bag1.c:
 ac_t_bag2.c:
     .text: [0x804A79F8, 0x804A7B4C]
     .data: [0x8068EA48, 0x8068EA88]
+ac_t_biscus1.c:
+    .text: [0x804A7B4C, 0x804A7CA0]
+    .data: [0x8068EA88, 0x8068EAC8]
+ac_t_biscus2.c:
+    .text: [0x804A7CA0, 0x804A7DF4]
+    .data: [0x8068EAC8, 0x8068EB08]
+ac_t_biscus3.c:
+    .text: [0x804A7DF4, 0x804A7F48]
+    .data: [0x8068EB08, 0x8068EB48]
+ac_t_biscus4.c:
+    .text: [0x804A7F48, 0x804A809C]
+    .data: [0x8068EB48, 0x8068EB88]
 ac_t_pistol.c:
     .text: [0x804A95F4, 0x804A9858]
     .rodata: [0x80645EF8, 0x80645F00]
