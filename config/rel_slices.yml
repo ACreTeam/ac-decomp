@@ -306,6 +306,12 @@ ac_set_ovl_insect.c:
 ac_t_anrium1.c:
     .text: [0x804A7750, 0x804A78A4]
     .data: [0x8068E9C8, 0x8068EA08]
+ac_t_bag1.c:
+    .text: [0x804A78A4, 0x804A79F8]
+    .data: [0x8068EA08, 0x8068EA48]
+ac_t_bag2.c:
+    .text: [0x804A79F8, 0x804A7B4C]
+    .data: [0x8068EA48, 0x8068EA88]
 ac_t_pistol.c:
     .text: [0x804A95F4, 0x804A9858]
     .rodata: [0x80645EF8, 0x80645F00]
