@@ -69,19 +69,19 @@ static void aTPT_setupAction(ACTOR* actor, int idx){
 
     pistol->proc = process[idx];
     pistol->current_id = idx; 
-    pistol->process_id = idx;
+    pistol->tools_class.process_id = idx;
 
     scale = start_scale[idx];
-    pistol->actor_class.scale.x = scale;
-    pistol->actor_class.scale.y = scale;
-    pistol->actor_class.scale.z = scale;
+    pistol->tools_class.actor_class.scale.x = scale;
+    pistol->tools_class.actor_class.scale.y = scale;
+    pistol->tools_class.actor_class.scale.z = scale;
     
 }
 
 static void aTPT_actor_move(ACTOR* actor, GAME* game){
     PISTOL_ACTOR* pistol = (PISTOL_ACTOR*)actor;
     
-    int t = pistol->process_id;
+    int t = pistol->tools_class.process_id;
     if(t!= pistol->current_id){
         aTPT_setupAction(actor, t);
     }
@@ -96,18 +96,18 @@ static void aTPT_actor_draw(ACTOR* actor, GAME* game){
 
     OPEN_DISP(graph);
 
-    if(pistol->enable == 1){
-        Matrix_put(&pistol->matrix_work);
-        Matrix_Position_Zero(&pistol->actor_class.world.position);
-        pistol->enable = 0;
+    if(pistol->tools_class.enable == 1){
+        Matrix_put(&pistol->tools_class.matrix_work);
+        Matrix_Position_Zero(&pistol->tools_class.actor_class.world.position);
+        pistol->tools_class.enable = 0;
     }
     else{
-        Matrix_translate(pistol->actor_class.world.position.x, pistol->actor_class.world.position.y, 
-            pistol->actor_class.world.position.z, FALSE);
+        Matrix_translate(pistol->tools_class.actor_class.world.position.x, pistol->tools_class.actor_class.world.position.y, 
+            pistol->tools_class.actor_class.world.position.z, FALSE);
             Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
     }
 
-    Matrix_scale(pistol->actor_class.scale.x, pistol->actor_class.scale.y, pistol->actor_class.scale.z, TRUE);
+    Matrix_scale(pistol->tools_class.actor_class.scale.x, pistol->tools_class.actor_class.scale.y, pistol->tools_class.actor_class.scale.z, TRUE);
    _texture_z_light_fog_prim_npc(graph); 
 
     gfxp = NOW_POLY_OPA_DISP;

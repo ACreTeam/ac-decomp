@@ -66,10 +66,10 @@ typedef struct tools_s{
   int enable;
   int unk1BC;
   int process_id;
-}ACTOR_TOOLS;
+}TOOLS_ACTOR;
 
-typedef ACTOR_TOOLS* (*ToolBirthProc)(ToolName, int, ACTOR_TOOLS*, GAME_PLAY*, s16, int*);
-typedef int (*ToolChgRequestModeProc)(ACTOR*, ACTOR_TOOLS*, int);
+typedef TOOLS_ACTOR* (*ToolBirthProc)(ToolName, int, TOOLS_ACTOR*, GAME_PLAY*, s16, int*);
+typedef int (*ToolChgRequestModeProc)(ACTOR*, TOOLS_ACTOR*, int);
     
 typedef struct ToolClip {
   ToolBirthProc aTOL_birth_proc;

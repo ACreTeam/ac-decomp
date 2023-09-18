@@ -2,8 +2,7 @@
 #define AC_T_PISTOL_H
 
 #include "types.h"
-#include "m_actor.h"
-#include "libultra/ultratypes.h"
+#include "ac_tools.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,12 +11,7 @@ extern "C" {
 typedef void (*PISTOL_PROC)(ACTOR*);
 
 typedef struct t_pistol_s{
-    ACTOR actor_class;
-    int unk174;
-    MtxF matrix_work;
-    int enable;
-    int unk1BC;
-    int process_id;
+    TOOLS_ACTOR tools_class;
     u8 pad2[0x8];
     PISTOL_PROC proc; 
     int current_id;
