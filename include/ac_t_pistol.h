@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+extern ACTOR_PROFILE T_Pistol_Profile;
+
 typedef void (*PISTOL_PROC)(ACTOR*);
 
 typedef struct t_pistol_s{
@@ -16,9 +18,6 @@ typedef struct t_pistol_s{
     PISTOL_PROC proc; 
     int current_id;
 }PISTOL_ACTOR;
-
-
-extern ACTOR_PROFILE T_Pistol_Profile;
 
 #ifdef __cplusplus
 }

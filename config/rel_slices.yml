@@ -327,6 +327,10 @@ ac_t_biscus4.c:
 ac_t_cobra1.c:
     .text: [0x804A809C, 0x804A81F0]
     .data: [0x8068EB88, 0x8068EBC8]
+ac_t_cracker.c:
+    .text: [0x804A81F0, 0x804A8454]
+    .rodata: [0x80645EA8, 0x80645EB0]
+    .data: [0x8068EBC8, 0x8068EC28]
 ac_t_pistol.c:
     .text: [0x804A95F4, 0x804A9858]
     .rodata: [0x80645EF8, 0x80645F00]
