@@ -33,7 +33,7 @@ typedef struct object_bank_s {
 
 typedef struct object_exchange_s {
   Object_Bank_c banks[mSc_OBJECT_BANK_NUM];
-  int _1928;
+  int bank_id;
   int _192C;
   int exchange_id;
   u8 _1934[0x1958-0x1934];
@@ -97,6 +97,7 @@ extern Scene_status_c start_demo3_info;
 extern Scene_status_c lighthouse_info;
 extern Scene_status_c tent_info;
 
+extern int mSc_secure_exchange_keep_bank(Object_Exchange_c*, Object_Bank_c*, int);
 extern int mSc_bank_regist_check(Object_Exchange_c* exchange, s16 bank_id);
 extern void mSc_regist_initial_exchange_bank(GAME_PLAY* play);
 extern void mSc_dmacopy_data_bank(Object_Exchange_c*);

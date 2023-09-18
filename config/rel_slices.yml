@@ -307,6 +307,11 @@ ac_t_pistol.c:
     .text: [0x804A95F4, 0x804A9858]
     .rodata: [0x80645EF8, 0x80645F00]
     .data: [0x8068EE98, 0x8068EEF8]
+ac_tools.c:
+    .text: [0x804AC034, 0x804AC2D8]
+    .rodata: [0x80645F90, 0x80645F98]
+    .data: [0x8068F510, 0x8068F5C0]
+    .bss: [0x812FD498, 0x812FD4A8]
 ac_train_door.c:
     .text: [0x804AC2D8, 0x804AC510]
     .rodata: [0x80645F98, 0x80645FA8]

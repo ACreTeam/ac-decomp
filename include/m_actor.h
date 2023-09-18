@@ -28,6 +28,7 @@ typedef void (*mActor_proc)(ACTOR*, GAME*);
 #define ACTOR_STATE_TA_SET (1 << 11)
 #define ACTOR_STATE_LIGHTING (1 << 22) // does lighting NOT affect this actor?
 #define ACTOR_STATE_24 (1 << 24)
+#define ACTOR_STATE_25 (1 << 25)
 #define ACTOR_STATE_CAN_MOVE_IN_DEMO_SCENES (1 << 29)
 
 #define ACTOR_OBJ_BANK_NONE 0
@@ -42,8 +43,8 @@ typedef void (*mActor_proc)(ACTOR*, GAME*);
 enum actor_part {
   ACTOR_PART_FG,
   ACTOR_PART_ITEM,
+  ACTOR_PART_UNUSED,
   ACTOR_PART_PLAYER,
-  ACTOR_PART_3, /* Thought this was for NPCs but maybe not? */
   ACTOR_PART_NPC,
   ACTOR_PART_BG,
   ACTOR_PART_EFFECT,
