@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_random_field_h.h"
 #include "m_field_make.h"
+#include "game_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,6 +59,7 @@ typedef struct gate_s {
   int ut1;
 } mRF_gate_c;
 
+extern void mRF_MakeRandomField(mFM_combination_c* combi_table, mFM_combo_info_c* combo_info, int combo_count, GAME* game);
 extern u32 mRF_Type2BlockInfo(u8 type);
 extern int mRF_SearchPond(int* ut_x, int* ut_z, int block_x, int block_z);
 extern mRF_gate_c* mRF_BlockTypeDirect2GateData(int* gate_count, u8 block_type, int direct);

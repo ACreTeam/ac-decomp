@@ -5,7 +5,7 @@
 #include "libu64/gfxprint.h"
 #include "m_lib.h"
 #include "m_collision_bg.h"
-
+#include "m_field_make.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,6 +17,12 @@ extern "C" {
 
 #define mFI_UT_WORLDSIZE_X_F ((f32)mFI_UT_WORLDSIZE_X)
 #define mFI_UT_WORLDSIZE_Z_F ((f32)mFI_UT_WORLDSIZE_Z)
+
+#define mFI_UT_WORLDSIZE_HALF_X_F (mFI_UT_WORLDSIZE_X_F / 2.0f)
+#define mFI_UT_WORLDSIZE_HALF_Z_F (mFI_UT_WORLDSIZE_X_F / 2.0f)
+
+#define mFI_BK_WORLDSIZE_X_F (mFI_UT_WORLDSIZE_X_F * UT_X_NUM)
+#define mFI_BK_WORLDSIZE_Z_F (mFI_UT_WORLDSIZE_Z_F * UT_Z_NUM)
 
 #define mFI_ROW_TO_CHARSTR(row) ((row) + 'A')
 #define mFI_COL_TO_CHARSTR(col) ((col) + '0')
@@ -164,6 +170,16 @@ extern f32 mFI_GetBlockWidth();
 extern f32 mFI_GetBlockHeight();
 extern int mFI_Wpos2BkandUtNuminBlock(int* block_x, int* block_z, int* ut_x, int* ut_z, xyz_t wpos);
 extern int mFI_GetItemNumOnBlockInField(int block_x, int block_z, mActor_name_t start_item, mActor_name_t end_item);
+extern int mFI_CheckShopFieldName(mActor_name_t field_name);
+extern int mFI_GetMoveActorListIdx(mFM_move_actor_c* move_actor_list, int list_size, mActor_name_t name);
+extern int mFI_GetNowPlayerHouseFloorNo();
+extern int mFI_BlockUtNumtoFGSet(mActor_name_t item, int bx, int bz, int ut_x, int ut_z);
+extern void mFI_InitMoveActorBitData();
+extern void mFI_ClearColKeep();
+extern void mFI_InitAreaInfo();
+extern void mFI_InitRegisterBgInfo();
+extern mFM_block_info_c* mFI_GetBlockTopP();
+extern int mFI_GetBlockNum(int block_x, int block_z);
 
 extern void mFI_PrintNowBGNum(gfxprint_t* gfxprint);
 extern void mFI_PrintFgAttr(gfxprint_t* gfxprint);

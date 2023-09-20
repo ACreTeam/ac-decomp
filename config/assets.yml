@@ -145,3 +145,186 @@ config/rel.yml:
     type: vtx
   g_wipe1_txt:
     addrs: [0x80652C60, 0x80653460]
+  mFM_beach_pal_0:
+    addrs: [0x80C59CA8, 0x80C59CC8]
+    type: pal16
+  mFM_beach_pal_1:
+    addrs: [0x80C59CC8, 0x80C59CE8]
+    type: pal16
+  mFM_beach_pal_2:
+    addrs: [0x80C59CE8, 0x80C59D08]
+    type: pal16
+  mFM_beach_pal_3:
+    addrs: [0x80C59D08, 0x80C59D28]
+    type: pal16
+  mFM_beach_pal_4:
+    addrs: [0x80C59D28, 0x80C59D48]
+    type: pal16
+  mFM_beach_pal_5:
+    addrs: [0x80C59D48, 0x80C59D68]
+    type: pal16
+  mFM_beach_pal_6:
+    addrs: [0x80C59D68, 0x80C59D88]
+    type: pal16
+  mFM_beach_pal_7:
+    addrs: [0x80C59D88, 0x80C59DA8]
+    type: pal16
+  mFM_beach_pal_8:
+    addrs: [0x80C59DA8, 0x80C59DC8]
+    type: pal16
+  mFM_beach_pal_9:
+    addrs: [0x80C59DC8, 0x80C59DE8]
+    type: pal16
+  mFM_beach_pal_10:
+    addrs: [0x80C59DE8, 0x80C59E08]
+    type: pal16
+  mFM_beach_pal_11:
+    addrs: [0x80C59E08, 0x80C59E28]
+    type: pal16
+  mFM_bush_pal_0:
+    addrs: [0x80C78680, 0x80C786A0]
+    type: pal16
+  mFM_bush_pal_1:
+    addrs: [0x80C786A0, 0x80C786C0]
+    type: pal16
+  mFM_bush_pal_2:
+    addrs: [0x80C786C0, 0x80C786E0]
+    type: pal16
+  mFM_bush_pal_3:
+    addrs: [0x80C786E0, 0x80C78700]
+    type: pal16
+  mFM_bush_pal_4:
+    addrs: [0x80C78700, 0x80C78720]
+    type: pal16
+  mFM_bush_pal_5:
+    addrs: [0x80C78720, 0x80C78740]
+    type: pal16
+  mFM_bush_pal_6:
+    addrs: [0x80C78740, 0x80C78760]
+    type: pal16
+  mFM_bush_pal_7:
+    addrs: [0x80C78760, 0x80C78780]
+    type: pal16
+  mFM_bush_pal_8:
+    addrs: [0x80C78780, 0x80C787A0]
+    type: pal16
+  mFM_bush_pal_9:
+    addrs: [0x80C787A0, 0x80C787C0]
+    type: pal16
+  mFM_bush_pal_10:
+    addrs: [0x80C787C0, 0x80C787E0]
+    type: pal16
+  mFM_bush_pal_11:
+    addrs: [0x80C787E0, 0x80C78800]
+    type: pal16
+  mFM_cliff_pal_0:
+    addrs: [0x80C78988, 0x80C789A8]
+    type: pal16
+  mFM_cliff_pal_1:
+    addrs: [0x80C789A8, 0x80C789C8]
+    type: pal16
+  mFM_cliff_pal_2:
+    addrs: [0x80C789C8, 0x80C789E8]
+    type: pal16
+  mFM_cliff_pal_3:
+    addrs: [0x80C789E8, 0x80C78A08]
+    type: pal16
+  mFM_cliff_pal_4:
+    addrs: [0x80C78A08, 0x80C78A28]
+    type: pal16
+  mFM_cliff_pal_5:
+    addrs: [0x80C78A28, 0x80C78A48]
+    type: pal16
+  mFM_cliff_pal_6:
+    addrs: [0x80C78A48, 0x80C78A68]
+    type: pal16
+  mFM_cliff_pal_7:
+    addrs: [0x80C78A68, 0x80C78A88]
+    type: pal16
+  mFM_cliff_pal_8:
+    addrs: [0x80C78A88, 0x80C78AA8]
+    type: pal16
+  mFM_cliff_pal_9:
+    addrs: [0x80C78AA8, 0x80C78AC8]
+    type: pal16
+  mFM_cliff_pal_10:
+    addrs: [0x80C78AC8, 0x80C78AE8]
+    type: pal16
+  mFM_cliff_pal_11:
+    addrs: [0x80C78AE8, 0x80C78B08]
+    type: pal16
+  mFM_earth_pal_0:
+    addrs: [0x80C90100, 0x80C90120]
+    type: pal16
+  mFM_earth_pal_1:
+    addrs: [0x80C90120, 0x80C90140]
+    type: pal16
+  mFM_earth_pal_2:
+    addrs: [0x80C90140, 0x80C90160]
+    type: pal16
+  mFM_earth_pal_3:
+    addrs: [0x80C90160, 0x80C90180]
+    type: pal16
+  mFM_earth_pal_4:
+    addrs: [0x80C90180, 0x80C901A0]
+    type: pal16
+  mFM_earth_pal_5:
+    addrs: [0x80C901A0, 0x80C901C0]
+    type: pal16
+  mFM_earth_pal_6:
+    addrs: [0x80C901C0, 0x80C901E0]
+    type: pal16
+  mFM_earth_pal_7:
+    addrs: [0x80C901E0, 0x80C90200]
+    type: pal16
+  mFM_earth_pal_8:
+    addrs: [0x80C90200, 0x80C90220]
+    type: pal16
+  mFM_earth_pal_9:
+    addrs: [0x80C90220, 0x80C90240]
+    type: pal16
+  mFM_earth_pal_10:
+    addrs: [0x80C90240, 0x80C90260]
+    type: pal16
+  mFM_earth_pal_11:
+    addrs: [0x80C90260, 0x80C90280]
+    type: pal16
+  mFM_rail_pal_0:
+    addrs: [0x80F8C2C8, 0x80F8C2E8]
+    type: pal16
+  mFM_rail_pal_1:
+    addrs: [0x80F8C2E8, 0x80F8C308]
+    type: pal16
+  mFM_rail_pal_2:
+    addrs: [0x80F8C308, 0x80F8C328]
+    type: pal16
+  mFM_rail_pal_3:
+    addrs: [0x80F8C328, 0x80F8C348]
+    type: pal16
+  mFM_rail_pal_4:
+    addrs: [0x80F8C348, 0x80F8C368]
+    type: pal16
+  mFM_rail_pal_5:
+    addrs: [0x80F8C368, 0x80F8C388]
+    type: pal16
+  mFM_rail_pal_6:
+    addrs: [0x80F8C388, 0x80F8C3A8]
+    type: pal16
+  mFM_rail_pal_7:
+    addrs: [0x80F8C3A8, 0x80F8C3C8]
+    type: pal16
+  mFM_rail_pal_8:
+    addrs: [0x80F8C3C8, 0x80F8C3E8]
+    type: pal16
+  mFM_rail_pal_9:
+    addrs: [0x80F8C3E8, 0x80F8C408]
+    type: pal16
+  mFM_rail_pal_10:
+    addrs: [0x80F8C408, 0x80F8C428]
+    type: pal16
+  mFM_rail_pal_11:
+    addrs: [0x80F8C428, 0x80F8C448]
+    type: pal16
+  mFM_rail_pal_12:
+    addrs: [0x80F8C448, 0x80F8C468]
+    type: pal16

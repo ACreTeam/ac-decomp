@@ -79,6 +79,14 @@ enum scene_table {
   SCENE_NUM
 };
 
+#define mSc_IS_SCENE_PLAYER_ROOM(scene) \
+  ((scene) == SCENE_MY_ROOM_S || (scene) == SCENE_MY_ROOM_M || (scene) == SCENE_MY_ROOM_L || \
+   (scene) == SCENE_MY_ROOM_LL1 || (scene) == SCENE_MY_ROOM_LL2 || (scene) == SCENE_MY_ROOM_BASEMENT_S || \
+   (scene) == SCENE_MY_ROOM_BASEMENT_M || (scene) == (SCENE_MY_ROOM_BASEMENT_L) || (scene) == SCENE_MY_ROOM_BASEMENT_LL1 || \
+   (scene) == SCENE_COTTAGE_MY)
+
+#define mSc_IS_SCENE_MUSEUM_ROOM(scene) \
+  ((scene) >= SCENE_MUSEUM_ENTRANCE && (scene) <= SCENE_MUSEUM_ROOM_FISH)
 
 extern Scene_status_c scene_data_status[SCENE_NUM];
 
