@@ -119,6 +119,7 @@ extern int mCoBG_BnumUnum2HoleNumber(int block_x, int block_z, int ut_x, int ut_
 extern u32 mCoBG_UtNum2BgAttr(int ut_x, int ut_z);
 extern f32 mCoBG_UtNum2UtCenterY(int ut_x, int ut_z);
 extern int mCoBG_CheckCliffAttr(u32 attribute);
+extern int mCoBG_Change2PoorAttr(mCoBG_Collision_u* col);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();

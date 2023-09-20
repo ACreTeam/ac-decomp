@@ -7,3 +7,5 @@ symbol_aligns:
     0x81361820 : 0x20 # S_back_title_timer
     0x806D4D40: 32 # align fFTR_myhome_off_pal_table to 32 bytes
     0x8064F860: 32 # data right after m_camera2 TU
+    0x80C78B20: 32 # mFM_grd_s_cliff_tex
+    0x80F8C460: 32 # mFM_grd_s_rail_tex

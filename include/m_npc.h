@@ -12,6 +12,7 @@
 #include "m_quest.h"
 #include "m_lib.h"
 #include "m_private_h.h"
+#include "m_field_make.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -232,6 +233,13 @@ extern u8 mNpc_CheckNormalMail_length(int* len, u8* body);
 extern mActor_name_t mNpc_GetNpcFurniture(AnmPersonalID_c* pid);
 extern void mNpc_GetNpcWorldNameTableNo(u8* buf, mActor_name_t name_id);
 extern void mNpc_GetRandomAnimalName(u8* buf);
+extern int mNpc_GetIslandRoomFtrNum();
+extern mActor_name_t* mNpc_GetIslandRoomP(mActor_name_t npc_name);
+extern void mNpc_ChangeIslandRoom(mActor_name_t* items);
+extern void mNpc_SetNpcFurnitureRandom(mFM_fg_data_c** fg_data_list, int fg_name_start);
+extern void mNpc_SetNpcHomeYpos();
+extern void mNpc_SendRegisteredGoodbyMail();
+extern void mNpc_IslandNpcRoomDataSet(mFM_fg_data_c** sorted_fg_data_list, int fg_name_start);
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);

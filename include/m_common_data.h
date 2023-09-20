@@ -209,13 +209,16 @@ typedef struct common_data_s {
   /* 0x02852E */ s16 goods_power;
   /* 0x028530 */ Door_data_c door_data; /* misc door data */
   /* 0x028544 */ Door_data_c structure_exit_door_data; /* door data for when exiting a building */
-  /* 0x028558 */ u8 tmp1[0x028592 - 0x028558];
+  /* 0x028558 */ u8 tmp1[0x028591 - 0x028558];
+  /* 0x028591 */ u8 floor_idx;
   /* 0x028592 */ s16 demo_profiles[mDemo_CLIP_TYPE_NUM - 1];
   /* 0x028596 */ u8 _28596[0x285C0 - 0x28596];
   /* 0x0285C0 */ s8 player_decoy_flag;
-  /* 0x0285C1 */ u8 _285C1[0x0285C6 - 0x0285C1];
+  /* 0x0285C1 */ u8 _285C1;
+  /* 0x0285C2 */ u8 make_npc2_actor;
+  /* 0x0285C3 */ u8 _285C3[0x0285C6 - 0x0285C3];
   /* 0x0285C6 */ u8 event_id;
-  /* 0x0285C7 */ u8 _285C3[0x0287F8 - 0x0285C7];
+  /* 0x0285C7 */ u8 _285C7[0x0287F8 - 0x0285C7];
   /* 0x0287F8 */ s8 current_famicom_rom;
   /* 0x0287F9 */ s8 famicom_287F9;
   /* 0x0287FA */ u8 _287FA[0x28838 - 0x0287FA]; 
