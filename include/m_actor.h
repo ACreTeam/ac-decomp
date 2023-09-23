@@ -33,6 +33,7 @@ typedef void (*mActor_proc)(ACTOR*, GAME*);
 
 #define ACTOR_OBJ_BANK_NONE 0
 #define ACTOR_OBJ_BANK_3 3 /* TODO: rename, also likely an enum */
+#define ACTOR_OBJ_BANK_6 6
 #define ACTOR_OBJ_BANK_7 7
 #define ACTOR_OBJ_BANK_10 10
 #define ACTOR_OBJ_BANK_11 11
