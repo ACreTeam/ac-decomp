@@ -123,5 +123,7 @@ extern int mRmTp_PleaseDrawLightSwitch();
 extern mActor_name_t mRmTp_Item1ItemNo2FtrItemNo_AtPlayerRoom(mActor_name_t item_no, int flag);
 extern void mRmTp_SetDefaultLightSwitchData(int state);
 extern int mRmTp_GetEntranceBasePosition(xyz_t* pos);
+extern mActor_name_t mRmTp_GetPlayerRoomCollisionIdx(mActor_name_t field_name, mActor_name_t bg_name);
+extern u8 mRmTp_GetFloorIdx();
 
 #endif

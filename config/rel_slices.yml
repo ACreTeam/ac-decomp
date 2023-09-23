@@ -34,6 +34,8 @@ m_banti.c:
     .rodata: [0x80641388, 0x806413E0]
     .data: [0x8064F548, 0x8064F658]
     .bss: [0x8125A830, 0x8125AC80]
+m_bg_tex.c:
+    .bss: [0x8125AC80, 0x81263080]
 m_bg_item.c:
     .text: [0x80378858, 0x803789F8]
     .rodata: [0x806413E0, 0x806413F0]
@@ -78,6 +80,11 @@ m_fbdemo_fade.c:
     .text: [0x803A12F8, 0x803A1508]
     .rodata: [0x80641FC0, 0x80641FD8]
     .data: [0x80653558, 0x806535A0]
+m_field_make.c:
+    .text: [0x803A22C4, 0x803A4D68]
+    .rodata: [0x80641FE0, 0x80642008]
+    .data: [0x80653620, 0x80653E28]
+    .bss: [0x812957A0, 0x81295A88]
 m_fishrecord.c:
     .text: [0x803AB698, 0x803AC5C8]
     .rodata: [0x80642068, 0x80642080]
@@ -449,3 +456,13 @@ data/titledemo/pact3.c:
     .data: [0x80C43D18, 0x80C44B98]
 data/titledemo/pact4.c:
     .data: [0x80C44B98, 0x80C45A08]
+data/field/bg/beach_pal.c:
+    .data: [0x80C59CA8, 0x80C59E28]
+data/field/bg/bush_pal.c:
+    .data: [0x80C78680, 0x80C78800]
+data/field/bg/cliff_pal.c:
+    .data: [0x80C78988, 0x80C78B20]
+data/field/bg/earth_pal.c:
+    .data: [0x80C90100, 0x80C90280]
+data/field/bg/rail_pal.c:
+    .data: [0x80F8C2C8, 0x80F8C460]

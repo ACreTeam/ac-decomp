@@ -90,6 +90,7 @@ n.variable("cpp", c.CPP)
 n.variable("iconv", c.ICONV)
 n.variable("forcefilesgen", c.FORCEFILESGEN)
 n.variable("vtxdis", c.VTXDIS)
+n.variable("pal16dis", c.PAL16DIS)
 n.newline()
 
 ##############
@@ -241,6 +242,12 @@ n.rule(
     "vtxdis",
     command = "$vtxdis $in $out",
     description = "vtxdis.py $in $out"
+)
+
+n.rule(
+    "pal16dis",
+    command = "$pal16dis $in $out",
+    description = "pal16dis.py $in $out"
 )
 
 ##########
@@ -488,6 +495,12 @@ class AssetInclude(GeneratedInclude):
                 n.build(
                     inc.path,
                     rule="vtxdis",
+                    inputs=inc.asset_path
+                )
+            elif inc.asset.convtype == "pal16":
+                n.build(
+                    inc.path,
+                    rule="pal16dis",
                     inputs=inc.asset_path
                 )
             else:

@@ -1306,6 +1306,8 @@ extern mActor_name_t bg_item_fg_sub_tree_grow(mActor_name_t tree, int past_days,
 #define RSV_WALL_NO 0xFFFE /* interior wall item, no collision */
 #define RSV_NO 0xFFFF /* reserved space, can't interact but no collision */
 
+#define mNT_IS_RESERVE(n) ((n) >= SIGN00 && (n) <= SIGN20)
+
 #ifdef __cplusplus
 }
 #endif

@@ -222,6 +222,7 @@ CPP = os.path.join(DEVKITPPC, "bin", "powerpc-eabi-cpp")
 
 # Asset Converters
 VTXDIS = f"{PYTHON} {TOOLS}/converters/vtxdis.py"
+PAL16DIS = f"{PYTHON} {TOOLS}/converters/pal16dis.py"
 
 ICONV = f"{PYTHON} tools/sjis.py" # TODO: get actual iconv working(?)
 
