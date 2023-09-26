@@ -142,14 +142,14 @@ static int mRF_GateType2GateCount(int gate_type) {
 }
 
 extern int mRF_SearchPond(int* ut_x, int* ut_z, int block_x, int block_z) {
-  mFI_sound_source_info_c* s_source_info = mFI_GetSoundSourcePBlockNum(block_x, block_z);
+  mFM_bg_sound_source_c* s_source_info = mFI_GetSoundSourcePBlockNum(block_x, block_z);
 
   if (s_source_info != NULL) {
     int i;
 
     for (i = 0; i < mFI_NUM_SOUND_SOURCES; i++, s_source_info++) {
       if (s_source_info->kind == mFI_SOUND_SOURCE_POND) {
-        if (mFI_Wpos2UtNum(ut_x, ut_z, s_source_info->wpos)) {
+        if (mFI_Wpos2UtNum(ut_x, ut_z, s_source_info->pos)) {
           return TRUE;
         }
       }

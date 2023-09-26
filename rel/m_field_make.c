@@ -247,8 +247,8 @@ static void mFM_SetBG(mFM_bg_info_c* bg_info, mFM_bg_data_c* bg_data, u16 height
   bg_info->translucent_gfx = bg_data->translucent_gfx;
   bg_info->animation = bg_data->animation;
   bg_info->animation_count = bg_data->animation_count;
-  bg_info->_18 = bg_data->_14;
-  bg_info->_1C = bg_data->_18 - bg_data->_14; // size
+  bg_info->rom_start_addr = bg_data->rom_start_addr;
+  bg_info->rom_size = bg_data->rom_end_addr - bg_data->rom_start_addr;
   bg_info->block_type = type;
   bg_info->block_kind = mRF_Type2BlockInfo(type);
 
@@ -780,7 +780,7 @@ static mFM_fdinfo_c* mFM_MakeField(u16 scene, u16 bg_max, u8 bg_num) {
   for (j = 0; j < mFM_VISIBLE_BLOCK_NUM; j++) {
     field_info->bg_draw_info[j].block_x = 0xFF;
     field_info->bg_draw_info[j].block_z = 0xFF;
-    field_info->bg_draw_info[j].display_list = NULL;
+    field_info->bg_draw_info[j].dma_loaded = FALSE;
     field_info->last_bg_idx[j] = -1;
   }
 
