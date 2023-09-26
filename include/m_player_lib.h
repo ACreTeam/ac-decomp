@@ -26,6 +26,10 @@ extern void mPlib_Set_able_hand_all_item_in_demo(s8 enable);
 extern void mPlib_change_player_cloth_info_lv2(Private_c* priv, mActor_name_t cloth_name);
 extern int mPlib_Get_address_able_display();
 extern int mPlib_get_player_actor_main_index(GAME_PLAY* play);
+extern int mPlib_check_player_actor_main_index_AllWade(GAME_PLAY* play);
+
+#define GET_PLAYER_ACTOR(play) get_player_actor_withoutCheck(play)
+#define GET_PLAYER_ACTOR_NOW() get_player_actor_withoutCheck((GAME_PLAY*)gamePT)
 
 #ifdef __cplusplus
 }

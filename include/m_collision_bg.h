@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+#define mCoBG_HEIGHT_MAX 31
+
 enum field_layer {
   mCoBG_LAYER0,
   mCoBG_LAYER1,
@@ -66,8 +68,8 @@ typedef struct collision_bg_data_s {
 
 /* sizeof (mCoBG_Collision_u) == 4 */
 typedef union collision_bg_u {
-  u32 raw;
   mCoBG_CollisionData_c data;
+  u32 raw;
 } mCoBG_Collision_u;
 
 typedef struct collision_bg_check_result_s {
@@ -120,6 +122,12 @@ extern u32 mCoBG_UtNum2BgAttr(int ut_x, int ut_z);
 extern f32 mCoBG_UtNum2UtCenterY(int ut_x, int ut_z);
 extern int mCoBG_CheckCliffAttr(u32 attribute);
 extern int mCoBG_Change2PoorAttr(mCoBG_Collision_u* col);
+extern int mCoBG_CheckHole(xyz_t wpos);
+extern int mCoBG_CheckSkySwing(xyz_t wpos);
+extern void mCoBG_Ut2SetDefaultOffset(int ut_x, int ut_z);
+extern int mCoBG_CheckWaveAttr(u32 attribute);
+extern int mCoBG_CheckPlant(xyz_t wpos);
+extern void mCoBG_InitBoatCollision();
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();

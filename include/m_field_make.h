@@ -73,7 +73,7 @@ typedef struct block_combo_s {
 typedef struct field_display_list_info_s {
   int block_x;
   int block_z;
-  u8* display_list;
+  u32 dma_loaded;
 } mFM_field_draw_info_c;
 
 typedef struct field_pal_s {
@@ -103,8 +103,8 @@ typedef struct field_bg_info_s {
   s8 animation_count;
   u8 block_type;
   u32 block_kind;
-  int _18;
-  int _1C;
+  int rom_start_addr;
+  int rom_size;
   mCoBG_Collision_u collision[UT_Z_NUM][UT_X_NUM];
   u8 keep_h[UT_Z_NUM][UT_X_NUM]; // base height?
   mFM_bg_sound_source_c sound_source[mFM_SOUND_SOURCE_NUM];
@@ -155,8 +155,8 @@ typedef struct field_bg_data_s {
   Gfx* translucent_gfx;
   EVW_ANIME_DATA* animation;
   s8 animation_count;
-  u32 _14;
-  u32 _18;
+  u32 rom_start_addr;
+  u32 rom_end_addr;
   mCoBG_Collision_u collision[UT_Z_NUM][UT_X_NUM];
   mFM_bg_sound_source_data_c sound_source[mFM_SOUND_SOURCE_NUM];
 } mFM_bg_data_c;

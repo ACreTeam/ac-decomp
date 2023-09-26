@@ -85,6 +85,11 @@ m_field_make.c:
     .rodata: [0x80641FE0, 0x80642008]
     .data: [0x80653620, 0x80653E28]
     .bss: [0x812957A0, 0x81295A88]
+m_field_info.c:
+    .text: [0x803A4D68, 0x803AB698]
+    .rodata: [0x80642008, 0x80642068]
+    .data: [0x80653E28, 0x80654180]
+    .bss: [0x81295A88, 0x81295BD0]
 m_fishrecord.c:
     .text: [0x803AB698, 0x803AC5C8]
     .rodata: [0x80642068, 0x80642080]
