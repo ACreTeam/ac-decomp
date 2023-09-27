@@ -39,42 +39,42 @@ static void aTCB1_destruct(ACTOR* actor){
 
 
 static void aTCB1_setupAction(ACTOR*actor, int action){
-    COBRA1_ACTOR* biscus = (COBRA1_ACTOR*)actor;
+    COBRA1_ACTOR* cobra = (COBRA1_ACTOR*)actor;
     static COBRA1_PROC process[] = {
         (COBRA1_PROC)none_proc1,(COBRA1_PROC)none_proc1,(COBRA1_PROC)none_proc1,aTCB1_destruct,(COBRA1_PROC)none_proc1,NULL
     };
 
-    biscus->proc = process[action];
-    biscus->current_id = action;
-    biscus->tools_class.process_id = action;
+    cobra->proc = process[action];
+    cobra->current_id = action;
+    cobra->tools_class.process_id = action;
 
 }
 
 static void aTCB1_actor_move(ACTOR* actor, GAME*){
-    COBRA1_ACTOR* biscus = (COBRA1_ACTOR*)actor;
+    COBRA1_ACTOR* cobra = (COBRA1_ACTOR*)actor;
 
-    if(biscus->tools_class.process_id != biscus->current_id){
-        aTCB1_setupAction(actor, biscus->tools_class.process_id);
+    if(cobra->tools_class.process_id != cobra->current_id){
+        aTCB1_setupAction(actor, cobra->tools_class.process_id);
     }
 
-    biscus->proc(actor);
+    cobra->proc(actor);
 }
 
 static void aTCB1_actor_draw(ACTOR* actor, GAME* game){
-    COBRA1_ACTOR* biscus = (COBRA1_ACTOR*)actor;
+    COBRA1_ACTOR* cobra = (COBRA1_ACTOR*)actor;
 
     GRAPH* graph;
     Gfx* gfxp;
 
-    if(biscus->tools_class.enable == 1){
+    if(cobra->tools_class.enable == 1){
         graph = game->graph;
         
         OPEN_DISP(graph);
         
-        Matrix_put(&biscus->tools_class.matrix_work);
-        Matrix_Position_Zero(&biscus->tools_class.actor_class.world.position);
+        Matrix_put(&cobra->tools_class.matrix_work);
+        Matrix_Position_Zero(&cobra->tools_class.actor_class.world.position);
         
-        biscus->tools_class.enable = 0;
+        cobra->tools_class.enable = 0;
     
         _texture_z_light_fog_prim_npc(graph); 
 

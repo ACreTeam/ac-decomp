@@ -351,6 +351,18 @@ ac_t_hanabi.c:
     .text: [0x804A8834, 0x804A8A9C]
     .rodata: [0x80645EC8, 0x80645ED0]
     .data: [0x8068EC50, 0x8068ECB0]
+ac_t_hasu1.c:
+    .text: [0x804A8A9C, 0x804A8BF0]
+    .data: [0x8068ECB0, 0x8068ECF0]
+ac_t_hat1.c:
+    .text: [0x804A8BF0, 0x804A8D44]
+    .data: [0x8068ECF0, 0x8068ED30]
+ac_t_hat2.c:
+    .text: [0x804A8D44, 0x804A8E98]
+    .data: [0x8068ED30, 0x8068ED70]
+ac_t_hat3.c:
+    .text: [0x804A8E98, 0x804A8FEC]
+    .data: [0x8068ED70, 0x8068EDB0]
 ac_t_pistol.c:
     .text: [0x804A95F4, 0x804A9858]
     .rodata: [0x80645EF8, 0x80645F00]
