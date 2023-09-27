@@ -1,5 +1,5 @@
 # Animal Crossing Decompilation [![Discord Channel][discord-badge]][discord]
-[discord]: https://discord.zelda64.dev
+[discord]: https://discord.gg/hKx3FJJgrV
 [discord-badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
 
 Decompilation in progress of Animal Crossing (GAFE01)
