@@ -19,6 +19,11 @@ typedef struct rect_s {
   int l, r;
 } rect;
 
+typedef struct generic_unit_s {
+  int z;
+  int x;
+} BlockOrUnit_c;
+
 extern void radianxy_by_2pos(xyz_t* dest, xyz_t* sub, xyz_t* min);
 extern s_xyz sanglexy_by_2pos(xyz_t* sub, xyz_t* min); 
 

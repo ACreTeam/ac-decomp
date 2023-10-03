@@ -11,6 +11,9 @@
 #include "bg_item_h.h"
 #include "ac_npc.h"
 #include "ac_tools.h"
+#include "ac_aprilfool_control.h"
+#include "ac_groundhog_control.h"
+#include "ac_event_manager.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,7 +38,13 @@ typedef struct clip_s {
   /* 0x0AC */ aGYO_Clip_c* gyo_clip;
   /* 0x0B0 */ void* _0B0[(0x0DC - 0x0B0) / sizeof(void*)];
   /* 0x0DC */ aAL_Clip_c* animal_logo_clip;
-  /* 0x0E0 */ void* _0E0[(0x104 - 0x0E0) / sizeof(void*)];
+  /* 0x0E0 */ void* _0E0[(0x0EC - 0x0E0) / sizeof(void*)];
+  /* 0x0EC */ aAPC_Clip_c* aprilfool_control_clip;
+  /* 0x0F0 */ aEvMgr_Clip_c* event_manager_clip;
+  /* 0x0F4 */ aGHC_Clip_c* groundhog_control_clip;
+  /* 0x0F8 */ void* _0F8;
+  /* 0x0FC */ void* _0FC;
+  /* 0x100 */ void* _100;
 } Clip_c;
 
 extern void clip_clear();

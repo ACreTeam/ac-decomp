@@ -20,11 +20,20 @@ typedef struct npc_draw_data_s {
   u8 _04[0x68]; // TODO
 } aNPC_draw_data_c;
 
+enum {
+  aNPC_ATTENTION_TYPE_NONE,
+  aNPC_ATTENTION_TYPE_ACTOR,
+  aNPC_ATTENTION_TYPE_POSITION,
+
+  aNPC_ATTENTION_TYPE_NUM
+};
+
 typedef int (*aNPC_SETUP_ACTOR_PROC)(GAME_PLAY*, mActor_name_t, s8, int, s16, int, int, int, int);
 typedef void (*aNPC_DMA_DRAW_DATA_PROC)(aNPC_draw_data_c*, mActor_name_t);
 typedef void (*aNPC_FREE_OVERLAY_AREA_PROC)(ACTOR_DLFTBL*);
 typedef ACTOR* (*aNPC_GET_ACTOR_AREA_PROC)(size_t, const char*, int);
 typedef void (*aNPC_FREE_ACTOR_AREA_PROC)(ACTOR*);
+typedef void (*aNPC_SET_ATTENTION_REQUEST_PROC)(u8, ACTOR*, xyz_t*);
 
 typedef int (*aNPC_FORCE_CALL_REQ_PROC)(NPC_ACTOR*, int);
 
@@ -35,7 +44,8 @@ struct ac_npc_clip_s {
   aNPC_GET_ACTOR_AREA_PROC get_actor_area_proc;
   aNPC_FREE_ACTOR_AREA_PROC free_actor_area_proc;
   aNPC_DMA_DRAW_DATA_PROC dma_draw_data_proc;
-  void* _018[(0x124 - 0x018) / sizeof(void*)];
+  aNPC_SET_ATTENTION_REQUEST_PROC set_attention_request_proc;
+  void* _01C[(0x124 - 0x01C) / sizeof(void*)];
   aNPC_FORCE_CALL_REQ_PROC force_call_req_proc;
   void* _128;
 };

@@ -72,14 +72,34 @@ extern int mFRm_get_msg_idx() {
   return l_mfrm_msg_idx;
 }
 
-/* @fabricated - necessary for including some strings in .data */
+/* @fabricated - necessary for including some strings in .data & taken from DnM */
 extern MATCH_FORCESTRIP void mFRm_PrintErrInfo(gfxprint_t* gfxprint) {
-  gfxprint_printf(gfxprint, "N");
-  gfxprint_printf(gfxprint, "A");
-  gfxprint_printf(gfxprint, "W");
-  gfxprint_printf(gfxprint, "R");
-  gfxprint_printf(gfxprint, "C");
-  gfxprint_printf(gfxprint, "O");
+  gfxprint_color(gfxprint, 250, 100, 250, 255);
+  gfxprint_locate8x8(gfxprint, 22, 3);
+
+  if (l_mfrm_err_debug[0] != 0) {
+    gfxprint_printf(gfxprint, "N");
+  }
+
+  if (l_mfrm_err_debug[1] != 0) {
+    gfxprint_printf(gfxprint, "A");
+  }
+
+  if (l_mfrm_err_debug[2] != 0) {
+    gfxprint_printf(gfxprint, "W");
+  }
+
+  if (l_mfrm_err_debug[3] != 0) {
+    gfxprint_printf(gfxprint, "R");
+  }
+
+  if (l_mfrm_err_debug[4] != 0) {
+    gfxprint_printf(gfxprint, "C");
+  }
+
+  if (l_mfrm_err_debug[5] != 0) {
+    gfxprint_printf(gfxprint, "O");
+  }
 }
 
 /**

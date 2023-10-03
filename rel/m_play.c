@@ -61,15 +61,15 @@ void Game_play_Reset_destiny(){
 }
 
 void event_title_flag_on(){
-    if(Common_Get(event_id) != 0){
+    if(Common_Get(event_title_flags) != 0){
         Common_Set(event_notification_active,1);
     }
 }
 
 void event_title_flag_off(){
 
-    if(Common_Get(event_id) == 2){
-        Common_Set(event_id,0);
+    if(Common_Get(event_title_flags) == 2){
+        Common_Set(event_title_flags,0);
         Common_Set(event_notification_active,0);
          
     }
@@ -807,7 +807,7 @@ int makeBumpTexture(GAME_PLAY* play, GRAPH* graph1, GRAPH* graph2){
     CLOSE_DISP(graph1);
 }
 
-void draw_version(GRAPH*) {
+void draw_version(GRAPH* graph) {
     JW_JUTReport(0x82, 0x172, 1, "[CopyDate:%.19s]", boot_copyDate);
     JW_JUTReport(0x82, 0x180, 1, "[Date:%s]" , &__DateTime__);
     JW_JUTReport(0x82, 0x18E, 1, "[Creator:%s]", &__Creator__);
