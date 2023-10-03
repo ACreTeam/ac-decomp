@@ -1267,7 +1267,7 @@ static int aSOI_check_countdown_event(SET_MANAGER* set_manager, mEv_gst_hitodama
   int res = FALSE;
 
   // Check that the ghost event is active
-  if (mEv_check_status(mEv_EVENT_GHOST, mEv_STATUS_ACTIVE) == TRUE) {
+  if (mEv_check_status(mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN, mEv_STATUS_ACTIVE) == TRUE) {
     int n_bx = (u8)set_manager->player_pos.next_bx;
     int n_bz = (u8)set_manager->player_pos.next_bz; // idk if this is a fake match or not
     int pool_bx;

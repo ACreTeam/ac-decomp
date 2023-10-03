@@ -6,10 +6,51 @@
 #include "m_personal_id.h"
 #include "m_private.h"
 #include "m_time.h"
+#include "m_olib.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define mEv_TODAY_EVENT_NUM 16
+
+#define mEv_SCHEDULE_LAST_WEEKDAY_OF_MONTH 6 /* day of last weekday of the month */
+#define mEv_SCHEDULE_WEEKLY 7 /* scheduled for the desired day this week (e.g. this saturday) */
+
+#define mEv_SCHEDULE_MULTIDAY 0x40 /* event scheduled over more than a single day */
+#define mEv_SCHEDULE_TODAY 0x80 /* event will be active on the day loaded */
+
+typedef union event_monthday_s {
+  struct {
+    s8 month;
+    s8 day;
+  };
+  u16 raw;
+} mEv_MonthDay_u;
+
+typedef struct event_today_s {
+  int type;
+  u32 active_hours; /* bitfield (24 bits) */
+  mEv_MonthDay_u begin_date;
+  mEv_MonthDay_u end_date;
+  u16 status;
+  u16 pad;
+} mEv_event_today_c;
+
+typedef struct event_date_s {
+  struct {
+   mEv_MonthDay_u month_day;
+   u8 _2;
+   u8 hour;
+  };
+  u32 raw;
+} mEv_schedule_date_u;
+
+typedef struct event_schedule_s {
+  mEv_schedule_date_u date[2]; /* 0 = begin, 1 = end */
+  s16 _8;
+  s16 type; /* event type */
+} mEv_schedule_c;
 
 /**
  * Event type definition
@@ -40,7 +81,7 @@ enum event_type {
   mEv_DAILY_EVENT, /* checked daily always? aSL_ReportShopOpen2Event has event 3 */
   mEv_SPECL_EVENT, /* ??? secondary special npc event data? */
 
-  mEv_EVENT_NUM
+  mEv_EVENT_TYPE_NUM
 };
 
 enum events {
@@ -111,16 +152,139 @@ enum week_type {
 };
 
 enum event_table {
-  mEv_EVENT_MOTHERS_DAY = 23,
-  mEv_EVENT_FATHERS_DAY = 26,
-  mEv_EVENT_FISHING_TOURNEY_1 = 29,
-  mEv_EVENT_MUSHROOM_SEASON = 47,
-  mEv_EVENT_HALLOWEEN = 49,
-  mEv_EVENT_FISHING_TOURNEY_2 = 54,
-  mEv_EVENT_GHOST = 64,
-  mEv_EVENT_KK_SLIDER = 71,
-  mEv_EVENT_BROKER_SALE = 75,
-  mEv_EVENT_SHOP_SALE = 78,
+  mEv_EVENT_RUMOR_NEW_YEARS_DAY,
+  mEv_EVENT_NEW_YEARS_DAY,
+  mEv_EVENT_RUMOR_KAMAKURA,
+  mEv_EVENT_KAMAKURA,
+  mEv_EVENT_SONCHO_VACATION_JANUARY,
+  mEv_EVENT_SONCHO_VACATION_FEBRUARY,
+  mEv_EVENT_RUMOR_GROUNDHOG_DAY,
+  mEv_EVENT_GROUNDHOG_DAY,
+  mEv_EVENT_RUMOR_VALENTINES_DAY,
+  mEv_EVENT_VALENTINES_DAY,
+  mEv_EVENT_RUMOR_SPRING_SPORTS_FAIR,
+  mEv_EVENT_SPRING_EQUINOX,
+  mEv_EVENT_SPORTS_FAIR_BALL_TOSS,
+  mEv_EVENT_SPORTS_FAIR_AEROBICS,
+  mEv_EVENT_SPORTS_FAIR_TUG_OF_WAR,
+  mEv_EVENT_SPORTS_FAIR_FOOT_RACE,
+  mEv_EVENT_SPRING_SPORTS_FAIR,
+  mEv_EVENT_APRILFOOLS_DAY,
+  mEv_EVENT_RUMOR_APRILFOOLS_DAY,
+  mEv_EVENT_RUMOR_CHERRY_BLOSSOM_FESTIVAL,
+  mEv_EVENT_CHERRY_BLOSSOM_FESTIVAL,
+  mEv_EVENT_NATURE_DAY,
+  mEv_EVENT_SPRING_CLEANING,
+  mEv_EVENT_MOTHERS_DAY,
+  mEv_EVENT_SUMMER_CAMPER,
+  mEv_EVENT_GRADUATION_DAY,
+  mEv_EVENT_FATHERS_DAY,
+  mEv_EVENT_RUMOR_FISHING_TOURNEY_1,
+  mEv_EVENT_TALK_FISHING_TOURNEY_1, // for dialog?
+  mEv_EVENT_FISHING_TOURNEY_1,
+  mEv_EVENT_TOWN_DAY,
+  mEv_EVENT_RUMOR_FIREWORKS_SHOW,
+  mEv_EVENT_FIREWORKS_SHOW,
+  mEv_EVENT_RUMOR_MORNING_AEROBICS,
+  mEv_EVENT_TALK_MORNING_AEROBICS,
+  mEv_EVENT_MORNING_AEROBICS,
+  mEv_EVENT_RUMOR_METEOR_SHOWER,
+  mEv_EVENT_METEOR_SHOWER,
+  mEv_EVENT_FOUNDERS_DAY,
+  mEv_EVENT_LABOR_DAY,
+  mEv_EVENT_RUMOR_FALL_SPORTS_FAIR,
+  mEv_EVENT_AUTUMN_EQUINOX,
+  mEv_EVENT_HARVEST_MOON_DAY,
+  mEv_EVENT_HARVEST_MOON_FESTIVAL,
+  mEv_EVENT_EXPLORERS_DAY,
+  mEv_EVENT_RUMOR_MUSHROOM_SEASON,
+  mEv_EVENT_TALK_MUSHROOM_SEASON,
+  mEv_EVENT_MUSHROOM_SEASON,
+  mEv_EVENT_RUMOR_HALLOWEEN,
+  mEv_EVENT_HALLOWEEN,
+  mEv_EVENT_MAYORS_DAY,
+  mEv_EVENT_OFFICERS_DAY,
+  mEv_EVENT_RUMOR_FISHING_TOURNEY_2,
+  mEv_EVENT_TALK_FISHING_TOURNEY_2,
+  mEv_EVENT_FISHING_TOURNEY_2,
+  mEv_EVENT_RUMOR_HARVEST_FESTIVAL,
+  mEv_EVENT_HARVEST_FESTIVAL,
+  mEv_EVENT_SALE_DAY,
+  mEv_EVENT_SNOW_DAY,
+  mEv_EVENT_TOY_DAY_SONCHO,
+  mEv_EVENT_RUMOR_TOY_DAY,
+  mEv_EVENT_TOY_DAY_JINGLE,
+  mEv_EVENT_SNOWMAN_SEASON,
+  mEv_EVENT_RUMOR_NEW_YEARS_EVE_COUNTDOWN,
+  mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN,
+  mEv_EVENT_CHERRY_BLOSSOM_PETALS,
+  mEv_EVENT_TALK_TOY_DAY,
+  
+  mEv_EVENT_PLAYER_BIRTHDAY,
+  
+  mEv_EVENT_DOZAEMON,
+  mEv_EVENT_KABU_PEDDLER,
+  mEv_EVENT_LOTTERY,
+  mEv_EVENT_KK_SLIDER,
+  
+  mEv_EVENT_HANDBILL_BROKER,
+  mEv_EVENT_HANDBILL_SHOP_SALE,
+  
+  mEv_EVENT_ARTIST,
+  mEv_EVENT_BROKER_SALE,
+  mEv_EVENT_DESIGNER,
+  mEv_EVENT_GYPSY,
+  mEv_EVENT_SHOP_SALE,
+  mEv_EVENT_CARPET_PEDDLER,
+
+  mEv_EVENT_SONCHO_NEW_YEARS_DAY,
+  mEv_EVENT_SONCHO_GROUNDHOG_DAY,
+  mEv_EVENT_SONCHO_SPRING_SPORTS_FAIR,
+  mEv_EVENT_SONCHO_APRILFOOLS_DAY,
+  mEv_EVENT_SONCHO_CHERRY_BLOSSOM_FESTIVAL,
+  mEv_EVENT_SONCHO_NATURE_DAY,
+  mEv_EVENT_SONCHO_SPRING_CLEANING,
+  mEv_EVENT_SONCHO_MOTHERS_DAY,
+  mEv_EVENT_SONCHO_GRADUATION_DAY,
+  mEv_EVENT_SONCHO_FATHERS_DAY,
+  mEv_EVENT_SONCHO_FISHING_TOURNEY_1,
+  mEv_EVENT_SONCHO_TOWN_DAY,
+  mEv_EVENT_SONCHO_FIREWORKS_SHOW,
+  mEv_EVENT_SONCHO_METEOR_SHOWER,
+  mEv_EVENT_SONCHO_FOUNDERS_DAY,
+  mEv_EVENT_SONCHO_LABOR_DAY,
+  mEv_EVENT_SONCHO_FALL_SPORTS_FAIR,
+  mEv_EVENT_SONCHO_HARVEST_MOON_FESTIVAL,
+  mEv_EVENT_SONCHO_EXPLORERS_DAY,
+  mEv_EVENT_SONCHO_HALLOWEEN,
+  mEv_EVENT_SONCHO_MAYORS_DAY,
+  mEv_EVENT_SONCHO_OFFICERS_DAY,
+  mEv_EVENT_SONCHO_FISHING_TOURNEY_2,
+  mEv_EVENT_SONCHO_HARVEST_FESTIVAL,
+  mEv_EVENT_SONCHO_SALE_DAY,
+  mEv_EVENT_SONCHO_SNOW_DAY,
+  mEv_EVENT_SONCHO_TOY_DAY,
+
+  mEv_EVENT_TALK_NEW_YEARS_COUNTDOWN,
+  mEv_EVENT_HARVEST_FESTIVAL_FRANKLIN,
+
+  mEv_EVENT_WEATHER_CLEAR,
+  mEv_EVENT_WEATHER_SNOW,
+  mEv_EVENT_WEATHER_SPORTS_FAIR,
+
+  mEv_EVENT_BRIDGE_MAKE,
+  mEv_EVENT_SONCHO_BRIDGE_MAKE,
+
+  mEv_EVENT_GHOST,
+  mEv_EVENT_MASK_CAT,
+
+  mEv_EVENT_74, // unused?
+
+  mEv_EVENT_KOINOBORI,
+
+  mEv_EVENT_76, // unused?
+
+  mEv_EVENT_NUM
 };
 
 #define mEv_STATUS_ACTIVE     (1 << 0) /* event is active */
@@ -130,6 +294,7 @@ enum event_table {
 #define mEv_STATUS_RUN        (1 << 4) /* event should run */
 #define mEv_STATUS_ERROR      (1 << 5) /* event is in error state */
 #define mEv_STATUS_TALK       (1 << 6) /* event requires talking to player */
+#define mEv_STATUS_EXIST      (1 << 7) /* event is scheduled */
 
 #define mEv_GHOST_HITODAMA_NUM 5
 typedef struct ghost_spirit_block_data_s {
@@ -211,7 +376,7 @@ typedef union {
 typedef struct special_event_s {
   lbRTC_time_c scheduled;
   u32 type;
-  mEv_special_u;
+  mEv_special_u event;
 } mEv_special_c;
 
 typedef struct save_event_data_s {
@@ -219,6 +384,24 @@ typedef struct save_event_data_s {
   mEv_weekly_u weekly;
   u32 flags;
 } mEv_event_save_c;
+
+typedef struct broker_event_common_s {
+  PersonalID_c entered_pid;
+  int hide_npc;
+} mEv_broker_common_c;
+
+typedef struct santa_event_common_s {
+  u8 present;
+  u8 talk_counter;
+  s8 bx;
+  s8 bz;
+  mActor_name_t last_talk_cloth;
+} mEv_santa_event_common_c;
+
+typedef union {
+  mEv_broker_common_c broker;
+  mEv_santa_event_common_c santa;
+} mEv_event_common_u;
 
 typedef struct event_s {
   u8 day;
@@ -233,18 +416,86 @@ typedef struct event_s {
   int unused[5];
 } Event_c;
 
+typedef struct event_info_s {
+  s8 type;
+  s8 id;
+  u16 year;
+  mEv_MonthDay_u start_date;
+  mEv_MonthDay_u end_date;
+} mEv_info_c;
+
+typedef struct event_place_data_s {
+  BlockOrUnit_c block;
+  BlockOrUnit_c unit;
+  mActor_name_t actor_name;
+  s16 flag;
+} mEv_place_data_c;
+
+typedef struct event_place_s {
+  mEv_info_c info;
+  mEv_place_data_c data;
+} mEv_place_c;
+
+typedef struct event_area_s {
+  mEv_info_c info;
+  int data[11];
+} mEv_area_c;
+
+typedef struct event_common_s {
+  s16 _00;
+  s16 area_use_bitfield;
+  mEv_area_c area[5];
+  s16 too_short;
+  s16 place_use_bitfield;
+  mEv_place_c place[10];
+  s16 fieldday_event_id;
+  s16 fieldday_event_over_status;
+  u32 unused[2];
+} mEv_common_data_c;
+
+typedef struct event_save_event_info_s {
+  s8 type;
+  s8 flags;
+} mEv_event_save_info_c;
+
+typedef struct event_common_save_data {
+  mEv_event_save_info_c special_event;
+  mEv_event_save_info_c weekly_event;
+  u16 dates[8];
+  int area_use_bitfield;
+  mEv_area_c area[5];
+  int last_date;
+  int _120;
+  u32 valentines_day_date;
+  u32 white_day_date; /* unused in AC */
+  u16 ghost_day;
+  u16 bridge_day; // last date suspension bridge event was active
+  struct {
+    u8 used_all_locations:1; // set to true when tortimer has cycled through all possible bridge locations?
+    u8 locations_used:7; // index of river acre w/ possible bridge location currently at
+  } bridge_flags;
+  u8 ghost_event_type; // 0x72 will spawn wisp, 0x77 won't?
+  u8 soncho_event_type; // checked not equal to 0xFF for summer & fall fishing tournies
+  u8 current_event_state; // used to signal when you've received an item from gracie or woken gulliver up
+} mEv_save_common_data_c;
+
 extern int mEv_CheckFirstJob();
 extern int mEv_CheckFirstIntro();
 extern int mEv_CheckArbeit();
 extern int mEv_CheckTitleDemo();
 extern int mEv_check_status(int event, s16 status);
 extern s8* mEv_get_common_area(int type, s8 id);
+extern s8* mEv_reserve_common_area(int type, s8 id);
 extern s8* mEv_get_save_area(int type, s8 id);
+extern s8* mEv_reserve_save_area(int type, s8 id);
+extern void mEv_actor_dying_message(int type, ACTOR* actor);
 extern int mEv_ArbeitPlayer(u32 player_no);
 extern u16 mEv_get_special_event_type();
-extern int mEv_ClearEventSaveInfo(mEv_event_save_c* event_save_data);
+extern void mEv_ClearEventSaveInfo(mEv_event_save_c* event_save_data);
 extern void mEv_EventON(u32 event_kind);
 extern int mEv_CheckGateway();
+extern int mEv_check_schedule(int event);
+extern mEv_place_data_c* mEv_get_common_place(int type, s8 id);
 
 extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
 extern void mEv_ClearEventInfo();

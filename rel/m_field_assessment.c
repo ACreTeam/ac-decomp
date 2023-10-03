@@ -4,10 +4,25 @@
 #include "m_common_data.h"
 #include "m_all_grow.h"
 #include "libultra/libultra.h"
-#include "libc64/qrand.h"
 
 static int l_good_block_num;
 static int l_field_assessment_rank;
+
+static u8 l_block_rank_tree_num[mFAs_TREE_RANK_COUNT] = { 8, 11, 14, 17, 255 };
+static u8 l_block_rank_table[mFAs_TREE_RANK_COUNT] = { 0, 1, 2, 1, 0 };
+static u8 l_block_max_by_rank[mFAs_FIELDRANK_NUM] =  { 0, 2, 4, 7, 12, 16, 255 };
+static int l_mfas_romf_check[5] = { 0, 0, 0, 0, 0 };
+
+#ifdef MUST_MATCH
+static FORCESTRIP int match_data_m_field_assessment() {
+  int a = l_block_rank_tree_num[0];
+  int b = l_block_rank_table[0];
+  int c = l_block_max_by_rank[0];
+  int d = l_mfas_romf_check[0];
+
+  return a > b > c > d;
+}
+#endif
 
 static void mFAs_ClearGoodField_common(mFAs_GoodField_c* good_field) {
   lbRTC_TimeCopy(&good_field->renew_time, &mTM_rtcTime_clear_code);
@@ -31,7 +46,7 @@ static void mFAs_SetGoodField(int rank) {
   mFAs_GoodField_c* good_field = Save_GetPointer(good_field);
   lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
   if (rank == mFAs_FIELDRANK_SIX) {
-    if (mTM_IsTimeEqual(&mTM_rtcTime_clear_code, &good_field->renew_time) == TRUE) {
+    if (mTM_AreTimesEqual(&mTM_rtcTime_clear_code, &good_field->renew_time) == TRUE) {
       lbRTC_TimeCopy(&good_field->renew_time, rtc_time);
       good_field->perfect_day_streak = 0;
     }
@@ -123,8 +138,9 @@ static int mFAs_GetBlockTreeNum2(
       }
     }
     else if (mFAs_CheckDust(item) == TRUE) {
-      int ut_x = IDX_2_UT_X(i);
-      int ut_z = IDX_2_UT_Z(i);
+      int ut_x = i & 15;
+      int ut_z = (i >> 4) & 15;
+
       if ((dump_unit_info == NULL) ||
           (dump_unit_info->block_data == NULL) ||
           (dump_unit_info->unit_x < ut_x || dump_unit_info->unit_x - mAGrw_DUMP_WIDTH > ut_x) ||
@@ -142,8 +158,6 @@ static int mFAs_GetBlockTreeNum2(
   *effective_grass_num -= *flower_num; /* offset weeds by number of flowers */
   return trees;
 }
-
-static u8 l_block_rank_tree_num[mFAs_TREE_RANK_COUNT] = { 8, 11, 14, 17, 255 };
 
 /* int tree_num, int grass_num */
 typedef int (*mFAs_CheckProc)(int, int);
@@ -212,53 +226,86 @@ static int mFAs_CheckBlockNum(int* block_num, int block_x, int block_z, int fail
   return res;
 }
 
-static u8 l_block_rank_table[mFAs_TREE_RANK_COUNT] = { 0, 1, 2, 1, 0 };
-static u8 l_block_max_by_rank[mFAs_FIELDRANK_NUM] =  { 0, 2, 4, 7, 12, 16, 255 };
-static int l_mfas_romf_check[5] = { 0, 0, 0, 0, 0 };
-
-#pragma pool_data on
-/* TODO: @nonmatching */
+/* @nonmatching - something going on with the stack causing an extra 0 register to be allocated */
+#ifndef MUST_MATCH
 static int mFAs_GetFieldGoodBlockNum_common(int* condition_num, int* block_x, int* block_z, int* block_num) {
-  int set_bad_block = FALSE;
+  int perfect_block_num;
   mFI_unit_c dump_unit;
-  int perfect_block_num = 0;
   mFM_fg_c* fg_block_items;
-  int bx, bz;
-  int condition_result;
-  int good_blocks = 0;
+  int bx;
+  int bz;
   int flower_num;
   int block_dust_num;
-  int total_flowers = 0;
+  int total_flowers;
+  int good_blocks;
+  int condition_result;
   int i;
-  int selected_block_x = 0;
-  int selected_block_z = 0;
-  int tree_num = 0;
-  int grass_num = 0;
-  int effective_grass_num = 0;
-  int total_trees = 0;
-  int total_grass = 0;
+  int selected_block_x;
+  int selected_block_z;
+  int tree_num;
+  int grass_num;
+  int effective_grass_num;
+  int total_trees;
+  int total_grass;
   int rank;
-  int good_block_num;
   mFI_unit_c* dump_info;
   int trees;
-  int dust_num = 0;
+  int dust_num;
+  int set_bad_block;
 
-  dump_unit.block_data = (void*)(set_bad_block);
-  dump_info = (void*)(set_bad_block);
   fg_block_items = Save_GetPointer(fg[0][0]);
+  perfect_block_num = 0;
+  good_blocks = 0;
+  total_flowers = 0;
+  selected_block_x = 0;
+  selected_block_z = 0;
+  total_trees = 0;
+  total_grass = 0;
+  dust_num = 0;
+  tree_num = 0;
+  grass_num = 0;
+  dump_info = NULL;
+  effective_grass_num = 0;
+  dump_unit.block_data = NULL;
+  set_bad_block = FALSE;
+
+  //fg_block_items = Save_GetPointer(fg[0][0]);
 
   if (mFI_CheckFieldData()) {
+    /* @BUG - this method is broken when used during initial loading.
+     *
+     * The fdinfo structure still contains the info for the start demo scene,
+     * and thus cannot return the proper block info for the dump. It fails in
+     * mFI_BlockCheck.
+     */
+    #ifndef BUGFIXES
     mAGrw_SearchDump(&dump_unit);
+    #else
+    if (mFI_BlockKind2BkNum(&dump_unit.block_x, &dump_unit.block_z, mRF_BLOCKKIND_DUMP)) {
+      mActor_name_t* dump_fg_p = Save_Get(fg[dump_unit.block_z - 1][dump_unit.block_x - 1]).items[0];
+      int j;
+
+      for (j = 0; j < UT_TOTAL_NUM; j++) {
+        if (dump_fg_p[j] == DUMP) {
+          dump_unit.unit_x = j % UT_X_NUM;
+          dump_unit.unit_z = j / UT_X_NUM;
+          dump_unit.block_data = dump_fg_p;
+
+          break;
+        }
+      }
+    }
+    #endif
   }
 
   for (i = 0; i < FG_BLOCK_TOTAL_NUM; i++) {
+    bx = 1 + (i % 5);
+    bz = 1 + (i / 5);
     block_dust_num = 0;
     tree_num = 0;
     effective_grass_num = 0;
     grass_num = 0;
     flower_num = 0;
-    bx = 1 + (i % 5);
-    bz = 1 + (i / 5);
 
     if (dump_unit.block_data != NULL && dump_unit.block_x == bx && dump_unit.block_z == bz) {
       dump_info = &dump_unit;
@@ -278,7 +325,7 @@ static int mFAs_GetFieldGoodBlockNum_common(int* condition_num, int* block_x, in
           condition_result = 1;
         }
         else {
-          condition_result = (fqrand() * 3.0f);
+          condition_result = RANDOM(3);
         }
 
         if (condition_result == 1 && block_x != NULL && block_z != NULL) {
@@ -291,7 +338,7 @@ static int mFAs_GetFieldGoodBlockNum_common(int* condition_num, int* block_x, in
     if (block_dust_num != 0) {
       // bug here? this only executes when the value is not FALSE, but value is only
       // updated within the if statement block.
-      if (!set_bad_block) {
+      if (set_bad_block == FALSE) {
         selected_block_x = bx;
         selected_block_z = bz;
 
@@ -300,7 +347,7 @@ static int mFAs_GetFieldGoodBlockNum_common(int* condition_num, int* block_x, in
         #endif
       }
       else {
-        if ((int)(fqrand() * 3.0f) == 1) {
+        if (RANDOM(3) == 1) {
           selected_block_x = bx;
           selected_block_z = bz;
         }
@@ -333,15 +380,15 @@ static int mFAs_GetFieldGoodBlockNum_common(int* condition_num, int* block_x, in
     fg_block_items++;
   }
 
-  l_mfas_romf_check[1] = FG_BLOCK_TOTAL_NUM - (good_blocks + perfect_block_num); /* "bad" block count */
-  good_block_num = perfect_block_num + good_blocks / 2;
   l_mfas_romf_check[0] = good_blocks;
+  l_mfas_romf_check[1] = FG_BLOCK_TOTAL_NUM - (good_blocks + perfect_block_num); /* "bad" block count */
   l_mfas_romf_check[2] = total_trees;
   l_mfas_romf_check[3] = total_flowers;
   l_mfas_romf_check[4] = total_grass;
+  perfect_block_num += good_blocks / 2;
 
   if (dust_num >= mFAs_DUST_OVER_NUM) {
-    good_block_num = 0;
+    perfect_block_num = 0;
     Save_Set(dust_flag, TRUE);
     if (condition_num != NULL) {
       *condition_num = mFAs_CONDITION_DUST_OVER;
@@ -357,9 +404,15 @@ static int mFAs_GetFieldGoodBlockNum_common(int* condition_num, int* block_x, in
     mFAs_ClearGoodField(); /* reset perfect town streak */
   }
 
-  return good_block_num;
+  return perfect_block_num;
 }
-#pragma pool_data reset
+#else
+#include "orderfloats/80641fd8_80641fdc.inc"
+
+static asm int mFAs_GetFieldGoodBlockNum_common(int* condition_num, int* block_x, int* block_z, int* block_num) {
+  #include "asm/803a1ae8.s"
+}
+#endif
 
 static int mFAs_GetFieldGoodBlockNum() {
   int block_x = 0;
@@ -390,7 +443,30 @@ static int mFAs_GetDustNum(int* block_x, int* block_z) {
   fg_block_items = Save_GetPointer(fg[0][0]);
 
   if (mFI_CheckFieldData()) {
+    /* @BUG - this method is broken when used during initial loading.
+     *
+     * The fdinfo structure still contains the info for the start demo scene,
+     * and thus cannot return the proper block info for the dump. It fails in
+     * mFI_BlockCheck.
+     */
+    #ifndef BUGFIXES
     mAGrw_SearchDump(&dump_unit);
+    #else
+    if (mFI_BlockKind2BkNum(&dump_unit.block_x, &dump_unit.block_z, mRF_BLOCKKIND_DUMP)) {
+      mActor_name_t* dump_fg_p = Save_Get(fg[dump_unit.block_z - 1][dump_unit.block_x - 1]).items[0];
+      int j;
+
+      for (j = 0; j < UT_TOTAL_NUM; j++) {
+        if (dump_fg_p[j] == DUMP) {
+          dump_unit.unit_x = j % UT_X_NUM;
+          dump_unit.unit_z = j / UT_X_NUM;
+          dump_unit.block_data = dump_fg_p;
+
+          break;
+        }
+      }
+    }
+    #endif
   }
 
   for (bz = 0; bz < FG_BLOCK_Z_NUM; bz++) {
@@ -436,7 +512,7 @@ static int mFAs_GetDustNum(int* block_x, int* block_z) {
           #endif
         }
         else {
-          if ((int)(fqrand() * 3.0f) == 1) {
+          if (RANDOM(3) == 1) {
             *block_x = bx + 1;
             *block_z = bz + 1;
           }
@@ -514,7 +590,6 @@ extern int mFAs_GetFieldRank() {
   return l_field_assessment_rank;
 }
 
-#pragma pool_data on
 extern void mFAs_PrintFieldAssessment(gfxprint_t* gfxprint) {
   gfxprint_color(gfxprint, 240, 50, 150, 255);
   gfxprint_locate8x8(gfxprint, 3, 14);
@@ -524,4 +599,3 @@ extern void mFAs_PrintFieldAssessment(gfxprint_t* gfxprint) {
   gfxprint_locate8x8(gfxprint, 3, 16);
   gfxprint_printf(gfxprint, " %02d", l_field_assessment_rank); /* current field rank */
 }
-#pragma pool_data reset

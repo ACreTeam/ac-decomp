@@ -94,7 +94,7 @@ typedef struct Save_s {
   /* 0x020340 */ Shop_c shop; /* Nook's shop */
   /* 0x020480 */ Kabu_price_c kabu_price_schedule; /* Stalk Market info */
   /* 0x020498 */ mEv_event_save_c event_save_data;
-  /* 0x020554 */ u8 _20554[0x20688 - 0x20554]; /* active event data? */
+  /* 0x020554 */ mEv_save_common_data_c event_save_common;
   /* 0x020688 */ mActor_name_t fruit; /* town fruit type */
   /* 0x02068A */ u8 house_arrangement; /* 2 bits for each player for the # of house they own */
   /* 0x02068B */ u8 num_statues; /* number of statues built for players who have paid off their debts */
@@ -198,7 +198,8 @@ typedef struct common_data_s {
   /* 0x02666C */ s16 weather;
   /* 0x02666E */ s16 weather_intensity;
   /* 0x026670 */ lbRTC_time_c weather_time;
-  /* 0x026678 */ u8 _26678[0x2669C - 0x26678];
+  /* 0x026678 */ u8 _26678[0x26684 - 0x26678];
+  /* 0x026684 */ mEv_event_common_u special_event_common;
   /* 0x02669C */ mQst_not_saved_c quest;
   /* 0x0266A4 */ int scene_from_title_demo; /* next scene to be loaded when title demo finishes */
   /* 0x0266A8 */ mNPS_schedule_c npc_schedule[SCHEDULE_NUM];
@@ -220,8 +221,9 @@ typedef struct common_data_s {
   /* 0x0285C1 */ u8 _285C1;
   /* 0x0285C2 */ u8 make_npc2_actor;
   /* 0x0285C3 */ u8 _285C3[0x0285C6 - 0x0285C3];
-  /* 0x0285C6 */ u8 event_id;
-  /* 0x0285C7 */ u8 _285C7[0x0287F8 - 0x0285C7];
+  /* 0x0285C6 */ u8 event_title_flags;
+  /* 0x0285C7 */ u8 event_title_fade_in_progress;
+  /* 0x0285C8 */ mEv_common_data_c event_common;
   /* 0x0287F8 */ s8 current_famicom_rom;
   /* 0x0287F9 */ s8 famicom_287F9;
   /* 0x0287FA */ u8 _287FA[0x28838 - 0x0287FA]; 
@@ -275,7 +277,7 @@ typedef struct common_data_s {
   /* 0X02DBAC */ int famicom_2DBAC;
   /* 0x02DBB0 */ s16 can_look_goki_count;
   /* 0x02DBB4 */ f32 rainbow_opacity; /* current opacity of rainbow (0.0f - 1.0f) */
-  /* 0x02DBB8 */ u32 event_flags[7]; /* TODO: make array size a definition/enum */
+  /* 0x02DBB8 */ u32 event_flags[mEv_EVENT_TYPE_NUM];
   /* 0x02DBD4 */ xyz_t* pluss_bridge_pos; /* position of extra bridge */
   /* 0x02DBD8 */ lbRTC_time_c auto_nwrite_time; /* cached notice time used for fishing tourney results? */
   /* 0x02DBE0 */ u8 rhythym_updated;

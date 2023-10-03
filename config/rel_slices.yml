@@ -80,6 +80,11 @@ m_fbdemo_fade.c:
     .text: [0x803A12F8, 0x803A1508]
     .rodata: [0x80641FC0, 0x80641FD8]
     .data: [0x80653558, 0x806535A0]
+m_field_assessment.c:
+    .text: [0x803A1508, 0x803A22C4]
+    .rodata: [0x80641FD8, 0x80641FE0]
+    .data: [0x806535A0, 0x80653620]
+    .bss: [0x81295790, 0x812957A0]
 m_field_make.c:
     .text: [0x803A22C4, 0x803A4D68]
     .rodata: [0x80641FE0, 0x80642008]
@@ -396,6 +401,12 @@ m_all_grow_ovl.c:
     .rodata: [0x80649098, 0x80649110]
     .data: [0x8069FA68, 0x8069FD08]
     .bss: [0x813013E0, 0x81301820]
+ac_aprilfool_control.c:
+    .text: [0x80515340, 0x805155C8]
+    .data: [0x8069FD08, 0x8069FD88]
+ac_groundhog_control.c:
+    .text: [0x805155C8, 0x80515C48]
+    .data: [0x8069FD88, 0x8069FDD0]
 ac_douzou.c:
     .text: [0x805AD6D8, 0x805AE704]
     .rodata: [0x8064A7C0, 0x8064A7E8]
