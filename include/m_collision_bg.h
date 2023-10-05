@@ -19,6 +19,17 @@ enum field_layer {
   mCoBG_LAYER_NUM
 };
 
+enum {
+  mCoBG_FTR_TYPEA,
+  mCoBG_FTR_TYPEB_0,
+  mCoBG_FTR_TYPEB_180,
+  mCoBG_FTR_TYPEB_270,
+  mCoBG_FTR_TYPEB_90,
+  mCoBG_FTR_TYPEC,
+
+  mCoBG_FTR_TYPE_NUM
+};
+
 enum background_attribute {
   /* TODO: finish */
   mCoBG_ATTRIBUTE_GRASS0,
@@ -103,6 +114,38 @@ typedef struct collision_bg_check_s {
   mCoBG_WallInfo_c wall_info[2];
   s16 in_front_wall_angle_y;
 } mCoBG_Check_c;
+
+typedef struct bg_side_contact_s {
+  s16 name;
+  s16 angle;
+} mCoBG_side_contact_c;
+
+typedef struct bg_contact_s {
+  mCoBG_side_contact_c side_contact[5];
+  int side_count;
+  s16 on_contact_names[5];
+  int on_count;
+} mCoBG_bg_contact_c;
+
+typedef struct bg_size_s {
+  f32 right_size; // x |   *->
+  f32 left_size; //  x | <-*
+  f32 up_size; //   z | ^
+  f32 down_size; // z | v
+} mCoBG_bg_size_c;
+
+typedef struct bg_register_s {
+  xyz_t* wpos;
+  xyz_t* last_wpos;
+  s16* angle_y;
+  mCoBG_bg_contact_c* contact;
+  mCoBG_bg_size_c* bg_size;
+  xyz_t* base_ofs;
+  f32 height;
+  u32 attribute;
+  f32 active_dist;
+  f32* scale_percent;
+} mCoBG_bg_regist_c;
 
 extern u32 mCoBG_Wpos2BgAttribute_Original(xyz_t wpos);
 extern u32 mCoBG_Wpos2Attribute(xyz_t wpos, char* is_diggable);

@@ -90,6 +90,11 @@ typedef struct combine_work_set_s {
     int anm_data_src_idx;
 }cKF_SkeletonInfo_R_combine_work_c;
 
+typedef struct tex_anim_s {
+  s16 frame;
+  s16 timer;
+} cKF_TextureAnimation_c;
+
 typedef int (*cKF_draw_callback)(GAME*, cKF_SkeletonInfo_R_c*, int, Gfx**, u8*, void*, s_xyz*, xyz_t*);
 
 
