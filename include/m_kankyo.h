@@ -38,9 +38,12 @@ typedef struct nature_s {
   void* arg;
 } Nature;
 
+
 typedef struct kankyo_s {
   /* 0x00 */ Lights sun_light;
-  /* 0x0E */ u8 pad[0x9A - 0x0E];
+  /* 0x0E */ u8 pad[0x1C - 0x0E];
+  /* 0x1C */ Lights* lights_p;
+  /* 0x20 */ u8 pad3[0x9A - 0x20];
   /* 0x9A */ u8 ambientColor[3];
   /* 0x9E */ u8 pad2[0xC0 - 0x9E];
   /* 0xC0 */ f32 unkC0;

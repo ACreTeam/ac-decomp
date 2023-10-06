@@ -74,8 +74,8 @@ extern void LightsN_disp(LightsN* lights, GRAPH* graph);
 extern void LightsN_list_check(LightsN* lights, LightNode* node, xyz_t* pos);
 extern void Global_light_ct(Global_light* glight);
 extern LightsN* Global_light_read(Global_light* glight, GRAPH* graph);
-extern void Global_light_list_new(GAME_PLAY*, Global_light* glight, Lights* light);
-extern void Global_light_list_delete(Global_light* glight, LightNode* light);
+extern void* Global_light_list_new(GAME_PLAY*, Global_light* glight, Lights* light);
+extern void* Global_light_list_delete(Global_light* glight, LightNode* light);
 extern void Light_list_point_draw(GAME_PLAY* play);
 
 #ifdef __cplusplus

@@ -312,7 +312,7 @@ static void Global_light_list_ct(Global_light* glight){
     glight->list = NULL;
 }
 
-extern void Global_light_list_new(GAME_PLAY* play, Global_light* glight, Lights* light){
+extern void* Global_light_list_new(GAME_PLAY* play, Global_light* glight, Lights* light){
 
     LightNode* clight;
 
@@ -331,7 +331,7 @@ extern void Global_light_list_new(GAME_PLAY* play, Global_light* glight, Lights*
     }
 }
 
-extern void Global_light_list_delete(Global_light* glight, LightNode* light){
+extern void* Global_light_list_delete(Global_light* glight, LightNode* light){
 
     if(light != NULL){
         if(light->prev != NULL){

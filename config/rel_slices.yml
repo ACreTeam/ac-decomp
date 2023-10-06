@@ -385,6 +385,10 @@ ac_train_window.c:
     .text: [0x804AC510, 0x804AD428]
     .rodata: [0x80645FA8, 0x80645FF8]
     .data: [0x8068F600, 0x8068F830]
+ef_lamp_light.c:
+    .text: [0x804CEC5C, 0x804CEF2C]
+    .rodata: [0x806463C8, 0x806463D8]
+    .data: [0x8069BFD0, 0x8069C028]
 m_huusui_room_ovl.c:
     .text: [0x804D1BBC, 0x804D2164]
     .rodata: [0x80646558, 0x806465C8]
