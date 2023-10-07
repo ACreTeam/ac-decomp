@@ -54,7 +54,7 @@ void mActorShadow_AdjustRate(f32* rate) {
 void mActorShadow_GetTimeAngleY_TimeAlpha(Shadow_Info* shadow, GAME_PLAY* play){
     f32 timef;
     int timesec = Common_Get(time.now_sec);
-    shadow->unk1C = play->kankyo.unkC4;
+    shadow->unk1C = play->kankyo.shadow_alpha;
 
     // Between 4 a.m and 8 p.m
     if((timesec >= 14400) && ( timesec < 72000)){

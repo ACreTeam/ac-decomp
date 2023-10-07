@@ -26,7 +26,7 @@ ACTOR_PROFILE Lamp_Light_Profile = {
 static void Ef_Lamp_Light_actor_ct(ACTOR* actor, GAME_PLAY* play) {
     LAMPLIGHT_ACTOR* lamp = (LAMPLIGHT_ACTOR*)actor;
     
-    play->kankyo.lights_p = &lamp->lights;
+    play->kankyo.lamp_light = &lamp->lights;
     Light_diffuse_ct(&lamp->lights, 0, 0x50, 0, 0, 0, 0); 
     lamp->node_p = Global_light_list_new(play, &play->global_light, &lamp->lights);
 }
@@ -34,7 +34,7 @@ static void Ef_Lamp_Light_actor_ct(ACTOR* actor, GAME_PLAY* play) {
 static void Ef_Lamp_Light_actor_dt(ACTOR* actor, GAME_PLAY* play) {
     LAMPLIGHT_ACTOR* lamp = (LAMPLIGHT_ACTOR*)actor;
 
-    play->kankyo.lights_p = NULL; 
+    play->kankyo.lamp_light = NULL; 
     Global_light_list_delete(&play->global_light, lamp->node_p);
 }
 
