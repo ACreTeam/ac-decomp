@@ -397,6 +397,10 @@ ef_room_sunshine_police.c:
     .text: [0x804CF784, 0x804CFF8C]
     .rodata: [0x80646420, 0x80646470]
     .data: [0x8069C050, 0x8069C078]
+ef_room_sunshine_posthouse.c:
+    .text: [0x804CFF8C, 0x804D0704]
+    .rodata: [0x80646470, 0x806464B8]
+    .data: [0x8069C078, 0x8069C0A0]
 m_huusui_room_ovl.c:
     .text: [0x804D1BBC, 0x804D2164]
     .rodata: [0x80646558, 0x806465C8]

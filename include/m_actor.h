@@ -41,6 +41,7 @@ typedef void (*mActor_proc)(ACTOR*, GAME*);
 #define ACTOR_OBJ_BANK_12 12
 #define ACTOR_OBJ_BANK_16 16
 #define ACTOR_OBJ_BANK_41 41
+#define ACTOR_OBJ_BANK_43 43
 #define ACTOR_OBJ_BANK_44 44
 #define ACTOR_OBJ_BANK_53 53
 
