@@ -14,7 +14,7 @@ ACTOR_PROFILE Lamp_Light_Profile = {
     ACTOR_PART_EFFECT,
     ACTOR_STATE_NO_MOVE_WHILE_CULLED | ACTOR_STATE_NO_DRAW_WHILE_CULLED,
     EMPTY_NO,
-    ACTOR_OBJ_BANK_3,
+    ACTOR_OBJ_BANK_KEEP,
     sizeof(LAMPLIGHT_ACTOR),
     (mActor_proc)Ef_Lamp_Light_actor_ct,
     (mActor_proc)Ef_Lamp_Light_actor_dt,

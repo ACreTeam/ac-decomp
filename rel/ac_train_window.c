@@ -181,7 +181,7 @@ ACTOR_PROFILE Train_Window_Profile = {
     ACTOR_PART_ITEM,
     ACTOR_STATE_NO_DRAW_WHILE_CULLED | ACTOR_STATE_NO_MOVE_WHILE_CULLED,
     ETC_TRAIN_WINDOW,
-    ACTOR_OBJ_BANK_41,
+    ACTOR_OBJ_BANK_TRAINWINDOW,
     sizeof(TRAIN_WINDOW_ACTOR),
     &Train_Window_Actor_ct,
     &Train_Window_Actor_dt,

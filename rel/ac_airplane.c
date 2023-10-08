@@ -24,9 +24,8 @@ ACTOR_PROFILE Airplane_Profile = {
   ACTOR_PART_BG,
   ACTOR_STATE_NO_MOVE_WHILE_CULLED | ACTOR_STATE_NO_DRAW_WHILE_CULLED,
   ETC_AIRPLANE,
-  ACTOR_OBJ_BANK_7,
+  ACTOR_OBJ_BANK_AIRPLANE,
   sizeof(AIRPLANE_ACTOR),
-
   &Airplane_Actor_ct,
   &Airplane_Actor_dt,
   &Airplane_Actor_move,

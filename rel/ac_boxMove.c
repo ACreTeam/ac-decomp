@@ -13,7 +13,7 @@ ACTOR_PROFILE BoxMove_Profile = {
     ACTOR_PART_BG,
     ACTOR_STATE_NONE,
     EMPTY_NO,
-    ACTOR_OBJ_BANK_3,
+    ACTOR_OBJ_BANK_KEEP,
     sizeof(BOXMOVE_ACTOR),
     &BoxMove_Actor_ct,
     &BoxMove_Actor_dt,

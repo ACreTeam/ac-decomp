@@ -13,7 +13,7 @@ ACTOR_PROFILE BoxManager_Profile = {
     ACTOR_PART_BG,
     ACTOR_STATE_NO_MOVE_WHILE_CULLED | ACTOR_STATE_NO_DRAW_WHILE_CULLED,
     ETC_BOXMANAGER,
-    ACTOR_OBJ_BANK_3,
+    ACTOR_OBJ_BANK_KEEP,
     sizeof(BOXMANAGER_ACTOR),
     &BoxManager_Actor_ct,
     &BoxManager_Actor_dt,

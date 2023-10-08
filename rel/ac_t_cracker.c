@@ -14,7 +14,7 @@ ACTOR_PROFILE T_Cracker_Profile = {
     ACTOR_PART_BG,
     ACTOR_STATE_NO_DRAW_WHILE_CULLED | ACTOR_STATE_NO_MOVE_WHILE_CULLED,
     EMPTY_NO,
-    395, //Leftover from the object table, so this actor doesn't have an object bank
+    ACTOR_OBJ_BANK_CRACKER,
     sizeof(CRACKER_ACTOR),
     &aTCR_actor_ct,
     NONE_ACTOR_PROC,
