@@ -10,6 +10,8 @@ void Ef_Room_Sunshine_Museum_actor_ct(ACTOR* actor, GAME* play);
 void Ef_Room_Sunshine_Museum_actor_dt(ACTOR* actor, GAME* play);
 void Ef_Room_Sunshine_MuseumL_actor_draw(ACTOR* actor, GAME* play);
 void Ef_Room_Sunshine_MuseumL_actor_move(ACTOR* actor, GAME* play);
+void Ef_Room_Sunshine_MuseumR_actor_draw(ACTOR* actor, GAME* play);
+void Ef_Room_Sunshine_MuseumR_actor_move(ACTOR* actor, GAME* play);
 
 extern Gfx obj_museum1_shine_model[];
 extern Gfx obj_museum1_shine_modelT[];
@@ -163,7 +165,7 @@ void setup_mode_Ef_Room_Sunshine_Museum(ACTOR* actor, GAME_PLAY* play){
 
     calc = ((u8)calc_alpha_Ef_Room_SunshineMuseum() * mKK_windowlight_alpha_get());
  
-    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, calc, color[0], color[1], color[2], 255);
+    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, calc, color[0], color[1], color[2], 75);
     CLOSE_DISP(graph);
     
 }
