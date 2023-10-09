@@ -405,6 +405,11 @@ ef_room_sunshine_museum.c:
     .text: [0x804D0704, 0x804D0F3C]
     .rodata: [0x806464B8, 0x80646508]
     .data: [0x8069C0A0, 0x8069C0C8]
+ef_room_sunshine_minsect.c:
+    .text: [0x804D0F3C,0x804D1BBC]
+    .rodata: [0x80646508,0x80646558]
+    .data: [0x8069C0C8, 0x8069C0F0]
+    .bss: [0x81300BD0, 0x81300BD8]
 m_huusui_room_ovl.c:
     .text: [0x804D1BBC, 0x804D2164]
     .rodata: [0x80646558, 0x806465C8]
