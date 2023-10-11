@@ -14,7 +14,7 @@ typedef struct ef_lamp_light_s{
     ACTOR actor_class;
     int switch_type;
     Lights lights;
-    LightNode* node_p;
+    Light_list* node_p;
 }LAMPLIGHT_ACTOR;
 
 #ifdef __cplusplus
