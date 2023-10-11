@@ -33,8 +33,8 @@ void fbdemo_fade_move(fbdemo_fade* this, int rate) {
 
   if (this->type != 7) {
     this->frame += rate;
-    if (this->frame >= Common_Get(transFadeDuration)) {
-      this->frame = Common_Get(transFadeDuration);
+    if (this->frame >= Common_Get(transition).fade_rate) {
+      this->frame = Common_Get(transition).fade_rate;
       this->isDone = 1;
     }
     ftimer = (f32)this->frame;
@@ -42,7 +42,7 @@ void fbdemo_fade_move(fbdemo_fade* this, int rate) {
       ftimer = 0.0f;
     }
 
-    alpha = (255.0f * ftimer) / Common_Get(transFadeDuration);
+    alpha = (255.0f * ftimer) / Common_Get(transition).fade_rate;
     if (this->type == 1) {
       this->color.a = 255 - alpha;
     } else {

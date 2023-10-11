@@ -214,8 +214,7 @@ static void LightsN__diffuse_proc(LightsN* lights, LightParams* lightInfo){
     }
 }
 
-
-extern void LightsN_list_check(LightsN* lights, LightNode* node, xyz_t* pos){
+extern void LightsN_list_check(LightsN* lights, Light_list* node, xyz_t* pos){
 
     const static light_point_proc poslight_type_proc[] = {
         LightsN__point_proc,
@@ -243,9 +242,9 @@ extern void LightsN_list_check(LightsN* lights, LightNode* node, xyz_t* pos){
     }
 }
 
-static LightNode* Light_list_buf_new(){
+static Light_list* Light_list_buf_new(){
 
-    LightNode* light;
+    Light_list* light;
     
     if(light_list_buf.current >= 32){
         return NULL;
@@ -268,11 +267,11 @@ static LightNode* Light_list_buf_new(){
     return light;
 }
 
-static void Light_list_buf_delete(LightNode* light){
+static void Light_list_buf_delete(Light_list* light){
     if(light != NULL){
         light_list_buf.current--;
         light->info = NULL;
-        light_list_buf.idx = (light - light_list_buf.lights) / (int)(sizeof(LightNode));
+        light_list_buf.idx = (light - light_list_buf.lights) / (int)(sizeof(Light_list));
     }
 }
 
@@ -312,9 +311,9 @@ static void Global_light_list_ct(Global_light* glight){
     glight->list = NULL;
 }
 
-extern void Global_light_list_new(GAME_PLAY* play, Global_light* glight, Lights* light){
+extern Light_list* Global_light_list_new(GAME_PLAY* play, Global_light* glight, Lights* light){
 
-    LightNode* clight;
+    Light_list* clight;
 
     clight = Light_list_buf_new();
 
@@ -329,9 +328,11 @@ extern void Global_light_list_new(GAME_PLAY* play, Global_light* glight, Lights*
 
         glight->list = clight;
     }
+
+    return clight;
 }
 
-extern void Global_light_list_delete(Global_light* glight, LightNode* light){
+extern void Global_light_list_delete(Global_light* glight, Light_list* light){
 
     if(light != NULL){
         if(light->prev != NULL){
@@ -367,7 +368,7 @@ static LightsN* new_LightsN(GRAPH* graph, u8 r, u8 g, u8 b){
 
 extern void Light_list_point_draw(GAME_PLAY* play){
     LightPoint* lightInfo;
-    LightNode* light;
+    Light_list* light;
     GRAPH* g = play->game.graph;
     f32 rad;
     Gfx* dl;

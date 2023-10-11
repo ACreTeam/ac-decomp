@@ -151,7 +151,11 @@ typedef struct Save_s {
   /* 0x024177 */ u8 gyoei_term_transition_offset; /* days offset from end of term to begin transition */
   /* 0x024178 */ mFAs_GoodField_c good_field; /* field assessment last info */
   /* 0x024184 */ u8 bg_tex_idx; /* Grass type */
-  /* 0x024185 */ u8 _24185[0x2418A - 0x24185];
+  /* 0x024185 */ lbRTC_month_t rainbow_month;
+  /* 0x024186 */ lbRTC_day_t rainbow_day;
+  /* 0x024187 */ u8 rainbow_reserved;
+  /* 0x024188 */ u8 _24188;
+  /* 0x024189 */ u8 _24189;
   /* 0x02418A */ u8 town_day;
   /* 0x02418B */ u8 _2418B[0x241A0 - 0x2418B];
   /* 0x0241A0 */ lbRTC_time_c saved_auto_nwrite_time; /* save data notice time used for fishing tourney results? */
@@ -162,6 +166,13 @@ typedef union save_u {
   Save_t save;
   //u8 raw[0x26000]; /* Temp to force length */
 } Save;
+
+typedef struct transition_s {
+  u8 _00; // only set in Global_kankyo_ct?
+  u8 fade_rate;
+  u8 wipe_rate;
+  u8 wipe_type;
+} Transition_c;
 
 /* sizeof(common_data_t) == 0x2DC00 */
 typedef struct common_data_s {
@@ -178,10 +189,10 @@ typedef struct common_data_s {
   /* 0x026140 */ mHm_hs_c* now_home;
   /* 0x026144 */ u8 map_flag;
   /* 0x026145 */ u8 fish_location;
-  /* 0x026146 */ u8 tmp0[0x2614D - 0x26146];
-  /* 0x02614D */ u8 transFadeDuration;
-  /* 0x02614E */ u8 transWipeSpeed;
-  /* 0x02614F */ u8 wipeType; /* maybe unused? */
+  /* 0x026146 */ u8 npc_is_summercamper;
+  /* 0x026147 */ u8 player_select_animal_no;
+  /* 0x026148 */ u8 _26148[0x2614C - 0x26148];
+  /* 0x02614C */ Transition_c transition;
   /* 0x026150 */ s16 bg_item_type;
   /* 0x026152 */ s16 bg_item_profile;
   /* 0x026154 */ u8 _26154[0x26164 - 0x26154];
@@ -273,7 +284,10 @@ typedef struct common_data_s {
   /* 0x02DB40 */ u8 auto_nwrite_set; /* when true, saved nwrite time will be utilized. Seems to be used to keep same date for fishing tourney stuff. */
   /* 0x02DB42 */ u16 select_last_select_no;
   /* 0x02DB44 */ u16 select_last_top_no;
-  /* 0x02DB46 */ u8 tmp3[0x2DBAC - 0x2DB46];
+  /* 0x02DB46 */ u8 _2DB46[0x2DBA2 - 0x2DB46];
+  /* 0x02DBA2 */ s16 island_weather;
+  /* 0x02DBA4 */ s16 island_weather_intensity;
+  /* 0x02DBA6 */ u8 _2DBA6[0x2DBAC - 0x2DBA6];
   /* 0X02DBAC */ int famicom_2DBAC;
   /* 0x02DBB0 */ s16 can_look_goki_count;
   /* 0x02DBB4 */ f32 rainbow_opacity; /* current opacity of rainbow (0.0f - 1.0f) */

@@ -1,0 +1,554 @@
+extern void mEnv_DecideWindDirect(s_xyz* dir, s16 x, s16 z) {
+  xyz_t wind_dir = { 0.0f, -100.0f, 0.0f };
+  f32 x_f = x;
+  f32 z_f = z;
+  s16 rot_x = (RANDOM_F(x_f) - x_f); // range of [-x, x)
+  s16 rot_z = (RANDOM_F(z_f) - z_f); // range of [-z, z)
+
+  sMath_RotateX(&wind_dir, SHORTANGLE2RAD(rot_x));
+  sMath_RotateZ(&wind_dir, SHORTANGLE2RAD(rot_z));
+
+  dir->x = wind_dir.x;
+  dir->y = wind_dir.y;
+  dir->z = wind_dir.z;
+}
+
+static int mEnv_GetWeatherChangeStep() {
+  static u8 weather_term_table[mEnv_WEATHER_TERM_NUM][2] = {
+    { lbRTC_JANUARY,    7 }, // January 1st - January 7th
+    { lbRTC_FEBRUARY,  24 }, // January 8th - February 24th
+    { lbRTC_MARCH,     31 }, // February 25th - March 31st
+    { lbRTC_APRIL,      4 }, // April 1st - April 4th
+    { lbRTC_APRIL,      7 }, // April 5th - April 7th
+    { lbRTC_APRIL,      8 }, // April 8th - April 8th
+    { lbRTC_APRIL,     19 }, // April 9th - April 19th
+    { lbRTC_APRIL,     20 }, // April 20th - April 20th
+    { lbRTC_JUNE,      25 }, // April 21st - June 25th
+    { lbRTC_JULY,      15 }, // June 26th - July 15th
+    { lbRTC_AUGUST,    31 }, // July 16th - August 31st
+    { lbRTC_SEPTEMBER, 30 }, // September 1st - September 30th
+    { lbRTC_OCTOBER,   30 }, // October 1st - October 30th
+    { lbRTC_OCTOBER,   31 }, // October 31st - Octber 31st
+    { lbRTC_NOVEMBER,  15 }, // November 1st - November 15th
+    { lbRTC_DECEMBER,   9 }, // November 16th - December 9th
+    { lbRTC_DECEMBER,  10 }, // December 10th - December 10th
+    { lbRTC_DECEMBER,  23 }, // December 11th - December 23rd
+    { lbRTC_DECEMBER,  30 }, // December 24th - December 30th
+    { lbRTC_DECEMBER,  31 }  // December 31st - December 31st
+  };
+
+  lbRTC_month_t month = Common_Get(time.rtc_time).month;
+  lbRTC_day_t day = Common_Get(time.rtc_time).day;
+  int i;
+
+  for (i = 0; i < mEnv_WEATHER_TERM_NUM; i++) {
+    if (month < weather_term_table[i][0]) {
+      return i;
+    }
+    else if (month == weather_term_table[i][0] && day <= weather_term_table[i][1]) {
+      return i;
+    }
+  }
+
+  return 1; /* default is between Jan 8 & Feb 24 */
+}
+
+#define mEnv_MAKE_WEATHER_TABLE_ENTRY(clear, rain, thunder, snow, blizzard, sakura, heavy_sakura) \
+  ( \
+    (((clear) & 0xF) << 24) | \
+    (((rain) & 0xF) << 16) | \
+    (((thunder) & 0xF) << 20) | \
+    (((snow) & 0xF) << 8) | \
+    (((blizzard) & 0xF) << 12) | \
+    (((sakura) & 0xF) << 0) | \
+    (((heavy_sakura) & 0xF) << 4) \
+  )
+
+extern void mEnv_RandomWeather(s16* next_weather, s16* next_intensity) {
+  /* note: entries must add up to 10 for this to function properly */
+  static const u32 weather_table[mEnv_WEATHER_TERM_NUM] = {
+    mEnv_MAKE_WEATHER_TABLE_ENTRY(10, 0, 0, 0, 0, 0, 0), // 100% chance of clear weather
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 7, 0, 0, 2, 1, 0, 0), // 70% chance of clear weather, 20% chance of snow, 10% chance of blizzard
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 8, 2, 0, 0, 0, 0, 0), // 80% chance of clear weather, 20% chance of rain
+    mEnv_MAKE_WEATHER_TABLE_ENTRY(10, 0, 0, 0, 0, 0, 0), // 100% chance of clear weather
+    mEnv_MAKE_WEATHER_TABLE_ENTRY(0, 0, 0, 0, 0, 10, 0), // 100% chance of light cherry blossoms
+    mEnv_MAKE_WEATHER_TABLE_ENTRY(0, 0, 0, 0, 0, 0, 10), // 100% chance of heavy cherry blossoms
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 8, 2, 0, 0, 0, 0, 0), // 80% chance of clear weather, 20% chance of rain
+    mEnv_MAKE_WEATHER_TABLE_ENTRY(10, 0, 0, 0, 0, 0, 0), // 100% chance of clear weather
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 7, 2, 1, 0, 0, 0, 0), // 70% chance of clear weather, 20% chance of rain, 10% chance of thunderstorms
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 5, 3, 2, 0, 0, 0, 0), // 50% chance of clear weather, 30% chance of rain, 20% chance of thunderstorms
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 9, 0, 1, 0, 0, 0, 0), // 90% chance of clear weather, 10% chance of thunderstorms
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 6, 0, 4, 0, 0, 0, 0), // 60% chance of clear weather, 40% chance of thunderstorms
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 8, 2, 0, 0, 0, 0, 0), // 80% chance of clear weather, 20% chance of rain
+    mEnv_MAKE_WEATHER_TABLE_ENTRY(10, 0, 0, 0, 0, 0, 0), // 100% chance of clear weather
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 8, 1, 0, 1, 0, 0, 0), // 80% chance of clear weather, 10% chance of rain, 10% chance of snow
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 7, 0, 0, 3, 0, 0, 0), // 70% chance of clear weather, 30% chance of snow
+    mEnv_MAKE_WEATHER_TABLE_ENTRY(0, 0, 0, 0, 10, 0, 0), // 100% chance of blizzard
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 4, 0, 0, 4, 2, 0, 0), // 40% chance of clear weather, 40% chance of snow, 20% chance of blizzard
+    mEnv_MAKE_WEATHER_TABLE_ENTRY( 0, 0, 0, 6, 4, 0, 0), // 60% chance of snow, 40% chance of blizzard
+    mEnv_MAKE_WEATHER_TABLE_ENTRY(10, 0, 0, 0, 0, 0, 0)  // 100% chance of clear weather
+  };
+
+  int step = mEnv_GetWeatherChangeStep();
+  
+  u32 weather = weather_table[step];
+  u32 selected;
+  u32 c0;
+  u32 c1;
+  u32 c2;
+  u32 c3;
+  u32 c4;
+  u32 c5;
+
+  c0 = (weather >> 24) & 0xF; // clear
+  c1 = (weather >> 16) & 0xF; // light rain
+  c2 = (weather >> 20) & 0xF; // thunderstorm
+  c3 = (weather >>  8) & 0xF; // light snow
+  c4 = (weather >> 12) & 0xF; // blizzard
+  #ifndef BUGFIXES
+  c5 = (weather >>  8) & 0xF; // @BUG - this is almost certainly supposed to be (weather >> 0) & 0xF
+  #else
+  c5 = (weather >>  0) & 0xF; // light cherry blossoms
+  #endif
+  
+  selected = RANDOM_F(10.0f);
+
+  if (selected < c0) {
+    next_weather[0] = mEnv_WEATHER_CLEAR;
+    next_intensity[0] = mEnv_WEATHER_INTENSITY_LIGHT;
+  }
+  else if (selected < c0 + c1) {
+    next_weather[0] = mEnv_WEATHER_RAIN;
+    next_intensity[0] = mEnv_WEATHER_INTENSITY_LIGHT;
+  }
+  else if (selected < c0 + c1 + c2) {
+    next_weather[0] = mEnv_WEATHER_RAIN;
+    next_intensity[0] = mEnv_WEATHER_INTENSITY_HEAVY;
+  }
+  else if (selected < c0 + c1 + c2 + c3) {
+    next_weather[0] = mEnv_WEATHER_SNOW;
+    next_intensity[0] = mEnv_WEATHER_INTENSITY_LIGHT;
+  }
+  else if (selected < c0 + c1 + c2 + c3 + c4) {
+    next_weather[0] = mEnv_WEATHER_SNOW;
+    next_intensity[0] = mEnv_WEATHER_INTENSITY_HEAVY;
+  }
+  else if (selected < c0 + c1 + c2 + c3 + c4 + c5) {
+    next_weather[0] = mEnv_WEATHER_SAKURA;
+    next_intensity[0] = mEnv_WEATHER_INTENSITY_LIGHT;
+  }
+  else {
+    next_weather[0] = mEnv_WEATHER_SAKURA;
+    next_intensity[0] = mEnv_WEATHER_INTENSITY_HEAVY;
+  }
+}
+
+typedef struct wind_power_range_s {
+  int calm_percent;
+  int normal_percent;
+  int gusty_percent;
+} mEnv_wind_power_range_c;
+
+typedef struct wind_info_s {
+  int wind_change_timer; /* timer until wind direction & base power changes */
+  
+  f32 target_wind_angle;
+  f32 wind_angle;
+  f32 wind_angle_step;
+
+  f32 wind_power_range_max;
+  f32 wind_power_range_min;
+
+  f32 target_wind_power;
+  f32 wind_power; /* base wind power */
+  f32 wind_power_step;
+
+  int wind_state;
+  int gust_timer;
+  s16 wind_power_timer;
+
+  f32 gust_wind_power; /* power during gusts */
+  f32 last_wind_power; /* saved base power for returning from gusts */
+} mEnv_wind_info_c;
+
+static mEnv_wind_info_c mEnv_wind_info = {
+  0,
+
+  /* angle */
+  DEG2SHORT_ANGLE(45.0f), /* 0x2000 */
+  DEG2SHORT_ANGLE(45.0f),
+  0.0f,
+  
+  /* power range */
+  1.0f,
+  0.0f,
+
+  /* power */
+  0.5f,
+  0.5f,
+  0.0f,
+
+  mEnv_WIND_STATE_STEADY,
+  0,
+  0,
+
+  0.0f,
+  0.0f
+};
+
+extern s16 mEnv_GetWindAngleS() {
+  return mEnv_wind_info.wind_angle; /* angle is stored as a binangle (short angle), but in float type */
+}
+
+extern f32 mEnv_GetWindPowerF() {
+  if (mEnv_wind_info.wind_power < 0.0f) {
+    return 0.0f;
+  }
+  else if (mEnv_wind_info.wind_power > 1.0f) {
+    return 1.0f;
+  }
+  else {
+    return mEnv_wind_info.wind_power;
+  }
+}
+
+extern f32 mEnv_GetWindPowerF_Windmill() {
+  return mEnv_wind_info.wind_power; // unclamped for gusts/luls
+}
+
+static u8 wind_term[mEnv_WIND_TERM_NUM][2] = {
+  { lbRTC_JANUARY,    7 }, /* January 1st - January 7th */
+  { lbRTC_APRIL,      5 }, /* January 8th - April 5th */
+  { lbRTC_AUGUST,    19 }, /* April 6th - August 19th */
+  { lbRTC_SEPTEMBER, 30 }  /* August 20th - September 30th */
+                           /* October 1st - December 31st */
+};
+
+static int mEnv_GetWindPowerTableTerm(lbRTC_time_c* time) {
+  lbRTC_month_t month = time->month;
+  lbRTC_day_t day = time->day;
+  int i;
+
+  for (i = 0; i < mEnv_WIND_TERM_NUM; i++) {
+    if (month < wind_term[i][0]) {
+      return i;
+    }
+    else if (month == wind_term[i][0] && day <= wind_term[i][1]) {
+      return i;
+    }
+  }
+
+  return i; /* must be the final term */
+}
+
+static int mEnv_GetWindPowerPercent(lbRTC_time_c* time, mEnv_wind_power_range_c* wind_power_range) {
+  static mEnv_wind_power_range_c pow_table[mEnv_WIND_TERM_NUM + 1] = {
+    { 10, 80, 10 },
+    {  0, 70, 30 },
+    { 10, 80, 10 },
+    {  0, 70, 30 },
+    { 10, 80, 10 }
+  };
+
+  static mEnv_wind_power_range_c error_data = { 33, 33, 34 };
+
+  int power_table_term = mEnv_GetWindPowerTableTerm(time);
+  *wind_power_range = error_data;
+
+  if (power_table_term >= 0 && power_table_term < mEnv_WIND_TERM_NUM) {
+    *wind_power_range = pow_table[power_table_term];
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+extern void mEnv_DecideTodayWindPowerRange() {
+  mEnv_wind_power_range_c power_range_percents;
+  int selected = RANDOM(100);
+  
+  mEnv_GetWindPowerPercent(Common_GetPointer(time.rtc_time), &power_range_percents);
+
+  if (selected < power_range_percents.calm_percent) {
+    mEnv_wind_info.wind_power_range_max = 0.4f;
+    mEnv_wind_info.wind_power_range_min = 0.0f;
+  }
+  else if (selected < power_range_percents.calm_percent + power_range_percents.normal_percent) {
+    mEnv_wind_info.wind_power_range_max = 0.6f;
+    mEnv_wind_info.wind_power_range_min = 0.4f;
+  }
+  else {
+    mEnv_wind_info.wind_power_range_max = 1.0f;
+    mEnv_wind_info.wind_power_range_min = 0.6f;
+  }
+}
+
+extern void mEnv_ChangeWind() {
+  if (mEv_check_schedule(mEv_EVENT_KOINOBORI)) {
+    mEnv_wind_info.target_wind_angle = DEG2SHORT_ANGLE(135.0f); /* 0x6000 */
+    mEnv_wind_info.wind_angle = DEG2SHORT_ANGLE(135.0f);
+    mEnv_wind_info.target_wind_power = 1.0f;
+    mEnv_wind_info.wind_power = 1.0f;
+    mEnv_wind_info.wind_angle_step = 0.0f;
+    mEnv_wind_info.wind_power_step = 0.0f;
+  }
+  else {
+    f32 wind_angle_adjust = RANDOM_F(DEG2SHORT_ANGLE(30.0f)) - (f32)DEG2SHORT_ANGLE(30.0f) / 2.0f;
+    f32 w = fqrand();
+    f32 min = mEnv_wind_info.wind_power_range_min;
+    f32 max = mEnv_wind_info.wind_power_range_max;
+
+    mEnv_wind_info.target_wind_angle = mEnv_wind_info.wind_angle + wind_angle_adjust;
+    mEnv_wind_info.wind_angle_step = wind_angle_adjust / mEnv_WIND_CHANGE_RATE;
+    mEnv_wind_info.target_wind_power = min + w * (max - min);
+    mEnv_wind_info.wind_power_step = (mEnv_wind_info.target_wind_power - mEnv_wind_info.wind_power) / mEnv_WIND_CHANGE_RATE;
+  }
+}
+
+static void mEnv_InitWind() {
+  if (mEv_check_schedule(mEv_EVENT_KOINOBORI)) {
+    mEnv_wind_info.target_wind_angle = DEG2SHORT_ANGLE(135.0f); /* 0x6000 */
+    mEnv_wind_info.target_wind_power = 1.0f;
+  }
+  else {
+    f32 angle = RANDOM_F(65536);
+    f32 t = fqrand();
+    f32 min = mEnv_wind_info.wind_power_range_min;
+    f32 max = mEnv_wind_info.wind_power_range_max;
+    
+    mEnv_wind_info.target_wind_angle = angle; /* completely random wind direction */
+    mEnv_wind_info.target_wind_power = min + t * (max - min);
+  }
+
+  mEnv_wind_info.wind_state = mEnv_WIND_STATE_STEADY;
+  mEnv_wind_info.wind_change_timer = mEnv_WIND_CHANGE_RATE;
+  mEnv_wind_info.wind_angle = mEnv_wind_info.target_wind_angle;
+  mEnv_wind_info.wind_angle_step = 0.0f;
+  mEnv_wind_info.wind_power = mEnv_wind_info.target_wind_power;
+  mEnv_wind_info.wind_power_step = 0.0f;
+}
+
+extern void mEnv_WindMove() {
+  if (mEnv_wind_info.wind_state == mEnv_WIND_STATE_STEADY) {
+    if (
+      (mEnv_wind_info.target_wind_angle > mEnv_wind_info.wind_angle && mEnv_wind_info.wind_angle_step < 0.0f) ||
+      (mEnv_wind_info.target_wind_angle < mEnv_wind_info.wind_angle && mEnv_wind_info.wind_angle_step > 0.0f)
+    ) {
+      mEnv_wind_info.wind_angle_step *= -1.0f; // invert wind angle step direction
+    }
+
+    if (
+      (mEnv_wind_info.target_wind_power > mEnv_wind_info.wind_power && mEnv_wind_info.wind_power_step < 0.0f) ||
+      (mEnv_wind_info.target_wind_power < mEnv_wind_info.wind_power && mEnv_wind_info.wind_power_step > 0.0f)
+    ) {
+      mEnv_wind_info.wind_power_step *= -1.0f; // invert wind power step direction
+    }
+
+    /* process change in wind angle */
+    if (mEnv_wind_info.target_wind_angle != mEnv_wind_info.wind_angle) {
+      mEnv_wind_info.wind_angle += mEnv_wind_info.wind_angle_step;
+
+      /* stop wind angle step once target is reached */
+      if (mEnv_wind_info.wind_angle_step > 0.0f) {
+        if (mEnv_wind_info.wind_angle >= mEnv_wind_info.target_wind_angle) {
+          mEnv_wind_info.wind_angle_step = 0.0f;
+        }
+      }
+      else if (mEnv_wind_info.wind_angle_step < 0.0f) {
+        if (mEnv_wind_info.wind_angle <= mEnv_wind_info.target_wind_angle) {
+          mEnv_wind_info.wind_angle_step = 0.0f;
+        }
+      }
+    }
+
+    /* process change in wind power */
+    if (mEnv_wind_info.target_wind_power != mEnv_wind_info.wind_power) {
+      mEnv_wind_info.wind_power += mEnv_wind_info.wind_power_step;
+
+      /* stop wind power step once target is reached */
+      if (mEnv_wind_info.wind_power_step > 0.0f) {
+        if (mEnv_wind_info.wind_power >= mEnv_wind_info.target_wind_power) {
+          mEnv_wind_info.wind_power_step = 0.0f;
+        }
+      }
+      else if (mEnv_wind_info.wind_power_step < 0.0f) {
+        if (mEnv_wind_info.wind_power <= mEnv_wind_info.target_wind_power) {
+          mEnv_wind_info.wind_power_step = 0.0f;
+        }
+      }
+    }
+
+    if (mEnv_wind_info.gust_timer <= 0) {
+      int res = (int)(fqrand() * 100.0f) & 1;
+      f32 rng1 = fqrand();
+      f32 rng2 = fqrand();
+    
+      mEnv_wind_info.wind_state = (res == 1 || mEnv_wind_info.wind_power_range_min == 0.0f) ? mEnv_WIND_STATE_FAST : mEnv_WIND_STATE_SLOW;
+      mEnv_wind_info.last_wind_power = mEnv_wind_info.wind_power;
+      mEnv_wind_info.wind_power_timer = 200.0f + rng2 * 100.0f;
+      
+      if (mEnv_wind_info.wind_state == mEnv_WIND_STATE_FAST) {
+        mEnv_wind_info.gust_wind_power = mEnv_wind_info.wind_power_range_max + 0.3f + rng1 * ((mEnv_wind_info.wind_power_range_max + 0.4f) - (mEnv_wind_info.wind_power_range_max + 0.3f)); // ??
+      }
+      else {
+        mEnv_wind_info.gust_wind_power = mEnv_wind_info.wind_power_range_min - 0.3f + rng1 * ((mEnv_wind_info.wind_power_range_min - 0.4f) - (mEnv_wind_info.wind_power_range_min - 0.3f)); // ??
+      }
+    }
+    else {
+      if (mEnv_wind_info.gust_timer > 0) {
+        mEnv_wind_info.gust_timer--;
+      }
+
+      if (mEnv_wind_info.wind_change_timer <= 0) {
+        mEnv_ChangeWind();
+        mEnv_wind_info.wind_change_timer = mEnv_WIND_CHANGE_RATE;
+      }
+    }
+  }
+  else if (mEnv_wind_info.wind_state == mEnv_WIND_STATE_FAST) {
+    add_calc(&mEnv_wind_info.wind_power, mEnv_wind_info.gust_wind_power, 0.05f, 0.05f, 0.0001f);
+
+    if (mEnv_wind_info.wind_power_timer <= 0) {
+      mEnv_wind_info.wind_state = mEnv_WIND_STATE_REDUCING;
+    }
+    else {
+      mEnv_wind_info.wind_power_timer--;
+    }
+  }
+  else if (mEnv_wind_info.wind_state == mEnv_WIND_STATE_SLOW) {
+    add_calc(&mEnv_wind_info.wind_power, mEnv_wind_info.gust_wind_power, 0.05f, 0.05f, 0.0001f);
+
+    if (mEnv_wind_info.wind_power_timer <= 0) {
+      mEnv_wind_info.wind_state = mEnv_WIND_STATE_REDUCING;
+    }
+    else {
+      mEnv_wind_info.wind_power_timer--;
+    }
+  }
+  else {
+    add_calc(&mEnv_wind_info.wind_power, mEnv_wind_info.last_wind_power, 0.032f, 0.032f, 0.000005f);
+
+    if (mEnv_wind_info.wind_power == mEnv_wind_info.last_wind_power) {
+      f32 rng = fqrand();
+    
+      mEnv_wind_info.gust_timer = rng * 450.0f + 150.0f;
+      mEnv_wind_info.wind_state = mEnv_WIND_STATE_STEADY;
+    }
+  }
+
+  if (mEnv_wind_info.wind_change_timer > 0) {
+    mEnv_wind_info.wind_change_timer--;
+  }
+}
+
+extern void mEnv_DecideWeather_GameStart() {
+  s16 weather;
+  s16 intensity;
+  s16 event_weather;
+  s16 event_intensity;
+
+  mEnv_RandomWeather(&weather, &intensity);
+  mEv_GetEventWeather(&event_weather, &event_intensity);
+
+  if (event_weather != -1) {
+    weather = event_weather;
+    intensity = event_intensity;
+  }
+
+  if (mEv_CheckRealArbeit() == TRUE && weather == mEnv_WEATHER_RAIN) {
+    weather = mEnv_WEATHER_CLEAR;
+    intensity = mEnv_WEATHER_INTENSITY_NONE;
+  }
+
+  Common_Set(weather, weather);
+  Common_Set(weather_intensity, intensity);
+  Common_Set(weather_time, Common_Get(time.rtc_time));
+}
+
+extern void mEnv_DecideWeather_FirstGameStart() {
+  mEnv_DecideWeather_GameStart();
+  Save_Set(weather, ((u8)Common_Get(weather_intensity) | (u8)Common_Get(weather) << 4));
+
+  if (mTM_check_renew_time(mTM_RENEW_TIME_WEATHER)) {
+    mTM_off_renew_time(mTM_RENEW_TIME_WEATHER);
+  }
+}
+
+static void mEnv_Rainbow_reserve() {
+  Save_Set(rainbow_reserved, TRUE);
+  Save_Set(rainbow_month, Common_Get(time.rtc_time).month);
+  Save_Set(rainbow_day, Common_Get(time.rtc_time).day);
+}
+
+extern void mEnv_PreRainNowFine_Init() {
+  mAGrw_OrderSetHaniwa();
+  mEnv_Rainbow_reserve();
+}
+
+extern void mEnv_DecideWeather_NormalGameStart() {
+  u8 weather;
+  u8 intensity;
+
+  if (mTM_check_renew_time(mTM_RENEW_TIME_WEATHER)) {
+    u8 save_weather;
+    
+    mEnv_DecideWeather_GameStart();
+    mTM_off_renew_time(mTM_RENEW_TIME_WEATHER);
+    weather = Common_Get(weather);
+    intensity = Common_Get(weather_intensity);
+    save_weather = mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather));
+
+    if (
+      (weather == mEnv_WEATHER_CLEAR || weather == mEnv_WEATHER_SAKURA) &&
+      (save_weather == mEnv_WEATHER_SNOW || save_weather == mEnv_WEATHER_RAIN) 
+    ) {
+      mEnv_PreRainNowFine_Init();
+    }
+
+    Save_Set(weather, intensity | (weather << 4));
+  }
+  else {
+    weather = mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather));
+    intensity = mEnv_SAVE_GET_WEATHER_INTENSITY(Save_Get(weather));
+
+    if (mEv_CheckRealArbeit() == TRUE && weather == mEnv_WEATHER_RAIN) {
+      weather = mEnv_WEATHER_CLEAR;
+      intensity = mEnv_WEATHER_INTENSITY_NONE;
+
+      Save_Set(weather, (intensity | (u8)weather << 4));
+    }
+
+    Common_Set(weather, weather);
+    Common_Set(weather_intensity, intensity);
+  }
+
+  if (fqrand() < (f32)GETREG(TAKREG, 50) * 0.1f + 0.8f) {
+    Common_Set(island_weather, mEnv_WEATHER_CLEAR);
+    Common_Set(island_weather_intensity, mEnv_WEATHER_INTENSITY_NONE);
+  }
+  else {
+    Common_Set(island_weather, mEnv_WEATHER_RAIN);
+    Common_Set(island_weather_intensity, mEnv_WEATHER_INTENSITY_HEAVY);
+    
+  }
+}
+
+extern int mEnv_NowWeather() {
+  switch (mEv_CheckTitleDemo()) {
+    case 1:
+      return mEnv_WEATHER_SAKURA;
+    case 2:
+      return mEnv_WEATHER_RAIN;
+    case 3:
+    case 4:
+      return mEnv_WEATHER_CLEAR;
+    case 5:
+      return mEnv_WEATHER_SNOW;
+  }
+
+  if (mFI_GET_TYPE(mFI_GetFieldId()) == mFI_FIELD_FG) {
+    return Common_Get(weather);
+  }
+
+  return mEnv_WEATHER_CLEAR;
+}

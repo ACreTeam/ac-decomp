@@ -505,7 +505,7 @@ static void aTrainWindow_SetLightPrimColorDetail(GAME* game, u32 r, u32 g, u32 b
     GRAPH* graph;
 
     for(i = 0; i < 3; i++){
-        current_color = play->global_light.ambientColor[i] + play->kankyo.ambientColor[i];
+        current_color = play->global_light.ambientColor[i] + play->kankyo.base_light.sun_color[i];
         switch(i){
             case 0:
                 current_color += r;
