@@ -390,6 +390,31 @@ ac_train_window.c:
     .text: [0x804AC510, 0x804AD428]
     .rodata: [0x80645FA8, 0x80645FF8]
     .data: [0x8068F600, 0x8068F830]
+ef_lamp_light.c:
+    .text: [0x804CEC5C, 0x804CEF2C]
+    .rodata: [0x806463C8, 0x806463D8]
+    .data: [0x8069BFD0, 0x8069C028]
+ef_room_sunshine.c:
+    .text: [0x804CEF2C, 0x804CF784]
+    .rodata: [0x806463D8, 0x80646420]
+    .data: [0x8069C028, 0x8069C050]
+ef_room_sunshine_police.c:
+    .text: [0x804CF784, 0x804CFF8C]
+    .rodata: [0x80646420, 0x80646470]
+    .data: [0x8069C050, 0x8069C078]
+ef_room_sunshine_posthouse.c:
+    .text: [0x804CFF8C, 0x804D0704]
+    .rodata: [0x80646470, 0x806464B8]
+    .data: [0x8069C078, 0x8069C0A0]
+ef_room_sunshine_museum.c:
+    .text: [0x804D0704, 0x804D0F3C]
+    .rodata: [0x806464B8, 0x80646508]
+    .data: [0x8069C0A0, 0x8069C0C8]
+ef_room_sunshine_minsect.c:
+    .text: [0x804D0F3C,0x804D1BBC]
+    .rodata: [0x80646508,0x80646558]
+    .data: [0x8069C0C8, 0x8069C0F0]
+    .bss: [0x81300BD0, 0x81300BD8]
 m_huusui_room_ovl.c:
     .text: [0x804D1BBC, 0x804D2164]
     .rodata: [0x80646558, 0x806465C8]

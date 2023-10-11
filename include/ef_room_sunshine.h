@@ -10,6 +10,11 @@ extern "C" {
 
 extern ACTOR_PROFILE Room_Sunshine_Profile;
 
+typedef struct effect_room_sunshine_s{
+    ACTOR actor_class;
+    u8 unk_174;
+} ROOMSUNSHINE_ACTOR;
+
 #ifdef __cplusplus
 }
 #endif

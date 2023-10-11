@@ -22,7 +22,7 @@ ACTOR_PROFILE Train1_Profile = {
   ACTOR_PART_ITEM,
   ACTOR_STATE_CAN_MOVE_IN_DEMO_SCENES | 1 << 11 | ACTOR_STATE_NO_MOVE_WHILE_CULLED, //figure out flag 0x800
   TRAIN1,
-  ACTOR_OBJ_BANK_3,
+  ACTOR_OBJ_BANK_KEEP,
   sizeof(TRAIN1_ACTOR),
   &aTR1_actor_ct,
   &aTR1_actor_dt,

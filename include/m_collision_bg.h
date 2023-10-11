@@ -154,6 +154,7 @@ extern f32 mCoBG_GetBgY_AngleS_FromWpos(s_xyz* angle_to_ground, xyz_t wpos, f32 
 extern f32 mCoBG_GetShadowBgY_AngleS_FromWpos(f32, s_xyz*, xyz_t);
 extern int mCoBG_CheckWaterAttribute_OutOfSea(u32 attribute);
 extern int mCoBG_CheckHole_OrgAttr(u32 attribute);
+extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos(f32 dist, xyz_t* wpos);
 extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos2(xyz_t wpos, f32 foot_dist);
 extern int mCoBG_Attribute2CheckPlant(u32 attribute, const xyz_t* wpos);
 extern void mCoBG_BgCheckControll(xyz_t* reverse_pos, ACTOR* actor, f32 check_range, f32 offset_y, s16 wall_attr_check, s16 no_reverse, s16 check_type);

@@ -13,7 +13,7 @@ ACTOR_PROFILE Groundhog_Control_Profile = {
   ACTOR_PART_CONTROL,
   ACTOR_STATE_NO_MOVE_WHILE_CULLED,
   EMPTY_NO,
-  ACTOR_OBJ_BANK_3,
+  ACTOR_OBJ_BANK_KEEP,
   sizeof(GROUNDHOG_CONTROL_ACTOR),
   &aGHC_actor_ct,
   &aGHC_actor_dt,
