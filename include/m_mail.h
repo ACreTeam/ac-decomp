@@ -53,6 +53,8 @@ enum {
   mMl_TYPE_SHOP_SALE_LEAFLET = 2,
   mMl_TYPE_BROKER_SALE_LEAFLET = 3,
 
+  mMl_TYPE_HRA = 6,
+
   mMl_TYPE_FISHING_CONTENST = 9,
 
   mMl_TYPE_12 = 12

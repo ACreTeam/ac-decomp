@@ -127,6 +127,9 @@ m_kankyo.c:
     .rodata: [0x806424C0, 0x80642640]
     .data: [0x80655D78, 0x80656670]
     .bss: [0x81297A68, 0x81297B18]
+m_lib.c:
+    .text: [0x803BAB0C, 0x803BB960]
+    .rodata: [0x80642640, 0x80642680]
 m_lights.c:
     .text: [0x803BB960, 0x803BC510]
     .rodata: [0x80642680, 0x806426D8]
@@ -143,9 +146,9 @@ m_mail_check.c:
 m_mail_password_check.c:
     .text: [0x803BD250, 0x803BEC9C]
     .data: [0x806566C0, 0x806571D8]
-m_lib.c:
-    .text: [0x803BAB0C, 0x803BB960]
-    .rodata: [0x80642640, 0x80642680]
+m_mark_room.c:
+    .text: [0x803BEC9C, 0x803BF210]
+    .rodata: [0x806426D8, 0x806426E8]
 m_museum.c:
     .text: [0x803C6228, 0x803C74C0]
     .rodata: [0x80642938, 0x80642950]
