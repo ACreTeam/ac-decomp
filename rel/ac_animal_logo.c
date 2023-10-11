@@ -130,7 +130,7 @@ static void aAL_title_game_data_init_start_select(ANIMAL_LOGO_ACTOR* actor, GAME
 
   play->fb_fade_type = 8;
   play->fb_wipe_type = 3;
-  Common_Set(wipeType, 3);
+  Common_Set(transition.wipe_type, 3);
   mBGMPsComp_make_ps_wipe(0x1168);
 }
 

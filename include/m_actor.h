@@ -1034,6 +1034,13 @@ enum actor_profile_table {
   mAc_PROFILE_NUM
 };
 
+enum {
+  mAc_HILITE_OPAQUE,
+  mAc_HILITE_TRANSLUCENT,
+
+  mAc_HILITE_NUM
+};
+
 /* sizeof(ACTOR_PROFILE) == 0x24 */
 struct actor_profile_s {
   /* 0x00 */ s16 id; /* unique actor type ID */

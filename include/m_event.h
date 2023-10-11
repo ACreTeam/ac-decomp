@@ -496,6 +496,9 @@ extern void mEv_EventON(u32 event_kind);
 extern int mEv_CheckGateway();
 extern int mEv_check_schedule(int event);
 extern mEv_place_data_c* mEv_get_common_place(int type, s8 id);
+extern void mEv_set_status(int event, s16 status);
+extern void mEv_GetEventWeather(s16* weather, s16* intensity);
+extern int mEv_CheckRealArbeit();
 
 extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
 extern void mEv_ClearEventInfo();

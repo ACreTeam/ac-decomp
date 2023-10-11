@@ -167,8 +167,8 @@ void Game_play_fbdemo_wipe_init(GAME_PLAY* play){
     
     play->fbdemo_wipe.wipe_procs.init_proc(&wipe->wipe_data);
     
-    Common_Set(transWipeSpeed, 28);
-    Common_Set(transFadeDuration, 30);
+    Common_Set(transition.wipe_rate, 28);
+    Common_Set(transition.fade_rate, 30);
 
     wipe->wipe_procs.setcolor_proc(&wipe->wipe_data,0);
 
@@ -478,9 +478,9 @@ void play_init(GAME* game){
     play->fb_wipe_mode = 0;
     play->fb_fade_type = 1;
     
-    if(Common_Get(wipeType) != 0xFF){
-        type = Common_Get(wipeType);
-        Common_Set(wipeType, 0xFF); 
+    if(Common_Get(transition.wipe_type) != 0xFF){
+        type = Common_Get(transition.wipe_type);
+        Common_Set(transition.wipe_type, 0xFF); 
     }
 
     play->fb_wipe_type = type;

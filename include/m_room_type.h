@@ -111,6 +111,24 @@ typedef struct room_type_place_info_s {
 
 #define FTR1_NO_START 0x3000
 
+enum {
+  mRmTp_LIGHT_SWITCH_HOUSE0_MAIN_UPPER,
+  mRmTp_LIGHT_SWITCH_HOUSE0_BASEMENT,
+  mRmTp_LIGHT_SWITCH_HOUSE1_MAIN_UPPER,
+  mRmTp_LIGHT_SWITCH_HOUSE1_BASEMENT,
+  mRmTp_LIGHT_SWITCH_HOUSE2_MAIN_UPPER,
+  mRmTp_LIGHT_SWITCH_HOUSE2_BASEMENT,
+  mRmTp_LIGHT_SWITCH_HOUSE3_MAIN_UPPER,
+  mRmTp_LIGHT_SWITCH_HOUSE3_BASEMENT,
+  mRmTp_LIGHT_SWITCH_COTTAGE_MY,
+  mRmTp_LIGHT_SWITCH_9,
+  mRmTp_LIGHT_SWITCH_NPC,
+  mRmTp_LIGHT_SWITCH_LIGHTHOUSE,
+  mRmTp_LIGHT_SWITCH_TENT,
+
+  mRmTp_LIGHT_SWITCH_NUM
+};
+
 extern void mRmTp_DrawFamicomInfo(gfxprint_t* gfxprint);
 extern void mRmTp_MakeFamicom_Fdebug();
 
@@ -125,5 +143,11 @@ extern void mRmTp_SetDefaultLightSwitchData(int state);
 extern int mRmTp_GetEntranceBasePosition(xyz_t* pos);
 extern mActor_name_t mRmTp_GetPlayerRoomCollisionIdx(mActor_name_t field_name, mActor_name_t bg_name);
 extern u8 mRmTp_GetFloorIdx();
+extern int mRmTp_GetNowSceneLightSwitchIndex();
+extern void mRmTp_IndexLightSwitchOFF(int index);
+extern void mRmTp_IndexLightSwitchON(int index);
+extern int mRmTp_Index2LightSwitchStatus(int index);
+extern int mRmTp_NowSceneLightSwitchON();
+extern int mRmTp_NowSceneLightSwitchOFF();
 
 #endif

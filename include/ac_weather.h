@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+extern int aWeather_ChangingWeather();
+ 
 extern ACTOR_PROFILE Weather_Profile;
 
 #ifdef __cplusplus

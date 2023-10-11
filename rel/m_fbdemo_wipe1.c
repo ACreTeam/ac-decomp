@@ -53,13 +53,13 @@ fbdemo_wipe1* fbdemo_wipe1_init(fbdemo_wipe1* this) {
 
 void fbdemo_wipe1_move(fbdemo_wipe1* this, int rate) {
   if (this->direction != 0) {
-    this->texY += (((void)0, Common_Get(transWipeSpeed)) * 3) / rate;
+    this->texY += (((void)0, Common_Get(transition).wipe_rate) * 3) / rate;
     if (this->texY >= (int)(153 * (1 << 2))) {
       this->texY = (int)(153 * (1 << 2));
       this->finished = 1;
     }
   } else {
-    this->texY -= (((void)0, Common_Get(transWipeSpeed)) * 3) / rate;
+    this->texY -= (((void)0, Common_Get(transition).wipe_rate) * 3) / rate;
     if (this->texY <= (int)(83.25f * (1 << 2))) {
       this->texY = (int)(83.25f * (1 << 2));
       this->finished = 1;

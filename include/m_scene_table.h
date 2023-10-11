@@ -85,6 +85,12 @@ enum scene_table {
    (scene) == SCENE_MY_ROOM_BASEMENT_M || (scene) == (SCENE_MY_ROOM_BASEMENT_L) || (scene) == SCENE_MY_ROOM_BASEMENT_LL1 || \
    (scene) == SCENE_COTTAGE_MY)
 
+#define mSc_IS_SCENE_BASEMENT(scene) \
+  ((scene) == SCENE_MY_ROOM_BASEMENT_S || \
+   (scene) == SCENE_MY_ROOM_BASEMENT_M || \
+   (scene) == SCENE_MY_ROOM_BASEMENT_L || \
+   (scene) == SCENE_MY_ROOM_BASEMENT_LL1)
+
 #define mSc_IS_SCENE_MUSEUM_ROOM(scene) \
   ((scene) >= SCENE_MUSEUM_ENTRANCE && (scene) <= SCENE_MUSEUM_ROOM_FISH)
 
