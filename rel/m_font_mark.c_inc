@@ -1,0 +1,84 @@
+static u8* mFont_Get_MarkTex_p(int mark_type) {
+  static u8* tex_p_array[mFont_MARKTYPE_TOTAL] = {
+    FONT_nes_tex_jyouge,
+    FONT_nes_tex_sayuu,
+    FONT_nes_tex_cursor,
+    FONT_nes_tex_next,
+    FONT_nes_tex_choice
+  };
+
+  if (0 <= mark_type && mark_type < mFont_MARKTYPE_TOTAL && tex_p_array[mark_type] != NULL) {
+    return tex_p_array[mark_type];
+  }
+
+  return NULL;
+}
+
+static int mFont_Get_MarkTex_sizeW(int mark_type) {
+  static int size_array[mFont_MARKTYPE_TOTAL] = { 16, 16, 16, 16, 16 };
+
+  if (0 <= mark_type && mark_type < mFont_MARKTYPE_TOTAL && size_array[mark_type] != 0) {
+    return size_array[mark_type];
+  }
+
+  return 0;
+}
+
+static int mFont_Get_MarkTex_sizeH(int mark_type) {
+  static int size_array[mFont_MARKTYPE_TOTAL] = { 16, 16, 16, 16, 16 };
+
+  if (0 <= mark_type && mark_type < mFont_MARKTYPE_TOTAL && size_array[mark_type] != 0) {
+    return size_array[mark_type];
+  }
+
+  return 0;
+}
+
+extern f32 mFont_SetMarkChar(
+  GAME* game,
+  u8 mark_type,
+  f32 x, f32 y,
+  int r, int g, int b, int a,
+  int revert_flag,
+  f32 scale_x, f32 scale_y,
+  int mode
+) {
+  f32 next_x = x;
+
+  if ((int)mark_type < mFont_MARKTYPE_TOTAL) {
+    u8* tex = mFont_Get_MarkTex_p(mark_type);
+    int w = mFont_Get_MarkTex_sizeW(mark_type);
+    int h = mFont_Get_MarkTex_sizeH(mark_type);
+    GRAPH* graph = game->graph;
+    Gfx* gfx = GRAPH_ALLOC_TYPE(graph, Gfx, 9);
+
+    if (tex != NULL && w != 0 && h != 0 && gfx != NULL) {
+      mFont_SetMode(graph, mode);
+      mFont_SetPrimColor(graph, r, g, b, a, mode);
+      mFont_SetCombineMode(graph, revert_flag, mode);
+
+      OPEN_DISP(graph);
+
+      if (mode == 1) {
+        gSPDisplayList(NOW_FONT_DISP++, gfx);
+      }
+      else {
+        gSPDisplayList(NOW_POLY_OPA_DISP++, gfx);
+      }
+
+      CLOSE_DISP(graph);
+
+      gDPLoadTextureTile_4b_Dolphin(
+        gfx++,
+        tex,
+        G_IM_FMT_I,
+        w, (h + 3)
+      );
+
+      gSPEndDisplayList(gfx);
+      next_x = mFont_SetVertexRectangle(game, x, y, w, h, scale_x, scale_y, mode);
+    }
+  }
+
+  return next_x;
+}
