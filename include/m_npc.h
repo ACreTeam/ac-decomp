@@ -241,6 +241,7 @@ extern void mNpc_SetNpcHomeYpos();
 extern void mNpc_SendRegisteredGoodbyMail();
 extern void mNpc_IslandNpcRoomDataSet(mFM_fg_data_c** sorted_fg_data_list, int fg_name_start);
 extern Animal_c* mNpc_GetAnimalInfoP(mActor_name_t npc_name);
+extern int mNpc_RegistMaskNpc(mActor_name_t mask_id, mActor_name_t npc_id, mActor_name_t cloth);
 
 extern void mNpc_PrintRemoveInfo(gfxprint_t* gfxprint);
 extern void mNpc_PrintFriendship_fdebug(gfxprint_t* gfxprint);

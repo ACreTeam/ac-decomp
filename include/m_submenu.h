@@ -113,6 +113,7 @@ extern void mSM_submenu_move(Submenu*);
 extern void mSM_submenu_draw(Submenu*, GAME_PLAY*);
 extern int mSM_CHECK_ALL_FISH_GET();
 extern int mSM_CHECK_ALL_INSECT_GET();
+extern void mSM_Object_Exchange_keep_new_Menu(GAME_PLAY* play);
 
 #ifdef __cplusplus
 }

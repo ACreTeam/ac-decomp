@@ -134,7 +134,7 @@ typedef struct home_floor_s {
     u8 wall_original:1; /* is wallpaper a pattern (original)? */
     u8 floor_original:1; /* is flooring a pattern (original)? */
     u8 bit_2_7:6; /* unused? */
-  } fllot_bit; /* Name exposed? by mISL_gc_to_agb_fllot_bit */
+  } fllot_bit; /* Name exposed? by mISL_gc_to_agb_fllot_bit, may also be floor_bit_info as 'mRmTp_GetNowSceneFloorBitInfoP' */
 } mHm_flr_c;
 
 /* sizeof(mHm_flg_c) == 1 */

@@ -33,7 +33,7 @@ struct game_play_s {
   /* 0x00E4 */ mFI_block_tbl_c block_table;
   /* 0x00F4 */ mFI_block_tbl_c last_block_table;
   /* 0x0104 */ u8 _0104[0x010C - 0x0104];
-  /* 0x010C */ Scene_status_c* current_scene_data;
+  /* 0x010C */ Scene_Word_u* current_scene_data;
   /* 0x0110 */ Object_Exchange_c object_exchange;
   /* 0x1A68 */ View view;
   /* 0x1B88 */ Camera2 camera;
@@ -45,8 +45,7 @@ struct game_play_s {
   /* 0x1FA4 */ s8 unk1FA4;
   /* 0x1FA8 */ u8 _1FA4[0x1FB8 - 0x1FA8];
   /* 0x1FB8 */ PreRender prerender;
-  /* 0x2000 */ Door_data_c* door_data;
-  /* 0x2004 */ int _2004; 
+  /* 0x2000 */ Door_info_c door_info;
   /* 0x2008 */ int next_scene_no;
   /* 0x200C */ MtxF projection_matrix;
   /* 0x204C */ MtxF billboard_matrix;
@@ -71,7 +70,7 @@ struct game_play_s {
   /* 0x2328 */ CollisionCheck_c collision_check;
   /* 0x23F8 */ DRAW_CHK_PROC draw_chk_proc; // only used by mikanbox actor
   /* 0x23FC */ u32 fade_color_value;
-  /* 0x2400 */ Scene_status_c* scene_data_2400;
+  /* 0x2400 */ Scene_data_status_c* scene_data_status;
   /* 0x2404 */ u8 _2400[0x2600 - 0x2404];
 };
 

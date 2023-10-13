@@ -100,7 +100,7 @@ typedef struct ftr_profile_s {
 typedef struct furniture_collision_s {
   f32 start[2]; /* starting xz pos */
   f32 end[2]; /* ending xz pos */
-  f32 normal[2] /* xz normal */
+  f32 normal[2]; /* xz normal */
   f32 height; /* collision y */
   f32 edge_contact_ratio; /* percentage of the xz collision in contact with edge to count as collision */ 
 } aFTR_collision_c;

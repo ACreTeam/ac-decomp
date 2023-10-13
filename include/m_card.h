@@ -3,10 +3,18 @@
 
 #include "types.h"
 #include "libu64/gfxprint.h"
+#include "m_personal_id.h"
+#include "m_land_h.h"
+#include "m_private.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct {
+  mLd_land_info_c land;
+  PersonalID_c pid[PLAYER_NUM];
+} mCD_persistent_data_c;
 
 extern u8 mCD_GetThisLandSlotNo_code(int* player_no, int* slot_card_results);
 extern void mCD_save_data_aram_malloc();
