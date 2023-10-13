@@ -3,6 +3,8 @@
 #include "m_scene.h"
 #include "m_play.h"
 
+/* @unused ? mScn_Dma2Bank(...) */
+
 static void mScn_KeepMyRoomBankNew(Object_Exchange_c* exchange, s16 bank_id, size_t size) {
   Object_Bank_c* bank = exchange->banks + exchange->bank_idx;
   
@@ -29,6 +31,8 @@ extern void mScn_ObtainCarpetBank(GAME_PLAY* play) {
     mScn_KeepMyRoomBankNew(exchange, 19, 0x1020); // wall tex + pal
   }
 }
+
+/* @unused extern ? mScn_ObtainFurnitureBank(...) */
 
 extern void mScn_ObtainMyRoomBank(GAME_PLAY* play) {
   mScn_ObtainCarpetBank(play);
