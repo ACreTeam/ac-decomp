@@ -22,6 +22,7 @@ extern "C" {
 #define mPr_WALLET_MAX 99999
 #define mPr_DEPOSIT_MAX 999999999
 
+#define mPr_FLAG_MASK_CAT_SCHEDULED (1 << 0) // Blanca appears when travelling
 #define mPr_FLAG_POSTOFFICE_GIFT0 (1 << 2) // 1,000,000 Bells
 #define mPr_FLAG_POSTOFFICE_GIFT1 (1 << 3) // 10,000,000 Bells
 #define mPr_FLAG_POSTOFFICE_GIFT2 (1 << 4) // 100,000,000 Bells

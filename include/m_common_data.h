@@ -31,6 +31,7 @@
 #include "m_npc_schedule_h.h"
 #include "m_all_grow.h"
 #include "m_fishrecord.h"
+#include "m_card.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -221,7 +222,8 @@ typedef struct common_data_s {
   /* 0x02852E */ s16 goods_power;
   /* 0x028530 */ Door_data_c door_data; /* misc door data */
   /* 0x028544 */ Door_data_c structure_exit_door_data; /* door data for when exiting a building */
-  /* 0x028558 */ u8 tmp1[0x028590 - 0x028558];
+  /* 0x028558 */ u8 _28558[0x02857C - 0x028558];
+  /* 0x02857C */ Door_data_c famicom_emu_exit_door_data;
   /* 0x028590 */ u8 remove_cut_tree_info_bitfield; /* resets the cut tree states for trees in a visible acre */
   /* 0x028591 */ u8 floor_idx;
   /* 0x028592 */ s16 demo_profiles[mDemo_CLIP_TYPE_NUM - 1];
@@ -284,7 +286,7 @@ typedef struct common_data_s {
   /* 0x02DB40 */ u8 auto_nwrite_set; /* when true, saved nwrite time will be utilized. Seems to be used to keep same date for fishing tourney stuff. */
   /* 0x02DB42 */ u16 select_last_select_no;
   /* 0x02DB44 */ u16 select_last_top_no;
-  /* 0x02DB46 */ u8 _2DB46[0x2DBA2 - 0x2DB46];
+  /* 0x02DB46 */ mCD_persistent_data_c travel_persistent_data; /* used for checking if travelling back to town */
   /* 0x02DBA2 */ s16 island_weather;
   /* 0x02DBA4 */ s16 island_weather_intensity;
   /* 0x02DBA6 */ u8 _2DBA6[0x2DBAC - 0x2DBA6];

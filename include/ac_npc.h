@@ -35,6 +35,8 @@ typedef ACTOR* (*aNPC_GET_ACTOR_AREA_PROC)(size_t, const char*, int);
 typedef void (*aNPC_FREE_ACTOR_AREA_PROC)(ACTOR*);
 typedef void (*aNPC_SET_ATTENTION_REQUEST_PROC)(u8, ACTOR*, xyz_t*);
 
+typedef void (*aNPC_REBUILD_DMA_PROC)();
+
 typedef int (*aNPC_FORCE_CALL_REQ_PROC)(NPC_ACTOR*, int);
 
 struct ac_npc_clip_s {
@@ -45,7 +47,9 @@ struct ac_npc_clip_s {
   aNPC_FREE_ACTOR_AREA_PROC free_actor_area_proc;
   aNPC_DMA_DRAW_DATA_PROC dma_draw_data_proc;
   aNPC_SET_ATTENTION_REQUEST_PROC set_attention_request_proc;
-  void* _01C[(0x124 - 0x01C) / sizeof(void*)];
+  void* _01C[(0x0F8 - 0x01C) / sizeof(void*)];
+  aNPC_REBUILD_DMA_PROC rebuild_dma_proc;
+  void* _0FC[(0x124 - 0x0FC) / sizeof(void*)];
   aNPC_FORCE_CALL_REQ_PROC force_call_req_proc;
   void* _128;
 };

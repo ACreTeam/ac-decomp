@@ -2,7 +2,7 @@
 #define M_SCENE_TABLE_H
 
 #include "types.h"
-#include "m_scene.h"
+//#include "m_scene.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,6 +16,11 @@ enum field_draw_type {
 
   FIELD_DRAW_TYPE_NUM
 };
+
+typedef struct scene_status_s {
+  u8 unk0[0x13];
+  u8 unk13;
+} Scene_data_status_c;
 
 /*
   TODO: is this right? I assume so based on file names but
@@ -94,7 +99,7 @@ enum scene_table {
 #define mSc_IS_SCENE_MUSEUM_ROOM(scene) \
   ((scene) >= SCENE_MUSEUM_ENTRANCE && (scene) <= SCENE_MUSEUM_ROOM_FISH)
 
-extern Scene_status_c scene_data_status[SCENE_NUM];
+extern Scene_data_status_c scene_data_status[SCENE_NUM];
 
 #ifdef __cplusplus
 }

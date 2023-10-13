@@ -911,7 +911,7 @@ void Gameplay_Scene_Init(GAME_PLAY* play){
     
     mSc_data_bank_ct(play, &play->object_exchange);
     Global_light_ct(&play->global_light);
-    Door_info_ct(&play->door_data);
+    Door_info_ct(&play->door_info);
     common_data_clear();
     Scene_ct(play, play->current_scene_data);
     mSc_decide_exchange_bank(&play->object_exchange);
@@ -920,95 +920,95 @@ void Gameplay_Scene_Init(GAME_PLAY* play){
 
 u8 mPl_SceneNo2SoundRoomType(int scene) {
     switch (scene) {
-        case 20:
-        return 1;
+        case SCENE_MY_ROOM_S:
+            return 1;
 
-        case 6:
-        case 9:
-        case 12:
-        case 14:
-        case 18:
-        case 21:
-        case 31:
-        case 41:
-        case 51:
-        return 2;
+        case SCENE_NPC_HOUSE:
+        case SCENE_SHOP0:
+        case SCENE_BROKER_SHOP:
+        case SCENE_POST_OFFICE:
+        case SCENE_BUGGY:
+        case SCENE_MY_ROOM_M:
+        case SCENE_KAMAKURA:
+        case SCENE_MY_ROOM_LL2:
+        case SCENE_TENT:
+            return 2;
 
-        case 22:
-        case 23:
-        case 24:
-        case 25:
-        case 29:
-        case 40:
-        case 47:
-        case 17:
-        return 3;
+        case SCENE_MY_ROOM_L:
+        case SCENE_CONVENI:
+        case SCENE_SUPER:
+        case SCENE_DEPART:
+        case SCENE_DEPART_2:
+        case SCENE_MY_ROOM_LL1:
+        case SCENE_COTTAGE_MY:
+        case SCENE_POLICE_BOX:
+            return 3;
 
         default:
-        return 0;
+            return 0;
     } 
 }
 
 void Gameplay_Scene_Read(GAME_PLAY* play, s16 idx){
-    static Scene_status_c* scene_word_data[SCENE_NUM] = {
-       &test01_info,
-       &test02_info,
-       &test03_info,
-       &water_test_info,
-       &test_step01_info,
-       &test04_info,
-       &npc_room01_info,
-       &test_fd_npc_land_info,
-       &field_tool_field_info,
-       &shop01_info,
-       &BG_TEST01_info,
-       &BG_TEST01_XLU_info,
-       &broker_shop_info,
-       &fg_tool_in_info,
-       &post_office_info,
-       &start_demo1_info,
-       &start_demo2_info,
-       &police_box_info,
-       &buggy_info,
-       &player_select_info,
-       &player_room_s_info,
-       &player_room_m_info,
-       &player_room_l_info,
-       &shop02_info,
-       &shop03_info,
-       &shop04_1f_info,
-       &test05_info,
-       &PLAYER_SELECT2_info,
-       &PLAYER_SELECT3_info,
-       &shop04_2f_info,
-       &event_notification_info,
-       &kamakura_info,
-       &field_tool_field_info,
-       &title_demo_info,
-       &PLAYER_SELECT4_info,
-       &museum_entrance_info,
-       &museum_picture_info,
-       &museum_fossil_info,
-       &museum_insect_info,
-       &museum_fish_info,
-       &player_room_ll1_info,
-       &player_room_ll2_info,
-       &p_room_bm_s_info,
-       &p_room_bm_m_info,
-       &p_room_bm_l_info,
-       &p_room_bm_ll1_info,
-       &NEEDLEWORK_info,
-       &player_room_island_info,
-       &npc_room_island_info,
-       &start_demo3_info,
-       &lighthouse_info,
-       &tent_info,
+    static Scene_Word_u* scene_word_data[SCENE_NUM] = {
+       test01_info,
+       test02_info,
+       test03_info,
+       water_test_info,
+       test_step01_info,
+       test04_info,
+       npc_room01_info,
+       test_fd_npc_land_info,
+       field_tool_field_info,
+       shop01_info,
+       BG_TEST01_info,
+       BG_TEST01_XLU_info,
+       broker_shop_info,
+       fg_tool_in_info,
+       post_office_info,
+       start_demo1_info,
+       start_demo2_info,
+       police_box_info,
+       buggy_info,
+       player_select_info,
+       player_room_s_info,
+       player_room_m_info,
+       player_room_l_info,
+       shop02_info,
+       shop03_info,
+       shop04_1f_info,
+       test05_info,
+       PLAYER_SELECT2_info,
+       PLAYER_SELECT3_info,
+       shop04_2f_info,
+       event_notification_info,
+       kamakura_info,
+       field_tool_field_info,
+       title_demo_info,
+       PLAYER_SELECT4_info,
+       museum_entrance_info,
+       museum_picture_info,
+       museum_fossil_info,
+       museum_insect_info,
+       museum_fish_info,
+       player_room_ll1_info,
+       player_room_ll2_info,
+       p_room_bm_s_info,
+       p_room_bm_m_info,
+       p_room_bm_l_info,
+       p_room_bm_ll1_info,
+       NEEDLEWORK_info,
+       player_room_island_info,
+       npc_room_island_info,
+       start_demo3_info,
+       lighthouse_info,
+       tent_info,
     };
 
-    Scene_status_c* current = &scene_data_status[idx];
+    Scene_data_status_c* current = &scene_data_status[idx];
     
     current->unk13 = 0; 
-    play->scene_data_2400 = current;
+    play->scene_data_status = current;
     play->scene_id = idx;
     play->current_scene_data = scene_word_data[idx];
     current->unk13 = 0; 

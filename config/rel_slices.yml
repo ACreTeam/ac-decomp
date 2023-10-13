@@ -218,6 +218,10 @@ m_time.c:
     .rodata: [0x806433B0, 0x806433D8]
     .data: [0x8065E378, 0x8065E438]
     .bss: [0x8129F410, 0x8129F420]
+m_scene.c:
+    .text: [0x803F0610, 0x803F1528]
+    .rodata: [0x806432F8, 0x80643310]
+    .data: [0x8065DE80, 0x8065DEC8]
 m_skin_matrix.c:
     .text: [0x803f1528, 0x803f1bb4]
     .rodata: [0x80643310, 0x80643318]

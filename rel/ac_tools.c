@@ -114,9 +114,9 @@ static void aTOL_secure_pl_umbrella_bank_area(GAME* game){
     int id;
     
     exchange = &play->object_exchange;
-    id = exchange->bank_id;
+    id = exchange->bank_idx;
 
-    if(mSc_secure_exchange_keep_bank(exchange, NULL, 0xC00) != 0U){
+    if(mSc_secure_exchange_keep_bank(exchange, 0, 0xC00) != NULL){
         Common_Set(clip.tools_clip->bank_id, id);
     }
     else{
