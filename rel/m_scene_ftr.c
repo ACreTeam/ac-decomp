@@ -17,7 +17,7 @@ static void mScn_KeepMyRoomBankNew(Object_Exchange_c* exchange, s16 bank_id, siz
   }
 }
 
-static void mScn_ObtainCarpetBank(GAME_PLAY* play) {
+extern void mScn_ObtainCarpetBank(GAME_PLAY* play) {
   Object_Exchange_c* exchange = &play->object_exchange;
   int i;
 
