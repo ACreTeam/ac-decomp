@@ -143,8 +143,8 @@ typedef struct home_flags_s {
   u8 has_saved:1; /* whether or not the player has saved at this house before */
   u8 hra_member:1; /* whether or not the house has been setup for HRA membership */
   u8 has_basement:1; /* set when the basement is built */
-  u8 bit_4:1; /* unused */
-  u8 bit_5:1; /* unused */
+  u8 hra_reward0:1; /* earned 70k HRA points reward */
+  u8 hra_reward1:1; /* earned 100k HRA points reward */
   u8 bit_6:1; /* unused */
   u8 bit_7:1; /* unused */
 } mHm_flg_c;
