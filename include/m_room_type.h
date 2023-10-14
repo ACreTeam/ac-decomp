@@ -74,10 +74,6 @@ typedef struct room_type_place_info_one_s {
   int ut_z;
 } mRmTp_FtrPlaceInfoOne_t;
 
-typedef struct room_type_place_info_s {
-  mRmTp_FtrPlaceInfoOne_t units[mRmTp_FTR_UNIT_MAX];
-} mRmTp_FtrPlaceInfo_t;
-
 #define FTR_NUM 1266
 
 #define FTR_GET_ROTATION(f) ((f) & 3)
@@ -135,7 +131,7 @@ extern void mRmTp_MakeFamicom_Fdebug();
 extern mActor_name_t mRmTp_FtrItemNo2Item1ItemNo(mActor_name_t ftr_item_no, void* unused); /* second paramter is probably GAME*? */
 extern int mRmTp_FtrItemNo2FtrIdx(mActor_name_t ftr_item_no);
 extern mActor_name_t mRmTp_FtrIdx2FtrItemNo(int ftr_idx, int rotation);
-extern int mRmTp_GetFurnitureData(mActor_name_t ftr, int ut_x, int ut_z, mRmTp_FtrPlaceInfo_t* place_info);
+extern int mRmTp_GetFurnitureData(mActor_name_t ftr, int ut_x, int ut_z, mRmTp_FtrPlaceInfoOne_t* place_info);
 extern int mRmTp_FurnitureIdx2FurnitureKind(int ftr_idx);
 extern int mRmTp_PleaseDrawLightSwitch();
 extern mActor_name_t mRmTp_Item1ItemNo2FtrItemNo_AtPlayerRoom(mActor_name_t item_no, int flag);
@@ -149,5 +145,6 @@ extern void mRmTp_IndexLightSwitchON(int index);
 extern int mRmTp_Index2LightSwitchStatus(int index);
 extern int mRmTp_NowSceneLightSwitchON();
 extern int mRmTp_NowSceneLightSwitchOFF();
+extern void mRmTp_MakeFtrNoTable(mActor_name_t* dst, mActor_name_t* src);
 
 #endif

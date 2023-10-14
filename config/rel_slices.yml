@@ -428,6 +428,11 @@ m_huusui_room_ovl.c:
     .text: [0x804D1BBC, 0x804D2164]
     .rodata: [0x80646558, 0x806465C8]
     .data: [0x8069C0F0, 0x8069CAF0]
+m_mark_room_ovl.c:
+    .text: [0x804D2164, 0x804D3B24]
+    .rodata: [0x806465C8, 0x806465D0]
+    .data: [0x8069CAF0, 0x8069E580]
+    .bss: [0x81300BD8, 0x813010D0]
 m_random_field/mRF_MakePerfectBit.c:
     .text: [0x8050B1AC, 0x8050B1D4]
 m_random_field/mRF_GetRandomStepMode.c:

@@ -144,6 +144,8 @@ extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
 
 #define IS_ITEM_HANIWA(item) ((item) >= HANIWA_START && (item) <= HANIWA_END)
 
+#define IS_ITEM_DIARY(item) ((item) >= ITM_DIARY_START && (item) <= (ITM_DIARY_END-1))
+
 #define BG_CATEGORY 0
 #define ENV_CATEGORY 8
 
@@ -1115,7 +1117,9 @@ extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
 #define FTR1_START 0x3000
 
 #define FTR_POST_MODEL 0x3020
-
+#define FTR_HOUSE_MODEL 0x3024
+#define FTR_MANOR_MODEL 0x3028
+#define FTR_POLICE_MODEL 0x302C
 #define FTR_MUSEUM_MODEL 0x3030
 
 #define FTR_ORANGEBOX 0x30F8
@@ -1355,6 +1359,8 @@ extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
 #define DUMMY_DOUZOU 0xF11D
 
 #define RSV_DOOR 0xFE1B
+#define RSV_FE1C 0xFE1C
+#define RSV_FE1F 0xFE1F
 #define RSV_CLOTH 0xFE20
 #define RSV_WALL_NO 0xFFFE /* interior wall item, no collision */
 #define RSV_NO 0xFFFF /* reserved space, can't interact but no collision */

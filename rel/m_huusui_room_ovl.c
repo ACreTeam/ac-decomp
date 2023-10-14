@@ -100,7 +100,7 @@ static void mHsRm_EvaluateHuusuiPoint_Single(mActor_name_t ftr, int ut_x, int ut
   int huusui_type;
   int room_side_tbl[mHsRm_DIRECTION_NUM];
   int rotation_tbl[mHsRm_DIRECTION_NUM];
-  mRmTp_FtrPlaceInfo_t place_info;
+  mRmTp_FtrPlaceInfoOne_t place_info[mRmTp_FTR_UNIT_MAX];
   int ftr_rot;
   int has_face;
   int start_ut;
@@ -112,7 +112,7 @@ static void mHsRm_EvaluateHuusuiPoint_Single(mActor_name_t ftr, int ut_x, int ut
   ftr_rot = FTR_GET_ROTATION(ftr);
   huusui_type = mMkRm_ftr_info[ftr_idx].huusui_type;
   has_face = mMkRm_ftr_info[ftr_idx].has_face;
-  ut_value = mHsRm_unit_value[mRmTp_GetFurnitureData(ftr, ut_x, ut_z, &place_info)]; /* number of units occupied by this furniture */
+  ut_value = mHsRm_unit_value[mRmTp_GetFurnitureData(ftr, ut_x, ut_z, place_info)]; /* number of units occupied by this furniture */
 
   /* maximum top/left position for feng shui */
   if (ut_max == mHsRm_UNIT_MAX_S && ut_value == 1) {
@@ -129,32 +129,32 @@ static void mHsRm_EvaluateHuusuiPoint_Single(mActor_name_t ftr, int ut_x, int ut
 
   /* loop through all units occupied by the furniture and check feng shui parameters on each unit */
   for (i = 0; i < ut_value; i++) {
-    if (place_info.units[i].ut_z <= start_ut) {
+    if (place_info[i].ut_z <= start_ut) {
       room_side_tbl[mHsRm_DIRECTION_NORTH]++;
 
-      if (place_info.units[i].ut_z <= 1) {
+      if (place_info[i].ut_z <= 1) {
         rotation_tbl[mHsRm_DIRECTION_NORTH]++;
       }
     }
-    else if (place_info.units[i].ut_z >= ((ut_max - start_ut) - 1)) {
+    else if (place_info[i].ut_z >= ((ut_max - start_ut) - 1)) {
       room_side_tbl[mHsRm_DIRECTION_SOUTH]++;
       
-      if (place_info.units[i].ut_z >= ut_max - 2) {
+      if (place_info[i].ut_z >= ut_max - 2) {
         rotation_tbl[mHsRm_DIRECTION_SOUTH]++;
       }
     }
 
-    if (place_info.units[i].ut_x <= start_ut) {
+    if (place_info[i].ut_x <= start_ut) {
       room_side_tbl[mHsRm_DIRECTION_WEST]++;
 
-      if (place_info.units[i].ut_x <= 1) {
+      if (place_info[i].ut_x <= 1) {
         rotation_tbl[mHsRm_DIRECTION_WEST]++;
       }
     }
-    else if (place_info.units[i].ut_x >= ((ut_max - start_ut) - 1)) {
+    else if (place_info[i].ut_x >= ((ut_max - start_ut) - 1)) {
       room_side_tbl[mHsRm_DIRECTION_EAST]++;
       
-      if (place_info.units[i].ut_x >= ut_max - 2) {
+      if (place_info[i].ut_x >= ut_max - 2) {
         rotation_tbl[mHsRm_DIRECTION_EAST]++;
       }
     }

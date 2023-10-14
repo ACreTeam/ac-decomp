@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_mail.h"
 #include "m_item_name.h"
+#include "m_handbill_data.h"
 
 #ifdef __cplusplus
 extern "C" {
