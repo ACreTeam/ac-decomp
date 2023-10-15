@@ -237,6 +237,9 @@ m_snowman.c:
 m_view.c:
     .text: [0x803F3E58, 0x803F4E08]
     .rodata: [0x806433D8, 0x80643408]
+m_roll_lib.c:
+    .text: [0x803F6570, 0x803F76F0]
+    .rodata: [0x806434D8, 0x80643538]
 sys_stacks.c:
     .bss: [0x812F5670, 0x812F9670]
 m_vibctl.c:

@@ -83,6 +83,12 @@ typedef union collision_bg_u {
   u32 raw;
 } mCoBG_Collision_u;
 
+#define mCoBG_HIT_WALL       (1 << 0) /* in contact with *any* wall        */
+#define mCoBG_HIT_WALL_FRONT (1 << 1) /* in contact with wall to the front */
+#define mCoBG_HIT_WALL_RIGHT (1 << 2) /* in contact with wall to the right */
+#define mCoBG_HIT_WALL_LEFT  (1 << 3) /* in contact with wall to the left  */
+#define mCoBG_HIT_WALL_BACK  (1 << 4) /* in contact with wall to the back  */
+
 typedef struct collision_bg_check_result_s {
   u32 on_ground:1;
   u32 hit_attribute_wall:5;
@@ -172,6 +178,9 @@ extern void mCoBG_Ut2SetDefaultOffset(int ut_x, int ut_z);
 extern int mCoBG_CheckWaveAttr(u32 attribute);
 extern int mCoBG_CheckPlant(xyz_t wpos);
 extern void mCoBG_InitBoatCollision();
+extern int mCoBG_CheckAttribute_BallRolling(s16* angles, const xyz_t* wpos);
+extern f32 mCoBG_CheckBallRollingArea(s16 angle, const xyz_t* wpos);
+extern int mCoBG_ExistHeightGap_KeepAndNow_Detail(xyz_t wpos);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();
