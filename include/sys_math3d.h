@@ -31,6 +31,7 @@ typedef struct math_3d_triangle_s {
 } Math3D_triangle_c; // size = 0x34
 
 extern f32 Math3DVecLength(xyz_t* vec);
+extern f32 Math3DVecLengthSquare2D(f32 x, f32 y);
 extern void sMath_RotateX(xyz_t* pos, f32 rad);
 extern void sMath_RotateY(xyz_t* pos, f32 rad);
 extern void sMath_RotateZ(xyz_t* pos, f32 rad);

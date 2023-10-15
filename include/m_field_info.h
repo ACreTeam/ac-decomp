@@ -12,6 +12,9 @@ extern "C" {
 #endif
 
 /* acre unit world size */
+#define mFI_UNIT_BASE_SIZE 40
+#define mFI_UNIT_BASE_SIZE_F ((f32)mFI_UNIT_BASE_SIZE)
+
 #define mFI_UT_WORLDSIZE_X 40
 #define mFI_UT_WORLDSIZE_Z 40
 
