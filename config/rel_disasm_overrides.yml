@@ -9,3 +9,5 @@ symbol_aligns:
     0x8064F860: 32 # data right after m_camera2 TU
     0x80C78B20: 32 # mFM_grd_s_cliff_tex
     0x80F8C460: 32 # mFM_grd_s_rail_tex
+    0x80657200: 32 # .data msg.o
+    0x81297E80: 32 # .bss msg.o

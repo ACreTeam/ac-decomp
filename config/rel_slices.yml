@@ -149,6 +149,10 @@ m_mail_password_check.c:
 m_mark_room.c:
     .text: [0x803BEC9C, 0x803BF210]
     .rodata: [0x806426D8, 0x806426E8]
+m_melody.c:
+    .text: [0x803BF210, 0x803BF464]
+    .data: [0x806571D8, 0x80657200]
+    .bss: [0x81297E68, 0x81297E80]
 m_museum.c:
     .text: [0x803C6228, 0x803C74C0]
     .rodata: [0x80642938, 0x80642950]
