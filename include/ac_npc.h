@@ -7,6 +7,7 @@
 #include "ac_npc_h.h"
 #include "m_npc_schedule.h"
 #include "m_actor_dlftbls.h"
+#include "m_npc.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,19 +56,24 @@ struct ac_npc_clip_s {
 };
 
 typedef struct npc_info_s {
-  mNPS_schedule_c* schedule;
-  mNpc_NpcList_c* list;
   Animal_c* animal;
-  void* event; // TODO: EventNpc struct
+  mNpc_NpcList_c* list;
+  mNPS_schedule_c* schedule;
+  mNpc_EventNpc_c* event;
+  mNpc_MaskNpc_c* mask;
+  mActor_name_t npc_name;
 } NpcActorInfo_c;
 
 struct npc_actor_s {
   ACTOR actor_class;
+  int _174;
+  int _178;
   NpcActorInfo_c npc_info;
-  // TODO: finish
-  u8 _174[0x718 - 0x184];
+  u8 _194[0x718 - 0x194];
   int texture_bank_idx; // TEMP: this is part of draw struct
-  u8 _71C[0x9D8 - 0x71C];
+  u8 _71C[0x978 - 0x71C];
+  s16 melody_inst;
+  u8 _97A[0x9D8 - 0x97A];
 };
 
 extern ACTOR_PROFILE Npc_Profile;

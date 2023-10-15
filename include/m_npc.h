@@ -196,6 +196,25 @@ typedef struct npc_list_s {
   mActor_name_t reward_furniture;
 } mNpc_NpcList_c;
 
+typedef struct event_npc_s {
+  mActor_name_t event_id; /* event NPC id */
+  mActor_name_t texture_id; /* real NPC id which is used for texture data */
+  mActor_name_t npc_id; /* non-texture NPC id used for other NPC data */
+  mActor_name_t cloth_id; /* cloth texture id */
+  u8 exists; /* has the actor been spawned yet? */
+  u8 in_use; /* is this event npc structure being used? */
+  u16 _A; /* exists based on size of structure, seems unused */
+} mNpc_EventNpc_c;
+
+typedef struct mask_npc_s {
+  mActor_name_t mask_id; /* 'mask' actor id */
+  mActor_name_t npc_id; /* NPC actor id whose data will be used */
+  mActor_name_t cloth_id; /* cloth actor id */
+  u8 exists; /* has the actor been spawned yet? */
+  u8 in_use; /* is this mask npc structure being used? */
+  Animal_c animal_data; /* animal data is copied if the mask npc is a standard villager NPC */
+} mNpc_MaskNpc_c;
+
 /* anm_id could also just be a Animal_c pointer */
 extern void mNpc_GetNpcWorldNameAnm(u8* name, AnmPersonalID_c* anm_id);
 extern int mNpc_CheckFreeAnimalPersonalID(AnmPersonalID_c* anm_id);
