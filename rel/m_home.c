@@ -252,7 +252,7 @@ extern void mHm_SetDefaultPlayerRoomData(int home_no) {
 
   Save_Set(homes[home_no & 3].floors[mHm_ROOM_MAIN].layer_main.items[ut_z][ut_x], l_mHm_player_room_default_data[home_no & 3].item);
   Save_Set(homes[home_no & 3].floors[mHm_ROOM_MAIN].layer_main.items[1][1], FTR_ORANGEBOX);
-  Save_Set(homes[home_no & 3].floors[mHm_ROOM_MAIN].layer_secondary.items[1][1], ITM_COLLEGERULE);
+  Save_Set(homes[home_no & 3].floors[mHm_ROOM_MAIN].layer_secondary.items[1][1], ITM_DIARY00);
 
   for (i = 0; i < mHm_ROOM_NUM; i++) {
     Save_Set(homes[home_no & 3].floors[i].wall_floor.flooring_idx, l_mHm_player_room_default_data[home_no & 3].floor_num);

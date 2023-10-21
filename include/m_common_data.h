@@ -280,7 +280,7 @@ typedef struct common_data_s {
   /* 0x028894 */ s16 balloon_state; /* balloon's current state */
   /* 0x028896 */ s16 balloon_last_spawn_min; /* last minute the balloon was spawned */
   /* 0x028898 */ f32 balloon_spawn_percent; /* chance that a balloon will spawn */
-  /* 0x02889C */ int nook_shop_state; /* adjusted based on any current events happening to Nook's shop */
+  /* 0x02889C */ int tanuki_shop_status; /* adjusted based on any current events happening to Nook's shop */
   /* 0x0288A0 */ u8 pad_connected; /* is gamepad 0 connected? */
   /* 0x0288A1 */ u8 _288a1[0x02DB40 - 0x0288A1];
   /* 0x02DB40 */ u8 auto_nwrite_set; /* when true, saved nwrite time will be utilized. Seems to be used to keep same date for fishing tourney stuff. */
