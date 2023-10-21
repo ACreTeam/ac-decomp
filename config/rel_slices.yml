@@ -58,6 +58,10 @@ m_common_data.c:
 m_controller.c:
     .text: [0x80395BE8, 0x80396120]
     .rodata: [0x80641D20, 0x80641D50]
+m_debug_display.c:
+    .text: [0x80396198, 0x803965E4]
+    .data: [0x806512D8, 0x80651328]
+    .bss: [0x81294008, 0x81294010]
 m_debug_hayakawa.c:
     .text: [0x803965E4, 0x803973E8]
     .rodata: [0x80641D50, 0x80641D90]
