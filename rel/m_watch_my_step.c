@@ -493,7 +493,7 @@ static void mWt_mybell_confirmation_move(GAME_PLAY* play) {
     }
   }
 
-  if ((u32)i == 8 || mEv_CheckFirstJob() == TRUE || (i <= 4 && Common_Get(nook_shop_state) == 3)) { // TODO: shop state enum, this is likely raffle
+  if ((u32)i == 8 || mEv_CheckFirstJob() == TRUE || (i <= 4 && Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI)) {
     if (S_mybell_conf.update_money == TRUE) {
       S_mybell_conf.all_money = get_all_money();
       mWt_set_coin_se(FALSE);

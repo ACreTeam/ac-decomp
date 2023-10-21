@@ -9,7 +9,7 @@
 
 int fuusen_DEBUG_mode_flag;
 
-extern void Balloon_init(GAME_PLAY*) {
+extern void Balloon_init(GAME_PLAY* play) {
   Common_Set(balloon_state, Balloon_STATE_DEAD);
   Common_Set(balloon_last_spawn_min, 0);
   Common_Set(balloon_spawn_percent, 0.05f);

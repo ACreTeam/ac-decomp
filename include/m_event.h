@@ -20,6 +20,9 @@ extern "C" {
 #define mEv_SCHEDULE_MULTIDAY 0x40 /* event scheduled over more than a single day */
 #define mEv_SCHEDULE_TODAY 0x80 /* event will be active on the day loaded */
 
+#define mEv_TO_DAY(month_day) ((lbRTC_day_t)(month_day))
+#define mEv_TO_MONTH(month_day) ((lbRTC_month_t)((month_day) >> 8))
+
 typedef union event_monthday_s {
   struct {
     s8 month;
@@ -499,6 +502,8 @@ extern mEv_place_data_c* mEv_get_common_place(int type, s8 id);
 extern void mEv_set_status(int event, s16 status);
 extern void mEv_GetEventWeather(s16* weather, s16* intensity);
 extern int mEv_CheckRealArbeit();
+extern int mEv_CheckEvent(u32 event);
+extern u16 mEv_get_bargain_day();
 
 extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
 extern void mEv_ClearEventInfo();

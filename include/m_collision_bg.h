@@ -181,6 +181,7 @@ extern void mCoBG_InitBoatCollision();
 extern int mCoBG_CheckAttribute_BallRolling(s16* angles, const xyz_t* wpos);
 extern f32 mCoBG_CheckBallRollingArea(s16 angle, const xyz_t* wpos);
 extern int mCoBG_ExistHeightGap_KeepAndNow_Detail(xyz_t wpos);
+extern int mCoBG_GetHoleNumber(xyz_t wpos);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();

@@ -1087,7 +1087,7 @@ extern int mMpswd_check_present_user(mActor_name_t item) {
       }
       else if (
         (item >= ITM_RED_BALLOON && item <= ITM_BUNNY_O_BALLOON) ||
-        (item >= ITM_COLLEGERULE && item <= ITM_CALLIGRAPHY_PAD) ||
+        (item >= ITM_DIARY00 && item <= ITM_DIARY15) ||
         (item >= ITM_BLUEBELL_FAN && item <= ITM_LEAF_FAN) ||
         (item >= ITM_YELLOW_PINWHEEL && item <= ITM_FANCY_PINWHEEL) ||
         (item >= ITM_GOLDEN_NET && item <= ITM_GOLDEN_ROD) ||

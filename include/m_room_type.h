@@ -146,5 +146,6 @@ extern int mRmTp_Index2LightSwitchStatus(int index);
 extern int mRmTp_NowSceneLightSwitchON();
 extern int mRmTp_NowSceneLightSwitchOFF();
 extern void mRmTp_MakeFtrNoTable(mActor_name_t* dst, mActor_name_t* src);
+extern u8* mRmTp_CheckFtrBirthInfoTop();
 
 #endif

@@ -243,7 +243,7 @@ static void mMl_get_mail_to_player_com(Mail_c* mail, PersonalID_c* recipient_pid
   mail->header.sender.type = mMl_NAME_TYPE_MUSEUM;
   
   mail->present = present;
-  mail->content.paper_type = (paper - ITM_PAPER_START) % 64;
+  mail->content.paper_type = (paper - ITM_PAPER_START) % PAPER_UNIQUE_NUM;
 }
 
 static int mMl_send_mail_box_com(PersonalID_c* recipient_pid, int player_no, Mail_c* mail, mActor_name_t present, mActor_name_t paper, int mail_no, u8* sender_name, u32 proc_type, u8 mail_type) {
