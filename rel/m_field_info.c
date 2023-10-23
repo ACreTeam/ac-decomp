@@ -2915,18 +2915,14 @@ extern mActor_name_t mFI_GetOtherFruit() {
 #else
 /* This implementation gives an equal 25% chance for all non-native fruit to be rolled */
 extern mActor_name_t mFI_GetOtherFruit() {
-  mActor_name_t other_fruit_tbl[ITM_FOOD_ORANGE - ITM_FOOD_APPLE];
-  int idx = 0;
-  mActor_name_t native_fruit = Save_Get(fruit);
-  mActor_name_t i;
+  mActor_name_t other_fruit = ITM_FOOD_START | RANDOM(4);
 
-  for (i = ITM_FOOD_APPLE; i < ITM_FOOD_ORANGE + 1; i++) {
-    if (i != native_fruit) {
-      other_fruit_tbl[idx++] = i;
-    }
+  /* simple fix is to add one if the random fruit is also greater than the town fruit */
+  if (other_fruit >= Save_Get(fruit)) {
+    other_fruit++;
   }
 
-  return other_fruit_tbl[RANDOM(4)];
+  return other_fruit;
 }
 #endif
 

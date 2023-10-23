@@ -240,6 +240,9 @@ extern int mMsg_Check_MainDisappear(mMsg_Window_c* msg_win);
 extern void mMsg_request_main_disappear_wait_type1(mMsg_Window_c* msg_win);
 extern void mMsg_request_main_appear_wait_type1(mMsg_Window_c* msg_win);
 extern void mMsg_Get_BodyParam(u32 table_rom_start, u32 data_rom_start, int entry_no, u32* data_addr, u32* data_size);
+extern void mMsg_Set_LockContinue(mMsg_Window_c* msg_win);
+extern void mMsg_Unset_LockContinue(mMsg_Window_c* msg_win);
+extern int mMsg_Get_msg_num(mMsg_Window_c* msg_win);
 
 #ifdef __cplusplus
 }

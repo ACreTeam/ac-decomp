@@ -71,7 +71,7 @@ typedef struct bridge_s {
 
 typedef struct lighthouse_s {
   lbRTC_ymd_c renew_time;
-  u8 players_switch_on;
+  u8 days_switched_on;
   u8 players_quest_started;
   u8 players_completed;
 } LightHouse_c;

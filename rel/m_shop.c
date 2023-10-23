@@ -785,7 +785,7 @@ extern u32 mSP_ItemNo2ItemPrice(mActor_name_t item_no) {
             case ITM_FOOD_ORANGE:
             {
               if (Save_Get(fruit) != item_no) {
-                return mSP_FORIEGN_FRUIT_PRICE;
+                return mSP_FOREIGN_FRUIT_PRICE;
               }
                 
               break;

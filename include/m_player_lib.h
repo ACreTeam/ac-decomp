@@ -27,11 +27,13 @@ extern void mPlib_change_player_cloth_info_lv2(Private_c* priv, mActor_name_t cl
 extern int mPlib_Get_address_able_display();
 extern int mPlib_get_player_actor_main_index(GAME_PLAY* play);
 extern int mPlib_check_player_actor_main_index_AllWade(GAME_PLAY* play);
+extern int mPlib_request_main_demo_wait_type1(GAME_PLAY* play, int param_2, void* param_3);
 
 extern void mPlib_Object_Exchange_keep_new_PlayerMdl(GAME_PLAY* play);
 extern void mPlib_Object_Exchange_keep_new_PlayerTex(GAME_PLAY* play, int bank_id, int base_idx);
 extern void mPlib_Object_Exchange_keep_new_PlayerFaceTex(GAME_PLAY* play);
 extern void mPlib_Object_Exchange_keep_new_PlayerFacePallet(GAME_PLAY* play, int bank_id, int base_idx);
+extern void mPlib_request_main_give_type1(GAME_PLAY* play, mActor_name_t item, int mode, int present, int on_surface);
 
 #define GET_PLAYER_ACTOR(play) get_player_actor_withoutCheck(play)
 #define GET_PLAYER_ACTOR_NOW() get_player_actor_withoutCheck((GAME_PLAY*)gamePT)
