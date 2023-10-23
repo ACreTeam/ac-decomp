@@ -71,10 +71,17 @@ struct npc_actor_s {
   NpcActorInfo_c npc_info;
   u8 _194[0x718 - 0x194];
   int texture_bank_idx; // TEMP: this is part of draw struct
-  u8 _71C[0x978 - 0x71C];
+  u8 _71C[0x974 - 0x71C];
+  s16 talk_base_anim_id;
+  s16 _976;
   s16 melody_inst;
-  u8 _97A[0x9D8 - 0x97A];
+  u8 _97A[0x994 - 0x97A]; /* TODO: 0x994 may be too big. Verify size. Seen in ac_normal_npc, ac_npc_engineer */
 };
+
+typedef struct animal_npc_actor_s {
+  NPC_ACTOR npc_actor_class;
+  u8 _994[0x9D8 - 0x994];
+} ANIMAL_NPC_ACTOR;
 
 extern ACTOR_PROFILE Npc_Profile;
 

@@ -20,6 +20,7 @@
 #include "ac_my_indoor.h"
 #include "ac_arrange_room.h"
 #include "ac_shop_umbrella.h"
+#include "ac_handOverItem.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,7 +45,7 @@ typedef struct clip_s {
   /* 0x07C */ aINS_Clip_c* insect_clip;
   /* 0x080 */ aMR_Clip_c* my_room_clip;
   /* 0x084 */ void* _084;
-  /* 0x088 */ void* _088;
+  /* 0x088 */ aHOI_Clip_c* handOverItem_clip;
   /* 0x08C */ aSTR_Clip_c* structure_clip;
   /* 0x090 */ eEC_EffectControl_Clip_c* effect_clip;
   /* 0x094 */ aTOL_Clip_c* tools_clip;

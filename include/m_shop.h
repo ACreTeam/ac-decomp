@@ -18,7 +18,7 @@ extern "C" {
 #define mSP_LOTTERY_ITEM_COUNT 3
 
 #define mSP_SIGNBOARD_PRICE 500
-#define mSP_FORIEGN_FRUIT_PRICE 2000
+#define mSP_FOREIGN_FRUIT_PRICE 2000
 
 #define mSP_NET_SALES_SUM  3000 // minimum sales sum before net appears (Nook's Cranny only)
 #define mSP_ROD_SALES_SUM  8000 // minimum sales sum before rod appears (Nook's Cranny only)

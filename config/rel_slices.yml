@@ -229,6 +229,10 @@ m_shop.c:
     .rodata: [0x80643270, 0x806432D0]
     .data: [0x8065D690, 0x8065DBF8]
     .bss: [0x8129F308, 0x8129F320]
+m_soncho.c:
+    .text: [0x803EC240, 0x803EDEC0]
+    .rodata: [0x806432D0, 0x806432E0]
+    .data: [0x8065DBF8, 0x8065DD70]
 m_start_data_init.c:
     .text: [0x803EDEC0, 0x803EED30]
     .rodata: [0x806432E0, 0x806432F0]
