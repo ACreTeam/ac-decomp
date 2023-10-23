@@ -4,7 +4,7 @@
 #include "types.h"
 #include "graph.h"
 #include "m_debug.h"
-#include "pad.h"
+#include "libu64/pad.h"
 #include "game.h"
 
 #ifdef __cplusplus
