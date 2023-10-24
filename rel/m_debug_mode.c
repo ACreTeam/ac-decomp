@@ -71,15 +71,13 @@ static debug_mode_print_buf_t debug_print_buffer[DEBUG_MODE_PRINT_BUF_COUNT] = {
   }
 };
 
-void Debug_Print_reset(){
+void Debug_Print_reset() {
   debug_print_flg = 0;
 }
 
-void Debug_Print_write(){
+void Debug_Print_write() {
   debug_print2_count = 0;
 }
-
-#pragma pool_data on
 
 static void Debug_Print_output(gfxprint_t* gfxprint) {
   static rgba_t print_color[8] = {
@@ -108,8 +106,6 @@ static void Debug_Print_output(gfxprint_t* gfxprint) {
     print_buf++;
   }
 }
-
-#pragma pool_data reset
 
 #define DEBUG_MODE_PRINT2_BUF_COUNT 80
 
@@ -238,28 +234,21 @@ static int Debug_console(pad_t* pad) {
 }
 
 static u32 draw_status = 0;
-
-
-void silly(){
-    draw_status = 1;
-}
-static int bg_draw_status = 0;
-static int bg_draw_status2 = 0;
-static int quest_draw_status = 0;
-static int shop_draw_status = 0;
-static int event_status = 0;
-static int zelda_malloc_status = 0; 
+static u32 bg_draw_status = 0;
+static u32 bg_draw_status2 = 0;
+static u32 quest_draw_status = 0;
+static u32 shop_draw_status = 0;
+static u32 event_status = 0;
+static u32 zelda_malloc_status = 0; 
 static u32 famicom_status = 0;    
-static int npc_draw_status = 0;
-static int field_assessment_status = 0;
-
+static u32 npc_draw_status = 0;
+static u32 field_assessment_status = 0;
 
 typedef struct debug_reg_keycombo_s {
   u16 held; /* Previously held */
   u16 pressed; /* Pressed this frame */
 } debug_reg_keycombo_t;
 
-#pragma pool_data on
 extern void Debug_mode_input(pad_t* pad) {
   int r_ofs = (-1 + debug_mode->mode + debug_mode->type * DEBUG_REG_GROUP) * DEBUG_REG_SIZE;
 
@@ -515,9 +504,7 @@ extern void Debug_mode_input(pad_t* pad) {
     }
   }
 }
-#pragma pool_data reset
 
-#pragma pool_data on
 static void Debug_mode_output_sub(gfxprint_t* gfxprint) {
   static u8 reg_name_data[] = " SOPQMYDUIZCNKXcsiWAVHGmnBdkb*********";
   static char* long_reg_name_data[] = {
@@ -588,9 +575,7 @@ static void Debug_mode_output_sub(gfxprint_t* gfxprint) {
     }
   }
 }
-#pragma pool_data reset
 
-#pragma pool_data on
 static void Debug_mode_zelda_malloc_info_output(gfxprint_t* gfxprint) {
   u32 max, free, alloc;
   u32 graph_alloc;
@@ -608,7 +593,6 @@ static void Debug_mode_zelda_malloc_info_output(gfxprint_t* gfxprint) {
     gfxprint_printf(gfxprint, "graph_alloc ﾉｺﾘ     %x", graph_alloc);
   }
 }
-#pragma pool_data reset
 
 /* sizeof(haniwa_tempo_data) == 6 */
 typedef struct {
@@ -646,12 +630,12 @@ static void DebugHaniwaTempo(gfxprint_t* gfxprint) {
 
 #define GFXLIST_RESERVED_SIZE (int)(512 * sizeof(Gfx)) /* requires 0x1000 bytes, or 512 free Gfx */
 
-#pragma pool_data on
 extern void Debug_mode_output(GRAPH* graph) {
   static int glist_used_bytes;
-  static int font_scale_select;
-  static int console_position_y;
   static int console_position_x;
+  static int console_position_y;
+  static int font_scale_select;
+
   Gfx* start_gfx;
   Gfx* last_gfx;
   int poly_free_bytes;
@@ -780,4 +764,3 @@ extern void Debug_mode_output(GRAPH* graph) {
     CLOSE_DISP(graph);
   }
 }
-#pragma pool_data reset
