@@ -69,11 +69,11 @@ m_debug_hayakawa.c:
     .text: [0x803965E4, 0x803973E8]
     .rodata: [0x80641D50, 0x80641D90]
     .data: [0x80651328, 0x80651358]
-#m_debug_mode.c:
-#    .text: [0x803973E8, 0x803984B4]
-#    .rodata: [0x80641D90, 0x80641DA8]
-#    .data: [0x80651358, 0x80651788]
-#    .bss: [0x81294010, 0x81294E18]
+m_debug_mode.c:
+    .text: [0x803973E8, 0x803984B4]
+    .rodata: [0x80641D90, 0x80641DA8]
+    .data: [0x80651358, 0x80651788]
+    .bss: [0x81294010, 0x81294E18]
 m_eappli.c:
     .text: [0x8039A5E0, 0x8039A960]
     .bss: [0x81295150, 0x81295550]

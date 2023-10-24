@@ -71,6 +71,14 @@ static debug_mode_print_buf_t debug_print_buffer[DEBUG_MODE_PRINT_BUF_COUNT] = {
   }
 };
 
+void Debug_Print_reset(){
+  debug_print_flg = 0;
+}
+
+void Debug_Print_write(){
+  debug_print2_count = 0;
+}
+
 #pragma pool_data on
 
 static void Debug_Print_output(gfxprint_t* gfxprint) {
@@ -229,16 +237,22 @@ static int Debug_console(pad_t* pad) {
   return FALSE;
 }
 
-static int draw_status;
-static int bg_draw_status;
-static int bg_draw_status2;
-static int quest_draw_status;
-static int shop_draw_status;
-static int event_status;
-static int zelda_malloc_status;
-static int famicom_status;
-static int npc_draw_status;
-static int field_assessment_status;
+static u32 draw_status = 0;
+
+
+void silly(){
+    draw_status = 1;
+}
+static int bg_draw_status = 0;
+static int bg_draw_status2 = 0;
+static int quest_draw_status = 0;
+static int shop_draw_status = 0;
+static int event_status = 0;
+static int zelda_malloc_status = 0; 
+static u32 famicom_status = 0;    
+static int npc_draw_status = 0;
+static int field_assessment_status = 0;
+
 
 typedef struct debug_reg_keycombo_s {
   u16 held; /* Previously held */
@@ -635,6 +649,9 @@ static void DebugHaniwaTempo(gfxprint_t* gfxprint) {
 #pragma pool_data on
 extern void Debug_mode_output(GRAPH* graph) {
   static int glist_used_bytes;
+  static int font_scale_select;
+  static int console_position_y;
+  static int console_position_x;
   Gfx* start_gfx;
   Gfx* last_gfx;
   int poly_free_bytes;
