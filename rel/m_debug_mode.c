@@ -119,8 +119,8 @@ static void Debug_Print2_output(gfxprint_t* gfxprint) {
     { 255, 255,  32, 192 }, /* Yellow */
     { 255, 150, 128, 192 }, /* Pink */
     { 128,  96,   0,  64 }, /* Brown */
-    { 196, 128,  16, 128 }, /* Dark Orange */
-    { 255, 196,  32, 128 }, /* Light Orange */
+    { 192, 128,  16, 128 }, /* Dark Orange */
+    { 255, 192,  32, 128 }, /* Light Orange */
     { 230, 230, 220,  64 }, /* White/Gray */
     { 128, 150, 255, 128 }, /* Lilac */
     { 128, 255,  32, 128 }  /* Lime green */
@@ -146,6 +146,12 @@ static void Debug_Print2_output(gfxprint_t* gfxprint) {
 static int Debug_console(pad_t* pad) {
   static f32 console_scroll;
   static f32 console_offset_x;
+  static f32 font_scale_x[] = {
+    1.0f, 0.9f, 0.8f, 0.7f, 0.6f, 0.5f, 0.4f, 0.3f,
+  };
+  static f32 font_scale_y[] = {
+    1.0f, 0.9f, 0.8f, 0.7f, 0.6f, 0.5f, 0.4f, 0.3f,
+  };
 
   void* sys_console = JC_JFWSystem_getSystemConsole();
 
@@ -258,7 +264,7 @@ extern void Debug_mode_input(pad_t* pad) {
         JW_JUTReport(320, 50, 1, "%.19s", boot_copyDate);
       }
 
-      JW_JUTReport(50, 60, 1, "Z=%d Z2=%d, ANB=%08x", zurumode_flag != 0, zurumode_flag >= 2, APPNMI_GETVAL());
+      JW_JUTReport(50, 60, 1, "Z=%d Z2=%d ANB=%08x", zurumode_flag != 0, zurumode_flag >= 2, APPNMI_GETVAL());
 
       /* Additionally, pressing Z after L + R will print out each bit in debug appNMI buffer */
       if (PAD_BUTTON_DOWN(pad->now.button, BUTTON_Z)) {
