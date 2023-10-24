@@ -10,6 +10,10 @@ extern "C" {
 
 extern ACTOR_PROFILE Rope_Profile;
 
+typedef struct rope_actor_s{
+    ACTOR actor;
+}ROPE_ACTOR;
+
 #ifdef __cplusplus
 }
 #endif
