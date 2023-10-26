@@ -1504,6 +1504,7 @@ extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
 #define DUMMY_HANIWA1 (DUMMY_HANIWA0 + 1)
 #define DUMMY_HANIWA2 (DUMMY_HANIWA1 + 1)
 #define DUMMY_HANIWA3 (DUMMY_HANIWA2 + 1)
+#define DUMMY_RADIO 0xF109
 #define DUMMY_DOUZOU 0xF11D
 
 #define RSV_DOOR 0xFE1B
