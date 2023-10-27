@@ -9,10 +9,10 @@
 
 #define MSEC(x) OSMicrosecondsToTicks(((u64)(x)) * (u64)1000)
 
-volatile int ResetStatus;             // 0x00
-volatile OSTime ResetTime;    // 0x08
-volatile OSTime RetraceTime;  // 0x10
-volatile int RetraceCount;    // 0x18
+volatile int ResetStatus = 0;             // 0x00
+volatile OSTime ResetTime = 0;    // 0x08
+volatile OSTime RetraceTime = 0;  // 0x10
+volatile int RetraceCount = 0;    // 0x18
 static irqmgr_t* this;               // 0x1C
 irqmgr_t irqmgr_class;
 
@@ -193,14 +193,20 @@ extern void CreateIRQManager(void* stack, size_t stack_size, int priority, u8 re
 
 #define VI_STACK_SIZE 0x1000
 
+static u16 vc_retraceCount;
 static OSMessage vc_msg;
 static OSMessageQueue* vc_msgq;
-static u16 vc_retraceCount;
-static u16 retrace; /* this probably belongs in one of the unused vi functions below */
 static u8 viThreadStack[VI_STACK_SIZE];
 static OSThread viThread;
 
-/* @unused ? viMgrMain(?) */
+/* @fabricated @unused */
+
+void viMgrMain(void){
+  static u16 retrace;
+
+  retrace = 0;
+  vc_retraceCount = 0;
+} 
 
 /* @unused ? osCreateViManager(?) */
 
