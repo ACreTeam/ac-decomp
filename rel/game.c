@@ -10,29 +10,18 @@
 #include "THA_GA.h"
 #include "libjsys/jsyswrapper.h"
 
-GAME* game_class_p;
-u8 game_GameFrame;
-f32 game_GameFrameF;
-f32 game_GameFrame_2F;
-f32 game_GameFrame__1F;
+GAME* gamePT = NULL;
 
 static u16 last_button[MAXCONTROLLERS];
 static u16 last_now_button[MAXCONTROLLERS];
 static u16 last_on_trigger[MAXCONTROLLERS];
 
-GAME* gamePT;
+u8 game_GameFrame;
+f32 game_GameFrameF;
+f32 game_GameFrame_2F;
+f32 game_GameFrame__1F;
 
-BSS_ORDER_GROUP_START
-  BSS_ORDER_ITEM(gamePT)
-  BSS_ORDER_ITEM(last_now_button)
-  BSS_ORDER_ITEM(last_on_trigger)
-  BSS_ORDER_ITEM(last_button)
-  BSS_ORDER_ITEM(game_GameFrame)
-  BSS_ORDER_ITEM(game_GameFrameF)
-  BSS_ORDER_ITEM(game_GameFrame_2F)
-  BSS_ORDER_ITEM(game_GameFrame__1F)
-  BSS_ORDER_ITEM(game_class_p)
-BSS_ORDER_GROUP_END
+GAME* game_class_p;
 
 static void game_move_first(GAME* this) {
   if (zurumode_flag) {
