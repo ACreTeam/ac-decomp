@@ -42,13 +42,9 @@
 #include "m_kabu_manager.h"
 #include "zurumode.h"
 
-static int debug_disp;
-static u8 l_renew_is;
+static int debug_disp = 0;
+static u8 l_renew_is = 0;
 
-BSS_ORDER_GROUP_START
-  BSS_ORDER_ITEM(debug_disp)
-  BSS_ORDER_ITEM(l_renew_is)
-BSS_ORDER_GROUP_END
 
 const lbRTC_time_c mTM_rtcTime_clear_code = {
   0xFF, 0xFF, 0xFF,
