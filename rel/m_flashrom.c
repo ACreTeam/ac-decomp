@@ -39,16 +39,11 @@
 #include "m_name_table.h"
 #include "zurumode.h"
 
-static int l_mfrm_msg_idx;
-static int l_mfrm_now_color;
+static int l_mfrm_msg_idx = 0;
+static int l_mfrm_now_color = 0;
 static mFRm_err_info_c l_mfrm_err_info[mFRm_ERROR_INFO_NUM];
 static int l_mfrm_err_debug[] = {0, 0, 0, 0, 0, 0};
 
-BSS_ORDER_GROUP_START
-  BSS_ORDER_ITEM(l_mfrm_msg_idx);
-  BSS_ORDER_ITEM(l_mfrm_now_color);
-  BSS_ORDER_ITEM(l_mfrm_err_info);
-BSS_ORDER_GROUP_END
 
 /**
  * @brief Set the current message index value.
