@@ -17,7 +17,7 @@ static u32 Handbillz_start;
 
 static void mHandbillz_aram_init();
 
-#pragma pool_data on
+
 extern void mHandbill_aram_init() {
   Ps_table_rom_start = JW_GetAramAddress(RESOURCE_PS_TABLE);
   Ps_rom_start = JW_GetAramAddress(RESOURCE_PS);

@@ -77,7 +77,7 @@ static void irqmgr_JamMesgForClient(irqmgr_mesg_t* msg) {
   }
 }
 
-#pragma pool_data on
+
 /**
  * @brief Handler function for pre-NMI message.
  **/
@@ -113,7 +113,7 @@ static void irqmgr_HandlePreNMI480() {
  **/
 static void irqmgr_HandlePreNMI500() {}
 
-#pragma pool_data on
+
 /**
  * @brief Handler for retrace message.
  **/
@@ -210,7 +210,7 @@ void viMgrMain(void){
 
 /* @unused ? osCreateViManager(?) */
 
-#pragma pool_data on
+
 /**
  * @brief Sets the VI event info. Stubbed outside this functionality.
  * 

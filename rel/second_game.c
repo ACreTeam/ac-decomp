@@ -12,7 +12,6 @@
 #include "sys_math.h"
 #include "m_nmibuf.h"
 
-#pragma pool_data on
 static u8 sound_ok;
 static u8 contpad_ok;
 static u8 frame_count;
@@ -93,4 +92,3 @@ extern void second_game_init(GAME* game) {
   init_rnd();
   __osInitialize_common();
 }
-#pragma pool_data reset

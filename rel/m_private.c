@@ -1003,7 +1003,6 @@ static void mPr_SetMotherMailMonthly(mPr_mother_mail_data_c* send_data, int mont
   }
 }
 
-#pragma pool_data on
 static void mPr_GetMotherMailMonthlyData(mPr_mother_mail_data_c* send_data, int* mail_no, mActor_name_t* present, int* event_no, int month, int not_send_num) {
   static int mail_start_no_table[mTM_SEASON_NUM] = { 0x18C, 0x192, 0x186, 0x19E };
   static mActor_name_t may_2_item_table[1] = { ITM_CLOTH105 }; // fortune shirt
@@ -1073,7 +1072,6 @@ static void mPr_GetMotherMailMonthlyData(mPr_mother_mail_data_c* send_data, int*
     *present = ITM_FOOD_MUSHROOM;
   }
 }
-#pragma pool_data reset
 
 static int mPr_GetMotherMailNormalNotSendNum(mPr_mother_mail_data_c* send_data) {
   int not_send_num = 0;

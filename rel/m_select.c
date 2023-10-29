@@ -903,7 +903,6 @@ static void select_print_wait(gfxprint_t* gfxprint) {
   gfxprint_printf(gfxprint, "%s", msgs[msg_no]);
 }
 
-#pragma pool_data on
 static void select_print_course_name(GAME_SELECT* select, gfxprint_t* gfxprint) {
   const char* name;
   int i;
@@ -940,14 +939,12 @@ static void select_print_course_name(GAME_SELECT* select, gfxprint_t* gfxprint) 
       gfxprint_printf(gfxprint, "%s", name);
   }
 }
-#pragma pool_data reset
 
 static void select_print_rtc(gfxprint_t* gfxprint, GAME_SELECT* select) {
   gfxprint_locate8x8(gfxprint, 23, 6);
   gfxprint_printf(gfxprint, "RTC  Z:USE");
 }
 
-#pragma pool_data on
 static void select_print_time_sub(gfxprint_t* gfxprint, GAME_SELECT* select, lbRTC_time_c* time) {
   const char* weekday_name;
 
@@ -1035,7 +1032,6 @@ static void select_print_time_sub(gfxprint_t* gfxprint, GAME_SELECT* select, lbR
     }
   }
 }
-#pragma pool_data reset
 
 static void select_print_time(gfxprint_t* gfxprint, GAME_SELECT* select) {
   lbRTC_time_c time;

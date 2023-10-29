@@ -692,7 +692,7 @@ static void aHNW_save_end_wait(ACTOR* actor, GAME* game) {
   }
 }
 
-#pragma pool_data on
+
 static void aHNW_pl_approach_door(ACTOR* actor, GAME* game) {
   static f32 chk_posX[mHS_HOUSE_NUM] = { 2095.0f, 2385.0f, 2095.0f, 2385.0f };
   static f32 chk_val[mHS_HOUSE_NUM] = { 1.0f, -1.0f, 1.0f, -1.0f };

@@ -28,7 +28,6 @@ u8 SegmentBaseAddress[0x40];
 int ScreenWidth = SCREEN_WIDTH;
 int ScreenHeight = SCREEN_HEIGHT;
 
-#pragma pool_data on
 extern void mainproc (void* val){ 
 
     irqmgr_client_t irqClient;
@@ -77,7 +76,6 @@ extern void mainproc (void* val){
         osRecvMesg(&irqMgrMsgQueue, &msg, 1);
     } while (msg != NULL);
 }
-#pragma pool_data reset
 
 
 u32 entry(void) {

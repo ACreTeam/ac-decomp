@@ -289,8 +289,6 @@ extern void mTM_renewal_renew_time() {
   }
 }
 
-// TODO: Hack. This fixes an issue where pooling data is necessary.
-#pragma pool_data on
 /**
  * Display the current time in debug mode if certain conditions are met.
  *
@@ -348,7 +346,6 @@ static void mTM_disp_time(int unused) {
     CLOSE_DISP(g);
   }
 }
-#pragma pool_data reset
 
 #define mTM_TIMESTEP_NUM 4
 

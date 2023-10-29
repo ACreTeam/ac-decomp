@@ -161,7 +161,7 @@ static void aDOU_set_bgOffset(ACTOR*, int);
 static void aDOU_setup_action(ACTOR*, int);
 static void aDOU_keep_item(ACTOR*);
 
-#pragma pool_data on
+
 static void aDOU_actor_ct(ACTOR* actor, GAME* game) {
   static cKF_Skeleton_R_c* skl[2] = { &cKF_bs_r_obj_s_douzou, &cKF_bs_r_obj_w_douzou };
 

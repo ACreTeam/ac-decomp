@@ -254,7 +254,6 @@ static void mMsr_ClearCandidateMushroom(mFM_fg_c* fg, u16* candidates, u8* candi
   }
 }
 
-#pragma pool_data on
 /**
  * @brief Clears a set number of mushrooms around town while ignoring the acre the player is in.
  * 
@@ -321,7 +320,6 @@ static void mMsr_ClearMushrooms(int clear_num, int block_x, int block_z) {
     }
   }
 }
-#pragma pool_data reset
 
 /**
  * @brief Clears mushrooms upon first load.

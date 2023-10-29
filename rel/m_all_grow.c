@@ -30,7 +30,7 @@ static int l_haniwa_num_debug;
 static mAGrw_block_c l_fossil_block[mAGrw_FOSSIL_NUM];
 static mAGrw_block_c l_haniwa_block[mAGrw_HANIWA_NUM];
 
-#pragma pool_data on
+
 static void mAGrw_ClearDebugData() {
   l_fossil_num_debug = 0;
   l_haniwa_num_debug = 0;
@@ -95,7 +95,7 @@ static void mAGrw_SetDebugDataBlock(mActor_name_t* fg_items, u16* deposit, mAGrw
   }
 }
 
-#pragma pool_data on
+
 static void mAGrw_SetDebugData() {
   mFM_fg_c* fg_items = Save_Get(fg[0]);
   u16* deposit = Save_Get(deposit[0]);
@@ -114,7 +114,7 @@ static void mAGrw_SetDebugData() {
 }
 #pragma pool_data reset
 
-#pragma pool_data on
+
 extern void mAGrw_PrintFossilHaniwa_debug(gfxprint_t* gfxprint) {
   gfxprint_color(gfxprint, 240, 50, 50, 255);
   gfxprint_locate8x8(gfxprint, 3, 17);

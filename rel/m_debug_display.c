@@ -51,7 +51,7 @@ extern void* nt_txt;
 extern Gfx darrow_model[];
 extern Gfx camera_model[];
 
-#pragma pool_data off
+
 extern void Debug_Display_output(GAME_PLAY* play){ 
     static DEBUG_DISP_PROC debug_display_output_proc[] = { debug_display_output_sprite_16x16_I8, debug_display_output_polygon};
     static Debug_display_info debug_display_shape_data[] = {
@@ -69,7 +69,7 @@ extern void Debug_Display_output(GAME_PLAY* play){
 }
 
 extern Gfx RCP_debug_texture_16x16_8[];
-#pragma pool_data on
+
 
 static void debug_display_output_sprite_16x16_I8(Debug_display* display, void* txt, GAME_PLAY* play){
 

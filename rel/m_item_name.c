@@ -294,7 +294,6 @@ extern void mIN_copy_name_str(u8* dst, mActor_name_t item) {
   }
 }
 
-#pragma pool_data on
 /**
  * @brief Gets the artticle type for a given item.
  * 
@@ -353,4 +352,3 @@ extern int mIN_get_item_article(mActor_name_t item) {
 
   return article;
 }
-#pragma pool_data reset

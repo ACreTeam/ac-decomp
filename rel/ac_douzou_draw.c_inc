@@ -4,7 +4,7 @@
 #include "bg_item_h.h"
 #include "m_house.h"
 
-#pragma pool_data on
+
 static int aDOU_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape, u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
   static rgba_t primcolor[mHS_HOUSE_NUM] = {
     { 255, 255,   0, 255 },
@@ -74,7 +74,7 @@ static int aDOU_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, in
 }
 #pragma pool_data reset
 
-#pragma pool_data on
+
 static void aDOU_actor_draw(ACTOR* actor, GAME* game) {
   GAME_PLAY* play = (GAME_PLAY*)game;
   GRAPH* graph = game->graph;

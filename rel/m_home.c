@@ -136,7 +136,7 @@ static mActor_name_t l_proom_cottage_tmp[UT_X_NUM * UT_Z_NUM] = {
 #define HANIWA_MSG_LINES 4
 
 // TODO: fix me
-#pragma pool_data on
+
 
 /**
  * @brief Clears the save data for a given home.

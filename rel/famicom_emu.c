@@ -76,7 +76,6 @@ void my_zelda_free(void* ptr){
 
     zelda_free(ptr);
 }
-#pragma pool_data off
 
 void famicom_emu_main(GAME* famicom){
     static GXColor black_color = {0,0,0,0};
@@ -131,8 +130,6 @@ void famicom_emu_main(GAME* famicom){
     }
     JW_EndFrame();
 }
-
-#pragma pool_data on
 
 
 void famicom_emu_init(GAME_FAMICOM_EMU* famicom){

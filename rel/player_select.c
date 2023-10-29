@@ -246,7 +246,6 @@ static void player_select_main(GAME* game) {
 
 extern void player_select_cleanup(GAME* game) { }
 
-#pragma pool_data on
 extern void player_select_init(GAME* game) {
   GAME_PLAYER_SELECT* player_select = (GAME_PLAYER_SELECT*)game;
   GRAPH* g = game->graph;
@@ -333,4 +332,3 @@ extern void player_select_init(GAME* game) {
   Common_Set(player_data_mode, 0);
   Common_Set(scene_from_title_demo, -1);
 }
-#pragma pool_data reset

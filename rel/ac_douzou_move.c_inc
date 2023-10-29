@@ -74,7 +74,7 @@ static void aDOU_keep_item(ACTOR* actor) {
   }
 }
 
-#pragma pool_data on
+
 static int aDOU_setEffect_sub(ACTOR* actor, GAME* game, int house_no, int color) {
   static xyz_t offset_tbl[mHS_HOUSE_NUM] = {
     { 1.0f, 68.0f, 14.0f },

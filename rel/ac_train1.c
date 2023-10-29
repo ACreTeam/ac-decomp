@@ -157,7 +157,7 @@ static void aTR1_passenger_ctrl(ACTOR* actor){
     }
 }
 
-#pragma pool_data on
+
 static void aTR1_setupAction(ACTOR* actor, int action){
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
     
