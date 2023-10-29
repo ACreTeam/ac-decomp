@@ -496,6 +496,10 @@ ac_structure.c:
     .rodata: [0x8064AC30, 0x8064AC38]
     .data: [0x806C6C00, 0x806C6ED0]
     .bss: [0x813280F0, 0x8133DEB0]
+ac_toudai.c:
+    .text: [0x805BEA00, 0x805BFC28]
+    .rodata: [0x8064ACB0,0x8064AD28]
+    .data: [0x806C7200, 0x806C72D0]
 ac_train0.c:
     .text: [0x805BFC28, 0x805C0614]
     .rodata: [0x8064AD28, 0x8064AD80]

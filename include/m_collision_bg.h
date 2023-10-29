@@ -153,6 +153,16 @@ typedef struct bg_register_s {
   f32* scale_percent;
 } mCoBG_bg_regist_c;
 
+typedef struct collision_offset_table_s {
+    u8 unit_attribute;
+    s8 centerRight_offset; 
+    s8 leftUp_offset;
+    s8 leftDown_offset;
+    s8 rightDown_offset;
+    s8 rightUp_offset;
+    s8 slate_switch;
+} mCoBG_OffsetTable_c;
+
 extern u32 mCoBG_Wpos2BgAttribute_Original(xyz_t wpos);
 extern u32 mCoBG_Wpos2Attribute(xyz_t wpos, char* is_diggable);
 extern int mCoBG_CheckWaterAttribute(u32 attribute);
@@ -171,6 +181,7 @@ extern int mCoBG_BnumUnum2HoleNumber(int block_x, int block_z, int ut_x, int ut_
 extern u32 mCoBG_UtNum2BgAttr(int ut_x, int ut_z);
 extern f32 mCoBG_UtNum2UtCenterY(int ut_x, int ut_z);
 extern int mCoBG_CheckCliffAttr(u32 attribute);
+extern void mCoBG_SetPluss5PointOffset_file(xyz_t pos, mCoBG_OffsetTable_c offsetptr, const char* file, int line);
 extern int mCoBG_Change2PoorAttr(mCoBG_Collision_u* col);
 extern int mCoBG_CheckHole(xyz_t wpos);
 extern int mCoBG_CheckSkySwing(xyz_t wpos);
