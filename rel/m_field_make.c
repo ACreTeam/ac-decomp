@@ -53,21 +53,13 @@ typedef struct police_pos_s {
 
 static mFM_police_pos_c l_mfm_police_pos = { 0, 0, 0, 0 };
 
-int l_bg_disp_num;
-int l_bg_disp_size;
+int l_bg_disp_num = 0;
+int l_bg_disp_size = 0;
 static u16 mFM_pal_area[11][16] ATTRIBUTE_ALIGN(32);
 mFM_fdinfo_c* g_fdinfo;
-static int l_block_kind[BLOCK_TOTAL_NUM];
 static u8 l_block_type[BLOCK_TOTAL_NUM];
+static int l_block_kind[BLOCK_TOTAL_NUM];
 
-BSS_ORDER_GROUP_START
-  BSS_ORDER_ITEM(l_bg_disp_num);
-  BSS_ORDER_ITEM(l_bg_disp_size);
-  BSS_ORDER_ITEM(mFM_pal_area);
-  BSS_ORDER_ITEM(g_fdinfo);
-  BSS_ORDER_ITEM(l_block_kind);
-  BSS_ORDER_ITEM(l_block_type);
-BSS_ORDER_GROUP_END
 
 static void mFM_SortBGData(mFM_bg_data_c** sorted_data_p, mFM_bg_data_c* data, int count) {
   mFM_bg_data_c** sorted_data_p_copy = sorted_data_p;
