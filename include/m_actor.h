@@ -21,6 +21,8 @@ typedef void (*mActor_proc)(ACTOR*, GAME*);
 #define mAc_MAX_ACTORS 200
 
 #define ACTOR_STATE_NONE 0
+#define ACTOR_STATE_0 (1 << 0)
+#define ACTOR_STATE_2 (1 << 2)
 #define ACTOR_STATE_NO_MOVE_WHILE_CULLED (1 << 4)
 #define ACTOR_STATE_NO_DRAW_WHILE_CULLED (1 << 5)
 #define ACTOR_STATE_NO_CULL (1 << 6)
@@ -29,6 +31,7 @@ typedef void (*mActor_proc)(ACTOR*, GAME*);
 #define ACTOR_STATE_LIGHTING (1 << 22) // does lighting NOT affect this actor?
 #define ACTOR_STATE_24 (1 << 24)
 #define ACTOR_STATE_25 (1 << 25)
+#define ACTOR_STATE_26 (1 << 26)
 #define ACTOR_STATE_CAN_MOVE_IN_DEMO_SCENES (1 << 29)
 
 

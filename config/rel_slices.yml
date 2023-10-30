@@ -195,6 +195,10 @@ m_olib.c:
     .rodata: [0x80642A00, 0x80642A10]
 m_pause.c:
     .text: [0x803D8A34, 0x803D8AEC]
+m_player_call.c:
+    .text: [0x803D8AEC, 0x803D8CEC]
+    .data: [0x8065B9A0, 0x8065B9C8]
+    .bss: [0x8129CC98, 0x8129CCA8]
 m_police_box.c:
     .text: [0x803DE8A0, 0x803DEE38]
     .rodata: [0x806431C8, 0x806431D8]

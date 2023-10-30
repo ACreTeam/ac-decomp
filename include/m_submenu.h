@@ -104,6 +104,8 @@ struct submenu_s {
 };
 
 extern void mSM_open_submenu(Submenu* submenu, int menu_type, int arg0, int arg1);
+extern void load_player(Submenu* submenu);
+extern void* mSM_ovlptr_dllcnv(void* vram, Submenu* submenu, int);
 extern void mSM_submenu_dt(Submenu*);
 extern void mSM_submenu_ovlptr_cleanup(Submenu*);
 extern void mSM_submenu_ovlptr_init(GAME_PLAY*);

@@ -80,6 +80,11 @@ struct player_actor_s {
   /* TODO: finish */
 };
 
+void Player_actor_ct(ACTOR*, GAME*);
+void Player_actor_dt(ACTOR*, GAME*);
+void Player_actor_move(ACTOR*, GAME*);
+void Player_actor_draw(ACTOR*, GAME*);
+
 #ifdef __cplusplus
 }
 #endif
