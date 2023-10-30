@@ -487,6 +487,10 @@ ac_douzou.c:
     .text: [0x805AD6D8, 0x805AE704]
     .rodata: [0x8064A7C0, 0x8064A7E8]
     .data: [0x806C4DF0, 0x806C5018]
+ac_dump.c:
+    .text: [0x805AE704, 0x805AECE8]
+    .rodata: [0x8064A7E8,0x8064A808]
+    .data: [0x806C5018, 0x806C5120]
 ac_radio.c:
     .text: [0x805B887C,0x805B8C7C]
     .rodata: [0x8064AB58,0x8064AB68]
