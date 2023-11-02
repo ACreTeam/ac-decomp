@@ -1,0 +1,23 @@
+
+static void aEVD_set_talk_info(ACTOR* actorx) {
+  mDemo_Set_msg_num(0x3146);
+}
+
+static void aEVD_talk_request(ACTOR* actorx, GAME* game) {
+  mDemo_Request(mDemo_TYPE_TALK, actorx, &aEVD_set_talk_info);
+}
+
+static int aEVD_talk_init(ACTOR* actorx, GAME* game) {
+  mDemo_Set_ListenAble();
+  return TRUE;
+}
+
+static int aEVD_talk_end_chk(ACTOR* actorx, GAME* game) {
+  int res = FALSE;
+
+  if (mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {
+    res = TRUE;
+  }
+
+  return res;
+}

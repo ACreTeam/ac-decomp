@@ -29,30 +29,64 @@ enum {
   aNPC_ATTENTION_TYPE_NUM
 };
 
+typedef void (*aNPC_TALK_REQUEST_PROC)(ACTOR*, GAME*);
+typedef int (*aNPC_TALK_INIT_PROC)(ACTOR*, GAME*);
+typedef int (*aNPC_TALK_END_CHECK_PROC)(ACTOR*, GAME*);
+
+typedef struct npc_ct_data_s {
+  mActor_proc move_proc;
+  mActor_proc draw_proc;
+  int _08;
+  aNPC_TALK_REQUEST_PROC talk_request_proc;
+  aNPC_TALK_INIT_PROC talk_init_proc;
+  aNPC_TALK_END_CHECK_PROC talk_end_check_proc;
+  int _18;
+} aNPC_ct_data_c;
+
 typedef int (*aNPC_SETUP_ACTOR_PROC)(GAME_PLAY*, mActor_name_t, s8, int, s16, int, int, int, int);
 typedef void (*aNPC_DMA_DRAW_DATA_PROC)(aNPC_draw_data_c*, mActor_name_t);
 typedef void (*aNPC_FREE_OVERLAY_AREA_PROC)(ACTOR_DLFTBL*);
 typedef ACTOR* (*aNPC_GET_ACTOR_AREA_PROC)(size_t, const char*, int);
 typedef void (*aNPC_FREE_ACTOR_AREA_PROC)(ACTOR*);
 typedef void (*aNPC_SET_ATTENTION_REQUEST_PROC)(u8, ACTOR*, xyz_t*);
+typedef int (*aNPC_BIRTH_CHECK_PROC)(ACTOR*, GAME*);
+typedef void (*aNPC_CT_PROC)(ACTOR*, GAME*, aNPC_ct_data_c*);
+typedef void (*aNPC_DT_PROC)(ACTOR*, GAME*);
+typedef void (*aNPC_SAVE_PROC)(ACTOR*, GAME*);
+typedef void (*aNPC_INIT_PROC)(ACTOR*, GAME*);
+typedef void (*aNPC_MOVE_PROC)(ACTOR*, GAME*);
+typedef void (*aNPC_MOVE_BEFORE_PROC)(ACTOR*, GAME*);
+typedef void (*aNPC_MOVE_AFTER_PROC)(ACTOR*, GAME*);
+typedef void (*aNPC_DRAW_PROC)(ACTOR*, GAME*);
 
 typedef void (*aNPC_REBUILD_DMA_PROC)();
 
 typedef int (*aNPC_FORCE_CALL_REQ_PROC)(NPC_ACTOR*, int);
 
 struct ac_npc_clip_s {
-  aNPC_SETUP_ACTOR_PROC setupActor_proc;
-  void* _004;
-  aNPC_FREE_OVERLAY_AREA_PROC free_overlay_area_proc;
-  aNPC_GET_ACTOR_AREA_PROC get_actor_area_proc;
-  aNPC_FREE_ACTOR_AREA_PROC free_actor_area_proc;
-  aNPC_DMA_DRAW_DATA_PROC dma_draw_data_proc;
-  aNPC_SET_ATTENTION_REQUEST_PROC set_attention_request_proc;
-  void* _01C[(0x0F8 - 0x01C) / sizeof(void*)];
-  aNPC_REBUILD_DMA_PROC rebuild_dma_proc;
-  void* _0FC[(0x124 - 0x0FC) / sizeof(void*)];
-  aNPC_FORCE_CALL_REQ_PROC force_call_req_proc;
-  void* _128;
+  /* 0x000 */ aNPC_SETUP_ACTOR_PROC setupActor_proc;
+  /* 0x004 */ void* _004;
+  /* 0x008 */ aNPC_FREE_OVERLAY_AREA_PROC free_overlay_area_proc;
+  /* 0x00C */ aNPC_GET_ACTOR_AREA_PROC get_actor_area_proc;
+  /* 0x010 */ aNPC_FREE_ACTOR_AREA_PROC free_actor_area_proc;
+  /* 0x014 */ aNPC_DMA_DRAW_DATA_PROC dma_draw_data_proc;
+  /* 0x018 */ aNPC_SET_ATTENTION_REQUEST_PROC set_attention_request_proc;
+  /* 0x01C */ void* _01C[(0x0CC - 0x01C) / sizeof(void*)];
+  /* 0x0CC */ aNPC_BIRTH_CHECK_PROC birth_check_proc;
+  /* 0x0D0 */ aNPC_CT_PROC ct_proc;
+  /* 0x0D4 */ aNPC_DT_PROC dt_proc;
+  /* 0x0D8 */ aNPC_SAVE_PROC save_proc;
+  /* 0x0DC */ aNPC_INIT_PROC init_proc;
+  /* 0x0E0 */ aNPC_MOVE_PROC move_proc;
+  /* 0x0E4 */ aNPC_MOVE_BEFORE_PROC move_before_proc;
+  /* 0x0E8 */ aNPC_MOVE_AFTER_PROC move_after_proc;
+  /* 0x0EC */ void* _0EC;
+  /* 0x0F0 */ void* _0F0;
+  /* 0x0F4 */ aNPC_DRAW_PROC draw_proc;
+  /* 0x0F8 */ aNPC_REBUILD_DMA_PROC rebuild_dma_proc;
+  /* 0x0FC */ void* _0FC[(0x124 - 0x0FC) / sizeof(void*)];
+  /* 0x124 */ aNPC_FORCE_CALL_REQ_PROC force_call_req_proc;
+  /* 0x128 */ void* _128;
 };
 
 typedef struct npc_info_s {
