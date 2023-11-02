@@ -94,6 +94,8 @@ typedef struct mHandbillz_info_s {
   int header_back_start;
 } mHandbillz_Info_c;
 
+extern int mHandbillz_load(mHandbillz_Info_c* info);
+
 #ifdef __cplusplus
 }
 #endif

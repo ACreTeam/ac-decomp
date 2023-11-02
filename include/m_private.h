@@ -15,10 +15,6 @@
 extern "C" {
 #endif
 
-#define PLAYER_NUM 4
-#define FOREIGNER_NUM 1
-#define TOTAL_PLAYER_NUM (PLAYER_NUM + FOREIGNER_NUM)
-
 #define mPr_WALLET_MAX 99999
 #define mPr_DEPOSIT_MAX 999999999
 
@@ -56,8 +52,9 @@ enum {
 enum {
   mPr_SEX_MALE,
   mPr_SEX_FEMALE,
+  mPr_SEX_OTHER,
 
-  mPr_SEX_NUM
+  mPr_SEX_NUM = mPr_SEX_OTHER
 };
 
 enum {

@@ -291,7 +291,7 @@ static int aHNW_decide_msg_idx_dance(ACTOR* actor) {
     int house_arrange_idx = mHS_get_arrange_idx(Common_Get(player_no));
     mHm_hs_c* house = Save_GetPointer(homes[house_arrange_idx]);
     if (house->flags.has_saved == FALSE &&
-        mEv_CheckFirstJob() == TRUE && mNpc_GetFriendAnimalNum(Common_Get(now_private)) == 0
+        mEv_CheckFirstJob() == TRUE && mNpc_GetFriendAnimalNum(&Common_Get(now_private)->player_ID) == 0
     ) {
       res = aHNW_MSG_NEED_FRIEND; /* player owns this house, but is in intro and has not spoken to any villagers */
     }

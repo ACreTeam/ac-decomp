@@ -60,6 +60,7 @@ typedef u32 unknown;
 #endif
 
 #define ARRAY_SIZE(arr, type) (sizeof(arr) / sizeof(type))
+#define ARRAY_COUNT(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))

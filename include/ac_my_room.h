@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_actor.h"
 #include "ac_furniture.h"
+#include "m_room_type.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,6 +67,10 @@ typedef struct my_room_clip_s {
 /* TODO: my room actor */
 
 extern ACTOR_PROFILE My_Room_Profile;
+
+extern int aMR_CorrespondFurniture(mActor_name_t ftr0, mActor_name_t ftr1);
+extern int aMR_GetFurnitureUnit(mActor_name_t ftr);
+extern mActor_name_t aMR_FurnitureFg_to_FurnitureFgWithDirect(mActor_name_t ftr, int direct);
 
 #ifdef __cplusplus
 }
