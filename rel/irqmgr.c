@@ -89,7 +89,6 @@ static void irqmgr_HandlePreNMI() {
   osSetTimer(&this->timer, MSEC(400), 0, &this->_msgQueue, (OSMessage)IRQ_PRENMI450_MSG);
   irqmgr_JamMesgForClient(&this->msgPreNMI);
 }
-#pragma pool_data reset
 
 /**
  * @brief Handler for pre-NMI message (post 400ms).
@@ -132,7 +131,6 @@ static void irqmgr_HandleRetrace() {
   RetraceCount++;
   irqmgr_SendMesgForClient(&this->msgRetrace);
 }
-#pragma pool_data reset
 
 /**
  * @brief Main IRQ manager handler.
@@ -223,4 +221,3 @@ extern void osViSetEvent(OSMessageQueue* mesgq, OSMessage msg, u32 retcount) {
   vc_msg = msg;
   vc_retraceCount = retcount;
 }
-#pragma pool_data reset

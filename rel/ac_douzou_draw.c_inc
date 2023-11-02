@@ -72,8 +72,6 @@ static int aDOU_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, in
 
   return TRUE;
 }
-#pragma pool_data reset
-
 
 static void aDOU_actor_draw(ACTOR* actor, GAME* game) {
   GAME_PLAY* play = (GAME_PLAY*)game;
@@ -146,4 +144,3 @@ static void aDOU_actor_draw(ACTOR* actor, GAME* game) {
     }
   }
 }
-#pragma pool_data reset
