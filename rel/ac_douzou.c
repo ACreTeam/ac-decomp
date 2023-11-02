@@ -184,7 +184,6 @@ static void aDOU_actor_ct(ACTOR* actor, GAME* game) {
   cKF_SkeletonInfo_R_play(&douzou->keyframe);
   aDOU_keep_item(actor);
 }
-#pragma pool_data reset
 
 static void aDOU_actor_dt(ACTOR* actor, GAME* game) {
   STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;

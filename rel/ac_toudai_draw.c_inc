@@ -1,0 +1,99 @@
+static int aTOU_actor_draw_before(GAME*,cKF_SkeletonInfo_R_c*, int idx, Gfx** gfxp,u8* dispbuf, void* actor, s_xyz* rotation, xyz_t* translation){
+
+    if(idx == 4){
+        *gfxp = NULL;
+    }
+
+    return 1;
+}
+
+extern Gfx obj_s_toudai_light_model[];
+extern Gfx obj_w_toudai_light_model[];
+
+static int aTOU_actor_draw_after(GAME* game,cKF_SkeletonInfo_R_c* info, int idx, Gfx** gfxp,
+u8* dispbuf, void* actor, s_xyz* rotation, xyz_t* translation){
+    static Gfx* mdl[] = {obj_s_toudai_light_model, obj_w_toudai_light_model};
+    static rgba_t prmcol = {255,255,150,120};
+    TOUDAI_ACTOR* light = (TOUDAI_ACTOR*)actor; 
+    
+    GRAPH* graph = game->graph;
+    Mtx* work;
+    u16* pal;
+    Gfx* gfx; 
+    int type;
+
+    if((idx == 4) && ((int)light->unk2CC != 0)){
+        work = _Matrix_to_Mtx_new(graph);
+
+        if(work != NULL){
+           type = light->season == mTM_SEASON_WINTER;
+            pal = Common_Get(clip.structure_clip)->get_pal_segment_proc(aSTR_PAL_TOUDAI);
+            _texture_z_light_fog_prim_light(graph);
+
+            OPEN_DISP(graph);
+            
+            gfx = NOW_LIGHT_DISP; 
+            gSPSegment(gfx++, 0x8, pal); 
+
+            prmcol.b = light->unk2C8;
+            prmcol.a = light->unk2CC;
+
+            if(prmcol.a > (u8)light->unk2D0){
+                prmcol.a = light->unk2D0; 
+            }
+ 
+            gDPPipeSync(gfx++); 
+            gDPSetPrimColor(gfx++, 0, (s8)light->unk2D0, prmcol.r, prmcol.g, prmcol.b, prmcol.a);
+            gSPMatrix(gfx++, work, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPDisplayList(gfx++, mdl[type]);
+
+            SET_LIGHT_DISP(gfx);
+            CLOSE_DISP(graph);
+        }
+    }
+
+    return 1;
+}
+
+
+static void aTOU_actor_draw(ACTOR* actor, GAME* game){
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    GRAPH* graph;
+
+    Gfx* gfx;
+    u16* pal;
+    cKF_SkeletonInfo_R_c* keyf;
+    Mtx* mtx;
+    xyz_t* pos;
+    TOUDAI_ACTOR* light = (TOUDAI_ACTOR*)actor;
+    
+    graph = game->graph;
+    pos = &light->actor_class.world.position;
+    keyf = &light->keyframe;
+    mtx = GRAPH_ALLOC_TYPE(graph, Mtx, keyf->skeleton->num_shown_joints);
+ 
+    if(mtx != NULL){
+        pal = Common_Get(clip.structure_clip)->get_pal_segment_proc(aSTR_PAL_TOUDAI);
+        
+        OPEN_DISP(graph);
+
+        _texture_z_light_fog_prim_npc(graph);
+            
+        gfx = NOW_POLY_OPA_DISP; 
+        gSPSegment(gfx++, 0x8, pal); 
+        SET_POLY_OPA_DISP(gfx); 
+
+        _texture_z_light_fog_prim_xlu(graph);
+
+        gfx = NOW_POLY_XLU_DISP; 
+        gSPSegment(gfx++, 0x8, pal);  
+        SET_POLY_XLU_DISP(gfx); 
+
+        Setpos_HiliteReflect_init(pos, play);
+        Setpos_HiliteReflect_xlu_init(pos, play);
+        
+        cKF_Si3_draw_R_SV(game, keyf, mtx, aTOU_actor_draw_before, aTOU_actor_draw_after, light);
+        (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, &aTOU_shadow_data, TRUE);
+        CLOSE_DISP(graph);
+    }
+}

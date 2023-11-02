@@ -38,7 +38,6 @@ static void mAGrw_ClearDebugData() {
   bzero(l_fossil_block, mAGrw_FOSSIL_NUM * sizeof(mAGrw_block_c));
   bzero(l_haniwa_block, mAGrw_HANIWA_NUM * sizeof(mAGrw_block_c));
 }
-#pragma pool_data reset
 
 static int mAGrw_CheckRegistedData_debug(mAGrw_block_c* block_info, int num, int block_x, int block_z) {
   int res = FALSE;
@@ -95,7 +94,6 @@ static void mAGrw_SetDebugDataBlock(mActor_name_t* fg_items, u16* deposit, mAGrw
   }
 }
 
-
 static void mAGrw_SetDebugData() {
   mFM_fg_c* fg_items = Save_Get(fg[0]);
   u16* deposit = Save_Get(deposit[0]);
@@ -112,8 +110,6 @@ static void mAGrw_SetDebugData() {
     }
   }
 }
-#pragma pool_data reset
-
 
 extern void mAGrw_PrintFossilHaniwa_debug(gfxprint_t* gfxprint) {
   gfxprint_color(gfxprint, 240, 50, 50, 255);
@@ -139,7 +135,6 @@ extern void mAGrw_PrintFossilHaniwa_debug(gfxprint_t* gfxprint) {
     l_haniwa_block[2].block_x, l_haniwa_block[2].block_z
   );
 }
-#pragma pool_data reset
 
 extern int mAGrw_CheckKabuPeddler() {
   lbRTC_time_c peddler_spawn_time;

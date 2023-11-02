@@ -33,7 +33,6 @@ extern void mHandbill_aram_init() {
 
   mHandbillz_aram_init();
 }
-#pragma pool_data reset
 
 static mHandbill_Data_c mHandbill_data;
 

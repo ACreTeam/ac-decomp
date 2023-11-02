@@ -121,7 +121,6 @@ static int aDOU_setEffect_sub(ACTOR* actor, GAME* game, int house_no, int color)
 
   return TRUE;
 }
-#pragma pool_data reset
 
 static void aDOU_setEffect(ACTOR* actor, GAME* game) {
   static f32 b_timetbl[mHS_HOUSE_NUM] = {  5.0f, 15.0f, 20.0f, 30.0f };

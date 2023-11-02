@@ -1,0 +1,26 @@
+static void aTR1_actor_draw(ACTOR* actor, GAME* game){
+    u16* pal = (*Common_Get(clip).structure_clip->get_pal_segment_proc)(0x3A);
+
+    TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
+    
+    GRAPH* graph = game->graph;
+    cKF_SkeletonInfo_R_c* keyf;
+    Mtx* mtx;
+    Gfx* gfx;
+
+    keyf = &train1->keyframe;
+    mtx = GRAPH_ALLOC_TYPE(graph, Mtx, keyf->skeleton->num_shown_joints);
+
+    if(mtx != NULL){
+        _texture_z_light_fog_prim_npc(graph);
+
+        OPEN_DISP(graph);
+
+        gfx = NOW_POLY_OPA_DISP;
+        gSPSegment(gfx++, 0x8, pal);
+        SET_POLY_OPA_DISP(gfx);
+        CLOSE_DISP(graph);
+
+        cKF_Si3_draw_R_SV(game, keyf, mtx, NULL,NULL,train1);
+    }
+}

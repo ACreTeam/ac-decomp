@@ -196,7 +196,6 @@ extern void mHm_ClearHomeInfo(int home_no) {
   Save_Set(keep_house_size[no], 0);
   Save_Set(homes[no].door_original, 0xFF);
 }
-#pragma pool_data reset
 
 /**
  * @brief Clears save data for all homes.
