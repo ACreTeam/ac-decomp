@@ -13,6 +13,8 @@
 extern "C" {
 #endif
 
+#define aNPC_SPNPC_BIT_EV_SONCHO 5
+
 typedef struct ac_npc_clip_s aNPC_Clip_c;
 
 typedef struct npc_draw_data_s {
@@ -105,7 +107,11 @@ struct npc_actor_s {
   NpcActorInfo_c npc_info;
   u8 _194[0x718 - 0x194];
   int texture_bank_idx; // TEMP: this is part of draw struct
-  u8 _71C[0x974 - 0x71C];
+  u8 _71C[0x751 - 0x71C];
+  u8 _751;
+  u8 _752[0x8F4 - 0x752];
+  int _8F4;
+  u8 _8F8[0x974 - 0x8F8];
   s16 talk_base_anim_id;
   s16 _976;
   s16 melody_inst;
