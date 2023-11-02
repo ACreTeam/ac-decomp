@@ -182,6 +182,11 @@ m_needlework.c:
     .text: [0x803C98EC, 0x803C9F7C]
     .data: [0x8065ABC0, 0x8065AE30]
     .bss: [0x81298F60, 0x81299180]
+m_npc.c:
+    .text: [0x803CB340, 0x803D7570]
+    .rodata: [0x806429B8, 0x806429F0]
+    .data: [0x8065AEE8, 0x8065B638]
+    .bss: [0x81299240, 0x8129CC48]
 m_npc_schedule.c:
     .text: [0x803D7570, 0x803D7890]
     .data: [0x8065B638, 0x8065B7F0]

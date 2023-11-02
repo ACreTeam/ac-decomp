@@ -10,6 +10,8 @@ extern "C" {
 #endif
 
 extern int mEvMN_GetJointEventRandomNpc(mActor_name_t* selected_npc_id);
+extern int mEvNM_CheckJointEvent();
+extern void mEvMN_GetEventNpcName(mActor_name_t* npc_name, int event, int idx, int param_4);
 
 #ifdef __cplusplus
 }

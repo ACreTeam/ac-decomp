@@ -48,8 +48,8 @@ enum {
 };
 
 enum {
-  mMl_TYPE_MUSEUM = 0,
-  mMl_TYPE_1 = 1,
+  mMl_TYPE_MAIL = 0,
+  mMl_TYPE_XMAS = 1,
   mMl_TYPE_SHOP_SALE_LEAFLET = 2,
   mMl_TYPE_BROKER_SALE_LEAFLET = 3,
 
@@ -57,6 +57,7 @@ enum {
 
   mMl_TYPE_FISHING_CONTENST = 9,
 
+  mMl_TYPE_SPNPC_PASSWORD = 11,
   mMl_TYPE_12 = 12
 };
 

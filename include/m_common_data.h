@@ -79,7 +79,7 @@ typedef struct lighthouse_s {
 typedef struct Save_s {
   /* 0x000000 */ mFRm_chk_t save_check; /* save information */
   /* 0x000014 */ int scene_no; /* current 'scene' id */
-  /* 0x000018 */ u8 now_npc_max; /* current number of villagers living in town (see mNpc_(Add/Sub)NowNpcMax) */
+  /* 0x000018 */ u8 now_npc_max; /* current number of villagers living in town (see (Add/Sub)NowNpcMax) */
   /* 0x000019 */ u8 remove_animal_idx; /* index of the villager which is scheduled to leave town, 0xFF when none selected */
   /* 0x00001A */ u16 copy_protect; /* 'unique' value between [1, 65520] used for copy protection (see mCD_get_land_copyProtect) */
   /* 0x00001C */ u8 pad_1C[4];
@@ -197,8 +197,7 @@ typedef struct common_data_s {
   /* 0x026150 */ s16 bg_item_type;
   /* 0x026152 */ s16 bg_item_profile;
   /* 0x026154 */ u8 _26154[0x26164 - 0x26154];
-  /* 0x026164 */ mNpc_NpcList_c npclist[ANIMAL_NUM_MAX];
-  /* 0x0264AC */ mNpc_NpcList_c unk_264AC; // fits exact size of npc list struct, seems unused
+  /* 0x026164 */ mNpc_NpcList_c npclist[ANIMAL_NUM_MAX + 1];
   /* 0x0264E4 */ mNpc_NpcList_c island_npclist[1]; // TODO: define for island npc count
   /* 0x02651C */ mActor_name_t house_owner_name;
   /* 0x02651E */ mActor_name_t last_field_id;
@@ -216,7 +215,8 @@ typedef struct common_data_s {
   /* 0x0266A4 */ int scene_from_title_demo; /* next scene to be loaded when title demo finishes */
   /* 0x0266A8 */ mNPS_schedule_c npc_schedule[SCHEDULE_NUM];
   /* 0x0267A8 */ mNpc_walk_c npc_walk;
-  /* 0x026838 */ u8 _26838[0x28528 - 0x26838];
+  /* 0x026838 */ mNpc_EventNpc_c event_npc[mNpc_EVENT_NPC_NUM];
+  /* 0x026878 */ mNpc_MaskNpc_c mask_npc[mNpc_MASK_NPC_NUM];
   /* 0x028528 */ int snowman_msg_id;
   /* 0x02852C */ s16 money_power;
   /* 0x02852E */ s16 goods_power;

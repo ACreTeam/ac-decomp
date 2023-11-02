@@ -1222,13 +1222,13 @@ static void mPr_GetForeingerAnimalMail(Mail_c* mail, Private_c* priv, mPr_animal
   u8 header[40];
   u8 footer[48];
   int ofs;
-  int looks;
+  u8 looks;
   int header_back_start;
 
   looks = mNpc_GetLooks(anm_mem->npc_id);
   ofs = RANDOM(3);
   mail_no = 0xFC;
-  mail_no += ofs + (u8)looks * 3;
+  mail_no += ofs + looks * 3;
   mHandbill_Set_free_str(0, priv->player_ID.player_name, PLAYER_NAME_LEN); // player's name
   mNpc_LoadNpcNameString(npc_name, anm_mem->npc_id);
   mHandbill_Set_free_str(1, npc_name, ANIMAL_NAME_LEN); // animal's name

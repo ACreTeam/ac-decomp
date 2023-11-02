@@ -689,7 +689,7 @@ static u8 mQst_GetMailRank(u8* body, mActor_name_t present) {
     rank = mQst_LETTER_RANK_1;
   }
 
-  if (score_bonus >= 1) {
+  if (score_bonus >= mNpc_LETTER_RANK_OK) {
     rank += mQst_LETTER_SCORE_BONUS;
   }
 

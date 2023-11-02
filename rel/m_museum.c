@@ -666,7 +666,7 @@ extern void mMsm_SendCompMail() {
         
         mHandbill_Set_free_str(mHandbill_FREE_STR0, Save_Get(land_info.name), land_name_len);
 
-        if (mMl_send_mail_postoffice(&priv->player_ID, i, FTR_MUSEUM_MODEL, ITM_PAPER24, 0x22F, l_museum_name_str, mMl_DATA2, mMl_TYPE_MUSEUM) == TRUE) {
+        if (mMl_send_mail_postoffice(&priv->player_ID, i, FTR_MUSEUM_MODEL, ITM_PAPER24, 0x22F, l_museum_name_str, mMl_DATA2, mMl_TYPE_MAIL) == TRUE) {
           mMsm_SetPrivateCompMail(priv, mPr_FLAG_MUSEUM_COMP_HANDBILL_RECEIVED);
         }
       }

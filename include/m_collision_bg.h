@@ -39,8 +39,11 @@ enum background_attribute {
   mCoBG_ATTRIBUTE_SOIL0,
   mCoBG_ATTRIBUTE_SOIL1,
   mCoBG_ATTRIBUTE_SOIL2,
-  mCoBG_ATTRIBUTE_BUSH = 9,
-  mCoBG_ATTRIBUTE_WAVE = 11,
+  mCoBG_ATTRIBUTE_STONE,
+  mCoBG_ATTRIBUTE_FLOOR,
+  mCoBG_ATTRIBUTE_BUSH,
+  mCoBG_ATTRIBUTE_HOLE,
+  mCoBG_ATTRIBUTE_WAVE,
   mCoBG_ATTRIBUTE_WATER,
   mCoBG_ATTRIBUTE_WATERFALL,
   mCoBG_ATTRIBUTE_RIVER_N,
@@ -54,6 +57,7 @@ enum background_attribute {
   mCoBG_ATTRIBUTE_SAND,
   mCoBG_ATTRIBUTE_WOOD,
   mCoBG_ATTRIBUTE_SEA,
+  // ...
 };
 
 enum {
@@ -193,6 +197,8 @@ extern int mCoBG_CheckAttribute_BallRolling(s16* angles, const xyz_t* wpos);
 extern f32 mCoBG_CheckBallRollingArea(s16 angle, const xyz_t* wpos);
 extern int mCoBG_ExistHeightGap_KeepAndNow_Detail(xyz_t wpos);
 extern int mCoBG_GetHoleNumber(xyz_t wpos);
+extern int mCoBG_Attr2CheckPlaceNpc(u32 attribute);
+extern int mCoBG_ExistHeightGap_KeepAndNow(xyz_t wpos);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();

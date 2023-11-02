@@ -10,6 +10,10 @@
 extern "C" {
 #endif
 
+#define PLAYER_NUM 4
+#define FOREIGNER_NUM 1
+#define TOTAL_PLAYER_NUM (PLAYER_NUM + FOREIGNER_NUM)
+
 #define PLAYER_NAME_LEN 8
 
 /* sizeof(PersonalID_c) == 0x14 */
