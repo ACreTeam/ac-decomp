@@ -1,0 +1,174 @@
+#include "m_msg.h"
+#include "m_font.h"
+
+static int aESC_bitset_func() {
+  u8 flags = Common_Get(spnpc_first_talk_flags);
+  if (Common_Get(player_no) == mPr_FOREIGNER) {
+    return FALSE;
+  }
+
+  Common_Get(spnpc_first_talk_flags) = flags | (1 << aNPC_SPNPC_BIT_EV_SONCHO);
+  return TRUE;
+}
+
+static u16 aESC_bitcheck_func() {
+  u8 flags = Common_Get(spnpc_first_talk_flags);
+
+  if (Common_Get(player_no) == mPr_FOREIGNER) {
+    return FALSE;
+  }
+
+  return (Common_Get(spnpc_first_talk_flags) >> aNPC_SPNPC_BIT_EV_SONCHO) & 1;
+}
+
+static void aESC_owari_message() {
+  mMsg_Window_c* win_p = mMsg_Get_base_window_p();
+  aESC_event_save_c* ev_save = (aESC_event_save_c*)mEv_get_save_area(mEv_EVENT_SONCHO_BRIDGE_MAKE, 34);
+
+  if ((*(u8*)&Save_Get(event_save_common).bridge_flags) & 0x80) {
+    mMsg_Set_continue_msg_num(win_p, 0x2F47 + ev_save->msg_no);
+  }
+  else {
+    mMsg_Set_continue_msg_num(win_p, 0x2F39 + ev_save->msg_no);
+  }
+
+  ev_save->msg_no++;
+
+  if (ev_save->msg_no >= 5) {
+    ev_save->msg_no = 0;
+  }
+}
+
+static void aESC_set_day() {
+  u8 day_str[16];
+  
+  int len = mFont_UnintToString(day_str, 16, Save_Get(bridge).build_date.day, 16, TRUE, FALSE, TRUE);
+  mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0, day_str, len);
+}
+
+/* They forgot to change the prefix on this copy-paste */
+static int aEGH_change_talk_proc(EVENT_SONCHO_ACTOR* soncho, u8 state) {
+  soncho->talk_state = state;
+  return TRUE;
+}
+
+static void aESC_talk_select(EVENT_SONCHO_ACTOR* soncho, GAME* game) {
+  lbRTC_time_c rtc_time = Common_Get(time.rtc_time);
+
+  if ((int)mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9) == 1 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p())) {
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    aEGH_change_talk_proc(soncho, aESC_TALK_OWARI);
+
+    switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+      case 1:
+      {
+        Save_Get(bridge).pending = TRUE;
+        lbRTC_Add_DD(&rtc_time, 1);
+        Save_Get(bridge).build_date.year = rtc_time.year;
+        Save_Get(bridge).build_date.month = rtc_time.month;
+        Save_Get(bridge).build_date.day = rtc_time.day;
+        Save_Get(bridge).block_x = soncho->npc_class.actor_class.block_x;
+        Save_Get(bridge).block_z = soncho->npc_class.actor_class.block_z;
+        aESC_set_day();
+
+        break;
+      }
+      
+      case 0:
+      {
+        if (soncho->first_talk != FALSE) {
+          aESC_owari_message();
+        }
+        else {
+          aEGH_change_talk_proc(soncho, aESC_TALK_SECAND);
+        }
+
+        break;
+      }
+    }
+
+  }
+}
+
+static void aESC_talk_secand(EVENT_SONCHO_ACTOR* soncho, GAME* game) {
+  if ((int)mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9) == 1 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p())) {
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    aEGH_change_talk_proc(soncho, aESC_TALK_OWARI);
+    aESC_owari_message();
+  }
+}
+
+static int aESC_time_talk() {
+  lbRTC_time_c rtc_time = Common_Get(time.rtc_time);
+
+  if (rtc_time.hour < 6 || rtc_time.hour >= 23) {
+    return 0x2F36;
+  }
+  else if (rtc_time.hour < 10) {
+    return 0x2F33;
+  }
+  else if (rtc_time.hour < 17) {
+    return 0x2F34;
+  }
+  else {
+    return 0x2F35;
+  }
+}
+
+static void aESC_set_talk_info_talk_request(ACTOR* actorx) {
+  int msg_no;
+  EVENT_SONCHO_ACTOR* soncho = (EVENT_SONCHO_ACTOR*)actorx;
+
+  aEGH_change_talk_proc(soncho, 0);
+  if (Save_Get(bridge).pending) {
+    msg_no = 0x2F44 + RANDOM(3);
+    aESC_set_day();
+  }
+  else if (aESC_bitcheck_func()) {
+    msg_no = 0x2F3E;
+    aEGH_change_talk_proc(soncho, aESC_TALK_SELECT);
+    soncho->first_talk = FALSE;
+  }
+  else {
+    msg_no = aESC_time_talk();
+    aEGH_change_talk_proc(soncho, aESC_TALK_SELECT);
+    soncho->first_talk = TRUE;
+  }
+
+  mDemo_Set_msg_num(msg_no);
+}
+
+static void aESC_talk_request(ACTOR* actorx, GAME* game) {
+  mDemo_Request(mDemo_TYPE_TALK, actorx, &aESC_set_talk_info_talk_request);
+}
+
+static int aESC_talk_init(ACTOR* actorx, GAME* game) {
+  aESC_bitset_func();
+  mDemo_Set_ListenAble();
+  return TRUE;
+}
+
+typedef void (*aESC_TALK_PROC)(EVENT_SONCHO_ACTOR*, GAME*);
+
+static int aESC_talk_end_chk(ACTOR* actorx, GAME* game) {
+  static aESC_TALK_PROC proc[aESC_TALK_NUM] = {
+    (aESC_TALK_PROC)&none_proc1,
+    &aESC_talk_select,
+    &aESC_talk_secand
+  };
+
+  EVENT_SONCHO_ACTOR* soncho = (EVENT_SONCHO_ACTOR*)actorx;
+  int res = FALSE;
+
+  (*proc[soncho->talk_state])(soncho, game);
+
+  if (mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {
+    res = TRUE;
+  }
+
+  return res;
+}
+
+static void aESC_actor_move(ACTOR* actorx, GAME* game) {
+  (*Common_Get(clip).npc_clip->move_proc)(actorx, game);
+}
