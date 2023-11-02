@@ -1,0 +1,27 @@
+extern Gfx kago_r_ball_DL_model[];
+extern Gfx kago_w_ball_DL_model[];
+
+static void aTAM_actor_draw(ACTOR* actorx, GAME* game) {
+  static Gfx* model[2] = { kago_r_ball_DL_model, kago_w_ball_DL_model };
+
+  TAMA_ACTOR* tama = (TAMA_ACTOR*)actorx;
+  GRAPH* graph = game->graph;
+  u16* pal = (*Common_Get(clip).structure_clip->get_pal_segment_proc)(tama->structure_class.structure_pal);
+  Gfx* gfx;
+  Mtx* mtx;
+
+  OPEN_DISP(graph);
+  _texture_z_light_fog_prim(graph);
+  gfx = NOW_POLY_OPA_DISP;
+  gSPSegment(gfx++, G_MWO_SEGMENT_8, pal);
+  Matrix_translate(0.0f, 0.0f, 4000.0f, 1);
+  mtx = _Matrix_to_Mtx_new(graph);
+
+  if (mtx != NULL) {
+    gSPMatrix(gfx++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(gfx++, model[tama->structure_class.action]);
+    SET_POLY_OPA_DISP(gfx); // isn't this a bug? shouldn't this go outside of the if block?
+  }
+
+  CLOSE_DISP(graph);
+}

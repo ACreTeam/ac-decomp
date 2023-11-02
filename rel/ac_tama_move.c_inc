@@ -1,0 +1,26 @@
+static void aTAM_actor_move(ACTOR* actorx, GAME* game) {
+  GAME_PLAY* play = (GAME_PLAY*)game;
+  PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
+  int bx;
+  int bz;
+  int player_bx;
+  int player_bz;
+
+  mFI_Wpos2BlockNum(&bx, &bz, actorx->world.position);
+  mFI_Wpos2BlockNum(&player_bx, &player_bz, player->actor_class.world.position);
+
+  if (
+    mDemo_Check(mDemo_TYPE_SCROLL, &player->actor_class) == FALSE &&
+    mDemo_Check(mDemo_TYPE_SCROLL2, &player->actor_class) == FALSE &&
+    mDemo_Check(mDemo_TYPE_SCROLL3, &player->actor_class) == FALSE &&
+    (bx != player_bx || bz != player_bz)
+  ) {
+    Actor_delete(actorx);
+  }
+}
+
+static void aTAM_actor_init(ACTOR* actorx, GAME* game) {
+  mFI_SetFG_common(DUMMY_TAMA, actorx->home.position, FALSE);
+  aTAM_actor_move(actorx, game);
+  actorx->mv_proc = &aTAM_actor_move;
+}

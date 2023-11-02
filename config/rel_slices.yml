@@ -511,6 +511,10 @@ ac_radio.c:
     .text: [0x805B887C,0x805B8C7C]
     .rodata: [0x8064AB58,0x8064AB68]
     .data: [0x806C6558,0x806C65A0]
+ac_tama.c:
+    .text: [0x805BDDF4, 0x805BE06C]
+    .rodata: [0x8064AC78, 0x8064AC80]
+    .data: [0x806C7110, 0x806C7140]
 ac_structure.c:
     .text: [0x805BCA00, 0x805BD06C]
     .rodata: [0x8064AC30, 0x8064AC38]
