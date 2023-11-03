@@ -251,7 +251,7 @@ extern void mIN_copy_name_str(u8* dst, mActor_name_t item) {
 
   u8 item_name[mIN_ITEM_NAME_LEN];
   u32 itm = item;
-  mActor_name_t item_no = mRmTp_FtrItemNo2Item1ItemNo(item, NULL);
+  mActor_name_t item_no = mRmTp_FtrItemNo2Item1ItemNo(item, FALSE);
 
   if (mNT_check_unknown(item_no) == TRUE) {
     mem_copy(dst, unknown_item_str, mIN_ITEM_NAME_LEN);
@@ -321,7 +321,7 @@ extern int mIN_get_item_article(mActor_name_t item) {
   };
 
   int article = mIN_ARTICLE_NONE;
-  mActor_name_t item_no = mRmTp_FtrItemNo2Item1ItemNo(item, NULL);
+  mActor_name_t item_no = mRmTp_FtrItemNo2Item1ItemNo(item, FALSE);
   int index = item_no & 0xFF;
 
   switch (ITEM_NAME_GET_TYPE(item_no)) {

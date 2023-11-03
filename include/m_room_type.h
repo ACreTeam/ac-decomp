@@ -4,6 +4,7 @@
 #include "types.h"
 #include "libu64/gfxprint.h"
 #include "m_actor_type.h"
+#include "m_play_h.h"
 
 #define mRmTp_FTR_UNIT_MAX 4
 
@@ -68,6 +69,23 @@ enum {
   mRmTp_DIRECT_NUM
 };
 
+enum {
+  mRmTp_FTR_SE_NONE,
+  mRmTp_FTR_SE_SOFT_CHAIR,
+  mRmTp_FTR_SE_HARD_CHAIR,
+  mRmTp_FTR_SE_BUBU_CHAIR,
+  mRmTp_FTR_SE_TOILET_CHAIR,
+
+  mRmTp_FTR_SE_NUM
+};
+
+enum {
+  mRmTp_CHAIR_ACTION_SIT,
+  mRmTp_CHAIR_ACTION_STAND,
+
+  mRmTp_CHAIR_ACTION_NUM
+};
+
 typedef struct room_type_place_info_one_s {
   int exists;
   int ut_x;
@@ -125,27 +143,42 @@ enum {
   mRmTp_LIGHT_SWITCH_NUM
 };
 
+extern int mRmTp_ItemNo2FtrSize(mActor_name_t item_no);
+extern int mRmTp_GetFurnitureData(mActor_name_t ftr, int ut_x, int ut_z, mRmTp_FtrPlaceInfoOne_t* place_info);
+extern void mRmTp_MakeFtrNoTable(mActor_name_t* dst, mActor_name_t* src);
+extern int mRmTp_GetFtrActionSE(int ftr_idx, int mode);
+extern u8* mRmTp_CheckFtrBirthInfoTop();
+extern int mRmTp_GetFloorIdx();
+extern int mRmTp_GetWallIdx();
+extern mActor_name_t mRmTp_Item1ItemNo2FtrItemNo_AtPlayerRoom(mActor_name_t item1_no, int no_convert_tools);
+extern mActor_name_t mRmTp_FtrItemNo2Item1ItemNo(mActor_name_t ftr_no, int no_convert_tools);
+extern void mRmTp_MakeMelodyData();
+extern u8* mRmTp_GetMelodyData();
 extern void mRmTp_DrawFamicomInfo(gfxprint_t* gfxprint);
 extern void mRmTp_MakeFamicom_Fdebug();
-
-extern mActor_name_t mRmTp_FtrItemNo2Item1ItemNo(mActor_name_t ftr_item_no, void* unused); /* second paramter is probably GAME*? */
-extern int mRmTp_FtrItemNo2FtrIdx(mActor_name_t ftr_item_no);
-extern mActor_name_t mRmTp_FtrIdx2FtrItemNo(int ftr_idx, int rotation);
-extern int mRmTp_GetFurnitureData(mActor_name_t ftr, int ut_x, int ut_z, mRmTp_FtrPlaceInfoOne_t* place_info);
+extern mActor_name_t mRmTp_GetPlayerRoomCollisionIdx(mActor_name_t field_id, mActor_name_t bg_idx);
 extern int mRmTp_FurnitureIdx2FurnitureKind(int ftr_idx);
-extern int mRmTp_PleaseDrawLightSwitch();
-extern mActor_name_t mRmTp_Item1ItemNo2FtrItemNo_AtPlayerRoom(mActor_name_t item_no, int flag);
-extern void mRmTp_SetDefaultLightSwitchData(int state);
+extern void mRmTp_CopyWallData(u8* dst, int wall_no);
+extern void mRmTp_CopyFloorData(u8* dst, int floor_no);
+extern int mRmTp_CheckTalkAble(s16* rot, xyz_t* pos, f32 max_dist, int required_dir, GAME_PLAY* play);
+extern int mRmTp_CheckWallIsMyOriginalInThisScene();
+extern int mRmTp_CheckFloorIsMyOriginalInThisScene();
 extern int mRmTp_GetEntranceBasePosition(xyz_t* pos);
-extern mActor_name_t mRmTp_GetPlayerRoomCollisionIdx(mActor_name_t field_name, mActor_name_t bg_name);
-extern u8 mRmTp_GetFloorIdx();
 extern int mRmTp_GetNowSceneLightSwitchIndex();
-extern void mRmTp_IndexLightSwitchOFF(int index);
-extern void mRmTp_IndexLightSwitchON(int index);
-extern int mRmTp_Index2LightSwitchStatus(int index);
+extern int mRmTp_PleaseDrawLightSwitch();
 extern int mRmTp_NowSceneLightSwitchON();
+extern int mRmTp_IndexLightSwitchON(int switch_index);
 extern int mRmTp_NowSceneLightSwitchOFF();
-extern void mRmTp_MakeFtrNoTable(mActor_name_t* dst, mActor_name_t* src);
-extern u8* mRmTp_CheckFtrBirthInfoTop();
+extern int mRmTp_IndexLightSwitchOFF(int switch_index);
+extern int mRmTp_Index2LightSwitchStatus(int switch_index);
+extern int mRmTp_SetDefaultLightSwitchData(int state);
+extern void mRmTp_DecideCottageDefaultLightSwitch();
+extern int mRmTp_GetNowSceneOriginalWallStatus();
+extern int mRmTp_GetNowSceneOriginalFloorStatus();
+extern void mRmTp_SetNowSceneOriginalWallStatus(int enabled);
+extern void mRmTp_SetNowSceneOriginalFloorStatus(int enabled);
+extern int mRmTp_FtrItemNo2FtrIdx(mActor_name_t ftr_item_no);
+extern mActor_name_t mRmTp_FtrIdx2FtrItemNo(int ftr_idx, int direct);
+extern int mRmTp_SoundStepWalkSE(xyz_t* wpos);
 
 #endif

@@ -18,6 +18,7 @@ extern "C" {
 #define mNW_TOTAL_DESIGN_NUM (mNW_CLOTH_DESIGN_NUM + mNW_UMBRELLA_DESIGN_NUM) /* total designs in Able Sisters' */
 
 #define mNW_DESIGN_TEX_SIZE (mNW_ORIGINAL_DESIGN_HEIGHT * (mNW_ORIGINAL_DESIGN_WIDTH / 2)) /* total texture data size */
+#define mNW_PALETTE_SIZE (16 * sizeof(u16))
 #define mNW_PALETTE_COUNT 16 /* number of design palettes */
 
 enum {
