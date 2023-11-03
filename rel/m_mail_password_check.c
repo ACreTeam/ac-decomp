@@ -1033,7 +1033,7 @@ extern int mMpswd_check_present_user(mActor_name_t item) {
     case NAME_TYPE_FTR1:
     {
       if (item >= FTR_CLOTH_MANNIQUIN000_SOUTH && item <= FTR_CLOTH_MANNIQUIN254_WEST) {
-        item = mRmTp_FtrItemNo2Item1ItemNo(item, NULL);
+        item = mRmTp_FtrItemNo2Item1ItemNo(item, FALSE);
         if (
           mSP_SearchItemCategoryPriority(item, mSP_KIND_CLOTH, mSP_LISTTYPE_COMMON, NULL) ||
           mSP_SearchItemCategoryPriority(item, mSP_KIND_CLOTH, mSP_LISTTYPE_UNCOMMON, NULL) ||
@@ -1043,7 +1043,7 @@ extern int mMpswd_check_present_user(mActor_name_t item) {
         }
       }
       else if (item >= FTR_UMBRELLA00_SOUTH && item <= FTR_UMBRELLA31_WEST) {
-        price = mSP_ItemNo2ItemPrice(mRmTp_FtrItemNo2Item1ItemNo(item, NULL));
+        price = mSP_ItemNo2ItemPrice(mRmTp_FtrItemNo2Item1ItemNo(item, FALSE));
       }
       else if ( // TODO: furniture index values need to be declared in some header file as defines
         (mRmTp_FtrItemNo2FtrIdx(item) >= 0x3FC && mRmTp_FtrItemNo2FtrIdx(item) <= 0x403) || // balloons
@@ -1054,7 +1054,7 @@ extern int mMpswd_check_present_user(mActor_name_t item) {
         (mRmTp_FtrItemNo2FtrIdx(item) >= 0x463 && mRmTp_FtrItemNo2FtrIdx(item) <= 0x466) // regular tools
       ) { 
         /* Convert furniture to their item1 variants */
-        price = mSP_ItemNo2ItemPrice(mRmTp_FtrItemNo2Item1ItemNo(item, NULL));
+        price = mSP_ItemNo2ItemPrice(mRmTp_FtrItemNo2Item1ItemNo(item, FALSE));
       }
       else if (
         mSP_SearchItemCategoryPriority(item, mSP_KIND_FURNITURE, mSP_LISTTYPE_COMMON, NULL) ||

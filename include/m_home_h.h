@@ -122,6 +122,12 @@ typedef struct home_layer_s {
   /* 0x208 */ u32 unk_208[8]; /* Only referenced in mISL_gc_to_agb_layer */
 } mHm_lyr_c;
 
+typedef struct floor_bit_info_s {
+  u8 wall_original:1; /* is wallpaper a pattern (original)? */
+  u8 floor_original:1; /* is flooring a pattern (original)? */
+  u8 bit_2_7:6; /* unused? */
+} mHm_fllot_bit_c;
+
 /* sizeof(mHm_flr_c) == 0x8A8 */
 typedef struct home_floor_s {
   /* 0x000 */ mHm_lyr_c layer_main;
@@ -130,11 +136,7 @@ typedef struct home_floor_s {
   /* 0x678 */ mHm_lyr_c layer_storage2;
   /* 0x8A0 */ mHm_wf_c wall_floor;
   /* 0x8A2 */ TempoBeat_c tempo_beat;
-  /* 0x8A4 */ struct {
-    u8 wall_original:1; /* is wallpaper a pattern (original)? */
-    u8 floor_original:1; /* is flooring a pattern (original)? */
-    u8 bit_2_7:6; /* unused? */
-  } fllot_bit; /* Name exposed? by mISL_gc_to_agb_fllot_bit, may also be floor_bit_info as 'mRmTp_GetNowSceneFloorBitInfoP' */
+  /* 0x8A4 */ mHm_fllot_bit_c floor_bit_info;
 } mHm_flr_c;
 
 /* sizeof(mHm_flg_c) == 1 */

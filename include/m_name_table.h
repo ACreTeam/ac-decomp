@@ -96,6 +96,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 extern int FGTreeType_check(mActor_name_t tree);
 extern mActor_name_t bg_item_fg_sub_tree_grow(mActor_name_t tree, int past_days, int check_plant);
 extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
+extern mActor_name_t mNT_FishIdx2FishItemNo(int idx);
 
 /* Retrieve the item actor's category */
 #define ITEM_NAME_GET_TYPE(n) (((n) & 0xF000) >> 12)
@@ -676,6 +677,7 @@ extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
 #define ITM_AXE 0x2201
 #define ITM_SHOVEL 0x2202
 #define ITM_ROD 0x2203
+#define ITM_UMBRELLA_START (ITM_TOOL_START + 4)
 #define ITM_GELATO_UMBRELLA 0x2204
 #define ITM_DAFFODIL_PARASOL 0x2205
 // TODO: other umbrellas
@@ -688,6 +690,7 @@ extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
 #define ITM_MY_ORG_UMBRELLA5 0x2229
 #define ITM_MY_ORG_UMBRELLA6 0x222A
 #define ITM_MY_ORG_UMBRELLA7 0x222B
+#define ITM_UMBRELLA_END (ITM_TOOL_START + 44)
 #define ITM_SICKLE 0x222C
 #define ITM_RED_PAINT 0x222D
 #define ITM_ORANGE_PAINT 0x222E
@@ -712,6 +715,7 @@ extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
 #define ITM_AXE_USE_5 0x2241
 #define ITM_AXE_USE_6 0x2242
 #define ITM_AXE_USE_7 0x2243
+#define ITM_BALLOON_START (ITM_TOOL_START + 68)
 #define ITM_RED_BALLOON 0x2244
 #define ITM_YELLOW_BALLOON 0x2245
 #define ITM_BLUE_BALLOON 0x2246
@@ -1245,12 +1249,13 @@ extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
 #define ITM_INSECT37 (ITM_INSECT_START + 37)
 #define ITM_INSECT38 (ITM_INSECT_START + 38)
 #define ITM_INSECT39 (ITM_INSECT_START + 39)
+#define ITM_INSECT_END (ITM_INSECT_START + 40)
 #define ITM_SPIRIT0 (ITM_INSECT_START + 40)
 #define ITM_SPIRIT1 (ITM_INSECT_START + 41)
 #define ITM_SPIRIT2 (ITM_INSECT_START + 42)
 #define ITM_SPIRIT3 (ITM_INSECT_START + 43)
 #define ITM_SPIRIT4 (ITM_INSECT_START + 44)
-#define ITM_INSECT_END (ITM_INSECT_START + 45)
+#define ITM_INSECT_ALL_END (ITM_INSECT_START + 45)
 
 #define ITM_HUKUBUKURO_START 0x2E00
 #define ITM_HUKUBUKURO_BAG (ITM_HUKUBUKURO_START + 0)
@@ -1325,6 +1330,8 @@ extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
 #define FTR_COLLEGERULE 0x30FC
 
 #define FTR_CALLIGRAPHY_PAD_WEST 0x313B
+
+#define FTR_AXE 0x3190
 
 #define FTR_BOTTLE_ROCKET 0x31F0
 

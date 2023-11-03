@@ -745,7 +745,7 @@ extern u32 mSP_ItemNo2ItemPrice(mActor_name_t item_no) {
     return year;
   }
 
-  item_no = mRmTp_FtrItemNo2Item1ItemNo(item_no, NULL);
+  item_no = mRmTp_FtrItemNo2Item1ItemNo(item_no, FALSE);
   if (item_no >= ITM_SHELL0 && item_no <= ITM_SHELL7) {
     u32 idx = item_no - ITM_SHELL0;
     
