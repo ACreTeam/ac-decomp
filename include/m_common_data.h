@@ -209,7 +209,8 @@ typedef struct common_data_s {
   /* 0x02666C */ s16 weather;
   /* 0x02666E */ s16 weather_intensity;
   /* 0x026670 */ lbRTC_time_c weather_time;
-  /* 0x026678 */ u8 _26678[0x26684 - 0x26678];
+  /* 0x026678 */ s_xyz wind;
+  /* 0x026680 */ f32 wind_speed;
   /* 0x026684 */ mEv_event_common_u special_event_common;
   /* 0x02669C */ mQst_not_saved_c quest;
   /* 0x0266A4 */ int scene_from_title_demo; /* next scene to be loaded when title demo finishes */
@@ -282,7 +283,9 @@ typedef struct common_data_s {
   /* 0x028898 */ f32 balloon_spawn_percent; /* chance that a balloon will spawn */
   /* 0x02889C */ int tanuki_shop_status; /* adjusted based on any current events happening to Nook's shop */
   /* 0x0288A0 */ u8 pad_connected; /* is gamepad 0 connected? */
-  /* 0x0288A1 */ u8 _288a1[0x02DB40 - 0x0288A1];
+  /* 0x0288A1 */ u8 unk288A1;
+  /* 0x0288A2 */ s16 current_sound_effect;
+  /* 0x0288A4 */ u8 _288a4[0x02DB40 - 0x0288A4];
   /* 0x02DB40 */ u8 auto_nwrite_set; /* when true, saved nwrite time will be utilized. Seems to be used to keep same date for fishing tourney stuff. */
   /* 0x02DB42 */ u16 select_last_select_no;
   /* 0x02DB44 */ u16 select_last_top_no;

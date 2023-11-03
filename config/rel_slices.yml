@@ -542,6 +542,10 @@ m_map_ovl.c:
     .rodata: [0x8064B628, 0x8064B6B0]
     .data: [0x806CD9C0, 0x806CE008]
     .bss: [0x81340468, 0x81340488]
+#ac_weather.c:
+#   .text: [0x8060193C, 0x80602E70]
+#   .rodata: []
+#   .data: []
 m_select.c:
     .text: [0x80627F88, 0x80629CA8]
     .rodata: [0x8064D1B0, 0x8064D1B8]

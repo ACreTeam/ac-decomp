@@ -9,6 +9,7 @@
 #include "ef_effect_control.h"
 #include "m_demo.h"
 #include "bg_item_h.h"
+#include "ac_weather.h"
 #include "ac_npc.h"
 #include "ac_tools.h"
 #include "ac_aprilfool_control.h"
@@ -41,7 +42,7 @@ typedef struct clip_s {
   /* 0x06C */ void* _06C;
   /* 0x070 */ aSI_Clip_c* shop_indoor_clip;
   /* 0x074 */ bIT_Clip_c* bg_item_clip;
-  /* 0x078 */ void* _078;
+  /* 0x078 */ aWeather_Clip_c* weather_clip;
   /* 0x07C */ aINS_Clip_c* insect_clip;
   /* 0x080 */ aMR_Clip_c* my_room_clip;
   /* 0x084 */ void* _084;
