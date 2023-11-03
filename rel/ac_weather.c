@@ -12,10 +12,13 @@
 #include "m_malloc.h"
 #include "m_player_lib.h"
 
-void Weather_Actor_ct(ACTOR* actor, GAME* game);
-void Weather_Actor_dt(ACTOR* actor, GAME* game);
-void Weather_Actor_move(ACTOR* actor, GAME* game);
-void Weather_Actor_draw(ACTOR* actor, GAME* game);
+static void Weather_Actor_ct(ACTOR* actor, GAME* game);
+static void Weather_Actor_dt(ACTOR* actor, GAME* game);
+static void Weather_Actor_move(ACTOR* actor, GAME* game);
+static void Weather_Actor_draw(ACTOR* actor, GAME* game);
+
+
+static void aWeather_SetNowProfile(WEATHER_ACTOR* weather, s16 id);
 
 static aWeather_Profile_c* profile_tbl[] = {
     &iam_weather_fine,
@@ -369,8 +372,12 @@ void aWeather_SnowInAdvance(WEATHER_ACTOR* weather, GAME_PLAY* play, int moves){
 
 
 void Weather_Actor_ct(ACTOR* actor, GAME* game){
-    static s16 DemoWeatherTbl[10][2] = {
-        
+    static s16 DemoWeatherTbl[5][2] = {
+        3,1,
+        1,2,
+        0,0,
+        0,0,
+        2,1,
     };
     WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
     GAME_PLAY* play = (GAME_PLAY*)game;
@@ -637,7 +644,7 @@ static void aWeather_MakeKaminari(WEATHER_ACTOR* weather){
             if (((timer == weather->lightning_timer2) || (timer == (weather->lightning_timer2 + 20))) && 
                 (Common_Get(clip.effect_clip) != NULL) && ( (Save_Get(scene_no) - SCENE_MY_ROOM_BASEMENT_S) > 3U) && 
                 ( (Save_Get(scene_no) - SCENE_MUSEUM_ROOM_PAINTING) > 1U) && ( Save_Get(scene_no) != SCENE_MUSEUM_ROOM_FISH)) {
-                f32 effect[] = { 12712.2f };
+                f32 effect[] = { 12712.249f };
                 Common_Get(clip.effect_clip)->regist_effect_light(effect, 2, 0x23, 0);
             }
             if (timer == (weather->lightning_timer2 + 65)) {

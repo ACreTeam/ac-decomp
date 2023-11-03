@@ -30,11 +30,16 @@ enum {
 
 typedef void (*eEC_NAME2EFFECTMAKE_PROC)(int, xyz_t, int, short, GAME*, u16, s16, s16);
 
+typedef void (*eEC_REGISTEFFECTLIGHT_PROC)(f32*, s16,s16,s16);
+
 typedef int (*eEC_EFFECTLIGHTSTATUS_PROC)(rgba_t*, int*); // returns eEC_LIGHT_COLOR_*
 
 typedef struct effect_control_clip_s {
   /* 0x00 */ eEC_NAME2EFFECTMAKE_PROC effect_make_proc;
-  /* 0x04 */ u8 _04[0x3C - 0x04];
+  /* 0x04 */ u8 _04[0x30 - 0x04];
+  /* 0x30 */ eEC_REGISTEFFECTLIGHT_PROC regist_effect_light;
+  /* 0x34 */ void* _34;
+  /* 0x38 */ void* _38;
   /* 0x3C */ eEC_EFFECTLIGHTSTATUS_PROC effect_light_status;
   /* 0x40 */ void* _40;
   /* 0x44 */ void* _44;
