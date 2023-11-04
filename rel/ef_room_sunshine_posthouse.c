@@ -46,10 +46,8 @@ void Ef_Room_Sunshine_Posthouse_actor_ct(ACTOR* actor, GAME* game){
     else{
         posthouse->ef_sunshine_class.actor_class.world.position.x -= 1.0f;
     }
-
-    pos = posthouse->ef_sunshine_class.actor_class.world.position;
     
-    posthouse->ef_sunshine_class.actor_class.world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(0.0f, &pos);
+    posthouse->ef_sunshine_class.actor_class.world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(posthouse->ef_sunshine_class.actor_class.world.position, 0.0f);
 
     posthouse->ef_sunshine_class.actor_class.scale.x = 0.05f;
     posthouse->ef_sunshine_class.actor_class.scale.y = 0.05f;
@@ -62,15 +60,13 @@ void Ef_Room_Sunshine_Posthouse_actor_ct(ACTOR* actor, GAME* game){
             posthouse->ef_sunshine_class.actor_class.mv_proc = Ef_Room_Sunshine_PosthouseL_actor_move;
             posthouse->ef_sunshine_class.actor_class.dw_proc = Ef_Room_Sunshine_PosthouseL_actor_draw;
             posthouse->ef_sunshine_class.actor_class.world.position.x += 5.0f;
-            pos2 = posthouse->ef_sunshine_class.actor_class.world.position;
-            posthouse->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(0.0f, &pos2);
+            posthouse->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(posthouse->ef_sunshine_class.actor_class.world.position, 0.0f);
             posthouse->ef_sunshine_class.actor_class.world.position.x -= 6.0f;
         break;
 
         case 3:
             posthouse->ef_sunshine_class.actor_class.world.position.x -= 5.0f;
-            pos3 = posthouse->ef_sunshine_class.actor_class.world.position;
-            posthouse->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(0.0f, &pos3);
+            posthouse->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(posthouse->ef_sunshine_class.actor_class.world.position, 0.0f);
             posthouse->ef_sunshine_class.actor_class.world.position.x += 6.0f;
         break;
     }

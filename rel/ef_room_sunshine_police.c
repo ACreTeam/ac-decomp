@@ -45,9 +45,7 @@ void Ef_Room_Sunshine_Police_actor_ct(ACTOR* actor, GAME* game){
         police->ef_sunshine_class.actor_class.world.position.x -= 1.0f;
     }
 
-    pos = police->ef_sunshine_class.actor_class.world.position;
-    
-    police->ef_sunshine_class.actor_class.world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(0.0f, &pos);
+    police->ef_sunshine_class.actor_class.world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(police->ef_sunshine_class.actor_class.world.position, 0.0f);
 
     police->ef_sunshine_class.actor_class.scale.x = 0.01f;
     police->ef_sunshine_class.actor_class.scale.y = 0.01f;
@@ -60,15 +58,13 @@ void Ef_Room_Sunshine_Police_actor_ct(ACTOR* actor, GAME* game){
             police->ef_sunshine_class.actor_class.mv_proc = Ef_Room_Sunshine_PoliceL_actor_move;
             police->ef_sunshine_class.actor_class.dw_proc = Ef_Room_Sunshine_PoliceL_actor_draw;
             police->ef_sunshine_class.actor_class.world.position.x += 5.0f;
-            pos2 = police->ef_sunshine_class.actor_class.world.position;
-            police->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(0.0f, &pos2) - 40.0f;
+            police->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(police->ef_sunshine_class.actor_class.world.position, 0.0f) - 40.0f;
             police->ef_sunshine_class.actor_class.world.position.x -= 6.0f;
         break;
 
         case 3:
             police->ef_sunshine_class.actor_class.world.position.x -= 5.0f;
-            pos3 = police->ef_sunshine_class.actor_class.world.position;
-            police->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(0.0f, &pos3) - 40.0f;
+            police->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(police->ef_sunshine_class.actor_class.world.position, 0.0f) - 40.0f;
             police->ef_sunshine_class.actor_class.world.position.x += 6.0f;
         break;
     }

@@ -46,9 +46,7 @@ void Ef_Room_Sunshine_Museum_actor_ct(ACTOR* actor, GAME* game){
         museum->ef_sunshine_class.actor_class.world.position.x -= 1.0f;
     }
 
-    pos = museum->ef_sunshine_class.actor_class.world.position;
-    
-    museum->ef_sunshine_class.actor_class.world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(0.0f, &pos);
+    museum->ef_sunshine_class.actor_class.world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(museum->ef_sunshine_class.actor_class.world.position, 0.0f);
 
     museum->ef_sunshine_class.actor_class.scale.x = 0.01f;
     museum->ef_sunshine_class.actor_class.scale.y = 0.01f;
@@ -61,15 +59,13 @@ void Ef_Room_Sunshine_Museum_actor_ct(ACTOR* actor, GAME* game){
             museum->ef_sunshine_class.actor_class.mv_proc = Ef_Room_Sunshine_MuseumL_actor_move;
             museum->ef_sunshine_class.actor_class.dw_proc = Ef_Room_Sunshine_MuseumL_actor_draw;
             museum->ef_sunshine_class.actor_class.world.position.x += 5.0f;
-            pos2 = museum->ef_sunshine_class.actor_class.world.position;
-            museum->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(0.0f, &pos2) - 40.0f;
+            museum->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(museum->ef_sunshine_class.actor_class.world.position, 0.0f) - 40.0f;
             museum->ef_sunshine_class.actor_class.world.position.x -= 6.0f;
         break;
 
         case 3:
             museum->ef_sunshine_class.actor_class.world.position.x -= 5.0f;
-            pos3 = museum->ef_sunshine_class.actor_class.world.position;
-            museum->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(0.0f, &pos3) - 40.0f;
+            museum->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(pos3 = museum->ef_sunshine_class.actor_class.world.position, 0.0f) - 40.0f;
             museum->ef_sunshine_class.actor_class.world.position.x += 6.0f;
         break;
     }
