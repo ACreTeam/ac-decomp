@@ -20,7 +20,7 @@ typedef struct ac_weather_priv_s{
     s16 timer;
     s16 work[5]; 
     u8 use;
-    s8 id;
+    u8 id;
     u8 status;
 }aWeather_Priv;
 

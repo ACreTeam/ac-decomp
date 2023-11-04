@@ -549,6 +549,10 @@ ac_weather.c:
    .text: [0x8060193C, 0x80602E70]
    .rodata: [0x8064BAE8, 0x8064BB08]
    .data: [0x806D1D50, 0x806D1DA0]
+ac_weather_rain.c:
+    .text: [0x80602E70, 0x80603494]
+    .rodata: [0x8064BB08,0x8064BB30]
+    .data: [0x806D1DB8, 0x806D1DF8]
 m_select.c:
     .text: [0x80627F88, 0x80629CA8]
     .rodata: [0x8064D1B0, 0x8064D1B8]
