@@ -47,10 +47,8 @@ void Ef_Room_Sunshine_Minsect_actor_ct(ACTOR* actor, GAME* game){
     else{
         minsect->ef_sunshine_class.actor_class.world.position.x -= 1.0f;
     }
-
-    pos = minsect->ef_sunshine_class.actor_class.world.position;
     
-    minsect->ef_sunshine_class.actor_class.world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(0.0f, &pos);
+    minsect->ef_sunshine_class.actor_class.world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(minsect->ef_sunshine_class.actor_class.world.position, 0.0f);
 
     minsect->ef_sunshine_class.actor_class.scale.x = 0.01f;
     minsect->ef_sunshine_class.actor_class.scale.y = 0.01f;
