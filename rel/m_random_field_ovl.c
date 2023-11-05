@@ -4,6 +4,22 @@
 #include "m_common_data.h"
 
 enum {
+  mRF_BIT_SLOPE_LEFT,
+  mRF_BIT_SLOPE_RIGHT,
+  mRF_BIT_BRIDGE_UPPER,
+  mRF_BIT_BRIDGE_LOWER,
+  mRF_BIT_SHRINE,
+  mRF_BIT_POLICE,
+  mRF_BIT_MUSEUM,
+  mRF_BIT_POOL,
+  mRF_BIT_NEEDLEWORK,
+
+  mRF_BIT_NUM
+};
+
+#define mRF_TO_BIT(type) (1 << (mRF_BIT_##type))
+
+enum {
   mRF_BLOCK_GROUP_CLIFF,
   mRF_BLOCK_GROUP_RIVER,
   mRF_BLOCK_GROUP_BRIDGE,
@@ -943,7 +959,7 @@ static int mRF_SetBridgeBlock(u8* blocks, int stepmode) {
         if (mRF_CheckBlockGroup(*blocks_p, mRF_BLOCK_GROUP_RIVER) != FALSE && bz < cross_bz) {
           if (cross_num == selected) {
             blocks_p[0] += 7; // change to a bridge block type
-            flags |= 4;
+            flags |= mRF_TO_BIT(BRIDGE_UPPER);
             // no break?
           }
 
@@ -964,7 +980,7 @@ static int mRF_SetBridgeBlock(u8* blocks, int stepmode) {
         if (mRF_CheckBlockGroup(*blocks_p2, mRF_BLOCK_GROUP_RIVER) != FALSE && bz > cross_bz) {
           if (cross_num == selected) {
             blocks_p2[0] += 7; // change to a bridge block type
-            flags |= 8;
+            flags |= mRF_TO_BIT(BRIDGE_LOWER);
             // no break?
           }
 
@@ -1354,7 +1370,7 @@ static int mRF_SetSlopeBlock(u8* blocks) {
         selected = mRF_GetRandom(possibilities);
         
         if (mRF_SetSlopeDirectedInfoCliff(blocks, 0, bz, mRF_RIVER_SIDE_LEFT, selected) != FALSE) {
-          flags |= (1 << 0);
+          flags |= mRF_TO_BIT(SLOPE_LEFT);
         }
       }
 
@@ -1364,7 +1380,7 @@ static int mRF_SetSlopeBlock(u8* blocks) {
         selected = mRF_GetRandom(possibilities);
         
         if (mRF_SetSlopeDirectedInfoCliff(blocks, 0, bz, mRF_RIVER_SIDE_RIGHT, selected) != FALSE) {
-          flags |= (1 << 1);
+          flags |= mRF_TO_BIT(SLOPE_RIGHT);
         }
       }
     }
@@ -1538,7 +1554,7 @@ static int mRF_SetNeedleworkAndWharfBlock(u8* blocks) {
     if (blocks[bnum] == mFM_BLOCK_TYPE_BEACH) {
       if (needlework_bx == bx) {
         blocks[bnum] = mFM_BLOCK_TYPE_NEEDLEWORK;
-        flags |= (1 << 8);
+        flags |= mRF_TO_BIT(NEEDLEWORK);
       }
 
       bx++;
@@ -1555,23 +1571,23 @@ static int mRF_SetUniqueFlatBlock(u8* blocks) {
   
   /* Wishing Well should be on one side of the river below the cliff */
   if (mRF_FlatBlock2Unique(blocks, mFM_BLOCK_TYPE_SHRINE, side0, mRF_CLIFF_HEIGHT_BELOW)) {
-    flags |= (1 << 4);
+    flags |= mRF_TO_BIT(SHRINE);
   }
   else if (mRF_FlatBlock2Unique(blocks, mFM_BLOCK_TYPE_SHRINE, side1, mRF_CLIFF_HEIGHT_BELOW)) {
-    flags |= (1 << 4);
+    flags |= mRF_TO_BIT(SHRINE);
   }
 
   /* Police Station prefers to be on the opposite side of the river from the Wishing Well if possible */
   if (mRF_FlatBlock2Unique(blocks, mFM_BLOCK_TYPE_POLICE_BOX, side1, mRF_CLIFF_HEIGHT_BELOW)) {
-    flags |= (1 << 5);
+    flags |= mRF_TO_BIT(POLICE);
   }
   else if (mRF_FlatBlock2Unique(blocks, mFM_BLOCK_TYPE_POLICE_BOX, side0, mRF_CLIFF_HEIGHT_BELOW)) {
-    flags |= (1 << 5);
+    flags |= mRF_TO_BIT(POLICE);
   }
 
   /* Museum can be on either side of the river below the cliff */
   if (mRF_FlatBlock2Unique(blocks, mFM_BLOCK_TYPE_MUSEUM, mRF_RIVER_SIDE_BOTH, mRF_CLIFF_HEIGHT_BELOW)) {
-    flags |= (1 << 6);
+    flags |= mRF_TO_BIT(MUSEUM);
   }
 
   return flags;
@@ -1670,7 +1686,7 @@ static int mRF_SetPoolBlock(u8* blocks) {
     int selected = mRF_GetRandom(pure_river_num);
     
     if (mRF_SetPoolDirectedRiverBlock(blocks, selected) != FALSE) {
-      return (1 << 7);
+      return mRF_TO_BIT(POOL);
     }
   }
 
@@ -1706,13 +1722,13 @@ static void mRF_InitCombTable(mFM_combination_c* combi_table) {
 }
 
 static int mRF_SetSeaBlockWithBridgeRiver(u8* blocks, int flags) {
-  if ((flags & (1 << 3)) == 0) {
+  if ((flags & mRF_TO_BIT(BRIDGE_LOWER)) == 0) {
     int i;
 
     for (i = 0; i < ((BLOCK_Z_NUM - 2) * BLOCK_X_NUM); i++) {
       if (blocks[i] == mFM_BLOCK_TYPE_BEACH_RIVER) {
         blocks[i] = mFM_BLOCK_TYPE_BEACH_RIVER_BRIDGE;
-        return (1 << 3);
+        return mRF_TO_BIT(BRIDGE_LOWER);
       }
     }
   }
@@ -1725,7 +1741,7 @@ static int mRF_MakePerfectBit() {
   int perfect_bit = 0;
   int i;
 
-  for (i = 0; i < 9; i++) {
+  for (i = 0; i < mRF_BIT_NUM; i++) {
     perfect_bit |= (1 << i);
   }
 
@@ -1767,24 +1783,24 @@ extern void mRF_MakeRandomField_ovl(mFM_combination_c* combi_table, mFM_combo_in
   int bit = 0;
   int perfect_bit;
   int stepmode;
-  stepmode = mRF_GetRandomStepMode();
-  perfect_bit = mRF_MakePerfectBit();
+  stepmode = mRF_GetRandomStepMode(); // select 2 or 3 step town
+  perfect_bit = mRF_MakePerfectBit(); // lol
 
   while (perfect_bit != (perfect_bit & bit)) {
     bit = 0;
-    mRF_InitCombTable(combi_table);
-    mRF_MakeBaseLandform(blocks_c, blocks_r, stepmode);
-    mRF_MakeFlatPlaceInfomation(blocks_c);
-    mRF_SetMarinBlock(blocks_c);
-    bit |= mRF_SetBridgeAndSlopeBlock(blocks_c, stepmode);
-    bit |= mRF_SetNeedleworkAndWharfBlock(blocks_c);
-    bit |= mRF_SetUniqueFlatBlock(blocks_c);
-    mRF_SetUniqueRailBlock(blocks_c);
-    bit |= mRF_SetPoolBlock(blocks_c);
-    bit |= mRF_SetSeaBlockWithBridgeRiver(blocks_c, bit);
-    mRF_MakeBaseHeightTable(base_table, blocks_c);
-    mRF_ReportRandomFieldBitResult(bit, perfect_bit);
-    mRF_SelectBlock(combi_table, combi_info, combi_count, blocks_c);
-    mRF_CopyBlockBaseHeightData(combi_table, base_table);
+    mRF_InitCombTable(combi_table); // clear save data acres
+    mRF_MakeBaseLandform(blocks_c, blocks_r, stepmode); // make the town base (cliffs + river)
+    mRF_MakeFlatPlaceInfomation(blocks_c); // log all "flat" blocks (no river or cliff)
+    mRF_SetMarinBlock(blocks_c); // make the beach base
+    bit |= mRF_SetBridgeAndSlopeBlock(blocks_c, stepmode); // set bridges and slopes
+    bit |= mRF_SetNeedleworkAndWharfBlock(blocks_c); // set Able Sister's and dock
+    bit |= mRF_SetUniqueFlatBlock(blocks_c); // Set Wishing Well, Police Station, & Museum
+    mRF_SetUniqueRailBlock(blocks_c); // Set Nook's Shop & Post Office
+    bit |= mRF_SetPoolBlock(blocks_c); // Set lake
+    bit |= mRF_SetSeaBlockWithBridgeRiver(blocks_c, bit); // Set river bridge only if necessary
+    mRF_MakeBaseHeightTable(base_table, blocks_c); // Create acre height map
+    mRF_ReportRandomFieldBitResult(bit, perfect_bit); // Debug function stubbed
+    mRF_SelectBlock(combi_table, combi_info, combi_count, blocks_c); // Choose the actual acres for each block
+    mRF_CopyBlockBaseHeightData(combi_table, base_table); // Set block height
   }
 }
