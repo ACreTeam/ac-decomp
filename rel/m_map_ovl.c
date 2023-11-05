@@ -88,7 +88,7 @@ extern u8 kan_tizu_c6r1b_TA_tex_txt[];
 extern u8 kan_tizu_c7r1b_TA_tex_txt[];
 extern u8 kan_tizu_mwf_TA_tex_txt[];
 
-static u8* l_map_texture[108] = {
+static u8* l_map_texture[mFM_BLOCK_TYPE_NUM] = {
   kan_tizu_f_TA_tex_txt,
   kan_tizu_f_TA_tex_txt,
   kan_tizu_f_TA_tex_txt,
@@ -199,7 +199,7 @@ static u8* l_map_texture[108] = {
   kan_tizu_c5r2b_TA_tex_txt
 };
 
-static u8 l_map_pal[108] = {
+static u8 l_map_pal[mFM_BLOCK_TYPE_NUM] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -209,7 +209,7 @@ static u8 l_map_pal[108] = {
   0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0
 };
 
-static u8 pluss_bridge[108] = {
+static u8 pluss_bridge[mFM_BLOCK_TYPE_NUM] = {
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x56, 0xff, 0xff,
   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x58, 0x59, 0xff, 0x5c, 0x5d, 0x57, 0xff, 0xff,
   0x5a, 0x5b, 0x69, 0x6a, 0x6b, 0xff, 0xff, 0xff, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0xff,
