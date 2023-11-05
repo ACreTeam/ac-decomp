@@ -10,7 +10,7 @@ extern void mRF_MakeRandomField(mFM_combination_c* combi_table, mFM_combo_info_c
   mRF_MakeRandomField_ovl(combi_table, combo_info, combo_count, game);
 }
 
-static u32 mRF_block_info[mRF_BLOCK_TYPE_MAX] = {
+static u32 mRF_block_info[mFM_BLOCK_TYPE_NUM] = {
   mRF_BLOCKKIND_BORDER,
   mRF_BLOCKKIND_BORDER | mRF_BLOCKKIND_RIVER0,
   mRF_BLOCKKIND_BORDER,
@@ -122,7 +122,7 @@ static u32 mRF_block_info[mRF_BLOCK_TYPE_MAX] = {
 };
 
 extern u32 mRF_Type2BlockInfo(u8 type) {
-  if (type < mRF_BLOCK_TYPE_MAX) {
+  if (type < mFM_BLOCK_TYPE_NUM) {
     return mRF_block_info[type];
   }
 
@@ -211,7 +211,7 @@ static mRF_gate_c* mRF_gate_correct_info[mRF_GATE_TYPE_NUM][mRF_DIRECT_NUM] = {
   { gate3_type0_up, gate3_type0_lt, gate3_type0_dn, gate3_type0_rt },
 };
 
-static u8 mRF_gate_info2[mRF_BLOCK_TYPE_MAX][mRF_DIRECT_NUM] = {
+static u8 mRF_gate_info2[mFM_BLOCK_TYPE_NUM][mRF_DIRECT_NUM] = {
   {
     mRF_GATE_NONE, // north
     mRF_GATE_NONE, // west

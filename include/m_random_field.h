@@ -10,7 +10,6 @@
 extern "C" {
 #endif
 
-#define mRF_BLOCK_TYPE_MAX 108 // TODO: this is likely a giant enum lol
 #define mRF_DIRECT_ERROR 100
 
 enum {
