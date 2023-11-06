@@ -5,6 +5,7 @@
 #include "m_field_info.h"
 #include "m_malloc.h"
 #include "m_player_lib.h"
+#include "sys_matrix.h"
 
 extern Gfx ef_ame02_setmode[];
 
