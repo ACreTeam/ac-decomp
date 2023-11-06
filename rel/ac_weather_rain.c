@@ -36,7 +36,8 @@ aWeather_Profile_c iam_weather_rain = {
     aWeatherRain_draw,
 };
 
-static int aWeatherRain_DecideMakeRainCount(WEATHER_ACTOR* weather){
+static int aWeatherRain_DecideMakeRainCount(ACTOR* actor){
+    WEATHER_ACTOR* weather  = (WEATHER_ACTOR*)actor;
 
     if(weather->current_level == 1){
         return 1;
@@ -46,24 +47,24 @@ static int aWeatherRain_DecideMakeRainCount(WEATHER_ACTOR* weather){
 }
 
 static void aWeatherRain_make(ACTOR* actor, GAME* game){
-    int i;
-    int priv_num;
-    GAME_PLAY* play = (GAME_PLAY*)game;
-    WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
-    
     aWeather_Priv* priv;
     xyz_t pos;
     xyz_t pos_mod;
     xyz_t speed;
     int count;
-    f32 x,y,z;
+    int i;
+    int priv_num;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
 
-    count = aWeatherRain_DecideMakeRainCount(weather);
+    f32 x,y,z;
+    
+    count = aWeatherRain_DecideMakeRainCount(actor);
     pos = weather->pos;
 
     for(i = 0; i < count; i++){
 
-        priv_num = Common_Get(clip.weather_clip)->get_priv_num(weather);
+        priv_num = Common_Get(clip.weather_clip)->get_priv_num(&weather->actor_class);
         if (priv_num != -1){ 
             x = -130.0f + (RANDOM_F(260.0f));
             z = -200.0f + (RANDOM_F(360.0f));
@@ -86,7 +87,7 @@ static void aWeatherRain_make(ACTOR* actor, GAME* game){
                 pos_mod.y = 70.0f + (120.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(pos_mod, 0.0f));
             }
             
-            priv = Common_Get(clip.weather_clip)->get_priv(1, 1000, &pos_mod, &speed, (WEATHER_ACTOR*)actor, priv_num);
+            priv = Common_Get(clip.weather_clip)->get_priv(1, 1000, &pos_mod, &speed, actor, priv_num);
             if(priv != NULL){
                 aWeatherRain_ct(priv,game);
                 priv->work[0] = 0;
@@ -108,8 +109,8 @@ static void aWeatherRain_MoveRain(aWeather_Priv* priv){
 }
 
 
-static void aWeatherRain_MakePicha(WEATHER_ACTOR* weather, GAME* game, xyz_t pos){
-    int priv_num = Common_Get(clip.weather_clip)->get_priv_num(weather);
+static void aWeatherRain_MakePicha(ACTOR* actor, GAME* game, xyz_t pos){
+    int priv_num = Common_Get(clip.weather_clip)->get_priv_num(actor);
     GAME_PLAY* play = (GAME_PLAY*)game;
     aWeather_Priv* priv;
     f32 y;
@@ -125,7 +126,7 @@ static void aWeatherRain_MakePicha(WEATHER_ACTOR* weather, GAME* game, xyz_t pos
             y = mCoBG_GetBgY_OnlyCenter_FromWpos(pos, 0.0f);
             pos.y = y;
         }
-        priv = Common_Get(clip.weather_clip)->get_priv(1, 8, &pos, NULL, weather,priv_num);
+        priv = Common_Get(clip.weather_clip)->get_priv(1, 8, &pos, NULL, actor, priv_num);
         if(priv != NULL){
             aWeatherRain_ct(priv,game);
             priv->work[0] = 1;
@@ -155,8 +156,8 @@ static void aWeatherRain_move(aWeather_Priv* priv, GAME* game){
         if((timer >= 10) && (Common_Get(clip.weather_clip) != NULL)){
             weather = Common_Get(clip.weather_clip)->actor;
             if(weather != NULL){
-                (Common_Get(clip.weather_clip)->remove_priv(weather, priv->id)); 
-                aWeatherRain_MakePicha(weather, game, priv->pos);
+                (Common_Get(clip.weather_clip)->remove_priv(&weather->actor_class, priv->id)); 
+                aWeatherRain_MakePicha(&weather->actor_class, game, priv->pos);
             }
         }
     }

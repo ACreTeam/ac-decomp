@@ -15,7 +15,7 @@ extern ACTOR_PROFILE Weather_Profile;
 typedef struct ac_weather_priv_s{
     xyz_t pos;
     xyz_t speed;
-    f32 unk18;
+    f32 currentY;
     f32 unk1C;
     s16 timer;
     s16 work[5]; 
@@ -26,10 +26,10 @@ typedef struct ac_weather_priv_s{
 
 typedef struct weather_actor_s WEATHER_ACTOR;
 
-typedef void (*CHANGE_WEATHER_PROC)(WEATHER_ACTOR* weather, s16 status, s16 level);
-typedef int (*GET_WEATHER_PRV_NUM)(WEATHER_ACTOR* weather);
-typedef void (*REMOVE_WEATHER_PRV)(WEATHER_ACTOR* weather, int id);
-typedef aWeather_Priv* (*GET_WEATHER_PRV)(u8 status, s16 timer, xyz_t* pos, xyz_t* speed, WEATHER_ACTOR* weather, int id);
+typedef void (*CHANGE_WEATHER_PROC)(ACTOR* weather, s16 status, s16 level);
+typedef int (*GET_WEATHER_PRV_NUM)(ACTOR* weather);
+typedef void (*REMOVE_WEATHER_PRV)(ACTOR* weather, int id);
+typedef aWeather_Priv* (*GET_WEATHER_PRV)(u8 status, s16 timer, xyz_t* pos, xyz_t* speed, ACTOR* weather, int id);
 typedef int (*WEATHER_SOUND_EFFECT)();
 typedef void (*CHANGE_WEATER_INSTANCE_PROC)(WEATHER_ACTOR* weather, s16 status, s16 level);
 

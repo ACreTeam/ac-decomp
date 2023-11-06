@@ -86,8 +86,8 @@ static void aWeather_weatherinfo_CommonSet(s16 type, s16 intensity){
     Common_Set(weather_intensity, intensity);
 }
 
-static void aWeather_RequestChangeWeather(WEATHER_ACTOR* weather, s16 status, s16 level){
-
+static void aWeather_RequestChangeWeather(ACTOR* actor, s16 status, s16 level){
+    WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
     if(mEnv_ReqeustChangeWeatherEnviroment(weather->current_status, status) != 0){
         if(status != weather->current_status){
             weather->next_status = status;
@@ -102,14 +102,15 @@ static void aWeather_RequestChangeWeather(WEATHER_ACTOR* weather, s16 status, s1
 }
 
 void aWeather_RequestChangeWeatherToIsland(){
-    aWeather_RequestChangeWeather(Common_Get(clip.weather_clip)->actor,Common_Get(island_weather),Common_Get(island_weather_intensity));
+    aWeather_RequestChangeWeather(&Common_Get(clip.weather_clip)->actor->actor_class,Common_Get(island_weather),Common_Get(island_weather_intensity));
 }
 
 void aWeather_RequestChangeWeatherFromIsland(){
-    aWeather_RequestChangeWeather(Common_Get(clip.weather_clip)->actor, mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather)) , mEnv_SAVE_GET_WEATHER_INTENSITY(Save_Get(weather)));
+    aWeather_RequestChangeWeather(&Common_Get(clip.weather_clip)->actor->actor_class, mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather)) , mEnv_SAVE_GET_WEATHER_INTENSITY(Save_Get(weather)));
 }
 
-int aWeather_GetWeatherPrvNum(WEATHER_ACTOR* weather){
+int aWeather_GetWeatherPrvNum(ACTOR* actor){
+    WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
     aWeather_Priv* priv = weather->priv;
     int i;
     int num = 0;
@@ -124,7 +125,8 @@ int aWeather_GetWeatherPrvNum(WEATHER_ACTOR* weather){
 }
 
 
-void aWeather_AbolishPrivate(WEATHER_ACTOR* weather, int num){
+void aWeather_AbolishPrivate(ACTOR* actor, int num){
+    WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
     aWeather_Priv* priv = weather->priv;
 
     if(priv != NULL){
@@ -135,7 +137,8 @@ void aWeather_AbolishPrivate(WEATHER_ACTOR* weather, int num){
     }
 }
 
-aWeather_Priv* aWeather_GetWeatherPrv(u8 status, s16 timer, xyz_t* pos, xyz_t* speed, WEATHER_ACTOR* weather, int id){
+aWeather_Priv* aWeather_GetWeatherPrv(u8 status, s16 timer, xyz_t* pos, xyz_t* speed, ACTOR* actor, int id){
+    WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
     aWeather_Priv* priv = weather->priv;
 
     if((id != -1) && (id < 100)){
@@ -517,7 +520,7 @@ static void aWeather_MoveWeatherPrv(WEATHER_ACTOR* weather, GAME* game){
                 if(priv->timer != -100){
                     priv->timer--;
                     if(priv->timer <= 0){
-                        aWeather_AbolishPrivate(weather, i);
+                        aWeather_AbolishPrivate(&weather->actor_class, i);
                     }
                 }
             }
@@ -622,7 +625,7 @@ static void aWeather_ChangeWeatherTime0(WEATHER_ACTOR* weather){
 
                 if(((mEv_CheckTitleDemo(rndIntensity) != -9) || ( weather->sound_flag != 1)) 
                     && (mFI_CheckInIsland() == 0)){
-                        aWeather_RequestChangeWeather(weather, rndWeather, rndIntensity);
+                        aWeather_RequestChangeWeather(&weather->actor_class, rndWeather, rndIntensity);
                     }
                 Common_Set(weather_time, Common_Get(time.rtc_time));
             }
