@@ -564,6 +564,10 @@ ac_weather_sakura.c:
     .text: [0x80603B44, 0x8060420C]
     .rodata: [0x8064BB88, 0x8064BBE8]
     .data: [0x806D1E10, 0x806D1E28]
+ac_weather_leaf.c:
+    .text: [0x8060420C, 0x806048B8]
+    .rodata: [0x8064BBE8, 0x8064BC40]
+    .data: [0x806D1E28, 0x806D1E48]
 m_select.c:
     .text: [0x80627F88, 0x80629CA8]
     .rodata: [0x8064D1B0, 0x8064D1B8]
