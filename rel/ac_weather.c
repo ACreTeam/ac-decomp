@@ -11,6 +11,7 @@
 #include "m_field_info.h"
 #include "m_malloc.h"
 #include "m_player_lib.h"
+#include "m_event.h"
 
 static void Weather_Actor_ct(ACTOR* actor, GAME* game);
 static void Weather_Actor_dt(ACTOR* actor, GAME* game);
@@ -623,7 +624,7 @@ static void aWeather_ChangeWeatherTime0(WEATHER_ACTOR* weather){
                 }
                 Save_Set(weather, rndIntensity | (rndWeather * 16));
 
-                if(((mEv_CheckTitleDemo(rndIntensity) != -9) || ( weather->sound_flag != 1)) 
+                if(((mEv_CheckTitleDemo() != -9) || ( weather->sound_flag != 1)) 
                     && (mFI_CheckInIsland() == 0)){
                         aWeather_RequestChangeWeather(&weather->actor_class, rndWeather, rndIntensity);
                     }
