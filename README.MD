@@ -22,8 +22,8 @@ Use `--recursive` when cloning to have ppcdis in the repository.
 5. Download the [CodeWarrior 1.3.2r compiler](https://mega.nz/file/WuBFTCLT#TmB5R4-1mEFkk4G1Vjn9_cHXRD9wOIH9CtOLaVSWEas) and extract it to *tools/1.3.2r/*.
 6. Install Docker.
 7. Build the Docker image (`docker build -t ac-decomp .`).
-8. Run configure.py (`docker run -it --rm -v ${PWD}:/ac-decomp ac-decomp python3 configure.py`).
-9. Run ninja (`docker run -it --rm -v ${PWD}:/ac-decomp ac-decomp ninja`).
+8. Run configure.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 configure.py`).
+9. Run ninja (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp ninja`).
 
 ### Build manually
 
