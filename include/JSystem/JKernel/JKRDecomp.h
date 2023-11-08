@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "dolphin/os/OSMessage.h"
+#include "JSystem/JKernel/JKRDvdFile.h"
 #include "JSystem/JKernel/JKRThread.h"
 #include "JSystem/JKernel/JKRAram.h"
 
@@ -78,6 +79,14 @@ inline JKRDecomp* JKRCreateDecompManager(s32 priority) {
   return JKRDecomp::create(priority);
 }
 
+inline int JKRCheckCompressed_noASR(u8* pBuf)
+{
+  int compression = JKRDecomp::checkCompressed(pBuf);
+  if (compression == JKRCOMPRESSION_ASR)
+    compression = JKRCOMPRESSION_NONE;
+  return compression;
+}
+
 inline JKRDecomp::CompressionMode JKRCheckCompressed(u8* buf) {
   return JKRDecomp::checkCompressed(buf);
 }
@@ -89,5 +98,9 @@ inline u32 JKRDecompExpandSize(u8* buf) {
 inline void JKRDecompress(u8* src, u8* dst, u32 srcLength, u32 skipCount) {
   JKRDecomp::orderSync(src, dst, srcLength, skipCount);
 }
+
+int JKRDecompressFromDVD(JKRDvdFile* srcFile, void* buf, u32 size, u32 maxDest, u32 fileOffset, u32 srcOffset);
+int JKRDecompressFromDVDToAram(JKRDvdFile* srcFile, u32 address, u32 fileSize, u32 maxDest, u32 fileOffset, u32 srcOffset);
+int JKRDecompressFromAramToMainRam(u32 srcAddress, void* dst, u32 fileSize, u32 maxDest, u32 fileOffset);
 
 #endif

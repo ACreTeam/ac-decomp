@@ -12,13 +12,13 @@ JKRAramHeap::JKRAramHeap(u32 baseAddress, u32 size) : JKRDisposer() {
   this->mTailAddress = this->mHeadAddress + this->mSize;
   this->mGroupID = 0xFF;
   JKRAramBlock* block = new (this->mHeap, nullptr)
-      JKRAramBlock(this->mHeadAddress, 0, this->mSize, 0xFF, false);
+    JKRAramBlock(this->mHeadAddress, 0, this->mSize, 0xFF, false);
   sAramList.append(&block->mLink);
 }
 
 JKRAramHeap::~JKRAramHeap() {
   for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst();
-       it != sAramList.getEnd();) {
+    it != sAramList.getEnd();) {
     delete (it++).getObject();
   }
 }
@@ -29,7 +29,8 @@ JKRAramBlock* JKRAramHeap::alloc(u32 size, JKRAramHeap::EAllocMode mode) {
 
   if (mode == Head) {
     block = this->allocFromHead(size);
-  } else {
+  }
+  else {
     block = this->allocFromTail(size);
   }
 
@@ -37,10 +38,9 @@ JKRAramBlock* JKRAramHeap::alloc(u32 size, JKRAramHeap::EAllocMode mode) {
   return block;
 }
 
-/* Code retrieved from Twilight Princess Debug version & matched. Unused in AC. */
-void JKRAramHeap::free(JKRAramBlock* block) {
-  delete block;
-}
+/* Code retrieved from Twilight Princess Debug version & matched. Unused in AC.
+ */
+void JKRAramHeap::free(JKRAramBlock* block) { delete block; }
 
 JKRAramBlock* JKRAramHeap::allocFromHead(u32 size) {
   size = ALIGN_NEXT(size, 32);
@@ -48,7 +48,7 @@ JKRAramBlock* JKRAramHeap::allocFromHead(u32 size) {
   JKRAramBlock* block = nullptr;
 
   for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst();
-       it != sAramList.getEnd(); it++) {
+    it != sAramList.getEnd(); it++) {
     JKRAramBlock* n_block = it.getObject();
     if (n_block->mFreeSize >= size && min_size > n_block->mFreeSize) {
       min_size = n_block->mFreeSize;
@@ -71,7 +71,7 @@ JKRAramBlock* JKRAramHeap::allocFromTail(u32 size) {
   size = ALIGN_NEXT(size, 32);
 
   for (JSUListIterator<JKRAramBlock> it = sAramList.getLast();
-       it != sAramList.getEnd(); it--) {
+    it != sAramList.getEnd(); it--) {
     JKRAramBlock* n_block = it.getObject();
 
     if (n_block->mFreeSize >= size) {
@@ -96,23 +96,23 @@ void JKRAramHeap::dump() {
   JREPORT(" attr  address:   size    gid\n");
 
   for (JSUListIterator<JKRAramBlock> listItr = sAramList.getFirst();
-       listItr != sAramList.getEnd(); listItr++) {
+    listItr != sAramList.getEnd(); listItr++) {
     if (listItr->mSize != 0) {
       JREPORTF("%s %08x: %08x  %3d\n",
-               listItr->isTempMemory() ? " temp" : "alloc", listItr->mAddress,
-               listItr->mSize, listItr->mGroupID);
+        listItr->isTempMemory() ? " temp" : "alloc", listItr->mAddress,
+        listItr->mSize, listItr->mGroupID);
     }
 
     if (listItr->mFreeSize != 0) {
       JREPORTF(" free %08x: %08x    0\n", listItr->mAddress + listItr->mSize,
-               listItr->mFreeSize);
+        listItr->mFreeSize);
     }
 
     total_used += listItr->mSize;
   }
 
   JREPORTF("%d / %d bytes (%6.2f%%) used\n", total_used, this->mSize,
-           (f32)total_used / (f32)this->mSize);
+    (f32)total_used / (f32)this->mSize);
 
   this->unlock();
 }
@@ -122,7 +122,8 @@ u32 JKRAramHeap::getFreeSize() {
   u32 max_free = 0;
   this->lock();
 
-  for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst(); it != sAramList.getEnd(); it++) {
+  for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst();
+    it != sAramList.getEnd(); it++) {
     if (it->mFreeSize > max_free) {
       max_free = it->mFreeSize;
     }
@@ -137,7 +138,8 @@ u32 JKRAramHeap::getTotalFreeSize() {
   u32 total_free = 0;
   this->lock();
 
-  for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst(); it != sAramList.getEnd(); it++) {
+  for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst();
+    it != sAramList.getEnd(); it++) {
     total_free += it->mFreeSize;
   }
 
@@ -154,7 +156,8 @@ u32 JKRAramHeap::getUsedSize(u8 groupID) {
     total_used = this->mSize - this->getTotalFreeSize();
   }
   else {
-    for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst(); it != sAramList.getEnd(); it++) {
+    for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst();
+      it != sAramList.getEnd(); it++) {
       if (groupID == it->mGroupID) {
         total_used += it->mSize;
       }

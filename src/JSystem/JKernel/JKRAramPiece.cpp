@@ -1,19 +1,20 @@
-#include "types.h"
+#include "JSystem/JKernel/JKRAram.h"
+#include "JSystem/JKernel/JKRDecomp.h"
+#include "JSystem/JKernel/JKRHeap.h"
+#include "JSystem/JKernel/JKRMacro.h"
+#include "JSystem/JSystem.h"
 #include "dolphin/ar.h"
+#include "dolphin/os.h" /* TODO: OSReport lives in libforest in AC */
 #include "dolphin/os/OSCache.h"
 #include "dolphin/os/OSMessage.h"
-#include "dolphin/os.h" /* TODO: OSReport lives in libforest in AC */
-#include "JSystem/JKernel/JKRMacro.h"
-#include "JSystem/JKernel/JKRHeap.h"
-#include "JSystem/JKernel/JKRDecomp.h"
-#include "JSystem/JSystem.h"
-
-#include "JSystem/JKernel/JKRAram.h"
+#include "types.h"
 
 JSUList<JKRAMCommand> JKRAramPiece::sAramPieceCommandList;
 OSMutex JKRAramPiece::mMutex;
 
-JKRAMCommand* JKRAramPiece::prepareCommand(int direction, u32 source, u32 destination, u32 length, JKRAramBlock* aramBlock, JKRAMCommand::AMCommandCallback callback) {
+JKRAMCommand* JKRAramPiece::prepareCommand(
+  int direction, u32 source, u32 destination, u32 length,
+  JKRAramBlock* aramBlock, JKRAMCommand::AMCommandCallback callback) {
   JKRAMCommand* cmd = new (JKRGetSystemHeap(), -4) JKRAMCommand();
   cmd->mDirection = direction;
   cmd->mSource = source;
@@ -29,7 +30,9 @@ void JKRAramPiece::sendCommand(JKRAMCommand* cmd) {
   JKRAramPiece::startDMA(cmd);
 }
 
-JKRAMCommand* JKRAramPiece::orderAsync(int direction, u32 source, u32 destination, u32 length, JKRAramBlock* aramBlock, JKRAMCommand::AMCommandCallback callback) {
+JKRAMCommand* JKRAramPiece::orderAsync(
+  int direction, u32 source, u32 destination, u32 length,
+  JKRAramBlock* aramBlock, JKRAMCommand::AMCommandCallback callback) {
   JKRAramPiece::lock();
 
   if (!JKR_ISALIGNED32(source) || !JKR_ISALIGNED32(destination)) {
@@ -41,9 +44,11 @@ JKRAMCommand* JKRAramPiece::orderAsync(int direction, u32 source, u32 destinatio
   }
 
   JKRAramCommand* aramCmd = new (JKRGetSystemHeap(), -4) JKRAramCommand();
-  JKRAMCommand* cmd = JKRAramPiece::prepareCommand(direction, source, destination, length, aramBlock, callback);
+  JKRAMCommand* cmd = JKRAramPiece::prepareCommand(
+    direction, source, destination, length, aramBlock, callback);
   aramCmd->setting(TRUE, cmd);
-  OSSendMessage((OSMessageQueue*)&JKRAram::sMessageQueue, (OSMessage)aramCmd, OS_MESSAGE_BLOCK);
+  OSSendMessage((OSMessageQueue*)&JKRAram::sMessageQueue, (OSMessage)aramCmd,
+    OS_MESSAGE_BLOCK);
   if (cmd->mCallback != nullptr) {
     JKRAramPiece::sAramPieceCommandList.append(&cmd->mAramPieceCommandLink);
   }
@@ -76,11 +81,12 @@ bool JKRAramPiece::sync(JKRAMCommand* cmd, BOOL noBlock) {
   }
 }
 
-
-bool JKRAramPiece::orderSync(int direction, u32 source, u32 destination, u32 length, JKRAramBlock* aramBlock) {
+bool JKRAramPiece::orderSync(int direction, u32 source, u32 destination,
+  u32 length, JKRAramBlock* aramBlock) {
   JKRAramPiece::lock();
 
-  JKRAMCommand* cmd = JKRAramPiece::orderAsync(direction, source, destination, length, aramBlock, nullptr);
+  JKRAMCommand* cmd = JKRAramPiece::orderAsync(direction, source, destination,
+    length, aramBlock, nullptr);
   bool res = JKRAramPiece::sync(cmd, FALSE);
   delete cmd;
 
@@ -96,7 +102,8 @@ void JKRAramPiece::startDMA(JKRAMCommand* cmd) {
     DCStoreRange((u8*)cmd->mSource, cmd->mLength);
   }
 
-  ARQPostRequest(cmd, 0, cmd->mDirection, 0, cmd->mSource, cmd->mDestination, cmd->mLength, JKRAramPiece::doneDMA);
+  ARQPostRequest(cmd, 0, cmd->mDirection, 0, cmd->mSource, cmd->mDestination,
+    cmd->mLength, JKRAramPiece::doneDMA);
 }
 
 void JKRAramPiece::doneDMA(u32 param) {
@@ -115,7 +122,8 @@ void JKRAramPiece::doneDMA(u32 param) {
     }
     else {
       if (cmd->mCompletedMesgQueue != nullptr) {
-        OSSendMessage(cmd->mCompletedMesgQueue, (OSMessage)cmd, OS_MESSAGE_NOBLOCK);
+        OSSendMessage(cmd->mCompletedMesgQueue, (OSMessage)cmd,
+          OS_MESSAGE_NOBLOCK);
       }
       else {
         OSSendMessage(&cmd->mMesgQueue, (OSMessage)cmd, OS_MESSAGE_NOBLOCK);

@@ -1,14 +1,13 @@
 #include "JSystem/JKernel/JKRAram.h"
 
-JKRAramBlock::JKRAramBlock(u32 address, u32 size, u32 freeSize, u8 groupID, bool tempMemory)
-  : mLink(this)
-  , mAddress(address)
-  , mSize(size)
-  , mFreeSize(freeSize)
-  , mGroupID(groupID)
-  , mIsTempMemory(tempMemory)
-  {
-  }
+JKRAramBlock::JKRAramBlock(u32 address, u32 size, u32 freeSize, u8 groupID,
+  bool tempMemory)
+  : mLink(this),
+  mAddress(address),
+  mSize(size),
+  mFreeSize(freeSize),
+  mGroupID(groupID),
+  mIsTempMemory(tempMemory) {}
 
 JKRAramBlock::~JKRAramBlock() {
   JSULink<JKRAramBlock>* prev = this->mLink.getPrev();
@@ -28,7 +27,8 @@ JKRAramBlock* JKRAramBlock::allocHead(u32 size, u8 groupID, JKRAramHeap* heap) {
   u32 address = this->mAddress + this->mSize;
   u32 freeSize = this->mFreeSize - size;
 
-  JKRAramBlock* block = new(heap->mHeap, nullptr) JKRAramBlock(address, size, freeSize, groupID, false);
+  JKRAramBlock* block = new (heap->mHeap, nullptr)
+    JKRAramBlock(address, size, freeSize, groupID, false);
   this->mFreeSize = 0;
   this->mLink.mPtrList->insert(this->mLink.mNext, &block->mLink);
   return block;
@@ -37,7 +37,8 @@ JKRAramBlock* JKRAramBlock::allocHead(u32 size, u8 groupID, JKRAramHeap* heap) {
 JKRAramBlock* JKRAramBlock::allocTail(u32 size, u8 groupID, JKRAramHeap* heap) {
   u32 address = this->mAddress + this->mSize + this->mFreeSize - size;
 
-  JKRAramBlock* block = new(heap->mHeap, nullptr) JKRAramBlock(address, size, 0, groupID, true);
+  JKRAramBlock* block =
+    new (heap->mHeap, nullptr) JKRAramBlock(address, size, 0, groupID, true);
   this->mFreeSize -= size;
   this->mLink.mPtrList->insert(this->mLink.mNext, &block->mLink);
   return block;

@@ -7,10 +7,16 @@
 
 #define SZP_BUFFERSIZE 1024
 #define REF_BUFFERSIZE 0x1120
+#define DMA_BUFFERSIZE 0x100
 
 struct SZPHeader {
   u32 magic;
   u32 decompSize;
+};
+
+struct SYaz0Header {
+  u32 signature;
+  u32 length;
 };
 
 class JKRDMCommand {
@@ -37,6 +43,14 @@ public:
   static bool errorRetry;
 };
 
-static int JKRDecompressFromDVD(JKRDvdFile* srcFile, void* buf, u32 size, u32 maxDest, u32 fileOffset, u32 srcOffset);
+inline void* JKRDvdToMainRam(long entryNum, u8* dst, JKRExpandSwitch expandSwitch, u32 fileSize, JKRHeap* heap, JKRDvdRipper::EAllocDirection allocDirection, u32 startOffset, int* pCompression)
+{
+  return JKRDvdRipper::loadToMainRAM(entryNum, dst, expandSwitch, fileSize, heap, allocDirection, startOffset, pCompression);
+}
+
+inline void* JKRDvdToMainRam(const char* path, u8* dst, JKRExpandSwitch expandSwitch, u32 fileSize, JKRHeap* heap, JKRDvdRipper::EAllocDirection allocDirection, u32 startOffset, int* pCompression)
+{
+  return JKRDvdRipper::loadToMainRAM(path, dst, expandSwitch, fileSize, heap, allocDirection, startOffset, pCompression);
+}
 
 #endif

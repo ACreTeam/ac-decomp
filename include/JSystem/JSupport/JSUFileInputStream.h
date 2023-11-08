@@ -9,7 +9,6 @@ class JSUFileInputStream : public JSURandomInputStream {
 public:
   JSUFileInputStream(JKRFile* file);
 
-  virtual ~JSUFileInputStream() { }
   virtual int readData(void* buf, s32 len);
   virtual int getLength() const { return ((JKRFile*)this->mObject)->getFileSize(); }
   virtual int getPosition() const { return this->mPosition; }

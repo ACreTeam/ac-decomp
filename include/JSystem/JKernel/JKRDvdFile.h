@@ -1,6 +1,7 @@
 #ifndef JKRDVDFILE_H
 #define JKRDVDFILE_H
 
+#include "JSystem/JKernel/JKRAram.h"
 #include "JSystem/JKernel/JKRFile.h"
 #include "JSystem/JSupport/JSUStream.h"
 
@@ -30,22 +31,22 @@ public:
   }
 
   inline int readDataAsync(void* addr, s32 length, s32 offset) {
-    OSLockMutex(&this->mMutex1);
+    OSLockMutex(&this->mDvdMutex);
     s32 retAddr;
 
-    if (this->mThread2 != nullptr) {
-      OSUnlockMutex(&this->mMutex1);
+    if (this->mDvdThread != nullptr) {
+      OSUnlockMutex(&this->mDvdMutex);
       retAddr = -1;
     }
     else {
-      this->mThread2 = OSGetCurrentThread();
+      this->mDvdThread = OSGetCurrentThread();
       retAddr = -1;
       if (DVDReadAsync(&this->mDvdFileInfo, addr, length, offset, JKRDvdFile::doneProcess)) {
         retAddr = this->sync();
       }
 
-      this->mThread2 = nullptr;
-      OSUnlockMutex(&this->mMutex1);
+      this->mDvdThread = nullptr;
+      OSUnlockMutex(&this->mDvdMutex);
     }
 
     return retAddr;
@@ -60,20 +61,20 @@ public:
 
   static JSUList<JKRDvdFile> sDvdList;
 
-protected:
-  OSMutex mMutex1;
-  OSMutex mMutex2;
+public:
+  OSMutex mDvdMutex;
+  OSMutex mAramMutex;
   JKRAramBlock* mAramBlock;
-  OSThread* mThread1;
+  OSThread* mAramThread;
   JSUFileInputStream* mInputStream;
   u32 _58;
   JKRDvdFileInfo mDvdFileInfo;
-  OSMessageQueue mMessageQueue1;
-  OSMessage mMsg1;
-  OSMessageQueue mMessageQueue2;
-  OSMessage mMsg2;
+  OSMessageQueue mAramMessageQueue;
+  OSMessage mAramMessage;
+  OSMessageQueue mDvdMessageQueue;
+  OSMessage mDvdMessage;
   JSULink<JKRDvdFile> mLink;
-  OSThread* mThread2;
+  OSThread* mDvdThread;
 };
 
 #endif

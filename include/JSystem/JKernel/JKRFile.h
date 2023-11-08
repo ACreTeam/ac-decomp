@@ -5,7 +5,6 @@
 #include "dolphin/dvd.h"
 #include "dolphin/os.h"
 #include "JSystem/JSupport/JSUList.h"
-#include "JSystem/JKernel/JKRAram.h"
 #include "JSystem/JKernel/JKRDisposer.h"
 #include "JSystem/JKernel/JKRMacro.h"
 
@@ -14,8 +13,8 @@ public:
   inline JKRFile()
     : JKRDisposer()
     , mFileOpen(false)
-    { 
-    }
+  {
+  }
 
   virtual ~JKRFile() { }
   virtual bool open(const char* path) = 0;
