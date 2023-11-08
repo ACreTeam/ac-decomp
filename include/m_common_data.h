@@ -285,7 +285,9 @@ typedef struct common_data_s {
   /* 0x0288A0 */ u8 pad_connected; /* is gamepad 0 connected? */
   /* 0x0288A1 */ u8 unk288A1;
   /* 0x0288A2 */ s16 current_sound_effect;
-  /* 0x0288A4 */ u8 _288a4[0x02DB40 - 0x0288A4];
+  /* 0x0288A4 */ u8 _288a4[0x0288C0 - 0x0288A4];
+  /* 0x0288C0 */ Island_c transfer_island; /* used when transferring islands with the GBA */
+  /* 0x02A1C0 */ Island_agb_c agb_island; /* converted island data sent over to the GBA */
   /* 0x02DB40 */ u8 auto_nwrite_set; /* when true, saved nwrite time will be utilized. Seems to be used to keep same date for fishing tourney stuff. */
   /* 0x02DB42 */ u16 select_last_select_no;
   /* 0x02DB44 */ u16 select_last_top_no;

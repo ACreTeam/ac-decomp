@@ -127,6 +127,14 @@ m_home.c:
     .data: [0x806546C8, 0x80655340]
 m_house.c:
     .text: [0x803B3688, 0x803B3880]
+m_land.c:
+    .text: [0x803B3880, 0x803B3CB8]
+    .rodata: [0x80642478, 0x80642480]
+    .bss: [0x81296128, 0x81296140]
+m_island.c:
+    .text: [0x803B3CB8, 0x803B5A68]
+    .data: [0x80655340, 0x80655388]
+    .bss: [0x81296140, 0x81297A68]
 m_item_name.c:
     .text: [0x803B5A68, 0x803B5CC4]
     .data: [0x80655388, 0x80655D48]

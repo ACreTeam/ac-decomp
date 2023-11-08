@@ -1648,6 +1648,27 @@ extern mActor_name_t mNT_FishIdx2FishItemNo(int idx);
 #define NPC_TYBALT 0xE0B6
 #define NPC_LOBO 0xE0B9
 #define NPC_BIFF 0xE0C2
+#define NPC_MAELLE (NPC_START + 216)
+#define NPC_OHARE (NPC_START + 217)
+#define NPC_BLISS (NPC_START + 218)
+#define NPC_DRIFT (NPC_START + 219)
+#define NPC_BUD (NPC_START + 220)
+#define NPC_BOOMER (NPC_START + 221)
+#define NPC_ELINA (NPC_START + 222)
+#define NPC_FLASH (NPC_START + 223)
+#define NPC_DOBIE (NPC_START + 224)
+#define NPC_FLOSSIE (NPC_START + 225)
+#define NPC_ANNALISE (NPC_START + 226)
+#define NPC_PLUCKY (NPC_START + 227)
+#define NPC_FAITH (NPC_START + 228)
+#define NPC_YODEL (NPC_START + 229)
+#define NPC_ROWAN (NPC_START + 230)
+#define NPC_JUNE (NPC_START + 231)
+#define NPC_CHERI (NPC_START + 232)
+#define NPC_PIGLEG (NPC_START + 233)
+#define NPC_ANKHA (NPC_START + 234)
+#define NPC_PUNCHY (NPC_START + 235)
+#define NPC_END (NPC_START + 236)
 
 #define DUMMY_START 0xF000
 #define DUMMY_RESERVE 0xF0EE // unsure about this, only true in DnM

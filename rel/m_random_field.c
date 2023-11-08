@@ -1015,8 +1015,8 @@ extern void mRF_IslandBgData_To_VillageData() {
   mActor_name_t right_t = right_bg_idx + 0x70;
 
   if (mFI_BlockKind2BkNum(&island_left_bx, &island_left_bz, mRF_BLOCKKIND_ISLAND_LEFT)) {
-    mActor_name_t left_bg_name = mRF_FindBgNameTypeCombiNum(left_t, 0x62);
-    mActor_name_t right_bg_name = mRF_FindBgNameTypeCombiNum(right_t, 0x63);
+    mActor_name_t left_bg_name = mRF_FindBgNameTypeCombiNum(left_t, mFM_BLOCK_TYPE_ISLAND_LEFT);
+    mActor_name_t right_bg_name = mRF_FindBgNameTypeCombiNum(right_t, mFM_BLOCK_TYPE_ISLAND_RIGHT);
     
     Save_Set(combi_table[island_left_bz][island_left_bx].combination_type, left_bg_name);
     Save_Set(combi_table[island_left_bz][island_left_bx + 1].combination_type, right_bg_name);

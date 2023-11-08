@@ -6806,7 +6806,12 @@ extern int mNpc_ReceiveHPMail(Mail_c* mail) {
         animal = &animal[npc_idx];
 
         if (animal != NULL) {
+          /* @BUG - the final byte of the password should not be stored. */
+          #ifndef BUGFIXES
           bcopy(password, animal->hp_mail[private_idx].password, mMpswd_PASSWORD_DATA_LEN);
+          #else
+          bcopy(password, animal->hp_mail[private_idx].password, sizeof(animal->hp_mail[private_idx].password));
+          #endif
           lbRTC_TimeCopy(&animal->hp_mail[private_idx].receive_time, Common_GetPointer(time.rtc_time));
           res = TRUE;
         }
