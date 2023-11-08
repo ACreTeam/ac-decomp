@@ -11,3 +11,4 @@ symbol_aligns:
     0x80F8C460: 32 # mFM_grd_s_rail_tex
     0x80657200: 32 # .data msg.o
     0x81297E80: 32 # .bss msg.o
+    0x81296140: 32 # .bss m_island.o

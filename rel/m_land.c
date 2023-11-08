@@ -43,7 +43,7 @@
 #include "m_string.h"
 #include "types.h"
 
-static int l_mld_start_flag;
+static int l_mld_start_flag = FALSE;
 
 /**
  * @brief Turns on the start flag.
@@ -170,14 +170,15 @@ extern int mLd_AddMuraString(u8* name, int name_len) {
  */
 extern int mLd_GetLandNameStringAddMura(u8* buf) {
   int mura_size;
+  int i;
   
   u8* name = mLd_GetLandName();
   int size = mMsg_Get_Length_String(name, LAND_NAME_SIZE);
   mem_copy(buf, name, size);
   mura_size = mLd_AddMuraString(buf, size);
 
-  for (mura_size; mura_size < LAND_NAME_MURA_SIZE; mura_size++) {
-    buf[mura_size] = CHAR_SPACE;
+  for (i = mura_size; i < LAND_NAME_MURA_SIZE; i++) {
+    buf[i] = CHAR_SPACE;
   }
 
   return mura_size;
