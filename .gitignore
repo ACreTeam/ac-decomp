@@ -15,3 +15,5 @@ dump/*
 build.ninja
 ac-decomp.code-workspace
 assets/
+tools/cli.ini
+tools/cli.py
