@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_actor_type.h"
+#include "m_collision_bg.h"
 
 /* TODO: these defintions are likely included from an auto-gen source */
 

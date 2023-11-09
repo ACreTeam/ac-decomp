@@ -283,6 +283,10 @@ m_roll_lib.c:
     .rodata: [0x806434D8, 0x80643538]
 sys_stacks.c:
     .bss: [0x812F5670, 0x812F9670]
+m_cpak.c:
+    .text: [0x80403830, 0x80403874]
+    .data: [0x8065EC98, 0x8065ECA0]
+    .bss: [0x812F3040, 0x812F3098]
 m_vibctl.c:
     .text: [0x8040387C, 0x804040F0]
     .rodata: [0x80643550, 0x806436C8]
