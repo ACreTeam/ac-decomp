@@ -61,6 +61,78 @@ enum {
   mNT_TREE_TYPE_NUM
 };
 
+enum {
+  mNT_ITEM_TYPE_NONE,
+  mNT_ITEM_TYPE_APPLE,
+  mNT_ITEM_TYPE_ORANGE,
+  mNT_ITEM_TYPE_PEACH,
+  mNT_ITEM_TYPE_PEAR,
+  mNT_ITEM_TYPE_NUTS,
+  mNT_ITEM_TYPE_MATSUTAKE,
+  mNT_ITEM_TYPE_KABU,
+  mNT_ITEM_TYPE_FISH,
+  mNT_ITEM_TYPE_BAG,
+  mNT_ITEM_TYPE_LEAF,
+  mNT_ITEM_TYPE_ROLL,
+  mNT_ITEM_TYPE_BOX,
+  mNT_ITEM_TYPE_PACK,
+  mNT_ITEM_TYPE_PRESENT,
+  mNT_ITEM_TYPE_SEED,
+  mNT_ITEM_TYPE_HANIWA,
+  mNT_ITEM_TYPE_ETC,
+  mNT_ITEM_TYPE_CAGE,
+  mNT_ITEM_TYPE_TOOL,
+  mNT_ITEM_TYPE_FOSSIL,
+  mNT_ITEM_TYPE_TRASH,
+  mNT_ITEM_TYPE_LETTER,
+  mNT_ITEM_TYPE_OTOSI,
+  mNT_ITEM_TYPE_SHELLA,
+  mNT_ITEM_TYPE_SHELLB,
+  mNT_ITEM_TYPE_SHELLC,
+  mNT_ITEM_TYPE_CANDY,
+  mNT_ITEM_TYPE_COCONUT,
+  mNT_ITEM_TYPE_OMIKUJI,
+  mNT_ITEM_TYPE_CLOTH,
+  mNT_ITEM_TYPE_CARPET,
+  mNT_ITEM_TYPE_WALL,
+  mNT_ITEM_TYPE_AXE,
+  mNT_ITEM_TYPE_NET,
+  mNT_ITEM_TYPE_ROD,
+  mNT_ITEM_TYPE_SHOVEL,
+  mNT_ITEM_TYPE_AXE2,
+  mNT_ITEM_TYPE_NET2,
+  mNT_ITEM_TYPE_ROD2,
+  mNT_ITEM_TYPE_SHOVEL2,
+  mNT_ITEM_TYPE_UMBRELLA,
+  mNT_ITEM_TYPE_KAZA,
+  mNT_ITEM_TYPE_UTIWA,
+  mNT_ITEM_TYPE_PAPER,
+  mNT_ITEM_TYPE_FLOWER_SEED,
+  mNT_ITEM_TYPE_HUKUBUKURO,
+  mNT_ITEM_TYPE_TAISOU,
+  mNT_ITEM_TYPE_MD,
+  mNT_ITEM_TYPE_TICKET,
+  mNT_ITEM_TYPE_BONE,
+  mNT_ITEM_TYPE_DIARY,
+  mNT_ITEM_TYPE_FORK_ON,
+
+  mNT_ITEM_TYPE_NUM
+};
+
+enum {
+  mNT_TREE_SIZE_FULL,
+  mNT_TREE_SIZE_S2,
+  mNT_TREE_SIZE_S1,
+  mNT_TREE_SIZE_S0,
+
+  mNT_TREE_SIZE_NUM
+};
+
+typedef struct offset_table_s {
+  int type;
+  mCoBG_OffsetTable_c table;
+} mNT_offset_table_c;
+
 /* TODO: these should be calculated via definitions later */
 #define NPC_NUM 236
 #define NPC_ISLANDER_NUM 18
@@ -90,6 +162,9 @@ enum {
 #define NOT_SECRET_MD_NUM 52
 #define UMBRELLA_NUM 32
 
+extern s16 move_obj_profile_table[];
+extern s16 actor_profile_table[];
+extern s16 props_profile_table[];
 extern u8 npc_looks_table[];
 
 extern int mNT_check_unknown(mActor_name_t item_no);

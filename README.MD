@@ -1,6 +1,8 @@
-# Animal Crossing Decompilation [![Discord Channel][discord-badge]][discord]
+# Animal Crossing Decompilation [![Discord Channel][discord-badge]][discord] ![rel progress] ![dol progress]
 [discord]: https://discord.gg/hKx3FJJgrV
 [discord-badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
+[rel progress]: https://img.shields.io/endpoint?label=rel&url=https%3A%2F%2Fprogress.decomp.club%2Fdata%2Fanimalcrossing%2Fus%2Frel%2F%3Fmode%3Dshield%26measure%3Dcode
+[dol progress]: https://img.shields.io/endpoint?label=dol&url=https%3A%2F%2Fprogress.decomp.club%2Fdata%2Fanimalcrossing%2Fus%2Fdol%2F%3Fmode%3Dshield%26measure%3Dcode
 
 Decompilation in progress of Animal Crossing (GAFE01)
 
