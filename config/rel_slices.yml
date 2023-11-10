@@ -186,6 +186,10 @@ m_mushroom.c:
     .rodata: [0x80642950, 0x80642960]
     .data: [0x8065A3F8, 0x8065A430]
     .bss: [0x81298B40, 0x81298F60]
+m_name_table.c:
+    .text: [0x803C90A8, 0x803C98EC]
+    .rodata: [0x80642960, 0x80642978]
+    .data: [0x8065A430, 0x8065ABC0]
 m_needlework.c:
     .text: [0x803C98EC, 0x803C9F7C]
     .data: [0x8065ABC0, 0x8065AE30]

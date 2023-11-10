@@ -1747,11 +1747,11 @@ extern mActor_name_t mNT_FishIdx2FishItemNo(int idx);
 #define NPC_END (NPC_START + 236)
 
 #define DUMMY_START 0xF000
-#define DUMMY_RESERVE 0xF0EE // unsure about this, only true in DnM
 #define DUMMY_HANIWA0 0xF0FB
 #define DUMMY_HANIWA1 (DUMMY_HANIWA0 + 1)
 #define DUMMY_HANIWA2 (DUMMY_HANIWA1 + 1)
 #define DUMMY_HANIWA3 (DUMMY_HANIWA2 + 1)
+#define DUMMY_RESERVE 0xF102
 #define DUMMY_RADIO 0xF109
 #define DUMMY_TAMA 0xF110
 #define DUMMY_DOUZOU 0xF11D
