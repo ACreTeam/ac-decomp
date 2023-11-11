@@ -11,6 +11,10 @@ typedef struct xy_s {
     f32 x, y;
 } xy_t;
 
+typedef struct xz_s {
+    f32 x, z;
+} xz_t;
+
 typedef struct xyz_s {
     f32 x, y, z;
 } xyz_t;
