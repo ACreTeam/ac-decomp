@@ -397,10 +397,10 @@ static void mCoBG_MakeTab2MoveTail(xz_t* dst_xz, xz_t* src_xz) {
   }
 }
 
-static void mCoBG_SearchAttribute(xyz_t wpos, int direct, s8* can_dig) {
+static u32 mCoBG_SearchAttribute(xyz_t wpos, int direct, s8* can_dig) {
   xyz_t next_ut;
 
   wpos.y = 0.0f;
   mCoBG_PlussDirectOffset(&next_ut, wpos, direct);
-  mCoBG_Wpos2Attribute(next_ut, can_dig);
+  return mCoBG_Wpos2Attribute(next_ut, can_dig);
 }
