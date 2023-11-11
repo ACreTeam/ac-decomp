@@ -70,6 +70,28 @@ enum {
   mCoBG_KILL_PLANT = 7 /* No growth, all plants die on this unit  */
 };
 
+enum {
+  mCoBG_DIRECT_N,
+  mCoBG_DIRECT_W,
+  mCoBG_DIRECT_S,
+  mCoBG_DIRECT_E,
+  mCoBG_DIRECT_NW,
+  mCoBG_DIRECT_NE,
+  mCoBG_DIRECT_SE,
+  mCoBG_DIRECT_SW,
+
+  mCoBG_DIRECT_NUM
+};
+
+enum {
+  mCoBG_AREA_N,
+  mCoBG_AREA_W,
+  mCoBG_AREA_S,
+  mCoBG_AREA_E,
+
+  mCoBG_AREA_NUM
+};
+
 /* sizeof(mCoBG_CollisionData_c) == 4*/
 typedef struct collision_bg_data_s {
   /* 1------- -------- -------- -------- */ u32 shape:1; /* collision shape */
@@ -86,6 +108,22 @@ typedef union collision_bg_u {
   mCoBG_CollisionData_c data;
   u32 raw;
 } mCoBG_Collision_u;
+
+typedef struct collision_unit_info_s {
+  mCoBG_Collision_u* collision;
+  f32 leftUp_offset;
+  f32 leftDown_offset;
+  f32 rightDown_offset;
+  f32 rightUp_offset;
+  f32 base_height;
+  f32 pos_x;
+  f32 pos_z;
+  int ut_x;
+  int ut_z;
+  int shape;
+  u8 attribute;
+  mActor_name_t item;
+} mCoBG_UnitInfo_c;
 
 #define mCoBG_HIT_WALL       (1 << 0) /* in contact with *any* wall        */
 #define mCoBG_HIT_WALL_FRONT (1 << 1) /* in contact with wall to the front */
@@ -158,17 +196,37 @@ typedef struct bg_register_s {
 } mCoBG_bg_regist_c;
 
 typedef struct collision_offset_table_s {
-    u8 unit_attribute;
-    s8 centerRight_offset; 
-    s8 leftUp_offset;
-    s8 leftDown_offset;
-    s8 rightDown_offset;
-    s8 rightUp_offset;
-    s8 slate_switch;
+  u8 unit_attribute;
+  s8 centerRight_offset; 
+  s8 leftUp_offset;
+  s8 leftDown_offset;
+  s8 rightDown_offset;
+  s8 rightUp_offset;
+  s8 shape;
 } mCoBG_OffsetTable_c;
 
+typedef struct collision_actor_info_s {
+  mActor_name_t name_id;
+  u8 _02;
+  u8 on_ground;
+  u8 _04;
+  u8 in_water;
+  u8 _06[2]; // alignment?
+  mCoBG_CheckResult_c* check_res_p;
+  xz_t speed_xz0;
+  xz_t speed_xz1;
+  xyz_t center_pos;
+  xyz_t old_center_pos;
+  xyz_t rev_pos;
+  u8 _40[4];
+  f32 _44;
+  f32 _48;
+  f32 _4C;
+  u8 _50[0x20];
+} mCoBG_ActorInf_c;
+
 extern u32 mCoBG_Wpos2BgAttribute_Original(xyz_t wpos);
-extern u32 mCoBG_Wpos2Attribute(xyz_t wpos, char* is_diggable);
+extern u32 mCoBG_Wpos2Attribute(xyz_t wpos, s8* is_diggable);
 extern int mCoBG_CheckWaterAttribute(u32 attribute);
 extern f32 mCoBG_GetBgY_AngleS_FromWpos(s_xyz* angle_to_ground, xyz_t wpos, f32 offset_y);
 extern f32 mCoBG_GetShadowBgY_AngleS_FromWpos(f32, s_xyz*, xyz_t);
@@ -199,6 +257,7 @@ extern int mCoBG_ExistHeightGap_KeepAndNow_Detail(xyz_t wpos);
 extern int mCoBG_GetHoleNumber(xyz_t wpos);
 extern int mCoBG_Attr2CheckPlaceNpc(u32 attribute);
 extern int mCoBG_ExistHeightGap_KeepAndNow(xyz_t wpos);
+extern void mCoBG_GetNorm_By3Point(xyz_t* norm, xyz_t* p0, xyz_t* p1, xyz_t* p2);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();
