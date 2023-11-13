@@ -11,10 +11,21 @@
 #include "m_map_ovl_h.h"
 #include "m_bank_ovl_h.h"
 #include "m_music_ovl_h.h"
+#include "m_warning_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+enum {
+  mSM_OVL_PROC_MOVE,
+  mSM_OVL_PROC_PLAY,
+  mSM_OVL_PROC_WAIT,
+  mSM_OVL_PROC_3,
+  mSM_OVL_PROC_END,
+
+  mSM_OVL_PROC_NUM
+};
 
 // TODO: fill this out
 typedef struct submenu_segment_s {
@@ -98,7 +109,10 @@ struct submenu_overlay_s {
   /* 0x964 */ mSM_SETUP_VIEW_PROC setup_view_proc;
   /* 0x968 */ void* unused_func_968;
   /* 0x96C */ mSM_CHANGE_VIEW_PROC change_view_proc;
-  /* 0x970 */ u8 _940[0x9B4 - 0x970];
+  /* 0x970 */ u8 _970[0x9A8 - 0x970];
+  /* 0x9A8 */ mWR_Ovl_c* warning_ovl;
+  /* 0x9AC */ void* _9AC;
+  /* 0x9B0 */ void* _9B0;
   /* 0x9B4 */ mMP_Overlay_c* map_ovl;
   /* 0x9B8 */ u8 _9B8[0x9D0 - 0x9B8];
   /* 0x9D0 */ mMU_Overlay_c* music_ovl;
