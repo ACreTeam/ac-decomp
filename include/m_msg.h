@@ -14,6 +14,19 @@ extern "C" {
 #define mMsg_MAIL_STRING_LEN 132
 
 enum {
+  mMsg_INDEX_HIDE,
+  mMsg_INDEX_APPEAR,
+  mMsg_INDEX_NORMAL,
+  mMsg_INDEX_CURSOL,
+  mMsg_INDEX_DISAPPEAR,
+  mMsg_INDEX_APPEAR_WAIT,
+  mMsg_INDEX_WAIT,
+  mMsg_INDEX_DISAPPEAR_WAIT,
+
+  mMsg_INDEX_NUM
+};
+
+enum {
   mMsg_FREE_STR0,
   mMsg_FREE_STR1,
   mMsg_FREE_STR2,
@@ -243,6 +256,9 @@ extern void mMsg_Get_BodyParam(u32 table_rom_start, u32 data_rom_start, int entr
 extern void mMsg_Set_LockContinue(mMsg_Window_c* msg_win);
 extern void mMsg_Unset_LockContinue(mMsg_Window_c* msg_win);
 extern int mMsg_Get_msg_num(mMsg_Window_c* msg_win);
+extern int mMsg_Check_main_index(mMsg_Window_c* msg_win, int index);
+extern int mMsg_request_main_appear(mMsg_Window_c* msg_win, ACTOR* other_actor, int display_name, rgba_t* window_color_p, int msg_no, int request_priority);
+extern int mMsg_Check_main_hide(mMsg_Window_c* msg_win);
 
 #ifdef __cplusplus
 }

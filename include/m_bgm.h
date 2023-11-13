@@ -18,6 +18,9 @@ extern void mBGMPsComp_museum_status(int museum_status);
 extern void mBGMPsComp_make_ps_quietField(u16 stop_type);
 extern void mBGMPsComp_delete_ps_quietField();
 extern void mBGMPsComp_make_ps_co_quiet(u16 stop_type, s16 frames);
+extern void mBGMPsComp_volume_talk_start();
+extern void mBGMPsComp_volume_talk_end();
+extern void mBGMForce_inform_end();
 
 #ifdef __cplusplus
 }

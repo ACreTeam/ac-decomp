@@ -32,6 +32,7 @@
 #include "m_all_grow.h"
 #include "m_fishrecord.h"
 #include "m_card.h"
+#include "m_demo.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -223,7 +224,8 @@ typedef struct common_data_s {
   /* 0x02852E */ s16 goods_power;
   /* 0x028530 */ Door_data_c door_data; /* misc door data */
   /* 0x028544 */ Door_data_c structure_exit_door_data; /* door data for when exiting a building */
-  /* 0x028558 */ u8 _28558[0x02857C - 0x028558];
+  /* 0x028558 */ mDemo_Request_c start_demo_request;
+  /* 0x028568 */ Door_data_c event_door_data;
   /* 0x02857C */ Door_data_c famicom_emu_exit_door_data;
   /* 0x028590 */ u8 remove_cut_tree_info_bitfield; /* resets the cut tree states for trees in a visible acre */
   /* 0x028591 */ u8 floor_idx;
@@ -234,7 +236,7 @@ typedef struct common_data_s {
   /* 0x0285C0 */ s8 player_decoy_flag;
   /* 0x0285C1 */ u8 _285C1;
   /* 0x0285C2 */ u8 make_npc2_actor;
-  /* 0x0285C3 */ u8 _285C3[0x0285C6 - 0x0285C3];
+  /* 0x0285C4 */ s16 event_id;
   /* 0x0285C6 */ u8 event_title_flags;
   /* 0x0285C7 */ u8 event_title_fade_in_progress;
   /* 0x0285C8 */ mEv_common_data_c event_common;
