@@ -192,7 +192,7 @@ static void aTOU_actor_move(ACTOR* actor, GAME* game){
             pos.x = light->actor_class.world.position.x;
             pos.y = light->actor_class.world.position.y;
             pos.z = light->actor_class.world.position.z - 60.0f;
-            mPlib_request_main_door_type1(play, &pos, 0, 1, light); 
+            mPlib_request_main_door_type1(game, &pos, 0, 1, light); 
         }
     } 
     aTOU_color_ctrl(light); 

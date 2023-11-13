@@ -33,6 +33,7 @@ typedef void (*mActor_proc)(ACTOR*, GAME*);
 #define ACTOR_STATE_25 (1 << 25)
 #define ACTOR_STATE_26 (1 << 26)
 #define ACTOR_STATE_CAN_MOVE_IN_DEMO_SCENES (1 << 29)
+#define ACTOR_STATE_IN_DEMO (1 << 30)
 
 
 //TODO: Name the unique ones for their correspondant actor
