@@ -1708,43 +1708,278 @@ extern mActor_name_t mNT_FishIdx2FishItemNo(int idx);
 #define SP_NPC_HEM (SP_NPC_START + 142) // D08E
 
 
-#define NPC_START 0xE000
-#define NPC_BOB NPC_START
-// TODO: Finish
-#define NPC_JOEY 0xE048
-#define NPC_PAOLO 0xE04C
-#define NPC_JANE 0xE061
-#define NPC_CARRIE 0xE06F
-#define NPC_SAMSON 0xE07D
-#define NPC_BUZZ 0xE08C
-#define NPC_CUBE 0xE093
-#define NPC_RASHER 0xE09B
-#define NPC_TANK 0xE0AA
-#define NPC_VESTA 0xE0AD
-#define NPC_TYBALT 0xE0B6
-#define NPC_LOBO 0xE0B9
-#define NPC_BIFF 0xE0C2
-#define NPC_MAELLE (NPC_START + 216)
-#define NPC_OHARE (NPC_START + 217)
-#define NPC_BLISS (NPC_START + 218)
-#define NPC_DRIFT (NPC_START + 219)
-#define NPC_BUD (NPC_START + 220)
-#define NPC_BOOMER (NPC_START + 221)
-#define NPC_ELINA (NPC_START + 222)
-#define NPC_FLASH (NPC_START + 223)
-#define NPC_DOBIE (NPC_START + 224)
-#define NPC_FLOSSIE (NPC_START + 225)
-#define NPC_ANNALISE (NPC_START + 226)
-#define NPC_PLUCKY (NPC_START + 227)
-#define NPC_FAITH (NPC_START + 228)
-#define NPC_YODEL (NPC_START + 229)
-#define NPC_ROWAN (NPC_START + 230)
-#define NPC_JUNE (NPC_START + 231)
-#define NPC_CHERI (NPC_START + 232)
-#define NPC_PIGLEG (NPC_START + 233)
-#define NPC_ANKHA (NPC_START + 234)
-#define NPC_PUNCHY (NPC_START + 235)
-#define NPC_END (NPC_START + 236)
+#define NPC_START    0xE000
+// cats
+#define NPC_BOB      NPC_START          // E000
+#define NPC_OLIVIA   (NPC_BOB + 1)      // E001
+#define NPC_MITZI    (NPC_OLIVIA + 1)   // E002
+#define NPC_KIKI     (NPC_MITZI + 1)    // E003
+#define NPC_TANGY    (NPC_KIKI + 1)     // E004
+#define NPC_KABUKI   (NPC_TANGY + 1)    // E005
+#define NPC_TABBY    (NPC_KABUKI + 1)   // E006
+#define NPC_MONIQUE  (NPC_TABBY + 1)    // E007
+#define NPC_STINKY   (NPC_MONIQUE + 1)  // E008
+#define NPC_PURRL    (NPC_STINKY + 1)   // E009
+#define NPC_KITTY    (NPC_PURRL + 1)    // E00A
+#define NPC_TOM      (NPC_KITTY + 1)    // E00B
+#define NPC_ROSIE    (NPC_TOM + 1)      // E00C
+// anteaters
+#define NPC_NOSEGAY  (NPC_ROSIE + 1)    // E00D
+#define NPC_ZOE      (NPC_NOSEGAY + 1)  // E00E
+#define NPC_PANGO    (NPC_ZOE + 1)      // E00F
+#define NPC_CYRANO   (NPC_PANGO + 1)    // E010
+#define NPC_SNOOTY   (NPC_CYRANO + 1)   // E011
+// bears
+#define NPC_TEDDY    (NPC_SNOOTY + 1)   // E012
+#define NPC_CHOW     (NPC_TEDDY + 1)    // E013
+#define NPC_DOZER    (NPC_CHOW + 1)     // E014
+#define NPC_NATE     (NPC_DOZER + 1)    // E015
+#define NPC_GROUCHO  (NPC_NATE + 1)     // E016
+#define NPC_TUTU     (NPC_GROUCHO + 1)  // E017
+#define NPC_URSALA   (NPC_TUTU + 1)     // E018
+#define NPC_GRIZZLY  (NPC_URSALA + 1)   // E019
+#define NPC_PINKY    (NPC_GRIZZLY + 1)  // E01A
+// birds
+#define NPC_JAY      (NPC_PINKY + 1)    // E01B
+#define NPC_TWIGGY   (NPC_JAY + 1)      // E01C
+#define NPC_ANCHOVY  (NPC_TWIGGY + 1)   // E01D
+#define NPC_PIPER    (NPC_ANCHOVY + 1)  // E01E
+#define NPC_ADMIRAL  (NPC_PIPER + 1)    // E01F
+#define NPC_OTIS     (NPC_ADMIRAL + 1)  // E020
+#define NPC_ROBIN    (NPC_OTIS + 1)     // E021
+#define NPC_MIDGE    (NPC_ROBIN + 1)    // E022
+#define NPC_ACE      (NPC_MIDGE + 1)    // E023
+#define NPC_TWIRP    (NPC_ACE + 1)      // E024
+// bulls
+#define NPC_CHUCK    (NPC_TWIRP + 1)    // E025
+#define NPC_STU      (NPC_CHUCK + 1)    // E026
+// chickens
+#define NPC_GOOSE    (NPC_STU + 1)      // E027
+#define NPC_BETTY    (NPC_GOOSE + 1)    // E028
+#define NPC_HECTOR   (NPC_BETTY + 1)    // E029
+#define NPC_EGBERT   (NPC_HECTOR + 1)   // E02A
+#define NPC_AVA      (NPC_EGBERT + 1)   // E02B
+#define NPC_HANK     (NPC_AVA + 1)      // E02C
+#define NPC_LEIGH    (NPC_HANK + 1)     // E02D
+#define NPC_RHODA    (NPC_LEIGH + 1)    // E02E
+// cubs
+#define NPC_VLADIMIR (NPC_RHODA + 1)    // E02F
+#define NPC_MURPHY   (NPC_VLADIMIR + 1) // E030
+#define NPC_CUPCAKE  (NPC_MURPHY + 1)   // E031
+#define NPC_KODY     (NPC_CUPCAKE + 1)  // E032
+#define NPC_MAPLE    (NPC_KODY + 1)     // E033
+#define NPC_PUDGE    (NPC_MAPLE + 1)    // E034
+#define NPC_OLIVE    (NPC_PUDGE + 1)    // E035
+#define NPC_PONCHO   (NPC_OLIVE + 1)    // E036
+#define NPC_BLUEBEAR (NPC_PONCHO + 1)   // E037
+// cows
+#define NPC_PATTY    (NPC_BLUEBEAR + 1) // E038
+#define NPC_PETUNIA  (NPC_PATTY + 1)    // E039
+#define NPC_BESSIE   (NPC_PETUNIA + 1)  // E03A
+#define NPC_BELLE    (NPC_BESSIE + 1)   // E03B
+// alligators ("crocodiles")
+#define NPC_ALFONSO  (NPC_BELLE + 1)    // E03C
+#define NPC_BOOTS    (NPC_ALFONSO + 1)  // E03D
+#define NPC_LIZ      (NPC_BOOTS + 1)    // E03E
+#define NPC_BISKIT   (NPC_LIZ + 1)      // E03F
+// dogs
+#define NPC_GOLDIE   (NPC_BISKIT + 1)   // E040
+#define NPC_DAISY    (NPC_GOLDIE + 1)   // E041
+#define NPC_LUCKY    (NPC_DAISY + 1)    // E042
+#define NPC_PORTIA   (NPC_LUCKY + 1)    // E043
+#define NPC_MADDIE   (NPC_PORTIA + 1)   // E044
+#define NPC_BUTCH    (NPC_MADDIE + 1)   // E045
+// ducks
+#define NPC_BILL     (NPC_BUTCH + 1)    // E046
+#define NPC_POMPOM   (NPC_BILL + 1)     // E047
+#define NPC_JOEY     (NPC_POMPOM + 1)   // E048
+#define NPC_SCOOT    (NPC_JOEY + 1)     // E049
+#define NPC_DERWIN   (NPC_SCOOT + 1)    // E04A
+#define NPC_FRECKLES (NPC_DERWIN + 1)   // E04B
+// elephants
+#define NPC_PAOLO    (NPC_FRECKLES + 1) // E04C
+#define NPC_DIZZY    (NPC_PAOLO + 1)    // EO4D
+#define NPC_AXEL     (NPC_DIZZY + 1)    // E04E
+// frogs
+#define NPC_EMERALD  (NPC_AXEL + 1)     // E04F
+#define NPC_TAD      (NPC_EMERALD + 1)  // E050
+#define NPC_WART_JR  (NPC_TAD + 1)      // E051
+#define NPC_COUSTEAU (NPC_WART_JR + 1)  // E052
+#define NPC_PUDDLES  (NPC_COUSTEAU + 1) // E053
+#define NPC_LILY     (NPC_PUDDLES + 1)  // E054
+#define NPC_JEREMIAH (NPC_LILY + 1)     // E055
+#define NPC_HUCK     (NPC_JEREMIAH + 1) // E056
+#define NPC_CAMOFROG (NPC_HUCK + 1)     // E057
+#define NPC_RIBBOT   (NPC_CAMOFROG + 1) // E058
+#define NPC_PRINCE   (NPC_RIBBOT + 1)   // E059
+#define NPC_JAMBETTE (NPC_PRINCE + 1)   // E05A
+// goats
+#define NPC_BILLY    (NPC_JAMBETTE + 1) // E05B
+#define NPC_CHEVRE   (NPC_BILLY + 1)    // E05C
+#define NPC_IGGY     (NPC_CHEVRE + 1)   // E05D
+#define NPC_GRUFF    (NPC_IGGY + 1)     // E05E
+#define NPC_SVEN     (NPC_GRUFF + 1)    // E05F
+#define NPC_VELMA    (NPC_SVEN + 1)     // E060
+// gorillas
+#define NPC_JANE     (NPC_VELMA + 1)    // E061
+#define NPC_CESAR    (NPC_JANE + 1)     // E062
+#define NPC_LOUIE    (NPC_CESAR + 1)    // E063
+#define NPC_PEEWEE   (NPC_LOUIE + 1)    // E064
+// hippos
+#define NPC_ROLLO    (NPC_PEEWEE + 1)   // E065
+#define NPC_BUBBLES  (NPC_ROLLO + 1)    // E066
+#define NPC_BERTHA   (NPC_BUBBLES + 1)  // E067
+// horses
+#define NPC_ELMER    (NPC_BERTHA + 1)   // E068
+#define NPC_WINNIE   (NPC_ELMER + 1)    // E069
+#define NPC_SAVANNAH (NPC_WINNIE + 1)   // E06A
+#define NPC_ED       (NPC_SAVANNAH + 1) // E06B
+#define NPC_CLEO     (NPC_ED + 1)       // E06C
+#define NPC_PEACHES  (NPC_CLEO + 1)     // E06D
+#define NPC_BUCK     (NPC_PEACHES + 1)  // E06E
+// kangaroos
+#define NPC_CARRIE   (NPC_BUCK + 1)     // E06F
+#define NPC_MATHILDA (NPC_CARRIE + 1)   // E070
+#define NPC_MARCY    (NPC_MATHILDA + 1) // E071
+#define NPC_KITT     (NPC_MARCY + 1)    // E072
+#define NPC_VALISE   (NPC_KITT + 1)     // E073
+#define NPC_ASTRID   (NPC_VALISE + 1)   // E074
+// koalas
+#define NPC_SYDNEY   (NPC_ASTRID + 1)   // E075
+#define NPC_GONZO    (NPC_SYDNEY + 1)   // E076
+#define NPC_OZZIE    (NPC_GONZO + 1)    // E077
+#define NPC_YUKA     (NPC_OZZIE + 1)    // E078
+#define NPC_HUGGY    (NPC_YUKA + 1)     // E079
+// lions
+#define NPC_REX      (NPC_HUGGY + 1)    // E07A
+#define NPC_AZIZ     (NPC_REX + 1)      // E07B
+#define NPC_LEOPOLD  (NPC_AZIZ + 1)     // E07C
+// mice
+#define NPC_SAMSON   (NPC_LEOPOLD + 1)  // E07D
+#define NPC_PENNY    (NPC_SAMSON + 1)   // E07E
+#define NPC_DORA     (NPC_PENNY + 1)    // E07F
+#define NPC_CHICO    (NPC_DORA + 1)     // E080
+#define NPC_CANDI    (NPC_CHICO + 1)    // E081
+#define NPC_RIZZO    (NPC_CANDI + 1)    // E082
+#define NPC_ANICOTTI (NPC_RIZZO + 1)    // E083
+#define NPC_LIMBERG  (NPC_ANICOTTI + 1) // E084
+#define NPC_CARMEN   (NPC_LIMBERG + 1)  // E085
+// octopus
+#define NPC_OCTAVIAN (NPC_CARMEN + 1)   // E086
+// ostriches
+#define NPC_SANDY    (NPC_OCTAVIAN + 1) // E087
+#define NPC_SPROCKET (NPC_SANDY + 1)    // E088
+#define NPC_RIO      (NPC_SPROCKET + 1) // E089
+#define NPC_QUEENIE  (NPC_RIO + 1)      // E08A
+// eagles ("parrots")
+#define NPC_APOLLO   (NPC_QUEENIE + 1)  // E08B
+#define NPC_BUZZ     (NPC_APOLLO + 1)   // E08C
+#define NPC_QUETZAL  (NPC_BUZZ + 1)     // E08D
+#define NPC_AMELIA   (NPC_QUETZAL + 1)  // E08E
+#define NPC_PIERCE   (NPC_AMELIA + 1)   // E08F
+// penguins
+#define NPC_ROALD    (NPC_PIERCE + 1)   // E090
+#define NPC_AURORA   (NPC_ROALD + 1)    // E091
+#define NPC_HOPPER   (NPC_AURORA + 1)   // E092
+#define NPC_CUBE     (NPC_HOPPER + 1)   // E093
+#define NPC_PUCK     (NPC_CUBE + 1)     // E094
+#define NPC_GWEN     (NPC_PUCK + 1)     // E095
+#define NPC_FRIGA    (NPC_GWEN + 1)     // E096
+// pigs
+#define NPC_CURLY    (NPC_FRIGA + 1)    // E097
+#define NPC_TRUFFLES (NPC_CURLY + 1)    // E098
+#define NPC_SPORK    (NPC_TRUFFLES + 1) // E099
+#define NPC_HUGH     (NPC_SPORK + 1)    // E09A
+#define NPC_RASHER   (NPC_HUGH + 1)     // E09B
+#define NPC_SUE_E    (NPC_RASHER + 1)   // E09C
+#define NPC_HAMBO    (NPC_SUE_E + 1)    // E09D
+#define NPC_LUCY     (NPC_HAMBO + 1)    // E09E
+#define NPC_COBB     (NPC_LUCY + 1)     // E09F
+#define NPC_BORIS    (NPC_COBB + 1)     // E0A0
+// rabbits
+#define NPC_BUNNIE   (NPC_BORIS + 1)    // E0A1
+#define NPC_DOC      (NPC_BUNNIE + 1)   // E0A2
+#define NPC_GASTON   (NPC_DOC + 1)      // E0A3
+#define NPC_COCO     (NPC_GASTON + 1)   // E0A4
+#define NPC_GABI     (NPC_COCO + 1)     // E0A5
+#define NPC_DOTTY    (NPC_GABI + 1)     // E0A6
+#define NPC_GENJI    (NPC_DOTTY + 1)    // E0A7
+#define NPC_SNAKE    (NPC_GENJI + 1)    // E0A8
+#define NPC_CLAUDE   (NPC_SNAKE + 1)    // E0A9
+// rhinos
+#define NPC_TANK     (NPC_CLAUDE + 1)   // E0AA
+#define NPC_SPIKE    (NPC_TANK + 1)     // E0AB
+#define NPC_TIARA    (NPC_SPIKE + 1)    // E0AC
+// sheep
+#define NPC_VESTA    (NPC_TIARA + 1)    // E0AD
+// squirrels
+#define NPC_FILBERT  (NPC_VESTA + 1)    // E0AE
+#define NPC_HAZEL    (NPC_FILBERT + 1)  // E0AF
+#define NPC_PEANUT   (NPC_HAZEL + 1)    // E0B0
+#define NPC_PECAN    (NPC_PEANUT + 1)   // E0B1
+#define NPC_RICKY    (NPC_PECAN + 1)    // E0B2
+#define NPC_STATIC   (NPC_RICKY + 1)    // E0B3
+#define NPC_MINT     (NPC_STATIC + 1)   // E0B4
+#define NPC_NIBBLES  (NPC_MINT + 1)     // E0B5
+// tigers
+#define NPC_TYBALT   (NPC_NIBBLES + 1)  // E0B6
+#define NPC_ROLF     (NPC_TYBALT + 1)   // E0B7
+#define NPC_BANGLE   (NPC_ROLF + 1)     // E0B8
+// wolves
+#define NPC_LOBO     (NPC_BANGLE + 1)   // E0B9
+#define NPC_FREYA    (NPC_LOBO + 1)     // E0BA
+#define NPC_CHIEF    (NPC_FREYA + 1)    // E0BB
+// assorted late additions
+#define NPC_WEBER    (NPC_CHIEF + 1)    // E0BC
+#define NPC_MALLARY  (NPC_WEBER + 1)    // E0BD
+#define NPC_WOLFGANG (NPC_MALLARY + 1)  // E0BE
+#define NPC_HORNSBY  (NPC_WOLFGANG + 1) // E0BF
+#define NPC_OXFORD   (NPC_HORNSBY + 1)  // E0C0
+#define NPC_T_BONE   (NPC_OXFORD + 1)   // E0C1
+#define NPC_BIFF     (NPC_T_BONE + 1)   // E0C2
+#define NPC_OPAL     (NPC_BIFF + 1)     // E0C3
+#define NPC_BONES    (NPC_OPAL + 1)     // E0C4
+#define NPC_BEA      (NPC_BONES + 1)    // E0C5
+#define NPC_BITTY    (NPC_BEA + 1)      // E0C6
+#define NPC_ROCCO    (NPC_BITTY + 1)    // E0C7
+#define NPC_LULU     (NPC_ROCCO + 1)    // E0C8
+#define NPC_BLAIRE   (NPC_LULU + 1)     // E0C9
+#define NPC_SALLY    (NPC_BLAIRE + 1)   // E0CA
+#define NPC_ELLIE    (NPC_SALLY + 1)    // E0CB
+#define NPC_ELOISE   (NPC_ELLIE + 1)    // E0CC
+#define NPC_ALLI     (NPC_ELOISE + 1)   // E0CD
+#define NPC_PIPPY    (NPC_ALLI + 1)     // E0CE
+#define NPC_EUNICE   (NPC_PIPPY + 1)    // E0CF
+#define NPC_BAABARA  (NPC_EUNICE + 1)   // E0D0
+#define NPC_FANG     (NPC_BAABARA + 1)  // E0D1
+#define NPC_DEENA    (NPC_FANG + 1)     // E0D2
+#define NPC_PATE     (NPC_DEENA + 1)    // E0D3
+#define NPC_STELLA   (NPC_PATE + 1)     // E0D4
+#define NPC_CASHMERE (NPC_STELLA + 1)   // E0D5
+#define NPC_WOOLIO   (NPC_CASHMERE + 1) // E0D6
+#define NPC_COOKIE   (NPC_WOOLIO + 1)   // E0D7
+// assorted gamecube additions
+#define NPC_MAELLE   (NPC_COOKIE + 1)   // E0D8
+#define NPC_OHARE    (NPC_MAELLE + 1)   // E0D9
+#define NPC_BLISS    (NPC_OHARE + 1)    // E0DA
+#define NPC_DRIFT    (NPC_BLISS + 1)    // E0DB
+#define NPC_BUD      (NPC_DRIFT + 1)    // E0DC
+#define NPC_BOOMER   (NPC_BUD + 1)      // E0DD
+#define NPC_ELINA    (NPC_BOOMER + 1)   // E0DE
+#define NPC_FLASH    (NPC_ELINA + 1)    // E0DF
+#define NPC_DOBIE    (NPC_FLASH + 1)    // E0E0
+#define NPC_FLOSSIE  (NPC_DOBIE + 1)    // E0E1
+#define NPC_ANNALISE (NPC_FLOSSIE + 1)  // E0E2
+#define NPC_PLUCKY   (NPC_ANNALISE + 1) // E0E3
+#define NPC_FAITH    (NPC_PLUCKY + 1)   // E0E4
+#define NPC_YODEL    (NPC_FAITH + 1)    // E0E5
+#define NPC_ROWAN    (NPC_YODEL + 1)    // E0E6
+#define NPC_JUNE     (NPC_ROWAN + 1)    // E0E7
+#define NPC_CHERI    (NPC_JUNE + 1)     // E0E8
+#define NPC_PIGLEG   (NPC_CHERI + 1)    // E0E9
+#define NPC_ANKHA    (NPC_PIGLEG + 1)   // E0EA
+#define NPC_PUNCHY   (NPC_ANKHA + 1)    // E0EB
+#define NPC_END      (NPC_START + 236)  // E0EC
 
 #define DUMMY_START 0xF000
 #define DUMMY_HANIWA0 0xF0FB
