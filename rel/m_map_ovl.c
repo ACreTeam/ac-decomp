@@ -832,7 +832,7 @@ static void mMP_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu) {
   int cursor_moved = FALSE;
 
   if ((trigger & (BUTTON_A | BUTTON_B | BUTTON_START)) || (menu->data0 == 1 && (trigger & BUTTON_X))) {
-    (*ovl->move_chg_base_proc)(menu, 4);
+    (*ovl->move_chg_base_proc)(menu, mSM_MOVE_OUT_TOP);
     sAdo_SysTrgStart(0x17D);
   }
   else if (trigger & BUTTON_CLEFT) {
@@ -1345,7 +1345,7 @@ static void mMP_map_ovl_init(Submenu* submenu) {
   mSM_MenuInfo_c* menu = &overlay->menu_info[mSM_OVL_MAP];
 
   overlay->menu_control.animation_flag = FALSE;
-  (*submenu->overlay->move_chg_base_proc)(menu, 5);
+  (*submenu->overlay->move_chg_base_proc)(menu, mSM_MOVE_IN_TOP);
 
   sAdo_SysTrgStart(0x17C);
   mMP_set_init_data(submenu->overlay->map_ovl, menu);

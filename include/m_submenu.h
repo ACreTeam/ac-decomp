@@ -24,6 +24,22 @@ enum {
   mSM_PROCESS_NUM
 };
 
+enum {
+  mSM_MOVE_OUT_RIGHT,
+  mSM_MOVE_IN_RIGHT,
+  
+  mSM_MOVE_OUT_LEFT,
+  mSM_MOVE_IN_LEFT,
+  
+  mSM_MOVE_OUT_TOP,
+  mSM_MOVE_IN_TOP,
+  
+  mSM_MOVE_OUT_BOTTOM,
+  mSM_MOVE_IN_BOTTOM,
+
+  mSM_MOVE_NUM
+};
+
 enum submenu_overlay {
   mSM_OVL_NONE,
   

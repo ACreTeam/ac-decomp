@@ -52651,6 +52651,7 @@ global:
     0x8133EEE0: de_ovl_data
     0x8133F5C0: ee_ovl_data
     0x8133F5C8: edit_ovl_data
+    0x8133F600: gb_ovl_change_flg
     0x8133F608: hand_ovl_data
     0x8133F980: hp_ovl_data
     0x8133FAA0: haniwa_ovl_data

@@ -259,6 +259,7 @@ extern int mMsg_Get_msg_num(mMsg_Window_c* msg_win);
 extern int mMsg_Check_main_index(mMsg_Window_c* msg_win, int index);
 extern int mMsg_request_main_appear(mMsg_Window_c* msg_win, ACTOR* other_actor, int display_name, rgba_t* window_color_p, int msg_no, int request_priority);
 extern int mMsg_Check_main_hide(mMsg_Window_c* msg_win);
+extern int mMsg_sound_voice_get_for_editor(int code);
 
 #ifdef __cplusplus
 }

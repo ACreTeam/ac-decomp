@@ -123,7 +123,7 @@ static void mBN_bank_ok(Submenu* submenu, mSM_MenuInfo_c* menu, mBN_Overlay_c* b
     }
 
     Common_Get(now_private)->inventory.wallet = bank_ovl->now_bell;
-    (*submenu->overlay->move_chg_base_proc)(menu, 4);
+    (*submenu->overlay->move_chg_base_proc)(menu, mSM_MOVE_OUT_TOP);
     sAdo_SysTrgStart(SE_MENU_EXIT);
   }
 }
@@ -138,7 +138,7 @@ static void mBN_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu) {
   mBN_Overlay_c* bank_ovl = overlay->bank_ovl;
 
   if (trigger & BUTTON_B) {
-    (*overlay->move_chg_base_proc)(menu, 4);
+    (*overlay->move_chg_base_proc)(menu, mSM_MOVE_OUT_TOP);
     sAdo_SysTrgStart(SE_MENU_EXIT);
   }
   else if (trigger & BUTTON_START) {

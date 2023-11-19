@@ -12,6 +12,12 @@
 #include "m_bank_ovl_h.h"
 #include "m_music_ovl_h.h"
 #include "m_warning_ovl_h.h"
+#include "m_editor_ovl_h.h"
+#include "m_passwordChk_ovl_h.h"
+#include "m_passwordMake_ovl_h.h"
+#include "m_board_ovl_h.h"
+#include "m_diary_ovl_h.h"
+#include "m_address_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,7 +27,7 @@ enum {
   mSM_OVL_PROC_MOVE,
   mSM_OVL_PROC_PLAY,
   mSM_OVL_PROC_WAIT,
-  mSM_OVL_PROC_3,
+  mSM_OVL_PROC_OBEY,
   mSM_OVL_PROC_END,
 
   mSM_OVL_PROC_NUM
@@ -109,7 +115,11 @@ struct submenu_overlay_s {
   /* 0x964 */ mSM_SETUP_VIEW_PROC setup_view_proc;
   /* 0x968 */ void* unused_func_968;
   /* 0x96C */ mSM_CHANGE_VIEW_PROC change_view_proc;
-  /* 0x970 */ u8 _970[0x9A8 - 0x970];
+  /* 0x970 */ u8 _970[0x98C - 0x970];
+  /* 0x98C */ mED_Ovl_c* editor_ovl;
+  /* 0x990 */ mBD_Ovl_c* board_ovl;
+  /* 0x994 */ mAD_Ovl_c* address_ovl;
+  /* 0x998 */ u8 _998[0x9A8 - 0x998];
   /* 0x9A8 */ mWR_Ovl_c* warning_ovl;
   /* 0x9AC */ void* _9AC;
   /* 0x9B0 */ void* _9B0;
@@ -117,7 +127,19 @@ struct submenu_overlay_s {
   /* 0x9B8 */ u8 _9B8[0x9D0 - 0x9B8];
   /* 0x9D0 */ mMU_Overlay_c* music_ovl;
   /* 0x9D4 */ mBN_Overlay_c* bank_ovl;
-  /* 0x9D8 */ u8 _9D8[0xA00 - 0x9D8];
+  /* 0x9D8 */ void* _9D8;
+  /* 0x9DC */ void* _9DC;
+  /* 0x9E0 */ void* _9E0;
+  /* 0x9E4 */ void* _9E4;
+  /* 0x9E8 */ mDI_Ovl_c* diary_ovl;
+  /* 0x9EC */ void* _9EC;
+  /* 0x9F0 */ mPM_Ovl_c* passwordMake_ovl;
+  /* 0x9F4 */ mPC_Ovl_c* passwordChk_ovl;
+  /* 0x9F8 */ u8 hboard_exists;
+  /* 0x9F9 */ u8 le_exists;
+  /* 0x9FA */ u8 _9FA;
+  /* 0x9FB */ u8 _9FB;
+  /* 0x9FC */ int _9FC;
   /* 0xA00 */ Mtx* projection_matrix;
 };
 

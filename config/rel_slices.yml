@@ -562,6 +562,11 @@ m_bank_ovl.c:
     .rodata: [0x8064AE58, 0x8064AE90]
     .data: [0x806C7B90, 0x806C7BE0]
     .bss: [0x8133E0A8, 0x8133E0C0]
+m_editor_ovl.c:
+    .text: [0x805D8498, 0x805DC3CC]
+    .rodata: [0x8064B300, 0x8064B368]
+    .data: [0x806CC9D8, 0x806CD068]
+    .bss: [0x8133F5C8, 0x8133F600]
 m_map_ovl.c:
     .text: [0x805E5EFC, 0x805E7A54]
     .rodata: [0x8064B628, 0x8064B6B0]
