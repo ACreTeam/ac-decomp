@@ -18,6 +18,7 @@
 #include "m_board_ovl_h.h"
 #include "m_diary_ovl_h.h"
 #include "m_address_ovl_h.h"
+#include "m_editEndChk_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -119,7 +120,8 @@ struct submenu_overlay_s {
   /* 0x98C */ mED_Ovl_c* editor_ovl;
   /* 0x990 */ mBD_Ovl_c* board_ovl;
   /* 0x994 */ mAD_Ovl_c* address_ovl;
-  /* 0x998 */ u8 _998[0x9A8 - 0x998];
+  /* 0x998 */ u8 _998[0x9A4 - 0x998];
+  /* 0x9A4 */ mEE_Ovl_c* editEndChk_ovl;
   /* 0x9A8 */ mWR_Ovl_c* warning_ovl;
   /* 0x9AC */ void* _9AC;
   /* 0x9B0 */ void* _9B0;
