@@ -145,6 +145,8 @@ struct submenu_overlay_s {
   /* 0xA00 */ Mtx* projection_matrix;
 };
 
+extern void mSM_menu_ovl_init(Submenu* submenu);
+
 #ifdef __cplusplus
 }
 #endif

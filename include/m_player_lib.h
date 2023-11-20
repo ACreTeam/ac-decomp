@@ -42,6 +42,9 @@ extern int mPlib_check_request_main_outdoor_priority(GAME* game);
 extern int mPlib_check_request_main_talk_type1_priority(GAME* game);
 extern int mPlib_check_request_main_speak_type1_priority(GAME* game);
 extern int mPlib_Check_able_force_speak_label(GAME* game);
+extern int mPlib_able_submenu_type1(GAME* game);
+extern void mPlib_request_main_demo_wait_from_submenu(ACTOR* force_speak_label);
+extern void mPlib_Load_PlayerTexAndPallet(void* tex_p, void* pal_p, int idx);
 
 extern void mPlib_Object_Exchange_keep_new_PlayerMdl(GAME_PLAY* play);
 extern void mPlib_Object_Exchange_keep_new_PlayerTex(GAME_PLAY* play, int bank_id, int base_idx);

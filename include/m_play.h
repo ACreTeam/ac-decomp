@@ -42,8 +42,9 @@ struct game_play_s {
   /* 0x1DA0 */ pause_t pause;
   /* 0x1DA8 */ Actor_info actor_info;
   /* 0x1DEC */ Submenu submenu;
-  /* 0x1FA4 */ s8 unk1FA4;
-  /* 0x1FA8 */ u8 _1FA4[0x1FB8 - 0x1FA8];
+  /* 0x1FA4 */ s8 submenu_ground_idx;
+  /* 0x1FA8 */ char* submenu_ground_tex[2];
+  /* 0x1FB0 */ char* submenu_ground_pallet[2];
   /* 0x1FB8 */ PreRender prerender;
   /* 0x2000 */ Door_info_c door_info;
   /* 0x2008 */ int next_scene_no;
