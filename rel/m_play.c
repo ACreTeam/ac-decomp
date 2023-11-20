@@ -404,7 +404,7 @@ void play_cleanup(GAME* game){
     mNpc_ClearMaskNpc();
     
     mSM_submenu_dt(&play->submenu);
-    play->unk1FA4 = -1;
+    play->submenu_ground_idx = -1;
     mSM_submenu_ovlptr_cleanup(&play->submenu);
 
     mPlib_Object_Exchange_keep_Player_dt(play);
@@ -461,7 +461,7 @@ void play_init(GAME* game){
     mCoBG_InitBlockBgCheckMode();
     mCoBG_InitDecalCircle();
 
-    play->unk1FA4 = -1;
+    play->submenu_ground_idx = -1;
     
     Gameplay_Scene_Read(play, Save_Get(scene_no));
 
@@ -830,7 +830,7 @@ void Game_play_draw(GAME* game){
 
             watch_my_step_draw(play); 
             banti_draw(play); 
-            mSM_submenu_draw(&play->submenu, play);
+            mSM_submenu_draw(&play->submenu, (GAME*)play);
         }
     }
     if (zurumode_flag != 0) {

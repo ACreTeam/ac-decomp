@@ -152,7 +152,8 @@ typedef struct offset_table_s {
 #define MINIDISK_NUM 55
 #define DIARY_NUM 16
 #define TICKET_NUM 96
-#define INSECT_NUM 40 + 5 // 5 spirits
+#define INSECT_ONLY_NUM 40
+#define INSECT_NUM INSECT_ONLY_NUM + 5 // 5 spirits
 #define HUKUBUKURO_NUM 2
 #define KABU_NUM 4
 

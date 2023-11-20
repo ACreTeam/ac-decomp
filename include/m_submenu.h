@@ -14,6 +14,10 @@ extern "C" {
 
 typedef struct submenu_s Submenu;
 
+#define mSM_MAP_BUTTON BUTTON_X
+#define mSM_INV_BUTTON_0 BUTTON_START
+#define mSM_INV_BUTTON_1 BUTTON_Y
+
 enum {
   mSM_PROCESS_WAIT,
   mSM_PROCESS_PREWAIT,
@@ -22,6 +26,13 @@ enum {
   mSM_PROCESS_END,
 
   mSM_PROCESS_NUM
+};
+
+enum {
+  mSM_DLF_SUBMENU_OVL,
+  mSM_DLF_PLAYER_ACTOR,
+
+  mSM_DLF_NUM
 };
 
 enum {
@@ -82,6 +93,16 @@ typedef struct submenu_item_s {
   u8 slot_no;
 } Submenu_Item_c;
 
+typedef struct submenu_dlftbl {
+  void* _00;
+  int _04;
+  int _08;
+  int _0C;
+  int _10;
+  int _14;
+  const char* name;
+} mSM_dlftbl_c;
+
 typedef void (*SUBMENU_PROC)(Submenu*);
 typedef void (*SUBMENU_GAME_PROC)(Submenu*, GAME*);
 
@@ -119,19 +140,31 @@ struct submenu_s {
   /* 0x17C */ Submenu_Item_c items[mPr_POCKETS_SLOT_COUNT]; /* item buffer, entries are only set when an item is selected by the player */
 };
 
-extern void mSM_open_submenu(Submenu* submenu, int menu_type, int arg0, int arg1);
-extern void load_player(Submenu* submenu);
-extern void* mSM_ovlptr_dllcnv(void* vram, Submenu* submenu, int);
-extern void mSM_submenu_dt(Submenu*);
-extern void mSM_submenu_ovlptr_cleanup(Submenu*);
-extern void mSM_submenu_ovlptr_init(GAME_PLAY*);
-extern void mSM_submenu_ct(Submenu*);
-extern void mSM_submenu_ctrl(GAME_PLAY*);
-extern void mSM_submenu_move(Submenu*);
-extern void mSM_submenu_draw(Submenu*, GAME_PLAY*);
-extern int mSM_CHECK_ALL_FISH_GET();
+extern int mSM_COLLECT_INSECT_GET(int idx);
+extern void mSM_COLLECT_INSECT_SET(int idx);
 extern int mSM_CHECK_ALL_INSECT_GET();
+extern int mSM_CHECK_LAST_INSECT_GET(int idx);
+extern int mSM_COLLECT_FISH_GET(int idx);
+extern void mSM_COLLECT_FISH_SET(int idx);
+extern int mSM_CHECK_ALL_FISH_GET();
+extern int mSM_CHECK_LAST_FISH_GET(int idx);
+extern int SubmenuArea_IsPlayer();
+extern void* mSM_ovlptr_dllcnv(void* proc, Submenu* submenu, int dlf_idx);
+extern void mSM_submenu_ovlptr_init(GAME_PLAY* play);
+extern void mSM_submenu_ovlptr_cleanup(Submenu* submenu);
+extern void load_player(Submenu* submenu);
+extern void mSM_submenu_ct(Submenu* submenu);
+extern void mSM_submenu_dt(Submenu* submenu);
+extern void mSM_open_submenu(Submenu* submenu, int type, int arg0, int arg1);
+extern void mSM_open_submenu_new(Submenu* submenu, int type, int arg0, int arg1, void* arg2);
+extern void mSM_open_submenu_new2(Submenu* submenu, int type, int arg0, int arg1, void* arg2, int arg3);
+extern void mSM_submenu_ctrl(GAME_PLAY* play);
+extern void mSM_submenu_move(Submenu* submenu);
+extern void mSM_submenu_draw(Submenu* submenu, GAME* game);
+extern int mSM_check_open_inventory_itemlist(int type, int param_2);
 extern void mSM_Object_Exchange_keep_new_Menu(GAME_PLAY* play);
+extern u8* mSM_Get_ground_tex_p(GAME_PLAY* play);
+extern u16* mSM_Get_ground_pallet_p(GAME_PLAY* play);
 
 #ifdef __cplusplus
 }
