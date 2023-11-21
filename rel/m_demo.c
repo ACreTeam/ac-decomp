@@ -1071,7 +1071,7 @@ extern int mDemo_Request(int type, ACTOR* actor, mDemo_REQUEST_PROC req_proc) {
           return FALSE;
         }
       }
-      else if (type == mDemo_TYPE_SPEAK && mPlib_Check_able_force_speak_label(gamePT) == FALSE) {
+      else if (type == mDemo_TYPE_SPEAK && mPlib_Check_able_force_speak_label(gamePT, actor) == FALSE) {
         return FALSE;
       }
 
