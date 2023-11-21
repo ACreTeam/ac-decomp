@@ -41,7 +41,7 @@ extern int mPlib_check_request_main_door_type2_priority(GAME* game);
 extern int mPlib_check_request_main_outdoor_priority(GAME* game);
 extern int mPlib_check_request_main_talk_type1_priority(GAME* game);
 extern int mPlib_check_request_main_speak_type1_priority(GAME* game);
-extern int mPlib_Check_able_force_speak_label(GAME* game);
+extern int mPlib_Check_able_force_speak_label(GAME* game, ACTOR* label);
 extern int mPlib_able_submenu_type1(GAME* game);
 extern void mPlib_request_main_demo_wait_from_submenu(ACTOR* force_speak_label);
 extern void mPlib_Load_PlayerTexAndPallet(void* tex_p, void* pal_p, int idx);

@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_actor.h"
 #include "m_lib.h"
+#include "c_keyframe.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -156,7 +157,31 @@ enum {
 /* sizeof(struct player_actor_s) == 0x13A8 */
 struct player_actor_s {
   /* 0x0000 */ ACTOR actor_class;
-  /* 0x0174 */ u8 tmp0174[0x1270 - 0x0174];
+  /* 0x0174 */ cKF_SkeletonInfo_R_c keyframe0;
+  /* 0x01E4 */ cKF_SkeletonInfo_R_c keyframe1;
+  /* 0x0252 */ s_xyz joint_data[27];
+  /* 0x02F4 */ s_xyz morph_data[27];
+  /* 0x0398 */ Mtx work_mtx[2][13]; /* swapped between frames */
+  /* 0x0A18 */ cKF_SkeletonInfo_R_c item_keyframe; /* for item animations */
+  /* 0x0A88 */ s_xyz item_joint_data[8];
+  /* 0x0AB8 */ s_xyz item_morph_data[8];
+  /* 0x0AE8 */ Mtx item_work_mtx[2][4]; /* swapped between frames */
+  /* 0x0CE8 */ s16 eye_pattern_normal;
+  /* 0x0CEA */ s16 eye_pattern_normal_timer;
+  /* 0x0CEC */ int blink_count;
+  /* 0x0CF0 */ int eye_tex_idx;
+  /* 0x0CF4 */ int mouth_tex_idx;
+  /* 0x0CF8 */ int now_main_index;
+  /* 0x0CFC */ int prev_main_index;
+  /* 0x0D00 */ int changed_main_index;
+  /* 0x0D04 */ int item_main_index;
+  /* 0x0D08 */ int requested_main_index;
+  /* 0x0D0C */ int requested_main_index_priority;
+  /* 0x0D10 */ int requested_main_index_changed;
+  /* 0x0D14 */ int settled_requested_main_index_priority;
+  /* 0x0D18 */ u8 main_index_data[72]; // TODO: Union of many types...
+  /* 0x0D60 */ u8 requested_main_index_data[72]; // TODO: Union of many types...
+  /* 0x0DA8 */ u8 _0DA8[0x1270 - 0x0DA8]; /* TODO: finish */
   /* 0x1270 */ int (*request_main_invade_all_proc)(GAME*, int);
   /* 0x1274 */ int (*request_main_refuse_all_proc)(GAME*, int);
   /* 0x1278 */ int (*request_main_return_demo_all_proc)(GAME*, int, f32, int);
@@ -200,12 +225,39 @@ struct player_actor_s {
   /* 0x1310 */ void (*Set_force_position_angle_proc)(GAME*, const xyz_t*, const s_xyz*, u8);
   /* 0x1314 */ u8 (*Get_force_position_angle_proc)(GAME*, xyz_t*, s_xyz*);
   /* 0x1318 */ int (*Get_WadeEndPos_proc)(GAME*, xyz_t*);
-  /* 0x131C */ u8 tmp131C[0x138C - 0x131C];
+  /* 0x131C */ int (*Check_Label_main_push_snowball_proc)(GAME*, void*);
+  /* 0x1320 */ int (*SetParam_for_push_snowball_proc)(GAME*, const xyz_t*, s16, f32);
+  /* 0x1324 */ int (*able_submenu_request_main_index_proc)(GAME*);
+  /* 0x1328 */ int (*check_able_change_camera_normal_index_proc)(ACTOR*);
+  /* 0x132C */ int (*Check_able_force_speak_label_proc)(GAME*, ACTOR*);
+  /* 0x1330 */ int (*check_cancel_request_change_proc_index_proc)(int);
+  /* 0x1334 */ u32 (*Get_item_net_catch_label_proc)(ACTOR*);
+  /* 0x1338 */ int (*Change_item_net_catch_label_proc)(ACTOR*, u32, s8);
+  /* 0x133C */ int (*Check_StopNet_proc)(ACTOR*, xyz_t*);
+  /* 0x1340 */ int (*Check_HitAxe_proc)(ACTOR*, xyz_t*);
+  /* 0x1344 */ int (*Check_VibUnit_OneFrame_proc)(ACTOR*, const xyz_t*);
+  /* 0x1348 */ int (*Check_HitScoop_proc)(ACTOR*, xyz_t*);
+  /* 0x134C */ int (*Check_DigScoop_proc)(ACTOR*, xyz_t*);
+  /* 0x1350 */ int (*check_request_change_item_proc)(GAME*);
+  /* 0x1354 */ int (*Check_RotateOctagon_proc)(GAME*);
+  /* 0x1358 */ int (*Check_end_stung_bee_proc)(ACTOR*);
+  /* 0x135C */ int (*Get_status_for_bee_proc)(ACTOR*);
+  /* 0x1360 */ int (*Set_ScrollDemo_forWade_snowball_proc)(ACTOR*, int, const xyz_t*);
+  /* 0x1364 */ int (*Check_tree_shaken_proc)(ACTOR*, const xyz_t*);
+  /* 0x1368 */ int (*Check_tree_shaken_little_proc)(ACTOR*, const xyz_t*);
+  /* 0x136C */ int (*Check_tree_shaken_big_proc)(ACTOR*, const xyz_t*);
+  /* 0x1370 */ int (*Check_Label_main_wade_snowball_proc)(GAME*, void*);
+  /* 0x1374 */ int (*GetSnowballPos_forWadeSnowball_proc)(ACTOR*, xyz_t*);
+  /* 0x1378 */ int (*CheckCondition_forWadeSnowball_proc)(GAME*, const xyz_t*, s16);
+  /* 0x137C */ mActor_name_t (*Get_itemNo_forWindow_proc)(ACTOR*);
+  /* 0x1380 */ int (*check_cancel_event_without_priority_proc)(GAME*);
+  /* 0x1384 */ int (*CheckScene_AbleSubmenu_proc)();
+  /* 0x1388 */ int (*Check_stung_mosquito_proc)(GAME*, ACTOR*);
   /* 0x138C */ int a_btn_pressed;
   /* 0x1390 */ int a_btn_triggers_submenu;
   /* 0x1394 */ mActor_name_t item_in_front; /* item directly in front of the player */
-  /* 0x1396 */ u8 _1396[0x13A8 - 0x1396];
-  /* TODO: finish */
+  /* 0x1398 */ xyz_t foward_ut_pos; /* wpos of unit in front of player */
+  /* 0x13A4 */ s8 update_scene_bg_mode;
 };
 
 void Player_actor_ct(ACTOR*, GAME*);
