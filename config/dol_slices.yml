@@ -82,9 +82,9 @@ libc64/qrand.c:
     .sdata2: [0x80219130, 0x80219138]
 libc64/sprintf.c:
     .text: [0x8005ce18, 0x8005cf08]
-#libc64/malloc.c:
-#    .text: [0x8005cf08, 0x8005d01c]
-#    .bss: [0x80206F30, 0x80206F60]
+libc64/malloc.c:
+    .text: [0x8005cf08, 0x8005d01c]
+    .bss: [0x80206F30, 0x80206F60]
 libultra/ultra.c:
     .text: [0x8005d01c, 0x8005d15c]
     .bss: [0x80206f60, 0x80206fa0]
