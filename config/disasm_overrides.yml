@@ -5,3 +5,4 @@ symbol_aligns:
   0x800b9140: 32 # align gam_win_moji1_tex to 32 bytes
   0x801f71c0: 32 # align texture_buffer_data to 32 bytes
   0x800daaa0: 32 # align texture_cache_data_func to 32 bytes
+  0x80206f30: 16 # malloc.c align 16 bytes

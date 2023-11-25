@@ -52,11 +52,11 @@ libforest/osreport.c:
     .data: [0x800dc6d8, 0x800dc738]
     .bss: [0x80206f08, 0x80206f20]
     .sbss: [0x80218618, 0x80218628]
-#libforest/fault.c:
-#    .text: [0x8005a92c, 0x8005adac]
-#    .data: [0x800dc738, 0x800dc7c8]
-#    .bss: [0x80206f20, 0x80206f30]
-#    .sbss: [0x80218628, 0x80218630]
+libforest/fault.c:
+    .text: [0x8005a92c, 0x8005adac]
+    .data: [0x800dc738, 0x800dc7c8]
+    .bss: [0x80206f20, 0x80206f30]
+    .sbss: [0x80218628, 0x80218630]
 libforest/ReconfigBATs.c:
     .text: [0x8005adac, 0x8005aed4]
 libu64/debug.c:
