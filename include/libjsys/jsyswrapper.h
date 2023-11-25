@@ -4,6 +4,7 @@
 #include "types.h"
 #include "JSystem/JKernel/JKREnum.h"
 #include "JSystem/JUtility/JUTEnum.h"
+#include "va_args.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -144,6 +145,7 @@ extern void JC_JUTConsole_scrollToFirstLine(void* console);
 extern void JC_JUTConsole_scroll(void* console, int amount);
 extern u32 JC_JUTConsole_getHeight(void* console);
 extern u32 JC_JUTConsole_getUsedLine(void* console);
+extern void JC_JUTConsole_print_f_va(void* console, const char* fmt, va_list arg);
 
 extern void* JC_JUTConsoleManager_getManager();
 extern void JC_JUTConsoleManager_drawDirect(void* manager, int direct);

@@ -1,8 +1,10 @@
-#include "fault.h"
+#include "libforest/fault.h"
 #include "terminal.h"
 #include "va_args.h"
+#include "libjsys/jsyswrapper.h"
+#include "dolphin/os.h"
 
-/*__declspec(section ".sdata")*/ static fault* this;
+static fault* this = NULL;
 static fault fault_class;
 
 extern void fault_AddClientEx(fault_client* client, FaultCallback callback, const char* msg, u32 param, u8 priority, u8 flags) {
@@ -48,7 +50,7 @@ extern void fault_AddClientEx(fault_client* client, FaultCallback callback, cons
 exit:
     OSRestoreInterrupts(enable);
     if (client_exists != FALSE) {
-        OSReport(VT_COL(VT_COLOR_RED,VT_COLOR_WHITE) "fault_AddClient: %08x は既にリスト中にある\n%x" VT_RST, client);
+        OSReport(VT_COL(RED, WHITE) "fault_AddClient: %08x は既にリスト中にある\n" VT_RST, client);
     }
 }
 
