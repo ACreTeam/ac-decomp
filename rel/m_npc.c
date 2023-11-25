@@ -1402,7 +1402,7 @@ extern int mNpc_SendMailtoNpc(Mail_c* mail) {
         }
       }
       else  {
-        int friendship;
+        int friendship = 0;
 
         if (mLd_PlayerManKindCheck() == FALSE) {
             int occur_idx = mQst_GetOccuredContestIdx(mQst_CONTEST_KIND_LETTER);
@@ -1412,10 +1412,10 @@ extern int mNpc_SendMailtoNpc(Mail_c* mail) {
           }
         }
 
-        friendship = 3;
+        friendship += 3;
 
         if (letter_rank == mNpc_LETTER_RANK_BAD) {
-          friendship = -2;
+          friendship += -5;
         }
 
         if (mail->present != EMPTY_NO) {
