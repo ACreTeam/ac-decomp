@@ -72,9 +72,9 @@ libu64/pad.c:
     .text: [0x8005b9a8, 0x8005ba2c]
 libc64/aprintf.c:
     .text: [0x8005cbdc, 0x8005cc14]
-#libc64/math64.c: //not match
-#    .text: [0x8005cc14, 0x8005cccc]
-#    .sdata2: [0x80219118, 0x80219130]
+libc64/math64.c:
+    .text: [0x8005cc14, 0x8005cccc]
+    .sdata2: [0x80219118, 0x80219130]
 libc64/qrand.c:
     .text: [0x8005cccc, 0x8005cd64]
     .sdata: [0x80217de8, 0x80217df0]
