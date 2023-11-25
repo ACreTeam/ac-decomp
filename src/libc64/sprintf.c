@@ -4,7 +4,7 @@
 #include "_mem.h"
 
 
-static void* proutPrintf(void* dst, const char* fmt, size_t size) {
+static void* proutPrintf(void* dst, const char* fmt, int size) {
     return (void*)((u8*)memcpy(dst, fmt, size) + size);
 }
 
