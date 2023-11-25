@@ -1,5 +1,5 @@
-#ifndef OS_MALLOC_H
-#define OS_MALLOC_H
+#ifndef MALLOC_H
+#define MALLOC_H
 
 #include "types.h"
 
