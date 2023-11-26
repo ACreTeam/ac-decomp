@@ -4,7 +4,7 @@
 #include "dolphin/dvd.h"
 #include "libforest/gbi_extensions.h"
 #include "libforest/emu64/emu64_wrapper.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "dolphin/vi.h"
 #include "dolphin/gx.h"
 

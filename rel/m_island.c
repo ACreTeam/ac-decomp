@@ -5,7 +5,7 @@
 #include "m_random_field.h"
 #include "m_malloc.h"
 #include "libultra/libultra.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 
 static Island_c l_keepIsland;
 static u16 l_keepIslandComb[mISL_FG_BLOCK_X_NUM * mISL_FG_BLOCK_Z_NUM];

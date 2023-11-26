@@ -88,8 +88,8 @@ typedef struct graph_s {
 } GRAPH ATTRIBUTE_ALIGN(8); // one of the missing structs is likely aligned to 8 bytes.
 
 extern void graph_proc(void* arg);
-extern void graph_ct(GRAPH* this);
-extern void graph_dt(GRAPH* this);
+extern void graph_ct(GRAPH* graph);
+extern void graph_dt(GRAPH* graph);
 
 #define GRAPH_SET_DOING_POINT(g, point) ((g)->doing_point = GRAPH_DOING_##point)
 

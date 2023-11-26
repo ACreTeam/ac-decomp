@@ -13,7 +13,7 @@
 #include "ac_my_room.h"
 #include "m_mail_password_check.h"
 #include "libultra/libultra.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 
 extern mNpc_Default_Data_c npc_def_list[];
 extern s8 npc_grow_list[];

@@ -3,7 +3,7 @@
 #include "libforest/gbi_extensions.h"
 #include "m_nmibuf.h"
 #include "dolphin/dvd.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "boot.h"
 #include "dolphin/os/OSFont.h"
 #include "bootdata.h"

@@ -5,122 +5,44 @@
 #include "JSystem/JKernel/JKREnum.h"
 #include "JSystem/JUtility/JUTEnum.h"
 #include "va_args.h"
+#include "dolphin/gx.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-enum resource_index {
-  RESOURCE_FGDATA,
-  RESOURCE_MAIL,
-  RESOURCE_MAIL_TABLE,
-  RESOURCE_MAILA,
-  RESOURCE_MAILA_TABLE,
-  RESOURCE_MAILB,
-  RESOURCE_MAILB_TABLE,
-  RESOURCE_MAILC,
-  RESOURCE_MAILC_TABLE,
-  RESOURCE_PALLET_BOY,
-  RESOURCE_PS,
-  RESOURCE_PS_TABLE,
-  RESOURCE_PSZ,
-  RESOURCE_PSZ_TABLE,
-  RESOURCE_SELECT,
-  RESOURCE_SELECT_TABLE,
-  RESOURCE_STRING,
-  RESOURCE_STRING_TABLE,
-  RESOURCE_SUPERZ,
-  RESOURCE_SUPERZ_TABLE,
-  RESOURCE_SUPER,
-  RESOURCE_SUPER_TABLE,
-  RESOURCE_TEX_BOY,
-  RESOURCE_FACE_BOY,
-  RESOURCE_FGNPCDATA,
-  RESOURCE_MESSAGE,
-  RESOURCE_MESSAGE_TABLE,
-  RESOURCE_MY_ORIGINAL,
-  RESOURCE_NEEDLEWORK_JOYBOOT,
-  RESOURCE_PLAYER_ROOM_FLOOR,
-  RESOURCE_PLAYER_ROOM_WALL,
-  RESOURCE_NPC_NAME_STR_TABLE,
-  RESOURCE_D_OBJ_NPC_STOCK_SCH,
-  RESOURCE_D_OBJ_NPC_STOCK_SCL,
-  RESOURCE_TITLE,
-  RESOURCE_MURA_SPRING,
-  RESOURCE_MURA_SUMMER,
-  RESOURCE_MURA_FALL,
-  RESOURCE_MURA_WINTER,
-  RESOURCE_ODEKAKE,
-  RESOURCE_OMAKE,
-  RESOURCE_EKI1,
-  RESOURCE_EKI1_2,
-  RESOURCE_EKI1_3,
-  RESOURCE_EKI1_4,
-  RESOURCE_EKI1_5,
-  RESOURCE_EKI2,
-  RESOURCE_EKI2_2,
-  RESOURCE_EKI2_3,
-  RESOURCE_EKI2_4,
-  RESOURCE_EKI2_5,
-  RESOURCE_EKI3,
-  RESOURCE_EKI3_2,
-  RESOURCE_EKI3_3,
-  RESOURCE_EKI3_4,
-  RESOURCE_EKI3_5,
-  RESOURCE_TEGAMI,
-  RESOURCE_TEGAMI2,
-  RESOURCE_FAMIKON,
-  RESOURCE_BOY1,
-  RESOURCE_BOY2,
-  RESOURCE_BOY3,
-  RESOURCE_BOY4,
-  RESOURCE_BOY5,
-  RESOURCE_BOY6,
-  RESOURCE_BOY7,
-  RESOURCE_BOY8,
-  RESOURCE_GIRL11,
-  RESOURCE_GIRL12,
-  RESOURCE_GIRL13,
-  RESOURCE_GIRL14,
-  RESOURCE_GIRL15,
-  RESOURCE_GIRL16,
-  RESOURCE_GIRL17,
-  RESOURCE_GIRL18,
-  RESOURCE_D_BG_ISLAND_SCH,
-
-  RESOURCE_NUM
-};
-
-extern void JW_Init();
-extern void JW_Init2();
-extern void JW_Init3();
-extern void* JW_Alloc(size_t size, int align);
-extern void JW_Free(void* ptr);
-extern s32 JW_Resize(void* ptr, size_t new_size);
-extern size_t JW_GetMemBlockSize(void* ptr);
-extern size_t JW_GetResSizeFileNo(int file_no);
-extern void JW_BeginFrame();
-extern void JW_EndFrame();
-extern void JW_JUTReport(int x, int y, int show_count, const char* fmt, ...);
-extern void JW_SetLowResoMode(BOOL enable);
-extern void JW_SetProgressiveMode(BOOL enable);
-extern u32 JW_GetAramAddress(int resource_no);
-extern u8* _JW_GetResourceAram(u32 aram_addr, u8* dst, size_t size);
-extern void JW_SetFamicomMode(int enabled);
-extern void JW_SetLogoMode(int mode);
-extern void JW_Cleanup();
+typedef struct {
+  u16 mFileID;     // _00
+  u16 mHash;       // _02
+  u32 mFlag;       // _04
+  u32 mDataOffset; // _08
+  u32 mSize;       // _0C
+  void* mData;     // _10
+} CSDIFileEntry;
 
 extern void* JC_JFWSystem_getSystemConsole();
 extern void* JC_JFWSystem_getRootHeap();
 extern void* JC_JFWSystem_getSystemHeap();
 
+extern void* JC_JUTVideo_getManager();
+extern u16 JC_JUTVideo_getFbWidth(void* manager);
+extern u16 JC_JUTVideo_getEfbHeight(void* manager);
+extern void JC_JUTVideo_setRenderMode(void* manager, GXRenderModeObj* renderMode);
+
 extern void* JC_JFWDisplay_getManager();
 extern void JC_JFWDisplay_startFadeOut(void* manager, int len);
 extern void JC_JFWDisplay_startFadeIn(void* manager, int len);
 extern void JC_JFWDisplay_setFrameRate(void* manager, u16 framerate);
+extern void JC_JFWDisplay_endFrame(void* manager);
+extern void JC_JFWDisplay_beginRender(void* manager);
+extern void JC_JFWDisplay_endRender(void* manager);
+extern void JC_JFWDisplay_setClearColor(void* manager, GXColor color);
 
 extern void JC_JKRAramHeap_dump(void* heap);
 extern void* JC_JKRAram_getAramHeap();
+
+extern u32 JC_JKRAramArchive_getAramAddress_byName(void* archive, u32 root_name, const char* res_name);
+extern CSDIFileEntry* JC__JKRGetResourceEntry_byName(u32 root_name, const char* res_name, void* archive);
 
 extern int JC_JKRHeap_dump(void* heap);
 extern s32 JC_JKRHeap_getTotalFreeSize(void* heap);
@@ -146,6 +68,7 @@ extern void JC_JUTConsole_scroll(void* console, int amount);
 extern u32 JC_JUTConsole_getHeight(void* console);
 extern u32 JC_JUTConsole_getUsedLine(void* console);
 extern void JC_JUTConsole_print_f_va(void* console, const char* fmt, va_list arg);
+extern void JC_JUTConsole_print_f(void* console, const char* fmt, ...);
 
 extern void* JC_JUTConsoleManager_getManager();
 extern void JC_JUTConsoleManager_drawDirect(void* manager, int direct);
@@ -169,10 +92,58 @@ extern void JC_JUTAssertion_changeDevice(int device);
 extern void JC_JUTAssertion_changeDisplayTime(int displayTime);
 
 extern void JC_JUTGamePad_read();
+extern void JC_JFWDisplay_startFadeOut(void* manager, int fadeout);
+extern void JC_JFWDisplay_clearEfb(void* manager, GXColor* color);
+extern GXRenderModeObj* JC_JFWDisplay_getRenderMode(void* manager);
+extern void* JC_JFWDisplay_changeToSingleXfb(void* manager, int param);
+extern u16 JC_JFWDisplay_getEfbWidth(void* manager);
+extern u16 JC_JFWDisplay_getEfbHeight(void* manager);
+extern void JC_JFWSystem_setMaxStdHeap(int max);
+extern void JC_JFWSystem_setSysHeapSize(u32 size);
+extern void JC_JFWSystem_setFifoBufSize(u32 size);
+extern void JC_JFWSystem_setAramAudioBufSize(u32 size);
+extern void JC_JFWSystem_setAramGraphBufSize(u32 size);
+extern void JC_JFWSystem_init();
+extern void* JC_JFWDisplay_createManager_0(GXRenderModeObj* renderMode, void* heap, int param0, int param1);
+extern void JC_JFWDisplay_setFader(void* manager, void* fader);
+extern void JC_JFWDisplay_setGamma(void* manager, int gamma);
+extern void JC_JFWDisplay_destroyManager();
 
-extern u32 JW_JUTGamepad_getButton();
-extern u32 JW_JUTGamepad_getTrigger();
-extern u32 JW_JUTGamepad_getErrorStatus();
+extern void* JC_J2DOrthoGraph_new();
+extern void JC_J2DOrthoGraph_delete(void* orthograph);
+
+extern void* JC_JUTFader_new(int ul_x, int ul_y, int br_x, int br_y, u32* color);
+extern void JC_JUTFader_delete(void* fader);
+
+extern void JC_JFWDisplay_changeToDoubleXfb(void* manager);
+extern u32 JC__JKRGetResource(char* resourceName);
+extern int JC__JKRGetMemBlockSize(int, u32);
+
+extern void JC__JKRRemoveResource(void* res);
+
+extern void JC_J2DOrthoGraph_setOrtho(void* gport, u16 ul_x, u16 ul_y, u16 br_x, u16 br_y);
+extern void JC_J2DOrthoGraph_setPort(void* gport);
+
+extern void* JC_JKRAramArchive_new();
+extern BOOL JC__JKRMountFixedAramArchive(void* aram_archive, const char* file);
+extern BOOL JC__JKRUnmountFixedAramArchive(void* aram_archive);
+extern void JC_JKRAramArchive_delete(void* aram_archive);
+
+extern u32 JC_JKRHeap_getFreeSize(void* heap);
+extern void* JC_JKRHeap_alloc(void* heap, u32 size, int align);
+extern void JC_JKRHeap_free(void* heap, void* mem);
+
+extern void* JW_Alloc(size_t size, int align);
+extern void JW_Free(void* ptr);
+extern s32 JW_Resize(void* ptr, size_t new_size);
+extern size_t JW_GetMemBlockSize(void* ptr);
+extern void JW_JUTReport(int x, int y, int show_count, const char* fmt, ...);
+
+#ifdef JSYSWRAPPER_DEBUG
+#define JSYSWRAPPER_PRINTF(console, fmt, ...) JC_JUTConsole_print_f(console, fmt, ...)
+#else
+#define JSYSWRAPPER_PRINTF(console, fmt, ...)
+#endif
 
 #ifdef __cplusplus
 }

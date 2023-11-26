@@ -7,7 +7,7 @@
 #include "m_scene_table.h"
 #include "m_random_field.h"
 #include "m_soncho.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "m_malloc.h"
 #include "libultra/libultra.h"
 #include "m_bg_tex.h"

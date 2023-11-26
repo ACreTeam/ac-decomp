@@ -57,23 +57,23 @@ do { \
   GAME_NEXT_GAME(t_game, init_name, class_name); \
 } while (0)
 
-extern void game_debug_draw_last(GAME* this, GRAPH* graph);
+extern void game_debug_draw_last(GAME* game, GRAPH* graph);
 extern void game_draw_last(GRAPH* graph);
-extern void game_get_controller(GAME* this);
+extern void game_get_controller(GAME* game);
 extern void SetGameFrame(int frame);
-extern void game_main(GAME* this);
-extern void game_resize_hyral(GAME* this, int size);
-extern void game_ct(GAME* this, void (*init)(GAME*), GRAPH* graph);
-extern void game_dt(GAME* this);
-extern void (*game_get_next_game_init(GAME* this))(GAME*);
+extern void game_main(GAME* game);
+extern void game_resize_hyral(GAME* game, int size);
+extern void game_ct(GAME* game, void (*init)(GAME*), GRAPH* graph);
+extern void game_dt(GAME* game);
+extern void (*game_get_next_game_init(GAME* game))(GAME*);
 #ifndef MUST_MATCH
-extern size_t game_get_next_game_class_size(GAME* this);
+extern size_t game_get_next_game_class_size(GAME* game);
 #endif
-extern int game_is_doing(GAME* this);
-extern int game_getFreeBytes(GAME* this);
-extern void game_goto_next_game_play(GAME* this);
+extern int game_is_doing(GAME* game);
+extern int game_getFreeBytes(GAME* game);
+extern void game_goto_next_game_play(GAME* game);
 #ifndef MUST_MATCH
-extern void game_goto_next_game_famicom_emu(GAME* this);
+extern void game_goto_next_game_famicom_emu(GAME* game);
 #endif
 
 extern GAME* gamePT;

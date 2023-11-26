@@ -1,7 +1,7 @@
 #include "libforest/fault.h"
 #include "terminal.h"
 #include "va_args.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "dolphin/os.h"
 
 static fault* this = NULL;

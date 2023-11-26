@@ -3,6 +3,10 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 class JSUPtrLink;
 
 class JSUPtrList
@@ -219,5 +223,9 @@ public:
 private:
     JSUTree<T> *mTree;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* JSULIST_H */

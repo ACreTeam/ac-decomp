@@ -5,7 +5,7 @@
 #include "lb_rtc.h"
 #include "m_scene_table.h"
 #include "m_malloc.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 
 #define CRC32_POLYNOMIAL 0xEDB88320
 #define CRC32_START_VALUE 0xAA478422

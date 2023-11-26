@@ -8,7 +8,7 @@
 #include "game.h"
 #include "m_house.h"
 #include "dolphin/os/OSCache.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "m_player_lib.h"
 
 typedef struct ftr_place_data_s {

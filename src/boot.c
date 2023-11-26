@@ -13,7 +13,7 @@
 #include "libc64/sleep.h"
 #include "libforest/osreport.h"
 #include "libforest/emu64/emu64_wrapper.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "libultra/initialize.h"
 #include "libultra/contreaddata.h"
 #include "libultra/libultra.h"
