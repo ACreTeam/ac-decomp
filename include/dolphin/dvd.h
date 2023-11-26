@@ -193,6 +193,8 @@ void DVDDumpWaitingQueue();
 
 #define DVD_AIS_SUCCESS 0
 
+DVDDiskID DiskID AT_ADDRESS(0x80000000);
+
 //////////////////////////////////
 
 #ifdef __cplusplus

@@ -636,6 +636,9 @@ class CSource(Source):
         elif path.startswith("src/TRK") and not path.startswith("src/TRK/init"): 
             self.cc = c.CC
             self.cflags = c.DOL_TRK_CFLAGS
+        elif os.path.dirname(path).endswith("src"):
+            self.cflags = c.DOL_CFLAGS_SDATA0_CFLAGS
+            self.cc = c.CC
         else:
             self.cflags = ctx.cflags
             self.cc = c.CC_R

@@ -342,6 +342,7 @@ BOOT_CFLAGS = CFLAGS + [
 ] + DOL_DEFINES
 DOL_CFLAGS_NO_SDATA = CFLAGS + [
     "-inline on",
+    "-enum int",
     "-sdata 0",
     "-sdata2 0"
 ] + DOL_DEFINES

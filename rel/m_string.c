@@ -1,7 +1,7 @@
 #include "m_string.h"
 
 #include "m_msg.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "m_lib.h"
 #include "m_font.h"
 #include "m_mail.h"

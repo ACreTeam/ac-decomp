@@ -8,7 +8,7 @@
 #include "irqmgr.h"
 #include "libc64/malloc.h"
 #include "libforest/emu64/emu64_wrapper.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "libu64/debug.h"
 #include "libultra/libultra.h"
 #include "m_bgm.h"

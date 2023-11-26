@@ -27,7 +27,7 @@
 #include "m_vibctl.h"
 #include "sys_matrix.h"
 #include "sys_vimgr.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "libc64/qrand.h"
 #include "m_common_data.h"
 #include "m_play.h"

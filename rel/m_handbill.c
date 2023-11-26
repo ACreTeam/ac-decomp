@@ -1,6 +1,6 @@
 #include "m_handbill.h"
 
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "m_msg.h"
 #include "m_string.h"
 #include "m_font.h"

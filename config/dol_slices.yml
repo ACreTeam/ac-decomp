@@ -16,6 +16,11 @@ boot.c:
     .rodata: [0x800a97e0, 0x800a97e8]
     .data: [0x800af860, 0x800afe50]
     .bss: [0x800e2280, 0x800e2318]
+jsyswrap.cpp:
+    .text: [0x8000663c, 0x80007188]
+    .ctors: [0x800a9784, 0x800a9788]
+    .data: [0x800afe50, 0x800b05e8]
+    .bss: [0x800e2318, 0x800e2640]
 version.c:
     .data: [0x800b05e8, 0x800b0608]
 initial_menu.c:

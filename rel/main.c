@@ -6,7 +6,7 @@
 #include "graph.h"
 #include "libultra/osMesg.h"
 #include "libultra/os_thread.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "m_card.h"
 #include "_mem.h"
 #include "padmgr.h"

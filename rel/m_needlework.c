@@ -3,7 +3,7 @@
 #include "m_string.h"
 #include "m_private.h"
 #include "m_common_data.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "libultra/libultra.h"
 #include "m_lib.h"
 

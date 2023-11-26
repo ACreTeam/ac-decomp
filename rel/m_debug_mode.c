@@ -24,7 +24,7 @@
 #include "m_card.h"
 #include "m_flashrom.h"
 #include "dolphin/dvd.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 #include "boot.h"
 #include "m_common_data.h"
 
@@ -145,7 +145,7 @@ static void Debug_Print2_output(gfxprint_t* gfxprint) {
   }
 }
 
-#define PAD_BUTTON_DOWN(buttons, button) (((int)(buttons) | (~(int)(button))) == -1)
+#define PAD_BUTTON_IS_DOWN(buttons, button) (((int)(buttons) | (~(int)(button))) == -1)
 
 static int Debug_console(pad_t* pad) {
   static f32 console_scroll;
@@ -161,7 +161,7 @@ static int Debug_console(pad_t* pad) {
 
   if (sys_console != NULL) {
     /* Toggle console visiblity when Z button is released */
-    if (PAD_BUTTON_DOWN(pad->on.button, BUTTON_Z) && (pad->now.button & (~BUTTON_Z)) == 0) {
+    if (PAD_BUTTON_IS_DOWN(pad->on.button, BUTTON_Z) && (pad->now.button & (~BUTTON_Z)) == 0) {
       JC_JUTConsole_setVisible(sys_console, !JC_JUTConsole_isVisible(sys_console));
     }
 
@@ -171,12 +171,12 @@ static int Debug_console(pad_t* pad) {
       f32 log_stick_y = (f32)pad->off.stick_y / 60.0f;
 
       /* B button clears console */
-      if (PAD_BUTTON_DOWN(pad->on.button, BUTTON_B)) {
+      if (PAD_BUTTON_IS_DOWN(pad->on.button, BUTTON_B)) {
         JC_JUTConsole_clear(sys_console);
       }
 
       /* L button to scroll */
-      if (PAD_BUTTON_DOWN(pad->now.button, BUTTON_L)) {
+      if (PAD_BUTTON_IS_DOWN(pad->now.button, BUTTON_L)) {
         console_scroll -= log_stick_y;
 
         if (console_scroll > 1.0f) {
@@ -221,7 +221,7 @@ static int Debug_console(pad_t* pad) {
       }
 
       /* R button re-prints console */
-      if (PAD_BUTTON_DOWN(pad->on.button, BUTTON_R)) {
+      if (PAD_BUTTON_IS_DOWN(pad->on.button, BUTTON_R)) {
         JC_JUTConsole_dumpToTerminal(sys_console, -1); /* -1 is probably a define */
         JC_JUTConsole_setOutput(sys_console, 3); /* Again, 3 is probably a define */
       }
@@ -257,7 +257,7 @@ extern void Debug_mode_input(pad_t* pad) {
     int dpad = now_button & (BUTTON_DRIGHT | BUTTON_DLEFT | BUTTON_DDOWN | BUTTON_DUP);
 
     /* L + R held shows the disk info, copy date, and zurumode/appNMI buffer state */
-    if (PAD_BUTTON_DOWN(now_button, BUTTON_L) && PAD_BUTTON_DOWN(now_button, BUTTON_R)) {
+    if (PAD_BUTTON_IS_DOWN(now_button, BUTTON_L) && PAD_BUTTON_IS_DOWN(now_button, BUTTON_R)) {
       DVDDiskID* diskid = DVDGetCurrentDiskID();
       if (diskid != NULL) {
         JW_JUTReport(50, 50, 1, "%.4s %.2s 0x%02x(%d)", diskid->gameName, diskid->company, diskid->gameVersion, diskid->gameVersion);
@@ -270,7 +270,7 @@ extern void Debug_mode_input(pad_t* pad) {
       JW_JUTReport(50, 60, 1, "Z=%d Z2=%d ANB=%08x", zurumode_flag != 0, zurumode_flag >= 2, APPNMI_GETVAL());
 
       /* Additionally, pressing Z after L + R will print out each bit in debug appNMI buffer */
-      if (PAD_BUTTON_DOWN(pad->now.button, BUTTON_Z)) {
+      if (PAD_BUTTON_IS_DOWN(pad->now.button, BUTTON_Z)) {
         int i;
         for (i = 0; i < 32; i++) {
           JW_JUTReport(50 + i * 12, 70, 1, "%1x", (APPNMI_GETVAL() >> (31 - i)) & 1);
@@ -278,7 +278,7 @@ extern void Debug_mode_input(pad_t* pad) {
       }
     }
 
-    if (zurumode_flag >= 2 && (PAD_BUTTON_DOWN(pad->now.button, BUTTON_L) || PAD_BUTTON_DOWN(pad->now.button, BUTTON_R) || PAD_BUTTON_DOWN(pad->now.button, BUTTON_START))) {
+    if (zurumode_flag >= 2 && (PAD_BUTTON_IS_DOWN(pad->now.button, BUTTON_L) || PAD_BUTTON_IS_DOWN(pad->now.button, BUTTON_R) || PAD_BUTTON_IS_DOWN(pad->now.button, BUTTON_START))) {
       /* Button combos to get to each register */
       static debug_reg_keycombo_t key_data[DEBUG_REG_MAX] = {
           {BUTTON_L, BUTTON_CUP},        /* REG */
@@ -324,8 +324,8 @@ extern void Debug_mode_input(pad_t* pad) {
       int i;
 
       for (i = 0; i < DEBUG_REG_MAX; i++) {
-        if (PAD_BUTTON_DOWN(pad->now.button, key_data[i].held) &&
-            PAD_BUTTON_DOWN(pad->on.button, key_data[i].pressed)) {
+        if (PAD_BUTTON_IS_DOWN(pad->now.button, key_data[i].held) &&
+            PAD_BUTTON_IS_DOWN(pad->on.button, key_data[i].pressed)) {
           break;
         }
       }
@@ -379,37 +379,37 @@ extern void Debug_mode_input(pad_t* pad) {
            **/
           if (dpad & BUTTON_DRIGHT) {
             u16 btn = pad->now.button;
-            if (PAD_BUTTON_DOWN(btn, BUTTON_CUP)) {
+            if (PAD_BUTTON_IS_DOWN(btn, BUTTON_CUP)) {
               increment = 0x1000;
-            } else if (PAD_BUTTON_DOWN(btn, BUTTON_CDOWN)) {
+            } else if (PAD_BUTTON_IS_DOWN(btn, BUTTON_CDOWN)) {
               increment = 0x100;
-            } else if (PAD_BUTTON_DOWN(btn, BUTTON_A | BUTTON_B)) {
+            } else if (PAD_BUTTON_IS_DOWN(btn, BUTTON_A | BUTTON_B)) {
               increment = 1000;
-            } else if (PAD_BUTTON_DOWN(btn, BUTTON_A)) {
+            } else if (PAD_BUTTON_IS_DOWN(btn, BUTTON_A)) {
               increment = 100;
             } else {
               increment = 1;
-              if (PAD_BUTTON_DOWN(btn, BUTTON_B)) {
+              if (PAD_BUTTON_IS_DOWN(btn, BUTTON_B)) {
                 increment = 10;
               }
             }
           } else if (dpad & BUTTON_DLEFT) {
             u16 btn = pad->now.button;
-            if (PAD_BUTTON_DOWN(btn, BUTTON_CUP)) {
+            if (PAD_BUTTON_IS_DOWN(btn, BUTTON_CUP)) {
               increment = -0x1000;
-            } else if (PAD_BUTTON_DOWN(btn, BUTTON_CDOWN)) {
+            } else if (PAD_BUTTON_IS_DOWN(btn, BUTTON_CDOWN)) {
               increment = -0x100;
-            } else if (PAD_BUTTON_DOWN(btn, BUTTON_A | BUTTON_B)) {
+            } else if (PAD_BUTTON_IS_DOWN(btn, BUTTON_A | BUTTON_B)) {
               increment = -1000;
             }
             /* lol the missed duplicated case */
-            else if (PAD_BUTTON_DOWN(btn, BUTTON_A | BUTTON_B)) {
+            else if (PAD_BUTTON_IS_DOWN(btn, BUTTON_A | BUTTON_B)) {
               increment = -1000;
-            } else if (PAD_BUTTON_DOWN(btn, BUTTON_A)) {
+            } else if (PAD_BUTTON_IS_DOWN(btn, BUTTON_A)) {
               increment = -100;
             } else {
               increment = -1;
-              if (PAD_BUTTON_DOWN(btn, BUTTON_B)) {
+              if (PAD_BUTTON_IS_DOWN(btn, BUTTON_B)) {
                 increment = -10;
               }
             }

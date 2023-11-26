@@ -8,7 +8,7 @@
 #include "gfxalloc.h"
 #include "gamealloc.h"
 #include "THA_GA.h"
-#include "libjsys/jsyswrapper.h"
+#include "jsyswrap.h"
 
 GAME* gamePT = NULL;
 

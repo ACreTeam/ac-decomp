@@ -25,6 +25,33 @@ extern "C" {
 #define PAD_BUTTON_MENU 0x1000
 #define PAD_BUTTON_START 0x1000
 
+typedef void (*PADSamplingCallback)(void);
+
+typedef struct PADStatus {
+  u16 button;
+  s8 stickX;
+  s8 stickY;
+  s8 substickX;
+  s8 substickY;
+  u8 triggerLeft;
+  u8 triggerRight;
+  u8 analogA;
+  u8 analogB;
+  s8 err;
+} PADStatus;
+
+BOOL PADInit();
+u32 PADRead(PADStatus *status);
+BOOL PADReset(u32 mask);
+BOOL PADRecalibrate(u32 mask);
+void PADClamp(PADStatus *status);
+void PADClampCircle(PADStatus *status);
+void PADControlMotor(s32 chan, u32 cmd);
+void PADSetSpec(u32 spec);
+void PADControlAllMotors(const u32 *cmdArr);
+void PADSetAnalogMode(u32 mode);
+PADSamplingCallback PADSetSamplingCallback(PADSamplingCallback);
+
 #ifdef __cplusplus
 }
 #endif

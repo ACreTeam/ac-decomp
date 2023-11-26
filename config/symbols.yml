@@ -3709,6 +3709,7 @@ global:
     0x802185b0: __GBAReset
     0x802185b8: texture_cache_num
     0x802185bc: texture_cache_data_entry_num
+    0x8021860a: FrameCansel
     0x8021861c: __OSReport_MonopolyThread
     0x80218620: __OSReport_disable
     0x80218628: this
