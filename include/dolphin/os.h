@@ -63,7 +63,7 @@ void OSInit(void);
 u32 OSGetConsoleType();
 #define OS_CONSOLE_IS_DEV() ((OSGetConsoleType() & OS_CONSOLE_DEV_MASK) != 0)
 
-
+#define OSHalt(msg) OSPanic(__FILE__, __LINE__, msg)
 
 typedef void (*OSExceptionHandler)(u8, OSContext*);
 OSExceptionHandler __OSSetExceptionHandler(u8, OSExceptionHandler);

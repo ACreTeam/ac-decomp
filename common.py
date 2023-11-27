@@ -400,7 +400,7 @@ JSYSTEM_BASE = [
     "-lang=c++",
     "-inline on",
     "-fp fmadd",
-    "-fp_contract on",
+    #"-fp_contract on",
     #"-pool off", # this is wrong
     "-Cpp_exceptions off",
     "-RTTI on",

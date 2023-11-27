@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+#define PAD_CONTROLLER_NUM 4
+
 #define PAD_MOTOR_STOP 0
 #define PAD_MOTOR_RUMBLE 1
 #define PAD_MOTOR_STOP_HARD 2

@@ -403,4 +403,4 @@ forced_types:
     0x800a8138: ENTRY
     0x800a8140: ENTRY
     0x800a8148: ENTRY
-    0x800ab260: ENTRY
+#    0x800ab260: ENTRY
