@@ -619,7 +619,8 @@ s32 JKRExpHeap::getUsedSize(u8 groupId) const
 bool JKRExpHeap::isEmpty()
 {
     u32 newSize;
-    JUT_ASSERT(1269, newSize > 0);
+    #line 1269
+    JUT_ASSERT(newSize > 0);
     return true;
 }
 

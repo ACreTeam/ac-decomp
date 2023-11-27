@@ -98,7 +98,8 @@ JKRHeap* JKRHeap::becomeCurrentHeap()
 
 void JKRHeap::destroy(JKRHeap* heap)
 {
-    JUT_ASSERT(200, heap != 0);
+    #line 200
+    JUT_ASSERT(heap != 0);
     heap->destroy();
 }
 
@@ -399,13 +400,15 @@ JKRHeap::TState::TState(const JKRHeap::TState &other, const JKRHeap::TState::TLo
 
 void JKRHeap::state_register(JKRHeap::TState* p, u32) const
 {
-    JUT_ASSERT(1132, p != 0);
-    JUT_ASSERT(1133, p->getHeap() == this);
+    #line 1132
+    JUT_ASSERT(p != 0);
+    JUT_ASSERT(p->getHeap() == this);
 }
 
 bool JKRHeap::state_compare(const JKRHeap::TState& r1, const JKRHeap::TState& r2) const
 {
-    JUT_ASSERT(1141, r1.getHeap() == r2.getHeap());
+    #line 1141
+    JUT_ASSERT(r1.getHeap() == r2.getHeap());
     return (r1.getCheckCode() == r2.getCheckCode());
 }
 

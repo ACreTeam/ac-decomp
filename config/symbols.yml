@@ -2927,6 +2927,7 @@ global:
     0x800ab010: tblc
     0x800ab110: pows
     0x800ab170: saoAboutEncoding___10JUTResFont
+    0x800ab260: JUTResFONT_Ascfont_fix12
     0x800af3c0: __constants
     0x800af4e0: two_over_pi
     0x800af5e8: npio2_hw

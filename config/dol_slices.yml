@@ -230,6 +230,15 @@ JSystem/JSupport/JSUInputStream.cpp:
 #    .text: [0x8006e3e4, 0x8006e604]
 #    .data: [0x800dedb8, 0x800dee60]
 #    .sdata: [0x80218068, 0x80218088]
+JSystem/JUtility/JUTGamePad.cpp:
+    .text: [0x80070274, 0x800713b0]
+    .ctors: [0x800a97ac, 0x800a97b0]
+    .rodata: [0x800ab240, 0x800ab260]
+    .data: [0x800def60, 0x800defa0]
+    .bss: [0x802070e0, 0x80207268]
+    .sdata: [0x802180b8, 0x802180d0]
+    .sbss: [0x80218808, 0x80218838]
+    .sdata2: [0x802192c0, 0x80219300]
 dolphin/BASE/ppcarch.c:
     .text: [0x8007867c, 0x80078718]
 dolphin/os/OSArena.c:

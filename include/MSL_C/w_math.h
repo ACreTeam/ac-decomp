@@ -67,7 +67,15 @@ inline float fabsf(float x) {
 	return (float)fabs((double)x);
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 f64 atan2(f64, f64);
 f64 acos(f32);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
