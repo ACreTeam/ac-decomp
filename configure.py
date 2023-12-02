@@ -618,6 +618,9 @@ class CSource(Source):
         if path.startswith("src/dolphin/"):
             self.cflags = c.SDK_FLAGS
             self.cc = c.OCC
+        elif path.startswith("src/JSystem/JGadget/"):
+            self.cflags = c.JSYSTEM_JGADGET_CFLAGS
+            self.cc = c.CC
         elif path.startswith("src/JSystem/"):
             self.cflags = c.JSYSTEM_CFLAGS
             self.cc = c.CC

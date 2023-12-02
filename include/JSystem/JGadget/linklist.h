@@ -16,7 +16,7 @@ public:
   TPRIsEqual_pointer_<T>(const T* p) { this->p_ = p; }
 
   bool operator()(const T& rSrc) const {
-    return this->p_ == &rSrc;
+    return &rSrc == this->p_;
   }
 
 private:
@@ -32,7 +32,14 @@ public:
     this->pPrev_ = nullptr;
   }
 
-  ~TLinkListNode();
+  ~TLinkListNode() {
+    // Seemingly not present in earlier versions of JSystem
+    /*
+    #line 77
+    JUT_ASSERT(pNext_==NULL);
+    JUT_ASSERT(pPrev_==NULL);
+    */
+  }
 
   TLinkListNode* getNext() const {
     return this->pNext_;
@@ -42,7 +49,10 @@ public:
     return this->pPrev_;
   }
 
-  void clear_();
+  void clear_() {
+    this->pNext_ = nullptr;
+    this->pPrev_ = nullptr;
+  }
 
   TLinkListNode* pNext_;
   TLinkListNode* pPrev_;
@@ -50,7 +60,7 @@ public:
 
 class TNodeLinkList {
 public:
-  TNodeLinkList();
+  TNodeLinkList() : oNode_() { Initialize_(); }
   ~TNodeLinkList();
 
   class iterator {
@@ -104,7 +114,20 @@ public:
   iterator Find(const TLinkListNode* node);
   iterator Insert(iterator it, TLinkListNode* node);
   void Remove(TLinkListNode* node);
-  template <typename Predicate> void Remove_if(Predicate predicate, TNodeLinkList& other);
+  template <typename Predicate> void Remove_if(Predicate predicate, TNodeLinkList& tList) {
+    iterator it = this->begin();
+
+    while(!Iterator_isEnd_(it)) {
+      if (predicate(*it)) {
+        iterator itPrev = it;
+        ++it;
+        tList.splice(tList.end(), *this, itPrev);
+      }
+      else {
+        ++it;
+      }
+    }
+  }
 
   s32 size() const { return this->size_; }
   bool empty() const { return this->size() == 0; }
@@ -129,24 +152,31 @@ public:
   const_iterator end() const { return &this->oNode_; }
 
 private:
-  void Initialize_();
-  bool Iterator_isEnd_(const_iterator it) const { return &this->oNode_ == it.p_; }
+  void Initialize_() {
+    this->size_ = 0;
+    this->oNode_.pNext_ = &this->oNode_;
+    this->oNode_.pPrev_ = &this->oNode_;
+  }
+
+  bool Iterator_isEnd_(const_iterator it) const { return it.p_ == &this->oNode_; }
 
   s32 size_;
   TLinkListNode oNode_;
 };
 
-bool operator==(TNodeLinkList::iterator lhs, TNodeLinkList::iterator rhs) { return lhs.p_ == rhs.p_; }
-bool operator!=(TNodeLinkList::iterator lhs, TNodeLinkList::iterator rhs) { return !(lhs == rhs); }
+inline bool operator==(TNodeLinkList::iterator lhs, TNodeLinkList::iterator rhs) { return lhs.p_ == rhs.p_; }
+inline bool operator!=(TNodeLinkList::iterator lhs, TNodeLinkList::iterator rhs) { return !(lhs == rhs); }
 
-bool operator==(TNodeLinkList::const_iterator lhs, TNodeLinkList::const_iterator rhs) { return lhs.p_ == rhs.p_; }
-bool operator!=(TNodeLinkList::const_iterator lhs, TNodeLinkList::const_iterator rhs) { return !(lhs == rhs); }
+inline bool operator==(TNodeLinkList::const_iterator lhs, TNodeLinkList::const_iterator rhs) { return lhs.p_ == rhs.p_; }
+inline bool operator!=(TNodeLinkList::const_iterator lhs, TNodeLinkList::const_iterator rhs) { return !(lhs == rhs); }
+
+/* TODO: TLinkList has not been matched and should be verified */
 
 template <typename T, int O>
 class TLinkList : public TNodeLinkList {
   class iterator {
   public:
-    iterator iterator(TNodeLinkList::iterator it) : mIt(it) {  }
+    iterator(TNodeLinkList::iterator it) : mIt(it) {  }
 
     bool operator==(iterator other) { return (mIt == other.mIt);  }
     bool operator!=(iterator other) { return !(*this == other); }
@@ -173,7 +203,7 @@ class TLinkList : public TNodeLinkList {
 
   class const_iterator {
   public:
-    const_iterator iterator(TNodeLinkList::const_iterator it) : mIt(it) {  }
+    const_iterator(TNodeLinkList::const_iterator it) : mIt(it) {  }
 
     bool operator==(const_iterator other) { return (mIt == other.mIt);  }
     bool operator!=(const_iterator other) { return !(*this == other); }

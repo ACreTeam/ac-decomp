@@ -6,16 +6,12 @@
 namespace JGadget {
 
 TNodeLinkList::~TNodeLinkList() {
+  #ifdef DEBUG
   Confirm();
   clear();
+  #endif
   JGADGET_ASSERTWARN(empty());
-  this->oNode_.clear_();
-}
-
-void TNodeLinkList::Initialize_() {
-  this->size_ = 0;
-  this->oNode_.pNext_ = &this->oNode_;
-  this->oNode_.pPrev_ = &this->oNode_;
+  //this->oNode_.clear_();
 }
 
 TNodeLinkList::iterator TNodeLinkList::erase(iterator it, iterator itEnd) {
@@ -82,11 +78,14 @@ void TNodeLinkList::splice(TNodeLinkList::iterator it, TNodeLinkList& rSrc, TNod
   iterator itSrcNext = itSrc;
   ++itSrcNext;
 
-  if (((it == itSrc) || (it == itSrcNext)) == false) {
-    TLinkListNode& node = *itSrc;
+  if ((it == itSrc) || (it == itSrcNext)) {
+      return;
+  }
+  else {
+    TLinkListNode* const node = &*itSrc;
 
-    rSrc.Erase(&node);
-    this->Insert(it, &node);
+    rSrc.Erase(node);
+    this->Insert(it, node);
   }
 }
 
@@ -140,28 +139,12 @@ TNodeLinkList::iterator TNodeLinkList::Erase(TLinkListNode* p) {
   JUT_ASSERT(pPrev!=0);
   pPrev->pNext_ = pNext;
   this->size_--;
-  p->clear_();
+  //p->clear_();
   return pNext;
 }
 
 void TNodeLinkList::Remove(TLinkListNode* node) {
   this->remove_if(TPRIsEqual_pointer_<TLinkListNode>(node));
-}
-
-template<typename Predicate>
-void TNodeLinkList::Remove_if(Predicate predicate, TNodeLinkList& tList) {
-  iterator it = this->begin();
-
-  while(!Iterator_isEnd_(it)) {
-    if (predicate(*it)) {
-      iterator itPrev = it;
-      ++it;
-      tList.splice(tList.end(), *this, itPrev);
-    }
-    else {
-      ++it;
-    }
-  }
 }
 
 bool TNodeLinkList::Confirm() const {
