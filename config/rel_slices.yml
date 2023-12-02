@@ -659,6 +659,8 @@ data/npc/default_list.c:
     .data: [0x8096CD90, 0x8096D328]
 data/npc/grow_list.c:
     .data: [0x80977450, 0x80977540]
+data/npc/house_list.c:
+    .data: [0x80977540, 0x80977CB0]
 data/titledemo/pact0.c:
     .data: [0x80C411D8, 0x80C42038]
 data/titledemo/pact1.c:
