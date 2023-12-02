@@ -19,8 +19,13 @@ void TNodeLinkList::Initialize_() {
 }
 
 TNodeLinkList::iterator TNodeLinkList::erase(iterator it, iterator itEnd) {
-  for (it; it != itEnd; ++it) {
-    this->Erase(it.p_);
+  TLinkListNode* cur = it.p_;
+  TLinkListNode* end = itEnd.p_;
+  TLinkListNode* next;
+
+  for (; cur != end; cur = next) {
+    next = cur->pNext_;
+    this->Erase(cur);
   }
 
   return itEnd;
@@ -76,13 +81,8 @@ void TNodeLinkList::splice(TNodeLinkList::iterator it, TNodeLinkList& rSrc, TNod
 void TNodeLinkList::splice(TNodeLinkList::iterator it, TNodeLinkList& rSrc, TNodeLinkList::iterator itSrc) {
   iterator itSrcNext = itSrc;
   ++itSrcNext;
-  bool invalid = true;
 
-  if (!(it == itSrc) && !(it == itSrcNext)) {
-    invalid = false;
-  }
-
-  if (!invalid) {
+  if (((it == itSrc) || (it == itSrcNext)) == false) {
     TLinkListNode& node = *itSrc;
 
     rSrc.Erase(&node);
@@ -97,31 +97,13 @@ void TNodeLinkList::splice(iterator it, TNodeLinkList& rSrc) {
   JUT_ASSERT(rSrc.empty());
 }
 
-void TNodeLinkList::Remove(TLinkListNode* node) {
-  this->remove_if(TPRIsEqual_pointer_(node));
-}
-
-template<typename Predicate>
-void TNodeLinkList::Remove_if(Predicate predicate, TNodeLinkList& tList) {
-  iterator itBeg = this->begin();
-  iterator it = itBeg;
-
-  while(!Iterator_isEnd_(it)) {
-    if (predicate(*it) == true) {
-      iterator itPrev = it;
-      ++it;
-      tList.splice(tList.end(), *this, itPrev);
-    }
-    else {
-      ++it;
-    }
-  }
-}
-
 TNodeLinkList::iterator TNodeLinkList::Find(const TLinkListNode* node) {
-  return std::find_if(this->begin(), this->end(), TPRIsEqual_pointer_(node));
+  return std::find_if(this->begin(), this->end(), TPRIsEqual_pointer_<TLinkListNode>(node));
 }
 
+#undef NULL
+#define NULL 0
+    
 TNodeLinkList::iterator TNodeLinkList::Insert(iterator it, TLinkListNode* p) {
   #line 300
   JUT_ASSERT(p!=0);
@@ -131,8 +113,8 @@ TNodeLinkList::iterator TNodeLinkList::Insert(iterator it, TLinkListNode* p) {
   TLinkListNode* pItPrev = pIt->pPrev_;
   JUT_ASSERT(pItPrev!=0);
 
-  JUT_ASSERT(p->pNext_==NULL);
-  JUT_ASSERT(p->pPrev_==NULL);
+  JGADGET_ASSERTWARN(p->pNext_==NULL);
+  JGADGET_ASSERTWARN(p->pPrev_==NULL);
 
   p->pNext_ = pIt;
   p->pPrev_ = pItPrev;
@@ -142,6 +124,9 @@ TNodeLinkList::iterator TNodeLinkList::Insert(iterator it, TLinkListNode* p) {
 
   return p;
 }
+
+#undef NULL
+#define NULL (void*)0;
 
 TNodeLinkList::iterator TNodeLinkList::Erase(TLinkListNode* p) {
   #line 325
@@ -159,38 +144,65 @@ TNodeLinkList::iterator TNodeLinkList::Erase(TLinkListNode* p) {
   return pNext;
 }
 
-bool TNodeLinkList::Confirm() const {
-  u32 u = 0;
-  const_iterator itEnd(this->end());
-  
-  #line 357
-  JGADGET_EXIT(itEnd.p_==&oNode_)
-  const_iterator it(this->begin());
-  JGADGET_EXIT(it.p_==oNode_.pNext_); // #line 359
+void TNodeLinkList::Remove(TLinkListNode* node) {
+  this->remove_if(TPRIsEqual_pointer_<TLinkListNode>(node));
+}
 
-  for (it; it != itEnd; ++it, ++u) {
-    JGADGET_EXIT(u<size()); // #line 362
-    const TLinkListNode* pIt = it.p_;
-    JUT_ASSERT(pIt!=0); // #line 364
-    JGADGET_EXIT(pIt->pNext_->pPrev_==pIt); // #line 365
-    JGADGET_EXIT(pIt->pPrev_->pNext_==pIt); // #line 366
-  }
-  if (it.p_ == &this->oNode_) {
-    JGADGET_EXIT(u==size()); // #line 369
-    return true;
+template<typename Predicate>
+void TNodeLinkList::Remove_if(Predicate predicate, TNodeLinkList& tList) {
+  iterator it = this->begin();
+
+  while(!Iterator_isEnd_(it)) {
+    if (predicate(*it)) {
+      iterator itPrev = it;
+      ++it;
+      tList.splice(tList.end(), *this, itPrev);
+    }
+    else {
+      ++it;
+    }
   }
 }
 
-bool TNodeLinkList::Confirm_iterator(const_iterator it) const {
-  const_iterator itCur(this->begin());
-  const_iterator itEnd(this->end());
-  for (itCur; itCur != itEnd; ++itCur) {
-    if (itCur==it) {
-      return true;
-    }
+bool TNodeLinkList::Confirm() const {
+  u32 u = 0;
+  const_iterator itEnd = this->end();
+  
+  #line 357
+  JGADGET_EXITWARN(itEnd.p_==&oNode_);
+  const_iterator it = this->begin();
+  JGADGET_EXITWARN(it.p_==oNode_.pNext_); // #line 359
+
+  for (; it != itEnd; ++it, ++u) {
+    JGADGET_EXITWARN(u<size()); // #line 362
+    const TLinkListNode* pIt = it.p_;
+    JUT_ASSERT(pIt!=0); // #line 364
+    #line 365
+    JGADGET_EXITWARN(pIt->pNext_->pPrev_==pIt);
+    JGADGET_EXITWARN(pIt->pPrev_->pNext_==pIt); // #line 366
   }
 
-  JGADGET_EXIT(it==itEnd); // #line 383
+  #line 368
+  JGADGET_EXITWARN(it.p_==&oNode_);
+  JGADGET_EXITWARN(u==size());
+  return true;
+}
+
+bool TNodeLinkList::Confirm_iterator(const_iterator it) const {
+  const_iterator itBegin = begin();
+  const_iterator itEnd = end();
+
+  while (itBegin != itEnd) {
+    if (itBegin == it) {
+      return true;
+    }
+
+    ++itBegin;
+  }
+
+  #line 383
+  JGADGET_EXITWARN(it==itEnd);
+
   return true;
 }
 
