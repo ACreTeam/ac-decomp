@@ -159,9 +159,9 @@ class TLinkList : public TNodeLinkList {
       return *this;
     }
 
-    T* operator->() const { return TLinkList::Element_toValue(TNodeLinkList::iterator::operator->(mIt)); }
+    T* operator->() const { return TLinkList::Element_toValue(mIt.operator->()); }
     T& operator*() const {
-      T* p = TLinkList::iterator::operator->();
+      T* p = this->operator->();
       #line 541
       JUT_ASSERT(p!=0);
       return *p;
@@ -186,9 +186,9 @@ class TLinkList : public TNodeLinkList {
       return *this;
     }
 
-    const T* operator->() const { return TLinkList::Element_toValue(TNodeLinkList::const_iterator::operator->(mIt)); }
+    const T* operator->() const { return TLinkList::Element_toValue(mIt.operator->()); }
     const T& operator*() const {
-      T* p = TLinkList::const_iterator::operator->();
+      T* p = this->operator->();
       #line 586
       JUT_ASSERT(p!=0);
       return *p;
@@ -244,7 +244,7 @@ class TLinkList : public TNodeLinkList {
   }
 
   static const T* Element_toValue(const TLinkListNode* p) {
-    #line 763
+    #line 768
     JUT_ASSERT(p!=0);
     return (const T*)((const char*)p - O);
   }
