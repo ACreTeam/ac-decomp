@@ -653,6 +653,12 @@ audio.c:
     .bss: [0x8148DA78,0x8148DA7C]
 
 # dataobject.obj files
+data/combi/data_combi.c:
+    .data: [0x8080DD80, 0x8080E628]
+data/npc/default_list.c:
+    .data: [0x8096CD90, 0x8096D328]
+data/npc/grow_list.c:
+    .data: [0x80977450, 0x80977540]
 data/titledemo/pact0.c:
     .data: [0x80C411D8, 0x80C42038]
 data/titledemo/pact1.c:
@@ -673,5 +679,3 @@ data/field/bg/earth_pal.c:
     .data: [0x80C90100, 0x80C90280]
 data/field/bg/rail_pal.c:
     .data: [0x80F8C2C8, 0x80F8C460]
-data/combi/data_combi.c:
-    .data: [0x8080DD80, 0x8080E628]
