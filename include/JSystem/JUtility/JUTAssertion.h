@@ -52,11 +52,7 @@ namespace JUTAssertion
 #else
 
 #define JUT_ASSERT(COND)                                                             \
-  if ((COND) == false)                                                                       \
-  {                                                                                  \
-    JUTAssertion::showAssert(JUTAssertion::getSDevice(), __FILE__, __LINE__, #COND); \
-    OSHalt("Halt");                                                                  \
-  }
+  ((COND)) ?  (void)0 : (JUTAssertion::showAssert(JUTAssertion::getSDevice(), __FILE__, __LINE__, #COND),  OSHalt("Halt"));
 
 #define JUT_ASSERT_F(COND, ...)                                                              \
   if ((COND) == false)                                                                               \

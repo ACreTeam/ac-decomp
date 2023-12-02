@@ -230,6 +230,8 @@ JSystem/JSupport/JSUInputStream.cpp:
 #    .text: [0x8006e3e4, 0x8006e604]
 #    .data: [0x800dedb8, 0x800dee60]
 #    .sdata: [0x80218068, 0x80218088]
+JSystem/JGadget/linklist.cpp:
+    .text: [0x8006e604, 0x8006e800]
 JSystem/JUtility/JUTGamePad.cpp:
     .text: [0x80070274, 0x800713b0]
     .ctors: [0x800a97ac, 0x800a97b0]

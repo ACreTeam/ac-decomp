@@ -409,8 +409,22 @@ JSYSTEM_BASE = [
     "-sym on", # might also be on for base flags?
     "-O4,s" # in mkdd some libraries use O4,p, might be the case here too
 ]
+JSYSTEM_JGADGET_BASE = [
+    "-lang=c++",
+    "-inline on",
+    "-fp fmadd",
+    #"-fp_contract on",
+    #"-pool off", # this is wrong
+    "-Cpp_exceptions off",
+    "-RTTI on",
+    "-char signed",
+    "-enum int",
+    # "-sym on", # might also be on for base flags?
+    "-O4,s" # in mkdd some libraries use O4,p, might be the case here too
+]
 
 JSYSTEM_CFLAGS = ' '.join(JSYSTEM_BASE + LOCAL_CFLAGS)
+JSYSTEM_JGADGET_CFLAGS = ' '.join(JSYSTEM_JGADGET_BASE + LOCAL_CFLAGS)
 DOL_CFLAGS = ' '.join(BASE_DOL_CFLAGS + LOCAL_CFLAGS)
 DOL_BOOT_CFLAGS = ' '.join(BOOT_CFLAGS + LOCAL_CFLAGS)
 DOL_DVDERR_CFLAGS = ' '.join(DVDERR_CFLAGS + LOCAL_CFLAGS)
