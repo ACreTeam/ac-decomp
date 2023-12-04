@@ -33,7 +33,7 @@ RUN if [ ! -e /etc/mtab ]; then ln -s /proc/self/mounts /etc/mtab; fi
 ## and finally, we get to install devkitPPC
 RUN dkp-pacman -S devkitPPC --noconfirm
 ## dear fucking god this is hacky but it works (needed otherwise next step fails)
-RUN rm /usr/bin/cpp && rm /usr/bin/g++
+RUN rm /usr/bin/cpp /usr/bin/g++
 ## set devkitPPC executables as the default ones
 RUN for file in $(find "/opt/devkitpro/devkitPPC/bin" -type f -name 'powerpc-eabi*'); do original_file=$(basename "$file"); new_file=$(basename "$file" | sed 's/powerpc-eabi-//g'); update-alternatives --install "/usr/bin/$new_file" "$new_file" "/opt/devkitpro/devkitPPC/bin/$original_file" 0; done
 
