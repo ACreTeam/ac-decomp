@@ -44,7 +44,7 @@ RUN sed -i 's/unsigned char	param:8;/unsigned int	param:8;/g' /N64_SDK/ultra/usr
 # --- set up work directory and env vars ---
 RUN mkdir /ac-decomp
 WORKDIR /ac-decomp
-ENV PATH="/opt/devkitpro/tools/bin:/ac-decomp/tools:${PATH}"
+ENV PATH="/opt/devkitpro/devkitPPC/bin:/ac-decomp/tools:${PATH}"
 ENV N64_SDK="/N64_SDK"
 ENV DEVKITPPC="/opt/devkitpro/devkitPPC"
 
