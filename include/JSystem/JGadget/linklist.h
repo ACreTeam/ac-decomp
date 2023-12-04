@@ -67,10 +67,18 @@ public:
   TNodeLinkList() : oNode_() { Initialize_(); }
   ~TNodeLinkList();
 
+  class const_iterator;
+
   class iterator {
   public:
+    friend class TNodeLinkList::const_iterator;
+    friend class TNodeLinkList;
+  
     iterator() { this->p_ = nullptr; }
     iterator(TLinkListNode* node) { this->p_ = node; }
+
+    friend bool operator==(TNodeLinkList::iterator lhs, TNodeLinkList::iterator rhs) { return lhs.p_ == rhs.p_; }
+    friend bool operator!=(TNodeLinkList::iterator lhs, TNodeLinkList::iterator rhs) { return !(lhs == rhs); }
 
     iterator& operator++() {
       this->p_ = this->p_->getNext();
@@ -89,13 +97,19 @@ public:
 
     TLinkListNode* operator->() const { return this->p_; }
     
+  private:
     TLinkListNode* p_;
   };
 
   class const_iterator {
   public:
+    friend class TNodeLinkList;
+
     const_iterator(const TLinkListNode* node) { this->p_ = node; }
     const_iterator(iterator it) { this->p_ = it.p_; }
+
+    friend bool operator==(TNodeLinkList::const_iterator lhs, TNodeLinkList::const_iterator rhs) { return lhs.p_ == rhs.p_; }
+    friend bool operator!=(TNodeLinkList::const_iterator lhs, TNodeLinkList::const_iterator rhs) { return !(lhs == rhs); }
 
     const const_iterator& operator++() {
       this->p_ = this->p_->getNext();
@@ -109,6 +123,7 @@ public:
 
     const TLinkListNode* operator->() const { return this->p_; }
     
+  private:
     const TLinkListNode* p_;
   };
 
@@ -168,30 +183,18 @@ private:
   TLinkListNode oNode_;
 };
 
-inline bool operator==(TNodeLinkList::iterator lhs, TNodeLinkList::iterator rhs) { return lhs.p_ == rhs.p_; }
-inline bool operator!=(TNodeLinkList::iterator lhs, TNodeLinkList::iterator rhs) { return !(lhs == rhs); }
-
-inline bool operator==(TNodeLinkList::const_iterator lhs, TNodeLinkList::const_iterator rhs) { return lhs.p_ == rhs.p_; }
-inline bool operator!=(TNodeLinkList::const_iterator lhs, TNodeLinkList::const_iterator rhs) { return !(lhs == rhs); }
-
-/* TODO: TLinkList has not been matched and should be verified */
-
-template <typename T, int O>
-class TLinkList;
-
-template <typename T, int O>
-bool operator==(typename TLinkList<T, O>::iterator lhs, typename TLinkList<T, O>::iterator rhs);
-
 template <typename T, int O>
 class TLinkList : public TNodeLinkList {
 public:
   class iterator {
   public:
+    friend class TLinkList;
+    friend class TLinkList<T, O>::const_iterator;
+
     iterator(TNodeLinkList::iterator it) : mIt(it) {  }
 
-    friend bool operator==(iterator lhs, iterator rhs) { return (lhs.mIt == rhs.mIt);  }
+    friend bool operator==(iterator lhs, iterator rhs) { return (lhs.mIt == rhs.mIt); }
     friend bool operator!=(iterator lhs, iterator rhs) { return !(lhs == rhs); }
-
     iterator& operator++() {
       ++mIt;
       return *this;
@@ -205,7 +208,7 @@ public:
     T& operator*() const {
       T* p = this->operator->();
       #line 541
-      JUT_ASSERT(p!=0);
+      JGADGET_ASSERT(p!=0);
       return *p;
     }
 
@@ -216,10 +219,11 @@ public:
   class const_iterator {
   public:
     const_iterator(TNodeLinkList::const_iterator it) : mIt(it) {  }
+    const_iterator(iterator it) : mIt(it.mIt) {}
 
     friend bool operator==(const_iterator lhs, const_iterator rhs) { return (lhs.mIt == rhs.mIt); }
     friend bool operator!=(const_iterator lhs, const_iterator rhs) { return !(lhs == rhs); }
-
+    
     const_iterator& operator++() {
       ++mIt;
       return *this;
@@ -231,9 +235,9 @@ public:
 
     const T* operator->() const { return TLinkList::Element_toValue(mIt.operator->()); }
     const T& operator*() const {
-      T* p = this->operator->();
+      const T* p = this->operator->();
       #line 586
-      JUT_ASSERT(p!=0);
+      JGADGET_ASSERT(p!=0);
       return *p;
     }
 
@@ -241,9 +245,15 @@ public:
     TNodeLinkList::const_iterator mIt;
   };
 
+  iterator begin() { return TNodeLinkList::begin(); }
+  const_iterator begin() const { return const_cast<TLinkList*>(this)->begin(); }
+
+  iterator end() { return TNodeLinkList::end(); }
+  const_iterator end() const { return const_cast<TLinkList*>(this)->end(); }
+
   iterator Find(const T* p) { return TNodeLinkList::Find(TLinkList::Element_toNode(p)); }
-  iterator Erase( T* p) { return TNodeLinkList::Erase(Element_toNode(p)); }
-  iterator Insert(iterator it, T* p) { return TNodeLinkList::Insert(it.mIt, Element_toNode(p)); }
+  iterator Erase(T* p) { return TNodeLinkList::Erase(Element_toNode(p)); }
+  iterator Insert(iterator it, T *p) { return TNodeLinkList::Insert(it.mIt, TLinkList::Element_toNode(p)); }
   void Remove(T* p) { TNodeLinkList::Remove(TLinkList::Element_toNode(p)); }
   void Push_front(T* p) { Insert(begin(), p); }
   void Push_back(T* p) { Insert(end(), p); }
@@ -257,39 +267,31 @@ public:
   T& back() {
     #line 652
     JUT_ASSERT(!empty());
-    iterator itEnd = end();
-    --itEnd;
-    return *itEnd;
+    return *--end();
   }
-
-  iterator begin() { return TNodeLinkList::begin(); }
-  const_iterator begin() const { return TNodeLinkList::begin(); }
-
-  iterator end() { return TNodeLinkList::end(); }
-  const_iterator end() const { return TNodeLinkList::end(); }
 
   static TLinkListNode* Element_toNode(T* p) {
     #line 753
     JUT_ASSERT(p!=0);
-    return (TLinkListNode*)((char*)p + O);
+    return (TLinkListNode*)((char*)p - O);
   }
 
   static const TLinkListNode* Element_toNode(const T* p) {
     #line 758
     JUT_ASSERT(p!=0);
-    return (const TLinkListNode*)((const char*)p + O);
+    return (const TLinkListNode*)((const char*)p - O);
   }
 
   static T* Element_toValue(TLinkListNode* p) {
     #line 763
     JUT_ASSERT(p!=0);
-    return (T*)((char*)p - O);
+    return (T*)((char*)p + O);
   }
 
   static const T* Element_toValue(const TLinkListNode* p) {
     #line 768
     JUT_ASSERT(p!=0);
-    return (const T*)((const char*)p - O);
+    return (const T*)((const char*)p + O);
   }
 };
 
