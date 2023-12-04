@@ -8,6 +8,10 @@
 
 namespace JGadget {
 
+#define NEGATIVE_OFFSETOF(TYPE, MEMBER) (-static_cast<s32>(offsetof(TYPE, MEMBER)))
+#define TLINKLIST_NODE_OFS(TYPE) (NEGATIVE_OFFSETOF(TYPE, mNode))
+#define TLinkList(TYPE) TLinkList<TYPE, TLINKLIST_NODE_OFS(TYPE)>
+
 namespace {
 
 template <typename T>
@@ -173,13 +177,21 @@ inline bool operator!=(TNodeLinkList::const_iterator lhs, TNodeLinkList::const_i
 /* TODO: TLinkList has not been matched and should be verified */
 
 template <typename T, int O>
+class TLinkList;
+
+template <typename T, int O>
+bool operator==(typename TLinkList<T, O>::iterator lhs, typename TLinkList<T, O>::iterator rhs);
+
+template <typename T, int O>
 class TLinkList : public TNodeLinkList {
+public:
   class iterator {
   public:
     iterator(TNodeLinkList::iterator it) : mIt(it) {  }
 
-    bool operator==(iterator other) { return (mIt == other.mIt);  }
-    bool operator!=(iterator other) { return !(*this == other); }
+    friend bool operator==(iterator lhs, iterator rhs) { return (lhs.mIt == rhs.mIt);  }
+    friend bool operator!=(iterator lhs, iterator rhs) { return !(lhs == rhs); }
+
     iterator& operator++() {
       ++mIt;
       return *this;
@@ -205,8 +217,9 @@ class TLinkList : public TNodeLinkList {
   public:
     const_iterator(TNodeLinkList::const_iterator it) : mIt(it) {  }
 
-    bool operator==(const_iterator other) { return (mIt == other.mIt);  }
-    bool operator!=(const_iterator other) { return !(*this == other); }
+    friend bool operator== <T, O>(const_iterator lhs, const_iterator rhs) { return (lhs.mIt == rhs.mIt); }
+    friend bool operator!= <T, O>(const_iterator lhs, const_iterator rhs) { return !(lhs == rhs); }
+
     const_iterator& operator++() {
       ++mIt;
       return *this;
@@ -230,7 +243,7 @@ class TLinkList : public TNodeLinkList {
 
   iterator Find(const T* p) { return TNodeLinkList::Find(TLinkList::Element_toNode(p)); }
   iterator Erase( T* p) { return TNodeLinkList::Erase(Element_toNode(p)); }
-  iterator Insert(iterator it, T* p) { return TNodeLinkList::Insert(it, Element_toNode(p)); }
+  iterator Insert(iterator it, T* p) { return TNodeLinkList::Insert(it.mIt, Element_toNode(p)); }
   void Remove(T* p) { TNodeLinkList::Remove(TLinkList::Element_toNode(p)); }
   void Push_front(T* p) { Insert(begin(), p); }
   void Push_back(T* p) { Insert(end(), p); }
