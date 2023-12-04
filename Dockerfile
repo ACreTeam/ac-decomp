@@ -32,8 +32,6 @@ RUN rm install-devkitpro-pacman
 RUN if [ ! -e /etc/mtab ]; then ln -s /proc/self/mounts /etc/mtab; fi
 ## and finally, we get to install devkitPPC
 RUN dkp-pacman -S devkitPPC --noconfirm
-## set devkitPPC executables as the default ones
-RUN for file in $(find "/opt/devkitpro/devkitPPC/bin" -type f -name 'powerpc-eabi*'); do original_file=$(basename "$file"); new_file=$(basename "$file" | sed 's/powerpc-eabi-//g'); update-alternatives --install "/usr/bin/$new_file" "$new_file" "/opt/devkitpro/devkitPPC/bin/$original_file" 0; done
 
 # --- stage ultralib headers ---
 RUN mkdir -p /N64_SDK/ultra/usr/
@@ -46,7 +44,7 @@ RUN sed -i 's/unsigned char	param:8;/unsigned int	param:8;/g' /N64_SDK/ultra/usr
 # --- set up work directory and env vars ---
 RUN mkdir /ac-decomp
 WORKDIR /ac-decomp
-ENV PATH="/ac-decomp/tools:${PATH}"
+ENV PATH="/opt/devkitpro/tools/bin:/ac-decomp/tools:${PATH}"
 ENV N64_SDK="/N64_SDK"
 ENV DEVKITPPC="/opt/devkitpro/devkitPPC"
 
