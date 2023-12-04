@@ -237,7 +237,7 @@ public:
     const T& operator*() const {
       const T* p = this->operator->();
       #line 586
-      JGADGET_ASSERT(p!=0);
+      JUT_ASSERT(p!=0);
       return *p;
     }
 
