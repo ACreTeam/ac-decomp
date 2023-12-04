@@ -217,8 +217,8 @@ public:
   public:
     const_iterator(TNodeLinkList::const_iterator it) : mIt(it) {  }
 
-    friend bool operator== <T, O>(const_iterator lhs, const_iterator rhs) { return (lhs.mIt == rhs.mIt); }
-    friend bool operator!= <T, O>(const_iterator lhs, const_iterator rhs) { return !(lhs == rhs); }
+    friend bool operator==(const_iterator lhs, const_iterator rhs) { return (lhs.mIt == rhs.mIt); }
+    friend bool operator!=(const_iterator lhs, const_iterator rhs) { return !(lhs == rhs); }
 
     const_iterator& operator++() {
       ++mIt;
