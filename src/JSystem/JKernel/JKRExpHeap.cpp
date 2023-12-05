@@ -1,8 +1,8 @@
-#include "JSystem/JSystem.h"
 #include "JSystem/JSupport.h"
 #include "JSystem/JUtility/JUTAssertion.h"
-#include "JSystem/JUtility/JUTConsole.h"
 #include "JSystem/JKernel/JKRExpHeap.h"
+#include "JSystem/JUtility/JUTConsoleExtern.h"
+#include "JSystem/JMacro.h"
 
 static u32 whatdo;
 static u32 whatdo2;

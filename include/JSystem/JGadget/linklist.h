@@ -245,50 +245,50 @@ public:
     TNodeLinkList::const_iterator mIt;
   };
 
-  iterator begin() { return TNodeLinkList::begin(); }
-  const_iterator begin() const { return const_cast<TLinkList*>(this)->begin(); }
+  inline iterator begin() { return TNodeLinkList::begin(); }
+  inline const_iterator begin() const { return const_cast<TLinkList*>(this)->begin(); }
 
-  iterator end() { return TNodeLinkList::end(); }
-  const_iterator end() const { return const_cast<TLinkList*>(this)->end(); }
+  inline iterator end() { return TNodeLinkList::end(); }
+  inline const_iterator end() const { return const_cast<TLinkList*>(this)->end(); }
 
-  iterator Find(const T* p) { return TNodeLinkList::Find(TLinkList::Element_toNode(p)); }
-  iterator Erase(T* p) { return TNodeLinkList::Erase(Element_toNode(p)); }
-  iterator Insert(iterator it, T *p) { return TNodeLinkList::Insert(it.mIt, TLinkList::Element_toNode(p)); }
-  void Remove(T* p) { TNodeLinkList::Remove(TLinkList::Element_toNode(p)); }
-  void Push_front(T* p) { Insert(begin(), p); }
-  void Push_back(T* p) { Insert(end(), p); }
+  inline iterator Find(const T* p) { return TNodeLinkList::Find(TLinkList::Element_toNode(p)); }
+  inline iterator Erase(T* p) { return TNodeLinkList::Erase(Element_toNode(p)); }
+  inline iterator Insert(iterator it, T *p) { return TNodeLinkList::Insert(it.mIt, TLinkList::Element_toNode(p)); }
+  inline void Remove(T* p) { TNodeLinkList::Remove(TLinkList::Element_toNode(p)); }
+  inline void Push_front(T* p) { Insert(begin(), p); }
+  inline void Push_back(T* p) { Insert(end(), p); }
 
-  T& front() {
+  inline T& front() {
     #line 642
     JUT_ASSERT(!empty());
     return *begin();
   }
 
-  T& back() {
+  inline T& back() {
     #line 652
     JUT_ASSERT(!empty());
     return *--end();
   }
 
-  static TLinkListNode* Element_toNode(T* p) {
+  static inline TLinkListNode* Element_toNode(T* p) {
     #line 753
     JUT_ASSERT(p!=0);
     return (TLinkListNode*)((char*)p - O);
   }
 
-  static const TLinkListNode* Element_toNode(const T* p) {
+  static inline const TLinkListNode* Element_toNode(const T* p) {
     #line 758
     JUT_ASSERT(p!=0);
     return (const TLinkListNode*)((const char*)p - O);
   }
 
-  static T* Element_toValue(TLinkListNode* p) {
+  static inline T* Element_toValue(TLinkListNode* p) {
     #line 763
     JUT_ASSERT(p!=0);
     return (T*)((char*)p + O);
   }
 
-  static const T* Element_toValue(const TLinkListNode* p) {
+  static inline const T* Element_toValue(const TLinkListNode* p) {
     #line 768
     JUT_ASSERT(p!=0);
     return (const T*)((const char*)p + O);

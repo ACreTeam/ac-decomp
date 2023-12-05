@@ -6,11 +6,11 @@
 #include "dolphin/os/OSThread.h"
 #include "dolphin/os/OSTime.h"
 #include "JSystem/JSupport/JSUList.h"
-#include "JSystem/JUtility/JUTConsole.h"
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JKernel/JKRDisposer.h"
 
 struct JKRThread;
+class JUTConsole;
 
 struct JKRThreadName_
 {
