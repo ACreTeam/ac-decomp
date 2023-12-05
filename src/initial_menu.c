@@ -158,7 +158,7 @@ static void step0_make_dl(Gfx** gpp) {
     JW_JUTReport(150, 330, 1, "<DISK ID>"); /* I belive the above <DISK ID> is a 'bug', because this is the exact same print */
     JW_JUTReport(150, 50, 1, "SDK VERSION: 12Dec2001 Patch4");
 
-    if (OSGetFontEncode() == OS_FONT_SJIS) {
+    if (OSGetFontEncode() == OS_FONT_ENCODE_SJIS) {
       JW_JUTReport(150, 100, 1, " ****** WARNING ******");
       JW_JUTReport(150, 112, 1, "The DISP SW is JAPAN MODE now");
       JW_JUTReport(150, 124, 1, "but this GAME is NES version");

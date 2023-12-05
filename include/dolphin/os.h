@@ -7,6 +7,7 @@
 #include "dolphin/os/OSMessage.h"
 #include "libforest/osreport.h" /* OSReport funcs */
 #include "dolphin/os/OSReset.h"
+#include "dolphin/os/OSFont.h"
 #include "va_args.h"
 
 #ifdef __cplusplus
