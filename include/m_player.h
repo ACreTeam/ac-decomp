@@ -179,15 +179,15 @@ typedef struct player_request_putin_scoop_from_submenu_s {
 typedef struct {
   int type;
   int got_gold_scoop;
-  xyz_t wpos;
-  int insect_type;
+  s16 angle_y;
+  s16 item;
 } mPlayer_request_release_creature_gyoei_from_submenu_c;
 
 typedef struct {
   int type;
   int got_gold_scoop;
-  s16 angle_y;
-  s16 item;
+  xyz_t wpos;
+  int insect_type;
 } mPlayer_request_release_creature_insect_from_submenu_c;
 
 typedef struct {
