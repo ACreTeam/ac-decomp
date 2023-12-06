@@ -8,9 +8,10 @@
 #include "JSystem/JSupport/JSUList.h"
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JKernel/JKRDisposer.h"
+#include "JSystem/JUtility/JUTConsole.h"
 
 struct JKRThread;
-class JUTConsole;
+//class JUTConsole;
 
 struct JKRThreadName_
 {

@@ -5,7 +5,6 @@
 #include "JSystem/JGadget/linklist.h"
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JUtility/JUTFont.h"
-#include "JSystem/JUtility/JUTConsoleExtern.h"
 
 inline s32 colorCheck(s32 diff, s32 t)
 {
@@ -158,6 +157,12 @@ JUTConsole* JUTGetReportConsole();
 void JUTSetReportConsole(JUTConsole*);
 JUTConsole* JUTGetWarningConsole();
 void JUTSetWarningConsole(JUTConsole*);
+void JUTReportConsole(const char*);
+void JUTReportConsole_f(const char*, ...);
+void JUTReportConsole_f_va(const char*, va_list);
+void JUTWarningConsole(const char*);
+void JUTWarningConsole_f(const char*, ...);
+void JUTWarningConsole_f_va(const char*, va_list);
 };
 
 #endif
