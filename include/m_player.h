@@ -154,6 +154,24 @@ enum {
   mPlayer_INDEX_DEMO_GET_GOLDEN_AXE_WAIT
 };
 
+typedef struct player_request_putin_scoop_from_submenu_s {
+  xyz_t wpos;
+  mActor_name_t item;
+  int got_golden_item;
+} mPlayer_request_putin_scoop_from_submenu_data_c;
+
+typedef union {
+  mPlayer_request_putin_scoop_from_submenu_data_c putin_scoop_from_submenu_data;
+  /* TODO: others */
+  u8 force_size[72]; // TEMP
+} mPlayer_request_main_data;
+
+typedef struct {
+  int requested_main_index;
+  int requested_index_pending;
+  mPlayer_request_main_data request_main_data;
+} mPlayer_change_data_from_submenu_c;
+
 /* sizeof(struct player_actor_s) == 0x13A8 */
 struct player_actor_s {
   /* 0x0000 */ ACTOR actor_class;
