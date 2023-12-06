@@ -154,14 +154,60 @@ enum {
   mPlayer_INDEX_DEMO_GET_GOLDEN_AXE_WAIT
 };
 
+enum {
+  mPlayer_CREATURE_INSECT,
+  mPlayer_CREATURE_GYOEI,
+  mPlayer_CREATURE_BALLOON,
+
+  mPlayer_CREATURE_NUM
+};
+
+typedef struct player_request_give_from_submenu_s {
+  xyz_t unused; // assumed based on size
+  mActor_name_t item;
+  int mode_after;   // player mode after the action finishes
+  int present_flag; // set if the item is wrapped as presnet
+  int counter_flag; // set when the item slides across a counter
+} mPlayer_request_give_from_submenu_c;
+
 typedef struct player_request_putin_scoop_from_submenu_s {
   xyz_t wpos;
   mActor_name_t item;
-  int got_golden_item;
+  int got_gold_scoop;
 } mPlayer_request_putin_scoop_from_submenu_data_c;
 
+typedef struct {
+  int type;
+  int got_gold_scoop;
+  xyz_t wpos;
+  int insect_type;
+} mPlayer_request_release_creature_gyoei_from_submenu_c;
+
+typedef struct {
+  int type;
+  int got_gold_scoop;
+  s16 angle_y;
+  s16 item;
+} mPlayer_request_release_creature_insect_from_submenu_c;
+
+typedef struct {
+  int type;
+  int got_gold_scoop;
+  int balloon_shape_type
+} mPlayer_request_release_creature_balloon_from_submenu_c;
+
+typedef struct {
+  int _0;
+  ACTOR* speak_actor;
+} mPlayer_request_demo_wait_from_submenu_c;
+
 typedef union {
-  mPlayer_request_putin_scoop_from_submenu_data_c putin_scoop_from_submenu_data;
+  mPlayer_request_give_from_submenu_c give_from_submenu;
+  mPlayer_request_putin_scoop_from_submenu_data_c putin_scoop_from_submenu;
+  mPlayer_request_release_creature_gyoei_from_submenu_c release_creature_gyoei_from_submenu;
+  mPlayer_request_release_creature_insect_from_submenu_c release_creature_insect_from_submenu;
+  mPlayer_request_release_creature_balloon_from_submenu_c release_creature_balloon_from_submenu;
+  mPlayer_request_demo_wait_from_submenu_c demo_wait_from_submenu;
   /* TODO: others */
   u8 force_size[72]; // TEMP
 } mPlayer_request_main_data;
