@@ -193,13 +193,20 @@ typedef struct {
 typedef struct {
   int type;
   int got_gold_scoop;
-  int balloon_shape_type
+  int balloon_shape_type;
 } mPlayer_request_release_creature_balloon_from_submenu_c;
 
 typedef struct {
   int _0;
   ACTOR* speak_actor;
 } mPlayer_request_demo_wait_from_submenu_c;
+
+typedef struct {
+  int direct;
+  s16 angle;
+  xyz_t wpos;
+  int ftr_name;
+} mPlayer_request_lie_bed_c;
 
 typedef union {
   mPlayer_request_give_from_submenu_c give_from_submenu;
@@ -208,6 +215,7 @@ typedef union {
   mPlayer_request_release_creature_insect_from_submenu_c release_creature_insect_from_submenu;
   mPlayer_request_release_creature_balloon_from_submenu_c release_creature_balloon_from_submenu;
   mPlayer_request_demo_wait_from_submenu_c demo_wait_from_submenu;
+  mPlayer_request_lie_bed_c lie_bed;
   /* TODO: others */
   u8 force_size[72]; // TEMP
 } mPlayer_request_main_data;
