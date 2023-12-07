@@ -69,7 +69,7 @@ static void aTPT_setupAction(ACTOR* actor, int idx){
 
     pistol->proc = process[idx];
     pistol->current_id = idx; 
-    pistol->tools_class.process_id = idx;
+    pistol->tools_class.work0 = idx;
 
     scale = start_scale[idx];
     pistol->tools_class.actor_class.scale.x = scale;
@@ -81,7 +81,7 @@ static void aTPT_setupAction(ACTOR* actor, int idx){
 static void aTPT_actor_move(ACTOR* actor, GAME* game){
     PISTOL_ACTOR* pistol = (PISTOL_ACTOR*)actor;
     
-    int t = pistol->tools_class.process_id;
+    int t = pistol->tools_class.work0;
     if(t!= pistol->current_id){
         aTPT_setupAction(actor, t);
     }
@@ -96,10 +96,10 @@ static void aTPT_actor_draw(ACTOR* actor, GAME* game){
 
     OPEN_DISP(graph);
 
-    if(pistol->tools_class.enable == 1){
+    if(pistol->tools_class.init_matrix == 1){
         Matrix_put(&pistol->tools_class.matrix_work);
         Matrix_Position_Zero(&pistol->tools_class.actor_class.world.position);
-        pistol->tools_class.enable = 0;
+        pistol->tools_class.init_matrix = 0;
     }
     else{
         Matrix_translate(pistol->tools_class.actor_class.world.position.x, pistol->tools_class.actor_class.world.position.y, 

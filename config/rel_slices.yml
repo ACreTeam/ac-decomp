@@ -452,6 +452,10 @@ ac_t_hat2.c:
 ac_t_hat3.c:
     .text: [0x804A8E98, 0x804A8FEC]
     .data: [0x8068ED70, 0x8068EDB0]
+ac_t_npc_sao.c:
+    .text: [0x804A9348, 0x804A95F4]
+    .rodata: [0x80645EE0, 0x80645EF8]
+    .data: [0x8068EE58, 0x8068EE98]
 ac_t_pistol.c:
     .text: [0x804A95F4, 0x804A9858]
     .rodata: [0x80645EF8, 0x80645F00]

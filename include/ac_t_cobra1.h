@@ -16,7 +16,6 @@ typedef void (*COBRA1_PROC)(ACTOR*);
 
 typedef struct t_cobra1_s{
     TOOLS_ACTOR tools_class;
-    u8 pad2[0x8];
     COBRA1_PROC proc; 
     int current_id;
 }COBRA1_ACTOR;

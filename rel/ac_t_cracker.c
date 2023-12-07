@@ -69,7 +69,7 @@ static void aTCR_setupAction(ACTOR* actor, int idx){
 
     cracker->proc = process[idx];
     cracker->current_id = idx; 
-    cracker->tools_class.process_id = idx;
+    cracker->tools_class.work0 = idx;
 
     scale = start_scale[idx];
     cracker->tools_class.actor_class.scale.x = scale;
@@ -81,7 +81,7 @@ static void aTCR_setupAction(ACTOR* actor, int idx){
 static void aTCR_actor_move(ACTOR* actor, GAME* game){
     CRACKER_ACTOR* cracker = (CRACKER_ACTOR*)actor;
     
-    int t = cracker->tools_class.process_id;
+    int t = cracker->tools_class.work0;
     if(t!= cracker->current_id){
         aTCR_setupAction(actor, t);
     }
@@ -96,10 +96,10 @@ static void aTCR_actor_draw(ACTOR* actor, GAME* game){
 
     OPEN_DISP(graph);
 
-    if(cracker->tools_class.enable == 1){
+    if(cracker->tools_class.init_matrix == 1){
         Matrix_put(&cracker->tools_class.matrix_work);
         Matrix_Position_Zero(&cracker->tools_class.actor_class.world.position);
-        cracker->tools_class.enable = 0;
+        cracker->tools_class.init_matrix = 0;
     }
     else{
         Matrix_translate(cracker->tools_class.actor_class.world.position.x, cracker->tools_class.actor_class.world.position.y, 

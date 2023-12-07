@@ -15,7 +15,6 @@ typedef void (*HASU1_PROC)(ACTOR*);
 
 typedef struct t_hasu1_s{
     TOOLS_ACTOR tools_class;
-    u8 pad2[0x8];
     HASU1_PROC proc; 
     int current_id;
 }HASU1_ACTOR;

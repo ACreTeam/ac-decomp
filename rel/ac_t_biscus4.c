@@ -46,15 +46,15 @@ static void aTB4_setupAction(ACTOR*actor, int action){
 
     biscus->proc = process[action];
     biscus->current_id = action;
-    biscus->tools_class.process_id = action;
+    biscus->tools_class.work0 = action;
 
 }
 
 static void aTB4_actor_move(ACTOR* actor, GAME*){
     BISCUS4_ACTOR* biscus = (BISCUS4_ACTOR*)actor;
 
-    if(biscus->tools_class.process_id != biscus->current_id){
-        aTB4_setupAction(actor, biscus->tools_class.process_id);
+    if(biscus->tools_class.work0 != biscus->current_id){
+        aTB4_setupAction(actor, biscus->tools_class.work0);
     }
 
     biscus->proc(actor);
@@ -66,7 +66,7 @@ static void aTB4_actor_draw(ACTOR* actor, GAME* game){
     GRAPH* graph;
     Gfx* gfxp;
 
-    if(biscus->tools_class.enable == 1){
+    if(biscus->tools_class.init_matrix == 1){
         graph = game->graph;
         
         OPEN_DISP(graph);
@@ -74,7 +74,7 @@ static void aTB4_actor_draw(ACTOR* actor, GAME* game){
         Matrix_put(&biscus->tools_class.matrix_work);
         Matrix_Position_Zero(&biscus->tools_class.actor_class.world.position);
         
-        biscus->tools_class.enable = 0;
+        biscus->tools_class.init_matrix = 0;
     
         _texture_z_light_fog_prim_npc(graph); 
 

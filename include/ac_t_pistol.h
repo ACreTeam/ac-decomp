@@ -14,7 +14,6 @@ typedef void (*PISTOL_PROC)(ACTOR*);
 
 typedef struct t_pistol_s{
     TOOLS_ACTOR tools_class;
-    u8 pad2[0x8];
     PISTOL_PROC proc; 
     int current_id;
 }PISTOL_ACTOR;

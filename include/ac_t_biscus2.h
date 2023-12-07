@@ -15,7 +15,6 @@ typedef void (*BISCUS2_PROC)(ACTOR*);
 
 typedef struct t_biscus2_s{
     TOOLS_ACTOR tools_class;
-    u8 pad2[0x8];
     BISCUS2_PROC proc; 
     int current_id;
 }BISCUS2_ACTOR;

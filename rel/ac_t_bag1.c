@@ -46,15 +46,15 @@ static void aTBG1_setupAction(ACTOR*actor, int action){
 
     bag->proc = process[action];
     bag->current_id = action;
-    bag->tools_class.process_id = action;
+    bag->tools_class.work0 = action;
 
 }
 
 static void aTBG1_actor_move(ACTOR* actor, GAME*){
     BAG1_ACTOR* bag = (BAG1_ACTOR*)actor;
 
-    if(bag->tools_class.process_id != bag->current_id){
-        aTBG1_setupAction(actor, bag->tools_class.process_id);
+    if(bag->tools_class.work0 != bag->current_id){
+        aTBG1_setupAction(actor, bag->tools_class.work0);
     }
 
     bag->proc(actor);
@@ -66,7 +66,7 @@ static void aTBG1_actor_draw(ACTOR* actor, GAME* game){
     GRAPH* graph;
     Gfx* gfxp;
 
-    if(bag->tools_class.enable == 1){
+    if(bag->tools_class.init_matrix == 1){
         graph = game->graph;
         
         OPEN_DISP(graph);
@@ -74,7 +74,7 @@ static void aTBG1_actor_draw(ACTOR* actor, GAME* game){
         Matrix_put(&bag->tools_class.matrix_work);
         Matrix_Position_Zero(&bag->tools_class.actor_class.world.position);
         
-        bag->tools_class.enable = 0;
+        bag->tools_class.init_matrix = 0;
     
         _texture_z_light_fog_prim_npc(graph); 
 

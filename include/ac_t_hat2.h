@@ -15,7 +15,6 @@ typedef void (*HAT2_PROC)(ACTOR*);
 
 typedef struct t_hat2_s{
     TOOLS_ACTOR tools_class;
-    u8 pad2[0x8];
     HAT2_PROC proc; 
     int current_id;
 }HAT2_ACTOR;

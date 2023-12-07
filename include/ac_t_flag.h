@@ -13,8 +13,6 @@ extern ACTOR_PROFILE T_Flag_Profile;
 
 typedef struct t_flag_s{
     TOOLS_ACTOR tools_class;
-    u32 unk1C4;
-    u32 unk1C8;
     s16 angle;
     s16 addendedang;
     int unk1D0;
