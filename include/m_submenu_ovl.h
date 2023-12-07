@@ -19,6 +19,7 @@
 #include "m_diary_ovl_h.h"
 #include "m_address_ovl_h.h"
 #include "m_editEndChk_h.h"
+#include "m_haniwaPortrait_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -94,7 +95,7 @@ typedef void (*mSM_SET_DRAWMODE_PROC)(GRAPH*, PreRender*, f32, f32, s16);
 typedef void (*mSM_DRAW_ITEM_PROC)(GRAPH*, f32, f32, f32, mActor_name_t, int, int, int);
 typedef void (*mSM_DRAW_MAIL_PROC)(GRAPH*, f32, f32, f32, Mail_c*, int, int);
 typedef void (*mSM_SETUP_VIEW_PROC)(Submenu*, GRAPH*, int);
-typedef void (*mSM_CHANGE_VIEW_PROC)(GRAPH*, f32, f32, f32, s16, int, int);
+typedef void (*mSM_CHANGE_VIEW_PROC)(GRAPH*, f32, f32, f32, f32, s16, int, int);
 
 typedef void (*mSM_MOVE_PROC)(Submenu*, mSM_MenuInfo_c*);
 
@@ -116,7 +117,13 @@ struct submenu_overlay_s {
   /* 0x964 */ mSM_SETUP_VIEW_PROC setup_view_proc;
   /* 0x968 */ void* unused_func_968;
   /* 0x96C */ mSM_CHANGE_VIEW_PROC change_view_proc;
-  /* 0x970 */ u8 _970[0x98C - 0x970];
+  /* 0x970 */ void* _970;
+  /* 0x974 */ void* _974;
+  /* 0x978 */ void* _978;
+  /* 0x97C */ void* _97C;
+  /* 0x980 */ void* _980;
+  /* 0x984 */ mHP_Ovl_c* hanwiaPortrait_ovl;
+  /* 0x988 */ void* inventory_ovl;
   /* 0x98C */ mED_Ovl_c* editor_ovl;
   /* 0x990 */ mBD_Ovl_c* board_ovl;
   /* 0x994 */ mAD_Ovl_c* address_ovl;

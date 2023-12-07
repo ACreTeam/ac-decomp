@@ -24,7 +24,7 @@
 extern cKF_Skeleton_R_c cKF_bs_r_hnw;
 extern cKF_Animation_R_c cKF_ba_r_hnw_move;
 extern u8 hnw_tmem_txt[];
-extern u8 hnw_face[];
+extern u16 hnw_face[];
 
 static void aHNW_actor_ct(ACTOR* actor, GAME* game);
 static void aHNW_actor_dt(ACTOR* actor, GAME* game);
