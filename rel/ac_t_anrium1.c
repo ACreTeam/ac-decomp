@@ -46,15 +46,15 @@ static void aTA1_setupAction(ACTOR*actor, int action){
 
     anrium->proc = process[action];
     anrium->current_id = action;
-    anrium->tools_class.process_id = action;
+    anrium->tools_class.work0 = action;
 
 }
 
 static void aTA1_actor_move(ACTOR* actor, GAME*){
     ANRIUM1_ACTOR* anrium = (ANRIUM1_ACTOR*)actor;
 
-    if(anrium->tools_class.process_id != anrium->current_id){
-        aTA1_setupAction(actor, anrium->tools_class.process_id);
+    if(anrium->tools_class.work0 != anrium->current_id){
+        aTA1_setupAction(actor, anrium->tools_class.work0);
     }
 
     anrium->proc(actor);
@@ -66,7 +66,7 @@ static void aTA1_actor_draw(ACTOR* actor, GAME* game){
     GRAPH* graph;
     Gfx* gfxp;
 
-    if(anrium->tools_class.enable == 1){
+    if(anrium->tools_class.init_matrix == 1){
         graph = game->graph;
         
         OPEN_DISP(graph);
@@ -74,7 +74,7 @@ static void aTA1_actor_draw(ACTOR* actor, GAME* game){
         Matrix_put(&anrium->tools_class.matrix_work);
         Matrix_Position_Zero(&anrium->tools_class.actor_class.world.position);
         
-        anrium->tools_class.enable = 0;
+        anrium->tools_class.init_matrix = 0;
     
         _texture_z_light_fog_prim_npc(graph); 
 

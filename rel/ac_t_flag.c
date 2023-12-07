@@ -60,7 +60,7 @@ static void aTFL_make_vtx(Vtx* v, ACTOR* actor){
 
 
     fact = 0;
-    if(tools->enable == 1){
+    if(tools->init_matrix == 1){
         Matrix_put(&flag->tools_class.matrix_work);
         Matrix_translate(0.0f,0.0f,48.0999984741f,1);
         Matrix_Position_Zero(&pos);
@@ -114,10 +114,10 @@ static void aTFL_actor_draw(ACTOR* actor, GAME* game){
         buf = tol_hata_01_v;
     }
 
-    if(tools->enable == 1){
+    if(tools->init_matrix == 1){
         Matrix_put(&flag->tools_class.matrix_work);
         Matrix_Position_Zero(&actor->world.position);
-        tools->enable = 0;
+        tools->init_matrix = 0;
     }
     else{
         Matrix_translate(actor->world.position.x, actor->world.position.y, 

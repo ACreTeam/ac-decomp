@@ -59,7 +59,7 @@ static void aTOL_check_data_bank(int id, ACTOR* actor){
     }
 }
 
-static TOOLS_ACTOR* aTOL_birth_proc(ToolName name, int id, TOOLS_ACTOR* tool, 
+static TOOLS_ACTOR* aTOL_birth_proc(int name, int id, TOOLS_ACTOR* tool, 
     GAME_PLAY* play, s16 arg, int* arg5){
     static s16 profile_table[] = {
         mAc_PROFILE_T_UMBRELLA, mAc_PROFILE_T_UMBRELLA, mAc_PROFILE_T_UMBRELLA, mAc_PROFILE_T_UMBRELLA, mAc_PROFILE_T_UMBRELLA,
@@ -86,7 +86,7 @@ static TOOLS_ACTOR* aTOL_birth_proc(ToolName name, int id, TOOLS_ACTOR* tool,
         profile_table[name], 0.0f, 0.0f, 0.0f, 0, 0, 0, -1, 0, arg, -1); 
 
     if(child != NULL){
-        child->process_id = id;
+        child->work0 = id;
         child->tool_name = name;
     }
 
@@ -103,7 +103,7 @@ static int aTOL_chg_request_mode_proc(ACTOR* actor ,TOOLS_ACTOR* tool, int id){
         return 0;
     }
 
-    tool->process_id = id;
+    tool->work0 = id;
     return 1;
 }
 

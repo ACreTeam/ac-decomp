@@ -14,7 +14,6 @@ typedef void (*ANRIUM1_PROC)(ACTOR*);
 
 typedef struct t_anrium_s{
     TOOLS_ACTOR tools_class;
-    u8 pad2[0x8];
     ANRIUM1_PROC proc; 
     int current_id;
 }ANRIUM1_ACTOR;

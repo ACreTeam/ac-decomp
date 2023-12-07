@@ -60,15 +60,17 @@ typedef enum {
 } ToolName;
 
 typedef struct tools_s{
-  ACTOR actor_class;
-  ToolName tool_name;
-  MtxF matrix_work;
-  int enable;
-  int unk1BC;
-  int process_id;
+  /* 0x000 */ ACTOR actor_class;
+  /* 0x174 */ int tool_name;
+  /* 0x178 */ MtxF matrix_work;
+  /* 0x1B8 */ int init_matrix;
+  /* 0x1BC */ int unk1BC;
+  /* 0x1C0 */ int work0;
+  /* 0x1C4 */ int work1;
+  /* 0x1C8 */ int work2;
 }TOOLS_ACTOR;
 
-typedef TOOLS_ACTOR* (*ToolBirthProc)(ToolName, int, TOOLS_ACTOR*, GAME_PLAY*, s16, int*);
+typedef TOOLS_ACTOR* (*ToolBirthProc)(int, int, TOOLS_ACTOR*, GAME_PLAY*, s16, int*);
 typedef int (*ToolChgRequestModeProc)(ACTOR*, TOOLS_ACTOR*, int);
     
 typedef struct ToolClip {

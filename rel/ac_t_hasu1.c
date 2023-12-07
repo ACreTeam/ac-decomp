@@ -46,15 +46,15 @@ static void aTHS1_setupAction(ACTOR*actor, int action){
 
     hasu->proc = process[action];
     hasu->current_id = action;
-    hasu->tools_class.process_id = action;
+    hasu->tools_class.work0 = action;
 
 }
 
 static void aTHS1_actor_move(ACTOR* actor, GAME*){
     HASU1_ACTOR* hasu = (HASU1_ACTOR*)actor;
 
-    if(hasu->tools_class.process_id != hasu->current_id){
-        aTHS1_setupAction(actor, hasu->tools_class.process_id);
+    if(hasu->tools_class.work0 != hasu->current_id){
+        aTHS1_setupAction(actor, hasu->tools_class.work0);
     }
 
     hasu->proc(actor);
@@ -66,7 +66,7 @@ static void aTHS1_actor_draw(ACTOR* actor, GAME* game){
     GRAPH* graph;
     Gfx* gfxp;
 
-    if(hasu->tools_class.enable == 1){
+    if(hasu->tools_class.init_matrix == 1){
         graph = game->graph;
         
         OPEN_DISP(graph);
@@ -74,7 +74,7 @@ static void aTHS1_actor_draw(ACTOR* actor, GAME* game){
         Matrix_put(&hasu->tools_class.matrix_work);
         Matrix_Position_Zero(&hasu->tools_class.actor_class.world.position);
         
-        hasu->tools_class.enable = 0;
+        hasu->tools_class.init_matrix = 0;
     
         _texture_z_light_fog_prim_npc(graph); 
 

@@ -15,7 +15,6 @@ typedef void (*CRACKER_PROC)(ACTOR*);
 
 typedef struct t_cracker_s{
     TOOLS_ACTOR tools_class;
-    u8 pad2[0x8];
     CRACKER_PROC proc; 
     int current_id;
 }CRACKER_ACTOR;

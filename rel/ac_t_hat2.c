@@ -46,15 +46,15 @@ static void aTHT2_setupAction(ACTOR*actor, int action){
 
     hat->proc = process[action];
     hat->current_id = action;
-    hat->tools_class.process_id = action;
+    hat->tools_class.work0 = action;
 
 }
 
 static void aTHT2_actor_move(ACTOR* actor, GAME*){
     HAT2_ACTOR* hat = (HAT2_ACTOR*)actor;
 
-    if(hat->tools_class.process_id != hat->current_id){
-        aTHT2_setupAction(actor, hat->tools_class.process_id);
+    if(hat->tools_class.work0 != hat->current_id){
+        aTHT2_setupAction(actor, hat->tools_class.work0);
     }
 
     hat->proc(actor);
@@ -66,7 +66,7 @@ static void aTHT2_actor_draw(ACTOR* actor, GAME* game){
     GRAPH* graph;
     Gfx* gfxp;
 
-    if(hat->tools_class.enable == 1){
+    if(hat->tools_class.init_matrix == 1){
         graph = game->graph;
         
         OPEN_DISP(graph);
@@ -74,7 +74,7 @@ static void aTHT2_actor_draw(ACTOR* actor, GAME* game){
         Matrix_put(&hat->tools_class.matrix_work);
         Matrix_Position_Zero(&hat->tools_class.actor_class.world.position);
         
-        hat->tools_class.enable = 0;
+        hat->tools_class.init_matrix = 0;
     
         _texture_z_light_fog_prim_npc(graph); 
 

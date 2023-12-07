@@ -73,7 +73,7 @@ static void aTHB_setupAction(ACTOR* actor, int idx){
 
     hanabi->proc = process[idx];
     hanabi->current_id = idx; 
-    hanabi->tools_class.process_id = idx;
+    hanabi->tools_class.work0 = idx;
 
     scale = start_scale[idx];
     hanabi->tools_class.actor_class.scale.x = scale;
@@ -85,7 +85,7 @@ static void aTHB_setupAction(ACTOR* actor, int idx){
 static void aTHB_actor_move(ACTOR* actor, GAME* game){
     HANABI_ACTOR* hanabi = (HANABI_ACTOR*)actor;
     
-    int t = hanabi->tools_class.process_id;
+    int t = hanabi->tools_class.work0;
     if(t!= hanabi->current_id){
         aTHB_setupAction(actor, t);
     }
@@ -100,10 +100,10 @@ static void aTHB_actor_draw(ACTOR* actor, GAME* game){
 
     OPEN_DISP(graph);
 
-    if(hanabi->tools_class.enable == 1){
+    if(hanabi->tools_class.init_matrix == 1){
         Matrix_put(&hanabi->tools_class.matrix_work);
         Matrix_Position_Zero(&hanabi->tools_class.actor_class.world.position);
-        hanabi->tools_class.enable = 0;
+        hanabi->tools_class.init_matrix = 0;
     }
     else{
         Matrix_translate(hanabi->tools_class.actor_class.world.position.x, hanabi->tools_class.actor_class.world.position.y, 

@@ -46,15 +46,15 @@ static void aTCB1_setupAction(ACTOR*actor, int action){
 
     cobra->proc = process[action];
     cobra->current_id = action;
-    cobra->tools_class.process_id = action;
+    cobra->tools_class.work0 = action;
 
 }
 
 static void aTCB1_actor_move(ACTOR* actor, GAME*){
     COBRA1_ACTOR* cobra = (COBRA1_ACTOR*)actor;
 
-    if(cobra->tools_class.process_id != cobra->current_id){
-        aTCB1_setupAction(actor, cobra->tools_class.process_id);
+    if(cobra->tools_class.work0 != cobra->current_id){
+        aTCB1_setupAction(actor, cobra->tools_class.work0);
     }
 
     cobra->proc(actor);
@@ -66,7 +66,7 @@ static void aTCB1_actor_draw(ACTOR* actor, GAME* game){
     GRAPH* graph;
     Gfx* gfxp;
 
-    if(cobra->tools_class.enable == 1){
+    if(cobra->tools_class.init_matrix == 1){
         graph = game->graph;
         
         OPEN_DISP(graph);
@@ -74,7 +74,7 @@ static void aTCB1_actor_draw(ACTOR* actor, GAME* game){
         Matrix_put(&cobra->tools_class.matrix_work);
         Matrix_Position_Zero(&cobra->tools_class.actor_class.world.position);
         
-        cobra->tools_class.enable = 0;
+        cobra->tools_class.init_matrix = 0;
     
         _texture_z_light_fog_prim_npc(graph); 
 
