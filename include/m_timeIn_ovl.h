@@ -1,0 +1,46 @@
+#ifndef M_TIMEIN_OVL_H
+#define M_TIMEIN_OVL_H
+
+#include "types.h"
+#include "m_timeIn_ovl_h.h"
+#include "m_submenu_ovl.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define mTI_MIN_YEAR 1
+#define mTI_MAX_YEAR 30
+
+enum {
+  mTI_IDX_HOUR,
+  mTI_IDX_MIN,
+  mTI_IDX_MONTH,
+  mTI_IDX_DAY,
+  mTI_IDX_YEAR,
+  mTI_IDX_OK,
+
+  mTI_IDX_NUM = mTI_IDX_OK
+};
+
+enum {
+  mTI_OVL_OPEN_NORMAL,
+  mTI_OVL_OPEN_INITIAL,
+
+  mTI_OVL_OPEN_NUM
+};
+
+struct timeIn_ovl_s {
+  u16 values[mTI_IDX_NUM];
+  int sel_idx;
+  u16 saved_min;
+  u16 input_disabled_flag;
+  lbRTC_time_c original_time;
+  int init_flag;
+};
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

@@ -586,6 +586,11 @@ m_map_ovl.c:
     .rodata: [0x8064B628, 0x8064B6B0]
     .data: [0x806CD9C0, 0x806CE008]
     .bss: [0x81340468, 0x81340488]
+m_timeIn_ovl.c:
+    .text: [0x805FF3C4, 0x80600370]
+    .rodata: [0x8064BA00, 0x8064BA58]
+    .data: [0x806D1320, 0x806D13E8]
+    .bss: [0x81341390, 0x813413B0]
 m_warning_ovl.c:
     .text: [0x80600370, 0x80600B00]
     .rodata: [0x8064BA58, 0x8064BA78]
