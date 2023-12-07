@@ -581,6 +581,10 @@ m_haniwaPortrait_ovl.c:
     .text: [0x805DFA00, 0x805DFE48]
     .rodata: [0x8064B418, 0x8064B448]
     .bss: [0x8133F980, 0x8133FAA0]
+m_hboard_ovl.c:
+    .text: [0x805E0AC8, 0x805E1398]
+    .rodata: [0x8064B480, 0x8064B4B8]
+    .data: [0x806CD3B0, 0x806CD3C8]
 m_map_ovl.c:
     .text: [0x805E5EFC, 0x805E7A54]
     .rodata: [0x8064B628, 0x8064B6B0]
