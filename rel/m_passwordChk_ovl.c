@@ -50,7 +50,6 @@ extern Gfx pwd_win_model[];
 static void mPC_set_frame_dl(Submenu* submenu, GRAPH* graph, f32 x, f32 y) {
   mPC_Ovl_c* passwordChk_ovl = submenu->overlay->passwordChk_ovl;
   Gfx* gfx;
-  Gfx* gfx2;
   u8 s;
   u8 t;
 
@@ -62,7 +61,6 @@ static void mPC_set_frame_dl(Submenu* submenu, GRAPH* graph, f32 x, f32 y) {
 
   /* Setup RDP settings */
   gSPDisplayList(gfx++, pwd_win_mode);
-  gfx2 = gfx; // setting this to gfx2 = gfx; causes the stwu to generate but breaks other stuff
 
   /* Initialize position matrix */
   gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
