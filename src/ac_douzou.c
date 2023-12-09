@@ -191,5 +191,5 @@ static void aDOU_actor_dt(ACTOR* actor, GAME* game) {
   cKF_SkeletonInfo_R_dt(&douzou->keyframe);
 }
 
-#include "../rel/ac_douzou_move.c_inc"
-#include "../rel/ac_douzou_draw.c_inc"
+#include "../src/ac_douzou_move.c_inc"
+#include "../src/ac_douzou_draw.c_inc"

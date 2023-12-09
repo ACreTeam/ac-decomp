@@ -52692,16 +52692,16 @@ global:
     0x8148DA70: freeXfbBase
     0x8148DA74: freeXfbSize
     0x8148DA78: S_ongenpos_refuse_fg
-src/bankread.c:
+src/static/bankread.c:
     0x800305e0: PTconvert__FPPvUl
-src/waveread.c:
+src/static/waveread.c:
     0x800309c0: PTconvert__FPPvUl
-src/famicom.cpp:
+src/static/famicom.cpp:
     0x80041614: calcSum__FPUcUl
     0x800d9984: __RTTI__13JKRFileFinder
-src/famicom_nesinfo.cpp:
+src/static/famicom_nesinfo.cpp:
     0x80046d88: calcSum__FPUcUl
-src/JKRAram.cpp:
+src/static/JKRAram.cpp:
     0x80066a08: decompSZS_subroutine__FPUcPUc
     0x80066c8c: firstSrcData__Fv
     0x80066d24: nextSrcData__FPUc
@@ -52718,7 +52718,7 @@ src/JKRAram.cpp:
     0x80218748: fileOffset
     0x8021874c: readCount
     0x80218750: maxDest
-src/JKRDvdRipper.cpp:
+src/static/JKRDvdRipper.cpp:
     0x8006c42c: decompSZS_subroutine__FPUcPUc
     0x8006c6c0: firstSrcData__Fv
     0x8006c774: nextSrcData__FPUc
@@ -52734,7 +52734,7 @@ src/JKRDvdRipper.cpp:
     0x8021879c: fileOffset
     0x802187a0: readCount
     0x802187a4: maxDest
-src/JKRDvdAramRipper.cpp:
+src/static/JKRDvdAramRipper.cpp:
     0x8006d370: firstSrcData__Fv
     0x8006d424: nextSrcData__FPUc
     0x802187a8: szpBuf
@@ -52749,47 +52749,47 @@ src/JKRDvdAramRipper.cpp:
     0x802187d8: fileOffset
     0x802187dc: readCount
     0x802187e0: maxDest
-src/GBA.c:
+src/static/GBA.c:
     0x80048120: OnReset
     0x800da9c8: ResetFunctionInfo
-src/OSMemory.c:
+src/static/OSMemory.c:
     0x8007bf04: OnReset
     0x8007c070: Config24MB
     0x8007c0f0: Config48MB
     0x800e01a8: ResetFunctionInfo
-src/libforest/ReconfigBATs.c:
+src/static/libforest/ReconfigBATs.c:
     0x8005adac: Config24MB
     0x8005ae18: Config48MB
-src/SIBios.c:
+src/static/SIBios.c:
     0x80082924: AlarmHandler
     0x800e0a3c: Type
-src/dvdlow.c:
+src/static/dvdlow.c:
     0x80083bdc: AlarmHandler
     0x80218998: Callback
-src/dvd.c:
+src/static/dvd.c:
     0x80085dfc: AlarmHandler
     0x80218a3c: LastState
-src/Pad.c:
+src/static/Pad.c:
     0x8008b664: OnReset
     0x800e1430: ResetFunctionInfo
     0x80208490: Type
-src/CARDBios.c:
+src/static/CARDBios.c:
     0x8008e504: OnReset
     0x800e1440: ResetFunctionInfo
-src/CARDBlock.c:
+src/static/CARDBlock.c:
     0x8008e7dc: WriteCallback
     0x8008e8b0: EraseCallback
-src/CARDDir.c:
+src/static/CARDDir.c:
     0x8008ebe0: WriteCallback
     0x8008ecb0: EraseCallback
-src/CARDWrite.c:
+src/static/CARDWrite.c:
     0x80091e88: WriteCallback
     0x80091ff8: EraseCallback
-src/__init_cpp_exceptions.cpp:
+src/static/__init_cpp_exceptions.cpp:
     0x800a97c0: __destroy_global_chain_reference
-src/global_destructor_chain.c:
+src/static/global_destructor_chain.c:
     0x800a97c8: __destroy_global_chain_reference
-src/bootdata.obj:
+src/static/bootdata.obj:
     0x800b9a40: att_win_waku1_tex
     0x800b9e40: att_win_waku2_tex
     0x800ba240: att_win_waku3_tex
@@ -52804,88 +52804,88 @@ src/bootdata.obj:
     0x800bcf00: att_win_waku5_tex
     0x800bd300: att_win_waku6_tex
     0x800bd820: gam_win_moji3_tex
-src/emusound.c:
+src/static/emusound.c:
     0x800cea20: NOISE_TABLE
-src/driver.c:
+src/static/driver.c:
     0x800d0298: NOISE_TABLE
-src/dspbuf.c:
+src/static/dspbuf.c:
     0x801864b0: dsp_buf
-src/cpubuf.c:
+src/static/cpubuf.c:
     0x801864c0: dsp_buf
-src/audiothread.c:
+src/static/audiothread.c:
     0x8017ffe0: msgbuf
-src/dvdthread.c:
+src/static/dvdthread.c:
     0x801865b0: msgbuf
-src/JKRHeap.cpp:
+src/static/JKRHeap.cpp:
     0x80217e6c: __RTTI__11JKRDisposer
     0x80217e74: __RTTI__7JKRHeap
-src/JKRExpHeap.cpp:
+src/static/JKRExpHeap.cpp:
     0x80217ea0: __RTTI__11JKRDisposer
     0x80217eb0: __RTTI__7JKRHeap
-src/JKRDisposer.cpp:
+src/static/JKRDisposer.cpp:
     0x80217ec0: __RTTI__11JKRDisposer
-src/JKRThread.cpp:
+src/static/JKRThread.cpp:
     0x80217ec8: __RTTI__11JKRDisposer
     0x80217ed0: __RTTI__9JKRThread
-src/JKRAramHeap.cpp:
+src/static/JKRAramHeap.cpp:
     0x80217ef8: __RTTI__11JKRDisposer
-src/JKRAramStream.cpp:
+src/static/JKRAramStream.cpp:
     0x80217f20: __RTTI__11JKRDisposer
     0x80217f28: __RTTI__9JKRThread
-src/JKRFileLoader.cpp:
+src/static/JKRFileLoader.cpp:
     0x80217f40: __RTTI__11JKRDisposer
     0x80217f48: __RTTI__13JKRFileLoader
-src/JKRFileFinder.cpp:
+src/static/JKRFileFinder.cpp:
     0x80217f50: __RTTI__13JKRFileFinder
-src/JKRArchivePub.cpp:
+src/static/JKRArchivePub.cpp:
     0x80217f60: __RTTI__11JKRDisposer
     0x80217f68: __RTTI__13JKRFileLoader
     0x80217f70: __RTTI__10JKRArchive
-src/JKRMemArchive.cpp:
+src/static/JKRMemArchive.cpp:
     0x80217f78: __RTTI__11JKRDisposer
     0x80217f80: __RTTI__13JKRFileLoader
     0x80217f88: __RTTI__10JKRArchive
-src/JKRAramArchive.cpp:
+src/static/JKRAramArchive.cpp:
     0x80217fa0: __RTTI__11JKRDisposer
     0x80217fa8: __RTTI__7JKRFile
     0x80217fb0: __RTTI__13JKRFileLoader
     0x80217fb8: __RTTI__10JKRArchive
-src/JKRDvdArchive.cpp:
+src/static/JKRDvdArchive.cpp:
     0x80217fc8: __RTTI__11JKRDisposer
     0x80217fd0: __RTTI__13JKRFileLoader
     0x80217fd8: __RTTI__10JKRArchive
-src/JKRCompArchive.cpp:
+src/static/JKRCompArchive.cpp:
     0x80217fe8: __RTTI__11JKRDisposer
     0x80217ff0: __RTTI__13JKRFileLoader
     0x80217ff8: __RTTI__10JKRArchive
-src/JKRDvdFile.cpp:
+src/static/JKRDvdFile.cpp:
     0x80218008: __RTTI__11JKRDisposer
     0x80218018: __RTTI__7JKRFile
-src/JKRDecomp.cpp:
+src/static/JKRDecomp.cpp:
     0x80218038: __RTTI__11JKRDisposer
     0x80218040: __RTTI__9JKRThread
-src/JSUInputStream.cpp:
+src/static/JSUInputStream.cpp:
     0x80218050: __RTTI__10JSUIosBase
     0x80218058: __RTTI__14JSUInputStream
     0x80218060: __RTTI__20JSURandomInputStream
-src/JSUFileStream.cpp:
+src/static/JSUFileStream.cpp:
     0x80218068: __RTTI__10JSUIosBase
     0x80218070: __RTTI__14JSUInputStream
     0x80218078: __RTTI__20JSURandomInputStream
-src/JUTFont.cpp:
+src/static/JUTFont.cpp:
     0x80218098: __RTTI__7JUTFont
-src/JUTResFont.cpp:
+src/static/JUTResFont.cpp:
     0x802180a8: __RTTI__7JUTFont
-src/JUTGamePad.cpp:
+src/static/JUTGamePad.cpp:
     0x802180c0: __RTTI__11JKRDisposer
-src/JUTException.cpp:
+src/static/JUTException.cpp:
     0x80218100: __RTTI__11JKRDisposer
     0x80218108: __RTTI__9JKRThread
-src/J2DGrafContext.cpp:
+src/static/J2DGrafContext.cpp:
     0x80218158: __RTTI__14J2DGrafContext
-src/J2DOrthoGraph.cpp:
+src/static/J2DOrthoGraph.cpp:
     0x80218160: __RTTI__14J2DGrafContext
-src/dvderr.c:
+src/static/dvderr.c:
     0x800a97f8: this
     0x800b1c60: ctl_att_w1_tex
     0x800b2060: ctl_att_w2_tex
@@ -52893,21 +52893,21 @@ src/dvderr.c:
     0x800b2860: ctl_att_w4_tex
     0x800b2c60: ctl_att_w5_tex
     0x800b3060: ctl_att_w6_tex
-src/fault.c:
+src/static/fault.c:
     0x80218628: this
-src/OSReboot.c:
+src/static/OSReboot.c:
     0x8007c6e0: Callback
-src/OS.c:
+src/static/OS.c:
     0x802188b0: BootInfo
-src/dvdfs.c:
+src/static/dvdfs.c:
     0x802189d8: BootInfo
-src/OSResetSW.c:
+src/static/OSResetSW.c:
     0x80218938: LastState
-#src/boot.c:
+#src/static/boot.c:
 #    0x800060f8: main
-#rel/main.c:
+#src/main.c:
 #    0x80407CB9: main
-rel/ac_quest_talk_island.c:
+src/ac_quest_talk_island.c:
     0x8048D769: aQMgr_init_normal_info
     0x8048D7A5: aQMgr_set_number_free_str
     0x8048D809: aQMgr_set_number_item_str
@@ -52999,7 +52999,7 @@ rel/ac_quest_talk_island.c:
     0x8068B424: constellation_table
     0x812FCAA8: l_aqmgr_str
     0x812FCAB8: l_normal_info
-rel/ac_quest_talk_normal_init.c:
+src/ac_quest_talk_normal_init.c:
     0x804915F5: aQMgr_init_normal_info
     0x80491631: aQMgr_set_number_free_str
     0x80491695: aQMgr_set_number_item_str
@@ -53091,7 +53091,7 @@ rel/ac_quest_talk_normal_init.c:
     0x8068B9F4: constellation_table
     0x812FCB5C: l_aqmgr_str
     0x812FCB6C: l_normal_info
-rel/bg_cherry_item.c:
+src/bg_cherry_item.c:
     0x804AFE75: bIT_copy_vtx
     0x804AFEC9: bIT_draw_shadow
     0x804B003D: bIT_clip_ct
@@ -53588,7 +53588,7 @@ rel/bg_cherry_item.c:
     0x806927EC: rnd_data_x
     0x8069282C: rnd_data_z
     0x80692BC8: type_data_table_p_a
-rel/bg_item.c:
+src/bg_item.c:
     0x804B71F9: bIT_copy_vtx
     0x804B724D: bIT_draw_shadow
     0x804B73C1: bIT_clip_ct
@@ -54089,7 +54089,7 @@ rel/bg_item.c:
     0x8069574C: rnd_data_x
     0x8069578C: rnd_data_z
     0x80695B20: type_data_table_p_a
-rel/bg_winter_item.c:
+src/bg_winter_item.c:
     0x804BECF1: bIT_copy_vtx
     0x804BED45: bIT_draw_shadow
     0x804BEEB9: bIT_clip_ct
@@ -54590,7 +54590,7 @@ rel/bg_winter_item.c:
     0x8069891C: rnd_data_x
     0x8069895C: rnd_data_z
     0x80698CF8: type_data_table_p_a
-rel/bg_xmas_item.c:
+src/bg_xmas_item.c:
     0x804C6109: bIT_copy_vtx
     0x804C615D: bIT_draw_shadow
     0x804C62D1: bIT_clip_ct
@@ -55091,23 +55091,23 @@ rel/bg_xmas_item.c:
     0x8069B91C: rnd_data_x
     0x8069B95C: rnd_data_z
     0x8069BCF4: type_data_table_p_a
-rel/m_all_grow.c:
+src/m_all_grow.c:
     0x80373BD9: mAGrw_ChangeItemBlock2
-rel/m_all_grow_ovl.c:
+src/m_all_grow_ovl.c:
     0x80510F99: mAGrw_ChangeItemBlock2
-rel/ac_ev_ghost.c:
+src/ac_ev_ghost.c:
     0x8051FED9: aEGH_change_talk_proc
     0x806A07E0: umbrella_list
     0x806A08D4: dt_tbl
     0x806A08F8: proc_table
     0x806A090C: init_table
-rel/ac_ev_soncho.c:
+src/ac_ev_soncho.c:
     0x8052438D: aEGH_change_talk_proc
-rel/ac_hatumode_control.c:
+src/ac_hatumode_control.c:
     0x80429581: aHN0_set_request_act
     0x80683F5C: dt_tbl
     0x80684044: init_table
-rel/ac_hanabi_npc0.c:
+src/ac_hanabi_npc0.c:
     0x80528515: aHN0_actor_ct
     0x80528599: aHN0_actor_save
     0x805285D1: aHN0_actor_dt
@@ -55123,7 +55123,7 @@ rel/ac_hanabi_npc0.c:
     0x80528F09: aHN0_schedule_proc
     0x80528FCD: aHN0_talk_init
     0x80528FF1: aHN0_talk_end_chk
-rel/ac_hatumode_npc0.c:
+src/ac_hatumode_npc0.c:
     0x8052AB55: aHN0_actor_ct
     0x8052AC71: aHN0_actor_save
     0x8052AC91: aHN0_actor_dt
@@ -55139,7 +55139,7 @@ rel/ac_hatumode_npc0.c:
     0x8052BC41: aHN0_schedule_main_proc
     0x8052BCF9: aHN0_schedule_proc
     0x806A1428: proc_table
-rel/ac_npc.c:
+src/ac_npc.c:
     0x8052C131: aNPC_dma_cloth_data
     0x8052C1ED: aNPC_getP_cloth_tex_rom
     0x8052C251: aNPC_getP_cloth_pal_rom
@@ -55410,7 +55410,7 @@ rel/ac_npc.c:
     0x806A2AE0: aNPC_sche_proc
     0x81301840: aNPC_ctrlActor
     0x81319AC8: aNPC_clip
-rel/ac_npc2.c:
+src/ac_npc2.c:
     0x8053AD41: aNPC_dma_cloth_data
     0x8053ADFD: aNPC_getP_cloth_tex_rom
     0x8053AE61: aNPC_getP_cloth_pal_rom
@@ -55681,7 +55681,7 @@ rel/ac_npc2.c:
     0x806A3FA0: aNPC_sche_proc
     0x81319BF8: aNPC_ctrlActor
     0x81319F94: aNPC_clip
-rel/ac_npc_conv_master.c:
+src/ac_npc_conv_master.c:
     0x80545B7D: aNSC_set_animation
     0x80545BCD: aNSC_BGcheck
     0x80545C11: aNSC_check_present_balloon
@@ -55864,7 +55864,7 @@ rel/ac_npc_conv_master.c:
     0x806A4A74: aNSC_item1_F_tanni_type
     0x806A4A78: aNSC_item_tanni_type
     0x806A4B6C: aNSC_exchange_itemNo
-rel/ac_npc_depart_master.c:
+src/ac_npc_depart_master.c:
     0x8054D495: aNSC_set_animation
     0x8054D4E5: aNSC_BGcheck
     0x8054D529: aNSC_check_present_balloon
@@ -56047,7 +56047,7 @@ rel/ac_npc_depart_master.c:
     0x806A5C88: aNSC_item1_F_tanni_type
     0x806A5C8C: aNSC_item_tanni_type
     0x806A5D80: aNSC_exchange_itemNo
-rel/ac_npc_mamedanuki.c:
+src/ac_npc_mamedanuki.c:
     0x8055A4ED: aNSC_set_animation
     0x8055A53D: aNSC_BGcheck
     0x8055A581: aNSC_calc_talk_start_tim
@@ -56205,7 +56205,7 @@ rel/ac_npc_mamedanuki.c:
     0x806A9E18: aNSC_item1_F_tanni_type
     0x806A9E1C: aNSC_item_tanni_type
     0x806A9F30: aNSC_exchange_itemNo
-rel/ac_npc_shop_master.c:
+src/ac_npc_shop_master.c:
     0x80577115: aNSC_set_animation
     0x80577165: aNSC_BGcheck
     0x805771A9: aNSC_check_present_balloon
@@ -56388,25 +56388,25 @@ rel/ac_npc_shop_master.c:
     0x806C024C: aNSC_item1_F_tanni_type
     0x806C0250: aNSC_item_tanni_type
     0x806C0344: aNSC_exchange_itemNo
-rel/ac_npc_needlework.c:
+src/ac_npc_needlework.c:
     0x80564CA1: player_go_away
     0x80564CE1: player_buy
     0x806BE35C: dt_tbl
     0x806BE3A8: proc_table
     0x806BE3C8: init_table
-rel/ac_npc_shop_mastersp.c:
+src/ac_npc_shop_mastersp.c:
     0x8057CB61: player_go_away
     0x8057CBB9: player_buy
-rel/ac_npc_p_sel2.c:
+src/ac_npc_p_sel2.c:
     0x805682D1: aNPS2_make_door_data
     0x8056852D: aNPS2_setup_game_start
-rel/ac_npc_station_master.c:
+src/ac_npc_station_master.c:
     0x8057F7C1: aNPS2_make_door_data
     0x8057F825: aNPS2_setup_game_start
     0x806C0C14: proc_table
     0x806C0C5C: dt_tbl
     0x806C0CCC: init_table
-rel/ac_npc_super_master.c:
+src/ac_npc_super_master.c:
     0x80580C21: aNSC_set_animation
     0x80580C71: aNSC_BGcheck
     0x80580CB5: aNSC_check_present_balloon
@@ -56589,18 +56589,18 @@ rel/ac_npc_super_master.c:
     0x806C1790: aNSC_item1_F_tanni_type
     0x806C1794: aNSC_item_tanni_type
     0x806C1888: aNSC_exchange_itemNo
-rel/ac_tokyoso_control.c:
+src/ac_tokyoso_control.c:
     0x804AB041: aTKN1_set_request_act
     0x8068F438: init_table
-rel/ac_tokyoso_npc1.c:
+src/ac_tokyoso_npc1.c:
     0x8058C3BD: aTKN1_set_request_act
     0x806C2400: dt_tbl
     0x806C2474: proc_table
-rel/ac_br_shop.c:
+src/ac_br_shop.c:
     0x805A8769: change_FGUnit
-rel/ac_buggy.c:
+src/ac_buggy.c:
     0x805A9E19: change_FGUnit
-rel/ac_count02.c:
+src/ac_count02.c:
     0x805AB8B9: aCOU_actor_ct
     0x805AB989: aCOU_actor_dt
     0x805ABAE9: aCOU_wait
@@ -56609,7 +56609,7 @@ rel/ac_count02.c:
     0x805ABDAD: aCOU_actor_init
     0x805ABE25: aCOU_actor_draw_before
     0x805ABE89: aCOU_actor_draw
-rel/ac_countdown.c:
+src/ac_countdown.c:
     0x805AC0AD: aCOU_actor_ct
     0x805AC121: aCOU_actor_dt
     0x805AC335: aCOU_wait
@@ -56618,76 +56618,76 @@ rel/ac_countdown.c:
     0x805AC5ED: aCOU_actor_init
     0x805AC665: aCOU_actor_draw_before
     0x805AC7B1: aCOU_actor_draw
-rel/ac_house.c:
+src/ac_house.c:
     0x805AFB2D: change_FGUnit
-rel/ac_kamakura.c:
+src/ac_kamakura.c:
     0x805B1DE5: change_FGUnit
-rel/ac_mikanbox.c:
+src/ac_mikanbox.c:
     0x805B3011: aMIK_actor_ct
     0x805B3E59: aMIK_actor_init
     0x805B4055: aMIK_actor_draw
     0x806C5BB0: init_table
     0x806C5BD0: obj_e_mikanbox_v
-rel/ac_mikuji.c:
+src/ac_mikuji.c:
     0x805B414D: aMIK_actor_ct
     0x805B437D: aMIK_actor_init
     0x805B43F5: aMIK_actor_draw
-rel/ac_turi_npc0.c:
+src/ac_turi_npc0.c:
     0x805900B1: aTR0_actor_ct
     0x805901D9: aTR0_actor_dt
     0x80590285: aTR0_actor_move
     0x805902BD: aTR0_actor_draw
-rel/ac_train0.c:
+src/ac_train0.c:
     0x805BFC29: aTR0_actor_ct
     0x805BFCDD: aTR0_actor_dt
     0x805C00F5: calc_speed1
     0x805C014D: calc_speed2
     0x805C03ED: aTR0_actor_move
     0x805C04E1: aTR0_actor_draw
-rel/ac_train1.c:
+src/ac_train1.c:
     0x805C0709: calc_speed1
     0x805C0761: calc_speed2
-rel/ac_ev_angler.c:
+src/ac_ev_angler.c:
     0x80518395: get_fish_save_area
     0x805186F5: getP_top_of_angler_pID
     0x80518719: set_top_of_angler_pID
     0x80518751: get_top_of_angler_size
-rel/ac_turi.c:
+src/ac_turi.c:
     0x805C1291: get_fish_save_area
     0x805C12F1: get_top_of_angler_size
     0x805C1315: set_top_of_angler_pID
     0x805C134D: getP_top_of_angler_pID
-rel/m_submenu.c:
+src/m_submenu.c:
     0x803EFD79: mSM_move_End
-rel/m_submenu_ovl.c:
+src/m_submenu_ovl.c:
     0x805EF449: mSM_move_End
-rel/m_inventory_ovl.c:
+src/m_inventory_ovl.c:
     0x805E448D: mIV_get_win_posY
-rel/m_tag_ovl.c:
+src/m_tag_ovl.c:
     0x805F89B1: mIV_get_win_posY
-rel/ef_turi_hane0.c:
+src/ef_turi_hane0.c:
     0x80624049: eTH0_init
     0x806240BD: eTH0_ct
     0x80624139: eTH0_mv
     0x8062413D: eTH0_dw
-rel/ef_turi_hane1.c:
+src/ef_turi_hane1.c:
     0x80624261: eTH0_init
     0x806242D5: eTH0_ct
     0x806242F5: eTH0_mv
     0x806242F9: eTH0_dw
-rel/ef_takurami.c:
+src/ef_takurami.c:
     0x80620A7D: eTM_init
     0x80620BC5: eTM_ct
     0x80620D05: eTM_mv
     0x80620DBD: eTM_dw
-rel/ef_turi_mizu.c:
+src/ef_turi_mizu.c:
     0x806247C1: eTM_init
     0x80624891: eTM_ct
     0x80624989: eTM_mv
     0x80624B11: eTM_dw
-rel/padmgr.c:
+src/padmgr.c:
     0x8065F138: this
-rel/ac_gyo_release.c:
+src/ac_gyo_release.c:
     0x80682D1C: gyoei_type
     0x80682E84: aGYO_funa_dl
     0x80682E90: aGYO_hera_dl
@@ -56734,7 +56734,7 @@ rel/ac_gyo_release.c:
     0x8068307C: aGYO_taiya_dl
     0x80683088: aGYO_displayList
     0x8068313C: aGYO_shadow_scale
-rel/ac_handOverItem.c:
+src/ac_handOverItem.c:
     0x806832E4: aGYO_funa_dl
     0x806832F0: aGYO_hera_dl
     0x806832FC: aGYO_koi_dl
@@ -56781,56 +56781,56 @@ rel/ac_handOverItem.c:
     0x806834E8: aGYO_displayList
     0x8068359C: mode_DL_table
     0x80683670: vtx_DL_table
-rel/m_collision_bg.c:
+src/m_collision_bg.c:
     0x80650D78: norm_table
-rel/ac_my_room.c:
+src/ac_my_room.c:
     0x806874B4: furniture_quality
     0x80688F78: norm_table
-rel/ac_uki.c:
+src/ac_uki.c:
     0x8068F898: gyoei_type
-rel/bg_police_item.c:
+src/bg_police_item.c:
     0x80695B5C: mode_DL_table
     0x80695C30: vtx_DL_table
-rel/m_huusui_room_ovl.c:
+src/m_huusui_room_ovl.c:
     0x8069C0F0: mMkRm_ftr_info
-rel/m_mark_room_ovl.c:
+src/m_mark_room_ovl.c:
     0x8069CFFC: mMkRm_ftr_info
-rel/ac_ev_dozaemon.c:
+src/ac_ev_dozaemon.c:
     0x806A0658: dt_tbl
     0x806A0674: proc_table
     0x806A067C: init_table
-rel/ac_ev_soncho2.c:
+src/ac_ev_soncho2.c:
     0x806A0DE4: dt_tbl
     0x806A0E30: proc_table
     0x806A0E50: init_table
-rel/ac_npc_soncho.c:
+src/ac_npc_soncho.c:
     0x806C0B68: dt_tbl
     0x806C0B70: proc_table
     0x806C0B74: init_table
-rel/ac_npc_totakeke.c:
+src/ac_npc_totakeke.c:
     0x806C1D34: proc_table
     0x806C1D50: dt_tbl
-rel/ac_tamaire_npc0.c:
+src/ac_tamaire_npc0.c:
     0x806C2154: dt_tbl
     0x806C2184: proc_table
     0x806C2198: init_table
-rel/ac_tamaire_npc1.c:
+src/ac_tamaire_npc1.c:
     0x806C222C: dt_tbl
     0x806C2264: proc_table
     0x806C228C: init_table
-rel/ac_tokyoso_npc0.c:
+src/ac_tokyoso_npc0.c:
     0x806C2338: dt_tbl
     0x806C2360: proc_table
     0x806C237C: init_table
-rel/ac_tunahiki_npc0.c:
+src/ac_tunahiki_npc0.c:
     0x806C2710: dt_tbl
     0x806C271C: proc_table
     0x806C2724: init_table
-rel/ac_tunahiki_npc1.c:
+src/ac_tunahiki_npc1.c:
     0x806C27A8: dt_tbl
     0x806C27BC: proc_table
     0x806C27C8: init_table
-rel/ac_gyoei.c:
+src/ac_gyoei.c:
     0x806C37FC: aGYO_funa_dl
     0x806C3808: aGYO_hera_dl
     0x806C3814: aGYO_koi_dl
@@ -56878,34 +56878,34 @@ rel/ac_gyoei.c:
     0x806C3B38: aGYO_texture_table
     0x806C3B48: aGYO_2tile_texture_idx
     0x806C3B70: aGYO_prim_f
-rel/ac_gyo_kage.c:
+src/ac_gyo_kage.c:
     0x80682C7C: aGYO_texture_table
     0x80682C8C: aGYO_2tile_texture_idx
     0x80682CB4: aGYO_prim_f
-rel/ac_gyo_test.c:
+src/ac_gyo_test.c:
     0x806C3D58: gyoei_type
     0x806C3F30: aGYO_shadow_scale
-rel/ac_gyo_kaseki.c:
+src/ac_gyo_kaseki.c:
     0x806C40A8: gyoei_type
-rel/m_catalog_ovl.c:
+src/m_catalog_ovl.c:
     0x806C8AB0: furniture_quality
     0x806C9E78: paper_disp_model
     0x806CA278: paper_disp_sen_model
-rel/m_board_ovl.c:
+src/m_board_ovl.c:
     0x806C7C60: paper_disp_model
     0x806C8060: paper_disp_sen_model
     0x806C8460: letter_color
-rel/m_diary_ovl.c:
+src/m_diary_ovl.c:
     0x806CBA70: letter_color
-rel/ef_effect_control.c:
+src/ef_effect_control.c:
     0x8069BD10: profile_tbl
-rel/ac_weather.c:
+src/ac_weather.c:
     0x806D1D50: profile_tbl
-rel/ac_museum_fish.c:
+src/ac_museum_fish.c:
     0x80684F7C: suisou_pos
-rel/ef_suisou_awa.c:
+src/ef_suisou_awa.c:
     0x806D37F0: suisou_pos
-rel/dataobject.obj:
+src/dataobject.obj:
     0x8074FE80: obj_flower_tex
     0x807508C0: obj_flower_tex
     0x80752700: obj_melody_pal
@@ -58181,9 +58181,9 @@ rel/dataobject.obj:
     0x810DEEE0: int_tak_cone02_asi_tex_pal
     0x810DF400: int_tak_cone02_asi_tex_pal
     0x81106D80: rom_train_3_pal
-rel/irqmgr.c:
+src/irqmgr.c:
     0x812F357C: this
-rel/m_malloc.c:
+src/m_malloc.c:
     0x81297CA0: zelda_arena
 foresta.rel:
     0x80641254: _ctors

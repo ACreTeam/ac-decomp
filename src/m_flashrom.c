@@ -349,13 +349,13 @@ static int mFRm_get_errInfoNum(mFRm_err_info_c* err_info, int count) {
 #define mFRm_ERRORLINE(line) mFRm_set_errInfo(l_mfrm_err_info, (line), l_mfrm_now_color)
 #define mFRm_ERROR() mFRm_ERRORLINE(__LINE__)
 
-#include "../rel/save_check.c_inc"
-#include "../rel/save_check_gen.c_inc"
-#include "../rel/save_check_MYK.c_inc"
-#include "../rel/save_check_NSW.c_inc"
-#include "../rel/save_check_take.c_inc"
-#include "../rel/save_check_YSD.c_inc"
-#include "../rel/save_check_komatu.c_inc"
+#include "../src/save_check.c_inc"
+#include "../src/save_check_gen.c_inc"
+#include "../src/save_check_MYK.c_inc"
+#include "../src/save_check_NSW.c_inc"
+#include "../src/save_check_take.c_inc"
+#include "../src/save_check_YSD.c_inc"
+#include "../src/save_check_komatu.c_inc"
 
 /**
  * @brief Perform save data checks.

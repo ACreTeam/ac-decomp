@@ -7,7 +7,7 @@ src/*/*/*.s
 out/
 dump/*
 !dump/foresta.rel.sha1
-!dump/main.dol.sha1
+!dump/static.dol.sha1
 *.dol
 *.rel
 *.exe

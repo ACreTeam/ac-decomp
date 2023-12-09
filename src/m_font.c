@@ -2,7 +2,7 @@
 
 #include "audio.h"
 #include "m_lib.h"
-#include "gbi_extensions.h"
+#include "libforest/gbi_extensions.h"
 #include "dataobject.h"
 #include "game.h"
 #include "graph.h"
@@ -16,10 +16,10 @@
 #define mFont_CC_FONT   0, 0, 0, PRIMITIVE, PRIMITIVE, 0, TEXEL0, 0
 #define mFont_CC_NOFONT 0, 0, 0, PRIMITIVE, 0, PRIMITIVE, TEXEL0, PRIMITIVE
 
-#include "../rel/m_font_offset.c_inc"
-#include "../rel/m_font_main.c_inc"
-#include "../rel/m_font_mark.c_inc"
-#include "../rel/m_font_rect.c_inc"
+#include "../src/m_font_offset.c_inc"
+#include "../src/m_font_main.c_inc"
+#include "../src/m_font_mark.c_inc"
+#include "../src/m_font_rect.c_inc"
 
 /* @unused static u8* mFont_Get_end_load_texture() */
 

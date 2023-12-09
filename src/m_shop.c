@@ -2758,4 +2758,4 @@ extern mActor_name_t mSP_GetRandomStationToyItemNo() {
   return mRmTp_FtrIdx2FtrItemNo(0x42A + RANDOM(15), mRmTp_DIRECT_SOUTH);
 }
 
-#include "../rel/m_item_debug.c"
+#include "../src/m_item_debug.c"

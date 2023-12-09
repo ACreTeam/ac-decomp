@@ -2,7 +2,7 @@ static u8* mFont_Get_FontTex_p() {
   return FONT_nes_tex_font1;
 }
 
-extern int mFont_GetCodeWidth(int c, int cut) {
+extern int mFont_GetCodeWidth(u8 c, int cut) {
   return mFont_TEX_CHAR_WIDTH - (cut ? mFont_Get_FontOffset(c) : 0);
 }
 
@@ -490,7 +490,7 @@ static f32 mFont_SetLineStrings_AndSpace_new(
   f32 scale_x, f32 scale_y,
   int mode
 ) {
-  Gfx* g;
+  Gfx* gfx;
   mFontSentence sentence;
   int use_polygon_opaque = mode == 0;
   u32 flag;
@@ -509,10 +509,10 @@ static f32 mFont_SetLineStrings_AndSpace_new(
   OPEN_DISP(game->graph);
 
   if (use_polygon_opaque) {
-    g = NOW_POLY_OPA_DISP;
+    gfx = NOW_POLY_OPA_DISP;
   }
   else {
-    g = NOW_FONT_DISP;
+    gfx = NOW_FONT_DISP;
   }
 
   flag = mFont_SENTENCE_FLAG_USE_POLY;
@@ -536,13 +536,13 @@ static f32 mFont_SetLineStrings_AndSpace_new(
   color.a = a;
 
   mFontSentence_set(&sentence, str, len, flag, &pos, mFont_LineType_Top, &scale, &color, 0, 0, 0, 0, 0);
-  mFontSentence_gppDraw(&sentence, game, &g);
+  mFontSentence_gppDraw(&sentence, game, &gfx);
 
   if (use_polygon_opaque) {
-    SET_POLY_OPA_DISP(g);
+    SET_POLY_OPA_DISP(gfx);
   }
   else {
-    SET_FONT_DISP(g);
+    SET_FONT_DISP(gfx);
   }
 
   CLOSE_DISP(game->graph);

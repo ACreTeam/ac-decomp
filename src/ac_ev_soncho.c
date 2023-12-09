@@ -80,4 +80,4 @@ static void aESC_actor_draw(ACTOR* actorx, GAME* game) {
   (*Common_Get(clip).npc_clip->draw_proc)(actorx, game);
 }
 
-#include "../rel/ac_ev_soncho_talk.c_inc"
+#include "../src/ac_ev_soncho_talk.c_inc"

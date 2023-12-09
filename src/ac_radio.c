@@ -52,6 +52,6 @@ static void aRAD_actor_ct(ACTOR* actor, GAME* game){
     aRAD_set_bgOffset(radio, 1);
 }
 
-#include "../rel/ac_radio_move.c_inc"
+#include "../src/ac_radio_move.c_inc"
 
-#include "../rel/ac_radio_draw.c_inc"
+#include "../src/ac_radio_draw.c_inc"

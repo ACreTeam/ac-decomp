@@ -935,7 +935,7 @@ static f32 mEnv_DiffuseLightEffectRate() {
   return l_mEnv_electric_light.diffuse_light_effect_rate;
 }
 
-#include "../rel/m_kankyo_weather.c_inc"
+#include "../src/m_kankyo_weather.c_inc"
 
 extern void mEnv_regist_nature(Kankyo* kankyo, NATURE_PROC nature_proc, void* arg) {
   kankyo->nature.proc = nature_proc;

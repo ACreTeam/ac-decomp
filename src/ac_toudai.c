@@ -123,6 +123,6 @@ static void aTOU_actor_dt(ACTOR* actor, GAME* game){
 
 }
 
-#include "../rel/ac_toudai_move.c_inc"
+#include "../src/ac_toudai_move.c_inc"
 
-#include "../rel/ac_toudai_draw.c_inc"
+#include "../src/ac_toudai_draw.c_inc"

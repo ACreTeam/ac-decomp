@@ -69,7 +69,7 @@ ACTOR_PROFILE Animal_Logo_Profile = {
 
 
 // TODO: once proper building is possible, fix this
-//#include "../rel/ac_animal_logo_misc.c"
+//#include "../src/ac_animal_logo_misc.c"
 
 static void aAL_setupAction(ANIMAL_LOGO_ACTOR* actor, GAME* game, int action);
 static void aAL_title_decide_p_sel_npc();

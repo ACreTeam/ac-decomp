@@ -61,6 +61,6 @@ static void aTR0_actor_dt(ACTOR* actor, GAME* game){
     Common_Set(train_exists_flag, 0);
 }
 
-#include "../rel/ac_train0_move.c_inc"
+#include "../src/ac_train0_move.c_inc"
 
-#include "../rel/ac_train0_draw.c_inc"
+#include "../src/ac_train0_draw.c_inc"

@@ -34,6 +34,6 @@ static void aTAM_actor_ct(ACTOR* actorx, GAME* game) {
   tama->structure_class.structure_pal = aSTR_PAL_KAGO_R + tama->structure_class.action;
 }
 
-#include "../rel/ac_tama_move.c_inc"
+#include "../src/ac_tama_move.c_inc"
 
-#include "../rel/ac_tama_draw.c_inc"
+#include "../src/ac_tama_draw.c_inc"

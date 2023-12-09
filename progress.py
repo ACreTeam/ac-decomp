@@ -90,5 +90,5 @@ if __name__=="__main__":
         ]
     else:
         dol_secs = rel_secs = [".text"]
-    print_binary_progress(dol_secs, decomp_sizes, total_sizes, "main.dol", args.full)
+    print_binary_progress(dol_secs, decomp_sizes, total_sizes, "static.dol", args.full)
     print_binary_progress(rel_secs, rel_decomp_sizes, rel_total_sizes, "foresta.rel", args.full)

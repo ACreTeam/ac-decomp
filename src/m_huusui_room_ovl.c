@@ -28,7 +28,7 @@ typedef struct huusui_room_ftr_info_s {
 
 /* table of feng shui data for every item, clearly copy-pasted... should be mHsRm_ftr_info */
 static mHsRm_ftr_info_c mMkRm_ftr_info[FTR_NUM] = {
-#include "../rel/m_huusui_room_ovl_data.inc" /* data moved out of file due to length */
+#include "../src/m_huusui_room_ovl_data.inc" /* data moved out of file due to length */
 };
 
 /* maximum unit position for each main floor size */

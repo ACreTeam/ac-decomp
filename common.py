@@ -148,10 +148,10 @@ def load_from_yaml(path: str, default=None):
 ################
 
 # Directory for decompiled dol code
-DOL_SRCDIR = "src"
+DOL_SRCDIR = "src/static"
 
 # Directory for decompiled rel code
-REL_SRCDIR = "rel"
+REL_SRCDIR = "src"
 
 # Include directory
 INCDIR = "include"
@@ -244,15 +244,15 @@ DOL_DISASM_OVERRIDES = f"{CONFIG}/disasm_overrides.yml"
 REL_DISASM_OVERRIDES = f"{CONFIG}/rel_disasm_overrides.yml"
 
 # Binaries
-DOL = f"{ORIG}/main.dol" # read in python code
+DOL = f"{ORIG}/static.dol" # read in python code
 REL = f"{ORIG}/foresta.rel" # read in python code
 DOL_YML = f"{CONFIG}/dol.yml"
 REL_YML = f"{CONFIG}/rel.yml"
-DOL_SHA = f"{ORIG}/main.dol.sha1"
+DOL_SHA = f"{ORIG}/static.dol.sha1"
 REL_SHA = f"{ORIG}/foresta.rel.sha1"
-DOL_OK = f"{BUILDDIR}/main.dol.ok"
+DOL_OK = f"{BUILDDIR}/static.dol.ok"
 REL_OK = f"{BUILDDIR}/foresta.rel.ok"
-DOL_ASM_LIST = f"{BUILDDIR}/main.dol.asml"
+DOL_ASM_LIST = f"{BUILDDIR}/static.dol.asml"
 REL_ASM_LIST = f"{BUILDDIR}/foresta.rel.asml"
 
 # Symbols
@@ -275,11 +275,11 @@ DOL_LCF = f"{BUILDDIR}/dol.lcf"
 REL_LCF = f"{CONFIG}/rel.lcf"
 
 # Outputs
-DOL_ELF = f"{BUILDDIR}/main.elf"
+DOL_ELF = f"{BUILDDIR}/static.elf"
 REL_PLF = f"{BUILDDIR}/foresta.plf"
-DOL_OUT = f"{OUTDIR}/main.dol"
+DOL_OUT = f"{OUTDIR}/static.dol"
 REL_OUT = f"{OUTDIR}/foresta.rel"
-DOL_MAP = f"{OUTDIR}/main.map"
+DOL_MAP = f"{OUTDIR}/static.map"
 REL_MAP = f"{OUTDIR}/foresta.map"
 
 # Optional full disassembly

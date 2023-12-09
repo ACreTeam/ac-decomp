@@ -21,6 +21,10 @@ import common as c
 # Setup Validation #
 ####################
 
+# Rename main.dol to static.dol
+if os.path.exists("dump/main.dol"):
+    os.rename("dump/main.dol", "dump/static.dol")
+
 # Check CodeWarrior was added
 assert os.path.exists("tools/1.3.2/mwcceppc.exe") and \
     os.path.exists("tools/1.2.5n/mwcceppc.exe"), \
@@ -615,31 +619,31 @@ class AsmSource(Source):
         
 class CSource(Source):
     def __init__(self, ctx: c.SourceContext, path: str):
-        if path.startswith("src/dolphin/"):
+        if path.startswith("src/static/dolphin/"):
             self.cflags = c.SDK_FLAGS
             self.cc = c.OCC
-        elif path.startswith("src/JSystem/JGadget/"):
+        elif path.startswith("src/static/JSystem/JGadget/"):
             self.cflags = c.JSYSTEM_JGADGET_CFLAGS
             self.cc = c.CC
-        elif path.startswith("src/JSystem/"):
+        elif path.startswith("src/static/JSystem/"):
             self.cflags = c.JSYSTEM_CFLAGS
             self.cc = c.CC
-        elif path.startswith("src/GBA2/"):
+        elif path.startswith("src/static/GBA2/"):
             self.cflags = c.DOL_CFLAGS_SDATA0_CFLAGS
             self.cc = c.CC
-        elif path.startswith("src/bootdata/") or path == "src/boot.c" or path == "src/initial_menu.c":
+        elif path.startswith("src/static/bootdata/") or path == "src/static/boot.c" or path == "src/static/initial_menu.c":
             self.cflags = c.DOL_BOOT_CFLAGS
             self.cc = c.CC
-        elif path == "src/dvderr.c":
+        elif path == "src/static/dvderr.c":
             self.cflags = c.DOL_DVDERR_CFLAGS
             self.cc = c.CC
-        elif path.startswith("src/jaudio_NES"):
+        elif path.startswith("src/static/jaudio_NES"):
             self.cc = c.CC
             self.cflags = c.DOL_CPPFLAGS
-        elif path.startswith("src/TRK") and not path.startswith("src/TRK/init"): 
+        elif path.startswith("src/static/TRK") and not path.startswith("src/static/TRK/init"): 
             self.cc = c.CC
             self.cflags = c.DOL_TRK_CFLAGS
-        elif os.path.dirname(path).endswith("src"):
+        elif os.path.dirname(path).endswith("src/static"):
             self.cflags = c.DOL_CFLAGS_SDATA0_CFLAGS
             self.cc = c.CC
         else:
