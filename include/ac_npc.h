@@ -100,6 +100,10 @@ typedef struct npc_info_s {
   mActor_name_t npc_name;
 } NpcActorInfo_c;
 
+/* Used for think, schedule, action, & talk */
+typedef void (*aNPC_PROC)(NPC_ACTOR* npc_actorx, GAME_PLAY* play, int schedule_idx);
+typedef void (*aNPC_SUB_PROC)(NPC_ACTOR* npc_actorx, GAME_PLAY* play);
+
 struct npc_actor_s {
   ACTOR actor_class;
   int _174;
