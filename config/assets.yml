@@ -138,7 +138,7 @@ config/dol.yml:
   bootdata/logo_nin_v:
     addrs: [0x800c30c0, 0x800c3100]
     type: vtx
-  JSystem/JUtility/FontData/Ascfont_fix12.bfn:
+  static/JSystem/JUtility/FontData/Ascfont_fix12.bfn:
     addrs: [0x800ab260, 0x800af3c0]
 
 config/rel.yml:
