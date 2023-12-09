@@ -2131,6 +2131,7 @@ extern mActor_name_t mNT_FishIdx2FishItemNo(int idx);
 #define DUMMY_RADIO 0xF109
 #define DUMMY_TAMA 0xF110
 #define DUMMY_DOUZOU 0xF11D
+#define DUMMY_NAMEPLATE 0xF11F
 
 #define RSV_DOOR 0xFE1B
 #define RSV_FE1C 0xFE1C

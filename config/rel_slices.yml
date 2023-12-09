@@ -545,19 +545,22 @@ ac_dump.c:
     .text: [0x805AE704, 0x805AECE8]
     .rodata: [0x8064A7E8,0x8064A808]
     .data: [0x806C5018, 0x806C5120]
+ac_nameplate.c:
+    .text: [0x805B63FC,0x805B65C4]
+    .data: [0x806C6110,0x806C6138]
 ac_radio.c:
     .text: [0x805B887C,0x805B8C7C]
     .rodata: [0x8064AB58,0x8064AB68]
     .data: [0x806C6558,0x806C65A0]
-ac_tama.c:
-    .text: [0x805BDDF4, 0x805BE06C]
-    .rodata: [0x8064AC78, 0x8064AC80]
-    .data: [0x806C7110, 0x806C7140]
 ac_structure.c:
     .text: [0x805BCA00, 0x805BD06C]
     .rodata: [0x8064AC30, 0x8064AC38]
     .data: [0x806C6C00, 0x806C6ED0]
     .bss: [0x813280F0, 0x8133DEB0]
+ac_tama.c:
+    .text: [0x805BDDF4, 0x805BE06C]
+    .rodata: [0x8064AC78, 0x8064AC80]
+    .data: [0x806C7110, 0x806C7140]
 ac_toudai.c:
     .text: [0x805BEA00, 0x805BFC28]
     .rodata: [0x8064ACB0,0x8064AD28]

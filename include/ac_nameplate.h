@@ -10,6 +10,11 @@ extern "C" {
 
 extern ACTOR_PROFILE Nameplate_Profile;
 
+typedef struct nameplate_actor_s{
+    ACTOR actor_class;
+	u8 pad[0x2D8 - 0x170];
+}NAMEPLATE_ACTOR;
+
 #ifdef __cplusplus
 }
 #endif
