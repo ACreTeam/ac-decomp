@@ -21,6 +21,7 @@
 #include "m_editEndChk_h.h"
 #include "m_haniwaPortrait_ovl_h.h"
 #include "m_timeIn_ovl_h.h"
+#include "m_repay_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -133,7 +134,7 @@ struct submenu_overlay_s {
   /* 0x9A0 */ mTI_Ovl_c* timeIn_ovl;
   /* 0x9A4 */ mEE_Ovl_c* editEndChk_ovl;
   /* 0x9A8 */ mWR_Ovl_c* warning_ovl;
-  /* 0x9AC */ void* _9AC;
+  /* 0x9AC */ mRP_Ovl_c* repay_ovl;
   /* 0x9B0 */ void* _9B0;
   /* 0x9B4 */ mMP_Overlay_c* map_ovl;
   /* 0x9B8 */ u8 _9B8[0x9D0 - 0x9B8];

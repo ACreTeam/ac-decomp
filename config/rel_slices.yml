@@ -601,6 +601,11 @@ m_map_ovl.c:
     .rodata: [0x8064B628, 0x8064B6B0]
     .data: [0x806CD9C0, 0x806CE008]
     .bss: [0x81340468, 0x81340488]
+m_repay_ovl.c:
+    .text: [0x805EC550, 0x805ED0FC]
+    .rodata: [0x8064B830, 0x8064B870]
+    .data: [0x806CE4E0, 0x806CE550]
+    .bss: [0x813405A8, 0x813405C0]
 m_timeIn_ovl.c:
     .text: [0x805FF3C4, 0x80600370]
     .rodata: [0x8064BA00, 0x8064BA58]
