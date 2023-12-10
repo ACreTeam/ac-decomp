@@ -45,6 +45,7 @@ extern int mPlib_Check_able_force_speak_label(GAME* game, ACTOR* label);
 extern int mPlib_able_submenu_type1(GAME* game);
 extern void mPlib_request_main_demo_wait_from_submenu(ACTOR* force_speak_label);
 extern void mPlib_Load_PlayerTexAndPallet(void* tex_p, void* pal_p, int idx);
+extern void mPlib_request_main_give_from_submenu(mActor_name_t disp_item, int submenu_ovl, int present_flag, int counter_flag);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 
