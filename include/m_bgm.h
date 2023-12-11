@@ -21,6 +21,7 @@ extern void mBGMPsComp_make_ps_co_quiet(u16 stop_type, s16 frames);
 extern void mBGMPsComp_volume_talk_start();
 extern void mBGMPsComp_volume_talk_end();
 extern void mBGMForce_inform_end();
+extern void mBGMPsComp_pause(int pause_mode);
 
 #ifdef __cplusplus
 }
