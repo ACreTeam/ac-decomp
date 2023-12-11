@@ -259,6 +259,7 @@ extern int mCoBG_Attr2CheckPlaceNpc(u32 attribute);
 extern int mCoBG_ExistHeightGap_KeepAndNow(xyz_t wpos);
 extern void mCoBG_GetNorm_By3Point(xyz_t* norm, xyz_t* p0, xyz_t* p1, xyz_t* p2);
 extern int mCoBG_SearchWaterLimitDistN(xyz_t* water_pos, xyz_t wpos, s16 angle, float max_dist, int divisor);
+extern f32 mCoBG_GetBalloonGroundY(const xyz_t* pos);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();
