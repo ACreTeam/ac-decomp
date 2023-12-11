@@ -516,6 +516,10 @@ m_random_field_ovl.c:
     .rodata: [0x80648ED0, 0x80648ED8]
     .data: [0x8069E918, 0x8069F070]
     .bss: [0x813010D0, 0x813013E0]
+ac_fuusen.c:
+    .text: [0x8050DAC4, 0x8050F06C]
+    .rodata: [0x80648FE8, 0x80649098]
+    .data: [0x8069F190, 0x8069F320]
 m_mail_check_ovl.c:
     .text: [0x8050F06C, 0x8050F838]
     .data: [0x8069F320, 0x8069FA40]
