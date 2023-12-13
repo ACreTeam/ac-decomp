@@ -1397,7 +1397,7 @@ static void Camera2_main_Normal_SetEndCenterPos_fromPlayer(GAME_PLAY* play, xyz_
   Camera2_GetBorderScale(play, scale, &border_x0, &border_x1, &border_z0, &border_z1);
   *end_center_pos = player->actor_class.eye.position;
 
-  if (mPlib_get_player_actor_main_index(play) == 114) {
+  if (mPlib_get_player_actor_main_index((GAME*)play) == 114) {
     if (mFI_Wpos2BlockNum(&block_x, &block_z, player->actor_class.world.position)) {
       if (block_x == 5) {
         if (block_z == 7) {

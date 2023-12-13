@@ -2,26 +2,55 @@
 #define M_BGM_H
 
 #include "types.h"
+#include "game_h.h"
+#include "m_lib.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern void mBGM_ct();
-extern void mBGM_reset();
-extern void mBGMPsComp_make_ps_lost_fanfare(u8 bgm_no, u16 unk);
-extern void mBGMPsComp_scene_mode(int scene_mode);
-extern void mBGMPsComp_make_ps_wipe(u16 ps_wipe);
-extern void mBGMPsComp_delete_ps_demo(u8 bgm_num, u16 stop_type);
-extern void mBGMPsComp_make_ps_demo(u8 bgm_no, u16 stop_type);
-extern void mBGMPsComp_museum_status(int museum_status);
+extern void mBGMPsComp_make_ps_fanfare(u8 bgm_num, u16 stop_type);
+extern void mBGMPsComp_make_ps_lost_fanfare(u8 bgm_num, u16 stop_type);
+extern void mBGMPsComp_make_ps_wipe(u16 stop_type);
+extern void mBGMPsComp_make_ps_quiet(u16 stop_type);
+extern void mBGMPsComp_make_ps_co_quiet(u16 stop_type, s16 counter);
+extern void mBGMPsComp_make_ps_fc_quiet(u16 stop_type);
+extern void mBGMPsComp_make_ps_demo(u8 bgm_num, u16 stop_type);
+extern void mBGMPsComp_make_ps_happening(u8 bgm_num, u16 stop_type);
+extern void mBGMPsComp_make_ps_room(u8 bgm_num, u16 stop_type);
 extern void mBGMPsComp_make_ps_quietField(u16 stop_type);
+extern void mBGMPsComp_make_ps_fc_quietField(u16 stop_type);
+extern void mBGMPsComp_make_ps_fieldSuddenEv(u8 bgm_num, u16 stop_type, u8 priority);
+extern void mBGMPsComp_delete_ps_fanfare(u8 bgm_num, u16 stop_type);
+extern void mBGMPsComp_delete_ps_wipe();
+extern void mBGMPsComp_delete_ps_demo(u8 bgm_num, u16 stop_type);
+extern void mBGMPsComp_delete_ps_happening(u8 bgm_num, u16 stop_type);
+extern void mBGMPsComp_delete_ps_room(u8 bgm_num, u16 stop_type);
 extern void mBGMPsComp_delete_ps_quietField();
-extern void mBGMPsComp_make_ps_co_quiet(u16 stop_type, s16 frames);
+extern void mBGMPsComp_delete_ps_fieldSuddenEv(u8 bgm_num, u16 stop_type);
+extern void mBGMPsComp_volume_fishing_start();
+extern void mBGMPsComp_volume_fishing_end();
+extern void mBGMPsComp_volume_collect_insects_start();
+extern void mBGMPsComp_volume_collect_insects_end();
 extern void mBGMPsComp_volume_talk_start();
 extern void mBGMPsComp_volume_talk_end();
+extern void mBGMPsComp_volume_boat_start();
+extern void mBGMPsComp_volume_boat_end();
+extern void mBGMPsComp_pause(int state);
+extern void mBGMPsComp_MDPlayerPos_make();
+extern void mBGMPsComp_MDPlayerPos_delete();
+extern void mBGMPsComp_MDPlayerPos_param_set(const xyz_t* pos, u16 angle, u16 md_type, u32 ongen_no);
+extern void mBGMPsComp_scene_mode(u8 mode);
+extern void mBGMPsComp_museum_status(u8 status);
+extern int mBGMPsComp_execute_bgm_num_get();
+extern void mBGMForce_inform_start();
 extern void mBGMForce_inform_end();
-extern void mBGMPsComp_pause(int pause_mode);
+extern void mBGMForce_room_nonstop_start();
+extern void mBGM_main(GAME* game);
+extern void mBGM_ct();
+extern void mBGM_init();
+extern void mBGM_cleanup();
+extern void mBGM_reset();
 
 #ifdef __cplusplus
 }
