@@ -439,7 +439,7 @@ static int wait_talk_start() {
 
   if (demo->data.talk.change_player) {
     if (
-      mPlib_get_player_actor_main_index((GAME_PLAY*)gamePT) != 65 &&
+      mPlib_get_player_actor_main_index(gamePT) != 65 &&
       mPlib_request_main_talk_type1((GAME_PLAY*)gamePT, demo->current.actor, demo->data.talk.turn, FALSE) == FALSE
     ) {
       return FALSE;

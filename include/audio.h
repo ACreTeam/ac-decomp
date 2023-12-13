@@ -19,8 +19,8 @@ extern void sAdo_Calc_MicPosition_forTrig(f32* fcalc, u16* scalc, xyz_t* pos);
 extern void sAdo_Calc_MicPosition_forLevel(f32* fcalc, u16* scalc, xyz_t* pos);
 
 extern void sAdo_GameFrame();
-extern void sAdo_BgmStart(s8 id);
-extern void sAdo_BgmStop(s16 id);
+extern void sAdo_BgmStart(u8 id);
+extern void sAdo_BgmStop(u16 id);
 extern void sAdo_SysTrgStart(u16 id);
 
 extern void sAdo_PlyWalkSe(int walk, xyz_t* pos);

@@ -49,11 +49,11 @@ extern void sAdo_GameFrame(){
     Na_GameFrame();
 }
 
-extern void sAdo_BgmStart(s8 id){
+extern void sAdo_BgmStart(u8 id){
     Na_BgmStart(id);
 }
 
-extern void sAdo_BgmStop(s16 id){
+extern void sAdo_BgmStop(u16 id){
     Na_BgmStop(id);
 }
 extern void sAdo_SysTrgStart(u16 id){
@@ -261,9 +261,9 @@ extern void sAdo_MDPlayerPos(xyz_t* pos, u16 s1, u16 s2, int p){
     Na_MDPlayerPos(scalc,s1,s2,p,fcalc);
 }
 
-extern void sAdo_BGMVolume(f32 f, u16 volume){
+extern void sAdo_BGMVolume(f32 volume, u16 vol_move_ctr){
 
-    Na_BGMVolume(f,volume);
+    Na_BGMVolume(volume, vol_move_ctr);
 }
 
 extern void sAdo_BgmCrossfadeStart(u8 b){

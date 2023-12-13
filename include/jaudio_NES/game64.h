@@ -9,9 +9,9 @@ extern "C" {
 
 extern void Na_InitAudio(void (*fatal_callback)(), u8* load_addr, size_t load_size, u8* bootsound, size_t bootsound_size, BOOL cut_flag);
 extern void Na_GameFrame();
-extern void Na_BgmStart(s8);
+extern void Na_BgmStart(u8);
 extern void Na_BgmCrossfadeStart(u8);
-extern void Na_BgmStop(s16);
+extern void Na_BgmStop(u16);
 extern void Na_SysTrgStart(u16);
 extern void Na_PlyWalkSe(int, u16,f32);
 extern void Na_PlyWalkSeRoom(int, u16, f32);

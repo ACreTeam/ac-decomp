@@ -487,6 +487,7 @@ extern int mEv_CheckFirstIntro();
 extern int mEv_CheckArbeit();
 extern int mEv_CheckTitleDemo();
 extern int mEv_check_status(int event, s16 status);
+extern int mEv_check_status_edge(s16 status);
 extern s8* mEv_get_common_area(int type, s8 id);
 extern s8* mEv_reserve_common_area(int type, s8 id);
 extern s8* mEv_get_save_area(int type, s8 id);
