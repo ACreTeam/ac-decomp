@@ -23,6 +23,7 @@
 #include "m_timeIn_ovl_h.h"
 #include "m_repay_ovl_h.h"
 #include "m_notice_ovl_h.h"
+#include "m_birthday_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -139,7 +140,11 @@ struct submenu_overlay_s {
   /* 0x9B0 */ void* _9B0;
   /* 0x9B4 */ mMP_Overlay_c* map_ovl;
   /* 0x9B8 */ mNT_Ovl_c* notice_ovl;
-  /* 0x9BC */ u8 _9BC[0x9D0 - 0x9BC];
+  /* 0x9BC */ mBR_Ovl_c* birthday_ovl;
+  /* 0x9C0 */ void* _9C0;
+  /* 0x9C4 */ void* _9C4;
+  /* 0x9C8 */ void* _9C8;
+  /* 0x9CC */ void* _9CC;
   /* 0x9D0 */ mMU_Overlay_c* music_ovl;
   /* 0x9D4 */ mBN_Overlay_c* bank_ovl;
   /* 0x9D8 */ void* _9D8;
