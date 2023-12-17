@@ -387,6 +387,11 @@ ac_boxMove.c:
 ac_boxTrick01.c:
     .text: [0x80415BF8, 0x80415C04]
     .data: [0x806818F0, 0x80681918]
+ac_handOverItem.c:
+    .text: [0x80426A50, 0x80427624]
+    .rodata: [0x806440A0, 0x806440B8]
+    .data: [0x806832C0, 0x80683D08]
+    .bss: [0x812F9C28, 0x812F9C50]
 ac_haniwa.c:
     .text: [0x80427624, 0x80428F64]
     .rodata: [0x806440B8, 0x806440F8]

@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_actor.h"
+#include "ac_tools.h"
 #include "m_scene.h"
 
 #ifdef __cplusplus
@@ -26,9 +27,16 @@ enum {
   aHOI_REQUEST_NUM
 };
 
+enum {
+  aHOI_NOT_PRESENT,
+  aHOI_PRESENT,
+
+  aHOI_PRESENT_TYPE_NUM
+};
+
 typedef struct hand_over_item_actor_s HANDOVERITEM_ACTOR;
 
-typedef ACTOR* (*aHOI_BIRTH_PROC)(mActor_name_t, int, int);
+typedef ACTOR* (*aHOI_BIRTH_PROC)(mActor_name_t, int, int, ACTOR*);
 typedef ACTOR* (*aHOI_CHG_MASTER_PROC)(ACTOR*);
 typedef int (*aHOI_CHG_REQUEST_MODE_PROC)(ACTOR*, int);
 typedef void (*aHOI_REBUILD_DMA_PROC)(Object_Exchange_c*, ACTOR*); /* yoinked from DnM, unused in AC */
@@ -49,8 +57,18 @@ typedef struct hand_over_item_clip_s {
 } aHOI_Clip_c;
 
 struct hand_over_item_actor_s {
-  ACTOR actor_class;
-  u8 _174[0x1F4 - 0x174]; /* TODO */
+  TOOLS_ACTOR tools_class;
+  int mode;
+  f32 anm_cnt;
+  xyz_t trans;
+  f32 scale;
+  u8 trans_flag;
+  u8 item_type;
+  u8 draw_type;
+  u8 se_set_flag;
+  int item;
+  int gyo_type;
+  int gyo_flag;
 };
 
 extern ACTOR_PROFILE HandOverItem_Profile;
