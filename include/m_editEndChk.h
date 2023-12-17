@@ -11,7 +11,7 @@ extern "C" {
 
 /* TODO: verify these */
 enum {
-  mEE_TYPE_DIARY,
+  mEE_TYPE_BOARD,
   mEE_TYPE_NOTICE,
   mEE_TYPE_MSCORE,
   mEE_TYPE_CPORIGINAL,
