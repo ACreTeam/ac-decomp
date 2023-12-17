@@ -52,7 +52,8 @@ enum {
   mMl_TYPE_XMAS = 1,
   mMl_TYPE_SHOP_SALE_LEAFLET = 2,
   mMl_TYPE_BROKER_SALE_LEAFLET = 3,
-
+  mMl_TYPE_4 = 4,
+  mMl_TYPE_5 = 5,
   mMl_TYPE_HRA = 6,
 
   mMl_TYPE_FISHING_CONTENST = 9,

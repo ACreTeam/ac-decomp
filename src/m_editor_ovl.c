@@ -1328,21 +1328,21 @@ static void mED_edit_func_letter_header(Submenu* submenu, mSM_MenuInfo_c* menu_i
   if (overlay->menu_info[mSM_OVL_BOARD].data0 == 3) {
     mED_edit_func_single_line(submenu, menu_info);
   }
-  else if (board_ovl->_02 != 1) {
+  else if (board_ovl->header_pos != mBD_HEADER_POS_ON_NAME) {
     s16 len = editor_ovl->now_str_len;
 
     if (
       board_ovl->mail.content.header_back_start == editor_ovl->cursor_idx &&
-      ((board_ovl->_02 == 0 && editor_ovl->command == mED_COMMAND_CURSOL_RIGHT) ||
-       (board_ovl->_02 == 2 && (editor_ovl->command == mED_COMMAND_CURSOL_LEFT || editor_ovl->command == mED_COMMAND_BACKSPACE)))
+      ((board_ovl->header_pos == mBD_HEADER_POS_PRE_NAME && editor_ovl->command == mED_COMMAND_CURSOL_RIGHT) ||
+       (board_ovl->header_pos == mBD_HEADER_POS_POST_NAME && (editor_ovl->command == mED_COMMAND_CURSOL_LEFT || editor_ovl->command == mED_COMMAND_BACKSPACE)))
     ) {
-      board_ovl->_02 = 1;
+      board_ovl->header_pos = mBD_HEADER_POS_ON_NAME;
       editor_ovl->command_processed = TRUE;
     }
     else {
       mED_edit_func_single_line(submenu, menu_info);
 
-      if (board_ovl->_02 == 0) {
+      if (board_ovl->header_pos == mBD_HEADER_POS_PRE_NAME) {
         if (len > editor_ovl->now_str_len) {
           board_ovl->mail.content.header_back_start --;
         }
@@ -1502,7 +1502,7 @@ static void mED_move_letter_table(mED_Ovl_c* editor_ovl, mBD_Ovl_c* board_ovl, S
   int next_field;
   int upper;
 
-  if (field == mBD_FIELD_HEADER && board_ovl->_02 == 1) {
+  if (field == mBD_FIELD_HEADER && board_ovl->header_pos == mBD_HEADER_POS_ON_NAME) {
     return;
   }
 
@@ -1524,7 +1524,7 @@ static void mED_move_letter_table(mED_Ovl_c* editor_ovl, mBD_Ovl_c* board_ovl, S
 
   editor_ovl->command_processed = TRUE;
   board_ovl->field = next_field;
-  board_ovl->_02 = 0;
+  board_ovl->header_pos = mBD_HEADER_POS_PRE_NAME;
   editor_ovl->input_length = letter_table_col[next_field];
   editor_ovl->line_width = letter_table_width[next_field];
   menu_info->data3 = letter_table_width[next_field];

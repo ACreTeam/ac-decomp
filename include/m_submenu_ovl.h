@@ -24,6 +24,7 @@
 #include "m_repay_ovl_h.h"
 #include "m_notice_ovl_h.h"
 #include "m_birthday_ovl_h.h"
+#include "m_tag_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -124,7 +125,7 @@ struct submenu_overlay_s {
   /* 0x970 */ void* _970;
   /* 0x974 */ void* _974;
   /* 0x978 */ void* _978;
-  /* 0x97C */ void* _97C;
+  /* 0x97C */ mTG_Ovl_c* tag_ovl;
   /* 0x980 */ void* _980;
   /* 0x984 */ mHP_Ovl_c* hanwiaPortrait_ovl;
   /* 0x988 */ void* inventory_ovl;
