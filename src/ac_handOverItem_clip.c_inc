@@ -1,0 +1,87 @@
+static ACTOR* aHOI_birth_proc(mActor_name_t item, int after_mode, int present_flag, ACTOR* master) {
+  ACTOR* speaker;
+  ACTOR* listener;
+
+  if (Common_Get(clip).handOverItem_clip->master_actor != NULL) {
+    return NULL;
+  }
+
+  if (mDemo_Get_Talk_Actors(&speaker, &listener) == FALSE) {
+    return NULL;
+  }
+
+  Common_Get(clip).handOverItem_clip->master_actor = master;
+
+  if (speaker != master) {
+    Common_Get(clip).handOverItem_clip->target_actor = speaker;
+  }
+  else {
+    Common_Get(clip).handOverItem_clip->target_actor = listener;
+  }
+
+  Common_Get(clip).handOverItem_clip->item = item;
+
+  if (after_mode != 5 && after_mode != 6 && after_mode != 7 && after_mode != 8) {
+    after_mode = 7;
+  }
+
+  Common_Get(clip).handOverItem_clip->player_after_mode = after_mode;
+  Common_Get(clip).handOverItem_clip->present_flag = present_flag;
+  Common_Get(clip).handOverItem_clip->master_changed_flag = FALSE;
+  mMsg_Set_LockContinue(mMsg_Get_base_window_p());
+  return (ACTOR*)Common_Get(clip).handOverItem_clip->handOverItem_p;
+}
+
+static ACTOR* aHOI_chg_master_proc(ACTOR* master) {
+  ACTOR* actor = NULL;
+
+  if (master == Common_Get(clip).handOverItem_clip->target_actor) {
+    switch (Common_Get(clip).handOverItem_clip->request_mode) {
+      case aHOI_REQUEST_TRANS_WAIT:
+      case aHOI_REQUEST_RETURN_WAIT:
+      {
+        Common_Get(clip).handOverItem_clip->target_actor = Common_Get(clip).handOverItem_clip->master_actor;
+        Common_Get(clip).handOverItem_clip->master_actor = master;
+        Common_Get(clip).handOverItem_clip->request_mode = aHOI_REQUEST_GET;
+        Common_Get(clip).handOverItem_clip->master_changed_flag = TRUE;
+        actor = (ACTOR*)Common_Get(clip).handOverItem_clip->handOverItem_p;
+        break;
+      }
+    }
+  }
+
+  return actor;
+}
+
+static int aHOI_chg_request_mode_proc(ACTOR* master, int request_mode) {
+  int res = FALSE;
+
+  if (master == Common_Get(clip).handOverItem_clip->master_actor) {
+    Common_Get(clip).handOverItem_clip->request_mode = request_mode;
+    res = TRUE;
+  }
+
+  return res;
+}
+
+static void aHOI_init_clip_area(ACTOR* actorx, GAME* game) {
+  HANDOVERITEM_ACTOR* handOverItem = (HANDOVERITEM_ACTOR*)actorx;
+
+  if (Common_Get(clip).handOverItem_clip == NULL) {
+    Common_Get(clip).handOverItem_clip = &aHOI_clip;
+    bzero(&aHOI_clip, sizeof(aHOI_Clip_c));
+    Common_Get(clip).handOverItem_clip->birth_proc = &aHOI_birth_proc;
+    Common_Get(clip).handOverItem_clip->chg_master_proc = &aHOI_chg_master_proc;
+    Common_Get(clip).handOverItem_clip->chg_request_mode_proc = &aHOI_chg_request_mode_proc;
+    Common_Get(clip).handOverItem_clip->request_mode = aHOI_REQUEST_NO_REQUEST;
+    Common_Get(clip).handOverItem_clip->item = EMPTY_NO;
+    Common_Get(clip).handOverItem_clip->master_actor = NULL;
+    Common_Get(clip).handOverItem_clip->handOverItem_p = handOverItem;
+  }
+}
+
+static void aHOI_free_clip_area() {
+  if (Common_Get(clip).handOverItem_clip != NULL) {
+    Common_Get(clip).handOverItem_clip = NULL;
+  }
+}

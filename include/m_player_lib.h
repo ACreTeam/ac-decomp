@@ -48,6 +48,7 @@ extern void mPlib_Load_PlayerTexAndPallet(void* tex_p, void* pal_p, int idx);
 extern void mPlib_request_main_give_from_submenu(mActor_name_t disp_item, int submenu_ovl, int present_flag, int counter_flag);
 extern int mPlib_Check_tree_shaken_big(const xyz_t* pos);
 extern int mPlib_Check_tree_shaken_little(const xyz_t* pos);
+extern int mPlib_request_main_recieve_wait_type1(GAME* game, mActor_name_t item, int counter_flag);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 

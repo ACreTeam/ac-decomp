@@ -169,11 +169,17 @@ extern s16 actor_profile_table[];
 extern s16 props_profile_table[];
 extern u8 npc_looks_table[];
 
-extern int mNT_check_unknown(mActor_name_t item_no);
-extern int FGTreeType_check(mActor_name_t tree);
-extern mActor_name_t bg_item_fg_sub_tree_grow(mActor_name_t tree, int past_days, int check_plant);
-extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
+extern int mNT_get_itemTableNo(mActor_name_t item);
 extern mActor_name_t mNT_FishIdx2FishItemNo(int idx);
+extern mActor_name_t bg_item_fg_sub(mActor_name_t item, s16 flag);
+extern mActor_name_t bg_item_fg_sub_tree_grow(mActor_name_t item, int past_days, int check_plant);
+extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item);
+extern mNT_offset_table_c* obj_hight_table_item0_nogrow(mActor_name_t item);
+extern int FGTreeType_check(mActor_name_t tree);
+extern int mNT_ItIsStump(mActor_name_t actor);
+extern int mNT_ItIsStoneCoin10(mActor_name_t actor);
+extern int mNT_ItIsReserveDummy(mActor_name_t actor);
+extern int mNT_check_unknown(mActor_name_t item_no);
 
 /* Retrieve the item actor's category */
 #define ITEM_NAME_GET_TYPE(n) (((n) & 0xF000) >> 12)

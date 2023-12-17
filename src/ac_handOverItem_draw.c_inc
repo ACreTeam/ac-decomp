@@ -1,0 +1,113 @@
+static int aHOI_chase_pos(ACTOR* actorx, xyz_t* chase_pos) {
+  HANDOVERITEM_ACTOR* handOverItem = (HANDOVERITEM_ACTOR*)actorx;
+  s16 angle_x;
+  s16 angle_y;
+  f32 dist_x;
+  f32 dist_y;
+  f32 dist_z;
+  f32 sin_x;
+  f32 cos_x;
+  f32 sin_y;
+  f32 cos_y;
+  int res = TRUE;
+
+  dist_x = actorx->world.position.x - chase_pos->x;
+  dist_y = actorx->world.position.y - chase_pos->y;
+  dist_z = actorx->world.position.z - chase_pos->z;
+
+  angle_x = atans_table(dist_y, dist_z);
+  angle_y = atans_table(dist_z, dist_x);
+
+  sin_x = sin_s(angle_x);
+  cos_x = cos_s(angle_x);
+  sin_y = sin_s(angle_y);
+  cos_y = cos_s(angle_y);
+
+  sin_y = ABS(sin_y * 2.0f * sin_x);
+  cos_x = ABS(cos_x * 2.0f);
+  sin_x = ABS(cos_y * 2.0f * sin_x);
+
+  res &= chase_f(&actorx->world.position.x, chase_pos->x, sin_y * 0.5f);
+  res &= chase_f(&actorx->world.position.y, chase_pos->y, cos_x * 0.5f);
+  res &= chase_f(&actorx->world.position.z, chase_pos->z, sin_x * 0.5f);
+  xyz_t_move(chase_pos, &actorx->world.position);
+
+  if (res == TRUE) {
+    handOverItem->trans_flag = FALSE; /* finished translational movement */
+  }
+
+  return res;
+}
+
+static void aHOI_actor_draw(ACTOR* actorx, GAME* game) {
+  static xyz_t dummy = { 0.0f, 0.0f, 0.0f }; /* unused but left in data */
+  HANDOVERITEM_ACTOR* handOverItem = (HANDOVERITEM_ACTOR*)actorx;
+  GAME_PLAY* play = (GAME_PLAY*)game;
+  // Object_Exchange exchange; ?
+  ACTOR* master = Common_Get(clip).handOverItem_clip->master_actor;
+  GRAPH* graph = game->graph;
+  f32 scale = handOverItem->scale * 0.01f;
+  xyz_t why_is_this_here;
+  xyz_t chase_pos;
+  Gfx* mode_dl = mode_DL_table[handOverItem->draw_type];
+  Gfx* vtx_dl = vtx_DL_table[handOverItem->draw_type];
+  Gfx* gfx;
+
+  if (
+    handOverItem->draw_type == mNT_ITEM_TYPE_NONE ||
+    master == NULL ||
+    handOverItem->tools_class.init_matrix == FALSE
+  ) {
+    handOverItem->gyo_flag = FALSE;
+  }
+  else {
+    Matrix_RotateY(master->shape_info.rotation.y + DEG2SHORT_ANGLE(-90.0f), 0);
+    Matrix_translate(handOverItem->trans.x, handOverItem->trans.y, handOverItem->trans.z, 1);
+    Matrix_Position_Zero(&why_is_this_here);
+    Matrix_put(&handOverItem->tools_class.matrix_work);
+    Matrix_Position_Zero(&chase_pos);
+
+    chase_pos.x += why_is_this_here.x;
+    chase_pos.y += why_is_this_here.y;
+    chase_pos.z += why_is_this_here.z;
+
+    if (handOverItem->trans_flag == FALSE) {
+      xyz_t_move(&actorx->world.position, &chase_pos); /* no translation */
+    }
+    else {
+      aHOI_chase_pos(actorx, &chase_pos);
+    }
+
+    Matrix_translate(chase_pos.x, chase_pos.y, chase_pos.z, 0);
+    _texture_z_light_fog_prim(graph);
+
+    if (handOverItem->item_type == aHOI_ITEM_TYPE_FISH) {
+      if (handOverItem->gyo_flag == FALSE) {
+        handOverItem->gyo_type = ITEM_NAME_GET_INDEX(handOverItem->item);
+        handOverItem->gyo_flag = TRUE;
+      }
+
+      Matrix_scale(scale, scale, scale, 1);
+      OPEN_DISP(graph);
+      gfx = NOW_POLY_OPA_DISP;
+
+      gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+      gSPDisplayList(gfx++, aGYO_displayList[handOverItem->gyo_type]->dl_a);
+
+      SET_POLY_OPA_DISP(gfx);
+      CLOSE_DISP(graph);
+    }
+    else {
+      Matrix_scale(scale, scale, scale, 1);
+      OPEN_DISP(graph);
+      gfx = NOW_POLY_OPA_DISP;
+
+      gSPDisplayList(gfx++, mode_dl);
+      gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+      gSPDisplayList(gfx++, vtx_dl);
+
+      SET_POLY_OPA_DISP(gfx);
+      CLOSE_DISP(graph);
+    }
+  }
+}

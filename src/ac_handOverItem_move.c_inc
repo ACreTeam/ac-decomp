@@ -1,0 +1,447 @@
+static void aHOI_set_se(HANDOVERITEM_ACTOR* handOverItem) {
+  if (handOverItem->mode == aHOI_REQUEST_TRANSFER && handOverItem->anm_cnt > 24.0f && handOverItem->se_set_flag) {
+    xyz_t sound_pos;
+
+    xyz_t_move(&sound_pos, &Common_Get(clip).handOverItem_clip->master_actor->world.position);
+    sAdo_OngenTrgStart(0x56, &sound_pos);
+    handOverItem->se_set_flag = FALSE;
+  }
+}
+
+typedef struct trans_data_s {
+  f32 frame;
+  xyz_t trans;
+} aHOI_trans_data_c;
+
+typedef struct trans_table_s {
+  int max_idx;
+  aHOI_trans_data_c* data;
+} aHOI_trans_table_c;
+
+static void aHOI_calc_trans(HANDOVERITEM_ACTOR* handOverItem) {
+  static aHOI_trans_data_c no_request_data[2] = {
+    { 0.0f, { 0.0f, 0.0f, 0.0f } },
+    { 1.0f, { 0.0f, 0.0f, 0.0f } }
+  };
+
+  static aHOI_trans_data_c transfer_data[4] = {
+    { 0.0f, { 9.0f, 0.0f, 0.0f } },
+    { 17.0f, { 9.0f, 0.0f, 0.0f } },
+    { 31.0f, { 14.0f, -9.5f, 6.0f } },
+    { 39.0f, { 14.0f, -9.5f, 6.0f } }
+  };
+
+  static aHOI_trans_data_c transfer_f_data[4] = {
+    { 0.0f, { 9.0f, 0.0f, 0.0f } },
+    { 17.0f, { 9.0f, 0.0f, 0.0f } },
+    { 31.0f, { 14.0f, -3.0f, 1.0f } },
+    { 39.0f, { 14.0f, -3.0f, 1.0f } }
+  };
+
+  static aHOI_trans_data_c trans_wait_data[2] = {
+    { 0.0f, { 14.0f, -9.5f, 6.0f } },
+    { 1.0f, { 14.0f, -9.5f, 6.0f } }
+  };
+
+  static aHOI_trans_data_c trans_wait_f_data[2] = {
+    { 0.0f, { 14.0f, -3.0f, 1.0f } },
+    { 1.0f, { 14.0f, -3.0f, 1.0f } }
+  };
+
+  static aHOI_trans_data_c eat_data[4] = {
+    { 0.0f, { 14.0f, -3.0f, 1.0f } },
+    { 10.0f, { 14.0f, -3.0f, 1.0f } },
+    { 28.0f, { 10.0f, -0.5f, 5.0f } },
+    { 59.0f, { 10.0f, -0.5f, 5.0f } }
+  };
+
+  static aHOI_trans_data_c change_data[3] = {
+    { 0.0f, { 14.0f, -9.5f, 6.0f } },
+    { 8.0f, { 9.0f, 0.0f, 0.0f } },
+    { 57.0f, { 9.0f, 0.0f, 0.0f } }
+  };
+
+  static aHOI_trans_data_c putaway_data[3] = {
+    { 0.0f, { 14.0f, -9.5f, 6.0f } },
+    { 13.0f, { 9.0f, 0.0f, 0.0f } },
+    { 31.0f, { 9.0f, 0.0f, 0.0f } }
+  };
+
+  static aHOI_trans_data_c putaway_f_data[3] = {
+    { 0.0f, { 14.0f, -3.0f, 1.0f } },
+    { 13.0f, { 9.0f, 0.0f, 0.0f } },
+    { 31.0f, { 9.0f, 0.0f, 0.0f } }
+  };
+
+  static aHOI_trans_data_c send_mail_data[3] = {
+    { 0.0f, { 9.0f, 0.0f, 0.0f } },
+    { 17.0f, { 9.0f, 0.0f, 0.0f } },
+    { 38.0f, { 24.0f, -3.0f, 2.5f } }
+  };
+
+  static aHOI_trans_data_c send_mail_wait_data[2] = {
+    { 0.0f, { 24.0f, -3.0f, 2.5f } },
+    { 1.0f, { 24.0f, -3.0f, 2.5f } }
+  };
+
+  static aHOI_trans_data_c contract1_data[2] = {
+    { 0.0f, { 31.5f, -4.0f, 2.0f } },
+    { 1.0f, { 31.5f, -4.0f, 2.0f } }
+  };
+
+  static aHOI_trans_data_c contract2_data[2] = {
+    { 0.0f, { 31.5f, -4.0f, 2.0f } },
+    { 13.0f, { 17.5f, -1.5f, 0.75f } }
+  };
+
+  static aHOI_trans_data_c contract3_data[3] = {
+    { 0.0f, { 17.5f, -1.5f, 0.75f } },
+    { 5.0f, { 17.5f, -1.5f, 0.75f } },
+    { 18.0f, { 31.5f, -4.0f, 2.0f } }
+  };
+
+  static aHOI_trans_data_c not_contract_data[3] = {
+    { 0.0f, { 17.5f, -1.5f, 0.75f } },
+    { 5.0f, { 17.5f, -1.5f, 0.75f } },
+    { 18.0f, { 31.5f, -4.0f, 2.0f } }
+  };
+
+  static aHOI_trans_data_c not_contract_wait_data[2] = {
+    { 0.0f, { 31.5f, -4.0f, 2.0f } },
+    { 1.0f, { 31.5f, -4.0f, 2.0f } }
+  };
+
+  static aHOI_trans_table_c trans_data_table[aHOI_REQUEST_NUM] = {
+    { 1, no_request_data },
+    { 3, transfer_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 3, eat_data },
+    { 2, change_data },
+    { 2, putaway_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_f_data }
+  };
+
+  static aHOI_trans_table_c trans_data_table_f[aHOI_REQUEST_NUM] = {
+    { 1, no_request_data },
+    { 3, transfer_f_data },
+    { 1, trans_wait_f_data },
+    { 1, trans_wait_f_data },
+    { 1, trans_wait_f_data },
+    { 3, eat_data },
+    { 2, change_data },
+    { 2, putaway_f_data },
+    { 1, trans_wait_f_data },
+    { 1, trans_wait_f_data },
+    { 1, trans_wait_f_data },
+    { 1, trans_wait_f_data }
+  };
+
+  static aHOI_trans_table_c trans_data_table_m[aHOI_REQUEST_NUM] = {
+    { 1, no_request_data },
+    { 2, send_mail_data },
+    { 1, send_mail_wait_data },
+    { 1, contract1_data },
+    { 1, contract2_data },
+    { 3, eat_data },
+    { 2, change_data },
+    { 2, contract3_data },
+    { 1, trans_wait_f_data },
+    { 2, not_contract_data },
+    { 1, not_contract_wait_data },
+    { 1, trans_wait_f_data }
+  };
+
+  static aHOI_trans_table_c* table[aHOI_ITEM_TYPE_NUM] = {
+    trans_data_table,
+    trans_data_table_f,
+    trans_data_table_m
+  };
+
+  aHOI_trans_table_c* tbl = &table[handOverItem->item_type][handOverItem->mode];
+  int max_idx = tbl->max_idx;
+  aHOI_trans_data_c* data = tbl->data;
+  int i;
+  xyz_t trans0;
+  xyz_t trans1;
+  f32 f = handOverItem->anm_cnt;
+  f32 step;
+
+  for (i = max_idx; i != 0; i--) {
+    if (f > data[i].frame) {
+      break;
+    }
+  }
+  
+  if (i >= max_idx) {
+    i = max_idx - 1;
+    f = data[max_idx].frame;
+  }
+
+  xyz_t_move(&trans0, &data[i + 1].trans);
+  xyz_t_move(&trans1, &data[i].trans);
+
+  /* Apply linear interpolation to translation */
+
+  /* step = (current_frame - start_frame) / (total_frames), total_frames = (end_frame - start_frame) */
+  f -= data[i].frame;
+  step = f / (data[i + 1].frame - data[i].frame);
+  handOverItem->trans.x = trans1.x + step * (trans0.x - trans1.x);
+  handOverItem->trans.y = trans1.y + step * (trans0.y - trans1.y);
+  handOverItem->trans.z = trans1.z + step * (trans0.z - trans1.z);
+}
+
+typedef struct scale_data_s {
+  f32 frame;
+  f32 scale;
+} aHOI_scale_data_c;
+
+typedef struct scale_table_s {
+  int max_idx;
+  aHOI_scale_data_c* data;
+} aHOI_scale_table_c;
+
+
+static void aHOI_calc_scale(HANDOVERITEM_ACTOR* handOverItem) {
+  static aHOI_scale_data_c no_request_data[2] = {
+    { 0.0f, 0.0f },
+    { 1.0f, 0.0f }
+  };
+
+  static aHOI_scale_data_c transfer_data[3] = {
+    { 0.0f, 0.0f },
+    { 17.0f, 0.0f },
+    { 35.0f, 1.0f }
+  };
+
+  static aHOI_scale_data_c trans_wait_data[2] = {
+    { 0.0f, 1.0f },
+    { 1.0f, 1.0f }
+  };
+
+  static aHOI_scale_data_c eat_data[2] = {
+    { 0.0f, 1.0f },
+    { 28.0f, 0.0f }
+  };
+
+  static aHOI_scale_data_c change_data[2] = {
+    { 0.0f, 1.0f },
+    { 28.0f, 0.0f }
+  };
+
+  static aHOI_scale_data_c putaway_data[2] = {
+    { 0.0f, 1.0f },
+    { 13.0f, 0.0f }
+  };
+
+  static aHOI_scale_data_c send_mail_data[2] = {
+    { 0.0f, 0.0f },
+    { 38.0f, 1.0f }
+  };
+
+  static aHOI_scale_data_c contract3_data[3] = {
+    { 0.0f, 1.0f },
+    { 5.0f, 1.0f },
+    { 18.0f, 0.0f }
+  };
+
+  static aHOI_scale_table_c scale_data_table[aHOI_REQUEST_NUM] = {
+    { 1, no_request_data },
+    { 2, transfer_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 1, eat_data },
+    { 1, change_data },
+    { 1, putaway_data},
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data }
+  };
+
+  static aHOI_scale_table_c scale_data_table_m[aHOI_REQUEST_NUM] = {
+    { 1, no_request_data },
+    { 1, send_mail_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 1, eat_data },
+    { 1, change_data },
+    { 2, contract3_data},
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data },
+    { 1, trans_wait_data }
+  };
+
+  static aHOI_scale_table_c* table[aHOI_ITEM_TYPE_NUM] = {
+    scale_data_table,
+    scale_data_table,
+    scale_data_table_m
+  };
+
+  aHOI_scale_table_c* tbl = &table[handOverItem->item_type][handOverItem->mode];
+  int max_idx = tbl->max_idx;
+  int i;
+  aHOI_scale_data_c* data = tbl->data;
+  f32 f = handOverItem->anm_cnt;
+  f32 step;
+  f32 scale;
+
+  for (i = max_idx; i != 0; i--) {
+    if (f > data[i].frame) {
+      break;
+    }
+  }
+  
+  if (i >= max_idx) {
+    i = max_idx - 1;
+    f = data[max_idx].frame;
+  }
+
+  /* Apply linear interpolation to scale */
+  scale = data[i].scale;
+  f -= data[i].frame;
+  step = (f * (data[i + 1].scale - scale));
+  handOverItem->scale = scale + step / (data[i + 1].frame - data[i].frame);
+}
+
+static void aHOI_anime_proc(HANDOVERITEM_ACTOR* handOverItem) {
+  static f32 max_anm_cnt[aHOI_REQUEST_NUM] = {
+    1.0f,
+    39.0f,
+    17.0f,
+    11.0f,
+    11.0f,
+    59.0f,
+    57.0f,
+    31.0f,
+    17.0f,
+    11.0f,
+    1.0f,
+    81.0f
+  };
+
+  static f32 max_anm_cnt_m[aHOI_REQUEST_NUM] = {
+    1.0f,
+    38.0f,
+    1.0f,
+    12.0f,
+    18.0f,
+    59.0f,
+    57.0f,
+    29.0f,
+    17.0f,
+    29.0f,
+    1.0f,
+    81.0f
+  };
+
+  static f32* table[aHOI_ITEM_TYPE_NUM] = {
+    max_anm_cnt,
+    max_anm_cnt,
+    max_anm_cnt_m
+  };
+
+  f32 anm_cnt = handOverItem->anm_cnt;
+  f32 anm_cnt_max = table[handOverItem->item_type][handOverItem->mode];
+
+  anm_cnt += 0.5f;
+  if (anm_cnt > anm_cnt_max) {
+    anm_cnt = anm_cnt_max;
+  }
+
+  handOverItem->anm_cnt = anm_cnt;
+  aHOI_calc_trans(handOverItem);
+  aHOI_calc_scale(handOverItem);
+
+  if (F32_IS_ZERO(handOverItem->scale) && anm_cnt == anm_cnt_max && Common_Get(clip).handOverItem_clip->master_actor != NULL) {
+    Common_Get(clip).handOverItem_clip->master_actor = NULL;
+    Common_Get(clip).handOverItem_clip->request_mode = aHOI_REQUEST_NO_REQUEST;
+    handOverItem->mode = aHOI_REQUEST_NO_REQUEST;
+    handOverItem->draw_type = mNT_ITEM_TYPE_NONE;
+    mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+  }
+}
+
+static int aHOI_get_item_type(HANDOVERITEM_ACTOR* handOverItem) {
+  int type = aHOI_ITEM_TYPE_ITEM; /* Show as respective 2D sprite */
+
+  /* Force all icons to mail in the post office */
+  if (handOverItem->item == ITM_FORTUNE_SLIP || Save_Get(scene_no) == SCENE_POST_OFFICE) {
+    type = aHOI_ITEM_TYPE_MAIL; /* Show as mail */
+  }
+  else if (ITEM_NAME_GET_TYPE(handOverItem->item) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_CAT(handOverItem->item) == ITEM1_CAT_FISH) {
+    type = aHOI_ITEM_TYPE_FISH; /* Show as fish model */
+  }
+
+  return type;
+}
+
+static void aHOI_actor_move(ACTOR* actorx, GAME* game) {
+  TOOLS_ACTOR* tools = (TOOLS_ACTOR*)actorx;
+  HANDOVERITEM_ACTOR* handOverItem = (HANDOVERITEM_ACTOR*)actorx;
+  mActor_name_t item;
+  int counter_flag = FALSE;
+
+  if (handOverItem->mode != Common_Get(clip).handOverItem_clip->request_mode) {
+    switch (Common_Get(clip).handOverItem_clip->request_mode) {
+      case aHOI_REQUEST_TRANSFER:
+      {
+        handOverItem->item = Common_Get(clip).handOverItem_clip->item;
+        switch (Common_Get(clip).handOverItem_clip->present_flag) {
+          case aHOI_PRESENT:
+          {
+            handOverItem->draw_type = mNT_ITEM_TYPE_PRESENT;
+            handOverItem->item_type = aHOI_ITEM_TYPE_ITEM;
+            break;
+          }
+
+          default:
+          {
+            handOverItem->draw_type = mNT_get_itemTableNo(Common_Get(clip).handOverItem_clip->item);
+            handOverItem->item_type = aHOI_get_item_type(handOverItem);
+            break;
+          }
+        }
+
+        tools->init_matrix = FALSE;
+        handOverItem->se_set_flag = TRUE;
+        handOverItem->trans_flag = FALSE;
+        break;
+      }
+
+      case aHOI_REQUEST_TRANS_WAIT:
+      case aHOI_REQUEST_RETURN_WAIT:
+      {
+        if (Common_Get(clip).handOverItem_clip->target_actor->part == ACTOR_PART_PLAYER) {
+          item = handOverItem->item;
+          if (handOverItem->item_type == aHOI_ITEM_TYPE_MAIL) {
+            counter_flag = TRUE; /* display over counter since it's mail at the post office */
+          }
+
+          mPlib_request_main_recieve_wait_type1(game, item, counter_flag);
+        }
+
+        break;
+      }
+
+      case aHOI_REQUEST_GET_PULL:
+      {
+        handOverItem->trans_flag = TRUE;
+        break;
+      }
+    }
+
+    handOverItem->mode = Common_Get(clip).handOverItem_clip->request_mode;
+    handOverItem->anm_cnt = 0.0f;
+  }
+
+  aHOI_set_se(handOverItem);
+  aHOI_anime_proc(handOverItem);
+}
