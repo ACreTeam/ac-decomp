@@ -27,7 +27,7 @@ def calculate_directory_hash(path, hash_func):
     return hasher.hexdigest()
 
 def directory_changed(path, build_dir, hash_func=hashlib.md5):
-    hash_file = os.path.join(build_dir, '.dirhash')
+    hash_file = os.path.join(build_dir, f'{os.path.basename(os.path.normpath(path))}.dirhash')
     current_hash = calculate_directory_hash(path, hash_func)
     try:
         with open(hash_file, 'r') as f:
