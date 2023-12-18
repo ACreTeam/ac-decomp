@@ -5,3 +5,4 @@ ninja_syntax
 prettytable
 python-Levenshtein
 watchdog
+pyjkernel

@@ -95,6 +95,7 @@ n.variable("iconv", c.ICONV)
 n.variable("forcefilesgen", c.FORCEFILESGEN)
 n.variable("vtxdis", c.VTXDIS)
 n.variable("pal16dis", c.PAL16DIS)
+n.variable("arctool", c.ARC_TOOL)
 n.newline()
 
 ##############
@@ -252,6 +253,12 @@ n.rule(
     "pal16dis",
     command = "$pal16dis $in $out",
     description = "pal16dis.py $in $out"
+)
+
+n.rule(
+    "arctool",
+    command = "$arctool $in $out",
+    description = "$arctool $in $out"
 )
 
 ##########
@@ -732,6 +739,18 @@ n.build(
     c.EXTERNS,
     rule = "relextern",
     inputs = c.REL_YML
+)
+
+n.build(
+    f"{c.OUTDIR}/forest_1st.arc",
+    rule = "arctool",
+    inputs = f"{c.FOREST_1STDIR}"
+)
+
+n.build(
+    f"{c.OUTDIR}/forest_2nd.arc",
+    rule = "arctool",
+    inputs = f"{c.FOREST_2NDDIR}"
 )
 
 n.build(
