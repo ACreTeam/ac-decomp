@@ -215,9 +215,9 @@ static void Actor_draw_ta_set(ACTOR* actor, GAME_PLAY* play) {
   g = play->game.graph;
   OPEN_DISP(g);
 
-  gDPSetTextureAdjustMode(NOW_POLY_OPA_DISP++, G_SPECIAL_TA_MODE, G_TA_DOLPHIN);
-  gDPSetTextureAdjustMode(NOW_SHADOW_DISP++, G_SPECIAL_TA_MODE, G_TA_DOLPHIN);
-  gDPSetTextureAdjustMode(NOW_POLY_XLU_DISP++, G_SPECIAL_TA_MODE, G_TA_DOLPHIN);
+  gDPSetTextureAdjustMode(NOW_POLY_OPA_DISP++, G_TA_DOLPHIN);
+  gDPSetTextureAdjustMode(NOW_SHADOW_DISP++, G_TA_DOLPHIN);
+  gDPSetTextureAdjustMode(NOW_POLY_XLU_DISP++, G_TA_DOLPHIN);
 
   gDPSetTexEdgeAlpha(NOW_POLY_OPA_DISP++, 127);
   gDPSetTexEdgeAlpha(NOW_SHADOW_DISP++, 127);
@@ -236,9 +236,9 @@ static void Actor_draw_ta_clr(ACTOR* actor, GAME_PLAY* play) {
   g = play->game.graph;
   OPEN_DISP(g);
 
-  gDPSetTextureAdjustMode(NOW_POLY_OPA_DISP++, G_SPECIAL_TA_MODE, G_TA_N64);
-  gDPSetTextureAdjustMode(NOW_SHADOW_DISP++, G_SPECIAL_TA_MODE, G_TA_N64);
-  gDPSetTextureAdjustMode(NOW_POLY_XLU_DISP++, G_SPECIAL_TA_MODE, G_TA_N64);
+  gDPSetTextureAdjustMode(NOW_POLY_OPA_DISP++, G_TA_N64);
+  gDPSetTextureAdjustMode(NOW_SHADOW_DISP++, G_TA_N64);
+  gDPSetTextureAdjustMode(NOW_POLY_XLU_DISP++, G_TA_N64);
 
   gDPSetTexEdgeAlpha(NOW_POLY_OPA_DISP++, 144);
   gDPSetTexEdgeAlpha(NOW_SHADOW_DISP++, 144);

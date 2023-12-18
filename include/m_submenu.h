@@ -88,6 +88,28 @@ enum submenu_overlay {
   mSM_OVL_NUM
 };
 
+enum {
+  mSM_IV_OPEN_NORMAL,
+  mSM_IV_OPEN_MAILBOX,
+  mSM_IV_OPEN_HANIWA_ENTRUST,
+  mSM_IV_OPEN_HANIWA_TAKE,
+  mSM_IV_OPEN_QUEST,
+  mSM_IV_OPEN_SELL,
+  mSM_IV_OPEN_GIVE,
+  mSM_IV_OPEN_SEND_MAIL,
+  mSM_IV_OPEN_TAKE,
+  mSM_IV_OPEN_PUTIN_FTR,
+  mSM_IV_OPEN_MINIDISK,
+  mSM_IV_OPEN_SHRINE,
+  mSM_IV_OPEN_12,
+  mSM_IV_OPEN_EXCHANGE,
+  mSM_IV_OPEN_14,
+  mSM_IV_OPEN_CURATOR,
+  mSM_IV_OPEN_16,
+
+  mSM_IV_OPEN_NUM
+};
+
 typedef struct submenu_item_s {
   mActor_name_t item;
   u8 slot_no;

@@ -261,6 +261,7 @@ extern int mMsg_request_main_appear(mMsg_Window_c* msg_win, ACTOR* other_actor, 
 extern int mMsg_Check_main_hide(mMsg_Window_c* msg_win);
 extern int mMsg_sound_voice_get_for_editor(int code);
 extern int mMsg_sound_spec_change_voice(mMsg_Window_c* msg_win);
+extern void mMsg_request_main_forceoff();
 
 #ifdef __cplusplus
 }

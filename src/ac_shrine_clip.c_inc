@@ -1,0 +1,18 @@
+static void aSHR_anime_play() {
+  aSHR_GET_CLIP()->play_flag = TRUE;
+}
+
+static void aSHR_init_clip_area() {
+  if (aSHR_GET_CLIP() == NULL) {
+    aSHR_SET_CLIP(&aSHR_clip);
+    aSHR_GET_CLIP()->anime_play_proc = &aSHR_anime_play;
+    aSHR_GET_CLIP()->play_flag = FALSE;
+    aSHR_GET_CLIP()->hem_flag = FALSE;
+  }
+}
+
+static void aSHR_free_clip_area() {
+  if (aSHR_GET_CLIP() != NULL) {
+    aSHR_SET_CLIP(NULL);
+  }
+}

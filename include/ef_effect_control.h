@@ -16,6 +16,8 @@ enum effect_type {
   eEC_EFFECT_WARAU,
   /* TODO: finish */
   eEC_DOUZOU_LIGHT = 101,
+  eEC_HEM_LIGHT = 123,
+  
   eEC_EFFECT_NUM = 126
 };
 
