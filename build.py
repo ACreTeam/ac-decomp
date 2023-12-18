@@ -2,6 +2,7 @@ import subprocess
 import sys
 import os
 import hashlib
+import argparse
 
 # List of Ninja build targets
 NINJA_BUILD_TARGETS = [ ['src/data/bin1', 'out/forest_1st.arc', 'dump/forest_1st.arc'], ['src/data/bin2', 'out/forest_2nd.arc', 'dump/forest_2nd.arc'] ]
@@ -61,14 +62,31 @@ def check_and_dump_arc(target, dump):
             sys.exit(1)
 
 if __name__ == "__main__":
-    for target in NINJA_BUILD_TARGETS:
-        check_and_dump_arc(target[0], target[2])
-        if directory_changed(target[0], 'build'):
-            run_ninja_build(target[1])
-        else:
-            print(f"No changes in {target[0]}, skipping build.")
-    try:
-        subprocess.run(['ninja'], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error running Ninja build")
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description='Build Animal Crossing')
+    parser.add_argument('--clean', help='Cleans all build artifacts', required=False, action='store_true')
+
+    args = parser.parse_args()
+
+    if args.clean:
+        for target in NINJA_BUILD_TARGETS:
+            rel_path = f'{os.path.basename(os.path.normpath(target[0]))}.dirhash'
+            path = os.path.join('build', rel_path)
+            if os.path.exists(path):
+                os.remove(path)
+        try:
+            subprocess.run(['ninja', '-t', 'clean'], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error running ninja -t clean")
+            sys.exit(1)
+    else:
+        for target in NINJA_BUILD_TARGETS:
+            check_and_dump_arc(target[0], target[2])
+            if directory_changed(target[0], 'build'):
+                run_ninja_build(target[1])
+            else:
+                print(f"No changes in {target[0]}, skipping build.")
+        try:
+            subprocess.run(['ninja'], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error running Ninja build")
+            sys.exit(1)
