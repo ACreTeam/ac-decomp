@@ -566,6 +566,11 @@ ac_radio.c:
     .text: [0x805B887C,0x805B8C7C]
     .rodata: [0x8064AB58,0x8064AB68]
     .data: [0x806C6558,0x806C65A0]
+ac_shrine.c:
+    .text: [0x805BA4D8, 0x805BB8D0]
+    .rodata: [0x8064ABD0, 0x8064AC18]
+    .data: [0x806C6838, 0x806C6930]
+    .bss: [0x813280C0, 0x813280E8]
 ac_structure.c:
     .text: [0x805BCA00, 0x805BD06C]
     .rodata: [0x8064AC30, 0x8064AC38]

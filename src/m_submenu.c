@@ -637,7 +637,7 @@ static int mSM_check_item_for_curator(int slot_no, int param_2) {
 typedef int (*mSM_INVENTORY_CHECK_PROC)(int, int);
 
 extern int mSM_check_open_inventory_itemlist(int type, int param_2) {
-  static mSM_INVENTORY_CHECK_PROC check_process[] = {
+  static mSM_INVENTORY_CHECK_PROC check_process[mSM_IV_OPEN_NUM] = {
     NULL,
     NULL,
     &mSM_check_item_for_entrust,

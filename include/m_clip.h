@@ -62,7 +62,7 @@ typedef struct clip_s {
   /* 0x0BC */ aAR_Clip_c* arrange_room_clip;
   /* 0x0C0 */ void* _0C0;
   /* 0x0C4 */ void* _0C4;
-  /* 0x0C8 */ void* _0C8;
+  /* 0x0C8 */ void* shrine_clip;
   /* 0x0CC */ void* _0CC;
   /* 0x0D0 */ void* _0D0;
   /* 0x0D4 */ CLIP_NONE_PROC ball_redma_proc; /* removed in DnM+ */

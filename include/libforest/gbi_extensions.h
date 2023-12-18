@@ -581,16 +581,16 @@ do { \
   (u32)(_SHIFTL(alpha, 0, 8)) \
 }}
 
-#define gDPSetTextureAdjustMode(pkt, type, mode) \
+#define gDPSetTextureAdjustMode(pkt, mode) \
 do { \
   Gfx* _g = (Gfx*)(pkt); \
-  _g->words.w0 = (u32)(_SHIFTL(G_SPECIAL_1, 24, 8) | _SHIFTL(type, 16, 8) | _SHIFTL(mode, 0, 16)); \
+  _g->words.w0 = (u32)(_SHIFTL(G_SPECIAL_1, 24, 8) | _SHIFTL(G_SPECIAL_TA_MODE, 16, 8) | _SHIFTL(mode, 0, 16)); \
   _g->words.w1 = (u32)0; \
 } while(0)
 
-#define gsDPSetTextureAdjustMode(type, mode) \
+#define gsDPSetTextureAdjustMode(mode) \
 {{ \
-  (u32)(_SHIFTL(G_SPECIAL_1, 24, 8) | _SHIFTL(type, 16, 8) | _SHIFTL(mode, 0, 16)), \
+  (u32)(_SHIFTL(G_SPECIAL_1, 24, 8) | _SHIFTL(G_SPECIAL_TA_MODE, 16, 8) | _SHIFTL(mode, 0, 16)), \
   (u32)0 \
 }}
 

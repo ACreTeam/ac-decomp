@@ -1,0 +1,132 @@
+static void aSHR_actor_draw_ta_set(ACTOR* actorx, GAME* game) {
+  GRAPH* graph = game->graph;
+
+  OPEN_DISP(graph);
+
+  gDPSetTextureAdjustMode(NOW_POLY_OPA_DISP++, G_TA_DOLPHIN);
+  gDPSetTextureAdjustMode(NOW_SHADOW_DISP++, G_TA_DOLPHIN);
+  gDPSetTexEdgeAlpha(NOW_POLY_OPA_DISP++, 112);
+  gDPSetTexEdgeAlpha(NOW_SHADOW_DISP++, 112);
+  
+  CLOSE_DISP(graph);
+}
+
+static void aSHR_actor_draw_ta_clr(ACTOR* actorx, GAME* game) {
+  GRAPH* graph = game->graph;
+
+  OPEN_DISP(graph);
+
+  gDPSetTextureAdjustMode(NOW_POLY_OPA_DISP++, G_TA_N64);
+  gDPSetTextureAdjustMode(NOW_SHADOW_DISP++, G_TA_N64);
+  gDPSetTexEdgeAlpha(NOW_POLY_OPA_DISP++, 144);
+  gDPSetTexEdgeAlpha(NOW_SHADOW_DISP++, 144);
+  
+  CLOSE_DISP(graph);
+}
+
+static Gfx* aSHR_GetTwoTileGfx(int x1, int y1, int x2, int y2, GAME* game) {
+  return two_tex_scroll_dolphin(game->graph, 0, x1, y1, 32, 16, 1, x2, y2, 32, 16);
+}
+
+static Gfx* aSHR_GetTwoTileGfx2(int x, int y, GAME* game) {
+  return two_tex_scroll_dolphin(game->graph, 0, x, y, 16, 64, 1, 0, 0, 0, 0);
+}
+
+extern u8 obj_s_tree3_leaf_tex[];
+extern u8 obj_w_tree_leaf_tex[];
+extern u8 obj_w_tree_leaf_tex[];
+extern u8 obj_f_tree_leaf_tex[];
+
+static u8* leaf_texture_table[] = {
+  obj_s_tree3_leaf_tex,
+  obj_w_tree_leaf_tex,
+  obj_w_tree_leaf_tex,
+  obj_f_tree_leaf_tex
+};
+
+extern Gfx obj_w_shrine_bubble_model[];
+extern Gfx obj_w_shrine_trunk_model[];
+extern Gfx obj_w_shrine_leaf_model[];
+extern Gfx obj_w_shrine_figure_model[];
+extern Gfx obj_w_shrine_base_model[];
+extern Gfx obj_w_shrine_statue_model[];
+extern Gfx obj_w_shrine_water_model[];
+extern Gfx obj_w_shrine_sprash_model[];
+
+extern Gfx obj_s_shrine_bubble_model[];
+extern Gfx obj_s_shrine_trunk_model[];
+extern Gfx obj_s_shrine_leaf_model[];
+extern Gfx obj_s_shrine_figure_model[];
+extern Gfx obj_s_shrine_base_model[];
+extern Gfx obj_s_shrine_statue_model[];
+extern Gfx obj_s_shrine_water_model[];
+extern Gfx obj_s_shrine_sprash_model[];
+
+static void aSHR_actor_draw(ACTOR* actorx, GAME* game) {
+  SHRINE_ACTOR* shrine = (SHRINE_ACTOR*)actorx;
+  GAME_PLAY* play = (GAME_PLAY*)game;
+  GRAPH* graph = game->graph;
+  u16* pal = (*Common_Get(clip).structure_clip->get_pal_segment_proc)(aSTR_PAL_SHRINE);
+  Gfx* two_tile0 = aSHR_GetTwoTileGfx(-(play->game_frame * 50), 0, 0, -(play->game_frame * 13), game);
+  Gfx* two_tile1 = aSHR_GetTwoTileGfx(0, -(play->game_frame * -5), 0, -(play->game_frame * -3), game);
+  Gfx* two_tile2 = aSHR_GetTwoTileGfx2(0, -(play->game_frame * 12), game);
+  u16* dol_pal = g_fdinfo->field_palette.cedar_tree_pal;
+  u8* tex = leaf_texture_table[shrine->structure_class.arg1 & 3];
+
+  if (Camera2_CheckCullingMode() == FALSE || Camera2_CheckEnterCullingArea(actorx->world.position.x, actorx->world.position.z, 105.0f) == FALSE) {
+    GRAPH* graph2; // probably from a macro
+
+    _texture_z_light_fog_prim_npc(graph);
+    _texture_z_light_fog_prim_xlu(game->graph);
+    _texture_z_light_fog_prim_shadow(game->graph);
+    aSHR_actor_draw_ta_set(actorx, game);
+    
+    graph2 = game->graph;
+    OPEN_DISP(graph2);
+
+    gSPMatrix(NOW_POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPMatrix(NOW_POLY_XLU_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPMatrix(NOW_SHADOW_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+    gSPSegment(NOW_POLY_XLU_DISP++, G_MWO_SEGMENT_C, two_tile0);
+    gSPSegment(NOW_POLY_XLU_DISP++, G_MWO_SEGMENT_D, two_tile1);
+    gSPSegment(NOW_POLY_XLU_DISP++, G_MWO_SEGMENT_B, two_tile2);
+
+    gSPSegment(NOW_POLY_OPA_DISP++, G_MWO_SEGMENT_9, dol_pal);
+    gSPSegment(NOW_POLY_OPA_DISP++, G_MWO_SEGMENT_A, tex);
+
+    if (shrine->structure_class.season == mTM_SEASON_WINTER) {
+      /* Opaque */
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_w_shrine_bubble_model);
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_w_shrine_trunk_model);
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_w_shrine_leaf_model);
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_w_shrine_figure_model);
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_w_shrine_base_model);
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_w_shrine_statue_model);
+
+      /* Translucent */
+      gSPDisplayList(NOW_POLY_XLU_DISP++, obj_w_shrine_water_model);
+      gSPDisplayList(NOW_POLY_XLU_DISP++, obj_w_shrine_sprash_model);
+      gSPDisplayList(NOW_POLY_XLU_DISP++, obj_w_shrine_bubble_model);
+    }
+    else {
+      /* Opaque */
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_s_shrine_bubble_model);
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_s_shrine_trunk_model);
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_s_shrine_leaf_model);
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_s_shrine_figure_model);
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_s_shrine_base_model);
+      gSPDisplayList(NOW_POLY_OPA_DISP++, obj_s_shrine_statue_model);
+
+      /* Translucent */
+      gSPDisplayList(NOW_POLY_XLU_DISP++, obj_s_shrine_water_model);
+      gSPDisplayList(NOW_POLY_XLU_DISP++, obj_s_shrine_sprash_model);
+      gSPDisplayList(NOW_POLY_XLU_DISP++, obj_s_shrine_bubble_model);
+    }
+
+    CLOSE_DISP(graph2);
+
+    (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, &aSHR_shadow_data, FALSE);
+    aSHR_actor_draw_ta_clr(actorx, game);
+  }
+}

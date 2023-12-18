@@ -41,7 +41,7 @@ extern u8 sAdo_MessageSpeedGet();
 extern void sAdo_SysLevStop(u8 id);
 extern void sAdo_SysLevStart(u8 id);
 
-extern void sAdo_OngenPos(u8 p1, u8 p2, xyz_t* pos);
+extern void sAdo_OngenPos(u32 p1, u8 p2, xyz_t* pos);
 extern void sAdo_OngenTrgStart(u16 id, xyz_t* pos);
 
 extern void sAdo_SetOutMode(u8 mode);

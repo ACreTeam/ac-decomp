@@ -1012,7 +1012,7 @@ static void mMP_set_map_dl(GRAPH* graph, mMP_Overlay_c* map_ovl) {
 
   gfx = NOW_POLY_OPA_DISP;
   
-  gDPSetTextureAdjustMode(gfx++, G_SPECIAL_TA_MODE, G_TA_DOLPHIN);
+  gDPSetTextureAdjustMode(gfx++, G_TA_DOLPHIN);
   gSPDisplayList(gfx++, kan_tizu_mode);
   
   Matrix_push();
@@ -1035,7 +1035,7 @@ static void mMP_set_map_dl(GRAPH* graph, mMP_Overlay_c* map_ovl) {
   }
 
   Matrix_pull();
-  gDPSetTextureAdjustMode(gfx++, G_SPECIAL_TA_MODE, G_TA_N64);
+  gDPSetTextureAdjustMode(gfx++, G_TA_N64);
 
   SET_POLY_OPA_DISP(gfx);
   CLOSE_DISP(graph);

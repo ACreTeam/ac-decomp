@@ -24,7 +24,7 @@ extern void Na_MessageSpeed(u8);
 extern u8 Na_MessageSpeedGet();
 extern void Na_SysLevStart(u8);
 extern void Na_SysLevStop(u8);
-extern void Na_OngenPos(u8,u8,u16,f32);
+extern void Na_OngenPos(u32,u8,u16,f32);
 extern void Na_OngenTrgStart(u16,u16,f32);
 extern void Na_SetOutMode(u8);
 extern void Na_SetVoiceMode(u8);

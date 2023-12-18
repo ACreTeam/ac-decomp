@@ -135,7 +135,7 @@ extern void sAdo_SysLevStop(u8 id){
     Na_SysLevStop(id);
 }
 
-extern void sAdo_OngenPos(u8 p1, u8 p2, xyz_t* pos){
+extern void sAdo_OngenPos(u32 p1, u8 p2, xyz_t* pos){
 
     u16 scalc;
     f32 fcalc;
