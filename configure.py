@@ -257,8 +257,8 @@ n.rule(
 
 n.rule(
     "arctool",
-    command = "$arctool $in $out",
-    description = "$arctool $in $out"
+    command = "$arctool -v $in $out",
+    description = "$arctool -v $in $out"
 )
 
 ##########

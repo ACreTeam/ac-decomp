@@ -50,13 +50,16 @@ def run_ninja_build(target):
         print(f"Error running Ninja build for target {target}: {e}")
         sys.exit(1)
 
-def check_and_dump_arc(target, dump):
+def check_and_dump_arc(target, dump, verbose=False):
     if not os.path.exists(target):
         assert os.path.exists(dump), f"Please add missing file: {dump}"
         print(f'Dumping {dump}')
 
         try:
-            subprocess.run(['python3', 'tools/arc_tool.py', dump, os.path.dirname(target)])
+            if verbose:
+                subprocess.run(['python3', 'tools/arc_tool.py', dump, os.path.dirname(target)])
+            else:
+                subprocess.run(['python3', 'tools/arc_tool.py', '-v', dump, os.path.dirname(target)])
         except subprocess.CalledProcessError as e:
             print(f"Error running arc_tool")
             sys.exit(1)
@@ -64,6 +67,7 @@ def check_and_dump_arc(target, dump):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Build Animal Crossing')
     parser.add_argument('--clean', help='Cleans all build artifacts', required=False, action='store_true')
+    parser.add_argument('-v', help='Enable verbose logging', required=False, action='store_true')
 
     args = parser.parse_args()
 
@@ -80,13 +84,16 @@ if __name__ == "__main__":
             sys.exit(1)
     else:
         for target in NINJA_BUILD_TARGETS:
-            check_and_dump_arc(target[0], target[2])
+            check_and_dump_arc(target[0], target[2], args.v)
             if directory_changed(target[0], 'build'):
                 run_ninja_build(target[1])
             else:
                 print(f"No changes in {target[0]}, skipping build.")
         try:
-            subprocess.run(['ninja'], check=True)
+            if args.v:
+                subprocess.run(['ninja', '-v'], check=True)
+            else:
+                subprocess.run(['ninja'], check=True)
         except subprocess.CalledProcessError as e:
             print(f"Error running Ninja build")
             sys.exit(1)
