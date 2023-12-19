@@ -52,5 +52,5 @@ ENV PATH="/ac-decomp/tools:${PATH}"
 ENV N64_SDK="/N64_SDK"
 ENV DEVKITPPC="/opt/devkitpro/devkitPPC"
 
-CMD echo 'Usage: docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 configure.py && ninja\n'\
+CMD echo 'Usage: docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 configure.py && python3 build.py\n'\
          'See https://github.com/Prakxo/ac-decomp/blob/master/README.MD for more information'
