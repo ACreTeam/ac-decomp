@@ -1,0 +1,197 @@
+static void aEGPS_set_string(int type) {
+  static int string_num[aEGPS_STR_TYPE_NUM] = { 0x1A4, 0x1C4, 0x184, 0x164 };
+  u8 str[mIN_ITEM_NAME_LEN];
+  int str_no = RANDOM(32) + string_num[type];
+
+  mString_Load_StringFromRom(str, sizeof(str), str_no);
+  mMsg_Set_item_str(mMsg_Get_base_window_p(), type, str, sizeof(str));
+}
+
+static void aEGPS_call_in(EV_GYPSY_ACTOR* gypsy, GAME_PLAY* play) {
+  static int msg_no[] = {
+    0x971,  /* 'No' choice */
+    0x973,  /* 'Yes' choice */
+    0x972   /* 'Yes' choice, but not enough Bells */
+  };
+
+  static int next_act_idx[] = {
+    aEGPS_ACTION_TALK_END_WAIT,
+    aEGPS_ACTION_DECIDE_RESULT,
+    aEGPS_ACTION_TALK_END_WAIT
+  };
+
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+  if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+    int type = -1;
+
+    switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+      case mChoice_CHOICE0: /* Yes */
+        if (Common_Get(now_private)->inventory.wallet >= aEGPS_FORTUNE_PRICE) {
+          type = 1; // yes
+        }
+        else {
+          type = 2; // not enough bells
+        }
+        break;
+      case mChoice_CHOICE1: /* No */
+        type = 0; // no
+        break;
+    }
+
+    if (type != -1) {
+      mMsg_Set_continue_msg_num(msg_p, msg_no[type]);
+      (*gypsy->setup_talk_proc)(gypsy, play, next_act_idx[type]);
+    }
+  }
+}
+
+static void aEGPS_decide_result(EV_GYPSY_ACTOR* gypsy, GAME_PLAY* play) {
+  static int msg_no[] = {
+    0x974,
+    0x975,
+    0x976,
+    0x977,
+    0x978,
+    0x979
+  };
+
+  static int msg_no2[] = {
+    0x97C,
+    0x97D,
+    0x97E,
+    0x97F,
+    0x980
+  };
+
+  static u8 destiny[] = {
+    mPr_DESTINY_NORMAL,
+    mPr_DESTINY_POPULAR,
+    mPr_DESTINY_UNPOPULAR,
+    mPr_DESTINY_BAD_LUCK,
+    mPr_DESTINY_MONEY_LUCK,
+    mPr_DESTINY_GOODS_LUCK
+  };
+
+  int demo_order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+  int selected;
+
+  if (demo_order != 0) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    if (gypsy->talk_action == aEGPS_ACTION_DECIDE_RESULT) {
+      selected = RANDOM(10);
+
+      if (selected < 4) {
+        selected = 4; /* 50% chance of 'normal' luck, 10% chance for other types */
+      }
+
+      selected -= 4;
+      Common_Get(now_private)->destiny.type = destiny[selected];
+      mMsg_Set_continue_msg_num(msg_p, msg_no[selected]);
+    }
+    else {
+      /* aEGPS_ACTION_DECIDE_RESULT2 */
+      selected = Common_Get(now_private)->destiny.type - 1;
+      mMsg_Set_continue_msg_num(msg_p, msg_no2[selected]);
+    }
+
+    (*gypsy->setup_talk_proc)(gypsy, play, aEGPS_ACTION_TALK_END_WAIT);
+  }
+}
+
+static void aEGPS_decide_result_init(EV_GYPSY_ACTOR* gypsy, GAME_PLAY* play) {
+  u32 wallet = Common_Get(now_private)->inventory.wallet;
+  wallet -= aEGPS_FORTUNE_PRICE;
+  Common_Get(now_private)->inventory.wallet = wallet;
+  aEGPS_set_string(aEGPS_STR_TYPE_ADJECTIVE);
+  aEGPS_set_string(aEGPS_STR_TYPE_NOUN);
+  aEGPS_set_string(aEGPS_STR_TYPE_VERB);
+  aEGPS_set_string(aEGPS_STR_TYPE_PLACE);
+  gypsy->fortune_given = TRUE;
+}
+
+static void aEGPS_init_proc(EV_GYPSY_ACTOR* gypsy, GAME_PLAY* play, int action) {
+  static aEGPS_TALK_INIT_PROC init_proc[aEGPS_ACTION_NUM] = {
+    (aEGPS_TALK_INIT_PROC)&none_proc1,
+    (aEGPS_TALK_INIT_PROC)&none_proc1,
+    &aEGPS_decide_result_init,
+    (aEGPS_TALK_INIT_PROC)&none_proc1
+  };
+
+  (*init_proc[action])(gypsy, play);
+}
+
+static void aEGPS_setupAction(EV_GYPSY_ACTOR* gypsy, GAME_PLAY* play, int action) {
+  static aEGPS_TALK_PROC process[aEGPS_ACTION_NUM] = {
+    (aEGPS_TALK_PROC)&none_proc1,
+    &aEGPS_call_in,
+    &aEGPS_decide_result,
+    &aEGPS_decide_result
+  };
+
+  gypsy->talk_action = action;
+  gypsy->talk_proc = process[action];
+  aEGPS_init_proc(gypsy, play, action);
+}
+
+static void aEGPS_set_talk_info(ACTOR* actorx) {
+  EV_GYPSY_ACTOR* gypsy = (EV_GYPSY_ACTOR*)actorx;
+  int msg_num;
+
+  if (gypsy->fortune_given == TRUE) {
+    msg_num = 0x982; // Fortune given msg but scene not reloaded?
+  }
+  else if (Common_Get(now_private)->destiny.type == mPr_DESTINY_NORMAL) {
+    msg_num = 0x970; // Should fortune be given?
+  }
+  else {
+    msg_num = 0x97B; // Fortune given msg after scene was reloaded?
+  }
+
+  mDemo_Set_msg_num(msg_num);
+}
+
+static void aEGPS_talk_request(ACTOR* actorx, GAME* game) {
+  mDemo_Request(mDemo_TYPE_TALK, actorx, &aEGPS_set_talk_info);
+}
+
+static int aEGPS_talk_init(ACTOR* actorx, GAME* game) {
+  EV_GYPSY_ACTOR* gypsy = (EV_GYPSY_ACTOR*)actorx;
+  GAME_PLAY* play = (GAME_PLAY*)game;
+  int next_act_idx;
+
+  if (Common_Get(now_private)->destiny.type == mPr_DESTINY_NORMAL) {
+    next_act_idx = aEGPS_ACTION_CALL_IN;
+  }
+  else {
+    next_act_idx = aEGPS_ACTION_DECIDE_RESULT2;
+  }
+
+  (*gypsy->setup_talk_proc)(gypsy, play, next_act_idx);
+  mDemo_Set_ListenAble();
+  return TRUE;
+}
+
+static int aEGPS_talk_end_chk(ACTOR* actorx, GAME* game) {
+  EV_GYPSY_ACTOR* gypsy = (EV_GYPSY_ACTOR*)actorx;
+  GAME_PLAY* play = (GAME_PLAY*)game;
+  int res = FALSE;
+
+  (*gypsy->talk_proc)(gypsy, play);
+  if (mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {
+    res = TRUE;
+  }
+
+  return res;
+}
+
+static void aEGPS_actor_move(ACTOR* actorx, GAME* game) {
+  (*Common_Get(clip).npc_clip->move_proc)(actorx, game);
+
+  if (mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {
+    chase_angle(&actorx->shape_info.rotation.y, 0, DEG2SHORT_ANGLE(5.625f));
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+  }
+}
