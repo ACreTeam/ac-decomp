@@ -48,8 +48,8 @@ static void aESC_actor_ct(ACTOR* actorx, GAME* game) {
 
   if ((*Common_Get(clip).npc_clip->birth_check_proc)(actorx, game) == TRUE) {
     (*Common_Get(clip).npc_clip->ct_proc)(actorx, game, &ct_data);
-    soncho_actor->npc_class._8F4 = -1;
-    soncho_actor->npc_class._751 = 3;
+    soncho_actor->npc_class.palActorIgnoreTimer = -1;
+    soncho_actor->npc_class.draw._5BD = 3;
 
     if (soncho_event == NULL) {
       soncho_event = (aESC_event_save_c*)mEv_reserve_save_area(mEv_EVENT_SONCHO_BRIDGE_MAKE, 34);

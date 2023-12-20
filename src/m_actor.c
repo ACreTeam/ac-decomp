@@ -136,7 +136,7 @@ static void Actor_ct(ACTOR* actor, GAME* game) {
 
     (*Common_Get(clip).npc_clip->dma_draw_data_proc)(&draw_data, actor->npc_id);
     tex_bank_id = mSc_bank_regist_check(exchange, draw_data.texture_bank);
-    npc_actor->texture_bank_idx = tex_bank_id;
+    npc_actor->draw.texture_bank_idx = tex_bank_id;
 
     bank = &exchange->banks[tex_bank_id];
     bank->num_exist++;
