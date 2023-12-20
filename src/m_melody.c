@@ -49,7 +49,7 @@ extern void mMld_MakeMelody(u16 inst) {
 extern void mMld_ActorMakeThisMelody(u8* melody, ACTOR* actor) {
   if (actor != NULL && actor->part == ACTOR_PART_NPC) {
     NPC_ACTOR* npc_actor = (NPC_ACTOR*)actor;
-    int melody_inst = npc_actor->melody_inst;
+    int melody_inst = npc_actor->talk_info.melody_inst;
 
     if (melody_inst != 0) {
       sAdo_Inst(melody_inst, melody);
@@ -60,7 +60,7 @@ extern void mMld_ActorMakeThisMelody(u8* melody, ACTOR* actor) {
 extern void mMld_ActorMakeMelody(ACTOR* actor) {
   if (actor != NULL && actor->part == ACTOR_PART_NPC) {
     NPC_ACTOR* npc_actor = (NPC_ACTOR*)actor;
-    int melody_inst = npc_actor->melody_inst;
+    int melody_inst = npc_actor->talk_info.melody_inst;
 
     if (melody_inst != 0) {
       mMld_MakeMelody(melody_inst);
