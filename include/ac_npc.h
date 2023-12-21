@@ -13,7 +13,12 @@
 extern "C" {
 #endif
 
+#define aNPC_SPNPC_BIT_CURATOR 0
 #define aNPC_SPNPC_BIT_EV_SONCHO 5
+
+#define aNPC_SPNPC_BIT_GET(field, bit) (((field) >> (bit)) & 1)
+#define aNPC_SPNPC_BIT_SET(field, bit) ((field) |= (1 << (bit)))
+#define aNPC_SPNPC_BIT_CLR(field, bit) ((field) &= ~(1 << (bit)))
 
 typedef struct ac_npc_clip_s aNPC_Clip_c;
 
@@ -29,6 +34,29 @@ enum {
   aNPC_ATTENTION_TYPE_POSITION,
 
   aNPC_ATTENTION_TYPE_NUM
+};
+
+enum {
+  aNPC_THINK_WAIT,
+  aNPC_THINK_WANDER,
+  aNPC_THINK_WANDER2,
+  aNPC_THINK_GO_HOME,
+  aNPC_THINK_INTO_HOUSE,
+  aNPC_THINK_LEAVE_HOUSE,
+  aNPC_THINK_IN_BLOCK,
+  aNPC_THINK_PITFALL,
+  aNPC_THINK_SLEEP,
+  aNPC_THINK_SPECIAL,
+
+  aNPC_THINK_NUM
+};
+
+enum {
+  aNPC_THINK_TYPE_INIT,
+  aNPC_THINK_TYPE_CHK_INTERRUPT,
+  aNPC_THINK_TYPE_MAIN,
+
+  aNPC_THINK_TYPE_NUM
 };
 
 typedef void (*aNPC_TALK_REQUEST_PROC)(ACTOR*, GAME*);
@@ -62,6 +90,8 @@ typedef void (*aNPC_MOVE_AFTER_PROC)(ACTOR*, GAME*);
 typedef void (*aNPC_DRAW_PROC)(ACTOR*, GAME*);
 
 typedef void (*aNPC_REBUILD_DMA_PROC)();
+typedef void (*aNPC_ANIMATION_INIT_PROC)(ACTOR*, int, int);
+typedef int (*aNPC_CLIP_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*, int, int);
 
 typedef int (*aNPC_FORCE_CALL_REQ_PROC)(NPC_ACTOR*, int);
 
@@ -86,7 +116,11 @@ struct ac_npc_clip_s {
   /* 0x0F0 */ void* _0F0;
   /* 0x0F4 */ aNPC_DRAW_PROC draw_proc;
   /* 0x0F8 */ aNPC_REBUILD_DMA_PROC rebuild_dma_proc;
-  /* 0x0FC */ void* _0FC[(0x124 - 0x0FC) / sizeof(void*)];
+  /* 0x0FC */ void* _0FC[(0x114 - 0x0FC) / sizeof(void*)];
+  /* 0x114 */ aNPC_ANIMATION_INIT_PROC animation_init_proc;
+  /* 0x118 */ void* _118;
+  /* 0x11C */ void* _11C;
+  /* 0x120 */ aNPC_CLIP_THINK_PROC think_proc;
   /* 0x124 */ aNPC_FORCE_CALL_REQ_PROC force_call_req_proc;
   /* 0x128 */ void* _128;
 };
@@ -151,6 +185,8 @@ enum {
 
 typedef void (*aNPC_ACTION_PROC)(NPC_ACTOR*, GAME_PLAY*, int);
 
+#define aNPC_ACTION_END_STEP 0xFF
+
 typedef struct npc_action_s {
   u8 priority;
   u8 idx;
@@ -179,6 +215,23 @@ typedef struct npc_request_s {
   ACTOR* head_target;
   xyz_t head_pos;
 } aNPC_request_c;
+
+#define aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK  (1 <<  0) /* 0x0001 */
+#define aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV   (1 <<  1) /* 0x0002 */
+#define aNPC_COND_DEMO_SKIP_MOVE_Y            (1 <<  2) /* 0x0004 */
+#define aNPC_COND_DEMO_SKIP_OBJ_COL_CHECK     (1 <<  3) /* 0x0008 */
+#define aNPC_COND_DEMO_SKIP_BGCHECK           (1 <<  4) /* 0x0010 */
+#define aNPC_COND_DEMO_SKIP_FORWARD_CHECK     (1 <<  5) /* 0x0020 */
+#define aNPC_COND_DEMO_SKIP_ITEM              (1 <<  6) /* 0x0040 */
+#define aNPC_COND_DEMO_SKIP_TALK_CHECK        (1 <<  7) /* 0x0080 */
+#define aNPC_COND_DEMO_SKIP_HEAD_LOOKAT       (1 <<  8) /* 0x0100 */
+#define aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK    (1 <<  9) /* 0x0200 */
+#define aNPC_COND_DEMO_SKIP_KUTIPAKU          (1 << 10) /* 0x0400 */
+#define aNPC_COND_DEMO_SKIP_FOOTSTEPS         (1 << 11) /* 0x0800 */
+#define aNPC_COND_DEMO_SKIP_FEEL_CHECK        (1 << 12) /* 0x1000 */
+#define aNPC_COND_DEMO_SKIP_LOVE_CHECK        (1 << 13) /* 0x2000 */
+#define aNPC_COND_DEMO_SKIP_FOOTSTEPS_VFX     (1 << 14) /* 0x4000 */
+#define aNPC_COND_DEMO_SKIP_UZAI_CHECK        (1 << 15) /* 0x8000 */
 
 typedef struct npc_condition_s {
   u8 hide_flg;
@@ -296,6 +349,7 @@ typedef struct npc_actor_talk_info_s {
   s16 npc_voice_id;
   u8 feel;
   u8 memory;
+  u8 kutipaku_timer; // frames of mouth movement animation
 } aNPC_talk_info_c;
 
 typedef struct npc_accessory_s {

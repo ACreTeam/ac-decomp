@@ -1,0 +1,1177 @@
+static void aCR_set_animation(NPC_CURATOR_ACTOR* curator, int action) {
+  static int animeSeqNo[] = { 5, 5, 9 };
+
+  (*Common_Get(clip).npc_clip->animation_init_proc)((ACTOR*)curator, animeSeqNo[action], FALSE);
+}
+
+static void aCR_set_request_act(NPC_CURATOR_ACTOR* curator) {
+  curator->npc_class.request.act_priority = 4;
+  curator->npc_class.request.act_idx = 16;
+  curator->npc_class.request.act_type = 2;
+}
+
+static int aCR_check_sleep_time() {
+  int res = FALSE;
+
+  if (Common_Get(time.now_sec) >= aCR_SLEEP_TIME_START && Common_Get(time.now_sec) < aCR_SLEEP_TIME_END) {
+    res = TRUE;
+  }
+
+  return res;
+}
+
+static void aCR_sleep_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  curator->sleep_wait_timer--;
+
+  if (curator->sleep_wait_timer <= 0) {
+    aCR_setupAction(curator, play, aCR_ACTION_SLEEP); // Go back to sleep
+  }
+}
+
+static void aCR_wait_init(NPC_CURATOR_ACTOR* curator) {
+  curator->npc_class.condition_info.demo_flg = 0;
+  curator->npc_class.head.angle_add_y = DEG2SHORT_ANGLE(5.625f);
+  curator->npc_class.movement.mv_angl = DEG2SHORT_ANGLE(0.0f);
+  curator->npc_class.movement.mv_add_angl = DEG2SHORT_ANGLE(5.625f);
+}
+
+static void aCR_sleep_wait_init(NPC_CURATOR_ACTOR* curator) {
+  aCR_wait_init(curator);
+  curator->sleep_wait_timer = aCR_SLEEP_WAIT_TIMER;
+}
+
+static void aCR_sleep_init(NPC_CURATOR_ACTOR* curator) {
+  curator->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT;
+  curator->npc_class.head.angle_add_y = DEG2SHORT_ANGLE(1.40625f);
+  curator->_9B0 = 0;
+}
+
+typedef void (*aCR_INIT_PROC)(NPC_CURATOR_ACTOR*);
+
+static void aCR_setupAction(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play, int action) {
+  static aCR_ACT_PROC process[aCR_ACTION_NUM] = {
+    (aCR_ACT_PROC)&none_proc1,
+    &aCR_sleep_wait,
+    (aCR_ACT_PROC)&none_proc1
+  };
+
+  static aCR_INIT_PROC init_proc[aCR_ACTION_NUM] = {
+    &aCR_wait_init,
+    &aCR_sleep_wait_init,
+    &aCR_sleep_init
+  };
+
+  aCR_set_animation(curator, action);
+  curator->action = action;
+  curator->action_proc = process[action];
+  (*init_proc[action])(curator);
+}
+
+static void aCR_act_chg_data_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+  NPC_CURATOR_ACTOR* curator = (NPC_CURATOR_ACTOR*)actorx;
+
+  curator->npc_class.action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aCR_act_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+  NPC_CURATOR_ACTOR* curator = (NPC_CURATOR_ACTOR*)actorx;
+  int action;
+
+  if (curator->action == aCR_ACTION_WAIT) {
+    if (aCR_check_sleep_time() == TRUE) {
+      action = aCR_ACTION_SLEEP_WAIT;
+    }
+    else {
+      action = aCR_ACTION_WAIT;
+    }
+  }
+  else {
+    if (aCR_check_sleep_time() == TRUE) {
+      action = aCR_ACTION_SLEEP;
+    }
+    else {
+      action = aCR_ACTION_WAIT;
+    }
+  }
+
+  actorx->action.step = 0;
+  aCR_setupAction(curator, play, action);
+}
+
+static void aCR_act_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+  NPC_CURATOR_ACTOR* curator = (NPC_CURATOR_ACTOR*)actorx;
+    
+  (*curator->action_proc)(curator, play);
+}
+
+static void aCR_act_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int action) {
+  static aCR_ACTION_PROC act_proc[aCR_ACTION_NUM] = {
+    &aCR_act_init_proc,
+    &aCR_act_chg_data_proc,
+    &aCR_act_main_proc
+  };
+
+  (*act_proc[action])(actorx, play);
+}
+
+static void aCR_think_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+  NPC_CURATOR_ACTOR* curator = (NPC_CURATOR_ACTOR*)actorx;
+
+  if (curator->npc_class.action.step == aNPC_ACTION_END_STEP) {
+    aCR_set_request_act(curator);
+  }
+  else if (curator->npc_class.action.idx == 16) {
+    if (aCR_check_sleep_time() == TRUE) {
+      if (curator->action == aCR_ACTION_WAIT) {
+        aCR_setupAction(curator, play, aCR_ACTION_SLEEP_WAIT);
+      }
+    }
+    else if (curator->action == aCR_ACTION_SLEEP) {
+      aCR_setupAction(curator, play, aCR_ACTION_WAIT);
+    }
+  }
+}
+
+static void aCR_think_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+  NPC_CURATOR_ACTOR* curator = (NPC_CURATOR_ACTOR*)actorx;
+  int action;
+
+  if (aCR_check_sleep_time() == TRUE) {
+    action = aCR_ACTION_SLEEP;
+  }
+  else {
+    action = aCR_ACTION_WAIT;
+  }
+
+  curator->action = action;
+  curator->npc_class.action.act_proc = &aCR_act_proc;
+  aCR_set_request_act(curator);
+}
+
+typedef void (*aCR_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*);
+
+static void aCR_think_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int think_idx) {
+  static aCR_THINK_PROC think_proc[2] = {
+    &aCR_think_init_proc,
+    &aCR_think_main_proc
+  };
+
+  (*think_proc[think_idx])(actorx, play);
+}
+
+static void aCR_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+  actorx->think.think_proc = &aCR_think_proc;
+  actorx->condition_info.hide_request = FALSE;
+  (*Common_Get(clip).npc_clip->think_proc)(actorx, play, aNPC_THINK_IN_BLOCK, aNPC_THINK_TYPE_INIT);
+}
+
+static void aCR_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+  if ((*Common_Get(clip).npc_clip->think_proc)(actorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == FALSE) {
+    (*Common_Get(clip).npc_clip->think_proc)(actorx, play, -1, aNPC_THINK_TYPE_MAIN);
+  }
+}
+
+typedef void (*aCR_SCHEDULE_PROC)(NPC_ACTOR*, GAME_PLAY*);
+
+static void aCR_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int proc_idx) {
+  static aCR_SCHEDULE_PROC sched_proc[] = {
+    &aCR_schedule_init_proc,
+    &aCR_schedule_main_proc
+  };
+
+  (*sched_proc[proc_idx])(actorx, play);
+}
+
+enum {
+  aCR_FOSSIL_TYPE_TRICERA,
+  aCR_FOSSIL_TYPE_TREX,
+  aCR_FOSSIL_TYPE_APATO,
+  aCR_FOSSIL_TYPE_STEGO,
+  aCR_FOSSIL_TYPE_PTERA,
+  aCR_FOSSIL_TYPE_PLESIO,
+  aCR_FOSSIL_TYPE_MAMMOTH,
+
+  aCR_FOSSIL_TYPE_NUM
+};
+
+static int aCR_get_fossil_type(mActor_name_t item) {
+  static int fossil_ftr_start[aCR_FOSSIL_TYPE_NUM] = {
+    FTR_DINO_TRICERA_SKULL,
+    FTR_DINO_TREX_SKULL,
+    FTR_DINO_APATO_SKULL,
+    FTR_DINO_STEGO_SKULL,
+    FTR_DINO_PTERA_SKULL,
+    FTR_DINO_PLESIO_SKULL,
+    FTR_DINO_MAMMOTH_SKULL
+  };
+
+  static int fossil_ftr_end[aCR_FOSSIL_TYPE_NUM] = {
+    FTR_DINO_TRICERA_BODY+3,
+    FTR_DINO_TREX_BODY+3,
+    FTR_DINO_APATO_BODY+3,
+    FTR_DINO_STEGO_BODY+3,
+    FTR_DINO_PTERA_LEFT_WING+3,
+    FTR_DINO_PLESIO_TORSO+3,
+    FTR_DINO_MAMMOTH_TORSO+3
+  };
+
+  int res = -1;
+  int i;
+
+  for (i = 0; i < aCR_FOSSIL_TYPE_NUM; i++) {
+    if (item >= fossil_ftr_start[i] && item <= fossil_ftr_end[i]) {
+      res = i;
+      break;
+    }
+  }
+
+  return res;
+}
+
+typedef struct {
+  int count;
+  mActor_name_t* parts;
+} aCR_fossil_part_c;
+
+#define aCR_GetFossilPartDonator(item_no) \
+  mMmd_FossilInfo(((item_no) >= FTR_DINO_START && (item_no) <= FTR_DINO_END) ? FTR_IDX_2_NO((item_no - FTR_DINO_START)) : 0)
+#define aCR_GetArtDonator(item_no) \
+  mMmd_ArtInfo(((item_no) >= FTR_PAINTING0 && (item_no) <= FTR_PAINTING14_WEST) ? FTR_IDX_2_NO((item_no - FTR_PAINTING0)) : 0)
+#define aCR_GetInsectDonator(item_no) \
+  mMmd_InsectInfo(((item_no) >= ITM_INSECT_START && (item_no) < ITM_INSECT_END) ? (item_no - ITM_INSECT_START) : 0)
+#define aCR_GetFishDonator(item_no) \
+  mMmd_FishInfo(((item_no) >= ITM_FISH_START && (item_no) <= ITM_FISH_END) ? (item_no - ITM_FISH_START) : 0)
+
+static int aCR_chk_fossil_parts_complete_sub(int type) {
+  static mActor_name_t trikera_parts[] = { FTR_DINO_TRICERA_SKULL, FTR_DINO_TRICERA_TAIL, FTR_DINO_TRICERA_BODY };
+  static mActor_name_t trex_parts[] = { FTR_DINO_TREX_SKULL, FTR_DINO_TREX_TAIL, FTR_DINO_TREX_BODY };
+  static mActor_name_t bront_parts[] = { FTR_DINO_APATO_SKULL, FTR_DINO_APATO_TAIL, FTR_DINO_APATO_BODY };
+  static mActor_name_t stego_parts[] = { FTR_DINO_STEGO_SKULL, FTR_DINO_STEGO_TAIL, FTR_DINO_STEGO_BODY };
+  static mActor_name_t ptera_parts[] = { FTR_DINO_PTERA_SKULL, FTR_DINO_PTERA_RIGHT_WING, FTR_DINO_PTERA_LEFT_WING };
+  static mActor_name_t hutaba_parts[] = { FTR_DINO_PLESIO_SKULL, FTR_DINO_PLESIO_NECK, FTR_DINO_PLESIO_TORSO };
+  static mActor_name_t mammoth_parts[] = { FTR_DINO_MAMMOTH_SKULL, FTR_DINO_MAMMOTH_TORSO };
+  static aCR_fossil_part_c fossil_parts[aCR_FOSSIL_TYPE_NUM] = {
+    { ARRAY_COUNT(trikera_parts), trikera_parts },
+    { ARRAY_COUNT(trex_parts), trex_parts },
+    { ARRAY_COUNT(bront_parts), bront_parts },
+    { ARRAY_COUNT(stego_parts), stego_parts },
+    { ARRAY_COUNT(ptera_parts), ptera_parts },
+    { ARRAY_COUNT(hutaba_parts), hutaba_parts },
+    { ARRAY_COUNT(mammoth_parts), mammoth_parts }
+  };
+
+  aCR_fossil_part_c* fossil_part = &fossil_parts[type];
+  int i = fossil_part->count;
+  mActor_name_t* fossil_part_p = fossil_part->parts;
+  int res = TRUE;
+
+  while (i != 0) {
+    int valid = aCR_GetFossilPartDonator(*fossil_part_p) >= mMmd_DONATOR_PLAYER1
+      && aCR_GetFossilPartDonator(*fossil_part_p) <= mMmd_DONATOR_DELETED_PLAYER;
+      
+    if (!valid) {
+      res = FALSE;
+      break;
+    }
+    
+    fossil_part_p++;
+    i--;
+  }
+
+  return res;
+}
+
+static void aCR_chk_fossil_parts_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  static int msg_no_table[aCR_FOSSIL_TYPE_NUM] = {
+    0x2F78,
+    0x2F79,
+    0x2F7A,
+    0x2F7B,
+    0x2F7C,
+    0x2F7D,
+    0x2F7E
+  };
+  
+  int fossil_type = aCR_get_fossil_type(play->submenu.item_p->item);
+  int msg_no = 0x2F84;
+
+  if (fossil_type != -1 && aCR_chk_fossil_parts_complete_sub(fossil_type) == TRUE) {
+    msg_no = msg_no_table[fossil_type];
+  }
+
+  mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg_no);
+  curator->msg_no = msg_no;
+  (*curator->setupTalkAction_proc)(curator, play, aCR_TALK_THANKS_FOSSIL_MSG_END_WAIT);
+}
+
+static void aCR_chk_fossil_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  static int msg_no[] = { 0x2F73, 0x2F85 };
+  static int next_act_idx[] = { aCR_TALK_CHK_CONTINUE_TO_DONATE3, aCR_TALK_CHK_ALL_COMPLETE };
+
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+  int complete = FALSE;
+
+  if (mMmd_CountDisplayedFossil() == mMmd_FOSSIL_NUM) {
+    complete = TRUE;
+  }
+
+  mMsg_Set_continue_msg_num(msg_p, msg_no[complete]);
+  curator->msg_no = msg_no[complete];
+  (*curator->setupTalkAction_proc)(curator, play, next_act_idx[complete]);
+}
+
+static void aCR_chk_art_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  static int msg_no[] = { 0x2F73, 0x2F75 };
+  static int next_act_idx[] = { aCR_TALK_CHK_CONTINUE_TO_DONATE3, aCR_TALK_CHK_ALL_COMPLETE };
+
+  int complete = FALSE;
+
+  if (mMmd_CountDisplayedArt() == mMmd_ART_NUM) {
+    complete = TRUE;
+  }
+
+  mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg_no[complete]);
+  curator->msg_no = msg_no[complete];
+  (*curator->setupTalkAction_proc)(curator, play, next_act_idx[complete]);
+}
+
+static void aCR_chk_fish_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  static int msg_no[] = { 0x2F73, 0x2F8A };
+  static int next_act_idx[] = { aCR_TALK_CHK_CONTINUE_TO_DONATE3, aCR_TALK_CHK_ALL_COMPLETE };
+
+  int complete = FALSE;
+
+  if (mMmd_CountDisplayedFish() == mMmd_FISH_NUM) {
+    complete = TRUE;
+  }
+
+  mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg_no[complete]);
+  curator->msg_no = msg_no[complete];
+  (*curator->setupTalkAction_proc)(curator, play, next_act_idx[complete]);
+}
+
+static void aCR_chk_insect_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  static int msg_no[] = { 0x2F73, 0x2F88 };
+  static int next_act_idx[] = { aCR_TALK_CHK_CONTINUE_TO_DONATE3, aCR_TALK_CHK_ALL_COMPLETE };
+
+  int complete = FALSE;
+
+  if (mMmd_CountDisplayedInsect() == mMmd_INSECT_NUM) {
+    complete = TRUE;
+  }
+
+  mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg_no[complete]);
+  curator->msg_no = msg_no[complete];
+  (*curator->setupTalkAction_proc)(curator, play, next_act_idx[complete]);
+}
+
+static void aCR_set_after_explain_insect(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  static int msg_no[] = {
+    0x3A56,
+    0x3A56,
+    0x3A56,
+    0x3A56,
+    0x3A57,
+    0x3A57,
+    0x3A5D,
+    0x3A57,
+    0x3A5E,
+    0x3A58,
+    0x3A58,
+    0x3A58,
+    0x3A5F,
+    0x3A59,
+    0x3A59,
+    0x3A5A,
+    0x3A5A,
+    0x3A5A,
+    0x3A5A,
+    0x3A5B,
+    0x3A5B,
+    0x3A5B,
+    0x3A61,
+    0x3A62,
+    0x3A5C,
+    0x3A5C,
+    0x3A63,
+    0x3A64,
+    0x3A56,
+    0x3A5B,
+    0x3A5B,
+    0x3A60,
+    0x3A6B,
+    0x3A69,
+    0x3A65,
+    0x3A6C,
+    0x3A68,
+    0x3A6A,
+    0x3A66,
+    0x3A67
+  };
+
+  int insect_type = curator->donated_item - ITM_INSECT_START;
+
+  if (insect_type < 0 || insect_type >= INSECT_ONLY_NUM) {
+    insect_type = 0;
+  }
+
+  mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg_no[insect_type]);
+  curator->msg_no = msg_no[insect_type];
+  (*curator->setupTalkAction_proc)(curator, play, aCR_TALK_AFTER_EXPLAIN_INSECT);
+}
+
+static void aCR_set_item_name_str(mActor_name_t item) {
+  u8 item_str[mIN_ITEM_NAME_LEN];
+
+  mIN_copy_name_str(item_str, item);
+  mMsg_Set_item_str_art(mMsg_Get_base_window_p(), mMsg_FREE_STR0, item_str, sizeof(item_str), mIN_get_item_article(item));
+}
+
+static void aCR_set_other_player_name_str(int player_no) {
+  mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0, Save_Get(private[player_no]).player_ID.player_name, PLAYER_NAME_LEN);
+}
+
+static int aCR_countDisplayed() {
+  return mMmd_CountDisplayedFossil() + mMmd_CountDisplayedArt() + mMmd_CountDisplayedInsect() + mMmd_CountDisplayedFish();
+}
+
+static int aCR_get_msg_no_after_talk() {
+  static int msg_no[] = { 0x2F58, 0x2F59, 0x2F5A, 0x2F5B };
+  int displayed = aCR_countDisplayed();
+  int idx;
+
+  if (displayed == 0) {
+    idx = 0;
+  }
+  else if (displayed <= 36) {
+    idx = 1;
+  }
+  else if (displayed <= 84) {
+    idx = 2;
+  }
+  else {
+    idx = 3;
+  }
+
+  return msg_no[idx];
+}
+
+static int aCR_get_idx_to_donate_fossil(mActor_name_t item) {
+  int donator = aCR_GetFossilPartDonator(item);
+
+  if (donator == (Common_Get(player_no) + 1)) {
+    return 4;
+  }
+  
+  switch (donator) {
+    case mMmd_DONATOR_NONE:
+    {
+      switch (item) {
+        case FTR_FOSSIL_TRILOBITE:
+          return 17;
+        case FTR_FOSSIL_AMMONITE:
+          return 18;
+        case FTR_FOSSIL_EGG:
+          return 19;
+        case FTR_FOSSIL_TRACK:
+          return 20;
+        case FTR_FOSSIL_AMBER:
+          return 21;
+        default:
+          return 16;
+      }
+    }
+
+    case mMmd_DONATOR_DELETED_PLAYER:
+      return 12;
+  }
+
+  aCR_set_other_player_name_str(donator - 1);
+  return 8;
+}
+
+static int aCR_get_idx_to_donate_art(mActor_name_t item) {
+  int donator = aCR_GetArtDonator(item);
+
+  switch (item) {
+    case FTR_PAINTING15_UNUSED:
+    case FTR_PAINTING16_UNUSED:
+      return 1;
+  }
+
+  if (donator == (Common_Get(player_no) + 1)) {
+    return 5;
+  }
+  
+  switch (donator) {
+    case mMmd_DONATOR_NONE:
+      return 22 + RANDOM(3);
+    case mMmd_DONATOR_DELETED_PLAYER:
+      return 13;
+  }
+
+  aCR_set_other_player_name_str(donator - 1);
+  return 9;
+}
+
+static int aCR_get_idx_to_donate_insect(mActor_name_t item) {
+  int donator = aCR_GetInsectDonator(item);
+  int res;
+
+  if (donator == (Common_Get(player_no) + 1)) {
+    res = 7;
+  }
+  else {
+  switch (donator) {
+    case mMmd_DONATOR_NONE:
+    {
+      /* Is it a cockroach? */
+      if (item == ITM_INSECT28) {
+        res = 26;
+      }
+      else {
+        res = 25;
+      }
+      break;
+    }
+
+    case mMmd_DONATOR_DELETED_PLAYER:
+      res = 15;
+      break;
+
+    default:
+      aCR_set_other_player_name_str(donator - 1);
+      res = 11;
+      break;
+  }
+  }
+
+  return res;
+}
+
+static int aCR_get_idx_to_donate_fish(mActor_name_t item) {
+  int donator = aCR_GetFishDonator(item);
+
+  if (donator == (Common_Get(player_no) + 1)) {
+    return 6;
+  }
+  
+  switch (donator) {
+    case mMmd_DONATOR_NONE:
+      return 27;
+
+    case mMmd_DONATOR_DELETED_PLAYER:
+      return 14;
+  }
+
+  aCR_set_other_player_name_str(donator - 1);
+  return 10;
+}
+
+static void aCR_after_talk_start_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+  if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+    int msg_no = aCR_get_msg_no_after_talk();
+    
+    mMsg_Set_continue_msg_num(msg_p, msg_no);
+    (*curator->setupTalkAction_proc)(curator, play, aCR_TALK_END_WAIT);
+  }
+}
+
+static void aCR_chk_request(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+  int talk_act;
+
+  if (mMsg_Get_msg_num(msg_p) == 0x2F50 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+    switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+      case mChoice_CHOICE0:
+        talk_act = aCR_TALK_MENU_OPEN_WAIT;
+        break;
+      case mChoice_CHOICE1:
+        talk_act = aCR_TALK_CHK_DECIDE_TO_DONATE;
+        break;
+      case mChoice_CHOICE2:
+        talk_act = aCR_TALK_AFTER_TALK_START_WAIT;
+        break;
+      default:
+        talk_act = aCR_TALK_END_WAIT;
+        break;
+    }
+
+    (*curator->setupTalkAction_proc)(curator, play, talk_act);
+  }
+}
+
+static void aCR_chk_decide_to_donate(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+  int talk_act;
+
+  if (mMsg_Get_msg_num(msg_p) == 0x2F5F && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+    switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+      case mChoice_CHOICE0:
+        talk_act = aCR_TALK_CHK_DECIDE_TO_DONATE2;
+        break;
+      case mChoice_CHOICE1:
+        talk_act = aCR_TALK_END_WAIT;
+        break;
+      default:
+        talk_act = aCR_TALK_END_WAIT;
+        break;
+    }
+
+    (*curator->setupTalkAction_proc)(curator, play, talk_act);
+  }
+}
+
+static void aCR_chk_decide_to_donate2(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+  int talk_act;
+
+  if (mMsg_Get_msg_num(msg_p) == 0x2F60 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+    switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+      case mChoice_CHOICE0:
+        talk_act = aCR_TALK_MENU_OPEN_WAIT;
+        break;
+      case mChoice_CHOICE1:
+        talk_act = aCR_TALK_END_WAIT;
+        break;
+      default:
+        talk_act = aCR_TALK_END_WAIT;
+        break;
+    }
+
+    (*curator->setupTalkAction_proc)(curator, play, talk_act);
+  }
+}
+
+static void aCR_menu_open_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+    (*curator->setupTalkAction_proc)(curator, play, aCR_TALK_MSG_WIN_CLOSE_WAIT);
+  }
+}
+
+static void aCR_msg_win_close_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  if (mMsg_Check_main_wait(mMsg_Get_base_window_p()) == TRUE) {
+    (*curator->setupTalkAction_proc)(curator, play, aCR_TALK_MENU_CLOSE_WAIT);
+  }
+}
+
+static void aCR_menu_close_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  int talk_act;
+
+  if (play->submenu.flag == FALSE) {
+    talk_act = aCR_TALK_GET_DEMO_START_WAIT;
+
+    if (play->submenu.item_p->item == EMPTY_NO) {
+      talk_act = aCR_TALK_MSG_WIN_OPEN_WAIT;
+    }
+
+    (*curator->setupTalkAction_proc)(curator, play, talk_act);
+  }
+}
+
+static void aCR_get_demo_start_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  if (Common_Get(clip).handOverItem_clip->request_mode == aHOI_REQUEST_TRANS_WAIT) {
+    (*curator->setupTalkAction_proc)(curator, play, aCR_TALK_GET_DEMO_END_WAIT);
+  }
+}
+
+static void aCR_get_demo_end_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  if (Common_Get(clip).handOverItem_clip->request_mode == aHOI_REQUEST_GET_PULL_WAIT) {
+    curator->npc_class.talk_info.default_animation = 30;
+    (*curator->setupTalkAction_proc)(curator, play, aCR_TALK_MSG_WIN_OPEN_WAIT);
+  }
+}
+
+#define aCR_IS_FOSSIL(item) \
+  ((item) >= FTR_DINO_START && (item) <= FTR_DINO_END)
+
+#define aCR_IS_ART(item) \
+  ((item) >= FTR_PAINTING0 && (item) <= FTR_PAINTING14_WEST)
+
+#define aCR_IS_INSECT(item) \
+  ((item) >= ITM_INSECT_START && (item) < ITM_INSECT_END)
+
+#define aCR_IS_FISH(item) \
+  ((item) >= ITM_FISH_START && (item) <= ITM_FISH_END)
+
+typedef struct {
+  int msg_no;
+  int talk_act;
+} aCR_donate_act_c;
+
+static void aCR_msg_win_open_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  static aCR_donate_act_c donate_act[] = {
+    { 0x2F63, aCR_TALK_END_WAIT },
+    { 0x3A83, aCR_TALK_RETURN_DEMO_START_WAIT },
+    { 0x2F64, aCR_TALK_RETURN_DEMO_START_WAIT },
+    { 0x2F65, aCR_TALK_RETURN_DEMO_START_WAIT },
+    { 0x2F6B, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F6C, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F6D, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F6E, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F67, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F68, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F69, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F6A, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F90, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F91, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F92, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F93, aCR_TALK_RETURN_DEMO_START_WAIT2 },
+    { 0x2F8F, aCR_TALK_PUTAWAY_DEMO_START_WAIT2 },
+    { 0x2F7F, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
+    { 0x2F80, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
+    { 0x2F81, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
+    { 0x2F82, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
+    { 0x2F83, aCR_TALK_PUTAWAY_DEMO_START_WAIT3 },
+    { 0x2F70, aCR_TALK_PUTAWAY_DEMO_START_WAIT },
+    { 0x2F71, aCR_TALK_PUTAWAY_DEMO_START_WAIT },
+    { 0x2F72, aCR_TALK_PUTAWAY_DEMO_START_WAIT },
+    { 0x2F86, aCR_TALK_PUTAWAY_DEMO_START_WAIT5 },
+    { 0x2F87, aCR_TALK_PUTAWAY_DEMO_START_WAIT4 },
+    { 0x2F89, aCR_TALK_PUTAWAY_DEMO_START_WAIT5_2 }
+  };
+
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+  mActor_name_t item;
+  int act_idx;
+  aCR_donate_act_c* donate_act_p;
+
+  if (mMsg_Check_not_series_main_wait(msg_p) == TRUE) {
+    act_idx = 0;
+    item = play->submenu.item_p->item;
+
+    if (item != EMPTY_NO) {
+      if (aCR_IS_FOSSIL(item) == TRUE) {
+        act_idx = aCR_get_idx_to_donate_fossil(item);
+      }
+      else if (aCR_IS_ART(item) == TRUE) {
+        act_idx = aCR_get_idx_to_donate_art(item);
+      }
+      else if (aCR_IS_INSECT(item) == TRUE) {
+        act_idx = aCR_get_idx_to_donate_insect(item);
+      }
+      else if (aCR_IS_FISH(item) == TRUE) {
+        act_idx = aCR_get_idx_to_donate_fish(item);
+      }
+      else if (item == ITM_FOSSIL) {
+        act_idx = 3;
+      }
+      else {
+        act_idx = 2;
+      }
+
+      aCR_set_item_name_str(item);
+    }
+
+    donate_act_p = &donate_act[act_idx];
+    curator->donated_item = item;
+    mMsg_Set_continue_msg_num(msg_p, donate_act_p->msg_no);
+    mMsg_Set_ForceNext(msg_p);
+    (*curator->setupTalkAction_proc)(curator, play, donate_act_p->talk_act);
+  }
+}
+
+static void aCR_return_demo_start_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+
+  if (order == 10) {
+    int talk_act = aCR_TALK_RETURN_DEMO_END_WAIT;
+
+    if (curator->talk_act_idx != aCR_TALK_RETURN_DEMO_START_WAIT) {
+      talk_act = aCR_TALK_RETURN_DEMO_END_WAIT2;
+    }
+
+    (*curator->setupTalkAction_proc)(curator, play, talk_act);
+  }
+}
+
+static void aCR_return_demo_end_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  if (Common_Get(clip).handOverItem_clip->master_actor == NULL) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int talk_act = aCR_TALK_CHK_CONTINUE_TO_DONATE;
+
+    if (curator->talk_act_idx != aCR_TALK_RETURN_DEMO_END_WAIT) {
+      talk_act = aCR_TALK_CHK_CONTINUE_TO_DONATE2;
+    }
+
+    curator->npc_class.talk_info.default_animation = -1;
+    mMsg_Unset_LockContinue(msg_p);
+    (*curator->setupTalkAction_proc)(curator, play, talk_act);
+  }
+}
+
+static void aCR_chk_continue_to_donate(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  static int chk_msg_num[] = { 0x2F66, 0x2F6F, 0x2F73 };
+
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+  int donate_idx = curator->talk_act_idx - aCR_TALK_CHK_CONTINUE_TO_DONATE;
+
+  if (chk_msg_num[donate_idx] == mMsg_Get_msg_num(msg_p) && mMsg_Check_MainNormalContinue(msg_p)) {
+    int talk_act = aCR_TALK_END_WAIT;
+    int msg_no;
+
+    if (mChoice_Get_ChoseNum(mChoice_Get_base_window_p()) == mChoice_CHOICE0) {
+      talk_act = aCR_TALK_MENU_OPEN_WAIT;
+      msg_no = 0x2F62;
+    }
+    else {
+      msg_no = aCR_get_msg_no_after_talk();
+    }
+
+    if (curator->talk_act_idx != aCR_TALK_CHK_CONTINUE_TO_DONATE3) {
+      mMsg_Set_continue_msg_num(msg_p, msg_no);
+    }
+
+    (*curator->setupTalkAction_proc)(curator, play, talk_act);
+  }
+}
+
+static void aCR_putaway_demo_start_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+    
+  if (order == 14) {
+    (*curator->setupTalkAction_proc)(curator, play, curator->talk_act_idx + (aCR_TALK_PUTAWAY_DEMO_END_WAIT - aCR_TALK_PUTAWAY_DEMO_START_WAIT));
+  }
+}
+
+static void aCR_putaway_demo_start_wait5_2(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  static int msg_no[FISH_NUM + 1] = {
+    0x3A6D,
+    0x3A6E,
+    0x3A6D,
+    0x3A80,
+    0x3A6D,
+    0x3A6D,
+    0x3A6E,
+    0x3A6F,
+    0x3A6D,
+    0x3A70,
+    0x3A71,
+    0x3A6D,
+    0x3A6E,
+    0x3A72,
+    0x3A6D,
+    0x3A6D,
+    0x3A6D,
+    0x3A73,
+    0x3A6E,
+    0x3A81,
+    0x3A6E,
+    0x3A74,
+    0x3A6D,
+    0x3A7D,
+    0x3A75,
+    0x3A76,
+    0x3A6E,
+    0x3A6E,
+    0x3A7E,
+    0x3A77,
+    0x3A7D,
+    0x3A79,
+    0x3A7C,
+    0x3A82,
+    0x3A77,
+    0x3A7F,
+    0x3A6D,
+    0x3A7A,
+    0x3A7B,
+    0x3A78
+    // uninitialized entry here
+  };
+
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+  if (mMsg_Get_msg_num(msg_p) == 0x2F89) {
+      int fish_type = curator->donated_item - ITM_FISH_START;
+
+    if (fish_type < 0 || fish_type >= (FISH_NUM + 1)) {
+      fish_type = 0;
+    }
+
+    mMsg_Set_continue_msg_num(msg_p, msg_no[fish_type]);
+    (*curator->setupTalkAction_proc)(curator, play, aCR_TALK_PUTAWAY_DEMO_START_WAIT6);
+  }
+}
+
+static void aCR_putaway_demo_end_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  if (Common_Get(clip).handOverItem_clip->master_actor == NULL) {
+    curator->npc_class.talk_info.default_animation = -1;
+    mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+
+    switch (curator->talk_act_idx) {
+      case aCR_TALK_PUTAWAY_DEMO_END_WAIT:
+        aCR_chk_art_complete(curator, play);
+        break;
+      case aCR_TALK_PUTAWAY_DEMO_END_WAIT2:
+        aCR_chk_fossil_parts_complete(curator, play);
+        break;
+      case aCR_TALK_PUTAWAY_DEMO_END_WAIT3:
+        aCR_chk_fossil_complete(curator, play);
+        break;
+      case aCR_TALK_PUTAWAY_DEMO_END_WAIT4:
+        aCR_chk_insect_complete(curator, play);
+        break;
+      case aCR_TALK_PUTAWAY_DEMO_END_WAIT5:
+        aCR_set_after_explain_insect(curator, play);
+        break;
+      case aCR_TALK_PUTAWAY_DEMO_END_WAIT6:
+        aCR_chk_fish_complete(curator, play);
+        break;
+    }
+  }
+}
+
+static void aCR_after_explain_insect(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+  if (curator->msg_no == mMsg_Get_msg_num(msg_p) && mMsg_Check_MainNormalContinue(msg_p)) {
+    aCR_chk_insect_complete(curator, play);
+  }
+}
+
+static void aCR_thanks_fossil_msg_end_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+  if (curator->msg_no == mMsg_Get_msg_num(msg_p) && mMsg_Check_MainNormalContinue(msg_p)) {
+    aCR_chk_fossil_complete(curator, play);
+  }
+}
+
+static void aCR_chk_all_complete(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  static int msg_no[] = { 0x2F76, 0x2F77 };
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+  if (curator->msg_no == mMsg_Get_msg_num(msg_p) && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+    int msg_idx = 0;
+
+    if (aCR_countDisplayed() == (mMmd_FOSSIL_NUM + mMmd_ART_NUM + mMmd_INSECT_NUM + mMmd_FISH_NUM)) {
+      mMsm_SetCompMail();
+      msg_idx = 1;
+    }
+
+    mMsg_Set_continue_msg_num(msg_p, msg_no[msg_idx]);
+    (*curator->setupTalkAction_proc)(curator, play, aCR_TALK_END_WAIT);
+  }
+}
+
+static void aCR_msg_win_close_wait_init(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  mMsg_request_main_disappear_wait_type1(mMsg_Get_base_window_p());
+}
+
+static void aCR_menu_close_wait_init(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  mSM_open_submenu(&play->submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_CURATOR, 0);
+}
+
+static void aCR_get_demo_end_wait_init(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 3);
+  Common_Get(clip).handOverItem_clip->player_after_mode = 8;
+}
+
+static void aCR_msg_win_open_wait_init(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+  mMsg_request_main_appear_wait_type1(msg_p);
+  mMsg_Unset_LockContinue(msg_p);
+}
+
+static void aCR_return_demo_end_wait_init(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  mMsg_Set_LockContinue(mMsg_Get_base_window_p());
+}
+
+static void aCR_putaway_demo_end_wait_init(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
+  Submenu_Item_c* sm_item_p = play->submenu.item_p;
+
+  if (mMmd_RequestMuseumDisplay(sm_item_p->item) == TRUE) {
+    mPr_SetPossessionItem(Common_Get(now_private), sm_item_p->slot_no, EMPTY_NO, mPr_ITEM_COND_NORMAL);
+  }
+
+  mMsg_Set_LockContinue(mMsg_Get_base_window_p());
+}
+
+typedef void (*aCR_TALK_INIT_PROC)(NPC_CURATOR_ACTOR*, GAME_PLAY*);
+
+static void aCR_talk_init_proc(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play, int talk_act) {
+  static aCR_TALK_INIT_PROC init_proc[aCR_TALK_NUM] = {
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    &aCR_msg_win_close_wait_init,
+    &aCR_menu_close_wait_init,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    &aCR_get_demo_end_wait_init,
+    &aCR_msg_win_open_wait_init,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    &aCR_return_demo_end_wait_init,
+    &aCR_return_demo_end_wait_init,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    &aCR_putaway_demo_end_wait_init,
+    &aCR_putaway_demo_end_wait_init,
+    &aCR_putaway_demo_end_wait_init,
+    &aCR_putaway_demo_end_wait_init,
+    &aCR_putaway_demo_end_wait_init,
+    &aCR_putaway_demo_end_wait_init,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1,
+    (aCR_TALK_INIT_PROC)none_proc1
+  };
+
+  (*init_proc[talk_act])(curator, play);
+}
+
+static void aCR_setupTalkAction(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play, int talk_act) {
+  static aCR_TALK_ACT_PROC process[aCR_TALK_NUM] = {
+    (aCR_TALK_INIT_PROC)&none_proc1,
+    &aCR_after_talk_start_wait,
+    &aCR_chk_request,
+    &aCR_chk_decide_to_donate,
+    &aCR_chk_decide_to_donate2,
+    &aCR_menu_open_wait,
+    &aCR_msg_win_close_wait,
+    &aCR_menu_close_wait,
+    &aCR_get_demo_start_wait,
+    &aCR_get_demo_end_wait,
+    &aCR_msg_win_open_wait,
+    &aCR_return_demo_start_wait,
+    &aCR_return_demo_start_wait,
+    &aCR_return_demo_end_wait,
+    &aCR_return_demo_end_wait,
+    &aCR_chk_continue_to_donate,
+    &aCR_chk_continue_to_donate,
+    &aCR_chk_continue_to_donate,
+    &aCR_putaway_demo_start_wait,
+    &aCR_putaway_demo_start_wait,
+    &aCR_putaway_demo_start_wait,
+    &aCR_putaway_demo_start_wait,
+    &aCR_putaway_demo_start_wait,
+    &aCR_putaway_demo_start_wait,
+    &aCR_putaway_demo_start_wait5_2,
+    &aCR_putaway_demo_end_wait,
+    &aCR_putaway_demo_end_wait,
+    &aCR_putaway_demo_end_wait,
+    &aCR_putaway_demo_end_wait,
+    &aCR_putaway_demo_end_wait,
+    &aCR_putaway_demo_end_wait,
+    &aCR_after_explain_insect,
+    &aCR_thanks_fossil_msg_end_wait,
+    &aCR_chk_all_complete
+  };
+
+  curator->talk_act_idx = talk_act;
+  curator->talk_proc = process[talk_act];
+  aCR_talk_init_proc(curator, play, talk_act);
+}
+
+static void aCR_set_talk_info(ACTOR* actorx) {
+  static int msg_no[2][2][2][3] = {
+    {
+      { { 0x2F8B, 0x2F8C, 0x2F8C }, { 0x2F8D, 0x2F95, 0x2F8E } },
+      { { 0x2F4E, 0x2F4F, 0x2F4F }, { 0x2F51, 0x2F96, 0x2F52 } }
+    },
+    {
+      { { 0x2F53, 0x2F54, 0x2F54 }, { 0x2F55, 0x2F94, 0x2F56 } },
+      { { 0x2F53, 0x2F54, 0x2F54 }, { 0x2F55, 0x2F94, 0x2F56 } }
+    }
+  };
+
+  NPC_CURATOR_ACTOR* curator = (NPC_CURATOR_ACTOR*)actorx;
+
+  int talk_act = aCR_TALK_END_WAIT;
+  int sel_msg_no;
+
+  if (Common_Get(clip).aprilfool_control_clip != NULL && Common_Get(clip).aprilfool_control_clip->talk_chk_proc(SP_NPC_CURATOR) == FALSE) {
+    sel_msg_no = (*Common_Get(clip).aprilfool_control_clip->get_msg_num_proc)(SP_NPC_CURATOR, TRUE);
+  }
+  else {
+    int completed = FALSE;
+    int not_foreigner = FALSE;
+    int not_first_talk = FALSE;
+    int action_idx = 0;
+
+    if (aCR_countDisplayed() == (mMmd_FOSSIL_NUM + mMmd_ART_NUM + mMmd_INSECT_NUM + mMmd_FISH_NUM)) {
+      completed = TRUE;
+    }
+
+    if (mLd_PlayerManKindCheck() == FALSE) {
+      not_foreigner = TRUE;
+    }
+
+    if (aNPC_SPNPC_BIT_GET(Common_Get(spnpc_first_talk_flags), aNPC_SPNPC_BIT_CURATOR)) {
+      not_first_talk = TRUE;
+    }
+
+    if (aCR_check_sleep_time() == TRUE) {
+      if (curator->action == aCR_ACTION_SLEEP_WAIT) {
+        action_idx = 1;
+      }
+    }
+    else {
+      action_idx = 2;
+    }
+
+    if (completed == FALSE) {
+      if (not_foreigner == FALSE) {
+        if (not_first_talk == FALSE) {
+          talk_act = aCR_TALK_AFTER_TALK_START_WAIT;
+        }
+      }
+      else {
+        talk_act = aCR_TALK_CHK_REQUEST;
+      }
+    }
+
+    sel_msg_no = msg_no[completed][not_foreigner][not_first_talk][action_idx];
+  }
+
+  mDemo_Set_msg_num(sel_msg_no);
+  curator->talk_act_idx = talk_act;
+}
+
+static void aCR_talk_request(ACTOR* actorx, GAME* game) {
+  mDemo_Request(mDemo_TYPE_TALK, actorx, &aCR_set_talk_info);
+}
+
+static int aCR_talk_init(ACTOR* actorx, GAME* game) {
+  NPC_CURATOR_ACTOR* curator = (NPC_CURATOR_ACTOR*)actorx;
+  GAME_PLAY* play = (GAME_PLAY*)game;
+
+  (*curator->setupTalkAction_proc)(curator, play, curator->talk_act_idx);
+  mDemo_Set_ListenAble();
+  aNPC_SPNPC_BIT_SET(Common_Get(spnpc_first_talk_flags), aNPC_SPNPC_BIT_CURATOR);
+  curator->npc_class.head.angle_add_y = DEG2SHORT_ANGLE(5.625f);
+  curator->action = aCR_ACTION_WAIT;
+
+  return TRUE;
+}
+
+static int aCR_talk_end_chk(ACTOR* actorx, GAME* game) {
+  NPC_CURATOR_ACTOR* curator = (NPC_CURATOR_ACTOR*)actorx;
+  GAME_PLAY* play = (GAME_PLAY*)game;
+  int res = FALSE;
+
+  (*curator->talk_proc)(curator, play);
+
+  if (mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {
+    res = TRUE;
+  }
+
+  return res;
+}
+
+static void aCR_actor_move(ACTOR* actorx, GAME* game) {
+  (*Common_Get(clip).npc_clip->move_proc)(actorx, game);
+}

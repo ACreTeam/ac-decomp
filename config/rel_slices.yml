@@ -555,6 +555,10 @@ ac_ev_soncho.c:
     .text: [0x8052400C, 0x8052475C]
     .rodata: [0x80649270, 0x80649278]
     .data: [0x806A0D38, 0x806A0D88]
+ac_npc_curator.c:
+    .text: [0x8054B06C, 0x8054CF28]
+    .rodata: [0x806495B0, 0x806495B8]
+    .data: [0x806A4FB0, 0x806A5530]
 ac_douzou.c:
     .text: [0x805AD6D8, 0x805AE704]
     .rodata: [0x8064A7C0, 0x8064A7E8]
