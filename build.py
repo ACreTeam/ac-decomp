@@ -86,6 +86,8 @@ if __name__ == "__main__":
         for target in NINJA_BUILD_TARGETS:
             check_and_dump_arc(target[0], target[2], args.v)
             if directory_changed(target[0], 'build'):
+                if os.path.exists(target[1]):
+                    os.remove(target[1])
                 run_ninja_build(target[1])
             else:
                 print(f"No changes in {target[0]}, skipping build.")
