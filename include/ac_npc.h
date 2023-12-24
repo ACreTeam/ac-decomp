@@ -35,7 +35,7 @@ enum {
 
   aNPC_ATTENTION_TYPE_NUM
 };
-
+ 
 enum {
   aNPC_THINK_WAIT,
   aNPC_THINK_WANDER,
@@ -136,12 +136,25 @@ typedef struct npc_info_s {
 
 /* TODO: draw data */
 typedef struct npc_draw_info_s {
-  /* 0x000 */ u8 _000[0x584 - 0x000];
+  /* 0x000 */ u8 _000[0x20 - 0];
+  /* 0x020 */ f32 _20;
+  /* 0x024 */ f32 _24; 
+  /* 0x024 */ u8 _028[0x534 - 0x028];
+  /* 0x538 */ u8 _534;
+  /* 0x538 */ u8 _535;
+  /* 0x538 */ u8 _536;
+  /* 0x538 */ u8 _537;
+  /* 0x538 */ u8 _538;
+  /* 0x538 */ u8 _539;
+  /* 0x540 */ u8 _53A[0x580 - 0x53A];
+  /* 0x580 */ int _580;
   /* 0x584 */ int texture_bank_idx;
-  /* 0x588 */ u8 _588[0x5BD - 0x588];
+  /* 0x588 */ u8 _588[0x5BD - 0x588]; 
   /* 0x5BD */ u8 _5BD;
-  /* 0x5BE */ u8 _5BE[0x630 - 0x5BE];
-} aNPC_draw_info_c;
+  /* 0x5BE */ u8 _5BE;
+  /* 0x5BE */ u8 _5BF[0x630 - 0x5BF];
+} aNPC_draw_info_c; 
+
 
 typedef void (*aNPC_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*, int);
 

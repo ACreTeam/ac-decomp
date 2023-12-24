@@ -497,7 +497,7 @@ void play_init(GAME* game){
     fbdemo_fade_setcolor_rgba8888(fade, 0xA0A0A0FF);
     fbdemo_fade_startup(fade);
 
-    play->fade_color_value = 0;
+    play->fade_color_value.rgba8888 = 0;
     
     freebytes = game_getFreeBytes(&play->game);
     alloc = (u32)THA_alloc16(&play->game.tha, freebytes);
@@ -731,7 +731,7 @@ int makeBumpTexture(GAME_PLAY* play, GRAPH* graph1, GRAPH* graph2){
         }
 
         fbdemo_fade_draw(&play->color_fade, &polydisp);
-        fade_rgba8888_draw(&polydisp, play->fade_color_value);  
+        fade_rgba8888_draw(&polydisp, play->fade_color_value.rgba8888);  
         
         gSPEndDisplayList(polydisp++);
 

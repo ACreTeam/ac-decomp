@@ -1,6 +1,7 @@
 #include "m_rcp.h"
 
 #include "gfxalloc.h"
+#include "libu64/u64types.h"
 
 #define G_CC_POLY_Z_LIGHT_PRIM PRIMITIVE, 0, SHADE, 0, 0, 0, 0, PRIMITIVE
 #define G_CC_MODULATEIDECALA_PRIM2 PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED

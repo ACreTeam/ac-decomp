@@ -70,7 +70,7 @@ struct game_play_s {
   /* 0x2318 */ fbdemo_fade color_fade;
   /* 0x2328 */ CollisionCheck_c collision_check;
   /* 0x23F8 */ DRAW_CHK_PROC draw_chk_proc; // only used by mikanbox actor
-  /* 0x23FC */ u32 fade_color_value;
+  /* 0x23FC */ rgba8888 fade_color_value;
   /* 0x2400 */ Scene_data_status_c* scene_data_status;
   /* 0x2404 */ u8 _2400[0x2600 - 0x2404];
 };

@@ -19,7 +19,7 @@ ACTOR_PROFILE Nameplate_Profile = {
     NONE_ACTOR_PROC,
     aNP_actor_init,
     NULL,
-	NULL,
+    NULL,
 };
 
 static void aNP_set_talk_info(ACTOR* actor) {
@@ -41,7 +41,7 @@ static void aNP_set_talk_info(ACTOR* actor) {
 }
 
 static void aNP_actor_move(ACTOR* actor, GAME_PLAY* play) {
-	PLAYER_ACTOR* player;
+    PLAYER_ACTOR* player;
     s16 player_angle;
     int angle;
 
@@ -58,7 +58,7 @@ static void aNP_actor_move(ACTOR* actor, GAME_PLAY* play) {
 }
 
 extern void aNP_actor_init(ACTOR* actor, GAME* game) {
-	GAME_PLAY* play = (GAME_PLAY*)game;
+    GAME_PLAY* play = (GAME_PLAY*)game;
     
     mFI_SetFG_common(DUMMY_NAMEPLATE, actor->home.position, 0);
     aNP_actor_move(actor, play);

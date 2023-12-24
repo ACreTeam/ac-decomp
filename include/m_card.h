@@ -26,6 +26,8 @@ extern void mCD_InitAll();
 extern void mCD_LoadLand();
 extern void mCD_toNextLand();
 
+extern int mCD_EraseBrokenLand_bg(void*);
+extern int mCD_card_format_bg(u8);
 #ifdef __cplusplus
 }
 #endif
