@@ -51,6 +51,11 @@ m_camera2.c:
     .text: [0x8037DA54, 0x8038344C]
     .rodata: [0x80641438, 0x80641828]
     .data: [0x8064F818, 0x8064F860]
+m_choice.c:
+    .text: [0x8038344C, 0x80385404]
+    .rodata: [0x80641828, 0x80641A90]
+    .data: [0x8064F860, 0x80650960]
+    .bss: [0x812633A0, 0x81263410]
 m_cockroach.c:
     .text: [0x80385430, 0x80385A80]
 m_collision_obj.c:
