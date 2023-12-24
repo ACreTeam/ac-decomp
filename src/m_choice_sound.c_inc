@@ -1,0 +1,19 @@
+static void mChoice_sound_SENTAKU_KETTEI() {
+  sAdo_SysTrgStart(0xD);
+}
+
+static void mChoice_sound_SENTAKU_OPEN() {
+  sAdo_SysTrgStart(0xC);
+}
+
+static void mChoice_sound_CURSOL() {
+  sAdo_SysTrgStart(0x1);
+}
+
+static void mChoice_sound_ZOOMDOWN_SHORT() {
+  sAdo_SysTrgStart(0x8005);
+}
+
+static void mChoice_sound_ZOOMDOWN_LONG() {
+  sAdo_SysTrgStart(0x8015);
+}
