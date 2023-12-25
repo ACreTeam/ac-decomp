@@ -401,6 +401,14 @@ typedef struct santa_event_common_s {
   mActor_name_t last_talk_cloth;
 } mEv_santa_event_common_c;
 
+#define mEv_SANTA_CLOTH_NUM_MAX 10 /* How many different shirts can the player trick Jingle with */
+
+typedef struct santa_event_s {
+  PersonalID_c pid;
+  u8 present_count;
+  mActor_name_t cloth[mEv_SANTA_CLOTH_NUM_MAX];
+} mEv_santa_event_c;
+
 typedef union {
   mEv_broker_common_c broker;
   mEv_santa_event_common_c santa;
