@@ -5,6 +5,7 @@
 #include "libu64/gfxprint.h"
 #include "m_choice.h"
 #include "m_item_name.h"
+#include "m_msg_data.h"
 
 #ifdef __cplusplus
 extern "C" {
