@@ -198,9 +198,23 @@ static int aESNT_before_talk_more_check_decide_talk_data_idx(mEv_santa_event_com
 static int aESNT_before_talk_decide_talk_data_idx(EVENT_SANTA_ACTOR* santa, GAME_PLAY* play, mEv_santa_event_c* event_p, mEv_santa_event_common_c* event_common_p) {
   int talk_data_idx;
 
+  /* @BUG - because we compare the acre the player is in (GAME_PLAY block table)
+   * against the last acre we talked to Jingle, we can actually talk to him again
+   * without having to find him again. If you trap him at the border of an acre
+   * and then move into the adjacent acre and talk to him, GAME_PLAY's block state
+   * updates which passes the 'same block' check. Rinse and repeat between two acres
+   * to satisfy the talk requirements without having to do the search portion.
+   */
+  #if !defined(BUGFIXES) || defined(ALLOW_EXPLOITS)
   if (play->block_table.block_x == event_common_p->bx && play->block_table.block_z == event_common_p->bz) {
     talk_data_idx = aESNT_TALK_SAME_BLOCK + RANDOM(aESNT_TALK_SAME_BLOCK_NUM);
   }
+  #else
+  /* Use Jingle's actor block instead of GAME_PLAY's current block (player block) */
+  if (santa->npc_class.actor_class.block_x == event_common_p->bx && santa->npc_class.actor_class.block_x == event_common_p->bz) {
+    talk_data_idx = aESNT_TALK_SAME_BLOCK + RANDOM(aESNT_TALK_SAME_BLOCK_NUM);
+  }
+  #endif
   else if (event_common_p->talk_counter >= 4) {
     talk_data_idx = aESNT_before_talk_present_decide_talk_data_idx(santa, event_p, event_common_p, 0);
   }
@@ -210,8 +224,13 @@ static int aESNT_before_talk_decide_talk_data_idx(EVENT_SANTA_ACTOR* santa, GAME
 
   if (talk_data_idx != aESNT_TALK_FINAL_NO_PRESENT) {
     /* Update talked acre */
+    #if !defined(BUGFIXES) || defined(ALLOW_EXPLOITS)
     event_common_p->bx = play->block_table.block_x;
     event_common_p->bz = play->block_table.block_z;
+    #else
+    event_common_p->bx = santa->npc_class.actor_class.block_x;
+    event_common_p->bz = santa->npc_class.actor_class.block_z;
+    #endif
   }
 
   return talk_data_idx;
