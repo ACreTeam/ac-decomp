@@ -2671,7 +2671,7 @@ static void Camera2_main_Staff_Roll_SetPos(GAME_PLAY* play) {
   s_xyz angle;
 
   if (speaker != NULL || listener != NULL) {
-    s8* kk_save_area = mEv_get_save_area(mEv_EVENT_KK_SLIDER, 10);
+    u8* kk_save_area = mEv_get_save_area(mEv_EVENT_KK_SLIDER, 10);
 
     if (speaker == NULL || listener == NULL) {
       distance = 0.0f;
