@@ -18,3 +18,4 @@ tools/cli.ini
 tools/cli.py
 src/data/bin1
 src/data/bin2
+objdiff.json
