@@ -131,8 +131,9 @@ typedef struct Save_s {
   /* 0x021393 */ u8 haniwa_scheduled; /* when set, gyroids will be spwaned */
   /* 0x021394 */ u8 dust_flag; /* set by field assessment for too much 'dust' (garbage) around town, causes immediate fail of town ranking */
   /* 0x021395 */ u8 clear_grass; /* set by Wisp, removes all weeds */
-  /* 0x021396 */ lbRTC_ymd_c event_year_ymd; /* might not exist and just be lbRTC_year_t */
-  /* 0x02139A */ u8 unused_2139A[6];
+  /* 0x021396 */ u8 _021396[2];
+  /* 0x021398 */ lbRTC_year_t event_year; /* might not exist and just be lbRTC_year_t */
+  /* 0x02139A */ u8 unused_2139C[6];
   /* 0x0213A0 */ u8 keep_house_size[PLAYER_NUM]; /* saved flags for house sizes */
   /* 0x0213A4 */ lbRTC_ymd_c force_remove_date; /* last time the NPC force remove timer was updated */
   /* 0x0213A8 */ mMmd_info_c museum_display; /* museum display bits */
@@ -229,8 +230,10 @@ typedef struct common_data_s {
   /* 0x02857C */ Door_data_c famicom_emu_exit_door_data;
   /* 0x028590 */ u8 remove_cut_tree_info_bitfield; /* resets the cut tree states for trees in a visible acre */
   /* 0x028591 */ u8 floor_idx;
-  /* 0x028592 */ s16 demo_profiles[mDemo_CLIP_TYPE_NUM - 1];
-  /* 0x028596 */ u8 _28596[0x285BE - 0x28596];
+  /* 0x028592 */ s16 demo_profiles[2]; /* demo_profiles[0] is for demo_clip, demo_profiles[1] is for demo_clip2 */
+  /* 0x028596 */ u16 copy_protect_code;
+  /* 0x028598 */ int event_keep_flags[4];
+  /* 0x0285A8 */ u8 _285A8[0x0285BE - 0x0285A8];
   /* 0x0285BE */ s8 player_actor_exists;
   /* 0x0285BF */ s8 payment_completed_type;
   /* 0x0285C0 */ s8 player_decoy_flag;

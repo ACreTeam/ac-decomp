@@ -94,6 +94,9 @@ enum demo_clip_type {
   mDemo_CLIP_TYPE_NONE,
   mDemo_CLIP_TYPE_INTRO_DEMO,
   mDemo_CLIP_TYPE_RIDE_OFF_DEMO,
+  mDemo_CLIP_TYPE_PRESENT_DEMO,
+  mDemo_CLIP_TYPE_BOAT_DEMO,
+  mDemo_CLIP_TYPE_RESET_DEMO,
 
   mDemo_CLIP_TYPE_NUM
 };

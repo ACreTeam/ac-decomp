@@ -49,6 +49,8 @@ extern void mPlib_request_main_give_from_submenu(mActor_name_t disp_item, int su
 extern int mPlib_Check_tree_shaken_big(const xyz_t* pos);
 extern int mPlib_Check_tree_shaken_little(const xyz_t* pos);
 extern int mPlib_request_main_recieve_wait_type1(GAME* game, mActor_name_t item, int counter_flag);
+extern int mPlib_able_player_warp_forEvent();
+extern int mPlib_Get_unable_wade();
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 
