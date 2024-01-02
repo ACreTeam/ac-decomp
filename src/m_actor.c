@@ -339,7 +339,7 @@ extern void Actor_info_ct(GAME* game, Actor_info* actor_info, Actor_data* player
   }
 
   /* Spawn any demo actors */
-  for (i = 0; i < mDemo_CLIP_TYPE_NUM - 1; i++) {
+  for (i = 0; i < 2; i++) {
     s16 demo_profile = Common_Get(demo_profiles[i]);
     
     if (demo_profile != mAc_PROFILE_NUM) {

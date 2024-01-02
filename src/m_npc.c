@@ -3852,7 +3852,7 @@ extern void mNpc_SetReturnAnimal(Animal_c* return_animal) {
     }
     else {
       return_animal_p->npc_id = return_animal->id.npc_id;
-      return_animal_p->talk_bit = FALSE;
+      return_animal_p->talk_bit = 0b000;
       return_animal_p->exist = FALSE;
       lbRTC_TimeCopy(&return_animal_p->renew_time, Common_GetPointer(time.rtc_time));
       mNpc_CopyAnimalPersonalID(Save_GetPointer(last_removed_animal_id), &return_animal->id);

@@ -14,6 +14,8 @@ extern "C" {
 #endif
 
 #define aNPC_SPNPC_BIT_CURATOR 0
+#define aNPC_SPNPC_BIT_GOHOME_NPC 1
+#define aNPC_SPNPC_BIT_MASK_CAT 2
 #define aNPC_SPNPC_BIT_EV_SONCHO 5
 
 #define aNPC_SPNPC_BIT_GET(field, bit) (((field) >> (bit)) & 1)
