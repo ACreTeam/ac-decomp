@@ -16,6 +16,7 @@ extern "C" {
 #define aNPC_SPNPC_BIT_CURATOR 0
 #define aNPC_SPNPC_BIT_GOHOME_NPC 1
 #define aNPC_SPNPC_BIT_MASK_CAT 2
+#define aNPC_SPNPC_BIT_CASTAWAY 4
 #define aNPC_SPNPC_BIT_EV_SONCHO 5
 
 #define aNPC_SPNPC_BIT_GET(field, bit) (((field) >> (bit)) & 1)
@@ -141,7 +142,7 @@ typedef struct npc_draw_info_s {
   /* 0x000 */ u8 _000[0x20 - 0];
   /* 0x020 */ f32 _20;
   /* 0x024 */ f32 _24; 
-  /* 0x024 */ u8 _028[0x534 - 0x028];
+  /* 0x028 */ u8 _028[0x534 - 0x028];
   /* 0x538 */ u8 _534;
   /* 0x538 */ u8 _535;
   /* 0x538 */ u8 _536;
@@ -149,13 +150,13 @@ typedef struct npc_draw_info_s {
   /* 0x538 */ u8 _538;
   /* 0x538 */ u8 _539;
   /* 0x540 */ u8 _53A[0x580 - 0x53A];
-  /* 0x580 */ int _580;
+  /* 0x580 */ int animation_id;
   /* 0x584 */ int texture_bank_idx;
   /* 0x588 */ u8 _588[0x5BD - 0x588]; 
   /* 0x5BD */ u8 _5BD;
   /* 0x5BE */ u8 _5BE;
   /* 0x5BE */ u8 _5BF[0x630 - 0x5BF];
-} aNPC_draw_info_c; 
+} aNPC_draw_info_c;
 
 
 typedef void (*aNPC_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*, int);
