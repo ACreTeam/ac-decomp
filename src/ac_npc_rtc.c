@@ -108,7 +108,7 @@ void aNRTC_actor_move(ACTOR* actor, GAME* game){
     GAME_PLAY* play = (GAME_PLAY*)game;
 
  
-    if(rtc->npc_class.draw._580 == 0x76){
+    if(rtc->npc_class.draw.animation_id == 0x76){
         sAdos_GetStaffRollInfo(&info);
         if(info.unk0 != 4){
             val = 0.0f;
