@@ -1,7 +1,7 @@
 #include "ac_ev_majin.h"
 #include "m_common_data.h"
 #include "m_name_table.h"
-
+#include "m_demo.h"
 
 extern void aEMJ_actor_ct(ACTOR*, GAME*);
 extern void aEMJ_actor_dt(ACTOR*, GAME*);
