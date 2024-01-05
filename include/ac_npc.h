@@ -136,7 +136,9 @@ typedef struct npc_info_s {
 
 /* TODO: draw data */
 typedef struct npc_draw_info_s {
-  /* 0x000 */ u8 _000[0x20 - 0];
+  /* 0x000 */ int _00;
+  /* 0x004 */ int _04;
+  /* 0x008 */ u8 _000[0x20 - 8];
   /* 0x020 */ f32 _20;
   /* 0x024 */ f32 _24; 
   /* 0x024 */ u8 _028[0x534 - 0x028];
@@ -420,6 +422,11 @@ typedef struct npc_control_actor_s {
   aNPC_cloth_c cloth[10];
   u8 _8F4[0x9D8 - 0x8F4]; // TODO
 } NPC_CONTROL_ACTOR;
+
+typedef struct npc_destruct_table_proc{
+    aNPC_SUB_PROC unk0;
+    aNPC_SUB_PROC unk4;
+}NPC_DT_PROCS;
 
 extern ACTOR_PROFILE Npc_Profile;
 

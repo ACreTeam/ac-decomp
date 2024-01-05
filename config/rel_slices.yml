@@ -559,10 +559,17 @@ ac_npc_curator.c:
     .text: [0x8054B06C, 0x8054CF28]
     .rodata: [0x806495B0, 0x806495B8]
     .data: [0x806A4FB0, 0x806A5530]
+ac_npc_engineer.c:
+    .text: [0x80552984, 0x80552B5C]
+    .data: [0x806A61C8, 0x806A6208]
 ac_npc_rtc.c:
     .text: [0x80573044, 0x80574134]
     .rodata: [0x80649A08, 0x80649A40]
     .data: [0x806BF648,0x806BF788]
+ac_ev_majin.c:
+    .text: [0x80592A40, 0x80593158]
+    .rodata: [0x80649D98,0x80649DA0]
+    .data: [0x806C2B50, 0x806C2BD0]
 ac_douzou.c:
     .text: [0x805AD6D8, 0x805AE704]
     .rodata: [0x8064A7C0, 0x8064A7E8]
