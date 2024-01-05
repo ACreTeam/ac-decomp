@@ -46,7 +46,7 @@ static void aECST_actor_ct(ACTOR* actorx, GAME* game) {
     castaway->npc_class.condition_info.demo_flg = ~aNPC_COND_DEMO_SKIP_MOVE_Y; // is this a mistake?
     castaway->npc_class.condition_info.hide_request = FALSE;
     castaway->npc_class.palActorIgnoreTimer = -1;
-    aNPC_SPNPC_BIT_SET(Common_Get(spnpc_first_talk_flags), aNPC_SPNPC_BIT_CASTAWAY);
+    aNPC_SPNPC_BIT_SET(Common_Get(spnpc_first_talk_flags), aNPC_SPNPC_BIT_DOZAEMON);
     actorx->status_data.weight = 254;
     actorx->gravity = 0.0f;
     actorx->max_velocity_y = 0.0f;

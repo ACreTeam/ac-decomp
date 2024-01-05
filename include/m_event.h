@@ -377,7 +377,7 @@ typedef struct kabu_peddler_event_s {
 } mEv_kabu_peddler_c;
 
 typedef struct dozaemon_event_s {
-  u32 flags;
+  u16 flags;
 } mEv_dozaemon_c;
 
 typedef union {
@@ -552,7 +552,7 @@ typedef struct event_common_save_data {
   } bridge_flags;
   u8 ghost_event_type; // 0x72 will spawn wisp, 0x77 won't?
   u8 soncho_event_type; // checked not equal to 0xFF for summer & fall fishing tournies
-  u8 current_event_state; // used to signal when you've received an item from gracie or woken gulliver up
+  u8 dozaemon_completed; // used to signal when you've received an item from gulliver
 } mEv_save_common_data_c;
 
 extern int mEv_CheckFirstJob();
