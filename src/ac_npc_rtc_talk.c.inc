@@ -326,10 +326,10 @@ int aNRTC_talk_end_chk(ACTOR* actor,GAME* game){
         }  
         if (mDemo_Get_OrderValue(4, 0) == 0) {
             if (unk9AC >= 0x258) { 
-                if ( rtc->npc_class.draw._580 != 0x76) {
+                if ( rtc->npc_class.draw.animation_id != 0x76) {
                     mDemo_Set_OrderValue(4, 0, 0xFF);
                 }
-            } else if (rtc->npc_class.draw._580 == 0x76) {
+            } else if (rtc->npc_class.draw.animation_id == 0x76) {
                 mDemo_Set_OrderValue(4, 0, 0xFD);
             }
         }

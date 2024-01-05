@@ -142,6 +142,16 @@ config/dol.yml:
     addrs: [0x800ab260, 0x800af3c0]
 
 config/rel.yml:
+  con_waku_swaku3_tex: # m_choice
+    addrs: [0x8064F880, 0x80650880]
+  con_sentaku2_v:
+    addrs: [0x80650880, 0x806508C0]
+    type: vtx
+  # ac_boat_demo
+  aBTD_island_prg:
+    addrs: [0x8065FD4C, 0x80674F90]
+  aBTD_island_ldr:
+    addrs: [0x80674F90, 0x806817CC]
   wipe1_v:
     addrs: [0x80652AD0, 0x80652C60]
     type: vtx

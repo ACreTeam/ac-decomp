@@ -102,11 +102,11 @@ static void aWeather_RequestChangeWeather(ACTOR* actor, s16 status, s16 level){
     }
 }
 
-void aWeather_RequestChangeWeatherToIsland(){
+extern void aWeather_RequestChangeWeatherToIsland(){
     aWeather_RequestChangeWeather(&Common_Get(clip.weather_clip)->actor->actor_class,Common_Get(island_weather),Common_Get(island_weather_intensity));
 }
 
-void aWeather_RequestChangeWeatherFromIsland(){
+extern void aWeather_RequestChangeWeatherFromIsland(){
     aWeather_RequestChangeWeather(&Common_Get(clip.weather_clip)->actor->actor_class, mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather)) , mEnv_SAVE_GET_WEATHER_INTENSITY(Save_Get(weather)));
 }
 

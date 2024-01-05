@@ -248,8 +248,8 @@ static int mSDI_StartInitNew(GAME* game, int player_no, int malloc_flag) {
   lbRTC_TimeCopy(Save_GetPointer(saved_auto_nwrite_time), &mTM_rtcTime_clear_code);
 
   Save_Set(station_type, RANDOM(15));
-  Save_Set(island.last_song_male, -1);
-  Save_Set(island.last_song_female, -1);
+  Save_Set(island.last_song_to_island, -1);
+  Save_Set(island.last_song_from_island, -1);
 
   mPr_SetPossessionItem(Common_Get(now_private), 0, ITM_MONEY_1000, mPr_ITEM_COND_QUEST);
   

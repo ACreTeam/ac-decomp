@@ -11,8 +11,13 @@ extern "C" {
 
 #define mMC_TALK_IDX_MAX 10
 
+typedef struct mask_cat_data_s {
+  /* 0x000 */ PersonalID_c creator_pid;
+  /* 0x020 */ u8 design[mNW_DESIGN_TEX_SIZE] ATTRIBUTE_ALIGN(32); /* this is aligned to 32 bytes for ARAM transfer */
+} mMC_design_c;
+
 typedef struct mask_cat_s {
-  mNW_original_design_c design;
+  mMC_design_c design;
   u8 palette_no;
   u8 cloth_no;
   u8 talk_idx;

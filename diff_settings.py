@@ -21,4 +21,4 @@ def apply(config, args: Namespace):
     config["show_line_numbers_default"] = True
 
 def add_custom_arguments(parser: ArgumentParser):
-    parser.add_argument("-r", "--rel", action="store_true", help="(SPM) Diff a function in relF.rel")
+    parser.add_argument("-r", "--rel", action="store_true", help="(AC) Diff a function in foresta.rel")

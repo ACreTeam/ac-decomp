@@ -51,6 +51,11 @@ m_camera2.c:
     .text: [0x8037DA54, 0x8038344C]
     .rodata: [0x80641438, 0x80641828]
     .data: [0x8064F818, 0x8064F860]
+m_choice.c:
+    .text: [0x8038344C, 0x80385404]
+    .rodata: [0x80641828, 0x80641A90]
+    .data: [0x8064F860, 0x80650960]
+    .bss: [0x812633A0, 0x81263410]
 m_cockroach.c:
     .text: [0x80385430, 0x80385A80]
 m_collision_obj.c:
@@ -378,8 +383,13 @@ ac_animal_logo.c:
     .data: [0x8065FB68, 0x8065FBA8]
 ac_animal_logo_misc.c:
     .text: [0x804117D4, 0x80411A60]
+ac_boat_demo.c:
+    .text: [0x80414EC4, 0x80415BD8]
+    .rodata: [0x80643B98, 0x80643BA0]
+    .data: [0x8065FD28, 0x806818A0]
+    .bss: [0x812F96E8, 0x812F96F0]
 ac_boxManager.c:
-    .text: [0x80415BD8,0x80415BE8]
+    .text: [0x80415BD8, 0x80415BE8]
     .data: [0x806818A0, 0x806818C8]
 ac_boxMove.c:
     .text: [0x80415BE8, 0x80415BF8]
@@ -544,6 +554,10 @@ ac_aprilfool_control.c:
 ac_groundhog_control.c:
     .text: [0x805155C8, 0x80515C48]
     .data: [0x8069FD88, 0x8069FDD0]
+ac_ev_castaway.c:
+    .text: [0x8051CAC4, 0x8051CDCC]
+    .rodata: [0x806491B0, 0x806491B8]
+    .data: [0x806A03A0, 0x806A03F8]
 ac_ev_dokutu.c:
     .text: [0x8051DFF4, 0x8051E228]
     .data: [0x806A05C8, 0x806A0608]
@@ -551,6 +565,10 @@ ac_ev_gypsy.c:
     .text: [0x80520D78, 0x80521414]
     .rodata: [0x80649228, 0x80649238]
     .data: [0x806A0938, 0x806A09F8]
+ac_ev_santa.c:
+    .text: [0x80523498, 0x8052400C]
+    .rodata: [0x80649268, 0x80649270]
+    .data: [0x806A0BE0, 0x806A0D38]
 ac_ev_soncho.c:
     .text: [0x8052400C, 0x8052475C]
     .rodata: [0x80649270, 0x80649278]

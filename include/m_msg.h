@@ -4,6 +4,8 @@
 #include "types.h"
 #include "libu64/gfxprint.h"
 #include "m_choice.h"
+#include "m_item_name.h"
+#include "m_msg_data.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,6 +68,9 @@ enum {
 
   mMsg_MAIL_STR_NUM
 };
+
+#define mMsg_STATUS_FLAG_ZOOMDOWN_LONG (1 << 11) /* When set, mMsg_sound_ZOOMDOWN_SHORT() sfx will not play */
+#define mMsg_STATUS_FLAG_USE_AM (1 << 17) /* 'AM' when set, 'PM' when not set */
 
 typedef struct message_window_s mMsg_Window_c;
 typedef struct message_data_s mMsg_Data_c;
@@ -144,88 +149,89 @@ struct message_data_s {
 };
 
 struct message_window_s {
-  int data_loaded;
-  int msg_no;
-  int _008;
-  mMsg_Data_c* msg_data;
-  f32 center_x;
-  f32 center_y;
-  f32 width;
-  f32 height;
+  /* 0x000 */ int data_loaded;
+  /* 0x004 */ int msg_no;
+  /* 0x008 */ int _008;
+  /* 0x00C */ mMsg_Data_c* msg_data;
+  /* 0x010 */ f32 center_x;
+  /* 0x014 */ f32 center_y;
+  /* 0x018 */ f32 width;
+  /* 0x01C */ f32 height;
   
-  ACTOR* talk_actor;
-  int show_actor_name;
-  int actor_name_len;
-  int nameplate_x;
-  int nameplay_y;
+  /* 0x020 */ ACTOR* talk_actor;
+  /* 0x024 */ int show_actor_name;
+  /* 0x028 */ int actor_name_len;
+  /* 0x02C */ int nameplate_x;
+  /* 0x030 */ int nameplay_y;
 
-  int show_continue_button;
+  /* 0x034 */ int show_continue_button;
 
-  u8 free_str[mMsg_FREE_STR_NUM][mMsg_FREE_STRING_LEN];
-  int free_str_article[mMsg_FREE_STR_NUM];
+  /* 0x038 */ u8 free_str[mMsg_FREE_STR_NUM][mMsg_FREE_STRING_LEN];
+  /* 0x178 */ int free_str_article[mMsg_FREE_STR_NUM];
 
-  u8 item_str[mMsg_ITEM_STR_NUM][mMsg_FREE_STRING_LEN];
-  int item_str_article[mMsg_ITEM_STR_NUM];
+  /* 0x1C8 */ u8 item_str[mMsg_ITEM_STR_NUM][mMsg_FREE_STRING_LEN];
+  /* 0x218 */ int item_str_article[mMsg_ITEM_STR_NUM];
 
-  u8 mail_str[mMsg_MAIL_STR_NUM][mMsg_MAIL_STRING_LEN];
+  /* 0x22C */ u8 mail_str[mMsg_MAIL_STR_NUM][mMsg_MAIL_STRING_LEN];
 
-  rgba_t name_text_color;
-  rgba_t name_background_color;
+  /* 0x2B0 */ rgba_t name_text_color;
+  /* 0x2B4 */ rgba_t name_background_color;
 
-  rgba_t window_background_color;
-  rgba_t font_color[4];
+  /* 0x2B8 */ rgba_t window_background_color;
+  /* 0x2BC */ rgba_t font_color[4];
 
-  rgba_t continue_button_color;
+  /* 0x2CC */ rgba_t continue_button_color;
 
-  f32 font_scale_x;
-  f32 font_scale_y;
+  /* 0x2D0 */ f32 font_scale_x;
+  /* 0x2D4 */ f32 font_scale_y;
 
-  int _2D8;
-  int _2DC;
+  /* 0x2D8 */ int _2D8;
+  /* 0x2DC */ int _2DC;
 
-  int text_lines;
-  int current_line;
+  /* 0x2E0 */ int text_lines;
+  /* 0x2E4 */ int current_line;
 
-  mChoice_c choice_window;
+  /* 0x2E8 */ mChoice_c choice_window;
 
-  int _3E8;
+  /* 0x3E8 */ int _3E8;
 
-  u16 end_timer;
-  s16 animal_voice_idx;
-  int voice_sfx_idx;
-  u8 voice_idx;
-  u8 voice2_idx;
-  u8 voice3_idx;
-  s8 hide_choice_window_timer;
-  int spec;
-  u8 free_str_color_idx[4];
-  u8 _404[8]; // unused?
-  u32 status_flags;
+  /* 0x3EC */ u16 end_timer;
+  /* 0x3EE */ s16 animal_voice_idx;
+  /* 0x3F0 */ int voice_sfx_idx;
+  /* 0x3F4 */ u8 voice_idx;
+  /* 0x3F5 */ u8 voice2_idx;
+  /* 0x3F6 */ u8 voice3_idx;
+  /* 0x3F7 */ s8 hide_choice_window_timer;
+  /* 0x3F8 */ u8 force_voice_enable_flag;
+  /* 0x3FC */ int spec;
+  /* 0x400 */ u8 free_str_color_idx[4];
+  /* 0x408 */ u8 _404[8]; // unused?
+  /* 0x40C */ u32 status_flags;
 
-  f32 timer;
-  f32 cursor_timer;
-  f32 continue_button_timer;
+  /* 0x410 */ f32 timer;
+  /* 0x414 */ f32 cursor_timer;
+  /* 0x418 */ f32 continue_button_timer;
 
-  int start_text_cursor_idx;
-  int end_text_cursor_idx;
-  f32 window_scale;
-  f32 text_scale;
+  /* 0x41C */ int start_text_cursor_idx;
+  /* 0x420 */ int end_text_cursor_idx;
+  /* 0x424 */ f32 window_scale;
+  /* 0x428 */ f32 text_scale;
 
-  int requested_main_index;
-  int requested_priority;
+  /* 0x42C */ int requested_main_index;
+  /* 0x430 */ int requested_priority;
 
-  int main_index;
-  int draw_flag;
-  int cancel_flag;
-  int cancelable_flag;
-  int continue_msg_no;
-  int continue_cancel_flag;
-  int force_next;
-  int lock_continue;
-  s8 now_utter;
+  /* 0x434 */ int main_index;
+  /* 0x438 */ int draw_flag;
+  /* 0x43C */ int cancel_flag;
+  /* 0x440 */ int cancelable_flag;
+  /* 0x444 */ int continue_msg_no;
+  /* 0x448 */ int continue_cancel_flag;
+  /* 0x44C */ int force_next;
+  /* 0x450 */ int lock_continue;
+  /* 0x454 */ s8 now_utter;
 
-  mMsg_Main_Data_c main_data;
-  mMsg_Request_Data_c request_data;
+  /* 0x458 */ mMsg_Main_Data_c main_data;
+  /* 0x460 */ mMsg_Request_Data_c request_data;
 };
 
 extern int mMsg_Get_Length_String(u8* buf, size_t buf_size);
@@ -262,6 +268,26 @@ extern int mMsg_Check_main_hide(mMsg_Window_c* msg_win);
 extern int mMsg_sound_voice_get_for_editor(int code);
 extern int mMsg_sound_spec_change_voice(mMsg_Window_c* msg_win);
 extern void mMsg_request_main_forceoff();
+extern int mMsg_CopyPlayerName(u8* data, int idx, int max_size, int capitalize);
+extern int mMsg_CopyTalkName(ACTOR* actor, u8* data, int idx, int max_size, int capitalize);
+extern int mMsg_CopyTail(ACTOR* actor, u8* data, int idx, int max_size, int capitalize);
+extern int mMsg_CopyYear(u8* data, int idx, int max_size);
+extern int mMsg_CopyMonth(u8* data, int idx, int max_size);
+extern int mMsg_CopyWeek(u8* data, int idx, int max_size);
+extern int mMsg_CopyDay(u8* data, int idx, int max_size);
+extern int mMsg_CopyHour(u8* data, int idx, int max_size);
+extern int mMsg_CopyMin(u8* data, int idx, int max_size);
+extern int mMsg_CopySec(u8* data, int idx, int max_size);
+extern int mMsg_CopyFree(mMsg_Window_c* msg_win, int free_idx, u8* data, int idx, int max_size, int article, int capitalize);
+extern int mMsg_CopyDetermination(mMsg_Window_c* msg_win, u8* data, int idx, int max_size);
+extern int mMsg_CopyCountryName(u8* data, int idx, int max_size, int capitalize);
+extern int mMsg_CopyRamdomNumber2(u8* data, int idx, int max_size);
+extern int mMsg_CopyItem(mMsg_Window_c* msg_win, int item_idx, u8* data, int idx, int max_size, int article, int capitalize);
+extern int mMsg_CopyMail(mMsg_Window_c* msg_win, int mail_idx, u8* data, int idx, int max_size);
+extern int mMsg_CopyIslandName(u8* data, int idx, int max_size, int capitalize);
+extern int mMsg_CopyAmPm(mMsg_Window_c* msg_win, u8* data, int idx, int max_size);
+extern void mMsg_sound_set_voice_silent(mMsg_Window_c* msg_win, int update_voice_mode);
+extern void mMsg_sound_unset_voice_silent(mMsg_Window_c* msg_win, int update_voice_mode);
 
 #ifdef __cplusplus
 }

@@ -44,8 +44,8 @@ typedef struct island_s {
   /* 0x18CA */ lbRTC_time_c renew_time; /* last time island was visited? */
   /* 0x18D2 */ u8 unused_18D2[14]; /* unused */
   /* 0x18E0 */ u8 grass_tex_type; /* grass type */
-  /* 0x18E1 */ u8 last_song_male; /* last song kapp'n sang for a male character */
-  /* 0x18E2 */ u8 last_song_female; /* last song kapp'n sang for a female character */
+  /* 0x18E1 */ u8 last_song_to_island; /* last song kapp'n sang to the island */
+  /* 0x18E2 */ u8 last_song_from_island; /* last song kapp'n sang leaving the island */
   /* 0x18E3 */ u8 unused_18E3[29]; /* unused */
 } Island_c;
 
@@ -180,8 +180,8 @@ typedef struct island_agb_s {
   /* 0x3948 */ u16 npc_pal[16];
   /* 0x3968 */ u8 _3968[20];
   /* 0x397C */ u8 _397C;
-  /* 0x397D */ u8 last_song_male; /* last song kapp'n sang for a male character */
-  /* 0x397E */ u8 last_song_female; /* last song kapp'n sang for a female character */
+  /* 0x397D */ u8 last_song_to_island; /* last song kapp'n sang for a male character */
+  /* 0x397E */ u8 last_song_from_island; /* last song kapp'n sang for a female character */
   /* 0x397F */ u8 checksum;
 } Island_agb_c;
 

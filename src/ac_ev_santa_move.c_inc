@@ -1,0 +1,365 @@
+static void aESNT_chk_wish_1st(EVENT_SANTA_ACTOR* santa, GAME_PLAY* play) {
+  if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+    mEv_santa_event_common_c* event_common_p = santa->event_common_p;
+    int present_flag;
+    
+    switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+      case mChoice_CHOICE0:
+        present_flag = 0;
+        break;
+      default:
+        present_flag = 1;
+        break;
+    }
+
+    if (santa->talk_act != aESNT_ACTION_CHK_WISH_1ST) {
+      present_flag <<= 1;
+    }
+
+    event_common_p->present |= present_flag;
+    (*santa->setup_talk_proc)(santa, play, aESNT_ACTION_TALK_END_WAIT);
+  }
+}
+
+static void aESNT_chk_wish_final(EVENT_SANTA_ACTOR* santa, GAME_PLAY* play) {
+  if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+    mEv_santa_event_common_c* event_common_p = santa->event_common_p;
+    int present_flag = event_common_p->present;
+
+    switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+      case mChoice_CHOICE0:
+        present_flag &= 1; /* Furniture & Cloth */
+        break;
+      default:
+        present_flag &= 2; /* Wallpaper & Carpet */
+
+        if ((present_flag & aESNT_WISH_WALL) == 0) {
+          present_flag = aESNT_WISH_CARPET;
+        }
+        break;
+    }
+
+    event_common_p->present = present_flag;
+    (*santa->setup_talk_proc)(santa, play, aESNT_ACTION_TALK_END_WAIT);
+  }
+}
+
+static void aESNT_chk_wish_more(EVENT_SANTA_ACTOR* santa, GAME_PLAY* play) {
+  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+  if (order != 0) {
+    mEv_santa_event_common_c* event_common_p = santa->event_common_p;
+    u8 present = aESNT_WISH_FTR;
+
+    switch (mMsg_Get_msg_num(mMsg_Get_base_window_p())) {
+      case MSG_SANTA_WISH_FTR:
+        present = aESNT_WISH_FTR;
+        break;
+      case MSG_SANTA_WISH_WALL:
+        present = aESNT_WISH_WALL;
+        break;
+      case MSG_SANTA_WISH_CARPET:
+        present = aESNT_WISH_CARPET;
+        break;
+      case MSG_SANTA_WISH_CLOTH:
+        present = aESNT_WISH_CLOTH;
+        break;
+    }
+
+    event_common_p->present = present;
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    (*santa->setup_talk_proc)(santa, play, aESNT_ACTION_TALK_END_WAIT);
+  }
+}
+
+
+static void aESNT_motion_start_wait(EVENT_SANTA_ACTOR* santa, GAME_PLAY* play) {
+  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+
+  if (order == 2) {
+    (*santa->setup_talk_proc)(santa, play, aESNT_ACTION_MOTION_END_WAIT);
+  }
+}
+
+typedef void (*aESNT_INIT_PROC)(EVENT_SANTA_ACTOR*, GAME_PLAY*);
+
+static void aESNT_chk_wish_more_init(EVENT_SANTA_ACTOR* santa, GAME_PLAY* play) {
+  mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+}
+
+static void aESNT_motion_end_wait_init(EVENT_SANTA_ACTOR* santa, GAME_PLAY* play) {
+  mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, ITM_PRESENT);
+  mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, 7);
+  mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, 1);
+}
+
+static void aESNT_init_proc(EVENT_SANTA_ACTOR* santa, GAME_PLAY* play, int act) {
+  static aESNT_INIT_PROC init_proc[aESNT_ACTION_NUM] = {
+    (aESNT_INIT_PROC)&none_proc1,
+    (aESNT_INIT_PROC)&none_proc1,
+    (aESNT_INIT_PROC)&none_proc1,
+    (aESNT_INIT_PROC)&none_proc1,
+    &aESNT_chk_wish_more_init,
+    (aESNT_INIT_PROC)&none_proc1,
+    &aESNT_motion_end_wait_init
+  };
+
+  (*init_proc[act])(santa, play);
+}
+
+static void aESNT_setupAction(EVENT_SANTA_ACTOR* santa, GAME_PLAY* play, int act) {
+  static aESNT_TALK_PROC process[aESNT_ACTION_NUM] = {
+    (aESNT_TALK_PROC)&none_proc1,
+    &aESNT_chk_wish_1st,
+    &aESNT_chk_wish_1st,
+    &aESNT_chk_wish_final,
+    &aESNT_chk_wish_more,
+    &aESNT_motion_start_wait,
+    (aESNT_TALK_PROC)&none_proc1
+  };
+
+  santa->talk_act = act;
+  santa->talk_proc = process[act];
+  aESNT_init_proc(santa, play, act);
+}
+
+static int aESNT_check_pl_cloth(mEv_santa_event_c* event_p) {
+  mActor_name_t* cloth_p = event_p->cloth;
+  mActor_name_t pl_cloth = Common_Get(now_private)->cloth.item;
+  int i;
+  int res = TRUE;
+
+  for (i = 0; i != event_p->present_count; i++) {
+    if (*cloth_p == pl_cloth) {
+      res = FALSE;
+      break;
+    }
+
+    cloth_p++;
+  }
+
+  return res;
+}
+
+static int aESNT_before_talk_present_decide_talk_data_idx(EVENT_SANTA_ACTOR* santa, mEv_santa_event_c* event_p, mEv_santa_event_common_c* event_common_p, int type) {
+  static int talk_data_idx[2][2] = {
+    { aESNT_TALK_FINAL_PRESENT,  aESNT_TALK_FINAL_NO_PRESENT  },
+    { aESNT_TALK_FINAL_PRESENT2, aESNT_TALK_FINAL_NO_PRESENT2 }
+  };
+  static int category[aESNT_WISH_NUM] = { mSP_KIND_FURNITURE, mSP_KIND_CLOTH, mSP_KIND_WALLPAPER, mSP_KIND_CARPET };
+  int item_idx = mPr_GetPossessionItemIdx(Common_Get(now_private), EMPTY_NO);
+  int inv_full;
+  mActor_name_t present;
+
+  if (item_idx != -1) {
+    if (event_common_p->present >= aESNT_WISH_NUM) {
+      event_common_p->present = aESNT_WISH_CARPET;
+    }
+
+    mSP_SelectRandomItem_New(NULL, &present, 1, NULL, 0, category[event_common_p->present], mSP_LISTTYPE_CHRISTMAS, FALSE);
+    mPr_SetPossessionItem(Common_Get(now_private), item_idx, present, mPr_ITEM_COND_PRESENT);
+    mPr_CopyPersonalID(&event_p->pid, &Common_Get(now_private)->player_ID);
+    santa->present = present;
+    event_common_p->talk_counter = 0;
+    event_p->cloth[event_p->present_count] = Common_Get(now_private)->cloth.item;
+    event_p->present_count++;
+    inv_full = FALSE;
+
+  }
+  else {
+    inv_full = TRUE;
+  }
+
+  return talk_data_idx[type][inv_full];
+}
+
+static int aESNT_before_talk_more_check_decide_talk_data_idx(mEv_santa_event_common_c* event_common_p) {
+  int talk_data_idx = aESNT_TALK_HELLO;
+
+  switch (event_common_p->talk_counter) {
+    case 0:
+      talk_data_idx = aESNT_TALK_HELLO;
+      break;
+    case 1:
+      talk_data_idx = aESNT_TALK_CHK_1ST;
+      break;
+    case 2:
+      talk_data_idx = aESNT_TALK_CHK_2ND;
+      break;
+    case 3:
+      talk_data_idx = aESNT_TALK_CHK_FINAL + event_common_p->present; /* select index based on desired present */
+      break;
+  }
+
+  event_common_p->talk_counter++;
+  return talk_data_idx;
+}
+
+static int aESNT_before_talk_decide_talk_data_idx(EVENT_SANTA_ACTOR* santa, GAME_PLAY* play, mEv_santa_event_c* event_p, mEv_santa_event_common_c* event_common_p) {
+  int talk_data_idx;
+
+  /* @BUG - because we compare the acre the player is in (GAME_PLAY block table)
+   * against the last acre we talked to Jingle, we can actually talk to him again
+   * without having to find him again. If you trap him at the border of an acre
+   * and then move into the adjacent acre and talk to him, GAME_PLAY's block state
+   * updates which passes the 'same block' check. Rinse and repeat between two acres
+   * to satisfy the talk requirements without having to do the search portion.
+   */
+  #if !defined(BUGFIXES) || defined(ALLOW_EXPLOITS)
+  if (play->block_table.block_x == event_common_p->bx && play->block_table.block_z == event_common_p->bz) {
+    talk_data_idx = aESNT_TALK_SAME_BLOCK + RANDOM(aESNT_TALK_SAME_BLOCK_NUM);
+  }
+  #else
+  /* Use Jingle's actor block instead of GAME_PLAY's current block (player block) */
+  if (santa->npc_class.actor_class.block_x == event_common_p->bx && santa->npc_class.actor_class.block_x == event_common_p->bz) {
+    talk_data_idx = aESNT_TALK_SAME_BLOCK + RANDOM(aESNT_TALK_SAME_BLOCK_NUM);
+  }
+  #endif
+  else if (event_common_p->talk_counter >= 4) {
+    talk_data_idx = aESNT_before_talk_present_decide_talk_data_idx(santa, event_p, event_common_p, 0);
+  }
+  else {
+    talk_data_idx = aESNT_before_talk_more_check_decide_talk_data_idx(event_common_p);
+  }
+
+  if (talk_data_idx != aESNT_TALK_FINAL_NO_PRESENT) {
+    /* Update talked acre */
+    #if !defined(BUGFIXES) || defined(ALLOW_EXPLOITS)
+    event_common_p->bx = play->block_table.block_x;
+    event_common_p->bz = play->block_table.block_z;
+    #else
+    event_common_p->bx = santa->npc_class.actor_class.block_x;
+    event_common_p->bz = santa->npc_class.actor_class.block_z;
+    #endif
+  }
+
+  return talk_data_idx;
+}
+
+static int aESNT_after_talk_restart_Q_decide_talk_data_idx(mEv_santa_event_common_c* event_common_p) {
+  event_common_p->last_talk_cloth = Common_Get(now_private)->cloth.item;
+  event_common_p->talk_counter++;
+  return aESNT_TALK_ALMOST_RECOGNIZE;
+}
+
+static int aESNT_after_talk_same_pl_decide_talk_data_idx(EVENT_SANTA_ACTOR* santa, mEv_santa_event_c* event_p, mEv_santa_event_common_c* event_common_p) {
+  int talk_data_idx;
+
+  if (aESNT_check_pl_cloth(event_p) == TRUE) {
+    if (event_p->present_count >= mEv_SANTA_CLOTH_NUM_MAX) {
+      talk_data_idx = aESNT_TALK_NO_MORE_PRESENTS + RANDOM(aESNT_TALK_NO_MORE_PRESENTS_NUM);
+    }
+    else if (event_common_p->talk_counter == 0) {
+      talk_data_idx = aESNT_after_talk_restart_Q_decide_talk_data_idx(event_common_p);
+    }
+    else if (event_common_p->last_talk_cloth == Common_Get(now_private)->cloth.item) {
+      talk_data_idx = aESNT_before_talk_present_decide_talk_data_idx(santa, event_p, event_common_p, 1);
+    }
+    else {
+      talk_data_idx = aESNT_after_talk_restart_Q_decide_talk_data_idx(event_common_p);
+      event_common_p->talk_counter = 1;
+    }
+  }
+  else {
+    event_common_p->talk_counter = 0;
+    talk_data_idx = aESNT_TALK_TALK_SAME_PLAYER + RANDOM(aESNT_TALK_TALK_SAME_PLAYER_NUM);
+  }
+
+  return talk_data_idx;
+}
+
+static int aESNT_after_talk_other_pl_decide_talk_data_idx(mEv_santa_event_c* event_p) {
+  mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0, event_p->pid.player_name, PLAYER_NAME_LEN);
+  return aESNT_TALK_TALK_OTHER_PLAYER + RANDOM(aESNT_TALK_TALK_OTHER_PLAYER_NUM);
+}
+
+static int aESNT_after_talk_decide_talk_data_idx(EVENT_SANTA_ACTOR* santa, mEv_santa_event_c* event_p, mEv_santa_event_common_c* event_common_p) {
+  if (mPr_CheckCmpPersonalID(&event_p->pid, &Common_Get(now_private)->player_ID) == TRUE) {
+    return aESNT_after_talk_same_pl_decide_talk_data_idx(santa, event_p, event_common_p);
+  }
+  else {
+    return aESNT_after_talk_other_pl_decide_talk_data_idx(event_p);
+  }
+}
+
+static void aESNT_getP_talk_data(ACTOR* actorx) {
+  static aESNT_talk_data_c talk_data[aESNT_TALK_NUM] = {
+    { 0x07BF, aESNT_ACTION_TALK_END_WAIT },
+    { 0x07C0, aESNT_ACTION_TALK_END_WAIT },
+    { 0x07C1, aESNT_ACTION_TALK_END_WAIT },
+    { 0x07C2, aESNT_ACTION_TALK_END_WAIT },
+    { 0x07C3, aESNT_ACTION_TALK_END_WAIT },
+    { 0x07C4, aESNT_ACTION_TALK_END_WAIT },
+    { 0x07BA, aESNT_ACTION_MOTION_START_WAIT },
+    { 0x07B9, aESNT_ACTION_TALK_END_WAIT },
+    { 0x07BC, aESNT_ACTION_TALK_END_WAIT },
+    { 0x07BD, aESNT_ACTION_TALK_END_WAIT },
+    { 0x07BE, aESNT_ACTION_TALK_END_WAIT },
+    { 0x07AA, aESNT_ACTION_TALK_END_WAIT },
+    { 0x07AB, aESNT_ACTION_CHK_WISH_1ST },
+    { 0x07AE, aESNT_ACTION_CHK_WISH_2ND },
+    { 0x07B2, aESNT_ACTION_CHK_WISH_FINAL },
+    { 0x07B4, aESNT_ACTION_CHK_WISH_FINAL },
+    { 0x07B1, aESNT_ACTION_CHK_WISH_FINAL },
+    { 0x07B3, aESNT_ACTION_CHK_WISH_FINAL },
+    { 0x2B4C, aESNT_ACTION_CHK_WISH_MORE },
+    { 0x2B59, aESNT_ACTION_MOTION_START_WAIT },
+    { 0x2B58, aESNT_ACTION_TALK_END_WAIT },
+    { 0x2B5B, aESNT_ACTION_TALK_END_WAIT },
+    { 0x2B5C, aESNT_ACTION_TALK_END_WAIT },
+    { 0x2B5D, aESNT_ACTION_TALK_END_WAIT }
+  };
+
+  EVENT_SANTA_ACTOR* santa = (EVENT_SANTA_ACTOR*)actorx;
+  GAME_PLAY* play = (GAME_PLAY*)gamePT;
+  mEv_santa_event_c* event_p = santa->event_p;
+  mEv_santa_event_common_c* event_common_p = santa->event_common_p;
+  int talk_data_idx;
+
+  if (mPr_NullCheckPersonalID(&event_p->pid) == FALSE) {
+    talk_data_idx = aESNT_after_talk_decide_talk_data_idx(santa, event_p, event_common_p);
+  }
+  else {
+    talk_data_idx = aESNT_before_talk_decide_talk_data_idx(santa, play, event_p, event_common_p);
+  }
+
+  santa->talk_data_p = &talk_data[talk_data_idx];
+}
+
+static void aESNT_set_talk_info(ACTOR* actorx) {
+  EVENT_SANTA_ACTOR* santa = (EVENT_SANTA_ACTOR*)actorx;
+  
+  aESNT_getP_talk_data(actorx);
+  mEv_set_status(mEv_EVENT_TOY_DAY_JINGLE, mEv_STATUS_TALK);
+  mDemo_Set_msg_num(santa->talk_data_p->msg_no);
+}
+
+static void aESNT_talk_request(ACTOR* actorx, GAME* game) {
+  mDemo_Request(mDemo_TYPE_TALK, actorx, &aESNT_set_talk_info);
+}
+
+static int aESNT_talk_init(ACTOR* actorx, GAME* game) {
+  EVENT_SANTA_ACTOR* santa = (EVENT_SANTA_ACTOR*)actorx;
+  GAME_PLAY* play = (GAME_PLAY*)game;
+
+  (*santa->setup_talk_proc)(santa, play, santa->talk_data_p->talk_act);
+  mDemo_Set_ListenAble();
+  return TRUE;
+}
+
+static int aESNT_talk_end_chk(ACTOR* actorx, GAME* game) {
+  EVENT_SANTA_ACTOR* santa = (EVENT_SANTA_ACTOR*)actorx;
+  GAME_PLAY* play = (GAME_PLAY*)game;
+  int res = FALSE;
+
+  (*santa->talk_proc)(santa, play);
+  if (mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {
+    res = TRUE;
+  }
+
+  return res;
+}
+
+static void aESNT_actor_move(ACTOR* actorx, GAME* game) {
+  (*Common_Get(clip).npc_clip->move_proc)(actorx, game);
+}

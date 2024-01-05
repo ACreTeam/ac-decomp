@@ -53,7 +53,7 @@ typedef struct clip_s {
   /* 0x098 */ void* _098;
   /* 0x09C */ aMI_Clip_c* my_indoor_clip;
   /* 0x0A0 */ mDemo_Clip_c* demo_clip; /* can be multiple clip classes */
-  /* 0x0A4 */ void* demo_clip2; /* can be multiple clip classes */
+  /* 0x0A4 */ mDemo_Clip_c* demo_clip2; /* can be multiple clip classes */
   /* 0x0A8 */ void* _0A8;
   /* 0x0AC */ aGYO_Clip_c* gyo_clip;
   /* 0x0B0 */ void* _0B0;

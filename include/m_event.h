@@ -15,18 +15,45 @@ extern "C" {
 #define mEv_TODAY_EVENT_NUM 16
 
 #define mEv_SCHEDULE_LAST_WEEKDAY_OF_MONTH 6 /* day of last weekday of the month */
-#define mEv_SCHEDULE_WEEKLY 7 /* scheduled for the desired day this week (e.g. this saturday) */
+#define mEv_SCHEDULE_EVERY_WEEK 7 /* scheduled for the desired day this week (e.g. this saturday) */
 
-#define mEv_SCHEDULE_MULTIDAY 0x40 /* event scheduled over more than a single day */
+/* Month flags */
+#define mEv_SCHEDULE_HARVEST_MOON_DATE 0x40 /* Use this year's lunisolar harvest moon date */
+#define mEv_SCHEDULE_NOW_MONTH 0x20
+#define mEv_SCHEDULE_USE_SAVE_MONTH 0x10
+
+#define mEv_SCHEDULE_SAVE_MONTH(m) (mEv_SCHEDULE_USE_SAVE_MONTH | ((m) & 0xF))
+#define mEv_SCHEDULE_LUNAR(m) (mEv_SCHEDULE_HARVEST_MOON_DATE | ((m) & 0xF))
+
+/* Day flags */
+#define mEv_SCHEDULE_WEEKLY 0x80 /* Event happens on a given weekday and week of the month */
+#define mEv_SCHEDULE_TOWN_DAY 0x40 /* Use save data 'town day' day */
+#define mEv_SCHEDULE_DAY_AFTER 0x40 /* When used in conjunction with the 'weekly' flag, it schedules on the day after the Nth weekday */
+#define mEv_SCHEDULE_LAST_DAY_OF_MONTH 0x20
+
+#define mEv_SCHEDULE_MAKE_WEEKLY_DATA(week, weekday) (mEv_SCHEDULE_WEEKLY | ((((week) & 0b111) << 3) | ((weekday) & 0b111)))
+#define mEv_SCHEDULE_1ST_WEEKDAY(weekday) mEv_SCHEDULE_MAKE_WEEKLY_DATA(1, weekday)
+#define mEv_SCHEDULE_2ND_WEEKDAY(weekday) mEv_SCHEDULE_MAKE_WEEKLY_DATA(2, weekday)
+#define mEv_SCHEDULE_3RD_WEEKDAY(weekday) mEv_SCHEDULE_MAKE_WEEKLY_DATA(3, weekday)
+#define mEv_SCHEDULE_4TH_WEEKDAY(weekday) mEv_SCHEDULE_MAKE_WEEKLY_DATA(4, weekday)
+#define mEv_SCHEDULE_5TH_WEEKDAY(weekday) mEv_SCHEDULE_MAKE_WEEKLY_DATA(5, weekday)
+#define mEv_SCHEDULE_LAST_WEEKDAY(weekday) mEv_SCHEDULE_MAKE_WEEKLY_DATA(mEv_SCHEDULE_LAST_WEEKDAY_OF_MONTH, weekday)
+#define mEv_SCHEDULE_EVERY_WEEKDAY(weekday) mEv_SCHEDULE_MAKE_WEEKLY_DATA(mEv_SCHEDULE_EVERY_WEEK, weekday)
+
+/* Hour flags */
 #define mEv_SCHEDULE_TODAY 0x80 /* event will be active on the day loaded */
+#define mEv_SCHEDULE_MULTIDAY 0x40 /* event scheduled over more than a single day */
+#define mEv_SCHEDULE_USE_SAVE_SLOT_VALUE 0x20
+
+#define mEv_SCHEDULE_HOUR_SLOT(h) (mEv_SCHEDULE_USE_SAVE_SLOT_VALUE | (h & 0xF))
 
 #define mEv_TO_DAY(month_day) ((lbRTC_day_t)(month_day))
 #define mEv_TO_MONTH(month_day) ((lbRTC_month_t)((month_day) >> 8))
 
 typedef union event_monthday_s {
   struct {
-    s8 month;
-    s8 day;
+    u8 month;
+    u8 day;
   };
   u16 raw;
 } mEv_MonthDay_u;
@@ -36,16 +63,20 @@ typedef struct event_today_s {
   u32 active_hours; /* bitfield (24 bits) */
   mEv_MonthDay_u begin_date;
   mEv_MonthDay_u end_date;
-  u16 status;
+  s16 status;
   u16 pad;
 } mEv_event_today_c;
 
 typedef struct event_date_s {
-  struct {
-   mEv_MonthDay_u month_day;
-   u8 _2;
-   u8 hour;
-  };
+  u8 month;
+  u8 day;
+  u8 _2;
+  u8 hour;
+} mEv_schedule_date_c;
+
+typedef union {
+  mEv_schedule_date_c d;
+  u16 md, _h;
   u32 raw;
 } mEv_schedule_date_u;
 
@@ -54,6 +85,10 @@ typedef struct event_schedule_s {
   s16 _8;
   s16 type; /* event type */
 } mEv_schedule_c;
+
+#define mEv_EVENT_HOUR_START_EVENT (1 << 28)
+#define mEv_EVENT_HOUR_CLEAR_EVENT (1 << 29)
+#define mEv_EVENT_HOUR_TOO_SHORT_EVENT (1 << 30)
 
 /**
  * Event type definition
@@ -94,6 +129,7 @@ enum events {
   mEv_SPNPC_ARTIST,
   mEv_SPNPC_ARABIAN,
   mEv_SPNPC_GYPSY,
+  mEv_SPNPC_END,
 
   mEv_SAVED_RENEWSHOP = (int)mEv_SET(mEv_SAVED_EVENT, 0), /* renew shop */
   mEv_SAVED_UNK1, /* unused */
@@ -197,7 +233,7 @@ enum event_table {
   mEv_EVENT_LABOR_DAY,
   mEv_EVENT_RUMOR_FALL_SPORTS_FAIR,
   mEv_EVENT_AUTUMN_EQUINOX,
-  mEv_EVENT_HARVEST_MOON_DAY,
+  mEv_EVENT_RUMOR_HARVEST_MOON_DAY,
   mEv_EVENT_HARVEST_MOON_FESTIVAL,
   mEv_EVENT_EXPLORERS_DAY,
   mEv_EVENT_RUMOR_MUSHROOM_SEASON,
@@ -279,7 +315,7 @@ enum event_table {
   mEv_EVENT_SONCHO_BRIDGE_MAKE,
 
   mEv_EVENT_GHOST,
-  mEv_EVENT_MASK_CAT,
+  mEv_EVENT_MASK_NPC, // "Go Home Npc" & "Blanca" events
 
   mEv_EVENT_74, // unused?
 
@@ -288,6 +324,28 @@ enum event_table {
   mEv_EVENT_76, // unused?
 
   mEv_EVENT_NUM
+};
+
+enum {
+  mEv_SAVE_DATE_TODAY,
+  mEv_SAVE_DATE_LAST_PLAY_DATE,
+  mEv_SAVE_DATE_BIRTHDAY,
+  mEv_SAVE_DATE_SPECIAL0, /* Initialized to rtc month-day in init_special_event */
+  mEv_SAVE_DATE_SPECIAL1, /* Initialized to beginning month-day of special event in init_special_event */
+  mEv_SAVE_DATE_SPECIAL2, /* Initialized to ending month-day of special event in init_special_event */
+  mEv_SAVE_DATE_WEEKLY,
+  mEv_SAVE_DATE_SPECIAL3, /* Initialized to opening hours for shop sale in init_special_event */
+
+  mEv_SAVE_DATE_NUM
+};
+
+enum {
+  mEv_SPECIAL_STATE_UNSCHEDULED,
+  mEv_SPECIAL_STATE_SCHEDULED_LATER,
+  mEv_SPECIAL_STATE_SCHEDULED_TODAY,
+  mEv_SPECIAL_STATE_ACTIVE,
+  
+  mEv_SPECIAL_STATE_NUM
 };
 
 #define mEv_STATUS_ACTIVE     (1 << 0) /* event is active */
@@ -319,7 +377,7 @@ typedef struct kabu_peddler_event_s {
 } mEv_kabu_peddler_c;
 
 typedef struct dozaemon_event_s {
-  u32 flags;
+  u16 flags;
 } mEv_dozaemon_c;
 
 typedef union {
@@ -401,6 +459,14 @@ typedef struct santa_event_common_s {
   mActor_name_t last_talk_cloth;
 } mEv_santa_event_common_c;
 
+#define mEv_SANTA_CLOTH_NUM_MAX 10 /* How many different shirts can the player trick Jingle with */
+
+typedef struct santa_event_s {
+  PersonalID_c pid;
+  u8 present_count;
+  mActor_name_t cloth[mEv_SANTA_CLOTH_NUM_MAX];
+} mEv_santa_event_c;
+
 typedef union {
   mEv_broker_common_c broker;
   mEv_santa_event_common_c santa;
@@ -420,8 +486,8 @@ typedef struct event_s {
 } Event_c;
 
 typedef struct event_info_s {
-  s8 type;
-  s8 id;
+  u8 type;
+  u8 id;
   u16 year;
   mEv_MonthDay_u start_date;
   mEv_MonthDay_u end_date;
@@ -444,42 +510,49 @@ typedef struct event_area_s {
   int data[11];
 } mEv_area_c;
 
+#define mEv_AREA_NUM 5
+#define mEv_PLACE_NUM 10
+
 typedef struct event_common_s {
   s16 _00;
   s16 area_use_bitfield;
-  mEv_area_c area[5];
+  mEv_area_c area[mEv_AREA_NUM];
   s16 too_short;
   s16 place_use_bitfield;
-  mEv_place_c place[10];
+  mEv_place_c place[mEv_PLACE_NUM];
   s16 fieldday_event_id;
   s16 fieldday_event_over_status;
   u32 unused[2];
 } mEv_common_data_c;
 
 typedef struct event_save_event_info_s {
-  s8 type;
-  s8 flags;
+  u8 type;
+  u8 flags;
 } mEv_event_save_info_c;
 
 typedef struct event_common_save_data {
   mEv_event_save_info_c special_event;
   mEv_event_save_info_c weekly_event;
-  u16 dates[8];
+  u16 dates[mEv_SAVE_DATE_NUM];
   int area_use_bitfield;
-  mEv_area_c area[5];
+  mEv_area_c area[mEv_AREA_NUM];
   int last_date;
-  int _120;
+  int delete_event_id;
   u32 valentines_day_date;
   u32 white_day_date; /* unused in AC */
   u16 ghost_day;
   u16 bridge_day; // last date suspension bridge event was active
-  struct {
-    u8 used_all_locations:1; // set to true when tortimer has cycled through all possible bridge locations?
-    u8 locations_used:7; // index of river acre w/ possible bridge location currently at
+  union {
+    struct {
+      u8 used_all_locations:1; // set to true when tortimer has cycled through all possible bridge locations?
+      u8 locations_used:7; // index of river acre w/ possible bridge location currently at
+    };
+
+    u8 raw;
   } bridge_flags;
   u8 ghost_event_type; // 0x72 will spawn wisp, 0x77 won't?
   u8 soncho_event_type; // checked not equal to 0xFF for summer & fall fishing tournies
-  u8 current_event_state; // used to signal when you've received an item from gracie or woken gulliver up
+  u8 dozaemon_completed; // used to signal when you've received an item from gulliver
 } mEv_save_common_data_c;
 
 extern int mEv_CheckFirstJob();
@@ -488,10 +561,10 @@ extern int mEv_CheckArbeit();
 extern int mEv_CheckTitleDemo();
 extern int mEv_check_status(int event, s16 status);
 extern int mEv_check_status_edge(s16 status);
-extern s8* mEv_get_common_area(int type, s8 id);
-extern s8* mEv_reserve_common_area(int type, s8 id);
-extern s8* mEv_get_save_area(int type, s8 id);
-extern s8* mEv_reserve_save_area(int type, s8 id);
+extern u8* mEv_get_common_area(int type, u8 id);
+extern u8* mEv_reserve_common_area(int type, u8 id);
+extern u8* mEv_get_save_area(int type, u8 id);
+extern u8* mEv_reserve_save_area(int type, u8 id);
 extern void mEv_actor_dying_message(int type, ACTOR* actor);
 extern int mEv_ArbeitPlayer(u32 player_no);
 extern u16 mEv_get_special_event_type();
@@ -499,14 +572,14 @@ extern void mEv_ClearEventSaveInfo(mEv_event_save_c* event_save_data);
 extern void mEv_EventON(u32 event_kind);
 extern int mEv_CheckGateway();
 extern int mEv_check_schedule(int event);
-extern mEv_place_data_c* mEv_get_common_place(int type, s8 id);
+extern mEv_place_data_c* mEv_get_common_place(int type, u8 id);
 extern void mEv_set_status(int event, s16 status);
 extern void mEv_GetEventWeather(s16* weather, s16* intensity);
 extern int mEv_CheckRealArbeit();
 extern int mEv_CheckEvent(u32 event);
 extern u16 mEv_get_bargain_day();
 
-extern int mEv_weekday2day(lbRTC_month_t month, int week_type, lbRTC_weekday_t weekday);
+extern int mEv_weekday2day(lbRTC_month_t month, int week_type, int weekday);
 extern void mEv_ClearEventInfo();
 
 extern void mEv_init(Event_c* event);
@@ -517,6 +590,9 @@ extern void mEv_finish(Event_c* event);
 
 extern int mEv_CheckTitleDemo();
 extern void mEv_SetTitleDemo(int titledemo_no);
+
+extern int mGH_check_birth2();
+extern int mMC_check_birth();
 
 extern void mEv_debug_print4f(gfxprint_t* gfxprint);
 extern void mEv_sp_debug_print4f(gfxprint_t* gfxprint);

@@ -773,8 +773,8 @@ extern void mISL_gc_to_agb(Island_agb_c* agb, Island_c* gc) {
       zelda_free(temp);
     }
 
-    agb->last_song_male = gc->last_song_male;
-    agb->last_song_female = gc->last_song_female;
+    agb->last_song_to_island = gc->last_song_to_island;
+    agb->last_song_from_island = gc->last_song_from_island;
     // remove the land info portion from the checksum as it can change
     agb->checksum = mISL_GetFlatCheckSum((u8*)agb, sizeof(Island_agb_c), agb->checksum, mISL_ReturnCheckSum((u8*)&agb->landinfo, 16));
   }
@@ -820,8 +820,8 @@ extern void mISL_agb_to_gc(Island_c* gc, Island_agb_c* agb) {
     mISL_short((u16*)gc->deposit, (u16*)agb->deposit, sizeof(gc->deposit) / sizeof(u16));
     bcopy(agb->bg_data, gc->bg_data, sizeof(gc->bg_data));
     mISL_gc_to_agb_time(&gc->renew_time, &agb->renew_time);
-    gc->last_song_male = agb->last_song_male;
-    gc->last_song_female = agb->last_song_female;
+    gc->last_song_to_island = agb->last_song_to_island;
+    gc->last_song_from_island = agb->last_song_from_island;
 
     if (mFI_CheckFieldData() == TRUE) {
       bzero(island_x_blocks, sizeof(island_x_blocks));
