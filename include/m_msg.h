@@ -286,6 +286,8 @@ extern int mMsg_CopyItem(mMsg_Window_c* msg_win, int item_idx, u8* data, int idx
 extern int mMsg_CopyMail(mMsg_Window_c* msg_win, int mail_idx, u8* data, int idx, int max_size);
 extern int mMsg_CopyIslandName(u8* data, int idx, int max_size, int capitalize);
 extern int mMsg_CopyAmPm(mMsg_Window_c* msg_win, u8* data, int idx, int max_size);
+extern void mMsg_sound_set_voice_silent(mMsg_Window_c* msg_win, int update_voice_mode);
+extern void mMsg_sound_unset_voice_silent(mMsg_Window_c* msg_win, int update_voice_mode);
 
 #ifdef __cplusplus
 }

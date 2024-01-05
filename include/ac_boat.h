@@ -8,6 +8,13 @@
 extern "C" {
 #endif
 
+typedef struct boat_s BOAT_ACTOR;
+
+struct boat_s {
+  ACTOR actor_class;
+  // TODO
+};
+
 extern ACTOR_PROFILE Boat_Profile;
 
 #ifdef __cplusplus
