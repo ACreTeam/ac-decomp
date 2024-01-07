@@ -8,6 +8,7 @@
 #include "m_npc_schedule.h"
 #include "m_actor_dlftbls.h"
 #include "m_npc.h"
+#include "c_keyframe.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -137,21 +138,21 @@ typedef struct npc_info_s {
   mActor_name_t npc_name;
 } NpcActorInfo_c;
 
+typedef struct npc_animation_s {
+  cKF_SkeletonInfo_R_c keyframe;
+  s_xyz work[27];
+  s_xyz morph[27];
+  int _1B4;
+  s8 animation_id; 
+} aNPC_ANIMATION_c;
+
 /* TODO: draw data */
 typedef struct npc_draw_info_s {
-  /* 0x000 */ int _00;
-  /* 0x004 */ int _04;
-  /* 0x008 */ u8 _000[0x20 - 8];
-  /* 0x020 */ f32 _20;
-  /* 0x024 */ f32 _24; 
-  /* 0x028 */ u8 _028[0x534 - 0x028];
-  /* 0x538 */ u8 _534;
-  /* 0x538 */ u8 _535;
-  /* 0x538 */ u8 _536;
-  /* 0x538 */ u8 _537;
-  /* 0x538 */ u8 _538;
-  /* 0x538 */ u8 _539;
-  /* 0x540 */ u8 _53A[0x580 - 0x53A];
+  /* 0x000 */ u8 _000[0x14 - 0];
+  /* 0x014 */ aNPC_ANIMATION_c main_animation;
+  /* 0x1D0 */ aNPC_ANIMATION_c sub_animation0;
+  /* 0x38C */ aNPC_ANIMATION_c sub_animation1;
+  /* 0x548 */ u8 _548[0x580 - 0x548];
   /* 0x580 */ int animation_id;
   /* 0x584 */ int texture_bank_idx;
   /* 0x588 */ u8 _588[0x5BD - 0x588]; 
@@ -159,7 +160,6 @@ typedef struct npc_draw_info_s {
   /* 0x5BE */ u8 _5BE;
   /* 0x5BE */ u8 _5BF[0x630 - 0x5BF];
 } aNPC_draw_info_c;
-
 
 typedef void (*aNPC_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*, int);
 

@@ -1,10 +1,8 @@
 
-void aNRTC_set_slot_name(NPC_ACTOR* actor, int str_no) {
-    NPCRTC_ACTOR* rtc = (NPCRTC_ACTOR*)actor;
-    u8 name[16];
+void aNRTC_set_slot_name(int slot_id, int str_no) {
+    u8 name[mIN_ITEM_NAME_LEN];
 
-    mString_Load_StringFromRom(name, sizeof(name), &rtc->npc_class.draw._539);
-
+    mString_Load_StringFromRom(name, sizeof(name), 0x6CD + slot_id);
     mMsg_Set_free_str(mMsg_Get_base_window_p(),str_no, name, sizeof(name));
 }
 
@@ -145,7 +143,7 @@ void aNRTC_format(NPCRTC_ACTOR* rtc, GAME_PLAY* play) {
         mMsg_Set_LockContinue(window);
         break;
     case 2: 
-        card_ret = mCD_card_format_bg(Common_Get(_2DBA8));
+        card_ret = mCD_card_format_bg(Common_Get(memcard_slot));
         switch (card_ret) {                        
         case 1:                                     
             mMsg_Set_continue_msg_num(window, 0x9E9);
@@ -273,7 +271,7 @@ int aNRTC_talk_init(ACTOR* actor, GAME* game) {
     NPCRTC_ACTOR* rtc = (NPCRTC_ACTOR*)actor;
     
     mDemo_Set_ListenAble();
-    aNRTC_set_slot_name((NPC_ACTOR*)Common_Get(_2DBA8), 4);
+    aNRTC_set_slot_name(Common_Get(memcard_slot), mMsg_FREE_STR4);
     switch (Common_Get(save_error_type)) {     
     case 0:
         aNRTC_change_talk_proc(rtc, 2);

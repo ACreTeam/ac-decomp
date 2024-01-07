@@ -113,11 +113,11 @@ void aNRTC_actor_move(ACTOR* actor, GAME* game){
         if(info.unk0 != 4){
             val = 0.0f;
             arm_flag = FALSE;
-            rtc->npc_class.draw._24 = 1.0f + (64.0f * (f32)info.unk8); 
+            rtc->npc_class.draw.main_animation.keyframe.frame_control.current_frame = 1.0f + (64.0f * (f32)info.unk8); 
         }
     } 
 
-    rtc->npc_class.draw._20 = val;
+    rtc->npc_class.draw.main_animation.keyframe.frame_control.speed = val;
     sAdos_TTKK_ARM(arm_flag);
     Common_Get(clip.npc_clip)->move_proc(actor,game);
     mSC_change_player_freeze(play);

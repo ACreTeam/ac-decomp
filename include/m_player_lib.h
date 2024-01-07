@@ -18,7 +18,7 @@ extern void mPlib_request_main_invade_type1(GAME_PLAY* play);
 extern mActor_name_t mPlib_Get_itemNo_forWindow();
 extern int mPlib_check_able_change_camera_normal_index();
 extern void mPlib_request_main_refuse_type1(GAME_PLAY* play);
-extern void mPlib_request_main_wait_type3(GAME_PLAY* play);
+extern void mPlib_request_main_wait_type3(GAME* game);
 extern void mPlib_Set_able_force_speak_label(ACTOR* actor);
 extern int mPlib_request_main_demo_walk_type1(GAME* game, f32 goal_x, f32 goal_z, f32 speed, int flag);
 extern void mPlib_Set_goal_player_demo_walk(f32 goal_x, f32 goal_z, f32 speed);
@@ -51,6 +51,10 @@ extern int mPlib_Check_tree_shaken_little(const xyz_t* pos);
 extern int mPlib_request_main_recieve_wait_type1(GAME* game, mActor_name_t item, int counter_flag);
 extern int mPlib_able_player_warp_forEvent();
 extern int mPlib_Get_unable_wade();
+extern void mPlib_Set_boat_angleZ(s16 angleZ);
+extern int mPlib_Get_end_player_demo_walk();
+extern int mPlib_request_main_demo_geton_boat_type1(f32 goal_x, f32 goal_z, s16 angleY);
+extern int mPlib_request_main_demo_getoff_boat_standup_type1(const xyz_t* pos, s16 angleY);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 

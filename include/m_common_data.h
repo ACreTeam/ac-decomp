@@ -300,7 +300,7 @@ typedef struct common_data_s {
   /* 0x02DBA2 */ s16 island_weather;
   /* 0x02DBA4 */ s16 island_weather_intensity;
   /* 0x02DBA6 */ s16 _2DBA6;
-  /* 0x02DBA8 */ u8 _2DBA8;
+  /* 0x02DBA8 */ u8 memcard_slot;
   /* 0X02DBAC */ int famicom_2DBAC;
   /* 0x02DBB0 */ s16 can_look_goki_count;
   /* 0x02DBB4 */ f32 rainbow_opacity; /* current opacity of rainbow (0.0f - 1.0f) */
