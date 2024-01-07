@@ -581,6 +581,10 @@ ac_npc_rtc.c:
     .text: [0x80573044, 0x80574134]
     .rodata: [0x80649A08, 0x80649A40]
     .data: [0x806BF648,0x806BF788]
+ac_boat.c:
+    .text: [0x805A6CF4, 0x805A856C]
+    .rodata: [0x8064A5B0, 0x8064A630]
+    .data: [0x806C4440, 0x806C4560]
 ac_douzou.c:
     .text: [0x805AD6D8, 0x805AE704]
     .rodata: [0x8064A7C0, 0x8064A7E8]

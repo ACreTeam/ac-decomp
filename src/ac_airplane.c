@@ -206,7 +206,7 @@ static void aAp_StartFlyMove(ACTOR* actor, GAME* game) {
     airplane->rotZ = 0.0f;
     airplane->y_speed = 0.0f;
 
-    mPlib_request_main_wait_type3(play);
+    mPlib_request_main_wait_type3((GAME*)play);
   }
 }
 
@@ -349,7 +349,7 @@ static void aAp_ZbuttonChangeStatus(AIRPLANE_ACTOR* actor, GAME* game) {
     }
   }
   else if (actor->status == aAp_STATUS_START_FLY_MOVE) {
-    mPlib_request_main_wait_type3(play);
+    mPlib_request_main_wait_type3((GAME*)play);
     actor->status = aAp_STATUS_PLAYER_CATCH;
   }
 }
