@@ -148,7 +148,11 @@ typedef struct npc_animation_s {
 
 /* TODO: draw data */
 typedef struct npc_draw_info_s {
-  /* 0x000 */ u8 _000[0x14 - 0];
+  /* 0x000 */ int main_animation_frame;
+  /* 0x004 */ int _04; // TODO: figure out where this is set
+  /* 0x008 */ int main_animation_frame_changed;
+  /* 0x00C */ int _08; // TODO: figure out where this is set
+  /* 0x010 */ int _0C; // TODO: figure out where this is set
   /* 0x014 */ aNPC_ANIMATION_c main_animation;
   /* 0x1D0 */ aNPC_ANIMATION_c sub_animation0;
   /* 0x38C */ aNPC_ANIMATION_c sub_animation1;
