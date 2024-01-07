@@ -1,0 +1,157 @@
+
+void aEMJ_schedule_proc(NPC_ACTOR*, GAME_PLAY*, int);
+void aEMJ_setup_think_proc(NPC_ACTOR*, int);
+void aEMJ_force_talk_request(NPC_ACTOR*, GAME_PLAY*);
+
+void aEMJ_set_request_act(NPC_ACTOR* actor, GAME_PLAY* play) {
+    EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
+
+    majin->npc_class.request.act_priority = 4;
+    majin->npc_class.request.act_idx = 22;
+    majin->npc_class.request.act_type = 2;
+}
+
+void aEMJ_act_init_proc(NPC_ACTOR* actor, GAME_PLAY* play) {
+    EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
+
+    majin->npc_class.action.step = 0;
+}
+
+void aEMJ_act_proc(NPC_ACTOR* actor, GAME_PLAY* play, int idx) {
+    static aNPC_SUB_PROC act_proc[] = {aEMJ_act_init_proc, (aNPC_SUB_PROC)mActor_NONE_PROC1,
+                                       (aNPC_SUB_PROC)mActor_NONE_PROC1};
+
+    act_proc[idx](actor, play);
+}
+
+void aEMJ_appear(NPC_ACTOR* actor, GAME_PLAY* play) {
+    EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
+
+    if (majin->npc_class.draw._04 == 1) {
+        aEMJ_setup_think_proc(actor, 1);
+    }
+}
+
+void aEMJ_retire(NPC_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->draw._04 == 1) {
+        ((NPC_ACTOR*)(actor->actor_class.parent_actor))->npc_info.animal = (Animal_c*)1;
+        Actor_delete(&actor->actor_class);
+    }
+}
+
+void aEMJ_think_main_proc(NPC_ACTOR* actor, GAME_PLAY* play) {
+    EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
+
+    if (actor->action.idx == 0x16) {
+        majin->think_proc(actor, play);
+    } else {
+        if (actor->action.step == aNPC_ACTION_END_STEP) {
+            aEMJ_set_request_act(actor, play);
+        }
+    }
+}
+
+void aEMJ_think_init_proc(ACTOR* actor, GAME* game) {
+    EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    majin->npc_class.action.act_proc = aEMJ_act_proc;
+    aEMJ_set_request_act(&majin->npc_class, play);
+    Common_Get(clip).effect_clip->effect_make_proc(0x5D, actor->world.position, 3, actor->shape_info.rotation.y,
+                                                   &play->game, 0xFFFF, 0, 0);
+    aEMJ_setup_think_proc(&majin->npc_class, 0);
+}
+
+void aEMJ_setup_think_proc(NPC_ACTOR* actor, int idx) {
+    static NPC_DT_PROCS dt_tbl[] = {
+        {aEMJ_appear, (aNPC_SUB_PROC)none_proc1},
+        {(aNPC_SUB_PROC)none_proc1, aEMJ_force_talk_request},
+        {aEMJ_retire, (aNPC_SUB_PROC)none_proc1},
+    };
+    EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
+
+    NPC_DT_PROCS* current = &dt_tbl[idx];
+
+    majin->unk994 = idx;
+    majin->think_proc = current->unk0;
+    actor->talk_info.talk_request_proc = (mActor_proc)current->unk4;
+    aEMJ_set_animation(&actor->actor_class, idx);
+}
+
+void aEMJ_think_proc(NPC_ACTOR* actor, GAME_PLAY* play, int idx) {
+    static aNPC_SUB_PROC think_proc[] = {
+        (aNPC_SUB_PROC)(aEMJ_think_init_proc),
+        aEMJ_think_main_proc,
+    };
+
+    think_proc[idx](actor, play);
+}
+
+void aEMJ_schedule_init_proc(NPC_ACTOR* actor, GAME_PLAY* play) {
+    EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
+
+    majin->npc_class.think.think_proc = aEMJ_think_proc;
+    majin->npc_class.condition_info.hide_request = 0;
+    majin->npc_class.palActorIgnoreTimer = -1;
+    majin->npc_class.actor_class.world.position.x += 20.0f;
+    majin->npc_class.actor_class.world.position.z += 20.0f;
+    Common_Get(clip.npc_clip)->think_proc(actor, play, 9, 0);
+}
+
+void aEMJ_schedule_main_proc(NPC_ACTOR* actor, GAME_PLAY* play) {
+    EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
+    if (Common_Get(clip.npc_clip)->think_proc(actor, play, -1, 1) == 0) {
+        Common_Get(clip.npc_clip)->think_proc(actor, play, -1, 2);
+    }
+}
+
+void aEMJ_schedule_proc(NPC_ACTOR* actor, GAME_PLAY* play, int idx) {
+    static aNPC_SUB_PROC sche_proc[] = {aEMJ_schedule_init_proc, aEMJ_schedule_main_proc};
+
+    sche_proc[idx](actor, play);
+}
+
+void aEMJ_set_force_talk_info() {
+    int msg_num;
+
+    switch (Common_Get(weather)) {
+        case mEnv_WEATHER_CLEAR:
+            msg_num = RANDOM(3.0f) + 0x3DAF;
+            break;
+
+        case mEnv_WEATHER_SNOW:
+            msg_num = RANDOM(3.0f) + 0x3DB2;
+            break;
+
+        default:
+        case mEnv_WEATHER_RAIN:
+            msg_num = 0x3DAF;
+            break;
+    }
+
+    mDemo_Set_msg_num(msg_num);
+}
+
+void aEMJ_force_talk_request(NPC_ACTOR* actor, GAME_PLAY* play) { 
+    mDemo_Request(10, &actor->actor_class, aEMJ_set_force_talk_info); 
+}
+
+int aEMJ_talk_init(ACTOR* actor, GAME* play) {
+    EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
+
+    majin->npc_class.talk_info.talk_request_proc = (mActor_proc)none_proc1;
+    mDemo_Set_ListenAble();
+    return 1;
+}
+
+int aEMJ_talk_end_chk(ACTOR* actor, GAME* play) {
+    EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
+    int res = 0;
+
+    if (mDemo_Check(10, actor) == 0) {
+        aEMJ_setup_think_proc(&majin->npc_class, 2);
+        res = 1;
+    }
+
+    return res;
+}

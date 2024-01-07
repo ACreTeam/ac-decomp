@@ -426,6 +426,11 @@ typedef struct npc_control_actor_s {
   u8 _8F4[0x9D8 - 0x8F4]; // TODO
 } NPC_CONTROL_ACTOR;
 
+typedef struct npc_destruct_table_proc{
+    aNPC_SUB_PROC unk0;
+    aNPC_SUB_PROC unk4;
+}NPC_DT_PROCS;
+
 extern ACTOR_PROFILE Npc_Profile;
 
 #ifdef __cplusplus
