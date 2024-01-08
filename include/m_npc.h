@@ -207,7 +207,7 @@ typedef struct animal_s {
   /* 0x8E9 */ u8 moved_in; /* TRUE when the villager moved in after town creation, FALSE if they started out in town */
   /* 0x8EA */ u8 removing; /* TRUE when the villager is leaving town, FALSE otherwise */
   /* 0x8EB */ u8 cloth_original_id; /* 0xFF when not wearing an Able Sister's pattern, otherwise 0-3 indicating which pattern */
-  /* 0x8EC */ s8 umbrella_id; /* 0xFF when no umbrella, 0-31 when a standard umbrella, 32-35 when using an Able Sister's pattern
+  /* 0x8EC */ s8 umbrella_id; /* 0xFF when no umbrella, 0-31 when a standard umbrella, 32-35 when using an Able Sister's pattern */
   /* 0x8ED */ u8 unk_8ED; /* Exists according to mISL_gc_to_agb_animal, but seems unused in practice */
   /* 0x8EE */ mActor_name_t present_cloth; /* The most recently received shirt from a letter which the villager may change into */
   /* 0x8F0 */ u8 animal_relations[ANIMAL_NUM_MAX]; /* relationships between all villagers in town, starts at 128 which is neutral */

@@ -26,7 +26,7 @@ extern u8 boot_sound_initializing;
 typedef void(*HotStartProc)();
 
 #define NMISaveArea (void*)0x811FFFC0
-OSModuleHeader* BaseModule : 0x800030C8;
+OSModuleHeader* BaseModule AT_ADDRESS(0x800030C8);
 
 // TODO: this macro should probably go elsewhere
 #define MAKE_PARTIAL_ADDRESS(segment, ofs) \

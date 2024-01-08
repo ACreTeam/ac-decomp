@@ -11,6 +11,8 @@ dump/*
 *.exe
 *.dll
 *.arc
+*.ctx
+ctx.c
 build.ninja
 ac-decomp.code-workspace
 assets/

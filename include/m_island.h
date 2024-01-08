@@ -147,7 +147,7 @@ typedef struct agb_animal_s {
   /* 0x92E */ u8 moved_in; /* TRUE when the villager moved in after town creation, FALSE if they started out in town */
   /* 0x92F */ u8 removing; /* TRUE when the villager is leaving town, FALSE otherwise */
   /* 0x930 */ u8 cloth_original_id; /* 0xFF when not wearing an Able Sister's pattern, otherwise 0-3 indicating which pattern */
-  /* 0x931 */ s8 umbrella_id; /* 0xFF when no umbrella, 0-31 when a standard umbrella, 32-35 when using an Able Sister's pattern
+  /* 0x931 */ s8 umbrella_id; /* 0xFF when no umbrella, 0-31 when a standard umbrella, 32-35 when using an Able Sister's pattern */
   /* 0x932 */ u8 unk_932; /* Exists according to mISL_gc_to_agb_animal, but seems unused in practice */
   /* 0x934 */ mActor_name_t present_cloth; /* The most recently received shirt from a letter which the villager may change into */
   /* 0x936 */ u8 pad_936[6];
