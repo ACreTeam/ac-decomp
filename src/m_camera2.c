@@ -27,7 +27,7 @@ static void Camera2_DirectionCalc(GAME_PLAY* play) {
   dir = camera->direction;
   mag = Math3d_normalizeXyz_t(&eye_minus_center);
 
-  if (fabsf(mag) < 0.008f) {
+  if (F32_IS_ZERO(mag)) {
     camera->direction.x = 0;
     camera->direction.y = 0;
     camera->direction.z = 0;
@@ -198,7 +198,7 @@ static void Camera2_SetView(GAME_PLAY* play) {
   view  = &play->view;
   center = &camera->lookat.center;
 
-  if (fabsf(Math3DLength(eye, center)) < 0.008f) {
+  if (F32_IS_ZERO(Math3DLength(eye, center))) {
     eye->z = center->z + 1.0f;
   }
 
@@ -221,7 +221,7 @@ static void Camera2_SetView(GAME_PLAY* play) {
     }
   }
 
-  if (fabsf(camera->perspective.fov_y) < 0.008f) {
+  if (F32_IS_ZERO(camera->perspective.fov_y)) {
     camera->perspective.fov_y += 1.0f;
   }
 

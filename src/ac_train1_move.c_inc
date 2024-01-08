@@ -8,7 +8,7 @@ static f32 calc_speed1(ACTOR* actor0, ACTOR* actor1) {
     TRAIN0_ACTOR* train0 = (TRAIN0_ACTOR*)actor0;
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor1;
 
-    if (fabsf(actor1->speed) < 0.008f) {
+    if (F32_IS_ZERO(actor1->speed)) {
         return 0.8f + train0->tr_speed;
     }
 
@@ -21,7 +21,7 @@ static f32 calc_speed1(ACTOR* actor0, ACTOR* actor1) {
 
 static f32 calc_speed2(ACTOR* actor){
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
-    int should_stop = fabsf(train1->tr0_pos) < 0.008f;
+    int should_stop = F32_IS_ZERO(train1->tr0_pos);
     
     return should_stop == FALSE ? train1->tr0_pos : -0.23f;
 }

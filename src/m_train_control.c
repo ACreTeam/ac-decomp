@@ -331,7 +331,7 @@ static void mTRC_trainControl(GAME_PLAY* play, int state) {
     case mTRC_ACTION_BEGIN_STOP:
     {
       chase_f(&speed, 0.0f, 0.005f);
-      if (fabsf(speed) < 0.008f) {
+      if (F32_IS_ZERO(speed)) {
         signal = TRUE;
         timer = 48;
         action = mTRC_ACTION_SIGNAL_STOPPED;

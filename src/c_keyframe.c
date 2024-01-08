@@ -162,7 +162,7 @@ static s16 cKF_KeyCalc(s16 index, s16 next_index, s16* data_src, f32 frame) {
     if (s_vec[i].x > frame) {
       sub = s_vec[i].x - s_vec[j].x;
 
-      if (!(fabsf(sub) < 0.008f)) {
+      if (!(F32_IS_ZERO(sub))) {
         f32 t = (frame - s_vec[j].x) / sub;
         f32 tension = sub * (1.0f / 30.0f);
         f32 calc = cKF_HermitCalc(t, tension, s_vec[j].y, s_vec[i].y, s_vec[j].z, s_vec[i].z);
@@ -283,7 +283,7 @@ static void cKF_SkeletonInfo_R_morphJoint(cKF_SkeletonInfo_R_c* keyframe) {
   s_xyz* current_joint = keyframe->current_joint;
   s_xyz* target_joint = keyframe->target_joint;
 
-  if (!(fabsf(keyframe->morph_counter) < 0.008f)) {
+  if (!(F32_IS_ZERO(keyframe->morph_counter))) {
     step = 0.5f / fabsf(keyframe->morph_counter);
   } else {
     step = 0.0f;
@@ -370,7 +370,7 @@ extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
   int t = 0;
 
   int index = 0;
-  s16* joint = (fabsf(keyframe->morph_counter) < 0.008f)
+  s16* joint = (F32_IS_ZERO(keyframe->morph_counter))
                    ? &keyframe->current_joint->x
                    : &keyframe->target_joint->x;
   int joint_num = 32;
@@ -425,7 +425,7 @@ extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
   }
 
   if (keyframe->rotation_diff_table != NULL) {
-    c_joint = (fabsf(keyframe->morph_counter) < 0.008f)
+    c_joint = (F32_IS_ZERO(keyframe->morph_counter))
                   ? keyframe->current_joint
                   : keyframe->target_joint;
 
@@ -439,7 +439,7 @@ extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
     }
   }
 
-  if (fabsf(keyframe->morph_counter) < 0.008f) {
+  if (F32_IS_ZERO(keyframe->morph_counter)) {
     ret = cKF_FrameControl_play(&keyframe->frame_control);
   } else if (keyframe->morph_counter > 0.0f) {
     cKF_SkeletonInfo_R_morphJoint(keyframe);
@@ -808,7 +808,7 @@ extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1,
   if ((info1 == NULL) || (info2 == NULL) || (flag == NULL)) {
     return 0;
   }
-  joint = (fabsf(info1->morph_counter) < 0.008f) ? &info1->current_joint->x
+  joint = (F32_IS_ZERO(info1->morph_counter)) ? &info1->current_joint->x
                                                  : &info1->target_joint->x;
 
   if (info1 != NULL) {
@@ -823,7 +823,7 @@ extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1,
   cKF_SkeletonInfo_R_combine_rotation(&joint, &combinet, &combine3, flag);
 
   if (info1->rotation_diff_table != NULL) {
-    applyjoint = (fabsf(info1->morph_counter) < 0.008f) ? info1->current_joint
+    applyjoint = (F32_IS_ZERO(info1->morph_counter)) ? info1->current_joint
                                                         : info1->target_joint;
 
     applyjoint += 1;
@@ -835,7 +835,7 @@ extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1,
       applyjoint++;
     }
   }
-  if (fabsf(info1->morph_counter) < 0.008f) {
+  if (F32_IS_ZERO(info1->morph_counter)) {
     cKF_FrameControl_play(&info2->frame_control);
     return cKF_FrameControl_play(&info1->frame_control);
   }
@@ -877,7 +877,7 @@ extern void cKF_SkeletonInfo_R_T_combine_play(int* arg1, int* arg2, int* arg3,
     return;
   }
 
-  joint = (fabsf(info1->morph_counter) < 0.008f) ? &info1->current_joint->x
+  joint = (F32_IS_ZERO(info1->morph_counter)) ? &info1->current_joint->x
                                                  : &info1->target_joint->x;
 
   if (info1 != NULL) {
@@ -895,7 +895,7 @@ extern void cKF_SkeletonInfo_R_T_combine_play(int* arg1, int* arg2, int* arg3,
   cKF_SkeletonInfo_R_combine_rotation(&joint, &combinet, &combine3, flag);
 
   if (info1->rotation_diff_table != NULL) {
-    applyjoint = (fabsf(info1->morph_counter) < 0.008f) ? info1->current_joint
+    applyjoint = (F32_IS_ZERO(info1->morph_counter)) ? info1->current_joint
                                                         : info1->target_joint;
 
     applyjoint += 1;
@@ -907,7 +907,7 @@ extern void cKF_SkeletonInfo_R_T_combine_play(int* arg1, int* arg2, int* arg3,
       applyjoint++;
     }
   }
-  if (fabsf(info1->morph_counter) < 0.008f) {
+  if (F32_IS_ZERO(info1->morph_counter)) {
     *arg1 = cKF_FrameControl_play(&info1->frame_control);
     *arg2 = cKF_FrameControl_play(&info2->frame_control);
     *arg3 = cKF_FrameControl_play(&info3->frame_control);

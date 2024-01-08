@@ -462,7 +462,7 @@ void CollisionCheck_setOC_HitInfo(ClObj_c* col1, ClObjElem_c* colelem1, xyz_t* p
 
     comweight = weight1 + weight2;
 
-    if (fabsf(comweight) < 0.008f)
+    if (F32_IS_ZERO(comweight))
     {
         weight1 = weight2 = 1.0f;
         comweight = 2.0f;
@@ -529,7 +529,7 @@ void CollisionCheck_setOC_HitInfo(ClObj_c* col1, ClObjElem_c* colelem1, xyz_t* p
         actor1->speed = 0.0f;
     }
 
-    if (!(fabsf(xzdist) < 0.008f))
+    if (!(F32_IS_ZERO(xzdist)))
     {
 
         xdiff *= diff / xzdist;

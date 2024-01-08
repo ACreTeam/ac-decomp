@@ -84,7 +84,7 @@ static void aTR0_steam_work(ACTOR* actor, GAME* game){
 static f32 calc_speed1(ACTOR* actor){
     TRAIN0_ACTOR* train0 = (TRAIN0_ACTOR*)actor;
 
-    if(fabsf(train0->tr_speed) < 0.008f){
+    if(F32_IS_ZERO(train0->tr_speed)){
         return 0.8f + train0->actor_class.speed;
     }
 
@@ -97,7 +97,7 @@ static f32 calc_speed1(ACTOR* actor){
 
 static f32 calc_speed2(ACTOR* actor){
     TRAIN0_ACTOR* train0 = (TRAIN0_ACTOR*)actor;
-    int should_stop = fabsf(train0->actor_class.speed) < 0.008f;
+    int should_stop = F32_IS_ZERO(train0->actor_class.speed);
     
     return should_stop == FALSE ? train0->actor_class.speed : -0.23f;
 }
@@ -182,7 +182,7 @@ static void aTR0_actor_move(ACTOR* actor, GAME* game){
     aTR0_animation(actor);
     aTR0_move(actor);
 
-    if(!(fabsf(train0->actor_class.speed) < 0.008f)){
+    if(!F32_IS_ZERO(train0->actor_class.speed)){
         aTR0_set_effect(actor,game);
         aTR0_steam_work(actor,game);
     }
