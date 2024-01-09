@@ -16,7 +16,7 @@ void CollisionCheck_workTrisElemCenter(ClObjTrisElem_c* tri, xyz_t* vec)
              (1.0f / 3.0f);
 }
 
-int ClObj_ct(GAME_PLAY* play, ClObj_c* cl)
+int ClObj_ct(GAME* game, ClObj_c* cl)
 {
     static ClObj_c clobj_default = {NULL, NULL, 0, 0, 3};
 
@@ -25,12 +25,12 @@ int ClObj_ct(GAME_PLAY* play, ClObj_c* cl)
     return 1;
 }
 
-int ClObj_dt(GAME_PLAY*, ClObj_c*)
+int ClObj_dt(GAME*, ClObj_c*)
 {
     return 1;
 }
 
-int ClObj_set4(GAME_PLAY*, ClObj_c* cl, ACTOR* actor, ClObjData_c* data)
+int ClObj_set4(GAME*, ClObj_c* cl, ACTOR* actor, ClObjData_c* data)
 {
 
     cl->owner_actor = actor;
@@ -41,7 +41,7 @@ int ClObj_set4(GAME_PLAY*, ClObj_c* cl, ACTOR* actor, ClObjData_c* data)
     return 1;
 }
 
-void ClObj_OCClear(GAME_PLAY *, ClObj_c* cl)
+void ClObj_OCClear(GAME *, ClObj_c* cl)
 {
 
     cl->collision_flags0 &= ~2;
@@ -65,37 +65,37 @@ int ClObjElem_set(ClObjElem_c* elem, ClObjElemData_c* data)
     return 1;
 }
 
-void ClObjElem_OCClear(GAME_PLAY*, ClObjElem_c* elem)
+void ClObjElem_OCClear(GAME*, ClObjElem_c* elem)
 {
 
     elem->flags &= ~2;
 }
 
-int ClObjJntSphElem_OCClear(GAME_PLAY* play, ClObjJntSphElem_c* col)
+int ClObjJntSphElem_OCClear(GAME* game, ClObjJntSphElem_c* col)
 {
-
-    ClObjElem_OCClear(play, &col->element);
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ClObjElem_OCClear(game, &col->element);
 
     return 1;
 }
 
-int ClObjJntSph_OCClear(GAME_PLAY* play, ClObj_c* cl)
+int ClObjJntSph_OCClear(GAME* game, ClObj_c* cl)
 {
-
+    GAME_PLAY* play = (GAME_PLAY*)game;
     ClObjJntSph_c* jntsph = (ClObjJntSph_c*)cl;
     ClObjJntSphElem_c* elem;
 
-    ClObj_OCClear(play, &jntsph->collision_obj);
+    ClObj_OCClear(game, &jntsph->collision_obj);
 
     for (elem = jntsph->elements; elem < &jntsph->elements[jntsph->count]; elem++)
     {
-        ClObjJntSphElem_OCClear(play, elem);
+        ClObjJntSphElem_OCClear(game, elem);
     }
 
     return 1;
 }
 
-int ClObjPipeAttr_ct(GAME_PLAY* play, ClObjPipeAttr_c* attribute)
+int ClObjPipeAttr_ct(GAME* game, ClObjPipeAttr_c* attribute)
 {
 
     static ClObjPipeAttr_c default_pipe_attr = {0, 0, 0};
@@ -105,13 +105,13 @@ int ClObjPipeAttr_ct(GAME_PLAY* play, ClObjPipeAttr_c* attribute)
     return 1;
 }
 
-int ClObjPipeAttr_dt(GAME_PLAY*, ClObjPipeAttr_c*)
+int ClObjPipeAttr_dt(GAME*, ClObjPipeAttr_c*)
 {
 
     return 1;
 }
 
-int ClObjPipeAttr_set(GAME_PLAY* play, ClObjPipeAttr_c* dst, ClObjPipeAttr_c* src)
+int ClObjPipeAttr_set(GAME* game, ClObjPipeAttr_c* dst, ClObjPipeAttr_c* src)
 {
 
     *dst = *src;
@@ -119,47 +119,47 @@ int ClObjPipeAttr_set(GAME_PLAY* play, ClObjPipeAttr_c* dst, ClObjPipeAttr_c* sr
     return 1;
 }
 
-int ClObjPipe_ct(GAME_PLAY* play, ClObjPipe_c* pipe)
+int ClObjPipe_ct(GAME* game, ClObjPipe_c* pipe)
 {
-
-    ClObj_ct(play, &pipe->collision_obj);
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ClObj_ct(game, &pipe->collision_obj);
     ClObjElem_ct(&pipe->element);
-    ClObjPipeAttr_ct(play, &pipe->attribute);
+    ClObjPipeAttr_ct(game, &pipe->attribute);
 
     return 1;
 }
 
-int ClObjPipe_dt(GAME_PLAY* play, ClObjPipe_c* pipe)
+int ClObjPipe_dt(GAME* game, ClObjPipe_c* pipe)
 {
-
-    ClObj_dt(play, &pipe->collision_obj);
-    ClObjPipeAttr_dt(play, &pipe->attribute);
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ClObj_dt(game, &pipe->collision_obj);
+    ClObjPipeAttr_dt(game, &pipe->attribute);
 
     return 1;
 }
 
-int ClObjPipe_set5(GAME_PLAY* play, ClObjPipe_c* pipe, ACTOR* owner, ClObjPipeData_c* data)
+int ClObjPipe_set5(GAME* game, ClObjPipe_c* pipe, ACTOR* owner, ClObjPipeData_c* data)
 {
-
-    ClObj_set4(play, &pipe->collision_obj, owner, &data->collision_data);
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ClObj_set4(game, &pipe->collision_obj, owner, &data->collision_data);
     ClObjElem_set(&pipe->element, &data->element_data);
-    ClObjPipeAttr_set(play, &pipe->attribute, (ClObjPipeAttr_c *)&data->attribute_data);
+    ClObjPipeAttr_set(game, &pipe->attribute, (ClObjPipeAttr_c *)&data->attribute_data);
 
     return 1;
 }
 
-int ClObjPipe_OCClear(GAME_PLAY* play, ClObj_c* cl)
+int ClObjPipe_OCClear(GAME* game, ClObj_c* cl)
 {
-
+    GAME_PLAY* play = (GAME_PLAY*)game;
     ClObjPipe_c* pipe = (ClObjPipe_c *)cl;
 
-    ClObj_OCClear(play, &pipe->collision_obj);
-    ClObjElem_OCClear(play, &pipe->element);
+    ClObj_OCClear(game, &pipe->collision_obj);
+    ClObjElem_OCClear(game, &pipe->element);
 
     return 1;
 }
 
-int ClObjTrisElemAttr_ct(GAME_PLAY *play, ClObjTrisElemAttr_c *tris)
+int ClObjTrisElemAttr_ct(GAME* game, ClObjTrisElemAttr_c *tris)
 {
 
     static ClObjTrisElemAttr_c default_clobjtriselem_attr = {
@@ -170,13 +170,13 @@ int ClObjTrisElemAttr_ct(GAME_PLAY *play, ClObjTrisElemAttr_c *tris)
     return 1;
 }
 
-int ClObjTrisElemAttr_dt(GAME_PLAY *play, ClObjTrisElemAttr_c *tris)
+int ClObjTrisElemAttr_dt(GAME* game, ClObjTrisElemAttr_c *tris)
 {
 
     return 1;
 }
 
-int ClObjTrisElemAttr_set(GAME_PLAY* play, ClObjTrisElemAttr_c* tris, ClObjTrisElemAttrData_c* data)
+int ClObjTrisElemAttr_set(GAME* game, ClObjTrisElemAttr_c* tris, ClObjTrisElemAttrData_c* data)
 {
 
     xyz_t* dst;
@@ -197,60 +197,60 @@ int ClObjTrisElemAttr_set(GAME_PLAY* play, ClObjTrisElemAttr_c* tris, ClObjTrisE
     return 1;
 }
 
-int ClObjTrisElem_ct(GAME_PLAY* play, ClObjTrisElem_c* tris)
+int ClObjTrisElem_ct(GAME* game, ClObjTrisElem_c* tris)
 {
-
+    GAME_PLAY* play = (GAME_PLAY*)game;
     ClObjElem_ct(&tris->element);
-    ClObjTrisElemAttr_ct(play, &tris->attribute);
+    ClObjTrisElemAttr_ct(game, &tris->attribute);
 
     return 1;
 }
 
-int ClObjTrisElem_dt(GAME_PLAY* play, ClObjTrisElem_c* tris)
+int ClObjTrisElem_dt(GAME* game, ClObjTrisElem_c* tris)
 {
-
-    ClObjTrisElemAttr_dt(play, &tris->attribute);
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ClObjTrisElemAttr_dt(game, &tris->attribute);
 
     return 1;
 }
 
-int ClObjTrisElem_set(GAME_PLAY* play, ClObjTrisElem_c* tris, ClObjTrisElemData_c* data)
+int ClObjTrisElem_set(GAME* game, ClObjTrisElem_c* tris, ClObjTrisElemData_c* data)
 {
-
+    GAME_PLAY* play = (GAME_PLAY*)game;
     ClObjElem_set(&tris->element, &data->element);
-    ClObjTrisElemAttr_set(play, &tris->attribute, &data->data);
+    ClObjTrisElemAttr_set(game, &tris->attribute, &data->data);
 
     return 1;
 }
 
-int ClObjTrisElem_OCClear(GAME_PLAY* play, ClObjTrisElem_c* tris)
+int ClObjTrisElem_OCClear(GAME* game, ClObjTrisElem_c* tris)
 {
-
-    ClObjElem_OCClear(play, &tris->element);
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ClObjElem_OCClear(game, &tris->element);
 
     return 1;
 }
 
-int ClObjTris_ct(GAME_PLAY* play, ClObjTris_c* tris)
+int ClObjTris_ct(GAME* game, ClObjTris_c* tris)
 {
-
-    ClObj_ct(play, &tris->collision_obj);
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ClObj_ct(game, &tris->collision_obj);
     tris->count = 0;
     tris->elements = NULL;
 
     return 1;
 }
 
-int ClObjTris_dt_nzf(GAME_PLAY *play, ClObjTris_c *tris)
+int ClObjTris_dt_nzf(GAME* game, ClObjTris_c *tris)
 {
-
+    GAME_PLAY* play = (GAME_PLAY*)game;
     ClObjTrisElem_c *element;
 
-    ClObj_dt(play, &tris->collision_obj);
+    ClObj_dt(game, &tris->collision_obj);
 
     for (element = tris->elements; element < &tris->elements[tris->count]; element++)
     {
-        ClObjTrisElem_dt(play, element);
+        ClObjTrisElem_dt(game, element);
     }
     tris->count = 0;
     tris->elements = NULL;
@@ -258,14 +258,14 @@ int ClObjTris_dt_nzf(GAME_PLAY *play, ClObjTris_c *tris)
     return 1;
 }
 
-int ClObjTris_set5_nzm(GAME_PLAY* play, ClObjTris_c* tris, ACTOR* actor, ClObjTrisData_c* data,
+int ClObjTris_set5_nzm(GAME* game, ClObjTris_c* tris, ACTOR* actor, ClObjTrisData_c* data,
                        ClObjTrisElem_c *elem)
 {
-
+    GAME_PLAY* play = (GAME_PLAY*)game;
     ClObjTrisElem_c* element;
     ClObjTrisElemData_c* elementData;
 
-    ClObj_set4(play, &tris->collision_obj, actor, &data->data);
+    ClObj_set4(game, &tris->collision_obj, actor, &data->data);
 
     tris->count = data->count;
     tris->elements = elem;
@@ -273,40 +273,42 @@ int ClObjTris_set5_nzm(GAME_PLAY* play, ClObjTris_c* tris, ACTOR* actor, ClObjTr
     for (element = tris->elements, elementData = data->elem_data;
          element < &tris->elements[tris->count]; element++, elementData++)
     {
-        ClObjTrisElem_ct(play, element);
-        ClObjTrisElem_set(play, element, elementData);
+        ClObjTrisElem_ct(game, element);
+        ClObjTrisElem_set(game, element, elementData);
     }
 
     return 1;
 }
 
-int ClObjTris_OCClear(GAME_PLAY* play, ClObj_c* cl)
+int ClObjTris_OCClear(GAME* game, ClObj_c* cl)
 {
+    GAME_PLAY* play = (GAME_PLAY*)game;
     ClObjTris_c* tris = (ClObjTris_c*)cl;
     ClObjTrisElem_c* element;
 
-    ClObj_OCClear(play, &tris->collision_obj);
+
+    ClObj_OCClear(game, &tris->collision_obj);
 
     for (element = tris->elements; element < &tris->elements[tris->count]; element++)
     {
-        ClObjTrisElem_OCClear(play, element);
+        ClObjTrisElem_OCClear(game, element);
     }
 
     return 1;
 }
 
-void CollisionCheck_ct(GAME_PLAY* play, CollisionCheck_c* col)
+void CollisionCheck_ct(GAME* game, CollisionCheck_c* col)
 {
-
+    GAME_PLAY* play = (GAME_PLAY*)game;
     col->flags = 0;
-    CollisionCheck_clear(play, col);
+    CollisionCheck_clear(game, col);
 }
 
-void CollisionCheck_dt(GAME_PLAY* play, CollisionCheck_c* col)
+void CollisionCheck_dt(GAME* game, CollisionCheck_c* col)
 {
 }
 
-void CollisionCheck_clear(GAME_PLAY* play, CollisionCheck_c* col)
+void CollisionCheck_clear(GAME* game, CollisionCheck_c* col)
 {
 
     ClObj_c** clp;
@@ -350,9 +352,9 @@ CollisionOCClear OCCClearFunctionTable[ClObj_TYPE_NUM] = {
         NULL, NULL, ClObjTris_OCCClear};
 
 
-int CollisionCheck_setOC(GAME_PLAY* play, CollisionCheck_c* col, ClObj_c* cl)
+int CollisionCheck_setOC(GAME* game, CollisionCheck_c* col, ClObj_c* cl)
 {
-
+    GAME_PLAY* play = (GAME_PLAY*)game;
     int ret;
 
     if (_Game_play_isPause(play) == 1)
@@ -361,7 +363,7 @@ int CollisionCheck_setOC(GAME_PLAY* play, CollisionCheck_c* col, ClObj_c* cl)
     }
     else
     {
-        OCClearFunctionTable[cl->collision_type](play, cl);
+        OCClearFunctionTable[cl->collision_type](game, cl);
 
         if ((cl->owner_actor != NULL) && (cl->owner_actor->mv_proc == NULL))
         {
@@ -553,7 +555,7 @@ void CollisionCheck_setOC_HitInfo(ClObj_c* col1, ClObjElem_c* colelem1, xyz_t* p
     }
 }
 
-void CollisionCheck_OC_JntSph_Vs_JntSph(GAME_PLAY* play, CollisionCheck_c* check, ClObj_c* col1,
+void CollisionCheck_OC_JntSph_Vs_JntSph(GAME* game, CollisionCheck_c* check, ClObj_c* col1,
                                         ClObj_c* col2)
 {
 
@@ -599,7 +601,7 @@ void CollisionCheck_OC_JntSph_Vs_JntSph(GAME_PLAY* play, CollisionCheck_c* check
     }
 }
 
-void CollisionCheck_OC_JntSph_Vs_Pipe(GAME_PLAY* play, CollisionCheck_c* check, ClObj_c* col1,
+void CollisionCheck_OC_JntSph_Vs_Pipe(GAME* game, CollisionCheck_c* check, ClObj_c* col1,
                                         ClObj_c* col2)
 {
 
@@ -639,14 +641,14 @@ void CollisionCheck_OC_JntSph_Vs_Pipe(GAME_PLAY* play, CollisionCheck_c* check, 
     }
 }
 
-void CollisionCheck_OC_Pipe_Vs_JntSph(GAME_PLAY* play, CollisionCheck_c* colcheck, ClObj_c* col1,
+void CollisionCheck_OC_Pipe_Vs_JntSph(GAME* game, CollisionCheck_c* colcheck, ClObj_c* col1,
                                         ClObj_c* col2)
 {
-
-    CollisionCheck_OC_JntSph_Vs_Pipe(play, colcheck, col2, col1);
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    CollisionCheck_OC_JntSph_Vs_Pipe(game, colcheck, col2, col1);
 }
 
-void CollisionCheck_OC_Pipe_Vs_Pipe(GAME_PLAY* play, CollisionCheck_c* colcheck, ClObj_c* col1,
+void CollisionCheck_OC_Pipe_Vs_Pipe(GAME* game, CollisionCheck_c* colcheck, ClObj_c* col1,
                                         ClObj_c* col2)
 {
 
@@ -697,9 +699,9 @@ int CollisionCheck_Check2ClObjNoOC(ClObj_c* col1, ClObj_c* col2)
 
 
 
-void CollisionCheck_OC(GAME_PLAY* play, CollisionCheck_c* colcheck)
+void CollisionCheck_OC(GAME* game, CollisionCheck_c* colcheck)
 {
-     
+    GAME_PLAY* play = (GAME_PLAY*)game;
     ClObj_c** col1p;
     ClObj_c** col2p;
     CollisionOCFunction current;
@@ -727,13 +729,13 @@ void CollisionCheck_OC(GAME_PLAY* play, CollisionCheck_c* colcheck)
                 continue;
             }
 
-            current(play, colcheck, *col1p, *col2p);
+            current(game, colcheck, *col1p, *col2p);
         }
     }
-    CollisionCheck_OCC(play, colcheck);
+    CollisionCheck_OCC(game, colcheck);
 }
 
-void CollisionCheck_setOCC_HitInfo(GAME_PLAY* play, ClObj_c* col1, ClObjTrisElem_c* elem1, xyz_t* pos1,
+void CollisionCheck_setOCC_HitInfo(GAME* game, ClObj_c* col1, ClObjTrisElem_c* elem1, xyz_t* pos1,
                                    ClObj_c* col2, ClObjElem_c* elem2, xyz_t* pos2, xyz_t* pos3)
 {
 
@@ -746,10 +748,10 @@ void CollisionCheck_setOCC_HitInfo(GAME_PLAY* play, ClObj_c* col1, ClObjTrisElem
 }
 
 
-void CollisionCheck_OCC_Tris_Vs_JntSph(GAME_PLAY* play, CollisionCheck_c* colcheck, ClObjTris_c* tris,
+void CollisionCheck_OCC_Tris_Vs_JntSph(GAME* game, CollisionCheck_c* colcheck, ClObjTris_c* tris,
                                        ClObjJntSph_c* jntsph)
 {
-
+    GAME_PLAY* play = (GAME_PLAY*)game;
     ClObjTrisElem_c* triselem;
     ClObjJntSphElem_c* jntsphelem;
     xyz_t pos;
@@ -776,7 +778,7 @@ void CollisionCheck_OCC_Tris_Vs_JntSph(GAME_PLAY* play, CollisionCheck_c* colche
 
                     xyz_t_move_s_xyz(&sphpos, &jntsphelem->attribute.s2.center);
                     CollisionCheck_workTrisElemCenter(triselem, &trispos);
-                    CollisionCheck_setOCC_HitInfo(play, &tris->collision_obj, triselem, &trispos, &jntsph->collision_obj, &jntsphelem->element,
+                    CollisionCheck_setOCC_HitInfo(game, &tris->collision_obj, triselem, &trispos, &jntsph->collision_obj, &jntsphelem->element,
                                                   &sphpos, &pos);
                 }
             }
@@ -785,9 +787,9 @@ void CollisionCheck_OCC_Tris_Vs_JntSph(GAME_PLAY* play, CollisionCheck_c* colche
 }
 
 
-void CollisionCheck_OCC_Tris_Vs_Pipe(GAME_PLAY* play, CollisionCheck_c* colcheck, ClObjTris_c* tris, ClObjPipe_c* pipe)
+void CollisionCheck_OCC_Tris_Vs_Pipe(GAME* game, CollisionCheck_c* colcheck, ClObjTris_c* tris, ClObjPipe_c* pipe)
 {
-
+    GAME_PLAY* play = (GAME_PLAY*)game;
     ClObjTrisElem_c* triselem;
     xyz_t pos;
     xyz_t pipepos;
@@ -809,7 +811,7 @@ void CollisionCheck_OCC_Tris_Vs_Pipe(GAME_PLAY* play, CollisionCheck_c* colcheck
 
                 CollisionCheck_workTrisElemCenter(triselem, &trispos);
                 xyz_t_move_s_xyz(&pipepos, &pipe->attribute.pipe.center);
-                CollisionCheck_setOCC_HitInfo(play, &tris->collision_obj, triselem, &trispos, &pipe->collision_obj, &pipe->element, &pipepos, &pos);
+                CollisionCheck_setOCC_HitInfo(game, &tris->collision_obj, triselem, &trispos, &pipe->collision_obj, &pipe->element, &pipepos, &pos);
                 break;
             }
         }
@@ -822,7 +824,7 @@ int CollisionCheck_Check1ClObjNoOCC(ClObj_c* col)
     return col->collision_flags1 >> 1 & 1 ^ 1;
 }
 
-void CollisionCheck_OCC(GAME_PLAY* play, CollisionCheck_c* colcheck)
+void CollisionCheck_OCC(GAME* game, CollisionCheck_c* colcheck)
 {
 
 
@@ -863,12 +865,12 @@ void CollisionCheck_OCC(GAME_PLAY* play, CollisionCheck_c* colcheck)
                 continue;
             }
 
-            current(play, colcheck, *col1p, *col2p);
+            current(game, colcheck, *col1p, *col2p);
         }
     }
 }
 
-int ClObjTrisElem_OCCClear(GAME_PLAY* play, ClObjTrisElem_c* triselem)
+int ClObjTrisElem_OCCClear(GAME* game, ClObjTrisElem_c* triselem)
 {
 
     triselem->attribute.t.x = 0.0f;
@@ -877,33 +879,33 @@ int ClObjTrisElem_OCCClear(GAME_PLAY* play, ClObjTrisElem_c* triselem)
     return 1;
 }
 
-int ClObj_OCCClear(GAME_PLAY* play, ClObj_c* col)
+int ClObj_OCCClear(GAME* game, ClObj_c* col)
 {
 
     col->collided_actor = NULL;
     col->collision_flags1 &= ~4;
 }
 
-int ClObjTris_OCCClear(GAME_PLAY* play, ClObj_c* col)
+int ClObjTris_OCCClear(GAME* game, ClObj_c* col)
 {
 
     ClObjTris_c* tris = (ClObjTris_c*)col;
     ClObjTrisElem_c* triselem;
 
-    ClObj_OCCClear(play, &tris->collision_obj);
+    ClObj_OCCClear(game, &tris->collision_obj);
 
     for (triselem = tris->elements; triselem < &tris->elements[tris->count]; triselem++)
     {
 
-        ClObjTrisElem_OCCClear(play, triselem);
+        ClObjTrisElem_OCCClear(game, triselem);
     }
 
     return 1;
 }
 
-int CollisionCheck_setOCC(GAME_PLAY* play, CollisionCheck_c* colcheck, ClObj_c* col)
+int CollisionCheck_setOCC(GAME* game, CollisionCheck_c* colcheck, ClObj_c* col)
 {
-
+    GAME_PLAY* play = (GAME_PLAY*)game;
     int ret;
 
     if (_Game_play_isPause(play) == 1)
@@ -918,7 +920,7 @@ int CollisionCheck_setOCC(GAME_PLAY* play, CollisionCheck_c* colcheck, ClObj_c* 
         return -1;
     }
 
-    OCCClearFunctionTable[col->collision_type](play, col);
+    OCCClearFunctionTable[col->collision_type](game, col);
 
     if ((col->owner_actor != NULL) && (col->owner_actor->mv_proc == NULL))
     {

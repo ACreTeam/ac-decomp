@@ -21,6 +21,7 @@ extern "C" {
 #define SHT_MINV (1.0f / SHT_MAX)
 #define ABS(x) (((x) >= 0) ? (x) : -(x))
 #define SQ(x) ((x)*(x))
+#define CLAMP_MAX(x, min) ((min) < (x) ? (min) : (x)) 
 
 /* radians -> short angle */
 #define RAD2SHORT_ANGLE(rad) ((s16)(int)((rad) * (65536.0f / (2.0f * F_PI))))
@@ -32,6 +33,8 @@ extern "C" {
 
 /* degrees -> short angle */
 #define DEG2SHORT_ANGLE(deg) ((s16)((deg) * (65536.0f / 360.0f)))
+
+#define DEG2SHORT_ANGLE2(deg) ((int)((deg) * (65536.0f / 360.0f)))
 
 /* short angle -> degrees */
 #define SHORT2DEG_ANGLE(s) ((((f32)(s)) / (65536.0f / 360.0f)))

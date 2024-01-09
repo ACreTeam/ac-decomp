@@ -804,7 +804,7 @@ static void aHNW_actor_move(ACTOR* actor, GAME* game) {
   (*haniwa->action_proc)((ACTOR*)haniwa, game);
   aHNW_common_process(actor, game);
   CollisionCheck_Uty_ActorWorldPosSetPipeC(actor, &haniwa->col_pipe);
-  CollisionCheck_setOC(play, &play->collision_check, &haniwa->col_pipe.collision_obj);
+  CollisionCheck_setOC(game, &play->collision_check, &haniwa->col_pipe.collision_obj);
   Actor_world_to_eye(actor, 50.0f);
 }
 

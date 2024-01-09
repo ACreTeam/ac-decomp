@@ -24,15 +24,15 @@ static ClObjPipeData_c Ac_Sample_OcInfoData_forStand = {
 static void Ac_Sample_ct_forCorect(ACTOR* actor, GAME* game) {
   GAME_PLAY* play = (GAME_PLAY*)game;
   SAMPLE_ACTOR* sample = (SAMPLE_ACTOR*)actor;
-  ClObjPipe_ct(play, &sample->stand);
-  ClObjPipe_set5(play, &sample->stand, (ACTOR*)actor, &Ac_Sample_OcInfoData_forStand);
+  ClObjPipe_ct(game, &sample->stand);
+  ClObjPipe_set5(game, &sample->stand, (ACTOR*)actor, &Ac_Sample_OcInfoData_forStand);
 }
 
 static void Ac_Sample_Excute_Corect(SAMPLE_ACTOR* actor, GAME_PLAY* play) {
   ClObjPipe_c* stand = &actor->stand;
     
   CollisionCheck_Uty_ActorWorldPosSetPipeC((ACTOR*)actor, stand);
-  CollisionCheck_setOC(play, &play->collision_check, (ClObj_c*)stand);
+  CollisionCheck_setOC(&play->game, &play->collision_check, (ClObj_c*)stand);
 }
 
 static void Ac_Sample_Actor_dt(ACTOR* actor, GAME* game) {
@@ -43,7 +43,7 @@ static void Ac_Sample_Actor_dt(ACTOR* actor, GAME* game) {
   }
 
   cKF_SkeletonInfo_R_dt(keyframe);
-  ClObjPipe_dt((GAME_PLAY*)game, &sample->stand);
+  ClObjPipe_dt(game, &sample->stand);
 }
 
 static void Ac_Sample_Animation_Base(SAMPLE_ACTOR* actor) {

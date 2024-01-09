@@ -68,8 +68,8 @@ static void aHNW_actor_ct(ACTOR* actor, GAME* game) {
   cKF_SkeletonInfo_R_ct(keyframe, &cKF_bs_r_hnw, NULL, haniwa->keyframe_work_area, haniwa->keyframe_morph_area);
 
   pipe = &haniwa->col_pipe;
-  ClObjPipe_ct((GAME_PLAY*)game, pipe);
-  ClObjPipe_set5((GAME_PLAY*)game, pipe, actor, &AcHaniwaCoInfoData);
+  ClObjPipe_ct(game, pipe);
+  ClObjPipe_set5(game, pipe, actor, &AcHaniwaCoInfoData);
   CollisionCheck_Status_set3(&haniwa->actor_class.status_data, &AcHaniwaStatusData);
 
   {
@@ -91,7 +91,7 @@ static void aHNW_actor_dt(ACTOR* actor, GAME* game) {
   }
 
   cKF_SkeletonInfo_R_dt(&haniwa->keyframe);
-  ClObjPipe_dt(play, &haniwa->col_pipe);
+  ClObjPipe_dt(game, &haniwa->col_pipe);
 }
 
 #include "../src/ac_haniwa_move.c_inc"

@@ -19,7 +19,7 @@ float fqrand(void){
     return *(float*)&__qrand_itemp - 1.0f;
 }
 
-double fqrand2(void){
+float fqrand2(void){
     __qrand_idum = __qrand_idum * 0x19660D + 0x3C6EF35F;
     __qrand_itemp = __qrand_idum >> 9 | 0x3F800000;
     return *(float*)&__qrand_itemp - 1.5f;

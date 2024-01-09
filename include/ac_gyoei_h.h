@@ -19,7 +19,7 @@ typedef struct gyoei_init_s {
 
 typedef int (*aGYO_make_proc)(aGYO_Init_c*);
 typedef void (*aGYO_dt_proc)(ACTOR*, GAME*);
-typedef void (*aGYO_ballcheck_proc)(xyz_t*, s16);
+typedef void (*aGYO_ballcheck_proc)(xyz_t*, f32, s16);
 typedef void (*aGYO_hitcheck_proc)(xyz_t*, s16);
 typedef int (*aGYO_chk_live_proc)(int, int, GAME*);
 typedef int (*aGYO_search_near_proc)(f32, f32);

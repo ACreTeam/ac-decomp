@@ -387,7 +387,7 @@ void play_cleanup(GAME* game){
     play->submenu.mode = 0;
     
     PreRender_cleanup(&play->prerender);
-    CollisionCheck_dt(play, &play->collision_check);
+    CollisionCheck_dt(&play->game, &play->collision_check);
     
     if(play->fb_mode == 3){
         fbdemo_cleanup(&fbdemo);
@@ -455,7 +455,7 @@ void play_init(GAME* game){
 
     initView(&play->view, graph);
     Init_Camera2(play);
-    CollisionCheck_ct(play, &play->collision_check);
+    CollisionCheck_ct(&play->game, &play->collision_check);
     
     mCoBG_InitMoveBgData();
     mCoBG_InitBlockBgCheckMode();
@@ -554,9 +554,9 @@ void Game_play_move_fbdemo_not_move(GAME_PLAY* play){
         play->game_frame++;
         mVibctl_clr_force_stop(2);
         play->game.doing_point = 7;
-        CollisionCheck_OC(play, &play->collision_check);
+        CollisionCheck_OC(&play->game, &play->collision_check);
         play->game.doing_point = 8;
-        CollisionCheck_clear(play, &play->collision_check);
+        CollisionCheck_clear(&play->game, &play->collision_check);
         play->game.doing_point = 9;
         play->game.doing_point = 0;
         play->game.doing_point_specific = 0x90;
