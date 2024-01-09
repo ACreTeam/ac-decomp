@@ -584,6 +584,11 @@ ac_npc_rtc.c:
     .text: [0x80573044, 0x80574134]
     .rodata: [0x80649A08, 0x80649A40]
     .data: [0x806BF648,0x806BF788]
+ac_npc_sendo.c:
+    .text: [0x80574134, 0x80576468]
+    .rodata: [0x80649A40, 0x80649A58]
+    .data: [0x806BF788, 0x806BFA80]
+    .bss: [0x8131B258, 0x8131B298]
 ac_ev_majin.c:
     .text: [0x80592A40, 0x80593158]
     .rodata: [0x80649D98,0x80649DA0]

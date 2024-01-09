@@ -741,7 +741,7 @@ extern void mISL_gc_to_agb(Island_agb_c* agb, Island_c* gc) {
 
   if (agb != NULL) {
     bcopy(gc->name, agb->name, mISL_ISLAND_NAME_LEN);
-    agb->_0013 = 0;
+    agb->in_use = FALSE;
     mISL_gc_to_agb_iandinfo(&agb->landinfo, &gc->landinfo);
     mISL_gc_to_agb_fgblock(agb->fgblock[0], gc->fgblock[0]);
     mISL_gc_to_agb_cottage(&agb->cottage, &gc->cottage);

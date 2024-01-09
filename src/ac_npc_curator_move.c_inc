@@ -660,7 +660,7 @@ static void aCR_msg_win_close_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) 
 static void aCR_menu_close_wait(NPC_CURATOR_ACTOR* curator, GAME_PLAY* play) {
   int talk_act;
 
-  if (play->submenu.flag == FALSE) {
+  if (play->submenu.open_flag == FALSE) {
     talk_act = aCR_TALK_GET_DEMO_START_WAIT;
 
     if (play->submenu.item_p->item == EMPTY_NO) {

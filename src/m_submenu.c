@@ -353,7 +353,7 @@ static void mSM_move_LINKWait(Submenu* submenu) {
     submenu->move_proc = (SUBMENU_PROC)mSM_ovlptr_dllcnv(&mSM_menu_ovl_init, submenu, mSM_DLF_SUBMENU_OVL);
     submenu->draw_proc = (SUBMENU_GAME_PROC)&none_proc1;
     submenu->process_status = mSM_PROCESS_PLAY;
-    submenu->flag = TRUE;
+    submenu->open_flag = TRUE;
     submenu->after_mode = 7;
     submenu->unk_164 = 0;
     mMl_clear_mail(&submenu->mail);
@@ -395,7 +395,7 @@ static void mSM_move_End(Submenu* submenu) {
   submenu->process_status = mSM_PROCESS_WAIT;
   submenu->menu_type = mSM_OVL_NONE;
   submenu->wait_timer = 2;
-  submenu->flag = FALSE;
+  submenu->open_flag = FALSE;
   SetGameFrame(1);
 
   if (submenu->mode != 4) {
