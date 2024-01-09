@@ -384,7 +384,7 @@ static void aHNW_menu_end_wait(ACTOR* actor, GAME* game) {
   Submenu* submenu = &play->submenu;
   Submenu_Item_c* item;
 
-  if (submenu->flag == FALSE) {
+  if (submenu->open_flag == FALSE) {
     if (mMsg_Check_not_series_main_wait(mMsg_Get_base_window_p()) == TRUE) {
       aHNW_setupAction(actor, game, aHNW_ACTION_TALK_WITH_MASTER);
       switch (haniwa->submenu_type) {
@@ -458,7 +458,7 @@ static void aHNW_menu_end_wait_for_guest(ACTOR* actor, GAME* game) {
   HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
   GAME_PLAY* play = (GAME_PLAY*)game;
 
-  if (play->submenu.flag == FALSE && mMsg_Check_not_series_main_wait(mMsg_Get_base_window_p()) == TRUE) {
+  if (play->submenu.open_flag == FALSE && mMsg_Check_not_series_main_wait(mMsg_Get_base_window_p()) == TRUE) {
     aHNW_setupAction(actor, game, aHNW_ACTION_TALK_END_WAIT);
   }
 }

@@ -150,7 +150,7 @@ struct submenu_s {
   /* 0x034 */ SUBMENU_GAME_PROC draw_proc;
 
   /* 0x038 */ Mail_c mail; /* selected mail */
-  /* 0x162 */ u8 flag; // only set to 0 or 1, checked at least once in aQMgr_actor_move_talk_sub_hand_item_wait
+  /* 0x162 */ u8 open_flag; // only set to 0 or 1, checked at least once in aQMgr_actor_move_talk_sub_hand_item_wait
   /* 0x163 */ u8 after_mode; /* relates to code which runs after the submenu process */
   /* 0x164 */ u8 unk_164; // only set to 0 in mSM_move_LINKWait in AC
   /* 0x165 */ u8 disable_start_btn_flag; /* when set to TRUE, the START button input will be ignored */

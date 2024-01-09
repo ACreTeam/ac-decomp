@@ -31,6 +31,39 @@ enum {
   mISL_ISLAND_BLOCK_NUM
 };
 
+#define mISL_PLAYER_ACTION_DIG_SCOOP (1 << 0)
+#define mISL_PLAYER_ACTION_PLANT_FLOWER (1 << 1)
+#define mISL_PLAYER_ACTION_CHANGE_FLAG (1 << 2)
+#define mISL_PLAYER_ACTION_SHAKE_TREE (1 << 3)
+#define mISL_PLAYER_ACTION_TRAMPLE_FLOWER (1 << 4)
+#define mISL_PLAYER_ACTION_TRAMPLE_ALL_FLOWERS (1 << 5) // seems to be incorrectly? set when only a single flower was trampled
+#define mISL_PLAYER_ACTION_CHOP_PALM_TREE (1 << 6)
+#define mISL_PLAYER_ACTION_CHOP_TREE (1 << 7)
+#define mISL_PLAYER_ACTION_PLANT_TREE (1 << 8)
+#define mISL_PLAYER_ACTION_UZAI_PUSHED (1 << 9)
+#define mISL_PLAYER_ACTION_UZAI_HIT (1 << 10)
+#define mISL_PLAYER_ACTION_BEST_FRIEND (1 << 11) // seemingly unused but based on intention from dialogue
+#define mISL_PLAYER_ACTION_UZAI_HIT_NET (1 << 12) // set at the same time as "UZAI_HIT"
+#define mISL_PLAYER_ACTION_FALL_PITFALL (1 << 13)
+#define mISL_PLAYER_ACTION_PLANT_APPLE_TREE (1 << 14)
+#define mISL_PLAYER_ACTION_PLANT_PEACH_TREE (1 << 15)
+#define mISL_PLAYER_ACTION_PLANT_CHERRY_TREE (1 << 16)
+#define mISL_PLAYER_ACTION_PLANT_PEAR_TREE (1 << 17)
+#define mISL_PLAYER_ACTION_PLANT_ORANGE_TREE (1 << 18)
+#define mISL_PLAYER_ACTION_PLANT_COCONUT_TREE (1 << 19)
+#define mISL_PLAYER_ACTION_PICKUP_COCONUT (1 << 20)
+#define mISL_PLAYER_ACTION_EAT_COCONUT (1 << 21)
+#define mISL_PLAYER_ACTION_TUMBLE (1 << 22)
+#define mISL_PLAYER_ACTION_DESTINY_POPULAR (1 << 23)
+#define mISL_PLAYER_ACTION_DESTINY_UNPOPULAR (1 << 24)
+#define mISL_PLAYER_ACTION_DESTINY_BAD_LUCK (1 << 25)
+#define mISL_PLAYER_ACTION_DESTINY_MONEY_LUCK (1 << 26)
+#define mISL_PLAYER_ACTION_DESTINY_GOODS_LUCK (1 << 27)
+#define mISL_PLAYER_ACTION_SEX_MALE (1 << 28)
+#define mISL_PLAYER_ACTION_SEX_FEMALE (1 << 29)
+#define mISL_PLAYER_ACTION_TRADE_CLOTH (1 << 30)
+#define mISL_PLAYER_ACTION_NOTICE_FISHING_ROD (1 << 31)
+
 /* sizeof(Island_c) == 0x1900 */
 typedef struct island_s {
   /* 0x0000 */ u8 name[mISL_ISLAND_NAME_LEN]; /* island name */
@@ -162,7 +195,7 @@ typedef struct island_agb_s {
   /* 0x0008 */ u8 name[mISL_ISLAND_NAME_LEN]; /* island name */
   /* 0x0010 */ u8 grass_tex_type; /* grass type */
   /* 0x0011 */ u8 _0011[2];
-  /* 0x0013 */ u8 _0013;
+  /* 0x0013 */ u8 in_use; /* Set on the GBA when the island has been transferred already */
   /* 0x0014 */ mISL_landinfo_agb_c landinfo; /* land info for town */
   /* 0x0020 */ u8 _0020[4];
   /* 0x0024 */ mFM_fg_c fgblock[mISL_FG_BLOCK_Z_NUM][mISL_FG_BLOCK_X_NUM]; /* island item actor data */

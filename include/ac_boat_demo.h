@@ -13,6 +13,9 @@
 extern "C" {
 #endif
 
+#define aBTD_LOADER_SIZE 0xC83C
+#define aBTD_PROGRAM_SIZE 0x15244
+
 enum {
   aBTD_ACTION_SENDO_BIRTH_WAIT,
   aBTD_ACTION_PL_RIDE_ON_START_WAIT,

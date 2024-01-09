@@ -159,7 +159,11 @@ typedef struct npc_draw_info_s {
   /* 0x548 */ u8 _548[0x580 - 0x548];
   /* 0x580 */ int animation_id;
   /* 0x584 */ int texture_bank_idx;
-  /* 0x588 */ u8 _588[0x5BD - 0x588]; 
+  /* 0x588 */ u8 _588[0x5B9 - 0x588]; 
+  /* 0x5B9 */ u8 _5B9;
+  /* 0x5BA */ u8 _5BA;
+  /* 0x5BB */ u8 _5BB;
+  /* 0x5BC */ u8 _5BC;
   /* 0x5BD */ u8 _5BD;
   /* 0x5BE */ u8 _5BE;
   /* 0x5BE */ u8 _5BF[0x630 - 0x5BF];
@@ -386,8 +390,7 @@ typedef void (*aNPC_SUB_PROC)(NPC_ACTOR* npc_actorx, GAME_PLAY* play);
 
 struct npc_actor_s {
   ACTOR actor_class;
-  int _174;
-  int _178;
+  s_xyz _174;
   NpcActorInfo_c npc_info;
   aNPC_draw_info_c draw;
   aNPC_think_info_c think;

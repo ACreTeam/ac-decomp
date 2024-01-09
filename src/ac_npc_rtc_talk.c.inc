@@ -48,7 +48,7 @@ void aNRTC_timer_open_wait(NPCRTC_ACTOR* rtc, GAME_PLAY* play){
 
 
 void aNRTC_timer_close_wait(NPCRTC_ACTOR* rtc, GAME_PLAY* play) {
-    if (play->submenu.flag == 0) { 
+    if (play->submenu.open_flag == FALSE) { 
         if (mMsg_Check_not_series_main_wait(mMsg_Get_base_window_p()) == 1) {
             mMsg_Set_ForceNext(mMsg_Get_base_window_p()); 
             rtc->unk9A8 = 2;

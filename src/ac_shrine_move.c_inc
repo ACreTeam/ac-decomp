@@ -275,7 +275,7 @@ static void aSHR_talk_gomen(SHRINE_ACTOR* shrine, GAME_PLAY* play) {
     {
       u8 item_name[mIN_ITEM_NAME_LEN];
       Submenu_Item_c* sm_item;
-      if (submenu->flag) {
+      if (submenu->open_flag) {
         return;
       }
 
