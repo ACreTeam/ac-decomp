@@ -388,6 +388,10 @@ ac_ball.c:
     .rodata: [0x80643A90,0x80643B60]
     .data: [0x8065FBF8, 0x8065FC58]
     .bss: [0x812F96E0, 0x812F96E8]
+ac_birth_control.c:
+    .text: [0x80414598, 0x80414EC4]
+    .rodata: [0x80643B90, 0x80643B98]
+    .data: [0x8065FCB0, 0x8065FD28]
 ac_boat_demo.c:
     .text: [0x80414EC4, 0x80415BD8]
     .rodata: [0x80643B98, 0x80643BA0]

@@ -227,8 +227,8 @@ typedef struct field_bg_info_s {
 
 typedef struct field_fg_move_actor_s {
   mActor_name_t name_id;
-  s8 ut_x;
-  s8 ut_z;
+  u8 ut_x;
+  u8 ut_z;
   s8 npc_info_idx;
   s16 arg;
 } mFM_move_actor_c;
