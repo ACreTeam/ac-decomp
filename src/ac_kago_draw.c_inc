@@ -1,0 +1,30 @@
+
+extern Gfx kago_r_DL_model[];
+extern Gfx kago_w_DL_model[];
+
+static void aKAG_actor_draw(ACTOR* actor, GAME* game) {
+    static Gfx* model[] = {kago_r_DL_model, kago_w_DL_model};
+ 
+    KAGO_ACTOR* kago = (KAGO_ACTOR*)actor;
+    GRAPH* graph = game->graph;
+    
+    u16* pal = (*Common_Get(clip).structure_clip->get_pal_segment_proc)(kago->structure_class.structure_pal);
+    Gfx* gfx;
+    Mtx* mtx;
+    
+    OPEN_DISP(graph);
+
+    mtx = _Matrix_to_Mtx_new(graph);
+
+    if(mtx != NULL){
+        _texture_z_light_fog_prim(graph);
+        gfx = NOW_POLY_OPA_DISP;
+        gSPSegment(gfx++, G_MWO_SEGMENT_8, pal);
+        gSPMatrix(gfx++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPDisplayList(gfx++, model[kago->structure_class.action]);
+        SET_POLY_OPA_DISP(gfx);
+        Common_Get(clip.bg_item_clip)->draw_shadow_proc(game, &aKAG_shadow_data, 0);
+    }
+
+    CLOSE_DISP(graph);
+}
