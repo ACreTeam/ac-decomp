@@ -70,6 +70,7 @@ enum {
 };
 
 #define mMsg_STATUS_FLAG_ZOOMDOWN_LONG (1 << 11) /* When set, mMsg_sound_ZOOMDOWN_SHORT() sfx will not play */
+#define mMsg_STATUS_FLAG_CURSOL_JUST (1 << 14) /* Sets cursor justification */
 #define mMsg_STATUS_FLAG_USE_AM (1 << 17) /* 'AM' when set, 'PM' when not set */
 
 typedef struct message_window_s mMsg_Window_c;
@@ -86,7 +87,7 @@ typedef struct {
 } mMsg_MainDisappearWait_Data_c;
 
 typedef struct {
-  int saved_main_index;
+  int last_main_index;
 } mMsg_MainWait_Data_c;
 
 typedef union {
@@ -104,24 +105,24 @@ typedef struct {
 } mMsg_Request_MainAppear_Data_c;
 
 typedef struct {
-  int saved_main_index;
-  int init_flags;
+  int last_main_index;
+  u32 setup_flag;
 } mMsg_Request_MainAppearWait_Data_c;
 
 typedef struct {
-  int init_flags;
+  int wait_flag;
 } mMsg_Request_MainCursor_Data_c;
 
 typedef struct {
-  int init_flags;
+  int last_main_index;
 } mMsg_Request_MainDisappearWait_Data_c;
 
 typedef struct {
-  int init_flags;
+  int wait_flag;
 } mMsg_Request_MainNormal_Data_c;
 
 typedef struct {
-  int saved_main_index;
+  int last_main_index;
 } mMsg_Request_MainWait_Data_c;
 
 typedef union {
@@ -161,15 +162,15 @@ struct message_window_s {
   /* 0x020 */ ACTOR* talk_actor;
   /* 0x024 */ int show_actor_name;
   /* 0x028 */ int actor_name_len;
-  /* 0x02C */ int nameplate_x;
-  /* 0x030 */ int nameplay_y;
+  /* 0x02C */ f32 nameplate_x;
+  /* 0x030 */ f32 nameplate_y;
 
   /* 0x034 */ int show_continue_button;
 
   /* 0x038 */ u8 free_str[mMsg_FREE_STR_NUM][mMsg_FREE_STRING_LEN];
   /* 0x178 */ int free_str_article[mMsg_FREE_STR_NUM];
 
-  /* 0x1C8 */ u8 item_str[mMsg_ITEM_STR_NUM][mMsg_FREE_STRING_LEN];
+  /* 0x1C8 */ u8 item_str[mMsg_ITEM_STR_NUM][mIN_ITEM_NAME_LEN];
   /* 0x218 */ int item_str_article[mMsg_ITEM_STR_NUM];
 
   /* 0x22C */ u8 mail_str[mMsg_MAIL_STR_NUM][mMsg_MAIL_STRING_LEN];
@@ -256,8 +257,8 @@ extern int mMsg_ChangeMsgData(mMsg_Window_c* msg_win, int msg_no);
 extern void mMsg_Set_ForceNext(mMsg_Window_c* msg_win);
 extern int mMsg_Check_not_series_main_wait(mMsg_Window_c* msg_win);
 extern int mMsg_Check_MainDisappear(mMsg_Window_c* msg_win);
-extern void mMsg_request_main_disappear_wait_type1(mMsg_Window_c* msg_win);
-extern void mMsg_request_main_appear_wait_type1(mMsg_Window_c* msg_win);
+extern int mMsg_request_main_disappear_wait_type1(mMsg_Window_c* msg_win);
+extern int mMsg_request_main_appear_wait_type1(mMsg_Window_c* msg_win);
 extern void mMsg_Get_BodyParam(u32 table_rom_start, u32 data_rom_start, int entry_no, u32* data_addr, u32* data_size);
 extern void mMsg_Set_LockContinue(mMsg_Window_c* msg_win);
 extern void mMsg_Unset_LockContinue(mMsg_Window_c* msg_win);
@@ -267,7 +268,7 @@ extern int mMsg_request_main_appear(mMsg_Window_c* msg_win, ACTOR* other_actor, 
 extern int mMsg_Check_main_hide(mMsg_Window_c* msg_win);
 extern int mMsg_sound_voice_get_for_editor(int code);
 extern int mMsg_sound_spec_change_voice(mMsg_Window_c* msg_win);
-extern void mMsg_request_main_forceoff();
+extern int mMsg_request_main_forceoff();
 extern int mMsg_CopyPlayerName(u8* data, int idx, int max_size, int capitalize);
 extern int mMsg_CopyTalkName(ACTOR* actor, u8* data, int idx, int max_size, int capitalize);
 extern int mMsg_CopyTail(ACTOR* actor, u8* data, int idx, int max_size, int capitalize);
