@@ -12,7 +12,7 @@ static void mBR_window_close(Submenu* submenu, mSM_MenuInfo_c* menu_info, mBR_Ov
   (*submenu->overlay->move_chg_base_proc)(menu_info, mSM_MOVE_OUT_TOP);
   Common_Get(now_private)->birthday.month = data_p[mBR_Ovl_IDX_MONTH];
   Common_Get(now_private)->birthday.day = data_p[mBR_Ovl_IDX_DAY];
-  sAdo_SysTrgStart(2);
+  sAdo_SysTrgStart(NA_SE_MENU_EXIT);
 }
 
 static void mBR_move_Move(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
@@ -43,7 +43,7 @@ static void mBR_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     }
     else {
       (*idx_p)++;
-      sAdo_SysTrgStart(0xD);
+      sAdo_SysTrgStart(NA_SE_SENTAKU_KETTEI);
     }
   }
   else if ((trigger & (BUTTON_CUP | BUTTON_CDOWN))) {
@@ -83,7 +83,7 @@ static void mBR_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
         }
       }
 
-      sAdo_SysTrgStart(1);
+      sAdo_SysTrgStart(NA_SE_CURSOL);
     }
   }
 }

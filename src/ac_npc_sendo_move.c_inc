@@ -502,13 +502,13 @@ static int aSEN_get_msg_no(NPC_SENDO_ACTOR* sendo, int msg_no) {
 static void aSEN_agb_trans_se_proc(NPC_SENDO_ACTOR* sendo, int enable) {
   if (enable == TRUE) {
     if (sendo->agb_trans_se == FALSE) {
-      sAdo_SysLevStart(0x47);
+      sAdo_SysLevStart(NA_SE_ITEM_HORIDASHI);
       sendo->agb_trans_se = TRUE;
     }
   }
   else {
     if (sendo->agb_trans_se == TRUE) {
-      sAdo_SysLevStop(0x47);
+      sAdo_SysLevStop(NA_SE_ITEM_HORIDASHI);
       sendo->agb_trans_se = FALSE;
     }
   }

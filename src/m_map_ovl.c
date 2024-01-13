@@ -866,7 +866,7 @@ static void mMP_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu) {
 
   if (cursor_moved == TRUE) {
     menu->proc_status = 2; // TODO: enum & name
-    sAdo_SysTrgStart(1);
+    sAdo_SysTrgStart(NA_SE_CURSOL);
   }
 
   map_ovl->cursor_frame++;

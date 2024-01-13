@@ -441,14 +441,14 @@ static void mWt_set_coin_se(int play_flag) {
 
   if (play_flag == FALSE) {
     if (S_se_play_flg == TRUE) {
-      sAdo_SysLevStop(SE_COIN); // TODO: enum for sound effects
+      sAdo_SysLevStop(NA_SE_COIN); // TODO: enum for sound effects
       S_mybell_conf.update_money = FALSE;
       S_mybell_conf.play_finish_sfx = FALSE;
       S_mybell_conf.coin_sfx_timer = 0;
     }
   }
   else if (S_se_play_flg == FALSE) {
-    sAdo_SysLevStart(SE_COIN);
+    sAdo_SysLevStart(NA_SE_COIN);
     S_mybell_conf.update_money = TRUE;
     S_mybell_conf.play_finish_sfx = FALSE;
     S_mybell_conf.coin_sfx_timer = 300;

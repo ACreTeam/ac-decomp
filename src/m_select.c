@@ -544,7 +544,7 @@ static void select_course_step(GAME_SELECT* select, int step_add) {
 
   if (ABS(new_step) >= 32) {
     int course = select->selected_course;
-    sAdo_SysTrgStart(1);
+    sAdo_SysTrgStart(NA_SE_CURSOL);
 
     if (new_step > 0) {
       new_step = 0;

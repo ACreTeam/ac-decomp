@@ -18,7 +18,7 @@ static void mPM_move_Obey(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
 
   if (submenu->overlay->menu_info[mSM_OVL_EDITOR].next_proc_status == mSM_PROCESS_END) {
     (*submenu->overlay->move_chg_base_proc)(menu_info, mSM_PROCESS_END); // close this submenu overlay too
-    sAdo_SysTrgStart(2);
+    sAdo_SysTrgStart(NA_SE_MENU_EXIT);
     dst = (u8*)menu_info->data2;
     passwordMake_ovl = submenu->overlay->passwordMake_ovl;
     mem_copy(                 dst,   passwordMake_ovl->town_name,  LAND_NAME_SIZE);

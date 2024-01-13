@@ -69,7 +69,7 @@ static void mRP_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
 
   if ((trigger & BUTTON_B)) {
     (*submenu->overlay->move_chg_base_proc)(menu_info, mSM_MOVE_OUT_TOP);
-    sAdo_SysTrgStart(2);
+    sAdo_SysTrgStart(NA_SE_MENU_EXIT);
   }
   else if (repay_ovl->cursor_idx >= mRP_CURSOR_OK || (trigger & BUTTON_START)) {
     if ((trigger & BUTTON_A) || (trigger & BUTTON_START)) {
@@ -80,20 +80,20 @@ static void mRP_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
       }
 
       (*submenu->overlay->move_chg_base_proc)(menu_info, mSM_MOVE_OUT_TOP);
-      sAdo_SysTrgStart(2);
+      sAdo_SysTrgStart(NA_SE_MENU_EXIT);
     }
     else if ((trigger & (BUTTON_CUP | BUTTON_CLEFT))) {
       repay_ovl->cursor_idx--;
-      sAdo_SysTrgStart(1);
+      sAdo_SysTrgStart(NA_SE_CURSOL);
     }
   }
   else if (repay_ovl->cursor_idx != 0 && (trigger & BUTTON_CLEFT)) {
     repay_ovl->cursor_idx--;
-    sAdo_SysTrgStart(1);
+    sAdo_SysTrgStart(NA_SE_CURSOL);
   }
   else if ((trigger & BUTTON_CRIGHT)) {
     repay_ovl->cursor_idx++;
-    sAdo_SysTrgStart(1);
+    sAdo_SysTrgStart(NA_SE_CURSOL);
   }
   else if ((trigger & (BUTTON_CDOWN | BUTTON_CUP))) {
     u32 repay_amount = repay_ovl->repay_amount;

@@ -106,7 +106,7 @@ static void mTI_window_close(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     lbRTC_GetTime(Common_GetPointer(old_time));
   }
 
-  sAdo_SysTrgStart(2);
+  sAdo_SysTrgStart(NA_SE_MENU_EXIT);
 }
 
 static void mTI_move_Move(Submenu* submenu, mSM_MenuInfo_c* menu_info) {

@@ -2052,7 +2052,7 @@ extern int mEnv_RequestChangeLightON(GAME_PLAY* play, int light_on_type, int pla
       l_mEnv_electric_light.light_anime_frame = 0;
     
       if (play_sfx == TRUE) {
-        sAdo_SysTrgStart(0x16);
+        sAdo_SysTrgStart(NA_SE_LIGHT_ON);
       }
     }
     
@@ -2069,7 +2069,7 @@ extern int mEnv_RequestChangeLightOFF(GAME_PLAY* play, int light_off_type, f32 s
     if (light_off_type == mEnv_LIGHT_TYPE_PLAYER) {
       PLAYER_ACTOR* player = get_player_actor_withoutCheck(play); // unused
     
-      sAdo_SysTrgStart(0x17);
+      sAdo_SysTrgStart(NA_SE_LIGHT_OFF);
     }
     return TRUE;
   }

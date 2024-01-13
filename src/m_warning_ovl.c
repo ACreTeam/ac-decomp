@@ -290,13 +290,13 @@ static void mWR_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     if ((trigger & BUTTON_CLEFT) != 0) {
       if (warning_ovl->selected == 1) {
         warning_ovl->selected = 0;
-        sAdo_SysTrgStart(1);
+        sAdo_SysTrgStart(NA_SE_CURSOL);
       }
     }
     else if ((trigger & BUTTON_CRIGHT) != 0) {
       if (warning_ovl->selected == 0) {
         warning_ovl->selected = 1;
-        sAdo_SysTrgStart(1);
+        sAdo_SysTrgStart(NA_SE_CURSOL);
       }
     }
   }

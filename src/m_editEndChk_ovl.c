@@ -103,7 +103,7 @@ static void mEE_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
       sAdo_SysTrgStart(0x1003);
     }
     else {
-      sAdo_SysTrgStart(0x2);
+      sAdo_SysTrgStart(NA_SE_MENU_EXIT);
     }
   }
   else if (editEndChk_ovl->moving_in == TRUE) {
@@ -116,13 +116,13 @@ static void mEE_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
       if ((trigger & BUTTON_CUP)) {
         if (editEndChk_ovl->selected_answer != 0) {
           editEndChk_ovl->selected_answer--;
-          sAdo_SysTrgStart(0x1);
+          sAdo_SysTrgStart(NA_SE_CURSOL);
         }
       }
       else if ((trigger & BUTTON_CDOWN)) {
         if (editEndChk_ovl->selected_answer < max_answer_no) {
           editEndChk_ovl->selected_answer++;
-          sAdo_SysTrgStart(0x1);
+          sAdo_SysTrgStart(NA_SE_CURSOL);
         }
       }
     }

@@ -124,7 +124,7 @@ static void mBN_bank_ok(Submenu* submenu, mSM_MenuInfo_c* menu, mBN_Overlay_c* b
 
     Common_Get(now_private)->inventory.wallet = bank_ovl->now_bell;
     (*submenu->overlay->move_chg_base_proc)(menu, mSM_MOVE_OUT_TOP);
-    sAdo_SysTrgStart(SE_MENU_EXIT);
+    sAdo_SysTrgStart(NA_SE_MENU_EXIT);
   }
 }
 
@@ -139,7 +139,7 @@ static void mBN_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu) {
 
   if (trigger & BUTTON_B) {
     (*overlay->move_chg_base_proc)(menu, mSM_MOVE_OUT_TOP);
-    sAdo_SysTrgStart(SE_MENU_EXIT);
+    sAdo_SysTrgStart(NA_SE_MENU_EXIT);
   }
   else if (trigger & BUTTON_START) {
     mBN_bank_ok(submenu, menu, bank_ovl);
@@ -153,16 +153,16 @@ static void mBN_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu) {
       }
       else if (trigger & (BUTTON_CLEFT | BUTTON_CUP)) {
         bank_ovl->cursol = cursol - 1;
-        sAdo_SysTrgStart(SE_CURSOR_MOVE);
+        sAdo_SysTrgStart(NA_SE_CURSOL);
       }
     }
     else if ((trigger & BUTTON_CLEFT) && cursol > 0) {
       bank_ovl->cursol = cursol - 1;
-      sAdo_SysTrgStart(SE_CURSOR_MOVE);
+      sAdo_SysTrgStart(NA_SE_CURSOL);
     }
     else if (trigger & BUTTON_CRIGHT) {
       bank_ovl->cursol += 1;
-      sAdo_SysTrgStart(SE_CURSOR_MOVE);
+      sAdo_SysTrgStart(NA_SE_CURSOL);
     }
     else if ((trigger & BUTTON_CDOWN) || (trigger & BUTTON_CUP)) {
       int keta = mBN_cursol_2_keta(cursol);
