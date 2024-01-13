@@ -11,9 +11,11 @@
 extern "C" {
 #endif
 
+#define mMsg_MSG_BUF_MAX 1536
 #define mMsg_MSG_BUF_SIZE 1600
 #define mMsg_FREE_STRING_LEN 16
 #define mMsg_MAIL_STRING_LEN 132
+#define mMsg_MAX_LINE 4
 
 enum {
   mMsg_INDEX_HIDE,
@@ -69,8 +71,23 @@ enum {
   mMsg_MAIL_STR_NUM
 };
 
+#define mMsg_STATUS_FLAG_0 (1 << 0) // 0x000001
+#define mMsg_STATUS_FLAG_1 (1 << 1) // 0x000002
+#define mMsg_STATUS_FLAG_2 (1 << 2) // 0x000004
+#define mMsg_STATUS_FLAG_3 (1 << 3) // 0x000008
+#define mMsg_STATUS_FLAG_4 (1 << 4) // 0x000010
+#define mMsg_STATUS_FLAG_5 (1 << 5) // 0x000020
+#define mMsg_STATUS_FLAG_IDLING_REQ (1 << 6) // 0x000040
+#define mMsg_STATUS_FLAG_IDLING_NOW (1 << 7) // 0x000080
+#define mMsg_STATUS_FLAG_8 (1 << 8) // 0x000100
+#define mMsg_STATUS_FLAG_9 (1 << 9) // 0x000200
+#define mMsg_STATUS_FLAG_10 (1 << 10) // 0x000400
 #define mMsg_STATUS_FLAG_ZOOMDOWN_LONG (1 << 11) /* When set, mMsg_sound_ZOOMDOWN_SHORT() sfx will not play */
+#define mMsg_STATUS_FLAG_12 (1 << 12) // 0x001000
+#define mMsg_STATUS_FLAG_13 (1 << 13) // 0x002000
 #define mMsg_STATUS_FLAG_CURSOL_JUST (1 << 14) /* Sets cursor justification */
+#define mMsg_STATUS_FLAG_15 (1 << 15) // 0x008000
+#define mMsg_STATUS_FLAG_16 (1 << 16) // 0x010000
 #define mMsg_STATUS_FLAG_USE_AM (1 << 17) /* 'AM' when set, 'PM' when not set */
 
 typedef struct message_window_s mMsg_Window_c;
@@ -136,7 +153,7 @@ typedef union {
 } mMsg_Request_Data_c;
 
 typedef union {
-  u8 data[mMsg_MSG_BUF_SIZE];
+  u8 data[mMsg_MSG_BUF_SIZE] ATTRIBUTE_ALIGN(32);
   u64 align;
 } mMsg_MsgBuf_c;
 
@@ -159,9 +176,9 @@ struct message_window_s {
   /* 0x018 */ f32 width;
   /* 0x01C */ f32 height;
   
-  /* 0x020 */ ACTOR* talk_actor;
+  /* 0x020 */ ACTOR* client_actor_p;
   /* 0x024 */ int show_actor_name;
-  /* 0x028 */ int actor_name_len;
+  /* 0x028 */ int client_name_len;
   /* 0x02C */ f32 nameplate_x;
   /* 0x030 */ f32 nameplate_y;
 
@@ -179,7 +196,7 @@ struct message_window_s {
   /* 0x2B4 */ rgba_t name_background_color;
 
   /* 0x2B8 */ rgba_t window_background_color;
-  /* 0x2BC */ rgba_t font_color[4];
+  /* 0x2BC */ rgba_t font_color[mMsg_MAX_LINE];
 
   /* 0x2CC */ rgba_t continue_button_color;
 
@@ -190,7 +207,7 @@ struct message_window_s {
   /* 0x2DC */ int _2DC;
 
   /* 0x2E0 */ int text_lines;
-  /* 0x2E4 */ int current_line;
+  /* 0x2E4 */ int now_display_line;
 
   /* 0x2E8 */ mChoice_c choice_window;
 
@@ -229,13 +246,13 @@ struct message_window_s {
   /* 0x448 */ int continue_cancel_flag;
   /* 0x44C */ int force_next;
   /* 0x450 */ int lock_continue;
-  /* 0x454 */ s8 now_utter;
+  /* 0x454 */ u8 now_utter;
 
   /* 0x458 */ mMsg_Main_Data_c main_data;
   /* 0x460 */ mMsg_Request_Data_c request_data;
 };
 
-extern int mMsg_Get_Length_String(u8* buf, size_t buf_size);
+extern int mMsg_Get_Length_String(u8* buf, int buf_size);
 extern mMsg_Window_c* mMsg_Get_base_window_p();
 extern void mMsg_Set_free_str(mMsg_Window_c* msg, int free_str_no, u8* str, int str_size);
 extern void mMsg_Set_free_str_art(mMsg_Window_c* msg, int free_str_no, u8* str, int str_size, int article_no);
@@ -269,9 +286,9 @@ extern int mMsg_Check_main_hide(mMsg_Window_c* msg_win);
 extern int mMsg_sound_voice_get_for_editor(int code);
 extern int mMsg_sound_spec_change_voice(mMsg_Window_c* msg_win);
 extern int mMsg_request_main_forceoff();
-extern int mMsg_CopyPlayerName(u8* data, int idx, int max_size, int capitalize);
-extern int mMsg_CopyTalkName(ACTOR* actor, u8* data, int idx, int max_size, int capitalize);
-extern int mMsg_CopyTail(ACTOR* actor, u8* data, int idx, int max_size, int capitalize);
+extern int mMsg_CopyPlayerName(u8* data, int idx, int max_size, u32 capitalize);
+extern int mMsg_CopyTalkName(ACTOR* actor, u8* data, int idx, int max_size, u32 capitalize);
+extern int mMsg_CopyTail(ACTOR* actor, u8* data, int idx, int max_size, u32 capitalize);
 extern int mMsg_CopyYear(u8* data, int idx, int max_size);
 extern int mMsg_CopyMonth(u8* data, int idx, int max_size);
 extern int mMsg_CopyWeek(u8* data, int idx, int max_size);
@@ -279,13 +296,13 @@ extern int mMsg_CopyDay(u8* data, int idx, int max_size);
 extern int mMsg_CopyHour(u8* data, int idx, int max_size);
 extern int mMsg_CopyMin(u8* data, int idx, int max_size);
 extern int mMsg_CopySec(u8* data, int idx, int max_size);
-extern int mMsg_CopyFree(mMsg_Window_c* msg_win, int free_idx, u8* data, int idx, int max_size, int article, int capitalize);
+extern int mMsg_CopyFree(mMsg_Window_c* msg_win, int free_idx, u8* data, int idx, int max_size, int article, u32 capitalize);
 extern int mMsg_CopyDetermination(mMsg_Window_c* msg_win, u8* data, int idx, int max_size);
-extern int mMsg_CopyCountryName(u8* data, int idx, int max_size, int capitalize);
+extern int mMsg_CopyCountryName(u8* data, int idx, int max_size, u32 capitalize);
 extern int mMsg_CopyRamdomNumber2(u8* data, int idx, int max_size);
-extern int mMsg_CopyItem(mMsg_Window_c* msg_win, int item_idx, u8* data, int idx, int max_size, int article, int capitalize);
-extern int mMsg_CopyMail(mMsg_Window_c* msg_win, int mail_idx, u8* data, int idx, int max_size);
-extern int mMsg_CopyIslandName(u8* data, int idx, int max_size, int capitalize);
+extern int mMsg_CopyItem(mMsg_Window_c* msg_win, int item_idx, u8* data, int idx, int max_size, int article, u32 capitalize);
+extern int mMsg_CopyMail(mMsg_Window_c* msg_win, int mail_idx, u8* data, int idx, int max_size, u32 capitalize);
+extern int mMsg_CopyIslandName(u8* data, int idx, int max_size, u32 capitalize);
 extern int mMsg_CopyAmPm(mMsg_Window_c* msg_win, u8* data, int idx, int max_size);
 extern void mMsg_sound_set_voice_silent(mMsg_Window_c* msg_win, int update_voice_mode);
 extern void mMsg_sound_unset_voice_silent(mMsg_Window_c* msg_win, int update_voice_mode);

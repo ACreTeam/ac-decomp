@@ -43,7 +43,7 @@ static void mMsg_Set_client_actor_p(mMsg_Window_c* msg_p, ACTOR* client_actor_p,
     f32 ofs_x;
     int len;
 
-    msg_p->talk_actor = client_actor_p;
+    msg_p->client_actor_p = client_actor_p;
     msg_p->show_actor_name = show_name;
 
     mNpc_GetNpcWorldName(name, client_actor_p);
@@ -53,10 +53,10 @@ static void mMsg_Set_client_actor_p(mMsg_Window_c* msg_p, ACTOR* client_actor_p,
 
     msg_p->nameplate_x = 61.0f + ofs_x;
     msg_p->nameplate_y = 64.0f;
-    msg_p->actor_name_len = len; 
+    msg_p->client_name_len = len; 
   }
   else {
-    msg_p->talk_actor = NULL;
+    msg_p->client_actor_p = NULL;
     msg_p->show_actor_name = FALSE;
   }
 }
