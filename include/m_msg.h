@@ -6,6 +6,7 @@
 #include "m_choice.h"
 #include "m_item_name.h"
 #include "m_msg_data.h"
+#include "audio.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -71,24 +72,25 @@ enum {
   mMsg_MAIL_STR_NUM
 };
 
-#define mMsg_STATUS_FLAG_0 (1 << 0) // 0x000001
+#define mMsg_STATUS_SOUND_CUT (1 << 0) // 0x000001
 #define mMsg_STATUS_FLAG_1 (1 << 1) // 0x000002
 #define mMsg_STATUS_FLAG_2 (1 << 2) // 0x000004
 #define mMsg_STATUS_FLAG_3 (1 << 3) // 0x000008
-#define mMsg_STATUS_FLAG_4 (1 << 4) // 0x000010
-#define mMsg_STATUS_FLAG_5 (1 << 5) // 0x000020
+#define mMsg_STATUS_FLAG_SPEC_VOICE (1 << 4) // 0x000010
+#define mMsg_STATUS_FLAG_VOICE_ENTRY (1 << 5) // 0x000020
 #define mMsg_STATUS_FLAG_IDLING_REQ (1 << 6) // 0x000040
 #define mMsg_STATUS_FLAG_IDLING_NOW (1 << 7) // 0x000080
 #define mMsg_STATUS_FLAG_8 (1 << 8) // 0x000100
 #define mMsg_STATUS_FLAG_9 (1 << 9) // 0x000200
 #define mMsg_STATUS_FLAG_10 (1 << 10) // 0x000400
-#define mMsg_STATUS_FLAG_ZOOMDOWN_LONG (1 << 11) /* When set, mMsg_sound_ZOOMDOWN_SHORT() sfx will not play */
-#define mMsg_STATUS_FLAG_12 (1 << 12) // 0x001000
-#define mMsg_STATUS_FLAG_13 (1 << 13) // 0x002000
+#define mMsg_STATUS_FLAG_NO_ZOOMDOWN (1 << 11) /* When set, mMsg_sound_ZOOMDOWN_[SHORT, LONG]() sfx will not play */
+#define mMsg_STATUS_FLAG_VOICE_CLICK (1 << 12) // 0x001000
+#define mMsg_STATUS_FLAG_VOICE_SILENT (1 << 13) // 0x002000
 #define mMsg_STATUS_FLAG_CURSOL_JUST (1 << 14) /* Sets cursor justification */
 #define mMsg_STATUS_FLAG_15 (1 << 15) // 0x008000
 #define mMsg_STATUS_FLAG_16 (1 << 16) // 0x010000
 #define mMsg_STATUS_FLAG_USE_AM (1 << 17) /* 'AM' when set, 'PM' when not set */
+#define mMsg_STATUS_FLAG_18 (1 << 18) // 0x040000
 
 typedef struct message_window_s mMsg_Window_c;
 typedef struct message_data_s mMsg_Data_c;

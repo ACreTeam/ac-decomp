@@ -467,12 +467,12 @@ static int sChk_PoliceBox_c_sub(PoliceBox_c* police_box, int depth) {
 static int sChk_Config_c_sub(Config_c* config, int depth) {
   int res = FALSE;
 
-  if (config->sound_mode > Config_SOUND_MODE_3) {
+  if (config->sound_mode > Config_SOUND_MODE_NUM) {
     mFRm_ERRORLINE(1775);
     res = TRUE;
   }
 
-  if (config->voice_mode > Config_VOICE_MODE_3) {
+  if (config->voice_mode > Config_VOICE_MODE_NUM) {
     mFRm_ERRORLINE(1789);
     res = TRUE;
   }

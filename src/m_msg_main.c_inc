@@ -464,13 +464,13 @@ static void mMsg_init(GAME* game) {
   mMsg_sound_MessageSpeedForce(0.0f);
   mMsg_sound_MessageStatus(0);
   mMsg_window.status_flags &= ~(
-    mMsg_STATUS_FLAG_0 |
+    mMsg_STATUS_SOUND_CUT |
     mMsg_STATUS_FLAG_IDLING_REQ |
     mMsg_STATUS_FLAG_IDLING_NOW |
     mMsg_STATUS_FLAG_9 |
-    mMsg_STATUS_FLAG_ZOOMDOWN_LONG |
-    mMsg_STATUS_FLAG_12 |
-    mMsg_STATUS_FLAG_13 |
+    mMsg_STATUS_FLAG_NO_ZOOMDOWN |
+    mMsg_STATUS_FLAG_VOICE_CLICK |
+    mMsg_STATUS_FLAG_VOICE_SILENT |
     mMsg_STATUS_FLAG_CURSOL_JUST
   ); // ~7AC1
   mMsg_window.free_str_color_idx[0] = 0;

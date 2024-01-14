@@ -11,16 +11,14 @@ enum {
   Config_SOUND_MODE_0,
   Config_SOUND_MODE_1,
   Config_SOUND_MODE_2,
-  Config_SOUND_MODE_3,
 
   Config_SOUND_MODE_NUM
 };
 
 enum {
-  Config_VOICE_MODE_0,
-  Config_VOICE_MODE_1,
-  Config_VOICE_MODE_2,
-  Config_VOICE_MODE_3,
+  Config_VOICE_MODE_ANIMALESE,
+  Config_VOICE_MODE_CLICK,
+  Config_VOICE_MODE_SILENT,
 
   Config_VOICE_MODE_NUM
 };

@@ -436,7 +436,7 @@ enum {
 };
 
 enum {
-  mFont_BGM_0,
+  mFont_BGM_QUIET,
 
   // TODO
 

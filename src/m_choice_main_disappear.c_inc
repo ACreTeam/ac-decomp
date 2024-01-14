@@ -37,7 +37,7 @@ static void mChoice_MainSetup_Disappear(mChoice_c* choice, GAME* game) {
   if (choice->no_b_flag && choice->selected_choice_idx == (choice->data.choice_num - 1)) {
     if (choice->no_close_flag) {
       mChoice_sound_ZOOMDOWN_LONG();
-      mMsg_Get_base_window_p()->status_flags |= mMsg_STATUS_FLAG_ZOOMDOWN_LONG;
+      mMsg_Get_base_window_p()->status_flags |= mMsg_STATUS_FLAG_NO_ZOOMDOWN;
     }
     else {
       mChoice_sound_ZOOMDOWN_SHORT();

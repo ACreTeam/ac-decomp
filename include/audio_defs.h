@@ -7,6 +7,10 @@
 extern "C" {
 #endif
 
+#define VOICE_MODE_ANIMALESE 0
+#define VOICE_MODE_CLICK 1
+#define VOICE_MODE_SILENT 2
+
 /* audio is monophonic */
 #define MONO(id) (id | 0x1000)
 
