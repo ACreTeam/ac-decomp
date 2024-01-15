@@ -15,6 +15,17 @@ typedef struct audio_tempo_beat_s {
   /* 0x01 */ s8 beat;
 } TempoBeat_c;
 
+enum {
+  VOICE_STATUS_NORMAL,
+  VOICE_STATUS_ANGRY,
+  VOICE_STATUS_SAD,
+  VOICE_STATUS_FUN,
+  VOICE_STATUS_SLEEPY,
+  VOICE_STATUS_GLOOMY,
+
+  VOICE_STATUS_NUM
+};
+
 extern void sAdo_Calc_MicPosition_forTrig(f32* fcalc, u16* scalc, xyz_t* pos);
 extern void sAdo_Calc_MicPosition_forLevel(f32* fcalc, u16* scalc, xyz_t* pos);
 

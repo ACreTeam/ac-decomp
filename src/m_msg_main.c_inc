@@ -464,10 +464,10 @@ static void mMsg_init(GAME* game) {
   mMsg_sound_MessageSpeedForce(0.0f);
   mMsg_sound_MessageStatus(0);
   mMsg_window.status_flags &= ~(
-    mMsg_STATUS_SOUND_CUT |
+    mMsg_STATUS_FLAG_SOUND_CUT |
     mMsg_STATUS_FLAG_IDLING_REQ |
     mMsg_STATUS_FLAG_IDLING_NOW |
-    mMsg_STATUS_FLAG_9 |
+    mMsg_STATUS_FLAG_NOT_PAUSE_FRAME |
     mMsg_STATUS_FLAG_NO_ZOOMDOWN |
     mMsg_STATUS_FLAG_VOICE_CLICK |
     mMsg_STATUS_FLAG_VOICE_SILENT |

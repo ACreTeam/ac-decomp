@@ -132,7 +132,7 @@ static int mMsg_sound_CodeVoice(mMsg_Window_c* msg_p, int idx) {
   if (voice_id < 0) {
     return FALSE;
   }
-  else if ((msg_p->status_flags & mMsg_STATUS_SOUND_CUT) != 0) {
+  else if ((msg_p->status_flags & mMsg_STATUS_FLAG_SOUND_CUT) != 0) {
     int voice_mode = Save_Get(config).voice_mode;
     
     if (voice_mode != Config_VOICE_MODE_SILENT) {
