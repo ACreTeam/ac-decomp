@@ -1,0 +1,24 @@
+static void aMIK_actor_draw(ACTOR* actor, GAME* game){
+    MIKUJI_ACTOR* mikuji = (MIKUJI_ACTOR*)actor;
+
+    Mtx* cur;
+    GRAPH* graph = game->graph;
+    u16* pal;
+    Gfx* gfx;
+
+    OPEN_DISP(graph);
+    pal = Common_Get(clip.structure_clip)->get_pal_segment_proc(aSTR_PAL_MIKUJI);
+    
+    cur = _Matrix_to_Mtx_new(graph);
+
+    if(cur != NULL){ 
+        _texture_z_light_fog_prim_npc(graph);
+        gfx = NOW_POLY_OPA_DISP;
+        gSPMatrix(gfx++, cur, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPDisplayList(gfx++, obj_e_mikuji_model);
+        SET_POLY_OPA_DISP(gfx);
+        Common_Get(clip.bg_item_clip)->draw_shadow_proc(game, &aMIK_shadow_data, 0);
+    }
+
+    CLOSE_DISP(graph);
+}

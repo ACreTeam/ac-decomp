@@ -629,6 +629,9 @@ ac_dummy.c:
 ac_kago.c:
     .text: [0x805B1A08, 0x805B1D50]
     .data: [0x806C5750, 0x806C57A8]
+ac_mikuji.c:
+    .text: [0x805B414C, 0x805B44C4]
+    .data: [0x806C5C10, 0x806C5CA0]
 ac_nameplate.c:
     .text: [0x805B63FC,0x805B65C4]
     .data: [0x806C6110,0x806C6138]

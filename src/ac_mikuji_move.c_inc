@@ -1,0 +1,50 @@
+static void aMIK_set_bgOffset(MIKUJI_ACTOR* mikuji, int offs)
+{
+    static mCoBG_OffsetTable_c height_table_ct[] = { { 0x64, 2, 0, 2, 2, 2, 1 },
+                                            { 0x64, 6, 6, 6, 6, 0, 1 },
+                                            { 0x64, 2, 2, 0, 2, 2, 1 },
+                                            { 0x64, 2, 2, 2, 0, 2, 1 } };
+    static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
+    static f32 addX[] = { 0.0f, 40.0f };
+    static f32 addZ[] = { 40.0f, 80.0f };
+
+    mCoBG_OffsetTable_c* offset;
+    int i;
+    xyz_t pos;
+
+    offset = height_table[offs]; 
+
+    for(i = 0; i < 2; i++){
+        pos.z = mikuji->actor_class.home.position.z + addZ[i];
+        pos.x = mikuji->actor_class.home.position.x + addX[0];
+        mCoBG_SetPluss5PointOffset_file(pos, *offset, __FILE__, 97);
+        offset++;
+        pos.x = mikuji->actor_class.home.position.x + addX[1];
+        mCoBG_SetPluss5PointOffset_file(pos, *offset, __FILE__, 101);
+        offset++;
+    }
+}
+
+static void aMIK_actor_move(ACTOR* actor, GAME* game){
+    int world_bx, world_bz;
+    int player_bx, player_bz;
+    PLAYER_ACTOR* player_actor = get_player_actor_withoutCheck((GAME_PLAY*)game);
+
+    mFI_Wpos2BlockNum(&world_bx, &world_bz, actor->world.position);
+    mFI_Wpos2BlockNum(&player_bx, &player_bz, player_actor->actor_class.world.position);
+
+    if (
+        mDemo_Check(mDemo_TYPE_SCROLL, (ACTOR*)player_actor) == FALSE && 
+        mDemo_Check(mDemo_TYPE_SCROLL2, (ACTOR*)player_actor) == FALSE && 
+        mDemo_Check(mDemo_TYPE_SCROLL3, (ACTOR*)player_actor) == FALSE && 
+        (world_bx != player_bx || world_bz != player_bz)
+    ) {
+        Actor_delete(actor);
+    }
+}
+
+static void aMIK_actor_init(ACTOR* actor, GAME* game){
+    mFI_SetFG_common(DUMMY_MIKUJI, actor->home.position, 0);
+    aMIK_actor_move(actor, game);
+    actor->mv_proc = &aMIK_actor_move;
+}
