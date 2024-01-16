@@ -1,0 +1,107 @@
+static void mMsg_SetMatrix(mMsg_Window_c* msg_p, GAME* game, int mode) {
+  GRAPH* graph = game->graph;
+  f32 scale = msg_p->window_scale;
+  f32 center_x = ( msg_p->center_x - (SCREEN_WIDTH_F * 0.5f)) * 16.0f;
+  f32 center_y = (-msg_p->center_y + (SCREEN_HEIGHT_F * 0.5f)) * 16.0f;
+
+  Matrix_push();
+  Matrix_translate(center_x, center_y, 0.0f, 1);
+  Matrix_scale(scale, scale, scale, 1);
+
+  OPEN_DISP(graph);
+
+  if (mode == mFont_MODE_FONT) {
+    gSPMatrix(NOW_FONT_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
+  }
+  else {
+    gSPMatrix(NOW_POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_MODELVIEW | G_MTX_LOAD | G_MTX_NOPUSH);
+  }
+
+  CLOSE_DISP(graph);
+}
+
+static void mMsg_UnSetMatrix() {
+  Matrix_pull();
+}
+
+static void mMsg_DrawNameWindow(mMsg_Window_c* msg_p, GAME* game, int mode) {
+  GRAPH* graph = game->graph;
+
+  OPEN_DISP(graph);
+
+  if (mode == mFont_MODE_FONT) {
+    gDPSetPrimColor(NOW_FONT_DISP++, 0, 255, msg_p->name_background_color.r, msg_p->name_background_color.g, msg_p->name_background_color.b, 255);
+    gSPDisplayList(NOW_FONT_DISP++, con_kaiwaname_modelT);
+  }
+  else {
+    gDPSetPrimColor(NOW_POLY_OPA_DISP++, 0, 255, msg_p->name_background_color.r, msg_p->name_background_color.g, msg_p->name_background_color.b, 255);
+    gSPDisplayList(NOW_POLY_OPA_DISP++, con_kaiwaname_modelT);
+  }
+
+  CLOSE_DISP(graph);
+}
+
+static void mMsg_DrawWindowClientName(mMsg_Window_c* msg_p, GAME* game, int mode) {
+  u8 name[ANIMAL_NAME_LEN];
+
+  mNpc_GetNpcWorldName(name, msg_p->client_actor_p);
+  mFont_SetLineStrings_AndSpace(
+    game,
+    name, msg_p->client_name_len,
+    msg_p->nameplate_x, msg_p->nameplate_y,
+    msg_p->name_text_color.r, msg_p->name_text_color.g, msg_p->name_text_color.b, msg_p->name_text_color.a,
+    FALSE,
+    TRUE,
+    TRUE,
+    1.0f, 1.0f,
+    mode
+  );
+}
+
+static void mMsg_DrawWindowTurnButton(mMsg_Window_c* msg_p, GAME* game, int mode) {
+  if (msg_p->show_continue_button != FALSE && msg_p->lock_continue == FALSE) {
+    mFont_SetMarkChar(
+      game,
+      mFont_MARKTYPE_NEXT,
+      257.0f, 136.0f,
+      msg_p->continue_button_color.r, msg_p->continue_button_color.g, msg_p->continue_button_color.b, msg_p->continue_button_color.a,
+      FALSE,
+      1.0f, 1.0f,
+      mode
+    );
+  }
+}
+
+static void mMsg_DrawWindowBody(mMsg_Window_c* msg_p, GAME* game, int mode) {
+  GRAPH* graph = game->graph;
+  rgba_t* window_background_color = &msg_p->window_background_color;
+
+  OPEN_DISP(graph);
+
+  if (mode == mFont_MODE_FONT) {
+    gSPDisplayList(NOW_FONT_DISP++, mMsg_init_disp);
+    gDPSetPrimColor(NOW_FONT_DISP++, 0, 255, window_background_color->r, window_background_color->g, window_background_color->b, window_background_color->a);
+    gSPDisplayList(NOW_FONT_DISP++, con_kaiwa2_modelT);
+
+    if (msg_p->show_actor_name) {
+      mMsg_DrawNameWindow(msg_p, game, mode);
+      mMsg_DrawWindowClientName(msg_p, game, mode);
+    }
+
+    mMsg_DrawWindowTurnButton(msg_p, game, mode);
+  }
+  else {
+    gSPDisplayList(NOW_POLY_OPA_DISP++, mMsg_init_disp);
+    gDPSetPrimColor(NOW_POLY_OPA_DISP++, 0, 255, window_background_color->r, window_background_color->g, window_background_color->b, window_background_color->a);
+    gSPDisplayList(NOW_POLY_OPA_DISP++, con_kaiwa2_modelT);
+
+    if (msg_p->show_actor_name) {
+      mMsg_DrawNameWindow(msg_p, game, mode);
+      mMsg_DrawWindowClientName(msg_p, game, mode);
+    }
+
+    mMsg_DrawWindowTurnButton(msg_p, game, mode);
+  }
+
+  CLOSE_DISP(graph);
+}

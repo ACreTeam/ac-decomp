@@ -1,0 +1,118 @@
+static void mMsg_draw_font(mMsg_Window_c* msg_p, GAME* game) {
+  mFontSentence sentence;
+  u8* last_p = &msg_p->msg_data->text_buf.data[msg_p->end_text_cursor_idx];
+  u8* start_p = &msg_p->msg_data->text_buf.data[msg_p->start_text_cursor_idx];
+  int line_num;
+  u8* cur_p;
+  u8 code;
+  u8 cont_type;
+  int len;
+  int line_len;
+  int total_len;
+  xy_t scale;
+  xy_t pos;
+  Gfx* gfx;
+  int line_end_flag;
+  int sentence_finished_flag;
+  u32 sentence_flags;
+  int sentence_voice_idx = msg_p->voice_sfx_idx - msg_p->start_text_cursor_idx;
+  int voice = FALSE;
+
+  if (fabsf(msg_p->text_scale) < 0.001f) {
+    return;
+  }
+
+  OPEN_DISP(game->graph);
+
+  gfx = NOW_FONT_DISP;
+
+  scale.x = msg_p->text_scale;
+  scale.y = msg_p->text_scale;
+
+  pos.x = msg_p->center_x - (96.0f * scale.x);
+  pos.y = msg_p->center_y - (32.0f * scale.y);
+
+  if ((msg_p->status_flags & mMsg_STATUS_FLAG_VOICE_ENTRY)) {
+    if ((msg_p->status_flags & mMsg_STATUS_FLAG_18)) {
+      voice = TRUE;
+    }
+    else if (!F32_IS_ZERO(msg_p->cursor_timer) || msg_p->force_voice_enable_flag == TRUE) {
+      voice = TRUE;
+    }
+  }
+
+  line_num = 0;
+  sentence_finished_flag = FALSE;
+  total_len = 0;
+
+  while (line_num < msg_p->text_lines && sentence_finished_flag == FALSE) {
+    for (
+      line_len = 0, cur_p = start_p, line_end_flag = FALSE;
+      cur_p < last_p && line_end_flag == FALSE;
+      len = mFont_CodeSize_get(cur_p), cur_p += len, line_len += len
+    ) {
+      code = cur_p[0];
+
+      if (code == CHAR_NEW_LINE) {
+        line_end_flag = TRUE;
+      }
+      else if (code == CHAR_CONTROL_CODE) {
+        cont_type = cur_p[1];
+        if (
+          cont_type == mFont_CONT_CODE_LAST ||
+          cont_type == mFont_CONT_CODE_CONTINUE ||
+          cont_type == mFont_CONT_CODE_MSG_TIME_END
+        ) {
+          line_end_flag = TRUE;
+          sentence_finished_flag = TRUE;
+        }
+      }
+    }
+
+    if (cur_p >= last_p) {
+      sentence_finished_flag = TRUE;
+    }
+
+    if (line_num == 0) {
+      sentence_flags = mFont_SENTENCE_SKIP_DRAW_NEW_LINE | mFont_SENTENCE_FLAG_CUT;
+    }
+    else {
+      sentence_flags = mFont_SENTENCE_SKIP_DRAW_NEW_LINE | mFont_SENTENCE_FLAG_NO_COMBINE | mFont_SENTENCE_FLAG_3 | mFont_SENTENCE_FLAG_CUT;
+    }
+
+    if (
+      voice &&
+      sentence_voice_idx >= total_len &&
+      sentence_voice_idx < (total_len + line_len)
+    ) {
+      sentence_flags |= mFont_SENTENCE_FLAG_VOICE_SE;
+      msg_p->status_flags &= ~(mMsg_STATUS_FLAG_18 | mMsg_STATUS_FLAG_VOICE_ENTRY);
+    }
+
+    mFontSentence_set(
+      &sentence,
+      start_p,
+      line_len,
+      sentence_flags,
+      &pos,
+      mFont_LineType_Top,
+      &scale,
+      &msg_p->font_color[line_num],
+      sentence_voice_idx - total_len,
+      msg_p->voice_idx,
+      msg_p->voice2_idx,
+      msg_p->voice3_idx,
+      msg_p->animal_voice_idx
+    );
+
+    mFontSentence_gppDraw(&sentence, game, &gfx);
+
+    pos.y += 16.0f * scale.y;
+    start_p = cur_p;
+    line_num++;
+    total_len += line_len;
+  }
+
+  SET_FONT_DISP(gfx);
+  CLOSE_DISP(game->graph);
+}

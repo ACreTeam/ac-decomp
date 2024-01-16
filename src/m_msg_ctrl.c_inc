@@ -1,0 +1,346 @@
+extern mMsg_Window_c* mMsg_Get_base_window_p() {
+  return &mMsg_window;
+}
+
+extern int mMsg_Check_request_priority(mMsg_Window_c* msg_p, int request_priority) {
+  return request_priority > msg_p->requested_priority;
+}
+
+static int mMsg_Change_request_main_index(mMsg_Window_c* msg_p, int request_main_index, int request_priority) {
+  if (mMsg_Check_request_priority(msg_p, request_priority)) {
+    msg_p->requested_main_index = request_main_index;
+    msg_p->requested_priority = request_priority;
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+extern int mMsg_Check_main_index(mMsg_Window_c* msg_p, int main_index) {
+  return msg_p->main_index == main_index;
+}
+
+extern int mMsg_Check_main_wait(mMsg_Window_c* msg_p) {
+  return mMsg_Check_main_index(msg_p, mMsg_INDEX_WAIT);
+}
+
+extern int mMsg_Check_not_series_main_wait(mMsg_Window_c* msg_p) {
+  return !(
+    mMsg_Check_main_index(msg_p, mMsg_INDEX_WAIT) ||
+    mMsg_Check_main_index(msg_p, mMsg_INDEX_APPEAR_WAIT) ||
+    mMsg_Check_main_index(msg_p, mMsg_INDEX_DISAPPEAR_WAIT)
+  );
+}
+
+extern int mMsg_Check_main_hide(mMsg_Window_c* msg_p) {
+  return mMsg_Check_main_index(msg_p, mMsg_INDEX_HIDE);
+}
+
+static void mMsg_Set_client_actor_p(mMsg_Window_c* msg_p, ACTOR* client_actor_p, int show_name) {
+  if (client_actor_p != NULL) {
+    u8 name[ANIMAL_NAME_LEN];
+    f32 width;
+    f32 ofs_x;
+    int len;
+
+    msg_p->client_actor_p = client_actor_p;
+    msg_p->show_actor_name = show_name;
+
+    mNpc_GetNpcWorldName(name, client_actor_p);
+    len = mMsg_Get_Length_String(name, ANIMAL_NAME_LEN);
+    width = mFont_GetStringWidth(name, len, TRUE);
+    ofs_x = ((9.0f * (f32)ANIMAL_NAME_LEN) - width) * 0.5f;
+
+    msg_p->nameplate_x = 61.0f + ofs_x;
+    msg_p->nameplate_y = 64.0f;
+    msg_p->client_name_len = len; 
+  }
+  else {
+    msg_p->client_actor_p = NULL;
+    msg_p->show_actor_name = FALSE;
+  }
+}
+
+extern int mMsg_request_main_forceoff() {
+  return mMsg_Change_request_main_index(mMsg_Get_base_window_p(), mMsg_INDEX_HIDE, 9);
+}
+
+extern int mMsg_request_main_disappear(mMsg_Window_c* msg_p) {
+  return mMsg_end_to_disappear(msg_p);
+}
+
+extern int mMsg_request_main_appear(mMsg_Window_c* msg_p, ACTOR* client_actor_p, int show_name, rgba_t* window_color, int msg_no, int request_priority) {
+  if (mMsg_Change_request_main_index(msg_p, mMsg_INDEX_APPEAR, request_priority)) {
+    mMsg_Request_MainAppear_Data_c* data = &msg_p->request_data.request_main_appear;
+
+    data->speaker_actor = client_actor_p;
+    data->name_shown_flag = show_name;
+    data->window_color = *window_color;
+    data->msg_no = msg_no;
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static int mMsg_request_main_disappear_wait(mMsg_Window_c* msg_p, int last_main_index, int request_priority) {
+  if (mMsg_Change_request_main_index(msg_p, mMsg_INDEX_DISAPPEAR_WAIT, request_priority)) {
+    mMsg_Request_MainDisappearWait_Data_c* data = &msg_p->request_data.request_main_disappear_wait;
+
+    data->last_main_index = last_main_index;
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static int mMsg_request_main_disappear_wait_sub(mMsg_Window_c* msg_p, int last_main_index) {
+  if (mChoice_check_main_index(mChoice_Get_base_window_p()) == mChoice_MAIN_HIDE) {
+    return mMsg_request_main_disappear_wait(msg_p, last_main_index, 5);
+  }
+
+  return FALSE;
+}
+
+extern int mMsg_request_main_disappear_wait_type1(mMsg_Window_c* msg_p) {
+  return mMsg_request_main_disappear_wait_sub(msg_p, msg_p->main_index);
+}
+
+extern int mMsg_request_main_disappear_wait_type2(mMsg_Window_c* msg_p) {
+  return mMsg_request_main_disappear_wait_sub(msg_p, mMsg_INDEX_NORMAL);
+}
+
+static int mMsg_request_main_wait(mMsg_Window_c* msg_p, int last_main_index, int request_priority) {
+  if (mMsg_Change_request_main_index(msg_p, mMsg_INDEX_WAIT, request_priority)) {
+    mMsg_Request_MainWait_Data_c* data = &msg_p->request_data.request_main_wait;
+
+    data->last_main_index = last_main_index;
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static int mMsg_request_main_appear_wait(mMsg_Window_c* msg_p, int last_main_index, u32 setup_flag, int request_priority) {
+  if (mMsg_Change_request_main_index(msg_p, mMsg_INDEX_APPEAR_WAIT, request_priority)) {
+    mMsg_Request_MainAppearWait_Data_c* data = &msg_p->request_data.request_main_appear_wait;
+
+    data->last_main_index = last_main_index;
+    data->setup_flag = setup_flag;
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+extern int mMsg_request_main_appear_wait_type2(mMsg_Window_c* msg_p, int clear_flag) {
+  if (msg_p->main_index == mMsg_INDEX_WAIT) {
+    mMsg_MainWait_Data_c* data = &msg_p->main_data.main_wait;
+    int last_main_index = data->last_main_index;
+    u32 setup_flag = clear_flag ? TRUE : FALSE;
+
+    return mMsg_request_main_appear_wait(msg_p, last_main_index, setup_flag, 5);
+  }
+
+  return FALSE;
+}
+
+extern int mMsg_request_main_appear_wait_type1(mMsg_Window_c* msg_p) {
+  return mMsg_request_main_appear_wait_type2(msg_p, TRUE);
+}
+
+static int mMsg_request_main_normal(mMsg_Window_c* msg_p, int wait_flag, int request_priority) {
+  if (mMsg_Change_request_main_index(msg_p, mMsg_INDEX_NORMAL, request_priority)) {
+    mMsg_Request_MainNormal_Data_c* data = &msg_p->request_data.request_main_normal;
+
+    data->wait_flag = wait_flag;
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static int mMsg_request_main_cursol(mMsg_Window_c* msg_p, int wait_flag, int request_priority) {
+  if (mMsg_Change_request_main_index(msg_p, mMsg_INDEX_CURSOL, request_priority)) {
+    mMsg_Request_MainCursor_Data_c* data = &msg_p->request_data.request_main_cursor;
+
+    data->wait_flag = wait_flag;
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+extern void mMsg_Set_free_str(mMsg_Window_c* msg_p, int free_str_no, u8* str, int str_len) {
+  if (free_str_no >= mMsg_FREE_STR0 && free_str_no < mMsg_FREE_STR_NUM && str != NULL) {
+    int i;
+    u8* free_str = msg_p->free_str[free_str_no];
+
+    if (str_len > mMsg_FREE_STRING_LEN) {
+      str_len = mMsg_FREE_STRING_LEN;
+    }
+
+    for (i = 0; i < mMsg_FREE_STRING_LEN; i++) {
+      if (i < str_len) {
+        free_str[i] = str[i];
+      }
+      else {
+        free_str[i] = CHAR_SPACE;
+      }
+    }
+
+    msg_p->free_str_article[free_str_no] = mIN_ARTICLE_NONE;
+  }
+
+  if (free_str_no == mMsg_FREE_STR1) {
+    msg_p->free_str_color_idx[0] = 0;
+  }
+  else if (free_str_no == mMsg_FREE_STR2) {
+    msg_p->free_str_color_idx[1] = 0;
+  }
+  else if (free_str_no == mMsg_FREE_STR5) {
+    msg_p->free_str_color_idx[2] = 0;
+  }
+}
+
+extern void mMsg_Set_free_str_cl(mMsg_Window_c* msg_p, int str_no, u8* str_p, int str_len, int cl_id) {
+  mMsg_Set_free_str_cl_art(msg_p, str_no, str_p, str_len, cl_id, mIN_ARTICLE_NONE);
+}
+
+extern void mMsg_Set_free_str_art(mMsg_Window_c* msg_p, int str_no, u8* str_p, int str_len, int article) {
+  mMsg_Set_free_str_cl_art(msg_p, str_no, str_p, str_len, 0, article);
+}
+
+extern void mMsg_Set_free_str_cl_art(mMsg_Window_c* msg_p, int str_no, u8* str_p, int str_len, int cl_id, int article) {
+  mMsg_Set_free_str(msg_p, str_no, str_p, str_len);
+
+  if (cl_id != 0) {
+    if (str_no == mMsg_FREE_STR1) {
+      msg_p->free_str_color_idx[0] = cl_id;
+    }
+    else if (str_no == mMsg_FREE_STR2) {
+      msg_p->free_str_color_idx[1] = cl_id;
+    }
+    else if (str_no == mMsg_FREE_STR5) {
+      msg_p->free_str_color_idx[2] = cl_id;
+    }
+  }
+
+  msg_p->free_str_article[str_no] = article;
+}
+
+extern void mMsg_Set_item_str(mMsg_Window_c* msg_p, int item_str_no, u8* str, int str_len) {
+  if (item_str_no >= mMsg_ITEM_STR0 && item_str_no < mMsg_ITEM_STR_NUM && str != NULL) {
+    int i;
+    u8* free_str = msg_p->item_str[item_str_no];
+
+    if (str_len > mIN_ITEM_NAME_LEN) {
+      str_len = mIN_ITEM_NAME_LEN;
+    }
+
+    for (i = 0; i < mIN_ITEM_NAME_LEN; i++) {
+      if (i < str_len) {
+        free_str[i] = str[i];
+      }
+      else {
+        free_str[i] = CHAR_SPACE;
+      }
+    }
+
+    msg_p->item_str_article[item_str_no] = mIN_ARTICLE_NONE;
+  }
+}
+
+extern void mMsg_Set_item_str_art(mMsg_Window_c* msg_p, int item_str_no, u8* str, int str_len, int article) {
+  mMsg_Set_item_str(msg_p, item_str_no, str, str_len);
+  msg_p->item_str_article[item_str_no] = article;
+}
+
+/* @unused extern void mMsg_Get_free_str(mMsg_Window_c* msg_p, int free_str_no, u8* str?) */
+
+/* @unused extern void mMsg_Get_item_str(mMsg_Window_c* msg_p, int item_str_no, u8* str?) */
+
+extern void mMsg_Set_mail_str(mMsg_Window_c* msg_p, int mail_str_no, u8* str, int str_len) {
+  if (mail_str_no >= mMsg_MAIL_STR0 && mail_str_no < mMsg_MAIL_STR_NUM && str != NULL) {
+    int src;
+    int dst;
+    u8* dst_p;
+    u8* src_p;
+    int rows;
+    int width;
+
+    if (str_len > mMsg_MAIL_STRING_LEN) {
+      str_len = mMsg_MAIL_STRING_LEN;
+    }
+    
+    dst = 0;
+    dst_p = msg_p->mail_str[mail_str_no];
+    src_p = str;
+    rows = 0;
+    width = 0;
+
+    for (src = 0; src < str_len; src++) {
+      u8 c = *src_p++;
+
+      if (c == CHAR_NEW_LINE) {
+        rows++;
+        *dst_p++ = c;
+        dst++;
+        width = 0;
+
+        if (dst >= mMsg_MAIL_STRING_LEN || rows > 4) {
+          break;
+        }
+      }
+      else {
+        *dst_p++ = c;
+        dst++;
+        width += mFont_GetCodeWidth(c, TRUE);
+
+        if (dst >= mMsg_MAIL_STRING_LEN) {
+          break;
+        }
+        else if (width > 186) {
+          rows++;
+          *dst_p++ = CHAR_NEW_LINE;
+          dst++;
+          width = 0;
+
+          if (dst >= mMsg_MAIL_STRING_LEN || rows > 4) {
+            break;
+          }
+        }
+      }
+    }
+
+    for (dst; dst < mMsg_MAIL_STRING_LEN; dst++) {
+      *dst_p++ = CHAR_SPACE;
+    }
+  }
+}
+
+extern void mMsg_Set_continue_msg_num(mMsg_Window_c* msg_p, int msg_no) {
+  msg_p->continue_msg_no = msg_no;
+}
+
+extern int mMsg_Get_msg_num(mMsg_Window_c* msg_p) {
+  mMsg_Data_c* data_p = msg_p->msg_data;
+
+  if (msg_p->data_loaded && data_p->data_loaded) {
+    return data_p->msg_no;
+  }
+
+  return -1;
+}
+
+static int mMsg_Check_give_item() {
+  return Common_Get(clip).handOverItem_clip != NULL && Common_Get(clip).handOverItem_clip->master_actor != NULL;
+}
+
+static void mMsg_set_cursol_just(mMsg_Window_c* msg_p) {
+  msg_p->status_flags |= mMsg_STATUS_FLAG_CURSOL_JUST;
+}
+
+static void mMsg_unset_cursol_just(mMsg_Window_c* msg_p) {
+  msg_p->status_flags &= ~mMsg_STATUS_FLAG_CURSOL_JUST;
+}

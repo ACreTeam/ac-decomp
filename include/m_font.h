@@ -285,7 +285,7 @@ extern "C" {
 enum {
   mFont_CONT_CODE_BEGIN = 0,
   mFont_CONT_CODE_LAST = mFont_CONT_CODE_BEGIN,
-  mFont_CONT_CODE_CONINTUE,
+  mFont_CONT_CODE_CONTINUE,
   mFont_CONT_CODE_CLEAR,
   mFont_CONT_CODE_CURSOR_SET_TIME,
   mFont_CONT_CODE_BUTTON,
@@ -433,6 +433,30 @@ enum {
   mFont_LineType_Bottom,
 
   mFont_LineType_End
+};
+
+enum {
+  mFont_BGM_QUIET,
+
+  // TODO
+
+  mFont_BGM_NUM = 9
+};
+
+enum {
+  mFont_BGM_STOP_TYPE_NORMAL,
+  mFont_BGM_STOP_TYPE_QUICK,
+  mFont_BGM_STOP_TYPE_RESETTI,
+
+  mFont_BGM_STOP_TYPE_NUM
+};
+
+enum {
+  mFont_SE_0,
+
+  // TODO
+
+  mFont_SE_NUM = 7
 };
 
 #define mFont_CHAR_FLAG_CUT 1

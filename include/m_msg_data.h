@@ -12,6 +12,8 @@ extern "C" {
 #define MSG_SANTA_WISH_CARPET       0x2B56
 #define MSG_SANTA_WISH_CLOTH        0x2B57
 
+#define MSG_MAX                     0x3F91 /* Maximum message id */
+
 #ifdef __cplusplus
 }
 #endif

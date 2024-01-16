@@ -1,0 +1,358 @@
+extern int mMsg_sound_voice_get(int code) {
+  static u8 voice_array[TOTAL_CHARS] = {
+    0x85, 0x85, 0x5D, 0x5D, 0x5D, 0x5D, 0x5D, 0x5D, 0x5F, 0x61, 0x61, 0x61, 0x61, 0x65, 0x65, 0x65, 
+    0x65, 0x60, 0x6A, 0x6B, 0x6B, 0x6B, 0x6B, 0x6B, 0x85, 0x71, 0x71, 0x71, 0x71, 0x5E, 0x6C, 0x5D, 
+    0x81, 0x83, 0x85, 0x5D, 0x5D, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x80, 
+    0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0x5B, 0x5C, 0x85, 0x85, 0x85, 0x85, 0x85, 0x82, 
+    0x85, 0x5D, 0x5E, 0x5F, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 
+    0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x5D, 0x85, 0x5D, 0x5D, 0x85, 
+    0x5F, 0x5D, 0x5E, 0x5F, 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B, 
+    0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x61, 0x61, 0x61, 0x61, 0xFF, 
+    0xFF, 0x65, 0x65, 0x65, 0x65, 0x86, 0x60, 0x6A, 0x6B, 0x6B, 0x6B, 0x6B, 0x6B, 0x85, 0x71, 0x71, 
+    0x85, 0x71, 0x71, 0x75, 0x75, 0x6C, 0x75, 0x85, 0x85, 0x5D, 0x6B, 0x85, 0x85, 0x85, 0x85, 0x85, 
+    0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 
+    0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 
+    0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 
+    0x85, 0x85, 0x81, 0x81, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 
+    0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 
+    0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x85, 0x81
+  };
+
+  if (code == CHAR_CONTROL_CODE || code == CHAR_MESSAGE_TAG) {
+    return -1;
+  }
+
+  return voice_array[code];
+}
+
+extern int mMsg_sound_voice_get_for_editor(int code) {
+  int sound = mMsg_sound_voice_get(code);
+
+  switch (sound) {
+    case 0x80:
+    case 0x82:
+    case 0x83:
+    case 0x85:
+      return 0x86;
+    default:
+      return sound;
+  }
+
+  return sound;
+}
+
+static int mMsg_sound_voice_get2(int code) {
+  if (code == CHAR_NEW_LINE) {
+    return 0x84;
+  }
+
+  return mMsg_sound_voice_get(code);
+}
+
+static int mMsg_check_sound_special(mMsg_Window_c* msg_p) {
+  int msg_no = msg_p->msg_data->msg_no;
+
+  return (msg_no >= 0x1743 && msg_no <= 0x1756) ||  /* Event starting */
+         (msg_no >= 0x1799 && msg_no <= 0x17AC) ||  /* Event ending */
+         (msg_no >= 0x3A8A && msg_no <= 0x3AF0);    /* Dial-a-Psychic */
+}
+
+static int mMsg_check_sound_shasho(mMsg_Window_c* msg_p) {
+  int msg_no = msg_p->msg_data->msg_no;
+
+  return (msg_no >= 0x35AF && msg_no <= 0x35BE);
+}
+
+static int mMsg_check_sound_animal(mMsg_Window_c* msg_p) {
+  if ((msg_p->status_flags & mMsg_STATUS_FLAG_VOICE_CLICK) != 0) {
+    return FALSE;
+  }
+
+  return (msg_p->show_actor_name || mMsg_check_sound_special(msg_p) || mMsg_check_sound_shasho(msg_p));
+}
+
+static int mMsg_sound_npc_id_get(mMsg_Window_c* msg_p) {
+  int id = 0;
+  ACTOR* actor = msg_p->client_actor_p;
+
+  if (actor != NULL && actor->part == ACTOR_PART_NPC) {
+    id = ((NPC_ACTOR*)actor)->talk_info.npc_voice_id;
+  }
+
+  return id;
+}
+
+static void mMsg_sound_voice_entry(mMsg_Window_c* msg_p, int voice_sfx_idx, u8 voice_no, s16 voice_anm_id) {
+  if (voice_sfx_idx != msg_p->voice_sfx_idx && voice_sfx_idx != msg_p->end_text_cursor_idx) {
+    msg_p->voice_sfx_idx = voice_sfx_idx;
+
+    if ((msg_p->status_flags & mMsg_STATUS_FLAG_VOICE_ENTRY) != 0) {
+      u8* msg_data = msg_p->msg_data->text_buf.data;
+      int code_size = mMsg_Set_SizeCode(msg_p, voice_sfx_idx);
+      int voice3_idx;
+
+      if (msg_data[voice_sfx_idx + code_size] == CHAR_NEW_LINE) {
+        voice3_idx = 0xFF;
+      }
+      else {
+        voice3_idx = mMsg_sound_voice_get2(msg_data[voice_sfx_idx + code_size]);
+
+        if (voice3_idx < 0) {
+          voice3_idx = 0xFF;
+        }
+      }
+
+      msg_p->voice2_idx = voice_no;
+      msg_p->voice3_idx = voice3_idx;
+      msg_p->status_flags |= mMsg_STATUS_FLAG_18;
+    }
+    else if (voice_no != 129) {
+      msg_p->free_str_color_idx[3] = 1;
+      msg_p->voice_idx = voice_no;
+      msg_p->voice2_idx = 0xFF;
+      msg_p->voice3_idx = 0xFF;
+      msg_p->animal_voice_idx = voice_anm_id;
+      msg_p->status_flags |= mMsg_STATUS_FLAG_VOICE_ENTRY;
+    }
+  }
+}
+
+static void mMsg_sound_voice_endcode_set(mMsg_Window_c* msg_p) {
+  int npc_id = mMsg_sound_npc_id_get(msg_p);
+
+  sAdo_VoiceSe(0x84, 0xFF, 0xFF, npc_id, 32, 0);
+  msg_p->free_str_color_idx[3] = 0;
+  msg_p->status_flags &= ~(mMsg_STATUS_FLAG_18 | mMsg_STATUS_FLAG_VOICE_ENTRY);
+}
+
+static int mMsg_sound_CodeVoice(mMsg_Window_c* msg_p, int idx) {
+  u8* data = msg_p->msg_data->text_buf.data;
+  int voice_id = mMsg_sound_voice_get2(data[idx]);
+
+  if (voice_id < 0) {
+    return FALSE;
+  }
+  else if ((msg_p->status_flags & mMsg_STATUS_FLAG_SOUND_CUT) != 0) {
+    int voice_mode = Save_Get(config).voice_mode;
+    
+    if (voice_mode != Config_VOICE_MODE_SILENT) {
+      sAdo_SysTrgStart(0x54);
+    }
+
+    mMsg_sound_voice_endcode_set(msg_p);
+    return FALSE;
+  }
+  else {
+    int npc_id = mMsg_sound_npc_id_get(msg_p);
+
+    mMsg_sound_voice_entry(msg_p, idx, voice_id, npc_id);
+    return voice_id != 0x81 &&
+           voice_id != 0x83 &&
+           voice_id != 0x82 &&
+           voice_id != 0x85 &&
+           voice_id != 0x80;
+  }
+}
+
+static void mMsg_sound_PAGE_OKURI() {
+  sAdo_SysTrgStart(0xB);
+}
+
+static void mMsg_sound_ZOOMUP() {
+  sAdo_SysTrgStart(0x8004);
+}
+
+static void mMsg_sound_ZOOMDOWN_SHORT(mMsg_Window_c* msg_p) {
+  if ((msg_p->status_flags & mMsg_STATUS_FLAG_NO_ZOOMDOWN) == 0) {
+    sAdo_SysTrgStart(0x8005);
+  }
+}
+
+static void mMsg_sound_ZOOMDOWN_LONG(mMsg_Window_c* msg_p) {
+  if ((msg_p->status_flags & mMsg_STATUS_FLAG_NO_ZOOMDOWN) == 0) {
+    sAdo_SysTrgStart(0x8015);
+  }
+}
+
+static u8 Sound_Now_MessageSpeed = 1;
+
+static void mMsg_sound_MessageSpeedForce(f32 timer) {
+  u8 int_timer = (int)timer;
+
+  int_timer++;
+
+  if (int_timer > 0) {
+    if (sAdo_MessageSpeedGet() != int_timer) {
+      sAdo_MessageSpeed(int_timer);
+    }
+
+    Sound_Now_MessageSpeed = int_timer;
+  }
+  else {
+    sAdo_MessageSpeed(1);
+    Sound_Now_MessageSpeed = 1;
+  }
+}
+
+static void mMsg_sound_MessageSpeedClear(int speed) {
+  if (Sound_Now_MessageSpeed != 1) {
+    Sound_Now_MessageSpeed = 1;
+  }
+  else if (sAdo_MessageSpeedGet() != 1) {
+    sAdo_MessageSpeed(speed);
+  }
+}
+
+static void mMsg_sound_MessageStatus(u8 status) {
+  sAdo_MessageStatus(status);
+}
+
+static u8 mMsg_bgm_num[mFont_BGM_NUM] = {
+  255,
+  47,
+  48,
+  49,
+  50,
+  66,
+  255,
+  78,
+  122
+};
+
+static u16 mMsg_bgm_stop[mFont_BGM_STOP_TYPE_NUM] = {
+  0x168,
+  0,
+  0x321C
+};
+
+static void mMsg_sound_bgm_make(int bgm_no, int stop_type) {
+  if (bgm_no == mFont_BGM_QUIET) {
+    mBGMPsComp_make_ps_quiet(mMsg_bgm_stop[stop_type]);
+  }
+  else if (bgm_no == 6) {
+    mBGMPsComp_make_ps_fc_quietField(mMsg_bgm_stop[stop_type]);
+  }
+  else {
+    mBGMPsComp_make_ps_demo(mMsg_bgm_num[bgm_no], mMsg_bgm_stop[stop_type]);
+  }
+}
+
+static void mMsg_sound_bgm_delete(int bgm_no, int stop_type) {
+  if (bgm_no == mFont_BGM_QUIET) {
+    mBGMPsComp_delete_ps_quiet();
+  }
+  else {
+    mBGMPsComp_delete_ps_demo(mMsg_bgm_num[bgm_no], mMsg_bgm_stop[stop_type]);
+  }
+}
+
+static void mMsg_sound_sound_trg_sys(int se_no) {
+  static u16 mMsg_se_num[mFont_SE_NUM] = {
+    0x1050, 0x012e, 0x012f, 0x0130, 0x0131, 0x0427, 0x0428
+  };
+
+  if (se_no != 4 && se_no != 3) {
+    sAdo_SysTrgStart(mMsg_se_num[se_no]);
+  }
+}
+
+static u8 mMsg_sound_voice_mode_get(mMsg_Window_c* msg_p) {
+  int mode_type = Save_Get(config).voice_mode;
+  u8 mode;
+
+  if ((msg_p->status_flags & mMsg_STATUS_FLAG_VOICE_SILENT) != 0) {
+    mode_type = Config_VOICE_MODE_SILENT;
+  }
+
+  if (mMsg_check_sound_animal(msg_p)) {
+    static u8 mode_table[Config_VOICE_MODE_NUM] = { VOICE_MODE_ANIMALESE, VOICE_MODE_CLICK, VOICE_MODE_SILENT };
+
+    mode = mode_table[mode_type];
+  }
+  else if (mode_type == Config_VOICE_MODE_SILENT) {
+    mode = VOICE_MODE_SILENT;
+  }
+  else {
+    mode = VOICE_MODE_CLICK;
+  }
+
+  return mode;
+}
+
+static void mMsg_sound_voice_mode(mMsg_Window_c* msg_p) {
+  sAdo_SetVoiceMode(mMsg_sound_voice_mode_get(msg_p));
+}
+
+extern void mMsg_sound_spec_change_voice_force(mMsg_Window_c* msg_p) {
+  int spec;
+
+  if (mMsg_check_sound_special(msg_p)) {
+    spec = 4;
+  }
+  else {
+    spec = mNpc_GetNpcSoundSpec(msg_p->client_actor_p);
+  }
+
+  sAdo_SpecChange(spec);
+  msg_p->status_flags |= mMsg_STATUS_FLAG_SPEC_VOICE;
+  msg_p->spec = spec;
+}
+
+extern int mMsg_sound_spec_change_voice(mMsg_Window_c* msg_p) {
+  if (mMsg_sound_voice_mode_get(msg_p) == VOICE_MODE_ANIMALESE) {
+    mMsg_sound_spec_change_voice_force(msg_p);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static void mMsg_sound_spec_change_scene(mMsg_Window_c* msg_p) {
+  if ((msg_p->status_flags & mMsg_STATUS_FLAG_SPEC_VOICE) != 0) {
+    msg_p->status_flags &= ~mMsg_STATUS_FLAG_SPEC_VOICE;
+  }
+}
+
+static void mMsg_sound_spec_change_true(mMsg_Window_c* msg_p) {
+  ACTOR* actor = msg_p->client_actor_p;
+
+  if (actor != NULL && actor->part == ACTOR_PART_NPC) {
+    const mActor_name_t npc_id = actor->npc_id;
+
+    if (npc_id == SP_NPC_MAMEDANUKI0 || npc_id == SP_NPC_MAMEDANUKI1) {
+      sAdo_SpecChange(msg_p->spec);
+    }
+  }
+}
+
+static void mMsg_sound_spec_change_false(mMsg_Window_c* msg_p) {
+  ACTOR* actor = msg_p->client_actor_p;
+
+  if (actor != NULL && actor->part == ACTOR_PART_NPC) {
+    const mActor_name_t npc_id = actor->npc_id;
+
+    if (npc_id == SP_NPC_MAMEDANUKI0 || npc_id == SP_NPC_MAMEDANUKI1) {
+      sAdo_SpecChange(7);
+    }
+  }
+}
+
+extern void mMsg_sound_set_voice_click(mMsg_Window_c* msg_p) {
+  msg_p->status_flags |= mMsg_STATUS_FLAG_VOICE_CLICK;
+}
+
+extern void mMsg_sound_set_voice_silent(mMsg_Window_c* msg_p, int update_mode) {
+  msg_p->status_flags |= mMsg_STATUS_FLAG_VOICE_SILENT;
+
+  if (update_mode) {
+    mMsg_sound_voice_mode(msg_p);
+  }
+}
+
+extern void mMsg_sound_unset_voice_silent(mMsg_Window_c* msg_p, int update_mode) {
+  msg_p->status_flags &= ~mMsg_STATUS_FLAG_VOICE_SILENT;
+
+  if (update_mode) {
+    mMsg_sound_voice_mode(msg_p);
+  }
+}

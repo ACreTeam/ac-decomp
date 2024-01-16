@@ -1,0 +1,47 @@
+static void mMsg_request_main_index_fromAppear_wait(mMsg_Window_c* msg_p, GAME* game, int scaling_done_flag) {
+  if (scaling_done_flag) {
+    mMsg_MainAppearWait_Data_c* main_data = &msg_p->main_data.main_appear_wait;
+    int saved_main_index = main_data->saved_main_index;
+
+    if (saved_main_index == mMsg_INDEX_CURSOL) {
+      mMsg_request_main_cursol(msg_p, TRUE, 5);
+    }
+    else {
+      mMsg_request_main_normal(msg_p, TRUE, 5);
+    }
+  }
+}
+
+static void mMsg_Main_Appear_wait(mMsg_Window_c* msg_p, GAME* game) {
+  int scaling_finished;
+
+  if ((msg_p->status_flags & mMsg_STATUS_FLAG_NO_ZOOMUP) == FALSE) {
+    msg_p->status_flags |= mMsg_STATUS_FLAG_NO_ZOOMUP;
+    mMsg_sound_ZOOMUP();
+    mMsg_sound_spec_change_voice(msg_p);
+    mMsg_sound_voice_mode(msg_p);
+  }
+
+  scaling_finished = mMsg_Main_Appear_SetScale(msg_p, game);
+  mMsg_request_main_index_fromAppear_wait(msg_p, game, scaling_finished);
+  mMsg_MainSetup_Window(msg_p, game);
+}
+
+static void mMsg_MainSetup_Appear_Wait(mMsg_Window_c* msg_p, GAME* game) {
+  mMsg_Request_MainAppearWait_Data_c* request_data = &msg_p->request_data.request_main_appear_wait;
+  mMsg_MainAppearWait_Data_c* main_data = &msg_p->main_data.main_appear_wait;
+
+  if ((request_data->setup_flag & 1)) {
+    mMsg_Clear_CursolIndex(msg_p);
+  }
+
+  main_data->saved_main_index = request_data->last_main_index;
+  msg_p->main_index = mMsg_INDEX_APPEAR_WAIT;
+  msg_p->draw_flag = TRUE;
+  msg_p->window_scale = 0.0f;
+  msg_p->text_scale = 0.0f;
+  msg_p->timer = 0.0f;
+  msg_p->status_flags &= ~(mMsg_STATUS_FLAG_NOT_PAUSE_FRAME | mMsg_STATUS_FLAG_NO_ZOOMUP);
+  msg_p->requested_main_index = -1;
+  msg_p->requested_priority = 4;
+}
