@@ -6,7 +6,7 @@ static void aMIK_set_bgOffset(MIKUJI_ACTOR* mikuji, int offs)
                                             { 0x64, 2, 2, 2, 0, 2, 1 } };
     static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
     static f32 addX[] = { 0.0f, 40.0f };
-    static f32 addZ[] = { 40.0f, 80.0f, 0.0f, 0.0f };
+    static f32 addZ[] = { 40.0f, 80.0f };
 
     mCoBG_OffsetTable_c* offset;
     int i;
@@ -26,24 +26,25 @@ static void aMIK_set_bgOffset(MIKUJI_ACTOR* mikuji, int offs)
 }
 
 static void aMIK_actor_move(ACTOR* actor, GAME* game){
-    int player_bz, player_bx;
-    int wordl_bz, world_bx;
+    int world_bx, world_bz;
+    int player_bx, player_bz;
+    PLAYER_ACTOR* player_actor = get_player_actor_withoutCheck((GAME_PLAY*)game);
 
-    PLAYER_ACTOR* player_actor = (PLAYER_ACTOR*)get_player_actor_withoutCheck((GAME_PLAY*)game);
-
-    mFI_Wpos2BlockNum(&world_bx, &wordl_bz, actor->home.position);
+    mFI_Wpos2BlockNum(&world_bx, &world_bz, actor->world.position);
     mFI_Wpos2BlockNum(&player_bx, &player_bz, player_actor->actor_class.world.position);
 
-    if (mDemo_Check(mDemo_TYPE_SCROLL, actor) == FALSE && 
-            mDemo_Check(mDemo_TYPE_SCROLL2, actor) == FALSE && 
-            mDemo_Check(mDemo_TYPE_SCROLL3, actor) == FALSE && 
-            world_bx != player_bx && wordl_bz != player_bz) {
-                Actor_delete(actor);
+    if (
+        mDemo_Check(mDemo_TYPE_SCROLL, (ACTOR*)player_actor) == FALSE && 
+        mDemo_Check(mDemo_TYPE_SCROLL2, (ACTOR*)player_actor) == FALSE && 
+        mDemo_Check(mDemo_TYPE_SCROLL3, (ACTOR*)player_actor) == FALSE && 
+        (world_bx != player_bx || world_bz != player_bz)
+    ) {
+        Actor_delete(actor);
     }
 }
 
 static void aMIK_actor_init(ACTOR* actor, GAME* game){
     mFI_SetFG_common(DUMMY_MIKUJI, actor->home.position, 0);
     aMIK_actor_move(actor, game);
-    actor->mv_proc = (mActor_proc)aMIK_actor_move;
+    actor->mv_proc = &aMIK_actor_move;
 }

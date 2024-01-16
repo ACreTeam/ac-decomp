@@ -14,7 +14,6 @@ static void aMIK_actor_draw(ACTOR* actor, GAME* game){
     if(cur != NULL){ 
         _texture_z_light_fog_prim_npc(graph);
         gfx = NOW_POLY_OPA_DISP;
-        gSPSegment(gfx++, 0x8, pal); 
         gSPMatrix(gfx++, cur, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(gfx++, obj_e_mikuji_model);
         SET_POLY_OPA_DISP(gfx);
