@@ -84,7 +84,7 @@ enum {
 
 #define mMsg_STATUS_FLAG_SOUND_CUT (1 << 0) // 0x000001
 #define mMsg_STATUS_FLAG_NO_SE_PAGE_OKURI (1 << 1) // 0x000002
-#define mMsg_STATUS_FLAG_2 (1 << 2) // 0x000004
+#define mMsg_STATUS_FLAG_NO_ZOOMUP (1 << 2) // 0x000004
 #define mMsg_STATUS_FLAG_LAST_DELAY (1 << 3) // 0x000008
 #define mMsg_STATUS_FLAG_SPEC_VOICE (1 << 4) // 0x000010
 #define mMsg_STATUS_FLAG_VOICE_ENTRY (1 << 5) // 0x000020
@@ -264,60 +264,73 @@ struct message_window_s {
   /* 0x460 */ mMsg_Request_Data_c request_data;
 };
 
-extern int mMsg_Get_Length_String(u8* buf, int buf_size);
-extern mMsg_Window_c* mMsg_Get_base_window_p();
-extern void mMsg_Set_free_str(mMsg_Window_c* msg, int free_str_no, u8* str, int str_size);
-extern void mMsg_Set_free_str_art(mMsg_Window_c* msg, int free_str_no, u8* str, int str_size, int article_no);
-extern void mMsg_Set_item_str_art(mMsg_Window_c* msg, int free_str_no, u8* str, int str_size, int article_no);
-extern void mMsg_ct(GAME_PLAY*);
-extern void mMsg_dt(GAME_PLAY*);
-extern void mMsg_Main(GAME_PLAY*);
-extern void mMsg_Draw(GAME_PLAY*);
-extern void mMsg_debug_draw(gfxprint_t* gfxprint);
 extern void mMsg_aram_init();
 extern void mMsg_aram_init2();
-extern int mMsg_Check_MainHide(mMsg_Window_c* msg);
-extern void mMsg_Set_item_str(mMsg_Window_c* msg_win, int str_no, u8* item_str, int str_len);
-extern void mMsg_Set_mail_str(mMsg_Window_c* msg_win, int str_no, u8* str, int str_len);
-extern void mMsg_Set_continue_msg_num(mMsg_Window_c* msg_win, int continue_msg_num);
-extern int mMsg_Check_MainNormalContinue(mMsg_Window_c* msg_win);
-extern int mMsg_Check_main_wait(mMsg_Window_c* msg_win);
-extern int mMsg_ChangeMsgData(mMsg_Window_c* msg_win, int msg_no);
-extern void mMsg_Set_ForceNext(mMsg_Window_c* msg_win);
-extern int mMsg_Check_not_series_main_wait(mMsg_Window_c* msg_win);
-extern int mMsg_Check_MainDisappear(mMsg_Window_c* msg_win);
-extern int mMsg_request_main_disappear_wait_type1(mMsg_Window_c* msg_win);
-extern int mMsg_request_main_appear_wait_type1(mMsg_Window_c* msg_win);
-extern void mMsg_Get_BodyParam(u32 table_rom_start, u32 data_rom_start, int entry_no, u32* data_addr, u32* data_size);
-extern void mMsg_Set_LockContinue(mMsg_Window_c* msg_win);
-extern void mMsg_Unset_LockContinue(mMsg_Window_c* msg_win);
-extern int mMsg_Get_msg_num(mMsg_Window_c* msg_win);
-extern int mMsg_Check_main_index(mMsg_Window_c* msg_win, int index);
-extern int mMsg_request_main_appear(mMsg_Window_c* msg_win, ACTOR* other_actor, int display_name, rgba_t* window_color_p, int msg_no, int request_priority);
-extern int mMsg_Check_main_hide(mMsg_Window_c* msg_win);
-extern int mMsg_sound_voice_get_for_editor(int code);
-extern int mMsg_sound_spec_change_voice(mMsg_Window_c* msg_win);
+extern void mMsg_ct(GAME* game);
+extern void mMsg_dt(GAME* game);
+extern void mMsg_debug_draw(gfxprint_t* gfxprint);
+extern void mMsg_Main(GAME* game);
+extern void mMsg_Draw(GAME* game);
+extern mMsg_Window_c* mMsg_Get_base_window_p();
+extern int mMsg_Check_request_priority(mMsg_Window_c* msg_p, int request_priority);
+extern int mMsg_Check_main_index(mMsg_Window_c* msg_p, int main_index);
+extern int mMsg_Check_main_wait(mMsg_Window_c* msg_p);
+extern int mMsg_Check_not_series_main_wait(mMsg_Window_c* msg_p);
+extern int mMsg_Check_main_hide(mMsg_Window_c* msg_p);
 extern int mMsg_request_main_forceoff();
-extern int mMsg_CopyPlayerName(u8* data, int idx, int max_size, u32 capitalize);
-extern int mMsg_CopyTalkName(ACTOR* actor, u8* data, int idx, int max_size, u32 capitalize);
-extern int mMsg_CopyTail(ACTOR* actor, u8* data, int idx, int max_size, u32 capitalize);
-extern int mMsg_CopyYear(u8* data, int idx, int max_size);
-extern int mMsg_CopyMonth(u8* data, int idx, int max_size);
-extern int mMsg_CopyWeek(u8* data, int idx, int max_size);
-extern int mMsg_CopyDay(u8* data, int idx, int max_size);
-extern int mMsg_CopyHour(u8* data, int idx, int max_size);
-extern int mMsg_CopyMin(u8* data, int idx, int max_size);
-extern int mMsg_CopySec(u8* data, int idx, int max_size);
-extern int mMsg_CopyFree(mMsg_Window_c* msg_win, int free_idx, u8* data, int idx, int max_size, int article, u32 capitalize);
-extern int mMsg_CopyDetermination(mMsg_Window_c* msg_win, u8* data, int idx, int max_size);
-extern int mMsg_CopyCountryName(u8* data, int idx, int max_size, u32 capitalize);
-extern int mMsg_CopyRamdomNumber2(u8* data, int idx, int max_size);
-extern int mMsg_CopyItem(mMsg_Window_c* msg_win, int item_idx, u8* data, int idx, int max_size, int article, u32 capitalize);
-extern int mMsg_CopyMail(mMsg_Window_c* msg_win, int mail_idx, u8* data, int idx, int max_size, u32 capitalize);
-extern int mMsg_CopyIslandName(u8* data, int idx, int max_size, u32 capitalize);
-extern int mMsg_CopyAmPm(mMsg_Window_c* msg_win, u8* data, int idx, int max_size);
-extern void mMsg_sound_set_voice_silent(mMsg_Window_c* msg_win, int update_voice_mode);
-extern void mMsg_sound_unset_voice_silent(mMsg_Window_c* msg_win, int update_voice_mode);
+extern int mMsg_request_main_disappear(mMsg_Window_c* msg_p);
+extern int mMsg_request_main_appear(mMsg_Window_c* msg_p, ACTOR* client_actor_p, int show_name, rgba_t* window_color, int msg_no, int request_priority);
+extern int mMsg_request_main_disappear_wait_type1(mMsg_Window_c* msg_p);
+extern int mMsg_request_main_disappear_wait_type2(mMsg_Window_c* msg_p);
+extern int mMsg_request_main_appear_wait_type2(mMsg_Window_c* msg_p, int clear_flag);
+extern int mMsg_request_main_appear_wait_type1(mMsg_Window_c* msg_p);
+extern void mMsg_Set_free_str(mMsg_Window_c* msg_p, int free_str_no, u8* str, int str_len);
+extern void mMsg_Set_free_str_cl(mMsg_Window_c* msg_p, int str_no, u8* str_p, int str_len, int cl_id);
+extern void mMsg_Set_free_str_art(mMsg_Window_c* msg_p, int str_no, u8* str_p, int str_len, int article);
+extern void mMsg_Set_free_str_cl_art(mMsg_Window_c* msg_p, int str_no, u8* str_p, int str_len, int cl_id, int article);
+extern void mMsg_Set_item_str(mMsg_Window_c* msg_p, int item_str_no, u8* str, int str_len);
+extern void mMsg_Set_item_str_art(mMsg_Window_c* msg_p, int item_str_no, u8* str, int str_len, int article);
+/* @unused extern void mMsg_Get_free_str(mMsg_Window_c* msg_p, int free_str_no, u8* str?) */
+/* @unused extern void mMsg_Get_item_str(mMsg_Window_c* msg_p, int item_str_no, u8* str?) */
+extern void mMsg_Set_mail_str(mMsg_Window_c* msg_p, int mail_str_no, u8* str, int str_len);
+extern void mMsg_Set_continue_msg_num(mMsg_Window_c* msg_p, int msg_no);
+extern int mMsg_Get_msg_num(mMsg_Window_c* msg_p);
+extern void mMsg_Get_BodyParam(u32 table_addr, u32 data_addr, int index, u32* addr, u32* size);
+extern int mMsg_ChangeMsgData(mMsg_Window_c* msg_p, int index);
+extern int mMsg_Check_NowUtter();
+extern int mMsg_Get_Length_String(u8* str, int str_len);
+extern int mMsg_Check_MainNormalContinue(mMsg_Window_c* msg_p);
+extern int mMsg_Check_MainNormal(mMsg_Window_c* msg_p);
+extern int mMsg_Check_MainHide(mMsg_Window_c* msg_p);
+extern int mMsg_Check_MainDisappear(mMsg_Window_c* msg_p);
+extern void mMsg_Set_CancelNormalContinue(mMsg_Window_c* msg_p);
+extern void mMsg_Unset_CancelNormalContinue(mMsg_Window_c* msg_p);
+extern void mMsg_Set_ForceNext(mMsg_Window_c* msg_p);
+extern void mMsg_Unset_ForceNext(mMsg_Window_c* msg_p);
+// extern int mMsg_Get_LockContinue(mMsg_Window_c* msg_p);
+extern void mMsg_Set_LockContinue(mMsg_Window_c* msg_p);
+extern void mMsg_Unset_LockContinue(mMsg_Window_c* msg_p);
+extern void mMsg_Set_idling_req(mMsg_Window_c* msg_p);
+extern int mMsg_Check_idling_now(mMsg_Window_c* msg_p);
+extern int mMsg_MoveDataCut(u8* data, int dst_idx, int src_idx, int len, int space_flag);
+extern int mMsg_CopyPlayerName(u8* data, int start_idx, int len, u32 capitalize);
+extern int mMsg_CopyTalkName(ACTOR* actor_p, u8* data, int start_idx, int len, u32 capitalize);
+extern int mMsg_CopyTail(ACTOR* actor_p, u8* data, int start_idx, int len, u32 capitalize);
+extern int mMsg_CopyYear(u8* data, int start_idx, int len);
+extern int mMsg_CopyMonth(u8* data, int start_idx, int len);
+extern int mMsg_CopyWeek(u8* data, int start_idx, int len);
+extern int mMsg_CopyDay(u8* data, int start_idx, int len);
+extern int mMsg_CopyHour(u8* data, int start_idx, int len);
+extern int mMsg_CopyMin(u8* data, int start_idx, int len);
+extern int mMsg_CopySec(u8* data, int start_idx, int len);
+extern int mMsg_CopyFree(mMsg_Window_c* msg_p, int str_no, u8* data, int start_idx, int len, int article, u32 capitalize);
+extern int mMsg_CopyDetermination(mMsg_Window_c* msg_p, u8* data, int start_idx, int len);
+extern int mMsg_CopyCountryName(u8 *data, int start_idx, int len, u32 capitalize);
+extern int mMsg_CopyIslandName(u8* data, int start_idx, int len, u32 capitalize);
+extern int mMsg_CopyAmPm(mMsg_Window_c* msg_p, u8* data, int start_idx, int len);
+extern int mMsg_CopyRamdomNumber2(u8* data, int start_idx, int len);
+extern int mMsg_CopyItem(mMsg_Window_c* msg_p, int str_no, u8* data, int start_idx, int len, int article, u32 capitalize);
+extern int mMsg_CopyMail(mMsg_Window_c* msg_p, int str_no, u8* data, int start_idx, int len, u32 capitalize);
 
 #ifdef __cplusplus
 }

@@ -379,7 +379,7 @@ void Game_play_fbdemo_proc(GAME_PLAY* play){
 void play_cleanup(GAME* game){
     GAME_PLAY* play = (GAME_PLAY*)game;
 
-    mMsg_dt(play);
+    mMsg_dt(game);
     banti_dt();
     
     play->game.graph->taskEndCallback = NULL;
@@ -515,7 +515,7 @@ void play_init(GAME* game){
     mMmd_MakeMuseumDisplayData();
     Actor_info_ct(&play->game, &play->actor_info, play->player_data);
     play->draw_chk_proc = none_proc1;
-    mMsg_ct(play);
+    mMsg_ct(game);
     mEv_2nd_init(&play->event);
     mTD_player_keydata_init(play); 
     Balloon_init(play);
@@ -566,7 +566,7 @@ void Game_play_move_fbdemo_not_move(GAME_PLAY* play){
         play->game.doing_point = 1;
         mCoBG_CalcTimerDecalCircle();
         play->game.doing_point = 2;
-        mMsg_Main(play);
+        mMsg_Main((GAME*)play);
     }
     else{
         mVibctl_set_force_stop(2);
@@ -774,7 +774,7 @@ int makeBumpTexture(GAME_PLAY* play, GRAPH* graph1, GRAPH* graph2){
     if((GETREG(HREG, 80) != 10) || (GETREG(HREG, 85) != 0)){
         Actor_info_draw_actor(play, &play->actor_info);
         Camera2_draw(play);
-        mMsg_Draw(play);
+        mMsg_Draw((GAME*)play);
     }
 
     if((GETREG(HREG, 80) != 10) || (GETREG(HREG, 93) != 0)){

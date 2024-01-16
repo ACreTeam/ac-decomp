@@ -957,7 +957,7 @@ static int mMsg_Main_Cursol_Proc_ControlCursol(mMsg_Window_c* msg_p, int* idx_p)
   u8* data = msg_p->msg_data->text_buf.data;
 
   if (data[*idx_p] == CHAR_CONTROL_CODE) {
-    static mMsg_CONTROL_CODE_PROC proc[mFont_CONT_CODE_NUM] = {
+    static const mMsg_CONTROL_CODE_PROC proc[mFont_CONT_CODE_NUM] = {
       &mMsg_Main_Cursol_Last_ControlCursol,
       &mMsg_Main_Cursol_Continue_ControlCursol,
       &mMsg_Main_Cursol_Clear_ControlCursol,

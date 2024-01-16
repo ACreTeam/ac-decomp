@@ -287,8 +287,7 @@ int aNRTC_talk_init(ACTOR* actor, GAME* game) {
         break;
     }
     rtc->npc_class.talk_info.talk_request_proc = mActor_NONE_PROC1;
-    mMsg_Get_base_window_p(); 
-    mMsg_Set_idling_req();
+    mMsg_Set_idling_req(mMsg_Get_base_window_p());
     return 1;
 }
 
