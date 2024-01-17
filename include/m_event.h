@@ -364,7 +364,7 @@ typedef struct ghost_spirit_block_data_s {
 } mEv_gst_hitodama_block_c;
 
 #define mEv_GHOST_FLAG_ACTIVE 0x4000 // TODO: do these live in the ghost actor itself?
-#define mEv_GHOST_FLAG_HITODAMA_EXIST 0x8000
+#define mEv_GHOST_FLAG_RETURNED_SPIRITS 0x8000
 typedef struct ghost_common_s {
   mEv_gst_hitodama_block_c hitodama_block_data;
   u16 flags;

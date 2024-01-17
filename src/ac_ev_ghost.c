@@ -148,7 +148,7 @@ static void aEGH_actor_ct(ACTOR* actorx, GAME* game) {
         mTM_set_renew_time(&ghost_save->renew_time, rtc_time);
       }
 
-      if ((ghost_save->flags & mEv_GHOST_FLAG_HITODAMA_EXIST) != 0) {
+      if ((ghost_save->flags & mEv_GHOST_FLAG_RETURNED_SPIRITS) != 0) {
         Actor_delete(actorx);
       }
     }
