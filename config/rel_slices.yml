@@ -497,6 +497,9 @@ ac_t_pistol.c:
 ac_t_rei1.c:
     .text: [0x804A9858, 0x804A99AC]
     .data: [0x8068EEF8, 0x8068EF38]
+ac_t_rei2.c:
+    .text: [0x804A99AC, 0x804A9B00]
+    .data: [0x8068EF38, 0x8068EF78]
 ac_t_tumbler.c:
     .text: [0x804A9CC4, 0x804A9F24]
     .rodata: [0x80645F10, 0x80645F18]
