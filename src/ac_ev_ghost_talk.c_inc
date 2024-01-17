@@ -375,7 +375,7 @@ static void aEGH_select_wait(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
 
   if (order == 1 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p())) {
     ghost->after_talk_think_act = 1;
-    ghost_data->flags |= 0x8000;
+    ghost_data->flags |= mEv_GHOST_FLAG_RETURNED_SPIRITS;
     mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
 
     switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
