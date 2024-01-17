@@ -331,6 +331,13 @@ extern int mMsg_CopyAmPm(mMsg_Window_c* msg_p, u8* data, int start_idx, int len)
 extern int mMsg_CopyRamdomNumber2(u8* data, int start_idx, int len);
 extern int mMsg_CopyItem(mMsg_Window_c* msg_p, int str_no, u8* data, int start_idx, int len, int article, u32 capitalize);
 extern int mMsg_CopyMail(mMsg_Window_c* msg_p, int str_no, u8* data, int start_idx, int len, u32 capitalize);
+extern int mMsg_sound_voice_get(int code);
+extern int mMsg_sound_voice_get_for_editor(int code);
+extern void mMsg_sound_spec_change_voice_force(mMsg_Window_c* msg_p);
+extern int mMsg_sound_spec_change_voice(mMsg_Window_c* msg_p);
+extern void mMsg_sound_set_voice_click(mMsg_Window_c* msg_p);
+extern void mMsg_sound_set_voice_silent(mMsg_Window_c* msg_p, int update_mode);
+extern void mMsg_sound_unset_voice_silent(mMsg_Window_c* msg_p, int update_mode);
 
 #ifdef __cplusplus
 }

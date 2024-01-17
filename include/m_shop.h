@@ -28,6 +28,23 @@ extern "C" {
 #define mSP_SUPER_SUM   90000 // sales sum for upgrading to Nookway
 #define mSP_DSUPER_SUM 240000 // sales sum for upgrading to Nookington's
 
+enum {
+  mSP_ROOF_COLOR_RED,
+  mSP_ROOF_COLOR_ORANGE,
+  mSP_ROOF_COLOR_YELLOW,
+  mSP_ROOF_COLOR_PALE_GREEN,
+  mSP_ROOF_COLOR_GREEN,
+  mSP_ROOF_COLOR_SKY_BLUE,
+  mSP_ROOF_COLOR_BLUE,
+  mSP_ROOF_COLOR_PURPLE,
+  mSP_ROOF_COLOR_PINK,
+  mSP_ROOF_COLOR_BLACK,
+  mSP_ROOF_COLOR_WHITE,
+  mSP_ROOF_COLOR_BROWN,
+
+  mSP_ROOF_COLOR_NUM
+};
+
 /* item list groups */
 enum {
   mSP_LIST_A,                 /* A priority list */

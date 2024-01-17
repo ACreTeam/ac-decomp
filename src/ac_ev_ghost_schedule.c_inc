@@ -1,0 +1,376 @@
+static void aEGH_look_player(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  if (ghost->npc_class.action.step == aNPC_ACTION_END_STEP) {
+    u8 action = 4;
+    s16 player_y = ghost->npc_class.actor_class.player_angle_y;
+    s16 rot_y = ghost->npc_class.actor_class.shape_info.rotation.y;
+    s16 diff = player_y - rot_y;
+    
+    if (ABS(diff) < DEG2SHORT_ANGLE(67.5f)) {
+      action = 0;
+    }
+
+    aEGH_set_request_act(ghost, 4, action, 2, 1, 0, 0);
+  }
+}
+
+static int aEGH_bitset_func(u16 bit) {
+  u32 player_no = Common_Get(player_no);
+  mEv_gst_c* ghost_save = (mEv_gst_c*)mEv_get_save_area(mEv_EVENT_GHOST, 54);
+  mEv_gst_common_c* ghost_common = (mEv_gst_common_c*)mEv_get_common_area(mEv_EVENT_GHOST, 55);
+
+  if (player_no == mPr_FOREIGNER) {
+    if (ghost_common != NULL) {
+      ghost_common->flags |= bit;
+      return TRUE;
+    }
+  }
+  else if (ghost_save != NULL) {
+    ghost_save->flags |= (u16)(bit << player_no);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static int aEGH_bitclr_func(u16 bit) {
+  u32 player_no = Common_Get(player_no);
+  mEv_gst_c* ghost_save = (mEv_gst_c*)mEv_get_save_area(mEv_EVENT_GHOST, 54);
+  mEv_gst_common_c* ghost_common = (mEv_gst_common_c*)mEv_get_common_area(mEv_EVENT_GHOST, 55);
+
+  if (player_no == mPr_FOREIGNER) {
+    if (ghost_common != NULL) {
+      ghost_common->flags &= ~bit;
+      return TRUE;
+    }
+  }
+  else if (ghost_save != NULL) {
+    ghost_save->flags &= ~(u16)(bit << player_no);
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+static u16 aEGH_bitcheck_func(u16 bit) {
+  u32 player_no = Common_Get(player_no);
+  mEv_gst_c* ghost_save = (mEv_gst_c*)mEv_get_save_area(mEv_EVENT_GHOST, 54);
+  mEv_gst_common_c* ghost_common = (mEv_gst_common_c*)mEv_get_common_area(mEv_EVENT_GHOST, 55);
+
+  if (player_no == mPr_FOREIGNER) {
+    if (ghost_common != NULL) {
+      return ghost_common->flags & bit;
+    }
+  }
+  else if (ghost_save != NULL) {
+    return (u16)(bit << player_no) & ghost_save->flags;
+  }
+
+  return FALSE;
+}
+
+static int aEGH_equal_block(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  int bx;
+  int bz;
+
+  mFI_Wpos2BlockNum(&bx, &bz, GET_PLAYER_ACTOR(play)->actor_class.world.position);
+  return bx == ghost->npc_class.actor_class.block_x && bz == ghost->npc_class.actor_class.block_z;
+}
+
+static int aEGH_time_over() {
+  return Common_Get(time.now_sec) > (4 * mTM_SECONDS_IN_HOUR);
+}
+
+static void aEGH_byebye_check(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  ACTOR* actorx = (ACTOR*)ghost;
+
+  if (
+    mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE &&
+    mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE &&
+    aEGH_time_over() != FALSE
+  ) {
+    if (aEGH_equal_block(ghost, play)) {
+      switch (ghost->think_act) {
+        case aEGH_THINK_SPEAK:
+        {
+          aEGH_setup_think_proc(ghost, play, aEGH_THINK_BYEBYE);
+          ghost->msg_no = 0x2EDD;
+          ghost->npc_class.actor_class.talk_distance = 1000.0f;
+          ghost->_9AA = 1;
+          break;
+        }
+
+        case aEGH_THINK_NORMAL_WAIT:
+        case aEGH_THINK_IRAI_AF:
+        case aEGH_THINK_BYE:
+        case aEGH_THINK_WELCOM:
+        {
+          Actor_delete((ACTOR*)ghost);
+          break;
+        }
+      }
+    }
+    else {
+      aEGH_setup_think_proc(ghost, play, aEGH_THINK_IRAI);
+    }
+  }
+}
+
+static void aEGH_irai(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  if (ghost->npc_class.actor_class.player_distance_xz > 220.0f) {
+    aEGH_setup_think_proc(ghost, play, aEGH_THINK_BYE);
+  }
+}
+
+static void aEGH_bye(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  if (ghost->npc_class.actor_class.player_distance_xz < 200.0f) {
+    aEGH_setup_think_proc(ghost, play, aEGH_THINK_WELCOM);
+  }
+}
+
+static void aEGH_byebye(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  if (ghost->alpha == 0) {
+    Actor_delete((ACTOR*)ghost);
+  }
+  else {
+    if (ghost->bye_bye_timer != 0) {
+      ghost->bye_bye_timer--;
+
+      if (ghost->bye_bye_timer == 0) {
+        sAdo_SysTrgStart(0x16C);
+      }
+    }
+    else {
+      if (ghost->bye_bye_angle < 30000) {
+        ghost->bye_bye_angle += 60;
+      }
+
+      ghost->npc_class.actor_class.shape_info.rotation.y += ghost->bye_bye_angle;
+      ghost->npc_class.actor_class.world.angle.y = ghost->npc_class.actor_class.shape_info.rotation.y;
+      ghost->npc_class.movement.mv_angl = ghost->npc_class.actor_class.world.angle.y;
+      ghost->npc_class.movement.mv_add_angl = 0;
+    }
+
+    if (ghost->bye_bye_scale_timer != 0) {
+      ghost->bye_bye_scale_timer--;
+    }
+    else {
+      ghost->npc_class.actor_class.scale.x += -0.00004f;
+      ghost->npc_class.actor_class.scale.z = ghost->npc_class.actor_class.scale.x;
+    }
+  }
+}
+
+static void aEGH_speak_byebye(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  ACTOR* actorx = (ACTOR*)ghost;
+
+  if (
+    mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE &&
+    mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE &&
+    aEGH_equal_block(ghost, play) == FALSE
+  ) {
+    aEGH_setup_think_proc(ghost, play, aEGH_THINK_IRAI);
+  }
+}
+
+static void aEGH_think_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+
+  (*ghost->think_proc)(ghost, play);
+  aEGH_look_player(ghost, play);
+}
+
+static void aEGH_think_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+  u8 think_act;
+
+  if (ghost->_9AC) {
+    ghost->_9AC = FALSE;
+  }
+  else {
+    if (aEGH_bitcheck_func(aEGH_BIT_FOUND_GHOST)) {
+      ghost->alpha = 140;
+      think_act = aEGH_THINK_SPEAK;
+    }
+    else {
+      ghost->alpha = 0;
+      think_act = aEGH_THINK_IRAI_AF;
+    }
+
+    actorx->actor_class.status_data.weight = 255;
+    actorx->condition_info.hide_request = FALSE;
+    aEGH_setup_think_proc(ghost, play, think_act);
+    actorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FOOTSTEPS_VFX |
+      aNPC_COND_DEMO_SKIP_FEEL_CHECK |
+      aNPC_COND_DEMO_SKIP_FOOTSTEPS |
+      aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK |
+      aNPC_COND_DEMO_SKIP_HEAD_LOOKAT;
+  }
+}
+
+static void aEGH_normal_wait_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  (*Common_Get(clip).npc_clip->animation_init_proc)((ACTOR*)ghost, 126, FALSE);
+  ghost->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_REPEAT;
+  ghost->npc_class.action.idx = 0;
+  aEGH_set_request_act(ghost, 4, 0, 0, 0, 0, 0);
+}
+
+static void aEGH_irai_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  ghost->npc_class.actor_class.talk_distance = 80.0f;
+  aEGH_normal_wait_init(ghost, play);
+  ghost->msg_no = 0x2EE2;
+}
+
+static void aEGH_irai_af_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  ghost->npc_class.actor_class.talk_distance = 55.0f;
+  ghost->msg_no = 0x2EE7;
+  (*Common_Get(clip).npc_clip->chg_schedule_proc)((NPC_ACTOR*)ghost, play, 5);
+  ghost->npc_class.actor_class.status_data.weight = 80;
+}
+
+static void aEGH_bye_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  ghost->npc_class.actor_class.talk_distance = 280.0f;
+  aEGH_normal_wait_init(ghost, play);
+  ghost->msg_no = 0x2ED8;
+}
+
+static void aEGH_welcom_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  ghost->npc_class.actor_class.talk_distance = 200.0f;
+  aEGH_normal_wait_init(ghost, play);
+  ghost->msg_no = 0x2ED3;
+}
+
+static void aEGH_byebye_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  aEGH_bitclr_func(aEGH_BIT_FOUND_GHOST);
+  ghost->bye_bye_angle = -1000;
+  ghost->bye_bye_timer = 25;
+  ghost->bye_bye_scale_timer = 48;
+  ghost->bye_bye_transparency_delay_timer = 43;
+  aEGH_normal_wait_init(ghost, play);
+  ghost->npc_class.head.lock_flag = TRUE;
+}
+
+static aEGH_setup_c dt_tbl[aEGH_THINK_NUM] = {
+  {
+    aEGH_THINK_PROC_BYE,
+    aEGH_THINK_INIT_NORMAL_WAIT,
+    aEGH_TALK_REQUEST_NONE,
+    aEGH_TALK_END_WAIT,
+    aEGH_THINK_NORMAL_WAIT
+  },
+  {
+    aEGH_THINK_PROC_BYEBYE,
+    aEGH_THINK_INIT_BYEBYE,
+    aEGH_TALK_REQUEST_NONE,
+    aEGH_TALK_END_WAIT,
+    aEGH_THINK_IRAI
+  },
+
+  {
+    aEGH_THINK_PROC_NONE,
+    aEGH_THINK_INIT_WELCOM,
+    aEGH_TALK_REQUEST_FORCE,
+    aEGH_TALK_END_WAIT,
+    aEGH_THINK_WELCOM
+  },
+
+  {
+    aEGH_THINK_PROC_BYE,
+    aEGH_THINK_INIT_BYE,
+    aEGH_TALK_REQUEST_FORCE,
+    aEGH_TALK_GIVE_ME_WAIT,
+    aEGH_THINK_NORMAL_WAIT
+  },
+
+  {
+    aEGH_THINK_PROC_IRAI,
+    aEGH_THINK_INIT_IRAI,
+    aEGH_TALK_REQUEST_FORCE,
+    aEGH_TALK_SELECT_WAIT,
+    aEGH_THINK_SPEAK
+  },
+
+  {
+    aEGH_THINK_PROC_SPEAK_BYEBYE,
+    aEGH_THINK_INIT_NORMAL_WAIT,
+    aEGH_TALK_REQUEST_FORCE,
+    aEGH_TALK_SELECT_ROOF,
+    aEGH_THINK_IRAI
+  },
+
+  {
+    aEGH_THINK_PROC_NONE,
+    aEGH_THINK_INIT_IRAI_AF,
+    aEGH_TALK_REQUEST_NORM,
+    aEGH_TALK_END_WAIT,
+    aEGH_THINK_SPEAK
+  }
+};
+
+static aEGH_PROC proc_table[aEGH_THINK_PROC_NUM] = {
+  (aEGH_PROC)&none_proc1,
+  &aEGH_irai,
+  &aEGH_bye,
+  &aEGH_byebye,
+  &aEGH_speak_byebye
+};
+
+static aEGH_PROC init_table[aEGH_THINK_INIT_NUM] = {
+  (aEGH_PROC)&none_proc1,
+  &aEGH_normal_wait_init,
+  &aEGH_irai_init,
+  &aEGH_irai_af_init,
+  &aEGH_bye_init,
+  &aEGH_welcom_init,
+  &aEGH_byebye_init
+};
+
+static void aEGH_setup_think_proc(EV_GHOST_ACTOR* ghost, GAME_PLAY* play, u8 think_act) {
+  static aNPC_TALK_REQUEST_PROC talk_request_table[aEGH_TALK_REQUEST_NUM] = {
+    (aNPC_TALK_REQUEST_PROC)&none_proc1,
+    &aEGH_norm_talk_request,
+    &aEGH_force_talk_request
+  };
+  
+  aEGH_setup_c* data = &dt_tbl[think_act];
+
+  ghost->think_act = think_act;
+  ghost->think_proc = proc_table[data->think_proc];
+  ghost->npc_class.talk_info.talk_request_proc = talk_request_table[data->talk_request_proc];
+  ghost->talk_act = data->talk_act;
+  ghost->after_talk_think_act = data->talk_after_act;
+  (*init_table[data->think_init_proc])(ghost, play);
+  ghost->_9A7 = TRUE;
+}
+
+static void aEGH_think_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int think_type) {
+  switch (think_type) {
+    case 0:
+      aEGH_think_init_proc(actorx, play);
+      break;
+    case 1:
+      aEGH_think_main_proc(actorx, play);
+      break;
+  }
+}
+
+static void aEGH_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+  actorx->think.think_proc = &aEGH_think_proc;
+  (*Common_Get(clip).npc_clip->think_proc)(actorx, play, aNPC_THINK_SPECIAL, 0);
+}
+
+static void aEGH_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+  if ((*Common_Get(clip).npc_clip->think_proc)(actorx, play, -1, 1) == FALSE) {
+    (*Common_Get(clip).npc_clip->think_proc)(actorx, play, -1, 2);
+  }
+}
+
+static void aEGH_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int sched_type) {
+  switch (sched_type) {
+    case 0:
+      aEGH_schedule_init_proc(actorx, play);
+      break;
+    case 1:
+      aEGH_schedule_main_proc(actorx, play);
+      break;
+  }
+}

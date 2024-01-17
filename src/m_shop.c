@@ -2074,7 +2074,7 @@ extern void mSP_RandomUmbSelect(mActor_name_t* umb_list, int count) {
     int set = FALSE;
 
     while (!set) {
-      mActor_name_t umb = ITM_GELATO_UMBRELLA + RANDOM(UMBRELLA_NUM);
+      mActor_name_t umb = ITM_UMBRELLA00 + RANDOM(UMBRELLA_NUM);
 
       if (mSP_GoodsExistAlready(umb_list, count, umb) == FALSE) {
         umb_list[i] = umb;

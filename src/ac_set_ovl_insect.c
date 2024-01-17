@@ -1337,7 +1337,7 @@ static int aSOI_ins_renew_check_range_table(SET_MANAGER* set_manager, aSOI_insec
     spawn_type = aSOI_SPAWN_TYPE_ISLAND;
   }
   else {
-    mEv_gst_common_c* ghost_common = (mEv_gst_common_c*)mEv_get_common_area(0x72, 0x37); // TODO: definitions for event type, event id
+    mEv_gst_common_c* ghost_common = (mEv_gst_common_c*)mEv_get_common_area(mEv_EVENT_GHOST, 0x37); // TODO: definitions for event type, event id
     if (ghost_common != NULL && (ghost_common->flags & mEv_GHOST_FLAG_ACTIVE) != 0 &&
         aSOI_check_hitodama_set_block(set_manager, &ghost_common->hitodama_block_data) == TRUE
     ) {

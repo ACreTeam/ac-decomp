@@ -1219,7 +1219,7 @@ static void init_weekly_event() {
         sched_date = after_n_day(today_date.raw, ofs - rtc_time->weekday);
         event_dates[mEv_SAVE_DATE_WEEKLY] = sched_date;
         Save_Get(event_save_common).weekly_event.type = mEv_EVENT_DOZAEMON; // Gulliver
-        Save_Get(event_save_common).current_event_state = 0;
+        Save_Get(event_save_common).dozaemon_completed = FALSE;
       }
 
       /* Check if Guillver should spawn today */
