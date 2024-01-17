@@ -372,7 +372,7 @@ typedef struct ghost_common_s {
 } mEv_gst_common_c;
 
 typedef struct ghost_event_s {
-  u16 violent_person_str_no;
+  u16 okoruhito_str_no;
   u16 flags;
   lbRTC_ymd_c renew_time;
 } mEv_gst_c;

@@ -95,6 +95,7 @@ typedef void (*aNPC_DRAW_PROC)(ACTOR*, GAME*);
 
 typedef void (*aNPC_REBUILD_DMA_PROC)();
 typedef void (*aNPC_ANIMATION_INIT_PROC)(ACTOR*, int, int);
+typedef void (*aNPC_CHG_SCHEDULE_PROC)(NPC_ACTOR*, GAME_PLAY*, u8);
 typedef int (*aNPC_CLIP_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*, int, int);
 
 typedef int (*aNPC_FORCE_CALL_REQ_PROC)(NPC_ACTOR*, int);
@@ -122,7 +123,7 @@ struct ac_npc_clip_s {
   /* 0x0F8 */ aNPC_REBUILD_DMA_PROC rebuild_dma_proc;
   /* 0x0FC */ void* _0FC[(0x114 - 0x0FC) / sizeof(void*)];
   /* 0x114 */ aNPC_ANIMATION_INIT_PROC animation_init_proc;
-  /* 0x118 */ void* _118;
+  /* 0x118 */ aNPC_CHG_SCHEDULE_PROC chg_schedule_proc;
   /* 0x11C */ void* _11C;
   /* 0x120 */ aNPC_CLIP_THINK_PROC think_proc;
   /* 0x124 */ aNPC_FORCE_CALL_REQ_PROC force_call_req_proc;
@@ -166,7 +167,9 @@ typedef struct npc_draw_info_s {
   /* 0x5BC */ u8 _5BC;
   /* 0x5BD */ u8 _5BD;
   /* 0x5BE */ u8 _5BE;
-  /* 0x5BE */ u8 _5BF[0x630 - 0x5BF];
+  /* 0x5BE */ u8 _5BF[0x5D0 - 0x5BF];
+  /* 0x5D0 */ f32 animation_speed;
+  /* 0x5D4 */ u8 _5D4[0x630 - 0x5D4];
 } aNPC_draw_info_c;
 
 typedef void (*aNPC_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*, int);
@@ -387,6 +390,18 @@ typedef struct npc_accessory_s {
 /* Used for think, schedule, action, & talk */
 typedef void (*aNPC_PROC)(NPC_ACTOR* npc_actorx, GAME_PLAY* play, int schedule_idx);
 typedef void (*aNPC_SUB_PROC)(NPC_ACTOR* npc_actorx, GAME_PLAY* play);
+
+enum {
+  aNPC_SCHEDULE_TYPE_FIELD,
+  aNPC_SCHEDULE_TYPE_IN_HOUSE,
+  aNPC_SCHEDULE_TYPE_SLEEP,
+  aNPC_SCHEDULE_TYPE_STAND,
+  aNPC_SCHEDULE_TYPE_WANDER,
+  aNPC_SCHEDULE_TYPE_WALK_WANDER,
+  aNPC_SCHEDULE_TYPE_SPECIAL,
+
+  aNPC_SCHEDULE_TYPE_NUM
+};
 
 struct npc_actor_s {
   ACTOR actor_class;

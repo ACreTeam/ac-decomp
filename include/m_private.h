@@ -25,6 +25,7 @@ extern "C" {
 #define mPr_FLAG_POSTOFFICE_GIFT3 (1 << 5) // 999,999,999 Bells
 #define mPr_FLAG_MUSEUM_COMP_HANDBILL_SCHEDULED (1 << 6) // player is scheduled to receive completion letter & reward
 #define mPr_FLAG_MUSEUM_COMP_HANDBILL_RECEIVED (1 << 7) // player has received the completion letter & reward
+#define mPr_FLAG_UPDATE_OUTLOOK_PENDING (1 << 9) // player bought a new coat of roof paint to be repainted
 
 #define mPr_MONEY_POWER_MIN -80
 

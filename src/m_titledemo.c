@@ -53,8 +53,8 @@ extern void mTD_player_keydata_init(GAME_PLAY* play) {
     else if (tool == ITM_ROD) {
       tool = ITM_ROD;
     }
-    else if (tool == ITM_GELATO_UMBRELLA) {
-      tool = ITM_GELATO_UMBRELLA;
+    else if (tool == ITM_UMBRELLA00) {
+      tool = ITM_UMBRELLA00;
     }
 
     mPlib_SetData2_controller_data_for_title_demo(tool);

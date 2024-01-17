@@ -62,7 +62,7 @@ extern void mPlib_Object_Exchange_keep_new_PlayerMdl(GAME_PLAY* play);
 extern void mPlib_Object_Exchange_keep_new_PlayerTex(GAME_PLAY* play, int bank_id, int base_idx);
 extern void mPlib_Object_Exchange_keep_new_PlayerFaceTex(GAME_PLAY* play);
 extern void mPlib_Object_Exchange_keep_new_PlayerFacePallet(GAME_PLAY* play, int bank_id, int base_idx);
-extern void mPlib_request_main_give_type1(GAME_PLAY* play, mActor_name_t item, int mode, int present, int on_surface);
+extern void mPlib_request_main_give_type1(GAME* game, mActor_name_t item, int mode, int present, int on_surface);
 
 #define GET_PLAYER_ACTOR(play) get_player_actor_withoutCheck(play)
 #define GET_PLAYER_ACTOR_NOW() get_player_actor_withoutCheck((GAME_PLAY*)gamePT)

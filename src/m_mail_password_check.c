@@ -1082,7 +1082,7 @@ extern int mMpswd_check_present_user(mActor_name_t item) {
           price = mSP_ItemNo2ItemPrice(item);
         }
       }
-      else if (item >= ITM_GELATO_UMBRELLA && item <= ITM_MY_ORG_UMBRELLA7) {
+      else if (item >= ITM_UMBRELLA00 && item <= ITM_MY_ORG_UMBRELLA7) {
         price = mSP_ItemNo2ItemPrice(item);
       }
       else if (
@@ -1193,7 +1193,7 @@ static int mMpswd_check_present_other(mActor_name_t item) {
         case ITEM1_CAT_TOOL:
         {
           /* allow umbrellas */
-          if (item >= ITM_GELATO_UMBRELLA && item <= ITM_FLAME_UMBRELLA) {
+          if (item >= ITM_UMBRELLA00 && item <= ITM_UMBRELLA31) {
             res = TRUE;
             break;
           }

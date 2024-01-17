@@ -744,7 +744,7 @@ static void mSCR_talk_pickup_all(TAISOU_NPC0_ACTOR* taisou_actor, GAME_PLAY* pla
   switch (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9)) {
     case 1:
     {
-      mPlib_request_main_give_type1(play, ITM_EXCERCISE_CARD00, 7, FALSE, FALSE);
+      mPlib_request_main_give_type1((GAME*)play, ITM_EXCERCISE_CARD00, 7, FALSE, FALSE);
       mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 2);
       mMsg_Set_LockContinue(mMsg_Get_base_window_p());
       mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 3);
@@ -772,7 +772,7 @@ static void mSCR_talk_inspection(TAISOU_NPC0_ACTOR* taisou_actor, GAME_PLAY* pla
   switch (order) {
     case 1:
     {
-      mPlib_request_main_give_type1(play, ITM_EXCERCISE_CARD00, 8, FALSE, FALSE);
+      mPlib_request_main_give_type1((GAME*)play, ITM_EXCERCISE_CARD00, 8, FALSE, FALSE);
       mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 2);
       mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 3);
       mMsg_Set_continue_msg_num(msg_win, 0x3422 + taisou_actor->talk_state);

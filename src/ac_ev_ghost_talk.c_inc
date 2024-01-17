@@ -1,0 +1,625 @@
+static int aEGH_hitodama_num() {
+  int i;
+  int num;
+  Private_c* priv = Common_Get(now_private);
+
+  for (i = 0, num = 0; i < mEv_GHOST_HITODAMA_NUM; i++) {
+    int n = mPr_GetPossessionItemSumWithCond(priv, ITM_SPIRIT0 + i, mPr_ITEM_COND_NORMAL);
+    
+    num += n * (i + 1);
+  }
+
+  return num;
+}
+
+static void aEGH_okoruhito() {
+  static u8 pf_string[mMsg_FREE_STRING_LEN];
+  mEv_gst_c* ghost_ev = (mEv_gst_c*)mEv_get_save_area(mEv_EVENT_GHOST, 54);
+
+  mString_Load_StringFromRom(pf_string, sizeof(pf_string), 0x62E + ghost_ev->okoruhito_str_no);
+  mMsg_Set_item_str(mMsg_Get_base_window_p(), mMsg_FREE_STR1, pf_string, sizeof(pf_string));
+}
+
+static void aEGH_delete_hitodama() {
+  int i;
+  int num;
+  Private_c* priv = Common_Get(now_private);
+
+  for (i = 0, num = 0; i < mEv_GHOST_HITODAMA_NUM; i++) {
+    int idx = mPr_GetPossessionItemIdxWithCond(priv, ITM_SPIRIT0 + i, mPr_ITEM_COND_NORMAL);
+
+    while (idx != -1) {
+      mPr_SetPossessionItem(Common_Get(now_private), idx, EMPTY_NO, mPr_ITEM_COND_NORMAL);
+      idx = mPr_GetPossessionItemIdxWithCond(priv, ITM_SPIRIT0 + i, mPr_ITEM_COND_NORMAL);
+    }
+  }
+}
+
+static mActor_name_t aEGH_get_collect(int selected_idx, mActor_name_t* list) {
+  while (*list != EMPTY_NO) {
+    if (mSP_CollectCheck(*list) == FALSE) {
+      if (selected_idx > 0) {
+        selected_idx--;
+      }
+      else {
+        return *list;
+      }
+    }
+
+    list++;
+  }
+
+  return EMPTY_NO;
+}
+
+static void aEGH_check_collect_num(int* list_num, int* uncollect_num, mActor_name_t* list) {
+  *list_num = 0;
+  *uncollect_num = 0;
+  
+  while (*list != EMPTY_NO) {
+    (*list_num)++;
+
+    if (mSP_CollectCheck(*list) == FALSE) {
+      (*uncollect_num)++;
+    }
+
+    list++;
+  }
+}
+
+extern mActor_name_t ftr_listA[];
+extern mActor_name_t ftr_listB[];
+extern mActor_name_t ftr_listC[];
+extern mActor_name_t ftr_listEvent[];
+extern mActor_name_t ftr_listLottery[];
+extern mActor_name_t carpet_listA[];
+extern mActor_name_t carpet_listB[];
+extern mActor_name_t carpet_listC[];
+extern mActor_name_t carpet_listEvent[];
+extern mActor_name_t wall_listA[];
+extern mActor_name_t wall_listB[];
+extern mActor_name_t wall_listC[];
+extern mActor_name_t wall_listEvent[];
+extern mActor_name_t cloth_listA[];
+extern mActor_name_t cloth_listB[];
+extern mActor_name_t cloth_listC[];
+extern mActor_name_t cloth_listEvent[];
+extern mActor_name_t binsen_listA[];
+extern mActor_name_t binsen_listB[];
+extern mActor_name_t binsen_listC[];
+
+static mActor_name_t list_haniwa[HANIWA_NUM + 1] = {
+  FTR_HANIWA000_SOUTH,
+  FTR_HANIWA001_SOUTH,
+  FTR_HANIWA002_SOUTH,
+  FTR_HANIWA003_SOUTH,
+  FTR_HANIWA004_SOUTH,
+  FTR_HANIWA005_SOUTH,
+  FTR_HANIWA006_SOUTH,
+  FTR_HANIWA007_SOUTH,
+  FTR_HANIWA008_SOUTH,
+  FTR_HANIWA009_SOUTH,
+  FTR_HANIWA010_SOUTH,
+  FTR_HANIWA011_SOUTH,
+  FTR_HANIWA012_SOUTH,
+  FTR_HANIWA013_SOUTH,
+  FTR_HANIWA014_SOUTH,
+  FTR_HANIWA015_SOUTH,
+  FTR_HANIWA016_SOUTH,
+  FTR_HANIWA017_SOUTH,
+  FTR_HANIWA018_SOUTH,
+  FTR_HANIWA019_SOUTH,
+  FTR_HANIWA020_SOUTH,
+  FTR_HANIWA021_SOUTH,
+  FTR_HANIWA022_SOUTH,
+  FTR_HANIWA023_SOUTH,
+  FTR_HANIWA024_SOUTH,
+  FTR_HANIWA025_SOUTH,
+  FTR_HANIWA026_SOUTH,
+  FTR_HANIWA027_SOUTH,
+  FTR_HANIWA028_SOUTH,
+  FTR_HANIWA029_SOUTH,
+  FTR_HANIWA030_SOUTH,
+  FTR_HANIWA031_SOUTH,
+  FTR_HANIWA032_SOUTH,
+  FTR_HANIWA033_SOUTH,
+  FTR_HANIWA034_SOUTH,
+  FTR_HANIWA035_SOUTH,
+  FTR_HANIWA036_SOUTH,
+  FTR_HANIWA037_SOUTH,
+  FTR_HANIWA038_SOUTH,
+  FTR_HANIWA039_SOUTH,
+  FTR_HANIWA040_SOUTH,
+  FTR_HANIWA041_SOUTH,
+  FTR_HANIWA042_SOUTH,
+  FTR_HANIWA043_SOUTH,
+  FTR_HANIWA044_SOUTH,
+  FTR_HANIWA045_SOUTH,
+  FTR_HANIWA046_SOUTH,
+  FTR_HANIWA047_SOUTH,
+  FTR_HANIWA048_SOUTH,
+  FTR_HANIWA049_SOUTH,
+  FTR_HANIWA050_SOUTH,
+  FTR_HANIWA051_SOUTH,
+  FTR_HANIWA052_SOUTH,
+  FTR_HANIWA053_SOUTH,
+  FTR_HANIWA054_SOUTH,
+  FTR_HANIWA055_SOUTH,
+  FTR_HANIWA056_SOUTH,
+  FTR_HANIWA057_SOUTH,
+  FTR_HANIWA058_SOUTH,
+  FTR_HANIWA059_SOUTH,
+  FTR_HANIWA060_SOUTH,
+  FTR_HANIWA061_SOUTH,
+  FTR_HANIWA062_SOUTH,
+  FTR_HANIWA063_SOUTH,
+  FTR_HANIWA064_SOUTH,
+  FTR_HANIWA065_SOUTH,
+  FTR_HANIWA066_SOUTH,
+  FTR_HANIWA067_SOUTH,
+  FTR_HANIWA068_SOUTH,
+  FTR_HANIWA069_SOUTH,
+  FTR_HANIWA070_SOUTH,
+  FTR_HANIWA071_SOUTH,
+  FTR_HANIWA072_SOUTH,
+  FTR_HANIWA073_SOUTH,
+  FTR_HANIWA074_SOUTH,
+  FTR_HANIWA075_SOUTH,
+  FTR_HANIWA076_SOUTH,
+  FTR_HANIWA077_SOUTH,
+  FTR_HANIWA078_SOUTH,
+  FTR_HANIWA079_SOUTH,
+  FTR_HANIWA080_SOUTH,
+  FTR_HANIWA081_SOUTH,
+  FTR_HANIWA082_SOUTH,
+  FTR_HANIWA083_SOUTH,
+  FTR_HANIWA084_SOUTH,
+  FTR_HANIWA085_SOUTH,
+  FTR_HANIWA086_SOUTH,
+  FTR_HANIWA087_SOUTH,
+  FTR_HANIWA088_SOUTH,
+  FTR_HANIWA089_SOUTH,
+  FTR_HANIWA090_SOUTH,
+  FTR_HANIWA091_SOUTH,
+  FTR_HANIWA092_SOUTH,
+  FTR_HANIWA093_SOUTH,
+  FTR_HANIWA094_SOUTH,
+  FTR_HANIWA095_SOUTH,
+  FTR_HANIWA096_SOUTH,
+  FTR_HANIWA097_SOUTH,
+  FTR_HANIWA098_SOUTH,
+  FTR_HANIWA099_SOUTH,
+  FTR_HANIWA100_SOUTH,
+  FTR_HANIWA101_SOUTH,
+  FTR_HANIWA102_SOUTH,
+  FTR_HANIWA103_SOUTH,
+  FTR_HANIWA104_SOUTH,
+  FTR_HANIWA105_SOUTH,
+  FTR_HANIWA106_SOUTH,
+  FTR_HANIWA107_SOUTH,
+  FTR_HANIWA108_SOUTH,
+  FTR_HANIWA109_SOUTH,
+  FTR_HANIWA110_SOUTH,
+  FTR_HANIWA111_SOUTH,
+  FTR_HANIWA112_SOUTH,
+  FTR_HANIWA113_SOUTH,
+  FTR_HANIWA114_SOUTH,
+  FTR_HANIWA115_SOUTH,
+  FTR_HANIWA116_SOUTH,
+  FTR_HANIWA117_SOUTH,
+  FTR_HANIWA118_SOUTH,
+  FTR_HANIWA119_SOUTH,
+  FTR_HANIWA120_SOUTH,
+  FTR_HANIWA121_SOUTH,
+  FTR_HANIWA122_SOUTH,
+  FTR_HANIWA123_SOUTH,
+  FTR_HANIWA124_SOUTH,
+  FTR_HANIWA125_SOUTH,
+  FTR_HANIWA126_SOUTH,
+  EMPTY_NO /* end of list */
+};
+
+static mActor_name_t umbrella_list[UMBRELLA_NUM + 1] = {
+  ITM_UMBRELLA00,
+  ITM_UMBRELLA01,
+  ITM_UMBRELLA02,
+  ITM_UMBRELLA03,
+  ITM_UMBRELLA04,
+  ITM_UMBRELLA05,
+  ITM_UMBRELLA06,
+  ITM_UMBRELLA07,
+  ITM_UMBRELLA08,
+  ITM_UMBRELLA09,
+  ITM_UMBRELLA10,
+  ITM_UMBRELLA11,
+  ITM_UMBRELLA12,
+  ITM_UMBRELLA13,
+  ITM_UMBRELLA14,
+  ITM_UMBRELLA15,
+  ITM_UMBRELLA16,
+  ITM_UMBRELLA17,
+  ITM_UMBRELLA18,
+  ITM_UMBRELLA19,
+  ITM_UMBRELLA20,
+  ITM_UMBRELLA21,
+  ITM_UMBRELLA22,
+  ITM_UMBRELLA23,
+  ITM_UMBRELLA24,
+  ITM_UMBRELLA25,
+  ITM_UMBRELLA26,
+  ITM_UMBRELLA27,
+  ITM_UMBRELLA28,
+  ITM_UMBRELLA29,
+  ITM_UMBRELLA30,
+  ITM_UMBRELLA31,
+  EMPTY_NO /* end of list */
+};
+
+static mActor_name_t aEGH_not_collect_get() {
+  static mActor_name_t* item_list[aEGH_ITEM_LIST_NUM] = {
+    ftr_listA,
+    ftr_listB,
+    ftr_listC,
+    ftr_listEvent,
+    ftr_listLottery,
+    carpet_listA,
+    carpet_listB,
+    carpet_listC,
+    carpet_listEvent,
+    wall_listA,
+    wall_listB,
+    wall_listC,
+    wall_listEvent,
+    cloth_listA,
+    cloth_listB,
+    cloth_listC,
+    cloth_listEvent,
+    binsen_listA,
+    binsen_listB,
+    binsen_listC,
+    list_haniwa,
+    umbrella_list
+  };
+
+  int list_num_tbl[aEGH_ITEM_LIST_NUM];
+  int uncollect_num_tbl[aEGH_ITEM_LIST_NUM];
+  int no_uncollected_flag = FALSE;
+  int selected_idx;
+  mActor_name_t item;
+  int i;
+  int total_count;
+
+  /* Calculate total items in each list and uncollected items in each list */
+  for (i = 0; i < aEGH_ITEM_LIST_NUM; i++) {
+    aEGH_check_collect_num(&list_num_tbl[i], &uncollect_num_tbl[i], item_list[i]);
+  }
+
+  for (i = 0, total_count = 0; i < aEGH_ITEM_LIST_NUM; i++) {
+    total_count += uncollect_num_tbl[i];
+  }
+
+  /* If no uncollected items remain, select one at random from all lists */
+  if (total_count == 0) {
+    no_uncollected_flag = TRUE; /* all items collected */
+    for (i = 0, total_count = 0; i < aEGH_ITEM_LIST_NUM; i++) {
+      total_count += list_num_tbl[i];
+    }
+  }
+
+  selected_idx = RANDOM(total_count);
+  if (no_uncollected_flag) {
+    /* Transform the absolute idx into the list idx by removing all entries up to the selected list */
+    for (i = 0; i < aEGH_ITEM_LIST_NUM && selected_idx >= list_num_tbl[i]; i++) {
+      selected_idx -= list_num_tbl[i];
+    }
+
+    if (i != aEGH_ITEM_LIST_NUM) {
+      item = item_list[i][selected_idx];
+    }
+    else {
+      item = ITM_FOOD_PEACH; /* If we somehow failed to select an item, we'll give them a peach */
+    }
+  }
+  else {
+    /* Transform the absolute idx into the list idx by removing all entries up to the selected list */
+    for (i = 0; i < aEGH_ITEM_LIST_NUM && selected_idx >= uncollect_num_tbl[i]; i++) {
+      selected_idx -= uncollect_num_tbl[i];
+    }
+
+    if (i != aEGH_ITEM_LIST_NUM) {
+      item = aEGH_get_collect(selected_idx, item_list[i]); /* Get the uncollected item from the list */
+
+      if (item == EMPTY_NO) {
+        item = ITM_FOOD_APPLE; /* If we somehow failed to get an uncollected item, we'll give them an apple */
+      }
+    }
+    else {
+      item = ITM_FOOD_PEACH; /* If we somehow failed to select an item, we'll give them a peach */
+    }
+  }
+
+  return mRmTp_FtrItemNo2Item1ItemNo(item, TRUE);
+}
+
+static void aEGH_give_me_wait(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+  switch (order) {
+    case 1:
+    {
+      mPlib_request_main_give_type1((GAME*)play, ITM_SPIRIT0, 7, FALSE, FALSE);
+      mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 2);
+      mMsg_Set_LockContinue(mMsg_Get_base_window_p());
+      mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 3);
+      aEGH_delete_hitodama();
+      break;
+    }
+
+    case 2:
+    {
+      if (Common_Get(clip).handOverItem_clip->master_actor == NULL) {
+        mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        aEGH_change_talk_proc(ghost, aEGH_TALK_SELECT_WAIT);
+      }
+
+      break;
+    }
+  }
+}
+
+static void aEGH_select_wait(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+  mEv_gst_c* ghost_data = (mEv_gst_c*)mEv_get_save_area(mEv_EVENT_GHOST, 54);
+
+  if (order == 1 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p())) {
+    ghost->after_talk_think_act = 1;
+    ghost_data->flags |= 0x8000;
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+    switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+      case mChoice_CHOICE0: /* Clear weeds */
+      {
+        u32 num_weeds = mFI_GetItemNumField(GRASS_A, GRASS_C);
+
+        if (num_weeds < 50) {
+          mMsg_Set_continue_msg_num(msg_p, 0x2EF1);
+        }
+        else if (num_weeds < 150) {
+          mMsg_Set_continue_msg_num(msg_p, 0x2EF2);
+        }
+        else if (num_weeds < 450) {
+          mMsg_Set_continue_msg_num(msg_p, 0x2EF3);
+        }
+        else if (num_weeds < 900) {
+          mMsg_Set_continue_msg_num(msg_p, 0x2EF4);
+        }
+        else {
+          mMsg_Set_continue_msg_num(msg_p, 0x2EF5);
+        }
+
+        aEGH_change_talk_proc(ghost, aEGH_TALK_CLEAR_GRASS);
+        break;
+      }
+
+      case mChoice_CHOICE1:
+      {
+        aEGH_change_talk_proc(ghost, aEGH_TALK_SELECT_ROOF);
+        ghost->roof_pal = 0;
+        break;
+      }
+
+      case mChoice_CHOICE2:
+      {
+        u8 name[mIN_ITEM_NAME_LEN];
+
+        aEGH_change_talk_proc(ghost, aEGH_TALK_GIVE_YOU_WAIT);
+        ghost->give_item = aEGH_not_collect_get();
+        mIN_copy_name_str(name, ghost->give_item);
+        mMsg_Set_item_str_art(msg_p, mMsg_ITEM_STR0, name, mIN_ITEM_NAME_LEN, mIN_get_item_article(ghost->give_item));
+        break;
+      }
+    }
+  }
+}
+
+static void aEGH_select_roof(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+  int arrange_idx = mHS_get_arrange_idx(Common_Get(player_no));
+  mHm_hs_c* home = Save_GetPointer(homes[arrange_idx]);
+
+  if (order == 1 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p())) {
+    int selected;
+
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    selected = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+
+    if (selected >= mChoice_CHOICE3) {
+      ghost->roof_pal += 3;
+
+      if (ghost->roof_pal >= mSP_ROOF_COLOR_NUM) {
+        ghost->roof_pal = 0;
+      }
+    }
+    else {
+      ghost->roof_pal += (u8)selected;
+      home->outlook_pal = ghost->roof_pal;
+
+      /* Only update the 'next outlook' palette if the player doesn't have a coat of paint already scheduled */
+      if ((Common_Get(now_private)->state_flags & mPr_FLAG_UPDATE_OUTLOOK_PENDING) == 0) {
+        home->next_outlook_pal = ghost->roof_pal;
+      }
+
+      aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
+    }
+  }
+}
+
+static void aEGH_give_you_wait(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
+  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+
+  if (order == 2) {
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, ghost->give_item);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, 7);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, 0);
+    mPr_SetFreePossessionItem(Common_Get(now_private), ghost->give_item, mPr_ITEM_COND_NORMAL);
+    aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
+  }
+}
+
+static int aEGH_change_talk_proc(EV_GHOST_ACTOR* ghost, u8 talk_act) {
+  ghost->talk_act = talk_act;
+  return TRUE;
+}
+
+static void aEGH_set_force_talk_info(ACTOR* actorx) {
+  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+  mEv_gst_common_c* ghost_common = (mEv_gst_common_c*)mEv_get_common_area(mEv_EVENT_GHOST, 55);
+
+  mDemo_Set_msg_num(ghost->msg_no + RANDOM(5));
+  aEGH_okoruhito();
+
+  switch (ghost->msg_no) {
+    case 0x2EE2:
+    {
+      mDemo_Set_talk_turn(TRUE);
+      mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+      
+      if (aEGH_bitcheck_func(aEGH_BIT_FOUND_GHOST) == FALSE) {
+        sAdo_SysTrgStart(0x6B);
+        aEGH_bitset_func(aEGH_BIT_FOUND_GHOST);
+      }
+
+      ghost_common->flags |= mEv_GHOST_FLAG_ACTIVE;
+      break;
+    }
+
+    case 0x2EDD:
+    {
+      mDemo_Set_talk_turn(TRUE);
+      mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+      break;
+    }
+
+    case 0x2ED3:
+    case 0x2ED8:
+    {
+      mDemo_Set_talk_turn(FALSE);
+      mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+      mMsg_sound_set_voice_click(mMsg_Get_base_window_p());
+      break;
+    }
+
+    default:
+    {
+      mDemo_Set_talk_turn(FALSE);
+      mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+      break;
+    }
+  }
+
+  aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
+}
+
+static void aEGH_force_talk_request(ACTOR* actorx, GAME* game) {
+  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+  GAME_PLAY* play = (GAME_PLAY*)game;
+  f32 dist = GET_PLAYER_ACTOR(play)->actor_class.world.position.y - actorx->world.position.y;
+
+  if (dist < 0.0f) {
+    dist = -dist;
+  }
+
+  if (!(
+      !(ghost->_9A7 == FALSE && actorx->player_distance_xz < actorx->talk_distance) ||
+      !(dist < 60.0f) && (ghost->_9AA == FALSE)
+  )) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aEGH_set_force_talk_info);
+  }
+  else {
+    ghost->_9A7 = FALSE;
+  }
+}
+
+static void aEGH_set_norm_talk_info(ACTOR* actorx) {
+  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+  int hitodama_num;
+  int msg_no;
+
+  aEGH_okoruhito();
+  mDemo_Set_talk_turn(TRUE);
+  mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+  aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
+
+  hitodama_num = aEGH_hitodama_num();
+  if (hitodama_num == 0) {
+    msg_no = 0x2EE7 + RANDOM(5);
+  }
+  else if (hitodama_num >= mEv_GHOST_HITODAMA_NUM) {
+    msg_no = 0x2EF0;
+    aEGH_change_talk_proc(ghost, aEGH_TALK_GIVE_ME_WAIT);
+    Save_Get(event_save_common).ghost_day = 0;
+  }
+  else {
+    msg_no = 0x2EEB + hitodama_num;
+  }
+
+  mDemo_Set_msg_num(msg_no);
+}
+
+static void aEGH_norm_talk_request(ACTOR* actorx, GAME* game) {
+  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+
+  if (ghost->_9A7 == FALSE) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, &aEGH_set_norm_talk_info);
+  }
+  else {
+    ghost->_9A7 = FALSE;
+  }
+}
+
+static int aEGH_talk_init(ACTOR* actorx, GAME* game) {
+  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+
+  ghost->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)&none_proc1;
+  mDemo_Set_ListenAble();
+  mDemo_Start(actorx);
+  return TRUE;
+}
+
+typedef void (*aEGH_TALK_PROC)(EV_GHOST_ACTOR*, GAME_PLAY*);
+
+static int aEGH_talk_end_chk(ACTOR* actorx, GAME* game) {
+  static aEGH_TALK_PROC proc[aEGH_TALK_NUM] = {
+    (aEGH_TALK_PROC)&none_proc1,
+    &aEGH_give_me_wait,
+    &aEGH_select_wait,
+    &aEGH_select_roof,
+    &aEGH_give_you_wait,
+    (aEGH_TALK_PROC)&none_proc1
+  };
+
+  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+  GAME_PLAY* play = (GAME_PLAY*)game;
+  int res = FALSE;
+
+  (*proc[ghost->talk_act])(ghost, play);
+
+  if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE && mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {
+    if (ghost->talk_act == aEGH_TALK_CLEAR_GRASS) {
+      Save_Set(clear_grass, TRUE);
+    }
+
+    aEGH_setup_think_proc(ghost, play, ghost->after_talk_think_act);
+
+    if (ghost->melody_inst != 0) {
+      ghost->npc_class.talk_info.melody_inst = ghost->melody_inst;
+      ghost->melody_inst = 0;
+    }
+
+    res = TRUE;
+  }
+
+  return res;
+}
