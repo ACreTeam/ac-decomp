@@ -56,7 +56,7 @@ static void mNW_InitMyOriginalTexture(int player_no) {
   for (i = 0; i < mNW_DEFAULT_ORIGINAL_TEX_NUM; i++) {
     _JW_GetResourceAram(
       JW_GetAramAddress(27) + i * mNW_DESIGN_TEX_SIZE,
-      Save_Get(private[player_no].my_org[i & 7].design),
+      Save_Get(private[player_no].my_org[i & 7].design.data),
       mNW_DESIGN_TEX_SIZE
     );
   }
@@ -112,7 +112,7 @@ static void mNW_InitNeedleworkTexture() {
   int i;
 
   for (i = 0; i < mNW_TOTAL_DESIGN_NUM; i++) {
-    mNW_CopyNeedleworkDefaultTexture(Save_Get(needlework.original_design[i & 7].design), i);
+    mNW_CopyNeedleworkDefaultTexture(Save_Get(needlework.original_design[i & 7].design.data), i);
   }
 }
 
@@ -321,7 +321,7 @@ extern u16* mNW_PaletteIdx2Palette(int palette_idx) {
  **/
 extern void mNW_CopyOriginalTextureClass(mNW_original_design_c* dst, mNW_original_design_c* src) {
   bcopy(src, dst, sizeof(mNW_original_design_c));
-  DCStoreRangeNoSync(dst->design, mNW_DESIGN_TEX_SIZE);
+  DCStoreRangeNoSync(dst->design.data, mNW_DESIGN_TEX_SIZE);
 }
 
 /**
@@ -332,7 +332,7 @@ extern void mNW_CopyOriginalTextureClass(mNW_original_design_c* dst, mNW_origina
  **/
 extern void mNW_CopyOriginalTexture(void* dst, mNW_original_design_c* src) {
   if (dst != NULL) {
-    bcopy(src->design, dst, mNW_DESIGN_TEX_SIZE);
+    bcopy(src->design.data, dst, mNW_DESIGN_TEX_SIZE);
     DCStoreRangeNoSync(dst, mNW_DESIGN_TEX_SIZE);
   }
 }
@@ -358,7 +358,7 @@ extern void mNW_CopyOriginalPalette(void* dst, mNW_original_design_c* src) {
  **/
 extern void mNW_OverWriteOriginalTexture(mNW_original_design_c* dst, u8* src) {
   if (src != NULL) {
-    u8* tex = dst->design; 
+    u8* tex = dst->design.data; 
     bcopy(src, tex, mNW_DESIGN_TEX_SIZE);
     DCStoreRangeNoSync(tex, mNW_DESIGN_TEX_SIZE);
   }
@@ -389,8 +389,8 @@ extern void mNW_SwapOriginalData(mNW_original_design_c* org0, mNW_original_desig
   bcopy(org0, &mNW_swap_work, sizeof(mNW_original_design_c));
   bcopy(org1, org0, sizeof(mNW_original_design_c));
   bcopy(&mNW_swap_work, org1, sizeof(mNW_original_design_c));
-  DCStoreRangeNoSync(org0->design, mNW_DESIGN_TEX_SIZE);
-  DCStoreRangeNoSync(org1->design, mNW_DESIGN_TEX_SIZE);
+  DCStoreRangeNoSync(org0->design.data, mNW_DESIGN_TEX_SIZE);
+  DCStoreRangeNoSync(org1->design.data, mNW_DESIGN_TEX_SIZE);
 }
 
 /**
@@ -403,7 +403,7 @@ extern void mNW_InitOriginalData(mNW_original_design_c* design) {
 
   u8* tex;
   mNW_OverWriteOriginalName(design, name);
-  tex = design->design;
+  tex = design->design.data;
   mem_clear(tex, mNW_DESIGN_TEX_SIZE, 0xFF);
   DCStoreRangeNoSync(tex, mNW_DESIGN_TEX_SIZE);
   design->palette = 0;

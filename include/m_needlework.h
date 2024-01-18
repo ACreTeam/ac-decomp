@@ -42,12 +42,16 @@ enum {
   mNW_PALETTE_NUM
 };
 
+typedef struct original_texture_s {
+  u8 data[mNW_DESIGN_TEX_SIZE];
+} ATTRIBUTE_ALIGN(32) mNW_original_tex_c;
+
 /* sizeof(mNW_original_design_c) == 0x220 */
 typedef struct original_data_s {
   /* 0x000 */ u8 name[mNW_ORIGINAL_DESIGN_NAME_LEN];
   /* 0x010 */ u8 palette;
 
-  /* 0x020 */ u8 design[mNW_DESIGN_TEX_SIZE] ATTRIBUTE_ALIGN(32); /* this is aligned to 32 bytes for ARAM transfer */
+  /* 0x020 */ mNW_original_tex_c design; /* this is aligned to 32 bytes for ARAM transfer */
 } mNW_original_design_c;
 
 /* sizeof(mNW_needlework_c) == 0x1100 */
