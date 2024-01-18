@@ -13,7 +13,7 @@ extern "C" {
 
 typedef struct mask_cat_data_s {
   /* 0x000 */ PersonalID_c creator_pid;
-  /* 0x020 */ u8 design[mNW_DESIGN_TEX_SIZE] ATTRIBUTE_ALIGN(32); /* this is aligned to 32 bytes for ARAM transfer */
+  /* 0x020 */ mNW_original_tex_c design; /* this is aligned to 32 bytes for ARAM transfer */
 } mMC_design_c;
 
 typedef struct mask_cat_s {
