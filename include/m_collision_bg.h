@@ -262,6 +262,7 @@ extern int mCoBG_SearchWaterLimitDistN(xyz_t* water_pos, xyz_t wpos, s16 angle, 
 extern f32 mCoBG_GetBalloonGroundY(const xyz_t* pos);
 extern void mCoBG_MakeBoatCollision(ACTOR* actor, xyz_t* pos, s16* angle_y);
 extern void mCoBG_DeleteBoatCollision(ACTOR* actor);
+extern void mCoBG_WaveCos2BgCheck(f32 wave_cos);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();

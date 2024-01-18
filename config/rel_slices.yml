@@ -411,6 +411,11 @@ ac_boxMove.c:
 ac_boxTrick01.c:
     .text: [0x80415BF8, 0x80415C04]
     .data: [0x806818F0, 0x80681918]
+ac_field_draw.c:
+    .text: [0x80422DA8, 0x80423E20]
+    .rodata: [0x80643F00, 0x80643F88]
+    .data: [0x806829E0, 0x80682B68]
+    .bss: [0x812F98C0, 0x812F9C28]
 ac_handOverItem.c:
     .text: [0x80426A50, 0x80427624]
     .rodata: [0x806440A0, 0x806440B8]
