@@ -8,6 +8,34 @@
 extern "C" {
 #endif
 
+#define NESTAG_END "END"
+#define NESTAG_VEQ "VEQ"
+#define NESTAG_VNE "VNE"
+#define NESTAG_GID "GID"
+#define NESTAG_GNM "GNM"
+#define NESTAG_CPN "CPN"
+#define NESTAG_OFS "OFS"
+#define NESTAG_HSC "HSC"
+#define NESTAG_GNO "GNO"
+#define NESTAG_BBR "BBR"
+#define NESTAG_QDS "QDS"
+#define NESTAG_SPE "SPE"
+#define NESTAG_TCS "TCS"
+#define NESTAG_ICS "ICS"
+#define NESTAG_ESZ "ESZ"
+#define NESTAG_ROM "ROM"
+#define NESTAG_MOV "MOV"
+#define NESTAG_NHD "NHD"
+#define NESTAG_DIF "DIF"
+#define NESTAG_PAT "PAT"
+#define NESTAG_PAD "PAD"
+#define NESTAG_FIL "FIL"
+#define NESTAG_ISZ "ISZ"
+#define NESTAG_IFM "IFM"
+#define NESTAG_REM "REM"
+#define NESTAG_APL "APL"
+#define NESTAG_FGN "FGN"
+
 typedef void* (*MALLOC_ALIGN_FUNC)(size_t size, u32 align);
 typedef void (*MALLOC_FREE_FUNC)(void* ptr);
 typedef size_t (*MALLOC_GETMEMBLOCKSIZE_FUNC)(void* ptr);
