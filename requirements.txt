@@ -7,3 +7,4 @@ python-Levenshtein
 watchdog
 pyjkernel
 pcpp
+pyperclip
