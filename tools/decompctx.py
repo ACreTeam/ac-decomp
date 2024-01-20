@@ -404,7 +404,7 @@ def main():
     # Check if we need to do further conversions after the file is preprocessed
     context_options = ContextGenerationOptions()
     context_options.should_strip_at_address = known_args.strip_at_address or known_args.ghidra or known_args.m2c
-    context_options.should_strip_attributes = known_args.strip_attributes or known_args.ghidra or known_args.m2c
+    context_options.should_strip_attributes = known_args.strip_attributes or known_args.m2c
     context_options.should_convert_binary_literals = known_args.convert_binary_literals or known_args.ghidra
     context_options.should_strip_initializer_trailing_commas = known_args.strip_initializer_trailing_commas or known_args.ghidra
     context_options.should_replace_enums_in_initializers = known_args.replace_enums_in_initializers or known_args.ghidra
