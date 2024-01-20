@@ -17,7 +17,7 @@ Use `--recursive` when cloning to have ppcdis in the repository.
 
 ### Docker
 
-1. Dump a copy of the game and extract **main.dol** and **foresta.rel.szs**.
+1. [Dump a copy of the game](./docs/extract_game.md) and extract **main.dol** and **foresta.rel.szs**.
 2. Decompress **foresta.rel.szs** with yaz0 found in *tools/* (`yaz0 -d foresta.rel.szs foresta.rel`).
 3. Place **main.dol** and **foresta.rel** in *dump/*.
 4. Place **forest_1st.arc** and **forest_2nd.arc** in *dump/*.
@@ -32,7 +32,7 @@ Use `--recursive` when cloning to have ppcdis in the repository.
 
 > ℹ️ When building manually from a work directory originally used for Docker, you will need to run `sudo ninja -t clean` for the build to execute properly.
 
-1. Dump a copy of the game and extract **main.dol** and **foresta.rel.szs**.
+1. [Dump a copy of the game](./docs/extract_game.md) and extract **main.dol** and **foresta.rel.szs**.
 2. Decompress **foresta.rel.szs** with yaz0 found in *tools/* (`yaz0 -d foresta.rel.szs foresta.rel`).
 3. Place **main.dol** and **foresta.rel** in *dump/*.
 4. Place **forest_1st.arc** and **forest_2nd.arc** in *dump/*.
@@ -52,6 +52,13 @@ Use `--recursive` when cloning to have ppcdis in the repository.
     - You may need to modify `Gpopmtx`'s `param` member to be `unsigned int` in **gbi.h**.
 12. Run `python3 configure.py`.
 13. Run `python3 build.py`.
+
+## Quick Guides
+- [Dumping Game Files](./docs/extract_game.md)
+- [Ghidra Setup](./docs/ghidra_setup.md)
+- [Generating Decomp Context](./docs/generating_decomp_context.md)
+- [Ghidra Basics](./docs/ghidra_basics.md)
+- [Decomp Basics](./docs/decomp_basics.md)
 
 ## Credits
 
