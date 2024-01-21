@@ -1,0 +1,219 @@
+static int aEKPD_check_look() {
+    mEv_kabu_peddler_c* peddler_data = &Save_Get(event_save_data).weekly.kabu_peddler;
+    int res = FALSE;
+
+    if (mPr_CheckCmpPersonalID(&peddler_data->spoken_pids[Common_Get(player_no)],
+                               &Common_Get(now_private)->player_ID) == TRUE) {
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static void aEKPD_set_price_str_sub(u32 price, int free_str_no) {
+    u8 price_str[6];
+
+    mFont_UnintToString(price_str, sizeof(price_str), price, 5, TRUE, FALSE, TRUE);
+    mMsg_Set_free_str(mMsg_Get_base_window_p(), free_str_no, price_str, sizeof(price_str));
+}
+
+static void aEKPD_set_price_str() {
+    static int sum[aEKPD_KABU_TYPE_NUM] = { 1, 10, 50, 100 };
+    u32 price = Save_Get(kabu_price_schedule).daily_price[lbRTC_SUNDAY];
+    int i;
+
+    for (i = 0; i < aEKPD_KABU_TYPE_NUM; i++) {
+        aEKPD_set_price_str_sub(price * sum[i], i);
+    }
+}
+
+static int aEKPD_get_trans_space_idx() {
+    return mPr_GetPossessionItemIdx(Common_Get(now_private), EMPTY_NO);
+}
+
+static void aEKPD_hand_over_kabu(int idx, int kabu_type) {
+    static mActor_name_t kabu_no[aEKPD_KABU_TYPE_NUM - 1] = { ITM_KABU_10, ITM_KABU_50, ITM_KABU_100 };
+
+    mPr_SetPossessionItem(Common_Get(now_private), idx, kabu_no[kabu_type], mPr_ITEM_COND_NORMAL);
+}
+
+static void aEKPD_sell_check(EV_KABUPEDDLER_ACTOR* kabuPeddler, GAME_PLAY* play) {
+    static int next_act[] = { aEKPD_ACTION_TALK_END_WAIT, aEKPD_ACTION_SELL_CHECK_AFTER, aEKPD_ACTION_SELL_CEHCK_AFTER2,
+                              0 };
+    int talk_act_idx;
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+        int choseNum = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+
+        switch (choseNum) {
+            case mChoice_CHOICE0:
+            case mChoice_CHOICE1:
+            case mChoice_CHOICE2: {
+                if (kabuPeddler->talk_act == aEKPD_ACTION_SELL_CHECK) {
+                    talk_act_idx = 1;
+                } else {
+                    talk_act_idx = 2;
+                }
+                break;
+            }
+
+            case mChoice_CHOICE3: {
+                talk_act_idx = 3;
+                break;
+            }
+
+            default: {
+                talk_act_idx = 0;
+                break;
+            }
+        }
+
+        if (talk_act_idx != 0) {
+            (*kabuPeddler->setup_talk_proc)(kabuPeddler, play, next_act[talk_act_idx]);
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+            kabuPeddler->kabu_type = choseNum;
+        }
+    }
+}
+
+static void aEKPD_sell_check_after(EV_KABUPEDDLER_ACTOR* kabuPeddler, GAME_PLAY* play) {
+    static int sell_sum[aEKPD_KABU_TYPE_NUM] = { 10, 50, 100, 0 };
+    static int next_msg_no[] = { 0x0711, 0x0710, 0x070F };
+    static int next_msg_no2[] = { 0x0711, 0x0717, 0x0716 };
+    static int next_act[] = { aEKPD_ACTION_MONEY_GET_DEMO_START_WAIT, aEKPD_ACTION_TALK_END_WAIT,
+                              aEKPD_ACTION_TALK_END_WAIT };
+
+    if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+        u32 price;
+        int talk_act_idx;
+        int trans_space_idx = aEKPD_get_trans_space_idx();
+
+        if (trans_space_idx != -1) {
+            price = Save_Get(kabu_price_schedule).daily_price[lbRTC_SUNDAY] * sell_sum[kabuPeddler->kabu_type];
+
+            if (mSP_money_check(price) == TRUE) {
+                mSP_get_sell_price(price); /* take money from player */
+                aEKPD_hand_over_kabu(trans_space_idx, kabuPeddler->kabu_type);
+                talk_act_idx = 0;
+            } else {
+                talk_act_idx = 1;
+            }
+        } else {
+            talk_act_idx = 2;
+        }
+
+        if (kabuPeddler->talk_act == 2) {
+            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), next_msg_no[talk_act_idx]);
+        } else {
+            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), next_msg_no2[talk_act_idx]);
+        }
+
+        (*kabuPeddler->setup_talk_proc)(kabuPeddler, play, next_act[talk_act_idx]);
+    }
+}
+
+static void aEKPD_money_get_demo_start_wait(EV_KABUPEDDLER_ACTOR* kabuPeddler, GAME_PLAY* play) {
+    if (Common_Get(clip).handOverItem_clip->request_mode == aHOI_REQUEST_TRANS_WAIT) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 3);
+        (*kabuPeddler->setup_talk_proc)(kabuPeddler, play, aEKPD_ACTION_MONEY_GET_DEMO_END_WAIT);
+    }
+}
+
+static void aEKPD_money_get_demo_end_wait(EV_KABUPEDDLER_ACTOR* kabuPeddler, GAME_PLAY* play) {
+    if (Common_Get(clip).handOverItem_clip->master_actor == NULL) {
+        mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+        (*kabuPeddler->setup_talk_proc)(kabuPeddler, play, aEKPD_ACTION_KABU_TRANS_DEMO_START_WAIT);
+    }
+}
+
+static void aEKPD_kabu_trans_demo_start_wait(EV_KABUPEDDLER_ACTOR* kabuPeddler, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+
+    if (order == 2) {
+        (*kabuPeddler->setup_talk_proc)(kabuPeddler, play, aEKPD_ACTION_SELL_CHECK2);
+    }
+}
+
+static void aEKPD_sell_check_init(EV_KABUPEDDLER_ACTOR* kabuPeddler, GAME_PLAY* play) {
+    aEKPD_set_price_str();
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+}
+
+static void aEKPD_sell_check2_init(EV_KABUPEDDLER_ACTOR* kabuPeddler, GAME_PLAY* play) {
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, (mActor_name_t)(ITM_KABU_START + kabuPeddler->kabu_type));
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, 7);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, 0);
+}
+
+static void aEKPD_money_get_demo_start_wait_init(EV_KABUPEDDLER_ACTOR* kabuPeddler, GAME_PLAY* play) {
+    mMsg_Set_LockContinue(mMsg_Get_base_window_p());
+    mPlib_request_main_give_type1((GAME*)play, ITM_MONEY_10000, 7, FALSE, FALSE);
+}
+
+typedef void (*aEKPD_INIT_PROC)(EV_KABUPEDDLER_ACTOR*, GAME_PLAY*);
+
+static void aEKPD_init_proc(EV_KABUPEDDLER_ACTOR* kabuPeddler, GAME_PLAY* play, int act) {
+    static aEKPD_INIT_PROC init_proc[aEKPD_ACTION_NUM] = {
+        (aEKPD_INIT_PROC)&none_proc1, &aEKPD_sell_check_init,       (aEKPD_INIT_PROC)&none_proc1,
+        &aEKPD_sell_check2_init,      (aEKPD_INIT_PROC)&none_proc1, &aEKPD_money_get_demo_start_wait_init,
+        (aEKPD_INIT_PROC)&none_proc1, (aEKPD_INIT_PROC)&none_proc1
+    };
+
+    (*init_proc[act])(kabuPeddler, play);
+}
+
+static void aEKPD_setupAction(EV_KABUPEDDLER_ACTOR* kabuPeddler, GAME_PLAY* play, int act) {
+    static aEKPD_PROC process[aEKPD_ACTION_NUM] = { (aEKPD_PROC)&none_proc1,        &aEKPD_sell_check,
+                                                    &aEKPD_sell_check_after,        &aEKPD_sell_check,
+                                                    &aEKPD_sell_check_after,        &aEKPD_money_get_demo_start_wait,
+                                                    &aEKPD_money_get_demo_end_wait, &aEKPD_kabu_trans_demo_start_wait };
+
+    kabuPeddler->talk_act = act;
+    kabuPeddler->talk_proc = process[act];
+    aEKPD_init_proc(kabuPeddler, play, act);
+}
+
+static void aEKPD_set_talk_info(ACTOR* actorx) {
+    int msg_no = aEKPD_check_look() == TRUE ? 0x0718 : 0x06FD;
+
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aEKPD_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, &aEKPD_set_talk_info);
+}
+
+static int aEKPD_talk_init(ACTOR* actorx, GAME* game) {
+    EV_KABUPEDDLER_ACTOR* kabuPeddler = (EV_KABUPEDDLER_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    if (aEKPD_check_look() == FALSE) {
+        mEv_kabu_peddler_c* kabu_data = &Save_Get(event_save_data).weekly.kabu_peddler;
+
+        mPr_CopyPersonalID(&kabu_data->spoken_pids[Common_Get(player_no)], &Common_Get(now_private)->player_ID);
+    }
+
+    (*kabuPeddler->setup_talk_proc)(kabuPeddler, play, aEKPD_ACTION_SELL_CHECK);
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aEKPD_talk_end_chk(ACTOR* actorx, GAME* game) {
+    EV_KABUPEDDLER_ACTOR* kabuPeddler = (EV_KABUPEDDLER_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int res = FALSE;
+
+    (*kabuPeddler->talk_proc)(kabuPeddler, play);
+
+    if (mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {
+        mEv_set_status(mEv_EVENT_KABU_PEDDLER, mEv_STATUS_TALK);
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static void aEKPD_actor_move(ACTOR* actorx, GAME* game) {
+    (*Common_Get(clip).npc_clip->move_proc)(actorx, game);
+}

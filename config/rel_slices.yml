@@ -600,6 +600,9 @@ ac_ev_gypsy.c:
     .text: [0x80520D78, 0x80521414]
     .rodata: [0x80649228, 0x80649238]
     .data: [0x806A0938, 0x806A09F8]
+ac_ev_kabuPeddler.c:
+    .text: [0x80521414, 0x80521D34]
+    .data: [0x806A09F8, 0x806A0AD8]
 ac_ev_santa.c:
     .text: [0x80523498, 0x8052400C]
     .rodata: [0x80649268, 0x80649270]
