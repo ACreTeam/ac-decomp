@@ -131,6 +131,11 @@ m_flashrom.c:
     .text: [0x803AC5C8, 0x803AF48C]
     .data: [0x80654188, 0x80654298]
     .bss: [0x81295BD8, 0x81295C30]
+m_font.c:
+    .text: [0x803AF48C, 0x803B15E0]
+    .rodata: [0x80642080, 0x80642258]
+    .data: [0x80654298, 0x806544D0]
+    .bss: [0x81295C30, 0x81295C70]
 m_fuusen.c:
     .text: [0x803B15E0, 0x803B1908]
     .rodata: [0x80642258, 0x80642288]

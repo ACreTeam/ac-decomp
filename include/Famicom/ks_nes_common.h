@@ -27,7 +27,8 @@ typedef struct ks_nes_common_work_obj_s {
 } ksNesCommonWorkObj;
 
 typedef struct ks_nes_state_obj_s {
-  u8 _temp[0x1A78];
+  /* 0x0000 */ u8 wram[2048];
+  /* 0x0800 */ u8 _temp[0x1A78 - 0x800];
 } ksNesStateObj;
 
 #ifdef __cplusplus
