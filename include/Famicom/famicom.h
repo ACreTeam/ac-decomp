@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "Famicom/ks_nes.h"
+#include "terminal.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -104,6 +105,15 @@ typedef struct famicom_common_s {
 
 extern void* my_malloc_current;
 extern u8 save_game_image;
+extern char** nesrom_filename_ptrs;
+
+extern u32 nesinfo_tags_size;
+extern u8* nesinfo_tags_start;
+extern u8* nesinfo_tags_end;
+
+extern u32 nesinfo_data_size;
+extern u8* nesinfo_data_start;
+extern u8* nesinfo_data_end;
 
 extern FamicomCommon famicomCommon;
 
@@ -117,6 +127,14 @@ extern int famicom_init(int, void*, u8);
 extern int famicom_cleanup();
 
 extern void nesinfo_tags_set(int rom_no);
+extern void nesinfo_tag_process1(u8* save_data, int mode, u32* max_ofs_p);
+extern void nesinfo_tag_process2();
+extern void nesinfo_tag_process3(u8* save_data);
+extern void nesinfo_update_highscore(u8* save_data, int mode);
+extern int nesinfo_get_highscore_num();
+extern u8* nesinfo_get_moriName();
+extern void nesinfo_init();
+extern void highscore_setup_flags(u8* flags);
 
 
 #ifdef __cplusplus

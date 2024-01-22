@@ -431,6 +431,11 @@ JSYSTEM_JGADGET_BASE = [
     # "-sym on", # might also be on for base flags?
     "-O4,s" # in mkdd some libraries use O4,p, might be the case here too
 ]
+FAMICOM_BASE = CFLAGS + [
+    "-lang=c++",
+    "-sdata 0",
+    "-sdata2 0"
+] + DOL_DEFINES
 
 JSYSTEM_CFLAGS = ' '.join(JSYSTEM_BASE + LOCAL_CFLAGS)
 JSYSTEM_JGADGET_CFLAGS = ' '.join(JSYSTEM_JGADGET_BASE + LOCAL_CFLAGS)
@@ -446,6 +451,7 @@ REL_CFLAGS = ' '.join(BASE_REL_CFLAGS + LOCAL_CFLAGS)
 EXTERNAL_DOL_CFLAGS = ' '.join(BASE_DOL_CFLAGS)
 EXTERNAL_REL_CFLAGS = ' '.join(BASE_REL_CFLAGS)
 PREPROCESS_CFLAGS = ' '.join(PREPROCESSOR_CFLAGS)
+FAMICOM_CLFAGS = ' '.join(FAMICOM_BASE + LOCAL_CFLAGS)
 
 DOL_LDFLAGS = ' '.join([
     "-maxerrors 1",
