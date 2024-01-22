@@ -5,6 +5,11 @@
 #include "libultra/libultra.h"
 #include "JSystem/JSystem.h"
 #include "JSystem/JKernel/JKRFileLoader.h"
+#include "terminal.h"
+
+/* This is necessary because there are some unused implicitly created
+   variables which I don't know how to generate */
+static u8 __hack[0x3D];
 
 static u8 highscore_num = 0;
 static u8 highscore_updated = 0;
@@ -12,15 +17,15 @@ static u8* highscore_flags = nullptr;
 static u8 nesinfo_mcrd_cont_no = 0;
 static u8 nesinfo_mcrd_game_name[33];
 static u8* nesinfo_ptr = nullptr;
-static u32 nesinfo_tags_size = 0;
-static u8* nesinfo_tags_start = nullptr;
-static u8* nesinfo_tags_end = nullptr;
+u32 nesinfo_tags_size = 0;
+u8* nesinfo_tags_start = nullptr;
+u8* nesinfo_tags_end = nullptr;
 static char* nesinfo_tags_gameName = nullptr;
 static char* nesinfo_tags_kanjiName = nullptr;
 static u8* nesinfo_tags_moriName = nullptr;
-static u32 nesinfo_data_size = 0;
-static u8* nesinfo_data_start = nullptr;
-static u8* nesinfo_data_end = nullptr;
+u32 nesinfo_data_size = 0;
+u8* nesinfo_data_start = nullptr;
+u8* nesinfo_data_end = nullptr;
 static u32 nesinfo_rom_size = 0;
 static u8* nesinfo_rom_start = nullptr;
 static u8* nesinfo_rom_end = nullptr;
@@ -56,12 +61,11 @@ enum famicom_games {
     FAMICOM_GAME_ICE_CLIMBER,
     FAMICOM_GAME_MARIO_BROS,
     FAMICOM_GAME_SUPER_MARIO_BROS,
-    FAMICOM_GAME_LEGEND_OF_ZELDA_DISK,
-    FAMICOM_GAME_LEGEND_OF_ZELDA_ROM,
-    FAMICOM_GAME_GOMOKU_NARABE,
-    FAMICOM_GAME_MAHJONG,
-
+    FAMICOM_GAME_LEGEND_OF_ZELDA,
     FAMICOM_GAME_NUM,
+
+    FAMICOM_GAME_GOMOKU_NARABE = 22,
+    FAMICOM_GAME_MAHJONG = 23,
 
     FAMICOM_GAME_EXTERNAL = 31
 };
@@ -269,7 +273,7 @@ static u8 tags_table_super_mario_bros[] = {
 static u8 tags_table_legend_of_zelda_disk[] = {
     GID_TAG(2), 'Z', 'L',
     GNM_TAG(15), 'L', 'E', 'G', 'E', 'N', 'D', ' ', 'O', 'F', ' ', 'Z', 'E', 'L', 'D', 'A',
-    GNO_TAG(), FAMICOM_GAME_LEGEND_OF_ZELDA_DISK,
+    GNO_TAG(), FAMICOM_GAME_LEGEND_OF_ZELDA,
     
     OFS_TAG(), OFS_U16(0x0139),
     QDS_TAG(), OFS_U24(0x01BAFD), OFS_U16(0x051C), // Save 0x51C bytes from 0x1BAFD
@@ -279,7 +283,7 @@ static u8 tags_table_legend_of_zelda_disk[] = {
 static u8 tags_table_legend_of_zelda_rom[] = {
     GID_TAG(2), 'Z', 'L',
     GNM_TAG(16), 'L', 'E', 'G', 'E', 'N', 'D', ' ', 'O', 'F', ' ', 'Z', 'E', 'L', 'D', 'A', '1',
-    GNO_TAG(), FAMICOM_GAME_LEGEND_OF_ZELDA_ROM,
+    GNO_TAG(), FAMICOM_GAME_LEGEND_OF_ZELDA,
     
     OFS_TAG(), OFS_U16(0x0139),
     BBR_TAG(), OFS_U16(0x0002), OFS_U16(0x051C), // Save 0x51C bytes from BBR+0x0002
@@ -377,8 +381,8 @@ static u8 tags_table_super_mario_bros_2[] = {
 };
 
 static u8 tags_table_marioopen_golf[] = {
-    TCS_TAG(),
-    ICS_TAG(),
+    TCS_TAG(), OFS_U16(0x0000),
+    ICS_TAG(), OFS_U16(0x0000),
     GID_TAG(2), 'U', 'G', 
     GNM_TAG(14), 'M', 'A', 'R', 'I', 'O', 'O', 'P', 'E', 'N', ' ', 'G', 'O', 'L', 'F', 
     GNO_TAG(), FAMICOM_GAME_EXTERNAL,
@@ -800,7 +804,7 @@ extern void nesinfo_tag_process1(u8* save_data, int mode, u32* max_ofs_p) {
                     nesinfo_set_u16(&data[4], chk - checksum); // update tags checksum
                 } else {
                     if (checksum != 0) {
-                        OSReport(VT_COL(VT_COLOR_YELLOW, VT_COLOR_BLACK) "BAD %04x\n" VT_RST, checksum);
+                        OSReport(VT_COL(YELLOW, BLACK) "BAD %04x\n" VT_RST, checksum);
                         tcs_bad = true;
                         break;
                     } else {
@@ -819,7 +823,7 @@ extern void nesinfo_tag_process1(u8* save_data, int mode, u32* max_ofs_p) {
 
                     if (checksum != chk) {
                         ics_bad = true;
-                        OSReport(VT_COL(VT_COLOR_YELLOW, VT_COLOR_BLACK) "BAD %04x %04x\n" VT_RST, checksum, chk);
+                        OSReport(VT_COL(YELLOW, BLACK) "BAD %04x %04x\n" VT_RST, checksum, chk);
                     } else {
                         OSReport("OK\n");
                     }
@@ -830,7 +834,7 @@ extern void nesinfo_tag_process1(u8* save_data, int mode, u32* max_ofs_p) {
         } else if (memcmp(data, NESTAG_FIL, NESTAG_CMD_SIZE) == 0) {
             // stubbed
         } else if (memcmp(data, NESTAG_ROM, NESTAG_CMD_SIZE) == 0) {
-            u8 rom_id = data[4];
+            u32 rom_id = data[4];
             u8* rom_p = famicomCommon.nesromp;
 
             OSReport("ロムデータ参照: %d\n", rom_id); // Referencing ROM data: %d\n
@@ -1022,7 +1026,7 @@ extern void nesinfo_tag_process3(u8* save_data) {
             cur_ofs += size;
             print_hex_lf(&data[4], data[NESTAG_CMD_SIZE]);
         } else if (memcmp(data, NESTAG_SPE, NESTAG_CMD_SIZE) == 0) {
-            OSReport("特別プログラム発動!\n"); // Special program activated?\n
+            OSReport("特別プログラム発動?\n"); // Special program activated?\n
             print_hex_lf(&data[4], data[NESTAG_CMD_SIZE]);
         } else if (memcmp(data, NESTAG_END, NESTAG_CMD_SIZE) == 0) {
             break;
@@ -1116,7 +1120,52 @@ extern void nesinfo_init() {
     nesinfo_rom_end = nullptr;
 }
 
+/* @unused highscore_mcrd_readwrite__Fi */
+
 extern void highscore_setup_flags(u8* flags) {
     highscore_flags = flags;
     bzero(flags, highscore_num);
+}
+
+/* @unused bbram_mcrd_readwrite__Fii */
+
+/* @unused, necessary for matching .data*/
+static void bbram_load() {
+    // There is no BB RAM data on Memory Card %d\n
+    OSReport(VT_COL(YELLOW, BLACK) "メモリーカード%dにはＢＢラムデータはない\n" VT_RST);
+
+    // There is also no BB RAM data on Memory Card %d\n
+    OSReport(VT_COL(YELLOW, BLACK) "メモリーカード%dにもＢＢラムデータはない\n" VT_RST);
+}
+
+/* @unused */
+static void bbram_save() {
+    // It seems that BBRAM is not being used.
+    OSReport("BBRAMは使ってないようです\n");
+
+    // Cannot save BB RAM data on Memory Card %d
+    OSReport(VT_COL(YELLOW, BLACK) "メモリーカード%dにはＢＢラムデータをセーブできない\n" VT_RST);
+
+    // Cannot save BB RAM data on Memory Card %d either
+    OSReport(VT_COL(YELLOW, BLACK) "メモリーカード%dにもＢＢラムデータをセーブできない\n" VT_RST);
+}
+
+/* @unused state_mcrd_readwrite_Fii */
+
+/* @unused */
+static void state_mcrd_load() {
+    // There is no state data on Memory Card %d
+    OSReport(VT_COL(YELLOW, BLACK) "メモリーカード%dには状態データはない\n" VT_RST);
+
+    // State data from Memory Card %d has been loaded
+    OSReport(VT_FGCOL(YELLOW) "メモリーカード%dの状態データをロードしました\n" VT_RST);
+}
+
+/* @unused */
+static void state_mcrd_save() {
+    // Cannot save state data on Memory Card %d
+    OSReport(VT_COL(YELLOW, BLACK) "メモリーカード%dには状態データをセーブできない\n" VT_RST);
+
+    // State data has been saved on Memory Card %d
+    OSReport(VT_COL(YELLOW, BLACK) "メモリーカード%dに状態データをセーブしました\n" VT_RST);
 }
