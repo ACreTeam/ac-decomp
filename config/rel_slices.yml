@@ -514,6 +514,12 @@ ac_t_tumbler.c:
     .text: [0x804A9CC4, 0x804A9F24]
     .rodata: [0x80645F10, 0x80645F18]
     .data: [0x8068EFE0, 0x8068F040]
+ac_t_zinnia1.c:
+    .text: [0x804AA72C, 0x804AA880]
+    .data: [0x8068F370, 0x8068F3B0]
+ac_t_zinnia2.c:
+    .text: [0x804AA880, 0x804AA9d4]
+    .data: [0x8068F3B0, 0x8068F3F0]
 ac_tools.c:
     .text: [0x804AC034, 0x804AC2D8]
     .rodata: [0x80645F90, 0x80645F98]
