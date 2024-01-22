@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "Famicom/ks_nes.h"
+#include "terminal.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -104,6 +105,7 @@ typedef struct famicom_common_s {
 
 extern void* my_malloc_current;
 extern u8 save_game_image;
+extern char** nesrom_filename_ptrs;
 
 extern FamicomCommon famicomCommon;
 

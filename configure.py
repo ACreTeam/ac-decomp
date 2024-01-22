@@ -635,6 +635,9 @@ class CSource(Source):
         elif path.startswith("src/static/JSystem/"):
             self.cflags = c.JSYSTEM_CFLAGS
             self.cc = c.CC
+        elif path.startswith("src/static/Famicom/"):
+            self.cflags = c.FAMICOM_CLFAGS
+            self.cc = c.CC
         elif path.startswith("src/static/GBA2/"):
             self.cflags = c.DOL_CFLAGS_SDATA0_CFLAGS
             self.cc = c.CC
