@@ -8,13 +8,18 @@
 extern "C" {
 #endif
 
+#define FAMICOM_INTERNAL_ROM_NUM 19
+
+#define NESTAG_CMD_SIZE 3
+#define NESTAG_SIZE (NESTAG_CMD_SIZE + 1)
+
 #define NESTAG_END "END"
 #define NESTAG_VEQ "VEQ"
 #define NESTAG_VNE "VNE"
 #define NESTAG_GID "GID"
 #define NESTAG_GNM "GNM"
 #define NESTAG_CPN "CPN"
-#define NESTAG_OFS "OFS"
+#define NESTAG_OFS "OFS"  /* Offset into the shared highscore data to read/write at */
 #define NESTAG_HSC "HSC"
 #define NESTAG_GNO "GNO"
 #define NESTAG_BBR "BBR"
@@ -100,6 +105,8 @@ typedef struct famicom_common_s {
 extern void* my_malloc_current;
 extern u8 save_game_image;
 
+extern FamicomCommon famicomCommon;
+
 typedef u8 (*FAMICOM_GETSAVECHAN_PROC)(int* player_no, int* slot_card_result);
 extern void famicom_setCallback_getSaveChan(FAMICOM_GETSAVECHAN_PROC getSaveChan_proc);
 extern int famicom_mount_archive();
@@ -108,6 +115,8 @@ extern int famicom_rom_load_check();
 extern int famicom_1frame();
 extern int famicom_init(int, void*, u8);
 extern int famicom_cleanup();
+
+extern void nesinfo_tags_set(int rom_no);
 
 
 #ifdef __cplusplus

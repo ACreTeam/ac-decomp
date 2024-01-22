@@ -131,6 +131,11 @@ m_flashrom.c:
     .text: [0x803AC5C8, 0x803AF48C]
     .data: [0x80654188, 0x80654298]
     .bss: [0x81295BD8, 0x81295C30]
+m_font.c:
+    .text: [0x803AF48C, 0x803B15E0]
+    .rodata: [0x80642080, 0x80642258]
+    .data: [0x80654298, 0x806544D0]
+    .bss: [0x81295C30, 0x81295C70]
 m_fuusen.c:
     .text: [0x803B15E0, 0x803B1908]
     .rodata: [0x80642258, 0x80642288]
@@ -513,6 +518,12 @@ ac_t_utiwa.c:
     .text: [0x804AA4C8, 0x804AA72C]
     .data: [0x8068F310, 0x8068F370]
     .rodata: [0x80645F30, 0x80645F38]
+ac_t_zinnia1.c:
+    .text: [0x804AA72C, 0x804AA880]
+    .data: [0x8068F370, 0x8068F3B0]
+ac_t_zinnia2.c:
+    .text: [0x804AA880, 0x804AA9d4]
+    .data: [0x8068F3B0, 0x8068F3F0]
 ac_tools.c:
     .text: [0x804AC034, 0x804AC2D8]
     .rodata: [0x80645F90, 0x80645F98]
@@ -599,6 +610,9 @@ ac_ev_gypsy.c:
     .text: [0x80520D78, 0x80521414]
     .rodata: [0x80649228, 0x80649238]
     .data: [0x806A0938, 0x806A09F8]
+ac_ev_kabuPeddler.c:
+    .text: [0x80521414, 0x80521D34]
+    .data: [0x806A09F8, 0x806A0AD8]
 ac_ev_santa.c:
     .text: [0x80523498, 0x8052400C]
     .rodata: [0x80649268, 0x80649270]

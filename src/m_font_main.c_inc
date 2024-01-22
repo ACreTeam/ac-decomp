@@ -39,7 +39,7 @@ typedef struct control_code_s {
   s8 attribute;
 } mFont_ControlCodeInfo_t;
 
-static mFont_ControlCodeInfo_t mFont_cont_info_tbl[mFont_CONT_CODE_NUM] = {
+static const mFont_ControlCodeInfo_t mFont_cont_info_tbl[mFont_CONT_CODE_NUM] = {
   { 2, mFont_CONT_ATTRIBUTE_0 },
   { 2, mFont_CONT_ATTRIBUTE_0 },
   { 2, mFont_CONT_ATTRIBUTE_0 },
@@ -669,7 +669,6 @@ static void mFont_gppDrawCharRect(
   *gfx_pp = g;
 }
 
-// TODO: Non-matching
 static void mFont_gppDrawCharPoly(
   GRAPH* graph,
   Gfx** gfx_pp,
@@ -683,21 +682,29 @@ static void mFont_gppDrawCharPoly(
   int ulx, uly, lrx, lry;
   xy_t vert_tl, vert_br;
   f32 inv_half_s, inv_half_t;
+  f32 t0, t1;
 
   mFont_gppLoadTexture(&g, c, &uls, &ult, &lrs, &lrt);
     
   vert_tl.x = pos_tl->x - ((f32)SCREEN_WIDTH * 0.5f);
   vert_tl.y = -(pos_tl->y - ((f32)SCREEN_HEIGHT * 0.5f));
-  vert_br.x = pos_br->x - ((f32)SCREEN_WIDTH * 0.5f) - vert_tl.x;
-  vert_br.y = -(pos_br->y - ((f32)SCREEN_HEIGHT * 0.5f)) - vert_tl.y;
+  vert_br.x = vert_tl.x;
+  vert_br.y = vert_tl.y;
+  t0 = pos_br->x - ((f32)SCREEN_WIDTH * 0.5f) - vert_tl.x;
+  t1 = -(pos_br->y - ((f32)SCREEN_HEIGHT * 0.5f)) - vert_tl.y;
     
   inv_half_s = 0.5f / (f32)s;
   inv_half_t = 0.5f / (f32)t;
+
+  vert_br.x += t0 * (1.0f - inv_half_s);
+  vert_br.y += t1 * (1.0f - inv_half_t);
+  vert_tl.x += t0 * inv_half_s;
+  vert_tl.y += t1 * inv_half_t;
     
-  ulx = (vert_tl.x + vert_br.x * inv_half_s) * mFont_SCALE_F;
-  uly = (vert_tl.y + vert_br.y * inv_half_t) * mFont_SCALE_F;
-  lrx = (vert_tl.x + vert_br.x * (1.0f - inv_half_s)) * mFont_SCALE_F;
-  lry = (vert_tl.y + vert_br.y * (1.0f - inv_half_t)) * mFont_SCALE_F;
+  ulx = (int)(vert_tl.x * mFont_SCALE_F);
+  uly = (int)(vert_tl.y * mFont_SCALE_F);
+  lrx = (int)(vert_br.x * mFont_SCALE_F);
+  lry = (int)(vert_br.y * mFont_SCALE_F);
 
   lrs = ((uls + s) << 6) - 32;
   lrt = ((ult + t) << 6) - 32;
