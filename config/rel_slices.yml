@@ -514,6 +514,10 @@ ac_t_tumbler.c:
     .text: [0x804A9CC4, 0x804A9F24]
     .rodata: [0x80645F10, 0x80645F18]
     .data: [0x8068EFE0, 0x8068F040]
+ac_t_utiwa.c:
+    .text: [0x804AA4C8, 0x804AA72C]
+    .data: [0x8068F310, 0x8068F370]
+    .rodata: [0x80645F30, 0x80645F38]
 ac_t_zinnia1.c:
     .text: [0x804AA72C, 0x804AA880]
     .data: [0x8068F370, 0x8068F3B0]
