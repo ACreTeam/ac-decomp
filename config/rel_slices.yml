@@ -496,6 +496,10 @@ ac_t_hat2.c:
 ac_t_hat3.c:
     .text: [0x804A8E98, 0x804A8FEC]
     .data: [0x8068ED70, 0x8068EDB0]
+ac_t_keitai.c:
+    .text: [0x804A8FEC, 0x804A9348]
+    .data: [0x8068EDB0, 0x8068EE58]
+    .rodata: [0x80645ED0, 0x80645EE0]
 ac_t_npc_sao.c:
     .text: [0x804A9348, 0x804A95F4]
     .rodata: [0x80645EE0, 0x80645EF8]
