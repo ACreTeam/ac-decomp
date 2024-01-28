@@ -522,6 +522,10 @@ ac_t_tama.c:
     .text: [0x804A9B00, 0x804A9CC4]
     .data: [0x8068EF78, 0x8068EFE0]
     .rodata: [0x80645F00, 0x80645F10]
+ac_t_umbrella.c:
+    .text: [0x804A9F24, 0x804AA4C8]
+    .data: [0x8068F040, 0x8068F310]
+    .rodata: [0x80645F18, 0x80645F30]
 ac_t_utiwa.c:
     .text: [0x804AA4C8, 0x804AA72C]
     .data: [0x8068F310, 0x8068F370]
