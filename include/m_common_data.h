@@ -329,6 +329,16 @@ extern common_data_t common_data;
 /* Useful for returning fg item data as a pointer to mActor_name_t */
 #define Save_GetFG() Save_Get(fg[0][0].items[0])
 
+#define Player_Palette_Get(idx) (Common_Get(now_private->my_org[idx].palette))
+#define Player_Design_Get(idx) (Common_GetPointer(now_private->my_org[idx].design))
+
+#define Able_Sisters_Palette_Get(idx) (Save_Get(needlework.original_design[idx].palette))
+#define Able_Sisters_Design_Get(idx) (Save_GetPointer(needlework.original_design[idx].design))
+#define Able_Sisters_Cloth_Palette_Get(idx) (Able_Sisters_Palette_Get(idx))
+#define Able_Sisters_Cloth_Design_Get(idx) (Able_Sisters_Design_Get(idx))
+#define Able_Sisters_Umbrella_Palette_Get(idx) (Able_Sisters_Palette_Get(idx + mNW_CLOTH_DESIGN_NUM))
+#define Able_Sisters_Umbrella_Design_Get(idx) (Able_Sisters_Design_Get(idx + mNW_CLOTH_DESIGN_NUM))
+
 extern void common_data_reinit();
 extern void common_data_init();
 extern void common_data_clear();
