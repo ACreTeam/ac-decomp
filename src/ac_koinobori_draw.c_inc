@@ -1,0 +1,41 @@
+u16 aKOI_obj_e_koinobori_a_pal[] = {
+    #include "assets/aKOI_obj_e_koinobori_a_pal.inc"
+};
+
+u16 obj_e_koinobori_b_pal[] = {
+    #include "assets/obj_e_koinobori_b_pal.inc"
+};
+
+static void aKOI_actor_draw(ACTOR* actor, GAME* game) {
+    KOINOBORI_ACTOR* koinobori;
+    GRAPH* graph;
+    cKF_SkeletonInfo_R_c* keyframe;
+    Mtx* mtx;
+    u16* pal;
+    Gfx* gfx;
+
+
+    koinobori = (KOINOBORI_ACTOR*)actor;
+    graph = game->graph;
+    keyframe = &koinobori->keyframe;
+    mtx = GRAPH_ALLOC_TYPE(graph, Mtx, keyframe->skeleton->num_shown_joints);
+
+    if (mtx != NULL) {
+        pal = Common_Get(clip.structure_clip)->get_pal_segment_proc(aSTR_PAL_KOINOBORI_A);
+
+        _texture_z_light_fog_prim_npc(graph);
+
+        OPEN_DISP(graph);
+        gfx = NOW_POLY_OPA_DISP;
+
+        gSPSegment(gfx++, G_MWO_SEGMENT_8, pal);
+        gSPSegment(gfx++, G_MWO_SEGMENT_9, &obj_e_koinobori_b_pal);
+        gSPSegment(gfx++, G_MWO_SEGMENT_A, &aKOI_obj_e_koinobori_a_pal);
+
+        SET_POLY_OPA_DISP(gfx);
+        CLOSE_DISP(graph);
+
+        cKF_Si3_draw_R_SV(game, keyframe, mtx, NULL, NULL, actor);
+        (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, &aKOI_shadow_data, FALSE);
+    }
+}
