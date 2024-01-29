@@ -430,6 +430,10 @@ ac_haniwa.c:
     .text: [0x80427624, 0x80428F64]
     .rodata: [0x806440B8, 0x806440F8]
     .data: [0x80683D08, 0x80683E98]
+ac_koinobori.c:
+    .text: [0x805B27B8, 0x805B2AE0]
+    .data: [0x806C58A0, 0x806C5940]
+    .rodata: [0x8064A978, 0x8064A990]
 ac_rope.c:
     .text: [0x804967A4, 0x80496AB8]
     .rodata: [0x80644DB0,0x80644DB8]

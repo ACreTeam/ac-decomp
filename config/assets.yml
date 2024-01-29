@@ -355,3 +355,11 @@ config/rel.yml:
   mFM_rail_pal_12:
     addrs: [0x80F8C448, 0x80F8C468]
     type: pal16
+  # ac_koinobori
+  aKOI_obj_e_koinobori_a_pal:
+    addrs: [0x806C5900, 0x806C5920]
+    type: pal16
+  obj_e_koinobori_b_pal:
+    addrs: [0x806C5920, 0x806C5940]
+    type: pal16
+    
