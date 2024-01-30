@@ -19,7 +19,7 @@ class JKRFileFinder
 {
 public:
     JKRFileFinder()
-        : mIsAvailable(false), mIsFileOrDir(false)
+        : mIsAvailable(false), mIsDir(false)
     {
     }
 
@@ -36,7 +36,7 @@ public:
     // _00     = VTBL
 
     bool mIsAvailable; // _10
-    bool mIsFileOrDir; // _11
+    bool mIsDir; // _11
 };
 
 class JKRArcFinder : public JKRFileFinder

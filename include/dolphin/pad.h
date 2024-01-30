@@ -9,6 +9,11 @@ extern "C" {
 
 #define PAD_CONTROLLER_NUM 4
 
+#define PAD_ERR_NONE           0
+#define PAD_ERR_NO_CONTROLLER -1
+#define PAD_ERR_NOT_READY     -2
+#define PAD_ERR_TRANSFER      -3
+
 #define PAD_MOTOR_STOP 0
 #define PAD_MOTOR_RUMBLE 1
 #define PAD_MOTOR_STOP_HARD 2

@@ -323,23 +323,23 @@ extern void JW_getPadStatus(PADStatus* padStatus) {
 }
 
 extern int JW_JUTGamepad_getErrorStatus() {
-  return (s8)gamePad[0].mErrorStatus;
+  return (s8)((JUTGamePad*)gamePad)[0].mErrorStatus;
 }
 
 extern u32 JW_JUTGamepad_getButton() {
-  return gamePad[0].mButtons.mButton;
+  return ((JUTGamePad*)gamePad)[0].mButtons.mButton;
 }
 
 extern u32 JW_JUTGamepad_getTrigger() {
-  return gamePad[0].mButtons.mTrigger;
+  return ((JUTGamePad*)gamePad)[0].mButtons.mTrigger;
 }
 
 extern f32 JW_JUTGamepad_getSubStickValue() {
-  return gamePad[0].mSubStick.mValue;
+  return ((JUTGamePad*)gamePad)[0].mSubStick.mValue;
 }
 
 extern int JW_JUTGamepad_getSubStickAngle() {
-  return gamePad[0].mSubStick.mAngle;
+  return ((JUTGamePad*)gamePad)[0].mSubStick.mAngle;
 }
 
 static bool FrameDrawing = false;

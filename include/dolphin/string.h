@@ -16,6 +16,7 @@ int stricmp(char*, char*);
 char* strcpy(char*, const char*);
 char* strcat(char* dst, const char* src);
 char* strncpy(char* dst, const char* src, size_t n);
+char* strstr(const char* str, const char* pat);
 
 #ifdef __cplusplus
 };

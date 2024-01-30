@@ -30,8 +30,8 @@ static u32 nesinfo_rom_size = 0;
 static u8* nesinfo_rom_start = nullptr;
 static u8* nesinfo_rom_end = nullptr;
 static u32 nesinfo_expand_rom_size = 0;
-static bool tcs_bad = false;
-static bool ics_bad = false;
+u8 tcs_bad = false;
+u8 ics_bad = false;
 
 // clang-format off
 
@@ -839,7 +839,7 @@ extern void nesinfo_tag_process1(u8* save_data, int mode, u32* max_ofs_p) {
 
             OSReport("ロムデータ参照: %d\n", rom_id); // Referencing ROM data: %d\n
             if (nesrom_filename_ptrs != nullptr && rom_p != nullptr) {
-                nesinfo_data_size = JKRFileLoader::readGlbResource(rom_p, 0x100000, nesrom_filename_ptrs[rom_id],
+                nesinfo_data_size = JKRFileLoader::readGlbResource(rom_p, 0x100000, (char*)nesrom_filename_ptrs[rom_id],
                                                                    EXPAND_SWITCH_DECOMPRESS);
                 nesinfo_data_start = rom_p;
                 nesinfo_data_end = rom_p + nesinfo_data_size;

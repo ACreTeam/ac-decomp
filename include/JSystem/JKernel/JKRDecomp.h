@@ -6,6 +6,7 @@
 #include "JSystem/JKernel/JKRDvdFile.h"
 #include "JSystem/JKernel/JKRThread.h"
 #include "JSystem/JKernel/JKRAram.h"
+#include "JSystem/JKernel/JKREnum.h"
 
 #define JKRDECOMP_MSG_BUF_COUNT 4
 #define JKRDECOMP_STACK_SIZE 0x4000

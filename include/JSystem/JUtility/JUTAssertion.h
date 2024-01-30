@@ -46,7 +46,7 @@ namespace JUTAssertion
 #define JUT_MAX_ASSERT(...)
 #define JUT_LOG_F(...)
 
-#ifndef DEBUG
+#if defined(DEBUG) || 1
 #define JUT_ASSERT(...)
 #define JUT_ASSERT_F(...)
 #else

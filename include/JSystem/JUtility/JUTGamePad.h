@@ -126,10 +126,12 @@ public:
         return JUTGamePad::sClampMode;
     }
 
-    static s8 getPortStatus(EPadPort port) {
+    /* @HACK - This gets inlined when defined -- JSystem might have precompiled headers */
+    static s8 getPortStatus(EPadPort port);
+    /*{
         JUT_ASSERT(0 <= port && port < 4);
         return mPadStatus[port].err;
-    }
+    }*/
 
     bool isPushing3ButtonReset() const {
         bool pushing = false;

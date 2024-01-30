@@ -4,14 +4,8 @@
 #include "types.h"
 #include "Famicom/ks_nes_common.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-
-#ifdef __cplusplus
-}
-#endif
+extern void ksNesDrawInit(ksNesCommonWorkObj* wp);
+extern void ksNesDraw(ksNesCommonWorkObj* wp, ksNesStateObj* sp);
+extern void ksNesDrawEnd();
 
 #endif

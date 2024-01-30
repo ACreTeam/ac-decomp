@@ -434,7 +434,9 @@ JSYSTEM_JGADGET_BASE = [
 FAMICOM_BASE = CFLAGS + [
     "-lang=c++",
     "-sdata 0",
-    "-sdata2 0"
+    "-sdata2 0",
+    "-enum int",
+    "-sym on"
 ] + DOL_DEFINES
 
 JSYSTEM_CFLAGS = ' '.join(JSYSTEM_BASE + LOCAL_CFLAGS)

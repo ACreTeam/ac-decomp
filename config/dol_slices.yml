@@ -48,6 +48,11 @@ jaudio_NES/dummyprobe.c:
 #jaudio_NES/verysimple.c:
 #    .text: [0x80008400, 0x80008480]
 #    .sdata: [0x80217b80, 0x80217b88]
+Famicom/famicom.cpp:
+    .text: [0x80041614, 0x80046888] # TODO: get ~J2DOrthoGraph's dtor in here somehow? 0x800468fc, also add in JUTGamePad::getPortStatus when JUTGamePad is linked?
+    .rodata: [0x800aa9a8, 0x800aaa30]
+    .data: [0x800d8778, 0x800d99a0]
+    .bss: [0x801ef540, 0x801f6bd8]
 Famicom/famicom_nesinfo.cpp:
     .text: [0x800468fc, 0x80047e40]
     .rodata: [0x800aaa30, 0x800aab60]

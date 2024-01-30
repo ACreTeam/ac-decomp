@@ -27,7 +27,7 @@ bool JKRArcFinder::findNextFile()
             mBase.mFileIndex = mNextIndex;
             mBase.mFileID = dirEntry.mID;
             mBase.mFileTypeFlags = dirEntry.mFlags;
-            mIsFileOrDir = FLAG_OFF(mBase.mFileTypeFlags, 2);
+            mIsDir = FLAG_OFF(mBase.mFileTypeFlags, 2);
             mNextIndex++;
         }
     }
@@ -51,12 +51,12 @@ bool JKRDvdFinder::findNextFile()
         mIsAvailable = DVDReadDir(&mDir, &entry);
         if (mIsAvailable)
         {
-            mIsFileOrDir = (bool)entry.isDir;
+            mIsDir = (bool)entry.isDir;
             mBase.mFileName = entry.name;
             mBase.mFileIndex = entry.entryNum;
             mBase.mFileID = 0;
 
-            mBase.mFileTypeFlags = mIsFileOrDir ? 2 : 1;
+            mBase.mFileTypeFlags = mIsDir ? 2 : 1;
         }
     }
     return mIsAvailable;

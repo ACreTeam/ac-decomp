@@ -179,6 +179,7 @@ typedef enum _GXCITexFmt {
   GX_TF_C14X2 = 0xa,
 } GXCITexFmt;
 
+// TODO: fix
 typedef enum _GXTexWrapMode {
   GX_CLAMP,
   GX_REPEAT,

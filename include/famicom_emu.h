@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "game.h"
+#include "Famicom/famicom.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,7 +14,7 @@ typedef struct game_famicom_emu_s {
   /* 0x00 */ GAME game;
 } GAME_FAMICOM_EMU;
 
-extern void* my_malloc_func[];
+extern Famicom_MallocInfo my_malloc_func;
 
 extern void famicom_emu_main(GAME* game);
 extern void famicom_emu_init(GAME* game);
