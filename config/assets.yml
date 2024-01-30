@@ -362,4 +362,31 @@ config/rel.yml:
   obj_e_koinobori_b_pal:
     addrs: [0x806C5920, 0x806C5940]
     type: pal16
-    
+  # ac_lotus
+  aLOT_obj_01_lotus_pal:
+    addrs: [0x806C59E0, 0x806C5A00]
+    type: pal16
+  obj_02_lotus_pal:
+    addrs: [0x806C5A00, 0x806C5A20]
+    type: pal16
+  obj_03_lotus_pal:
+    addrs: [0x806C5A20, 0x806C5A40]
+    type: pal16
+  obj_04_lotus_pal:
+    addrs: [0x806C5A40, 0x806C5A60]
+    type: pal16
+  obj_05_lotus_pal:
+    addrs: [0x806C5A60, 0x806C5A80]
+    type: pal16
+  obj_06_lotus_pal:
+    addrs: [0x806C5A80, 0x806C5AA0]
+    type: pal16
+  obj_07_lotus_pal:
+    addrs: [0x806C5AA0, 0x806C5AC0]
+    type: pal16
+  obj_08_lotus_pal:
+    addrs: [0x806C5AC0, 0x806C5AE0]
+    type: pal16
+  obj_09_lotus_pal:
+    addrs: [0x806C5AE0, 0x806C5B00]
+    type: pal16

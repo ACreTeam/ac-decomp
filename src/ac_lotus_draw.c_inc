@@ -1,0 +1,122 @@
+u16 aLOT_obj_01_lotus_pal[] = {
+    #include "assets/aLOT_obj_01_lotus_pal.inc"
+};
+
+u16 obj_02_lotus_pal[] = {
+    #include "assets/obj_02_lotus_pal.inc"
+};
+
+u16 obj_03_lotus_pal[] = {
+    #include "assets/obj_03_lotus_pal.inc"
+};
+
+u16 obj_04_lotus_pal[] = {
+    #include "assets/obj_04_lotus_pal.inc"
+};
+
+u16 obj_05_lotus_pal[] = {
+    #include "assets/obj_05_lotus_pal.inc"
+};
+
+u16 obj_06_lotus_pal[] = {
+    #include "assets/obj_06_lotus_pal.inc"
+};
+
+u16 obj_07_lotus_pal[] = {
+    #include "assets/obj_07_lotus_pal.inc"
+};
+
+u16 obj_08_lotus_pal[] = {
+    #include "assets/obj_08_lotus_pal.inc"
+};
+
+u16 obj_09_lotus_pal[] = {
+    #include "assets/obj_09_lotus_pal.inc"
+};
+
+static int aLOT_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape, u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    static int on_off_tbl[12] = {
+        0, 0, 0, 0,
+        1, 1, 1, 0,
+        0, 0, 0, 0
+    };
+
+    BOOL draw;
+    int month;
+    int day;
+    Gfx* gfx;
+    GRAPH* graph;
+    lbRTC_time_c* rtc_time;
+
+    graph = game->graph;
+    rtc_time = Common_GetPointer(time.rtc_time);
+    month = rtc_time->month;
+    day = rtc_time->day;
+    draw = on_off_tbl[month - 1];
+
+    OPEN_DISP(graph);
+    gfx = NOW_POLY_OPA_DISP;
+    
+    if (joint_idx == 0x12) {
+        switch(month) {
+            case lbRTC_MAY:
+                {
+                    if (day < 26) {
+                        draw = FALSE;
+                    }
+                }
+                break;
+            case lbRTC_AUGUST:
+                {
+                    if (day < 26) {
+                        draw = TRUE;
+                    }
+                }
+                break;
+        }
+
+        if (draw == FALSE) {
+            *joint_shape = NULL;
+        }
+    }
+
+    SET_POLY_OPA_DISP(gfx);
+    CLOSE_DISP(graph);
+    return TRUE;
+}
+
+static void aLOT_actor_draw(ACTOR* actor, GAME* game) {
+    static u16* paltbl[9] = {
+        aLOT_obj_01_lotus_pal, obj_02_lotus_pal, obj_03_lotus_pal,
+        obj_04_lotus_pal, obj_05_lotus_pal, obj_06_lotus_pal,
+        obj_07_lotus_pal, obj_08_lotus_pal, obj_09_lotus_pal
+    };
+
+    LOTUS_ACTOR* lotus;
+    GRAPH* graph;
+    cKF_SkeletonInfo_R_c* keyframe;
+    Mtx* mtx;
+    Gfx* gfx;
+
+    lotus = (LOTUS_ACTOR*)actor;
+    graph = game->graph;
+    keyframe = &lotus->structure_class.keyframe;
+
+    if (lotus->structure_class.arg0 >= 0) {
+        mtx = GRAPH_ALLOC_TYPE(graph, Mtx, keyframe->skeleton->num_shown_joints);
+        if (mtx != NULL) {
+            _texture_z_light_fog_prim_npc(graph);
+
+            OPEN_DISP(graph);
+            gfx = NOW_POLY_OPA_DISP;
+
+            gSPSegment(gfx++, G_MWO_SEGMENT_8, paltbl[lotus->structure_class.arg0]);
+
+            SET_POLY_OPA_DISP(gfx);
+
+            cKF_Si3_draw_R_SV(game, keyframe, mtx, aLOT_actor_draw_before, NULL, actor);
+
+            CLOSE_DISP(graph);
+        }
+    }
+}

@@ -1,0 +1,81 @@
+extern cKF_Animation_R_c cKF_ba_r_obj_s_lotus;
+
+static int aLOT_getPalNo() {
+    static int flower_pal_idx_table[18] = {
+        8, 8, 8,
+        0, 1, 1,
+        1, 2, 2,
+        3, 4, 5,
+        6, 7, 8,
+        8, 8, 8
+    };
+
+    return flower_pal_idx_table[Common_Get(time).term_idx];
+}
+
+static void aLOT_wait(ACTOR* actor, GAME* game) {
+    LOTUS_ACTOR* lotus;
+    int comeback_status;
+
+    lotus = (LOTUS_ACTOR*)actor;
+    comeback_status = mPlib_Check_UKI_COMEBACK_STATUS();
+
+    if (comeback_status == FALSE
+        && (pipeinfo.collision_obj.collision_flags0 & 2) != 0
+        && pipeinfo.collision_obj.collided_actor != NULL
+        && pipeinfo.collision_obj.collided_actor->id == mAc_PROFILE_UKI) {
+        lotus->structure_class.keyframe.frame_control.speed = 2.0f;
+        aLOT_setup_action(lotus, aLOT_ACTION_SHAKE);
+    }
+    else {
+        add_calc(&lotus->structure_class.keyframe.frame_control.speed, 0.5f, 0.1f, 0.03f, 0.0f);
+    }
+}
+
+static void aLOT_shake(ACTOR* actor, GAME* game) {
+    LOTUS_ACTOR* lotus;
+    int comeback_status;
+
+    lotus = (LOTUS_ACTOR*)actor;
+    comeback_status = mPlib_Check_UKI_COMEBACK_STATUS();
+
+    if (comeback_status == FALSE) {
+        add_calc(&lotus->structure_class.keyframe.frame_control.speed, 0.5f, 0.1f, 0.03f, 0.0f);
+    }
+    else {
+        aLOT_setup_action(lotus, aLOT_ACTION_WAIT2);
+    }
+}
+
+static void aLOT_setup_action(LOTUS_ACTOR* lotus, int action) {
+    static aSTR_MOVE_PROC process[3] = { aLOT_wait, aLOT_wait, aLOT_shake };
+
+    if (action == aLOT_ACTION_WAIT1) {
+        cKF_SkeletonInfo_R_init(&lotus->structure_class.keyframe, lotus->structure_class.keyframe.skeleton, &cKF_ba_r_obj_s_lotus, 1.0f, 129.0f, 1.0f, 0.5f, 0.0f, TRUE, NULL);
+    }
+
+    lotus->structure_class.action_proc = process[action];
+    lotus->structure_class.action = action;
+}
+
+static void aLOT_actor_move(ACTOR* actor, GAME* game) {
+    LOTUS_ACTOR* lotus;
+    GAME_PLAY* game_play;
+
+    lotus = (LOTUS_ACTOR*)actor;
+    game_play = (GAME_PLAY*)game;
+
+    cKF_SkeletonInfo_R_play(&lotus->structure_class.keyframe);
+    
+    lotus->structure_class.action_proc(actor, game);
+
+    CollisionCheck_Uty_ActorWorldPosSetPipeC(actor, &pipeinfo);
+    CollisionCheck_setOC(game, &game_play->collision_check, &pipeinfo.collision_obj);
+}
+
+static void aLOT_actor_init(ACTOR* actor, GAME* game) {
+    mFI_SetFG_common(DUMMY_LOTUS, actor->home.position, FALSE);
+    aLOT_actor_move(actor, game);
+
+    actor->mv_proc = aLOT_actor_move;
+}
