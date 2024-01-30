@@ -7,6 +7,18 @@
 #include "m_common_data.h"
 #include "m_player_lib.h"
 
+#ifdef MUST_MATCH
+#ifndef __INTELLISENSE__
+/* Force assetrip to detect these assets. They're used in a .c_inc file. */
+FORCESTRIP static u16 __hack_pal0[] = {
+  #include "assets/aKOI_obj_e_koinobori_a_pal.inc"
+};
+FORCESTRIP static u16 __hack_pal1[] = {
+  #include "assets/obj_e_koinobori_b_pal.inc"
+};
+#endif
+#endif
+
 enum {
   aKOI_ACTION_WAIT,
 };
