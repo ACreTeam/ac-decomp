@@ -139,6 +139,13 @@ extern s32 JW_Resize(void* ptr, size_t new_size);
 extern size_t JW_GetMemBlockSize(void* ptr);
 extern void JW_JUTReport(int x, int y, int show_count, const char* fmt, ...);
 
+extern int JC_JKRDecomp_checkCompressed(u8* bufp);
+extern void JC_JKRDecomp_decode(u8* comp_bufp, u8* decomp_bufp, u32 decomp_buf_size, u32 skipCount);
+
+extern void* JC__JKRMountArchive(const char* path, int mount_mode, void* heap, int mount_direction);
+
+extern void* JC__JKRGetSystemHeap();
+
 #ifdef JSYSWRAPPER_DEBUG
 #define JSYSWRAPPER_PRINTF(console, fmt, ...) JC_JUTConsole_print_f(console, fmt, ...)
 #else

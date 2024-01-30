@@ -1,8 +1,14 @@
 #ifndef SPRINTF_H
 #define SPRINTF_H
 
-#include "types.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-s32 sprintf(char* dst, const char* fmt, ...);
+int sprintf(char* dst, const char* fmt, ...);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

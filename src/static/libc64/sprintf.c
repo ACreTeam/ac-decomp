@@ -8,8 +8,8 @@ static void* proutPrintf(void* dst, const char* fmt, int size) {
     return (void*)((u8*)memcpy(dst, fmt, size) + size);
 }
 
-s32 sprintf(char* dst, const char* fmt, ...) {
-    s32 ret;
+int sprintf(char* dst, const char* fmt, ...) {
+    int ret;
     va_list args;
     va_start(args, fmt);
 

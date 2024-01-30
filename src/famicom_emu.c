@@ -38,12 +38,12 @@ static void my_alloc_cleanup() {
     zelda_CleanupArena();
 }
 
-static void my_zelda_getmemblocksize(void* ptr) {
-    zelda_GetMemBlockSize(ptr);
+static int my_zelda_getmemblocksize(void* ptr) {
+    return zelda_GetMemBlockSize(ptr);
 }
 
-static void my_zelda_gettotalfreesize() {
-    zelda_GetTotalFreeSize();
+static int my_zelda_gettotalfreesize() {
+    return zelda_GetTotalFreeSize();
 }
 
 static void* my_zelda_malloc_align(size_t size, u32 align) {
@@ -59,7 +59,7 @@ static void my_zelda_free(void* ptr) {
     zelda_free(ptr);
 }
 
-void* my_malloc_func[] = {
+Famicom_MallocInfo my_malloc_func = {
     my_zelda_malloc_align,
     my_zelda_free,
     my_zelda_getmemblocksize,
@@ -151,7 +151,7 @@ extern void famicom_emu_init(GAME* game) {
 
     my_alloc_init(game, freeXfbBase, freeXfbSize);
 
-    if (famicom_init(rom_id, my_malloc_func, player) != 0) {
+    if (famicom_init(rom_id, &my_malloc_func, player) != 0) {
         Common_Set(famicom_2DBAC, Common_Get(famicom_2DBAC) | 1);
         return_emu_game(game);
     }

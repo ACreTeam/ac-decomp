@@ -2634,6 +2634,7 @@ global:
     0x8009ae84: _restfpr_28
     0x8009ae88: _restfpr_29
     0x8009ae98: __save_gpr
+    0x8009ae98: _savegpr_14
     0x8009ae9c: _savegpr_15
     0x8009aea0: _savegpr_16
     0x8009aea4: _savegpr_17
@@ -2650,6 +2651,7 @@ global:
     0x8009aed0: _savegpr_28
     0x8009aed4: _savegpr_29
     0x8009aee4: __restore_gpr
+    0x8009aee4: _restgpr_14
     0x8009aee8: _restgpr_15
     0x8009aeec: _restgpr_16
     0x8009aef0: _restgpr_17

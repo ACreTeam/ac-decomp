@@ -4,14 +4,8 @@
 #include "types.h"
 #include "Famicom/ks_nes_common.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-
-#ifdef __cplusplus
-}
-#endif
+extern int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp, u8* bbramp);
+extern void ksNesEmuFrame(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags);
+extern void ksNesPushResetButton(ksNesStateObj* sp);
 
 #endif

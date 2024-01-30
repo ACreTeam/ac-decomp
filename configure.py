@@ -637,7 +637,10 @@ class CSource(Source):
             self.cc = c.CC
         elif path.startswith("src/static/Famicom/"):
             self.cflags = c.FAMICOM_CLFAGS
-            self.cc = c.CC
+            if "ksNes" in path: # ksNes doesn't have rodata pooling off
+                self.cc = c.CC
+            else:
+                self.cc = c.CC_R
         elif path.startswith("src/static/GBA2/"):
             self.cflags = c.DOL_CFLAGS_SDATA0_CFLAGS
             self.cc = c.CC

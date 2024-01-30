@@ -120,6 +120,12 @@ static inline void GXTexCoord2s16(s16 u, s16 v) {
   GXWGFifo.s16 = v;
 }
 
+static inline void GXPosition2s16(s16 x, s16 y)
+{
+  GXWGFifo.s16 = x;
+  GXWGFifo.s16 = y;
+}
+
 static inline void GXPosition2u16(u16 x, u16 y)
 {
   GXWGFifo.u16 = x;
