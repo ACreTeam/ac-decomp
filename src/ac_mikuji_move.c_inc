@@ -15,11 +15,11 @@ static void aMIK_set_bgOffset(MIKUJI_ACTOR* mikuji, int offs)
     offset = height_table[offs]; 
 
     for(i = 0; i < 2; i++){
-        pos.z = mikuji->actor_class.home.position.z + addZ[i];
-        pos.x = mikuji->actor_class.home.position.x + addX[0];
+        pos.z = mikuji->structure_class.actor_class.home.position.z + addZ[i];
+        pos.x = mikuji->structure_class.actor_class.home.position.x + addX[0];
         mCoBG_SetPluss5PointOffset_file(pos, *offset, __FILE__, 97);
         offset++;
-        pos.x = mikuji->actor_class.home.position.x + addX[1];
+        pos.x = mikuji->structure_class.actor_class.home.position.x + addX[1];
         mCoBG_SetPluss5PointOffset_file(pos, *offset, __FILE__, 101);
         offset++;
     }

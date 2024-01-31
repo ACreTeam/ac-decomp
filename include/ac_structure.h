@@ -189,33 +189,34 @@ typedef u16* (*aSTR_GET_PAL_SEGMENT_PROC)(s16);
 
 typedef void (*aSTR_MOVE_PROC)(ACTOR*, GAME*);
 
+// sizeof(actor_structure_s) == 0x2DC
 struct actor_structure_s {
-  ACTOR actor_class;
-  int keyframe_state;
-  cKF_SkeletonInfo_R_c keyframe;
-  int keyframe_saved_keyframe;
-  s_xyz work_area[15];
-  s_xyz morph_area[15];
-  aSTR_MOVE_PROC action_proc;
-  int _2A4;
-  int structure_type; /* aSTR_TYPE_* */
-  int structure_pal; /* aSTR_PAL_* */
-  int request_type;
-  int action;
+  /* 0x000*/ ACTOR actor_class;
+  /* 0x174*/ int keyframe_state;
+  /* 0x178*/ cKF_SkeletonInfo_R_c keyframe;
+  /* 0x1E8*/ int keyframe_saved_keyframe;
+  /* 0x1EC*/ s_xyz work_area[15];
+  /* 0x246*/ s_xyz morph_area[15];
+  /* 0x2A0*/ aSTR_MOVE_PROC action_proc;
+  /* 0x2A4*/ int _2A4;
+  /* 0x2A8*/ int structure_type; /* aSTR_TYPE_* */
+  /* 0x2AC*/ int structure_pal; /* aSTR_PAL_* */
+  /* 0x2B0*/ int request_type;
+  /* 0x2B4*/ int action;
 
   /* general purpose members with unique usage between structure actors */
-  int arg0;
-  int arg1;
-  int arg2;
-  int arg3;
+  /* 0x2B8*/ int arg0;
+  /* 0x2BC*/ int arg1;
+  /* 0x2C0*/ int arg2;
+  /* 0x2C4*/ int arg3;
 
   /* general purpose float members with unique usage between structure actors*/
-  f32 arg0_f;
-  f32 arg1_f;
-  f32 arg2_f;
-  f32 arg3_f;
+  /* 0x2C8*/ f32 arg0_f;
+  /* 0x2CC*/ f32 arg1_f;
+  /* 0x2D0*/ f32 arg2_f;
+  /* 0x2D4*/ f32 arg3_f;
 
-  u32 season;
+  /* 0x2D8*/ u32 season;
 };
 
 typedef struct actor_overlay_info_s {
