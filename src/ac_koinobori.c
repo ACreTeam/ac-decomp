@@ -68,14 +68,14 @@ static void aKOI_actor_ct(ACTOR* actor, GAME* game) {
     actor->cull_height = 830.0f;
     actor->cull_radius = 480.0f;
 
-    cKF_SkeletonInfo_R_ct(&koinobori->keyframe, &cKF_bs_r_obj_e_koinobori, NULL, koinobori->work, koinobori->morph);
+    cKF_SkeletonInfo_R_ct(&koinobori->structure_class.keyframe, &cKF_bs_r_obj_e_koinobori, NULL, koinobori->structure_class.work_area, koinobori->structure_class.morph_area);
     aKOI_setup_action(koinobori, aKOI_ACTION_WAIT);
-    cKF_SkeletonInfo_R_play(&koinobori->keyframe);
+    cKF_SkeletonInfo_R_play(&koinobori->structure_class.keyframe);
 }
 
 static void aKOI_actor_dt(ACTOR* actor, GAME* game) {
     KOINOBORI_ACTOR* koinobori = (KOINOBORI_ACTOR*)actor;
-    cKF_SkeletonInfo_R_dt(&koinobori->keyframe);
+    cKF_SkeletonInfo_R_dt(&koinobori->structure_class.keyframe);
 }
 
 #include "../src/ac_koinobori_move.c_inc"
