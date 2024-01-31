@@ -434,6 +434,11 @@ ac_koinobori.c:
     .text: [0x805B27B8, 0x805B2AE0]
     .data: [0x806C58A0, 0x806C5940]
     .rodata: [0x8064A978, 0x8064A990]
+ac_lotus.c:
+    .text: [0x805B2AE0, 0x805B3010]
+    .rodata: [0x8064A990, 0x8064A9B0]
+    .data: [0x806C5940, 0x806C5B58]
+    .bss: [0x81327F48, 0x81327F68]
 ac_rope.c:
     .text: [0x804967A4, 0x80496AB8]
     .rodata: [0x80644DB0,0x80644DB8]

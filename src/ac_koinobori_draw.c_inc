@@ -17,7 +17,7 @@ static void aKOI_actor_draw(ACTOR* actor, GAME* game) {
 
     koinobori = (KOINOBORI_ACTOR*)actor;
     graph = game->graph;
-    keyframe = &koinobori->keyframe;
+    keyframe = &koinobori->structure_class.keyframe;
     mtx = GRAPH_ALLOC_TYPE(graph, Mtx, keyframe->skeleton->num_shown_joints);
 
     if (mtx != NULL) {
