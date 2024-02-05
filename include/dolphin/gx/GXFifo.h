@@ -2,6 +2,7 @@
 #define _DOLPHIN_GXFIFO
 
 #include <dolphin/gx/GXEnum.h>
+#include <dolphin/os/OSThread.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,6 +30,8 @@ void GXInitFifoLimits(GXFifoObj* fifo, u32 hiWaterMark, u32 loWaterMark);
 GXBreakPtCallback GXSetBreakPtCallback(GXBreakPtCallback cb);
 void GXEnableBreakPt(void* breakPt);
 void GXDisableBreakPt(void);
+OSThread* GXSetCurrentGXThread(void);
+OSThread* GXGetCurrentGXThread(void);
 
 #ifdef __cplusplus
 }

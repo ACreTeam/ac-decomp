@@ -306,25 +306,25 @@ typedef struct {
 } Gloadtlut_dolphin;
 
 typedef struct {
-    unsigned char cmd:8;
-    unsigned char xparam:8;
+    unsigned int cmd:8;
+    unsigned int xparam:8;
     unsigned int pad:2;
-    unsigned char level:3;
-    unsigned char tile:3;
-    unsigned char on:8; /* Should be 7 bits w/ 1 bit padding, but emulator doesn't do this */
+    unsigned int level:3;
+    unsigned int tile:3;
+    unsigned int on:8; /* Should be 7 bits w/ 1 bit padding, but emulator doesn't do this */
     unsigned short s:16;
     unsigned short t:16;
 } Gtexture_internal;
 
 typedef struct {
-    unsigned char cmd:8;
+    unsigned int cmd:8;
     unsigned int index:8;
     unsigned int offset:16;
     unsigned int data;
 } Gmoveword;
 
 typedef struct {
-    unsigned char cmd:8;
+    unsigned int cmd:8;
     unsigned int length:8;
     unsigned int offset:8;
     unsigned int index:8;
@@ -349,70 +349,16 @@ typedef union {
 
 /* Combiner Structs */
 typedef struct {
-    unsigned int pad0:4;
-    unsigned int color0:4;
-    unsigned int pad1:4;
-    unsigned int color1:4;
-    unsigned int pad2:4;
-    unsigned int color2:4;
-    unsigned int pad3:4;
-    unsigned int color3:4;
+    u8 color0;
+    u8 color1;
+    u8 color2;
+    u8 color3;
 } combiner_tev_color;
 
 typedef struct {
-    unsigned int pad0:5;
-    unsigned int alpha0:3;
-    unsigned int pad1:5;
-    unsigned int alpha1:3;
+    u8 alpha0;
+    u8 alpha1;
 } combiner_tev_alpha;
-
-/*
-static combiner_tev_alpha tbla[8] = {
-    { 0, TEV_ALPHA_COMBINED, 0, TEV_ALPHA_ONE },
-    { 0, TEV_ALPHA_TEXEL0, 0, TEV_ALPHA_TEXEL0 },
-    { 0, TEV_ALPHA_TEXEL0, 0, TEV_ALPHA_TEXEL0 },
-    { 0, TEV_ALPHA_PRIMITIVE, 0, TEV_ALPHA_PRIMITIVE },
-    { 0, TEV_ALPHA_SHADE, 0, TEV_ALPHA_SHADE },
-    { 0, TEV_ALPHA_ENVIRONMENT, 0, TEV_ALPHA_ENVIRONMENT },
-    { 0, TEV_ALPHA_ONE, 0, TEV_ALPHA_PRIM_LOD_FRAC },
-    { 0, TEV_ALPHA_ZERO, 0, TEV_ALPHA_ZERO }
-};
-
-static combiner_tev_color tblc[32] = {
-    { 0, TEV_COMBINED, 0, TEV_COMBINED, 0, TEV_COMBINED, 0, TEV_COMBINED },
-    { 0, TEV_TEXEL0, 0, TEV_TEXEL0, 0, TEV_TEXEL0, 0, TEV_TEXEL0 },
-    { 0, TEV_TEXEL0, 0, TEV_TEXEL0, 0, TEV_TEXEL0, 0, TEV_TEXEL0 },
-    { 0, TEV_PRIMITIVE, 0, TEV_PRIMITIVE, 0, TEV_PRIMITIVE, 0, TEV_PRIMITIVE },
-    { 0, TEV_SHADE, 0, TEV_SHADE, 0, TEV_SHADE, 0, TEV_SHADE },
-    { 0, TEV_ENVIRONMENT, 0, TEV_ENVIRONMENT, 0, TEV_ENVIRONMENT, 0, TEV_ENVIRONMENT },
-    { 0, TEV_ONE, 0, TEV_HALF, 0, TEV_HALF, 0, TEV_ONE },
-    { 0, TEV_HALF, 0, TEV_HALF, 0, TEV_COMBINED_ALPHA, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_TEXEL0_ALPHA, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_TEXEL0_ALPHA, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_PRIMITIVE_ALPHA, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_SHADE_ALPHA, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ENV_ALPHA, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_HALF, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_PRIM_LOD_FRAC, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_HALF, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO },
-    { 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO, 0, TEV_ZERO }
-};
-*/
 
 /* New Command Macros */
 #define gsDPParam2(cmd, tag, param, extra) \

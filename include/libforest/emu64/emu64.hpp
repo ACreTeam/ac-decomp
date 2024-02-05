@@ -9,10 +9,7 @@
 #include "dolphin/os/__ppc_eabi_init.h"
 #include "dolphin/gx.h"
 #include "dolphin/mtx.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "sys_ucode.h"
 
 #ifdef EMU64_DEBUG
 #define AFLAGS_MAX 100
@@ -38,7 +35,43 @@ extern "C" {
 
 #define EMU64_WARN_TIME 600
 
+
+#define EMU64_DIRTY_FLAG_PRIM_COLOR 0
+#define EMU64_DIRTY_FLAG_ENV_COLOR 1
+#define EMU64_DIRTY_FLAG_BLEND_COLOR 2
+#define EMU64_DIRTY_FLAG_FOG 3
+#define EMU64_DIRTY_FLAG_FILL_COLOR 4
+#define EMU64_DIRTY_FLAG_FILL_TEV_COLOR 5
+#define EMU64_DIRTY_FLAG_COMBINE 6
+#define EMU64_DIRTY_FLAG_OTHERMODE_HIGH 7
+#define EMU64_DIRTY_FLAG_OTHERMODE_LOW 8
+#define EMU64_DIRTY_FLAG_GEOMETRYMODE 9
+#define EMU64_DIRTY_FLAG_PROJECTION_MTX 10
+#define EMU64_DIRTY_FLAG_TEX 11
+#define EMU64_DIRTY_FLAG_POSITION_MTX 12
+#define EMU64_DIRTY_FLAG_TEX_TILE0 13
+#define EMU64_DIRTY_FLAG_TEX_TILE1 14
+#define EMU64_DIRTY_FLAG_TEX_TILE2 15
+#define EMU64_DIRTY_FLAG_TEX_TILE3 16
+#define EMU64_DIRTY_FLAG_TEX_TILE4 17
+#define EMU64_DIRTY_FLAG_TEX_TILE5 18
+#define EMU64_DIRTY_FLAG_TEX_TILE6 19
+#define EMU64_DIRTY_FLAG_TEX_TILE7 20
+#define EMU64_DIRTY_FLAG_21 21
+#define EMU64_DIRTY_FLAG_22 22
+#define EMU64_DIRTY_FLAG_23 23
+#define EMU64_DIRTY_FLAG_24 24
+#define EMU64_DIRTY_FLAG_25 25
+#define EMU64_DIRTY_FLAG_26 26
+#define EMU64_DIRTY_FLAG_27 27
+#define EMU64_DIRTY_FLAG_28 28
+#define EMU64_DIRTY_FLAG_LIGHTS 29
+#define EMU64_DIRTY_FLAG_LIGHTING 30
+#define EMU64_DIRTY_FLAG_TEX_MTX 31
 #define NUM_DIRTY_FLAGS 32
+
+#define EMU64_TLUT_IA16 0x0000
+#define EMU64_TLUT_RGBA5551 0x8000
 
 /* TODO: figure out where this actually belongs */
 namespace std {
@@ -100,6 +133,47 @@ typedef struct {
   u8 tlut_name; /* Palette/TLUT idx */
   u8 pad;
 } emu64_texture_info;
+
+static inline void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigned int* blk_ht) {
+  static u8 blk_tbl[4][2] = {
+    { 8, 8 }, // G_IM_SIZ_4b
+    { 8, 4 }, // G_IM_SIZ_8b
+    { 4, 4 }, // G_IM_SIZ_16b
+    { 4, 4 }  // G_IM_SIZ_32b
+  };
+
+  *blk_wd = blk_tbl[siz][0];
+  *blk_ht = blk_tbl[siz][1];
+}
+
+extern void get_dol_wd_ht(unsigned int siz, unsigned int in_wd, unsigned int in_ht, unsigned int* wd, unsigned int* ht);
+
+static inline unsigned int rgba5551_to_rgb5a3(unsigned int rgba5551) {
+  if ((rgba5551 & 1)) {
+    return 0x8000 | (rgba5551 >> 1); // no transparency so simply swap
+  }
+  else {
+    return ((rgba5551 >> 3) & 0xF0) | ((rgba5551 >> 4) & ~0xFF) | ((rgba5551 >> 2) & 0x0F);
+  }
+}
+
+static inline unsigned int get_dol_tex_siz(unsigned int siz, unsigned int in_wd, unsigned int in_ht) {
+  unsigned int wd;
+  unsigned int ht;
+
+  get_dol_wd_ht(siz, in_wd, in_ht, &wd, &ht);
+  return ((wd * ht) << siz) / 2;
+}
+
+static inline unsigned int get_dol_tlut_size(unsigned int count) {
+  return ALIGN_NEXT(count * sizeof(u16), 32);
+}
+
+#define AFLAGS_COMBINE_AUTO 12
+#define ALFAGS_TEV_ALPHA_KONST 18
+#define AFLAGS_2TRIS 22 /* Draws the current polygon as two triangles */
+#define AFLAGS_SKIP_COMBINE_TEV 27
+#define AFLAGS_FORCE_TEV_COMBINE_MODE 28 /* 1 = force shade, 2 = force d1 = ENV, Ad1 = ONE */
 
 class aflags_c {
 public:
@@ -297,8 +371,34 @@ private:
   void Vprintf(const char* fmt, std::__tag_va_List* va_list) { vprintf(fmt, va_list); }
 };
 
+#define EMU64_ASSERTLINE(cond, line) \
+  if (!cond) {  \
+    this->panic(#cond, __FILE__, line); \
+  }
+
+#define EMU64_ASSERT(cond) EMU64_PANICLINE(cond, __LINE__)
+
 class emu64 : public emu64_print {
 public:
+  void emu64_init();
+  void printInfo();
+  void panic(char* fmt, char* file, int line);
+  
+  void emu64_change_ucode(void* ucode_p);
+  void texconv_tile(u8* addr, u8* converted_addr, unsigned int wd, unsigned int fmt, unsigned int siz, unsigned int start_wd, unsigned int start_ht, unsigned int end_wd, unsigned int end_ht, unsigned int line_siz);
+  unsigned int tmem_swap(unsigned int ofs, unsigned int blk_siz) { return ofs ^ ((ofs / blk_siz) & 4); }
+  void tlutconv_rgba5551(u16* rgba5551_p, u16* rgb5a3_p, unsigned int count);
+  void tlutconv_ia16(u16* src_ia16_p, u16* dst_ia16_p, unsigned int count);
+  u8* texconv_tile_new(u8* addr, unsigned int wd, unsigned int fmt, unsigned int siz, unsigned int start_wd, unsigned int start_ht, unsigned int end_wd, unsigned int end_ht, unsigned int line_siz);
+  u16* tlutconv_new(u16* tlut, unsigned int tlut_fmt, unsigned int count);
+  void tlutconv(u16* src_tlut, u16* dst_tlut, unsigned int count, unsigned int tlut_fmt);
+  int replace_combine_to_tev(Gfx* g);
+  int combine_auto();
+  int combine_tev();
+  void combine_manual();
+  const char* combine_name(u32 param, u32 type);
+  const char* combine_alpha(int param, int type);
+  void print_combine(u64 combine);
 
   /* N64 texture format[N64 bit size] -> dol texture format */
   static u16 fmtxtbl[8][4];
@@ -331,8 +431,8 @@ private:
   /* 0x0054 */ void* work_ptr;
   /* 0x0058 */ int end_dl;
   /* 0x005C */ s8 ucode_len;
-  /* 0x0060 */ void* ucode_info;
-  /* 0x0064 */ void* ucode_p;
+  /* 0x0060 */ ucode_info* ucode_info;
+  /* 0x0064 */ int ucode_type; // maybe?
   /* 0x0068 */ int _0068; /* ??? */
   /* 0x006C */ void* segments[NUM_SEGMENTS];
   /* 0x00AC */ Gfx* DL_stack[DL_MAX_STACK_LEVEL];
@@ -341,8 +441,7 @@ private:
   /* 0x00FC */ u32 othermode_low;
   /* 0x0100 */ u32 geometry_mode;
   /* 0x0104 */ u32 _0104;
-  /* 0x0108 */ u32 combiner_high;
-  /* 0x010C */ u32 combiner_low;
+  /* 0x0108 */ Gfx combine;
   /* 0x0110 */ emu64_texture_info texture_info[NUM_TILES];
   /* 0x0170 */ Gsetimg2 setimg2_cmds[NUM_TILES];
   /* 0x01B0 */ void* tlut_addresses[NUM_TLUTS];
@@ -372,10 +471,10 @@ private:
   /* 0x049C */ EmuColor fill_color;
   /* 0x04A0 */ EmuColor fill_tev_color; /* GX_TEVREG0 */
   /* 0x04A4 */ bool dirty_flags[NUM_DIRTY_FLAGS];
-  /* 0x04C4 */ Mtx original_projection_mtx;
-  /* 0x04F4 */ Mtx position_mtx;
-  /* 0x0524 */ Mtx model_view_mtx_stack[MTX_STACK_SIZE];
-  /* 0x0704 */ Mtx position_mtx_stack[MTX_STACK_SIZE];
+  /* 0x04C4 */ GC_Mtx original_projection_mtx;
+  /* 0x04F4 */ GC_Mtx position_mtx;
+  /* 0x0524 */ GC_Mtx model_view_mtx_stack[MTX_STACK_SIZE];
+  /* 0x0704 */ GC_Mtx position_mtx_stack[MTX_STACK_SIZE];
   /* 0x08E4 */ Mtx44 projection_mtx;
   /* 0x0924 */ struct {
     struct {
@@ -387,15 +486,15 @@ private:
   } lookAt;
   /* 0x092C */ f32 near; /* Near clipping plane */
   /* 0x0930 */ f32 far; /* Far clipping plane */
-  /* 0x0934 */ Mtx model_view_mtx;
-  /* 0x0964 */ Mtx _0964; /* UNCONFIRMED TYPE */
+  /* 0x0934 */ GC_Mtx model_view_mtx;
+  /* 0x0964 */ GC_Mtx _0964; /* UNCONFIRMED TYPE */
   /* 0x0994 */ int mtx_stack_size;
   /* 0x0998 */ Gtexture_internal texture_gfx;
   /* 0x09A0 */ f32 texture_scale_s; /* x-scale */
   /* 0x09A4 */ f32 texture_scale_t; /* y-scale */
   /* 0x09A8 */ Mtx44 ortho_mtx;
   /* 0x09E8 */ GXProjectionType projection_type;
-  /* 0x09EC */ Mtx perspective_mtx;
+  /* 0x09EC */ GC_Mtx perspective_mtx;
   /* 0x0A1C */ u32 _0A1C;
   /* 0x0A20 */ u32 rdpHalf_1;
   /* 0x0A24 */ EmuLight lights[NUM_LIGHTS];
@@ -416,7 +515,7 @@ private:
   /* 0x0B9C */ u32 polygons_time;
   /* 0x0BA0 */ u32 dirty_check_time;
   /* 0x0BA4 */ u32 dirty_lightX_time;
-  /* 0x0BA8 */ u32 dirty_lightX_cnt
+  /* 0x0BA8 */ u32 dirty_lightX_cnt;
   /* 0x0BAC */ u32 dirty_light_time;
   /* 0x0BB0 */ u32 dirty_light_cnt;
   /* 0x0BB4 */ u32 dirty_tex_time;
@@ -457,9 +556,5 @@ private:
   /* 0x2038 */ Gfx* dl_history[DL_HISTORY_COUNT];
   /* 0x2078 */ u8 dl_history_start;
 };
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
