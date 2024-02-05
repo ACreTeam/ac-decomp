@@ -1423,37 +1423,40 @@ void emu64::combine_manual() {
             GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD1, GX_TEXMAP1, GX_COLOR0A0);
             break;
         }
-    }
-
-    if (aflags[AFLAGS_COMBINE_AUTO] != 0 || this->combine_auto() != 0) {
-        if (aflags[AFLAGS_SKIP_COMBINE_TEV] == 2) {
-            last_highlow = 0;
-        }
-
-        if (last_highlow < NUM_COMBINER_HIGHLOW_ERRS) {
-            bool found = false;
-            int i;
-            for (i = 0; i < last_highlow; i++) {
-                if (*(u64*)&this->combine == highlow_errs[i]) {
-                    found = true;
-                    break;
+        default:
+        {
+            if (aflags[AFLAGS_COMBINE_AUTO] != 0 || this->combine_auto() != 0) {
+                if (aflags[AFLAGS_SKIP_COMBINE_TEV] == 2) {
+                    last_highlow = 0;
                 }
-            }
 
-            if (!found) {
-                highlow_errs[i] = *(u64*)&this->combine;
-                this->err_count++;
-                /* ### Unsupported combine mode ###\ncase 0x%16llx:// */
-                this->Printf0("### 未対応のコンバインモードです ###\ncase 0x%16llx:// ");
-                this->print_combine(*((u64*)&this->combine));
-                this->Printf0("\n");
+                if (last_highlow < NUM_COMBINER_HIGHLOW_ERRS) {
+                    bool found = false;
+                    int i;
+                    for (i = 0; i < last_highlow; i++) {
+                        if (*(u64*)&this->combine == highlow_errs[i]) {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        highlow_errs[i] = *(u64*)&this->combine;
+                        this->err_count++;
+                        /* ### Unsupported combine mode ###\ncase 0x%16llx:// */
+                        this->Printf0("### 未対応のコンバインモードです ###\ncase 0x%16llx:// ");
+                        this->print_combine(*((u64*)&this->combine));
+                        this->Printf0("\n");
+                    }
+                }
+
+                /* Default case */
+                GXSetNumTevStages(1);
+                GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ONE);
+                GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
+                GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
             }
+            break;
         }
-
-        /* Default case */
-        GXSetNumTevStages(1);
-        GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ONE);
-        GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
-        GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
     }
 }
