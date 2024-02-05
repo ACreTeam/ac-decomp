@@ -1009,6 +1009,7 @@ static u64 highlow_errs[NUM_COMBINER_HIGHLOW_ERRS];
 
 void emu64::combine_manual() {
     u64 combine_mode = *(u64*)&this->combine;
+
     switch (combine_mode) {
         case gsDPSetCombineLERPInline(TEXEL0, 0, SHADE, TEXEL0, 0, 0, 0, TEXEL0, SHADE, ENVIRONMENT, PRIMITIVE,
                                       COMBINED, 0, 0, 0, COMBINED): {
@@ -1423,8 +1424,7 @@ void emu64::combine_manual() {
             GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD1, GX_TEXMAP1, GX_COLOR0A0);
             break;
         }
-        default:
-        {
+        default: {
             if (aflags[AFLAGS_COMBINE_AUTO] != 0 || this->combine_auto() != 0) {
                 if (aflags[AFLAGS_SKIP_COMBINE_TEV] == 2) {
                     last_highlow = 0;
@@ -1434,19 +1434,20 @@ void emu64::combine_manual() {
                     bool found = false;
                     int i;
                     for (i = 0; i < last_highlow; i++) {
-                        if (*(u64*)&this->combine == highlow_errs[i]) {
+                        if (combine_mode == highlow_errs[i]) {
                             found = true;
                             break;
                         }
                     }
 
                     if (!found) {
-                        highlow_errs[i] = *(u64*)&this->combine;
+
+                        highlow_errs[i] = combine_mode;
                         this->err_count++;
                         /* ### Unsupported combine mode ###\ncase 0x%16llx:// */
-                        this->Printf0("### 未対応のコンバインモードです ###\ncase 0x%16llx:// ");
-                        this->print_combine(*((u64*)&this->combine));
-                        this->Printf0("\n");
+                        this->Printf0(VT_COL(YELLOW, BLACK) "### 未対応のコンバインモードです ###\ncase 0x%16llx:// ", combine_mode);
+                        this->print_combine(combine_mode);
+                        this->Printf0("\n" VT_RST);
                     }
                 }
 
