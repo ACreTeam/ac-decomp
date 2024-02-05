@@ -13,6 +13,7 @@ typedef struct ucode_info_s {
   void* ucode_p;
 } ucode_info;
 
+#define UCODE_TYPE_NONE 0
 #define UCODE_TYPE_POLY_TEXT 1
 #define UCODE_TYPE_POLY_DATA 2
 #define UCODE_TYPE_SPRITE_TEXT 3
