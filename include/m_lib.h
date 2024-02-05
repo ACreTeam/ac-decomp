@@ -23,6 +23,9 @@ extern "C" {
 #define SQ(x) ((x)*(x))
 #define CLAMP_MAX(x, min) ((min) < (x) ? (min) : (x)) 
 
+/* Percent of 360 deg */
+#define MOD_F(a, m) (a - (int)((a) * (1.0f / (m))) * (m))
+
 /* radians -> short angle */
 #define RAD2SHORT_ANGLE(rad) ((s16)(int)((rad) * (65536.0f / (2.0f * F_PI))))
 #define RAD2SHORTANGLE(rad)	((s16)((32768.0f / F_PI) * ((f32)(rad))))
