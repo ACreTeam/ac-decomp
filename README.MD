@@ -57,7 +57,9 @@ Use `--recursive` when cloning to have ppcdis in the repository.
 - [Dumping Game Files](./docs/extract_game.md)
 - [Ghidra Setup](./docs/ghidra_setup.md)
 - [Generating Decomp Context](./docs/generating_decomp_context.md)
+- [decomp.me Basics](./docs/decomp_me_basics.md)
 - [Ghidra Basics](./docs/ghidra_basics.md)
+- [m2c Basics](./docs/m2c_basics.md)
 - [Decomp Basics](./docs/decomp_basics.md)
 
 ## Credits

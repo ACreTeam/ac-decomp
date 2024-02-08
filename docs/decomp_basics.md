@@ -1,7 +1,32 @@
 # Decompilation Basics And Tips
 
-## Determining Slice Boundaries
-When adding in a new Translation Unit (TU) you currently need to manually calculate the addresses for the TU's section boundaries. You can determine the boundaries for a new TU by using the [symbol map files extracted from the game](./extract_game.md) and adding an offset to the addresses.
+## Adding TU Boundaries And Asset Boundaries With TU Config Tool
+Adding boundaries for the binary sections and assets of a given TU can be done by using the [TU Config script](../tools/tu_config.py) inside of the tools folder. Using this tool allows you to more quickly add in the address boundaries for each section of a TU and optionally add in any assets to the asset config file.
+
+To use this tool follow the steps below:
+1. Run the command:
+
+``` console
+python3 ./tools/tu_config.py
+```
+
+2. Type the name of the TU you want to add to the config files.
+3. If it detects that the TU had data assets it will prompt you if you would like to add them to the assets config file.
+4. For each data symbol you will be given the option to add them to the config file or not.
+5. If you are adding the symbol to the config file it will optionally ask you if you know the data type.
+6. After the tool has finished, run the [configure script](../configure.py).
+
+A list of tool parameters can be found below:
+
+| Argument               | Description                                                                                    |
+|------------------------|------------------------------------------------------------------------------------------------|
+| `--symbol-map`         | Path to the [symbol map](./extract_game.md).                                                   |
+| `--binary-slices-file` | Path to the binary slices config file. Defaults to [rel_slices.yml](../config/rel_slices.yml). |
+| `--asset-slices-file` | Path to the asset slices config file. Defaults to [assets.yml](../config/assets.yml).          |
+
+
+## Determining Slice Boundaries (Manual)
+If you do not use the TU Config tool, you will need to manually add in the slice boundaries to the config file. You can determine the boundaries for a new TU by using the [symbol map files extracted from the game](./extract_game.md) and adding an offset to the addresses.
 
 If using the symbol map, search for `<TU_NAME>.o` to find each applicable section, its start address and end address (usually the address of the next address with a different TU name attached to it). Note that some TUs may or may not have certain sections. You can determine this by searching through the symbol map and noting which sections are found.
 
@@ -48,6 +73,15 @@ Once the boundaries have been determined, paste them into the [slices file](../c
 >    .text: [0x8050F838, 0x8050F848]
 >~~~
 
+## Determining Asset Boundaries
+We declare asset data such as textures and palettes in the [assets config file](../config/assets.yml) and include them into the C file in which they are referenced. This process follows similar steps as above where a new entry for each data object is declared in the config file using the starting and ending address range. You can include the data type if it is known. Optionally this step can be done with the [TU Config tool](../tools/tu_config.py) instead of manually updating the file.
+
+Once the data address range has been added to the config file, you can add it to the C source file using an `#include` statement following the format of `#include "assets/OBJECT_NAME"` where `OBJECT_NAME` is the name of the data object.
+
+> :warning: Due to how the configure script scans through files, if you used `.c_inc` files you currently need to "hint" to the configure script that these files are referenced by using them in the root C file. An example can be found in [`ac_lotus.c`](../src/ac_lotus.c) and [`ac_lotus_draw.c_inc`](../src/ac_lotus_draw.c_inc)
+
+After the steps above have been completed, run the [configure script](../configure.py).
+
 ## Generating Assembly Text File
 
 To use sites such as [decomp.me](https://decomp.me) or [m2c](https://simonsoftware.se/other/m2c.html) you will need to paste in the assembly code you wish to match. The easiest way to get the assembly is by first generating an assembly text file with symbols included. To create this file run the following command at the root of the repository:
@@ -57,3 +91,11 @@ python3 tools/ppcdis/disassembler.py config/rel.yml build/rel_labels.pickle buil
 ~~~
 
 This will generate a `rel.s` file. Once generated open the file and search for the name of the function you wish to match and copy the assembly listed in the file for that function.
+
+### Copying Function Assembly
+To copy the assembly for a specific function, follow the steps below:
+1. Open the generated `rel.s` file.
+2. Search for the name of the function. Search for the first line with the format of `.global FUNCTION_NAME` where `FUNCTION_NAME` is the name of the function you are searching for.
+3. Search for the line at the bottom of the assembly code block following the format `.size FUNCTION_NAME, . - FUNCTION_NAME` where `FUNCTION_NAME` is the name of the function you are searching for.
+4. Select all of the lines between those two lines, include the two lines themselves.
+5. Paste the copied assembly into the tool of your choice.

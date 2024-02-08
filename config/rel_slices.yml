@@ -34,8 +34,6 @@ m_banti.c:
     .rodata: [0x80641388, 0x806413E0]
     .data: [0x8064F548, 0x8064F658]
     .bss: [0x8125A830, 0x8125AC80]
-m_bg_tex.c:
-    .bss: [0x8125AC80, 0x81263080]
 m_bg_item.c:
     .text: [0x80378858, 0x803789F8]
     .rodata: [0x806413E0, 0x806413F0]
@@ -61,7 +59,7 @@ m_cockroach.c:
 m_collision_obj.c:
     .text: [0x80394518, 0x80395B24]
     .rodata: [0x80641CE8, 0x80641D20]
-    .data: [0x80651208,0x806512D8]
+    .data: [0x80651208, 0x806512D8]
     .bss: [0x812663D0, 0x81266400]
 m_common_data.c:
     .text: [0x80395B24, 0x80395BE8]
@@ -100,9 +98,9 @@ m_fbdemo_triforce.c:
     .text: [0x803A0ABC, 0x803A0F00]
     .rodata: [0x80641F60, 0x80641FA0]
 m_fbdemo_wipe1.c:
-     .text: [0x803A0F00, 0x803A12F8]
-     .rodata: [0x80641FA0, 0x80641FC0]
-     .data: [0x80652AD0, 0x80653558]
+    .text: [0x803A0F00, 0x803A12F8]
+    .rodata: [0x80641FA0, 0x80641FC0]
+    .data: [0x80652AD0, 0x80653558]
 m_fbdemo_fade.c:
     .text: [0x803A12F8, 0x803A1508]
     .rodata: [0x80641FC0, 0x80641FD8]
@@ -315,8 +313,6 @@ m_view.c:
 m_roll_lib.c:
     .text: [0x803F6570, 0x803F76F0]
     .rodata: [0x806434D8, 0x80643538]
-sys_stacks.c:
-    .bss: [0x812F5670, 0x812F9670]
 m_cpak.c:
     .text: [0x80403830, 0x80403874]
     .data: [0x8065EC98, 0x8065ECA0]
@@ -395,7 +391,7 @@ ac_animal_logo_misc.c:
     .text: [0x804117D4, 0x80411A60]
 ac_ball.c:
     .text: [0x80411F64, 0x80413DD4]
-    .rodata: [0x80643A90,0x80643B60]
+    .rodata: [0x80643A90, 0x80643B60]
     .data: [0x8065FBF8, 0x8065FC58]
     .bss: [0x812F96E0, 0x812F96E8]
 ac_birth_control.c:
@@ -430,22 +426,13 @@ ac_haniwa.c:
     .text: [0x80427624, 0x80428F64]
     .rodata: [0x806440B8, 0x806440F8]
     .data: [0x80683D08, 0x80683E98]
-ac_koinobori.c:
-    .text: [0x805B27B8, 0x805B2AE0]
-    .data: [0x806C58A0, 0x806C5940]
-    .rodata: [0x8064A978, 0x8064A990]
-ac_lotus.c:
-    .text: [0x805B2AE0, 0x805B3010]
-    .rodata: [0x8064A990, 0x8064A9B0]
-    .data: [0x806C5940, 0x806C5B58]
-    .bss: [0x81327F48, 0x81327F68]
 ac_psnowman.c:
     .text: [0x80484098, 0x80484694]
     .rodata: [0x80644C30, 0x80644C60]
     .data: [0x8068A458, 0x8068A480]
 ac_rope.c:
     .text: [0x804967A4, 0x80496AB8]
-    .rodata: [0x80644DB0,0x80644DB8]
+    .rodata: [0x80644DB0, 0x80644DB8]
     .data: [0x8068BB80, 0x8068BBE0]
 ac_set_manager.c:
     .text: [0x80496AB8, 0x80496F50]
@@ -527,14 +514,14 @@ ac_t_rei1.c:
 ac_t_rei2.c:
     .text: [0x804A99AC, 0x804A9B00]
     .data: [0x8068EF38, 0x8068EF78]
-ac_t_tumbler.c:
-    .text: [0x804A9CC4, 0x804A9F24]
-    .rodata: [0x80645F10, 0x80645F18]
-    .data: [0x8068EFE0, 0x8068F040]
 ac_t_tama.c:
     .text: [0x804A9B00, 0x804A9CC4]
     .data: [0x8068EF78, 0x8068EFE0]
     .rodata: [0x80645F00, 0x80645F10]
+ac_t_tumbler.c:
+    .text: [0x804A9CC4, 0x804A9F24]
+    .rodata: [0x80645F10, 0x80645F18]
+    .data: [0x8068EFE0, 0x8068F040]
 ac_t_umbrella.c:
     .text: [0x804A9F24, 0x804AA4C8]
     .data: [0x8068F040, 0x8068F310]
@@ -547,7 +534,7 @@ ac_t_zinnia1.c:
     .text: [0x804AA72C, 0x804AA880]
     .data: [0x8068F370, 0x8068F3B0]
 ac_t_zinnia2.c:
-    .text: [0x804AA880, 0x804AA9d4]
+    .text: [0x804AA880, 0x804AA9D4]
     .data: [0x8068F3B0, 0x8068F3F0]
 ac_tools.c:
     .text: [0x804AC034, 0x804AC2D8]
@@ -583,8 +570,8 @@ ef_room_sunshine_museum.c:
     .rodata: [0x806464B8, 0x80646508]
     .data: [0x8069C0A0, 0x8069C0C8]
 ef_room_sunshine_minsect.c:
-    .text: [0x804D0F3C,0x804D1BBC]
-    .rodata: [0x80646508,0x80646558]
+    .text: [0x804D0F3C, 0x804D1BBC]
+    .rodata: [0x80646508, 0x80646558]
     .data: [0x8069C0C8, 0x8069C0F0]
     .bss: [0x81300BD0, 0x81300BD8]
 m_huusui_room_ovl.c:
@@ -608,6 +595,9 @@ ac_fuusen.c:
 m_mail_check_ovl.c:
     .text: [0x8050F06C, 0x8050F838]
     .data: [0x8069F320, 0x8069FA40]
+ac_dummy.c:
+    .text: [0x8050F838, 0x8050F848]
+    .data: [0x8069FA40, 0x8069FA68]
 m_all_grow_ovl.c:
     .text: [0x8050F848, 0x80515340]
     .rodata: [0x80649098, 0x80649110]
@@ -660,7 +650,7 @@ ac_npc_engineer.c:
 ac_npc_rtc.c:
     .text: [0x80573044, 0x80574134]
     .rodata: [0x80649A08, 0x80649A40]
-    .data: [0x806BF648,0x806BF788]
+    .data: [0x806BF648, 0x806BF788]
 ac_npc_sendo.c:
     .text: [0x80574134, 0x80576468]
     .rodata: [0x80649A40, 0x80649A58]
@@ -668,7 +658,7 @@ ac_npc_sendo.c:
     .bss: [0x8131B258, 0x8131B298]
 ac_ev_majin.c:
     .text: [0x80592A40, 0x80593158]
-    .rodata: [0x80649D98,0x80649DA0]
+    .rodata: [0x80649D98, 0x80649DA0]
     .data: [0x806C2B50, 0x806C2BD0]
 ac_boat.c:
     .text: [0x805A6CF4, 0x805A856C]
@@ -680,24 +670,30 @@ ac_douzou.c:
     .data: [0x806C4DF0, 0x806C5018]
 ac_dump.c:
     .text: [0x805AE704, 0x805AECE8]
-    .rodata: [0x8064A7E8,0x8064A808]
+    .rodata: [0x8064A7E8, 0x8064A808]
     .data: [0x806C5018, 0x806C5120]
-ac_dummy.c:
-    .text: [0x8050F838, 0x8050F848]
-    .data: [0x8069FA40, 0x8069FA68]
 ac_kago.c:
     .text: [0x805B1A08, 0x805B1D50]
     .data: [0x806C5750, 0x806C57A8]
+ac_koinobori.c:
+    .text: [0x805B27B8, 0x805B2AE0]
+    .data: [0x806C58A0, 0x806C5940]
+    .rodata: [0x8064A978, 0x8064A990]
+ac_lotus.c:
+    .text: [0x805B2AE0, 0x805B3010]
+    .rodata: [0x8064A990, 0x8064A9B0]
+    .data: [0x806C5940, 0x806C5B58]
+    .bss: [0x81327F48, 0x81327F68]
 ac_mikuji.c:
     .text: [0x805B414C, 0x805B44C4]
     .data: [0x806C5C10, 0x806C5CA0]
 ac_nameplate.c:
-    .text: [0x805B63FC,0x805B65C4]
-    .data: [0x806C6110,0x806C6138]
+    .text: [0x805B63FC, 0x805B65C4]
+    .data: [0x806C6110, 0x806C6138]
 ac_radio.c:
-    .text: [0x805B887C,0x805B8C7C]
-    .rodata: [0x8064AB58,0x8064AB68]
-    .data: [0x806C6558,0x806C65A0]
+    .text: [0x805B887C, 0x805B8C7C]
+    .rodata: [0x8064AB58, 0x8064AB68]
+    .data: [0x806C6558, 0x806C65A0]
 ac_shrine.c:
     .text: [0x805BA4D8, 0x805BB8D0]
     .rodata: [0x8064ABD0, 0x8064AC18]
@@ -714,7 +710,7 @@ ac_tama.c:
     .data: [0x806C7110, 0x806C7140]
 ac_toudai.c:
     .text: [0x805BEA00, 0x805BFC28]
-    .rodata: [0x8064ACB0,0x8064AD28]
+    .rodata: [0x8064ACB0, 0x8064AD28]
     .data: [0x806C7200, 0x806C72D0]
 ac_train0.c:
     .text: [0x805BFC28, 0x805C0614]
@@ -788,18 +784,16 @@ m_passwordChk_ovl.c:
     .data: [0x806D1D18, 0x806D1D50]
     .bss: [0x813413D0, 0x813413F8]
 ac_weather.c:
-   .text: [0x8060193C, 0x80602E70]
-   .rodata: [0x8064BAE8, 0x8064BB08]
-   .data: [0x806D1D50, 0x806D1DA0]
-ac_weather_fine.c:
-    .data: [0x806D1DA0, 0x806D1DB8]
+    .text: [0x8060193C, 0x80602E70]
+    .rodata: [0x8064BAE8, 0x8064BB08]
+    .data: [0x806D1D50, 0x806D1DA0]
 ac_weather_rain.c:
     .text: [0x80602E70, 0x80603494]
-    .rodata: [0x8064BB08,0x8064BB30]
+    .rodata: [0x8064BB08, 0x8064BB30]
     .data: [0x806D1DB8, 0x806D1DF8]
 ac_weather_snow.c:
     .text: [0x80603494, 0x80603B44]
-    .rodata: [0x8064BB30, 0x8064BB88] 
+    .rodata: [0x8064BB30, 0x8064BB88]
     .data: [0x806D1DF8, 0x806D1E10]
 ac_weather_sakura.c:
     .text: [0x80603B44, 0x8060420C]
@@ -817,10 +811,8 @@ first_game.c:
     .text: [0x80629CA8, 0x80629D4C]
 sys_romcheck.c:
     .text: [0x80629D4C, 0x80629D8C]
-sys_dynamic.c:
-    .bss: [0x813413F8, 0x81361820]
 m_play.c:
-    .text: [0x80629D8C,0x8062B630]
+    .text: [0x80629D8C, 0x8062B630]
     .rodata: [0x8064D1B8, 0x8064D1C0]
     .data: [0x806D46D0, 0x806D4958]
     .bss: [0x81361820, 0x8148DA60]
@@ -849,8 +841,10 @@ m_prenmi.c:
 audio.c:
     .text: [0x8062DC04, 0x8062E96C]
     .rodata: [0x8064D340, 0x8064D360]
-    .data: [0x806D4CB0,0x806D4D40]
-    .bss: [0x8148DA78,0x8148DA7C]
+    .data: [0x806D4CB0, 0x806D4D40]
+    .bss: [0x8148DA78, 0x8148DA7C]
+ac_weather_fine.c:
+    .data: [0x806D1DA0, 0x806D1DB8]
 
 # dataobject.obj files
 data/combi/data_combi.c:
@@ -881,3 +875,9 @@ data/field/bg/earth_pal.c:
     .data: [0x80C90100, 0x80C90280]
 data/field/bg/rail_pal.c:
     .data: [0x80F8C2C8, 0x80F8C460]
+m_bg_tex.c:
+    .bss: [0x8125AC80, 0x81263080]
+sys_stacks.c:
+    .bss: [0x812F5670, 0x812F9670]
+sys_dynamic.c:
+    .bss: [0x813413F8, 0x81361820]

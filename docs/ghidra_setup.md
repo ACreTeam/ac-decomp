@@ -86,3 +86,10 @@ In the above case, `mNW_original_tex_c` is aligned to `32` bytes. However, when 
 ![Struct Editor Dialog](./doc_assets/ghidra_struct_editor_dialog.png)
 
 6. Hit the save button near the top of the dialog, or close the dialog and press "Yes" when prompted to save the changes to the struct.
+
+Please note that if you re-import an entire context file any previous modifications to structs will be discarded. It is strongly recommended that after doing an initial import that you import any new functions and structs on a case-by-case basis. Otherwise, remember to re-apply the alignment changes.
+
+## Inline Functions
+While browsing through decompiled code in Ghidra you may come across calls to functions with names following a pattern of `Fun_XXXX`. The functions correspond to the built-in saved register functions and should be inlined and have a `void` return type in order to give a more correct decompilation. It is also recommended to change the name of the function to `FUNCTION_NAME` or another consistent name format to help you keep track of which functions you've made modifications to.
+
+![Inline Func Settings](./doc_assets/ghidra_inline_register_function.png)
