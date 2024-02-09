@@ -3,6 +3,7 @@ import re
 import argparse
 from re import Match
 from io import TextIOWrapper
+import typing
 from ruamel.yaml import YAML
 from ruamel.yaml import CommentedMap
 from ruamel.yaml import CommentedSeq
@@ -19,24 +20,24 @@ class SymbolInfo:
         self.start_address = start
         self.end_address = start + size
 
-    def get_address_range(self)->tuple[int, int]:
+    def get_address_range(self)->typing.Tuple[int, int]:
         return self.start_address, self.end_address
 
 class SliceSection:
     section_symbol: SymbolInfo = None
-    symbols: list[SymbolInfo] = None
+    symbols: typing.List[SymbolInfo] = None
 
     def __init__(self, symbol: SymbolInfo) -> None:
         self.section_symbol = symbol
         self.symbols = []
 
 class SliceInfo:
-    sections: list[SliceSection] = None
+    sections: typing.List[SliceSection] = None
 
     def __init__(self) -> None:
         self.sections = []
 
-    def get_address_range(self)->tuple[int, int]:
+    def get_address_range(self)->typing.Tuple[int, int]:
         start_address = self.sections[0].section_symbol.start_address
         end_address = self.sections[-1].section_symbol.end_address
         if len(self.sections[-1].symbols) > 0:
@@ -57,14 +58,14 @@ class Address_Sort_Entry:
 
 #region Constants
 # Dictionary for the offsets we need to apply to the addresses from the map
-address_offset_map : dict[str, int] = {
+address_offset_map : typing.Dict[str, int] = {
     ".text": int("0x803702A8", 16),
     ".rodata": int("0x80641260", 16),
     ".data": int("0x8064D500", 16),
     ".bss": int("0x8125A7C0", 16)
 }
 
-prioritized_addresses: list[str] = [".text", ".rodata", ".data", ".bss"]
+prioritized_addresses: typing.List[str] = [".text", ".rodata", ".data", ".bss"]
 
 script_dir: str = os.path.dirname(os.path.realpath(__file__))
 root_dir: str = os.path.abspath(os.path.join(script_dir, ".."))
@@ -79,7 +80,7 @@ slice_boundary_format = "[{start_address}, {end_address}]"
 #endregion
 
 #region Sorting
-def sort_by_starting_address(data: CommentedMap, address_sort_keys: list[str])->CommentedMap:
+def sort_by_starting_address(data: CommentedMap, address_sort_keys: typing.List[str])->CommentedMap:
     if len(data) <= 1:
         return data
     
@@ -92,7 +93,14 @@ def sort_by_starting_address(data: CommentedMap, address_sort_keys: list[str])->
             if address_key not in entry:
                 continue
             
-            starting_address = entry[address_key]
+            # Ensure starting_address is an integer
+            if isinstance(entry[address_key], int):
+                starting_address = entry[address_key]
+            elif isinstance(entry[address_key], CommentedSeq):
+                starting_address = entry[address_key][0]
+            else:
+                print('Address key %s is not an int or CommentedSeq! type: %s value: %s' % (address_key, type(entry[address_key]), entry[address_key]))
+                starting_address = 0
             break
 
         ordered_entries.append(Address_Sort_Entry(key, entry, starting_address))
@@ -169,7 +177,7 @@ def gather_symbols_for_section(address_offset: int, file_reader:TextIOWrapper, s
         symbol.end_address = next_match_start_address
         section.symbols.append(symbol)
 
-def gather_tu_symbols(tu_name: str, map_path: str)->dict[str, SliceInfo]:
+def gather_tu_symbols(tu_name: str, map_path: str)->typing.Dict[str, SliceInfo]:
     gathered_symbols: dict[str, SliceInfo] = {}
     tu_regex = re.compile(specific_tu_pattern_format.format(tu_name = tu_name))
 
@@ -200,7 +208,7 @@ def gather_tu_symbols(tu_name: str, map_path: str)->dict[str, SliceInfo]:
 #endregion
 
 #region Asset Slices Config File
-def update_asset_slice_config(tu_name: str, binary_slice_file_path: str, asset_slice_file_path: str, symbols_for_tu: dict[str, SliceInfo]):
+def update_asset_slice_config(tu_name: str, binary_slice_file_path: str, asset_slice_file_path: str, symbols_for_tu: typing.Dict[str, SliceInfo]):
     if ".data" not in symbols_for_tu:
         return
     
@@ -278,7 +286,7 @@ def update_asset_slice_config(tu_name: str, binary_slice_file_path: str, asset_s
 #endregion
 
 #region Slice Config File
-def update_binary_slice_config(tu_name: str, slice_file_path: str, symbols_for_tu: dict[str, SliceInfo]):
+def update_binary_slice_config(tu_name: str, slice_file_path: str, symbols_for_tu: typing.Dict[str, SliceInfo]):
     yaml = YAML(typ="rt")
     yaml.indent(mapping=4, sequence=4, offset=4)
     data: CommentedMap = None
