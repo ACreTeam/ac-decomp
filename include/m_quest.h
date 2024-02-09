@@ -37,6 +37,8 @@ extern "C" {
 #define mQst_LETTER_OKAY_LENGTH 17
 #define mQst_LETTER_GOOD_LENGTH 49
 
+#define mQst_DELIVERY_KIND_NUM 4
+
 enum {
   mQst_QUEST_TYPE_DELIVERY, /* Deliver item quest */
   mQst_QUEST_TYPE_ERRAND,   /* Villager 'can I help' quests */

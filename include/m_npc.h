@@ -35,6 +35,7 @@ extern "C" {
 #define mNpc_ISLAND_FTR_NUM 16
 #define mNpc_EVENT_NPC_NUM 5
 #define mNpc_MASK_NPC_NUM 3
+#define mNpc_ISLANDER_NO ANIMAL_NUM_MAX
 
 enum {
   mNpc_MOOD_0,
@@ -333,7 +334,7 @@ extern void mNpc_CopyAnimalInfo(Animal_c* dst, Animal_c* src);
 extern int mNpc_SearchAnimalinfo(Animal_c* animal, mActor_name_t npc_id, int count);
 extern Animal_c* mNpc_GetAnimalInfoP(mActor_name_t npc_id);
 extern int mNpc_SearchAnimalPersonalID(AnmPersonalID_c* anm_pid);
-extern AnmPersonalID_c* mNpc_GetOtherAnimalPersonalIDOtherBlock(AnmPersonalID_c* pids, int count, int bx, int bz, int check_flag);
+extern AnmPersonalID_c* mNpc_GetOtherAnimalPersonalIDOtherBlock(AnmPersonalID_c* exclude_pids, int count, int bx, int bz, int check_flag);
 extern AnmPersonalID_c* mNpc_GetOtherAnimalPersonalID(AnmPersonalID_c* pids, int count);
 extern void mNpc_SetAnimalThisLand(Animal_c* animal, int count);
 extern int mNpc_GetSameLooksNum(u8 looks);

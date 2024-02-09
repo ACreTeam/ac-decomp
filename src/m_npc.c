@@ -5185,13 +5185,13 @@ extern void mNpc_TalkInfoMove() {
   }
 }
 
-extern void mNpc_TalkEndMove(int animal_idx, int feel) {
-  if (animal_idx >= 0 && animal_idx < ARRAY_COUNT(l_npc_talk_info) && feel >= 0 && feel < mNpc_FEEL_NUM) {
+extern void mNpc_TalkEndMove(int animal_idx, int looks) {
+  if (animal_idx >= 0 && animal_idx < ARRAY_COUNT(l_npc_talk_info) && looks >= 0 && looks < mNpc_LOOKS_NUM) {
     mNpc_Talk_Info_c* talk_info = &l_npc_talk_info[animal_idx];
     talk_info->timer = 1000;
 
-    if (mNpc_CountTalkNum(animal_idx, feel) == TRUE && mNpc_CheckOverImpatient(animal_idx, feel) == TRUE) {
-      mNpc_SetUnlockTimer(&talk_info->unlock_timer, &talk_info->reset_timer, feel);
+    if (mNpc_CountTalkNum(animal_idx, looks) == TRUE && mNpc_CheckOverImpatient(animal_idx, looks) == TRUE) {
+      mNpc_SetUnlockTimer(&talk_info->unlock_timer, &talk_info->reset_timer, looks);
     }
   }
 }

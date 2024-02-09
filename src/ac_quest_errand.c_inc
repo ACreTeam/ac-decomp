@@ -1,0 +1,85 @@
+static void aQMgr_move_own_errand_cloth(QUEST_MANAGER_ACTOR* manager, aQMgr_regist_c* regist) {
+    mActor_name_t player_cloth = Common_Get(now_private)->cloth.item;
+    mQst_errand_c* errand = (mQst_errand_c*)regist->quest_info;
+    mActor_name_t cloth = errand->item;
+
+    switch (errand->base.progress) {
+        case 2:
+            if (cloth == player_cloth) {
+                errand->base.progress = 0;
+            }
+
+            break;
+
+        case 0:
+            if (cloth != player_cloth) {
+                errand->base.progress = 2;
+            }
+
+            break;
+    }
+}
+
+static void aQMgr_move_own_errand_seed(QUEST_MANAGER_ACTOR* manager, aQMgr_regist_c* regist) {
+    mActor_name_t* item_p = Common_Get(now_private)->inventory.pockets;
+    mQst_errand_c* errand = (mQst_errand_c*)regist->quest_info;
+
+    if (errand->base.progress == 2) {
+        int i;
+
+        for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++) {
+            if (ITEM_NAME_GET_TYPE(*item_p) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_CAT(*item_p) == ITEM1_CAT_PLANT) {
+                break;
+            }
+
+            item_p++;
+        }
+
+        // Reset progress if no plants in inventory
+        if (i >= mPr_POCKETS_SLOT_COUNT) {
+            errand->base.progress = 0;
+        }
+    }
+}
+
+static void aQMgr_move_own_errand_letter(QUEST_MANAGER_ACTOR* manager, aQMgr_regist_c* regist) {
+    mQst_errand_c* errand = (mQst_errand_c*)regist->quest_info;
+    PersonalID_c* pid = &Common_Get(now_private)->player_ID;
+    AnmPersonalID_c* to_id;
+    Animal_c* animal = Save_Get(animals);
+    Anmmem_c* memory;
+
+    if (errand->base.progress == 2 || errand->base.progress == 3) {
+        int i;
+
+        to_id = &errand->recipient;
+        for (i = 0; i < ANIMAL_NUM_MAX; i++) {
+            if (mNpc_CheckCmpAnimalPersonalID(to_id, &animal->id) == TRUE) {
+                int idx;
+
+                memory = animal->memories;
+                idx = mNpc_GetAnimalMemoryIdx(pid, memory, ANIMAL_MEMORY_NUM);
+
+                if (idx != -1) {
+                    memory += idx;
+                    if (memory->letter_info.exists == TRUE) {
+                        errand->base.progress = 0;
+                        break;
+                    }
+                }
+            }
+
+            animal++;
+        }
+    }
+}
+
+static void aQMgr_move_own_errand_hello(QUEST_MANAGER_ACTOR* manager, aQMgr_regist_c* regist) {
+    mQst_errand_c* errand = (mQst_errand_c*)regist->quest_info;
+
+    if (errand->base.progress == 2) {
+        if (mNpc_CheckFriendAllAnimal(&Common_Get(now_private)->player_ID) == TRUE && mSC_check_ArbeitPlayer()) {
+            errand->base.progress = 0;
+        }
+    }
+}

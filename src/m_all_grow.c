@@ -288,7 +288,7 @@ extern void mAGrw_RenewalFgItem(lbRTC_time_c* time) {
     mAGrw_RenewalFgItem_ovl(time, &haniwa_scheduled);
     Save_Set(haniwa_scheduled, haniwa_scheduled);
 
-    if (ZURUMODE2_ENALBED()) {
+    if (ZURUMODE2_ENABLED()) {
       mAGrw_SetDebugData();
     }
   }
