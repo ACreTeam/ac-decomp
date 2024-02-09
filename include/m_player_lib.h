@@ -55,6 +55,7 @@ extern void mPlib_Set_boat_angleZ(s16 angleZ);
 extern int mPlib_Get_end_player_demo_walk();
 extern int mPlib_request_main_demo_geton_boat_type1(f32 goal_x, f32 goal_z, s16 angleY);
 extern int mPlib_request_main_demo_getoff_boat_standup_type1(const xyz_t* pos, s16 angleY);
+extern int mPlib_check_player_actor_main_index_RecieveMove(GAME* game);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 

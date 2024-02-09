@@ -2414,7 +2414,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define SP_NPC_EV_GROUNDHOG_4 (SP_NPC_START + 140) // D08C
 #define SP_NPC_TURKEY (SP_NPC_START + 141) // D08D
 #define SP_NPC_HEM (SP_NPC_START + 142) // D08E
-
+#define SP_NPC_EV_SUMMERCAMP_0 (SP_NPC_START + 143) // 0xD08F
 
 #define NPC_START    0xE000
 // cats

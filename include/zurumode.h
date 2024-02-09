@@ -46,7 +46,7 @@ enum zurumode_stage {
 };
 
 #define ZURUMODE_ENABLED() (zurumode_flag >= 1)
-#define ZURUMODE2_ENALBED() (zurumode_flag >= 2)
+#define ZURUMODE2_ENABLED() (zurumode_flag >= 2)
 
 #ifdef __cplusplus
 }

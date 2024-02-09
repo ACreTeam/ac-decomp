@@ -22,6 +22,7 @@
 #include "ac_arrange_room.h"
 #include "ac_shop_umbrella.h"
 #include "ac_handOverItem.h"
+#include "ac_quest_manager_clip.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,7 +40,7 @@ typedef struct clip_s {
   /* 0x060 */ aSM_Clip_c* shop_manekin_clip;
   /* 0x064 */ void* _064;
   /* 0x068 */ CLIP_NONE_PROC _068;
-  /* 0x06C */ void* _06C;
+  /* 0x06C */ aQMgr_Clip_c* quest_manager_clip;
   /* 0x070 */ aSI_Clip_c* shop_indoor_clip;
   /* 0x074 */ bIT_Clip_c* bg_item_clip;
   /* 0x078 */ aWeather_Clip_c* weather_clip;

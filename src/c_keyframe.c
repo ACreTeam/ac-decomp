@@ -229,7 +229,7 @@ static s16 cKF_KeyCalc(s16 start_idx, s16 n_frames, s16* data_src, f32 frame) {
     // Search through all frames
     now = 0;
     next = 1;
-    
+
     while (TRUE) {
         if (key_p[next].frame > frame) {
             f32 delta_frame = key_p[next].frame - key_p[now].frame;
@@ -237,15 +237,16 @@ static s16 cKF_KeyCalc(s16 start_idx, s16 n_frames, s16* data_src, f32 frame) {
             if (!(F32_IS_ZERO(delta_frame))) {
                 f32 t = (frame - key_p[now].frame) / delta_frame; // progress towards the next frame
                 f32 tension = delta_frame * (1.0f / 30.0f);
-                f32 calc = cKF_HermitCalc(t, tension, key_p[now].value, key_p[next].value, key_p[now].tangent, key_p[next].tangent);
-                int key = calc + 0.5;
+                f32 calc = cKF_HermitCalc(t, tension, key_p[now].value, key_p[next].value, key_p[now].tangent,
+                                          key_p[next].tangent);
+                int key = calc + 0.5; // Always round up
 
                 return key;
             } else {
                 return key_p[now].value;
             }
         }
-        
+
         now++;
         next++;
     }
@@ -271,7 +272,7 @@ extern void cKF_SkeletonInfo_subRotInterpolation(f32 t, s16* out, s16 rot1, s16 
  * Morphs current state towards a target state with a given step size.
  *
  * Adjusts 'now' values towards 'target' values based on 'step', performing this operation
- * for three consecutive s16 values starting from 'now' and 'target'.
+ * for three consecutive s16 values (x->y->z) starting from 'now' and 'target'.
  *
  * @param now Pointer to the current values.
  * @param target Pointer to the target values to morph towards.
@@ -527,7 +528,8 @@ extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
             // Convert joint value to fixed-point format after scaling
             jointFlag >>= 1; // Shift flag for next component x -> y -> z
 
-            // Reduce the value by 10% and clamp to [0, 360) degrees converted back to binangle (s16)
+            // Reduce the value by 90% and clamp to [0, 360) degrees converted back to binangle (s16)
+            // This effectively limits any joint's maximum rotation to be in the range of [-36.8, 36.7] degrees
             adjustedJointValue = *jointValuePtr * 0.1f;
             *jointValuePtr++ = DEG2SHORT_ANGLE(MOD_F(adjustedJointValue, 360.0f));
         }

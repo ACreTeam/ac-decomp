@@ -1,0 +1,180 @@
+static void aQMgr_actor_check_limit_and_clear_quest(mQst_contest_c* contest) {
+    if (mQst_CheckLimitOver(&contest->base) == TRUE) {
+        mQst_ClearContest(contest);
+    }
+}
+
+static void aQMgr_contest_check_limit(QUEST_MANAGER_ACTOR* manager, aQMgr_regist_c* regist) {
+    aQMgr_actor_check_limit_and_clear_quest((mQst_contest_c*)regist->quest_info);
+}
+
+static int aQMgr_actor_check_fin_fruit(mQst_base_c* quest_info, Animal_c* animal) {
+    int res = FALSE;
+
+    if (quest_info->progress == 1 && aQMgr_actor_check_fin_item(quest_info, animal) == TRUE) {
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static int aQMgr_actor_check_fin_soccer(mQst_base_c* quest_info, Animal_c* animal) {
+    int res = FALSE;
+
+    if (quest_info->progress == 1) {
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static void aQMgr_actor_contest_snowman_clear(QUEST_MANAGER_ACTOR* manager, aQMgr_regist_c* regist) {
+    lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
+    
+    if (regist != NULL && regist->quest_info != NULL) {
+        mQst_base_c* quest_info = regist->quest_info;
+        
+        if (
+            (rtc_time->month == lbRTC_FEBRUARY && rtc_time->day > 17) ||
+            (rtc_time->month >= lbRTC_MARCH && rtc_time->month <= lbRTC_NOVEMBER) ||
+            (rtc_time->month == lbRTC_DECEMBER && rtc_time->day < 25) ||
+            (mQst_CheckLimitOver(quest_info) == TRUE)
+        ) {
+            mQst_ClearContest((mQst_contest_c*)quest_info);
+        }
+    }
+}
+
+static int aQMgr_actor_check_fin_snowman(mQst_base_c* quest_info, Animal_c* animal) {
+    int res = FALSE;
+    
+    if (animal != NULL && quest_info != NULL) {
+        mQst_contest_c* contest = (mQst_contest_c*)quest_info;
+        
+        if (quest_info->progress == 1 &&
+            mPr_NullCheckPersonalID(&contest->player_id) == FALSE &&
+            mPr_CheckCmpPersonalID(&contest->player_id, &Common_Get(now_private)->player_ID) == TRUE) {
+            res = TRUE;
+        }
+    }
+
+    return res;
+}
+
+static void aQMgr_actor_contest_flower_clear(QUEST_MANAGER_ACTOR* manager, aQMgr_regist_c* regist) {
+    lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
+    
+    if (regist != NULL && regist->quest_info != NULL) {
+        mQst_base_c* quest_info = regist->quest_info;
+        
+        if (
+            (rtc_time->month == lbRTC_JANUARY) ||
+            (rtc_time->month == lbRTC_FEBRUARY && rtc_time->day < 25) ||
+            (rtc_time->month >= lbRTC_SEPTEMBER) ||
+            (mQst_CheckLimitOver(quest_info) == TRUE)
+        ) {
+            mQst_ClearContest((mQst_contest_c*)quest_info);
+        }
+    }
+}
+
+static int aQMgr_actor_check_flower(mQst_contest_c* contest, int bx, int bz) {
+    int res = FALSE;
+    int flower_num = mQst_GetFlowerSeedNum(bx, bz);
+
+    if (contest->base.progress == 1) {
+        if (contest->info.flower_data.flowers_requested <= flower_num) {
+            if (mPr_NullCheckPersonalID(&contest->player_id) == TRUE || mPr_CheckCmpPersonalID(&contest->player_id, &Common_Get(now_private)->player_ID) == TRUE) {
+                res = TRUE;
+            }
+        }
+        else {
+            mPr_ClearPersonalID(&contest->player_id);
+        }
+    }
+
+    return res;
+}
+
+static int aQMgr_actor_check_fin_flower(mQst_base_c* quest_info, Animal_c* animal) {
+    mQst_contest_c* contest = (mQst_contest_c*)quest_info;
+
+    return aQMgr_actor_check_flower(contest, animal->home_info.block_x, animal->home_info.block_z);
+}
+
+static int aQMgr_actor_check_fin_quest_have_item1(mQst_contest_c* contest, u8 item1_category) {
+    int res = FALSE;
+
+    if (contest->base.progress == 1 && mPr_NullCheckPersonalID(&contest->player_id) == TRUE && mPr_GetPossessionItemIdxItem1Category(Common_Get(now_private), item1_category) != -1) {
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static int aQMgr_actor_check_fin_fish(mQst_base_c* quest_info, Animal_c* animal) {
+    mQst_contest_c* contest = (mQst_contest_c*)quest_info;
+
+    return aQMgr_actor_check_fin_quest_have_item1(contest, ITEM1_CAT_FISH);
+}
+
+static void aQMgr_actor_contest_insect_clear(QUEST_MANAGER_ACTOR* manager, aQMgr_regist_c* regist) {
+    lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
+    
+    if (regist != NULL && regist->quest_info != NULL) {
+        mQst_base_c* quest_info = regist->quest_info;
+        
+        if (
+            (rtc_time->month <= lbRTC_FEBRUARY) ||
+            (rtc_time->month == lbRTC_NOVEMBER && rtc_time->day >= 29) ||
+            (rtc_time->month == lbRTC_DECEMBER) ||
+            (mQst_CheckLimitOver(quest_info) == TRUE)
+        ) {
+            mQst_ClearContest((mQst_contest_c*)quest_info);
+        }
+    }
+}
+
+static int aQMgr_actor_check_fin_insect(mQst_base_c* quest_info, Animal_c* animal) {
+    mQst_contest_c* contest = (mQst_contest_c*)quest_info;
+
+    return aQMgr_actor_check_fin_quest_have_item1(contest, ITEM1_CAT_INSECT);
+}
+
+static int aQMgr_actor_check_fin_contest_letter(mQst_base_c* quest_info, Animal_c* animal) {
+    mQst_contest_c* contest = (mQst_contest_c*)quest_info;
+    int res = FALSE;
+
+    if (contest->base.progress == 1) {
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static void aQMgr_save_contest_flower(aQMgr_regist_c* regist) {
+    mQst_contest_c* contest = (mQst_contest_c*)regist->quest_info;
+    Anmhome_c* home = &Save_Get(animals[regist->animal_idx]).home_info;
+
+    if (aQMgr_actor_check_flower(contest, home->block_x, home->block_z) == TRUE) {
+        mPr_ClearPersonalID(&contest->player_id);
+        mPr_CopyPersonalID(&contest->player_id, &Common_Get(now_private)->player_ID);
+    }
+}
+
+typedef void (*aQMgr_CONTEST_SAVE_PROC)(aQMgr_regist_c*);
+
+static void aQMgr_save_contest(aQMgr_regist_c* regist) {
+    int contest_kind = regist->quest_info->quest_kind;
+    static aQMgr_CONTEST_SAVE_PROC save_proc[mQst_CONTEST_KIND_NUM] = {
+        (aQMgr_CONTEST_SAVE_PROC)&none_proc1,
+        (aQMgr_CONTEST_SAVE_PROC)&none_proc1,
+        (aQMgr_CONTEST_SAVE_PROC)&none_proc1,
+        &aQMgr_save_contest_flower,
+        (aQMgr_CONTEST_SAVE_PROC)&none_proc1,
+        (aQMgr_CONTEST_SAVE_PROC)&none_proc1,
+        (aQMgr_CONTEST_SAVE_PROC)&none_proc1
+    };
+
+    (*save_proc[contest_kind])(regist);
+}
