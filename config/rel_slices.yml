@@ -434,6 +434,10 @@ ac_quest_manager.c:
     .text: [0x80485508, 0x80487A78]
     .data: [0x8068A520, 0x8068ADF8]
     .bss: [0x812FC920, 0x812FC938]
+ac_quest_talk_fj_init.c:
+    .text: [0x80487A78, 0x80488474]
+    .data: [0x8068ADF8, 0x8068AE40]
+    .bss: [0x812FC938, 0x812FCA68]
 ac_rope.c:
     .text: [0x804967A4, 0x80496AB8]
     .rodata: [0x80644DB0, 0x80644DB8]

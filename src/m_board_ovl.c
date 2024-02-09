@@ -1103,7 +1103,7 @@ static void mBD_move_Obey(Submenu* submenu,  mSM_MenuInfo_c* menu_info) {
         mem_copy(board_ovl->dst_p->content.footer + footer_len_diff, t_footer_p, footer_len - t_footer_len);
       }
 
-      if (menu_info->data0 != 3) {
+      if (menu_info->data0 != mSM_BD_OPEN_WRITE_ISLAND) {
         mail_header->header_back_start = board_ovl->mail.content.header_back_start;
         mem_copy(mail_header->header, board_ovl->dst_p->content.header, MAIL_HEADER_LEN);
         mem_copy(mail_header->footer, board_ovl->dst_p->content.footer, MAIL_FOOTER_LEN);
@@ -1396,7 +1396,7 @@ static void mBD_set_writing_header(Submenu* submenu, GAME* game, mSM_MenuInfo_c*
   int len;
 
   if (menu_info->proc_status == mSM_OVL_PROC_PLAY) {
-    if (menu_info->data0 == 3) {
+    if (menu_info->data0 == mSM_BD_OPEN_WRITE_ISLAND) {
       mFont_SetLineStrings(
         game,
         mail_content->header, board_ovl->lengths[mBD_FIELD_HEADER],
@@ -1463,7 +1463,7 @@ static void mBD_set_writing_header(Submenu* submenu, GAME* game, mSM_MenuInfo_c*
   else {
     u8 tmp_header[MAIL_HEADER_LEN + PLAYER_NAME_LEN];
 
-    if (menu_info->data0 == 3 || menu_info->data0 == 4) {
+    if (menu_info->data0 == mSM_BD_OPEN_WRITE_ISLAND || menu_info->data0 == mSM_BD_OPEN_READ_ISLAND) {
       mem_copy(tmp_header, mail_content->header, board_ovl->lengths[mBD_FIELD_HEADER]);
       len = board_ovl->lengths[mBD_FIELD_HEADER];
     }
@@ -1529,7 +1529,7 @@ static void mBD_set_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_info) 
 
   mBD_set_frame_dl(graph, menu_info, x, y, submenu->overlay->board_ovl);
 
-  if (menu_info->data0 == 1 || menu_info->data0 == 4 || submenu->overlay->board_ovl->first == FALSE) {
+  if (menu_info->data0 == mSM_BD_OPEN_READ || menu_info->data0 == mSM_BD_OPEN_READ_ISLAND || submenu->overlay->board_ovl->first == FALSE) {
     (*submenu->overlay->set_char_matrix_proc)(graph);
     mBD_set_character(submenu, game, menu_info, x, y);
   }
@@ -1564,7 +1564,7 @@ static void mBD_board_ovl_init(Submenu* submenu) {
   board_ovl->header_pos = mBD_HEADER_POS_PRE_NAME;
   board_ovl->dst_p = (Mail_c*)menu_info->data2;
 
-  if (menu_info->data0 == 0) {
+  if (menu_info->data0 == mSM_BD_OPEN_WRITE) {
     Mail_hs_c* mail_header = &Common_Get(now_private)->saved_mail_header;
     board_ovl->first = TRUE;
     menu_info->next_proc_status = mSM_OVL_PROC_PLAY;
@@ -1589,7 +1589,7 @@ static void mBD_board_ovl_init(Submenu* submenu) {
   else {
     mMl_copy_mail(&board_ovl->mail, (Mail_c*)menu_info->data2);
 
-    if (menu_info->data0 == 1 || menu_info->data0 == 4) {
+    if (menu_info->data0 == mSM_BD_OPEN_READ || menu_info->data0 == mSM_BD_OPEN_READ_ISLAND) {
       menu_info->next_proc_status = mSM_OVL_PROC_WAIT;
     }
     else {

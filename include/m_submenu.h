@@ -110,6 +110,16 @@ enum {
   mSM_IV_OPEN_NUM
 };
 
+enum {
+  mSM_BD_OPEN_WRITE,
+  mSM_BD_OPEN_READ,
+  mSM_BD_OPEN_REWRITE,
+  mSM_BD_OPEN_WRITE_ISLAND,
+  mSM_BD_OPEN_READ_ISLAND,
+
+  mSM_BD_OPEN_NUM
+};
+
 typedef struct submenu_item_s {
   mActor_name_t item;
   u8 slot_no;
