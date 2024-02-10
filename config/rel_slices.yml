@@ -438,6 +438,11 @@ ac_quest_talk_fj_init.c:
     .text: [0x80487A78, 0x80488474]
     .data: [0x8068ADF8, 0x8068AE40]
     .bss: [0x812FC938, 0x812FCA68]
+ac_quest_talk_greeting.c:
+    .text: [0x80488474, 0x80489A34]
+    .rodata: [0x80644CA0, 0x80644CA8]
+    .data: [0x8068AE40, 0x8068B048]
+    .bss: [0x812FCA68, 0x812FCAA8]
 ac_rope.c:
     .text: [0x804967A4, 0x80496AB8]
     .rodata: [0x80644DB0, 0x80644DB8]

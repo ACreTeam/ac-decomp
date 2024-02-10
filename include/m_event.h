@@ -604,6 +604,8 @@ extern int mMC_check_birth();
 extern void mEv_debug_print4f(gfxprint_t* gfxprint);
 extern void mEv_sp_debug_print4f(gfxprint_t* gfxprint);
 
+#define mEv_IsEventActive(event) mEv_check_status(event, mEv_STATUS_ACTIVE)
+
 
 #ifdef __cplusplus
 }
