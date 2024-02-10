@@ -96,7 +96,13 @@ enum {
   mNpc_FEEL_SLEEPY,
   mNpc_FEEL_PITFALL,
 
-  mNpc_FEEL_NUM
+  mNpc_FEEL_NUM,
+
+  mNpc_FEEL_6 = mNpc_FEEL_NUM,
+  mNpc_FEEL_UZAI_0,
+  mNpc_FEEL_UZAI_1,
+
+  mNpc_FEEL_ALL_NUM
 };
 
 enum {
@@ -425,8 +431,8 @@ extern int mNpc_GetMakeUtNuminBlock(int* ut_x, int* ut_z, int bx, int bz);
 extern int mNpc_GetMakeUtNuminBlock33(int* make_ut_x, int* make_ut_z, int ut_x, int ut_z, int bx, int bz);
 extern int mNpc_GetMakeUtNuminBlock_hide_hard_area(int* ut_x, int* ut_z, int bx, int bz, int restrict_area);
 extern void mNpc_ClearTalkInfo();
-extern int mNpc_CheckOverImpatient(int animal_idx, int feel);
-extern int mNpc_GetOverImpatient(int animal_idx, int feel);
+extern int mNpc_CheckOverImpatient(int animal_idx, int looks);
+extern int mNpc_GetOverImpatient(int animal_idx, int looks);
 extern int mNpc_CheckQuestRequest(int animal_idx);
 extern void mNpc_SetQuestRequestOFF(int animal_idx, int feel);
 extern void mNpc_TalkInfoMove();

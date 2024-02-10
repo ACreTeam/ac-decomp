@@ -5074,18 +5074,18 @@ static void mNpc_TimerCountDown(mNpc_Talk_Info_c* talk_info) {
   }
 }
 
-static void mNpc_SetUnlockTimer(u16* unlock_timer, u16* reset_timer, int feel) {
-  unlock_timer[0] = l_npc_temper[feel].unlock_timer;
+static void mNpc_SetUnlockTimer(u16* unlock_timer, u16* reset_timer, int looks) {
+  unlock_timer[0] = l_npc_temper[looks].unlock_timer;
   reset_timer[0] = unlock_timer[0];
 }
 
-static int mNpc_CountTalkNum(int animal_idx, int feel) {
+static int mNpc_CountTalkNum(int animal_idx, int looks) {
   int res = FALSE;
 
   if (animal_idx >= 0 && animal_idx < ARRAY_COUNT(l_npc_talk_info)) {
     mNpc_Talk_Info_c* talk_info = &l_npc_talk_info[animal_idx];
       
-    if (talk_info->talk_num < l_npc_temper[feel].talk_num_max && talk_info->timer > 0) {
+    if (talk_info->talk_num < l_npc_temper[looks].talk_num_max && talk_info->timer > 0) {
       talk_info->talk_num++;
       res = TRUE;
     }
@@ -5094,13 +5094,13 @@ static int mNpc_CountTalkNum(int animal_idx, int feel) {
   return res;
 }
 
-extern int mNpc_CheckOverImpatient(int animal_idx, int feel) {
+extern int mNpc_CheckOverImpatient(int animal_idx, int looks) {
   int res = FALSE;
 
   if (animal_idx >= 0 && animal_idx < ARRAY_COUNT(l_npc_talk_info)) {
     mNpc_Talk_Info_c* talk_info = &l_npc_talk_info[animal_idx];
     
-    if (talk_info->talk_num >= l_npc_temper[feel].over_impatient_num) {
+    if (talk_info->talk_num >= l_npc_temper[looks].over_impatient_num) {
       res = TRUE;
     }
   }
@@ -5108,14 +5108,14 @@ extern int mNpc_CheckOverImpatient(int animal_idx, int feel) {
   return res;
 }
 
-extern int mNpc_GetOverImpatient(int animal_idx, int feel) {
+extern int mNpc_GetOverImpatient(int animal_idx, int looks) {
   int patience = mNpc_PATIENCE_NORMAL;
 
   if (animal_idx >= 0 && animal_idx < ARRAY_COUNT(l_npc_talk_info)) {
     mNpc_Talk_Info_c* talk_info = &l_npc_talk_info[animal_idx];
     
-    if (talk_info->talk_num >= l_npc_temper[feel].over_impatient_num) {
-      if (talk_info->talk_num >= l_npc_temper[feel].talk_num_max) {
+    if (talk_info->talk_num >= l_npc_temper[looks].over_impatient_num) {
+      if (talk_info->talk_num >= l_npc_temper[looks].talk_num_max) {
         patience = mNpc_PATIENCE_ANNOYED; // refuse to talk
       }
       else {
