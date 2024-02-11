@@ -1,0 +1,75 @@
+extern Gfx obj_e_tukimi_l_endai_model[];
+extern Gfx obj_e_tukimi_r_endai_model[];
+
+static int aTUK_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape, u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    if (joint_idx == 7) {
+        *joint_shape = NULL;
+    }
+
+    return TRUE;
+}
+
+static int aTUK_actor_draw_after(GAME* game,cKF_SkeletonInfo_R_c* info, int idx, Gfx** gfxp, u8* dispbuf, void* actor, s_xyz* rotation, xyz_t* translation) {
+    static Gfx* mdl[] = { obj_e_tukimi_l_endai_model, obj_e_tukimi_r_endai_model };
+
+    STRUCTURE_ACTOR* tukimi;
+    GRAPH* graph;
+    Mtx* mtx;
+    u16* pal;
+    Gfx* gfx;
+
+    tukimi = (STRUCTURE_ACTOR*)actor;
+    graph = game->graph;
+
+    if (idx == 7) {
+        mtx = _Matrix_to_Mtx_new(graph);
+        if (mtx != NULL) {
+            pal = (*Common_Get(clip).structure_clip->get_pal_segment_proc)(tukimi->structure_pal);
+
+            _texture_z_light_fog_prim_shadow(graph);
+
+            OPEN_DISP(graph);
+
+            gfx = NOW_SHADOW_DISP;
+            gSPSegment(gfx++, G_MWO_SEGMENT_8, pal);
+            gSPMatrix(gfx++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPDisplayList(gfx++, mdl[tukimi->arg0]);
+
+            SET_SHADOW_DISP(gfx);
+            CLOSE_DISP(graph);
+        }
+    }
+
+    return TRUE;
+}
+
+static void aTUK_actor_draw(ACTOR* actor, GAME* game) {
+    static bIT_ShadowData_c* shadow_data[2] = { &aTUK_shadow_data_l, &aTUK_shadow_data_r };
+
+    GRAPH* graph;
+    cKF_SkeletonInfo_R_c* keyframe;
+    STRUCTURE_ACTOR* tukimi;
+    Gfx* gfx;
+    u16* pal;
+    Mtx* mtx;
+
+    graph = game->graph;
+    tukimi = (STRUCTURE_ACTOR*)actor;
+    keyframe = &tukimi->keyframe;
+    mtx = GRAPH_ALLOC_TYPE(graph, Mtx, keyframe->skeleton->num_shown_joints);
+    if (mtx != NULL) {
+        pal = Common_Get(clip.structure_clip)->get_pal_segment_proc(tukimi->structure_pal);
+
+        OPEN_DISP(graph);
+
+        _texture_z_light_fog_prim_npc(graph);
+
+        gfx = NOW_POLY_OPA_DISP; 
+        gSPSegment(gfx++, G_MWO_SEGMENT_8, pal);
+        SET_POLY_OPA_DISP(gfx);
+
+        cKF_Si3_draw_R_SV(game, keyframe, mtx, aTUK_actor_draw_before, aTUK_actor_draw_after, actor);
+        (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, shadow_data[tukimi->arg0], FALSE);
+        CLOSE_DISP(graph);
+    }
+}
