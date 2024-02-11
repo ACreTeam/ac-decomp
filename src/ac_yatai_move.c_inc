@@ -1,0 +1,89 @@
+static void aYAT_set_bgOffset(STRUCTURE_ACTOR* yatai, int idx){
+    static mCoBG_OffsetTable_c height_table_ct_l[9] = {
+        { 0x64, 0, 0, 0, 0, 0, 0 },
+        { 0x64, 8, 0, 8, 8, 8, 1 },
+        { 0x64, 8, 8, 8, 8, 0, 1 },
+        { 0x64, 8, 0, 8, 8, 8, 1 },
+        { 0x64, 8, 8, 8, 8, 8, 0 },
+        { 0x64, 8, 8, 8, 0, 8, 1 },
+        { 0x64, 8, 8, 0, 8, 8, 1 },
+        { 0x64, 8, 8, 8, 0, 8, 1 },
+        { 0x64, 0, 0, 0, 0, 0, 0 }
+    };
+
+    static mCoBG_OffsetTable_c height_table_ct_r[9] = {
+        { 0x64, 8, 0, 8, 8, 8, 1 },
+        { 0x64, 8, 8, 8, 8, 0, 1 },
+        { 0x64, 0, 0, 0, 0, 0, 0 },
+        { 0x64, 8, 8, 0, 8, 8, 1 },
+        { 0x64, 8, 8, 8, 8, 8, 0 },
+        { 0x64, 8, 8, 8, 8, 0, 1 },
+        { 0x64, 0, 0, 0, 0, 0, 0 },
+        { 0x64, 8, 8, 0, 8, 8, 1 },
+        { 0x64, 8, 8, 8, 0, 8, 1 }
+    };
+
+    static mCoBG_OffsetTable_c* height_table[4] = {
+        height_table_ct_l, height_table_ct_r,
+        height_table_ct_l, height_table_ct_r
+    };
+
+    static f32 addX[3] = { -40.0f, 0.0f, 40.0f };
+    static f32 addZ[3] = { -40.0f, 0.0f, 40.0f };
+
+    mCoBG_OffsetTable_c* offset;
+    int type;
+    int i;
+    int j;
+    xyz_t pos;
+
+    offset = height_table[idx];
+    type = idx & 1;
+    for (i = 0; i < 3; i++) { 
+        pos.z = 40.0f + (yatai->actor_class.home.position.z + addZ[i]);
+        for (j = 0; j < 3; j++) {
+            if (type == 0) {
+                if (j + i * 3 != 0 && j + i * 3 != 8) {
+                    pos.x = (yatai->actor_class.home.position.x + addX[j]);
+                    mCoBG_SetPluss5PointOffset_file(pos, *offset, __FILE__, 123);
+                }
+            }
+            else {
+                if (j + i * 3 != 2 && j + i * 3 != 6) {
+                    pos.x = (yatai->actor_class.home.position.x + addX[j]);
+                    mCoBG_SetPluss5PointOffset_file(pos, *offset, __FILE__, 129);
+                }
+            }
+
+            offset++;
+        }
+    }
+}
+
+static void aYAT_actor_move(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player_actor;
+    int yatai_bx;
+    int yatai_bz;
+    int player_bx;
+    int player_bz;
+
+    player_actor = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    
+    mFI_Wpos2BlockNum(&yatai_bx, &yatai_bz, actor->world.position);
+    mFI_Wpos2BlockNum(&player_bx, &player_bz, player_actor->actor_class.world.position);
+
+    if (mDemo_Check(mDemo_TYPE_SCROLL, &player_actor->actor_class) == FALSE
+        && mDemo_Check(mDemo_TYPE_SCROLL2, &player_actor->actor_class) == FALSE
+        && mDemo_Check(mDemo_TYPE_SCROLL3, &player_actor->actor_class) == FALSE
+        && (yatai_bx != player_bx || yatai_bz != player_bz))
+    {
+        Actor_delete(actor);
+    }
+}
+
+static void aYAT_actor_init(ACTOR* actor, GAME* game){
+    STRUCTURE_ACTOR* yatai = (STRUCTURE_ACTOR*)actor;
+    mFI_SetFG_common(DUMMY_YATAI, actor->home.position, FALSE);
+    aYAT_actor_move(actor, game);
+    actor->mv_proc = aYAT_actor_move;
+}
