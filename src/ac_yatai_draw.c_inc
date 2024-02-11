@@ -1,0 +1,37 @@
+extern Gfx obj_e_yatai_l_modelT[];
+extern Gfx obj_e_yatai_r_modelT[];
+extern Gfx obj_e_yatai_l_model[];
+extern Gfx obj_e_yatai_r_model[];
+
+static void aYAT_actor_draw(ACTOR* actor, GAME* game) {
+    static bIT_ShadowData_c* shadow_data[2] = { &aYAT_shadow_data_l, &aYAT_shadow_data_r };
+    static Gfx* mdl[2] = { obj_e_yatai_l_modelT, obj_e_yatai_r_modelT };
+    static Gfx* mdl2[2] = { obj_e_yatai_l_model, obj_e_yatai_r_model };
+
+    STRUCTURE_ACTOR* yatai;
+    u16* pal;
+    Mtx* mtx;
+    Gfx* gfx;
+    GRAPH* graph;
+
+    yatai = (STRUCTURE_ACTOR*)actor;
+    graph = game->graph;
+    pal = Common_Get(clip).structure_clip->get_pal_segment_proc(aSTR_PAL_YATAI);
+    mtx = _Matrix_to_Mtx_new(graph);
+    if (mtx != NULL) {
+        _texture_z_light_fog_prim_npc(graph);
+
+        OPEN_DISP(graph);
+        gfx = NOW_POLY_OPA_DISP;
+
+        gSPSegment(gfx++, G_MWO_SEGMENT_8, pal);
+        gSPMatrix(gfx++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPDisplayList(gfx++, mdl[yatai->arg0]);
+        gSPDisplayList(gfx++, mdl2[yatai->arg0]);
+
+        SET_POLY_OPA_DISP(gfx);
+        CLOSE_DISP(graph);
+
+        (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, shadow_data[yatai->arg0], FALSE);
+    }
+}
