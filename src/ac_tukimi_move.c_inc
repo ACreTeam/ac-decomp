@@ -1,0 +1,48 @@
+extern cKF_Animation_R_c cKF_ba_r_obj_e_tukimi_l;
+extern cKF_Animation_R_c cKF_ba_r_obj_e_tukimi_r;
+
+static void aTUK_set_bgOffset(STRUCTURE_ACTOR* tukimi, int id) {
+    id = id == 0 ? 6 : 6;
+    mCoBG_SetPlussOffset(tukimi->actor_class.home.position, id, 100);
+}
+
+static void aTUK_setup_action(ACTOR* actor) {
+    static cKF_Animation_R_c* ani[] = { &cKF_ba_r_obj_e_tukimi_l, &cKF_ba_r_obj_e_tukimi_r };
+
+    STRUCTURE_ACTOR* tukimi = (STRUCTURE_ACTOR*)actor;
+    cKF_SkeletonInfo_R_init(&tukimi->keyframe, tukimi->keyframe.skeleton, ani[tukimi->arg0], 1.0f, 271.0f, 1.0f, 0.5f, 0.0f, 1, NULL);
+}
+
+static void aTUK_actor_move(ACTOR* actor, GAME* game) {
+    STRUCTURE_ACTOR* tukimi;
+    GAME_PLAY* game_play;
+    PLAYER_ACTOR* player_actor;
+    int tukimi_bx;
+    int tukimi_bz;
+    int player_bx;
+    int player_bz;
+
+    tukimi = (STRUCTURE_ACTOR*)actor;
+    game_play = (GAME_PLAY*)game;
+
+    player_actor = get_player_actor_withoutCheck(game_play);
+    mFI_Wpos2BlockNum(&tukimi_bx, &tukimi_bz, tukimi->actor_class.world.position);
+    mFI_Wpos2BlockNum(&player_bx, &player_bz, player_actor->actor_class.world.position);
+
+    if (mDemo_Check(mDemo_TYPE_SCROLL, &player_actor->actor_class) == FALSE
+        && mDemo_Check(mDemo_TYPE_SCROLL2, &player_actor->actor_class) == FALSE
+        && mDemo_Check(mDemo_TYPE_SCROLL3, &player_actor->actor_class) == FALSE
+        && (tukimi_bx != player_bx || tukimi_bz != player_bz))
+    {
+        Actor_delete(actor);
+    }
+    else {
+        cKF_SkeletonInfo_R_play(&tukimi->keyframe);
+    }
+}
+
+static void aTUK_actor_init(ACTOR* actor, GAME* game) {
+    mFI_SetFG_common(DUMMY_TUKIMI, actor->home.position, FALSE);
+    aTUK_actor_move(actor, game);
+    actor->mv_proc = aTUK_actor_move;
+}
