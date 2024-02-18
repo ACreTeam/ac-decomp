@@ -19,13 +19,17 @@ extern "C" {
 #define mPr_DEPOSIT_MAX 999999999
 
 #define mPr_FLAG_MASK_CAT_SCHEDULED (1 << 0) // Blanca appears when travelling
+#define mPr_FLAG_1 (1 << 1) // unused?
 #define mPr_FLAG_POSTOFFICE_GIFT0 (1 << 2) // 1,000,000 Bells
 #define mPr_FLAG_POSTOFFICE_GIFT1 (1 << 3) // 10,000,000 Bells
 #define mPr_FLAG_POSTOFFICE_GIFT2 (1 << 4) // 100,000,000 Bells
 #define mPr_FLAG_POSTOFFICE_GIFT3 (1 << 5) // 999,999,999 Bells
 #define mPr_FLAG_MUSEUM_COMP_HANDBILL_SCHEDULED (1 << 6) // player is scheduled to receive completion letter & reward
 #define mPr_FLAG_MUSEUM_COMP_HANDBILL_RECEIVED (1 << 7) // player has received the completion letter & reward
+#define mPr_FLAG_8 (1 << 8) // unused?
 #define mPr_FLAG_UPDATE_OUTLOOK_PENDING (1 << 9) // player bought a new coat of roof paint to be repainted
+#define mPr_FLAG_BIRTHDAY_ACTIVE (1 << 10) // player's birthday is active and a villager can give them a gift
+#define mPr_FLAG_TOTAKEKE_INTRODUCTION  (1 << 11) // player has spoken to K.K. Slider before
 
 #define mPr_MONEY_POWER_MIN -80
 

@@ -434,7 +434,7 @@ extern void mNpc_ClearTalkInfo();
 extern int mNpc_CheckOverImpatient(int animal_idx, int looks);
 extern int mNpc_GetOverImpatient(int animal_idx, int looks);
 extern int mNpc_CheckQuestRequest(int animal_idx);
-extern void mNpc_SetQuestRequestOFF(int animal_idx, int feel);
+extern void mNpc_SetQuestRequestOFF(int animal_idx, int looks);
 extern void mNpc_TalkInfoMove();
 extern void mNpc_TalkEndMove(int animal_idx, int feel);
 extern int mNpc_GetNpcFloorNo();
