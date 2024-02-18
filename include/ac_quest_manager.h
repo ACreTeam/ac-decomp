@@ -75,7 +75,7 @@ enum {
     aQMgr_MSG_KIND_FULL_ITEM, // pockets are full so can't give quests
     aQMgr_MSG_KIND_AFTER_REWARD,
     aQMgr_MSG_KIND_AFTER_REWARD_THANKS,
-    aQMgr_MSG_KIND_REWARD_FULL_ITEM, // pockets are full so can't give reward
+    aQMgr_MSG_KIND_REWARD_FULL_ITEM,  // pockets are full so can't give reward
     aQMgr_MSG_KIND_REWARD_FULL_ITEM2, // pockets are still full
     aQMgr_MSG_KIND_NONE,
 
@@ -141,11 +141,11 @@ typedef struct quest_manager_order_s {
 } aQMgr_order_c;
 
 typedef struct quest_manager_set_data_s {
-    u32 to_type:3;
-    u32 day_limit:6;
-    u32 last_step:4;
-    u32 handover_item:1;
-    u32 src_item_type:3;
+    u32 to_type : 3;
+    u32 day_limit : 6;
+    u32 last_step : 4;
+    u32 handover_item : 1;
+    u32 src_item_type : 3;
     mActor_name_t item;
     u8 reward_percentages[aQMgr_QUEST_REWARD_NUM];
     u32 max_pay;
@@ -153,8 +153,8 @@ typedef struct quest_manager_set_data_s {
 } aQMgr_set_data_c;
 
 typedef struct quest_manager_flower_work_data_s {
-    int exist_num;
     int goal_num;
+    int exist_num;
     int remain_num;
 } aQMgr_flower_data_c;
 
@@ -175,7 +175,7 @@ typedef struct quest_manager_target_s {
     aQMgr_set_data_c* set_data_p;
     int free_data_idx;
     mQst_base_c* free_data_p;
-    u8 errand_type;
+    s8 errand_type;
     aQMgr_work_data_c work;
 } aQMgr_target_c;
 
@@ -199,8 +199,8 @@ typedef struct quest_manager_normal_info_s {
     Anmmem_c* memory;
     Anmplmail_c* anmplmail;
     u32 pay;
-    int player_num_items; // valid items to trade
-    int player_give_item_idx; // index to give item away
+    int player_num_items;          // valid items to trade
+    int player_give_item_idx;      // index to give item away
     mActor_name_t player_items[4]; // items which the player has in their inventory which match 'player_num_items'
     mActor_name_t selected_item;
 } aQMgr_normal_info_c;
@@ -253,13 +253,16 @@ struct quest_manager_actor {
     /* 0x958 */ mActor_name_t cloth;
     /* 0x95A */ u8 talk_type;
     /* 0x95B */ u8 talk_change_type;
-    /* 0x95C */ u8 errand_next[5];
+    /* 0x95C */ u8 errand_next[mPr_ERRAND_QUEST_NUM];
     /* 0x962 */ Mail_c mail;
     /* 0xA8C */ Anmmem_c* mail_memory;
     /* 0xA90 */ u8 last_strings[7];
     /* 0xA98 */ mActor_name_t give_item;
     /* 0xA9C */ int _A9C;
 };
+
+#define aQMgr_GET_CLIENT(manager) ((NPC_ACTOR*)*manager->client)
+#define aQMgr_GET_CLIENT_ANIMAL(manager) aQMgr_GET_CLIENT(manager)->npc_info.animal
 
 extern ACTOR_PROFILE Quest_Manager_Profile;
 
@@ -268,4 +271,3 @@ extern ACTOR_PROFILE Quest_Manager_Profile;
 #endif
 
 #endif
-

@@ -5141,12 +5141,12 @@ extern int mNpc_CheckQuestRequest(int animal_idx) {
   return res;
 }
 
-extern void mNpc_SetQuestRequestOFF(int animal_idx, int feel) {
+extern void mNpc_SetQuestRequestOFF(int animal_idx, int looks) {
   mNpc_Talk_Info_c* talk_info = &l_npc_talk_info[animal_idx];
 
   if (animal_idx >= 0 && animal_idx < ARRAY_COUNT(l_npc_talk_info)) {
     if (talk_info->quest_request == TRUE) {
-      mNpc_SetUnlockTimer(&talk_info->unlock_timer, &talk_info->reset_timer, feel);
+      mNpc_SetUnlockTimer(&talk_info->unlock_timer, &talk_info->reset_timer, looks);
     }
 
     talk_info->quest_request = FALSE;
