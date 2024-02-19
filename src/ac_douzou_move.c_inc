@@ -14,283 +14,272 @@
 #include "m_player_lib.h"
 
 static int aDOU_set_check(int house_no) {
-  int player_no = mHS_get_pl_no(house_no);
-  Private_c* priv = Save_GetPointer(private[player_no]);
-  mHm_hs_c* house = Save_GetPointer(homes[house_no]);
+    int player_no = mHS_get_pl_no(house_no);
+    Private_c* priv = Save_GetPointer(private[player_no]);
+    mHm_hs_c* house = Save_GetPointer(homes[house_no]);
 
-  if (mEv_CheckTitleDemo() != 0 && mEv_CheckTitleDemo() != -1 && mEv_CheckTitleDemo() != -9) {
-    return FALSE;
-  }
-  else if (mLd_PlayerManKindCheckNo(player_no) || mPr_CheckPrivate(priv) == FALSE) {
-    return FALSE;
-  }
-  else if (mPr_NullCheckPersonalID(&house->ownerID) == FALSE && house->size_info.next_size == mHm_HOMESIZE_STATUE) {
-    return TRUE;
-  }
-  else {
-    return FALSE;
-  }
+    if (mEv_CheckTitleDemo() != 0 && mEv_CheckTitleDemo() != -1 && mEv_CheckTitleDemo() != -9) {
+        return FALSE;
+    } else if (mLd_PlayerManKindCheckNo(player_no) || mPr_CheckPrivate(priv) == FALSE) {
+        return FALSE;
+    } else if (mPr_NullCheckPersonalID(&house->ownerID) == FALSE && house->size_info.next_size == mHm_HOMESIZE_STATUE) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
 
 static int aDOU_get_color(int house_no) {
-  return Save_Get(homes[house_no]).size_info.statue_rank;
+    return Save_Get(homes[house_no]).size_info.statue_rank;
 }
 
 static int aDOU_get_douzou_type(int house_no) {
-  int player_no = mHS_get_pl_no(house_no);
-  Private_c* priv = Save_GetPointer(private[player_no]);
-  s8 sex = mPr_SEX_MALE;
-  s8 face = mPr_FACE_TYPE0;
+    int player_no = mHS_get_pl_no(house_no);
+    Private_c* priv = Save_GetPointer(private[player_no]);
+    s8 sex = mPr_SEX_MALE;
+    s8 face = mPr_FACE_TYPE0;
 
-  if (mLd_PlayerManKindCheckNo(player_no) == FALSE && mPr_CheckPrivate(priv)) {
-    sex = priv->gender;
-    face = priv->face;
-  }
+    if (mLd_PlayerManKindCheckNo(player_no) == FALSE && mPr_CheckPrivate(priv)) {
+        sex = priv->gender;
+        face = priv->face;
+    }
 
-  return sex * mPr_FACE_TYPE_NUM + face;
+    return sex * mPr_FACE_TYPE_NUM + face;
 }
 
 static void KeepItem(xyz_t pos) {
-  mActor_name_t* unit_fg = mFI_GetUnitFG(pos);
-  if (unit_fg != NULL) {
-    mFI_Wpos2DepositOFF(pos);
-    mPB_keep_item(*unit_fg);
-    mFI_SetFG_common(EMPTY_NO, pos, TRUE);
-  }
+    mActor_name_t* unit_fg = mFI_GetUnitFG(pos);
+    if (unit_fg != NULL) {
+        mFI_Wpos2DepositOFF(pos);
+        mPB_keep_item(*unit_fg);
+        mFI_SetFG_common(EMPTY_NO, pos, TRUE);
+    }
 }
 
 static void aDOU_keep_item(ACTOR* actor) {
-  STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
-  xyz_t wpos;
-  int i;
+    STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
+    xyz_t wpos;
+    int i;
 
-  for (i = 0; i < mHS_HOUSE_NUM; i++) {
-    if (aDOU_set_check(i)) {
-      xyz_t_move(&wpos, &actor->world.position);
-      wpos.x += xpostbl[i];
-      wpos.z += zpostbl[i];
-      KeepItem(wpos);
+    for (i = 0; i < mHS_HOUSE_NUM; i++) {
+        if (aDOU_set_check(i)) {
+            xyz_t_move(&wpos, &actor->world.position);
+            wpos.x += xpostbl[i];
+            wpos.z += zpostbl[i];
+            KeepItem(wpos);
+        }
     }
-  }
 }
 
-
 static int aDOU_setEffect_sub(ACTOR* actor, GAME* game, int house_no, int color) {
-  static xyz_t offset_tbl[mHS_HOUSE_NUM] = {
-    { 1.0f, 68.0f, 14.0f },
-    { 1.0f, 62.0f, 12.0f },
-    { 1.0f, 56.0f, 10.0f },
-    { 1.0f, 50.0f,  8.0f }
-  };
+    static xyz_t offset_tbl[mHS_HOUSE_NUM] = {
+        { 1.0f, 68.0f, 14.0f }, { 1.0f, 62.0f, 12.0f }, { 1.0f, 56.0f, 10.0f }, { 1.0f, 50.0f, 8.0f }
+    };
 
-  static xyz_t mult_p_tbl[mHS_HOUSE_NUM] = {
-    { 26.0f, 42.0f, 0.0f },
-    { 23.0f, 38.0f, 0.0f },
-    { 20.0f, 34.0f, 0.0f },
-    { 17.0f, 30.0f, 0.0f }
-  };
+    static xyz_t mult_p_tbl[mHS_HOUSE_NUM] = {
+        { 26.0f, 42.0f, 0.0f }, { 23.0f, 38.0f, 0.0f }, { 20.0f, 34.0f, 0.0f }, { 17.0f, 30.0f, 0.0f }
+    };
 
-  STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
-  xyz_t ofs;
-  xyz_t eff_pos;
-  xyz_t wpos;
+    STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
+    xyz_t ofs;
+    xyz_t eff_pos;
+    xyz_t wpos;
 
-  Matrix_push();
+    Matrix_push();
 
-  /* Initialize base position */
-  xyz_t_move(&wpos, &actor->world.position);
-  wpos.x += xpostbl[house_no];
-  wpos.z += zpostbl[house_no];
-  Matrix_translate(wpos.x, wpos.y, wpos.z, 0);
-  
-  /* Initialize effect offset */
-  xyz_t_move(&ofs, &offset_tbl[color]);
+    /* Initialize base position */
+    xyz_t_move(&wpos, &actor->world.position);
+    wpos.x += xpostbl[house_no];
+    wpos.z += zpostbl[house_no];
+    Matrix_translate(wpos.x, wpos.y, wpos.z, 0);
 
-  /* Randomize effect offset */
-  ofs.x += mult_p_tbl[color].x * (fqrand() - 0.5f);
-  ofs.y += mult_p_tbl[color].y * (fqrand() - 0.5f);
-  ofs.z += mult_p_tbl[color].z * (fqrand() - 0.5f);
+    /* Initialize effect offset */
+    xyz_t_move(&ofs, &offset_tbl[color]);
 
-  /* Move effect offset into a world position */
-  Matrix_Position(&ofs, &eff_pos);
+    /* Randomize effect offset */
+    ofs.x += mult_p_tbl[color].x * (fqrand() - 0.5f);
+    ofs.y += mult_p_tbl[color].y * (fqrand() - 0.5f);
+    ofs.z += mult_p_tbl[color].z * (fqrand() - 0.5f);
 
-  /* Spawn effect */
-  (*Common_Get(clip).effect_clip->effect_make_proc)(eEC_DOUZOU_LIGHT, eff_pos, 1, 0, game, DOUZOU, color, 0);
+    /* Move effect offset into a world position */
+    Matrix_Position(&ofs, &eff_pos);
 
-  Matrix_pull();
+    /* Spawn effect */
+    (*Common_Get(clip).effect_clip->effect_make_proc)(eEC_DOUZOU_LIGHT, eff_pos, 1, 0, game, DOUZOU, color, 0);
 
-  return TRUE;
+    Matrix_pull();
+
+    return TRUE;
 }
 
 static void aDOU_setEffect(ACTOR* actor, GAME* game) {
-  static f32 b_timetbl[mHS_HOUSE_NUM] = {  5.0f, 15.0f, 20.0f, 30.0f };
-  static f32 r_timetbl[mHS_HOUSE_NUM] = { 10.0f, 30.0f, 40.0f, 60.0f };
+    static f32 b_timetbl[mHS_HOUSE_NUM] = { 5.0f, 15.0f, 20.0f, 30.0f };
+    static f32 r_timetbl[mHS_HOUSE_NUM] = { 10.0f, 30.0f, 40.0f, 60.0f };
 
-  STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
+    STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
 
-  s16 time_tbl[mHS_HOUSE_NUM];
-  int i;
+    s16 time_tbl[mHS_HOUSE_NUM];
+    int i;
 
-  time_tbl[0] = douzou->arg0_f;
-  time_tbl[1] = douzou->arg1_f;
-  time_tbl[2] = douzou->arg2_f;
-  time_tbl[3] = douzou->arg3_f;
+    time_tbl[0] = douzou->arg0_f;
+    time_tbl[1] = douzou->arg1_f;
+    time_tbl[2] = douzou->arg2_f;
+    time_tbl[3] = douzou->arg3_f;
 
-  for (i = 0; i < mHS_HOUSE_NUM; i++) {
-    if (aDOU_set_check(i)) { 
-      if (time_tbl[i] == 0) {
-        int color = aDOU_get_color(i);
-        time_tbl[i] = (b_timetbl[color] + r_timetbl[color] * fqrand());
-        aDOU_setEffect_sub(actor, game, i, color);
-      }
-      else {
-        time_tbl[i]--;
-      }
+    for (i = 0; i < mHS_HOUSE_NUM; i++) {
+        if (aDOU_set_check(i)) {
+            if (time_tbl[i] == 0) {
+                int color = aDOU_get_color(i);
+                time_tbl[i] = (b_timetbl[color] + r_timetbl[color] * fqrand());
+                aDOU_setEffect_sub(actor, game, i, color);
+            } else {
+                time_tbl[i]--;
+            }
+        }
     }
-  }
 
-  douzou->arg0_f = time_tbl[0];
-  douzou->arg1_f = time_tbl[1];
-  douzou->arg2_f = time_tbl[2];
-  douzou->arg3_f = time_tbl[3];
+    douzou->arg0_f = time_tbl[0];
+    douzou->arg1_f = time_tbl[1];
+    douzou->arg2_f = time_tbl[2];
+    douzou->arg3_f = time_tbl[3];
 }
 
 static void aDOU_set_bgOffset(ACTOR* actor, int height) {
-  STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
-  xyz_t wpos;
-  s16 ofs = height == 0 ? 9 : 9;
-  int i;
-  for (i = 0; i < mHS_HOUSE_NUM; i++) {
-    if (aDOU_set_check(i)) { 
-      xyz_t_move(&wpos, &actor->home.position);
-      wpos.x += xpostbl[i];
-      wpos.z += zpostbl[i];
+    STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
+    xyz_t wpos;
+    s16 ofs = height == 0 ? 9 : 9;
+    int i;
+    for (i = 0; i < mHS_HOUSE_NUM; i++) {
+        if (aDOU_set_check(i)) {
+            xyz_t_move(&wpos, &actor->home.position);
+            wpos.x += xpostbl[i];
+            wpos.z += zpostbl[i];
 
-      mCoBG_SetPlussOffset(wpos, ofs, 100);
+            mCoBG_SetPlussOffset(wpos, ofs, 100);
+        }
     }
-  }
 }
 
 static void aDOU_set_talk_info(ACTOR* actor) {
-  STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
-  mMsg_Window_c* msg_win = mMsg_Get_base_window_p();
-  int player_no = mHS_get_pl_no(douzou->arg2);
-  u8 player_name[PLAYER_NAME_LEN];
-  rgba_t window_color;
+    STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
+    mMsg_Window_c* msg_win = mMsg_Get_base_window_p();
+    int player_no = mHS_get_pl_no(douzou->arg2);
+    u8 player_name[PLAYER_NAME_LEN];
+    rgba_t window_color;
 
-  if (mLd_PlayerManKindCheckNo(player_no) == FALSE && mPr_GetPlayerName(player_name, player_no)) {
-    mMsg_Set_free_str(msg_win, 0, player_name, PLAYER_NAME_LEN);
-  }
+    if (mLd_PlayerManKindCheckNo(player_no) == FALSE && mPr_GetPlayerName(player_name, player_no)) {
+        mMsg_Set_free_str(msg_win, 0, player_name, PLAYER_NAME_LEN);
+    }
 
-  mDemo_Set_talk_turn(FALSE);
-  mDemo_Set_msg_num(0x136B);
-  mDemo_Set_talk_display_name(FALSE);
-  mDemo_Set_camera(TRUE);
-  mPlib_Set_able_hand_all_item_in_demo(TRUE);
-  mDemo_Set_ListenAble();
+    mDemo_Set_talk_turn(FALSE);
+    mDemo_Set_msg_num(0x136B);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(TRUE);
+    mPlib_Set_able_hand_all_item_in_demo(TRUE);
+    mDemo_Set_ListenAble();
 
-  window_color.r = 185;
-  window_color.g = 60;
-  window_color.b = 40;
-  window_color.a = 255;
+    window_color.r = 185;
+    window_color.g = 60;
+    window_color.b = 40;
+    window_color.a = 255;
 
-  mDemo_Set_talk_window_color(&window_color);
+    mDemo_Set_talk_window_color(&window_color);
 }
 
-static void aDOU_wait(ACTOR* actor, GAME* game) {
-  STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
-  GAME_PLAY* play = (GAME_PLAY*)game;
-  PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
-  xyz_t wpos;
-  xyz_t t_wpos;
-  s16 target;
-  s16 now_angle;
-  s_xyz target_rot;
-  int i;
+static void aDOU_wait(STRUCTURE_ACTOR* douzou, GAME_PLAY* play) {
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
+    xyz_t wpos;
+    xyz_t t_wpos;
+    s16 target;
+    s16 now_angle;
+    s_xyz target_rot;
+    int i;
 
-  if (mDemo_Check(mDemo_TYPE_SPEAK, actor) == TRUE) {
-    i = douzou->arg2;
+    if (mDemo_Check(mDemo_TYPE_SPEAK, (ACTOR*)douzou) == TRUE) {
+        i = douzou->arg2;
 
-    xyz_t_move(&wpos, &actor->world.position);
-    wpos.x += xpostbl[i];
-    wpos.z += zpostbl[i];
+        xyz_t_move(&wpos, &douzou->actor_class.world.position);
+        wpos.x += xpostbl[i];
+        wpos.z += zpostbl[i];
 
-    target = search_position_angleY(&player->actor_class.world.position, &wpos);
-    now_angle = player->actor_class.shape_info.rotation.y;
-    add_calc_short_angle2(&now_angle, target, 0.3f, 0x1000, 0);
-    target_rot.x = player->actor_class.shape_info.rotation.x;
-    target_rot.y = now_angle;
-    target_rot.z = player->actor_class.shape_info.rotation.z;
+        target = search_position_angleY(&player->actor_class.world.position, &wpos);
+        now_angle = player->actor_class.shape_info.rotation.y;
+        add_calc_short_angle2(&now_angle, target, 0.3f, 0x1000, 0);
+        target_rot.x = player->actor_class.shape_info.rotation.x;
+        target_rot.y = now_angle;
+        target_rot.z = player->actor_class.shape_info.rotation.z;
 
-    (*get_player_actor_withoutCheck((GAME_PLAY*)gamePT)->Set_force_position_angle_proc)(gamePT, NULL, &target_rot, mPlayer_FORCE_POSITION_ANGLE_ROTY);
-  }
-  else {
-    if (chkTrigger(BUTTON_A)) {
-      if (ABS(player->actor_class.shape_info.rotation.y) >= 0x6000 && mDemo_Get_talk_actor() == NULL) {
-        s_xyz test;
-        f32 dist_xz;
-        s16 angle_y;
+        (*get_player_actor_withoutCheck((GAME_PLAY*)gamePT)->Set_force_position_angle_proc)(
+            gamePT, NULL, &target_rot, mPlayer_FORCE_POSITION_ANGLE_ROTY);
+    } else {
+        if (chkTrigger(BUTTON_A)) {
+            if (ABS(player->actor_class.shape_info.rotation.y) >= 0x6000 && mDemo_Get_talk_actor() == NULL) {
+                s_xyz test;
+                f32 dist_xz;
+                s16 angle_y;
 
-        xyz_t_move(&t_wpos, &actor->world.position);
+                xyz_t_move(&t_wpos, &douzou->actor_class.world.position);
 
-        for (i = 0; i < mHS_HOUSE_NUM; i++) {
-          if (aDOU_set_check(i)) {
-            wpos.x = t_wpos.x + xpostbl[i];
-            wpos.z = t_wpos.z + zpostbl[i];
+                for (i = 0; i < mHS_HOUSE_NUM; i++) {
+                    if (aDOU_set_check(i)) {
+                        wpos.x = t_wpos.x + xpostbl[i];
+                        wpos.z = t_wpos.z + zpostbl[i];
 
-            dist_xz = search_position_distanceXZ(&player->actor_class.world.position, &wpos);
-            now_angle = search_position_angleY(&wpos, &player->actor_class.world.position);
+                        dist_xz = search_position_distanceXZ(&player->actor_class.world.position, &wpos);
+                        now_angle = search_position_angleY(&wpos, &player->actor_class.world.position);
 
-        
-            if (dist_xz > 50.0f) {
-              continue;
+                        if (dist_xz > 50.0f) {
+                            continue;
+                        }
+
+                        if (ABS((int)now_angle) > 0x1800) {
+                            continue;
+                        }
+
+                        /* resetti check in the train station acre */
+                        if (Common_Get(reset_flag) == TRUE) {
+                            Common_Set(reset_type, 4);
+                            return;
+                        }
+
+                        douzou->arg2 = i; // set current statue idx
+                        mDemo_Request(mDemo_TYPE_SPEAK, (ACTOR*)douzou,
+                                      &aDOU_set_talk_info); // tell game to process demo sequence
+                        return;
+                    }
+                }
             }
-
-            if (ABS((int)now_angle) > 0x1800) {
-              continue;
-            }
-            
-            /* resetti check in the train station acre */
-            if (Common_Get(reset_flag) == TRUE) {
-              Common_Set(reset_type, 4);
-              return;
-            }
-              
-            douzou->arg2 = i; // set current statue idx
-            mDemo_Request(mDemo_TYPE_SPEAK, actor, &aDOU_set_talk_info); // tell game to process demo sequence
-            return;
-          }
         }
-      }
     }
-  }
 }
 
 extern cKF_Animation_R_c cKF_ba_r_obj_s_douzou;
 extern cKF_Animation_R_c cKF_ba_r_obj_w_douzou;
 
 static void aDOU_setup_action(ACTOR* actor, int action) {
-  static cKF_Animation_R_c* ani[2] = { &cKF_ba_r_obj_s_douzou, &cKF_ba_r_obj_w_douzou };
-  static aSTR_MOVE_PROC process[1] = { &aDOU_wait };
+    static cKF_Animation_R_c* ani[2] = { &cKF_ba_r_obj_s_douzou, &cKF_ba_r_obj_w_douzou };
+    static aSTR_MOVE_PROC process[1] = { &aDOU_wait };
 
-  STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
+    STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
 
-  cKF_SkeletonInfo_R_init(&douzou->keyframe, douzou->keyframe.skeleton, ani[douzou->season == mTM_SEASON_WINTER], 1.0f, 1.0f, 1.0f, 0.5f, 0.0f, cKF_FRAMECONTROL_REPEAT, NULL);
-  douzou->action_proc = process[action];
-  douzou->action = action;
+    cKF_SkeletonInfo_R_init(&douzou->keyframe, douzou->keyframe.skeleton, ani[douzou->season == mTM_SEASON_WINTER],
+                            1.0f, 1.0f, 1.0f, 0.5f, 0.0f, cKF_FRAMECONTROL_REPEAT, NULL);
+    douzou->action_proc = process[action];
+    douzou->action = action;
 }
 
 static void aDOU_actor_move(ACTOR* actor, GAME* game) {
-  STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
 
-  douzou->keyframe_state = cKF_SkeletonInfo_R_play(&douzou->keyframe);
-  douzou->keyframe_saved_keyframe = douzou->keyframe.frame_control.current_frame;
-  (*douzou->action_proc)((ACTOR*)douzou, game);
-  aDOU_setEffect(actor, game);
+    douzou->keyframe_state = cKF_SkeletonInfo_R_play(&douzou->keyframe);
+    douzou->keyframe_saved_keyframe = douzou->keyframe.frame_control.current_frame;
+    (*douzou->action_proc)(douzou, play);
+    aDOU_setEffect(actor, game);
 }
 
 static void aDOU_actor_init(ACTOR* actor, GAME* game) {
-  mFI_SetFG_common(DUMMY_DOUZOU, actor->home.position, FALSE);
-  aDOU_actor_move(actor, game);
-  actor->mv_proc = &aDOU_actor_move;
+    mFI_SetFG_common(DUMMY_DOUZOU, actor->home.position, FALSE);
+    aDOU_actor_move(actor, game);
+    actor->mv_proc = &aDOU_actor_move;
 }
