@@ -1012,8 +1012,8 @@ static u32 aQMgr_actor_get_pay(u32 base_pay) {
         pay = 700;
     }
 
-    // min:  (90.9 * 100) / 10000 = ~0.91x (max percent = ~1.1x)
-    // max: (109.9 * 760) / 10000 = ~8.36x (min percent = ~6.916x)
+    // min:  (~90.0 * 100) / 10000 = ~0.91x (max percent = ~1.1x)
+    // max: (~109.9 * 760) / 10000 = ~8.36x (min percent = ~6.916x)
     pay_f = 100.0f;
     pay_f += pay;
     final_pay = (scale * pay_f) / 10000.0f;
