@@ -1,0 +1,56 @@
+static void aWIN_set_bgOffset(STRUCTURE_ACTOR* windmill, int idx) {
+    static mCoBG_OffsetTable_c height_table_ct[9] = {
+        { 0x64, 12, 0, 12, 12, 12, 1 },  { 0x64, 12, 12, 12, 12, 12, 0 }, { 0x64, 12, 12, 12, 12, 0, 1 },
+        { 0x64, 12, 12, 12, 12, 12, 0 }, { 0x64, 12, 12, 12, 12, 12, 0 }, { 0x64, 12, 12, 12, 12, 12, 0 },
+        { 0x64, 12, 12, 0, 12, 12, 1 },  { 0x64, 12, 12, 12, 12, 12, 0 }, { 0x64, 12, 12, 12, 0, 12, 1 }
+      };
+
+    static mCoBG_OffsetTable_c height_table_dt[9] = {
+        { 0x64, 0, 0, 0, 0, 0, 0 }, { 0x64, 0, 0, 0, 0, 0, 0 }, { 0x64, 0, 0, 0, 0, 0, 0 },
+        { 0x64, 0, 0, 0, 0, 0, 0 }, { 0x64, 0, 0, 0, 0, 0, 0 }, { 0x64, 0, 0, 0, 0, 0, 0 },
+        { 0x64, 0, 0, 0, 0, 0, 0 }, { 0x64, 0, 0, 0, 0, 0, 0 }, { 0x64, 0, 0, 0, 0, 0, 0 }
+    };
+
+    static mCoBG_OffsetTable_c* height_table[2] = { height_table_dt, height_table_ct };
+
+    static f32 addX[3] = { -40.0f, 0.0f, 40.0f };
+    static f32 addZ[3] = { -40.0f, 0.0f, 40.0f };
+
+    mCoBG_OffsetTable_c* offset;
+    int i;
+    xyz_t pos;
+
+    offset = height_table[idx];
+    for (i = 0; i < 3; i++) {
+        pos.z = windmill->actor_class.home.position.z + addZ[i];
+
+        pos.x = windmill->actor_class.home.position.x + addX[0];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[0], __FILE__, 109);
+
+        pos.x = windmill->actor_class.home.position.x + addX[1];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[1], __FILE__, 113);
+
+        pos.x = windmill->actor_class.home.position.x + addX[2];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[2], __FILE__, 117);
+
+        offset += 3;
+    }
+}
+
+static void aWIN_actor_move(ACTOR* actor, GAME* game) {
+    STRUCTURE_ACTOR* windmill = (STRUCTURE_ACTOR*)actor;
+    windmill->keyframe_state = cKF_SkeletonInfo_R_play(&windmill->keyframe);
+    (*windmill->action_proc)(windmill, (GAME_PLAY*)game);
+}
+
+static void aWIN_actor_init(ACTOR* actor, GAME* game) {
+    STRUCTURE_ACTOR* windmill;
+    mActor_name_t windmill_actor_name;
+
+    windmill = (STRUCTURE_ACTOR*)actor;
+    windmill_actor_name = windmill->arg0 + DUMMY_WINDMILL;
+
+    mFI_SetFG_common(windmill_actor_name, actor->home.position, FALSE);
+    aWIN_actor_move(actor, game);
+    windmill->actor_class.mv_proc = aWIN_actor_move;
+}
