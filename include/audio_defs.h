@@ -74,7 +74,7 @@ typedef enum audio_sound_effects{
     NA_SE_SOUND_KNOCK,
 
     NA_SE_ARAIIKI_BOY = 0x158,
-    NA_sE_ARAIIKI_GIRL = 0x15A,
+    NA_SE_ARAIIKI_GIRL = 0x15A,
 
     NA_SE_ZASSOU_NUKU = 0x15F,
     NA_SE_HACHI_SASARERU,

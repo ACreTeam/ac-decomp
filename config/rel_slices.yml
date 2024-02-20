@@ -725,6 +725,10 @@ ac_tama.c:
     .text: [0x805BDDF4, 0x805BE06C]
     .rodata: [0x8064AC78, 0x8064AC80]
     .data: [0x806C7110, 0x806C7140]
+ac_tent.c:
+    .text: [0x805BE06C, 0x805BEA00]
+    .rodata: [0x8064AC80, 0x8064ACB0]
+    .data: [0x806C7140, 0x806C7200]
 ac_toudai.c:
     .text: [0x805BEA00, 0x805BFC28]
     .rodata: [0x8064ACB0, 0x8064AD28]
