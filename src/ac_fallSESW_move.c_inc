@@ -1,0 +1,9 @@
+void aFLEW_actor_move(ACTOR* actor, GAME*) {
+    xyz_t pos;
+
+    xyz_t_move(&pos, &actor->world.position);
+
+    pos.y += 40.0f;
+
+    sAdo_OngenPos((u32)actor, 12, &pos);
+}
