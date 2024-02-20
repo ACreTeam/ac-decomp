@@ -44,6 +44,7 @@ extern int Math3D_sphereVsPipe_cl(Math3D_sphere_c* s, Math3D_pipe_c* c, f32* in)
 extern int Math3D_pipeVsPipe_cl(Math3D_pipe_c* a, Math3D_pipe_c* b , f32* d);
 extern int Math3D_sphereCrossTriangle3_cp(Math3D_sphere_c* s, Math3D_triangle_c* tri, xyz_t* ip);
 extern int Math3D_pipeCrossTriangle_cp(Math3D_pipe_c* c,Math3D_triangle_c* tri, xyz_t* in);
+extern void Math3DVectorProduct2Vec(const xyz_t* a, xyz_t* b, xyz_t* ret);
 
 extern xyz_t ZeroVec;
 extern s_xyz ZeroSVec;

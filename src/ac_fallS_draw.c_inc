@@ -1,0 +1,61 @@
+
+void aFLS_actor_draw(ACTOR* actor, GAME* game) {
+    static const xyz_t shape_norm_vec = {0.0f, 0.0f, 1.0f};
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    GRAPH* graph = game->graph;
+    Gfx* gfx;
+    int a;
+    f32 vecLen;
+    f32 angle;
+    xyz_t bboard;
+    xyz_t l;
+
+    _texture_z_light_fog_prim_xlu(graph);
+
+    OPEN_DISP(graph);
+
+    {
+        Gfx* gfx;
+        gfx = NOW_POLY_XLU_DISP;
+        gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+        NOW_POLY_XLU_DISP = gfx;
+    }
+    Evw_Anime_Set(play, &obj_fallS_evw_anime);
+
+    gfx = NOW_POLY_XLU_DISP;
+    gSPDisplayList(gfx++, obj_fallS_model);
+
+    if (Common_Get(rainbow_opacity) > 0.0f) {
+        a = (256.0f * Common_Get(rainbow_opacity));
+
+        if (a > 255) {
+            a = 255;
+        }
+        bboard.x = play->billboard_matrix.mf[2][0];
+        bboard.y = play->billboard_matrix.mf[2][1];
+        bboard.z = play->billboard_matrix.mf[2][2];
+
+        Math3DVectorProduct2Vec(&shape_norm_vec, &bboard, &l);
+
+        vecLen = Math3DVecLength(&l);
+
+        if (vecLen >= 0.0000001f) {
+            xyz_t_mult_v(&l, 1.0f / vecLen);
+            angle = facos(shape_norm_vec.z * bboard.z + ((shape_norm_vec.x * bboard.x) + shape_norm_vec.y * bboard.y));
+
+            Matrix_translate(actor->world.position.x, actor->world.position.y, actor->world.position.z, FALSE);
+            Matrix_RotateVector(RAD2SHORTANGLE(angle), &l, TRUE);
+            Matrix_scale(actor->scale.x, actor->scale.y, actor->scale.z, TRUE);
+
+            gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gDPSetRenderMode(gfx++, G_RM_FOG_SHADE_A, G_RM_XLU_SURF2);
+            gDPSetEnvColor(gfx++, 255, 255, 255, a);
+            gSPLoadGeometryMode(gfx++, G_SHADE | G_FOG | G_SHADING_SMOOTH);
+            gSPDisplayList(gfx++, obj_fallS_rainbowT_model);
+        }
+    }
+
+    NOW_POLY_XLU_DISP = gfx;
+    CLOSE_DISP(graph);
+}

@@ -17,7 +17,7 @@ ACTOR_PROFILE Tent_Profile = {
     ACTOR_STATE_TA_SET,
     TENT,
     ACTOR_OBJ_BANK_KEEP,
-    sizeof(ACTOR_TENT),
+    sizeof(TENT_ACTOR),
     aTnt_actor_ct,
     aTnt_actor_dt,
     aTnt_actor_init,
@@ -56,8 +56,8 @@ static void aTnt_SetBgOffset(ACTOR* actor, int offset);
 static int aTnt_ControlLight(ACTOR* actor);
 
 
-void aTnt_actor_ct(ACTOR* actor, GAME* game) {
-    ACTOR_TENT* tent = (ACTOR_TENT*)actor;
+static void aTnt_actor_ct(ACTOR* actor, GAME* game) {
+    TENT_ACTOR* tent = (TENT_ACTOR*)actor;
     f32 t;
 
     aTnt_ChangeFg(actor, 1);
@@ -73,11 +73,11 @@ void aTnt_actor_ct(ACTOR* actor, GAME* game) {
     tent->structure_class.arg0_f = t;
 }
 
-void aTnt_actor_dt(ACTOR* actor, GAME* game) { 
+static void aTnt_actor_dt(ACTOR* actor, GAME* game) { 
     aTnt_ChangeFg(actor, 0); 
 }
 
-void aTnt_ChangeFg(ACTOR* actor, int type) {
+static void aTnt_ChangeFg(ACTOR* actor, int type) {
     xyz_t pos = actor->world.position;
     mActor_name_t* name;
 
@@ -112,7 +112,7 @@ void aTnt_ChangeFg(ACTOR* actor, int type) {
     }
 }
 
-void aTnt_SetBgOffset(ACTOR* actor, int type) {
+static void aTnt_SetBgOffset(ACTOR* actor, int type) {
     static mCoBG_OffsetTable_c height_table_ct[] = {
         {100, 3, 1, 1, 7, 7, 0},
         {100, 10, 10, 10, 10, 10, 0},
@@ -141,7 +141,7 @@ void aTnt_SetBgOffset(ACTOR* actor, int type) {
     }
 }
 
-void aTnt_rewrite_out_data(ACTOR* actor, GAME_PLAY* play) {
+static void aTnt_rewrite_out_data(ACTOR* actor, GAME_PLAY* play) {
     Door_data_c* door_data = Common_GetPointer(structure_exit_door_data);
 
     if (play->fb_wipe_mode == 0) {
@@ -167,7 +167,7 @@ void aTnt_rewrite_out_data(ACTOR* actor, GAME_PLAY* play) {
     }
 }
 
-int aTnt_check_player(ACTOR* actor, GAME_PLAY* play) {
+static int aTnt_check_player(ACTOR* actor, GAME_PLAY* play) {
     u16 y;
     f32 xOffs;
     f32 zOffs;
@@ -187,7 +187,7 @@ int aTnt_check_player(ACTOR* actor, GAME_PLAY* play) {
     return 0;
 }
 
-void aTnt_wait(STRUCTURE_ACTOR* actor, GAME_PLAY* play) {
+static void aTnt_wait(STRUCTURE_ACTOR* actor, GAME_PLAY* play) {
     xyz_t pos;
 
     if (actor == GET_PLAYER_ACTOR_NOW()->get_door_label_proc(gamePT)) {
@@ -201,24 +201,24 @@ void aTnt_wait(STRUCTURE_ACTOR* actor, GAME_PLAY* play) {
     }
 }
 
-void aTnt_SetupAction(ACTOR* actor, int type) {
+static void aTnt_SetupAction(ACTOR* actor, int type) {
     static aSTR_MOVE_PROC process[] = {
         aTnt_wait,
     };
-    ACTOR_TENT* tent = (ACTOR_TENT*)actor;
+    TENT_ACTOR* tent = (TENT_ACTOR*)actor;
 
     tent->structure_class.action_proc = process[type];
     tent->structure_class.action = type;
 }
 
-int aTnt_ControlLight(ACTOR*) {
+static int aTnt_ControlLight(ACTOR*) {
     if (Common_Get(time.now_sec) >= 18000 && Common_Get(time.now_sec) < 64800) {
         return 0;
     }
     return 1;
 }
 
-void aTnt_actor_move(ACTOR* actor, GAME* game) {
+static void aTnt_actor_move(ACTOR* actor, GAME* game) {
     STRUCTURE_ACTOR* tent = (STRUCTURE_ACTOR*)actor;
     GAME_PLAY* play = (GAME_PLAY*)game;
 
@@ -244,14 +244,14 @@ void aTnt_actor_move(ACTOR* actor, GAME* game) {
     }
 }
 
-void aTnt_actor_init(ACTOR* actor, GAME* game) {
+static void aTnt_actor_init(ACTOR* actor, GAME* game) {
     mFI_SetFG_common(DUMMY_TENT, actor->home.position, 0);
     aTnt_actor_move(actor, game);
     actor->mv_proc = aTnt_actor_move;
 }
 
-Gfx* aTnt_MakeWindowPrimDisplayList(ACTOR* actor, GAME* game) {
-    ACTOR_TENT* tent = (ACTOR_TENT*)actor;
+static Gfx* aTnt_MakeWindowPrimDisplayList(ACTOR* actor, GAME* game) {
+    TENT_ACTOR* tent = (TENT_ACTOR*)actor;
 
     GRAPH* graph = game->graph;
     Gfx* gfx = GRAPH_ALLOC_TYPE(graph, Gfx, 2);
@@ -270,7 +270,7 @@ Gfx* aTnt_MakeWindowPrimDisplayList(ACTOR* actor, GAME* game) {
 
 extern Gfx obj_s_tent_model[];
 
-void aTnt_actor_draw(ACTOR* actor, GAME* game) {
+static void aTnt_actor_draw(ACTOR* actor, GAME* game) {
     Mtx* m = _Matrix_to_Mtx_new(game->graph);
     Gfx* gfx = aTnt_MakeWindowPrimDisplayList(actor, game);
 

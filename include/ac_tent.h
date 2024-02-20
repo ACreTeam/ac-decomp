@@ -7,9 +7,9 @@
 extern "C" {
 #endif
 
-typedef struct actor_tent_s{
+typedef struct TENT_ACTOR_s{
     STRUCTURE_ACTOR structure_class;
-}ACTOR_TENT;
+}TENT_ACTOR;
 
 extern ACTOR_PROFILE Tent_Profile;
 
