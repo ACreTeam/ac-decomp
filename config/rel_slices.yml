@@ -741,6 +741,9 @@ ac_tukimi.c:
     .text: [0x805C0CC8, 0x805C11A8]
     .rodata: [0x8064ADB0, 0x8064ADC0]
     .data: [0x806C7388, 0x806C7400]
+ac_windmill.c:
+    .text: [0x805C1AB8, 0x805C1D34]
+    .data: [0x806C75D0, 0x806C76B8]
 ac_yatai.c:
     .text: [0x805C1D34, 0x805C217C]
     .rodata: [0x8064ADC0, 0x8064ADC8]
