@@ -1,0 +1,85 @@
+extern Vtx reserve_shadow_v[];
+extern Gfx reserve_shadow_model[];
+extern Vtx obj_attention_shadow_v[];
+extern Gfx obj_attention_shadowT_model[];
+
+u8 aRSV_shadow_vtx_fix_flg_table[] = {TRUE, FALSE, FALSE, TRUE};
+
+bIT_ShadowData_c aRSV_shadow_data = {
+    4, aRSV_shadow_vtx_fix_flg_table, 60.0f, reserve_shadow_v, reserve_shadow_model,
+};
+
+bIT_ShadowData_c aRSV_kappa_shadow_data = {
+    4, aRSV_shadow_vtx_fix_flg_table, 60.0f, obj_attention_shadow_v, obj_attention_shadowT_model,
+};
+
+static void aRSV_set_bgOffset(ACTOR*, int) {}
+
+static void aRSV_set_talk_info(ACTOR* actor) {
+    RESERVE_ACTOR* reserve = (RESERVE_ACTOR*)actor;
+    u8 str[8];
+    int item;
+    u8 str2[8];
+    rgba_t window_color;
+
+    if (reserve->structure_class.arg0 == 0x42) {
+        mDemo_Set_msg_num(0x2B42);
+    } else {
+        if (reserve->structure_class.arg0 >= 6 && reserve->structure_class.arg0 <= 8) {
+            mIN_copy_name_str(str, Save_Get(fruit));
+            item = mIN_get_item_article(Save_Get(fruit));
+            mMsg_Set_free_str_art(mMsg_Get_base_window_p(), 0, str, 16, item);
+            mNpc_GetActorWorldName(str2, SP_NPC_SHOP_MASTER);
+            mMsg_Set_free_str(mMsg_Get_base_window_p(), 1, str2, 8);
+        }
+        mDemo_Set_msg_num(reserve->structure_class.arg0 + 0x2B2D);
+    }
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(TRUE);
+    mPlib_Set_able_hand_all_item_in_demo(TRUE);
+    mDemo_Set_ListenAble();
+    window_color.r = 145;
+    window_color.g = 60;
+    window_color.b = 40;
+    window_color.a = 255;
+
+    mDemo_Set_talk_window_color(&window_color);
+}
+
+static void aRSV_wait(STRUCTURE_ACTOR* actor, GAME_PLAY* play) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    int angle;
+
+    if (mDemo_Check(mDemo_TYPE_TALK, &actor->actor_class) != 1 && player != NULL) {
+        if (player->actor_class.world.position.z >= actor->actor_class.world.position.z) {
+            angle = ABS(actor->actor_class.player_angle_y);
+
+            if (angle < 0x2000) {
+                mDemo_Request(mDemo_TYPE_TALK, &actor->actor_class, aRSV_set_talk_info);
+            }
+        }
+    }
+}
+
+static void aRSV_setup_action(ACTOR* actor, int type) {
+    static aSTR_MOVE_PROC process[] = {
+        aRSV_wait,
+    };
+    RESERVE_ACTOR* reserve = (RESERVE_ACTOR*)actor;
+
+    reserve->structure_class.action_proc = process[type];
+    reserve->structure_class.action = type;
+}
+
+static void aRSV_actor_move(ACTOR* actor, GAME* game) {
+    STRUCTURE_ACTOR* structure = (STRUCTURE_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    structure->action_proc(structure, play);
+}
+
+static void aRSV_actor_init(ACTOR* actor, GAME* game) {
+    mFI_SetFG_common(DUMMY_RESERVE, actor->home.position, 0);
+    aRSV_actor_move(actor, game);
+    actor->mv_proc = aRSV_actor_move;
+}

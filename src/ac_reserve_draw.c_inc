@@ -1,0 +1,57 @@
+void aRSV_actor_draw(ACTOR* actor, GAME* game) {
+    static Gfx* displayList[] = {
+        reserve_DL_model,
+        reserve_winter_DL_model,
+    };
+    static Gfx* displayList_kappa[] = {
+        obj_s_attentionT_model,
+        obj_w_attentionT_model,
+    };
+
+    RESERVE_ACTOR* reserve = (RESERVE_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    GRAPH* graph;
+    int isWinter;
+    Gfx* gfx;
+    Mtx* mtx;
+    bIT_ShadowData_c* data;
+    int check;
+    u16* pal;
+
+    graph = game->graph;
+
+    isWinter = reserve->structure_class.season == mTM_SEASON_WINTER;
+    check = reserve->structure_class.arg0 == 0x42;
+
+    if (check != 0) {
+        gfx = displayList_kappa[isWinter];
+        data = &aRSV_kappa_shadow_data;
+    } else {
+        gfx = displayList[isWinter];
+        data = &aRSV_shadow_data;
+    }
+
+    pal = Common_Get(clip).structure_clip->get_pal_segment_proc(0x3E);
+    mtx = _Matrix_to_Mtx_new(graph);
+
+    if (mtx != NULL) {
+        Gfx* disp;
+        _texture_z_light_fog_prim_npc(graph);
+        OPEN_DISP(graph);
+        disp = NOW_POLY_OPA_DISP;
+
+        gSPSegment(disp++, 8, pal);
+        gSPMatrix(disp++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPDisplayList(disp++, gfx);
+
+        NOW_POLY_OPA_DISP = disp;
+
+        if (check != 0) {
+            Common_Get(clip).bg_item_clip->draw_shadow_proc(game, data, 1);
+        } else {
+            Common_Get(clip).bg_item_clip->draw_shadow_proc(game, data, 0);
+        }
+
+        CLOSE_DISP(graph);
+    }
+}
