@@ -28,7 +28,7 @@ class ContextGenerationOptions:
 at_address_pattern = re.compile(r"(?:.*?)(?:[a-zA-Z_$][\w$]*\s*\*?\s[a-zA-Z_$][\w$]*)\s*((?:AT_ADDRESS|:)(?:\s*\(?\s*)(0x[0-9a-fA-F]+|[a-zA-Z_$][\w$]*)\)?);")
 attribute_pattern = re.compile(r"(__attribute__)")
 binary_literal_pattern = re.compile(r"\b(0b[01]+)\b")
-trailing_initializer_pattern = re.compile(r"^.*?=\s*\{(?:.|\s)+?(,)\s*(?:\/\/.*?|\/\*.*?\*\/)*\s*?\}\s*;", re.MULTILINE)
+trailing_initializer_pattern = re.compile(r"^.*?=\s*\{(?:.|\s)+?(,)?\s*(?:\/\/.*?|\/\*.*?\*\/)*\s*?\}\s*;", re.MULTILINE)
 enum_array_size_initializer_pattern = re.compile(r"\[\s*([a-zA-Z_$][\w$]*)\s*\]\s*;")
 enum_declaration_pattern = re.compile(r"^.*(?:typedef\s+)*enum\s(?:[a-zA-Z_$][\w$]*)*\s*\{\s*((?:.|\s)*?)\}\s*(?:[a-zA-Z_$][\w$]*)*\s*;", re.MULTILINE)
 enum_value_pattern = re.compile(r"([a-zA-Z_$][\w$]*)\s*(?:=\s*(.*))*")
@@ -157,9 +157,12 @@ def strip_initializer_trailing_commas(text_to_strip: str) -> str:
         return text_to_strip
     
     trailing_comma_matches = reversed(list(re.finditer(trailing_initializer_pattern, text_to_strip)))
-    for attribute_match in trailing_comma_matches:
+    for comma_match in trailing_comma_matches:
         # Create the substring
-        match_span = attribute_match.span(1)
+        if not comma_match[1]:
+            continue
+
+        match_span = comma_match.span(1)
         start_index = match_span[0]
         end_index = match_span[1]
         prefix = text_to_strip[0:start_index]
