@@ -6,6 +6,12 @@ blocked_targets:
   - 0x80008000
   - 0x801F6C7C # tcs_bad
   - 0x801F6C7D # ics_bad
+  - 0x800a9a90
+  - 0x800a9838
+  - 0x800a9938
+  - 0x800a9a3a
+  - 0x800a99f6
+  - 0x800a9a18
 forced_types:
     0x80003534: FUNCTION
     0x80005468: FUNCTION

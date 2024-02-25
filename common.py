@@ -438,6 +438,13 @@ FAMICOM_BASE = CFLAGS + [
     "-enum int",
     "-sym on"
 ] + DOL_DEFINES
+JAUDIO_BASE = CFLAGS + [
+    "-lang=c++",
+    "-sdata 8",
+    "-sdata2 8",
+    "-enum int",
+    "-common on"
+] + DOL_DEFINES
 
 JSYSTEM_CFLAGS = ' '.join(JSYSTEM_BASE + LOCAL_CFLAGS)
 JSYSTEM_JGADGET_CFLAGS = ' '.join(JSYSTEM_JGADGET_BASE + LOCAL_CFLAGS)
@@ -454,6 +461,7 @@ EXTERNAL_DOL_CFLAGS = ' '.join(BASE_DOL_CFLAGS)
 EXTERNAL_REL_CFLAGS = ' '.join(BASE_REL_CFLAGS)
 PREPROCESS_CFLAGS = ' '.join(PREPROCESSOR_CFLAGS)
 FAMICOM_CLFAGS = ' '.join(FAMICOM_BASE + LOCAL_CFLAGS)
+JAUDIO_CFLAGS = ' '.join(JAUDIO_BASE + LOCAL_CFLAGS)
 
 DOL_LDFLAGS = ' '.join([
     "-maxerrors 1",

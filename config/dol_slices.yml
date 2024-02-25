@@ -45,6 +45,8 @@ nintendo_hi_0.c:
     .data: [0x800c3140, 0x800cca40]
 jaudio_NES/dummyprobe.c:
     .text: [0x800083f8, 0x80008400]
+# jaudio_NES/game64.c: # TODO: finish
+#     .rodata: [0x800a9938, 0x800a9b98]
 #jaudio_NES/verysimple.c:
 #    .text: [0x80008400, 0x80008480]
 #    .sdata: [0x80217b80, 0x80217b88]

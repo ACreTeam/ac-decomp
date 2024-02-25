@@ -390,3 +390,42 @@ config/rel.yml:
     addrs: [0x80F8C448, 0x80F8C468]
     type: pal16
   # ac_koinobori
+
+  # dataobj.obj item names
+  itemName_paper:
+    addrs: [0x808BF660, 0x808C0660]
+  itemName_money:
+    addrs: [0x808C0660, 0x808C06A0]
+  itemName_tool:
+    addrs: [0x808C06A0, 0x808C0C60]
+  itemName_fish:
+    addrs: [0x808C0C60, 0x808C0EE0]
+  itemName_cloth:
+    addrs: [0x808C0EE0, 0x808C1ED0]
+  itemName_etc:
+    addrs: [0x808C1ED0, 0x808C21E0]
+  itemName_carpet:
+    addrs: [0x808C21E0, 0x808C2610]
+  itemName_wall:
+    addrs: [0x808C2610, 0x808C2A40]
+  itemName_fruit:
+    addrs: [0x808C2A40, 0x808C2AC0]
+  itemName_plant:
+    addrs: [0x808C2AC0, 0x808C2B70]
+  itemName_minidisk:
+    addrs: [0x808C2B70, 0x808C2EE0]
+  itemName_dummy:
+    addrs: [0x808C2EE0, 0x808C2FE0]
+  itemName_ticket:
+    addrs: [0x808C2FE0, 0x808C35E0]
+  itemName_insect:
+    addrs: [0x808C35E0, 0x808C38B0]
+  itemName_hukubukuro:
+    addrs: [0x808C38B0, 0x808C38D0]
+  itemName_kabu:
+    addrs: [0x808C38D0, 0x808C3910]
+  ftrName_table:
+    addrs: [0x808C3910, 0x808C7910]
+  ftrName2_table:
+    addrs: [0x808C7910, 0x808C8830]
+  

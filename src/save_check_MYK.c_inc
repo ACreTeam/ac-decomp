@@ -10,272 +10,250 @@
 #define sSC_MYK_ERR_MAP (1 << 7)
 
 static int sSC_CheckSaveData_Weather() {
-  int weather = mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather));
-  int intensity = mEnv_SAVE_GET_WEATHER_INTENSITY(Save_Get(weather));
-    
-  if (weather >= mEnv_WEATHER_LEAVES) {
-    mFRm_ERRORLINE(78);
-    return sSC_MYK_ERR_WEATHER;
-  }
-  else if (intensity >= mEnv_WEATHER_INTENSITY_NUM) {
-    mFRm_ERRORLINE(82);
-    return sSC_MYK_ERR_WEATHER;
-  }
-  else {
-    return sSC_MYK_OK;
-  }
+    int weather = mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather));
+    int intensity = mEnv_SAVE_GET_WEATHER_INTENSITY(Save_Get(weather));
+
+    if (weather >= mEnv_WEATHER_LEAVES) {
+        mFRm_ERRORLINE(78);
+        return sSC_MYK_ERR_WEATHER;
+    } else if (intensity >= mEnv_WEATHER_INTENSITY_NUM) {
+        mFRm_ERRORLINE(82);
+        return sSC_MYK_ERR_WEATHER;
+    } else {
+        return sSC_MYK_OK;
+    }
 }
 
 static int sSC_CheckSaveData_Shop() {
-  Shop_c* shop = Save_GetPointer(shop);
-  mSP_goods_priority_list_c* prio_list = Save_GetPointer(shop)->priority_lists;
-  int i;
+    Shop_c* shop = Save_GetPointer(shop);
+    mSP_goods_priority_list_c* prio_list = Save_GetPointer(shop)->priority_lists;
+    int i;
 
-  for (i = 0; i < mSP_KIND_MAX; i++) {
-    if (prio_list->a >= mSP_PRIORITY_NUM) {
-      mFRm_ERRORLINE(101);
-      return sSC_MYK_ERR_SHOP;
+    for (i = 0; i < mSP_KIND_MAX; i++) {
+        if (prio_list->a >= mSP_PRIORITY_NUM) {
+            mFRm_ERRORLINE(101);
+            return sSC_MYK_ERR_SHOP;
+        }
+
+        if (prio_list->b >= mSP_PRIORITY_NUM) {
+            mFRm_ERRORLINE(105);
+            return sSC_MYK_ERR_SHOP;
+        }
+
+        if (prio_list->c >= mSP_PRIORITY_NUM) {
+            mFRm_ERRORLINE(109);
+            return sSC_MYK_ERR_SHOP;
+        }
+
+        if (prio_list->pad != 0) {
+            mFRm_ERRORLINE(113);
+            return sSC_MYK_ERR_SHOP;
+        }
+
+        prio_list++;
     }
 
-    if (prio_list->b >= mSP_PRIORITY_NUM) {
-      mFRm_ERRORLINE(105);
-      return sSC_MYK_ERR_SHOP;
-    }
-
-    if (prio_list->c >= mSP_PRIORITY_NUM) {
-      mFRm_ERRORLINE(109);
-      return sSC_MYK_ERR_SHOP;
-    }
-
-    if (prio_list->pad != 0) {
-      mFRm_ERRORLINE(113);
-      return sSC_MYK_ERR_SHOP;
-    }
-
-    prio_list++;
-  }
-
-  return sSC_MYK_OK;
+    return sSC_MYK_OK;
 }
 
 static int sSC_CheckHouseSize(mHm_hs_c* house) {
-  return house->size_info.size < mHm_HOMESIZE_NUM;
+    return house->size_info.size < mHm_HOMESIZE_NUM;
 }
 
 static int sSC_CheckHappyRoom(mHm_hs_c* house) {
-  return TRUE;
+    return TRUE;
 }
 
 static int sSC_CheckDoorOriginal(mHm_hs_c* house) {
-  if (house->door_original < mPr_ORIGINAL_DESIGN_COUNT || house->door_original == 0xFF) {
-    return TRUE;
-  }
+    if (house->door_original < mPr_ORIGINAL_DESIGN_COUNT || house->door_original == 0xFF) {
+        return TRUE;
+    }
 
-  return FALSE;
+    return FALSE;
 }
 
 static int sSCCheckOneFloorData(mHm_flr_c* floor) {
-  return TRUE;
+    return TRUE;
 }
 
 static int sSC_CheckHouseInterior(mHm_hs_c* house) {
-  int i;
+    int i;
 
-  for (i = 0; i < mHm_ROOM_NUM; i++) {
-    if (sSCCheckOneFloorData(house->floors + i) == 0) {
-      return FALSE;
+    for (i = 0; i < mHm_ROOM_NUM; i++) {
+        if (sSCCheckOneFloorData(house->floors + i) == 0) {
+            return FALSE;
+        }
     }
-  }
 
-  return TRUE;
+    return TRUE;
 }
 
 static int sSC_CheckSaveData_House() {
-  mHm_hs_c* house;
-  int i;
+    mHm_hs_c* house;
+    int i;
 
-  for (i = 0; i < mHS_HOUSE_NUM; i++) {
-    house = Save_Get(homes) + i;
+    for (i = 0; i < mHS_HOUSE_NUM; i++) {
+        house = Save_Get(homes) + i;
 
-    if (sSC_CheckHouseSize(house) == 0) {
-      mFRm_ERRORLINE(220);
-      return sSC_MYK_ERR_HOUSE;
+        if (sSC_CheckHouseSize(house) == 0) {
+            mFRm_ERRORLINE(220);
+            return sSC_MYK_ERR_HOUSE;
+        }
+
+        if (sSC_CheckHappyRoom(house) == 0) {
+            mFRm_ERRORLINE(227);
+            return sSC_MYK_ERR_HOUSE;
+        }
+
+        if (sSC_CheckDoorOriginal(house) == 0) {
+            mFRm_ERRORLINE(234);
+            return sSC_MYK_ERR_HOUSE;
+        }
+
+        if (sSC_CheckHouseInterior(house) == 0) {
+            mFRm_ERRORLINE(241);
+            return sSC_MYK_ERR_HOUSE;
+        }
     }
 
-    if (sSC_CheckHappyRoom(house) == 0) {
-      mFRm_ERRORLINE(227);
-      return sSC_MYK_ERR_HOUSE;
-    }
-
-    if (sSC_CheckDoorOriginal(house) == 0) {
-      mFRm_ERRORLINE(234);
-      return sSC_MYK_ERR_HOUSE;
-    }
-
-    if (sSC_CheckHouseInterior(house) == 0) {
-      mFRm_ERRORLINE(241);
-      return sSC_MYK_ERR_HOUSE;
-    }
-  }
-
-  return sSC_MYK_OK;
+    return sSC_MYK_OK;
 }
 
 static int sSC_CheckSaveData_Cattage() {
-  u8 floor = Save_Get(island).cottage.unused_wall_floor.flooring_idx;
-  u8 wall = Save_Get(island).cottage.unused_wall_floor.wallpaper_idx;
+    u8 floor = Save_Get(island).cottage.unused_wall_floor.flooring_idx;
+    u8 wall = Save_Get(island).cottage.unused_wall_floor.wallpaper_idx;
 
-  if (sSCCheckOneFloorData(&Save_Get(island).cottage.room) == 0) {
-    return sSC_MYK_ERR_CATTAGE;
-  }
-  else if (floor >= CARPET_NUM && (floor < 87 || floor > 94)) {
-    return sSC_MYK_ERR_CATTAGE;
-  }
-  else if (wall >= WALL_NUM && (wall < 72 || wall > 79)) {
-    return sSC_MYK_ERR_CATTAGE;
-  }
-  else {
-    return sSC_MYK_OK;
-  }
+    if (sSCCheckOneFloorData(&Save_Get(island).cottage.room) == 0) {
+        return sSC_MYK_ERR_CATTAGE;
+    } else if (floor >= CARPET_NUM && !FLOOR_IS_MY_ORIG(floor)) {
+        return sSC_MYK_ERR_CATTAGE;
+    } else if (wall >= WALL_NUM && !WALL_IS_MY_ORIG(wall)) {
+        return sSC_MYK_ERR_CATTAGE;
+    } else {
+        return sSC_MYK_OK;
+    }
 }
 
 static int sSC_CheckMuseumBitData(u8* bits, int max) {
-  int i;
+    int i;
 
-  for (i = 0; i < max; i++) {
-    int donator = mMmd_BIT_INFO2(bits, i);
-    
-    if (donator < 0 || donator >= 6) {
-      mFRm_ERRORLINE(289);
-      return FALSE;
+    for (i = 0; i < max; i++) {
+        int donator = mMmd_BIT_INFO2(bits, i);
+
+        if (donator < 0 || donator >= 6) {
+            mFRm_ERRORLINE(289);
+            return FALSE;
+        }
     }
-  }
 
-  return TRUE;
+    return TRUE;
 }
 
 static int sSC_CheckSaveData_MuseumDisplay() {
-  if (sSC_CheckMuseumBitData(Save_Get(museum_display).fossil_bit, mMmd_FOSSIL_NUM) == FALSE) {
-    mFRm_ERRORLINE(300);
-    return sSC_MYK_ERR_MUSEUMDISPLAY;
-  }
-  else if (sSC_CheckMuseumBitData(Save_Get(museum_display).art_bit, mMmd_ART_NUM) == FALSE) {
-    mFRm_ERRORLINE(305);
-    return sSC_MYK_ERR_MUSEUMDISPLAY;
-  }
-  else if (sSC_CheckMuseumBitData(Save_Get(museum_display).fish_bit, mMmd_INSECT_NUM) == FALSE) {
-    mFRm_ERRORLINE(310);
-    return sSC_MYK_ERR_MUSEUMDISPLAY;
-  }
-  else if (sSC_CheckMuseumBitData(Save_Get(museum_display).insect_bit, mMmd_FISH_NUM) == FALSE) {
-    mFRm_ERRORLINE(315);
-    return sSC_MYK_ERR_MUSEUMDISPLAY;
-  }
-  else {
-    return sSC_MYK_OK;
-  }
+    if (sSC_CheckMuseumBitData(Save_Get(museum_display).fossil_bit, mMmd_FOSSIL_NUM) == FALSE) {
+        mFRm_ERRORLINE(300);
+        return sSC_MYK_ERR_MUSEUMDISPLAY;
+    } else if (sSC_CheckMuseumBitData(Save_Get(museum_display).art_bit, mMmd_ART_NUM) == FALSE) {
+        mFRm_ERRORLINE(305);
+        return sSC_MYK_ERR_MUSEUMDISPLAY;
+    } else if (sSC_CheckMuseumBitData(Save_Get(museum_display).fish_bit, mMmd_INSECT_NUM) == FALSE) {
+        mFRm_ERRORLINE(310);
+        return sSC_MYK_ERR_MUSEUMDISPLAY;
+    } else if (sSC_CheckMuseumBitData(Save_Get(museum_display).insect_bit, mMmd_FISH_NUM) == FALSE) {
+        mFRm_ERRORLINE(315);
+        return sSC_MYK_ERR_MUSEUMDISPLAY;
+    } else {
+        return sSC_MYK_OK;
+    }
 }
 
 static int sSC_CheckOneOriginalData(mNW_original_design_c* original) {
-  if (original->palette >= mNW_PALETTE_NUM) {
-    mFRm_ERRORLINE(333);
-    return FALSE;
-  }
+    if (original->palette >= mNW_PALETTE_NUM) {
+        mFRm_ERRORLINE(333);
+        return FALSE;
+    }
 
-  return TRUE;
+    return TRUE;
 }
 
 static int sSC_CheckSaveData_Needlework() {
-  int j;
-  int i;
+    int j;
+    int i;
 
-  for (i = 0; i < PLAYER_NUM; i++) {
-    for (j = 0; j < mPr_ORIGINAL_DESIGN_COUNT; j++) {
-      if (sSC_CheckOneOriginalData(Save_Get(private + i)->my_org + j) == FALSE) {
-        mFRm_ERRORLINE(348);
-        return sSC_MYK_ERR_NEEDLEWORK;
-      }
+    for (i = 0; i < PLAYER_NUM; i++) {
+        for (j = 0; j < mPr_ORIGINAL_DESIGN_COUNT; j++) {
+            if (sSC_CheckOneOriginalData(Save_Get(private + i)->my_org + j) == FALSE) {
+                mFRm_ERRORLINE(348);
+                return sSC_MYK_ERR_NEEDLEWORK;
+            }
+        }
     }
-  }
 
-  for (i = 0; i < mNW_TOTAL_DESIGN_NUM; i++) {
-    if (sSC_CheckOneOriginalData(Save_Get(needlework).original_design + i) == FALSE) {
-      mFRm_ERRORLINE(356);
-      return sSC_MYK_ERR_NEEDLEWORK;
+    for (i = 0; i < mNW_TOTAL_DESIGN_NUM; i++) {
+        if (sSC_CheckOneOriginalData(Save_Get(needlework).original_design + i) == FALSE) {
+            mFRm_ERRORLINE(356);
+            return sSC_MYK_ERR_NEEDLEWORK;
+        }
     }
-  }
 
-  return sSC_MYK_OK;
+    return sSC_MYK_OK;
 }
 
 static int sSC_BlockInfo2Count(u32 block_kind) {
-  mFM_combo_info_c* combi_table = data_combi_table;
-  int bx;
-  int bz;
-  int count = 0;
+    mFM_combo_info_c* combi_table = data_combi_table;
+    int bx;
+    int bz;
+    int count = 0;
 
-  for (bz = 0; bz < BLOCK_Z_NUM; bz++) {
-    for (bx = 0; bx < BLOCK_X_NUM; bx++) {
-      int block_no = Save_Get(combi_table)[bz][bx].combination_type;
+    for (bz = 0; bz < BLOCK_Z_NUM; bz++) {
+        for (bx = 0; bx < BLOCK_X_NUM; bx++) {
+            int block_no = Save_Get(combi_table)[bz][bx].combination_type;
 
-      if (block_no < data_combi_table_number) {
-        u32 info = mRF_Type2BlockInfo(combi_table[block_no].type);
-        
-        if (info & block_kind) {
-          count++;
+            if (block_no < data_combi_table_number) {
+                u32 info = mRF_Type2BlockInfo(combi_table[block_no].type);
+
+                if (info & block_kind) {
+                    count++;
+                }
+            } else {
+                return -1;
+            }
         }
-      }
-      else {
-        return -1;
-      }
     }
-  }
 
-  return count;
+    return count;
 }
 
-static u32 sSC_map_perfect_table[16] = {
-  mRF_BLOCKKIND_PLAYER,
-  mRF_BLOCKKIND_SHOP,
-  mRF_BLOCKKIND_SHRINE,
-  mRF_BLOCKKIND_POLICE,
-  mRF_BLOCKKIND_POSTOFFICE,
-  mRF_BLOCKKIND_STATION,
-  mRF_BLOCKKIND_BRIDGE,
-  mRF_BLOCKKIND_SLOPE,
-  mRF_BLOCKKIND_POOL,
-  mRF_BLOCKKIND_DUMP,
-  mRF_BLOCKKIND_MUSEUM,
-  mRF_BLOCKKIND_TAILORS,
-  mRF_BLOCKKIND_OCEAN,
-  mRF_BLOCKKIND_ISLAND,
-  mRF_BLOCKKIND_DOCK,
-  mRF_BLOCKKIND_ISLAND_LEFT
-};
+static u32 sSC_map_perfect_table[16] = { mRF_BLOCKKIND_PLAYER,     mRF_BLOCKKIND_SHOP,       mRF_BLOCKKIND_SHRINE,
+                                         mRF_BLOCKKIND_POLICE,     mRF_BLOCKKIND_POSTOFFICE, mRF_BLOCKKIND_STATION,
+                                         mRF_BLOCKKIND_BRIDGE,     mRF_BLOCKKIND_SLOPE,      mRF_BLOCKKIND_POOL,
+                                         mRF_BLOCKKIND_DUMP,       mRF_BLOCKKIND_MUSEUM,     mRF_BLOCKKIND_TAILORS,
+                                         mRF_BLOCKKIND_OCEAN,      mRF_BLOCKKIND_ISLAND,     mRF_BLOCKKIND_DOCK,
+                                         mRF_BLOCKKIND_ISLAND_LEFT };
 
 static int sSC_CheckSaveData_Map() {
-  int i;
+    int i;
 
-  for (i = 0; i < 16; i++) {
-    if (sSC_BlockInfo2Count(sSC_map_perfect_table[i]) <= 0) {
-      mFRm_ERRORLINE(434);
-      return sSC_MYK_ERR_MAP;
+    for (i = 0; i < 16; i++) {
+        if (sSC_BlockInfo2Count(sSC_map_perfect_table[i]) <= 0) {
+            mFRm_ERRORLINE(434);
+            return sSC_MYK_ERR_MAP;
+        }
     }
-  }
 
-  return sSC_MYK_OK;
+    return sSC_MYK_OK;
 }
 
 static int sChk_CheckSaveData_MYK() {
-  int res;
+    int res;
 
-  res  = sSC_CheckSaveData_Weather();
-  res |= sSC_CheckSaveData_Shop();
-  res |= sSC_CheckSaveData_House();
-  res |= sSC_CheckSaveData_Cattage();
-  res |= sSC_CheckSaveData_MuseumDisplay();
-  res |= sSC_CheckSaveData_Needlework();
-  res |= sSC_CheckSaveData_Map();
+    res = sSC_CheckSaveData_Weather();
+    res |= sSC_CheckSaveData_Shop();
+    res |= sSC_CheckSaveData_House();
+    res |= sSC_CheckSaveData_Cattage();
+    res |= sSC_CheckSaveData_MuseumDisplay();
+    res |= sSC_CheckSaveData_Needlework();
+    res |= sSC_CheckSaveData_Map();
 
-  return res;
+    return res;
 }

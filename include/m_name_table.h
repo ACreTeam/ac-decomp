@@ -4,12 +4,16 @@
 #include "types.h"
 #include "m_actor_type.h"
 #include "m_collision_bg.h"
+#include "m_name_table_floor_decl.h"
+#include "m_name_table_wall_decl.h"
 
 /* TODO: these defintions are likely included from an auto-gen source */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+// clang-format off
 
 enum {
   NAME_TYPE_ITEM0,  /* Scenery items */
@@ -156,6 +160,11 @@ typedef struct offset_table_s {
 #define INSECT_NUM INSECT_ONLY_NUM + 5 // 5 spirits
 #define HUKUBUKURO_NUM 2
 #define KABU_NUM 4
+
+// #define WALL_MY_ORIG_START   (72)
+// #define WALL_MY_ORIG_NUM     (8)
+// #define WALL_MY_ORIG_END     ((WALL_MY_ORIG_START + WALL_MY_ORIG_NUM) - 1)
+// #define WALL_IS_MY_ORIG(idx) ((idx) >= WALL_MY_ORIG_START && (idx) <= WALL_MY_ORIG_END)
 
 #define PAPER_UNIQUE_NUM 64
 #define PAINT_NUM 12
@@ -2731,6 +2740,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define RSV_NO 0xFFFF /* reserved space, can't interact but no collision */
 
 #define mNT_IS_RESERVE(n) ((n) >= SIGN00 && (n) <= SIGN20)
+
+// clang-format on
 
 #ifdef __cplusplus
 }
