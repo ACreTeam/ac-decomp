@@ -21,3 +21,5 @@ tools/cli.py
 src/data/bin1
 src/data/bin2
 objdiff.json
+src/data/item/player_room_floor
+src/data/item/player_room_wall
