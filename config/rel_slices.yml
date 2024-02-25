@@ -426,6 +426,10 @@ ac_haniwa.c:
     .text: [0x80427624, 0x80428F64]
     .rodata: [0x806440B8, 0x806440F8]
     .data: [0x80683D08, 0x80683E98]
+ac_my_indoor.c:
+    .text: [0x8046EE38, 0x80470288]
+    .rodata: [0x80644A88, 0x80644A98]
+    .data: [0x806870F0, 0x806873E8]
 ac_psnowman.c:
     .text: [0x80484098, 0x80484694]
     .rodata: [0x80644C30, 0x80644C60]
@@ -892,6 +896,8 @@ ac_weather_fine.c:
 # dataobject.obj files
 data/combi/data_combi.c:
     .data: [0x8080DD80, 0x8080E628]
+data/item/item_name.c:
+    .data: [0x808BF660, 0x808C8830]
 data/npc/default_list.c:
     .data: [0x8096CD90, 0x8096D328]
 data/npc/grow_list.c:
@@ -918,8 +924,6 @@ data/field/bg/earth_pal.c:
     .data: [0x80C90100, 0x80C90280]
 data/field/bg/rail_pal.c:
     .data: [0x80F8C2C8, 0x80F8C460]
-data/item/item_name.c:
-    .data: [0x808BF660, 0x808C8830]
 m_bg_tex.c:
     .bss: [0x8125AC80, 0x81263080]
 sys_stacks.c:
