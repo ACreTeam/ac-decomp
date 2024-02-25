@@ -1,0 +1,106 @@
+#ifndef M_NAME_TABLE_WALL_DECL_H
+#define M_NAME_TABLE_WALL_DECL_H
+
+#include "types.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define WALL_NPC000 0
+#define WALL_NPC001 1
+#define WALL_NPC002 2
+#define WALL_NPC003 3
+#define WALL_NPC004 4
+#define WALL_NPC005 5
+#define WALL_NPC006 6
+#define WALL_NPC007 7
+#define WALL_NPC008 8
+#define WALL_NPC009 9
+#define WALL_NPC010 10
+#define WALL_NPC011 11
+#define WALL_NPC012 12
+#define WALL_NPC013 13
+#define WALL_NPC014 14
+#define WALL_NPC015 15
+#define WALL_NPC016 16
+#define WALL_NPC017 17
+#define WALL_NPC018 18
+#define WALL_NPC019 19
+#define WALL_NPC020 20
+#define WALL_NPC021 21
+#define WALL_NPC022 22
+#define WALL_NPC023 23
+#define WALL_NPC024 24
+#define WALL_NPC025 25
+#define WALL_NPC026 26
+#define WALL_NPC027 27
+#define WALL_NPC028 28
+#define WALL_NPC029 29
+#define WALL_NPC030 30
+#define WALL_NPC031 31
+#define WALL_NPC032 32
+#define WALL_NPC033 33
+#define WALL_NPC034 34
+#define WALL_NPC035 35
+#define WALL_NPC036 36
+#define WALL_NPC037 37
+#define WALL_NPC038 38
+#define WALL_NPC039 39
+#define WALL_NPC040 40
+#define WALL_NPC041 41
+#define WALL_NPC042 42
+#define WALL_NPC043 43
+#define WALL_NPC044 44
+#define WALL_NPC045 45
+#define WALL_NPC046 46
+#define WALL_NPC047 47
+#define WALL_NPC048 48
+#define WALL_NPC049 49
+#define WALL_NPC050 50
+#define WALL_NPC051 51
+#define WALL_NPC052 52
+#define WALL_NPC053 53
+#define WALL_NPC054 54
+#define WALL_NPC055 55
+#define WALL_NPC056 56
+#define WALL_NPC057 57
+#define WALL_NPC058 58
+#define WALL_NPC059 59
+#define WALL_NPC060 60
+#define WALL_NPC061 61
+#define WALL_NPC062 62
+#define WALL_NPC063 63
+#define WALL_NPC064 64
+#define WALL_NPC065 65
+#define WALL_NPC066 66
+#define WALL_NPC_END WALL_NPC066
+
+#define WALL_ETC_START (WALL_NPC_END + 1)
+#define WALL_SHOP1 (WALL_ETC_START + 0)
+#define WALL_SHOP2 (WALL_ETC_START + 1)
+#define WALL_SHOP3 (WALL_ETC_START + 2)
+#define WALL_SHOP4_1 (WALL_ETC_START + 3)
+#define WALL_SHOP4_2 (WALL_ETC_START + 3)
+#define WALL_ETC_END (WALL_SHOP4_2 + 1)
+
+#define WALL_MY_ORIG_START (WALL_ETC_END + 1)
+#define WALL_MY_ORIG0 (WALL_MY_ORIG_START + 0)
+#define WALL_MY_ORIG1 (WALL_MY_ORIG_START + 1)
+#define WALL_MY_ORIG2 (WALL_MY_ORIG_START + 2)
+#define WALL_MY_ORIG3 (WALL_MY_ORIG_START + 3)
+#define WALL_MY_ORIG4 (WALL_MY_ORIG_START + 4)
+#define WALL_MY_ORIG5 (WALL_MY_ORIG_START + 5)
+#define WALL_MY_ORIG6 (WALL_MY_ORIG_START + 6)
+#define WALL_MY_ORIG7 (WALL_MY_ORIG_START + 7)
+#define WALL_MY_ORIG_END WALL_MY_ORIG7
+
+#define WALL_ALL_NUM (WALL_MY_ORIG_END + 1)
+
+#define WALL_IS_MY_ORIG(idx) ((idx) >= WALL_MY_ORIG_START && (idx) <= WALL_MY_ORIG_END)
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

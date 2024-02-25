@@ -629,6 +629,9 @@ class CSource(Source):
         if path.startswith("src/static/dolphin/"):
             self.cflags = c.SDK_FLAGS
             self.cc = c.OCC
+        elif path.startswith("src/static/jaudio_NES/"):
+            self.cflags = c.JAUDIO_CFLAGS
+            self.cc = c.CC
         elif path.startswith("src/static/JSystem/JGadget/"):
             self.cflags = c.JSYSTEM_JGADGET_CFLAGS
             self.cc = c.CC

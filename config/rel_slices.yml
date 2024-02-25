@@ -918,6 +918,8 @@ data/field/bg/earth_pal.c:
     .data: [0x80C90100, 0x80C90280]
 data/field/bg/rail_pal.c:
     .data: [0x80F8C2C8, 0x80F8C460]
+data/item/item_name.c:
+    .data: [0x808BF660, 0x808C8830]
 m_bg_tex.c:
     .bss: [0x8125AC80, 0x81263080]
 sys_stacks.c:
