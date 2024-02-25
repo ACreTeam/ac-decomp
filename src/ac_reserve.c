@@ -12,7 +12,7 @@ ACTOR_PROFILE Reserve_Profile = {
     mAc_PROFILE_RESERVE,
     ACTOR_PART_ITEM,
     ACTOR_STATE_TA_SET,
-    0x5810,  // include name later
+    0x5810, // include name later
     ACTOR_OBJ_BANK_KEEP,
     sizeof(RESERVE_ACTOR),
     aRSV_actor_ct,
@@ -41,5 +41,20 @@ static void aRSV_actor_ct(ACTOR* actor, GAME* game) {
     aRSV_set_bgOffset(actor, 1);
 }
 
-#include "../src/ac_reserve_draw.c_inc"
+extern Vtx reserve_shadow_v[];
+extern Gfx reserve_shadow_model[];
+extern Vtx obj_attention_shadow_v[];
+extern Gfx obj_attention_shadowT_model[];
+
+static u8 aRSV_shadow_vtx_fix_flg_table[] = { TRUE, FALSE, FALSE, TRUE };
+
+static bIT_ShadowData_c aRSV_shadow_data = {
+    4, aRSV_shadow_vtx_fix_flg_table, 60.0f, reserve_shadow_v, reserve_shadow_model,
+};
+
+static bIT_ShadowData_c aRSV_kappa_shadow_data = {
+    4, aRSV_shadow_vtx_fix_flg_table, 60.0f, obj_attention_shadow_v, obj_attention_shadowT_model,
+};
+
 #include "../src/ac_reserve_move.c_inc"
+#include "../src/ac_reserve_draw.c_inc"
