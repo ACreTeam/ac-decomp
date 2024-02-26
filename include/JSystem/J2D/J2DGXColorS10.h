@@ -5,6 +5,7 @@
 #include "dolphin/gx.h"
 #include "JSystem/JUtility/TColor.h"
 
+#ifdef __cplusplus
 /**
  * Everything is fabricated here except for the default ctor.
  * Copied from J3DGXColorS10.
@@ -44,5 +45,6 @@ struct J2DGXColorS10 : public GXColorS10
     inline operator JUtility::TColor() const { return toTColor(); }
     inline JUtility::TColor toTColor() const { return JUtility::TColor(r, g, b, a); }
 };
+#endif
 
 #endif

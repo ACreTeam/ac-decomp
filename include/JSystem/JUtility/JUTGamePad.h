@@ -10,7 +10,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
 
 class JUTGamePadRecordBase
 {
@@ -357,7 +356,6 @@ public:
     OSTime mResetTime; // _A0
 };
 
-#ifdef __cplusplus
 }
 #endif
 

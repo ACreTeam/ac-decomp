@@ -4,6 +4,7 @@
 #include "JSystem/JKernel/JKRHeap.h"
 #include "types.h"
 
+#ifdef __cplusplus
 class JKRExpHeap : public JKRHeap
 {
 public:
@@ -103,5 +104,6 @@ inline JKRExpHeap* JKRCreateExpHeap(u32 size, JKRHeap* parent, bool errorFlag)
 {
     return JKRExpHeap::create(size, parent, errorFlag);
 }
+#endif
 
 #endif /* JKREXPHEAP_H */

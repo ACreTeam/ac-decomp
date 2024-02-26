@@ -121,4 +121,9 @@ typedef u32 unknown;
     #define BSS_ORDER_ITEM(v)
 #endif
 
+#ifndef __cplusplus
+// Some definitions rely on wchar_t being defined
+typedef short wchar_t;
+#endif
+
 #endif

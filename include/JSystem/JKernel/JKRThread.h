@@ -10,6 +10,7 @@
 #include "JSystem/JKernel/JKRDisposer.h"
 #include "JSystem/JUtility/JUTConsole.h"
 
+#ifdef __cplusplus
 struct JKRThread;
 //class JUTConsole;
 
@@ -176,4 +177,5 @@ struct JKRIdleThread : public JKRThread
   static JKRIdleThread* sThread;
 };
 
+#endif
 #endif

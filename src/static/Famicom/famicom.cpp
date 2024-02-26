@@ -1,5 +1,5 @@
 #include "Famicom/famicom.h"
-#include "Famicom/famicomInternal.h"
+#include "Famicom/famicomInternal.hpp"
 
 #include "dolphin/string.h"
 #include "dolphin/gx.h"

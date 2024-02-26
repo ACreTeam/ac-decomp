@@ -5,7 +5,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
 
 class JGadget_outMessage {
 public:
@@ -44,7 +43,6 @@ private:
 
 #endif
 
-#ifdef __cplusplus
 }
 #endif
 

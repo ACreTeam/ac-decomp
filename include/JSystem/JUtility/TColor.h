@@ -3,7 +3,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
 
 #include "types.h"
 #include <dolphin/gx.h>
@@ -69,7 +68,6 @@ namespace JUtility {
   };
 } // namespace JUtility
 
-#ifdef __cplusplus
 }
 #endif
 

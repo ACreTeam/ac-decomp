@@ -3,8 +3,14 @@
 
  #include "types.h"
 
- extern "C"{
-    void StartAudioThread(void*, u32, u32, u32);
- }
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void StartAudioThread(void*, u32, u32, u32);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

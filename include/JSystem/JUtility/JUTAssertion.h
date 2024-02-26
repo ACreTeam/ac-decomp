@@ -7,7 +7,6 @@
 #ifdef __cplusplus
 extern "C"
 {
-#endif
 
 namespace JUTAssertion
 {
@@ -62,7 +61,6 @@ namespace JUTAssertion
   }
 #endif
 
-#ifdef __cplusplus
 }
 #endif
 

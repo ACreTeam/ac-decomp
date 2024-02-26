@@ -4,6 +4,8 @@
 #include "dolphin/gx.h"
 #include "types.h"
 
+#ifdef __cplusplus
+
 #ifndef _JUTTransparency
 typedef u8 _JUTTransparency;
 #endif
@@ -52,5 +54,5 @@ struct ResTIMGPair {
 	ResTIMG _00;
 	ResTIMG _20;
 };
-
+#endif
 #endif

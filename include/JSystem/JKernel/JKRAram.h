@@ -11,6 +11,7 @@
 #include "JSystem/JSupport/JSUList.h"
 #include "JSystem/JSupport/JSUStream.h"
 
+#ifdef __cplusplus
 #define ARAM_GROUP_ID_ALL 0
 #define ARAM_GROUP_ID_DEFAULT 0xFF
 
@@ -311,4 +312,5 @@ inline void JKRAramPcs_SendCommand(JKRAMCommand* cmd)
   JKRAramPiece::sendCommand(cmd);
 }
 
+#endif
 #endif

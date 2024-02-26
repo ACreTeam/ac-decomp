@@ -25,8 +25,8 @@ typedef enum {
     OS_ERR_PROTECTION,
     OS_ERR_FP_EXCEPTION,
     OS_ERR_MAX,
-}
-#ifdef __cplusplus
 };
+#ifdef __cplusplus
+}
 #endif
 #endif

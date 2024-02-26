@@ -7,6 +7,7 @@
 #include "dolphin/os.h"
 #include "JSystem/JUtility/TColor.h"
 
+#ifdef __cplusplus
 struct JKRAramBlock;
 struct JKRHeap;
 
@@ -365,5 +366,6 @@ struct JUTCacheFont : public JUTResFont
 };
 
 extern const ResFONT JUTResFONT_Ascfont_fix12;
+#endif
 
 #endif

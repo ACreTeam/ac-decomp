@@ -1,5 +1,5 @@
-#ifndef DSP_H
-#define DSP_H
+#ifndef DSP_DSP_H
+#define DSP_DSP_H
 
 #include "types.h"
 
@@ -7,7 +7,7 @@
 extern "C"{
 #endif
 
-extern volatile u16 __DSPRegs[] : 0XCC005000;
+extern volatile u16 __DSPRegs[] AT_ADDRESS(0xCC005000);
 
 #ifdef __cplusplus
 }

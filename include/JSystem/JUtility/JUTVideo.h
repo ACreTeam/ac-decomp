@@ -7,6 +7,7 @@
 #include "dolphin/gx.h"
 #include "dolphin/vi.h"
 
+#ifdef __cplusplus
 /**
  * @size{0x58}
  */
@@ -80,5 +81,6 @@ inline JUTVideo *JUTGetVideoManager() {
 }
 
 extern bool sDrawWaiting;
+#endif
 
 #endif

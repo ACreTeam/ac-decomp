@@ -10,6 +10,7 @@
 #include "JSystem/JUtility/TColor.h"
 #include "types.h"
 
+#ifdef __cplusplus
 struct JUTTexture;
 
 enum J2DBinding
@@ -385,5 +386,5 @@ enum J2DTextBoxVBinding
 };
 
 // extern const J2DTexCoordInfo j2dDefaultTexCoordInfo[8];
-
+#endif
 #endif

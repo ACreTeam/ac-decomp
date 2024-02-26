@@ -4,13 +4,13 @@
 #include "types.h"
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 extern void Na_GetRadioCounter(void*);
 
 #ifdef __cplusplus
- }
+}
 #endif
 
 

@@ -3,9 +3,15 @@
 
 #include "types.h"
 
-extern "C"{
+#ifdef __cplusplus
+extern "C" {
+#endif
+
     void Probe_Start(void);
     void Probe_Finish(void);
+
+#ifdef __cplusplus
 }
+#endif
 
 #endif

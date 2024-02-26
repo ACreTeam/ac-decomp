@@ -5,6 +5,7 @@
 #include "JSystem/JKernel/JKRFile.h"
 #include "JSystem/JSupport/JSUStream.h"
 
+#ifdef __cplusplus
 class JKRDvdFile;
 
 struct JKRDvdFileInfo : public DVDFileInfo {
@@ -76,5 +77,6 @@ public:
   JSULink<JKRDvdFile> mLink;
   OSThread* mDvdThread;
 };
+#endif
 
 #endif

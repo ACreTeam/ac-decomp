@@ -24,8 +24,8 @@ enum weight{
   MASS_NORMAL
 };
 
-#define MASSTYPE_IMMOVABLE 0XFF
-#define MASSTYPE_HEAVY 0XFE
+#define MASSTYPE_IMMOVABLE 0xFF
+#define MASSTYPE_HEAVY 0xFE
 
 typedef struct collision_obj_s {
   ACTOR* owner_actor; // actor which owns this collision object

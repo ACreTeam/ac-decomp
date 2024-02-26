@@ -22,6 +22,7 @@ struct J2DGrafBlend {
 	u8 mDestFactor; // _02
 };
 
+#ifdef __cplusplus
 struct J2DGrafContext {
 	J2DGrafContext(f32, f32, f32, f32);
 
@@ -130,5 +131,6 @@ void J2DDrawFrame(f32 param_0, f32 param_1, f32 param_2, f32 param_3, JUtility::
 void J2DDrawFrame(JGeometry::TBox2f const& param_0, JUtility::TColor param_1, u8 param_2);
 
 void J2DDrawLine(f32, f32, f32, f32, JUtility::TColor, int);
+#endif
 
 #endif

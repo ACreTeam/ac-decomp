@@ -8,6 +8,7 @@
 #include "JSystem/JKernel/JKRAram.h"
 #include "JSystem/JKernel/JKREnum.h"
 
+#ifdef __cplusplus
 #define JKRDECOMP_MSG_BUF_COUNT 4
 #define JKRDECOMP_STACK_SIZE 0x4000
 #define JKRDECOMP_THREAD_MSG_BUF_COUNT 16
@@ -104,4 +105,5 @@ int JKRDecompressFromDVD(JKRDvdFile* srcFile, void* buf, u32 size, u32 maxDest, 
 int JKRDecompressFromDVDToAram(JKRDvdFile* srcFile, u32 address, u32 fileSize, u32 maxDest, u32 fileOffset, u32 srcOffset);
 int JKRDecompressFromAramToMainRam(u32 srcAddress, void* dst, u32 fileSize, u32 maxDest, u32 fileOffset);
 
+#endif
 #endif

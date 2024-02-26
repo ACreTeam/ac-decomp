@@ -5,6 +5,8 @@
 #include "JSystem/JKernel/JKREnum.h"
 #include "JSystem/JKernel/JKRDvdFile.h"
 
+#ifdef __cplusplus
+
 #define SZP_BUFFERSIZE 1024
 #define REF_BUFFERSIZE 0x1120
 #define DMA_BUFFERSIZE 0x100
@@ -53,4 +55,5 @@ inline void* JKRDvdToMainRam(const char* path, u8* dst, JKRExpandSwitch expandSw
   return JKRDvdRipper::loadToMainRAM(path, dst, expandSwitch, fileSize, heap, allocDirection, startOffset, pCompression);
 }
 
+#endif
 #endif

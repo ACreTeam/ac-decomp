@@ -5,6 +5,7 @@
 #include "JSystem/JKernel/JKRDisposer.h"
 #include "JSystem/JSupport/JSUList.h"
 
+#ifdef __cplusplus
 class JKRFileFinder;
 class JKRFileLoader : public JKRDisposer
 {
@@ -59,4 +60,5 @@ protected:
     u32 mMountCount;                        // 0x34
 };
 
+#endif
 #endif

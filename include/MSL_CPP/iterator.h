@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
 namespace std {
 
 /* TODO: these should be properly implemented */
@@ -28,5 +29,6 @@ distance(InputIterator first, InputIterator last) {
 }
 
 } // namespace std
+#endif
 
 #endif
