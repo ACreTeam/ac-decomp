@@ -685,6 +685,10 @@ ac_boat.c:
     .text: [0x805A6CF4, 0x805A856C]
     .rodata: [0x8064A5B0, 0x8064A630]
     .data: [0x806C4440, 0x806C4560]
+ac_br_shop.c:
+    .text: [0x805A856C, 0x805A9474]
+    .rodata: [0x8064A630, 0x8064A660]
+    .data: [0x806C4560, 0x806C4688]
 ac_douzou.c:
     .text: [0x805AD6D8, 0x805AE704]
     .rodata: [0x8064A7C0, 0x8064A7E8]
