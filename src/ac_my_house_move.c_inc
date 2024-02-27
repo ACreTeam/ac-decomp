@@ -1,0 +1,483 @@
+static void aMHS_set_door_SE_sub(STRUCTURE_ACTOR* my_house, u16 se_idx) {
+    sAdo_OngenTrgStart(se_idx, &my_house->actor_class.world.position);
+}
+
+static void aMHS_set_door_SE(STRUCTURE_ACTOR* my_house) {
+    static f32 chk_pat_in[4] = { 10.0f, 14.0f, 35.0f, 50.0f };
+    static f32 chk_pat_out[4] = { 2.0f, 8.0f, 33.0f, 40.0f };
+    static u16 se_no[4] = { 6, 7, 8, 9 };
+
+    f32* chk_pat_p;
+    int i;
+
+    switch ((int)my_house->arg2_f) {
+        case 0:
+        case 3:
+            chk_pat_p = chk_pat_in;
+            break;
+        default:
+            chk_pat_p = chk_pat_out;
+            break;
+    }
+
+    for (i = 0; i < 4; i++, chk_pat_p++) {
+        if (cKF_FrameControl_passCheck_now(&my_house->keyframe.frame_control, *chk_pat_p)) {
+            aMHS_set_door_SE_sub(my_house, se_no[i]);
+            break;
+        }
+    }
+}
+
+static void aMHS_goto_next_pl_scene(GAME_PLAY* play, STRUCTURE_ACTOR* my_house) {
+    static int next_scene_no[mHm_HOMESIZE_NUM - 1] = {
+        SCENE_MY_ROOM_S,
+        SCENE_MY_ROOM_M,
+        SCENE_MY_ROOM_L,
+        SCENE_MY_ROOM_LL1,
+    };
+
+    static s16 startX[mHm_HOMESIZE_NUM - 1] = {
+        120,
+        160,
+        200,
+        200,
+    };
+
+    static s16 startZ[mHm_HOMESIZE_NUM - 1] = {
+        220,
+        300,
+        380,
+        380,
+    };
+
+    Door_data_c door_data;
+
+    door_data.next_scene_id = next_scene_no[my_house->arg0];
+    door_data.exit_orientation = mSc_DIRECT_NORTH;
+    door_data.exit_type = 0;
+    door_data.extra_data = 0;
+    door_data.exit_position.x = startX[my_house->arg0];
+    door_data.exit_position.y = 0;
+    door_data.exit_position.z = startZ[my_house->arg0];
+    door_data.door_actor_name = EMPTY_NO;
+    door_data.wipe_type = 1;
+
+    goto_other_scene(play, &door_data, 0);
+    play->fb_fade_type = 9;
+}
+
+// In
+extern cKF_Animation_R_c cKF_ba_r_obj_s_myhome1;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_myhome1;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_myhome2;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_myhome2;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_myhome3;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_myhome3;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_myhome4;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_myhome4;
+
+// Out
+extern cKF_Animation_R_c cKF_ba_r_obj_s_myhome1_out;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_myhome1_out;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_myhome2_out;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_myhome2_out;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_myhome3_out;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_myhome3_out;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_myhome4_out;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_myhome4_out;
+
+static void aMHS_setup_animation(STRUCTURE_ACTOR* my_house, f32 speed) {
+    static cKF_Animation_R_c* ani[2][mHm_HOMESIZE_NUM - 1][2] = {
+        {
+            { &cKF_ba_r_obj_s_myhome1, &cKF_ba_r_obj_w_myhome1 },
+            { &cKF_ba_r_obj_s_myhome2, &cKF_ba_r_obj_w_myhome2 },
+            { &cKF_ba_r_obj_s_myhome3, &cKF_ba_r_obj_w_myhome3 },
+            { &cKF_ba_r_obj_s_myhome4, &cKF_ba_r_obj_w_myhome4 },
+        },
+        {
+            { &cKF_ba_r_obj_s_myhome1_out, &cKF_ba_r_obj_w_myhome1_out },
+            { &cKF_ba_r_obj_s_myhome2_out, &cKF_ba_r_obj_w_myhome2_out },
+            { &cKF_ba_r_obj_s_myhome3_out, &cKF_ba_r_obj_w_myhome3_out },
+            { &cKF_ba_r_obj_s_myhome4_out, &cKF_ba_r_obj_w_myhome4_out },
+        }
+    };
+
+    static f32 start_idx[mHm_HOMESIZE_NUM - 1] = { 1.0f, 25.0f, 1.0f, 1.0f };
+    static f32 end_idx[mHm_HOMESIZE_NUM - 1] = { 51.0f, 51.0f, 51.0f, 51.0f };
+
+    int type = (int)my_house->arg2_f;
+    int size = my_house->arg0;
+    int season = my_house->season == mTM_SEASON_WINTER;
+    int dir = 0;
+
+    if (type != 0 && type != 3) {
+        dir = 1;
+    }
+
+    cKF_SkeletonInfo_R_init(&my_house->keyframe, my_house->keyframe.skeleton, ani[dir][size][season], start_idx[type],
+                            end_idx[type], start_idx[type], speed, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+}
+
+static void aMHS_rewrite_pl_out_data(GAME_PLAY* play, STRUCTURE_ACTOR* my_house) {
+    static u8 out_drt[2] = { mSc_DIRECT_SOUTH_EAST, mSc_DIRECT_SOUTH_WEST };
+    static f32 restartX[2] = { 48.29f, -48.29f };
+
+    Door_data_c* exit_data = Common_GetPointer(structure_exit_door_data);
+    int direct = my_house->action & 1;
+
+    if (play->fb_wipe_mode == 0) {
+        xyz_t exit_pos;
+        s_xyz* exit_pos_p = &exit_data->exit_position;
+
+        exit_data->next_scene_id = Save_Get(scene_no);
+        exit_data->exit_orientation = out_drt[direct];
+        exit_data->exit_type = 0;
+        exit_data->extra_data = 2;
+
+        exit_pos.x = my_house->actor_class.world.position.x + restartX[direct];
+        exit_pos.z = my_house->actor_class.world.position.z + 48.29f;
+        exit_pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(exit_pos, 0.0f);
+
+        exit_pos_p->x = exit_pos.x;
+        exit_pos_p->y = exit_pos.y;
+        exit_pos_p->z = exit_pos.z;
+        exit_data->door_actor_name = my_house->actor_class.npc_id;
+        exit_data->wipe_type = 1;
+
+        Common_Set(house_owner_name, my_house->action);
+    }
+}
+
+static f32 aMHS_player_chk_f[2] = { 1.0f, -1.0f };
+static u16 aMHS_player_chk_angl0[2] = { DEG2SHORT_ANGLE(-180.0f), DEG2SHORT_ANGLE(90.0f) };
+static u16 aMHS_player_chk_angl1[2] = { DEG2SHORT_ANGLE(-90.0f), DEG2SHORT_ANGLE(-180.0f) };
+
+static int aMHS_check_player_sub(STRUCTURE_ACTOR* my_house, GAME_PLAY* play) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    int direct = my_house->action & 1;
+    f32 dist_x;
+    f32 dist_z;
+    int res = FALSE;
+
+    if (player == NULL) {
+        return FALSE;
+    }
+
+    dist_x = player->actor_class.world.position.x - my_house->arg0_f;
+    dist_z = player->actor_class.world.position.z - my_house->arg1_f;
+
+    if ((dist_x * dist_x) + (dist_z * dist_z) < (40.0f * 40.0f) &&
+        dist_z + dist_x * aMHS_player_chk_f[direct] < 40.0f) {
+        u16 angle_y = player->actor_class.shape_info.rotation.y;
+
+        if (angle_y > aMHS_player_chk_angl0[direct] && angle_y < aMHS_player_chk_angl1[direct]) {
+            if (chkTrigger(BUTTON_A) == FALSE) {
+                return FALSE;
+            }
+
+            if (Common_Get(reset_flag)) {
+                Common_Set(reset_type, 1);
+            } else {
+                res = TRUE;
+            }
+        }
+    }
+
+    return res;
+}
+
+static int aMHS_check_player_in_intro_demo(STRUCTURE_ACTOR* my_house, GAME_PLAY* play) {
+    mDemo_Clip_c* clip = Common_Get(clip).demo_clip;
+    INTRO_DEMO_ACTOR* intro_demo;
+
+    if (clip == NULL) {
+        return 0;
+    }
+
+    intro_demo = (INTRO_DEMO_ACTOR*)clip->class;
+    if (intro_demo == NULL || clip->type != mDemo_CLIP_TYPE_INTRO_DEMO || mEv_CheckFirstIntro() == FALSE) {
+        return 0;
+    }
+
+    if (my_house->arg3_f == TRUE && intro_demo->player_in_intro_demo == TRUE) {
+        return 1;
+    }
+
+    if (mPlib_check_label_player_demo_wait((GAME*)play, my_house)) {
+        int action;
+
+        my_house->arg3_f = TRUE;
+        action = my_house->action;
+        intro_demo->selected_house = action;
+        intro_demo->player_intro_demo_state =
+            mPr_NullCheckPersonalID(&Save_Get(homes[action]).ownerID) ? aID_STATE_TAKEN_HOUSE : aID_STATE_FREE_HOUSE;
+        return 2;
+    } else {
+        if (aMHS_check_player_sub(my_house, play) == TRUE) {
+            mPlib_request_main_demo_wait_type1((GAME*)play, 0, my_house);
+        }
+
+        return 0;
+    }
+}
+
+static void aMHS_set_demo_info(ACTOR* actorx) {
+    static int direct[2] = { mSc_DIRECT_NORTH_EAST, mSc_DIRECT_NORTH_WEST };
+
+    mDemo_Set_house_info(0.0f, direct[((STRUCTURE_ACTOR*)actorx)->action & 1]);
+    mDemo_Set_camera(CAMERA2_PROCESS_DOOR);
+}
+
+static void aMHS_set_demo_info_save(ACTOR* actorx) {
+    aMHS_set_demo_info(actorx);
+    mBGMPsComp_make_ps_wipe(0x249);
+}
+
+static int aMHS_check_player(STRUCTURE_ACTOR* my_house, GAME_PLAY* play) {
+    int intro_demo_state;
+
+    if (my_house->arg2_f != 0) {
+        if (my_house->arg2_f == 3) {
+            if (mDemo_Check(mDemo_TYPE_DOOR2, (ACTOR*)my_house)) {
+                return 1;
+            }
+
+            mDemo_Request(mDemo_TYPE_DOOR2, (ACTOR*)my_house, &aMHS_set_demo_info_save);
+            return 0;
+        } else {
+            return 4;
+        }
+    }
+
+    intro_demo_state = aMHS_check_player_in_intro_demo(my_house, play);
+    if (intro_demo_state != 2) {
+        if (intro_demo_state == 1) {
+            if (mDemo_Check(mDemo_TYPE_DOOR2, (ACTOR*)my_house)) {
+                return 1;
+            } else {
+                mDemo_Request(mDemo_TYPE_DOOR2, (ACTOR*)my_house, &aMHS_set_demo_info);
+                return 0;
+            }
+        } else {
+            if (mDemo_Check(mDemo_TYPE_DOOR, (ACTOR*)my_house)) {
+                return 1;
+            } else if (aMHS_check_player_sub(my_house, play)) {
+                mDemo_Request(mDemo_TYPE_DOOR, (ACTOR*)my_house, &aMHS_set_demo_info);
+            }
+        }
+    }
+
+    return 0;
+}
+
+typedef struct {
+    u8 centerRight_offset;
+    u8 leftUp_offset;
+    u8 leftDown_offset;
+    u8 rightDown_offset;
+    u8 rightUp_offset;
+    u8 shape;
+} aMHS_ofs_c;
+
+static void aMHS_make_bgOffset(mCoBG_OffsetTable_c* ofs_tbl, s8 def_val, int side_idx) {
+    static s8 height_tbl[32 * 6] = {
+        // East
+        4, 4, 4, 4, 4, 0, 4, 4, 4, 0, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 11, 4, 11, 11, 1, 11, 11, 11, 11,
+        11, 0, 11, 11, 11, 0, 11, 1, 0, 0, 0, 0, 0, 0, 11, 4, 11, 11, 11, 1, 11, 11, 11, 11, 11, 0, 11, 11, 11, 11, 11,
+        0, 4, 4, 4, 0, 4, 1, 4, 4, 4, 4, 4, 0, 11, 4, 11, 11, 11, 1, 11, 11, 11, 11, 4, 1, 4, 4, 4, 4, 4, 0,
+        // West
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 0, 4, 4, 1, 4, 4, 4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 11, 11, 0, 11, 11, 1,
+        11, 11, 11, 11, 11, 0, 11, 11, 11, 4, 11, 1, 4, 4, 0, 4, 4, 1, 11, 11, 11, 11, 11, 0, 11, 11, 11, 11, 11, 0, 11,
+        11, 11, 11, 4, 1, 4, 4, 4, 4, 4, 0, 11, 4, 11, 11, 11, 1, 11, 11, 11, 11, 4, 1, 4, 4, 4, 4, 4, 0
+    };
+
+    int ofs;
+    int i;
+
+    if (side_idx == 0) {
+        ofs = 0;
+    } else {
+        ofs = 6 * 16;
+    }
+
+    for (i = 0; i != 16; i++, ofs_tbl++) {
+        ofs_tbl->unit_attribute = mCoBG_ATTRIBUTE_NONE;
+        ofs_tbl->centerRight_offset = (height_tbl[ofs + i * 6 + 0] != 11) ? height_tbl[ofs + i * 6 + 0] : def_val;
+        ofs_tbl->leftUp_offset = (height_tbl[ofs + i * 6 + 1] != 11) ? height_tbl[ofs + i * 6 + 1] : def_val;
+        ofs_tbl->leftDown_offset = (height_tbl[ofs + i * 6 + 2] != 11) ? height_tbl[ofs + i * 6 + 2] : def_val;
+        ofs_tbl->rightDown_offset = (height_tbl[ofs + i * 6 + 3] != 11) ? height_tbl[ofs + i * 6 + 3] : def_val;
+        ofs_tbl->rightUp_offset = (height_tbl[ofs + i * 6 + 4] != 11) ? height_tbl[ofs + i * 6 + 4] : def_val;
+        ofs_tbl->shape = height_tbl[ofs + i * 6 + 5];
+    }
+}
+
+static void aMHS_set_bgOffset(ACTOR* actorx, int flag) {
+    static s8 height_dt[mHm_HOMESIZE_NUM - 1] = { 11, 14, 15, 14 };
+    static s8 addX[8] = {
+        216, 0, 40, 80, 176, 216, 0, 40,
+    };
+    static s8 addZ[4] = { 90, 40, 0, 216 };
+
+    STRUCTURE_ACTOR* my_house = (STRUCTURE_ACTOR*)actorx;
+    int side_idx = my_house->action & 1;
+    int addX_ofs = side_idx == 0 ? 0 : 4;
+    mCoBG_OffsetTable_c offset_tbl[4 * 4];
+    mCoBG_OffsetTable_c* ofs_p;
+    mCoBG_OffsetTable_c tmp_ofs;
+    xyz_t pos;
+    int z;
+    int x;
+
+// @BUG - they use the side of the house to get the size default rather than the index itself
+#ifndef BUGFIXES
+    aMHS_make_bgOffset(offset_tbl, height_dt[Save_Get(homes[side_idx]).size_info.size], side_idx);
+#else
+    aMHS_make_bgOffset(offset_tbl, height_dt[Save_Get(homes[my_house->action & 3]).size_info.size], side_idx);
+#endif
+
+    ofs_p = offset_tbl;
+    for (z = 0; z < 4; z++) {
+        pos.z = actorx->home.position.z + addZ[z];
+
+        for (x = 0; x < 4; x++) {
+            pos.x = actorx->home.position.x + addX[addX_ofs + x];
+
+            mCoBG_SetPluss5PointOffset_file(pos, *ofs_p, __FILE__, 651);
+            ofs_p++;
+        }
+    }
+}
+
+static int aMHS_light_ctrl(STRUCTURE_ACTOR* my_house) {
+    return mRmTp_Index2LightSwitchStatus((my_house->action & 3) * 2) != FALSE;
+}
+
+static void aMHS_wait(STRUCTURE_ACTOR* my_house, GAME_PLAY* play) {
+    switch (aMHS_check_player(my_house, play)) {
+        case 1:
+            aMHS_setup_action(my_house, aMHS_ACTION_OPEN_DOOR_WAIT);
+            break;
+        case 4:
+            if (mPlib_check_player_outdoor_start((GAME*)play)) {
+                aMHS_setup_animation(my_house, 0.5f);
+                aMHS_setup_action(my_house, aMHS_ACTION_OPEN_DOOR);
+            }
+    }
+}
+
+static void aMHS_open_door_wait(STRUCTURE_ACTOR* my_house, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)my_house;
+
+    if (actorx == (*GET_PLAYER_ACTOR_NOW()->get_door_label_proc)(gamePT)) {
+        mBGMPsComp_make_ps_wipe(0x249);
+        aMHS_setup_animation(my_house, 0.5f);
+        aMHS_setup_action(my_house, aMHS_ACTION_OPEN_DOOR);
+    }
+}
+
+static void aMHS_open_door(STRUCTURE_ACTOR* my_house, GAME_PLAY* play) {
+    if (cKF_SkeletonInfo_R_play(&my_house->keyframe) != cKF_STATE_STOPPED) {
+        aMHS_door_closed_flag[my_house->arg0] = FALSE;
+    } else {
+        void* demo_class;
+        INTRO_DEMO_ACTOR* intro_demo;
+        int next_act;
+
+        if (my_house->arg2_f == 3) {
+            if (my_house->actor_class.world.angle.z == 0) {
+                my_house->actor_class.world.angle.z = 1;
+            }
+
+            next_act = aMHS_ACTION_GOTO_NEXT_SCEEN_WAIT;
+        } else if (my_house->arg2_f == 0) {
+            aMHS_rewrite_pl_out_data(play, my_house);
+            aMHS_goto_next_pl_scene(play, my_house);
+
+            if (Common_Get(clip).demo_clip != NULL && Common_Get(clip).demo_clip->type == mDemo_CLIP_TYPE_INTRO_DEMO) {
+                demo_class = Common_Get(clip).demo_clip->class;
+
+                if (demo_class != NULL) {
+                    intro_demo = (INTRO_DEMO_ACTOR*)demo_class;
+
+                    intro_demo->player_in_intro_demo = FALSE;
+                }
+            }
+
+            mDemo_End((ACTOR*)my_house);
+            next_act = aMHS_ACTION_GOTO_NEXT_SCEEN_WAIT;
+        } else {
+            next_act = aMHS_ACTION_WAIT;
+        }
+
+        aMHS_setup_action(my_house, next_act);
+        my_house->arg2_f = 0;
+        my_house->request_type = 0;
+    }
+}
+
+static void aMHS_setup_action(STRUCTURE_ACTOR* my_house, int action) {
+    static aSTR_MOVE_PROC process[aMHS_ACTION_NUM] = {
+        &aMHS_wait,
+        &aMHS_open_door_wait,
+        &aMHS_open_door,
+        (aSTR_MOVE_PROC)&none_proc1,
+    };
+
+    aMHS_door_closed_flag[my_house->arg0] = TRUE;
+    my_house->action_proc = process[action];
+}
+
+static void aMHS_actor_move(ACTOR* actorx, GAME* game) {
+    // clang-format off
+    static Door_data_c door_data = {
+        SCENE_PLAYERSELECT_SAVE,
+        mSc_DIRECT_NORTH,
+        0,
+        0,
+        100, 0, 120,
+        EMPTY_NO,
+        1,
+        0, 0, 0
+    };
+    // clang-format on
+
+    static u8 drtbl[] = {
+        mSc_DIRECT_SOUTH,      mSc_DIRECT_SOUTH, mSc_DIRECT_SOUTH,      mSc_DIRECT_SOUTH,
+        mSc_DIRECT_SOUTH_EAST, mSc_DIRECT_EAST,  mSc_DIRECT_NORTH_EAST,
+    };
+
+    STRUCTURE_ACTOR* my_house = (STRUCTURE_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    my_house->arg2_f = drtbl[my_house->request_type];
+    aMHS_set_door_SE(my_house);
+    actorx->actor_specific -= (s16)(mEnv_GetWindPowerF() * 1000.0f);
+    (*my_house->action_proc)(my_house, play);
+
+    if (aMHS_light_ctrl(my_house)) {
+        chase_s(&my_house->actor_class.world.angle.x, DEG2SHORT_ANGLE(90.0f) - 1, 320);
+    } else {
+        chase_s(&my_house->actor_class.world.angle.x, DEG2SHORT_ANGLE(0.0f), 320);
+    }
+
+    if (my_house->actor_class.world.angle.z > 0) {
+        goto_other_scene(play, &door_data, 1);
+        Common_Get(transition).wipe_type = 3;
+        play->fb_fade_type = 9;
+        my_house->actor_class.world.angle.z = -1;
+    }
+}
+
+static void aMHS_actor_init(ACTOR* actorx, GAME* game) {
+    STRUCTURE_ACTOR* my_house = (STRUCTURE_ACTOR*)actorx;
+
+    mFI_SetFG_common(DUMMY_HOUSE0 + my_house->action, actorx->home.position, FALSE);
+    aMHS_actor_move(actorx, game);
+    actorx->mv_proc = &aMHS_actor_move;
+}

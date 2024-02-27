@@ -720,6 +720,11 @@ ac_lotus.c:
 ac_mikuji.c:
     .text: [0x805B414C, 0x805B44C4]
     .data: [0x806C5C10, 0x806C5CA0]
+ac_my_house.c:
+    .text: [0x805B4CF4, 0x805B63FC]
+    .rodata: [0x8064AA50, 0x8064AAA0]
+    .data: [0x806C5DC0, 0x806C6110]
+    .bss: [0x813280B0, 0x813280C0]
 ac_nameplate.c:
     .text: [0x805B63FC, 0x805B65C4]
     .data: [0x806C6110, 0x806C6138]

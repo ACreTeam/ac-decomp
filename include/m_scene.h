@@ -13,125 +13,138 @@ extern "C" {
 
 #define mSc_ARENA_SIZE 0xA000
 
+enum {
+    mSc_DIRECT_SOUTH,
+    mSc_DIRECT_SOUTH_EAST,
+    mSc_DIRECT_EAST,
+    mSc_DIRECT_NORTH_EAST,
+    mSc_DIRECT_NORTH,
+    mSc_DIRECT_NORTH_WEST,
+    mSc_DIRECT_WEST,
+    mSc_DIRECT_SOUTH_WEST,
+
+    mSc_DIRECT_NUM
+};
+
 typedef struct door_data_s {
-  int next_scene_id;
-  u8 exit_orientation;
-  u8 exit_type; // 0 = normal, 1 = restart game?
-  u16 extra_data;
-  s_xyz exit_position;
-  mActor_name_t door_actor_name;
-  u8 wipe_type;
-  u8 pad[3]; // possibly necessary due to struct copy
+    int next_scene_id;
+    u8 exit_orientation;
+    u8 exit_type; // 0 = normal, 1 = restart game?
+    u16 extra_data;
+    s_xyz exit_position;
+    mActor_name_t door_actor_name;
+    u8 wipe_type;
+    u8 pad[3]; // possibly necessary due to struct copy
 } Door_data_c;
 
 #define mSc_OBJECT_BANK_NUM 70
 
 typedef struct object_bank_s {
-  s16 bank_id;
-  char* ram_start;
-  char* dma_start;
-  u32 rom_addr;
-  size_t size;
-  u32 _14;
-  int _18;
-  int _1C;
-  int _20;
-  int _24;
-  int _28;
-  OSMessageQueue* msg_queue_p;
-  OSMessage _30_msg;
-  OSMessageQueue dma_controller_msg_queue;
-  OSMessage dma_controller_msg;
-  s16 num_exist;
-  u8 part_id;
-  u8 state;
+    s16 bank_id;
+    char* ram_start;
+    char* dma_start;
+    u32 rom_addr;
+    size_t size;
+    u32 _14;
+    int _18;
+    int _1C;
+    int _20;
+    int _24;
+    int _28;
+    OSMessageQueue* msg_queue_p;
+    OSMessage _30_msg;
+    OSMessageQueue dma_controller_msg_queue;
+    OSMessage dma_controller_msg;
+    s16 num_exist;
+    u8 part_id;
+    u8 state;
 } Object_Bank_c;
 
 typedef struct object_exchange_s {
-  Object_Bank_c banks[mSc_OBJECT_BANK_NUM];
-  int bank_idx;
-  int keep_id;
-  int exchange_id;
-  char* next_bank_ram_address;
-  char* max_ram_address;
-  char* start_address_save[2];
-  char* end_address_save[2];
-  char* _194C;
-  int selected_partition;
-  int _1954;
+    Object_Bank_c banks[mSc_OBJECT_BANK_NUM];
+    int bank_idx;
+    int keep_id;
+    int exchange_id;
+    char* next_bank_ram_address;
+    char* max_ram_address;
+    char* start_address_save[2];
+    char* end_address_save[2];
+    char* _194C;
+    int selected_partition;
+    int _1954;
 } Object_Exchange_c;
 
 enum {
-  mSc_SCENE_DATA_TYPE_PLAYER_PTR,
-  mSc_SCENE_DATA_TYPE_CTRL_ACTOR_PTR,
-  mSc_SCENE_DATA_TYPE_ACTOR_PTR,
-  mSc_SCENE_DATA_TYPE_OBJECT_EXCHANGE_BANK_PTR,
-  mSc_SCENE_DATA_TYPE_DOOR_DATA_PTR,
-  mSc_SCENE_DATA_TYPE_FIELD_CT,
-  mSc_SCENE_DATA_TYPE_MY_ROOM_CT,
-  mSc_SCENE_DATA_TYPE_ARRANGE_ROOM_CT,
-  mSc_SCENE_DATA_TYPE_ARRANGE_FURNITURE_CT,
-  mSc_SCENE_DATA_TYPE_SOUND,
-  mSc_SCENE_DATA_TYPE_END,
+    mSc_SCENE_DATA_TYPE_PLAYER_PTR,
+    mSc_SCENE_DATA_TYPE_CTRL_ACTOR_PTR,
+    mSc_SCENE_DATA_TYPE_ACTOR_PTR,
+    mSc_SCENE_DATA_TYPE_OBJECT_EXCHANGE_BANK_PTR,
+    mSc_SCENE_DATA_TYPE_DOOR_DATA_PTR,
+    mSc_SCENE_DATA_TYPE_FIELD_CT,
+    mSc_SCENE_DATA_TYPE_MY_ROOM_CT,
+    mSc_SCENE_DATA_TYPE_ARRANGE_ROOM_CT,
+    mSc_SCENE_DATA_TYPE_ARRANGE_FURNITURE_CT,
+    mSc_SCENE_DATA_TYPE_SOUND,
+    mSc_SCENE_DATA_TYPE_END,
 
-  mSc_SCENE_DATA_TYPE_NUM
+    mSc_SCENE_DATA_TYPE_NUM
 };
 
 typedef struct {
-  u8 type;
-  u8 num_actors;
-  Actor_data* data_p;
+    u8 type;
+    u8 num_actors;
+    Actor_data* data_p;
 } Scene_Word_Data_Actor_c;
 
 typedef struct {
-  u8 type;
-  u8 num_ctrl_actors;
-  s16* ctrl_actor_profile_p;
+    u8 type;
+    u8 num_ctrl_actors;
+    s16* ctrl_actor_profile_p;
 } Scene_Word_Data_Ctrl_Actor_c;
 
 typedef struct {
-  u8 type;
-  u8 num_banks;
-  s16* banks_p;
+    u8 type;
+    u8 num_banks;
+    s16* banks_p;
 } Scene_Word_Data_Object_Bank_c;
 
 typedef struct {
-  u8 type;
-  u8 num_doors;
-  Door_data_c* door_data_p;
+    u8 type;
+    u8 num_doors;
+    Door_data_c* door_data_p;
 } Scene_Word_Data_Door_Data_c;
 
 typedef struct {
-  u8 type;
-  u8 item_type;
-  u8 bg_num;
-  u16 bg_disp_size;
-  u8 room_type;
-  u8 draw_type;
+    u8 type;
+    u8 item_type;
+    u8 bg_num;
+    u16 bg_disp_size;
+    u8 room_type;
+    u8 draw_type;
 } Scene_Word_Data_FieldCt_c;
 
 typedef struct {
-  u8 type;
-  u8 arrange_ftr_num;
+    u8 type;
+    u8 arrange_ftr_num;
 } Scene_Word_Data_ArrangeFurniture_ct_c;
 
 typedef struct {
-  u8 type;
+    u8 type;
 } Scene_Word_Data_Misc_c;
 
 typedef union scene_word_u {
-  Scene_Word_Data_Misc_c misc; /* MY_ROOM_CT, ARRANGE_ROOM_CT, ARRANGE_FURNITURE_CT, SOUND */
-  Scene_Word_Data_Actor_c actor; /* PLAYER_PTR, ACTOR_PTR */
-  Scene_Word_Data_Ctrl_Actor_c control_actor;
-  Scene_Word_Data_Object_Bank_c object_bank;
-  Scene_Word_Data_Door_Data_c door_data;
-  Scene_Word_Data_FieldCt_c field_ct;
-  Scene_Word_Data_ArrangeFurniture_ct_c arrange_ftr_ct;
+    Scene_Word_Data_Misc_c misc;   /* MY_ROOM_CT, ARRANGE_ROOM_CT, ARRANGE_FURNITURE_CT, SOUND */
+    Scene_Word_Data_Actor_c actor; /* PLAYER_PTR, ACTOR_PTR */
+    Scene_Word_Data_Ctrl_Actor_c control_actor;
+    Scene_Word_Data_Object_Bank_c object_bank;
+    Scene_Word_Data_Door_Data_c door_data;
+    Scene_Word_Data_FieldCt_c field_ct;
+    Scene_Word_Data_ArrangeFurniture_ct_c arrange_ftr_ct;
 } Scene_Word_u;
 
 typedef struct door_info_s {
-  u8 num_doors;
-  Door_data_c* door_data_p;
+    u8 num_doors;
+    Door_data_c* door_data_p;
 } Door_info_c;
 
 extern Scene_Word_u test01_info[];
@@ -201,7 +214,6 @@ extern int goto_other_scene(GAME_PLAY* play, Door_data_c* door_data, int update_
 extern int goto_next_scene(GAME_PLAY* play, int next_idx, int update_player_mode);
 extern int goto_emu_game(GAME_PLAY* play, u8 famicom_rom_id);
 extern void return_emu_game(GAME* game);
-
 
 #ifdef __cplusplus
 }
