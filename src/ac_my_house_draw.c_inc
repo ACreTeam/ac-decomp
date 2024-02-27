@@ -1,0 +1,260 @@
+static int aMHS_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    static s16 angle_table[2] = { DEG2SHORT_ANGLE(0.0f), DEG2SHORT_ANGLE(90.0f) };
+    GRAPH* graph = game->graph;
+    STRUCTURE_ACTOR* my_house = (STRUCTURE_ACTOR*)arg;
+    int l;
+    int r;
+    int g;
+    int b;
+    int a;
+    Gfx* gfx;
+
+    OPEN_DISP(graph);
+    gfx = NOW_POLY_OPA_DISP;
+
+    if (joint_idx == 8) {
+        int angle = my_house->actor_class.world.angle.x;
+
+        if (angle == (DEG2SHORT_ANGLE(90.0f) - 1)) {
+            l = 120;
+            r = 255;
+            g = 255;
+            b = 150;
+            a = 255;
+        } else if (angle == DEG2SHORT_ANGLE(0.0f)) {
+            l = 0;
+            r = 0;
+            g = 0;
+            b = 0;
+            a = 255;
+        } else {
+            f32 inter = (f32)angle * (1.0f / 16383.0f); // approx (1.0f / (f32)DEG2SHORT_ANGLE(90.0f)
+
+            l = inter * 120.0f;
+            r = inter * 255.0f;
+            g = inter * 255.0f;
+            b = inter * 150.0f;
+            a = 255;
+        }
+
+        gDPSetPrimColor(gfx++, 0, l, r, g, b, a);
+    } else if (joint_idx == 12) {
+        *joint_shape = NULL; // Don't draw window frame shadow yet
+    } else if (joint_idx == 3 || joint_idx == 5) {
+        int draw_comp_fish = my_house->actor_class.speed;
+
+        if (draw_comp_fish) {
+            s16 angle = (s16)(joint_idx == 3 ? mEnv_GetWindAngleS() : my_house->actor_class.actor_specific);
+
+            if (joint_idx == 3) {
+                angle += angle_table[my_house->action & 1]; // rotate based on side house is on
+            }
+
+            if (my_house->arg0 == 0) {
+                Matrix_RotateY(angle, 1);
+            } else {
+                Matrix_RotateX(angle, 1);
+            }
+
+            if (my_house->arg0 == 1) {
+                Matrix_RotateZ(DEG2SHORT_ANGLE(-90.0f), 1);
+            }
+        } else {
+            *joint_shape = NULL; // do not draw fish decoration joints
+        }
+    } else if (joint_idx == 1) {
+        int draw_comp_insect = my_house->actor_class.gravity;
+
+        if (draw_comp_insect == FALSE) {
+            *joint_shape = NULL; // do not draw insect decoration joint
+        }
+    } else if (joint_idx == 6 && aMHS_door_closed_flag[my_house->arg0]) {
+        joint_rot->y = DEG2SHORT_ANGLE(-89.895630f); // draw door shut
+    }
+
+    SET_POLY_OPA_DISP(gfx);
+    CLOSE_DISP(graph);
+
+    return TRUE;
+}
+
+extern Gfx obj_s_myhome1_window_model[];
+extern Gfx obj_w_myhome1_window_model[];
+
+extern Gfx obj_s_myhome2_window_model[];
+extern Gfx obj_w_myhome2_window_model[];
+
+extern Gfx obj_s_myhome3_window_model[];
+extern Gfx obj_w_myhome3_window_model[];
+
+extern Gfx obj_s_myhome4_window_model[];
+extern Gfx obj_w_myhome4_window_model[];
+
+static int aMHS_actor_draw_after(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                 u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    static Gfx* mdl[mHm_HOMESIZE_NUM - 1][2] = {
+        { obj_s_myhome1_window_model, obj_w_myhome1_window_model },
+        { obj_s_myhome2_window_model, obj_w_myhome2_window_model },
+        { obj_s_myhome3_window_model, obj_w_myhome3_window_model },
+        { obj_s_myhome4_window_model, obj_w_myhome4_window_model },
+    };
+
+    GRAPH* graph = game->graph;
+    STRUCTURE_ACTOR* my_house = (STRUCTURE_ACTOR*)arg;
+    u32 season;
+    int l;
+    int r;
+    int g;
+    int b;
+    int a;
+    Mtx* mtx;
+    Gfx* gfx;
+
+    // Draw window frame shadow last
+    if (joint_idx == 12) {
+        mtx = _Matrix_to_Mtx_new(graph);
+
+        if (mtx != NULL) {
+            int angle = my_house->actor_class.world.angle.x;
+
+            if (angle == (DEG2SHORT_ANGLE(90.0f) - 1)) {
+                l = 120;
+                r = 255;
+                g = 255;
+                b = 150;
+                a = 255;
+            } else if (angle == DEG2SHORT_ANGLE(0.0f)) {
+                l = 0;
+                r = 0;
+                g = 0;
+                b = 0;
+                a = 255;
+            } else {
+                f32 inter = (f32)angle * (1.0f / 16383.0f); // approx (1.0f / (f32)DEG2SHORT_ANGLE(90.0f)
+
+                l = inter * 120.0f;
+                r = 255;
+                g = 255;
+                b = 150;
+                a = 255;
+            }
+
+            season = my_house->season == mTM_SEASON_WINTER;
+            _texture_z_light_fog_prim_shadow(graph);
+
+            OPEN_DISP(graph);
+            gfx = NOW_SHADOW_DISP;
+
+            gDPSetPrimColor(gfx++, 0, l, r, g, b, a);
+            gSPMatrix(gfx++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPDisplayList(gfx++, mdl[my_house->arg0][season]);
+
+            SET_SHADOW_DISP(gfx);
+            CLOSE_DISP(graph);
+        }
+    }
+
+    return TRUE;
+}
+
+static void aMHS_actor_draw_ta_set(STRUCTURE_ACTOR* my_house, GAME* game) {
+    static u8 edge_alpha[mHm_HOMESIZE_NUM - 1] = { 96, 64, 112, 96 };
+    GRAPH* graph = game->graph;
+
+    OPEN_DISP(graph);
+
+    gDPSetTextureAdjustMode(NEXT_POLY_OPA_DISP, G_TA_DOLPHIN);
+    gDPSetTextureAdjustMode(NEXT_SHADOW_DISP, G_TA_DOLPHIN);
+    gDPSetTexEdgeAlpha(NEXT_POLY_OPA_DISP, edge_alpha[my_house->arg0]);
+    gDPSetTexEdgeAlpha(NEXT_SHADOW_DISP, edge_alpha[my_house->arg0]);
+
+    CLOSE_DISP(graph);
+}
+
+static void aMHS_actor_draw_ta_clr(STRUCTURE_ACTOR* my_house, GAME* game) {
+    GRAPH* graph = game->graph;
+
+    OPEN_DISP(graph);
+
+    gDPSetTextureAdjustMode(NEXT_POLY_OPA_DISP, G_TA_N64);
+    gDPSetTextureAdjustMode(NEXT_SHADOW_DISP, G_TA_N64);
+    gDPSetTexEdgeAlpha(NEXT_POLY_OPA_DISP, 144);
+    gDPSetTexEdgeAlpha(NEXT_SHADOW_DISP, 144);
+
+    CLOSE_DISP(graph);
+}
+
+extern u8 obj_myhome_mark_tex_txt[];
+extern u16 obj_myhome_mark_pal[];
+
+static int aMHS_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos);
+static int aMHS_actor_draw_after(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                 u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos);
+
+static void aMHS_actor_draw_ta_set(STRUCTURE_ACTOR* my_house, GAME* game);
+static void aMHS_actor_draw_ta_clr(STRUCTURE_ACTOR* my_house, GAME* game);
+
+extern u8 obj_myhome_mark_tex_txt[];
+extern u16 obj_myhome_mark_pal[];
+
+static void aMHS_actor_draw(ACTOR* actorx, GAME* game) {
+    static bIT_ShadowData_c** shadow_data[mHm_HOMESIZE_NUM - 1] = {
+        aMHS_lv1_shadow_data,
+        aMHS_lv2_shadow_data,
+        aMHS_lv3_shadow_data,
+        aMHS_lv4_shadow_data,
+    };
+
+    GRAPH* graph;
+    cKF_SkeletonInfo_R_c* keyframe;
+    Mtx* mtx;
+    int door_original;
+    int pl_no;
+    bIT_ShadowData_c** shadow_data_pp;
+    Gfx* gfx;
+    GAME_PLAY* play;
+    STRUCTURE_ACTOR* my_house;
+
+    play = (GAME_PLAY*)game;
+    graph = play->game.graph;
+    my_house = (STRUCTURE_ACTOR*)actorx;
+    keyframe = &my_house->keyframe;
+    door_original = Save_Get(homes[my_house->action]).door_original;
+    pl_no = mHS_get_pl_no_detail(my_house->action);
+    mtx = GRAPH_ALLOC_TYPE(graph, Mtx, keyframe->skeleton->num_shown_joints);
+
+    if (mtx != NULL) {
+        aMHS_actor_draw_ta_set(my_house, (GAME*)play);
+        _texture_z_light_fog_prim(graph);
+
+        OPEN_DISP(graph);
+        gfx = NOW_POLY_OPA_DISP;
+
+        gSPSegment(gfx++, G_MWO_SEGMENT_8, (*Common_Get(clip).structure_clip->get_pal_segment_proc)(my_house->arg1));
+
+        if (door_original == 0xFF || pl_no == -1) {
+            gSPSegment(gfx++, G_MWO_SEGMENT_9, obj_myhome_mark_tex_txt);
+            gSPSegment(gfx++, G_MWO_SEGMENT_A, obj_myhome_mark_pal);
+        } else {
+            int org_idx = door_original & 7;
+            u16* pal = mNW_PaletteIdx2Palette(Save_Get(private[pl_no]).my_org[org_idx].palette);
+            u8* tex = Save_Get(private[pl_no]).my_org[org_idx].design.data;
+
+            gSPSegment(gfx++, G_MWO_SEGMENT_9, tex);
+            gSPSegment(gfx++, G_MWO_SEGMENT_A, pal);
+        }
+
+        SET_POLY_OPA_DISP(gfx);
+        CLOSE_DISP(graph);
+
+        cKF_Si3_draw_R_SV((GAME*)play, keyframe, mtx, &aMHS_actor_draw_before, &aMHS_actor_draw_after, my_house);
+        shadow_data_pp = shadow_data[my_house->arg0];
+        Matrix_translate(my_house->actor_class.world.position.x, my_house->actor_class.world.position.y,
+                         my_house->actor_class.world.position.z, 0);
+        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        (*Common_Get(clip).bg_item_clip->draw_shadow_proc)((GAME*)play, shadow_data_pp[my_house->action & 1], 0);
+        aMHS_actor_draw_ta_clr(my_house, (GAME*)play);
+    }
+}

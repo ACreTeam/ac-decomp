@@ -2699,6 +2699,10 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define NPC_END      (NPC_START + 236)
 
 #define DUMMY_START 0xF000
+#define DUMMY_HOUSE0 0xF0F3
+#define DUMMY_HOUSE1 0xF0F4
+#define DUMMY_HOUSE2 0xF0F5
+#define DUMMY_HOUSE3 0xF0F6
 #define DUMMY_HANIWA0 0xF0FB
 #define DUMMY_HANIWA1 (DUMMY_HANIWA0 + 1)
 #define DUMMY_HANIWA2 (DUMMY_HANIWA1 + 1)

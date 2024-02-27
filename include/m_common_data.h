@@ -209,8 +209,7 @@ typedef struct common_data_s {
     /* 0x0264E4 */ mNpc_NpcList_c island_npclist[1]; // TODO: define for island npc count
     /* 0x02651C */ mActor_name_t house_owner_name;
     /* 0x02651E */ mActor_name_t last_field_id;
-    /* 0x026520 */ u8
-        in_initial_block; /* when TRUE, the player is in the acre which they exited a building. FALSE otherwise. */
+    /* 0x026520 */ u8 in_initial_block; /* when TRUE, the player is in acre they exited a building. FALSE otherwise. */
     /* 0x026521 */ u8 submenu_disabled; /* when set, submenus cannot be accessed from start button */
     /* 0x026522 */ u8 sunlight_flag;
     /* 0x026523 */ u8 train_flag;

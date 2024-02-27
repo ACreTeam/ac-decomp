@@ -27,7 +27,7 @@ extern void mPlib_change_player_cloth_info_lv2(Private_c* priv, mActor_name_t cl
 extern int mPlib_Get_address_able_display();
 extern int mPlib_get_player_actor_main_index(GAME* game);
 extern int mPlib_check_player_actor_main_index_AllWade(GAME_PLAY* play);
-extern int mPlib_request_main_demo_wait_type1(GAME_PLAY* play, int param_2, void* param_3);
+extern int mPlib_request_main_demo_wait_type1(GAME* game, int param_2, void* param_3);
 extern int mPlib_request_main_talk_type1(GAME_PLAY* play, ACTOR* other_actor, int turn, int flag);
 extern int mPlib_request_main_talk_end_type1(GAME_PLAY* play, int return_demo_wait, int return_get_golden_axe_demo);
 extern int mPlib_request_main_door_type1(GAME* game, const xyz_t* pos, s16 angle_y, int door_type, void* door_label);
@@ -45,7 +45,8 @@ extern int mPlib_Check_able_force_speak_label(GAME* game, ACTOR* label);
 extern int mPlib_able_submenu_type1(GAME* game);
 extern void mPlib_request_main_demo_wait_from_submenu(ACTOR* force_speak_label);
 extern void mPlib_Load_PlayerTexAndPallet(void* tex_p, void* pal_p, int idx);
-extern void mPlib_request_main_give_from_submenu(mActor_name_t disp_item, int submenu_ovl, int present_flag, int counter_flag);
+extern void mPlib_request_main_give_from_submenu(mActor_name_t disp_item, int submenu_ovl, int present_flag,
+                                                 int counter_flag);
 extern int mPlib_Check_tree_shaken_big(const xyz_t* pos);
 extern int mPlib_Check_tree_shaken_little(const xyz_t* pos);
 extern int mPlib_request_main_recieve_wait_type1(GAME* game, mActor_name_t item, int counter_flag);
@@ -56,6 +57,8 @@ extern int mPlib_Get_end_player_demo_walk();
 extern int mPlib_request_main_demo_geton_boat_type1(f32 goal_x, f32 goal_z, s16 angleY);
 extern int mPlib_request_main_demo_getoff_boat_standup_type1(const xyz_t* pos, s16 angleY);
 extern int mPlib_check_player_actor_main_index_RecieveMove(GAME* game);
+extern int mPlib_check_label_player_demo_wait(GAME* game, void* label);
+extern int mPlib_check_player_outdoor_start(GAME* game);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 
