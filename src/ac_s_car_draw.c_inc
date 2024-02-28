@@ -1,0 +1,43 @@
+extern Gfx s_car_DL_model[];
+
+static void aSCR_set_prim_col(rgb_t* color) {
+    mEv_dsg_common_c* designer_common;
+    f32 percentage;
+    f32 remaining;
+
+    designer_common = (mEv_dsg_common_c*)mEv_get_common_area(mEv_EVENT_DESIGNER, FALSE);
+    if (designer_common != NULL) {
+        percentage = designer_common->button_presses / 100.0f;
+        remaining = (1.0f - percentage);
+
+        color->r = (remaining * 150) + (percentage * 255);
+        color->g = (remaining * 120) + (percentage * 255);
+        color->b = (remaining * 100) + (percentage * 255);
+    } else {
+        color->r = 150;
+        color->g = 120;
+        color->b = 100;
+    }
+}
+
+static void aSCR_actor_draw(ACTOR* actor, GAME* game) {
+    GRAPH* graph;
+    Gfx* gfx;
+    rgb_t color;
+
+    graph = game->graph;
+
+    aSCR_set_prim_col(&color);
+    _texture_z_light_fog_prim_npc(graph);
+
+    OPEN_DISP(graph);
+    gfx = NOW_POLY_OPA_DISP;
+    gDPSetPrimColor(gfx++, 0, 128, color.r, color.g, color.b, 255);
+    gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(gfx++, s_car_DL_model);
+
+    SET_POLY_OPA_DISP(gfx);
+    CLOSE_DISP(graph);
+
+    (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, &aSCR_shadow_data, FALSE);
+}

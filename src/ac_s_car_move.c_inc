@@ -1,0 +1,79 @@
+static void aSCR_set_bgOffset(STRUCTURE_ACTOR* car, int offs) {
+    static mCoBG_OffsetTable_c height_table_ct[] = {
+      { 0x64, 3, 3, 0, 3, 3, 1 },
+      { 0x64, 3, 3, 3, 0, 3, 1 },
+      { 0x64, 0, 0, 0, 0, 0, 0 },
+      { 0x64, 3, 0, 3, 3, 3, 1 },
+      { 0x64, 6, 3, 3, 3, 3, 0 },
+      { 0x64, 3, 3, 3, 0, 3, 1 },
+      { 0x64, 0, 0, 0, 0, 0, 0 },
+      { 0x64, 3, 0, 3, 3, 3, 1 },
+      { 0x64, 3, 3, 3, 3, 0, 1 }
+    };
+
+    static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
+
+    static f32 addX[] = { -40.0f, 0.0f, 40.0f };
+    static f32 addZ[] = { 40.0f, 0.0f, -40.0f };
+
+    mCoBG_OffsetTable_c* offset;
+    int i;
+    int j;
+    xyz_t pos;
+
+    offset = height_table[offs];
+    for (i = 0; i < 3; i++) {
+        pos.z = car->actor_class.home.position.z + addZ[i];
+
+        for (j = 0; j < 3; j++) {
+            pos.x = car->actor_class.home.position.x + addX[j];
+
+            if (j + i * 3 != 2 && j + i * 3 != 6) {
+                mCoBG_SetPluss5PointOffset_file(pos, *offset, __FILE__, 74);
+            }
+
+            offset++;
+        }
+    }
+}
+
+static void aSCR_actor_move(ACTOR* actor, GAME* game) {
+    STRUCTURE_ACTOR* car;
+    PLAYER_ACTOR* player_actor;
+    mEv_dsg_common_c* designer_common;
+    int car_bx;
+    int car_bz;
+    int player_bx;
+    int player_bz;
+
+    car = (STRUCTURE_ACTOR*)actor;
+    player_actor = get_player_actor_withoutCheck((GAME_PLAY*)game);
+
+    mFI_Wpos2BlockNum(&car_bx, &car_bz, actor->world.position);
+    mFI_Wpos2BlockNum(&player_bx, &player_bz, player_actor->actor_class.world.position);
+
+    if (mDemo_Check(mDemo_TYPE_SCROLL, &player_actor->actor_class) == FALSE &&
+        mDemo_Check(mDemo_TYPE_SCROLL2, &player_actor->actor_class) == FALSE &&
+        mDemo_Check(mDemo_TYPE_SCROLL3, &player_actor->actor_class) == FALSE &&
+        (car_bx != player_bx || car_bz != player_bz)) {
+        Actor_delete(actor);
+        return;
+    }
+
+    designer_common = (mEv_dsg_common_c*)mEv_get_common_area(mEv_EVENT_DESIGNER, FALSE);
+    if (designer_common != NULL && designer_common->button_presses >= 100) {
+        if (car->action <= 0) {
+            (*Common_Get(clip).effect_clip->effect_make_proc)(eEC_EFFECT_CAR_SPARKLE, actor->world.position, 1, 0, game,
+                                                              actor->npc_id, designer_common->_04 != 0, 0);
+            car->action = (int)(fqrand() * 3.0f) * 16 + 48;
+        } else {
+            car->action--;
+        }
+    }
+}
+
+static void aSCR_actor_init(ACTOR* actor, GAME* game) {
+    mFI_SetFG_common(DUMMY_CAR, actor->home.position, FALSE);
+    aSCR_actor_move(actor, game);
+    actor->mv_proc = aSCR_actor_move;
+}

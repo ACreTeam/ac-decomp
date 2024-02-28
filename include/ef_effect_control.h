@@ -15,6 +15,7 @@ enum effect_type {
   eEC_EFFECT_MUKA,
   eEC_EFFECT_WARAU,
   /* TODO: finish */
+  eEC_EFFECT_CAR_SPARKLE = 90,
   eEC_DOUZOU_LIGHT = 101,
   eEC_HEM_LIGHT = 123,
   
