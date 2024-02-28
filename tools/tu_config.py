@@ -247,7 +247,7 @@ def update_asset_slice_config(tu_name: str, binary_slice_file_path: str, asset_s
                 else:
                     asset_commented_map = CommentedMap()
                     binary_commented_map.insert(len(binary_commented_map), asset_symbol.symbol_name, asset_commented_map)
-                    binary_commented_map.ca.insert(asset_symbol.symbol_name, asset_symbol.symbol_name)
+                    binary_commented_map.ca.items[asset_symbol.symbol_name] = [None, asset_symbol.symbol_name, None, None]
 
                 # Add in the address range
                 address_commented_seq: CommentedSeq = None
