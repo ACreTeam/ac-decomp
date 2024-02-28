@@ -426,6 +426,11 @@ ac_haniwa.c:
     .text: [0x80427624, 0x80428F64]
     .rodata: [0x806440B8, 0x806440F8]
     .data: [0x80683D08, 0x80683E98]
+ac_museum_picture.c:
+    .text: [0x8042F170, 0x8042F7FC]
+    .rodata: [0x806442D0, 0x80644330]
+    .data: [0x80684E38, 0x80684F58]
+    .bss: [0x812FBE70, 0x812FBE80]
 ac_my_indoor.c:
     .text: [0x8046EE38, 0x80470288]
     .rodata: [0x80644A88, 0x80644A98]
