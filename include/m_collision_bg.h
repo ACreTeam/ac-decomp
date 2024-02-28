@@ -267,6 +267,10 @@ extern f32 mCoBG_GetBalloonGroundY(const xyz_t* pos);
 extern void mCoBG_MakeBoatCollision(ACTOR* actor, xyz_t* pos, s16* angle_y);
 extern void mCoBG_DeleteBoatCollision(ACTOR* actor);
 extern void mCoBG_WaveCos2BgCheck(f32 wave_cos);
+extern int mCoBG_RegistMoveBg(mCoBG_bg_regist_c* bg_regist, xyz_t* wpos, xyz_t* last_wpos, s16* angle_y, f32 height,
+                              mCoBG_bg_size_c* bg_size, f32* scale_percent, mCoBG_bg_contact_c* bg_contact, xyz_t* ofs,
+                              int type, u32 attribute, f32 check_dist);
+extern void mCoBG_CrossOffMoveBg(int move_bg_idx);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();

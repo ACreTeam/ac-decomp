@@ -2249,6 +2249,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ETC_START 0x8000
 #define ETC_AIRPLANE ETC_START
 #define ETC_BALL (ETC_START + 1)
+#define ETC_MBG (ETC_START + 3)
 #define ETC_BOXTRICK (ETC_START + 4)
 #define ETC_BOXMANAGER (ETC_START + 5)
 #define ETC_SNOWMAN_BALL_A (ETC_START + 13)
