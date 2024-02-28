@@ -8,6 +8,12 @@
 extern "C" {
 #endif
 
+typedef struct museum_fossil_actor_s {
+    ACTOR actor_class;
+    s16 target_angle;
+    int msg_no;
+} MUSEUM_FOSSIL_ACTOR;
+
 extern ACTOR_PROFILE Museum_Fossil_Profile;
 
 #ifdef __cplusplus
@@ -15,4 +21,3 @@ extern ACTOR_PROFILE Museum_Fossil_Profile;
 #endif
 
 #endif
-

@@ -426,6 +426,11 @@ ac_haniwa.c:
     .text: [0x80427624, 0x80428F64]
     .rodata: [0x806440B8, 0x806440F8]
     .data: [0x80683D08, 0x80683E98]
+ac_museum_fossil.c:
+    .text: [0x8042EDC0, 0x8042F170]
+    .rodata: [0x806442A0, 0x806442D0]
+    .data: [0x80684D48, 0x80684E38]
+    .bss: [0x812FBE60, 0x812FBE70]
 ac_museum_picture.c:
     .text: [0x8042F170, 0x8042F7FC]
     .rodata: [0x806442D0, 0x80644330]
