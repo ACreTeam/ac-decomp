@@ -13,7 +13,7 @@ ACTOR_PROFILE BrShop_Profile = {
     mAc_PROFILE_BRSHOP,
     ACTOR_PART_ITEM,
     ACTOR_STATE_TA_SET,
-    0x5826,  // fix name later
+    0x5826, // fix name later
     ACTOR_OBJ_BANK_KEEP,
     sizeof(BRSHOP_ACTOR),
     aBRS_actor_ct,
@@ -23,7 +23,7 @@ ACTOR_PROFILE BrShop_Profile = {
     NULL,
 };
 
-u8 aBRS_shadow_vtx_fix_flg_table[] = {TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE};
+u8 aBRS_shadow_vtx_fix_flg_table[] = { TRUE, FALSE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE };
 
 extern Vtx obj_yamishop_shadow_v[];
 extern Gfx obj_yamishop_shadowT_model[];
@@ -94,7 +94,7 @@ static void aBRS_actor_ct(ACTOR* actor, GAME* game) {
 }
 
 Door_data_c aBRS_br_shop_door_data = {
-    SCENE_BROKER_SHOP, 4, FALSE, 0, {160, 0, 280}, EMPTY_NO, 1, {0, 0, 0},
+    SCENE_BROKER_SHOP, 4, FALSE, 0, { 160, 0, 280 }, EMPTY_NO, 1, { 0, 0, 0 },
 };
 
 static void aBRS_actor_dt(ACTOR* actor, GAME* game) {
@@ -108,6 +108,5 @@ static void aBRS_actor_dt(ACTOR* actor, GAME* game) {
     }
 }
 
-#include "../src/ac_br_shop_draw.c_inc"
-
 #include "../src/ac_br_shop_move.c_inc"
+#include "../src/ac_br_shop_draw.c_inc"
