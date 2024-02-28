@@ -430,6 +430,10 @@ ac_mbg.c:
     .text: [0x8042DCA0, 0x8042DEC8]
     .rodata: [0x80644218, 0x80644238]
     .data: [0x80684BB0, 0x80684CB8]
+ac_misin.c:
+    .text: [0x8042DEC8, 0x8042EAE0]
+    .rodata: [0x80644238, 0x80644288]
+    .data: [0x80684CB8, 0x80684D20]
 ac_museum_fossil.c:
     .text: [0x8042EDC0, 0x8042F170]
     .rodata: [0x806442A0, 0x806442D0]
