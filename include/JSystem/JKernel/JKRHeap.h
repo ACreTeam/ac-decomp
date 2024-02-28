@@ -6,6 +6,7 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
 typedef void JKRHeapErrorHandler(void*, u32, int);
 
 class JKRHeap : public JKRDisposer
@@ -316,4 +317,5 @@ void* operator new[](size_t, JKRHeap*, int);
 void operator delete(void*);
 void operator delete[](void*);
 
+#endif
 #endif // !JKRHEAP_H

@@ -3,8 +3,14 @@
 
 #include "types.h"
 
-extern "C"{
+#ifdef __cplusplus
+extern "C" {
+#endif
+
     void Jam_InitRegistTrack(void);
+    
+#ifdef __cplusplus
 }
+#endif
 
 #endif

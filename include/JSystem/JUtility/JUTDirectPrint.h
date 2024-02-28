@@ -5,6 +5,7 @@
 #include "va_args.h"
 #include "JSystem/JUtility/TColor.h"
 
+#ifdef __cplusplus
 class JUTDirectPrint
 {
 private:
@@ -58,5 +59,6 @@ inline void JUTChangeFrameBuffer(void *buffer, u16 height, u16 width)
 {
     JUTDirectPrint::getManager()->changeFrameBuffer(buffer, width, height);
 }
+#endif
 
 #endif

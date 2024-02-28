@@ -5,6 +5,7 @@
 #include "JSystem/JKernel/JKRFile.h"
 #include "JSystem/JSupport/JSURandomInputStream.h"
 
+#ifdef __cplusplus
 class JSUFileInputStream : public JSURandomInputStream {
 public:
   JSUFileInputStream(JKRFile* file);
@@ -22,5 +23,6 @@ protected:
   const void* mObject;
   s32 mPosition;
 };
+#endif
 
 #endif

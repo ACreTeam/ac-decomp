@@ -5,6 +5,7 @@
 #include <dolphin/os.h>
 #include "types.h"
 
+#ifdef __cplusplus
 class JKRArchive;
 
 struct JKRFileFinderBase
@@ -75,4 +76,5 @@ public:
     bool mIsDvdOpen; // _20
 };
 
+#endif
 #endif

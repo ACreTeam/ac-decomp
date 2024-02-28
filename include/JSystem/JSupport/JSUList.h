@@ -5,7 +5,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
 
 class JSUPtrLink;
 
@@ -224,7 +223,6 @@ private:
     JSUTree<T> *mTree;
 };
 
-#ifdef __cplusplus
 }
 #endif
 

@@ -6,7 +6,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
 
 #define TEX_CACHE_ALIGNMENT (32-1) /* 32 byte alignment */
 #define NUM_TEXTURE_CACHE_DATA 10
@@ -74,10 +73,8 @@ int texture_cache_data_entry(void* original, void* converted);
 #define TEX_BUFFER_DATA_SIZE 0xC000
 #define TEX_BUFFER_BSS_SIZE 0x1000
 
-extern "C" void emu64_texture_cache_data_entry_set(void* begin, void* end);
 extern texture_cache_t* texture_cache_select(void* address);
 
-#ifdef __cplusplus
 }
 #endif
 

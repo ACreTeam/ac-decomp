@@ -5,6 +5,7 @@
 #include "JSystem/J3D/J3DTypes.h"
 #include "dolphin/gx.h"
 
+#ifdef __cplusplus
 typedef float Mtx23[2][3];
 
 struct J2DIndTexCoordScaleInfo
@@ -122,5 +123,6 @@ struct J2DIndBlockFull : public J2DIndBlock
     J2DIndTexMtx mTexMtxes[3];              // _10
     J2DIndTexCoordScale mTexCoordScales[4]; // _64
 };
+#endif
 
 #endif

@@ -8,6 +8,7 @@
 #include "JSystem/JKernel/JKRDisposer.h"
 #include "JSystem/JKernel/JKRMacro.h"
 
+#ifdef __cplusplus
 class JKRFile : public JKRDisposer {
 public:
   inline JKRFile()
@@ -29,5 +30,6 @@ public:
 protected:
   bool mFileOpen;
 };
+#endif
 
 #endif

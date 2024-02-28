@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
 enum JBlockType {
   JBT_ColorAmbientOn = 'CLAB',
   JBT_ColorNull = 'CLNL',
@@ -28,5 +29,6 @@ enum JBlockType {
   JBT_TevNull = 'TVNL',
   JBT_TevPatched = 'TVPT'
 };
+#endif
 
 #endif

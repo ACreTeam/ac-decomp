@@ -4,7 +4,7 @@
 #include "types.h"
 
 #ifdef __cplusplus
- extern "C"{
+extern "C" {
 #endif
 
 extern void Na_Inst(u16, u8*);
@@ -14,7 +14,7 @@ extern int Na_InstCountGet();
 
 
 #ifdef __cplusplus
- }
+}
 #endif
 
 #endif

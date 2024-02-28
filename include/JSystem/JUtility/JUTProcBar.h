@@ -8,6 +8,7 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
 class JUTProcBar
 {
 public:
@@ -152,5 +153,6 @@ private:
     JKRHeap* mWatchHeap;    // _12C
     bool mHeapBarVisible;   // _130
 }; // 0x134 size
+#endif
 
 #endif

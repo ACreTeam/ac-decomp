@@ -6,6 +6,7 @@
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JUtility/JUTFont.h"
 
+#ifdef __cplusplus
 inline s32 colorCheck(s32 diff, s32 t)
 {
     s32 ret = diff - t;
@@ -164,5 +165,7 @@ void JUTWarningConsole(const char*);
 void JUTWarningConsole_f(const char*, ...);
 void JUTWarningConsole_f_va(const char*, va_list);
 };
+
+#endif
 
 #endif

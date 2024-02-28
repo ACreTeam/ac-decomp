@@ -6,6 +6,7 @@
 #include "JSystem/JSupport/JSUList.h"
 #include "types.h"
 
+#ifdef __cplusplus
 class JKRADCommand
 {
 public:
@@ -59,4 +60,5 @@ inline JKRAramBlock* JKRDvdToAram(s32 entrynum, u32 p2, JKRExpandSwitch expSwitc
     return JKRDvdAramRipper::loadToAram(entrynum, p2, expSwitch, p4, p5);
 }
 
+#endif
 #endif

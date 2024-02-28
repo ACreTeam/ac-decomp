@@ -4,13 +4,13 @@
 #include "types.h"
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 extern void Na_GetKappaCounter(void*);
 
 #ifdef __cplusplus
- }
+}
 #endif
 
 

@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
 namespace std {
 
 template <class InputIterator, class Predicate>
@@ -15,5 +16,5 @@ find_if(InputIterator first, InputIterator last, Predicate pred) {
 }
 
 } // namespace std
-
+#endif
 #endif

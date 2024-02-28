@@ -9,9 +9,7 @@
 extern "C" {
 #endif
 
-struct music_ovl_s {
-
-};
+struct music_ovl_s;
 
 extern void mMU_music_ovl_set_proc(Submenu* submenu);
 extern void mMU_music_ovl_construct(Submenu* submenu);

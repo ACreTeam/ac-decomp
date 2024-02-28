@@ -4,6 +4,7 @@
 #include "types.h"
 #include "JSystem/JSupport/JSUStreamEnum.h"
 
+#ifdef __cplusplus
 class JSUIosBase {
 public:
   inline JSUIosBase() : mState(GOOD) { }
@@ -16,6 +17,6 @@ public:
 
   u8 mState;
 };
-
+#endif
 
 #endif

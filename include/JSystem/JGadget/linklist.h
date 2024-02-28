@@ -6,6 +6,7 @@
 #include "JSystem/JUtility/JUTAssertion.h"
 #include "JSystem/JGadget/define.h"
 
+#ifdef __cplusplus
 namespace JGadget {
 
 #define NEGATIVE_OFFSETOF(TYPE, MEMBER) (-static_cast<s32>(offsetof(TYPE, MEMBER)))
@@ -301,5 +302,6 @@ public:
 #pragma pop
 
 }
+#endif
 
 #endif

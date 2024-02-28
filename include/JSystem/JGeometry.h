@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+#ifdef __cplusplus
 inline f32 fsqrt_step(f32 mag)
 {
 	f32 root = __frsqrte(mag);
@@ -359,5 +360,6 @@ typedef TBox2<f32> TBox2f;
 typedef TBox3<f32> TBox3f;
 
 } // namespace JGeometry
+#endif
 
 #endif

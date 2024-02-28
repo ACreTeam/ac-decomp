@@ -6,7 +6,6 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
 
 class JKRHeap;
 
@@ -21,7 +20,6 @@ public:
     JSULink<JKRDisposer> mPointerLinks; // _8
 };
 
-#ifdef __cplusplus
 }
 #endif
 

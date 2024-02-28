@@ -5,6 +5,7 @@
 #include "JSystem/JKernel/JKRFile.h"
 #include "JSystem/JSupport/JSUInputStream.h"
 
+#ifdef __cplusplus
 class JSURandomInputStream : public JSUInputStream {
 public:
   virtual ~JSURandomInputStream() { }
@@ -20,5 +21,6 @@ public:
   int peek(void* buf, s32 len);
   int seek(s32 offset, JSUStreamSeekFrom from);
 };
+#endif
 
 #endif

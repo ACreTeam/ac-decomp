@@ -10,8 +10,8 @@
 extern "C" {
 #endif
 
-asm void Config24MB();
-asm void Config48MB();
+void Config24MB();
+void Config48MB();
 void ReconfigBATs();
 
 

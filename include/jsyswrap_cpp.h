@@ -7,11 +7,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-extern JUTGamePad gamePad[];
-
-#ifdef __cplusplus
+    extern JUTGamePad gamePad[];
 }
 #endif
 

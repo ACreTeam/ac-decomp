@@ -4,7 +4,7 @@
 #include "types.h"
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 typedef struct staff_roll_info_s{
@@ -16,7 +16,7 @@ typedef struct staff_roll_info_s{
 extern void Na_GetStaffRollInfo(void*);
 
 #ifdef __cplusplus
- }
+}
 #endif
 
 

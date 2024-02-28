@@ -4,6 +4,7 @@
 #include "types.h"
 #include "JSystem/JSupport/JSUIosBase.h"
 
+#ifdef __cplusplus
 class JSUInputStream : public JSUIosBase {
 public:
   virtual ~JSUInputStream();
@@ -106,5 +107,6 @@ public:
     return *this;
    }
 };
+#endif
 
 #endif

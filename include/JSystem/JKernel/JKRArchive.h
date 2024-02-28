@@ -6,6 +6,7 @@
 #include "JSystem/JKernel/JKRHeap.h"
 #include "types.h"
 
+#ifdef __cplusplus
 // NOTE: Vtable offsets are off
 
 #define JKRARCHIVE_ATTR_COMPRESSION 0x04
@@ -339,4 +340,5 @@ inline JKRArchive* JKRMountArchive(void* inBuf, JKRHeap* heap, JKRArchive::EMoun
     return JKRArchive::mount(inBuf, heap, mountDirection);
 }
 
+#endif
 #endif
