@@ -2154,7 +2154,7 @@ extern void mRmTp_CopyFloorData(u8* dst, int floor_no) {
     }
 }
 
-extern int mRmTp_CheckTalkAble(s16* rot, xyz_t* pos, f32 max_dist, int required_dir, GAME_PLAY* play) {
+extern int mRmTp_CheckTalkAble(s16* rot, xyz_t* pos, int required_dir, f32 max_dist, GAME_PLAY* play) {
     static int direct_table[16] = { mRmTp_DIRECT_NORTH, -1, -1, mRmTp_DIRECT_WEST,
                                     mRmTp_DIRECT_WEST,  -1, -1, mRmTp_DIRECT_SOUTH,
                                     mRmTp_DIRECT_SOUTH, -1, -1, mRmTp_DIRECT_EAST,
