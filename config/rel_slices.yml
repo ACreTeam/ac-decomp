@@ -753,6 +753,10 @@ ac_radio.c:
 ac_reserve.c:
     .text: [0x805B8C7C, 0x805B9098]
     .data: [0x806C65A0, 0x806C6608]
+ac_s_car.c:
+    .text: [0x805B9098, 0x805B9644]
+    .rodata: [0x8064AB68, 0x8064AB88]
+    .data: [0x806C6608, 0x806C66D0]
 ac_shrine.c:
     .text: [0x805BA4D8, 0x805BB8D0]
     .rodata: [0x8064ABD0, 0x8064AC18]

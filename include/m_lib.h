@@ -52,6 +52,10 @@ typedef struct rgba_t { //can be put in other place
     u8 r, g, b, a;
 } rgba_t;
 
+typedef struct rgb_t {
+  uint r, g, b;
+} rgb_t;
+
 typedef struct {
     xyz_t position;
     s_xyz angle;

@@ -379,6 +379,11 @@ typedef struct ghost_event_s {
 
 #define mEv_DESGINER_NUM 3
 
+typedef struct designer_common_s {
+  int button_presses;
+  int _04;
+} mEv_dsg_common_c;
+
 typedef struct kabu_peddler_event_s {
   PersonalID_c spoken_pids[TOTAL_PLAYER_NUM];
 } mEv_kabu_peddler_c;
