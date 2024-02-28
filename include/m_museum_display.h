@@ -21,46 +21,47 @@ extern "C" {
 #define mMmd_FISH_NUM 40
 
 enum {
-  mMmd_DISPLAY_CANNOT_DONATE, /* Item cannot be donated */
-  mMmd_DISPLAY_CAN_DONATE, /* Item can be donated */
-  mMmd_DISPLAY_ALREADY_DONATED, /* Item has already been donated */
+    mMmd_DISPLAY_CANNOT_DONATE,   /* Item cannot be donated */
+    mMmd_DISPLAY_CAN_DONATE,      /* Item can be donated */
+    mMmd_DISPLAY_ALREADY_DONATED, /* Item has already been donated */
 
-  mMmd_DISPLAY_NUM
+    mMmd_DISPLAY_NUM
 };
 
 enum {
-  mMmd_DONATOR_NONE,
-  mMmd_DONATOR_PLAYER1,
-  mMmd_DONATOR_PLAYER2,
-  mMmd_DONATOR_PLAYER3,
-  mMmd_DONATOR_PLAYER4,
-  mMmd_DONATOR_DELETED_PLAYER,
+    mMmd_DONATOR_NONE,
+    mMmd_DONATOR_PLAYER1,
+    mMmd_DONATOR_PLAYER2,
+    mMmd_DONATOR_PLAYER3,
+    mMmd_DONATOR_PLAYER4,
+    mMmd_DONATOR_DELETED_PLAYER,
 
-  mMmd_DONATOR_NUM
+    mMmd_DONATOR_NUM
 };
 
-enum {
-  mMmd_CATEGORY_FOSSIL,
-  mMmd_CATEGORY_ART,
-  mMmd_CATEGORY_INSECT,
-  mMmd_CATEGORY_FISH,
+#define mMmd_IS_DONATED(donator) ((donator) >= mMmd_DONATOR_PLAYER1 && (donator) <= mMmd_DONATOR_DELETED_PLAYER)
+#define mMmd_DONATOR_EXISTS(donator) ((donator) >= mMmd_DONATOR_PLAYER1 && (donator) <= mMmd_DONATOR_PLAYER4)
+#define mMmd_DONATOR_PLR_IDX(donator) (((donator)-1) & 3)
 
-  mMmd_CATEGORY_NUM
+enum {
+    mMmd_CATEGORY_FOSSIL,
+    mMmd_CATEGORY_ART,
+    mMmd_CATEGORY_INSECT,
+    mMmd_CATEGORY_FISH,
+
+    mMmd_CATEGORY_NUM
 };
 
 /* 4 bits per donatable item */
-#define mMmd_BIT_INFO(info, category, index) \
-  (((info).category##_bit[(index) >> 1] >> (((index) & 1) << 2)) & 0x0F)
-#define mMmd_BIT_INFO2(bitfield, index) \
-  (((bitfield)[(index) >> 1] >> (((index) & 1) << 2)) & 0x0F)
+#define mMmd_BIT_INFO(info, category, index) (((info).category##_bit[(index) >> 1] >> (((index)&1) << 2)) & 0x0F)
+#define mMmd_BIT_INFO2(bitfield, index) (((bitfield)[(index) >> 1] >> (((index)&1) << 2)) & 0x0F)
 
 #define mMmd_ART_BIT(info, index) mMmd_BIT_INFO(info, art, index)
 #define mMmd_INSECT_BIT(info, index) mMmd_BIT_INFO(info, insect, index)
 #define mMmd_FISH_BIT(info, index) mMmd_BIT_INFO(info, fish, index)
 #define mMmd_FOSSIL_BIT(info, index) mMmd_BIT_INFO(info, fossil, index)
 
-#define mMmd_BIT_CLR(info, category, index) \
-  ((info).category##_bit[(index) >> 1] &= ~(0b1111 << (((index) & 1) * 4)))
+#define mMmd_BIT_CLR(info, category, index) ((info).category##_bit[(index) >> 1] &= ~(0b1111 << (((index)&1) * 4)))
 
 #define mMmd_FOSSIL_CLR(info, index) mMmd_BIT_CLR(info, fossil, index)
 #define mMmd_ART_CLR(info, index) mMmd_BIT_CLR(info, art, index)
@@ -68,7 +69,7 @@ enum {
 #define mMmd_FISH_CLR(info, index) mMmd_BIT_CLR(info, fish, index)
 
 #define mMmd_BIT_SET(info, category, index, value) \
-  ((info).category##_bit[(index) >> 1] |= (((value) & 0b1111) << (((index) & 1)) * 4))
+    ((info).category##_bit[(index) >> 1] |= (((value)&0b1111) << (((index)&1)) * 4))
 
 #define mMmd_FOSSIL_SET(info, index, value) mMmd_BIT_SET(info, fossil, index, value)
 #define mMmd_ART_SET(info, index, value) mMmd_BIT_SET(info, art, index, value)
@@ -77,10 +78,10 @@ enum {
 
 /* sizeof(mMmd_info_c) == 0x3F */
 typedef struct museum_display_info_s {
-  /* 0x00 */ u8 fossil_bit[mMmd_FOSSIL_BIT_NUM];
-  /* 0x0D */ u8 art_bit[mMmd_ART_BIT_NUM];
-  /* 0x15 */ u8 fish_bit[mMmd_FISH_BIT_NUM];
-  /* 0x2A */ u8 insect_bit[mMmd_INSECT_BIT_NUM];
+    /* 0x00 */ u8 fossil_bit[mMmd_FOSSIL_BIT_NUM];
+    /* 0x0D */ u8 art_bit[mMmd_ART_BIT_NUM];
+    /* 0x15 */ u8 fish_bit[mMmd_FISH_BIT_NUM];
+    /* 0x2A */ u8 insect_bit[mMmd_INSECT_BIT_NUM];
 } mMmd_info_c;
 
 extern int mMmd_FossilInfo(int fossil_no);
