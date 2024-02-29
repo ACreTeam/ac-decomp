@@ -181,6 +181,10 @@ config/rel.yml:
   obj_e_koinobori_b_pal:
     addrs: [0x806C5920, 0x806C5940]
     type: pal16
+  # ac_mural
+  obj_mural_v:
+    addrs: [0x80904600, 0x80904640]
+    type: vtx
   # ac_lotus
   aLOT_obj_01_lotus_pal:
     addrs: [0x806C59E0, 0x806C5A00]
