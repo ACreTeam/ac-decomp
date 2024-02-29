@@ -8,6 +8,7 @@
 
 import os
 import re
+import typing
 import argparse
 import pyperclip
 from glob import glob
@@ -42,14 +43,14 @@ cast_patterns = re.compile(r"\(int\)")
 #endregion
 
 #region Defaults
-default_defines: dict[str, str] = {"__MWERKS__" : "1", "_LANGUAGE_C": "1", "F3DEX_GBI_2": "1"}
+default_defines: typing.Dict[str, str] = {"__MWERKS__" : "1", "_LANGUAGE_C": "1", "F3DEX_GBI_2": "1"}
 
 src_dir = "src"
 include_dir = "include"
 cwd_dir = os.getcwd()
 script_dir = os.path.dirname(os.path.realpath(__file__))
 root_dir = os.path.abspath(os.path.join(script_dir, ".."))
-default_include_directories: list[str] = [
+default_include_directories: typing.List[str] = [
     os.path.join(root_dir, src_dir),
     os.path.join(root_dir, include_dir),
     os.path.join(script_dir, src_dir),
@@ -231,7 +232,7 @@ def replace_enums_with_numeric_values(text_to_strip: str)->str:
         return text_to_strip
     
     preprocessor = Preprocessor()
-    enum_to_numeric_dict : dict[str, int] = {}
+    enum_to_numeric_dict : typing.Dict[str, int] = {}
     for enum_declaration in enum_declarations:
         enum_members = enum_declaration[1]
         split_enum_members = enum_members.split(",")
@@ -304,7 +305,7 @@ def replace_enums_with_numeric_values(text_to_strip: str)->str:
 #endregion
 
 #region Preprocessing
-def generate_context(preprocessor_arguments: list[str], context_options: ContextGenerationOptions)->str:
+def generate_context(preprocessor_arguments: typing.List[str], context_options: ContextGenerationOptions)->str:
     # Create the temp string writer to pass to the preprocessor since we still want to modify
     # the contents for project-specific conditions
     with StringIO() as preprocessor_string_writer:
@@ -400,7 +401,7 @@ def main():
         return
 
     # Append in the default include directories
-    include_directories: list[str] = []
+    include_directories: typing.List[str] = []
     include_directories.extend(default_include_directories)
     n64_sdk = get_n64_sdk(known_args.n64_sdk)
     if n64_sdk:
@@ -411,7 +412,7 @@ def main():
 
     # Check if we have any passed in defines
     include_defines = []
-    known_defines: list[str] = []
+    known_defines: typing.List[str] = []
     if known_args.defines:
         argument_defines = [x[0] for x in known_args.defines]
         for define in argument_defines:
@@ -421,7 +422,7 @@ def main():
     if not known_args.c_file:
         # If not file is specified it is assumed we want to create a mega context
         # file that is the aggregate of all include files
-        include_files : set[str, str] = set()
+        include_files : typing.Set[str, str] = set()
         for include_directory in default_include_directories:
             files = [y for x in os.walk(include_directory) for y in glob(os.path.join(x[0], '*.h'))]
             for include_file in files:
