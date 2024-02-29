@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+// clang-format off
+
 #include "types.h"
 #include <PR/mbi.h>
 #include "dolphin/gx.h"
@@ -577,6 +579,8 @@ do { \
 /* Macro for calling GC formatted display lists from N64 lists */
 #define gGXCallDisplayList(pkt, dl, nbytes) gDma1p(pkt, G_DL, dl, nbytes, G_DL_GXDL)
 #define gsGXCallDisplayList(dl, nbytes) gsDma1p(pkt, G_DL, dl, nbytes, G_DL_GXDL)
+
+// clang-format on
 
 #ifdef __cplusplus
 }

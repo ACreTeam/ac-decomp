@@ -434,6 +434,11 @@ ac_misin.c:
     .text: [0x8042DEC8, 0x8042EAE0]
     .rodata: [0x80644238, 0x80644288]
     .data: [0x80684CB8, 0x80684D20]
+ac_mural.c:
+    .text: [0x8042EAE0, 0x8042EDC0]
+    .rodata: [0x80644288, 0x806442A0]
+    .data: [0x80684D20, 0x80684D48]
+    .bss: [0x812F9C60, 0x812FBE60]
 ac_museum_fossil.c:
     .text: [0x8042EDC0, 0x8042F170]
     .rodata: [0x806442A0, 0x806442D0]
@@ -929,6 +934,8 @@ data/combi/data_combi.c:
     .data: [0x8080DD80, 0x8080E628]
 data/item/item_name.c:
     .data: [0x808BF660, 0x808C8830]
+data/model/mural/obj_mural.c:
+    .data: [0x80904600, 0x80904700]
 data/npc/default_list.c:
     .data: [0x8096CD90, 0x8096D328]
 data/npc/grow_list.c:
