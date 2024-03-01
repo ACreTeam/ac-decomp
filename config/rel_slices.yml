@@ -54,6 +54,8 @@ m_choice.c:
     .rodata: [0x80641828, 0x80641A90]
     .data: [0x8064F860, 0x80650960]
     .bss: [0x812633A0, 0x81263410]
+m_clip.c:
+    .text: [0x80385404, 0x80385430]
 m_cockroach.c:
     .text: [0x80385430, 0x80385A80]
 m_collision_obj.c:
