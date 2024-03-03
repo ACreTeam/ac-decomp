@@ -1,0 +1,34 @@
+extern Gfx int_sum_casse01_on_model[];
+extern Gfx int_sum_casse01_onT_model[];
+static void aSumCasse01_ct(FTR_ACTOR* ftr_actor, u8* data);
+static void aSumCasse01_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
+static void aSumCasse01_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
+static void aSumCasse01_dt(FTR_ACTOR* ftr_actor, u8* data);
+
+static aFTR_vtable_c aSumCasse01_func = {
+	&aSumCasse01_ct,
+	&aSumCasse01_mv,
+	&aSumCasse01_dw,
+	&aSumCasse01_dt,
+	NULL,
+};
+
+aFTR_PROFILE iam_sum_casse01 = {
+	int_sum_casse01_on_model,
+	int_sum_casse01_onT_model,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	18.0f,
+	0.01f,
+	aFTR_SHAPE_TYPEA,
+	mCoBG_FTR_TYPEA,
+	0,
+	0,
+	0,
+	aFTR_INTERACTION_MUSIC_DISK,
+	&aSumCasse01_func,
+};

@@ -21,3 +21,4 @@ AllowShortFunctionsOnASingleLine: false
 AlignEscapedNewlines: Left
 AlignTrailingComments: true
 SortIncludes: false
+InsertNewlineAtEOF: true
