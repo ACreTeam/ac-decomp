@@ -567,6 +567,7 @@ typedef struct event_common_save_data {
   u8 dozaemon_completed; // used to signal when you've received an item from gulliver
 } mEv_save_common_data_c;
 
+extern void mEv_clear_status(int event, s16 status);
 extern int mEv_CheckFirstJob();
 extern int mEv_CheckFirstIntro();
 extern int mEv_CheckArbeit();

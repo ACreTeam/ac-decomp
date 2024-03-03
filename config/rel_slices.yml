@@ -634,6 +634,9 @@ m_random_field_ovl.c:
     .rodata: [0x80648ED0, 0x80648ED8]
     .data: [0x8069E918, 0x8069F070]
     .bss: [0x813010D0, 0x813013E0]
+ev_cherry_manager.c:
+    .text: [0x8050B3D0, 0x8050B404]
+    .data: [0x8069F070, 0x8069F098]
 ac_fuusen.c:
     .text: [0x8050DAC4, 0x8050F06C]
     .rodata: [0x80648FE8, 0x80649098]
