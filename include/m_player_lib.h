@@ -59,6 +59,7 @@ extern int mPlib_request_main_demo_getoff_boat_standup_type1(const xyz_t* pos, s
 extern int mPlib_check_player_actor_main_index_RecieveMove(GAME* game);
 extern int mPlib_check_label_player_demo_wait(GAME* game, void* label);
 extern int mPlib_check_player_outdoor_start(GAME* game);
+extern void mPlib_Set_change_color_request();
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 

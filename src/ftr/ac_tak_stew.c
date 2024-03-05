@@ -5,8 +5,7 @@ static void fTSW_ct(FTR_ACTOR* ftr_actor, u8* data) {
 static void fTSW_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
-    if (ftr_actor->state != aFTR_STATE_BIRTH && ftr_actor->state != aFTR_STATE_BYE &&
-        ftr_actor->state != aFTR_STATE_DEATH && ftr_actor->state != aFTR_STATE_BIRTH_WAIT) {
+    if (aFTR_CAN_PLAY_SE(ftr_actor)) {
         u32 frame = play->game_frame;
 
         sAdo_OngenPos((u32)ftr_actor, 0x54, &ftr_actor->position);

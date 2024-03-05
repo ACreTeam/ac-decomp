@@ -12,6 +12,35 @@ extern "C" {
 
 typedef struct my_room_actor_s MY_ROOM_ACTOR;
 
+enum {
+    aMR_CONTACT_LEFT,
+    aMR_CONTACT_RIGHT,
+    aMR_CONTACT_CENTER,
+
+    aMR_CONTACT_NUM
+};
+
+enum {
+    aMR_CONTACT_DIR_BACK,
+    aMR_CONTACT_DIR_RIGHT,
+    aMR_CONTACT_DIR_FRONT,
+    aMR_CONTACT_DIR_LEFT,
+
+    aMR_CONTACT_DIR_NUM
+};
+
+typedef struct my_room_contact_s {
+    int contact_flag;
+    int ftr_no;
+    int direction;
+    int contact_side;
+    f32 contact_percent;
+    f32* normal_p;
+    f32 contact_edge0[2];
+    f32 contact_edge1[2];
+    int contact_direction;
+} aMR_contact_info_c;
+
 typedef struct my_room_clock_info_s {
     int tick0;     /* set on frame 15 */
     int tick1;     /* set on frame 45 */
@@ -77,6 +106,8 @@ extern ACTOR_PROFILE My_Room_Profile;
 extern int aMR_CorrespondFurniture(mActor_name_t ftr0, mActor_name_t ftr1);
 extern int aMR_GetFurnitureUnit(mActor_name_t ftr);
 extern mActor_name_t aMR_FurnitureFg_to_FurnitureFgWithDirect(mActor_name_t ftr, int direct);
+extern void aMR_SameFurnitureSwitchOFF(u16 ftr_name);
+extern aMR_contact_info_c* aMR_GetContactInfoLayer1(void);
 
 #ifdef __cplusplus
 }
