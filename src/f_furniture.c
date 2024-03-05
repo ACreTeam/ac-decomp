@@ -5,6 +5,8 @@
 #include "m_play.h"
 #include "m_common_data.h"
 #include "audio.h"
+#include "m_player_lib.h"
+#include "ac_my_room.h"
 
 static u16 fFTR_myhome_off_pal_table[][16] = {
     // clang-format off
@@ -118,6 +120,10 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
     return two_tex_scroll_dolphin(play->game.graph, 0, -(scroll_x0 * ofs), -(scroll_y0 * ofs), width0, height0, 1,
                                   -(scroll_x1 * ofs), -(scroll_y1 * ofs), width1, height1);
 }
+
+#define aFTR_CAN_PLAY_SE(ftr_actor)                                                \
+    (ftr_actor->state != aFTR_STATE_BIRTH && ftr_actor->state != aFTR_STATE_BYE && \
+     ftr_actor->state != aFTR_STATE_DEATH && ftr_actor->state != aFTR_STATE_BIRTH_WAIT)
 
 /**
  * How to add a completed furniture actor:
@@ -716,8 +722,8 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_hos_deskL.c"
 #include "../src/ftr/ac_hos_deskR.c"
 #include "../src/ftr/ac_hos_flip.c"
-// #include "../src/ftr/ac_hos_mario_hata.c"
-// #include "../src/ftr/ac_hos_mario_kinoko.c"
+#include "../src/ftr/ac_hos_mario_hata.c"
+#include "../src/ftr/ac_hos_mario_kinoko.c"
 #include "../src/ftr/ac_hos_piknic.c"
 #include "../src/ftr/ac_hos_Tdesk.c"
 #include "../src/ftr/ac_iku_bugzapper.c"
@@ -738,13 +744,13 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_iku_ido.c"
 #include "../src/ftr/ac_iku_jack.c"
 #include "../src/ftr/ac_iku_jersey.c"
-// #include "../src/ftr/ac_iku_mario_coin.c"
-// #include "../src/ftr/ac_iku_mario_dokan.c"
-// #include "../src/ftr/ac_iku_mario_hatena.c"
-// #include "../src/ftr/ac_iku_mario_koura.c"
+#include "../src/ftr/ac_iku_mario_coin.c"
+#include "../src/ftr/ac_iku_mario_dokan.c"
+#include "../src/ftr/ac_iku_mario_hatena.c"
+#include "../src/ftr/ac_iku_mario_koura.c"
 #include "../src/ftr/ac_iku_mario_renga.c"
-// #include "../src/ftr/ac_iku_mario_taihou.c"
-// #include "../src/ftr/ac_iku_mario_star.c"
+#include "../src/ftr/ac_iku_mario_taihou.c"
+#include "../src/ftr/ac_iku_mario_star.c"
 #include "../src/ftr/ac_iku_orange.c"
 #include "../src/ftr/ac_iku_reducespeed.c"
 #include "../src/ftr/ac_iku_roller.c"
@@ -769,7 +775,7 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_yaz_b_house.c"
 // #include "../src/ftr/ac_yaz_candle.c"
 // #include "../src/ftr/ac_yaz_fish_trophy.c"
-// #include "../src/ftr/ac_yaz_mario_flower.c"
+#include "../src/ftr/ac_yaz_mario_flower.c"
 #include "../src/ftr/ac_yaz_telescope.c"
 #include "../src/ftr/ac_yaz_tub.c"
 #include "../src/ftr/ac_yaz_turkey_chair.c"
