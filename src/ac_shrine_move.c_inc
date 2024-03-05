@@ -1,93 +1,88 @@
 /* @unused static void aSHR_OngenTrgStart(SHRINE_ACTOR*, int?) */
 
 static void aSHR_set_bgOffset(ACTOR* actorx, int table_idx) {
-  static mCoBG_OffsetTable_c height_table_ct[4][2] = {
-    {
-      { 100, 1, 1, 1, 1, 1, 0 }, // X
-      { 100, 1, 1, 1, 1, 1, 0 }, // Z
-    },
-    {
-      { 100, 2, 2, 1, 1, 4, 0 },
-      { 100, 2, 4, 1, 1, 2, 0 },
-    },
-    {
-      { 100, 11, 11, 11, 11, 11, 0 },
-      { 100, 11, 11, 11, 11, 11, 0 },
-    },
-    {
-      { 100, 11, 11, 11, 11, 11, 0 },
-      { 100, 11, 11, 11, 11, 11, 0 }
+    static mCoBG_OffsetTable_c height_table_ct[4][2] = { {
+                                                             { 100, 1, 1, 1, 1, 1, 0 }, // X
+                                                             { 100, 1, 1, 1, 1, 1, 0 }, // Z
+                                                         },
+                                                         {
+                                                             { 100, 2, 2, 1, 1, 4, 0 },
+                                                             { 100, 2, 4, 1, 1, 2, 0 },
+                                                         },
+                                                         {
+                                                             { 100, 11, 11, 11, 11, 11, 0 },
+                                                             { 100, 11, 11, 11, 11, 11, 0 },
+                                                         },
+                                                         { { 100, 11, 11, 11, 11, 11, 0 },
+                                                           { 100, 11, 11, 11, 11, 11, 0 } } };
+
+    static mCoBG_OffsetTable_c* height_table[] = { (mCoBG_OffsetTable_c*)height_table_ct,
+                                                   (mCoBG_OffsetTable_c*)height_table_ct };
+
+    static f32 addX[2] = { -20.0f, 20.0f };
+    static f32 addZ[4] = { 20.0f, -20.0f, -60.0f, -100.0f };
+
+    mCoBG_OffsetTable_c* height_table_p = (mCoBG_OffsetTable_c*)height_table[table_idx];
+    int i;
+
+    for (i = 0; i < 4; i++) {
+        xyz_t pos;
+
+        pos.z = actorx->home.position.z + addZ[i];
+        pos.x = actorx->home.position.x + addX[0];
+        mCoBG_SetPluss5PointOffset_file(pos, height_table_p[0], __FILE__, 238);
+
+        pos.x = actorx->home.position.x + addX[1];
+        mCoBG_SetPluss5PointOffset_file(pos, height_table_p[1], __FILE__, 242);
+
+        height_table_p += 2;
     }
-  };
-
-  static mCoBG_OffsetTable_c* height_table[] = {
-    (mCoBG_OffsetTable_c*)height_table_ct,
-    (mCoBG_OffsetTable_c*)height_table_ct
-  };
-
-  static f32 addX[2] = { -20.0f, 20.0f };
-  static f32 addZ[4] = { 20.0f, -20.0f, -60.0f, -100.0f };
-
-  mCoBG_OffsetTable_c* height_table_p = (mCoBG_OffsetTable_c*)height_table[table_idx];
-  int i;
-
-  for (i = 0; i < 4; i++) {
-    xyz_t pos;
-
-    pos.z = actorx->home.position.z + addZ[i];
-    pos.x = actorx->home.position.x + addX[0];
-    mCoBG_SetPluss5PointOffset_file(pos, height_table_p[0], __FILE__, 238);
-    
-    pos.x = actorx->home.position.x + addX[1];
-    mCoBG_SetPluss5PointOffset_file(pos, height_table_p[1], __FILE__, 242);
-    
-    height_table_p += 2;
-  }
 }
 
 static int aSHR_talk_check(ACTOR* actorx, GAME_PLAY* play) {
-  PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
-  SHRINE_ACTOR* shrine = (SHRINE_ACTOR*)actorx;
-  int res = FALSE;
-  
-  if (aSHR_GET_CLIP()->hem_flag == TRUE) {
-    return FALSE;
-  }
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    SHRINE_ACTOR* shrine = (SHRINE_ACTOR*)actorx;
+    int res = FALSE;
 
-  if (shrine->structure_class.arg2 == 0 && mDemo_Get_talk_actor() == NULL && player != NULL) {
-    s16 player_angle_y = search_position_angleY(&actorx->world.position, &player->actor_class.world.position);
-
-    if (ABS(player_angle_y - actorx->shape_info.rotation.y) < DEG2SHORT_ANGLE(22.5f)) {
-      res = TRUE;
+    if (aSHR_GET_CLIP()->hem_flag == TRUE) {
+        return FALSE;
     }
-  }
 
-  return res;
+    if (shrine->structure_class.arg2 == 0 && mDemo_Get_talk_actor() == NULL && player != NULL) {
+        s16 player_angle_y = search_position_angleY(&actorx->world.position, &player->actor_class.world.position);
+
+        if (ABS(player_angle_y - actorx->shape_info.rotation.y) < DEG2SHORT_ANGLE(22.5f)) {
+            res = TRUE;
+        }
+    }
+
+    return res;
 }
 
 static void aSHR_set_talk_info(ACTOR* actorx) {
-  rgba_t window_color;
+    rgba_t window_color;
 
-  mDemo_Set_msg_num(0x1124);
-  mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
-  mDemo_Set_talk_display_name(FALSE);
-  mDemo_Set_ListenAble();
+    mDemo_Set_msg_num(0x1124);
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_ListenAble();
 
-  window_color.r = 205;
-  window_color.g = 80;
-  window_color.b = 40;
-  window_color.a = 255;
-  mDemo_Set_talk_window_color(&window_color);
+    window_color.r = 205;
+    window_color.g = 80;
+    window_color.b = 40;
+    window_color.a = 255;
+    mDemo_Set_talk_window_color(&window_color);
 }
 
 static int aSHR_ctrl_light() {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (Common_Get(time.now_sec) < (6 * mTM_SECONDS_IN_HOUR) || Common_Get(time.now_sec) >= (18 * mTM_SECONDS_IN_HOUR)) {
-    res = TRUE;
-  }
+    if (Common_Get(time.now_sec) < (6 * mTM_SECONDS_IN_HOUR) ||
+        Common_Get(time.now_sec) >= (18 * mTM_SECONDS_IN_HOUR)) {
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static void aSHR_Present_move_wait_init(aSHR_Present_c*);
@@ -95,307 +90,284 @@ static void aSHR_Present_move_wait(aSHR_Present_c*);
 static void aSHR_Present_move_walk(aSHR_Present_c*);
 
 static void aSHR_Present_ct(aSHR_Present_c* present) {
-  bzero(present, sizeof(aSHR_Present_c));
-  aSHR_Present_move_wait_init(present);
+    bzero(present, sizeof(aSHR_Present_c));
+    aSHR_Present_move_wait_init(present);
 }
 
 static void aSHR_Present_move(aSHR_Present_c* present, SHRINE_ACTOR* shrine, GAME_PLAY* play) {
-  (*present->move_proc)(present);
+    (*present->move_proc)(present);
 
-  if (present->move_proc == aSHR_Present_move_walk && present->finish_flag == FALSE) {
-    HANDOVERITEM_ACTOR* handOverItem = (HANDOVERITEM_ACTOR*)Actor_info_name_search(&play->actor_info, mAc_PROFILE_HANDOVERITEM, ACTOR_PART_BG);
+    if (present->move_proc == aSHR_Present_move_walk && present->finish_flag == FALSE) {
+        HANDOVERITEM_ACTOR* handOverItem =
+            (HANDOVERITEM_ACTOR*)Actor_info_name_search(&play->actor_info, mAc_PROFILE_HANDOVERITEM, ACTOR_PART_BG);
 
-    if (handOverItem != NULL) {
-      /* Move the 'handOverItem' actor's position to the location of our 'present' */
-      Matrix_push();
-      Matrix_translate(
-        shrine->structure_class.actor_class.world.position.x + present->trans.x,
-        shrine->structure_class.actor_class.world.position.y + present->trans.y,
-        shrine->structure_class.actor_class.world.position.z + present->trans.z,
-        0
-      );
-      Matrix_scale(0.01f, 0.01f, 0.01f, 1);
-      Matrix_get(&handOverItem->tools_class.matrix_work);
-      Matrix_pull();
-      handOverItem->tools_class.init_matrix = TRUE;
+        if (handOverItem != NULL) {
+            /* Move the 'handOverItem' actor's position to the location of our 'present' */
+            Matrix_push();
+            Matrix_translate(shrine->structure_class.actor_class.world.position.x + present->trans.x,
+                             shrine->structure_class.actor_class.world.position.y + present->trans.y,
+                             shrine->structure_class.actor_class.world.position.z + present->trans.z, 0);
+            Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+            Matrix_get(&handOverItem->tools_class.matrix_work);
+            Matrix_pull();
+            handOverItem->tools_class.init_matrix = TRUE;
+        }
     }
-  }
 }
 
 static void aSHR_Present_move_wait_init(aSHR_Present_c* present) {
-  present->move_proc = &aSHR_Present_move_wait;
+    present->move_proc = &aSHR_Present_move_wait;
 }
 
 static void aSHR_Present_move_wait(aSHR_Present_c* present) {
-  /* Do nothing */
+    /* Do nothing */
 }
 
 static const xyz_t aSHR_present_init_pos = { 2.0f, 40.0f, 10.0f }; // start
-static const xyz_t aSHR_present_aim_pos  = { 2.0f, 40.0f, 33.0f }; // goal
+static const xyz_t aSHR_present_aim_pos = { 2.0f, 40.0f, 33.0f };  // goal
 
 static void aSHR_Present_move_walk(aSHR_Present_c* present) {
-  f32 move = get_percent_forAccelBrake(present->percent, 0.0f, 1.0f, 0.15f, 0.15f);
-  
-  present->percent += 0.012f;
-  Math3DInDivPos2(&aSHR_present_init_pos, &aSHR_present_aim_pos, &present->trans, move);
+    f32 move = get_percent_forAccelBrake(present->percent, 0.0f, 1.0f, 0.15f, 0.15f);
 
-  if (move >= 1.0f) {
-    present->finish_flag = TRUE;
-  }
+    present->percent += 0.012f;
+    Math3DInDivPos2(&aSHR_present_init_pos, &aSHR_present_aim_pos, &present->trans, move);
+
+    if (move >= 1.0f) {
+        present->finish_flag = TRUE;
+    }
 }
 
 static void aSHR_wait(SHRINE_ACTOR* shrine, GAME_PLAY* play) {
-  if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)shrine) == TRUE) {
-    mDemo_Set_ListenAble();
-    aSHR_setup_action(shrine, play, aSHR_ACTION_TALK);
-  }
-  else if (aSHR_talk_check((ACTOR*)shrine, play)) {
-    mDemo_Request(mDemo_TYPE_TALK, (ACTOR*)shrine, &aSHR_set_talk_info);
-  }
+    if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)shrine) == TRUE) {
+        mDemo_Set_ListenAble();
+        aSHR_setup_action(shrine, play, aSHR_ACTION_TALK);
+    } else if (aSHR_talk_check((ACTOR*)shrine, play)) {
+        mDemo_Request(mDemo_TYPE_TALK, (ACTOR*)shrine, &aSHR_set_talk_info);
+    }
 }
 
 static void aSHR_talk(SHRINE_ACTOR* shrine, GAME_PLAY* play) {
-  static u8 choume_str[FG_BLOCK_Z_NUM + 1] = { 'Q', 'A', 'B', 'C', 'D', 'E', 'F' };
-  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
-  int msg_no = 0x1128;
-  int action;
-  int condition;
-  int field_rank;
-  int bx;
-  int bz;
-  int good_field;
-  u8 acre_str[mIN_ITEM_NAME_LEN];
+    static u8 choume_str[FG_BLOCK_Z_NUM + 1] = { 'Q', 'A', 'B', 'C', 'D', 'E', 'F' };
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int msg_no = 0x1128;
+    int action;
+    int condition;
+    int field_rank;
+    int bx;
+    int bz;
+    int good_field;
+    u8 acre_str[mIN_ITEM_NAME_LEN];
 
-  if (mMsg_Check_MainNormalContinue(msg_p)) {
-    switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
-      case mChoice_CHOICE0: /* How are things? */
-      {
-        condition = mFAs_GetFieldRank_Condition(&field_rank, &bx, &bz);
-        good_field = mFAs_CheckGoodField();
+    if (mMsg_Check_MainNormalContinue(msg_p)) {
+        switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+            case mChoice_CHOICE0: /* How are things? */
+            {
+                condition = mFAs_GetFieldRank_Condition(&field_rank, &bx, &bz);
+                good_field = mFAs_CheckGoodField();
 
-        if (
-          field_rank == mFAs_FIELDRANK_SIX &&                                 /* Current field rank is 'perfect' */
-          good_field &&                                                       /* Perfect town status achieved for long enough */
-          mSC_trophy_get(mSC_TROPHY_GOLDEN_AXE) == FALSE &&                   /* Haven't already obtained the golden axe */
-          mLd_PlayerManKindCheck() == FALSE &&                                /* Must be from this town */
-          mPr_GetPossessionItemIdx(Common_Get(now_private), EMPTY_NO) >= 0 && /* Must have a free inventory slot */
-          mEv_CheckFirstJob() == FALSE &&                                     /* Can't be doing the part-time job */
-          condition != mFAs_CONDITION_DUST_OVER                               /* No trash */
-        ) {
-          msg_no = 0x2C50;
-          action = aSHR_ACTION_MAKE_HEM;
+                if (field_rank == mFAs_FIELDRANK_SIX &&               /* Current field rank is 'perfect' */
+                    good_field &&                                     /* Perfect town status achieved for long enough */
+                    mSC_trophy_get(mSC_TROPHY_GOLDEN_AXE) == FALSE && /* Haven't already obtained the golden axe */
+                    mLd_PlayerManKindCheck() == FALSE &&              /* Must be from this town */
+                    mPr_GetPossessionItemIdx(Common_Get(now_private), EMPTY_NO) >=
+                        0 &&                              /* Must have a free inventory slot */
+                    mEv_CheckFirstJob() == FALSE &&       /* Can't be doing the part-time job */
+                    condition != mFAs_CONDITION_DUST_OVER /* No trash */
+                ) {
+                    msg_no = 0x2C50;
+                    action = aSHR_ACTION_MAKE_HEM;
+                } else if (condition != mFAs_CONDITION_NO_CASE) {
+                    switch (condition) {
+                        case mFAs_CONDITION_DUST_OVER:
+                            msg_no = 0x2C4F;
+                            break;
+                        case mFAs_CONDITION_TREE_LESS:
+                            msg_no = 0x2C45;
+                            break;
+                        case mFAs_CONDITION_TREE_OVER:
+                            msg_no = 0x2C46;
+                            break;
+                        // case mFAs_CONDITION_GRASS_OVER:
+                        default:
+                            msg_no = 0x2C47;
+                            break;
+                    }
+
+                    mFont_UnintToString(acre_str, sizeof(acre_str), bx, sizeof(acre_str), TRUE, FALSE, TRUE);
+                    mMsg_Set_free_str(msg_p, mMsg_FREE_STR1, acre_str, sizeof(acre_str));
+                    mMsg_Set_free_str(msg_p, mMsg_FREE_STR0, &choume_str[bz], 1);
+                    action = aSHR_ACTION_TALK_END;
+                } else {
+                    msg_no = 0x2C4E - field_rank; /* Message is based on the field rank */
+                    action = aSHR_ACTION_TALK_END;
+                }
+
+                mMsg_Set_continue_msg_num(msg_p, msg_no);
+                break;
+            }
+
+            case mChoice_CHOICE1: /* Apologize */
+            {
+                if (mSM_check_open_inventory_itemlist(mSM_IV_OPEN_SHRINE, 0)) {
+                    shrine->structure_class.arg0 = 0;
+                    action = aSHR_ACTION_TALK_GOMEN;
+                } else {
+                    msg_no = 0x1127;
+                    action = aSHR_ACTION_TALK_END;
+                }
+
+                mMsg_Set_continue_msg_num(msg_p, msg_no);
+                break;
+            }
+
+            default: /* 'What's this?', 'Nothing...' */
+            {
+                action = aSHR_ACTION_TALK_END;
+                break;
+            }
         }
-        else if (condition != mFAs_CONDITION_NO_CASE) {
-          switch (condition) {
-            case mFAs_CONDITION_DUST_OVER:
-              msg_no = 0x2C4F;
-              break;
-            case mFAs_CONDITION_TREE_LESS:
-              msg_no = 0x2C45;
-              break;
-            case mFAs_CONDITION_TREE_OVER:
-              msg_no = 0x2C46;
-              break;
-            //case mFAs_CONDITION_GRASS_OVER:
-            default:
-              msg_no = 0x2C47;
-              break;
-          }
 
-          mFont_UnintToString(acre_str, sizeof(acre_str), bx, sizeof(acre_str), TRUE, FALSE, TRUE);
-          mMsg_Set_free_str(msg_p, mMsg_FREE_STR1, acre_str, sizeof(acre_str));
-          mMsg_Set_free_str(msg_p, mMsg_FREE_STR0, &choume_str[bz], 1);
-          action = aSHR_ACTION_TALK_END;
+        if (action != -1) {
+            aSHR_setup_action(shrine, play, action);
         }
-        else {
-          msg_no = 0x2C4E - field_rank; /* Message is based on the field rank */
-          action = aSHR_ACTION_TALK_END;
-        }
-
-        mMsg_Set_continue_msg_num(msg_p, msg_no);
-        break;
-      }
-
-      case mChoice_CHOICE1: /* Apologize */
-      {
-        if (mSM_check_open_inventory_itemlist(mSM_IV_OPEN_SHRINE, 0)) {
-          shrine->structure_class.arg0 = 0;
-          action = aSHR_ACTION_TALK_GOMEN;
-        }
-        else {
-          msg_no = 0x1127;
-          action = aSHR_ACTION_TALK_END;
-        }
-
-        mMsg_Set_continue_msg_num(msg_p, msg_no);
-        break;
-      }
-
-      default: /* 'What's this?', 'Nothing...' */
-      {
-        action = aSHR_ACTION_TALK_END;
-        break;
-      }
     }
-
-    if (action != -1) {
-      aSHR_setup_action(shrine, play, action);
-    }
-  }
 }
 
 static void aSHR_talk_gomen(SHRINE_ACTOR* shrine, GAME_PLAY* play) {
-  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
-  Submenu* submenu = &play->submenu;
-  int msg_no = -1;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    Submenu* submenu = &play->submenu;
+    int msg_no = -1;
 
-  /* TODO: enums for whatever this is */
-  switch (shrine->structure_class.arg0) {
-    //default:
-    
-    case 0:
-    {
-      if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
-        mMsg_request_main_disappear_wait_type1(msg_p);
-        shrine->structure_class.arg0 = 1;
-      }
-      return;
+    /* TODO: enums for whatever this is */
+    switch (shrine->structure_class.arg0) {
+            // default:
+
+        case 0: {
+            if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+                mMsg_request_main_disappear_wait_type1(msg_p);
+                shrine->structure_class.arg0 = 1;
+            }
+            return;
+        }
+
+        case 1: {
+            if (mMsg_Check_main_wait(msg_p) == TRUE) {
+                mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_SHRINE, 0);
+                shrine->structure_class.arg0 = 2;
+            }
+            return;
+        }
+
+        case 2: {
+            u8 item_name[mIN_ITEM_NAME_LEN];
+            Submenu_Item_c* sm_item;
+            if (submenu->open_flag) {
+                return;
+            }
+
+            sm_item = submenu->item_p;
+            if (sm_item->item == EMPTY_NO) {
+                mMsg_request_main_forceoff();
+            } else if (mQst_CheckNpcExistbyItemIdx(sm_item->slot_no, mQst_CHECK_NPC_RECEIPIENT)) {
+                msg_no = 0x1129;
+            } else if (mQst_CheckNpcExistbyItemIdx(sm_item->slot_no, mQst_CHECK_NPC_SENDER)) {
+                msg_no = 0x112A;
+            } else if (mQst_CheckFirstJobQuestbyItemIdx(sm_item->slot_no)) {
+                msg_no = 0x112A;
+            } else {
+                mIN_copy_name_str(item_name, sm_item->item);
+                mMsg_Set_free_str_art(msg_p, mMsg_FREE_STR0, item_name, mIN_ITEM_NAME_LEN,
+                                      mIN_get_item_article(sm_item->item));
+                msg_no = 0x112B;
+                mQst_ClearQuestbyPossessionIdx(sm_item->slot_no);
+                mPr_SetPossessionItem(Common_Get(now_private), sm_item->slot_no, EMPTY_NO, mPr_ITEM_COND_NORMAL);
+            }
+
+            if (msg_no != -1) {
+                mMsg_Set_ForceNext(msg_p);
+                mMsg_request_main_appear_wait_type1(msg_p);
+                mMsg_Set_continue_msg_num(msg_p, msg_no);
+            }
+
+            aSHR_setup_action(shrine, play, aSHR_ACTION_TALK_END);
+            shrine->structure_class.arg0 = 0;
+            break;
+        }
     }
-
-    case 1:
-    {
-      if (mMsg_Check_main_wait(msg_p) == TRUE) {
-        mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_SHRINE, 0);
-        shrine->structure_class.arg0 = 2;
-      }
-      return;
-    }
-
-    case 2:
-    {
-      u8 item_name[mIN_ITEM_NAME_LEN];
-      Submenu_Item_c* sm_item;
-      if (submenu->open_flag) {
-        return;
-      }
-
-      sm_item = submenu->item_p;
-      if (sm_item->item == EMPTY_NO) {
-        mMsg_request_main_forceoff();
-      }
-      else if (mQst_CheckNpcExistbyItemIdx(sm_item->slot_no, mQst_CHECK_NPC_RECEIPIENT)) {
-        msg_no = 0x1129;
-      }
-      else if (mQst_CheckNpcExistbyItemIdx(sm_item->slot_no, mQst_CHECK_NPC_SENDER)) {
-        msg_no = 0x112A;
-      }
-      else if (mQst_CheckFirstJobQuestbyItemIdx(sm_item->slot_no)) {
-        msg_no = 0x112A;
-      }
-      else {
-        mIN_copy_name_str(item_name, sm_item->item);
-        mMsg_Set_free_str_art(msg_p, mMsg_FREE_STR0, item_name, mIN_ITEM_NAME_LEN, mIN_get_item_article(sm_item->item));
-        msg_no = 0x112B;
-        mQst_ClearQuestbyPossessionIdx(sm_item->slot_no);
-        mPr_SetPossessionItem(Common_Get(now_private), sm_item->slot_no, EMPTY_NO, mPr_ITEM_COND_NORMAL);
-      }
-
-      if (msg_no != -1) {
-        mMsg_Set_ForceNext(msg_p);
-        mMsg_request_main_appear_wait_type1(msg_p);
-        mMsg_Set_continue_msg_num(msg_p, msg_no);
-      }
-
-      aSHR_setup_action(shrine, play, aSHR_ACTION_TALK_END);
-      shrine->structure_class.arg0 = 0;
-      break;
-    }
-  }
 }
 
 static void aSHR_make_hem_init(SHRINE_ACTOR* shrine) {
-  mDemo_Set_talk_return_demo_wait(TRUE);
-  mPlib_Set_able_force_speak_label((ACTOR*)shrine);
+    mDemo_Set_talk_return_demo_wait(TRUE);
+    mPlib_Set_able_force_speak_label((ACTOR*)shrine);
 }
 
 static void aSHR_make_hem(SHRINE_ACTOR* shrine, GAME_PLAY* play) {
-  if (shrine->structure_class.actor_class.parent_actor == NULL) {
-    if (
-      mMsg_Check_MainDisappear(mMsg_Get_base_window_p()) &&
-      Common_Get(clip).npc_clip != NULL &&
-      Common_Get(clip).npc_clip->setupActor_proc != NULL
-    ) {
-      int made_hem = (*Common_Get(clip).npc_clip->setupActor_proc)(play, SP_NPC_HEM, -1, -1, -1, shrine->structure_class.actor_class.block_x, shrine->structure_class.actor_class.block_z, 7, 8);
+    if (shrine->structure_class.actor_class.parent_actor == NULL) {
+        if (mMsg_Check_MainDisappear(mMsg_Get_base_window_p()) && Common_Get(clip).npc_clip != NULL &&
+            Common_Get(clip).npc_clip->setupActor_proc != NULL) {
+            int made_hem = (*Common_Get(clip).npc_clip->setupActor_proc)(
+                play, SP_NPC_HEM, -1, -1, -1, shrine->structure_class.actor_class.block_x,
+                shrine->structure_class.actor_class.block_z, 7, 8);
 
-      if (made_hem == TRUE) {
-        ACTOR* hem_actor = Actor_info_fgName_search(&play->actor_info, SP_NPC_HEM, ACTOR_PART_NPC);
+            if (made_hem == TRUE) {
+                ACTOR* hem_actor = Actor_info_fgName_search(&play->actor_info, SP_NPC_HEM, ACTOR_PART_NPC);
 
-        if (hem_actor != NULL) {
-          xyz_t pos = shrine->structure_class.actor_class.world.position;
-          
-          hem_actor->parent_actor = (ACTOR*)shrine;
-          aSHR_GET_CLIP()->hem_flag = TRUE;
-          Common_Set(hem_visible, FALSE);
-          pos.z += mFI_UT_WORLDSIZE_Z_F;
-          (*Common_Get(clip).effect_clip->effect_make_proc)(eEC_HEM_LIGHT, pos, 2, 0, (GAME*)play, 0xFFFF, 1, 0);
-          mSC_trophy_set(mSC_TROPHY_GOLDEN_AXE);
-          mFAs_ClearGoodField(); /* Only one player can get it at a time */
-          aSHR_setup_action(shrine, play, aSHR_ACTION_TALK_END);
+                if (hem_actor != NULL) {
+                    xyz_t pos = shrine->structure_class.actor_class.world.position;
 
-          if (mPlib_Check_able_force_speak_label((GAME*)play, (ACTOR*)shrine)) {
-            mPlib_Set_able_force_speak_label(hem_actor);
-          }
+                    hem_actor->parent_actor = (ACTOR*)shrine;
+                    aSHR_GET_CLIP()->hem_flag = TRUE;
+                    Common_Set(hem_visible, FALSE);
+                    pos.z += mFI_UT_WORLDSIZE_Z_F;
+                    (*Common_Get(clip).effect_clip->effect_make_proc)(eEC_EFFECT_MAKE_HEM, pos, 2, 0, (GAME*)play,
+                                                                      0xFFFF, 1, 0);
+                    mSC_trophy_set(mSC_TROPHY_GOLDEN_AXE);
+                    mFAs_ClearGoodField(); /* Only one player can get it at a time */
+                    aSHR_setup_action(shrine, play, aSHR_ACTION_TALK_END);
+
+                    if (mPlib_Check_able_force_speak_label((GAME*)play, (ACTOR*)shrine)) {
+                        mPlib_Set_able_force_speak_label(hem_actor);
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
 
 static void aSHR_talk_end(SHRINE_ACTOR* shrine, GAME_PLAY* play) {
-  if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)shrine) == FALSE) {
-    aSHR_setup_action(shrine, play, aSHR_ACTION_WAIT);
-  }
+    if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)shrine) == FALSE) {
+        aSHR_setup_action(shrine, play, aSHR_ACTION_WAIT);
+    }
 }
 
 typedef void (*aSHR_PROC)(SHRINE_ACTOR*, GAME_PLAY*);
 typedef void (*aSHR_INIT_PROC)(SHRINE_ACTOR*);
 
 static void aSHR_setup_action(SHRINE_ACTOR* shrine, GAME_PLAY* play, int action) {
-  static aSHR_INIT_PROC init_proc[aSHR_ACTION_NUM] = {
-    NULL,
-    NULL,
-    NULL,
-    &aSHR_make_hem_init,
-    NULL
-  };
+    static aSHR_INIT_PROC init_proc[aSHR_ACTION_NUM] = { NULL, NULL, NULL, &aSHR_make_hem_init, NULL };
 
-  static aSHR_PROC process[aSHR_ACTION_NUM] = {
-    &aSHR_wait,
-    &aSHR_talk,
-    &aSHR_talk_gomen,
-    &aSHR_make_hem,
-    &aSHR_talk_end
-  };
+    static aSHR_PROC process[aSHR_ACTION_NUM] = { &aSHR_wait, &aSHR_talk, &aSHR_talk_gomen, &aSHR_make_hem,
+                                                  &aSHR_talk_end };
 
-  if (init_proc[action] != NULL) {
-    (*init_proc[action])(shrine);
-  }
+    if (init_proc[action] != NULL) {
+        (*init_proc[action])(shrine);
+    }
 
-  shrine->structure_class.action_proc = (aSTR_MOVE_PROC)process[action];
-  shrine->structure_class.action = action;
+    shrine->structure_class.action_proc = (aSTR_MOVE_PROC)process[action];
+    shrine->structure_class.action = action;
 }
 
 static void aSHR_actor_move(ACTOR* actorx, GAME* game) {
-  GAME_PLAY* play = (GAME_PLAY*)game;
-  SHRINE_ACTOR* shrine = (SHRINE_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    SHRINE_ACTOR* shrine = (SHRINE_ACTOR*)actorx;
 
-  (*(aSHR_PROC)shrine->structure_class.action_proc)(shrine, play);
-  aSHR_Present_move(&aSHR_present, shrine, play);
-  sAdo_OngenPos((u32)actorx, 0x5A, &actorx->world.position);
+    (*(aSHR_PROC)shrine->structure_class.action_proc)(shrine, play);
+    aSHR_Present_move(&aSHR_present, shrine, play);
+    sAdo_OngenPos((u32)actorx, 0x5A, &actorx->world.position);
 }
 
 static void aSHR_actor_init(ACTOR* actorx, GAME* game) {
-  mFI_SetFG_common(DUMMY_SHRINE, actorx->home.position, FALSE);
-  aSHR_actor_move(actorx, game);
-  actorx->mv_proc = &aSHR_actor_move;
+    mFI_SetFG_common(DUMMY_SHRINE, actorx->home.position, FALSE);
+    aSHR_actor_move(actorx, game);
+    actorx->mv_proc = &aSHR_actor_move;
 }

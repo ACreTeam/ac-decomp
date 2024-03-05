@@ -13,6 +13,34 @@ extern "C" {
 typedef struct furniture_actor_s FTR_ACTOR;
 
 enum {
+    aFTR_STATE_STOP,
+    aFTR_STATE_WAIT_PUSH,
+    aFTR_STATE_WAIT_PUSH2,
+    aFTR_STATE_WAIT_PUSH3,
+    aFTR_STATE_PUSH,
+    aFTR_STATE_WAIT_PULL,
+    aFTR_STATE_WAIT_PULL2,
+    aFTR_STATE_PULL,
+    aFTR_STATE_WAIT_LROTATE,
+    aFTR_STATE_LROTATE,
+    aFTR_STATE_WAIT_RROTATE,
+    aFTR_STATE_RROTATE,
+    aFTR_STATE_BIRTH_WAIT,
+    aFTR_STATE_BIRTH,
+    aFTR_STATE_BYE,
+    aFTR_STATE_DEATH,
+
+    aFTR_STATE_NUM
+};
+
+enum {
+    aFTR_CTR_TYPE_GAME,
+    aFTR_CTR_TYPE_GAME_PLAY,
+
+    aFTR_CTR_TYPE_NUM
+};
+
+enum {
     aFTR_SHAPE_TYPEB_90,  /* 2x1 (facing up)*/
     aFTR_SHAPE_TYPEB_180, /* 2x1 [- *] */
     aFTR_SHAPE_TYPEB_270, /* 2x1 (facing down) */

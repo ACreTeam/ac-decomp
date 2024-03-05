@@ -105,7 +105,7 @@ static int aDOU_setEffect_sub(ACTOR* actor, GAME* game, int house_no, int color)
     Matrix_Position(&ofs, &eff_pos);
 
     /* Spawn effect */
-    (*Common_Get(clip).effect_clip->effect_make_proc)(eEC_DOUZOU_LIGHT, eff_pos, 1, 0, game, DOUZOU, color, 0);
+    (*Common_Get(clip).effect_clip->effect_make_proc)(eEC_EFFECT_DOUZOU_LIGHT, eff_pos, 1, 0, game, DOUZOU, color, 0);
 
     Matrix_pull();
 
