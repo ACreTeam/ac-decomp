@@ -41,6 +41,15 @@ enum {
 };
 
 enum {
+    aFTR_HNW_STATE_WAIT_TURN_ON,
+    aFTR_HNW_STATE_TURN_ON,
+    aFTR_HNW_STATE_ON,
+    aFTR_HNW_STATE_OFF,
+
+    aFTR_HNW_STATE_NUM
+};
+
+enum {
     aFTR_SHAPE_TYPEB_90,  /* 2x1 (facing up)*/
     aFTR_SHAPE_TYPEB_180, /* 2x1 [- *] */
     aFTR_SHAPE_TYPEB_270, /* 2x1 (facing down) */
