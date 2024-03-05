@@ -1,15 +1,9 @@
 static void aSCR_set_bgOffset(STRUCTURE_ACTOR* car, int offs) {
-    static mCoBG_OffsetTable_c height_table_ct[] = {
-      { 0x64, 3, 3, 0, 3, 3, 1 },
-      { 0x64, 3, 3, 3, 0, 3, 1 },
-      { 0x64, 0, 0, 0, 0, 0, 0 },
-      { 0x64, 3, 0, 3, 3, 3, 1 },
-      { 0x64, 6, 3, 3, 3, 3, 0 },
-      { 0x64, 3, 3, 3, 0, 3, 1 },
-      { 0x64, 0, 0, 0, 0, 0, 0 },
-      { 0x64, 3, 0, 3, 3, 3, 1 },
-      { 0x64, 3, 3, 3, 3, 0, 1 }
-    };
+    static mCoBG_OffsetTable_c height_table_ct[] = { { 0x64, 3, 3, 0, 3, 3, 1 }, { 0x64, 3, 3, 3, 0, 3, 1 },
+                                                     { 0x64, 0, 0, 0, 0, 0, 0 }, { 0x64, 3, 0, 3, 3, 3, 1 },
+                                                     { 0x64, 6, 3, 3, 3, 3, 0 }, { 0x64, 3, 3, 3, 0, 3, 1 },
+                                                     { 0x64, 0, 0, 0, 0, 0, 0 }, { 0x64, 3, 0, 3, 3, 3, 1 },
+                                                     { 0x64, 3, 3, 3, 3, 0, 1 } };
 
     static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
 
@@ -63,7 +57,7 @@ static void aSCR_actor_move(ACTOR* actor, GAME* game) {
     designer_common = (mEv_dsg_common_c*)mEv_get_common_area(mEv_EVENT_DESIGNER, FALSE);
     if (designer_common != NULL && designer_common->button_presses >= 100) {
         if (car->action <= 0) {
-            (*Common_Get(clip).effect_clip->effect_make_proc)(eEC_EFFECT_CAR_SPARKLE, actor->world.position, 1, 0, game,
+            (*Common_Get(clip).effect_clip->effect_make_proc)(eEC_EFFECT_CAR_BLIGHT, actor->world.position, 1, 0, game,
                                                               actor->npc_id, designer_common->_04 != 0, 0);
             car->action = (int)(fqrand() * 3.0f) * 16 + 48;
         } else {

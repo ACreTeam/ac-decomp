@@ -4,6 +4,7 @@
 #include "m_rcp.h"
 #include "m_play.h"
 #include "m_common_data.h"
+#include "audio.h"
 
 static u16 fFTR_myhome_off_pal_table[][16] = {
     // clang-format off
@@ -126,6 +127,7 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
  */
 
 #include "../src/ftr/ac_famicom_common.c"
+#include "../src/ftr/ac_tak_stew.c"
 
 // #include "../src/ftr/ac_sum_hal_chest02.c"
 // #include "../src/ftr/ac_sum_clchest03.c"
@@ -816,4 +818,3 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 // #include "../src/ftr/ac_nog_cornucopia.c"
 // #include "../src/ftr/ac_nog_gong.c"
 // #include "../src/ftr/ac_tak_noise.c"
-// #include "../src/ftr/ac_tak_stew.c"
