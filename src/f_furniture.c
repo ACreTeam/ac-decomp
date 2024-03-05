@@ -166,7 +166,7 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_famicom_common.c"
 // #include "../src/ftr/ac_fmanekin.c"
 // #include "../src/ftr/ac_fumbrella.c"
-// #include "../src/ftr/ac_hnw_common.c"
+#include "../src/ftr/ac_hnw_common.c"
 #include "../src/ftr/ac_ike_art_ang.c"
 #include "../src/ftr/ac_ike_art_fel.c"
 // #include "../src/ftr/ac_ike_island_hako01.c"

@@ -11,19 +11,19 @@ extern "C" {
 
 /* sizeof(TempoBeat_c) == 2 */
 typedef struct audio_tempo_beat_s {
-  /* 0x00 */ u8 tempo;
-  /* 0x01 */ s8 beat;
+    /* 0x00 */ u8 tempo;
+    /* 0x01 */ s8 beat;
 } TempoBeat_c;
 
 enum {
-  VOICE_STATUS_NORMAL,
-  VOICE_STATUS_ANGRY,
-  VOICE_STATUS_SAD,
-  VOICE_STATUS_FUN,
-  VOICE_STATUS_SLEEPY,
-  VOICE_STATUS_GLOOMY,
+    VOICE_STATUS_NORMAL,
+    VOICE_STATUS_ANGRY,
+    VOICE_STATUS_SAD,
+    VOICE_STATUS_FUN,
+    VOICE_STATUS_SLEEPY,
+    VOICE_STATUS_GLOOMY,
 
-  VOICE_STATUS_NUM
+    VOICE_STATUS_NUM
 };
 
 extern void sAdo_Calc_MicPosition_forTrig(f32* fcalc, u16* scalc, xyz_t* pos);
@@ -60,21 +60,21 @@ extern void sAdo_SetVoiceMode(u8 mode);
 
 extern void sAdo_FloorTrgStart(u16 id, xyz_t* pos);
 
-extern void sAdo_RhythmStart(void* p, u8 b1, u8 b2);
-extern void sAdo_RhythmStop(void* p);
+extern void sAdo_RhythmStart(u32 id, s8 type, s8 wait);
+extern void sAdo_RhythmStop(u32 id);
 extern void sAdo_RhythmAllStop();
 
 extern void sAdo_FurnitureInst(int track_id, s8 cb, s32 cl, xyz_t* pos);
 extern void sAdo_Pause(u8 mode);
 
-extern f32 sAdo_GetRhythmAnimCounter(void* p);
-extern f32 sAdo_GetRhythmDelay(void* p);
-extern f32 sAdo_GetRhythmInfo(void* p);
+extern f32 sAdo_GetRhythmAnimCounter(u32 id);
+extern s8 sAdo_GetRhythmDelay(u32 id);
+extern f32 sAdo_GetRhythmInfo(u32 id);
 extern void sAdo_SetRhythmInfo(f32 p);
 
 extern int sAdo_InstCountGet();
 
-extern void sAdo_RhythmPos(void* p, int unk, xyz_t* pos);
+extern void sAdo_RhythmPos(u32 id, u8 haniwa_id, xyz_t* pos);
 
 extern void sAdo_SpecChange(int spec);
 extern void sAdo_MDPlayerPos(xyz_t* pos, u16 s1, u16 s2, int p);
@@ -89,7 +89,8 @@ extern int sAdo_SubGameOK();
 extern void sAdo_Tenki(u8 mode);
 
 extern void sAdos_KishaStatusTrg(u8 state);
-extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 distance1, u32 ongenNum2, u16 angle2, f32 distance2);
+extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 distance1, u32 ongenNum2, u16 angle2,
+                                   f32 distance2);
 
 extern void sAdos_GetRadioCounter(void* p);
 extern void sAdos_GetKappaCounter(void* p);
