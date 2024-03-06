@@ -73,7 +73,7 @@ void fIIH_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
             sAdo_OngenPos((u32)ftr_actor, 0x52, &ftr_actor->position);
         }
     }
-    if (cKF_SkeletonInfo_R_play(keyf) == 1) {
+    if (cKF_SkeletonInfo_R_play(keyf) == cKF_STATE_STOPPED) {
         keyf->frame_control.speed = 0.0f;
     }
 }

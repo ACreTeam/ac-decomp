@@ -109,6 +109,9 @@ extern int aMR_GetFurnitureUnit(mActor_name_t ftr);
 extern mActor_name_t aMR_FurnitureFg_to_FurnitureFgWithDirect(mActor_name_t ftr, int direct);
 extern void aMR_SameFurnitureSwitchOFF(u16 ftr_name);
 extern aMR_contact_info_c* aMR_GetContactInfoLayer1(void);
+extern FTR_ACTOR* aMR_GetParentFactor();
+extern s16 aMR_GetParentAngleOffset(FTR_ACTOR* ftr_actor, MY_ROOM_ACTOR* my_room_actor);
+extern void aMR_SetSurprise(ACTOR* my_room_actor, s16 rot);
 
 #ifdef __cplusplus
 }
