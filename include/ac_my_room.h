@@ -67,6 +67,7 @@ typedef void (*aMR_OPEN_CLOSE_COMMON_MOVE_PROC)(FTR_ACTOR* ftr_actor, ACTOR* act
                                                 f32 end_frame);
 typedef void (*aMR_FAMICOM_EMU_COMMON_MOVE_PROC)(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, int rom_no,
                                                  int agb_rom_no);
+typedef void (*aMR_SOUND_MELODY_PROC)(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, int idx);
 
 typedef struct my_room_clip_s {
     MY_ROOM_ACTOR* my_room_actor_p;
@@ -95,7 +96,7 @@ typedef struct my_room_clip_s {
     void* ftrNo2bankAddress_proc;
     void* call_sit_down_ongen_pos_se_proc;
     aMR_clock_info_c* clock_info_p; /* used for playing the clock tick? sfx */
-    void* sound_melody_proc;
+    aMR_SOUND_MELODY_PROC sound_melody_proc;
     void* check_danna_kill_proc;
 } aMR_Clip_c;
 
