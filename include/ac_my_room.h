@@ -65,10 +65,20 @@ typedef int (*aMR_COUNT_FRIEND_FURNITURE_PROC)(FTR_ACTOR* ftr_actor, u8 switch_o
 typedef int (*aMR_JUDGE_PLACE_2ND_LAYER_PROC)(int ut_x, int ut_z);
 typedef void (*aMR_OPEN_CLOSE_COMMON_MOVE_PROC)(FTR_ACTOR* ftr_actor, ACTOR* actor, GAME* game, f32 start_frame,
                                                 f32 end_frame);
-typedef void (*aMR_MINI_DISK_COMMON_MOVE_PROC)(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, f32 start_frame, f32 end_frame);
+typedef int (*aMR_GET_BED_ACTION_PROC)(PLAYER_ACTOR* player, int bed_move_dir);
+typedef void (*aMR_MINI_DISK_COMMON_MOVE_PROC)(FTR_ACTOR* ftr_actor, ACTOR* my_room_actorx, GAME* game, f32 start_frame,
+                                               f32 end_frame);
+typedef int (*aMR_SET_LEAF_PROC)(const xyz_t* pos, f32 scale);
+typedef int (*aMR_FTR2LEAF_PROC)(void);
+typedef void (*aMR_LEAF_START_POS_PROC)(xyz_t* pos);
+typedef int (*aMR_PICKUP_FTR_LAYER_PROC)(void);
+typedef void (*aMR_LEAF_PICKUPED_PROC)(void);
 typedef void (*aMR_FAMICOM_EMU_COMMON_MOVE_PROC)(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, int rom_no,
                                                  int agb_rom_no);
+typedef u32 (*aMR_FTR_NO_2_BANK_ADDRESS_PROC)(u16 ftr_no);
+typedef void (*aMR_CALL_SIT_DOWN_ONGEN_POS_SE_PROC)(const xyz_t* pos);
 typedef void (*aMR_SOUND_MELODY_PROC)(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, int idx);
+typedef int (*aMR_CHECK_DANNA_KILL_PROC)(xyz_t* pos);
 
 typedef struct my_room_clip_s {
     MY_ROOM_ACTOR* my_room_actor_p;
@@ -85,23 +95,160 @@ typedef struct my_room_clip_s {
     aMR_COUNT_FRIEND_FURNITURE_PROC count_friend_ftr_proc;
     aMR_JUDGE_PLACE_2ND_LAYER_PROC judge_place_2nd_layer_proc;
     aMR_OPEN_CLOSE_COMMON_MOVE_PROC open_close_common_move_proc;
-    /* TODO: function definitions */
-    void* get_bed_action_proc;
+    aMR_GET_BED_ACTION_PROC get_bed_action_proc;
     aMR_MINI_DISK_COMMON_MOVE_PROC mini_disk_common_move_proc;
-    void* set_leaf_proc;
-    void* ftr2leaf_proc;
-    void* leaf_start_pos_proc;
-    void* pickup_ftr_layer_proc;
-    void* leaf_pickuped_proc;
+    aMR_SET_LEAF_PROC set_leaf_proc;
+    aMR_FTR2LEAF_PROC ftr2leaf_proc;
+    aMR_LEAF_START_POS_PROC leaf_start_pos_proc;
+    aMR_PICKUP_FTR_LAYER_PROC pickup_ftr_layer_proc;
+    aMR_LEAF_PICKUPED_PROC leaf_pickuped_proc;
     aMR_FAMICOM_EMU_COMMON_MOVE_PROC famicom_emu_common_move_proc;
-    void* ftrNo2bankAddress_proc;
-    void* call_sit_down_ongen_pos_se_proc;
+    aMR_FTR_NO_2_BANK_ADDRESS_PROC ftrNo2bankAddress_proc;
+    aMR_CALL_SIT_DOWN_ONGEN_POS_SE_PROC call_sit_down_ongen_pos_se_proc;
     aMR_clock_info_c* clock_info_p; /* used for playing the clock tick? sfx */
     aMR_SOUND_MELODY_PROC sound_melody_proc;
-    void* check_danna_kill_proc;
+    aMR_CHECK_DANNA_KILL_PROC check_danna_kill_proc;
 } aMR_Clip_c;
 
-/* TODO: my room actor */
+typedef struct room_leaf_s {
+    int exist_flag;
+    xyz_t pos;
+    f32 scale;
+} aMR_leaf_info_c;
+
+typedef struct room_pickup_s {
+    int pickup_flag;
+    int ftr_no;
+    xyz_t leaf_pos;
+    int picking_up_flag;
+    s16 layer;
+    u16 dust_effect_timer;
+    u16 icon;
+} aMR_pickup_info_c;
+
+typedef struct room_rsv_ftr_s {
+    u8 exist_flag;
+    u16 ftr_name;
+    int ofs;
+    u16 angle_idx;
+    int free_no;
+    s16 layer;
+    s16 frames;
+    s16 initial_frames_num;
+    int ut_x;
+    int ut_z;
+} aMR_rsv_ftr_c;
+
+typedef struct room_bgm_s {
+    int md_no;
+    int last_md_no;
+    u8 reserve_flag;
+    s16 timer;
+    FTR_ACTOR* reserved_ftr_actor;
+    FTR_ACTOR* active_ftr_actor;
+    int active_flag;
+} aMR_bgm_info_c;
+
+typedef struct room_info_s {
+    int shop_flag;
+    int owner_flag;
+} aMR_room_info_c;
+
+typedef struct emu_info_s {
+    int request_flag;
+    int rom_no;
+    int agb_rom_no;
+    int explaination_given_flag;
+    int _10;
+    int card_famicom_count;
+    int memory_game_select;
+    char** famicom_names_p;
+    s16 save_msg_timer;
+    s16 external_rom;
+} aMR_emu_info_c;
+
+typedef void (*aMR_GOKI_CT_PROC)(ACTOR*, GAME*);
+
+typedef struct room_fit_ftr_s {
+    int exist_flag;
+    xyz_t pos;
+    int ftr_ID;
+    mActor_name_t item_no;
+    s16 angle_y;
+    xyz_t ut_pos;
+} aMR_fit_ftr_c;
+
+struct my_room_actor_s {
+    ACTOR actor_class;
+    s16 state;
+    aMR_contact_info_c contact0;
+    aMR_contact_info_c contact1;
+    u8 allow_rotation_flag;
+    int _1D4;
+    cKF_SkeletonInfo_R_c keyframe;
+    s_xyz joint[1];
+    s_xyz morph[1];
+    u8 _254[132];
+    s16 move_angle;
+    xyz_t nice_pos;
+    aMR_Clip_c clip;
+    s16 sit_timer;
+    s16 bed_timer;
+    aMR_leaf_info_c leaf_info;
+    aMR_pickup_info_c pickup_info;
+    aMR_rsv_ftr_c rsv_ftr[3];
+    s16 msg_type;
+    s16 requested_msg_type;
+    int emu_ftrID;
+    int _3F4;
+    s16 demo_flag;
+    s16 demo_ftrID;
+    int _3FC;
+    s16 pull_timer;
+    s16 push_timer;
+    s16 msg_timer;
+    s16 head_direction;
+    s16 bed_ftr_actor_idx;
+    s16 pull_bubu;
+    s16 push_bubu;
+    s16 keep_push_flag;
+    s16 keep_pull_flag;
+    xyz_t pull_target_pos0;
+    xyz_t pull_target_pos1;
+    int haniwa_on_table[14];
+    aMR_bgm_info_c bgm_info;
+    aMR_room_info_c room_info;
+    aMR_emu_info_c emu_info;
+    aMR_clock_info_c clock_info;
+    aMR_GOKI_CT_PROC goki_ct_proc;
+    int _4BC[3];
+    int weight;
+    u8 melody[8];
+    int _4D4;
+    int _4D8;
+    int bank_count0;
+    int bank_count1;
+    int request_player_surprise;
+    s16 player_surprise_angle_y;
+    s16 switch_timer;
+    s16 force_open_demo_flag;
+    int _4F0;
+    int _4F4;
+    int room_msg_flag;
+    int haniwa_step_idx;
+    int parent_ftrID;
+    s16 parent_angleY;
+    aMR_fit_ftr_c fit_ftr_table[4];
+    u32 music_box[2];
+    int scene;
+    int _5A4;
+    int throw_item_lock_flag;
+    void* bank0_p;
+    u32 agb_game_size;
+    void* famicom_agb_image_p;
+    s16 agb_connect_tries;
+    int _5BC;
+};
 
 extern ACTOR_PROFILE My_Room_Profile;
 
