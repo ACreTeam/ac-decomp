@@ -1,4 +1,4 @@
-extern aFTR_rig_c &aSumMezaClock_sklkey;
+extern aFTR_rig_c aSumMezaClock_sklkey;
 static void aSumMezaClock_Dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
 
 static aFTR_vtable_c aSumMezaClock_func = {

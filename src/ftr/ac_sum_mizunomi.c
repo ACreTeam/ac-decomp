@@ -1,4 +1,4 @@
-extern aFTR_rig_c &aSumMizunomi_sklkey;
+extern aFTR_rig_c aSumMizunomi_sklkey;
 static void aSumMizunomi_ct(FTR_ACTOR* ftr_actor, u8* data);
 static void aSumMizunomi_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
 static void aSumMizunomi_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);

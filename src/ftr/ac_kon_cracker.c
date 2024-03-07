@@ -1,4 +1,4 @@
-extern aFTR_rig_c &aKonCracker_sklkey;
+extern aFTR_rig_c aKonCracker_sklkey;
 static void aKonCracker_ct(FTR_ACTOR* ftr_actor, u8* data);
 static void aKonCracker_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
 static void aKonCracker_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);

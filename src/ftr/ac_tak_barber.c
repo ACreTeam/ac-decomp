@@ -1,4 +1,4 @@
-extern aFTR_rig_c &aTakBarber_sklkey;
+extern aFTR_rig_c aTakBarber_sklkey;
 
 aFTR_PROFILE iam_tak_barber = {
 	NULL,

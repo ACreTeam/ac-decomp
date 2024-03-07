@@ -1,4 +1,4 @@
-extern aFTR_rig_c &aNogKurage_key_anime_data;
+extern aFTR_rig_c aNogKurage_key_anime_data;
 
 aFTR_PROFILE iam_nog_kurage = {
 	NULL,

@@ -1,4 +1,4 @@
-extern aFTR_rig_c &aTakEisei_sklkey;
+extern aFTR_rig_c aTakEisei_sklkey;
 
 aFTR_PROFILE iam_tak_eisei = {
 	NULL,

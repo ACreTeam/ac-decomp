@@ -1,4 +1,4 @@
-extern aFTR_rig_c &aTakUfo_sklkey;
+extern aFTR_rig_c aTakUfo_sklkey;
 
 aFTR_PROFILE iam_tak_ufo = {
 	NULL,

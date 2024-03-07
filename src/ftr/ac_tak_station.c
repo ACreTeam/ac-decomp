@@ -1,4 +1,4 @@
-extern aFTR_rig_c &aTakStation_sklkey;
+extern aFTR_rig_c aTakStation_sklkey;
 
 aFTR_PROFILE iam_tak_station = {
 	NULL,

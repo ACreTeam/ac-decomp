@@ -1,4 +1,4 @@
-extern aFTR_rig_c &aSumTamamushi_key_anime_data;
+extern aFTR_rig_c aSumTamamushi_key_anime_data;
 
 aFTR_PROFILE iam_sum_tamamushi = {
 	NULL,

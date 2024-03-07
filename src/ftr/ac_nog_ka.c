@@ -1,4 +1,4 @@
-extern aFTR_rig_c &aNogKa_key_anime_data;
+extern aFTR_rig_c aNogKa_key_anime_data;
 static void fNKA_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
 
 static aFTR_vtable_c fNKA_func = {

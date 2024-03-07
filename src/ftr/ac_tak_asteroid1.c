@@ -1,4 +1,4 @@
-extern aFTR_rig_c &aTakAsteroid1_sklkey;
+extern aFTR_rig_c aTakAsteroid1_sklkey;
 
 aFTR_PROFILE iam_tak_asteroid1 = {
 	NULL,
