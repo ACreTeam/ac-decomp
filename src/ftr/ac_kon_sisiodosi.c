@@ -2,6 +2,19 @@ extern aFTR_rig_c aKonSisiodosi_sklkey;
 static void aKonSisiodosi_ct(FTR_ACTOR* ftr_actor, u8* data);
 static void aKonSisiodosi_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
 
+static void aKonSisiodosi_ct(FTR_ACTOR* ftr_actor, u8* data){
+    ftr_actor->keyframe.frame_control.current_frame = (int)(1.0f + RANDOM_F(119.0f));
+}
+
+static void aKonSisiodosi_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data){
+
+    if(ftr_actor->keyframe.frame_control.current_frame == 20.0f){
+        if(aFTR_CAN_PLAY_SE(ftr_actor)){
+            sAdo_OngenTrgStart(0x18, &ftr_actor->position);
+        }
+    }
+}
+
 static aFTR_vtable_c aKonSisiodosi_func = {
 	&aKonSisiodosi_ct,
 	&aKonSisiodosi_mv,

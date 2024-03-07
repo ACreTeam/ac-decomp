@@ -5,6 +5,23 @@ static void aKobNcube_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game,
 static void aKobNcube_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
 static void aKobNcube_dt(FTR_ACTOR* ftr_actor, u8* data);
 
+
+static void aKobNcube_ct(FTR_ACTOR* ftr_actor, u8* data){
+
+}
+
+static void aKobNcube_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data){
+
+}
+
+static void aKobNcube_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data){
+
+}
+
+static void aKobNcube_dt(FTR_ACTOR* ftr_actor, u8* data){
+
+}
+
 static aFTR_vtable_c aKobNcube_func = {
 	&aKobNcube_ct,
 	&aKobNcube_mv,
