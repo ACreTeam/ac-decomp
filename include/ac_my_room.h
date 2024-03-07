@@ -260,6 +260,7 @@ extern aMR_contact_info_c* aMR_GetContactInfoLayer1(void);
 extern FTR_ACTOR* aMR_GetParentFactor();
 extern s16 aMR_GetParentAngleOffset(FTR_ACTOR* ftr_actor, MY_ROOM_ACTOR* my_room_actor);
 extern void aMR_SetSurprise(ACTOR* my_room_actor, s16 rot);
+extern void aMR_RadioCommonMove(FTR_ACTOR* ftr_actor, ACTOR* my_room_actorx);
 
 #ifdef __cplusplus
 }
