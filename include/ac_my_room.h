@@ -65,7 +65,7 @@ typedef int (*aMR_COUNT_FRIEND_FURNITURE_PROC)(FTR_ACTOR* ftr_actor, u8 switch_o
 typedef int (*aMR_JUDGE_PLACE_2ND_LAYER_PROC)(int ut_x, int ut_z);
 typedef void (*aMR_OPEN_CLOSE_COMMON_MOVE_PROC)(FTR_ACTOR* ftr_actor, ACTOR* actor, GAME* game, f32 start_frame,
                                                 f32 end_frame);
-typedef int (*aMR_GET_BED_ACTION_PROC)(PLAYER_ACTOR* player, int bed_move_dir);
+typedef int (*aMR_GET_BED_ACTION_PROC)(ACTOR* actorx, int bed_move_dir);
 typedef void (*aMR_MINI_DISK_COMMON_MOVE_PROC)(FTR_ACTOR* ftr_actor, ACTOR* my_room_actorx, GAME* game, f32 start_frame,
                                                f32 end_frame);
 typedef int (*aMR_SET_LEAF_PROC)(const xyz_t* pos, f32 scale);
