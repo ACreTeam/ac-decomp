@@ -13,26 +13,33 @@ extern "C" {
 #endif
 
 #define SHT_MIN_S -32768 /* 0x8000 */
-#define SHT_MAX_S  32767 /* 0x7FFF */
+#define SHT_MAX_S 32767  /* 0x7FFF */
 
 #define SHT_MIN ((f32)SHT_MIN_S)
 #define SHT_MAX ((f32)SHT_MAX_S)
 
+#define USHT_MIN_S 0
+#define USHT_MAX_S 65535
+
+#define USHT_MIN ((f32)USHT_MIN_S)
+#define USHT_MAX ((f32)USHT_MAX_S)
+
 #define SHT_MINV (1.0f / SHT_MAX)
 #define ABS(x) (((x) >= 0) ? (x) : -(x))
-#define SQ(x) ((x)*(x))
-#define CLAMP_MAX(x, min) ((min) < (x) ? (min) : (x)) 
+#define SQ(x) ((x) * (x))
+#define CLAMP_MAX(x, min) ((min) < (x) ? (min) : (x))
 
 /* Float modulo operator */
 #define MOD_F(a, m) (a - (int)((a) * (1.0f / (m))) * (m))
 
 /* radians -> short angle */
 #define RAD2SHORT_ANGLE(rad) ((s16)(int)((rad) * (65536.0f / (2.0f * F_PI))))
-#define RAD2SHORTANGLE(rad)	((s16)((32768.0f / F_PI) * ((f32)(rad))))
+#define RAD2SHORTANGLE(rad) ((s16)((32768.0f / F_PI) * ((f32)(rad))))
+#define RAD2SHORT_ANGLE2(rad) ((s16)((rad) * (65536.0f / (2.0f * F_PI))))
 
 /* short angle -> radians */
 #define SHORT2RAD_ANGLE(s) ((((f32)(s)) / (65536.0f / (2.0f * F_PI))))
-#define SHORTANGLE2RAD(sangle)	((F_PI / 32768.0f) * ((f32)(sangle)))
+#define SHORTANGLE2RAD(sangle) ((F_PI / 32768.0f) * ((f32)(sangle)))
 
 /* degrees -> short angle */
 #define DEG2SHORT_ANGLE(deg) ((s16)((deg) * (65536.0f / 360.0f)))
@@ -48,12 +55,12 @@ extern "C" {
 /* degrees -> radians */
 #define DEG2RAD(deg) ((F_PI / 180.0f) * (deg))
 
-typedef struct rgba_t { //can be put in other place
+typedef struct rgba_t { // can be put in other place
     u8 r, g, b, a;
 } rgba_t;
 
 typedef struct rgb_t {
-  uint r, g, b;
+    uint r, g, b;
 } rgb_t;
 
 typedef struct {
@@ -102,7 +109,8 @@ extern void none_proc2(ACTOR* actor, GAME* game);
 
 extern int _Game_play_isPause(GAME_PLAY* play);
 extern f32 check_percent_abs(f32 x, f32 min, f32 max, f32 scale, int shift_by_min);
-extern f32 get_percent_forAccelBrake(const f32 now, const f32 start, const f32 end, const f32 accelerateDist, const f32 brakeDist);
+extern f32 get_percent_forAccelBrake(const f32 now, const f32 start, const f32 end, const f32 accelerateDist,
+                                     const f32 brakeDist);
 extern void Game_play_Projection_Trans(GAME_PLAY* const play, xyz_t* world_pos, xyz_t* screen_pos);
 
 extern f32 get_percent(const int max, const int min, const int x);
