@@ -443,7 +443,7 @@ extern void sAdo_SceneMode(u8 mode) {
     Na_SceneMode(mode);
 }
 
-extern void sAdo_RoomIncectPos(int f, u16 u, xyz_t* pos) {
+extern void sAdo_RoomIncectPos(u32 f, u16 u, xyz_t* pos) {
 
     u16 scalc;
     f32 fcalc;
@@ -452,7 +452,7 @@ extern void sAdo_RoomIncectPos(int f, u16 u, xyz_t* pos) {
     Na_RoomIncectPos(f, u, scalc, fcalc);
 }
 
-extern void sAdo_FurnitureInstPos(int f, xyz_t* pos) {
+extern void sAdo_FurnitureInstPos(u32 f, xyz_t* pos) {
 
     u16 scalc;
     f32 fcalc;

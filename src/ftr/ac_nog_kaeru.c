@@ -1,15 +1,17 @@
 extern aFTR_rig_c aNogKaeru_key_anime_data;
-static void fNKR_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
+
+static void fNKR_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+    if (aFTR_CAN_PLAY_SE(ftr_actor)) {
+        sAdo_RoomIncectPos((u32)ftr_actor, 0x41, &ftr_actor->position);
+    }
+}
 
 static aFTR_vtable_c fNKR_func = {
-	NULL,
-	&fNKR_mv,
-	NULL,
-	NULL,
-	NULL,
+    NULL, &fNKR_mv, NULL, NULL, NULL,
 };
 
 aFTR_PROFILE iam_nog_kaeru = {
+    // clang-format off
 	NULL,
 	NULL,
 	NULL,
@@ -27,4 +29,5 @@ aFTR_PROFILE iam_nog_kaeru = {
 	0,
 	aFTR_INTERACTION_FISH,
 	&fNKR_func,
+    // clang-format on
 };

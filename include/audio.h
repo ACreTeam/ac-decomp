@@ -115,9 +115,9 @@ extern u16 sAdo_Get_WalkLabel(int type);
 extern int sAdo_Get_KokeruLabel(int type);
 
 extern void sAdo_SceneMode(u8 mode);
-extern void sAdo_RoomIncectPos(int f, u16 u, xyz_t* pos);
+extern void sAdo_RoomIncectPos(u32 f, u16 u, xyz_t* pos);
 
-extern void sAdo_FurnitureInstPos(int f, xyz_t* pos);
+extern void sAdo_FurnitureInstPos(u32 f, xyz_t* pos);
 extern void sAdo_Set_ongenpos_refuse_fg(int state);
 
 extern int sAdo_GameframeEnd_Check();
