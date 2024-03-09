@@ -5,6 +5,22 @@ static void aSumasitaiko_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* ga
 static void aSumasitaiko_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
 static void aSumasitaiko_dt(FTR_ACTOR* ftr_actor, u8* data);
 
+static void aSumasitaiko_ct(FTR_ACTOR* ftr_actor, u8* data) {
+}
+
+static void aSumasitaiko_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor) {
+    if (Common_Get(clip).my_room_clip != NULL) {
+        Common_Get(clip).my_room_clip->sound_melody_proc(ftr_actor, my_room_actor, 12);
+    }
+}
+
+static void aSumasitaiko_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+}
+
+static void aSumasitaiko_dt(FTR_ACTOR* ftr_actor, u8* data) {
+}
+
+
 static aFTR_vtable_c aSumasitaiko_func = {
 	&aSumasitaiko_ct,
 	&aSumasitaiko_mv,

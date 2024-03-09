@@ -48,6 +48,7 @@ static u16 fFTR_myhome_on_pal_table[][16] = {
 
 static void fFTR_MorphHousePalette(u16* dst_pal_p, u16* off_pal_p, u16* on_pal_p, FTR_ACTOR* ftr_actor) {
     f32 target;
+    f32 now;
     int i;
 
     if (ftr_actor->switch_bit == TRUE) {
@@ -56,13 +57,14 @@ static void fFTR_MorphHousePalette(u16* dst_pal_p, u16* off_pal_p, u16* on_pal_p
         target = 0.0f;
     }
 
-    if (ftr_actor->dynamic_work_f[0] > target) {
+    now = ftr_actor->dynamic_work_f[0];
+    if (now > target) {
         ftr_actor->dynamic_work_f[0] -= 0.1f;
 
         if (ftr_actor->dynamic_work_f[0] < target) {
             ftr_actor->dynamic_work_f[0] = target;
         }
-    } else if (ftr_actor->dynamic_work_f[0] < target) {
+    } else if (now < target) {
         ftr_actor->dynamic_work_f[0] += 0.1f;
 
         if (ftr_actor->dynamic_work_f[0] > target) {
@@ -70,33 +72,36 @@ static void fFTR_MorphHousePalette(u16* dst_pal_p, u16* off_pal_p, u16* on_pal_p
         }
     }
 
-    for (i = 0; i < 16; i++) {
-        f32 work;
+    if (dst_pal_p != NULL) {
+        for (i = 0; i < 16; i++) {
+            // clang-format off
 
-        // We assume that the palette will be RGB5A3 with no alpha component so:
-        // [1][rrrrr][ggggg][bbbbb]
-        dst_pal_p[i] = 0;
+            // We assume that the palette will be RGB5A3 with no alpha component so:
+            // [1][rrrrr][ggggg][bbbbb]
+            dst_pal_p[i] = 0;
 
-        // Red
-        work = (f32)((off_pal_p[i] >> 10) & 0x1F);
-        dst_pal_p[i] |=
-            ((u16)(work + ftr_actor->dynamic_work_f[0] * ((f32)((off_pal_p[i] >> 10) & 0x1F) - work)) & 0x1F) << 10;
+            // Red
+            dst_pal_p[i] |= ((u16)((f32)((off_pal_p[i] >> 10) & 0x1F) +
+                                   ftr_actor->dynamic_work_f[0] *
+                                       ((f32)((on_pal_p[i] >> 10) & 0x1F) - (f32)((off_pal_p[i] >> 10) & 0x1F))) & 0x1F) << 10;
 
-        // Green
-        work = (f32)((off_pal_p[i] >> 5) & 0x1F);
-        dst_pal_p[i] |= ((u16)(work + ftr_actor->dynamic_work_f[0] * ((f32)((off_pal_p[i] >> 5) & 0x1F) - work)) & 0x1F)
-                        << 5;
+            // Green
+            dst_pal_p[i] |= ((u16)((f32)((off_pal_p[i] >> 5) & 0x1F) +
+                                   ftr_actor->dynamic_work_f[0] *
+                                       ((f32)((on_pal_p[i] >> 5) & 0x1F) - (f32)((off_pal_p[i] >> 5) & 0x1F))) & 0x1F) << 5;
 
-        // Blue
-        work = (f32)((off_pal_p[i] >> 0) & 0x1F);
-        dst_pal_p[i] |= ((u16)(work + ftr_actor->dynamic_work_f[0] * ((f32)((off_pal_p[i] >> 0) & 0x1F) - work)) & 0x1F)
-                        << 0;
+            // Blue
+            dst_pal_p[i] |= ((u16)((f32)((off_pal_p[i] >> 0) & 0x1F) +
+                                   ftr_actor->dynamic_work_f[0] *
+                                       ((f32)((on_pal_p[i] >> 0) & 0x1F) - (f32)((off_pal_p[i] >> 0) & 0x1F))) & 0x1F) << 0;
 
-        // Alpha-bit (not sure why they bother even masking this out)
-        dst_pal_p[i] |= (u16)(off_pal_p[i] & 0x8000);
+            // Alpha-bit (not sure why they bother even masking this out)
+            dst_pal_p[i] |= (u16)(off_pal_p[i] & 0x8000);
+            // clang-format on
+        }
+
+        DCStoreRangeNoSync(dst_pal_p, 16 * sizeof(u16));
     }
-
-    DCStoreRangeNoSync(dst_pal_p, 16 * sizeof(u16));
 }
 
 static void fFTR_MorphHousepaletteCt(u16* dst_pal_p, u16* off_pal_p, u16* on_pal_p, FTR_ACTOR* ftr_actor) {
@@ -114,7 +119,7 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
     u32 ctr_ofs;
     int ofs;
 
-    if (ftr_actor->ctr_type) {
+    if (ftr_actor->ctr_type == aFTR_CTR_TYPE_GAME_PLAY) {
         ctr_ofs = play->game_frame;
     } else {
         ctr_ofs = play->game.frame_counter;
@@ -225,7 +230,7 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_kob_jimudesk.c"
 #include "../src/ftr/ac_kob_jimuisu.c"
 #include "../src/ftr/ac_kob_locker1.c"
-// #include "../src/ftr/ac_kob_mastersword.c"
+#include "../src/ftr/ac_kob_mastersword.c"
 #include "../src/ftr/ac_kob_ncube.c"
 #include "../src/ftr/ac_kob_pipeisu.c"
 #include "../src/ftr/ac_kob_rika_desk.c"
@@ -319,12 +324,12 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_nog_suzuki.c"
 #include "../src/ftr/ac_nog_shop1.c"
 #include "../src/ftr/ac_nog_tai.c"
-// #include "../src/ftr/ac_nog_tri_audio01.c"
+#include "../src/ftr/ac_nog_tri_audio01.c"
 #include "../src/ftr/ac_nog_tri_bed01.c"
 #include "../src/ftr/ac_nog_tri_chair01.c"
-// #include "../src/ftr/ac_nog_tri_chest01.c"
-// #include "../src/ftr/ac_nog_tri_chest02.c"
-// #include "../src/ftr/ac_nog_tri_chest03.c"
+#include "../src/ftr/ac_nog_tri_chest01.c"
+#include "../src/ftr/ac_nog_tri_chest02.c"
+#include "../src/ftr/ac_nog_tri_chest03.c"
 #include "../src/ftr/ac_nog_tri_clock01.c"
 #include "../src/ftr/ac_nog_tri_rack01.c"
 #include "../src/ftr/ac_nog_tri_sofa01.c"
@@ -337,7 +342,7 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_nog_zarigani.c"
 #include "../src/ftr/ac_nog_zassou.c"
 #include "../src/ftr/ac_nog_w_tree.c"
-// #include "../src/ftr/ac_sum_abura.c"
+#include "../src/ftr/ac_sum_abura.c"
 #include "../src/ftr/ac_sum_akiakane.c"
 #include "../src/ftr/ac_sum_angel.c"
 #include "../src/ftr/ac_sum_aroana.c"
@@ -358,41 +363,41 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_sum_asi_chair01.c"
 #include "../src/ftr/ac_sum_asi_chair02.c"
 #include "../src/ftr/ac_sum_asi_chest01.c"
-// #include "../src/ftr/ac_sum_asi_chest02.c"
-// #include "../src/ftr/ac_sum_asi_chest03.c"
+#include "../src/ftr/ac_sum_asi_chest02.c"
+#include "../src/ftr/ac_sum_asi_chest03.c"
 #include "../src/ftr/ac_sum_asi_lanp01.c"
 #include "../src/ftr/ac_sum_asi_screen01.c"
 #include "../src/ftr/ac_sum_asi_table01.c"
 #include "../src/ftr/ac_sum_asi_table02.c"
-// #include "../src/ftr/ac_sum_asi_taiko.c"
+#include "../src/ftr/ac_sum_asi_taiko.c"
 #include "../src/ftr/ac_sum_ayu.c"
 #include "../src/ftr/ac_sum_baketu.c"
 #include "../src/ftr/ac_sum_bass.c"
-// #include "../src/ftr/ac_sum_bass01.c"
+#include "../src/ftr/ac_sum_bass01.c"
 #include "../src/ftr/ac_sum_bassl.c"
 #include "../src/ftr/ac_sum_bassm.c"
 #include "../src/ftr/ac_sum_bdcake01.c"
 #include "../src/ftr/ac_sum_billiads.c"
-// #include "../src/ftr/ac_sum_biwa01.c"
+#include "../src/ftr/ac_sum_biwa01.c"
 #include "../src/ftr/ac_sum_bla_bed01.c"
 #include "../src/ftr/ac_sum_bla_chair02.c"
-// #include "../src/ftr/ac_sum_bla_chest01.c"
+#include "../src/ftr/ac_sum_bla_chest01.c"
 #include "../src/ftr/ac_sum_bla_chest02.c"
-// #include "../src/ftr/ac_sum_bla_chest03.c"
+#include "../src/ftr/ac_sum_bla_chest03.c"
 #include "../src/ftr/ac_sum_bla_desk01.c"
-// #include "../src/ftr/ac_sum_bla_lanp.c"
+#include "../src/ftr/ac_sum_bla_lanp.c"
 #include "../src/ftr/ac_sum_bla_sofa02.c"
 #include "../src/ftr/ac_sum_bla_table01.c"
 #include "../src/ftr/ac_sum_bla_table02.c"
 #include "../src/ftr/ac_sum_blue_bed01.c"
 #include "../src/ftr/ac_sum_blue_bench01.c"
-// #include "../src/ftr/ac_sum_blue_bureau01.c"
-// #include "../src/ftr/ac_sum_blue_cab01.c"
+#include "../src/ftr/ac_sum_blue_bureau01.c"
+#include "../src/ftr/ac_sum_blue_cab01.c"
 #include "../src/ftr/ac_sum_blue_chair01.c"
 #include "../src/ftr/ac_sum_blue_chest01.c"
 #include "../src/ftr/ac_sum_blue_chest02.c"
 #include "../src/ftr/ac_sum_blue_clk.c"
-// #include "../src/ftr/ac_sum_blue_lowchest01.c"
+#include "../src/ftr/ac_sum_blue_lowchest01.c"
 #include "../src/ftr/ac_sum_blue_table01.c"
 #include "../src/ftr/ac_sum_bon_boke.c"
 #include "../src/ftr/ac_sum_bon_matu01.c"
@@ -405,33 +410,33 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_sum_bon_turu.c"
 #include "../src/ftr/ac_sum_bon_ume.c"
 #include "../src/ftr/ac_sum_bookcht01.c"
-// #include "../src/ftr/ac_sum_casse01.c"
-// #include "../src/ftr/ac_sum_cello01.c"
+#include "../src/ftr/ac_sum_casse01.c"
+#include "../src/ftr/ac_sum_cello01.c"
 #include "../src/ftr/ac_sum_chair01.c"
-// #include "../src/ftr/ac_sum_chikuon01.c"
-// #include "../src/ftr/ac_sum_chikuon02.c"
+#include "../src/ftr/ac_sum_chikuon01.c"
+#include "../src/ftr/ac_sum_chikuon02.c"
 #include "../src/ftr/ac_sum_classiccabinet01.c"
 #include "../src/ftr/ac_sum_classicchair01.c"
-// #include "../src/ftr/ac_sum_classicchest01.c"
+#include "../src/ftr/ac_sum_classicchest01.c"
 #include "../src/ftr/ac_sum_classicchest02.c"
 #include "../src/ftr/ac_sum_classictable01.c"
 #include "../src/ftr/ac_sum_classicwardrope01.c"
 #include "../src/ftr/ac_sum_clbed02.c"
 #include "../src/ftr/ac_sum_clchair02.c"
-// #include "../src/ftr/ac_sum_clchest03.c"
+#include "../src/ftr/ac_sum_clchest03.c"
 #include "../src/ftr/ac_sum_col_chair01.c"
 #include "../src/ftr/ac_sum_col_chair02.c"
 #include "../src/ftr/ac_sum_col_chair03.c"
 #include "../src/ftr/ac_sum_comp01.c"
-// #include "../src/ftr/ac_sum_conga01.c"
-// #include "../src/ftr/ac_sum_conpo01.c"
-// #include "../src/ftr/ac_sum_conpo02.c"
+#include "../src/ftr/ac_sum_conga01.c"
+#include "../src/ftr/ac_sum_conpo01.c"
+#include "../src/ftr/ac_sum_conpo02.c"
 #include "../src/ftr/ac_sum_cont_bed01.c"
 #include "../src/ftr/ac_sum_cont_cab01.c"
 #include "../src/ftr/ac_sum_cont_chair01.c"
 #include "../src/ftr/ac_sum_cont_chest01.c"
-// #include "../src/ftr/ac_sum_cont_chest02.c"
-// #include "../src/ftr/ac_sum_cont_chest03.c"
+#include "../src/ftr/ac_sum_cont_chest02.c"
+#include "../src/ftr/ac_sum_cont_chest03.c"
 #include "../src/ftr/ac_sum_cont_sofa01.c"
 #include "../src/ftr/ac_sum_cont_sofa02.c"
 #include "../src/ftr/ac_sum_cont_table01.c"
@@ -458,15 +463,15 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_sum_fruitchair02.c"
 #include "../src/ftr/ac_sum_fruitchair03.c"
 #include "../src/ftr/ac_sum_fruitchair04.c"
-// #include "../src/ftr/ac_sum_fruitchest01.c"
-// #include "../src/ftr/ac_sum_fruitchest03.c"
+#include "../src/ftr/ac_sum_fruitchest01.c"
+#include "../src/ftr/ac_sum_fruitchest03.c"
 #include "../src/ftr/ac_sum_fruitclk.c"
 #include "../src/ftr/ac_sum_fruittable01.c"
 #include "../src/ftr/ac_sum_fruittable02.c"
 #include "../src/ftr/ac_sum_fruittable03.c"
 #include "../src/ftr/ac_sum_fruittv01.c"
 #include "../src/ftr/ac_sum_funa.c"
-// #include "../src/ftr/ac_sum_genji.c"
+#include "../src/ftr/ac_sum_genji.c"
 #include "../src/ftr/ac_sum_gill.c"
 #include "../src/ftr/ac_sum_ginyanma.c"
 #include "../src/ftr/ac_sum_globe01.c"
@@ -478,75 +483,75 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_sum_gre_chair01.c"
 #include "../src/ftr/ac_sum_gre_chair02.c"
 #include "../src/ftr/ac_sum_gre_chest01.c"
-// #include "../src/ftr/ac_sum_gre_chest02.c"
-// #include "../src/ftr/ac_sum_gre_chest03.c"
+#include "../src/ftr/ac_sum_gre_chest02.c"
+#include "../src/ftr/ac_sum_gre_chest03.c"
 #include "../src/ftr/ac_sum_gre_counter01.c"
 #include "../src/ftr/ac_sum_gre_desk01.c"
-// #include "../src/ftr/ac_sum_gre_lanp01.c"
+#include "../src/ftr/ac_sum_gre_lanp01.c"
 #include "../src/ftr/ac_sum_gre_table01.c"
-// #include "../src/ftr/ac_sum_guitar01.c"
-// #include "../src/ftr/ac_sum_guitar02.c"
-// #include "../src/ftr/ac_sum_guitar03.c"
+#include "../src/ftr/ac_sum_guitar01.c"
+#include "../src/ftr/ac_sum_guitar02.c"
+#include "../src/ftr/ac_sum_guitar03.c"
 #include "../src/ftr/ac_sum_gupi.c"
 #include "../src/ftr/ac_sum_hachi.c"
 #include "../src/ftr/ac_sum_hal_bed01.c"
 #include "../src/ftr/ac_sum_hal_box01.c"
 #include "../src/ftr/ac_sum_hal_chair01.c"
 #include "../src/ftr/ac_sum_hal_chest01.c"
-// #include "../src/ftr/ac_sum_hal_chest02.c"
-// #include "../src/ftr/ac_sum_hal_chest03.c"
+#include "../src/ftr/ac_sum_hal_chest02.c"
+#include "../src/ftr/ac_sum_hal_chest03.c"
 #include "../src/ftr/ac_sum_hal_clk01.c"
 #include "../src/ftr/ac_sum_hal_lanp01.c"
 #include "../src/ftr/ac_sum_hal_mirror01.c"
 #include "../src/ftr/ac_sum_hal_pkin.c"
 #include "../src/ftr/ac_sum_hal_sofa01.c"
 #include "../src/ftr/ac_sum_hal_table01.c"
-// #include "../src/ftr/ac_sum_harp.c"
+#include "../src/ftr/ac_sum_harp.c"
 #include "../src/ftr/ac_sum_hera.c"
-// #include "../src/ftr/ac_sum_higurashi.c"
+#include "../src/ftr/ac_sum_higurashi.c"
 #include "../src/ftr/ac_sum_hirata.c"
 #include "../src/ftr/ac_sum_ito.c"
 #include "../src/ftr/ac_sum_iwana.c"
-// #include "../src/ftr/ac_sum_jukebox.c"
+#include "../src/ftr/ac_sum_jukebox.c"
 #include "../src/ftr/ac_sum_kabuto.c"
 #include "../src/ftr/ac_sum_kamakiri.c"
 #include "../src/ftr/ac_sum_kanabun.c"
 #include "../src/ftr/ac_sum_kaseki.c"
 #include "../src/ftr/ac_sum_kiageha.c"
 #include "../src/ftr/ac_sum_kingyo.c"
-// #include "../src/ftr/ac_sum_kirigirisu.c"
-// #include "../src/ftr/ac_sum_kisha.c"
+#include "../src/ftr/ac_sum_kirigirisu.c"
+#include "../src/ftr/ac_sum_kisha.c"
 #include "../src/ftr/ac_sum_kitchair01.c"
 #include "../src/ftr/ac_sum_kittable01.c"
 #include "../src/ftr/ac_sum_koi.c"
 #include "../src/ftr/ac_sum_kokuban.c"
-// #include "../src/ftr/ac_sum_koorogi.c"
+#include "../src/ftr/ac_sum_koorogi.c"
 #include "../src/ftr/ac_sum_liccabed.c"
 #include "../src/ftr/ac_sum_liccachair.c"
-// #include "../src/ftr/ac_sum_liccachest.c"
+#include "../src/ftr/ac_sum_liccachest.c"
 #include "../src/ftr/ac_sum_liccakitchen.c"
 #include "../src/ftr/ac_sum_liccalanp.c"
-// #include "../src/ftr/ac_sum_liccalowchest.c"
+#include "../src/ftr/ac_sum_liccalowchest.c"
 #include "../src/ftr/ac_sum_liccalowtable.c"
 #include "../src/ftr/ac_sum_liccamirror.c"
-// #include "../src/ftr/ac_sum_liccapiano.c"
+#include "../src/ftr/ac_sum_liccapiano.c"
 #include "../src/ftr/ac_sum_liccasofa.c"
 #include "../src/ftr/ac_sum_liccatable.c"
 #include "../src/ftr/ac_sum_log_bed01.c"
 #include "../src/ftr/ac_sum_log_chair01.c"
 #include "../src/ftr/ac_sum_log_chair02.c"
 #include "../src/ftr/ac_sum_log_chair03.c"
-// #include "../src/ftr/ac_sum_log_chest01.c"
-// #include "../src/ftr/ac_sum_log_chest02.c"
+#include "../src/ftr/ac_sum_log_chest01.c"
+#include "../src/ftr/ac_sum_log_chest02.c"
 #include "../src/ftr/ac_sum_log_chest03.c"
 #include "../src/ftr/ac_sum_log_hatoclk.c"
 #include "../src/ftr/ac_sum_log_table01.c"
 #include "../src/ftr/ac_sum_log_table02.c"
-// #include "../src/ftr/ac_sum_lv_stereo.c"
-// #include "../src/ftr/ac_sum_matumushi.c"
-// #include "../src/ftr/ac_sum_md01.c"
+#include "../src/ftr/ac_sum_lv_stereo.c"
+#include "../src/ftr/ac_sum_matumushi.c"
+#include "../src/ftr/ac_sum_md01.c"
 #include "../src/ftr/ac_sum_mezaclock.c"
-// #include "../src/ftr/ac_sum_minmin.c"
+#include "../src/ftr/ac_sum_minmin.c"
 #include "../src/ftr/ac_sum_misin01.c"
 #include "../src/ftr/ac_sum_miyama.c"
 #include "../src/ftr/ac_sum_mizunomi.c"
@@ -566,8 +571,8 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_sum_oldsofa01.c"
 #include "../src/ftr/ac_sum_oniyanma.c"
 #include "../src/ftr/ac_sum_oonamazu.c"
-// #include "../src/ftr/ac_sum_pet01.c"
-// #include "../src/ftr/ac_sum_piano01.c"
+#include "../src/ftr/ac_sum_pet01.c"
+#include "../src/ftr/ac_sum_piano01.c"
 #include "../src/ftr/ac_sum_pirania.c"
 #include "../src/ftr/ac_sum_pl_aloe01.c"
 #include "../src/ftr/ac_sum_pl_ananas.c"
@@ -590,12 +595,12 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_sum_poptable01.c"
 #include "../src/ftr/ac_sum_poptable02.c"
 #include "../src/ftr/ac_sum_poptable03.c"
-// #include "../src/ftr/ac_sum_radio01.c"
-// #include "../src/ftr/ac_sum_radio02.c"
+#include "../src/ftr/ac_sum_radio01.c"
+#include "../src/ftr/ac_sum_radio02.c"
 #include "../src/ftr/ac_sum_raigyo.c"
 #include "../src/ftr/ac_sum_ratan_bed01.c"
-// #include "../src/ftr/ac_sum_ratan_chest01.c"
-// #include "../src/ftr/ac_sum_ratan_chest02.c"
+#include "../src/ftr/ac_sum_ratan_chest01.c"
+#include "../src/ftr/ac_sum_ratan_chest02.c"
 #include "../src/ftr/ac_sum_ratan_chest03.c"
 #include "../src/ftr/ac_sum_ratan_isu01.c"
 #include "../src/ftr/ac_sum_ratan_isu02.c"
@@ -603,12 +608,12 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_sum_ratan_mirror.c"
 #include "../src/ftr/ac_sum_ratan_screen.c"
 #include "../src/ftr/ac_sum_ratan_table01.c"
-// #include "../src/ftr/ac_sum_reco01.c"
+#include "../src/ftr/ac_sum_reco01.c"
 #include "../src/ftr/ac_sum_roboclk.c"
-// #include "../src/ftr/ac_sum_roboconpo.c"
+#include "../src/ftr/ac_sum_roboconpo.c"
 #include "../src/ftr/ac_sum_sabo01.c"
 #include "../src/ftr/ac_sum_sabo02.c"
-// #include "../src/ftr/ac_sum_saiconpo.c"
+#include "../src/ftr/ac_sum_saiconpo.c"
 #include "../src/ftr/ac_sum_sake.c"
 #include "../src/ftr/ac_sum_shiokara.c"
 #include "../src/ftr/ac_sum_shoukaki.c"
@@ -616,22 +621,22 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_sum_sofe01.c"
 #include "../src/ftr/ac_sum_sofe02.c"
 #include "../src/ftr/ac_sum_sofe03.c"
-// #include "../src/ftr/ac_sum_stereo01.c"
-// #include "../src/ftr/ac_sum_stereo02.c"
+#include "../src/ftr/ac_sum_stereo01.c"
+#include "../src/ftr/ac_sum_stereo02.c"
 #include "../src/ftr/ac_sum_stove01.c"
 #include "../src/ftr/ac_sum_suberi01.c"
-// #include "../src/ftr/ac_sum_suzumushi.c"
-// #include "../src/ftr/ac_sum_syouryou.c"
-// #include "../src/ftr/ac_sum_taiko01.c"
+#include "../src/ftr/ac_sum_suzumushi.c"
+#include "../src/ftr/ac_sum_syouryou.c"
+#include "../src/ftr/ac_sum_taiko01.c"
 #include "../src/ftr/ac_sum_takkyu.c"
 #include "../src/ftr/ac_sum_tamamushi.c"
 #include "../src/ftr/ac_sum_tanago.c"
 #include "../src/ftr/ac_sum_taru01.c"
 #include "../src/ftr/ac_sum_taru02.c"
-// #include "../src/ftr/ac_sum_tekin01.c"
+#include "../src/ftr/ac_sum_tekin01.c"
 #include "../src/ftr/ac_sum_tentou.c"
-// #include "../src/ftr/ac_sum_timpani01.c"
-// #include "../src/ftr/ac_sum_tonosama.c"
+#include "../src/ftr/ac_sum_timpani01.c"
+#include "../src/ftr/ac_sum_tonosama.c"
 #include "../src/ftr/ac_sum_totemp01.c"
 #include "../src/ftr/ac_sum_totemp02.c"
 #include "../src/ftr/ac_sum_totemp03.c"
@@ -640,7 +645,7 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_sum_touro02.c"
 #include "../src/ftr/ac_sum_touro03.c"
 #include "../src/ftr/ac_sum_touro04.c"
-// #include "../src/ftr/ac_sum_tukutuku.c"
+#include "../src/ftr/ac_sum_tukutuku.c"
 #include "../src/ftr/ac_sum_tv01.c"
 #include "../src/ftr/ac_sum_tv02.c"
 #include "../src/ftr/ac_sum_ugui.c"
@@ -650,24 +655,24 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
 #include "../src/ftr/ac_sum_uwa_vase01.c"
 #include "../src/ftr/ac_sum_uwa_vase02.c"
 #include "../src/ftr/ac_sum_uwa_vase03.c"
-// #include "../src/ftr/ac_sum_viola01.c"
+#include "../src/ftr/ac_sum_viola01.c"
 #include "../src/ftr/ac_sum_wakasagi.c"
 #include "../src/ftr/ac_sum_wc01.c"
 #include "../src/ftr/ac_sum_wc02.c"
 #include "../src/ftr/ac_sum_whi_bed01.c"
-// #include "../src/ftr/ac_sum_whi_chest01.c"
-// #include "../src/ftr/ac_sum_whi_chest02.c"
-// #include "../src/ftr/ac_sum_whi_lanp.c"
+#include "../src/ftr/ac_sum_whi_chest01.c"
+#include "../src/ftr/ac_sum_whi_chest02.c"
+#include "../src/ftr/ac_sum_whi_lanp.c"
 #include "../src/ftr/ac_sum_whi_mirror.c"
 #include "../src/ftr/ac_sum_whi_sofa01.c"
 #include "../src/ftr/ac_sum_x_bed01.c"
 #include "../src/ftr/ac_sum_x_chair01.c"
-// #include "../src/ftr/ac_sum_x_chest01.c"
-// #include "../src/ftr/ac_sum_x_chest02.c"
+#include "../src/ftr/ac_sum_x_chest01.c"
+#include "../src/ftr/ac_sum_x_chest02.c"
 #include "../src/ftr/ac_sum_x_chest03.c"
 #include "../src/ftr/ac_sum_x_clk.c"
 #include "../src/ftr/ac_sum_x_lanp.c"
-// #include "../src/ftr/ac_sum_x_piano.c"
+#include "../src/ftr/ac_sum_x_piano.c"
 #include "../src/ftr/ac_sum_x_sofa01.c"
 #include "../src/ftr/ac_sum_x_table01.c"
 #include "../src/ftr/ac_sum_yamame.c"

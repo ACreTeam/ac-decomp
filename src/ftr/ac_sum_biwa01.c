@@ -5,6 +5,21 @@ static void aSumBiwa01_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game
 static void aSumBiwa01_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
 static void aSumBiwa01_dt(FTR_ACTOR* ftr_actor, u8* data);
 
+static void aSumBiwa01_ct(FTR_ACTOR* ftr_actor, u8* data) {
+}
+
+static void aSumBiwa01_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor) {
+    if (Common_Get(clip).my_room_clip != NULL) {
+        Common_Get(clip).my_room_clip->sound_melody_proc(ftr_actor, my_room_actor, 6);
+    }
+}
+
+static void aSumBiwa01_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+}
+
+static void aSumBiwa01_dt(FTR_ACTOR* ftr_actor, u8* data) {
+}
+
 static aFTR_vtable_c aSumBiwa01_func = {
 	&aSumBiwa01_ct,
 	&aSumBiwa01_mv,
