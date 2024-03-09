@@ -53,7 +53,7 @@ static Gfx* fIJS_GetTwoTileGfx(int x0, int y0, int x1, int y1, GAME* game) {
     return two_tex_scroll_dolphin(game->graph, 0, x0, y0, 32, 32, 1, x1, y1, 32, 32);
 }
 
-static void fNS_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+static void fIJS_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     u32 ctr_ofs;
     Gfx* scroll;

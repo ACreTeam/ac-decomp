@@ -1,5 +1,14 @@
 extern aFTR_rig_c aNogKaeru_key_anime_data;
 
+extern cKF_Skeleton_R_c cKF_bs_r_int_nog_kaeru;
+extern cKF_Animation_R_c cKF_ba_r_int_nog_kaeru;
+
+aFTR_rig_c aNogKaeru_key_anime_data {
+    cKF_bs_r_int_nog_kaeru,
+    cKF_ba_r_int_nog_kaeru,
+    0.5f,
+};
+
 static void fNKR_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     if (aFTR_CAN_PLAY_SE(ftr_actor)) {
         sAdo_RoomIncectPos((u32)ftr_actor, 0x41, &ftr_actor->position);

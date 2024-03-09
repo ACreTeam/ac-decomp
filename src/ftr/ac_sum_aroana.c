@@ -1,5 +1,14 @@
 extern aFTR_rig_c aSumAroana_key_anime_data;
 
+extern cKF_Skeleton_R_c cKF_bs_r_int_sum_aroana;
+extern cKF_Animation_R_c cKF_ba_r_int_sum_aroana;
+
+aFTR_rig_c aSumAroana_key_anime_data {
+    cKF_bs_r_int_sum_aroana,
+    cKF_ba_r_int_sum_aroana,
+    0.5f,
+};
+
 aFTR_PROFILE iam_sum_aroana = {
 	NULL,
 	NULL,

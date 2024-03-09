@@ -1,5 +1,14 @@
 extern aFTR_rig_c aSumBassm_key_anime_data;
 
+extern cKF_Skeleton_R_c cKF_bs_r_int_sum_bassm;
+extern cKF_Animation_R_c cKF_ba_r_int_sum_bassm;
+
+aFTR_rig_c aSumBassm_key_anime_data {
+    cKF_bs_r_int_sum_bassm,
+    cKF_ba_r_int_sum_bassm,
+    0.5f,
+};
+
 aFTR_PROFILE iam_sum_bassm = {
 	NULL,
 	NULL,

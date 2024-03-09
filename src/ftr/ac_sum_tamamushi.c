@@ -1,5 +1,14 @@
 extern aFTR_rig_c aSumTamamushi_key_anime_data;
 
+extern cKF_Skeleton_R_c cKF_bs_r_int_sum_tamamushi;
+extern cKF_Animation_R_c cKF_ba_r_int_sum_tamamushi;
+
+aFTR_rig_c aSumTamamushi_key_anime_data {
+    cKF_bs_r_int_sum_tamamushi,
+    cKF_ba_r_int_sum_tamamushi,
+    0.5f,
+};
+
 aFTR_PROFILE iam_sum_tamamushi = {
 	NULL,
 	NULL,

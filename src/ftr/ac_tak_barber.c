@@ -1,5 +1,14 @@
 extern aFTR_rig_c aTakBarber_sklkey;
 
+extern cKF_Skeleton_R_c cKF_bs_r_int_tak_barber;
+extern cKF_Animation_R_c cKF_ba_r_int_tak_barber;
+
+aFTR_rig_c aTakBarber_sklkey {
+    cKF_bs_r_int_tak_barber,
+    cKF_ba_r_int_tak_barber,
+    0.5f,
+};
+
 aFTR_PROFILE iam_tak_barber = {
 	NULL,
 	NULL,
