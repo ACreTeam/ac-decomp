@@ -48,6 +48,7 @@ static u16 fFTR_myhome_on_pal_table[][16] = {
 
 static void fFTR_MorphHousePalette(u16* dst_pal_p, u16* off_pal_p, u16* on_pal_p, FTR_ACTOR* ftr_actor) {
     f32 target;
+    f32 now;
     int i;
 
     if (ftr_actor->switch_bit == TRUE) {
@@ -56,13 +57,14 @@ static void fFTR_MorphHousePalette(u16* dst_pal_p, u16* off_pal_p, u16* on_pal_p
         target = 0.0f;
     }
 
-    if (ftr_actor->dynamic_work_f[0] > target) {
+    now = ftr_actor->dynamic_work_f[0];
+    if (now > target) {
         ftr_actor->dynamic_work_f[0] -= 0.1f;
 
         if (ftr_actor->dynamic_work_f[0] < target) {
             ftr_actor->dynamic_work_f[0] = target;
         }
-    } else if (ftr_actor->dynamic_work_f[0] < target) {
+    } else if (now < target) {
         ftr_actor->dynamic_work_f[0] += 0.1f;
 
         if (ftr_actor->dynamic_work_f[0] > target) {
@@ -70,33 +72,36 @@ static void fFTR_MorphHousePalette(u16* dst_pal_p, u16* off_pal_p, u16* on_pal_p
         }
     }
 
-    for (i = 0; i < 16; i++) {
-        f32 work;
+    if (dst_pal_p != NULL) {
+        for (i = 0; i < 16; i++) {
+            // clang-format off
 
-        // We assume that the palette will be RGB5A3 with no alpha component so:
-        // [1][rrrrr][ggggg][bbbbb]
-        dst_pal_p[i] = 0;
+            // We assume that the palette will be RGB5A3 with no alpha component so:
+            // [1][rrrrr][ggggg][bbbbb]
+            dst_pal_p[i] = 0;
 
-        // Red
-        work = (f32)((off_pal_p[i] >> 10) & 0x1F);
-        dst_pal_p[i] |=
-            ((u16)(work + ftr_actor->dynamic_work_f[0] * ((f32)((off_pal_p[i] >> 10) & 0x1F) - work)) & 0x1F) << 10;
+            // Red
+            dst_pal_p[i] |= ((u16)((f32)((off_pal_p[i] >> 10) & 0x1F) +
+                                   ftr_actor->dynamic_work_f[0] *
+                                       ((f32)((on_pal_p[i] >> 10) & 0x1F) - (f32)((off_pal_p[i] >> 10) & 0x1F))) & 0x1F) << 10;
 
-        // Green
-        work = (f32)((off_pal_p[i] >> 5) & 0x1F);
-        dst_pal_p[i] |= ((u16)(work + ftr_actor->dynamic_work_f[0] * ((f32)((off_pal_p[i] >> 5) & 0x1F) - work)) & 0x1F)
-                        << 5;
+            // Green
+            dst_pal_p[i] |= ((u16)((f32)((off_pal_p[i] >> 5) & 0x1F) +
+                                   ftr_actor->dynamic_work_f[0] *
+                                       ((f32)((on_pal_p[i] >> 5) & 0x1F) - (f32)((off_pal_p[i] >> 5) & 0x1F))) & 0x1F) << 5;
 
-        // Blue
-        work = (f32)((off_pal_p[i] >> 0) & 0x1F);
-        dst_pal_p[i] |= ((u16)(work + ftr_actor->dynamic_work_f[0] * ((f32)((off_pal_p[i] >> 0) & 0x1F) - work)) & 0x1F)
-                        << 0;
+            // Blue
+            dst_pal_p[i] |= ((u16)((f32)((off_pal_p[i] >> 0) & 0x1F) +
+                                   ftr_actor->dynamic_work_f[0] *
+                                       ((f32)((on_pal_p[i] >> 0) & 0x1F) - (f32)((off_pal_p[i] >> 0) & 0x1F))) & 0x1F) << 0;
 
-        // Alpha-bit (not sure why they bother even masking this out)
-        dst_pal_p[i] |= (u16)(off_pal_p[i] & 0x8000);
+            // Alpha-bit (not sure why they bother even masking this out)
+            dst_pal_p[i] |= (u16)(off_pal_p[i] & 0x8000);
+            // clang-format on
+        }
+
+        DCStoreRangeNoSync(dst_pal_p, 16 * sizeof(u16));
     }
-
-    DCStoreRangeNoSync(dst_pal_p, 16 * sizeof(u16));
 }
 
 static void fFTR_MorphHousepaletteCt(u16* dst_pal_p, u16* off_pal_p, u16* on_pal_p, FTR_ACTOR* ftr_actor) {
@@ -114,7 +119,7 @@ static Gfx* fFTR_GetTwoTileGfx(int width0, int height0, int scroll_x0, int scrol
     u32 ctr_ofs;
     int ofs;
 
-    if (ftr_actor->ctr_type) {
+    if (ftr_actor->ctr_type == aFTR_CTR_TYPE_GAME_PLAY) {
         ctr_ofs = play->game_frame;
     } else {
         ctr_ofs = play->game.frame_counter;
