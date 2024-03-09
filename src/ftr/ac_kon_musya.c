@@ -9,14 +9,14 @@ extern Gfx int_kon_musya_dou_onT_model[];
 extern Gfx int_kon_musya_hako_on_model[];
 extern Gfx int_kon_musya_tare_onT_model[];
 
-static void aKonJihanki02_ct(FTR_ACTOR* ftr_actor, u8* data){ 
+static void aKonMusya_ct(FTR_ACTOR* ftr_actor, u8* data){ 
 
 }
 
-static void aKonJihanki02_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data){
+static void aKonMusya_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data){
 }
 
-static void aKonJihanki02_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data){
+static void aKonMusya_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data){
 
     OPEN_DISP(game->graph);
 
@@ -32,7 +32,7 @@ static void aKonJihanki02_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* g
     CLOSE_DISP(game->graph);
 } 
 
-static void aKonJihanki02_dt(FTR_ACTOR* ftr_actor, u8* data){ 
+static void aKonMusya_dt(FTR_ACTOR* ftr_actor, u8* data){ 
     
 }
 

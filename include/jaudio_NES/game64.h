@@ -52,7 +52,7 @@ extern void Na_RoomType(u8);
 extern void Na_Museum(u8);
 extern void Na_SoftReset();
 extern void Na_SceneMode(u8);
-extern void Na_RoomIncectPos(int, u16, u16, f32);
+extern s8 Na_RoomIncectPos(int, u16, u16, f32);
 extern void Na_FurnitureInstPos(int, u16, f32);
 extern int Na_GetSoundFrameCounter();
 extern void Na_kazagurumaLevel(f32);

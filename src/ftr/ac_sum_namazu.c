@@ -1,5 +1,14 @@
 extern aFTR_rig_c aSumNamazu_key_anime_data;
 
+extern cKF_Skeleton_R_c cKF_bs_r_int_sum_namazu;
+extern cKF_Animation_R_c cKF_ba_r_int_sum_namazu;
+
+aFTR_rig_c aSumNamazu_key_anime_data {
+    cKF_bs_r_int_sum_namazu,
+    cKF_ba_r_int_sum_namazu,
+    0.5f,
+};
+
 aFTR_PROFILE iam_sum_namazu = {
 	NULL,
 	NULL,

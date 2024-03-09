@@ -2,6 +2,15 @@ extern aFTR_rig_c aSumMezaClock_sklkey;
 extern Gfx int_sum_mezaclock_short_model[];
 extern Gfx int_sum_mezaclock_long_model[];
 
+extern cKF_Skeleton_R_c cKF_bs_r_int_sum_mezaclock;
+extern cKF_Animation_R_c cKF_ba_r_int_sum_mezaclock;
+
+aFTR_rig_c aSumMezaClock_sklkey {
+    cKF_bs_r_int_sum_mezaclock,
+    cKF_ba_r_int_sum_mezaclock,
+    0.5f,
+};
+
 static int aSumMezaClock_DwAfter(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     if (joint_idx == 3) {

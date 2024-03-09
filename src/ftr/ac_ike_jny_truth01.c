@@ -53,6 +53,10 @@ static void fIJT_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* 
     CLOSE_DISP(game->graph);
 }
 
+static void fIJT_dt(FTR_ACTOR* ftr_actor, u8* data){
+
+}
+
 static aFTR_vtable_c fIJT_func = {
 	&fIJT_ct,
 	&fIJT_mv,

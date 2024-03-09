@@ -56,7 +56,7 @@ extern Gfx int_tak_lion_on_model[];
 extern Gfx int_tak_lion_onT_model[];
 extern Gfx int_tak_lion_alphaT_model[];
 
-static void fSKP_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+static void fTL_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     u32 ctr_ofs;
     Gfx* scroll_gfx;

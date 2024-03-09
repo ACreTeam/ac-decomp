@@ -27,7 +27,7 @@ static void aKonWaclock_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* gam
     cKF_Si3_draw_R_SV(game, &ftr_actor->keyframe, mtx , aKonWaclock_DwBefore, aKonWaclock_DwAfter, ftr_actor);
 }
 
-static void aKonwaclock_ct(FTR_ACTOR* ftr_actor, u8* data){
+static void aKonWaclock_ct(FTR_ACTOR* ftr_actor, u8* data){
     cKF_SkeletonInfo_R_c* keyf;
 
     keyf = &ftr_actor->keyframe;

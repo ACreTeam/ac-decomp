@@ -1,5 +1,15 @@
 extern aFTR_rig_c aSumAkiakane_key_anime_data;
 
+extern cKF_Skeleton_R_c cKF_bs_r_int_sum_akiakane;
+extern cKF_Animation_R_c cKF_ba_r_int_sum_akiakane;
+
+aFTR_rig_c aSumAkiakane_key_anime_data {
+    cKF_bs_r_int_sum_akiakane,
+    cKF_ba_r_int_sum_akiakane,
+    0.5f,
+};
+
+
 aFTR_PROFILE iam_sum_akiakane = {
 	NULL,
 	NULL,

@@ -1,5 +1,14 @@
 extern aFTR_rig_c aSumHirata_key_anime_data;
 
+extern cKF_Skeleton_R_c cKF_bs_r_int_sum_hirata;
+extern cKF_Animation_R_c cKF_ba_r_int_sum_hirata;
+
+aFTR_rig_c aSumHirata_key_anime_data {
+    cKF_bs_r_int_sum_hirata,
+    cKF_ba_r_int_sum_hirata,
+    0.5f,
+};
+
 aFTR_PROFILE iam_sum_hirata = {
 	NULL,
 	NULL,

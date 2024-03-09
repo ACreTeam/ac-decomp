@@ -17,7 +17,7 @@ static void aKonsnowtansu_ct(FTR_ACTOR* ftr_actor, u8* data){
 
 }
 
-static void aKonsnowtansu_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data){
+static void aKonSnowtansu_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data){
 
     if(Common_Get(clip).my_room_clip != NULL){
         Common_Get(clip).my_room_clip->open_close_common_move_proc(ftr_actor,my_room_actor,game,1.0f,16.0f);

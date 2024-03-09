@@ -1,5 +1,9 @@
 extern aFTR_rig_c aSumOkuwa_key_anime_data;
 
+aFTR_rig_c aSumOkuwa_key_anime_data = {
+    
+}
+
 aFTR_PROFILE iam_sum_okuwa = {
 	NULL,
 	NULL,
