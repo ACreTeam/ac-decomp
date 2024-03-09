@@ -5,6 +5,19 @@ static void aSumX_Piano_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* gam
 static void aSumX_Piano_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
 static void aSumX_Piano_dt(FTR_ACTOR* ftr_actor, u8* data);
 
+void aSumX_Piano_ct(FTR_ACTOR* ftr_actor, u8* data) {
+}
+
+static void aSumX_Piano_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+    Common_Get(clip).my_room_clip->sound_melody_proc(ftr_actor, my_room_actor, 8);
+}
+
+void aSumX_Piano_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+}
+
+void aSumX_Piano_dt(FTR_ACTOR* ftr_actor, u8* data) {
+}
+
 static aFTR_vtable_c aSumX_Piano_func = {
 	&aSumX_Piano_ct,
 	&aSumX_Piano_mv,

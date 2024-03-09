@@ -5,6 +5,21 @@ static void aSumBass01_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game
 static void aSumBass01_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
 static void aSumBass01_dt(FTR_ACTOR* ftr_actor, u8* data);
 
+static void aSumBass01_ct(FTR_ACTOR* ftr_actor, u8* data) {
+}
+
+static void aSumBass01_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor) {
+    if (Common_Get(clip).my_room_clip != NULL) {
+        Common_Get(clip).my_room_clip->sound_melody_proc(ftr_actor, my_room_actor, 9);
+    }
+}
+
+static void aSumBass01_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+}
+
+static void aSumBass01_dt(FTR_ACTOR* ftr_actor, u8* data) {
+}
+
 static aFTR_vtable_c aSumBass01_func = {
 	&aSumBass01_ct,
 	&aSumBass01_mv,

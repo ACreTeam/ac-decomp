@@ -5,6 +5,19 @@ static void aSumLv_Stereo_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* g
 static void aSumLv_Stereo_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data);
 static void aSumLv_Stereo_dt(FTR_ACTOR* ftr_actor, u8* data);
 
+static void aSumLv_Stereo_ct(FTR_ACTOR* ftr_actor, u8* data) {
+}
+
+static void aSumLv_Stereo_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+    (*Common_Get(clip).my_room_clip->mini_disk_common_move_proc)(ftr_actor, my_room_actor, game, 0.0f, 0.0f);
+}
+
+static void aSumLv_Stereo_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+}
+
+static void aSumLv_Stereo_dt(FTR_ACTOR* ftr_actor, u8* data) {
+}
+
 static aFTR_vtable_c aSumLv_Stereo_func = {
 	&aSumLv_Stereo_ct,
 	&aSumLv_Stereo_mv,
