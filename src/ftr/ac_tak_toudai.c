@@ -109,7 +109,7 @@ aFTR_PROFILE iam_tak_toudai = {
 	0,
 	2,
 	0,
-	0,
+	aFTR_INTERACTION_TOGGLE,
 	&fTTD_func,
     // clang-format on
 };

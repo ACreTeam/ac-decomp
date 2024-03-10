@@ -35,7 +35,7 @@ static void aKonAtqclock_ct(FTR_ACTOR* ftr_actor, u8* data){
     cKF_SkeletonInfo_R_ct(keyf, &cKF_bs_r_int_kon_atqclock, &cKF_ba_r_int_kon_atqclock, ftr_actor->joint, ftr_actor->morph);
     cKF_SkeletonInfo_R_init_standard_repeat(keyf, &cKF_ba_r_int_kon_atqclock, NULL);
     cKF_SkeletonInfo_R_play(keyf);
-    keyf->frame_control.speed = 0.0f;
+    keyf->frame_control.speed = 0.5f;
 
 }
 
@@ -52,7 +52,7 @@ static void aKonAtqclock_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* ga
     if(clock_info->tick_stop != 0){
         cKF_SkeletonInfo_R_init_standard_repeat(keyf, &cKF_ba_r_int_kon_atqclock, NULL);
         cKF_SkeletonInfo_R_play(keyf);
-        keyf->frame_control.speed = 0.0f;
+        keyf->frame_control.speed = 0.5f;
     }
     else if(clock_info->tick0 == 1 || clock_info->tick1 == 1){
         if(aFTR_CAN_PLAY_SE(ftr_actor)){

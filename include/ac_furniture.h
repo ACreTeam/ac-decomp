@@ -61,30 +61,32 @@ enum {
 };
 
 enum {
-    aFTR_INTERACTION_STORAGE_DRAWERS,  // dressers
+    aFTR_INTERACTION_STORAGE_DRAWERS = 1,  // dressers
     aFTR_INTERACTION_STORAGE_WARDROBE, // double doors
-    aFTR_INTERACTION_STORAGE_CLOSET,   // single door
-    aFTR_INTERACTION_MUSIC_DISK,
-    aFTR_INTERACTION_NO_COLLISION,
-    aFTR_INTERACTION_HANIWA,
-    aFTR_INTERACTION_FISH,
-    aFTR_INTERACTION_INSECT,
-    aFTR_INTERACTION_MANNEKIN,
-    aFTR_INTERACTION_UMBRELLA,
-    aFTR_INTERACTION_FOSSIL,
-    aFTR_INTERACTION_FAMICOM,
-    aFTR_INTERACTION_START_DISABLED, // mainly used for TVs to be off when placed
+    aFTR_INTERACTION_STORAGE_CLOSET = 4,   // single door
+    aFTR_INTERACTION_MUSIC_DISK = 8,
+    aFTR_INTERACTION_NO_COLLISION = 0x10,
+    aFTR_INTERACTION_HANIWA = 0x20,
+    aFTR_INTERACTION_FISH = 0x40,
+    aFTR_INTERACTION_INSECT = 0x80,
+    aFTR_INTERACTION_MANNEKIN = 0x100,
+    aFTR_INTERACTION_UMBRELLA = 0x200,
+    aFTR_INTERACTION_FOSSIL = 0x400,
+    aFTR_INTERACTION_FAMICOM = 0x800,
+    aFTR_INTERACTION_START_DISABLED = 0x1000, // mainly used for TVs to be off when placed
     // there may be more types, but I didn't see any
-
-    aFTR_INTERACTION_NUM
+    aFTR_INTERACTION_FAMICOM_ITEM = 0x2000,
+    aFTR_INTERACTION_RADIO_AEROBICS = 0x4000,
+    aFTR_INTERACTION_TOGGLE = 0x8000,
+    aFTR_INTERACTION_NUM = 15,
 };
 
 enum {
-    aFTR_CONTACT_ACTION_CHAIR_UNIDIRECTIONAL,   // only can sit from the front
-    aFTR_CONTACT_ACTION_CHAIR_MULTIDIRECTIONAL, // can sit from any direction
-    aFTR_CONTACT_ACTION_CHAIR_SOFA,             // cam sit anywhere from the front
-    aFTR_CONTACT_ACTION_BED_SINGLE,             // single bed (can't roll)
-    aFTR_CONTACT_ACTION_BED_DOUBLE,             // double bed (can roll)
+    aFTR_CONTACT_ACTION_CHAIR_UNIDIRECTIONAL = 1,   // only can sit from the front
+    aFTR_CONTACT_ACTION_CHAIR_MULTIDIRECTIONAL = 2, // can sit from any direction
+    aFTR_CONTACT_ACTION_CHAIR_SOFA = 4,             // cam sit anywhere from the front
+    aFTR_CONTACT_ACTION_BED_SINGLE = 8,             // single bed (can't roll)
+    aFTR_CONTACT_ACTION_BED_DOUBLE = 0x10,             // double bed (can roll)
 
     aFTR_CONTACT_ACTION_NUM
 };

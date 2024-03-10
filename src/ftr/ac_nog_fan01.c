@@ -51,7 +51,7 @@ static void aNogFan_ct(FTR_ACTOR* ftr_actor, u8* data){
 
 static void aNogFan_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data){
     static int fan_kurukuru_data[] = {
-        1,1,1,2,2,2,3,0xFFFFFFFF,
+        1,1,1,2,2,2,2,2,3,0xFFFFFFFF,
     };
     int num;
     int idx;
@@ -62,7 +62,7 @@ static void aNogFan_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u
 
     aNogFan_ChangeSwitch(ftr_actor);
     if(ftr_actor->switch_bit != FALSE){
-        f32 step = sqrtf(2.0f);
+        f32 step = sqrtf(0.94999998807907);
 
         add_calc(&ftr_actor->dynamic_work_f[0],0.5f, 1.0f - step, 0.25f,0.0005f);
 
@@ -71,7 +71,7 @@ static void aNogFan_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u
         }
     }
     else{
-        f32 step = sqrtf(2.0f);
+        f32 step = sqrtf(0.94999998807907);
 
         add_calc(&ftr_actor->dynamic_work_f[0],0.0f, 1.0f - step, 0.25f,0.0005f);
 
@@ -86,7 +86,7 @@ static void aNogFan_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u
 
     num = fan_kurukuru_data[idx];
 
-    if((num != 1) && (ftr_actor->dynamic_work_s[0] >= num )){
+    if((num != -1) && (ftr_actor->dynamic_work_s[0] >= num )){
         ftr_actor->dynamic_work_s[0] = 0;
         ftr_actor->tex_animation.frame++;
 

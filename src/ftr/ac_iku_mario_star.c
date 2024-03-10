@@ -16,16 +16,16 @@ static void fIMS_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* 
     }
 }
 
-extern u16 int_iku_mario_start_a_pal[];
-extern u16 int_iku_mario_start_b_pal[];
-extern u16 int_iku_mario_start_c_pal[];
-extern u16 int_iku_mario_start_d_pal[];
+extern u16 int_iku_mario_star_a_pal[];
+extern u16 int_iku_mario_star_b_pal[];
+extern u16 int_iku_mario_star_c_pal[];
+extern u16 int_iku_mario_star_d_pal[];
 
 static u16* fIMS_palette_table[] = {
-    int_iku_mario_start_a_pal,
-    int_iku_mario_start_b_pal,
-    int_iku_mario_start_c_pal,
-    int_iku_mario_start_d_pal,
+    int_iku_mario_star_a_pal,
+    int_iku_mario_star_b_pal,
+    int_iku_mario_star_c_pal,
+    int_iku_mario_star_d_pal,
 };
 
 extern Gfx int_iku_mario_star_model[];

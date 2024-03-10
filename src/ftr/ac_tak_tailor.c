@@ -1,5 +1,10 @@
-extern u16 int_tak_tailor_off_pal[];
-extern u16 int_tak_tailor_on_pal[];
+extern u16 int_tak_tailor_on_pal[] ATTRIBUTE_ALIGN(32) = {
+    #include "assets/int_tak_tailor_on_pal.inc"
+};
+extern u16 int_tak_tailor_off_pal[] ATTRIBUTE_ALIGN(32) = {
+    #include "assets/int_tak_tailor_off_pal.inc"
+};
+
 
 static void fTTR_ct(FTR_ACTOR* ftr_actor, u8* data) {
     ftr_actor->pal_p = (u16*)zelda_malloc_align(16 * sizeof(u16), 32);
@@ -55,7 +60,7 @@ aFTR_PROFILE iam_tak_tailor = {
 	0,
 	0,
 	0,
-	0,
+	aFTR_INTERACTION_TOGGLE,
 	&fTTR_func,
     // clang-format on
 };

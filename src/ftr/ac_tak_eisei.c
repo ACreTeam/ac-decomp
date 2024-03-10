@@ -3,10 +3,10 @@ extern aFTR_rig_c aTakEisei_sklkey;
 extern cKF_Skeleton_R_c cKF_bs_r_int_tak_eisei;
 extern cKF_Animation_R_c cKF_ba_r_int_tak_eisei;
 
-aFTR_rig_c aTakEisei_sklkey {
-    cKF_bs_r_int_tak_eisei,
-    cKF_ba_r_int_tak_eisei,
-    0.5f,
+aFTR_rig_c aTakEisei_sklkey= {
+    &cKF_bs_r_int_tak_eisei,
+    &cKF_ba_r_int_tak_eisei,
+    1.0f,
 };
 
 aFTR_PROFILE iam_tak_eisei = {

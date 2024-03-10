@@ -3,10 +3,10 @@ extern aFTR_rig_c aSumPirania_key_anime_data;
 extern cKF_Skeleton_R_c cKF_bs_r_int_sum_pirania;
 extern cKF_Animation_R_c cKF_ba_r_int_sum_pirania;
 
-aFTR_rig_c aSumPirania_key_anime_data {
-    cKF_bs_r_int_sum_pirania,
-    cKF_ba_r_int_sum_pirania,
-    0.5f,
+aFTR_rig_c aSumPirania_key_anime_data= {
+    &cKF_bs_r_int_sum_pirania,
+    &cKF_ba_r_int_sum_pirania,
+    1.0f,
 };
 
 aFTR_PROFILE iam_sum_pirania = {

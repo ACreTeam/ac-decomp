@@ -37,7 +37,7 @@ static void aKonRedclock_ct(FTR_ACTOR* ftr_actor, u8* data){
     cKF_SkeletonInfo_R_ct(keyf, &cKF_bs_r_int_kon_redclock, &cKF_ba_r_int_kon_redclock, ftr_actor->joint, ftr_actor->morph);
     cKF_SkeletonInfo_R_init_standard_repeat(keyf, &cKF_ba_r_int_kon_redclock, NULL);
     cKF_SkeletonInfo_R_play(keyf);
-    keyf->frame_control.speed = 0.0f;
+    keyf->frame_control.speed = 0.5f;
 
 }
 

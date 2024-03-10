@@ -434,4 +434,123 @@ config/rel.yml:
     type: pal16
   # ac_koinobori
 
+  int_nog_kamakura_off_pal:
+    addrs: [0x806D79C0, 0x806D79E0]
+    type: pal16
+  int_nog_kamakura_on_pal:
+    addrs: [0x806D79E0, 0x806D7A00]
+    type: pal16
+  int_nog_kouban_on_pal:
+    addrs: [0x806D7B80,0x806D7BA0]
+    type: pal16
+  int_nog_kouban_off_pal:
+    addrs: [0x806D7BA0,0x806D7BC0]
+    type: pal16
+  int_nog_museum_off_pal:
+    addrs: [0x806D7D80,0x806D7DA0]
+    type: pal16
+  int_nog_museum_on_pal:
+    addrs: [0x806D7DA0,0x806D7DC0]
+    type: pal16
+  int_nog_station1_a_pal:
+    addrs: [0x806D8200,0x806D8220]
+    type: pal16
+  int_nog_station1_b_pal:
+    addrs: [0x806D8220,0x806D8240]
+    type: pal16
+  int_nog_station1_c_pal:
+    addrs: [0x806D8240,0x806D8260]
+    type: pal16
+  int_nog_station1_d_pal:
+    addrs: [0x806D8260,0x806D8280]
+    type: pal16
+  int_nog_station1_e_pal:
+    addrs: [0x806D8280,0x806D82A0]
+    type: pal16
+  int_nog_station2_a_pal:
+    addrs: [0x806D82A0,0x806D82C0]
+    type: pal16
+  int_nog_station2_b_pal:
+    addrs: [0x806D82C0,0x806D82E0]
+    type: pal16
+  int_nog_station2_c_pal:
+    addrs: [0x806D82E0,0x806D8300]
+    type: pal16
+  int_nog_station2_d_pal:
+    addrs: [0x806D8300,0x806D8320]
+    type: pal16
+  int_nog_station2_e_pal:
+    addrs: [0x806D8320,0x806D8340]
+    type: pal16
+  int_nog_station3_a_pal:
+    addrs: [0x806D8340,0x806D8360]
+    type: pal16
+  int_nog_station3_b_pal:
+    addrs: [0x806D8360,0x806D8380]
+    type: pal16
+  int_nog_station3_c_pal:
+    addrs: [0x806D8380,0x806D83A0]
+    type: pal16
+  int_nog_station3_d_pal:
+    addrs: [0x806D83A0,0x806D83C0]
+    type: pal16
+  int_nog_station3_e_pal:
+    addrs: [0x806D83C0,0x806D83E0]
+    type: pal16  
+  int_nog_shop1_on_pal:
+    addrs: [0x806D8560,0x806D8580]
+    type: pal16  
+  int_nog_shop1_off_pal:
+    addrs: [0x806D8580,0x806D85A0]
+    type: pal16
+  int_nog_uranai_off_pal:
+    addrs: [0x806D8900,0x806D8920]
+    type: pal16
+  int_nog_uranai_on_pal:
+    addrs: [0x806D8920,0x806D8940]
+    type: pal16
+  int_nog_yamishop_off_pal:
+    addrs: [0x806D89A0,0x806D89C0]
+    type: pal16
+  int_nog_yamishop_on_pal:
+    addrs: [0x806D89C0,0x806D89E0]
+    type: pal16
+  int_nog_yubin_on_pal:
+    addrs: [0x806D8A40,0x806D8A60]
+    type: pal16
+  int_nog_yubin_off_pal:
+    addrs: [0x806D8A60,0x806D8A80]
+    type: pal16
+  int_tak_tailor_on_pal:
+    addrs: [0x806DE200, 0x806DE220]
+    type: pal16
+  int_tak_tailor_off_pal:
+    addrs: [0x806DE220, 0x806DE240]
+    type: pal16
+  radio_pal:
+    addrs: [0x806DE600, 0x806DE620]
+    type: pal16
+  int_yaz_fish_trophy_pal:
+    addrs: [0x806DF4C0,0x806DF4E0]
+    type: pal16
+  int_tak_tent_on_pal:
+    addrs: [0x806DFB40, 0x806DFB60]
+    type: pal16
+  int_tak_tent_off_pal:
+    addrs: [0x806DFB60, 0x806DFB80]
+    type: pal16
+  int_yaz_fish_trophy2_pal:
+    addrs: [0x806DFC40,0x806DFC60]
+    type: pal16  
+  int_nog_flower_a_pal:
+    addrs: [0x806E0080,0x806E00A0]
+    type: pal16  
+  int_nog_flower_b_pal:
+    addrs: [0x806E00A0,0x806E00C0]
+    type: pal16  
+  int_nog_flower_c_pal:
+    addrs: [0x806E00C0,0x806E00E0]
+    type: pal16  
+  #f_furniture
+
   # dataobj.obj item names

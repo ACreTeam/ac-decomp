@@ -3,10 +3,10 @@ extern aFTR_rig_c aNogPiraluku_key_anime_data;
 extern cKF_Skeleton_R_c cKF_bs_r_int_nog_piraluku;
 extern cKF_Animation_R_c cKF_ba_r_int_nog_piraluku;
 
-aFTR_rig_c aNogPiraluku_key_anime_data {
-    cKF_bs_r_int_nog_piraluku,
-    cKF_ba_r_int_nog_piraluku,
-    0.5f,
+aFTR_rig_c aNogPiraluku_key_anime_data= {
+    &cKF_bs_r_int_nog_piraluku,
+    &cKF_ba_r_int_nog_piraluku,
+    1.0f,
 };
 
 aFTR_PROFILE iam_nog_piraluku = {

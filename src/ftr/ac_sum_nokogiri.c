@@ -1,5 +1,14 @@
 extern aFTR_rig_c aSumNokogiri_key_anime_data;
 
+extern cKF_Skeleton_R_c cKF_bs_r_int_sum_nokogiri;
+extern cKF_Animation_R_c cKF_ba_r_int_sum_nokogiri;
+
+aFTR_rig_c aSumNokogiri_key_anime_data= {
+    &cKF_bs_r_int_sum_nokogiri,
+    &cKF_ba_r_int_sum_nokogiri,
+    1.0f,
+};
+
 aFTR_PROFILE iam_sum_nokogiri = {
 	NULL,
 	NULL,

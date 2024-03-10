@@ -84,7 +84,7 @@ aFTR_PROFILE iam_nog_myhome2 = {
 	0,
 	0,
 	0,
-	0,
+	aFTR_INTERACTION_TOGGLE,
 	&fNM2_func,
     // clang-format on
 };

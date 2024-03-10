@@ -3,10 +3,10 @@ extern aFTR_rig_c aNogDango_key_anime_data;
 extern cKF_Skeleton_R_c cKF_bs_r_int_nog_dango;
 extern cKF_Animation_R_c cKF_ba_r_int_nog_dango;
 
-aFTR_rig_c aNogDango_key_anime_data {
-    cKF_bs_r_int_nog_dango,
-    cKF_ba_r_int_nog_dango,
-    0.5f,
+aFTR_rig_c aNogDango_key_anime_data= {
+    &cKF_bs_r_int_nog_dango,
+    &cKF_ba_r_int_nog_dango,
+    1.0f,
 };
 
 

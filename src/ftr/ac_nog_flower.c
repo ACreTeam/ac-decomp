@@ -17,9 +17,15 @@ extern Gfx int_nog_cosmosT_model[];
 extern Gfx int_nog_turip_model[];
 extern Gfx int_nog_turipT_model[];
 
-extern u16 int_nog_flower_a_pal[];
-extern u16 int_nog_flower_b_pal[];
-extern u16 int_nog_flower_c_pal[];
+u16 int_nog_flower_a_pal[] ATTRIBUTE_ALIGN(32) = {
+    #include "assets/int_nog_flower_a_pal.inc"
+};
+u16 int_nog_flower_b_pal[] ATTRIBUTE_ALIGN(32) = {
+    #include "assets/int_nog_flower_b_pal.inc"
+};
+u16 int_nog_flower_c_pal[] ATTRIBUTE_ALIGN(32) = {
+    #include "assets/int_nog_flower_c_pal.inc"
+};
 
 typedef struct {
     Gfx* model0;

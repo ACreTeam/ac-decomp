@@ -5,10 +5,10 @@ extern Gfx int_sum_mezaclock_long_model[];
 extern cKF_Skeleton_R_c cKF_bs_r_int_sum_mezaclock;
 extern cKF_Animation_R_c cKF_ba_r_int_sum_mezaclock;
 
-aFTR_rig_c aSumMezaClock_sklkey {
-    cKF_bs_r_int_sum_mezaclock,
-    cKF_ba_r_int_sum_mezaclock,
-    0.5f,
+aFTR_rig_c aSumMezaClock_sklkey= {
+    &cKF_bs_r_int_sum_mezaclock,
+    &cKF_ba_r_int_sum_mezaclock,
+    1.0f,
 };
 
 static int aSumMezaClock_DwAfter(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,

@@ -61,6 +61,6 @@ aFTR_PROFILE iam_kob_disksystem8 = {
 	0,
 	0,
 	0,
-	0,
+	aFTR_INTERACTION_FAMICOM_ITEM,
 	&aKobDisksystem8_func,
 };

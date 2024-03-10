@@ -6,6 +6,21 @@ static void aSumKisha_dt(FTR_ACTOR* ftr_actor, u8* data);
 extern cKF_Skeleton_R_c cKF_bs_r_int_sum_kisha;
 extern cKF_Animation_R_c cKF_ba_r_int_sum_kisha;
 
+static void aSumKisha_ControlSwitchSE(FTR_ACTOR* ftr_actor){
+    if (ftr_actor->switch_bit != FALSE){
+        sAdo_OngenTrgStart(0x16,&ftr_actor->position);
+    }
+    else{
+        sAdo_OngenTrgStart(0x17,&ftr_actor->position);
+    }
+}
+
+static void aSumKisha_ChangeSwitch(FTR_ACTOR* ftr_actor){
+    if (ftr_actor->switch_changed_flag != FALSE){
+        aSumKisha_ControlSwitchSE(ftr_actor);
+    }
+} 
+
 static void aSumKisha_ct(FTR_ACTOR* ftr_actor, u8* data) {
     cKF_SkeletonInfo_R_c* keyframe = &ftr_actor->keyframe;
 
