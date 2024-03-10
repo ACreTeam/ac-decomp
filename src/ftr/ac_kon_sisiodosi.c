@@ -6,10 +6,10 @@ static void aKonSisiodosi_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* g
 extern cKF_Skeleton_R_c cKF_bs_r_int_kon_sisiodosi;
 extern cKF_Animation_R_c cKF_ba_r_int_kon_sisiodosi;
 
-aFTR_rig_c aKonSisiodosi_sklkey {
-    cKF_bs_r_int_kon_sisiodosi,
-    cKF_ba_r_int_kon_sisiodosi,
-    0.5f,
+aFTR_rig_c aKonSisiodosi_sklkey= {
+    &cKF_bs_r_int_kon_sisiodosi,
+    &cKF_ba_r_int_kon_sisiodosi,
+    1.0f,
 };
 
 static void aKonSisiodosi_ct(FTR_ACTOR* ftr_actor, u8* data){

@@ -24,8 +24,9 @@ static void fRT_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* d
 extern Gfx radio_DL_model[];
 
 static void fRT_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
-    static u16 radio_pal[] = { 0x0335, 0xE79D, 0xCEF9, 0xB212, 0x9D4A, 0x8CC7, 0xD0A8, 0xC655,
-                               0xB5D1, 0xA96D, 0x98EA, 0x8887, 0xA12B, 0xC5A2, 0xEEE9, 0xF7D7 };
+    static u16 radio_pal[] ATTRIBUTE_ALIGN(32) = { 
+        #include "assets/radio_pal.inc"
+     };
 
     OPEN_DISP(game->graph);
 
@@ -62,7 +63,7 @@ aFTR_PROFILE iam_radio_test = {
 	0,
 	0,
 	0,
-	0,
+	aFTR_INTERACTION_RADIO_AEROBICS,
 	&fRT_func,
     // clang-format on
 };

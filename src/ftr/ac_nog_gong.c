@@ -7,7 +7,7 @@ static void aNogG_ct(FTR_ACTOR* ftr_actor, u8* data) {
     cKF_SkeletonInfo_R_ct(keyframe, &cKF_bs_r_int_nog_gong, &cKF_ba_r_int_nog_gong, ftr_actor->joint, ftr_actor->morph);
     cKF_SkeletonInfo_R_init_standard_stop(keyframe, &cKF_ba_r_int_nog_gong, NULL);
     cKF_SkeletonInfo_R_play(keyframe);
-    keyframe->frame_control.speed = 0.0f;
+    keyframe->frame_control.speed = 0.5f;
 }
 
 static void aNogG_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {

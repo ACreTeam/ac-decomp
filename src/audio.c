@@ -443,7 +443,7 @@ extern void sAdo_SceneMode(u8 mode) {
     Na_SceneMode(mode);
 }
 
-extern s8 sAdo_RoomIncectPos(u32 f, u16 u, xyz_t* pos) {
+extern u8 sAdo_RoomIncectPos(u32 f, u16 u, xyz_t* pos) {
 
     u16 scalc;
     f32 fcalc;

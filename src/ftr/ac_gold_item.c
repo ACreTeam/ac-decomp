@@ -22,21 +22,21 @@ extern Gfx obj_shovel2T_mat_model[];
 extern Gfx obj_rod2T_gfx_model[];
 extern Gfx obj_rod2T_mat_model[];
 
-extern Gfx obj_rod_line2T_gfx_model[];
-extern Gfx obj_rod_line2T_mat_model[];
+extern Gfx obj_rod2_lineT_gfx_model[];
+extern Gfx obj_rod2_lineT_mat_model[];
 
 static Gfx* fGI_mat_table[] = {
     obj_net2T_mat_model,
     obj_axe2T_mat_model,
     obj_shovel2T_mat_model,
-    obj_rod_line2T_mat_model,
+    obj_rod2_lineT_mat_model,
 };
 
 static Gfx* fGI_gfx_table[] = {
     obj_net2T_gfx_model,
     obj_axe2T_gfx_model,
     obj_shovel2T_gfx_model,
-    obj_rod_line2T_gfx_model,
+    obj_rod2_lineT_gfx_model,
 };
 
 static void fGI_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {

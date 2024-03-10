@@ -82,7 +82,6 @@ static void aSumLogHatoclk_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* 
 
     cKF_Si3_draw_R_SV(game, keyframe, mtx, &aSumLogHatoclk_DwBefore, &aSumLogHatoclk_DwAfter, ftr_actor);
 }
-
 static void aSumLogHatoclk_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     cKF_SkeletonInfo_R_c* keyframe = &ftr_actor->keyframe;
     lbRTC_time_c rtc_time = Common_Get(time.rtc_time);
@@ -112,19 +111,19 @@ static void aSumLogHatoclk_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* 
                 if (aFTR_CAN_PLAY_SE(ftr_actor)) {
                     sAdo_OngenTrgStart(0x133, &ftr_actor->position);
                 }
+            }
 
-                if (cKF_SkeletonInfo_R_play(keyframe) == cKF_STATE_STOPPED) {
-                    if (keyframe->frame_control.speed == 0.0f) {
-                        aSumLogHatoclk_StopAnimeInitNormal(keyframe, &cKF_ba_r_int_sum_log_hatoclk, 1.0f);
-                        keyframe->frame_control.current_frame = 1.0f;
-                        ftr_actor->dynamic_work_s[1]--;
+            if (cKF_SkeletonInfo_R_play(keyframe) == cKF_STATE_STOPPED) {
+                if (keyframe->frame_control.speed == 0.0f) {
+                    aSumLogHatoclk_StopAnimeInitNormal(keyframe, &cKF_ba_r_int_sum_log_hatoclk, 1.0f);
+                    keyframe->frame_control.current_frame = 1.0f;
+                    ftr_actor->dynamic_work_s[1]--;
 
-                        if (ftr_actor->dynamic_work_s[1] <= 0) {
-                            ftr_actor->dynamic_work_s[0] = 2; // last 'pappo' was played
-                        }
-                    } else {
-                        keyframe->frame_control.speed = 0.0f;
+                    if (ftr_actor->dynamic_work_s[1] <= 0) {
+                        ftr_actor->dynamic_work_s[0] = 2; // last 'pappo' was played
                     }
+                } else {
+                    keyframe->frame_control.speed = 0.0f;
                 }
             }
 

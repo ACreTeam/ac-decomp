@@ -37,7 +37,7 @@ static void aKonGrclock_ct(FTR_ACTOR* ftr_actor, u8* data){
     cKF_SkeletonInfo_R_ct(keyf, &cKF_bs_r_int_kon_grclock, &cKF_ba_r_int_kon_grclock, ftr_actor->joint, ftr_actor->morph);
     cKF_SkeletonInfo_R_init_standard_repeat(keyf, &cKF_ba_r_int_kon_grclock, NULL);
     cKF_SkeletonInfo_R_play(keyf);
-    keyf->frame_control.speed = 0.0f;
+    keyf->frame_control.speed = 0.5f;
 
 }
 

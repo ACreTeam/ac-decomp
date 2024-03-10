@@ -7,10 +7,10 @@ static void aKonCracker_dt(FTR_ACTOR* ftr_actor, u8* data);
 extern cKF_Skeleton_R_c cKF_bs_r_int_kon_cracker;
 extern cKF_Animation_R_c cKF_ba_r_int_kon_cracker;
 
-aFTR_rig_c aKonCracker_sklkey {
-    cKF_bs_r_int_kon_cracker,
-    cKF_ba_r_int_kon_cracker,
-    0.5f,
+aFTR_rig_c aKonCracker_sklkey = {
+    &cKF_bs_r_int_kon_cracker,
+    &cKF_ba_r_int_kon_cracker,
+    1.0f,
 };
 
 static void aKonCracker_ct(FTR_ACTOR* ftr_actor, u8* data) {

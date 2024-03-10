@@ -3,10 +3,10 @@ extern aFTR_rig_c aSumMizunomi_sklkey;
 extern cKF_Skeleton_R_c cKF_bs_r_int_sum_mizunomi;
 extern cKF_Animation_R_c cKF_ba_r_int_sum_mizunomi;
 
-aFTR_rig_c aSumMizunomi_sklkey {
-    cKF_bs_r_int_sum_mizunomi,
-    cKF_ba_r_int_sum_mizunomi,
-    0.5f,
+aFTR_rig_c aSumMizunomi_sklkey= {
+    &cKF_bs_r_int_sum_mizunomi,
+    &cKF_ba_r_int_sum_mizunomi,
+    1.0f,
 };
 
 static void aSumMizunomi_ct(FTR_ACTOR* ftr_actor, u8* data) {

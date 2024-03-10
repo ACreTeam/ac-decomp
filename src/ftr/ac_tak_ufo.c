@@ -3,10 +3,10 @@ extern aFTR_rig_c aTakUfo_sklkey;
 extern cKF_Skeleton_R_c cKF_bs_r_int_tak_ufo;
 extern cKF_Animation_R_c cKF_ba_r_int_tak_ufo;
 
-aFTR_rig_c aTakUfo_sklkey {
-    cKF_bs_r_int_tak_ufo,
-    cKF_ba_r_int_tak_ufo,
-    0.5f,
+aFTR_rig_c aTakUfo_sklkey= {
+    &cKF_bs_r_int_tak_ufo,
+    &cKF_ba_r_int_tak_ufo,
+    1.0f,
 };
 
 aFTR_PROFILE iam_tak_ufo = {

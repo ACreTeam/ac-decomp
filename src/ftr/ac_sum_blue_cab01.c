@@ -6,7 +6,7 @@ static void aSumBlueCab01_dt(FTR_ACTOR* ftr_actor, u8* data);
 extern cKF_Skeleton_R_c cKF_bs_r_int_sum_blue_cab01;
 extern cKF_Animation_R_c cKF_ba_r_int_sum_blue_cab01;
 
-static void SumBlueCab01_ct(FTR_ACTOR* ftr_actor, u8* data) {
+static void aSumBlueCab01_ct(FTR_ACTOR* ftr_actor, u8* data) {
     cKF_SkeletonInfo_R_c* keyframe = &ftr_actor->keyframe;
 
     cKF_SkeletonInfo_R_ct(keyframe, &cKF_bs_r_int_sum_blue_cab01, &cKF_ba_r_int_sum_blue_cab01, ftr_actor->joint, ftr_actor->morph);
@@ -15,7 +15,7 @@ static void SumBlueCab01_ct(FTR_ACTOR* ftr_actor, u8* data) {
     cKF_SkeletonInfo_R_play(keyframe);
 }
 
-static void SumBlueCab01_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+static void aSumBlueCab01_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     cKF_SkeletonInfo_R_c* keyframe = &ftr_actor->keyframe;
 
     if (Common_Get(clip).my_room_clip != NULL) {
@@ -23,7 +23,7 @@ static void SumBlueCab01_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* ga
     }
 }
 
-static void SumBlueCab01_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+static void aSumBlueCab01_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     cKF_SkeletonInfo_R_c* keyframe = &ftr_actor->keyframe;
     Mtx* mtx = ftr_actor->skeleton_mtx[game->frame_counter & 1];
@@ -35,7 +35,7 @@ static void SumBlueCab01_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* ga
     cKF_Si3_draw_R_SV(game, keyframe, mtx, NULL, NULL, NULL);
 }
 
-static void SumBlueCab01_dt(FTR_ACTOR* ftr_actor, u8* data) {
+static void aSumBlueCab01_dt(FTR_ACTOR* ftr_actor, u8* data) {
 }
 
 static aFTR_vtable_c aSumBlueCab01_func = {

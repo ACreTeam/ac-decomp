@@ -935,8 +935,9 @@ ac_weather_fine.c:
     .data: [0x806D1DA0, 0x806D1DB8]
 f_furniture.c:
     .text: [0x8062E96C, 0x80641254]
-    .rodata: [0x8064D360,0x8064D4D0]
-    .data: [0x806D4D40,0x806E02A0]
+    .rodata: [0x8064D360, 0x8064D4D0]
+    .data: [0x806D4D40, 0x806E02A0]
+
 
 # dataobject.obj files
 data/combi/data_combi.c:

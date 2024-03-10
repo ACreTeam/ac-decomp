@@ -35,7 +35,7 @@ static void fTMN_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* 
     keyframe->frame_control.speed = ftr_actor->dynamic_work_f[0] * 0.5f * 2.0f;
     cKF_SkeletonInfo_R_play(keyframe);
 
-    ftr_actor->dynamic_work_f[1] += 1.820444f;
+    ftr_actor->dynamic_work_f[1] += 1.8204445f;
     if (ftr_actor->dynamic_work_f[1] >= USHT_MAX) {
         ftr_actor->dynamic_work_f[1] = 0.0f;
     }

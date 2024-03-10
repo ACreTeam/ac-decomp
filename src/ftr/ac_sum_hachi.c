@@ -3,10 +3,10 @@ extern aFTR_rig_c aSumHachi_key_anime_data;
 extern cKF_Skeleton_R_c cKF_bs_r_int_sum_hachi;
 extern cKF_Animation_R_c cKF_ba_r_int_sum_hachi;
 
-aFTR_rig_c aSumHachi_key_anime_data {
-    cKF_bs_r_int_sum_hachi,
-    cKF_ba_r_int_sum_hachi,
-    0.5f,
+aFTR_rig_c aSumHachi_key_anime_data= {
+    &cKF_bs_r_int_sum_hachi,
+    &cKF_ba_r_int_sum_hachi,
+    1.0f,
 };
 
 aFTR_PROFILE iam_sum_hachi = {

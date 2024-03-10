@@ -8,7 +8,7 @@ static void aSumHalBox01_ct(FTR_ACTOR* ftr_actor, u8* data) {
                           ftr_actor->morph);
     cKF_SkeletonInfo_R_init_standard_stop(keyframe, &cKF_ba_r_int_sum_hal_box01, NULL);
     cKF_SkeletonInfo_R_play(keyframe);
-    keyframe->frame_control.speed = 0.5f;
+    keyframe->frame_control.speed = 0.0f;
     ftr_actor->dynamic_work_s[0] = 0;
 }
 
