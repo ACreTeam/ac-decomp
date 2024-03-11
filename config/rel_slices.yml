@@ -903,6 +903,10 @@ ef_make_hem.c:
     .text: [0x806162B0, 0x8061710C]
     .rodata: [0x8064C818, 0x8064C860]
     .data: [0x806D3160, 0x806D31B8]
+ef_tent_lamp.c:
+    .text: [0x80622304, 0x8062260C]
+    .rodata: [0x8064CF10, 0x8064CF38]
+    .data: [0x806D3910, 0x806D3928]
 m_select.c:
     .text: [0x80627F88, 0x80629CA8]
     .rodata: [0x8064D1B0, 0x8064D1B8]
