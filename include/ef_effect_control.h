@@ -4,10 +4,13 @@
 #include "types.h"
 #include "m_lib.h"
 #include "m_actor.h"
+#include "m_lights.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define eEC_EFFECT_ACTIVE_MAX 100
 
 enum effect_type {
     eEC_EFFECT_SHOCK,
@@ -149,26 +152,119 @@ enum {
     eEC_LIGHT_COLOR_NUM
 };
 
-typedef void (*eEC_NAME2EFFECTMAKE_PROC)(int, xyz_t, int, short, GAME*, u16, s16, s16);
-typedef void (*eEC_NAME2EFFECTKILL_PROC)(int, u16);
+typedef struct effect_s eEC_Effect_c;
 
-typedef void (*eEC_REGISTEFFECTLIGHT_PROC)(f32*, s16, s16, s16);
+struct effect_s {
+    s16 timer;
+    s16 name;
+    s16 prog_idx;
+    s16 arg0;
+    s16 arg1;
+    s16 _0A;
+    u16 item_name;
+    u8 prio;
+    u8 state;
+    xyz_t position;
+    xyz_t velocity;
+    xyz_t acceleration;
+    xyz_t scale;
+    xyz_t offset;
+    s16 effect_specific[6];
+};
 
-typedef int (*eEC_EFFECTLIGHTSTATUS_PROC)(rgba_t*, int*); // returns eEC_LIGHT_COLOR_*
+typedef void (*eEC_EFFECT_INIT_PROC)(xyz_t, int, s16, GAME*, u16, s16, s16);
+typedef void (*eEC_EFFECT_CT_PROC)(eEC_Effect_c*, GAME*, void*);
+typedef void (*eEC_EFFECT_MOVE_PROC)(eEC_Effect_c*, GAME*);
+typedef void (*eEC_EFFECT_DRAW_PROC)(eEC_Effect_c*, GAME*);
+
+typedef struct effect_profile_s {
+    eEC_EFFECT_INIT_PROC init_proc;
+    eEC_EFFECT_CT_PROC ct_proc;
+    eEC_EFFECT_MOVE_PROC move_proc;
+    eEC_EFFECT_DRAW_PROC draw_proc;
+    s16 n_frames;
+    s16 child_effect_id;
+    f32 max_dist;
+} eEC_PROFILE_c;
+
+typedef struct morph_data_s {
+    u8 start_frame;
+    u8 end_frame;
+    u8 morph_flag;
+    f32 start_val;
+    f32 end_val;
+} eEC_morph_data_c;
+
+typedef struct light_data_s {
+    s16 ctr;
+    rgba_t start_color;
+    rgba_t target_color;
+    s16 max_frame;
+    s16 n_frames;
+    int light_state;
+    int shadow_flag;
+} eEC_light_data_c;
+
+typedef void (*eEC_NAME2EFFECTMAKE_PROC)(int effect_id, xyz_t position, int prio, s16 angle, GAME* game, u16 item_name,
+                                         s16 arg0, s16 arg1);
+typedef void (*eEC_NAME2EFFECTKILL_PROC)(int effect_id, u16 item_name);
+typedef void (*eEC_NAME2EFFECTKILLALL_PROC)(u16 item_name);
+typedef void (*eEC_VECTORROTATEY_PROC)(xyz_t* ofs, f32 rot_rad);
+typedef s16 (*eEC_RANDOMFIRSTSPEED_PROC)(xyz_t* speed, f32 y, f32 max_z, f32 max_x);
+typedef void (*eEC_SETCONTINIOUSENV_PROC)(eEC_Effect_c* effect, s16 unused, s16 timer);
+typedef f32 (*eEC_CALCADJUST_PROC)(s16 now_timer, s16 start_timer, s16 end_timer, f32 start_val, f32 end_val);
+typedef void (*eEC_AUTOMATRIXXLU_PROC)(GAME* game, xyz_t* pos, xyz_t* scale);
+typedef void (*eEC_AUTOMATRIXXLU_OFFSET_PROC)(GAME* game, xyz_t* pos, xyz_t* scale, xyz_t* offset);
+typedef eEC_Effect_c* (*eEC_MAKEEFFECT_PROC)(s16 effect_id, xyz_t* pos, xyz_t* ofs, GAME* game, void* ct_arg,
+                                             u16 item_name, int prio, s16 arg0, s16 arg1);
+typedef void (*eEC_MORPHCOMBINE_PROC)(u8* result, eEC_morph_data_c* morph_data, s16 now_timer);
+typedef void (*eEC_REGISTEFFECTLIGHT_PROC)(rgba_t color, s16 max_frames, s16 n_frames, int shadow_flag);
+typedef void (*eEC_DECIDELIGHTPOWER_PROC)(rgba_t* result_color, rgba_t base_color, xyz_t pos, GAME* game, f32 max_power,
+                                          f32 min_power, f32 max_dist);
+typedef int (*eEC_CHECKLOOKATBLOCK_PROC)(xyz_t pos);
+typedef int (*eEC_EFFECTLIGHTSTATUS_PROC)(rgba_t* color, int* shadow_flag); // returns eEC_LIGHT_COLOR_*
+typedef int (*eEC_SPECIALBLOCKCENTERPOS_PROC)(xyz_t* pos, u32 block_kind);
 
 typedef struct effect_control_clip_s {
     /* 0x00 */ eEC_NAME2EFFECTMAKE_PROC effect_make_proc;
     /* 0x04 */ eEC_NAME2EFFECTKILL_PROC effect_kill_proc;
-    /* 0x08 */ u8 _08[0x30 - 0x08];
+    /* 0x08 */ eEC_VECTORROTATEY_PROC vector_rotate_y_proc;
+    /* 0x0C */ eEC_RANDOMFIRSTSPEED_PROC random_first_speed_proc;
+    /* 0x10 */ eEC_SETCONTINIOUSENV_PROC set_continious_env_proc;
+    /* 0x14 */ eEC_CALCADJUST_PROC calc_adjust_proc;
+    /* 0x18 */ eEC_AUTOMATRIXXLU_PROC auto_matrix_xlu_proc;
+    /* 0x1C */ eEC_AUTOMATRIXXLU_OFFSET_PROC auto_matrix_xlu_offset_proc;
+    /* 0x20 */ void* _20; // unused in AC
+    /* 0x24 */ void* _24; // unused in AC
+    /* 0x28 */ eEC_MAKEEFFECT_PROC make_effect_proc;
+    /* 0x2C */ eEC_MORPHCOMBINE_PROC morph_combine_proc;
     /* 0x30 */ eEC_REGISTEFFECTLIGHT_PROC regist_effect_light;
-    /* 0x34 */ void* _34;
-    /* 0x38 */ void* _38;
+    /* 0x34 */ eEC_DECIDELIGHTPOWER_PROC decide_light_power_proc;
+    /* 0x38 */ eEC_CHECKLOOKATBLOCK_PROC check_lookat_block_proc;
     /* 0x3C */ eEC_EFFECTLIGHTSTATUS_PROC effect_light_status;
-    /* 0x40 */ void* _40;
-    /* 0x44 */ void* _44;
+    /* 0x40 */ eEC_SPECIALBLOCKCENTERPOS_PROC special_block_center_pos_proc;
+    /* 0x44 */ eEC_NAME2EFFECTKILLALL_PROC effect_kill_all_proc;
 } eEC_EffectControl_Clip_c;
 
 typedef struct effect_control_s EFFECT_CONTROL_ACTOR;
+
+// almost entirely scrapped in AC (functionally scrapped?)
+typedef struct effect_prog_info_s {
+    u8 _00[0x18]; // scrapped
+    s16 end_frame;
+    u8 _1A[0x06]; // scrapped
+} eEC_program_info_c;
+
+typedef struct effect_work_s {
+    u8 _0000[0x004C - 0x0000];
+    eEC_program_info_c program_info[6];
+    u8 _010C[0x01D0 - 0x010C];
+    int active_effect_num;
+    eEC_Effect_c effects[eEC_EFFECT_ACTIVE_MAX];
+    u8 effect_active_flags[eEC_EFFECT_ACTIVE_MAX];
+    Lights light_info;
+    int _24A8;
+} eEC_work_c;
 
 struct effect_control_s {
     ACTOR actor_class;
