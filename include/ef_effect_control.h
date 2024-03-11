@@ -12,6 +12,14 @@ extern "C" {
 
 #define eEC_EFFECT_ACTIVE_MAX 100
 
+#define eEC_IMMEDIATE_DEATH -1
+#define eEC_IGNORE_DEATH -2
+
+#define eEC_NO_CHILD_ID 0xFF
+
+#define eEC_DEFAULT_DEATH_DIST (800.0f)
+#define eEC_IGNORE_DEATH_DIST (-1000.203064f) // ignore death range check when set to this
+
 enum effect_type {
     eEC_EFFECT_SHOCK,
     eEC_EFFECT_DUST,
@@ -142,6 +150,133 @@ enum effect_type {
 
     eEC_EFFECT_NUM
 };
+
+extern eEC_PROFILE_c iam_ef_ami_mizu;
+extern eEC_PROFILE_c iam_ef_anahikari;
+extern eEC_PROFILE_c iam_ef_ase;
+extern eEC_PROFILE_c iam_ef_ase2;
+extern eEC_PROFILE_c iam_ef_ase_ch;
+extern eEC_PROFILE_c iam_ef_break_axe;
+extern eEC_PROFILE_c iam_ef_bubu;
+extern eEC_PROFILE_c iam_ef_buruburu;
+extern eEC_PROFILE_c iam_ef_bush_happa;
+extern eEC_PROFILE_c iam_ef_bush_yuki;
+extern eEC_PROFILE_c iam_ef_car_blight;
+extern eEC_PROFILE_c iam_ef_car_light;
+extern eEC_PROFILE_c iam_ef_clacker;
+extern eEC_PROFILE_c iam_ef_coin;
+extern eEC_PROFILE_c iam_ef_dash_asimoto;
+extern eEC_PROFILE_c iam_ef_dig_hole;
+extern eEC_PROFILE_c iam_ef_dig_mud;
+extern eEC_PROFILE_c iam_ef_dig_scoop;
+extern eEC_PROFILE_c iam_ef_douzou_light;
+extern eEC_PROFILE_c iam_ef_doyon;
+extern eEC_PROFILE_c iam_ef_dust;
+extern eEC_PROFILE_c iam_ef_flash;
+extern eEC_PROFILE_c iam_ef_flashC;
+extern eEC_PROFILE_c iam_ef_footprint;
+extern eEC_PROFILE_c iam_ef_furo_yuge;
+extern eEC_PROFILE_c iam_ef_gimonhu;
+extern eEC_PROFILE_c iam_ef_goki;
+extern eEC_PROFILE_c iam_ef_ha;
+extern eEC_PROFILE_c iam_ef_halloween;
+extern eEC_PROFILE_c iam_ef_halloween_smoke;
+extern eEC_PROFILE_c iam_ef_hanabi_botan1;
+extern eEC_PROFILE_c iam_ef_hanabi_botan2;
+extern eEC_PROFILE_c iam_ef_hanabi_dummy;
+extern eEC_PROFILE_c iam_ef_hanabi_hoshi;
+extern eEC_PROFILE_c iam_ef_hanabi_set;
+extern eEC_PROFILE_c iam_ef_hanabi_switch;
+extern eEC_PROFILE_c iam_ef_hanabi_yanagi;
+extern eEC_PROFILE_c iam_ef_hanabira;
+extern eEC_PROFILE_c iam_ef_hanatiri;
+extern eEC_PROFILE_c iam_ef_hirameki_den;
+extern eEC_PROFILE_c iam_ef_hirameki_hikari;
+extern eEC_PROFILE_c iam_ef_ikigire;
+extern eEC_PROFILE_c iam_ef_impact_star;
+extern eEC_PROFILE_c iam_ef_kagu_happa;
+extern eEC_PROFILE_c iam_ef_kamifubuki;
+extern eEC_PROFILE_c iam_ef_kangaeru;
+extern eEC_PROFILE_c iam_ef_kantanhu;
+extern eEC_PROFILE_c iam_ef_kasamizu;
+extern eEC_PROFILE_c iam_ef_kasamizutama;
+extern eEC_PROFILE_c iam_ef_kaze;
+extern eEC_PROFILE_c iam_ef_kaze_happa;
+extern eEC_PROFILE_c iam_ef_kigae;
+extern eEC_PROFILE_c iam_ef_kigae_light;
+extern eEC_PROFILE_c iam_ef_kikuzu;
+extern eEC_PROFILE_c iam_ef_killer;
+extern eEC_PROFILE_c iam_ef_kisha_kemuri;
+extern eEC_PROFILE_c iam_ef_konpu;
+extern eEC_PROFILE_c iam_ef_kpun;
+extern eEC_PROFILE_c iam_ef_kyousou_onpu;
+extern eEC_PROFILE_c iam_ef_lovelove;
+extern eEC_PROFILE_c iam_ef_lovelove2;
+extern eEC_PROFILE_c iam_ef_lovelove_heart;
+extern eEC_PROFILE_c iam_ef_make_hem;
+extern eEC_PROFILE_c iam_ef_make_hem_kira;
+extern eEC_PROFILE_c iam_ef_make_hem_light;
+extern eEC_PROFILE_c iam_ef_mizutama;
+extern eEC_PROFILE_c iam_ef_motiyuge;
+extern eEC_PROFILE_c iam_ef_muka;
+extern eEC_PROFILE_c iam_ef_naku;
+extern eEC_PROFILE_c iam_ef_namida;
+extern eEC_PROFILE_c iam_ef_neboke;
+extern eEC_PROFILE_c iam_ef_neboke_akubi;
+extern eEC_PROFILE_c iam_ef_neboke_awa;
+extern eEC_PROFILE_c iam_ef_night13_moon;
+extern eEC_PROFILE_c iam_ef_night15_moon;
+extern eEC_PROFILE_c iam_ef_ongen;
+extern eEC_PROFILE_c iam_ef_otikomi;
+extern eEC_PROFILE_c iam_ef_otosiana;
+extern eEC_PROFILE_c iam_ef_pun;
+extern eEC_PROFILE_c iam_ef_pun_sekimen;
+extern eEC_PROFILE_c iam_ef_pun_yuge;
+extern eEC_PROFILE_c iam_ef_reset_hole;
+extern eEC_PROFILE_c iam_ef_sandsplash;
+extern eEC_PROFILE_c iam_ef_shock;
+extern eEC_PROFILE_c iam_ef_shooting;
+extern eEC_PROFILE_c iam_ef_shooting_kira;
+extern eEC_PROFILE_c iam_ef_shooting_set;
+extern eEC_PROFILE_c iam_ef_siawase_hana;
+extern eEC_PROFILE_c iam_ef_siawase_hana_ch;
+extern eEC_PROFILE_c iam_ef_siawase_hikari;
+extern eEC_PROFILE_c iam_ef_sibuki;
+extern eEC_PROFILE_c iam_ef_situren;
+extern eEC_PROFILE_c iam_ef_slip;
+extern eEC_PROFILE_c iam_ef_slip_footprint;
+extern eEC_PROFILE_c iam_ef_soba_yuge;
+extern eEC_PROFILE_c iam_ef_steam;
+extern eEC_PROFILE_c iam_ef_string;
+extern eEC_PROFILE_c iam_ef_suisou_awa;
+extern eEC_PROFILE_c iam_ef_swing_axe;
+extern eEC_PROFILE_c iam_ef_swing_net;
+extern eEC_PROFILE_c iam_ef_swing_rod;
+extern eEC_PROFILE_c iam_ef_taberu;
+extern eEC_PROFILE_c iam_ef_takurami;
+extern eEC_PROFILE_c iam_ef_takurami_kira;
+extern eEC_PROFILE_c iam_ef_tamaire;
+extern eEC_PROFILE_c iam_ef_tape;
+extern eEC_PROFILE_c iam_ef_tent_lamp;
+extern eEC_PROFILE_c iam_ef_tumble;
+extern eEC_PROFILE_c iam_ef_tumble_bodyprint;
+extern eEC_PROFILE_c iam_ef_tumble_dust;
+extern eEC_PROFILE_c iam_ef_turi_hamon;
+extern eEC_PROFILE_c iam_ef_turi_hane0;
+extern eEC_PROFILE_c iam_ef_turi_hane1;
+extern eEC_PROFILE_c iam_ef_turi_mizu;
+extern eEC_PROFILE_c iam_ef_turi_suiteki;
+extern eEC_PROFILE_c iam_ef_turn_asimoto;
+extern eEC_PROFILE_c iam_ef_turn_footprint;
+extern eEC_PROFILE_c iam_ef_uranai;
+extern eEC_PROFILE_c iam_ef_wait_asimoto;
+extern eEC_PROFILE_c iam_ef_walk_asimoto;
+extern eEC_PROFILE_c iam_ef_warau;
+extern eEC_PROFILE_c iam_ef_yajirushi;
+extern eEC_PROFILE_c iam_ef_young_tree;
+extern eEC_PROFILE_c iam_ef_yukidama;
+extern eEC_PROFILE_c iam_ef_yukidaruma;
+extern eEC_PROFILE_c iam_ef_yukihane;
 
 enum {
     eEC_LIGHT_COLOR_DISABLED,
