@@ -891,6 +891,10 @@ ac_weather_leaf.c:
     .text: [0x8060420C, 0x806048B8]
     .rodata: [0x8064BBE8, 0x8064BC40]
     .data: [0x806D1E28, 0x806D1E48]
+ef_make_hem.c:
+    .text: [0x806162B0, 0x8061710C]
+    .rodata: [0x8064C818, 0x8064C860]
+    .data: [0x806D3160, 0x806D31B8]
 m_select.c:
     .text: [0x80627F88, 0x80629CA8]
     .rodata: [0x8064D1B0, 0x8064D1B8]
@@ -931,12 +935,12 @@ audio.c:
     .rodata: [0x8064D340, 0x8064D360]
     .data: [0x806D4CB0, 0x806D4D40]
     .bss: [0x8148DA78, 0x8148DA7C]
-ac_weather_fine.c:
-    .data: [0x806D1DA0, 0x806D1DB8]
 f_furniture.c:
     .text: [0x8062E96C, 0x80641254]
     .rodata: [0x8064D360, 0x8064D4D0]
     .data: [0x806D4D40, 0x806E02A0]
+ac_weather_fine.c:
+    .data: [0x806D1DA0, 0x806D1DB8]
 
 
 # dataobject.obj files
