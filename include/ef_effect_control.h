@@ -151,6 +151,8 @@ enum effect_type {
     eEC_EFFECT_NUM
 };
 
+typedef struct effect_profile_s eEC_PROFILE_c;
+
 extern eEC_PROFILE_c iam_ef_ami_mizu;
 extern eEC_PROFILE_c iam_ef_anahikari;
 extern eEC_PROFILE_c iam_ef_ase;
@@ -287,6 +289,14 @@ enum {
     eEC_LIGHT_COLOR_NUM
 };
 
+enum {
+    eEC_STATE_NORMAL,     // playing
+    eEC_STATE_CONTINUOUS, // continuously playing
+    eEC_STATE_FINISHED,   // finished playing
+
+    eEC_STATE_NUM
+};
+
 typedef struct effect_s eEC_Effect_c;
 
 struct effect_s {
@@ -312,7 +322,7 @@ typedef void (*eEC_EFFECT_CT_PROC)(eEC_Effect_c*, GAME*, void*);
 typedef void (*eEC_EFFECT_MOVE_PROC)(eEC_Effect_c*, GAME*);
 typedef void (*eEC_EFFECT_DRAW_PROC)(eEC_Effect_c*, GAME*);
 
-typedef struct effect_profile_s {
+struct effect_profile_s {
     eEC_EFFECT_INIT_PROC init_proc;
     eEC_EFFECT_CT_PROC ct_proc;
     eEC_EFFECT_MOVE_PROC move_proc;
@@ -320,7 +330,7 @@ typedef struct effect_profile_s {
     s16 n_frames;
     s16 child_effect_id;
     f32 max_dist;
-} eEC_PROFILE_c;
+};
 
 typedef struct morph_data_s {
     u8 start_frame;
@@ -350,7 +360,7 @@ typedef void (*eEC_SETCONTINIOUSENV_PROC)(eEC_Effect_c* effect, s16 unused, s16 
 typedef f32 (*eEC_CALCADJUST_PROC)(s16 now_timer, s16 start_timer, s16 end_timer, f32 start_val, f32 end_val);
 typedef void (*eEC_AUTOMATRIXXLU_PROC)(GAME* game, xyz_t* pos, xyz_t* scale);
 typedef void (*eEC_AUTOMATRIXXLU_OFFSET_PROC)(GAME* game, xyz_t* pos, xyz_t* scale, xyz_t* offset);
-typedef eEC_Effect_c* (*eEC_MAKEEFFECT_PROC)(s16 effect_id, xyz_t* pos, xyz_t* ofs, GAME* game, void* ct_arg,
+typedef eEC_Effect_c* (*eEC_MAKEEFFECT_PROC)(s16 effect_id, xyz_t pos, xyz_t* ofs, GAME* game, void* ct_arg,
                                              u16 item_name, int prio, s16 arg0, s16 arg1);
 typedef void (*eEC_MORPHCOMBINE_PROC)(u8* result, eEC_morph_data_c* morph_data, s16 now_timer);
 typedef void (*eEC_REGISTEFFECTLIGHT_PROC)(rgba_t color, s16 max_frames, s16 n_frames, int shadow_flag);
@@ -406,7 +416,12 @@ struct effect_control_s {
     eEC_EffectControl_Clip_c clip;
 };
 
+extern int eMH_special_point_light_num;
+
 extern ACTOR_PROFILE Effect_Control_Profile;
+
+/* NOTE: you must include 'm_common_data.h' to use this macro */
+#define eEC_CLIP (Common_Get(clip).effect_clip)
 
 #ifdef __cplusplus
 }
