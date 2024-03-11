@@ -891,6 +891,10 @@ ac_weather_leaf.c:
     .text: [0x8060420C, 0x806048B8]
     .rodata: [0x8064BBE8, 0x8064BC40]
     .data: [0x806D1E28, 0x806D1E48]
+ef_flash.c:
+    .text: [0x8060B7B4, 0x8060BCB0]
+    .rodata: [0x8064C078, 0x8064C0B0]
+    .data: [0x806D2350, 0x806D2430]
 ef_killer.c:
     .text: [0x80614178, 0x8061481C]
     .rodata: [0x8064C680, 0x8064C6C0]
