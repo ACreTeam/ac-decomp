@@ -28,6 +28,7 @@ extern "C" {
 #define ABS(x) (((x) >= 0) ? (x) : -(x))
 #define SQ(x) ((x) * (x))
 #define CLAMP_MAX(x, min) ((min) < (x) ? (min) : (x))
+#define CLAMP(x, min, max) ((x) < (min) ? (min) : ((x > (max) ? (max) : (x))))
 
 /* Float modulo operator */
 #define MOD_F(a, m) (a - (int)((a) * (1.0f / (m))) * (m))
