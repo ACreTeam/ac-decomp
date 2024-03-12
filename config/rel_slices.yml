@@ -915,6 +915,10 @@ ef_tent_lamp.c:
     .text: [0x80622304, 0x8062260C]
     .rodata: [0x8064CF10, 0x8064CF38]
     .data: [0x806D3910, 0x806D3928]
+ef_yukidaruma.c:
+    .text: [0x80627914, 0x80627CB8]
+    .rodata: [0x8064D180, 0x8064D190]
+    .data: [0x806D3CA8, 0x806D3CD0]
 ef_yukihane.c:
     .text: [0x80627CB8, 0x80627F88]
     .rodata: [0x8064D190, 0x8064D1B0]
