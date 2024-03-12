@@ -1,5 +1,22 @@
 #include "ef_effect_control.h"
 
+static void eDig_Scoop_init(xyz_t pos, int prio, s16 angle, GAME* game, u16 item_name, s16 arg0, s16 arg1);
+static void eDig_Scoop_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg);
+static void eDig_Scoop_mv(eEC_Effect_c* effect, GAME* game);
+static void eDig_Scoop_dw(eEC_Effect_c* effect, GAME* game);
+
+eEC_PROFILE_c iam_ef_dig_scoop = {
+    // clang-format off
+    &eDig_Scoop_init,
+    &eDig_Scoop_ct,
+    &eDig_Scoop_mv,
+    &eDig_Scoop_dw,
+    eEC_IGNORE_DEATH,
+    eEC_NO_CHILD_ID,
+    eEC_DEFAULT_DEATH_DIST,
+    // clang-format on
+};
+
 static void eDig_Scoop_init(xyz_t pos, int prio, s16 angle, GAME* game, u16 item_name, s16 arg0, s16 arg1) {
     // TODO
 }
@@ -15,15 +32,3 @@ static void eDig_Scoop_mv(eEC_Effect_c* effect, GAME* game) {
 static void eDig_Scoop_dw(eEC_Effect_c* effect, GAME* game) {
     // TODO
 }
-
-eEC_PROFILE_c iam_ef_dig_scoop = {
-    // clang-format off
-    &eDig_Scoop_init,
-    &eDig_Scoop_ct,
-    &eDig_Scoop_mv,
-    &eDig_Scoop_dw,
-    eEC_IGNORE_DEATH,
-    eEC_NO_CHILD_ID,
-    eEC_DEFAULT_DEATH_DIST,
-    // clang-format on
-};
