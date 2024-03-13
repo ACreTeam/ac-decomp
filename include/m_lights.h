@@ -36,20 +36,19 @@ typedef struct lights_s {
     LightParams lights;
 } Lights;
 
-
 typedef struct light_list {
     /* 0x0 */ Lights* info;
     /* 0x4 */ struct light_list* prev;
     /* 0x8 */ struct light_list* next;
 } Light_list; // size = 0xC
 
-typedef struct light_buf_s{
+typedef struct light_buf_s {
     int current;
     int idx;
     Light_list lights[32];
 } Light_buffer;
 
-typedef struct lightsn_s{
+typedef struct lightsn_s {
     u8 diffuse_count;
     Ambient a;
     Light_new l[7];
@@ -60,7 +59,7 @@ typedef struct global_light_s {
     /* 0x4 */ u8 ambientColor[3];
     /* 0x7 */ u8 fogColor[3];
     /* 0xA */ s16 fogNear;
-    /* 0xC */ s16 fogFar; 
+    /* 0xC */ s16 fogFar;
 } Global_light; // size = 0x10
 
 typedef void (*light_point_proc)(LightsN*, LightParams*, xyz_t*);
@@ -73,7 +72,7 @@ extern void LightsN_disp(LightsN* lights, GRAPH* graph);
 extern void LightsN_list_check(LightsN* lights, Light_list* node, xyz_t* pos);
 extern void Global_light_ct(Global_light* glight);
 extern LightsN* Global_light_read(Global_light* glight, GRAPH* graph);
-extern Light_list* Global_light_list_new(GAME_PLAY*, Global_light* glight, Lights* light);
+extern Light_list* Global_light_list_new(GAME* game, Global_light* glight, Lights* light);
 extern void Global_light_list_delete(Global_light* glight, Light_list* light);
 extern void Light_list_point_draw(GAME_PLAY* play);
 

@@ -4,10 +4,9 @@
 #include "m_common_data.h"
 #include "m_name_table.h"
 
-static void Ef_Lamp_Light_actor_ct(ACTOR* actor, GAME_PLAY* game);
-static void Ef_Lamp_Light_actor_dt(ACTOR* actor, GAME_PLAY* game);
-static void Ef_Lamp_Light_actor_move(ACTOR* actor, GAME_PLAY* game);
-
+static void Ef_Lamp_Light_actor_ct(ACTOR* actor, GAME* game);
+static void Ef_Lamp_Light_actor_dt(ACTOR* actor, GAME* game);
+static void Ef_Lamp_Light_actor_move(ACTOR* actor, GAME* game);
 
 ACTOR_PROFILE Lamp_Light_Profile = {
     mAc_PROFILE_LAMP_LIGHT,
@@ -16,51 +15,53 @@ ACTOR_PROFILE Lamp_Light_Profile = {
     EMPTY_NO,
     ACTOR_OBJ_BANK_KEEP,
     sizeof(LAMPLIGHT_ACTOR),
-    (mActor_proc)Ef_Lamp_Light_actor_ct,
-    (mActor_proc)Ef_Lamp_Light_actor_dt,
+    Ef_Lamp_Light_actor_ct,
+    Ef_Lamp_Light_actor_dt,
     (mActor_proc)Ef_Lamp_Light_actor_move,
     NONE_ACTOR_PROC,
     NULL,
 };
 
-static void Ef_Lamp_Light_actor_ct(ACTOR* actor, GAME_PLAY* play) {
+static void Ef_Lamp_Light_actor_ct(ACTOR* actor, GAME* game) {
     LAMPLIGHT_ACTOR* lamp = (LAMPLIGHT_ACTOR*)actor;
-    
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
     play->kankyo.lamp_light = &lamp->lights;
-    Light_diffuse_ct(&lamp->lights, 0, 0x50, 0, 0, 0, 0); 
-    lamp->node_p = Global_light_list_new(play, &play->global_light, &lamp->lights);
+    Light_diffuse_ct(&lamp->lights, 0, 0x50, 0, 0, 0, 0);
+    lamp->node_p = Global_light_list_new(game, &play->global_light, &lamp->lights);
 }
 
-static void Ef_Lamp_Light_actor_dt(ACTOR* actor, GAME_PLAY* play) {
+static void Ef_Lamp_Light_actor_dt(ACTOR* actor, GAME* game) {
     LAMPLIGHT_ACTOR* lamp = (LAMPLIGHT_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
 
-    play->kankyo.lamp_light = NULL; 
+    play->kankyo.lamp_light = NULL;
     Global_light_list_delete(&play->global_light, lamp->node_p);
 }
 
-static int eLL_get_light_sw_other_room(){
+static int eLL_get_light_sw_other_room() {
     int ret = 0;
-    //Not before 6 p.m or past 6 a.m
-    if((Common_Get(time.now_sec) < 21600) || (Common_Get(time.now_sec) >= 64800)){
+    // Not before 6 p.m or past 6 a.m
+    if ((Common_Get(time.now_sec) < 21600) || (Common_Get(time.now_sec) >= 64800)) {
         ret = 1;
     }
 
     return ret;
 }
 
-static int eLL_get_light_sw_player_room(){
-    //6 p.m to 11 p.m
-    if((Common_Get(time.now_sec) >= 64800 ) && (Common_Get(time.now_sec) < 82800)){
+static int eLL_get_light_sw_player_room() {
+    // 6 p.m to 11 p.m
+    if ((Common_Get(time.now_sec) >= 64800) && (Common_Get(time.now_sec) < 82800)) {
         return 1;
     }
 
     return 0;
 }
 
-static int eLL_get_light_sw_start_demo(){
+static int eLL_get_light_sw_start_demo() {
     int ret = 1;
-    
-    if(Common_Get(sunlight_flag) == 1){
+
+    if (Common_Get(sunlight_flag) == 1) {
         ret = 0;
     }
 
@@ -100,18 +101,18 @@ static void eLL_ctrl_light_sw(LAMPLIGHT_ACTOR* lamp) {
     lamp->switch_type = ret;
 }
 
-static void Ef_Lamp_Light_actor_move(ACTOR* actor, GAME_PLAY* play) {
-    static s16 add_data_off[] = {2, 2, 1, 0};
-    static s16 add_data_on[] = {16, 16, 8, 0};
-    static s16* add_data[] = { add_data_off, add_data_on};
+static void Ef_Lamp_Light_actor_move(ACTOR* actor, GAME* game) {
+    static s16 add_data_off[] = { 2, 2, 1, 0 };
+    static s16 add_data_on[] = { 16, 16, 8, 0 };
+    static s16* add_data[] = { add_data_off, add_data_on };
     static s16 cmp_data_off[] = { 0, 0, 0, 0 };
     static s16 cmp_data_on[] = { 0xC8, 0xC8, 0x96, 0 };
-    static s16* cmp_data[] = { cmp_data_off, cmp_data_on};
+    static s16* cmp_data[] = { cmp_data_off, cmp_data_on };
 
     LAMPLIGHT_ACTOR* lamp = (LAMPLIGHT_ACTOR*)actor;
 
     s16 val;
-    u8* color;  
+    u8* color;
     s16* add;
     int type;
     s16* cmp;

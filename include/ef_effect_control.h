@@ -408,7 +408,7 @@ typedef struct effect_work_s {
     eEC_Effect_c effects[eEC_EFFECT_ACTIVE_MAX];
     u8 effect_active_flags[eEC_EFFECT_ACTIVE_MAX];
     Lights light_info;
-    int _24A8;
+    Light_list* light_list;
 } eEC_work_c;
 
 struct effect_control_s {
