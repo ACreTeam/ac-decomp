@@ -419,6 +419,10 @@ ac_field_draw.c:
     .rodata: [0x80643F00, 0x80643F88]
     .data: [0x806829E0, 0x80682B68]
     .bss: [0x812F98C0, 0x812F9C28]
+ac_flag.c:
+    .text: [0x80423E30, 0x80424B88]
+    .rodata: [0x80643F88, 0x80643FC0]
+    .data: [0x80682B90, 0x80682C00]
 ac_handOverItem.c:
     .text: [0x80426A50, 0x80427624]
     .rodata: [0x806440A0, 0x806440B8]
