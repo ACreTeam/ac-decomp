@@ -785,6 +785,10 @@ ac_my_house.c:
 ac_nameplate.c:
     .text: [0x805B63FC, 0x805B65C4]
     .data: [0x806C6110, 0x806C6138]
+ac_needlework_shop.c:
+    .text: [0x805B65C4, 0x805B7338]
+    .rodata: [0x8064AAA0, 0x8064AAE8]
+    .data: [0x806C6138, 0x806C62D0]
 ac_radio.c:
     .text: [0x805B887C, 0x805B8C7C]
     .rodata: [0x8064AB58, 0x8064AB68]
