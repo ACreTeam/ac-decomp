@@ -604,6 +604,11 @@ bg_item.c:
     .rodata: [0x80646178, 0x80646218]
     .data: [0x80692BE0, 0x80695B38]
     .bss: [0x812FD938, 0x812FDDC8]
+bg_winter_item.c:
+    .text: [0x804BE9FC, 0x804C5E30]
+    .rodata: [0x80646228, 0x806462C8]
+    .data: [0x80695D98, 0x80698D10]
+    .bss: [0x812FDDE8, 0x812FE278]
 ef_effect_control.c:
     .text: [0x804CD474, 0x804CEC5C]
     .rodata: [0x80646368, 0x806463C8]

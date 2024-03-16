@@ -1802,7 +1802,6 @@ static void bit_cmn_single_draw_BT_shadow(GAME* game, bg_item_common_info_c* com
     }
 
     Matrix_push();
-    // ISSUE
     draw_part = draw_part_table_a[type_data->type].draw_part_p;
     draw_pos.gfx_no = type_data->_00;
     draw_pos.cull_flag = FALSE;
@@ -1982,7 +1981,6 @@ static void bit_cmn_single_draw_BT(GAME* game, bg_item_common_info_c* common_inf
         Gfx* gfx;
 
         Matrix_push();
-        // ISSUE
         table_p = &draw_part_table_a[type_data->type];
         draw_part = table_p->draw_part_p;
         display_list_table = (Gfx**)draw_part->display_list_table_p;
