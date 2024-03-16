@@ -5,6 +5,8 @@
 #include "m_field_info.h"
 #include "sys_matrix.h"
 #include "m_common_data.h"
+#include "m_bgm.h"
+#include "m_rcp.h"
 
 static void aTnt_actor_ct(ACTOR* actor, GAME* game);
 static void aTnt_actor_dt(ACTOR* actor, GAME* game);
@@ -12,49 +14,30 @@ static void aTnt_actor_init(ACTOR* actor, GAME* game);
 static void aTnt_actor_draw(ACTOR* actor, GAME* game);
 
 ACTOR_PROFILE Tent_Profile = {
-    mAc_PROFILE_TENT,
-    ACTOR_PART_ITEM,
-    ACTOR_STATE_TA_SET,
-    TENT,
-    ACTOR_OBJ_BANK_KEEP,
-    sizeof(TENT_ACTOR),
-    aTnt_actor_ct,
-    aTnt_actor_dt,
-    aTnt_actor_init,
-    aTnt_actor_draw,
-    NULL,
+    mAc_PROFILE_TENT, ACTOR_PART_ITEM, ACTOR_STATE_TA_SET, TENT, ACTOR_OBJ_BANK_KEEP, sizeof(TENT_ACTOR), aTnt_actor_ct,
+    aTnt_actor_dt,    aTnt_actor_init, aTnt_actor_draw,    NULL,
 };
 
 extern Vtx obj_s_tent_shadow_v[];
 extern Gfx obj_s_tent_shadow_modelT[];
 
-u8 aTNT_shadow_vtx_fix_flg_table[] = { FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE,FALSE,TRUE,TRUE,FALSE,FALSE,TRUE,TRUE
-,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE,FALSE,TRUE,TRUE,FALSE };
- 
+u8 aTNT_shadow_vtx_fix_flg_table[] = {
+    FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,  TRUE, FALSE, TRUE,  TRUE,  FALSE, FALSE, TRUE,
+    TRUE,  FALSE, FALSE, TRUE,  TRUE,  FALSE, FALSE, TRUE, TRUE,  FALSE, FALSE, TRUE,  TRUE,  FALSE,
+};
+
 bIT_ShadowData_c aTnt_shadow_data = {
-    28,
-    aTNT_shadow_vtx_fix_flg_table,
-    60.0f,
-    obj_s_tent_shadow_v,
-    obj_s_tent_shadow_modelT,
+    28, aTNT_shadow_vtx_fix_flg_table, 60.0f, obj_s_tent_shadow_v, obj_s_tent_shadow_modelT,
 };
 
 Door_data_c aTnt_tent_enter_data = {
-    SCENE_TENT,
-    4,
-    FALSE,
-    0,
-    {120,0,220},
-    EMPTY_NO,
-    1,
-    {0,0,0},
+    SCENE_TENT, 4, FALSE, 0, { 120, 0, 220 }, EMPTY_NO, 1, { 0, 0, 0 },
 };
 
 static void aTnt_ChangeFg(ACTOR* actor, int type);
 static void aTnt_SetupAction(ACTOR* actor, int type);
 static void aTnt_SetBgOffset(ACTOR* actor, int offset);
 static int aTnt_ControlLight(ACTOR* actor);
-
 
 static void aTnt_actor_ct(ACTOR* actor, GAME* game) {
     TENT_ACTOR* tent = (TENT_ACTOR*)actor;
@@ -73,8 +56,8 @@ static void aTnt_actor_ct(ACTOR* actor, GAME* game) {
     tent->structure_class.arg0_f = t;
 }
 
-static void aTnt_actor_dt(ACTOR* actor, GAME* game) { 
-    aTnt_ChangeFg(actor, 0); 
+static void aTnt_actor_dt(ACTOR* actor, GAME* game) {
+    aTnt_ChangeFg(actor, 0);
 }
 
 static void aTnt_ChangeFg(ACTOR* actor, int type) {
@@ -114,17 +97,11 @@ static void aTnt_ChangeFg(ACTOR* actor, int type) {
 
 static void aTnt_SetBgOffset(ACTOR* actor, int type) {
     static mCoBG_OffsetTable_c height_table_ct[] = {
-        {100, 3, 1, 1, 7, 7, 0},
-        {100, 10, 10, 10, 10, 10, 0},
-        {100, 3, 7, 7, 1, 1, 0},
-        {100, 3, 1, 1, 7, 7, 0},
-        {100, 10, 10, 10, 10, 10, 0},
-        {100, 3, 7, 7, 1, 1, 0},
-        {100, 3, 3, 3, 3, 3, 0},
-        {100, 10, 10, 10, 10, 10, 0},
-        {100, 3, 3, 3, 3, 3, 0},
+        { 100, 3, 1, 1, 7, 7, 0 }, { 100, 10, 10, 10, 10, 10, 0 }, { 100, 3, 7, 7, 1, 1, 0 },
+        { 100, 3, 1, 1, 7, 7, 0 }, { 100, 10, 10, 10, 10, 10, 0 }, { 100, 3, 7, 7, 1, 1, 0 },
+        { 100, 3, 3, 3, 3, 3, 0 }, { 100, 10, 10, 10, 10, 10, 0 }, { 100, 3, 3, 3, 3, 3, 0 },
     };
-    static mCoBG_OffsetTable_c* height_table[] = {height_table_ct, height_table_ct};
+    static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
     mCoBG_OffsetTable_c* tbl = height_table[type];
     int j;
     int i;
@@ -290,4 +267,3 @@ static void aTnt_actor_draw(ACTOR* actor, GAME* game) {
         CLOSE_DISP(game->graph);
     }
 }
-

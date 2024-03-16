@@ -10,25 +10,29 @@ extern "C" {
 #endif
 
 enum {
-  mRP_CURSOR_100000,
-  mRP_CURSOR_10000,
-  mRP_CURSOR_1000,
-  mRP_CURSOR_100,
-  mRP_CURSOR_10,
-  mRP_CURSOR_1,
-  mRP_CURSOR_OK,
+    mRP_CURSOR_100000,
+    mRP_CURSOR_10000,
+    mRP_CURSOR_1000,
+    mRP_CURSOR_100,
+    mRP_CURSOR_10,
+    mRP_CURSOR_1,
+    mRP_CURSOR_OK,
 
-  mRP_CURSOR_NUM
+    mRP_CURSOR_NUM
 };
 
 struct repay_ovl_s {
-  u32 money;
-  u32 loan;
-  u32 repay_amount;
-  u32 max_money;
-  u32 max_repay;
-  int cursor_idx;
+    u32 money;
+    u32 loan;
+    u32 repay_amount;
+    u32 max_money;
+    u32 max_repay;
+    int cursor_idx;
 };
+
+extern void mRP_repay_ovl_set_proc(Submenu* submenu);
+extern void mRP_repay_ovl_construct(Submenu* submenu);
+extern void mRP_repay_ovl_destruct(Submenu* submenu);
 
 #ifdef __cplusplus
 }

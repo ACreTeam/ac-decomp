@@ -7,6 +7,9 @@
 #include "m_bgm.h"
 #include "m_soncho.h"
 #include "m_card.h"
+#include "boot.h"
+#include "m_string.h"
+#include "libultra/libultra.h"
 
 extern void aNRTC_actor_ct(ACTOR*, GAME*);
 extern void aNRTC_actor_dt(ACTOR*, GAME*);

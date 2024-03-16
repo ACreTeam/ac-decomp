@@ -3,6 +3,8 @@
 #include "m_name_table.h"
 #include "m_player_lib.h"
 #include "sys_matrix.h"
+#include "m_bgm.h"
+#include "m_rcp.h"
 
 static void aBRS_actor_ct(ACTOR*, GAME*);
 static void aBRS_actor_dt(ACTOR*, GAME*);
@@ -43,6 +45,7 @@ extern Gfx obj_w_yamishop_window_model[];
 static void aBRS_set_bgOffset(STRUCTURE_ACTOR*, int);
 static void aBRS_setup_action(STRUCTURE_ACTOR* actor, int type);
 static void change_FGUnit(ACTOR*, int);
+static int aBRS_ctrl_light(STRUCTURE_ACTOR* shop);
 
 static void aBRS_actor_ct(ACTOR* actor, GAME* game) {
     static cKF_Skeleton_R_c* skl[] = {
@@ -90,7 +93,7 @@ static void aBRS_actor_ct(ACTOR* actor, GAME* game) {
     aBRS_setup_action(&shop->structure_class, action);
     cKF_SkeletonInfo_R_play(&shop->structure_class.keyframe);
 
-    shop->structure_class.arg0_f = aBRS_ctrl_light(actor) != 0 ? 1.0f : 0.0f;
+    shop->structure_class.arg0_f = aBRS_ctrl_light((STRUCTURE_ACTOR*)actor) != 0 ? 1.0f : 0.0f;
 }
 
 Door_data_c aBRS_br_shop_door_data = {
@@ -104,7 +107,7 @@ static void aBRS_actor_dt(ACTOR* actor, GAME* game) {
     cKF_SkeletonInfo_R_dt(&shop->structure_class.keyframe);
 
     if (Save_Get(event_save_data.special.event.broker.used) >= 3) {
-        mEv_special_event_soldout(75);
+        mEv_special_event_soldout(mEv_EVENT_BROKER_SALE);
     }
 }
 

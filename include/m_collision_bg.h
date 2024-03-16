@@ -271,6 +271,12 @@ extern int mCoBG_RegistMoveBg(mCoBG_bg_regist_c* bg_regist, xyz_t* wpos, xyz_t* 
                               mCoBG_bg_size_c* bg_size, f32* scale_percent, mCoBG_bg_contact_c* bg_contact, xyz_t* ofs,
                               int type, u32 attribute, f32 check_dist);
 extern void mCoBG_CrossOffMoveBg(int move_bg_idx);
+extern int mCoBG_CheckPlace(xyz_t wpos);
+extern int mCoBG_CheckSandHole_ClData(mCoBG_Collision_u* col);
+extern int mCoBG_GetHoleNumber_ClData(mCoBG_Collision_u* col);
+extern void mCoBG_GetBgNorm_FromWpos(xyz_t* norm, xyz_t wpos);
+extern int mCoBG_GetWaterFlow(xyz_t* water_flow, u32 attr);
+extern void mCoBG_SetAttribute(xyz_t pos, u32 attr);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();

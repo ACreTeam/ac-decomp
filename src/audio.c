@@ -8,6 +8,8 @@
 #include "m_common_data.h"
 #include "m_camera2.h"
 #include "sys_math.h"
+#include "jaudio_NES/kappa.h"
+#include "jaudio_NES/staff.h"
 
 int S_ongenpos_refuse_fg;
 
@@ -297,7 +299,6 @@ extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 dis
 }
 
 extern void sAdos_GetRadioCounter(void* p) {
-
     Na_GetRadioCounter(p);
 }
 

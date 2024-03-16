@@ -22,7 +22,7 @@ extern void mBGMPsComp_make_ps_quietField(u16 stop_type);
 extern void mBGMPsComp_make_ps_fc_quietField(u16 stop_type);
 extern void mBGMPsComp_make_ps_fieldSuddenEv(u8 bgm_num, u16 stop_type, u8 priority);
 extern void mBGMPsComp_delete_ps_fanfare(u8 bgm_num, u16 stop_type);
-extern void mBGMPsComp_delete_ps_wipe();
+extern void mBGMPsComp_delete_ps_quiet();
 extern void mBGMPsComp_delete_ps_demo(u8 bgm_num, u16 stop_type);
 extern void mBGMPsComp_delete_ps_happening(u8 bgm_num, u16 stop_type);
 extern void mBGMPsComp_delete_ps_room(u8 bgm_num, u16 stop_type);

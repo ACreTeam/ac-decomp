@@ -6,11 +6,11 @@
 #include "audio.h"
 #include "sys_math3d.h"
 #include "sys_matrix.h"
+#include "m_rcp.h"
 
 extern Gfx obj_fallSESW_model[];
 extern Gfx obj_fallSE_rainbowT_model[];
 extern EVW_ANIME_DATA obj_fallSE_evw_anime;
-
 
 static void aFLEW_actor_move(ACTOR* actor, GAME* game);
 static void aFLEW_actor_draw(ACTOR* actor, GAME* game);
@@ -32,4 +32,3 @@ ACTOR_PROFILE FallSESW_Profile = {
 #include "../src/ac_fallSESW_move.c_inc"
 
 #include "../src/ac_fallSESW_draw.c_inc"
-

@@ -1,0 +1,36 @@
+static bg_item_type_data_c* type_data_table_p_a[bIT_TYPE_CAT_NUM] = {
+    typeData_table_bgCherryItem, typeData_table_bgCherryItem2, typeData_table_ftr,
+    typeData_table_item1,        typeData_table_crack,         typeData_table_dummy,
+};
+
+static int bg_cherry_item_talking_display_limit_check(int idx) {
+    int res = FALSE;
+
+    if ((idx >= bIT_DRAW_TYPE_TREE2 && idx <= bIT_DRAW_TYPE_TREE4_BG) ||
+        (idx >= bIT_DRAW_TYPE_PALM002 && idx <= bIT_DRAW_TYPE_PALM004_CC) ||
+        (idx >= bIT_DRAW_TYPE_CEDAR002 && idx <= bIT_DRAW_TYPE_CEDAR004) ||
+        (idx >= bIT_DRAW_TYPE_GOLD_TREE002 && idx <= bIT_DRAW_TYPE_GOLD_TREE004) || idx == bIT_DRAW_TYPE_NOTICE ||
+        idx == bIT_DRAW_TYPE_MAPBOARD || idx == bIT_DRAW_TYPE_MELODY) {
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static void bCI_actor_move(ACTOR* actorx, GAME* game) {
+    BG_ITEM_ACTOR* bg_item = (BG_ITEM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    bg_item_common_c* common = &bg_item->common;
+    bg_item_common_info_c* common_info = &common->common_info;
+
+    common_info->type_data_table_p = type_data_table_p_a;
+    common_info->pos_table_p = pos_table;
+    common->flags = 0;
+
+    if (Camera2_CheckCullingMode() != FALSE) {
+        common->flags |= 1;
+    }
+
+    common->talk_display_limit_check_proc = &bg_cherry_item_talking_display_limit_check;
+    bg_item_common_move(play, actorx, common);
+}

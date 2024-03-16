@@ -21,6 +21,7 @@ extern OSThread graphThread;
 extern u8 SegmentBaseAddress[0x40];
 
 void foresta_main();
+extern void mainproc(void* val);
 
 #ifdef __cplusplus
 }

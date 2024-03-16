@@ -11,6 +11,7 @@
 #include "m_random_field.h"
 #include "m_roll_lib.h"
 #include "sys_matrix.h"
+#include "m_collision_bg.h"
 
 extern Gfx act_ball_b_model[];
 extern Gfx act_ball_d_model[];
@@ -44,15 +45,15 @@ ACTOR_PROFILE Ball_Profile = {
 BALL_ACTOR* Global_Actor_p;
 
 ClObjPipeData_c aBALL_CoInfoData = {
-    {0x39, 0x20, ClObj_TYPE_PIPE},  // collision data
-    {1},                            // element data
+    { 0x39, 0x20, ClObj_TYPE_PIPE }, // collision data
+    { 1 },                           // element data
     // Pipe specs
     {
-        13,   // radius
-        30,   // height
-        -10,  // offset
+        13,  // radius
+        30,  // height
+        -10, // offset
 
-        {0, 0, 0},  // center
+        { 0, 0, 0 }, // center
     },
 };
 
@@ -60,15 +61,15 @@ StatusData_c aBALL_StatusData = {
     0, 13, 30, -10, 100,
 };
 
-void aBALL_process_ground_init(ACTOR*, GAME*);
-void aBALL_process_air_water(ACTOR*, GAME*);
-void aBALL_process_ground_water(ACTOR*, GAME*);
-void aBALL_process_ground(ACTOR*, GAME*);
-void aBALL_process_air(ACTOR*, GAME*);
-void aBALL_process_air_water_init(ACTOR* actor, GAME*);
-void aBALL_process_ground_water_init(ACTOR* actor, GAME*);
+static void aBALL_process_ground_init(ACTOR*, GAME*);
+static void aBALL_process_air_water(ACTOR*, GAME*);
+static void aBALL_process_ground_water(ACTOR*, GAME*);
+static void aBALL_process_ground(ACTOR*, GAME*);
+static void aBALL_process_air(ACTOR*, GAME*);
+static void aBALL_process_air_water_init(ACTOR* actor, GAME*);
+static void aBALL_process_ground_water_init(ACTOR* actor, GAME*);
 
-int aBALL_Random_pos_set(xyz_t* pos) {
+static int aBALL_Random_pos_set(xyz_t* pos) {
     int x_max;
     int z_max;
     int random_x;
@@ -111,7 +112,7 @@ int aBALL_Random_pos_set(xyz_t* pos) {
     return FALSE;
 }
 
-void aBALL_actor_ct(ACTOR* actor, GAME* game) {
+static void aBALL_actor_ct(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
     GAME_PLAY* play = (GAME_PLAY*)game;
 
@@ -157,7 +158,7 @@ void aBALL_actor_ct(ACTOR* actor, GAME* game) {
     ball->unk20C = 0;
 }
 
-void aBALL_actor_dt(ACTOR* actor, GAME* game) {
+static void aBALL_actor_dt(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
 
     if ((ball->unk208 & 1) || (ball->unk208 & 2) || (mRlib_Set_Position_Check(actor) == 0)) {
@@ -169,7 +170,7 @@ void aBALL_actor_dt(ACTOR* actor, GAME* game) {
     ClObjPipe_dt(game, &ball->ball_pipe);
 }
 
-void aBALL_position_move(BALL_ACTOR* actor) {
+static void aBALL_position_move(BALL_ACTOR* actor) {
     xyz_t pos;
     s_xyz angle;
 
@@ -195,7 +196,7 @@ void aBALL_position_move(BALL_ACTOR* actor) {
     }
 }
 
-void aBALL_BGcheck(BALL_ACTOR* actor) {
+static void aBALL_BGcheck(BALL_ACTOR* actor) {
     f32 speed_y;
     s16 hit_angle;
     s16 rot;
@@ -266,7 +267,7 @@ void aBALL_BGcheck(BALL_ACTOR* actor) {
     }
 }
 
-void aBALL_OBJcheck(BALL_ACTOR* actor, GAME*) {
+static void aBALL_OBJcheck(BALL_ACTOR* actor, GAME*) {
     int wade;
     ACTOR* collided;
     xyz_t pos_speed;
@@ -373,14 +374,14 @@ void aBALL_OBJcheck(BALL_ACTOR* actor, GAME*) {
     }
 }
 
-void aBALL_House_Tree_Rev_Check(BALL_ACTOR* actor) {
+static void aBALL_House_Tree_Rev_Check(BALL_ACTOR* actor) {
     if (mRlib_HeightGapCheck_And_ReversePos(&actor->actor_class) != 1) {
         actor->unk208 |= 1;
         Actor_delete(&actor->actor_class);
     }
 }
 
-void aBALL_process_air_init(ACTOR* actor, GAME* game) {
+static void aBALL_process_air_init(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
 
     f32 angle;
@@ -395,7 +396,7 @@ void aBALL_process_air_init(ACTOR* actor, GAME* game) {
     ball->process_proc = aBALL_process_air;
 }
 
-void aBALL_process_air(ACTOR* actor, GAME* game) {
+static void aBALL_process_air(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
 
     ball->ball_acceleration = 0.0f;
@@ -414,7 +415,7 @@ void aBALL_process_air(ACTOR* actor, GAME* game) {
     }
 }
 
-void aBALL_process_ground_init(ACTOR* actor, GAME* game) {
+static void aBALL_process_ground_init(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
 
     actor->shape_info.draw_shadow = 1;
@@ -426,7 +427,7 @@ void aBALL_process_ground_init(ACTOR* actor, GAME* game) {
     }
 }
 
-void aBALL_process_ground(ACTOR* actor, GAME* game) {
+static void aBALL_process_ground(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
     f32 temp;
     xyz_t norm;
@@ -518,7 +519,7 @@ void aBALL_process_ground(ACTOR* actor, GAME* game) {
     }
 }
 
-void aBALL_set_spd_relations_in_water(ACTOR* actor, GAME* game) {
+static void aBALL_set_spd_relations_in_water(ACTOR* actor, GAME* game) {
     static s16 angl_add_table[] = {
         0x100,
         0x400,
@@ -559,14 +560,14 @@ void aBALL_set_spd_relations_in_water(ACTOR* actor, GAME* game) {
     ball->ball_acceleration = 0.1f;
 }
 
-void aBALL_process_air_water_init(ACTOR* actor, GAME*) {
+static void aBALL_process_air_water_init(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
 
     actor->shape_info.draw_shadow = 0;
     ball->process_proc = aBALL_process_air_water;
 }
 
-void aBALL_process_air_water(ACTOR* actor, GAME* game) {
+static void aBALL_process_air_water(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
     GAME_PLAY* play = (GAME_PLAY*)game;
     f32 ball_speed;
@@ -595,7 +596,7 @@ void aBALL_process_air_water(ACTOR* actor, GAME* game) {
     }
 }
 
-void aBALL_process_ground_water_init(ACTOR* actor, GAME*) {
+static void aBALL_process_ground_water_init(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
 
     actor->shape_info.draw_shadow = 0;
@@ -603,7 +604,7 @@ void aBALL_process_ground_water_init(ACTOR* actor, GAME*) {
     ball->process_proc = aBALL_process_ground_water;
 }
 
-void aBALL_process_ground_water(ACTOR* actor, GAME* game) {
+static void aBALL_process_ground_water(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
 
     u32 currentUT;
@@ -643,7 +644,7 @@ void aBALL_process_ground_water(ACTOR* actor, GAME* game) {
     }
 }
 
-void aBALL_calc_axis(ACTOR* actor) {
+static void aBALL_calc_axis(ACTOR* actor) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
     s16 angle;
     f32 speed_fact;
@@ -658,7 +659,7 @@ void aBALL_calc_axis(ACTOR* actor) {
     mRlib_Roll_Matrix_to_s_xyz(actor, &ball->angle, angle);
 }
 
-int aBALL_player_angle_distance_check(ACTOR* actor, PLAYER_ACTOR* player) {
+static int aBALL_player_angle_distance_check(ACTOR* actor, PLAYER_ACTOR* player) {
     f32 distance;
     s16 angle;
     int abs_angle;
@@ -678,7 +679,7 @@ int aBALL_player_angle_distance_check(ACTOR* actor, PLAYER_ACTOR* player) {
     return 0;
 }
 
-void aBALL_status_check(ACTOR* actor, GAME* game) {
+static void aBALL_status_check(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
     GAME_PLAY* play = (GAME_PLAY*)game;
     PLAYER_ACTOR* player;
@@ -731,7 +732,7 @@ void aBALL_status_check(ACTOR* actor, GAME* game) {
     }
 }
 
-void aBALL_actor_move(ACTOR* actor, GAME* game) {
+static void aBALL_actor_move(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
     GAME_PLAY* play = (GAME_PLAY*)game;
 
@@ -757,7 +758,7 @@ void aBALL_actor_move(ACTOR* actor, GAME* game) {
     aBALL_status_check(actor, game);
 }
 
-void aBALL_actor_draw(ACTOR* actor, GAME* game) {
+static void aBALL_actor_draw(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
     GRAPH* graph;
     Gfx* gfx;

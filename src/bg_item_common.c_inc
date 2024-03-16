@@ -1,0 +1,3141 @@
+static void bit_cmn_single_drawS(GAME* game, bg_item_common_info_c* common_info, mActor_name_t fg_item, xyz_t* pos,
+                                 s_xyz* angle, xyz_t* scale, u8 alpha, bIT_DRAW_BF_PROC draw_bf,
+                                 bIT_DRAW_AF_PROC draw_af, rgba_t* col);
+
+static void bit_draw_ta_set(GAME* game) {
+    OPEN_DISP(game->graph);
+
+    gDPSetTextureAdjustMode(NEXT_POLY_OPA_DISP, G_TA_DOLPHIN);
+    gDPSetTextureAdjustMode(NEXT_SHADOW_DISP, G_TA_DOLPHIN);
+    gDPSetTextureAdjustMode(NEXT_POLY_XLU_DISP, G_TA_DOLPHIN);
+
+    CLOSE_DISP(game->graph);
+}
+
+static void bit_draw_ta_clr(GAME* game) {
+    OPEN_DISP(game->graph);
+
+    gDPSetTextureAdjustMode(NEXT_POLY_OPA_DISP, G_TA_N64);
+    gDPSetTextureAdjustMode(NEXT_SHADOW_DISP, G_TA_N64);
+    gDPSetTextureAdjustMode(NEXT_POLY_XLU_DISP, G_TA_N64);
+
+    CLOSE_DISP(game->graph);
+}
+
+static int bIT_individual_draw_check(mActor_name_t fg_name) {
+    int type = ITEM_NAME_GET_TYPE(fg_name);
+
+    if (fg_name != EMPTY_NO && ITEM_NAME_GET_TYPE(fg_name) < NAME_TYPE_WARP &&
+        (type != NAME_TYPE_ITEM0 || (type == NAME_TYPE_ITEM0 && ITEM_NAME_GET_CAT(fg_name) != 9))) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static f32 rnd_data_x[][4] = {
+    { 7.5f, 0.0f, -5.0f, 5.0f },
+    { -5.0f, -7.5f, 2.5f, -2.5f },
+    { 7.5f, 10.0f, -2.5f, 5.0f },
+    { -2.5f, 5.0f, 7.5f, -2.5f },
+};
+
+static f32 rnd_data_z[][4] = {
+    { -5.0f, 0.0f, 5.0f, 0.0f },
+    { -5.0f, 2.5f, 0.0f, 5.0f },
+    { -2.5f, 0.0f, 7.5f, 5.0f },
+    { 7.5f, -7.5f, -2.5f, -5.0f },
+};
+
+static int mFI_search_unit_around_high(xyz_t* pos, mActor_name_t item, xyz_t* cur_pos) {
+    static f32 BI_chk_pos[9 * 2] = {
+        -40.0f, -40.0f, // x - 1, z - 1 (top-left)
+        -40.0f, 40.0f,  // x - 1, z + 1 (bottom-left)
+        40.0f,  40.0f,  // x + 1, z + 1 (bottom-right)
+        40.0f,  -40.0f, // x + 1, z - 1 (top-right)
+        -40.0f, 0.0f,   // x - 1, z (left)
+        0.0f,   40.0f,  // x, z + 1 (below)
+        40.0f,  0.0f,   // x + 1, z (right)
+        0.0f,   -40.0f, // x, z - 1 (above)
+        0.0f,   0.0f    // x, z (origin)
+    };
+    mActor_name_t* item_p;
+    xyz_t tpos;
+    f32* around = BI_chk_pos;
+    int i = 9;
+    int res = FALSE;
+
+    while (i != 0) {
+        i--;
+
+        tpos.x = pos->x + around[i * 2 + 0];
+        tpos.z = pos->z + around[i * 2 + 1];
+
+        item_p = mFI_GetUnitFG(tpos);
+        tpos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(tpos, 0.0f);
+        if (item_p != NULL && item_p[0] == item && tpos.y <= (cur_pos->y + 40.0f) && tpos.y >= (cur_pos->y - 40.0f) &&
+            mCoBG_CheckPlace(tpos)) {
+            xyz_t_move(pos, &tpos);
+            res = TRUE;
+            break;
+        }
+    }
+
+    return res;
+}
+
+static int bIT_actor_fade_entry(mActor_name_t fg_name, xyz_t* pos) {
+    bg_item_fade_c* bg_item_fade = bIT_CLIP->bg_item_common_p->fade;
+    u8 min_alpha = 255;
+    bg_item_fade_c* selected_fade = NULL;
+    int i;
+
+    for (i = 0; i < bIT_FADE_NUM; i++, bg_item_fade++) {
+        if (bg_item_fade->mode == 0) {
+            selected_fade = bg_item_fade;
+            break;
+        } else if (bg_item_fade->mode == 1 && bg_item_fade->alpha < min_alpha) {
+            min_alpha = bg_item_fade->alpha;
+            selected_fade = bg_item_fade;
+        }
+    }
+
+    if (selected_fade != NULL) {
+        selected_fade->mode = 1;
+        selected_fade->fg_item = fg_name;
+        selected_fade->alpha = 255;
+        mFI_Wpos2UtCenterWpos(&selected_fade->position, *pos);
+        selected_fade->position.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(selected_fade->position, -1.0f);
+        selected_fade->_10 = 0;
+        mFI_SetFG_common(EMPTY_NO, selected_fade->position, TRUE);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void bIT_actor_fade_move(GAME* game, bg_item_fade_c* bg_item_fade) {
+    int i;
+
+    for (i = 0; i < bIT_FADE_NUM; i++, bg_item_fade++) {
+        if (bg_item_fade->mode != 0) {
+            bg_item_fade->_10++;
+
+            if (bg_item_fade->alpha < 20) {
+                bg_item_fade->mode = 0; // delete
+            } else {
+                bg_item_fade->alpha -= 20;
+            }
+        }
+    }
+}
+
+static void bIT_actor_fade_draw(GAME* game, bg_item_common_info_c* common_info, bg_item_fade_c* bg_item_fade) {
+    static xyz_t d_size = { 0.01f, 0.01f, 0.01f };
+    int i;
+
+    for (i = 0; i < bIT_FADE_NUM; i++, bg_item_fade++) {
+        if (bg_item_fade->mode != 0) {
+            bit_cmn_single_drawS(game, common_info, bg_item_fade->fg_item, &bg_item_fade->position, &ZeroSVec, &d_size,
+                                 bg_item_fade->alpha, NULL, NULL, NULL);
+        }
+    }
+}
+
+static int bIT_actor_ten_coin_entryR(bg_item_ten_coin_c* ten_coin, mActor_name_t fg_item, xyz_t* pos, s16 angle) {
+    int mode;
+    bg_item_ten_coin_c* sel_ten_coin;
+    int money_stone_flag;
+    int set_pos_valid;
+    xyz_t set_pos;
+    xyz_t target_pos;
+    int i;
+
+    money_stone_flag = FALSE;
+    mode = 0;
+    if ((fg_item >= MONEY_ROCK_A && fg_item <= MONEY_ROCK_E) || fg_item == MONEY_FLOWER_SEED) {
+        money_stone_flag = TRUE;
+    }
+
+    sel_ten_coin = NULL;
+
+    mFI_Wpos2UtCenterWpos(&target_pos, *pos);
+    target_pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(target_pos, -1.0f);
+    xyz_t_move(&set_pos, &target_pos);
+    set_pos_valid = mFI_search_unit_around_high(&set_pos, EMPTY_NO, &target_pos);
+
+    for (i = 0; i < bIT_TEN_COIN_NUM; i++, ten_coin++) {
+        if (ten_coin->_4C != 0 && ten_coin->position.x == target_pos.x && ten_coin->position.z == target_pos.z &&
+            ten_coin->left_frames > 0) {
+            mode = 2;
+            sel_ten_coin = ten_coin;
+            break;
+        }
+
+        if (money_stone_flag) {
+            if (ten_coin->_4C == 0) {
+                mode = 1;
+                sel_ten_coin = ten_coin;
+            } else if (mode == 0) {
+                // won't this case always be true since _44 is a u16?
+                if ((int)ten_coin->_44 > (int)-0x80000000) {
+                    sel_ten_coin = ten_coin;
+                }
+            }
+        }
+    }
+
+    if (sel_ten_coin != NULL) {
+        sel_ten_coin->_44 = 0;
+        sel_ten_coin->_4E = 10;
+        sel_ten_coin->_50 = sel_ten_coin->_4E;
+        sel_ten_coin->_46 = 0;
+        sel_ten_coin->_48 = (int)(32767.0f / ((f32)(int)sel_ten_coin->_4E));
+        sel_ten_coin->angle = angle;
+        sel_ten_coin->_4C = 1;
+
+        if (mode != 2) {
+            s16 swing_time;
+
+            xyz_t_move(&sel_ten_coin->position, &target_pos);
+            sel_ten_coin->scale = 15.0f;
+            sel_ten_coin->fg_item = fg_item;
+            swing_time = mPr_GetMoneyPower();
+
+            /* @BUG - shouldn't this be += 100? */
+            if ((int)Common_Get(now_private)->destiny.type == mPr_DESTINY_MONEY_LUCK) {
+                swing_time -= 100;
+            }
+
+            if (swing_time > 100) {
+                swing_time = 100;
+            }
+
+            sel_ten_coin->left_frames = (int)(386.0f + ((f32)(int)swing_time) * 0.59999999f);
+            sel_ten_coin->total_frames = sel_ten_coin->left_frames;
+            sel_ten_coin->hit_count = 0;
+            mFI_SetFG_common(MONEY_FLOWER_SEED, target_pos, TRUE);
+        } else {
+            sel_ten_coin->hit_count++;
+        }
+
+        /* There must be a valid place to drop the item */
+        if (set_pos_valid) {
+            mActor_name_t fg_money_item;
+            u16 sfx_no;
+
+            /* Drop money out of rock & play sfx */
+            mFI_SetFG_common(RSV_NO, set_pos, FALSE);
+            switch (sel_ten_coin->hit_count) {
+                case 0:
+                case 1:
+                case 2:
+                    fg_money_item = ITM_MONEY_100;
+                    if (Common_Get(now_private)->destiny.type == mPr_DESTINY_MONEY_LUCK) {
+                        fg_money_item = ITM_MONEY_1000;
+                    }
+
+                    sfx_no = 0x426;
+                    break;
+                case 3:
+                case 4:
+                case 5:
+                    fg_money_item = Common_Get(now_private)->destiny.type == mPr_DESTINY_MONEY_LUCK
+                                        ? (mActor_name_t)ITM_MONEY_10000
+                                        : (mActor_name_t)ITM_MONEY_1000;
+                    sfx_no = 0x447;
+                    break;
+                case 6:
+                default:
+                    fg_money_item = Common_Get(now_private)->destiny.type == mPr_DESTINY_MONEY_LUCK
+                                        ? (mActor_name_t)ITM_MONEY_30000
+                                        : (mActor_name_t)ITM_MONEY_10000;
+                    sfx_no = 0x447;
+                    break;
+            }
+
+            bIT_actor_drop_entry(&bIT_CLIP->bg_item_common_p->drop_info, fg_money_item, &target_pos, &set_pos, 1, 0);
+            sAdo_OngenTrgStart(sfx_no, &target_pos);
+        }
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static int bIT_actor_ten_coin_entry(bg_item_ten_coin_c* ten_coin, xyz_t* pos, s16 angle) {
+    int res = FALSE;
+    mActor_name_t* fg_item_p = mFI_GetUnitFG(*pos);
+
+    if (fg_item_p != NULL) {
+        res = bIT_actor_ten_coin_entryR(ten_coin, *fg_item_p, pos, angle);
+    }
+
+    return res;
+}
+
+static int bg_item_ten_coin_entry_ex(xyz_t* pos, s16 angle) {
+    return bIT_actor_ten_coin_entry(bIT_CLIP->bg_item_common_p->ten_coin, pos, angle);
+}
+
+static void bIT_actor_ten_coin_move(GAME* game, bg_item_ten_coin_c* ten_coin) {
+    int save;
+    int cmp0;
+    int cmp1;
+    int i;
+
+    for (i = 0; i < bIT_TEN_COIN_NUM; i++, ten_coin++) {
+        if (ten_coin->_4C != 0) {
+            if (ten_coin->_4C == 1) {
+                ten_coin->_4E--;
+
+                if (ten_coin->_4E < 0) {
+                    ten_coin->_4E = 0;
+                }
+
+                save = ten_coin->_46;
+                ten_coin->_46 += ten_coin->_48;
+                cmp0 = save >= 0 ? 1 : -1;
+                cmp1 = ten_coin->_46 >= 0 ? 1 : -1;
+
+                if (cmp1 != cmp0) {
+                    ten_coin->_46 = 0;
+                    ten_coin->_4C = 2;
+                }
+            }
+
+            if (ten_coin->left_frames > 0) {
+                ten_coin->left_frames--;
+            }
+
+            /* Check if we should reset the money rock to a normal rock */
+            if (ten_coin->left_frames <= 0 && ten_coin->_4C == 2) {
+                mFI_SetFG_common(ten_coin->fg_item - 7, ten_coin->position, TRUE);
+                ten_coin->_4C = 0;
+            }
+        }
+    }
+}
+
+static int bIT_actor_ten_coin_draw_af(Gfx** gfx_pp, rgba_t* color) {
+    gDPPipeSync((*gfx_pp)++);
+    gDPSetPrimColor((*gfx_pp)++, 0, 128, 255, 255, 255, 255);
+    return TRUE;
+}
+
+static int bIT_actor_ten_coin_draw_bf(Gfx** gfx_pp, rgba_t* color) {
+    gDPPipeSync((*gfx_pp)++);
+    gDPSetPrimColor((*gfx_pp)++, 0, 128, color->r, color->g, color->b, color->a);
+    return TRUE;
+}
+
+static void bIT_actor_ten_coin_draw(GAME* game, bg_item_common_info_c* common_info, bg_item_ten_coin_c* ten_coin,
+                                    f32 shadow_pos, rgba_t* shadow_color) {
+    static xyz_t d_size = { 0.01f, 0.01f, 0.01f };
+    int i;
+
+    for (i = 0; i < bIT_TEN_COIN_NUM; i++, ten_coin++) {
+        if (ten_coin->_4C != 0) {
+            xyz_t add_pos;
+            rgba_t color;
+            xyz_t display_pos;
+            f32 percent;
+            f32 scale;
+
+            add_pos.y = 0.0f;
+            if (ten_coin->_50 != 0) {
+                percent = 1.0f - ((f32)(int)ten_coin->left_frames / (f32)(int)ten_coin->total_frames);
+            } else {
+                percent = 0.0f;
+            }
+
+            percent = percent * percent * percent * percent;
+            color.r = 255;
+            color.g = (int)(55.0f + 200.0f * percent);
+            color.b = (int)(255.0f * percent);
+            color.a = 255;
+
+            scale = sin_s(ten_coin->_46) * ten_coin->scale;
+            add_pos.x = sin_s(ten_coin->angle) * scale;
+            add_pos.z = cos_s(ten_coin->angle) * scale;
+
+            xyz_t_add(&ten_coin->position, &add_pos, &display_pos);
+            bit_cmn_single_drawS(game, common_info, ten_coin->fg_item, &display_pos, &ZeroSVec, &d_size, 255,
+                                 &bIT_actor_ten_coin_draw_bf, &bIT_actor_ten_coin_draw_af, &color);
+            bit_cmn_single_drawS_shadow(game, common_info, ten_coin->fg_item, &display_pos, &ZeroSVec, &d_size, 255,
+                                        shadow_pos, shadow_color);
+        }
+    }
+}
+
+static void bIT_actor_ten_coin_destruct(bg_item_ten_coin_c* ten_coin) {
+    int i;
+
+    for (i = 0; i < bIT_TEN_COIN_NUM; i++, ten_coin++) {
+        if (ten_coin->_4C != 0) {
+            mFI_SetFG_common(ten_coin->fg_item - 7, ten_coin->position, TRUE);
+            ten_coin->_4C = 0;
+        }
+    }
+}
+
+static void bg_item_common_palload(Gfx** gfx_pp, u16** pal_pp) {
+    int i;
+
+    for (i = 0; i < bIT_PAL_NUM; i++) {
+        gDPLoadTLUT_Dolphin((*gfx_pp)++, i, 16, 1, pal_pp[i]);
+    }
+}
+
+static void bIT_actor_rand_pos_get_blk_correct(f32* x, f32* z, int ut_x, int ut_z) {
+    *x = rnd_data_x[ut_x & 3][ut_z & 3];
+    *z = rnd_data_z[ut_x & 3][ut_z & 3];
+}
+
+static void bIT_actor_rand_pos_get_plus(mActor_name_t fg_item, xyz_t* pos, const xyz_t* check_pos) {
+    int ut_x;
+    int ut_z;
+    f32 x;
+    f32 z;
+    xyz_t tpos;
+    int valid = mFI_Wpos2UtNum(&ut_x, &ut_z, *check_pos);
+
+    xyz_t_move(&tpos, check_pos);
+
+    /* If the item is a weed or a shell then slightly offset their position */
+    if (valid && (IS_ITEM_GRASS(fg_item) || (fg_item >= ITM_SHELL_START && fg_item <= ITM_SHELL7))) {
+        bIT_actor_rand_pos_get_blk_correct(&x, &z, ut_x, ut_z);
+        tpos.x += x;
+        tpos.z += z;
+    }
+
+    xyz_t_move(pos, &tpos);
+}
+
+static int bIT_actor_rand_pos_get(xyz_t* pos, const xyz_t* check_pos) {
+    int ut_x;
+    int ut_z;
+    int res = FALSE;
+    int valid = mFI_Wpos2UtNum(&ut_x, &ut_z, *check_pos);
+
+    if (valid) {
+        mActor_name_t* fg_item_p = mFI_UtNum2UtFG(ut_x, ut_z);
+
+        if (fg_item_p != NULL) {
+            bIT_actor_rand_pos_get_plus(*fg_item_p, pos, check_pos);
+            res = TRUE;
+        }
+    }
+
+    if (res == FALSE) {
+        pos->x = 0.0f;
+        pos->y = 0.0f;
+        pos->z = 0.0f;
+    }
+
+    return res;
+}
+
+static void bIT_actor_shin_effect_entry(bg_item_shin_c* shin, mActor_name_t fg_item, xyz_t* pos, u16 mode) {
+    int exit = FALSE;
+    int i;
+
+    for (i = 0; exit == FALSE && i < bIT_SHIN_NUM; i++, shin++) {
+        switch (shin->mode) {
+            case 0:
+                shin->fg_item = fg_item;
+                shin->mode = mode;
+                xyz_t_move(&shin->position, pos);
+                exit = TRUE;
+                break;
+
+            case 5:
+                if (pos->x == shin->position.x && pos->z == shin->position.z) {
+                    if (mode == 1) {
+                        shin->mode = 3;
+                        exit = TRUE;
+                    } else if (mode == 2) {
+                        shin->mode = 2;
+                        exit = TRUE;
+                    }
+                }
+                break;
+
+            case 6:
+                if (pos->x == shin->position.x && pos->z == shin->position.z) {
+                    if (mode == 1) {
+                        shin->mode = 1;
+                        exit = TRUE;
+                    } else if (mode == 2) {
+                        shin->mode = 4;
+                        exit = TRUE;
+                    }
+                }
+                break;
+        }
+    }
+}
+
+static int bIT_actor_shin_effect_check(bg_item_shin_c* shin) {
+    int i;
+
+    for (i = 0; i < bIT_SHIN_NUM; i++) {
+        switch (shin->mode) {
+            case 0:
+            case 1:
+            case 2:
+                break;
+            case 3:
+                shin->mode = 5;
+                break;
+            case 4:
+                shin->mode = 6;
+                break;
+            case 5:
+            case 6:
+                break;
+        }
+    }
+
+    return FALSE;
+}
+
+static int bIT_actor_shin_effect_move(GAME* game, bg_item_shin_c* shin) {
+    int exit = FALSE;
+    int i;
+
+    for (i = 0; exit == FALSE && i < bIT_SHIN_NUM; i++, shin++) {
+        switch (shin->mode) {
+            case 1:
+                eEC_CLIP->effect_make_proc(eEC_EFFECT_ANAHIKARI, shin->position, 1, 0, game, (u16)i, 0, 0);
+                shin->mode = 3;
+                exit = TRUE;
+                break;
+            case 2:
+                eEC_CLIP->effect_make_proc(eEC_EFFECT_ANAHIKARI, shin->position, 1, 0, game, (u16)i, 1, 0);
+                shin->mode = 4;
+                exit = TRUE;
+                break;
+            case 4:
+                sAdo_OngenPos((u32)shin, 0x2C, &shin->position);
+                break;
+            case 5:
+                eEC_CLIP->effect_kill_proc(eEC_EFFECT_ANAHIKARI, (u16)i);
+                shin->mode = 0;
+                break;
+            case 6:
+                eEC_CLIP->effect_kill_proc(eEC_EFFECT_ANAHIKARI, (u16)i);
+                shin->mode = 0;
+                break;
+        }
+    }
+
+    return exit;
+}
+
+static void bIT_actor_drop_move_plant_destruct(bg_item_drop_c* drop) {
+    if (drop->move_proc != NULL) {
+        mFI_SetFG_common(drop->fg_item, drop->position, TRUE);
+        drop->move_proc = NULL;
+        drop->draw_proc = NULL;
+        drop->dt_proc = NULL;
+    }
+}
+
+static int bIT_common_moneytree_check(void) {
+    int res = FALSE;
+    f32 rnd = RANDOM_F(100.0f);
+
+    if (rnd <= (50.0f + (f32)(int)mPr_GetMoneyPower() * 0.5f) ||
+        (int)Common_Get(now_private)->destiny.type == mPr_DESTINY_MONEY_LUCK) {
+        res = TRUE;
+    }
+
+    return res;
+}
+
+typedef struct fruit2tree_s {
+    mActor_name_t fruit;
+    mActor_name_t tree;
+} bIT_fr2tr_c;
+
+enum {
+    bIT_BURY_ACTION_BURY,
+    bIT_BURY_ACTION_PLANT,
+    bIT_BURY_ACTION_PITFALL,
+
+    bIT_BURY_ACTION_NUM
+};
+
+static int bIT_common_bury_after(mActor_name_t fg_bury_item, mActor_name_t fg_hole_item, xyz_t* bury_pos,
+                                 mActor_name_t* buried_item_p) {
+    int res = bIT_BURY_ACTION_BURY;
+    int i;
+
+    *buried_item_p = fg_bury_item;
+    if (fg_bury_item == ITM_FOOD_APPLE || fg_bury_item == ITM_FOOD_CHERRY || fg_bury_item == ITM_FOOD_PEAR ||
+        fg_bury_item == ITM_FOOD_PEACH || fg_bury_item == ITM_FOOD_ORANGE || fg_bury_item == ITM_FOOD_COCONUT) {
+        static bIT_fr2tr_c fr2tr_f[] = {
+            { ITM_FOOD_APPLE, TREE_APPLE_SAPLING },   { ITM_FOOD_CHERRY, TREE_CHERRY_SAPLING },
+            { ITM_FOOD_PEAR, TREE_PEAR_SAPLING },     { ITM_FOOD_PEACH, TREE_PEACH_SAPLING },
+            { ITM_FOOD_ORANGE, TREE_ORANGE_SAPLING }, { ITM_FOOD_COCONUT, TREE_PALM_SAPLING },
+        };
+
+        *buried_item_p = EMPTY_NO;
+        for (i = 0; i < ARRAY_COUNT(fr2tr_f); i++) {
+            if (fg_bury_item == fr2tr_f[i].fruit) {
+                *buried_item_p = fr2tr_f[i].tree;
+                return bIT_BURY_ACTION_PLANT;
+            }
+        }
+    } else if (fg_bury_item == ITM_MONEY_1000 || fg_bury_item == ITM_MONEY_10000 || fg_bury_item == ITM_MONEY_30000 ||
+               fg_bury_item == ITM_MONEY_100) {
+        if (fg_hole_item == HOLE_SHINE) {
+            if (bIT_common_moneytree_check() != FALSE) {
+                static bIT_fr2tr_c fr2tr_f[] = {
+                    { ITM_MONEY_1000, TREE_1000BELLS_SAPLING },
+                    { ITM_MONEY_10000, TREE_10000BELLS_SAPLING },
+                    { ITM_MONEY_30000, TREE_30000BELLS_SAPLING },
+                    { ITM_MONEY_100, TREE_100BELLS_SAPLING },
+                };
+
+                for (i = 0; i < ARRAY_COUNT(fr2tr_f); i++) {
+                    if (fg_bury_item == fr2tr_f[i].fruit) {
+                        *buried_item_p = fr2tr_f[i].tree;
+                        break;
+                    }
+                }
+            } else {
+                *buried_item_p = TREE_SAPLING;
+            }
+
+            res = bIT_BURY_ACTION_PLANT;
+        }
+    } else if (fg_bury_item >= ITM_WHITE_PANSY_BAG && fg_bury_item <= ITM_YELLOW_TULIP_BAG) {
+        *buried_item_p = FLOWER_PANSIES0 + (fg_bury_item - ITM_WHITE_PANSY_BAG);
+        res = bIT_BURY_ACTION_PLANT;
+    } else if (fg_bury_item == ITM_SAPLING) {
+        *buried_item_p = TREE_SAPLING;
+        res = bIT_BURY_ACTION_PLANT;
+    } else if (fg_bury_item == ITM_CEDAR_SAPLING) {
+        *buried_item_p = CEDAR_TREE_SAPLING;
+        res = bIT_BURY_ACTION_PLANT;
+    } else if (fg_bury_item == ITM_PITFALL) {
+        int hole_no = mCoBG_GetHoleNumber(*bury_pos);
+
+        if (hole_no != -1) {
+            *buried_item_p = BURIED_PITFALL_START + hole_no;
+        } else {
+            *buried_item_p = EMPTY_NO;
+        }
+
+        res = bIT_BURY_ACTION_PITFALL;
+    } else if (fg_bury_item == ITM_SHOVEL) {
+        if (fg_hole_item == HOLE_SHINE) {
+            *buried_item_p = GOLD_TREE_SAPLING;
+            res = bIT_BURY_ACTION_PLANT;
+        }
+    }
+
+    return res;
+}
+
+static void bIT_common_hole_throw(mActor_name_t fg_item, mActor_name_t fg_hole_item, xyz_t* pos, int mode) {
+    mActor_name_t buried_item;
+    int bury_action = bIT_common_bury_after(fg_item, fg_hole_item, pos, &buried_item);
+
+    if (mode != 1) {
+        switch (bury_action) {
+            case bIT_BURY_ACTION_BURY:
+            default:
+                mFI_SetFG_common(buried_item, *pos, TRUE);
+                if (fg_item != EMPTY_NO) {
+                    mFI_Wpos2DepositON(*pos);
+                }
+                break;
+            case bIT_BURY_ACTION_PLANT:
+                bIT_actor_drop_entry(&bIT_CLIP->bg_item_common_p->drop_info, buried_item, pos, pos, 131, 0);
+                break;
+            case bIT_BURY_ACTION_PITFALL:
+                mFI_SetFG_common(buried_item, *pos, TRUE);
+                break;
+        }
+    } else {
+        switch (bury_action) {
+            case bIT_BURY_ACTION_BURY:
+            default:
+                mFI_SetFG_common(fg_item, *pos, TRUE);
+                if (fg_item != EMPTY_NO) {
+                    mFI_Wpos2DepositON(*pos);
+                }
+                break;
+            case bIT_BURY_ACTION_PLANT:
+            case bIT_BURY_ACTION_PITFALL:
+                mFI_SetFG_common(buried_item, *pos, TRUE);
+                break;
+        }
+    }
+}
+
+static void bIT_actor_drop_move_fly_destruct(bg_item_drop_c* drop) {
+    if (drop->move_proc != NULL) {
+        if ((drop->flags & 4) == 0) {
+            mActor_name_t* fg_item_p = mFI_GetUnitFG(drop->target_position);
+
+            if (fg_item_p != NULL && ((*fg_item_p >= HOLE00 && *fg_item_p <= HOLE24) || *fg_item_p == HOLE_SHINE)) {
+                bIT_common_hole_throw(drop->fg_item, *fg_item_p, &drop->target_position, 1);
+            } else {
+                mFI_SetFG_common(drop->fg_item, drop->target_position, FALSE);
+            }
+        }
+
+        drop->move_proc = NULL;
+        drop->draw_proc = NULL;
+    }
+}
+
+static void func_calc_spec_drop_time(f32 distance_xz, f32 distance_y, f32 drop_time, f32 acceleration_y,
+                                     f32* velocity_xz, f32* velocity_y) {
+    if (drop_time > 0.0f) {
+        *velocity_xz = distance_xz / drop_time;
+        *velocity_y = (distance_y - (drop_time * 0.5f) * (drop_time * acceleration_y)) / drop_time;
+    } else {
+        *velocity_xz = 0.0f;
+        *velocity_y = 0.0f;
+    }
+}
+
+// Part 1
+static void bIT_actor_drop_draw_nrm(GAME* game, bg_item_common_info_c* common_info, bg_item_drop_c* drop);
+static void bIT_actor_drop_move_plant(bg_item_drop_c* drop);
+static void bIT_actor_drop_move_fly(bg_item_drop_c* drop);
+static void bIT_actor_drop_move_wait(bg_item_drop_c* drop);
+
+static int bIT_actor_drop_entry_main(bg_item_drop_table_c* drop_info, bg_item_drop_c* src_drop) {
+    int res = FALSE;
+    bg_item_drop_c* drop = drop_info->drop_p;
+    int i;
+
+    for (i = 0; i < drop_info->count; i++, drop++) {
+        if (drop->move_proc == NULL) {
+            bcopy(src_drop, drop, sizeof(bg_item_drop_c));
+            drop->display_fg_item = src_drop->fg_item;
+            drop->mode = 0;
+
+            if ((src_drop->flags & 1)) {
+                xyz_t_move(&drop->scale, &ZeroVec);
+            } else {
+                drop->scale.x = 1.0f;
+                drop->scale.y = 1.0f;
+                drop->scale.z = 1.0f;
+            }
+
+            drop->angle.x = 0;
+            drop->angle.y = 0;
+            drop->angle.z = 0;
+            drop->_4C = 0;
+            xyz_t_move(&drop->offset, &ZeroVec);
+            drop->target_pos_fg_item = EMPTY_NO;
+            drop->draw_proc = &bIT_actor_drop_draw_nrm;
+
+            if ((drop->flags & 2)) {
+                xyz_t_move(&drop->position, &src_drop->target_position);
+                drop->_58 = 0;
+                drop->_5A = 6000;
+                drop->_54 = 0.25f;
+                drop->_72 = 255;
+                drop->move_proc = &bIT_actor_drop_move_plant;
+                drop->dt_proc = &bIT_actor_drop_move_plant_destruct;
+                drop->_6E = 0;
+            } else {
+                xyz_t_move(&drop->last_position, &src_drop->position);
+
+                if (drop->fg_item != HONEYCOMB) {
+                    mActor_name_t* fg_item_p = mFI_GetUnitFG(src_drop->target_position);
+
+                    if (fg_item_p != NULL) {
+                        drop->target_pos_fg_item = *fg_item_p;
+
+                        if ((drop->flags & 4) == 0) {
+                            if ((drop->target_pos_fg_item >= HOLE_START && drop->target_pos_fg_item <= HOLE_END) ||
+                                drop->target_pos_fg_item == HOLE_SHINE) {
+                                drop->flags |= 8; // target item is a hole
+
+                                if (drop->fg_item >= ITM_WHITE_PANSY_BAG && drop->fg_item <= ITM_YELLOW_TULIP_BAG) {
+                                    drop->display_fg_item = FLOWER_SEED;
+                                } else if (drop->fg_item == ITM_SAPLING) {
+                                    drop->display_fg_item = TREE_SAPLING;
+                                } else if (drop->fg_item == ITM_CEDAR_SAPLING) {
+                                    drop->display_fg_item = CEDAR_TREE_SAPLING;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                drop->flags |= 0x2000;
+                drop->_5C = search_position_angleY(&drop->position, &drop->target_position);
+                drop->_72 = 255;
+                drop->move_proc = &bIT_actor_drop_move_fly;
+                drop->dt_proc = &bIT_actor_drop_move_fly_destruct;
+                drop->_76 = 0;
+                drop->total_distance_y = fabsf(drop->target_position.y - drop->position.y);
+                drop->last_velocity_xz = src_drop->velocity_xz;
+                drop->last_velocity_y = src_drop->velocity_y;
+            }
+
+            res = TRUE;
+            break;
+        }
+    }
+
+    return res;
+}
+
+static int fruit_set(mActor_name_t fg_item, int ut_x, int ut_z, s16 num, int drop_type, xyz_t* pos,
+                     ACTOR* parent_actor) {
+    xyz_t drop_pos;
+    xyz_t fruit_pos;
+    xyz_t target_wpos;
+    bg_item_drop_c drop;
+    int flag;
+    int start;
+    int drop_res;
+    int i;
+
+    mFI_UtNum2CenterWpos(&target_wpos, ut_x, ut_z);
+    target_wpos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(target_wpos, -1.0f);
+
+    flag = FALSE;
+    if (fg_item != ITM_PRESENT && num == 1) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_NOW();
+        if (target_wpos.x > player->actor_class.world.position.x) {
+            flag = TRUE;
+        }
+    }
+
+    start = 0;
+    if (flag) {
+        start = 1;
+    }
+
+    for (i = start; i < start + (int)num; i++) {
+        static int unit_offset_part[3][2] = { { -1, 0 }, { 1, 0 }, { 0, 1 } };
+        static xyz_t pos_part[3] = {
+            { -22.5f, 65.0f, 17.5f },
+            { 22.5f, 72.0f, 12.5f },
+            { -2.5f, 97.5f, 7.5f },
+        };
+        static xyz_t pos_part_honey_comb[3] = {
+            { -37.5f, 65.0f, 17.5f },
+            { 37.5f, 72.0f, 12.5f },
+            { -2.5f, 97.5f, 7.5f },
+        };
+        static xyz_t pos_part_present[3] = {
+            { -2.5f, 97.5f, 7.5f },
+            { -37.5f, 65.0f, 17.5f },
+            { 37.5f, 72.0f, 12.5f },
+        };
+        static xyz_t pos_part_palm_cc[2] = {
+            { -10.0f, 70.0f, 2.5f },
+            { 10.0f, 75.0f, 0.0f },
+        };
+        static xyz_t fade_out = { -1.0f, -1.0f, -1.0f };
+
+        f32 dist_xz;
+
+        if (drop_type == 1) {
+            mFI_UtNum2CenterWpos(&drop_pos, ut_x, ut_z + 1);
+        } else {
+            mFI_UtNum2CenterWpos(&drop_pos, ut_x + unit_offset_part[i][0], ut_z + unit_offset_part[i][1]);
+        }
+
+        if (fg_item == ITM_PRESENT) {
+            drop_res = mFI_search_unit_around_high(&drop_pos, EMPTY_NO, &target_wpos);
+            xyz_t_add(&pos_part_present[i], &target_wpos, &fruit_pos);
+        } else if (fg_item == HONEYCOMB) {
+            drop_res = TRUE;
+            xyz_t_add(&pos_part_honey_comb[i], &target_wpos, &fruit_pos);
+        } else if (fg_item == ITM_FOOD_COCONUT) {
+            drop_res = mFI_search_unit_around_high(&drop_pos, EMPTY_NO, &target_wpos);
+            xyz_t_add(&pos_part_palm_cc[i], &target_wpos, &fruit_pos);
+        } else {
+            drop_res = mFI_search_unit_around_high(&drop_pos, EMPTY_NO, &target_wpos);
+            xyz_t_add(&pos_part[i], &target_wpos, &fruit_pos);
+        }
+
+        drop_pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(drop_pos, -1.0f);
+        drop.actorx_p = parent_actor;
+        drop.fg_item = fg_item;
+        xyz_t_move(&drop.position, &fruit_pos);
+        xyz_t_move(&drop.target_position, &drop_pos);
+        drop._8A = 0;
+        drop.flags = 0;
+
+        if (drop_res || drop.fg_item == HONEYCOMB) {
+            if (ITEM_IS_FTR(drop.fg_item)) {
+                drop.flags = 0x200; // hidden furniture flag
+            } else if (drop.fg_item == ITM_MONEY_100) {
+                drop.flags |= 0x1000; // hidden money flag
+            } else {
+                drop.flags = 0x100; // standard drop flag?
+
+                if (drop.fg_item == HONEYCOMB && drop_res) {
+                    drop.flags |= 0x400; // honeycomb flag
+                }
+            }
+
+            drop.layer = 0;
+            drop._7C = 0.25f;
+
+            if ((drop.flags & 0x200)) {
+                /* dropped item is furniture leaf */
+                drop._8A = 1;
+                drop.drop_speed = 26;
+                drop.acceleration_y = 0.15f;
+                drop._6E = 0;
+            } else if ((drop.flags & 0x400)) {
+                /* dropped item is honeycomb? */
+                drop.drop_speed = 5;
+                drop.acceleration_y = -1.2f;
+                drop._6E = 1;
+            } else {
+                drop.drop_speed = 14 + i * 4;
+                drop._8A = 1 + i * 4;
+                drop.acceleration_y = -1.2f;
+                drop._6E = 1;
+            }
+
+            drop.wait_counter = 0;
+
+            /* If the item is something that has offset positions, apply that */
+            if (IS_ITEM_GRASS(drop.fg_item) || (drop.fg_item >= ITM_SHELL0 && drop.fg_item <= ITM_SHELL7)) {
+                xyz_t temp_pos;
+
+                bIT_actor_rand_pos_get_plus(drop.fg_item, &temp_pos, &drop.target_position);
+                xyz_t_move(&drop.target_position, &temp_pos);
+            }
+
+            dist_xz = search_position_distanceXZ(&drop.target_position, &drop.position);
+            func_calc_spec_drop_time(dist_xz, drop.target_position.y - drop.position.y, drop.drop_speed,
+                                     drop.acceleration_y, &drop.velocity_xz, &drop.velocity_y);
+
+            if (bIT_actor_drop_entry_main(&bIT_CLIP->bg_item_common_p->fruit_drop_info, &drop) &&
+                drop.fg_item != HONEYCOMB) {
+                mFI_SetFG_common(RSV_NO, drop_pos, FALSE);
+            }
+
+            xyz_t_move(pos, &drop_pos);
+        } else {
+            drop.flags = 0;
+            if (ITEM_IS_FTR(drop.fg_item)) {
+                drop._8A = 1;
+                drop.flags = 0x200;
+            }
+
+            if ((drop.flags & 0x200)) {
+                drop.drop_speed = 26;
+                drop.acceleration_y = 0.15f;
+            } else {
+                drop.drop_speed = 14 + i * 4;
+                drop._8A = 1 + i * 4;
+                drop.acceleration_y = -1.2f;
+            }
+
+            drop.target_position.y = target_wpos.y;
+            drop.flags |= 0x20 | 0x4;
+            drop._7C = 0.0f;
+            drop._78 = 12;
+            drop._70 = 27;
+            drop.layer = 0;
+
+            // duplicate set in these if-else blocks
+            if ((drop.flags & 0x200)) {
+                drop.drop_speed = 26;
+                drop.acceleration_y = 0.15f;
+            } else {
+                drop.drop_speed = 14 + i * 4;
+                drop.acceleration_y = -1.2f;
+            }
+
+            drop._6E = 0;
+            drop.wait_counter = 0;
+
+            if (IS_ITEM_GRASS(drop.fg_item) || (drop.fg_item >= ITM_SHELL0 && drop.fg_item <= ITM_SHELL7)) {
+                xyz_t temp_pos;
+
+                bIT_actor_rand_pos_get_plus(drop.fg_item, &temp_pos, &drop.target_position);
+                xyz_t_move(&drop.target_position, &temp_pos);
+            }
+
+            dist_xz = search_position_distanceXZ(&drop.target_position, &drop.position);
+            func_calc_spec_drop_time(dist_xz, drop.target_position.y - drop.position.y, drop.drop_speed,
+                                     drop.acceleration_y, &drop.velocity_xz, &drop.velocity_y);
+
+            bIT_actor_drop_entry_main(&bIT_CLIP->bg_item_common_p->fruit_drop_info, &drop);
+            xyz_t_move(pos, &fade_out);
+        }
+    }
+
+    return FALSE;
+}
+
+static int bIT_fruit_set(mActor_name_t fg_item, int ut_x, int ut_z, s16 count, int type) {
+    xyz_t tmp;
+
+    return fruit_set(fg_item, ut_x, ut_z, count, type, &tmp, NULL);
+}
+
+typedef struct fruit_drop_s {
+    mActor_name_t src_tree_item;
+    mActor_name_t dropped_item;
+    mActor_name_t dst_tree_item;
+    s16 drop_count;
+} bIT_fruit_drop_c;
+
+static void drop_fruit(mActor_name_t fg_item, int ut_x, int ut_z, xyz_t* drop_pos, ACTOR* parent_actor) {
+    static bIT_fruit_drop_c fg_ytable[] = {
+        { TREE_APPLE_FRUIT, ITM_FOOD_APPLE, TREE_APPLE_NOFRUIT_0, 3 },
+        { TREE_ORANGE_FRUIT, ITM_FOOD_ORANGE, TREE_ORANGE_NOFRUIT_0, 3 },
+        { TREE_PEACH_FRUIT, ITM_FOOD_PEACH, TREE_PEACH_NOFRUIT_0, 3 },
+        { TREE_PEAR_FRUIT, ITM_FOOD_PEAR, TREE_PEAR_NOFRUIT_0, 3 },
+        { TREE_CHERRY_FRUIT, ITM_FOOD_CHERRY, TREE_CHERRY_NOFRUIT_0, 3 },
+        { TREE_1000BELLS, ITM_MONEY_1000, TREE, 3 },
+        { TREE_10000BELLS, ITM_MONEY_10000, TREE, 3 },
+        { TREE_30000BELLS, ITM_MONEY_30000, TREE, 3 },
+        { TREE_100BELLS, ITM_MONEY_100, TREE, 3 },
+        { TREE_FTR, FTR_FAN, TREE, 1 },
+        { TREE_BEES, HONEYCOMB, TREE, 1 },
+        { TREE_PRESENT, ITM_PRESENT, TREE, 1 },
+        { TREE_BELLS, ITM_MONEY_100, TREE, 1 },
+        { TREE_PALM_FRUIT, ITM_FOOD_COCONUT, TREE_PALM_NOFRUIT_0, 2 },
+        { CEDAR_TREE_BELLS, ITM_MONEY_100, CEDAR_TREE, 1 },
+        { CEDAR_TREE_FTR, FTR_FAN, CEDAR_TREE, 1 },
+        { CEDAR_TREE_BEES, HONEYCOMB, CEDAR_TREE, 1 },
+        { GOLD_TREE_BELLS, ITM_MONEY_100, GOLD_TREE, 1 },
+        { GOLD_TREE_FTR, FTR_FAN, GOLD_TREE, 1 },
+        { GOLD_TREE_BEES, HONEYCOMB, GOLD_TREE, 1 },
+        { GOLD_TREE_SHOVEL, ITM_GOLDEN_SHOVEL, GOLD_TREE, 1 },
+    };
+
+    xyz_t tree_pos;
+    int i;
+
+    for (i = 0; i < ARRAY_COUNT(fg_ytable); i++) {
+        if (fg_item == fg_ytable[i].src_tree_item) {
+            mActor_name_t item = fg_ytable[i].dropped_item;
+
+            if (item == FTR_FAN) {
+                int list = mSP_LISTTYPE_ABC;
+                mActor_name_t ftr_item;
+
+                if (Common_Get(now_private)->destiny.type == mPr_DESTINY_GOODS_LUCK) {
+                    if (fqrand() >= 0.5f) {
+                        list = mSP_LISTTYPE_EVENT; // pull from Crazy Redd's list
+                    } else {
+                        list = mSP_LISTTYPE_LOTTERY; // pull from raffle list
+                    }
+                }
+
+                mSP_SelectRandomItem_New(NULL, &ftr_item, 1, NULL, 0, mSP_KIND_FURNITURE, list, FALSE);
+                fruit_set(ftr_item, ut_x, ut_z, fg_ytable[i].drop_count, 0, drop_pos, parent_actor);
+            } else {
+                mActor_name_t drop_item = item;
+
+                if (fg_item == TREE_BELLS || fg_item == CEDAR_TREE_BELLS || fg_item == GOLD_TREE_BELLS) {
+                    if (Common_Get(now_private)->destiny.type == mPr_DESTINY_MONEY_LUCK) {
+                        drop_item = ITM_MONEY_1000;
+                    }
+                }
+
+                fruit_set(drop_item, ut_x, ut_z, fg_ytable[i].drop_count, 0, drop_pos, parent_actor);
+            }
+
+            mFI_UtNum2CenterWpos(&tree_pos, ut_x, ut_z);
+            tree_pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(tree_pos, -1.0f);
+            mFI_SetFG_common(fg_ytable[i].dst_tree_item, tree_pos, TRUE);
+            break;
+        }
+    }
+}
+
+static int BIT_actor_tree_cutcount_check(GAME* game, int ut_x, int ut_z) {
+    bg_item_common_c* common_p = bIT_CLIP->bg_item_common_p;
+    int res = 0;
+    int bx;
+    int i;
+    int bz;
+
+    for (i = 0; i < common_p->item_table.count; i++) {
+        bx = common_p->item_table.block_info_tbl[i].block_x;
+        bz = common_p->item_table.block_info_tbl[i].block_z;
+
+        if (ut_x >= bx * UT_X_NUM && ut_x < (bx + 1) * UT_X_NUM && ut_z >= bz * UT_Z_NUM &&
+            ut_z < (bz + 1) * UT_Z_NUM) {
+            int z = (ut_z - bz * UT_Z_NUM);
+            int idx = z * UT_X_NUM + (ut_x - bx * UT_X_NUM);
+
+            res = common_p->block_info_table.info_tbl[i].info[idx];
+            if (res > 0) {
+                common_p->block_info_table.info_tbl[i].info[idx] = res - 1;
+                res--;
+            }
+
+            break;
+        }
+    }
+
+    return res;
+}
+
+static void bg_item_tree_fruit_drop(mActor_name_t fg_item, int ut_x, int ut_z, xyz_t* drop_pos) {
+    if (fg_item == TREE || fg_item == CEDAR_TREE || fg_item == GOLD_TREE) {
+        if (Common_Get(clip).insect_clip != NULL && Common_Get(clip).insect_clip->set_pl_act_tim_proc != NULL) {
+            Common_Get(clip).insect_clip->set_pl_act_tim_proc(4, ut_x, ut_z);
+        }
+    } else if (fg_item == TREE_BEES || fg_item == CEDAR_TREE_BEES || fg_item == GOLD_TREE_BEES) {
+        ACTOR* actor;
+        static xyz_t wait_pos = { -1.0f, -1.0f, -1.0f };
+        GAME_PLAY* play = (GAME_PLAY*)gamePT;
+
+        actor = Actor_info_make_actor(&play->actor_info, (GAME*)play, mAc_PROFILE_BEE, wait_pos.x, wait_pos.y,
+                                      wait_pos.z, 0, 0, 0, play->block_table.block_x, play->block_table.block_z, -1,
+                                      EMPTY_NO, 0, -1, -1);
+        if (actor != NULL) {
+            drop_fruit(fg_item, ut_x, ut_z, drop_pos, actor);
+
+            if (drop_pos->x == -1.0f && drop_pos->y == -1.0f && drop_pos->z == -1.0f) {
+                Actor_delete(actor);
+            }
+        } else {
+            xyz_t_move(drop_pos, &wait_pos);
+        }
+    } else {
+        drop_fruit(fg_item, ut_x, ut_z, drop_pos, NULL);
+    }
+}
+
+static void bIT_actor_dig_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames, u16 wait_frames) {
+    int ut_x;
+    int ut_z;
+
+    if (mFI_Wpos2UtNum(&ut_x, &ut_z, *pos)) {
+        mFI_UtNumtoFGSet_common(RSV_NO, ut_x, ut_z, FALSE);
+        mFI_UtNum2DepositOFF(ut_x, ut_z);
+    }
+
+    bIT_actor_hole_effect_entry(bIT_CLIP->bg_item_common_p->hole, fg_item, pos, frames, wait_frames, 1, 0);
+}
+
+static void bIT_actor_bury_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames) {
+    bIT_actor_hole_effect_entry(bIT_CLIP->bg_item_common_p->hole, fg_item, pos, frames, 0, 2, 0);
+}
+
+static int bIT_actor_hole_effect_entry(bg_item_hole_c* hole, mActor_name_t fg_item, xyz_t* pos, u16 frames,
+                                       u16 wait_frames, s16 mode, s16 wait_type) {
+    int i;
+    int hole_no;
+    int res;
+
+    res = FALSE;
+    hole_no = -1;
+
+    switch (mode) {
+        case 1:
+            if (fg_item == SHINE_SPOT) {
+                hole_no = HOLE_SHINE;
+            } else {
+                int hole_num = mCoBG_GetHoleNumber(*pos);
+                if (hole_num >= 0) {
+                    hole_no = HOLE_START + hole_num;
+                }
+            }
+            break;
+        case 2: {
+            mActor_name_t* fg_p = mFI_GetUnitFG(*pos);
+
+            if (fg_p != NULL) {
+                hole_no = *fg_p;
+                mFI_SetFG_common(RSV_NO, *pos, TRUE);
+            }
+            break;
+        }
+    }
+
+    if (hole_no >= 0) {
+        xyz_t target_pos;
+
+        mFI_Wpos2UtCenterWpos(&target_pos, *pos);
+        target_pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(*pos, -1.0f);
+        for (i = 0; res == FALSE && i < bIT_HOLE_NUM; i++, hole++) {
+            if (hole->mode == 0) {
+                switch (mode) {
+                    case 1:
+                        hole->fg_item = fg_item;
+                        hole->hole_fg_item = hole_no;
+                        hole->scale = 0.0f;
+                        res = TRUE;
+                        break;
+                    case 2:
+                        hole->fg_item = fg_item;
+                        hole->hole_fg_item = hole_no;
+                        hole->scale = 1.0f;
+                        xyz_t_move(&hole->position, &target_pos);
+                        mFI_SetFG_common(RSV_NO, hole->position, TRUE);
+                        res = TRUE;
+                        break;
+                }
+
+                if (res) {
+                    hole->mode = mode;
+                    xyz_t_move(&hole->position, &target_pos);
+                    hole->counter = 0;
+                    hole->max_counter = frames;
+                    hole->wait_counter = wait_frames + 1;
+                    hole->wait_type = wait_type;
+                }
+            }
+        }
+    }
+
+    return res;
+}
+
+static void bIT_actor_hole_effect_destruct(bg_item_hole_c* hole) {
+    switch (hole->mode) {
+        case 1:
+            mFI_SetFG_common(hole->hole_fg_item, hole->position, TRUE);
+            mFI_Wpos2DepositOFF(hole->position);
+            break;
+        case 2:
+            bIT_common_hole_throw(hole->fg_item, hole->hole_fg_item, &hole->position, 1);
+
+            if (hole->fg_item == EMPTY_NO && hole->hole_fg_item == HOLE_SHINE) {
+                mFI_SetFG_common(SHINE_SPOT, hole->position, TRUE);
+            }
+
+            break;
+    }
+
+    hole->mode = 0;
+}
+
+static void bIT_actor_hole_effect_move(bg_item_hole_c* hole) {
+    if (hole->wait_counter != 0) {
+        hole->wait_counter--;
+    }
+
+    if (hole->wait_counter == 0) {
+        switch (hole->mode) {
+            case 1:
+                hole->scale = (f32)hole->counter / (f32)hole->max_counter;
+                hole->counter++;
+
+                if (hole->counter > hole->max_counter) {
+                    mFI_SetFG_common(hole->hole_fg_item, hole->position, TRUE);
+                    mFI_Wpos2DepositOFF(hole->position);
+                    hole->mode = 0;
+                }
+
+                break;
+            case 2:
+                hole->scale = 1.0f - (f32)hole->counter / (f32)hole->max_counter;
+                hole->counter++;
+
+                if (hole->counter > hole->max_counter) {
+                    bIT_common_hole_throw(hole->fg_item, hole->hole_fg_item, &hole->position, 0);
+                    if (hole->fg_item == EMPTY_NO && hole->hole_fg_item == HOLE_SHINE) {
+                        mFI_SetFG_common(EMPTY_NO, hole->position, TRUE);
+                    }
+
+                    hole->mode = 0;
+                }
+
+                break;
+        }
+    }
+}
+
+static void bIT_actor_hole_effect_draw(GAME* game, bg_item_common_info_c* common_info, bg_item_hole_c* hole) {
+    if (hole->wait_counter == 0 && hole->mode != 0) {
+        xyz_t scale;
+
+        scale.x = hole->scale * 0.01f;
+        scale.y = hole->scale * 0.01f;
+        scale.z = hole->scale * 0.01f;
+        bit_cmn_single_drawS(game, common_info, hole->hole_fg_item, &hole->position, &hole->angle, &scale, 255, NULL,
+                             NULL, NULL);
+    }
+}
+
+static int bIT_actor_player_drop_entry(GAME* game, mActor_name_t fg_item, int ut_x, int ut_z, s16 layer) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR((GAME_PLAY*)game);
+    int res;
+    xyz_t target_pos;
+    xyz_t pos;
+    mActor_name_t* fg_p;
+    u16 drop_type;
+
+    res = 0;
+    pos.x = 0.0f;
+    pos.y = 0.0f;
+    pos.z = 0.0f;
+
+    mFI_UtNum2CenterWpos(&pos, ut_x, ut_z);
+    pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, -1.0f);
+    fg_p = mFI_GetUnitFG(pos);
+
+    if (fg_p != NULL && (*fg_p == EMPTY_NO || (*fg_p >= HOLE_START && *fg_p <= HOLE_END) || *fg_p == HOLE_SHINE)) {
+        drop_type = 0;
+        xyz_t_move(&target_pos, &player->actor_class.world.position);
+        target_pos.y += 50.0f;
+
+        if (ITEM_NAME_GET_TYPE(fg_item) == NAME_TYPE_ITEM0) {
+            if (ITEM_NAME_GET_CAT(fg_item) == 8) {
+                drop_type |= 3;
+            } else if (ITEM_NAME_GET_CAT(fg_item) == 0) {
+                drop_type |= 1;
+            }
+        } else {
+            drop_type |= 1;
+        }
+
+        if (bIT_actor_drop_entry(&bIT_CLIP->bg_item_common_p->drop_info, fg_item, &target_pos, &pos, drop_type,
+                                 layer)) {
+            if (!((*fg_p >= HOLE_START && *fg_p <= HOLE_END) || *fg_p == HOLE_SHINE)) {
+                mFI_SetFG_common(RSV_NO, pos, FALSE);
+            }
+
+            res = 1;
+        }
+    } else {
+        res = -1;
+    }
+
+    return res;
+}
+
+static int bIT_drop_entry_v1(mActor_name_t fg_item, xyz_t* pos, xyz_t* target_pos) {
+    int res = 0;
+    mActor_name_t* fg_p = mFI_GetUnitFG(*target_pos);
+
+    if (*fg_p == EMPTY_NO || (*fg_p >= HOLE_START && *fg_p <= HOLE_END) || *fg_p == HOLE_SHINE) {
+        u16 drop_type = 0;
+
+        if (ITEM_NAME_GET_TYPE(fg_item) == NAME_TYPE_ITEM0) {
+            if (ITEM_NAME_GET_CAT(fg_item) == 8) {
+                drop_type = 3;
+            } else if (ITEM_NAME_GET_CAT(fg_item) == 0) {
+                drop_type = 1;
+            }
+        }
+
+        if (bIT_actor_drop_entry(&bIT_CLIP->bg_item_common_p->drop_info, fg_item, pos, target_pos, drop_type, 0)) {
+            if (!((*fg_p >= HOLE_START && *fg_p <= HOLE_END) || *fg_p == HOLE_SHINE)) {
+                mFI_SetFG_common(RSV_NO, *target_pos, FALSE);
+            }
+
+            res = 1;
+        }
+    } else {
+        res = -1;
+    }
+
+    return res;
+}
+
+static void bIT_actor_fly_entry(mActor_name_t fg_item, xyz_t* pos, s16 angle_y) {
+    xyz_t target_pos;
+    bg_item_drop_c drop;
+    f32 dist_xz;
+
+    target_pos.x = pos->x + 40.0f * sin_s(angle_y);
+    target_pos.z = pos->z + 40.0f * cos_s(angle_y);
+    target_pos.y = pos->y;
+
+    if (fg_item != EMPTY_NO && fg_item != RSV_NO) {
+        mFI_SetFG_common(EMPTY_NO, *pos, TRUE);
+    }
+
+    drop.fg_item = fg_item;
+    xyz_t_move(&drop.position, pos);
+    xyz_t_move(&drop.target_position, &target_pos);
+    drop._78 = 7;
+    drop._7C = 0.25f;
+    drop._70 = 17;
+    drop.layer = 0;
+
+    if (angle_y > 0) {
+        drop.flags = 0x40 | 0x20 | 0x10 | 0x4;
+    } else {
+        drop.flags = 0x20 | 0x10 | 0x4;
+    }
+
+    if ((drop.flags & 0x200)) {
+        drop.drop_speed = 26;
+        drop.acceleration_y = 0.15f;
+    } else {
+        drop.drop_speed = 17;
+        drop.acceleration_y = -1.2f;
+    }
+
+    drop._6E = 0;
+    drop.actorx_p = NULL;
+    drop.wait_counter = 0;
+
+    if (IS_ITEM_GRASS(drop.fg_item) || (drop.fg_item >= ITM_SHELL0 && drop.fg_item <= ITM_SHELL7)) {
+        xyz_t tpos;
+
+        bIT_actor_rand_pos_get_plus(drop.fg_item, &tpos, &drop.target_position);
+        xyz_t_move(&drop.target_position, &tpos);
+    }
+
+    dist_xz = search_position_distanceXZ(&drop.target_position, &drop.position);
+    func_calc_spec_drop_time(dist_xz, drop.target_position.y - drop.position.y, (f32)(int)drop.drop_speed,
+                             drop.acceleration_y, &drop.velocity_xz, &drop.velocity_y);
+    bIT_actor_drop_entry_main(&bIT_CLIP->bg_item_common_p->drop_info, &drop);
+}
+
+static int bIT_actor_drop_entry(bg_item_drop_table_c* drop_info, mActor_name_t fg_item, xyz_t* pos, xyz_t* target_pos,
+                                u16 flags, s16 layer) {
+    bg_item_drop_c drop;
+    f32 dist_xz;
+
+    drop.fg_item = fg_item;
+    xyz_t_move(&drop.position, pos);
+    xyz_t_move(&drop.target_position, target_pos);
+
+    drop.flags = flags;
+    drop.layer = layer;
+    drop._7C = 0.25f;
+
+    if ((flags & 0x80)) {
+        drop.wait_counter = 46;
+    } else {
+        drop.wait_counter = 0;
+    }
+
+    if ((flags & 0x200)) {
+        drop.drop_speed = 26;
+        drop.acceleration_y = 0.15f;
+        drop._6E = 0;
+    } else {
+        drop.drop_speed = 14;
+        drop.acceleration_y = -1.2f;
+        drop._6E = 1;
+    }
+
+    drop.actorx_p = NULL;
+
+    if (IS_ITEM_GRASS(drop.fg_item) || (drop.fg_item >= ITM_SHELL0 && drop.fg_item <= ITM_SHELL7)) {
+        xyz_t tpos;
+
+        bIT_actor_rand_pos_get_plus(drop.fg_item, &tpos, &drop.target_position);
+        xyz_t_move(&drop.target_position, &tpos);
+    }
+
+    dist_xz = search_position_distanceXZ(&drop.target_position, &drop.position);
+    func_calc_spec_drop_time(dist_xz, drop.target_position.y - drop.position.y, (f32)(int)drop.drop_speed,
+                             drop.acceleration_y, &drop.velocity_xz, &drop.velocity_y);
+    return bIT_actor_drop_entry_main(drop_info, &drop);
+}
+
+static void bIT_actor_drop_move(bg_item_drop_table_c* drop_info) {
+    bg_item_drop_c* drop = drop_info->drop_p;
+    int i;
+
+    for (i = 0; i < drop_info->count; i++, drop++) {
+        if (drop->layer > 0) {
+            drop->layer--;
+        } else if (drop->wait_counter > 0) {
+            drop->wait_counter--;
+
+            if (drop->wait_counter == 0 && (drop->flags & 0x80)) {
+                sAdo_OngenTrgStart(0x2A, &drop->position);
+            }
+        } else if (drop->move_proc != NULL) {
+            xyz_t_move(&drop->offset, &ZeroVec);
+            drop->move_proc(drop);
+        }
+    }
+}
+
+static void bIT_actor_drop_destruct(bg_item_drop_table_c* drop_info) {
+    bg_item_drop_c* drop = drop_info->drop_p;
+    int i;
+
+    for (i = 0; i < drop_info->count; i++, drop++) {
+        if (drop->move_proc != NULL && drop->dt_proc != NULL) {
+            drop->dt_proc(drop);
+            drop->dt_proc = NULL;
+        }
+    }
+}
+
+static void bIT_actor_drop_move_plant(bg_item_drop_c* drop) {
+    s16 last_58 = drop->_58;
+    s16 now_58;
+
+    drop->_58 = last_58 + drop->_5A;
+    now_58 = drop->_58;
+
+    if ((drop->flags & 1)) {
+        f32 scale = sinf_table(SHORT2RAD_ANGLE2(now_58)) * drop->_54;
+        f32 x = 1.0f - scale;
+
+        scale += 1.0f;
+        drop->scale.x = x;
+        drop->scale.y = scale;
+        drop->scale.z = 1.0f;
+    }
+
+    if ((last_58 < 0 && now_58 >= 0) || ((u16)last_58 < (u16)SHT_MAX_S && (u16)now_58 >= (u16)SHT_MIN_S)) {
+        f32 tmp;
+
+        drop->_54 *= 0.2f;
+        tmp = (f32)(int)drop->_5A + 1500.0f;
+        drop->_5A = (int)tmp;
+    }
+
+    if (ABS(drop->_54) < 0.02f) {
+        if (drop->fg_item == GOLD_TREE_SAPLING) {
+            xyz_t effect_pos;
+
+            effect_pos.x = drop->position.x + GOLD_TREE_SAPLING_EFFECT_X;
+            effect_pos.y = drop->position.y + GOLD_TREE_SAPLING_EFFECT_Y;
+            effect_pos.z = drop->position.z + GOLD_TREE_SAPLING_EFFECT_Z;
+
+            eEC_CLIP->effect_make_proc(eEC_EFFECT_KIGAE_LIGHT, effect_pos, 2, 0, gamePT, RSV_NO, -1, 0);
+        }
+
+        mFI_SetFG_common(drop->fg_item, drop->position, TRUE);
+        drop->move_proc = NULL;
+        drop->draw_proc = NULL;
+        drop->dt_proc = NULL;
+    }
+}
+
+static void bIT_actor_drop_move_bury_destruct(bg_item_drop_c* drop) {
+    if (drop->move_proc != NULL) {
+        drop->move_proc = NULL;
+        drop->draw_proc = NULL;
+        drop->dt_proc = NULL;
+    }
+}
+
+static void bIT_actor_drop_move_bury(bg_item_drop_c* drop) {
+    if (drop->scale.x > 0.0f) {
+        drop->scale.x += -0.1f;
+        drop->scale.y = drop->scale.x;
+        drop->scale.z = drop->scale.x;
+    } else {
+        drop->move_proc = NULL;
+        drop->draw_proc = NULL;
+        drop->dt_proc = NULL;
+    }
+}
+
+static void bIT_actor_drop_move_bury_change(bg_item_drop_c* drop) {
+    drop->scale.x = 1.0f;
+    drop->scale.y = 1.0f;
+    drop->scale.z = 1.0f;
+    bIT_actor_bury_hole_effect_entry(drop->fg_item, &drop->target_position, 46);
+    drop->velocity_xz = 0.0f;
+    drop->velocity_y = 0.0f;
+    drop->position.y = drop->target_position.y;
+    drop->move_proc = &bIT_actor_drop_move_bury;
+    drop->dt_proc = &bIT_actor_drop_move_bury_destruct;
+}
+
+// Part 2
+
+static void bIT_actor_drop_wait_bee(bg_item_drop_c* drop) {
+    drop->_90--;
+
+    if (drop->_90 == 0) {
+        if (drop->actorx_p != NULL) {
+            xyz_t_move(&drop->actorx_p->world.position, &drop->position);
+        }
+
+        drop->_88 = 120;
+        drop->move_proc = &bIT_actor_drop_move_wait;
+    }
+}
+
+static void bIT_actor_drop_move_wait(bg_item_drop_c* drop) {
+    if (drop->_88 != 0) {
+        drop->_88--;
+        drop->_76 = 0;
+        drop->_70 = 5;
+    } else if (drop->_76 <= 255) {
+        drop->_72 = 255 - drop->_76;
+        drop->_76 += drop->_70;
+    } else {
+        drop->_72 = 0;
+        drop->move_proc = NULL;
+        drop->draw_proc = NULL;
+        drop->dt_proc = NULL;
+    }
+}
+
+static void bIT_actor_drop_move_fly(bg_item_drop_c* drop) {
+    f32 vel_x;
+    f32 vel_z;
+    f32 scale = drop->_4C / (f32)(int)drop->drop_speed;
+
+    if (drop->_8A > 0) {
+        if (drop->_8A == 1) {
+            if ((drop->flags & 0x100)) {
+                sAdo_OngenTrgStart(0x43D, &drop->position);
+            } else if ((drop->flags & 0x200)) {
+                sAdo_OngenTrgStart(0x40C, &drop->position);
+            }
+        }
+
+        drop->_8A--;
+    }
+
+    if ((drop->flags & 0x200)) {
+        f32 dist_y = fabsf(drop->target_position.y - drop->position.y);
+        f32 percent_y = dist_y / drop->total_distance_y;
+        f32 temp0 = scale * 65536.0f;
+        int dir0 = (int)(temp0 * (1.0f / 65536.0f));
+        s16 angle = (s16)(temp0 - dir0 * 65536.0f);
+
+        drop->offset.x = 18.0f * sin_s(angle) * percent_y;
+    }
+
+    if ((drop->flags & 1)) {
+        f32 t = 1.0f - (1.0f - scale) * (1.0f - scale);
+        f32 s = 0.1f + t * 0.9f;
+
+        drop->scale.x = s;
+        drop->scale.y = s;
+        drop->scale.z = s;
+    }
+
+    vel_x = drop->velocity_xz * sin_s(drop->_5C);
+    vel_z = drop->velocity_xz * cos_s(drop->_5C);
+
+    drop->velocity_y = drop->acceleration_y * drop->_4C;
+
+    drop->position.x = drop->last_position.x + vel_x * drop->_4C;
+    drop->position.y = drop->last_position.y + drop->last_velocity_y * drop->_4C +
+                       (drop->acceleration_y * 0.5f) * drop->_4C * drop->_4C;
+    drop->position.z = drop->last_position.z + vel_z * drop->_4C;
+
+    if ((drop->flags & 0x20) && drop->_4C > (f32)drop->_78) {
+        if (drop->_76 <= 255) {
+            drop->_72 = 255 - drop->_76;
+            drop->_76 += drop->_70;
+        } else {
+            drop->_72 = 0;
+            drop->move_proc = NULL;
+            drop->draw_proc = NULL;
+        }
+    }
+
+    if ((drop->flags & 0x10)) {
+        if ((drop->flags & 0x40)) {
+            drop->angle.z -= 0x123;
+        } else {
+            drop->angle.z += 0x123;
+        }
+    }
+
+    if (drop->_4C == (f32)(drop->drop_speed - 1) && (drop->flags & 0x2000)) {
+        drop->flags &= ~0x2000;
+
+        if ((drop->flags & 0x20) == 0) {
+            if (drop->fg_item == ITM_FOOD_APPLE || drop->fg_item == ITM_FOOD_CHERRY || drop->fg_item == ITM_FOOD_PEAR ||
+                drop->fg_item == ITM_FOOD_PEACH || drop->fg_item == ITM_FOOD_ORANGE ||
+                drop->fg_item == ITM_FOOD_COCONUT) {
+                sAdo_OngenTrgStart(0x127, &drop->position);
+            } else if (drop->fg_item >= ITM_MONEY_START && drop->fg_item <= (ITM_MONEY_END + 1)) {
+                sAdo_OngenTrgStart(0x444, &drop->position);
+            } else if ((drop->flags & 0x200) == 0) {
+                sAdo_OngenTrgStart(0x128, &drop->position);
+            }
+        }
+    }
+
+    if (((drop->flags & 0x200) && drop->_4C >= (f32)drop->drop_speed) ||
+        (drop->velocity_y < 0.0f && drop->position.y <= drop->target_position.y)) {
+        xyz_t_move(&drop->position, &drop->target_position);
+
+        if ((drop->flags & 8)) {
+            bIT_actor_drop_move_bury_change(drop);
+        } else if (drop->_6E) {
+            f32 xz;
+            f32 vel_y;
+
+            drop->flags &= ~1;
+            xyz_t_move(&drop->position, &drop->target_position);
+            drop->velocity_xz = 0.0f;
+            drop->drop_speed = (f32)drop->drop_speed * drop->_7C;
+            xyz_t_move(&drop->last_position, &drop->position);
+            func_calc_spec_drop_time(0.0f, 0.0f, drop->drop_speed, drop->acceleration_y, &xz, &vel_y);
+            drop->velocity_y = vel_y;
+            drop->last_velocity_xz = drop->velocity_xz;
+            drop->last_velocity_y = drop->velocity_y;
+            drop->_4C = 1.0f;
+            drop->_6E--;
+        } else if (drop->fg_item == HONEYCOMB) {
+            drop->_90 = 1;
+            drop->move_proc = &bIT_actor_drop_wait_bee;
+        } else {
+            drop->move_proc = NULL;
+            drop->draw_proc = NULL;
+
+            if ((drop->flags & 4) == 0) {
+                mFI_SetFG_common(drop->fg_item, drop->target_position, TRUE);
+            }
+        }
+    } else {
+        drop->_4C += 0.5f;
+    }
+}
+
+static void bIT_actor_drop_draw(GAME* game, bg_item_common_info_c* common_info, bg_item_drop_table_c* drop_info) {
+    bg_item_drop_c* drop = drop_info->drop_p;
+    int i;
+
+    for (i = 0; i < drop_info->count; i++, drop++) {
+        if (drop->draw_proc != NULL) {
+            drop->draw_proc(game, common_info, drop);
+        }
+    }
+}
+
+static void bIT_actor_drop_draw_nrm(GAME* game, bg_item_common_info_c* common_info, bg_item_drop_c* drop) {
+    xyz_t pos;
+    xyz_t scale;
+
+    scale.x = drop->scale.x * 0.01f;
+    scale.y = drop->scale.y * 0.01f;
+    scale.z = drop->scale.z * 0.01f;
+    xyz_t_add(&drop->position, &drop->offset, &pos);
+    bit_cmn_single_drawS(game, common_info, drop->display_fg_item, &pos, &drop->angle, &scale, drop->_72, NULL, NULL,
+                         NULL);
+}
+
+typedef struct draw_pos_entry_s {
+    MtxF mtx;
+    u16 cull_flag;
+    u8 alpha;
+    u8 pal_no;
+    s8 gfx_no;
+} bIT_draw_pos_entry_c;
+
+static void bit_cmn_s_single_draw_loop_type1(GRAPH* graph, Gfx** gfx_pp, bg_item_draw_list_c* shadow_draw_list,
+                                             int shadow_vtx_num, Vtx* shadow_vtx, bIT_draw_pos_entry_c* draw_pos_entry,
+                                             Gfx** display_list_tbl) {
+    Gfx* dl = display_list_tbl[shadow_draw_list->mat_idx + draw_pos_entry->gfx_no];
+    Matrix_put(&draw_pos_entry->mtx);
+
+    gSPMatrix((*gfx_pp)++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPVertex((*gfx_pp)++, shadow_vtx, shadow_vtx_num, 0);
+    gSPDisplayList((*gfx_pp)++, dl);
+}
+
+static void bit_cmn_single_draw_loop_type1(GRAPH* graph, Gfx** gfx_pp, bIT_draw_pos_entry_c* draw_pos_entry,
+                                           bg_item_draw_list_c* draw_list, Gfx** display_list_table) {
+    Gfx* dl = display_list_table[draw_list->mat_idx + draw_pos_entry->gfx_no];
+
+    gSPDisplayList((*gfx_pp)++, display_list_table[draw_list->gfx_idx]);
+    if (draw_pos_entry->alpha == 255) {
+        gDPSetRenderMode((*gfx_pp)++, G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2);
+        gDPSetCombineLERP((*gfx_pp)++, TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0,
+                          COMBINED);
+    } else {
+        gDPSetRenderMode((*gfx_pp)++, G_RM_FOG_SHADE_A, G_RM_AA_ZB_XLU_SURF2);
+        gDPSetCombineLERP((*gfx_pp)++, TEXEL0, 0, SHADE, 0, TEXEL0, 0, ENVIRONMENT, 0, PRIMITIVE, 0, COMBINED, 0, 0, 0,
+                          0, COMBINED);
+        gDPSetEnvColor((*gfx_pp)++, 255, 255, 255, draw_pos_entry->alpha);
+    }
+
+    Matrix_put(&draw_pos_entry->mtx);
+
+    gSPMatrix((*gfx_pp)++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList((*gfx_pp)++, dl);
+}
+
+static void bit_cmn_single_draw_item_shadow(GRAPH* graph, bg_item_draw_part_c* draw_part,
+                                            bIT_draw_pos_entry_c* draw_pos_entry, f32 shadow_pos, rgba_t* color) {
+    bg_item_draw_list_c* draw_list = draw_part->shadow_draw_list;
+
+    if (draw_list != NULL) {
+        Vtx* vtx;
+        Gfx* gfx;
+        Gfx* gfx2;
+
+        OPEN_DISP(graph);
+        gfx = NOW_SHADOW_DISP;
+        vtx = (Vtx*)GRAPH_ALLOC_TYPE(graph, Vtx, draw_part->shadow_vtx_count);
+
+        if (vtx != NULL) {
+            bIT_copy_vtx(vtx, draw_part->shadow_vtx_p, draw_part->shadow_vtx_count, draw_part->shadow_vtx_fix_table_p,
+                         (int)(shadow_pos * draw_part->shadow_len));
+        } else {
+            vtx = draw_part->shadow_vtx_p;
+        }
+
+        gSPDisplayList(gfx++, draw_part->display_list_table_p[draw_list->gfx_idx]);
+        gDPSetPrimColor(gfx++, 0, color->a, color->r, color->g, color->b, 255);
+        gfx2 = gfx;
+        bit_cmn_s_single_draw_loop_type1(graph, &gfx2, draw_list, draw_part->shadow_vtx_count, vtx, draw_pos_entry,
+                                         draw_part->display_list_table_p);
+
+        SET_SHADOW_DISP(gfx2);
+        CLOSE_DISP(graph);
+    }
+}
+
+static void bit_cmn_single_draw_BT_shadow(GAME* game, bg_item_common_info_c* common_info,
+                                          bg_item_type_data_c* type_data, xyz_t* pos, s_xyz* angle, xyz_t* scale,
+                                          u8 alpha, f32 shadow_pos, rgba_t* shadow_color) {
+    static bIT_draw_pos_entry_c draw_pos;
+    bg_item_draw_part_c* draw_part;
+
+    if (type_data == NULL || type_data->type == bIT_DRAW_TYPE_NONE || type_data->type < 0) {
+        return;
+    }
+
+    Matrix_push();
+    draw_part = draw_part_table_a[type_data->type].draw_part_p;
+    draw_pos.gfx_no = type_data->_00;
+    draw_pos.cull_flag = FALSE;
+    draw_pos.alpha = alpha;
+
+    Matrix_translate(pos->x, pos->y, pos->z, 0);
+    Matrix_RotateY(angle->y, 1);
+    Matrix_RotateX(angle->x, 1);
+    Matrix_RotateZ(angle->z, 1);
+    Matrix_scale(scale->x, scale->y, scale->z, 1);
+    Matrix_get(&draw_pos.mtx);
+    bit_cmn_single_draw_item_shadow(game->graph, draw_part, &draw_pos, shadow_pos, shadow_color);
+    Matrix_pull();
+}
+
+static void fg_no2fg_type(mActor_name_t fg_no, bg_item_type_data_c* type_data, mCoBG_Collision_u* collision,
+                          bg_item_type_data_c** type_data_table) {
+    int fg_type = ITEM_NAME_GET_TYPE((mActor_name_t)fg_no);
+
+    switch (fg_type) {
+        case NAME_TYPE_ITEM0: {
+            bg_item_type_data_c* src;
+
+            switch (ITEM_NAME_GET_CAT((mActor_name_t)fg_no)) {
+                case 0: {
+                    src = type_data_table[bIT_TYPE_CAT_BG_ITEM] + fg_no;
+                    type_data->_00 = src->_00;
+                    type_data->type = src->type;
+                    type_data->pos_x_tbl_p = src->pos_x_tbl_p;
+                    type_data->pos_z_tbl_p = src->pos_z_tbl_p;
+
+                    /* Convert grass to sand if necessary */
+                    if (mCoBG_CheckSandHole_ClData(collision)) {
+                        if (type_data->type == bIT_DRAW_TYPE_HOLE00_G) {
+                            type_data->type = bIT_DRAW_TYPE_HOLE00_S;
+                        } else if (type_data->type == bIT_DRAW_TYPE_CRACK00_G) {
+                            type_data->type = bIT_DRAW_TYPE_CRACK00_S;
+                        }
+                    }
+
+                    break;
+                }
+
+                case 8: {
+                    src = type_data_table[bIT_TYPE_CAT_BG_ITEM2] + fg_no - ENV_START;
+                    type_data->_00 = src->_00;
+                    type_data->type = src->type;
+                    type_data->pos_x_tbl_p = src->pos_x_tbl_p;
+                    type_data->pos_z_tbl_p = src->pos_z_tbl_p;
+
+                    break;
+                }
+
+                default: {
+                    src = type_data_table[bIT_TYPE_CAT_DUMMY];
+                    type_data->_00 = src->_00;
+                    type_data->type = src->type;
+                    type_data->pos_x_tbl_p = src->pos_x_tbl_p;
+                    type_data->pos_z_tbl_p = src->pos_z_tbl_p;
+
+                    break;
+                }
+            }
+            break;
+        }
+
+        case NAME_TYPE_FTR0:
+        case NAME_TYPE_FTR1: {
+            bg_item_type_data_c* src;
+
+            src = type_data_table[bIT_TYPE_CAT_FTR];
+            type_data->_00 = src->_00;
+            type_data->type = src->type;
+            type_data->pos_x_tbl_p = src->pos_x_tbl_p;
+            type_data->pos_z_tbl_p = src->pos_z_tbl_p;
+
+            type_data->type = 68 + mNT_get_itemTableNo(fg_no);
+
+            break;
+        }
+
+        case NAME_TYPE_ITEM1: {
+            bg_item_type_data_c* src;
+
+            src = type_data_table[bIT_TYPE_CAT_ITEM1];
+            type_data->_00 = src->_00;
+            type_data->type = src->type;
+            type_data->pos_x_tbl_p = src->pos_x_tbl_p;
+            type_data->pos_z_tbl_p = src->pos_z_tbl_p;
+
+            type_data->type = 68 + mNT_get_itemTableNo(fg_no);
+
+            break;
+        }
+
+        default: {
+            bg_item_type_data_c* src;
+
+            src = type_data_table[bIT_TYPE_CAT_DUMMY];
+            type_data->_00 = src->_00;
+            type_data->type = src->type;
+            type_data->pos_x_tbl_p = src->pos_x_tbl_p;
+            type_data->pos_z_tbl_p = src->pos_z_tbl_p;
+
+            break;
+        }
+    }
+}
+
+static void bit_cmn_single_drawS_shadow(GAME* game, bg_item_common_info_c* common_info, mActor_name_t fg_no, xyz_t* pos,
+                                        s_xyz* angle, xyz_t* scale, u8 alpha, f32 shadow_pos, rgba_t* shadow_color) {
+    if (bIT_individual_draw_check((mActor_name_t)fg_no)) {
+        bg_item_type_data_c type_data;
+        int ut_x;
+        int ut_z;
+        mCoBG_Collision_u* col;
+
+        mFI_Wpos2UtNum(&ut_x, &ut_z, *pos);
+        col = mFI_UtNum2UtCol(ut_x, ut_z);
+        fg_no2fg_type(fg_no, &type_data, col, common_info->type_data_table_p);
+        bit_cmn_single_draw_BT_shadow(game, common_info, &type_data, pos, angle, scale, alpha, shadow_pos,
+                                      shadow_color);
+    }
+}
+
+static void bit_cmn_single_draw_item_body(GRAPH* graph, bIT_draw_pos_entry_c* draw_pos_entry,
+                                          bg_item_draw_part_c* draw_part, Gfx** display_list_table) {
+    Gfx* gfx;
+    bg_item_draw_list_c* draw_list;
+    int i = draw_part->draw_list_count;
+
+    while (i != 0) {
+        i--;
+        draw_list = draw_part->draw_list_table_p[i];
+
+        OPEN_DISP(graph);
+
+        if (draw_pos_entry->alpha == 255) {
+            gfx = NOW_POLY_OPA_DISP;
+            bit_cmn_single_draw_loop_type1(graph, &gfx, draw_pos_entry, draw_list, display_list_table);
+            SET_POLY_OPA_DISP(gfx);
+        } else {
+            gfx = NOW_POLY_XLU_DISP;
+            bit_cmn_single_draw_loop_type1(graph, &gfx, draw_pos_entry, draw_list, display_list_table);
+            SET_POLY_XLU_DISP(gfx);
+        }
+
+        CLOSE_DISP(graph);
+    }
+}
+
+static void bit_cmn_single_draw(GAME* game, mActor_name_t fg_no, xyz_t* pos, f32 scale_f, bIT_DRAW_BF_PROC draw_bf,
+                                bIT_DRAW_AF_PROC draw_af, rgba_t* col) {
+    bg_item_common_info_c* common_info;
+    xyz_t scale;
+
+    scale.x = scale_f;
+    scale.y = scale_f;
+    scale.z = scale_f;
+    common_info = &bIT_CLIP->bg_item_common_p->common_info;
+
+    bit_draw_ta_set(game);
+    bit_cmn_single_drawS(game, common_info, fg_no, pos, &ZeroSVec, &scale, 255, draw_bf, draw_af, col);
+    bit_draw_ta_clr(game);
+}
+
+static void bit_cmn_single_draw_BT(GAME* game, bg_item_common_info_c* common_info, bg_item_type_data_c* type_data,
+                                   xyz_t* pos, s_xyz* angle, xyz_t* scale, u8 alpha, bIT_DRAW_BF_PROC draw_bf,
+                                   bIT_DRAW_AF_PROC draw_af, rgba_t* col) {
+    if (type_data == NULL || type_data->type == bIT_DRAW_TYPE_NONE || type_data->type < 0) {
+        return;
+    } else {
+        static bIT_draw_pos_entry_c draw_pos;
+        bg_item_draw_part_table_c* table_p;
+        bg_item_draw_part_c* draw_part;
+        Gfx** display_list_table;
+        Gfx* gfx;
+
+        Matrix_push();
+        table_p = &draw_part_table_a[type_data->type];
+        draw_part = table_p->draw_part_p;
+        display_list_table = (Gfx**)draw_part->display_list_table_p;
+        draw_pos.gfx_no = type_data->_00;
+        draw_pos.cull_flag = FALSE;
+        draw_pos.alpha = alpha;
+
+        Matrix_translate(pos->x, pos->y, pos->z, 0);
+        Matrix_RotateY(angle->y, 1);
+        Matrix_RotateX(angle->x, 1);
+        Matrix_RotateZ(angle->z, 1);
+        Matrix_scale(scale->x, scale->y, scale->z, 1);
+        Matrix_get(&draw_pos.mtx);
+
+        if (draw_bf != NULL) {
+            if (alpha == 255) {
+                OPEN_DISP(game->graph);
+                gfx = NOW_POLY_OPA_DISP;
+
+                draw_bf(&gfx, col);
+
+                SET_POLY_OPA_DISP(gfx);
+                CLOSE_DISP(game->graph);
+            } else {
+                OPEN_DISP(game->graph);
+                gfx = NOW_POLY_XLU_DISP;
+
+                draw_bf(&gfx, col);
+
+                SET_POLY_XLU_DISP(gfx);
+                CLOSE_DISP(game->graph);
+            }
+        }
+
+        bit_cmn_single_draw_item_body(game->graph, &draw_pos, draw_part, display_list_table);
+
+        if (draw_af != NULL) {
+            if (alpha == 255) {
+                OPEN_DISP(game->graph);
+                gfx = NOW_POLY_OPA_DISP;
+
+                draw_af(&gfx, col);
+
+                SET_POLY_OPA_DISP(gfx);
+                CLOSE_DISP(game->graph);
+            } else {
+                OPEN_DISP(game->graph);
+                gfx = NOW_POLY_XLU_DISP;
+
+                draw_af(&gfx, col);
+
+                SET_POLY_XLU_DISP(gfx);
+                CLOSE_DISP(game->graph);
+            }
+        }
+
+        Matrix_pull();
+    }
+}
+
+static void bit_cmn_single_drawS(GAME* game, bg_item_common_info_c* common_info, mActor_name_t fg_no, xyz_t* pos,
+                                 s_xyz* angle, xyz_t* scale, u8 alpha, bIT_DRAW_BF_PROC draw_bf,
+                                 bIT_DRAW_AF_PROC draw_af, rgba_t* color) {
+    if (bIT_individual_draw_check((mActor_name_t)fg_no)) {
+        bg_item_type_data_c type_data;
+        int ut_x;
+        int ut_z;
+        mCoBG_Collision_u* col;
+
+        mFI_Wpos2UtNum(&ut_x, &ut_z, *pos);
+        col = mFI_UtNum2UtCol(ut_x, ut_z);
+        fg_no2fg_type(fg_no, &type_data, col, common_info->type_data_table_p);
+        bit_cmn_single_draw_BT(game, common_info, &type_data, pos, angle, scale, alpha, draw_bf, draw_af, color);
+    }
+}
+
+static void bIT_common_info_tbl_copy(bg_item_tbl_c* dst, bg_item_tbl_c* src) {
+    u8* src_p = src->info;
+    u8* dst_p = dst->info;
+    int i;
+
+    for (i = 0; i < UT_TOTAL_NUM; i++) {
+        *dst_p++ = *src_p++;
+    }
+}
+
+typedef struct tree_cut_info_s {
+    mActor_name_t tree;
+    s16 cut_count;
+} bIT_tree_cut_info_c;
+
+static void bIT_common_clear_treeatr(int bx, int bz, bg_item_tbl_c* tbl) {
+    static bIT_tree_cut_info_c tree_cut_tbl[] = {
+        { TREE_S0, 1 },
+        { TREE_S1, 2 },
+        { TREE_S2, 3 },
+        { TREE, 3 },
+        { TREE_APPLE_S0, 1 },
+        { TREE_APPLE_S1, 2 },
+        { TREE_APPLE_S2, 3 },
+        { TREE_APPLE_NOFRUIT_0, 3 },
+        { TREE_APPLE_NOFRUIT_1, 3 },
+        { TREE_APPLE_NOFRUIT_2, 3 },
+        { TREE_APPLE_FRUIT, 3 },
+        { TREE_ORANGE_S0, 1 },
+        { TREE_ORANGE_S1, 2 },
+        { TREE_ORANGE_S2, 3 },
+        { TREE_ORANGE_NOFRUIT_0, 3 },
+        { TREE_ORANGE_NOFRUIT_1, 3 },
+        { TREE_ORANGE_NOFRUIT_2, 3 },
+        { TREE_ORANGE_FRUIT, 3 },
+        { TREE_PEACH_S0, 1 },
+        { TREE_PEACH_S1, 2 },
+        { TREE_PEACH_S2, 3 },
+        { TREE_PEACH_NOFRUIT_0, 3 },
+        { TREE_PEACH_NOFRUIT_1, 3 },
+        { TREE_PEACH_NOFRUIT_2, 3 },
+        { TREE_PEACH_FRUIT, 3 },
+        { TREE_PEAR_S0, 1 },
+        { TREE_PEAR_S1, 2 },
+        { TREE_PEAR_S2, 3 },
+        { TREE_PEAR_NOFRUIT_0, 3 },
+        { TREE_PEAR_NOFRUIT_1, 3 },
+        { TREE_PEAR_NOFRUIT_2, 3 },
+        { TREE_PEAR_FRUIT, 3 },
+        { TREE_CHERRY_S0, 1 },
+        { TREE_CHERRY_S1, 2 },
+        { TREE_CHERRY_S2, 3 },
+        { TREE_CHERRY_NOFRUIT_0, 3 },
+        { TREE_CHERRY_NOFRUIT_1, 3 },
+        { TREE_CHERRY_NOFRUIT_2, 3 },
+        { TREE_CHERRY_FRUIT, 3 },
+        { TREE_1000BELLS_S0, 1 },
+        { TREE_1000BELLS_S1, 2 },
+        { TREE_1000BELLS_S2, 3 },
+        { TREE_1000BELLS, 3 },
+        { TREE_10000BELLS_S0, 1 },
+        { TREE_10000BELLS_S1, 2 },
+        { TREE_10000BELLS_S2, 3 },
+        { TREE_10000BELLS, 3 },
+        { TREE_30000BELLS_S0, 1 },
+        { TREE_30000BELLS_S1, 2 },
+        { TREE_30000BELLS_S2, 3 },
+        { TREE_30000BELLS, 3 },
+        { TREE_BEES, 3 },
+        { TREE_FTR, 3 },
+        { TREE_LIGHTS, 3 },
+        { TREE_PRESENT, 3 },
+        { TREE_BELLS, 3 },
+        { TREE_100BELLS_S0, 1 },
+        { TREE_100BELLS_S1, 2 },
+        { TREE_100BELLS_S2, 3 },
+        { TREE_100BELLS, 3 },
+        { TREE_PALM_S0, 1 },
+        { TREE_PALM_S1, 2 },
+        { TREE_PALM_S2, 3 },
+        { TREE_PALM_NOFRUIT_0, 3 },
+        { TREE_PALM_NOFRUIT_1, 3 },
+        { TREE_PALM_NOFRUIT_2, 3 },
+        { TREE_PALM_FRUIT, 3 },
+        { CEDAR_TREE_S0, 1 },
+        { CEDAR_TREE_S1, 2 },
+        { CEDAR_TREE_S2, 3 },
+        { CEDAR_TREE, 3 },
+        { CEDAR_TREE_BELLS, 3 },
+        { CEDAR_TREE_FTR, 3 },
+        { CEDAR_TREE_BEES, 3 },
+        { CEDAR_TREE_LIGHTS, 3 },
+        { GOLD_TREE_S0, 1 },
+        { GOLD_TREE_S1, 2 },
+        { GOLD_TREE_S2, 3 },
+        { GOLD_TREE_SHOVEL, 3 },
+        { GOLD_TREE, 3 },
+        { GOLD_TREE_BELLS, 3 },
+        { GOLD_TREE_FTR, 3 },
+        { GOLD_TREE_BEES, 3 },
+    };
+
+    int ut_z;
+    int ut_x;
+    int i;
+    mActor_name_t* fg_p = mFI_UtNum2UtFG(bx * UT_X_NUM, bz * UT_Z_NUM);
+    bIT_tree_cut_info_c* tree_cut_table_p;
+    u8* atr = tbl->info;
+
+    for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
+        for (ut_x = 0; ut_x < UT_X_NUM; ut_x++, atr++) {
+            tree_cut_table_p = tree_cut_tbl;
+
+            for (i = 0; i < ARRAY_COUNT(tree_cut_tbl); i++, tree_cut_table_p++) {
+                if (*fg_p == tree_cut_table_p->tree) {
+                    *atr = tree_cut_table_p->cut_count;
+                    break;
+                }
+            }
+
+            if (i == ARRAY_COUNT(tree_cut_tbl)) {
+                *atr = 255;
+            }
+
+            fg_p++;
+        }
+    }
+}
+
+typedef struct {
+    int bx;
+    int bz;
+} bIT_block_info_c;
+
+typedef struct {
+    int count;
+    bIT_block_info_c info[mFM_VISIBLE_BLOCK_NUM];
+} bIT_block_c;
+
+static void m_GetCItTable_TreeTblChk(bg_item_block_info_tbl_c* block_info_table, mFI_item_table_c* item_table,
+                                     xyz_t wpos) {
+    int remove_cut_tree_info_bitfield;
+    mFI_block_tbl_c* block_table;
+    bIT_block_c block_info[2];
+    int dst_idx_tbl[mFM_VISIBLE_BLOCK_NUM];
+    int update_flag;
+    int i;
+
+    block_info[0].count = item_table->count;
+    for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++) {
+        if (i < block_info[0].count) {
+            block_info[0].info[i].bx = item_table->block_info_tbl[i].block_x;
+            block_info[0].info[i].bz = item_table->block_info_tbl[i].block_z;
+        } else {
+            block_info[0].info[i].bx = -1;
+            block_info[0].info[i].bz = -1;
+        }
+    }
+
+    mFI_GetItemTable(item_table, wpos, __FILE__, 4856);
+    remove_cut_tree_info_bitfield = Common_Get(remove_cut_tree_info_bitfield);
+    block_info[1].count = item_table->count;
+
+    for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++) {
+        if (i < block_info[1].count) {
+            block_info[1].info[i].bx = item_table->block_info_tbl[i].block_x;
+            block_info[1].info[i].bz = item_table->block_info_tbl[i].block_z;
+        } else {
+            block_info[1].info[i].bx = -1;
+            block_info[1].info[i].bz = -1;
+        }
+    }
+
+    update_flag = FALSE;
+    for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++) {
+        dst_idx_tbl[i] = i;
+    }
+
+    for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++) {
+        int j;
+
+        if (block_info[0].info[i].bx != -1) {
+            for (j = 0; j < mFM_VISIBLE_BLOCK_NUM; j++) {
+                if (i != j && block_info[1].info[j].bx != -1) {
+                    if (block_info[0].info[i].bx == block_info[1].info[j].bx &&
+                        block_info[0].info[i].bz == block_info[1].info[j].bz) {
+                        dst_idx_tbl[j] = i;
+                        update_flag = TRUE;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    if (update_flag) {
+        static bg_item_tbl_c tmp_info_tbl[mFM_VISIBLE_BLOCK_NUM];
+
+        for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++) {
+            bIT_common_info_tbl_copy(&tmp_info_tbl[i], &block_info_table->info_tbl[dst_idx_tbl[i]]);
+        }
+
+        for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++) {
+            bIT_common_info_tbl_copy(&block_info_table->info_tbl[i], &tmp_info_tbl[i]);
+        }
+    }
+
+    {
+        int bx;
+        int bz;
+        bg_item_tbl_c* info_table;
+
+        block_table = item_table->block_info_tbl;
+        info_table = block_info_table->info_tbl;
+        for (i = 0; i < item_table->count; i++) {
+            if ((remove_cut_tree_info_bitfield & (1 << i)) != 0) {
+                bx = block_table->block_x;
+                bz = block_table->block_z;
+
+                bIT_common_clear_treeatr(bx, bz, info_table);
+                mFI_ClearHoleBlock(bx, bz);
+                mFI_ClearBeecomb(bx, bz);
+            }
+
+            block_table++;
+            info_table++;
+        }
+    }
+}
+
+static int bIT_actor_pit_entry(bg_item_pit_c* pit, s16 mode, mActor_name_t fg_no, xyz_t* pos,
+                               mActor_name_t fg_item_in_pit) {
+    int res = FALSE;
+    int i;
+
+    for (i = 0; res == FALSE && i < bIT_PIT_NUM; i++, pit++) {
+        if (pit->mode == 0) {
+            pit->mode = mode;
+            pit->fg_item_in_pit = fg_item_in_pit;
+            pit->hole_fg_item = fg_no;
+            pit->wait_counter = 0;
+            xyz_t_move(&pit->position, pos);
+
+            switch (mode) {
+                case 1:
+                    pit->scale = 0.0f;
+                    pit->hole_timer = 1;
+                    res = TRUE;
+                    break;
+                case 4:
+                    mFI_SetFG_common(RSV_NO, pit->position, TRUE);
+                    pit->scale = 1.0f;
+                    pit->hole_timer = 0;
+                    res = TRUE;
+                    break;
+            }
+        }
+    }
+
+    return res;
+}
+
+static void bIT_actor_pit_move(GAME* game, bg_item_pit_c* pit) {
+    int i;
+
+    for (i = 0; i < bIT_PIT_NUM; i++, pit++) {
+        switch (pit->mode) {
+            case 0: {
+                break;
+            }
+
+            case 1: {
+                if (pit->hole_timer > 0) {
+                    pit->hole_timer--;
+                } else {
+                    mFI_SetFG_common(RSV_NO, pit->position, FALSE);
+                    pit->mode = 2;
+                    pit->hole_timer = 17;
+                }
+
+                break;
+            }
+
+            case 2: {
+                if (pit->hole_timer <= 0) {
+                    pit->hole_timer = 0;
+                    pit->mode = 3;
+                } else {
+                    pit->hole_timer--;
+                }
+
+                break;
+            }
+
+            case 3: {
+                pit->scale = (f32)(int)pit->hole_timer / 26.0f;
+
+                if (pit->hole_timer == 6) {
+                    sAdo_OngenTrgStart(0x13C, &pit->position);
+                    eEC_CLIP->effect_make_proc(eEC_EFFECT_OTOSIANA, pit->position, 1, 0, game, pit->fg_item_in_pit,
+                                               mCoBG_Wpos2Attribute(pit->position, NULL), 0);
+                }
+
+                if (pit->scale >= 1.0f) {
+                    mFI_SetFG_common(pit->hole_fg_item, pit->position, TRUE);
+                    pit->mode = 0;
+                }
+
+                pit->hole_timer++;
+                break;
+            }
+
+            case 4: {
+                pit->scale = 1.0f - (f32)(int)pit->hole_timer / 14.0f;
+
+                if (pit->hole_timer == 0) {
+                    sAdo_OngenTrgStart(0x15B, &pit->position);
+                    eEC_CLIP->effect_make_proc(eEC_EFFECT_OTOSIANA, pit->position, 1, 0, game, pit->fg_item_in_pit,
+                                               mCoBG_Wpos2Attribute(pit->position, NULL), 0);
+                }
+
+                if (pit->scale <= 0.0f) {
+                    mFI_SetFG_common(EMPTY_NO, pit->position, TRUE);
+                    pit->mode = 0;
+                }
+
+                pit->hole_timer++;
+                break;
+            }
+        }
+    }
+}
+
+static void bIT_actor_pit_destruct(bg_item_pit_c* pit) {
+    int i;
+
+    for (i = 0; i < bIT_PIT_NUM; i++, pit++) {
+        if (pit->mode != 0) {
+            mFI_SetFG_common(EMPTY_NO, pit->position, FALSE);
+            pit->mode = 0;
+        }
+    }
+}
+
+static int bg_item_common_chg_BGDataR_b(bg_item_common_c* common, int bx, int bz) {
+    f32 block_pos_x;
+    f32 block_pos_z;
+    int ut_z;
+    int ut_x;
+    f32* pos_table;
+    mActor_name_t* fg_p = mFI_BkNumtoUtFGTop(bx, bz);
+
+    if (fg_p == NULL) {
+        return FALSE;
+    }
+
+    if (mFI_BkNum2WposXZ(&block_pos_x, &block_pos_z, bx, bz) == FALSE) {
+        return FALSE;
+    }
+
+    pos_table = common->common_info.pos_table_p;
+    for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
+        for (ut_x = 0; ut_x < UT_X_NUM; ut_x++, fg_p++) {
+            switch (ITEM_NAME_GET_TYPE(*fg_p)) {
+                case NAME_TYPE_ITEM0: {
+                    if (*fg_p != EMPTY_NO) {
+                        mNT_offset_table_c* ofs_tbl = obj_hight_table_item0_nogrow(*fg_p);
+                        xyz_t pos;
+
+                        pos.x = block_pos_x + pos_table[ut_x];
+                        pos.z = block_pos_z + pos_table[ut_z];
+
+                        if (ofs_tbl->type != 0) {
+                            mCoBG_SetPluss5PointOffset_file(pos, ofs_tbl->table, __FILE__, 5243);
+                        } else {
+                            mCoBG_SetPlussOffset(pos, ofs_tbl->table.centerRight_offset, ofs_tbl->table.unit_attribute);
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+static void bg_item_common_chg_BGDataR(bg_item_common_c* common) {
+    int bz;
+    int bx;
+    int bx_max = mFI_GetBlockXMax();
+    int bz_max = mFI_GetBlockZMax();
+
+    for (bz = 0; bz < bz_max; bz++) {
+        for (bx = 0; bx < bx_max; bx++) {
+            bg_item_common_chg_BGDataR_b(common, bx, bz);
+        }
+    }
+}
+
+static void bg_item_common_outPutData(GAME_PLAY* play, bg_item_draw_pos_c* draw_pos, s16 next, int gfx_idx,
+                                      xyz_t* pos) {
+    Matrix_translate(pos->x, pos->y, pos->z, 0);
+    Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+    Matrix_get(&draw_pos->mtxf);
+    draw_pos->next_add_cnt = next;
+    draw_pos->sub_idx = gfx_idx;
+}
+
+static void bg_item_common_classifyitemDataTable(GAME_PLAY* play, bg_item_draw_table_c* draw_table,
+                                                 mFI_block_tbl_c* block_table, u16* start_idx_tbl,
+                                                 bg_item_type_data_c** type_data_table,
+                                                 bg_item_draw_part_table_c* draw_part_table) {
+    Matrix_push();
+    {
+        int flag;
+        bg_item_draw_pos_c* draw_pos;
+        mActor_name_t* fg_p;
+        mCoBG_Collision_u* col;
+        int bx;
+        int bz;
+        int base_ut_x;
+        int base_ut_z;
+        f32 bx_pos;
+        f32 bz_pos;
+        f32 block_height;
+        int idx;
+        int ut_z;
+        int ut_x;
+        u16* deposit;
+        u8* height_p;
+        int block;
+
+        draw_pos = &draw_table->draw_data.draw_pos[1];
+        idx = 1;
+        bx = block_table->block_x;
+        bz = block_table->block_z;
+        bx_pos = block_table->pos_x;
+        bz_pos = block_table->pos_z;
+        base_ut_x = bx * UT_X_NUM;
+        base_ut_z = bz * UT_Z_NUM;
+        block_height = 1.0f + mFI_UtNum2BaseHeight(base_ut_x, base_ut_z);
+        block = mFI_GetBlockNum(bx, bz);
+        height_p = (u8*)g_fdinfo->block_info[block].bg_info.keep_h;
+        col = mFI_UtNum2UtCol(base_ut_x, base_ut_z);
+        deposit = mFI_GetDepositP(bx, bz);
+        fg_p = block_table->items;
+
+        for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
+            for (ut_x = 0; ut_x < UT_X_NUM; ut_x++, fg_p++, draw_pos++, idx++, col++, height_p++) {
+                if (bIT_individual_draw_check(*fg_p)) {
+                    xyz_t pos;
+                    bg_item_type_data_c type_data;
+                    flag = TRUE;
+
+                    fg_no2fg_type(*fg_p, &type_data, col, type_data_table);
+                    if (deposit == NULL || ((*deposit >> ut_x) & 1) == 0 || type_data.type == bIT_DRAW_TYPE_FISH2) {
+                        if (*fg_p != EMPTY_NO) {
+                            fg_no2fg_type(*fg_p, &type_data, col, type_data_table);
+                        } else {
+                            flag = FALSE;
+                        }
+                    } else {
+                        int hole_no = mCoBG_GetHoleNumber_ClData(col);
+
+                        if (hole_no >= 0) {
+                            bg_item_type_data_c* src_data = type_data_table[bIT_TYPE_CAT_CRACK];
+
+                            type_data._00 = src_data->_00;
+                            type_data.type = src_data->type;
+                            type_data.pos_x_tbl_p = src_data->pos_x_tbl_p;
+                            type_data.pos_z_tbl_p = src_data->pos_z_tbl_p;
+
+                            if (mCoBG_CheckSandHole_ClData(col)) {
+                                type_data.type = bIT_DRAW_TYPE_CRACK00_S;
+                            }
+
+                            type_data._00 = hole_no;
+                        } else {
+                            flag = FALSE;
+                        }
+                    }
+
+                    if (flag) {
+                        int type = type_data.type;
+                        int before_start;
+                        int diff;
+
+                        pos.x = bx_pos + type_data.pos_x_tbl_p[ut_x];
+                        pos.z = bz_pos + type_data.pos_z_tbl_p[ut_z];
+
+                        if ((draw_part_table[type].flags & 2)) {
+                            pos.x += rnd_data_x[ut_x & 3][ut_z & 3];
+                            pos.z += rnd_data_z[ut_x & 3][ut_z & 3];
+                        }
+
+                        if (*fg_p == ITM_KNIFE_AND_FORK) {
+                            pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos(pos, 0.0f);
+                        } else {
+                            pos.y = (f32)*height_p * 10.0f + block_height;
+                        }
+
+                        before_start = start_idx_tbl[type];
+                        diff = before_start - idx;
+                        start_idx_tbl[type] = idx;
+                        bg_item_common_outPutData(play, draw_pos, diff, type_data._00, &pos);
+                    }
+                }
+            }
+
+            if (deposit != NULL) {
+                deposit++;
+            }
+        }
+    }
+    Matrix_pull();
+}
+
+// Part 3
+
+static void bg_item_common_set_draw_tbl(GAME_PLAY* play, bg_item_draw_table_c* draw_tbl, mFI_block_tbl_c* block_tbl,
+                                        bg_item_type_data_c** type_data_table,
+                                        bg_item_draw_part_table_c* draw_part_table) {
+    bg_item_draw_pos_c* draw_pos;
+    u16 start_idx_tbl[bIT_DRAW_TYPE_MAX];
+    u16* start_idx_p = start_idx_tbl;
+    u16* draw_start_idx_p;
+    int i;
+
+    for (i = 0; i < bIT_DRAW_TYPE_MAX; i++, start_idx_p++) {
+        *start_idx_p = 0;
+    }
+
+    draw_pos = draw_tbl->draw_data.draw_pos;
+    for (i = 0; i < (UT_TOTAL_NUM + 1); i++, draw_pos++) {
+        draw_pos->next_add_cnt = 256;
+    }
+
+    bg_item_common_classifyitemDataTable(play, draw_tbl, block_tbl, start_idx_tbl, type_data_table, draw_part_table);
+
+    start_idx_p = start_idx_tbl;
+    draw_start_idx_p = draw_tbl->draw_data.idx_p;
+    for (i = 0; i < bIT_DRAW_TYPE_MAX; i++, start_idx_p++, draw_start_idx_p++) {
+        *draw_start_idx_p = *start_idx_p;
+    }
+
+    draw_tbl->draw_flag = TRUE;
+}
+
+static void bg_shin_effect_being_check(bg_item_common_c* common, int count) {
+    xyz_t pos;
+    xyz_t shine_pos;
+    f32 x_start_save;
+    int i;
+    int ut_z;
+    int ut_x;
+    mFI_block_tbl_c* block_info_tbl = common->item_table.block_info_tbl;
+    mActor_name_t shin_fg_item = EMPTY_NO;
+    mActor_name_t* fg_p;
+    u16 mode = 0;
+
+    pos.y = 0.0f;
+    for (i = 0; i < count; i++, block_info_tbl++) {
+        fg_p = block_info_tbl->items;
+
+        mFI_BkNum2WposXZ(&pos.x, &pos.z, block_info_tbl->block_x, block_info_tbl->block_z);
+        pos.x += mFI_UT_WORLDSIZE_HALF_X_F;
+        pos.z += mFI_UT_WORLDSIZE_HALF_Z_F;
+        x_start_save = pos.x;
+
+        for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
+            pos.x = x_start_save;
+            for (ut_x = 0; ut_x < UT_X_NUM; ut_x++, fg_p++) {
+                mActor_name_t fg_item = *fg_p;
+
+                if (fg_item == SHINE_SPOT) {
+                    shin_fg_item = fg_item;
+                    xyz_t_move(&shine_pos, &pos);
+                    mode = 1;
+                } else if (fg_item == HOLE_SHINE) {
+                    shin_fg_item = fg_item;
+                    xyz_t_move(&shine_pos, &pos);
+                    mode = 2;
+                }
+
+                pos.x += mFI_UT_WORLDSIZE_X_F;
+            }
+
+            pos.z += mFI_UT_WORLDSIZE_Z_F;
+        }
+    }
+
+    if (mode != 0) {
+        shine_pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(shine_pos, -1.0f);
+        bIT_actor_shin_effect_entry(common->shin, shin_fg_item, &shine_pos, mode);
+    }
+}
+
+static void bg_item_common_chg_draw_tbl_perfect(GAME_PLAY* play, bg_item_common_c* common, int flags) {
+    int count;
+    bg_item_type_data_c** type_data_table = common->common_info.type_data_table_p;
+    int* order_tbl = common->_139F4;
+    mFI_block_tbl_c* block_tbl;
+    int flag0;
+    u8 clear_tree_cut_flags;
+    int t0[mFM_VISIBLE_BLOCK_NUM];
+    int t1[mFM_VISIBLE_BLOCK_NUM];
+    int t2[mFM_VISIBLE_BLOCK_NUM];
+    int i;
+    int j;
+
+    count = common->item_table.count;
+
+    for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++, order_tbl++) {
+        common->draw_table[*order_tbl].draw_flag = FALSE;
+    }
+
+    if ((flags & (2 | 1))) {
+        bIT_actor_shin_effect_check(common->shin);
+    }
+
+    for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++) {
+        t0[i] = -2;
+        t1[i] = -2;
+        t2[i] = FALSE;
+    }
+
+    if ((flags & 2)) {
+        for (i = 0; i < count; i++) {
+            t0[i] = mFI_GetOldItemTableIdx(i);
+
+            if (t0[i] >= 0) {
+                t1[i] = common->_139F4[t0[i]];
+                t2[t1[i]] = TRUE;
+            }
+        }
+
+        for (i = 0; i < count; i++) {
+            if (t0[i] < 0) {
+                for (j = 0; j < mFM_VISIBLE_BLOCK_NUM; j++) {
+                    if (t2[j] == FALSE) {
+                        t2[j] = TRUE;
+                        t1[i] = j;
+                        common->draw_table[j].bx = common->item_table.block_info_tbl[i].block_x;
+                        common->draw_table[j].bz = common->item_table.block_info_tbl[i].block_z;
+                        break;
+                    }
+                }
+            }
+        }
+
+        flag0 = FALSE;
+        for (i = 0; i < count; i++) {
+            common->_139F4[i] = t1[i];
+            if (t0[i] < 0) {
+                flag0 = TRUE;
+            }
+
+            common->draw_table[common->_139F4[i]].draw_flag = TRUE;
+        }
+
+        clear_tree_cut_flags = Common_Get(remove_cut_tree_info_bitfield);
+        if (flag0 || clear_tree_cut_flags != 0) {
+            for (i = 0; i < count; i++) {
+                if (t0[i] < 0 || (clear_tree_cut_flags & (1 << i)) != 0) {
+                    bg_item_common_set_draw_tbl(play, &common->draw_table[common->_139F4[i]],
+                                                &common->item_table.block_info_tbl[i], type_data_table,
+                                                common->common_info.draw_part_table_p);
+                }
+            }
+        }
+    }
+
+    if ((flags & 1)) {
+        for (i = 0; i < count; i++) {
+            bg_item_common_set_draw_tbl(play, &common->draw_table[common->_139F4[i]],
+                                        &common->item_table.block_info_tbl[i], type_data_table,
+                                        common->common_info.draw_part_table_p);
+        }
+    }
+
+    if ((flags & (2 | 1))) {
+        bg_shin_effect_being_check(common, count);
+    }
+}
+
+static void bg_item_common_renew_draw_and_crs_data_perfect(GAME_PLAY* play, bg_item_common_c* common, int flags) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+
+    if (player != NULL) {
+        m_GetCItTable_TreeTblChk(&common->block_info_table, &common->item_table, player->actor_class.world.position);
+    }
+
+    bg_item_common_chg_draw_tbl_perfect(play, common, flags);
+}
+
+static void bg_item_common_destruct(GAME_PLAY* play, ACTOR* actorx, bg_item_common_c* common) {
+    bIT_actor_drop_destruct(&common->drop_info);
+    bIT_actor_drop_destruct(&common->fruit_drop_info);
+    bIT_actor_hole_effect_destruct(common->hole);
+    bIT_actor_pit_destruct(common->pit);
+    bIT_actor_ten_coin_destruct(common->ten_coin);
+}
+
+static int bg_item_common_culling_check(GAME_PLAY* play, ACTOR* actorx, xyz_t* pos) {
+    xyz_t camera_pos;
+    f32 camera_w;
+
+    Skin_Matrix_PrjMulVector(&play->projection_matrix, pos, &camera_pos, &camera_w);
+    return Actor_draw_actor_no_culling_check2(actorx, &camera_pos, camera_w);
+}
+
+static int bg_item_common_culling_check_talk(GAME_PLAY* play, ACTOR* actorx, xyz_t* pos) {
+    int res = FALSE;
+
+    if (bg_item_common_culling_check(play, actorx, pos) == TRUE) {
+        if (Camera2_CheckEnterCullingArea(pos->x, pos->z, 65.0f) == TRUE) {
+            res = FALSE;
+        } else {
+            res = TRUE;
+        }
+    }
+
+    return res;
+}
+
+static void bg_item_common_culling_check_loop(GAME_PLAY* play, ACTOR* actorx, bg_item_draw_pos_c* draw_pos) {
+    while (draw_pos->next_add_cnt != 256) {
+        xyz_t pos;
+
+        Matrix_put(&draw_pos->mtxf);
+        Matrix_Position(&ZeroVec, &pos);
+
+        if (bg_item_common_culling_check(play, actorx, &pos) == TRUE) {
+            draw_pos->cull_flag = FALSE;
+        } else {
+            draw_pos->cull_flag = TRUE;
+        }
+
+        draw_pos += draw_pos->next_add_cnt;
+    }
+}
+
+static void bg_item_common_culling_check_talk_loop(GAME_PLAY* play, ACTOR* actorx, bg_item_draw_pos_c* draw_pos) {
+    while (draw_pos->next_add_cnt != 256) {
+        xyz_t pos;
+
+        Matrix_put(&draw_pos->mtxf);
+        Matrix_Position(&ZeroVec, &pos);
+
+        if (bg_item_common_culling_check_talk(play, actorx, &pos) == TRUE) {
+            draw_pos->cull_flag = FALSE;
+        } else {
+            draw_pos->cull_flag = TRUE;
+        }
+
+        draw_pos += draw_pos->next_add_cnt;
+    }
+}
+
+static int bg_item_common_check_talk_tree(bg_item_common_c* common, int idx) {
+    int res = FALSE;
+
+    if ((common->flags & 1) && common->talk_display_limit_check_proc(idx)) {
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static void bg_item_common_draw_check(GAME_PLAY* play, bg_item_common_c* common, ACTOR* actorx,
+                                      bg_item_draw_table_c* draw_tbl) {
+    u16* start_idx_p = draw_tbl->draw_data.idx_p;
+    int count = draw_tbl->draw_data.val;
+    bg_item_draw_pos_c* draw_pos;
+    int i;
+
+    for (i = 0; i < count; i++, start_idx_p++) {
+        if (*start_idx_p != 0) {
+            draw_pos = &draw_tbl->draw_data.draw_pos[*start_idx_p];
+
+            if (bg_item_common_check_talk_tree(common, i) == TRUE) {
+                bg_item_common_culling_check_talk_loop(play, actorx, draw_pos);
+            } else {
+                bg_item_common_culling_check_loop(play, actorx, draw_pos);
+            }
+        }
+    }
+}
+
+static void bg_item_common_move(GAME_PLAY* play, ACTOR* actorx, bg_item_common_c* common) {
+    int flags;
+    int i;
+    bg_item_draw_table_c* draw_tbl;
+
+    bIT_actor_drop_move(&common->drop_info);
+    bIT_actor_drop_move(&common->fruit_drop_info);
+    bIT_actor_hole_effect_move(common->hole);
+    bIT_actor_shin_effect_move((GAME*)play, common->shin);
+    bIT_actor_pit_move((GAME*)play, common->pit);
+    bIT_actor_ten_coin_move((GAME*)play, common->ten_coin);
+    bIT_actor_fade_move((GAME*)play, common->fade);
+
+    flags = 0;
+    if (mFI_ItemisBorn() == TRUE || mFI_CheckPlayerWade(mFI_WADE_END)) {
+        flags |= 2;
+    }
+
+    if (mFI_FGisUpDate() == TRUE) {
+        flags |= 1;
+    }
+
+    if (flags != 0) {
+        bg_item_common_renew_draw_and_crs_data_perfect(play, common, flags);
+    }
+
+    draw_tbl = common->draw_table;
+    for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++, draw_tbl++) {
+        if (draw_tbl->draw_flag == TRUE) {
+            bg_item_common_draw_check(play, common, actorx, draw_tbl);
+        }
+    }
+}
+
+static int bIT_actor_pit_entry_del(bg_item_pit_c* pit, int param_2, int param_3, xyz_t* pos,
+                                   mActor_name_t fg_item_in_pit) {
+    int res = FALSE;
+    int i;
+
+    for (i = 0; i < bIT_PIT_NUM; i++, pit++) {
+        if (fg_item_in_pit == pit->fg_item_in_pit && pos->x == pit->position.x && pos->y == pit->position.y &&
+            pos->z == pit->position.z) {
+            pit->mode = 0;
+            res = TRUE;
+            break;
+        }
+    }
+
+    return res;
+}
+
+static int bIT_actor_pit_fall(mActor_name_t pit_fg_item, int ut_x, int ut_z, mActor_name_t fg_item_in_pit) {
+    xyz_t pos;
+    bg_item_common_c* common = bIT_CLIP->bg_item_common_p;
+    mActor_name_t pitfall_fg_no;
+    mActor_name_t hole_fg_no;
+
+    mFI_UtNum2CenterWpos(&pos, ut_x, ut_z);
+    pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, -1.0f);
+    pitfall_fg_no = pit_fg_item - BURIED_PITFALL_START;
+    mFI_SetFG_common(pitfall_fg_no + 0x43, pos, FALSE);
+    hole_fg_no = pitfall_fg_no + HOLE_START;
+    bIT_actor_pit_entry(common->pit, 1, hole_fg_no, &pos, fg_item_in_pit);
+    return FALSE;
+}
+
+static int bIT_actor_pit_fall_stop(mActor_name_t pit_fg_item, int ut_x, int ut_z, mActor_name_t fg_item_in_pit) {
+    xyz_t pos;
+    bg_item_common_c* common = bIT_CLIP->bg_item_common_p;
+
+    pit_fg_item = pit_fg_item - 0x19;
+    mFI_UtNum2CenterWpos(&pos, ut_x, ut_z);
+    pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, -1.0f);
+    mFI_SetFG_common(pit_fg_item, pos, FALSE);
+    bIT_actor_pit_entry_del(common->pit, 3, HOLE00, &pos, fg_item_in_pit);
+    return FALSE;
+}
+
+static int bIT_actor_pit_exit(mActor_name_t pit_fg_item, int ut_x, int ut_z, mActor_name_t fg_item_in_pit) {
+    xyz_t pos;
+    bg_item_common_c* common = bIT_CLIP->bg_item_common_p;
+    mActor_name_t relative_fg_no;
+
+    mFI_UtNum2CenterWpos(&pos, ut_x, ut_z);
+    pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, -1.0f);
+    relative_fg_no = pit_fg_item - HOLE_START;
+    bIT_actor_pit_entry(common->pit, 4, relative_fg_no + HOLE_START, &pos, fg_item_in_pit);
+    return FALSE;
+}
+
+static void bg_item_common_draw_loop_type1(GRAPH* graph, Gfx** gfx_pp, bg_item_draw_list_c* draw_list,
+                                           bg_item_draw_pos_c* draw_pos, Gfx** display_list_table) {
+    int base_idx = draw_list->mat_idx;
+
+    gSPDisplayList((*gfx_pp)++, display_list_table[draw_list->gfx_idx]);
+
+    while (draw_pos->next_add_cnt != 256) {
+        if (draw_pos->cull_flag == FALSE) {
+            Matrix_put(&draw_pos->mtxf);
+            gSPMatrix((*gfx_pp)++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPDisplayList((*gfx_pp)++, display_list_table[base_idx + draw_pos->sub_idx]);
+        }
+
+        draw_pos += draw_pos->next_add_cnt;
+    }
+}
+
+static void bg_item_common_s_draw_loop_type1(GRAPH* graph, Gfx** gfx_pp, bg_item_draw_list_c* draw_list,
+                                             int shadow_vtx_count, Vtx* shadow_vtx, bg_item_draw_pos_c* draw_pos,
+                                             Gfx** display_list_table) {
+    Gfx* base_gfx = display_list_table[draw_list->mat_idx + draw_pos->sub_idx];
+
+    while (draw_pos->next_add_cnt != 256) {
+        if (draw_pos->cull_flag == FALSE) {
+            Matrix_put(&draw_pos->mtxf);
+            gSPMatrix((*gfx_pp)++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPVertex((*gfx_pp)++, shadow_vtx, shadow_vtx_count, 0);
+            gSPDisplayList((*gfx_pp)++, base_gfx);
+        }
+
+        draw_pos += draw_pos->next_add_cnt;
+    }
+}
+
+typedef void (*bIT_DRAW_PROC)(GRAPH*, Gfx**, bg_item_draw_list_c*, bg_item_draw_pos_c*, Gfx**);
+
+static void bg_item_common_draw_item_body(GRAPH* graph, Gfx** gfx_pp, bg_item_draw_part_c* draw_part,
+                                          bg_item_draw_pos_c* draw_pos) {
+    bg_item_draw_list_c** draw_list_table;
+    int count;
+    int i;
+    Gfx** display_list_table;
+
+    count = draw_part->draw_list_count;
+    draw_list_table = draw_part->draw_list_table_p;
+    display_list_table = draw_part->display_list_table_p;
+
+    for (i = 0; i < count; i++, draw_list_table++) {
+        ((bIT_DRAW_PROC)(*draw_list_table)->draw_proc)(graph, gfx_pp, *draw_list_table, draw_pos, display_list_table);
+    }
+}
+
+typedef void (*bIT_DRAW_SHADOW_PROC)(GRAPH*, Gfx**, bg_item_draw_list_c*, int, Vtx*, bg_item_draw_pos_c*, Gfx**);
+
+static void bg_item_common_draw_item_shadow(GRAPH* graph, Gfx** gfx_pp, bg_item_draw_part_c* draw_part,
+                                            bg_item_draw_pos_c* draw_pos, f32 shadow_pos, rgba_t* shadow_color) {
+    bg_item_draw_list_c* draw_list = draw_part->shadow_draw_list;
+
+    if (draw_list != NULL) {
+        Vtx* vtx = (Vtx*)GRAPH_ALLOC_TYPE(graph, Vtx, draw_part->shadow_vtx_count);
+
+        if (vtx != NULL) {
+            bIT_copy_vtx(vtx, draw_part->shadow_vtx_p, draw_part->shadow_vtx_count, draw_part->shadow_vtx_fix_table_p,
+                         shadow_pos * draw_part->shadow_len);
+        } else {
+            vtx = draw_part->shadow_vtx_p;
+        }
+
+        gSPDisplayList((*gfx_pp)++, draw_part->display_list_table_p[draw_list->gfx_idx]);
+        gDPSetPrimColor((*gfx_pp)++, 0, shadow_color->a, shadow_color->r, shadow_color->g, shadow_color->b, 255);
+        ((bIT_DRAW_SHADOW_PROC)draw_list->draw_proc)(graph, gfx_pp, draw_list, draw_part->shadow_vtx_count, vtx,
+                                                     draw_pos, draw_part->display_list_table_p);
+    }
+}
+
+static void bg_item_common_draw_item(GAME_PLAY* play, bg_item_draw_table_c* draw_tbl, f32 shadow_pos,
+                                     rgba_t* shadow_color, bg_item_draw_part_table_c* draw_part_table) {
+    u16* start_idx;
+    GRAPH* graph;
+    int i;
+    Gfx* gfx;
+    bg_item_draw_part_table_c* draw_part_table_p;
+    Gfx* start_gfx_p;
+
+    draw_part_table_p = draw_part_table;
+    start_idx = draw_tbl->draw_data.idx_p;
+    graph = play->game.graph;
+
+    OPEN_DISP(graph);
+    gfx = NOW_POLY_OPA_DISP;
+
+    for (i = 0; i < draw_tbl->draw_data.val; i++, start_idx++, draw_part_table_p++) {
+        if (*start_idx != 0) {
+            bg_item_common_draw_item_body(graph, &gfx, draw_part_table_p->draw_part_p,
+                                          draw_tbl->draw_data.draw_pos + *start_idx);
+        }
+    }
+
+    SET_POLY_OPA_DISP(gfx);
+    start_gfx_p = NOW_POLY_OPA_DISP;
+    gfx = gfxopen(start_gfx_p);
+    gSPDisplayList(NEXT_SHADOW_DISP, gfx);
+
+    start_idx = draw_tbl->draw_data.idx_p;
+    draw_part_table_p = draw_part_table;
+    for (i = 0; i < draw_tbl->draw_data.val; i++, start_idx++, draw_part_table_p++) {
+        if (*start_idx != 0) {
+            bg_item_common_draw_item_shadow(graph, &gfx, draw_part_table_p->draw_part_p,
+                                            draw_tbl->draw_data.draw_pos + *start_idx, shadow_pos, shadow_color);
+        }
+    }
+
+    gSPEndDisplayList(gfx++);
+    gfxclose(start_gfx_p, gfx);
+    SET_POLY_OPA_DISP(gfx);
+    CLOSE_DISP(graph);
+}
+
+static void bIT_actor_pit_draw_nrm(GAME* game, bg_item_common_info_c* common_info, bg_item_pit_c* pit,
+                                   bIT_DRAW_BF_PROC draw_bf, bIT_DRAW_AF_PROC draw_af, rgba_t* color) {
+    xyz_t scale;
+
+    scale.x = pit->scale * 0.01f;
+    scale.y = pit->scale * 0.01f;
+    scale.z = pit->scale * 0.01f;
+    bit_cmn_single_drawS(game, common_info, pit->hole_fg_item, &pit->position, &ZeroSVec, &scale, 255, draw_bf, draw_af,
+                         color);
+}
+
+static void bIT_actor_pit_draw(GAME* game, bg_item_common_info_c* common_info, bg_item_pit_c* pit) {
+    int i;
+
+    for (i = 0; i < bIT_PIT_NUM; i++, pit++) {
+        if (pit->hole_fg_item != 0 && pit->mode != 0) {
+            bIT_actor_pit_draw_nrm(game, common_info, pit, NULL, NULL, NULL);
+        }
+    }
+}
+
+static void bg_item_common_draw(GAME_PLAY* play, bg_item_common_c* common, bg_item_draw_part_table_c* draw_part_table) {
+    GAME* game = (GAME*)play;
+    Kankyo* kankyo = &play->kankyo;
+    f32 shadow_pos;
+    rgba_t shadow_color;
+
+    OPEN_DISP(game->graph);
+
+    SET_POLY_OPA_DISP(texture_z_light_fog_prim_bb_pal_opa(NOW_POLY_OPA_DISP));
+    SET_POLY_XLU_DISP(texture_z_light_fog_prim_bb_pal_xlu(NOW_POLY_XLU_DISP));
+    SET_SHADOW_DISP(texture_z_fog_lod_alpha_shadow(NOW_SHADOW_DISP));
+
+    CLOSE_DISP(game->graph);
+
+    bit_draw_ta_set(game);
+
+    shadow_pos = kankyo->shadow_pos;
+    shadow_color.a = kankyo->shadow_alpha;
+    shadow_color.r = kankyo->base_light.shadow_color[0];
+    shadow_color.g = kankyo->base_light.shadow_color[1];
+    shadow_color.b = kankyo->base_light.shadow_color[2];
+
+    OPEN_DISP(game->graph);
+    {
+        Gfx* opa = NOW_POLY_OPA_DISP;
+        Gfx* xlu = NOW_POLY_XLU_DISP;
+
+        bg_item_common_palload(&opa, common->common_info.pal_p);
+        bg_item_common_palload(&xlu, common->common_info.pal_p);
+
+        SET_POLY_OPA_DISP(opa);
+        SET_POLY_XLU_DISP(xlu);
+    }
+    CLOSE_DISP(game->graph);
+
+    {
+        int i;
+        bg_item_draw_table_c* draw_table = common->draw_table;
+
+        for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++, draw_table++) {
+            if (draw_table->draw_flag == TRUE) {
+                bg_item_common_draw_item(play, draw_table, shadow_pos, &shadow_color, draw_part_table);
+            }
+        }
+    }
+
+    bIT_actor_drop_draw(game, &common->common_info, &common->drop_info);
+    bIT_actor_drop_draw(game, &common->common_info, &common->fruit_drop_info);
+    bIT_actor_hole_effect_draw(game, &common->common_info, common->hole);
+    bIT_actor_pit_draw(game, &common->common_info, common->pit);
+    bIT_actor_ten_coin_draw(game, &common->common_info, common->ten_coin, shadow_pos, &shadow_color);
+    bIT_actor_fade_draw(game, &common->common_info, common->fade);
+
+    bit_draw_ta_clr(game);
+}
+
+static void bg_item_common_construct(GAME* game, bg_item_common_c* common) {
+    common->drop_info.drop_p = common->drop;
+    common->drop_info.count = bIT_DROP_NUM;
+    common->fruit_drop_info.drop_p = common->fruit_drop;
+    common->fruit_drop_info.count = bIT_FRUIT_DROP_NUM;
+}

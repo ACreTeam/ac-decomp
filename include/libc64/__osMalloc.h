@@ -16,7 +16,7 @@ typedef struct Arena {
     /* 0x20 */ u8 unk_20;
     /* 0x21 */ u8 isInit;
     /* 0x22 */ u8 flag;
-    /* 0x24 */ u8 pad[0x2C-0x24];
+    /* 0x24 */ u8 pad[0x2C - 0x24];
 } Arena; // size = 0x2C
 
 typedef struct ArenaNode {
@@ -30,8 +30,8 @@ typedef struct ArenaNode {
     /* 0x18 */ OSId threadId;
     /* 0x1C */ Arena* arena;
     /* 0x20 */ OSTime time;
-    /* 0x28 */ u8 unk_28[0x30-0x28]; // probably padding
-} ArenaNode; // size = 0x30
+    /* 0x28 */ u8 unk_28[0x30 - 0x28]; // probably padding
+} ArenaNode;                           // size = 0x30
 
 void setDebugInfo(ArenaNode*, const char*, s32, Arena*);
 void arena_lock_init(Arena*);
@@ -61,8 +61,8 @@ u32 __osGetFreeSize(Arena*);
 u32 __osGetMemBlockSize(Arena*, void*);
 void __osDisplayArena(Arena*);
 int __osCheckArena(Arena*);
+extern int __osMallocIsInitalized(Arena*);
 
 extern int __osMalloc_FreeBlockTest_Enable;
-
 
 #endif

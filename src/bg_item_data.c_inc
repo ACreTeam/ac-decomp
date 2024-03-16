@@ -1,0 +1,2697 @@
+static bg_item_type_data_c typeData_table_bgItem[] = {
+    { 0, bIT_DRAW_TYPE_NONE, NULL, NULL },                         // 0x0000
+    { 0, bIT_DRAW_TYPE_STUMP1, pos_table, pos_table },             // 0x0001
+    { 0, bIT_DRAW_TYPE_STUMP2, pos_table, pos_table },             // 0x0002
+    { 0, bIT_DRAW_TYPE_STUMP3, pos_table, pos_table },             // 0x0003
+    { 0, bIT_DRAW_TYPE_STUMP4, pos_table, pos_table },             // 0x0004
+    { 0, bIT_DRAW_TYPE_FENCE, pos_table2, pos_table },             // 0x0005
+    { 0, bIT_DRAW_TYPE_NONE, pos_table, pos_table },               // 0x0006
+    { 0, bIT_DRAW_TYPE_NOTICE, pos_table2, pos_table },            // 0x0007
+    { 0, bIT_DRAW_TYPE_GRASS, pos_table, pos_table },              // 0x0008
+    { 1, bIT_DRAW_TYPE_GRASS, pos_table, pos_table },              // 0x0009
+    { 2, bIT_DRAW_TYPE_GRASS, pos_table, pos_table },              // 0x000A
+    { 0, bIT_DRAW_TYPE_NONE, pos_table, pos_table },               // 0x000B
+    { 0, bIT_DRAW_TYPE_MAPBOARD, pos_table2, pos_table },          // 0x000C
+    { 0, bIT_DRAW_TYPE_NONE, pos_table, pos_table },               // 0x000D
+    { 0, bIT_DRAW_TYPE_MELODY, pos_table2, pos_table },            // 0x000E
+    { 0, bIT_DRAW_TYPE_NONE, pos_table, pos_table },               // 0x000F
+    { 0, bIT_DRAW_TYPE_FENCES, pos_table, pos_table },             // 0x0010
+    { 0, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },           // 0x0011
+    { 1, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },           // 0x0012
+    { 2, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },           // 0x0013
+    { 3, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },           // 0x0014
+    { 4, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },           // 0x0015
+    { 5, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },           // 0x0016
+    { 6, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },           // 0x0017
+    { 7, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },           // 0x0018
+    { 8, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },           // 0x0019
+    { 9, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },           // 0x001A
+    { 10, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x001B
+    { 11, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x001C
+    { 12, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x001D
+    { 13, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x001E
+    { 14, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x001F
+    { 15, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x0020
+    { 16, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x0021
+    { 17, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x0022
+    { 18, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x0023
+    { 19, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x0024
+    { 20, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x0025
+    { 21, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x0026
+    { 22, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x0027
+    { 23, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x0028
+    { 24, bIT_DRAW_TYPE_HOLE00_G, pos_table, pos_table },          // 0x0029
+    { 0, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x002A
+    { 1, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x002B
+    { 2, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x002C
+    { 3, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x002D
+    { 4, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x002E
+    { 5, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x002F
+    { 6, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x0030
+    { 7, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x0031
+    { 8, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x0032
+    { 9, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x0033
+    { 10, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0034
+    { 11, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0035
+    { 12, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0036
+    { 13, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0037
+    { 14, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0038
+    { 15, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0039
+    { 16, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x003A
+    { 17, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x003B
+    { 18, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x003C
+    { 19, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x003D
+    { 20, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x003E
+    { 21, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x003F
+    { 22, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0040
+    { 23, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0041
+    { 24, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0042
+    { 0, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x0043
+    { 1, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x0044
+    { 2, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x0045
+    { 3, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x0046
+    { 4, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x0047
+    { 5, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x0048
+    { 6, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x0049
+    { 7, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x004A
+    { 8, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x004B
+    { 9, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },          // 0x004C
+    { 10, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x004D
+    { 11, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x004E
+    { 12, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x004F
+    { 13, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0050
+    { 14, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0051
+    { 15, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0052
+    { 16, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0053
+    { 17, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0054
+    { 18, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0055
+    { 19, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0056
+    { 20, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0057
+    { 21, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0058
+    { 22, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x0059
+    { 23, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x005A
+    { 24, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },         // 0x005B
+    { 0, bIT_DRAW_TYPE_NONE, pos_table, pos_table },               // 0x005C
+    { 0, bIT_DRAW_TYPE_HOLE00_SHIN_G, pos_table, pos_table },      // 0x005D
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },              // 0x005E
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },              // 0x005F
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },              // 0x0060
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },              // 0x0061
+    { 0, bIT_DRAW_TYPE_HONYCOMB, pos_table, pos_table },           // 0x0062
+    { 0, bIT_DRAW_TYPE_STONE_A, pos_table, pos_table },            // 0x0063
+    { 1, bIT_DRAW_TYPE_STONE_B, pos_table, pos_table },            // 0x0064
+    { 2, bIT_DRAW_TYPE_STONE_C, pos_table, pos_table },            // 0x0065
+    { 3, bIT_DRAW_TYPE_STONE_D, pos_table, pos_table },            // 0x0066
+    { 4, bIT_DRAW_TYPE_STONE_E, pos_table, pos_table },            // 0x0067
+    { 0, bIT_DRAW_TYPE_TANE, pos_table, pos_table },               // 0x0068
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },              // 0x0069
+    { 0, bIT_DRAW_TYPE_STONE_A, pos_table, pos_table },            // 0x006A
+    { 1, bIT_DRAW_TYPE_STONE_B, pos_table, pos_table },            // 0x006B
+    { 2, bIT_DRAW_TYPE_STONE_C, pos_table, pos_table },            // 0x006C
+    { 3, bIT_DRAW_TYPE_STONE_D, pos_table, pos_table },            // 0x006D
+    { 4, bIT_DRAW_TYPE_STONE_E, pos_table, pos_table },            // 0x006E
+    { 0, bIT_DRAW_TYPE_NONE, pos_table, pos_table },               // 0x006F
+    { 0, bIT_DRAW_TYPE_PALM_STUMP001, pos_table, pos_table },      // 0x0070
+    { 0, bIT_DRAW_TYPE_PALM_STUMP002, pos_table, pos_table },      // 0x0071
+    { 0, bIT_DRAW_TYPE_PALM_STUMP003, pos_table, pos_table },      // 0x0072
+    { 0, bIT_DRAW_TYPE_PALM_STUMP004, pos_table, pos_table },      // 0x0073
+    { 0, bIT_DRAW_TYPE_CEDAR_STUMP001, pos_table, pos_table },     // 0x0074
+    { 0, bIT_DRAW_TYPE_CEDAR_STUMP002, pos_table, pos_table },     // 0x0075
+    { 0, bIT_DRAW_TYPE_CEDAR_STUMP003, pos_table, pos_table },     // 0x0076
+    { 0, bIT_DRAW_TYPE_CEDAR_STUMP004, pos_table, pos_table },     // 0x0077
+    { 0, bIT_DRAW_TYPE_CEDAR004, pos_table, pos_table },           // 0x0078
+    { 0, bIT_DRAW_TYPE_CEDAR004, pos_table, pos_table },           // 0x0079
+    { 0, bIT_DRAW_TYPE_CEDAR004, pos_table, pos_table },           // 0x007A
+    { 0, bIT_DRAW_TYPE_GOLD_TREE_STUMP001, pos_table, pos_table }, // 0x007B
+    { 0, bIT_DRAW_TYPE_GOLD_TREE_STUMP002, pos_table, pos_table }, // 0x007C
+    { 0, bIT_DRAW_TYPE_GOLD_TREE_STUMP003, pos_table, pos_table }, // 0x007D
+    { 0, bIT_DRAW_TYPE_GOLD_TREE_STUMP004, pos_table, pos_table }, // 0x007E
+    { 0, bIT_DRAW_TYPE_GOLD_TREE004, pos_table, pos_table },       // 0x007F
+    { 0, bIT_DRAW_TYPE_GOLD_TREE004, pos_table, pos_table },       // 0x0080
+    { 0, bIT_DRAW_TYPE_GOLD_TREE004, pos_table, pos_table },       // 0x0081
+    { 0, bIT_DRAW_TYPE_CEDAR004, pos_table, pos_table },           // 0x0082
+};
+
+static bg_item_type_data_c typeData_table_bgItem2[] = {
+    { 0, bIT_DRAW_TYPE_TREE0, pos_table, pos_table },             // 0x0800
+    { 0, bIT_DRAW_TYPE_TREE1, pos_table, pos_table },             // 0x0801
+    { 0, bIT_DRAW_TYPE_TREE2, pos_table, pos_table },             // 0x0802
+    { 0, bIT_DRAW_TYPE_TREE3, pos_table, pos_table },             // 0x0803
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x0804
+    { 0, bIT_DRAW_TYPE_TREE0, pos_table, pos_table },             // 0x0805
+    { 0, bIT_DRAW_TYPE_TREE1, pos_table, pos_table },             // 0x0806
+    { 0, bIT_DRAW_TYPE_TREE2, pos_table, pos_table },             // 0x0807
+    { 0, bIT_DRAW_TYPE_TREE3, pos_table, pos_table },             // 0x0808
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x0809
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x080A
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x080B
+    { 0, bIT_DRAW_TYPE_TREE4_AP, pos_table, pos_table },          // 0x080C
+    { 0, bIT_DRAW_TYPE_TREE0, pos_table, pos_table },             // 0x080D
+    { 0, bIT_DRAW_TYPE_TREE1, pos_table, pos_table },             // 0x080E
+    { 0, bIT_DRAW_TYPE_TREE2, pos_table, pos_table },             // 0x080F
+    { 0, bIT_DRAW_TYPE_TREE3, pos_table, pos_table },             // 0x0810
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x0811
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x0812
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x0813
+    { 0, bIT_DRAW_TYPE_TREE4_OR, pos_table, pos_table },          // 0x0814
+    { 0, bIT_DRAW_TYPE_TREE0, pos_table, pos_table },             // 0x0815
+    { 0, bIT_DRAW_TYPE_TREE1, pos_table, pos_table },             // 0x0816
+    { 0, bIT_DRAW_TYPE_TREE2, pos_table, pos_table },             // 0x0817
+    { 0, bIT_DRAW_TYPE_TREE3, pos_table, pos_table },             // 0x0818
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x0819
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x081A
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x081B
+    { 0, bIT_DRAW_TYPE_TREE4_PH, pos_table, pos_table },          // 0x081C
+    { 0, bIT_DRAW_TYPE_TREE0, pos_table, pos_table },             // 0x081D
+    { 0, bIT_DRAW_TYPE_TREE1, pos_table, pos_table },             // 0x081E
+    { 0, bIT_DRAW_TYPE_TREE2, pos_table, pos_table },             // 0x081F
+    { 0, bIT_DRAW_TYPE_TREE3, pos_table, pos_table },             // 0x0820
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x0821
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x0822
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x0823
+    { 0, bIT_DRAW_TYPE_TREE4_PR, pos_table, pos_table },          // 0x0824
+    { 0, bIT_DRAW_TYPE_TREE0, pos_table, pos_table },             // 0x0825
+    { 0, bIT_DRAW_TYPE_TREE1, pos_table, pos_table },             // 0x0826
+    { 0, bIT_DRAW_TYPE_TREE2, pos_table, pos_table },             // 0x0827
+    { 0, bIT_DRAW_TYPE_TREE3, pos_table, pos_table },             // 0x0828
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x0829
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x082A
+    { 0, bIT_DRAW_TYPE_TREE4, pos_table, pos_table },             // 0x082B
+    { 0, bIT_DRAW_TYPE_TREE4_NT, pos_table, pos_table },          // 0x082C
+    { 0, bIT_DRAW_TYPE_TREE0, pos_table, pos_table },             // 0x082D
+    { 0, bIT_DRAW_TYPE_TREE1, pos_table, pos_table },             // 0x082E
+    { 0, bIT_DRAW_TYPE_TREE2, pos_table, pos_table },             // 0x082F
+    { 0, bIT_DRAW_TYPE_TREE3, pos_table, pos_table },             // 0x0830
+    { 0, bIT_DRAW_TYPE_TREE4_BG, pos_table, pos_table },          // 0x0831
+    { 0, bIT_DRAW_TYPE_TREE0, pos_table, pos_table },             // 0x0832
+    { 0, bIT_DRAW_TYPE_TREE1, pos_table, pos_table },             // 0x0833
+    { 0, bIT_DRAW_TYPE_TREE2, pos_table, pos_table },             // 0x0834
+    { 0, bIT_DRAW_TYPE_TREE3, pos_table, pos_table },             // 0x0835
+    { 0, bIT_DRAW_TYPE_TREE4_BG, pos_table, pos_table },          // 0x0836
+    { 0, bIT_DRAW_TYPE_TREE0, pos_table, pos_table },             // 0x0837
+    { 0, bIT_DRAW_TYPE_TREE1, pos_table, pos_table },             // 0x0838
+    { 0, bIT_DRAW_TYPE_TREE2, pos_table, pos_table },             // 0x0839
+    { 0, bIT_DRAW_TYPE_TREE3, pos_table, pos_table },             // 0x083A
+    { 0, bIT_DRAW_TYPE_TREE4_BG, pos_table, pos_table },          // 0x083B
+    { 0, bIT_DRAW_TYPE_FLOWER_LEAF, pos_table, pos_table },       // 0x083C
+    { 0, bIT_DRAW_TYPE_FLOWER_LEAF, pos_table, pos_table },       // 0x083D
+    { 0, bIT_DRAW_TYPE_FLOWER_LEAF, pos_table, pos_table },       // 0x083E
+    { 0, bIT_DRAW_TYPE_FLOWER_LEAF, pos_table, pos_table },       // 0x083F
+    { 0, bIT_DRAW_TYPE_FLOWER_LEAF, pos_table, pos_table },       // 0x0840
+    { 0, bIT_DRAW_TYPE_FLOWER_LEAF, pos_table, pos_table },       // 0x0841
+    { 0, bIT_DRAW_TYPE_FLOWER_LEAF, pos_table, pos_table },       // 0x0842
+    { 0, bIT_DRAW_TYPE_FLOWER_LEAF, pos_table, pos_table },       // 0x0843
+    { 0, bIT_DRAW_TYPE_FLOWER_LEAF, pos_table, pos_table },       // 0x0844
+    { 0, bIT_DRAW_TYPE_FLOWER00, pos_table, pos_table },          // 0x0845
+    { 0, bIT_DRAW_TYPE_FLOWER01, pos_table, pos_table },          // 0x0846
+    { 0, bIT_DRAW_TYPE_FLOWER02, pos_table, pos_table },          // 0x0847
+    { 1, bIT_DRAW_TYPE_FLOWER00, pos_table, pos_table },          // 0x0848
+    { 1, bIT_DRAW_TYPE_FLOWER01, pos_table, pos_table },          // 0x0849
+    { 1, bIT_DRAW_TYPE_FLOWER02, pos_table, pos_table },          // 0x084A
+    { 2, bIT_DRAW_TYPE_FLOWER00, pos_table, pos_table },          // 0x084B
+    { 2, bIT_DRAW_TYPE_FLOWER01, pos_table, pos_table },          // 0x084C
+    { 2, bIT_DRAW_TYPE_FLOWER02, pos_table, pos_table },          // 0x084D
+    { 0, bIT_DRAW_TYPE_TREE0_DEAD, pos_table, pos_table },        // 0x084E
+    { 0, bIT_DRAW_TYPE_TREE0, pos_table, pos_table },             // 0x084F
+    { 0, bIT_DRAW_TYPE_TREE1, pos_table, pos_table },             // 0x0850
+    { 0, bIT_DRAW_TYPE_TREE2, pos_table, pos_table },             // 0x0851
+    { 0, bIT_DRAW_TYPE_TREE3, pos_table, pos_table },             // 0x0852
+    { 0, bIT_DRAW_TYPE_TREE4_BG, pos_table, pos_table },          // 0x0853
+    { 0, bIT_DRAW_TYPE_PALM000, pos_table, pos_table },           // 0x0854
+    { 0, bIT_DRAW_TYPE_PALM001, pos_table, pos_table },           // 0x0855
+    { 0, bIT_DRAW_TYPE_PALM002, pos_table, pos_table },           // 0x0856
+    { 0, bIT_DRAW_TYPE_PALM003, pos_table, pos_table },           // 0x0857
+    { 0, bIT_DRAW_TYPE_PALM004, pos_table, pos_table },           // 0x0858
+    { 0, bIT_DRAW_TYPE_PALM004, pos_table, pos_table },           // 0x0859
+    { 0, bIT_DRAW_TYPE_PALM004, pos_table, pos_table },           // 0x085A
+    { 0, bIT_DRAW_TYPE_PALM004_CC, pos_table, pos_table },        // 0x085B
+    { 0, bIT_DRAW_TYPE_PALM000_DEAD, pos_table, pos_table },      // 0x085C
+    { 0, bIT_DRAW_TYPE_CEDAR000, pos_table, pos_table },          // 0x085D
+    { 0, bIT_DRAW_TYPE_CEDAR001, pos_table, pos_table },          // 0x085E
+    { 0, bIT_DRAW_TYPE_CEDAR002, pos_table, pos_table },          // 0x085F
+    { 0, bIT_DRAW_TYPE_CEDAR003, pos_table, pos_table },          // 0x0860
+    { 0, bIT_DRAW_TYPE_CEDAR004, pos_table, pos_table },          // 0x0861
+    { 0, bIT_DRAW_TYPE_CEDAR000_DEAD, pos_table, pos_table },     // 0x0862
+    { 0, bIT_DRAW_TYPE_GOLD_TREE000, pos_table, pos_table },      // 0x0863
+    { 0, bIT_DRAW_TYPE_GOLD_TREE001, pos_table, pos_table },      // 0x0864
+    { 0, bIT_DRAW_TYPE_GOLD_TREE002, pos_table, pos_table },      // 0x0865
+    { 0, bIT_DRAW_TYPE_GOLD_TREE003, pos_table, pos_table },      // 0x0866
+    { 0, bIT_DRAW_TYPE_GOLD_TREE004, pos_table, pos_table },      // 0x0867
+    { 0, bIT_DRAW_TYPE_GOLD_TREE004, pos_table, pos_table },      // 0x0868
+    { 0, bIT_DRAW_TYPE_GOLD_TREE000_DEAD, pos_table, pos_table }, // 0x0869
+};
+
+static bg_item_type_data_c typeData_table_dummy[] = {
+    { 0, bIT_DRAW_TYPE_FISH2, pos_table, pos_table },
+};
+
+extern Gfx obj_s_tree1T_mat_model[];
+extern Gfx obj_s_tree3_trunkT_mat_model[];
+extern Gfx obj_s_tree5_leafT_mat_model[];
+extern Gfx obj_s_tree5_trunkT_mat_model[];
+extern Gfx obj_tree5_shadowT_mat_model[];
+extern Gfx obj_s_tree1T_gfx_model[];
+extern Gfx obj_s_tree2T_gfx_model[];
+extern Gfx obj_s_tree3_leafT_gfx_model[];
+extern Gfx obj_s_tree3_trunkT_gfx_model[];
+extern Gfx obj_tree3_shadowT_gfx_model[];
+extern Gfx obj_s_tree4_leafT_gfx_model[];
+extern Gfx obj_s_tree4_trunkT_gfx_model[];
+extern Gfx obj_tree4_shadowT_gfx_model[];
+extern Gfx obj_s_tree5_leafT_gfx_model[];
+extern Gfx obj_s_tree5_trunkT_gfx_model[];
+extern Gfx obj_tree5_shadowT_gfx_model[];
+extern Gfx apple_DL_mode[];
+extern Gfx orange_DL_mode[];
+extern Gfx peach_DL_mode[];
+extern Gfx pear_DL_mode[];
+extern Gfx nuts_DL_mode[];
+extern Gfx bag_DL_mode[];
+extern Gfx obj_s_tree5_apple_appleT_gfx_model[];
+extern Gfx obj_s_tree1_deadT_mat_model[];
+extern Gfx obj_s_tree1_deadT_gfx_model[];
+
+static Gfx* tree_DL_table[] = {
+    obj_s_tree1T_mat_model,
+    obj_s_tree3_trunkT_mat_model,
+    obj_s_tree5_leafT_mat_model,
+    obj_s_tree5_trunkT_mat_model,
+    obj_tree5_shadowT_mat_model,
+    obj_s_tree1T_gfx_model,
+    obj_s_tree2T_gfx_model,
+    obj_s_tree3_leafT_gfx_model,
+    obj_s_tree3_trunkT_gfx_model,
+    obj_tree3_shadowT_gfx_model,
+    obj_s_tree4_leafT_gfx_model,
+    obj_s_tree4_trunkT_gfx_model,
+    obj_tree4_shadowT_gfx_model,
+    obj_s_tree5_leafT_gfx_model,
+    obj_s_tree5_trunkT_gfx_model,
+    obj_tree5_shadowT_gfx_model,
+    apple_DL_mode,
+    orange_DL_mode,
+    peach_DL_mode,
+    pear_DL_mode,
+    nuts_DL_mode,
+    bag_DL_mode,
+    obj_s_tree5_apple_appleT_gfx_model,
+    obj_s_tree1_deadT_mat_model,
+    obj_s_tree1_deadT_gfx_model,
+};
+
+static bg_item_draw_list_c tree0_list = { &bg_item_common_draw_loop_type1, 0, 5 };
+
+static bg_item_draw_list_c tree1_list = { &bg_item_common_draw_loop_type1, 1, 6 };
+
+static bg_item_draw_list_c tree2_list = { &bg_item_common_draw_loop_type1, 2, 7 };
+
+static bg_item_draw_list_c tree2_list2 = { &bg_item_common_draw_loop_type1, 1, 8 };
+
+static bg_item_draw_list_c tree2_shadow_list = { &bg_item_common_s_draw_loop_type1, 4, 9 };
+
+static bg_item_draw_list_c tree3_list = { &bg_item_common_draw_loop_type1, 2, 10 };
+
+static bg_item_draw_list_c tree3_list2 = { &bg_item_common_draw_loop_type1, 3, 11 };
+
+static bg_item_draw_list_c tree3_shadow_list = { &bg_item_common_s_draw_loop_type1, 4, 12 };
+
+static bg_item_draw_list_c tree4_list = { &bg_item_common_draw_loop_type1, 2, 13 };
+
+static bg_item_draw_list_c tree4_list2 = { &bg_item_common_draw_loop_type1, 3, 14 };
+
+static bg_item_draw_list_c tree4_shadow_list = { &bg_item_common_s_draw_loop_type1, 4, 15 };
+
+static bg_item_draw_list_c tree4_ap_list = { &bg_item_common_draw_loop_type1, 16, 22 };
+
+static bg_item_draw_list_c tree4_or_list = { &bg_item_common_draw_loop_type1, 17, 22 };
+
+static bg_item_draw_list_c tree4_ph_list = { &bg_item_common_draw_loop_type1, 18, 22 };
+
+static bg_item_draw_list_c tree4_pr_list = { &bg_item_common_draw_loop_type1, 19, 22 };
+
+static bg_item_draw_list_c tree4_nt_list = { &bg_item_common_draw_loop_type1, 20, 22 };
+
+static bg_item_draw_list_c tree4_bg_list = { &bg_item_common_draw_loop_type1, 21, 22 };
+
+static bg_item_draw_list_c tree0_dead_list = { &bg_item_common_draw_loop_type1, 23, 24 };
+
+static bg_item_draw_list_c* tree0_list_table[] = {
+    &tree0_list,
+};
+
+static bg_item_draw_list_c* tree1_list_table[] = {
+    &tree1_list,
+};
+
+static bg_item_draw_list_c* tree2_list_table[] = {
+    &tree2_list,
+    &tree2_list2,
+};
+
+static bg_item_draw_list_c* tree3_list_table[] = {
+    &tree3_list,
+    &tree3_list2,
+};
+
+static bg_item_draw_list_c* tree4_list_table[] = {
+    &tree4_list,
+    &tree4_list2,
+};
+
+static bg_item_draw_list_c* tree4_ap_list_table[] = {
+    &tree4_ap_list,
+    &tree4_list,
+    &tree4_list2,
+};
+
+static bg_item_draw_list_c* tree4_or_list_table[] = {
+    &tree4_or_list,
+    &tree4_list,
+    &tree4_list2,
+};
+
+static bg_item_draw_list_c* tree4_ph_list_table[] = {
+    &tree4_ph_list,
+    &tree4_list,
+    &tree4_list2,
+};
+
+static bg_item_draw_list_c* tree4_pr_list_table[] = {
+    &tree4_pr_list,
+    &tree4_list,
+    &tree4_list2,
+};
+
+static bg_item_draw_list_c* tree4_nt_list_table[] = {
+    &tree4_nt_list,
+    &tree4_list,
+    &tree4_list2,
+};
+
+static bg_item_draw_list_c* tree4_bg_list_table[] = {
+    &tree4_bg_list,
+    &tree4_list,
+    &tree4_list2,
+};
+
+static bg_item_draw_list_c* tree0_dead_list_table[] = {
+    &tree0_dead_list,
+};
+
+static u8 tree_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+static bg_item_draw_part_c tree0_part = {
+    tree_DL_table, 1, tree0_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_part_c tree1_part = {
+    tree_DL_table, 1, tree1_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Vtx obj_tree3_shadow_v[];
+
+static bg_item_draw_part_c tree2_part = {
+    tree_DL_table, 2, tree2_list_table, 4, obj_tree3_shadow_v, 30.0f, tree_shadow_v_fix, &tree2_shadow_list,
+};
+
+extern Vtx obj_tree4_shadow_v[];
+
+static bg_item_draw_part_c tree3_part = {
+    tree_DL_table, 2, tree3_list_table, 4, obj_tree4_shadow_v, 45.0f, tree_shadow_v_fix, &tree3_shadow_list,
+};
+
+extern Vtx obj_tree5_shadow_v[];
+
+static bg_item_draw_part_c tree4_part = {
+    tree_DL_table, 2, tree4_list_table, 4, obj_tree5_shadow_v, 60.0f, tree_shadow_v_fix, &tree4_shadow_list,
+};
+
+extern Vtx obj_tree5_shadow_v[];
+
+static bg_item_draw_part_c tree4_ap_part = {
+    tree_DL_table, 3, tree4_ap_list_table, 4, obj_tree5_shadow_v, 60.0f, tree_shadow_v_fix, &tree4_shadow_list,
+};
+
+extern Vtx obj_tree5_shadow_v[];
+
+static bg_item_draw_part_c tree4_or_part = {
+    tree_DL_table, 3, tree4_or_list_table, 4, obj_tree5_shadow_v, 60.0f, tree_shadow_v_fix, &tree4_shadow_list,
+};
+
+extern Vtx obj_tree5_shadow_v[];
+
+static bg_item_draw_part_c tree4_ph_part = {
+    tree_DL_table, 3, tree4_ph_list_table, 4, obj_tree5_shadow_v, 60.0f, tree_shadow_v_fix, &tree4_shadow_list,
+};
+
+extern Vtx obj_tree5_shadow_v[];
+
+static bg_item_draw_part_c tree4_pr_part = {
+    tree_DL_table, 3, tree4_pr_list_table, 4, obj_tree5_shadow_v, 60.0f, tree_shadow_v_fix, &tree4_shadow_list,
+};
+
+extern Vtx obj_tree5_shadow_v[];
+
+static bg_item_draw_part_c tree4_nt_part = {
+    tree_DL_table, 3, tree4_nt_list_table, 4, obj_tree5_shadow_v, 60.0f, tree_shadow_v_fix, &tree4_shadow_list,
+};
+
+extern Vtx obj_tree5_shadow_v[];
+
+static bg_item_draw_part_c tree4_bg_part = {
+    tree_DL_table, 3, tree4_bg_list_table, 4, obj_tree5_shadow_v, 60.0f, tree_shadow_v_fix, &tree4_shadow_list,
+};
+
+static bg_item_draw_part_c tree0_dead_part = {
+    tree_DL_table, 1, tree0_dead_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_s_palm1T_mat_model[];
+extern Gfx obj_s_palm1T_gfx_model[];
+extern Gfx obj_s_palm1_deadT_mat_model[];
+extern Gfx obj_s_palm1_deadT_gfx_model[];
+extern Gfx obj_s_palm2T_mat_model[];
+extern Gfx obj_s_palm2T_gfx_model[];
+extern Gfx obj_s_palm3_leafT_mat_model[];
+extern Gfx obj_s_palm3_leafT_gfx_model[];
+extern Gfx obj_s_palm3_trunkT_mat_model[];
+extern Gfx obj_s_palm3_trunkT_gfx_model[];
+extern Gfx obj_s_palm4_leafT_mat_model[];
+extern Gfx obj_s_palm4_leafT_gfx_model[];
+extern Gfx obj_s_palm4_trunkT_mat_model[];
+extern Gfx obj_s_palm4_trunkT_gfx_model[];
+extern Gfx obj_s_palm5_trunkT_mat_model[];
+extern Gfx obj_s_palm5_trunkT_gfx_model[];
+extern Gfx obj_s_palm5_leafT_mat_model[];
+extern Gfx obj_s_palm5_leafT_gfx_model[];
+extern Gfx obj_item_cocoT_mat_model[];
+extern Gfx obj_s_palm5_cocoT_gfx_model[];
+extern Gfx obj_palm3_shadowT_mat_model[];
+extern Gfx obj_palm3_shadowT_gfx_model[];
+extern Gfx obj_palm4_shadowT_mat_model[];
+extern Gfx obj_palm4_shadowT_gfx_model[];
+extern Gfx obj_palm5_shadowT_mat_model[];
+extern Gfx obj_palm5_shadowT_gfx_model[];
+
+static Gfx* palm_DL_table[] = {
+    obj_s_palm1T_mat_model,       obj_s_palm1T_gfx_model,       obj_s_palm1_deadT_mat_model,
+    obj_s_palm1_deadT_gfx_model,  obj_s_palm2T_mat_model,       obj_s_palm2T_gfx_model,
+    obj_s_palm3_leafT_mat_model,  obj_s_palm3_leafT_gfx_model,  obj_s_palm3_trunkT_mat_model,
+    obj_s_palm3_trunkT_gfx_model, obj_s_palm4_leafT_mat_model,  obj_s_palm4_leafT_gfx_model,
+    obj_s_palm4_trunkT_mat_model, obj_s_palm4_trunkT_gfx_model, obj_s_palm5_trunkT_mat_model,
+    obj_s_palm5_trunkT_gfx_model, obj_s_palm5_leafT_mat_model,  obj_s_palm5_leafT_gfx_model,
+    obj_item_cocoT_mat_model,     obj_s_palm5_cocoT_gfx_model,  obj_palm3_shadowT_mat_model,
+    obj_palm3_shadowT_gfx_model,  obj_palm4_shadowT_mat_model,  obj_palm4_shadowT_gfx_model,
+    obj_palm5_shadowT_mat_model,  obj_palm5_shadowT_gfx_model,
+};
+
+static bg_item_draw_list_c palm1_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c palm1_dead_list = { &bg_item_common_draw_loop_type1, 2, 3 };
+
+static bg_item_draw_list_c palm2_list = { &bg_item_common_draw_loop_type1, 4, 5 };
+
+static bg_item_draw_list_c palm3_leaf_list = { &bg_item_common_draw_loop_type1, 6, 7 };
+
+static bg_item_draw_list_c palm3_trunk_list = { &bg_item_common_draw_loop_type1, 8, 9 };
+
+static bg_item_draw_list_c palm4_leaf_list = { &bg_item_common_draw_loop_type1, 10, 11 };
+
+static bg_item_draw_list_c palm4_trunk_list = { &bg_item_common_draw_loop_type1, 12, 13 };
+
+static bg_item_draw_list_c palm5_leaf_list = { &bg_item_common_draw_loop_type1, 16, 17 };
+
+static bg_item_draw_list_c palm5_trunk_list = { &bg_item_common_draw_loop_type1, 14, 15 };
+
+static bg_item_draw_list_c palm5_coco_list = { &bg_item_common_draw_loop_type1, 18, 19 };
+
+static bg_item_draw_list_c palm3_shadow_list = { &bg_item_common_s_draw_loop_type1, 20, 21 };
+
+static bg_item_draw_list_c palm4_shadow_list = { &bg_item_common_s_draw_loop_type1, 22, 23 };
+
+static bg_item_draw_list_c palm5_shadow_list = { &bg_item_common_s_draw_loop_type1, 24, 25 };
+
+static bg_item_draw_list_c* palm1_list_table[] = {
+    &palm1_list,
+};
+
+static bg_item_draw_list_c* palm2_list_table[] = {
+    &palm2_list,
+};
+
+static bg_item_draw_list_c* palm3_list_table[] = {
+    &palm3_leaf_list,
+    &palm3_trunk_list,
+};
+
+static bg_item_draw_list_c* palm4_list_table[] = {
+    &palm4_leaf_list,
+    &palm4_trunk_list,
+};
+
+static bg_item_draw_list_c* palm5_list_table[] = {
+    &palm5_leaf_list,
+    &palm5_trunk_list,
+};
+
+static bg_item_draw_list_c* palm5_cc_list_table[] = {
+    &palm5_coco_list,
+    &palm5_leaf_list,
+    &palm5_trunk_list,
+};
+
+static bg_item_draw_list_c* palm1_dead_list_table[] = {
+    &palm1_dead_list,
+};
+
+static u8 palm3_shadow_v_fix[] = {
+    0,
+    1,
+    1,
+    0,
+};
+
+static u8 palm5_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+static bg_item_draw_part_c palm000_part = {
+    palm_DL_table, 1, palm1_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_part_c palm001_part = {
+    palm_DL_table, 1, palm2_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Vtx obj_palm3_shadow_v[];
+
+static bg_item_draw_part_c palm002_part = {
+    palm_DL_table, 2, palm3_list_table, 4, obj_palm3_shadow_v, 30.0f, palm3_shadow_v_fix, &palm3_shadow_list,
+};
+
+extern Vtx obj_palm4_shadow_v[];
+
+static bg_item_draw_part_c palm003_part = {
+    palm_DL_table, 2, palm4_list_table, 4, obj_palm4_shadow_v, 45.0f, palm3_shadow_v_fix, &palm4_shadow_list,
+};
+
+extern Vtx obj_palm5_shadow_v[];
+
+static bg_item_draw_part_c palm004_part = {
+    palm_DL_table, 2, palm5_list_table, 4, obj_palm5_shadow_v, 60.0f, palm5_shadow_v_fix, &palm5_shadow_list,
+};
+
+extern Vtx obj_palm5_shadow_v[];
+
+static bg_item_draw_part_c palm004_cc_part = {
+    palm_DL_table, 3, palm5_cc_list_table, 4, obj_palm5_shadow_v, 60.0f, palm5_shadow_v_fix, &palm5_shadow_list,
+};
+
+static bg_item_draw_part_c palm000_dead_part = {
+    palm_DL_table, 1, palm1_dead_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_cedar3_shadowT_mat_model[];
+extern Gfx obj_cedar3_shadowT_gfx_model[];
+extern Gfx obj_cedar4_shadowT_mat_model[];
+extern Gfx obj_cedar4_shadowT_gfx_model[];
+extern Gfx obj_cedar5_shadowT_mat_model[];
+extern Gfx obj_cedar5_shadowT_gfx_model[];
+extern Gfx obj_s_cedar1T_mat_model[];
+extern Gfx obj_s_cedar1T_gfx_model[];
+extern Gfx obj_s_cedar1_deadT_mat_model[];
+extern Gfx obj_s_cedar1_deadT_gfx_model[];
+extern Gfx obj_s_cedar2T_mat_model[];
+extern Gfx obj_s_cedar2T_gfx_model[];
+extern Gfx obj_s_cedar3_leafT_mat_model[];
+extern Gfx obj_s_cedar3_leafT_gfx_model[];
+extern Gfx obj_s_cedar3_trunkT_mat_model[];
+extern Gfx obj_s_cedar3_trunkT_gfx_model[];
+extern Gfx obj_s_cedar4_trunkT_mat_model[];
+extern Gfx obj_s_cedar4_trunkT_gfx_model[];
+extern Gfx obj_s_cedar4_leafT_mat_model[];
+extern Gfx obj_s_cedar4_leafT_gfx_model[];
+extern Gfx obj_s_cedar5_leafT_mat_model[];
+extern Gfx obj_s_cedar5_leafT_gfx_model[];
+extern Gfx obj_s_cedar5_trunkT_mat_model[];
+extern Gfx obj_s_cedar5_trunkT_gfx_model[];
+
+static Gfx* Cedar_DL_table[] = {
+    obj_cedar3_shadowT_mat_model,  obj_cedar3_shadowT_gfx_model,  obj_cedar4_shadowT_mat_model,
+    obj_cedar4_shadowT_gfx_model,  obj_cedar5_shadowT_mat_model,  obj_cedar5_shadowT_gfx_model,
+    obj_s_cedar1T_mat_model,       obj_s_cedar1T_gfx_model,       obj_s_cedar1_deadT_mat_model,
+    obj_s_cedar1_deadT_gfx_model,  obj_s_cedar2T_mat_model,       obj_s_cedar2T_gfx_model,
+    obj_s_cedar3_leafT_mat_model,  obj_s_cedar3_leafT_gfx_model,  obj_s_cedar3_trunkT_mat_model,
+    obj_s_cedar3_trunkT_gfx_model, obj_s_cedar4_trunkT_mat_model, obj_s_cedar4_trunkT_gfx_model,
+    obj_s_cedar4_leafT_mat_model,  obj_s_cedar4_leafT_gfx_model,  obj_s_cedar5_leafT_mat_model,
+    obj_s_cedar5_leafT_gfx_model,  obj_s_cedar5_trunkT_mat_model, obj_s_cedar5_trunkT_gfx_model,
+};
+
+static bg_item_draw_list_c cedar3_shadow_list = { &bg_item_common_s_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c cedar4_shadow_list = { &bg_item_common_s_draw_loop_type1, 2, 3 }; // @unused
+
+static bg_item_draw_list_c cedar5_shadow_list = { &bg_item_common_s_draw_loop_type1, 4, 5 }; // @unused
+
+static bg_item_draw_list_c cedar1_list = { &bg_item_common_draw_loop_type1, 6, 7 };
+
+static bg_item_draw_list_c cedar1_dead_list = { &bg_item_common_draw_loop_type1, 8, 9 };
+
+static bg_item_draw_list_c cedar2_list = { &bg_item_common_draw_loop_type1, 10, 11 };
+
+static bg_item_draw_list_c cedar3_leaf_list = { &bg_item_common_draw_loop_type1, 12, 13 };
+
+static bg_item_draw_list_c cedar3_trunk_list = { &bg_item_common_draw_loop_type1, 14, 15 };
+
+static bg_item_draw_list_c cedar4_leaf_list = { &bg_item_common_draw_loop_type1, 18, 19 };
+
+static bg_item_draw_list_c cedar4_trunk_list = { &bg_item_common_draw_loop_type1, 16, 17 };
+
+static bg_item_draw_list_c cedar5_leaf_list = { &bg_item_common_draw_loop_type1, 20, 21 };
+
+static bg_item_draw_list_c cedar5_trunk_list = { &bg_item_common_draw_loop_type1, 22, 23 };
+
+static bg_item_draw_list_c* cedar1_list_table[] = {
+    &cedar1_list,
+};
+
+static bg_item_draw_list_c* cedar1_dead_list_table[] = {
+    &cedar1_dead_list,
+};
+
+static bg_item_draw_list_c* cedar2_list_table[] = {
+    &cedar2_list,
+};
+
+static bg_item_draw_list_c* cedar3_list_table[] = {
+    &cedar3_leaf_list,
+    &cedar3_trunk_list,
+};
+
+static bg_item_draw_list_c* cedar4_list_table[] = {
+    &cedar4_leaf_list,
+    &cedar4_trunk_list,
+};
+
+static bg_item_draw_list_c* cedar5_list_table[] = {
+    &cedar5_leaf_list,
+    &cedar5_trunk_list,
+};
+
+static u8 cedar_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+static bg_item_draw_part_c cedar000_part = {
+    Cedar_DL_table, 1, cedar1_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_part_c cedar001_part = {
+    Cedar_DL_table, 1, cedar2_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Vtx obj_cedar3_shadow_v[];
+
+static bg_item_draw_part_c cedar002_part = {
+    Cedar_DL_table, 2, cedar3_list_table, 4, obj_cedar3_shadow_v, 30.0f, cedar_shadow_v_fix, &cedar3_shadow_list,
+};
+
+extern Vtx obj_cedar4_shadow_v[];
+
+static bg_item_draw_part_c cedar003_part = {
+    Cedar_DL_table, 2, cedar4_list_table, 4, obj_cedar4_shadow_v, 45.0f, cedar_shadow_v_fix, &cedar3_shadow_list,
+};
+
+extern Vtx obj_cedar5_shadow_v[];
+
+static bg_item_draw_part_c cedar004_part = {
+    Cedar_DL_table, 2, cedar5_list_table, 4, obj_cedar5_shadow_v, 60.0f, cedar_shadow_v_fix, &cedar3_shadow_list,
+};
+
+static bg_item_draw_part_c cedar000_dead_part = {
+    Cedar_DL_table, 1, cedar1_dead_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_s_gold_tree1T_mat_model[];
+extern Gfx obj_s_tree1T_gfx_model[];
+extern Gfx obj_s_gold_tree1_deadT_mat_model[];
+extern Gfx obj_s_tree1_deadT_gfx_model[];
+extern Gfx obj_s_gold_tree2T_mat_model[];
+extern Gfx obj_s_tree2T_gfx_model[];
+extern Gfx obj_s_gold_tree3_leafT_mat_model[];
+extern Gfx obj_s_tree3_leafT_gfx_model[];
+extern Gfx obj_s_gold_tree3_trunkT_mat_model[];
+extern Gfx obj_s_tree3_trunkT_gfx_model[];
+extern Gfx obj_s_gold_tree4_leafT_mat_model[];
+extern Gfx obj_s_tree4_leafT_gfx_model[];
+extern Gfx obj_s_gold_tree4_trunkT_mat_model[];
+extern Gfx obj_s_tree4_trunkT_gfx_model[];
+extern Gfx obj_s_gold_tree5_leafT_mat_model[];
+extern Gfx obj_s_tree5_leafT_gfx_model[];
+extern Gfx obj_s_gold_tree5_trunkT_mat_model[];
+extern Gfx obj_s_tree5_trunkT_gfx_model[];
+extern Gfx obj_tree3_shadowT_mat_model[];
+extern Gfx obj_tree3_shadowT_gfx_model[];
+extern Gfx obj_tree4_shadowT_mat_model[];
+extern Gfx obj_tree4_shadowT_gfx_model[];
+extern Gfx obj_tree5_shadowT_mat_model[];
+extern Gfx obj_tree5_shadowT_gfx_model[];
+
+static Gfx* GTree_DL_table[] = {
+    obj_s_gold_tree1T_mat_model,       obj_s_tree1T_gfx_model,
+    obj_s_gold_tree1_deadT_mat_model,  obj_s_tree1_deadT_gfx_model,
+    obj_s_gold_tree2T_mat_model,       obj_s_tree2T_gfx_model,
+    obj_s_gold_tree3_leafT_mat_model,  obj_s_tree3_leafT_gfx_model,
+    obj_s_gold_tree3_trunkT_mat_model, obj_s_tree3_trunkT_gfx_model,
+    obj_s_gold_tree4_leafT_mat_model,  obj_s_tree4_leafT_gfx_model,
+    obj_s_gold_tree4_trunkT_mat_model, obj_s_tree4_trunkT_gfx_model,
+    obj_s_gold_tree5_leafT_mat_model,  obj_s_tree5_leafT_gfx_model,
+    obj_s_gold_tree5_trunkT_mat_model, obj_s_tree5_trunkT_gfx_model,
+    obj_tree3_shadowT_mat_model,       obj_tree3_shadowT_gfx_model,
+    obj_tree4_shadowT_mat_model,       obj_tree4_shadowT_gfx_model,
+    obj_tree5_shadowT_mat_model,       obj_tree5_shadowT_gfx_model,
+};
+
+static bg_item_draw_list_c gold_tree1_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c gold_tree1_dead_list = { &bg_item_common_draw_loop_type1, 2, 3 };
+
+static bg_item_draw_list_c gold_tree2_list = { &bg_item_common_draw_loop_type1, 4, 5 };
+
+static bg_item_draw_list_c gold_tree3_leaf_list = { &bg_item_common_draw_loop_type1, 6, 7 };
+
+static bg_item_draw_list_c gold_tree3_trunk_list = { &bg_item_common_draw_loop_type1, 8, 9 };
+
+static bg_item_draw_list_c gold_tree4_leaf_list = { &bg_item_common_draw_loop_type1, 10, 11 };
+
+static bg_item_draw_list_c gold_tree4_trunk_list = { &bg_item_common_draw_loop_type1, 12, 13 };
+
+static bg_item_draw_list_c gold_tree5_leaf_list = { &bg_item_common_draw_loop_type1, 14, 15 };
+
+static bg_item_draw_list_c gold_tree5_trunk_list = { &bg_item_common_draw_loop_type1, 16, 17 };
+
+static bg_item_draw_list_c gold_tree3_shadow_list = { &bg_item_common_s_draw_loop_type1, 18, 19 };
+
+static bg_item_draw_list_c gold_tree4_shadow_list = { &bg_item_common_s_draw_loop_type1, 20, 21 };
+
+static bg_item_draw_list_c gold_tree5_shadow_list = { &bg_item_common_s_draw_loop_type1, 22, 23 };
+
+static bg_item_draw_list_c* gold_tree1_list_table[] = {
+    &gold_tree1_list,
+};
+
+static bg_item_draw_list_c* gold_tree1_dead_list_table[] = {
+    &gold_tree1_dead_list,
+};
+
+static bg_item_draw_list_c* gold_tree2_list_table[] = {
+    &gold_tree2_list,
+};
+
+static bg_item_draw_list_c* gold_tree3_list_table[] = {
+    &gold_tree3_leaf_list,
+    &gold_tree3_trunk_list,
+};
+
+static bg_item_draw_list_c* gold_tree4_list_table[] = {
+    &gold_tree4_leaf_list,
+    &gold_tree4_trunk_list,
+};
+
+static bg_item_draw_list_c* gold_tree5_list_table[] = {
+    &gold_tree5_leaf_list,
+    &gold_tree5_trunk_list,
+};
+
+static u8 gold_tree_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+static bg_item_draw_part_c gold_tree000_part = {
+    GTree_DL_table, 1, gold_tree1_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_part_c gold_tree001_part = {
+    GTree_DL_table, 1, gold_tree2_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Vtx obj_tree3_shadow_v[];
+
+static bg_item_draw_part_c gold_tree002_part = {
+    GTree_DL_table,     2,     gold_tree3_list_table,  4,
+    obj_tree3_shadow_v, 30.0f, gold_tree_shadow_v_fix, &gold_tree3_shadow_list,
+};
+
+extern Vtx obj_tree4_shadow_v[];
+
+static bg_item_draw_part_c gold_tree003_part = {
+    GTree_DL_table,     2,     gold_tree4_list_table,  4,
+    obj_tree4_shadow_v, 45.0f, gold_tree_shadow_v_fix, &gold_tree4_shadow_list,
+};
+
+extern Vtx obj_tree5_shadow_v[];
+
+static bg_item_draw_part_c gold_tree004_part = {
+    GTree_DL_table,     2,     gold_tree5_list_table,  4,
+    obj_tree5_shadow_v, 60.0f, gold_tree_shadow_v_fix, &gold_tree5_shadow_list,
+};
+
+static bg_item_draw_part_c gold_tree000_dead_part = {
+    GTree_DL_table, 1, gold_tree1_dead_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_stump5T_mat_model[];
+extern Gfx obj_stump5T_gfx_model[];
+extern Gfx obj_stump5_shadowT_mat_model[];
+extern Gfx obj_stump5_shadowT_gfx_model[];
+extern Gfx obj_stump4T_mat_model[];
+extern Gfx obj_stump4T_gfx_model[];
+extern Gfx obj_stump4_shadowT_mat_model[];
+extern Gfx obj_stump4_shadowT_gfx_model[];
+extern Gfx obj_stump3T_mat_model[];
+extern Gfx obj_stump3T_gfx_model[];
+extern Gfx obj_stump3_shadowT_mat_model[];
+extern Gfx obj_stump3_shadowT_gfx_model[];
+extern Gfx obj_stump2T_mat_model[];
+extern Gfx obj_stump2T_gfx_model[];
+
+static Gfx* stump_DL_table[] = {
+    obj_stump5T_mat_model, obj_stump5T_gfx_model, obj_stump5_shadowT_mat_model, obj_stump5_shadowT_gfx_model,
+    obj_stump4T_mat_model, obj_stump4T_gfx_model, obj_stump4_shadowT_mat_model, obj_stump4_shadowT_gfx_model,
+    obj_stump3T_mat_model, obj_stump3T_gfx_model, obj_stump3_shadowT_mat_model, obj_stump3_shadowT_gfx_model,
+    obj_stump2T_mat_model, obj_stump2T_gfx_model,
+};
+
+static bg_item_draw_list_c stump_list0 = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c stump_shadow_list0 = { &bg_item_common_s_draw_loop_type1, 2, 3 };
+
+static bg_item_draw_list_c stump_list1 = { &bg_item_common_draw_loop_type1, 4, 5 };
+
+static bg_item_draw_list_c stump_shadow_list1 = { &bg_item_common_s_draw_loop_type1, 6, 7 };
+
+static bg_item_draw_list_c stump_list2 = { &bg_item_common_draw_loop_type1, 8, 9 };
+
+static bg_item_draw_list_c stump_shadow_list2 = { &bg_item_common_s_draw_loop_type1, 10, 11 };
+
+static bg_item_draw_list_c stump_list3 = { &bg_item_common_draw_loop_type1, 12, 13 };
+
+static bg_item_draw_list_c* stump_list_table0[] = {
+    &stump_list0,
+};
+
+static bg_item_draw_list_c* stump_list_table1[] = {
+    &stump_list1,
+};
+
+static bg_item_draw_list_c* stump_list_table2[] = {
+    &stump_list2,
+};
+
+static bg_item_draw_list_c* stump_list_table3[] = {
+    &stump_list3,
+};
+
+static u8 stump_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+extern Vtx obj_stump5_shadow_v[];
+
+static bg_item_draw_part_c stump_part4 = {
+    stump_DL_table, 1, stump_list_table0, 4, obj_stump5_shadow_v, 50.0f, stump_shadow_v_fix, &stump_shadow_list0,
+};
+
+extern Vtx obj_stump4_shadow_v[];
+
+static bg_item_draw_part_c stump_part3 = {
+    stump_DL_table, 1, stump_list_table1, 4, obj_stump4_shadow_v, 45.0f, stump_shadow_v_fix, &stump_shadow_list1,
+};
+
+extern Vtx obj_stump3_shadow_v[];
+
+static bg_item_draw_part_c stump_part2 = {
+    stump_DL_table, 1, stump_list_table2, 4, obj_stump3_shadow_v, 30.0f, stump_shadow_v_fix, &stump_shadow_list2,
+};
+
+static bg_item_draw_part_c stump_part1 = {
+    stump_DL_table, 1, stump_list_table3, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_pstump3_shadowT_mat_model[];
+extern Gfx obj_pstump3_shadowT_gfx_model[];
+extern Gfx obj_pstump4_shadowT_mat_model[];
+extern Gfx obj_pstump4_shadowT_gfx_model[];
+extern Gfx obj_pstump5_shadowT_mat_model[];
+extern Gfx obj_pstump5_shadowT_gfx_model[];
+extern Gfx obj_s_pstump2T_mat_model[];
+extern Gfx obj_s_pstump2T_gfx_model[];
+extern Gfx obj_s_pstump3T_mat_model[];
+extern Gfx obj_s_pstump3T_gfx_model[];
+extern Gfx obj_s_pstump4T_mat_model[];
+extern Gfx obj_s_pstump4T_gfx_model[];
+extern Gfx obj_s_spstump5T_mat_model[];
+extern Gfx obj_s_spstump5T_gfx_model[];
+
+static Gfx* palm_stump_DL_table[] = {
+    obj_pstump3_shadowT_mat_model, obj_pstump3_shadowT_gfx_model, obj_pstump4_shadowT_mat_model,
+    obj_pstump4_shadowT_gfx_model, obj_pstump5_shadowT_mat_model, obj_pstump5_shadowT_gfx_model,
+    obj_s_pstump2T_mat_model,      obj_s_pstump2T_gfx_model,      obj_s_pstump3T_mat_model,
+    obj_s_pstump3T_gfx_model,      obj_s_pstump4T_mat_model,      obj_s_pstump4T_gfx_model,
+    obj_s_spstump5T_mat_model,     obj_s_spstump5T_gfx_model,
+};
+
+static bg_item_draw_list_c pstump3_shadow_list = { &bg_item_common_s_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c pstump4_shadow_list = { &bg_item_common_s_draw_loop_type1, 2, 3 };
+
+static bg_item_draw_list_c pstump5_shadow_list = { &bg_item_common_s_draw_loop_type1, 4, 5 };
+
+static bg_item_draw_list_c pstump2_list = { &bg_item_common_draw_loop_type1, 6, 7 };
+
+static bg_item_draw_list_c pstump3_list = { &bg_item_common_draw_loop_type1, 8, 9 };
+
+static bg_item_draw_list_c pstump4_list = { &bg_item_common_draw_loop_type1, 10, 11 };
+
+static bg_item_draw_list_c pstump5_list = { &bg_item_common_draw_loop_type1, 12, 13 };
+
+static bg_item_draw_list_c* pstump2_list_table[] = {
+    &pstump2_list,
+};
+
+static bg_item_draw_list_c* pstump3_list_table[] = {
+    &pstump3_list,
+};
+
+static bg_item_draw_list_c* pstump4_list_table[] = {
+    &pstump4_list,
+};
+
+static bg_item_draw_list_c* pstump5_list_table[] = {
+    &pstump5_list,
+};
+
+static u8 pstump3_shadow_v_fix[] = {
+    0,
+    1,
+    1,
+    0,
+};
+
+static u8 pstump5_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+static bg_item_draw_part_c palm_stump001_part = {
+    palm_stump_DL_table, 1, pstump2_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Vtx obj_pstump3_shadow_v[];
+
+static bg_item_draw_part_c palm_stump002_part = {
+    palm_stump_DL_table,  1,     pstump3_list_table,   4,
+    obj_pstump3_shadow_v, 30.0f, pstump3_shadow_v_fix, &pstump3_shadow_list,
+};
+
+extern Vtx obj_pstump4_shadow_v[];
+
+static bg_item_draw_part_c palm_stump003_part = {
+    palm_stump_DL_table,  1,     pstump4_list_table,   4,
+    obj_pstump4_shadow_v, 45.0f, pstump3_shadow_v_fix, &pstump4_shadow_list,
+};
+
+extern Vtx obj_pstump5_shadow_v[];
+
+static bg_item_draw_part_c palm_stump004_part = {
+    palm_stump_DL_table,  1,     pstump5_list_table,   4,
+    obj_pstump5_shadow_v, 50.0f, pstump5_shadow_v_fix, &pstump5_shadow_list,
+};
+
+extern Gfx obj_cstump3_shadowT_mat_model[];
+extern Gfx obj_cstump3_shadowT_gfx_model[];
+extern Gfx obj_cstump4_shadowT_mat_model[];
+extern Gfx obj_cstump4_shadowT_gfx_model[];
+extern Gfx obj_cstump5_shadowT_mat_model[];
+extern Gfx obj_cstump5_shadowT_gfx_model[];
+extern Gfx obj_s_cstump2T_mat_model[];
+extern Gfx obj_s_cstump2T_gfx_model[];
+extern Gfx obj_s_cstump3T_mat_model[];
+extern Gfx obj_s_cstump3T_gfx_model[];
+extern Gfx obj_s_cstump4T_mat_model[];
+extern Gfx obj_s_cstump4T_gfx_model[];
+extern Gfx obj_s_cstump5T_mat_model[];
+extern Gfx obj_s_cstump5T_gfx_model[];
+
+static Gfx* CedarStump_DL_table[] = {
+    obj_cstump3_shadowT_mat_model, obj_cstump3_shadowT_gfx_model, obj_cstump4_shadowT_mat_model,
+    obj_cstump4_shadowT_gfx_model, obj_cstump5_shadowT_mat_model, obj_cstump5_shadowT_gfx_model,
+    obj_s_cstump2T_mat_model,      obj_s_cstump2T_gfx_model,      obj_s_cstump3T_mat_model,
+    obj_s_cstump3T_gfx_model,      obj_s_cstump4T_mat_model,      obj_s_cstump4T_gfx_model,
+    obj_s_cstump5T_mat_model,      obj_s_cstump5T_gfx_model,
+};
+
+static bg_item_draw_list_c cstump3_shadow_list = { &bg_item_common_s_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c cstump4_shadow_list = { &bg_item_common_s_draw_loop_type1, 2, 3 };
+
+static bg_item_draw_list_c cstump5_shadow_list = { &bg_item_common_s_draw_loop_type1, 4, 5 };
+
+static bg_item_draw_list_c cstump2_list = { &bg_item_common_draw_loop_type1, 6, 7 };
+
+static bg_item_draw_list_c cstump3_list = { &bg_item_common_draw_loop_type1, 8, 9 };
+
+static bg_item_draw_list_c cstump4_list = { &bg_item_common_draw_loop_type1, 10, 11 };
+
+static bg_item_draw_list_c cstump5_list = { &bg_item_common_draw_loop_type1, 12, 13 };
+
+static bg_item_draw_list_c* cstump2_list_table[] = {
+    &cstump2_list,
+};
+
+static bg_item_draw_list_c* cstump3_list_table[] = {
+    &cstump3_list,
+};
+
+static bg_item_draw_list_c* cstump4_list_table[] = {
+    &cstump4_list,
+};
+
+static bg_item_draw_list_c* cstump5_list_table[] = {
+    &cstump5_list,
+};
+
+static u8 cstump_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+static bg_item_draw_part_c cedar_stump001_part = {
+    CedarStump_DL_table, 1, cstump2_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Vtx obj_cstump3_shadow_v[];
+
+static bg_item_draw_part_c cedar_stump002_part = {
+    CedarStump_DL_table,  1,     cstump3_list_table,  4,
+    obj_cstump3_shadow_v, 30.0f, cstump_shadow_v_fix, &cstump3_shadow_list,
+};
+
+extern Vtx obj_cstump4_shadow_v[];
+
+static bg_item_draw_part_c cedar_stump003_part = {
+    CedarStump_DL_table,  1,     cstump4_list_table,  4,
+    obj_cstump4_shadow_v, 45.0f, cstump_shadow_v_fix, &cstump4_shadow_list,
+};
+
+extern Vtx obj_cstump5_shadow_v[];
+
+static bg_item_draw_part_c cedar_stump004_part = {
+    CedarStump_DL_table,  1,     cstump5_list_table,  4,
+    obj_cstump5_shadow_v, 50.0f, cstump_shadow_v_fix, &cstump5_shadow_list,
+};
+
+extern Gfx obj_gold_stump2T_mat_model[];
+extern Gfx obj_stump2T_gfx_model[];
+extern Gfx obj_gold_stump3T_mat_model[];
+extern Gfx obj_stump3T_gfx_model[];
+extern Gfx obj_gold_stump4T_mat_model[];
+extern Gfx obj_stump4T_gfx_model[];
+extern Gfx obj_gold_stump5T_mat_model[];
+extern Gfx obj_stump5T_gfx_model[];
+extern Gfx obj_stump3_shadowT_mat_model[];
+extern Gfx obj_stump3_shadowT_gfx_model[];
+extern Gfx obj_stump4_shadowT_mat_model[];
+extern Gfx obj_stump4_shadowT_gfx_model[];
+extern Gfx obj_stump5_shadowT_mat_model[];
+extern Gfx obj_stump5_shadowT_gfx_model[];
+
+static Gfx* GStump_DL_table[] = {
+    obj_gold_stump2T_mat_model,   obj_stump2T_gfx_model,        obj_gold_stump3T_mat_model,
+    obj_stump3T_gfx_model,        obj_gold_stump4T_mat_model,   obj_stump4T_gfx_model,
+    obj_gold_stump5T_mat_model,   obj_stump5T_gfx_model,        obj_stump3_shadowT_mat_model,
+    obj_stump3_shadowT_gfx_model, obj_stump4_shadowT_mat_model, obj_stump4_shadowT_gfx_model,
+    obj_stump5_shadowT_mat_model, obj_stump5_shadowT_gfx_model,
+};
+
+static bg_item_draw_list_c gold_stump2_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c gold_stump3_list = { &bg_item_common_draw_loop_type1, 2, 3 };
+
+static bg_item_draw_list_c gold_stump4_list = { &bg_item_common_draw_loop_type1, 4, 5 };
+
+static bg_item_draw_list_c gold_stump5_list = { &bg_item_common_draw_loop_type1, 6, 7 };
+
+static bg_item_draw_list_c gold_stump3_shadow_list = { &bg_item_common_s_draw_loop_type1, 8, 9 };
+
+static bg_item_draw_list_c gold_stump4_shadow_list = { &bg_item_common_s_draw_loop_type1, 10, 11 };
+
+static bg_item_draw_list_c gold_stump5_shadow_list = { &bg_item_common_s_draw_loop_type1, 12, 13 };
+
+static bg_item_draw_list_c* gold_stump2_list_table[] = {
+    &gold_stump2_list,
+};
+
+static bg_item_draw_list_c* gold_stump3_list_table[] = {
+    &gold_stump3_list,
+};
+
+static bg_item_draw_list_c* gold_stump4_list_table[] = {
+    &gold_stump4_list,
+};
+
+static bg_item_draw_list_c* gold_stump5_list_table[] = {
+    &gold_stump5_list,
+};
+
+static u8 gold_stump_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+static bg_item_draw_part_c gold_tree_stump001_part = {
+    GStump_DL_table, 1, gold_stump2_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Vtx obj_stump3_shadow_v[];
+
+static bg_item_draw_part_c gold_tree_stump002_part = {
+    GStump_DL_table,     1,     gold_stump3_list_table,  4,
+    obj_stump3_shadow_v, 30.0f, gold_stump_shadow_v_fix, &gold_stump3_shadow_list,
+};
+
+extern Vtx obj_stump4_shadow_v[];
+
+static bg_item_draw_part_c gold_tree_stump003_part = {
+    GStump_DL_table,     1,     gold_stump4_list_table,  4,
+    obj_stump4_shadow_v, 45.0f, gold_stump_shadow_v_fix, &gold_stump4_shadow_list,
+};
+
+extern Vtx obj_stump5_shadow_v[];
+
+static bg_item_draw_part_c gold_tree_stump004_part = {
+    GStump_DL_table,     1,     gold_stump5_list_table,  4,
+    obj_stump5_shadow_v, 50.0f, gold_stump_shadow_v_fix, &gold_stump5_shadow_list,
+};
+
+extern Gfx obj_s_fenceLT_mat_model[];
+extern Gfx obj_s_fenceLT_gfx_model[];
+extern Gfx obj_fenceL_shadowT_mat_model[];
+extern Gfx obj_fenceL_shadowT_gfx_model[];
+
+static Gfx* fence_DL_table[] = {
+    obj_s_fenceLT_mat_model,
+    obj_s_fenceLT_gfx_model,
+    obj_fenceL_shadowT_mat_model,
+    obj_fenceL_shadowT_gfx_model,
+};
+
+static bg_item_draw_list_c fence_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* fence_list_table[] = {
+    &fence_list,
+};
+
+static bg_item_draw_list_c fence_shadow_list = { &bg_item_common_s_draw_loop_type1, 2, 3 };
+
+static u8 fence_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+extern Vtx obj_fenceL_shadow_v[];
+
+static bg_item_draw_part_c fence_part = {
+    fence_DL_table, 1, fence_list_table, 4, obj_fenceL_shadow_v, 40.0f, fence_shadow_v_fix, &fence_shadow_list,
+};
+
+extern Gfx obj_s_noticeT_mat_model[];
+extern Gfx obj_s_noticeT_gfx_model[];
+extern Gfx obj_notice_shadowT_mat_model[];
+extern Gfx obj_notice_shadowT_gfx_model[];
+
+static Gfx* notice_DL_table[] = {
+    obj_s_noticeT_mat_model,
+    obj_s_noticeT_gfx_model,
+    obj_notice_shadowT_mat_model,
+    obj_notice_shadowT_gfx_model,
+};
+
+static bg_item_draw_list_c notice_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* notice_list_table[] = {
+    &notice_list,
+};
+
+static bg_item_draw_list_c notice_shadow_list = { &bg_item_common_s_draw_loop_type1, 2, 3 };
+
+static u8 notice_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+extern Vtx obj_notice_shadow_v[];
+
+static bg_item_draw_part_c notice_part = {
+    notice_DL_table, 1, notice_list_table, 4, obj_notice_shadow_v, 60.0f, notice_shadow_v_fix, &notice_shadow_list,
+};
+
+extern Gfx obj_s_melodyT_mat_model[];
+extern Gfx obj_s_melodyT_gfx_model[];
+extern Gfx obj_melody_shadowT_mat_model[];
+extern Gfx obj_melody_shadowT_gfx_model[];
+
+static Gfx* melody_DL_table[] = {
+    obj_s_melodyT_mat_model,
+    obj_s_melodyT_gfx_model,
+    obj_melody_shadowT_mat_model,
+    obj_melody_shadowT_gfx_model,
+};
+
+static bg_item_draw_list_c melody_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* melody_list_table[] = {
+    &melody_list,
+};
+
+static bg_item_draw_list_c melody_shadow_list = { &bg_item_common_s_draw_loop_type1, 2, 3 };
+
+static u8 melody_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+extern Vtx obj_melody_shadow_v[];
+
+static bg_item_draw_part_c melody_part = {
+    melody_DL_table, 1, melody_list_table, 4, obj_melody_shadow_v, 60.0f, melody_shadow_v_fix, &melody_shadow_list,
+};
+
+extern Gfx obj_s_sightmapT_mat_model[];
+extern Gfx obj_s_sightmapT_gfx_model[];
+extern Gfx obj_sightmap_shadowT_mat_model[];
+extern Gfx obj_sightmap_shadowT_gfx_model[];
+
+static Gfx* mapboard_DL_table[] = {
+    obj_s_sightmapT_mat_model,
+    obj_s_sightmapT_gfx_model,
+    obj_sightmap_shadowT_mat_model,
+    obj_sightmap_shadowT_gfx_model,
+};
+
+static bg_item_draw_list_c mapboard_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* mapboard_list_table[] = {
+    &mapboard_list,
+};
+
+static bg_item_draw_list_c mapboard_shadow_list = { &bg_item_common_s_draw_loop_type1, 2, 3 };
+
+static u8 mapboard_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+extern Vtx obj_sightmap_shadow_v[];
+
+static bg_item_draw_part_c mapboard_part = {
+    mapboard_DL_table,     1,     mapboard_list_table,   4,
+    obj_sightmap_shadow_v, 60.0f, mapboard_shadow_v_fix, &mapboard_shadow_list,
+};
+
+extern Gfx obj_flower_aT_mat_model[];
+extern Gfx obj_flower_bT_mat_model[];
+extern Gfx obj_flower_cT_mat_model[];
+extern Gfx obj_flower_aT_gfx_model[];
+extern Gfx obj_flower_bT_gfx_model[];
+extern Gfx obj_flower_cT_gfx_model[];
+extern Gfx obj_flower_leafT_mat_model[];
+extern Gfx obj_flower_leafT_gfx_model[];
+
+static Gfx* flower_DL_table[] = {
+    obj_flower_aT_mat_model, obj_flower_bT_mat_model, obj_flower_cT_mat_model,    obj_flower_aT_gfx_model,
+    obj_flower_bT_gfx_model, obj_flower_cT_gfx_model, obj_flower_leafT_mat_model, obj_flower_leafT_gfx_model,
+};
+
+static bg_item_draw_list_c flower_list00 = { &bg_item_common_draw_loop_type1, 0, 3 };
+
+static bg_item_draw_list_c flower_list01 = { &bg_item_common_draw_loop_type1, 1, 3 };
+
+static bg_item_draw_list_c flower_list02 = { &bg_item_common_draw_loop_type1, 2, 3 };
+
+static bg_item_draw_list_c flower_leaf_list = { &bg_item_common_draw_loop_type1, 6, 7 };
+
+static bg_item_draw_list_c* flower_list_table00[] = {
+    &flower_list00,
+};
+
+static bg_item_draw_list_c* flower_list_table01[] = {
+    &flower_list01,
+};
+
+static bg_item_draw_list_c* flower_list_table02[] = {
+    &flower_list02,
+};
+
+static bg_item_draw_list_c* flower_leaf_list_table[] = {
+    &flower_leaf_list,
+};
+
+static bg_item_draw_part_c flower_leaf_part = {
+    flower_DL_table, 1, flower_leaf_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_part_c flower_part00 = {
+    flower_DL_table, 1, flower_list_table00, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_part_c flower_part01 = {
+    flower_DL_table, 1, flower_list_table01, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_part_c flower_part02 = {
+    flower_DL_table, 1, flower_list_table02, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_zassou_aT_mat_model[];
+extern Gfx obj_zassou_aT_gfx_model[];
+extern Gfx obj_zassou_bT_gfx_model[];
+extern Gfx obj_zassou_cT_gfx_model[];
+
+static Gfx* grass_DL_table[] = {
+    obj_zassou_aT_mat_model,
+    obj_zassou_aT_gfx_model,
+    obj_zassou_bT_gfx_model,
+    obj_zassou_cT_gfx_model,
+};
+
+static bg_item_draw_list_c grass_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* grass_list_table[] = {
+    &grass_list,
+};
+
+static bg_item_draw_part_c grass_part = {
+    grass_DL_table, 1, grass_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_s_fenceST_mat_model[];
+extern Gfx obj_s_fenceST_gfx_model[];
+extern Gfx obj_fenceS_shadowT_mat_model[];
+extern Gfx obj_fenceS_shadowT_gfx_model[];
+
+static Gfx* fences_DL_table[] = {
+    obj_s_fenceST_mat_model,
+    obj_s_fenceST_gfx_model,
+    obj_fenceS_shadowT_mat_model,
+    obj_fenceS_shadowT_gfx_model,
+};
+
+static bg_item_draw_list_c fences_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* fences_list_table[] = {
+    &fences_list,
+};
+
+static bg_item_draw_list_c fences_shadow_list = { &bg_item_common_s_draw_loop_type1, 2, 3 };
+
+static u8 fences_shadow_v_fix[] = {
+    1,
+    0,
+    0,
+    1,
+};
+
+extern Vtx obj_fenceS_shadow_v[];
+
+static bg_item_draw_part_c fences_part = {
+    fences_DL_table, 1, fences_list_table, 4, obj_fenceS_shadow_v, 40.0f, fences_shadow_v_fix, &fences_shadow_list,
+};
+
+extern Gfx obj_hole0T_g_mat_model[];
+extern Gfx obj_hole0T_s_mat_model[];
+extern Gfx obj_hole0T_gfx_model[];
+extern Gfx obj_hole1T_gfx_model[];
+extern Gfx obj_hole2T_gfx_model[];
+extern Gfx obj_hole3T_gfx_model[];
+extern Gfx obj_hole4T_gfx_model[];
+extern Gfx obj_hole5T_gfx_model[];
+extern Gfx obj_hole6T_gfx_model[];
+extern Gfx obj_hole7T_gfx_model[];
+extern Gfx obj_hole8T_gfx_model[];
+extern Gfx obj_hole9T_gfx_model[];
+extern Gfx obj_hole10T_gfx_model[];
+extern Gfx obj_hole11T_gfx_model[];
+extern Gfx obj_hole12T_gfx_model[];
+extern Gfx obj_hole13T_gfx_model[];
+extern Gfx obj_hole14T_gfx_model[];
+extern Gfx obj_hole15T_gfx_model[];
+extern Gfx obj_hole16T_gfx_model[];
+extern Gfx obj_hole17T_gfx_model[];
+extern Gfx obj_hole18T_gfx_model[];
+extern Gfx obj_hole19T_gfx_model[];
+extern Gfx obj_hole20T_gfx_model[];
+extern Gfx obj_hole21T_gfx_model[];
+extern Gfx obj_hole22T_gfx_model[];
+extern Gfx obj_hole23T_gfx_model[];
+extern Gfx obj_hole24T_gfx_model[];
+
+static Gfx* hole_DL_table[] = {
+    obj_hole0T_g_mat_model, obj_hole0T_s_mat_model, obj_hole0T_gfx_model,  obj_hole1T_gfx_model,  obj_hole2T_gfx_model,
+    obj_hole3T_gfx_model,   obj_hole4T_gfx_model,   obj_hole5T_gfx_model,  obj_hole6T_gfx_model,  obj_hole7T_gfx_model,
+    obj_hole8T_gfx_model,   obj_hole9T_gfx_model,   obj_hole10T_gfx_model, obj_hole11T_gfx_model, obj_hole12T_gfx_model,
+    obj_hole13T_gfx_model,  obj_hole14T_gfx_model,  obj_hole15T_gfx_model, obj_hole16T_gfx_model, obj_hole17T_gfx_model,
+    obj_hole18T_gfx_model,  obj_hole19T_gfx_model,  obj_hole20T_gfx_model, obj_hole21T_gfx_model, obj_hole22T_gfx_model,
+    obj_hole23T_gfx_model,  obj_hole24T_gfx_model,
+};
+
+static bg_item_draw_list_c hole00_g_list = { &bg_item_common_draw_loop_type1, 0, 2 };
+
+static bg_item_draw_list_c* hole00_g_list_table[] = {
+    &hole00_g_list,
+};
+
+static bg_item_draw_part_c hole00_g_part = {
+    hole_DL_table, 1, hole00_g_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_list_c hole00_s_list = { &bg_item_common_draw_loop_type1, 1, 2 };
+
+static bg_item_draw_list_c* hole00_s_list_table[] = {
+    &hole00_s_list,
+};
+
+static bg_item_draw_part_c hole00_s_part = {
+    hole_DL_table, 1, hole00_s_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_crack0T_g_mat_model[];
+extern Gfx obj_crack0T_s_mat_model[];
+extern Gfx obj_hole0T_gfx_model[];
+extern Gfx obj_hole1T_gfx_model[];
+extern Gfx obj_hole2T_gfx_model[];
+extern Gfx obj_hole3T_gfx_model[];
+extern Gfx obj_hole4T_gfx_model[];
+extern Gfx obj_hole5T_gfx_model[];
+extern Gfx obj_hole6T_gfx_model[];
+extern Gfx obj_hole7T_gfx_model[];
+extern Gfx obj_hole8T_gfx_model[];
+extern Gfx obj_hole9T_gfx_model[];
+extern Gfx obj_hole10T_gfx_model[];
+extern Gfx obj_hole11T_gfx_model[];
+extern Gfx obj_hole12T_gfx_model[];
+extern Gfx obj_hole13T_gfx_model[];
+extern Gfx obj_hole14T_gfx_model[];
+extern Gfx obj_hole15T_gfx_model[];
+extern Gfx obj_hole16T_gfx_model[];
+extern Gfx obj_hole17T_gfx_model[];
+extern Gfx obj_hole18T_gfx_model[];
+extern Gfx obj_hole19T_gfx_model[];
+extern Gfx obj_hole20T_gfx_model[];
+extern Gfx obj_hole21T_gfx_model[];
+extern Gfx obj_hole22T_gfx_model[];
+extern Gfx obj_hole23T_gfx_model[];
+extern Gfx obj_hole24T_gfx_model[];
+
+static Gfx* crack_DL_table[] = {
+    obj_crack0T_g_mat_model, obj_crack0T_s_mat_model, obj_hole0T_gfx_model,  obj_hole1T_gfx_model,
+    obj_hole2T_gfx_model,    obj_hole3T_gfx_model,    obj_hole4T_gfx_model,  obj_hole5T_gfx_model,
+    obj_hole6T_gfx_model,    obj_hole7T_gfx_model,    obj_hole8T_gfx_model,  obj_hole9T_gfx_model,
+    obj_hole10T_gfx_model,   obj_hole11T_gfx_model,   obj_hole12T_gfx_model, obj_hole13T_gfx_model,
+    obj_hole14T_gfx_model,   obj_hole15T_gfx_model,   obj_hole16T_gfx_model, obj_hole17T_gfx_model,
+    obj_hole18T_gfx_model,   obj_hole19T_gfx_model,   obj_hole20T_gfx_model, obj_hole21T_gfx_model,
+    obj_hole22T_gfx_model,   obj_hole23T_gfx_model,   obj_hole24T_gfx_model,
+};
+
+static bg_item_draw_list_c crack00_g_list = { &bg_item_common_draw_loop_type1, 0, 2 };
+
+static bg_item_draw_list_c* crack00_g_list_table[] = {
+    &crack00_g_list,
+};
+
+static bg_item_draw_part_c crack00_g_part = {
+    crack_DL_table, 1, crack00_g_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_list_c crack00_s_list = { &bg_item_common_draw_loop_type1, 1, 2 };
+
+static bg_item_draw_list_c* crack00_s_list_table[] = {
+    &crack00_s_list,
+};
+
+static bg_item_draw_part_c crack00_s_part = {
+    crack_DL_table, 1, crack00_s_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_s_honeycombT_mat_model[];
+extern Gfx obj_s_honeycombT_gfx_model[];
+
+static Gfx* honycomb_DL_table[] = {
+    obj_s_honeycombT_mat_model,
+    obj_s_honeycombT_gfx_model,
+};
+
+static bg_item_draw_list_c honycomb_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* honycomb_list_table[] = {
+    &honycomb_list,
+};
+
+static bg_item_draw_part_c honycomb_part = {
+    honycomb_DL_table, 1, honycomb_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static u8 stone_a_shadow_v_fix[] = {
+    1, 0, 0, 1, 0, 1, 0, 1, 1, 0,
+};
+
+static u8 stone_b_shadow_v_fix[] = {
+    1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0,
+};
+
+static u8 stone_c_shadow_v_fix[] = {
+    1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1,
+};
+
+static u8 stone_d_shadow_v_fix[] = {
+    1, 0, 0, 1, 1, 0, 0, 1,
+};
+
+static u8 stone_e_shadow_v_fix[] = {
+    1, 0, 0, 1, 1, 0, 0, 1, 1, 0,
+};
+
+extern Gfx obj_s_stoneA_mat_model[];
+extern Gfx obj_s_stoneA_gfx_model[];
+extern Gfx obj_s_stoneB_gfx_model[];
+extern Gfx obj_s_stoneC_gfx_model[];
+extern Gfx obj_s_stoneD_gfx_model[];
+extern Gfx obj_s_stoneE_gfx_model[];
+extern Gfx obj_stoneA_shadowT_mat_model[];
+extern Gfx obj_stoneA_shadowT_gfx_model[];
+extern Gfx obj_stoneB_shadowT_gfx_model[];
+extern Gfx obj_stoneC_shadowT_gfx_model[];
+extern Gfx obj_stoneD_shadowT_gfx_model[];
+extern Gfx obj_stoneE_shadowT_gfx_model[];
+
+static Gfx* stone_DL_table[] = {
+    obj_s_stoneA_mat_model,       obj_s_stoneA_gfx_model,       obj_s_stoneB_gfx_model,
+    obj_s_stoneC_gfx_model,       obj_s_stoneD_gfx_model,       obj_s_stoneE_gfx_model,
+    obj_stoneA_shadowT_mat_model, obj_stoneA_shadowT_gfx_model, obj_stoneB_shadowT_gfx_model,
+    obj_stoneC_shadowT_gfx_model, obj_stoneD_shadowT_gfx_model, obj_stoneE_shadowT_gfx_model,
+};
+
+static bg_item_draw_list_c stone_a_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c stone_a_shadow_list = { &bg_item_common_s_draw_loop_type1, 6, 7 };
+
+static bg_item_draw_list_c* stone_a_list_table[] = {
+    &stone_a_list,
+};
+
+extern Vtx obj_stoneA_shadow_v[];
+
+static bg_item_draw_part_c stone_a_part = {
+    stone_DL_table, 1, stone_a_list_table, 10, obj_stoneA_shadow_v, 30.0f, stone_a_shadow_v_fix, &stone_a_shadow_list,
+};
+
+extern Vtx obj_stoneB_shadow_v[];
+
+static bg_item_draw_part_c stone_b_part = {
+    stone_DL_table, 1, stone_a_list_table, 12, obj_stoneB_shadow_v, 20.0f, stone_b_shadow_v_fix, &stone_a_shadow_list,
+};
+
+extern Vtx obj_stoneC_shadow_v[];
+
+static bg_item_draw_part_c stone_c_part = {
+    stone_DL_table, 1, stone_a_list_table, 12, obj_stoneC_shadow_v, 20.0f, stone_c_shadow_v_fix, &stone_a_shadow_list,
+};
+
+extern Vtx obj_stoneD_shadow_v[];
+
+static bg_item_draw_part_c stone_d_part = {
+    stone_DL_table, 1, stone_a_list_table, 8, obj_stoneD_shadow_v, 20.0f, stone_d_shadow_v_fix, &stone_a_shadow_list,
+};
+
+extern Vtx obj_stoneE_shadow_v[];
+
+static bg_item_draw_part_c stone_e_part = {
+    stone_DL_table, 1, stone_a_list_table, 10, obj_stoneE_shadow_v, 20.0f, stone_e_shadow_v_fix, &stone_a_shadow_list,
+};
+
+extern Gfx obj_taneT_mat_model[];
+extern Gfx obj_taneT_gfx_model[];
+
+static Gfx* tane_DL_table[] = {
+    obj_taneT_mat_model,
+    obj_taneT_gfx_model,
+};
+
+static bg_item_draw_list_c tane_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* tane_list_table[] = {
+    &tane_list,
+};
+
+static bg_item_draw_part_c tane_part = {
+    tane_DL_table, 1, tane_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_type_data_c typeData_table_item1[] = {
+    { 0, bIT_DRAW_TYPE_APPLE, pos_table, pos_table }, // 2XXX
+};
+
+static bg_item_type_data_c typeData_table_ftr[] = {
+    { 0, bIT_DRAW_TYPE_LEAF, pos_table, pos_table }, // 1XXX, 3XXX
+};
+
+static bg_item_type_data_c typeData_table_crack[] = {
+    { 0, bIT_DRAW_TYPE_CRACK00_G, pos_table, pos_table },
+};
+
+extern Gfx apple_DL_mode[];
+extern Gfx apple_DL_vtx[];
+
+static Gfx* apple_DL_table[] = {
+    apple_DL_mode,
+    apple_DL_vtx,
+};
+
+static bg_item_draw_list_c apple_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* apple_list_table[] = {
+    &apple_list,
+};
+
+static bg_item_draw_part_c apple_part = {
+    apple_DL_table, 1, apple_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx orange_DL_mode[];
+extern Gfx orange_DL_vtx[];
+
+static Gfx* orange_DL_table[] = {
+    orange_DL_mode,
+    orange_DL_vtx,
+};
+
+static bg_item_draw_list_c orange_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* orange_list_table[] = {
+    &orange_list,
+};
+
+static bg_item_draw_part_c orange_part = {
+    orange_DL_table, 1, orange_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx peach_DL_mode[];
+extern Gfx peach_DL_vtx[];
+
+static Gfx* peach_DL_table[] = {
+    peach_DL_mode,
+    peach_DL_vtx,
+};
+
+static bg_item_draw_list_c peach_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* peach_list_table[] = {
+    &peach_list,
+};
+
+static bg_item_draw_part_c peach_part = {
+    peach_DL_table, 1, peach_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx pear_DL_mode[];
+extern Gfx pear_DL_vtx[];
+
+static Gfx* pear_DL_table[] = {
+    pear_DL_mode,
+    pear_DL_vtx,
+};
+
+static bg_item_draw_list_c pear_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* pear_list_table[] = {
+    &pear_list,
+};
+
+static bg_item_draw_part_c pear_part = {
+    pear_DL_table, 1, pear_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx nuts_DL_mode[];
+extern Gfx nuts_DL_vtx[];
+
+static Gfx* nuts_DL_table[] = {
+    nuts_DL_mode,
+    nuts_DL_vtx,
+};
+
+static bg_item_draw_list_c nuts_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* nuts_list_table[] = {
+    &nuts_list,
+};
+
+static bg_item_draw_part_c nuts_part = {
+    nuts_DL_table, 1, nuts_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx matutake_DL_mode[];
+extern Gfx matutake_DL_vtx[];
+
+static Gfx* matutake_DL_table[] = {
+    matutake_DL_mode,
+    matutake_DL_vtx,
+};
+
+static bg_item_draw_list_c matutake_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* matutake_list_table[] = {
+    &matutake_list,
+};
+
+static bg_item_draw_part_c matutake_part = {
+    matutake_DL_table, 1, matutake_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx kabu_DL_mode[];
+extern Gfx kabu_DL_vtx[];
+
+static Gfx* kabu_DL_table[] = {
+    kabu_DL_mode,
+    kabu_DL_vtx,
+};
+
+static bg_item_draw_list_c kabu_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* kabu_list_table[] = {
+    &kabu_list,
+};
+
+static bg_item_draw_part_c kabu_part = {
+    kabu_DL_table, 1, kabu_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx fish_DL_mode[];
+extern Gfx fish_DL_vtx[];
+
+static Gfx* fish_DL_table[] = {
+    fish_DL_mode,
+    fish_DL_vtx,
+};
+
+static bg_item_draw_list_c fish_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* fish_list_table[] = {
+    &fish_list,
+};
+
+static bg_item_draw_part_c fish_part = {
+    fish_DL_table, 1, fish_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx bag_DL_mode[];
+extern Gfx bag_DL_vtx[];
+
+static Gfx* bag_DL_table[] = {
+    bag_DL_mode,
+    bag_DL_vtx,
+};
+
+static bg_item_draw_list_c bag_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* bag_list_table[] = {
+    &bag_list,
+};
+
+static bg_item_draw_part_c bag_part = {
+    bag_DL_table, 1, bag_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx leaf_DL_mode[];
+extern Gfx leaf_DL_vtx[];
+
+static Gfx* leaf_DL_table[] = {
+    leaf_DL_mode,
+    leaf_DL_vtx,
+};
+
+static bg_item_draw_list_c leaf_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* leaf_list_table[] = {
+    &leaf_list,
+};
+
+static bg_item_draw_part_c leaf_part = {
+    leaf_DL_table, 1, leaf_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_rollT_mat_model[];
+extern Gfx obj_rollT_gfx_model[];
+
+static Gfx* roll_DL_table[] = {
+    obj_rollT_mat_model,
+    obj_rollT_gfx_model,
+};
+
+static bg_item_draw_list_c roll_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* roll_list_table[] = {
+    &roll_list,
+};
+
+static bg_item_draw_part_c roll_part = {
+    roll_DL_table, 1, roll_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx box_DL_mode[];
+extern Gfx box_DL_vtx[];
+
+static Gfx* box_DL_table[] = {
+    box_DL_mode,
+    box_DL_vtx,
+};
+
+static bg_item_draw_list_c box_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* box_list_table[] = {
+    &box_list,
+};
+
+static bg_item_draw_part_c box_part = {
+    box_DL_table, 1, box_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx pack_DL_mode[];
+extern Gfx pack_DL_vtx[];
+
+static Gfx* pack_DL_table[] = {
+    pack_DL_mode,
+    pack_DL_vtx,
+};
+
+static bg_item_draw_list_c pack_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* pack_list_table[] = {
+    &pack_list,
+};
+
+static bg_item_draw_part_c pack_part = {
+    pack_DL_table, 1, pack_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx present_DL_mode[];
+extern Gfx present_DL_vtx[];
+
+static Gfx* present_DL_table[] = {
+    present_DL_mode,
+    present_DL_vtx,
+};
+
+static bg_item_draw_list_c present_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* present_list_table[] = {
+    &present_list,
+};
+
+static bg_item_draw_part_c present_part = {
+    present_DL_table, 1, present_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx seed_DL_mode[];
+extern Gfx seed_DL_vtx[];
+
+static Gfx* seed_DL_table[] = {
+    seed_DL_mode,
+    seed_DL_vtx,
+};
+
+static bg_item_draw_list_c seed_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* seed_list_table[] = {
+    &seed_list,
+};
+
+static bg_item_draw_part_c seed_part = {
+    seed_DL_table, 1, seed_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_haniwaT_mat_model[];
+extern Gfx obj_haniwaT_gfx_model[];
+
+static Gfx* haniwa_DL_table[] = {
+    obj_haniwaT_mat_model,
+    obj_haniwaT_gfx_model,
+};
+
+static bg_item_draw_list_c haniwa_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* haniwa_list_table[] = {
+    &haniwa_list,
+};
+
+static bg_item_draw_part_c haniwa_part = {
+    haniwa_DL_table, 1, haniwa_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_boxT_mat_model[];
+extern Gfx obj_boxT_gfx_model[];
+
+static Gfx* other_DL_table[] = {
+    obj_boxT_mat_model,
+    obj_boxT_gfx_model,
+};
+
+static bg_item_draw_list_c other_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* other_list_table[] = {
+    &other_list,
+};
+
+static bg_item_draw_part_c other_part = {
+    other_DL_table, 1, other_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_toolT_mat_model[];
+extern Gfx obj_toolT_gfx_model[];
+
+static Gfx* tool_DL_table[] = {
+    obj_toolT_mat_model,
+    obj_toolT_gfx_model,
+};
+
+static bg_item_draw_list_c tool_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* tool_list_table[] = {
+    &tool_list,
+};
+
+static bg_item_draw_part_c tool_part = {
+    tool_DL_table, 1, tool_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_fossilT_mat_model[];
+extern Gfx obj_fossilT_gfx_model[];
+
+static Gfx* fossil_DL_table[] = {
+    obj_fossilT_mat_model,
+    obj_fossilT_gfx_model,
+};
+
+static bg_item_draw_list_c fossil_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* fossil_list_table[] = {
+    &fossil_list,
+};
+
+static bg_item_draw_part_c fossil_part = {
+    fossil_DL_table, 1, fossil_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_trashT_mat_model[];
+extern Gfx obj_trashT_gfx_model[];
+
+static Gfx* trash_DL_table[] = {
+    obj_trashT_mat_model,
+    obj_trashT_gfx_model,
+};
+
+static bg_item_draw_list_c trash_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* trash_list_table[] = {
+    &trash_list,
+};
+
+static bg_item_draw_part_c trash_part = {
+    trash_DL_table, 1, trash_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_otosiT_mat_model[];
+extern Gfx obj_otosiT_gfx_model[];
+
+static Gfx* otosi_DL_table[] = {
+    obj_otosiT_mat_model,
+    obj_otosiT_gfx_model,
+};
+
+static bg_item_draw_list_c otosi_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* otosi_list_table[] = {
+    &otosi_list,
+};
+
+static bg_item_draw_part_c otosi_part = {
+    otosi_DL_table, 1, otosi_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_shellAT_mat_model[];
+extern Gfx obj_item_shellAT_gfx_model[];
+extern Gfx obj_item_shellBT_mat_model[];
+extern Gfx obj_item_shellBT_gfx_model[];
+extern Gfx obj_item_shellCT_mat_model[];
+extern Gfx obj_item_shellCT_gfx_model[];
+
+static Gfx* shell_DL_table[] = {
+    obj_item_shellAT_mat_model, obj_item_shellAT_gfx_model, obj_item_shellBT_mat_model,
+    obj_item_shellBT_gfx_model, obj_item_shellCT_mat_model, obj_item_shellCT_gfx_model,
+};
+
+static bg_item_draw_list_c shell_a_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c shell_b_list = { &bg_item_common_draw_loop_type1, 2, 3 };
+
+static bg_item_draw_list_c shell_c_list = { &bg_item_common_draw_loop_type1, 4, 5 };
+
+static bg_item_draw_list_c* shell_a_list_table[] = {
+    &shell_a_list,
+};
+
+static bg_item_draw_list_c* shell_b_list_table[] = {
+    &shell_b_list,
+};
+
+static bg_item_draw_list_c* shell_c_list_table[] = {
+    &shell_c_list,
+};
+
+static bg_item_draw_part_c shell_a_part = {
+    shell_DL_table, 1, shell_a_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_part_c shell_b_part = {
+    shell_DL_table, 1, shell_b_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_part_c shell_c_part = {
+    shell_DL_table, 1, shell_c_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_shop_candy_mat_modelT[];
+extern Gfx obj_shop_candy_gfx_modelT[];
+
+static Gfx* candy_DL_table[] = {
+    obj_shop_candy_mat_modelT,
+    obj_shop_candy_gfx_modelT,
+};
+
+static bg_item_draw_list_c candy_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* candy_list_table[] = {
+    &candy_list,
+};
+
+static bg_item_draw_part_c candy_part = {
+    candy_DL_table, 1, candy_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_cocoT_mat_model[];
+extern Gfx obj_item_cocoT_gfx_model[];
+
+static Gfx* coconut_DL_table[] = {
+    obj_item_cocoT_mat_model,
+    obj_item_cocoT_gfx_model,
+};
+
+static bg_item_draw_list_c coconut_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* coconut_list_table[] = {
+    &coconut_list,
+};
+
+static bg_item_draw_part_c coconut_part = {
+    coconut_DL_table, 1, coconut_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_clothT_mat_model[];
+extern Gfx obj_item_clothT_gfx_model[];
+
+static Gfx* cloth_DL_table[] = {
+    obj_item_clothT_mat_model,
+    obj_item_clothT_gfx_model,
+};
+
+static bg_item_draw_list_c cloth_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* cloth_list_table[] = {
+    &cloth_list,
+};
+
+static bg_item_draw_part_c cloth_part = {
+    cloth_DL_table, 1, cloth_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_carpetT_mat_model[];
+extern Gfx obj_item_carpetT_gfx_model[];
+
+static Gfx* carpet_DL_table[] = {
+    obj_item_carpetT_mat_model,
+    obj_item_carpetT_gfx_model,
+};
+
+static bg_item_draw_list_c carpet_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* carpet_list_table[] = {
+    &carpet_list,
+};
+
+static bg_item_draw_part_c carpet_part = {
+    carpet_DL_table, 1, carpet_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_wallT_mat_model[];
+extern Gfx obj_item_wallT_gfx_model[];
+
+static Gfx* wall_DL_table[] = {
+    obj_item_wallT_mat_model,
+    obj_item_wallT_gfx_model,
+};
+
+static bg_item_draw_list_c wall_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* wall_list_table[] = {
+    &wall_list,
+};
+
+static bg_item_draw_part_c wall_part = {
+    wall_DL_table, 1, wall_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_axeT_mat_model[];
+extern Gfx obj_item_axeT_gfx_model[];
+
+static Gfx* axe_DL_table[] = {
+    obj_item_axeT_mat_model,
+    obj_item_axeT_gfx_model,
+};
+
+static bg_item_draw_list_c axe_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* axe_list_table[] = {
+    &axe_list,
+};
+
+static bg_item_draw_part_c axe_part = {
+    axe_DL_table, 1, axe_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_netT_mat_model[];
+extern Gfx obj_item_netT_gfx_model[];
+
+static Gfx* net_DL_table[] = {
+    obj_item_netT_mat_model,
+    obj_item_netT_gfx_model,
+};
+
+static bg_item_draw_list_c net_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* net_list_table[] = {
+    &net_list,
+};
+
+static bg_item_draw_part_c net_part = {
+    net_DL_table, 1, net_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_rodT_mat_model[];
+extern Gfx obj_item_rodT_gfx_model[];
+
+static Gfx* rod_DL_table[] = {
+    obj_item_rodT_mat_model,
+    obj_item_rodT_gfx_model,
+};
+
+static bg_item_draw_list_c rod_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* rod_list_table[] = {
+    &rod_list,
+};
+
+static bg_item_draw_part_c rod_part = {
+    rod_DL_table, 1, rod_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_shovelT_mat_model[];
+extern Gfx obj_item_shovelT_gfx_model[];
+
+static Gfx* scoop_DL_table[] = {
+    obj_item_shovelT_mat_model,
+    obj_item_shovelT_gfx_model,
+};
+
+static bg_item_draw_list_c scoop_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* scoop_list_table[] = {
+    &scoop_list,
+};
+
+static bg_item_draw_part_c scoop_part = {
+    scoop_DL_table, 1, scoop_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_axe2T_mat_model[];
+extern Gfx obj_item_axe2T_gfx_model[];
+
+static Gfx* gold_axe_DL_table[] = {
+    obj_item_axe2T_mat_model,
+    obj_item_axe2T_gfx_model,
+};
+
+static bg_item_draw_list_c gold_axe_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* gold_axe_list_table[] = {
+    &gold_axe_list,
+};
+
+static bg_item_draw_part_c gold_axe_part = {
+    gold_axe_DL_table, 1, gold_axe_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_net2T_mat_model[];
+extern Gfx obj_item_net2T_gfx_model[];
+
+static Gfx* gold_net_DL_table[] = {
+    obj_item_net2T_mat_model,
+    obj_item_net2T_gfx_model,
+};
+
+static bg_item_draw_list_c gold_net_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* gold_net_list_table[] = {
+    &gold_net_list,
+};
+
+static bg_item_draw_part_c gold_net_part = {
+    gold_net_DL_table, 1, gold_net_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_rod2T_mat_model[];
+extern Gfx obj_item_rod2T_gfx_model[];
+
+static Gfx* gold_rod_DL_table[] = {
+    obj_item_rod2T_mat_model,
+    obj_item_rod2T_gfx_model,
+};
+
+static bg_item_draw_list_c gold_rod_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* gold_rod_list_table[] = {
+    &gold_rod_list,
+};
+
+static bg_item_draw_part_c gold_rod_part = {
+    gold_rod_DL_table, 1, gold_rod_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_shovel2T_mat_model[];
+extern Gfx obj_item_shovel2T_gfx_model[];
+
+static Gfx* gold_scoop_DL_table[] = {
+    obj_item_shovel2T_mat_model,
+    obj_item_shovel2T_gfx_model,
+};
+
+static bg_item_draw_list_c gold_scoop_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* gold_scoop_list_table[] = {
+    &gold_scoop_list,
+};
+
+static bg_item_draw_part_c gold_scoop_part = {
+    gold_scoop_DL_table, 1, gold_scoop_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_umbrellaT_mat_model[];
+extern Gfx obj_item_umbrellaT_gfx_model[];
+
+static Gfx* umbrella_DL_table[] = {
+    obj_item_umbrellaT_mat_model,
+    obj_item_umbrellaT_gfx_model,
+};
+
+static bg_item_draw_list_c umbrella_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* umbrella_list_table[] = {
+    &umbrella_list,
+};
+
+static bg_item_draw_part_c umbrella_part = {
+    umbrella_DL_table, 1, umbrella_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_kazaT_mat_model[];
+extern Gfx obj_item_kazaT_gfx_model[];
+
+static Gfx* pinwheel_DL_table[] = {
+    obj_item_kazaT_mat_model,
+    obj_item_kazaT_gfx_model,
+};
+
+static bg_item_draw_list_c pinwheel_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* pinwheel_list_table[] = {
+    &pinwheel_list,
+};
+
+static bg_item_draw_part_c pinwheel_part = {
+    pinwheel_DL_table, 1, pinwheel_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_utiwaT_mat_model[];
+extern Gfx obj_item_utiwaT_gfx_model[];
+
+static Gfx* fan_DL_table[] = {
+    obj_item_utiwaT_mat_model,
+    obj_item_utiwaT_gfx_model,
+};
+
+static bg_item_draw_list_c fan_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* fan_list_table[] = {
+    &fan_list,
+};
+
+static bg_item_draw_part_c fan_part = {
+    fan_DL_table, 1, fan_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_paperT_mat_model[];
+extern Gfx obj_item_paperT_gfx_model[];
+
+static Gfx* paper_DL_table[] = {
+    obj_item_paperT_mat_model,
+    obj_item_paperT_gfx_model,
+};
+
+static bg_item_draw_list_c paper_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* paper_list_table[] = {
+    &paper_list,
+};
+
+static bg_item_draw_part_c paper_part = {
+    paper_DL_table, 1, paper_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_seedT_mat_model[];
+extern Gfx obj_item_seedT_gfx_model[];
+
+static Gfx* seedbag_DL_table[] = {
+    obj_item_seedT_mat_model,
+    obj_item_seedT_gfx_model,
+};
+
+static bg_item_draw_list_c seedbag_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* seedbag_list_table[] = {
+    &seedbag_list,
+};
+
+static bg_item_draw_part_c seedbag_part = {
+    seedbag_DL_table, 1, seedbag_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_fukuT_mat_model[];
+extern Gfx obj_item_fukuT_gfx_model[];
+
+static Gfx* luckbag_DL_table[] = {
+    obj_item_fukuT_mat_model,
+    obj_item_fukuT_gfx_model,
+};
+
+static bg_item_draw_list_c luckbag_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* luckbag_list_table[] = {
+    &luckbag_list,
+};
+
+static bg_item_draw_part_c luckbag_part = {
+    luckbag_DL_table, 1, luckbag_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_taisouT_mat_model[];
+extern Gfx obj_item_taisouT_gfx_model[];
+
+static Gfx* gymcard_DL_table[] = {
+    obj_item_taisouT_mat_model,
+    obj_item_taisouT_gfx_model,
+};
+
+static bg_item_draw_list_c gymcard_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* gymcard_list_table[] = {
+    &gymcard_list,
+};
+
+static bg_item_draw_part_c gymcard_part = {
+    gymcard_DL_table, 1, gymcard_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_mdT_mat_model[];
+extern Gfx obj_mdT_gfx_model[];
+
+static Gfx* music_DL_table[] = {
+    obj_mdT_mat_model,
+    obj_mdT_gfx_model,
+};
+
+static bg_item_draw_list_c music_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* music_list_table[] = {
+    &music_list,
+};
+
+static bg_item_draw_part_c music_part = {
+    music_DL_table, 1, music_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_ticketT_mat_model[];
+extern Gfx obj_item_ticketT_gfx_model[];
+
+static Gfx* lottery_DL_table[] = {
+    obj_item_ticketT_mat_model,
+    obj_item_ticketT_gfx_model,
+};
+
+static bg_item_draw_list_c lottery_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* lottery_list_table[] = {
+    &lottery_list,
+};
+
+static bg_item_draw_part_c lottery_part = {
+    lottery_DL_table, 1, lottery_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_boneT_mat_model[];
+extern Gfx obj_item_boneT_gfx_model[];
+
+static Gfx* bone_DL_table[] = {
+    obj_item_boneT_mat_model,
+    obj_item_boneT_gfx_model,
+};
+
+static bg_item_draw_list_c bone_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* bone_list_table[] = {
+    &bone_list,
+};
+
+static bg_item_draw_part_c bone_part = {
+    bone_DL_table, 1, bone_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_diaryT_mat_model[];
+extern Gfx obj_item_diaryT_gfx_model[];
+
+static Gfx* diary_DL_table[] = {
+    obj_item_diaryT_mat_model,
+    obj_item_diaryT_gfx_model,
+};
+
+static bg_item_draw_list_c diary_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* diary_list_table[] = {
+    &diary_list,
+};
+
+static bg_item_draw_part_c diary_part = {
+    diary_DL_table, 1, diary_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+extern Gfx obj_item_fork_onT_mat_model[];
+extern Gfx obj_item_fork_onT_gfx_model[];
+
+static Gfx* fork_DL_table[] = {
+    obj_item_fork_onT_mat_model,
+    obj_item_fork_onT_gfx_model,
+};
+
+static bg_item_draw_list_c fork_list = { &bg_item_common_draw_loop_type1, 0, 1 };
+
+static bg_item_draw_list_c* fork_list_table[] = {
+    &fork_list,
+};
+
+static bg_item_draw_part_c fork_part = {
+    fork_DL_table, 1, fork_list_table, 0, NULL, 0.0f, NULL, NULL,
+};
+
+static bg_item_draw_part_table_c draw_part_table_a[] = {
+    { &stump_part1, 0 },             // bIT_DRAW_TYPE_STUMP1
+    { &stump_part2, 0 },             // bIT_DRAW_TYPE_STUMP2
+    { &stump_part3, 0 },             // bIT_DRAW_TYPE_STUMP3
+    { &stump_part4, 0 },             // bIT_DRAW_TYPE_STUMP4
+    { &fence_part, 0 },              // bIT_DRAW_TYPE_FENCE
+    { &notice_part, 0 },             // bIT_DRAW_TYPE_NOTICE
+    { &grass_part, 2 },              // bIT_DRAW_TYPE_GRASS
+    { &mapboard_part, 0 },           // bIT_DRAW_TYPE_MAPBOARD
+    { &melody_part, 0 },             // bIT_DRAW_TYPE_MELODY
+    { &fences_part, 0 },             // bIT_DRAW_TYPE_FENCES
+    { &honycomb_part, 0 },           // bIT_DRAW_TYPE_HONYCOMB
+    { &hole00_g_part, 0 },           // bIT_DRAW_TYPE_HOLE00_G
+    { &hole00_s_part, 0 },           // bIT_DRAW_TYPE_HOLE00_S
+    { &crack00_g_part, 0 },          // bIT_DRAW_TYPE_CRACK00_G
+    { &crack00_s_part, 0 },          // bIT_DRAW_TYPE_CRACK00_S
+    { &hole00_g_part, 0 },           // bIT_DRAW_TYPE_HOLE00_SHIN_G
+    { &stone_a_part, 0 },            // bIT_DRAW_TYPE_STONE_A
+    { &stone_b_part, 0 },            // bIT_DRAW_TYPE_STONE_B
+    { &stone_c_part, 0 },            // bIT_DRAW_TYPE_STONE_C
+    { &stone_d_part, 0 },            // bIT_DRAW_TYPE_STONE_D
+    { &stone_e_part, 0 },            // bIT_DRAW_TYPE_STONE_E
+    { &tane_part, 0 },               // bIT_DRAW_TYPE_TANE
+    { &tree0_part, 0 },              // bIT_DRAW_TYPE_TREE0
+    { &tree1_part, 0 },              // bIT_DRAW_TYPE_TREE1
+    { &tree2_part, 0 },              // bIT_DRAW_TYPE_TREE2
+    { &tree3_part, 0 },              // bIT_DRAW_TYPE_TREE3
+    { &tree4_part, 0 },              // bIT_DRAW_TYPE_TREE4
+    { &tree4_ap_part, 0 },           // bIT_DRAW_TYPE_TREE4_AP
+    { &tree4_or_part, 0 },           // bIT_DRAW_TYPE_TREE4_OR
+    { &tree4_ph_part, 0 },           // bIT_DRAW_TYPE_TREE4_PH
+    { &tree4_pr_part, 0 },           // bIT_DRAW_TYPE_TREE4_PR
+    { &tree4_nt_part, 0 },           // bIT_DRAW_TYPE_TREE4_NT
+    { &tree4_bg_part, 0 },           // bIT_DRAW_TYPE_TREE4_BG
+    { &flower_leaf_part, 0 },        // bIT_DRAW_TYPE_FLOWER_LEAF
+    { &flower_part00, 0 },           // bIT_DRAW_TYPE_FLOWER00
+    { &flower_part01, 0 },           // bIT_DRAW_TYPE_FLOWER01
+    { &flower_part02, 0 },           // bIT_DRAW_TYPE_FLOWER02
+    { &tree0_dead_part, 0 },         // bIT_DRAW_TYPE_TREE0_DEAD
+    { &palm000_part, 0 },            // bIT_DRAW_TYPE_PALM000
+    { &palm001_part, 0 },            // bIT_DRAW_TYPE_PALM001
+    { &palm002_part, 0 },            // bIT_DRAW_TYPE_PALM002
+    { &palm003_part, 0 },            // bIT_DRAW_TYPE_PALM003
+    { &palm004_part, 0 },            // bIT_DRAW_TYPE_PALM004
+    { &palm004_cc_part, 0 },         // bIT_DRAW_TYPE_PALM004_CC
+    { &palm_stump001_part, 0 },      // bIT_DRAW_TYPE_PALM_STUMP001
+    { &palm_stump002_part, 0 },      // bIT_DRAW_TYPE_PALM_STUMP002
+    { &palm_stump003_part, 0 },      // bIT_DRAW_TYPE_PALM_STUMP003
+    { &palm_stump004_part, 0 },      // bIT_DRAW_TYPE_PALM_STUMP004
+    { &palm000_dead_part, 0 },       // bIT_DRAW_TYPE_PALM000_DEAD
+    { &cedar000_part, 0 },           // bIT_DRAW_TYPE_CEDAR000
+    { &cedar001_part, 0 },           // bIT_DRAW_TYPE_CEDAR001
+    { &cedar002_part, 0 },           // bIT_DRAW_TYPE_CEDAR002
+    { &cedar003_part, 0 },           // bIT_DRAW_TYPE_CEDAR003
+    { &cedar004_part, 0 },           // bIT_DRAW_TYPE_CEDAR004
+    { &cedar_stump001_part, 0 },     // bIT_DRAW_TYPE_CEDAR_STUMP001
+    { &cedar_stump002_part, 0 },     // bIT_DRAW_TYPE_CEDAR_STUMP002
+    { &cedar_stump003_part, 0 },     // bIT_DRAW_TYPE_CEDAR_STUMP003
+    { &cedar_stump004_part, 0 },     // bIT_DRAW_TYPE_CEDAR_STUMP004
+    { &cedar000_dead_part, 0 },      // bIT_DRAW_TYPE_CEDAR000_DEAD
+    { &gold_tree000_part, 0 },       // bIT_DRAW_TYPE_GOLD_TREE000
+    { &gold_tree001_part, 0 },       // bIT_DRAW_TYPE_GOLD_TREE001
+    { &gold_tree002_part, 0 },       // bIT_DRAW_TYPE_GOLD_TREE002
+    { &gold_tree003_part, 0 },       // bIT_DRAW_TYPE_GOLD_TREE003
+    { &gold_tree004_part, 0 },       // bIT_DRAW_TYPE_GOLD_TREE004
+    { &gold_tree_stump001_part, 0 }, // bIT_DRAW_TYPE_GOLD_TREE_STUMP001
+    { &gold_tree_stump002_part, 0 }, // bIT_DRAW_TYPE_GOLD_TREE_STUMP002
+    { &gold_tree_stump003_part, 0 }, // bIT_DRAW_TYPE_GOLD_TREE_STUMP003
+    { &gold_tree_stump004_part, 0 }, // bIT_DRAW_TYPE_GOLD_TREE_STUMP004
+    { &gold_tree000_dead_part, 0 },  // bIT_DRAW_TYPE_GOLD_TREE000_DEAD
+    { &apple_part, 1 },              // bIT_DRAW_TYPE_APPLE
+    { &orange_part, 1 },             // bIT_DRAW_TYPE_ORANGE
+    { &peach_part, 1 },              // bIT_DRAW_TYPE_PEACH
+    { &pear_part, 1 },               // bIT_DRAW_TYPE_PEAR
+    { &nuts_part, 1 },               // bIT_DRAW_TYPE_NUTS
+    { &matutake_part, 1 },           // bIT_DRAW_TYPE_MATUTAKE
+    { &kabu_part, 1 },               // bIT_DRAW_TYPE_KABU
+    { &fish_part, 1 },               // bIT_DRAW_TYPE_FISH
+    { &bag_part, 1 },                // bIT_DRAW_TYPE_BAG
+    { &leaf_part, 1 },               // bIT_DRAW_TYPE_LEAF
+    { &roll_part, 1 },               // bIT_DRAW_TYPE_ROLL
+    { &box_part, 1 },                // bIT_DRAW_TYPE_BOX
+    { &pack_part, 1 },               // bIT_DRAW_TYPE_PACK
+    { &present_part, 1 },            // bIT_DRAW_TYPE_PRESENT
+    { &seed_part, 1 },               // bIT_DRAW_TYPE_SEED
+    { &haniwa_part, 1 },             // bIT_DRAW_TYPE_HANIWA
+    { &other_part, 1 },              // bIT_DRAW_TYPE_OTHER
+    { NULL, 1 },                     // bIT_DRAW_TYPE_86
+    { &tool_part, 1 },               // bIT_DRAW_TYPE_TOOL
+    { &fossil_part, 1 },             // bIT_DRAW_TYPE_FOSSIL
+    { &trash_part, 1 },              // bIT_DRAW_TYPE_TRASH
+    { NULL, 1 },                     // bIT_DRAW_TYPE_90
+    { &otosi_part, 1 },              // bIT_DRAW_TYPE_OTOSI
+    { &shell_a_part, 2 },            // bIT_DRAW_TYPE_SHELL_A
+    { &shell_b_part, 2 },            // bIT_DRAW_TYPE_SHELL_B
+    { &shell_c_part, 2 },            // bIT_DRAW_TYPE_SHELL_C
+    { &candy_part, 1 },              // bIT_DRAW_TYPE_CANDY
+    { &coconut_part, 1 },            // bIT_DRAW_TYPE_COCONUT
+    { NULL, 1 },                     // bIT_DRAW_TYPE_97
+    { &cloth_part, 1 },              // bIT_DRAW_TYPE_CLOTH
+    { &carpet_part, 1 },             // bIT_DRAW_TYPE_CARPET
+    { &wall_part, 1 },               // bIT_DRAW_TYPE_WALL
+    { &axe_part, 1 },                // bIT_DRAW_TYPE_AXE
+    { &net_part, 1 },                // bIT_DRAW_TYPE_NET
+    { &rod_part, 1 },                // bIT_DRAW_TYPE_ROD
+    { &scoop_part, 1 },              // bIT_DRAW_TYPE_SCOOP
+    { &gold_axe_part, 1 },           // bIT_DRAW_TYPE_GOLD_AXE
+    { &gold_net_part, 1 },           // bIT_DRAW_TYPE_GOLD_NET
+    { &gold_rod_part, 1 },           // bIT_DRAW_TYPE_GOLD_ROD
+    { &gold_scoop_part, 1 },         // bIT_DRAW_TYPE_GOLD_SCOOP
+    { &umbrella_part, 1 },           // bIT_DRAW_TYPE_UMBRELLA
+    { &pinwheel_part, 1 },           // bIT_DRAW_TYPE_PINWHEEL
+    { &fan_part, 1 },                // bIT_DRAW_TYPE_FAN
+    { &paper_part, 1 },              // bIT_DRAW_TYPE_PAPER
+    { &seedbag_part, 1 },            // bIT_DRAW_TYPE_SEEDBAG
+    { &luckbag_part, 1 },            // bIT_DRAW_TYPE_LUCKBAG
+    { &gymcard_part, 1 },            // bIT_DRAW_TYPE_GYMCARD
+    { &music_part, 1 },              // bIT_DRAW_TYPE_MUSIC
+    { &lottery_part, 1 },            // bIT_DRAW_TYPE_LOTTERY
+    { &bone_part, 1 },               // bIT_DRAW_TYPE_BONE
+    { &diary_part, 1 },              // bIT_DRAW_TYPE_DIARY
+    { &fork_part, 1 },               // bIT_DRAW_TYPE_FORK
+    { &fish_part, 0 },               // bIT_DRAW_TYPE_FISH2
+    { NULL, 0 },                     // bIT_DRAW_TYPE_NONE
+};

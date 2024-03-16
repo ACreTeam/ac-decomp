@@ -30,15 +30,19 @@ extern Gfx* gfx_softsprite_prim_xlu(Gfx* gfx);
 extern Gfx* gfx_tex_scroll2(Gfx** gfxpp, int x, int y, int width, int height);
 extern Gfx* tex_scroll2(GRAPH* graph, u32 x, u32 y, int width, int height);
 extern Gfx* tex_scroll2_dolphin(GRAPH* graph, int x, int y, int width, int height);
-extern Gfx* two_tex_scroll(GRAPH* graph, int tile1, int x1, int y1, int width1, int height1, int tile2, int x2, int y2, int width2, int height2);
-extern Gfx* two_tex_scroll_dolphin(GRAPH* graph, int tile1, int x1, int y1, int width1, int height1, int tile2, int x2, int y2, int width2, int height2);
-extern void DisplayList_initialize(GRAPH* graph, u32 clear_r, u32 clear_g, u32 clear_b, GAME* game);
+extern Gfx* two_tex_scroll(GRAPH* graph, int tile1, int x1, int y1, int width1, int height1, int tile2, int x2, int y2,
+                           int width2, int height2);
+extern Gfx* two_tex_scroll_dolphin(GRAPH* graph, int tile1, int x1, int y1, int width1, int height1, int tile2, int x2,
+                                   int y2, int width2, int height2);
+extern void DisplayList_initialize(GRAPH* graph, u8 clear_r, u8 clear_g, u8 clear_b, GAME* game);
 extern void fade_rgba8888_draw(Gfx** gfxp, u32 color);
 extern void fade_black_draw(Gfx** gfx, u32 color);
 extern Gfx* gfx_gDPFillRectangle1(Gfx* gfx, u32 ulx, u32 uly, u32 lrx, u32 lry);
 extern Gfx* gfx_gDPFillRectangleF(Gfx* gfx, u32 ulx, u32 uly, u32 lrx, u32 lry);
-extern Gfx* gfx_gSPTextureRectangle1(Gfx* gfx, int xl, int yl, int xh, int yh, int tile, int s, int t, int dsdx, int dtdy);
-extern Gfx* gfx_gSPScisTextureRectangle1(Gfx* gfx, int xl, int yl, int xh, int yh, int tile, int s, int t, int dsdx, int dtdy);
+extern Gfx* gfx_gSPTextureRectangle1(Gfx* gfx, int xl, int yl, int xh, int yh, int tile, int s, int t, int dsdx,
+                                     int dtdy);
+extern Gfx* gfx_gSPScisTextureRectangle1(Gfx* gfx, int xl, int yl, int xh, int yh, int tile, int s, int t, int dsdx,
+                                         int dtdy);
 
 extern Gfx RSP_RDP_clear_data[];
 extern int fbdemo_mode;

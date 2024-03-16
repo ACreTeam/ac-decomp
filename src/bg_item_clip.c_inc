@@ -1,0 +1,109 @@
+static void bIT_copy_vtx(Vtx* dst, Vtx* src, u32 count, u8* fix_table, int fix_adjust_pos) {
+    int i;
+
+    for (i = 0; i != count; i++, src++, dst++, fix_table++) {
+        *dst = *src;
+
+        /* Adjust vertex by sun position */
+        if (*fix_table == TRUE) {
+            dst->v.ob[0] = src->v.ob[0] + fix_adjust_pos;
+        } else {
+            dst->v.ob[0] = src->v.ob[0];
+        }
+    }
+}
+
+static void bIT_draw_shadow(GAME* game, bIT_ShadowData_c* data, int type) {
+    GRAPH* graph = game->graph;
+    Kankyo* kankyo = &((GAME_PLAY*)game)->kankyo;
+    Vtx* vtx = (Vtx*)GRAPH_ALLOC_TYPE(graph, Vtx, data->vtx_num);
+    Gfx* gfx;
+    u8 r;
+    u8 g;
+    u8 b;
+    u8 a;
+
+    if (vtx != NULL) {
+        bIT_copy_vtx(vtx, data->vtx, data->vtx_num, data->vtx_fix_flags, (int)(kankyo->shadow_pos * data->size));
+    } else {
+        vtx = data->vtx;
+    }
+
+    OPEN_DISP(graph);
+    gfx = NOW_SHADOW_DISP;
+
+    gDPPipeSync(gfx++);
+    gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPSegment(gfx++, G_MWO_SEGMENT_8, vtx);
+    r = kankyo->base_light.shadow_color[0];
+    g = kankyo->base_light.shadow_color[1];
+    b = kankyo->base_light.shadow_color[2];
+    a = kankyo->shadow_alpha;
+    gDPSetPrimColor(gfx++, 0, kankyo->shadow_alpha, r, g, b, a);
+    if (type == 1) {
+        gSPLoadGeometryMode(gfx++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | 0x00000050);
+    }
+
+    gSPDisplayList(gfx++, data->gfx);
+
+    if (type == 1) {
+        gSPLoadGeometryMode(gfx++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | 0x00000040);
+        gSPDisplayList(gfx++, data->gfx);
+    }
+
+    gSPClearGeometryMode(gfx++, 0x00000050);
+
+    SET_SHADOW_DISP(gfx);
+    CLOSE_DISP(graph);
+}
+
+static void bIT_draw_shadow(GAME* game, bIT_ShadowData_c* data, int type);
+static void bit_cmn_single_draw(GAME* game, mActor_name_t fg_no, xyz_t* pos, f32 scale_f, bIT_DRAW_BF_PROC draw_bf,
+                                bIT_DRAW_AF_PROC draw_af, rgba_t* col);
+static int bIT_actor_player_drop_entry(GAME* game, mActor_name_t fg_item, int ut_x, int ut_z, s16 layer);
+static int BIT_actor_tree_cutcount_check(GAME* game, int ut_x, int ut_z);
+static void bIT_actor_dig_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames, u16 wait_frames);
+static void bIT_actor_bury_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames);
+static void bIT_actor_fly_entry(mActor_name_t fg_item, xyz_t* pos, s16 angle_y);
+static int bIT_drop_entry_v1(mActor_name_t fg_item, xyz_t* pos, xyz_t* target_pos);
+static void bg_item_tree_fruit_drop(mActor_name_t fg_item, int ut_x, int ut_z, xyz_t* drop_pos);
+static int bIT_actor_pit_fall(mActor_name_t pit_fg_item, int ut_x, int ut_z, mActor_name_t fg_item_in_pit);
+static int bIT_actor_pit_fall_stop(mActor_name_t pit_fg_item, int ut_x, int ut_z, mActor_name_t fg_item_in_pit);
+static int bIT_actor_pit_exit(mActor_name_t pit_fg_item, int ut_x, int ut_z, mActor_name_t fg_item_in_pit);
+static int bIT_actor_rand_pos_get(xyz_t* pos, const xyz_t* check_pos);
+static int bg_item_ten_coin_entry_ex(xyz_t* pos, s16 angle);
+static int bIT_fruit_set(mActor_name_t fg_item, int ut_x, int ut_z, s16 count, int type);
+static int bIT_actor_fade_entry(mActor_name_t fg_name, xyz_t* pos);
+
+static void bIT_clip_ct(ACTOR* actorx) {
+    BG_ITEM_ACTOR* bg_item = (BG_ITEM_ACTOR*)actorx;
+
+    if (bIT_CLIP == NULL) {
+        bIT_CLIP = (bIT_Clip_c*)zelda_malloc(sizeof(bIT_Clip_c));
+        bIT_CLIP->draw_shadow_proc = &bIT_draw_shadow;
+        bIT_CLIP->single_draw_proc = &bit_cmn_single_draw;
+        bIT_CLIP->player_drop_entry_proc = &bIT_actor_player_drop_entry;
+        bIT_CLIP->tree_cutcount_check_proc = &BIT_actor_tree_cutcount_check;
+        bIT_CLIP->dig_hole_effect_entry_proc = &bIT_actor_dig_hole_effect_entry;
+        bIT_CLIP->bury_hole_effect_entry_proc = &bIT_actor_bury_hole_effect_entry;
+        bIT_CLIP->fly_entry_proc = &bIT_actor_fly_entry;
+        bIT_CLIP->drop_entry_v1_proc = &bIT_drop_entry_v1;
+        bIT_CLIP->item_tree_fruit_drop_proc = &bg_item_tree_fruit_drop;
+        bIT_CLIP->pit_fall_proc = &bIT_actor_pit_fall;
+        bIT_CLIP->pit_fall_stop_proc = &bIT_actor_pit_fall_stop;
+        bIT_CLIP->pit_exit_proc = &bIT_actor_pit_exit;
+        bIT_CLIP->rand_pos_get_proc = &bIT_actor_rand_pos_get;
+        bIT_CLIP->ten_coin_entry_ex_proc = &bg_item_ten_coin_entry_ex;
+        bIT_CLIP->fruit_set_proc = &bIT_fruit_set;
+        bIT_CLIP->fade_entry_proc = &bIT_actor_fade_entry;
+        bIT_CLIP->bg_item_common_p = &bg_item->common;
+        bIT_CLIP->bg_item_actorx = actorx;
+    }
+}
+
+static void bIT_clip_dt(void) {
+    if (bIT_CLIP != NULL) {
+        zelda_free(bIT_CLIP);
+        bIT_CLIP = NULL;
+    }
+}

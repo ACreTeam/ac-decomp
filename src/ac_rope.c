@@ -4,6 +4,7 @@
 #include "m_name_table.h"
 #include "m_field_info.h"
 #include "m_event.h"
+#include "sys_matrix.h"
 
 static void aRP_actor_ct(ACTOR* actor, GAME* game);
 static void aRP_actor_dt(ACTOR* actor, GAME* game);
@@ -24,82 +25,75 @@ ACTOR_PROFILE Rope_Profile = {
 };
 
 extern Vtx tol_rope_1_v[0x3C];
-extern Gfx tol_rope_1T_model[]; 
+extern Gfx tol_rope_1T_model[];
 extern Gfx tol_rope_1_shadowT_model[];
 
-void aRP_actor_ct(ACTOR* actor, GAME* game){
+static void aRP_actor_ct(ACTOR* actor, GAME* game) {
 
-    xyz_t world; 
+    xyz_t world;
     xyz_t pos = actor->world.position;
 
     int i;
     mFI_Wpos2UtCenterWpos(&world, pos);
 
-    world.x -= 40.0f; 
-    for(i = 0; i < 3; i++){
+    world.x -= 40.0f;
+    for (i = 0; i < 3; i++) {
         mCoBG_SetPlussOffset(world, 2, 100);
         world.x += 40.0f;
     }
 }
 
-void aRP_actor_dt(ACTOR* actor, GAME* game){
+static void aRP_actor_dt(ACTOR* actor, GAME* game) {
 
-    xyz_t world; 
+    xyz_t world;
     xyz_t pos = actor->world.position;
 
     int i;
     mFI_Wpos2UtCenterWpos(&world, pos);
 
-    world.x -= 40.0f; 
-    for(i = 0; i < 3; i++){
+    world.x -= 40.0f;
+    for (i = 0; i < 3; i++) {
         mCoBG_SetPlussOffset(world, 0, 100);
         world.x += 40.0f;
     }
 }
 
-void aRP_make_vtx(Vtx* vtx){
+static void aRP_make_vtx(Vtx* vtx) {
     static u8 flg[] = {
-    FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
-    FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
-    TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,
-    TRUE,  TRUE,  TRUE,  TRUE, FALSE,  TRUE,  TRUE, FALSE,
-    FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
-    FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
-    FALSE, FALSE, FALSE,  TRUE,  TRUE, FALSE,  TRUE,  TRUE,
-    TRUE,  TRUE,  TRUE,  TRUE
+        FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+        FALSE, TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  FALSE, TRUE,
+        TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
+        FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,  TRUE,  FALSE, TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,
     };
-    
+
     Vtx* make;
     int fact;
     u8* flag;
     int i;
 
-    
     flag = flg;
     fact = (*(f32*)mEv_get_save_area(0xE, 9) * 100.0f);
     make = tol_rope_1_v;
- 
-    for(i = 0; i < ARRAY_SIZE(tol_rope_1_v, Vtx); i++, vtx++, flag++){
+
+    for (i = 0; i < ARRAY_SIZE(tol_rope_1_v, Vtx); i++, vtx++, flag++) {
         vtx[0] = make[0];
 
         if (flag[0] == 1) {
             vtx->v.ob[0] = make->v.ob[0] + fact;
-        }
-        else {
+        } else {
             vtx->v.ob[0] = make->v.ob[0];
         }
-    
+
         make++;
-    } 
+    }
 }
 
-void aRP_actor_draw(ACTOR* actor, GAME* game){
+static void aRP_actor_draw(ACTOR* actor, GAME* game) {
     Vtx* work;
     Vtx* vtx;
     Gfx* gfxp;
     Gfx* gfxp2;
     GRAPH* graph = game->graph;
-
 
     _texture_z_light_fog_prim_npc(graph);
 
@@ -107,10 +101,9 @@ void aRP_actor_draw(ACTOR* actor, GAME* game){
 
     work = vtx;
 
-    if(vtx != NULL){
+    if (vtx != NULL) {
         aRP_make_vtx(vtx);
-    }
-    else{
+    } else {
         work = tol_rope_1_v;
     }
 
@@ -118,15 +111,14 @@ void aRP_actor_draw(ACTOR* actor, GAME* game){
 
     gfxp = NOW_POLY_OPA_DISP;
     gSPMatrix(gfxp++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gSPSegment(gfxp++, 8, work); 
+    gSPSegment(gfxp++, 8, work);
     gSPDisplayList(gfxp++, tol_rope_1T_model);
     SET_POLY_OPA_DISP(gfxp);
 
-
-    _texture_z_light_fog_prim_shadow(graph); 
-    gfxp2 = NOW_SHADOW_DISP; 
+    _texture_z_light_fog_prim_shadow(graph);
+    gfxp2 = NOW_SHADOW_DISP;
     gSPMatrix(gfxp2++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gSPDisplayList(gfxp2++, tol_rope_1_shadowT_model); 
+    gSPDisplayList(gfxp2++, tol_rope_1_shadowT_model);
     SET_SHADOW_DISP(gfxp2);
 
     CLOSE_DISP(graph);

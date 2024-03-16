@@ -35,6 +35,8 @@
 #include "m_trademark.h"
 #include "zurumode.h"
 #include "m_scene_table.h"
+#include "m_player_lib.h"
+#include "m_skin_matrix.h"
 
 u16 S_back_title_timer;
 u16 S_se_endcheck_timeout;
