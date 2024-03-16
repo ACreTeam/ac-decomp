@@ -8,17 +8,20 @@
 #include "m_player_lib.h"
 #include "m_msg.h"
 #include "m_debug.h"
+#include "m_needlework.h"
+#include "m_needlework_ovl.h"
+#include "libultra/libultra.h"
 
 enum {
-  aFLAG_ACTION_WAIT,
-  aFLAG_ACTION_TALK,
-  aFLAG_ACTION_TALK_END,
-  aFLAG_ACTION_OPEN_WAIT,
-  aFLAG_ACTION_END_WAIT,
-  aFLAG_ACTION_UP,
-  aFLAG_ACTION_DOWN,
+    aFLAG_ACTION_WAIT,
+    aFLAG_ACTION_TALK,
+    aFLAG_ACTION_TALK_END,
+    aFLAG_ACTION_OPEN_WAIT,
+    aFLAG_ACTION_END_WAIT,
+    aFLAG_ACTION_UP,
+    aFLAG_ACTION_DOWN,
 
-  aFLAG_ACTION_NUM
+    aFLAG_ACTION_NUM
 };
 
 static void aFLAG_actor_ct(ACTOR* actor, GAME* game);
@@ -37,20 +40,15 @@ ACTOR_PROFILE Flag_Profile = {
     &aFLAG_actor_dt,
     &aFLAG_actor_init,
     &aFLAG_actor_draw,
-    NULL
+    NULL,
 };
 
 static u8 aFLAG_shadow_vtx_fix_flg_table[8] = { FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, FALSE, TRUE };
 
 extern Vtx obj_frag_shadow_v[];
 extern Gfx obj_frag_shadowT_model[];
-static bIT_ShadowData_c aFLAG_shadow_data = {
-    8,
-    aFLAG_shadow_vtx_fix_flg_table,
-    60.0f,
-    obj_frag_shadow_v,
-    obj_frag_shadowT_model
-};
+static bIT_ShadowData_c aFLAG_shadow_data = { 8, aFLAG_shadow_vtx_fix_flg_table, 60.0f, obj_frag_shadow_v,
+                                              obj_frag_shadowT_model };
 
 extern cKF_Skeleton_R_c cKF_bs_r_obj_s_frag;
 extern cKF_Skeleton_R_c cKF_bs_r_obj_w_frag;
@@ -248,12 +246,17 @@ static void aFLAG_up(STRUCTURE_ACTOR* flag, GAME_PLAY* game_play) {
         flag->arg1_f = starting_x + (normalized_x_length * flag->arg1 * flag->arg1);
     } else if (flag->arg1 <= second_point_frame) {
         normalized_x_length = (middle_x - starting_x) / (second_point_frame * (first_point_frame - second_point_frame));
-        flag->arg1_f = middle_x + (normalized_x_length * (flag->arg1 - second_point_frame) * (flag->arg1 - second_point_frame));
+        flag->arg1_f =
+            middle_x + (normalized_x_length * (flag->arg1 - second_point_frame) * (flag->arg1 - second_point_frame));
     } else if (flag->arg1 <= third_point_frame) {
-        normalized_x_length = (ending_x - middle_x) / ((third_point_frame - second_point_frame) * (ending_frame - second_point_frame));
-        flag->arg1_f = middle_x + (normalized_x_length * (flag->arg1 - second_point_frame) * (flag->arg1 - second_point_frame));
+        normalized_x_length =
+            (ending_x - middle_x) / ((third_point_frame - second_point_frame) * (ending_frame - second_point_frame));
+        flag->arg1_f =
+            middle_x + (normalized_x_length * (flag->arg1 - second_point_frame) * (flag->arg1 - second_point_frame));
     } else {
-        normalized_x_length = (ending_x - middle_x) / ((ending_frame - second_point_frame) * ((third_point_frame - second_point_frame) - (ending_frame - second_point_frame)));
+        normalized_x_length =
+            (ending_x - middle_x) / ((ending_frame - second_point_frame) *
+                                     ((third_point_frame - second_point_frame) - (ending_frame - second_point_frame)));
         flag->arg1_f = ending_x + (normalized_x_length * (flag->arg1 - ending_frame) * (flag->arg1 - ending_frame));
     }
 
@@ -307,7 +310,8 @@ static void aFLAG_down(STRUCTURE_ACTOR* flag, GAME_PLAY* game_play) {
             flag->arg1_f = ending_x + (flag->arg1 * (normalized_x_length * flag->arg1));
         } else {
             normalized_x_length = -(x_length / (ending_frame * (midpoint_frame - ending_frame)));
-            flag->arg1_f = starting_x + (normalized_x_length * (flag->arg1 - ending_frame) * (flag->arg1 - ending_frame));
+            flag->arg1_f =
+                starting_x + (normalized_x_length * (flag->arg1 - ending_frame) * (flag->arg1 - ending_frame));
         }
 
         flag->arg1 += 1;
@@ -320,13 +324,7 @@ static void aFLAG_down(STRUCTURE_ACTOR* flag, GAME_PLAY* game_play) {
 
 static void aFLAG_setup_action(STRUCTURE_ACTOR* flag, int action) {
     static aSTR_MOVE_PROC process[aFLAG_ACTION_NUM] = {
-        &aFLAG_wait,
-        &aFLAG_talk,
-        &aFLAG_talk_end,
-        &aFLAG_menu_open_wait,
-        &aFLAG_menu_end_wait,
-        &aFLAG_up,
-        &aFLAG_down
+        &aFLAG_wait, &aFLAG_talk, &aFLAG_talk_end, &aFLAG_menu_open_wait, &aFLAG_menu_end_wait, &aFLAG_up, &aFLAG_down
     };
 
     flag->action_proc = process[action];

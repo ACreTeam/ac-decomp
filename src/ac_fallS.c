@@ -6,6 +6,7 @@
 #include "audio.h"
 #include "sys_math3d.h"
 #include "sys_matrix.h"
+#include "m_rcp.h"
 
 extern Gfx obj_fallS_model[];
 extern Gfx obj_fallS_rainbowT_model[];

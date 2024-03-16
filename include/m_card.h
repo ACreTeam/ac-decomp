@@ -53,6 +53,7 @@ extern void mCD_toNextLand();
 
 extern int mCD_EraseBrokenLand_bg(void*);
 extern int mCD_card_format_bg(u8);
+extern void mCD_ReCheckLoadLand(GAME_PLAY* play);
 
 #ifdef __cplusplus
 }

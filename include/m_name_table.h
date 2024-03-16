@@ -555,6 +555,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define FTR0_START 0x1000
 #define FTR_CLASSIC_WARDROBE 0x1004
+#define FTR_FAN 0x1088
 #define FTR_PAPA_BEAR 0x10E8
 #define FTR_PAPA_BEAR_EAST 0x10E9
 #define FTR_PAPA_BEAR_NORTH 0x10EA

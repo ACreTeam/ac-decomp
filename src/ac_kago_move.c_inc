@@ -1,13 +1,13 @@
-void aKAG_set_bgOffset(KAGO_ACTOR* actor, int id) {
+static void aKAG_set_bgOffset(KAGO_ACTOR* actor, int id) {
     id = id == 0 ? 10 : 10;
 
     mCoBG_SetPlussOffset(actor->structure_class.actor_class.home.position, id, 100);
 }
 
-void aKAG_wait(STRUCTURE_ACTOR* actorx, GAME_PLAY* play) {
+static void aKAG_wait(STRUCTURE_ACTOR* actorx, GAME_PLAY* play) {
 }
 
-void aKAG_setup_action(KAGO_ACTOR* kago, int id) {
+static void aKAG_setup_action(KAGO_ACTOR* kago, int id) {
     static aSTR_MOVE_PROC process[] = {
         aKAG_wait,
     };
@@ -16,7 +16,7 @@ void aKAG_setup_action(KAGO_ACTOR* kago, int id) {
     kago->structure_class.arg0 = id;
 }
 
-void aKAG_actor_move(ACTOR* actor, GAME* game) {
+static void aKAG_actor_move(ACTOR* actor, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     KAGO_ACTOR* kago = (KAGO_ACTOR*)actor;
 
@@ -40,7 +40,7 @@ void aKAG_actor_move(ACTOR* actor, GAME* game) {
     }
 }
 
-void aKAG_actor_init(ACTOR* actor, GAME* game) {
+static void aKAG_actor_init(ACTOR* actor, GAME* game) {
 
     mFI_SetFG_common(0xF111, actor->home.position, 0);
     aKAG_actor_move(actor, game);

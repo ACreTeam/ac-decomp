@@ -11,7 +11,7 @@
 #include "m_snowman.h"
 #include "m_quest.h"
 #include "sys_matrix.h"
-
+#include "m_rcp.h"
 
 static void aPSM_actor_ct(ACTOR* actor, GAME* game);
 static void aPSM_actor_dt(ACTOR* actor, GAME* game);
@@ -75,8 +75,8 @@ static void aPSM_actor_ct(ACTOR* actor, GAME* game) {
     mCoBG_SetPlussOffset(actor->home.position, 3, 100);
 }
 
-static void aPSM_actor_dt(ACTOR* actor, GAME* game) { 
-    mCoBG_SetPlussOffset(actor->home.position, 0, 100); 
+static void aPSM_actor_dt(ACTOR* actor, GAME* game) {
+    mCoBG_SetPlussOffset(actor->home.position, 0, 100);
 }
 
 static void aPSM_set_talk_info(ACTOR* actor) {

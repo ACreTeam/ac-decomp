@@ -375,6 +375,7 @@ BASE_REL_CFLAGS = CFLAGS + [
      "-sdata 0",
      f"-sdata2 {REL_SDATA2_SIZE}",
      "-enum int",
+     "-requireprotos",
      #"-pool off",
      "-sym on"
 ] + REL_DEFINES

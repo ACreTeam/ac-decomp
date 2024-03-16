@@ -6,14 +6,15 @@
 #include "m_debug.h"
 #include "m_npc_schedule.h"
 #include "m_player_lib.h"
+#include "libultra/libultra.h"
 
 #define mEnv_TIME_TO_SECS(hour, min, sec) ((hour) * mTM_SECONDS_IN_HOUR + (min) * mTM_SECONDS_IN_MINUTE + (sec))
 
-static int klight_chg_time[mEnv_TERM_NUM + 1] = { mEnv_TIME_TO_SECS(0, 0, 0),  mEnv_TIME_TO_SECS(4, 0, 0),
-                                                  mEnv_TIME_TO_SECS(6, 0, 0),  mEnv_TIME_TO_SECS(8, 0, 0),
-                                                  mEnv_TIME_TO_SECS(12, 0, 0), mEnv_TIME_TO_SECS(16, 0, 0),
-                                                  mEnv_TIME_TO_SECS(18, 0, 0), mEnv_TIME_TO_SECS(20, 0, 0),
-                                                  mEnv_TIME_TO_SECS(24, 0, 0) };
+static int klight_chg_time[mEnv_TERM_NUM + 1] = {
+    mEnv_TIME_TO_SECS(0, 0, 0),  mEnv_TIME_TO_SECS(4, 0, 0),  mEnv_TIME_TO_SECS(6, 0, 0),
+    mEnv_TIME_TO_SECS(8, 0, 0),  mEnv_TIME_TO_SECS(12, 0, 0), mEnv_TIME_TO_SECS(16, 0, 0),
+    mEnv_TIME_TO_SECS(18, 0, 0), mEnv_TIME_TO_SECS(20, 0, 0), mEnv_TIME_TO_SECS(24, 0, 0),
+};
 
 static BaseLight l_mEnv_kcolor_fine_data[mEnv_TERM_NUM] = {
     /* 00:00 -> 03:59 */

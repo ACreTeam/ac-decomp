@@ -3,6 +3,9 @@
 #include "m_common_data.h"
 #include "m_player_lib.h"
 #include "sys_matrix.h"
+#include "m_item_name.h"
+#include "m_msg.h"
+#include "m_rcp.h"
 
 static void aRSV_actor_ct(ACTOR* actor, GAME* game);
 static void aRSV_actor_init(ACTOR* actor, GAME* game);

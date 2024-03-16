@@ -40,6 +40,7 @@ extern "C" {
 
 /* short angle -> radians */
 #define SHORT2RAD_ANGLE(s) ((((f32)(s)) / (65536.0f / (2.0f * F_PI))))
+#define SHORT2RAD_ANGLE2(s) ((f32)(s) * ((2.0f * F_PI) / 65536.0f))
 #define SHORTANGLE2RAD(sangle) ((F_PI / 32768.0f) * ((f32)(sangle)))
 
 /* degrees -> short angle */

@@ -5,6 +5,7 @@
 #include "m_field_info.h"
 #include "m_demo.h"
 #include "m_player_lib.h"
+#include "m_msg.h"
 
 extern void aNP_actor_init(ACTOR* actor, GAME* game);
 
@@ -34,7 +35,7 @@ static void aNP_set_talk_info(ACTOR* actor) {
     mDemo_Set_camera(TRUE);
     mPlib_Set_able_hand_all_item_in_demo(TRUE);
     color.r = 205;
-    color.g = 120; 
+    color.g = 120;
     color.b = 0;
     color.a = 255;
     mDemo_Set_talk_window_color(&color);
@@ -45,9 +46,9 @@ static void aNP_actor_move(ACTOR* actor, GAME_PLAY* play) {
     s16 player_angle;
     int angle;
 
-    if ((mDemo_Check(7, actor) == 0) && (mDemo_Check(8,actor) == 0)) {
+    if ((mDemo_Check(7, actor) == 0) && (mDemo_Check(8, actor) == 0)) {
         player = GET_PLAYER_ACTOR(play);
-        if ((player != NULL) && (player->actor_class.world.position.z >=  actor->world.position.z)) {
+        if ((player != NULL) && (player->actor_class.world.position.z >= actor->world.position.z)) {
             player_angle = actor->player_angle_y;
             angle = (player_angle >= 0) ? player_angle : -player_angle;
             if (angle < 0x2000) {
@@ -59,7 +60,7 @@ static void aNP_actor_move(ACTOR* actor, GAME_PLAY* play) {
 
 extern void aNP_actor_init(ACTOR* actor, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
-    
+
     mFI_SetFG_common(DUMMY_NAMEPLATE, actor->home.position, 0);
     aNP_actor_move(actor, play);
     actor->mv_proc = (mActor_proc)(aNP_actor_move);

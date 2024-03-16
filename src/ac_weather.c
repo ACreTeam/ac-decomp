@@ -12,6 +12,7 @@
 #include "m_malloc.h"
 #include "m_player_lib.h"
 #include "m_event.h"
+#include "libultra/libultra.h"
 
 static void Weather_Actor_ct(ACTOR* actor, GAME* game);
 static void Weather_Actor_dt(ACTOR* actor, GAME* game);
@@ -19,6 +20,7 @@ static void Weather_Actor_move(ACTOR* actor, GAME* game);
 static void Weather_Actor_draw(ACTOR* actor, GAME* game);
 
 static void aWeather_SetNowProfile(WEATHER_ACTOR* weather, s16 id);
+static int aWeather_CountWeatherPrivate(WEATHER_ACTOR* weather);
 
 static aWeather_Profile_c* profile_tbl[] = {
     &iam_weather_fine, &iam_weather_rain, &iam_weather_snow, &iam_weather_sakura, &iam_weather_leaf,
@@ -105,7 +107,7 @@ extern void aWeather_RequestChangeWeatherFromIsland() {
                                   mEnv_SAVE_GET_WEATHER_INTENSITY(Save_Get(weather)));
 }
 
-int aWeather_GetWeatherPrvNum(ACTOR* actor) {
+static int aWeather_GetWeatherPrvNum(ACTOR* actor) {
     WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
     aWeather_Priv* priv = weather->priv;
     int i;
@@ -120,7 +122,7 @@ int aWeather_GetWeatherPrvNum(ACTOR* actor) {
     return -1;
 }
 
-void aWeather_AbolishPrivate(ACTOR* actor, int num) {
+static void aWeather_AbolishPrivate(ACTOR* actor, int num) {
     WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
     aWeather_Priv* priv = weather->priv;
 
@@ -132,7 +134,7 @@ void aWeather_AbolishPrivate(ACTOR* actor, int num) {
     }
 }
 
-aWeather_Priv* aWeather_GetWeatherPrv(u8 status, s16 timer, xyz_t* pos, xyz_t* speed, ACTOR* actor, int id) {
+static aWeather_Priv* aWeather_GetWeatherPrv(u8 status, s16 timer, xyz_t* pos, xyz_t* speed, ACTOR* actor, int id) {
     WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
     aWeather_Priv* priv = weather->priv;
 
@@ -155,7 +157,7 @@ aWeather_Priv* aWeather_GetWeatherPrv(u8 status, s16 timer, xyz_t* pos, xyz_t* s
     return NULL;
 }
 
-int aWeather_StopSysLevSE() {
+static int aWeather_StopSysLevSE() {
     WEATHER_ACTOR* weather = Common_Get(clip.weather_clip)->actor;
 
     u8 current = weather->current_sound_effect;
@@ -171,7 +173,7 @@ int aWeather_StopSysLevSE() {
     }
 }
 
-int aWeather_StartSysLevSE() {
+static int aWeather_StartSysLevSE() {
     WEATHER_ACTOR* weather = Common_Get(clip.weather_clip)->actor;
 
     u8 current = weather->current_sound_effect;
@@ -200,7 +202,7 @@ int aWeather_StartSysLevSE() {
     return 0;
 }
 
-void aWeather_ChangeWeatherInstance(WEATHER_ACTOR* weather, s16 status, s16 level) {
+static void aWeather_ChangeWeatherInstance(WEATHER_ACTOR* weather, s16 status, s16 level) {
 
     weather->next_status = status;
     weather->next_level = level;
@@ -218,7 +220,7 @@ void aWeather_ChangeWeatherInstance(WEATHER_ACTOR* weather, s16 status, s16 leve
     }
 }
 
-int aWeather_IsLand_Event_Check() {
+static int aWeather_IsLand_Event_Check() {
 
     if (((mFI_CheckBeforeScenePerpetual() != 0) || (mFI_GetClimate() == 1)) &&
         (Common_Get(island_weather) != (s16)mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather)))) {
@@ -227,7 +229,7 @@ int aWeather_IsLand_Event_Check() {
     return 0;
 }
 
-int aWeather_Basement_Event_Check(WEATHER_ACTOR* weather) {
+static int aWeather_Basement_Event_Check(WEATHER_ACTOR* weather) {
 
     if ((weather->basement_event == 1) || (weather->basement_event == 2)) {
         return 1;
@@ -303,7 +305,7 @@ static void aWeather_EndEnvSE(ACTOR* actor) {
     aWeather_SysLevCall_MoveEnd(weather);
 }
 
-void aWeather_SetNowProfile(WEATHER_ACTOR* weather, s16 id) {
+static void aWeather_SetNowProfile(WEATHER_ACTOR* weather, s16 id) {
 
     if (!mFI_GET_TYPE(mFI_GetFieldId())) {
         weather->current_profile = profile_tbl[id];
@@ -312,7 +314,7 @@ void aWeather_SetNowProfile(WEATHER_ACTOR* weather, s16 id) {
     }
 }
 
-void aWeather_SecureWeatherPrivateWork(WEATHER_ACTOR* weather) {
+static void aWeather_SecureWeatherPrivateWork(WEATHER_ACTOR* weather) {
     int i;
 
     weather->priv = zelda_malloc(sizeof(aWeather_Priv) * 100);
@@ -344,7 +346,7 @@ static void aWeather_SetClip(WEATHER_ACTOR* weather, int flag) {
     }
 }
 
-void aWeather_RenewWindInfo(WEATHER_ACTOR* weather) {
+static void aWeather_RenewWindInfo(WEATHER_ACTOR* weather) {
     s_xyz pos = Common_Get(wind); // multiply by 1 means inline ?
     f32 speed = Common_Get(wind_speed) * 0.01f;
     f32 factor = 1.0f;
@@ -354,7 +356,7 @@ void aWeather_RenewWindInfo(WEATHER_ACTOR* weather) {
     weather->wind_info.z = pos.z * speed * factor;
 }
 
-void aWeather_SnowInAdvance(WEATHER_ACTOR* weather, GAME_PLAY* play, int moves) {
+static void aWeather_SnowInAdvance(WEATHER_ACTOR* weather, GAME_PLAY* play, int moves) {
 
     int i;
 
@@ -363,7 +365,7 @@ void aWeather_SnowInAdvance(WEATHER_ACTOR* weather, GAME_PLAY* play, int moves) 
     }
 }
 
-void Weather_Actor_ct(ACTOR* actor, GAME* game) {
+static void Weather_Actor_ct(ACTOR* actor, GAME* game) {
     static s16 DemoWeatherTbl[5][2] = {
         3, 1, 1, 2, 0, 0, 0, 0, 2, 1,
     };
@@ -481,7 +483,7 @@ static void Weather_Actor_draw(ACTOR* actor, GAME* game) {
     aWeather_DrawWeatherPrv(actor, game);
 }
 
-void aWeather_MakeWeatherPrv(ACTOR* actor, GAME* game) {
+static void aWeather_MakeWeatherPrv(ACTOR* actor, GAME* game) {
     WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
 
     if (weather->current_level != 0) {
@@ -515,7 +517,7 @@ static void aWeather_MoveWeatherPrv(WEATHER_ACTOR* weather, GAME* game) {
     }
 }
 
-int aWeather_CountWeatherPrivate(WEATHER_ACTOR* weather) {
+static int aWeather_CountWeatherPrivate(WEATHER_ACTOR* weather) {
     int i;
     int count;
     aWeather_Priv* priv = weather->priv;
@@ -554,13 +556,13 @@ static void aWeather_ChangeWeather(WEATHER_ACTOR* weather, GAME_PLAY* play) {
     }
 }
 
-void aWeather_CheckWeatherTimer() {
+static void aWeather_CheckWeatherTimer() {
     s_xyz dir;
 
     mEnv_DecideWindDirect(&dir, 0x3000, 0x3000);
 }
 
-void aWeather_RenewWeatherLevel(WEATHER_ACTOR* weather, GAME_PLAY* play) {
+static void aWeather_RenewWeatherLevel(WEATHER_ACTOR* weather, GAME_PLAY* play) {
     s16 level;
 
     if (weather->current_level != weather->current_aim_level) {

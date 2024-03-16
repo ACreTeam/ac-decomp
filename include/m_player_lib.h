@@ -60,6 +60,9 @@ extern int mPlib_check_player_actor_main_index_RecieveMove(GAME* game);
 extern int mPlib_check_label_player_demo_wait(GAME* game, void* label);
 extern int mPlib_check_player_outdoor_start(GAME* game);
 extern void mPlib_Set_change_color_request();
+extern int mPlib_check_player_open_umbrella(GAME_PLAY* play);
+extern int mPlib_Check_UKI_COMEBACK_STATUS();
+extern int mPlib_check_player_actor_main_index_OutDoorMove(GAME_PLAY* play);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 
@@ -67,6 +70,7 @@ extern void mPlib_Object_Exchange_keep_new_PlayerMdl(GAME_PLAY* play);
 extern void mPlib_Object_Exchange_keep_new_PlayerTex(GAME_PLAY* play, int bank_id, int base_idx);
 extern void mPlib_Object_Exchange_keep_new_PlayerFaceTex(GAME_PLAY* play);
 extern void mPlib_Object_Exchange_keep_new_PlayerFacePallet(GAME_PLAY* play, int bank_id, int base_idx);
+extern void mPlib_Object_Exchange_keep_new_PlayerPallet(GAME_PLAY* play, int bank_id, int base_idx);
 extern void mPlib_request_main_give_type1(GAME* game, mActor_name_t item, int mode, int present, int on_surface);
 
 #define GET_PLAYER_ACTOR(play) get_player_actor_withoutCheck(play)

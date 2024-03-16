@@ -6,33 +6,30 @@
 #include "m_rcp.h"
 #include "m_common_data.h"
 #include "m_player_lib.h"
+#include "m_event.h"
 
 static void aSCR_actor_ct(ACTOR* actor, GAME* game);
 static void aSCR_actor_dt(ACTOR* actor, GAME* game);
 static void aSCR_actor_init(ACTOR* actor, GAME* game);
 static void aSCR_actor_draw(ACTOR* actor, GAME* game);
 
-ACTOR_PROFILE S_Car_Profile = { 
-  mAc_PROFILE_S_CAR,
-  ACTOR_PART_ITEM,
-  ACTOR_STATE_TA_SET,
-  DESIGNER_CAR,
-  ACTOR_OBJ_BANK_KEEP,
-  sizeof(STRUCTURE_ACTOR),
-  &aSCR_actor_ct,
-  &aSCR_actor_dt,
-  &aSCR_actor_init,
-  &aSCR_actor_draw,
-  NULL 
+ACTOR_PROFILE S_Car_Profile = {
+    mAc_PROFILE_S_CAR,
+    ACTOR_PART_ITEM,
+    ACTOR_STATE_TA_SET,
+    DESIGNER_CAR,
+    ACTOR_OBJ_BANK_KEEP,
+    sizeof(STRUCTURE_ACTOR),
+    &aSCR_actor_ct,
+    &aSCR_actor_dt,
+    &aSCR_actor_init,
+    &aSCR_actor_draw,
+    NULL,
 };
 
-u8 aSCR_shadow_vtx_fix_flg_table0[24] = { 
-  FALSE, FALSE, FALSE, FALSE,
-  FALSE, FALSE, TRUE,  TRUE,
-  TRUE,  TRUE,  TRUE,  TRUE, 
-  TRUE,  TRUE,  TRUE,  TRUE,
-  FALSE, FALSE, FALSE, FALSE,
-  FALSE, FALSE, FALSE, FALSE
+u8 aSCR_shadow_vtx_fix_flg_table0[24] = {
+    FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE,  TRUE,  TRUE,  TRUE,  TRUE,  TRUE,
+    TRUE,  TRUE,  TRUE,  TRUE,  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE,
 };
 
 extern Vtx obj_car_shadow_v[];

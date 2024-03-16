@@ -1,4 +1,4 @@
-static void aTR1_OngenTrgStart(ACTOR* actor, u16 id){
+static void aTR1_OngenTrgStart(ACTOR* actor, u16 id) {
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
 
     sAdo_OngenTrgStart(id, &train1->actor_class.world.position);
@@ -12,138 +12,132 @@ static f32 calc_speed1(ACTOR* actor0, ACTOR* actor1) {
         return 0.8f + train0->tr_speed;
     }
 
-    if (actor1->speed < train0->tr_speed){
-        return train0->tr_speed + (0.5f * - (actor1->speed - train0->tr_speed));
+    if (actor1->speed < train0->tr_speed) {
+        return train0->tr_speed + (0.5f * -(actor1->speed - train0->tr_speed));
     }
 
     return train0->tr_speed;
 }
 
-static f32 calc_speed2(ACTOR* actor){
+static f32 calc_speed2(ACTOR* actor) {
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
     int should_stop = F32_IS_ZERO(train1->tr0_pos);
-    
+
     return should_stop == FALSE ? train1->tr0_pos : -0.23f;
 }
 
-static void aTR1_position_move(ACTOR* actor){
+static void aTR1_position_move(ACTOR* actor) {
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
     TRAIN0_ACTOR* train0 = (TRAIN0_ACTOR*)actor->parent_actor;
 
     f32 diff;
     f32 tr_back_calc;
     f32 base_x_pos;
-    
+
     tr_back_calc = train1->actor_class.world.position.x;
     base_x_pos = -125.0f + train0->tr1_pos;
     tr_back_calc += 0.5f * train1->actor_class.speed;
-    
+
     diff = tr_back_calc - base_x_pos;
-    if((diff) <= 0.0f){
+    if ((diff) <= 0.0f) {
         train1->actor_class.speed = calc_speed1(actor->parent_actor, actor);
         train1->actor_class.world.position.x = base_x_pos;
-    }
-    else if((diff) > 2.0f){
+    } else if ((diff) > 2.0f) {
         train1->actor_class.speed = calc_speed2(actor->parent_actor);
         train1->actor_class.world.position.x = 2.0f + base_x_pos;
-    }
-    else{
+    } else {
         chase_f(&train1->actor_class.speed, 0.0f, 0.0025f);
         train1->actor_class.world.position.x = tr_back_calc;
     }
 }
 
-static void aTR1_chg_station_attr(int station){
+static void aTR1_chg_station_attr(int station) {
     static xyz_t doorway_pos = { 2180.0f, 0.0f, 820.0f };
-    xyz_t soil_pos;
-    xyz_t unk20_pos;
 
-    if(mEv_CheckFirstIntro() == 0){
-        if(station == 5){
-            soil_pos = doorway_pos;
-            mCoBG_SetAttribute(&soil_pos, 7);
-        }
-        else if(station == 6){
-            unk20_pos = doorway_pos;
-            mCoBG_SetAttribute(&unk20_pos, 0x20);
+    if (mEv_CheckFirstIntro() == 0) {
+        if (station == 5) {
+            mCoBG_SetAttribute(doorway_pos, mCoBG_ATTRIBUTE_STONE);
+        } else if (station == 6) {
+            mCoBG_SetAttribute(doorway_pos, 0x20);
         }
     }
 }
 
-static void aTR1_passenger_ctrl(ACTOR* actor){
+static void aTR1_passenger_ctrl(ACTOR* actor) {
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
 
     GAME_PLAY* play = (GAME_PLAY*)gamePT;
     xyz_t pos;
     s_xyz rot;
 
-    if(train1->player_pass_exists == 1){
+    if (train1->player_pass_exists == 1) {
         pos.x = train1->actor_class.world.position.x + 60.0f;
         pos.y = train1->actor_class.world.position.y + 20.0f;
         pos.z = train1->actor_class.world.position.z + 20.0f;
         rot.x = ZeroSVec.x;
         rot.y = ZeroSVec.y;
         rot.z = ZeroSVec.z;
-        get_player_actor_withoutCheck((GAME_PLAY*)gamePT)->Set_force_position_angle_proc(gamePT, &pos, &rot, mPlayer_FORCE_POSITION_ANGLE_POSX | mPlayer_FORCE_POSITION_ANGLE_POSY | mPlayer_FORCE_POSITION_ANGLE_POSZ | mPlayer_FORCE_POSITION_ANGLE_ROTY);
-    }
-    else if(train1->player_pass_leaving == 1){
+        get_player_actor_withoutCheck((GAME_PLAY*)gamePT)
+            ->Set_force_position_angle_proc(gamePT, &pos, &rot,
+                                            mPlayer_FORCE_POSITION_ANGLE_POSX | mPlayer_FORCE_POSITION_ANGLE_POSY |
+                                                mPlayer_FORCE_POSITION_ANGLE_POSZ | mPlayer_FORCE_POSITION_ANGLE_ROTY);
+    } else if (train1->player_pass_leaving == 1) {
         pos.x = train1->actor_class.world.position.x + 2.0f;
         pos.y = train1->actor_class.world.position.y + 16.0f;
         pos.z = train1->actor_class.world.position.z + 20.0f;
-        get_player_actor_withoutCheck((GAME_PLAY*)gamePT)->Set_force_position_angle_proc(gamePT, &pos, NULL, mPlayer_FORCE_POSITION_ANGLE_POSX | mPlayer_FORCE_POSITION_ANGLE_POSY | mPlayer_FORCE_POSITION_ANGLE_POSZ);
-        
+        get_player_actor_withoutCheck((GAME_PLAY*)gamePT)
+            ->Set_force_position_angle_proc(gamePT, &pos, NULL,
+                                            mPlayer_FORCE_POSITION_ANGLE_POSX | mPlayer_FORCE_POSITION_ANGLE_POSY |
+                                                mPlayer_FORCE_POSITION_ANGLE_POSZ);
     }
 }
 
-
-static void aTR1_setupAction(ACTOR* actor, int action){
+static void aTR1_setupAction(ACTOR* actor, int action) {
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
-    
-    static cKF_Animation_R_c* anime_table[] = {&cKF_ba_r_obj_train1_3_open, &cKF_ba_r_obj_train1_3_close};
-    static f32 anime_end[] = {24.0f, 32.0f};
-    static int animeSeqNoTable[] = {0,0,0,0,0,1,1,0,0};
-    static f32 anime_spd[]  = {0.0f,0.0f,0.0f,0.0f, 0.5f, 0.0f,0.5f,0.0f,0.0f};
-    
+
+    static cKF_Animation_R_c* anime_table[] = { &cKF_ba_r_obj_train1_3_open, &cKF_ba_r_obj_train1_3_close };
+    static f32 anime_end[] = { 24.0f, 32.0f };
+    static int animeSeqNoTable[] = { 0, 0, 0, 0, 0, 1, 1, 0, 0 };
+    static f32 anime_spd[] = { 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 0.0f, 0.0f };
+
     cKF_Animation_R_c* anime_pt;
     f32 speed;
     f32 end;
     f32 tr_speed;
     int seq_no = animeSeqNoTable[action];
-    
+
     anime_pt = anime_table[seq_no];
     speed = anime_spd[action];
     end = anime_end[seq_no];
 
     tr_speed = 1.0f;
     train1->tr_action = action;
-    
-    if((train1->tr_action == 6) || (train1->tr_action == 4)){
-        if((mEv_CheckTitleDemo() == 0) && (tr_speed != train1->tr_speed)){
+
+    if ((train1->tr_action == 6) || (train1->tr_action == 4)) {
+        if ((mEv_CheckTitleDemo() == 0) && (tr_speed != train1->tr_speed)) {
             aTR1_OngenTrgStart(actor, 43);
-        }
-        else{
+        } else {
             tr_speed = end;
         }
     }
-    cKF_SkeletonInfo_R_init(&train1->keyframe, train1->keyframe.skeleton, anime_pt,
-        1.0f, end, tr_speed, speed, 0.0f, 0, NULL );
+    cKF_SkeletonInfo_R_init(&train1->keyframe, train1->keyframe.skeleton, anime_pt, 1.0f, end, tr_speed, speed, 0.0f, 0,
+                            NULL);
     aTR1_chg_station_attr(action);
 }
 
-static void aTR1_actor_move(ACTOR* actor, GAME* game){
+static void aTR1_actor_move(ACTOR* actor, GAME* game) {
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
     TRAIN0_ACTOR* train0 = (TRAIN0_ACTOR*)actor->parent_actor;
     cKF_SkeletonInfo_R_c* keyframe = &train1->keyframe;
 
-    
     train1->anim_state = cKF_SkeletonInfo_R_play(keyframe);
-    if(mEv_CheckTitleDemo() <= 0){
-      aTR1_position_move((ACTOR*)train1);
+    if (mEv_CheckTitleDemo() <= 0) {
+        aTR1_position_move((ACTOR*)train1);
     }
     aTR1_passenger_ctrl((ACTOR*)train1);
 
-    if(train0->tr_action != train1->tr_action){
-      aTR1_setupAction((ACTOR*)train1, train0->tr_action);
+    if (train0->tr_action != train1->tr_action) {
+        aTR1_setupAction((ACTOR*)train1, train0->tr_action);
     }
 
     train1->tr_speed = 0.0f;

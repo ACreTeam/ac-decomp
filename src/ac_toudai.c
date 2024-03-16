@@ -7,7 +7,7 @@
 #include "m_player_lib.h"
 #include "m_common_data.h"
 #include "m_bgm.h"
-
+#include "m_soncho.h"
 
 static void aTOU_actor_ct(ACTOR*, GAME*);
 static void aTOU_actor_dt(ACTOR*, GAME*);
@@ -31,48 +31,42 @@ ACTOR_PROFILE Toudai_Profile = {
 extern Vtx obj_s_toudai_shadow_v[];
 extern Gfx obj_s_toudai_shadow_1_model[];
 
-u8 aTOU_shadow_vtx_fix_flg_table[] = {1,0,1,0,
-                                      0,1,1,0,
-                                      1,0,0,0,};
-bIT_ShadowData_c aTOU_shadow_data = {
-    10,
-    aTOU_shadow_vtx_fix_flg_table,
-    60.0f,
-    obj_s_toudai_shadow_v,
-    obj_s_toudai_shadow_1_model,
+u8 aTOU_shadow_vtx_fix_flg_table[] = {
+    1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0,
 };
 
+bIT_ShadowData_c aTOU_shadow_data = {
+    10, aTOU_shadow_vtx_fix_flg_table, 60.0f, obj_s_toudai_shadow_v, obj_s_toudai_shadow_1_model,
+};
 
 static void aTOU_set_bgOffset(TOUDAI_ACTOR*, int);
 static void aTOU_setup_action(ACTOR*, int);
 
-static void aTOU_fgunit_on(ACTOR* actor){
+static void aTOU_fgunit_on(ACTOR* actor) {
     TOUDAI_ACTOR* light = (TOUDAI_ACTOR*)actor;
 
     xyz_t pos;
     int i;
     mActor_name_t* nameptr;
-    
-    xyz_t_move(&pos, &light->actor_class.home.position); 
+
+    xyz_t_move(&pos, &light->actor_class.home.position);
 
     pos.x -= 40.0f;
     pos.z -= 80.0f;
-    for(i = 0; i < 2; i++){
+    for (i = 0; i < 2; i++) {
         nameptr = mFI_GetUnitFG(pos);
-        if(nameptr != NULL){
-            if(mSN_ClearSnowman(nameptr) == 0){
+        if (nameptr != NULL) {
+            if (mSN_ClearSnowman(nameptr) == 0) {
                 if (((*nameptr >= 0x2A) && (*nameptr <= 0x42)) || (*nameptr == 0x5C)) {
                     mPB_keep_item(bg_item_fg_sub_dig2take_conv(*nameptr));
                     mFI_SetFG_common(RSV_NO, pos, 1);
                     mFI_Wpos2DepositOFF(pos);
-                }
-                else{
+                } else {
                     mFI_Wpos2DepositOFF(pos);
                     mPB_keep_item(*nameptr);
                     mFI_SetFG_common(RSV_NO, pos, 1);
                 }
-            }
-            else{
+            } else {
                 mFI_SetFG_common(RSV_NO, pos, 1);
             }
         }
@@ -80,17 +74,17 @@ static void aTOU_fgunit_on(ACTOR* actor){
     }
 }
 
-static void aTOU_fgunit_off(ACTOR* actor){
+static void aTOU_fgunit_off(ACTOR* actor) {
     TOUDAI_ACTOR* light = (TOUDAI_ACTOR*)actor;
 
     int i;
     xyz_t pos;
-    
-    xyz_t_move(&pos, &light->actor_class.home.position); 
+
+    xyz_t_move(&pos, &light->actor_class.home.position);
 
     pos.x -= 40.0f;
     pos.z -= 80.0f;
-    for (i = 0; i < 2; i++){
+    for (i = 0; i < 2; i++) {
         mFI_SetFG_common(EMPTY_NO, pos, 1);
         pos.x += 40.0f;
     }
@@ -98,9 +92,9 @@ static void aTOU_fgunit_off(ACTOR* actor){
 
 extern cKF_Skeleton_R_c cKF_bs_r_obj_s_toudai;
 extern cKF_Skeleton_R_c cKF_bs_r_obj_w_toudai;
- 
-static void aTOU_actor_ct(ACTOR* actor, GAME* game){
-    static cKF_Skeleton_R_c* skl[] = {&cKF_bs_r_obj_s_toudai, &cKF_bs_r_obj_w_toudai};
+
+static void aTOU_actor_ct(ACTOR* actor, GAME* game) {
+    static cKF_Skeleton_R_c* skl[] = { &cKF_bs_r_obj_s_toudai, &cKF_bs_r_obj_w_toudai };
     TOUDAI_ACTOR* light = (TOUDAI_ACTOR*)actor;
 
     light->season = Common_Get(time.season);
@@ -113,14 +107,13 @@ static void aTOU_actor_ct(ACTOR* actor, GAME* game){
     actor->world.position.z -= 20.0f;
 }
 
-static void aTOU_actor_dt(ACTOR* actor, GAME* game){
+static void aTOU_actor_dt(ACTOR* actor, GAME* game) {
     TOUDAI_ACTOR* light = (TOUDAI_ACTOR*)actor;
-    
+
     aTOU_fgunit_off(&light->actor_class);
     cKF_SkeletonInfo_R_dt(&light->keyframe);
     light->actor_class.world.position.x += 20.0f;
     light->actor_class.world.position.z += 20.0f;
-
 }
 
 #include "../src/ac_toudai_move.c_inc"
