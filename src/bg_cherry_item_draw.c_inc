@@ -1,0 +1,6 @@
+static void bCI_actor_draw(ACTOR* actorx, GAME* game) {
+    BG_ITEM_ACTOR* bg_item = (BG_ITEM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    bg_item_common_draw(play, &bg_item->common, draw_part_table_a);
+}

@@ -1,4 +1,5 @@
 #include "bg_item.h"
+#include "bg_cherry_item.h"
 
 #include "m_common_data.h"
 #include "m_name_table.h"
@@ -11,28 +12,28 @@
 #include "m_rcp.h"
 #include "m_event_map_npc.h"
 
-#define GOLD_TREE_SAPLING_EFFECT_X 13.0f
-#define GOLD_TREE_SAPLING_EFFECT_Y 33.0f
+#define GOLD_TREE_SAPLING_EFFECT_X 12.0f
+#define GOLD_TREE_SAPLING_EFFECT_Y 27.0f
 #define GOLD_TREE_SAPLING_EFFECT_Z 10.0f
 
 #define bIT_CLIP (Common_Get(clip).bg_item_clip)
 
-static void bIT_actor_ct(ACTOR* actorx, GAME* game);
-static void bIT_actor_dt(ACTOR* actorx, GAME* game);
-static void bIT_actor_move(ACTOR* actorx, GAME* game);
-static void bIT_actor_draw(ACTOR* actorx, GAME* game);
+static void bCI_actor_ct(ACTOR* actorx, GAME* game);
+static void bCI_actor_dt(ACTOR* actorx, GAME* game);
+static void bCI_actor_move(ACTOR* actorx, GAME* game);
+static void bCI_actor_draw(ACTOR* actorx, GAME* game);
 
-ACTOR_PROFILE BgItem_Profile = {
-    mAc_PROFILE_BGITEM,
+ACTOR_PROFILE BgCherryItem_Profile = {
+    mAc_PROFILE_BGCHERRYITEM,
     ACTOR_PART_ITEM,
     ACTOR_STATE_NO_DRAW_WHILE_CULLED | ACTOR_STATE_NO_MOVE_WHILE_CULLED,
     EMPTY_NO,
-    ACTOR_OBJ_BANK_BGITEM,
+    ACTOR_OBJ_BANK_BG_CHERRY_ITEM,
     sizeof(BG_ITEM_ACTOR),
-    &bIT_actor_ct,
-    &bIT_actor_dt,
-    &bIT_actor_move,
-    &bIT_actor_draw,
+    &bCI_actor_ct,
+    &bCI_actor_dt,
+    &bCI_actor_move,
+    &bCI_actor_draw,
     NULL,
 };
 
@@ -59,14 +60,14 @@ static void bit_cmn_single_drawS_shadow(GAME* game, bg_item_common_info_c* commo
 static int bIT_actor_hole_effect_entry(bg_item_hole_c* hole, mActor_name_t fg_item, xyz_t* pos, u16 frames,
                                        u16 wait_frames, s16 mode, s16 wait_type);
 
-#include "../src/bg_item_data.c_inc"
+#include "../src/bg_cherry_item_data.c_inc"
 #include "../src/bg_item_clip.c_inc"
 #include "../src/bg_item_common.c_inc"
 
 extern u16 obj_g_hole_pal[];
 extern u16 obj_b_hole_pal[];
 
-static void bIT_actor_ct(ACTOR* actorx, GAME* game) {
+static void bCI_actor_ct(ACTOR* actorx, GAME* game) {
     BG_ITEM_ACTOR* bg_item = (BG_ITEM_ACTOR*)actorx;
     bg_item_common_c* common;
     bg_item_common_info_c* common_info;
@@ -80,32 +81,32 @@ static void bIT_actor_ct(ACTOR* actorx, GAME* game) {
     common = &bg_item->common;
     common_info = &common->common_info;
     bIT_clip_ct(actorx);
-    mFI_InitItemTable(&common->item_table);
+    mFI_InitItemTable(&bg_item->common.item_table);
     player = GET_PLAYER_ACTOR((GAME_PLAY*)game);
     event_type = mEvMN_GetEventTypeMap();
 
     if (player != NULL) {
-        mFI_GetItemTable(&bg_item->common.item_table, player->actor_class.world.position, __FILE__, 257);
+        mFI_GetItemTable(&bg_item->common.item_table, player->actor_class.world.position, __FILE__, 269);
         mFI_BornItemON();
     }
 
-    max = common->item_table.count;
-    block_table = common->item_table.block_info_tbl;
-    info_table = common->block_info_table.info_tbl;
-    for (i = 0; i < max; i++, block_table++, info_table++) {
-        bIT_common_clear_treeatr(block_table->block_x, block_table->block_z, info_table);
+    for (i = 0; i < bg_item->common.item_table.count; i++) {
+        bIT_common_clear_treeatr(bg_item->common.item_table.block_info_tbl[i].block_x,
+                                 bg_item->common.item_table.block_info_tbl[i].block_z,
+                                 &bg_item->common.block_info_table.info_tbl[i]);
 
         if (event_type == -1 || mEvMN_GetMapIdx(event_type) == -1) {
-            mFI_ClearHoleBlock(block_table->block_x, block_table->block_z);
+            mFI_ClearHoleBlock(bg_item->common.item_table.block_info_tbl[i].block_x,
+                               bg_item->common.item_table.block_info_tbl[i].block_z);
         }
     }
 
     for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++) {
-        common->_139F4[i] = i;
+        bg_item->common._139F4[i] = i;
     }
 
-    common_info->_30 = 4;
-    common_info->draw_part_table_p = draw_part_table_a;
+    bg_item->common.common_info._30 = 0x24;
+    bg_item->common.common_info.draw_part_table_p = draw_part_table_a;
 
     common_info->pal_p[bIT_PAL_FLOWER_A] = g_fdinfo->field_palette.flower0_pal;
     common_info->pal_p[bIT_PAL_FLOWER_B] = g_fdinfo->field_palette.flower1_pal;
@@ -117,16 +118,11 @@ static void bIT_actor_ct(ACTOR* actorx, GAME* game) {
     common_info->pal_p[bIT_PAL_HOLE_G] = obj_g_hole_pal;
     common_info->pal_p[bIT_PAL_HOLE_S] = obj_b_hole_pal;
 
-    common->bg_item_actorx_p = actorx;
+    bg_item->common.bg_item_actorx_p = actorx;
 
-    {
-        bg_item_draw_table_c* draw_tbl = common->draw_table;
-        bg_item_idx_info_c* start_idx = bg_item->item_idx_info;
-
-        for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++, draw_tbl++, start_idx++) {
-            draw_tbl->draw_data.val = bIT_DRAW_TYPE_MAX - 1;
-            draw_tbl->draw_data.idx_p = start_idx->idx;
-        }
+    for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++) {
+        bg_item->common.draw_table[i].draw_data.val = bIT_DRAW_TYPE_MAX - 1;
+        bg_item->common.draw_table[i].draw_data.idx_p = bg_item->item_idx_info[i].idx;
     }
 
     common_info->pos_table_p = pos_table;
@@ -134,12 +130,12 @@ static void bIT_actor_ct(ACTOR* actorx, GAME* game) {
     bg_item_common_construct(game, common);
 }
 
-static void bIT_actor_dt(ACTOR* actorx, GAME* game) {
+static void bCI_actor_dt(ACTOR* actorx, GAME* game) {
     BG_ITEM_ACTOR* bg_item = (BG_ITEM_ACTOR*)actorx;
 
     bg_item_common_destruct((GAME_PLAY*)game, actorx, &bg_item->common);
     bIT_clip_dt();
 }
 
-#include "../src/bg_item_move.c_inc"
-#include "../src/bg_item_draw.c_inc"
+#include "../src/bg_cherry_item_move.c_inc"
+#include "../src/bg_cherry_item_draw.c_inc"

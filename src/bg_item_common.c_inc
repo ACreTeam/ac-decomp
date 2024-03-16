@@ -1501,9 +1501,9 @@ static void bIT_actor_drop_move_plant(bg_item_drop_c* drop) {
         if (drop->fg_item == GOLD_TREE_SAPLING) {
             xyz_t effect_pos;
 
-            effect_pos.x = drop->position.x + 13.0f;
-            effect_pos.y = drop->position.y + 33.0f;
-            effect_pos.z = drop->position.z + 10.0f;
+            effect_pos.x = drop->position.x + GOLD_TREE_SAPLING_EFFECT_X;
+            effect_pos.y = drop->position.y + GOLD_TREE_SAPLING_EFFECT_Y;
+            effect_pos.z = drop->position.z + GOLD_TREE_SAPLING_EFFECT_Z;
 
             eEC_CLIP->effect_make_proc(eEC_EFFECT_KIGAE_LIGHT, effect_pos, 2, 0, gamePT, RSV_NO, -1, 0);
         }

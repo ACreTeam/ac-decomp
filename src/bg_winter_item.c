@@ -12,6 +12,10 @@
 #include "m_rcp.h"
 #include "m_event_map_npc.h"
 
+#define GOLD_TREE_SAPLING_EFFECT_X 13.0f
+#define GOLD_TREE_SAPLING_EFFECT_Y 33.0f
+#define GOLD_TREE_SAPLING_EFFECT_Z 10.0f
+
 #define bIT_CLIP (Common_Get(clip).bg_item_clip)
 
 static void bWI_actor_ct(ACTOR* actorx, GAME* game);

@@ -599,6 +599,11 @@ ac_train_window.c:
     .text: [0x804AC510, 0x804AD428]
     .rodata: [0x80645FA8, 0x80645FF8]
     .data: [0x8068F600, 0x8068F830]
+bg_cherry_item.c:
+    .text: [0x804AFC14, 0x804B6FB4]
+    .rodata: [0x806460D8, 0x80646178]
+    .data: [0x8068FC68, 0x80692BE0]
+    .bss: [0x812FD4A8, 0x812FD938]
 bg_item.c:
     .text: [0x804B6FB4, 0x804BE338]
     .rodata: [0x80646178, 0x80646218]
