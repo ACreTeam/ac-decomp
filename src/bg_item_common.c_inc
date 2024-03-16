@@ -105,7 +105,7 @@ static int bIT_actor_fade_entry(mActor_name_t fg_name, xyz_t* pos) {
         selected_fade->fg_item = fg_name;
         selected_fade->alpha = 255;
         mFI_Wpos2UtCenterWpos(&selected_fade->position, *pos);
-        selected_fade->position.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(selected_fade->position, 0.0f);
+        selected_fade->position.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(selected_fade->position, -1.0f);
         selected_fade->_10 = 0;
         mFI_SetFG_common(EMPTY_NO, selected_fade->position, TRUE);
         return TRUE;
@@ -211,7 +211,7 @@ static int bIT_actor_ten_coin_entryR(bg_item_ten_coin_c* ten_coin, mActor_name_t
                 swing_time = 100;
             }
 
-            sel_ten_coin->left_frames = (int)(386.0f + ((f32)(int)swing_time) * 0.6f);
+            sel_ten_coin->left_frames = (int)(386.0f + ((f32)(int)swing_time) * 0.59999999f);
             sel_ten_coin->total_frames = sel_ten_coin->left_frames;
             sel_ten_coin->hit_count = 0;
             mFI_SetFG_common(MONEY_FLOWER_SEED, target_pos, TRUE);
@@ -317,7 +317,7 @@ static void bIT_actor_ten_coin_move(GAME* game, bg_item_ten_coin_c* ten_coin) {
     }
 }
 
-static int bIT_actor_ten_coin_draw_af(Gfx** gfx_pp) {
+static int bIT_actor_ten_coin_draw_af(Gfx** gfx_pp, rgba_t* color) {
     gDPPipeSync((*gfx_pp)++);
     gDPSetPrimColor((*gfx_pp)++, 0, 128, 255, 255, 255, 255);
     return TRUE;
@@ -742,7 +742,7 @@ static int bIT_actor_drop_entry_main(bg_item_drop_table_c* drop_info, bg_item_dr
                 xyz_t_move(&drop->position, &src_drop->target_position);
                 drop->_58 = 0;
                 drop->_5A = 6000;
-                drop->_54 = 0.4f;
+                drop->_54 = 0.25f;
                 drop->_72 = 255;
                 drop->move_proc = &bIT_actor_drop_move_plant;
                 drop->dt_proc = &bIT_actor_drop_move_plant_destruct;
@@ -834,7 +834,7 @@ static int fruit_set(mActor_name_t fg_item, int ut_x, int ut_z, s16 num, int dro
         static xyz_t pos_part_present[3] = {
             { -2.5f, 97.5f, 7.5f },
             { -37.5f, 65.0f, 17.5f },
-            { 37.5f, 72.5f, 12.5f },
+            { 37.5f, 72.0f, 12.5f },
         };
         static xyz_t pos_part_palm_cc[2] = {
             { -10.0f, 70.0f, 2.5f },
@@ -1005,8 +1005,8 @@ static void drop_fruit(mActor_name_t fg_item, int ut_x, int ut_z, xyz_t* drop_po
         { TREE_30000BELLS, ITM_MONEY_30000, TREE, 3 },
         { TREE_100BELLS, ITM_MONEY_100, TREE, 3 },
         { TREE_FTR, FTR_FAN, TREE, 1 },
-        { TREE_BEES, HONEYCOMB, 1 },
-        { TREE_PRESENT, ITM_PRESENT, 1 },
+        { TREE_BEES, HONEYCOMB, TREE, 1 },
+        { TREE_PRESENT, ITM_PRESENT, TREE, 1 },
         { TREE_BELLS, ITM_MONEY_100, TREE, 1 },
         { TREE_PALM_FRUIT, ITM_FOOD_COCONUT, TREE_PALM_NOFRUIT_0, 2 },
         { CEDAR_TREE_BELLS, ITM_MONEY_100, CEDAR_TREE, 1 },
@@ -1015,7 +1015,7 @@ static void drop_fruit(mActor_name_t fg_item, int ut_x, int ut_z, xyz_t* drop_po
         { GOLD_TREE_BELLS, ITM_MONEY_100, GOLD_TREE, 1 },
         { GOLD_TREE_FTR, FTR_FAN, GOLD_TREE, 1 },
         { GOLD_TREE_BEES, HONEYCOMB, GOLD_TREE, 1 },
-        { GOLD_TREE_SHOVEL, ITM_GOLDEN_SHOVEL, 1 },
+        { GOLD_TREE_SHOVEL, ITM_GOLDEN_SHOVEL, GOLD_TREE, 1 },
     };
 
     xyz_t tree_pos;
@@ -1285,30 +1285,28 @@ static int bIT_actor_player_drop_entry(GAME* game, mActor_name_t fg_item, int ut
     pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, -1.0f);
     fg_p = mFI_GetUnitFG(pos);
 
-    if (fg_p != NULL) {
-        if (*fg_p == EMPTY_NO || (*fg_p >= HOLE_START && *fg_p <= HOLE_END) || *fg_p == HOLE_SHINE) {
-            drop_type = 0;
-            xyz_t_move(&target_pos, &player->actor_class.world.position);
-            target_pos.y += 50.0f;
+    if (fg_p != NULL && (*fg_p == EMPTY_NO || (*fg_p >= HOLE_START && *fg_p <= HOLE_END) || *fg_p == HOLE_SHINE)) {
+        drop_type = 0;
+        xyz_t_move(&target_pos, &player->actor_class.world.position);
+        target_pos.y += 50.0f;
 
-            if (ITEM_NAME_GET_TYPE(fg_item) == NAME_TYPE_ITEM0) {
-                if (ITEM_NAME_GET_CAT(fg_item) == 8) {
-                    drop_type |= 3;
-                } else if (ITEM_NAME_GET_CAT(fg_item) == 0) {
-                    drop_type |= 1;
-                }
-            } else {
+        if (ITEM_NAME_GET_TYPE(fg_item) == NAME_TYPE_ITEM0) {
+            if (ITEM_NAME_GET_CAT(fg_item) == 8) {
+                drop_type |= 3;
+            } else if (ITEM_NAME_GET_CAT(fg_item) == 0) {
                 drop_type |= 1;
             }
+        } else {
+            drop_type |= 1;
+        }
 
-            if (bIT_actor_drop_entry(&bIT_CLIP->bg_item_common_p->drop_info, fg_item, &target_pos, &pos, drop_type,
-                                     layer)) {
-                if (!((*fg_p >= HOLE_START && *fg_p <= HOLE_END) || *fg_p == HOLE_SHINE)) {
-                    mFI_SetFG_common(RSV_NO, pos, FALSE);
-                }
-
-                res = 1;
+        if (bIT_actor_drop_entry(&bIT_CLIP->bg_item_common_p->drop_info, fg_item, &target_pos, &pos, drop_type,
+                                 layer)) {
+            if (!((*fg_p >= HOLE_START && *fg_p <= HOLE_END) || *fg_p == HOLE_SHINE)) {
+                mFI_SetFG_common(RSV_NO, pos, FALSE);
             }
+
+            res = 1;
         }
     } else {
         res = -1;
@@ -1916,7 +1914,7 @@ static void fg_no2fg_type(mActor_name_t fg_no, bg_item_type_data_c* type_data, m
 
 static void bit_cmn_single_drawS_shadow(GAME* game, bg_item_common_info_c* common_info, mActor_name_t fg_no, xyz_t* pos,
                                         s_xyz* angle, xyz_t* scale, u8 alpha, f32 shadow_pos, rgba_t* shadow_color) {
-    if (bIT_individual_draw_check(fg_no)) {
+    if (bIT_individual_draw_check((mActor_name_t)fg_no)) {
         bg_item_type_data_c type_data;
         int ut_x;
         int ut_z;
@@ -2048,7 +2046,7 @@ static void bit_cmn_single_draw_BT(GAME* game, bg_item_common_info_c* common_inf
 static void bit_cmn_single_drawS(GAME* game, bg_item_common_info_c* common_info, mActor_name_t fg_no, xyz_t* pos,
                                  s_xyz* angle, xyz_t* scale, u8 alpha, bIT_DRAW_BF_PROC draw_bf,
                                  bIT_DRAW_AF_PROC draw_af, rgba_t* color) {
-    if (bIT_individual_draw_check(fg_no)) {
+    if (bIT_individual_draw_check((mActor_name_t)fg_no)) {
         bg_item_type_data_c type_data;
         int ut_x;
         int ut_z;
@@ -3010,7 +3008,7 @@ static void bg_item_common_draw_item_shadow(GRAPH* graph, Gfx** gfx_pp, bg_item_
             vtx = draw_part->shadow_vtx_p;
         }
 
-        gSPDisplayList((*gfx_pp)++, draw_part->display_list_table_p[draw_list->mat_idx]);
+        gSPDisplayList((*gfx_pp)++, draw_part->display_list_table_p[draw_list->gfx_idx]);
         gDPSetPrimColor((*gfx_pp)++, 0, shadow_color->a, shadow_color->r, shadow_color->g, shadow_color->b, 255);
         ((bIT_DRAW_SHADOW_PROC)draw_list->draw_proc)(graph, gfx_pp, draw_list, draw_part->shadow_vtx_count, vtx,
                                                      draw_pos, draw_part->display_list_table_p);

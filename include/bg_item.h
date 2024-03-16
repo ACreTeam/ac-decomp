@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_actor.h"
 #include "m_field_info.h"
+#include "libultra/ultratypes.h"
 #include "bg_item_h.h"
 
 #ifdef __cplusplus

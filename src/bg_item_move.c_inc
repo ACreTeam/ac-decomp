@@ -1,5 +1,6 @@
-static bg_item_type_data_c type_data_table_p_a[bIT_TYPE_CAT_NUM] = {
-    // TODO
+static bg_item_type_data_c* type_data_table_p_a[bIT_TYPE_CAT_NUM] = {
+    typeData_table_bgItem, typeData_table_bgItem2, typeData_table_ftr,
+    typeData_table_item1,  typeData_table_crack,   typeData_table_dummy,
 };
 
 static int bg_item_talking_display_limit_check(int idx) {

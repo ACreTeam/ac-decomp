@@ -42,16 +42,25 @@ static f32 pos_table2[] = {
     320.0f, 360.0f, 400.0f, 440.0f, 480.0f, 520.0f, 560.0f, 600.0f,
 };
 
-#include "bg_item_data.c_inc"
+static void bg_item_common_draw_loop_type1(GRAPH* graph, Gfx** gfx_pp, bg_item_draw_list_c* draw_list,
+                                           bg_item_draw_pos_c* draw_pos, Gfx** display_list_table);
+static void bg_item_common_s_draw_loop_type1(GRAPH* graph, Gfx** gfx_pp, bg_item_draw_list_c* draw_list,
+                                             int shadow_vtx_count, Vtx* shadow_vtx, bg_item_draw_pos_c* draw_pos,
+                                             Gfx** display_list_table);
 
-// TODO:
-static bg_item_draw_part_table_c draw_part_table_a[];
+static int bIT_actor_drop_entry(bg_item_drop_table_c* drop_info, mActor_name_t fg_item, xyz_t* pos, xyz_t* target_pos,
+                                u16 flags, s16 layer);
+static void bit_cmn_single_drawS_shadow(GAME* game, bg_item_common_info_c* common_info, mActor_name_t fg_no, xyz_t* pos,
+                                        s_xyz* angle, xyz_t* scale, u8 alpha, f32 shadow_pos, rgba_t* shadow_color);
+static int bIT_actor_hole_effect_entry(bg_item_hole_c* hole, mActor_name_t fg_item, xyz_t* pos, u16 frames,
+                                       u16 wait_frames, s16 mode, s16 wait_type);
 
+#include "../src/bg_item_data.c_inc"
 #include "../src/bg_item_clip.c_inc"
 #include "../src/bg_item_common.c_inc"
 
 extern u16 obj_g_hole_pal[];
-extern u16 obj_s_hole_pal[];
+extern u16 obj_b_hole_pal[];
 
 static void bIT_actor_ct(ACTOR* actorx, GAME* game) {
     BG_ITEM_ACTOR* bg_item = (BG_ITEM_ACTOR*)actorx;
@@ -102,7 +111,7 @@ static void bIT_actor_ct(ACTOR* actorx, GAME* game) {
     common_info->pal_p[bIT_PAL_PALM_TREE] = g_fdinfo->field_palette.palm_tree_pal;
     common_info->pal_p[bIT_PAL_GOLD_TREE] = g_fdinfo->field_palette.golden_tree_pal;
     common_info->pal_p[bIT_PAL_HOLE_G] = obj_g_hole_pal;
-    common_info->pal_p[bIT_PAL_HOLE_S] = obj_s_hole_pal;
+    common_info->pal_p[bIT_PAL_HOLE_S] = obj_b_hole_pal;
 
     common->bg_item_actorx_p = actorx;
 
