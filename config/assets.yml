@@ -335,6 +335,24 @@ config/rel.yml:
     addrs: [0x806E00C0, 0x806E00E0]
     type: pal16
 
+  # flowers
+  flower/obj_flower_tex:
+    addrs: [0x8074FE80, 0x80750680]
+  flower/obj_flower_a_v:
+    addrs: [0x80750680, 0x80750700]
+    type: vtx
+  flower/obj_flower_b_v:
+    addrs: [0x80750700, 0x80750780]
+    type: vtx
+  flower/obj_flower_c_v:
+    addrs: [0x80750780, 0x80750800]
+    type: vtx
+  flower/obj_flower_leaf_tex:
+    addrs: [0x807508C0, 0x807510C0]
+  flower/obj_flower_leaf_v:
+    addrs: [0x807510C0, 0x80751100]
+    type: vtx
+
   # dataobj.obj item names
   itemName_paper:
     addrs: [0x808BF660, 0x808C0660]

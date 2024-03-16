@@ -13,3 +13,4 @@ symbol_aligns:
     0x81297E80: 32 # .bss msg.o
     0x81296140: 32 # .bss m_island.o
     0x80904700: 32 # rom_myhome1_floor_v
+    0x80751140: 32 # dataobject.obj/.data/obj_zassou_tex

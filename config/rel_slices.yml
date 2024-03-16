@@ -1000,6 +1000,10 @@ ac_weather_fine.c:
 
 
 # dataobject.obj files
+data/field/bg/flower/obj_flower.c:
+    .data: [0x8074FE80, 0x807508C0]
+data/field/bg/flower/obj_flower_leaf.c:
+    .data: [0x807508C0, 0x80751140]
 data/combi/data_combi.c:
     .data: [0x8080DD80, 0x8080E628]
 data/item/item_name.c:
