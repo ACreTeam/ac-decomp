@@ -1,0 +1,40 @@
+static void bXI_actor_draw(ACTOR* actorx, GAME* game) {
+    BG_XMAS_ITEM_ACTOR* bg_item = (BG_XMAS_ITEM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    bg_item_common_draw(play, &bg_item->common, draw_part_table_a);
+}
+
+static void bXI_draw_loop_type1_xtree(GRAPH* graph, Gfx** gfx_pp, bg_item_draw_list_c* draw_list,
+                                      bg_item_draw_pos_c* draw_pos, Gfx** display_list_table) {
+    Gfx* dl = display_list_table[draw_list->mat_idx];
+
+    gSPDisplayList((*gfx_pp)++, display_list_table[draw_list->gfx_idx]);
+
+    while (draw_pos->next_add_cnt != 256) {
+        if (draw_pos->cull_flag == FALSE) {
+            bg_item_idx_info_c* idx_info;
+
+            Matrix_put(&draw_pos->mtxf);
+            gSPMatrix((*gfx_pp)++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            idx_info = (bg_item_idx_info_c*)draw_pos->_04;
+
+            if (idx_info->v1 == 0) {
+                gDPSetPrimColor((*gfx_pp)++, 0, 128, 255, 255, 100, 255);
+            } else if (idx_info->v1 == 1) {
+                gDPSetPrimColor((*gfx_pp)++, 0, 128, 100, 255, 255, 255);
+            } else {
+                gDPSetPrimColor((*gfx_pp)++, 0, 128, 255, 100, 255, 255);
+            }
+
+            gSPDisplayList((*gfx_pp)++, dl);
+        }
+
+        draw_pos += draw_pos->next_add_cnt;
+    }
+
+    gDPPipeSync((*gfx_pp)++);
+    gDPSetPrimColor((*gfx_pp)++, 0, 128, 255, 255, 255, 255);
+    gSPLoadGeometryMode((*gfx_pp)++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH);
+    gDPSetCombineLERP((*gfx_pp)++, TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED);
+}
