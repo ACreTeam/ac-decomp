@@ -401,7 +401,8 @@ SDK_CFLAG = [
     "-O4,p",
     "-inline all",
     "-sdata 8",
-    f"-sdata2 {DOL_SDATA2_SIZE}"
+    f"-sdata2 {DOL_SDATA2_SIZE}",
+    "-fp hard"
 ]
 ALIGN16_CFLAG = [
     "-func_align 16",
@@ -466,14 +467,16 @@ JAUDIO_CFLAGS = ' '.join(JAUDIO_BASE + LOCAL_CFLAGS)
 
 DOL_LDFLAGS = ' '.join([
     "-maxerrors 1",
-    "-mapunused"
+    "-mapunused",
+    "-fp hardware"
 ])
 
 LDFLAGS = ' '.join([
     "-maxerrors 1",
     "-mapunused",
     "-opt_partial",
-    "-strip_partial"
+    "-strip_partial",
+    "-fp hardware"
 ])
 
 PPCDIS_ANALYSIS_FLAGS = ' '.join([
