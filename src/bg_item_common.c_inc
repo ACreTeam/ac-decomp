@@ -1878,7 +1878,7 @@ static void fg_no2fg_type(mActor_name_t fg_no, bg_item_type_data_c* type_data, m
             type_data->pos_x_tbl_p = src->pos_x_tbl_p;
             type_data->pos_z_tbl_p = src->pos_z_tbl_p;
 
-            type_data->type = 68 + mNT_get_itemTableNo(fg_no);
+            type_data->type = bIT_TYPE_BASE + mNT_get_itemTableNo(fg_no);
 
             break;
         }
@@ -1892,7 +1892,7 @@ static void fg_no2fg_type(mActor_name_t fg_no, bg_item_type_data_c* type_data, m
             type_data->pos_x_tbl_p = src->pos_x_tbl_p;
             type_data->pos_z_tbl_p = src->pos_z_tbl_p;
 
-            type_data->type = 68 + mNT_get_itemTableNo(fg_no);
+            type_data->type = bIT_TYPE_BASE + mNT_get_itemTableNo(fg_no);
 
             break;
         }
