@@ -76,7 +76,7 @@ static int bIT_fruit_set(mActor_name_t fg_item, int ut_x, int ut_z, s16 count, i
 static int bIT_actor_fade_entry(mActor_name_t fg_name, xyz_t* pos);
 
 static void bIT_clip_ct(ACTOR* actorx) {
-    BG_ITEM_ACTOR* bg_item = (BG_ITEM_ACTOR*)actorx;
+    // BG_ITEM_ACTOR* bg_item = (BG_ITEM_ACTOR*)actorx;
 
     if (bIT_CLIP == NULL) {
         bIT_CLIP = (bIT_Clip_c*)zelda_malloc(sizeof(bIT_Clip_c));
@@ -96,7 +96,7 @@ static void bIT_clip_ct(ACTOR* actorx) {
         bIT_CLIP->ten_coin_entry_ex_proc = &bg_item_ten_coin_entry_ex;
         bIT_CLIP->fruit_set_proc = &bIT_fruit_set;
         bIT_CLIP->fade_entry_proc = &bIT_actor_fade_entry;
-        bIT_CLIP->bg_item_common_p = &bg_item->common;
+        bIT_CLIP->bg_item_common_p = bIT_GET_COMMON(actorx);
         bIT_CLIP->bg_item_actorx = actorx;
     }
 }
