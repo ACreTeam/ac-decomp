@@ -1,0 +1,301 @@
+// clang-format off
+static Door_data_c aNW_needlework_shop_door_data = {
+    SCENE_NEEDLEWORK,
+    4,
+    FALSE,
+    0,
+    {160,0,300},
+    EMPTY_NO,
+    1,
+    {0,0,0},
+};
+// clang-format on
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_tailor;
+extern cKF_Animation_R_c cKF_ba_r_obj_s_tailor_out;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_tailor;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_tailor_out;
+
+static void aNW_set_door_SE_sub(STRUCTURE_ACTOR* shop, u16 se_no) {
+    sAdo_OngenTrgStart(se_no, &shop->actor_class.world.position);
+}
+
+static void aNW_set_doorSE(STRUCTURE_ACTOR* shop) {
+    static f32 chk_pat_in[4] = { 10.0f, 14.0f, 35.0f, 50.0f };
+    static f32 chk_pat_out[4] = { 2.0f, 8.0f, 33.0f, 40.0f };
+    static u16 se_no[4] = { 6, 7, 8, 9 };
+
+    f32* chk_pat_p;
+    int i;
+
+    switch (shop->request_type) {
+        case 1:
+        case 3:
+            chk_pat_p = chk_pat_in;
+            break;
+        default:
+            chk_pat_p = chk_pat_out;
+            break;
+    }
+
+    for (i = 0; i < 4; i++, chk_pat_p++) {
+        if (cKF_FrameControl_passCheck_now(&shop->keyframe.frame_control, *chk_pat_p) != FALSE) {
+            aNW_set_door_SE_sub(shop, se_no[i]);
+            break;
+        }
+    }
+}
+
+static void aNW_rewrite_out_data(STRUCTURE_ACTOR* shop, GAME_PLAY* play) {
+    Door_data_c* door_data;
+    xyz_t pos;
+
+    door_data = Common_GetPointer(structure_exit_door_data);
+    if (play->fb_wipe_mode == 0) {
+        door_data->next_scene_id = Save_Get(scene_no);
+        door_data->exit_orientation = mSc_DIRECT_SOUTH_WEST;
+        door_data->exit_type = 0;
+        door_data->extra_data = 2;
+
+        pos.x = shop->actor_class.world.position.x - 64.0f;
+        pos.z = shop->actor_class.world.position.z + 64.0f;
+        pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 0.0f);
+
+        door_data->exit_position.x = pos.x;
+        door_data->exit_position.y = pos.y;
+        door_data->exit_position.z = pos.z;
+
+        door_data->door_actor_name = NEEDLEWORK_SHOP;
+
+        door_data->wipe_type = 1;
+    }
+}
+
+static int aNW_check_player(ACTOR* actor, GAME_PLAY* play) {
+    u16 y;
+    f32 xOffs;
+    f32 zOffs;
+    f32 t;
+    int res;
+    PLAYER_ACTOR* player;
+
+    player = GET_PLAYER_ACTOR(play);
+    res = 0;
+
+    if (player == NULL) {
+        return 0;
+    }
+
+    y = player->actor_class.shape_info.rotation.y;
+    xOffs = SQ(player->actor_class.world.position.x - (actor->world.position.x - 40.0f));
+    zOffs = SQ(player->actor_class.world.position.z - (actor->world.position.z + 50.0f));
+    t = (xOffs) + (zOffs);
+
+    if ((y > 0x4000) && (y < 0x8000) && (t < 360.0f) && chkTrigger(BUTTON_A) != 0) {
+        res = 2;
+    }
+
+    return res;
+}
+
+static int aNW_check_open(STRUCTURE_ACTOR* shop, GAME_PLAY* play) {
+    static int cond[] = { 1, 1, 2, 3 };
+
+    switch (shop->request_type) {
+        case 0:
+            return aNW_check_player(&shop->actor_class, play);
+        case 5:
+            return 0;
+        default:
+            return cond[shop->request_type - 1];
+    }
+}
+
+static void aNW_set_bgOffset(STRUCTURE_ACTOR* shop, int idx) {
+    // clang-format off
+    static mCoBG_OffsetTable_c height_table_ct[] = {
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 0, 13, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 0, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 0, 13, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 13, 14, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 14, 13, 13, 13, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 0, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 0, 13, 13, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 14, 13, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 14, 13, 13, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 13, 0, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 0, 13, 13, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 13, 0, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 }
+    };
+    // clang-format on
+
+    static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
+
+    static f32 addX[] = { -80.0f, -40.0f, 0.0f, 40.0f };
+    static f32 addZ[] = { 80.0f, 40.0f, 0.0f, -40.0f };
+
+    mCoBG_OffsetTable_c* offset;
+    int i;
+    int j;
+    xyz_t pos;
+
+    offset = height_table[idx];
+    for (i = 0; i < 4; i++) {
+        pos.z = shop->actor_class.home.position.z + addZ[i];
+
+        for (j = 0; j < 4; j++) {
+            if (j + i * 4 != 0 && j + i * 4 != 3 && j + i * 4 != 12 && j + i * 4 != 15) {
+                pos.x = shop->actor_class.home.position.x + addX[j];
+                mCoBG_SetPluss5PointOffset_file(pos, *offset, __FILE__, 315);
+            }
+
+            offset++;
+        }
+    }
+}
+
+static void aNW_setup_animation(STRUCTURE_ACTOR* shop, f32 speed) {
+    // clang-format off
+    static cKF_Animation_R_c* animation[2][2] = {
+        { &cKF_ba_r_obj_s_tailor, &cKF_ba_r_obj_s_tailor_out },
+        { &cKF_ba_r_obj_w_tailor, &cKF_ba_r_obj_w_tailor_out }
+    };
+    // clang-format on
+
+    static f32 start_idx[] = { 1.0f, 25.0f, 1.0f, 1.0f };
+    static f32 end_idx[] = { 51.0f, 51.0f, 51.0f, 51.0f };
+
+    int winter;
+    int idx;
+
+    winter = shop->season == mTM_SEASON_WINTER;
+    switch (shop->request_type) {
+        case 2:
+            idx = 2;
+            break;
+        case 4:
+            idx = 1;
+            break;
+        default:
+            idx = 0;
+            break;
+    }
+
+    cKF_SkeletonInfo_R_init(&shop->keyframe, shop->keyframe.skeleton, animation[winter][idx != 0], start_idx[idx],
+                            end_idx[idx], start_idx[idx], speed, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+}
+
+static void aNW_open_door_demo_ct() {
+    mDemo_Set_house_info(40.0f, 5);
+    mDemo_Set_camera(CAMERA2_PROCESS_DOOR);
+}
+
+static void aNW_talk_door_demo_ct() {
+    static rgba_t window_color = { 145, 60, 40, 255 };
+
+    mDemo_Set_msg_num(0x7DA);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+    mPlib_Set_able_hand_all_item_in_demo(TRUE);
+    mDemo_Set_ListenAble();
+    mDemo_Set_talk_window_color(&window_color);
+}
+
+static int aNW_check_opend() {
+    int now_sec = Common_Get(time.now_sec);
+    return !(now_sec < (25200) && now_sec >= (7200));
+}
+
+static int aNW_ctrl_light(STRUCTURE_ACTOR* shop) {
+    int now_sec = Common_Get(time.now_sec);
+    return !(now_sec < (64800) && now_sec >= (18000)) && (aNW_check_opend() != 0);
+}
+
+static void aNW_wait(STRUCTURE_ACTOR* shop, GAME_PLAY* play) {
+    ACTOR* actor;
+    int request_type;
+    int check_open;
+
+    actor = (ACTOR*)shop;
+    request_type = shop->request_type;
+
+    if (mDemo_Check(mDemo_TYPE_DOOR, actor) != FALSE) {
+        if (request_type == 4) {
+            aNW_setup_animation(shop, 0.5f);
+        }
+
+        aNW_setup_action(shop, aNW_ACTION_OPEN_DOOR_WAIT);
+        return;
+    }
+
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actor) == FALSE) {
+        check_open = aNW_check_open(shop, play);
+        if (check_open == 2) {
+            if (aNW_check_opend() != FALSE) {
+                mDemo_Request(mDemo_TYPE_DOOR, actor, &aNW_open_door_demo_ct);
+            } else {
+                mDemo_Request(mDemo_TYPE_SPEAK, actor, &aNW_talk_door_demo_ct);
+            }
+        } else if (check_open == 3) {
+            if (request_type == 4) {
+                aNW_setup_animation(shop, 0.5f);
+            }
+
+            aNW_setup_action(shop, aNW_ACTION_OPEN_DOOR);
+        }
+    }
+}
+
+static void aNW_open_door_wait(STRUCTURE_ACTOR* shop, GAME_PLAY* play) {
+    if (shop == GET_PLAYER_ACTOR_NOW()->get_door_label_proc(gamePT)) {
+        shop->request_type = 3;
+        aNW_setup_animation(shop, 0.5f);
+        aNW_setup_action(shop, aNW_ACTION_OPEN_DOOR);
+        mBGMPsComp_make_ps_wipe(0x249); // TODO: enum/define
+    }
+}
+
+static void aNW_open_door(STRUCTURE_ACTOR* shop, GAME_PLAY* play) {
+    if (cKF_SkeletonInfo_R_play(&shop->keyframe) == TRUE) {
+        if (shop->request_type == 3) {
+            aNW_rewrite_out_data(shop, play);
+            goto_other_scene(play, &aNW_needlework_shop_door_data, FALSE);
+            aNW_setup_action(shop, aNW_ACTION_OPEN_UNKNOWN);
+            mDemo_End((ACTOR*)shop);
+        } else {
+            aNW_setup_action(shop, aNW_ACTION_WAIT);
+        }
+
+        shop->request_type = 0;
+    }
+}
+
+static void aNW_setup_action(STRUCTURE_ACTOR* shop, int action) {
+    static aSTR_MOVE_PROC process[] = { &aNW_wait, &aNW_open_door_wait, &aNW_open_door, (aSTR_MOVE_PROC)&none_proc1 };
+
+    shop->action_proc = process[action];
+}
+
+static void aNW_actor_move(ACTOR* actor, GAME* game) {
+    STRUCTURE_ACTOR* shop;
+    GAME_PLAY* play;
+    f32 target;
+
+    shop = (STRUCTURE_ACTOR*)actor;
+    play = (GAME_PLAY*)game;
+
+    aNW_set_doorSE(shop);
+    (*shop->action_proc)(shop, play);
+    target = (aNW_ctrl_light(shop) != 0) ? 1.0f : 0.0f;
+    chase_f(&shop->arg0_f, target, 0.019532442f);
+}
+
+static void aNW_actor_init(ACTOR* actor, GAME* game) {
+    mFI_SetFG_common(DUMMY_NEEDLEWORK_SHOP, actor->home.position, 0);
+    aNW_actor_move(actor, game);
+    actor->mv_proc = aNW_actor_move;
+}
