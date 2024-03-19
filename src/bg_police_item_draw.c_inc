@@ -1,0 +1,66 @@
+typedef struct draw_work_s {
+    GAME* game;
+    GRAPH* graph;
+    bPI_draw_tbl_c* draw_tbl;
+    int start_idx;
+    Gfx* mode_p; // material (textures, etc)
+    Gfx* vtx_p;  // tris
+    int _18;
+} bIP_draw_work_c;
+
+static bIP_draw_work_c draw_work;
+
+static void bPI_draw_item_loop(void) {
+    bPI_draw_pos_c* draw_pos = draw_work.draw_tbl->draw_data.draw_pos + draw_work.start_idx;
+    Gfx* vtx = draw_work.vtx_p;
+    GRAPH* graph = draw_work.graph;
+    Gfx* gfx;
+
+    OPEN_DISP(graph);
+    gfx = NOW_POLY_OPA_DISP;
+
+    /* Load the texture data first */
+    gSPDisplayList(gfx++, draw_work.mode_p);
+
+    for (draw_pos; draw_pos->next != 256; draw_pos += draw_pos->next) {
+        Matrix_put(&draw_pos->mtx);
+
+        gDPPipeSync(gfx++);
+        gSPMatrix(gfx++, _Matrix_to_Mtx_new(draw_work.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        /* Draw all instances of this item using the loaded texture data */
+        gSPDisplayList(gfx++, vtx);
+    }
+
+    SET_POLY_OPA_DISP(gfx);
+    CLOSE_DISP(graph);
+}
+
+static void bPI_draw_item(void) {
+    u16* start_idx = draw_work.draw_tbl->draw_data.start_idx;
+    int i;
+
+    _texture_z_light_fog_prim(draw_work.graph);
+
+    /* We start at 1 so we skip mNT_ITEM_TYPE_NONE, start_idx already takes this into account */
+    for (i = 1; i < mNT_ITEM_TYPE_NUM; i++, start_idx++) {
+        /* If there's at least one entry of the item, draw all of the same type */
+        if (*start_idx != 0) {
+            draw_work.start_idx = *start_idx;
+            draw_work.mode_p = mode_DL_table[i];
+            draw_work.vtx_p = vtx_DL_table[i];
+            bPI_draw_item_loop();
+        }
+    }
+}
+
+static void bPI_actor_draw(ACTOR* actorx, GAME* game) {
+    BG_POLICE_ITEM_ACTOR* bg_police_item = (BG_POLICE_ITEM_ACTOR*)actorx;
+
+    draw_work.game = game;
+    draw_work.graph = game->graph;
+
+    if (bg_police_item->draw_tbl.draw_flag == TRUE) {
+        draw_work.draw_tbl = &bg_police_item->draw_tbl;
+        bPI_draw_item();
+    }
+}
