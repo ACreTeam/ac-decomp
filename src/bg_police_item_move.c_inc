@@ -1,0 +1,107 @@
+static void bPI_outPutData(u16* draw_start, bPI_draw_pos_c** draw_pos_pp, u16* data_count, int type,
+                           mFI_block_tbl_c* block_tbl, int idx) {
+    if (type != mNT_ITEM_TYPE_NUM) {
+        static f32 pos_table[] = {
+            20.0f,  60.0f,  100.0f, 140.0f, 180.0f, 220.0f, 260.0f, 300.0f,
+            340.0f, 380.0f, 420.0f, 460.0f, 500.0f, 540.0f, 580.0f, 620.0f,
+        };
+
+        xyz_t pos;
+
+        pos.x = block_tbl->pos_x + pos_table[idx & 15];
+        pos.z = block_tbl->pos_z + pos_table[(idx >> 4) & 15];
+        pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 1.0f);
+
+        Matrix_translate(pos.x, pos.y, pos.z, 0);
+        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_get(&(*draw_pos_pp)->mtx);
+        (*draw_pos_pp)->next = draw_start[type] - *data_count;
+        draw_start[type] = *data_count;
+        (*draw_pos_pp)++;
+        (*data_count)++;
+    }
+}
+
+static void bPI_classifyitemDataTable(bPI_draw_tbl_c* draw_tbl, mFI_block_tbl_c* block_tbl, u16* draw_start) {
+    bPI_draw_pos_c* draw_pos = draw_tbl->draw_data.draw_pos + 1;
+    mActor_name_t* fg_p = block_tbl->items;
+    mActor_name_t item;
+    u16 data_count = 1;
+    int i;
+
+    Matrix_push();
+
+    for (i = 0; i < UT_TOTAL_NUM; i++, fg_p++) {
+        if (*fg_p >= RSV_POLICE_ITEM_0 && *fg_p < RSV_POLICE_ITEM_END) {
+            item = Save_Get(police_box).keep_items[*fg_p - RSV_POLICE_ITEM_0];
+
+            if (item != EMPTY_NO) {
+                bPI_outPutData(draw_start, &draw_pos, &data_count, mNT_get_itemTableNo(item) - 1, block_tbl, i);
+            }
+        }
+    }
+
+    Matrix_pull();
+}
+
+static void bPI_set_draw_tbl(BG_POLICE_ITEM_ACTOR* bg_police_item, bPI_draw_tbl_c* draw_tbl,
+                             mFI_block_tbl_c* block_tbl) {
+    bPI_draw_pos_c* draw_pos = draw_tbl->draw_data.draw_pos;
+    u16 draw_start[mNT_ITEM_TYPE_NUM - 1];
+    int i;
+
+    for (i = 0; i < ARRAY_COUNT(draw_start); i++) {
+        draw_start[i] = 0;
+    }
+
+    for (i = 0; i < (UT_TOTAL_NUM + 1); i++, draw_pos++) {
+        draw_pos->next = 256;
+    }
+
+    bPI_classifyitemDataTable(draw_tbl, block_tbl, draw_start);
+
+    {
+        u16* start_idx_p = draw_tbl->draw_data.start_idx;
+        u16* draw_start_p = draw_start;
+
+        for (i = 0; i < ARRAY_COUNT(draw_start); i++) {
+            *start_idx_p++ = *draw_start_p++;
+        }
+    }
+
+    bg_police_item->draw_tbl.draw_flag = TRUE;
+}
+
+static void bPI_chg_draw_tbl(BG_POLICE_ITEM_ACTOR* bg_police_item) {
+    int i;
+    int j;
+
+    /* Why did they leave it in a loop lol... */
+    for (i = 0; i < mFM_VISIBLE_BLOCK_NUM; i++) {
+        bg_police_item->draw_tbl.draw_flag = FALSE;
+    }
+
+    for (i = bg_police_item->item_tbl.count, j = 0; i != 0; i--) {
+        bPI_set_draw_tbl(bg_police_item, &bg_police_item->draw_tbl, &bg_police_item->item_tbl.block_info_tbl[j]);
+        j++;
+    }
+}
+
+static void bPI_renew_draw_and_crs_data(BG_POLICE_ITEM_ACTOR* bg_police_item, GAME_PLAY* play) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+
+    if (player != NULL) {
+        mFI_GetItemTable(&bg_police_item->item_tbl, player->actor_class.world.position, __FILE__, 182);
+    }
+
+    bPI_chg_draw_tbl(bg_police_item);
+}
+
+static void bPI_actor_move(ACTOR* actorx, GAME* game) {
+    BG_POLICE_ITEM_ACTOR* bg_police_item = (BG_POLICE_ITEM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    if (mFI_FGisUpDate() == TRUE || mFI_ItemisBorn() == TRUE) {
+        bPI_renew_draw_and_crs_data(bg_police_item, play);
+    }
+}

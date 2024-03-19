@@ -609,6 +609,15 @@ bg_item.c:
     .rodata: [0x80646178, 0x80646218]
     .data: [0x80692BE0, 0x80695B38]
     .bss: [0x812FD938, 0x812FDDC8]
+bg_police_item.c:
+    .text: [0x804BE338, 0x804BE890]
+    .rodata: [0x80646218, 0x80646220]
+    .data: [0x80695B38, 0x80695D60]
+    .bss: [0x812FDDC8, 0x812FDDE8]
+bg_post_item.c:
+    .text: [0x804BE890, 0x804BE9FC]
+    .rodata: [0x80646220, 0x80646228]
+    .data: [0x80695D60, 0x80695D98]
 bg_winter_item.c:
     .text: [0x804BE9FC, 0x804C5E30]
     .rodata: [0x80646228, 0x806462C8]
