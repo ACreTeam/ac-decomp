@@ -1,0 +1,293 @@
+// clang-format off
+static Door_data_c aPOFF_post_office_door_data = {
+    SCENE_POST_OFFICE,
+    4,
+    FALSE,
+    0,
+    {160, 0, 300},
+    EMPTY_NO,
+    1,
+    {0, 0, 0},
+};
+// clang-format on
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_yubinkyoku;
+extern cKF_Animation_R_c cKF_ba_r_obj_s_yubinkyoku_out;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_yubinkyoku;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_yubinkyoku_out;
+
+static void aPOFF_set_door_SE_sub(STRUCTURE_ACTOR* office, u16 se_no) {
+    sAdo_OngenTrgStart(se_no, &office->actor_class.world.position);
+}
+
+static void aPOFF_set_doorSE(STRUCTURE_ACTOR* office) {
+    static f32 chk_pat_in[4] = { 10.0f, 14.0f, 35.0f, 50.0f };
+    static f32 chk_pat_out[4] = { 2.0f, 8.0f, 33.0f, 40.0f };
+    static u16 se_no[4] = { 6, 7, 8, 9 };
+
+    f32* chk_pat_p;
+    int i;
+
+    switch (office->request_type) {
+        case 1:
+        case 3:
+            chk_pat_p = chk_pat_in;
+            break;
+        default:
+            chk_pat_p = chk_pat_out;
+            break;
+    }
+
+    for (i = 0; i < 4; i++, chk_pat_p++) {
+        if (cKF_FrameControl_passCheck_now(&office->keyframe.frame_control, *chk_pat_p) != FALSE) {
+            aPOFF_set_door_SE_sub(office, se_no[i]);
+            break;
+        }
+    }
+}
+
+static void aPOFF_rewrite_out_data(STRUCTURE_ACTOR* office, GAME_PLAY* play) {
+    Door_data_c* door_data;
+    xyz_t pos;
+
+    door_data = Common_GetPointer(structure_exit_door_data);
+    if (play->fb_wipe_mode == 0) {
+        door_data->next_scene_id = Save_Get(scene_no);
+        door_data->exit_orientation = mSc_DIRECT_SOUTH_WEST;
+        door_data->exit_type = 0;
+        door_data->extra_data = 2;
+
+        pos.x = office->actor_class.world.position.x - 64.0f;
+        pos.z = office->actor_class.world.position.z + 64.0f;
+        pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 0.0f);
+
+        door_data->exit_position.x = pos.x;
+        door_data->exit_position.y = pos.y;
+        door_data->exit_position.z = pos.z;
+
+        door_data->door_actor_name = POST_OFFICE;
+
+        door_data->wipe_type = 1;
+    }
+}
+
+static int aPOFF_check_player(ACTOR* actor, GAME_PLAY* play) {
+    u16 y;
+    f32 xOffs;
+    f32 zOffs;
+    f32 t;
+    int res;
+    PLAYER_ACTOR* player;
+
+    player = GET_PLAYER_ACTOR(play);
+    res = 0;
+
+    if (player == NULL) {
+        return 0;
+    }
+
+    y = player->actor_class.shape_info.rotation.y;
+    xOffs = SQ(player->actor_class.world.position.x - (actor->world.position.x - 40.0f));
+    zOffs = SQ(player->actor_class.world.position.z - (actor->world.position.z + 50.0f));
+    t = (xOffs) + (zOffs);
+
+    if ((y > 0x4000) && (y < 0x8000) && (t < 360.0f) && chkTrigger(BUTTON_A) != 0) {
+        res = 2;
+    }
+
+    return res;
+}
+
+static int aPOFF_check_open(STRUCTURE_ACTOR* office, GAME_PLAY* play) {
+    static int cond[] = { 1, 1, 2, 3 };
+
+    switch (office->request_type) {
+        case 0:
+            return aPOFF_check_player(&office->actor_class, play);
+        case 5:
+            return 0;
+        default:
+            return cond[office->request_type - 1];
+    }
+}
+
+static void aPOFF_set_bgOffset(STRUCTURE_ACTOR* office, int idx) {
+    // clang-format off
+    static mCoBG_OffsetTable_c height_table_ct[] = {
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 0, 13, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 0, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 0, 13, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 13, 14, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 14, 13, 13, 13, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 0, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 0, 13, 13, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 14, 13, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 14, 13, 13, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 13, 0, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 0, 13, 13, 13, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 13, 13, 13, 13, 0, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 }
+    };
+    // clang-format on
+
+    static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
+
+    static f32 addX[] = { -80.0f, -40.0f, 0.0f, 40.0f };
+    static f32 addZ[] = { 80.0f, 40.0f, 0.0f, -40.0f };
+
+    mCoBG_OffsetTable_c* offset;
+    int i;
+    int j;
+    xyz_t pos;
+
+    offset = height_table[idx];
+    for (i = 0; i < 4; i++) {
+        pos.z = office->actor_class.home.position.z + addZ[i];
+
+        for (j = 0; j < 4; j++) {
+            if (j + i * 4 != 0 && j + i * 4 != 3 && j + i * 4 != 12 && j + i * 4 != 15) {
+                pos.x = office->actor_class.home.position.x + addX[j];
+                mCoBG_SetPluss5PointOffset_file(pos, *offset, __FILE__, 337);
+            }
+
+            offset++;
+        }
+    }
+}
+
+static void aPOFF_setup_animation(STRUCTURE_ACTOR* office, f32 speed) {
+    // clang-format off
+    static cKF_Animation_R_c* animation[2][2] = {
+        { &cKF_ba_r_obj_s_yubinkyoku, &cKF_ba_r_obj_s_yubinkyoku_out },
+        { &cKF_ba_r_obj_w_yubinkyoku, &cKF_ba_r_obj_w_yubinkyoku_out }
+    };
+    // clang-format on
+
+    static f32 start_idx[] = { 1.0f, 25.0f, 1.0f, 1.0f };
+    static f32 end_idx[] = { 51.0f, 51.0f, 51.0f, 51.0f };
+
+    int winter;
+    int idx;
+
+    winter = office->season == mTM_SEASON_WINTER;
+    switch (office->request_type) {
+        case 2:
+            idx = 2;
+            break;
+        case 4:
+            idx = 1;
+            break;
+        default:
+            idx = 0;
+            break;
+    }
+
+    cKF_SkeletonInfo_R_init(&office->keyframe, office->keyframe.skeleton, animation[winter][idx != 0], start_idx[idx],
+                            end_idx[idx], start_idx[idx], speed, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+}
+
+static void aPOFF_open_door_demo_ct() {
+    mDemo_Set_house_info(40.0f, 5);
+    mDemo_Set_camera(CAMERA2_PROCESS_DOOR);
+}
+
+static int aPOFF_ctrl_light(STRUCTURE_ACTOR* office) {
+    int now_sec = Common_Get(time.now_sec);
+    return !(now_sec < (64800) && now_sec > (18000));
+}
+
+static void aPOFF_wait(STRUCTURE_ACTOR* office, GAME_PLAY* play) {
+    ACTOR* actor;
+    int request_type;
+    int check_open;
+
+    actor = (ACTOR*)office;
+    request_type = office->request_type;
+
+    if (mDemo_Check(mDemo_TYPE_DOOR, actor) != FALSE) {
+        if (request_type == 4) {
+            aPOFF_setup_animation(office, 0.5f);
+        }
+
+        aPOFF_setup_action(office, aPOFF_ACTION_OPEN_DOOR_WAIT);
+    } else {
+        check_open = aPOFF_check_open(office, play);
+        if (check_open == 2) {
+            mDemo_Request(mDemo_TYPE_DOOR, actor, &aPOFF_open_door_demo_ct);
+        } else if (check_open == 3) {
+            if (request_type == 4) {
+                aPOFF_setup_animation(office, 0.5f);
+            }
+
+            aPOFF_setup_action(office, aPOFF_ACTION_OPEN_DOOR);
+        }
+    }
+}
+
+static void aPOFF_open_door_wait(STRUCTURE_ACTOR* office, GAME_PLAY* play) {
+    if (office == GET_PLAYER_ACTOR_NOW()->get_door_label_proc(gamePT)) {
+        office->request_type = 3;
+        aPOFF_setup_animation(office, 0.5f);
+        aPOFF_setup_action(office, aPOFF_ACTION_OPEN_DOOR);
+        mBGMPsComp_make_ps_wipe(0x249); // TODO: enum/define
+    }
+}
+
+static void aPOFF_open_door(STRUCTURE_ACTOR* office, GAME_PLAY* play) {
+    if (cKF_SkeletonInfo_R_play(&office->keyframe) == TRUE) {
+        if (office->request_type == 3) {
+            aPOFF_rewrite_out_data(office, play);
+            goto_other_scene(play, &aPOFF_post_office_door_data, FALSE);
+            aPOFF_setup_action(office, aPOFF_ACTION_OPEN_UNKNOWN);
+            mDemo_End((ACTOR*)office);
+        } else {
+            aPOFF_setup_action(office, aPOFF_ACTION_WAIT);
+        }
+
+        office->request_type = 0;
+    }
+}
+
+static void aPOFF_setup_action(STRUCTURE_ACTOR* office, int action) {
+    // clang-format off
+    static aSTR_MOVE_PROC process[] = {
+        &aPOFF_wait,
+        &aPOFF_open_door_wait,
+        &aPOFF_open_door,
+        (aSTR_MOVE_PROC)&none_proc1
+    };
+    // clang-format on
+
+    office->action_proc = process[action];
+}
+
+static void aPOFF_actor_move(ACTOR* actor, GAME* game) {
+    STRUCTURE_ACTOR* office;
+    GAME_PLAY* play;
+    s16 target;
+
+    office = (STRUCTURE_ACTOR*)actor;
+    play = (GAME_PLAY*)game;
+
+    aPOFF_set_doorSE(office);
+    
+    (*office->action_proc)(office, play);
+    
+    target = (s16)office->action;
+    if (aPOFF_ctrl_light(office)) {
+        chase_s(&target, DEG2SHORT_ANGLE(90.0f) - 1, 320); // 0x3FFF
+    } else {
+        chase_s(&target, DEG2SHORT_ANGLE(0.0f), 320);
+    }
+
+    office->action = target;
+}
+
+static void aPOFF_actor_init(ACTOR* actor, GAME* game) {
+    mFI_SetFG_common(DUMMY_POST_OFFICE, actor->home.position, FALSE);
+    aPOFF_actor_move(actor, game);
+    actor->mv_proc = aPOFF_actor_move;
+}
