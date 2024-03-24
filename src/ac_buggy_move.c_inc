@@ -1,0 +1,331 @@
+extern cKF_Animation_R_c cKF_ba_r_obj_s_uranai;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_uranai;
+
+// clang-format off
+static Door_data_c aBGY_buggy_door_data = {
+    SCENE_BUGGY,
+    mSc_DIRECT_NORTH,
+    FALSE,
+    0,
+    {160,0,300},
+    EMPTY_NO,
+    1,
+    {0,0,0},
+};
+// clang-format on
+
+static void change_FGUnit(STRUCTURE_ACTOR* buggy, int type) {
+    int dug;
+    xyz_t pos;
+    mActor_name_t* unit_fg;
+
+    xyz_t_move(&pos, &buggy->actor_class.world.position);
+    pos.z += 80.0f;
+
+    if (type == FALSE) {
+        mFI_SetFG_common(EMPTY_NO, pos, TRUE);
+        return;
+    }
+
+    unit_fg = mFI_GetUnitFG(pos);
+    if (unit_fg == NULL) {
+        return;
+    }
+
+    if (mSN_ClearSnowman(unit_fg) == FALSE) {
+        dug = FALSE;
+        if ((((*unit_fg >= BURIED_PITFALL_START) && (*unit_fg <= BURIED_PITFALL_END)) || (*unit_fg == SHINE_SPOT))) {
+            dug = TRUE;
+        }
+
+        if (dug == TRUE) {
+            mPB_keep_item(bg_item_fg_sub_dig2take_conv(*unit_fg));
+            mFI_SetFG_common(RSV_NO, pos, 1);
+            mFI_Wpos2DepositOFF(pos);
+        } else {
+            mFI_Wpos2DepositOFF(pos);
+            mPB_keep_item(*unit_fg);
+            mFI_SetFG_common(RSV_NO, pos, 1);
+        }
+    } else {
+        mFI_SetFG_common(RSV_NO, pos, 1);
+    }
+}
+
+static void aBGY_set_bgOffset(STRUCTURE_ACTOR* buggy, int offs) {
+    // clang-format off
+    static mCoBG_OffsetTable_c height_table_ct[] = {
+        { mCoBG_ATTRIBUTE_NONE, 8, 8, 0, 8, 8, 1},
+        { mCoBG_ATTRIBUTE_NONE, 8, 8, 8, 8, 8, 0},
+        { mCoBG_ATTRIBUTE_NONE, 8, 8, 8, 0, 8, 1},
+        { mCoBG_ATTRIBUTE_NONE, 8, 8, 8, 8, 8, 0},
+        { mCoBG_ATTRIBUTE_NONE, 8, 8, 8, 8, 8, 0},
+        { mCoBG_ATTRIBUTE_NONE, 8, 8, 8, 8, 8, 0},
+        { mCoBG_ATTRIBUTE_NONE, 8, 0, 8, 8, 8, 1},
+        { mCoBG_ATTRIBUTE_NONE, 8, 8, 8, 8, 8, 0},
+        { mCoBG_ATTRIBUTE_NONE, 8, 8, 8, 8, 0, 1}
+    };
+    // clang-format on
+
+    static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
+
+    static f32 addX[] = { -mFI_UT_WORLDSIZE_X_F, 0.0f, mFI_UT_WORLDSIZE_X_F };
+    static f32 addZ[] = { mFI_UT_WORLDSIZE_Z_F, 0.0f, -mFI_UT_WORLDSIZE_Z_F };
+
+    mCoBG_OffsetTable_c* offset;
+    int i;
+    xyz_t pos;
+
+    offset = height_table[offs];
+
+    for (i = 0; i < 3; i++) {
+        pos.z = buggy->actor_class.home.position.z + addZ[i];
+
+        pos.x = buggy->actor_class.home.position.x + addX[0];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[0], __FILE__, 225);
+
+        pos.x = buggy->actor_class.home.position.x + addX[1];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[1], __FILE__, 229);
+
+        pos.x = buggy->actor_class.home.position.x + addX[2];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[2], __FILE__, 233);
+
+        offset += 3;
+    }
+}
+
+static void aBGY_rewrite_out_data(ACTOR* actor, GAME_PLAY* play) {
+    Door_data_c* door_data;
+    xyz_t pos;
+
+    door_data = Common_GetPointer(structure_exit_door_data);
+    if (play->fb_wipe_mode != 0) {
+        return;
+    }
+
+    door_data->next_scene_id = Save_Get(scene_no);
+    door_data->exit_orientation = mSc_DIRECT_SOUTH;
+    door_data->exit_type = 0;
+    door_data->extra_data = 3;
+
+    pos.x = actor->world.position.x;
+    pos.y = actor->world.position.y;
+    pos.z = actor->world.position.z + 100.0f;
+
+    door_data->exit_position.x = pos.x;
+    door_data->exit_position.y = pos.y;
+    door_data->exit_position.z = pos.z;
+
+    door_data->door_actor_name = FORTUNE_TENT;
+
+    door_data->wipe_type = 1;
+
+    mBGMPsComp_make_ps_wipe(0x2168);
+}
+
+static int aBGY_check_player2(GAME_PLAY* play) {
+    PLAYER_ACTOR* player;
+    u16 y;
+    int res;
+
+    player = GET_PLAYER_ACTOR(play);
+    y = player->actor_class.world.angle.y;
+
+    res = 0;
+    if ((y > DEG2SHORT_ANGLE2(135.0f)) && (y < DEG2SHORT_ANGLE2(225.0f)) && (player->actor_class.speed > 0.0f)) { // 0x6000 && 0xA000
+        res = 1;
+    }
+
+    return res;
+}
+
+static int aBGY_check_player(ACTOR* actor, GAME_PLAY* play) {
+    u16 y;
+    f32 xOffs;
+    f32 zOffs;
+    f32 t;
+    int res;
+    PLAYER_ACTOR* player;
+
+    player = GET_PLAYER_ACTOR(play);
+    res = 0;
+
+    if (player == NULL) {
+        return 0;
+    }
+
+    y = player->actor_class.shape_info.rotation.y;
+    xOffs = SQ(player->actor_class.world.position.x - actor->world.position.x);
+    zOffs = SQ(player->actor_class.world.position.z - (actor->world.position.z + 60.0f));
+
+    t = (xOffs) + (zOffs);
+
+    if ((y > DEG2SHORT_ANGLE2(135.0f)) && (y < DEG2SHORT_ANGLE2(225.0f)) && (t < 480.0f)) { // 0x6000 && 0xA000
+        res = 2;
+    } else if (t < 1200.0f) {
+        res = 1;
+    }
+
+    return res;
+}
+
+static int aBGY_open_check() {
+    int res;
+
+    res = mEv_CheckEvent(mEv_SPNPC_GYPSY);
+    res = (res != FALSE) + 1;
+
+    return res;
+}
+
+static void aBGY_set_talk_info_close_wait(ACTOR* actor) {
+    rgba_t window_color;
+
+    mDemo_Set_msg_num(0x7D5);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_ListenAble();
+
+    window_color.r = 145;
+    window_color.g = 60;
+    window_color.b = 40;
+    window_color.a = 255;
+    mDemo_Set_talk_window_color(&window_color);
+}
+
+static void aBGY_close_wait(STRUCTURE_ACTOR* buggy, GAME_PLAY* play) {
+    ACTOR* actor;
+
+    actor = (ACTOR*)buggy;
+    if (mDemo_Check(mDemo_TYPE_TALK, actor) == TRUE) {
+        return;
+    }
+
+    if (aBGY_open_check() == 2) {
+        if (aBGY_check_player(actor, play) == FALSE) {
+            return;
+        }
+
+        aBGY_setup_action(buggy, aBGY_ACTION_OPEN_DOOR);
+        return;
+    }
+
+    if (ABS(actor->player_angle_y) >= DEG2SHORT_ANGLE(45.0f)) { // 0x2000
+        return;
+    }
+
+    mDemo_Request(mDemo_TYPE_TALK, actor, &aBGY_set_talk_info_close_wait);
+}
+
+static void aBGY_open_wait(STRUCTURE_ACTOR* buggy, GAME_PLAY* play) {
+    ACTOR* actor;
+    GAME* game;
+    xyz_t pos;
+
+    actor = (ACTOR*)buggy;
+    game = &play->game;
+
+    if (buggy == GET_PLAYER_ACTOR_NOW()->get_door_label_proc(gamePT)) {
+        aBGY_rewrite_out_data(actor, play);
+        goto_other_scene(play, &aBGY_buggy_door_data, TRUE);
+        return;
+    }
+
+    if (mPlib_check_player_actor_main_index_OutDoorMove(play) != FALSE) {
+        return;
+    }
+
+    if ((aBGY_check_player(actor, play) == 0) || (aBGY_open_check() != 2)) {
+        aBGY_setup_action(buggy, aBGY_ACTION_CLOSE_DOOR);
+        return;
+    }
+
+    if ((aBGY_check_player(actor, play) == 2) && (aBGY_check_player2(play) != 0)) {
+        pos.x = actor->world.position.x;
+        pos.y = GET_PLAYER_ACTOR(play)->actor_class.world.position.y;
+        pos.z = actor->world.position.z + 64.0f;
+        mPlib_request_main_door_type1(game, &pos, -DEG2SHORT_ANGLE(180.0f), TRUE, actor); // 0x8000
+    }
+}
+
+static void aBGY_close_door(STRUCTURE_ACTOR* buggy, GAME_PLAY* play) {
+    if (buggy->keyframe_state != 1) {
+        return;
+    }
+
+    aBGY_setup_action(buggy, aBGY_ACTION_WAIT);
+}
+
+static void aBGY_open_door(STRUCTURE_ACTOR* buggy, GAME_PLAY* play) {
+    if (buggy->keyframe_state != 1) {
+        return;
+    }
+
+    aBGY_setup_action(buggy, aBGY_ACTION_OPEN_WAIT);
+}
+
+static void aBGY_setup_action(STRUCTURE_ACTOR* buggy, int action) {
+    static aSTR_MOVE_PROC process[] = {
+        &aBGY_close_wait,
+        &aBGY_open_wait,
+        &aBGY_close_door,
+        &aBGY_open_door
+    };
+
+    static cKF_Animation_R_c* animation[] = { &cKF_ba_r_obj_s_uranai, &cKF_ba_r_obj_w_uranai };
+    static f32 start_idx[] = { 1.0f, 17.0f, 17.0f, 1.0f };
+    static f32 end_idx[] = { 1.0f, 17.0f, 1.0f, 17.0f };
+    static f32 framespeed[] = { 0.0f, 0.0f, 0.5f, 0.5f };
+
+    int winter;
+
+    winter = buggy->season == mTM_SEASON_WINTER;
+
+    cKF_SkeletonInfo_R_init(&buggy->keyframe, buggy->keyframe.skeleton, animation[winter], start_idx[action],
+                            end_idx[action], start_idx[action], framespeed[action], 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+
+    buggy->action_proc = process[action];
+    buggy->action = action;
+}
+
+static int aBGY_ctrl_light(STRUCTURE_ACTOR* buggy) {
+    int now_sec = Common_Get(time.now_sec);
+    return !(now_sec < (64800) && now_sec >= (18000));
+}
+
+static void aBGY_actor_move(ACTOR* actor, GAME* game) {
+    GAME_PLAY* play;
+    STRUCTURE_ACTOR* buggy;
+    PLAYER_ACTOR* player;
+    int bx1;
+    int bz1;
+    int bx2;
+    int bz2;
+    f32 window;
+
+    play = (GAME_PLAY*)game;
+    buggy = (STRUCTURE_ACTOR*)actor;
+    player = GET_PLAYER_ACTOR(play);
+
+    mFI_Wpos2BlockNum(&bx1, &bz1, actor->world.position);
+    mFI_Wpos2BlockNum(&bx2, &bz2, player->actor_class.world.position);
+
+    if ((mDemo_Check(mDemo_TYPE_SCROLL, &player->actor_class) == FALSE) &&
+        (mDemo_Check(mDemo_TYPE_SCROLL2, &player->actor_class) == FALSE) &&
+        (mDemo_Check(mDemo_TYPE_SCROLL3, &player->actor_class) == FALSE) && ((bx1 != bx2) || (bz1 != bz2))) {
+        Actor_delete(actor);
+    } else {
+        
+        buggy->keyframe_state = cKF_SkeletonInfo_R_play(&buggy->keyframe);
+
+        buggy->action_proc(buggy, play);
+
+        window = (aBGY_ctrl_light(buggy) != 0) ? 1.0f : 0.0f;
+        chase_f(&buggy->arg0_f, window, 0.019532442f);
+    }
+}
+
+static void aBGY_actor_init(ACTOR* actor, GAME* game) {
+    mFI_SetFG_common(DUMMY_BUGGY, actor->home.position, FALSE);
+    aBGY_actor_move(actor, game);
+    actor->mv_proc = &aBGY_actor_move;
+}

@@ -755,6 +755,10 @@ ac_br_shop.c:
     .text: [0x805A856C, 0x805A9474]
     .rodata: [0x8064A630, 0x8064A660]
     .data: [0x806C4560, 0x806C4688]
+ac_buggy.c:
+    .text: [0x805A9CA0, 0x805AAB3C]
+    .rodata: [0x8064A6D0, 0x8064A708]
+    .data: [0x806C4730, 0x806C4858]
 ac_douzou.c:
     .text: [0x805AD6D8, 0x805AE704]
     .rodata: [0x8064A7C0, 0x8064A7E8]
