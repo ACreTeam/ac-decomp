@@ -1,0 +1,124 @@
+extern Gfx obj_s_uranai_window_model[];
+extern Gfx obj_w_uranai_window_model[];
+
+static int aBGY_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    STRUCTURE_ACTOR* actor = (STRUCTURE_ACTOR*)arg;
+    GRAPH* graph = game->graph;
+    f32 color;
+    Gfx* gfx;
+
+    if (joint_idx == 1) {
+        OPEN_DISP(graph);
+        color = actor->arg0_f;
+        gfx = NOW_POLY_OPA_DISP;
+
+        gDPSetPrimColor(gfx++, 0, 0, (int)(0.5f + (255.0f * color)), (int)(0.5f + (255.0f * color)),
+                        (int)(0.5f + (150.0f * color)), 255);
+
+        SET_POLY_OPA_DISP(gfx);
+        CLOSE_DISP(graph);
+    } else if (joint_idx == 7) {
+        *joint_shape = NULL;
+    }
+
+    return TRUE;
+}
+
+static int aBGY_actor_draw_after(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                 u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    static Gfx* mdl[] = {
+        obj_s_uranai_window_model,
+        obj_w_uranai_window_model,
+    };
+
+    STRUCTURE_ACTOR* buggy;
+    GRAPH* graph;
+    Mtx* mtx;
+    int winter;
+    int l;
+    int r;
+    int g;
+    int b;
+    Gfx* gfx;
+
+    buggy = (STRUCTURE_ACTOR*)arg;
+    graph = game->graph;
+
+    if (joint_idx == 7) {
+        mtx = _Matrix_to_Mtx_new(graph);
+
+        if (mtx != NULL) {
+            if (buggy->arg0_f > 0.0f) {
+                r = 255;
+                g = 255;
+                b = 150;
+                l = (0.5f + (120.0f * buggy->arg0_f));
+            } else {
+                l = 0;
+                r = 0;
+                g = 0;
+                b = 0;
+            }
+
+            winter = buggy->season == mTM_SEASON_WINTER;
+            _texture_z_light_fog_prim_shadow(graph);
+
+            OPEN_DISP(graph);
+            gfx = NOW_SHADOW_DISP;
+
+            gDPSetPrimColor(gfx++, 0, l, r, g, b, 0);
+            gSPMatrix(gfx++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+            gSPDisplayList(gfx++, mdl[winter]);
+
+            SET_SHADOW_DISP(gfx);
+            CLOSE_DISP(graph);
+        }
+    }
+
+    return TRUE;
+}
+
+static void aBGY_actor_draw(ACTOR* actor, GAME* game) {
+    STRUCTURE_ACTOR* buggy;
+    GRAPH* graph;
+    cKF_SkeletonInfo_R_c* keyframe;
+    Mtx* mtx;
+    Gfx* poly_opa;
+    Gfx* poly_xlu;
+
+    buggy = (STRUCTURE_ACTOR*)actor;
+    graph = game->graph;
+    keyframe = &buggy->keyframe;
+
+    mtx = GRAPH_ALLOC_TYPE(graph, Mtx, (u32)keyframe->skeleton->num_shown_joints);
+
+    if (mtx != NULL) {
+        u16* pal;
+
+        pal = Common_Get(clip).structure_clip->get_pal_segment_proc(aSTR_PAL_BUGGY);
+
+        OPEN_DISP(graph);
+        {
+            _texture_z_light_fog_prim(graph);
+            poly_opa = NOW_POLY_OPA_DISP;
+
+            gSPSegment(poly_opa++, 8, pal);
+
+            SET_POLY_OPA_DISP(poly_opa);
+        }
+        {
+            _texture_z_light_fog_prim_xlu(graph);
+
+            poly_xlu = NOW_POLY_XLU_DISP;
+            gSPSegment(poly_xlu++, 8, pal);
+
+            SET_POLY_XLU_DISP(poly_xlu);
+        }
+        CLOSE_DISP(graph);
+
+        cKF_Si3_draw_R_SV(game, keyframe, mtx, &aBGY_actor_draw_before, &aBGY_actor_draw_after, actor);
+        (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, &aBGY_shadow_data, FALSE);
+    }
+}
