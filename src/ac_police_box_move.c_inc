@@ -1,0 +1,139 @@
+static void aPBOX_set_bgOffset(STRUCTURE_ACTOR* box, int idx) {
+    // clang-format off
+    static mCoBG_OffsetTable_c height_table_ct[] = {
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 0, 10, 10, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 10, 10, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 0, 10, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 10, 10, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 10, 10, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 10, 10, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 0, 10, 10, 10, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 10, 10, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 10, 0, 1 }
+    };
+    // clang-format on
+
+    static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
+
+    static f32 addX[] = { -40.0f, 0.0f, 40.0f };
+    static f32 addZ[] = { 40.0f, 0.0f, -40.0f };
+
+    mCoBG_OffsetTable_c* offset;
+    int i;
+    xyz_t pos;
+
+    offset = height_table[idx];
+
+    for (i = 0; i < 3; i++) {
+        pos.z = box->actor_class.home.position.z + addZ[i];
+        pos.x = box->actor_class.home.position.x + addX[0];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[0], __FILE__, 142);
+
+        pos.x = box->actor_class.home.position.x + addX[1];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[1], __FILE__, 146);
+
+        pos.x = box->actor_class.home.position.x + addX[2];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[2], __FILE__, 150);
+
+        offset += 3;
+    }
+}
+
+static void aPBOX_rewrite_out_data(STRUCTURE_ACTOR* shop, GAME_PLAY* play) {
+    Door_data_c* door_data;
+    xyz_t pos;
+
+    door_data = Common_GetPointer(structure_exit_door_data);
+    if (play->fb_wipe_mode == 0) {
+        door_data->next_scene_id = Save_Get(scene_no);
+        door_data->exit_orientation = mSc_DIRECT_SOUTH_EAST;
+        door_data->exit_type = 0;
+        door_data->extra_data = 3;
+
+        pos.x = shop->actor_class.home.position.x + 60.0f;
+        pos.z = shop->actor_class.home.position.z + 60.0f;
+        pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 0.0f);
+
+        door_data->exit_position.x = pos.x;
+        door_data->exit_position.y = pos.y;
+        door_data->exit_position.z = pos.z;
+
+        door_data->door_actor_name = POLICE_STATION;
+
+        door_data->wipe_type = 1;
+
+        mBGMPsComp_make_ps_wipe(0x2168);
+    }
+}
+
+static int aPBOX_check_player(ACTOR* actor, GAME_PLAY* play) {
+    u16 y;
+    f32 xOffs;
+    f32 zOffs;
+    f32 t;
+    int res;
+    PLAYER_ACTOR* player;
+
+    player = GET_PLAYER_ACTOR(play);
+    res = 1;
+
+    if (player == NULL) {
+        return 0;
+    }
+
+    y = player->actor_class.shape_info.rotation.y;
+    xOffs = actor->world.position.x + 24.0f;
+    zOffs = actor->world.position.z + 40.0f;
+    xOffs = SQ(player->actor_class.world.position.x - xOffs);
+    zOffs = SQ(player->actor_class.world.position.z - zOffs);
+
+    t = (xOffs) + (zOffs);
+
+    if ((y > 0x8000) && (y < 0xC000) && (t < 1100.0f)) {
+        res = 2;
+    }
+
+    return res;
+}
+
+static int aPBOX_ctrl_light(STRUCTURE_ACTOR* shop) {
+    int now_sec = Common_Get(time.now_sec);
+    return !(now_sec < (64800) && now_sec >= (18000));
+}
+
+static void aPBOX_actor_move(ACTOR* actor, GAME* game) {
+    STRUCTURE_ACTOR* box;
+    GAME_PLAY* play;
+    s16 target;
+    xyz_t pos;
+
+    box = (STRUCTURE_ACTOR*)actor;
+    play = (GAME_PLAY*)game;
+
+    target = (s16)box->action;
+    if (aPBOX_ctrl_light(box)) {
+        chase_s(&target, DEG2SHORT_ANGLE(90.0f) - 1, 320); // 0x3FFF
+    } else {
+        chase_s(&target, DEG2SHORT_ANGLE(0.0f), 320);
+    }
+
+    box->action = target;
+
+    if (box == (*GET_PLAYER_ACTOR_NOW()->get_door_label_proc)(gamePT)) {
+        aPBOX_rewrite_out_data(box, play);
+        goto_other_scene(play, &aPBOX_police_box_enter_data, FALSE);
+    } else {
+        if (aPBOX_check_player(actor, play) == 2) {
+            pos.x = actor->world.position.x + 50.0f;
+            pos.y = GET_PLAYER_ACTOR(play)->actor_class.world.position.y;
+            pos.z = actor->world.position.z + 50.0f;
+            mPlib_request_main_door_type1(game, &pos, -DEG2SHORT_ANGLE(135.0f), TRUE, actor); //-0x6000
+        }
+    }
+}
+
+static void aPBOX_actor_init(ACTOR* actor, GAME* game) {
+    mFI_SetFG_common(DUMMY_POLICE_STATION, actor->home.position, FALSE);
+    aPBOX_actor_move(actor, game);
+    actor->mv_proc = &aPBOX_actor_move;
+}

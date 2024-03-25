@@ -798,6 +798,10 @@ ac_needlework_shop.c:
     .text: [0x805B65C4, 0x805B7338]
     .rodata: [0x8064AAA0, 0x8064AAE8]
     .data: [0x806C6138, 0x806C62D0]
+ac_police_box.c:
+    .text: [0x805B7338, 0x805B7B0C]
+    .rodata: [0x8064AAE8, 0x8064AB18]
+    .data: [0x806C62D0, 0x806C63C0]
 ac_post_office.c:
     .text: [0x805B7B0C, 0x805B887C]
     .rodata: [0x8064AB18, 0x8064AB58]

@@ -2714,6 +2714,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define DUMMY_HANIWA3 (DUMMY_HANIWA2 + 1)
 #define DUMMY_POST_OFFICE 0xF0FF
 #define DUMMY_NEEDLEWORK_SHOP 0xF0FF
+#define DUMMY_POLICE_STATION 0xF101
 #define DUMMY_RESERVE 0xF102
 #define DUMMY_SHRINE 0xF103
 #define DUMMY_BROKER_SHOP 0xF104
