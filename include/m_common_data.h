@@ -310,7 +310,7 @@ typedef struct common_data_s {
     /* 0x02DBA4 */ s16 island_weather_intensity;
     /* 0x02DBA6 */ s16 _2DBA6;
     /* 0x02DBA8 */ u8 memcard_slot;
-    /* 0X02DBAC */ int famicom_2DBAC;
+    /* 0X02DBAC */ int my_room_message_control_flags;
     /* 0x02DBB0 */ s16 can_look_goki_count;
     /* 0x02DBB4 */ f32 rainbow_opacity; /* current opacity of rainbow (0.0f - 1.0f) */
     /* 0x02DBB8 */ u32 event_flags[mEv_EVENT_TYPE_NUM];

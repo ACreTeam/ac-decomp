@@ -10,14 +10,13 @@ def unpack_dir(archive: pyjkernel.JKRArchive, dir: str, verbose=False):
     if verbose:
       print('Dumping file: ' + file.name)
     with open(os.path.join(dir, file.name), "wb") as f:
-      f.write(archive.get_file(dir + "/" + file.name).data)
+      f.write(archive.get_file(dir + os.sep + file.name).data)
 
   # create all subdirectories and recurse through them
   for subdir in archive.list_folders(dir):
-    if not os.path.exists(dir + "/" + subdir):
-      os.mkdir(dir + "/" + subdir)
-    unpack_dir(archive, dir + "/" + subdir, verbose)
-
+    if not os.path.exists(dir + os.sep + subdir):
+      os.mkdir(dir + os.sep + subdir)
+    unpack_dir(archive, dir + os.sep + subdir, verbose)
 
 def unpack_archive(path: str, out_path: str, verbose=False):
   archive = pyjkernel.from_archive_file(path, True)
@@ -38,13 +37,13 @@ def pack_dir(archive: pyjkernel.JKRArchive, path: str, verbose=False):
   for root, dirs, files in os.walk(local_root):
     files.sort(key=lambda item: (item.lower(), item))
     for dir in dirs:
-      archive.create_folder(root + "/" + dir)
+      archive.create_folder(root + os.sep + dir)
 
     for file in files:
       if verbose:
-        print('Packing file: ' + root + '/' + file)
-      with open(root + "/" + file, "rb") as f:
-        archive.create_file(root + "/" + file, bytearray(f.read()), pyjkernel.JKRPreloadType.ARAM)
+        print('Packing file: ' + root + os.sep + file)
+      with open(root + os.sep + file, "rb") as f:
+        archive.create_file(root + os.sep + file, bytearray(f.read()), pyjkernel.JKRPreloadType.ARAM)
   os.chdir(orig_dir)
 
 def pack_archive(root_path: str, out_path: str, verbose=False):

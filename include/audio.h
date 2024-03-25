@@ -69,8 +69,8 @@ extern void sAdo_Pause(u8 mode);
 
 extern f32 sAdo_GetRhythmAnimCounter(u32 id);
 extern s8 sAdo_GetRhythmDelay(u32 id);
-extern f32 sAdo_GetRhythmInfo(u32 id);
-extern void sAdo_SetRhythmInfo(f32 p);
+extern void sAdo_GetRhythmInfo(TempoBeat_c* rhythm);
+extern void sAdo_SetRhythmInfo(TempoBeat_c* rhythm);
 
 extern int sAdo_InstCountGet();
 

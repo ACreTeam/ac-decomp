@@ -12,6 +12,9 @@ extern "C" {
 
 typedef struct furniture_actor_s FTR_ACTOR;
 
+#define aFTR_KEEP_ITEM_COUNT (mCoBG_LAYER_NUM - 1)
+#define aFTR_CHECK_INTERACTION(inter, type) (((inter) >> (type)) & 1)
+
 enum {
     aFTR_STATE_STOP,
     aFTR_STATE_WAIT_PUSH,
@@ -62,7 +65,7 @@ enum {
 
 enum {
     aFTR_INTERACTION_STORAGE_DRAWERS = 1,  // dressers
-    aFTR_INTERACTION_STORAGE_WARDROBE, // double doors
+    aFTR_INTERACTION_STORAGE_WARDROBE = 2, // double doors
     aFTR_INTERACTION_STORAGE_CLOSET = 4,   // single door
     aFTR_INTERACTION_MUSIC_DISK = 8,
     aFTR_INTERACTION_NO_COLLISION = 0x10,
@@ -78,17 +81,50 @@ enum {
     aFTR_INTERACTION_FAMICOM_ITEM = 0x2000,
     aFTR_INTERACTION_RADIO_AEROBICS = 0x4000,
     aFTR_INTERACTION_TOGGLE = 0x8000,
-    aFTR_INTERACTION_NUM = 15,
 };
 
+enum {
+    aFTR_INTERACTION_TYPE_DRAWERS,
+    aFTR_INTERACTION_TYPE_WARDROBE,
+    aFTR_INTERACTION_TYPE_CLOSET,
+    aFTR_INTERACTION_TYPE_MUSIC_DISK,
+    aFTR_INTERACTION_TYPE_NO_COLLISION,
+    aFTR_INTERACTION_TYPE_HANIWA,
+    aFTR_INTERACTION_TYPE_FISH,
+    aFTR_INTERACTION_TYPE_INSECT,
+    aFTR_INTERACTION_TYPE_MANNEKIN,
+    aFTR_INTERACTION_TYPE_UMBRELLA,
+    aFTR_INTERACTION_TYPE_FOSSIL,
+    aFTR_INTERACTION_TYPE_FAMICOM,
+    aFTR_INTERACTION_TYPE_START_DISABLED,
+    aFTR_INTERACTION_TYPE_FAMICOM_ITEM,
+    aFTR_INTERACTION_TYPE_RADIO_AEROBICS,
+    aFTR_INTERACTION_TYPE_TOGGLE,
+
+    aFTR_INTERACTION_NUM,
+};
+
+#define aFTR_IS_STORAGE(profile)                                                            \
+    (aFTR_CHECK_INTERACTION((profile)->interaction_type, aFTR_INTERACTION_TYPE_DRAWERS) ||  \
+     aFTR_CHECK_INTERACTION((profile)->interaction_type, aFTR_INTERACTION_TYPE_WARDROBE) || \
+     aFTR_CHECK_INTERACTION((profile)->interaction_type, aFTR_INTERACTION_TYPE_CLOSET) ||   \
+     aFTR_CHECK_INTERACTION((profile)->interaction_type, aFTR_INTERACTION_TYPE_MUSIC_DISK))
 enum {
     aFTR_CONTACT_ACTION_CHAIR_UNIDIRECTIONAL = 1,   // only can sit from the front
     aFTR_CONTACT_ACTION_CHAIR_MULTIDIRECTIONAL = 2, // can sit from any direction
     aFTR_CONTACT_ACTION_CHAIR_SOFA = 4,             // cam sit anywhere from the front
     aFTR_CONTACT_ACTION_BED_SINGLE = 8,             // single bed (can't roll)
-    aFTR_CONTACT_ACTION_BED_DOUBLE = 0x10,             // double bed (can roll)
+    aFTR_CONTACT_ACTION_BED_DOUBLE = 0x10,          // double bed (can roll)
 
     aFTR_CONTACT_ACTION_NUM
+};
+
+enum {
+    aFTR_SET_TYPE_NORMAL,     /* Can't be placed on top and is not a table (layer0) */
+    aFTR_SET_TYPE_SURFACE,    /* Is a surface (layer0) */
+    aFTR_SET_TYPE_ON_SURFACE, /* Can be placed on a surface (layer0/layer1) */
+
+    aFTR_SET_TYPE_NUM
 };
 
 typedef void (*aFTR_FTR_CT_PROC)(FTR_ACTOR*, u8*);
@@ -186,7 +222,7 @@ struct furniture_actor_s {
     s16 _83E;
     s16 open_music_disk; /* set when a music player is interacted with */
     s16 dust_timer;
-    mActor_name_t items[mCoBG_LAYER_NUM - 1]; /* used for holding items (music players & wardrobes)  */
+    mActor_name_t items[aFTR_KEEP_ITEM_COUNT]; /* used for holding items (music players & wardrobes)  */
     int _84C;
     u16* pal_p; /* used for furniture actors with dynamic palettes such as the structure model items */
     int _854;

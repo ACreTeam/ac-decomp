@@ -219,14 +219,13 @@ extern s8 sAdo_GetRhythmDelay(u32 p) {
     return Na_GetRhythmDelay(p);
 }
 
-extern f32 sAdo_GetRhythmInfo(u32 p) {
+extern void sAdo_GetRhythmInfo(TempoBeat_c* rhythm) {
 
-    return Na_GetRhythmInfo(p);
+    Na_GetRhythmInfo(rhythm);
 }
 
-extern void sAdo_SetRhythmInfo(f32 p) {
-
-    Na_SetRhythmInfo(p);
+extern void sAdo_SetRhythmInfo(TempoBeat_c* rhythm) {
+    Na_SetRhythmInfo(rhythm);
 }
 
 extern int sAdo_InstCountGet() {

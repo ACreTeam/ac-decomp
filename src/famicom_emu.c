@@ -77,7 +77,7 @@ extern void famicom_emu_main(GAME* famicom) {
 
     if (famicom_done == 0) {
         if (famicom_rom_load_check() < 0) {
-            Common_Set(famicom_2DBAC, Common_Get(famicom_2DBAC) | 1);
+            Common_Set(my_room_message_control_flags, Common_Get(my_room_message_control_flags) | 1);
             famicom_done = 1;
             famicom_done_countdown = 0;
         } else {
@@ -152,7 +152,7 @@ extern void famicom_emu_init(GAME* game) {
     my_alloc_init(game, freeXfbBase, freeXfbSize);
 
     if (famicom_init(rom_id, &my_malloc_func, player) != 0) {
-        Common_Set(famicom_2DBAC, Common_Get(famicom_2DBAC) | 1);
+        Common_Set(my_room_message_control_flags, Common_Get(my_room_message_control_flags) | 1);
         return_emu_game(game);
     }
 }
@@ -161,7 +161,7 @@ extern void famicom_emu_cleanup(GAME* game) {
     JC_JFWDisplay_startFadeIn(JC_JFWDisplay_getManager(), 1);
 
     if (famicom_cleanup() != 0) {
-        Common_Set(famicom_2DBAC, Common_Get(famicom_2DBAC) | 2);
+        Common_Set(my_room_message_control_flags, Common_Get(my_room_message_control_flags) | 2);
     }
 
     my_alloc_cleanup();
