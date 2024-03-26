@@ -2720,6 +2720,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define DUMMY_BROKER_SHOP 0xF104
 #define DUMMY_BUGGY 0xF105
 #define DUMMY_CAR 0xF106
+#define DUMMY_KAMAKURA 0xF107
 #define DUMMY_RADIO 0xF109
 #define DUMMY_YATAI 0xF10A
 #define DUMMY_TUKIMI 0xF10A
