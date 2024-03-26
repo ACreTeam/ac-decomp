@@ -1,0 +1,229 @@
+// clang-format off
+static Door_data_c aKKR_kamakura_enter_data = {
+    SCENE_KAMAKURA,
+    mSc_DIRECT_NORTH,
+    FALSE,
+    0,
+    {160,0,300},
+    EMPTY_NO,
+    1,
+    {0,0,0},
+};
+// clang-format on
+
+static void change_FGUnit(STRUCTURE_ACTOR* kamakura, int type) {
+    int dug;
+    xyz_t pos;
+    mActor_name_t* unit_fg;
+
+    xyz_t_move(&pos, &kamakura->actor_class.world.position);
+    pos.z += 80.0f;
+
+    if (type == FALSE) {
+        mFI_SetFG_common(EMPTY_NO, pos, TRUE);
+        return;
+    }
+
+    unit_fg = mFI_GetUnitFG(pos);
+    if (unit_fg == NULL) {
+        return;
+    }
+
+    if (mSN_ClearSnowman(unit_fg) == FALSE) {
+        dug = FALSE;
+        if ((((*unit_fg >= BURIED_PITFALL_START) && (*unit_fg <= BURIED_PITFALL_END)) || (*unit_fg == SHINE_SPOT))) {
+            dug = TRUE;
+        }
+
+        if (dug == TRUE) {
+            mPB_keep_item(bg_item_fg_sub_dig2take_conv(*unit_fg));
+            mFI_SetFG_common(RSV_NO, pos, 1);
+            mFI_Wpos2DepositOFF(pos);
+        } else {
+            mFI_Wpos2DepositOFF(pos);
+            mPB_keep_item(*unit_fg);
+            mFI_SetFG_common(RSV_NO, pos, 1);
+        }
+    } else {
+        mFI_SetFG_common(RSV_NO, pos, 1);
+    }
+}
+
+static void aKKR_set_bgOffset(STRUCTURE_ACTOR* kamakura, int offs) {
+    // clang-format off
+    static mCoBG_OffsetTable_c height_table_ct[] = {
+        { mCoBG_ATTRIBUTE_NONE, 6, 0, 6, 6, 6, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 6, 6, 6, 6, 6, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 6, 6, 6, 6, 0, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 6, 6, 6, 6, 6, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 8, 8, 8, 8, 8, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 6, 6, 6, 6, 6, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 6, 6, 0, 6, 6, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 6, 6, 6, 6, 6, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 6, 6, 6, 0, 6, 1 }
+    };
+    // clang-format on
+
+    static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
+
+    static f32 addX[] = { -mFI_UT_WORLDSIZE_X_F, 0.0f, mFI_UT_WORLDSIZE_X_F };
+    static f32 addZ[] = { -mFI_UT_WORLDSIZE_Z_F, 0.0f, mFI_UT_WORLDSIZE_Z_F };
+
+    mCoBG_OffsetTable_c* offset;
+    int i;
+    xyz_t pos;
+
+    offset = height_table[offs];
+
+    for (i = 0; i < 3; i++) {
+        pos.z = kamakura->actor_class.home.position.z + addZ[i];
+
+        pos.x = kamakura->actor_class.home.position.x + addX[0];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[0], __FILE__, 202);
+
+        pos.x = kamakura->actor_class.home.position.x + addX[1];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[1], __FILE__, 206);
+
+        pos.x = kamakura->actor_class.home.position.x + addX[2];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[2], __FILE__, 210);
+
+        offset += 3;
+    }
+}
+
+static void aKKR_rewrite_out_data(ACTOR* actor, GAME_PLAY* play) {
+    Door_data_c* door_data;
+    xyz_t pos;
+
+    door_data = Common_GetPointer(structure_exit_door_data);
+    if (play->fb_wipe_mode == 0) {
+        door_data->next_scene_id = Save_Get(scene_no);
+        door_data->exit_orientation = mSc_DIRECT_SOUTH;
+        door_data->exit_type = 0;
+        door_data->extra_data = 3;
+
+        pos.x = actor->world.position.x;
+        pos.z = actor->world.position.z + 86.0f;
+        pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 0.0f);
+
+        door_data->exit_position.x = pos.x;
+        door_data->exit_position.y = pos.y;
+        door_data->exit_position.z = pos.z;
+
+        door_data->door_actor_name = KAMAKURA;
+
+        door_data->wipe_type = 1;
+
+        mBGMPsComp_make_ps_wipe(0x2168);
+    }
+}
+
+static int aKKR_check_player(ACTOR* actor, GAME_PLAY* play) {
+    u16 y;
+    f32 xOffs;
+    f32 zOffs;
+    f32 t;
+    int res;
+    PLAYER_ACTOR* player;
+
+    player = GET_PLAYER_ACTOR(play);
+    res = 0;
+
+    if (player == NULL) {
+        return 0;
+    }
+
+    y = player->actor_class.shape_info.rotation.y;
+    xOffs = SQ(player->actor_class.world.position.x - actor->world.position.x);
+    zOffs = SQ(player->actor_class.world.position.z - (actor->world.position.z + 40.0f));
+    t = (xOffs) + (zOffs);
+
+    if ((y > DEG2SHORT_ANGLE2(135.0f)) && (y < DEG2SHORT_ANGLE2(225.0f)) && (t < 1600.0f)) { // 0x6000 && 0xA000
+        res = 1;
+    }
+
+    return res;
+}
+
+static void aKKR_wait(STRUCTURE_ACTOR* kamakura, GAME_PLAY* play) {
+    ACTOR* actor;
+    GAME* game;
+    xyz_t pos;
+
+    actor = &kamakura->actor_class;
+    game = &play->game;
+
+    if (kamakura == GET_PLAYER_ACTOR_NOW()->get_door_label_proc(gamePT)) {
+        aKKR_rewrite_out_data(actor, play);
+        goto_other_scene(play, &aKKR_kamakura_enter_data, TRUE);
+        return;
+    }
+
+    if (aKKR_check_player(actor, play) == 0) {
+        return;
+    }
+
+    pos.x = actor->world.position.x;
+    pos.y = GET_PLAYER_ACTOR(play)->actor_class.world.position.y;
+    pos.z = actor->world.position.z + 68.0f;
+    mPlib_request_main_door_type1(game, &pos, -DEG2SHORT_ANGLE(180.0f), TRUE, actor); // 0x8000
+}
+
+static void aKKR_setup_action(STRUCTURE_ACTOR* kamakura, int action) {
+    static aSTR_MOVE_PROC process[] = {
+        &aKKR_wait,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+    };
+
+    kamakura->action_proc = process[action];
+    kamakura->action = action;
+}
+
+static int aKKR_ctrl_light(STRUCTURE_ACTOR* kamakura) {
+    int now_sec = Common_Get(time.now_sec);
+    return !(now_sec < (64800) && now_sec >= (21600));
+}
+
+static void aKKR_actor_move(ACTOR* actor, GAME* game) {
+    GAME_PLAY* play;
+    STRUCTURE_ACTOR* kamakura;
+    PLAYER_ACTOR* player;
+    int bx1;
+    int bz1;
+    int bx2;
+    int bz2;
+    f32 window;
+
+    play = (GAME_PLAY*)game;
+    kamakura = (STRUCTURE_ACTOR*)actor;
+    player = GET_PLAYER_ACTOR(play);
+
+    mFI_Wpos2BlockNum(&bx1, &bz1, actor->world.position);
+    mFI_Wpos2BlockNum(&bx2, &bz2, player->actor_class.world.position);
+
+    if ((mDemo_Check(mDemo_TYPE_SCROLL, &player->actor_class) == FALSE) &&
+        (mDemo_Check(mDemo_TYPE_SCROLL2, &player->actor_class) == FALSE) &&
+        (mDemo_Check(mDemo_TYPE_SCROLL3, &player->actor_class) == FALSE) && ((bx1 != bx2) || (bz1 != bz2))) {
+        Actor_delete(actor);
+    } else {
+        kamakura->action_proc(kamakura, play);
+
+        window = (aKKR_ctrl_light(kamakura) != 0) ? 1.0f : 0.0f;
+        chase_f(&kamakura->arg0_f, window, 0.019532442f);
+    }
+}
+
+static void aKKR_actor_init(ACTOR* actor, GAME* game) {
+    xyz_t pos;
+
+    pos = actor->home.position;
+    mFI_SetFG_common(DUMMY_KAMAKURA, pos, FALSE);
+    aKKR_actor_move(actor, game);
+    actor->mv_proc = aKKR_actor_move;
+}
