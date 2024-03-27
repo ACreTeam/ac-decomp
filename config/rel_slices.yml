@@ -775,6 +775,10 @@ ac_fallSESW.c:
     .text: [0x805AEF84, 0x805AF278]
     .rodata: [0x8064A830, 0x8064A858]
     .data: [0x806C5148, 0x806C51B0]
+ac_goza.c:
+    .text: [0x805AF4C4, 0x805AF924]
+    .rodata: [0x8064A868, 0x8064A878]
+    .data: [0x806C5200, 0x806C5340]
 ac_kago.c:
     .text: [0x805B1A08, 0x805B1D50]
     .data: [0x806C5750, 0x806C57A8]

@@ -1,0 +1,54 @@
+extern Gfx obj_e_hanami_a_model[];
+extern Gfx obj_e_hanami_b_model[];
+
+extern Gfx obj_e_hanami_a_modelT[];
+extern Gfx obj_e_hanami_b_modelT[];
+
+static void aGOZ_actor_draw(ACTOR* actor, GAME* game) {
+    static Gfx* gfx_opa_table[] = { obj_e_hanami_a_model, obj_e_hanami_b_model };
+    static Gfx* gfx_xlu_table[] = { obj_e_hanami_a_modelT, obj_e_hanami_b_modelT };
+
+    STRUCTURE_ACTOR* goza;
+    GRAPH* graph;
+    Mtx* mtx;
+    int type;
+    Gfx* poly_opa;
+    Gfx* poly_xlu;
+
+    goza = (STRUCTURE_ACTOR*)actor;
+    graph = game->graph;
+    type = goza->arg1 & 1;
+
+    _Matrix_to_Mtx_new(graph);
+    _texture_z_light_fog_prim_shadow(graph);
+    _texture_z_light_fog_prim_xlu(graph);
+    _texture_z_light_fog_prim_npc(graph);
+
+    OPEN_DISP(graph);
+    {
+        poly_opa = NOW_POLY_OPA_DISP;
+        mtx = _Matrix_to_Mtx_new(graph);
+        if (mtx != NULL) {
+            gSPMatrix(poly_opa++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPDisplayList(poly_opa++, gfx_opa_table[type]);
+        }
+
+        SET_POLY_OPA_DISP(poly_opa);
+
+        poly_xlu = NOW_POLY_XLU_DISP;
+        mtx = _Matrix_to_Mtx_new(graph);
+        if (mtx != NULL) {
+            gSPMatrix(poly_xlu++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPDisplayList(poly_xlu++, gfx_xlu_table[type]);
+        }
+
+        SET_POLY_XLU_DISP(poly_xlu);
+    }
+    CLOSE_DISP(graph);
+
+    if (mtx == NULL) {
+        return;
+    }
+
+    (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, aGOZ_shadow_data_table[type & 1], FALSE);
+}

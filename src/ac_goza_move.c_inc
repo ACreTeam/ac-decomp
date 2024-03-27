@@ -1,0 +1,89 @@
+static void aGOZ_set_bgOffset(STRUCTURE_ACTOR* goza, int offs) {
+    // clang-format off
+    static mCoBG_OffsetTable_c rewrite_dataA[] = {
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 0, 2, 2, 2, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 2, 2, 2, 0, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 0, 2, 2, 2, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 2, 2, 2, 2, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 2, 2, 0, 2, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 2, 0, 2, 2, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 2, 2, 0, 2, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 }
+    };
+    // clang-format on
+
+    // clang-format off
+    static mCoBG_OffsetTable_c rewrite_dataB[] = {
+        { mCoBG_ATTRIBUTE_NONE, 2, 0, 2, 2, 2, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 2, 2, 2, 0, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 2, 0, 2, 2, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 2, 2, 2, 2, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 2, 2, 2, 0, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 2, 0, 2, 2, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 2, 2, 2, 0, 2, 1 }
+    };
+    // clang-format on
+
+    static mCoBG_OffsetTable_c* rewrite_data[] = { rewrite_dataA, rewrite_dataB };
+
+    int j;
+    int i;
+    mCoBG_OffsetTable_c* offset;
+    xyz_t pos;
+
+    offset = rewrite_data[goza->arg1 & 1];
+    for (i = -1; i <= 1; i++) {
+        for (j = -1; j <= 1; j++) {
+            pos = goza->actor_class.world.position;
+            pos.x += mFI_UT_WORLDSIZE_X_F * j;
+            pos.z += mFI_UT_WORLDSIZE_Z_F * i;
+
+            mCoBG_SetPluss5PointOffset_file(pos, *offset, __FILE__, 167);
+
+            offset++;
+        }
+    }
+}
+
+static void aGOZ_setup_action(STRUCTURE_ACTOR* goza, int action) {
+    static aSTR_MOVE_PROC process[] = { (aSTR_MOVE_PROC)&none_proc1 };
+
+    goza->action_proc = process[action];
+}
+
+static void aGOZ_actor_move(ACTOR* actor, GAME* game) {
+    GAME_PLAY* play;
+    STRUCTURE_ACTOR* goza;
+    PLAYER_ACTOR* player;
+    int bx1;
+    int bz1;
+    int bx2;
+    int bz2;
+
+    play = (GAME_PLAY*)game;
+    goza = (STRUCTURE_ACTOR*)actor;
+    player = GET_PLAYER_ACTOR(play);
+
+    mFI_Wpos2BlockNum(&bx1, &bz1, actor->world.position);
+    mFI_Wpos2BlockNum(&bx2, &bz2, player->actor_class.world.position);
+
+    if ((mDemo_Check(mDemo_TYPE_SCROLL, &player->actor_class) == FALSE) &&
+        (mDemo_Check(mDemo_TYPE_SCROLL2, &player->actor_class) == FALSE) &&
+        (mDemo_Check(mDemo_TYPE_SCROLL3, &player->actor_class) == FALSE) && ((bx1 != bx2) || (bz1 != bz2))) {
+        Actor_delete(actor);
+    } else {
+        goza->action_proc(goza, play);
+    }
+}
+
+static void aGOZ_actor_init(ACTOR* actor, GAME* game) {
+    xyz_t pos;
+
+    pos = actor->home.position;
+    mFI_SetFG_common(DUMMY_GOZA, pos, FALSE);
+    aGOZ_actor_move(actor, game);
+    actor->mv_proc = aGOZ_actor_move;
+}
