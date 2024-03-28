@@ -23,6 +23,10 @@ typedef struct s_xyz_s {
     s16 x, y, z;
 } s_xyz;
 
+typedef struct s_xz_s {
+    s16 x, z;
+} s_xz;
+
 typedef struct {
   u32 r:8;
   u32 g:8;
