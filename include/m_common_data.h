@@ -348,6 +348,11 @@ extern common_data_t common_data;
 #define Able_Sisters_Umbrella_Palette_Get(idx) (Able_Sisters_Palette_Get(idx + mNW_CLOTH_DESIGN_NUM))
 #define Able_Sisters_Umbrella_Design_Get(idx) (Able_Sisters_Design_Get(idx + mNW_CLOTH_DESIGN_NUM))
 
+#define Get_Villager(idx) (Save_Get(animals[idx]))
+
+#define Get_Island() (Save_Get(island))
+#define Get_Island_Villager() (Get_Island().animal)
+
 extern void common_data_reinit();
 extern void common_data_init();
 extern void common_data_clear();

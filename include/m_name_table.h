@@ -2735,6 +2735,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define DUMMY_NAMEPLATE 0xF11F
 #define DUMMY_MUSEUM 0xF120
 #define DUMMY_FLAG 0xF122
+#define DUMMY_COTTAGE_MY 0xF123
+#define DUMMY_COTTAGE_NPC 0xF124
 #define DUMMY_TENT 0xF127
 #define DUMMY_BOAT 0xF128
 #define RSV_POLICE_ITEM_0 0xF128 // why is this duplicated?
