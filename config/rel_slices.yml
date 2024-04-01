@@ -414,6 +414,10 @@ ac_boxMove.c:
 ac_boxTrick01.c:
     .text: [0x80415BF8, 0x80415C04]
     .data: [0x806818F0, 0x80681918]
+ac_cottage.c:
+    .text: [0x80415F04, 0x804174C4]
+    .rodata: [0x80643BA0, 0x80643DB0]
+    .data: [0x80681958, 0x80681A98]
 ac_field_draw.c:
     .text: [0x80422DA8, 0x80423E20]
     .rodata: [0x80643F00, 0x80643F88]
