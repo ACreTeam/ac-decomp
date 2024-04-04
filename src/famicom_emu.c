@@ -174,7 +174,7 @@ extern void famicom_emu_cleanup(GAME* game) {
     sAdo_SubGameEnd();
 }
 
-extern int famicom_gba_getImage(u32 rom_id, int* ptr) {
+extern void* famicom_gba_getImage(u32 rom_id, size_t* size) {
     static char* names[] = {
         "cluclu", "usa_balloon",  "donkey", "usa_jr_math", "pinball",  "tennis", "usa_golf",
         NULL,     "usa_baseball", NULL,     "usa_donkey3", "donkeyjr", "soccer", "exbike",
@@ -182,8 +182,7 @@ extern int famicom_gba_getImage(u32 rom_id, int* ptr) {
     };
 
     char buf[256];
-    u32 resource;
-    int block;
+    void* resource;
     char* rom;
 
     if (rom_id > 19) {
@@ -197,9 +196,8 @@ extern int famicom_gba_getImage(u32 rom_id, int* ptr) {
     } else {
         sprintf(buf, "/FAMICOM/GBA/jb_%s.bin.szs", rom);
         resource = JC__JKRGetResource(buf);
-        if ((resource != 0) && (ptr != NULL)) {
-            block = JC__JKRGetMemBlockSize(0, resource);
-            *ptr = block;
+        if ((resource != NULL) && (size != NULL)) {
+            *size = JC__JKRGetMemBlockSize(0, resource);
         }
     }
     return resource;

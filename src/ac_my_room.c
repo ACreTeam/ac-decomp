@@ -10,6 +10,10 @@
 #include "m_cockroach.h"
 #include "m_msg.h"
 #include "dolphin/card.h"
+#include "m_string.h"
+#include "m_house.h"
+#include "m_player_lib.h"
+#include "GBA2/gba2.h"
 
 enum {
     aMR_ICON_LEAF,
@@ -123,6 +127,10 @@ static int aMR_UnitNum2FtrItemNoFtrID(mActor_name_t* item_no, int* ftr_id, int u
 static void aMR_ReserveDefaultBgm(ACTOR* actorx, FTR_ACTOR* ftr_actor);
 static void aMR_ChangeMDBgm(ACTOR* actorx, FTR_ACTOR* ftr_actor);
 static void aMR_SetFurniture2FG(FTR_ACTOR* ftr_actor, xyz_t pos, int on_flag);
+static int aMR_FtrIdx2ChangeFtrSwitch(ACTOR* actorx, int ftr_id);
+static aFTR_PROFILE* aMR_GetFurnitureProfile(u16 ftr_no);
+
+#include "../src/ac_my_room_msg_ctrl.c_inc"
 
 static aFTR_PROFILE* aMR_GetFurnitureProfile(u16 ftr_no) {
     if (ftr_no < FTR_NUM) {

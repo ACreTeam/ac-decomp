@@ -220,7 +220,7 @@ struct furniture_actor_s {
     f32 dynamic_work_f[2]; /* reserved for any use by each unique furniture actor */
     s16 layer;             /* layer the furniture actor resides on */
     s16 _83E;
-    s16 open_music_disk; /* set when a music player is interacted with */
+    s16 demo_status; /* set when a music player is interacted with */
     s16 dust_timer;
     mActor_name_t items[aFTR_KEEP_ITEM_COUNT]; /* used for holding items (music players & wardrobes)  */
     int _84C;

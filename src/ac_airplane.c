@@ -334,15 +334,13 @@ static void aAp_CommonHandle(ACTOR* actor, AIRPLANE_ACTOR* airplane, GAME* game)
 }
 
 static void aAp_ZbuttonChangeStatus(AIRPLANE_ACTOR* actor, GAME* game) {
-    GAME_PLAY* play = (GAME_PLAY*)game;
-
     if (chkButton(BUTTON_Z)) {
         if (actor->status == aAp_STATUS_PLAYER_CATCH) {
-            mPlib_request_main_refuse_type1(play);
+            mPlib_request_main_refuse_type1(game);
             actor->status = aAp_STATUS_START_FLY_MOVE;
         }
     } else if (actor->status == aAp_STATUS_START_FLY_MOVE) {
-        mPlib_request_main_wait_type3((GAME*)play);
+        mPlib_request_main_wait_type3(game);
         actor->status = aAp_STATUS_PLAYER_CATCH;
     }
 }

@@ -341,6 +341,8 @@ extern common_data_t common_data;
 #define Player_Palette_Get(idx) (Common_Get(now_private->my_org[idx].palette))
 #define Player_Design_Get(idx) (Common_GetPointer(now_private->my_org[idx].design))
 
+#define Now_Private (Common_Get(now_private))
+
 #define Able_Sisters_Palette_Get(idx) (Save_Get(needlework.original_design[idx].palette))
 #define Able_Sisters_Design_Get(idx) (Save_GetPointer(needlework.original_design[idx].design))
 #define Able_Sisters_Cloth_Palette_Get(idx) (Able_Sisters_Palette_Get(idx))

@@ -15,12 +15,12 @@ extern "C" {
 #define MONO(id) (id | 0x1000)
 #define SE_FLAG_15(id) (id | 0x8000)
 
-//TODO: Make the rest of Sound Effects with parameters
+// TODO: Make the rest of Sound Effects with parameters
 #define SE_REGISTER MONO(0x50)
 
-typedef enum audio_sound_effects{
+typedef enum audio_sound_effects {
     NA_SE_START,
-    NA_SE_CURSOL, 
+    NA_SE_CURSOL,
     NA_SE_MENU_EXIT,
 
     NA_SE_ZOOMUP = 4,
@@ -109,14 +109,19 @@ typedef enum audio_sound_effects{
     NA_SE_KARABURI = 0x43A,
 
     NA_SE_ROD_STROKE_SMALL = 0x445,
-    
+
     NA_SE_SCOOP_TREE_HIT = 0x448,
     NA_SE_SCOOP_ITEM_HIT,
     NA_SE_AXE_BALL_HIT,
 
     NA_SE_COIN_GASAGOSO = 0x465,
 
-}AudioSE;
+} AudioSE;
+
+typedef enum bgm_e {
+    BGM_MD0 = 128,
+
+} BGM_e;
 
 #ifdef __cplusplus
 }
