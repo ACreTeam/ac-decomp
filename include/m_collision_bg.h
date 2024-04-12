@@ -277,6 +277,15 @@ extern int mCoBG_GetHoleNumber_ClData(mCoBG_Collision_u* col);
 extern void mCoBG_GetBgNorm_FromWpos(xyz_t* norm, xyz_t wpos);
 extern int mCoBG_GetWaterFlow(xyz_t* water_flow, u32 attr);
 extern void mCoBG_SetAttribute(xyz_t pos, u32 attr);
+extern int mCoBG_GetPointInfoFrontLine(f32* line, f32* check_pos, f32* norm);
+extern int mCoBG_GetCrossCircleAndLine2Dvector(f32* cross0_xz, f32* cross1_xz, f32* point_xz, f32* vec_xz,
+                                               f32* center_xz, f32 radius);
+extern f32 mCoBG_GetVectorProductin2D(f32* vec0_xz, f32* vec1_xz);
+extern int mCoBG_GetCrossLineAndPerpendicular(f32* cross_xz, f32* start_xz, f32* end_xz, f32* point_xz);
+extern int mCoBG_RangeCheckLinePoint(f32* start_xz, f32* end_xz, f32* point_xz);
+extern int mCoBG_GetDistPointAndLine2D_Norm(f32* dist, f32* start_xz, f32* end_xz, f32* norm, f32* point_xz);
+extern f32 mCoBG_Get2VectorAngleF(f32* v0, f32* v1, u8 type);
+extern int mCoBG_CheckUtFlat(const xyz_t* pos);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();

@@ -74,31 +74,31 @@ static aMR_place_info_c* next_table[] = {
     NULL, NULL, NULL, NULL, &l_next_place_typeA, &l_next_place_typeC,
 };
 
-static xyz_t l_typeB_90_pattern[2] = {
+static xyz_t l_typeB_90_pattarn[2] = {
     { 0.0f, 0.0f, 0.0f },
     { 0.0f, 0.0f, 40.0f },
 };
 
-static xyz_t l_typeB_180_pattern[2] = {
+static xyz_t l_typeB_180_pattarn[2] = {
     { 0.0f, 0.0f, 0.0f },
     { 40.0f, 0.0f, 0.0f },
 };
 
-static xyz_t l_typeB_270_pattern[2] = {
+static xyz_t l_typeB_270_pattarn[2] = {
     { 0.0f, 0.0f, 0.0f },
     { 0.0f, 0.0f, -40.0f },
 };
 
-static xyz_t l_typeB_0_pattern[2] = {
+static xyz_t l_typeB_0_pattarn[2] = {
     { 0.0f, 0.0f, 0.0f },
     { -40.0f, 0.0f, 0.0f },
 };
 
-static xyz_t* pattern_table[] = {
-    l_typeB_90_pattern,
-    l_typeB_180_pattern,
-    l_typeB_270_pattern,
-    l_typeB_0_pattern,
+static xyz_t* pattarn_table[] = {
+    l_typeB_90_pattarn,
+    l_typeB_180_pattarn,
+    l_typeB_270_pattarn,
+    l_typeB_0_pattarn,
 };
 
 // clang-format off

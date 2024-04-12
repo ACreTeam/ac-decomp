@@ -15,6 +15,8 @@ typedef struct furniture_actor_s FTR_ACTOR;
 #define aFTR_KEEP_ITEM_COUNT (mCoBG_LAYER_NUM - 1)
 #define aFTR_CHECK_INTERACTION(inter, type) (((inter) >> (type)) & 1)
 
+#define aFTR_EDGE_COL_NUM 4
+
 enum {
     aFTR_STATE_STOP,
     aFTR_STATE_WAIT_PUSH,
@@ -110,6 +112,7 @@ enum {
      aFTR_CHECK_INTERACTION((profile)->interaction_type, aFTR_INTERACTION_TYPE_CLOSET) ||   \
      aFTR_CHECK_INTERACTION((profile)->interaction_type, aFTR_INTERACTION_TYPE_MUSIC_DISK))
 enum {
+    aFTR_CONTACT_ACTION_NONE = 0,
     aFTR_CONTACT_ACTION_CHAIR_UNIDIRECTIONAL = 1,   // only can sit from the front
     aFTR_CONTACT_ACTION_CHAIR_MULTIDIRECTIONAL = 2, // can sit from any direction
     aFTR_CONTACT_ACTION_CHAIR_SOFA = 4,             // cam sit anywhere from the front
@@ -195,7 +198,7 @@ struct furniture_actor_s {
     u8 shape_type;          /* current size & shape (rotation) */
     u8 original_shape_type; /* original size & shape (rotation) */
     xyz_t base_position;
-    aFTR_collision_c edge_collision[4]; /* collision for each edge */
+    aFTR_collision_c edge_collision[aFTR_EDGE_COL_NUM]; /* collision for each edge */
     s16 collision_direction;
     int move_bg_idx;
     mCoBG_bg_regist_c bg_register;

@@ -12,6 +12,12 @@ extern "C" {
 
 #define aMR_MAX_UNIT 8
 #define aMR_HANIWA_ON_TABLE_NUM 14
+#define aMR_GOKI_MAX 3
+#define aMR_FIT_FTR_MAX 4
+#define aMR_RSV_FTR_NUM 3
+
+#define aMR_NO_FTR_ID 200
+#define aMR_NO_FTR_ID2 201
 
 typedef struct my_room_actor_s MY_ROOM_ACTOR;
 
@@ -51,13 +57,13 @@ enum {
 
 typedef struct my_room_contact_s {
     int contact_flag;
-    int ftr_no;
+    int ftrID;
     int direction;
     int contact_side;
     f32 contact_percent;
     f32* normal_p;
-    f32 contact_edge0[2];
-    f32 contact_edge1[2];
+    f32 contact_edge_start[2];
+    f32 contact_edge_end[2];
     int contact_direction;
 } aMR_contact_info_c;
 
@@ -138,11 +144,11 @@ typedef struct room_leaf_s {
 
 typedef struct room_pickup_s {
     int pickup_flag;
-    int ftr_no;
+    int ftrID;
     xyz_t leaf_pos;
     int picking_up_flag;
     s16 layer;
-    u16 dust_effect_timer;
+    s16 dust_effect_timer;
     u16 icon;
 } aMR_pickup_info_c;
 
@@ -197,6 +203,12 @@ typedef struct room_fit_ftr_s {
     s16 angle_y;
     xyz_t ut_pos;
 } aMR_fit_ftr_c;
+
+typedef struct room_parent_ftr_s {
+    int ftrID;
+    s16 angle_y;
+    aMR_fit_ftr_c fit_ftr_table[aMR_FIT_FTR_MAX];
+} aMR_parent_ftr_c;
 
 struct my_room_actor_s {
     ACTOR actor_class;
@@ -256,9 +268,7 @@ struct my_room_actor_s {
     int _4F4;
     int room_msg_flag;
     int haniwa_step_idx;
-    int parent_ftrID;
-    s16 parent_angleY;
-    aMR_fit_ftr_c fit_ftr_table[4];
+    aMR_parent_ftr_c parent_ftr;
     u32 music_box[2];
     int scene;
     int _5A4;

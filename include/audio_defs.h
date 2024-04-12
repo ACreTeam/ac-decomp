@@ -35,6 +35,8 @@ typedef enum audio_sound_effects {
     NA_SE_LIGHT_ON,
     NA_SE_LIGHT_OFF,
 
+    NA_SE_DRAWER_SHUT = 0x3A,
+
     NA_SE_ITEM_GET = 0x40,
     NA_SE_ITEM_HORIDASHI = 0x47,
 
@@ -42,6 +44,9 @@ typedef enum audio_sound_effects {
     NA_SE_MONEY1,
     NA_SE_MONEY2,
     NA_SE_COIN,
+
+    NA_SE_BIRTH_FTR = 0x57,
+    NA_SE_CLEAN_UP_FTR = 0x58,
 
     NA_SE_TOOL_FURI = 0x5A, // swing?
     NA_SE_AMI_HIT = 0x5C,
@@ -79,6 +84,7 @@ typedef enum audio_sound_effects {
     NA_SE_ZASSOU_NUKU = 0x15F,
     NA_SE_HACHI_SASARERU,
 
+    NA_SE_166 = 0x166,
     NA_SE_UCHIWA = 0x167,
 
     NA_SE_SCOOP_SHIGEMI = 0x401,
@@ -99,6 +105,10 @@ typedef enum audio_sound_effects {
     NA_SE_HARD_CHAIR_STANDUP,
 
     NA_SE_BUBU_CHAIR_STANDUP = 0x429,
+    NA_SE_FTR_DOOR_OPEN = 0x42C,
+    NA_SE_FTR_DOOR_CLOSE = 0x42D,
+    NA_SE_DRAWER_OPEN = 0x42E,
+    NA_SE_DRAWER_CLOSE = 0x42F,
     NA_SE_DAI_UE_KAKUNOU = 0x430,
 
     NA_SE_UMBRELLA_ROTATE = 0x432,
@@ -119,8 +129,8 @@ typedef enum audio_sound_effects {
 } AudioSE;
 
 typedef enum bgm_e {
+    BGM_AEROBICS = 27,
     BGM_MD0 = 128,
-
 } BGM_e;
 
 #ifdef __cplusplus

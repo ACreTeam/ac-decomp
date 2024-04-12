@@ -424,9 +424,8 @@ extern void cKF_SkeletonInfo_R_T_combine_play(int* arg1, int* arg2, int* arg3, c
  * @param angley Y angle for base model rotation.
  * @param anglez Z angle for base model rotation.
  */
-extern void cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(f32 transx, f32 transy, f32 transz,
-                                                            cKF_SkeletonInfo_R_c* keyframe, s16 anglex, s16 angley,
-                                                            s16 anglez);
+extern void cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(cKF_SkeletonInfo_R_c* keyframe, f32 transx, f32 transy,
+                                                            f32 transz, s16 anglex, s16 angley, s16 anglez);
 
 /**
  * Adjusts the base position and correction for a skeleton info structure based on animation flags.

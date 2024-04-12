@@ -256,7 +256,7 @@ typedef struct common_data_s {
     /* 0x0287FA */ u8 _287FA[0x28838 - 0x0287FA];
     /* 0x028838 */ s8 player_bee_swell_flag;
     /* 0x028839 */ s8 player_bee_chase_flag;
-    /* 0x02883A */ u8 goki_shocked_flag;
+    /* 0x02883A */ s8 goki_shocked_flag;
     /* 0x02883B */ u8 time_changed_flag;
     /* 0x02883C */ u8 unable_to_wade_flag;
     /* 0x02883D */ u8 _02883D;
@@ -314,7 +314,7 @@ typedef struct common_data_s {
     /* 0x02DBB0 */ s16 can_look_goki_count;
     /* 0x02DBB4 */ f32 rainbow_opacity; /* current opacity of rainbow (0.0f - 1.0f) */
     /* 0x02DBB8 */ u32 event_flags[mEv_EVENT_TYPE_NUM];
-    /* 0x02DBD4 */ xyz_t* pluss_bridge_pos;       /* position of extra bridge */
+    /* 0x02DBD4 */ const xyz_t* pluss_bridge_pos; /* position of extra bridge */
     /* 0x02DBD8 */ lbRTC_time_c auto_nwrite_time; /* cached notice time used for fishing tourney results? */
     /* 0x02DBE0 */ u8 rhythym_updated;
     /* 0x02DBE1 */ u8 _2dbe1;

@@ -14,6 +14,9 @@
 #include "m_house.h"
 #include "m_player_lib.h"
 #include "GBA2/gba2.h"
+#include "m_debug.h"
+#include "m_mark_room.h"
+#include "sys_matrix.h"
 
 enum {
     aMR_ICON_LEAF,
@@ -120,17 +123,33 @@ static aMR_work_c l_aMR_work;
 static u8 l_bank_index_table[FTR_NUM];
 static u8* l_bank_address_table[aMR_FTR_BANK_NUM];
 
+// clang-format off
+const aMR_contact_info_c l_cntInf_default = {
+    FALSE,
+    100,
+    0,
+    0,
+    0.0f,
+    NULL,
+    { 0.0f, 0.0f },
+    { 0.0f, 0.0f },
+    0
+};
+// clang-format on
 const f32 aMR_angle_table[4] = { 0.0f, 90.0f, 180.0f, 270.0f };
 const u8 l_typeB0_table[4] = { aFTR_SHAPE_TYPEB_0, aFTR_SHAPE_TYPEB_90, aFTR_SHAPE_TYPEB_180, aFTR_SHAPE_TYPEB_270 };
 
 static int aMR_UnitNum2FtrItemNoFtrID(mActor_name_t* item_no, int* ftr_id, int ut_x, int ut_z, int layer);
 static void aMR_ReserveDefaultBgm(ACTOR* actorx, FTR_ACTOR* ftr_actor);
 static void aMR_ChangeMDBgm(ACTOR* actorx, FTR_ACTOR* ftr_actor);
-static void aMR_SetFurniture2FG(FTR_ACTOR* ftr_actor, xyz_t pos, int on_flag);
+static int aMR_SetFurniture2FG(FTR_ACTOR* ftr_actor, xyz_t pos, int on_flag);
 static int aMR_FtrIdx2ChangeFtrSwitch(ACTOR* actorx, int ftr_id);
 static aFTR_PROFILE* aMR_GetFurnitureProfile(u16 ftr_no);
+static mActor_name_t* aMR_GetLayerTopFg(s16 layer);
 
 #include "../src/ac_my_room_msg_ctrl.c_inc"
+#include "../src/ac_my_room_goki.c_inc"
+#include "../src/ac_my_room_melody.c_inc"
 
 static aFTR_PROFILE* aMR_GetFurnitureProfile(u16 ftr_no) {
     if (ftr_no < FTR_NUM) {
@@ -244,7 +263,7 @@ static mActor_name_t* aMR_GetLayerTopFg(s16 layer) {
     return mFI_BkNum2UtFGTop_layer(0, 0, layer);
 }
 
-u64* aMR_GetBitSwitchTable(int layer, MY_ROOM_ACTOR* my_room) {
+static u64* aMR_GetBitSwitchTable(int layer, MY_ROOM_ACTOR* my_room) {
     mActor_name_t field_id = mFI_GetFieldId();
 
     if (my_room->scene == SCENE_COTTAGE_MY) {
@@ -266,7 +285,7 @@ u64* aMR_GetBitSwitchTable(int layer, MY_ROOM_ACTOR* my_room) {
     return NULL;
 }
 
-u32* aMR_GetHaniwaStepSaveData(s16 layer, MY_ROOM_ACTOR* my_room) {
+static u32* aMR_GetHaniwaStepSaveData(s16 layer, MY_ROOM_ACTOR* my_room) {
     mActor_name_t field_id = mFI_GetFieldId();
 
     if (my_room->scene == SCENE_COTTAGE_MY) {
@@ -764,7 +783,7 @@ static void aMR_SetFirstScale(FTR_ACTOR* ftr_actor) {
     ftr_actor->dust_timer = 0;
 }
 
-static void aMR_DeleteFurnitreBank(u16 ftr_no) {
+static void aMR_DeleteFurnitureBank(u16 ftr_no) {
     if (aMR_CountAppointFurniture(ftr_no) == 0) {
         l_bank_index_table[ftr_no] = 255;
     }
@@ -1022,7 +1041,7 @@ static void aMR_MiniDiskCommonDt(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
         my_room->bgm_info.last_md_no = -1;
 
         /* Don't delete for aerobics radio music */
-        if (my_room->bgm_info.md_no != 27) {
+        if (my_room->bgm_info.md_no != BGM_AEROBICS) {
             mBGMPsComp_MDPlayerPos_delete();
         }
     }
@@ -1055,7 +1074,7 @@ static void aMR_ChangeMDBgm(ACTOR* actorx, FTR_ACTOR* ftr_actor) {
             if (my_room->bgm_info.md_no != -1) {
                 mBGMPsComp_make_ps_room(my_room->bgm_info.md_no, 0);
 
-                if (my_room->bgm_info.md_no != 27) {
+                if (my_room->bgm_info.md_no != BGM_AEROBICS) {
                     mBGMPsComp_MDPlayerPos_make();
                 }
 
@@ -1071,12 +1090,12 @@ static void aMR_ChangeMDBgm(ACTOR* actorx, FTR_ACTOR* ftr_actor) {
             my_room->bgm_info.last_md_no = my_room->bgm_info.md_no;
         } else {
             mBGMPsComp_delete_ps_room(my_room->bgm_info.last_md_no, 0);
-            if (my_room->bgm_info.last_md_no != 27) {
+            if (my_room->bgm_info.last_md_no != BGM_AEROBICS) {
                 mBGMPsComp_MDPlayerPos_delete();
             }
 
             mBGMPsComp_make_ps_room(my_room->bgm_info.md_no, 0);
-            if (my_room->bgm_info.md_no != 27) {
+            if (my_room->bgm_info.md_no != BGM_AEROBICS) {
                 mBGMPsComp_MDPlayerPos_make();
             }
 
@@ -1412,7 +1431,7 @@ static int aMR_ftrID2Wpos(xyz_t* wpos, int ftr_id);
 static int aMR_UnitNum2FtrItemNoFtrID(mActor_name_t* ftr_item_no, int* ftr_id, int ut_x, int ut_z, int layer);
 static void aMR_FtrID2ExtinguishFurniture(int ftr_id);
 static void aMR_RedmaFtrBank(void);
-static int aMR_ReserveFurniture(GAME* game, u16 ftr_no, int judge_res, int ut_x, int ut_z, u16 rotation,
+static int aMR_ReserveFurniture(GAME* game, u16 ftr_no, int free_idx, int ut_x, int ut_z, u16 rotation,
                                 int square_offset, int layer);
 static int aMR_CountFriendFurniture(FTR_ACTOR* ftr_actor, u8 switch_on);
 static int aMR_JudgePlace2ndLayer(int ut_x, int ut_z);
@@ -1724,7 +1743,7 @@ static void My_Room_Actor_ct(ACTOR* actorx, GAME* game) {
     aMR_InitFurnitureBankTable();
     aMR_MakeFurnitureActor(actorx, play, mCoBG_LAYER0);
     aMR_MakeFurnitureActor(actorx, play, mCoBG_LAYER1);
-    my_room->parent_ftrID = -1;
+    my_room->parent_ftr.ftrID = -1;
     Common_Set(make_npc2_actor, TRUE);
     aMR_MakeItemDataInFurniture();
     aMR_DeleteMusicWhichMusicBoxDontHave();
@@ -1939,6 +1958,8 @@ static void My_Room_Actor_dt(ACTOR* actorx, GAME* game) {
     }
 }
 
+#include "../src/ac_my_room_move.c_inc"
+
 static void aMR_RedmaFtrBank(void) {
     int i;
 
@@ -2124,7 +2145,7 @@ extern mActor_name_t aMR_FurnitureFg_to_FurnitureFgWithDirect(mActor_name_t item
 
 extern void aMR_RadioCommonMove(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
     if (ftr_actor->haniwa_state == 1) {
-        aMR_ReserveBgm(actorx, 27, ftr_actor, 0);
+        aMR_ReserveBgm(actorx, BGM_AEROBICS, ftr_actor, 0);
         ftr_actor->haniwa_state = 0;
     } else if (ftr_actor->switch_changed_flag) {
         if (ftr_actor->switch_bit == FALSE) {
@@ -2134,7 +2155,7 @@ extern void aMR_RadioCommonMove(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
             ftr_actor->switch_bit = FALSE;
         } else {
             aMR_OneMDSwitchOn_TheOtherSwitchOff(ftr_actor);
-            aMR_ReserveBgm(actorx, 27, ftr_actor, 0);
+            aMR_ReserveBgm(actorx, BGM_AEROBICS, ftr_actor, 0);
             aMR_ChangeMDBgm(actorx, ftr_actor);
             ftr_actor->switch_bit = TRUE;
         }
@@ -2142,7 +2163,7 @@ extern void aMR_RadioCommonMove(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
 }
 
 extern int aMR_RadioBgmNow(void) {
-    if (mBGMPsComp_execute_bgm_num_get() == 27) {
+    if (mBGMPsComp_execute_bgm_num_get() == BGM_AEROBICS) {
         return TRUE;
     }
 
@@ -2167,13 +2188,13 @@ extern FTR_ACTOR* aMR_GetParentFactor(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
     if (actorx != NULL) {
         MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
 
-        if (my_room->parent_ftrID != -1) {
-            FTR_ACTOR* parent_ftr_actor = l_aMR_work.ftr_actor_list + my_room->parent_ftrID;
+        if (my_room->parent_ftr.ftrID != -1) {
+            FTR_ACTOR* parent_ftr_actor = l_aMR_work.ftr_actor_list + my_room->parent_ftr.ftrID;
 
-            if (my_room->fit_ftr_table[0].ftr_ID == ftr_actor->id ||
-                my_room->fit_ftr_table[1].ftr_ID == ftr_actor->id ||
-                my_room->fit_ftr_table[2].ftr_ID == ftr_actor->id ||
-                my_room->fit_ftr_table[3].ftr_ID == ftr_actor->id) {
+            if (my_room->parent_ftr.fit_ftr_table[0].ftr_ID == ftr_actor->id ||
+                my_room->parent_ftr.fit_ftr_table[1].ftr_ID == ftr_actor->id ||
+                my_room->parent_ftr.fit_ftr_table[2].ftr_ID == ftr_actor->id ||
+                my_room->parent_ftr.fit_ftr_table[3].ftr_ID == ftr_actor->id) {
                 return parent_ftr_actor;
             }
         }
@@ -2185,14 +2206,14 @@ extern FTR_ACTOR* aMR_GetParentFactor(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
 extern s16 aMR_GetParentAngleOffset(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
     if (actorx != NULL) {
         MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
-        if (my_room->parent_ftrID != -1) {
-            FTR_ACTOR* parent_ftr_actor = l_aMR_work.ftr_actor_list + my_room->parent_ftrID;
+        if (my_room->parent_ftr.ftrID != -1) {
+            FTR_ACTOR* parent_ftr_actor = l_aMR_work.ftr_actor_list + my_room->parent_ftr.ftrID;
 
-            if (my_room->fit_ftr_table[0].ftr_ID == ftr_actor->id ||
-                my_room->fit_ftr_table[1].ftr_ID == ftr_actor->id ||
-                my_room->fit_ftr_table[2].ftr_ID == ftr_actor->id ||
-                my_room->fit_ftr_table[3].ftr_ID == ftr_actor->id) {
-                return parent_ftr_actor->s_angle_y - my_room->parent_angleY;
+            if (my_room->parent_ftr.fit_ftr_table[0].ftr_ID == ftr_actor->id ||
+                my_room->parent_ftr.fit_ftr_table[1].ftr_ID == ftr_actor->id ||
+                my_room->parent_ftr.fit_ftr_table[2].ftr_ID == ftr_actor->id ||
+                my_room->parent_ftr.fit_ftr_table[3].ftr_ID == ftr_actor->id) {
+                return parent_ftr_actor->s_angle_y - my_room->parent_ftr.angle_y;
             }
         }
     }
