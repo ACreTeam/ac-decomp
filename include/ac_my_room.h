@@ -149,7 +149,7 @@ typedef struct room_pickup_s {
     int picking_up_flag;
     s16 layer;
     s16 dust_effect_timer;
-    u16 icon;
+    s16 icon;
 } aMR_pickup_info_c;
 
 typedef struct room_rsv_ftr_s {
@@ -291,6 +291,11 @@ extern FTR_ACTOR* aMR_GetParentFactor(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor
 extern s16 aMR_GetParentAngleOffset(FTR_ACTOR* ftr_actor, ACTOR* my_room_actorx);
 extern void aMR_SetSurprise(ACTOR* my_room_actor, s16 rot);
 extern void aMR_RadioCommonMove(FTR_ACTOR* ftr_actor, ACTOR* my_room_actorx);
+extern void aMR_SaveWaltzTempo2(void);
+extern u8 aMR_GetAlphaEdge(u16 ftr_name);
+extern int aMR_DrawDolphinMode(u16 ftr_name);
+extern Gfx* aMR_IconNo2Gfx1(int icon_no);
+extern Gfx* aMR_IconNo2Gfx2(int icon_no);
 
 #ifdef __cplusplus
 }

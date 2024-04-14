@@ -171,7 +171,7 @@ extern void sAdo_SetVoiceMode(u8 mode) {
     Na_SetVoiceMode(mode);
 }
 
-extern void sAdo_FloorTrgStart(u16 id, const xyz_t* pos) {
+extern void sAdo_FloorTrgStart(u8 id, const xyz_t* pos) {
 
     u16 scalc;
     f32 fcalc;

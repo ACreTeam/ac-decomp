@@ -67,6 +67,9 @@ extern int mPlib_request_main_close_furniture_type1(GAME* game);
 extern int mPlib_request_main_shock_type1(GAME* game, f32 time, s16 angle_y, int axe_swing);
 extern int mPlib_request_main_hold_type1(GAME* game, int ftr_no, int player_direct, const xyz_t* player_pos);
 extern int mPlib_check_player_warp_forEvent(void);
+extern int mPlib_check_player_actor_main_index_Furniture_Move(GAME* game);
+extern int mPlib_request_main_sitdown_type1(GAME* game, int direct, const xyz_t* pos, int ftr_no);
+extern int mPlib_request_main_lie_bed_type1(GAME* game, int direct, const xyz_t* pos, int head_direct, int ftr_no);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 

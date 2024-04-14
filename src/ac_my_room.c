@@ -17,6 +17,7 @@
 #include "m_debug.h"
 #include "m_mark_room.h"
 #include "sys_matrix.h"
+#include "m_rcp.h"
 
 enum {
     aMR_ICON_LEAF,
@@ -110,6 +111,27 @@ enum {
     aMR_MSG_STATE_NUM
 };
 
+static void My_Room_Actor_ct(ACTOR*, GAME*);
+static void My_Room_Actor_dt(ACTOR*, GAME*);
+static void My_Room_Actor_move(ACTOR*, GAME*);
+static void My_Room_Actor_draw(ACTOR*, GAME*);
+
+// clang-format off
+ACTOR_PROFILE My_Room_Profile = {
+    mAc_PROFILE_MY_ROOM,
+    ACTOR_PART_BG,
+    ACTOR_STATE_CAN_MOVE_IN_DEMO_SCENES | ACTOR_STATE_NO_DRAW_WHILE_CULLED | ACTOR_STATE_NO_MOVE_WHILE_CULLED,
+    ETC_MY_ROOM,
+    ACTOR_OBJ_BANK_KEEP,
+    sizeof(MY_ROOM_ACTOR),
+    &My_Room_Actor_ct,
+    &My_Room_Actor_dt,
+    &My_Room_Actor_move,
+    &My_Room_Actor_draw,
+    NULL
+};
+// clang-format on
+
 #include "../src/ac_furniture_data.c_inc"
 #include "../src/ac_my_room_data.c_inc"
 
@@ -146,10 +168,48 @@ static int aMR_SetFurniture2FG(FTR_ACTOR* ftr_actor, xyz_t pos, int on_flag);
 static int aMR_FtrIdx2ChangeFtrSwitch(ACTOR* actorx, int ftr_id);
 static aFTR_PROFILE* aMR_GetFurnitureProfile(u16 ftr_no);
 static mActor_name_t* aMR_GetLayerTopFg(s16 layer);
-
-#include "../src/ac_my_room_msg_ctrl.c_inc"
-#include "../src/ac_my_room_goki.c_inc"
-#include "../src/ac_my_room_melody.c_inc"
+static void aMR_TidyItemInFurniture(FTR_ACTOR* ftr_actor);
+static int aMR_GetItemCountInFurniture(FTR_ACTOR* ftr_actor);
+static int aMR_ItemPutInFurniture(FTR_ACTOR* ftr_actor, mActor_name_t item);
+static void aMR_AllMDSwitchOff(void);
+static void aMR_OneMDSwitchOn_TheOtherSwitchOff(FTR_ACTOR* ftr_actor);
+static void aMR_ReserveBgm(ACTOR* actorx, int bgm_no, FTR_ACTOR* ftr_actor, s16 timer);
+static void aMR_SetMDFtrDemoData(MY_ROOM_ACTOR* my_room, FTR_ACTOR* ftr_actor, aMR_contact_info_c* contact_info);
+static int aMR_CheckHikidashi(FTR_ACTOR* ftr_actor, PLAYER_ACTOR* player, aMR_contact_info_c* contact_info);
+static int aMR_JudgeDemoStart(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, GAME* game,
+                              PLAYER_ACTOR* player);
+static void aMR_PlacePushFurniture(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, f32* point,
+                                   PLAYER_ACTOR* player, GAME* game);
+static void aMR_PlacePullFurniture(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, PLAYER_ACTOR* player,
+                                   GAME* game);
+static void aMR_PlaceKurukuruFurniture(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, PLAYER_ACTOR* player,
+                                       GAME* game);
+static void aMR_SitDownFurniture(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, PLAYER_ACTOR* player,
+                                 GAME* game);
+static void aMR_JudgeGoToBed(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, PLAYER_ACTOR* player,
+                             GAME* game);
+static void aMR_SetMelodyData(u8* melody_data);
+static void aMR_GokiInfoCt(ACTOR* actorx, GAME* game);
+static void aMR_GokiInfoDt(void);
+static void aMR_CheckFtrAndGoki(ACTOR* actorx, FTR_ACTOR* ftr_actor, GAME* game);
+static void aMR_MakeGokiburi(xyz_t* pos, GAME* game, s16 arg);
+static void aMR_RequestPlayerBikkuri(ACTOR* actorx, GAME* game);
+static void aMR_GetFtrShape4Position(xyz_t* p0, xyz_t* p1, xyz_t* p2, xyz_t* p3, FTR_ACTOR* ftr_actor);
+static u8 aMR_JudgeStickFull(int direct, GAME* game);
+static int aMR_JudgeFurnitureMove(u8 type, int ut);
+static int aMR_RequestItemToFitFurniture(ACTOR* actorx, FTR_ACTOR* ftr_actor);
+static void aMR_SetPullMoveAnime(FTR_ACTOR* ftr_actor, GAME* game, MY_ROOM_ACTOR* my_room,
+                                 aMR_contact_info_c* contact_info);
+static int aMR_PullDirect2PushDirect(int pull_direct);
+static void aMR_SetPushMoveAnime(FTR_ACTOR* ftr_actor, GAME* game, MY_ROOM_ACTOR* my_room,
+                                 aMR_contact_info_c* contact_info);
+static void aMR_MoveShapeCenter(FTR_ACTOR* ftr_actor);
+static void aMR_RotateY(f32* xz, f32 amount);
+static int aMR_3DStickNuetral(void);
+static void aMR_SetNicePos(xyz_t* nice_pos, xyz_t player_pos, f32* col_start_xz, f32* col_end_xz,
+                           aMR_contact_info_c* contact_info, int type);
+static int aMR_GetPlayerDirect(const f32* normal_xz);
+static int aMR_Get3dDirectStatus(int direct);
 
 static aFTR_PROFILE* aMR_GetFurnitureProfile(u16 ftr_no) {
     if (ftr_no < FTR_NUM) {
@@ -237,7 +297,7 @@ static int aMR_ItemNo2IconNo(mActor_name_t item_no) {
     return aMR_ICON_LEAF;
 }
 
-static Gfx* aMR_IconNo2Gfx1(int icon_no) {
+extern Gfx* aMR_IconNo2Gfx1(int icon_no) {
     aMR_icon_display_data_c* icon;
 
     if (icon_no < 0) {
@@ -249,7 +309,7 @@ static Gfx* aMR_IconNo2Gfx1(int icon_no) {
     return aMR_icon_display_data[icon_no].mat_gfx;
 }
 
-static Gfx* aMR_IconNo2Gfx2(int icon_no) {
+extern Gfx* aMR_IconNo2Gfx2(int icon_no) {
     if (icon_no < 0) {
         icon_no = 0;
     } else if (icon_no >= aMR_ICON_NUM) {
@@ -1402,6 +1462,8 @@ static int aMR_GetSceneFurnitureMax(void) {
     return 3;
 }
 
+#include "../src/ac_my_room_msg_ctrl.c_inc"
+
 static void aMR_SecureFurnitureRam(ACTOR* actorx) {
     l_aMR_work.ftr_actor_list = (FTR_ACTOR*)zelda_malloc(l_aMR_work.list_size * sizeof(FTR_ACTOR));
     l_aMR_work.used_list = (u8*)zelda_malloc(l_aMR_work.list_size * sizeof(u8));
@@ -1719,8 +1781,6 @@ static void aMR_SetMDIslandNPC(void) {
     }
 }
 
-static void aMR_GokiInfoCt(ACTOR* actorx, GAME* game);
-
 static void My_Room_Actor_ct(ACTOR* actorx, GAME* game) {
     MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
     GAME_PLAY* play = (GAME_PLAY*)game;
@@ -1878,6 +1938,8 @@ static int aMR_PickupFtrLayer(void) {
     return mCoBG_LAYER0;
 }
 
+#include "../src/ac_my_room_goki.c_inc"
+
 static void aMR_LeafStartPos(xyz_t* pos) {
     static xyz_t leaf_start0 = { 0.0f, 0.0f, 0.0f };
 
@@ -1958,7 +2020,9 @@ static void My_Room_Actor_dt(ACTOR* actorx, GAME* game) {
     }
 }
 
+#include "../src/ac_my_room_melody.c_inc"
 #include "../src/ac_my_room_move.c_inc"
+#include "../src/ac_my_room_draw.c_inc"
 
 static void aMR_RedmaFtrBank(void) {
     int i;

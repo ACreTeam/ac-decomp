@@ -1,0 +1,378 @@
+static void aMR_SetKankyoMapping(FTR_ACTOR* ftr_actor, GAME_PLAY* play) {
+    aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_actor->name);
+
+    switch (profile->kankyo_map) {
+        case aFTR_KANKYO_MAP_OPA:
+            Setpos_HiliteReflect_init(&ftr_actor->position, play);
+            break;
+        case aFTR_KANKYO_MAP_XLU:
+            Setpos_HiliteReflect_xlu_init(&ftr_actor->position, play);
+            break;
+    }
+}
+
+static void aMR_LoadPallet(aFTR_PROFILE* profile, GAME* game) {
+    if (profile->palette != NULL) {
+        if (profile->opaque0 != NULL || profile->opaque1 != NULL || profile->rig != NULL) {
+            OPEN_DISP(game->graph);
+
+            gDPPipeSync(NEXT_POLY_OPA_DISP);
+            gDPLoadTLUT_pal16(NEXT_POLY_OPA_DISP, 15, profile->palette);
+
+            CLOSE_DISP(game->graph);
+        }
+
+        if (profile->translucent0 != NULL || profile->translucent1 != NULL || profile->rig != NULL) {
+            OPEN_DISP(game->graph);
+
+            gDPPipeSync(NEXT_POLY_XLU_DISP);
+            gDPLoadTLUT_pal16(NEXT_POLY_XLU_DISP, 15, profile->palette);
+
+            CLOSE_DISP(game->graph);
+        }
+    }
+}
+
+static void aMR_LoadTexture(aFTR_PROFILE* profile, GAME* game) {
+    if (profile->texture != NULL) {
+        if (profile->opaque0 != NULL || profile->opaque1 != NULL || profile->rig != NULL) {
+            OPEN_DISP(game->graph);
+
+            gDPPipeSync(NEXT_POLY_OPA_DISP);
+            gDPLoadTextureBlockS(NEXT_POLY_OPA_DISP, profile->texture, G_IM_FMT_I, G_IM_SIZ_8b, 64, 64, 0,
+                                 G_TX_MIRROR | G_TX_WRAP, G_TX_MIRROR | G_TX_WRAP, 7, 7, G_TX_NOLOD, G_TX_NOLOD);
+
+            CLOSE_DISP(game->graph);
+        }
+
+        if (profile->translucent0 != NULL || profile->translucent1 != NULL || profile->rig != NULL) {
+            OPEN_DISP(game->graph);
+
+            gDPPipeSync(NEXT_POLY_XLU_DISP);
+            gDPLoadTextureBlockS(NEXT_POLY_XLU_DISP, profile->texture, G_IM_FMT_I, G_IM_SIZ_8b, 64, 64, 0,
+                                 G_TX_MIRROR | G_TX_WRAP, G_TX_MIRROR | G_TX_WRAP, 7, 7, G_TX_NOLOD, G_TX_NOLOD);
+
+            CLOSE_DISP(game->graph);
+        }
+    }
+}
+
+static void aMR_SetLoopTextureAnime(FTR_ACTOR* ftr_actor, aFTR_PROFILE* profile, GAME* game) {
+    aFTR_tex_anim_c* tex_anime = profile->tex_anim;
+
+    if (tex_anime != NULL) {
+        u8* tex_p = tex_anime->animation[ftr_actor->tex_animation.frame];
+
+        OPEN_DISP(game->graph);
+
+        gSPSegment(NEXT_POLY_OPA_DISP, G_MWO_SEGMENT_8, tex_p);
+        gSPSegment(NEXT_POLY_XLU_DISP, G_MWO_SEGMENT_8, tex_p);
+
+        CLOSE_DISP(game->graph);
+    }
+}
+
+static void aMR_DrawRegistModel(aFTR_PROFILE* profile, GAME* game) {
+    OPEN_DISP(game->graph);
+
+    if (profile->opaque0 != NULL || profile->opaque1 != NULL) {
+        gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    }
+
+    if (profile->opaque0 != NULL) {
+        gSPDisplayList(NEXT_POLY_OPA_DISP, profile->opaque0);
+    }
+
+    if (profile->opaque1 != NULL) {
+        gSPDisplayList(NEXT_POLY_OPA_DISP, profile->opaque1);
+    }
+
+    if (profile->translucent0 != NULL || profile->translucent1 != NULL) {
+        gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    }
+
+    if (profile->translucent0 != NULL) {
+        gSPDisplayList(NEXT_POLY_XLU_DISP, profile->translucent0);
+    }
+
+    if (profile->translucent1 != NULL) {
+        gSPDisplayList(NEXT_POLY_XLU_DISP, profile->translucent1);
+    }
+
+    CLOSE_DISP(game->graph);
+}
+
+static void aMR_DrawSkelShape(FTR_ACTOR* ftr_actor, aFTR_PROFILE* profile, GAME* game) {
+    if (profile->rig != NULL) {
+        cKF_SkeletonInfo_R_c* keyframe = &ftr_actor->keyframe;
+        int mtx_idx = game->frame_counter & 1;
+        Mtx* mtx = ftr_actor->skeleton_mtx[mtx_idx];
+
+        OPEN_DISP(game->graph);
+
+        gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+        CLOSE_DISP(game->graph);
+
+        cKF_Si3_draw_R_SV(game, keyframe, mtx, NULL, NULL, NULL);
+    }
+}
+
+static void aMR_DrawUniqueShape(FTR_ACTOR* ftr_actor, ACTOR* actorx, aFTR_PROFILE* profile, GAME* game) {
+    if (profile->vtable != NULL && profile->vtable->draw_proc != NULL) {
+        u8* bank = aMR_FtrNo2BankAddress(ftr_actor->name);
+
+        OPEN_DISP(game->graph);
+
+        gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+        CLOSE_DISP(game->graph);
+
+        profile->vtable->draw_proc(ftr_actor, actorx, game, bank);
+    }
+}
+
+static void aMR_DrawItemOnMovingFurniture(ACTOR* actorx, FTR_ACTOR* ftr_actor, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    aMR_parent_ftr_c* parent_ftr = &my_room->parent_ftr;
+
+    if (parent_ftr->ftrID == ftr_actor->id) {
+        int i;
+
+        OPEN_DISP(game->graph);
+
+        gDPSetTexEdgeAlpha(NEXT_POLY_OPA_DISP, 144);
+        gDPSetTexEdgeAlpha(NEXT_POLY_XLU_DISP, 144);
+
+        for (i = 0; i < aMR_FIT_FTR_MAX; i++) {
+            if (parent_ftr->fit_ftr_table[i].exist_flag == TRUE) {
+                mActor_name_t item_no = parent_ftr->fit_ftr_table[i].item_no;
+                xyz_t* pos = &parent_ftr->fit_ftr_table[i].ut_pos;
+
+                if (Common_Get(clip).shop_goods_clip != NULL &&
+                    Common_Get(clip).shop_goods_clip->single_draw_proc != NULL) {
+                    Common_Get(clip).shop_goods_clip->single_draw_proc(game, item_no, pos, 0.01f,
+                                                                       parent_ftr->fit_ftr_table[i].angle_y +
+                                                                           (ftr_actor->s_angle_y - parent_ftr->angle_y),
+                                                                       mCoBG_LAYER1);
+                }
+            }
+        }
+
+        CLOSE_DISP(game->graph);
+    }
+}
+
+static int aMR_GetFitNo(ACTOR* actorx, FTR_ACTOR* ftr_actor) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    aMR_parent_ftr_c* parent_ftr = &my_room->parent_ftr;
+    int i;
+
+    for (i = 0; i < aMR_FIT_FTR_MAX; i++) {
+        if (parent_ftr->fit_ftr_table[i].ftr_ID == ftr_actor->id) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+static void aMR_FurnitureLightSet(FTR_ACTOR* ftr_actor, GAME_PLAY* play) {
+    LightsN* lights;
+    xyz_t center;
+
+    aMR_GetFtrShapeCenter(&center, ftr_actor);
+    lights = Global_light_read(&play->global_light, play->game.graph);
+    LightsN_list_check(lights, play->global_light.list, &center);
+    LightsN_disp(lights, play->game.graph);
+}
+
+static void aMR_DrawOneFurniture(FTR_ACTOR* ftr_actor, ACTOR* actorx, GAME* game, int fit_flag) {
+    xyz_t ftr_scale = ftr_actor->scale;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    aFTR_PROFILE* profile;
+
+    profile = aMR_GetFurnitureProfile(ftr_actor->name);
+    if (profile != NULL) {
+        f32 scale = profile->scale;
+
+        _texture_z_light_fog_prim_xlu(game->graph);
+        _texture_z_light_fog_prim(game->graph);
+        aMR_FurnitureLightSet(ftr_actor, play);
+        aMR_LoadTexture(profile, game);
+        aMR_LoadPallet(profile, game);
+        aMR_SetKankyoMapping(ftr_actor, play);
+
+        if (fit_flag == TRUE) {
+            aMR_parent_ftr_c* parent_ftr = &my_room->parent_ftr;
+            FTR_ACTOR* fit_ftr_p = &l_aMR_work.ftr_actor_list[parent_ftr->ftrID];
+            int fit_no = aMR_GetFitNo(actorx, ftr_actor);
+            s16 angle = fit_ftr_p->s_angle_y - parent_ftr->angle_y;
+            aMR_fit_ftr_c* fit_ftr_info_p = &parent_ftr->fit_ftr_table[fit_no & 3];
+            xyz_t* pos = &fit_ftr_info_p->pos;
+
+            Matrix_translate(fit_ftr_p->position.x, fit_ftr_p->position.y, fit_ftr_p->position.z, 0);
+            Matrix_RotateY(angle, 1);
+            Matrix_translate(fit_ftr_p->base_position.x, fit_ftr_p->base_position.y, fit_ftr_p->base_position.z, 1);
+
+            if (ftr_actor->name == 0x9A) { /* lower alarm clock ftr's height */
+                Matrix_translate(pos->x, pos->y - 4.0f, pos->z, 1);
+            } else {
+                Matrix_translate(pos->x, pos->y, pos->z, 1);
+            }
+
+            Matrix_RotateY(ftr_actor->s_angle_y, 1);
+            Matrix_translate(ftr_actor->base_position.x, ftr_actor->base_position.y, ftr_actor->base_position.z, 1);
+
+            if (ftr_actor->state == aFTR_STATE_BIRTH && ftr_actor->shape_type <= aFTR_SHAPE_TYPEB_0) {
+                Matrix_translate(mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, 1);
+            }
+            Matrix_scale(ftr_scale.x, ftr_scale.y, ftr_scale.z, 1);
+
+            if (ftr_actor->state == aFTR_STATE_BIRTH && ftr_actor->shape_type <= aFTR_SHAPE_TYPEB_0) {
+                Matrix_translate(-mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, 1);
+            }
+            Matrix_scale(scale, scale, scale, 1);
+        } else {
+            if (ftr_actor->name == 0x9A) { /* lower alarm clock ftr's height */
+                Matrix_translate(ftr_actor->position.x, ftr_actor->position.y - 4.0f, ftr_actor->position.z, 0);
+            } else {
+                Matrix_translate(ftr_actor->position.x, ftr_actor->position.y, ftr_actor->position.z, 0);
+            }
+
+            Matrix_RotateY(ftr_actor->s_angle_y, 1);
+
+            if (Save_Get(scene_no) == SCENE_MUSEUM_ROOM_FOSSIL &&
+                aFTR_CHECK_INTERACTION(profile->interaction_type, aFTR_INTERACTION_TYPE_FOSSIL) &&
+                profile->shape <= aFTR_SHAPE_TYPEB_0) {
+                Matrix_translate(ftr_actor->base_position.x + 2.5f, ftr_actor->base_position.y,
+                                 ftr_actor->base_position.z, 1);
+            } else {
+                Matrix_translate(ftr_actor->base_position.x, ftr_actor->base_position.y, ftr_actor->base_position.z, 1);
+            }
+
+            if (ftr_actor->state == aFTR_STATE_BIRTH && ftr_actor->shape_type <= aFTR_SHAPE_TYPEB_0) {
+                Matrix_translate(mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, 1);
+            }
+            Matrix_scale(ftr_scale.x, ftr_scale.y, ftr_scale.z, 1);
+
+            if (ftr_actor->state == aFTR_STATE_BIRTH && ftr_actor->shape_type <= aFTR_SHAPE_TYPEB_0) {
+                Matrix_translate(-mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, 1);
+            }
+            Matrix_scale(scale, scale, scale, 1);
+        }
+
+        aMR_SetLoopTextureAnime(ftr_actor, profile, game);
+        aMR_DrawRegistModel(profile, game);
+        aMR_DrawSkelShape(ftr_actor, profile, game);
+        aMR_DrawUniqueShape(ftr_actor, actorx, profile, game);
+        aMR_DrawItemOnMovingFurniture(actorx, ftr_actor, game);
+    }
+}
+
+static void aMR_DrawFurniture(MY_ROOM_ACTOR* my_room, GAME_PLAY* play, int ftr_flag, u16 ftr_no) {
+    ACTOR* actorx = (ACTOR*)my_room;
+    GAME* game = (GAME*)play;
+    int i;
+    int z;
+
+    OPEN_DISP(game->graph);
+
+    gDPSetTexEdgeAlpha(NEXT_POLY_OPA_DISP, 127);
+    gDPSetTexEdgeAlpha(NEXT_POLY_XLU_DISP, 127);
+
+    CLOSE_DISP(game->graph);
+
+    for (z = UT_Z_NUM - 1; z >= 0; z--) {
+        FTR_ACTOR* ftr_actor = l_aMR_work.ftr_actor_list;
+        u8* used = l_aMR_work.used_list;
+
+        for (i = 0; i < l_aMR_work.list_size; i++) {
+            if (*used == TRUE && mFI_POS2UT(ftr_actor->position.z) == z) {
+                if ((ftr_flag == FALSE && ftr_actor->name != ftr_no) ||
+                    (ftr_flag == TRUE && ftr_actor->name == ftr_no)) {
+                    int alpha_edge;
+                    int fit_flag = (ftr_actor->layer == mCoBG_LAYER0 || my_room->parent_ftr.ftrID == -1 ||
+                                    (my_room->parent_ftr.ftrID != -1 &&
+                                     my_room->parent_ftr.fit_ftr_table[0].ftr_ID != ftr_actor->id &&
+                                     my_room->parent_ftr.fit_ftr_table[1].ftr_ID != ftr_actor->id &&
+                                     my_room->parent_ftr.fit_ftr_table[2].ftr_ID != ftr_actor->id &&
+                                     my_room->parent_ftr.fit_ftr_table[3].ftr_ID != ftr_actor->id)) == FALSE;
+
+                    alpha_edge = aMR_GetAlphaEdge(ftr_actor->name);
+
+                    OPEN_DISP(game->graph);
+
+                    gDPSetTexEdgeAlpha(NEXT_POLY_OPA_DISP, alpha_edge);
+                    gDPSetTexEdgeAlpha(NEXT_POLY_XLU_DISP, alpha_edge);
+
+                    CLOSE_DISP(game->graph);
+
+                    if (aMR_DrawDolphinMode(ftr_actor->name)) {
+                        OPEN_DISP(game->graph);
+
+                        gDPSetTextureAdjustMode(NEXT_POLY_OPA_DISP, G_TA_DOLPHIN);
+                        gDPSetTextureAdjustMode(NEXT_POLY_XLU_DISP, G_TA_DOLPHIN);
+
+                        CLOSE_DISP(game->graph);
+                    }
+
+                    aMR_DrawOneFurniture(ftr_actor, actorx, game, fit_flag);
+
+                    if (aMR_DrawDolphinMode(ftr_actor->name)) {
+                        OPEN_DISP(game->graph);
+
+                        gDPSetTextureAdjustMode(NEXT_POLY_OPA_DISP, G_TA_N64);
+                        gDPSetTextureAdjustMode(NEXT_POLY_XLU_DISP, G_TA_N64);
+
+                        CLOSE_DISP(game->graph);
+                    }
+                }
+            }
+
+            ftr_actor++;
+            used++;
+        }
+    }
+
+    OPEN_DISP(game->graph);
+
+    gDPSetTexEdgeAlpha(NEXT_POLY_OPA_DISP, 144);
+    gDPSetTexEdgeAlpha(NEXT_POLY_XLU_DISP, 144);
+
+    CLOSE_DISP(game->graph);
+}
+
+static void aMR_DrawLeaf(MY_ROOM_ACTOR* my_room, GAME_PLAY* play) {
+    GAME* game = (GAME*)play;
+
+    if (my_room->leaf_info.exist_flag) {
+        f32 scale = my_room->leaf_info.scale;
+
+        OPEN_DISP(game->graph);
+
+        _texture_z_light_fog_prim(game->graph);
+        Matrix_translate(my_room->leaf_info.pos.x, my_room->leaf_info.pos.y, my_room->leaf_info.pos.z, 0);
+        Matrix_scale(scale, scale, scale, 1);
+
+        gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPDisplayList(NEXT_POLY_OPA_DISP, aMR_IconNo2Gfx1(my_room->pickup_info.icon));
+        gSPDisplayList(NEXT_POLY_OPA_DISP, aMR_IconNo2Gfx2(my_room->pickup_info.icon));
+
+        CLOSE_DISP(game->graph);
+
+        my_room->leaf_info.exist_flag = FALSE;
+    }
+}
+
+static void My_Room_Actor_draw(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    aMR_DrawFurniture(my_room, play, FALSE, 0x41C); /* lighthouse model */
+    aMR_DrawFurniture(my_room, play, TRUE, 0x41C);  /* lighthouse model */
+    aMR_DrawLeaf(my_room, play);
+}

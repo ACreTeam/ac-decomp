@@ -60,6 +60,9 @@ typedef enum audio_sound_effects {
     NA_SE_TOOL_BROKEN2,
     NA_SE_TOOL_BROKEN3,
 
+    NA_SE_STONECOIN_ROLL = 0x7D,
+    NA_SE_STONECOIN_DRAG = 0x7E,
+
     NA_SE_ROD_STROKE = 0x109,
     NA_SE_ROD_BACK,
 
@@ -86,6 +89,7 @@ typedef enum audio_sound_effects {
 
     NA_SE_166 = 0x166,
     NA_SE_UCHIWA = 0x167,
+    NA_SE_LAWNMOWER = 0x177,
 
     NA_SE_SCOOP_SHIGEMI = 0x401,
 
@@ -97,6 +101,8 @@ typedef enum audio_sound_effects {
     NA_SE_BED_IN = 0x415,
     NA_SE_BED_NEGAERI,
     NA_SE_BED_OUT,
+
+    NA_SE_ROTATE = 0x41A,
 
     NA_SE_SOFT_CHAIR_SIT = 0x41F,
     NA_SE_HARD_CHAIR_SIT,

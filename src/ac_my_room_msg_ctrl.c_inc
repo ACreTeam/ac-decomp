@@ -147,7 +147,6 @@ static void aMR_SetEmulatorStartMessage(ACTOR* actorx, int internal_rom) {
             mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
             mMsg_Set_ForceNext(mMsg_Get_base_window_p());
             break;
-        case FAMICOM_RESULT_NOFILE:
         default:
             mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x3071);
             mMsg_Unset_LockContinue(mMsg_Get_base_window_p());

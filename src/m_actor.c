@@ -608,18 +608,18 @@ extern void Actor_get_overlay_area(ACTOR_DLFTBL* dlftbl, int unused, size_t allo
     }
 }
 
-static int Actor_data_bank_regist_check_npc(int* bank_id, ACTOR_PROFILE* profile, ACTOR_DLFTBL* dlftbl, GAME* game,
+static int Actor_data_bank_regist_check_npc(int* bank_id, ACTOR_PROFILE* profile, ACTOR_DLFTBL* dlftbl, GAME_PLAY* play,
                                             mActor_name_t name_id) {
     return TRUE;
 }
 
-static int Actor_data_bank_regist_check(int* bank_id, ACTOR_PROFILE* profile, ACTOR_DLFTBL* dlftbl, GAME* game,
+static int Actor_data_bank_regist_check(int* bank_id, ACTOR_PROFILE* profile, ACTOR_DLFTBL* dlftbl, GAME_PLAY* play,
                                         mActor_name_t name_id) {
     int res = TRUE;
 
     if (*bank_id == -1) {
         if (profile->part == ACTOR_PART_NPC) {
-            res = Actor_data_bank_regist_check_npc(bank_id, profile, dlftbl, game, name_id);
+            res = Actor_data_bank_regist_check_npc(bank_id, profile, dlftbl, play, name_id);
         } else {
             // in DnM, this was another func call
             res = TRUE;
@@ -687,31 +687,32 @@ extern void Actor_init_actor_class(ACTOR* actor, ACTOR_PROFILE* profile, ACTOR_D
     actor->npc_id = name_id;
 }
 
-#ifndef MUST_MATCH
-/* @nonmatching */
+typedef struct overlay_struct {
+    const char* actor_name;
+} mAc_overlay_info_c;
+
 extern ACTOR* Actor_info_make_actor(Actor_info* actor_info, GAME* game, s16 profile_no, f32 x, f32 y, f32 z, s16 rot_x,
                                     s16 rot_y, s16 rot_z, s8 block_x, s8 block_z, s16 move_actor_list_idx,
                                     mActor_name_t name_id, s16 arg, s8 npc_info_idx, int data_bank_idx) {
-    const char* test = "";
-    GAME_PLAY* play = (GAME_PLAY*)game;
+    GAME_PLAY* play;
     ACTOR* actor;
     ACTOR_PROFILE* profile;
     ACTOR_DLFTBL* dlftbl;
+    mAc_overlay_info_c overlay_info; /* Required to be a struct, stubbed in GC */
 
-    test = ""; // removing this line helps a bit...
-
-    dlftbl = &actor_dlftbls[profile_no];
-
+    play = (GAME_PLAY*)game;
+    dlftbl = actor_dlftbls + profile_no;
+    overlay_info.actor_name = "";
     if (actor_info->total_num > mAc_MAX_ACTORS) {
         return NULL;
     }
 
     profile = dlftbl->profile;
-    if (Actor_data_bank_regist_check(&data_bank_idx, profile, dlftbl, game, name_id) == FALSE) {
+    if (Actor_data_bank_regist_check(&data_bank_idx, profile, dlftbl, play, name_id) == FALSE) {
         return NULL;
     }
 
-    if (Actor_malloc_actor_class(&actor, profile, dlftbl, test, name_id) == FALSE) {
+    if (Actor_malloc_actor_class(&actor, profile, dlftbl, overlay_info.actor_name, name_id) == FALSE) {
         return NULL;
     }
 
@@ -720,18 +721,10 @@ extern ACTOR* Actor_info_make_actor(Actor_info* actor_info, GAME* game, s16 prof
                            move_actor_list_idx, name_id, arg);
     Actor_info_part_new(actor_info, actor, profile->part);
     mNpc_SetNpcinfo(actor, npc_info_idx);
-    Actor_ct(actor, (GAME*)play);
+    Actor_ct(actor, game);
 
     return actor;
 }
-#else
-extern asm ACTOR* Actor_info_make_actor(Actor_info* actor_info, GAME* game, s16 profile_no, f32 x, f32 y, f32 z,
-                                        s16 rot_x, s16 rot_y, s16 rot_z, s8 block_x, s8 block_z,
-                                        s16 move_actor_list_idx, mActor_name_t name_id, s16 arg, s8 npc_info_idx,
-                                        int data_bank_idx) {
-#include "asm/80375830.s"
-}
-#endif
 
 extern ACTOR* Actor_info_make_child_actor(Actor_info* actor_info, ACTOR* parent_actor, GAME* game, s16 profile, f32 x,
                                           f32 y, f32 z, s16 rot_x, s16 rot_y, s16 rot_z, s16 move_actor_list_idx,

@@ -58,7 +58,7 @@ extern void sAdo_OngenTrgStart(u16 id, const xyz_t* pos);
 extern void sAdo_SetOutMode(u8 mode);
 extern void sAdo_SetVoiceMode(u8 mode);
 
-extern void sAdo_FloorTrgStart(u16 id, const xyz_t* pos);
+extern void sAdo_FloorTrgStart(u8 id, const xyz_t* pos);
 
 extern void sAdo_RhythmStart(u32 id, s8 type, s8 wait);
 extern void sAdo_RhythmStop(u32 id);

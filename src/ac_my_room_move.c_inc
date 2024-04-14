@@ -5,16 +5,16 @@ typedef struct process_info_s {
     s16 unit_ofs[4];
 } aMR_process_info_c;
 
-static aMR_process_info_c aMR_process_typeB90 = { 2, { 0, -UT_X_NUM, 0, 0 } };
-static aMR_process_info_c aMR_process_typeB180 = { 2, { 0, -1, 0, 0 } };
-static aMR_process_info_c aMR_process_typeB270 = { 2, { 0, UT_X_NUM, 0, 0 } };
-static aMR_process_info_c aMR_process_typeB0 = { 2, { 0, 1, 0, 0 } };
-static aMR_process_info_c aMR_process_typeA = { 1, { 0, 0, 0, 0 } };
-static aMR_process_info_c aMR_process_typeC = { 4, { 0, 1, UT_X_NUM, UT_X_NUM + 1 } };
+static aMR_process_info_c aMR_poccess_typeB90 = { 2, { 0, -UT_X_NUM, 0, 0 } };
+static aMR_process_info_c aMR_poccess_typeB180 = { 2, { 0, -1, 0, 0 } };
+static aMR_process_info_c aMR_poccess_typeB270 = { 2, { 0, UT_X_NUM, 0, 0 } };
+static aMR_process_info_c aMR_poccess_typeB0 = { 2, { 0, 1, 0, 0 } };
+static aMR_process_info_c aMR_poccess_typeA = { 1, { 0, 0, 0, 0 } };
+static aMR_process_info_c aMR_poccess_typeC = { 4, { 0, 1, UT_X_NUM, UT_X_NUM + 1 } };
 
-static aMR_process_info_c* aMR_process_table[aFTR_SHAPE_TYPE_NUM] = {
-    &aMR_process_typeB90, &aMR_process_typeB180, &aMR_process_typeB270,
-    &aMR_process_typeB0,  &aMR_process_typeA,    &aMR_process_typeC,
+static aMR_process_info_c* aMR_poccess_table[aFTR_SHAPE_TYPE_NUM] = {
+    &aMR_poccess_typeB90, &aMR_poccess_typeB180, &aMR_poccess_typeB270,
+    &aMR_poccess_typeB0,  &aMR_poccess_typeA,    &aMR_poccess_typeC,
 };
 
 static int aMR_GetFurniturePoccessUnitNo(int* ut_info, int ut_x, int ut_z, u8 type) {
@@ -22,7 +22,7 @@ static int aMR_GetFurniturePoccessUnitNo(int* ut_info, int ut_x, int ut_z, u8 ty
         int ut = ut_x + ut_z * UT_X_NUM;
 
         if (type < aFTR_SHAPE_TYPE_NUM) {
-            aMR_process_info_c* process_info = aMR_process_table[type];
+            aMR_process_info_c* process_info = aMR_poccess_table[type];
             int count = process_info->unit_count;
             int i;
 
@@ -360,19 +360,19 @@ static void aMR_SetCleanUpFtrSE(xyz_t pos) {
 }
 
 static int aMR_GetPlayerDirect(const f32* normal_xz) {
-    if (normal_xz[0] > (F_PI / 4.0f)) {
+    if (normal_xz[0] > F_SQRT2_DIV2) {
         return aMR_DIRECT_LEFT;
     }
 
-    if (normal_xz[0] < -(F_PI / 4.0f)) {
+    if (normal_xz[0] < -F_SQRT2_DIV2) {
         return aMR_DIRECT_RIGHT;
     }
 
-    if (normal_xz[1] > (F_PI / 4.0f)) {
+    if (normal_xz[1] > F_SQRT2_DIV2) {
         return aMR_DIRECT_UP;
     }
 
-    if (normal_xz[1] < -(F_PI / 4.0f)) {
+    if (normal_xz[1] < -F_SQRT2_DIV2) {
         return aMR_DIRECT_DOWN;
     }
 
@@ -397,19 +397,19 @@ static void aMR_MoveShapeCenter(FTR_ACTOR* ftr_actor) {
 }
 
 static int aMR_Norm2DirectName(f32* normal_xz) {
-    if (normal_xz[0] > (F_PI / 4.0f)) {
+    if (normal_xz[0] > F_SQRT2_DIV2) {
         return aMR_DIRECT_RIGHT;
     }
 
-    if (normal_xz[0] <= -(F_PI / 4.0f)) {
+    if (normal_xz[0] <= -F_SQRT2_DIV2) {
         return aMR_DIRECT_LEFT;
     }
 
-    if (normal_xz[1] > (F_PI / 4.0f)) {
+    if (normal_xz[1] > F_SQRT2_DIV2) {
         return aMR_DIRECT_DOWN;
     }
 
-    if (normal_xz[1] <= -(F_PI / 4.0f)) {
+    if (normal_xz[1] <= -F_SQRT2_DIV2) {
         return aMR_DIRECT_UP;
     }
 
@@ -1332,6 +1332,8 @@ static void aMR_MngFtrContactAction(ACTOR* actorx, GAME* game) {
     }
 }
 
+#include "../src/ac_my_room_action.c_inc"
+
 static f32 aMR_GetDistXZ(const xyz_t* pos0, const xyz_t* pos1) {
     f32 diff_x = pos0->x - pos1->x;
     f32 diff_z = pos0->z - pos1->z;
@@ -1472,14 +1474,14 @@ static int aMR_CheckPlaceSituation(int ut, int target_ut, u16 ftr_no, u16 angle_
     aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_no);
 
     if (profile != NULL) {
-        u32 shape = profile->shape;
+        u8 shape = profile->shape;
 
         if (shape == aFTR_SHAPE_TYPEB_0) {
             static u8 rotate_angle_types[] = {
+                aFTR_SHAPE_TYPEB_0,
                 aFTR_SHAPE_TYPEB_90,
                 aFTR_SHAPE_TYPEB_180,
                 aFTR_SHAPE_TYPEB_270,
-                aFTR_SHAPE_TYPEB_0,
             };
 
             shape = rotate_angle_types[angle_idx & 3];

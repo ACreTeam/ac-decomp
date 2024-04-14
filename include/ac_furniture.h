@@ -66,6 +66,7 @@ enum {
 };
 
 enum {
+    aFTR_INTERACTION_NONE = 0,
     aFTR_INTERACTION_STORAGE_DRAWERS = 1,  // dressers
     aFTR_INTERACTION_STORAGE_WARDROBE = 2, // double doors
     aFTR_INTERACTION_STORAGE_CLOSET = 4,   // single door
@@ -123,11 +124,34 @@ enum {
 };
 
 enum {
+    aFTR_CONTACT_ACTION_TYPE_CHAIR1,
+    aFTR_CONTACT_ACTION_TYPE_CHAIR4,
+    aFTR_CONTACT_ACTION_TYPE_SOFA,
+    aFTR_CONTACT_ACTION_TYPE_BED_SINGLE,
+    aFTR_CONTACT_ACTION_TYPE_BED_DOUBLE,
+
+    aFTR_CONTACT_ACTION_TYPE_NUM
+};
+
+#define aFTR_CHK_CONTACT_ACTION(cnt, action) (((cnt) >> (aFTR_CONTACT_ACTION_TYPE_##action)) & 1)
+#define aFTR_CHK_CHAIR(cnt) \
+    (aFTR_CHK_CONTACT_ACTION(cnt, CHAIR1) || aFTR_CHK_CONTACT_ACTION(cnt, CHAIR4) || aFTR_CHK_CONTACT_ACTION(cnt, SOFA))
+#define aFTR_CHK_BED(cnt) (aFTR_CHK_CONTACT_ACTION(cnt, BED_SINGLE) || aFTR_CHK_CONTACT_ACTION(cnt, BED_DOUBLE))
+
+enum {
     aFTR_SET_TYPE_NORMAL,     /* Can't be placed on top and is not a table (layer0) */
     aFTR_SET_TYPE_SURFACE,    /* Is a surface (layer0) */
     aFTR_SET_TYPE_ON_SURFACE, /* Can be placed on a surface (layer0/layer1) */
 
     aFTR_SET_TYPE_NUM
+};
+
+enum {
+    aFTR_KANKYO_MAP_NONE,
+    aFTR_KANKYO_MAP_OPA,
+    aFTR_KANKYO_MAP_XLU,
+
+    aFTR_KANKYO_MAP_NUM
 };
 
 typedef void (*aFTR_FTR_CT_PROC)(FTR_ACTOR*, u8*);
@@ -190,10 +214,10 @@ struct furniture_actor_s {
     xyz_t position;
     xyz_t last_position;
     xyz_t target_position;
-    int target_distance; /* distance to target position */
-    f32 player_distance; /* distance to the player */
-    f32 angle_y;         /* current Y angle */
-    f32 angle_y_target;  /* goal Y angle */
+    int target_direction; /* direction to target position */
+    f32 player_distance;  /* distance to the player */
+    f32 angle_y;          /* current Y angle */
+    f32 angle_y_target;   /* goal Y angle */
     s16 state;
     u8 shape_type;          /* current size & shape (rotation) */
     u8 original_shape_type; /* original size & shape (rotation) */
