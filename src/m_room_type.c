@@ -2019,9 +2019,9 @@ extern void mRmTp_MakeFamicom_Fdebug() {
     u16 ftr_idx;
     int res;
     Clip_c* clip;
-    GAME_PLAY* play = (GAME_PLAY*)gamePT;
+    GAME* game = gamePT;
 
-    if ((gamePT->pads[PAD1].on.button & BUTTON_Z) == BUTTON_Z && play != NULL) {
+    if ((gamePT->pads[PAD1].on.button & BUTTON_Z) == BUTTON_Z && game != NULL) {
         clip = Common_GetPointer(clip);
 
         if (clip->my_room_clip != NULL) {
@@ -2036,10 +2036,10 @@ extern void mRmTp_MakeFamicom_Fdebug() {
                 ftr_idx = 0x36A + mRmTp_famicom_idx;
             }
 
-            res = (*clip->my_room_clip->judge_breed_new_ftr_proc)(play, ftr_idx, &ut_x, &ut_z, &direct, &ofs, &layer);
+            res = (*clip->my_room_clip->judge_breed_new_ftr_proc)(game, ftr_idx, &ut_x, &ut_z, &direct, &ofs, &layer);
 
             if (res >= 0) {
-                (*clip->my_room_clip->reserve_ftr_proc)(play, ftr_idx, res, ut_x, ut_z, direct, ofs, layer);
+                (*clip->my_room_clip->reserve_ftr_proc)(game, ftr_idx, res, ut_x, ut_z, direct, ofs, layer);
             }
         }
     }

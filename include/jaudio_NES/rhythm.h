@@ -2,6 +2,7 @@
 #define RHYTHM_H
 
 #include "types.h"
+#include "audio.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,8 +13,8 @@ extern void Na_RhythmStop(u32);
 extern void Na_RhythmAllStop();
 extern f32 Na_GetRhythmAnimCounter(u32);
 extern s8 Na_GetRhythmDelay(u32);
-extern f32 Na_GetRhythmInfo(u32);
-extern void Na_SetRhythmInfo(f32);
+extern void Na_GetRhythmInfo(TempoBeat_c* rhythm);
+extern void Na_SetRhythmInfo(TempoBeat_c* rhythm);
 
 #ifdef __cplusplus
 }

@@ -23,6 +23,7 @@
 #include "ac_shop_umbrella.h"
 #include "ac_handOverItem.h"
 #include "ac_quest_manager_clip.h"
+#include "ac_shop_goods_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -63,7 +64,7 @@ typedef struct clip_s {
     /* 0x0A4 */ mDemo_Clip_c* demo_clip2; /* can be multiple clip classes */
     /* 0x0A8 */ void* _0A8;
     /* 0x0AC */ aGYO_Clip_c* gyo_clip;
-    /* 0x0B0 */ void* _0B0;
+    /* 0x0B0 */ aSG_Clip_c* shop_goods_clip;
     /* 0x0B4 */ void* _0B4;
     /* 0x0B8 */ aShopUmbrella_Clip_c* shop_umbrella_clip;
     /* 0x0BC */ aAR_Clip_c* arrange_room_clip;

@@ -212,7 +212,7 @@ extern void Scene_ct(GAME_PLAY* play, Scene_Word_u* scene_data);
 extern void Door_info_ct(Door_info_c* door_info);
 extern int goto_other_scene(GAME_PLAY* play, Door_data_c* door_data, int update_player_mode);
 extern int goto_next_scene(GAME_PLAY* play, int next_idx, int update_player_mode);
-extern int goto_emu_game(GAME_PLAY* play, u8 famicom_rom_id);
+extern int goto_emu_game(GAME* game, s16 famicom_rom_id);
 extern void return_emu_game(GAME* game);
 
 #ifdef __cplusplus

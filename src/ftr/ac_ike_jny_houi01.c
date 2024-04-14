@@ -57,7 +57,7 @@ static void fIJHOUI_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u
     cKF_SkeletonInfo_R_c* keyf = &ftr_actor->keyframe;
     FTR_ACTOR* parent;
 
-    parent = aMR_GetParentFactor();
+    parent = aMR_GetParentFactor(ftr_actor, my_room_actor);
     fIJHOUI_Status2SetMode(ftr_actor, ftr_actor);
 
     if (parent != NULL) {
@@ -88,14 +88,14 @@ static void fIJHOUI_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u
     ftr_actor->dynamic_work_s[0] = ftr_actor->state;
 }
 
-static int fIJHOUI_DrawBefore(GAME* game, cKF_SkeletonInfo_R_c* keyf, int jointNum, Gfx** joint, u8* jointFlag, void* arg,
-                       s_xyz* joint1, xyz_t* trans) {
+static int fIJHOUI_DrawBefore(GAME* game, cKF_SkeletonInfo_R_c* keyf, int jointNum, Gfx** joint, u8* jointFlag,
+                              void* arg, s_xyz* joint1, xyz_t* trans) {
     FTR_ACTOR* actor = (FTR_ACTOR*)arg;
 
     int offset = 10430.378f * (0.017453292f * actor->dynamic_work_f[1]);
 
     if (jointNum == 3) {
-        MY_ROOM_ACTOR* my_room_actor;
+        ACTOR* my_room_actor;
         int exists = FALSE;
 
         if ((Common_Get(clip).my_room_clip != NULL && Common_Get(clip).my_room_clip->my_room_actor_p != NULL)) {
@@ -114,15 +114,15 @@ static int fIJHOUI_DrawBefore(GAME* game, cKF_SkeletonInfo_R_c* keyf, int jointN
     return 1;
 }
 
-static int fIJHOUI_DrawAfter(GAME* game, cKF_SkeletonInfo_R_c* keyf, int jointNum, Gfx** joint, u8* jointFlag, void* arg,
-                      s_xyz* joint1, xyz_t* trans) {
+static int fIJHOUI_DrawAfter(GAME* game, cKF_SkeletonInfo_R_c* keyf, int jointNum, Gfx** joint, u8* jointFlag,
+                             void* arg, s_xyz* joint1, xyz_t* trans) {
     return 1;
 }
 
 static void fIJHOUI_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     Mtx* mtx = ftr_actor->skeleton_mtx[game->frame_counter & 1];
-    
-	OPEN_DISP(game->graph);
+
+    OPEN_DISP(game->graph);
 
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
@@ -131,29 +131,10 @@ static void fIJHOUI_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u
 }
 
 static aFTR_vtable_c fIJHOUI_func = {
-	&fIJHOUI_ct,
-	&fIJHOUI_mv,
-	&fIJHOUI_dw,
-	NULL,
-	NULL,
+    &fIJHOUI_ct, &fIJHOUI_mv, &fIJHOUI_dw, NULL, NULL,
 };
 
 aFTR_PROFILE iam_ike_jny_houi01 = {
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	40.0f,
-	0.01f,
-	aFTR_SHAPE_TYPEA,
-	mCoBG_FTR_TYPEA,
-	0,
-	2,
-	0,
-	0,
-	&fIJHOUI_func,
+    NULL, NULL, NULL, NULL, NULL,          NULL, NULL, NULL, 40.0f, 0.01f, aFTR_SHAPE_TYPEA, mCoBG_FTR_TYPEA,
+    0,    2,    0,    0,    &fIJHOUI_func,
 };

@@ -12,6 +12,11 @@ extern "C" {
 
 typedef struct furniture_actor_s FTR_ACTOR;
 
+#define aFTR_KEEP_ITEM_COUNT (mCoBG_LAYER_NUM - 1)
+#define aFTR_CHECK_INTERACTION(inter, type) (((inter) >> (type)) & 1)
+
+#define aFTR_EDGE_COL_NUM 4
+
 enum {
     aFTR_STATE_STOP,
     aFTR_STATE_WAIT_PUSH,
@@ -61,8 +66,9 @@ enum {
 };
 
 enum {
+    aFTR_INTERACTION_NONE = 0,
     aFTR_INTERACTION_STORAGE_DRAWERS = 1,  // dressers
-    aFTR_INTERACTION_STORAGE_WARDROBE, // double doors
+    aFTR_INTERACTION_STORAGE_WARDROBE = 2, // double doors
     aFTR_INTERACTION_STORAGE_CLOSET = 4,   // single door
     aFTR_INTERACTION_MUSIC_DISK = 8,
     aFTR_INTERACTION_NO_COLLISION = 0x10,
@@ -78,17 +84,74 @@ enum {
     aFTR_INTERACTION_FAMICOM_ITEM = 0x2000,
     aFTR_INTERACTION_RADIO_AEROBICS = 0x4000,
     aFTR_INTERACTION_TOGGLE = 0x8000,
-    aFTR_INTERACTION_NUM = 15,
 };
 
 enum {
+    aFTR_INTERACTION_TYPE_DRAWERS,
+    aFTR_INTERACTION_TYPE_WARDROBE,
+    aFTR_INTERACTION_TYPE_CLOSET,
+    aFTR_INTERACTION_TYPE_MUSIC_DISK,
+    aFTR_INTERACTION_TYPE_NO_COLLISION,
+    aFTR_INTERACTION_TYPE_HANIWA,
+    aFTR_INTERACTION_TYPE_FISH,
+    aFTR_INTERACTION_TYPE_INSECT,
+    aFTR_INTERACTION_TYPE_MANNEKIN,
+    aFTR_INTERACTION_TYPE_UMBRELLA,
+    aFTR_INTERACTION_TYPE_FOSSIL,
+    aFTR_INTERACTION_TYPE_FAMICOM,
+    aFTR_INTERACTION_TYPE_START_DISABLED,
+    aFTR_INTERACTION_TYPE_FAMICOM_ITEM,
+    aFTR_INTERACTION_TYPE_RADIO_AEROBICS,
+    aFTR_INTERACTION_TYPE_TOGGLE,
+
+    aFTR_INTERACTION_NUM,
+};
+
+#define aFTR_IS_STORAGE(profile)                                                            \
+    (aFTR_CHECK_INTERACTION((profile)->interaction_type, aFTR_INTERACTION_TYPE_DRAWERS) ||  \
+     aFTR_CHECK_INTERACTION((profile)->interaction_type, aFTR_INTERACTION_TYPE_WARDROBE) || \
+     aFTR_CHECK_INTERACTION((profile)->interaction_type, aFTR_INTERACTION_TYPE_CLOSET) ||   \
+     aFTR_CHECK_INTERACTION((profile)->interaction_type, aFTR_INTERACTION_TYPE_MUSIC_DISK))
+enum {
+    aFTR_CONTACT_ACTION_NONE = 0,
     aFTR_CONTACT_ACTION_CHAIR_UNIDIRECTIONAL = 1,   // only can sit from the front
     aFTR_CONTACT_ACTION_CHAIR_MULTIDIRECTIONAL = 2, // can sit from any direction
     aFTR_CONTACT_ACTION_CHAIR_SOFA = 4,             // cam sit anywhere from the front
     aFTR_CONTACT_ACTION_BED_SINGLE = 8,             // single bed (can't roll)
-    aFTR_CONTACT_ACTION_BED_DOUBLE = 0x10,             // double bed (can roll)
+    aFTR_CONTACT_ACTION_BED_DOUBLE = 0x10,          // double bed (can roll)
 
     aFTR_CONTACT_ACTION_NUM
+};
+
+enum {
+    aFTR_CONTACT_ACTION_TYPE_CHAIR1,
+    aFTR_CONTACT_ACTION_TYPE_CHAIR4,
+    aFTR_CONTACT_ACTION_TYPE_SOFA,
+    aFTR_CONTACT_ACTION_TYPE_BED_SINGLE,
+    aFTR_CONTACT_ACTION_TYPE_BED_DOUBLE,
+
+    aFTR_CONTACT_ACTION_TYPE_NUM
+};
+
+#define aFTR_CHK_CONTACT_ACTION(cnt, action) (((cnt) >> (aFTR_CONTACT_ACTION_TYPE_##action)) & 1)
+#define aFTR_CHK_CHAIR(cnt) \
+    (aFTR_CHK_CONTACT_ACTION(cnt, CHAIR1) || aFTR_CHK_CONTACT_ACTION(cnt, CHAIR4) || aFTR_CHK_CONTACT_ACTION(cnt, SOFA))
+#define aFTR_CHK_BED(cnt) (aFTR_CHK_CONTACT_ACTION(cnt, BED_SINGLE) || aFTR_CHK_CONTACT_ACTION(cnt, BED_DOUBLE))
+
+enum {
+    aFTR_SET_TYPE_NORMAL,     /* Can't be placed on top and is not a table (layer0) */
+    aFTR_SET_TYPE_SURFACE,    /* Is a surface (layer0) */
+    aFTR_SET_TYPE_ON_SURFACE, /* Can be placed on a surface (layer0/layer1) */
+
+    aFTR_SET_TYPE_NUM
+};
+
+enum {
+    aFTR_KANKYO_MAP_NONE,
+    aFTR_KANKYO_MAP_OPA,
+    aFTR_KANKYO_MAP_XLU,
+
+    aFTR_KANKYO_MAP_NUM
 };
 
 typedef void (*aFTR_FTR_CT_PROC)(FTR_ACTOR*, u8*);
@@ -151,15 +214,15 @@ struct furniture_actor_s {
     xyz_t position;
     xyz_t last_position;
     xyz_t target_position;
-    int target_distance; /* distance to target position */
-    f32 player_distance; /* distance to the player */
-    f32 angle_y;         /* current Y angle */
-    f32 angle_y_target;  /* goal Y angle */
+    int target_direction; /* direction to target position */
+    f32 player_distance;  /* distance to the player */
+    f32 angle_y;          /* current Y angle */
+    f32 angle_y_target;   /* goal Y angle */
     s16 state;
     u8 shape_type;          /* current size & shape (rotation) */
     u8 original_shape_type; /* original size & shape (rotation) */
     xyz_t base_position;
-    aFTR_collision_c edge_collision[4]; /* collision for each edge */
+    aFTR_collision_c edge_collision[aFTR_EDGE_COL_NUM]; /* collision for each edge */
     s16 collision_direction;
     int move_bg_idx;
     mCoBG_bg_regist_c bg_register;
@@ -184,9 +247,9 @@ struct furniture_actor_s {
     f32 dynamic_work_f[2]; /* reserved for any use by each unique furniture actor */
     s16 layer;             /* layer the furniture actor resides on */
     s16 _83E;
-    s16 open_music_disk; /* set when a music player is interacted with */
+    s16 demo_status; /* set when a music player is interacted with */
     s16 dust_timer;
-    mActor_name_t items[mCoBG_LAYER_NUM - 1]; /* used for holding items (music players & wardrobes)  */
+    mActor_name_t items[aFTR_KEEP_ITEM_COUNT]; /* used for holding items (music players & wardrobes)  */
     int _84C;
     u16* pal_p; /* used for furniture actors with dynamic palettes such as the structure model items */
     int _854;

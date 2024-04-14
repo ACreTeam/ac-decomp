@@ -1,0 +1,1379 @@
+static f32 aMR_PointDist2(xyz_t* pos0, xyz_t* pos1) {
+    f32 dX = pos0->x - pos1->x;
+    f32 dZ = pos0->z - pos1->z;
+
+    return dX * dX + dZ * dZ;
+}
+
+static int aMR_GokiburiPos_Common(xyz_t* pos, FTR_ACTOR* ftr_actor, PLAYER_ACTOR* player, int flag) {
+    static xyz_t init_pos = { 0.0f, 0.0f, 0.0f };
+    f32 dist_tbl[4];
+    int idx_tbl[4] = { -1, -1, -1, -1 };
+    int sorted_tbl[4];
+    int idx_tbl_idx = 0;
+
+    if (ftr_actor->original_shape_type == aFTR_SHAPE_TYPEA) {
+        *pos = ftr_actor->position;
+        return TRUE;
+    } else {
+        xyz_t shape_pos_tbl[4];
+        int i;
+        int j;
+        f32 x;
+        f32 y;
+        f32 z;
+        int sel;
+        int chk;
+
+        *pos = init_pos;
+        aMR_GetFtrShape4Position(&shape_pos_tbl[0], &shape_pos_tbl[1], &shape_pos_tbl[2], &shape_pos_tbl[3], ftr_actor);
+        for (i = 0; i < 4; i++) {
+            dist_tbl[i] = aMR_PointDist2(&shape_pos_tbl[i], &player->actor_class.world.position);
+        }
+
+        for (j = 0; j < 4; j++) {
+            f32 dist = 1000000.0f;
+
+            for (i = 0; i < 4; i++) {
+                if (dist_tbl[i] < dist && idx_tbl[i] == -1) {
+                    dist = dist_tbl[i];
+                    idx_tbl_idx = i;
+                }
+            }
+
+            idx_tbl[idx_tbl_idx] = j;
+        }
+
+        for (j = 0; j < 4; j++) {
+            for (i = 0; i < 4; i++) {
+                if (j == idx_tbl[i]) {
+                    sorted_tbl[j] = i;
+                    break;
+                }
+            }
+        }
+
+        sel = (sorted_tbl[0] + 1) & 3;
+        chk = sorted_tbl[1];
+        if (sel != chk) {
+            x = (shape_pos_tbl[sorted_tbl[0]].x + shape_pos_tbl[sel].x) * 0.5f;
+            y = shape_pos_tbl[sorted_tbl[0]].y;
+            z = (shape_pos_tbl[sorted_tbl[0]].z + shape_pos_tbl[sel].z) * 0.5f;
+        } else {
+            sel = (sorted_tbl[0] - 1) & 3;
+            if (sel != chk) {
+                x = (shape_pos_tbl[sorted_tbl[0]].x + shape_pos_tbl[sel].x) * 0.5f;
+                y = shape_pos_tbl[sorted_tbl[0]].y;
+                z = (shape_pos_tbl[sorted_tbl[0]].z + shape_pos_tbl[sel].z) * 0.5f;
+            } else {
+                return FALSE;
+            }
+        }
+
+        if (flag == 1) {
+            sel = (sorted_tbl[0] + 2) & 3;
+            pos->x = (x + shape_pos_tbl[sel].x) * 0.5f;
+            pos->y = y;
+            pos->z = (z + shape_pos_tbl[sel].z) * 0.5f;
+        } else {
+            pos->x = (x + shape_pos_tbl[chk].x) * 0.5f;
+            pos->y = y;
+            pos->z = (z + shape_pos_tbl[chk].z) * 0.5f;
+        }
+    }
+
+    return TRUE;
+}
+
+static int aMR_GokiburiPos_Rotate(xyz_t* pos, FTR_ACTOR* ftr_actor, PLAYER_ACTOR* player) {
+    /* 1x1 and 2x2 furniture don't expose newly empty spots when rotating, so ignore them */
+    if (ftr_actor->original_shape_type == aFTR_SHAPE_TYPEA || ftr_actor->original_shape_type == aFTR_SHAPE_TYPEC) {
+        return FALSE;
+    }
+
+    return aMR_GokiburiPos_Common(pos, ftr_actor, player, TRUE);
+}
+
+static int aMR_GokiburiPos_Pull(xyz_t* pos, FTR_ACTOR* ftr_actor, PLAYER_ACTOR* player) {
+    return aMR_GokiburiPos_Common(pos, ftr_actor, player, TRUE);
+}
+
+static int aMR_GokiburiPos_Push(xyz_t* pos, FTR_ACTOR* ftr_actor, PLAYER_ACTOR* player) {
+    return aMR_GokiburiPos_Common(pos, ftr_actor, player, FALSE);
+}
+
+static int aMR_FtrColCheck(xyz_t pos, f32 radius) {
+    mActor_name_t* fg_p = aMR_GetLayerTopFg(mCoBG_LAYER0);
+
+    if (fg_p != NULL) {
+        int i;
+
+        for (i = 0; i < aMR_CONTACT_DIR_NUM; i++) {
+            xyz_t chk_pos;
+            int ut_x;
+            int ut_z;
+            int ut;
+
+            switch (i) {
+                case aMR_CONTACT_DIR_BACK:
+                    chk_pos.x = pos.x;
+                    chk_pos.z = pos.z - radius;
+                    break;
+                case aMR_CONTACT_DIR_RIGHT:
+                    chk_pos.x = pos.x - radius;
+                    chk_pos.z = pos.z;
+                    break;
+                case aMR_CONTACT_DIR_FRONT:
+                    chk_pos.x = pos.x;
+                    chk_pos.z = pos.z + radius;
+                    break;
+                case aMR_CONTACT_DIR_LEFT:
+                    chk_pos.x = pos.x + radius;
+                    chk_pos.z = pos.z;
+                    break;
+            }
+
+            ut_x = (int)(chk_pos.x / mFI_UT_WORLDSIZE_X_F);
+            ut_z = (int)(chk_pos.z / mFI_UT_WORLDSIZE_Z_F);
+            ut = ut_x + ut_z * UT_X_NUM;
+
+            if (ITEM_IS_FTR(fg_p[ut]) || fg_p[ut] == RSV_FE1F) {
+                mActor_name_t item_no;
+                int ftrID;
+
+                if (aMR_UnitNum2FtrItemNoFtrID(&item_no, &ftrID, ut_x, ut_z, mCoBG_LAYER0)) {
+                    FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[ftrID];
+                    aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_actor->name);
+
+                    if (profile != NULL && aFTR_CHECK_INTERACTION(profile->interaction_type,
+                                                                  aFTR_INTERACTION_TYPE_NO_COLLISION) == FALSE) {
+                        return TRUE;
+                    }
+                }
+            } else if (fg_p[ut] == RSV_WALL_NO) {
+                return TRUE; /* House walls always have collision */
+            }
+        }
+
+        return FALSE;
+    }
+
+    /* If we don't have any fg info then always collide */
+    return TRUE;
+}
+
+static void aMR_SetBubu(PLAYER_ACTOR* player, MY_ROOM_ACTOR* my_room, GAME* game, s16* bubu_p) {
+    if (eEC_CLIP != NULL) {
+        eEC_CLIP->effect_make_proc(eEC_EFFECT_BUBU, player->actor_class.world.position, 2, 0, game, RSV_NO, 0, 0);
+    }
+
+    my_room->pull_timer = 0;
+    my_room->push_timer = 0;
+
+    if (bubu_p != NULL) {
+        *bubu_p = TRUE;
+    }
+}
+
+static int aMR_ConvertDirectLevel(int direct) {
+    static s16 direct_conv_data[] = {
+        mFI_MOVEDIR_UP,   /* aMR_DIRECT_UP */
+        mFI_MOVEDIR_LEFT, /* aMR_DIRECT_LEFT */
+        mFI_MOVEDIR_DOWN, /* aMR_DIRECT_DOWN */
+        mFI_MOVEDIR_RIGHT /* aMR_DIRECT_RIGHT */
+    };
+
+    if (direct >= 0 && direct <= aMR_DIRECT_RIGHT) {
+        return direct_conv_data[direct];
+    }
+
+    return -1;
+}
+
+static void aMR_SetMoveSE(FTR_ACTOR* ftr_actor) {
+    aMR_contact_info_c* contact_layer;
+    int floor_idx;
+
+    switch (ftr_actor->name) {
+        case 0x406: /* stone coin */
+            contact_layer = aMR_GetContactInfoLayer1();
+
+            if (ftr_actor->state == aFTR_STATE_WAIT_PUSH || ftr_actor->state == aFTR_STATE_WAIT_PUSH2 ||
+                ftr_actor->state == aFTR_STATE_WAIT_PUSH3 || ftr_actor->state == aFTR_STATE_PUSH ||
+                ftr_actor->state == aFTR_STATE_WAIT_PULL || ftr_actor->state == aFTR_STATE_WAIT_PULL2 ||
+                ftr_actor->state == aFTR_STATE_PULL) {
+                if (contact_layer != NULL) {
+                    switch (contact_layer->contact_direction) {
+                        case aMR_CONTACT_DIR_RIGHT:
+                        case aMR_CONTACT_DIR_LEFT:
+                            sAdo_OngenTrgStart(NA_SE_STONECOIN_ROLL, &ftr_actor->position);
+                            break;
+                        default:
+                            sAdo_OngenTrgStart(NA_SE_STONECOIN_DRAG, &ftr_actor->position);
+                            break;
+                    }
+                }
+            }
+            break;
+        case 0x4E8: /* lawn mower */
+            floor_idx = Common_Get(floor_idx);
+
+            if (floor_idx == FLOOR_NPC026 || floor_idx == FLOOR_NPC048) {
+                contact_layer = aMR_GetContactInfoLayer1();
+
+                if (ftr_actor->state == aFTR_STATE_WAIT_PUSH || ftr_actor->state == aFTR_STATE_WAIT_PUSH2 ||
+                    ftr_actor->state == aFTR_STATE_WAIT_PUSH3 || ftr_actor->state == aFTR_STATE_PUSH) {
+                    if (contact_layer != NULL) {
+                        switch (contact_layer->contact_direction) {
+                            case aMR_CONTACT_DIR_BACK:
+                                sAdo_OngenTrgStart(NA_SE_LAWNMOWER, &ftr_actor->position);
+                                break;
+                        }
+                    }
+                }
+            } else {
+                sAdo_FloorTrgStart(Common_Get(floor_idx), &ftr_actor->position);
+            }
+            break;
+        default:
+            sAdo_FloorTrgStart(Common_Get(floor_idx), &ftr_actor->position);
+            break;
+    }
+}
+
+static void aMR_SetRotateSE(FTR_ACTOR* ftr_actor) {
+    if (mFI_GET_TYPE(mFI_GetFieldId()) == mFI_FIELD_PLAYER0_ROOM) {
+        sAdo_OngenTrgStart(NA_SE_ROTATE, &ftr_actor->position);
+    }
+}
+
+static void aMR_GetPullSlip(xyz_t* pos, xyz_t target_pos, int ut_x, int ut_z, int direct) {
+    *pos = target_pos;
+
+    switch (direct) {
+        case aMR_DIRECT_UP:
+        case aMR_DIRECT_DOWN:
+            pos->x = (f32)ut_x * mFI_UT_WORLDSIZE_X_F + mFI_UT_WORLDSIZE_HALF_X_F;
+            break;
+        default:
+            pos->z = (f32)ut_z * mFI_UT_WORLDSIZE_Z_F + mFI_UT_WORLDSIZE_HALF_Z_F;
+            break;
+    }
+}
+
+enum {
+    aMR_SLIDE_PULL_JUDGE_TYPE0,
+    aMR_SLIDE_PULL_JUDGE_TYPE1,
+    aMR_SLIDE_PULL_JUDGE_NUM,
+};
+
+static int aMR_CheckSlidePullJudgeType(aMR_contact_info_c* contact_info, aFTR_PROFILE* profile) {
+    if (profile->shape == aFTR_SHAPE_TYPEC) {
+        return aMR_SLIDE_PULL_JUDGE_TYPE1;
+    }
+
+    if (profile->shape <= aFTR_SHAPE_TYPEB_0) {
+        if (contact_info->contact_direction == aMR_CONTACT_DIR_FRONT ||
+            contact_info->contact_direction == aMR_CONTACT_DIR_BACK) {
+            return aMR_SLIDE_PULL_JUDGE_TYPE1;
+        }
+    }
+
+    return aMR_SLIDE_PULL_JUDGE_TYPE0;
+}
+
+static int aMR_CheckPullPlayerObstacle2(xyz_t* pull0, xyz_t* pull1, aMR_contact_info_c* contact_info,
+                                        PLAYER_ACTOR* player, xyz_t move_ofs) {
+    if (contact_info->contact_flag && contact_info->contact_side == aMR_DIRECT_DOWN &&
+        l_aMR_work.used_list[contact_info->ftrID] == TRUE) {
+        aFTR_PROFILE* profile = aMR_GetFurnitureProfile(l_aMR_work.ftr_actor_list[contact_info->ftrID].name);
+
+        if (profile != NULL) {
+            mActor_name_t* fg_p = aMR_GetLayerTopFg(mCoBG_LAYER0);
+            xyz_t player_pos = player->actor_class.world.position;
+            int direct = contact_info->direction;
+            xyz_t target_player_pos;
+            int ut_x;
+            int ut_z;
+
+            target_player_pos.x = player_pos.x + move_ofs.x;
+            target_player_pos.y = player_pos.y + move_ofs.y;
+            target_player_pos.z = player_pos.z + move_ofs.z;
+
+            ut_x = (int)(target_player_pos.x / mFI_UT_WORLDSIZE_X_F);
+            ut_z = (int)(target_player_pos.z / mFI_UT_WORLDSIZE_Z_F);
+
+            *pull0 = target_player_pos;
+            *pull1 = target_player_pos;
+
+            if (aMR_CheckSlidePullJudgeType(contact_info, profile) && fg_p != NULL) {
+                if (aMR_FtrColCheck(target_player_pos, 18.0f)) {
+                    if (!aMR_FtrColCheck(target_player_pos, 0.5f)) {
+                        aMR_GetPullSlip(pull1, target_player_pos, ut_x, ut_z, direct);
+                        return FALSE;
+                    } else {
+                        return TRUE;
+                    }
+                } else {
+                    return FALSE;
+                }
+            } else {
+                return FALSE;
+            }
+        } else {
+            return TRUE;
+        }
+    }
+
+    return TRUE;
+}
+
+static int aMR_CheckPullPlayerObstacle(xyz_t* pull0, xyz_t* pull1, PLAYER_ACTOR* player, xyz_t move_ofs, int direct) {
+    mActor_name_t* fg_p = aMR_GetLayerTopFg(mCoBG_LAYER0);
+
+    if (fg_p != NULL) {
+        int ut_x = (int)(player->actor_class.world.position.x / mFI_UT_WORLDSIZE_X_F);
+        int ut_z = (int)(player->actor_class.world.position.z / mFI_UT_WORLDSIZE_Z_F);
+
+        if (aMR_Direct2PlussUnit(&ut_x, &ut_z, direct)) {
+            int ut = ut_x + ut_z * UT_X_NUM;
+            mActor_name_t item_no;
+            int ftrID;
+
+            if (fg_p[ut] == RSV_WALL_NO || fg_p[ut] == RSV_FE1C || ITEM_NAME_GET_TYPE(fg_p[ut]) == NAME_TYPE_WARP) {
+                return TRUE;
+            }
+
+            aMR_UnitNum2FtrItemNoFtrID(&item_no, &ftrID, ut_x, ut_z, mCoBG_LAYER0);
+            if ((ITEM_IS_FTR(item_no) || item_no == RSV_FE1F) && ftrID >= 0 && ftrID < l_aMR_work.list_size) {
+                FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[ftrID];
+                aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_actor->name);
+
+                if (profile != NULL &&
+                    aFTR_CHECK_INTERACTION(profile->interaction_type, aFTR_INTERACTION_TYPE_NO_COLLISION) == FALSE) {
+                    return TRUE;
+                }
+            }
+        }
+
+        pull0->x = player->actor_class.world.position.x + move_ofs.x;
+        pull0->y = player->actor_class.world.position.y + move_ofs.y;
+        pull0->z = player->actor_class.world.position.z + move_ofs.z;
+
+        pull1->x = pull0->x;
+        pull1->y = pull0->y;
+        pull1->z = pull0->z;
+
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static void aMR_PlacePullFurniture(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, PLAYER_ACTOR* player,
+                                   GAME* game) {
+    static s_xyz move_table[4] = {
+        { 0, 0, -1 }, /* aMR_DIRECT_UP */
+        { -1, 0, 0 }, /* aMR_DIRECT_LEFT */
+        { 0, 0, 1 },  /* aMR_DIRECT_DOWN */
+        { 1, 0, 0 },  /* aMR_DIRECT_RIGHT */
+    };
+
+    static xyz_t target_table[4] = {
+        { 0.0f, 0.0f, -mFI_UT_WORLDSIZE_Z_F }, /* aMR_DIRECT_UP */
+        { -mFI_UT_WORLDSIZE_X_F, 0.0f, 0.0f }, /* aMR_DIRECT_LEFT */
+        { 0.0f, 0.0f, mFI_UT_WORLDSIZE_Z_F },  /* aMR_DIRECT_DOWN */
+        { mFI_UT_WORLDSIZE_X_F, 0.0f, 0.0f },  /* aMR_DIRECT_RIGHT */
+    };
+
+    if (contact_info->ftrID >= 0 && contact_info->ftrID < l_aMR_work.list_size && contact_info->contact_flag == TRUE &&
+        contact_info->contact_side == aMR_DIRECT_DOWN && l_aMR_work.used_list[contact_info->ftrID] == TRUE &&
+        my_room->state == 8 && my_room->pull_timer > 16 &&
+        mPlib_check_player_actor_main_index_Furniture_Move(game) == FALSE) {
+        FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[contact_info->ftrID];
+
+        if (ftr_actor->state == aFTR_STATE_STOP) {
+            int direct = contact_info->direction;
+            int ut_x;
+            int ut_z;
+            int ut;
+            int target_ut_x;
+            int target_ut_z;
+            int target_ut;
+
+            aMR_Wpos2PlaceNumber(&ut_x, &ut_z, ftr_actor->position, ftr_actor->shape_type);
+            ut = ut_x + ut_z * UT_X_NUM;
+
+            target_ut_x = ut_x + move_table[direct].x;
+            target_ut_z = ut_z + move_table[direct].z;
+            target_ut = target_ut_x + target_ut_z * UT_X_NUM;
+
+            if (aMR_JudgeStickFull(direct, game) == TRUE) {
+                xyz_t* target_pos = &target_table[direct];
+
+                if (aMR_CheckPullPlayerObstacle(&my_room->pull_target_pos0, &my_room->pull_target_pos1, player,
+                                                *target_pos, direct) == FALSE) {
+                    if (aMR_CheckPullPlayerObstacle2(&my_room->pull_target_pos0, &my_room->pull_target_pos1,
+                                                     contact_info, player, *target_pos) == FALSE) {
+                        aMR_SetInfoFurnitureTable(ftr_actor->shape_type, ut, aMR_NO_FTR_ID, ftr_actor->layer);
+                        aMR_SetFurniture2FG(ftr_actor, ftr_actor->position, FALSE);
+
+                        if (aMR_JudgeFurnitureMove(ftr_actor->shape_type, target_ut) &&
+                            aMR_RequestItemToFitFurniture((ACTOR*)my_room, ftr_actor)) {
+                            xyz_t goki_pos;
+
+                            my_room->state = 3;
+                            ftr_actor->state = aFTR_STATE_WAIT_PULL;
+                            ftr_actor->target_direction = direct;
+                            ftr_actor->target_position.x = ftr_actor->position.x + target_table[direct].x;
+                            ftr_actor->target_position.y = ftr_actor->position.y + target_table[direct].y;
+                            ftr_actor->target_position.z = ftr_actor->position.z + target_table[direct].z;
+
+                            aMR_SetInfoFurnitureTable(ftr_actor->shape_type, target_ut, ftr_actor->id,
+                                                      ftr_actor->layer);
+                            aMR_SetFurniture2FG(ftr_actor, ftr_actor->target_position, TRUE);
+                            aMR_SetPullMoveAnime(ftr_actor, game, my_room, contact_info);
+                            aMR_SetMoveSE(ftr_actor);
+                            my_room->pull_timer = 0;
+                            mMkRm_ReportChangePlayerRoom();
+                            my_room->keep_pull_flag = TRUE;
+
+                            if (aMR_GokiburiPos_Pull(&goki_pos, ftr_actor, player)) {
+                                aMR_MakeGokiburi(&goki_pos, game, 1);
+                            }
+                        } else {
+                            /* Can't move the furniture */
+                            aMR_SetInfoFurnitureTable(ftr_actor->shape_type, ut, ftr_actor->id, ftr_actor->layer);
+                            aMR_SetFurniture2FG(ftr_actor, ftr_actor->position, TRUE);
+                            aMR_SetBubu(player, my_room, game, &my_room->pull_bubu);
+                        }
+                    } else {
+                        aMR_SetBubu(player, my_room, game, &my_room->pull_bubu);
+                    }
+                } else {
+                    aMR_SetBubu(player, my_room, game, &my_room->pull_bubu);
+                }
+            }
+        }
+    }
+}
+
+static void aMR_PlacePushFurniture(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, f32* point,
+                                   PLAYER_ACTOR* player, GAME* game) {
+    static s_xyz push_move_table[4] = {
+        { 0, 0, 1 },  /* aMR_DIRECT_UP */
+        { 1, 0, 0 },  /* aMR_DIRECT_LEFT */
+        { 0, 0, -1 }, /* aMR_DIRECT_DOWN */
+        { -1, 0, 0 }, /* aMR_DIRECT_RIGHT */
+    };
+
+    static xyz_t push_target_table[4] = {
+        { 0.0f, 0.0f, mFI_UT_WORLDSIZE_Z_F },  /* aMR_DIRECT_UP */
+        { mFI_UT_WORLDSIZE_X_F, 0.0f, 0.0f },  /* aMR_DIRECT_LEFT */
+        { 0.0f, 0.0f, -mFI_UT_WORLDSIZE_Z_F }, /* aMR_DIRECT_DOWN */
+        { -mFI_UT_WORLDSIZE_X_F, 0.0f, 0.0f }, /* aMR_DIRECT_RIGHT */
+    };
+
+    if (my_room->state == 7 && contact_info->contact_flag == TRUE && contact_info->contact_side == aMR_DIRECT_DOWN &&
+        l_aMR_work.used_list[contact_info->ftrID] == TRUE && my_room->push_timer > 16 &&
+        mPlib_check_player_actor_main_index_Furniture_Move(game) == FALSE) {
+        int direct = contact_info->direction;
+        FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[contact_info->ftrID];
+
+        if (ftr_actor->state == aFTR_STATE_STOP) {
+            int ut_x;
+            int ut_z;
+            int ut;
+            int target_ut_x;
+            int target_ut_z;
+            int target_ut;
+
+            aMR_Wpos2PlaceNumber(&ut_x, &ut_z, ftr_actor->position, ftr_actor->shape_type);
+            ut = ut_x + ut_z * UT_X_NUM;
+
+            target_ut_x = ut_x + push_move_table[direct].x;
+            target_ut_z = ut_z + push_move_table[direct].z;
+            target_ut = target_ut_x + target_ut_z * UT_X_NUM;
+
+            if (aMR_JudgeStickFull(aMR_PullDirect2PushDirect(direct), game)) {
+                xyz_t* target_pos = &push_target_table[direct];
+
+                aMR_SetInfoFurnitureTable(ftr_actor->shape_type, ut, aMR_NO_FTR_ID, ftr_actor->layer);
+                aMR_SetFurniture2FG(ftr_actor, ftr_actor->position, FALSE);
+
+                if (aMR_JudgeFurnitureMove(ftr_actor->shape_type, target_ut) &&
+                    aMR_RequestItemToFitFurniture((ACTOR*)my_room, ftr_actor)) {
+                    xyz_t goki_pos;
+
+                    my_room->state = 2;
+                    ftr_actor->state = aFTR_STATE_WAIT_PUSH;
+                    ftr_actor->target_direction = aMR_PullDirect2PushDirect(direct);
+                    ftr_actor->target_position.x = ftr_actor->position.x + push_target_table[direct].x;
+                    ftr_actor->target_position.y = ftr_actor->position.y + push_target_table[direct].y;
+                    ftr_actor->target_position.z = ftr_actor->position.z + push_target_table[direct].z;
+
+                    aMR_SetInfoFurnitureTable(ftr_actor->shape_type, target_ut, ftr_actor->id, ftr_actor->layer);
+                    aMR_SetFurniture2FG(ftr_actor, ftr_actor->target_position, TRUE);
+                    aMR_SetPushMoveAnime(ftr_actor, game, my_room, contact_info);
+                    aMR_SetMoveSE(ftr_actor);
+                    mMkRm_ReportChangePlayerRoom();
+                    my_room->keep_push_flag = TRUE;
+
+                    if (aMR_GokiburiPos_Push(&goki_pos, ftr_actor, player)) {
+                        aMR_MakeGokiburi(&goki_pos, game, 1);
+                    }
+                } else {
+                    /* Can't move the furniture */
+                    aMR_SetInfoFurnitureTable(ftr_actor->shape_type, ut, ftr_actor->id, ftr_actor->layer);
+                    aMR_SetFurniture2FG(ftr_actor, ftr_actor->position, TRUE);
+                    aMR_SetBubu(player, my_room, game, &my_room->push_bubu);
+                }
+            }
+        }
+    }
+}
+
+static int aMR_DecideKurukuruDirect(MY_ROOM_ACTOR* my_room, s16* state, aMR_contact_info_c* contact_info,
+                                    FTR_ACTOR* ftr_actor, GAME* game) {
+    int direct = contact_info->direction;
+    int left = rotateDt[direct].left;
+    int right = rotateDt[direct].right;
+
+    if (my_room->allow_rotation_flag) {
+        if (aMR_JudgeStickFull(left, game)) {
+            *state = aFTR_STATE_WAIT_LROTATE;
+            ftr_actor->rotation_delay_timer = 3;
+            return TRUE;
+        }
+
+        if (aMR_JudgeStickFull(right, game)) {
+            *state = aFTR_STATE_WAIT_RROTATE;
+            ftr_actor->rotation_delay_timer = 3;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static void aMR_SetTargetAngle(FTR_ACTOR* ftr_actor) {
+    if (ftr_actor->state == aFTR_STATE_WAIT_RROTATE) {
+        ftr_actor->angle_y_target = ftr_actor->angle_y - 90.0f;
+    } else {
+        ftr_actor->angle_y_target = ftr_actor->angle_y + 90.0f;
+    }
+}
+
+static s_xyz* aMR_GetRotateForbidData(s16 rotation_state, u8 shape) {
+    int idx = (int)shape;
+
+    if (rotation_state == aFTR_STATE_WAIT_RROTATE) {
+        return rotate_forbid_table[idx].right;
+    } else {
+        return rotate_forbid_table[idx].left;
+    }
+}
+
+static int aMR_SearchCompleteObstacle(FTR_ACTOR* ftr_actor, s16 rotation_state, int player_ut, int ftr_ut) {
+    u8 shape = ftr_actor->shape_type;
+    mActor_name_t* fg_p = mFI_BkNumtoUtFGTop(0, 0);
+    s_xyz* rotate_forbid_data = aMR_GetRotateForbidData(rotation_state, shape);
+    int i;
+
+    for (i = 0; i < 2; i++) {
+        int ut = ftr_ut + rotate_forbid_data[i].z * UT_X_NUM + rotate_forbid_data[i].x;
+
+        if (l_place_table[ut] != aMR_NO_FTR_ID) {
+            return FALSE;
+        }
+
+        if (fg_p[ut] != EMPTY_NO) {
+            return FALSE;
+        }
+
+        if (ut == player_ut) {
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
+
+static int aMR_SearchFrictionObstacle(FTR_ACTOR* ftr_actor, s16 rotation_state, int ftr_ut) {
+    aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_actor->name);
+    int shape = ftr_actor->shape_type;
+
+    if (profile->check_rotation && shape <= aFTR_SHAPE_TYPEB_0) {
+        int i;
+        s_xyz* rotate_forbid_data;
+
+        if (rotation_state == aFTR_STATE_WAIT_RROTATE) {
+            rotate_forbid_data = rotate_forbid_friction_table[shape].right;
+        } else {
+            rotate_forbid_data = rotate_forbid_friction_table[shape].left;
+        }
+
+        for (i = 0; i < 2; i++) {
+            int ut = ftr_ut + rotate_forbid_data[i].z * UT_X_NUM + rotate_forbid_data[i].x;
+
+            if (l_place_table[ut] != aMR_NO_FTR_ID) {
+                FTR_ACTOR* other_ftr_actor = &l_aMR_work.ftr_actor_list[l_place_table[ut]];
+                aFTR_PROFILE* other_profile = aMR_GetFurnitureProfile(other_ftr_actor->name);
+
+                if (other_profile->check_rotation) {
+                    return FALSE;
+                }
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+static int aMR_RotatePermission(FTR_ACTOR* ftr_actor, PLAYER_ACTOR* player, s16 rotation_state) {
+    int player_ut_x;
+    int player_ut_z;
+    int player_ut;
+    int ftr_ut_x;
+    int ftr_ut_z;
+    int ftr_ut;
+
+    aMR_Wpos2PlaceNumber(&player_ut_x, &player_ut_z, player->actor_class.world.position, 0);
+    player_ut = player_ut_z * UT_X_NUM + player_ut_x;
+
+    aMR_Wpos2PlaceNumber(&ftr_ut_x, &ftr_ut_z, ftr_actor->position, ftr_actor->shape_type);
+    ftr_ut = ftr_ut_z * UT_X_NUM + ftr_ut_x;
+
+    if (aMR_SearchCompleteObstacle(ftr_actor, rotation_state, player_ut, ftr_ut)) {
+        if (aMR_SearchFrictionObstacle(ftr_actor, rotation_state, ftr_ut)) {
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    } else {
+        return FALSE;
+    }
+}
+
+static int aMR_ResetFurnitureType(FTR_ACTOR* ftr_actor, aMR_contact_info_c* contact_info, PLAYER_ACTOR* player,
+                                  s16 rotation_state) {
+    int sub_idx;
+    u8 shape;
+    int direct;
+    f32 contact_ratio;
+    aMR_type_target_c type_target;
+
+    contact_ratio = contact_info->contact_percent;
+    direct = contact_info->direction;
+
+    if (contact_ratio >= 0.5f) {
+        sub_idx = 0;
+    } else {
+        sub_idx = 1;
+    }
+
+    shape = ftr_actor->shape_type;
+    type_target = type_target_table[shape][direct][sub_idx];
+
+    if (type_target.type != shape) {
+        ftr_actor->shape_type = type_target.type;
+        ftr_actor->position.x += type_target.offset.x;
+        ftr_actor->position.y += type_target.offset.y;
+        ftr_actor->position.z += type_target.offset.z;
+        aMR_MoveShapeCenter(ftr_actor);
+    }
+
+    return aMR_RotatePermission(ftr_actor, player, rotation_state);
+}
+
+static void aMR_TypeChangeByRotate(FTR_ACTOR* ftr_actor) {
+    static u8 rt_place_tbl[] = { aFTR_SHAPE_TYPEB_0, aFTR_SHAPE_TYPEB_90, aFTR_SHAPE_TYPEB_180, aFTR_SHAPE_TYPEB_270 };
+    static u8 lt_place_tbl[] = { aFTR_SHAPE_TYPEB_180, aFTR_SHAPE_TYPEB_270, aFTR_SHAPE_TYPEB_0, aFTR_SHAPE_TYPEB_90 };
+
+    if (ftr_actor->state == aFTR_STATE_WAIT_LROTATE) {
+        ftr_actor->shape_type = lt_place_tbl[ftr_actor->shape_type];
+    } else {
+        ftr_actor->shape_type = rt_place_tbl[ftr_actor->shape_type];
+    }
+}
+
+static int aMR_SearchNextSituation(FTR_ACTOR* ftr_actor) {
+    aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_actor->name);
+    int shape = ftr_actor->shape_type;
+    int ut_x;
+    int ut_z;
+    int ut;
+
+    aMR_Wpos2PlaceNumber(&ut_x, &ut_z, ftr_actor->position, shape);
+    ut = ut_z * UT_X_NUM + ut_x;
+
+    if (shape > aFTR_SHAPE_TYPEB_0 && profile->check_rotation) {
+        aMR_place_info_c* place_info = next_table[shape];
+
+        if (place_info != NULL) {
+            int count = place_info->count;
+            s_xyz* ofs_p = place_info->ofs_p;
+            int i;
+
+            for (i = 0; i < count; i++) {
+                int check_ut = ut + ofs_p[i].z * UT_Z_NUM + ofs_p[i].x;
+
+                if (l_place_table[check_ut] != aMR_NO_FTR_ID) {
+                    FTR_ACTOR* other_ftr_actor = &l_aMR_work.ftr_actor_list[l_place_table[check_ut]];
+                    aFTR_PROFILE* other_profile = aMR_GetFurnitureProfile(other_ftr_actor->name);
+
+                    if (other_profile->check_rotation) {
+                        return FALSE;
+                    }
+                }
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+typedef struct sit_data_s {
+    u8* direction_p;
+    int direction_count;
+} aMR_sit_data_c;
+
+static u8 aMR_sit_small_chair1[] = { aMR_CONTACT_DIR_FRONT };
+static aMR_sit_data_c aMR_sit_small_chair1_data = { aMR_sit_small_chair1, ARRAY_COUNT(aMR_sit_small_chair1) };
+
+static u8 aMR_sit_small_chair4[] = { aMR_CONTACT_DIR_BACK, aMR_CONTACT_DIR_RIGHT, aMR_CONTACT_DIR_FRONT,
+                                     aMR_CONTACT_DIR_LEFT };
+static aMR_sit_data_c aMR_sit_small_chair4_data = { aMR_sit_small_chair4, ARRAY_COUNT(aMR_sit_small_chair4) };
+
+static u8 aMR_sit_middle_sofa[] = { aMR_CONTACT_DIR_FRONT };
+static aMR_sit_data_c aMR_sit_middle_sofa_data = { aMR_sit_middle_sofa, ARRAY_COUNT(aMR_sit_middle_sofa) };
+
+static aMR_sit_data_c* aME_sit_data[] = {
+    &aMR_sit_small_chair1_data,
+    &aMR_sit_small_chair4_data,
+    &aMR_sit_middle_sofa_data,
+};
+
+static void aMR_SitDownFurniture(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, PLAYER_ACTOR* player,
+                                 GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int angle = (u16)((s16)(DEG2SHORT_ANGLE2(270.0f) + gamePT->mcon.move_angle + (s16)getCamera2AngleY(play)) -
+                      player->actor_class.shape_info.rotation.y);
+
+    if (contact_info->contact_flag) {
+        f32 point[] = { 0.0f, -1.0f };
+        FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[contact_info->ftrID];
+        f32 angle_f;
+
+        aMR_RotateY(point, SHORT2RAD_ANGLE2(player->actor_class.shape_info.rotation.y));
+        angle_f = ABS(mCoBG_Get2VectorAngleF(contact_info->normal_p, point, 1)); // This gets called 3 times due to ABS
+
+        if (ftr_actor->state != aFTR_STATE_BYE && ftr_actor->state != aFTR_STATE_BIRTH_WAIT &&
+            ftr_actor->state != aFTR_STATE_BIRTH && ftr_actor->state != aFTR_STATE_DEATH &&
+            contact_info->contact_side == aMR_CONTACT_DIR_FRONT && my_room->state == 0 &&
+            aMR_3DStickNuetral() == FALSE && angle < DEG2SHORT_ANGLE2(15.0f) && angle_f < 15.0f &&
+            gamePT->mcon.move_pR > 0.6f) {
+            my_room->sit_timer++;
+        } else {
+            my_room->sit_timer = 0;
+        }
+    } else {
+        my_room->sit_timer = 0;
+    }
+
+    if (my_room->sit_timer > 14 && my_room->state == 0 && contact_info->contact_flag == TRUE &&
+        contact_info->contact_side == aMR_CONTACT_DIR_FRONT) {
+        FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[contact_info->ftrID];
+        u8 used = l_aMR_work.used_list[contact_info->ftrID];
+        int ftr_no = ftr_actor->name;
+        aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_no);
+
+        if (profile != NULL && used) {
+            u8 contact_action = profile->contact_action;
+            int i;
+
+            for (i = 0; i < 3; i++) {
+                if (((contact_action >> i) & 1) != 0) {
+                    aMR_sit_data_c* sit_data = aME_sit_data[i];
+                    int j;
+
+                    for (j = 0; j < sit_data->direction_count; j++) {
+                        if (contact_info->contact_direction == sit_data->direction_p[j]) {
+                            xyz_t nice_pos = { 0.0f, 0.0f, 0.0f };
+
+                            aMR_SetNicePos(&nice_pos, player->actor_class.world.position,
+                                           contact_info->contact_edge_start, contact_info->contact_edge_end,
+                                           contact_info, 2);
+                            my_room->nice_pos = nice_pos;
+                            mPlib_request_main_sitdown_type1(game, aMR_GetPlayerDirect(contact_info->normal_p),
+                                                             &nice_pos, ftr_no);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+static int aMR_GetBedHeadDirect(FTR_ACTOR* ftr_actor) {
+    u16 angle = ftr_actor->s_angle_y;
+
+    if (angle >= (DEG2SHORT_ANGLE2(90.0f) - 2) && angle <= (DEG2SHORT_ANGLE2(90.0f) + 2)) {
+        return aMR_DIRECT_DOWN;
+    } else if (angle >= (DEG2SHORT_ANGLE2(180.0f) - 2) && angle <= (DEG2SHORT_ANGLE2(180.0f) + 2)) {
+        return aMR_DIRECT_RIGHT;
+    } else if (angle >= (DEG2SHORT_ANGLE2(270.0f) - 2) && angle <= (DEG2SHORT_ANGLE2(270.0f) + 2)) {
+        return aMR_DIRECT_UP;
+    } else {
+        return aMR_DIRECT_LEFT;
+    }
+}
+
+static FTR_ACTOR* aMR_Wpos2FtrInfo(xyz_t pos, u8* action, u16* inter, s16 layer) {
+    int ut_x;
+    int ut_z;
+
+    *action = aFTR_CONTACT_ACTION_NONE;
+    *inter = aFTR_INTERACTION_NONE;
+
+    if (mFI_Wpos2UtNum(&ut_x, &ut_z, pos)) {
+        mActor_name_t item_no;
+        int ftrID;
+
+        aMR_UnitNum2FtrItemNoFtrID(&item_no, &ftrID, ut_x, ut_z, layer);
+        if ((ITEM_IS_FTR(item_no) || item_no == RSV_FE1F) && ftrID >= 0 && ftrID < l_aMR_work.list_size) {
+            FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[ftrID];
+            aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_actor->name);
+
+            if (profile != NULL) {
+                *action = profile->contact_action;
+                *inter = profile->interaction_type;
+                return ftr_actor;
+            }
+        }
+    }
+
+    return NULL;
+}
+
+static int aMR_GetUnderfootSidePos(xyz_t* left, xyz_t* right, FTR_ACTOR* ftr_actor, u8 exist) {
+    static xyz_t pos0 = { 0.0f, 0.0f, 0.0f };
+    aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_actor->name);
+
+    *left = pos0;
+    *right = pos0;
+
+    if (profile != NULL && exist) {
+        if ((profile->contact_action >> aFTR_CONTACT_ACTION_TYPE_BED_SINGLE) & 1) {
+            xyz_t pos = ftr_actor->base_position;
+            f32 angle = SHORT2RAD_ANGLE2(ftr_actor->s_angle_y);
+
+            left->x = pos.x + mFI_UT_WORLDSIZE_X_F;
+            left->y = pos.y;
+            left->z = pos.z - mFI_UT_WORLDSIZE_Z_F;
+
+            sMath_RotateY(left, angle);
+            left->x += ftr_actor->position.x;
+            left->y += ftr_actor->position.y;
+            left->z += ftr_actor->position.z;
+
+            right->x = pos.x + mFI_UT_WORLDSIZE_X_F;
+            right->y = pos.y;
+            right->z = pos.z + mFI_UT_WORLDSIZE_Z_F;
+            sMath_RotateY(right, angle);
+            right->x += ftr_actor->position.x;
+            right->y += ftr_actor->position.y;
+            right->z += ftr_actor->position.z;
+
+            return TRUE;
+        }
+
+        if ((profile->contact_action >> aFTR_CONTACT_ACTION_TYPE_BED_DOUBLE) & 1) {
+            xyz_t pos = ftr_actor->base_position;
+            f32 angle = SHORT2RAD_ANGLE2(ftr_actor->s_angle_y);
+
+            left->x = pos.x + mFI_UT_WORLDSIZE_HALF_X_F;
+            left->y = pos.y;
+            left->z = pos.z - (mFI_UT_WORLDSIZE_Z_F + mFI_UT_WORLDSIZE_HALF_Z_F);
+
+            sMath_RotateY(left, angle);
+            left->x += ftr_actor->position.x;
+            left->y += ftr_actor->position.y;
+            left->z += ftr_actor->position.z;
+
+            right->x = pos.x + mFI_UT_WORLDSIZE_HALF_X_F;
+            right->y = pos.y;
+            right->z = pos.z + (mFI_UT_WORLDSIZE_Z_F + mFI_UT_WORLDSIZE_HALF_Z_F);
+            sMath_RotateY(right, angle);
+            right->x += ftr_actor->position.x;
+            right->y += ftr_actor->position.y;
+            right->z += ftr_actor->position.z;
+
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static int aMR_GetPillowSidePos(xyz_t* left, xyz_t* right, FTR_ACTOR* ftr_actor, u8 exist) {
+    static xyz_t pos0 = { 0.0f, 0.0f, 0.0f };
+    aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_actor->name);
+
+    *left = pos0;
+    *right = pos0;
+
+    if (profile != NULL && exist) {
+        if ((profile->contact_action >> aFTR_CONTACT_ACTION_TYPE_BED_SINGLE) & 1) {
+            xyz_t pos = ftr_actor->base_position;
+            f32 angle = SHORT2RAD_ANGLE2(ftr_actor->s_angle_y);
+
+            left->x = pos.x;
+            left->y = pos.y;
+            left->z = pos.z - mFI_UT_WORLDSIZE_Z_F;
+
+            sMath_RotateY(left, angle);
+            left->x += ftr_actor->position.x;
+            left->y += ftr_actor->position.y;
+            left->z += ftr_actor->position.z;
+
+            right->x = pos.x;
+            right->y = pos.y;
+            right->z = pos.z + mFI_UT_WORLDSIZE_Z_F;
+            sMath_RotateY(right, angle);
+            right->x += ftr_actor->position.x;
+            right->y += ftr_actor->position.y;
+            right->z += ftr_actor->position.z;
+
+            return TRUE;
+        }
+
+        if ((profile->contact_action >> aFTR_CONTACT_ACTION_TYPE_BED_DOUBLE) & 1) {
+            xyz_t pos = ftr_actor->base_position;
+            f32 angle = SHORT2RAD_ANGLE2(ftr_actor->s_angle_y);
+
+            left->x = pos.x - mFI_UT_WORLDSIZE_HALF_X_F;
+            left->y = pos.y;
+            left->z = pos.z - (mFI_UT_WORLDSIZE_Z_F + mFI_UT_WORLDSIZE_HALF_Z_F);
+
+            sMath_RotateY(left, angle);
+            left->x += ftr_actor->position.x;
+            left->y += ftr_actor->position.y;
+            left->z += ftr_actor->position.z;
+
+            right->x = pos.x - mFI_UT_WORLDSIZE_HALF_X_F;
+            right->y = pos.y;
+            right->z = pos.z + (mFI_UT_WORLDSIZE_Z_F + mFI_UT_WORLDSIZE_HALF_Z_F);
+            sMath_RotateY(right, angle);
+            right->x += ftr_actor->position.x;
+            right->y += ftr_actor->position.y;
+            right->z += ftr_actor->position.z;
+
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static int aMR_CheckBedUnderfoot(aMR_contact_info_c* contact_info, PLAYER_ACTOR* player) {
+    if (contact_info->contact_flag == TRUE) {
+        FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[contact_info->ftrID];
+        u8 used = l_aMR_work.used_list[contact_info->ftrID];
+        mActor_name_t* fg_p = aMR_GetLayerTopFg(mCoBG_LAYER0);
+        xyz_t pillow_left;
+        xyz_t pillow_right;
+
+        if (aMR_GetPillowSidePos(&pillow_left, &pillow_right, ftr_actor, used)) {
+            int player_ut_x = (int)(player->actor_class.world.position.x / mFI_UT_WORLDSIZE_X_F);
+            int player_ut_z = (int)(player->actor_class.world.position.z / mFI_UT_WORLDSIZE_Z_F);
+            int pillow_left_ut_x = (int)(pillow_left.x / mFI_UT_WORLDSIZE_X_F);
+            int pillow_left_ut_z = (int)(pillow_left.z / mFI_UT_WORLDSIZE_Z_F);
+            int pillow_right_ut_x = (int)(pillow_right.x / mFI_UT_WORLDSIZE_X_F);
+            int pillow_right_ut_z = (int)(pillow_right.z / mFI_UT_WORLDSIZE_Z_F);
+            xyz_t underfoot_left;
+            xyz_t underfoot_right;
+            u8 contact_action_type;
+            u16 inter_type;
+
+            /* Check left first */
+            if (player_ut_x == pillow_left_ut_x && player_ut_z == pillow_left_ut_z) {
+                if (aMR_GetUnderfootSidePos(&underfoot_left, &underfoot_right, ftr_actor, used)) {
+                    if (aMR_Wpos2FtrInfo(underfoot_left, &contact_action_type, &inter_type, mCoBG_LAYER0) != NULL) {
+                        if (aFTR_CHECK_INTERACTION(inter_type, aFTR_INTERACTION_TYPE_NO_COLLISION) == FALSE) {
+                            return TRUE;
+                        }
+                    } else {
+                        int underfoot_left_ut_x = (int)(underfoot_left.x / mFI_UT_WORLDSIZE_X_F);
+                        int underfoot_left_ut_z = (int)(underfoot_left.z / mFI_UT_WORLDSIZE_Z_F);
+                        int underfoot_left_ut = underfoot_left_ut_z * UT_X_NUM + underfoot_left_ut_x;
+
+                        if (fg_p[underfoot_left_ut] == RSV_WALL_NO || fg_p[underfoot_left_ut] == RSV_FE1C ||
+                            ITEM_NAME_GET_TYPE(fg_p[underfoot_left_ut]) == NAME_TYPE_WARP) {
+                            return TRUE;
+                        }
+                    }
+                }
+            }
+
+            /* Check right */
+            if (player_ut_x == pillow_right_ut_x && player_ut_z == pillow_right_ut_z) {
+                if (aMR_GetUnderfootSidePos(&underfoot_left, &underfoot_right, ftr_actor, used)) {
+                    if (aMR_Wpos2FtrInfo(underfoot_right, &contact_action_type, &inter_type, mCoBG_LAYER0) != NULL) {
+                        if (aFTR_CHECK_INTERACTION(inter_type, aFTR_INTERACTION_TYPE_NO_COLLISION) == FALSE) {
+                            return TRUE;
+                        }
+                    } else {
+                        int underfoot_right_ut_x = (int)(underfoot_right.x / mFI_UT_WORLDSIZE_X_F);
+                        int underfoot_right_ut_z = (int)(underfoot_right.z / mFI_UT_WORLDSIZE_Z_F);
+                        int underfoot_right_ut = underfoot_right_ut_z * UT_X_NUM + underfoot_right_ut_x;
+
+                        if (fg_p[underfoot_right_ut] == RSV_WALL_NO || fg_p[underfoot_right_ut] == RSV_FE1C ||
+                            ITEM_NAME_GET_TYPE(fg_p[underfoot_right_ut]) == NAME_TYPE_WARP) {
+                            return TRUE;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+static void aMR_JudgeGoToBed(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, PLAYER_ACTOR* player,
+                             GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    u16 angle = (s16)(DEG2SHORT_ANGLE2(270.0f) + gamePT->mcon.move_angle + (s16)getCamera2AngleY(play)) -
+                player->actor_class.shape_info.rotation.y;
+
+    if (contact_info->contact_flag == TRUE) {
+        f32 point[] = { 0.0f, -1.0f };
+        FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[contact_info->ftrID];
+        f32 angle_f;
+
+        aMR_RotateY(point, SHORT2RAD_ANGLE2(player->actor_class.shape_info.rotation.y));
+        angle_f = ABS(mCoBG_Get2VectorAngleF(contact_info->normal_p, point, 1)); // This gets called 3 times due to ABS
+
+        if (ftr_actor->state != aFTR_STATE_BYE && ftr_actor->state != aFTR_STATE_BIRTH_WAIT &&
+            ftr_actor->state != aFTR_STATE_BIRTH && ftr_actor->state != aFTR_STATE_DEATH && my_room->state == 0 &&
+            aMR_3DStickNuetral() == FALSE && angle < DEG2SHORT_ANGLE(35.0f) && angle_f < 35.0f &&
+            gamePT->mcon.move_pR > 0.6f) {
+            if (aMR_CheckBedUnderfoot(contact_info, player) == FALSE) {
+                my_room->bed_timer++;
+            } else {
+                my_room->bed_timer = 0;
+            }
+        } else {
+            my_room->bed_timer = 0;
+        }
+    } else {
+        my_room->bed_timer = 0;
+    }
+
+    if (my_room->bed_timer > 14 && my_room->state == 0 && contact_info->contact_flag == TRUE &&
+        contact_info->contact_side == aMR_CONTACT_DIR_FRONT) {
+        FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[contact_info->ftrID];
+        u8 used = l_aMR_work.used_list[contact_info->ftrID];
+        int ftr_no = ftr_actor->name;
+        aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_no);
+
+        if (profile != NULL && used) {
+            if (aFTR_CHK_BED(profile->contact_action)) {
+                if (contact_info->contact_direction == aMR_CONTACT_DIR_FRONT ||
+                    contact_info->contact_direction == aMR_CONTACT_DIR_BACK) {
+                    xyz_t nice_pos = { 0.0f, 0.0f, 0.0f };
+                    int player_direct;
+                    int head_direct;
+
+                    aMR_SetNicePos(&nice_pos, player->actor_class.world.position, contact_info->contact_edge_start,
+                                   contact_info->contact_edge_end, contact_info, 0);
+                    my_room->nice_pos = nice_pos;
+                    player_direct = aMR_ConvertDirectLevel(aMR_GetPlayerDirect(contact_info->normal_p));
+                    my_room->head_direction = aMR_GetBedHeadDirect(ftr_actor);
+                    my_room->bed_ftr_actor_idx = contact_info->ftrID;
+                    head_direct = aMR_ConvertDirectLevel(my_room->head_direction);
+
+                    if (player_direct != -1 && head_direct != -1) {
+                        mPlib_request_main_lie_bed_type1(game, player_direct, &nice_pos, head_direct, ftr_no);
+                    }
+                }
+            }
+        }
+    }
+}
+
+static int aMR_CheckHikidashi(FTR_ACTOR* ftr_actor, PLAYER_ACTOR* player, aMR_contact_info_c* contact_info) {
+    int direct = contact_info->direction;
+    int x0;
+    int z0;
+    int x1;
+    int z1;
+
+    if (aMR_GetTypeBPlaceInfo(&x0, &z0, &x1, &z1, ftr_actor->shape_type, ftr_actor->position)) {
+        mActor_name_t* fg_p = aMR_GetLayerTopFg(mCoBG_LAYER0);
+
+        if (fg_p != NULL && aMR_Direct2PlussUnit(&x0, &z0, direct) && aMR_Direct2PlussUnit(&x1, &z1, direct)) {
+            int ut0 = z0 * UT_X_NUM + x0;
+            int ut1 = z1 * UT_X_NUM + x1;
+            mActor_name_t fg0 = fg_p[ut0];
+            mActor_name_t fg1 = fg_p[ut1];
+
+            if (!(ITEM_IS_FTR(fg0) || fg0 == RSV_FE1F) && !(ITEM_IS_FTR(fg1) || fg1 == RSV_FE1F)) {
+                return TRUE;
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+static void aMR_SetOpenFtrDemoData(MY_ROOM_ACTOR* my_room, FTR_ACTOR* ftr_actor, aMR_contact_info_c* contact_info) {
+    ftr_actor->demo_status = 1;
+    my_room->msg_timer = 0;
+    my_room->requested_msg_type = aMR_MSG_STATE_WAIT_MSG;
+    my_room->demo_flag = TRUE;
+    my_room->demo_ftrID = contact_info->ftrID;
+    my_room->pull_timer = 0;
+}
+
+static void aMR_SetMDFtrDemoData(MY_ROOM_ACTOR* my_room, FTR_ACTOR* ftr_actor, aMR_contact_info_c* contact_info) {
+    ftr_actor->demo_status = 1;
+    my_room->msg_timer = 0;
+    my_room->requested_msg_type = aMR_MSG_STATE_WAIT_MD;
+    my_room->demo_flag = TRUE;
+    my_room->demo_ftrID = contact_info->ftrID;
+    my_room->pull_timer = 0;
+}
+
+static int aMR_JudgeDemoStart(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, GAME* game,
+                              PLAYER_ACTOR* player) {
+    if (my_room->force_open_demo_flag == TRUE && my_room->state == 8 && my_room->demo_flag == FALSE &&
+        contact_info->contact_flag == TRUE && contact_info->contact_side == aMR_CONTACT_DIR_FRONT &&
+        mPlib_check_player_warp_forEvent() == FALSE) {
+        int stick_direct = aMR_Get3dDirectStatus(contact_info->direction);
+        FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[contact_info->ftrID];
+        aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_actor->name);
+
+        if (profile != NULL) {
+            if (contact_info->contact_direction == aMR_CONTACT_DIR_FRONT &&
+                (aFTR_CHECK_INTERACTION(profile->interaction_type, aFTR_INTERACTION_TYPE_WARDROBE) ||
+                 aFTR_CHECK_INTERACTION(profile->interaction_type, aFTR_INTERACTION_TYPE_CLOSET))) {
+                if (ftr_actor->demo_status == FALSE) {
+                    /* Open closet/wardrobe */
+                    aMR_SetOpenFtrDemoData(my_room, ftr_actor, contact_info);
+                    my_room->force_open_demo_flag = FALSE;
+                    return TRUE;
+                }
+            } else if (contact_info->contact_direction == aMR_CONTACT_DIR_FRONT &&
+                       aFTR_CHECK_INTERACTION(profile->interaction_type, aFTR_INTERACTION_TYPE_DRAWERS)) {
+                /* Open drawers if nothing is blocking them */
+                if (ftr_actor->demo_status == FALSE) {
+                    if (profile->shape == aFTR_SHAPE_TYPEA) {
+                        aMR_SetOpenFtrDemoData(my_room, ftr_actor, contact_info);
+                        my_room->force_open_demo_flag = FALSE;
+                        return TRUE;
+                    }
+
+                    if (aMR_CheckHikidashi(ftr_actor, player, contact_info)) {
+                        aMR_SetOpenFtrDemoData(my_room, ftr_actor, contact_info);
+                        my_room->force_open_demo_flag = FALSE;
+                        return TRUE;
+                    } else {
+                        /* Something is blocking the 2x1 drawers on one side */
+                        aMR_SetBubu(player, my_room, game, &my_room->pull_bubu);
+                        my_room->force_open_demo_flag = FALSE;
+                        return FALSE;
+                    }
+                }
+            } else {
+                my_room->state = 6;
+                my_room->pull_timer = 0;
+            }
+        }
+    }
+
+    if (my_room->demo_flag == TRUE) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void aMR_PlaceKurukuruFurniture(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* contact_info, PLAYER_ACTOR* player,
+                                       GAME* game) {
+    if (my_room->state == 6 && my_room->allow_rotation_flag == TRUE && contact_info->contact_flag == TRUE &&
+        contact_info->contact_side == aMR_CONTACT_DIR_FRONT) {
+        FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[contact_info->ftrID];
+        u8 used = l_aMR_work.used_list[contact_info->ftrID];
+
+        if (used && ftr_actor->state == aFTR_STATE_STOP) {
+            s16 rotation_state;
+
+            if (aMR_DecideKurukuruDirect(my_room, &rotation_state, contact_info, ftr_actor, game)) {
+                u8 shape = ftr_actor->shape_type;
+                int ftr_ut_x;
+                int ftr_ut_z;
+                int ftr_ut;
+
+                aMR_Wpos2PlaceNumber(&ftr_ut_x, &ftr_ut_z, ftr_actor->position, ftr_actor->shape_type);
+                ftr_ut = ftr_ut_z * UT_X_NUM + ftr_ut_x;
+
+                if (ftr_actor->shape_type <= aFTR_SHAPE_TYPEB_0) {
+                    aMR_SetInfoFurnitureTable(shape, ftr_ut, aMR_NO_FTR_ID, ftr_actor->layer);
+                    aMR_SetFurniture2FG(ftr_actor, ftr_actor->position, FALSE);
+
+                    if (aMR_ResetFurnitureType(ftr_actor, contact_info, player, rotation_state) &&
+                        aMR_RequestItemToFitFurniture((ACTOR*)my_room, ftr_actor)) {
+                        int next_ut_x;
+                        int next_ut_z;
+                        int next_ut;
+                        xyz_t goki_pos;
+
+                        ftr_actor->state = rotation_state;
+                        my_room->state = 4;
+                        aMR_SetTargetAngle(ftr_actor);
+                        my_room->allow_rotation_flag = FALSE;
+                        aMR_TypeChangeByRotate(ftr_actor);
+                        aMR_Wpos2PlaceNumber(&next_ut_x, &next_ut_z, ftr_actor->position, ftr_actor->shape_type);
+                        next_ut = next_ut_z * UT_X_NUM + next_ut_x;
+                        aMR_SetInfoFurnitureTable(ftr_actor->shape_type, next_ut, ftr_actor->id, ftr_actor->layer);
+                        aMR_SetFurniture2FG(ftr_actor, ftr_actor->position, TRUE);
+                        aMR_SetRotateSE(ftr_actor);
+                        mMkRm_ReportChangePlayerRoom();
+
+                        if (aMR_GokiburiPos_Rotate(&goki_pos, ftr_actor, player)) {
+                            aMR_MakeGokiburi(&goki_pos, game, 1);
+                        }
+                        return;
+                    } else {
+                        /* Failed to rotate */
+                        aMR_SetInfoFurnitureTable(shape, ftr_ut, ftr_actor->id, ftr_actor->layer);
+                        aMR_SetFurniture2FG(ftr_actor, ftr_actor->position, TRUE);
+                        aMR_SetBubu(player, my_room, game, NULL);
+                    }
+                } else {
+                    if (aMR_SearchNextSituation(ftr_actor) &&
+                        aMR_RequestItemToFitFurniture((ACTOR*)my_room, ftr_actor)) {
+                        ftr_actor->state = rotation_state;
+                        my_room->state = 4;
+                        aMR_SetTargetAngle(ftr_actor);
+                        my_room->allow_rotation_flag = FALSE;
+                        aMR_SetRotateSE(ftr_actor);
+                        aMR_SetInfoFurnitureTable(ftr_actor->shape_type, ftr_ut, ftr_actor->id, ftr_actor->layer);
+                        aMR_SetFurniture2FG(ftr_actor, ftr_actor->position, TRUE);
+                        mMkRm_ReportChangePlayerRoom();
+                        return;
+                    } else {
+                        aMR_SetBubu(player, my_room, game, NULL);
+                    }
+                }
+
+                my_room->allow_rotation_flag = FALSE;
+            }
+        }
+    }
+}
+
+static void aMR_GetBedTurnPos(xyz_t* player_pos, int direct) {
+    static xyz_t offset_data[mFI_MOVEDIR_NUM] = {
+        { 0.0f, 0.0f, 0.0f },                  // mFI_MOVEDIR_NONE
+        { mFI_UT_WORLDSIZE_X_F, 0.0f, 0.0f },  // mFI_MOVEDIR_RIGHT
+        { -mFI_UT_WORLDSIZE_X_F, 0.0f, 0.0f }, // mFI_MOVEDIR_LEFT
+        { 0.0f, 0.0f, -mFI_UT_WORLDSIZE_Z_F }, // mFI_MOVEDIR_UP
+        { 0.0f, 0.0f, mFI_UT_WORLDSIZE_Z_F },  // mFI_MOVEDIR_DOWN
+    };
+
+    player_pos->x += offset_data[direct].x;
+    player_pos->y += offset_data[direct].y;
+    player_pos->z += offset_data[direct].z;
+}
+
+static int aMR_GetBedAction(ACTOR* player_actorx, int direct) {
+    xyz_t player_pos;
+    ACTOR* actorx;
+    xyz_t head_pos;
+    xyz_t next_player_pos;
+    xyz_t next_head_pos;
+    mActor_name_t* fg_p;
+
+    player_pos = player_actorx->world.position;
+    actorx = aMR_CLIP->my_room_actor_p;
+    head_pos = ((PLAYER_ACTOR*)player_actorx)->head_pos;
+    next_player_pos = player_pos;
+    next_head_pos = head_pos;
+    fg_p = aMR_GetLayerTopFg(mCoBG_LAYER0);
+
+    aMR_GetBedTurnPos(&next_player_pos, direct);
+    aMR_GetBedTurnPos(&next_head_pos, direct);
+    if (actorx != NULL) {
+        MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+        int ut_x;
+        int ut_z;
+
+        if (mFI_Wpos2UtNum(&ut_x, &ut_z, next_player_pos)) {
+            mActor_name_t item_no;
+            int ftrID;
+
+            aMR_UnitNum2FtrItemNoFtrID(&item_no, &ftrID, ut_x, ut_z, mCoBG_LAYER0);
+            if ((ITEM_IS_FTR(item_no) || item_no == RSV_FE1F) && ftrID >= 0 && ftrID < l_aMR_work.list_size) {
+                FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[ftrID];
+                aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_actor->name);
+
+                if (profile != NULL) {
+                    if (ftrID == my_room->bed_ftr_actor_idx) {
+                        return mPlayer_BED_ACTION_ROLL;
+                    }
+
+                    if (aFTR_CHECK_INTERACTION(profile->interaction_type, aFTR_INTERACTION_TYPE_NO_COLLISION)) {
+                        return mPlayer_BED_ACTION_OUT;
+                    }
+
+                    if (aFTR_CHK_BED(profile->contact_action)) {
+                        int cur_ut_x = (int)(player_pos.x / mFI_UT_WORLDSIZE_X_F);
+                        int cur_ut_z = (int)(player_pos.z / mFI_UT_WORLDSIZE_Z_F);
+                        mActor_name_t item_no2 = EMPTY_NO;
+                        int ftrID2 = 0;
+
+                        aMR_UnitNum2FtrItemNoFtrID(&item_no2, &ftrID2, cur_ut_x, cur_ut_z, mCoBG_LAYER0);
+                        if ((ITEM_IS_FTR(item_no2) || item_no2 == RSV_FE1F) && ftrID2 >= 0 &&
+                            ftrID2 < l_aMR_work.list_size) {
+                            FTR_ACTOR* ftr_actor2 = &l_aMR_work.ftr_actor_list[ftrID2];
+
+                            /* Check if the beds are aligned so that you can roll across them */
+                            if (ftr_actor->s_angle_y == ftr_actor2->s_angle_y) {
+                                xyz_t bed0_uf_left;
+                                xyz_t bed0_uf_right;
+                                xyz_t bed1_uf_left;
+                                xyz_t bed1_uf_right;
+
+                                if (aMR_GetUnderfootSidePos(&bed0_uf_left, &bed0_uf_right, ftr_actor,
+                                                            l_aMR_work.used_list[ftrID]) &&
+                                    aMR_GetUnderfootSidePos(&bed1_uf_left, &bed1_uf_right, ftr_actor2,
+                                                            l_aMR_work.used_list[ftrID2])) {
+                                    if (mFI_POS2UT(bed0_uf_left.x) == mFI_POS2UT(bed1_uf_left.x) ||
+                                        mFI_POS2UT(bed0_uf_left.z) == mFI_POS2UT(bed1_uf_left.z)) {
+                                        return mPlayer_BED_ACTION_ROLL;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return mPlayer_BED_ACTION_NONE;
+                }
+            } else {
+                int ut = ut_z * UT_X_NUM + ut_x;
+
+                if (fg_p[ut] == RSV_WALL_NO || fg_p[ut] == RSV_FE1C || ITEM_NAME_GET_TYPE(fg_p[ut]) == NAME_TYPE_WARP) {
+                    return mPlayer_BED_ACTION_NONE;
+                }
+            }
+
+            return mPlayer_BED_ACTION_OUT;
+        }
+    }
+
+    return mPlayer_BED_ACTION_NONE;
+}

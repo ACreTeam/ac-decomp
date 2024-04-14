@@ -29,7 +29,7 @@ extern void Na_OngenPos(u32, u8, u16, f32);
 extern void Na_OngenTrgStart(u16, u16, f32);
 extern void Na_SetOutMode(u8);
 extern void Na_SetVoiceMode(u8);
-extern void Na_FloorTrgStart(u16, u16, f32);
+extern void Na_FloorTrgStart(u8, u16, f32);
 extern void Na_Pause(u8);
 extern void Na_RhythmPos(u32, u8, u16, f32);
 extern void Na_SpecChange(int);

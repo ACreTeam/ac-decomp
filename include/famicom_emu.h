@@ -11,7 +11,7 @@ extern "C" {
 
 /* sizeof(struct game_famicom_emu_s) == 0xE0 */
 typedef struct game_famicom_emu_s {
-  /* 0x00 */ GAME game;
+    /* 0x00 */ GAME game;
 } GAME_FAMICOM_EMU;
 
 extern Famicom_MallocInfo my_malloc_func;
@@ -19,8 +19,8 @@ extern Famicom_MallocInfo my_malloc_func;
 extern void famicom_emu_main(GAME* game);
 extern void famicom_emu_init(GAME* game);
 extern void famicom_emu_cleanup(GAME* game);
-extern int famicom_gba_getImage(u32 rom_id, int* ptr);
-extern void famicom_gba_removeImage(void* );
+extern void* famicom_gba_getImage(u32 rom_id, size_t* size);
+extern void famicom_gba_removeImage(void*);
 
 #ifdef __cplusplus
 }

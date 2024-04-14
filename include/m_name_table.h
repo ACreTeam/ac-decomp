@@ -1100,7 +1100,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define FTR_CLOTH_MANNIQUIN254_WEST 0x1BA7
 #define FTR_CLOTH_END FTR_CLOTH_MANNIQUIN254_WEST
 #define FTR_CLOTH_MANNIQUIN_MY_ORIGINAL0 0x1BA8
-
+#define FTR_CLOTH_MYMANNIQUIN_END 0x1BC7
 #define FTR_INSECT_START 0x1BC8
 #define FTR_INSECT00 FTR_INSECT_START
 
@@ -2253,6 +2253,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ETC_START 0x8000
 #define ETC_AIRPLANE ETC_START
 #define ETC_BALL (ETC_START + 1)
+#define ETC_MY_ROOM (ETC_START + 2)
 #define ETC_MBG (ETC_START + 3)
 #define ETC_BOXTRICK (ETC_START + 4)
 #define ETC_BOXMANAGER (ETC_START + 5)

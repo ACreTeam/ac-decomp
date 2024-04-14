@@ -1187,16 +1187,9 @@ extern void Actor_get_overlay_area(ACTOR_DLFTBL* dlftbl, int unused, size_t allo
 extern void Actor_init_actor_class(ACTOR* actor, ACTOR_PROFILE* profile, ACTOR_DLFTBL* dlftbl, GAME_PLAY* play,
                                    int bank_idx, f32 x, f32 y, f32 z, s16 rot_x, s16 rot_y, s16 rot_z, s8 block_x,
                                    s8 block_z, s16 move_actor_list_idx, mActor_name_t name_id, s16 arg);
-#ifndef MUST_MATCH
 extern ACTOR* Actor_info_make_actor(Actor_info* actor_info, GAME* game, s16 profile_no, f32 x, f32 y, f32 z, s16 rot_x,
                                     s16 rot_y, s16 rot_z, s8 block_x, s8 block_z, s16 move_actor_list_idx,
                                     mActor_name_t name_id, s16 arg, s8 npc_info_idx, int data_bank_idx);
-#else
-extern asm ACTOR* Actor_info_make_actor(Actor_info* actor_info, GAME* game, s16 profile_no, f32 x, f32 y, f32 z,
-                                        s16 rot_x, s16 rot_y, s16 rot_z, s8 block_x, s8 block_z,
-                                        s16 move_actor_list_idx, mActor_name_t name_id, s16 arg, s8 npc_info_idx,
-                                        int data_bank_idx);
-#endif
 extern ACTOR* Actor_info_make_child_actor(Actor_info* actor_info, ACTOR* parent_actor, GAME* game, s16 profile, f32 x,
                                           f32 y, f32 z, s16 rot_x, s16 rot_y, s16 rot_z, s16 move_actor_list_idx,
                                           mActor_name_t name_id, s16 arg, int data_bank_idx);

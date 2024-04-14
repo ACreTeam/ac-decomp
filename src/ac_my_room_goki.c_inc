@@ -1,0 +1,247 @@
+extern void aMR_SetSurprise(ACTOR* actorx, s16 angle_y) {
+    if (actorx != NULL) {
+        MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+        my_room->request_player_surprise = TRUE;
+        my_room->player_surprise_angle_y = angle_y;
+    }
+}
+
+static int aMR_MakeIndoorGoki(xyz_t* pos, s16 arg, s16 angle_y, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ACTOR* actor = Actor_info_make_actor(&play->actor_info, game, mAc_PROFILE_HOUSE_GOKI, pos->x, pos->y, pos->z, 0,
+                                         angle_y, 0, -1, -1, -1, EMPTY_NO, arg, -1, -1);
+
+    if (actor) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+typedef struct goki_info_s {
+    int scene;
+    int size;
+} aMR_goki_info_c;
+
+static int aMR_RandomMakeIndoorGoki(s16 arg, GAME* game) {
+    // clang-format off
+    static aMR_goki_info_c goki_random_make_data[] = {
+        { SCENE_MY_ROOM_S, 4 },
+        { SCENE_MY_ROOM_M, 6 },
+        { SCENE_MY_ROOM_LL2, 6 },
+        { SCENE_MY_ROOM_L, 8 },
+        { SCENE_MY_ROOM_LL1, 8 },
+        { SCENE_MY_ROOM_BASEMENT_S, 6 },
+        { SCENE_MY_ROOM_BASEMENT_M, 6 },
+        { SCENE_MY_ROOM_BASEMENT_L, 6 },
+        { SCENE_MY_ROOM_BASEMENT_LL1, 6 },
+    };
+    // clang-format on
+
+    int scene = Save_Get(scene_no);
+    int free_count0 = 0;
+    int free_count1 = 0;
+    mActor_name_t* fg_p = aMR_GetLayerTopFg(mCoBG_LAYER0);
+
+    int i;
+    int sel_no;
+    int ut_x;
+    int ut_z;
+
+    if (fg_p != NULL) {
+        for (i = 0; i < ARRAY_COUNT(goki_random_make_data); i++) {
+            if (scene == goki_random_make_data[i].scene) {
+                for (ut_z = 1; ut_z <= goki_random_make_data[i].size; ut_z++) {
+                    for (ut_x = 1; ut_x <= goki_random_make_data[i].size; ut_x++) {
+                        mActor_name_t item = fg_p[ut_x + ut_z * UT_X_NUM];
+
+                        if (!ITEM_IS_FTR(item) && item != RSV_FE1F && item != RSV_NO && item != RSV_WALL_NO &&
+                            item != RSV_DOOR) {
+                            free_count0++;
+                        }
+                    }
+                }
+
+                if (free_count0 <= 0) {
+                    return FALSE;
+                }
+
+                sel_no = RANDOM(free_count0);
+                for (ut_z = 1; ut_z <= goki_random_make_data[i].size; ut_z++) {
+                    for (ut_x = 1; ut_x <= goki_random_make_data[i].size; ut_x++) {
+                        mActor_name_t item = fg_p[ut_x + ut_z * UT_X_NUM];
+
+                        if (!ITEM_IS_FTR(item) && item != RSV_FE1F && item != RSV_NO && item != RSV_WALL_NO &&
+                            item != RSV_DOOR) {
+                            if (sel_no == free_count1) {
+                                xyz_t pos;
+
+                                if (mFI_UtNum2CenterWpos(&pos, ut_x, ut_z)) {
+                                    pos.y = 0.0f;
+                                    pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos(pos, 0.0f);
+                                    return aMR_MakeIndoorGoki(&pos, arg, 0, game);
+                                }
+                            }
+
+                            free_count1++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+static void aMR_RequestPlayerBikkuri(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (my_room->request_player_surprise) {
+        if (mPlib_get_player_actor_main_index(gamePT) != mPlayer_INDEX_SHOCK) {
+            mPlib_request_main_shock_type1(gamePT, 20.0f, my_room->player_surprise_angle_y, FALSE);
+        } else {
+            my_room->request_player_surprise = FALSE;
+        }
+    }
+}
+
+static void aMR_GokiInfoCt_Dummy(ACTOR* actorx, GAME* game) {
+    // nothing
+}
+
+static void aMR_GokiInfoCt(ACTOR* actorx, GAME* game) {
+    int field_type = Common_Get(field_type);
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int goki_count = mCkRh_NowSceneGokiFamilyCount();
+
+    mCkRh_InitCanLookGokiCount();
+    if (goki_count != 0) {
+        int max;
+        int i;
+
+        if (goki_count < aMR_GOKI_MAX) {
+            max = goki_count;
+        } else {
+            max = aMR_GOKI_MAX;
+        }
+
+        for (i = 0; i < max; i++) {
+            if (i == 0) {
+                if (Save_Get(scene_no) == SCENE_MY_ROOM_S || Save_Get(scene_no) == SCENE_MY_ROOM_M ||
+                    Save_Get(scene_no) == SCENE_MY_ROOM_L || Save_Get(scene_no) == SCENE_MY_ROOM_LL1 ||
+                    Save_Get(scene_no) == SCENE_MY_ROOM_BASEMENT_S || Save_Get(scene_no) == SCENE_MY_ROOM_BASEMENT_M ||
+                    Save_Get(scene_no) == SCENE_MY_ROOM_BASEMENT_L ||
+                    Save_Get(scene_no) == SCENE_MY_ROOM_BASEMENT_LL1) {
+                    static f32 off_x[] = { 10.0f, -10.0f, 15.0f, -15.0f };
+                    xyz_t pos = player->actor_class.world.position;
+                    mActor_name_t* fg_p;
+
+                    pos.x += off_x[play->game_frame % ARRAY_COUNT(off_x)];
+                    pos.y = 0.0f;
+                    pos.z += -10.0f;
+                    pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 0.0f);
+                    fg_p = mFI_GetUnitFG(pos);
+
+                    if (fg_p != NULL && !ITEM_IS_FTR(*fg_p) && *fg_p != RSV_FE1F && *fg_p != RSV_NO &&
+                        *fg_p != RSV_WALL_NO && *fg_p != RSV_DOOR) {
+                        int spawned = aMR_MakeIndoorGoki(&pos, 0, DEG2SHORT_ANGLE(0.0f), game);
+
+                        if (spawned) {
+                            mCkRh_CalcCanLookGokiCount(1);
+                            mCkRh_MinusGokiN_NowRoom(1, my_room->scene);
+                            if (Common_Get(goki_shocked_flag) == FALSE && field_type == mFI_FIELDTYPE2_PLAYER_ROOM) {
+                                aMR_SetSurprise(actorx, DEG2SHORT_ANGLE(-180.0f));
+                                Common_Set(goki_shocked_flag, TRUE);
+                            }
+                        }
+                    }
+                }
+            } else {
+                int spawned = aMR_RandomMakeIndoorGoki(0, game);
+
+                if (spawned) {
+                    mCkRh_CalcCanLookGokiCount(1);
+                    mCkRh_MinusGokiN_NowRoom(1, my_room->scene);
+                    if (Common_Get(goki_shocked_flag) == FALSE && field_type == mFI_FIELDTYPE2_PLAYER_ROOM) {
+                        aMR_SetSurprise(actorx, DEG2SHORT_ANGLE(-180.0f));
+                        Common_Set(goki_shocked_flag, TRUE);
+                    }
+                }
+            }
+        }
+    }
+
+    my_room->goki_ct_proc = &aMR_GokiInfoCt_Dummy;
+}
+
+static void aMR_MakeGokiburi(xyz_t* pos, GAME* game, s16 arg) {
+    if (mCkRh_NowSceneGokiFamilyCount() > 0 && mCkRh_GetCanLookGokiCount() < aMR_GOKI_MAX &&
+        aMR_MakeIndoorGoki(pos, arg, DEG2SHORT_ANGLE(0.0f), game)) {
+        mCkRh_CalcCanLookGokiCount(1);
+
+        if (aMR_CLIP != NULL) {
+            ACTOR* actorx = aMR_CLIP->my_room_actor_p;
+
+            if (actorx != NULL) {
+                MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+                mCkRh_MinusGokiN_NowRoom(1, my_room->scene);
+            }
+        }
+    }
+}
+
+static void aMR_GokiInfoDt(void) {
+    if (aMR_CLIP != NULL) {
+        ACTOR* actorx = aMR_CLIP->my_room_actor_p;
+
+        if (actorx != NULL) {
+            MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+            mCkRh_PlussGokiN_NowRoom(mCkRh_GetCanLookGokiCount(), my_room->scene);
+        }
+    }
+}
+
+static int aMR_CheckFtrAndGoki2(aFTR_collision_c* ftr_col, const xyz_t* goki_pos) {
+    f32 check_pos[2];
+    int i;
+
+    check_pos[0] = goki_pos->x;
+    check_pos[1] = goki_pos->z;
+
+    for (i = 0; i < aFTR_EDGE_COL_NUM; i++) {
+        aFTR_collision_c* col_p = &ftr_col[i];
+
+        if (mCoBG_GetPointInfoFrontLine(col_p->start, check_pos, col_p->normal)) {
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
+
+static void aMR_CheckFtrAndGoki(ACTOR* actorx, FTR_ACTOR* ftr_actor, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ACTOR* actor_p = play->actor_info.list[ACTOR_PART_BG].actor;
+    int count = 0;
+
+    while (actor_p != NULL) {
+        if (actor_p->id == mAc_PROFILE_HOUSE_GOKI) {
+            if (aMR_CheckFtrAndGoki2(ftr_actor->edge_collision, &actor_p->world.position)) {
+                actor_p->actor_specific = 2;
+            }
+
+            count++;
+            if (count >= aMR_GOKI_MAX) {
+                break;
+            }
+        }
+
+        actor_p = actor_p->next_actor;
+    }
+}

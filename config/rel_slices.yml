@@ -463,6 +463,11 @@ ac_my_indoor.c:
     .text: [0x8046EE38, 0x80470288]
     .rodata: [0x80644A88, 0x80644A98]
     .data: [0x806870F0, 0x806873E8]
+ac_my_room.c:
+    .text: [0x80470288, 0x80482D9C]
+    .rodata: [0x80644A98, 0x80644C28]
+    .data: [0x806873E8, 0x8068A378]
+    .bss: [0x812FBEB0, 0x812FC5E0]
 ac_psnowman.c:
     .text: [0x80484098, 0x80484694]
     .rodata: [0x80644C30, 0x80644C60]

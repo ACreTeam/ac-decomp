@@ -22,3 +22,4 @@ section_defs:
     - name: .bss
       balign: 4
     - name: .sbss
+label_prefix: ".L"

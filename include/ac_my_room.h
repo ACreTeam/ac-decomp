@@ -10,6 +10,15 @@
 extern "C" {
 #endif
 
+#define aMR_MAX_UNIT 8
+#define aMR_HANIWA_ON_TABLE_NUM 14
+#define aMR_GOKI_MAX 3
+#define aMR_FIT_FTR_MAX 4
+#define aMR_RSV_FTR_NUM 3
+
+#define aMR_NO_FTR_ID 200
+#define aMR_NO_FTR_ID2 201
+
 typedef struct my_room_actor_s MY_ROOM_ACTOR;
 
 enum {
@@ -29,15 +38,32 @@ enum {
     aMR_CONTACT_DIR_NUM
 };
 
+enum {
+    aMR_FRIEND_ALL,
+    aMR_FRIEND_ON,
+    aMR_FRIEND_OFF,
+
+    aMR_FRIEND_NUM
+};
+
+enum {
+    aMR_DIRECT_UP,
+    aMR_DIRECT_LEFT,
+    aMR_DIRECT_DOWN,
+    aMR_DIRECT_RIGHT,
+
+    aMR_DIRECT_NUM
+};
+
 typedef struct my_room_contact_s {
     int contact_flag;
-    int ftr_no;
+    int ftrID;
     int direction;
     int contact_side;
     f32 contact_percent;
     f32* normal_p;
-    f32 contact_edge0[2];
-    f32 contact_edge1[2];
+    f32 contact_edge_start[2];
+    f32 contact_edge_end[2];
     int contact_direction;
 } aMR_contact_info_c;
 
@@ -48,18 +74,18 @@ typedef struct my_room_clock_info_s {
     int frame;     /* 0-119 */
 } aMR_clock_info_c;
 
-typedef int (*aMR_JUDGE_BREED_NEW_FTR_PROC)(GAME_PLAY* play, u16 ftr_no, int* ut_x, int* ut_z, u16* rotation,
+typedef int (*aMR_JUDGE_BREED_NEW_FTR_PROC)(GAME* game, u16 ftr_no, int* ut_x, int* ut_z, u16* rotation,
                                             int* square_offset, int* layer);
-typedef mActor_name_t (*aMR_SEARCH_PICKUP_FURNITURE_PROC)(GAME_PLAY* play);
-typedef void (*aMR_FURNITURE2ITEMBAG_PROC)(GAME_PLAY* play);
+typedef mActor_name_t (*aMR_SEARCH_PICKUP_FURNITURE_PROC)(GAME* game);
+typedef void (*aMR_FURNITURE2ITEMBAG_PROC)(GAME* game);
 typedef int (*aMR_JUDGE_PLAYER_ACTION_PROC)(xyz_t* wpos0, xyz_t* wpos1, int ftr_actor_idx);
 typedef void (*aMR_PLAYER_MOVE_FURNITURE_PROC)(int ftr_actor_idx, xyz_t* wpos);
 typedef int (*aMR_FTR_ID_2_WPOS_PROC)(xyz_t* wpos, int ftr_id);
 typedef int (*aMR_UNIT_NUM_2_FTR_ITEMNO_FTRID_PROC)(mActor_name_t* ftr_item_no, int* ftr_id, int ut_x, int ut_z,
-                                                    s16 layer);
+                                                    int layer);
 typedef void (*aMR_FTR_ID_2_EXTINGUISH_FURNITURE_PROC)(int ftr_id);
-typedef void (*aMR_REDMA_FTR_BANK_PROC)();
-typedef int (*aMR_RESERVE_FURNITURE_PROC)(GAME_PLAY* play, u16 ftr_no, int judge_res, int ut_x, int ut_z, u16 rotation,
+typedef void (*aMR_REDMA_FTR_BANK_PROC)(void);
+typedef int (*aMR_RESERVE_FURNITURE_PROC)(GAME* game, u16 ftr_no, int judge_res, int ut_x, int ut_z, u16 rotation,
                                           int square_offset, int layer);
 typedef int (*aMR_COUNT_FRIEND_FURNITURE_PROC)(FTR_ACTOR* ftr_actor, u8 switch_on);
 typedef int (*aMR_JUDGE_PLACE_2ND_LAYER_PROC)(int ut_x, int ut_z);
@@ -75,13 +101,13 @@ typedef int (*aMR_PICKUP_FTR_LAYER_PROC)(void);
 typedef void (*aMR_LEAF_PICKUPED_PROC)(void);
 typedef void (*aMR_FAMICOM_EMU_COMMON_MOVE_PROC)(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, int rom_no,
                                                  int agb_rom_no);
-typedef u32 (*aMR_FTR_NO_2_BANK_ADDRESS_PROC)(u16 ftr_no);
+typedef u8* (*aMR_FTR_NO_2_BANK_ADDRESS_PROC)(u16 ftr_no);
 typedef void (*aMR_CALL_SIT_DOWN_ONGEN_POS_SE_PROC)(const xyz_t* pos);
 typedef void (*aMR_SOUND_MELODY_PROC)(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, int idx);
 typedef int (*aMR_CHECK_DANNA_KILL_PROC)(xyz_t* pos);
 
 typedef struct my_room_clip_s {
-    MY_ROOM_ACTOR* my_room_actor_p;
+    ACTOR* my_room_actor_p;
     aMR_JUDGE_BREED_NEW_FTR_PROC judge_breed_new_ftr_proc;
     aMR_SEARCH_PICKUP_FURNITURE_PROC search_pickup_ftr_proc;
     aMR_FURNITURE2ITEMBAG_PROC ftr2itemBag_proc;
@@ -118,12 +144,12 @@ typedef struct room_leaf_s {
 
 typedef struct room_pickup_s {
     int pickup_flag;
-    int ftr_no;
+    int ftrID;
     xyz_t leaf_pos;
     int picking_up_flag;
     s16 layer;
-    u16 dust_effect_timer;
-    u16 icon;
+    s16 dust_effect_timer;
+    s16 icon;
 } aMR_pickup_info_c;
 
 typedef struct room_rsv_ftr_s {
@@ -162,7 +188,7 @@ typedef struct emu_info_s {
     int _10;
     int card_famicom_count;
     int memory_game_select;
-    char** famicom_names_p;
+    char* famicom_names_p;
     s16 save_msg_timer;
     s16 external_rom;
 } aMR_emu_info_c;
@@ -177,6 +203,12 @@ typedef struct room_fit_ftr_s {
     s16 angle_y;
     xyz_t ut_pos;
 } aMR_fit_ftr_c;
+
+typedef struct room_parent_ftr_s {
+    int ftrID;
+    s16 angle_y;
+    aMR_fit_ftr_c fit_ftr_table[aMR_FIT_FTR_MAX];
+} aMR_parent_ftr_c;
 
 struct my_room_actor_s {
     ACTOR actor_class;
@@ -215,7 +247,7 @@ struct my_room_actor_s {
     s16 keep_pull_flag;
     xyz_t pull_target_pos0;
     xyz_t pull_target_pos1;
-    int haniwa_on_table[14];
+    int haniwa_on_table[aMR_HANIWA_ON_TABLE_NUM];
     aMR_bgm_info_c bgm_info;
     aMR_room_info_c room_info;
     aMR_emu_info_c emu_info;
@@ -236,9 +268,7 @@ struct my_room_actor_s {
     int _4F4;
     int room_msg_flag;
     int haniwa_step_idx;
-    int parent_ftrID;
-    s16 parent_angleY;
-    aMR_fit_ftr_c fit_ftr_table[4];
+    aMR_parent_ftr_c parent_ftr;
     u32 music_box[2];
     int scene;
     int _5A4;
@@ -257,10 +287,15 @@ extern int aMR_GetFurnitureUnit(mActor_name_t ftr);
 extern mActor_name_t aMR_FurnitureFg_to_FurnitureFgWithDirect(mActor_name_t ftr, int direct);
 extern void aMR_SameFurnitureSwitchOFF(u16 ftr_name);
 extern aMR_contact_info_c* aMR_GetContactInfoLayer1(void);
-extern FTR_ACTOR* aMR_GetParentFactor();
-extern s16 aMR_GetParentAngleOffset(FTR_ACTOR* ftr_actor, MY_ROOM_ACTOR* my_room_actor);
+extern FTR_ACTOR* aMR_GetParentFactor(FTR_ACTOR* ftr_actor, ACTOR* my_room_actorx);
+extern s16 aMR_GetParentAngleOffset(FTR_ACTOR* ftr_actor, ACTOR* my_room_actorx);
 extern void aMR_SetSurprise(ACTOR* my_room_actor, s16 rot);
 extern void aMR_RadioCommonMove(FTR_ACTOR* ftr_actor, ACTOR* my_room_actorx);
+extern void aMR_SaveWaltzTempo2(void);
+extern u8 aMR_GetAlphaEdge(u16 ftr_name);
+extern int aMR_DrawDolphinMode(u16 ftr_name);
+extern Gfx* aMR_IconNo2Gfx1(int icon_no);
+extern Gfx* aMR_IconNo2Gfx2(int icon_no);
 
 #ifdef __cplusplus
 }

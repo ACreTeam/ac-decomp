@@ -529,7 +529,8 @@ extern int goto_next_scene(GAME_PLAY* play, int next_idx, int update_player_mode
     return res;
 }
 
-extern int goto_emu_game(GAME_PLAY* play, u8 famicom_rom_id) {
+extern int goto_emu_game(GAME* game, s16 famicom_rom_id) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
     PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
     int res = FALSE;
 

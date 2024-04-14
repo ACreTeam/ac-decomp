@@ -77,7 +77,7 @@ extern void famicom_emu_main(GAME* famicom) {
 
     if (famicom_done == 0) {
         if (famicom_rom_load_check() < 0) {
-            Common_Set(famicom_2DBAC, Common_Get(famicom_2DBAC) | 1);
+            Common_Set(my_room_message_control_flags, Common_Get(my_room_message_control_flags) | 1);
             famicom_done = 1;
             famicom_done_countdown = 0;
         } else {
@@ -152,7 +152,7 @@ extern void famicom_emu_init(GAME* game) {
     my_alloc_init(game, freeXfbBase, freeXfbSize);
 
     if (famicom_init(rom_id, &my_malloc_func, player) != 0) {
-        Common_Set(famicom_2DBAC, Common_Get(famicom_2DBAC) | 1);
+        Common_Set(my_room_message_control_flags, Common_Get(my_room_message_control_flags) | 1);
         return_emu_game(game);
     }
 }
@@ -161,7 +161,7 @@ extern void famicom_emu_cleanup(GAME* game) {
     JC_JFWDisplay_startFadeIn(JC_JFWDisplay_getManager(), 1);
 
     if (famicom_cleanup() != 0) {
-        Common_Set(famicom_2DBAC, Common_Get(famicom_2DBAC) | 2);
+        Common_Set(my_room_message_control_flags, Common_Get(my_room_message_control_flags) | 2);
     }
 
     my_alloc_cleanup();
@@ -174,7 +174,7 @@ extern void famicom_emu_cleanup(GAME* game) {
     sAdo_SubGameEnd();
 }
 
-extern int famicom_gba_getImage(u32 rom_id, int* ptr) {
+extern void* famicom_gba_getImage(u32 rom_id, size_t* size) {
     static char* names[] = {
         "cluclu", "usa_balloon",  "donkey", "usa_jr_math", "pinball",  "tennis", "usa_golf",
         NULL,     "usa_baseball", NULL,     "usa_donkey3", "donkeyjr", "soccer", "exbike",
@@ -182,8 +182,7 @@ extern int famicom_gba_getImage(u32 rom_id, int* ptr) {
     };
 
     char buf[256];
-    u32 resource;
-    int block;
+    void* resource;
     char* rom;
 
     if (rom_id > 19) {
@@ -197,9 +196,8 @@ extern int famicom_gba_getImage(u32 rom_id, int* ptr) {
     } else {
         sprintf(buf, "/FAMICOM/GBA/jb_%s.bin.szs", rom);
         resource = JC__JKRGetResource(buf);
-        if ((resource != 0) && (ptr != NULL)) {
-            block = JC__JKRGetMemBlockSize(0, resource);
-            *ptr = block;
+        if ((resource != NULL) && (size != NULL)) {
+            *size = JC__JKRGetMemBlockSize(0, resource);
         }
     }
     return resource;

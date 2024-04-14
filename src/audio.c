@@ -13,7 +13,7 @@
 
 int S_ongenpos_refuse_fg;
 
-static void sAdo_Calc_MicPosition_common(f32* fcalc, u16* scalc, xyz_t* pos) {
+static void sAdo_Calc_MicPosition_common(f32* fcalc, u16* scalc, const xyz_t* pos) {
 
     f32 diff;
     xyz_t posd;
@@ -35,12 +35,12 @@ static void sAdo_Calc_MicPosition_common(f32* fcalc, u16* scalc, xyz_t* pos) {
     }
 }
 
-extern void sAdo_Calc_MicPosition_forTrig(f32* fcalc, u16* scalc, xyz_t* pos) {
+extern void sAdo_Calc_MicPosition_forTrig(f32* fcalc, u16* scalc, const xyz_t* pos) {
 
     sAdo_Calc_MicPosition_common(fcalc, scalc, pos);
 }
 
-extern void sAdo_Calc_MicPosition_forLevel(f32* fcalc, u16* scalc, xyz_t* pos) {
+extern void sAdo_Calc_MicPosition_forLevel(f32* fcalc, u16* scalc, const xyz_t* pos) {
 
     sAdo_Calc_MicPosition_common(fcalc, scalc, pos);
 }
@@ -60,7 +60,7 @@ extern void sAdo_SysTrgStart(u16 id) {
     Na_SysTrgStart(id);
 }
 
-extern void sAdo_PlyWalkSe(int walk, xyz_t* pos) {
+extern void sAdo_PlyWalkSe(int walk, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;
@@ -69,7 +69,7 @@ extern void sAdo_PlyWalkSe(int walk, xyz_t* pos) {
     Na_PlyWalkSe(walk, scalc, fcalc);
 }
 
-extern void sAdo_PlyWalkSeRoom(int walk, xyz_t* pos) {
+extern void sAdo_PlyWalkSeRoom(int walk, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;
@@ -78,7 +78,7 @@ extern void sAdo_PlyWalkSeRoom(int walk, xyz_t* pos) {
     Na_PlyWalkSeRoom(walk, scalc, fcalc);
 }
 
-extern void sAdo_NpcWalkSe(int walk, xyz_t* pos) {
+extern void sAdo_NpcWalkSe(int walk, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;
@@ -87,7 +87,7 @@ extern void sAdo_NpcWalkSe(int walk, xyz_t* pos) {
     Na_NpcWalkSe(walk, scalc, fcalc);
 }
 
-extern void sAdo_NpcWalkSeRoom(int walk, xyz_t* pos) {
+extern void sAdo_NpcWalkSeRoom(int walk, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;
@@ -135,7 +135,7 @@ extern void sAdo_SysLevStop(u8 id) {
     Na_SysLevStop(id);
 }
 
-extern void sAdo_OngenPos(u32 p1, u8 p2, xyz_t* pos) {
+extern void sAdo_OngenPos(u32 p1, u8 p2, const xyz_t* pos) {
 
     u16 scalc;
     f32 fcalc;
@@ -146,7 +146,7 @@ extern void sAdo_OngenPos(u32 p1, u8 p2, xyz_t* pos) {
     }
 }
 
-extern void sAdo_OngenTrgStart(u16 id, xyz_t* pos) {
+extern void sAdo_OngenTrgStart(u16 id, const xyz_t* pos) {
 
     u16 scalc;
     f32 fcalc;
@@ -171,7 +171,7 @@ extern void sAdo_SetVoiceMode(u8 mode) {
     Na_SetVoiceMode(mode);
 }
 
-extern void sAdo_FloorTrgStart(u16 id, xyz_t* pos) {
+extern void sAdo_FloorTrgStart(u8 id, const xyz_t* pos) {
 
     u16 scalc;
     f32 fcalc;
@@ -195,13 +195,13 @@ extern void sAdo_RhythmAllStop() {
     Na_RhythmAllStop();
 }
 
-extern void sAdo_FurnitureInst(int track_id, s8 cb, s32 cl, xyz_t* pos) {
+extern void sAdo_FurnitureInst(u32 id, u8 inst, u8* melody, const xyz_t* pos) {
 
     u16 scalc;
     f32 fcalc;
 
     sAdo_Calc_MicPosition_common(&fcalc, &scalc, pos);
-    Na_FurnitureInst(track_id, cb, cl, scalc, fcalc);
+    Na_FurnitureInst(id, inst, melody, scalc, fcalc);
 }
 
 extern void sAdo_Pause(u8 mode) {
@@ -219,14 +219,13 @@ extern s8 sAdo_GetRhythmDelay(u32 p) {
     return Na_GetRhythmDelay(p);
 }
 
-extern f32 sAdo_GetRhythmInfo(u32 p) {
+extern void sAdo_GetRhythmInfo(TempoBeat_c* rhythm) {
 
-    return Na_GetRhythmInfo(p);
+    Na_GetRhythmInfo(rhythm);
 }
 
-extern void sAdo_SetRhythmInfo(f32 p) {
-
-    Na_SetRhythmInfo(p);
+extern void sAdo_SetRhythmInfo(TempoBeat_c* rhythm) {
+    Na_SetRhythmInfo(rhythm);
 }
 
 extern int sAdo_InstCountGet() {
@@ -234,7 +233,7 @@ extern int sAdo_InstCountGet() {
     return Na_InstCountGet();
 }
 
-extern void sAdo_RhythmPos(u32 p, u8 haniwa_id, xyz_t* pos) {
+extern void sAdo_RhythmPos(u32 p, u8 haniwa_id, const xyz_t* pos) {
 
     u16 scalc;
     f32 fcalc;
@@ -248,7 +247,7 @@ extern void sAdo_SpecChange(int spec) {
     Na_SpecChange(spec);
 }
 
-extern void sAdo_MDPlayerPos(xyz_t* pos, u16 s1, u16 s2, int p) {
+extern void sAdo_MDPlayerPos(const xyz_t* pos, u16 s1, u16 s2, int p) {
 
     u16 scalc;
     f32 fcalc;
@@ -317,7 +316,7 @@ extern void sAdos_TTKK_ARM(u8 mode) {
     Na_TTKK_ARM(mode);
 }
 
-extern void sAdo_OngenTrgStartSpeed(f32 speed, u16 s1, xyz_t* pos) {
+extern void sAdo_OngenTrgStartSpeed(f32 speed, u16 s1, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;
@@ -444,7 +443,7 @@ extern void sAdo_SceneMode(u8 mode) {
     Na_SceneMode(mode);
 }
 
-extern u8 sAdo_RoomIncectPos(u32 f, u16 u, xyz_t* pos) {
+extern u8 sAdo_RoomIncectPos(u32 f, u16 u, const xyz_t* pos) {
 
     u16 scalc;
     f32 fcalc;
@@ -453,13 +452,13 @@ extern u8 sAdo_RoomIncectPos(u32 f, u16 u, xyz_t* pos) {
     return Na_RoomIncectPos(f, u, scalc, fcalc);
 }
 
-extern void sAdo_FurnitureInstPos(u32 f, xyz_t* pos) {
+extern void sAdo_FurnitureInstPos(u32 id, const xyz_t* pos) {
 
     u16 scalc;
     f32 fcalc;
 
     sAdo_Calc_MicPosition_forLevel(&fcalc, &scalc, pos);
-    Na_FurnitureInstPos(f, scalc, fcalc);
+    Na_FurnitureInstPos(id, scalc, fcalc);
 }
 
 extern void sAdo_Set_ongenpos_refuse_fg(int state) {
@@ -477,7 +476,7 @@ extern int sAdo_GetSoundFrameCounter() {
     return Na_GetSoundFrameCounter();
 }
 
-extern int sAdo_CheckOnPlussBridge(xyz_t* pos, u32 atr) {
+extern int sAdo_CheckOnPlussBridge(const xyz_t* pos, u32 atr) {
 
     f32 x;
     f32 z;
@@ -491,7 +490,7 @@ extern int sAdo_CheckOnPlussBridge(xyz_t* pos, u32 atr) {
     return 0;
 }
 
-extern void sAdo_RegistPlussBridge(xyz_t* pos) {
+extern void sAdo_RegistPlussBridge(const xyz_t* pos) {
 
     Common_Set(pluss_bridge_pos, pos);
 }

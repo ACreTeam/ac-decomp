@@ -1,0 +1,2038 @@
+static void aMR_SetSlotString(void) {
+    u8 str[mMsg_FREE_STRING_LEN];
+    int slot = famicom_getErrorChan();
+
+    mString_Load_StringFromRom(str, mMsg_FREE_STRING_LEN, 0x6CD + (slot & 1));
+    mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR4, str, mMsg_FREE_STRING_LEN);
+}
+
+static int aMR_GetCardFamicomCount(void) {
+    int count = 0;
+
+    if (famicom_get_disksystem_titles(&count, NULL, 0) != FALSE) {
+        return count;
+    }
+
+    return 0;
+}
+
+static u8* aMR_GetNameString(MY_ROOM_ACTOR* my_room, int rom_no) {
+    static u8 dummy[FAMICOM_MORI_NAME_LEN] = { 'n', 'o', ' ', 'g', 'a', 'm', 'e', ' ',
+                                               ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
+
+    if (my_room->emu_info.famicom_names_p != NULL && rom_no < my_room->emu_info.card_famicom_count) {
+        return (u8*)my_room->emu_info.famicom_names_p + rom_no * FAMICOM_MORI_NAME_LEN;
+    }
+
+    return dummy;
+}
+
+static void aMR_SetMemoryCardGameIndex(MY_ROOM_ACTOR* my_room, int sub_index) {
+    my_room->emu_info.rom_no = -(my_room->emu_info.memory_game_select + sub_index);
+}
+
+static void aMR_ReportDisplayMemoryGameSelectCount(MY_ROOM_ACTOR* my_room, int add_amount) {
+    my_room->emu_info.memory_game_select += add_amount;
+
+    if (my_room->emu_info.memory_game_select >= my_room->emu_info.card_famicom_count) {
+        my_room->emu_info.memory_game_select = 0;
+    }
+}
+
+static FTR_ACTOR* aMR_GetNowDemoFtr(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    return l_aMR_work.ftr_actor_list + my_room->demo_ftrID;
+}
+
+static void aMR_ChangeDemoFtrStatus(ACTOR* actorx, s16 status) {
+    FTR_ACTOR* ftr_actor = aMR_GetNowDemoFtr(actorx);
+
+    ftr_actor->demo_status = status;
+}
+
+static int aMR_GetMusicCountInMusicBox(void) {
+    int i;
+    int count = 0;
+
+    for (i = 0; i < MINIDISK_NUM; i++) {
+        u32* music_box = Save_Get(scene_no) == SCENE_COTTAGE_MY
+                             ? Save_Get(island).cottage.music_box
+                             : Save_Get(homes[mHS_get_arrange_idx(Common_Get(player_no))]).music_box;
+
+        if (((music_box[(i / 32) & 1] >> (i & 31)) & 1) == 1) {
+            count++;
+        }
+    }
+
+    return count;
+}
+
+static void aMR_MemoryMusicBoxStatus(MY_ROOM_ACTOR* my_room) {
+    u32* music_box = Save_Get(scene_no) == SCENE_COTTAGE_MY
+                         ? Save_Get(island).cottage.music_box
+                         : Save_Get(homes[mHS_get_arrange_idx(Common_Get(player_no))]).music_box;
+    int i;
+
+    for (i = 0; i < 2; i++) {
+        my_room->music_box[i] = music_box[i];
+    }
+}
+
+static void aMR_SetEmulatorMessage_CanSave(ACTOR* actorx) {
+    mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x17B5);
+    mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+    mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+}
+
+static void aMR_SetEmulatorStartMessage(ACTOR* actorx, int internal_rom) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int res;
+
+    Common_Get(my_room_message_control_flags) |= (1 << 2);
+
+    if (internal_rom == TRUE) {
+        res = famicom_internal_data_load();
+    } else {
+        if (Common_Get(player_no) < PLAYER_NUM) {
+            aMR_SetEmulatorMessage_CanSave(actorx);
+            aMR_SetSlotString();
+            return;
+        }
+
+        res = famicom_external_data_save_check();
+    }
+
+    aMR_SetSlotString();
+
+    switch (res) {
+        case FAMICOM_RESULT_OK:
+            my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR;
+            aMR_SetEmulatorMessage_CanSave(actorx);
+            break;
+        case FAMICOM_RESULT_NOSPACE:
+            my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR;
+            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x3B50);
+            mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+            break;
+        case FAMICOM_RESULT_NOENTRY:
+            my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR;
+            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x3B51);
+            mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+            break;
+        case FAMICOM_RESULT_BROKEN:
+            my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR;
+            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x3B52);
+            mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+            break;
+        case FAMICOM_RESULT_WRONGDEVICE:
+            my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR;
+            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x3B53);
+            mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+            break;
+        case FAMICOM_RESULT_WRONGENCODING:
+            my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR;
+            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x3B54);
+            mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+            break;
+        case FAMICOM_RESULT_NOCARD:
+            my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR;
+            mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0, Save_Get(land_info).name, LAND_NAME_SIZE);
+            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x3B55);
+            mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+            break;
+        default:
+            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x3071);
+            mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+            my_room->requested_msg_type = aMR_MSG_STATE_WAIT_FAMICOM_BATU;
+            Common_Get(my_room_message_control_flags) &= ~4;
+            break;
+    }
+}
+
+static void aMR_NoMsgInit(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_NoMsgControl(ACTOR* actorx, GAME* game) {
+    // nothing
+}
+
+static void aMR_MsgControlOwnerNoItem(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int choice = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+
+    if (choice != -1) {
+        switch (choice) {
+            case mChoice_CHOICE0: {
+                if (mSM_check_open_inventory_itemlist(mSM_IV_OPEN_PUTIN_FTR, 0) == FALSE) {
+                    my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+                    mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x0A10);
+                    mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+                } else {
+                    my_room->requested_msg_type = aMR_MSG_STATE_OPEN_SUBMENU;
+                    mMsg_Set_CancelNormalContinue(mMsg_Get_base_window_p());
+                    mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+                }
+
+                break;
+            }
+
+            default: {
+                my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+                mMsg_Set_CancelNormalContinue(mMsg_Get_base_window_p());
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+                break;
+            }
+        }
+    }
+}
+
+static void aMR_MsgInitOwnerWhichPutOut(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    static u8 item_name1[mIN_ITEM_NAME_LEN];
+    static u8 item_name2[mIN_ITEM_NAME_LEN];
+    static u8 item_name3[mIN_ITEM_NAME_LEN];
+    static u8* item_name_table[] = { item_name1, item_name2, item_name3 };
+    u8 cancel_str[mChoice_CHOICE_STRING_LEN];
+    FTR_ACTOR* ftr_actor = l_aMR_work.ftr_actor_list + my_room->demo_ftrID;
+    mChoice_c* choice_win = mChoice_Get_base_window_p();
+    int count;
+    int i;
+
+    aMR_TidyItemInFurniture(ftr_actor);
+    count = aMR_GetItemCountInFurniture(ftr_actor);
+    mChoice_Clear_ChoseNum(choice_win);
+
+    for (i = 0; i < count; i++) {
+        if (ftr_actor->items[i] != EMPTY_NO) {
+            mIN_copy_name_str(item_name_table[i], ftr_actor->items[i]);
+        }
+    }
+
+    if (my_room->msg_type == aMR_MSG_STATE_OWNER_WHICH_PUT_OUT1) {
+        for (i = 0; i < aFTR_KEEP_ITEM_COUNT; i++) {
+            if (ftr_actor->items[i] != EMPTY_NO) {
+                mMsg_Set_item_str_art(mMsg_Get_base_window_p(), i, item_name_table[i], mIN_ITEM_NAME_LEN,
+                                      mIN_get_item_article(ftr_actor->items[i]));
+            }
+        }
+    }
+
+    mChoice_Load_ChoseStringFromRom(choice_win, cancel_str, 0x29, NULL);
+    if (count == 1) {
+        mChoice_Set_choice_data(choice_win, item_name_table[0], mIN_ITEM_NAME_LEN, cancel_str,
+                                mChoice_CHOICE_STRING_LEN, NULL, mIN_ITEM_NAME_LEN, NULL, mIN_ITEM_NAME_LEN, NULL,
+                                mIN_ITEM_NAME_LEN, NULL, mIN_ITEM_NAME_LEN);
+    } else if (count == 2) {
+        mChoice_Set_choice_data(choice_win, item_name_table[0], mIN_ITEM_NAME_LEN, item_name_table[1],
+                                mIN_ITEM_NAME_LEN, cancel_str, mChoice_CHOICE_STRING_LEN, NULL, mIN_ITEM_NAME_LEN, NULL,
+                                mIN_ITEM_NAME_LEN, NULL, mIN_ITEM_NAME_LEN);
+    } else if (count == 3) {
+        mChoice_Set_choice_data(choice_win, item_name_table[0], mIN_ITEM_NAME_LEN, item_name_table[1],
+                                mIN_ITEM_NAME_LEN, item_name_table[2], mIN_ITEM_NAME_LEN, cancel_str,
+                                mChoice_CHOICE_STRING_LEN, NULL, mIN_ITEM_NAME_LEN, NULL, mIN_ITEM_NAME_LEN);
+    }
+}
+
+static void aMR_MsgControlOwnerWhichPutOut(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int choice_no = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+
+    mChoice_Clear_ChoseNum(mChoice_Get_base_window_p());
+    if (choice_no != -1) {
+        FTR_ACTOR* ftr_actor = aMR_GetNowDemoFtr(actorx);
+
+        if (choice_no < aMR_GetItemCountInFurniture(ftr_actor)) {
+            int idx = mPr_GetPossessionItemIdxWithCond(Common_Get(now_private), EMPTY_NO, mPr_ITEM_COND_NORMAL);
+
+            if (idx != -1) {
+                mActor_name_t item = ftr_actor->items[choice_no];
+
+                ftr_actor->items[choice_no] = EMPTY_NO;
+                aMR_TidyItemInFurniture(ftr_actor);
+                my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+                mPr_SetPossessionItem(Common_Get(now_private), idx, item, mPr_ITEM_COND_NORMAL);
+                mMsg_Set_CancelNormalContinue(mMsg_Get_base_window_p());
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            } else {
+                /* Full pockets */
+                my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x0A0E);
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            }
+        } else {
+            /* Cancelled */
+            my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+            mMsg_Set_CancelNormalContinue(mMsg_Get_base_window_p());
+            mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+        }
+    }
+}
+
+static void aMR_MsgInitOwnerWaitWhichPutOut(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p())) {
+        my_room->requested_msg_type = aMR_MSG_STATE_OWNER_WHICH_PUT_OUT3;
+        mChoice_no_b_close_set(mChoice_Get_base_window_p());
+    }
+}
+
+static void aMR_MsgControlOwnerWaitWhichPutOut(ACTOR* actorx, GAME* game) {
+    aMR_MsgInitOwnerWaitWhichPutOut(actorx);
+}
+
+static void aMR_MsgInitOwnerExistItem(ACTOR* actorx) {
+    u8 item_str[mIN_ITEM_NAME_LEN];
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int demo_ftrID = my_room->demo_ftrID;
+    FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[demo_ftrID];
+    int i;
+
+    for (i = 0; i < aFTR_KEEP_ITEM_COUNT; i++) {
+        if (ftr_actor->items[i] != EMPTY_NO) {
+            mIN_copy_name_str(item_str, ftr_actor->items[i]);
+            mMsg_Set_item_str_art(mMsg_Get_base_window_p(), i, item_str, mIN_ITEM_NAME_LEN,
+                                  mIN_get_item_article(ftr_actor->items[i]));
+        }
+    }
+}
+
+static void aMR_MsgControlOwnerExistItem(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int idx = mPr_GetPossessionItemIdxWithCond(Common_Get(now_private), EMPTY_NO, mPr_ITEM_COND_NORMAL);
+    int choice_no = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+
+    mChoice_Clear_ChoseNum(mChoice_Get_base_window_p());
+
+    if (choice_no != -1) {
+        if (choice_no == mChoice_CHOICE0) {
+            if (mSM_check_open_inventory_itemlist(mSM_IV_OPEN_PUTIN_FTR, 0) == FALSE) {
+                my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x0A10);
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            } else {
+                my_room->requested_msg_type = aMR_MSG_STATE_OPEN_SET_ITEM_SUBMENU;
+                mMsg_Set_CancelNormalContinue(mMsg_Get_base_window_p());
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            }
+        } else if (choice_no == mChoice_CHOICE1) {
+            FTR_ACTOR* ftr_actor = aMR_GetNowDemoFtr(actorx);
+
+            if (idx != -1) {
+                mActor_name_t item = ftr_actor->items[0];
+
+                ftr_actor->items[0] = EMPTY_NO;
+                aMR_TidyItemInFurniture(ftr_actor);
+                my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+                mPr_SetPossessionItem(Common_Get(now_private), idx, item, mPr_ITEM_COND_NORMAL);
+                mMsg_Set_CancelNormalContinue(mMsg_Get_base_window_p());
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            } else {
+                /* Full pockets */
+                my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x0A0E);
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            }
+        } else {
+            my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+            mMsg_Set_CancelNormalContinue(mMsg_Get_base_window_p());
+            mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+        }
+    }
+}
+
+static void aMR_MsgControlOwnerExistItem_ItemCount2(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int idx = mPr_GetPossessionItemIdxWithCond(Common_Get(now_private), EMPTY_NO, mPr_ITEM_COND_NORMAL);
+    int choice_no = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+
+    mChoice_Clear_ChoseNum(mChoice_Get_base_window_p());
+
+    if (choice_no != -1) {
+        if (choice_no == mChoice_CHOICE0) {
+            if (mSM_check_open_inventory_itemlist(mSM_IV_OPEN_PUTIN_FTR, 0) == FALSE) {
+                my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x0A10);
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            } else {
+                my_room->requested_msg_type = aMR_MSG_STATE_OPEN_SET_ITEM_SUBMENU;
+                mMsg_Set_CancelNormalContinue(mMsg_Get_base_window_p());
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            }
+        } else if (choice_no == mChoice_CHOICE1) {
+            if (idx != -1) {
+                my_room->requested_msg_type = aMR_MSG_STATE_OWNER_WAIT_WHICH_PUT_OUT;
+                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x2F1E);
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            } else {
+                /* Full pockets */
+                my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), 0x0A0E);
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            }
+        } else {
+            my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+            mMsg_Set_CancelNormalContinue(mMsg_Get_base_window_p());
+            mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+        }
+    }
+}
+
+static void aMR_MsgControlOtherNoItem(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_Check_MainDisappear(mMsg_Get_base_window_p())) {
+        my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+    }
+}
+
+static void aMR_MsgControlOtherExistItem(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_Check_MainDisappear(mMsg_Get_base_window_p())) {
+        my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_FTR;
+    }
+}
+
+static void aMR_MsgInitFullPlayerItem(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_MsgControlFullPlayerItem(ACTOR* actorx, GAME* game) {
+    if (mDemo_Check(mDemo_TYPE_REPORT, actorx) == FALSE) {
+        MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+        my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+    }
+}
+
+static void aMR_MsgControlOpenSubmenu(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Submenu* submenu = &play->submenu;
+
+    if (mDemo_CheckDemo() == FALSE) {
+        mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_PUTIN_FTR, 0);
+        mChoice_Clear_ChoseNum(mChoice_Get_base_window_p());
+        my_room->requested_msg_type = aMR_MSG_STATE_ITEM_PUT_IN;
+    }
+}
+
+static void aMR_MsgControlItemPutIn(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Submenu* submenu = &play->submenu;
+
+    if (submenu->process_status == mSM_PROCESS_WAIT) {
+        Submenu_Item_c* submenu_item = submenu->item_p;
+
+        if (submenu_item != NULL && submenu_item->item != EMPTY_NO) {
+            FTR_ACTOR* ftr_actor = aMR_GetNowDemoFtr(actorx);
+
+            aMR_ItemPutInFurniture(ftr_actor, submenu_item->item);
+        }
+
+        if (mPlib_request_main_close_furniture_type1(game)) {
+            aMR_ChangeDemoFtrStatus(actorx, 5);
+            my_room->requested_msg_type = aMR_MSG_STATE_WAIT_CLOSE_FTR;
+        }
+    }
+}
+
+static void aMR_MsgControlCanNotClean(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+}
+
+static void aMR_MsgControlWaitCloseFtr(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (my_room->demo_flag == TRUE) {
+        FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[my_room->demo_ftrID];
+
+        if (ftr_actor->demo_status == 0) {
+            my_room->demo_flag = FALSE;
+            my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+        }
+    } else {
+        my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+        my_room->demo_ftrID = 0;
+    }
+}
+
+static void aMR_MsgInitRequestCloseFtr(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_MsgControlRequestCloseFtr(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_CHECK_MAINDISAPPEAR() || mMsg_CHECK_MAINHIDE()) {
+        if (mPlib_request_main_close_furniture_type1(game)) {
+            aMR_ChangeDemoFtrStatus(actorx, 5);
+            my_room->requested_msg_type = aMR_MSG_STATE_WAIT_CLOSE_FTR;
+        }
+    }
+}
+
+static void aMR_MsgControlOpenSetItemSubmenu(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Submenu* submenu = &play->submenu;
+
+    if (mDemo_CheckDemo() == FALSE) {
+        mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_PUTIN_FTR, 0);
+        mChoice_Clear_ChoseNum(mChoice_Get_base_window_p());
+        my_room->requested_msg_type = aMR_MSG_STATE_ITEM_SET_SUBMENU;
+    }
+}
+
+static void aMR_MsgControlItemSetSubmenu(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Submenu* submenu = &play->submenu;
+
+    if (submenu->process_status == mSM_PROCESS_WAIT) {
+        Submenu_Item_c* submenu_item = submenu->item_p;
+
+        if (submenu_item != NULL && submenu_item->item != EMPTY_NO) {
+            FTR_ACTOR* ftr_actor = aMR_GetNowDemoFtr(actorx);
+
+            aMR_ItemPutInFurniture(ftr_actor, submenu_item->item);
+        }
+
+        if (mPlib_request_main_close_furniture_type1(game)) {
+            aMR_ChangeDemoFtrStatus(actorx, 5);
+            my_room->requested_msg_type = aMR_MSG_STATE_WAIT_CLOSE_FTR;
+        }
+    }
+}
+
+static void aMR_MsgControlOwnerNoMD(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int choice_no = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+
+    if (choice_no != -1) {
+        switch (choice_no) {
+            case mChoice_CHOICE0: {
+                if (mSM_check_open_inventory_itemlist(mSM_IV_OPEN_MINIDISK, 0) == FALSE) {
+                    my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_MD;
+                    mMsg_SET_CONTINUE_MSG_NUM(0x10BD);
+                    mMsg_UNSET_LOCKCONTINUE();
+                } else {
+                    my_room->requested_msg_type = aMR_MSG_STATE_OPENMD_SUBMENU;
+                    mMsg_SET_CANCELNORMALCONTINUE();
+                    mMsg_UNSET_LOCKCONTINUE();
+                }
+                break;
+            }
+
+            case mChoice_CHOICE1: {
+                if (aMR_GetMusicCountInMusicBox() == 0) {
+                    my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_MD;
+                    mMsg_SET_CONTINUE_MSG_NUM(0x2F28);
+                    mMsg_UNSET_LOCKCONTINUE();
+                } else {
+                    my_room->requested_msg_type = aMR_MSG_STATE_OPEN_MUSIC_BOX;
+                    mMsg_SET_CANCELNORMALCONTINUE();
+                    mMsg_UNSET_LOCKCONTINUE();
+                }
+
+                break;
+            }
+
+            default: {
+                my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_MD;
+                mMsg_SET_CANCELNORMALCONTINUE();
+                mMsg_UNSET_LOCKCONTINUE();
+                break;
+            }
+        }
+    }
+}
+
+static void aMR_MsgInitOwnerExistMD(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int demo_ftrID = my_room->demo_ftrID;
+    FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[demo_ftrID];
+    mActor_name_t item = ftr_actor->items[0];
+    u8 item_name[mIN_ITEM_NAME_LEN];
+
+    mIN_copy_name_str(item_name, item);
+    mMsg_SET_ITEM_STR_ART(mMsg_ITEM_STR0, item_name, mIN_ITEM_NAME_LEN, item);
+}
+
+static void aMR_MsgControlOwnerExistMD(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int choice_no = mChoice_GET_CHOSENUM();
+
+    mChoice_CLEAR_CHOSENUM();
+    if (choice_no != -1) {
+        if (choice_no == mChoice_CHOICE0) {
+            if (mSM_check_open_inventory_itemlist(mSM_IV_OPEN_MINIDISK, 0) == FALSE) {
+                my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_MD;
+                mMsg_SET_CONTINUE_MSG_NUM(0x10BD);
+                mMsg_UNSET_LOCKCONTINUE();
+            } else {
+                my_room->requested_msg_type = aMR_MSG_STATE_OPENMD_SUBMENU;
+                mMsg_SET_CANCELNORMALCONTINUE();
+                mMsg_UNSET_LOCKCONTINUE();
+            }
+        } else if (choice_no == mChoice_CHOICE1) {
+            if (aMR_GetMusicCountInMusicBox() == 0) {
+                my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_MD;
+                mMsg_SET_CONTINUE_MSG_NUM(0x2F28);
+                mMsg_UNSET_LOCKCONTINUE();
+            } else {
+                my_room->requested_msg_type = aMR_MSG_STATE_OPEN_MUSIC_BOX;
+                mMsg_SET_CANCELNORMALCONTINUE();
+                mMsg_UNSET_LOCKCONTINUE();
+            }
+        } else if (choice_no == mChoice_CHOICE2) {
+            my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_MD;
+            aMR_FtrIdx2ChangeFtrSwitch(actorx, my_room->demo_ftrID);
+            mMsg_SET_CANCELNORMALCONTINUE();
+            mMsg_UNSET_LOCKCONTINUE();
+        } else {
+            my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_MD;
+            mMsg_SET_CANCELNORMALCONTINUE();
+            mMsg_UNSET_LOCKCONTINUE();
+        }
+    }
+}
+
+static void aMR_MsgControlOtherNoMD(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_Check_MainDisappear(mMsg_Get_base_window_p())) {
+        my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_MD;
+    }
+}
+
+static void aMR_MsgControlOtherExistMD(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_Check_MainDisappear(mMsg_Get_base_window_p())) {
+        my_room->requested_msg_type = aMR_MSG_STATE_REQUEST_CLOSE_MD;
+        aMR_FtrIdx2ChangeFtrSwitch(actorx, my_room->demo_ftrID);
+    }
+}
+
+static void aMR_MsgControlFullPlayerMD(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+}
+
+static void aMR_MsgControlOpenMusicBox(ACTOR* actorx, GAME* game) {
+    FTR_ACTOR* ftr_actor = aMR_GetNowDemoFtr(actorx);
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Submenu* submenu = &play->submenu;
+
+    if (mDemo_CheckDemo() == FALSE) {
+        int md_idx = (ftr_actor->items[0] >= ITM_MINIDISK_START && ftr_actor->items[0] < ITM_MINIDISK_END)
+                         ? (mActor_name_t)(ftr_actor->items[0] - ITM_MINIDISK_START)
+                         : -1;
+
+        aMR_MemoryMusicBoxStatus(my_room);
+        mSM_open_submenu(submenu, mSM_OVL_MUSIC, md_idx, 0);
+        mChoice_CLEAR_CHOSENUM();
+        my_room->requested_msg_type = aMR_MSG_STATE_MUSIC_BOX_MD_PUT_IN;
+    }
+}
+
+static void aMR_DeleteDirectedMD(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    FTR_ACTOR* ftr_actor = l_aMR_work.ftr_actor_list;
+    u8* used = l_aMR_work.used_list;
+    int i;
+
+    for (i = 0; i < l_aMR_work.list_size; i++) {
+        if (*used) {
+            aFTR_PROFILE* profile = aMR_GetFurnitureProfile(ftr_actor->name);
+
+            if (aFTR_CHECK_INTERACTION(profile->interaction_type, aFTR_INTERACTION_TYPE_MUSIC_DISK) &&
+                (ftr_actor->items[0] >= ITM_MINIDISK_START && ftr_actor->items[0] < ITM_MINIDISK_END)) {
+                int md_idx = (mActor_name_t)(ftr_actor->items[0] - ITM_MINIDISK_START);
+                u32* music_box = Save_Get(scene_no) == SCENE_COTTAGE_MY
+                                     ? Save_Get(island).cottage.music_box
+                                     : Save_Get(homes[mHS_get_arrange_idx(Common_Get(player_no))]).music_box;
+
+                if (((music_box[(md_idx / 32) & 1] >> (md_idx & 31)) & 1) == 0) {
+                    if (ftr_actor->switch_bit == TRUE) {
+                        aMR_AllMDSwitchOff();
+                        ftr_actor->items[0] = EMPTY_NO;
+                        aMR_OneMDSwitchOn_TheOtherSwitchOff(ftr_actor);
+                        aMR_ReserveDefaultBgm(actorx, ftr_actor);
+                        aMR_ChangeMDBgm(actorx, ftr_actor);
+                        sAdo_OngenTrgStart(0x17, &ftr_actor->position);
+                    } else {
+                        ftr_actor->items[0] = EMPTY_NO;
+                        sAdo_OngenTrgStart(0x17, &ftr_actor->position);
+                    }
+
+                    ftr_actor->switch_changed_flag = TRUE;
+                    ftr_actor->switch_bit = FALSE;
+                }
+            }
+        }
+
+        used++;
+        ftr_actor++;
+    }
+}
+
+static void aMR_MsgControlMusicBoxMDPutIn(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Submenu* submenu = &play->submenu;
+
+    if (submenu->process_status == mSM_PROCESS_WAIT) {
+        FTR_ACTOR* ftr_actor = aMR_GetNowDemoFtr(actorx);
+
+        if (submenu->item_p != NULL && submenu->item_p->item != EMPTY_NO) {
+            ftr_actor->items[0] = submenu->item_p->item;
+            aMR_OneMDSwitchOn_TheOtherSwitchOff(ftr_actor);
+            aMR_ReserveBgm(actorx, BGM_MD0 + (ftr_actor->items[0] - ITM_MINIDISK_START), ftr_actor, 0);
+            aMR_ChangeMDBgm(actorx, ftr_actor);
+        } else {
+            aMR_DeleteDirectedMD(actorx);
+        }
+
+        aMR_ChangeDemoFtrStatus(actorx, 5);
+        my_room->requested_msg_type = aMR_MSG_STATE_WAIT_CLOSE_MD;
+    }
+}
+
+static void aMR_MsgControlOpenMDSubmenu(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Submenu* submenu = &play->submenu;
+
+    if (mDemo_CheckDemo() == FALSE) {
+        aMR_MemoryMusicBoxStatus(my_room);
+        mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_MINIDISK, 0);
+        mChoice_CLEAR_CHOSENUM();
+        my_room->requested_msg_type = aMR_MSG_STATE_MD_PUT_IN;
+    }
+}
+
+static void aMR_MsgControlOpenExchangeMDSubmenu(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Submenu* submenu = &play->submenu;
+
+    if (mDemo_CheckDemo() == FALSE) {
+        mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_MINIDISK, 0);
+        mChoice_CLEAR_CHOSENUM();
+        my_room->requested_msg_type = aMR_MSG_STATE_MD_EXCHANGE_SUBMENU;
+    }
+}
+
+static void aMR_MsgControlMDPutIn(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Submenu* submenu = &play->submenu;
+
+    if (submenu->process_status == mSM_PROCESS_WAIT) {
+        FTR_ACTOR* ftr_actor = aMR_GetNowDemoFtr(actorx);
+
+        if (submenu->item_p != NULL && submenu->item_p->item != EMPTY_NO) {
+            ftr_actor->items[0] = submenu->item_p->item;
+            aMR_OneMDSwitchOn_TheOtherSwitchOff(ftr_actor);
+            aMR_ReserveBgm(actorx, BGM_MD0 + (ftr_actor->items[0] - ITM_MINIDISK_START), ftr_actor, 0);
+            aMR_ChangeMDBgm(actorx, ftr_actor);
+        }
+
+        aMR_ChangeDemoFtrStatus(actorx, 5);
+        my_room->requested_msg_type = aMR_MSG_STATE_WAIT_CLOSE_MD;
+    }
+}
+
+static void aMR_MsgControlMDExchangeSubmenu(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Submenu* submenu = &play->submenu;
+
+    if (submenu->process_status == mSM_PROCESS_WAIT) {
+        Submenu_Item_c* submenu_item = submenu->item_p;
+
+        if (submenu_item != NULL && submenu_item->item != EMPTY_NO) {
+            FTR_ACTOR* ftr_actor = aMR_GetNowDemoFtr(actorx);
+
+            mPr_SetFreePossessionItem(Now_Private, ftr_actor->items[0], mPr_ITEM_COND_NORMAL);
+            ftr_actor->items[0] = submenu_item->item;
+            aMR_OneMDSwitchOn_TheOtherSwitchOff(ftr_actor);
+            aMR_ReserveBgm(actorx, BGM_MD0 + (ftr_actor->items[0] - ITM_MINIDISK_START), ftr_actor, 0);
+            aMR_ChangeMDBgm(actorx, ftr_actor);
+        }
+
+        aMR_ChangeDemoFtrStatus(actorx, 5);
+        my_room->requested_msg_type = aMR_MSG_STATE_WAIT_CLOSE_MD;
+    }
+}
+
+static void aMR_MsgControlWaitCloseMD(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (my_room->demo_flag == TRUE) {
+        FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[my_room->demo_ftrID];
+
+        if (ftr_actor->demo_status == 0) {
+            my_room->state = 0;
+            my_room->demo_flag = FALSE;
+            my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+        }
+    } else {
+        my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+        my_room->demo_ftrID = 0;
+    }
+}
+
+static void aMR_MsgInitRequestCloseMD(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_MsgControlRequestCloseMD(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_CHECK_MAINDISAPPEAR() != FALSE || mMsg_CHECK_MAINHIDE() != FALSE) {
+        aMR_ChangeDemoFtrStatus(actorx, 5);
+        my_room->requested_msg_type = aMR_MSG_STATE_WAIT_CLOSE_MD;
+    }
+}
+
+static void aMR_MsgControlCanNotMDClean(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+}
+
+static void aMR_MsgInitPrepareCommunication(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    my_room->agb_connect_tries = 0;
+    mGcgba_InitVar();
+}
+
+static void aMR_MsgControlPrepareCommunication(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_CHECK_MAINNORMALCONTINUE()) {
+        /* Check that the current message is the 'send to GBA' message */
+        if (mMsg_GET_MSG_NUM() == 0x3DCE) {
+            mMsg_SET_LOCKCONTINUE();
+
+            switch (mGcgba_ConnectEnabled()) {
+                case GBA2_GBA_STATE_SUCCESS:
+                    mGcgba_InitVar();
+                    my_room->requested_msg_type = aMR_MSG_STATE_START_EMU_DOWN_LOAD;
+                    break;
+
+                case GBA2_GBA_STATE_TRANSMITTING:
+                    break;
+
+                default:
+                    if (my_room->agb_connect_tries > 60) {
+                        my_room->requested_msg_type = aMR_MSG_STATE_NOT_CONNECT_AGB;
+                        mMsg_SET_CONTINUE_MSG_NUM(0x3DCF); /* GBA is not properly connected */
+                        mMsg_UNSET_LOCKCONTINUE();
+                        mGcgba_EndComm();
+                    }
+
+                    break;
+            }
+
+            my_room->agb_connect_tries++;
+        }
+    }
+}
+
+static void aMR_MsgInitNotConnectAgb(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_MsgControlNotConnectAgb(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_CHECK_MAINDISAPPEAR() || mMsg_CHECK_MAINHIDE()) {
+        my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+        my_room->emu_info.request_flag = FALSE;
+    }
+}
+
+static void aMR_MsgInitCheckAgbProgram(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_MsgControlCheckAgbProgram(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    switch (mGcgba_IsEditor()) {
+        case GBA2_GBA_STATE_ALREADY_EXIST:
+        case GBA2_GBA_STATE_SUCCESS:
+            my_room->requested_msg_type = aMR_MSG_STATE_DELETE_AGB_PROGRAMQ;
+            mMsg_SET_CONTINUE_MSG_NUM(0x3DD0); /* Already has GBA program */
+            mMsg_UNSET_LOCKCONTINUE();
+            break;
+
+        case GBA2_GBA_STATE_ERROR:
+            my_room->requested_msg_type = aMR_MSG_STATE_START_EMU_DOWN_LOAD;
+            break;
+    }
+}
+
+static void aMR_MsgInitDeleteAgbProgramQ(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_MsgControlDeleteAgbProgramQ(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int choice_no = mChoice_GET_CHOSENUM();
+
+    if (choice_no != -1) {
+        switch (choice_no) {
+            case mChoice_CHOICE0:
+                my_room->requested_msg_type = aMR_MSG_STATE_RECHECK_AGB_CONNECT;
+                mMsg_SET_CONTINUE_MSG_NUM(0x3DD2);
+                mMsg_UNSET_LOCKCONTINUE();
+                break;
+            default:
+                my_room->requested_msg_type = aMR_MSG_STATE_NOT_CONNECT_AGB;
+                mMsg_SET_CONTINUE_MSG_NUM(0x3DD1);
+                mMsg_UNSET_LOCKCONTINUE();
+                break;
+        }
+    }
+}
+
+static void aMR_MsgInitStartEmuDownLoad(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    my_room->famicom_agb_image_p = famicom_gba_getImage(my_room->emu_info.agb_rom_no, &my_room->agb_game_size);
+    mGcgba_InitVar();
+    mMsg_SET_LOCKCONTINUE();
+    sAdo_SysLevStart(0x47);
+}
+
+static void aMR_MsgControlStartEmuDownLoad(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    switch (mGcgba_Boot((u8*)my_room->famicom_agb_image_p, my_room->agb_game_size)) {
+        case GBA2_GBA_STATE_SUCCESS:
+            sAdo_SysLevStop(0x47);
+            famicom_gba_removeImage(my_room->famicom_agb_image_p);
+            mGcgba_InitVar();
+            mGcgba_EndComm();
+            my_room->requested_msg_type = aMR_MSG_STATE_NOT_CONNECT_AGB;
+            mMsg_SET_CONTINUE_MSG_NUM(0x3DD3); /* Data transmission complete */
+            mMsg_UNSET_LOCKCONTINUE();
+            mMsg_SET_FORCENEXT();
+            break;
+
+        case GBA2_GBA_STATE_TRANSMITTING:
+            break;
+
+        default:
+            sAdo_SysLevStop(0x47);
+            famicom_gba_removeImage(my_room->famicom_agb_image_p);
+            mGcgba_InitVar();
+            mGcgba_EndComm();
+            my_room->requested_msg_type = aMR_MSG_STATE_NOT_CONNECT_AGB;
+            mMsg_SET_CONTINUE_MSG_NUM(0x3DD4); /* Data transmission failed */
+            mMsg_UNSET_LOCKCONTINUE();
+            mMsg_SET_FORCENEXT();
+            break;
+    }
+}
+
+static void aMR_MsgInitRecheckAgbConnect(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    mGcgba_EndComm();
+    my_room->agb_connect_tries = 0;
+}
+
+static void aMR_MsgControlRecheckAgbConnect(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_CHECK_MAINNORMALCONTINUE()) {
+        /* Check that the current message is the 'reconnect GBA' message */
+        if (mMsg_GET_MSG_NUM() == 0x3DD2) {
+            mMsg_SET_LOCKCONTINUE();
+
+            switch (mGcgba_ConnectEnabled()) {
+                case GBA2_GBA_STATE_SUCCESS:
+                    mGcgba_InitVar();
+                    my_room->requested_msg_type = aMR_MSG_STATE_START_EMU_DOWN_LOAD;
+                    break;
+
+                case GBA2_GBA_STATE_TRANSMITTING:
+                    break;
+
+                default:
+                    if (my_room->agb_connect_tries > 60) {
+                        my_room->requested_msg_type = aMR_MSG_STATE_NOT_CONNECT_AGB;
+                        mMsg_SET_CONTINUE_MSG_NUM(0x3DCF); /* GBA is not properly connected */
+                        mMsg_UNSET_LOCKCONTINUE();
+                    }
+
+                    break;
+            }
+
+            my_room->agb_connect_tries++;
+        }
+    }
+}
+
+static void aMR_MsgInitQqqEmulator(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[my_room->emu_ftrID];
+
+    if (ftr_actor != NULL) {
+        static u8 ftr_name[mIN_ITEM_NAME_LEN];
+        mActor_name_t emu_item = mRmTp_FtrIdx2FtrItemNo(ftr_actor->name, mRmTp_DIRECT_SOUTH);
+
+        mIN_copy_name_str(ftr_name, emu_item);
+        mMsg_SET_FREE_STR_CL_ART(mMsg_FREE_STR1, ftr_name, sizeof(ftr_name), 5, emu_item);
+    }
+}
+
+static void aMR_MsgControlQqqEmulator(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int choice_no = mChoice_GET_CHOSENUM();
+
+    if (choice_no != -1) {
+        mChoice_NO_B_CLOSE_SET();
+
+        switch (choice_no) {
+            case mChoice_CHOICE0:
+                aMR_SetEmulatorStartMessage(actorx, TRUE);
+                break;
+            case mChoice_CHOICE1:
+                if (my_room->emu_info.agb_rom_no != 255) {
+                    my_room->requested_msg_type = aMR_MSG_STATE_PREPARE_COMMUNICATION;
+                    mMsg_SET_CONTINUE_MSG_NUM(0x3DCE); /* GBA */
+                    mMsg_UNSET_LOCKCONTINUE();
+                    mMsg_SET_FORCENEXT();
+                } else {
+                    my_room->requested_msg_type = aMR_MSG_STATE_NOT_CONNECT_AGB;
+                    mMsg_SET_CONTINUE_MSG_NUM(0x3B57); /* Can't play on GBA */
+                    mMsg_SET_FORCENEXT();
+                }
+                break;
+            default:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                my_room->emu_info.request_flag = FALSE;
+                mMsg_SET_CANCELNORMALCONTINUE();
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+        }
+    }
+}
+
+static void aMR_MsgInitWarningCannotMakeSaveFile(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_MsgControlWarningCannotMakeSaveFile(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    /* Check message is 'cannot create a new file' */
+    if (mMsg_GET_MSG_NUM() == 0x306A) {
+        my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR;
+        mMsg_SET_CONTINUE_MSG_NUM(0x17B5); /* Press L+R+Z to quit playing */
+        mMsg_UNSET_LOCKCONTINUE();
+    }
+}
+
+static void aMR_MsgInitExplainEmulator(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_MsgControlExplainEmulator(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    /* Check message is 'cannot create a new file' */
+    if (mMsg_CHECK_MAINDISAPPEAR()) {
+        my_room->emu_info.explaination_given_flag = TRUE;
+        my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+    }
+}
+
+static void aMR_MsgInitQqqEmulatorMemory1(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    mMsg_SET_FREE_STR_CL(mMsg_FREE_STR1, aMR_GetNameString(my_room, 0), mIN_ITEM_NAME_LEN, 5);
+}
+
+static void aMR_MsgControlQqqEmulatorMemory1(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int choice_no = mChoice_GET_CHOSENUM();
+
+    mChoice_NO_B_CLOSE_SET();
+    if (choice_no != -1) {
+        switch (choice_no) {
+            case mChoice_CHOICE0:
+                my_room->emu_info.rom_no = 0;
+                my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR_MEMORY;
+                aMR_SetEmulatorStartMessage(actorx, FALSE);
+                break;
+            case mChoice_CHOICE1:
+                my_room->requested_msg_type = aMR_MSG_STATE_NOT_CONNECT_AGB;
+                mMsg_SET_CONTINUE_MSG_NUM(0x3B57); /* Can't play on GBA */
+                mMsg_SET_FORCENEXT();
+                break;
+            default:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                my_room->emu_info.request_flag = FALSE;
+                mMsg_SET_CANCELNORMALCONTINUE();
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+        }
+    }
+}
+
+static void aMR_MsgInitQqqEmulatorMemory2(ACTOR* actorx) {
+    mChoice_c* choice_win = mChoice_Get_base_window_p();
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    u8 cancel_string[mChoice_CHOICE_STRING_LEN];
+
+    mChoice_Load_ChoseStringFromRom(choice_win, cancel_string, 0x1AB, NULL); /* No thanks. */
+
+    // clang-format off
+    mChoice_Set_choice_data(choice_win,
+        aMR_GetNameString(my_room, 0), mChoice_CHOICE_STRING_LEN,
+        aMR_GetNameString(my_room, 1), mChoice_CHOICE_STRING_LEN,
+        cancel_string, mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN);
+    // clang-format on
+}
+
+static void aMR_MsgControlQqqEmulatorMemory2(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int choice_no = mChoice_GET_CHOSENUM();
+
+    mChoice_NO_B_CLOSE_SET();
+    if (choice_no != -1) {
+        switch (choice_no) {
+            case mChoice_CHOICE0:
+                my_room->emu_info.rom_no = 0;
+                my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR_MEMORY;
+                aMR_SetEmulatorStartMessage(actorx, FALSE);
+                break;
+            case mChoice_CHOICE1:
+                my_room->emu_info.rom_no = -1;
+                my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR_MEMORY;
+                aMR_SetEmulatorStartMessage(actorx, FALSE);
+                break;
+            default:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                my_room->emu_info.request_flag = FALSE;
+                mMsg_SET_CANCELNORMALCONTINUE();
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+        }
+    }
+}
+
+static void aMR_MsgInitQqqEmulatorMemoryOver3(ACTOR* actorx) {
+    mChoice_c* choice_win = mChoice_Get_base_window_p();
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    static u8 cancel_string[mChoice_CHOICE_STRING_LEN];
+    static u8 else_string[mChoice_CHOICE_STRING_LEN];
+
+    mChoice_Load_ChoseStringFromRom(choice_win, cancel_string, 0x1AB, NULL); /* No thanks. */
+    mChoice_Load_ChoseStringFromRom(choice_win, else_string, 0x235, NULL);   /* Something else... */
+
+    // clang-format off
+    mChoice_Set_choice_data(choice_win,
+        aMR_GetNameString(my_room, 0), mChoice_CHOICE_STRING_LEN,
+        aMR_GetNameString(my_room, 1), mChoice_CHOICE_STRING_LEN,
+        else_string, mChoice_CHOICE_STRING_LEN,
+        cancel_string, mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN);
+    // clang-format on
+}
+
+static void aMR_MsgControlQqqEmulatorMemoryOver3(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int choice_no = mChoice_GET_CHOSENUM();
+
+    mChoice_NO_B_CLOSE_SET();
+    if (choice_no != -1) {
+        switch (choice_no) {
+            case mChoice_CHOICE0:
+                my_room->emu_info.rom_no = 0;
+                my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR_MEMORY;
+                aMR_SetEmulatorStartMessage(actorx, FALSE);
+                break;
+            case mChoice_CHOICE1:
+                my_room->emu_info.rom_no = -1;
+                my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR_MEMORY;
+                aMR_SetEmulatorStartMessage(actorx, FALSE);
+                break;
+            case mChoice_CHOICE2:
+                aMR_ReportDisplayMemoryGameSelectCount(my_room, 2);
+                if ((my_room->emu_info.card_famicom_count - my_room->emu_info.memory_game_select) >= 2 ||
+                    (my_room->emu_info.card_famicom_count - my_room->emu_info.memory_game_select) == 0) {
+                    my_room->requested_msg_type = aMR_MSG_STATE_QQQ_REPEAT_DISPLAY2;
+                } else {
+                    my_room->requested_msg_type = aMR_MSG_STATE_QQQ_REPEAT_DISPLAY1;
+                }
+                mMsg_SET_CONTINUE_MSG_NUM(0x3069);
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+            default:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                my_room->emu_info.request_flag = FALSE;
+                mMsg_SET_CANCELNORMALCONTINUE();
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+        }
+    }
+}
+
+static void aMR_MsgInitQqqRepeatDisplay1(ACTOR* actorx) {
+    mChoice_c* choice_win = mChoice_Get_base_window_p();
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    static u8 cancel_string[mChoice_CHOICE_STRING_LEN];
+    static u8 else_string[mChoice_CHOICE_STRING_LEN];
+
+    switch (mChoice_check_main_index(choice_win)) {
+        case mChoice_MAIN_HIDE:
+            mChoice_Load_ChoseStringFromRom(choice_win, cancel_string, 0x1AB, NULL); /* No thanks. */
+            mChoice_Load_ChoseStringFromRom(choice_win, else_string, 0x235, NULL);   /* Something else... */
+
+            // clang-format off
+            mChoice_Set_choice_data(choice_win,
+                aMR_GetNameString(my_room, my_room->emu_info.memory_game_select), mChoice_CHOICE_STRING_LEN,
+                else_string, mChoice_CHOICE_STRING_LEN,
+                cancel_string, mChoice_CHOICE_STRING_LEN,
+                NULL, mChoice_CHOICE_STRING_LEN,
+                NULL, mChoice_CHOICE_STRING_LEN,
+                NULL, mChoice_CHOICE_STRING_LEN);
+            // clang-format on
+            break;
+    }
+}
+
+static void aMR_MsgControlQqqRepeatDisplay1(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int choice_no;
+
+    aMR_MsgInitQqqRepeatDisplay1(actorx);
+    choice_no = mChoice_GET_CHOSENUM();
+    mChoice_NO_B_CLOSE_SET();
+    if (choice_no != -1) {
+        switch (choice_no) {
+            case mChoice_CHOICE0:
+                aMR_SetMemoryCardGameIndex(my_room, 0);
+                my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR_MEMORY;
+                aMR_SetEmulatorStartMessage(actorx, FALSE);
+                aMR_ReportDisplayMemoryGameSelectCount(my_room, 1);
+                break;
+            case mChoice_CHOICE1:
+                aMR_ReportDisplayMemoryGameSelectCount(my_room, 1);
+                if ((my_room->emu_info.card_famicom_count - my_room->emu_info.memory_game_select) >= 2 ||
+                    (my_room->emu_info.card_famicom_count - my_room->emu_info.memory_game_select) == 0) {
+                    my_room->requested_msg_type = aMR_MSG_STATE_QQQ_REPEAT_DISPLAY2;
+                } else if (my_room->msg_type == aMR_MSG_STATE_QQQ_REPEAT_DISPLAY1) {
+                    my_room->requested_msg_type = aMR_MSG_STATE_QQQ_REPEAT_DISPLAY1_2;
+                } else {
+                    my_room->requested_msg_type = aMR_MSG_STATE_QQQ_REPEAT_DISPLAY1;
+                }
+                mMsg_SET_CONTINUE_MSG_NUM(0x3069);
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+            default:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                my_room->emu_info.request_flag = FALSE;
+                mMsg_SET_CANCELNORMALCONTINUE();
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+        }
+    }
+}
+
+static void aMR_MsgInitQqqRepeatDisplay2(ACTOR* actorx) {
+    mChoice_c* choice_win = mChoice_Get_base_window_p();
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    static u8 cancel_string[mChoice_CHOICE_STRING_LEN];
+    static u8 else_string[mChoice_CHOICE_STRING_LEN];
+
+    switch (mChoice_check_main_index(choice_win)) {
+        case mChoice_MAIN_HIDE:
+            mChoice_Load_ChoseStringFromRom(choice_win, cancel_string, 0x1AB, NULL); /* No thanks. */
+            mChoice_Load_ChoseStringFromRom(choice_win, else_string, 0x235, NULL);   /* Something else... */
+
+            // clang-format off
+            mChoice_Set_choice_data(choice_win,
+                aMR_GetNameString(my_room, my_room->emu_info.memory_game_select), mChoice_CHOICE_STRING_LEN,
+                aMR_GetNameString(my_room, my_room->emu_info.memory_game_select + 1), mChoice_CHOICE_STRING_LEN,
+                else_string, mChoice_CHOICE_STRING_LEN,
+                cancel_string, mChoice_CHOICE_STRING_LEN,
+                NULL, mChoice_CHOICE_STRING_LEN,
+                NULL, mChoice_CHOICE_STRING_LEN);
+            // clang-format on
+            break;
+    }
+}
+
+static void aMR_MsgControlQqqRepeatDisplay2(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int choice_no;
+
+    aMR_MsgInitQqqRepeatDisplay2(actorx);
+    choice_no = mChoice_GET_CHOSENUM();
+    mChoice_NO_B_CLOSE_SET();
+    if (choice_no != -1) {
+        switch (choice_no) {
+            case mChoice_CHOICE0:
+                aMR_SetMemoryCardGameIndex(my_room, 0);
+                my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR_MEMORY;
+                aMR_SetEmulatorStartMessage(actorx, FALSE);
+                break;
+            case mChoice_CHOICE1:
+                aMR_SetMemoryCardGameIndex(my_room, 1);
+                my_room->requested_msg_type = aMR_MSG_STATE_EXPLAIN_EMULATOR_MEMORY;
+                aMR_SetEmulatorStartMessage(actorx, FALSE);
+                break;
+            case mChoice_CHOICE2:
+                aMR_ReportDisplayMemoryGameSelectCount(my_room, 2);
+                if ((my_room->emu_info.card_famicom_count - my_room->emu_info.memory_game_select) >= 2 ||
+                    (my_room->emu_info.card_famicom_count - my_room->emu_info.memory_game_select) == 0) {
+                    if (my_room->msg_type == aMR_MSG_STATE_QQQ_REPEAT_DISPLAY2) {
+                        my_room->requested_msg_type = aMR_MSG_STATE_QQQ_REPEAT_DISPLAY2_2;
+                    } else {
+                        my_room->requested_msg_type = aMR_MSG_STATE_QQQ_REPEAT_DISPLAY2;
+                    }
+                } else {
+                    my_room->requested_msg_type = aMR_MSG_STATE_QQQ_REPEAT_DISPLAY1;
+                }
+                mMsg_SET_CONTINUE_MSG_NUM(0x3069);
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+            default:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                my_room->emu_info.request_flag = FALSE;
+                mMsg_SET_CANCELNORMALCONTINUE();
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+        }
+    }
+}
+
+static void aMR_MsgInitExplainEmulatorMemory(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_MsgControlExplainEmulatorMemory(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_CHECK_MAINDISAPPEAR()) {
+        my_room->emu_info.explaination_given_flag = TRUE;
+        my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+    }
+}
+
+static void aMR_MsgInitNoPackNoData(ACTOR* actorx) {
+    aMR_SetSlotString();
+}
+
+static void aMR_MsgControlNoPackNoData(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_CHECK_MAINDISAPPEAR()) {
+        my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+        mMsg_SET_CANCELNORMALCONTINUE();
+        mMsg_UNSET_LOCKCONTINUE();
+        my_room->room_msg_flag = FALSE;
+    }
+}
+
+static void aMR_MsgInitWaitFamicomBatu(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_MsgControlWaitFamicomBatu(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_CHECK_MAINDISAPPEAR() || mMsg_CHECK_MAINHIDE()) {
+        my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+        my_room->emu_info.request_flag = FALSE;
+    }
+}
+
+static void aMR_MsgInitSaveFamicom(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    my_room->emu_info.save_msg_timer = 240;
+    my_room->emu_info.external_rom = (Common_Get(my_room_message_control_flags >> 3) & 1) ^ 1;
+    Common_Get(my_room_message_control_flags) &= ~(1 << 3);
+    Common_Get(my_room_message_control_flags) &= ~(1 << 4);
+    mMsg_SET_LOCKCONTINUE();
+    aMR_SetSlotString();
+}
+
+static void aMR_MsgControlSaveFamicom(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (my_room->emu_info.save_msg_timer > 0) {
+        my_room->emu_info.save_msg_timer--;
+    } else {
+        my_room->emu_info.save_msg_timer = 0;
+    }
+
+    if (my_room->emu_info.save_msg_timer == 0 && mMsg_CHECK_MAINNORMALCONTINUE()) {
+        int save_res;
+
+        if (my_room->emu_info.external_rom == FALSE) {
+            save_res = famicom_internal_data_save();
+        } else {
+            save_res = famicom_external_data_save();
+        }
+
+        aMR_SetSlotString();
+        switch (save_res) {
+            case FAMICOM_RESULT_OK:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                mMsg_REQUEST_MAIN_DISAPPEAR();
+                break;
+            case FAMICOM_RESULT_NOSPACE:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                mMsg_SET_CONTINUE_MSG_NUM(0x2B6C);
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+            case FAMICOM_RESULT_NOENTRY:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                mMsg_SET_CONTINUE_MSG_NUM(0x2B6D);
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+            case FAMICOM_RESULT_BROKEN:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                mMsg_SET_CONTINUE_MSG_NUM(0x2B6E);
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+            case FAMICOM_RESULT_WRONGDEVICE:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                mMsg_SET_CONTINUE_MSG_NUM(0x2B6F);
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+            case FAMICOM_RESULT_WRONGENCODING:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                mMsg_SET_CONTINUE_MSG_NUM(0x2B70);
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+            case FAMICOM_RESULT_NOCARD:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                mMsg_SET_FREE_STR(mMsg_FREE_STR0, Save_Get(land_info).name, LAND_NAME_SIZE);
+                mMsg_SET_CONTINUE_MSG_NUM(0x2B71);
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+            case FAMICOM_RESULT_NOFILE:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+                mMsg_SET_CONTINUE_MSG_NUM(0x3B56);
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+            default:
+                my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+
+                if (my_room->emu_info.external_rom == TRUE) {
+                    mMsg_SET_CONTINUE_MSG_NUM(0x3072);
+                } else {
+                    mMsg_SET_CONTINUE_MSG_NUM(0x3072);
+                }
+
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_SET_FORCENEXT();
+                break;
+        }
+
+        my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+        my_room->room_msg_flag = FALSE;
+    }
+}
+
+static void aMR_MsgInitHitokoto(ACTOR* actorx) {
+    // nothing
+}
+
+static void aMR_MsgControlHitokoto(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    if (mMsg_CHECK_MAINDISAPPEAR()) {
+        my_room->requested_msg_type = aMR_MSG_STATE_NONE;
+        my_room->state = 0;
+    }
+}
+
+typedef void (*aMR_MSG_INIT_PROC)(ACTOR*);
+typedef void (*aMR_MSG_CTRL_PROC)(ACTOR*, GAME*);
+
+// clang-format off
+static aMR_MSG_INIT_PROC msg_init_table[aMR_MSG_STATE_NUM] = {
+    &aMR_NoMsgInit,
+    &aMR_NoMsgInit,
+    &aMR_NoMsgInit,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerWhichPutOut,
+    &aMR_MsgInitOwnerWhichPutOut,
+    &aMR_MsgInitOwnerWhichPutOut,
+    &aMR_MsgInitOwnerWaitWhichPutOut,
+    &aMR_NoMsgInit,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitFullPlayerItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_NoMsgInit,
+    &aMR_MsgInitRequestCloseFtr,
+    &aMR_NoMsgInit,
+    &aMR_NoMsgInit,
+    &aMR_NoMsgInit,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_NoMsgInit,
+    &aMR_NoMsgInit,
+    &aMR_MsgInitOwnerExistMD,
+    &aMR_MsgInitOwnerExistMD,
+    &aMR_NoMsgInit,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_NoMsgInit,
+    &aMR_MsgInitRequestCloseMD,
+    &aMR_NoMsgInit,
+    &aMR_NoMsgInit,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitOwnerExistItem,
+    &aMR_MsgInitQqqEmulator,
+    &aMR_MsgInitExplainEmulator,
+    &aMR_MsgInitQqqEmulatorMemory1,
+    &aMR_MsgInitExplainEmulatorMemory,
+    &aMR_MsgInitQqqEmulatorMemory2,
+    &aMR_MsgInitQqqEmulatorMemoryOver3,
+    &aMR_MsgInitQqqRepeatDisplay1,
+    &aMR_MsgInitQqqRepeatDisplay1,
+    &aMR_MsgInitQqqRepeatDisplay2,
+    &aMR_MsgInitQqqRepeatDisplay2,
+    &aMR_MsgInitNoPackNoData,
+    &aMR_MsgInitWarningCannotMakeSaveFile,
+    &aMR_MsgInitNoPackNoData,
+    &aMR_MsgInitNoPackNoData,
+    &aMR_MsgInitHitokoto,
+    &aMR_MsgInitHitokoto,
+    &aMR_MsgInitHitokoto,
+    &aMR_MsgInitSaveFamicom,
+    &aMR_MsgInitWaitFamicomBatu,
+    &aMR_MsgInitPrepareCommunication,
+    &aMR_MsgInitNotConnectAgb,
+    &aMR_MsgInitCheckAgbProgram,
+    &aMR_MsgInitDeleteAgbProgramQ,
+    &aMR_MsgInitStartEmuDownLoad,
+    &aMR_MsgInitRecheckAgbConnect,
+};
+// clang-format on
+
+// clang-format off
+static aMR_MSG_CTRL_PROC msg_ctrl_table[aMR_MSG_STATE_NUM] = {
+    &aMR_NoMsgControl,
+    &aMR_NoMsgControl,
+    &aMR_MsgControlOwnerNoItem,
+    &aMR_MsgControlOwnerExistItem,
+    &aMR_MsgControlOwnerExistItem_ItemCount2,
+    &aMR_MsgControlOwnerWhichPutOut,
+    &aMR_MsgControlOwnerWhichPutOut,
+    &aMR_MsgControlOwnerWhichPutOut,
+    &aMR_MsgControlOwnerWaitWhichPutOut,
+    &aMR_MsgControlOtherNoItem,
+    &aMR_MsgControlOtherExistItem,
+    &aMR_MsgControlOtherExistItem,
+    &aMR_MsgControlOtherExistItem,
+    &aMR_MsgControlFullPlayerItem,
+    &aMR_MsgControlOpenSubmenu,
+    &aMR_MsgControlItemPutIn,
+    &aMR_MsgControlWaitCloseFtr,
+    &aMR_MsgControlRequestCloseFtr,
+    &aMR_NoMsgControl,
+    &aMR_MsgControlCanNotClean,
+    &aMR_MsgControlCanNotClean,
+    &aMR_MsgControlOpenSetItemSubmenu,
+    &aMR_MsgControlItemSetSubmenu,
+    &aMR_NoMsgControl,
+    &aMR_MsgControlOwnerNoMD,
+    &aMR_MsgControlOwnerExistMD,
+    &aMR_MsgControlOwnerExistMD,
+    &aMR_MsgControlOtherNoMD,
+    &aMR_MsgControlOtherExistMD,
+    &aMR_MsgControlFullPlayerMD,
+    &aMR_MsgControlOpenMDSubmenu,
+    &aMR_MsgControlMDPutIn,
+    &aMR_MsgControlOpenMusicBox,
+    &aMR_MsgControlMusicBoxMDPutIn,
+    &aMR_MsgControlWaitCloseMD,
+    &aMR_MsgControlRequestCloseMD,
+    &aMR_NoMsgControl,
+    &aMR_MsgControlCanNotMDClean,
+    &aMR_MsgControlOpenExchangeMDSubmenu,
+    &aMR_MsgControlMDExchangeSubmenu,
+    &aMR_MsgControlQqqEmulator,
+    &aMR_MsgControlExplainEmulator,
+    &aMR_MsgControlQqqEmulatorMemory1,
+    &aMR_MsgControlExplainEmulatorMemory,
+    &aMR_MsgControlQqqEmulatorMemory2,
+    &aMR_MsgControlQqqEmulatorMemoryOver3,
+    &aMR_MsgControlQqqRepeatDisplay1,
+    &aMR_MsgControlQqqRepeatDisplay1,
+    &aMR_MsgControlQqqRepeatDisplay2,
+    &aMR_MsgControlQqqRepeatDisplay2,
+    &aMR_MsgControlNoPackNoData,
+    &aMR_MsgControlWarningCannotMakeSaveFile,
+    &aMR_MsgControlNoPackNoData,
+    &aMR_MsgControlNoPackNoData,
+    &aMR_MsgControlHitokoto,
+    &aMR_MsgControlHitokoto,
+    &aMR_MsgControlHitokoto,
+    &aMR_MsgControlSaveFamicom,
+    &aMR_MsgControlWaitFamicomBatu,
+    &aMR_MsgControlPrepareCommunication,
+    &aMR_MsgControlNotConnectAgb,
+    &aMR_MsgControlCheckAgbProgram,
+    &aMR_MsgControlDeleteAgbProgramQ,
+    &aMR_MsgControlStartEmuDownLoad,
+    &aMR_MsgControlRecheckAgbConnect,
+};
+// clang-format on
+
+#define aMR_NO_MSG (-1)
+
+// clang-format off
+static int aMR_msg_no_table[aMR_MSG_STATE_NUM] = {
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    0x0A0A,
+    0x0A0B,
+    0x2F1A,
+    0x2F1B,
+    0x2F1E,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    0x0A0C,
+    0x0A0D,
+    0x2F1C,
+    0x2F1D,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    0x2F1F,
+    0x2F1F,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    0x10B7,
+    0x10BE,
+    0x10B8,
+    0x10B9,
+    0x10BA,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    0x10BC,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    0x2B72,
+    aMR_NO_MSG,
+    0x2B72,
+    aMR_NO_MSG,
+    0x3068,
+    0x3068,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    0x2B69,
+    aMR_NO_MSG,
+    0x306C,
+    0x306B,
+    0x3A8A,
+    0x3AF1,
+    0x3B58,
+    0x2B6B,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+    aMR_NO_MSG,
+};
+// clang-format on
+
+// clang-format off
+static int aMR_none_talk_proc[aMR_MSG_STATE_NUM] = {
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE,
+    TRUE,
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    FALSE,
+    TRUE,
+    TRUE,
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+};
+// clang-format on
+
+// clang-format off
+static int aMR_force_talk_flag[aMR_MSG_STATE_NUM] = {
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    TRUE,
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    TRUE,
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE,
+    TRUE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+};
+// clang-format on
+
+// clang-format off
+static int aMR_window_se_flag[aMR_MSG_STATE_NUM] = {
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    FALSE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+    TRUE,
+};
+// clang-format on
+
+static rgba_t aMR_window_color = { 255, 255, 20, 255 };
+
+static int aMR_GetMessageNum(s16 msg_state, MY_ROOM_ACTOR* my_room) {
+    FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[my_room->demo_ftrID];
+    if (msg_state == aMR_MSG_STATE_OTHER_NO_ITEM) {
+        if (Save_Get(scene_no) == SCENE_NPC_HOUSE || Save_Get(scene_no) == SCENE_COTTAGE_NPC) {
+            return 0x2988 + ((ftr_actor->name + my_room->demo_ftrID) & 0xF);
+        }
+    }
+
+    return aMR_msg_no_table[msg_state];
+}
+
+static void aMR_speak_set(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    mDemo_Set_msg_num(aMR_GetMessageNum(my_room->msg_type, my_room));
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+    mDemo_Set_ListenAble();
+    mDemo_Set_talk_window_color(&aMR_window_color);
+    mMsg_SET_CONTINUE_MSG_NUM(-1);
+}
+
+static void aMR_report_set(ACTOR* actorx) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+
+    mDemo_Set_msg_num(aMR_GetMessageNum(my_room->msg_type, my_room));
+    mDemo_Set_ListenAble();
+    mDemo_Set_use_zoom_sound(aMR_window_se_flag[my_room->msg_type] & 1);
+    mDemo_Set_talk_window_color(&aMR_window_color);
+    mMsg_SET_CONTINUE_MSG_NUM(-1);
+}
+
+static void aMR_MessageControl(ACTOR* actorx, GAME* game) {
+    MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
+    int demo_type;
+
+    if (aMR_force_talk_flag[my_room->requested_msg_type]) {
+        demo_type = mDemo_TYPE_SPEAK;
+    } else {
+        demo_type = mDemo_TYPE_REPORT;
+    }
+
+    if (my_room->requested_msg_type != my_room->msg_type && my_room->emu_info.explaination_given_flag == FALSE) {
+        if (aMR_msg_no_table[my_room->requested_msg_type] != aMR_NO_MSG) {
+            if (mDemo_Check(demo_type, actorx) == FALSE &&
+                mDemo_Request(demo_type, actorx, demo_type == mDemo_TYPE_SPEAK ? &aMR_speak_set : &aMR_report_set)) {
+                my_room->msg_type = my_room->requested_msg_type;
+                mChoice_NO_B_CLOSE_SET();
+                (*msg_init_table[my_room->msg_type])(actorx);
+                mChoice_CLEAR_CHOSENUM();
+            }
+        } else {
+            my_room->msg_type = my_room->requested_msg_type;
+            mChoice_NO_B_CLOSE_SET();
+            (*msg_init_table[my_room->msg_type])(actorx);
+            mChoice_CLEAR_CHOSENUM();
+        }
+    }
+
+    if (aMR_force_talk_flag[my_room->msg_type]) {
+        demo_type = mDemo_TYPE_SPEAK;
+    } else {
+        demo_type = mDemo_TYPE_REPORT;
+    }
+
+    if (mDemo_Check(demo_type, actorx)) {
+        (*msg_ctrl_table[my_room->msg_type])(actorx, game);
+    } else if (aMR_none_talk_proc[my_room->msg_type] == TRUE) {
+        (*msg_ctrl_table[my_room->msg_type])(actorx, game);
+    }
+
+    if (my_room->emu_info.request_flag == TRUE && my_room->emu_info.explaination_given_flag == TRUE &&
+        mDemo_CheckDemo() == FALSE) {
+        int rom_no = my_room->emu_info.rom_no;
+
+        if (rom_no <= 0) {
+            rom_no--;
+        }
+
+        aMR_SaveWaltzTempo2();
+        if (goto_emu_game(game, rom_no) == TRUE) {
+            mBGMPsComp_scene_mode(0x11);
+            mPlib_request_main_refuse_type1(game);
+            my_room->emu_info.request_flag = FALSE;
+
+            if (rom_no < 0) {
+                Common_Get(my_room_message_control_flags) |= (1 << 4);
+            } else {
+                Common_Get(my_room_message_control_flags) |= (1 << 3);
+            }
+        }
+    }
+
+    if ((Common_Get(my_room_message_control_flags) & (1 << 0))) {
+        my_room->requested_msg_type = aMR_MSG_STATE_NO_PACK_NO_DATA2;
+        my_room->room_msg_flag = TRUE;
+        Common_Get(my_room_message_control_flags) &= ~(1 << 0);
+        Common_Get(my_room_message_control_flags) &= ~(1 << 3);
+        Common_Get(my_room_message_control_flags) &= ~(1 << 4);
+        ;
+    }
+
+    if ((Common_Get(my_room_message_control_flags) >> 3) & 1) {
+        my_room->requested_msg_type = aMR_MSG_STATE_SAVE_FAMICOM;
+        my_room->room_msg_flag = TRUE;
+    } else if ((Common_Get(my_room_message_control_flags) & (1 << 4))) {
+        my_room->requested_msg_type = aMR_MSG_STATE_SAVE_FAMICOM;
+        my_room->room_msg_flag = TRUE;
+    }
+}

@@ -2,3 +2,4 @@ path: dump/foresta.rel
 address: 0x803701C0
 bss_address: 0x8125A7C0
 dol: config/dol.yml
+label_prefix: ".L"

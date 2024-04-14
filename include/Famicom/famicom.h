@@ -21,7 +21,7 @@ extern "C" {
 #define NESTAG_GID "GID"
 #define NESTAG_GNM "GNM"
 #define NESTAG_CPN "CPN"
-#define NESTAG_OFS "OFS"  /* Offset into the shared highscore data to read/write at */
+#define NESTAG_OFS "OFS" /* Offset into the shared highscore data to read/write at */
 #define NESTAG_HSC "HSC"
 #define NESTAG_GNO "GNO"
 #define NESTAG_BBR "BBR"
@@ -47,121 +47,121 @@ typedef void* (*MALLOC_ALIGN_FUNC)(size_t size, u32 align);
 typedef void (*MALLOC_FREE_FUNC)(void* ptr);
 typedef int (*MALLOC_GETMEMBLOCKSIZE_FUNC)(void* ptr);
 typedef int (*MALLOC_GETTOTALFREESIZE_FUNC)();
- 
+
 typedef struct malloc_s {
-  MALLOC_ALIGN_FUNC malloc_align;
-  MALLOC_FREE_FUNC free;
-  MALLOC_GETMEMBLOCKSIZE_FUNC getmemblocksize;
-  MALLOC_GETTOTALFREESIZE_FUNC gettotalfreesize;
+    MALLOC_ALIGN_FUNC malloc_align;
+    MALLOC_FREE_FUNC free;
+    MALLOC_GETMEMBLOCKSIZE_FUNC getmemblocksize;
+    MALLOC_GETTOTALFREESIZE_FUNC gettotalfreesize;
 } Famicom_MallocInfo;
 
 enum filer_demo_mode {
-  FILER_DEMO_MODE_NORMAL,
-  FILER_DEMO_MODE_AUTO,
+    FILER_DEMO_MODE_NORMAL,
+    FILER_DEMO_MODE_AUTO,
 
-  FILER_DEMO_MODE_NUM
+    FILER_DEMO_MODE_NUM
 };
 
 #define FAMICOM_SAVE_DATA_NAME_LEN 8
+#define FAMICOM_MORI_NAME_LEN 16
 
 typedef struct FamicomSaveDataHeader {
-  u8 name[FAMICOM_SAVE_DATA_NAME_LEN];
-  u8 _08;
-  u8 _09;
-  u8 headerSize;
-  u8 checksum;
-  u16 size;
-  u8 no_save;
-  u8 _temp[FAMICOM_SAVE_HEADER_SIZE - 0x000F];
+    u8 name[FAMICOM_SAVE_DATA_NAME_LEN];
+    u8 _08;
+    u8 _09;
+    u8 headerSize;
+    u8 checksum;
+    u16 size;
+    u8 no_save;
+    u8 _temp[FAMICOM_SAVE_HEADER_SIZE - 0x000F];
 } FamicomSaveDataHeader;
 
 enum {
-  MEMCARD_COMMENT_TYPE_NONE,
-  MEMCARD_COMMENT_TYPE_DEFAULT,
-  MEMCARD_COMMENT_TYPE_COPY_ROM, // converts rom's comment but converts "] ROM" to "] SAVE"
-  MEMCARD_COMMENT_TYPE_COPY_EMBEDDED // uses the embedded and unique 'save' comment
+    MEMCARD_COMMENT_TYPE_NONE,
+    MEMCARD_COMMENT_TYPE_DEFAULT,
+    MEMCARD_COMMENT_TYPE_COPY_ROM,     // converts rom's comment but converts "] ROM" to "] SAVE"
+    MEMCARD_COMMENT_TYPE_COPY_EMBEDDED // uses the embedded and unique 'save' comment
 };
 
 enum {
-  MEMCARD_BANNER_TYPE_NONE,
-  MEMCARD_BANNER_TYPE_DEFAULT,
-  MEMCARD_BANNER_TYPE_COPY_ROM, // copies the NES rom save's banner
-  MEMCARD_BANNER_TYPE_COPY_EMBEDDED // uses the embedded and unique 'save' banner
+    MEMCARD_BANNER_TYPE_NONE,
+    MEMCARD_BANNER_TYPE_DEFAULT,
+    MEMCARD_BANNER_TYPE_COPY_ROM,     // copies the NES rom save's banner
+    MEMCARD_BANNER_TYPE_COPY_EMBEDDED // uses the embedded and unique 'save' banner
 };
 
 enum {
-  MEMCARD_ICON_TYPE_NONE,
-  MEMCARD_ICON_TYPE_DEFAULT,
-  MEMCARD_ICON_TYPE_COPY_ROM, // copies the NES rom save's icon
-  MEMCARD_ICON_TYPE_COPY_EMBEDDED // uses the embedded and unique 'save' icon
+    MEMCARD_ICON_TYPE_NONE,
+    MEMCARD_ICON_TYPE_DEFAULT,
+    MEMCARD_ICON_TYPE_COPY_ROM,     // copies the NES rom save's icon
+    MEMCARD_ICON_TYPE_COPY_EMBEDDED // uses the embedded and unique 'save' icon
 };
 
 enum {
-  FAMICOM_RESULT_OK,
-  FAMICOM_RESULT_NOSPACE,
-  FAMICOM_RESULT_NOENTRY,
-  FAMICOM_RESULT_BROKEN,
-  FAMICOM_RESULT_WRONGDEVICE,
-  FAMICOM_RESULT_WRONGENCODING,
-  FAMICOM_RESULT_NOCARD,
-  FAMICOM_RESULT_NOFILE
+    FAMICOM_RESULT_OK,
+    FAMICOM_RESULT_NOSPACE,
+    FAMICOM_RESULT_NOENTRY,
+    FAMICOM_RESULT_BROKEN,
+    FAMICOM_RESULT_WRONGDEVICE,
+    FAMICOM_RESULT_WRONGENCODING,
+    FAMICOM_RESULT_NOCARD,
+    FAMICOM_RESULT_NOFILE
 };
 
 typedef struct MemcardGameHeader_t {
-  u8 _00;
-  u8 _01;
-  u8 mori_name[16];
-  u16 nesrom_size;
-  u16 nestags_size;
-  u16 icon_format;
-  u16 icon_flags;
-  u16 comment_img_size; /* Size of comment + banner + icon */
-  struct {
-    u8 has_comment_img:1;
-    u8 comment_type:2;
-    u8 banner_type:2;
-    u8 icon_type:2;
-    u8 no_copy_flag:1;
-  } flags0;
-  struct {
-    u8 no_move_flag:1;
-    u8 banner_fmt:2;
-    u8 reserved:5;
-  } flags1;
-  u16 pad;
+    u8 _00;
+    u8 _01;
+    u8 mori_name[FAMICOM_MORI_NAME_LEN];
+    u16 nesrom_size;
+    u16 nestags_size;
+    u16 icon_format;
+    u16 icon_flags;
+    u16 comment_img_size; /* Size of comment + banner + icon */
+    struct {
+        u8 has_comment_img : 1;
+        u8 comment_type : 2;
+        u8 banner_type : 2;
+        u8 icon_type : 2;
+        u8 no_copy_flag : 1;
+    } flags0;
+    struct {
+        u8 no_move_flag : 1;
+        u8 banner_fmt : 2;
+        u8 reserved : 5;
+    } flags1;
+    u16 pad;
 } MemcardGameHeader_t;
 
 /* sizeof (FamicomCommon) == 0xB8 */
 typedef struct FamicomCommon {
-  /* 0x00 */ ksNesCommonWorkObj* wp;
-  /* 0x04 */ ksNesStateObj* sp;
-  /* 0x08 */ u8* nesromp;
-  /* 0x0C */ u8* chrramp;
-  /* 0x10 */ u8* bbramp;
-  /* 0x14 */ u8* noise_bufp;
-  /* 0x18 */ u8* chr_to_i8_bufp;
-  /* 0x1C */ u8* result_bufp;
-  /* 0x20 */ u8* highscore_flagsp;
-  /* 0x24 */ u8* nesinfo_tagsp;
-  /* 0x28 */ int _28;
-  /* 0x2C */ u8 nesrom_memcard; // TRUE: rom is loaded from memcard, FALSE: rom is loaded internally
-  /* 0x2D */ u8 rom_no;
-  /* 0x2E */ s8 save_pl_no;
-  /* 0x2F */ u8 mura_save_name[33];
-  /* 0x50 */ u8 famicom_save_name[33];
-  /* 0x74 */ FamicomSaveDataHeader* save_data_header;
-  /* 0x78 */ u8* internal_save_datap;
-  /* 0x7C */ size_t save_data_total_size;
-  /* 0x80 */ size_t save_data_single_size;
-  /* 0x84 */ int _84;
-  /* 0x88 */ u8* save_data_name;
-  /* 0x8C */ u8 _8C;
-  /* 0x8D */ u8 low_res_mode;
-  /* 0x8E */ MemcardGameHeader_t memcard_game_header;
-  /* 0xB0 */ u8* memcard_save_comment;
-  /* 0xB4 */ size_t unused_save_data_start_ofs;
+    /* 0x00 */ ksNesCommonWorkObj* wp;
+    /* 0x04 */ ksNesStateObj* sp;
+    /* 0x08 */ u8* nesromp;
+    /* 0x0C */ u8* chrramp;
+    /* 0x10 */ u8* bbramp;
+    /* 0x14 */ u8* noise_bufp;
+    /* 0x18 */ u8* chr_to_i8_bufp;
+    /* 0x1C */ u8* result_bufp;
+    /* 0x20 */ u8* highscore_flagsp;
+    /* 0x24 */ u8* nesinfo_tagsp;
+    /* 0x28 */ int _28;
+    /* 0x2C */ u8 nesrom_memcard; // TRUE: rom is loaded from memcard, FALSE: rom is loaded internally
+    /* 0x2D */ u8 rom_no;
+    /* 0x2E */ s8 save_pl_no;
+    /* 0x2F */ u8 mura_save_name[33];
+    /* 0x50 */ u8 famicom_save_name[33];
+    /* 0x74 */ FamicomSaveDataHeader* save_data_header;
+    /* 0x78 */ u8* internal_save_datap;
+    /* 0x7C */ size_t save_data_total_size;
+    /* 0x80 */ size_t save_data_single_size;
+    /* 0x84 */ int _84;
+    /* 0x88 */ u8* save_data_name;
+    /* 0x8C */ u8 _8C;
+    /* 0x8D */ u8 low_res_mode;
+    /* 0x8E */ MemcardGameHeader_t memcard_game_header;
+    /* 0xB0 */ u8* memcard_save_comment;
+    /* 0xB4 */ size_t unused_save_data_start_ofs;
 } FamicomCommon;
-
 
 extern Famicom_MallocInfo* my_malloc_current;
 extern u8 save_game_image;
@@ -212,7 +212,6 @@ extern int nesinfo_get_highscore_num();
 extern u8* nesinfo_get_moriName();
 extern void nesinfo_init();
 extern void highscore_setup_flags(u8* flags);
-
 
 #ifdef __cplusplus
 }

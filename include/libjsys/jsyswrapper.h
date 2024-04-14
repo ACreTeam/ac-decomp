@@ -12,12 +12,12 @@ extern "C" {
 #endif
 
 typedef struct {
-  u16 mFileID;     // _00
-  u16 mHash;       // _02
-  u32 mFlag;       // _04
-  u32 mDataOffset; // _08
-  u32 mSize;       // _0C
-  void* mData;     // _10
+    u16 mFileID;     // _00
+    u16 mHash;       // _02
+    u32 mFlag;       // _04
+    u32 mDataOffset; // _08
+    u32 mSize;       // _0C
+    void* mData;     // _10
 } CSDIFileEntry;
 
 extern void* JC_JFWSystem_getSystemConsole();
@@ -116,8 +116,8 @@ extern void* JC_JUTFader_new(int ul_x, int ul_y, int br_x, int br_y, u32* color)
 extern void JC_JUTFader_delete(void* fader);
 
 extern void JC_JFWDisplay_changeToDoubleXfb(void* manager);
-extern u32 JC__JKRGetResource(char* resourceName);
-extern int JC__JKRGetMemBlockSize(int, u32);
+extern void* JC__JKRGetResource(const char* resourceName);
+extern u32 JC__JKRGetMemBlockSize(int, void*);
 
 extern void JC__JKRRemoveResource(void* res);
 

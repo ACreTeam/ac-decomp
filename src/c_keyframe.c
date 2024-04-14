@@ -1014,9 +1014,8 @@ extern void cKF_SkeletonInfo_R_T_combine_play(int* arg1, int* arg2, int* arg3, c
     *arg3 = cKF_FrameControl_play(&info3->frame_control);
 }
 
-extern void cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(f32 transx, f32 transy, f32 transz,
-                                                            cKF_SkeletonInfo_R_c* keyframe, s16 anglex, s16 angley,
-                                                            s16 anglez) {
+extern void cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(cKF_SkeletonInfo_R_c* keyframe, f32 transx, f32 transy,
+                                                            f32 transz, s16 anglex, s16 angley, s16 anglez) {
     keyframe->base_model_translation.x = transx;
     keyframe->base_model_translation.y = transy;
     keyframe->base_model_translation.z = transz;

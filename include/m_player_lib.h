@@ -17,7 +17,7 @@ extern void mPlib_Clear_controller_data_for_title_demo();
 extern void mPlib_request_main_invade_type1(GAME_PLAY* play);
 extern mActor_name_t mPlib_Get_itemNo_forWindow();
 extern int mPlib_check_able_change_camera_normal_index();
-extern void mPlib_request_main_refuse_type1(GAME_PLAY* play);
+extern void mPlib_request_main_refuse_type1(GAME* game);
 extern void mPlib_request_main_wait_type3(GAME* game);
 extern void mPlib_Set_able_force_speak_label(ACTOR* actor);
 extern int mPlib_request_main_demo_walk_type1(GAME* game, f32 goal_x, f32 goal_z, f32 speed, int flag);
@@ -63,6 +63,13 @@ extern void mPlib_Set_change_color_request();
 extern int mPlib_check_player_open_umbrella(GAME_PLAY* play);
 extern int mPlib_Check_UKI_COMEBACK_STATUS();
 extern int mPlib_check_player_actor_main_index_OutDoorMove(GAME_PLAY* play);
+extern int mPlib_request_main_close_furniture_type1(GAME* game);
+extern int mPlib_request_main_shock_type1(GAME* game, f32 time, s16 angle_y, int axe_swing);
+extern int mPlib_request_main_hold_type1(GAME* game, int ftr_no, int player_direct, const xyz_t* player_pos);
+extern int mPlib_check_player_warp_forEvent(void);
+extern int mPlib_check_player_actor_main_index_Furniture_Move(GAME* game);
+extern int mPlib_request_main_sitdown_type1(GAME* game, int direct, const xyz_t* pos, int ftr_no);
+extern int mPlib_request_main_lie_bed_type1(GAME* game, int direct, const xyz_t* pos, int head_direct, int ftr_no);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 
