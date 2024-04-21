@@ -15,6 +15,12 @@ extern "C" {
 /* Macro to generate a random integer in the range of [0, n) */
 #define RANDOM(n) ((int)RANDOM_F(n))
 
+/* Macro to generate a random float in the range of [0, n) */
+#define RANDOM2_F(n) (fqrand2() * (f32)(n))
+
+/* Macro to generate a random integer in the range of [0, n) */
+#define RANDOM2(n) ((int)RANDOM2_F(n))
+
 extern u16 U_GetAtanTable(f32 y, f32 x);
 extern s16 atans_table(f32 x, f32 y);
 extern f32 atanf_table(f32 x, f32 y);
