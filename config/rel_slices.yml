@@ -1014,6 +1014,10 @@ ef_car_blight.c:
     .text: [0x806075BC, 0x806079CC]
     .rodata: [0x8064BE00, 0x8064BE18]
     .data: [0x806D1F98, 0x806D2070]
+ef_car_light.c:
+    .text: [0x806079CC, 0x80607B9C]
+    .rodata: [0x8064BE18, 0x8064BE20]
+    .data: [0x806D2070, 0x806D2088]
 ef_coin.c:
     .text: [0x80608060, 0x806087EC]
     .rodata: [0x8064BE48, 0x8064BEA0]
