@@ -986,6 +986,10 @@ ef_ase.c:
     .text: [0x80604F78, 0x806050E4]
     .rodata: [0x8064BC90, 0x8064BC98]
     .data: [0x806D1E88, 0x806D1EA0]
+ef_ase2.c:
+    .text: [0x806050E4, 0x806052A8]
+    .rodata: [0x8064BC98, 0x8064BCA8]
+    .data: [0x806D1EA0, 0x806D1EC8]
 ef_coin.c:
     .text: [0x80608060, 0x806087EC]
     .rodata: [0x8064BE48, 0x8064BEA0]
