@@ -998,6 +998,10 @@ ef_bubu.c:
     .text: [0x8060672C, 0x80606878]
     .rodata: [0x8064BD60, 0x8064BD68]
     .data: [0x806D1F20, 0x806D1F38]
+ef_buruburu.c:
+    .text: [0x80606878, 0x80606A68]
+    .rodata: [0x8064BD68, 0x8064BD78]
+    .data: [0x806D1F38, 0x806D1F68]
 ef_coin.c:
     .text: [0x80608060, 0x806087EC]
     .rodata: [0x8064BE48, 0x8064BEA0]
