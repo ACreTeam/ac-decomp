@@ -974,6 +974,10 @@ ac_weather_leaf.c:
     .text: [0x8060420C, 0x806048B8]
     .rodata: [0x8064BBE8, 0x8064BC40]
     .data: [0x806D1E28, 0x806D1E48]
+ef_ami_mizu.c:
+    .text: [0x806048B8, 0x80604C9C]
+    .rodata: [0x8064BC40, 0x8064BC78]
+    .data: [0x806D1E48, 0x806D1E60]
 ef_coin.c:
     .text: [0x80608060, 0x806087EC]
     .rodata: [0x8064BE48, 0x8064BEA0]
