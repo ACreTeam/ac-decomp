@@ -982,6 +982,10 @@ ef_anahikari.c:
     .text: [0x80604C9C, 0x80604F78]
     .rodata: [0x8064BC78, 0x8064BC90]
     .data: [0x806D1E60, 0x806D1E88]
+ef_ase.c:
+    .text: [0x80604F78, 0x806050E4]
+    .rodata: [0x8064BC90, 0x8064BC98]
+    .data: [0x806D1E88, 0x806D1EA0]
 ef_coin.c:
     .text: [0x80608060, 0x806087EC]
     .rodata: [0x8064BE48, 0x8064BEA0]
