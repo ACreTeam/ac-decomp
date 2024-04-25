@@ -911,6 +911,11 @@ m_editor_ovl.c:
     .rodata: [0x8064B300, 0x8064B368]
     .data: [0x806CC9D8, 0x806CD068]
     .bss: [0x8133F5C8, 0x8133F600]
+m_hand_ovl.c:
+    .text: [0x805DD104, 0x805DFA00]
+    .rodata: [0x8064B388, 0x8064B418]
+    .data: [0x806CD0A0, 0x806CD260]
+    .bss: [0x8133F608, 0x8133F980]
 m_haniwaPortrait_ovl.c:
     .text: [0x805DFA00, 0x805DFE48]
     .rodata: [0x8064B418, 0x8064B448]

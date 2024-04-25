@@ -27,6 +27,7 @@
 #include "m_tag_ovl_h.h"
 #include "m_catalog_ovl_h.h"
 #include "m_hand_ovl_h.h"
+#include "m_inventory_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,7 +45,12 @@ enum {
 
 // TODO: fill this out
 typedef struct submenu_segment_s {
-    u8 _00[0x54];
+    int _00;
+    s16 _04;
+    s16 _06;
+    s16 _08;
+    s16 _0A;
+    u8 _0C[0x54 - 0x0C];
 } mSM_Segment_c;
 
 typedef struct submenu_menu_info_s {
@@ -104,8 +110,10 @@ typedef void (*mSM_MOVE_CHG_BASE_PROC)(mSM_MenuInfo_c*, int);
 typedef void (*mSM_SET_CHAR_MATRIX_PROC)(GRAPH*);
 typedef void (*mSM_CBUF_COPY_PROC)(GRAPH*, PreRender*, int, int, int);
 typedef void (*mSM_SET_DRAWMODE_PROC)(GRAPH*, PreRender*, f32, f32, s16);
-typedef void (*mSM_DRAW_ITEM_PROC)(GRAPH*, f32, f32, f32, mActor_name_t, int, int, int);
-typedef void (*mSM_DRAW_MAIL_PROC)(GRAPH*, f32, f32, f32, Mail_c*, int, int);
+typedef void (*mSM_DRAW_ITEM_PROC)(GRAPH* graph, f32 pos_x, f32 pos_y, f32 scale, mActor_name_t item, int present_flag,
+                                   int color_flag, int anim_frame, int shadow_flag, int mark_flag);
+typedef void (*mSM_DRAW_MAIL_PROC)(GRAPH* graph, f32 pos_x, f32 pos_y, f32 scale, Mail_c* mail, int color_flag,
+                                   int shadow_flag, int mark_flag);
 typedef void (*mSM_SETUP_VIEW_PROC)(Submenu*, GRAPH*, int);
 typedef void (*mSM_CHANGE_VIEW_PROC)(GRAPH*, f32, f32, f32, f32, s16, int, int);
 
@@ -135,7 +143,7 @@ struct submenu_overlay_s {
     /* 0x97C */ mTG_Ovl_c* tag_ovl;
     /* 0x980 */ mHD_Ovl_c* hand_ovl;
     /* 0x984 */ mHP_Ovl_c* hanwiaPortrait_ovl;
-    /* 0x988 */ void* inventory_ovl;
+    /* 0x988 */ mIV_Ovl_c* inventory_ovl;
     /* 0x98C */ mED_Ovl_c* editor_ovl;
     /* 0x990 */ mBD_Ovl_c* board_ovl;
     /* 0x994 */ mAD_Ovl_c* address_ovl;
@@ -172,6 +180,8 @@ struct submenu_overlay_s {
 };
 
 extern void mSM_menu_ovl_init(Submenu* submenu);
+extern void mSM_draw_original(Submenu* submenu, GRAPH* graph, f32 pos_x, f32 pos_y, f32 scale, mActor_name_t item,
+                              int shadow_flag);
 
 #ifdef __cplusplus
 }
