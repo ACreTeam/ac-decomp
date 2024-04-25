@@ -111,6 +111,15 @@ typedef struct tex_anim_s {
     s16 timer;
 } cKF_TextureAnimation_c;
 
+typedef struct anim_info_s {
+    cKF_Animation_R_c* animation;
+    f32 speed;
+    f32 start_frame;
+    f32 end_frame;
+    int mode;
+    f32 counter;
+} cKF_AnimInfo_c;
+
 typedef int (*cKF_draw_callback)(GAME*, cKF_SkeletonInfo_R_c*, int, Gfx**, u8*, void*, s_xyz*, xyz_t*);
 
 #define cKF_FRAMERATE 30.0f

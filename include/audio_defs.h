@@ -45,12 +45,16 @@ typedef enum audio_sound_effects {
     NA_SE_MONEY2,
     NA_SE_COIN,
 
+    NA_SE_52 = 0x52,
+
     NA_SE_BIRTH_FTR = 0x57,
     NA_SE_CLEAN_UP_FTR = 0x58,
 
     NA_SE_TOOL_FURI = 0x5A, // swing?
     NA_SE_AMI_HIT = 0x5C,
     NA_SE_TOOL_GET,
+
+    NA_SE_60 = 0x60,
 
     NA_SE_GASAGOSO = 0x69,
 
@@ -103,6 +107,8 @@ typedef enum audio_sound_effects {
     NA_SE_BED_OUT,
 
     NA_SE_ROTATE = 0x41A,
+
+    NA_SE_41C = 0x41C,
 
     NA_SE_SOFT_CHAIR_SIT = 0x41F,
     NA_SE_HARD_CHAIR_SIT,
