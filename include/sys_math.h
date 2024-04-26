@@ -4,10 +4,25 @@
 #include "types.h"
 #include "MSL_C/math.h"
 #include "libc64/qrand.h"
+#include "m_lib.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define SHT_MIN_S -32768 /* 0x8000 */
+#define SHT_MAX_S 32767  /* 0x7FFF */
+
+#define SHT_MIN ((f32)SHT_MIN_S)
+#define SHT_MAX ((f32)SHT_MAX_S)
+
+#define SHT_MINV (1.0f / SHT_MAX)
+
+#define USHT_MIN_S 0
+#define USHT_MAX_S 65535
+
+#define USHT_MIN ((f32)USHT_MIN_S)
+#define USHT_MAX ((f32)USHT_MAX_S)
 
 /* Macro to generate a random float in the range of [0, n) */
 #define RANDOM_F(n) (fqrand() * (f32)(n))
