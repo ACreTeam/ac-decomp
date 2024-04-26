@@ -3,19 +3,26 @@
 #include "libc64/qrand.h"
 #include "libc/math.h"
 
-
-void init_rnd(){
+extern void init_rnd() {
     sqrand(osGetCount());
 }
 
-f32 sinf_table(f32 x){
-	f32 max = 3.05185094476e-05f;
-    s16 sinf = sins((s16)(10430.0595703f * x));
-    return  sinf * max; 
+#ifdef MUST_MATCH
+FORCESTRIP static f32 _rodata_order(int in) {
+    return (f32)in;
+}
+#endif
+
+extern f32 sinf_table(f32 x) {
+    s16 v = (SHT_MAX / M_PI) * x;
+    s16 sin = sins(v);
+
+    return sin * SHT_MINV;
 }
 
-f32 cosf_table(f32 x){
-	f32 max = 3.05185094476e-05f;
-    s16 cosf = coss((s16)(10430.0595703f * x));
-    return cosf * max;
+extern f32 cosf_table(f32 x) {
+    s16 v = (SHT_MAX / M_PI) * x;
+    s16 cos = coss(v);
+
+    return cos * SHT_MINV;
 }

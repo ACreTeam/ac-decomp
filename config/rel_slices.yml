@@ -362,9 +362,9 @@ sys_math3d.c:
     .rodata: [0x806437D0, 0x80643810]
     .data: [0x8065F150, 0x8065F168]
     .bss: [0x812F54A0, 0x812F5668]
-#sys_math.c:
-#    .text: [0x80408940, 0x80408A44]
-#    .rodata: [0x806437C0, 0x806437D0]
+sys_math.c:
+   .text: [0x80408940, 0x80408A44]
+   .rodata: [0x806437C0, 0x806437D0]
 sys_math_atan.c:
     .text: [0x8040C06C, 0x8040C284]
     .rodata: [0x80643810, 0x80643828]
