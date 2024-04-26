@@ -381,6 +381,7 @@ zurumode.c:
 sys_ucode.c:
     .text: [0x8040F008, 0x8040F048]
     .data: [0x8065FA30, 0x8065FA40]
+    .bss: [0x812F9680, 0x812F96A0]
 ac_sample.c:
     .text: [0x8040F048, 0x8040F614]
     .rodata: [0x80643860, 0x80643868]
