@@ -323,6 +323,9 @@ m_vibctl.c:
     .text: [0x8040387C, 0x804040F0]
     .rodata: [0x80643550, 0x806436C8]
     .bss: [0x812F3098, 0x812F31B8]
+PreRender.c:
+    .text: [0x804040F0, 0x80404AE0]
+    .rodata: [0x806436C8, 0x806436E8]
 THA_GA.c:
     .text: [0x80404AE0, 0x80404B40]
 TwoHeadArena.c:
@@ -357,14 +360,14 @@ main.c:
     .text: [0x80407AE8, 0x80407CF4]
     .data: [0x8065F110, 0x8065F138]
     .bss: [0x812F4CC0, 0x812F5038]
+sys_math.c:
+    .text: [0x80408940, 0x80408A44]
+    .rodata: [0x806437C0, 0x806437D0]
 sys_math3d.c:
     .text: [0x80408A44, 0x8040C06C]
     .rodata: [0x806437D0, 0x80643810]
     .data: [0x8065F150, 0x8065F168]
     .bss: [0x812F54A0, 0x812F5668]
-sys_math.c:
-   .text: [0x80408940, 0x80408A44]
-   .rodata: [0x806437C0, 0x806437D0]
 sys_math_atan.c:
     .text: [0x8040C06C, 0x8040C284]
     .rodata: [0x80643810, 0x80643828]

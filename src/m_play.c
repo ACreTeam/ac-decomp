@@ -444,8 +444,8 @@ void play_init(GAME* game) {
     play->submenu.mode = 0;
 
     PreRender_init(&play->prerender);
-    PreRender_setup_savebuf(&play->prerender, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, 0, 0, 0);
-    PreRender_setup_renderbuf(&play->prerender, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, 0, 0);
+    PreRender_setup_savebuf(&play->prerender, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, NULL, NULL, NULL);
+    PreRender_setup_renderbuf(&play->prerender, SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, NULL, NULL);
 
     play->fb_mode = 0;
     type = 1;
