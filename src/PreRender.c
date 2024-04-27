@@ -48,7 +48,7 @@ extern void wallpaper_draw1(PreRenderBackground2DParams* bg2D, Gfx** gfxp) {
         bg->b.frameW = bg2D->width * (1 << 2);
         bg->b.frameH = bg2D->height * (1 << 2);
 
-        if (!(bg2D->flags & BG2D_FLAGS_1)) {
+        if (!(bg2D->flags & BG2D_FLAGS_SAVE_OTHERMODE)) {
             gDPSetOtherMode(gfx++, bg2D->tt | G_CYC_COPY, alphaCompare);
         }
 
@@ -60,14 +60,14 @@ extern void wallpaper_draw1(PreRenderBackground2DParams* bg2D, Gfx** gfxp) {
         bg->b.tmemH = (1 << 10) / bg2D->yScale;
         bg->s.imageYorig = bg->b.imageY;
 
-        if (!(bg2D->flags & BG2D_FLAGS_1)) {
+        if (!(bg2D->flags & BG2D_FLAGS_SAVE_OTHERMODE)) {
             gDPSetOtherMode(gfx++, bg2D->tt | G_AD_DISABLE | G_CD_DISABLE | G_TC_FILT,
                             AA_EN | CVG_X_ALPHA | ALPHA_CVG_SEL |
                                 GBL_c1(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_BL, G_BL_1MA) |
                                 GBL_c2(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_BL, G_BL_1MA) | alphaCompare);
         }
 
-        if (!(bg2D->flags & BG2D_FLAGS_2)) {
+        if (!(bg2D->flags & BG2D_FLAGS_SAVE_COMBINER)) {
             gDPSetCombineLERP(gfx++, 0, 0, 0, TEXEL0, 0, 0, 0, 1, 0, 0, 0, TEXEL0, 0, 0, 0, 1);
         }
 
@@ -202,8 +202,9 @@ extern void PreRender_CopyRGBC(PreRender* render, Gfx** gfxp, int width, int hei
                     G_AC_NONE | G_ZS_PRIM | G_RM_OPA_SURF | G_RM_OPA_SURF2);
     gDPSetCombineLERP(gfx++, 0, 0, 0, TEXEL0, 0, 0, 0, 1, 0, 0, 0, TEXEL0, 0, 0, 0, 1);
 
-    wallpaper_draw(&gfx, render->framebuffer_bak, 0, render->width_bak, render->height_bak, 0, 2, 0, 0, width, height,
-                   1.0f, 1.0f, 11);
+    wallpaper_draw(&gfx, render->framebuffer_bak, 0, render->width_bak, render->height_bak, G_IM_FMT_RGBA, G_IM_SIZ_16b,
+                   0, 0, width, height, 1.0f, 1.0f,
+                   BG2D_FLAGS_SAVE_OTHERMODE | BG2D_FLAGS_SAVE_COMBINER | BG2D_FLAGS_LOAD_S2DEX2);
 
     gfx = gfx_SetUpCFB(gfx, render->framebuffer_bak, render->width_bak, render->height_bak);
 
@@ -259,9 +260,9 @@ extern void PreRender_CopyRGBC(PreRender* render, Gfx** gfxp, int width, int hei
         h = lrt + remain;
 
         gDPLoadTextureTile(gfx++, render->framebuffer_bak, G_IM_FMT_I, G_IM_SIZ_8b, (render->width_bak << 1),
-                           (render->height_bak << 1), (uls * 2), ult, ((lrs_max * 2) - 1), /* this has issues */
-                           (lrt_max - 1), 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD,
-                           G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+                           (render->height_bak << 1), (uls * 2), ult, ((lrs_max * 2) - 1), (lrt_max - 1), 0,
+                           G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                           G_TX_NOLOD);
 
         gSPTextureRectangle(gfx++, ((u32)lrs) * 4, ((u32)lrt) << G_TEXTURE_IMAGE_FRAC, ((u32)w) << G_TEXTURE_IMAGE_FRAC,
                             ((u32)h) << G_TEXTURE_IMAGE_FRAC, G_TX_RENDERTILE, (uls * 2) << 5, ult << 5, (1 << 1) << 10,
