@@ -9,8 +9,8 @@ extern "C" {
 #endif
 
 typedef struct ucode_info_s {
-  int type;
-  void* ucode_p;
+    int type;
+    void* ucode_p;
 } ucode_info;
 
 #define UCODE_TYPE_NONE 0
@@ -18,6 +18,8 @@ typedef struct ucode_info_s {
 #define UCODE_TYPE_POLY_DATA 2
 #define UCODE_TYPE_SPRITE_TEXT 3
 #define UCODE_TYPE_SPRITE_DATA 4
+
+#define SP_UCODE_DATA_SIZE 0x800
 
 extern long long int gspF3DZEX2_NoN_PosLight_fifoDataStart[];
 extern long long int gspF3DZEX2_NoN_PosLight_fifoTextStart[];
