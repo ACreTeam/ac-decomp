@@ -9,11 +9,11 @@
 extern "C" {
 #endif
 
-#define BG2D_FLAGS_1 (1 << 0)
-#define BG2D_FLAGS_2 (1 << 1)
-#define BG2D_FLAGS_AC_THRESHOLD (1 << 2)
-#define BG2D_FLAGS_LOAD_S2DEX2 (1 << 3)
-#define BG2D_FLAGS_COPY (1 << 4)
+#define BG2D_FLAGS_SAVE_OTHERMODE (1 << 0) /* Keep othermode settings */
+#define BG2D_FLAGS_SAVE_COMBINER (1 << 1)  /* Keep combiner settings */
+#define BG2D_FLAGS_AC_THRESHOLD (1 << 2)   /* Alpha compare uses threshold */
+#define BG2D_FLAGS_LOAD_S2DEX2 (1 << 3)    /* Load S2DEX2 ucode */
+#define BG2D_FLAGS_COPY (1 << 4)           /* Direct copy instead of combined */
 
 typedef struct prerender_s {
     /* 0x00 */ u16 width;
