@@ -24,13 +24,13 @@ typedef struct ucode_info_s {
 extern long long int gspF3DZEX2_NoN_PosLight_fifoDataStart[];
 extern long long int gspF3DZEX2_NoN_PosLight_fifoTextStart[];
 
-extern long long int gspS2DEX2_fifoDataStart[];
-extern long long int gspS2DEX2_fifoTextStart[];
+extern unsigned long long gspS2DEX2_fifoDataStart[];
+extern unsigned long long gspS2DEX2_fifoTextStart[];
 
 extern long long int* ucode_GetPolyTextStart();
 extern long long int* ucode_GetPolyDataStart();
-extern long long int* ucode_GetSpriteTextStart();
-extern long long int* ucode_GetSpriteDataStart();
+extern unsigned long long* ucode_GetSpriteTextStart();
+extern unsigned long long* ucode_GetSpriteDataStart();
 
 #ifdef __cplusplus
 };
