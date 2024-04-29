@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_actor.h"
+#include "ac_insect_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,4 +16,3 @@ extern ACTOR_PROFILE Insect_Profile;
 #endif
 
 #endif
-

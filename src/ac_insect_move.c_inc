@@ -1,0 +1,396 @@
+static void aINS_position_move(ACTOR* actorx) {
+    aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actorx;
+    s16 angleY = actorx->world.angle.y;
+
+    xyz_t_move(&actorx->last_world_position, &actorx->world.position);
+    chase_f(&actorx->speed, insect->target_speed, insect->speed_step * 0.5f);
+    actorx->position_speed.x = actorx->speed * sin_s(angleY);
+    actorx->position_speed.z = actorx->speed * cos_s(angleY);
+
+    switch (insect->type) {
+        case aSOI_INSECT_TYPE_COMMON_BUTTERFLY:
+        case aSOI_INSECT_TYPE_YELLOW_BUTTERFLY:
+        case aSOI_INSECT_TYPE_TIGER_BUTTERFLY:
+        case aSOI_INSECT_TYPE_PURPLE_BUTTERFLY:
+        case aSOI_INSECT_TYPE_FIREFLY:
+        case aSOI_INSECT_TYPE_MOSQUITO:
+        case aSOI_INSECT_TYPE_SPIRIT:
+            break;
+
+        default:
+            chase_f(&actorx->position_speed.y, actorx->max_velocity_y, actorx->gravity * 0.5f);
+            break;
+    }
+
+    Actor_position_move(actorx);
+}
+
+static void aINS_set_player_info(ACTOR* actorx, PLAYER_ACTOR* player) {
+    if (player != NULL) {
+        f32 distXZ;
+        f32 distY;
+
+        distXZ = search_position_distanceXZ(&actorx->world.position, &player->actor_class.world.position);
+        actorx->player_distance_xz = distXZ;
+
+        distY = player->actor_class.world.position.y - actorx->world.position.y;
+        actorx->player_distance_y = distY;
+
+        actorx->player_distance = SQ(distXZ) + SQ(distY);
+        actorx->player_angle_y = search_position_angleY(&actorx->world.position, &player->actor_class.world.position);
+    } else {
+        actorx->player_distance_xz = 0.0f;
+        actorx->player_distance_y = 0.0f;
+        actorx->player_distance = 0.0f;
+        actorx->player_angle_y = 0;
+    }
+}
+
+static void aINS_BGcheck(ACTOR* actorx) {
+    aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actorx;
+
+    switch (insect->bg_type) {
+        case 1:
+            mCoBG_BgCheckControll(NULL, actorx, insect->bg_range, insect->bg_height, TRUE, FALSE, 1);
+            break;
+        case 2:
+            mCoBG_BgCheckControll(NULL, actorx, insect->bg_range, insect->bg_height, FALSE, FALSE, 1);
+            break;
+        case 3:
+            mCoBG_BgCheckControll_RemoveDirectedUnitColumn(NULL, actorx, insect->bg_range, insect->bg_height, TRUE,
+                                                           FALSE, 1, insect->ut_x, insect->ut_z);
+            break;
+        case 4:
+            mCoBG_BgCheckControll_RemoveDirectedUnitColumn(NULL, actorx, insect->bg_range, insect->bg_height, FALSE,
+                                                           FALSE, 1, insect->ut_x, insect->ut_z);
+            break;
+    }
+
+    if (insect->insect_flags.bit_2 == FALSE && insect->insect_flags.bit_4 == TRUE) {
+        mCoBG_UniqueWallCheck(actorx, insect->bg_range, 0.0f);
+    }
+}
+
+// clang-format off
+static f32 catch_ME_data[] = {
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    10.0,
+    10.0,
+    10.0,
+    0.0,
+    10.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    20.0,
+    -20.0,
+    -20.0,
+    -20.0,
+    -20.0,
+    -20.0,
+    -20.0,
+    -20.0,
+    0.0,
+    0.0,
+    -20.0,
+    -20.0,
+    -20.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0f,
+};
+// clang-format on
+
+static void aINS_get_stress_sub(f32* stress, Actor_list* actor_list, xyz_t* pos, aINS_INSECT_ACTOR* insect) {
+    static f32 calc_table[] = { 0.3f, 1.0f, 2.0f, 5.0f, 10.0f };
+    f32 min_dist = aINS_MAX_STRESS_DIST;
+    ACTOR* actor;
+
+    min_dist += catch_ME_data[insect->type];
+    /* Calculate the greatest stress caused by any nearby actors */
+    for (actor = actor_list->actor; actor != NULL; actor = actor->next_actor) {
+        f32 dist = search_position_distance(pos, &actor->world.position);
+
+        if (dist < min_dist) {
+            f32 tmp0;
+            int idx;
+            f32 dX;
+            f32 dZ;
+            f32 calc_stress;
+
+            tmp0 = dist - mFI_UNIT_BASE_SIZE_F;
+            if (tmp0 < 0.0f) {
+                tmp0 = 0.0f;
+            }
+
+            idx = (int)((min_dist - mFI_UNIT_BASE_SIZE_F) - tmp0) / 20;
+            if (idx > ARRAY_COUNT(calc_table) - 1) {
+                idx = ARRAY_COUNT(calc_table) - 1;
+            }
+
+            dX = actor->world.position.x - actor->last_world_position.x;
+            dZ = actor->world.position.z - actor->last_world_position.z;
+            calc_stress = sqrtf(SQ(dX) + SQ(dZ)) * calc_table[idx];
+
+            /* Stress is modified by the amount of movement over a single frame */
+            if (calc_stress > *stress) {
+                *stress = calc_stress;
+            }
+        }
+    }
+}
+
+static f32 aINS_get_stress(ACTOR* actorx, GAME* game) {
+    Actor_info* actor_info = &((GAME_PLAY*)game)->actor_info;
+    int i;
+    aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actorx;
+    f32 stress = 0.0f;
+
+    /* Calculate max stress on the insect from specific types of actors */
+    for (i = 0; i < ACTOR_PART_NUM; i++) {
+        switch (i) {
+            case ACTOR_PART_UNUSED:
+            case ACTOR_PART_PLAYER:
+            case ACTOR_PART_NPC:
+            case ACTOR_PART_BG:
+                aINS_get_stress_sub(&stress, &actor_info->list[i], &actorx->world.position, insect);
+                break;
+        }
+    }
+
+    return stress; /* return the max stress */
+}
+
+static void aINS_calc_patience(ACTOR* actorx, GAME* game) {
+    aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actorx;
+    f32 stress = aINS_get_stress(actorx, game);
+
+    if (F32_IS_ZERO(stress)) {
+        insect->patience -= aINS_PATIENCE_STEP;
+        if (insect->patience < 0.0f) {
+            insect->patience = 0.0f;
+        }
+    } else {
+        insect->patience += stress * aINS_PATIENCE_STEP;
+        if (insect->patience > 100.0f) {
+            insect->patience = 100.0f;
+        }
+    }
+}
+
+static void aINS_calc_life_time(aINS_INSECT_ACTOR* insect) {
+    insect->life_time--;
+
+    if (insect->life_time <= 0) {
+        insect->insect_flags.bit_3 = TRUE;
+        insect->life_time = 0;
+    }
+}
+
+static void aINS_calc_alpha_time(aINS_INSECT_ACTOR* insect) {
+    if (insect->life_time != 0) {
+        return;
+    }
+
+    if (insect->alpha_time <= 0) {
+        return;
+    }
+
+    insect->alpha_time--;
+    if (insect->alpha_time >= 24) {
+        return;
+    }
+
+    switch (insect->type) {
+        case aSOI_INSECT_TYPE_FIREFLY: {
+            int alpha = insect->alpha2;
+
+            alpha += 11;
+            if (alpha >= 255) {
+                alpha = 255;
+                insect->alpha0 = 0;
+                insect->alpha1 = 0;
+                insect->insect_flags.destruct = TRUE;
+            }
+
+            insect->alpha2 = alpha;
+            break;
+        }
+
+        default: {
+            int alpha = insect->alpha0;
+
+            alpha -= 11;
+            if (alpha <= 0) {
+                alpha = 0;
+                insect->insect_flags.destruct = TRUE;
+            }
+
+            insect->alpha0 = alpha;
+        }
+    }
+}
+
+static void aINS_cull_check(ACTOR* actorx, GAME* game) {
+    aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    Skin_Matrix_PrjMulVector(&play->projection_matrix, &actorx->world.position, &actorx->camera_position,
+                             &actorx->camera_w);
+
+    if (insect->insect_flags.destruct && (ACTOR*)mPlib_Get_item_net_catch_label() != actorx) {
+        aINS_destruct(actorx, game);
+    }
+
+    if (Actor_draw_actor_no_culling_check(actorx) == FALSE) {
+        if (actorx->actor_specific == 1) {
+            if ((ACTOR*)mPlib_Get_item_net_catch_label() != actorx) {
+                aINS_destruct(actorx, game);
+            }
+        } else {
+            if ((ACTOR*)mPlib_Get_item_net_catch_label() != actorx) {
+                /* Allow actor to be culled since it's not been caught */
+                actorx->state_bitfield &= ~ACTOR_STATE_NO_CULL;
+            }
+
+            /* Despawn if player is more than 15 units away and in another acre and has not caught it */
+            if (actorx->player_distance_xz > 600.0f &&
+                (actorx->block_x != play->block_table.block_x || actorx->block_z != play->block_table.block_z) &&
+                (ACTOR*)mPlib_Get_item_net_catch_label() != actorx) {
+                aINS_destruct(actorx, game);
+            }
+        }
+    } else {
+        /* Don't cull if the actor is still visible on the camera */
+        actorx->state_bitfield |= ACTOR_STATE_NO_CULL;
+    }
+}
+
+static f32 aINS_get_catch_range_sub(ACTOR* actorx) {
+    f32 range = 24.0f;
+    s16 dAngleY = ABS((s16)(actorx->world.angle.y - actorx->player_angle_y));
+
+    /* Player must be facing within 90 degrees of the insect */
+    if (dAngleY > DEG2SHORT_ANGLE2(90.0f)) {
+        range = 0.0f;
+    }
+
+    return range;
+}
+
+static f32 aINS_get_catch_range(ACTOR* actorx) {
+    aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actorx;
+    f32 range = 8.0f;
+
+    switch (insect->type) {
+        case aSOI_INSECT_TYPE_COMMON_BUTTERFLY:
+        case aSOI_INSECT_TYPE_YELLOW_BUTTERFLY:
+            range = 24.0f;
+            break;
+        case aSOI_INSECT_TYPE_ROBUST_CICADA:
+        case aSOI_INSECT_TYPE_WALKER_CICADA:
+        case aSOI_INSECT_TYPE_EVENING_CICADA:
+        case aSOI_INSECT_TYPE_BROWN_CICADA:
+        case aSOI_INSECT_TYPE_BEE:
+        case aSOI_INSECT_TYPE_DRONE_BEETLE:
+        case aSOI_INSECT_TYPE_DYNASTID_BEETLE:
+        case aSOI_INSECT_TYPE_FLAT_STAG_BEETLE:
+        case aSOI_INSECT_TYPE_JEWEL_BEETLE:
+        case aSOI_INSECT_TYPE_LONGHORN_BEETLE:
+        case aSOI_INSECT_TYPE_SAW_STAG_BEETLE:
+        case aSOI_INSECT_TYPE_MOUNTAIN_BEETLE:
+        case aSOI_INSECT_TYPE_GIANT_BEETLE:
+            range = aINS_get_catch_range_sub(actorx);
+            break;
+
+        case aSOI_INSECT_TYPE_COCKROACH:
+            if (insect->flag == 4) {
+                range = aINS_get_catch_range_sub(actorx);
+            }
+            break;
+    }
+
+    return range;
+}
+
+static void aINS_set_catch_range(ACTOR* actorx) {
+    aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actorx;
+
+    if (insect->insect_flags.bit_1 == FALSE) {
+        f32 catch_range = aINS_get_catch_range(actorx);
+
+        if (!F32_IS_ZERO(catch_range)) {
+            GET_PLAYER_ACTOR_NOW()->Set_Item_net_catch_request_table_proc(
+                (ACTOR*)GET_PLAYER_ACTOR_NOW(), gamePT, (u32)actorx, 0, &actorx->world.position, catch_range);
+        }
+    }
+}
+
+static void aINS_check_birth_ant(GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    if (aINS_CLIP->ant_spawn_pending == TRUE) {
+        aINS_Init_c* init = &aINS_CLIP->ant_spawn_info;
+        ACTOR* actorx = Actor_info_make_actor(&play->actor_info, game, mAc_PROFILE_ANT, init->position.x,
+                                              init->position.y, init->position.z, 0, 0, 0, aINS_CLIP->ant_bx,
+                                              aINS_CLIP->ant_bz, -1, EMPTY_NO, -1, -1, -1);
+
+        if (actorx != NULL) {
+            aINS_CLIP->ant_spawn_pending = FALSE;
+        }
+    }
+}
+
+static void aINS_actor_move(ACTOR* actorx, GAME* game) {
+    aINS_CTRL_ACTOR* ctrl_actor = (aINS_CTRL_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    aINS_INSECT_ACTOR* insect = ctrl_actor->insect_actor;
+    int i;
+
+    for (i = 0; i < aINS_ACTOR_NUM; i++) {
+        ACTOR* actorx = (ACTOR*)insect;
+
+        if (insect->exist_flag == TRUE) {
+            actorx->state_bitfield &= ~ACTOR_STATE_24;
+
+            if ((actorx->state_bitfield & (ACTOR_STATE_NO_MOVE_WHILE_CULLED | ACTOR_STATE_NO_CULL))) {
+                if (insect->tools_actor.init_matrix == FALSE) {
+                    (*insect->move_proc)(actorx);
+                }
+
+                aINS_set_player_info(actorx, player);
+                aINS_BGcheck(actorx);
+                aINS_calc_patience(actorx, game);
+                aINS_calc_life_time(insect);
+                aINS_calc_alpha_time(insect);
+                (*actorx->mv_proc)(actorx, game);
+                Actor_world_to_eye(actorx, 0.0f);
+                aINS_set_catch_range(actorx);
+            }
+
+            aINS_cull_check(actorx, game);
+        }
+
+        insect++;
+    }
+
+    aINS_check_birth_ant(game);
+    aINS_set_pl_act_tim(0, -1, -1);
+}

@@ -1,0 +1,327 @@
+static ACTOR* aINS_make_actor(GAME* game, int type, xyz_t* pos) {
+    aINS_Init_c init_data;
+
+    xyz_t_move(&init_data.position, pos);
+    init_data.insect_type = type;
+    init_data.extra_data = 1;
+    init_data.game = game;
+
+    return aINS_CLIP->make_insect_proc(&init_data, 1);
+}
+
+static int aINS_get_free_idx_set_block_table(mEv_gst_hitodama_block_c* block_table) {
+    int res = -1;
+
+    if (block_table != NULL) {
+        int i;
+
+        for (i = 0; i < mEv_GHOST_HITODAMA_NUM; i++) {
+            if (block_table->block_x[i] == 0xFF && block_table->block_z[i] == 0xFF) {
+                res = i;
+                break;
+            }
+        }
+    }
+
+    return res;
+}
+
+static void aINS_regist_set_block_table(ACTOR* actorx) {
+    mEv_gst_common_c* gst_common = (mEv_gst_common_c*)mEv_get_common_area(mEv_EVENT_GHOST, 55);
+    int free_idx = aINS_get_free_idx_set_block_table(&gst_common->hitodama_block_data);
+
+    if (free_idx != -1) {
+        int bx;
+        int bz;
+        int i;
+
+        /* Select random unused acre */
+        while (TRUE) {
+            bx = (int)(1.0f + RANDOM_F(FG_BLOCK_X_NUM));
+            bz = (int)(1.0f + RANDOM_F(FG_BLOCK_Z_NUM));
+
+            if (actorx->block_x != (u8)bx || actorx->block_z != (u8)bz) {
+                for (i = 0; i < mEv_GHOST_HITODAMA_NUM; i++) {
+                    if (gst_common->hitodama_block_data.block_x[i] == (u8)bx &&
+                        gst_common->hitodama_block_data.block_z[i] == (u8)bz) {
+                        break;
+                    }
+                }
+
+                /* If i is 5 then none of the spirits are in the same acre */
+                if (i == 5) {
+                    break;
+                }
+            }
+        }
+
+        gst_common->hitodama_block_data.block_x[free_idx] = bx;
+        gst_common->hitodama_block_data.block_z[free_idx] = bz;
+    }
+}
+
+static void aINS_destruct(ACTOR* actorx, GAME* game) {
+    aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    switch (insect->type) {
+        case aSOI_INSECT_TYPE_SPIRIT:
+            /* If we didn't catch the spirit, update it's location */
+            if ((ACTOR*)mPlib_Get_item_net_catch_label() != actorx) {
+                aINS_regist_set_block_table(actorx);
+            }
+        /* fallthrough spirit -> firefly */
+        case aSOI_INSECT_TYPE_FIREFLY:
+            if (insect->light_flag) {
+                Global_light_list_delete(&play->global_light, insect->light_list);
+                insect->light_flag = FALSE;
+            }
+            break;
+    }
+
+    insect->exist_flag = FALSE;
+    ClObjPipe_dt(game, &insect->col_pipe);
+}
+
+static int aINS_chk_live_ant(int bx, int bz, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Actor_list* bg_list = &play->actor_info.list[ACTOR_PART_BG];
+    int res = FALSE;
+    ACTOR* actor = bg_list->actor;
+    int i;
+
+    for (i = 0; i != bg_list->num_actors; i++) {
+        if (actor != NULL && actor->id == mAc_PROFILE_ANT && actor->block_x == bx && actor->block_z == bz) {
+            res = TRUE;
+            break;
+        }
+
+        actor = actor->next_actor;
+    }
+
+    return res;
+}
+
+static int aINS_chk_live_insect(int bx, int bz, GAME* game) {
+    aINS_INSECT_ACTOR* insect = aINS_ctrlActor->insect_actor;
+    int res = FALSE;
+
+    if (aINS_chk_live_ant(bx, bz, game) == TRUE) {
+        res = TRUE;
+    } else {
+        int i;
+
+        for (i = 0; i < aINS_ACTOR_NUM - 1; i++) {
+            if (insect->exist_flag == TRUE && insect->tools_actor.actor_class.block_x == bx &&
+                insect->tools_actor.actor_class.block_z == bz) {
+                res = TRUE;
+                break;
+            }
+
+            insect++;
+        }
+    }
+
+    return res;
+}
+
+static ACTOR* aINS_search_near_ant(f32 pos_x, f32 pos_z, f32* dist, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Actor_list* bg_list = &play->actor_info.list[ACTOR_PART_BG];
+    ACTOR* res = NULL;
+    ACTOR* actor = bg_list->actor;
+    int max = bg_list->num_actors;
+    int i;
+
+    /* Find the closest ant actor (if any) */
+    for (i = 0; i != max; i++) {
+        if (actor != NULL && actor->id == mAc_PROFILE_ANT) {
+            f32 dX = actor->world.position.x - pos_x;
+            f32 dZ = actor->world.position.z - pos_z;
+            f32 d = SQ(dX) + SQ(dZ);
+
+            if (d < *dist) {
+                res = actor;
+                *dist = d;
+            }
+        }
+
+        actor = actor->next_actor;
+    }
+
+    return res;
+}
+
+static ACTOR* aINS_search_near_insect(f32 pos_x, f32 pos_z, GAME* game) {
+    aINS_INSECT_ACTOR* insect = aINS_ctrlActor->insect_actor;
+    f32 dist = 819200.0f;
+    ACTOR* res = aINS_search_near_ant(pos_x, pos_z, &dist, game);
+    int i;
+
+    for (i = 0; i < aINS_ACTOR_NUM - 1; i++) {
+        if (insect->exist_flag == TRUE) {
+            f32 dX = insect->tools_actor.actor_class.world.position.x - pos_x;
+            f32 dZ = insect->tools_actor.actor_class.world.position.z - pos_z;
+            f32 d = SQ(dX) + SQ(dZ);
+
+            if (d < dist) {
+                res = (ACTOR*)insect;
+                dist = d;
+            }
+        }
+
+        insect++;
+    }
+
+    return res;
+}
+
+static int aINS_searchRegistSpace(int make_type) {
+    aINS_INSECT_ACTOR* insect = aINS_ctrlActor->insect_actor;
+
+    if (make_type == aINS_MAKE_NEW) {
+        int i;
+
+        for (i = 0; i < aINS_ACTOR_NUM - 1; i++) {
+            if (insect->exist_flag == FALSE) {
+                return i;
+            }
+
+            insect++;
+        }
+    } else { /* aINS_MAKE_EXIST -- spawn physical actor? */
+        if (insect[aINS_ACTOR_NUM - 1].exist_flag == FALSE) {
+            return aINS_ACTOR_NUM - 1;
+        }
+    }
+
+    return -1;
+}
+
+static void aINS_setupActor(ACTOR* actorx, aINS_Init_c* init) {
+    // clang-format off
+    static ACTOR_PROFILE Dummy_Profile = {
+        mAc_PROFILE_INSECT,
+        ACTOR_PART_BG,
+        ACTOR_STATE_NO_DRAW_WHILE_CULLED | ACTOR_STATE_NO_MOVE_WHILE_CULLED,
+        EMPTY_NO,
+        ACTOR_OBJ_BANK_KEEP,
+        sizeof(ACTOR),
+        mActor_NONE_PROC1,
+        mActor_NONE_PROC1,
+        mActor_NONE_PROC1,
+        mActor_NONE_PROC1,
+        NULL
+    };
+    // clang-format on
+
+    aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)init->game;
+    f32 shadow_size;
+
+    insect->exist_flag = TRUE;
+    insect->type = init->insect_type;
+    insect->action_proc = (aINS_ACTION_PROC)&none_proc1;
+    insect->life_time = 216000;
+    insect->alpha0 = 255;
+    insect->insect_flags.bit_4 = TRUE;
+    insect->bg_range = 12.0f;
+    insect->ut_x = -1;
+    insect->ut_z = -1;
+
+    Actor_init_actor_class(actorx, &Dummy_Profile, NULL, play, -1, init->position.x, init->position.y, init->position.z,
+                           0, 0, 0, play->block_table.block_x, play->block_table.block_z, -1, EMPTY_NO,
+                           init->extra_data);
+    actorx->world = actorx->home;
+    actorx->shape_info.rotation = actorx->world.angle;
+    Actor_world_to_eye(actorx, 0.0f);
+    xyz_t_move(&actorx->last_world_position, &actorx->world.position);
+    actorx->scale.x = 0.01f;
+    actorx->scale.y = 0.01f;
+    actorx->scale.z = 0.01f;
+    actorx->cull_width = 350.0f;
+    actorx->cull_height = 700.0f;
+    actorx->cull_distance = 1000.0f;
+    actorx->cull_radius = 350.0f;
+
+    switch (insect->type) {
+        case aSOI_INSECT_TYPE_TIGER_BUTTERFLY:
+        case aSOI_INSECT_TYPE_PURPLE_BUTTERFLY:
+        case aSOI_INSECT_TYPE_ROBUST_CICADA:
+        case aSOI_INSECT_TYPE_WALKER_CICADA:
+        case aSOI_INSECT_TYPE_EVENING_CICADA:
+        case aSOI_INSECT_TYPE_BROWN_CICADA:
+        case aSOI_INSECT_TYPE_BEE:
+        case aSOI_INSECT_TYPE_COMMON_DRAGONFLY:
+        case aSOI_INSECT_TYPE_RED_DRAGONFLY:
+        case aSOI_INSECT_TYPE_DARNER_DRAGONFLY:
+        case aSOI_INSECT_TYPE_BANDED_DRAGONFLY:
+            shadow_size = 8.0f;
+            break;
+
+        case aSOI_INSECT_TYPE_BAGWORM:
+        case aSOI_INSECT_TYPE_PILL_BUG:
+        case aSOI_INSECT_TYPE_SPIDER:
+        case aSOI_INSECT_TYPE_MOSQUITO:
+            shadow_size = 4.0f;
+            break;
+
+        case aSOI_INSECT_TYPE_ANT:
+            shadow_size = 2.0f;
+            break;
+
+        default:
+            shadow_size = 6.0f;
+            break;
+    }
+
+    Shape_Info_init(actorx, 0.0f, &mAc_ActorShadowCircle, shadow_size, shadow_size);
+    actorx->shape_info.shadow_alpha_change_rate = 0.4f;
+    actorx->mv_proc = aINS_program_dlftbl[aINS_program_type[insect->type]];
+    insect->move_proc = &aINS_position_move;
+    actorx->drawn = TRUE;
+}
+
+static ACTOR* aINS_make_insect(aINS_Init_c* init, int make_type) {
+    int free_idx = aINS_searchRegistSpace(make_type);
+
+    if (free_idx >= 0) {
+        aINS_INSECT_ACTOR* insect = &aINS_ctrlActor->insect_actor[free_idx];
+
+        bzero(insect, sizeof(aINS_INSECT_ACTOR));
+        aINS_setupActor((ACTOR*)insect, init);
+        return (ACTOR*)insect;
+    }
+
+    return NULL;
+}
+
+static void aINS_make_ant(aINS_Init_c* init, s8 bx, s8 bz) {
+    aINS_CLIP->ant_spawn_pending = TRUE;
+    bcopy(init, &aINS_CLIP->ant_spawn_info, sizeof(aINS_Init_c));
+    aINS_CLIP->ant_bx = bx;
+    aINS_CLIP->ant_bz = bz;
+}
+
+static void aINS_set_pl_act_tim(int action, int ut_x, int ut_z) {
+    aINS_CLIP->pl_action = action;
+    aINS_CLIP->pl_action_ut_x = ut_x;
+    aINS_CLIP->pl_action_ut_z = ut_z;
+}
+
+static void aINS_init_dma_and_clip_area(aINS_CTRL_ACTOR* ctrl_actor) {
+    aINS_CLIP = &aINS_clip;
+    bzero(&aINS_clip, sizeof(aINS_Clip_c));
+    aINS_CLIP->make_insect_proc = &aINS_make_insect;
+    aINS_CLIP->make_ant_proc = &aINS_make_ant;
+    aINS_CLIP->dt_proc = &aINS_destruct;
+    aINS_CLIP->make_actor_proc = &aINS_make_actor;
+    aINS_CLIP->set_pl_act_tim_proc = &aINS_set_pl_act_tim;
+    aINS_CLIP->chk_live_insect_proc = &aINS_chk_live_insect;
+    aINS_CLIP->position_move_proc = &aINS_position_move;
+    aINS_CLIP->search_near_insect_proc = &aINS_search_near_insect;
+}
+
+static void aINS_free_clip_area(void) {
+    aINS_CLIP = NULL;
+}
