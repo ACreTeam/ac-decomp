@@ -1,5 +1,5 @@
-#ifndef AC_INS_AMENBO_H
-#define AC_INS_AMENBO_H
+#ifndef AC_INS_HITODAMA_H
+#define AC_INS_HITODAMA_H
 
 #include "types.h"
 #include "ac_insect_h.h"
@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-extern void aIAB_actor_init(ACTOR* actorx, GAME* game);
+extern void aIHD_actor_init(ACTOR* actorx, GAME* game);
 
 #ifdef __cplusplus
 }
