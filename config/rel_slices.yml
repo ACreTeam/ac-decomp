@@ -774,6 +774,10 @@ ac_ins_amenbo.c:
     .text: [0x80595C74, 0x80596388]
     .rodata: [0x80649E70, 0x80649EC8]
     .data: [0x806C3200, 0x806C3230]
+ac_ins_hitodama.c:
+    .text: [0x8059A8E8, 0x8059B354]
+    .rodata: [0x8064A090, 0x8064A108]
+    .data: [0x806C3460, 0x806C34B0]
 ac_boat.c:
     .text: [0x805A6CF4, 0x805A856C]
     .rodata: [0x8064A5B0, 0x8064A630]
