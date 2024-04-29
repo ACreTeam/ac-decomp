@@ -1,0 +1,581 @@
+extern Gfx act_m_abura1_1T_model[];
+extern Gfx act_m_abura1_2T_model[];
+extern Gfx act_m_abura1_1T_model[];
+extern Gfx act_m_abura2_2T_model[];
+extern Gfx act_m_akiakane1_1T_model[];
+extern Gfx act_m_akiakane1_2T_model[];
+extern Gfx act_m_akiakane1_1T_model[];
+extern Gfx act_m_akiakane2_2T_model[];
+extern Gfx act_m_danna1T_model[];
+extern Gfx act_m_danna1T_model[];
+extern Gfx act_m_danna2T_model[];
+extern Gfx act_m_danna2T_model[];
+extern Gfx act_m_genji2_a_model[];
+extern Gfx act_m_genji2_b_model[];
+extern Gfx act_m_genji2_c_model[];
+extern Gfx act_m_genji2_d_model[];
+extern Gfx act_m_ginyanma1_1T_model[];
+extern Gfx act_m_ginyanma1_2T_model[];
+extern Gfx act_m_ginyanma1_1T_model[];
+extern Gfx act_m_ginyanma2_2T_model[];
+extern Gfx act_m_higurashi1_1T_model[];
+extern Gfx act_m_higurashi1_2T_model[];
+extern Gfx act_m_higurashi1_1T_model[];
+extern Gfx act_m_higurashi2_2T_model[];
+extern Gfx act_m_hirata1T_model[];
+extern Gfx act_m_hirata1T_model[];
+extern Gfx act_m_hirata2T_model[];
+extern Gfx act_m_hirata2T_model[];
+extern Gfx act_m_kabuto1T_model[];
+extern Gfx act_m_kabuto1T_model[];
+extern Gfx act_m_kabuto2T_model[];
+extern Gfx act_m_kabuto2T_model[];
+extern Gfx act_m_kamakiri1T_model[];
+extern Gfx act_m_kamakiri1T_model[];
+extern Gfx act_m_kamakiri1T_model[];
+extern Gfx act_m_kamakiri2_2T_model[];
+extern Gfx act_m_kanabun1T_model[];
+extern Gfx act_m_kanabun1T_model[];
+extern Gfx act_m_kanabun2T_model[];
+extern Gfx act_m_kanabun2T_model[];
+extern Gfx act_m_kiageha1T_model[];
+extern Gfx act_m_kiageha1T_model[];
+extern Gfx act_m_kiageha2T_model[];
+extern Gfx act_m_kiageha2T_model[];
+extern Gfx act_m_kirigirisu1T_model[];
+extern Gfx act_m_kirigirisu1T_model[];
+extern Gfx act_m_kirigirisu1T_model[];
+extern Gfx act_m_kirigirisu2_2T_model[];
+extern Gfx act_m_koorogi1T_model[];
+extern Gfx act_m_koorogi1T_model[];
+extern Gfx act_m_koorogi1T_model[];
+extern Gfx act_m_koorogi1T_model[];
+extern Gfx act_m_hachi1_1T_model[];
+extern Gfx act_m_hachi1_2T_model[];
+extern Gfx act_m_hachi1_1T_model[];
+extern Gfx act_m_hachi2_2T_model[];
+extern Gfx act_m_matumushi1T_model[];
+extern Gfx act_m_matumushi1T_model[];
+extern Gfx act_m_matumushi1T_model[];
+extern Gfx act_m_matumushi1T_model[];
+extern Gfx act_m_minmin1_1T_model[];
+extern Gfx act_m_minmin1_2T_model[];
+extern Gfx act_m_minmin1_1T_model[];
+extern Gfx act_m_minmin2_2T_model[];
+extern Gfx act_m_monki1T_model[];
+extern Gfx act_m_monki1T_model[];
+extern Gfx act_m_monki2T_model[];
+extern Gfx act_m_monki2T_model[];
+extern Gfx act_m_monshiro1T_model[];
+extern Gfx act_m_monshiro1T_model[];
+extern Gfx act_m_monshiro2T_model[];
+extern Gfx act_m_monshiro2T_model[];
+extern Gfx act_m_nanahoshi1T_model[];
+extern Gfx act_m_nanahoshi1T_model[];
+extern Gfx act_m_nanahoshi2T_model[];
+extern Gfx act_m_nanahoshi2T_model[];
+extern Gfx act_m_ohmurasaki1T_model[];
+extern Gfx act_m_ohmurasaki1T_model[];
+extern Gfx act_m_ohmurasaki2T_model[];
+extern Gfx act_m_ohmurasaki2T_model[];
+extern Gfx act_m_oniyanma1_1T_model[];
+extern Gfx act_m_oniyanma1_2T_model[];
+extern Gfx act_m_oniyanma1_1T_model[];
+extern Gfx act_m_oniyanma2_2T_model[];
+extern Gfx act_m_shiokara1_1T_model[];
+extern Gfx act_m_shiokara1_2T_model[];
+extern Gfx act_m_shiokara1_1T_model[];
+extern Gfx act_m_shiokara2_2T_model[];
+extern Gfx act_m_suzumushi1T_model[];
+extern Gfx act_m_suzumushi1T_model[];
+extern Gfx act_m_suzumushi1T_model[];
+extern Gfx act_m_suzumushi2_2T_model[];
+extern Gfx act_m_syouryou1T_model[];
+extern Gfx act_m_syouryou1T_model[];
+extern Gfx act_m_syouryou1T_model[];
+extern Gfx act_m_syouryou2_2T_model[];
+extern Gfx act_m_tamamushi1T_model[];
+extern Gfx act_m_tamamushi1T_model[];
+extern Gfx act_m_tamamushi2T_model[];
+extern Gfx act_m_tamamushi2T_model[];
+extern Gfx act_m_gomadara1T_model[];
+extern Gfx act_m_gomadara1T_model[];
+extern Gfx act_m_gomadara2T_model[];
+extern Gfx act_m_gomadara2T_model[];
+extern Gfx act_m_tentou1T_model[];
+extern Gfx act_m_tentou1T_model[];
+extern Gfx act_m_tentou2T_model[];
+extern Gfx act_m_tentou2T_model[];
+extern Gfx act_m_tonosama1T_model[];
+extern Gfx act_m_tonosama1T_model[];
+extern Gfx act_m_tonosama1T_model[];
+extern Gfx act_m_tonosama2_2T_model[];
+extern Gfx act_m_tukutuku1_1T_model[];
+extern Gfx act_m_tukutuku1_2T_model[];
+extern Gfx act_m_tukutuku1_1T_model[];
+extern Gfx act_m_tukutuku2_2T_model[];
+extern Gfx act_m_nokogiri1T_model[];
+extern Gfx act_m_nokogiri1T_model[];
+extern Gfx act_m_nokogiri2T_model[];
+extern Gfx act_m_nokogiri2T_model[];
+extern Gfx act_m_miyama1T_model[];
+extern Gfx act_m_miyama1T_model[];
+extern Gfx act_m_miyama2T_model[];
+extern Gfx act_m_miyama2T_model[];
+extern Gfx act_m_okuwa1T_model[];
+extern Gfx act_m_okuwa1T_model[];
+extern Gfx act_m_okuwa2T_model[];
+extern Gfx act_m_okuwa2T_model[];
+extern Gfx act_m_amenbo1T_model[];
+extern Gfx act_m_amenbo1T_model[];
+extern Gfx act_m_amenbo1T_model[];
+extern Gfx act_m_amenbo2T_model[];
+extern Gfx act_m_ariT_model[];
+extern Gfx act_m_ariT_model[];
+extern Gfx act_m_ariT_model[];
+extern Gfx act_m_ariT_model[];
+extern Gfx act_m_dango2T_model[];
+extern Gfx act_m_dango2T_model[];
+extern Gfx act_m_dango1T_model[];
+extern Gfx act_m_dango1T_model[];
+extern Gfx act_m_ka1T_model[];
+extern Gfx act_m_ka2_2T_model[];
+extern Gfx act_m_ka1T_model[];
+extern Gfx act_m_ka2_1T_model[];
+extern Gfx act_m_keraT_model[];
+extern Gfx act_m_keraT_model[];
+extern Gfx act_m_kumo1_2T_model[];
+extern Gfx act_m_kumo1_2T_model[];
+extern Gfx act_m_kumo1_1T_model[];
+extern Gfx act_m_kumo2T_model[];
+extern Gfx act_m_maimaiT_model[];
+extern Gfx act_m_maimaiT_model[];
+extern Gfx act_m_maimaiT_model[];
+extern Gfx act_m_maimaiT_model[];
+extern Gfx act_m_mino1_1T_model[];
+extern Gfx act_m_mino1_1T_model[];
+extern Gfx act_m_mino1_1T_model[];
+extern Gfx act_m_mino2T_model[];
+extern Gfx act_m_mino1_2T_model[];
+extern Gfx act_m_mino1_2T_model[];
+extern Gfx act_m_hitodama_a_model[];
+extern Gfx act_m_hitodama_a_model[];
+extern Gfx act_m_hitodama_b_model[];
+extern Gfx act_m_hitodama_b_model[];
+
+// clang-format off
+
+static Gfx* aINS_abura_dl[] = {
+    act_m_abura1_1T_model,
+    act_m_abura1_2T_model,
+    act_m_abura1_1T_model,
+    act_m_abura2_2T_model,
+};
+
+static Gfx* aINS_akiakane_dl[] = {
+    act_m_akiakane1_1T_model,
+    act_m_akiakane1_2T_model,
+    act_m_akiakane1_1T_model,
+    act_m_akiakane2_2T_model,
+};
+
+static Gfx* aINS_danna_dl[] = {
+    act_m_danna1T_model,
+    act_m_danna1T_model,
+    act_m_danna2T_model,
+    act_m_danna2T_model,
+};
+
+static Gfx* aINS_genji_dl[] = {
+    act_m_genji2_a_model,
+    act_m_genji2_b_model,
+    act_m_genji2_c_model,
+    act_m_genji2_d_model,
+};
+
+static Gfx* aINS_ginyanma_dl[] = {
+    act_m_ginyanma1_1T_model,
+    act_m_ginyanma1_2T_model,
+    act_m_ginyanma1_1T_model,
+    act_m_ginyanma2_2T_model,
+};
+
+static Gfx* aINS_higurashi_dl[] = {
+    act_m_higurashi1_1T_model,
+    act_m_higurashi1_2T_model,
+    act_m_higurashi1_1T_model,
+    act_m_higurashi2_2T_model,
+};
+
+static Gfx* aINS_hirata_dl[] = {
+    act_m_hirata1T_model,
+    act_m_hirata1T_model,
+    act_m_hirata2T_model,
+    act_m_hirata2T_model,
+};
+
+static Gfx* aINS_kabuto_dl[] = {
+    act_m_kabuto1T_model,
+    act_m_kabuto1T_model,
+    act_m_kabuto2T_model,
+    act_m_kabuto2T_model,
+};
+
+static Gfx* aINS_kamakiri_dl[] = {
+    act_m_kamakiri1T_model,
+    act_m_kamakiri1T_model,
+    act_m_kamakiri1T_model,
+    act_m_kamakiri2_2T_model,
+};
+
+static Gfx* aINS_kanabun_dl[] = {
+    act_m_kanabun1T_model,
+    act_m_kanabun1T_model,
+    act_m_kanabun2T_model,
+    act_m_kanabun2T_model,
+};
+
+static Gfx* aINS_kiageha_dl[] = {
+    act_m_kiageha1T_model,
+    act_m_kiageha1T_model,
+    act_m_kiageha2T_model,
+    act_m_kiageha2T_model,
+};
+
+static Gfx* aINS_kirigirisu_dl[] = {
+    act_m_kirigirisu1T_model,
+    act_m_kirigirisu1T_model,
+    act_m_kirigirisu1T_model,
+    act_m_kirigirisu2_2T_model,
+};
+
+static Gfx* aINS_koorogi_dl[] = {
+    act_m_koorogi1T_model,
+    act_m_koorogi1T_model,
+    act_m_koorogi1T_model,
+    act_m_koorogi1T_model,
+};
+
+static Gfx* aINS_kuma_dl[] = {
+    act_m_hachi1_1T_model,
+    act_m_hachi1_2T_model,
+    act_m_hachi1_1T_model,
+    act_m_hachi2_2T_model,
+};
+
+static Gfx* aINS_matumushi_dl[] = {
+    act_m_matumushi1T_model,
+    act_m_matumushi1T_model,
+    act_m_matumushi1T_model,
+    act_m_matumushi1T_model,
+};
+
+static Gfx* aINS_minmin_dl[] = {
+    act_m_minmin1_1T_model,
+    act_m_minmin1_2T_model,
+    act_m_minmin1_1T_model,
+    act_m_minmin2_2T_model,
+};
+
+static Gfx* aINS_monki_dl[] = {
+    act_m_monki1T_model,
+    act_m_monki1T_model,
+    act_m_monki2T_model,
+    act_m_monki2T_model,
+};
+
+static Gfx* aINS_monshiro_dl[] = {
+    act_m_monshiro1T_model,
+    act_m_monshiro1T_model,
+    act_m_monshiro2T_model,
+    act_m_monshiro2T_model,
+};
+
+static Gfx* aINS_nanahoshi_dl[] = {
+    act_m_nanahoshi1T_model,
+    act_m_nanahoshi1T_model,
+    act_m_nanahoshi2T_model,
+    act_m_nanahoshi2T_model,
+};
+
+static Gfx* aINS_ohmurasaki_dl[] = {
+    act_m_ohmurasaki1T_model,
+    act_m_ohmurasaki1T_model,
+    act_m_ohmurasaki2T_model,
+    act_m_ohmurasaki2T_model,
+};
+
+static Gfx* aINS_oniyanma_dl[] = {
+    act_m_oniyanma1_1T_model,
+    act_m_oniyanma1_2T_model,
+    act_m_oniyanma1_1T_model,
+    act_m_oniyanma2_2T_model,
+};
+
+static Gfx* aINS_shiokara_dl[] = {
+    act_m_shiokara1_1T_model,
+    act_m_shiokara1_2T_model,
+    act_m_shiokara1_1T_model,
+    act_m_shiokara2_2T_model,
+};
+
+static Gfx* aINS_suzumushi_dl[] = {
+    act_m_suzumushi1T_model,
+    act_m_suzumushi1T_model,
+    act_m_suzumushi1T_model,
+    act_m_suzumushi2_2T_model,
+};
+
+static Gfx* aINS_syouryou_dl[] = {
+    act_m_syouryou1T_model,
+    act_m_syouryou1T_model,
+    act_m_syouryou1T_model,
+    act_m_syouryou2_2T_model,
+};
+
+static Gfx* aINS_tamamushi_dl[] = {
+    act_m_tamamushi1T_model,
+    act_m_tamamushi1T_model,
+    act_m_tamamushi2T_model,
+    act_m_tamamushi2T_model,
+};
+
+static Gfx* aINS_gomadara_dl[] = {
+    act_m_gomadara1T_model,
+    act_m_gomadara1T_model,
+    act_m_gomadara2T_model,
+    act_m_gomadara2T_model,
+};
+
+static Gfx* aINS_tentou_dl[] = {
+    act_m_tentou1T_model,
+    act_m_tentou1T_model,
+    act_m_tentou2T_model,
+    act_m_tentou2T_model,
+};
+
+static Gfx* aINS_tonosama_dl[] = {
+    act_m_tonosama1T_model,
+    act_m_tonosama1T_model,
+    act_m_tonosama1T_model,
+    act_m_tonosama2_2T_model,
+};
+
+static Gfx* aINS_tukutuku_dl[] = {
+    act_m_tukutuku1_1T_model,
+    act_m_tukutuku1_2T_model,
+    act_m_tukutuku1_1T_model,
+    act_m_tukutuku2_2T_model,
+};
+
+static Gfx* aINS_nokogiri_dl[] = {
+    act_m_nokogiri1T_model,
+    act_m_nokogiri1T_model,
+    act_m_nokogiri2T_model,
+    act_m_nokogiri2T_model,
+};
+
+static Gfx* aINS_miyama_dl[] = {
+    act_m_miyama1T_model,
+    act_m_miyama1T_model,
+    act_m_miyama2T_model,
+    act_m_miyama2T_model,
+};
+
+static Gfx* aINS_okuwa_dl[] = {
+    act_m_okuwa1T_model,
+    act_m_okuwa1T_model,
+    act_m_okuwa2T_model,
+    act_m_okuwa2T_model,
+};
+
+static Gfx* aINS_amenbo_dl[] = {
+    act_m_amenbo1T_model,
+    act_m_amenbo1T_model,
+    act_m_amenbo1T_model,
+    act_m_amenbo2T_model,
+};
+
+static Gfx* aINS_ari_dl[] = {
+    act_m_ariT_model,
+    act_m_ariT_model,
+    act_m_ariT_model,
+    act_m_ariT_model,
+};
+
+static Gfx* aINS_dango_dl[] = {
+    act_m_dango2T_model,
+    act_m_dango2T_model,
+    act_m_dango1T_model,
+    act_m_dango1T_model,
+};
+
+static Gfx* aINS_ka_dl[] = {
+    act_m_ka1T_model,
+    act_m_ka2_2T_model,
+    act_m_ka1T_model,
+    act_m_ka2_1T_model,
+};
+
+static Gfx* aINS_kera_dl[] = {
+    act_m_keraT_model,
+    act_m_keraT_model,
+};
+
+static Gfx* aINS_kumo_dl[] = {
+    act_m_kumo1_2T_model,
+    act_m_kumo1_2T_model,
+    act_m_kumo1_1T_model,
+    act_m_kumo2T_model,
+};
+
+static Gfx* aINS_maimai_dl[] = {
+    act_m_maimaiT_model,
+    act_m_maimaiT_model,
+    act_m_maimaiT_model,
+    act_m_maimaiT_model,
+};
+
+static Gfx* aINS_mino_dl[] = {
+    act_m_mino1_1T_model,
+    act_m_mino1_1T_model,
+    act_m_mino1_1T_model,
+    act_m_mino2T_model,
+    act_m_mino1_2T_model,
+    act_m_mino1_2T_model,
+};
+
+static Gfx* aINS_hitodama_dl[] = {
+    act_m_hitodama_a_model,
+    act_m_hitodama_a_model,
+    act_m_hitodama_b_model,
+    act_m_hitodama_b_model,
+};
+
+// clang-format on
+
+// clang-format off
+static Gfx** aINS_displayList[] = {
+    aINS_monshiro_dl,
+    aINS_monki_dl,
+    aINS_kiageha_dl,
+    aINS_ohmurasaki_dl,
+    aINS_minmin_dl,
+    aINS_tukutuku_dl,
+    aINS_higurashi_dl,
+    aINS_abura_dl,
+    aINS_kuma_dl,
+    aINS_shiokara_dl,
+    aINS_akiakane_dl,
+    aINS_ginyanma_dl,
+    aINS_oniyanma_dl,
+    aINS_syouryou_dl,
+    aINS_tonosama_dl,
+    aINS_koorogi_dl,
+    aINS_kirigirisu_dl,
+    aINS_suzumushi_dl,
+    aINS_matumushi_dl,
+    aINS_kanabun_dl,
+    aINS_kabuto_dl,
+    aINS_hirata_dl,
+    aINS_tamamushi_dl,
+    aINS_gomadara_dl,
+    aINS_tentou_dl,
+    aINS_nanahoshi_dl,
+    aINS_kamakiri_dl,
+    aINS_genji_dl,
+    aINS_danna_dl,
+    aINS_nokogiri_dl,
+    aINS_miyama_dl,
+    aINS_okuwa_dl,
+    aINS_maimai_dl,
+    aINS_kera_dl,
+    aINS_amenbo_dl,
+    aINS_mino_dl,
+    aINS_dango_dl,
+    aINS_kumo_dl,
+    aINS_ari_dl,
+    aINS_ka_dl,
+    aINS_hitodama_dl,
+};
+// clang-format on
+
+extern void aICH_actor_init(ACTOR* actorx, GAME* game);
+extern void aIBT_actor_init(ACTOR* actorx, GAME* game);
+extern void aITB_actor_init(ACTOR* actorx, GAME* game);
+extern void aITT_actor_init(ACTOR* actorx, GAME* game);
+extern void aIHT_actor_init(ACTOR* actorx, GAME* game);
+extern void aISM_actor_init(ACTOR* actorx, GAME* game);
+extern void aIKB_actor_init(ACTOR* actorx, GAME* game);
+extern void aIGK_actor_init(ACTOR* actorx, GAME* game);
+extern void aIHD_actor_init(ACTOR* actorx, GAME* game);
+extern void aIAB_actor_init(ACTOR* actorx, GAME* game);
+extern void aIKA_actor_init(ACTOR* actorx, GAME* game);
+extern void aIDG_actor_init(ACTOR* actorx, GAME* game);
+extern void aIKR_actor_init(ACTOR* actorx, GAME* game);
+extern void aIMN_actor_init(ACTOR* actorx, GAME* game);
+
+// clang-format off
+static mActor_proc aINS_program_dlftbl[] = {
+    &aICH_actor_init,
+    &aIBT_actor_init,
+    &aITB_actor_init,
+    &aITT_actor_init,
+    &aIHT_actor_init,
+    &aISM_actor_init,
+    &aIKB_actor_init,
+    &aIGK_actor_init,
+    &aIHD_actor_init,
+    &aIAB_actor_init,
+    &aIKA_actor_init,
+    &aIDG_actor_init,
+    &aIKR_actor_init,
+    &aIMN_actor_init,
+};
+// clang-format on
+
+// clang-format off
+static int aINS_program_type[] = {
+    aINS_PROGRAM_CHOU,
+    aINS_PROGRAM_CHOU,
+    aINS_PROGRAM_CHOU,
+    aINS_PROGRAM_CHOU,
+    aINS_PROGRAM_SEMI,
+    aINS_PROGRAM_SEMI,
+    aINS_PROGRAM_SEMI,
+    aINS_PROGRAM_SEMI,
+    aINS_PROGRAM_SEMI,
+    aINS_PROGRAM_TONBO,
+    aINS_PROGRAM_TONBO,
+    aINS_PROGRAM_TONBO,
+    aINS_PROGRAM_TONBO,
+    aINS_PROGRAM_BATTA,
+    aINS_PROGRAM_BATTA,
+    aINS_PROGRAM_BATTA,
+    aINS_PROGRAM_BATTA,
+    aINS_PROGRAM_BATTA,
+    aINS_PROGRAM_BATTA,
+    aINS_PROGRAM_KABUTO,
+    aINS_PROGRAM_KABUTO,
+    aINS_PROGRAM_KABUTO,
+    aINS_PROGRAM_KABUTO,
+    aINS_PROGRAM_KABUTO,
+    aINS_PROGRAM_TENTOU,
+    aINS_PROGRAM_TENTOU,
+    aINS_PROGRAM_TENTOU,
+    aINS_PROGRAM_HOTARU,
+    aINS_PROGRAM_GOKI,
+    aINS_PROGRAM_KABUTO,
+    aINS_PROGRAM_KABUTO,
+    aINS_PROGRAM_KABUTO,
+    aINS_PROGRAM_TENTOU,
+    aINS_PROGRAM_KERA,
+    aINS_PROGRAM_AMENBO,
+    aINS_PROGRAM_MINO,
+    aINS_PROGRAM_DANGO,
+    aINS_PROGRAM_MINO,
+    aINS_PROGRAM_DANGO,
+    aINS_PROGRAM_KA,
+    aINS_PROGRAM_HITODAMA,
+};
+// clang-format on

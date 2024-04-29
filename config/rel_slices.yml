@@ -765,6 +765,11 @@ ac_ev_majin.c:
     .text: [0x80592A40, 0x80593158]
     .rodata: [0x80649D98, 0x80649DA0]
     .data: [0x806C2B50, 0x806C2BD0]
+ac_insect.c:
+    .text: [0x80594344, 0x80595C74]
+    .rodata: [0x80649E00, 0x80649E70]
+    .data: [0x806C2C80, 0x806C3200]
+    .bss: [0x8131B2C8, 0x81320738]
 ac_boat.c:
     .text: [0x805A6CF4, 0x805A856C]
     .rodata: [0x8064A5B0, 0x8064A630]

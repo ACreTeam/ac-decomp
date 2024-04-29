@@ -71,6 +71,7 @@ extern int mPlib_check_player_actor_main_index_Furniture_Move(GAME* game);
 extern int mPlib_request_main_sitdown_type1(GAME* game, int direct, const xyz_t* pos, int ftr_no);
 extern int mPlib_request_main_lie_bed_type1(GAME* game, int direct, const xyz_t* pos, int head_direct, int ftr_no);
 extern void mPlib_change_player_cloth(GAME* game, int idx);
+extern u32 mPlib_Get_item_net_catch_label(void);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 

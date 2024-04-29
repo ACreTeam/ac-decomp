@@ -34,7 +34,7 @@ typedef union {
 typedef struct lights_s {
     u8 type;
     LightParams lights;
-} Lights;
+} Lights; // size = 0xE
 
 typedef struct light_list {
     /* 0x0 */ Lights* info;

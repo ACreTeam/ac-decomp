@@ -286,6 +286,11 @@ extern int mCoBG_RangeCheckLinePoint(f32* start_xz, f32* end_xz, f32* point_xz);
 extern int mCoBG_GetDistPointAndLine2D_Norm(f32* dist, f32* start_xz, f32* end_xz, f32* norm, f32* point_xz);
 extern f32 mCoBG_Get2VectorAngleF(f32* v0, f32* v1, u8 type);
 extern int mCoBG_CheckUtFlat(const xyz_t* pos);
+extern void mCoBG_BgCheckControll_RemoveDirectedUnitColumn(xyz_t* reverse_pos, ACTOR* actor, f32 check_range,
+                                                           f32 offset_y, s16 wall_attr_check, s16 no_reverse,
+                                                           s16 check_type, int ut_x, int ut_z);
+extern xyz_t mCoBG_UniqueWallCheck(ACTOR* actorx, f32 range, f32 y_ofs);
+extern xyz_t mCoBG_ScopeWallCheck(ACTOR* actorx, const xyz_t* pos, f32 x, f32 z, f32 range, f32 y_ofs);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();
