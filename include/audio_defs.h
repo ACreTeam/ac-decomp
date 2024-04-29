@@ -35,6 +35,8 @@ typedef enum audio_sound_effects {
     NA_SE_LIGHT_ON,
     NA_SE_LIGHT_OFF,
 
+    NA_SE_25 = 0x25,
+
     NA_SE_DRAWER_SHUT = 0x3A,
 
     NA_SE_ITEM_GET = 0x40,
