@@ -778,6 +778,10 @@ ac_ins_hitodama.c:
     .text: [0x8059A8E8, 0x8059B354]
     .rodata: [0x8064A090, 0x8064A108]
     .data: [0x806C3460, 0x806C34B0]
+ac_ins_ka.c:
+    .text: [0x8059C174, 0x8059C9EC]
+    .rodata: [0x8064A1A8, 0x8064A1F0]
+    .data: [0x806C3550, 0x806C3580]
 ac_boat.c:
     .text: [0x805A6CF4, 0x805A856C]
     .rodata: [0x8064A5B0, 0x8064A630]
