@@ -72,6 +72,8 @@ extern int mPlib_request_main_sitdown_type1(GAME* game, int direct, const xyz_t*
 extern int mPlib_request_main_lie_bed_type1(GAME* game, int direct, const xyz_t* pos, int head_direct, int ftr_no);
 extern void mPlib_change_player_cloth(GAME* game, int idx);
 extern u32 mPlib_Get_item_net_catch_label(void);
+extern int mPlib_Check_stung_mosquito(ACTOR* actorx);
+extern int mPlib_request_main_stung_mosquito_type1(ACTOR* actorx);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 
