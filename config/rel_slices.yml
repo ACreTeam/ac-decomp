@@ -782,6 +782,10 @@ ac_ins_ka.c:
     .text: [0x8059C174, 0x8059C9EC]
     .rodata: [0x8064A1A8, 0x8064A1F0]
     .data: [0x806C3550, 0x806C3580]
+ac_ins_kabuto.c:
+    .text: [0x8059C9EC, 0x8059D1F4]
+    .rodata: [0x8064A1F0, 0x8064A228]
+    .data: [0x806C3580, 0x806C35E0]
 ac_boat.c:
     .text: [0x805A6CF4, 0x805A856C]
     .rodata: [0x8064A5B0, 0x8064A630]

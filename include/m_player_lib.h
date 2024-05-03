@@ -74,6 +74,10 @@ extern void mPlib_change_player_cloth(GAME* game, int idx);
 extern u32 mPlib_Get_item_net_catch_label(void);
 extern int mPlib_Check_stung_mosquito(ACTOR* actorx);
 extern int mPlib_request_main_stung_mosquito_type1(ACTOR* actorx);
+extern int mPlib_Check_StopNet(xyz_t* net_pos);
+extern int mPlib_Check_DigScoop(xyz_t* scoop_pos);
+extern int mPlib_Check_tree_shaken(const xyz_t* pos);
+extern int mPlib_Check_VibUnit_OneFrame(const xyz_t* pos);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 
@@ -86,6 +90,7 @@ extern void mPlib_request_main_give_type1(GAME* game, mActor_name_t item, int mo
 
 #define GET_PLAYER_ACTOR(play) get_player_actor_withoutCheck(play)
 #define GET_PLAYER_ACTOR_NOW() get_player_actor_withoutCheck((GAME_PLAY*)gamePT)
+#define GET_PLAYER_ACTOR_GAME(game) get_player_actor_withoutCheck((GAME_PLAY*)(game))
 
 #ifdef __cplusplus
 }
