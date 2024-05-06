@@ -774,6 +774,10 @@ ac_ins_amenbo.c:
     .text: [0x80595C74, 0x80596388]
     .rodata: [0x80649E70, 0x80649EC8]
     .data: [0x806C3200, 0x806C3230]
+ac_ins_goki.c:
+    .text: [0x80599A2C, 0x8059A8E8]
+    .rodata: [0x8064A028, 0x8064A090]
+    .data: [0x806C33C8, 0x806C3460]
 ac_ins_hitodama.c:
     .text: [0x8059A8E8, 0x8059B354]
     .rodata: [0x8064A090, 0x8064A108]
