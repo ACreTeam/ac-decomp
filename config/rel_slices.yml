@@ -782,6 +782,10 @@ ac_ins_dango.c:
     .text: [0x80597708, 0x805983F8]
     .rodata: [0x80649F60, 0x80649FA8]
     .data: [0x806C32B8, 0x806C3308]
+ac_ins_chou.c:
+    .text: [0x805983F8, 0x80599A2C]
+    .rodata: [0x80649FA8, 0x8064A028]
+    .data: [0x806C3308, 0x806C33C8]
 ac_ins_goki.c:
     .text: [0x80599A2C, 0x8059A8E8]
     .rodata: [0x8064A028, 0x8064A090]

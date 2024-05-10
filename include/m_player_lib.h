@@ -74,6 +74,7 @@ extern void mPlib_change_player_cloth(GAME* game, int idx);
 extern u32 mPlib_Get_item_net_catch_label(void);
 extern int mPlib_Check_stung_mosquito(ACTOR* actorx);
 extern int mPlib_request_main_stung_mosquito_type1(ACTOR* actorx);
+extern int mPlib_Check_HitAxe(xyz_t* axe_pos);
 extern int mPlib_Check_StopNet(xyz_t* net_pos);
 extern int mPlib_Check_DigScoop(xyz_t* scoop_pos);
 extern int mPlib_Check_tree_shaken(const xyz_t* pos);

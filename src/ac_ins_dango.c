@@ -19,10 +19,10 @@ enum {
     aIDG_ACTION_NUM
 };
 
-void aIDG_actor_move(ACTOR*, GAME*);
+static void aIDG_actor_move(ACTOR*, GAME*);
 static void aIDG_setupAction(aINS_INSECT_ACTOR* insect, int action, GAME* game);
 
-void aIDG_actor_init(ACTOR* actor, GAME* game) {
+extern void aIDG_actor_init(ACTOR* actor, GAME* game) {
     aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actor;
     int bx, bz;
     int action;
@@ -57,7 +57,7 @@ void aIDG_actor_init(ACTOR* actor, GAME* game) {
     aIDG_setupAction(insect, action, game);
 }
 
-int aIDG_check_strike_stone(aINS_INSECT_ACTOR* insect) {
+static int aIDG_check_strike_stone(aINS_INSECT_ACTOR* insect) {
     int ret;
     int bx, bz;
 
@@ -71,7 +71,7 @@ int aIDG_check_strike_stone(aINS_INSECT_ACTOR* insect) {
     return ret;
 }
 
-int aIDG_check_ball(aINS_INSECT_ACTOR* insect) {
+static int aIDG_check_ball(aINS_INSECT_ACTOR* insect) {
     f32 xDiff;
     f32 zDiff;
     int ret;
@@ -88,7 +88,7 @@ int aIDG_check_ball(aINS_INSECT_ACTOR* insect) {
     return ret;
 }
 
-int aIDG_check_player_net(aINS_INSECT_ACTOR* insect) {
+static int aIDG_check_player_net(aINS_INSECT_ACTOR* insect) {
     f32 xDiff;
     f32 zDiff;
     int ret;
@@ -99,7 +99,7 @@ int aIDG_check_player_net(aINS_INSECT_ACTOR* insect) {
         xDiff = pos.x - insect->tools_actor.actor_class.world.position.x;
         zDiff = pos.z - insect->tools_actor.actor_class.world.position.z;
 
-        if (((xDiff * xDiff) + (zDiff * zDiff)) < 3600.0f) {
+        if (((xDiff * xDiff) + (zDiff * zDiff)) < 4900.0f) {
             ret = TRUE;
         }
     }
@@ -107,7 +107,7 @@ int aIDG_check_player_net(aINS_INSECT_ACTOR* insect) {
     return ret;
 }
 
-int aIDG_check_player_scoop(aINS_INSECT_ACTOR* insect) {
+static int aIDG_check_player_scoop(aINS_INSECT_ACTOR* insect) {
     f32 xDiff;
     f32 zDiff;
     int ret;
@@ -118,7 +118,7 @@ int aIDG_check_player_scoop(aINS_INSECT_ACTOR* insect) {
         xDiff = pos.x - insect->tools_actor.actor_class.world.position.x;
         zDiff = pos.z - insect->tools_actor.actor_class.world.position.z;
 
-        if (((xDiff * xDiff) + (zDiff * zDiff)) < 3600.0f) {
+        if (((xDiff * xDiff) + (zDiff * zDiff)) < 4900.0f) {
             ret = TRUE;
         }
     }
@@ -126,7 +126,7 @@ int aIDG_check_player_scoop(aINS_INSECT_ACTOR* insect) {
     return ret;
 }
 
-int aIDG_check_player_axe(aINS_INSECT_ACTOR* insect) {
+static int aIDG_check_player_axe(aINS_INSECT_ACTOR* insect) {
     f32 xDiff;
     f32 zDiff;
     int ret;
@@ -137,7 +137,7 @@ int aIDG_check_player_axe(aINS_INSECT_ACTOR* insect) {
         xDiff = pos.x - insect->tools_actor.actor_class.world.position.x;
         zDiff = pos.z - insect->tools_actor.actor_class.world.position.z;
 
-        if (((xDiff * xDiff) + (zDiff * zDiff)) < 3600.0f) {
+        if (((xDiff * xDiff) + (zDiff * zDiff)) < 4900.0f) {
             ret = TRUE;
         }
     }
@@ -145,7 +145,7 @@ int aIDG_check_player_axe(aINS_INSECT_ACTOR* insect) {
     return ret;
 }
 
-int aIDG_check_patience(aINS_INSECT_ACTOR* insect) {
+static int aIDG_check_patience(aINS_INSECT_ACTOR* insect) {
     int ret;
 
     ret = FALSE;
@@ -166,7 +166,7 @@ int aIDG_check_patience(aINS_INSECT_ACTOR* insect) {
     return ret;
 }
 
-int aIDG_chk_active_range(aINS_INSECT_ACTOR* insect) {
+static int aIDG_chk_active_range(aINS_INSECT_ACTOR* insect) {
     f32 z, x;
     int ret;
 
@@ -179,7 +179,7 @@ int aIDG_chk_active_range(aINS_INSECT_ACTOR* insect) {
     return ret;
 }
 
-int aIDG_chk_water_attr(aINS_INSECT_ACTOR* insect, GAME* game) {
+static int aIDG_chk_water_attr(aINS_INSECT_ACTOR* insect, GAME* game) {
     int ret = FALSE;
 
     if (insect->tools_actor.actor_class.bg_collision_check.result.on_ground) {
@@ -199,7 +199,7 @@ int aIDG_chk_water_attr(aINS_INSECT_ACTOR* insect, GAME* game) {
     return ret;
 }
 
-void aIDG_calc_direction_angl(aINS_INSECT_ACTOR* insect) {
+static void aIDG_calc_direction_angl(aINS_INSECT_ACTOR* insect) {
     if (insect->tools_actor.actor_class.bg_collision_check.result.hit_wall & mCoBG_HIT_WALL_FRONT) {
         int wallCount = insect->tools_actor.actor_class.bg_collision_check.result.hit_wall_count & 7;
         if (wallCount != 0) {
@@ -219,7 +219,7 @@ void aIDG_calc_direction_angl(aINS_INSECT_ACTOR* insect) {
                 0x800);
 }
 
-void aIDG_avoid(ACTOR* actor, GAME* game) {
+static void aIDG_avoid(ACTOR* actor, GAME* game) {
     aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actor;
     int bx, bz;
     if (aIDG_chk_water_attr(insect, game) == FALSE) {
@@ -235,43 +235,43 @@ void aIDG_avoid(ACTOR* actor, GAME* game) {
                     insect->bg_type = 2;
                 }
             } else if (aIDG_check_patience(insect) == TRUE) {
-                aIDG_setupAction(insect, aIDG_ACTION_LET_ESCAPE, game);
+                aIDG_setupAction(insect, aIDG_ACTION_STOP, game);
             }
         }
-    }1
+    }
 }
 
-void aIDG_let_escape(ACTOR* actor, GAME* game) {
+static void aIDG_let_escape(ACTOR* actor, GAME* game) {
     aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actor;
     if (aIDG_chk_water_attr(insect, game) == FALSE) {
         aIDG_calc_direction_angl(insect);
     }
 }
 
-void aIDG_stop(ACTOR* actor, GAME* game) {
+static void aIDG_stop(ACTOR* actor, GAME* game) {
     aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actor;
     if ((aIDG_chk_water_attr(insect, game) == FALSE) && (insect->patience < 50.0f)) {
         aIDG_setupAction(insect, aIDG_ACTION_AVOID, game);
     }
 }
 
-void aIDG_hide(ACTOR* actor, GAME* game) {
+static void aIDG_hide(ACTOR* actor, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*) game;
     aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actor;
 
     if (aIDG_check_strike_stone(insect) == TRUE) {
-        aIDG_setupAction(insect, aIDG_ACTION_HIDE, &play->game);
+        aIDG_setupAction(insect, aIDG_ACTION_APPEAR, &play->game);
     }
 }
 
-void aIDG_appear(ACTOR* actor, GAME* game) {
+static void aIDG_appear(ACTOR* actor, GAME* game) {
     aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actor;
     if (insect->tools_actor.actor_class.bg_collision_check.result.on_ground) {
         aIDG_setupAction(insect, aIDG_ACTION_STOP , game);
     }
 }
 
-void aIDG_dive(ACTOR* actor, GAME* game) {
+static void aIDG_dive(ACTOR* actor, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*) game;
     aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actor;
     
@@ -281,7 +281,7 @@ void aIDG_dive(ACTOR* actor, GAME* game) {
     }
 }
 
-void aIDG_avoid_init(aINS_INSECT_ACTOR* insect, GAME* game) {
+static void aIDG_avoid_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     PLAYER_ACTOR* player;
     s16 angle;
@@ -299,7 +299,7 @@ void aIDG_avoid_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     }
 }
 
-void aIDG_let_escape_init(aINS_INSECT_ACTOR* insect, GAME* game) {
+static void aIDG_let_escape_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     insect->life_time = 0;
     insect->alpha_time = 80;
     insect->tools_actor.actor_class.shape_info.rotation.x = 0;
@@ -311,27 +311,27 @@ void aIDG_let_escape_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     insect->insect_flags.bit_2 = TRUE;
 }
 
-void aIDG_stop_init(aINS_INSECT_ACTOR* insect, GAME* game) {
+static void aIDG_stop_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     insect->target_speed = 0.0f;
     insect->speed_step = 0.05f;
     insect->_1E0 = 0.0f;
 }
 
-void aIDG_hide_init(aINS_INSECT_ACTOR* insect, GAME* game) {
+static void aIDG_hide_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     insect->bg_type = 4;
     insect->tools_actor.actor_class.gravity = 2.0f;
     insect->tools_actor.actor_class.max_velocity_y = -20.0f;
     insect->tools_actor.actor_class.drawn = FALSE;
 }
 
-void aIDG_appear_init(aINS_INSECT_ACTOR* insect, GAME* game) {
+static void aIDG_appear_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     aIDG_avoid_init(insect, game);
     insect->tools_actor.actor_class.drawn = TRUE;
     insect->_1E0 = 0.0f;
     insect->tools_actor.actor_class.position_speed.y = 12.0f;
 }
 
-void aIDG_dive_init(aINS_INSECT_ACTOR* insect, GAME* game) {
+static void aIDG_dive_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     insect->tools_actor.actor_class.speed = 1.5f;
     insect->speed_step = 0.3f;
     insect->target_speed = 1.5f;
@@ -340,7 +340,7 @@ void aIDG_dive_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     insect->insect_flags.bit_1 = TRUE;
 }
 
-void aIDG_drown_init(aINS_INSECT_ACTOR* insect, GAME* game) {
+static void aIDG_drown_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     xyz_t pos = insect->tools_actor.actor_class.world.position;
     f32 height = mCoBG_GetWaterHeight_File(pos, "ac_ins_dango.c", 763);
 
@@ -354,7 +354,7 @@ void aIDG_drown_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     insect->tools_actor.actor_class.shape_info.draw_shadow = FALSE;
 }
 
-void aIDG_retire_init(aINS_INSECT_ACTOR* insect, GAME* game) {
+static void aIDG_retire_init(aINS_INSECT_ACTOR* insect, GAME* game) {
     insect->life_time = 0;
     insect->alpha_time = 0x50;
     insect->tools_actor.actor_class.shape_info.rotation.x = 0;
@@ -388,7 +388,7 @@ static void aIDG_setupAction(aINS_INSECT_ACTOR* insect, int action, GAME* game) 
 }
 
 
-void aIBT_actor_move(ACTOR* actor, GAME* game) {
+static void aIDG_actor_move(ACTOR* actor, GAME* game) {
     aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)actor;
     GAME_PLAY* play = (GAME_PLAY*)game;
  
