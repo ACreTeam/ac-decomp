@@ -12,7 +12,7 @@ enum {
     aIBT_ACTION_CHANGE_DIRECTION,
     aIBT_ACTION_WAIT,
     aIBT_ACTION_JUMP,
-    aIBT_ACTION_IN_WATER,
+    aIBT_ACTION_DROWN,
 
     aIBT_ACTION_NUM
 };
@@ -297,7 +297,7 @@ static void aIBT_avoid(ACTOR* actor, GAME* game) {
 
     aIBT_anime_proc(insect);
     if (insect->tools_actor.actor_class.bg_collision_check.result.is_in_water) {
-        aIBT_setupAction(insect, aIBT_ACTION_IN_WATER, &play->game);
+        aIBT_setupAction(insect, aIBT_ACTION_DROWN, &play->game);
     } else if ((aIBT_check_player_net(insect) == FALSE) &&
                (insect->tools_actor.actor_class.bg_collision_check.result.on_ground)) {
         if (insect->timer > 0) {
@@ -333,7 +333,7 @@ static void aIBT_let_escape(ACTOR* actor, GAME* game) {
 
     aIBT_anime_proc(insect);
     if (insect->tools_actor.actor_class.bg_collision_check.result.is_in_water) {
-        aIBT_setupAction(insect, aIBT_ACTION_IN_WATER, game);
+        aIBT_setupAction(insect, aIBT_ACTION_DROWN, game);
     } else {
         if (insect->tools_actor.actor_class.bg_collision_check.result.on_ground) {
             if (insect->timer > 0) {
@@ -407,7 +407,7 @@ static void aIBT_wait(ACTOR* actor, GAME* game) {
 
     
     if (actor->bg_collision_check.result.is_in_water) {
-        aIBT_setupAction(insect, aIBT_ACTION_IN_WATER, game);
+        aIBT_setupAction(insect, aIBT_ACTION_DROWN, game);
 
     } else if (aIBT_check_patience(insect,game) == TRUE) {
         aIBT_setupAction(insect, aIBT_ACTION_AVOID, game);
