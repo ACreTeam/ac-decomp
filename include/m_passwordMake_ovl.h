@@ -11,18 +11,22 @@ extern "C" {
 #endif
 
 enum {
-  mPM_ENTRY_TOWN,
-  mPM_ENTRY_PLAYER,
+    mPM_ENTRY_TOWN,
+    mPM_ENTRY_PLAYER,
 
-  mPM_ENTRY_NUM
+    mPM_ENTRY_NUM
 };
 
 struct passwordMake_ovl_s {
-  int selected_idx;
-  u8 lengths[mPM_ENTRY_NUM];
-  u8 town_name[LAND_NAME_SIZE];
-  u8 player_name[PLAYER_NAME_LEN];
+    int selected_idx;
+    u8 lengths[mPM_ENTRY_NUM];
+    u8 town_name[LAND_NAME_SIZE];
+    u8 player_name[PLAYER_NAME_LEN];
 };
+
+extern void mPM_passwordMake_ovl_construct(Submenu* submenu);
+extern void mPM_passwordMake_ovl_destruct(Submenu* submenu);
+extern void mPM_passwordMake_ovl_set_proc(Submenu* submenu);
 
 #ifdef __cplusplus
 }

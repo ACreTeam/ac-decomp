@@ -12,10 +12,6 @@
 #include "m_shop.h"
 #include "m_scene_table.h"
 
-#ifdef MUST_MATCH
-#include "ppcdis.h"
-#endif
-
 static u8 l_candidate_num[FG_BLOCK_TOTAL_NUM];
 
 static s8 l_non_area[mAGrw_CHECK_CANCEL_NUM][4] = {

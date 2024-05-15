@@ -13,12 +13,16 @@ extern "C" {
 #define mPC_LINE_COUNT 2
 
 struct passwordChk_ovl_s {
-  int selected_line;
-  u8 _04;
-  u8 _05;
-  u8 line0[mPC_STR_SIZE];
-  u8 line1[mPC_STR_SIZE];
+    int selected_line;
+    u8 _04;
+    u8 _05;
+    u8 line0[mPC_STR_SIZE];
+    u8 line1[mPC_STR_SIZE];
 };
+
+extern void mPC_passwordChk_ovl_construct(Submenu* submenu);
+extern void mPC_passwordChk_ovl_destruct(Submenu* submenu);
+extern void mPC_passwordChk_ovl_set_proc(Submenu* submenu);
 
 #ifdef __cplusplus
 }

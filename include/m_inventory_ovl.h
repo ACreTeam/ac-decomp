@@ -46,6 +46,10 @@ struct inventory_ovl_s {
     u8 _3E3[0x5EC - 0x3E3];
 };
 
+extern void mIV_inventory_ovl_construct(Submenu* submenu);
+extern void mIV_inventory_ovl_destruct(Submenu* submenu);
+extern void mIV_inventory_ovl_set_proc(Submenu* submenu);
+
 #ifdef __cplusplus
 }
 #endif
