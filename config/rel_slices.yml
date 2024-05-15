@@ -985,6 +985,11 @@ m_repay_ovl.c:
     .rodata: [0x8064B830, 0x8064B870]
     .data: [0x806CE4E0, 0x806CE550]
     .bss: [0x813405A8, 0x813405C0]
+m_submenu_ovl.c:
+    .text: [0x805ED0FC, 0x805EF6CC]
+    .rodata: [0x8064B870, 0x8064B900]
+    .data: [0x806CE550, 0x806CF928]
+    .bss: [0x813405C0, 0x81340FC8]
 m_timeIn_ovl.c:
     .text: [0x805FF3C4, 0x80600370]
     .rodata: [0x8064BA00, 0x8064BA58]

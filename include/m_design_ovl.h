@@ -10,6 +10,10 @@ extern "C" {
 
 extern void mDE_maskcat_init(MaskCat_c* mask_cat);
 
+extern void mDE_design_ovl_construct(Submenu* submenu);
+extern void mDE_design_ovl_destruct(Submenu* submenu);
+extern void mDE_design_ovl_set_proc(Submenu* submenu);
+
 #ifdef __cplusplus
 }
 #endif
