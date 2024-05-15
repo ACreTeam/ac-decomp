@@ -44,9 +44,7 @@
 static Submenu_Overlay_c ovl_base;
 
 static void mSM_setup_view(Submenu* submenu, GRAPH* graph, int init_flag) {
-    Gfx* gfx;
     Mtx* mtx;
-    View* view;
 
     if (init_flag) {
         mtx = GRAPH_ALLOC_TYPE(graph, Mtx, 1);
@@ -56,26 +54,27 @@ static void mSM_setup_view(Submenu* submenu, GRAPH* graph, int init_flag) {
         mtx = submenu->overlay->projection_matrix;
     }
 
-    OPEN_DISP(graph);
-    gfx = NOW_POLY_OPA_DISP;
+    OPEN_POLY_OPA_DISP(graph);
 
     if (init_flag == FALSE) {
+        View* view;
+
         if (submenu->mode != 4) {
             view = &((GAME_PLAY*)gamePT)->view;
         } else {
             view = &((GAME_TRADEMARK*)gamePT)->view; // I'm not sure this is the correct game subclass
         }
 
-        gDPPipeSync(gfx++);
-        gDPSetScissor(gfx++, G_SC_NON_INTERLACE, view->screen.l, view->screen.top, view->screen.r, view->screen.bottom);
-        gSPViewport(gfx++, &view->viewport);
-        gDPSetScissor(gfx++, G_SC_NON_INTERLACE, 0, 0, 640, 480);
+        gDPPipeSync(POLY_OPA_DISP++);
+        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, view->screen.l, view->screen.top, view->screen.r,
+                      view->screen.bottom);
+        gSPViewport(POLY_OPA_DISP++, &view->viewport);
+        gDPSetScissor(POLY_OPA_DISP++, G_SC_NON_INTERLACE, 0, 0, 640, 480);
     }
 
-    gSPMatrix(gfx++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
+    gSPMatrix(POLY_OPA_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
 
-    SET_POLY_OPA_DISP(gfx);
-    CLOSE_DISP(graph);
+    CLOSE_POLY_OPA_DISP(graph);
 }
 
 static void mSM_change_view(GRAPH* graph, f32 eye_dist, f32 y_lookAt, f32 vp_x, f32 vp_y, s16 angle, int width,
