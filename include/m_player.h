@@ -156,6 +156,321 @@ enum {
 };
 
 enum {
+    mPlayer_ANIM_WAIT1,
+    mPlayer_ANIM_WALK1,
+    mPlayer_ANIM_AXE1,
+    mPlayer_ANIM_RUN1,
+    mPlayer_ANIM_PUSH1,
+    mPlayer_ANIM_PULL1,
+    mPlayer_ANIM_HOLD_WAIT1,
+    mPlayer_ANIM_PICKUP1,
+    mPlayer_ANIM_LTURN1,
+    mPlayer_ANIM_RTURN1,
+    mPlayer_ANIM_GET1,
+    mPlayer_ANIM_GET_CHANGE1,
+    mPlayer_ANIM_GET_PUTAWAY1,
+    mPlayer_ANIM_OPEN1,
+    mPlayer_ANIM_PUTAWAY1,
+    mPlayer_ANIM_TRANS_WAIT1,
+    mPlayer_ANIM_TRANSFER1,
+    mPlayer_ANIM_UMB_OPEN1,
+    mPlayer_ANIM_UMBRELLA1,
+    mPlayer_ANIM_DASH1,
+    mPlayer_ANIM_RUN_SLIP1,
+    mPlayer_ANIM_GET_PULL1,
+    mPlayer_ANIM_GET_M1,
+    mPlayer_ANIM_KAMAE_MOVE_M1,
+    mPlayer_ANIM_KAMAE_WAIT_M1,
+    mPlayer_ANIM_KOKERU_A1,
+    mPlayer_ANIM_KOKERU_GETUP_A1,
+    mPlayer_ANIM_KOKERU_GETUP_N1,
+    mPlayer_ANIM_KOKERU_N1,
+    mPlayer_ANIM_NET1,
+    mPlayer_ANIM_NET_SWING1,
+    mPlayer_ANIM_AXE_SWING1,
+    mPlayer_ANIM_KAMAE_SLIP_M1,
+    mPlayer_ANIM_KOKERU1,
+    mPlayer_ANIM_KOKERU_GETUP1,
+    mPlayer_ANIM_SITDOWN1,
+    mPlayer_ANIM_SITDOWN_WAIT1,
+    mPlayer_ANIM_STANDUP1,
+    mPlayer_ANIM_PUTAWAY_M1,
+    mPlayer_ANIM_BED_WAIT1,
+    mPlayer_ANIM_INBED_L1,
+    mPlayer_ANIM_INBED_R1,
+    mPlayer_ANIM_INTRAIN1,
+    mPlayer_ANIM_KAGU_OPEN_D1,
+    mPlayer_ANIM_KAGU_OPEN_H1,
+    mPlayer_ANIM_KAGU_OPEN_K1,
+    mPlayer_ANIM_NEGAERI_L1,
+    mPlayer_ANIM_NEGAERI_R1,
+    mPlayer_ANIM_OUTBED_L1,
+    mPlayer_ANIM_OUTBED_R1,
+    mPlayer_ANIM_OUTTRAIN1,
+    mPlayer_ANIM_KAGU_CLOSE_D1,
+    mPlayer_ANIM_KAGU_CLOSE_H1,
+    mPlayer_ANIM_KAGU_CLOSE_K1,
+    mPlayer_ANIM_KAGU_WAIT_D1,
+    mPlayer_ANIM_KAGU_WAIT_H1,
+    mPlayer_ANIM_KAGU_WAIT_K1,
+    mPlayer_ANIM_GO_OUT_O1,
+    mPlayer_ANIM_GO_OUT_S1,
+    mPlayer_ANIM_INTO_S1,
+    mPlayer_ANIM_AXE_HANE1,
+    mPlayer_ANIM_AXE_SUKA1,
+    mPlayer_ANIM_HOLD_WAIT_H1,
+    mPlayer_ANIM_HOLD_WAIT_O1,
+    mPlayer_ANIM_GET_T1,
+    mPlayer_ANIM_GET_T2,
+    mPlayer_ANIM_PUTAWAY_T1,
+    mPlayer_ANIM_SAO1,
+    mPlayer_ANIM_SAO_SWING1,
+    mPlayer_ANIM_TURI_HIKI1,
+    mPlayer_ANIM_TURI_WAIT1,
+    mPlayer_ANIM_NOT_GET_T1,
+    mPlayer_ANIM_MENU_CATCH1,
+    mPlayer_ANIM_MENU_CHANGE1,
+    mPlayer_ANIM_UMB_CLOSE1,
+    mPlayer_ANIM_NOT_SAO_SWING1,
+    mPlayer_ANIM_INTRAIN_WAIT1,
+    mPlayer_ANIM_CLEAR_TABLE1,
+    mPlayer_ANIM_DIG1,
+    mPlayer_ANIM_FILL_UP1,
+    mPlayer_ANIM_NOT_DIG1,
+    mPlayer_ANIM_CLEAR_TABLE_L1,
+    mPlayer_ANIM_PICKUP_L1,
+    mPlayer_ANIM_SCOOP1,
+    mPlayer_ANIM_CONFIRM1,
+    mPlayer_ANIM_DIG_SUKA1,
+    mPlayer_ANIM_GET_D1,
+    mPlayer_ANIM_PUTAWAY_D1,
+    mPlayer_ANIM_DIG_KABU1,
+    mPlayer_ANIM_FILL_UP_I1,
+    mPlayer_ANIM_SEND_MAIL1,
+    mPlayer_ANIM_GET_F1,
+    mPlayer_ANIM_GET_PULL_F1,
+    mPlayer_ANIM_GET_PUTAWAY_F1,
+    mPlayer_ANIM_TRANS_WAIT_F1,
+    mPlayer_ANIM_TRANSFER_F1,
+    mPlayer_ANIM_SHAKE1,
+    mPlayer_ANIM_TIRED1,
+    mPlayer_ANIM_WASH1,
+    mPlayer_ANIM_WASH2,
+    mPlayer_ANIM_WASH3,
+    mPlayer_ANIM_WASH4,
+    mPlayer_ANIM_WASH5,
+    mPlayer_ANIM_FUKUBIKI1,
+    mPlayer_ANIM_OMAIRI1,
+    mPlayer_ANIM_SAISEN1,
+    mPlayer_ANIM_RETURN_MAIL1,
+    mPlayer_ANIM_RETURN_MAIL2,
+    mPlayer_ANIM_RETURN_MAIL3,
+    mPlayer_ANIM_EAT1,
+    mPlayer_ANIM_GAAAN1,
+    mPlayer_ANIM_GAAAN2,
+    mPlayer_ANIM_DERU1,
+    mPlayer_ANIM_GURATUKU1,
+    mPlayer_ANIM_MOGAKU1,
+    mPlayer_ANIM_OTIRU1,
+    mPlayer_ANIM_ZASSOU1,
+    mPlayer_ANIM_KNOCK1,
+    mPlayer_ANIM_BIKU1,
+    mPlayer_ANIM_HATI1,
+    mPlayer_ANIM_HATI2,
+    mPlayer_ANIM_HATI3,
+    mPlayer_ANIM_PUSH_YUKI1,
+    mPlayer_ANIM_DERU2,
+    mPlayer_ANIM_OTIRU2,
+    mPlayer_ANIM_ITAZURA1,
+    mPlayer_ANIM_UMB_ROT1,
+    mPlayer_ANIM_PICKUP_WAIT1,
+    mPlayer_ANIM_YATTA1,
+    mPlayer_ANIM_YATTA2,
+    mPlayer_ANIM_YATTA3,
+    mPlayer_ANIM_KAZA1,
+    mPlayer_ANIM_MOSQUITO1,
+    mPlayer_ANIM_MOSQUITO2,
+    mPlayer_ANIM_RIDE1,
+    mPlayer_ANIM_RIDE2,
+    mPlayer_ANIM_RIDEWAIT,
+    mPlayer_ANIM_GETOFF1,
+    mPlayer_ANIM_GETOFF2,
+    mPlayer_ANIM_UTIWA_WAIT1,
+    mPlayer_ANIM_UTIWA_D1,
+    mPlayer_ANIM_AXE_BREAK1,
+    mPlayer_ANIM_AXE_BREAKWAIT1,
+    mPlayer_ANIM_LIGHT_ON1,
+    mPlayer_ANIM_TAISOU1,
+    mPlayer_ANIM_TAISOU2_1,
+    mPlayer_ANIM_TAISOU2_2,
+    mPlayer_ANIM_TAISOU3,
+    mPlayer_ANIM_TAISOU4_1,
+    mPlayer_ANIM_TAISOU4_2,
+    mPlayer_ANIM_TAISOU5_1,
+    mPlayer_ANIM_TAISOU5_2,
+    mPlayer_ANIM_TAISOU6_1,
+    mPlayer_ANIM_TAISOU6_2,
+    mPlayer_ANIM_TAISOU7_1,
+    mPlayer_ANIM_TAISOU7_2,
+    mPlayer_ANIM_OMAIRI_US1,
+
+    mPlayer_ANIM_NUM
+};
+
+enum {
+    mPlayer_ITEM_KIND_AXE,
+    mPlayer_ITEM_KIND_AXE_USE_1,
+    mPlayer_ITEM_KIND_AXE_USE_2,
+    mPlayer_ITEM_KIND_AXE_USE_3,
+    mPlayer_ITEM_KIND_AXE_USE_4,
+    mPlayer_ITEM_KIND_AXE_USE_5,
+    mPlayer_ITEM_KIND_AXE_USE_6,
+    mPlayer_ITEM_KIND_AXE_USE_7,
+    mPlayer_ITEM_KIND_GOLD_AXE,
+
+    mPlayer_ITEM_KIND_NET,
+    mPlayer_ITEM_KIND_GOLD_NET,
+
+    mPlayer_ITEM_KIND_UMBRELLA00,
+    mPlayer_ITEM_KIND_UMBRELLA01,
+    mPlayer_ITEM_KIND_UMBRELLA02,
+    mPlayer_ITEM_KIND_UMBRELLA03,
+    mPlayer_ITEM_KIND_UMBRELLA04,
+    mPlayer_ITEM_KIND_UMBRELLA05,
+    mPlayer_ITEM_KIND_UMBRELLA06,
+    mPlayer_ITEM_KIND_UMBRELLA07,
+    mPlayer_ITEM_KIND_UMBRELLA08,
+    mPlayer_ITEM_KIND_UMBRELLA09,
+    mPlayer_ITEM_KIND_UMBRELLA10,
+    mPlayer_ITEM_KIND_UMBRELLA11,
+    mPlayer_ITEM_KIND_UMBRELLA12,
+    mPlayer_ITEM_KIND_UMBRELLA13,
+    mPlayer_ITEM_KIND_UMBRELLA14,
+    mPlayer_ITEM_KIND_UMBRELLA15,
+    mPlayer_ITEM_KIND_UMBRELLA16,
+    mPlayer_ITEM_KIND_UMBRELLA17,
+    mPlayer_ITEM_KIND_UMBRELLA18,
+    mPlayer_ITEM_KIND_UMBRELLA19,
+    mPlayer_ITEM_KIND_UMBRELLA20,
+    mPlayer_ITEM_KIND_UMBRELLA21,
+    mPlayer_ITEM_KIND_UMBRELLA22,
+    mPlayer_ITEM_KIND_UMBRELLA23,
+    mPlayer_ITEM_KIND_UMBRELLA24,
+    mPlayer_ITEM_KIND_UMBRELLA25,
+    mPlayer_ITEM_KIND_UMBRELLA26,
+    mPlayer_ITEM_KIND_UMBRELLA27,
+    mPlayer_ITEM_KIND_UMBRELLA28,
+    mPlayer_ITEM_KIND_UMBRELLA29,
+    mPlayer_ITEM_KIND_UMBRELLA30,
+    mPlayer_ITEM_KIND_UMBRELLA31,
+
+    mPlayer_ITEM_KIND_ORG_UMBRELLA01,
+    mPlayer_ITEM_KIND_ORG_UMBRELLA02,
+    mPlayer_ITEM_KIND_ORG_UMBRELLA03,
+    mPlayer_ITEM_KIND_ORG_UMBRELLA04,
+    mPlayer_ITEM_KIND_ORG_UMBRELLA05,
+    mPlayer_ITEM_KIND_ORG_UMBRELLA06,
+    mPlayer_ITEM_KIND_ORG_UMBRELLA07,
+    mPlayer_ITEM_KIND_ORG_UMBRELLA08,
+
+    mPlayer_ITEM_KIND_ROD,
+    mPlayer_ITEM_KIND_GOLD_ROD,
+
+    mPlayer_ITEM_KIND_SHOVEL,
+    mPlayer_ITEM_KIND_GOLD_SHOVEL,
+
+    mPlayer_ITEM_KIND_RED_BALLOON,
+    mPlayer_ITEM_KIND_YELLOW_BALLOON,
+    mPlayer_ITEM_KIND_BLUE_BALLOON,
+    mPlayer_ITEM_KIND_GREEN_BALLOON,
+    mPlayer_ITEM_KIND_PURPLE_BALLOON,
+    mPlayer_ITEM_KIND_BUNNY_P_BALLOON,
+    mPlayer_ITEM_KIND_BUNNY_B_BALLOON,
+    mPlayer_ITEM_KIND_BUNNY_O_BALLOON,
+
+    mPlayer_ITEM_KIND_YELLOW_PINWHEEL,
+    mPlayer_ITEM_KIND_RED_PINWHEEL,
+    mPlayer_ITEM_KIND_TIGER_PINWHEEL,
+    mPlayer_ITEM_KIND_GREEN_PINWHEEL,
+    mPlayer_ITEM_KIND_PINK_PINWHEEL,
+    mPlayer_ITEM_KIND_STRIPED_PINWHEEL,
+    mPlayer_ITEM_KIND_FLOWER_PINWHEEL,
+    mPlayer_ITEM_KIND_FANCY_PINWHEEL,
+
+    mPlayer_ITEM_KIND_BLUEBELL_FAN,
+    mPlayer_ITEM_KIND_PLUM_FAN,
+    mPlayer_ITEM_KIND_BAMBOO_FAN,
+    mPlayer_ITEM_KIND_CLOUD_FAN,
+    mPlayer_ITEM_KIND_MAPLE_FAN,
+    mPlayer_ITEM_KIND_FAN_FAN,
+    mPlayer_ITEM_KIND_FLOWER_FAN,
+    mPlayer_ITEM_KIND_LEAF_FAN,
+
+    mPlayer_ITEM_KIND_NUM /* Are there more? */
+};
+
+enum {
+    mPlayer_ITEM_DATA_AXE,      // model
+    mPlayer_ITEM_DATA_AXE_B,    // model
+    mPlayer_ITEM_DATA_AXE_C,    // model
+    mPlayer_ITEM_DATA_GOLD_AXE, // model
+
+    mPlayer_ITEM_DATA_NET,            // skeleton
+    mPlayer_ITEM_DATA_GOLD_NET,       // skeleton
+    mPlayer_ITEM_DATA_NET_GET_M,      // animation
+    mPlayer_ITEM_DATA_NET_SWING,      // animation
+    mPlayer_ITEM_DATA_KAMAE_MAIN_M,   // animation
+    mPlayer_ITEM_DATA_KOKERU_GETUP_N, // animation
+    mPlayer_ITEM_DATA_KOKERU_N,       // animation
+    mPlayer_ITEM_DATA_SWING_WAIT,     // animation
+    mPlayer_ITEM_DATA_YATTA_M,        // animation
+
+    mPlayer_ITEM_DATA_ROD,           // skeleton
+    mPlayer_ITEM_DATA_GOLD_ROD,      // skeleton
+    mPlayer_ITEM_DATA_ROD_GET_T,     // animation
+    mPlayer_ITEM_DATA_ROD_MOVE,      // animation
+    mPlayer_ITEM_DATA_ROD_SINARI,    // animation
+    mPlayer_ITEM_DATA_ROD_SWING,     // animation
+    mPlayer_ITEM_DATA_ROD_WAIT,      // animation
+    mPlayer_ITEM_DATA_ROD_NOT_SWING, // animation
+
+    mPlayer_ITEM_DATA_SHOVEL,      // model
+    mPlayer_ITEM_DATA_GOLD_SHOVEL, // model
+
+    mPlayer_ITEM_DATA_BALLOON1,      // skeleton
+    mPlayer_ITEM_DATA_BALLOON2,      // skeleton
+    mPlayer_ITEM_DATA_BALLOON3,      // skeleton
+    mPlayer_ITEM_DATA_BALLOON4,      // skeleton
+    mPlayer_ITEM_DATA_BALLOON5,      // skeleton
+    mPlayer_ITEM_DATA_BALLOON6,      // skeleton
+    mPlayer_ITEM_DATA_BALLOON7,      // skeleton
+    mPlayer_ITEM_DATA_BALLOON8,      // skeleton
+    mPlayer_ITEM_DATA_BALLOON_WAIT,  // animation
+    mPlayer_ITEM_DATA_BALLOON_GYAZA, // animation
+
+    mPlayer_ITEM_DATA_PINWHEEL1,     // skeleton
+    mPlayer_ITEM_DATA_PINWHEEL2,     // skeleton
+    mPlayer_ITEM_DATA_PINWHEEL3,     // skeleton
+    mPlayer_ITEM_DATA_PINWHEEL4,     // skeleton
+    mPlayer_ITEM_DATA_PINWHEEL5,     // skeleton
+    mPlayer_ITEM_DATA_PINWHEEL6,     // skeleton
+    mPlayer_ITEM_DATA_PINWHEEL7,     // skeleton
+    mPlayer_ITEM_DATA_PINWHEEL8,     // skeleton
+    mPlayer_ITEM_DATA_PINWHEEL_WAIT, // animation
+
+    mPlayer_ITEM_DATA_FAN1, // model
+    mPlayer_ITEM_DATA_FAN2, // model
+    mPlayer_ITEM_DATA_FAN3, // model
+    mPlayer_ITEM_DATA_FAN4, // model
+    mPlayer_ITEM_DATA_FAN5, // model
+    mPlayer_ITEM_DATA_FAN6, // model
+    mPlayer_ITEM_DATA_FAN7, // model
+    mPlayer_ITEM_DATA_FAN8, // model
+
+    mPlayer_ITEM_DATA_NUM
+};
+
+enum {
     mPlayer_CREATURE_INSECT,
     mPlayer_CREATURE_GYOEI,
     mPlayer_CREATURE_BALLOON,
