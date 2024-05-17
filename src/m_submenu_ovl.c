@@ -160,32 +160,23 @@ static void mSM_set_char_matrix(GRAPH* graph) {
     CLOSE_POLY_OPA_DISP(graph);
 }
 
-/* @nonmatching - functionally equivalent */
-/*
-   @note - this function is functionally broken. It was stubbed
-   in DnM+ and would break if actually used. It is modified
-   vs its DnM implementation slightly. Additionally, it is entirely
-   unused. It is set to a func pointer member but that member is
-   never used.
-*/
-#ifndef MUST_MATCH
 static void mSM_cbuf_copy(GRAPH* graph, PreRender* prerender, int x, int y, int mode) {
-    s32 src_w;
-    s32 src_h;
-    s32 dst_w;
-    s32 dst_h;
+    int temp;
+    int temp0;
+    int src_w;
+    int src_h;
+    int dst_w;
+    int dst_h;
     int uls;
     int ult;
     int lrs;
     int lrt;
     int tmem_line;
-    int x_min;
     int y_min;
-    int y_max;
+    int x_min;
     int x_max;
+    int y_max;
     int tex_wd;
-    int temp0;
-    int temp1;
     void* src_buffer;
     void* dst_buffer;
 
@@ -243,23 +234,20 @@ static void mSM_cbuf_copy(GRAPH* graph, PreRender* prerender, int x, int y, int 
         dst_buffer = prerender->framebuffer_bak;
     }
 
-    OPEN_DISP(graph);
-
-    tmem_line = (1 << 12) / (((x_max + 3) & ~3) * 2);
+    tmem_line = (4 << 10) / ((((x_max + 4) - 1) & ~(4 - 1)) * 2);
     temp0 = uls + (x_max - 1);
-    tex_wd = (lrs + x_max - 1) << G_TEXTURE_IMAGE_FRAC;
+    tex_wd = (lrs + x_max - 1) << 2;
+    lrs <<= 2;
 
+    OPEN_DISP(graph);
     if (mode) {
         Gfx* gfx = NOW_POLY_OPA_DISP;
 
-        src_w = x - x_min;
-        src_h = y - y_min;
         prerender->width = 640;
         prerender->height = 480;
-        PreRender_CopyRGBC(prerender, &gfx, src_w, src_h);
+        PreRender_CopyRGBC(prerender, &gfx, x - x_min, y - y_min);
 
         SET_POLY_OPA_DISP(gfx);
-
     } else {
         gDPPipeSync(NEXT_POLY_OPA_DISP);
         gSPClearGeometryMode(NEXT_POLY_OPA_DISP, 0xFFFFFF);
@@ -275,36 +263,22 @@ static void mSM_cbuf_copy(GRAPH* graph, PreRender* prerender, int x, int y, int 
                 tmem_line = y_max;
             }
 
-            gDPLoadTextureTile(NEXT_POLY_OPA_DISP, dst_buffer, G_IM_FMT_RGBA, G_IM_SIZ_16b, src_w, 0, uls, ult, temp0,
-                               (ult + tmem_line - 1), 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD,
-                               G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+            temp = ult + tmem_line - 1;
+            gDPLoadTextureTile(NEXT_POLY_OPA_DISP, dst_buffer, G_IM_FMT_RGBA, G_IM_SIZ_16b, src_w, src_h, uls, ult,
+                               temp0, temp, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK,
+                               G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
 
-            gSPTextureRectangle(NEXT_POLY_OPA_DISP, lrs << G_TEXTURE_IMAGE_FRAC, lrt << G_TEXTURE_IMAGE_FRAC, tex_wd,
-                                (lrt + tmem_line - 1) << G_TEXTURE_IMAGE_FRAC, G_TX_RENDERTILE, uls << 5, ult << 5,
-                                (1 << 2) << 10, 1 << 10);
+            gSPTextureRectangle(NEXT_POLY_OPA_DISP, lrs, lrt << 2, tex_wd, (lrt + tmem_line - 1) << 2, G_TX_RENDERTILE,
+                                uls << 5, ult << 5, (4 << 10), (1 << 10));
 
             ult += tmem_line;
             lrt += tmem_line;
             y_max -= tmem_line;
         }
     }
+
     CLOSE_DISP(graph);
 }
-#else
-#pragma push
-#pragma force_active on
-extern f32 lbl_8064b870; /* 4.0f */
-REL_SYMBOL_AT(lbl_8064b870, 0x8064B870);
-
-extern f64 lbl_8064b878; /* int -> float magic */
-REL_SYMBOL_AT(lbl_8064b878, 0x8064B878);
-
-#pragma pop
-
-static asm void mSM_cbuf_copy(GRAPH* graph, PreRender* prerender, int x, int y, int mode) {
-#include "asm/805ed694.s"
-}
-#endif
 
 static void mSM_set_drawMode(GRAPH* graph, PreRender* prerender, f32 eye_dist, f32 eye_height, s16 angle) {
     static Vp viewport_data = { 0, 0, 511, 0, 0, 0, 511, 0 };
