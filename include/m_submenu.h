@@ -103,7 +103,7 @@ enum {
     mSM_IV_OPEN_SHRINE,
     mSM_IV_OPEN_12,
     mSM_IV_OPEN_EXCHANGE,
-    mSM_IV_OPEN_14,
+    mSM_IV_OPEN_CPMAIL,
     mSM_IV_OPEN_CURATOR,
     mSM_IV_OPEN_16,
 
@@ -116,6 +116,13 @@ enum {
     mSM_IV_ITEM_WAIT,
 
     mSM_IV_ITEM_NUM
+};
+
+enum {
+    mSM_HANIWA_OPEN_ENTRUST,
+    mSM_HANIWA_OPEN_TAKE,
+
+    mSM_HANIWA_OPEN_NUM
 };
 
 enum {

@@ -22,6 +22,8 @@ typedef struct player_actor_s PLAYER_ACTOR;
 #define mPlayer_FORCE_POSITION_ANGLE_ROTY (1 << 5)
 #define mPlayer_FORCE_POSITION_ANGLE_ROTZ (1 << 6)
 
+#define mPlayer_JOINT_NUM 26
+
 enum {
     mPlayer_ADDRESSABLE_TRUE,
     mPlayer_ADDRESSABLE_FALSE_MOVEMENT,
@@ -364,6 +366,7 @@ enum {
     mPlayer_ITEM_KIND_UMBRELLA30,
     mPlayer_ITEM_KIND_UMBRELLA31,
 
+    mPlayer_ITEM_KIND_ORG_UMBRELLA00,
     mPlayer_ITEM_KIND_ORG_UMBRELLA01,
     mPlayer_ITEM_KIND_ORG_UMBRELLA02,
     mPlayer_ITEM_KIND_ORG_UMBRELLA03,
@@ -371,7 +374,6 @@ enum {
     mPlayer_ITEM_KIND_ORG_UMBRELLA05,
     mPlayer_ITEM_KIND_ORG_UMBRELLA06,
     mPlayer_ITEM_KIND_ORG_UMBRELLA07,
-    mPlayer_ITEM_KIND_ORG_UMBRELLA08,
 
     mPlayer_ITEM_KIND_ROD,
     mPlayer_ITEM_KIND_GOLD_ROD,
@@ -468,6 +470,26 @@ enum {
     mPlayer_ITEM_DATA_FAN8, // model
 
     mPlayer_ITEM_DATA_NUM
+};
+
+enum {
+    mPlayer_ITEM_DATA_TYPE_GFX,
+    mPlayer_ITEM_DATA_TYPE_SKELETON,
+    mPlayer_ITEM_DATA_TYPE_NET_ANIMATION,
+    mPlayer_ITEM_DATA_TYPE_ROD_ANIMATION,
+    mPlayer_ITEM_DATA_TYPE_BALLOON_ANIMATION,
+    mPlayer_ITEM_DATA_TYPE_PINWHEEL_ANIMATION,
+
+    mPlayer_ITEM_DATA_TYPE_NUM
+};
+
+enum {
+    mPlayer_PART_TABLE_NORMAL,
+    mPlayer_PART_TABLE_AXE,
+    mPlayer_PART_TABLE_PICK_UP,
+    mPlayer_PART_TABLE_NET,
+
+    mPlayer_PART_TABLE_NUM
 };
 
 enum {

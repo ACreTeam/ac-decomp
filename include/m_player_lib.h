@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_player.h"
 #include "m_private_h.h"
+#include "c_keyframe.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -79,6 +80,23 @@ extern int mPlib_Check_StopNet(xyz_t* net_pos);
 extern int mPlib_Check_DigScoop(xyz_t* scoop_pos);
 extern int mPlib_Check_tree_shaken(const xyz_t* pos);
 extern int mPlib_Check_VibUnit_OneFrame(const xyz_t* pos);
+extern int mPlib_Get_BasicItemShapeIndex_fromItemKind(int item_kind);
+extern u8 mPlib_Get_Item_DataPointerType(int idx);
+extern void* mPlib_Get_Item_DataPointer(int idx);
+extern int mPlib_Get_BasicPlayerAnimeIndex_fromItemKind(int item_kind);
+extern cKF_Animation_R_c* mPlib_Get_Pointer_Animation(int anim_idx);
+extern int mPlib_Get_BasicPartTableIndex_fromAnimeIndex(int anim_idx);
+extern int mPlib_Get_BasicItemAnimeIndex_fromItemKind(int item_kind);
+extern void mPlib_DMA_player_Part_Table(s8* part_table_p, int idx);
+extern cKF_Skeleton_R_c* mPlib_get_player_mdl_p(void);
+extern u8* mPlib_Get_PlayerEyeTexAnimation_p(int anim_idx);
+extern u8* mPlib_Get_PlayerMouthTexAnimation_p(int anim_idx);
+extern u8* mPlib_Get_eye_tex_p(int idx);
+extern u8* mPlib_Get_mouth_tex_p(int idx);
+extern u8* mPlib_get_player_tex_p(GAME* game);
+extern u16* mPlib_get_player_pallet_p(GAME* game);
+extern u16* mPlib_get_player_face_pallet_p(GAME* game);
+extern int mPlib_Check_scoop_after(GAME* game, xyz_t* pos, mActor_name_t* item, ACTOR** hit_actor, int gold_shovel);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 
