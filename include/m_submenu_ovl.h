@@ -28,6 +28,7 @@
 #include "m_catalog_ovl_h.h"
 #include "m_hand_ovl_h.h"
 #include "m_inventory_ovl_h.h"
+#include "m_player.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -65,14 +66,15 @@ typedef struct submenu_ovl_dlftbl_s {
     int in_ram_flag;
 } mSM_Ovl_dlftbl_c;
 
-// TODO: fill this out
 typedef struct submenu_segment_s {
     int _00;
-    s16 _04;
-    s16 _06;
-    s16 _08;
-    s16 _0A;
-    u8 _0C[0x30 - 0x0C];
+    s16 player_main_anime_idx;
+    s16 player_item_anime_idx;
+    s16 change_player_main_anime_idx;
+    s16 player_anime_timer;
+    s16 player_umbrella_bank_idx;
+    s16 umbrella_ids[2];
+    s8 player_part_table[mPlayer_JOINT_NUM + 1];
     int dlftbl_loaded_num;
     mSM_Ovl_dlftbl_c* dlftbl_loaded_tbl[8];
 } mSM_Segment_c;
@@ -91,7 +93,7 @@ typedef struct submenu_menu_info_s {
     f32 speed[2];
 
     char* _28;
-    int _2C;
+    int open_flag;
 
     int next_proc_status;
     s16 move_drt;

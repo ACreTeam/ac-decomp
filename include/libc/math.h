@@ -4,6 +4,9 @@
 #include "types.h"
 
 #define SQRT_OF_2_F 1.41421356237309504880f
+#define SQRT_OF_3_F 1.73205080756887729353f
+
+#define SQRT_3_OVER_3_F (SQRT_OF_3_F / 3.0f)
 
 #define M_PI 3.14159265358979323846f
 

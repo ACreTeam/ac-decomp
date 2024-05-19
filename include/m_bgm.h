@@ -9,6 +9,17 @@
 extern "C" {
 #endif
 
+enum {
+    mBGM_PAUSE_0,
+    mBGM_PAUSE_1,
+    mBGM_PAUSE_2,
+    mBGM_PAUSE_NOTICE,
+    mBGM_PAUSE_4,
+    mBGM_PAUSE_STOP,
+
+    mBGM_PAUSE_NUM
+};
+
 extern void mBGMPsComp_make_ps_fanfare(u8 bgm_num, u16 stop_type);
 extern void mBGMPsComp_make_ps_lost_fanfare(u8 bgm_num, u16 stop_type);
 extern void mBGMPsComp_make_ps_wipe(u16 stop_type);
