@@ -2653,7 +2653,7 @@ extern void mBGM_reset() {
     }
 
     if (ps_comp->pause_state != 0) {
-        mBGMPsComp_pause(5);
+        mBGMPsComp_pause(mBGM_PAUSE_STOP);
     }
 
     mBGMDemo_ct(&bgm->demo);

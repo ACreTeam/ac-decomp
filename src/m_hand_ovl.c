@@ -310,8 +310,8 @@ static void mHD_drop_item(Submenu* submenu, mTG_tag_c* tag, mActor_name_t* item,
 
     submenu->overlay->tag_ovl->init_tag_data_item_win_proc(submenu);
 
-    if (overlay->segment._04 == 1) {
-        overlay->segment._08 = 0;
+    if (overlay->segment.player_main_anime_idx == mIV_ANIM_CATCH) {
+        overlay->segment.change_player_main_anime_idx = mIV_ANIM_WALK;
     }
 }
 
@@ -515,7 +515,8 @@ static void mHD_open_end_proc_item_type3(Submenu* submenu, int idx, int table) {
     int category = ITEM_NAME_GET_CAT(item);
 
     if (item == RSV_CLOTH || ITEM_IS_CLOTH(item)) {
-        if (cKF_FrameControl_passCheck_now(&submenu->overlay->inventory_ovl->player_keyframe0.frame_control, 36.0f)) {
+        if (cKF_FrameControl_passCheck_now(&submenu->overlay->inventory_ovl->player_main_keyframe.frame_control,
+                                           36.0f)) {
             cloth_p = &Now_Private->cloth;
 
             mHD_drop_item(submenu, tag, &cloth_p->item, NULL);
@@ -768,7 +769,8 @@ static void mHD_sasu2_move(Submenu* submenu) {
     int category = ITEM_NAME_GET_CAT(hand_ovl->info.item);
 
     if (hand_ovl->info.item == RSV_CLOTH || ITEM_IS_CLOTH(hand_ovl->info.item)) {
-        if (cKF_FrameControl_passCheck_now(&submenu->overlay->inventory_ovl->player_keyframe0.frame_control, 36.0f)) {
+        if (cKF_FrameControl_passCheck_now(&submenu->overlay->inventory_ovl->player_main_keyframe.frame_control,
+                                           36.0f)) {
             mPr_cloth_c* cloth_p = &Now_Private->cloth;
             u16 cloth_idx;
 

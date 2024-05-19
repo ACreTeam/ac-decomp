@@ -38,6 +38,9 @@ typedef enum audio_sound_effects {
     NA_SE_25 = 0x25,
     NA_SE_26 = 0x26,
 
+    NA_SE_MENU_PAUSE = 0x30,
+    NA_SE_31 = 0x31,
+
     NA_SE_DRAWER_SHUT = 0x3A,
 
     NA_SE_ITEM_GET = 0x40,
@@ -77,6 +80,8 @@ typedef enum audio_sound_effects {
 
     NA_SE_ROD_STROKE = 0x109,
     NA_SE_ROD_BACK,
+
+    NA_SE_EAT = 0x113,
 
     NA_SE_WEAR = 0x11C,
 

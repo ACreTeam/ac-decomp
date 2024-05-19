@@ -11,9 +11,10 @@
 extern "C" {
 #endif
 
-#define mIV_PLAYER_JOINT_NUM 27
+#define mIV_PLAYER_JOINT_NUM (mPlayer_JOINT_NUM + 1)
 #define mIV_ITEM_JOINT_NUM 8
 #define mIV_PLAYER_EFFECT_NUM 20
+#define mIV_COLLECT_NUM 40
 
 enum {
     mIV_ITEM_SCALE_TYPE_NONE,
@@ -30,9 +31,24 @@ enum {
     mIV_PAGE_FISH_COLLECTION,
     mIV_PAGE_INVENTORY,
     mIV_PAGE_INSECT_COLLECTION,
-    mIV_PAGE_ORIGINAL_DESIGNS,
 
     mIV_PAGE_NUM
+};
+
+enum {
+    mIV_ANIM_WALK,
+    mIV_ANIM_CATCH,
+    mIV_ANIM_CHANGE,
+    mIV_ANIM_EAT,
+
+    mIV_ANIM_NUM
+};
+
+enum {
+    mIV_STRING_LAND_NAME,
+    mIV_STRING_PLAYER_NAME,
+
+    mIV_STRING_NUM
 };
 
 typedef struct inventory_effect_s {
@@ -46,8 +62,8 @@ typedef mActor_name_t (*mIV_SET_COLLECT_ITEMNO_PROC)(int, int);
 
 /* sizeof (struct inventory_ovl_s) == 0x5EC */
 struct inventory_ovl_s {
-    cKF_SkeletonInfo_R_c player_keyframe0;
-    cKF_SkeletonInfo_R_c player_keyframe1;
+    cKF_SkeletonInfo_R_c player_main_keyframe;
+    cKF_SkeletonInfo_R_c player_com_keyframe;
     s_xyz player_work[mIV_PLAYER_JOINT_NUM];
     s_xyz player_morph[mIV_PLAYER_JOINT_NUM];
 
@@ -60,8 +76,8 @@ struct inventory_ovl_s {
 
     u8 _374[0x3BC - 0x374];
 
-    u16 selected_item_bitfield;
-    u16 selected_mail_bitfield;
+    u16 selectable_item_bitfield;
+    u16 selectable_mail_bitfield;
 
     u32 disp_money;
     int disp_money_change_frames;
@@ -74,6 +90,7 @@ struct inventory_ovl_s {
     u8 food_idx;
     u8 item_scale_type[mPr_POCKETS_SLOT_COUNT];
     u8 page_order[mIV_PAGE_NUM];
+    u8 next_page_id;
     s16 page_move_timer;
     s16 remove_timer;
     mIV_pl_eff_c pl_eff[mIV_PLAYER_EFFECT_NUM];

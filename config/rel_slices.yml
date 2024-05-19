@@ -970,6 +970,11 @@ m_hboard_ovl.c:
     .text: [0x805E0AC8, 0x805E1398]
     .rodata: [0x8064B480, 0x8064B4B8]
     .data: [0x806CD3B0, 0x806CD3C8]
+m_inventory_ovl.c:
+    .text: [0x805E1398, 0x805E4DFC]
+    .rodata: [0x8064B4B8, 0x8064B5C8]
+    .data: [0x806CD3C8, 0x806CD7B8]
+    .bss: [0x8133FAE0, 0x813400D0]
 m_map_ovl.c:
     .text: [0x805E5EFC, 0x805E7A54]
     .rodata: [0x8064B628, 0x8064B6B0]

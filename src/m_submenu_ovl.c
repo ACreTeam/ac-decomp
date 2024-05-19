@@ -2099,7 +2099,7 @@ static void mSM_set_new_start_data(Submenu* submenu) {
     menu->data3 = submenu->param3;
     menu->move_flag = FALSE;
 
-    if (type == mSM_OVL_INVENTORY && submenu->param0 == mSM_IV_OPEN_14) {
+    if (type == mSM_OVL_INVENTORY && submenu->param0 == mSM_IV_OPEN_CPMAIL) {
         menu->position[0] = -300.0f;
     }
 
@@ -2209,7 +2209,7 @@ static void mSM_return_func(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
         }
     }
 
-    menu_info->_2C = FALSE;
+    menu_info->open_flag = FALSE;
     menu_info->pre_menu_type = mSM_OVL_NONE;
     menu_info->next_menu_type = mSM_OVL_NONE;
     menu_info->proc_status = mSM_OVL_PROC_MOVE;
