@@ -560,7 +560,7 @@ static void mCL_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
         submenu->overlay->menu_control.tag_move_func(submenu, menu_info);
 
         if (catalog_ovl->change_flag) {
-            catalog_ovl->menu_data[catalog_ovl->page_order[0]].y_idx = submenu->overlay->tag_ovl->tags[0]._40;
+            catalog_ovl->menu_data[catalog_ovl->page_order[0]].y_idx = submenu->overlay->tag_ovl->tags[0].tag_row;
             mCL_item_data_set(submenu, catalog_ovl->page_order[0]);
             catalog_ovl->change_flag = FALSE;
         } else {

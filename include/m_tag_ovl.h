@@ -10,6 +10,10 @@ extern "C" {
 #endif
 
 #define mTG_TAG_NUM 4
+#define mTG_TAG_STR_LEN 16
+#define mTG_TAG_SEL_STRING_LEN 35
+
+#define mTG_TAG_FLAG_EDGE_FOOT_SELECT (1 << 0)
 
 enum {
     mTG_TYPE_NONE,
@@ -129,16 +133,24 @@ enum {
 /* sizeof(mTG_tag_c) == 0xB4 */
 typedef struct tag_s {
     u8 type;
-    u8 _01;
-    u8 _02;
-    u8 _03;
+    u8 arrow_dir;
+    u8 str2_type;
+    u8 flags;
     f32 _04[2];
-    f32 pos[2];
-    u8 _14[0x38 - 0x14];
+    f32 base_pos[2];
+    f32 body_scale[2];
+    f32 arrow_scale[2];
+    f32 body_ofs[2];
+    f32 text_ofs[2];
+    f32 _34;
     int table;
-    int _3C;
-    int _40;
-    u8 _44[0xB4 - 0x44];
+    int tag_col;
+    int tag_row;
+    f32 scale;
+    u8 str0[mTG_TAG_SEL_STRING_LEN];
+    u8 str1[mTG_TAG_SEL_STRING_LEN];
+    u8 str2[mTG_TAG_SEL_STRING_LEN];
+    u8 _B1[0xB4 - 0xB1];
 } mTG_tag_c;
 
 typedef void (*mTG_INIT_TAG_DATA_ITEM_WIN_PROC)(Submenu*);
