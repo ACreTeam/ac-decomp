@@ -623,15 +623,20 @@ class AsmSource(Source):
             rule = "as",
             inputs = self.src_path
         )
-        
+
+JAUDIO_FUNC_ALIGN_32_TUS = [
+    "sample.c",
+    "aictrl.c"
+]
+
 class CSource(Source):
     def __init__(self, ctx: c.SourceContext, path: str):
         if path.startswith("src/static/dolphin/"):
             self.cflags = c.SDK_FLAGS
             self.cc = c.OCC
         elif path.startswith("src/static/jaudio_NES/"):
-            if path.startswith("src/static/jaudio_NES/sample.c"):
-                self.cflags = c.JAUDIO_SAMPLE_CFLAGS
+            if os.path.basename(path) in JAUDIO_FUNC_ALIGN_32_TUS:
+                self.cflags = c.JAUDIO_FUNC_ALIGN_32_CFLAGS
             else:
                 self.cflags = c.JAUDIO_CFLAGS
             self.cc = c.CC

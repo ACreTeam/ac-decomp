@@ -2,6 +2,7 @@
 #define AUDIOSTRUCT_H
 
 #include "types.h"
+#include "jaudio_NES/audiocommon.h"
 
 #ifdef __cplusplus
 extern "C" {

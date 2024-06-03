@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-    void Probe_Start(void);
-    void Probe_Finish(void);
+extern void Probe_Start(s32 id, const char* label);
+extern void Probe_Finish(s32 id);
 
 #ifdef __cplusplus
 }
