@@ -38,6 +38,11 @@ jaudio_NES/aictrl.c:
     .sdata2: [0x80218da8, 0x80218db8]
 jaudio_NES/sample.c:
     .text: [0x80018640, 0x80018920]
+jaudio_NES/dummyrom.c:
+    .text: [0x80018920, 0x80018bc0]
+    .rodata: [0x800aa518, 0x800aa528]
+#    .bss: [0x8020d78c, 0x8020d7a0] # placed in common bss
+    .sbss: [0x80218420, 0x80218440]
 # jaudio_NES/game64.c: # TODO: finish
 #     .rodata: [0x800a9938, 0x800a9b98]
 #jaudio_NES/verysimple.c:
