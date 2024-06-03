@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "jaudio_NES/audiocommon.h"
+#include "PR/abi.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,17 +39,6 @@ typedef struct AudioPort_ {
     /* 0x03 */ u8 _03;
     /* 0x04 */ u32 param;
 } AudioPort;
-
-/* sizeof(Acmd) == 0x4*/
-typedef union Acmd {
-    struct {
-        /* 0x00 */ u8 p0;
-        /* 0x01 */ u8 p1;
-        /* 0x02 */ u8 p2;
-        /* 0x03 */ u8 p3;
-    };
-    /* 0x00 */ u32 uint32;
-} Acmd;
 
 /* sizeof(ALHeap) == 0x14 */
 typedef struct ALHeap {

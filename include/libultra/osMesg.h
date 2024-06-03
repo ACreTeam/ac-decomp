@@ -7,7 +7,7 @@
 
 typedef void* OSMesg;
 
-typedef struct OSMesgQueue {
+typedef struct OSMesgQueue_s {
     /* 0x00 */ OSThread* mtqueue;
     /* 0x04 */ OSThread* fullqueue;
     /* 0x08 */ int validCount;
@@ -16,7 +16,7 @@ typedef struct OSMesgQueue {
     /* 0x14 */ OSMesg* msg;
 } OSMesgQueue; // size = 0x18
 
-extern void osCreateMesgQueue(OSMessageQueue* mq ,OSMessage msg, int flags);
+extern void osCreateMesgQueue(OSMessageQueue* mq, OSMessage msg, int flags);
 extern int osSendMesg(OSMessageQueue* mq, OSMessage msg, int flags);
 extern int osRecvMesg(OSMessageQueue* mq, OSMessage* msg, int flags);
 

@@ -626,7 +626,8 @@ class AsmSource(Source):
 
 JAUDIO_FUNC_ALIGN_32_TUS = [
     "sample.c",
-    "aictrl.c"
+    "aictrl.c",
+    "dummyrom.c"
 ]
 
 class CSource(Source):
