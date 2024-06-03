@@ -2,9 +2,6 @@ ctors.s:
     .ctors: [0x800a97b4, 0x800a97c0] # remove trailing 0s from ctor area
 #dolphin/os/__start.c:
 #    .init: [0x80003100, 0x80003354]
-dolphin/__ppc_eabi_init.cpp:
-    .init: [0x80003354, 0x800033a8]
-    .text: [0x8007fdfc, 0x8007fe90]
 runtime/__mem.c:
     .init: [0x800033a8, 0x800034e0]
 TRK/init/mem_TRK.c:
@@ -21,8 +18,6 @@ jsyswrap.cpp:
     .ctors: [0x800a9784, 0x800a9788]
     .data: [0x800afe50, 0x800b05e8]
     .bss: [0x800e2318, 0x800e2640]
-version.c:
-    .data: [0x800b05e8, 0x800b0608]
 initial_menu.c:
     .text: [0x80007188, 0x80007e58]
     .rodata: [0x800a97e8, 0x800a97f8]
@@ -33,18 +28,10 @@ dvderr.c:
     .rodata: [0x800a97f8, 0x800a9838]
     .data: [0x800b0a60, 0x800b9140]
     .bss: [0x800e2790, 0x800e2b88]
-bootdata/gam_win1.c:
-    .data: [0x800b9140, 0x800bb500]
-bootdata/gam_win2.c:
-    .data: [0x800bb500, 0x800bd820]
-bootdata/gam_win3.c:
-    .data: [0x800bd820, 0x800be460]
-bootdata/logo_nin.c:
-    .data: [0x800be460, 0x800c3140]
-nintendo_hi_0.c:
-    .data: [0x800c3140, 0x800cca40]
 jaudio_NES/dummyprobe.c:
     .text: [0x800083f8, 0x80008400]
+jaudio_NES/sample.c:
+    .text: [0x80018640, 0x80018920]
 # jaudio_NES/game64.c: # TODO: finish
 #     .rodata: [0x800a9938, 0x800a9b98]
 #jaudio_NES/verysimple.c:
@@ -83,8 +70,6 @@ libu64/gfxprint.c:
     .text: [0x8005af30, 0x8005b9a8]
     .data: [0x800dc7f0, 0x800dc810]
     .sbss: [0x80218630, 0x80218638]
-libu64/gfxprint_data.c:
-    .data: [0x800dc810, 0x800dd090]
 libu64/pad.c:
     .text: [0x8005b9a8, 0x8005ba2c]
 libc64/aprintf.c:
@@ -271,6 +256,11 @@ dolphin/os/OSRestoreInterrupts.c:
 dolphin/os/OSRtc.c:
     .text: [0x8007d050, 0x8007db20]
     .bss: [0x80207400, 0x80207458]
+dolphin/__ppc_eabi_init.cpp:
+    .init: [0x80003354, 0x800033a8]
+    .text: [0x8007fdfc, 0x8007fe90]
+dolphin/gx/GXStubs.c:
+    .text: [0x800998d4, 0x800998d8]
 MSL_C/rand.c:
     .text: [0x8009f46c, 0x8009f494]
     .sdata: [0x80218260, 0x80218268]
@@ -279,6 +269,8 @@ TRK/mainloop.c:
 TRK/nubevent.c:
     .text: [0x800A20EC, 0x800A2314]
     .bss: [0x802095C8, 0x802095F0]
+dolphin/amcstubs/AmcExi2Stubs.c:
+    .text: [0x800a8cc0, 0x800a8cf0]
 #TRK/nubinit.c: #things break, fix later
 #    .text: [0x800A2314, 0x800A2494]
 #    .rodata: [0x800AF750, 0x800AF770]
@@ -291,7 +283,17 @@ TRK/nubevent.c:
 #    .bss: [0x8020AFC0, 0x8020AFC8]
 dolphin/odenotstub/odenotstub.c:
     .text: [0x800a9770, 0x800a9780]
-dolphin/amcstubs/AmcExi2Stubs.c:
-    .text: [0x800a8cc0, 0x800a8cf0]
-dolphin/gx/GXStubs.c:
-    .text: [0x800998d4, 0x800998d8]
+version.c:
+    .data: [0x800b05e8, 0x800b0608]
+bootdata/gam_win1.c:
+    .data: [0x800b9140, 0x800bb500]
+bootdata/gam_win2.c:
+    .data: [0x800bb500, 0x800bd820]
+bootdata/gam_win3.c:
+    .data: [0x800bd820, 0x800be460]
+bootdata/logo_nin.c:
+    .data: [0x800be460, 0x800c3140]
+nintendo_hi_0.c:
+    .data: [0x800c3140, 0x800cca40]
+libu64/gfxprint_data.c:
+    .data: [0x800dc810, 0x800dd090]

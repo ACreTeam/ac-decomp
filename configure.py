@@ -630,7 +630,10 @@ class CSource(Source):
             self.cflags = c.SDK_FLAGS
             self.cc = c.OCC
         elif path.startswith("src/static/jaudio_NES/"):
-            self.cflags = c.JAUDIO_CFLAGS
+            if path.startswith("src/static/jaudio_NES/sample.c"):
+                self.cflags = c.JAUDIO_SAMPLE_CFLAGS
+            else:
+                self.cflags = c.JAUDIO_CFLAGS
             self.cc = c.CC
         elif path.startswith("src/static/JSystem/JGadget/"):
             self.cflags = c.JSYSTEM_JGADGET_CFLAGS

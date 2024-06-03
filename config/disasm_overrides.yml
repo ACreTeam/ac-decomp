@@ -1,6 +1,7 @@
 trim_ctors: true
 
 symbol_aligns:
+  0x80018920: 32
   0x80207458: 8 # align RunQueue to 0x001251d8
   0x800b9140: 32 # align gam_win_moji1_tex to 32 bytes
   0x801f71c0: 32 # align texture_buffer_data to 32 bytes
