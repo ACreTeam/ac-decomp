@@ -49,6 +49,12 @@ jaudio_NES/audiothread.c:
     .bss: [0x8017cfc0, 0x80180020]
     .sbss: [0x80218440, 0x80218460]
     .sdata2: [0x80218db8, 0x80218dc0]
+jaudio_NES/neosthread.c:
+    .text: [0x800190e0, 0x80019380]
+    .rodata: [0x800aa538, 0x800aa558]
+    .bss: [0x80180020, 0x80186440]
+    .sdata: [0x80217be0, 0x80217be8]
+    .sbss: [0x80218460, 0x80218478]
 # jaudio_NES/game64.c: # TODO: finish
 #     .rodata: [0x800a9938, 0x800a9b98]
 #jaudio_NES/verysimple.c:
