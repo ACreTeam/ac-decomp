@@ -449,7 +449,8 @@ JAUDIO_BASE = CFLAGS + [
 ] + DOL_DEFINES
 JAUDIO_FUNC_ALIGN_32 = [
     "-func_align 32",
-    "-str readonly"
+    "-str readonly",
+    "-inline off"
 ]
 
 JSYSTEM_CFLAGS = ' '.join(JSYSTEM_BASE + LOCAL_CFLAGS)
