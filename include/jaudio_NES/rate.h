@@ -7,6 +7,7 @@
 extern "C" {
 #endif
 
+extern u32 JAC_AI_SETTING;
 extern u32 JAC_FRAMESAMPLES;
 extern u32 DAC_SIZE;
 

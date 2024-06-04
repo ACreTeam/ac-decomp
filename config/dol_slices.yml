@@ -43,6 +43,12 @@ jaudio_NES/dummyrom.c:
     .rodata: [0x800aa518, 0x800aa528]
 #    .bss: [0x8020d78c, 0x8020d7a0] # placed in common bss
     .sbss: [0x80218420, 0x80218440]
+jaudio_NES/audiothread.c:
+    .text: [0x80018bc0, 0x800190e0]
+    .rodata: [0x800aa528, 0x800aa538]
+    .bss: [0x8017cfc0, 0x80180020]
+    .sbss: [0x80218440, 0x80218460]
+    .sdata2: [0x80218db8, 0x80218dc0]
 # jaudio_NES/game64.c: # TODO: finish
 #     .rodata: [0x800a9938, 0x800a9b98]
 #jaudio_NES/verysimple.c:
