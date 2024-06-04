@@ -628,7 +628,8 @@ JAUDIO_FUNC_ALIGN_32_TUS = [
     "sample.c",
     "aictrl.c",
     "dummyrom.c",
-    "audiothread.c"
+    "audiothread.c",
+    "neosthread.c"
 ]
 
 class CSource(Source):
