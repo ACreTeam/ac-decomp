@@ -228,7 +228,7 @@ extern void sAdo_SetRhythmInfo(TempoBeat_c* rhythm) {
     Na_SetRhythmInfo(rhythm);
 }
 
-extern int sAdo_InstCountGet() {
+extern s8 sAdo_InstCountGet() {
 
     return Na_InstCountGet();
 }

@@ -13,6 +13,9 @@ extern "C" {
 #define AUDIO_ARAM_SIZE 0x400000 /* 4MB */
 #define AUDIO_ARAM_HEAP_SIZE 0xC000
 
+#define NA_MAKE_COMMAND(a0, a1, a2, a3) \
+    (u32)((((a0) & 0xFF) << 24) | (((a1) & 0xFF) << 16) | (((a2) & 0xFF) << 8) | (((a3) & 0xFF) << 0))
+
 typedef enum DSPBUF_EVENTS {
     DSPBUF_EVENTS_0 = 0,
     DSPBUF_EVENTS_1 = 1,

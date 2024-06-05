@@ -62,6 +62,7 @@ extern u8 Na_CheckRestartReady();
 extern void Na_Restart();
 
 extern u8 sou_now_bgm_handle;
+extern u8 sou_chime_status;
 
 #ifdef __cplusplus
 }

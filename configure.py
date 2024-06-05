@@ -633,8 +633,9 @@ JAUDIO_FUNC_ALIGN_32_TUS = [
 ]
 
 JAUDIO_USER_TUS = [
-    "rhythm.c",
-    "verysimple.c"
+    "verysimple.c",
+    "melody.c",
+    "rhythm.c"
 ]
 
 class CSource(Source):

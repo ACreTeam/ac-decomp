@@ -3616,6 +3616,8 @@ global:
     0x802182e8: bootsound_ptr
     0x802182ec: bootsound_size
     0x802182f0: sou_now_spec
+    0x802182f4: sou_scene_mode
+    0x802182f5: sou_chime_status
     0x802182f8: fatalErrorCallback
     0x80218300: sou_last_sys_trg_num
     0x80218304: sou_kazaguruma_speed

@@ -72,7 +72,7 @@ extern s8 sAdo_GetRhythmDelay(u32 id);
 extern void sAdo_GetRhythmInfo(TempoBeat_c* rhythm);
 extern void sAdo_SetRhythmInfo(TempoBeat_c* rhythm);
 
-extern int sAdo_InstCountGet();
+extern s8 sAdo_InstCountGet();
 
 extern void sAdo_RhythmPos(u32 id, u8 haniwa_id, const xyz_t* pos);
 
