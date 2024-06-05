@@ -632,6 +632,10 @@ JAUDIO_FUNC_ALIGN_32_TUS = [
     "neosthread.c"
 ]
 
+JAUDIO_USER_TUS = [
+    "verysimple.c"
+]
+
 class CSource(Source):
     def __init__(self, ctx: c.SourceContext, path: str):
         if path.startswith("src/static/dolphin/"):
@@ -640,6 +644,8 @@ class CSource(Source):
         elif path.startswith("src/static/jaudio_NES/"):
             if os.path.basename(path) in JAUDIO_FUNC_ALIGN_32_TUS:
                 self.cflags = c.JAUDIO_FUNC_ALIGN_32_CFLAGS
+            elif os.path.basename(path) in JAUDIO_USER_TUS:
+                self.cflags = c.JAUDIO_USER_CFLAGS
             else:
                 self.cflags = c.JAUDIO_CFLAGS
             self.cc = c.CC
