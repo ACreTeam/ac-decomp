@@ -3026,6 +3026,11 @@ global:
     0x800c30c0: logo_nin_v
     0x800c3100: logo_ninT_model
     0x800c3140: nintendo_hi_0
+    0x800cca40: AudioseqHeaderStart
+    0x800cd9e0: AudiobankHeaderStart
+    0x800ce3e0: AudiowaveHeaderStart
+    0x800ce450: AudiodataHeaderStart
+    0x800ce490: AudiomapHeaderStart
     0x800ce880: LEN_TABLE
     0x800ce8a0: NOISE_FREQ_TABLE
     0x800ce8e0: sbuffer
