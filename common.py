@@ -453,6 +453,7 @@ JAUDIO_FUNC_ALIGN_32 = [
     "-inline off"
 ]
 JAUDIO_USER = [
+    "-d _LANGUAGE_C_PLUS_PLUS",
     "-O0",
     "-char unsigned",
     "-fp hard",

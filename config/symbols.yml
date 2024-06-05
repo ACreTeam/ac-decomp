@@ -3503,6 +3503,7 @@ global:
     0x80217bac: write_pointer
     0x80217bb0: buffer_remain
     0x80217bb4: _STOP
+    0x80217bc0: sou_now_bgm_handle
     0x80217bc4: SOU_ONGEN_AREA1
     0x80217bc8: SOU_ONGEN_AREA2
     0x80217bcc: sou_md_bgm_boost_pasent

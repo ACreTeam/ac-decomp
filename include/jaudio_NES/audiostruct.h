@@ -169,6 +169,38 @@ typedef struct envp_ {
     /* 0x1C */ envdat* pEnvData;
 } envp;
 
+/* sizeof(group) == 0x160 */
+typedef struct group_ {
+    struct flags_ {
+    /* 0x000 */ u32 flag0 : 1;
+    } flags;
+
+    /* 0x004 */ u8 state;
+    /* 0x005 */ u8 unk4;
+    /* 0x006 */ u8 unk5;
+    /* 0x007 */ u16 tempo;
+    /* 0x00C */ u8 unkC[0xD4];
+    /* 0x0E0 */ int unkE0;
+    /* 0x0E4 */ u8 E4[0x77];
+    /* 0x15B */ s8 unk15B;
+    /* 0x15C */ s8 unk15C;
+} group;
+
+/* sizeof(AudioGlobals) == 0x92b0 */
+typedef struct AudioGlobals {
+    /* 0x0000 */ u8 unk0[0x3788];
+    /* 0x3788 */ group groups[5];
+    /* 0x3E68 */ u8 unk3E68[0x5448];
+} AudioGlobals;
+
+/* sizeof(sub) >= 0xCD */
+typedef struct sub_ {
+ /* 0x00 */ s8 unk0[0xCB];
+ /* 0xCB */ s8 unkCB;
+ /* 0xCD */ s8 unkCC;
+} sub; 
+
+
 typedef union SOUNDID_ {
     struct {
         u8 wave_id;
