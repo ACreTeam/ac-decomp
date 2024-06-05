@@ -30,6 +30,8 @@ dvderr.c:
     .bss: [0x800e2790, 0x800e2b88]
 jaudio_NES/dummyprobe.c:
     .text: [0x800083f8, 0x80008400]
+jaudio_NES/audioheaders.c:
+    .data: [0x800cca40, 0x800ce880]
 jaudio_NES/aictrl.c:
     .text: [0x80017e80, 0x80018640]
     .rodata: [0x800aa500, 0x800aa518]

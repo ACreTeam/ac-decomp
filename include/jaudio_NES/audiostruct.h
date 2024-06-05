@@ -49,13 +49,26 @@ typedef struct ALHeap {
     /* 0x10 */ u8* last;
 } ALHeap;
 
-/* sizeof(ArcHeader) == 0x10 */
+/* sizeof(ArcEntry) == 0x10 */
+typedef struct ArcEntry_ {
+    /* 0x00 */ u32 addr;
+    /* 0x04 */ size_t size;
+    /* 0x08 */ s8 medium;
+    /* 0x09 */ s8 cacheType;
+    /* 0x0A */ s16 param0;
+    /* 0x0C */ s16 param1;
+    /* 0x0E */ s16 param2;
+} ArcEntry;
+
+/* sizeof(ArcHeader) == [0x10, 0x10+entries*0x10] */
 typedef struct ArcHeader_ {
     /* 0x00 */ s16 numEntries;
-    /* 0x02 */ u16 _02;
+    /* 0x02 */ s16 _02;
     /* 0x04 */ u8* pData;
     /* 0x08 */ u8 copy;
-} ArcHeader ATTRIBUTE_ALIGN(8);
+    /* 0x09 */ u8 pad[7];
+    /* 0x10 */ ArcEntry entries[]; /* variable size */
+} ArcHeader;
 
 /* sizeof(AutoHeapstrc) == 0xC */
 typedef struct AutoHeapstrc_ {
