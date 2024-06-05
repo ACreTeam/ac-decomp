@@ -452,6 +452,16 @@ JAUDIO_FUNC_ALIGN_32 = [
     "-str readonly",
     "-inline off"
 ]
+JAUDIO_USER = [
+    "-O0",
+    "-char unsigned",
+    "-fp hard",
+    "-lang=c++",
+    "-sdata 8",
+    "-sdata2 8",
+    "-enum int",
+    "-common on"
+]
 
 JSYSTEM_CFLAGS = ' '.join(JSYSTEM_BASE + LOCAL_CFLAGS)
 JSYSTEM_JGADGET_CFLAGS = ' '.join(JSYSTEM_JGADGET_BASE + LOCAL_CFLAGS)
@@ -470,6 +480,7 @@ PREPROCESS_CFLAGS = ' '.join(PREPROCESSOR_CFLAGS)
 FAMICOM_CLFAGS = ' '.join(FAMICOM_BASE + LOCAL_CFLAGS)
 JAUDIO_CFLAGS = ' '.join(JAUDIO_BASE + LOCAL_CFLAGS)
 JAUDIO_FUNC_ALIGN_32_CFLAGS = ' '.join(JAUDIO_BASE + JAUDIO_FUNC_ALIGN_32 + LOCAL_CFLAGS)
+JAUDIO_USER_CFLAGS = ' '.join(JAUDIO_USER + LOCAL_CFLAGS)
 
 DOL_LDFLAGS = ' '.join([
     "-maxerrors 1",
