@@ -9,7 +9,7 @@ blocked_targets:
   - 0x801F6C7C # tcs_bad
   - 0x801F6C7D # ics_bad
   - 0x800a9a90
-  - 0x800a9838
+  # - 0x800a9838
   - 0x800a9938
   - 0x800a9a3a
   - 0x800a99f6

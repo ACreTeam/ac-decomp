@@ -172,14 +172,18 @@ typedef struct envp_ {
 /* sizeof(group) == 0x160 */
 typedef struct group_ {
     struct flags_ {
-    /* 0x000 */ u32 flag0 : 1;
+        /* 0x000 */ u32 flag0 : 1;
     } flags;
 
     /* 0x004 */ u8 state;
     /* 0x005 */ u8 unk4;
     /* 0x006 */ u8 unk5;
-    /* 0x007 */ u16 tempo;
-    /* 0x00C */ u8 unkC[0xD4];
+    /* 0x008 */ u16 tempo;
+    /* 0x00A */ u8 unkA;
+    /* 0x00B */ u8 unkB;
+    /* 0x00C */ u8 unkC[0x018 - 0x00C];
+    /* 0x018 */ u16* unk18;
+    /* 0x01C */ u8 unk1C[0x0E0 - 0x01C];
     /* 0x0E0 */ int unkE0;
     /* 0x0E4 */ u8 E4[0x77];
     /* 0x15B */ s8 unk15B;
@@ -188,18 +192,23 @@ typedef struct group_ {
 
 /* sizeof(AudioGlobals) == 0x92b0 */
 typedef struct AudioGlobals {
-    /* 0x0000 */ u8 unk0[0x3788];
+    /* 0x0000 */ u8 unk0[0x2850 - 0x0000];
+    /* 0x2850 */ ArcHeader* seq_header;
+    /* 0x2854 */ ArcHeader* bank_header;
+    /* 0x2858 */ ArcHeader* wave_header;
+    /* 0x285C */ ArcHeader* data_header;
+    /* 0x2860 */ u16* map_header;
+    /* 0x2864 */ u8 unk2864[0x3788 - 0x2864];
     /* 0x3788 */ group groups[5];
     /* 0x3E68 */ u8 unk3E68[0x5448];
 } AudioGlobals;
 
 /* sizeof(sub) >= 0xCD */
 typedef struct sub_ {
- /* 0x00 */ s8 unk0[0xCB];
- /* 0xCB */ s8 unkCB;
- /* 0xCD */ s8 unkCC;
-} sub; 
-
+    /* 0x00 */ s8 unk0[0xCB];
+    /* 0xCB */ s8 unkCB;
+    /* 0xCD */ s8 unkCC;
+} sub;
 
 typedef union SOUNDID_ {
     struct {

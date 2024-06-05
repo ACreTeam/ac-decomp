@@ -37,6 +37,11 @@ jaudio_NES/verysimple.c:
    .sdata: [0x80217b80, 0x80217b88]
 # jaudio_NES/game64.c: # TODO: finish
 #     .rodata: [0x800a9938, 0x800a9b98]
+jaudio_NES/melody.c:
+    .text: [0x8001561c, 0x80015a4c]
+    .rodata: [0x800a9b98, 0x800aa500]
+    .sbss: [0x80218390, 0x802183a0]
+    .sdata2: [0x80218d58, 0x80218d60]
 jaudio_NES/rhythm.c:
     .text: [0x80015a4c, 0x800165ec]
     .bss: [0x8017bdd8, 0x8017be80]
