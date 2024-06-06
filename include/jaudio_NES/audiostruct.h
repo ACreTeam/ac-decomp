@@ -31,6 +31,11 @@ struct chnode_ {
     /* 0x30 */ link globalReleaseWait;
 };
 
+/* forward declared */
+typedef struct note_ note;
+typedef struct channel_ channel;
+typedef struct group_ group;
+
 /* sizeof(struct AudioPort_) == 0x8 */
 typedef struct AudioPort_ {
     /* 0x00 */ u8 cmd;
@@ -151,7 +156,7 @@ typedef struct drvparam_ {
 
 /* sizeof(envdat) == 0x04 */
 typedef struct envdat_ {
-    /* 0x00 */ s16 key;
+    /* 0x00 */ s16 delay;
     /* 0x02 */ s16 value;
 } envdat;
 
@@ -169,26 +174,152 @@ typedef struct envp_ {
     /* 0x1C */ envdat* pEnvData;
 } envp;
 
+/* sizeof(env) == 0x08 */
+typedef struct env_ {
+    /* 0x00 */ u8 decay_idx;
+    /* 0x01 */ u8 sustain;
+    /* 0x04 */ envdat* envelope;
+} env;
+
+/* sizeof(vibparam) == 0x0E */
+typedef struct vibparam_ {
+    /* 0x00 */ u16 rate_start;
+    /* 0x02 */ u16 depth_start;
+    /* 0x04 */ u16 rate_target;
+    /* 0x06 */ u16 depth_target;
+    /* 0x08 */ u16 rate_change_delay;
+    /* 0x0A */ u16 depth_change_delay;
+    /* 0x0C */ u16 delay;
+} vibparam;
+
+typedef struct voicetable_ {
+
+} voicetable;
+
+/* sizeof(seqplayer) == 0x1C */
+typedef struct seqplayer_ {
+    /* 0x00 */ u8* pc;
+    /* 0x04 */ u8* stack[4];
+    /* 0x14 */ u8 remaining_loop_iters[4];
+    /* 0x18 */ u8 depth;
+    /* 0x19 */ s8 value;
+} seqplayer;
+
+/* SubTrack struct */
+/* sizeof(sub) == 0xE0 */
+typedef struct sub_ {
+    /* 0x00 */ u8 enabled : 1;
+    /* 0x00 */ u8 finished : 1;
+    /* 0x00 */ u8 stop_script : 1;
+    /* 0x00 */ u8 muted : 1;
+    /* 0x00 */ u8 has_instrument : 1;
+    /* 0x00 */ u8 stereo_effects : 1;
+    /* 0x00 */ u8 large_notes : 1;
+    /* 0x00 */ u8 unused : 1;
+
+    union {
+        struct {
+            /* 0x01 */ u8 frequency_scale : 1;
+            /* 0x01 */ u8 volume : 1;
+            /* 0x01 */ u8 pan : 1;
+        } flags;
+        /* 0x01 */ u8 as_byte;
+    } changes;
+
+    /* 0x02 */ u8 note_alloc_policy;
+    /* 0x03 */ u8 mute_flags;
+    /* 0x04 */ u8 target_reverb_vol;
+    /* 0x05 */ u8 note_priority;
+    /* 0x06 */ u8 priority2;
+    /* 0x07 */ u8 inst_id;
+    /* 0x08 */ u8 reverb_idx;
+    /* 0x09 */ u8 book_ofs;
+    /* 0x0A */ u8 new_pan;
+    /* 0x0B */ u8 pan_channel_weight;
+    /* 0x0C */ u8 gain;
+    /* 0x0D */ u8 velocity_random_variance;
+    /* 0x0E */ u8 gate_time_random_variance;
+    /* 0x0F */ u8 comb_filter_size;
+    /* 0x10 */ u8 surround_effect_idx;
+    /* 0x11 */ u8 channel_idx;
+    /* 0x12 */ vibparam vibrato_params;
+    /* 0x20 */ u16 delay;
+    /* 0x22 */ u16 comb_filter_gain;
+    /* 0x24 */ u16 unk24;
+    /* 0x26 */ s16 inst_or_wave;
+    /* 0x28 */ s16 transposition;
+    /* 0x2C */ f32 volume_scale;
+    /* 0x30 */ f32 volume;
+    /* 0x34 */ s32 pan;
+    /* 0x38 */ f32 applied_volume;
+    /* 0x3C */ f32 frequency_scale;
+    /* 0x40 */ u8 (*dyn_tbl)[][2];
+    /* 0x44 */ channel* channel;
+    /* 0x48 */ note* note;
+    /* 0x4C */ voicetable* voicetable;
+    /* 0x50 */ group* group;
+    /* 0x54 */ struct note_* note_layers[4];
+    /* 0x64 */ seqplayer seq_player;
+    /* 0x80 */ env asdr_env;
+    /* 0x88 */ chnode channel_node;
+    /* 0xC8 */ s8 seq_script_io[8];
+    /* 0xD0 */ u8* sfx_state;
+    /* 0xD4 */ s16* filter;
+    /* 0xD8 */ phase stereo_phase;
+    /* 0xDC */ s32 sample_start_pos;
+} sub;
+
 /* sizeof(group) == 0x160 */
-typedef struct group_ {
+struct group_ {
     struct flags_ {
-        /* 0x000 */ u32 flag0 : 1;
+        /* 0x000 */ u8 enabled : 1;
+        /* 0x000 */ u8 finished : 1;
+        /* 0x000 */ u8 muted : 1;
+        /* 0x000 */ u8 sequence_dma_in_progress : 1;
+        /* 0x000 */ u8 bank_dma_in_progress : 1;
+        /* 0x000 */ u8 recalculate_volume : 1;
+        /* 0x000 */ u8 stop_seq_script : 1;
+        /* 0x000 */ u8 apply_bend : 1;
     } flags;
 
-    /* 0x004 */ u8 state;
-    /* 0x005 */ u8 unk4;
-    /* 0x006 */ u8 unk5;
+    /* 0x001 */ u8 state;
+    /* 0x002 */ u8 note_alloc_policy;
+    /* 0x003 */ u8 mute_flags;
+    /* 0x004 */ u8 seq_id;
+    /* 0x005 */ u8 default_bank;
+    /* 0x006 */ u8 unk006;
+    /* 0x007 */ s8 group_idx;
     /* 0x008 */ u16 tempo;
-    /* 0x00A */ u8 unkA;
-    /* 0x00B */ u8 unkB;
-    /* 0x00C */ u8 unkC[0x018 - 0x00C];
-    /* 0x018 */ u16* unk18;
-    /* 0x01C */ u8 unk1C[0x0E0 - 0x01C];
-    /* 0x0E0 */ int unkE0;
-    /* 0x0E4 */ u8 E4[0x77];
-    /* 0x15B */ s8 unk15B;
-    /* 0x15C */ s8 unk15C;
-} group;
+    /* 0x00A */ u16 tempo_acceleration;
+    /* 0x00C */ s16 tempo_change;
+    /* 0x00E */ s16 transposition;
+    /* 0x010 */ u16 delay;
+    /* 0x012 */ u16 fade_timer;
+    /* 0x014 */ u16 stored_fade_timer;
+    /* 0x016 */ u16 unk016;
+    /* 0x018 */ u8* seq_data;
+    /* 0x01C */ f32 fade_volume;
+    /* 0x020 */ f32 fade_velocity;
+    /* 0x024 */ f32 volume;
+    /* 0x028 */ f32 mute_volume_scale;
+    /* 0x02C */ f32 fade_volume_scale;
+    /* 0x030 */ f32 applied_fade_volume;
+    /* 0x034 */ f32 bend;
+    /* 0x038 */ sub* subtracks[16];
+    /* 0x078 */ seqplayer seq_player;
+    /* 0x094 */ u8* short_note_velocity_tbl;
+    /* 0x098 */ u8* short_note_gate_time_tbl;
+    /* 0x09C */ u8 note_pool[0x40]; /* TODO: this is a struct according to MM decomp */
+    /* 0x0DC */ s32 skip_ticks;
+    /* 0x0E0 */ s32 script_counter; /* is u32 in MM decomp */
+    /* 0x0E4 */ u8 unkE4[0x158 - 0x0E4];
+    /* 0x158 */ s8 seq_script_io[8];
+};
+
+/* sizeof(note) == 0x90 */
+struct note_ {
+    u8 _00[0x90 - 0x00];
+};
 
 /* sizeof(AudioGlobals) == 0x92b0 */
 typedef struct AudioGlobals {
@@ -203,13 +334,6 @@ typedef struct AudioGlobals {
     /* 0x3E68 */ u8 unk3E68[0x5448];
 } AudioGlobals;
 
-/* sizeof(sub) >= 0xCD */
-typedef struct sub_ {
-    /* 0x00 */ s8 unk0[0xCB];
-    /* 0xCB */ s8 unkCB;
-    /* 0xCD */ s8 unkCC;
-} sub;
-
 typedef union SOUNDID_ {
     struct {
         u8 wave_id;
@@ -220,8 +344,6 @@ typedef union SOUNDID_ {
 
     u32 uint32;
 } SOUNDID;
-
-typedef struct note_ note;
 
 #ifdef __cplusplus
 }

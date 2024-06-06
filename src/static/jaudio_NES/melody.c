@@ -640,7 +640,7 @@ static void Na_MelodyStart(u16 voice, s16 subTrack, const u8* pData) {
 
     u8* dst;
     s16 seq_idx = 248;
-    u16 size = AG.groups[0].unk18[2];
+    u16 size = ((u16*)AG.groups[0].seq_data)[2];
 
     switch (subTrack) {
         case 6:
@@ -655,7 +655,7 @@ static void Na_MelodyStart(u16 voice, s16 subTrack, const u8* pData) {
 
     u8* src;
 
-    dst = (u8*)AG.groups[0].unk18 + size;
+    dst = AG.groups[0].seq_data + size;
     ArcHeader* seq_header = AG.seq_header;
     size_t seq_size = melody_seq_size[voice];
     int medium = seq_header->entries[seq_idx].medium;
