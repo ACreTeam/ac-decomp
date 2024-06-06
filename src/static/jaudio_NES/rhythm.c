@@ -19,7 +19,6 @@ typedef enum RythmBuffer_State {
     NA_RHYTHM_BUFFER_STARTED,
 } RythmBuffer_State;
 
-
 static s16 rhythm_beat_type = -1;
 
 static NA_RHYTHM_BUFFER rhythm_buffer[14];
@@ -138,7 +137,7 @@ extern void Na_RhythmAllStop() {
 }
 
 static s16 Na_GetRhythmBeatType(void) {
-    if (AG.groups[sou_now_bgm_handle].flags.flag0 != 0) {
+    if (AG.groups[sou_now_bgm_handle].flags.enabled != 0) {
         rhythm_beat_type = Nap_ReadGrpPort(sou_now_bgm_handle, 1);
     }
     return rhythm_beat_type;
@@ -204,13 +203,13 @@ static s8 Na_GetRhythmSeNum(s8 num, sub* sub) {
     u32 rand;
 
     if (num == 0) {
-        num = 16 - sub->unkCC;
+        num = 16 - sub->seq_script_io[4];
         if (num == 16) {
             num = 0;
         }
     } else {
         rand = Nap_GetRandom();
-        switch (sub->unkCB) {
+        switch (sub->seq_script_io[3]) {
             case 0x14:
             case 0x15:
             case 0x16:
@@ -351,7 +350,7 @@ extern void Na_SetRhythmInfo(TempoBeat_c* tempo) {
 static void tempo_adjust(group* group) {
     int tempo = (AG.groups[2].tempo / 48);
     int newTempo;
-    if (AG.groups[sou_now_bgm_handle].flags.flag0 != 0) {
+    if (AG.groups[sou_now_bgm_handle].flags.enabled != 0) {
         newTempo = (AG.groups[sou_now_bgm_handle].tempo / 48);
 
         if (tempo > newTempo) {
@@ -405,7 +404,7 @@ static s8 Na_RhythmGrpProcess(s8 arg0, group* group) {
     }
     pre_frame_per_step = r29;
 
-    if (AG.groups[sou_now_bgm_handle].flags.flag0 != 0) {
+    if (AG.groups[sou_now_bgm_handle].flags.enabled != 0) {
         int r25 = Nap_ReadGrpPort(sou_now_bgm_handle, 0);
         r30 = r25 - r27;
     } else {
@@ -420,7 +419,7 @@ static s8 Na_RhythmGrpProcess(s8 arg0, group* group) {
     }
 
     if (r30 > 1 || r30 < -1) {
-        if (AG.groups[2].unkE0 % 2 != 0) {
+        if (AG.groups[2].script_counter % 2 != 0) {
             r31++;
         }
     } else {
@@ -432,8 +431,8 @@ static s8 Na_RhythmGrpProcess(s8 arg0, group* group) {
         ret = 0;
     }
 
-    group->unk15B = r31;
-    group->unk15C = (s8)((s32)(r31 * 0x64) / r29);
-    
+    group->seq_script_io[3] = r31;
+    group->seq_script_io[4] = (s8)((s32)(r31 * 0x64) / r29);
+
     return ret;
 }
