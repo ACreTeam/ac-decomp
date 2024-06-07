@@ -48,6 +48,9 @@ jaudio_NES/rhythm.c:
     .sdata: [0x80217bd0, 0x80217bd8]
     .sbss: [0x802183a0, 0x802183b0]
     .sdata2: [0x80218d60, 0x80218d78]
+jaudio_NES/radio.c:
+    .text: [0x800165ec, 0x8001676c]
+    .sdata2: [0x80218d78, 0x80218d88]
 jaudio_NES/aictrl.c:
     .text: [0x80017e80, 0x80018640]
     .rodata: [0x800aa500, 0x800aa518]

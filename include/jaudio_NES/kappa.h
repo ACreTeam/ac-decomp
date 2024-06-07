@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-extern void Na_GetRadioCounter(void*);
+extern void Na_GetKappaCounter(void*);
 
 #ifdef __cplusplus
 }

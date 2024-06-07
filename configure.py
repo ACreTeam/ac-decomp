@@ -635,6 +635,7 @@ JAUDIO_FUNC_ALIGN_32_TUS = [
 JAUDIO_USER_TUS = [
     "verysimple.c",
     "melody.c",
+    "radio.c",
     "rhythm.c"
 ]
 
