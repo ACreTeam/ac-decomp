@@ -520,7 +520,7 @@ struct group_ {
     /* 0x02C */ f32 fade_volume_scale;
     /* 0x030 */ f32 applied_fade_volume;
     /* 0x034 */ f32 bend;
-    /* 0x038 */ sub* subtracks[16];
+    /* 0x038 */ sub* subtracks[AUDIO_SUBTRACK_NUM];
     /* 0x078 */ seqplayer seq_player;
     /* 0x094 */ u8* short_note_velocity_tbl;
     /* 0x098 */ u8* short_note_gate_time_tbl;

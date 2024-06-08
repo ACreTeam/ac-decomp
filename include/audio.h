@@ -15,6 +15,26 @@ typedef struct audio_tempo_beat_s {
     /* 0x01 */ s8 beat;
 } TempoBeat_c;
 
+/* sizeof(StaffRollInfo_c) == 0x18 */
+typedef struct audio_staffroll_info_s {
+    /* 0x00 */ s16 staffroll_part;
+    /* 0x02 */ s16 _01;
+    /* 0x08 */ f64 percent;
+    /* 0x10 */ s8 mouth_num;
+    /* 0x11 */ s8 blink_flag;
+    /* 0x12 */ s8 beat;
+} StaffRollInfo_c;
+
+enum {
+    STAFFROLL_PART_START,
+    STAFFROLL_PART_INTRO,
+    STAFFROLL_PART_MAIN,
+    STAFFROLL_PART_FADEOUT,
+    STAFFROLL_PART_FINISH,
+
+    STAFFROLL_PART_NUM
+};
+
 enum {
     VOICE_STATUS_NORMAL,
     VOICE_STATUS_ANGRY,
@@ -94,7 +114,7 @@ extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 dis
 
 extern void sAdos_GetRadioCounter(void* p);
 extern void sAdos_GetKappaCounter(void* p);
-extern void sAdos_GetStaffRollInfo(void* p);
+extern void sAdos_GetStaffRollInfo(StaffRollInfo_c* info);
 
 extern void sAdos_TTKK_ARM(u8 mode);
 

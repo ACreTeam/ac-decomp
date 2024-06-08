@@ -636,7 +636,8 @@ JAUDIO_USER_TUS = [
     "verysimple.c",
     "melody.c",
     "radio.c",
-    "rhythm.c"
+    "rhythm.c",
+    "staff.c"
 ]
 
 class CSource(Source):

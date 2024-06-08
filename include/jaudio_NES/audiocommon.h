@@ -14,6 +14,7 @@ extern "C" {
 #define AUDIO_ARAM_HEAP_SIZE 0xC000
 
 #define AUDIO_GROUP_MAX 5
+#define AUDIO_SUBTRACK_NUM 16
 
 #define NA_MAKE_COMMAND(a0, a1, a2, a3) \
     (u32)((((a0) & 0xFF) << 24) | (((a1) & 0xFF) << 16) | (((a2) & 0xFF) << 8) | (((a3) & 0xFF) << 0))
