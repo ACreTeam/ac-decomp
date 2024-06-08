@@ -51,6 +51,9 @@ jaudio_NES/game/rhythm.c:
 jaudio_NES/game/radio.c:
     .text: [0x800165ec, 0x8001676c]
     .sdata2: [0x80218d78, 0x80218d88]
+jaudio_NES/game/kappa.c:
+    .text: [0x8001676c,0x80016840]
+    .sbss: [0x802183b0, 0x802183b8]
 jaudio_NES/game/staff.c:
     .text: [0x80016840, 0x80016d20]
     .data: [0x800cfe10, 0x800cff20]
