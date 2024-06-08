@@ -87,7 +87,7 @@ void aNRTC_actor_init(ACTOR* actor, GAME* game) {
 }
 
 void aNRTC_actor_move(ACTOR* actor, GAME* game) {
-    StaffRoll info;
+    StaffRollInfo_c info;
     f32 val = 0.5f;
     u8 arm_flag = TRUE;
     NPCRTC_ACTOR* rtc = (NPCRTC_ACTOR*)actor;
@@ -95,10 +95,11 @@ void aNRTC_actor_move(ACTOR* actor, GAME* game) {
 
     if (rtc->npc_class.draw.animation_id == 0x76) {
         sAdos_GetStaffRollInfo(&info);
-        if (info.unk0 != 4) {
+        if (info.staffroll_part != STAFFROLL_PART_FINISH) {
             val = 0.0f;
             arm_flag = FALSE;
-            rtc->npc_class.draw.main_animation.keyframe.frame_control.current_frame = 1.0f + (64.0f * (f32)info.unk8);
+            rtc->npc_class.draw.main_animation.keyframe.frame_control.current_frame =
+                1.0f + (64.0f * (f32)info.percent);
         }
     }
 
