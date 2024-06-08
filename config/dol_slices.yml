@@ -84,6 +84,8 @@ jaudio_NES/internal/neosthread.c:
     .bss: [0x80180020, 0x80186440]
     .sdata: [0x80217be0, 0x80217be8]
     .sbss: [0x80218460, 0x80218478]
+jaudio_NES/internal/os.c:
+    .text: [0x80026120, 0x80026300]
 Famicom/famicom.cpp:
     .text: [0x80041614, 0x80046888] # TODO: get ~J2DOrthoGraph's dtor in here somehow? 0x800468fc, also add in JUTGamePad::getPortStatus when JUTGamePad is linked?
     .rodata: [0x800aa9a8, 0x800aaa30]

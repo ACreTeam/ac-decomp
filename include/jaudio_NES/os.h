@@ -4,6 +4,14 @@
 #include "types.h"
 #include "libultra/libultra.h"
 
-extern int Z_osSendMesg(OSMesgQueue* mq, OSMesg msg, s32 block);
+extern void Z_osWritebackDCacheAll();
+extern void osInvalDCache2(void* src, s32 size);
+extern void osWritebackDCache2(void* src, s32 size);
+extern void Z_osCreateMesgQueue (OSMesgQueue* mq, OSMesg* msg, s32 count );
+extern s32 Z_osSendMesg(OSMesgQueue* mq, OSMesg msg, s32 flags );
+extern s32 Z_osRecvMesg(OSMesgQueue* mq, OSMesg* msg, s32 flags );
+extern s32 Z_osEPiStartDma (OSPiHandle * handler, OSIoMesg* msg, s32 dir);
+extern void Z_bcopy (void* dst, void* src, size_t size);
+
 
 #endif
