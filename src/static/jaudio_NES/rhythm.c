@@ -367,14 +367,10 @@ static s8 Na_RhythmGrpProcess(s8 arg0, group* group) {
     int r27;
     int r30;
     int r31;
-    (void)arg0;
     int ret = 1;
     r29 = 24;
     static int pre_beat_type = -1;
-    static u8 init;
     static int pre_frame_per_step = -1;
-
-    { static u8 init; }
 
     tempo_adjust(group);
     if (Na_GetRhythmBeatType() == 0) {
@@ -386,6 +382,9 @@ static s8 Na_RhythmGrpProcess(s8 arg0, group* group) {
     } else {
         r29 = 24;
     }
+
+    /* random call to arg0 so it is stored on the stack, can also do (void)arg0 */
+    if (arg0) {}
 
     r31 = Nap_ReadGrpPort(2, 3);
     if (Nap_ReadGrpPort(2, 2) % 2 != 0) {
