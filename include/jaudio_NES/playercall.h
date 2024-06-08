@@ -12,12 +12,8 @@ extern void ResetPlayerCallback();
 extern s32 Jac_RegisterDspPlayerCallback(PlayerCallBack callback, void* arg);
 extern s32 Jac_RegisterPlayerCallback(PlayerCallBack callback, void* arg);
 
-
 #ifdef __cplusplus
 }
 #endif
-
-extern void PlayerCallback();
-extern void DspPlayerCallback();
 
 #endif
