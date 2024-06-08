@@ -894,6 +894,15 @@ typedef union SOUNDID_ {
     u32 uint32;
 } SOUNDID;
 
+typedef s32 (*PlayerCallBack)(void*);
+
+typedef struct PLAYER_CALL_ {
+    PlayerCallBack callback;
+    void* arg;
+    u32 DSP_mode;
+} PLAYER_CALL;
+
+
 #ifdef __cplusplus
 }
 #endif
