@@ -6,6 +6,7 @@ symbol_aligns:
   0x80018920: 32
   0x800190e0: 32
   0x80019380: 32
+  0x80019760: 32
   0x8001a0c0: 32
   0x80031d80: 32
   0x80207458: 8 # align RunQueue to 0x001251d8
@@ -14,3 +15,4 @@ symbol_aligns:
   0x800daaa0: 32 # align texture_cache_data_func to 32 bytes
   0x80206f30: 16 # malloc.c align 16 bytes
   0x800ab260: 32
+  0x801864b0: 8 # dspbuf align 8 (not sure why this doesn't happen)
