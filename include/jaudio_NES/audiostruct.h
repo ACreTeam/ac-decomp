@@ -39,11 +39,25 @@ typedef struct group_ group;
 
 /* sizeof(struct AudioPort_) == 0x8 */
 typedef struct AudioPort_ {
-    /* 0x00 */ u8 cmd;
-    /* 0x01 */ u8 groupID;
-    /* 0x02 */ u8 subtrackID;
-    /* 0x03 */ u8 _03;
-    /* 0x04 */ u32 param;
+    union {
+        struct {
+            /* 0x00 */ u8 opcode;
+            /* 0x01 */ u8 arg0;
+            /* 0x02 */ u8 arg1;
+            /* 0x03 */ u8 arg2;
+        } command;
+        /* 0x00 */ u32 raw_cmd;
+    };
+    union audioparam_ {
+        /* 0x04 */ s8 asS8;
+        /* 0x04 */ u8 asU8;
+        /* 0x04 */ s16 asS16;
+        /* 0x04 */ u16 asU16;
+        /* 0x04 */ u32 asU32;
+        /* 0x04 */ s32 asS32;
+        /* 0x04 */ f32 asF32;
+        /* 0x04 */ void* asVoidPtr;
+    } param;
 } AudioPort;
 
 /* sizeof(ALHeap) == 0x14 */
@@ -112,7 +126,17 @@ typedef struct wtstr_ {
 
 /* sizeof(phase) == 0x01 */
 typedef struct phase_ {
-    /* 0x00 */ u8 _00;
+    union {
+        struct {
+            /* 0x00 */ u8 _unused : 2;
+            /* 0x00 */ u8 type : 2;
+            /* 0x00 */ u8 strong_right : 1;
+            /* 0x00 */ u8 strong_left : 1;
+            /* 0x00 */ u8 strong_reverb_right : 1;
+            /* 0x00 */ u8 strong_reverb_left : 1;
+        };
+        /* 0x00 */ u8 asU8;
+    };
 } phase;
 
 /* sizeof(sweep) == 0x0C */
@@ -159,7 +183,7 @@ typedef struct envp_ {
     /* 0x00 */ u8 hang : 1;
     /* 0x00 */ u8 decay : 1;
     /* 0x00 */ u8 release : 1;
-    /* 0x00 */ u8 status : 1;
+    /* 0x00 */ u8 status : 4;
 
     /* 0x01 */ u8 envelope_idx;
     /* 0x02 */ s16 delay;
@@ -456,12 +480,13 @@ typedef struct sub_ {
     /* 0x0F */ u8 comb_filter_size;
     /* 0x10 */ u8 surround_effect_idx;
     /* 0x11 */ u8 channel_idx;
-    /* 0x12 */ vibparam vibrato_params;
-    /* 0x20 */ u16 delay;
-    /* 0x22 */ u16 comb_filter_gain;
-    /* 0x24 */ u16 unk24;
-    /* 0x26 */ s16 inst_or_wave;
-    /* 0x28 */ s16 transposition;
+    /* 0x12 */ u16 _12;
+    /* 0x14 */ vibparam vibrato_params;
+    /* 0x22 */ u16 delay;
+    /* 0x24 */ u16 comb_filter_gain;
+    /* 0x26 */ u16 _26;
+    /* 0x28 */ s16 inst_or_wave;
+    /* 0x2A */ s16 transposition;
     /* 0x2C */ f32 volume_scale;
     /* 0x30 */ f32 volume;
     /* 0x34 */ s32 pan;
@@ -476,7 +501,7 @@ typedef struct sub_ {
     /* 0x64 */ seqplayer seq_player;
     /* 0x80 */ env adsr_env;
     /* 0x88 */ chnode channel_node;
-    /* 0xC8 */ s8 seq_script_io[8];
+    /* 0xC8 */ s8 port[8];
     /* 0xD0 */ u8* sfx_state;
     /* 0xD4 */ s16* filter;
     /* 0xD8 */ phase stereo_phase;
@@ -528,7 +553,7 @@ struct group_ {
     /* 0x0DC */ s32 skip_ticks;
     /* 0x0E0 */ s32 script_counter; /* is u32 in MM decomp */
     /* 0x0E4 */ u8 unkE4[0x158 - 0x0E4];
-    /* 0x158 */ s8 seq_script_io[8];
+    /* 0x158 */ s8 port[8];
 };
 
 /* sizeof(note) == 0x90 */
@@ -662,7 +687,7 @@ typedef struct audioparams_ {
     /* 0x0E */ s16 num_samples_per_update;
     /* 0x10 */ s16 num_samples_per_update_max;
     /* 0x12 */ s16 num_samples_per_update_min;
-    /* 0x14 */ s16 num_playing_sequences;
+    /* 0x14 */ s16 num_groups;
     /* 0x18 */ f32 resample_rate;
     /* 0x1C */ f32 updates_per_frame_inverse;
     /* 0x20 */ f32 updates_per_frame_inverse_scaled;
@@ -857,27 +882,27 @@ typedef struct AudioGlobals {
     /* 0x377C */ u8* audio_heap_p;
     /* 0x3780 */ size_t audio_heap_size;
     /* 0x3784 */ channel* channels;
-    /* 0x3788 */ group groups[AUDIO_GROUP_MAX];
+    /* 0x3788 */ struct group_ groups[AUDIO_GROUP_MAX];
     /* 0x3E68 */ note notes[128];
     /* 0x8668 */ sub null_sub_track; /* used for 'null' sub tracks */
     /* 0x8748 */ group* groups_p[AUDIO_GROUP_MAX];
     /* 0x877C */ s32 _877C;
     /* 0x8780 */ link note_link;
     /* 0x8790 */ chnode channel_node; /* main chnode */
-    /* 0x87D0 */ group main_group;
+    /* 0x87D0 */ struct group_ main_group;
     /* 0x8930 */ sub main_sub;
     /* 0x8A30 */ u8 thread_cmd_write_pos;
     /* 0x8A31 */ u8 thread_cmd_read_pos;
     /* 0x8A32 */ u8 thread_cmd_queue_finished;
     /* 0x8A34 */ u16 thread_cmd_group_mask[AUDIO_GROUP_MAX];
-    /* 0x8A40 */ OSMesgQueue* audio_reset_mq_p;
+    /* 0x8A40 */ OSMesgQueue* spec_change_mq_p;
     /* 0x8A44 */ OSMesgQueue* task_start_mq_p;
     /* 0x8A48 */ OSMesgQueue* thread_cmd_proc_mq_p;
     /* 0x8A4C */ OSMesgQueue task_start_mq;
     /* 0x8A64 */ OSMesgQueue thread_cmd_proc_mq;
-    /* 0x8A7C */ OSMesgQueue audio_reset_mq;
+    /* 0x8A7C */ OSMesgQueue spec_change_mq;
     /* 0x8A94 */ OSMesg task_start_msg_buf[1];
-    /* 0x8A98 */ OSMesg audio_reset_msg_buf[1];
+    /* 0x8A98 */ OSMesg spec_change_msg_buf[1];
     /* 0x8A9C */ OSMesg thread_cmd_proc_msg_buf[4];
     /* 0x8AAC */ AudioPort audio_port_cmds[256];
     /* 0x92AC */ s32 _92AC;
@@ -901,7 +926,6 @@ typedef struct PLAYER_CALL_ {
     void* arg;
     u32 DSP_mode;
 } PLAYER_CALL;
-
 
 #ifdef __cplusplus
 }

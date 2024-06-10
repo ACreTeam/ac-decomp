@@ -101,6 +101,12 @@ jaudio_NES/internal/cpubuf.c:
 jaudio_NES/internal/playercall.c:
     .text: [0x80019dc0, 0x8001a0c0]
     .bss: [0x801864d0,0x80186590]
+jaudio_NES/internal/sub_sys.c:
+    .text: [0x80024ae0, 0x80026120]
+    .rodata: [0x800aa700, 0x800aa720]
+    .data: [0x800d0300, 0x800d0390]
+    .sbss: [0x80218510, 0x80218528]
+    .sdata2: [0x80218e48, 0x80218e60]
 jaudio_NES/internal/os.c:
     .text: [0x80026120, 0x80026300]
 jaudio_NES/internal/astest.c:

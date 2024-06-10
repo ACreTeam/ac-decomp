@@ -203,13 +203,13 @@ static s8 Na_GetRhythmSeNum(s8 num, sub* sub) {
     u32 rand;
 
     if (num == 0) {
-        num = 16 - sub->seq_script_io[4];
+        num = 16 - sub->port[4];
         if (num == 16) {
             num = 0;
         }
     } else {
         rand = Nap_GetRandom();
-        switch (sub->seq_script_io[3]) {
+        switch (sub->port[3]) {
             case 0x14:
             case 0x15:
             case 0x16:
@@ -430,8 +430,8 @@ static s8 Na_RhythmGrpProcess(s8 arg0, group* group) {
         ret = 0;
     }
 
-    group->seq_script_io[3] = r31;
-    group->seq_script_io[4] = (s8)((s32)(r31 * 0x64) / r29);
+    group->port[3] = r31;
+    group->port[4] = (s8)((s32)(r31 * 0x64) / r29);
 
     return ret;
 }

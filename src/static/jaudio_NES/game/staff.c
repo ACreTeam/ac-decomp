@@ -39,9 +39,9 @@ extern void Na_GetStaffRollInfo(StaffRollInfo_c* info) {
         start_flag = FALSE;
         group = &AG.groups[sou_now_bgm_handle];
 
-        if (group->seq_script_io[2] == 0) {
+        if (group->port[2] == 0) {
             info->staffroll_part = STAFFROLL_PART_MAIN;
-        } else if (group->seq_script_io[2] == 1) {
+        } else if (group->port[2] == 1) {
             info->staffroll_part = STAFFROLL_PART_FADEOUT;
         } else {
             info->staffroll_part = STAFFROLL_PART_INTRO;
@@ -188,7 +188,7 @@ extern void Na_GetStaffRollInfo(StaffRollInfo_c* info) {
     info->mouth_num = mouth_num;
 
     /* sequence script itself controls blink flag? */
-    if (group->seq_script_io[1] == 1) {
+    if (group->port[1] == 1) {
         blink = TRUE;
     } else {
         blink = FALSE;
