@@ -20,9 +20,9 @@ extern "C" {
     (u32)((((a0) & 0xFF) << 24) | (((a1) & 0xFF) << 16) | (((a2) & 0xFF) << 8) | (((a3) & 0xFF) << 0))
 
 typedef enum DSPBUF_EVENTS {
-    DSPBUF_EVENTS_0 = 0,
-    DSPBUF_EVENTS_1 = 1,
-    DSPBUF_EVENTS_2 = 2,
+    DSPBUF_EVENT_INIT = 0,
+    DSPBUF_EVENT_FRAME_END = 1,
+    DSPBUF_EVENT_MIX = 2,
 } DSPBUF_EVENTS;
 
 typedef enum SampleMedium {

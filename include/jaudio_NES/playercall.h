@@ -16,4 +16,8 @@ extern s32 Jac_RegisterPlayerCallback(PlayerCallBack callback, void* arg);
 }
 #endif
 
+/* C++ linkage, should these go in a different header file? */
+extern void PlayerCallback();
+extern void DspPlayerCallback();
+
 #endif
