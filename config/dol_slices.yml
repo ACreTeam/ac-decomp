@@ -103,6 +103,8 @@ jaudio_NES/internal/playercall.c:
     .bss: [0x801864d0,0x80186590]
 jaudio_NES/internal/os.c:
     .text: [0x80026120, 0x80026300]
+jaudio_NES/internal/astest.c:
+    .text: [0x80026300, 0x80026400]
 jaudio_NES/internal/random.c:
     .text: [0x80031ce0, 0x80031d80]
     .sdata: [0x80217c38, 0x80217c40]
