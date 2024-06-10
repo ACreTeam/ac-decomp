@@ -22,7 +22,7 @@ static u32 neosproc_mq_init = FALSE;
 static s16* tmp_buf = nullptr;
 static BOOL neos_ready = FALSE;
 
-extern BOOL Neos_Update(s16* dst) {
+extern u32 Neos_Update(s16* dst) {
     if (neosproc_mq_init) {
         if (OSSendMessage(&neosproc_mq, (OSMessage)dst, OS_MESSAGE_NOBLOCK) == TRUE) {
             return TRUE;

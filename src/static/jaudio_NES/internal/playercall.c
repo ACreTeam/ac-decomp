@@ -3,29 +3,29 @@
 
 static PLAYER_CALL PLAYER_CALLLIST[16];
 
-extern void ResetPlayerCallback(){
+extern void ResetPlayerCallback() {
     int i;
 
-    for(i = 0; i < 16; i++){
+    for (i = 0; i < 16; i++) {
         PLAYER_CALLLIST[i].callback = nullptr;
     }
 }
 
-static s32 Jac_CheckPlayerCallback(PlayerCallBack callback, void* arg){
-     int i;
+static s32 Jac_CheckPlayerCallback(PlayerCallBack callback, void* arg) {
+    int i;
 
-    for(i = 0; i < 16; i++){
-        if(PLAYER_CALLLIST[i].callback == callback && PLAYER_CALLLIST[i].arg == arg){
+    for (i = 0; i < 16; i++) {
+        if (PLAYER_CALLLIST[i].callback == callback && PLAYER_CALLLIST[i].arg == arg) {
             return i;
         }
-    }   
+    }
     return -1;
 }
 
-extern s32 Jac_RegisterDspPlayerCallback(PlayerCallBack callback, void* arg){
-    s32 idx = Jac_RegisterPlayerCallback(callback,arg);
+extern s32 Jac_RegisterDspPlayerCallback(PlayerCallBack callback, void* arg) {
+    s32 idx = Jac_RegisterPlayerCallback(callback, arg);
 
-    if(idx == -1){
+    if (idx == -1) {
         return -1;
     }
 
@@ -34,23 +34,22 @@ extern s32 Jac_RegisterDspPlayerCallback(PlayerCallBack callback, void* arg){
     return idx;
 }
 
-extern s32 Jac_RegisterPlayerCallback(PlayerCallBack callback, void* arg){
-     u32 i;
+extern s32 Jac_RegisterPlayerCallback(PlayerCallBack callback, void* arg) {
+    u32 i;
 
-    for(i = 0; i < 16; i++){
-        if(PLAYER_CALLLIST[i].callback == nullptr){
+    for (i = 0; i < 16; i++) {
+        if (PLAYER_CALLLIST[i].callback == nullptr) {
             break;
         }
-    }    
+    }
 
-    if(i == 16){
+    if (i == 16) {
         return -1;
     }
-    
-    if(Jac_CheckPlayerCallback(callback,arg) != -1){
+
+    if (Jac_CheckPlayerCallback(callback, arg) != -1) {
         return -1;
-    }
-    else{
+    } else {
         PLAYER_CALLLIST[i].callback = callback;
         PLAYER_CALLLIST[i].arg = arg;
         PLAYER_CALLLIST[i].DSP_mode = false;
@@ -60,23 +59,23 @@ extern s32 Jac_RegisterPlayerCallback(PlayerCallBack callback, void* arg){
     return -1;
 }
 
-extern void PlayerCallback(){
-     u32 i;
+extern void PlayerCallback() {
+    u32 i;
 
-    for(i = 0; i < 16; i++){
+    for (i = 0; i < 16; i++) {
         PlayerCallBack callback = PLAYER_CALLLIST[i].callback;
-        if(callback != nullptr && PLAYER_CALLLIST[i].DSP_mode == false && callback(PLAYER_CALLLIST[i].arg) == -1){
+        if (callback != nullptr && PLAYER_CALLLIST[i].DSP_mode == false && callback(PLAYER_CALLLIST[i].arg) == -1) {
             PLAYER_CALLLIST[i].callback = nullptr;
         }
-    }   
+    }
 }
 
-extern void DspPlayerCallback(){
-     u32 i;
+extern void DspPlayerCallback() {
+    u32 i;
 
-    for(i = 0; i < 16; i++){
+    for (i = 0; i < 16; i++) {
         PlayerCallBack callback = PLAYER_CALLLIST[i].callback;
-        if(callback != nullptr && PLAYER_CALLLIST[i].DSP_mode == true && callback(PLAYER_CALLLIST[i].arg) == -1){
+        if (callback != nullptr && PLAYER_CALLLIST[i].DSP_mode == true && callback(PLAYER_CALLLIST[i].arg) == -1) {
             PLAYER_CALLLIST[i].callback = nullptr;
         }
     }

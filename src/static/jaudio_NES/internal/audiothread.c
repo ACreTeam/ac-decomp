@@ -98,8 +98,8 @@ static void* audioproc(void* param) {
     Jac_Init();
     Jac_InitSinTable();
     ResetPlayerCallback();
-    DspbufProcess(DSPBUF_EVENTS_0);
-    CpubufProcess(DSPBUF_EVENTS_0);
+    DspbufProcess(DSPBUF_EVENT_INIT);
+    CpubufProcess(DSPBUF_EVENT_INIT);
     DspBoot();
     DSP_InitBuffer();
     __DspReg();
