@@ -6,6 +6,9 @@
 
 extern void Nas_HeapInit(ALHeap* heap, u8* base, s32 len);
 extern void* Nas_HeapAlloc(ALHeap* heap, s32 size);
+extern void* Nas_HeapAlloc_CL(ALHeap*, s32 size);
+
+extern u32 Nas_SzCacheCheck(s32 type, s32 cache_type, s32 id);
 extern void Nas_SzStayDelete(s32 type);
 
 extern void Nas_SetDelayLineParam(s32 delayIdx, s32 param_type, s32 param_value, s32 init);

@@ -111,6 +111,12 @@ jaudio_NES/internal/os.c:
     .text: [0x80026120, 0x80026300]
 jaudio_NES/internal/astest.c:
     .text: [0x80026300, 0x80026400]
+jaudio_NES/internal/track.c:
+    .text: [0x80028e60, 0x8002c920]
+    .rodata: [0x800aa720, 0x800aa780]
+    .data: [0x800d36f0, 0x800d3b00]
+    .sbss: [0x80218540, 0x80218548]
+    .sdata2: [0x80218ec8, 0x80218f08]
 jaudio_NES/internal/random.c:
     .text: [0x80031ce0, 0x80031d80]
     .sdata: [0x80217c38, 0x80217c40]
