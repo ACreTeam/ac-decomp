@@ -101,6 +101,11 @@ jaudio_NES/internal/cpubuf.c:
 jaudio_NES/internal/playercall.c:
     .text: [0x80019dc0, 0x8001a0c0]
     .bss: [0x801864d0,0x80186590]
+jaudio_NES/internal/dvdthread.c:
+    .text: [0x8001a0c0, 0x8001ada0]
+    .data: [0x800d0278, 0x800d0298]
+    .bss: [0x80186590, 0x8018f1a8]
+    .sbss: [0x80218498, 0x802184e8]   
 jaudio_NES/internal/sub_sys.c:
     .text: [0x80024ae0, 0x80026120]
     .rodata: [0x800aa700, 0x800aa720]
@@ -117,6 +122,14 @@ jaudio_NES/internal/track.c:
     .data: [0x800d36f0, 0x800d3b00]
     .sbss: [0x80218540, 0x80218548]
     .sdata2: [0x80218ec8, 0x80218f08]
+jaudio_NES/internal/dspboot.c:
+    .text: [0x8002c920, 0x8002cd20]
+    .rodata: [0x800aa780, 0x800aa7a0]
+    .data: [0x800d3b00, 0x800d5500]
+    .sdata2: [0x80218f08, 0x80218f10]
+jaudio_NES/internal/dspproc.c:
+    .text: [0x8002cd20, 0x8002cfe0]
+    .sdata: [0x80217c18, 0x80217c20]
 jaudio_NES/internal/random.c:
     .text: [0x80031ce0, 0x80031d80]
     .sdata: [0x80217c38, 0x80217c40]

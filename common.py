@@ -442,6 +442,7 @@ FAMICOM_BASE = CFLAGS + [
 ] + DOL_DEFINES
 JAUDIO_BASE = CFLAGS + [
     "-lang=c++",
+    "-char signed",
     "-sdata 8",
     "-sdata2 8",
     "-enum int",
