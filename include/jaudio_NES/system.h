@@ -32,6 +32,16 @@ extern void Nas_WaveDmaFrameWork(void);
 extern void Nas_BgDmaFrameWork(s32 reset_status);
 extern void MK_FrameWork(void);
 
+extern BOOL Nas_CheckIDseq(s32 id);
+extern BOOL Nas_CheckIDbank(s32 id);
+
+extern void Nas_WriteIDseq(s32 id, s32 type);
+extern void Nas_WriteIDbank(s32 id, s32 type);
+
+extern s32 VoiceLoad(s32 bank_id, u32 inst_id, s8* done_p);
+extern s32 SeqLoad(s32 seq_id, u8* ram_addr, s8* done_p);
+extern void MK_load(s32 type, s32 id, u8* done_p);
+
 extern BOOL AUDIO_SYSTEM_READY;
 
 #endif

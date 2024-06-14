@@ -15,13 +15,16 @@ extern "C" {
 
 #define AUDIO_GROUP_MAX 5
 #define AUDIO_SUBTRACK_NUM 16
+#define AUDIO_NOTE_MAX 128
 
 #define AUDIO_TATUMS_PER_BEAT 48
 
+#define AUDIO_GROUP_ALL_SUBTRACKS (0xFFFF)
+
 #define AUDIO_MUTE_FLAG_STOP_SAMPLES (1 << 3)
-#define AUDIO_MUTE_FLAG_STOP_NOTE (1 << 4)
+#define AUDIO_MUTE_FLAG_STOP_SUBTRACK (1 << 4)
 #define AUDIO_MUTE_FLAG_SOFTEN (1 << 5)
-#define AUDIO_MUTE_FLAG_6 (1 << 6)
+#define AUDIO_MUTE_FLAG_STOP_NOTE (1 << 6)
 #define AUDIO_MUTE_FLAG_STOP_SCRIPT (1 << 7)
 
 #define NA_MAKE_COMMAND(a0, a1, a2, a3) \
@@ -41,6 +44,13 @@ typedef enum SampleMedium {
     /* 5 */ MEDIUM_RAM_UNLOADED = 5
 } SampleMedium;
 
+typedef enum AudioCacheType {
+    /* 0 */ CACHE_TEMPORARY,
+    /* 1 */ CACHE_PERSISTENT,
+    /* 2 */ CACHE_EITHER,
+    /* 3 */ CACHE_PERMANENT
+} AudioCacheType;
+
 typedef enum AudioCacheLoadType {
     /* 0 */ CACHE_LOAD_PERMANENT,
     /* 1 */ CACHE_LOAD_PERSISTENT,
@@ -48,6 +58,15 @@ typedef enum AudioCacheLoadType {
     /* 3 */ CACHE_LOAD_EITHER,
     /* 4 */ CACHE_LOAD_EITHER_NOSYNC
 } AudioCacheLoadType;
+
+typedef enum AudioLoadStatus {
+    /* 0 */ LOAD_STATUS_NOT_LOADED,
+    /* 1 */ LOAD_STATUS_IN_PROGRESS,
+    /* 2 */ LOAD_STATUS_COMPLETE,
+    /* 3 */ LOAD_STATUS_DISCARDABLE,
+    /* 4 */ LOAD_STATUS_MAYBE_DISCARDABLE,
+    /* 5 */ LOAD_STATUS_PERMANENT
+} AudioLoadStatus;
 
 typedef enum AdsrStatus {
     /* 0 */ ADSR_STATUS_DISABLED,
@@ -60,6 +79,31 @@ typedef enum AdsrStatus {
     /* 7 */ ADSR_STATUS_RELEASE,
     /* 8 */ ADSR_STATUS_SUSTAIN
 } AdsrStatus;
+
+typedef enum PortamentoMode {
+    /* 0 */ PORTAMENTO_MODE_OFF,
+    /* 1 */ PORTAMENTO_MODE_1,
+    /* 2 */ PORTAMENTO_MODE_2,
+    /* 3 */ PORTAMENTO_MODE_3,
+    /* 4 */ PORTAMENTO_MODE_4,
+    /* 5 */ PORTAMENTO_MODE_5,
+    /* 6 */ PORTAMENTO_MODE_6,
+    /* 7 */ PORTAMENTO_MODE_7,
+    /* 8 */ PORTAMENTO_MODE_8, // might be PORTAMENTO_MODE_NUM
+} PortamentoMode;
+
+typedef enum SampleBankTableType {
+    /* 0 */ SEQUENCE_TABLE,
+    /* 1 */ BANK_TABLE,
+    /* 2 */ WAVE_TABLE
+} SampleBankTableType;
+
+#define VOICE_TYPE_PERCUSSION 0
+#define VOICE_TYPE_SOUND_EFF 1
+#define VOICE_TYPE_INSTRUMENT_START 2
+
+#define AUDIO_SWEEP_IS_SPECIAL(s) ((s).mode & 0x80)
+#define AUDIO_SWEEP_MODE(s) ((s).mode & ~0x80)
 
 #define AUDIO_NOTE_RELEASE (1 << 0)
 #define AUDIO_NOTE_SAMPLE_NOTES (1 << 1)
@@ -143,6 +187,23 @@ typedef enum AudioCmd {
     /* 0xFE */ AUDIOCMD_FORCE_STOP_ALL_GROUPS,
     /* 0xFF */ AUDIOCMD_MAIN_GROUP_SET_VOL_SCALE
 } AudioCmd;
+
+typedef enum SeqCmd {
+    SEQCMD_BRANCH_REL_NOT_EQ_ZERO = 0xF2,
+    SEQCMD_BRANCH_REL_EQ_ZERO = 0xF3,
+    SEQCMD_BRANCH_REL = 0xF4,
+    SEQCMD_BRANCH_ABS_GREQ_ZERO = 0xF5,
+    SEQCMD_BREAK = 0xF6,
+    SEQCMD_LOOP_END = 0xF7,
+    SEQCMD_LOOP = 0xF8,
+    SEQCMD_BRANCH_ABS_NOT_EQ_ZERO = 0xF9,
+    SEQCMD_BRANCH_ABS_EQ_ZERO = 0xFA,
+    SEQCMD_BRANCH_ABS = 0xFB,
+    SEQCMD_CALL = 0xFC,
+    SEQCMD_DELAY_N_FRAMES = 0xFD,
+    SEQCMD_DELAY_1_FRAME = 0xFE,
+    SEQCMD_STOP_SCRIPT = 0xFF,
+} SeqCmd;
 
 typedef enum AUDIO_CALLBACKS {
     /* 0x00 */ AUDIO_CALLBACK_SEQ_0,
