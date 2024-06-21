@@ -508,6 +508,451 @@ enum {
     mPlayer_BED_ACTION_NUM
 };
 
+typedef struct player_request_return_demo_s {
+    int prev_main_index;
+    f32 time;
+} mPlayer_request_return_demo_c;
+
+typedef struct player_request_wait_s {
+    f32 morph_speed;
+    f32 _04;
+    int flags;
+} mPlayer_request_wait_c;
+
+typedef struct player_request_talk_s {
+    ACTOR* talk_actor;
+    int turn_flag;
+    f32 morph_speed;
+    int umbrella_flag;
+} mPlayer_request_talk_c;
+
+typedef struct player_request_hold_s {
+    int ftr_no;
+    s16 angle_y;
+    xyz_t player_pos;
+    f32 morph_speed;
+    int flags;
+} mPlayer_request_hold_c;
+
+typedef struct player_request_recieve_wait_s {
+    ACTOR* talk_actor;
+    int turn_flag;
+    int prev_main_index;
+    mActor_name_t item;
+    int on_surface_flag;
+} mPlayer_request_recieve_wait_c;
+
+typedef struct player_request_give_s {
+    ACTOR* talk_actor;
+    int turn_flag;
+    int prev_main_index;
+    mActor_name_t item;
+    int mode;
+    int present_flag;
+    int on_surface_flag;
+} mPlayer_request_give_c;
+
+typedef struct player_request_sitdown_s {
+    s16 angle;
+    xyz_t pos;
+    int ftrID;
+} mPlayer_request_sitdown_c;
+
+typedef struct player_request_close_funriture_s {
+    int anim_idx;
+} mPlayer_request_close_furniture_c;
+
+typedef struct player_request_lie_bed_s {
+    int direct;
+    s16 angle;
+    xyz_t wpos;
+    int ftr_name;
+} mPlayer_request_lie_bed_c;
+
+typedef struct player_request_door_s {
+    s16 angle_y;
+    xyz_t player_pos;
+    int type;
+    u32 label;
+} mPlayer_request_door_c;
+
+typedef struct player_request_outdoor_s {
+    int type;
+    int is_start_demo;
+} mPlayer_request_outdoor_c;
+
+typedef struct player_request_demo_wait_s {
+    int umbrella_flag;
+    int _04;
+} mPlayer_request_demo_wait_c;
+
+typedef struct player_request_demo_walk_s {
+    f32 goal_pos_x;
+    f32 goal_pos_z;
+    f32 speed;
+    int _0C;
+} mPlayer_request_demo_walk_c;
+
+typedef struct player_request_demo_geton_train_s {
+    s16 angle_y;
+    xyz_t player_pos;
+} mPlayer_request_demo_geton_train_c;
+
+typedef struct player_request_demo_getoff_train_s {
+    s16 angle_y;
+    xyz_t player_pos;
+} mPlayer_request_demo_getoff_train_c;
+
+typedef struct player_request_rotate_octagon_s {
+    ACTOR* talk_actor;
+    int turn_flag;
+    int prev_main_index;
+    xyz_t pos;
+    s16 angle_y;
+} mPlayer_request_rotate_octagon_c;
+
+typedef struct player_request_wash_car_s {
+    xyz_t car_pos;
+    xyz_t orig_pos;
+    s16 orig_angle_y;
+    ACTOR* parent_actor;
+} mPlayer_request_wash_car_c;
+
+typedef struct player_request_throw_money_s {
+    xyz_t pos;
+    s16 angle_y;
+} mPlayer_request_throw_money_c;
+
+typedef struct player_request_pray_s {
+    xyz_t pos;
+    s16 angle_y;
+} mPlayer_request_pray_c;
+
+typedef struct player_request_mail_jump_s {
+    xyz_t pos;
+    s16 angle_y;
+} mPlayer_request_mail_jump_c;
+
+typedef struct player_request_shock_s {
+    f32 timer;
+    s16 target_angle_y;
+    u8 bee_chase_bgm_flag;
+    int axe_broke_flag;
+} mPlayer_request_shock_c;
+
+typedef struct player_request_push_snowball_s {
+    u32 type;
+    int wade_type;
+} mPlayer_request_push_snowball_c;
+
+typedef struct player_request_stung_mosquito_s {
+    u32 label;
+} mPlayer_request_stung_mosquito_c;
+
+typedef struct player_request_switch_on_lighthouse_s {
+    s16 angle_y;
+    xyz_t pos;
+} mPlayer_request_switch_on_lighthouse_c;
+
+typedef struct player_request_demo_geton_boat_s {
+    xyz_t pos;
+    s16 angle_y;
+} mPlayer_request_demo_geton_boat_c;
+
+typedef struct player_request_demo_getoff_boat_standup_s {
+    xyz_t pos;
+    s16 angle_y;
+} mPlayer_request_demo_getoff_boat_standup_c;
+
+typedef struct player_request_demo_get_golden_item_s {
+    u32 label;
+} mPlayer_request_demo_get_golden_item_c;
+
+//
+
+typedef struct player_request_walk_s {
+    xyz_t pos;
+    f32 morph_speed;
+    int flags;
+} mPlayer_request_walk_c;
+
+typedef struct player_request_run_s {
+    f32 morph_speed;
+    int flags;
+} mPlayer_request_run_c;
+
+typedef struct player_request_dash_s {
+    f32 morph_speed;
+    int flags;
+} mPlayer_request_dash_c;
+
+typedef struct player_request_turn_dash_s {
+    s16 target_angle_y;
+} mPlayer_request_turn_dash_c;
+
+typedef struct player_request_fall_s {
+    f32 morph_speed;
+    int flags;
+} mPlayer_request_fall_c;
+
+typedef struct player_request_wade_s {
+    int dir;
+} mPlayer_request_wade_c;
+
+typedef struct player_request_wade_snowball_s {
+    int dir;
+    xyz_t pos;
+    u32 label;
+} mPlayer_request_wade_snowball_c;
+
+typedef struct player_request_push_s {
+    int ftrNo;
+    s16 angle_y;
+    xyz_t player_pos;
+} mPlayer_request_push_c;
+
+typedef struct player_request_pull_s {
+    int ftrNo;
+    s16 angle_y;
+    xyz_t start_pos;
+    xyz_t end_pos;
+    xyz_t ofs;
+} mPlayer_request_pull_c;
+
+typedef struct player_request_rotate_furniture_s {
+    int ftrNo;
+    s16 angle_y;
+    xyz_t player_pos;
+    int rotate_type;
+} mPlayer_request_rotate_furniture_c;
+
+typedef struct player_request_wait_open_furniture_s {
+    int anim_idx;
+} mPlayer_request_wait_open_furniture_c;
+
+typedef struct player_request_wait_close_furniture_s {
+    int anim_idx;
+} mPlayer_request_wait_close_furniture_c;
+
+typedef struct player_request_roll_bed_s {
+    int move_dir;
+} mPlayer_request_roll_bed_c;
+
+typedef struct player_request_standup_bed_s {
+    int move_dir;
+} mPlayer_request_standup_bed_c;
+
+typedef struct player_request_pickup_s {
+    int inv_slot;
+    mActor_name_t item;
+    xyz_t end_pos;
+    xyz_t start_pos;
+    int flag;
+} mPlayer_request_pickup_c;
+
+typedef struct player_request_pickup_jump_s {
+    int inv_slot;
+    mActor_name_t item;
+    xyz_t start_pos;
+    int flag;
+} mPlayer_request_pickup_jump_c;
+
+typedef struct player_request_pickup_furniture_s {
+    int inv_slot;
+    mActor_name_t item;
+    xyz_t start_pos;
+} mPlayer_request_pickup_furniture_c;
+
+typedef struct player_request_pickup_exchange_s {
+    xyz_t end_pos;
+    mActor_name_t item;
+} mPlayer_request_pickup_exchange_c;
+
+typedef struct player_request_sitdown_wait_s {
+    int ftrID;
+} mPlayer_request_sitdown_wait_c;
+
+typedef struct player_request_standup_s {
+    int ftrID;
+} mPlayer_request_standup_c;
+
+typedef struct player_request_swing_axe_s {
+    xyz_t goal_pos;
+    mActor_name_t hit_item;
+    u16 axe_damage_no;
+    int hit_ut_x;
+    int hit_ut_z;
+    int break_flag;
+} mPlayer_request_swing_axe_c;
+
+typedef struct player_request_reflect_axe_s {
+    xyz_t goal_pos;
+    mActor_name_t hit_item;
+    u16 axe_damage_no;
+    ACTOR* hit_actor;
+    int _14;
+    int break_flag;
+} mPlayer_request_reflect_axe_c;
+
+typedef struct player_request_notice_net_s {
+    int _00;
+} mPlayer_request_notice_net_c;
+
+typedef struct player_request_putaway_net_s {
+    int _00;
+} mPlayer_request_putaway_net_c;
+
+typedef struct player_request_cast_rod_s {
+    xyz_t bobber_target_pos;
+} mPlayer_request_cast_rod_c;
+
+typedef struct player_request_notice_rod_s {
+    s16 angle_y;
+} mPlayer_request_notice_rod_c;
+
+typedef struct player_request_putaway_rod_s {
+    s16 angle_y;
+    int _04;
+} mPlayer_request_putaway_rod_c;
+
+typedef struct player_request_dig_scoop_s {
+    xyz_t dig_pos;
+    mActor_name_t item;
+} mPlayer_request_dig_scoop_c;
+
+typedef struct player_request_fill_scoop_s {
+    xyz_t dig_pos;
+} mPlayer_request_fill_scoop_c;
+
+typedef struct player_request_reflect_scoop_s {
+    xyz_t dig_pos;
+    mActor_name_t item;
+    ACTOR* hit_actor;
+} mPlayer_request_reflect_scoop_c;
+
+typedef struct player_request_putin_scoop_s {
+    xyz_t dig_pos;
+    mActor_name_t item;
+    int _10;
+} mPlayer_request_putin_scoop_c;
+
+typedef struct player_request_putaway_scoop_s {
+    xyz_t dig_pos;
+    mActor_name_t item;
+    int _10;
+} mPlayer_request_putaway_scoop_c;
+
+typedef struct player_request_get_scoop_s {
+    xyz_t dig_pos;
+    mActor_name_t item;
+} mPlayer_request_get_scoop_c;
+
+typedef struct player_request_recieve_stretch_s {
+    ACTOR* talk_actor;
+    int turn_flag;
+    int prev_main_index;
+    mActor_name_t item;
+    int on_surface_flag;
+} mPlayer_request_recieve_stretch_c;
+
+typedef struct player_request_recieve_s {
+    ACTOR* talk_actor;
+    int turn_flag;
+    int prev_main_index;
+    mActor_name_t item;
+    int on_surface_flag;
+} mPlayer_request_recieve_c;
+
+typedef struct player_request_recieve_putaway_s {
+    ACTOR* talk_actor;
+    int turn_flag;
+    int prev_main_index;
+    mActor_name_t item;
+    int on_surface_flag;
+} mPlayer_request_recieve_putaway_c;
+
+typedef struct player_request_give_wait_s {
+    ACTOR* talk_actor;
+    int turn_flag;
+    int prev_main_index;
+    mActor_name_t item;
+    int on_surface_flag; // TODO: verify this flag is correct
+} mPlayer_request_give_wait_c;
+
+typedef struct player_request_demo_wade_s {
+    int dir;
+} mPlayer_request_demo_wade_c;
+
+typedef struct player_request_release_creature_gyoei_s {
+    s16 angle_y;
+    s16 _02;
+} mPlayer_request_release_creature_gyoei_c;
+
+typedef struct player_request_release_creature_insect_s {
+    xyz_t pos;
+    int type;
+} mPlayer_request_release_creature_insect_c;
+
+typedef struct player_request_release_creature_balloon_s {
+    int _00;
+} mPlayer_request_release_creature_balloon_c;
+
+typedef union {
+    mPlayer_request_release_creature_gyoei_c gyoei;
+    mPlayer_request_release_creature_insect_c insect;
+    mPlayer_request_release_creature_balloon_c balloon;
+} mPlayer_request_release_creature_u;
+
+typedef struct player_request_release_creature_s {
+    int type;
+    mPlayer_request_release_creature_u data;
+    ACTOR* actor;
+} mPlayer_request_release_creature_c;
+
+typedef struct player_request_shake_tree_s {
+    xyz_t pos;
+    mActor_name_t item;
+    int ut_x;
+    int ut_z;
+} mPlayer_request_shake_tree_c;
+
+typedef struct player_request_ready_pitfall_s {
+    xyz_t pos;
+} mPlayer_request_ready_pitfall_c;
+
+typedef struct player_request_remove_grass_s {
+    xyz_t start_pos;
+    xyz_t end_pos;
+} mPlayer_request_remove_grass_c;
+
+typedef struct player_request_change_cloth_s {
+    ACTOR* talk_actor;
+    int turn_flag;
+    int prev_main_index;
+    mActor_name_t cloth_item;
+    u16 cloth_idx;
+    int _10;
+} mPlayer_request_change_cloth_c;
+
+typedef struct player_request_swing_fan_s {
+    int anim_idx;
+} mPlayer_request_swing_fan_c;
+
+typedef struct player_request_radio_exercise_s {
+    int anim_idx;
+    f32 morph_speed;
+} mPlayer_request_radio_exercise_c;
+
+typedef struct player_request_demo_geton_boat_wade_s {
+    int dir;
+    f32 speed; // TODO: check this
+} mPlayer_request_demo_geton_boat_wade_c;
+
+typedef struct player_request_demo_getoff_boat_s {
+    xyz_t pos;
+    s16 angle_y;
+} mPlayer_request_demo_getoff_boat_c;
+
 typedef struct player_request_give_from_submenu_s {
     xyz_t unused; // assumed based on size
     mActor_name_t item;
@@ -547,12 +992,106 @@ typedef struct {
     ACTOR* speak_actor;
 } mPlayer_request_demo_wait_from_submenu_c;
 
-typedef struct {
-    int direct;
-    s16 angle;
-    xyz_t wpos;
-    int ftr_name;
-} mPlayer_request_lie_bed_c;
+typedef union {
+    mPlayer_request_give_from_submenu_c give_from_submenu;
+    mPlayer_request_putin_scoop_from_submenu_data_c putin_scoop_from_submenu;
+    mPlayer_request_release_creature_gyoei_from_submenu_c release_creature_gyoei_from_submenu;
+    mPlayer_request_release_creature_insect_from_submenu_c release_creature_insect_from_submenu;
+    mPlayer_request_release_creature_balloon_from_submenu_c release_creature_balloon_from_submenu;
+    mPlayer_request_demo_wait_from_submenu_c demo_wait_from_submenu;
+    mPlayer_request_return_demo_c return_demo;
+    mPlayer_request_wait_c wait;
+    mPlayer_request_talk_c talk;
+    mPlayer_request_hold_c hold;
+    mPlayer_request_recieve_wait_c recieve_wait;
+    mPlayer_request_give_c give;
+    mPlayer_request_sitdown_c sitdown;
+    mPlayer_request_close_furniture_c close_furniture;
+    mPlayer_request_lie_bed_c lie_bed;
+    mPlayer_request_door_c door;
+    mPlayer_request_outdoor_c outdoor;
+    mPlayer_request_demo_wait_c demo_wait;
+    mPlayer_request_demo_walk_c demo_walk;
+    mPlayer_request_demo_geton_train_c demo_geton_train;
+    mPlayer_request_demo_getoff_train_c demo_getoff_train;
+    mPlayer_request_rotate_octagon_c rotate_octagon;
+    mPlayer_request_wash_car_c wash_car;
+    mPlayer_request_throw_money_c throw_money;
+    mPlayer_request_pray_c pray;
+    mPlayer_request_mail_jump_c mail_jump;
+    mPlayer_request_shock_c shock;
+    mPlayer_request_push_snowball_c push_snowball;
+    mPlayer_request_stung_mosquito_c stung_mosquito;
+    mPlayer_request_switch_on_lighthouse_c switch_on_lighthouse;
+    mPlayer_request_demo_geton_boat_c demo_geton_boat;
+    mPlayer_request_demo_getoff_boat_standup_c demo_getoff_boat_standup;
+    mPlayer_request_demo_get_golden_item_c demo_get_golden_item;
+    mPlayer_request_walk_c walk;
+    mPlayer_request_run_c run;
+    mPlayer_request_dash_c dash;
+    mPlayer_request_turn_dash_c turn_dash;
+    mPlayer_request_fall_c fall;
+    mPlayer_request_wade_c wade;
+    mPlayer_request_wade_snowball_c wade_snowball;
+    mPlayer_request_push_c push;
+    mPlayer_request_pull_c pull;
+    mPlayer_request_rotate_furniture_c rotate_furniture;
+    mPlayer_request_wait_open_furniture_c wait_open_furniture;
+    mPlayer_request_wait_close_furniture_c wait_close_furniture;
+    mPlayer_request_roll_bed_c roll_bed;
+    mPlayer_request_standup_bed_c standup_bed;
+    mPlayer_request_pickup_c pickup;
+    mPlayer_request_pickup_jump_c pickup_jump;
+    mPlayer_request_pickup_furniture_c pickup_furniture;
+    mPlayer_request_pickup_exchange_c pickup_exchange;
+    mPlayer_request_sitdown_wait_c sitdown_wait;
+    mPlayer_request_standup_c standup;
+    mPlayer_request_swing_axe_c swing_axe;
+    mPlayer_request_reflect_axe_c reflect_axe;
+    mPlayer_request_notice_net_c notice_net;
+    mPlayer_request_putaway_net_c putaway_net;
+    mPlayer_request_cast_rod_c cast_rod;
+    mPlayer_request_notice_rod_c notice_rod;
+    mPlayer_request_putaway_rod_c putaway_rod;
+    mPlayer_request_dig_scoop_c dig_scoop;
+    mPlayer_request_fill_scoop_c fill_scoop;
+    mPlayer_request_reflect_scoop_c reflect_scoop;
+    mPlayer_request_putin_scoop_c putin_scoop;
+    mPlayer_request_putaway_scoop_c putaway_scoop;
+    mPlayer_request_get_scoop_c get_scoop;
+    mPlayer_request_recieve_stretch_c recieve_stretch;
+    mPlayer_request_recieve_c recieve;
+    mPlayer_request_recieve_putaway_c recieve_putaway;
+    mPlayer_request_give_wait_c give_wait;
+    mPlayer_request_demo_wade_c demo_wade;
+    mPlayer_request_release_creature_c release_creature;
+    mPlayer_request_shake_tree_c shake_tree;
+    mPlayer_request_ready_pitfall_c ready_pitfall;
+    mPlayer_request_remove_grass_c remove_grass;
+    mPlayer_request_change_cloth_c change_cloth;
+    mPlayer_request_swing_fan_c swing_fan;
+    mPlayer_request_radio_exercise_c radio_exercise;
+    mPlayer_request_demo_geton_boat_wade_c demo_geton_boat_wade;
+    mPlayer_request_demo_getoff_boat_c demo_getoff_boat;
+    u64 align; // TODO: is this necessary? it makes the size correct for this and mPlayer_request_main_data
+} mPlayer_request_backup_u;
+
+typedef struct player_request_takeout_item_s {
+    mPlayer_request_backup_u request_data;
+    int request_main_index;
+} mPlayer_request_takeout_item_c;
+
+typedef struct player_request_putin_item_s {
+    mPlayer_request_backup_u request_data;
+    int request_main_index;
+} mPlayer_request_putin_item_c;
+
+typedef struct player_request_knock_door_s {
+    mPlayer_request_backup_u request_data;
+    int request_main_index;
+    xyz_t pos;
+    s16 angle_y;
+} mPlayer_request_knock_door_c;
 
 typedef union {
     mPlayer_request_give_from_submenu_c give_from_submenu;
@@ -561,9 +1100,85 @@ typedef union {
     mPlayer_request_release_creature_insect_from_submenu_c release_creature_insect_from_submenu;
     mPlayer_request_release_creature_balloon_from_submenu_c release_creature_balloon_from_submenu;
     mPlayer_request_demo_wait_from_submenu_c demo_wait_from_submenu;
+    mPlayer_request_return_demo_c return_demo;
+    mPlayer_request_wait_c wait;
+    mPlayer_request_talk_c talk;
+    mPlayer_request_hold_c hold;
+    mPlayer_request_recieve_wait_c recieve_wait;
+    mPlayer_request_give_c give;
+    mPlayer_request_sitdown_c sitdown;
+    mPlayer_request_close_furniture_c close_furniture;
     mPlayer_request_lie_bed_c lie_bed;
-    /* TODO: others */
-    u8 force_size[72]; // TEMP
+    mPlayer_request_door_c door;
+    mPlayer_request_outdoor_c outdoor;
+    mPlayer_request_demo_wait_c demo_wait;
+    mPlayer_request_demo_walk_c demo_walk;
+    mPlayer_request_demo_geton_train_c demo_geton_train;
+    mPlayer_request_demo_getoff_train_c demo_getoff_train;
+    mPlayer_request_rotate_octagon_c rotate_octagon;
+    mPlayer_request_wash_car_c wash_car;
+    mPlayer_request_throw_money_c throw_money;
+    mPlayer_request_pray_c pray;
+    mPlayer_request_mail_jump_c mail_jump;
+    mPlayer_request_shock_c shock;
+    mPlayer_request_push_snowball_c push_snowball;
+    mPlayer_request_stung_mosquito_c stung_mosquito;
+    mPlayer_request_switch_on_lighthouse_c switch_on_lighthouse;
+    mPlayer_request_demo_geton_boat_c demo_geton_boat;
+    mPlayer_request_demo_getoff_boat_standup_c demo_getoff_boat_standup;
+    mPlayer_request_demo_get_golden_item_c demo_get_golden_item;
+    mPlayer_request_walk_c walk;
+    mPlayer_request_run_c run;
+    mPlayer_request_dash_c dash;
+    mPlayer_request_turn_dash_c turn_dash;
+    mPlayer_request_fall_c fall;
+    mPlayer_request_wade_c wade;
+    mPlayer_request_wade_snowball_c wade_snowball;
+    mPlayer_request_push_c push;
+    mPlayer_request_pull_c pull;
+    mPlayer_request_rotate_furniture_c rotate_furniture;
+    mPlayer_request_wait_open_furniture_c wait_open_furniture;
+    mPlayer_request_wait_close_furniture_c wait_close_furniture;
+    mPlayer_request_roll_bed_c roll_bed;
+    mPlayer_request_standup_bed_c standup_bed;
+    mPlayer_request_pickup_c pickup;
+    mPlayer_request_pickup_jump_c pickup_jump;
+    mPlayer_request_pickup_furniture_c pickup_furniture;
+    mPlayer_request_pickup_exchange_c pickup_exchange;
+    mPlayer_request_sitdown_wait_c sitdown_wait;
+    mPlayer_request_standup_c standup;
+    mPlayer_request_swing_axe_c swing_axe;
+    mPlayer_request_reflect_axe_c reflect_axe;
+    mPlayer_request_notice_net_c notice_net;
+    mPlayer_request_putaway_net_c putaway_net;
+    mPlayer_request_cast_rod_c cast_rod;
+    mPlayer_request_notice_rod_c notice_rod;
+    mPlayer_request_putaway_rod_c putaway_rod;
+    mPlayer_request_dig_scoop_c dig_scoop;
+    mPlayer_request_fill_scoop_c fill_scoop;
+    mPlayer_request_reflect_scoop_c reflect_scoop;
+    mPlayer_request_putin_scoop_c putin_scoop;
+    mPlayer_request_putaway_scoop_c putaway_scoop;
+    mPlayer_request_get_scoop_c get_scoop;
+    mPlayer_request_recieve_stretch_c recieve_stretch;
+    mPlayer_request_recieve_c recieve;
+    mPlayer_request_recieve_putaway_c recieve_putaway;
+    mPlayer_request_give_wait_c give_wait;
+    mPlayer_request_demo_wade_c demo_wade;
+    mPlayer_request_release_creature_c release_creature;
+    mPlayer_request_shake_tree_c shake_tree;
+    mPlayer_request_ready_pitfall_c ready_pitfall;
+    mPlayer_request_remove_grass_c remove_grass;
+    mPlayer_request_change_cloth_c change_cloth;
+    mPlayer_request_swing_fan_c swing_fan;
+    mPlayer_request_radio_exercise_c radio_exercise;
+    mPlayer_request_demo_geton_boat_wade_c demo_geton_boat_wade;
+    mPlayer_request_demo_getoff_boat_c demo_getoff_boat;
+    mPlayer_request_takeout_item_c takeout_item;
+    mPlayer_request_putin_item_c putin_item;
+    mPlayer_request_knock_door_c knock_door;
+    /* TODO: others? */
+    // u8 force_size[72]; // TEMP
 } mPlayer_request_main_data;
 
 typedef struct {
