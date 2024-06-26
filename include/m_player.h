@@ -11,6 +11,12 @@
 extern "C" {
 #endif
 
+#define mPlayer_DEBT0 17400  /* Buy house */
+#define mPlayer_DEBT1 148000 /* 1st upgrade main floor */
+#define mPlayer_DEBT2 398000 /* 2nd upgrade main floor */
+#define mPlayer_DEBT3 49800  /* Basement */
+#define mPlayer_DEBT4 798000 /* Upper floor */
+
 typedef struct player_actor_s PLAYER_ACTOR;
 
 #define mPlayer_FORCE_POSITION_ANGLE_NONE 0
@@ -31,6 +37,14 @@ enum {
     mPlayer_ADDRESSABLE_FALSE_USING_TOOL,
 
     mPlayer_ADDRESSABLE_NUM
+};
+
+enum {
+    mPlayer_COMPLETE_PAYMENT_TYPE_NONE,
+    mPlayer_COMPLETE_PAYMENT_TYPE_ARBEIT,
+    mPlayer_COMPLETE_PAYMENT_TYPE_HOUSE,
+
+    mPlayer_COMPLETE_PAYMENT_TYPE_NUM
 };
 
 enum {
@@ -668,8 +682,6 @@ typedef struct player_request_demo_get_golden_item_s {
     u32 label;
 } mPlayer_request_demo_get_golden_item_c;
 
-//
-
 typedef struct player_request_walk_s {
     xyz_t pos;
     f32 morph_speed;
@@ -1181,6 +1193,38 @@ typedef union {
     // u8 force_size[72]; // TEMP
 } mPlayer_request_main_data;
 
+/* Current main state data structs */
+
+typedef struct player_main_intro_s {
+    f32 timer;
+} mPlayer_main_intro_c;
+
+typedef struct player_main_return_demo_s {
+    f32 timer;
+    f32 max_timer;
+    int prev_main_index;
+} mPlayer_main_return_demo_c;
+
+typedef struct player_main_return_outdoor_s {
+    f32 timer;
+    f32 max_timer;
+    int prev_main_index;
+} mPlayer_main_return_outdoor_c;
+
+typedef struct player_main_return_outdoor2_s {
+    f32 timer;
+    f32 max_timer;
+    int prev_main_index;
+} mPlayer_main_return_outdoor2_c;
+
+typedef union {
+    mPlayer_main_intro_c intro;
+    mPlayer_main_return_demo_c return_demo;
+    mPlayer_main_return_outdoor_c return_outdoor;
+    mPlayer_main_return_outdoor2_c return_outdoor2;
+    u8 force_size[72]; // TEMP
+} mPlayer_main_data;
+
 typedef struct {
     int requested_main_index;
     int requested_index_pending;
@@ -1212,9 +1256,9 @@ struct player_actor_s {
     /* 0x0D0C */ int requested_main_index_priority;
     /* 0x0D10 */ int requested_main_index_changed;
     /* 0x0D14 */ int settled_requested_main_index_priority;
-    /* 0x0D18 */ u8 main_index_data[72];           // TODO: Union of many types...
-    /* 0x0D60 */ u8 requested_main_index_data[72]; // TODO: Union of many types...
-    /* 0x0DA8 */ u8 _0DA8[0x1010 - 0x0DA8];        /* TODO: finish */
+    /* 0x0D18 */ mPlayer_main_data main_data;                         // TODO: Union of many types...
+    /* 0x0D60 */ mPlayer_request_main_data requested_main_index_data; // Union of many types...
+    /* 0x0DA8 */ u8 _0DA8[0x1010 - 0x0DA8];                           /* TODO: finish */
     /* 0x1010 */ ClObjPipe_c col_pipe;
     /* 0x102C */ xyz_t head_pos;
     /* 0x1038 */ xyz_t feel_pos;

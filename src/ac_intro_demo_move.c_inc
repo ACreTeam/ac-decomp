@@ -1,0 +1,331 @@
+static void aID_change_player_demo_standing_train(GAME* game) {
+    if (mPlib_get_player_actor_main_index(game) != mPlayer_INDEX_DEMO_STANDING_TRAIN) {
+        mPlib_request_main_demo_standing_train_type1(game);
+    }
+}
+
+static void aID_set_first_field_bgm(INTRO_DEMO_ACTOR* intro_demo) {
+    mBGMPsComp_make_ps_fieldSuddenEv(BGM_INTRO_SELECT_HOUSE2, 0x168, 1);
+    mBGMPsComp_scene_mode(1);
+    intro_demo->first_field_bgm_state = 2;
+}
+
+static void aID_check_set_first_field_bgm(INTRO_DEMO_ACTOR* intro_demo) {
+    if (intro_demo->first_field_bgm_state == 1 && sAdo_BgmFadeoutCheck() == TRUE) {
+        aID_set_first_field_bgm(intro_demo);
+    }
+}
+
+static void aID_first_set(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    Common_Set(train_coming_flag, 3);
+    aID_change_player_demo_standing_train(&play->game);
+    aID_setupAction(intro_demo, play, aID_ACT_TRAIN_BIRTH_WAIT);
+}
+
+static void aID_train_birth_wait(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    TRAIN1_ACTOR* train = (TRAIN1_ACTOR*)Actor_info_fgName_search(&play->actor_info, TRAIN1, ACTOR_PART_ITEM);
+
+    aID_change_player_demo_standing_train(&play->game);
+    if (train != NULL) {
+        intro_demo->train1_actor_p = train;
+        train->player_pass_exists = TRUE;
+        aID_setupAction(intro_demo, play, aID_ACT_RIDE_TRAIN);
+    }
+}
+
+static void aID_ride_train(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    TRAIN1_ACTOR* train = intro_demo->train1_actor_p;
+
+    aID_change_player_demo_standing_train(&play->game);
+    if (train->tr_action == 5) {
+        aID_setupAction(intro_demo, play, aID_ACT_RIDE_OFF_PLAYER);
+    }
+}
+
+static void aID_ride_off_player(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    ACTOR* station_master = intro_demo->station_master_actor_p;
+
+    if (intro_demo->_1A0 == 0) {
+        /* Wait for the station master to speak to the player */
+        if (mDemo_Check(mDemo_TYPE_SPEAK, station_master) == TRUE) {
+            intro_demo->_1A0 = 1;
+        }
+    } else {
+        /* Wait for the station master to be done speaking to the player */
+        if (mDemo_Check(mDemo_TYPE_SPEAK, station_master) == FALSE) {
+            aID_setupAction(intro_demo, play, aID_ACT_WALK_ONE_UNIT);
+        }
+    }
+}
+
+static void aID_walk_one_unit(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+
+    if (player != NULL) {
+        if (player->actor_class.world.position.z >= aID_OFF_UT_Z_POS) {
+            /* Reached target position */
+            aID_setupAction(intro_demo, play, aID_ACT_GO_OUT_OF_STATION);
+        } else {
+            /* Walk to A-3 @ 5Z, 7.5X */
+            mPlib_Set_goal_player_demo_walk(aID_OFF_UT_X_POS, aID_OFF_UT_Z_POS, 2.5f);
+        }
+    }
+}
+
+static void aID_go_out_of_station(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+
+    if (player != NULL) {
+        if (player->actor_class.world.position.z >= aID_OUT_OF_STATION_Z_POS) {
+            mPlib_request_main_demo_wait_type1(&play->game, 0, NULL);
+            intro_demo->next_action = aID_ACT_FIRST_TALK_END_WAIT;
+            aID_setupAction(intro_demo, play, aID_ACT_BIRTH_RCN_GUIDE);
+        }
+    }
+}
+
+static void aID_birth_rcn_guide(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    static mActor_name_t rcn_name[] = { SP_NPC_RCN_GUIDE, SP_NPC_RCN_GUIDE_1, SP_NPC_RCN_GUIDE_2, SP_NPC_RCN_GUIDE_3 };
+    static int restart_ux[] = { 6, 9, 6, 9 };
+    static int restart_uz[] = { 5, 5, 12, 12 };
+    static f32 restartOffsetX[] = { 10.0f, -10.0f, 10.0f, -10.0f };
+    mActor_name_t name = rcn_name[mSP_GetShopLevel()];
+    int type;
+    int data;
+    int ux;
+    int uz;
+    f32 ofsX;
+    f32 ofsZ;
+    s16 param;
+    int house_idx;
+    ACTOR* rcn_actor;
+
+    if (intro_demo->_1A4 == TRUE) {
+        house_idx = Common_Get(last_field_id) - mFI_FIELD_PLAYER0_ROOM;
+        intro_demo->house_idx = house_idx;
+        ux = restart_ux[house_idx];
+        uz = restart_uz[house_idx];
+        ofsX = restartOffsetX[house_idx];
+        ofsZ = 8.0f;
+        if (mPr_NullCheckPersonalID(&Save_Get(homes[house_idx]).ownerID) == TRUE) {
+            param = aID_STATE_TAKEN_HOUSE;
+        } else {
+            param = aID_STATE_FREE_HOUSE;
+        }
+        data = 3;
+        type = 2;
+    } else {
+        data = 3;
+        type = 1;
+        ux = 8;
+        uz = 15;
+        ofsX = 0.0f;
+        ofsZ = 0.0f;
+        param = aID_STATE_INITIAL;
+    }
+
+    if (Common_Get(clip).npc_clip->setupActor_proc(play, name, -1, -1, param, data, type, ux, uz) == TRUE) {
+        rcn_actor = Actor_info_fgName_search(&play->actor_info, name, ACTOR_PART_NPC);
+        intro_demo->rcn_guide_actor_p = rcn_actor;
+        rcn_actor->world.position.x += ofsX;
+        rcn_actor->world.position.z += ofsZ;
+        aID_setupAction(intro_demo, play, intro_demo->next_action);
+    }
+}
+
+static void aID_first_talk_end_wait(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    if (intro_demo->talk_flag == TRUE) {
+        intro_demo->talk_flag = FALSE;
+        aID_setupAction(intro_demo, play, aID_ACT_WALK_AFTER_RCN_GUIDE);
+    }
+}
+
+static void aID_walk_after_rcn_guide(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    static f32 rate_table[] = { 1.0f, 0.6f };
+    NPC_ACTOR* rcn_guide = (NPC_ACTOR*)intro_demo->rcn_guide_actor_p;
+    f32 rate = rate_table[rcn_guide->actor_class.player_distance_xz < 80.0f] * rcn_guide->actor_class.speed;
+
+    /* Walk the player to the raccoon guide NPC's position */
+    mPlib_Set_goal_player_demo_walk(rcn_guide->actor_class.world.position.x, rcn_guide->actor_class.world.position.z,
+                                    rate);
+
+    /* If we've finished our action then stop walking and move on */
+    if (((NPC_ACTOR*)intro_demo->rcn_guide_actor_p)->action.idx == 0) {
+        mPlib_request_main_wait_type3(&play->game);
+        aID_setupAction(intro_demo, play, aID_ACT_DECIDE_HOUSE);
+    }
+}
+
+static void aID_decide_house(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    if (intro_demo->talk_flag == TRUE) {
+        aID_setupAction(intro_demo, play, aID_ACT_RETIRE_RCN_GUIDE_WAIT);
+    }
+}
+
+static void aID_retire_rcn_guide_wait(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    mQst_errand_c* errand;
+
+    if (intro_demo->rcn_guide_actor_p == NULL) {
+        mPlib_request_main_wait_type3(&play->game);
+        mHS_set_use(Common_Get(player_no), intro_demo->house_idx);
+
+        mPr_SetItemCollectBit(Now_Private->cloth.item);
+        mPr_SetItemCollectBit(FTR_TAPEDECK);
+        mPr_SetItemCollectBit(ITM_CARPET_START +
+                              Save_Get(homes[intro_demo->house_idx]).floors[0].wall_floor.flooring_idx);
+        mPr_SetItemCollectBit(ITM_WALL_START +
+                              Save_Get(homes[intro_demo->house_idx]).floors[0].wall_floor.wallpaper_idx);
+
+        mHm_SetNowHome();
+        mPlib_Set_unable_wade(FALSE);
+        mCoBG_ChangeBlockBgCheckMode(0);
+        mEv_UnSetFirstIntro();
+        Now_Private->inventory.loan = mPlayer_DEBT0;
+        errand = mQst_GetFirstJobData();
+        mQst_SetFirstJobStart(errand);
+        aID_setupAction(intro_demo, play, aID_ACT_FIRST_JOB);
+    }
+
+    aID_check_set_first_field_bgm(intro_demo);
+}
+
+static void aID_first_job(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    if (intro_demo->_1A8 == TRUE) {
+        mQst_errand_c* errand = mQst_GetFirstJobData();
+
+        mQst_ClearErrand(errand, 1);
+        mEv_UnSetFirstJob();
+        mTM_off_renew_time(1);
+        Actor_delete(&intro_demo->actor_class);
+        Common_Set(complete_payment_type, mPlayer_COMPLETE_PAYMENT_TYPE_ARBEIT);
+        play->event.day = 0;
+    } else {
+        aID_check_set_first_field_bgm(intro_demo);
+    }
+}
+
+static void aID_first_set_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    Actor_data* player_data = play->player_data;
+
+    mBGMPsComp_make_ps_demo(BGM_INTRO_ARRIVE, 0x168);
+    mBGMPsComp_scene_mode(9);
+    player_data->position.x = aID_PLR_START_X_POS;
+    player_data->position.z = aID_PLR_START_Z_POS;
+}
+
+static void aID_train_birth_wait_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    xyz_t center_pos;
+
+    center_pos.x = 2180.0f;
+    center_pos.z = 820.0f;
+    center_pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(center_pos, -35.0f);
+    Camera2_request_main_demo_fromNowPos2(play, &center_pos, 0.0f, 0.0f, 0.0f, 9);
+}
+
+static void aID_ride_off_player_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    static xyz_t enter_pos = { 2180.0f, 0.0f, 820.0f };
+    TRAIN1_ACTOR* train = intro_demo->train1_actor_p;
+    ACTOR* station_master = Actor_info_fgName_search(&play->actor_info, SP_NPC_STATION_MASTER, ACTOR_PART_NPC);
+
+    intro_demo->station_master_actor_p = station_master;
+    train->player_pass_exists = FALSE;
+    mPlib_request_main_demo_getoff_train_type1(&play->game);
+    intro_demo->_1A0 = 0;
+    mCoBG_SetAttribute(enter_pos, mCoBG_ATTRIBUTE_STONE);
+}
+
+static void aID_walk_one_unit_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    mPlib_request_main_demo_walk_type1(&play->game, 2220.0f, 840.0f, 2.5f, 0);
+}
+
+static void aID_go_out_of_station_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    mPlib_request_main_wait_type3(&play->game);
+    Camera2_request_main_normal(play, 0, 9);
+}
+
+static void aID_walk_after_rcn_guide_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    ACTOR* rcn_guide = intro_demo->rcn_guide_actor_p;
+
+    /* Walk the player to the raccoon guide NPC's position */
+    mPlib_request_main_demo_walk_type1(&play->game, rcn_guide->world.position.x, rcn_guide->world.position.z,
+                                       rcn_guide->speed * 0.6f, 0);
+}
+
+static void aID_decide_house_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    mPlib_Set_unable_wade(TRUE);     /* We can't switch acres */
+    mCoBG_ChangeBlockBgCheckMode(1); /* Acre BG check mode altered */
+}
+
+static void aID_retire_rcn_guide_wait_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    mPlib_request_main_demo_wait_type1(&play->game, 0, NULL);
+    mBGMPsComp_delete_ps_demo(BGM_INTRO_SELECT_HOUSE, 0x168);
+    mBGMPsComp_make_ps_fc_quiet(0x2D0);
+    intro_demo->first_field_bgm_state = 1;
+}
+
+static void aID_first_job_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
+    mQst_errand_c* errand = mQst_GetFirstJobData();
+
+    if (errand->base.quest_kind == mQst_ERRAND_FIRSTJOB_CHANGE_CLOTH ||
+        errand->base.quest_kind == mQst_ERRAND_FIRSTJOB_START ||
+        (errand->base.quest_kind == mQst_ERRAND_FIRSTJOB_PLANT_FLOWER && errand->base.progress == 1)) {
+        if (Common_Get(field_type) == mFI_FIELD_FG && intro_demo->first_field_bgm_state == 0) {
+            aID_set_first_field_bgm(intro_demo);
+        }
+    }
+}
+
+typedef void (*aID_INIT_PROC)(INTRO_DEMO_ACTOR*, GAME_PLAY*);
+
+static void aID_init_proc(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play, int act) {
+    // clang-format off
+    static aID_INIT_PROC init_proc[] = {
+        &aID_first_set_init,
+        &aID_train_birth_wait_init,
+        (aID_INIT_PROC)&none_proc1,
+        &aID_ride_off_player_init,
+        &aID_walk_one_unit_init,
+        &aID_go_out_of_station_init,
+        (aID_INIT_PROC)&none_proc1,
+        (aID_INIT_PROC)&none_proc1,
+        &aID_walk_after_rcn_guide_init,
+        (aID_INIT_PROC)&none_proc1,
+        &aID_decide_house_init,
+        &aID_retire_rcn_guide_wait_init,
+        &aID_first_job_init,
+    };
+    // clang-format on
+
+    (*init_proc[act])(intro_demo, play);
+}
+
+static void aID_setupAction(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play, int act) {
+    // clang-format off
+    static aID_ACT_PROC process[] = {
+        &aID_first_set,
+        &aID_train_birth_wait,
+        &aID_ride_train,
+        &aID_ride_off_player,
+        &aID_walk_one_unit,
+        &aID_go_out_of_station,
+        &aID_birth_rcn_guide,
+        &aID_first_talk_end_wait,
+        &aID_walk_after_rcn_guide,
+        (aID_ACT_PROC)&none_proc1,
+        &aID_decide_house,
+        &aID_retire_rcn_guide_wait,
+        &aID_first_job,
+    };
+    // clang-format on
+
+    intro_demo->action_proc = process[act];
+    intro_demo->action = act;
+    aID_init_proc(intro_demo, play, act);
+}
+
+static void aID_actor_move(ACTOR* actorx, GAME* game) {
+    INTRO_DEMO_ACTOR* intro_demo = (INTRO_DEMO_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    (*intro_demo->action_proc)(intro_demo, play);
+}

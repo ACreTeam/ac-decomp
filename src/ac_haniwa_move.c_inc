@@ -108,7 +108,7 @@ static int aHNW_check_house_door(ACTOR* actor, GAME* game) {
         mDemo_Clip_c* demo_clip = Common_Get(clip).demo_clip;
 
         if (demo_clip != NULL) {
-            INTRO_DEMO_ACTOR* demo_class = (INTRO_DEMO_ACTOR*)demo_clip->class;
+            INTRO_DEMO_ACTOR* demo_class = (INTRO_DEMO_ACTOR*)demo_clip->demo_class;
             if (demo_class != NULL && demo_clip->type == mDemo_CLIP_TYPE_INTRO_DEMO && mEv_CheckFirstIntro() &&
                 demo_class->player_intro_demo_state != 0) {
                 res = TRUE;

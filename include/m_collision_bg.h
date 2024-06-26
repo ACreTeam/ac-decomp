@@ -297,6 +297,7 @@ extern void mCoBG_InitBlockBgCheckMode();
 extern void mCoBG_InitDecalCircle();
 
 extern void mCoBG_CalcTimerDecalCircle();
+extern int mCoBG_ChangeBlockBgCheckMode(int mode);
 
 extern f32 mCoBG_GetWaterHeight_File(xyz_t wpos, char* file, int line);
 #define mCoBG_GetWaterHeight(wpos) mCoBG_GetWaterHeight_File(wpos, __FILE__, __LINE__)

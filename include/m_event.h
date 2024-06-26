@@ -571,7 +571,9 @@ typedef struct event_common_save_data {
 
 extern void mEv_clear_status(int event, s16 status);
 extern int mEv_CheckFirstJob();
+extern void mEv_UnSetFirstJob();
 extern int mEv_CheckFirstIntro();
+extern void mEv_UnSetFirstIntro();
 extern int mEv_CheckArbeit();
 extern int mEv_CheckTitleDemo();
 extern int mEv_check_status(int event, s16 status);
