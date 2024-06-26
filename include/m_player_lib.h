@@ -97,6 +97,9 @@ extern u8* mPlib_get_player_tex_p(GAME* game);
 extern u16* mPlib_get_player_pallet_p(GAME* game);
 extern u16* mPlib_get_player_face_pallet_p(GAME* game);
 extern int mPlib_Check_scoop_after(GAME* game, xyz_t* pos, mActor_name_t* item, ACTOR** hit_actor, int gold_shovel);
+extern int mPlib_request_main_demo_standing_train_type1(GAME* game);
+extern void mPlib_Set_unable_wade(int unable);
+extern int mPlib_request_main_demo_getoff_train_type1(GAME* game);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 

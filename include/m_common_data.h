@@ -243,7 +243,7 @@ typedef struct common_data_s {
     /* 0x028598 */ int event_keep_flags[4];
     /* 0x0285A8 */ u8 _285A8[0x0285BE - 0x0285A8];
     /* 0x0285BE */ s8 player_actor_exists;
-    /* 0x0285BF */ s8 payment_completed_type;
+    /* 0x0285BF */ s8 complete_payment_type;
     /* 0x0285C0 */ s8 player_decoy_flag;
     /* 0x0285C1 */ u8 _285C1;
     /* 0x0285C2 */ u8 make_npc2_actor;

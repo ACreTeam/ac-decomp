@@ -445,6 +445,11 @@ ac_haniwa.c:
     .text: [0x80427624, 0x80428F64]
     .rodata: [0x806440B8, 0x806440F8]
     .data: [0x80683D08, 0x80683E98]
+ac_intro_demo.c:
+    .text: [0x8042A97C, 0x8042B65C]
+    .rodata: [0x80644128, 0x80644158]
+    .data: [0x80684208, 0x806842E0]
+    .bss: [0x812F9C50, 0x812F9C60]
 ac_mbg.c:
     .text: [0x8042DCA0, 0x8042DEC8]
     .rodata: [0x80644218, 0x80644238]

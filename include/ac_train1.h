@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-typedef struct train1_s{
+typedef struct train1_s {
     ACTOR actor_class;
     int anim_state;
     cKF_SkeletonInfo_R_c keyframe;
@@ -20,13 +20,13 @@ typedef struct train1_s{
     u8 pad4[0x2b4 - 0x2A0];
     int tr_action;
     int player_pass_exists;
-    int player_pass_leaving; //Not sure about this one
+    int player_pass_leaving; // Not sure about this one
     int unk2c0;
     ACTOR* tr_actor_p;
     f32 tr_speed;
     f32 tr0_pos;
-    u8 pad2[0x2D8-0x2CC];
-}TRAIN1_ACTOR;
+    u8 pad2[0x2D8 - 0x2CC];
+} TRAIN1_ACTOR;
 
 extern ACTOR_PROFILE Train1_Profile;
 
@@ -35,4 +35,3 @@ extern ACTOR_PROFILE Train1_Profile;
 #endif
 
 #endif
-
