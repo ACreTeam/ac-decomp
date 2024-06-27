@@ -67,7 +67,7 @@ static void aID_actor_ct(ACTOR* actorx, GAME* game) {
                     intro_demo->_1A4 = TRUE;
                     intro_demo->next_action = aID_ACT_DECIDE_HOUSE;
                     aID_setupAction(intro_demo, play, aID_ACT_BIRTH_RCN_GUIDE);
-                    mBGMPsComp_make_ps_demo(BGM_INTRO_STATION, 0x168);
+                    mBGMPsComp_make_ps_demo(BGM_INTRO_RCN_GUIDE, 0x168);
                     break;
                 default:
                     aID_setupAction(intro_demo, play, 0);
@@ -89,7 +89,7 @@ static void aID_actor_dt(ACTOR* actorx, GAME* game) {
     }
 
     if (intro_demo->first_field_bgm_state == 2) {
-        mBGMPsComp_delete_ps_fieldSuddenEv(BGM_INTRO_SELECT_HOUSE2, 0x168);
+        mBGMPsComp_delete_ps_fieldSuddenEv(BGM_INTRO_FIND_SHOP, 0x168);
     }
 }
 

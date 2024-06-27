@@ -5,7 +5,7 @@ static void aID_change_player_demo_standing_train(GAME* game) {
 }
 
 static void aID_set_first_field_bgm(INTRO_DEMO_ACTOR* intro_demo) {
-    mBGMPsComp_make_ps_fieldSuddenEv(BGM_INTRO_SELECT_HOUSE2, 0x168, 1);
+    mBGMPsComp_make_ps_fieldSuddenEv(BGM_INTRO_FIND_SHOP, 0x168, 1);
     mBGMPsComp_scene_mode(1);
     intro_demo->first_field_bgm_state = 2;
 }
@@ -258,7 +258,7 @@ static void aID_decide_house_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play)
 
 static void aID_retire_rcn_guide_wait_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
     mPlib_request_main_demo_wait_type1(&play->game, 0, NULL);
-    mBGMPsComp_delete_ps_demo(BGM_INTRO_SELECT_HOUSE, 0x168);
+    mBGMPsComp_delete_ps_demo(BGM_INTRO_SELECT_HOUSE2, 0x168);
     mBGMPsComp_make_ps_fc_quiet(0x2D0);
     intro_demo->first_field_bgm_state = 1;
 }
