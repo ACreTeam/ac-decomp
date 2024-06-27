@@ -141,8 +141,9 @@ static void aNRG_actor_save(ACTOR* actorx, GAME* game) {
 static void aNRG_actor_dt(ACTOR* actorx, GAME* game) {
     NPC_RCN_GUIDE_ACTOR* rcn_guide = (NPC_RCN_GUIDE_ACTOR*)actorx;
 
-    if (rcn_guide->think_idx == 16) {
-        mBGMPsComp_delete_ps_demo(BGM_INTRO_STATION, 0x168);
+    /* Stop playing the initial intro music when destruct due to entering a house */
+    if (rcn_guide->think_idx == aNRC_THINK_WAIT) {
+        mBGMPsComp_delete_ps_demo(BGM_INTRO_RCN_GUIDE, 0x168);
     }
 
     Common_Get(clip).npc_clip->dt_proc(actorx, game);

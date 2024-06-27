@@ -62,7 +62,7 @@ static void aNRG_demo_end_wait_talk_proc(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PL
         mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
 
         aNRG_set_shop_address(rcn_guide);
-        rcn_guide->next_think_idx = 14;
+        rcn_guide->next_think_idx = aNRC_THINK_EXIT_TURN;
         mMsg_request_main_appear_wait_type1(msg_p);
         mMsg_Set_ForceNext(msg_p);
         aNRG_demand_payment_change_talk_proc(rcn_guide, aNRG_TALK_FINISHED);
