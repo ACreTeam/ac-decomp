@@ -63,7 +63,7 @@ extern int mPlib_check_player_outdoor_start(GAME* game);
 extern void mPlib_Set_change_color_request();
 extern int mPlib_check_player_open_umbrella(GAME_PLAY* play);
 extern int mPlib_Check_UKI_COMEBACK_STATUS();
-extern int mPlib_check_player_actor_main_index_OutDoorMove(GAME_PLAY* play);
+extern int mPlib_check_player_actor_main_index_OutDoorMove(GAME* game);
 extern int mPlib_request_main_close_furniture_type1(GAME* game);
 extern int mPlib_request_main_shock_type1(GAME* game, f32 time, s16 angle_y, int axe_swing);
 extern int mPlib_request_main_hold_type1(GAME* game, int ftr_no, int player_direct, const xyz_t* player_pos);
@@ -100,6 +100,7 @@ extern int mPlib_Check_scoop_after(GAME* game, xyz_t* pos, mActor_name_t* item, 
 extern int mPlib_request_main_demo_standing_train_type1(GAME* game);
 extern void mPlib_Set_unable_wade(int unable);
 extern int mPlib_request_main_demo_getoff_train_type1(GAME* game);
+extern int mPlib_check_player_actor_main_index_OutDoorMove2(GAME* game);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 
