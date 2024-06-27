@@ -40,7 +40,7 @@ struct actor_intro_demo_s {
     TRAIN1_ACTOR* train1_actor_p;
     ACTOR* station_master_actor_p; // TODO: correct type
     ACTOR* rcn_guide_actor_p;      // TODO: correct type
-    int player_in_intro_demo;
+    int player_in_house;
     int player_intro_demo_state;
     int house_idx;
     int talk_flag;

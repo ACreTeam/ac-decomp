@@ -205,7 +205,7 @@ static int aMHS_check_player_in_intro_demo(STRUCTURE_ACTOR* my_house, GAME_PLAY*
         return 0;
     }
 
-    if (my_house->arg3_f == TRUE && intro_demo->player_in_intro_demo == TRUE) {
+    if (my_house->arg3_f == TRUE && intro_demo->player_in_house == TRUE) {
         return 1;
     }
 
@@ -405,7 +405,7 @@ static void aMHS_open_door(STRUCTURE_ACTOR* my_house, GAME_PLAY* play) {
                 if (demo_class != NULL) {
                     intro_demo = (INTRO_DEMO_ACTOR*)demo_class;
 
-                    intro_demo->player_in_intro_demo = FALSE;
+                    intro_demo->player_in_house = FALSE;
                 }
             }
 

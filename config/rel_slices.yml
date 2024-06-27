@@ -757,6 +757,10 @@ ac_npc_curator.c:
 ac_npc_engineer.c:
     .text: [0x80552984, 0x80552B5C]
     .data: [0x806A61C8, 0x806A6208]
+ac_npc_rcn_guide.c:
+    .text: [0x8056EED0, 0x8056FFF0]
+    .rodata: [0x806499C0, 0x806499E8]
+    .data: [0x806BEE20, 0x806BF028]
 ac_npc_rtc.c:
     .text: [0x80573044, 0x80574134]
     .rodata: [0x80649A08, 0x80649A40]
