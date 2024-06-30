@@ -15,6 +15,16 @@ extern "C" {
 #define lbRTC_YEAR_MIN 1901
 #define lbRTC_YEAR_MAX 2099
 
+typedef struct OSRTCTime { // from lbrtc library in N64
+  u8 sec;
+  u8 min;
+  u8 hour;
+  u8 day;
+  u8 weekday;
+  u8 month;
+  u16 year;
+} OSRTCTime; 
+
 typedef u8 lbRTC_sec_t;
 typedef u8 lbRTC_min_t;
 typedef u8 lbRTC_hour_t;
@@ -23,17 +33,7 @@ typedef u8 lbRTC_weekday_t;
 typedef u8 lbRTC_month_t;
 typedef u16 lbRTC_year_t;
 
-typedef struct lbRTC_datetime_s {
-  lbRTC_sec_t sec;
-  lbRTC_min_t min;
-  lbRTC_hour_t hour;
-  lbRTC_day_t day;
-  lbRTC_weekday_t weekday;
-  lbRTC_month_t month;
-  lbRTC_year_t year;
-} lbRTC_time_c; /* Name leaked in lbRTC_time_c_save_data_check */
-
-typedef lbRTC_time_c OSRTCTime;
+typedef OSRTCTime lbRTC_time_c; /* Name leaked in lbRTC_time_c_save_data_check */
 
 typedef struct lbRTC_ymd_s {
   lbRTC_year_t year;
