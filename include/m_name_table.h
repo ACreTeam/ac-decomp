@@ -594,6 +594,10 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define FTR_DRACAENA_NORTH 0x13B2
 #define FTR_DRACAENA_WEST 0x13B3
 
+#define FTR_MANHOLE_COVER 0x1444
+
+#define FTR_BATH_MAT 0x154C
+
 #define HANIWA_START 0x15B0
 #define FTR_HANIWA000_SOUTH (HANIWA_START +   0)
 #define FTR_HANIWA000_EAST  (HANIWA_START +   1)
@@ -2174,6 +2178,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define DOOR1 (DOOR0 + 1) /* 0x4001 */
 
 #define EXIT_DOOR 0x4080
+#define EXIT_DOOR1 (EXIT_DOOR + 1) /* 0x4081 */
 
 #define NPC_HOUSE_START 0x5000
 #define NPC_HOUSE000 NPC_HOUSE_START

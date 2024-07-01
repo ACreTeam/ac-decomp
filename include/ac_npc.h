@@ -160,7 +160,16 @@ typedef struct npc_draw_info_s {
     /* 0x548 */ u8 _548[0x580 - 0x548];
     /* 0x580 */ int animation_id;
     /* 0x584 */ int texture_bank_idx;
-    /* 0x588 */ u8 _588[0x5B9 - 0x588];
+    /* 0x588 */ u8 _588[0x5B0 - 0x588];
+    /* 0x5B0 */ u8 draw_type;
+    /* 0x5B1 */ u8 _5B1;
+    /* 0x5B2 */ u8 _5B2;
+    /* 0x5B3 */ u8 _5B3;
+    /* 0x5B4 */ u8 _5B4;
+    /* 0x5B5 */ u8 _5B5;
+    /* 0x5B6 */ u8 _5B6;
+    /* 0x5B7 */ u8 _5B7;
+    /* 0x5B8 */ u8 _5B8;
     /* 0x5B9 */ u8 _5B9;
     /* 0x5BA */ u8 _5BA;
     /* 0x5BB */ u8 _5BB;

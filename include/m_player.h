@@ -1368,7 +1368,7 @@ struct player_actor_s {
     /* 0x138C */ int a_btn_pressed;
     /* 0x1390 */ int a_btn_triggers_submenu;
     /* 0x1394 */ mActor_name_t item_in_front; /* item directly in front of the player */
-    /* 0x1398 */ xyz_t foward_ut_pos;         /* wpos of unit in front of player */
+    /* 0x1398 */ xyz_t forward_ut_pos;        /* wpos of unit in front of player */
     /* 0x13A4 */ s8 update_scene_bg_mode;
 };
 

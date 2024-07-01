@@ -49,7 +49,7 @@ enum {
 enum demo_type {
     mDemo_TYPE_NONE,
     mDemo_TYPE_SCROLL,
-    mDemo_TYPE_2,
+    mDemo_TYPE_EXITSCENE,
     mDemo_TYPE_DOOR,
     mDemo_TYPE_4,
     mDemo_TYPE_SCROLL2,

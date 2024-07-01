@@ -1,0 +1,30 @@
+static void aNRG2_set_exit_info(ACTOR* actorx) {
+    GAME_PLAY* play = (GAME_PLAY*)gamePT;
+
+    if (goto_other_scene(play, Common_GetPointer(structure_exit_door_data), TRUE) != 1) {
+        mDemo_End(actorx);
+    } else {
+        mBGMPsComp_scene_mode(14);
+        mBGMPsComp_make_ps_wipe(0x195);
+    }
+}
+
+static void aNRG2_exit_check(ACTOR* actorx, GAME_PLAY* play) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+
+    if (player != NULL && player->item_in_front == EXIT_DOOR1 && play->fb_wipe_mode == 0) {
+        mDemo_Request(mDemo_TYPE_EXITSCENE, actorx, &aNRG2_set_exit_info);
+    }
+}
+
+static void aNRG2_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_RCN_GUIDE2_ACTOR* rcn_guide2 = (NPC_RCN_GUIDE2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    if (rcn_guide2->npc_class.action.idx == aNPC_ACT_WAIT) {
+        rcn_guide2->npc_class.action.step = aNPC_ACTION_END_STEP;
+    }
+
+    Common_Get(clip).npc_clip->move_proc(actorx, game);
+    aNRG2_exit_check(actorx, play);
+}
