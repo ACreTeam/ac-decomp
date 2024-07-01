@@ -399,10 +399,12 @@ typedef union {
     mEv_dozaemon_c dozaemon;
 } mEv_weekly_u;
 
+#define mEv_BARGIN_ITEM_NUM 5
+
 typedef struct bargin_event_s {
     lbRTC_time_c start_time;
     lbRTC_time_c end_time;
-    mActor_name_t items[5];
+    mActor_name_t items[mEv_BARGIN_ITEM_NUM];
     int kind;
 } mEv_bargin_c;
 
