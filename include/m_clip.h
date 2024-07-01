@@ -24,6 +24,7 @@
 #include "ac_handOverItem.h"
 #include "ac_quest_manager_clip.h"
 #include "ac_shop_goods_h.h"
+#include "ac_shop_design.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,7 +44,13 @@ typedef struct clip_s {
     /* 0x038 */ void* _038;
     /* 0x03C */ void* _03C;
     /* 0x040 */ aNPC_Clip_c* npc_clip;
-    /* 0x044 */ void* _044[(0x060 - 0x044) / sizeof(void*)];
+    /* 0x044 */ void* _044;
+    /* 0x048 */ void* _048;
+    /* 0x04C */ void* _04C;
+    /* 0x050 */ void* _050;
+    /* 0x054 */ aSD_Clip_c* shop_design_clip;
+    /* 0x058 */ void* _058;
+    /* 0x05C */ void* _05C;
     /* 0x060 */ aSM_Clip_c* shop_manekin_clip;
     /* 0x064 */ void* _064;
     /* 0x068 */ CLIP_NONE_PROC _068;

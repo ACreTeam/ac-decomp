@@ -1,0 +1,374 @@
+static int aNRG2_setup_j1_cont(NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
+    int talk_idx = aNRG2_NORM_TALK_J1_CONT1;
+
+    if (mPr_GetPossessionItemIdxWithCond(Now_Private, ITM_CLOTH016, mPr_ITEM_COND_NORMAL) == -1) {
+        if (mPr_GetPossessionItemIdx(Now_Private, EMPTY_NO) == -1) {
+            talk_idx = aNRG2_NORM_TALK_J1_CONT3;
+        } else {
+            talk_idx = aNRG2_NORM_TALK_J1_CONT2;
+        }
+    }
+
+    return talk_idx;
+}
+
+static int aNRG2_setup_j2_cont(NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
+    int talk_idx = aNRG2_NORM_TALK_J2_CONT1;
+
+    if (rcn_guide2->can_ask_again_flag == TRUE) {
+        talk_idx = aNRG2_NORM_TALK_AGAIN;
+    }
+
+    return talk_idx;
+}
+
+static int aNRG2_setup_j3_cont(NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
+    mQst_errand_c* errand_p = mQst_GetFirstJobData();
+    int talk_idx = aNRG2_NORM_TALK_J3_CONT1;
+
+    if (mQst_CheckRemoveTarget(errand_p) == TRUE) {
+        talk_idx = aNRG2_NORM_TALK_J3_CONT2;
+    } else if (rcn_guide2->can_ask_again_flag == TRUE) {
+        talk_idx = aNRG2_NORM_TALK_AGAIN;
+    }
+
+    return talk_idx;
+}
+
+static int aNRG2_setup_j4_cont(NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
+    mQst_errand_c* errand_p = mQst_GetFirstJobData();
+    int talk_idx = aNRG2_NORM_TALK_J4_CONT1;
+
+    if (rcn_guide2->can_ask_again_flag == TRUE) {
+        talk_idx = aNRG2_NORM_TALK_AGAIN;
+    } else if (mQst_CheckRemoveTarget(errand_p) == TRUE) {
+        talk_idx = aNRG2_NORM_TALK_J4_CONT2;
+    } else if (errand_p->base.progress == 3) {
+        talk_idx = aNRG2_NORM_TALK_J5_CONT3;
+    }
+
+    return talk_idx;
+}
+
+static int aNRG2_setup_j5_cont(NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
+    mQst_errand_c* errand_p = mQst_GetFirstJobData();
+    int talk_idx = aNRG2_NORM_TALK_J5_CONT1;
+
+    if (mQst_CheckRemoveTarget(errand_p) == TRUE) {
+        talk_idx = aNRG2_NORM_TALK_J5_CONT2;
+    }
+
+    return talk_idx;
+}
+
+static int aNRG2_setup_j6_cont(NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
+    mQst_errand_c* errand_p = mQst_GetFirstJobData();
+    int talk_idx = aNRG2_NORM_TALK_J6_CONT1;
+
+    if (mQst_CheckRemoveTarget(errand_p) == TRUE) {
+        talk_idx = aNRG2_NORM_TALK_J6_CONT2;
+    } else if (rcn_guide2->can_ask_again_flag == TRUE) {
+        talk_idx = aNRG2_NORM_TALK_AGAIN;
+    }
+
+    return talk_idx;
+}
+
+static int aNRG2_setup_j7_cont(NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
+    int talk_idx = aNRG2_NORM_TALK_J7_CONT1;
+
+    if (rcn_guide2->can_ask_again_flag == TRUE) {
+        talk_idx = aNRG2_NORM_TALK_AGAIN;
+    }
+
+    return talk_idx;
+}
+
+static int aNRG2_setup_j10_cont(NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
+    return aNRG2_NORM_TALK_J10_CONT1;
+}
+
+static int aNRG2_setup_j11_cont(NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
+    return aNRG2_NORM_TALK_J11_CONT1;
+}
+
+typedef int (*aNRG2_SETUP_JOB_CONT_PROC)(NPC_RCN_GUIDE2_ACTOR*);
+
+static void aNRG2_setup_job_cont(NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
+    // clang-format off
+    static aNRG2_SETUP_JOB_CONT_PROC setup_job_cont_proc[] = {
+        &aNRG2_setup_j1_cont,
+        &aNRG2_setup_j2_cont,
+        &aNRG2_setup_j3_cont,
+        &aNRG2_setup_j4_cont,
+        &aNRG2_setup_j5_cont,
+        &aNRG2_setup_j6_cont,
+        &aNRG2_setup_j7_cont,
+        &aNRG2_setup_j4_cont,
+        &aNRG2_setup_j6_cont,
+        &aNRG2_setup_j10_cont,
+        &aNRG2_setup_j11_cont,
+    };
+    // clang-format on
+
+    mQst_errand_c* errand_p = mQst_GetFirstJobData();
+    int idx = errand_p->base.quest_kind - mQst_ERRAND_FIRSTJOB_CHANGE_CLOTH;
+
+    rcn_guide2->talk_idx = (*setup_job_cont_proc[idx])(rcn_guide2);
+}
+
+static void aNRG2_talk_start_wait(NPC_RCN_GUIDE2_ACTOR* rcn_guide2, GAME_PLAY* play) {
+    // clang-format off
+    static int job_end_talk_idx[] = {
+        aNRG2_NORM_TALK_J1_END,
+        aNRG2_NORM_TALK_J2_END,
+        aNRG2_NORM_TALK_J3_END,
+        aNRG2_NORM_TALK_J4_END,
+        aNRG2_NORM_TALK_J5_END,
+        aNRG2_NORM_TALK_J6_END,
+        aNRG2_NORM_TALK_J7_END,
+        aNRG2_NORM_TALK_J4_END,
+        aNRG2_NORM_TALK_J6_END,
+        aNRG2_NORM_TALK_J10_END,
+        aNRG2_NORM_TALK_J11_END,
+    };
+    // clang-format on
+
+    mQst_errand_c* errand_p = mQst_GetFirstJobData();
+    int idx = errand_p->base.quest_kind - mQst_ERRAND_FIRSTJOB_CHANGE_CLOTH;
+
+    if (mQst_CheckFirstJobFin(errand_p) == TRUE) {
+        rcn_guide2->talk_idx = job_end_talk_idx[idx];
+        rcn_guide2->can_ask_again_flag = FALSE;
+    } else {
+        aNRG2_setup_job_cont(rcn_guide2);
+    }
+}
+
+static void aNRG2_job_start_wait(NPC_RCN_GUIDE2_ACTOR* rcn_guide2, GAME_PLAY* play) {
+    // clang-format off
+    static int job_start_talk_idx[] = {
+        aNRG2_NORM_TALK_JOB1_START,
+        aNRG2_NORM_TALK_JOB2_START,
+        aNRG2_NORM_TALK_JOB3_START,
+        aNRG2_NORM_TALK_JOB4_START,
+        aNRG2_NORM_TALK_JOB5_START,
+        aNRG2_NORM_TALK_JOB6_START,
+        aNRG2_NORM_TALK_JOB7_START,
+        aNRG2_NORM_TALK_JOB4_START,
+        aNRG2_NORM_TALK_JOB6_START,
+        aNRG2_NORM_TALK_JOB10_START,
+        aNRG2_NORM_TALK_JOB11_START,
+    };
+    // clang-format on
+
+    // clang-format off
+    static int job_start_refuse_talk_idx[] = {
+        aNRG2_NORM_TALK_JOB1_REFUSE,
+        aNRG2_NORM_TALK_JOB2_REFUSE,
+        aNRG2_NORM_TALK_JOB3_REFUSE,
+        aNRG2_NORM_TALK_JOB4_REFUSE,
+        aNRG2_NORM_TALK_JOB5_REFUSE,
+        aNRG2_NORM_TALK_JOB6_REFUSE,
+        aNRG2_NORM_TALK_JOB7_REFUSE,
+        aNRG2_NORM_TALK_JOB4_REFUSE,
+        aNRG2_NORM_TALK_JOB6_REFUSE,
+        -1,
+        -1,
+    };
+    // clang-format on
+
+    mQst_errand_c* errand_p = mQst_GetFirstJobData();
+    int idx = errand_p->base.quest_kind - mQst_ERRAND_FIRSTJOB_CHANGE_CLOTH;
+
+    if (aNRG2_check_job_start() == TRUE) {
+        rcn_guide2->talk_idx = job_start_talk_idx[idx];
+    } else {
+        rcn_guide2->talk_idx = job_start_refuse_talk_idx[idx];
+    }
+}
+
+static void aNRG2_all_job_end(NPC_RCN_GUIDE2_ACTOR* rcn_guide2, GAME_PLAY* play) {
+    if (play->fb_wipe_mode == 0) {
+        rcn_guide2->counter++;
+
+        if (rcn_guide2->counter > 60) {
+            aNRG2_setup_think_proc(rcn_guide2, play, aNRG2_THINK_SEND_AWAY);
+        }
+    }
+}
+
+static void aNRG2_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_RCN_GUIDE2_ACTOR* rcn_guide2 = (NPC_RCN_GUIDE2_ACTOR*)nactorx;
+
+    if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        (*rcn_guide2->think_proc)(rcn_guide2, play);
+    }
+}
+
+static void aNRG2_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_RCN_GUIDE2_ACTOR* rcn_guide2 = (NPC_RCN_GUIDE2_ACTOR*)nactorx;
+    mQst_errand_c* errand_p = mQst_GetFirstJobData();
+    int think_idx;
+
+    rcn_guide2->npc_class.condition_info.hide_request = FALSE;
+    rcn_guide2->npc_class.actor_class.status_data.weight = 255;
+    rcn_guide2->npc_class.actor_class.shape_info.rotation.y = rcn_guide2->npc_class.actor_class.player_angle_y;
+    rcn_guide2->npc_class.actor_class.world.angle.y = rcn_guide2->npc_class.actor_class.player_angle_y;
+
+    if (Common_Get(quest).work == 0) {
+        Common_Get(quest).work = 1;
+        rcn_guide2->daily_speak_flag = TRUE;
+
+        if (errand_p->base.quest_kind == mQst_ERRAND_FIRSTJOB_START) {
+            if (Now_Private->cloth.item == ITM_CLOTH016) {
+                aNRG2_setup_job(aNRG2_JOB2);
+                think_idx = aNRG2_THINK_SAY_HELLO3;
+            } else {
+                aNRG2_setup_job(aNRG2_JOB1);
+                think_idx = aNRG2_THINK_SAY_HELLO;
+            }
+        } else {
+            think_idx = aNRG2_THINK_SAY_HELLO2;
+        }
+    } else if (errand_p->base.progress == 1) {
+        think_idx = aNRG2_THINK_JOB_START_WAIT;
+    } else {
+        think_idx = aNRG2_THINK_TALK_START_WAIT;
+    }
+
+    if (Save_Get(scene_no) == SCENE_DEPART) {
+        /* Replace the upstairs warps with reserve items */
+        mFI_UtNumtoFGSet_common(RSV_POLICE_ITEM_0, 7, 1, FALSE);
+        mFI_UtNumtoFGSet_common(RSV_POLICE_ITEM_0, 8, 1, FALSE);
+    }
+
+    aNRG2_setup_think_proc(rcn_guide2, play, think_idx);
+}
+
+static void aNRG2_send_away_init(NPC_RCN_GUIDE2_ACTOR* rcn_guide2, GAME_PLAY* play) {
+    goto_other_scene(play, Common_GetPointer(structure_exit_door_data), 1);
+    mBGMPsComp_scene_mode(14);
+}
+
+static void aNRG2_talk_start_wait_init(NPC_RCN_GUIDE2_ACTOR* rcn_guide2, GAME_PLAY* play) {
+    aNRG2_talk_start_wait(rcn_guide2, play);
+}
+
+static void aNRG2_job_start_wait_init(NPC_RCN_GUIDE2_ACTOR* rcn_guide2, GAME_PLAY* play) {
+    aNRG2_job_start_wait(rcn_guide2, play);
+}
+
+static void aNRG2_all_job_end_init(NPC_RCN_GUIDE2_ACTOR* rcn_guide2, GAME_PLAY* play) {
+    INTRO_DEMO_ACTOR* intro_demo;
+
+    mPlib_request_main_demo_wait_type1(&play->game, 0, NULL);
+    intro_demo =
+        (INTRO_DEMO_ACTOR*)Actor_info_name_search(&play->actor_info, mAc_PROFILE_INTRO_DEMO, ACTOR_PART_CONTROL);
+    intro_demo->_1A8 = TRUE;
+}
+
+typedef void (*aNRG2_THINK_INIT_PROC)(NPC_RCN_GUIDE2_ACTOR*, GAME_PLAY*);
+
+typedef struct rcn_guide2_think_data_s {
+    aNRG2_THINK_PROC think_proc;
+    aNRG2_THINK_INIT_PROC think_init_proc;
+    aNPC_TALK_REQUEST_PROC talk_request_proc;
+    u8 talk_idx;
+    u8 next_think_idx;
+} aNRG2_think_data_c;
+
+static void aNRG2_setup_think_proc(NPC_RCN_GUIDE2_ACTOR* rcn_guide2, GAME_PLAY* play, int think_idx) {
+    // clang-format off
+    static aNRG2_think_data_c dt_tbl[] = {
+        {
+            (aNRG2_THINK_PROC)&none_proc1,
+            (aNRG2_THINK_INIT_PROC)&none_proc1,
+            &aNRG2_force_talk_request,
+            aNRG2_FORCE_TALK_SAY_HELLO,
+            aNRG2_THINK_SEND_AWAY,
+        },
+        {
+            (aNRG2_THINK_PROC)&none_proc1,
+            (aNRG2_THINK_INIT_PROC)&none_proc1,
+            &aNRG2_force_talk_request,
+            aNRG2_FORCE_TALK_SAY_HELLO2,
+            aNRG2_THINK_SEND_AWAY,
+        },
+        {
+            (aNRG2_THINK_PROC)&none_proc1,
+            (aNRG2_THINK_INIT_PROC)&none_proc1,
+            &aNRG2_force_talk_request,
+            aNRG2_FORCE_TALK_SAY_HELLO_SP,
+            aNRG2_THINK_SEND_AWAY,
+        },
+        {
+            (aNRG2_THINK_PROC)&none_proc1,
+            &aNRG2_send_away_init,
+            (aNPC_TALK_REQUEST_PROC)&none_proc1,
+            0,
+            aNRG2_THINK_SEND_AWAY,
+        },
+        {
+            &aNRG2_talk_start_wait,
+            &aNRG2_talk_start_wait_init,
+            &aNRG2_norm_talk_request,
+            aNRG2_NORM_TALK_JOB1_START,
+            aNRG2_THINK_TALK_START_WAIT,
+        },
+        {
+            &aNRG2_job_start_wait,
+            &aNRG2_job_start_wait_init,
+            &aNRG2_norm_talk_request,
+            aNRG2_NORM_TALK_JOB1_START,
+            aNRG2_THINK_JOB_START_WAIT,
+        },
+        {
+            &aNRG2_all_job_end,
+            &aNRG2_all_job_end_init,
+            (aNPC_TALK_REQUEST_PROC)&none_proc1,
+            0,
+            aNRG2_THINK_ALL_JOB_END,
+        },
+    };
+    // clang-format on
+
+    aNRG2_think_data_c* data = &dt_tbl[think_idx];
+    static u16 arg_data[6] = { 0, 0, 0, 0, 0, 0 };
+
+    rcn_guide2->think_idx = think_idx;
+    rcn_guide2->think_proc = data->think_proc;
+    rcn_guide2->npc_class.talk_info.talk_request_proc = data->talk_request_proc;
+    rcn_guide2->talk_idx = data->talk_idx;
+    rcn_guide2->next_think_idx = data->next_think_idx;
+    rcn_guide2->npc_class.request.act_priority = 1;
+    rcn_guide2->npc_class.request.act_idx = aNPC_ACT_WAIT;
+    rcn_guide2->npc_class.request.act_type = aNPC_ACT_TYPE_DEFAULT;
+    mem_copy((u8*)rcn_guide2->npc_class.request.act_args, (u8*)arg_data, sizeof(arg_data));
+    (*data->think_init_proc)(rcn_guide2, play);
+}
+
+static void aNRG2_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC think_proc[] = { &aNRG2_think_init_proc, &aNRG2_think_main_proc };
+
+    (*think_proc[proc_type])(nactorx, play);
+}
+
+static void aNRG2_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = &aNRG2_think_proc;
+    Common_Get(clip).npc_clip->think_proc(nactorx, play, aNPC_THINK_IN_BLOCK, 0);
+}
+
+static void aNRG2_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int res = Common_Get(clip).npc_clip->think_proc(nactorx, play, -1, 1);
+
+    if (res == 0) {
+        Common_Get(clip).npc_clip->think_proc(nactorx, play, -1, 2);
+    }
+}
+
+static void aNRG2_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC sche_proc[] = { &aNRG2_schedule_init_proc, &aNRG2_schedule_main_proc };
+
+    (*sche_proc[proc_type])(nactorx, play);
+}
