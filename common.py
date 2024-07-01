@@ -209,6 +209,7 @@ FORCEFILESGEN = f"{PYTHON} {PPCDIS}/forcefilesgen.py"
 TOOLS = "tools"
 CODEWARRIOR = os.path.join(TOOLS, "1.3.2")
 CODEWARRIOR_RODATA_POOL_FIX = os.path.join(TOOLS, "1.3.2r")
+ORTHRUS = os.path.join(TOOLS, "orthrus")
 SDK_CW = os.path.join(TOOLS, "1.2.5n")
 CC = os.path.join(CODEWARRIOR, "mwcceppc.exe")
 CC_R = os.path.join(CODEWARRIOR_RODATA_POOL_FIX, "mwcceppc.exe")
@@ -219,6 +220,8 @@ if platform != "win32":
     CC_R = f"wibo {CC_R}"
     OCC = f"wibo {OCC}"
     LD = f"wibo {LD}"
+else:
+    ORTHRUS = os.path.join(TOOLS, "orthrus.exe")
 
 # DevkitPPC
 DEVKITPPC = os.environ.get("DEVKITPPC")
@@ -255,6 +258,7 @@ REL_DISASM_OVERRIDES = f"{CONFIG}/rel_disasm_overrides.yml"
 # Binaries
 DOL = f"{ORIG}/static.dol" # read in python code
 REL = f"{ORIG}/foresta.rel" # read in python code
+REL_SZS = f"{ORIG}/foresta.rel.szs"
 DOL_YML = f"{CONFIG}/dol.yml"
 REL_YML = f"{CONFIG}/rel.yml"
 DOL_SHA = f"{ORIG}/static.dol.sha1"
@@ -288,6 +292,7 @@ DOL_ELF = f"{BUILDDIR}/static.elf"
 REL_PLF = f"{BUILDDIR}/foresta.plf"
 DOL_OUT = f"{OUTDIR}/static.dol"
 REL_OUT = f"{OUTDIR}/foresta.rel"
+REL_SZS_OUT = f"{OUTDIR}/foresta.rel.szs"
 DOL_MAP = f"{OUTDIR}/static.map"
 REL_MAP = f"{OUTDIR}/foresta.map"
 

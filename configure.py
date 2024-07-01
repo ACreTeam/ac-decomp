@@ -11,6 +11,7 @@ import pickle
 import re
 from io import StringIO
 
+import subprocess
 from sys import executable as PYTHON, platform
 from typing import List, Tuple
 from ninja_syntax import Writer
@@ -29,6 +30,10 @@ if os.path.exists("dump/main.dol"):
 assert os.path.exists("tools/1.3.2/mwcceppc.exe") and \
     os.path.exists("tools/1.2.5n/mwcceppc.exe"), \
        "Error: Codewarrior not found!"
+
+# Check if foresta.rel.szs exists but not foresta.rel, and if so, decompress
+if not os.path.exists(c.REL) and os.path.exists(c.REL_SZS):
+    subprocess.call([f'./{c.ORTHRUS}', 'ncompress', 'yaz0', '-d', c.REL_SZS, c.REL])
 
 # Check binaries were added
 assert os.path.exists(c.DOL) and os.path.exists(c.REL), \
@@ -905,6 +910,11 @@ n.build(
     inputs = c.REL_SHA,
     implicit = [c.REL_OUT]
 )
+
+# Compress foresta.rel
+if os.path.exists(c.REL_OUT):
+    subprocess.call([f'./{c.ORTHRUS}', 'ncompress', 'yaz0', '-c', c.REL_OUT, c.REL_SZS_OUT])
+
 n.default(c.REL_OK)
 
 # Optional full binary disassembly

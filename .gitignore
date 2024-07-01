@@ -13,6 +13,7 @@ dump/*
 *.arc
 *.ctx
 ctx.*
+!tools/orthrus.exe
 build.ninja
 ac-decomp.code-workspace
 assets/
