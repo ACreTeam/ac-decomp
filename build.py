@@ -3,6 +3,7 @@ import sys
 import os
 import hashlib
 import argparse
+import common as c
 
 # List of Ninja build targets
 NINJA_BUILD_TARGETS = [ ['src/data/bin1', 'out/forest_1st.arc', 'dump/forest_1st.arc'], ['src/data/bin2', 'out/forest_2nd.arc', 'dump/forest_2nd.arc'] ]
@@ -92,10 +93,19 @@ if __name__ == "__main__":
             else:
                 print(f"No changes in {target[0]}, skipping build.")
         try:
+            # Check if foresta.rel.szs exists but not foresta.rel, and if so, decompress
+            if not os.path.exists(c.REL) and os.path.exists(c.REL_SZS):
+                print("Decompressing foresta.rel.szs to foresta.rel")
+                subprocess.call([f'./{c.ORTHRUS}', 'ncompress', 'yaz0', '-d', c.REL_SZS, c.REL])
+
             if args.v:
                 subprocess.run(['ninja', '-v'], check=True)
             else:
                 subprocess.run(['ninja'], check=True)
+                # Compress foresta.rel
+                if os.path.exists(c.REL_OUT):
+                    print("Compressing foresta.rel to foresta.rel.szs")
+                    subprocess.call([f'./{c.ORTHRUS}', 'ncompress', 'yaz0', '-c', c.REL_OUT, c.REL_SZS_OUT])
         except subprocess.CalledProcessError as e:
             print(f"Error running Ninja build")
             sys.exit(1)

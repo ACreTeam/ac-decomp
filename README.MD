@@ -19,12 +19,11 @@ Use `--recursive` when cloning to have ppcdis in the repository.
 
 1. [Dump a copy of the game](./docs/extract_game.md) and extract all files.
 2. Place **main.dol**, **foresta.rel.szs**, **forest_1st.arc**, and **forest_2nd.arc** in *dump/*.
-3. Download the [CodeWarrior 1.3.2 and 1.2.5n compilers](https://files.decomp.dev/compilers_20230715.zip) and extract them to *tools/1.3.2/* and *tools/1.2.5n/*, respectively.
-4. Download the [CodeWarrior 1.3.2r compiler](https://mega.nz/file/WuBFTCLT#TmB5R4-1mEFkk4G1Vjn9_cHXRD9wOIH9CtOLaVSWEas) and extract it to *tools/1.3.2r/*.
-5. Install Docker.
-6. Build the Docker image (`docker build -t ac-decomp .`).
-7. Run configure.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 configure.py`).
-8. Run build.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 build.py`).
+3. Download the [CodeWarrior 1.3.2, 1.3.2r, and 1.2.5n compilers](https://files.decomp.dev/compilers_latest.zip) and extract them to *tools/1.3.2/*, *tools/1.3.2r/*, and *tools/1.2.5n/*, respectively.
+4. Install Docker.
+5. Build the Docker image (`docker build -t ac-decomp .`).
+6. Run configure.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 configure.py`).
+7. Run build.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 build.py`).
 
 ### Build manually
 
@@ -32,22 +31,21 @@ Use `--recursive` when cloning to have ppcdis in the repository.
 
 1. [Dump a copy of the game](./docs/extract_game.md) and extract all files.
 2. Place **main.dol**, **foresta.rel.szs**, **forest_1st.arc**, and **forest_2nd.arc** in *dump/*.
-3. Download the [CodeWarrior 1.3.2 and 1.2.5n compilers](https://files.decomp.dev/compilers_20230715.zip) and extract them to *tools/1.3.2/* and *tools/1.2.5n/*, respectively.
-4. Download the [CodeWarrior 1.3.2r compiler](https://mega.nz/file/WuBFTCLT#TmB5R4-1mEFkk4G1Vjn9_cHXRD9wOIH9CtOLaVSWEas) and extract it to *tools/1.3.2r/*.
-5. Install Python, pip, and [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages#package-managers) using your package manager of choice.
-6. Install Python modules from requirements.txt (`pip install -r requirements.txt`).
-7. Install [wibo](https://github.com/decompals/wibo)
+3. Download the [CodeWarrior 1.3.2, 1.3.2r, and 1.2.5n compilers](https://files.decomp.dev/compilers_latest.zip) and extract them to *tools/1.3.2/*, *tools/1.3.2r/*, and *tools/1.2.5n/*, respectively.
+4. Install Python, pip, and [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages#package-managers) using your package manager of choice.
+5. Install Python modules from requirements.txt (`pip install -r requirements.txt`).
+6. Install version 0.6.13 of [wibo](https://github.com/decompals/wibo)
     - Wibo is a lightweight Wine replacement that's tailor-made for use with decomp projects. Regular Wine can be used if preferred, but for the purposes of this guide, these instructions will use wibo.
-    - Download [the latest GitHub release](https://github.com/decompals/wibo/releases/latest) and run `install ./wibo /usr/bin` to install it to your system.
-8. Install devkitPPC.
+    - Download [version 0.6.13 GitHub release](https://github.com/decompals/wibo/releases/tag/0.6.13) and run `install ./wibo /usr/bin` to install it to your system.
+7. Install devkitPPC.
     - To get devkitPPC, you'll need [devkitPro Pacman](https://devkitpro.org/wiki/devkitPro_pacman#Installing_devkitPro_Pacman).
         - Run `dkp-pacman -S devkitPPC` once dkp-pacman is installed to install devkitPPC.
         - Set the `DEVKITPPC` environment variable to */opt/devkitpro/devkitPPC*.
-9. Set the `N64_SDK` environment variable to the path of your libultra or equivalent headers. If you need headers, you can use the ones from [ultralib](https://github.com/decompals/ultralib).
+8. Set the `N64_SDK` environment variable to the path of your libultra or equivalent headers. If you need headers, you can use the ones from [ultralib](https://github.com/decompals/ultralib).
     - Headers should be located at `$N64_SDK/ultra/usr/include`.
     - You must modify `Gpopmtx`'s `param` member to be `unsigned int` in **gbi.h**.
-10. Run `python3 configure.py`.
-11. Run `python3 build.py`.
+9. Run `python3 configure.py`.
+10. Run `python3 build.py`.
 
 ## Quick Guides
 - [Dumping Game Files](./docs/extract_game.md)
