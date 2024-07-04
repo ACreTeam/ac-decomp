@@ -905,6 +905,7 @@ n.build(
     inputs = c.REL_SHA,
     implicit = [c.REL_OUT]
 )
+
 n.default(c.REL_OK)
 
 # Optional full binary disassembly
