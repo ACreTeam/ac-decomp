@@ -9,6 +9,7 @@ import json
 import os
 import pickle
 import re
+import subprocess
 from io import StringIO
 
 from sys import executable as PYTHON, platform
@@ -29,6 +30,11 @@ if os.path.exists("dump/main.dol"):
 assert os.path.exists("tools/1.3.2/mwcceppc.exe") and \
     os.path.exists("tools/1.2.5n/mwcceppc.exe"), \
        "Error: Codewarrior not found!"
+
+# Check if foresta.rel.szs exists but not foresta.rel, and if so, decompress
+if not os.path.exists(c.REL) and os.path.exists(c.REL_SZS):
+    print("Decompressing foresta.rel.szs to foresta.rel")
+    subprocess.call([f'./{c.ORTHRUS}', 'ncompress', 'yaz0', '-d', c.REL_SZS, c.REL])
 
 # Check binaries were added
 assert os.path.exists(c.DOL) and os.path.exists(c.REL), \

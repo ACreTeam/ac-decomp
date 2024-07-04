@@ -93,11 +93,6 @@ if __name__ == "__main__":
             else:
                 print(f"No changes in {target[0]}, skipping build.")
         try:
-            # Check if foresta.rel.szs exists but not foresta.rel, and if so, decompress
-            if not os.path.exists(c.REL) and os.path.exists(c.REL_SZS):
-                print("Decompressing foresta.rel.szs to foresta.rel")
-                subprocess.call([f'./{c.ORTHRUS}', 'ncompress', 'yaz0', '-d', c.REL_SZS, c.REL])
-
             if args.v:
                 subprocess.run(['ninja', '-v'], check=True)
             else:
