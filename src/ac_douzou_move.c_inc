@@ -15,7 +15,7 @@
 
 static int aDOU_set_check(int house_no) {
     int player_no = mHS_get_pl_no(house_no);
-    Private_c* priv = Save_GetPointer(private[player_no]);
+    Private_c* priv = Save_GetPointer(private_data[player_no]);
     mHm_hs_c* house = Save_GetPointer(homes[house_no]);
 
     if (mEv_CheckTitleDemo() != 0 && mEv_CheckTitleDemo() != -1 && mEv_CheckTitleDemo() != -9) {
@@ -35,7 +35,7 @@ static int aDOU_get_color(int house_no) {
 
 static int aDOU_get_douzou_type(int house_no) {
     int player_no = mHS_get_pl_no(house_no);
-    Private_c* priv = Save_GetPointer(private[player_no]);
+    Private_c* priv = Save_GetPointer(private_data[player_no]);
     s8 sex = mPr_SEX_MALE;
     s8 face = mPr_FACE_TYPE0;
 

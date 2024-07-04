@@ -1038,8 +1038,8 @@ extern void mQst_PrintQuestInfo(gfxprint_t* gfxprint) {
         delivery = priv->deliveries;
         errand = priv->errands;
     } else {
-        delivery = Save_Get(private[0]).deliveries;
-        errand = Save_Get(private[0]).errands;
+        delivery = Save_Get(private_data[0]).deliveries;
+        errand = Save_Get(private_data[0]).errands;
     }
 
     gfxprint_color(gfxprint, 220, 50, 50, 255);

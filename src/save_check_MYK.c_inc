@@ -182,7 +182,7 @@ static int sSC_CheckSaveData_Needlework() {
 
     for (i = 0; i < PLAYER_NUM; i++) {
         for (j = 0; j < mPr_ORIGINAL_DESIGN_COUNT; j++) {
-            if (sSC_CheckOneOriginalData(Save_Get(private + i)->my_org + j) == FALSE) {
+            if (sSC_CheckOneOriginalData(Save_Get(private_data + i)->my_org + j) == FALSE) {
                 mFRm_ERRORLINE(348);
                 return sSC_MYK_ERR_NEEDLEWORK;
             }

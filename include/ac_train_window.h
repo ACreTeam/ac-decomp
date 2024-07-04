@@ -15,8 +15,7 @@ typedef int (*TRAIN_WINDOW_DRAW_TYPE)(ACTOR*, GAME*);
 #define CRV_DEBUG_GREEN_VALUE 89
 #define CRV_DEBUG_BLUE_VALUE 90
 
-
-typedef struct train_window_s{
+typedef struct train_window_s {
     ACTOR actor_class;
     TRAIN_WINDOW_DRAW_TYPE draw_type;
     s16 pallete_id;
@@ -34,7 +33,7 @@ typedef struct train_window_s{
     f32 scroll_speed;
     s_xyz pos;
     f32 lod_factor;
-}TRAIN_WINDOW_ACTOR;
+} TRAIN_WINDOW_ACTOR;
 
 extern ACTOR_PROFILE Train_Window_Profile;
 
@@ -43,4 +42,3 @@ extern ACTOR_PROFILE Train_Window_Profile;
 #endif
 
 #endif
-
