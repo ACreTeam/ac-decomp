@@ -19,7 +19,7 @@ static int aNRG_set_request_act(NPC_RCN_GUIDE_ACTOR* rcn_guide, u8 act_prio, u8 
 }
 
 static void aNRG_set_house_master_name(int house_idx) {
-    mMsg_SET_FREE_STR(mMsg_FREE_STR0, Save_Get(private[mHS_get_pl_no(house_idx)]).player_ID.player_name,
+    mMsg_SET_FREE_STR(mMsg_FREE_STR0, Save_Get(private_data[mHS_get_pl_no(house_idx)]).player_ID.player_name,
                       PLAYER_NAME_LEN);
 }
 

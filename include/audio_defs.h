@@ -115,6 +115,9 @@ typedef enum audio_sound_effects {
 
     NA_SE_TOILE_CHAIR_SIT = 0x410,
 
+    NA_SE_TRAINDOOR0 = 0x412,
+    NA_SE_TRAINDOOR1,
+
     NA_SE_BED_IN = 0x415,
     NA_SE_BED_NEGAERI,
     NA_SE_BED_OUT,

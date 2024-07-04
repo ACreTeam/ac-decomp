@@ -1,105 +1,78 @@
 static int sCck_CheckSaveData_diary_body_YSD(Private_c* priv) {
-  return FALSE;
+    return FALSE;
 }
 
 static int sCCk_Check_ItemName(mActor_name_t item) {
-  /* TODO: do not hardcode this */
-  static s16 item1_kinds[ITEM1_CAT_NUM] = {
-    255,
-    3,
-    91,
-    39,
-    254,
-    48,
-    66,
-    66,
-    7,
-    10,
-    54,
-    15,
-    95,
-    44,
-    1,
-    3
-  };
+    /* TODO: do not hardcode this */
+    static s16 item1_kinds[ITEM1_CAT_NUM] = { 255, 3, 91, 39, 254, 48, 66, 66, 7, 10, 54, 15, 95, 44, 1, 3 };
 
-  mActor_name_t item_name = (mActor_name_t)item;
-  int item_type = ITEM_NAME_GET_TYPE(item_name);
-  int res = FALSE;
+    mActor_name_t item_name = (mActor_name_t)item;
+    int item_type = ITEM_NAME_GET_TYPE(item_name);
+    int res = FALSE;
 
-  if (item_type == NAME_TYPE_ITEM1) {
-    int index = ITEM_NAME_GET_INDEX(item_name);
-    int category = ITEM_NAME_GET_CAT(item_name);
-    
-    if (
-      index < 0 ||
-      index > item1_kinds[category] ||
-      item_name == ITM_SICKLE /* ??? why is this explicitly invalid... lol */
-    ) {
-      res = TRUE;
+    if (item_type == NAME_TYPE_ITEM1) {
+        int index = ITEM_NAME_GET_INDEX(item_name);
+        int category = ITEM_NAME_GET_CAT(item_name);
+
+        if (index < 0 || index > item1_kinds[category] ||
+            item_name == ITM_SICKLE /* ??? why is this explicitly invalid... lol */
+        ) {
+            res = TRUE;
+        }
+    } else if (item_name != EMPTY_NO && item_type != NAME_TYPE_FTR0 && item_type != NAME_TYPE_FTR1) {
+        mFRm_ERRORLINE(110);
+        res = TRUE;
     }
-  }
-  else if (item_name != EMPTY_NO && item_type != NAME_TYPE_FTR0 && item_type != NAME_TYPE_FTR1) {
-    mFRm_ERRORLINE(110);
-    res = TRUE;
-  }
 
-  return res;
+    return res;
 }
 
 static int sCCk_Check_ItemName_Possession(mActor_name_t item) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (
-    sCCk_Check_ItemName(item) ||
-    (item >= ITM_MY_ORG_UMBRELLA0 && item <= ITM_MY_ORG_UMBRELLA7) ||
-    (item >= ITM_RED_PAINT && item <= ITM_BROWN_PAINT) ||
-    item == ITM_PRESENT ||
-    item == ITM_TOWN_MAP ||
-    item == ITM_GOLDEN_NET_PRESENT ||
-    item == ITM_GOLDEN_AXE_PRESENT ||
-    item == ITM_GOLDEN_SHOVEL_PRESENT ||
-    item == ITM_GOLDEN_ROD_PRESENT
-  ) {
-    mFRm_ERRORLINE(141);
-    res = TRUE;
-  }
+    if (sCCk_Check_ItemName(item) || (item >= ITM_MY_ORG_UMBRELLA0 && item <= ITM_MY_ORG_UMBRELLA7) ||
+        (item >= ITM_RED_PAINT && item <= ITM_BROWN_PAINT) || item == ITM_PRESENT || item == ITM_TOWN_MAP ||
+        item == ITM_GOLDEN_NET_PRESENT || item == ITM_GOLDEN_AXE_PRESENT || item == ITM_GOLDEN_SHOVEL_PRESENT ||
+        item == ITM_GOLDEN_ROD_PRESENT) {
+        mFRm_ERRORLINE(141);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sCck_CheckSaveData_Item_YSD(Private_c* priv) {
-  int i;
+    int i;
 
-  for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++) {
-    sCCk_Check_ItemName_Possession(priv->inventory.pockets[i]);
-  }
+    for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++) {
+        sCCk_Check_ItemName_Possession(priv->inventory.pockets[i]);
+    }
 
-  return FALSE;
+    return FALSE;
 }
 
 static int sCck_CheckSaveData_Mail_YSD(Private_c* priv) {
-  int res = FALSE;
-  int i;
+    int res = FALSE;
+    int i;
 
-  for (i = 0; i < mPr_INVENTORY_MAIL_COUNT; i++) {
-    res |= sChk_Mail_c_sub(priv->mail + i, 0);
-  }
+    for (i = 0; i < mPr_INVENTORY_MAIL_COUNT; i++) {
+        res |= sChk_Mail_c_sub(priv->mail + i, 0);
+    }
 
-  return FALSE;
+    return FALSE;
 }
 
 static int sChk_CheckSaveData_YSD() {
-  int res = FALSE;
-  int i;
+    int res = FALSE;
+    int i;
 
-  for (i = 0; i < PLAYER_NUM; i++) {
-    Private_c* priv = Save_Get(private) + i;
+    for (i = 0; i < PLAYER_NUM; i++) {
+        Private_c* priv = Save_Get(private_data) + i;
 
-    res |= sCck_CheckSaveData_Item_YSD(priv);
-    res |= sCck_CheckSaveData_Mail_YSD(priv);
-    res |= sCck_CheckSaveData_diary_body_YSD(priv);
-  }
+        res |= sCck_CheckSaveData_Item_YSD(priv);
+        res |= sCck_CheckSaveData_Mail_YSD(priv);
+        res |= sCck_CheckSaveData_diary_body_YSD(priv);
+    }
 
-  return res;
+    return res;
 }

@@ -183,7 +183,7 @@ static int mSDI_StartInitNew(GAME* game, int player_no, int malloc_flag) {
     osSyncPrintf("player no -- %d\n", player_no);
     Common_Set(player_no, player_no);
 
-    priv = Save_GetPointer(private[player_no]);
+    priv = Save_GetPointer(private_data[player_no]);
     Common_Set(now_private, priv);
     priv->gender = mPr_SEX_MALE;
     decide_fruit(Save_GetPointer(fruit));
@@ -211,7 +211,7 @@ static int mSDI_StartInitNew(GAME* game, int player_no, int malloc_flag) {
     /* Tree -> Cedar Tree */
     mAGrw_ChangeTree2Cedar();
 
-    priv_p = Save_Get(private);
+    priv_p = Save_Get(private_data);
 
     mMld_SetDefaultMelody();
     mLd_LandDataInit();
@@ -292,7 +292,7 @@ static int mSDI_StartInitFrom(GAME* game, int player_no, int malloc_flag) {
     lbRTC_GetTime(Common_GetPointer(time.rtc_time));
 
     if (mFRm_CheckSaveData() == TRUE) {
-        Private_c* priv = Save_Get(private + player_no);
+        Private_c* priv = Save_Get(private_data + player_no);
 
         if (mPr_CheckPrivate(priv) == TRUE) {
 
@@ -349,7 +349,7 @@ static int mSDI_StartInitNewPlayer(GAME* game, int player_no, int malloc_flag) {
     lbRTC_GetTime(Common_GetPointer(time.rtc_time));
 
     if (mFRm_CheckSaveData() == TRUE) {
-        Private_c* priv = Save_Get(private + player_no);
+        Private_c* priv = Save_Get(private_data + player_no);
 
         if (mPr_CheckPrivate(priv) != TRUE) {
             mPr_InitPrivateInfo(priv);
