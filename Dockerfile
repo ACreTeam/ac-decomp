@@ -16,7 +16,7 @@ RUN pip install -r /temp/requirements.txt
 RUN rm -rf /temp
 
 # --- wibo installation ---
-RUN wget https://github.com/decompals/wibo/releases/latest/download/wibo
+RUN wget https://github.com/decompals/wibo/releases/download/0.6.13/wibo
 RUN install ./wibo /usr/bin
 RUN rm wibo
 
