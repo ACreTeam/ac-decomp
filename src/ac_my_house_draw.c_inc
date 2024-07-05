@@ -239,8 +239,8 @@ static void aMHS_actor_draw(ACTOR* actorx, GAME* game) {
             gSPSegment(gfx++, G_MWO_SEGMENT_A, obj_myhome_mark_pal);
         } else {
             int org_idx = door_original & 7;
-            u16* pal = mNW_PaletteIdx2Palette(Save_Get(private[pl_no]).my_org[org_idx].palette);
-            u8* tex = Save_Get(private[pl_no]).my_org[org_idx].design.data;
+            u16* pal = mNW_PaletteIdx2Palette(Save_Get(private_data[pl_no]).my_org[org_idx].palette);
+            u8* tex = Save_Get(private_data[pl_no]).my_org[org_idx].design.data;
 
             gSPSegment(gfx++, G_MWO_SEGMENT_9, tex);
             gSPSegment(gfx++, G_MWO_SEGMENT_A, pal);

@@ -2499,7 +2499,7 @@ static void mAGrw_SpoilAllPossession(int spoil_kabu) {
     int k;
 
     if (spoil_kabu == TRUE) {
-        priv = Save_Get(private);
+        priv = Save_Get(private_data);
 
         for (i = 0; i < PLAYER_NUM; i++) {
             mAGrw_SpoilPossession(priv->inventory.pockets, mPr_POCKETS_SLOT_COUNT);

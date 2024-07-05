@@ -86,7 +86,7 @@ typedef struct Save_s {
     /* 0x00001A */ u16
         copy_protect; /* 'unique' value between [1, 65520] used for copy protection (see mCD_get_land_copyProtect) */
     /* 0x00001C */ u8 pad_1C[4];
-    /* 0x000020 */ Private_c private[PLAYER_NUM];                        /* player data */
+    /* 0x000020 */ Private_c private_data[PLAYER_NUM];                   /* player data */
     /* 0x009120 */ mLd_land_info_c land_info;                            /* town name & id */
     /* 0x00912C */ mNtc_board_post_c noticeboard[mNtc_BOARD_POST_COUNT]; /* noticeboard posts */
     /* 0x009CE4 */ u8 pad_9CE4[4];

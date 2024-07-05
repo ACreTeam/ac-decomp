@@ -9,7 +9,7 @@ static int aHNW_set_save_permission() {
     if (player_no < PLAYER_NUM) {
         int arrange_idx = mHS_get_arrange_idx(player_no);
         house = Save_GetPointer(homes[arrange_idx]);
-        pid = &Save_Get(private[player_no]).player_ID;
+        pid = &Save_Get(private_data[player_no]).player_ID;
 
         if (mPr_NullCheckPersonalID(pid) != TRUE && mPr_CheckCmpPersonalID(pid, &house->ownerID) == TRUE) {
             res = TRUE;

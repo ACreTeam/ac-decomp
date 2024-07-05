@@ -194,7 +194,7 @@ static void Museum_Picture_Actor_move(ACTOR* actorx, GAME* game) {
                     /* If the donator still lives in town we need to copy their name */
                     if (mMmd_DONATOR_EXISTS(donator)) {
                         mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0,
-                                          Save_Get(private[mMmd_DONATOR_PLR_IDX(donator)]).player_ID.player_name,
+                                          Save_Get(private_data[mMmd_DONATOR_PLR_IDX(donator)]).player_ID.player_name,
                                           PLAYER_NAME_LEN);
                     }
                 }

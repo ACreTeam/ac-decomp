@@ -21,7 +21,7 @@ extern void flash_rom_and_player_info_clear() {
     bzero(save, sizeof(Save));
     mFRm_ClearSaveCheckData(Save_GetPointer(save_check));
 
-    priv_p = Save_GetPointer(private[0]);
+    priv_p = Save_GetPointer(private_data[0]);
     for (i = 0; i < PLAYER_NUM; i++) {
         mPr_ClearPrivateInfo(priv_p);
         priv_p++;
@@ -96,7 +96,7 @@ extern void title_action_data_init_start_select(GAME_PLAY* play) {
     mCD_LoadLand();
     mCPk_InitPak(0);
 
-    Common_Set(now_private, Save_GetPointer(private[0]));
+    Common_Set(now_private, Save_GetPointer(private_data[0]));
     Common_Set(player_no, 0);
 
     mTD_rtc_reserve();
