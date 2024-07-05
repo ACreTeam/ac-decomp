@@ -39,7 +39,6 @@ RUN rm /usr/bin/cpp /usr/bin/g++ /lib/cpp
 RUN for file in $(find "/opt/devkitpro/devkitPPC/bin" -type f -name 'powerpc-eabi*'); do new_file=$(basename "$file" | sed 's/powerpc-eabi-//g'); update-alternatives --install "/usr/bin/$new_file" "$new_file" "$file" 0; done
 
 # --- stage ultralib headers ---
-RUN mkdir -p /N64_SDK/ultra/usr/
 RUN git clone https://github.com/decompals/ultralib.git /N64_SDK/ultra/usr/
 # dockerfile does not seem to support extglob, so this monstrous command works around it to delete all of ultralib except the headers we need.
 RUN cd /N64_SDK/ultra/usr/ && find -type f -maxdepth 1 -delete && find . -not -name 'include' -type d -maxdepth 1 -exec rm -r "{}" \;
