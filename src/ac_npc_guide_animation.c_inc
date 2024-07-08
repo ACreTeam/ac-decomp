@@ -1,0 +1,56 @@
+typedef struct npc_guide_animation_s {
+    int anim_id;
+    int talk_flag;
+} aNGD_anime_c;
+
+static void aNGD_set_animation(NPC_GUIDE_ACTOR* guide, int action) {
+    // clang-format off
+    static aNGD_anime_c anime[] = {
+        { aNPC_ANIM_OPEN_D1, FALSE },
+        { aNPC_ANIM_WALK1, FALSE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_SITDOWN_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_STANDUP_D1, FALSE },
+        { aNPC_ANIM_WAIT1, FALSE },
+        { aNPC_ANIM_WALK1, FALSE },
+        { aNPC_ANIM_WALK1, FALSE },
+        { aNPC_ANIM_TO_DECK_D1, FALSE },
+        { aNPC_ANIM_KEITAI_ON1, FALSE },
+        { aNPC_ANIM_KEITAI_TALK1, TRUE },
+        { aNPC_ANIM_KEITAI_OFF1, FALSE },
+        { aNPC_ANIM_OPEN_D2, FALSE },
+        { aNPC_ANIM_WALK1, FALSE },
+        { aNPC_ANIM_WAIT1, FALSE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_SITDOWN_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, FALSE },
+    };
+    // clang-format on
+
+    aNGD_anime_c* anime_info = &anime[action];
+    int anim_id = anime_info->anim_id;
+    int talk_flag = anime_info->talk_flag;
+
+    if ((action == 4 || action == 7 || action == 8) && guide->next_action != 5 && guide->next_action != 6) {
+        anim_id = aNPC_ANIM_SITDOWN_WAIT_D1;
+        talk_flag = TRUE;
+    }
+
+    Common_Get(clip).npc_clip->animation_init_proc(&guide->npc_class.actor_class, anim_id, talk_flag);
+}

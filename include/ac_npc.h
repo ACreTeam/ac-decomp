@@ -9,6 +9,7 @@
 #include "m_actor_dlftbls.h"
 #include "m_npc.h"
 #include "c_keyframe.h"
+#include "ac_npc_anim_def.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -94,6 +95,7 @@ typedef void (*aNPC_MOVE_AFTER_PROC)(ACTOR*, GAME*);
 typedef void (*aNPC_DRAW_PROC)(ACTOR*, GAME*);
 
 typedef void (*aNPC_REBUILD_DMA_PROC)();
+typedef void (*aNPC_TALK_DEMO_PROC)(ACTOR*);
 typedef void (*aNPC_ANIMATION_INIT_PROC)(ACTOR*, int, int);
 typedef void (*aNPC_CHG_SCHEDULE_PROC)(NPC_ACTOR*, GAME_PLAY*, u8);
 typedef int (*aNPC_CLIP_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*, int, int);
@@ -121,7 +123,8 @@ struct ac_npc_clip_s {
     /* 0x0F0 */ void* _0F0;
     /* 0x0F4 */ aNPC_DRAW_PROC draw_proc;
     /* 0x0F8 */ aNPC_REBUILD_DMA_PROC rebuild_dma_proc;
-    /* 0x0FC */ void* _0FC[(0x114 - 0x0FC) / sizeof(void*)];
+    /* 0x0FC */ void* _0FC[(0x110 - 0x0FC) / sizeof(void*)];
+    /* 0x110 */ aNPC_TALK_DEMO_PROC talk_demo_proc;
     /* 0x114 */ aNPC_ANIMATION_INIT_PROC animation_init_proc;
     /* 0x118 */ aNPC_CHG_SCHEDULE_PROC chg_schedule_proc;
     /* 0x11C */ void* _11C;
@@ -150,10 +153,10 @@ typedef struct npc_animation_s {
 /* TODO: draw data */
 typedef struct npc_draw_info_s {
     /* 0x000 */ int main_animation_frame;
-    /* 0x004 */ int _04; // TODO: figure out where this is set
+    /* 0x004 */ int main_animation_state;
     /* 0x008 */ int main_animation_frame_changed;
-    /* 0x00C */ int _08; // TODO: figure out where this is set
-    /* 0x010 */ int _0C; // TODO: figure out where this is set
+    /* 0x00C */ int sub_animation0_state;
+    /* 0x010 */ int sub_animation1_state;
     /* 0x014 */ aNPC_ANIMATION_c main_animation;
     /* 0x1D0 */ aNPC_ANIMATION_c sub_animation0;
     /* 0x38C */ aNPC_ANIMATION_c sub_animation1;
@@ -178,7 +181,9 @@ typedef struct npc_draw_info_s {
     /* 0x5BE */ u8 _5BE;
     /* 0x5BE */ u8 _5BF[0x5D0 - 0x5BF];
     /* 0x5D0 */ f32 animation_speed;
-    /* 0x5D4 */ u8 _5D4[0x630 - 0x5D4];
+    /* 0x5D4 */ u8 _5D4[0x5D8 - 0x5D4];
+    /* 0x5D8 */ xyz_t shadow_pos;
+    /* 0x5E4 */ u8 _5E4[0x630 - 0x5E4];
 } aNPC_draw_info_c;
 
 typedef void (*aNPC_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*, int);

@@ -29,17 +29,19 @@ extern cKF_Animation_R_c cKF_ba_r_obj_romtrain_door;
 static void aTRD_actor_ct(ACTOR* actor, GAME* game) {
     TRAINDOOR_ACTOR* traindoor = (TRAINDOOR_ACTOR*)actor;
 
-    cKF_SkeletonInfo_R_ct(&traindoor->keyframe, &cKF_bs_r_obj_romtrain_door, NULL, traindoor->work, traindoor->target);
-    cKF_SkeletonInfo_R_init(&traindoor->keyframe, traindoor->keyframe.skeleton, &cKF_ba_r_obj_romtrain_door, 1.0f,
+    cKF_SkeletonInfo_R_ct(&traindoor->common_actor_class.anime.keyframe, &cKF_bs_r_obj_romtrain_door, NULL,
+                          traindoor->work, traindoor->target);
+    cKF_SkeletonInfo_R_init(&traindoor->common_actor_class.anime.keyframe,
+                            traindoor->common_actor_class.anime.keyframe.skeleton, &cKF_ba_r_obj_romtrain_door, 1.0f,
                             51.0f, 1.0f, 0.0f, 0.0f, 0, NULL);
-    traindoor->keyframe.morph_counter = 0.0f;
-    cKF_SkeletonInfo_R_play(&traindoor->keyframe);
+    traindoor->common_actor_class.anime.keyframe.morph_counter = 0.0f;
+    cKF_SkeletonInfo_R_play(&traindoor->common_actor_class.anime.keyframe);
 }
 
 static void aTRD_actor_dt(ACTOR* actor, GAME* game) {
     TRAINDOOR_ACTOR* traindoor = (TRAINDOOR_ACTOR*)actor;
 
-    cKF_SkeletonInfo_R_dt(&traindoor->keyframe);
+    cKF_SkeletonInfo_R_dt(&traindoor->common_actor_class.anime.keyframe);
 }
 
 static void aTRD_set_door_SE(ACTOR* actor) {
@@ -50,8 +52,8 @@ static void aTRD_set_door_SE(ACTOR* actor) {
     int i;
 
     for (i = 0; i < 2; i++) {
-        if (cKF_FrameControl_passCheck_now(&traindoor->keyframe.frame_control, chk_pat[i])) {
-            sAdo_OngenTrgStart(se_no[i], &traindoor->actor_class.world.position);
+        if (cKF_FrameControl_passCheck_now(&traindoor->common_actor_class.anime.keyframe.frame_control, chk_pat[i])) {
+            sAdo_OngenTrgStart(se_no[i], &traindoor->common_actor_class.actor_class.world.position);
             break;
         }
     }
@@ -62,12 +64,13 @@ static void aTRD_actor_move(ACTOR* actor, GAME* game) {
 
     if (traindoor->open_flag == TRUE) {
         traindoor->open_flag = FALSE;
-        traindoor->keyframe.frame_control.speed = 0.5f;
+        traindoor->common_actor_class.anime.keyframe.frame_control.speed = 0.5f;
     }
 
-    if (cKF_SkeletonInfo_R_play(&traindoor->keyframe) == cKF_FRAMECONTROL_REPEAT) {
-        traindoor->keyframe.frame_control.current_frame = traindoor->keyframe.frame_control.start_frame;
-        traindoor->keyframe.frame_control.speed = 0.0f;
+    if (cKF_SkeletonInfo_R_play(&traindoor->common_actor_class.anime.keyframe) == cKF_FRAMECONTROL_REPEAT) {
+        traindoor->common_actor_class.anime.keyframe.frame_control.current_frame =
+            traindoor->common_actor_class.anime.keyframe.frame_control.start_frame;
+        traindoor->common_actor_class.anime.keyframe.frame_control.speed = 0.0f;
     }
 
     aTRD_set_door_SE(actor);
@@ -76,7 +79,7 @@ static void aTRD_actor_move(ACTOR* actor, GAME* game) {
 static void aTRD_actor_draw(ACTOR* actor, GAME* game) {
     TRAINDOOR_ACTOR* traindoor = (TRAINDOOR_ACTOR*)actor;
 
-    cKF_SkeletonInfo_R_c* keyf = &traindoor->keyframe;
+    cKF_SkeletonInfo_R_c* keyf = &traindoor->common_actor_class.anime.keyframe;
     Mtx* mtxp;
 
     mtxp = GRAPH_ALLOC_TYPE(game->graph, Mtx, (u32)keyf->skeleton->num_shown_joints);
