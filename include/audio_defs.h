@@ -74,9 +74,11 @@ typedef enum audio_sound_effects {
     NA_SE_STONECOIN_ROLL = 0x7D,
     NA_SE_STONECOIN_DRAG = 0x7E,
 
-    NA_SE_A8 = 0xA8,
+    NA_SE_TRAIN_RIDE = 0x8D,
 
-    NA_SE_CF = 0xCF,
+    NA_SE_GOKI_MOVE = 0xA8,
+
+    NA_SE_KA_BUZZ = 0xCF,
 
     NA_SE_ROD_STROKE = 0x109,
     NA_SE_ROD_BACK,

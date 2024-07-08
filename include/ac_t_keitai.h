@@ -13,7 +13,7 @@ extern ACTOR_PROFILE T_Keitai_Profile;
 
 typedef void (*KEITAI_PROC)(ACTOR*);
 
-typedef struct t_keitai_s{
+typedef struct t_keitai_s {
     TOOLS_ACTOR tools_class;
     KEITAI_PROC action_proc;
     int action;
@@ -34,4 +34,3 @@ typedef struct t_keitai_action_anim_s {
 #endif
 
 #endif
-

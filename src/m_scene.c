@@ -320,17 +320,19 @@ static void Scene_Proc_Sound(GAME_PLAY* play, Scene_Word_u* data);
 typedef void (*mSc_SCENE_WORD_PROC)(GAME_PLAY*, Scene_Word_u*);
 
 extern void Scene_ct(GAME_PLAY* play, Scene_Word_u* scene_data) {
-    static mSc_SCENE_WORD_PROC Scene_Proc[mSc_SCENE_DATA_TYPE_NUM] = { &Scene_Proc_Player_Ptr,
-                                                                       &Scene_Proc_Ctrl_Actor_Ptr,
-                                                                       &Scene_Proc_Actor_Ptr,
-                                                                       &Scene_Proc_Object_Exchange_Bank_Ptr,
-                                                                       &Scene_Proc_Door_Data_Ptr,
-                                                                       &Scene_Proc_Field_ct,
-                                                                       &Scene_Proc_MyRoom_ct,
-                                                                       &Scene_Proc_ArrangeRoom_ct,
-                                                                       &Scene_Proc_ArrangeFurniture_ct,
-                                                                       &Scene_Proc_Sound,
-                                                                       NULL };
+    static mSc_SCENE_WORD_PROC Scene_Proc[mSc_SCENE_DATA_TYPE_NUM] = {
+        &Scene_Proc_Player_Ptr,
+        &Scene_Proc_Ctrl_Actor_Ptr,
+        &Scene_Proc_Actor_Ptr,
+        &Scene_Proc_Object_Exchange_Bank_Ptr,
+        &Scene_Proc_Door_Data_Ptr,
+        &Scene_Proc_Field_ct,
+        &Scene_Proc_MyRoom_ct,
+        &Scene_Proc_ArrangeRoom_ct,
+        &Scene_Proc_ArrangeFurniture_ct,
+        &Scene_Proc_Sound,
+        NULL,
+    };
 
     /* Initialize all scene data */
     while (TRUE) {

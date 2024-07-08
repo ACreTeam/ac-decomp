@@ -646,11 +646,11 @@ static void aHNW_setupAction(ACTOR* actor, GAME* game, int action) {
     HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
 
     int house_idx = haniwa->house_idx;
-    int animation_state = haniwa->animation_state;
+    int animation_state = haniwa->common_actor_class.anime.anime_no;
     int no_owner = mPr_NullCheckPersonalID(&Save_Get(homes[house_idx]).ownerID);
     int owner_is_player = mHS_get_pl_no(house_idx) == Common_Get(player_no);
 
-    haniwa->action = action;
+    haniwa->common_actor_class.act = action;
     haniwa->action_proc = process[action];
 
     if (action >= aHNW_ACTION_CHECK_PROCEEDS) {
@@ -674,37 +674,39 @@ static void aHNW_setupAction(ACTOR* actor, GAME* game, int action) {
     }
 
     if (animation_state == 2) {
-        cKF_SkeletonInfo_R_init(&haniwa->keyframe, haniwa->keyframe.skeleton, &cKF_ba_r_hnw_move, 1.0f, 9.0f, 1.0f,
-                                haniwa->anim_frame_speed, 0.0f, cKF_FRAMECONTROL_REPEAT, NULL);
-        haniwa->saved_current_frame = haniwa->keyframe.frame_control.current_frame;
+        cKF_SkeletonInfo_R_init(&haniwa->common_actor_class.anime.keyframe,
+                                haniwa->common_actor_class.anime.keyframe.skeleton, &cKF_ba_r_hnw_move, 1.0f, 9.0f,
+                                1.0f, haniwa->anim_frame_speed, 0.0f, cKF_FRAMECONTROL_REPEAT, NULL);
+        haniwa->common_actor_class.anime.cur_keyframe =
+            haniwa->common_actor_class.anime.keyframe.frame_control.current_frame;
     }
 
-    haniwa->animation_state = 0;
+    haniwa->common_actor_class.anime.anime_no = 0;
     aHNW_init_proc(actor, game, action);
     if (no_owner && action < aHNW_ACTION_CHECK_PROCEEDS) {
-        haniwa->keyframe.frame_control.mode = cKF_FRAMECONTROL_STOP;
+        haniwa->common_actor_class.anime.keyframe.frame_control.mode = cKF_FRAMECONTROL_STOP;
     } else {
-        haniwa->keyframe.frame_control.mode = cKF_FRAMECONTROL_REPEAT;
+        haniwa->common_actor_class.anime.keyframe.frame_control.mode = cKF_FRAMECONTROL_REPEAT;
     }
 }
 
 static void aHNW_common_process(ACTOR* actor, GAME* game) {
     HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
-    cKF_SkeletonInfo_R_c* keyframe = &haniwa->keyframe;
+    cKF_SkeletonInfo_R_c* keyframe = &haniwa->common_actor_class.anime.keyframe;
     int house_idx = haniwa->house_idx;
     int no_owner = mPr_NullCheckPersonalID(&Save_Get(homes[house_idx]).ownerID);
     f32 target;
 
     if (no_owner == FALSE && keyframe->frame_control.mode == cKF_FRAMECONTROL_STOP) {
-        aHNW_setupAction((ACTOR*)haniwa, game, haniwa->action);
+        aHNW_setupAction((ACTOR*)haniwa, game, haniwa->common_actor_class.act);
         keyframe->frame_control.mode = cKF_FRAMECONTROL_REPEAT;
-    } else if (no_owner && haniwa->action < 2 && keyframe->frame_control.speed <= 0.1f) {
+    } else if (no_owner && haniwa->common_actor_class.act < 2 && keyframe->frame_control.speed <= 0.1f) {
         keyframe->frame_control.mode = cKF_FRAMECONTROL_STOP;
     } else {
         keyframe->frame_control.mode = cKF_FRAMECONTROL_REPEAT;
     }
 
-    if (no_owner == FALSE || haniwa->action >= aHNW_ACTION_CHECK_PROCEEDS) {
+    if (no_owner == FALSE || haniwa->common_actor_class.act >= aHNW_ACTION_CHECK_PROCEEDS) {
         aHNW_search_player((ACTOR*)haniwa);
     } else {
         aHNW_search_front((ACTOR*)haniwa, house_idx);
@@ -724,13 +726,13 @@ static void aHNW_common_process(ACTOR* actor, GAME* game) {
 static void aHNW_actor_move(ACTOR* actor, GAME* game) {
     HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;
     GAME_PLAY* play = (GAME_PLAY*)game;
-    cKF_SkeletonInfo_R_c* keyframe = &haniwa->keyframe;
+    cKF_SkeletonInfo_R_c* keyframe = &haniwa->common_actor_class.anime.keyframe;
 
-    haniwa->keyframe_state = cKF_SkeletonInfo_R_play(keyframe);
+    haniwa->common_actor_class.anime.state = cKF_SkeletonInfo_R_play(keyframe);
     (*haniwa->action_proc)((ACTOR*)haniwa, game);
     aHNW_common_process(actor, game);
-    CollisionCheck_Uty_ActorWorldPosSetPipeC(actor, &haniwa->col_pipe);
-    CollisionCheck_setOC(game, &play->collision_check, &haniwa->col_pipe.collision_obj);
+    CollisionCheck_Uty_ActorWorldPosSetPipeC(actor, &haniwa->common_actor_class.col_pipe);
+    CollisionCheck_setOC(game, &play->collision_check, &haniwa->common_actor_class.col_pipe.collision_obj);
     Actor_world_to_eye(actor, 50.0f);
 }
 
@@ -743,6 +745,6 @@ static void aHNW_actor_init(ACTOR* actor, GAME* game) {
     actor->dw_proc = &aHNW_actor_draw;
     aHNW_setupAction((ACTOR*)haniwa, game,
                      aHNW_ACTION_WAIT); // weird that we have to re-cast to ACTOR so fequently for matches
-    haniwa->keyframe.morph_counter = 0.0f;
+    haniwa->common_actor_class.anime.keyframe.morph_counter = 0.0f;
     aHNW_actor_move(actor, game);
 }
