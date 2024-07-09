@@ -1,22 +1,17 @@
 typedef struct npc_guide_animation_s {
     int anim_id;
     int talk_flag;
-} aNGD_anime_c;
+} aNG2_anime_c;
 
-static void aNGD_set_animation(NPC_GUIDE_ACTOR* guide, int action) {
+static void aNG2_set_animation(NPC_GUIDE2_ACTOR* guide2, int action) {
     // clang-format off
-    static aNGD_anime_c anime[] = {
+    static aNG2_anime_c anime[] = {
         { aNPC_ANIM_OPEN_D1, FALSE },
         { aNPC_ANIM_WALK1, FALSE },
         { aNPC_ANIM_WAIT1, TRUE },
         { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },
         { aNPC_ANIM_SITDOWN_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
         { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
         { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
         { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
@@ -43,17 +38,8 @@ static void aNGD_set_animation(NPC_GUIDE_ACTOR* guide, int action) {
     };
     // clang-format on
 
-    aNGD_anime_c* anime_info = &anime[action];
-    int anim_id = anime_info->anim_id;
-    int talk_flag = anime_info->talk_flag;
+    aNG2_anime_c* anime_info = &anime[action];
 
-    if ((action == aNGD_ACTION_SDON_AND_PB_WAIT || action == aNGD_ACTION_MSG_WIN_OPEN_WAIT ||
-         action == aNGD_ACTION_CONFIRM_INPUT_DATA) &&
-        guide->next_action != aNGD_ACTION_TIME_MENU_OPEN_WAIT &&
-        guide->next_action != aNGD_ACTION_TIME_MENU_CLOSE_WAIT) {
-        anim_id = aNPC_ANIM_SITDOWN_WAIT_D1;
-        talk_flag = TRUE;
-    }
-
-    Common_Get(clip).npc_clip->animation_init_proc(&guide->npc_class.actor_class, anim_id, talk_flag);
+    Common_Get(clip).npc_clip->animation_init_proc(&guide2->npc_class.actor_class, anime_info->anim_id,
+                                                   anime_info->talk_flag);
 }
