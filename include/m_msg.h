@@ -359,10 +359,14 @@ extern void mMsg_sound_unset_voice_silent(mMsg_Window_c* msg_p, int update_mode)
 
 #define mMsg_GET_MSG_NUM() mMsg_Get_msg_num(mMsg_Get_base_window_p())
 
+#define mMsg_SET_IDLING_REQ() mMsg_Set_idling_req(mMsg_Get_base_window_p())
+
 #define mMsg_CHECK_MAINNORMALCONTINUE() mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p())
+#define mMsg_CHECK_MAINNORMAL() mMsg_Check_MainNormal(mMsg_Get_base_window_p())
 #define mMsg_CHECK_MAINDISAPPEAR() mMsg_Check_MainDisappear(mMsg_Get_base_window_p())
 #define mMsg_CHECK_MAINHIDE() mMsg_Check_MainHide(mMsg_Get_base_window_p())
 #define mMsg_CHECK_MAIN_WAIT() mMsg_Check_main_wait(mMsg_Get_base_window_p())
+#define mMsg_CHECK_NOT_SERIES_MAIN_WAIT() mMsg_Check_not_series_main_wait(mMsg_Get_base_window_p())
 
 #define mMsg_REQUEST_MAIN_DISAPPEAR() mMsg_request_main_disappear(mMsg_Get_base_window_p())
 #define mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1() mMsg_request_main_disappear_wait_type1(mMsg_Get_base_window_p())
