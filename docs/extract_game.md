@@ -40,12 +40,6 @@ Once files have been extracted you will need to copy the following files into th
 
 Make sure to rename `main.dol` to `static.dol`.
 
-You will also need to decompress `foresta.rel.szs` using `yaz0` found in `tools/` using the following command:
-
-~~~~console
-yaz0 -d foresta.rel.szs foresta.rel
-~~~~
-
 It is recommended that you also copy the following symbol maps for reference:
 - `foresta.map`
 - `static.map`

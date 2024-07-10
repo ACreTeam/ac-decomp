@@ -97,11 +97,11 @@ n.variable("ld", c.LD)
 n.variable("devkitppc", c.DEVKITPPC)
 n.variable("as", c.AS)
 n.variable("cpp", c.CPP)
-n.variable("iconv", c.ICONV)
 n.variable("forcefilesgen", c.FORCEFILESGEN)
 n.variable("vtxdis", c.VTXDIS)
 n.variable("pal16dis", c.PAL16DIS)
 n.variable("arctool", c.ARC_TOOL)
+n.variable("sjiswrap", c.SJISWRAP)
 n.newline()
 
 ##############
@@ -121,7 +121,7 @@ n.newline()
 
 # Windows can't use && without this statement
 ALLOW_CHAIN = "cmd /c " if os.name == "nt" else ""
-mwcc_cmd = ALLOW_CHAIN + f"$cpp -M $in -MF $out.d $cppflags && $cc $cflags -c $in -o $out"
+mwcc_cmd = ALLOW_CHAIN + f"$cpp -M $in -MF $out.d $cppflags && $sjiswrap $cc $cflags -c $in -o $out"
 
 n.rule(
     "relextern",
@@ -225,7 +225,7 @@ n.rule(
 
 n.rule(
     "ccs",
-    command = ALLOW_CHAIN + f"$cpp -M $in -MF $out.d $cppflags && $cc $cflags -S $in -o $out",
+    command = ALLOW_CHAIN + f"$cpp -M $in -MF $out.d $cppflags && $sjiswrap $cc $cflags -S $in -o $out",
     description = "CC -S $in",
     deps = "gcc",
     depfile = "$out.d"
@@ -235,12 +235,6 @@ n.rule(
     "ld",
     command = "$ld $ldflags -map $map -lcf $lcf $in -o $out",
     description = "LD $out",
-)
-
-n.rule(
-    "iconv",
-    command = "$iconv $in $out",
-    description = "iconv $in",
 )
 
 n.rule(
@@ -265,6 +259,12 @@ n.rule(
     "arctool",
     command = "$arctool -v $in $out",
     description = "$arctool -v $in $out"
+)
+
+n.rule(
+    "sjiswrap",
+    command = "$sjiswrap $in",
+    description = "sjiswrap $in",
 )
 
 ##########
@@ -676,7 +676,6 @@ class CSource(Source):
         else:
             self.cflags = ctx.cflags
             self.cc = c.CC_R
-        self.iconv_path = f"$builddir/iconv/{path}"
 
  # Find generated includes
         with open(path, encoding="utf-8") as f:
@@ -687,15 +686,9 @@ class CSource(Source):
         
     def build(self):
         n.build(
-            self.iconv_path,
-            rule="iconv",
-            inputs=self.src_path
-        )
-
-        n.build(
             self.o_path,
             rule = "cc",
-            inputs = self.iconv_path,
+            inputs = self.src_path,
             implicit = [inc.path for inc in self.gen_includes],
             variables = {
                 "cc" : self.cc,
@@ -707,7 +700,7 @@ class CSource(Source):
         n.build(
             self.s_path,
             rule = "ccs",
-            inputs = self.iconv_path,
+            inputs = self.src_path,
             implicit = [inc.path for inc in self.gen_includes],
             variables = {
                 "cflags" : self.cflags
