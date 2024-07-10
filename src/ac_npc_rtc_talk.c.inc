@@ -246,7 +246,7 @@ static void aNRTC_set_talk_info_talk_request() {
     }
 
     mDemo_Set_msg_num(msg);
-    mDemo_Set_camera(TRUE);
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
 }
 
 static void aNRTC_talk_request(ACTOR* actor, GAME* game) {
