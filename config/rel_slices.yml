@@ -360,6 +360,10 @@ main.c:
     .text: [0x80407AE8, 0x80407CF4]
     .data: [0x8065F110, 0x8065F138]
     .bss: [0x812F4CC0, 0x812F5038]
+padmgr.c:
+    .text: [0x80407CF4, 0x80408940]
+    .data: [0x8065F138, 0x8065F150]
+    .bss: [0x812F5038, 0x812F54A0]
 sys_math.c:
     .text: [0x80408940, 0x80408A44]
     .rodata: [0x806437C0, 0x806437D0]
