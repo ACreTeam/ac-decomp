@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+extern u8 FrameCansel;
+
 extern void emu64_set_ucode_info(int count, ucode_info* ucode_info);
 extern void emu64_set_first_ucode(void* ucode);
 extern void emu64_taskstart(Gfx* gfx);

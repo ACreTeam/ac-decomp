@@ -99,6 +99,22 @@ static inline void OSf32tos8(f32* f, s8* out) {
     *out = __OSf32tos8(*f);
 }
 
+static inline float __OSs16tof32(register s16* s) {
+    register float f;
+
+#ifdef __MWERKS__ // clang-format off
+    asm {
+        psq_l f, 0(s), 1, 5
+    }
+#endif // clang-format on
+
+    return f;
+}
+
+static inline void OSs16tof32(register s16* s, volatile register f32* f) {
+    *f = __OSs16tof32(s);
+}
+
 //////////////////////////////////
 
 #ifdef __cplusplus
