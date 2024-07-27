@@ -469,8 +469,12 @@ extern void get_dol_wd_ht(unsigned int siz, unsigned int in_wd, unsigned int in_
     unsigned int blk_ht;
 
     get_blk_wd_ht(siz, &blk_wd, &blk_ht);
-    *wd = in_wd + (blk_wd - 1) & ~(blk_wd - 1);
-    *ht = in_ht + (blk_ht - 1) & ~(blk_ht - 1);
+
+    unsigned int w = blk_wd - 1;
+    unsigned int h = blk_ht - 1;
+
+    *wd = in_wd + w & ~w;
+    *ht = in_ht + h & ~h;
 }
 
 void emu64::texconv_tile(u8* addr, u8* converted_addr, unsigned int wd, unsigned int fmt, unsigned int siz,
@@ -580,17 +584,19 @@ u8* emu64::texconv_tile_new(u8* addr, unsigned int wd, unsigned int fmt, unsigne
     u8* converted_addr = (u8*)(*texture_cache->funcs->search)(addr);
 
     /* Check if we already converted this texture */
-    if (converted_addr == nullptr) {
-        u32 len = get_dol_tex_siz(siz, (end_wd - start_wd) + 1, (end_ht - start_ht) + 1);
+    if (converted_addr != nullptr) {
+        return converted_addr;
+    }
 
-        converted_addr = (u8*)(*texture_cache->funcs->alloc)(texture_cache, len);
-        if (converted_addr != nullptr) {
-            /* Convert from N64 -> GC */
-            this->texconv_tile(addr, converted_addr, wd, fmt, siz, start_wd, start_ht, end_wd, end_ht, line_siz);
-            /* Update cache & store entry */
-            DCStoreRange(converted_addr, len);
-            (*texture_cache->funcs->entry)(addr, converted_addr);
-        }
+    u32 len = get_dol_tex_siz(siz, (end_wd - start_wd) + 1, (end_ht - start_ht) + 1);
+
+    converted_addr = (u8*)(*texture_cache->funcs->alloc)(texture_cache, len);
+    if (converted_addr != nullptr) {
+        /* Convert from N64 -> GC */
+        this->texconv_tile(addr, converted_addr, wd, fmt, siz, start_wd, start_ht, end_wd, end_ht, line_siz);
+        /* Update cache & store entry */
+        DCStoreRange(converted_addr, len);
+        (*texture_cache->funcs->entry)(addr, converted_addr);
     }
 
     return converted_addr;
