@@ -25,6 +25,37 @@ extern "C" {
 #define aNPC_SPNPC_BIT_SET(field, bit) ((field) |= (1 << (bit)))
 #define aNPC_SPNPC_BIT_CLR(field, bit) ((field) &= ~(1 << (bit)))
 
+enum {
+    aNPC_JOINT_BASE_ROOT,
+    aNPC_JOINT_BASE,
+    aNPC_JOINT_LFOOT_ROOT,
+    aNPC_JOINT_LFOOT1,
+    aNPC_JOINT_LFOOT2,
+    aNPC_JOINT_LFOOT3,
+    aNPC_JOINT_RFOOT_ROOT,
+    aNPC_JOINT_RFOOT1,
+    aNPC_JOINT_RFOOT2,
+    aNPC_JOINT_RFOOT3,
+    aNPC_JOINT_TAIL_ROOT,
+    aNPC_JOINT_TAIL1,
+    aNPC_JOINT_TAIL2,
+    aNPC_JOINT_CHEST,
+    aNPC_JOINT_LARM_ROOT,
+    aNPC_JOINT_LARM1,
+    aNPC_JOINT_LARM2,
+    aNPC_JOINT_RARM_ROOT,
+    aNPC_JOINT_RARM1,
+    aNPC_JOINT_RARM2,
+    aNPC_JOINT_HAND,
+    aNPC_JOINT_HEAD_ROOT,
+    aNPC_JOINT_MOUTH_ROOT,
+    aNPC_JOINT_MOUTH,
+    aNPC_JOINT_HEAD,
+    aNPC_JOINT_FEEL,
+
+    aNPC_JOINT_NUM
+};
+
 typedef struct ac_npc_clip_s aNPC_Clip_c;
 
 #define aNPC_EYE_TEX_NUM 8
