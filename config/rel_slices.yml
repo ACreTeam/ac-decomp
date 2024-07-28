@@ -1906,6 +1906,8 @@ data/model/mural/obj_mural.c:
     .data: [0x80904600, 0x80904700]
 data/npc/default_list.c:
     .data: [0x8096CD90, 0x8096D328]
+data/npc/npc_draw_data.c:
+    .data: [0x8096D328, 0x80977450]
 data/npc/grow_list.c:
     .data: [0x80977450, 0x80977540]
 data/npc/house_list.c:
