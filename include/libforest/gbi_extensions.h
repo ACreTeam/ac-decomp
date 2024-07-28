@@ -22,24 +22,21 @@ extern "C" {
 #define ANIME_4_TXT_SIZE 0x800
 #define ANIME_6_MODEL_SIZE 0x408
 
-#define SEGMENT_SHIFT 24
+#define SEG_EQUALS(seg_addr, seg) (seg_addr == SEGMENT_ADDR(seg, 0))
 
-#define SEG_2_SEGADDR(seg) (seg << SEGMENT_SHIFT)
-#define SEG_EQUALS(seg_addr, seg) (seg_addr == SEG_2_SEGADDR(seg))
-
-#define softsprite_mtx SEG_2_SEGADDR(SOFTSPRITE_MTX_SEG)
-#define anime_1_txt SEG_2_SEGADDR(ANIME_1_TXT_SEG)
-#define anime_1_model SEG_2_SEGADDR(ANIME_1_TXT_SEG)
-#define anime_2_txt SEG_2_SEGADDR(ANIME_2_TXT_SEG)
-#define anime_2_model SEG_2_SEGADDR(ANIME_2_TXT_SEG)
-#define anime_3_txt SEG_2_SEGADDR(ANIME_3_TXT_SEG)
-#define anime_3_model SEG_2_SEGADDR(ANIME_3_TXT_SEG)
-#define anime_4_txt SEG_2_SEGADDR(ANIME_4_TXT_SEG)
-#define anime_4_model SEG_2_SEGADDR(ANIME_4_TXT_SEG)
-#define anime_5_txt SEG_2_SEGADDR(ANIME_5_TXT_SEG)
-#define anime_5_model SEG_2_SEGADDR(ANIME_5_TXT_SEG)
-#define anime_6_txt SEG_2_SEGADDR(ANIME_6_TXT_SEG)
-#define anime_6_model SEG_2_SEGADDR(ANIME_6_TXT_SEG)
+#define softsprite_mtx SEGMENT_ADDR(SOFTSPRITE_MTX_SEG, 0)
+#define anime_1_txt SEGMENT_ADDR(ANIME_1_TXT_SEG, 0)
+#define anime_1_model SEGMENT_ADDR(ANIME_1_TXT_SEG, 0)
+#define anime_2_txt SEGMENT_ADDR(ANIME_2_TXT_SEG, 0)
+#define anime_2_model SEGMENT_ADDR(ANIME_2_TXT_SEG, 0)
+#define anime_3_txt SEGMENT_ADDR(ANIME_3_TXT_SEG, 0)
+#define anime_3_model SEGMENT_ADDR(ANIME_3_TXT_SEG, 0)
+#define anime_4_txt SEGMENT_ADDR(ANIME_4_TXT_SEG, 0)
+#define anime_4_model SEGMENT_ADDR(ANIME_4_TXT_SEG, 0)
+#define anime_5_txt SEGMENT_ADDR(ANIME_5_TXT_SEG, 0)
+#define anime_5_model SEGMENT_ADDR(ANIME_5_TXT_SEG, 0)
+#define anime_6_txt SEGMENT_ADDR(ANIME_6_TXT_SEG, 0)
+#define anime_6_model SEGMENT_ADDR(ANIME_6_TXT_SEG, 0)
 
 /* New Microcode Command Ids */
 #define G_TRIN 0x09
