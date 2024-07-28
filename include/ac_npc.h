@@ -27,10 +27,38 @@ extern "C" {
 
 typedef struct ac_npc_clip_s aNPC_Clip_c;
 
+#define aNPC_EYE_TEX_NUM 8
+#define aNPC_MOUTH_TEX_NUM 6
+
+/* sizeof(aNPC_draw_tex_data_c) == 0x4C */
+typedef struct ac_npc_draw_data_tex_s {
+    /* 0x00 */ u8* texture;  // main animal texture
+    /* 0x04 */ u16* palette; // palette for animal
+    /* 0x08 */ u8* eye_texture[aNPC_EYE_TEX_NUM];
+    /* 0x28 */ u8* mouth_texture[aNPC_MOUTH_TEX_NUM];
+    /* 0x40 */ int _40;
+    /* 0x44 */ int _44;
+    /* 0x48 */ int _48;
+} aNPC_draw_tex_data_c;
+
+/* sizeof(aNPC_draw_data_c) == 0x6C */
 typedef struct npc_draw_data_s {
-    s16 model_bank;
-    s16 texture_bank;
-    u8 _04[0x68]; // TODO
+    /* 0x00 */ s16 model_bank;
+    /* 0x02 */ s16 texture_bank;
+    /* 0x04 */ cKF_Skeleton_R_c* model_skeleton;
+    /* 0x08 */ aNPC_draw_tex_data_c tex_data;
+    /* 0x54 */ f32 scale;
+    /* 0x58 */ int talk_type;
+    /* 0x5C */ u8 species_sub_idx; // index into the current species type
+    /* 0x5D */ u8 umbrella_type;   // default umbrella type -- only used for special NPCs
+    /* 0x5E */ u8 eye_height;      // height of "eye" from the ground
+    /* 0x5F */ u8 _5F;
+    /* 0x60 */ u16 _60;
+    /* 0x62 */ u16 voice_type;      // voice/melody type
+    /* 0x64 */ s16 col_radius;      // collision pipe radius
+    /* 0x66 */ s16 col_height;      // collision pipe height
+    /* 0x68 */ s16 accessory_type;  // type of accessory
+    /* 0x6A */ s16 accessory_joint; // joint the accessory is attached to
 } aNPC_draw_data_c;
 
 enum {
