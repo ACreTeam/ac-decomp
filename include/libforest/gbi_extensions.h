@@ -11,6 +11,36 @@ extern "C" {
 #include <PR/mbi.h>
 #include "dolphin/gx.h"
 
+#define SOFTSPRITE_MTX_SEG 0x07
+#define ANIME_1_TXT_SEG 0x08
+#define ANIME_2_TXT_SEG 0x09
+#define ANIME_3_TXT_SEG 0x0A
+#define ANIME_4_TXT_SEG 0x0B
+#define ANIME_5_TXT_SEG 0x0C
+#define ANIME_6_TXT_SEG 0x0D
+
+#define ANIME_4_TXT_SIZE 0x800
+#define ANIME_6_MODEL_SIZE 0x408
+
+#define SEGMENT_SHIFT 24
+
+#define SEG_2_SEGADDR(seg) (seg << SEGMENT_SHIFT)
+#define SEG_EQUALS(seg_addr, seg) (seg_addr == SEG_2_SEGADDR(seg))
+
+#define softsprite_mtx SEG_2_SEGADDR(SOFTSPRITE_MTX_SEG)
+#define anime_1_txt SEG_2_SEGADDR(ANIME_1_TXT_SEG)
+#define anime_1_model SEG_2_SEGADDR(ANIME_1_TXT_SEG)
+#define anime_2_txt SEG_2_SEGADDR(ANIME_2_TXT_SEG)
+#define anime_2_model SEG_2_SEGADDR(ANIME_2_TXT_SEG)
+#define anime_3_txt SEG_2_SEGADDR(ANIME_3_TXT_SEG)
+#define anime_3_model SEG_2_SEGADDR(ANIME_3_TXT_SEG)
+#define anime_4_txt SEG_2_SEGADDR(ANIME_4_TXT_SEG)
+#define anime_4_model SEG_2_SEGADDR(ANIME_4_TXT_SEG)
+#define anime_5_txt SEG_2_SEGADDR(ANIME_5_TXT_SEG)
+#define anime_5_model SEG_2_SEGADDR(ANIME_5_TXT_SEG)
+#define anime_6_txt SEG_2_SEGADDR(ANIME_6_TXT_SEG)
+#define anime_6_model SEG_2_SEGADDR(ANIME_6_TXT_SEG)
+
 /* New Microcode Command Ids */
 #define G_TRIN 0x09
 #define G_TRIN_INDEPEND 0x0A
