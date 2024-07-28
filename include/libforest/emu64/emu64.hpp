@@ -129,19 +129,6 @@
 #define EMU64_TLUT_IA16 0x0000
 #define EMU64_TLUT_RGBA5551 0x8000
 
-#define SOFTSPRITE_MTX_SEG 0x07
-#define ANIME_1_TXT_SEG 0x08
-#define ANIME_2_TXT_SEG 0x09
-#define ANIME_3_TXT_SEG 0x0A
-#define ANIME_4_TXT_SEG 0x0B
-#define ANIME_5_TXT_SEG 0x0C
-#define ANIME_6_TXT_SEG 0x0D
-
-#define SEGMENT_SHIFT 24
-
-#define SEG_2_SEGADDR(seg) (seg << SEGMENT_SHIFT)
-#define SEG_EQUALS(seg_addr, seg) (seg_addr == SEG_2_SEGADDR(seg))
-
 /* TODO: figure out where this actually belongs */
 namespace std {
 typedef struct __va_list_struct __tag_va_List;

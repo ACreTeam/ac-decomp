@@ -11,6 +11,33 @@ extern "C" {
 #include <PR/mbi.h>
 #include "dolphin/gx.h"
 
+#define SOFTSPRITE_MTX_SEG 0x07
+#define ANIME_1_TXT_SEG 0x08
+#define ANIME_2_TXT_SEG 0x09
+#define ANIME_3_TXT_SEG 0x0A
+#define ANIME_4_TXT_SEG 0x0B
+#define ANIME_5_TXT_SEG 0x0C
+#define ANIME_6_TXT_SEG 0x0D
+
+#define ANIME_4_TXT_SIZE 0x800
+#define ANIME_6_MODEL_SIZE 0x408
+
+#define SEG_EQUALS(seg_addr, seg) (seg_addr == SEGMENT_ADDR(seg, 0))
+
+#define softsprite_mtx SEGMENT_ADDR(SOFTSPRITE_MTX_SEG, 0)
+#define anime_1_txt SEGMENT_ADDR(ANIME_1_TXT_SEG, 0)
+#define anime_1_model SEGMENT_ADDR(ANIME_1_TXT_SEG, 0)
+#define anime_2_txt SEGMENT_ADDR(ANIME_2_TXT_SEG, 0)
+#define anime_2_model SEGMENT_ADDR(ANIME_2_TXT_SEG, 0)
+#define anime_3_txt SEGMENT_ADDR(ANIME_3_TXT_SEG, 0)
+#define anime_3_model SEGMENT_ADDR(ANIME_3_TXT_SEG, 0)
+#define anime_4_txt SEGMENT_ADDR(ANIME_4_TXT_SEG, 0)
+#define anime_4_model SEGMENT_ADDR(ANIME_4_TXT_SEG, 0)
+#define anime_5_txt SEGMENT_ADDR(ANIME_5_TXT_SEG, 0)
+#define anime_5_model SEGMENT_ADDR(ANIME_5_TXT_SEG, 0)
+#define anime_6_txt SEGMENT_ADDR(ANIME_6_TXT_SEG, 0)
+#define anime_6_model SEGMENT_ADDR(ANIME_6_TXT_SEG, 0)
+
 /* New Microcode Command Ids */
 #define G_TRIN 0x09
 #define G_TRIN_INDEPEND 0x0A

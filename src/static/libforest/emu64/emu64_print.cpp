@@ -60,12 +60,12 @@ const char* emu64::segchk(u32 segment) {
             s = "anime_5_model";
         } else if (SEG_EQUALS(segment, ANIME_6_TXT_SEG)) {
             s = "anime_6_model";
-        } else if (segment > SEG_2_SEGADDR(ANIME_4_TXT_SEG) && segment < (SEG_2_SEGADDR(ANIME_4_TXT_SEG) + 0x800)) {
-            snprintf(buf, sizeof(buf) - 1, str0, segment - SEG_2_SEGADDR(ANIME_4_TXT_SEG));
+        } else if (segment > anime_4_txt && segment < (anime_4_txt + ANIME_4_TXT_SIZE)) {
+            snprintf(buf, sizeof(buf) - 1, str0, segment - anime_4_txt);
             s = buf;
         } else {
-            if (segment > 0xD000000 && segment < 0xD000408) {
-                int comb = segment - 0x0D000000;
+            if (segment > anime_6_model && segment < (anime_6_model + ANIME_6_MODEL_SIZE)) {
+                int comb = segment - anime_6_model;
                 snprintf(buf, sizeof(buf) - 1, str1, comb / (int)sizeof(Mtx));
                 s = buf;
             } else {
