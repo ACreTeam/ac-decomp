@@ -215,12 +215,12 @@ CC = os.path.join(CODEWARRIOR, "mwcceppc.exe")
 CC_R = os.path.join(CODEWARRIOR_RODATA_POOL_FIX, "mwcceppc.exe")
 OCC = os.path.join(SDK_CW, "mwcceppc.exe")
 LD = os.path.join(CODEWARRIOR, "mwldeppc.exe")
-SJISWRAP = f"{TOOLS}/sjiswrap.exe"
 if platform != "win32":
     LD = f"wibo {LD}"
-    SJISWRAP = f"wibo {SJISWRAP}"
+    SJISWRAP = f"wibo {TOOLS}/sjiswrap.exe"
 else:
     ORTHRUS = os.path.join(TOOLS, "orthrus.exe")
+    SJISWRAP = os.path.join(TOOLS, "sjiswrap.exe")
 
 # DevkitPPC
 DEVKITPPC = os.environ.get("DEVKITPPC")
