@@ -216,12 +216,11 @@ CC_R = os.path.join(CODEWARRIOR_RODATA_POOL_FIX, "mwcceppc.exe")
 OCC = os.path.join(SDK_CW, "mwcceppc.exe")
 LD = os.path.join(CODEWARRIOR, "mwldeppc.exe")
 if platform != "win32":
-    CC = f"wibo {CC}"
-    CC_R = f"wibo {CC_R}"
-    OCC = f"wibo {OCC}"
     LD = f"wibo {LD}"
+    SJISWRAP = f"wibo {TOOLS}/sjiswrap.exe"
 else:
     ORTHRUS = os.path.join(TOOLS, "orthrus.exe")
+    SJISWRAP = os.path.join(TOOLS, "sjiswrap.exe")
 
 # DevkitPPC
 DEVKITPPC = os.environ.get("DEVKITPPC")
@@ -235,8 +234,6 @@ PAL16DIS = f"{PYTHON} {TOOLS}/converters/pal16dis.py"
 
 # JSystem JKernel archive tool
 ARC_TOOL = f"{PYTHON} {TOOLS}/arc_tool.py"
-
-ICONV = f"{PYTHON} tools/sjis.py" # TODO: get actual iconv working(?)
 
 # N64 SDK path for GBI
 N64SDK = os.environ.get("N64_SDK")

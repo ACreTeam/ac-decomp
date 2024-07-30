@@ -1,5 +1,5 @@
 static void aCR_set_animation(NPC_CURATOR_ACTOR* curator, int action) {
-    static int animeSeqNo[] = { 5, 5, 9 };
+    static int animeSeqNo[] = { aNPC_ANIM_WAIT1, aNPC_ANIM_WAIT1, aNPC_ANIM_WAIT_NEMU1 };
 
     (*Common_Get(clip).npc_clip->animation_init_proc)((ACTOR*)curator, animeSeqNo[action], FALSE);
 }
@@ -7,7 +7,7 @@ static void aCR_set_animation(NPC_CURATOR_ACTOR* curator, int action) {
 static void aCR_set_request_act(NPC_CURATOR_ACTOR* curator) {
     curator->npc_class.request.act_priority = 4;
     curator->npc_class.request.act_idx = 16;
-    curator->npc_class.request.act_type = 2;
+    curator->npc_class.request.act_type = aNPC_ACT_TYPE_SEARCH;
 }
 
 static int aCR_check_sleep_time() {

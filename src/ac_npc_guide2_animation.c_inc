@@ -1,0 +1,45 @@
+typedef struct npc_guide_animation_s {
+    int anim_id;
+    int talk_flag;
+} aNG2_anime_c;
+
+static void aNG2_set_animation(NPC_GUIDE2_ACTOR* guide2, int action) {
+    // clang-format off
+    static aNG2_anime_c anime[] = {
+        { aNPC_ANIM_OPEN_D1, FALSE },
+        { aNPC_ANIM_WALK1, FALSE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_SITDOWN_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_STANDUP_D1, FALSE },
+        { aNPC_ANIM_WAIT1, FALSE },
+        { aNPC_ANIM_WALK1, FALSE },
+        { aNPC_ANIM_WALK1, FALSE },
+        { aNPC_ANIM_TO_DECK_D1, FALSE },
+        { aNPC_ANIM_KEITAI_ON1, FALSE },
+        { aNPC_ANIM_KEITAI_TALK1, TRUE },
+        { aNPC_ANIM_KEITAI_OFF1, FALSE },
+        { aNPC_ANIM_OPEN_D2, FALSE },
+        { aNPC_ANIM_WALK1, FALSE },
+        { aNPC_ANIM_WAIT1, FALSE },
+        { aNPC_ANIM_WAIT1, TRUE },
+        { aNPC_ANIM_SITDOWN_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, TRUE },
+        { aNPC_ANIM_SITDOWN_WAIT_D1, FALSE },
+    };
+    // clang-format on
+
+    aNG2_anime_c* anime_info = &anime[action];
+
+    Common_Get(clip).npc_clip->animation_init_proc(&guide2->npc_class.actor_class, anime_info->anim_id,
+                                                   anime_info->talk_flag);
+}

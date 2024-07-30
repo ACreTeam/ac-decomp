@@ -1,0 +1,908 @@
+static void aNGD_set_camera(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    static s8 mov_def_cnt[] = { 3, 0 };
+    static f32 obj_look_y_max[] = { 30.0f, 20.0f };
+    static f32 obj_look_y_spd[] = { 0.5f, 2.5f };
+
+    xyz_t eye;
+    xyz_t pos;
+    xyz_t ground;
+    s16 move;
+    f32 moveX;
+    f32 moveY;
+    int obj_look_type = guide->obj_look_type;
+    s16 cur_angle;
+    f32 inter;
+    f32 sin;
+    f32 ground_y;
+    s16 angle;
+
+    move = guide->camera_move;
+    guide->camera_move += 0xE20;
+    angle = move;
+    angle += 0xE20;
+    moveX = cos_s(angle) * 0.1f;
+    angle = move;
+    angle += 0xE20;
+    moveY = sin_s(angle) * guide->camera_move_range;
+
+    if (guide->camera_move_y <= 0.0f && moveY >= 0.0f) {
+        s8 cnt = guide->camera_move_cnt;
+
+        cnt--;
+        if (cnt < 0) {
+            s8 set_cnt = guide->camera_move_set_counter;
+
+            set_cnt--;
+            if (set_cnt < 0) {
+                set_cnt = ARRAY_COUNT(mov_def_cnt) - 1;
+            }
+
+            guide->camera_move_set_counter = set_cnt;
+            cnt = mov_def_cnt[set_cnt];
+            guide->camera_move_range = 0.3f;
+        } else {
+            guide->camera_move_range *= 0.35f;
+        }
+
+        guide->camera_move_cnt = cnt;
+    }
+
+    guide->camera_move_y = moveY;
+    cur_angle = guide->camera_tilt_cur_angle;
+    chase_angle(&cur_angle, guide->camera_tilt_goal_angle, guide->camera_tilt_add);
+    guide->camera_tilt_cur_angle = cur_angle;
+    sin = sin_s(cur_angle);
+
+    /* Set camera eye pos */
+    eye.x = moveX + sin * 20.0f + 100.0f;
+    eye.y = moveY + sin * -5.0f + 80.0f;
+    eye.z = 400.0f;
+
+    /* Move NPC head to current target */
+    chase_f(&guide->npc_class.eye_y, obj_look_y_max[obj_look_type], obj_look_y_spd[obj_look_type] * 0.5f);
+
+    /* Set ground pos */
+    ground.x = guide->npc_class.draw.shadow_pos.x;
+    ground.z = guide->npc_class.draw.shadow_pos.z;
+    if (obj_look_type == aNGD_OBJ_LOOK_TYPE_TALK) {
+        /* Use the guide's NPC shadow position for Y */
+        ground_y = guide->npc_class.draw.shadow_pos.y;
+    } else {
+        /* Get the ground position for Y */
+        ground_y = mCoBG_GetBgY_OnlyCenter_FromWpos2(ground, 0.0f);
+    }
+
+    chase_f(&guide->obj_dist_ground, ground_y, 0.5f);
+    ground.y = guide->obj_dist_ground;
+
+    /* Set camera center pos */
+    if (guide->lock_camera_flag == TRUE) {
+        pos.x = ground.x;
+        pos.y = ground.y + guide->npc_class.eye_y;
+        pos.z = ground.z;
+    } else if (mDemo_Check(mDemo_TYPE_SPEAK, &guide->npc_class.actor_class) == TRUE) {
+        int morph_counter = guide->camera_morph_counter;
+        f32 r;
+
+        guide->camera_morph_counter = morph_counter - 1;
+        if ((morph_counter - 1) == 0) {
+            guide->lock_camera_flag = TRUE;
+        }
+
+        r = (40.0f - (f32)(morph_counter - 1)) / 40.0f;
+        inter = cKF_HermitCalc(r, 1.0f, 0.0f, 1.0f, 3.2f, 0.0f);
+
+        pos.x = (ground.x - 90.0f) * inter + 90.0f;
+        pos.y = ((ground.y + guide->npc_class.eye_y) - 80.0f) * inter + 80.0f;
+        pos.z = (ground.z - 280.0f) * inter + 280.0f;
+    } else {
+        /* Default position */
+        pos.x = 90.0f;
+        pos.y = 80.0f;
+        pos.z = 280.0f;
+    }
+
+    pos.x += moveX;
+    pos.y += moveY;
+
+    Camera2_change_priority(play, 0);
+    Camera2_request_main_lock(play, &pos, &eye, 40.0f, 0, 60.0f, 800.0f, 5);
+}
+
+static void aNGD_set_camera_eyes(NPC_GUIDE_ACTOR* guide) {
+    if (guide->camera_eyes_flag == TRUE) {
+        guide->npc_class.request.head_pos.x = 100.0f;
+        guide->npc_class.request.head_pos.y = guide->npc_class.actor_class.eye.position.y;
+        guide->npc_class.request.head_pos.z = 400.0f;
+        guide->npc_class.request.head_priority = 3;
+        guide->npc_class.request.head_type = 2;
+    }
+}
+
+static void aNGD_set_walk_spd(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->npc_class.movement.max_speed = 1.0f;
+    guide->npc_class.movement.acceleration = 0.1f;
+    guide->npc_class.movement.deceleration = 0.2f;
+}
+
+static void aNGD_set_walk_spd2(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->npc_class.movement.max_speed = 1.5f;
+    guide->npc_class.movement.acceleration = 0.15f;
+    guide->npc_class.movement.deceleration = 0.3f;
+}
+
+static void aNGD_set_stop_spd(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->npc_class.actor_class.speed = 0.0f;
+    guide->npc_class.movement.max_speed = 0.0f;
+    guide->npc_class.movement.acceleration = 0.0f;
+    guide->npc_class.movement.deceleration = 0.0f;
+}
+
+static int aNGD_make_keitai(NPC_GUIDE_ACTOR* guide, GAME* game) {
+    int res = FALSE;
+
+    if (guide->npc_class.right_hand.item_actor_p == NULL) {
+        if (Common_Get(clip).tools_clip != NULL) {
+            ACTOR* keitai = Common_Get(clip).tools_clip->aTOL_birth_proc(TOOL_KEITAI, aTOL_ACTION_TAKEOUT,
+                                                                         &guide->npc_class.actor_class, game, -1, NULL);
+
+            if (keitai != NULL) {
+                guide->npc_class.right_hand.item_actor_p = keitai;
+                res = TRUE;
+            }
+        }
+    } else {
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static int aNGD_chg_cond_keitai(NPC_GUIDE_ACTOR* guide, int cond) {
+    int res = FALSE;
+
+    if (Common_Get(clip).tools_clip != NULL) {
+        if (Common_Get(clip).tools_clip->aTOL_chg_request_mode_proc(
+                &guide->npc_class.actor_class, guide->npc_class.right_hand.item_actor_p, cond) == TRUE) {
+            res = TRUE;
+        }
+    }
+
+    return res;
+}
+
+static void aNGD_talk_demo_proc(ACTOR* actorx) {
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        Common_Get(clip).npc_clip->talk_demo_proc(actorx);
+    }
+}
+
+static void aNGD_check_talk_msg_no(NPC_GUIDE_ACTOR* guide) {
+    if (mDemo_Check(mDemo_TYPE_SPEAK, &guide->npc_class.actor_class) == TRUE) {
+        int msg_no = mMsg_GET_MSG_NUM();
+        int flags;
+
+        switch (msg_no) {
+            case 0x2AC9:
+                flags = (1 << 3);
+                break;
+            case 0x2ACD:
+                flags = (1 << 2);
+                break;
+            case 0x2ACF:
+                flags = (1 << 1);
+                break;
+            case 0x2AD3:
+                flags = (1 << 0);
+                break;
+            default:
+                flags = 0;
+                break;
+        }
+
+        guide->answer_flags |= flags;
+    }
+}
+
+static void aNGD_set_pl_face_type(NPC_GUIDE_ACTOR* guide) {
+    static int face_type_table[mPr_SEX_NUM][mPr_FACE_TYPE_NUM] = {
+        /* Male faces */
+        {
+            mPr_FACE_TYPE5,
+            mPr_FACE_TYPE6,
+            mPr_FACE_TYPE1,
+            mPr_FACE_TYPE4,
+            mPr_FACE_TYPE0,
+            mPr_FACE_TYPE2,
+            mPr_FACE_TYPE7,
+            mPr_FACE_TYPE3,
+        },
+        /* Female faces */
+        {
+            mPr_FACE_TYPE0,
+            mPr_FACE_TYPE5,
+            mPr_FACE_TYPE2,
+            mPr_FACE_TYPE6,
+            mPr_FACE_TYPE4,
+            mPr_FACE_TYPE7,
+            mPr_FACE_TYPE3,
+            mPr_FACE_TYPE1,
+        },
+    };
+
+    int answer_flags = guide->answer_flags;
+    int face_type;
+
+    if ((answer_flags & 1) == 0) {
+        /* Select a random face for the player */
+        face_type = RANDOM(mPr_FACE_TYPE_NUM);
+    } else {
+        /* Select a face based on choices */
+        face_type = face_type_table[Now_Private->gender][answer_flags >> 1];
+    }
+
+    Now_Private->face = face_type;
+}
+
+static void aNGD_calc_body_angl(NPC_GUIDE_ACTOR* guide, f32 pos_x, f32 pos_z) {
+    f32 dX = pos_x - guide->npc_class.actor_class.world.position.x;
+    f32 dZ = pos_z - guide->npc_class.actor_class.world.position.z;
+    s16 angl = atans_table(dZ, dX);
+
+    chase_angle(&guide->npc_class.actor_class.shape_info.rotation.y, angl, DEG2SHORT_ANGLE2(11.25f));
+    guide->npc_class.actor_class.world.angle.y = guide->npc_class.actor_class.shape_info.rotation.y;
+}
+
+static void aNGD_set_default_talk_info(void) {
+    mDemo_Set_camera(CAMERA2_PROCESS_NUM);
+    mDemo_Set_talk_change_player(FALSE);
+    mDemo_Set_use_zoom_sound(TRUE);
+}
+
+static void aNGD_enter(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    if (guide->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        guide->camera_eyes_flag = TRUE;
+        aNGD_setupAction(guide, play, aNGD_ACTION_APPROACH);
+    } else if (cKF_FrameControl_passCheck_now(&guide->npc_class.draw.main_animation.keyframe.frame_control, 20.0f) ==
+               TRUE) {
+        TRAINDOOR_ACTOR* train_door = (TRAINDOOR_ACTOR*)guide->train_door_actor;
+
+        train_door->open_flag = TRUE;
+    }
+}
+
+static void aNGD_approach(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    if (guide->npc_class.actor_class.world.position.z >= 290.0f) {
+        guide->npc_class.actor_class.world.position.z = 290.0f;
+        aNGD_setupAction(guide, play, aNGD_ACTION_TALK_START_WAIT);
+    }
+}
+
+static void aNGD_set_talk_info_talk_start_wait(ACTOR* actorx) {
+    mDemo_Set_msg_num(0x2AC6);
+    aNGD_set_default_talk_info();
+    ((NPC_GUIDE_ACTOR*)actorx)->obj_look_type = aNGD_OBJ_LOOK_TYPE_TALK;
+}
+
+static void aNGD_talk_start_wait(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)guide;
+
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        if (mDemo_Check_ListenAble() == FALSE &&
+            chase_angle(&actorx->shape_info.rotation.y, actorx->player_angle_y, 0x400) == TRUE) {
+            guide->camera_eyes_flag = FALSE;
+            aNGD_setupAction(guide, play, aNGD_ACTION_TIME_CHECK);
+            mDemo_Set_ListenAble();
+        }
+    } else {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aNGD_set_talk_info_talk_start_wait);
+    }
+}
+
+static void aNGD_time_check(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNGD_setupAction(guide, play, aNGD_ACTION_WAIT_PERMISSION);
+                break;
+            case mChoice_CHOICE1:
+                guide->next_action = aNGD_ACTION_TIME_MENU_OPEN_WAIT;
+                aNGD_setupAction(guide, play, aNGD_ACTION_SDON_AND_PB_WAIT);
+                break;
+        }
+    }
+}
+
+static void aNGD_sdon_and_pb_wait(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    u16 order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0 && mMsg_CHECK_MAINNORMALCONTINUE()) {
+        aNGD_setupAction(guide, play, guide->next_action);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNGD_time_menu_open_wait(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
+        aNGD_setupAction(guide, play, guide->action + 1);
+    }
+}
+
+static void aNGD_time_menu_close_wait(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    if (play->submenu.open_flag == FALSE) {
+        aNGD_setupAction(guide, play, aNGD_ACTION_MSG_WIN_OPEN_WAIT);
+    }
+}
+
+static void aNGD_msg_win_open_wait(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    static int msg_no[] = { 0x2AE5, 0x2ACA, 0x2AE4 };
+    static int next_act_idx[] = {
+        aNGD_ACTION_CONFIRM_INPUT_DATA,
+        aNGD_ACTION_SEX_SELECT_WAIT,
+        aNGD_ACTION_CONFIRM_INPUT_DATA,
+    };
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_not_series_main_wait(msg_p) == TRUE) {
+        int idx = -1;
+
+        switch (guide->next_action) {
+            case aNGD_ACTION_TIME_MENU_CLOSE_WAIT:
+                idx = 0;
+                break;
+            case aNGD_ACTION_PNAME_MENU_CLOSE_WAIT:
+                idx = 1;
+                break;
+            case aNGD_ACTION_CNAME_MENU_CLOSE_WAIT:
+                idx = 2;
+                break;
+        }
+
+        if (idx >= 0) {
+            mMsg_Unset_LockContinue(msg_p);
+            mMsg_Set_continue_msg_num(msg_p, msg_no[idx]);
+            mMsg_Set_ForceNext(msg_p);
+            aNGD_setupAction(guide, play, next_act_idx[idx]);
+        }
+    }
+}
+
+static void aNGD_confirm_input_data(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                switch (guide->next_action) {
+                    case aNGD_ACTION_TIME_MENU_CLOSE_WAIT:
+                        aNGD_setupAction(guide, play, aNGD_ACTION_WAIT_PERMISSION);
+                        break;
+                    case aNGD_ACTION_CNAME_MENU_CLOSE_WAIT:
+                        aNGD_setupAction(guide, play, aNGD_ACTION_STANDUP_START_WAIT);
+                        break;
+                }
+                break;
+            case mChoice_CHOICE1:
+                switch (guide->next_action) {
+                    case aNGD_ACTION_TIME_MENU_CLOSE_WAIT:
+                        guide->next_action = aNGD_ACTION_TIME_MENU_OPEN_WAIT;
+                        break;
+                    case aNGD_ACTION_CNAME_MENU_CLOSE_WAIT:
+                        guide->next_action = aNGD_ACTION_CNAME_MENU_OPEN_WAIT;
+                        break;
+                }
+
+                aNGD_setupAction(guide, play, aNGD_ACTION_SDON_AND_PB_WAIT);
+                break;
+        }
+    }
+}
+
+static void aNGD_wait_permission(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        aNGD_setupAction(guide, play, aNGD_ACTION_SITDOWN);
+    }
+}
+
+static void aNGD_sitdown(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->npc_class.actor_class.world.position.x = 100.0f;
+    guide->npc_class.actor_class.world.position.z = 280.0f;
+    guide->npc_class.actor_class.shape_info.rotation.y = 0;
+
+    /* Wait for the sit animation to finish before continuing */
+    if (guide->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        mMsg_UNSET_LOCKCONTINUE();
+        guide->next_action = aNGD_ACTION_PNAME_MENU_OPEN_WAIT;
+        Common_Set(sunlight_flag, TRUE); // turn on the sunlight as we exit tunnel
+        /* Turn off echoes since we exited the tunnel */
+        sAdo_TrgSeEcho(FALSE);
+        sAdo_LevSeEcho(FALSE);
+        aNGD_setupAction(guide, play, aNGD_ACTION_SDON_AND_PB_WAIT);
+    }
+}
+
+static void aNGD_sex_select_wait(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0: // male
+            case mChoice_CHOICE1: // female
+                aNGD_setupAction(guide, play, aNGD_ACTION_SEX_SELECT_WAIT2);
+                break;
+            case mChoice_CHOICE2: // 'That's not right'
+                guide->next_action = aNGD_ACTION_PNAME_MENU_OPEN_WAIT;
+                aNGD_setupAction(guide, play, aNGD_ACTION_SDON_AND_PB_WAIT);
+                break;
+        }
+    }
+}
+
+static void aNGD_sex_select_wait2(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0: // male
+                switch (order) {
+                    case 1: // That's right
+                        Now_Private->gender = mPr_SEX_MALE;
+                        break;
+                    case 2: // I'm not a boy
+                        Now_Private->gender = mPr_SEX_FEMALE;
+                        break;
+                }
+
+                guide->next_action = aNGD_ACTION_CNAME_MENU_OPEN_WAIT;
+                aNGD_setupAction(guide, play, aNGD_ACTION_SDON_AND_PB_WAIT);
+                break;
+            case mChoice_CHOICE1: // female
+                switch (order) {
+                    case 1: // That's right
+                        Now_Private->gender = mPr_SEX_FEMALE;
+                        break;
+                    case 2: // I'm not a girl
+                        Now_Private->gender = mPr_SEX_MALE;
+                        break;
+                }
+                aNGD_setupAction(guide, play, aNGD_ACTION_SEX_SELECT_AFTER);
+                break;
+        }
+
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNGD_sex_select_after(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    u16 order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p)) {
+        mMsg_Set_continue_msg_num(msg_p, 0x2AD8);
+        mMsg_Set_ForceNext(msg_p);
+        guide->next_action = aNGD_ACTION_CNAME_MENU_OPEN_WAIT;
+        aNGD_setupAction(guide, play, aNGD_ACTION_SDON_AND_PB_WAIT);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNGD_standup_start_wait(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    /* Wait for guide to stop speaking to us */
+    if (mDemo_Check(mDemo_TYPE_SPEAK, &guide->npc_class.actor_class) == FALSE) {
+        guide->obj_look_type = aNGD_OBJ_LOOK_TYPE_NORMAL;
+        aNGD_setupAction(guide, play, aNGD_ACTION_STANDUP);
+    }
+}
+
+static void aNGD_standup(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    /* Wait for animation to finish */
+    if (guide->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        aNGD_setupAction(guide, play, guide->next_action);
+    }
+}
+
+static void aNGD_move_ready(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->npc_class.actor_class.world.position.x = 100.0f;
+    guide->npc_class.actor_class.world.position.z = 300.0f;
+    aNGD_setupAction(guide, play, aNGD_ACTION_MOVE_TO_AISLE);
+}
+
+static void aNGD_move_to_aisle(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    aNGD_calc_body_angl(guide, 140.0f, 290.0f);
+    if (guide->npc_class.actor_class.world.position.x > 140.0f) {
+        aNGD_setupAction(guide, play, aNGD_ACTION_MOVE_TO_DOOR);
+    }
+}
+
+static void aNGD_move_to_door(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    aNGD_calc_body_angl(guide, 140.0f, 130.0f);
+    /* Check if we reached the door */
+    if (guide->npc_class.actor_class.world.position.z < 130.0f) {
+        aNGD_setupAction(guide, play, aNGD_ACTION_MOVE_TO_DECK);
+    }
+
+    /* Check if we should start rotating */
+    if (guide->npc_class.draw.shadow_pos.z < 140.0f) {
+        guide->camera_tilt_goal_angle = DEG2SHORT_ANGLE2(90.0f);
+        guide->camera_tilt_add = DEG2SHORT_ANGLE2(2.8125f);
+    }
+}
+
+static void aNGD_move_to_deck(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    if (cKF_FrameControl_passCheck_now(&guide->npc_class.draw.main_animation.keyframe.frame_control, 9.0f) == TRUE) {
+        TRAINDOOR_ACTOR* train_door = (TRAINDOOR_ACTOR*)guide->train_door_actor;
+
+        train_door->open_flag = TRUE;
+    }
+
+    /* Reuse standup state to wait for animation to finish */
+    aNGD_standup(guide, play);
+}
+
+static void aNGD_set_talk_info_keitai_on(ACTOR* actorx) {
+    mDemo_Set_msg_num(0x2AD0);
+    aNGD_set_default_talk_info();
+}
+
+static void aNGD_keitai_on(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    static f32 anmSpd[] = { 0.0f, 0.5f };
+    int idx = aNGD_make_keitai(guide, &play->game);
+
+    guide->npc_class.draw.main_animation.keyframe.frame_control.speed = anmSpd[idx];
+    if (idx != 0) {
+        if (mDemo_Check(mDemo_TYPE_SPEAK, (ACTOR*)guide) == TRUE) {
+            if (mDemo_Check_ListenAble() == FALSE) {
+                mDemo_Set_ListenAble();
+            }
+        } else {
+            /* Request to start speaking */
+            mDemo_Request(mDemo_TYPE_SPEAK, (ACTOR*)guide, &aNGD_set_talk_info_keitai_on);
+        }
+    }
+
+    /* Wait for animation to finish */
+    if (guide->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        aNGD_setupAction(guide, play, aNGD_ACTION_KEITAI_TALK);
+    }
+}
+
+static void aNGD_keitai_talk(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    if (mDemo_Check(mDemo_TYPE_SPEAK, &guide->npc_class.actor_class) == FALSE) {
+        aNGD_setupAction(guide, play, aNGD_ACTION_KEITAI_OFF);
+    } else if (guide->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        Common_Get(clip).npc_clip->animation_init_proc(&guide->npc_class.actor_class, aNPC_ANIM_KEITAI_TALK2, TRUE);
+    }
+}
+
+static void aNGD_open_door(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    chase_angle(&guide->npc_class.actor_class.shape_info.rotation.y, DEG2SHORT_ANGLE2(-180.0f),
+                DEG2SHORT_ANGLE2(0.703125f));
+    if (cKF_FrameControl_passCheck_now(&guide->npc_class.draw.main_animation.keyframe.frame_control, 22.0f) == TRUE) {
+        TRAINDOOR_ACTOR* train_door = (TRAINDOOR_ACTOR*)guide->train_door_actor;
+
+        train_door->open_flag = TRUE;
+        if (guide->npc_class.draw.shadow_pos.z < 140.0f) {
+            guide->camera_tilt_goal_angle = 0;
+            guide->camera_tilt_add = 0x600;
+        }
+    }
+
+    /* Reuse standup state to wait for animation to finish */
+    aNGD_standup(guide, play);
+}
+
+static void aNGD_return_approach(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->npc_class.actor_class.world.position.x = 140.0f;
+    guide->npc_class.actor_class.world.angle.y = 0;
+    guide->npc_class.actor_class.shape_info.rotation.y = 0;
+    if (guide->npc_class.actor_class.world.position.z > 290.0f) {
+        aNGD_setupAction(guide, play, aNGD_ACTION_LAST_TALK_START_WAIT);
+    }
+}
+
+static void aNGD_set_talk_info_last_talk_start_wait(ACTOR* actorx) {
+    mDemo_Set_msg_num(0x2AD1);
+    aNGD_set_default_talk_info();
+    ((NPC_GUIDE_ACTOR*)actorx)->obj_look_type = aNGD_OBJ_LOOK_TYPE_TALK;
+}
+
+static void aNGD_last_talk_start_wait(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)guide;
+
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        if (mDemo_Check_ListenAble() == FALSE &&
+            chase_angle(&actorx->shape_info.rotation.y, actorx->player_angle_y, 0x400) == TRUE) {
+            guide->camera_eyes_flag = FALSE;
+            aNGD_setupAction(guide, play, aNGD_ACTION_SITDOWN2_START_WAIT);
+            mDemo_Set_ListenAble();
+        }
+    } else {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aNGD_set_talk_info_last_talk_start_wait);
+    }
+}
+
+static void aNGD_sitdown2_start_wait(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    u16 order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0) {
+        aNGD_setupAction(guide, play, aNGD_ACTION_SITDOWN2);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNGD_sitdown2(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->npc_class.actor_class.world.position.x = 100.0f;
+    guide->npc_class.actor_class.world.position.z = 280.0f;
+    guide->npc_class.actor_class.shape_info.rotation.y = 0;
+
+    /* Wait for animation to finish */
+    aNGD_standup(guide, play);
+}
+
+static void aNGD_last_talk_end_wait(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    if (mDemo_Check(mDemo_TYPE_SPEAK, &guide->npc_class.actor_class) == FALSE) {
+        aNGD_setupAction(guide, play, aNGD_ACTION_SCENE_CHANGE_WAIT);
+    }
+}
+
+/* Init procs */
+
+static void aNGD_time_menu_open_wait_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    mMsg_Set_LockContinue(msg_p);
+    mMsg_request_main_disappear_wait_type1(msg_p);
+    guide->next_action = aNGD_ACTION_TIME_MENU_CLOSE_WAIT;
+}
+
+static void aNGD_time_menu_close_wait_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+
+    switch (guide->next_action) {
+        case aNGD_ACTION_TIME_MENU_CLOSE_WAIT:
+            mSM_open_submenu(submenu, mSM_OVL_TIMEIN, mTI_OVL_OPEN_INITIAL, 0);
+            break;
+        case aNGD_ACTION_PNAME_MENU_CLOSE_WAIT:
+            mSM_open_submenu(submenu, mSM_OVL_LEDIT, mLE_TYPE_PLAYER_NAME, 0);
+            break;
+        case aNGD_ACTION_CNAME_MENU_CLOSE_WAIT:
+            mSM_open_submenu(submenu, mSM_OVL_LEDIT, mLE_TYPE_COUNTRY_NAME, 0);
+            break;
+    }
+}
+
+static void aNGD_msg_win_open_wait_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    mMsg_REQUEST_MAIN_APPEAR_WAIT_TYPE1();
+}
+
+static void aNGD_sitdown_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    mMsg_SET_LOCKCONTINUE();
+}
+
+static void aNGD_pname_menu_open_wait_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    mMsg_Set_LockContinue(msg_p);
+    mMsg_request_main_disappear_wait_type1(msg_p);
+    guide->next_action = aNGD_ACTION_PNAME_MENU_CLOSE_WAIT;
+}
+
+static void aNGD_cname_menu_open_wait_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    mMsg_Set_LockContinue(msg_p);
+    mMsg_request_main_disappear_wait_type1(msg_p);
+    guide->next_action = aNGD_ACTION_CNAME_MENU_CLOSE_WAIT;
+}
+
+static void aNGD_standup_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->next_action = aNGD_ACTION_MOVE_READY;
+}
+
+static void aNGD_move_ready_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->npc_class.draw.main_animation.keyframe.morph_counter = 0.0f;
+}
+
+static void aNGD_move_to_aisle_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    aNGD_set_walk_spd2(guide, play);
+}
+
+static void aNGD_move_to_deck_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    aNGD_set_stop_spd(guide, play);
+    guide->npc_class.actor_class.world.position.x = 140.0f;
+    guide->npc_class.actor_class.world.position.z = 130.0f;
+    guide->next_action = aNGD_ACTION_KEITAI_ON;
+}
+
+static void aNGD_keitai_off_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    aNGD_chg_cond_keitai(guide, aTOL_ACTION_PUTAWAY);
+    guide->next_action = aNGD_ACTION_OPEN_DOOR;
+}
+
+static void aNGD_open_door_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->next_action = aNGD_ACTION_RETURN_APPROACH;
+}
+
+static void aNGD_return_approach_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->camera_eyes_flag = TRUE;
+    aNGD_set_walk_spd2(guide, play);
+    guide->npc_class.draw.main_animation.keyframe.morph_counter = 0.0f;
+}
+
+static void aNGD_sitdown2_start_wait_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+}
+
+static void aNGD_sitdown2_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    guide->npc_class.draw.main_animation.keyframe.morph_counter = 0.0f;
+    guide->next_action = aNGD_ACTION_LAST_TALK_END_WAIT;
+}
+
+static void aNGD_last_talk_end_wait_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    aNGD_chg_cond_keitai(guide, aTOL_ACTION_DESTRUCT);
+    guide->npc_class.right_hand.item_actor_p = NULL;
+}
+
+static void aNGD_scene_change_wait_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
+    u8 term;
+    int town_day;
+
+    /* Init next scene transition */
+    goto_next_scene(play, 0, 1);
+    play->fb_wipe_type = 3;
+    Common_Get(transition).wipe_type = 4;
+
+    /* Clear plant growth renew time */
+    Save_Set(all_grow_renew_time, mTM_rtcTime_clear_code);
+
+    /* Update player ID town info */
+    if (Now_Private != NULL) {
+        mLd_CopyLandName(Now_Private->player_ID.land_name, Save_Get(land_info).name);
+    }
+
+    /* Init island */
+    bcopy(Save_GetPointer(land_info), &Save_Get(island).landinfo, sizeof(mLd_land_info_c)); // Copy the town's land info
+    mNpc_DecideIslandNpc(&Save_Get(island).animal);                                         // Pick islander
+
+    /* Update some renew time values to current rtc time */
+    lbRTC_TimeCopy(Save_GetPointer(last_grow_time), Common_GetPointer(time.rtc_time));
+    mTM_set_renew_time(Save_GetPointer(renew_time), Common_GetPointer(time.rtc_time));
+    mTM_set_season(); // initialize the season
+
+    /* Initialize first Stalk Market info */
+    Kabu_decide_price_schedule();
+
+    /* Init Post Office */
+    mPO_post_office_init();
+
+    /* Set insect term info */
+    Save_Set(insect_term, Common_Get(time.rtc_time.month));
+    Save_Set(insect_term_transition_offset, RANDOM(6));
+
+    /* Set fish term info */
+    term = Common_Get(time.rtc_time.month) * 2;
+    if (Common_Get(time.rtc_time.day) > 15) {
+        term++;
+    }
+    Save_Set(gyoei_term, term);
+    Save_Set(gyoei_term_transition_offset, RANDOM(6));
+
+    /* Decide Town Day date */
+    town_day = 1 + RANDOM(30);
+    if (town_day >= 4) {
+        town_day++; // add one to prevent conflict with Fireworks Festival (4th of July)
+    }
+    Save_Set(town_day, town_day);
+
+    mSP_ShopGameStartCt(NULL);
+    mNtc_SetInitData();
+    mPr_SetNowPrivateCloth();
+    mEv_SetFirstJob();
+    mEv_SetFirstIntro();
+    mEnv_DecideWeather_FirstGameStart();
+    mCD_calendar_clear(-1);
+    mCD_calendar_wellcome_on();
+    mNpc_SetParentNameAllAnimal();
+    aNGD_set_pl_face_type(guide);
+    Common_Set(submenu_disabled, TRUE);
+    mRmTp_SetDefaultLightSwitchData(1);
+    mBGMPsComp_make_ps_wipe(0x41C2);
+    mBGMPsComp_scene_mode(18);
+}
+
+typedef void (*aNGD_INIT_PROC)(NPC_GUIDE_ACTOR*, GAME_PLAY*);
+
+static void aNGD_init_proc(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play, int action) {
+    static aNGD_INIT_PROC init_proc[] = {
+        (aNGD_INIT_PROC)&none_proc1,
+        &aNGD_set_walk_spd,
+        &aNGD_set_stop_spd,
+        (aNGD_INIT_PROC)&none_proc1,
+        (aNGD_INIT_PROC)&none_proc1,
+        &aNGD_time_menu_open_wait_init,
+        &aNGD_time_menu_close_wait_init,
+        &aNGD_msg_win_open_wait_init,
+        (aNGD_INIT_PROC)&none_proc1,
+        (aNGD_INIT_PROC)&none_proc1,
+        &aNGD_sitdown_init,
+        &aNGD_pname_menu_open_wait_init,
+        &aNGD_time_menu_close_wait_init,
+        (aNGD_INIT_PROC)&none_proc1,
+        (aNGD_INIT_PROC)&none_proc1,
+        (aNGD_INIT_PROC)&none_proc1,
+        &aNGD_cname_menu_open_wait_init,
+        &aNGD_time_menu_close_wait_init,
+        (aNGD_INIT_PROC)&none_proc1,
+        &aNGD_standup_init,
+        &aNGD_move_ready_init,
+        &aNGD_move_to_aisle_init,
+        (aNGD_INIT_PROC)&none_proc1,
+        &aNGD_move_to_deck_init,
+        (aNGD_INIT_PROC)&none_proc1,
+        (aNGD_INIT_PROC)&none_proc1,
+        &aNGD_keitai_off_init,
+        &aNGD_open_door_init,
+        &aNGD_return_approach_init,
+        &aNGD_set_stop_spd,
+        &aNGD_sitdown2_start_wait_init,
+        &aNGD_sitdown2_init,
+        &aNGD_last_talk_end_wait_init,
+        &aNGD_scene_change_wait_init,
+    };
+
+    (*init_proc[action])(guide, play);
+}
+
+static void aNGD_setupAction(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play, int action) {
+    static aNGD_PROC process[] = {
+        &aNGD_enter,
+        &aNGD_approach,
+        &aNGD_talk_start_wait,
+        &aNGD_time_check,
+        &aNGD_sdon_and_pb_wait,
+        &aNGD_time_menu_open_wait,
+        &aNGD_time_menu_close_wait,
+        &aNGD_msg_win_open_wait,
+        &aNGD_confirm_input_data,
+        &aNGD_wait_permission,
+        &aNGD_sitdown,
+        &aNGD_time_menu_open_wait,
+        &aNGD_time_menu_close_wait,
+        &aNGD_sex_select_wait,
+        &aNGD_sex_select_wait2,
+        &aNGD_sex_select_after,
+        &aNGD_time_menu_open_wait,
+        &aNGD_time_menu_close_wait,
+        &aNGD_standup_start_wait,
+        &aNGD_standup,
+        &aNGD_move_ready,
+        &aNGD_move_to_aisle,
+        &aNGD_move_to_door,
+        &aNGD_move_to_deck,
+        &aNGD_keitai_on,
+        &aNGD_keitai_talk,
+        &aNGD_standup,
+        &aNGD_open_door,
+        &aNGD_return_approach,
+        &aNGD_last_talk_start_wait,
+        &aNGD_sitdown2_start_wait,
+        &aNGD_sitdown2,
+        &aNGD_last_talk_end_wait,
+        (aNGD_PROC)&none_proc1,
+    };
+
+    guide->action = action;
+    guide->proc = process[action];
+    aNGD_set_animation(guide, action);
+    aNGD_init_proc(guide, play, action);
+}
+
+static void aNGD_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_GUIDE_ACTOR* guide = (NPC_GUIDE_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    Common_Get(clip).npc_clip->move_before_proc(actorx, game);
+    aNGD_talk_demo_proc(actorx);
+    aNGD_check_talk_msg_no(guide);
+    (*guide->proc)(guide, play);
+    Common_Get(clip).npc_clip->move_after_proc(actorx, game);
+    aNGD_set_camera(guide, play);
+    aNGD_set_camera_eyes(guide);
+    mSC_change_player_freeze(play);
+}

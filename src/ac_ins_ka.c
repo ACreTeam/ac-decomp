@@ -283,7 +283,7 @@ static void aIKA_actor_move(ACTOR* actorx, GAME* game) {
         aIKA_setupAction(insect, aIKA_ACTION_LET_ESCAPE, game);
     } else {
         if (insect->action != aIKA_ACTION_ATTACK) {
-            sAdo_OngenPos((u32)actorx, NA_SE_CF, &actorx->world.position);
+            sAdo_OngenPos((u32)actorx, NA_SE_KA_BUZZ, &actorx->world.position);
         }
 
         if (insect->insect_flags.bit_3 == TRUE && insect->insect_flags.bit_2 == FALSE &&

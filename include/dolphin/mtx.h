@@ -7,13 +7,15 @@
 extern "C" {
 #endif
 
+#define MTX_PS
+
 /////////////// TYPE DEFINES ///////////////
-#define MTXDegToRad(a) ((a)*0.01745329252f)
+#define MTXDegToRad(a) ((a) * 0.01745329252f)
 
 typedef struct {
-  f32 x;
-  f32 y;
-  f32 z;
+    f32 x;
+    f32 y;
+    f32 z;
 } Vec;
 
 typedef f32 Mtx34[3][4];
@@ -25,7 +27,7 @@ typedef f32 PSQuaternion[4];
 typedef Mtx34 GC_Mtx; // TODO: fix this
 
 typedef struct Quaternion {
-	f32 x, y, z, w;
+    f32 x, y, z, w;
 } Quaternion;
 
 ////////////////////////////////////////////
@@ -50,6 +52,9 @@ void PSMTXScale(GC_Mtx mtx, f32 xS, f32 yS, f32 zS);
 void PSMTXScaleApply(const GC_Mtx src, GC_Mtx dest, f32 xS, f32 yS, f32 zS);
 void PSMTXQuat(GC_Mtx mtx, const PSQuaternion* quat);
 
+void PSVECNormalize(const Vec* src, Vec* dst);
+void PSMTXMultVec(const GC_Mtx m, const Vec* src, Vec* dst);
+
 ////////////////////////////////////////////
 
 //// PAIRED SINGLE MATRIX VEC FUNCTIONS ////
@@ -72,14 +77,36 @@ void C_MTXLightOrtho(GC_Mtx mtx, f32 t, f32 b, f32 l, f32 r, f32 scaleS, f32 sca
 ////////////////////////////////////////////
 
 ////////////// MATRIX INLINES //////////////
-static inline void MTXSetPosition(GC_Mtx mtx, const Vec* pos)
-{
-	mtx[0][3] = pos->x;
-	mtx[1][3] = pos->y;
-	mtx[2][3] = pos->z;
+static inline void MTXSetPosition(GC_Mtx mtx, const Vec* pos) {
+    mtx[0][3] = pos->x;
+    mtx[1][3] = pos->y;
+    mtx[2][3] = pos->z;
 }
 
 ////////////////////////////////////////////
+
+#ifdef MTX_PS
+#define MTXIdentity PSMTXIdentity
+#define MTXCopy PSMTXCopy
+#define MTXConcat PSMTXConcat
+#define MTXConcatArray PSMTXConcatArray
+#define MTXTranspose PSMTXTranspose
+#define MTXInverse PSMTXInverse
+#define MTXInvXpose PSMTXInvXpose
+
+#define MTXScale PSMTXScale
+#define MTXTrans PSMTXTrans
+
+#define MTXMultVec PSMTXMultVec
+#else
+#define MTXIdentity C_MTXIdentity
+#define MTXCopy C_MTXCopy
+#define MTXConcat C_MTXConcat
+#define MTXConcatArray C_MTXConcatArray
+#define MTXTranspose C_MTXTranspose
+#define MTXInverse C_MTXInverse
+#define MTXInvXpose C_MTXInvXpose
+#endif
 
 #ifdef __cplusplus
 }

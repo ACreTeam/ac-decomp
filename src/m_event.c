@@ -161,7 +161,7 @@ extern int mEv_CheckArbeit() {
     return res;
 }
 
-extern int mFI_CheckFirstJob() {
+extern int mEv_CheckFirstJob() {
     u32 player_no = Common_Get(player_no);
     int res = FALSE;
 
