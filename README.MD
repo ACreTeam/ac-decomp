@@ -7,6 +7,7 @@
 Decompilation in progress of Animal Crossing (GAFE01)
 
 A decompilation of the original N64 version of the game is being worked on [here](https://github.com/zeldaret/af).
+
 ## Cloning
 
 Use `--recursive` when cloning to have ppcdis in the repository. 
@@ -26,7 +27,7 @@ Use `--recursive` when cloning to have ppcdis in the repository.
 
 ### Build manually
 
-> ℹ️ When building manually from a work directory originally used for Docker, you will need to run `sudo ninja -t clean` for the build to execute properly.
+> ℹ️ When building manually from a work directory previously used for Docker, you will need to run `sudo ninja -t clean` for the build to execute properly.
 
 1. [Dump a copy of the game](./docs/extract_game.md) and extract all files.
 2. Place **main.dol**, **foresta.rel.szs**, **forest_1st.arc**, and **forest_2nd.arc** in *dump/*.
