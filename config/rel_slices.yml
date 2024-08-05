@@ -1127,6 +1127,10 @@ ef_dig_hole.c:
     .text: [0x80609030, 0x80609910]
     .rodata: [0x8064BEB8, 0x8064BF20]
     .data: [0x806D21B0, 0x806D2220]
+ef_dig_mud.c:
+    .text: [0x80609910, 0x80609F6C]
+    .rodata: [0x8064BF20, 0x8064BF70]
+    .data: [0x806D2220, 0x806D2268]
 ef_flash.c:
     .text: [0x8060B7B4, 0x8060BCB0]
     .rodata: [0x8064C078, 0x8064C0B0]
