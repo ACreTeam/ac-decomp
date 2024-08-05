@@ -21,7 +21,7 @@ Use `--recursive` when cloning to have ppcdis in the repository.
 1. [Dump a copy of the game](./docs/extract_game.md) and extract all files.
 2. Place **main.dol**, **foresta.rel.szs**, **forest_1st.arc**, and **forest_2nd.arc** in *dump/*.
 3. Install Docker.
-4. Build the Docker image. If using MacOS or Linux (including WSL), run `chmod +x build-docker.sh && ./build-docker.sh`. If using Windows, run the `build-docker.bat` file.
+4. Set up the Docker image. If using MacOS or Linux (including WSL), run `chmod +x docker-setup.sh && ./docker-setup.sh`. If using Windows, run the `docker-setup.bat` file.
 5. Run configure.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 configure.py`).
 6. Run build.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 build.py`).
 
