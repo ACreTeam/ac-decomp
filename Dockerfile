@@ -16,6 +16,12 @@ COPY ./tools/ppcdis/requirements.txt /temp/tools/ppcdis/requirements.txt
 RUN pip install --break-system-packages -r /temp/requirements.txt
 RUN rm -rf /temp
 
+# --- compiler download and setup ---
+RUN wget https://files.decomp.dev/compilers_latest.zip
+RUN mkdir compilers_temp && unzip compilers_latest.zip -d compilers_temp
+RUN mv compilers_temp/GC/1.2.5n/ tools/ && mv compilers_temp/GC/1.3.2/ tools/ && mv compilers_temp/GC/1.3.2r/ tools/
+RUN rm -r compilers_temp compilers_latest.zip
+
 # --- wibo installation ---
 RUN wget https://github.com/decompals/wibo/releases/download/0.6.13/wibo
 RUN install ./wibo /usr/bin
