@@ -1,4 +1,4 @@
-echo "Ensure Docker has been properly installed before continuing."
+echo "Please ensure Docker has been properly installed before continuing."
 read -p "Press enter to continue or CTRL-C to exit."
 docker build -t ac-decomp .
 if [ -e /bin/curl ]; then
