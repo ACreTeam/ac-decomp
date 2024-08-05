@@ -14,7 +14,7 @@ Use `--recursive` when cloning to have ppcdis in the repository.
 
 ## Building
 
-> ℹ️ The build is known to run disproportionately slow on Windows, so we recommend using WSL for both build methods when using Windows.
+> ℹ️ When using Windows, the build is known to run disproportionately slow when run natively, so we recommend using WSL.
 
 ### Docker
 
