@@ -1,5 +1,9 @@
 FROM ubuntu:24.04 as build
 
+# --- set up work directory ---
+RUN mkdir /ac-decomp
+WORKDIR /ac-decomp
+
 # --- basic package installation ---
 RUN apt-get update && \
     apt-get install -y \
@@ -7,6 +11,7 @@ RUN apt-get update && \
         ninja-build \
         python3 \
         python3-pip \
+        unzip \
         wget
 
 # --- python package installation ---
@@ -19,7 +24,7 @@ RUN rm -rf /temp
 # --- compiler download and setup ---
 RUN wget https://files.decomp.dev/compilers_latest.zip
 RUN mkdir compilers_temp && unzip compilers_latest.zip -d compilers_temp
-RUN mv compilers_temp/GC/1.2.5n/ tools/ && mv compilers_temp/GC/1.3.2/ tools/ && mv compilers_temp/GC/1.3.2r/ tools/
+RUN mv compilers_temp/GC/1.2.5n/ /ac-decomp/tools/ && mv compilers_temp/GC/1.3.2/ /ac-decomp/tools/ && mv compilers_temp/GC/1.3.2r/ /ac-decomp/tools/
 RUN rm -r compilers_temp compilers_latest.zip
 
 # --- wibo installation ---
@@ -49,9 +54,7 @@ RUN cd /N64_SDK/ultra/usr/ && find -type f -maxdepth 1 -delete && find . -not -n
 # modify Gpopmtx's param member to be unsigned int
 RUN sed -i 's/unsigned char	param:8;/unsigned int	param:8;/g' /N64_SDK/ultra/usr/include/PR/gbi.h
 
-# --- set up work directory and env vars ---
-RUN mkdir /ac-decomp
-WORKDIR /ac-decomp
+# --- set up env vars ---
 ENV PATH="/ac-decomp/tools:${PATH}"
 ENV N64_SDK="/N64_SDK"
 ENV DEVKITPPC="/opt/devkitpro/devkitPPC"
