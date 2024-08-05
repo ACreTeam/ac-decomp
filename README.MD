@@ -19,11 +19,10 @@ Use `--recursive` when cloning to have ppcdis in the repository.
 
 1. [Dump a copy of the game](./docs/extract_game.md) and extract all files.
 2. Place **main.dol**, **foresta.rel.szs**, **forest_1st.arc**, and **forest_2nd.arc** in *dump/*.
-3. Download the [CodeWarrior 1.3.2, 1.3.2r, and 1.2.5n compilers](https://files.decomp.dev/compilers_latest.zip) and extract them to *tools/1.3.2/*, *tools/1.3.2r/*, and *tools/1.2.5n/*, respectively.
-4. Install Docker.
-5. Build the Docker image (`docker build -t ac-decomp .`).
-6. Run configure.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 configure.py`).
-7. Run build.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 build.py`).
+3. Install Docker.
+4. Build the Docker image. If using MacOS or Linux, run `chmod +x build-docker.sh && ./build-docker.sh`. If using Windows, run the `build-docker.ps1` file.
+5. Run configure.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 configure.py`).
+6. Run build.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 build.py`).
 
 ### Build manually
 
