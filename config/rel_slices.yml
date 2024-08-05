@@ -1083,6 +1083,10 @@ ef_ase_ch.c:
     .text: [0x806052A8, 0x806054F0]
     .rodata: [0x8064BCA8, 0x8064BCC0]
     .data: [0x806D1EC8, 0x806D1F08]
+ef_break_axe.c:
+    .text: [0x806054F0, 0x8060672C]
+    .rodata: [0x8064BCC0, 0x8064BD60]
+    .data: [0x806D1F08, 0x806D1F20]
 ef_bubu.c:
     .text: [0x8060672C, 0x80606878]
     .rodata: [0x8064BD60, 0x8064BD68]
