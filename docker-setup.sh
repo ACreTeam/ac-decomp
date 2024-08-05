@@ -1,6 +1,5 @@
 echo "Please ensure Docker is installed before continuing."
 read -p "Press Enter to continue or CTRL-C to exit."
-docker build -t ac-decomp .
 if [ -e /bin/curl ]; then
     curl -O https://files.decomp.dev/compilers_latest.zip
 elif [ -e /bin/wget ]; then
@@ -21,4 +20,5 @@ else
 fi
 mv compilers_temp/GC/1.2.5n/ tools/ && mv compilers_temp/GC/1.3.2/ tools/ && mv compilers_temp/GC/1.3.2r/ tools/
 rm -r compilers_temp compilers_latest.zip
+docker build -t ac-decomp .
 echo "Docker image setup is now complete. You may proceed with the instructions."
