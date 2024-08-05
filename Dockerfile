@@ -7,7 +7,6 @@ RUN apt-get update && \
         ninja-build \
         python3 \
         python3-pip \
-        unzip \
         wget
 
 # --- python package installation ---
@@ -16,12 +15,6 @@ COPY ./tools/ppcdis/requirements.txt /temp/tools/ppcdis/requirements.txt
 # why bother setting up a venv for this, right? ¯\_(ツ)_/¯
 RUN pip install --break-system-packages -r /temp/requirements.txt
 RUN rm -rf /temp
-
-# --- compiler download and setup ---
-RUN wget https://files.decomp.dev/compilers_latest.zip
-RUN mkdir compilers_temp && unzip compilers_latest.zip -d compilers_temp
-RUN mv compilers_temp/GC/1.2.5n/ tools/ && mv compilers_temp/GC/1.3.2/ tools/ && mv compilers_temp/GC/1.3.2r/ tools/
-RUN rm -r compilers_temp compilers_latest.zip
 
 # --- wibo installation ---
 RUN wget https://github.com/decompals/wibo/releases/download/0.6.13/wibo
