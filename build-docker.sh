@@ -1,5 +1,5 @@
 echo "Please ensure Docker has been properly installed before continuing."
-read -p "Press enter to continue or CTRL-C to exit."
+read -p "Press Enter to continue or CTRL-C to exit."
 docker build -t ac-decomp .
 if [ -e /bin/curl ]; then
     curl -O https://files.decomp.dev/compilers_latest.zip
