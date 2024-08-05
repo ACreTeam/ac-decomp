@@ -1,8 +1,8 @@
 echo "Please ensure Docker is installed before continuing."
 read -p "Press Enter to continue or CTRL-C to exit."
-if [ -e /bin/curl ]; then
+if command -v curl &> /dev/null; then
     curl -O https://files.decomp.dev/compilers_latest.zip
-elif [ -e /bin/wget ]; then
+elif command -v wget &> /dev/null; then
     wget https://files.decomp.dev/compilers_latest.zip
 else
     echo "You do not seem to have curl or wget installed on this system. Please install one or the other to continue."
@@ -10,7 +10,7 @@ else
 fi
 
 mkdir compilers_temp
-if [ -e /bin/unzip ]; then
+if command -v unzip &> /dev/null; then
     unzip compilers_latest.zip -d compilers_temp
 else
     echo "You do not seem to have unzip installed on this system. Please install it to continue."
