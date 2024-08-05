@@ -1,5 +1,5 @@
 @echo off
-echo "Please ensure Docker Desktop is running before you continue."
+echo "Please ensure Docker Desktop is running before continuing."
 pause
 docker build -t ac-decomp .
 curl -O https://files.decomp.dev/compilers_latest.zip
