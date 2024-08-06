@@ -100,6 +100,8 @@ typedef enum audio_sound_effects {
     NA_SE_TREE_TOUCH = 0x134,
     NA_SE_TREE_YURASU,
 
+    NA_SE_DOYON = 0x13F,
+
     NA_SE_KIRIBASU_SCOOP = 0x148,
     NA_SE_KIRIBASU_OUT,
 
