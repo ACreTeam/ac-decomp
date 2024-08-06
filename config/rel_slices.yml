@@ -1135,6 +1135,10 @@ ef_dig_scoop.c:
     .text: [0x80609F6C, 0x8060A808]
     .rodata: [0x8064BF70, 0x8064BF90]
     .data: [0x806D2268, 0x806D2280]
+ef_douzou_light.c:
+    .text: [0x8060A808, 0x8060AAD4]
+    .rodata: [0x8064BF90, 0x8064BFA8]
+    .data: [0x806D2280, 0x806D2298]
 ef_flash.c:
     .text: [0x8060B7B4, 0x8060BCB0]
     .rodata: [0x8064C078, 0x8064C0B0]
