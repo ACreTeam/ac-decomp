@@ -1159,6 +1159,9 @@ ef_hanabi_dummy.c:
     .text: [0x8060E6D8, 0x8060E9B8]
     .rodata: [0x8064C2A0, 0x8064C2C0]
     .data: [0x806D2858, 0x806D2888]
+ef_hanatiri.c:
+    .text: [0x80610478, 0x8061061C]
+    .data: [0x806D2C08, 0x806D2C20]
 ef_killer.c:
     .text: [0x80614178, 0x8061481C]
     .rodata: [0x8064C680, 0x8064C6C0]
