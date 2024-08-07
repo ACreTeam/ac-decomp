@@ -1123,6 +1123,10 @@ ef_footprint.c:
     .text: [0x8060BCB0, 0x8060C21C]
     .rodata: [0x8064C0B0, 0x8064C0E0]
     .data: [0x806D2430, 0x806D2470]
+ef_halloween.c:
+    .text: [0x8060D44C, 0x8060D654]
+    .rodata: [0x8064C1C0, 0x8064C1D0]
+    .data: [0x806D2600, 0x806D2618]
 ef_killer.c:
     .text: [0x80614178, 0x8061481C]
     .rodata: [0x8064C680, 0x8064C6C0]
@@ -1193,717 +1197,502 @@ f_furniture.c:
     .data: [0x806D4D40, 0x806E02A0]
 ac_weather_fine.c:
     .data: [0x806D1DA0, 0x806D1DB8]
-
 # dataobject.obj NPC draw data TUs
 data/npc/model/mdl/bev_1.c:
-  .data: [0x806E03A0, 0x806E27D0]
+    .data: [0x806E03A0, 0x806E27D0]
 data/npc/model/tex/bev_1.c:
-  .data: [0x806E27E0, 0x806E3500]
+    .data: [0x806E27E0, 0x806E3500]
 data/npc/model/mdl/ant_1.c:
-  .data: [0x806E3838, 0x806E5910]
+    .data: [0x806E3838, 0x806E5910]
 data/npc/model/tex/ant_1.c:
-  .data: [0x806E5920, 0x806E6640]
+    .data: [0x806E5920, 0x806E6640]
 data/npc/model/tex/ant_2.c:
-  .data: [0x806E6640, 0x806E7360]
+    .data: [0x806E6640, 0x806E7360]
 data/npc/model/tex/ant_3.c:
-  .data: [0x806E7360, 0x806E8080]
+    .data: [0x806E7360, 0x806E8080]
 data/npc/model/tex/ant_4.c:
-  .data: [0x806E8080, 0x806E8DA0]
+    .data: [0x806E8080, 0x806E8DA0]
 data/npc/model/tex/ant_5.c:
-  .data: [0x806E8DA0, 0x806E9AC0]
+    .data: [0x806E8DA0, 0x806E9AC0]
 data/npc/model/mdl/wls_1.c:
-  .data: [0x806E9AC0, 0x806EBFF0]
+    .data: [0x806E9AC0, 0x806EBFF0]
 data/npc/model/tex/wls_1.c:
-  .data: [0x806EC000, 0x806ECFA0]
+    .data: [0x806EC000, 0x806ECFA0]
 data/npc/model/mdl/bea_1.c:
-  .data: [0x806EF078, 0x806F1030]
+    .data: [0x806EF078, 0x806F1030]
 data/npc/model/tex/bea_1.c:
-  .data: [0x806F1040, 0x806F2260]
+    .data: [0x806F1040, 0x806F2260]
 data/npc/model/tex/bea_2.c:
-  .data: [0x806F2260, 0x806F3480]
+    .data: [0x806F2260, 0x806F3480]
 data/npc/model/tex/bea_3.c:
-  .data: [0x806F3480, 0x806F46A0]
+    .data: [0x806F3480, 0x806F46A0]
 data/npc/model/tex/bea_5.c:
-  .data: [0x806F46A0, 0x806F58C0]
+    .data: [0x806F46A0, 0x806F58C0]
 data/npc/model/tex/bea_6.c:
-  .data: [0x806F58C0, 0x806F6AE0]
+    .data: [0x806F58C0, 0x806F6AE0]
 data/npc/model/tex/bea_7.c:
-  .data: [0x806F6AE0, 0x806F7D00]
+    .data: [0x806F6AE0, 0x806F7D00]
 data/npc/model/tex/bea_8.c:
-  .data: [0x806F7D00, 0x806F8F20]
+    .data: [0x806F7D00, 0x806F8F20]
 data/npc/model/tex/bea_9.c:
-  .data: [0x806F8F20, 0x806FA140]
+    .data: [0x806F8F20, 0x806FA140]
 data/npc/model/tex/bea_10.c:
-  .data: [0x806FA140, 0x806FB360]
-data/npc/model/mdl/pbr_1.c:
-  .data: [0x8076DFA8, 0x80770178]
-data/npc/model/tex/pbr_1.c:
-  .data: [0x80770180, 0x80770EA0]
-data/npc/model/tex/pbr_2.c:
-  .data: [0x80770EA0, 0x80771BC0]
-data/npc/model/tex/pbr_3.c:
-  .data: [0x80771BC0, 0x807728E0]
-data/npc/model/tex/pbr_4.c:
-  .data: [0x807728E0, 0x80773600]
-data/npc/model/tex/pbr_5.c:
-  .data: [0x80773600, 0x80774320]
-data/npc/model/mdl/brd_1.c:
-  .data: [0x80774320, 0x80776358]
-data/npc/model/tex/brd_1.c:
-  .data: [0x80776360, 0x80777080]
-data/npc/model/tex/brd_2.c:
-  .data: [0x80777080, 0x80777DA0]
-data/npc/model/tex/brd_11.c:
-  .data: [0x80777DA0, 0x80778AC0]
-data/npc/model/tex/brd_3.c:
-  .data: [0x80778AC0, 0x807797E0]
-data/npc/model/tex/brd_4.c:
-  .data: [0x807797E0, 0x8077A500]
-data/npc/model/tex/brd_5.c:
-  .data: [0x8077A500, 0x8077B220]
-data/npc/model/tex/brd_6.c:
-  .data: [0x8077B220, 0x8077BF40]
-data/npc/model/tex/brd_7.c:
-  .data: [0x8077BF40, 0x8077CC60]
-data/npc/model/tex/brd_8.c:
-  .data: [0x8077CC60, 0x8077D980]
-data/npc/model/tex/brd_9.c:
-  .data: [0x8077D980, 0x8077E6A0]
-data/npc/model/tex/brd_10.c:
-  .data: [0x8077E6A0, 0x8077F3C0]
-data/npc/model/mdl/fox_1.c:
-  .data: [0x807D5FE8, 0x807D8098]
-data/npc/model/tex/fox_1.c:
-  .data: [0x807D80A0, 0x807D8FC0]
-data/npc/model/mdl/bul_1.c:
-  .data: [0x807D8FC0, 0x807DAFB0]
-data/npc/model/tex/bul_1.c:
-  .data: [0x807DAFC0, 0x807DC1E0]
-data/npc/model/tex/bul_2.c:
-  .data: [0x807DC1E0, 0x807DD400]
-data/npc/model/tex/bul_3.c:
-  .data: [0x807DD400, 0x807DE620]
-data/npc/model/tex/bul_4.c:
-  .data: [0x807DE620, 0x807DF840]
-data/npc/model/mdl/cml_1.c:
-  .data: [0x807DF840, 0x807E1EA8]
-data/npc/model/tex/cml_1.c:
-  .data: [0x807E1EC0, 0x807E2E60]
-data/npc/model/mdl/cat_1.c:
-  .data: [0x807E2E60, 0x807E4BB0]
-data/npc/model/tex/cat_1.c:
-  .data: [0x807E4BC0, 0x807E5DE0]
-data/npc/model/tex/cat_2.c:
-  .data: [0x807E5DE0, 0x807E7000]
-data/npc/model/tex/cat_11.c:
-  .data: [0x807E7000, 0x807E8220]
-data/npc/model/tex/cat_12.c:
-  .data: [0x807E8220, 0x807E9440]
-data/npc/model/tex/cat_13.c:
-  .data: [0x807E9440, 0x807EA660]
-data/npc/model/tex/cat_14.c:
-  .data: [0x807EA660, 0x807EB880]
-data/npc/model/tex/cat_15.c:
-  .data: [0x807EB880, 0x807ECAA0]
-data/npc/model/tex/cat_3.c:
-  .data: [0x807ECAA0, 0x807EDCC0]
-data/npc/model/tex/cat_4.c:
-  .data: [0x807EDCC0, 0x807EEEE0]
-data/npc/model/tex/cat_5.c:
-  .data: [0x807EEEE0, 0x807F0100]
-data/npc/model/tex/cat_6.c:
-  .data: [0x807F0100, 0x807F1320]
-data/npc/model/tex/cat_7.c:
-  .data: [0x807F1320, 0x807F2540]
-data/npc/model/tex/cat_8.c:
-  .data: [0x807F2540, 0x807F3760]
-data/npc/model/tex/cat_9.c:
-  .data: [0x807F3760, 0x807F4980]
-data/npc/model/tex/cat_10.c:
-  .data: [0x807F4980, 0x807F5BA0]
-data/npc/model/mdl/chn_1.c:
-  .data: [0x807F5BA0, 0x807F8348]
-data/npc/model/tex/chn_1.c:
-  .data: [0x807F8360, 0x807F9040]
-data/npc/model/tex/chn_2.c:
-  .data: [0x807F9040, 0x807F9D20]
-data/npc/model/tex/chn_3.c:
-  .data: [0x807F9D20, 0x807FAA00]
-data/npc/model/tex/chn_4.c:
-  .data: [0x807FAA00, 0x807FB6E0]
-data/npc/model/tex/chn_5.c:
-  .data: [0x807FB6E0, 0x807FC3C0]
-data/npc/model/tex/chn_6.c:
-  .data: [0x807FC3C0, 0x807FD0A0]
-data/npc/model/tex/chn_7.c:
-  .data: [0x807FD0A0, 0x807FDD80]
-data/npc/model/tex/chn_8.c:
-  .data: [0x807FDD80, 0x807FEA60]
-data/npc/model/tex/chn_9.c:
-  .data: [0x807FEA60, 0x807FF740]
-data/npc/model/mdl/cbr_1.c:
-  .data: [0x807FF740, 0x80801620]
-data/npc/model/tex/cbr_1.c:
-  .data: [0x80801620, 0x80802840]
-data/npc/model/tex/cbr_2.c:
-  .data: [0x80802840, 0x80803A60]
-data/npc/model/tex/cbr_11.c:
-  .data: [0x80803A60, 0x80804C80]
-data/npc/model/tex/cbr_3.c:
-  .data: [0x80804C80, 0x80805EA0]
-data/npc/model/tex/cbr_4.c:
-  .data: [0x80805EA0, 0x808070C0]
-data/npc/model/tex/cbr_5.c:
-  .data: [0x808070C0, 0x808082E0]
-data/npc/model/tex/cbr_6.c:
-  .data: [0x808082E0, 0x80809500]
-data/npc/model/tex/cbr_7.c:
-  .data: [0x80809500, 0x8080A720]
-data/npc/model/tex/cbr_8.c:
-  .data: [0x8080A720, 0x8080B940]
-data/npc/model/tex/cbr_9.c:
-  .data: [0x8080B940, 0x8080CB60]
-data/npc/model/tex/cbr_10.c:
-  .data: [0x8080CB60, 0x8080DD80]
-data/npc/model/mdl/rcc_1.c:
-  .data: [0x8080E628, 0x80810608]
-data/npc/model/tex/rcc_1.c:
-  .data: [0x80810620, 0x80811500]
-data/npc/model/mdl/cow_1.c:
-  .data: [0x80811500, 0x808134E0]
-data/npc/model/tex/cow_1.c:
-  .data: [0x808134E0, 0x80814700]
-data/npc/model/tex/cow_2.c:
-  .data: [0x80814700, 0x80815920]
-data/npc/model/tex/cow_3.c:
-  .data: [0x80815920, 0x80816B40]
-data/npc/model/tex/cow_4.c:
-  .data: [0x80816B40, 0x80817D60]
-data/npc/model/mdl/crd_1.c:
-  .data: [0x80817D60, 0x80819EE8]
-data/npc/model/tex/crd_1.c:
-  .data: [0x80819F00, 0x8081AC20]
-data/npc/model/tex/crd_2.c:
-  .data: [0x8081AC20, 0x8081B940]
-data/npc/model/tex/crd_3.c:
-  .data: [0x8081B940, 0x8081C660]
-data/npc/model/tex/crd_4.c:
-  .data: [0x8081C660, 0x8081D380]
-data/npc/model/mdl/owl_1.c:
-  .data: [0x8081D380, 0x8081F9A8]
-data/npc/model/tex/owl_1.c:
-  .data: [0x8081F9C0, 0x80820820]
-data/npc/model/mdl/rcd_1.c:
-  .data: [0x80820820, 0x80822720]
-data/npc/model/tex/rcd_1.c:
-  .data: [0x80822720, 0x80823580]
-data/npc/model/mdl/grf_1.c:
-  .data: [0x80823580, 0x80825B28]
-data/npc/model/tex/grf_1.c:
-  .data: [0x80825B40, 0x80826A60]
-data/npc/model/mdl/dog_1.c:
-  .data: [0x80826A60, 0x80828A40]
-data/npc/model/tex/dog_1.c:
-  .data: [0x80828A40, 0x80829C60]
-data/npc/model/tex/dog_2.c:
-  .data: [0x80829C60, 0x8082AE80]
-data/npc/model/tex/dog_3.c:
-  .data: [0x8082AE80, 0x8082C0A0]
-data/npc/model/tex/dog_4.c:
-  .data: [0x8082C0A0, 0x8082D2C0]
-data/npc/model/tex/dog_5.c:
-  .data: [0x8082D2C0, 0x8082E4E0]
-data/npc/model/tex/dog_6.c:
-  .data: [0x8082E4E0, 0x8082F700]
-data/npc/model/tex/dog_7.c:
-  .data: [0x8082F700, 0x80830920]
-data/npc/model/tex/dog_8.c:
-  .data: [0x80830920, 0x80831B40]
-data/npc/model/tex/dog_9.c:
-  .data: [0x80831B40, 0x80832D60]
-data/npc/model/tex/dog_10.c:
-  .data: [0x80832D60, 0x80833F80]
-data/npc/model/mdl/seg_1.c:
-  .data: [0x80833F80, 0x808362E8]
-data/npc/model/tex/seg_1.c:
-  .data: [0x80836300, 0x80837160]
-data/npc/model/mdl/duk_1.c:
-  .data: [0x80837160, 0x80839070]
-data/npc/model/tex/duk_1.c:
-  .data: [0x80839080, 0x8083A2A0]
-data/npc/model/tex/duk_2.c:
-  .data: [0x8083A2A0, 0x8083B4C0]
-data/npc/model/tex/duk_11.c:
-  .data: [0x8083B4C0, 0x8083C6E0]
-data/npc/model/tex/duk_3.c:
-  .data: [0x8083C6E0, 0x8083D900]
-data/npc/model/tex/duk_4.c:
-  .data: [0x8083D900, 0x8083EB20]
-data/npc/model/tex/duk_5.c:
-  .data: [0x8083EB20, 0x8083FD40]
-data/npc/model/tex/duk_6.c:
-  .data: [0x8083FD40, 0x80840F60]
-data/npc/model/tex/duk_7.c:
-  .data: [0x80840F60, 0x80842180]
-data/npc/model/tex/duk_8.c:
-  .data: [0x80842180, 0x808433A0]
-data/npc/model/tex/duk_9.c:
-  .data: [0x808433A0, 0x808445C0]
-data/npc/model/tex/duk_10.c:
-  .data: [0x808445C0, 0x808457E0]
-data/npc/model/mdl/elp_1.c:
-  .data: [0x80845830, 0x808479A0]
-data/npc/model/tex/elp_1.c:
-  .data: [0x808479A0, 0x80848BC0]
-data/npc/model/tex/elp_2.c:
-  .data: [0x80848BC0, 0x80849DE0]
-data/npc/model/tex/elp_3.c:
-  .data: [0x80849DE0, 0x8084B000]
-data/npc/model/tex/elp_4.c:
-  .data: [0x8084B000, 0x8084C220]
-data/npc/model/tex/elp_5.c:
-  .data: [0x8084C220, 0x8084D440]
-data/npc/model/tex/elp_6.c:
-  .data: [0x8084D440, 0x8084E660]
-data/npc/model/tex/elp_7.c:
-  .data: [0x8084E660, 0x8084F880]
-data/npc/model/mdl/flg_1.c:
-  .data: [0x80857D80, 0x808597E0]
-data/npc/model/tex/flg_1.c:
-  .data: [0x808597E0, 0x8085AA00]
-data/npc/model/tex/flg_2.c:
-  .data: [0x8085AA00, 0x8085BC20]
-data/npc/model/tex/flg_11.c:
-  .data: [0x8085BC20, 0x8085CE40]
-data/npc/model/tex/flg_12.c:
-  .data: [0x8085CE40, 0x8085DFE0]
-data/npc/model/tex/flg_13.c:
-  .data: [0x8085DFE0, 0x8085F200]
-data/npc/model/tex/flg_3.c:
-  .data: [0x8085F200, 0x80860420]
-data/npc/model/tex/flg_4.c:
-  .data: [0x80860420, 0x80861640]
-data/npc/model/tex/flg_5.c:
-  .data: [0x80861640, 0x80862860]
-data/npc/model/tex/flg_6.c:
-  .data: [0x80862860, 0x80863A80]
-data/npc/model/tex/flg_7.c:
-  .data: [0x80863A80, 0x80864CA0]
-data/npc/model/tex/flg_8.c:
-  .data: [0x80864CA0, 0x80865EC0]
-data/npc/model/tex/flg_9.c:
-  .data: [0x80865EC0, 0x808670E0]
-data/npc/model/tex/flg_10.c:
-  .data: [0x808670E0, 0x80868300]
-data/npc/model/mdl/rcf_1.c:
-  .data: [0x80868300, 0x8086A9A0]
-data/npc/model/tex/rcf_1.c:
-  .data: [0x8086A9A0, 0x8086B8C0]
-data/npc/model/mdl/gst_1.c:
-  .data: [0x8086CB08, 0x8086E180]
-data/npc/model/tex/gst_1.c:
-  .data: [0x8086E180, 0x8086F120]
-data/npc/model/mdl/goa_1.c:
-  .data: [0x80871730, 0x808736E8]
-data/npc/model/tex/goa_1.c:
-  .data: [0x80873700, 0x80874920]
-data/npc/model/tex/goa_2.c:
-  .data: [0x80874920, 0x80875B40]
-data/npc/model/tex/goa_3.c:
-  .data: [0x80875B40, 0x80876D60]
-data/npc/model/tex/goa_4.c:
-  .data: [0x80876D60, 0x80877F80]
-data/npc/model/tex/goa_5.c:
-  .data: [0x80877F80, 0x808791A0]
-data/npc/model/tex/goa_6.c:
-  .data: [0x808791A0, 0x8087A3C0]
-data/npc/model/mdl/gor_1.c:
-  .data: [0x8087A3C0, 0x8087C948]
-data/npc/model/tex/gor_1.c:
-  .data: [0x8087C960, 0x8087DB80]
-data/npc/model/tex/gor_2.c:
-  .data: [0x8087DB80, 0x8087EDA0]
-data/npc/model/tex/gor_3.c:
-  .data: [0x8087EDA0, 0x8087FFC0]
-data/npc/model/tex/gor_4.c:
-  .data: [0x8087FFC0, 0x808811E0]
-data/npc/model/tex/gor_5.c:
-  .data: [0x808811E0, 0x80882400]
-data/npc/model/mdl/xct_1.c:
-  .data: [0x80882400, 0x80884068]
-data/npc/model/tex/xct_1.c:
-  .data: [0x80884080, 0x80885420]
-data/npc/model/mdl/bpt_1.c:
-  .data: [0x80894928, 0x80896A80]
-data/npc/model/tex/bpt_1.c:
-  .data: [0x80896A80, 0x808979A0]
-data/npc/model/mdl/pkn_1.c:
-  .data: [0x808979A0, 0x808993C8]
-data/npc/model/tex/pkn_1.c:
-  .data: [0x808993E0, 0x80899A80]
-data/npc/model/mdl/hem_1.c:
-  .data: [0x8089BA80, 0x8089D6E0]
-data/npc/model/tex/hem_1.c:
-  .data: [0x8089D6E0, 0x8089DE40]
-data/npc/model/mdl/hip_1.c:
-  .data: [0x8089DE40, 0x808A0558]
-data/npc/model/tex/hip_1.c:
-  .data: [0x808A0560, 0x808A1280]
-data/npc/model/tex/hip_2.c:
-  .data: [0x808A1280, 0x808A1FA0]
-data/npc/model/tex/hip_3.c:
-  .data: [0x808A1FA0, 0x808A2CC0]
-data/npc/model/tex/hip_4.c:
-  .data: [0x808A2CC0, 0x808A39E0]
-data/npc/model/tex/hip_5.c:
-  .data: [0x808A39E0, 0x808A4700]
-data/npc/model/tex/hip_6.c:
-  .data: [0x808A4700, 0x808A5420]
-data/npc/model/tex/hip_7.c:
-  .data: [0x808A5420, 0x808A6140]
-data/npc/model/mdl/hrs_1.c:
-  .data: [0x808A6140, 0x808A8508]
-data/npc/model/tex/hrs_1.c:
-  .data: [0x808A8520, 0x808A92C0]
-data/npc/model/tex/hrs_2.c:
-  .data: [0x808A92C0, 0x808AA060]
-data/npc/model/tex/hrs_3.c:
-  .data: [0x808AA060, 0x808AAE00]
-data/npc/model/tex/hrs_4.c:
-  .data: [0x808AAE00, 0x808ABBA0]
-data/npc/model/tex/hrs_5.c:
-  .data: [0x808ABBA0, 0x808AC940]
-data/npc/model/tex/hrs_6.c:
-  .data: [0x808AC940, 0x808AD6E0]
-data/npc/model/tex/hrs_7.c:
-  .data: [0x808AD6E0, 0x808AE480]
-data/npc/model/tex/hrs_8.c:
-  .data: [0x808AE480, 0x808AF220]
-data/npc/model/mdl/plj_1.c:
-  .data: [0x808B8D00, 0x808BAD00]
-data/npc/model/tex/plj_1.c:
-  .data: [0x808BAD00, 0x808BC1A0]
-data/npc/model/mdl/xsq_1.c:
-  .data: [0x808BC1A0, 0x808BE240]
-data/npc/model/tex/xsq_1.c:
-  .data: [0x808BE240, 0x808BF660]
-data/npc/model/mdl/boa_1.c:
-  .data: [0x808C88A8, 0x808CAF48]
-data/npc/model/tex/boa_1.c:
-  .data: [0x808CAF60, 0x808CBD40]
-data/npc/model/mdl/kgr_1.c:
-  .data: [0x808CBD40, 0x808CE3C8]
-data/npc/model/tex/kgr_1.c:
-  .data: [0x808CE3E0, 0x808CF040]
-data/npc/model/tex/kgr_2.c:
-  .data: [0x808CF040, 0x808CFCA0]
-data/npc/model/tex/kgr_3.c:
-  .data: [0x808CFCA0, 0x808D0900]
-data/npc/model/tex/kgr_4.c:
-  .data: [0x808D0900, 0x808D1560]
-data/npc/model/tex/kgr_5.c:
-  .data: [0x808D1560, 0x808D21C0]
-data/npc/model/tex/kgr_6.c:
-  .data: [0x808D21C0, 0x808D2E20]
-data/npc/model/mdl/fob_1.c:
-  .data: [0x808D2E20, 0x808D5360]
-data/npc/model/tex/fob_1.c:
-  .data: [0x808D5360, 0x808D62C0]
-data/npc/model/mdl/kal_1.c:
-  .data: [0x808D62C0, 0x808D81D8]
-data/npc/model/tex/kal_1.c:
-  .data: [0x808D81E0, 0x808D9480]
-data/npc/model/tex/kal_2.c:
-  .data: [0x808D9480, 0x808DA720]
-data/npc/model/tex/kal_3.c:
-  .data: [0x808DA720, 0x808DB9C0]
-data/npc/model/tex/kal_4.c:
-  .data: [0x808DB9C0, 0x808DCC60]
-data/npc/model/tex/kal_5.c:
-  .data: [0x808DCC60, 0x808DDF00]
-data/npc/model/tex/kal_6.c:
-  .data: [0x808DDF00, 0x808DF1A0]
-data/npc/model/mdl/lon_1.c:
-  .data: [0x808E1A10, 0x808E3F78]
-data/npc/model/tex/lon_1.c:
-  .data: [0x808E3F80, 0x808E5260]
-data/npc/model/tex/lon_2.c:
-  .data: [0x808E5260, 0x808E6540]
-data/npc/model/tex/lon_3.c:
-  .data: [0x808E6540, 0x808E7820]
-data/npc/model/tex/lon_4.c:
-  .data: [0x808E7820, 0x808E8B00]
-data/npc/model/mdl/mos_1.c:
-  .data: [0x808EAEA0, 0x808ECAC8]
-data/npc/model/tex/mos_1.c:
-  .data: [0x808ECAE0, 0x808EDF80]
-data/npc/model/mdl/mol_1.c:
-  .data: [0x808EDF80, 0x808EFBA8]
-data/npc/model/tex/mol_1.c:
-  .data: [0x808EFBC0, 0x808F1060]
-data/npc/model/mdl/lrc_1.c:
-  .data: [0x808F1060, 0x808F2F50]
-data/npc/model/tex/lrc_1.c:
-  .data: [0x808F2F60, 0x808F3E00]
-data/npc/model/mdl/mka_1.c:
-  .data: [0x808F3E00, 0x808F5BA8]
-data/npc/model/tex/mka_1.c:
-  .data: [0x808F5BC0, 0x808F6060]
-data/npc/model/mdl/mus_1.c:
-  .data: [0x808F6EA8, 0x808F90B0]
-data/npc/model/tex/mus_1.c:
-  .data: [0x808F90C0, 0x808FA2E0]
-data/npc/model/tex/mus_2.c:
-  .data: [0x808FA2E0, 0x808FB500]
-data/npc/model/tex/mus_3.c:
-  .data: [0x808FB500, 0x808FC720]
-data/npc/model/tex/mus_4.c:
-  .data: [0x808FC720, 0x808FD940]
-data/npc/model/tex/mus_5.c:
-  .data: [0x808FD940, 0x808FEB60]
-data/npc/model/tex/mus_6.c:
-  .data: [0x808FEB60, 0x808FFD80]
-data/npc/model/tex/mus_7.c:
-  .data: [0x808FFD80, 0x80900FA0]
-data/npc/model/tex/mus_8.c:
-  .data: [0x80900FA0, 0x809021C0]
-data/npc/model/tex/mus_9.c:
-  .data: [0x809021C0, 0x809033E0]
-data/npc/model/tex/mus_10.c:
-  .data: [0x809033E0, 0x80904600]
-data/npc/model/mdl/hgh_1.c:
-  .data: [0x80911E70, 0x80914610]
-data/npc/model/tex/hgh_1.c:
-  .data: [0x80914620, 0x80915500]
-data/npc/model/mdl/hgs_1.c:
-  .data: [0x80915500, 0x80917C80]
-data/npc/model/tex/hgs_1.c:
-  .data: [0x80917C80, 0x80918B60]
-data/npc/model/mdl/oct_1.c:
-  .data: [0x80977CB0, 0x8097A460]
-data/npc/model/tex/oct_1.c:
-  .data: [0x8097A460, 0x8097AE80]
-data/npc/model/mdl/ost_1.c:
-  .data: [0x8097AE80, 0x8097D100]
-data/npc/model/tex/ost_1.c:
-  .data: [0x8097D100, 0x8097DE60]
-data/npc/model/tex/ost_2.c:
-  .data: [0x8097DE60, 0x8097EBC0]
-data/npc/model/tex/ost_3.c:
-  .data: [0x8097EBC0, 0x8097F920]
-data/npc/model/tex/ost_4.c:
-  .data: [0x8097F920, 0x80980680]
-data/npc/model/mdl/pgn_1.c:
-  .data: [0x80980F28, 0x80983140]
-data/npc/model/tex/pgn_1.c:
-  .data: [0x80983140, 0x80983EE0]
-data/npc/model/tex/pgn_2.c:
-  .data: [0x80983EE0, 0x80984C80]
-data/npc/model/tex/pgn_3.c:
-  .data: [0x80984C80, 0x80985A20]
-data/npc/model/tex/pgn_4.c:
-  .data: [0x80985A20, 0x809867C0]
-data/npc/model/tex/pgn_5.c:
-  .data: [0x809867C0, 0x80987560]
-data/npc/model/tex/pgn_6.c:
-  .data: [0x80987560, 0x80988300]
-data/npc/model/tex/pgn_7.c:
-  .data: [0x80988300, 0x809890A0]
-data/npc/model/tex/pgn_8.c:
-  .data: [0x809890A0, 0x80989E40]
-data/npc/model/mdl/pig_1.c:
-  .data: [0x80989E40, 0x8098BAC0]
-data/npc/model/tex/pig_1.c:
-  .data: [0x8098BAC0, 0x8098CC60]
-data/npc/model/tex/pig_2.c:
-  .data: [0x8098CC60, 0x8098DE00]
-data/npc/model/tex/pig_11.c:
-  .data: [0x8098DE00, 0x8098EFA0]
-data/npc/model/tex/pig_3.c:
-  .data: [0x8098EFA0, 0x80990140]
-data/npc/model/tex/pig_4.c:
-  .data: [0x80990140, 0x809912E0]
-data/npc/model/tex/pig_5.c:
-  .data: [0x809912E0, 0x80992480]
-data/npc/model/tex/pig_6.c:
-  .data: [0x80992480, 0x80993620]
-data/npc/model/tex/pig_7.c:
-  .data: [0x80993620, 0x809947C0]
-data/npc/model/tex/pig_8.c:
-  .data: [0x809947C0, 0x80995960]
-data/npc/model/tex/pig_9.c:
-  .data: [0x80995960, 0x80996B00]
-data/npc/model/tex/pig_10.c:
-  .data: [0x80996B00, 0x80997CA0]
-data/npc/model/mdl/pla_1.c:
-  .data: [0x80997CA0, 0x8099A318]
-data/npc/model/mdl/plc_1.c:
-  .data: [0x8099A318, 0x8099C410]
-data/npc/model/tex/plc_1.c:
-  .data: [0x8099C420, 0x8099D900]
-data/npc/model/tex/pla_1.c:
-  .data: [0x8099D900, 0x8099ECA0]
-data/npc/model/mdl/pga_1.c:
-  .data: [0x8099ECA0, 0x809A11A0]
-data/npc/model/tex/pga_1.c:
-  .data: [0x809A11A0, 0x809A2000]
-data/npc/model/mdl/pgb_1.c:
-  .data: [0x809A2000, 0x809A4450]
-data/npc/model/tex/pgb_1.c:
-  .data: [0x809A4460, 0x809A5400]
-data/npc/model/mdl/plb_1.c:
-  .data: [0x809A5400, 0x809A7980]
-data/npc/model/tex/plb_1.c:
-  .data: [0x809A7980, 0x809A8920]
-data/npc/model/mdl/rbt_1.c:
-  .data: [0x809A8920, 0x809AA7B8]
-data/npc/model/tex/rbt_1.c:
-  .data: [0x809AA7C0, 0x809AB9E0]
-data/npc/model/tex/rbt_2.c:
-  .data: [0x809AB9E0, 0x809ACC00]
-data/npc/model/tex/rbt_11.c:
-  .data: [0x809ACC00, 0x809ADE20]
-data/npc/model/tex/rbt_3.c:
-  .data: [0x809ADE20, 0x809AF040]
-data/npc/model/tex/rbt_4.c:
-  .data: [0x809AF040, 0x809B0260]
-data/npc/model/tex/rbt_5.c:
-  .data: [0x809B0260, 0x809B1480]
-data/npc/model/tex/rbt_6.c:
-  .data: [0x809B1480, 0x809B26A0]
-data/npc/model/tex/rbt_7.c:
-  .data: [0x809B26A0, 0x809B38C0]
-data/npc/model/tex/rbt_8.c:
-  .data: [0x809B38C0, 0x809B4AE0]
-data/npc/model/tex/rbt_9.c:
-  .data: [0x809B4AE0, 0x809B5D00]
-data/npc/model/tex/rbt_10.c:
-  .data: [0x809B5D00, 0x809B6F20]
-data/npc/model/mdl/mob_1.c:
-  .data: [0x809B6F20, 0x809B8AA0]
-data/npc/model/tex/mob_1.c:
-  .data: [0x809B8AA0, 0x809B9F40]
-data/npc/model/mdl/rhn_1.c:
-  .data: [0x809BA340, 0x809BCAF0]
-data/npc/model/tex/rhn_1.c:
-  .data: [0x809BCB00, 0x809BDD20]
-data/npc/model/tex/rhn_2.c:
-  .data: [0x809BDD20, 0x809BEF40]
-data/npc/model/tex/rhn_3.c:
-  .data: [0x809BEF40, 0x809C0160]
-data/npc/model/tex/rhn_4.c:
-  .data: [0x809C0160, 0x809C1380]
-data/npc/model/mdl/snt_1.c:
-  .data: [0x809C9148, 0x809CAD30]
-data/npc/model/tex/snt_1.c:
-  .data: [0x809CAD40, 0x809CC1E0]
-data/npc/model/mdl/wip_1.c:
-  .data: [0x809CC1E0, 0x809CE170]
-data/npc/model/tex/wip_1.c:
-  .data: [0x809CE180, 0x809CF560]
-data/npc/model/mdl/shp_1.c:
-  .data: [0x809CF560, 0x809D11A0]
-data/npc/model/tex/shp_1.c:
-  .data: [0x809D11A0, 0x809D23C0]
-data/npc/model/tex/shp_2.c:
-  .data: [0x809D23C0, 0x809D35E0]
-data/npc/model/tex/shp_3.c:
-  .data: [0x809D35E0, 0x809D4800]
-data/npc/model/tex/shp_4.c:
-  .data: [0x809D4800, 0x809D5A20]
-data/npc/model/tex/shp_5.c:
-  .data: [0x809D5A20, 0x809D6C40]
-data/npc/model/tex/shp_6.c:
-  .data: [0x809D6C40, 0x809D7E60]
-data/npc/model/mdl/rcn_1.c:
-  .data: [0x809D7E60, 0x809D9E80]
-data/npc/model/tex/rcn_1.c:
-  .data: [0x809D9E80, 0x809DACE0]
-data/npc/model/mdl/kab_1.c:
-  .data: [0x80A001B0, 0x80A02398]
-data/npc/model/tex/kab_1.c:
-  .data: [0x80A023A0, 0x80A02FC0]
-data/npc/model/mdl/ttl_1.c:
-  .data: [0x80B38FC0, 0x80B3ADD8]
-data/npc/model/tex/ttl_1.c:
-  .data: [0x80B3ADE0, 0x80B3BD40]
-data/npc/model/mdl/squ_1.c:
-  .data: [0x80B3BD40, 0x80B3DDE0]
-data/npc/model/tex/squ_1.c:
-  .data: [0x80B3DDE0, 0x80B3F000]
-data/npc/model/tex/squ_2.c:
-  .data: [0x80B3F000, 0x80B40220]
-data/npc/model/tex/squ_11.c:
-  .data: [0x80B40220, 0x80B41440]
-data/npc/model/tex/squ_3.c:
-  .data: [0x80B41440, 0x80B42660]
-data/npc/model/tex/squ_4.c:
-  .data: [0x80B42660, 0x80B43880]
-data/npc/model/tex/squ_5.c:
-  .data: [0x80B43880, 0x80B44AA0]
-data/npc/model/tex/squ_6.c:
-  .data: [0x80B44AA0, 0x80B45CC0]
-data/npc/model/tex/squ_7.c:
-  .data: [0x80B45CC0, 0x80B46EE0]
-data/npc/model/tex/squ_8.c:
-  .data: [0x80B46EE0, 0x80B48100]
-data/npc/model/tex/squ_9.c:
-  .data: [0x80B48100, 0x80B49320]
-data/npc/model/tex/squ_10.c:
-  .data: [0x80B49320, 0x80B4A540]
-data/npc/model/mdl/mnk_1.c:
-  .data: [0x80B4A540, 0x80B4C7F8]
-data/npc/model/tex/mnk_1.c:
-  .data: [0x80B4C800, 0x80B4DC20]
-data/npc/model/mdl/rcs_1.c:
-  .data: [0x80C09AC0, 0x80C0BBA8]
-data/npc/model/tex/rcs_1.c:
-  .data: [0x80C0BBC0, 0x80C0C960]
-data/npc/model/mdl/tig_1.c:
-  .data: [0x80C2C9F8, 0x80C2EE88]
-data/npc/model/tex/tig_1.c:
-  .data: [0x80C2EEA0, 0x80C2FC40]
-data/npc/model/tex/tig_2.c:
-  .data: [0x80C2FC40, 0x80C309E0]
-data/npc/model/tex/tig_3.c:
-  .data: [0x80C309E0, 0x80C31780]
-data/npc/model/tex/tig_4.c:
-  .data: [0x80C31780, 0x80C32520]
-data/npc/model/mdl/end_1.c:
-  .data: [0x80C45A08, 0x80C480A8]
-data/npc/model/tex/end_1.c:
-  .data: [0x80C480C0, 0x80C493A0]
-data/npc/model/mdl/tuk_1.c:
-  .data: [0x80C4B710, 0x80C4E080]
-data/npc/model/tex/tuk_1.c:
-  .data: [0x80C4E080, 0x80C4EF20]
-data/npc/model/mdl/wol_1.c:
-  .data: [0x80C4F588, 0x80C51650]
-data/npc/model/tex/wol_1.c:
-  .data: [0x80C51660, 0x80C52280]
-data/npc/model/tex/wol_2.c:
-  .data: [0x80C52280, 0x80C52EA0]
-data/npc/model/tex/wol_3.c:
-  .data: [0x80C52EA0, 0x80C53AC0]
-data/npc/model/tex/wol_4.c:
-  .data: [0x80C53AC0, 0x80C546E0]
-data/npc/model/tex/wol_5.c:
-  .data: [0x80C546E0, 0x80C55300]
-data/npc/model/tex/wol_6.c:
-  .data: [0x80C55300, 0x80C55F20]
-
-
+    .data: [0x806FA140, 0x806FB360]
 # dataobject.obj files
 data/field/bg/flower/obj_flower.c:
     .data: [0x8074FE80, 0x807508C0]
 data/field/bg/flower/obj_flower_leaf.c:
     .data: [0x807508C0, 0x80751140]
+data/npc/model/mdl/pbr_1.c:
+    .data: [0x8076DFA8, 0x80770178]
+data/npc/model/tex/pbr_1.c:
+    .data: [0x80770180, 0x80770EA0]
+data/npc/model/tex/pbr_2.c:
+    .data: [0x80770EA0, 0x80771BC0]
+data/npc/model/tex/pbr_3.c:
+    .data: [0x80771BC0, 0x807728E0]
+data/npc/model/tex/pbr_4.c:
+    .data: [0x807728E0, 0x80773600]
+data/npc/model/tex/pbr_5.c:
+    .data: [0x80773600, 0x80774320]
+data/npc/model/mdl/brd_1.c:
+    .data: [0x80774320, 0x80776358]
+data/npc/model/tex/brd_1.c:
+    .data: [0x80776360, 0x80777080]
+data/npc/model/tex/brd_2.c:
+    .data: [0x80777080, 0x80777DA0]
+data/npc/model/tex/brd_11.c:
+    .data: [0x80777DA0, 0x80778AC0]
+data/npc/model/tex/brd_3.c:
+    .data: [0x80778AC0, 0x807797E0]
+data/npc/model/tex/brd_4.c:
+    .data: [0x807797E0, 0x8077A500]
+data/npc/model/tex/brd_5.c:
+    .data: [0x8077A500, 0x8077B220]
+data/npc/model/tex/brd_6.c:
+    .data: [0x8077B220, 0x8077BF40]
+data/npc/model/tex/brd_7.c:
+    .data: [0x8077BF40, 0x8077CC60]
+data/npc/model/tex/brd_8.c:
+    .data: [0x8077CC60, 0x8077D980]
+data/npc/model/tex/brd_9.c:
+    .data: [0x8077D980, 0x8077E6A0]
+data/npc/model/tex/brd_10.c:
+    .data: [0x8077E6A0, 0x8077F3C0]
+data/npc/model/mdl/fox_1.c:
+    .data: [0x807D5FE8, 0x807D8098]
+data/npc/model/tex/fox_1.c:
+    .data: [0x807D80A0, 0x807D8FC0]
+data/npc/model/mdl/bul_1.c:
+    .data: [0x807D8FC0, 0x807DAFB0]
+data/npc/model/tex/bul_1.c:
+    .data: [0x807DAFC0, 0x807DC1E0]
+data/npc/model/tex/bul_2.c:
+    .data: [0x807DC1E0, 0x807DD400]
+data/npc/model/tex/bul_3.c:
+    .data: [0x807DD400, 0x807DE620]
+data/npc/model/tex/bul_4.c:
+    .data: [0x807DE620, 0x807DF840]
+data/npc/model/mdl/cml_1.c:
+    .data: [0x807DF840, 0x807E1EA8]
+data/npc/model/tex/cml_1.c:
+    .data: [0x807E1EC0, 0x807E2E60]
+data/npc/model/mdl/cat_1.c:
+    .data: [0x807E2E60, 0x807E4BB0]
+data/npc/model/tex/cat_1.c:
+    .data: [0x807E4BC0, 0x807E5DE0]
+data/npc/model/tex/cat_2.c:
+    .data: [0x807E5DE0, 0x807E7000]
+data/npc/model/tex/cat_11.c:
+    .data: [0x807E7000, 0x807E8220]
+data/npc/model/tex/cat_12.c:
+    .data: [0x807E8220, 0x807E9440]
+data/npc/model/tex/cat_13.c:
+    .data: [0x807E9440, 0x807EA660]
+data/npc/model/tex/cat_14.c:
+    .data: [0x807EA660, 0x807EB880]
+data/npc/model/tex/cat_15.c:
+    .data: [0x807EB880, 0x807ECAA0]
+data/npc/model/tex/cat_3.c:
+    .data: [0x807ECAA0, 0x807EDCC0]
+data/npc/model/tex/cat_4.c:
+    .data: [0x807EDCC0, 0x807EEEE0]
+data/npc/model/tex/cat_5.c:
+    .data: [0x807EEEE0, 0x807F0100]
+data/npc/model/tex/cat_6.c:
+    .data: [0x807F0100, 0x807F1320]
+data/npc/model/tex/cat_7.c:
+    .data: [0x807F1320, 0x807F2540]
+data/npc/model/tex/cat_8.c:
+    .data: [0x807F2540, 0x807F3760]
+data/npc/model/tex/cat_9.c:
+    .data: [0x807F3760, 0x807F4980]
+data/npc/model/tex/cat_10.c:
+    .data: [0x807F4980, 0x807F5BA0]
+data/npc/model/mdl/chn_1.c:
+    .data: [0x807F5BA0, 0x807F8348]
+data/npc/model/tex/chn_1.c:
+    .data: [0x807F8360, 0x807F9040]
+data/npc/model/tex/chn_2.c:
+    .data: [0x807F9040, 0x807F9D20]
+data/npc/model/tex/chn_3.c:
+    .data: [0x807F9D20, 0x807FAA00]
+data/npc/model/tex/chn_4.c:
+    .data: [0x807FAA00, 0x807FB6E0]
+data/npc/model/tex/chn_5.c:
+    .data: [0x807FB6E0, 0x807FC3C0]
+data/npc/model/tex/chn_6.c:
+    .data: [0x807FC3C0, 0x807FD0A0]
+data/npc/model/tex/chn_7.c:
+    .data: [0x807FD0A0, 0x807FDD80]
+data/npc/model/tex/chn_8.c:
+    .data: [0x807FDD80, 0x807FEA60]
+data/npc/model/tex/chn_9.c:
+    .data: [0x807FEA60, 0x807FF740]
+data/npc/model/mdl/cbr_1.c:
+    .data: [0x807FF740, 0x80801620]
+data/npc/model/tex/cbr_1.c:
+    .data: [0x80801620, 0x80802840]
+data/npc/model/tex/cbr_2.c:
+    .data: [0x80802840, 0x80803A60]
+data/npc/model/tex/cbr_11.c:
+    .data: [0x80803A60, 0x80804C80]
+data/npc/model/tex/cbr_3.c:
+    .data: [0x80804C80, 0x80805EA0]
+data/npc/model/tex/cbr_4.c:
+    .data: [0x80805EA0, 0x808070C0]
+data/npc/model/tex/cbr_5.c:
+    .data: [0x808070C0, 0x808082E0]
+data/npc/model/tex/cbr_6.c:
+    .data: [0x808082E0, 0x80809500]
+data/npc/model/tex/cbr_7.c:
+    .data: [0x80809500, 0x8080A720]
+data/npc/model/tex/cbr_8.c:
+    .data: [0x8080A720, 0x8080B940]
+data/npc/model/tex/cbr_9.c:
+    .data: [0x8080B940, 0x8080CB60]
+data/npc/model/tex/cbr_10.c:
+    .data: [0x8080CB60, 0x8080DD80]
 data/combi/data_combi.c:
     .data: [0x8080DD80, 0x8080E628]
+data/npc/model/mdl/rcc_1.c:
+    .data: [0x8080E628, 0x80810608]
+data/npc/model/tex/rcc_1.c:
+    .data: [0x80810620, 0x80811500]
+data/npc/model/mdl/cow_1.c:
+    .data: [0x80811500, 0x808134E0]
+data/npc/model/tex/cow_1.c:
+    .data: [0x808134E0, 0x80814700]
+data/npc/model/tex/cow_2.c:
+    .data: [0x80814700, 0x80815920]
+data/npc/model/tex/cow_3.c:
+    .data: [0x80815920, 0x80816B40]
+data/npc/model/tex/cow_4.c:
+    .data: [0x80816B40, 0x80817D60]
+data/npc/model/mdl/crd_1.c:
+    .data: [0x80817D60, 0x80819EE8]
+data/npc/model/tex/crd_1.c:
+    .data: [0x80819F00, 0x8081AC20]
+data/npc/model/tex/crd_2.c:
+    .data: [0x8081AC20, 0x8081B940]
+data/npc/model/tex/crd_3.c:
+    .data: [0x8081B940, 0x8081C660]
+data/npc/model/tex/crd_4.c:
+    .data: [0x8081C660, 0x8081D380]
+data/npc/model/mdl/owl_1.c:
+    .data: [0x8081D380, 0x8081F9A8]
+data/npc/model/tex/owl_1.c:
+    .data: [0x8081F9C0, 0x80820820]
+data/npc/model/mdl/rcd_1.c:
+    .data: [0x80820820, 0x80822720]
+data/npc/model/tex/rcd_1.c:
+    .data: [0x80822720, 0x80823580]
+data/npc/model/mdl/grf_1.c:
+    .data: [0x80823580, 0x80825B28]
+data/npc/model/tex/grf_1.c:
+    .data: [0x80825B40, 0x80826A60]
+data/npc/model/mdl/dog_1.c:
+    .data: [0x80826A60, 0x80828A40]
+data/npc/model/tex/dog_1.c:
+    .data: [0x80828A40, 0x80829C60]
+data/npc/model/tex/dog_2.c:
+    .data: [0x80829C60, 0x8082AE80]
+data/npc/model/tex/dog_3.c:
+    .data: [0x8082AE80, 0x8082C0A0]
+data/npc/model/tex/dog_4.c:
+    .data: [0x8082C0A0, 0x8082D2C0]
+data/npc/model/tex/dog_5.c:
+    .data: [0x8082D2C0, 0x8082E4E0]
+data/npc/model/tex/dog_6.c:
+    .data: [0x8082E4E0, 0x8082F700]
+data/npc/model/tex/dog_7.c:
+    .data: [0x8082F700, 0x80830920]
+data/npc/model/tex/dog_8.c:
+    .data: [0x80830920, 0x80831B40]
+data/npc/model/tex/dog_9.c:
+    .data: [0x80831B40, 0x80832D60]
+data/npc/model/tex/dog_10.c:
+    .data: [0x80832D60, 0x80833F80]
+data/npc/model/mdl/seg_1.c:
+    .data: [0x80833F80, 0x808362E8]
+data/npc/model/tex/seg_1.c:
+    .data: [0x80836300, 0x80837160]
+data/npc/model/mdl/duk_1.c:
+    .data: [0x80837160, 0x80839070]
+data/npc/model/tex/duk_1.c:
+    .data: [0x80839080, 0x8083A2A0]
+data/npc/model/tex/duk_2.c:
+    .data: [0x8083A2A0, 0x8083B4C0]
+data/npc/model/tex/duk_11.c:
+    .data: [0x8083B4C0, 0x8083C6E0]
+data/npc/model/tex/duk_3.c:
+    .data: [0x8083C6E0, 0x8083D900]
+data/npc/model/tex/duk_4.c:
+    .data: [0x8083D900, 0x8083EB20]
+data/npc/model/tex/duk_5.c:
+    .data: [0x8083EB20, 0x8083FD40]
+data/npc/model/tex/duk_6.c:
+    .data: [0x8083FD40, 0x80840F60]
+data/npc/model/tex/duk_7.c:
+    .data: [0x80840F60, 0x80842180]
+data/npc/model/tex/duk_8.c:
+    .data: [0x80842180, 0x808433A0]
+data/npc/model/tex/duk_9.c:
+    .data: [0x808433A0, 0x808445C0]
+data/npc/model/tex/duk_10.c:
+    .data: [0x808445C0, 0x808457E0]
+data/npc/model/mdl/elp_1.c:
+    .data: [0x80845830, 0x808479A0]
+data/npc/model/tex/elp_1.c:
+    .data: [0x808479A0, 0x80848BC0]
+data/npc/model/tex/elp_2.c:
+    .data: [0x80848BC0, 0x80849DE0]
+data/npc/model/tex/elp_3.c:
+    .data: [0x80849DE0, 0x8084B000]
+data/npc/model/tex/elp_4.c:
+    .data: [0x8084B000, 0x8084C220]
+data/npc/model/tex/elp_5.c:
+    .data: [0x8084C220, 0x8084D440]
+data/npc/model/tex/elp_6.c:
+    .data: [0x8084D440, 0x8084E660]
+data/npc/model/tex/elp_7.c:
+    .data: [0x8084E660, 0x8084F880]
+data/npc/model/mdl/flg_1.c:
+    .data: [0x80857D80, 0x808597E0]
+data/npc/model/tex/flg_1.c:
+    .data: [0x808597E0, 0x8085AA00]
+data/npc/model/tex/flg_2.c:
+    .data: [0x8085AA00, 0x8085BC20]
+data/npc/model/tex/flg_11.c:
+    .data: [0x8085BC20, 0x8085CE40]
+data/npc/model/tex/flg_12.c:
+    .data: [0x8085CE40, 0x8085DFE0]
+data/npc/model/tex/flg_13.c:
+    .data: [0x8085DFE0, 0x8085F200]
+data/npc/model/tex/flg_3.c:
+    .data: [0x8085F200, 0x80860420]
+data/npc/model/tex/flg_4.c:
+    .data: [0x80860420, 0x80861640]
+data/npc/model/tex/flg_5.c:
+    .data: [0x80861640, 0x80862860]
+data/npc/model/tex/flg_6.c:
+    .data: [0x80862860, 0x80863A80]
+data/npc/model/tex/flg_7.c:
+    .data: [0x80863A80, 0x80864CA0]
+data/npc/model/tex/flg_8.c:
+    .data: [0x80864CA0, 0x80865EC0]
+data/npc/model/tex/flg_9.c:
+    .data: [0x80865EC0, 0x808670E0]
+data/npc/model/tex/flg_10.c:
+    .data: [0x808670E0, 0x80868300]
+data/npc/model/mdl/rcf_1.c:
+    .data: [0x80868300, 0x8086A9A0]
+data/npc/model/tex/rcf_1.c:
+    .data: [0x8086A9A0, 0x8086B8C0]
+data/npc/model/mdl/gst_1.c:
+    .data: [0x8086CB08, 0x8086E180]
+data/npc/model/tex/gst_1.c:
+    .data: [0x8086E180, 0x8086F120]
+data/npc/model/mdl/goa_1.c:
+    .data: [0x80871730, 0x808736E8]
+data/npc/model/tex/goa_1.c:
+    .data: [0x80873700, 0x80874920]
+data/npc/model/tex/goa_2.c:
+    .data: [0x80874920, 0x80875B40]
+data/npc/model/tex/goa_3.c:
+    .data: [0x80875B40, 0x80876D60]
+data/npc/model/tex/goa_4.c:
+    .data: [0x80876D60, 0x80877F80]
+data/npc/model/tex/goa_5.c:
+    .data: [0x80877F80, 0x808791A0]
+data/npc/model/tex/goa_6.c:
+    .data: [0x808791A0, 0x8087A3C0]
+data/npc/model/mdl/gor_1.c:
+    .data: [0x8087A3C0, 0x8087C948]
+data/npc/model/tex/gor_1.c:
+    .data: [0x8087C960, 0x8087DB80]
+data/npc/model/tex/gor_2.c:
+    .data: [0x8087DB80, 0x8087EDA0]
+data/npc/model/tex/gor_3.c:
+    .data: [0x8087EDA0, 0x8087FFC0]
+data/npc/model/tex/gor_4.c:
+    .data: [0x8087FFC0, 0x808811E0]
+data/npc/model/tex/gor_5.c:
+    .data: [0x808811E0, 0x80882400]
+data/npc/model/mdl/xct_1.c:
+    .data: [0x80882400, 0x80884068]
+data/npc/model/tex/xct_1.c:
+    .data: [0x80884080, 0x80885420]
+data/npc/model/mdl/bpt_1.c:
+    .data: [0x80894928, 0x80896A80]
+data/npc/model/tex/bpt_1.c:
+    .data: [0x80896A80, 0x808979A0]
+data/npc/model/mdl/pkn_1.c:
+    .data: [0x808979A0, 0x808993C8]
+data/npc/model/tex/pkn_1.c:
+    .data: [0x808993E0, 0x80899A80]
+data/npc/model/mdl/hem_1.c:
+    .data: [0x8089BA80, 0x8089D6E0]
+data/npc/model/tex/hem_1.c:
+    .data: [0x8089D6E0, 0x8089DE40]
+data/npc/model/mdl/hip_1.c:
+    .data: [0x8089DE40, 0x808A0558]
+data/npc/model/tex/hip_1.c:
+    .data: [0x808A0560, 0x808A1280]
+data/npc/model/tex/hip_2.c:
+    .data: [0x808A1280, 0x808A1FA0]
+data/npc/model/tex/hip_3.c:
+    .data: [0x808A1FA0, 0x808A2CC0]
+data/npc/model/tex/hip_4.c:
+    .data: [0x808A2CC0, 0x808A39E0]
+data/npc/model/tex/hip_5.c:
+    .data: [0x808A39E0, 0x808A4700]
+data/npc/model/tex/hip_6.c:
+    .data: [0x808A4700, 0x808A5420]
+data/npc/model/tex/hip_7.c:
+    .data: [0x808A5420, 0x808A6140]
+data/npc/model/mdl/hrs_1.c:
+    .data: [0x808A6140, 0x808A8508]
+data/npc/model/tex/hrs_1.c:
+    .data: [0x808A8520, 0x808A92C0]
+data/npc/model/tex/hrs_2.c:
+    .data: [0x808A92C0, 0x808AA060]
+data/npc/model/tex/hrs_3.c:
+    .data: [0x808AA060, 0x808AAE00]
+data/npc/model/tex/hrs_4.c:
+    .data: [0x808AAE00, 0x808ABBA0]
+data/npc/model/tex/hrs_5.c:
+    .data: [0x808ABBA0, 0x808AC940]
+data/npc/model/tex/hrs_6.c:
+    .data: [0x808AC940, 0x808AD6E0]
+data/npc/model/tex/hrs_7.c:
+    .data: [0x808AD6E0, 0x808AE480]
+data/npc/model/tex/hrs_8.c:
+    .data: [0x808AE480, 0x808AF220]
+data/npc/model/mdl/plj_1.c:
+    .data: [0x808B8D00, 0x808BAD00]
+data/npc/model/tex/plj_1.c:
+    .data: [0x808BAD00, 0x808BC1A0]
+data/npc/model/mdl/xsq_1.c:
+    .data: [0x808BC1A0, 0x808BE240]
+data/npc/model/tex/xsq_1.c:
+    .data: [0x808BE240, 0x808BF660]
 data/item/item_name.c:
     .data: [0x808BF660, 0x808C8830]
+data/npc/model/mdl/boa_1.c:
+    .data: [0x808C88A8, 0x808CAF48]
+data/npc/model/tex/boa_1.c:
+    .data: [0x808CAF60, 0x808CBD40]
+data/npc/model/mdl/kgr_1.c:
+    .data: [0x808CBD40, 0x808CE3C8]
+data/npc/model/tex/kgr_1.c:
+    .data: [0x808CE3E0, 0x808CF040]
+data/npc/model/tex/kgr_2.c:
+    .data: [0x808CF040, 0x808CFCA0]
+data/npc/model/tex/kgr_3.c:
+    .data: [0x808CFCA0, 0x808D0900]
+data/npc/model/tex/kgr_4.c:
+    .data: [0x808D0900, 0x808D1560]
+data/npc/model/tex/kgr_5.c:
+    .data: [0x808D1560, 0x808D21C0]
+data/npc/model/tex/kgr_6.c:
+    .data: [0x808D21C0, 0x808D2E20]
+data/npc/model/mdl/fob_1.c:
+    .data: [0x808D2E20, 0x808D5360]
+data/npc/model/tex/fob_1.c:
+    .data: [0x808D5360, 0x808D62C0]
+data/npc/model/mdl/kal_1.c:
+    .data: [0x808D62C0, 0x808D81D8]
+data/npc/model/tex/kal_1.c:
+    .data: [0x808D81E0, 0x808D9480]
+data/npc/model/tex/kal_2.c:
+    .data: [0x808D9480, 0x808DA720]
+data/npc/model/tex/kal_3.c:
+    .data: [0x808DA720, 0x808DB9C0]
+data/npc/model/tex/kal_4.c:
+    .data: [0x808DB9C0, 0x808DCC60]
+data/npc/model/tex/kal_5.c:
+    .data: [0x808DCC60, 0x808DDF00]
+data/npc/model/tex/kal_6.c:
+    .data: [0x808DDF00, 0x808DF1A0]
+data/npc/model/mdl/lon_1.c:
+    .data: [0x808E1A10, 0x808E3F78]
+data/npc/model/tex/lon_1.c:
+    .data: [0x808E3F80, 0x808E5260]
+data/npc/model/tex/lon_2.c:
+    .data: [0x808E5260, 0x808E6540]
+data/npc/model/tex/lon_3.c:
+    .data: [0x808E6540, 0x808E7820]
+data/npc/model/tex/lon_4.c:
+    .data: [0x808E7820, 0x808E8B00]
+data/npc/model/mdl/mos_1.c:
+    .data: [0x808EAEA0, 0x808ECAC8]
+data/npc/model/tex/mos_1.c:
+    .data: [0x808ECAE0, 0x808EDF80]
+data/npc/model/mdl/mol_1.c:
+    .data: [0x808EDF80, 0x808EFBA8]
+data/npc/model/tex/mol_1.c:
+    .data: [0x808EFBC0, 0x808F1060]
+data/npc/model/mdl/lrc_1.c:
+    .data: [0x808F1060, 0x808F2F50]
+data/npc/model/tex/lrc_1.c:
+    .data: [0x808F2F60, 0x808F3E00]
+data/npc/model/mdl/mka_1.c:
+    .data: [0x808F3E00, 0x808F5BA8]
+data/npc/model/tex/mka_1.c:
+    .data: [0x808F5BC0, 0x808F6060]
+data/npc/model/mdl/mus_1.c:
+    .data: [0x808F6EA8, 0x808F90B0]
+data/npc/model/tex/mus_1.c:
+    .data: [0x808F90C0, 0x808FA2E0]
+data/npc/model/tex/mus_2.c:
+    .data: [0x808FA2E0, 0x808FB500]
+data/npc/model/tex/mus_3.c:
+    .data: [0x808FB500, 0x808FC720]
+data/npc/model/tex/mus_4.c:
+    .data: [0x808FC720, 0x808FD940]
+data/npc/model/tex/mus_5.c:
+    .data: [0x808FD940, 0x808FEB60]
+data/npc/model/tex/mus_6.c:
+    .data: [0x808FEB60, 0x808FFD80]
+data/npc/model/tex/mus_7.c:
+    .data: [0x808FFD80, 0x80900FA0]
+data/npc/model/tex/mus_8.c:
+    .data: [0x80900FA0, 0x809021C0]
+data/npc/model/tex/mus_9.c:
+    .data: [0x809021C0, 0x809033E0]
+data/npc/model/tex/mus_10.c:
+    .data: [0x809033E0, 0x80904600]
 data/model/mural/obj_mural.c:
     .data: [0x80904600, 0x80904700]
+data/npc/model/mdl/hgh_1.c:
+    .data: [0x80911E70, 0x80914610]
+data/npc/model/tex/hgh_1.c:
+    .data: [0x80914620, 0x80915500]
+data/npc/model/mdl/hgs_1.c:
+    .data: [0x80915500, 0x80917C80]
+data/npc/model/tex/hgs_1.c:
+    .data: [0x80917C80, 0x80918B60]
 data/npc/default_list.c:
     .data: [0x8096CD90, 0x8096D328]
 data/npc/npc_draw_data.c:
@@ -1912,6 +1701,196 @@ data/npc/grow_list.c:
     .data: [0x80977450, 0x80977540]
 data/npc/house_list.c:
     .data: [0x80977540, 0x80977CB0]
+data/npc/model/mdl/oct_1.c:
+    .data: [0x80977CB0, 0x8097A460]
+data/npc/model/tex/oct_1.c:
+    .data: [0x8097A460, 0x8097AE80]
+data/npc/model/mdl/ost_1.c:
+    .data: [0x8097AE80, 0x8097D100]
+data/npc/model/tex/ost_1.c:
+    .data: [0x8097D100, 0x8097DE60]
+data/npc/model/tex/ost_2.c:
+    .data: [0x8097DE60, 0x8097EBC0]
+data/npc/model/tex/ost_3.c:
+    .data: [0x8097EBC0, 0x8097F920]
+data/npc/model/tex/ost_4.c:
+    .data: [0x8097F920, 0x80980680]
+data/npc/model/mdl/pgn_1.c:
+    .data: [0x80980F28, 0x80983140]
+data/npc/model/tex/pgn_1.c:
+    .data: [0x80983140, 0x80983EE0]
+data/npc/model/tex/pgn_2.c:
+    .data: [0x80983EE0, 0x80984C80]
+data/npc/model/tex/pgn_3.c:
+    .data: [0x80984C80, 0x80985A20]
+data/npc/model/tex/pgn_4.c:
+    .data: [0x80985A20, 0x809867C0]
+data/npc/model/tex/pgn_5.c:
+    .data: [0x809867C0, 0x80987560]
+data/npc/model/tex/pgn_6.c:
+    .data: [0x80987560, 0x80988300]
+data/npc/model/tex/pgn_7.c:
+    .data: [0x80988300, 0x809890A0]
+data/npc/model/tex/pgn_8.c:
+    .data: [0x809890A0, 0x80989E40]
+data/npc/model/mdl/pig_1.c:
+    .data: [0x80989E40, 0x8098BAC0]
+data/npc/model/tex/pig_1.c:
+    .data: [0x8098BAC0, 0x8098CC60]
+data/npc/model/tex/pig_2.c:
+    .data: [0x8098CC60, 0x8098DE00]
+data/npc/model/tex/pig_11.c:
+    .data: [0x8098DE00, 0x8098EFA0]
+data/npc/model/tex/pig_3.c:
+    .data: [0x8098EFA0, 0x80990140]
+data/npc/model/tex/pig_4.c:
+    .data: [0x80990140, 0x809912E0]
+data/npc/model/tex/pig_5.c:
+    .data: [0x809912E0, 0x80992480]
+data/npc/model/tex/pig_6.c:
+    .data: [0x80992480, 0x80993620]
+data/npc/model/tex/pig_7.c:
+    .data: [0x80993620, 0x809947C0]
+data/npc/model/tex/pig_8.c:
+    .data: [0x809947C0, 0x80995960]
+data/npc/model/tex/pig_9.c:
+    .data: [0x80995960, 0x80996B00]
+data/npc/model/tex/pig_10.c:
+    .data: [0x80996B00, 0x80997CA0]
+data/npc/model/mdl/pla_1.c:
+    .data: [0x80997CA0, 0x8099A318]
+data/npc/model/mdl/plc_1.c:
+    .data: [0x8099A318, 0x8099C410]
+data/npc/model/tex/plc_1.c:
+    .data: [0x8099C420, 0x8099D900]
+data/npc/model/tex/pla_1.c:
+    .data: [0x8099D900, 0x8099ECA0]
+data/npc/model/mdl/pga_1.c:
+    .data: [0x8099ECA0, 0x809A11A0]
+data/npc/model/tex/pga_1.c:
+    .data: [0x809A11A0, 0x809A2000]
+data/npc/model/mdl/pgb_1.c:
+    .data: [0x809A2000, 0x809A4450]
+data/npc/model/tex/pgb_1.c:
+    .data: [0x809A4460, 0x809A5400]
+data/npc/model/mdl/plb_1.c:
+    .data: [0x809A5400, 0x809A7980]
+data/npc/model/tex/plb_1.c:
+    .data: [0x809A7980, 0x809A8920]
+data/npc/model/mdl/rbt_1.c:
+    .data: [0x809A8920, 0x809AA7B8]
+data/npc/model/tex/rbt_1.c:
+    .data: [0x809AA7C0, 0x809AB9E0]
+data/npc/model/tex/rbt_2.c:
+    .data: [0x809AB9E0, 0x809ACC00]
+data/npc/model/tex/rbt_11.c:
+    .data: [0x809ACC00, 0x809ADE20]
+data/npc/model/tex/rbt_3.c:
+    .data: [0x809ADE20, 0x809AF040]
+data/npc/model/tex/rbt_4.c:
+    .data: [0x809AF040, 0x809B0260]
+data/npc/model/tex/rbt_5.c:
+    .data: [0x809B0260, 0x809B1480]
+data/npc/model/tex/rbt_6.c:
+    .data: [0x809B1480, 0x809B26A0]
+data/npc/model/tex/rbt_7.c:
+    .data: [0x809B26A0, 0x809B38C0]
+data/npc/model/tex/rbt_8.c:
+    .data: [0x809B38C0, 0x809B4AE0]
+data/npc/model/tex/rbt_9.c:
+    .data: [0x809B4AE0, 0x809B5D00]
+data/npc/model/tex/rbt_10.c:
+    .data: [0x809B5D00, 0x809B6F20]
+data/npc/model/mdl/mob_1.c:
+    .data: [0x809B6F20, 0x809B8AA0]
+data/npc/model/tex/mob_1.c:
+    .data: [0x809B8AA0, 0x809B9F40]
+data/npc/model/mdl/rhn_1.c:
+    .data: [0x809BA340, 0x809BCAF0]
+data/npc/model/tex/rhn_1.c:
+    .data: [0x809BCB00, 0x809BDD20]
+data/npc/model/tex/rhn_2.c:
+    .data: [0x809BDD20, 0x809BEF40]
+data/npc/model/tex/rhn_3.c:
+    .data: [0x809BEF40, 0x809C0160]
+data/npc/model/tex/rhn_4.c:
+    .data: [0x809C0160, 0x809C1380]
+data/npc/model/mdl/snt_1.c:
+    .data: [0x809C9148, 0x809CAD30]
+data/npc/model/tex/snt_1.c:
+    .data: [0x809CAD40, 0x809CC1E0]
+data/npc/model/mdl/wip_1.c:
+    .data: [0x809CC1E0, 0x809CE170]
+data/npc/model/tex/wip_1.c:
+    .data: [0x809CE180, 0x809CF560]
+data/npc/model/mdl/shp_1.c:
+    .data: [0x809CF560, 0x809D11A0]
+data/npc/model/tex/shp_1.c:
+    .data: [0x809D11A0, 0x809D23C0]
+data/npc/model/tex/shp_2.c:
+    .data: [0x809D23C0, 0x809D35E0]
+data/npc/model/tex/shp_3.c:
+    .data: [0x809D35E0, 0x809D4800]
+data/npc/model/tex/shp_4.c:
+    .data: [0x809D4800, 0x809D5A20]
+data/npc/model/tex/shp_5.c:
+    .data: [0x809D5A20, 0x809D6C40]
+data/npc/model/tex/shp_6.c:
+    .data: [0x809D6C40, 0x809D7E60]
+data/npc/model/mdl/rcn_1.c:
+    .data: [0x809D7E60, 0x809D9E80]
+data/npc/model/tex/rcn_1.c:
+    .data: [0x809D9E80, 0x809DACE0]
+data/npc/model/mdl/kab_1.c:
+    .data: [0x80A001B0, 0x80A02398]
+data/npc/model/tex/kab_1.c:
+    .data: [0x80A023A0, 0x80A02FC0]
+data/npc/model/mdl/ttl_1.c:
+    .data: [0x80B38FC0, 0x80B3ADD8]
+data/npc/model/tex/ttl_1.c:
+    .data: [0x80B3ADE0, 0x80B3BD40]
+data/npc/model/mdl/squ_1.c:
+    .data: [0x80B3BD40, 0x80B3DDE0]
+data/npc/model/tex/squ_1.c:
+    .data: [0x80B3DDE0, 0x80B3F000]
+data/npc/model/tex/squ_2.c:
+    .data: [0x80B3F000, 0x80B40220]
+data/npc/model/tex/squ_11.c:
+    .data: [0x80B40220, 0x80B41440]
+data/npc/model/tex/squ_3.c:
+    .data: [0x80B41440, 0x80B42660]
+data/npc/model/tex/squ_4.c:
+    .data: [0x80B42660, 0x80B43880]
+data/npc/model/tex/squ_5.c:
+    .data: [0x80B43880, 0x80B44AA0]
+data/npc/model/tex/squ_6.c:
+    .data: [0x80B44AA0, 0x80B45CC0]
+data/npc/model/tex/squ_7.c:
+    .data: [0x80B45CC0, 0x80B46EE0]
+data/npc/model/tex/squ_8.c:
+    .data: [0x80B46EE0, 0x80B48100]
+data/npc/model/tex/squ_9.c:
+    .data: [0x80B48100, 0x80B49320]
+data/npc/model/tex/squ_10.c:
+    .data: [0x80B49320, 0x80B4A540]
+data/npc/model/mdl/mnk_1.c:
+    .data: [0x80B4A540, 0x80B4C7F8]
+data/npc/model/tex/mnk_1.c:
+    .data: [0x80B4C800, 0x80B4DC20]
+data/npc/model/mdl/rcs_1.c:
+    .data: [0x80C09AC0, 0x80C0BBA8]
+data/npc/model/tex/rcs_1.c:
+    .data: [0x80C0BBC0, 0x80C0C960]
+data/npc/model/mdl/tig_1.c:
+    .data: [0x80C2C9F8, 0x80C2EE88]
+data/npc/model/tex/tig_1.c:
+    .data: [0x80C2EEA0, 0x80C2FC40]
+data/npc/model/tex/tig_2.c:
+    .data: [0x80C2FC40, 0x80C309E0]
+data/npc/model/tex/tig_3.c:
+    .data: [0x80C309E0, 0x80C31780]
+data/npc/model/tex/tig_4.c:
+    .data: [0x80C31780, 0x80C32520]
 data/titledemo/pact0.c:
     .data: [0x80C411D8, 0x80C42038]
 data/titledemo/pact1.c:
@@ -1922,6 +1901,28 @@ data/titledemo/pact3.c:
     .data: [0x80C43D18, 0x80C44B98]
 data/titledemo/pact4.c:
     .data: [0x80C44B98, 0x80C45A08]
+data/npc/model/mdl/end_1.c:
+    .data: [0x80C45A08, 0x80C480A8]
+data/npc/model/tex/end_1.c:
+    .data: [0x80C480C0, 0x80C493A0]
+data/npc/model/mdl/tuk_1.c:
+    .data: [0x80C4B710, 0x80C4E080]
+data/npc/model/tex/tuk_1.c:
+    .data: [0x80C4E080, 0x80C4EF20]
+data/npc/model/mdl/wol_1.c:
+    .data: [0x80C4F588, 0x80C51650]
+data/npc/model/tex/wol_1.c:
+    .data: [0x80C51660, 0x80C52280]
+data/npc/model/tex/wol_2.c:
+    .data: [0x80C52280, 0x80C52EA0]
+data/npc/model/tex/wol_3.c:
+    .data: [0x80C52EA0, 0x80C53AC0]
+data/npc/model/tex/wol_4.c:
+    .data: [0x80C53AC0, 0x80C546E0]
+data/npc/model/tex/wol_5.c:
+    .data: [0x80C546E0, 0x80C55300]
+data/npc/model/tex/wol_6.c:
+    .data: [0x80C55300, 0x80C55F20]
 data/field/bg/beach_pal.c:
     .data: [0x80C59CA8, 0x80C59E28]
 data/field/bg/bush_pal.c:
