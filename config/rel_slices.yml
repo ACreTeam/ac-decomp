@@ -1083,6 +1083,10 @@ ef_ase_ch.c:
     .text: [0x806052A8, 0x806054F0]
     .rodata: [0x8064BCA8, 0x8064BCC0]
     .data: [0x806D1EC8, 0x806D1F08]
+ef_break_axe.c:
+    .text: [0x806054F0, 0x8060672C]
+    .rodata: [0x8064BCC0, 0x8064BD60]
+    .data: [0x806D1F08, 0x806D1F20]
 ef_bubu.c:
     .text: [0x8060672C, 0x80606878]
     .rodata: [0x8064BD60, 0x8064BD68]
@@ -1115,6 +1119,30 @@ ef_coin.c:
     .text: [0x80608060, 0x806087EC]
     .rodata: [0x8064BE48, 0x8064BEA0]
     .data: [0x806D20C0, 0x806D2128]
+ef_dash_asimoto.c:
+    .text: [0x806087EC, 0x80609030]
+    .rodata: [0x8064BEA0, 0x8064BEB8]
+    .data: [0x806D2128, 0x806D21B0]
+ef_dig_hole.c:
+    .text: [0x80609030, 0x80609910]
+    .rodata: [0x8064BEB8, 0x8064BF20]
+    .data: [0x806D21B0, 0x806D2220]
+ef_dig_mud.c:
+    .text: [0x80609910, 0x80609F6C]
+    .rodata: [0x8064BF20, 0x8064BF70]
+    .data: [0x806D2220, 0x806D2268]
+ef_dig_scoop.c:
+    .text: [0x80609F6C, 0x8060A808]
+    .rodata: [0x8064BF70, 0x8064BF90]
+    .data: [0x806D2268, 0x806D2280]
+ef_douzou_light.c:
+    .text: [0x8060A808, 0x8060AAD4]
+    .rodata: [0x8064BF90, 0x8064BFA8]
+    .data: [0x806D2280, 0x806D2298]
+ef_doyon.c:
+    .text: [0x8060AAD4, 0x8060B068]
+    .rodata: [0x8064BFA8, 0x8064C000]
+    .data: [0x806D2298, 0x806D22B0]
 ef_flash.c:
     .text: [0x8060B7B4, 0x8060BCB0]
     .rodata: [0x8064C078, 0x8064C0B0]
@@ -1127,6 +1155,10 @@ ef_halloween.c:
     .text: [0x8060D44C, 0x8060D654]
     .rodata: [0x8064C1C0, 0x8064C1D0]
     .data: [0x806D2600, 0x806D2618]
+ef_hanabi_dummy.c:
+    .text: [0x8060E6D8, 0x8060E9B8]
+    .rodata: [0x8064C2A0, 0x8064C2C0]
+    .data: [0x806D2858, 0x806D2888]
 ef_killer.c:
     .text: [0x80614178, 0x8061481C]
     .rodata: [0x8064C680, 0x8064C6C0]
@@ -1238,6 +1270,7 @@ data/npc/model/tex/bea_9.c:
     .data: [0x806F8F20, 0x806FA140]
 data/npc/model/tex/bea_10.c:
     .data: [0x806FA140, 0x806FB360]
+
 # dataobject.obj files
 data/field/bg/flower/obj_flower.c:
     .data: [0x8074FE80, 0x807508C0]

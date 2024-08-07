@@ -12,8 +12,9 @@ extern "C" {
 #define VOICE_MODE_SILENT 2
 
 /* audio is monophonic */
-#define MONO(id) (id | 0x1000)
-#define SE_FLAG_15(id) (id | 0x8000)
+#define MONO(id) ((id) | 0x1000)
+#define HANABI(id) ((id) | 0x2000) /* TODO: better name, this probably is some echo effect modifier */
+#define SE_FLAG_15(id) ((id) | 0x8000)
 
 // TODO: Make the rest of Sound Effects with parameters
 #define SE_REGISTER MONO(0x50)
@@ -83,6 +84,10 @@ typedef enum audio_sound_effects {
     NA_SE_ROD_STROKE = 0x109,
     NA_SE_ROD_BACK,
 
+    NA_SE_HANABI0 = HANABI(0x10F),
+    NA_SE_HANABI1 = HANABI(0x110),
+    NA_SE_HANABI2 = HANABI(0x111),
+    NA_SE_HANABI3 = HANABI(0x112),
     NA_SE_EAT = 0x113,
 
     NA_SE_WEAR = 0x11C,
@@ -94,6 +99,8 @@ typedef enum audio_sound_effects {
 
     NA_SE_TREE_TOUCH = 0x134,
     NA_SE_TREE_YURASU,
+
+    NA_SE_DOYON = 0x13F,
 
     NA_SE_KIRIBASU_SCOOP = 0x148,
     NA_SE_KIRIBASU_OUT,
