@@ -1151,6 +1151,10 @@ ef_footprint.c:
     .text: [0x8060BCB0, 0x8060C21C]
     .rodata: [0x8064C0B0, 0x8064C0E0]
     .data: [0x806D2430, 0x806D2470]
+ef_halloween.c:
+    .text: [0x8060D44C, 0x8060D654]
+    .rodata: [0x8064C1C0, 0x8064C1D0]
+    .data: [0x806D2600, 0x806D2618]
 ef_hanabi_dummy.c:
     .text: [0x8060E6D8, 0x8060E9B8]
     .rodata: [0x8064C2A0, 0x8064C2C0]
@@ -1228,7 +1232,6 @@ f_furniture.c:
     .data: [0x806D4D40, 0x806E02A0]
 ac_weather_fine.c:
     .data: [0x806D1DA0, 0x806D1DB8]
-
 # dataobject.obj NPC draw data TUs
 data/npc/model/mdl/bev_1.c:
     .data: [0x806E03A0, 0x806E27D0]
@@ -1270,7 +1273,6 @@ data/npc/model/tex/bea_9.c:
     .data: [0x806F8F20, 0x806FA140]
 data/npc/model/tex/bea_10.c:
     .data: [0x806FA140, 0x806FB360]
-
 
 # dataobject.obj files
 data/field/bg/flower/obj_flower.c:
