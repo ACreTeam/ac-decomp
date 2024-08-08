@@ -115,14 +115,14 @@ static u8* l_map_texture[mFM_BLOCK_TYPE_NUM] = {
     kan_tizu_c6r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt,
     kan_tizu_c7r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt,
     kan_tizu_mwf_TA_tex_txt,   kan_tizu_mwf_TA_tex_txt,   kan_tizu_mwf_TA_tex_txt,   kan_tizu_mwf_TA_tex_txt,
-    kan_tizu_mwf_TA_tex_txt,   kan_tizu_c1r2b_TA_tex_txt, kan_tizu_c4r2b_TA_tex_txt, kan_tizu_c5r2b_TA_tex_txt
+    kan_tizu_mwf_TA_tex_txt,   kan_tizu_c1r2b_TA_tex_txt, kan_tizu_c4r2b_TA_tex_txt, kan_tizu_c5r2b_TA_tex_txt,
 };
 
-static u8 l_map_pal[mFM_BLOCK_TYPE_NUM] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-                                            1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0,
-                                            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 };
+static u8 l_map_pal[mFM_BLOCK_TYPE_NUM] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0,
+};
 
 static u8 pluss_bridge[mFM_BLOCK_TYPE_NUM] = {
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x56, 0xff, 0xff, 0xff, 0xff,
@@ -130,7 +130,7 @@ static u8 pluss_bridge[mFM_BLOCK_TYPE_NUM] = {
     0x6b, 0xff, 0xff, 0xff, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x52, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 };
 
 extern Gfx kan_win_model[];
@@ -156,11 +156,15 @@ extern mMP_HousePos_c mMP_house_pos_list[];
 
 extern Gfx kan_win_mode[];
 
-static u16 kan_tizu1_pal[16] ATTRIBUTE_ALIGN(32) = { 0x0000, 0xc3b0, 0x9e87, 0xd294, 0xca52, 0xbdef, 0xb5ad, 0xb9ce,
-                                                     0xa2e8, 0xb18c, 0xa705, 0xdaff, 0xab4a, 0xffff, 0xb635, 0xbe9f };
+static u16 kan_tizu1_pal[16] ATTRIBUTE_ALIGN(32) = {
+    0x0000, 0xc3b0, 0x9e87, 0xd294, 0xca52, 0xbdef, 0xb5ad, 0xb9ce,
+    0xa2e8, 0xb18c, 0xa705, 0xdaff, 0xab4a, 0xffff, 0xb635, 0xbe9f,
+};
 
-static u16 kan_tizu2_pal[16] ATTRIBUTE_ALIGN(32) = { 0x0000, 0xc3b0, 0x9e87, 0xc94a, 0xe70d, 0xe1ce, 0xb5ad, 0xb195,
-                                                     0xf390, 0xb18c, 0xa705, 0xffff, 0xd54a, 0xdaff, 0xb635, 0xbe9f };
+static u16 kan_tizu2_pal[16] ATTRIBUTE_ALIGN(32) = {
+    0x0000, 0xc3b0, 0x9e87, 0xc94a, 0xe70d, 0xe1ce, 0xb5ad, 0xb195,
+    0xf390, 0xb18c, 0xa705, 0xffff, 0xd54a, 0xdaff, 0xb635, 0xbe9f,
+};
 
 static u16* l_kan_tizu_pal[2] = { kan_tizu1_pal, kan_tizu2_pal };
 
@@ -303,10 +307,10 @@ static mMP_LabelWord_c mMP_label_word_port = { -83.0f, -25.0f, mMP_label_str_por
 
 static mMP_Label_c mMP_label_port = { -93.0f, -30.0f, kan_win_funeT_model, { &mMP_label_word_port, NULL } };
 
-static mMP_Label_c* mMP_label_data[mMP_LABEL_NUM] = { &mMP_label_npc,     &mMP_label_player, &mMP_label_shop,
-                                                      &mMP_label_police,  &mMP_label_post,   &mMP_label_shrine,
-                                                      &mMP_label_station, &mMP_label_junk,   &mMP_label_museum,
-                                                      &mMP_label_needle,  &mMP_label_port };
+static mMP_Label_c* mMP_label_data[mMP_LABEL_NUM] = {
+    &mMP_label_npc,     &mMP_label_player, &mMP_label_shop,   &mMP_label_police, &mMP_label_post, &mMP_label_shrine,
+    &mMP_label_station, &mMP_label_junk,   &mMP_label_museum, &mMP_label_needle, &mMP_label_port,
+};
 
 static int mMP_check_layer(f32 y) {
     int layer;
