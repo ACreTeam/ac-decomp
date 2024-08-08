@@ -1959,6 +1959,11 @@ data/npc/model/tex/wol_5.c:
     .data: [0x80C546E0, 0x80C55300]
 data/npc/model/tex/wol_6.c:
     .data: [0x80C55300, 0x80C55F20]
+# map submenu
+data/submenu/map/kan_tizu.c:
+    .data: [0x80F0B020, 0x80F11C20]
+data/submenu/map/kan_tizu2.c:
+    .data: [0x80F11C20, 0x80F13A20]
 data/field/bg/beach_pal.c:
     .data: [0x80C59CA8, 0x80C59E28]
 data/field/bg/bush_pal.c:
