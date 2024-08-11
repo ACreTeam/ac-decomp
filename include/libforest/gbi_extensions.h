@@ -675,7 +675,7 @@ do { \
     _SHIFTL(G_LOADTLUT, 24, 8) | _SHIFTL(G_TLUT_DOLPHIN, 22, 2) | _SHIFTL(name, 16, 4) | _SHIFTL(unk, 14, 2) | _SHIFTL(count, 0, 14), (unsigned int)addr \
 }}
 
-#define gsDPSetTextureImage_Dolphin(fmt, siz, h, w, img) \
+#define gsDPSetTextureImage_Dolphin(fmt, siz, w, h, img) \
 {{ \
     _SHIFTL(G_SETTIMG, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL(1, 18, 1) | \
         _SHIFTL((h/4)-1, 10, 8) | _SHIFTL((w-1), 0, 10), (unsigned int)img \
@@ -720,7 +720,7 @@ do { \
 
 #define G_DOLPHIN_TLUT_DEFAULT_MODE 15 // used almost always? CI palettes are forced to GX_TF_RGB5A3
 #define gsDPLoadTextureBlock_4b_Dolphin(timg, fmt, w, h, pal, ws, wt, ss, st) \
-    gsDPSetTextureImage_Dolphin(fmt, G_IM_SIZ_4b, h, w, timg), \
+    gsDPSetTextureImage_Dolphin(fmt, G_IM_SIZ_4b, w, h, timg), \
     gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, pal, ws, wt, ss, st)
 
 #define gDPLoadTextureTile_4b_Dolphin(pkt, timg, fmt, w, h) \
@@ -729,7 +729,11 @@ do { \
     gDPSetTile_Dolphin(pkt, G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 0, 0, 0, 0, 0) \
 } while (0);
 
-#define gsSPNTriangles(n) \
+#define gsDPLoadMultiBlock_4b_Dolphin(timg, tile, fmt, w, h, pal, ws, wt, ss, st) \
+    gsDPSetTextureImage_Dolphin(fmt, G_IM_SIZ_4b, w, h, timg), \
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, tile, pal, ws, wt, ss, st)
+
+#define gsSPNTriangles_Independ(n) \
 {{ \
     _SHIFTL(G_TRIN_INDEPEND, 24, 8) | _SHIFTL(n-1, 17, 7), 0 \
 }}
@@ -769,7 +773,7 @@ do { \
 
 #define gSPNTrianglesInit_7b(n, v0, v1, v2, v3, v4, v5) \
 {{ \
-    (unsigned long long)((((unsigned long long)gsSPNTriangles(n)) << 32) | (gsSPNWTriangleData2(v3, v4, v5) << 22) | \
+    (unsigned long long)((((unsigned long long)gsSPNTriangles_Independ(n)) << 32) | (gsSPNWTriangleData2(v3, v4, v5) << 22) | \
         (gsSPNTriangleData2(v0, v1, v2) << 1)) | G_VTX_MODE_7bit \
 }}
 
@@ -793,8 +797,14 @@ do { \
 
 #define gsSPNTrianglesInit_7b(n, v0, v1, v2, v3, v4, v5) \
 {{ \
-    (unsigned long long)((((unsigned long long)gsSPNTriangles(n)) << 32) | (gsSPNWTriangleData2(v3, v4, v5) << 22) | \
+    (unsigned long long)((((unsigned long long)gsSPNTriangles_Independ(n)) << 32) | (gsSPNWTriangleData2(v3, v4, v5) << 22) | \
         (gsSPNTriangleData2(v0, v1, v2) << 1)) | G_VTX_MODE_7bit \
+}}
+
+#define gsSPNTriangles(n, v0, v1, v2, v3, v4, v5, v6, v7, v8) \
+{{ \
+    _SHIFTL(G_TRIN, 24, 8) | _SHIFTL(n-1, 17, 7) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 2, 15) | _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 13, 2), 0, 2), \
+    _SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 19, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 4, 15) | _SHIFTL(G_VTX_MODE_5bit, 0, 1) \
 }}
 
 #define gDPSetTexEdgeAlpha(pkt, alpha) \

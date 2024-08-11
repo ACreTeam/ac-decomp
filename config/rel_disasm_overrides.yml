@@ -14,3 +14,8 @@ symbol_aligns:
     0x81296140: 32 # .bss m_island.o
     0x80904700: 32 # rom_myhome1_floor_v
     0x80751140: 32 # dataobject.obj/.data/obj_zassou_tex
+    0x80DD61A0: 32 # dataobject/obj/.data/cKF_ckcb_r_int_hnw001_tbl (TU is aligned to 32 because of 32-byte aligned entries)
+    0x80F1CCA0: 32 # dataobject/obj/.data/rom_museum5_wall_pal
+    0x80F85720: 32 # dataobject/obj/.data/grd_player_select_evw_anime_1 (TU is aligned to 32)
+    0x80FACE20: 32 # dataobject/obj/.data/rom_shop4_1_floor_tex_pal
+    0x8074B840: 32 # dataobject/obj/.data/mFM_obj_a_01_flower_pal

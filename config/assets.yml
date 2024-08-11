@@ -336,250 +336,6 @@ config/rel.yml:
     type: pal16
 
   # flowers
-  flower/obj_flower_tex:
-    addrs: [0x8074FE80, 0x80750680]
-  flower/obj_flower_a_v:
-    addrs: [0x80750680, 0x80750700]
-    type: vtx
-  flower/obj_flower_b_v:
-    addrs: [0x80750700, 0x80750780]
-    type: vtx
-  flower/obj_flower_c_v:
-    addrs: [0x80750780, 0x80750800]
-    type: vtx
-  flower/obj_flower_leaf_tex:
-    addrs: [0x807508C0, 0x807510C0]
-  flower/obj_flower_leaf_v:
-    addrs: [0x807510C0, 0x80751100]
-    type: vtx
-
-  # dataobj.obj item names
-  itemName_paper:
-    addrs: [0x808BF660, 0x808C0660]
-  itemName_money:
-    addrs: [0x808C0660, 0x808C06A0]
-  itemName_tool:
-    addrs: [0x808C06A0, 0x808C0C60]
-  itemName_fish:
-    addrs: [0x808C0C60, 0x808C0EE0]
-  itemName_cloth:
-    addrs: [0x808C0EE0, 0x808C1ED0]
-  itemName_etc:
-    addrs: [0x808C1ED0, 0x808C21E0]
-  itemName_carpet:
-    addrs: [0x808C21E0, 0x808C2610]
-  itemName_wall:
-    addrs: [0x808C2610, 0x808C2A40]
-  itemName_fruit:
-    addrs: [0x808C2A40, 0x808C2AC0]
-  itemName_plant:
-    addrs: [0x808C2AC0, 0x808C2B70]
-  itemName_minidisk:
-    addrs: [0x808C2B70, 0x808C2EE0]
-  itemName_dummy:
-    addrs: [0x808C2EE0, 0x808C2FE0]
-  itemName_ticket:
-    addrs: [0x808C2FE0, 0x808C35E0]
-  itemName_insect:
-    addrs: [0x808C35E0, 0x808C38B0]
-  itemName_hukubukuro:
-    addrs: [0x808C38B0, 0x808C38D0]
-  itemName_kabu:
-    addrs: [0x808C38D0, 0x808C3910]
-  ftrName_table:
-    addrs: [0x808C3910, 0x808C7910]
-  ftrName2_table:
-    addrs: [0x808C7910, 0x808C8830]
-  # ac_mural.o
-  obj_mural_v:
-    addrs: [0x80904600, 0x80904640]
-    type: vtx
-  mFM_beach_pal_0:
-    addrs: [0x80C59CA8, 0x80C59CC8]
-    type: pal16
-  mFM_beach_pal_1:
-    addrs: [0x80C59CC8, 0x80C59CE8]
-    type: pal16
-  mFM_beach_pal_2:
-    addrs: [0x80C59CE8, 0x80C59D08]
-    type: pal16
-  mFM_beach_pal_3:
-    addrs: [0x80C59D08, 0x80C59D28]
-    type: pal16
-  mFM_beach_pal_4:
-    addrs: [0x80C59D28, 0x80C59D48]
-    type: pal16
-  mFM_beach_pal_5:
-    addrs: [0x80C59D48, 0x80C59D68]
-    type: pal16
-  mFM_beach_pal_6:
-    addrs: [0x80C59D68, 0x80C59D88]
-    type: pal16
-  mFM_beach_pal_7:
-    addrs: [0x80C59D88, 0x80C59DA8]
-    type: pal16
-  mFM_beach_pal_8:
-    addrs: [0x80C59DA8, 0x80C59DC8]
-    type: pal16
-  mFM_beach_pal_9:
-    addrs: [0x80C59DC8, 0x80C59DE8]
-    type: pal16
-  mFM_beach_pal_10:
-    addrs: [0x80C59DE8, 0x80C59E08]
-    type: pal16
-  mFM_beach_pal_11:
-    addrs: [0x80C59E08, 0x80C59E28]
-    type: pal16
-  mFM_bush_pal_0:
-    addrs: [0x80C78680, 0x80C786A0]
-    type: pal16
-  mFM_bush_pal_1:
-    addrs: [0x80C786A0, 0x80C786C0]
-    type: pal16
-  mFM_bush_pal_2:
-    addrs: [0x80C786C0, 0x80C786E0]
-    type: pal16
-  mFM_bush_pal_3:
-    addrs: [0x80C786E0, 0x80C78700]
-    type: pal16
-  mFM_bush_pal_4:
-    addrs: [0x80C78700, 0x80C78720]
-    type: pal16
-  mFM_bush_pal_5:
-    addrs: [0x80C78720, 0x80C78740]
-    type: pal16
-  mFM_bush_pal_6:
-    addrs: [0x80C78740, 0x80C78760]
-    type: pal16
-  mFM_bush_pal_7:
-    addrs: [0x80C78760, 0x80C78780]
-    type: pal16
-  mFM_bush_pal_8:
-    addrs: [0x80C78780, 0x80C787A0]
-    type: pal16
-  mFM_bush_pal_9:
-    addrs: [0x80C787A0, 0x80C787C0]
-    type: pal16
-  mFM_bush_pal_10:
-    addrs: [0x80C787C0, 0x80C787E0]
-    type: pal16
-  mFM_bush_pal_11:
-    addrs: [0x80C787E0, 0x80C78800]
-    type: pal16
-  mFM_cliff_pal_0:
-    addrs: [0x80C78988, 0x80C789A8]
-    type: pal16
-  mFM_cliff_pal_1:
-    addrs: [0x80C789A8, 0x80C789C8]
-    type: pal16
-  mFM_cliff_pal_2:
-    addrs: [0x80C789C8, 0x80C789E8]
-    type: pal16
-  mFM_cliff_pal_3:
-    addrs: [0x80C789E8, 0x80C78A08]
-    type: pal16
-  mFM_cliff_pal_4:
-    addrs: [0x80C78A08, 0x80C78A28]
-    type: pal16
-  mFM_cliff_pal_5:
-    addrs: [0x80C78A28, 0x80C78A48]
-    type: pal16
-  mFM_cliff_pal_6:
-    addrs: [0x80C78A48, 0x80C78A68]
-    type: pal16
-  mFM_cliff_pal_7:
-    addrs: [0x80C78A68, 0x80C78A88]
-    type: pal16
-  mFM_cliff_pal_8:
-    addrs: [0x80C78A88, 0x80C78AA8]
-    type: pal16
-  mFM_cliff_pal_9:
-    addrs: [0x80C78AA8, 0x80C78AC8]
-    type: pal16
-  mFM_cliff_pal_10:
-    addrs: [0x80C78AC8, 0x80C78AE8]
-    type: pal16
-  mFM_cliff_pal_11:
-    addrs: [0x80C78AE8, 0x80C78B08]
-    type: pal16
-  mFM_earth_pal_0:
-    addrs: [0x80C90100, 0x80C90120]
-    type: pal16
-  mFM_earth_pal_1:
-    addrs: [0x80C90120, 0x80C90140]
-    type: pal16
-  mFM_earth_pal_2:
-    addrs: [0x80C90140, 0x80C90160]
-    type: pal16
-  mFM_earth_pal_3:
-    addrs: [0x80C90160, 0x80C90180]
-    type: pal16
-  mFM_earth_pal_4:
-    addrs: [0x80C90180, 0x80C901A0]
-    type: pal16
-  mFM_earth_pal_5:
-    addrs: [0x80C901A0, 0x80C901C0]
-    type: pal16
-  mFM_earth_pal_6:
-    addrs: [0x80C901C0, 0x80C901E0]
-    type: pal16
-  mFM_earth_pal_7:
-    addrs: [0x80C901E0, 0x80C90200]
-    type: pal16
-  mFM_earth_pal_8:
-    addrs: [0x80C90200, 0x80C90220]
-    type: pal16
-  mFM_earth_pal_9:
-    addrs: [0x80C90220, 0x80C90240]
-    type: pal16
-  mFM_earth_pal_10:
-    addrs: [0x80C90240, 0x80C90260]
-    type: pal16
-  mFM_earth_pal_11:
-    addrs: [0x80C90260, 0x80C90280]
-    type: pal16
-  mFM_rail_pal_0:
-    addrs: [0x80F8C2C8, 0x80F8C2E8]
-    type: pal16
-  mFM_rail_pal_1:
-    addrs: [0x80F8C2E8, 0x80F8C308]
-    type: pal16
-  mFM_rail_pal_2:
-    addrs: [0x80F8C308, 0x80F8C328]
-    type: pal16
-  mFM_rail_pal_3:
-    addrs: [0x80F8C328, 0x80F8C348]
-    type: pal16
-  mFM_rail_pal_4:
-    addrs: [0x80F8C348, 0x80F8C368]
-    type: pal16
-  mFM_rail_pal_5:
-    addrs: [0x80F8C368, 0x80F8C388]
-    type: pal16
-  mFM_rail_pal_6:
-    addrs: [0x80F8C388, 0x80F8C3A8]
-    type: pal16
-  mFM_rail_pal_7:
-    addrs: [0x80F8C3A8, 0x80F8C3C8]
-    type: pal16
-  mFM_rail_pal_8:
-    addrs: [0x80F8C3C8, 0x80F8C3E8]
-    type: pal16
-  mFM_rail_pal_9:
-    addrs: [0x80F8C3E8, 0x80F8C408]
-    type: pal16
-  mFM_rail_pal_10:
-    addrs: [0x80F8C408, 0x80F8C428]
-    type: pal16
-  mFM_rail_pal_11:
-    addrs: [0x80F8C428, 0x80F8C448]
-    type: pal16
-  mFM_rail_pal_12:
-    addrs: [0x80F8C448, 0x80F8C468]
-    type: pal16
-  # ac_koinobori
-
-  # NPC draw data assets
   npc/mdl/bev_1_v:
     addrs: [0x806E03A0, 0x806E1DF0]
     type: vtx
@@ -1036,6 +792,24 @@ config/rel.yml:
     addrs: [0x806FAE60, 0x806FAF60]
   npc/tex/bea_10_tmem_txt:
     addrs: [0x806FAF60, 0x806FB360]
+  flower/obj_flower_tex:
+    addrs: [0x8074FE80, 0x80750680]
+  flower/obj_flower_a_v:
+    addrs: [0x80750680, 0x80750700]
+    type: vtx
+  flower/obj_flower_b_v:
+    addrs: [0x80750700, 0x80750780]
+    type: vtx
+  flower/obj_flower_c_v:
+    addrs: [0x80750780, 0x80750800]
+    type: vtx
+  flower/obj_flower_leaf_tex:
+    addrs: [0x807508C0, 0x807510C0]
+  flower/obj_flower_leaf_v:
+    addrs: [0x807510C0, 0x80751100]
+    type: vtx
+
+  # dataobj.obj item names
   npc/mdl/pbr_1_v:
     addrs: [0x8076DFA8, 0x8076F6E8]
     type: vtx
@@ -5222,6 +4996,42 @@ config/rel.yml:
     addrs: [0x808BEF60, 0x808BF060]
   npc/tex/xsq_1_tmem_txt:
     addrs: [0x808BF060, 0x808BF660]
+  itemName_paper:
+    addrs: [0x808BF660, 0x808C0660]
+  itemName_money:
+    addrs: [0x808C0660, 0x808C06A0]
+  itemName_tool:
+    addrs: [0x808C06A0, 0x808C0C60]
+  itemName_fish:
+    addrs: [0x808C0C60, 0x808C0EE0]
+  itemName_cloth:
+    addrs: [0x808C0EE0, 0x808C1ED0]
+  itemName_etc:
+    addrs: [0x808C1ED0, 0x808C21E0]
+  itemName_carpet:
+    addrs: [0x808C21E0, 0x808C2610]
+  itemName_wall:
+    addrs: [0x808C2610, 0x808C2A40]
+  itemName_fruit:
+    addrs: [0x808C2A40, 0x808C2AC0]
+  itemName_plant:
+    addrs: [0x808C2AC0, 0x808C2B70]
+  itemName_minidisk:
+    addrs: [0x808C2B70, 0x808C2EE0]
+  itemName_dummy:
+    addrs: [0x808C2EE0, 0x808C2FE0]
+  itemName_ticket:
+    addrs: [0x808C2FE0, 0x808C35E0]
+  itemName_insect:
+    addrs: [0x808C35E0, 0x808C38B0]
+  itemName_hukubukuro:
+    addrs: [0x808C38B0, 0x808C38D0]
+  itemName_kabu:
+    addrs: [0x808C38D0, 0x808C3910]
+  ftrName_table:
+    addrs: [0x808C3910, 0x808C7910]
+  ftrName2_table:
+    addrs: [0x808C7910, 0x808C8830]
   npc/mdl/boa_1_v:
     addrs: [0x808C88A8, 0x808CA4F8]
     type: vtx
@@ -6172,6 +5982,10 @@ config/rel.yml:
     addrs: [0x80904100, 0x80904200]
   npc/tex/mus_10_tmem_txt:
     addrs: [0x80904200, 0x80904600]
+  # ac_mural.o
+  obj_mural_v:
+    addrs: [0x80904600, 0x80904640]
+    type: vtx
   npc/mdl/hgh_1_v:
     addrs: [0x80911E70, 0x80913B10]
     type: vtx
@@ -8443,6 +8257,9 @@ config/rel.yml:
     addrs: [0x80C48DE0, 0x80C48EE0]
   npc/tex/end_1_tmem_txt:
     addrs: [0x80C48EE0, 0x80C493A0]
+  field/bg/rom_train_3_pal:
+    addrs: [0x80C49C00, 0x80C49C20]
+    type: pal16
   npc/mdl/tuk_1_v:
     addrs: [0x80C4B710, 0x80C4D460]
     type: vtx
@@ -8596,7 +8413,1365 @@ config/rel.yml:
     addrs: [0x80C55A20, 0x80C55B20]
   npc/tex/wol_6_tmem_txt:
     addrs: [0x80C55B20, 0x80C55F20]
+  mFM_beach_pal_0:
+    addrs: [0x80C59CA8, 0x80C59CC8]
+    type: pal16
+  mFM_beach_pal_1:
+    addrs: [0x80C59CC8, 0x80C59CE8]
+    type: pal16
+  mFM_beach_pal_2:
+    addrs: [0x80C59CE8, 0x80C59D08]
+    type: pal16
+  mFM_beach_pal_3:
+    addrs: [0x80C59D08, 0x80C59D28]
+    type: pal16
+  mFM_beach_pal_4:
+    addrs: [0x80C59D28, 0x80C59D48]
+    type: pal16
+  mFM_beach_pal_5:
+    addrs: [0x80C59D48, 0x80C59D68]
+    type: pal16
+  mFM_beach_pal_6:
+    addrs: [0x80C59D68, 0x80C59D88]
+    type: pal16
+  mFM_beach_pal_7:
+    addrs: [0x80C59D88, 0x80C59DA8]
+    type: pal16
+  mFM_beach_pal_8:
+    addrs: [0x80C59DA8, 0x80C59DC8]
+    type: pal16
+  mFM_beach_pal_9:
+    addrs: [0x80C59DC8, 0x80C59DE8]
+    type: pal16
+  mFM_beach_pal_10:
+    addrs: [0x80C59DE8, 0x80C59E08]
+    type: pal16
+  mFM_beach_pal_11:
+    addrs: [0x80C59E08, 0x80C59E28]
+    type: pal16
+  # grd_yamishop.c
+  field/bg/rom_yami_wall_pal:
+    addrs: [0x80C5A240, 0x80C5A260]
+    type: pal16
+  field/bg/rom_yami_floor_pal:
+    addrs: [0x80C5A260, 0x80C5A280]
+    type: pal16
+  field/bg/rom_yami_box_pal:
+    addrs: [0x80C5A280, 0x80C5A2A0]
+    type: pal16
+  field/bg/rom_yami_mono01_pal:
+    addrs: [0x80C5A2A0, 0x80C5A2C0]
+    type: pal16
+  field/bg/rom_yami_mono02_pal:
+    addrs: [0x80C5A2C0, 0x80C5A2E0]
+    type: pal16
+  field/bg/rom_yami_mono03_pal:
+    addrs: [0x80C5A2E0, 0x80C5A300]
+    type: pal16
+  field/bg/rom_yami_qup_pal:
+    addrs: [0x80C5A300, 0x80C5A320]
+    type: pal16
+  field/bg/rom_yami_hyou_pal:
+    addrs: [0x80C5A320, 0x80C5A340]
+    type: pal16
+  field/bg/rom_yami_step_tex_pal:
+    addrs: [0x80C5A340, 0x80C5A360]
+    type: pal16
+  field/bg/rom_yami_hugu_pal:
+    addrs: [0x80C5A360, 0x80C5A380]
+    type: pal16
+  field/bg/rom_yami_tama_pal:
+    addrs: [0x80C5A380, 0x80C5A3A0]
+    type: pal16
+  field/bg/rom_yami_wall_tex:
+    addrs: [0x80C5A3A0, 0x80C5A6A0]
+  field/bg/rom_yami_floor_tex:
+    addrs: [0x80C5A6A0, 0x80C5AEA0]
+  field/bg/rom_yami_poll_tex:
+    addrs: [0x80C5AEA0, 0x80C5AF20]
+  field/bg/rom_yami_box01_tex:
+    addrs: [0x80C5AF20, 0x80C5B020]
+  field/bg/rom_yami_box02_tex:
+    addrs: [0x80C5B020, 0x80C5B0A0]
+  field/bg/rom_yami_mono01_tex:
+    addrs: [0x80C5B0A0, 0x80C5B2A0]
+  field/bg/rom_yami_mono02_tex:
+    addrs: [0x80C5B2A0, 0x80C5B4A0]
+  field/bg/rom_yami_mono03_tex:
+    addrs: [0x80C5B4A0, 0x80C5B6A0]
+  field/bg/rom_yami_qup_tex:
+    addrs: [0x80C5B6A0, 0x80C5B9A0]
+  field/bg/rom_yami_hyou_tex:
+    addrs: [0x80C5B9A0, 0x80C5BAA0]
+  field/bg/rom_yami_hyou02_tex:
+    addrs: [0x80C5BAA0, 0x80C5BBA0]
+  field/bg/rom_yami_step_tex:
+    addrs: [0x80C5BBA0, 0x80C5BFA0]
+  field/bg/rom_yami_hugu_tex:
+    addrs: [0x80C5BFA0, 0x80C5C2A0]
+  field/bg/rom_yami_tama_tex:
+    addrs: [0x80C5C2A0, 0x80C5C5A0]
+  field/bg/rom_yami_shadow01_tex:
+    addrs: [0x80C5C5A0, 0x80C5C6A0]
+  field/bg/grd_yamishop_v:
+    addrs: [0x80C5C6A0, 0x80C5D770]
+    type: vtx
+  # grd_post_office.c
+  field/bg/yubin_k_pal:
+    addrs: [0x80C5DBA0, 0x80C5DBC0]
+    type: pal16
+  field/bg/yubin_k2_pal:
+    addrs: [0x80C5DBC0, 0x80C5DBE0]
+    type: pal16
+  field/bg/yubin_floor_pal:
+    addrs: [0x80C5DBE0, 0x80C5DC00]
+    type: pal16
+  field/bg/yubin_hakari_pal:
+    addrs: [0x80C5DC00, 0x80C5DC20]
+    type: pal16
+  field/bg/yubin_wall_pal:
+    addrs: [0x80C5DC20, 0x80C5DC40]
+    type: pal16
+  field/bg/yubin_letter_pal:
+    addrs: [0x80C5DC40, 0x80C5DC60]
+    type: pal16
+  field/bg/yubin_us_bag_pal:
+    addrs: [0x80C5DC60, 0x80C5DC80]
+    type: pal16
+  field/bg/zzzyubin_tree_pal:
+    addrs: [0x80C5DC80, 0x80C5DCA0]
+    type: pal16
+  field/bg/yubin_t_pal:
+    addrs: [0x80C5DCA0, 0x80C5DCC0]
+    type: pal16
+  field/bg/yubin_us_card_pal:
+    addrs: [0x80C5DCC0, 0x80C5DCE0]
+    type: pal16
+  field/bg/yuibn_kaunta01_tex:
+    addrs: [0x80C5DCE0, 0x80C5DEE0]
+  field/bg/yuibn_kaunta02_tex:
+    addrs: [0x80C5DEE0, 0x80C5E0E0]
+  field/bg/yuibn_desk01_tex:
+    addrs: [0x80C5E0E0, 0x80C5E2E0]
+  field/bg/yubin_ark01_tex:
+    addrs: [0x80C5E2E0, 0x80C5E6E0]
+  field/bg/yuibn_kaunta03_tex:
+    addrs: [0x80C5E6E0, 0x80C5E7E0]
+  field/bg/yuibn_kaunta04_tex:
+    addrs: [0x80C5E7E0, 0x80C5E9E0]
+  field/bg/yubin_floor01_tex:
+    addrs: [0x80C5E9E0, 0x80C5F1E0]
+  field/bg/yubin_floor02_tex:
+    addrs: [0x80C5F1E0, 0x80C5F9E0]
+  field/bg/yubin_floor03_tex:
+    addrs: [0x80C5F9E0, 0x80C5FAE0]
+  field/bg/yubin_hakari01_tex:
+    addrs: [0x80C5FAE0, 0x80C5FBE0]
+  field/bg/yubin_hakari02_tex:
+    addrs: [0x80C5FBE0, 0x80C5FC60]
+  field/bg/yubin_hakari03_tex:
+    addrs: [0x80C5FC60, 0x80C5FD60]
+  field/bg/yubin_wall04_tex:
+    addrs: [0x80C5FD60, 0x80C60060]
+  field/bg/yubin_letter01_tex:
+    addrs: [0x80C60060, 0x80C60160]
+  field/bg/yubin_window_tex:
+    addrs: [0x80C60160, 0x80C601E0]
+  field/bg/yubin_us_bag_tex:
+    addrs: [0x80C601E0, 0x80C60660]
+  field/bg/yubin_tree2_tex:
+    addrs: [0x80C60660, 0x80C60960]
+  field/bg/yubin_tree_tex:
+    addrs: [0x80C60960, 0x80C60A60]
+  field/bg/yubin_tree3_tex:
+    addrs: [0x80C60A60, 0x80C60AE0]
+  field/bg/yubin_tree4_tex:
+    addrs: [0x80C60AE0, 0x80C60B60]
+  field/bg/yubin_step_tex:
+    addrs: [0x80C60B60, 0x80C60C60]
+  field/bg/rom_yubinkyoku_akril_tex:
+    addrs: [0x80C60C60, 0x80C60CE0]
+  field/bg/rom_yubinkyoku_shede_tex:
+    addrs: [0x80C60CE0, 0x80C60DE0]
+  field/bg/yubin_us_card_tex:
+    addrs: [0x80C60DE0, 0x80C611E0]
+  field/bg/yubin_us_mat_tex:
+    addrs: [0x80C611E0, 0x80C614E0]
+  field/bg/rom_yubinkyoku_shadow_tex:
+    addrs: [0x80C614E0, 0x80C615E0]
+  field/bg/yubin_us_card2_tex:
+    addrs: [0x80C615E0, 0x80C616E0]
+  field/bg/grd_post_office_v:
+    addrs: [0x80C616E0, 0x80C62DE0]
+    type: vtx
+  # tmp4.c
+  field/bg/tmp4_v:
+    addrs: [0x80C63408, 0x80C640C8]
+    type: vtx
+  # tmpr4.c
+  field/bg/tmpr4_v:
+    addrs: [0x80C646D8, 0x80C659A8]
+    type: vtx
+  # tmp3.c
+  field/bg/tmp3_v:
+    addrs: [0x80C66278, 0x80C67298]
+    type: vtx
+  # tmpr3.c
+  field/bg/tmpr3_v:
+    addrs: [0x80C67838, 0x80C68998]
+    type: vtx
+  # tmp.c
+  field/bg/tmp_v:
+    addrs: [0x80C69338, 0x80C694F8]
+    type: vtx
+  # tmpr.c
+  field/bg/tmpr_v:
+    addrs: [0x80C695F0, 0x80C6A330]
+    type: vtx
+  # tmp2.c
+  field/bg/grd_s_cliff_pal:
+    addrs: [0x80C6A8C8, 0x80C6A8E8]
+    type: pal16
+  field/bg/grd_s_earth_pal:
+    addrs: [0x80C6A8E8, 0x80C6A908]
+    type: pal16
+  field/bg/grd_s_cliff_tex:
+    addrs: [0x80C6A908, 0x80C6B108]
+  field/bg/grd_s_earth_tex:
+    addrs: [0x80C6B108, 0x80C6B908]
+  field/bg/grd_s_grass_tex:
+    addrs: [0x80C6B908, 0x80C6BB08]
+  field/bg/tmp2_v:
+    addrs: [0x80C6BB08, 0x80C6C9C8]
+    type: vtx
+  # tmpr2.c
+  field/bg/grd_1_earth_pal:
+    addrs: [0x80C6CE78, 0x80C6CE98]
+    type: pal16
+  field/bg/grd_s_river_tex:
+    addrs: [0x80C6CE98, 0x80C6D298]
+  field/bg/grd_water1_tex:
+    addrs: [0x80C6D298, 0x80C6D498]
+  field/bg/grd_s_grass_tex2:
+    addrs: [0x80C6D498, 0x80C6D698]
+  field/bg/tmpr2_v:
+    addrs: [0x80C6D698, 0x80C6D9F8]
+    type: vtx
+  mFM_bush_pal_0:
+    addrs: [0x80C78680, 0x80C786A0]
+    type: pal16
+  mFM_bush_pal_1:
+    addrs: [0x80C786A0, 0x80C786C0]
+    type: pal16
+  mFM_bush_pal_2:
+    addrs: [0x80C786C0, 0x80C786E0]
+    type: pal16
+  mFM_bush_pal_3:
+    addrs: [0x80C786E0, 0x80C78700]
+    type: pal16
+  mFM_bush_pal_4:
+    addrs: [0x80C78700, 0x80C78720]
+    type: pal16
+  mFM_bush_pal_5:
+    addrs: [0x80C78720, 0x80C78740]
+    type: pal16
+  mFM_bush_pal_6:
+    addrs: [0x80C78740, 0x80C78760]
+    type: pal16
+  mFM_bush_pal_7:
+    addrs: [0x80C78760, 0x80C78780]
+    type: pal16
+  mFM_bush_pal_8:
+    addrs: [0x80C78780, 0x80C787A0]
+    type: pal16
+  mFM_bush_pal_9:
+    addrs: [0x80C787A0, 0x80C787C0]
+    type: pal16
+  mFM_bush_pal_10:
+    addrs: [0x80C787C0, 0x80C787E0]
+    type: pal16
+  mFM_bush_pal_11:
+    addrs: [0x80C787E0, 0x80C78800]
+    type: pal16
+  mFM_cliff_pal_0:
+    addrs: [0x80C78988, 0x80C789A8]
+    type: pal16
+  mFM_cliff_pal_1:
+    addrs: [0x80C789A8, 0x80C789C8]
+    type: pal16
+  mFM_cliff_pal_2:
+    addrs: [0x80C789C8, 0x80C789E8]
+    type: pal16
+  mFM_cliff_pal_3:
+    addrs: [0x80C789E8, 0x80C78A08]
+    type: pal16
+  mFM_cliff_pal_4:
+    addrs: [0x80C78A08, 0x80C78A28]
+    type: pal16
+  mFM_cliff_pal_5:
+    addrs: [0x80C78A28, 0x80C78A48]
+    type: pal16
+  mFM_cliff_pal_6:
+    addrs: [0x80C78A48, 0x80C78A68]
+    type: pal16
+  mFM_cliff_pal_7:
+    addrs: [0x80C78A68, 0x80C78A88]
+    type: pal16
+  mFM_cliff_pal_8:
+    addrs: [0x80C78A88, 0x80C78AA8]
+    type: pal16
+  mFM_cliff_pal_9:
+    addrs: [0x80C78AA8, 0x80C78AC8]
+    type: pal16
+  mFM_cliff_pal_10:
+    addrs: [0x80C78AC8, 0x80C78AE8]
+    type: pal16
+  mFM_cliff_pal_11:
+    addrs: [0x80C78AE8, 0x80C78B08]
+    type: pal16
+  mFM_earth_pal_0:
+    addrs: [0x80C90100, 0x80C90120]
+    type: pal16
+  mFM_earth_pal_1:
+    addrs: [0x80C90120, 0x80C90140]
+    type: pal16
+  mFM_earth_pal_2:
+    addrs: [0x80C90140, 0x80C90160]
+    type: pal16
+  mFM_earth_pal_3:
+    addrs: [0x80C90160, 0x80C90180]
+    type: pal16
+  mFM_earth_pal_4:
+    addrs: [0x80C90180, 0x80C901A0]
+    type: pal16
+  mFM_earth_pal_5:
+    addrs: [0x80C901A0, 0x80C901C0]
+    type: pal16
+  mFM_earth_pal_6:
+    addrs: [0x80C901C0, 0x80C901E0]
+    type: pal16
+  mFM_earth_pal_7:
+    addrs: [0x80C901E0, 0x80C90200]
+    type: pal16
+  mFM_earth_pal_8:
+    addrs: [0x80C90200, 0x80C90220]
+    type: pal16
+  mFM_earth_pal_9:
+    addrs: [0x80C90220, 0x80C90240]
+    type: pal16
+  mFM_earth_pal_10:
+    addrs: [0x80C90240, 0x80C90260]
+    type: pal16
+  mFM_earth_pal_11:
+    addrs: [0x80C90260, 0x80C90280]
+    type: pal16
+
   # map submenu
+  # grd_s_c1_1.c
+  field/bg/grd_s_c1_1_v:
+    addrs: [0x80CE7320, 0x80CE8180]
+    type: vtx
+  # grd_s_c1_2.c
+  field/bg/grd_s_c1_2_v:
+    addrs: [0x80CE83C0, 0x80CE9290]
+    type: vtx
+  # grd_s_c1_3.c
+  field/bg/grd_s_c1_3_v:
+    addrs: [0x80CE9510, 0x80CEA330]
+    type: vtx
+  # grd_s_c1_4.c
+  field/bg/grd_s_c1_4_v:
+    addrs: [0x80CEA598, 0x80CEB5D8]
+    type: vtx
+  # grd_s_c1_5.c
+  field/bg/grd_s_c1_5_v:
+    addrs: [0x80CEB868, 0x80CEC538]
+    type: vtx
+  # grd_s_c1_r1_1.c
+  field/bg/grd_s_c1_r1_1_v:
+    addrs: [0x80CEC748, 0x80CED978]
+    type: vtx
+  # grd_s_c1_r1_2.c
+  field/bg/grd_s_c1_r1_2_v:
+    addrs: [0x80CEDD00, 0x80CEEE20]
+    type: vtx
+  # grd_s_c1_r1_3.c
+  field/bg/grd_s_c1_r1_3_v:
+    addrs: [0x80CEF138, 0x80CF0258]
+    type: vtx
+  # grd_s_c1_r2_1.c
+  field/bg/grd_s_c1_r2_1_v:
+    addrs: [0x80CF0548, 0x80CF1648]
+    type: vtx
+  # grd_s_c1_r2_2.c
+  field/bg/grd_s_c1_r2_2_v:
+    addrs: [0x80CF1970, 0x80CF2AF0]
+    type: vtx
+  # grd_s_c1_r2_3.c
+  field/bg/grd_s_c1_r2_3_v:
+    addrs: [0x80CF2DD8, 0x80CF40D8]
+    type: vtx
+  # grd_s_c1_r3_1.c
+  field/bg/grd_s_c1_r3_1_v:
+    addrs: [0x80CF4450, 0x80CF5230]
+    type: vtx
+  # grd_s_c1_r3_2.c
+  field/bg/grd_s_c1_r3_2_v:
+    addrs: [0x80CF5518, 0x80CF6508]
+    type: vtx
+  # grd_s_c1_r3_3.c
+  field/bg/grd_s_c1_r3_3_v:
+    addrs: [0x80CF6820, 0x80CF7900]
+    type: vtx
+  # grd_s_c1_s_1.c
+  field/bg/grd_s_c1_s_1_v:
+    addrs: [0x80CF7C58, 0x80CF8918]
+    type: vtx
+  # grd_s_c1_s_2.c
+  field/bg/grd_s_c1_s_2_v:
+    addrs: [0x80CF8B38, 0x80CF99F8]
+    type: vtx
+  # grd_s_c1_s_3.c
+  field/bg/grd_s_c1_s_3_v:
+    addrs: [0x80CF9C60, 0x80CFAC60]
+    type: vtx
+  # grd_s_c1_s_4.c
+  field/bg/grd_s_c1_s_4_v:
+    addrs: [0x80CFAEA0, 0x80CFBF20]
+    type: vtx
+  # grd_s_c2_1.c
+  field/bg/grd_s_c2_1_v:
+    addrs: [0x80CFC1B0, 0x80CFCF80]
+    type: vtx
+  # grd_s_c2_2.c
+  field/bg/grd_s_c2_2_v:
+    addrs: [0x80CFD1D0, 0x80CFE010]
+    type: vtx
+  # grd_s_c2_3.c
+  field/bg/grd_s_c2_3_v:
+    addrs: [0x80CFE230, 0x80CFF2B0]
+    type: vtx
+  # grd_s_c2_r1_1.c
+  field/bg/grd_s_c2_r1_1_v:
+    addrs: [0x80CFF5B8, 0x80D00688]
+    type: vtx
+  # grd_s_c2_r1_2.c
+  field/bg/grd_s_c2_r1_2_v:
+    addrs: [0x80D009B0, 0x80D01B50]
+    type: vtx
+  # grd_s_c2_r2_1.c
+  field/bg/grd_s_c2_r2_1_v:
+    addrs: [0x80D01E80, 0x80D02E70]
+    type: vtx
+  # grd_s_c2_r2_2.c
+  field/bg/grd_s_c2_r2_2_v:
+    addrs: [0x80D03150, 0x80D04360]
+    type: vtx
+  # grd_s_c2_s_1.c
+  field/bg/grd_s_c2_s_1_v:
+    addrs: [0x80D04680, 0x80D05790]
+    type: vtx
+  # grd_s_c2_s_2.c
+  field/bg/grd_s_c2_s_2_v:
+    addrs: [0x80D05A20, 0x80D06880]
+    type: vtx
+  # grd_s_c2_s_3.c
+  field/bg/grd_s_c2_s_3_v:
+    addrs: [0x80D06AF0, 0x80D07880]
+    type: vtx
+  # grd_s_c3_1.c
+  field/bg/grd_s_c3_1_v:
+    addrs: [0x80D07AF0, 0x80D08A30]
+    type: vtx
+  # grd_s_c3_2.c
+  field/bg/grd_s_c3_2_v:
+    addrs: [0x80D08C90, 0x80D09A90]
+    type: vtx
+  # grd_s_c3_3.c
+  field/bg/grd_s_c3_3_v:
+    addrs: [0x80D09D80, 0x80D0AAA0]
+    type: vtx
+  # grd_s_c3_r1_1.c
+  field/bg/grd_s_c3_r1_1_v:
+    addrs: [0x80D0AD00, 0x80D0BBA0]
+    type: vtx
+  # grd_s_c3_r1_2.c
+  field/bg/grd_s_c3_r1_2_v:
+    addrs: [0x80D0BE58, 0x80D0CE48]
+    type: vtx
+  # grd_s_c3_r2_1.c
+  field/bg/grd_s_c3_r2_1_v:
+    addrs: [0x80D0D158, 0x80D0E468]
+    type: vtx
+  # grd_s_c3_r2_2.c
+  field/bg/grd_s_c3_r2_2_v:
+    addrs: [0x80D0E7D8, 0x80D0FAE8]
+    type: vtx
+  # grd_s_c3_s_1.c
+  field/bg/grd_s_c3_s_1_v:
+    addrs: [0x80D0FE60, 0x80D11330]
+    type: vtx
+  # grd_s_c4_1.c
+  field/bg/grd_s_c4_1_v:
+    addrs: [0x80D11628, 0x80D12218]
+    type: vtx
+  # grd_s_c4_2.c
+  field/bg/grd_s_c4_2_v:
+    addrs: [0x80D12430, 0x80D13370]
+    type: vtx
+  # grd_s_c4_3.c
+  field/bg/grd_s_c4_3_v:
+    addrs: [0x80D135B0, 0x80D14340]
+    type: vtx
+  # grd_s_c4_r1_1.c
+  field/bg/grd_s_c4_r1_1_v:
+    addrs: [0x80D145A8, 0x80D155A8]
+    type: vtx
+  # grd_s_c4_r1_2.c
+  field/bg/grd_s_c4_r1_2_v:
+    addrs: [0x80D158C0, 0x80D16860]
+    type: vtx
+  # grd_s_c4_r2_1.c
+  field/bg/grd_s_c4_r2_1_v:
+    addrs: [0x80D16B90, 0x80D17C00]
+    type: vtx
+  # grd_s_c4_r2_2.c
+  field/bg/grd_s_c4_r2_2_v:
+    addrs: [0x80D17F08, 0x80D18D08]
+    type: vtx
+  # grd_s_c4_r3_1.c
+  field/bg/grd_s_c4_r3_1_v:
+    addrs: [0x80D18FC0, 0x80D19DE0]
+    type: vtx
+  # grd_s_c4_r3_2.c
+  field/bg/grd_s_c4_r3_2_v:
+    addrs: [0x80D1A0D8, 0x80D1AE08]
+    type: vtx
+  # grd_s_c4_s_1.c
+  field/bg/grd_s_c4_s_1_v:
+    addrs: [0x80D1B088, 0x80D1BDD8]
+    type: vtx
+  # grd_s_c4_s_2.c
+  field/bg/grd_s_c4_s_2_v:
+    addrs: [0x80D1C030, 0x80D1D020]
+    type: vtx
+  # grd_s_c5_1.c
+  field/bg/grd_s_c5_1_v:
+    addrs: [0x80D1D2A8, 0x80D1DD98]
+    type: vtx
+  # grd_s_c5_2.c
+  field/bg/grd_s_c5_2_v:
+    addrs: [0x80D1DFA8, 0x80D1EF28]
+    type: vtx
+  # grd_s_c5_3.c
+  field/bg/grd_s_c5_3_v:
+    addrs: [0x80D1F1B8, 0x80D1FD08]
+    type: vtx
+  # grd_s_c5_r1_1.c
+  field/bg/grd_s_c5_r1_1_v:
+    addrs: [0x80D1FF30, 0x80D211D0]
+    type: vtx
+  # grd_s_c5_r1_2.c
+  field/bg/grd_s_c5_r1_2_v:
+    addrs: [0x80D21520, 0x80D22760]
+    type: vtx
+  # grd_s_c5_r2_1.c
+  field/bg/grd_s_c5_r2_1_v:
+    addrs: [0x80D22AC0, 0x80D23E40]
+    type: vtx
+  # grd_s_c5_r2_2.c
+  field/bg/grd_s_c5_r2_2_v:
+    addrs: [0x80D241D0, 0x80D25300]
+    type: vtx
+  # grd_s_c5_r3_1.c
+  field/bg/grd_s_c5_r3_1_v:
+    addrs: [0x80D25648, 0x80D26658]
+    type: vtx
+  # grd_s_c5_r3_2.c
+  field/bg/grd_s_c5_r3_2_v:
+    addrs: [0x80D26988, 0x80D27898]
+    type: vtx
+  # grd_s_c5_s_1.c
+  field/bg/grd_s_c5_s_1_v:
+    addrs: [0x80D27B78, 0x80D288F8]
+    type: vtx
+  # grd_s_c5_s_2.c
+  field/bg/grd_s_c5_s_2_v:
+    addrs: [0x80D28B20, 0x80D298C0]
+    type: vtx
+  # grd_s_c6_1.c
+  field/bg/grd_s_c6_1_v:
+    addrs: [0x80D29AC8, 0x80D2A998]
+    type: vtx
+  # grd_s_c6_2.c
+  field/bg/grd_s_c6_2_v:
+    addrs: [0x80D2AC00, 0x80D2BB80]
+    type: vtx
+  # grd_s_c6_3.c
+  field/bg/grd_s_c6_3_v:
+    addrs: [0x80D2BE00, 0x80D2CB60]
+    type: vtx
+  # grd_s_c6_r1_1.c
+  field/bg/grd_s_c6_r1_1_v:
+    addrs: [0x80D2CDB0, 0x80D2DD50]
+    type: vtx
+  # grd_s_c6_r1_2.c
+  field/bg/grd_s_c6_r1_2_v:
+    addrs: [0x80D2E098, 0x80D2F0B8]
+    type: vtx
+  # grd_s_c6_r3_1.c
+  field/bg/grd_s_c6_r3_1_v:
+    addrs: [0x80D2F3F8, 0x80D30888]
+    type: vtx
+  # grd_s_c6_s_1.c
+  field/bg/grd_s_c6_s_1_v:
+    addrs: [0x80D30BB0, 0x80D31A50]
+    type: vtx
+  # grd_s_c7_1.c
+  field/bg/grd_s_c7_1_v:
+    addrs: [0x80D31C90, 0x80D32A90]
+    type: vtx
+  # grd_s_c7_2.c
+  field/bg/grd_s_c7_2_v:
+    addrs: [0x80D32CC8, 0x80D33DD8]
+    type: vtx
+  # grd_s_c7_3.c
+  field/bg/grd_s_c7_3_v:
+    addrs: [0x80D34090, 0x80D35150]
+    type: vtx
+  # grd_s_c7_r1_1.c
+  field/bg/grd_s_c7_r1_1_v:
+    addrs: [0x80D35460, 0x80D362A0]
+    type: vtx
+  # grd_s_c7_r1_2.c
+  field/bg/grd_s_c7_r1_2_v:
+    addrs: [0x80D365B0, 0x80D37440]
+    type: vtx
+  # grd_s_c7_r3_1.c
+  field/bg/grd_s_c7_r3_1_v:
+    addrs: [0x80D37708, 0x80D38908]
+    type: vtx
+  # grd_s_c7_r3_2.c
+  field/bg/grd_s_c7_r3_2_v:
+    addrs: [0x80D38C58, 0x80D39FA8]
+    type: vtx
+  # grd_s_c7_s_1.c
+  field/bg/grd_s_c7_s_1_v:
+    addrs: [0x80D3A318, 0x80D3B678]
+    type: vtx
+  # grd_s_c7_s_2.c
+  field/bg/grd_s_c7_s_2_v:
+    addrs: [0x80D3B938, 0x80D3C5B8]
+    type: vtx
+  # grd_s_c7_s_3.c
+  field/bg/grd_s_c7_s_3_v:
+    addrs: [0x80D3C800, 0x80D3D6C0]
+    type: vtx
+  # grd_s_e1_1.c
+  field/bg/grd_s_e1_1_v:
+    addrs: [0x80D3D930, 0x80D3DE90]
+    type: vtx
+  # grd_s_e1_r1_1.c
+  field/bg/grd_s_e1_r1_1_v:
+    addrs: [0x80D3DFF0, 0x80D3F3E0]
+    type: vtx
+  # grd_s_e2_1.c
+  field/bg/grd_s_e2_1_v:
+    addrs: [0x80D3F770, 0x80D3FDA0]
+    type: vtx
+  # grd_s_e2_c1_1.c
+  field/bg/grd_s_e2_c1_1_v:
+    addrs: [0x80D3FF08, 0x80D40568]
+    type: vtx
+  # grd_s_e2_m_1.c
+  field/bg/grd_s_e2_m_1_v:
+    addrs: [0x80D406C8, 0x80D40D58]
+    type: vtx
+  # grd_s_e2_o_1.c
+  field/bg/grd_s_e2_o_1_v:
+    addrs: [0x80D40FA0, 0x80D41180]
+    type: vtx
+  # grd_s_e2_t_1.c
+  field/bg/grd_s_e2_t_1_v:
+    addrs: [0x80D41280, 0x80D41C00]
+    type: vtx
+  # grd_s_e3_1.c
+  field/bg/grd_s_e3_1_v:
+    addrs: [0x80D41DF0, 0x80D42480]
+    type: vtx
+  # grd_s_e3_c1_1.c
+  field/bg/grd_s_e3_c1_1_v:
+    addrs: [0x80D425D8, 0x80D42C48]
+    type: vtx
+  # grd_s_e3_m_1.c
+  field/bg/grd_s_e3_m_1_v:
+    addrs: [0x80D42DB0, 0x80D434C0]
+    type: vtx
+  # grd_s_e3_o_1.c
+  field/bg/grd_s_e3_o_1_v:
+    addrs: [0x80D436F8, 0x80D438D8]
+    type: vtx
+  # grd_s_e3_t_1.c
+  field/bg/grd_s_e3_t_1_v:
+    addrs: [0x80D439D8, 0x80D44278]
+    type: vtx
+  # grd_s_e4_1.c
+  field/bg/grd_s_e4_1_v:
+    addrs: [0x80D44468, 0x80D445C8]
+    type: vtx
+  # grd_s_e5_1.c
+  field/bg/grd_s_e5_1_v:
+    addrs: [0x80D44670, 0x80D447F0]
+    type: vtx
+  # grd_s_f_1.c
+  field/bg/grd_s_f_1_v:
+    addrs: [0x80D448A0, 0x80D45410]
+    type: vtx
+  # grd_s_f_10.c
+  field/bg/grd_s_f_10_v:
+    addrs: [0x80D455F0, 0x80D46210]
+    type: vtx
+  # grd_s_f_2.c
+  field/bg/grd_s_f_2_v:
+    addrs: [0x80D463D8, 0x80D47118]
+    type: vtx
+  # grd_s_f_3.c
+  field/bg/grd_s_f_3_v:
+    addrs: [0x80D47320, 0x80D47B00]
+    type: vtx
+  # grd_s_f_4.c
+  field/bg/grd_s_f_4_v:
+    addrs: [0x80D47C88, 0x80D487F8]
+    type: vtx
+  # grd_s_f_5.c
+  field/bg/grd_s_f_5_v:
+    addrs: [0x80D48A70, 0x80D499A0]
+    type: vtx
+  # grd_s_f_6.c
+  field/bg/grd_s_f_6_v:
+    addrs: [0x80D49C60, 0x80D4ABD0]
+    type: vtx
+  # grd_s_f_7.c
+  field/bg/grd_s_f_7_v:
+    addrs: [0x80D4AE88, 0x80D4C3B8]
+    type: vtx
+  # grd_s_f_8.c
+  field/bg/grd_s_f_8_v:
+    addrs: [0x80D4C640, 0x80D4D360]
+    type: vtx
+  # grd_s_f_9.c
+  field/bg/grd_s_f_9_v:
+    addrs: [0x80D4D568, 0x80D4E4D8]
+    type: vtx
+  # grd_s_f_ko_1.c
+  field/bg/grd_s_f_ko_1_v:
+    addrs: [0x80D4E708, 0x80D4F5D8]
+    type: vtx
+  # grd_s_f_ko_2.c
+  field/bg/grd_s_f_ko_2_v:
+    addrs: [0x80D4F808, 0x80D502B8]
+    type: vtx
+  # grd_s_f_ko_3.c
+  field/bg/grd_s_f_ko_3_v:
+    addrs: [0x80D504A0, 0x80D51430]
+    type: vtx
+  # grd_s_f_mh_1.c
+  field/bg/grd_s_f_mh_1_v:
+    addrs: [0x80D51708, 0x80D523C8]
+    type: vtx
+  # grd_s_f_mh_2.c
+  field/bg/grd_s_f_mh_2_v:
+    addrs: [0x80D52588, 0x80D53338]
+    type: vtx
+  # grd_s_f_mh_3.c
+  field/bg/grd_s_f_mh_3_v:
+    addrs: [0x80D534F0, 0x80D53FF0]
+    type: vtx
+  # grd_s_f_mu_1.c
+  field/bg/grd_s_f_mu_1_v:
+    addrs: [0x80D54190, 0x80D54B90]
+    type: vtx
+  # grd_s_f_mu_2.c
+  field/bg/grd_s_f_mu_2_v:
+    addrs: [0x80D54D60, 0x80D55750]
+    type: vtx
+  # grd_s_f_mu_3.c
+  field/bg/grd_s_f_mu_3_v:
+    addrs: [0x80D55930, 0x80D562B0]
+    type: vtx
+  # grd_s_f_pk_1.c
+  field/bg/grd_s_f_pk_1_v:
+    addrs: [0x80D564B8, 0x80D57378]
+    type: vtx
+  # grd_s_f_pk_2.c
+  field/bg/grd_s_f_pk_2_v:
+    addrs: [0x80D575B8, 0x80D58358]
+    type: vtx
+  # grd_s_f_pk_3.c
+  field/bg/grd_s_f_pk_3_v:
+    addrs: [0x80D58580, 0x80D595A0]
+    type: vtx
+  # grd_s_hole_test.c
+  field/bg/grd_s_hole_test_v:
+    addrs: [0x80D59810, 0x80D5A740]
+    type: vtx
+  # grd_s_il_1.c
+  field/bg/grd_s_il_1_v:
+    addrs: [0x80D5A9A8, 0x80D5B6C8]
+    type: vtx
+  # grd_s_il_2.c
+  field/bg/grd_s_il_2_v:
+    addrs: [0x80D5BA18, 0x80D5CF08]
+    type: vtx
+  # grd_s_il_3.c
+  field/bg/grd_s_il_3_v:
+    addrs: [0x80D5D358, 0x80D5E188]
+    type: vtx
+  # grd_s_il_4.c
+  field/bg/grd_s_il_4_v:
+    addrs: [0x80D5E4F8, 0x80D5F278]
+    type: vtx
+  # grd_s_ir_1.c
+  field/bg/grd_s_ir_1_v:
+    addrs: [0x80D5F5E8, 0x80D60668]
+    type: vtx
+  # grd_s_ir_2.c
+  field/bg/grd_s_ir_2_v:
+    addrs: [0x80D60A60, 0x80D61DD0]
+    type: vtx
+  # grd_s_ir_3.c
+  field/bg/grd_s_ir_3_v:
+    addrs: [0x80D621F8, 0x80D63748]
+    type: vtx
+  # grd_s_ir_4.c
+  field/bg/grd_s_ir_4_v:
+    addrs: [0x80D63BB0, 0x80D64D60]
+    type: vtx
+  # grd_s_m_1.c
+  field/bg/grd_s_m_1_v:
+    addrs: [0x80D65158, 0x80D65F58]
+    type: vtx
+  # grd_s_m_10.c
+  field/bg/grd_s_m_10_v:
+    addrs: [0x80D662B0, 0x80D670A0]
+    type: vtx
+  # grd_s_m_2.c
+  field/bg/grd_s_m_2_v:
+    addrs: [0x80D67438, 0x80D68368]
+    type: vtx
+  # grd_s_m_3.c
+  field/bg/grd_s_m_3_v:
+    addrs: [0x80D68718, 0x80D69578]
+    type: vtx
+  # grd_s_m_4.c
+  field/bg/grd_s_m_4_v:
+    addrs: [0x80D698C8, 0x80D6A528]
+    type: vtx
+  # grd_s_m_5.c
+  field/bg/grd_s_m_5_v:
+    addrs: [0x80D6A8A0, 0x80D6B8A0]
+    type: vtx
+  # grd_s_m_6.c
+  field/bg/grd_s_m_6_v:
+    addrs: [0x80D6BC70, 0x80D6CBE0]
+    type: vtx
+  # grd_s_m_7.c
+  field/bg/grd_s_m_7_v:
+    addrs: [0x80D6CF60, 0x80D6DBF0]
+    type: vtx
+  # grd_s_m_8.c
+  field/bg/grd_s_m_8_v:
+    addrs: [0x80D6DF60, 0x80D6EC70]
+    type: vtx
+  # grd_s_m_9.c
+  field/bg/grd_s_m_9_v:
+    addrs: [0x80D6EFE8, 0x80D6FC28]
+    type: vtx
+  # grd_s_m_r1_1.c
+  field/bg/grd_s_m_r1_1_v:
+    addrs: [0x80D6FF78, 0x80D70FB8]
+    type: vtx
+  # grd_s_m_r1_2.c
+  field/bg/grd_s_m_r1_2_v:
+    addrs: [0x80D713F8, 0x80D723C8]
+    type: vtx
+  # grd_s_m_r1_3.c
+  field/bg/grd_s_m_r1_3_v:
+    addrs: [0x80D727D8, 0x80D73638]
+    type: vtx
+  # grd_s_m_r1_4.c
+  field/bg/grd_s_m_r1_4_v:
+    addrs: [0x80D73A50, 0x80D74B90]
+    type: vtx
+  # grd_s_m_r1_5.c
+  field/bg/grd_s_m_r1_5_v:
+    addrs: [0x80D74FF8, 0x80D76238]
+    type: vtx
+  # grd_s_m_r1_b_1.c
+  field/bg/grd_s_m_r1_b_1_v:
+    addrs: [0x80D76680, 0x80D774E0]
+    type: vtx
+  # grd_s_m_r1_b_2.c
+  field/bg/grd_s_m_r1_b_2_v:
+    addrs: [0x80D77928, 0x80D78AB8]
+    type: vtx
+  # grd_s_m_r1_b_3.c
+  field/bg/grd_s_m_r1_b_3_v:
+    addrs: [0x80D78F30, 0x80D79F30]
+    type: vtx
+  # grd_s_m_ta_1.c
+  field/bg/grd_s_m_ta_1_v:
+    addrs: [0x80D7A370, 0x80D7B320]
+    type: vtx
+  # grd_s_m_ta_2.c
+  field/bg/grd_s_m_ta_2_v:
+    addrs: [0x80D7B6E8, 0x80D7C568]
+    type: vtx
+  # grd_s_m_ta_3.c
+  field/bg/grd_s_m_ta_3_v:
+    addrs: [0x80D7C920, 0x80D7D890]
+    type: vtx
+  # grd_s_m_wf_1.c
+  field/bg/grd_s_m_wf_1_v:
+    addrs: [0x80D7DCB0, 0x80D7EEE0]
+    type: vtx
+  # grd_s_m_wf_2.c
+  field/bg/grd_s_m_wf_2_v:
+    addrs: [0x80D7F350, 0x80D80B60]
+    type: vtx
+  # grd_s_m_wf_3.c
+  field/bg/grd_s_m_wf_3_v:
+    addrs: [0x80D81048, 0x80D82348]
+    type: vtx
+  # grd_s_o_1.c
+  field/bg/grd_s_o_1_v:
+    addrs: [0x80D827C0, 0x80D82B60]
+    type: vtx
+  # grd_s_o_10.c
+  field/bg/grd_s_o_10_v:
+    addrs: [0x80D82CE0, 0x80D83040]
+    type: vtx
+  # grd_s_o_2.c
+  field/bg/grd_s_o_2_v:
+    addrs: [0x80D831B8, 0x80D83518]
+    type: vtx
+  # grd_s_o_3.c
+  field/bg/grd_s_o_3_v:
+    addrs: [0x80D83698, 0x80D839C8]
+    type: vtx
+  # grd_s_o_4.c
+  field/bg/grd_s_o_4_v:
+    addrs: [0x80D83B40, 0x80D83E90]
+    type: vtx
+  # grd_s_o_5.c
+  field/bg/grd_s_o_5_v:
+    addrs: [0x80D84010, 0x80D84350]
+    type: vtx
+  # grd_s_o_6.c
+  field/bg/grd_s_o_6_v:
+    addrs: [0x80D844D0, 0x80D84800]
+    type: vtx
+  # grd_s_o_7.c
+  field/bg/grd_s_o_7_v:
+    addrs: [0x80D84978, 0x80D84CC8]
+    type: vtx
+  # grd_s_o_8.c
+  field/bg/grd_s_o_8_v:
+    addrs: [0x80D84E48, 0x80D851E8]
+    type: vtx
+  # grd_s_o_9.c
+  field/bg/grd_s_o_9_v:
+    addrs: [0x80D85378, 0x80D85708]
+    type: vtx
+  # grd_s_o_i_1.c
+  field/bg/grd_s_o_i_1_v:
+    addrs: [0x80D85850, 0x80D85B70]
+    type: vtx
+  # grd_s_o_i_2.c
+  field/bg/grd_s_o_i_2_v:
+    addrs: [0x80D85CF0, 0x80D85ED0]
+    type: vtx
+  # grd_s_o_r1_1.c
+  field/bg/grd_s_o_r1_1_v:
+    addrs: [0x80D86010, 0x80D863E0]
+    type: vtx
+  # grd_s_o_r1_2.c
+  field/bg/grd_s_o_r1_2_v:
+    addrs: [0x80D86560, 0x80D86900]
+    type: vtx
+  # grd_s_o_r1_3.c
+  field/bg/grd_s_o_r1_3_v:
+    addrs: [0x80D86A80, 0x80D86E30]
+    type: vtx
+  # grd_s_o_r1_4.c
+  field/bg/grd_s_o_r1_4_v:
+    addrs: [0x80D86FB8, 0x80D87338]
+    type: vtx
+  # grd_s_o_r1_5.c
+  field/bg/grd_s_o_r1_5_v:
+    addrs: [0x80D874B8, 0x80D87778]
+    type: vtx
+  # grd_s_o_r1_b_1.c
+  field/bg/grd_s_o_r1_b_1_v:
+    addrs: [0x80D878D0, 0x80D87AB0]
+    type: vtx
+  # grd_s_o_r1_b_2.c
+  field/bg/grd_s_o_r1_b_2_v:
+    addrs: [0x80D87BF0, 0x80D87DD0]
+    type: vtx
+  # grd_s_o_r1_b_3.c
+  field/bg/grd_s_o_r1_b_3_v:
+    addrs: [0x80D87F08, 0x80D880E8]
+    type: vtx
+  # grd_s_o_ta_1.c
+  field/bg/grd_s_o_ta_1_v:
+    addrs: [0x80D88220, 0x80D885E0]
+    type: vtx
+  # grd_s_o_ta_2.c
+  field/bg/grd_s_o_ta_2_v:
+    addrs: [0x80D88768, 0x80D88A48]
+    type: vtx
+  # grd_s_o_ta_3.c
+  field/bg/grd_s_o_ta_3_v:
+    addrs: [0x80D88BB0, 0x80D88EA0]
+    type: vtx
+  # grd_s_o_wf_1.c
+  field/bg/grd_s_o_wf_1_v:
+    addrs: [0x80D89008, 0x80D893F8]
+    type: vtx
+  # grd_s_o_wf_2.c
+  field/bg/grd_s_o_wf_2_v:
+    addrs: [0x80D89578, 0x80D89998]
+    type: vtx
+  # grd_s_o_wf_3.c
+  field/bg/grd_s_o_wf_3_v:
+    addrs: [0x80D89B18, 0x80D89EF8]
+    type: vtx
+  # grd_s_r1_1.c
+  field/bg/grd_s_r1_1_v:
+    addrs: [0x80D8A040, 0x80D8AC00]
+    type: vtx
+  # grd_s_r1_2.c
+  field/bg/grd_s_r1_2_v:
+    addrs: [0x80D8AE38, 0x80D8BAD8]
+    type: vtx
+  # grd_s_r1_3.c
+  field/bg/grd_s_r1_3_v:
+    addrs: [0x80D8BD70, 0x80D8CAE0]
+    type: vtx
+  # grd_s_r1_4.c
+  field/bg/grd_s_r1_4_v:
+    addrs: [0x80D8CDA0, 0x80D8D880]
+    type: vtx
+  # grd_s_r1_b_1.c
+  field/bg/grd_s_r1_b_1_v:
+    addrs: [0x80D8DAB8, 0x80D8E818]
+    type: vtx
+  # grd_s_r1_b_2.c
+  field/bg/grd_s_r1_b_2_v:
+    addrs: [0x80D8EAF0, 0x80D8FC00]
+    type: vtx
+  # grd_s_r1_b_3.c
+  field/bg/grd_s_r1_b_3_v:
+    addrs: [0x80D8FF30, 0x80D90EF0]
+    type: vtx
+  # grd_s_r1_p_1.c
+  field/bg/grd_s_r1_p_1_v:
+    addrs: [0x80D91220, 0x80D921D0]
+    type: vtx
+  # grd_s_r2_1.c
+  field/bg/grd_s_r2_1_v:
+    addrs: [0x80D924C0, 0x80D93040]
+    type: vtx
+  # grd_s_r2_2.c
+  field/bg/grd_s_r2_2_v:
+    addrs: [0x80D932E8, 0x80D93F18]
+    type: vtx
+  # grd_s_r2_3.c
+  field/bg/grd_s_r2_3_v:
+    addrs: [0x80D94148, 0x80D94EE8]
+    type: vtx
+  # grd_s_r2_4.c
+  field/bg/grd_s_r2_4_v:
+    addrs: [0x80D951B8, 0x80D95F08]
+    type: vtx
+  # grd_s_r2_b_1.c
+  field/bg/grd_s_r2_b_1_v:
+    addrs: [0x80D961D0, 0x80D97490]
+    type: vtx
+  # grd_s_r2_b_2.c
+  field/bg/grd_s_r2_b_2_v:
+    addrs: [0x80D97810, 0x80D98850]
+    type: vtx
+  # grd_s_r2_b_3.c
+  field/bg/grd_s_r2_b_3_v:
+    addrs: [0x80D98B78, 0x80D99D28]
+    type: vtx
+  # grd_s_r2_p_1.c
+  field/bg/grd_s_r2_p_1_v:
+    addrs: [0x80D9A070, 0x80D9B5B0]
+    type: vtx
+  # grd_s_r3_1.c
+  field/bg/grd_s_r3_1_v:
+    addrs: [0x80D9B8E0, 0x80D9C6C0]
+    type: vtx
+  # grd_s_r3_2.c
+  field/bg/grd_s_r3_2_v:
+    addrs: [0x80D9C988, 0x80D9D5F8]
+    type: vtx
+  # grd_s_r3_3.c
+  field/bg/grd_s_r3_3_v:
+    addrs: [0x80D9D888, 0x80D9E518]
+    type: vtx
+  # grd_s_r3_4.c
+  field/bg/grd_s_r3_4_v:
+    addrs: [0x80D9E7D0, 0x80D9F3A0]
+    type: vtx
+  # grd_s_r3_b_1.c
+  field/bg/grd_s_r3_b_1_v:
+    addrs: [0x80D9F630, 0x80DA0520]
+    type: vtx
+  # grd_s_r3_b_2.c
+  field/bg/grd_s_r3_b_2_v:
+    addrs: [0x80DA0828, 0x80DA19F8]
+    type: vtx
+  # grd_s_r3_b_3.c
+  field/bg/grd_s_r3_b_3_v:
+    addrs: [0x80DA1D50, 0x80DA2E50]
+    type: vtx
+  # grd_s_r3_p_1.c
+  field/bg/grd_s_r3_p_1_v:
+    addrs: [0x80DA3180, 0x80DA44F0]
+    type: vtx
+  # grd_s_r4_1.c
+  field/bg/grd_s_r4_1_v:
+    addrs: [0x80DA4830, 0x80DA54D0]
+    type: vtx
+  # grd_s_r4_2.c
+  field/bg/grd_s_r4_2_v:
+    addrs: [0x80DA5768, 0x80DA6478]
+    type: vtx
+  # grd_s_r4_3.c
+  field/bg/grd_s_r4_3_v:
+    addrs: [0x80DA66E0, 0x80DA7270]
+    type: vtx
+  # grd_s_r4_b_1.c
+  field/bg/grd_s_r4_b_1_v:
+    addrs: [0x80DA7508, 0x80DA7F78]
+    type: vtx
+  # grd_s_r4_b_2.c
+  field/bg/grd_s_r4_b_2_v:
+    addrs: [0x80DA8208, 0x80DA90E8]
+    type: vtx
+  # grd_s_r4_p_1.c
+  field/bg/grd_s_r4_p_1_v:
+    addrs: [0x80DA93E8, 0x80DAA5A8]
+    type: vtx
+  # grd_s_r5_1.c
+  field/bg/grd_s_r5_1_v:
+    addrs: [0x80DAA938, 0x80DAB678]
+    type: vtx
+  # grd_s_r5_2.c
+  field/bg/grd_s_r5_2_v:
+    addrs: [0x80DAB930, 0x80DAC770]
+    type: vtx
+  # grd_s_r5_3.c
+  field/bg/grd_s_r5_3_v:
+    addrs: [0x80DACA20, 0x80DAD820]
+    type: vtx
+  # grd_s_r5_b_1.c
+  field/bg/grd_s_r5_b_1_v:
+    addrs: [0x80DADAD8, 0x80DAEAB8]
+    type: vtx
+  # grd_s_r5_b_2.c
+  field/bg/grd_s_r5_b_2_v:
+    addrs: [0x80DAEDA8, 0x80DAFD98]
+    type: vtx
+  # grd_s_r5_p_1.c
+  field/bg/grd_s_r5_p_1_v:
+    addrs: [0x80DB00B0, 0x80DB1210]
+    type: vtx
+  # grd_s_r6_1.c
+  field/bg/grd_s_r6_1_v:
+    addrs: [0x80DB1540, 0x80DB2010]
+    type: vtx
+  # grd_s_r6_2.c
+  field/bg/grd_s_r6_2_v:
+    addrs: [0x80DB2268, 0x80DB2DB8]
+    type: vtx
+  # grd_s_r6_3.c
+  field/bg/grd_s_r6_3_v:
+    addrs: [0x80DB2FF8, 0x80DB3B08]
+    type: vtx
+  # grd_s_r6_b_1.c
+  field/bg/grd_s_r6_b_1_v:
+    addrs: [0x80DB3D70, 0x80DB4930]
+    type: vtx
+  # grd_s_r6_b_2.c
+  field/bg/grd_s_r6_b_2_v:
+    addrs: [0x80DB4BE8, 0x80DB5E18]
+    type: vtx
+  # grd_s_r6_p_1.c
+  field/bg/grd_s_r6_p_1_v:
+    addrs: [0x80DB6138, 0x80DB7428]
+    type: vtx
+  # grd_s_r7_1.c
+  field/bg/grd_s_r7_1_v:
+    addrs: [0x80DB77B8, 0x80DB8408]
+    type: vtx
+  # grd_s_r7_2.c
+  field/bg/grd_s_r7_2_v:
+    addrs: [0x80DB86B0, 0x80DB9260]
+    type: vtx
+  # grd_s_r7_3.c
+  field/bg/grd_s_r7_3_v:
+    addrs: [0x80DB94C0, 0x80DBA020]
+    type: vtx
+  # grd_s_r7_b_1.c
+  field/bg/grd_s_r7_b_1_v:
+    addrs: [0x80DBA268, 0x80DBAF58]
+    type: vtx
+  # grd_s_r7_b_2.c
+  field/bg/grd_s_r7_b_2_v:
+    addrs: [0x80DBB228, 0x80DBC478]
+    type: vtx
+  # grd_s_r7_p_1.c
+  field/bg/grd_s_r7_p_1_v:
+    addrs: [0x80DBC7D0, 0x80DBD8E0]
+    type: vtx
+  # grd_s_t_1.c
+  field/bg/grd_s_t_1_v:
+    addrs: [0x80DBDBF8, 0x80DBE618]
+    type: vtx
+  # grd_s_t_10.c
+  field/bg/grd_s_t_10_v:
+    addrs: [0x80DBE858, 0x80DBF688]
+    type: vtx
+  # grd_s_t_2.c
+  field/bg/grd_s_t_2_v:
+    addrs: [0x80DBF8F8, 0x80DC05E8]
+    type: vtx
+  # grd_s_t_3.c
+  field/bg/grd_s_t_3_v:
+    addrs: [0x80DC0808, 0x80DC1188]
+    type: vtx
+  # grd_s_t_4.c
+  field/bg/grd_s_t_4_v:
+    addrs: [0x80DC1378, 0x80DC2218]
+    type: vtx
+  # grd_s_t_5.c
+  field/bg/grd_s_t_5_v:
+    addrs: [0x80DC2500, 0x80DC3480]
+    type: vtx
+  # grd_s_t_6.c
+  field/bg/grd_s_t_6_v:
+    addrs: [0x80DC3770, 0x80DC48D0]
+    type: vtx
+  # grd_s_t_7.c
+  field/bg/grd_s_t_7_v:
+    addrs: [0x80DC4B78, 0x80DC5CC8]
+    type: vtx
+  # grd_s_t_8.c
+  field/bg/grd_s_t_8_v:
+    addrs: [0x80DC5F48, 0x80DC6B88]
+    type: vtx
+  # grd_s_t_9.c
+  field/bg/grd_s_t_9_v:
+    addrs: [0x80DC6DA8, 0x80DC7A68]
+    type: vtx
+  # grd_s_t_po_1.c
+  field/bg/grd_s_t_po_1_v:
+    addrs: [0x80DC7C88, 0x80DC8708]
+    type: vtx
+  # grd_s_t_po_2.c
+  field/bg/grd_s_t_po_2_v:
+    addrs: [0x80DC8918, 0x80DC9348]
+    type: vtx
+  # grd_s_t_po_3.c
+  field/bg/grd_s_t_po_3_v:
+    addrs: [0x80DC9578, 0x80DCA3D8]
+    type: vtx
+  # grd_s_t_r1_1.c
+  field/bg/grd_s_t_r1_1_v:
+    addrs: [0x80DCA6E0, 0x80DCB5D0]
+    type: vtx
+  # grd_s_t_r1_2.c
+  field/bg/grd_s_t_r1_2_v:
+    addrs: [0x80DCB8E8, 0x80DCCA18]
+    type: vtx
+  # grd_s_t_r1_3.c
+  field/bg/grd_s_t_r1_3_v:
+    addrs: [0x80DCCD78, 0x80DCDEC8]
+    type: vtx
+  # grd_s_t_r1_4.c
+  field/bg/grd_s_t_r1_4_v:
+    addrs: [0x80DCE230, 0x80DCF240]
+    type: vtx
+  # grd_s_t_r1_5.c
+  field/bg/grd_s_t_r1_5_v:
+    addrs: [0x80DCF588, 0x80DD06E8]
+    type: vtx
+  # grd_s_t_sh_1.c
+  field/bg/grd_s_t_sh_1_v:
+    addrs: [0x80DD0A38, 0x80DD1458]
+    type: vtx
+  # grd_s_t_sh_2.c
+  field/bg/grd_s_t_sh_2_v:
+    addrs: [0x80DD1678, 0x80DD2338]
+    type: vtx
+  # grd_s_t_sh_3.c
+  field/bg/grd_s_t_sh_3_v:
+    addrs: [0x80DD2610, 0x80DD3070]
+    type: vtx
+  # grd_s_t_st1_1.c
+  field/bg/grd_s_t_st1_1_v:
+    addrs: [0x80DD3270, 0x80DD3EA0]
+    type: vtx
+  # grd_s_t_st1_2.c
+  field/bg/grd_s_t_st1_2_v:
+    addrs: [0x80DD40F0, 0x80DD4FF0]
+    type: vtx
+  # grd_s_t_st1_3.c
+  field/bg/grd_s_t_st1_3_v:
+    addrs: [0x80DD5280, 0x80DD5F30]
+    type: vtx
+  # rom_toudai.c
+  field/bg/rom_toudai_yuka_pal:
+    addrs: [0x80F08520, 0x80F08540]
+    type: pal16
+  field/bg/rom_toudai_kabe_pal:
+    addrs: [0x80F08540, 0x80F08560]
+    type: pal16
+  field/bg/rom_toudai_step_pal:
+    addrs: [0x80F08560, 0x80F08580]
+    type: pal16
+  field/bg/rom_toudai_meka_pal:
+    addrs: [0x80F08580, 0x80F085A0]
+    type: pal16
+  field/bg/rom_toudai_ukiwa_pal:
+    addrs: [0x80F085A0, 0x80F085C0]
+    type: pal16
+  field/bg/rom_toudai_yuka_tex:
+    addrs: [0x80F085C0, 0x80F08DC0]
+  field/bg/rom_toudai_kabeA_tex:
+    addrs: [0x80F08DC0, 0x80F095C0]
+  field/bg/rom_toudai_kabeB_tex:
+    addrs: [0x80F095C0, 0x80F09DC0]
+  field/bg/rom_toudai_step_tex:
+    addrs: [0x80F09DC0, 0x80F0A1C0]
+  field/bg/rom_toudai_mekaA_tex:
+    addrs: [0x80F0A1C0, 0x80F0A2C0]
+  field/bg/rom_toudai_ukiwa_tex:
+    addrs: [0x80F0A2C0, 0x80F0A4C0]
+  field/bg/rom_toudai_kage1_tex:
+    addrs: [0x80F0A4C0, 0x80F0A540]
+  field/bg/rom_toudai_mekaC_tex:
+    addrs: [0x80F0A540, 0x80F0A740]
+  field/bg/rom_toudai_kage2_tex:
+    addrs: [0x80F0A740, 0x80F0A7C0]
+  field/bg/rom_toudai_v:
+    addrs: [0x80F0A7C0, 0x80F0AE30]
+    type: vtx
   submenu/map/kan_tizu_c1_TA_tex_txt:
     addrs: [0x80F0B020, 0x80F0B220]
   submenu/map/kan_tizu_c1r1_TA_tex_txt:
@@ -8735,3 +9910,723 @@ config/rel.yml:
     addrs: [0x80F13620, 0x80F13820]
   submenu/map/kan_tizu_fmu_TA_tex_txt:
     addrs: [0x80F13820, 0x80F13A20]
+  # rom_museum1.c
+  field/bg/rom_museum1_mado_pal:
+    addrs: [0x80F13AA0, 0x80F13AC0]
+    type: pal16
+  field/bg/rom_museum1_step_pal:
+    addrs: [0x80F13AC0, 0x80F13AE0]
+    type: pal16
+  field/bg/rom_museum1_floor_pal:
+    addrs: [0x80F13AE0, 0x80F13B00]
+    type: pal16
+  field/bg/rom_museum1_wall_pal:
+    addrs: [0x80F13B00, 0x80F13B20]
+    type: pal16
+  field/bg/rom_museum1_mado1_tex:
+    addrs: [0x80F13B20, 0x80F14320]
+  field/bg/rom_museum1_step1_tex:
+    addrs: [0x80F14320, 0x80F14B20]
+  field/bg/rom_museum1_step2_tex:
+    addrs: [0x80F14B20, 0x80F14F20]
+  field/bg/rom_museum1_floorA_tex:
+    addrs: [0x80F14F20, 0x80F15720]
+  field/bg/rom_museum1_floorB_tex:
+    addrs: [0x80F15720, 0x80F15F20]
+  field/bg/rom_museum1_mado2_tex:
+    addrs: [0x80F15F20, 0x80F16720]
+  field/bg/rom_museum1_sign1_tex:
+    addrs: [0x80F16720, 0x80F16B20]
+  field/bg/rom_museum1_wallA_tex:
+    addrs: [0x80F16B20, 0x80F17320]
+  field/bg/rom_museum1_wallB_tex:
+    addrs: [0x80F17320, 0x80F17B20]
+  field/bg/rom_museum1_sign2_tex:
+    addrs: [0x80F17B20, 0x80F17F20]
+  field/bg/rom_museum1_sign3_tex:
+    addrs: [0x80F17F20, 0x80F18320]
+  field/bg/rom_museum1_sign4_tex:
+    addrs: [0x80F18320, 0x80F18720]
+  field/bg/rom_museum1_v:
+    addrs: [0x80F18720, 0x80F199E0]
+    type: vtx
+  # rom_museum5.c
+  field/bg/rom_museum5_on_pal:
+    addrs: [0x80F19DC0, 0x80F19DE0]
+    type: pal16
+  field/bg/rom_museum5_wall_pal:
+    addrs: [0x80F19DE0, 0x80F19E00]
+    type: pal16
+  field/bg/rom_museum5_floor_pal:
+    addrs: [0x80F19E00, 0x80F19E20]
+    type: pal16
+  field/bg/rom_museum5_step_pal:
+    addrs: [0x80F19E20, 0x80F19E40]
+    type: pal16
+  field/bg/rom_museum5_ki_tex:
+    addrs: [0x80F19E40, 0x80F1A040]
+  field/bg/rom_museum5_wallA_tex:
+    addrs: [0x80F1A040, 0x80F1A840]
+  field/bg/rom_museum5_floor_tex:
+    addrs: [0x80F1A840, 0x80F1B040]
+  field/bg/rom_museum5_step_tex:
+    addrs: [0x80F1B040, 0x80F1B840]
+  field/bg/rom_museum5_isi_tex:
+    addrs: [0x80F1B840, 0x80F1BA40]
+  field/bg/rom_museum5_plate_tex:
+    addrs: [0x80F1BA40, 0x80F1BC40]
+  field/bg/rom_museum5_v:
+    addrs: [0x80F1BC40, 0x80F1C9C0]
+    type: vtx
+  # rom_museum2.c
+  field/bg/rom_museum2_wall_pal:
+    addrs: [0x80F1D5C0, 0x80F1D5E0]
+    type: pal16
+  field/bg/rom_museum2_floor_pal:
+    addrs: [0x80F1D5E0, 0x80F1D600]
+    type: pal16
+  field/bg/rom_museum2_step1_pal:
+    addrs: [0x80F1D600, 0x80F1D620]
+    type: pal16
+  field/bg/rom_museum2_wallA_tex:
+    addrs: [0x80F1D620, 0x80F1DE20]
+  field/bg/rom_museum2_wallB_tex:
+    addrs: [0x80F1DE20, 0x80F1E620]
+  field/bg/rom_museum2_floorA_tex:
+    addrs: [0x80F1E620, 0x80F1EE20]
+  field/bg/rom_museum2_step1_tex:
+    addrs: [0x80F1EE20, 0x80F1F620]
+  field/bg/rom_museum2_plate_tex:
+    addrs: [0x80F1F620, 0x80F1F720]
+  field/bg/rom_museum2_v:
+    addrs: [0x80F1F720, 0x80F20820]
+    type: vtx
+  # rom_museum3.c
+  field/bg/rom_museum3_wall_pal:
+    addrs: [0x80F23E40, 0x80F23E60]
+    type: pal16
+  field/bg/rom_museum3_back_pal:
+    addrs: [0x80F23E60, 0x80F23E80]
+    type: pal16
+  field/bg/rom_museum3_floor_pal:
+    addrs: [0x80F23E80, 0x80F23EA0]
+    type: pal16
+  field/bg/rom_museum3_wallA_tex:
+    addrs: [0x80F23EA0, 0x80F246A0]
+  field/bg/rom_museum3_wallB_tex:
+    addrs: [0x80F246A0, 0x80F24EA0]
+  field/bg/rom_museum3_back_tex:
+    addrs: [0x80F24EA0, 0x80F256A0]
+  field/bg/rom_museum3_floorA_tex:
+    addrs: [0x80F256A0, 0x80F25EA0]
+  field/bg/rom_museum3_step_tex:
+    addrs: [0x80F25EA0, 0x80F266A0]
+  field/bg/rom_museum3_hasira_tex:
+    addrs: [0x80F266A0, 0x80F267A0]
+  field/bg/rom_museum3_backside_tex:
+    addrs: [0x80F267A0, 0x80F26920]
+  field/bg/rom_museum3_v:
+    addrs: [0x80F26920, 0x80F27AD0]
+    type: vtx
+  # rom_tailor.c
+  field/bg/rom_tailor_wall_pal:
+    addrs: [0x80F29260, 0x80F29280]
+    type: pal16
+  field/bg/rom_tailor_floor_pal:
+    addrs: [0x80F29280, 0x80F292A0]
+    type: pal16
+  field/bg/rom_tailor_mado_pal:
+    addrs: [0x80F292A0, 0x80F292C0]
+    type: pal16
+  field/bg/rom_tailor_reji_pal:
+    addrs: [0x80F292C0, 0x80F292E0]
+    type: pal16
+  field/bg/rom_tailor_dogu_pal:
+    addrs: [0x80F292E0, 0x80F29300]
+    type: pal16
+  field/bg/rom_tailor_misin_pal:
+    addrs: [0x80F29300, 0x80F29320]
+    type: pal16
+  field/bg/rom_tailor_table_pal:
+    addrs: [0x80F29320, 0x80F29340]
+    type: pal16
+  field/bg/rom_tailor_box_pal:
+    addrs: [0x80F29340, 0x80F29360]
+    type: pal16
+  field/bg/rom_tailor_quilt_pal:
+    addrs: [0x80F29360, 0x80F29380]
+    type: pal16
+  field/bg/rom_tailor_ent_pal:
+    addrs: [0x80F29380, 0x80F293A0]
+    type: pal16
+  field/bg/rom_tailor_wallA_tex:
+    addrs: [0x80F293A0, 0x80F29BA0]
+  field/bg/rom_tailor_wallB_tex:
+    addrs: [0x80F29BA0, 0x80F2A3A0]
+  field/bg/rom_tailor_floorA_tex:
+    addrs: [0x80F2A3A0, 0x80F2ABA0]
+  field/bg/rom_tailor_floorB_tex:
+    addrs: [0x80F2ABA0, 0x80F2B3A0]
+  field/bg/rom_tailor_floorC_tex:
+    addrs: [0x80F2B3A0, 0x80F2BBA0]
+  field/bg/rom_tailor_floorD_tex:
+    addrs: [0x80F2BBA0, 0x80F2C3A0]
+  field/bg/rom_tailor_kage1_tex:
+    addrs: [0x80F2C3A0, 0x80F2C4A0]
+  field/bg/rom_tailor_mado_tex:
+    addrs: [0x80F2C4A0, 0x80F2C6A0]
+  field/bg/rom_tailor_pic1_tex:
+    addrs: [0x80F2C6A0, 0x80F2C8A0]
+  field/bg/rom_tailor_pic2_tex:
+    addrs: [0x80F2C8A0, 0x80F2CAA0]
+  field/bg/rom_tailor_pic3_tex:
+    addrs: [0x80F2CAA0, 0x80F2CCA0]
+  field/bg/rom_tailor_pic4_tex:
+    addrs: [0x80F2CCA0, 0x80F2CEA0]
+  field/bg/rom_tailor_pic5_tex:
+    addrs: [0x80F2CEA0, 0x80F2D0A0]
+  field/bg/rom_tailor_pic6_tex:
+    addrs: [0x80F2D0A0, 0x80F2D2A0]
+  field/bg/rom_tailor_pic7_tex:
+    addrs: [0x80F2D2A0, 0x80F2D4A0]
+  field/bg/rom_tailor_pic8_tex:
+    addrs: [0x80F2D4A0, 0x80F2D6A0]
+  field/bg/rom_tailor_tyoki_tex:
+    addrs: [0x80F2D6A0, 0x80F2D7A0]
+  field/bg/rom_tailor_cloth1_tex:
+    addrs: [0x80F2D7A0, 0x80F2D820]
+  field/bg/rom_tailor_misin2_tex:
+    addrs: [0x80F2D820, 0x80F2DA20]
+  field/bg/rom_tailor_table_mae_tex:
+    addrs: [0x80F2DA20, 0x80F2DB20]
+  field/bg/rom_tailor_table_yoko_tex:
+    addrs: [0x80F2DB20, 0x80F2DBA0]
+  field/bg/rom_tailor_table_ue_tex:
+    addrs: [0x80F2DBA0, 0x80F2DCA0]
+  field/bg/rom_tailor_ito_tex:
+    addrs: [0x80F2DCA0, 0x80F2DEA0]
+  field/bg/rom_tailor_table_reji_tex:
+    addrs: [0x80F2DEA0, 0x80F2DF20]
+  field/bg/rom_tailor_misin1_tex:
+    addrs: [0x80F2DF20, 0x80F2E120]
+  field/bg/rom_tailor_misindai_tex:
+    addrs: [0x80F2E120, 0x80F2E320]
+  field/bg/rom_tailor_table_misin1_tex:
+    addrs: [0x80F2E320, 0x80F2E420]
+  field/bg/rom_tailor_reji_tex:
+    addrs: [0x80F2E420, 0x80F2E620]
+  field/bg/rom_tailor_table_misin2_tex:
+    addrs: [0x80F2E620, 0x80F2E6A0]
+  field/bg/rom_tailor_box_tex:
+    addrs: [0x80F2E6A0, 0x80F2E7A0]
+  field/bg/rom_tailor_box1_tex:
+    addrs: [0x80F2E7A0, 0x80F2E820]
+  field/bg/rom_tailor_box2_tex:
+    addrs: [0x80F2E820, 0x80F2E8A0]
+  field/bg/rom_tailor_box3_tex:
+    addrs: [0x80F2E8A0, 0x80F2E920]
+  field/bg/rom_tailor_box4_tex:
+    addrs: [0x80F2E920, 0x80F2E9A0]
+  field/bg/rom_tailor_box5_tex:
+    addrs: [0x80F2E9A0, 0x80F2EA20]
+  field/bg/rom_tailor_box6_tex:
+    addrs: [0x80F2EA20, 0x80F2EAA0]
+  field/bg/rom_tailor_box7_tex:
+    addrs: [0x80F2EAA0, 0x80F2EB20]
+  field/bg/rom_tailor_box8_tex:
+    addrs: [0x80F2EB20, 0x80F2EBA0]
+  field/bg/rom_tailor_kage2_tex:
+    addrs: [0x80F2EBA0, 0x80F2EC20]
+  field/bg/rom_tailor_quilt_tex:
+    addrs: [0x80F2EC20, 0x80F2F420]
+  field/bg/rom_tailor_ent_tex:
+    addrs: [0x80F2F420, 0x80F2F520]
+  field/bg/rom_tailor_misinbari1_tex:
+    addrs: [0x80F2F520, 0x80F2F5A0]
+  field/bg/rom_tailor_misinbari2_tex:
+    addrs: [0x80F2F5A0, 0x80F2F620]
+  field/bg/rom_tailor_tape_tex:
+    addrs: [0x80F2F620, 0x80F2F820]
+  field/bg/rom_tailor_dogu1_tex:
+    addrs: [0x80F2F820, 0x80F2F8A0]
+  field/bg/rom_tailor_dogu2_tex:
+    addrs: [0x80F2F8A0, 0x80F2F920]
+  field/bg/rom_tailor_v:
+    addrs: [0x80F2F920, 0x80F31700]
+    type: vtx
+  # myr_etc.c
+  field/bg/myr_kotei_pal:
+    addrs: [0x80F84780, 0x80F847A0]
+    type: pal16
+  field/bg/myr_enter:
+    addrs: [0x80F847A0, 0x80F84BA0]
+  field/bg/myr_window:
+    addrs: [0x80F84BA0, 0x80F853A0]
+  field/bg/myr_kotei_v:
+    addrs: [0x80F853A0, 0x80F85500]
+    type: vtx
+  # grd_player_select.c
+  field/bg/rom_open_pal:
+    addrs: [0x80F85740, 0x80F85760]
+    type: pal16
+  field/bg/rom_open_floor_tex:
+    addrs: [0x80F85760, 0x80F85F60]
+  field/bg/rom_open_shade_tex:
+    addrs: [0x80F85F60, 0x80F86360]
+  field/bg/rom_open_spot2_tex_rgb_i4:
+    addrs: [0x80F86360, 0x80F86560]
+  field/bg/rom_open_spot_tex:
+    addrs: [0x80F86560, 0x80F86D60]
+  field/bg/grd_player_select_v:
+    addrs: [0x80F86D60, 0x80F86EA0]
+    type: vtx
+  # police_indoor.c
+  field/bg/rom_koban_tel_pal:
+    addrs: [0x80F86FA0, 0x80F86FC0]
+    type: pal16
+  field/bg/rom_koban_win_pal:
+    addrs: [0x80F86FC0, 0x80F86FE0]
+    type: pal16
+  field/bg/rom_koban_us_pos_pal:
+    addrs: [0x80F86FE0, 0x80F87000]
+    type: pal16
+  field/bg/rom_koban_jim_pal:
+    addrs: [0x80F87000, 0x80F87020]
+    type: pal16
+  field/bg/rom_koban_kabe_pal:
+    addrs: [0x80F87020, 0x80F87040]
+    type: pal16
+  field/bg/rom_koban_roc_pal:
+    addrs: [0x80F87040, 0x80F87060]
+    type: pal16
+  field/bg/rom_koban_tel:
+    addrs: [0x80F87060, 0x80F87260]
+  field/bg/rom_koban_win:
+    addrs: [0x80F87260, 0x80F87460]
+  field/bg/rom_koban_desk_front:
+    addrs: [0x80F87460, 0x80F87560]
+  field/bg/rom_koban_desk_side:
+    addrs: [0x80F87560, 0x80F875E0]
+  field/bg/rom_koban_desk_top:
+    addrs: [0x80F875E0, 0x80F876E0]
+  field/bg/rom_koban_yuka:
+    addrs: [0x80F876E0, 0x80F87EE0]
+  field/bg/rom_koban_us_pos1:
+    addrs: [0x80F87EE0, 0x80F881E0]
+  field/bg/rom_koban_us_pos2:
+    addrs: [0x80F881E0, 0x80F884E0]
+  field/bg/rom_koban_kage1:
+    addrs: [0x80F884E0, 0x80F885E0]
+  field/bg/rom_koban_kage2:
+    addrs: [0x80F885E0, 0x80F88660]
+  field/bg/rom_koban_ent:
+    addrs: [0x80F88660, 0x80F88A60]
+  field/bg/rom_koban_jim_front:
+    addrs: [0x80F88A60, 0x80F88C60]
+  field/bg/rom_koban_jim_side:
+    addrs: [0x80F88C60, 0x80F88D60]
+  field/bg/rom_koban_jim_top:
+    addrs: [0x80F88D60, 0x80F88E60]
+  field/bg/rom_koban_kabe1:
+    addrs: [0x80F88E60, 0x80F89660]
+  field/bg/rom_koban_telcode:
+    addrs: [0x80F89660, 0x80F896E0]
+  field/bg/rom_koban_book:
+    addrs: [0x80F896E0, 0x80F89760]
+  field/bg/rom_koban_roc_s:
+    addrs: [0x80F89760, 0x80F89860]
+  field/bg/rom_koban_roc_t:
+    addrs: [0x80F89860, 0x80F898E0]
+  field/bg/rom_koban_kabe3:
+    addrs: [0x80F898E0, 0x80F89CE0]
+  field/bg/rom_koban_isu:
+    addrs: [0x80F89CE0, 0x80F89D60]
+  field/bg/rom_koban_roc_i:
+    addrs: [0x80F89D60, 0x80F89E60]
+  field/bg/rom_koban_roc_f3:
+    addrs: [0x80F89E60, 0x80F8A260]
+  field/bg/police_indoor_v:
+    addrs: [0x80F8A260, 0x80F8BCF0]
+    type: vtx
+
+  # Rail palettes
+  mFM_rail_pal_0:
+    addrs: [0x80F8C2C8, 0x80F8C2E8]
+    type: pal16
+  mFM_rail_pal_1:
+    addrs: [0x80F8C2E8, 0x80F8C308]
+    type: pal16
+  mFM_rail_pal_2:
+    addrs: [0x80F8C308, 0x80F8C328]
+    type: pal16
+  mFM_rail_pal_3:
+    addrs: [0x80F8C328, 0x80F8C348]
+    type: pal16
+  mFM_rail_pal_4:
+    addrs: [0x80F8C348, 0x80F8C368]
+    type: pal16
+  mFM_rail_pal_5:
+    addrs: [0x80F8C368, 0x80F8C388]
+    type: pal16
+  mFM_rail_pal_6:
+    addrs: [0x80F8C388, 0x80F8C3A8]
+    type: pal16
+  mFM_rail_pal_7:
+    addrs: [0x80F8C3A8, 0x80F8C3C8]
+    type: pal16
+  mFM_rail_pal_8:
+    addrs: [0x80F8C3C8, 0x80F8C3E8]
+    type: pal16
+  mFM_rail_pal_9:
+    addrs: [0x80F8C3E8, 0x80F8C408]
+    type: pal16
+  mFM_rail_pal_10:
+    addrs: [0x80F8C408, 0x80F8C428]
+    type: pal16
+  mFM_rail_pal_11:
+    addrs: [0x80F8C428, 0x80F8C448]
+    type: pal16
+  mFM_rail_pal_12:
+    addrs: [0x80F8C448, 0x80F8C468]
+    type: pal16
+  # ac_koinobori
+
+  # NPC draw data assets
+  field/bg/rom_shop_kouhaku_pal:
+    addrs: [0x80F9CDC0, 0x80F9CDE0]
+    type: pal16
+  field/bg/rom_shop_kouhaku_tex:
+    addrs: [0x80F9D260, 0x80F9DA60]
+  # rom_shop4_1.c
+  field/bg/rom_shop4_1_floor_tex_pal:
+    addrs: [0x80F9FF80, 0x80F9FFA0]
+    type: pal16
+  field/bg/rom_shop4_1_lamp_tex_pal:
+    addrs: [0x80F9FFA0, 0x80F9FFC0]
+    type: pal16
+  field/bg/rom_shop4_1_base_tex_pal:
+    addrs: [0x80F9FFC0, 0x80F9FFE0]
+    type: pal16
+  field/bg/rom_shop4_1_stair_tex_pal:
+    addrs: [0x80F9FFE0, 0x80FA0000]
+    type: pal16
+  field/bg/rom_shop4_1_table_tex_pal:
+    addrs: [0x80FA0000, 0x80FA0020]
+    type: pal16
+  field/bg/rom_shop4_1_wall_tex_pal:
+    addrs: [0x80FA0020, 0x80FA0040]
+    type: pal16
+  field/bg/rom_shop4_1_sign01_tex_pal:
+    addrs: [0x80FA0040, 0x80FA0060]
+    type: pal16
+  field/bg/rom_shop4_1_kaunta_tex_pal:
+    addrs: [0x80FA0060, 0x80FA0080]
+    type: pal16
+  field/bg/rom_shop4_1_us_sign01_tex_pal:
+    addrs: [0x80FA0080, 0x80FA00A0]
+    type: pal16
+  field/bg/rom_shop4_1_us_sign02_tex_pal:
+    addrs: [0x80FA00A0, 0x80FA00C0]
+    type: pal16
+  field/bg/rom_shop4_1_us_sign03_tex_pal:
+    addrs: [0x80FA00C0, 0x80FA00E0]
+    type: pal16
+  field/bg/rom_shop4_1_sign03_tex_pal:
+    addrs: [0x80FA00E0, 0x80FA0100]
+    type: pal16
+  field/bg/rom_shop4_1_reji_tex_pal:
+    addrs: [0x80FA0100, 0x80FA0120]
+    type: pal16
+  field/bg/rom_shop4_1_floor01_tex:
+    addrs: [0x80FA0120, 0x80FA0920]
+  field/bg/rom_shop4_1_lamp_tex:
+    addrs: [0x80FA0920, 0x80FA09A0]
+  field/bg/rom_shop4_1_base_tex:
+    addrs: [0x80FA09A0, 0x80FA0BA0]
+  field/bg/rom_shop4_1_stair01_tex:
+    addrs: [0x80FA0BA0, 0x80FA0CA0]
+  field/bg/rom_shop4_1_table01_tex:
+    addrs: [0x80FA0CA0, 0x80FA0DA0]
+  field/bg/rom_shop4_1_table02_tex:
+    addrs: [0x80FA0DA0, 0x80FA0EA0]
+  field/bg/rom_shop4_1_wall01_tex:
+    addrs: [0x80FA0EA0, 0x80FA16A0]
+  field/bg/rom_shop4_1_wall02_tex:
+    addrs: [0x80FA16A0, 0x80FA18A0]
+  field/bg/rom_shop4_1_sign05_tex:
+    addrs: [0x80FA18A0, 0x80FA1920]
+  field/bg/rom_shop4_1_kaunta01_tex:
+    addrs: [0x80FA1920, 0x80FA1B20]
+  field/bg/rom_shop4_1_kaunta02_tex:
+    addrs: [0x80FA1B20, 0x80FA1BA0]
+  field/bg/rom_shop4_1_us_sign01_tex:
+    addrs: [0x80FA1BA0, 0x80FA1FA0]
+  field/bg/rom_shop4_1_us_sign02_tex:
+    addrs: [0x80FA1FA0, 0x80FA20A0]
+  field/bg/rom_shop4_1_us_sign03_tex:
+    addrs: [0x80FA20A0, 0x80FA26A0]
+  field/bg/rom_shop4_1_sign04_tex:
+    addrs: [0x80FA26A0, 0x80FA27A0]
+  field/bg/rom_shop4_1_reji01_tex:
+    addrs: [0x80FA27A0, 0x80FA2AA0]
+  field/bg/rom_shop4_1_reji02_tex:
+    addrs: [0x80FA2AA0, 0x80FA2BA0]
+  field/bg/rom_shop4_1_reji03_tex:
+    addrs: [0x80FA2BA0, 0x80FA2CA0]
+  field/bg/rom_shop4_1_floor02_tex:
+    addrs: [0x80FA2CA0, 0x80FA34A0]
+  field/bg/rom_shop4_1_floor03_tex:
+    addrs: [0x80FA34A0, 0x80FA3CA0]
+  field/bg/rom_shop4_1_floor04_tex:
+    addrs: [0x80FA3CA0, 0x80FA44A0]
+  field/bg/rom_shop4_1_shadow01_tex:
+    addrs: [0x80FA44A0, 0x80FA45A0]
+  field/bg/rom_shop4_1_shadow02_tex:
+    addrs: [0x80FA45A0, 0x80FA46A0]
+  field/bg/rom_shop4_1_lamp02_tex:
+    addrs: [0x80FA46A0, 0x80FA4720]
+  field/bg/rom_shop4_1_shadow03_tex:
+    addrs: [0x80FA4720, 0x80FA4820]
+  field/bg/rom_shop4_1_v:
+    addrs: [0x80FA4820, 0x80FA5E40]
+    type: vtx
+  # rom_shop4_fuku.c
+  field/bg/rom_shop4_1_floor_tex_pal2:
+    addrs: [0x80FA6400, 0x80FA6420]
+    type: pal16
+  field/bg/rom_shop4_1_base_tex_pal2:
+    addrs: [0x80FA6420, 0x80FA6440]
+    type: pal16
+  field/bg/rom_shop4_1_stair_tex_pal2:
+    addrs: [0x80FA6440, 0x80FA6460]
+    type: pal16
+  field/bg/rom_shop4_1_table_tex_pal2:
+    addrs: [0x80FA6460, 0x80FA6480]
+    type: pal16
+  field/bg/rom_shop4_1_wall_tex_pal2:
+    addrs: [0x80FA6480, 0x80FA64A0]
+    type: pal16
+  field/bg/rom_shop4_1_sign01_tex_pal2:
+    addrs: [0x80FA64A0, 0x80FA64C0]
+    type: pal16
+  field/bg/rom_shop4_1_kaunta_tex_pal2:
+    addrs: [0x80FA64C0, 0x80FA64E0]
+    type: pal16
+  field/bg/rom_shop4_2_sign01_us_tex_pal:
+    addrs: [0x80FA64E0, 0x80FA6500]
+    type: pal16
+  field/bg/rom_shop4_1_us_sign02_tex_pal2:
+    addrs: [0x80FA6500, 0x80FA6520]
+    type: pal16
+  field/bg/rom_shop4_1_us_sign0_tex_pal:
+    addrs: [0x80FA6520, 0x80FA6540]
+    type: pal16
+  field/bg/rom_shop4_1_sign03_tex_pal2:
+    addrs: [0x80FA6540, 0x80FA6560]
+    type: pal16
+  field/bg/rom_shop4_1_reji_tex_pal2:
+    addrs: [0x80FA6560, 0x80FA6580]
+    type: pal16
+  field/bg/rom_shop_kouhaku_pal2:
+    addrs: [0x80FA6580, 0x80FA65A0]
+    type: pal16
+  field/bg/rom_shop4_1_floor01_tex2:
+    addrs: [0x80FA65A0, 0x80FA6DA0]
+  field/bg/rom_shop4_1_base_tex2:
+    addrs: [0x80FA6DA0, 0x80FA6FA0]
+  field/bg/rom_shop4_1_stair01_tex2:
+    addrs: [0x80FA6FA0, 0x80FA70A0]
+  field/bg/rom_shop4_1_table01_tex2:
+    addrs: [0x80FA70A0, 0x80FA71A0]
+  field/bg/rom_shop4_1_table02_tex2:
+    addrs: [0x80FA71A0, 0x80FA72A0]
+  field/bg/rom_shop4_1_wall01_tex2:
+    addrs: [0x80FA72A0, 0x80FA7AA0]
+  field/bg/rom_shop4_1_wall02_tex2:
+    addrs: [0x80FA7AA0, 0x80FA7CA0]
+  field/bg/rom_shop4_1_sign05_tex2:
+    addrs: [0x80FA7CA0, 0x80FA7D20]
+  field/bg/rom_shop4_1_kaunta01_tex2:
+    addrs: [0x80FA7D20, 0x80FA7F20]
+  field/bg/rom_shop4_1_kaunta02_tex2:
+    addrs: [0x80FA7F20, 0x80FA7FA0]
+  field/bg/rom_shop4_2_us_sign01_tex:
+    addrs: [0x80FA7FA0, 0x80FA83A0]
+  field/bg/rom_shop4_1_us_sign02_tex2:
+    addrs: [0x80FA83A0, 0x80FA84A0]
+  field/bg/rom_shop4_1_us_sign0_tex:
+    addrs: [0x80FA84A0, 0x80FA8AA0]
+  field/bg/rom_shop4_1_sign04_tex2:
+    addrs: [0x80FA8AA0, 0x80FA8BA0]
+  field/bg/rom_shop4_1_reji01_tex2:
+    addrs: [0x80FA8BA0, 0x80FA8EA0]
+  field/bg/rom_shop4_1_reji02_tex2:
+    addrs: [0x80FA8EA0, 0x80FA8FA0]
+  field/bg/rom_shop4_1_reji03_tex2:
+    addrs: [0x80FA8FA0, 0x80FA90A0]
+  field/bg/rom_shop4_1_floor02_tex2:
+    addrs: [0x80FA90A0, 0x80FA98A0]
+  field/bg/rom_shop4_1_floor03_tex2:
+    addrs: [0x80FA98A0, 0x80FAA0A0]
+  field/bg/rom_shop4_1_floor04_tex2:
+    addrs: [0x80FAA0A0, 0x80FAA8A0]
+  field/bg/rom_shop4_1_shadow02_tex2:
+    addrs: [0x80FAA8A0, 0x80FAA9A0]
+  field/bg/rom_shop_kouhaku_tex2:
+    addrs: [0x80FAA9A0, 0x80FAB1A0]
+  field/bg/rom_shop4_fuku_v:
+    addrs: [0x80FAB1A0, 0x80FAC8C0]
+    type: vtx
+  # rom_tent.c
+  field/bg/rom_tent_box_pal:
+    addrs: [0x811007A0, 0x811007C0]
+    type: pal16
+  field/bg/rom_tent_can_pal:
+    addrs: [0x811007C0, 0x811007E0]
+    type: pal16
+  field/bg/rom_tent_mono1_pal:
+    addrs: [0x811007E0, 0x81100800]
+    type: pal16
+  field/bg/rom_tent_gas_pal:
+    addrs: [0x81100800, 0x81100820]
+    type: pal16
+  field/bg/rom_tent_enter:
+    addrs: [0x81100820, 0x81100C20]
+  field/bg/rom_tent_floor:
+    addrs: [0x81100C20, 0x81101420]
+  field/bg/rom_tent_wall1:
+    addrs: [0x81101420, 0x81101C20]
+  field/bg/rom_tent_wall2:
+    addrs: [0x81101C20, 0x81102420]
+  field/bg/rom_tent_bou:
+    addrs: [0x81102420, 0x81102440]
+  field/bg/rom_tent_mono1:
+    addrs: [0x81102440, 0x81102C40]
+  field/bg/rom_tent_can:
+    addrs: [0x81102C40, 0x81102D40]
+  field/bg/rom_tent_conpas:
+    addrs: [0x81102D40, 0x81102DC0]
+  field/bg/rom_tent_box:
+    addrs: [0x81102DC0, 0x811031C0]
+  field/bg/rom_tent_kage_m:
+    addrs: [0x811031C0, 0x81103240]
+  field/bg/rom_tent_gas:
+    addrs: [0x81103240, 0x81103440]
+  field/bg/rom_tent_kage_s:
+    addrs: [0x81103440, 0x811034C0]
+  field/bg/rom_tent_kage_b:
+    addrs: [0x811034C0, 0x811035C0]
+  field/bg/rom_tent_v:
+    addrs: [0x811035C0, 0x81104B90]
+    type: vtx
+  # room01.c
+  field/bg/room:
+    addrs: [0x81104FE0, 0x81105000]
+    type: pal16
+  field/bg/room_floor:
+    addrs: [0x81105000, 0x81105400]
+  field/bg/room_wall:
+    addrs: [0x81105400, 0x81105C00]
+  field/bg/room_window:
+    addrs: [0x81105C00, 0x81106400]
+  field/bg/room01_v:
+    addrs: [0x81106400, 0x81106980]
+    type: vtx
+  # rom_train_in.c
+  field/bg/rom_train_1_pal:
+    addrs: [0x81106D40, 0x81106D60]
+    type: pal16
+  field/bg/rom_train_2_pal:
+    addrs: [0x81106D60, 0x81106D80]
+    type: pal16
+  field/bg/rom_train_seat1_tex:
+    addrs: [0x81106DA0, 0x811075A0]
+  field/bg/rom_train_seat2_tex:
+    addrs: [0x811075A0, 0x81107DA0]
+  field/bg/rom_train_floor_tex:
+    addrs: [0x81107DA0, 0x811085A0]
+  field/bg/rom_train_wall1_tex:
+    addrs: [0x811085A0, 0x81108DA0]
+  field/bg/rom_train_roof_tex:
+    addrs: [0x81108DA0, 0x811095A0]
+  field/bg/rom_train_wall2_tex:
+    addrs: [0x811095A0, 0x81109DA0]
+  field/bg/rom_train_net_tex:
+    addrs: [0x81109DA0, 0x8110A5A0]
+  field/bg/rom_train_glass_tex:
+    addrs: [0x8110A5A0, 0x8110A620]
+  field/bg/rom_train_light_tex:
+    addrs: [0x8110A620, 0x8110A820]
+  field/bg/rom_train_in_v:
+    addrs: [0x8110A820, 0x8110C910]
+    type: vtx
+  # rom_uranai.c
+  field/bg/rom_uranai_floor_tex_pal:
+    addrs: [0x8110F620, 0x8110F640]
+    type: pal16
+  field/bg/rom_uranai_wall_tex_pal:
+    addrs: [0x8110F640, 0x8110F660]
+    type: pal16
+  field/bg/rom_uranai_table_tex_pal:
+    addrs: [0x8110F660, 0x8110F680]
+    type: pal16
+  field/bg/rom_uranai_tubo_tex_pal:
+    addrs: [0x8110F680, 0x8110F6A0]
+    type: pal16
+  field/bg/rom_uranai_stand_tex_pal:
+    addrs: [0x8110F6A0, 0x8110F6C0]
+    type: pal16
+  field/bg/rom_uranai_tex_nuno_pal:
+    addrs: [0x8110F6C0, 0x8110F6E0]
+    type: pal16
+  field/bg/rom_uranai_tex_bace_pal:
+    addrs: [0x8110F6E0, 0x8110F700]
+    type: pal16
+  field/bg/rom_uranai_card_tex_pal:
+    addrs: [0x8110F700, 0x8110F720]
+    type: pal16
+  field/bg/rom_uranai_floor_tex:
+    addrs: [0x8110F720, 0x8110FF20]
+  field/bg/rom_uranai_wall01_tex:
+    addrs: [0x8110FF20, 0x81110520]
+  field/bg/rom_uranai_wall02_tex:
+    addrs: [0x81110520, 0x81110920]
+  field/bg/rom_uranai_wall03_tex:
+    addrs: [0x81110920, 0x81110D20]
+  field/bg/rom_uranai_table01_tex:
+    addrs: [0x81110D20, 0x81110DA0]
+  field/bg/rom_uranai_table02_tex:
+    addrs: [0x81110DA0, 0x81110E20]
+  field/bg/rom_uranai_tubo_tex:
+    addrs: [0x81110E20, 0x81111020]
+  field/bg/rom_uranai_shadow01_tex:
+    addrs: [0x81111020, 0x81111120]
+  field/bg/rom_uranai_vell_tex:
+    addrs: [0x81111120, 0x81111520]
+  field/bg/rom_uranai_vell02_tex:
+    addrs: [0x81111520, 0x81111920]
+  field/bg/rom_uranai_stand01_tex:
+    addrs: [0x81111920, 0x81111B20]
+  field/bg/rom_uranai_nuno01_tex:
+    addrs: [0x81111B20, 0x81111BA0]
+  field/bg/rom_uranai_nuno02_tex:
+    addrs: [0x81111BA0, 0x81111C20]
+  field/bg/rom_uranai_bace_tex:
+    addrs: [0x81111C20, 0x81111E20]
+  field/bg/rom_uranai_card01_tex:
+    addrs: [0x81111E20, 0x81112020]
+  field/bg/rom_uranai_shadow02_tex:
+    addrs: [0x81112020, 0x81112120]
+  field/bg/rom_uranai_card02_tex:
+    addrs: [0x81112120, 0x811125A0]
+  field/bg/rom_uranai_cris02_tex:
+    addrs: [0x811125A0, 0x81112DA0]
+  field/bg/rom_uranai_cris01_tex_rgb_ia8:
+    addrs: [0x81112DA0, 0x811131A0]
+  field/bg/rom_uranai_hi02_tex_rgb_i4:
+    addrs: [0x811131A0, 0x811133A0]
+  field/bg/rom_uranai_hi03_tex_rgb_i4:
+    addrs: [0x811133A0, 0x811135A0]
+  field/bg/rom_uranai_v:
+    addrs: [0x811135A0, 0x81114A80]
+    type: vtx

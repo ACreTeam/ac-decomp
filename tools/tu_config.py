@@ -177,6 +177,39 @@ def gather_symbols_for_section(address_offset: int, file_reader:TextIOWrapper, s
         symbol.end_address = next_match_start_address
         section.symbols.append(symbol)
 
+def find_beginning_of_tu(file)->str:
+    # Move the file pointer to the current line's beginning
+    file.seek(0, os.SEEK_CUR)
+    
+    position = file.tell()
+    line = ''
+    
+    while position >= 0:
+        file.seek(position)
+        char = file.read(1)
+        
+        if char == '\n':
+            # When a line break is found, check if the current line matches the pattern
+            line = line[::-1] # reverse the line since it's backwards
+            match = general_symbol_pattern.match(line)
+            if match != None and match.group(5) in prioritized_addresses:
+                return line.strip()
+            line = ''
+        else:
+            line += char
+        
+        position -= 1
+
+    # Check the first line in case the loop ends without a newline at the start
+    line = line[::-1] # reverse the line since it's backwards
+    match = general_symbol_pattern.match(line)
+    if match != None and match.group(5) in prioritized_addresses:
+        return line.strip()
+    
+    # If no matching line is found, return None
+    print('None')
+    return None
+
 def gather_tu_symbols(tu_name: str, map_path: str)->typing.Dict[str, SliceInfo]:
     gathered_symbols: typing.Dict[str, SliceInfo] = {}
     tu_regex = re.compile(specific_tu_pattern_format.format(tu_name = tu_name))
@@ -203,6 +236,92 @@ def gather_tu_symbols(tu_name: str, map_path: str)->typing.Dict[str, SliceInfo]:
             gathered_symbols[slice_name] = slice_info
 
             gather_symbols_for_section(offset, file_reader, slice_info, match)
+
+    return gathered_symbols
+
+def gather_symbols_for_section_from_member(address_offset: int, file_reader:TextIOWrapper, slice_info: SliceInfo, starting_match: Match):
+    section_tu_name = starting_match.group(6)
+    section_symbol = get_symbol_from_map_match(starting_match, address_offset)
+    section = SliceSection(section_symbol)
+    slice_info.sections.append(section)
+
+    # Keep reading until the end of the section has been reached
+    line: str = None
+    while True:
+        line = file_reader.readline()
+        if not line:
+            return
+        if "entry of .data" in line:
+            continue
+        break
+    
+    next_match: Match = general_symbol_pattern.match(line)
+    while True:
+        # Check if the next match belongs to this group or not
+        curr_match = next_match
+        if not curr_match:
+            break
+
+        curr_match_tu_name = curr_match.group(6)
+        if curr_match_tu_name != section_tu_name:
+            break
+
+        curr_match_symbol_name = curr_match.group(5)
+        if curr_match_symbol_name in address_offset_map:
+            break # break here, we've hit another TU
+
+        # Make symbol for current match
+        symbol = get_symbol_from_map_match(curr_match, address_offset)
+
+        # Check the next match to get a more accurate ending address
+        next_line = file_reader.readline()
+        if not next_line:
+            # Eof reached. Just add as is
+            section.symbols.append(symbol)
+        
+        # Match against the next line
+        next_match = general_symbol_pattern.match(next_line)
+        if not next_match:
+            # Non matching line
+            section.symbols.append(symbol)
+        
+        # Use start address as the end boundary for the slice
+        next_match_start_address = int(next_match.group(1), 16) + address_offset
+        symbol.end_address = next_match_start_address
+        section.symbols.append(symbol)
+
+def gather_tu_symbols_from_member(member_name: str, map_path: str)->typing.Dict[str, SliceInfo]:
+    gathered_symbols: typing.Dict[str, SliceInfo] = {}
+
+    with open(map_path, "r", encoding="utf-8", newline="\n") as file_reader:
+        while True:
+            line = file_reader.readline()
+            if not line:
+                break
+
+            # Check if the line matches the TU name
+            match = general_symbol_pattern.match(line)
+            if not match or match.group(5) != member_name:
+                continue
+
+            print('matched! ' + line)
+            line = find_beginning_of_tu(file_reader)
+            print(line)
+
+            if not line:
+                continue
+
+            match = general_symbol_pattern.match(line)
+            file_reader.readline()
+            # It is a match
+            slice_name = match.group(5)
+
+            # Add to dictionary
+            offset = address_offset_map[slice_name]
+            slice_info = SliceInfo()
+            gathered_symbols[slice_name] = slice_info
+
+            gather_symbols_for_section_from_member(offset, file_reader, slice_info, match)
 
     return gathered_symbols
 #endregion
@@ -352,13 +471,11 @@ def main():
     parser.add_argument("-map", "--symbol-map", dest="symbol_map", help="Path to the symbol map file used for reference", action="store")
     parser.add_argument("-binary", "--binary-slices-file", dest="binary_slices_file", help="Path to the binary slices file to write to", action="store")
     parser.add_argument("-asset", "--asset-slices-file", dest="asset_slices_file", help="Path to the asset slices file to write to", action="store")
+    parser.add_argument("-member", "--from-member", dest="from_member", help="When set, search for TU entries via a member's name", action="store_true")
     args = parser.parse_args()
-
-    # Make sure the translation unit name ends with .o
-    tu_name = args.tu_name
-    if tu_name[-2:] != ".o":
-        tu_name = tu_name + ".o"
     
+    tu_name = args.tu_name
+
     symbol_map_path = args.symbol_map
     if not symbol_map_path:
         symbol_map_path = default_map_path
@@ -371,12 +488,20 @@ def main():
     if not asset_slices_file:
         asset_slices_file = default_asset_slice_file_path
 
-    # Get the symbols for the TU
-    symbols_for_tu = gather_tu_symbols(tu_name, symbol_map_path)
+    if not args.from_member:
+        # Make sure the translation unit name ends with .o
+        if tu_name[-2:] != ".o":
+            tu_name = tu_name + ".o"
 
-    # Make a call to update the binary file
-    update_binary_slice_config(tu_name, binary_slices_file, symbols_for_tu)
-    update_asset_slice_config(tu_name, binary_slices_file, asset_slices_file, symbols_for_tu)
+        # Get the symbols for the TU
+        symbols_for_tu = gather_tu_symbols(tu_name, symbol_map_path)
+
+        # Make a call to update the binary file
+        update_binary_slice_config(tu_name, binary_slices_file, symbols_for_tu)
+        update_asset_slice_config(tu_name, binary_slices_file, asset_slices_file, symbols_for_tu)
+    else:
+        symbols_for_tu = gather_tu_symbols_from_member(tu_name, symbol_map_path)
+        update_binary_slice_config(tu_name, binary_slices_file, symbols_for_tu)
 
 if __name__ == "__main__":
     main()
