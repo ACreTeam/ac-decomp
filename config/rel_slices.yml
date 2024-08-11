@@ -1959,21 +1959,560 @@ data/npc/model/tex/wol_5.c:
     .data: [0x80C546E0, 0x80C55300]
 data/npc/model/tex/wol_6.c:
     .data: [0x80C55300, 0x80C55F20]
-# map submenu
-data/submenu/map/kan_tizu.c:
-    .data: [0x80F0B020, 0x80F11C20]
-data/submenu/map/kan_tizu2.c:
-    .data: [0x80F11C20, 0x80F13A20]
 data/field/bg/beach_pal.c:
     .data: [0x80C59CA8, 0x80C59E28]
+data/field/bg/acre/grd_yamishop/grd_yamishop.c:
+    .data: [0x80C5A240, 0x80C5DBA0]
+data/field/bg/acre/grd_post_office/grd_post_office.c:
+    .data: [0x80C5DBA0, 0x80C63408]
+data/field/bg/acre/tmp4/tmp4.c:
+    .data: [0x80C63408, 0x80C64698]
+data/field/bg/acre/tmpr4/tmpr4.c:
+    .data: [0x80C646D8, 0x80C66278]
+data/field/bg/acre/tmp3/tmp3.c:
+    .data: [0x80C66278, 0x80C677F8]
+data/field/bg/acre/tmpr3/tmpr3.c:
+    .data: [0x80C67838, 0x80C69338]
+data/field/bg/acre/tmp/tmp.c:
+    .data: [0x80C69338, 0x80C695E0]
+data/field/bg/acre/tmpr/tmpr.c:
+    .data: [0x80C695F0, 0x80C6A8C8]
+data/field/bg/acre/tmp2/tmp2.c:
+    .data: [0x80C6A8C8, 0x80C6CE68]
+data/field/bg/acre/tmpr2/tmpr2.c:
+    .data: [0x80C6CE78, 0x80C6DCC0]
 data/field/bg/bush_pal.c:
     .data: [0x80C78680, 0x80C78800]
 data/field/bg/cliff_pal.c:
     .data: [0x80C78988, 0x80C78B20]
 data/field/bg/earth_pal.c:
     .data: [0x80C90100, 0x80C90280]
+data/field/bg/acre/grd_s_c1_1/grd_s_c1_1.c:
+    .data: [0x80CE7320, 0x80CE83C0]
+data/field/bg/acre/grd_s_c1_2/grd_s_c1_2.c:
+    .data: [0x80CE83C0, 0x80CE9510]
+data/field/bg/acre/grd_s_c1_3/grd_s_c1_3.c:
+    .data: [0x80CE9510, 0x80CEA598]
+data/field/bg/acre/grd_s_c1_4/grd_s_c1_4.c:
+    .data: [0x80CEA598, 0x80CEB868]
+data/field/bg/acre/grd_s_c1_5/grd_s_c1_5.c:
+    .data: [0x80CEB868, 0x80CEC738]
+data/field/bg/acre/grd_s_c1_r1_1/grd_s_c1_r1_1.c:
+    .data: [0x80CEC748, 0x80CEDCF0]
+data/field/bg/acre/grd_s_c1_r1_2/grd_s_c1_r1_2.c:
+    .data: [0x80CEDD00, 0x80CEF128]
+data/field/bg/acre/grd_s_c1_r1_3/grd_s_c1_r1_3.c:
+    .data: [0x80CEF138, 0x80CF0538]
+data/field/bg/acre/grd_s_c1_r2_1/grd_s_c1_r2_1.c:
+    .data: [0x80CF0548, 0x80CF1960]
+data/field/bg/acre/grd_s_c1_r2_2/grd_s_c1_r2_2.c:
+    .data: [0x80CF1970, 0x80CF2DC8]
+data/field/bg/acre/grd_s_c1_r2_3/grd_s_c1_r2_3.c:
+    .data: [0x80CF2DD8, 0x80CF4440]
+data/field/bg/acre/grd_s_c1_r3_1/grd_s_c1_r3_1.c:
+    .data: [0x80CF4450, 0x80CF5508]
+data/field/bg/acre/grd_s_c1_r3_2/grd_s_c1_r3_2.c:
+    .data: [0x80CF5518, 0x80CF6810]
+data/field/bg/acre/grd_s_c1_r3_3/grd_s_c1_r3_3.c:
+    .data: [0x80CF6820, 0x80CF7C58]
+data/field/bg/acre/grd_s_c1_s_1/grd_s_c1_s_1.c:
+    .data: [0x80CF7C58, 0x80CF8B38]
+data/field/bg/acre/grd_s_c1_s_2/grd_s_c1_s_2.c:
+    .data: [0x80CF8B38, 0x80CF9C60]
+data/field/bg/acre/grd_s_c1_s_3/grd_s_c1_s_3.c:
+    .data: [0x80CF9C60, 0x80CFAEA0]
+data/field/bg/acre/grd_s_c1_s_4/grd_s_c1_s_4.c:
+    .data: [0x80CFAEA0, 0x80CFC1B0]
+data/field/bg/acre/grd_s_c2_1/grd_s_c2_1.c:
+    .data: [0x80CFC1B0, 0x80CFD1D0]
+data/field/bg/acre/grd_s_c2_2/grd_s_c2_2.c:
+    .data: [0x80CFD1D0, 0x80CFE220]
+data/field/bg/acre/grd_s_c2_3/grd_s_c2_3.c:
+    .data: [0x80CFE230, 0x80CFF5A8]
+data/field/bg/acre/grd_s_c2_r1_1/grd_s_c2_r1_1.c:
+    .data: [0x80CFF5B8, 0x80D009A0]
+data/field/bg/acre/grd_s_c2_r1_2/grd_s_c2_r1_2.c:
+    .data: [0x80D009B0, 0x80D01E70]
+data/field/bg/acre/grd_s_c2_r2_1/grd_s_c2_r2_1.c:
+    .data: [0x80D01E80, 0x80D03140]
+data/field/bg/acre/grd_s_c2_r2_2/grd_s_c2_r2_2.c:
+    .data: [0x80D03150, 0x80D04680]
+data/field/bg/acre/grd_s_c2_s_1/grd_s_c2_s_1.c:
+    .data: [0x80D04680, 0x80D05A20]
+data/field/bg/acre/grd_s_c2_s_2/grd_s_c2_s_2.c:
+    .data: [0x80D05A20, 0x80D06AF0]
+data/field/bg/acre/grd_s_c2_s_3/grd_s_c2_s_3.c:
+    .data: [0x80D06AF0, 0x80D07AF0]
+data/field/bg/acre/grd_s_c3_1/grd_s_c3_1.c:
+    .data: [0x80D07AF0, 0x80D08C80]
+data/field/bg/acre/grd_s_c3_2/grd_s_c3_2.c:
+    .data: [0x80D08C90, 0x80D09D80]
+data/field/bg/acre/grd_s_c3_3/grd_s_c3_3.c:
+    .data: [0x80D09D80, 0x80D0ACF0]
+data/field/bg/acre/grd_s_c3_r1_1/grd_s_c3_r1_1.c:
+    .data: [0x80D0AD00, 0x80D0BE48]
+data/field/bg/acre/grd_s_c3_r1_2/grd_s_c3_r1_2.c:
+    .data: [0x80D0BE58, 0x80D0D148]
+data/field/bg/acre/grd_s_c3_r2_1/grd_s_c3_r2_1.c:
+    .data: [0x80D0D158, 0x80D0E7C8]
+data/field/bg/acre/grd_s_c3_r2_2/grd_s_c3_r2_2.c:
+    .data: [0x80D0E7D8, 0x80D0FE50]
+data/field/bg/acre/grd_s_c3_s_1/grd_s_c3_s_1.c:
+    .data: [0x80D0FE60, 0x80D11628]
+data/field/bg/acre/grd_s_c4_1/grd_s_c4_1.c:
+    .data: [0x80D11628, 0x80D12430]
+data/field/bg/acre/grd_s_c4_2/grd_s_c4_2.c:
+    .data: [0x80D12430, 0x80D135B0]
+data/field/bg/acre/grd_s_c4_3/grd_s_c4_3.c:
+    .data: [0x80D135B0, 0x80D14598]
+data/field/bg/acre/grd_s_c4_r1_1/grd_s_c4_r1_1.c:
+    .data: [0x80D145A8, 0x80D158B0]
+data/field/bg/acre/grd_s_c4_r1_2/grd_s_c4_r1_2.c:
+    .data: [0x80D158C0, 0x80D16B80]
+data/field/bg/acre/grd_s_c4_r2_1/grd_s_c4_r2_1.c:
+    .data: [0x80D16B90, 0x80D17EF8]
+data/field/bg/acre/grd_s_c4_r2_2/grd_s_c4_r2_2.c:
+    .data: [0x80D17F08, 0x80D18FB0]
+data/field/bg/acre/grd_s_c4_r3_1/grd_s_c4_r3_1.c:
+    .data: [0x80D18FC0, 0x80D1A0C8]
+data/field/bg/acre/grd_s_c4_r3_2/grd_s_c4_r3_2.c:
+    .data: [0x80D1A0D8, 0x80D1B088]
+data/field/bg/acre/grd_s_c4_s_1/grd_s_c4_s_1.c:
+    .data: [0x80D1B088, 0x80D1C030]
+data/field/bg/acre/grd_s_c4_s_2/grd_s_c4_s_2.c:
+    .data: [0x80D1C030, 0x80D1D2A8]
+data/field/bg/acre/grd_s_c5_1/grd_s_c5_1.c:
+    .data: [0x80D1D2A8, 0x80D1DFA8]
+data/field/bg/acre/grd_s_c5_2/grd_s_c5_2.c:
+    .data: [0x80D1DFA8, 0x80D1F1B8]
+data/field/bg/acre/grd_s_c5_3/grd_s_c5_3.c:
+    .data: [0x80D1F1B8, 0x80D1FF20]
+data/field/bg/acre/grd_s_c5_r1_1/grd_s_c5_r1_1.c:
+    .data: [0x80D1FF30, 0x80D21510]
+data/field/bg/acre/grd_s_c5_r1_2/grd_s_c5_r1_2.c:
+    .data: [0x80D21520, 0x80D22AB0]
+data/field/bg/acre/grd_s_c5_r2_1/grd_s_c5_r2_1.c:
+    .data: [0x80D22AC0, 0x80D241C0]
+data/field/bg/acre/grd_s_c5_r2_2/grd_s_c5_r2_2.c:
+    .data: [0x80D241D0, 0x80D25638]
+data/field/bg/acre/grd_s_c5_r3_1/grd_s_c5_r3_1.c:
+    .data: [0x80D25648, 0x80D26978]
+data/field/bg/acre/grd_s_c5_r3_2/grd_s_c5_r3_2.c:
+    .data: [0x80D26988, 0x80D27B78]
+data/field/bg/acre/grd_s_c5_s_1/grd_s_c5_s_1.c:
+    .data: [0x80D27B78, 0x80D28B20]
+data/field/bg/acre/grd_s_c5_s_2/grd_s_c5_s_2.c:
+    .data: [0x80D28B20, 0x80D29AC8]
+data/field/bg/acre/grd_s_c6_1/grd_s_c6_1.c:
+    .data: [0x80D29AC8, 0x80D2AC00]
+data/field/bg/acre/grd_s_c6_2/grd_s_c6_2.c:
+    .data: [0x80D2AC00, 0x80D2BE00]
+data/field/bg/acre/grd_s_c6_3/grd_s_c6_3.c:
+    .data: [0x80D2BE00, 0x80D2CDA0]
+data/field/bg/acre/grd_s_c6_r1_1/grd_s_c6_r1_1.c:
+    .data: [0x80D2CDB0, 0x80D2E088]
+data/field/bg/acre/grd_s_c6_r1_2/grd_s_c6_r1_2.c:
+    .data: [0x80D2E098, 0x80D2F3E8]
+data/field/bg/acre/grd_s_c6_r3_1/grd_s_c6_r3_1.c:
+    .data: [0x80D2F3F8, 0x80D30BB0]
+data/field/bg/acre/grd_s_c6_s_1/grd_s_c6_s_1.c:
+    .data: [0x80D30BB0, 0x80D31C90]
+data/field/bg/acre/grd_s_c7_1/grd_s_c7_1.c:
+    .data: [0x80D31C90, 0x80D32CC8]
+data/field/bg/acre/grd_s_c7_2/grd_s_c7_2.c:
+    .data: [0x80D32CC8, 0x80D34080]
+data/field/bg/acre/grd_s_c7_3/grd_s_c7_3.c:
+    .data: [0x80D34090, 0x80D35450]
+data/field/bg/acre/grd_s_c7_r1_1/grd_s_c7_r1_1.c:
+    .data: [0x80D35460, 0x80D365A0]
+data/field/bg/acre/grd_s_c7_r1_2/grd_s_c7_r1_2.c:
+    .data: [0x80D365B0, 0x80D376F8]
+data/field/bg/acre/grd_s_c7_r3_1/grd_s_c7_r3_1.c:
+    .data: [0x80D37708, 0x80D38C48]
+data/field/bg/acre/grd_s_c7_r3_2/grd_s_c7_r3_2.c:
+    .data: [0x80D38C58, 0x80D3A318]
+data/field/bg/acre/grd_s_c7_s_1/grd_s_c7_s_1.c:
+    .data: [0x80D3A318, 0x80D3B938]
+data/field/bg/acre/grd_s_c7_s_2/grd_s_c7_s_2.c:
+    .data: [0x80D3B938, 0x80D3C800]
+data/field/bg/acre/grd_s_c7_s_3/grd_s_c7_s_3.c:
+    .data: [0x80D3C800, 0x80D3D930]
+data/field/bg/acre/grd_s_e1_1/grd_s_e1_1.c:
+    .data: [0x80D3D930, 0x80D3DFE0]
+data/field/bg/acre/grd_s_e1_r1_1/grd_s_e1_r1_1.c:
+    .data: [0x80D3DFF0, 0x80D3F770]
+data/field/bg/acre/grd_s_e2_1/grd_s_e2_1.c:
+    .data: [0x80D3F770, 0x80D3FF08]
+data/field/bg/acre/grd_s_e2_c1_1/grd_s_e2_c1_1.c:
+    .data: [0x80D3FF08, 0x80D406C8]
+data/field/bg/acre/grd_s_e2_m_1/grd_s_e2_m_1.c:
+    .data: [0x80D406C8, 0x80D40FA0]
+data/field/bg/acre/grd_s_e2_o_1/grd_s_e2_o_1.c:
+    .data: [0x80D40FA0, 0x80D41280]
+data/field/bg/acre/grd_s_e2_t_1/grd_s_e2_t_1.c:
+    .data: [0x80D41280, 0x80D41DF0]
+data/field/bg/acre/grd_s_e3_1/grd_s_e3_1.c:
+    .data: [0x80D41DF0, 0x80D425D8]
+data/field/bg/acre/grd_s_e3_c1_1/grd_s_e3_c1_1.c:
+    .data: [0x80D425D8, 0x80D42DB0]
+data/field/bg/acre/grd_s_e3_m_1/grd_s_e3_m_1.c:
+    .data: [0x80D42DB0, 0x80D436F8]
+data/field/bg/acre/grd_s_e3_o_1/grd_s_e3_o_1.c:
+    .data: [0x80D436F8, 0x80D439D8]
+data/field/bg/acre/grd_s_e3_t_1/grd_s_e3_t_1.c:
+    .data: [0x80D439D8, 0x80D44468]
+data/field/bg/acre/grd_s_e4_1/grd_s_e4_1.c:
+    .data: [0x80D44468, 0x80D44670]
+data/field/bg/acre/grd_s_e5_1/grd_s_e5_1.c:
+    .data: [0x80D44670, 0x80D448A0]
+data/field/bg/acre/grd_s_f_1/grd_s_f_1.c:
+    .data: [0x80D448A0, 0x80D455F0]
+data/field/bg/acre/grd_s_f_10/grd_s_f_10.c:
+    .data: [0x80D455F0, 0x80D463D8]
+data/field/bg/acre/grd_s_f_2/grd_s_f_2.c:
+    .data: [0x80D463D8, 0x80D47320]
+data/field/bg/acre/grd_s_f_3/grd_s_f_3.c:
+    .data: [0x80D47320, 0x80D47C78]
+data/field/bg/acre/grd_s_f_4/grd_s_f_4.c:
+    .data: [0x80D47C88, 0x80D48A60]
+data/field/bg/acre/grd_s_f_5/grd_s_f_5.c:
+    .data: [0x80D48A70, 0x80D49C50]
+data/field/bg/acre/grd_s_f_6/grd_s_f_6.c:
+    .data: [0x80D49C60, 0x80D4AE88]
+data/field/bg/acre/grd_s_f_7/grd_s_f_7.c:
+    .data: [0x80D4AE88, 0x80D4C640]
+data/field/bg/acre/grd_s_f_8/grd_s_f_8.c:
+    .data: [0x80D4C640, 0x80D4D568]
+data/field/bg/acre/grd_s_f_9/grd_s_f_9.c:
+    .data: [0x80D4D568, 0x80D4E708]
+data/field/bg/acre/grd_s_f_ko_1/grd_s_f_ko_1.c:
+    .data: [0x80D4E708, 0x80D4F808]
+data/field/bg/acre/grd_s_f_ko_2/grd_s_f_ko_2.c:
+    .data: [0x80D4F808, 0x80D50490]
+data/field/bg/acre/grd_s_f_ko_3/grd_s_f_ko_3.c:
+    .data: [0x80D504A0, 0x80D51708]
+data/field/bg/acre/grd_s_f_mh_1/grd_s_f_mh_1.c:
+    .data: [0x80D51708, 0x80D52588]
+data/field/bg/acre/grd_s_f_mh_2/grd_s_f_mh_2.c:
+    .data: [0x80D52588, 0x80D534F0]
+data/field/bg/acre/grd_s_f_mh_3/grd_s_f_mh_3.c:
+    .data: [0x80D534F0, 0x80D54190]
+data/field/bg/acre/grd_s_f_mu_1/grd_s_f_mu_1.c:
+    .data: [0x80D54190, 0x80D54D60]
+data/field/bg/acre/grd_s_f_mu_2/grd_s_f_mu_2.c:
+    .data: [0x80D54D60, 0x80D55920]
+data/field/bg/acre/grd_s_f_mu_3/grd_s_f_mu_3.c:
+    .data: [0x80D55930, 0x80D564B8]
+data/field/bg/acre/grd_s_f_pk_1/grd_s_f_pk_1.c:
+    .data: [0x80D564B8, 0x80D575B8]
+data/field/bg/acre/grd_s_f_pk_2/grd_s_f_pk_2.c:
+    .data: [0x80D575B8, 0x80D58580]
+data/field/bg/acre/grd_s_f_pk_3/grd_s_f_pk_3.c:
+    .data: [0x80D58580, 0x80D59810]
+data/field/bg/acre/grd_s_hole_test/grd_s_hole_test.c:
+    .data: [0x80D59810, 0x80D5A9A8]
+data/field/bg/acre/grd_s_il_1/grd_s_il_1.c:
+    .data: [0x80D5A9A8, 0x80D5BA18]
+data/field/bg/acre/grd_s_il_2/grd_s_il_2.c:
+    .data: [0x80D5BA18, 0x80D5D358]
+data/field/bg/acre/grd_s_il_3/grd_s_il_3.c:
+    .data: [0x80D5D358, 0x80D5E4F8]
+data/field/bg/acre/grd_s_il_4/grd_s_il_4.c:
+    .data: [0x80D5E4F8, 0x80D5F5E8]
+data/field/bg/acre/grd_s_ir_1/grd_s_ir_1.c:
+    .data: [0x80D5F5E8, 0x80D60A60]
+data/field/bg/acre/grd_s_ir_2/grd_s_ir_2.c:
+    .data: [0x80D60A60, 0x80D621F8]
+data/field/bg/acre/grd_s_ir_3/grd_s_ir_3.c:
+    .data: [0x80D621F8, 0x80D63BB0]
+data/field/bg/acre/grd_s_ir_4/grd_s_ir_4.c:
+    .data: [0x80D63BB0, 0x80D65158]
+data/field/bg/acre/grd_s_m_1/grd_s_m_1.c:
+    .data: [0x80D65158, 0x80D662B0]
+data/field/bg/acre/grd_s_m_10/grd_s_m_10.c:
+    .data: [0x80D662B0, 0x80D67438]
+data/field/bg/acre/grd_s_m_2/grd_s_m_2.c:
+    .data: [0x80D67438, 0x80D68718]
+data/field/bg/acre/grd_s_m_3/grd_s_m_3.c:
+    .data: [0x80D68718, 0x80D698C8]
+data/field/bg/acre/grd_s_m_4/grd_s_m_4.c:
+    .data: [0x80D698C8, 0x80D6A8A0]
+data/field/bg/acre/grd_s_m_5/grd_s_m_5.c:
+    .data: [0x80D6A8A0, 0x80D6BC70]
+data/field/bg/acre/grd_s_m_6/grd_s_m_6.c:
+    .data: [0x80D6BC70, 0x80D6CF60]
+data/field/bg/acre/grd_s_m_7/grd_s_m_7.c:
+    .data: [0x80D6CF60, 0x80D6DF60]
+data/field/bg/acre/grd_s_m_8/grd_s_m_8.c:
+    .data: [0x80D6DF60, 0x80D6EFE8]
+data/field/bg/acre/grd_s_m_9/grd_s_m_9.c:
+    .data: [0x80D6EFE8, 0x80D6FF58]
+data/field/bg/acre/grd_s_m_r1_1/grd_s_m_r1_1.c:
+    .data: [0x80D6FF78, 0x80D713D8]
+data/field/bg/acre/grd_s_m_r1_2/grd_s_m_r1_2.c:
+    .data: [0x80D713F8, 0x80D727B8]
+data/field/bg/acre/grd_s_m_r1_3/grd_s_m_r1_3.c:
+    .data: [0x80D727D8, 0x80D73A30]
+data/field/bg/acre/grd_s_m_r1_4/grd_s_m_r1_4.c:
+    .data: [0x80D73A50, 0x80D74FD8]
+data/field/bg/acre/grd_s_m_r1_5/grd_s_m_r1_5.c:
+    .data: [0x80D74FF8, 0x80D76660]
+data/field/bg/acre/grd_s_m_r1_b_1/grd_s_m_r1_b_1.c:
+    .data: [0x80D76680, 0x80D77908]
+data/field/bg/acre/grd_s_m_r1_b_2/grd_s_m_r1_b_2.c:
+    .data: [0x80D77928, 0x80D78F10]
+data/field/bg/acre/grd_s_m_r1_b_3/grd_s_m_r1_b_3.c:
+    .data: [0x80D78F30, 0x80D7A350]
+data/field/bg/acre/grd_s_m_ta_1/grd_s_m_ta_1.c:
+    .data: [0x80D7A370, 0x80D7B6C8]
+data/field/bg/acre/grd_s_m_ta_2/grd_s_m_ta_2.c:
+    .data: [0x80D7B6E8, 0x80D7C900]
+data/field/bg/acre/grd_s_m_ta_3/grd_s_m_ta_3.c:
+    .data: [0x80D7C920, 0x80D7DC70]
+data/field/bg/acre/grd_s_m_wf_1/grd_s_m_wf_1.c:
+    .data: [0x80D7DCB0, 0x80D7F310]
+data/field/bg/acre/grd_s_m_wf_2/grd_s_m_wf_2.c:
+    .data: [0x80D7F350, 0x80D81008]
+data/field/bg/acre/grd_s_m_wf_3/grd_s_m_wf_3.c:
+    .data: [0x80D81048, 0x80D82780]
+data/field/bg/acre/grd_s_o_1/grd_s_o_1.c:
+    .data: [0x80D827C0, 0x80D82CA0]
+data/field/bg/acre/grd_s_o_10/grd_s_o_10.c:
+    .data: [0x80D82CE0, 0x80D83178]
+data/field/bg/acre/grd_s_o_2/grd_s_o_2.c:
+    .data: [0x80D831B8, 0x80D83658]
+data/field/bg/acre/grd_s_o_3/grd_s_o_3.c:
+    .data: [0x80D83698, 0x80D83B00]
+data/field/bg/acre/grd_s_o_4/grd_s_o_4.c:
+    .data: [0x80D83B40, 0x80D83FD0]
+data/field/bg/acre/grd_s_o_5/grd_s_o_5.c:
+    .data: [0x80D84010, 0x80D84490]
+data/field/bg/acre/grd_s_o_6/grd_s_o_6.c:
+    .data: [0x80D844D0, 0x80D84938]
+data/field/bg/acre/grd_s_o_7/grd_s_o_7.c:
+    .data: [0x80D84978, 0x80D84E08]
+data/field/bg/acre/grd_s_o_8/grd_s_o_8.c:
+    .data: [0x80D84E48, 0x80D85338]
+data/field/bg/acre/grd_s_o_9/grd_s_o_9.c:
+    .data: [0x80D85378, 0x80D85850]
+data/field/bg/acre/grd_s_o_i_1/grd_s_o_i_1.c:
+    .data: [0x80D85850, 0x80D85CB0]
+data/field/bg/acre/grd_s_o_i_2/grd_s_o_i_2.c:
+    .data: [0x80D85CF0, 0x80D85FD0]
+data/field/bg/acre/grd_s_o_r1_1/grd_s_o_r1_1.c:
+    .data: [0x80D86010, 0x80D86520]
+data/field/bg/acre/grd_s_o_r1_2/grd_s_o_r1_2.c:
+    .data: [0x80D86560, 0x80D86A40]
+data/field/bg/acre/grd_s_o_r1_3/grd_s_o_r1_3.c:
+    .data: [0x80D86A80, 0x80D86F78]
+data/field/bg/acre/grd_s_o_r1_4/grd_s_o_r1_4.c:
+    .data: [0x80D86FB8, 0x80D87478]
+data/field/bg/acre/grd_s_o_r1_5/grd_s_o_r1_5.c:
+    .data: [0x80D874B8, 0x80D87890]
+data/field/bg/acre/grd_s_o_r1_b_1/grd_s_o_r1_b_1.c:
+    .data: [0x80D878D0, 0x80D87BB0]
+data/field/bg/acre/grd_s_o_r1_b_2/grd_s_o_r1_b_2.c:
+    .data: [0x80D87BF0, 0x80D87EC8]
+data/field/bg/acre/grd_s_o_r1_b_3/grd_s_o_r1_b_3.c:
+    .data: [0x80D87F08, 0x80D881E0]
+data/field/bg/acre/grd_s_o_ta_1/grd_s_o_ta_1.c:
+    .data: [0x80D88220, 0x80D88728]
+data/field/bg/acre/grd_s_o_ta_2/grd_s_o_ta_2.c:
+    .data: [0x80D88768, 0x80D88B70]
+data/field/bg/acre/grd_s_o_ta_3/grd_s_o_ta_3.c:
+    .data: [0x80D88BB0, 0x80D88FC8]
+data/field/bg/acre/grd_s_o_wf_1/grd_s_o_wf_1.c:
+    .data: [0x80D89008, 0x80D89538]
+data/field/bg/acre/grd_s_o_wf_2/grd_s_o_wf_2.c:
+    .data: [0x80D89578, 0x80D89AD8]
+data/field/bg/acre/grd_s_o_wf_3/grd_s_o_wf_3.c:
+    .data: [0x80D89B18, 0x80D8A030]
+data/field/bg/acre/grd_s_r1_1/grd_s_r1_1.c:
+    .data: [0x80D8A040, 0x80D8AE28]
+data/field/bg/acre/grd_s_r1_2/grd_s_r1_2.c:
+    .data: [0x80D8AE38, 0x80D8BD60]
+data/field/bg/acre/grd_s_r1_3/grd_s_r1_3.c:
+    .data: [0x80D8BD70, 0x80D8CD90]
+data/field/bg/acre/grd_s_r1_4/grd_s_r1_4.c:
+    .data: [0x80D8CDA0, 0x80D8DAA8]
+data/field/bg/acre/grd_s_r1_b_1/grd_s_r1_b_1.c:
+    .data: [0x80D8DAB8, 0x80D8EAE0]
+data/field/bg/acre/grd_s_r1_b_2/grd_s_r1_b_2.c:
+    .data: [0x80D8EAF0, 0x80D8FF20]
+data/field/bg/acre/grd_s_r1_b_3/grd_s_r1_b_3.c:
+    .data: [0x80D8FF30, 0x80D91210]
+data/field/bg/acre/grd_s_r1_p_1/grd_s_r1_p_1.c:
+    .data: [0x80D91220, 0x80D924B0]
+data/field/bg/acre/grd_s_r2_1/grd_s_r2_1.c:
+    .data: [0x80D924C0, 0x80D932D8]
+data/field/bg/acre/grd_s_r2_2/grd_s_r2_2.c:
+    .data: [0x80D932E8, 0x80D94138]
+data/field/bg/acre/grd_s_r2_3/grd_s_r2_3.c:
+    .data: [0x80D94148, 0x80D951A8]
+data/field/bg/acre/grd_s_r2_4/grd_s_r2_4.c:
+    .data: [0x80D951B8, 0x80D961C0]
+data/field/bg/acre/grd_s_r2_b_1/grd_s_r2_b_1.c:
+    .data: [0x80D961D0, 0x80D97800]
+data/field/bg/acre/grd_s_r2_b_2/grd_s_r2_b_2.c:
+    .data: [0x80D97810, 0x80D98B68]
+data/field/bg/acre/grd_s_r2_b_3/grd_s_r2_b_3.c:
+    .data: [0x80D98B78, 0x80D9A060]
+data/field/bg/acre/grd_s_r2_p_1/grd_s_r2_p_1.c:
+    .data: [0x80D9A070, 0x80D9B8D0]
+data/field/bg/acre/grd_s_r3_1/grd_s_r3_1.c:
+    .data: [0x80D9B8E0, 0x80D9C978]
+data/field/bg/acre/grd_s_r3_2/grd_s_r3_2.c:
+    .data: [0x80D9C988, 0x80D9D878]
+data/field/bg/acre/grd_s_r3_3/grd_s_r3_3.c:
+    .data: [0x80D9D888, 0x80D9E7C0]
+data/field/bg/acre/grd_s_r3_4/grd_s_r3_4.c:
+    .data: [0x80D9E7D0, 0x80D9F620]
+data/field/bg/acre/grd_s_r3_b_1/grd_s_r3_b_1.c:
+    .data: [0x80D9F630, 0x80DA0818]
+data/field/bg/acre/grd_s_r3_b_2/grd_s_r3_b_2.c:
+    .data: [0x80DA0828, 0x80DA1D40]
+data/field/bg/acre/grd_s_r3_b_3/grd_s_r3_b_3.c:
+    .data: [0x80DA1D50, 0x80DA3170]
+data/field/bg/acre/grd_s_r3_p_1/grd_s_r3_p_1.c:
+    .data: [0x80DA3180, 0x80DA4820]
+data/field/bg/acre/grd_s_r4_1/grd_s_r4_1.c:
+    .data: [0x80DA4830, 0x80DA5758]
+data/field/bg/acre/grd_s_r4_2/grd_s_r4_2.c:
+    .data: [0x80DA5768, 0x80DA66D0]
+data/field/bg/acre/grd_s_r4_3/grd_s_r4_3.c:
+    .data: [0x80DA66E0, 0x80DA74F8]
+data/field/bg/acre/grd_s_r4_b_1/grd_s_r4_b_1.c:
+    .data: [0x80DA7508, 0x80DA81F8]
+data/field/bg/acre/grd_s_r4_b_2/grd_s_r4_b_2.c:
+    .data: [0x80DA8208, 0x80DA93D8]
+data/field/bg/acre/grd_s_r4_p_1/grd_s_r4_p_1.c:
+    .data: [0x80DA93E8, 0x80DAA928]
+data/field/bg/acre/grd_s_r5_1/grd_s_r5_1.c:
+    .data: [0x80DAA938, 0x80DAB920]
+data/field/bg/acre/grd_s_r5_2/grd_s_r5_2.c:
+    .data: [0x80DAB930, 0x80DACA10]
+data/field/bg/acre/grd_s_r5_3/grd_s_r5_3.c:
+    .data: [0x80DACA20, 0x80DADAC8]
+data/field/bg/acre/grd_s_r5_b_1/grd_s_r5_b_1.c:
+    .data: [0x80DADAD8, 0x80DAED98]
+data/field/bg/acre/grd_s_r5_b_2/grd_s_r5_b_2.c:
+    .data: [0x80DAEDA8, 0x80DB00A0]
+data/field/bg/acre/grd_s_r5_p_1/grd_s_r5_p_1.c:
+    .data: [0x80DB00B0, 0x80DB1530]
+data/field/bg/acre/grd_s_r6_1/grd_s_r6_1.c:
+    .data: [0x80DB1540, 0x80DB2258]
+data/field/bg/acre/grd_s_r6_2/grd_s_r6_2.c:
+    .data: [0x80DB2268, 0x80DB2FE8]
+data/field/bg/acre/grd_s_r6_3/grd_s_r6_3.c:
+    .data: [0x80DB2FF8, 0x80DB3D60]
+data/field/bg/acre/grd_s_r6_b_1/grd_s_r6_b_1.c:
+    .data: [0x80DB3D70, 0x80DB4BD8]
+data/field/bg/acre/grd_s_r6_b_2/grd_s_r6_b_2.c:
+    .data: [0x80DB4BE8, 0x80DB6128]
+data/field/bg/acre/grd_s_r6_p_1/grd_s_r6_p_1.c:
+    .data: [0x80DB6138, 0x80DB77A8]
+data/field/bg/acre/grd_s_r7_1/grd_s_r7_1.c:
+    .data: [0x80DB77B8, 0x80DB86A0]
+data/field/bg/acre/grd_s_r7_2/grd_s_r7_2.c:
+    .data: [0x80DB86B0, 0x80DB94B0]
+data/field/bg/acre/grd_s_r7_3/grd_s_r7_3.c:
+    .data: [0x80DB94C0, 0x80DBA258]
+data/field/bg/acre/grd_s_r7_b_1/grd_s_r7_b_1.c:
+    .data: [0x80DBA268, 0x80DBB218]
+data/field/bg/acre/grd_s_r7_b_2/grd_s_r7_b_2.c:
+    .data: [0x80DBB228, 0x80DBC7C0]
+data/field/bg/acre/grd_s_r7_p_1/grd_s_r7_p_1.c:
+    .data: [0x80DBC7D0, 0x80DBDBE8]
+data/field/bg/acre/grd_s_t_1/grd_s_t_1.c:
+    .data: [0x80DBDBF8, 0x80DBE858]
+data/field/bg/acre/grd_s_t_10/grd_s_t_10.c:
+    .data: [0x80DBE858, 0x80DBF8F8]
+data/field/bg/acre/grd_s_t_2/grd_s_t_2.c:
+    .data: [0x80DBF8F8, 0x80DC0808]
+data/field/bg/acre/grd_s_t_3/grd_s_t_3.c:
+    .data: [0x80DC0808, 0x80DC1368]
+data/field/bg/acre/grd_s_t_4/grd_s_t_4.c:
+    .data: [0x80DC1378, 0x80DC24F0]
+data/field/bg/acre/grd_s_t_5/grd_s_t_5.c:
+    .data: [0x80DC2500, 0x80DC3770]
+data/field/bg/acre/grd_s_t_6/grd_s_t_6.c:
+    .data: [0x80DC3770, 0x80DC4B78]
+data/field/bg/acre/grd_s_t_7/grd_s_t_7.c:
+    .data: [0x80DC4B78, 0x80DC5F48]
+data/field/bg/acre/grd_s_t_8/grd_s_t_8.c:
+    .data: [0x80DC5F48, 0x80DC6DA8]
+data/field/bg/acre/grd_s_t_9/grd_s_t_9.c:
+    .data: [0x80DC6DA8, 0x80DC7C88]
+data/field/bg/acre/grd_s_t_po_1/grd_s_t_po_1.c:
+    .data: [0x80DC7C88, 0x80DC8918]
+data/field/bg/acre/grd_s_t_po_2/grd_s_t_po_2.c:
+    .data: [0x80DC8918, 0x80DC9568]
+data/field/bg/acre/grd_s_t_po_3/grd_s_t_po_3.c:
+    .data: [0x80DC9578, 0x80DCA6D0]
+data/field/bg/acre/grd_s_t_r1_1/grd_s_t_r1_1.c:
+    .data: [0x80DCA6E0, 0x80DCB8D8]
+data/field/bg/acre/grd_s_t_r1_2/grd_s_t_r1_2.c:
+    .data: [0x80DCB8E8, 0x80DCCD68]
+data/field/bg/acre/grd_s_t_r1_3/grd_s_t_r1_3.c:
+    .data: [0x80DCCD78, 0x80DCE220]
+data/field/bg/acre/grd_s_t_r1_4/grd_s_t_r1_4.c:
+    .data: [0x80DCE230, 0x80DCF578]
+data/field/bg/acre/grd_s_t_r1_5/grd_s_t_r1_5.c:
+    .data: [0x80DCF588, 0x80DD0A38]
+data/field/bg/acre/grd_s_t_sh_1/grd_s_t_sh_1.c:
+    .data: [0x80DD0A38, 0x80DD1668]
+data/field/bg/acre/grd_s_t_sh_2/grd_s_t_sh_2.c:
+    .data: [0x80DD1678, 0x80DD2610]
+data/field/bg/acre/grd_s_t_sh_3/grd_s_t_sh_3.c:
+    .data: [0x80DD2610, 0x80DD3270]
+data/field/bg/acre/grd_s_t_st1_1/grd_s_t_st1_1.c:
+    .data: [0x80DD3270, 0x80DD40F0]
+data/field/bg/acre/grd_s_t_st1_2/grd_s_t_st1_2.c:
+    .data: [0x80DD40F0, 0x80DD5280]
+data/field/bg/acre/grd_s_t_st1_3/grd_s_t_st1_3.c:
+    .data: [0x80DD5280, 0x80DD61A0]
+data/field/bg/acre/rom_toudai/rom_toudai.c:
+    .data: [0x80F08520, 0x80F0B020]
+
+# acres
+# data/field/bg/acre/grd_post_office/grd_post_office.c:
+    # .data: [0x80C5DBA0, 0x80C63408]
+
+# map submenu
+data/submenu/map/kan_tizu.c:
+    .data: [0x80F0B020, 0x80F11C20]
+data/submenu/map/kan_tizu2.c:
+    .data: [0x80F11C20, 0x80F13A20]
+data/field/bg/acre/rom_museum1/rom_museum1.c:
+    .data: [0x80F13AA0, 0x80F19D68]
+data/field/bg/acre/rom_museum5/rom_museum5.c:
+    .data: [0x80F19DC0, 0x80F1CCA0]
+data/field/bg/acre/rom_museum2/rom_museum2.c:
+    .data: [0x80F1D5C0, 0x80F20B58]
+data/field/bg/acre/rom_museum3/rom_museum3.c:
+    .data: [0x80F23E40, 0x80F27E18]
+data/field/bg/acre/rom_tailor/rom_tailor.c:
+    .data: [0x80F29260, 0x80F31FB0]
+data/field/bg/acre/myr_etc/myr_etc.c:
+    .data: [0x80F84780, 0x80F85720]
+data/field/bg/acre/grd_player_select/grd_player_select.c:
+    .data: [0x80F85740, 0x80F86FA0]
+data/field/bg/acre/police_indoor/police_indoor.c:
+    .data: [0x80F86FA0, 0x80F8C2C8]
 data/field/bg/rail_pal.c:
     .data: [0x80F8C2C8, 0x80F8C460]
+data/field/bg/acre/rom_shop4_1/rom_shop4_1.c:
+    .data: [0x80F9FF80, 0x80FA6400]
+data/field/bg/acre/rom_shop4_fuku/rom_shop4_fuku.c:
+    .data: [0x80FA6400, 0x80FACE20]
+data/field/bg/acre/rom_tent/rom_tent.c:
+    .data: [0x811007A0, 0x81104FE0]
+data/field/bg/acre/room01/room01.c:
+    .data: [0x81104FE0, 0x81106C68]
+data/field/bg/acre/rom_train_in/rom_train_in.c:
+    .data: [0x81106D40, 0x8110CE00]
+data/field/bg/acre/rom_uranai/rom_uranai.c:
+    .data: [0x8110F620, 0x81115868]
 m_bg_tex.c:
     .bss: [0x8125AC80, 0x81263080]
 sys_stacks.c:

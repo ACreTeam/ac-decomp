@@ -140,7 +140,16 @@ enum {
 };
 
 /* Not sure about these other than the island one */
-enum { mFI_CLIMATE_0, mFI_CLIMATE_ISLAND, mFI_CLIMATE_2, mFI_CLIMATE_3, mFI_CLIMATE_4, mFI_CLIMATE_5, mFI_CLIMATE_NUM };
+enum {
+    mFI_CLIMATE_0,
+    mFI_CLIMATE_ISLAND,
+    mFI_CLIMATE_2,
+    mFI_CLIMATE_3,
+    mFI_CLIMATE_4,
+    mFI_CLIMATE_5,
+
+    mFI_CLIMATE_NUM,
+};
 
 enum {
     mFI_DIGSTATUS_MISS,
@@ -185,7 +194,12 @@ typedef struct visible_block_item_info_s {
 } mFI_item_table_c;
 
 enum {
-    mFI_SOUND_SOURCE_POND = 3, // TODO: might not be correct name
+    mFI_SOUND_SOURCE_NONE,
+    mFI_SOUND_SOURCE_RIVER,
+    mFI_SOUND_SOURCE_OCEAN,
+    mFI_SOUND_SOURCE_POND,
+
+    mFI_SOUND_SOURCE_NUM
 };
 
 extern void mFI_ClearFieldData();
