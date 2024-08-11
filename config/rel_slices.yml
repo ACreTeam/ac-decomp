@@ -1274,6 +1274,9 @@ data/npc/model/tex/bea_9.c:
 data/npc/model/tex/bea_10.c:
     .data: [0x806FA140, 0x806FB360]
 
+data/field/bg/acre/bg_data.c:
+    .data: [0x806FE048, 0x8074B840]
+
 # dataobject.obj files
 data/field/bg/flower/obj_flower.c:
     .data: [0x8074FE80, 0x807508C0]

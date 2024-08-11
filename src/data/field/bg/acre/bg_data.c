@@ -2,301 +2,6 @@
 
 // clang-format off
 
-enum __bg_type__ {
-    BG_TYPE_GRD_S_HOLE_TEST,
-    BG_TYPE_GRD_S_C1_1,
-    BG_TYPE_GRD_S_C1_2,
-    BG_TYPE_GRD_S_C1_3,
-    BG_TYPE_GRD_S_C1_4,
-    BG_TYPE_GRD_S_C1_5,
-    BG_TYPE_GRD_S_C1_R1_1,
-    BG_TYPE_GRD_S_C1_R1_2,
-    BG_TYPE_GRD_S_C1_R1_3,
-    BG_TYPE_GRD_S_C1_R2_1,
-    BG_TYPE_GRD_S_C1_R2_2,
-    BG_TYPE_GRD_S_C1_R2_3,
-    BG_TYPE_GRD_S_C1_R3_1,
-    BG_TYPE_GRD_S_C1_R3_2,
-    BG_TYPE_GRD_S_C1_R3_3,
-    BG_TYPE_GRD_S_C1_S_1,
-    BG_TYPE_GRD_S_C1_S_2,
-    BG_TYPE_GRD_S_C1_S_3,
-    BG_TYPE_GRD_S_C1_S_4,
-    BG_TYPE_GRD_S_C2_1,
-    BG_TYPE_GRD_S_C2_2,
-    BG_TYPE_GRD_S_C2_3,
-    BG_TYPE_GRD_S_C2_R1_1,
-    BG_TYPE_GRD_S_C2_R1_2,
-    BG_TYPE_GRD_S_C2_R2_1,
-    BG_TYPE_GRD_S_C2_R2_2,
-    BG_TYPE_GRD_S_C2_S_1,
-    BG_TYPE_GRD_S_C2_S_2,
-    BG_TYPE_GRD_S_C2_S_3,
-    BG_TYPE_GRD_S_C3_1,
-    BG_TYPE_GRD_S_C3_2,
-    BG_TYPE_GRD_S_C3_3,
-    BG_TYPE_GRD_S_C3_R1_1,
-    BG_TYPE_GRD_S_C3_R1_2,
-    BG_TYPE_GRD_S_C3_R2_1,
-    BG_TYPE_GRD_S_C3_R2_2,
-    BG_TYPE_GRD_S_C3_S_1,
-    BG_TYPE_GRD_S_C4_1,
-    BG_TYPE_GRD_S_C4_2,
-    BG_TYPE_GRD_S_C4_3,
-    BG_TYPE_GRD_S_C4_R1_1,
-    BG_TYPE_GRD_S_C4_R1_2,
-    BG_TYPE_GRD_S_C4_R2_1,
-    BG_TYPE_GRD_S_C4_R2_2,
-    BG_TYPE_GRD_S_C4_R3_1,
-    BG_TYPE_GRD_S_C4_R3_2,
-    BG_TYPE_GRD_S_C4_S_1,
-    BG_TYPE_GRD_S_C4_S_2,
-    BG_TYPE_GRD_S_C5_1,
-    BG_TYPE_GRD_S_C5_2,
-    BG_TYPE_GRD_S_C5_3,
-    BG_TYPE_GRD_S_C5_R1_1,
-    BG_TYPE_GRD_S_C5_R1_2,
-    BG_TYPE_GRD_S_C5_R2_1,
-    BG_TYPE_GRD_S_C5_R2_2,
-    BG_TYPE_GRD_S_C5_R3_1,
-    BG_TYPE_GRD_S_C5_R3_2,
-    BG_TYPE_GRD_S_C5_S_1,
-    BG_TYPE_GRD_S_C5_S_2,
-    BG_TYPE_GRD_S_C6_1,
-    BG_TYPE_GRD_S_C6_2,
-    BG_TYPE_GRD_S_C6_3,
-    BG_TYPE_GRD_S_C6_R1_1,
-    BG_TYPE_GRD_S_C6_R1_2,
-    BG_TYPE_GRD_S_C6_R3_1,
-    BG_TYPE_GRD_S_C6_S_1,
-    BG_TYPE_GRD_S_C7_1,
-    BG_TYPE_GRD_S_C7_2,
-    BG_TYPE_GRD_S_C7_3,
-    BG_TYPE_GRD_S_C7_R1_1,
-    BG_TYPE_GRD_S_C7_R1_2,
-    BG_TYPE_GRD_S_C7_R3_1,
-    BG_TYPE_GRD_S_C7_R3_2,
-    BG_TYPE_GRD_S_C7_S_1,
-    BG_TYPE_GRD_S_C7_S_2,
-    BG_TYPE_GRD_S_C7_S_3,
-    BG_TYPE_GRD_S_E1_1,
-    BG_TYPE_GRD_S_E1_R1_1,
-    BG_TYPE_GRD_S_E2_1,
-    BG_TYPE_GRD_S_E2_C1_1,
-    BG_TYPE_GRD_S_E2_M_1,
-    BG_TYPE_GRD_S_E2_O_1,
-    BG_TYPE_GRD_S_E2_T_1,
-    BG_TYPE_GRD_S_E3_1,
-    BG_TYPE_GRD_S_E3_C1_1,
-    BG_TYPE_GRD_S_E3_M_1,
-    BG_TYPE_GRD_S_E3_O_1,
-    BG_TYPE_GRD_S_E3_T_1,
-    BG_TYPE_GRD_S_E4_1,
-    BG_TYPE_GRD_S_E5_1,
-    BG_TYPE_GRD_S_F_1,
-    BG_TYPE_GRD_S_F_2,
-    BG_TYPE_GRD_S_F_3,
-    BG_TYPE_GRD_S_F_4,
-    BG_TYPE_GRD_S_F_5,
-    BG_TYPE_GRD_S_F_6,
-    BG_TYPE_GRD_S_F_7,
-    BG_TYPE_GRD_S_F_8,
-    BG_TYPE_GRD_S_F_9,
-    BG_TYPE_GRD_S_F_10,
-    BG_TYPE_GRD_S_F_KO_1,
-    BG_TYPE_GRD_S_F_KO_2,
-    BG_TYPE_GRD_S_F_KO_3,
-    BG_TYPE_GRD_S_F_MH_1,
-    BG_TYPE_GRD_S_F_MH_2,
-    BG_TYPE_GRD_S_F_MH_3,
-    BG_TYPE_GRD_S_F_MU_1,
-    BG_TYPE_GRD_S_F_MU_2,
-    BG_TYPE_GRD_S_F_MU_3,
-    BG_TYPE_GRD_S_F_PK_1,
-    BG_TYPE_GRD_S_F_PK_2,
-    BG_TYPE_GRD_S_F_PK_3,
-    BG_TYPE_GRD_S_IR_1,
-    BG_TYPE_GRD_S_IR_2,
-    BG_TYPE_GRD_S_IR_3,
-    BG_TYPE_GRD_S_IR_4,
-    BG_TYPE_GRD_S_IL_1,
-    BG_TYPE_GRD_S_IL_2,
-    BG_TYPE_GRD_S_IL_3,
-    BG_TYPE_GRD_S_IL_4,
-    BG_TYPE_GRD_S_M_1,
-    BG_TYPE_GRD_S_M_2,
-    BG_TYPE_GRD_S_M_3,
-    BG_TYPE_GRD_S_M_4,
-    BG_TYPE_GRD_S_M_5,
-    BG_TYPE_GRD_S_M_6,
-    BG_TYPE_GRD_S_M_7,
-    BG_TYPE_GRD_S_M_8,
-    BG_TYPE_GRD_S_M_9,
-    BG_TYPE_GRD_S_M_10,
-    BG_TYPE_GRD_S_M_R1_1,
-    BG_TYPE_GRD_S_M_R1_2,
-    BG_TYPE_GRD_S_M_R1_3,
-    BG_TYPE_GRD_S_M_R1_4,
-    BG_TYPE_GRD_S_M_R1_5,
-    BG_TYPE_GRD_S_M_R1_B_1,
-    BG_TYPE_GRD_S_M_R1_B_2,
-    BG_TYPE_GRD_S_M_R1_B_3,
-    BG_TYPE_GRD_S_M_TA_1,
-    BG_TYPE_GRD_S_M_TA_2,
-    BG_TYPE_GRD_S_M_TA_3,
-    BG_TYPE_GRD_S_M_WF_1,
-    BG_TYPE_GRD_S_M_WF_2,
-    BG_TYPE_GRD_S_M_WF_3,
-    BG_TYPE_GRD_S_O_1,
-    BG_TYPE_GRD_S_O_2,
-    BG_TYPE_GRD_S_O_3,
-    BG_TYPE_GRD_S_O_4,
-    BG_TYPE_GRD_S_O_5,
-    BG_TYPE_GRD_S_O_6,
-    BG_TYPE_GRD_S_O_7,
-    BG_TYPE_GRD_S_O_8,
-    BG_TYPE_GRD_S_O_9,
-    BG_TYPE_GRD_S_O_10,
-    BG_TYPE_GRD_S_O_I_1,
-    BG_TYPE_GRD_S_O_I_2,
-    BG_TYPE_GRD_S_O_R1_1,
-    BG_TYPE_GRD_S_O_R1_2,
-    BG_TYPE_GRD_S_O_R1_3,
-    BG_TYPE_GRD_S_O_R1_4,
-    BG_TYPE_GRD_S_O_R1_5,
-    BG_TYPE_GRD_S_O_R1_B_1,
-    BG_TYPE_GRD_S_O_R1_B_2,
-    BG_TYPE_GRD_S_O_R1_B_3,
-    BG_TYPE_GRD_S_O_TA_1,
-    BG_TYPE_GRD_S_O_TA_2,
-    BG_TYPE_GRD_S_O_TA_3,
-    BG_TYPE_GRD_S_O_WF_1,
-    BG_TYPE_GRD_S_O_WF_2,
-    BG_TYPE_GRD_S_O_WF_3,
-    BG_TYPE_GRD_S_R1_1,
-    BG_TYPE_GRD_S_R1_2,
-    BG_TYPE_GRD_S_R1_3,
-    BG_TYPE_GRD_S_R1_4,
-    BG_TYPE_GRD_S_R1_B_1,
-    BG_TYPE_GRD_S_R1_B_2,
-    BG_TYPE_GRD_S_R1_B_3,
-    BG_TYPE_GRD_S_R1_P_1,
-    BG_TYPE_GRD_S_R2_1,
-    BG_TYPE_GRD_S_R2_2,
-    BG_TYPE_GRD_S_R2_3,
-    BG_TYPE_GRD_S_R2_4,
-    BG_TYPE_GRD_S_R2_B_1,
-    BG_TYPE_GRD_S_R2_B_2,
-    BG_TYPE_GRD_S_R2_B_3,
-    BG_TYPE_GRD_S_R2_P_1,
-    BG_TYPE_GRD_S_R3_1,
-    BG_TYPE_GRD_S_R3_2,
-    BG_TYPE_GRD_S_R3_3,
-    BG_TYPE_GRD_S_R3_4,
-    BG_TYPE_GRD_S_R3_B_1,
-    BG_TYPE_GRD_S_R3_B_2,
-    BG_TYPE_GRD_S_R3_B_3,
-    BG_TYPE_GRD_S_R3_P_1,
-    BG_TYPE_GRD_S_R4_1,
-    BG_TYPE_GRD_S_R4_2,
-    BG_TYPE_GRD_S_R4_3,
-    BG_TYPE_GRD_S_R4_B_1,
-    BG_TYPE_GRD_S_R4_B_2,
-    BG_TYPE_GRD_S_R4_P_1,
-    BG_TYPE_GRD_S_R5_1,
-    BG_TYPE_GRD_S_R5_2,
-    BG_TYPE_GRD_S_R5_3,
-    BG_TYPE_GRD_S_R5_B_1,
-    BG_TYPE_GRD_S_R5_B_2,
-    BG_TYPE_GRD_S_R5_P_1,
-    BG_TYPE_GRD_S_R6_1,
-    BG_TYPE_GRD_S_R6_2,
-    BG_TYPE_GRD_S_R6_3,
-    BG_TYPE_GRD_S_R6_B_1,
-    BG_TYPE_GRD_S_R6_B_2,
-    BG_TYPE_GRD_S_R6_P_1,
-    BG_TYPE_GRD_S_R7_1,
-    BG_TYPE_GRD_S_R7_2,
-    BG_TYPE_GRD_S_R7_3,
-    BG_TYPE_GRD_S_R7_B_1,
-    BG_TYPE_GRD_S_R7_B_2,
-    BG_TYPE_GRD_S_R7_P_1,
-    BG_TYPE_GRD_S_T_R1_1,
-    BG_TYPE_GRD_S_T_1,
-    BG_TYPE_GRD_S_T_2,
-    BG_TYPE_GRD_S_T_3,
-    BG_TYPE_GRD_S_T_4,
-    BG_TYPE_GRD_S_T_5,
-    BG_TYPE_GRD_S_T_6,
-    BG_TYPE_GRD_S_T_7,
-    BG_TYPE_GRD_S_T_8,
-    BG_TYPE_GRD_S_T_9,
-    BG_TYPE_GRD_S_T_10,
-    BG_TYPE_GRD_S_T_PO_1,
-    BG_TYPE_GRD_S_T_PO_2,
-    BG_TYPE_GRD_S_T_PO_3,
-    BG_TYPE_GRD_S_T_R1_2,
-    BG_TYPE_GRD_S_T_R1_3,
-    BG_TYPE_GRD_S_T_R1_4,
-    BG_TYPE_GRD_S_T_R1_5,
-    BG_TYPE_GRD_S_T_SH_1,
-    BG_TYPE_GRD_S_T_SH_2,
-    BG_TYPE_GRD_S_T_SH_3,
-    BG_TYPE_GRD_S_T_ST1_1,
-    BG_TYPE_GRD_S_T_ST1_2,
-    BG_TYPE_GRD_S_T_ST1_3,
-    BG_TYPE_242,
-    BG_TYPE_ROM_TENT,
-    BG_TYPE_ROOM01,
-    BG_TYPE_MYR_ETC,
-    BG_TYPE_246,
-    BG_TYPE_248,
-    BG_TYPE_249,
-    BG_TYPE_250,
-    BG_TYPE_251,
-    BG_TYPE_252,
-    BG_TYPE_ROM_SHOP4_FUKU,
-    BG_TYPE_254,
-    BG_TYPE_ROM_URANAI,
-    BG_TYPE_ROM_SHOP4_1,
-    BG_TYPE_257,
-    BG_TYPE_258,
-    BG_TYPE_259,
-    BG_TYPE_260,
-    BG_TYPE_ROM_TRAIN_IN,
-    BG_TYPE_GRD_S_F_9,
-    BG_TYPE_GRD_S_R1_3,
-    BG_TYPE_GRD_S_C1_3,
-    BG_TYPE_GRD_S_F_9,
-    BG_TYPE_GRD_PLAYER_SELECT,
-    BG_TYPE_GRD_POST_OFFICE,
-    BG_TYPE_POLICE_INDOOR,
-    BG_TYPE_TMP,
-    BG_TYPE_TMP2,
-    BG_TYPE_TMPR,
-    BG_TYPE_TMPR2,
-    BG_TYPE_TMP3,
-    BG_TYPE_TMPR3,
-    BG_TYPE_TMP4,
-    BG_TYPE_TMPR4,
-    BG_TYPE_GRD_YAMISHOP,
-    BG_TYPE_ROM_MUSEUM1,
-    BG_TYPE_ROM_MUSEUM2,
-    BG_TYPE_ROM_MUSEUM3,
-    BG_TYPE_ROM_MUSEUM5,
-    BG_TYPE_282,
-    BG_TYPE_283,
-    BG_TYPE_284,
-    BG_TYPE_285,
-    BG_TYPE_286,
-    BG_TYPE_287,
-    BG_TYPE_288,
-    BG_TYPE_289,
-    BG_TYPE_ROM_TAILOR,
-    BG_TYPE_ROM_TOUDAI,
-    BG_TYPE_292,
-};
-
 extern Gfx room01_model[];
 extern Gfx myr_etc_model[];
 extern Gfx tmp_model[];
@@ -305,37 +10,37 @@ extern Gfx tmp2_model[];
 extern Gfx tmp2_modelT[];
 extern Gfx tmpr_model[];
 extern Gfx tmpr_modelT[];
-extern EVW_ANIME_DATA* tmpr_evw_anime[];
+extern EVW_ANIME_DATA tmpr_evw_anime[];
 extern Gfx tmpr2_model[];
 extern Gfx tmpr2_modelT[];
-extern EVW_ANIME_DATA* tmpr2_evw_anime[];
+extern EVW_ANIME_DATA tmpr2_evw_anime[];
 extern Gfx tmp3_model[];
 extern Gfx tmp3_modelT[];
 extern Gfx tmpr3_model[];
 extern Gfx tmpr3_modelT[];
-extern EVW_ANIME_DATA* tmpr3_evw_anime[];
+extern EVW_ANIME_DATA tmpr3_evw_anime[];
 extern Gfx tmp4_model[];
 extern Gfx tmp4_modelT[];
 extern Gfx tmpr4_model[];
 extern Gfx tmpr4_modelT[];
-extern EVW_ANIME_DATA* tmpr4_evw_anime[];
+extern EVW_ANIME_DATA tmpr4_evw_anime[];
 extern Gfx grd_s_c1_r1_1_model[];
 extern Gfx grd_s_c1_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c1_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c1_r1_1_evw_anime[];
 extern Gfx grd_s_c1_s_1_model[];
 extern Gfx grd_s_c1_s_1_modelT[];
 extern Gfx grd_s_c2_r1_1_model[];
 extern Gfx grd_s_c2_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c2_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c2_r1_1_evw_anime[];
 extern Gfx grd_s_c2_r2_1_model[];
 extern Gfx grd_s_c2_r2_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c2_r2_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c2_r2_1_evw_anime[];
 extern Gfx grd_s_c5_r1_1_model[];
 extern Gfx grd_s_c5_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c5_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c5_r1_1_evw_anime[];
 extern Gfx grd_s_t_r1_1_model[];
 extern Gfx grd_s_t_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_t_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_t_r1_1_evw_anime[];
 extern Gfx grd_s_f_1_model[];
 extern Gfx grd_s_f_1_modelT[];
 extern Gfx grd_s_f_2_model[];
@@ -344,101 +49,101 @@ extern Gfx grd_s_c1_1_model[];
 extern Gfx grd_s_c1_1_modelT[];
 extern Gfx grd_s_c1_r2_1_model[];
 extern Gfx grd_s_c1_r2_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c1_r2_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c1_r2_1_evw_anime[];
 extern Gfx grd_s_c1_r3_1_model[];
 extern Gfx grd_s_c1_r3_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c1_r3_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c1_r3_1_evw_anime[];
 extern Gfx grd_s_c2_1_model[];
 extern Gfx grd_s_c2_1_modelT[];
 extern Gfx grd_s_c3_1_model[];
 extern Gfx grd_s_c3_1_modelT[];
 extern Gfx grd_s_c3_r1_1_model[];
 extern Gfx grd_s_c3_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c3_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c3_r1_1_evw_anime[];
 extern Gfx grd_s_c4_1_model[];
 extern Gfx grd_s_c4_1_modelT[];
 extern Gfx grd_s_c4_r1_1_model[];
 extern Gfx grd_s_c4_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c4_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c4_r1_1_evw_anime[];
 extern Gfx grd_s_c4_r2_1_model[];
 extern Gfx grd_s_c4_r2_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c4_r2_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c4_r2_1_evw_anime[];
 extern Gfx grd_s_c5_1_model[];
 extern Gfx grd_s_c5_1_modelT[];
 extern Gfx grd_s_c5_r2_1_model[];
 extern Gfx grd_s_c5_r2_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c5_r2_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c5_r2_1_evw_anime[];
 extern Gfx grd_s_c5_r3_1_model[];
 extern Gfx grd_s_c5_r3_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c5_r3_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c5_r3_1_evw_anime[];
 extern Gfx grd_s_c6_1_model[];
 extern Gfx grd_s_c6_1_modelT[];
 extern Gfx grd_s_c6_r1_1_model[];
 extern Gfx grd_s_c6_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c6_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c6_r1_1_evw_anime[];
 extern Gfx grd_s_c7_1_model[];
 extern Gfx grd_s_c7_1_modelT[];
 extern Gfx grd_s_r1_1_model[];
 extern Gfx grd_s_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r1_1_evw_anime[];
 extern Gfx grd_s_r2_1_model[];
 extern Gfx grd_s_r2_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r2_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r2_1_evw_anime[];
 extern Gfx grd_s_r3_1_model[];
 extern Gfx grd_s_r3_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r3_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r3_1_evw_anime[];
 extern Gfx grd_s_r4_1_model[];
 extern Gfx grd_s_r4_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r4_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r4_1_evw_anime[];
 extern Gfx grd_s_r5_1_model[];
 extern Gfx grd_s_r5_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r5_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r5_1_evw_anime[];
 extern Gfx grd_s_r6_1_model[];
 extern Gfx grd_s_r6_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r6_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r6_1_evw_anime[];
 extern Gfx grd_s_r7_1_model[];
 extern Gfx grd_s_r7_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r7_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r7_1_evw_anime[];
 extern Gfx grd_s_c3_r2_1_model[];
 extern Gfx grd_s_c3_r2_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c3_r2_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c3_r2_1_evw_anime[];
 extern Gfx grd_s_c7_r3_1_model[];
 extern Gfx grd_s_c7_r3_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c7_r3_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c7_r3_1_evw_anime[];
 extern Gfx grd_s_c6_r3_1_model[];
 extern Gfx grd_s_c6_r3_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c6_r3_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c6_r3_1_evw_anime[];
 extern Gfx grd_s_r1_b_1_model[];
 extern Gfx grd_s_r1_b_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r1_b_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r1_b_1_evw_anime[];
 extern Gfx grd_s_r2_b_1_model[];
 extern Gfx grd_s_r2_b_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r2_b_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r2_b_1_evw_anime[];
 extern Gfx grd_s_r3_b_1_model[];
 extern Gfx grd_s_r3_b_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r3_b_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r3_b_1_evw_anime[];
 extern Gfx grd_s_r4_b_1_model[];
 extern Gfx grd_s_r4_b_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r4_b_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r4_b_1_evw_anime[];
 extern Gfx grd_s_r5_b_1_model[];
 extern Gfx grd_s_r5_b_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r5_b_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r5_b_1_evw_anime[];
 extern Gfx grd_s_r6_b_1_model[];
 extern Gfx grd_s_r6_b_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r6_b_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r6_b_1_evw_anime[];
 extern Gfx grd_s_r7_b_1_model[];
 extern Gfx grd_s_r7_b_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r7_b_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r7_b_1_evw_anime[];
 extern Gfx grd_s_t_1_model[];
 extern Gfx grd_s_t_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_t_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_t_1_evw_anime[];
 extern Gfx grd_s_c1_s_2_model[];
 extern Gfx grd_s_c1_s_2_modelT[];
 extern Gfx grd_s_c2_s_1_model[];
 extern Gfx grd_s_c2_s_1_modelT[];
 extern Gfx grd_s_c3_s_1_model[];
 extern Gfx grd_s_c3_s_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c3_s_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c3_s_1_evw_anime[];
 extern Gfx grd_s_c4_s_1_model[];
 extern Gfx grd_s_c4_s_1_modelT[];
 extern Gfx grd_s_c5_s_1_model[];
@@ -448,10 +153,10 @@ extern Gfx grd_s_c6_s_1_modelT[];
 extern Gfx grd_s_c7_s_1_model[];
 extern Gfx grd_s_c4_r3_1_model[];
 extern Gfx grd_s_c4_r3_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c4_r3_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c4_r3_1_evw_anime[];
 extern Gfx grd_s_c7_r1_1_model[];
 extern Gfx grd_s_c7_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_c7_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c7_r1_1_evw_anime[];
 extern Gfx grd_s_t_st1_1_model[];
 extern Gfx grd_s_t_st1_1_modelT[];
 extern Gfx grd_s_c1_2_model[];
@@ -466,22 +171,22 @@ extern Gfx grd_s_c2_2_model[];
 extern Gfx grd_s_c2_2_modelT[];
 extern Gfx grd_s_r1_2_model[];
 extern Gfx grd_s_r1_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r1_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r1_2_evw_anime[];
 extern Gfx grd_s_r1_3_model[];
 extern Gfx grd_s_r1_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_r1_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r1_3_evw_anime[];
 extern Gfx grd_s_r4_2_model[];
 extern Gfx grd_s_r4_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r4_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r4_2_evw_anime[];
 extern Gfx grd_s_r5_2_model[];
 extern Gfx grd_s_r5_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r5_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r5_2_evw_anime[];
 extern Gfx grd_s_r7_2_model[];
 extern Gfx grd_s_r7_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r7_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r7_2_evw_anime[];
 extern Gfx grd_s_r7_3_model[];
 extern Gfx grd_s_r7_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_r7_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r7_3_evw_anime[];
 extern Gfx grd_s_c2_s_2_model[];
 extern Gfx grd_s_c2_s_2_modelT[];
 extern Gfx grd_s_c1_s_3_model[];
@@ -490,22 +195,22 @@ extern Gfx grd_s_c4_s_2_modelT[];
 extern Gfx grd_s_c5_s_2_model[];
 extern Gfx grd_s_c6_r1_2_model[];
 extern Gfx grd_s_c6_r1_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c6_r1_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c6_r1_2_evw_anime[];
 extern Gfx grd_s_c3_r1_2_model[];
 extern Gfx grd_s_c3_r1_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c3_r1_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c3_r1_2_evw_anime[];
 extern Gfx grd_s_c3_2_model[];
 extern Gfx grd_s_c3_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c3_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c3_2_evw_anime[];
 extern Gfx grd_s_c7_3_model[];
 extern Gfx grd_s_c7_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_c7_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c7_3_evw_anime[];
 extern Gfx grd_s_c1_r2_2_model[];
 extern Gfx grd_s_c1_r2_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c1_r2_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c1_r2_2_evw_anime[];
 extern Gfx grd_s_c1_r3_2_model[];
 extern Gfx grd_s_c1_r3_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c1_r3_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c1_r3_2_evw_anime[];
 extern Gfx grd_s_c4_2_model[];
 extern Gfx grd_s_c4_2_modelT[];
 extern Gfx grd_s_c5_2_model[];
@@ -514,36 +219,36 @@ extern Gfx grd_s_c6_2_model[];
 extern Gfx grd_s_c6_2_modelT[];
 extern Gfx grd_s_r2_2_model[];
 extern Gfx grd_s_r2_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r2_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r2_2_evw_anime[];
 extern Gfx grd_s_r3_2_model[];
 extern Gfx grd_s_r3_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r3_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r3_2_evw_anime[];
 extern Gfx grd_s_c4_r1_2_model[];
 extern Gfx grd_s_c4_r1_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c4_r1_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c4_r1_2_evw_anime[];
 extern Gfx grd_s_c4_r2_2_model[];
 extern Gfx grd_s_c4_r2_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c4_r2_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c4_r2_2_evw_anime[];
 extern Gfx grd_s_c7_r1_2_model[];
 extern Gfx grd_s_c7_r1_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c7_r1_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c7_r1_2_evw_anime[];
 extern Gfx grd_s_c6_2_model[];
 extern Gfx grd_s_c6_2_modelT[];
 extern Gfx grd_s_c5_r2_2_model[];
 extern Gfx grd_s_c5_r2_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c5_r2_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c5_r2_2_evw_anime[];
 extern Gfx grd_s_c4_r3_2_model[];
 extern Gfx grd_s_c4_r3_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c4_r3_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c4_r3_2_evw_anime[];
 extern Gfx grd_s_r2_3_model[];
 extern Gfx grd_s_r2_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_r2_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r2_3_evw_anime[];
 extern Gfx grd_s_r3_3_model[];
 extern Gfx grd_s_r3_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_r3_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r3_3_evw_anime[];
 extern Gfx grd_s_c5_r3_2_model[];
 extern Gfx grd_s_c5_r3_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c5_r3_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c5_r3_2_evw_anime[];
 extern Gfx grd_s_c5_3_model[];
 extern Gfx grd_s_c5_3_modelT[];
 extern Gfx grd_s_c4_3_model[];
@@ -552,102 +257,102 @@ extern Gfx grd_s_c3_3_model[];
 extern Gfx grd_s_c3_3_modelT[];
 extern Gfx grd_s_c2_3_model[];
 extern Gfx grd_s_c2_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_c2_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c2_3_evw_anime[];
 extern Gfx grd_s_r1_p_1_model[];
 extern Gfx grd_s_r1_p_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r1_p_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r1_p_1_evw_anime[];
 extern Gfx grd_s_r6_2_model[];
 extern Gfx grd_s_r6_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r6_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r6_2_evw_anime[];
 extern Gfx police_indoor_model[];
 extern Gfx police_indoor_modelT[];
 extern Gfx grd_s_c1_r1_2_model[];
 extern Gfx grd_s_c1_r1_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c1_r1_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c1_r1_2_evw_anime[];
 extern Gfx grd_s_c1_r1_3_model[];
 extern Gfx grd_s_c1_r1_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_c1_r1_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c1_r1_3_evw_anime[];
 extern Gfx grd_s_c1_r2_3_model[];
 extern Gfx grd_s_c1_r2_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_c1_r2_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c1_r2_3_evw_anime[];
 extern Gfx grd_s_c1_r3_3_model[];
 extern Gfx grd_s_c1_r3_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_c1_r3_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c1_r3_3_evw_anime[];
 extern Gfx grd_s_c2_r1_2_model[];
 extern Gfx grd_s_c2_r1_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c2_r1_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c2_r1_2_evw_anime[];
 extern Gfx grd_s_c5_r1_2_model[];
 extern Gfx grd_s_c5_r1_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c5_r1_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c5_r1_2_evw_anime[];
 extern Gfx grd_s_c6_3_model[];
 extern Gfx grd_s_c6_3_modelT[];
 extern Gfx grd_s_c7_2_model[];
 extern Gfx grd_s_c7_2_modelT[];
 extern Gfx grd_s_r1_4_model[];
 extern Gfx grd_s_r1_4_modelT[];
-extern EVW_ANIME_DATA* grd_s_r1_4_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r1_4_evw_anime[];
 extern Gfx grd_s_r2_4_model[];
 extern Gfx grd_s_r2_4_modelT[];
-extern EVW_ANIME_DATA* grd_s_r2_4_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r2_4_evw_anime[];
 extern Gfx grd_s_r3_4_model[];
 extern Gfx grd_s_r3_4_modelT[];
-extern EVW_ANIME_DATA* grd_s_r3_4_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r3_4_evw_anime[];
 extern Gfx grd_s_r4_3_model[];
 extern Gfx grd_s_r4_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_r4_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r4_3_evw_anime[];
 extern Gfx grd_s_r5_3_model[];
 extern Gfx grd_s_r5_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_r5_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r5_3_evw_anime[];
 extern Gfx grd_s_r6_3_model[];
 extern Gfx grd_s_r6_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_r6_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r6_3_evw_anime[];
 extern Gfx grd_s_c2_r2_2_model[];
 extern Gfx grd_s_c2_r2_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c2_r2_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c2_r2_2_evw_anime[];
 extern Gfx grd_s_c3_r2_2_model[];
 extern Gfx grd_s_c3_r2_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c3_r2_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c3_r2_2_evw_anime[];
 extern Gfx grd_s_r1_b_2_model[];
 extern Gfx grd_s_r1_b_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r1_b_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r1_b_2_evw_anime[];
 extern Gfx grd_s_r2_b_2_model[];
 extern Gfx grd_s_r2_b_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r2_b_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r2_b_2_evw_anime[];
 extern Gfx grd_s_r4_b_2_model[];
 extern Gfx grd_s_r4_b_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r4_b_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r4_b_2_evw_anime[];
 extern Gfx grd_s_r3_b_2_model[];
 extern Gfx grd_s_r3_b_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r3_b_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r3_b_2_evw_anime[];
 extern Gfx grd_s_r5_b_2_model[];
 extern Gfx grd_s_r5_b_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r5_b_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r5_b_2_evw_anime[];
 extern Gfx grd_s_r6_b_2_model[];
 extern Gfx grd_s_r6_b_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r6_b_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r6_b_2_evw_anime[];
 extern Gfx grd_s_r7_b_2_model[];
 extern Gfx grd_s_r7_b_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_r7_b_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r7_b_2_evw_anime[];
 extern Gfx grd_s_r1_b_3_model[];
 extern Gfx grd_s_r1_b_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_r1_b_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r1_b_3_evw_anime[];
 extern Gfx grd_s_r2_b_3_model[];
 extern Gfx grd_s_r2_b_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_r2_b_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r2_b_3_evw_anime[];
 extern Gfx grd_s_r3_b_3_model[];
 extern Gfx grd_s_r3_b_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_r3_b_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r3_b_3_evw_anime[];
 extern Gfx grd_s_f_3_model[];
 extern Gfx grd_s_f_3_modelT[];
 extern Gfx grd_s_f_4_model[];
 extern Gfx grd_s_f_4_modelT[];
-extern EVW_ANIME_DATA* grd_s_f_4_evw_anime[];
+extern EVW_ANIME_DATA grd_s_f_4_evw_anime[];
 extern Gfx grd_s_f_5_model[];
 extern Gfx grd_s_f_5_modelT[];
-extern EVW_ANIME_DATA* grd_s_f_5_evw_anime[];
+extern EVW_ANIME_DATA grd_s_f_5_evw_anime[];
 extern Gfx grd_s_f_6_model[];
 extern Gfx grd_s_f_6_modelT[];
-extern EVW_ANIME_DATA* grd_s_f_6_evw_anime[];
+extern EVW_ANIME_DATA grd_s_f_6_evw_anime[];
 extern Gfx grd_s_f_7_model[];
 extern Gfx grd_s_f_7_modelT[];
 extern Gfx grd_s_f_8_model[];
@@ -662,10 +367,10 @@ extern Gfx grd_s_t_3_model[];
 extern Gfx grd_s_t_3_modelT[];
 extern Gfx grd_s_t_4_model[];
 extern Gfx grd_s_t_4_modelT[];
-extern EVW_ANIME_DATA* grd_s_t_4_evw_anime[];
+extern EVW_ANIME_DATA grd_s_t_4_evw_anime[];
 extern Gfx grd_s_t_5_model[];
 extern Gfx grd_s_t_5_modelT[];
-extern EVW_ANIME_DATA* grd_s_t_5_evw_anime[];
+extern EVW_ANIME_DATA grd_s_t_5_evw_anime[];
 extern Gfx grd_s_t_6_model[];
 extern Gfx grd_s_t_6_modelT[];
 extern Gfx grd_s_t_7_model[];
@@ -678,28 +383,28 @@ extern Gfx grd_s_t_10_model[];
 extern Gfx grd_s_t_10_modelT[];
 extern Gfx grd_s_t_r1_2_model[];
 extern Gfx grd_s_t_r1_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_t_r1_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_t_r1_2_evw_anime[];
 extern Gfx grd_s_t_r1_3_model[];
 extern Gfx grd_s_t_r1_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_t_r1_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_t_r1_3_evw_anime[];
 extern Gfx grd_s_t_r1_4_model[];
 extern Gfx grd_s_t_r1_4_modelT[];
-extern EVW_ANIME_DATA* grd_s_t_r1_4_evw_anime[];
+extern EVW_ANIME_DATA grd_s_t_r1_4_evw_anime[];
 extern Gfx grd_s_t_r1_5_model[];
 extern Gfx grd_s_t_r1_5_modelT[];
-extern EVW_ANIME_DATA* grd_s_t_r1_5_evw_anime[];
+extern EVW_ANIME_DATA grd_s_t_r1_5_evw_anime[];
 extern Gfx grd_s_r2_p_1_model[];
 extern Gfx grd_s_r2_p_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r2_p_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r2_p_1_evw_anime[];
 extern Gfx grd_s_r3_p_1_model[];
 extern Gfx grd_s_r3_p_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r3_p_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r3_p_1_evw_anime[];
 extern Gfx grd_s_r6_p_1_model[];
 extern Gfx grd_s_r6_p_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r6_p_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r6_p_1_evw_anime[];
 extern Gfx grd_s_r7_p_1_model[];
 extern Gfx grd_s_r7_p_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r7_p_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r7_p_1_evw_anime[];
 extern Gfx grd_s_t_st1_2_model[];
 extern Gfx grd_s_t_st1_2_modelT[];
 extern Gfx grd_s_t_st1_3_model[];
@@ -708,17 +413,17 @@ extern Gfx grd_post_office_model[];
 extern Gfx grd_post_office_modelT[];
 extern Gfx grd_s_r4_p_1_model[];
 extern Gfx grd_s_r4_p_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r4_p_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r4_p_1_evw_anime[];
 extern Gfx grd_s_r5_p_1_model[];
 extern Gfx grd_s_r5_p_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_r5_p_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r5_p_1_evw_anime[];
 extern Gfx rom_train_in_model[];
 extern Gfx rom_train_in_modelT[];
 extern Gfx grd_s_f_9_model[];
 extern Gfx grd_s_f_9_modelT[];
 extern Gfx grd_s_r1_3_model[];
 extern Gfx grd_s_r1_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_r1_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_r1_3_evw_anime[];
 extern Gfx grd_s_c1_3_model[];
 extern Gfx grd_s_c1_3_modelT[];
 extern Gfx grd_s_f_9_model[];
@@ -727,14 +432,14 @@ extern Gfx grd_yamishop_model[];
 extern Gfx grd_yamishop_modelT[];
 extern Gfx grd_player_select_model[];
 extern Gfx grd_player_select_modelT[];
-extern EVW_ANIME_DATA* grd_player_select_evw_anime[];
+extern EVW_ANIME_DATA grd_player_select_evw_anime[];
 extern Gfx grd_s_c1_s_4_model[];
 extern Gfx grd_s_c1_s_4_modelT[];
 extern Gfx grd_s_e1_1_model[];
 extern Gfx grd_s_e1_1_modelT[];
 extern Gfx grd_s_e1_r1_1_model[];
 extern Gfx grd_s_e1_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_e1_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_e1_r1_1_evw_anime[];
 extern Gfx grd_s_e2_1_model[];
 extern Gfx grd_s_e2_1_modelT[];
 extern Gfx grd_s_e2_c1_1_model[];
@@ -757,7 +462,7 @@ extern Gfx grd_s_f_ko_2_model[];
 extern Gfx grd_s_f_ko_2_modelT[];
 extern Gfx grd_s_f_ko_3_model[];
 extern Gfx grd_s_f_ko_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_f_ko_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_f_ko_3_evw_anime[];
 extern Gfx grd_s_f_mh_1_model[];
 extern Gfx grd_s_f_mh_1_modelT[];
 extern Gfx grd_s_f_mh_2_model[];
@@ -776,17 +481,17 @@ extern Gfx grd_s_t_po_2_model[];
 extern Gfx grd_s_t_po_2_modelT[];
 extern Gfx grd_s_t_po_3_model[];
 extern Gfx grd_s_t_po_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_t_po_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_t_po_3_evw_anime[];
 extern Gfx grd_s_t_sh_1_model[];
 extern Gfx grd_s_t_sh_1_modelT[];
 extern Gfx grd_s_t_sh_2_model[];
 extern Gfx grd_s_t_sh_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_t_sh_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_t_sh_2_evw_anime[];
 extern Gfx grd_s_t_sh_3_model[];
 extern Gfx grd_s_t_sh_3_modelT[];
 extern Gfx rom_uranai_model[];
 extern Gfx rom_uranai_modelT[];
-extern EVW_ANIME_DATA* rom_uranai_evw_anime[];
+extern EVW_ANIME_DATA rom_uranai_evw_anime[];
 extern Gfx rom_shop4_1_model[];
 extern Gfx rom_shop4_1_modelT[];
 extern Gfx grd_s_hole_test_model[];
@@ -795,7 +500,7 @@ extern Gfx grd_s_m_1_model[];
 extern Gfx grd_s_m_1_modelT[];
 extern Gfx grd_s_m_r1_1_model[];
 extern Gfx grd_s_m_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_r1_1_evw_anime[];
 extern Gfx grd_s_e2_m_1_model[];
 extern Gfx grd_s_e2_m_1_modelT[];
 extern Gfx grd_s_e3_m_1_model[];
@@ -804,25 +509,25 @@ extern Gfx rom_shop4_fuku_model[];
 extern Gfx rom_shop4_fuku_modelT[];
 extern Gfx grd_s_m_r1_2_model[];
 extern Gfx grd_s_m_r1_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_r1_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_r1_2_evw_anime[];
 extern Gfx grd_s_m_r1_3_model[];
 extern Gfx grd_s_m_r1_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_r1_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_r1_3_evw_anime[];
 extern Gfx grd_s_m_r1_4_model[];
 extern Gfx grd_s_m_r1_4_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_r1_4_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_r1_4_evw_anime[];
 extern Gfx grd_s_m_r1_5_model[];
 extern Gfx grd_s_m_r1_5_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_r1_5_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_r1_5_evw_anime[];
 extern Gfx grd_s_m_r1_b_1_model[];
 extern Gfx grd_s_m_r1_b_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_r1_b_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_r1_b_1_evw_anime[];
 extern Gfx grd_s_m_r1_b_2_model[];
 extern Gfx grd_s_m_r1_b_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_r1_b_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_r1_b_2_evw_anime[];
 extern Gfx grd_s_m_r1_b_3_model[];
 extern Gfx grd_s_m_r1_b_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_r1_b_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_r1_b_3_evw_anime[];
 extern Gfx grd_s_m_2_model[];
 extern Gfx grd_s_m_2_modelT[];
 extern Gfx grd_s_m_3_model[];
@@ -847,7 +552,7 @@ extern Gfx grd_s_c7_s_2_model[];
 extern Gfx grd_s_c7_s_3_model[];
 extern Gfx grd_s_c7_r3_2_model[];
 extern Gfx grd_s_c7_r3_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_c7_r3_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_c7_r3_2_evw_anime[];
 extern Gfx rom_museum1_model[];
 extern Gfx rom_museum1_modelT[];
 extern Gfx rom_museum2_model[];
@@ -866,25 +571,25 @@ extern Gfx grd_s_f_mu_2_model[];
 extern Gfx grd_s_f_mu_2_modelT[];
 extern Gfx grd_s_f_mu_3_model[];
 extern Gfx grd_s_f_mu_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_f_mu_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_f_mu_3_evw_anime[];
 extern Gfx grd_s_m_ta_1_model[];
 extern Gfx grd_s_m_ta_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_ta_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_ta_1_evw_anime[];
 extern Gfx grd_s_m_ta_2_model[];
 extern Gfx grd_s_m_ta_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_ta_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_ta_2_evw_anime[];
 extern Gfx grd_s_m_ta_3_model[];
 extern Gfx grd_s_m_ta_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_ta_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_ta_3_evw_anime[];
 extern Gfx grd_s_m_wf_1_model[];
 extern Gfx grd_s_m_wf_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_wf_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_wf_1_evw_anime[];
 extern Gfx grd_s_m_wf_2_model[];
 extern Gfx grd_s_m_wf_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_wf_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_wf_2_evw_anime[];
 extern Gfx grd_s_m_wf_3_model[];
 extern Gfx grd_s_m_wf_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_m_wf_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_m_wf_3_evw_anime[];
 extern Gfx grd_s_ir_1_model[];
 extern Gfx grd_s_ir_1_modelT[];
 extern Gfx grd_s_il_1_model[];
@@ -895,85 +600,85 @@ extern Gfx grd_s_il_2_model[];
 extern Gfx grd_s_il_2_modelT[];
 extern Gfx grd_s_o_1_model[];
 extern Gfx grd_s_o_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_1_evw_anime[];
 extern Gfx grd_s_o_2_model[];
 extern Gfx grd_s_o_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_2_evw_anime[];
 extern Gfx grd_s_o_3_model[];
 extern Gfx grd_s_o_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_3_evw_anime[];
 extern Gfx grd_s_o_4_model[];
 extern Gfx grd_s_o_4_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_4_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_4_evw_anime[];
 extern Gfx grd_s_e2_o_1_model[];
 extern Gfx grd_s_e2_o_1_modelT[];
 extern Gfx grd_s_e3_o_1_model[];
 extern Gfx grd_s_e3_o_1_modelT[];
 extern Gfx grd_s_o_5_model[];
 extern Gfx grd_s_o_5_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_5_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_5_evw_anime[];
 extern Gfx grd_s_o_6_model[];
 extern Gfx grd_s_o_6_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_6_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_6_evw_anime[];
 extern Gfx grd_s_o_7_model[];
 extern Gfx grd_s_o_7_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_7_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_7_evw_anime[];
 extern Gfx grd_s_o_8_model[];
 extern Gfx grd_s_o_8_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_8_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_8_evw_anime[];
 extern Gfx grd_s_o_9_model[];
 extern Gfx grd_s_o_9_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_9_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_9_evw_anime[];
 extern Gfx grd_s_o_10_model[];
 extern Gfx grd_s_o_10_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_10_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_10_evw_anime[];
 extern Gfx grd_s_o_i_1_model[];
 extern Gfx grd_s_o_i_1_modelT[];
 extern Gfx grd_s_o_i_2_model[];
 extern Gfx grd_s_o_i_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_i_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_i_2_evw_anime[];
 extern Gfx grd_s_o_r1_1_model[];
 extern Gfx grd_s_o_r1_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_r1_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_r1_1_evw_anime[];
 extern Gfx grd_s_o_r1_2_model[];
 extern Gfx grd_s_o_r1_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_r1_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_r1_2_evw_anime[];
 extern Gfx grd_s_o_r1_3_model[];
 extern Gfx grd_s_o_r1_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_r1_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_r1_3_evw_anime[];
 extern Gfx grd_s_o_r1_4_model[];
 extern Gfx grd_s_o_r1_4_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_r1_4_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_r1_4_evw_anime[];
 extern Gfx grd_s_o_r1_5_model[];
 extern Gfx grd_s_o_r1_5_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_r1_5_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_r1_5_evw_anime[];
 extern Gfx grd_s_o_r1_b_1_model[];
 extern Gfx grd_s_o_r1_b_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_r1_b_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_r1_b_1_evw_anime[];
 extern Gfx grd_s_o_r1_b_2_model[];
 extern Gfx grd_s_o_r1_b_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_r1_b_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_r1_b_2_evw_anime[];
 extern Gfx grd_s_o_r1_b_3_model[];
 extern Gfx grd_s_o_r1_b_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_r1_b_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_r1_b_3_evw_anime[];
 extern Gfx grd_s_o_ta_1_model[];
 extern Gfx grd_s_o_ta_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_ta_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_ta_1_evw_anime[];
 extern Gfx grd_s_o_ta_2_model[];
 extern Gfx grd_s_o_ta_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_ta_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_ta_2_evw_anime[];
 extern Gfx grd_s_o_ta_3_model[];
 extern Gfx grd_s_o_ta_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_ta_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_ta_3_evw_anime[];
 extern Gfx grd_s_o_wf_1_model[];
 extern Gfx grd_s_o_wf_1_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_wf_1_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_wf_1_evw_anime[];
 extern Gfx grd_s_o_wf_2_model[];
 extern Gfx grd_s_o_wf_2_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_wf_2_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_wf_2_evw_anime[];
 extern Gfx grd_s_o_wf_3_model[];
 extern Gfx grd_s_o_wf_3_modelT[];
-extern EVW_ANIME_DATA* grd_s_o_wf_3_evw_anime[];
+extern EVW_ANIME_DATA grd_s_o_wf_3_evw_anime[];
 extern Gfx grd_s_ir_2_model[];
 extern Gfx grd_s_ir_2_modelT[];
 extern Gfx grd_s_il_2_model[];
@@ -7096,7 +6801,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_GRD_S_F_9,
+        BG_TYPE_GRD_S_F_9_1,
         grd_s_f_9_model,
         grd_s_f_9_modelT,
         NULL,
@@ -7133,7 +6838,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_GRD_S_R1_3,
+        BG_TYPE_GRD_S_R1_3_1,
         grd_s_r1_3_model,
         grd_s_r1_3_modelT,
         grd_s_r1_3_evw_anime,
@@ -7170,7 +6875,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_GRD_S_C1_3,
+        BG_TYPE_GRD_S_C1_3_1,
         grd_s_c1_3_model,
         grd_s_c1_3_modelT,
         NULL,
@@ -7207,7 +6912,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_GRD_S_F_9,
+        BG_TYPE_GRD_S_F_9_2,
         grd_s_f_9_model,
         grd_s_f_9_modelT,
         NULL,
@@ -11906,3 +11611,5 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
 };
+
+extern int data_bgd_number = ARRAY_COUNT(data_bgd);

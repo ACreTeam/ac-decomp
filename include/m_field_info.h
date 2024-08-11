@@ -6,6 +6,7 @@
 #include "m_lib.h"
 #include "m_collision_bg.h"
 #include "m_field_make.h"
+#include "m_bg_type.h"
 
 #ifdef __cplusplus
 extern "C" {
