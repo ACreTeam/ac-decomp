@@ -10,6 +10,7 @@ import os
 import pickle
 import re
 import subprocess
+import yaml
 from io import StringIO
 
 from sys import executable as PYTHON, platform
@@ -102,6 +103,7 @@ n.variable("vtxdis", c.VTXDIS)
 n.variable("pal16dis", c.PAL16DIS)
 n.variable("arctool", c.ARC_TOOL)
 n.variable("sjiswrap", c.SJISWRAP)
+n.variable("batchassetrip", c.BATCHASSETRIP)
 n.newline()
 
 ##############
@@ -182,6 +184,12 @@ n.rule(
     "assetinc",
     command = "$assetinc $in $out",
     description = "Asset include generation $out"
+)
+
+n.rule(
+    "batchassetrip",
+    command = "$batchassetrip $in $asset_yml",
+    description="Batch asset rip $asset_yml"
 )
 
 n.rule(
@@ -498,16 +506,29 @@ class AssetInclude(GeneratedInclude):
             return
 
         # Build
+        binary = None
+        asset_entries = {}
+        expected_files = []
         for inc in includes:
-            n.build(
-                inc.asset_path,
-                rule="assetrip",
-                inputs=inc.asset.binary,
-                variables={
-                    "addrs" : f"{inc.asset.start:x} {inc.asset.end:x}"
-                }
-            )
+            if binary == None:
+                binary = inc.asset.binary
+            asset_entries[inc.asset_path] = [inc.asset.start, inc.asset.end]
+            expected_files.append(inc.asset_path)
 
+        with open(f"{c.BUILDDIR}/{binary[7:10]}_assetrip.yml", 'w') as asset_yml:
+            yaml.dump(asset_entries, asset_yml)
+        
+        n.build(
+            outputs=expected_files,
+            rule = "batchassetrip",
+            inputs = binary,
+            variables = {
+                "asset_yml": f"{c.BUILDDIR}/{binary[7:10]}_assetrip.yml"
+            }
+        )
+
+        # Include
+        for inc in includes:
             if inc.asset.convtype == "vtx":
                 n.build(
                     inc.path,
