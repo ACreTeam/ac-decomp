@@ -362,7 +362,7 @@ extern void mNpc_CopyAnimalMemory(Anmmem_c* dst, Anmmem_c* src) {
 */
 
 extern void mNpc_AddFriendship(Anmmem_c* memory, int amount) {
-    int friendship = memory->friendship + amount;
+    int friendship;
 
 /* @BUG - devs checked for memory being NULL *after* deferencing it */
 #ifdef BUGFIXES
@@ -370,6 +370,8 @@ extern void mNpc_AddFriendship(Anmmem_c* memory, int amount) {
         return;
     }
 #endif
+
+    friendship = memory->friendship + amount;
 
 
 #ifndef BUGFIXES
