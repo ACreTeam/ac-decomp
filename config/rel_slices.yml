@@ -726,6 +726,10 @@ ac_aprilfool_control.c:
 ac_groundhog_control.c:
     .text: [0x805155C8, 0x80515C48]
     .data: [0x8069FD88, 0x8069FDD0]
+ac_ev_broker.c:
+    .text: [0x80519D4C, 0x8051A880]
+    .rodata: [0x80649160, 0x80649178]
+    .data: [0x806A0128, 0x806A01B0]
 ac_ev_castaway.c:
     .text: [0x8051CAC4, 0x8051CDCC]
     .rodata: [0x806491B0, 0x806491B8]

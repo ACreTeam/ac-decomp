@@ -21,6 +21,7 @@ extern int mPlib_check_able_change_camera_normal_index();
 extern void mPlib_request_main_refuse_type1(GAME* game);
 extern void mPlib_request_main_wait_type3(GAME* game);
 extern void mPlib_Set_able_force_speak_label(ACTOR* actor);
+extern void mPlib_Reset_able_force_speak_label(void);
 extern int mPlib_request_main_demo_walk_type1(GAME* game, f32 goal_x, f32 goal_z, f32 speed, int flag);
 extern void mPlib_Set_goal_player_demo_walk(f32 goal_x, f32 goal_z, f32 speed);
 extern void mPlib_Set_able_hand_all_item_in_demo(s8 enable);

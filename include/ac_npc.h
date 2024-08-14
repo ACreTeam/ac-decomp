@@ -252,15 +252,16 @@ typedef void (*aNPC_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*, int);
 #define aNPC_THINK_INTERRUPT_OBSTANCE (1 << 2)
 #define aNPC_THINK_INTERRUPT_ENTRANCE (1 << 3)
 
+/* sizeof(aNPC_think_info_c) == 0x18 */
 typedef struct npc_think_info_s {
-    int idx;
-    u8 end_flag;
-    u8 force_call_flag;
-    u16 force_call_timer;
-    int force_call_msg_no;
-    u8 force_call_camera_type;
-    aNPC_THINK_PROC think_proc;
-    u32 interrupt_flags;
+    /* 0x00 */ int idx;
+    /* 0x04 */ u8 end_flag;
+    /* 0x05 */ u8 force_call_flag;
+    /* 0x06 */ u16 force_call_timer;
+    /* 0x08 */ int force_call_msg_no;
+    /* 0x0C */ u8 force_call_camera_type;
+    /* 0x10 */ aNPC_THINK_PROC think_proc;
+    /* 0x14 */ u32 interrupt_flags;
 } aNPC_think_info_c;
 
 typedef void (*aNPC_SCHEDULE_PROC)(NPC_ACTOR*, GAME_PLAY*, int);
