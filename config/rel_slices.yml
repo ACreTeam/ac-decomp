@@ -842,6 +842,10 @@ ac_br_shop.c:
     .text: [0x805A856C, 0x805A9474]
     .rodata: [0x8064A630, 0x8064A660]
     .data: [0x806C4560, 0x806C4688]
+ac_bridge_a.c:
+    .text: [0x805A9474, 0x805A9CA0]
+    .rodata: [0x8064A660, 0x8064A6D0]
+    .data: [0x806C4688, 0x806C4730]
 ac_buggy.c:
     .text: [0x805A9CA0, 0x805AAB3C]
     .rodata: [0x8064A6D0, 0x8064A708]
