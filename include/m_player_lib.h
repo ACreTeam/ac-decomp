@@ -102,6 +102,8 @@ extern int mPlib_request_main_demo_standing_train_type1(GAME* game);
 extern void mPlib_Set_unable_wade(int unable);
 extern int mPlib_request_main_demo_getoff_train_type1(GAME* game);
 extern int mPlib_check_player_actor_main_index_OutDoorMove2(GAME* game);
+extern int mPlib_Check_SetOrderSubmenu(void);
+extern void mPlib_Clear_change_data_from_submenu(void);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 

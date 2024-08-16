@@ -48,6 +48,14 @@ enum {
 };
 
 enum {
+    mPlayer_BGM_VOLUME_MODE_NORMAL,
+    mPlayer_BGM_VOLUME_MODE_COLLECT_INSECTS,
+    mPlayer_BGM_VOLUME_MODE_FISHING,
+
+    mPlayer_BGM_VOLUME_MODE_NUM
+};
+
+enum {
     mPlayer_INDEX_DMA,
     mPlayer_INDEX_INTRO,
     mPlayer_INDEX_REFUSE,
@@ -168,8 +176,12 @@ enum {
     mPlayer_INDEX_DEMO_GETOFF_BOAT,
     mPlayer_INDEX_DEMO_GET_GOLDEN_ITEM,
     mPlayer_INDEX_DEMO_GET_GOLDEN_ITEM2,
-    mPlayer_INDEX_DEMO_GET_GOLDEN_AXE_WAIT
+    mPlayer_INDEX_DEMO_GET_GOLDEN_AXE_WAIT,
+
+    mPlayer_INDEX_NUM
 };
+
+#define mPlayer_MAIN_INDEX_VALID(idx) ((idx) >= 0 && (idx) < mPlayer_INDEX_NUM)
 
 enum {
     mPlayer_ANIM_WAIT1,
@@ -520,6 +532,13 @@ enum {
     mPlayer_BED_ACTION_OUT,
 
     mPlayer_BED_ACTION_NUM
+};
+
+enum {
+    mPlayer_DRAW_TYPE_NONE,
+    mPlayer_DRAW_TYPE_NORMAL,
+
+    mPlayer_DRAW_TYPE_NUM
 };
 
 typedef struct player_request_return_demo_s {
@@ -1258,7 +1277,27 @@ struct player_actor_s {
     /* 0x0D14 */ int settled_requested_main_index_priority;
     /* 0x0D18 */ mPlayer_main_data main_data;                         // TODO: Union of many types...
     /* 0x0D60 */ mPlayer_request_main_data requested_main_index_data; // Union of many types...
-    /* 0x0DA8 */ u8 _0DA8[0x1010 - 0x0DA8];                           /* TODO: finish */
+    /* 0x0DA8 */ u8 _0DA8[0x0DB4 - 0x0DA8];                           /* TODO: finish */
+    /* 0x0DB4 */ int animation0_idx;
+    /* 0x0DB8 */ int animation1_idx;
+    /* 0x0DBC */ int _0DBC;
+    /* 0x0DC0 */ int _0DC0[9];
+    /* 0x0DE4 */ int item_shape_type[2];
+    /* 0x0DEC */ int item_animation_idx[2];
+    /* 0x0DF4 */ int item_bank_idx;
+    /* 0x0DF8 */ f32 item_scale;
+    /* 0x0DFC */ xyz_t shape_angle_delta;
+    /* 0x0E08 */ xyz_t world_angle_delta;
+    /* 0x0E14 */ s_xyz old_shape_angle;
+    /* 0x0E1A */ s_xyz old_world_angle;
+    /* 0x0E20 */ xyz_t shadow_pos;
+    /* 0x0E2C */ xyz_t axe_pos;
+    /* 0x0E38 */ xyz_t net_pos;
+    /* 0x0E44 */ xyz_t net_top_col_pos;
+    /* 0x0E50 */ xyz_t net_bot_col_pos;
+    /* 0x0E5C */ s_xyz net_angle;
+    /* 0x0E64 */ ACTOR* umbrella_actor;
+    /* 0x0E68 */ u8 _0E68[0x1010 - 0x0E68]; // TODO
     /* 0x1010 */ ClObjPipe_c col_pipe;
     /* 0x102C */ xyz_t head_pos;
     /* 0x1038 */ xyz_t feel_pos;
@@ -1267,7 +1306,16 @@ struct player_actor_s {
     /* 0x105C */ xyz_t left_hand_pos;
     /* 0x1068 */ MtxF right_hand_mtx;
     /* 0x10A8 */ MtxF left_hand_mtx;
-    /* 0x10E8 */ u8 _10E8[0x11FC - 0x10E8]; // TODO
+    /* 0x10E8 */ u8 _10E8[0x1174 - 0x10E8]; // TODO
+    /* 0x1174 */ ACTOR* balloon_actor;
+    /* 0x1178 */ u8 _1178[0x11B4 - 0x1178]; // TODO
+    /* 0x11B4 */ f32 shake_tree_timer[3];
+    /* 0x11C0 */ int shake_tree_ut_x[3];
+    /* 0x11CC */ int shake_tree_ut_z[3];
+    /* 0x11D8 */ int shake_tree_little[3];
+    /* 0x11E4 */ u8 _11E4[0x11F8 - 0x11E4]; // TODO
+    /* 0x11F8 */ s8 _11F8;
+    /* 0x11F9 */ s8 bgm_volume_mode;
     /* 0x11FC */ int crash_snowball_for_wade;
     /* 0x1200 */ xyz_t snowball_dist;
     /* 0x120C */ int wade_request_flag;
@@ -1280,7 +1328,7 @@ struct player_actor_s {
     /* 0x1220 */ void* angle_force_speak_label;
     /* 0x1224 */ int player_sunburn_rankup;
     /* 0x1228 */ int player_sunburn_rankdown;
-    /* 0x122C */ u8 radio_exercise_command_ring_buffer[8];
+    /* 0x122C */ s8 radio_exercise_command_ring_buffer[8];
     /* 0x1234 */ s8 radio_exercise_ring_buffer_cmd_num;
     /* 0x1238 */ int radio_exercise_command_ring_buffer_index;
     /* 0x123C */ int radio_exercise_continue_cmd_idx;
@@ -1297,7 +1345,7 @@ struct player_actor_s {
     /* 0x1270 */ int (*request_main_invade_all_proc)(GAME*, int);
     /* 0x1274 */ int (*request_main_refuse_all_proc)(GAME*, int);
     /* 0x1278 */ int (*request_main_return_demo_all_proc)(GAME*, int, f32, int);
-    /* 0x127C */ int (*request_main_wait_all_proc)(GAME*, f32, int, int);
+    /* 0x127C */ int (*request_main_wait_all_proc)(GAME*, f32, f32, int, int);
     /* 0x1280 */ int (*request_main_talk_all_proc)(GAME*, ACTOR*, int, f32, int, int);
     /* 0x1284 */ int (*request_main_hold_all_proc)(GAME*, int, int, const xyz_t*, f32, int, int);
     /* 0x1288 */ int (*request_main_recieve_wait_all_proc)(GAME*, ACTOR*, int, int, mActor_name_t, int, int);
@@ -1372,10 +1420,10 @@ struct player_actor_s {
     /* 0x13A4 */ s8 update_scene_bg_mode;
 };
 
-void Player_actor_ct(ACTOR*, GAME*);
-void Player_actor_dt(ACTOR*, GAME*);
-void Player_actor_move(ACTOR*, GAME*);
-void Player_actor_draw(ACTOR*, GAME*);
+void Player_actor_ct(PLAYER_ACTOR*, GAME*);
+void Player_actor_dt(PLAYER_ACTOR*, GAME*);
+void Player_actor_move(PLAYER_ACTOR*, GAME*);
+void Player_actor_draw(PLAYER_ACTOR*, GAME*);
 
 #ifdef __cplusplus
 }
