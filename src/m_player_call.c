@@ -4,12 +4,10 @@
 #include "m_name_table.h"
 #include "m_play.h"
 
-typedef void (*PLAYER_ACTOR_PROC)(PLAYER_ACTOR*, GAME*);
-
-PLAYER_ACTOR_PROC Player_actor_ct_func;
-PLAYER_ACTOR_PROC Player_actor_dt_func;
-PLAYER_ACTOR_PROC Player_actor_move_func;
-PLAYER_ACTOR_PROC Player_actor_draw_func;
+static mActor_proc Player_actor_ct_func;
+static mActor_proc Player_actor_dt_func;
+static mActor_proc Player_actor_move_func;
+static mActor_proc Player_actor_draw_func;
 
 void Player_actor_ct_call(ACTOR* actor, GAME* game);
 void Player_actor_dt_call(ACTOR* actor, GAME* game);
@@ -45,26 +43,26 @@ static void Player_actor_ct_call(ACTOR* actor, GAME* game) {
 
     load_player(&play->submenu);
     initfunc(play);
-    Player_actor_ct_func((PLAYER_ACTOR*)actor, game);
+    Player_actor_ct_func(actor, game);
 }
 
 static void Player_actor_dt_call(ACTOR* actor, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
     load_player(&play->submenu);
-    Player_actor_dt_func((PLAYER_ACTOR*)actor, game);
+    Player_actor_dt_func(actor, game);
 }
 
 static void Player_actor_move_call(ACTOR* actor, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
     load_player(&play->submenu);
-    Player_actor_move_func((PLAYER_ACTOR*)actor, game);
+    Player_actor_move_func(actor, game);
 }
 
 static void Player_actor_draw_call(ACTOR* actor, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
     load_player(&play->submenu);
-    Player_actor_draw_func((PLAYER_ACTOR*)actor, game);
+    Player_actor_draw_func(actor, game);
 }
