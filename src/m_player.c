@@ -4,6 +4,9 @@
 #include "m_common_data.h"
 #include "m_actor_shadow.h"
 #include "m_bgm.h"
+#include "sys_matrix.h"
+#include "ac_tools.h"
+#include "m_rcp.h"
 
 /* Common */
 #include "../src/m_player_controller.c_inc"
@@ -152,11 +155,11 @@
 
 /* TODO: looks like all the c_inc files are included before the player funcs in this file based on rodata ordering */
 
-static void Player_actor_ct_forCorect(PLAYER_ACTOR* player, GAME* game);
-static void Player_actor_set_eye_pattern(PLAYER_ACTOR* player, int idx);
-static void Player_actor_set_mouth_pattern(PLAYER_ACTOR* player, int idx);
-static void Player_actor_Set_old_sound_frame_counter(PLAYER_ACTOR* player);
-static void Player_actor_change_proc_index(PLAYER_ACTOR* player, GAME* game);
+static void Player_actor_ct_forCorect(ACTOR* actorx, GAME* game);
+static void Player_actor_set_eye_pattern(ACTOR* actorx, int idx);
+static void Player_actor_set_mouth_pattern(ACTOR* actorx, int idx);
+static void Player_actor_Set_old_sound_frame_counter(ACTOR* actorx);
+static void Player_actor_change_proc_index(ACTOR* actorx, GAME* game);
 
 static int Player_actor_request_main_invade_all(GAME*, int);
 static int Player_actor_request_main_refuse(GAME*, int);
@@ -234,7 +237,8 @@ static int Player_actor_request_main_walk_all(GAME*, xyz_t*, f32, int, int);
 static int Player_actor_request_main_run_all(GAME*, f32, int, int);
 static int Player_actor_request_main_dash_all(GAME*, f32, int, int);
 
-static void Player_actor_init_value(PLAYER_ACTOR* player, GAME* game) {
+static void Player_actor_init_value(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     GAME_PLAY* play = (GAME_PLAY*)game;
     int* shake_tree_table_ut_x_p;
     int* shake_tree_table_ut_z_p;
@@ -246,10 +250,9 @@ static void Player_actor_init_value(PLAYER_ACTOR* player, GAME* game) {
     player->actor_class.scale.x = 0.01f;
     player->actor_class.scale.y = 0.01f;
     player->actor_class.scale.z = 0.01f;
-    player->balloon_actor =
-        Actor_info_make_actor(&play->actor_info, game, mAc_PROFILE_BALLOON, player->actor_class.world.position.x,
-                              player->actor_class.world.position.y, player->actor_class.world.position.z, 0, 0, 0, -1,
-                              -1, -1, EMPTY_NO, -1, -1, -1);
+    player->balloon_actor = Actor_info_make_actor(&play->actor_info, game, mAc_PROFILE_BALLOON,
+                                                  actorx->world.position.x, actorx->world.position.y,
+                                                  actorx->world.position.z, 0, 0, 0, -1, -1, -1, EMPTY_NO, -1, -1, -1);
     player->animation0_idx = -1;
     player->animation1_idx = -1;
     player->_0DBC = -1;
@@ -258,9 +261,9 @@ static void Player_actor_init_value(PLAYER_ACTOR* player, GAME* game) {
     player->item_shape_type[2] = -1;
     player->item_shape_type[3] = -1;
 
-    Player_actor_ct_forCorect(player, game);
-    Player_actor_set_eye_pattern(player, 0);
-    Player_actor_set_mouth_pattern(player, 0);
+    Player_actor_ct_forCorect(actorx, game);
+    Player_actor_set_eye_pattern(actorx, 0);
+    Player_actor_set_mouth_pattern(actorx, 0);
 
     player->request_main_invade_all_proc = &Player_actor_request_main_invade_all;
     player->request_main_refuse_all_proc = &Player_actor_request_main_refuse;
@@ -346,38 +349,40 @@ static void Player_actor_init_value(PLAYER_ACTOR* player, GAME* game) {
         *radio_exercise_command_ring_buffer_p++ = -1;
     }
 
-    Player_actor_Set_old_sound_frame_counter(player);
+    Player_actor_Set_old_sound_frame_counter(actorx);
 }
 
-static void Player_actor_ct(PLAYER_ACTOR* player, GAME* game) {
+extern void Player_actor_ct(ACTOR* actorx, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
     if (mEv_CheckTitleDemo() > 0) {
-        player->actor_class.status_data.weight = 255;
+        actorx->status_data.weight = 255;
     } else {
-        player->actor_class.status_data.weight = 50;
+        actorx->status_data.weight = 50;
     }
 
-    Player_actor_init_value(player, game);
+    Player_actor_init_value(actorx, game);
     Common_Set(player_actor_exists, TRUE);
-    Player_actor_Check_player_sunburn_for_ct(player); //
+    Player_actor_Check_player_sunburn_for_ct(actorx); //
     mPlib_change_player_face(game);                   //
-    Player_actor_ct_other_func1(player, game);        //
-    Player_actor_set_eye_PositionAndAngle(player);    //
+    Player_actor_ct_other_func1(actorx, game);        //
+    Player_actor_set_eye_PositionAndAngle(actorx);    //
     Camera2_request_main_normal(play, 1, 1);
-    Shape_Info_init(&player->actor_class, 0.0f, &mAc_ActorShadowCircle, 18.0f, 18.0f);
-    player->actor_class.shape_info.ofs_y = 200.0f;
+    Shape_Info_init(actorx, 0.0f, &mAc_ActorShadowCircle, 18.0f, 18.0f);
+    actorx->shape_info.ofs_y = 200.0f;
     mPlib_Clear_change_data_from_submenu();       //
     Player_actor_request_main_dma(game, 41);      //
-    Player_actor_change_proc_index(player, game); //
+    Player_actor_change_proc_index(actorx, game); //
 }
 
-static void Player_actor_dt(PLAYER_ACTOR* player, GAME* game) {
-    Player_actor_dt_forCorect(player, game); //
+extern void Player_actor_dt(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    Player_actor_dt_forCorect(actorx, game); //
     Common_Set(player_actor_exists, FALSE);
     mPlib_cancel_player_warp_forEvent();              //
-    Player_actor_Reset_bee_chase(player);             //
-    Player_actor_Check_player_sunburn_for_dt(player); //
+    Player_actor_Reset_bee_chase(actorx);             //
+    Player_actor_Check_player_sunburn_for_dt(actorx); //
 
     if (mEv_CheckTitleDemo() <= 0 && player->bgm_volume_mode != mPlayer_BGM_VOLUME_MODE_NORMAL) {
         switch (player->bgm_volume_mode) {
@@ -391,17 +396,17 @@ static void Player_actor_dt(PLAYER_ACTOR* player, GAME* game) {
     }
 }
 
-typedef void (*mPlayer_REQUEST_MAIN_CHANGE_FROM_SUBMENU_PROC)(PLAYER_ACTOR*, GAME*);
+typedef void (*mPlayer_REQUEST_MAIN_CHANGE_FROM_SUBMENU_PROC)(ACTOR*, GAME*);
 
-static void Player_actor_request_main_wait_from_submenu(PLAYER_ACTOR*, GAME*);
-static void Player_actor_request_main_putin_scoop_from_submenu(PLAYER_ACTOR*, GAME*);
-static void Player_actor_request_main_give_from_submenu(PLAYER_ACTOR*, GAME*);
-static void Player_actor_request_main_demo_wait_from_submenu(PLAYER_ACTOR*, GAME*);
-static void Player_actor_request_main_release_creature_from_submenu(PLAYER_ACTOR*, GAME*);
-static void Player_actor_request_main_mail_land_from_submenu(PLAYER_ACTOR*, GAME*);
-static void Player_actor_request_main_demo_get_golden_item_from_submenu(PLAYER_ACTOR*, GAME*);
+static void Player_actor_request_main_wait_from_submenu(ACTOR*, GAME*);
+static void Player_actor_request_main_putin_scoop_from_submenu(ACTOR*, GAME*);
+static void Player_actor_request_main_give_from_submenu(ACTOR*, GAME*);
+static void Player_actor_request_main_demo_wait_from_submenu(ACTOR*, GAME*);
+static void Player_actor_request_main_release_creature_from_submenu(ACTOR*, GAME*);
+static void Player_actor_request_main_mail_land_from_submenu(ACTOR*, GAME*);
+static void Player_actor_request_main_demo_get_golden_item_from_submenu(ACTOR*, GAME*);
 
-static void Player_actor_request_main_change_from_submenu(PLAYER_ACTOR* player, GAME* game) {
+static void Player_actor_request_main_change_from_submenu(ACTOR* actorx, GAME* game) {
     static const mPlayer_REQUEST_MAIN_CHANGE_FROM_SUBMENU_PROC proc[] = {
         NULL,
         NULL,
@@ -534,7 +539,7 @@ static void Player_actor_request_main_change_from_submenu(PLAYER_ACTOR* player, 
             return;
         }
 
-        (*proc[idx])(player, game);
+        (*proc[idx])(actorx, game);
     }
 
     mPlib_Clear_change_data_from_submenu();
@@ -559,70 +564,70 @@ static void Player_actor_request_change_item(GAME* game) {
     }
 }
 
-typedef void (*mPlayer_SETTLE_MAIN_PROC)(PLAYER_ACTOR*, GAME*);
+typedef void (*mPlayer_SETTLE_MAIN_PROC)(ACTOR*, GAME*);
 
-static void Player_actor_settle_main_Walk(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Turn_dash(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Wade(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Outdoor(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Push(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Pull(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Open_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Wait_open_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Close_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Lie_bed(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Roll_bed(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Standup_bed(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Pickup_jump(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Pickup_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Pickup_exchange(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Sitdown(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Standup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Reflect_axe(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Broken_axe(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Slip_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Swing_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Notice_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Collect_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Fly_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Notice_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Reflect_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Get_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Talk(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Recieve_putaway(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Give_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Takeout_item(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Demo_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Demo_geton_train(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Demo_getoff_train(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Demo_wade(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Release_creature(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Wash_car(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Rotate_octagon(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Throw_money(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Pray(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Mail_jump(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Ready_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Fall_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Struggle_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Climbup_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Notice_bee(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Shock(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Knock_door(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Wade_snowball(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Complete_payment(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Fail_emu(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Notice_mosquito(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Switch_on_lighthouse(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Radio_exercise(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Demo_geton_boat(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Demo_geton_boat_wade(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Demo_getoff_boat_standup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Demo_getoff_boat(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Demo_get_golden_item(PLAYER_ACTOR*, GAME*);
-static void Player_actor_settle_main_Demo_get_golden_item2(PLAYER_ACTOR*, GAME*);
+static void Player_actor_settle_main_Walk(ACTOR*, GAME*);
+static void Player_actor_settle_main_Turn_dash(ACTOR*, GAME*);
+static void Player_actor_settle_main_Wade(ACTOR*, GAME*);
+static void Player_actor_settle_main_Outdoor(ACTOR*, GAME*);
+static void Player_actor_settle_main_Push(ACTOR*, GAME*);
+static void Player_actor_settle_main_Pull(ACTOR*, GAME*);
+static void Player_actor_settle_main_Open_furniture(ACTOR*, GAME*);
+static void Player_actor_settle_main_Wait_open_furniture(ACTOR*, GAME*);
+static void Player_actor_settle_main_Close_furniture(ACTOR*, GAME*);
+static void Player_actor_settle_main_Lie_bed(ACTOR*, GAME*);
+static void Player_actor_settle_main_Roll_bed(ACTOR*, GAME*);
+static void Player_actor_settle_main_Standup_bed(ACTOR*, GAME*);
+static void Player_actor_settle_main_Pickup_jump(ACTOR*, GAME*);
+static void Player_actor_settle_main_Pickup_furniture(ACTOR*, GAME*);
+static void Player_actor_settle_main_Pickup_exchange(ACTOR*, GAME*);
+static void Player_actor_settle_main_Sitdown(ACTOR*, GAME*);
+static void Player_actor_settle_main_Standup(ACTOR*, GAME*);
+static void Player_actor_settle_main_Reflect_axe(ACTOR*, GAME*);
+static void Player_actor_settle_main_Broken_axe(ACTOR*, GAME*);
+static void Player_actor_settle_main_Slip_net(ACTOR*, GAME*);
+static void Player_actor_settle_main_Swing_net(ACTOR*, GAME*);
+static void Player_actor_settle_main_Notice_net(ACTOR*, GAME*);
+static void Player_actor_settle_main_Collect_rod(ACTOR*, GAME*);
+static void Player_actor_settle_main_Fly_rod(ACTOR*, GAME*);
+static void Player_actor_settle_main_Notice_rod(ACTOR*, GAME*);
+static void Player_actor_settle_main_Reflect_scoop(ACTOR*, GAME*);
+static void Player_actor_settle_main_Get_scoop(ACTOR*, GAME*);
+static void Player_actor_settle_main_Talk(ACTOR*, GAME*);
+static void Player_actor_settle_main_Recieve_putaway(ACTOR*, GAME*);
+static void Player_actor_settle_main_Give_wait(ACTOR*, GAME*);
+static void Player_actor_settle_main_Takeout_item(ACTOR*, GAME*);
+static void Player_actor_settle_main_Demo_wait(ACTOR*, GAME*);
+static void Player_actor_settle_main_Demo_geton_train(ACTOR*, GAME*);
+static void Player_actor_settle_main_Demo_getoff_train(ACTOR*, GAME*);
+static void Player_actor_settle_main_Demo_wade(ACTOR*, GAME*);
+static void Player_actor_settle_main_Release_creature(ACTOR*, GAME*);
+static void Player_actor_settle_main_Wash_car(ACTOR*, GAME*);
+static void Player_actor_settle_main_Rotate_octagon(ACTOR*, GAME*);
+static void Player_actor_settle_main_Throw_money(ACTOR*, GAME*);
+static void Player_actor_settle_main_Pray(ACTOR*, GAME*);
+static void Player_actor_settle_main_Mail_jump(ACTOR*, GAME*);
+static void Player_actor_settle_main_Ready_pitfall(ACTOR*, GAME*);
+static void Player_actor_settle_main_Fall_pitfall(ACTOR*, GAME*);
+static void Player_actor_settle_main_Struggle_pitfall(ACTOR*, GAME*);
+static void Player_actor_settle_main_Climbup_pitfall(ACTOR*, GAME*);
+static void Player_actor_settle_main_Notice_bee(ACTOR*, GAME*);
+static void Player_actor_settle_main_Shock(ACTOR*, GAME*);
+static void Player_actor_settle_main_Knock_door(ACTOR*, GAME*);
+static void Player_actor_settle_main_Wade_snowball(ACTOR*, GAME*);
+static void Player_actor_settle_main_Complete_payment(ACTOR*, GAME*);
+static void Player_actor_settle_main_Fail_emu(ACTOR*, GAME*);
+static void Player_actor_settle_main_Notice_mosquito(ACTOR*, GAME*);
+static void Player_actor_settle_main_Switch_on_lighthouse(ACTOR*, GAME*);
+static void Player_actor_settle_main_Radio_exercise(ACTOR*, GAME*);
+static void Player_actor_settle_main_Demo_geton_boat(ACTOR*, GAME*);
+static void Player_actor_settle_main_Demo_geton_boat_wade(ACTOR*, GAME*);
+static void Player_actor_settle_main_Demo_getoff_boat_standup(ACTOR*, GAME*);
+static void Player_actor_settle_main_Demo_getoff_boat(ACTOR*, GAME*);
+static void Player_actor_settle_main_Demo_get_golden_item(ACTOR*, GAME*);
+static void Player_actor_settle_main_Demo_get_golden_item2(ACTOR*, GAME*);
 
-static void Player_actor_settle_main(PLAYER_ACTOR* player, GAME* game) {
+static void Player_actor_settle_main(ACTOR* actorx, GAME* game) {
     static const mPlayer_SETTLE_MAIN_PROC proc[] = {
         NULL,
         NULL,
@@ -747,142 +752,143 @@ static void Player_actor_settle_main(PLAYER_ACTOR* player, GAME* game) {
         NULL,
     };
 
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     int idx = player->now_main_index;
 
     if (mPlayer_MAIN_INDEX_VALID(idx) != FALSE) {
         if (proc[idx] != NULL) {
-            (*proc[idx])(player, game);
+            (*proc[idx])(actorx, game);
         }
 
-        Player_actor_settle_main_other_func2(player, game); //
+        Player_actor_settle_main_other_func2(actorx, game); //
     }
 }
 
-typedef void (*mPlayer_SETUP_MAIN_PROC)(PLAYER_ACTOR*, GAME*);
+typedef void (*mPlayer_SETUP_MAIN_PROC)(ACTOR*, GAME*);
 
-static void Player_actor_setup_main_Dma(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Intro(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Refuse(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Refuse_pickup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Return_demo(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Return_outdoor(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Return_outdoor2(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Walk(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Run(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Dash(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Tumble(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Tumble_getup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Turn_dash(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Fall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Wade(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Door(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Outdoor(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Invade(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Hold(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Push(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Pull(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Rotate_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Open_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Wait_open_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Close_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Lie_bed(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Wait_bed(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Roll_bed(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Standup_bed(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Pickup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Pickup_jump(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Pickup_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Pickup_exchange(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Sitdown(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Sitdown_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Standup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Swing_axe(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Air_axe(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Reflect_axe(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Broken_axe(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Slip_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Ready_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Ready_walk_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Swing_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Pull_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Stop_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Notice_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Putaway_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Ready_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Cast_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Air_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Relax_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Collect_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Vib_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Fly_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Notice_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Putaway_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Dig_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Fill_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Reflect_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Air_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Get_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Putaway_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Putin_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Talk(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Recieve_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Recieve_stretch(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Recieve(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Recieve_putaway(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Give(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Give_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Takeout_item(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Putin_item(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_walk(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_geton_train(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_geton_train_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_getoff_train(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_standing_train(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_wade(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Hide(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Groundhog(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Release_creature(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Wash_car(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Tired(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Rotate_octagon(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Throw_money(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Pray(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Shake_tree(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Mail_jump(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Mail_land(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Ready_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Fall_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Struggle_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Climbup_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Stung_bee(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Notice_bee(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Remove_grass(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Shock(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Knock_door(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Change_cloth(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Push_snowball(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Rotate_umbrella(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Wade_snowball(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Complete_payment(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Fail_emu(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Stung_mosquito(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Notice_mosquito(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Swing_fan(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Switch_on_lighthouse(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Radio_exercise(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_geton_boat(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_geton_boat_sitdown(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_geton_boat_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_geton_boat_wade(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_getoff_boat_standup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_getoff_boat(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_get_golden_item(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_get_golden_item2(PLAYER_ACTOR*, GAME*);
-static void Player_actor_setup_main_Demo_get_golden_axe_wait(PLAYER_ACTOR*, GAME*);
+static void Player_actor_setup_main_Dma(ACTOR*, GAME*);
+static void Player_actor_setup_main_Intro(ACTOR*, GAME*);
+static void Player_actor_setup_main_Refuse(ACTOR*, GAME*);
+static void Player_actor_setup_main_Refuse_pickup(ACTOR*, GAME*);
+static void Player_actor_setup_main_Return_demo(ACTOR*, GAME*);
+static void Player_actor_setup_main_Return_outdoor(ACTOR*, GAME*);
+static void Player_actor_setup_main_Return_outdoor2(ACTOR*, GAME*);
+static void Player_actor_setup_main_Wait(ACTOR*, GAME*);
+static void Player_actor_setup_main_Walk(ACTOR*, GAME*);
+static void Player_actor_setup_main_Run(ACTOR*, GAME*);
+static void Player_actor_setup_main_Dash(ACTOR*, GAME*);
+static void Player_actor_setup_main_Tumble(ACTOR*, GAME*);
+static void Player_actor_setup_main_Tumble_getup(ACTOR*, GAME*);
+static void Player_actor_setup_main_Turn_dash(ACTOR*, GAME*);
+static void Player_actor_setup_main_Fall(ACTOR*, GAME*);
+static void Player_actor_setup_main_Wade(ACTOR*, GAME*);
+static void Player_actor_setup_main_Door(ACTOR*, GAME*);
+static void Player_actor_setup_main_Outdoor(ACTOR*, GAME*);
+static void Player_actor_setup_main_Invade(ACTOR*, GAME*);
+static void Player_actor_setup_main_Hold(ACTOR*, GAME*);
+static void Player_actor_setup_main_Push(ACTOR*, GAME*);
+static void Player_actor_setup_main_Pull(ACTOR*, GAME*);
+static void Player_actor_setup_main_Rotate_furniture(ACTOR*, GAME*);
+static void Player_actor_setup_main_Open_furniture(ACTOR*, GAME*);
+static void Player_actor_setup_main_Wait_open_furniture(ACTOR*, GAME*);
+static void Player_actor_setup_main_Close_furniture(ACTOR*, GAME*);
+static void Player_actor_setup_main_Lie_bed(ACTOR*, GAME*);
+static void Player_actor_setup_main_Wait_bed(ACTOR*, GAME*);
+static void Player_actor_setup_main_Roll_bed(ACTOR*, GAME*);
+static void Player_actor_setup_main_Standup_bed(ACTOR*, GAME*);
+static void Player_actor_setup_main_Pickup(ACTOR*, GAME*);
+static void Player_actor_setup_main_Pickup_jump(ACTOR*, GAME*);
+static void Player_actor_setup_main_Pickup_furniture(ACTOR*, GAME*);
+static void Player_actor_setup_main_Pickup_exchange(ACTOR*, GAME*);
+static void Player_actor_setup_main_Sitdown(ACTOR*, GAME*);
+static void Player_actor_setup_main_Sitdown_wait(ACTOR*, GAME*);
+static void Player_actor_setup_main_Standup(ACTOR*, GAME*);
+static void Player_actor_setup_main_Swing_axe(ACTOR*, GAME*);
+static void Player_actor_setup_main_Air_axe(ACTOR*, GAME*);
+static void Player_actor_setup_main_Reflect_axe(ACTOR*, GAME*);
+static void Player_actor_setup_main_Broken_axe(ACTOR*, GAME*);
+static void Player_actor_setup_main_Slip_net(ACTOR*, GAME*);
+static void Player_actor_setup_main_Ready_net(ACTOR*, GAME*);
+static void Player_actor_setup_main_Ready_walk_net(ACTOR*, GAME*);
+static void Player_actor_setup_main_Swing_net(ACTOR*, GAME*);
+static void Player_actor_setup_main_Pull_net(ACTOR*, GAME*);
+static void Player_actor_setup_main_Stop_net(ACTOR*, GAME*);
+static void Player_actor_setup_main_Notice_net(ACTOR*, GAME*);
+static void Player_actor_setup_main_Putaway_net(ACTOR*, GAME*);
+static void Player_actor_setup_main_Ready_rod(ACTOR*, GAME*);
+static void Player_actor_setup_main_Cast_rod(ACTOR*, GAME*);
+static void Player_actor_setup_main_Air_rod(ACTOR*, GAME*);
+static void Player_actor_setup_main_Relax_rod(ACTOR*, GAME*);
+static void Player_actor_setup_main_Collect_rod(ACTOR*, GAME*);
+static void Player_actor_setup_main_Vib_rod(ACTOR*, GAME*);
+static void Player_actor_setup_main_Fly_rod(ACTOR*, GAME*);
+static void Player_actor_setup_main_Notice_rod(ACTOR*, GAME*);
+static void Player_actor_setup_main_Putaway_rod(ACTOR*, GAME*);
+static void Player_actor_setup_main_Dig_scoop(ACTOR*, GAME*);
+static void Player_actor_setup_main_Fill_scoop(ACTOR*, GAME*);
+static void Player_actor_setup_main_Reflect_scoop(ACTOR*, GAME*);
+static void Player_actor_setup_main_Air_scoop(ACTOR*, GAME*);
+static void Player_actor_setup_main_Get_scoop(ACTOR*, GAME*);
+static void Player_actor_setup_main_Putaway_scoop(ACTOR*, GAME*);
+static void Player_actor_setup_main_Putin_scoop(ACTOR*, GAME*);
+static void Player_actor_setup_main_Talk(ACTOR*, GAME*);
+static void Player_actor_setup_main_Recieve_wait(ACTOR*, GAME*);
+static void Player_actor_setup_main_Recieve_stretch(ACTOR*, GAME*);
+static void Player_actor_setup_main_Recieve(ACTOR*, GAME*);
+static void Player_actor_setup_main_Recieve_putaway(ACTOR*, GAME*);
+static void Player_actor_setup_main_Give(ACTOR*, GAME*);
+static void Player_actor_setup_main_Give_wait(ACTOR*, GAME*);
+static void Player_actor_setup_main_Takeout_item(ACTOR*, GAME*);
+static void Player_actor_setup_main_Putin_item(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_wait(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_walk(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_geton_train(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_geton_train_wait(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_getoff_train(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_standing_train(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_wade(ACTOR*, GAME*);
+static void Player_actor_setup_main_Hide(ACTOR*, GAME*);
+static void Player_actor_setup_main_Groundhog(ACTOR*, GAME*);
+static void Player_actor_setup_main_Release_creature(ACTOR*, GAME*);
+static void Player_actor_setup_main_Wash_car(ACTOR*, GAME*);
+static void Player_actor_setup_main_Tired(ACTOR*, GAME*);
+static void Player_actor_setup_main_Rotate_octagon(ACTOR*, GAME*);
+static void Player_actor_setup_main_Throw_money(ACTOR*, GAME*);
+static void Player_actor_setup_main_Pray(ACTOR*, GAME*);
+static void Player_actor_setup_main_Shake_tree(ACTOR*, GAME*);
+static void Player_actor_setup_main_Mail_jump(ACTOR*, GAME*);
+static void Player_actor_setup_main_Mail_land(ACTOR*, GAME*);
+static void Player_actor_setup_main_Ready_pitfall(ACTOR*, GAME*);
+static void Player_actor_setup_main_Fall_pitfall(ACTOR*, GAME*);
+static void Player_actor_setup_main_Struggle_pitfall(ACTOR*, GAME*);
+static void Player_actor_setup_main_Climbup_pitfall(ACTOR*, GAME*);
+static void Player_actor_setup_main_Stung_bee(ACTOR*, GAME*);
+static void Player_actor_setup_main_Notice_bee(ACTOR*, GAME*);
+static void Player_actor_setup_main_Remove_grass(ACTOR*, GAME*);
+static void Player_actor_setup_main_Shock(ACTOR*, GAME*);
+static void Player_actor_setup_main_Knock_door(ACTOR*, GAME*);
+static void Player_actor_setup_main_Change_cloth(ACTOR*, GAME*);
+static void Player_actor_setup_main_Push_snowball(ACTOR*, GAME*);
+static void Player_actor_setup_main_Rotate_umbrella(ACTOR*, GAME*);
+static void Player_actor_setup_main_Wade_snowball(ACTOR*, GAME*);
+static void Player_actor_setup_main_Complete_payment(ACTOR*, GAME*);
+static void Player_actor_setup_main_Fail_emu(ACTOR*, GAME*);
+static void Player_actor_setup_main_Stung_mosquito(ACTOR*, GAME*);
+static void Player_actor_setup_main_Notice_mosquito(ACTOR*, GAME*);
+static void Player_actor_setup_main_Swing_fan(ACTOR*, GAME*);
+static void Player_actor_setup_main_Switch_on_lighthouse(ACTOR*, GAME*);
+static void Player_actor_setup_main_Radio_exercise(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_geton_boat(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_geton_boat_sitdown(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_geton_boat_wait(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_geton_boat_wade(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_getoff_boat_standup(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_getoff_boat(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_get_golden_item(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_get_golden_item2(ACTOR*, GAME*);
+static void Player_actor_setup_main_Demo_get_golden_axe_wait(ACTOR*, GAME*);
 
-static int Player_actor_change_main_index(PLAYER_ACTOR* player, GAME* game) {
+static int Player_actor_change_main_index(ACTOR* actorx, GAME* game) {
     static const mPlayer_SETUP_MAIN_PROC proc[] = {
         &Player_actor_setup_main_Dma,
         &Player_actor_setup_main_Intro,
@@ -1006,6 +1012,7 @@ static int Player_actor_change_main_index(PLAYER_ACTOR* player, GAME* game) {
         &Player_actor_setup_main_Demo_get_golden_item2,
         &Player_actor_setup_main_Demo_get_golden_axe_wait,
     };
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
 
     if (player->requested_main_index_changed) {
         int idx = player->requested_main_index;
@@ -1014,151 +1021,153 @@ static int Player_actor_change_main_index(PLAYER_ACTOR* player, GAME* game) {
             return FALSE;
         }
 
-        idx = Player_actor_CheckAndRequest_KnockDoor(player, game,
-                                                     Player_actor_CheckAndRequest_ItemInOut(player, game, idx)); //
-        Player_actor_Set_bgm_volume(player, idx);                                                                //
-        Player_actor_settle_main(player, game);
-        Player_actor_Reset_unable_hand_item_in_demo(player, idx);   //
-        Player_actor_Reset_able_hand_all_item_in_demo(player, idx); //
-        Player_actor_Reset_able_force_speak_label(player, idx);     //
-        Player_actor_change_main_index_other_func1(player, game);   //
-        (*proc[idx])(player, game);
-        Player_actor_change_main_index_other_func2(player, game); //
+        idx = Player_actor_CheckAndRequest_KnockDoor(actorx, game,
+                                                     Player_actor_CheckAndRequest_ItemInOut(actorx, game, idx)); //
+        Player_actor_Set_bgm_volume(actorx, idx);                                                                //
+        Player_actor_settle_main(actorx, game);
+        Player_actor_Reset_unable_hand_item_in_demo(actorx, idx);   //
+        Player_actor_Reset_able_hand_all_item_in_demo(actorx, idx); //
+        Player_actor_Reset_able_force_speak_label(actorx, idx);     //
+        Player_actor_change_main_index_other_func1(actorx, game);   //
+        (*proc[idx])(actorx, game);
+        Player_actor_change_main_index_other_func2(actorx, game); //
         return TRUE;
     }
 
     return FALSE;
 }
 
-static void Player_actor_change_proc_index(PLAYER_ACTOR* player, GAME* game) {
-    player->changed_main_index = Player_actor_change_main_index(player, game);
+static void Player_actor_change_proc_index(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    player->changed_main_index = Player_actor_change_main_index(actorx, game);
 }
 
-typedef void (*mPlayer_MAIN_PROC)(PLAYER_ACTOR*, GAME*);
+typedef void (*mPlayer_MAIN_PROC)(ACTOR*, GAME*);
 
-static void Player_actor_main_Dma(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Intro(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Refuse(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Refuse_pickup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Return_demo(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Return_outdoor(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Return_outdoor2(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Walk(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Run(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Dash(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Tumble(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Tumble_getup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Turn_dash(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Fall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Wade(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Door(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Outdoor(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Invade(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Hold(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Push(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Pull(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Rotate_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Open_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Wait_open_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Close_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Lie_bed(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Wait_bed(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Roll_bed(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Standup_bed(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Pickup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Pickup_jump(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Pickup_furniture(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Pickup_exchange(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Sitdown(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Sitdown_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Standup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Swing_axe(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Air_axe(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Reflect_axe(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Broken_axe(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Slip_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Ready_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Ready_walk_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Swing_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Pull_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Stop_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Notice_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Putaway_net(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Ready_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Cast_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Air_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Relax_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Collect_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Vib_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Fly_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Notice_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Putaway_rod(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Dig_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Fill_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Reflect_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Air_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Get_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Putaway_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Putin_scoop(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Talk(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Recieve_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Recieve_stretch(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Recieve(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Recieve_putaway(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Give(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Give_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Takeout_item(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Putin_item(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_walk(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_geton_train(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_geton_train_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_getoff_train(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_standing_train(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_wade(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Hide(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Groundhog(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Release_creature(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Wash_car(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Tired(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Rotate_octagon(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Throw_money(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Pray(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Shake_tree(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Mail_jump(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Mail_land(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Ready_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Fall_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Struggle_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Climbup_pitfall(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Stung_bee(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Notice_bee(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Remove_grass(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Shock(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Knock_door(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Change_cloth(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Push_snowball(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Rotate_umbrella(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Wade_snowball(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Complete_payment(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Fail_emu(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Stung_mosquito(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Notice_mosquito(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Swing_fan(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Switch_on_lighthouse(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Radio_exercise(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_geton_boat(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_geton_boat_sitdown(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_geton_boat_wait(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_geton_boat_wade(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_getoff_boat_standup(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_getoff_boat(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_get_golden_item(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_get_golden_item2(PLAYER_ACTOR*, GAME*);
-static void Player_actor_main_Demo_get_golden_axe_wait(PLAYER_ACTOR*, GAME*);
+static void Player_actor_main_Dma(ACTOR*, GAME*);
+static void Player_actor_main_Intro(ACTOR*, GAME*);
+static void Player_actor_main_Refuse(ACTOR*, GAME*);
+static void Player_actor_main_Refuse_pickup(ACTOR*, GAME*);
+static void Player_actor_main_Return_demo(ACTOR*, GAME*);
+static void Player_actor_main_Return_outdoor(ACTOR*, GAME*);
+static void Player_actor_main_Return_outdoor2(ACTOR*, GAME*);
+static void Player_actor_main_Wait(ACTOR*, GAME*);
+static void Player_actor_main_Walk(ACTOR*, GAME*);
+static void Player_actor_main_Run(ACTOR*, GAME*);
+static void Player_actor_main_Dash(ACTOR*, GAME*);
+static void Player_actor_main_Tumble(ACTOR*, GAME*);
+static void Player_actor_main_Tumble_getup(ACTOR*, GAME*);
+static void Player_actor_main_Turn_dash(ACTOR*, GAME*);
+static void Player_actor_main_Fall(ACTOR*, GAME*);
+static void Player_actor_main_Wade(ACTOR*, GAME*);
+static void Player_actor_main_Door(ACTOR*, GAME*);
+static void Player_actor_main_Outdoor(ACTOR*, GAME*);
+static void Player_actor_main_Invade(ACTOR*, GAME*);
+static void Player_actor_main_Hold(ACTOR*, GAME*);
+static void Player_actor_main_Push(ACTOR*, GAME*);
+static void Player_actor_main_Pull(ACTOR*, GAME*);
+static void Player_actor_main_Rotate_furniture(ACTOR*, GAME*);
+static void Player_actor_main_Open_furniture(ACTOR*, GAME*);
+static void Player_actor_main_Wait_open_furniture(ACTOR*, GAME*);
+static void Player_actor_main_Close_furniture(ACTOR*, GAME*);
+static void Player_actor_main_Lie_bed(ACTOR*, GAME*);
+static void Player_actor_main_Wait_bed(ACTOR*, GAME*);
+static void Player_actor_main_Roll_bed(ACTOR*, GAME*);
+static void Player_actor_main_Standup_bed(ACTOR*, GAME*);
+static void Player_actor_main_Pickup(ACTOR*, GAME*);
+static void Player_actor_main_Pickup_jump(ACTOR*, GAME*);
+static void Player_actor_main_Pickup_furniture(ACTOR*, GAME*);
+static void Player_actor_main_Pickup_exchange(ACTOR*, GAME*);
+static void Player_actor_main_Sitdown(ACTOR*, GAME*);
+static void Player_actor_main_Sitdown_wait(ACTOR*, GAME*);
+static void Player_actor_main_Standup(ACTOR*, GAME*);
+static void Player_actor_main_Swing_axe(ACTOR*, GAME*);
+static void Player_actor_main_Air_axe(ACTOR*, GAME*);
+static void Player_actor_main_Reflect_axe(ACTOR*, GAME*);
+static void Player_actor_main_Broken_axe(ACTOR*, GAME*);
+static void Player_actor_main_Slip_net(ACTOR*, GAME*);
+static void Player_actor_main_Ready_net(ACTOR*, GAME*);
+static void Player_actor_main_Ready_walk_net(ACTOR*, GAME*);
+static void Player_actor_main_Swing_net(ACTOR*, GAME*);
+static void Player_actor_main_Pull_net(ACTOR*, GAME*);
+static void Player_actor_main_Stop_net(ACTOR*, GAME*);
+static void Player_actor_main_Notice_net(ACTOR*, GAME*);
+static void Player_actor_main_Putaway_net(ACTOR*, GAME*);
+static void Player_actor_main_Ready_rod(ACTOR*, GAME*);
+static void Player_actor_main_Cast_rod(ACTOR*, GAME*);
+static void Player_actor_main_Air_rod(ACTOR*, GAME*);
+static void Player_actor_main_Relax_rod(ACTOR*, GAME*);
+static void Player_actor_main_Collect_rod(ACTOR*, GAME*);
+static void Player_actor_main_Vib_rod(ACTOR*, GAME*);
+static void Player_actor_main_Fly_rod(ACTOR*, GAME*);
+static void Player_actor_main_Notice_rod(ACTOR*, GAME*);
+static void Player_actor_main_Putaway_rod(ACTOR*, GAME*);
+static void Player_actor_main_Dig_scoop(ACTOR*, GAME*);
+static void Player_actor_main_Fill_scoop(ACTOR*, GAME*);
+static void Player_actor_main_Reflect_scoop(ACTOR*, GAME*);
+static void Player_actor_main_Air_scoop(ACTOR*, GAME*);
+static void Player_actor_main_Get_scoop(ACTOR*, GAME*);
+static void Player_actor_main_Putaway_scoop(ACTOR*, GAME*);
+static void Player_actor_main_Putin_scoop(ACTOR*, GAME*);
+static void Player_actor_main_Talk(ACTOR*, GAME*);
+static void Player_actor_main_Recieve_wait(ACTOR*, GAME*);
+static void Player_actor_main_Recieve_stretch(ACTOR*, GAME*);
+static void Player_actor_main_Recieve(ACTOR*, GAME*);
+static void Player_actor_main_Recieve_putaway(ACTOR*, GAME*);
+static void Player_actor_main_Give(ACTOR*, GAME*);
+static void Player_actor_main_Give_wait(ACTOR*, GAME*);
+static void Player_actor_main_Takeout_item(ACTOR*, GAME*);
+static void Player_actor_main_Putin_item(ACTOR*, GAME*);
+static void Player_actor_main_Demo_wait(ACTOR*, GAME*);
+static void Player_actor_main_Demo_walk(ACTOR*, GAME*);
+static void Player_actor_main_Demo_geton_train(ACTOR*, GAME*);
+static void Player_actor_main_Demo_geton_train_wait(ACTOR*, GAME*);
+static void Player_actor_main_Demo_getoff_train(ACTOR*, GAME*);
+static void Player_actor_main_Demo_standing_train(ACTOR*, GAME*);
+static void Player_actor_main_Demo_wade(ACTOR*, GAME*);
+static void Player_actor_main_Hide(ACTOR*, GAME*);
+static void Player_actor_main_Groundhog(ACTOR*, GAME*);
+static void Player_actor_main_Release_creature(ACTOR*, GAME*);
+static void Player_actor_main_Wash_car(ACTOR*, GAME*);
+static void Player_actor_main_Tired(ACTOR*, GAME*);
+static void Player_actor_main_Rotate_octagon(ACTOR*, GAME*);
+static void Player_actor_main_Throw_money(ACTOR*, GAME*);
+static void Player_actor_main_Pray(ACTOR*, GAME*);
+static void Player_actor_main_Shake_tree(ACTOR*, GAME*);
+static void Player_actor_main_Mail_jump(ACTOR*, GAME*);
+static void Player_actor_main_Mail_land(ACTOR*, GAME*);
+static void Player_actor_main_Ready_pitfall(ACTOR*, GAME*);
+static void Player_actor_main_Fall_pitfall(ACTOR*, GAME*);
+static void Player_actor_main_Struggle_pitfall(ACTOR*, GAME*);
+static void Player_actor_main_Climbup_pitfall(ACTOR*, GAME*);
+static void Player_actor_main_Stung_bee(ACTOR*, GAME*);
+static void Player_actor_main_Notice_bee(ACTOR*, GAME*);
+static void Player_actor_main_Remove_grass(ACTOR*, GAME*);
+static void Player_actor_main_Shock(ACTOR*, GAME*);
+static void Player_actor_main_Knock_door(ACTOR*, GAME*);
+static void Player_actor_main_Change_cloth(ACTOR*, GAME*);
+static void Player_actor_main_Push_snowball(ACTOR*, GAME*);
+static void Player_actor_main_Rotate_umbrella(ACTOR*, GAME*);
+static void Player_actor_main_Wade_snowball(ACTOR*, GAME*);
+static void Player_actor_main_Complete_payment(ACTOR*, GAME*);
+static void Player_actor_main_Fail_emu(ACTOR*, GAME*);
+static void Player_actor_main_Stung_mosquito(ACTOR*, GAME*);
+static void Player_actor_main_Notice_mosquito(ACTOR*, GAME*);
+static void Player_actor_main_Swing_fan(ACTOR*, GAME*);
+static void Player_actor_main_Switch_on_lighthouse(ACTOR*, GAME*);
+static void Player_actor_main_Radio_exercise(ACTOR*, GAME*);
+static void Player_actor_main_Demo_geton_boat(ACTOR*, GAME*);
+static void Player_actor_main_Demo_geton_boat_sitdown(ACTOR*, GAME*);
+static void Player_actor_main_Demo_geton_boat_wait(ACTOR*, GAME*);
+static void Player_actor_main_Demo_geton_boat_wade(ACTOR*, GAME*);
+static void Player_actor_main_Demo_getoff_boat_standup(ACTOR*, GAME*);
+static void Player_actor_main_Demo_getoff_boat(ACTOR*, GAME*);
+static void Player_actor_main_Demo_get_golden_item(ACTOR*, GAME*);
+static void Player_actor_main_Demo_get_golden_item2(ACTOR*, GAME*);
+static void Player_actor_main_Demo_get_golden_axe_wait(ACTOR*, GAME*);
 
-static void Player_actor_move(PLAYER_ACTOR* player, GAME* game) {
+extern void Player_actor_move(ACTOR* actorx, GAME* game) {
     static const mPlayer_MAIN_PROC proc[] = {
         &Player_actor_main_Dma,
         &Player_actor_main_Intro,
@@ -1282,23 +1291,24 @@ static void Player_actor_move(PLAYER_ACTOR* player, GAME* game) {
         &Player_actor_main_Demo_get_golden_item2,
         &Player_actor_main_Demo_get_golden_axe_wait,
     };
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     int idx;
 
-    Player_actor_move_other_func1(player, game); //
+    Player_actor_move_other_func1(actorx, game); //
     idx = player->now_main_index;
     if (mPlayer_MAIN_INDEX_VALID(idx) == FALSE || proc[idx] == NULL) {
         return;
     }
 
-    (*proc[idx])(player, game);
-    Player_actor_move_other_func2(player, game); //
+    (*proc[idx])(actorx, game);
+    Player_actor_move_other_func2(actorx, game); //
 }
 
-typedef void (*mPlayer_DRAW_PROC)(PLAYER_ACTOR*, GAME*);
+typedef void (*mPlayer_DRAW_PROC)(ACTOR*, GAME*);
 
-static void Player_actor_draw_Normal(PLAYER_ACTOR*, GAME*);
+static void Player_actor_draw_Normal(ACTOR*, GAME*);
 
-static void Player_actor_draw(PLAYER_ACTOR* player, GAME* game) {
+extern void Player_actor_draw(ACTOR* actorx, GAME* game) {
     static const s8 data[] = {
         mPlayer_DRAW_TYPE_NONE,   mPlayer_DRAW_TYPE_NORMAL, mPlayer_DRAW_TYPE_NORMAL, mPlayer_DRAW_TYPE_NORMAL,
         mPlayer_DRAW_TYPE_NORMAL, mPlayer_DRAW_TYPE_NORMAL, mPlayer_DRAW_TYPE_NORMAL, mPlayer_DRAW_TYPE_NORMAL,
@@ -1338,14 +1348,15 @@ static void Player_actor_draw(PLAYER_ACTOR* player, GAME* game) {
         &Player_actor_draw_Normal,
     };
 
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     int main_idx = player->now_main_index;
 
     if (mPlayer_MAIN_INDEX_VALID(main_idx) != FALSE) {
         int draw_idx = data[main_idx];
 
         if (draw_idx >= 0 && draw_idx < mPlayer_DRAW_TYPE_NUM && proc[draw_idx] != NULL) {
-            (*proc[draw_idx])(player, game);
-            Player_actor_draw_other_func2(player, game); //
+            (*proc[draw_idx])(actorx, game);
+            Player_actor_draw_other_func2(actorx, game); //
         }
     }
 }

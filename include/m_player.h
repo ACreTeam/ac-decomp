@@ -28,7 +28,36 @@ typedef struct player_actor_s PLAYER_ACTOR;
 #define mPlayer_FORCE_POSITION_ANGLE_ROTY (1 << 5)
 #define mPlayer_FORCE_POSITION_ANGLE_ROTZ (1 << 6)
 
-#define mPlayer_JOINT_NUM 26
+enum {
+    mPlayer_JOINT_ROOT,
+    mPlayer_JOINT_BASE,
+    mPlayer_JOINT_LFOOT_BASE,
+    mPlayer_JOINT_LFOOT1,
+    mPlayer_JOINT_LFOOT2,
+    mPlayer_JOINT_LFOOT3,
+    mPlayer_JOINT_RFOOT_BASE,
+    mPlayer_JOINT_RFOOT1,
+    mPlayer_JOINT_RFOOT2,
+    mPlayer_JOINT_RFOOT3,
+    mPlayer_JOINT_TAIL_BASE,
+    mPlayer_JOINT_TAIL1,
+    mPlayer_JOINT_TAIL2,
+    mPlayer_JOINT_CHEST,
+    mPlayer_JOINT_LARM_BASE,
+    mPlayer_JOINT_LARM1,
+    mPlayer_JOINT_LARM2,
+    mPlayer_JOINT_RARM_BASE,
+    mPlayer_JOINT_RARM1,
+    mPlayer_JOINT_RARM2,
+    mPlayer_JOINT_HAND,
+    mPlayer_JOINT_HEAD_BASE,
+    mPlayer_JOINT_MOUTH_BASE,
+    mPlayer_JOINT_MOUTH,
+    mPlayer_JOINT_HEAD,
+    mPlayer_JOINT_FEEL,
+
+    mPlayer_JOINT_NUM
+};
 
 enum {
     mPlayer_ADDRESSABLE_TRUE,
@@ -1236,11 +1265,76 @@ typedef struct player_main_return_outdoor2_s {
     int prev_main_index;
 } mPlayer_main_return_outdoor2_c;
 
+typedef struct player_main_pickup_s {
+    xyz_t target_pos;
+    xyz_t item_pos;
+    xyz_t item_offset;
+    f32 scale;
+    f32 timer;
+    mActor_name_t item;
+    int ftr_flag;
+    int exchange_flag;
+} mPlayer_main_pickup_c;
+
+typedef struct player_main_pickup_jump_s {
+    xyz_t target_pos;
+    xyz_t item_pos;
+    xyz_t item_offset;
+    f32 scale;
+    mActor_name_t item;
+    int exchange_flag;
+} mPlayer_main_pickup_jump_c;
+
+typedef struct player_main_get_scoop_s {
+    xyz_t target_pos;
+    mActor_name_t item;
+    f32 scale;
+    int success_flag;
+    f32 timer;
+    int msg_mode;
+    int submenu_flag;
+} mPlayer_main_get_scoop_c;
+
+typedef struct player_main_putaway_scoop_s {
+    xyz_t target_pos;
+    mActor_name_t item;
+    f32 scale;
+    int submenu_flag;
+} mPlayer_main_putaway_scoop_c;
+
+typedef struct player_main_wash_car_s {
+    int anime_idx;
+    int change_anime_idx;
+    int counter;
+    xyz_t ret_pos;
+    s16 ret_angle_y;
+    ACTOR* control_actor;
+    int ret_order;
+    int effect_flag;
+} mPlayer_main_wash_car_c;
+
+typedef struct player_main_demo_geton_boat_sitdown_s {
+    s16 angle_z;
+} mPlayer_main_demo_geton_boat_sitdown_c;
+
+typedef struct player_main_demo_getoff_boat_standup_s {
+    xyz_t pos;
+    s16 angle_y;
+    s16 angle_z;
+} mPlayer_main_demo_getoff_boat_standup_c;
+
 typedef union {
     mPlayer_main_intro_c intro;
     mPlayer_main_return_demo_c return_demo;
     mPlayer_main_return_outdoor_c return_outdoor;
     mPlayer_main_return_outdoor2_c return_outdoor2;
+    mPlayer_main_pickup_c pickup;
+    mPlayer_main_pickup_jump_c pickup_jump;
+    mPlayer_main_get_scoop_c get_scoop;
+    mPlayer_main_putaway_scoop_c putaway_scoop;
+    mPlayer_main_wash_car_c wash_car;
+    mPlayer_main_demo_geton_boat_sitdown_c demo_geton_boat_sitdown;
+    mPlayer_main_demo_getoff_boat_standup_c demo_getoff_boat_standup;
     u8 force_size[72]; // TEMP
 } mPlayer_main_data;
 
@@ -1255,8 +1349,8 @@ struct player_actor_s {
     /* 0x0000 */ ACTOR actor_class;
     /* 0x0174 */ cKF_SkeletonInfo_R_c keyframe0;
     /* 0x01E4 */ cKF_SkeletonInfo_R_c keyframe1;
-    /* 0x0252 */ s_xyz joint_data[27];
-    /* 0x02F4 */ s_xyz morph_data[27];
+    /* 0x0252 */ s_xyz joint_data[mPlayer_JOINT_NUM + 1];
+    /* 0x02F4 */ s_xyz morph_data[mPlayer_JOINT_NUM + 1];
     /* 0x0398 */ Mtx work_mtx[2][13];                /* swapped between frames */
     /* 0x0A18 */ cKF_SkeletonInfo_R_c item_keyframe; /* for item animations */
     /* 0x0A88 */ s_xyz item_joint_data[8];
@@ -1297,7 +1391,8 @@ struct player_actor_s {
     /* 0x0E50 */ xyz_t net_bot_col_pos;
     /* 0x0E5C */ s_xyz net_angle;
     /* 0x0E64 */ ACTOR* umbrella_actor;
-    /* 0x0E68 */ u8 _0E68[0x1010 - 0x0E68]; // TODO
+    /* 0x0E68 */ u8 _0E68[0x1004 - 0x0E68]; // TODO
+    /* 0x1004 */ xyz_t scoop_pos;
     /* 0x1010 */ ClObjPipe_c col_pipe;
     /* 0x102C */ xyz_t head_pos;
     /* 0x1038 */ xyz_t feel_pos;
@@ -1306,9 +1401,29 @@ struct player_actor_s {
     /* 0x105C */ xyz_t left_hand_pos;
     /* 0x1068 */ MtxF right_hand_mtx;
     /* 0x10A8 */ MtxF left_hand_mtx;
-    /* 0x10E8 */ u8 _10E8[0x1174 - 0x10E8]; // TODO
+    /* 0x10E8 */ xyz_t right_foot_pos;
+    /* 0x10F4 */ xyz_t left_foot_pos;
+    /* 0x1100 */ s_xyz right_foot_angle;
+    /* 0x1106 */ s_xyz left_foot_angle;
+    /* 0x110C */ int draw_effect_idx; // subtract 1 for the effect id
+    /* 0x1110 */ s8 part_table[mPlayer_JOINT_NUM + 1];
+    /* 0x112B */ s8 item_kind;
+    /* 0x112C */ int item_matrix_set;
+    /* 0x1130 */ xyz_t net_start_pos;
+    /* 0x113C */ xyz_t net_end_pos;
+    /* 0x1148 */ xyz_t other_item_start_pos;
+    /* 0x1154 */ xyz_t other_item_end_pos;
+    /* 0x1160 */ f32 other_item_move_dist;
+    /* 0x1164 */ s_xyz windmill_param;
+    /* 0x116A */ s_xyz windmill_angle;
+    /* 0x1170 */ int balloon_start_pos_set_flag;
     /* 0x1174 */ ACTOR* balloon_actor;
-    /* 0x1178 */ u8 _1178[0x11B4 - 0x1178]; // TODO
+    /* 0x1178 */ u8 _1178[0x1198 - 0x1178]; // TODO
+    /* 0x1198 */ s8 _1198;
+    /* 0x119A */ s_xyz head_angle;
+    /* 0x11A0 */ xyz_t force_position;
+    /* 0x11AC */ s_xyz force_angle;
+    /* 0x11B2 */ u8 force_position_angle_flag;
     /* 0x11B4 */ f32 shake_tree_timer[3];
     /* 0x11C0 */ int shake_tree_ut_x[3];
     /* 0x11CC */ int shake_tree_ut_z[3];
