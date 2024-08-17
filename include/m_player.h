@@ -28,6 +28,9 @@ typedef struct player_actor_s PLAYER_ACTOR;
 #define mPlayer_FORCE_POSITION_ANGLE_ROTY (1 << 5)
 #define mPlayer_FORCE_POSITION_ANGLE_ROTZ (1 << 6)
 
+#define mPlayer_WALK_FLAG_SET_POS (1 << 1)
+#define mPlayer_WALK_FLAG_RESET_MORPH (1 << 2)
+
 enum {
     mPlayer_JOINT_ROOT,
     mPlayer_JOINT_BASE,
@@ -1265,6 +1268,13 @@ typedef struct player_main_return_outdoor2_s {
     int prev_main_index;
 } mPlayer_main_return_outdoor2_c;
 
+typedef struct player_main_wade_s {
+    int dir;
+    xyz_t start_pos;
+    xyz_t end_pos;
+    f32 timer;
+} mPlayer_main_wade_c;
+
 typedef struct player_main_pickup_s {
     xyz_t target_pos;
     xyz_t item_pos;
@@ -1328,6 +1338,7 @@ typedef union {
     mPlayer_main_return_demo_c return_demo;
     mPlayer_main_return_outdoor_c return_outdoor;
     mPlayer_main_return_outdoor2_c return_outdoor2;
+    mPlayer_main_wade_c wade;
     mPlayer_main_pickup_c pickup;
     mPlayer_main_pickup_jump_c pickup_jump;
     mPlayer_main_get_scoop_c get_scoop;
@@ -1535,10 +1546,10 @@ struct player_actor_s {
     /* 0x13A4 */ s8 update_scene_bg_mode;
 };
 
-void Player_actor_ct(PLAYER_ACTOR*, GAME*);
-void Player_actor_dt(PLAYER_ACTOR*, GAME*);
-void Player_actor_move(PLAYER_ACTOR*, GAME*);
-void Player_actor_draw(PLAYER_ACTOR*, GAME*);
+extern void Player_actor_ct(ACTOR*, GAME*);
+extern void Player_actor_dt(ACTOR*, GAME*);
+extern void Player_actor_move(ACTOR*, GAME*);
+extern void Player_actor_draw(ACTOR*, GAME*);
 
 #ifdef __cplusplus
 }
