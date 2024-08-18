@@ -1382,7 +1382,7 @@ struct player_actor_s {
     /* 0x0D14 */ int settled_requested_main_index_priority;
     /* 0x0D18 */ mPlayer_main_data main_data;                         // TODO: Union of many types...
     /* 0x0D60 */ mPlayer_request_main_data requested_main_index_data; // Union of many types...
-    /* 0x0DA8 */ u8 _0DA8[0x0DB4 - 0x0DA8];                           /* TODO: finish */
+    /* 0x0DA8 */ u8 _0DA8[0x0DB4 - 0x0DA8];                           /* unused */
     /* 0x0DB4 */ int animation0_idx;
     /* 0x0DB8 */ int animation1_idx;
     /* 0x0DBC */ int _0DBC;
@@ -1402,7 +1402,29 @@ struct player_actor_s {
     /* 0x0E50 */ xyz_t net_bot_col_pos;
     /* 0x0E5C */ s_xyz net_angle;
     /* 0x0E64 */ ACTOR* umbrella_actor;
-    /* 0x0E68 */ u8 _0E68[0x1004 - 0x0E68]; // TODO
+    /* 0x0E68 */ int umbrella_state;
+    /* 0x0E6C */ s8 unable_hand_item_in_demo;
+    /* 0x0E6D */ s8 able_hand_all_item_in_demo;
+    /* 0x0E70 */ u32 item_net_catch_label;
+    /* 0x0E74 */ s8 item_net_catch_type;
+    /* 0x0E75 */ s8 item_net_has_catch;
+    /* 0x0E78 */ u32 item_net_catch_label_request_table[8];
+    /* 0x0E98 */ s8 item_net_catch_type_request_table[8];
+    /* 0x0EA0 */ xyz_t item_net_catch_pos_request_table[8];
+    /* 0x0F00 */ f32 item_net_catch_radius_request_table[8];
+    /* 0x0F20 */ int item_net_catch_request_use_count;
+    /* 0x0F24 */ u32 item_net_catch_label_request_force;
+    /* 0x0F28 */ s8 item_net_catch_type_request_force;
+    /* 0x0F2C */ int item_net_catch_insect_idx;
+    /* 0x0F30 */ ACTOR* fishing_rod_actor_p;
+    /* 0x0F34 */ xyz_t item_rod_top_pos;
+    /* 0x0F40 */ xyz_t item_rod_virtual_top_pos;
+    /* 0x0F4C */ int update_item_rod_top_pos;
+    /* 0x0F50 */ s16 item_rod_angle_z;
+    /* 0x0F54 */ ClObjTris_c item_axe_tris;
+    /* 0x0F68 */ ClObjTrisElem_c item_axe_tris_elem_tbl[1];
+    /* 0x0FAC */ ClObjTris_c item_net_tris;
+    /* 0x0FC0 */ ClObjTrisElem_c item_net_tris_elem_tbl[1];
     /* 0x1004 */ xyz_t scoop_pos;
     /* 0x1010 */ ClObjPipe_c col_pipe;
     /* 0x102C */ xyz_t head_pos;
@@ -1429,8 +1451,16 @@ struct player_actor_s {
     /* 0x116A */ s_xyz windmill_angle;
     /* 0x1170 */ int balloon_start_pos_set_flag;
     /* 0x1174 */ ACTOR* balloon_actor;
-    /* 0x1178 */ u8 _1178[0x1198 - 0x1178]; // TODO
-    /* 0x1198 */ s8 _1198;
+    /* 0x1178 */ s16 balloon_lean_angle;
+    /* 0x117A */ s_xyz balloon_angle;
+    /* 0x1180 */ f32 balloon_add_rot_z;
+    /* 0x1184 */ f32 balloon_anim_max_frame;
+    /* 0x1188 */ f32 balloon_anim_speed;
+    /* 0x118C */ int balloon_stop_movement_flag;
+    /* 0x1190 */ s16 ballon_add_rot_x;
+    /* 0x1192 */ s16 balloon_add_rot_x_counter;
+    /* 0x1194 */ f32 balloon_current_frame;
+    /* 0x1198 */ s8 address_able_display;
     /* 0x119A */ s_xyz head_angle;
     /* 0x11A0 */ xyz_t force_position;
     /* 0x11AC */ s_xyz force_angle;
@@ -1439,8 +1469,10 @@ struct player_actor_s {
     /* 0x11C0 */ int shake_tree_ut_x[3];
     /* 0x11CC */ int shake_tree_ut_z[3];
     /* 0x11D8 */ int shake_tree_little[3];
-    /* 0x11E4 */ u8 _11E4[0x11F8 - 0x11E4]; // TODO
-    /* 0x11F8 */ s8 _11F8;
+    /* 0x11E4 */ xyz_t pitfall_pos;
+    /* 0x11F0 */ int pitfall_flag;
+    /* 0x11F4 */ f32 ripple_timer;
+    /* 0x11F8 */ s8 ripple_foot_idx; // == 0: left, != 0: right
     /* 0x11F9 */ s8 bgm_volume_mode;
     /* 0x11FC */ int crash_snowball_for_wade;
     /* 0x1200 */ xyz_t snowball_dist;
