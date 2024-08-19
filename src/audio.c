@@ -60,7 +60,7 @@ extern void sAdo_SysTrgStart(u16 id) {
     Na_SysTrgStart(id);
 }
 
-extern void sAdo_PlyWalkSe(int walk, const xyz_t* pos) {
+extern void sAdo_PlyWalkSe(u16 walk, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;
@@ -69,7 +69,7 @@ extern void sAdo_PlyWalkSe(int walk, const xyz_t* pos) {
     Na_PlyWalkSe(walk, scalc, fcalc);
 }
 
-extern void sAdo_PlyWalkSeRoom(int walk, const xyz_t* pos) {
+extern void sAdo_PlyWalkSeRoom(u8 walk, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;
@@ -400,10 +400,10 @@ u16 sAdo_Get_WalkLabel(int type) {
     return ret;
 }
 
-int sAdo_Get_KokeruLabel(int type) {
+u16 sAdo_Get_KokeruLabel(int type) {
 
     u16 label = sAdo_Get_WalkLabel(type);
-    int ret;
+    u16 ret;
 
     switch (label) {
         case 0x4201:

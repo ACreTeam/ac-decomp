@@ -2354,7 +2354,7 @@ static void aMR_BirthWait(FTR_ACTOR* ftr_actor, GAME* game, MY_ROOM_ACTOR* my_ro
         if (ftr_actor->id == my_room->rsv_ftr[i].free_no) {
             if (my_room->rsv_ftr[i].frames <= 0) {
                 ftr_actor->state = aFTR_STATE_BIRTH;
-                sAdo_OngenTrgStart(NA_SE_BIRTH_FTR, &ftr_actor->position);
+                sAdo_OngenTrgStart(NA_SE_ITEM_HORIDASHI, &ftr_actor->position);
             }
 
             break;

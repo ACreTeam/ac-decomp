@@ -54,8 +54,8 @@ extern void sAdo_BgmStart(u8 id);
 extern void sAdo_BgmStop(u16 id);
 extern void sAdo_SysTrgStart(u16 id);
 
-extern void sAdo_PlyWalkSe(int walk, const xyz_t* pos);
-extern void sAdo_PlyWalkSeRoom(int walk, const xyz_t* pos);
+extern void sAdo_PlyWalkSe(u16 walk, const xyz_t* pos);
+extern void sAdo_PlyWalkSeRoom(u8 walk, const xyz_t* pos);
 extern void sAdo_NpcWalkSe(int walk, const xyz_t* pos);
 extern void sAdo_NpcWalkSeRoom(int walk, const xyz_t* pos);
 
@@ -132,7 +132,7 @@ extern void sAdo_Museum(u8 type);
 extern void sAdo_SoftReset();
 
 extern u16 sAdo_Get_WalkLabel(int type);
-extern int sAdo_Get_KokeruLabel(int type);
+extern u16 sAdo_Get_KokeruLabel(int type);
 
 extern void sAdo_SceneMode(u8 mode);
 extern u8 sAdo_RoomIncectPos(u32 f, u16 u, const xyz_t* pos);
