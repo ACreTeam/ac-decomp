@@ -12,6 +12,7 @@ extern "C" {
 
 extern void mPlib_Object_Exchange_keep_Player_dt(GAME_PLAY*);
 extern PLAYER_ACTOR* get_player_actor_withoutCheck(GAME_PLAY* play);
+extern mPlayer_Controller_Data_c* mPlib_Get_controller_data_for_title_demo_p();
 extern void mPlib_SetData1_controller_data_for_title_demo(f32 stick_x, f32 stick_y, int btn_a, int btn_b);
 extern void mPlib_SetData2_controller_data_for_title_demo(mActor_name_t tool);
 extern void mPlib_Clear_controller_data_for_title_demo();
@@ -54,6 +55,7 @@ extern int mPlib_Check_tree_shaken_little(const xyz_t* pos);
 extern int mPlib_request_main_recieve_wait_type1(GAME* game, mActor_name_t item, int counter_flag);
 extern int mPlib_able_player_warp_forEvent();
 extern int mPlib_Get_unable_wade();
+extern s8 mPlib_Get_ItemNoToItemKind(mActor_name_t);
 extern void mPlib_Set_boat_angleZ(s16 angleZ);
 extern int mPlib_Get_end_player_demo_walk();
 extern int mPlib_request_main_demo_geton_boat_type1(f32 goal_x, f32 goal_z, s16 angleY);

@@ -469,6 +469,23 @@ enum {
     mPlayer_ITEM_KIND_NUM /* Are there more? */
 };
 
+#define mPlayer_ITEM_KIND_CHECK(kind, min, max) ((kind) >= (min) && (kind) < ((max) + 1))
+#define mPlayer_ITEM_IS_AXE(kind) mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_AXE, mPlayer_ITEM_KIND_GOLD_AXE)
+#define mPlayer_ITEM_IS_NET(kind) mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_NET, mPlayer_ITEM_KIND_GOLD_NET)
+#define mPlayer_ITEM_IS_ROD(kind) mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_ROD, mPlayer_ITEM_KIND_GOLD_ROD)
+#define mPlayer_ITEM_IS_SHOVEL(kind) \
+    mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_SHOVEL, mPlayer_ITEM_KIND_GOLD_SHOVEL)
+#define mPlayer_ITEM_IS_UMBRELLA(kind) \
+    mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_UMBRELLA00, mPlayer_ITEM_KIND_ORG_UMBRELLA07)
+#define mPlayer_ITEM_IS_BALLOON(kind) \
+    mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_RED_BALLOON, mPlayer_ITEM_KIND_BUNNY_O_BALLOON)
+#define mPlayer_ITEM_IS_WINDMILL(kind) \
+    mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_YELLOW_PINWHEEL, mPlayer_ITEM_KIND_FANCY_PINWHEEL)
+#define mPlayer_ITEM_IS_FAN(kind) \
+    mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_BLUEBELL_FAN, mPlayer_ITEM_KIND_LEAF_FAN)
+
+#define mPlayer_ITEM_KIND_VALID(kind) ((kind) >= 0 && kind < mPlayer_ITEM_KIND_NUM)
+
 enum {
     mPlayer_ITEM_DATA_AXE,      // model
     mPlayer_ITEM_DATA_AXE_B,    // model
@@ -1354,6 +1371,16 @@ typedef struct {
     int requested_index_pending;
     mPlayer_request_main_data request_main_data;
 } mPlayer_change_data_from_submenu_c;
+
+typedef struct controller_data_s {
+    MCON mcon;
+    s8 on;
+    s8 now;
+    s8 unk3A;
+    s8 unk3B;
+    mActor_name_t equiped_item;
+} mPlayer_Controller_Data_c;
+
 
 /* sizeof(struct player_actor_s) == 0x13A8 */
 struct player_actor_s {
