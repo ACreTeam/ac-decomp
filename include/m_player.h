@@ -547,6 +547,8 @@ enum {
     mPlayer_ITEM_DATA_NUM
 };
 
+#define mPlayer_ITEM_DATA_VALID(type) ((type) >= 0 && type < mPlayer_ITEM_DATA_NUM)
+
 enum {
     mPlayer_ITEM_DATA_TYPE_GFX,
     mPlayer_ITEM_DATA_TYPE_SKELETON,
@@ -1350,6 +1352,14 @@ typedef struct player_main_demo_getoff_boat_standup_s {
     s16 angle_z;
 } mPlayer_main_demo_getoff_boat_standup_c;
 
+typedef struct player_main_uki_s {
+    xyz_t cast_goal_point;
+} mPlayer_main_uki_c;
+
+typedef struct player_main_putaway_uki_s {
+    f32 unk0;
+} mPlayer_main_putaway_uki_c;
+
 typedef union {
     mPlayer_main_intro_c intro;
     mPlayer_main_return_demo_c return_demo;
@@ -1363,6 +1373,8 @@ typedef union {
     mPlayer_main_wash_car_c wash_car;
     mPlayer_main_demo_geton_boat_sitdown_c demo_geton_boat_sitdown;
     mPlayer_main_demo_getoff_boat_standup_c demo_getoff_boat_standup;
+    mPlayer_main_uki_c uki;
+    mPlayer_main_putaway_uki_c putaway_uki;
     u8 force_size[72]; // TEMP
 } mPlayer_main_data;
 
