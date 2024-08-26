@@ -23,7 +23,7 @@ void Player_actor_Movement_Refuse(ACTOR* actor) {
 
 
 void Player_actor_CulcAnimation_Refuse(ACTOR* actor) {
-    int base;
+    f32 base;
 
     Player_actor_CulcAnimation_Base2(actor, &base);
 }

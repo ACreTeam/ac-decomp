@@ -49,7 +49,7 @@ void Player_actor_Movement_Refuse_pickup(ACTOR* actor) {
 }
 
 void Player_actor_CulcAnimation_Refuse_pickup(ACTOR* actor) {
-    int base;
+    f32 base;
 
     Player_actor_CulcAnimation_Base2(actor, &base);
 }

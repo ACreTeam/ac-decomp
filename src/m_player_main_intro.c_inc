@@ -19,7 +19,7 @@ void Player_actor_setup_main_Intro(ACTOR* actor, GAME* game){
 }
 
 void Player_actor_CulcAnimation_Intro(ACTOR* actor) {
-    int base;
+    f32 base;
 
     Player_actor_CulcAnimation_Base2(actor, &base);
 }
