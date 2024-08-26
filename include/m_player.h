@@ -597,6 +597,18 @@ typedef struct player_request_return_demo_s {
     f32 time;
 } mPlayer_request_return_demo_c;
 
+typedef struct player_request_return_outdoor_s {
+    int prev_main_index;
+    f32 time;
+    f32 _08;
+} mPlayer_request_return_outdoor_c;
+
+typedef struct player_request_return_outdoor2_s {
+    int prev_main_index;
+    f32 time;
+    f32 _08;
+} mPlayer_request_return_outdoor2_c;
+
 typedef struct player_request_wait_s {
     f32 morph_speed;
     f32 _04;
@@ -1183,6 +1195,8 @@ typedef union {
     mPlayer_request_release_creature_balloon_from_submenu_c release_creature_balloon_from_submenu;
     mPlayer_request_demo_wait_from_submenu_c demo_wait_from_submenu;
     mPlayer_request_return_demo_c return_demo;
+    mPlayer_request_return_outdoor_c return_outdoor;
+    mPlayer_request_return_outdoor2_c return_outdoor2;
     mPlayer_request_wait_c wait;
     mPlayer_request_talk_c talk;
     mPlayer_request_hold_c hold;
