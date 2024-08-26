@@ -6,14 +6,16 @@ int Player_actor_request_main_refuse(GAME* game, int flag) {
     return FALSE;
 }
 
-void Player_actor_setup_main_Refuse(ACTOR* actor, GAME* game) {
-    int spC;
-    int sp8;
+void Player_actor_setup_main_Refuse(ACTOR* actor, GAME* game){
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int anim_idx;
+    int part_table_idx;
 
-    Player_actor_SetupItem_Base1(actor,0, &spC, &sp8, -5.0f);
-    Player_actor_InitAnimation_Base1(actor, game,1.0f, 1.0f, 0.5f, -5.0f, 0, spC, sp8);
+    Player_actor_SetupItem_Base1(actor,0, -5.0f, &anim_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_WAIT1, anim_idx, 1.0f, 1.0f, 0.5f, -5.0f, part_table_idx);
     Player_actor_setup_main_Base(actor, game);
 }
+
 
 void Player_actor_Movement_Refuse(ACTOR* actor) {
     Player_actor_Movement_Base_Braking(actor);

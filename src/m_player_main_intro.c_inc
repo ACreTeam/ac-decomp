@@ -9,12 +9,12 @@ int Player_actor_request_main_intro_all(GAME* game, int flag) {
 
 void Player_actor_setup_main_Intro(ACTOR* actor, GAME* game){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
-    int spC;
-    int sp8;
+    int anim_idx;
+    int part_table_idx;
 
-    Player_actor_SetupItem_Base1(actor,0, &spC, &sp8, -5.0f);
+    Player_actor_SetupItem_Base1(actor,0, -5.0f, &anim_idx, &part_table_idx);
     player->main_data.intro.timer = 0.0f;
-    Player_actor_InitAnimation_Base1(actor, game,1.0f, 1.0f, 0.5f, 0.0f, 0, spC, sp8);
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_WAIT1, anim_idx, 1.0f, 1.0f, 0.5f, 0.0f, part_table_idx);
     Player_actor_setup_main_Base(actor, game);
 }
 
