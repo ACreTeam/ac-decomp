@@ -1301,6 +1301,10 @@ typedef struct player_main_return_outdoor2_s {
     int prev_main_index;
 } mPlayer_main_return_outdoor2_c;
 
+typedef struct player_main_wait_s {
+    int radio_exercise_command;
+} mPlayer_main_wait_c;
+
 typedef struct player_main_wade_s {
     int dir;
     xyz_t start_pos;
@@ -1379,6 +1383,7 @@ typedef union {
     mPlayer_main_return_demo_c return_demo;
     mPlayer_main_return_outdoor_c return_outdoor;
     mPlayer_main_return_outdoor2_c return_outdoor2;
+    mPlayer_main_wait_c wait;
     mPlayer_main_wade_c wade;
     mPlayer_main_pickup_c pickup;
     mPlayer_main_pickup_jump_c pickup_jump;
