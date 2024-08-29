@@ -39,7 +39,7 @@ static void aNRG_take_with(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
 static void aNRG_decide_house_wait(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
     int next_think_idx = -1;
 
-    if (GET_PLAYER_ACTOR_NOW()->cancel_wade_flag) {
+    if (GET_PLAYER_ACTOR_NOW()->excute_cancel_wade) {
         /* Player is trying to leave the acre, so let them know they can't */
         next_think_idx = aNRC_THINK_STOP_WADE;
     } else if (Common_Get(clip).demo_clip != NULL && Common_Get(clip).demo_clip->type == mDemo_CLIP_TYPE_INTRO_DEMO) {
@@ -112,7 +112,7 @@ static void aNRG_exit(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
 
                     intro_demo->rcn_guide_actor_p = NULL;
                     Actor_delete(&rcn_guide->npc_class.actor_class);
-                    play->submenu.disable_start_btn_flag = FALSE;
+                    play->submenu.start_refuse = FALSE;
                 }
             }
         } else {
@@ -177,7 +177,7 @@ static void aNRG_approach_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) 
     f32 z;
 
     /* Player cannot open the start menu */
-    play->submenu.disable_start_btn_flag = TRUE;
+    play->submenu.start_refuse = TRUE;
     /* Make the player stand around waiting */
     mPlib_request_main_demo_wait_type1(&play->game, 0, NULL);
 

@@ -83,6 +83,8 @@ typedef u32 unknown;
 #define BUTTON_B 0x4000
 #define BUTTON_A 0x8000
 
+#define FRAMES_PER_SECOND 60
+
 #define ARRAY_SIZE(arr, type) (sizeof(arr) / sizeof(type))
 #define ARRAY_COUNT(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 

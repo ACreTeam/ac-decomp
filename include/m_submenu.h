@@ -178,9 +178,9 @@ struct submenu_s {
     /* 0x162 */ u8 open_flag;  // only set to 0 or 1, checked at least once in aQMgr_actor_move_talk_sub_hand_item_wait
     /* 0x163 */ u8 after_mode; /* relates to code which runs after the submenu process */
     /* 0x164 */ u8 unk_164;    // only set to 0 in mSM_move_LINKWait in AC
-    /* 0x165 */ u8 disable_start_btn_flag;  /* when set to TRUE, the START button input will be ignored */
-    /* 0x166 */ u8 disable_start_btn_timer; /* timer for when to disable the start button ignore flag */
-    /* 0x168 */ xyz_t water_pos; /* calculated to the nearest water position to the player for releasing fish */
+    /* 0x165 */ u8 start_refuse;       /* when set to TRUE, the START button input will be ignored */
+    /* 0x166 */ u8 start_refuse_timer; /* timer for when to disable the start button ignore flag */
+    /* 0x168 */ xyz_t water_pos;       /* calculated to the nearest water position to the player for releasing fish */
     /* 0x174 */ Submenu_Item_c*
         item_p;               /* pointer to a 'Submenu_Item_c' array, seemingly only points to Submenu::items */
     /* 0x178 */ s16 item_num; /* number of items in the item array */

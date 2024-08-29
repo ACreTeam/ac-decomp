@@ -402,7 +402,7 @@ typedef struct npc_condition_s {
 
 typedef struct npc_uzai_s {
     int step;
-    u8 tool;
+    u8 counter;
     u8 flag;
     u8 cross;
 } aNPC_uzai_c;

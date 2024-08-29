@@ -738,7 +738,7 @@ static void mISL_toHole(mActor_name_t* fg, u16* deposit, int bx, int bz) {
                     hole_no = 0;
                 }
 
-                fg[0] = BURIED_PITFALL_START + hole_no;
+                fg[0] = BURIED_PITFALL_HOLE_START + hole_no;
                 deposit[0] &= ~(1 << ut_x);
             }
 
