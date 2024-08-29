@@ -1,53 +1,49 @@
 static int mMsg_Main_Disappear_SetScale(mMsg_Window_c* msg_p, GAME* game) {
-  const f32 max = 18.0f;
+    if (msg_p->timer < 18.0f) {
+        f32 scale;
 
-  if (msg_p->timer < max) {
-    f32 scale;
-
-    msg_p->timer += 1.0f;
-    scale = 1.0f - get_percent_forAccelBrake(msg_p->timer, 0.0f, max, 0.0f, 0.0f);
-    msg_p->window_scale = scale;
-    msg_p->text_scale = scale;
-    return FALSE;
-  }
-  else {
-    msg_p->window_scale = 0.0f;
-    msg_p->text_scale = 0.0f;
-    msg_p->timer = 0.0f;
-    return TRUE;
-  }
+        msg_p->timer += 1.0f;
+        scale = 1.0f - get_percent_forAccelBrake(msg_p->timer, 0.0f, 18.0f, 0.0f, 0.0f);
+        msg_p->window_scale = scale;
+        msg_p->text_scale = scale;
+        return FALSE;
+    } else {
+        msg_p->window_scale = 0.0f;
+        msg_p->text_scale = 0.0f;
+        msg_p->timer = 0.0f;
+        return TRUE;
+    }
 }
 
 static void mMsg_request_main_index_fromDisappear(mMsg_Window_c* msg_p, int scale_done_flag) {
-  if (scale_done_flag) {
-    mMsg_Change_request_main_index(msg_p, mMsg_INDEX_HIDE, 5);
-  }
+    if (scale_done_flag) {
+        mMsg_Change_request_main_index(msg_p, mMsg_INDEX_HIDE, 5);
+    }
 }
 
 static void mMsg_Main_Disappear(mMsg_Window_c* msg_p, GAME* game) {
-  int scaling_done_flag = mMsg_Main_Disappear_SetScale(msg_p, game);
-  mMsg_request_main_index_fromDisappear(msg_p, scaling_done_flag);
-  mMsg_MainSetup_Window(msg_p, game);
+    int scaling_done_flag = mMsg_Main_Disappear_SetScale(msg_p, game);
+    mMsg_request_main_index_fromDisappear(msg_p, scaling_done_flag);
+    mMsg_MainSetup_Window(msg_p, game);
 }
 
 static void mMsg_MainSetup_Disappear(mMsg_Window_c* msg_p, GAME* game) {
-  mMsg_sound_spec_change_scene(msg_p);
-  msg_p->main_index = mMsg_INDEX_DISAPPEAR;
-  msg_p->draw_flag = TRUE;
-  msg_p->window_scale = 1.0f;
-  msg_p->text_scale = 1.0f;
-  msg_p->timer = 0.0f;
-  msg_p->show_continue_button = FALSE;
+    mMsg_sound_spec_change_scene(msg_p);
+    msg_p->main_index = mMsg_INDEX_DISAPPEAR;
+    msg_p->draw_flag = TRUE;
+    msg_p->window_scale = 1.0f;
+    msg_p->text_scale = 1.0f;
+    msg_p->timer = 0.0f;
+    msg_p->show_continue_button = FALSE;
 
-  if (mDemo_Get_use_zoom_sound()) {
-    if (mDemo_Get_camera() == FALSE) {
-      mMsg_sound_ZOOMDOWN_SHORT(msg_p);
+    if (mDemo_Get_use_zoom_sound()) {
+        if (mDemo_Get_camera() == FALSE) {
+            mMsg_sound_ZOOMDOWN_SHORT(msg_p);
+        } else {
+            mMsg_sound_ZOOMDOWN_LONG(msg_p);
+        }
     }
-    else {
-      mMsg_sound_ZOOMDOWN_LONG(msg_p);
-    }
-  }
 
-  msg_p->requested_main_index = -1;
-  msg_p->requested_priority = 4;
+    msg_p->requested_main_index = -1;
+    msg_p->requested_priority = 4;
 }

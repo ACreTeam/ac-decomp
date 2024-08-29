@@ -1560,6 +1560,68 @@ typedef struct player_main_putin_scoop_s {
     int get_gold_scoop_flag; // TODO: check this
 } mPlayer_main_putin_scoop_c;
 
+typedef struct player_main_talk_s {
+    ACTOR* talk_actor_p;
+    int turn_flag;
+    int feel_type;
+} mPlayer_main_talk_c;
+
+typedef struct player_main_recieve_wait_s {
+    ACTOR* talk_actor_p;
+    int turn_flag;
+    int ret_main_index;
+    mActor_name_t item;
+    int surface_flag;
+} mPlayer_main_recieve_wait_c;
+
+typedef struct player_main_recieve_stretch_s {
+    ACTOR* talk_actor_p;
+    int turn_flag;
+    int ret_main_index;
+    mActor_name_t item;
+    int surface_flag;
+} mPlayer_main_recieve_stretch_c;
+
+typedef struct player_main_recieve_s {
+    ACTOR* talk_actor_p;
+    int turn_flag;
+    int ret_main_index;
+    mActor_name_t item;
+    int surface_flag;
+} mPlayer_main_recieve_c;
+
+typedef struct player_main_recieve_putaway_s {
+    ACTOR* talk_actor_p;
+    int turn_flag;
+    int ret_main_index;
+    int surface_flag;
+} mPlayer_main_recieve_putaway_c;
+
+typedef struct player_main_give_s {
+    ACTOR* talk_actor_p;
+    int turn_flag;
+    int ret_main_index;
+    mActor_name_t item;
+    int surface_flag;
+} mPlayer_main_give_c;
+
+typedef struct player_main_give_wait_s {
+    ACTOR* talk_actor_p;
+    int turn_flag;
+    int ret_main_index;
+    int surface_flag;
+} mPlayer_main_give_wait_c;
+
+typedef struct player_main_takeout_item_s {
+    mPlayer_request_takeout_item_c back_request_data;
+    f32 timer;
+} mPlayer_main_takeout_item_c;
+
+typedef struct player_main_putin_item_s {
+    mPlayer_request_putin_item_c back_request_data;
+    f32 timer;
+} mPlayer_main_putin_item_c;
+
 typedef struct player_main_wash_car_s {
     int anime_idx;
     int change_anime_idx;
@@ -1655,6 +1717,15 @@ typedef union {
     mPlayer_main_putaway_scoop_c putaway_scoop;
     mPlayer_main_putin_scoop_c putin_scoop;
     mPlayer_main_demo_wade_c demo_wade;
+    mPlayer_main_talk_c talk;
+    mPlayer_main_recieve_wait_c recieve_wait;
+    mPlayer_main_recieve_stretch_c recieve_stretch;
+    mPlayer_main_recieve_c recieve;
+    mPlayer_main_recieve_putaway_c recieve_putaway;
+    mPlayer_main_give_c give;
+    mPlayer_main_give_wait_c give_wait;
+    mPlayer_main_takeout_item_c takeout_item;
+    mPlayer_main_putin_item_c putin_item;
     mPlayer_main_wash_car_c wash_car;
     mPlayer_main_shake_tree_c shake_tree;
     mPlayer_main_stung_bee_c stung_bee;

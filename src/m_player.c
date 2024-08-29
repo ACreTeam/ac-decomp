@@ -1,5 +1,6 @@
 #include "m_player_lib.h"
 
+#include "libultra/libultra.h"
 #include "m_play.h"
 #include "m_common_data.h"
 #include "m_actor_shadow.h"
@@ -11,6 +12,58 @@
 #include "ac_insect.h"
 #include "ac_set_ovl_insect.h"
 #include "m_house.h"
+
+/* Static function declarations, add as needed for intellisense */
+static int Player_actor_check_request_main_able(GAME* game, int request_main_index, int priority);
+static void Player_actor_request_main_index(GAME* game, int request_index, int priority);
+static void Player_actor_InitAnimation_Base1(ACTOR* actorx, GAME* game, int anim0_idx, int anim1_idx, f32 anim0_frame,
+                                             f32 anim1_frame, f32 frame_speed, f32 morph_counter, int part_table_idx);
+static void Player_actor_InitAnimation_Base2(ACTOR* actorx, GAME* game, int anim0_idx, int anim1_idx, f32 anim0_frame,
+                                             f32 anim1_frame, f32 frame_speed, f32 morph_counter, int mode,
+                                             int part_table_idx);
+static void Player_actor_InitAnimation_Base3(ACTOR* actorx, GAME* game, int anim0_idx, int anim1_idx, f32 frame_speed,
+                                             f32 morph_counter, int mode, int part_table_idx);
+static void Player_actor_SetupItem_Base1(ACTOR* actorx, int anim1_idx, f32 item_morph_speed, int* anim1_idx_p,
+                                         int* part_table_idx_p);
+static void Player_actor_setup_main_Base(ACTOR* actorx, GAME* game);
+static int Player_actor_Movement_Base_Braking_common(ACTOR* actorx, f32 brake_amount);
+static int Player_actor_Movement_Base_Braking(ACTOR* actorx);
+static void Player_actor_Movement_Base_Stop(ACTOR* actorx, int use_position_speed_y);
+static int Player_actor_CulcAnimation_Base2(ACTOR* actorx, f32* last_anim0_current_frame_p);
+static int Player_actor_Check_AnimationFrame_PerfectEquel(ACTOR* actorx, f32 frame);
+static int Player_actor_Check_AnimationFrame(cKF_FrameControl_c* fc_p, f32 target_frame);
+static void Player_actor_set_eye_pattern(ACTOR* actorx, int idx);
+static void Player_actor_set_eye_pattern_normal(ACTOR* actorx);
+static void Player_actor_set_mouth_pattern(ACTOR* actorx, int idx);
+static void Player_actor_set_tex_anime_pattern(ACTOR* actorx);
+static void Player_actor_Excute_Corect_forBrake(ACTOR* actorx, GAME* game);
+static void Player_actor_Excute_Corect_forStand(ACTOR* actorx, GAME* game);
+static void Player_actor_BGcheck_common_type1(ACTOR* actorx);
+static void Player_actor_BGcheck_common_type2(ACTOR* actorx);
+static void Player_actor_BGcheck_common_type3(ACTOR* actorx);
+static int Player_actor_RecieveDemoOrder_EffectOrder(void);
+static void Player_actor_Reinput_force_position_angle(ACTOR* actorx, GAME* game);
+static void Player_actor_recover_lean_angle(ACTOR* actorx);
+static int Player_actor_Check_TradingItemMode(u8 mode);
+static void Player_actor_SettleRequestMainIndexPriority(ACTOR* actorx);
+static int Player_actor_check_item_is_fish(mActor_name_t item);
+static void Player_actor_Change_ItemParent(ACTOR* actor);
+static void Player_actor_Set_item_matrix_set(ACTOR* actorx);
+static void Player_actor_Unset_item_matrix_set(ACTOR* actorx);
+static void Player_actor_Birth_TradingItem(ACTOR* actor, mActor_name_t item, int mode, int present_flag);
+static void Player_actor_CHange_TradingItemMode(ACTOR* actorx, u8 mode);
+static int Player_actor_Check_ItemParent(ACTOR* actor);
+static ACTOR* Player_actor_Get_umbrella_p(ACTOR* actor, GAME* game);
+static s8 Player_actor_Get_ItemKind(ACTOR* actor, int kind);
+static void Player_actor_Set_now_item_main_index(ACTOR* actorx, int item_main_index);
+static void Player_actor_SetEffect_forTakeout_item(ACTOR* actorx, GAME* game);
+static void Player_actor_Set_FootMark_Base1(ACTOR* actorx, GAME* game, int disable_effect, int disable_sound);
+static s8 Player_actor_Get_ItemKind_from_submenu(void);
+
+static int Player_actor_Item_main(ACTOR* actorx, GAME* game);
+static void Player_actor_LoadOrDestruct_Item(ACTOR* actor, int kind, int anim_idx, int mode, f32 speed, f32 morph_speed,
+                                             f32 frame);
+static int Player_actor_Get_BasicItemMainIndex_fromItemKind(int kind);
 
 /* Common */
 #include "../src/m_player_controller.c_inc"

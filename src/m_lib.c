@@ -62,11 +62,11 @@
  * @param size Number of bytes to copy.
  */
 extern void mem_copy(u8* dst, u8* src, size_t size) {
-  for (size; size != 0; size--) {
-    *dst = *src;
-    src++;
-    dst++;
-  }
+    for (size; size != 0; size--) {
+        *dst = *src;
+        src++;
+        dst++;
+    }
 }
 
 /**
@@ -77,11 +77,11 @@ extern void mem_copy(u8* dst, u8* src, size_t size) {
  * @param val Value to set each byte in the destination buffer.
  */
 extern void mem_clear(u8* dst, size_t size, u8 val) {
-  u32 i;
+    u32 i;
 
-  for (i = 0; i < size; i++) {
-    *dst++ = val;
-  }
+    for (i = 0; i < size; i++) {
+        *dst++ = val;
+    }
 }
 
 /**
@@ -93,14 +93,14 @@ extern void mem_clear(u8* dst, size_t size, u8 val) {
  * @return TRUE if the memory buffers are equal, FALSE otherwise.
  */
 extern int mem_cmp(u8* p1, u8* p2, size_t size) {
-  for (size; size != 0; size--) {
-    if (*p1 != *p2) {
-      return FALSE;
+    for (size; size != 0; size--) {
+        if (*p1 != *p2) {
+            return FALSE;
+        }
+        p1++;
+        p2++;
     }
-    p1++;
-    p2++;
-  }
-  return TRUE;
+    return TRUE;
 }
 
 /**
@@ -109,7 +109,9 @@ extern int mem_cmp(u8* p1, u8* p2, size_t size) {
  * @param angle Angle in s16 format.
  * @return Cosine of the angle as a floating-point value.
  */
-extern f32 cos_s(s16 angle) { return coss(angle) * SHT_MINV; }
+extern f32 cos_s(s16 angle) {
+    return coss(angle) * SHT_MINV;
+}
 
 /**
  * @brief Calculate the sine of the given s16 angle.
@@ -117,7 +119,9 @@ extern f32 cos_s(s16 angle) { return coss(angle) * SHT_MINV; }
  * @param angle Angle in s16 format.
  * @return Sine of the angle as a floating-point value.
  */
-extern f32 sin_s(s16 angle) { return sins(angle) * SHT_MINV; }
+extern f32 sin_s(s16 angle) {
+    return sins(angle) * SHT_MINV;
+}
 
 /**
  * @brief Chase an angle value towards a target angle, with a specified step.
@@ -132,24 +136,24 @@ extern f32 sin_s(s16 angle) { return sins(angle) * SHT_MINV; }
  * @return TRUE if the angle reaches the target, FALSE otherwise.
  */
 extern int chase_angle(s16* const pValue, const s16 target, s16 step) {
-  if (step) {
-    f32 updateScale = game_GameFrame_2F;
+    if (step) {
+        f32 updateScale = game_GameFrame_2F;
 
-    if ((s16)(*pValue - target) > 0) {
-      step = -step;
+        if ((s16)(*pValue - target) > 0) {
+            step = -step;
+        }
+
+        *pValue += (s16)(step * updateScale);
+
+        if (((s16)(*pValue - target) * step) >= 0) {
+            *pValue = target;
+            return TRUE;
+        }
+    } else if (*pValue == target) {
+        return TRUE;
     }
 
-    *pValue += (s16)(step * updateScale);
-
-    if (((s16)(*pValue - target) * step) >= 0) {
-      *pValue = target;
-      return TRUE;
-    }
-  } else if (*pValue == target) {
-    return TRUE;
-  }
-
-  return FALSE;
+    return FALSE;
 }
 
 /**
@@ -165,23 +169,23 @@ extern int chase_angle(s16* const pValue, const s16 target, s16 step) {
  * @return TRUE if the value reaches the target, FALSE otherwise.
  */
 extern int chase_s(s16* const pValue, const s16 target, s16 step) {
-  if (step) {
-    if (*pValue > target) {
-      step = -step;
-    }
+    if (step) {
+        if (*pValue > target) {
+            step = -step;
+        }
 
-    *pValue += step;
+        *pValue += step;
 
-    if ((step * (*pValue - target)) >= 0) {
-      *pValue = target;
-      return TRUE;
+        if ((step * (*pValue - target)) >= 0) {
+            *pValue = target;
+            return TRUE;
+        }
+    } else {
+        if (*pValue == target) {
+            return TRUE;
+        }
     }
-  } else {
-    if (*pValue == target) {
-      return TRUE;
-    }
-  }
-  return FALSE;
+    return FALSE;
 }
 
 /**
@@ -197,23 +201,23 @@ extern int chase_s(s16* const pValue, const s16 target, s16 step) {
  * @return TRUE if the value reaches the target, FALSE otherwise.
  */
 extern int chase_f(f32* const pValue, const f32 target, f32 step) {
-  if (step) {
-    if (*pValue > target) {
-      step = -step;
-    }
+    if (step) {
+        if (*pValue > target) {
+            step = -step;
+        }
 
-    *pValue += step;
+        *pValue += step;
 
-    if ((step * (*pValue - target)) >= 0.0f) {
-      *pValue = target;
-      return TRUE;
+        if ((step * (*pValue - target)) >= 0.0f) {
+            *pValue = target;
+            return TRUE;
+        }
+    } else {
+        if (*pValue == target) {
+            return TRUE;
+        }
     }
-  } else {
-    if (*pValue == target) {
-      return TRUE;
-    }
-  }
-  return FALSE;
+    return FALSE;
 }
 
 /**
@@ -228,27 +232,26 @@ extern int chase_f(f32* const pValue, const f32 target, f32 step) {
  * @param fraction Fraction of the distance to move towards the target.
  * @return Remaining distance after the chase.
  */
-extern f32 chase_xyz_t(xyz_t* const pValue, const xyz_t* const target,
-                       const f32 fraction) {
-  xyz_t diff;
-  f32 dist;
-  f32 stepSize;
+extern f32 chase_xyz_t(xyz_t* const pValue, const xyz_t* const target, const f32 fraction) {
+    xyz_t diff;
+    f32 dist;
+    f32 stepSize;
 
-  xyz_t_sub(target, pValue, &diff);
+    xyz_t_sub(target, pValue, &diff);
 
-  dist = Math3DVecLength(&diff);
-  if (dist > fraction) {
-    stepSize = fraction / dist;
-    pValue->x += stepSize * diff.x;
-    pValue->y += stepSize * diff.y;
-    pValue->z += stepSize * diff.z;
+    dist = Math3DVecLength(&diff);
+    if (dist > fraction) {
+        stepSize = fraction / dist;
+        pValue->x += stepSize * diff.x;
+        pValue->y += stepSize * diff.y;
+        pValue->z += stepSize * diff.z;
 
-    return dist - fraction;
-  } else {
-    xyz_t_move(pValue, target);
+        return dist - fraction;
+    } else {
+        xyz_t_move(pValue, target);
 
-    return 0.0f;
-  }
+        return 0.0f;
+    }
 }
 
 /**
@@ -264,19 +267,19 @@ extern f32 chase_xyz_t(xyz_t* const pValue, const xyz_t* const target,
  * @return TRUE if the angle reaches the limit, FALSE otherwise.
  */
 extern int chase_angle2(s16* const pValue, const s16 limit, const s16 step) {
-  s16 prev = *pValue;
+    s16 prev = *pValue;
 
-  *pValue += step;
-  if (((s16)(*pValue - limit) * (s16)(prev - limit)) <= 0) {
-    s32 absDiff = ABS((s16)(*pValue - limit));
+    *pValue += step;
+    if (((s16)(*pValue - limit) * (s16)(prev - limit)) <= 0) {
+        s32 absDiff = ABS((s16)(*pValue - limit));
 
-    if (absDiff < 16384) {
-      *pValue = limit;
-      return TRUE;
+        if (absDiff < 16384) {
+            *pValue = limit;
+            return TRUE;
+        }
     }
-  }
 
-  return FALSE;
+    return FALSE;
 }
 
 /**
@@ -287,13 +290,13 @@ extern int chase_angle2(s16* const pValue, const s16 limit, const s16 step) {
  * @param step Step value for interpolation speed.
  */
 extern void inter_float(f32* const pValue, const f32 arg1, const int step) {
-  if (step <= 0) {
-    *pValue = arg1;
-  } else {
-    f32 diff = arg1 - *pValue;
+    if (step <= 0) {
+        *pValue = arg1;
+    } else {
+        f32 diff = arg1 - *pValue;
 
-    *pValue += diff / step;
-  }
+        *pValue += diff / step;
+    }
 }
 
 /**
@@ -308,7 +311,7 @@ extern void inter_float(f32* const pValue, const f32 arg1, const int step) {
  * @return Random timer value.
  */
 extern s16 get_random_timer(const s16 base, const s16 range) {
-  return base + (s16)(range * fqrand());
+    return base + (s16)(range * fqrand());
 }
 
 /**
@@ -318,9 +321,9 @@ extern s16 get_random_timer(const s16 base, const s16 range) {
  * @param src Source xyz_t structure.
  */
 extern void xyz_t_move(xyz_t* const dest, const xyz_t* const src) {
-  dest->x = src->x;
-  dest->y = src->y;
-  dest->z = src->z;
+    dest->x = src->x;
+    dest->y = src->y;
+    dest->z = src->z;
 }
 
 /**
@@ -330,9 +333,9 @@ extern void xyz_t_move(xyz_t* const dest, const xyz_t* const src) {
  * @param src Pointer to the source s_xyz structure.
  */
 extern void xyz_t_move_s_xyz(xyz_t* const dest, const s_xyz* const src) {
-  dest->x = src->x;
-  dest->y = src->y;
-  dest->z = src->z;
+    dest->x = src->x;
+    dest->y = src->y;
+    dest->z = src->z;
 }
 
 /**
@@ -343,11 +346,10 @@ extern void xyz_t_move_s_xyz(xyz_t* const dest, const s_xyz* const src) {
  * @param total Output xyz_t structure for the result.
  */
 
-extern void xyz_t_add(const xyz_t* const augend, const xyz_t* const addend,
-                      xyz_t* const total) {
-  total->x = augend->x + addend->x;
-  total->y = augend->y + addend->y;
-  total->z = augend->z + addend->z;
+extern void xyz_t_add(const xyz_t* const augend, const xyz_t* const addend, xyz_t* const total) {
+    total->x = augend->x + addend->x;
+    total->y = augend->y + addend->y;
+    total->z = augend->z + addend->z;
 }
 
 /**
@@ -357,11 +359,10 @@ extern void xyz_t_add(const xyz_t* const augend, const xyz_t* const addend,
  * @param subtrahend Second input xyz_t structure.
  * @param diff Output xyz_t structure for the result.
  */
-extern void xyz_t_sub(const xyz_t* const minuend, const xyz_t* const subtrahend,
-                      xyz_t* const diff) {
-  diff->x = minuend->x - subtrahend->x;
-  diff->y = minuend->y - subtrahend->y;
-  diff->z = minuend->z - subtrahend->z;
+extern void xyz_t_sub(const xyz_t* const minuend, const xyz_t* const subtrahend, xyz_t* const diff) {
+    diff->x = minuend->x - subtrahend->x;
+    diff->y = minuend->y - subtrahend->y;
+    diff->z = minuend->z - subtrahend->z;
 }
 
 /**
@@ -371,9 +372,9 @@ extern void xyz_t_sub(const xyz_t* const minuend, const xyz_t* const subtrahend,
  * @param multiplier Scalar value.
  */
 extern void xyz_t_mult_v(xyz_t* const multiplicand, const f32 multiplier) {
-  multiplicand->x *= multiplier;
-  multiplicand->y *= multiplier;
-  multiplicand->z *= multiplier;
+    multiplicand->x *= multiplier;
+    multiplicand->y *= multiplier;
+    multiplicand->z *= multiplier;
 }
 
 /**
@@ -383,13 +384,12 @@ extern void xyz_t_mult_v(xyz_t* const multiplicand, const f32 multiplier) {
  * @param target Pointer to the second xyz_t structure representing the target position.
  * @return The Euclidean distance between the two xyz_t structures.
  */
-extern f32 search_position_distance(const xyz_t* const pos,
-                                    const xyz_t* const target) {
-  f32 diffX = target->x - pos->x;
-  f32 diffY = target->y - pos->y;
-  f32 diffZ = target->z - pos->z;
+extern f32 search_position_distance(const xyz_t* const pos, const xyz_t* const target) {
+    f32 diffX = target->x - pos->x;
+    f32 diffY = target->y - pos->y;
+    f32 diffZ = target->z - pos->z;
 
-  return sqrtf((diffX * diffX) + (diffY * diffY) + (diffZ * diffZ));
+    return sqrtf((diffX * diffX) + (diffY * diffY) + (diffZ * diffZ));
 }
 
 /**
@@ -399,12 +399,11 @@ extern f32 search_position_distance(const xyz_t* const pos,
  * @param target Pointer to the second xyz_t structure representing the target position.
  * @return The Euclidean distance between the two xyz_t structures in the XZ plane.
  */
-extern f32 search_position_distanceXZ(const xyz_t* const pos,
-                                      const xyz_t* const target) {
-  f32 diffX = target->x - pos->x;
-  f32 diffZ = target->z - pos->z;
+extern f32 search_position_distanceXZ(const xyz_t* const pos, const xyz_t* const target) {
+    f32 diffX = target->x - pos->x;
+    f32 diffZ = target->z - pos->z;
 
-  return sqrtf((diffX * diffX) + (diffZ * diffZ));
+    return sqrtf((diffX * diffX) + (diffZ * diffZ));
 }
 
 /**
@@ -414,12 +413,11 @@ extern f32 search_position_distanceXZ(const xyz_t* const pos,
  * @param target Pointer to the second xyz_t structure representing the target position.
  * @return The angle in the Y axis (yaw) between the two xyz_t positions.
  */
-extern s16 search_position_angleY(const xyz_t* const pos,
-                                  const xyz_t* const target) {
-  f32 diffX = target->x - pos->x;
-  f32 diffZ = target->z - pos->z;
+extern s16 search_position_angleY(const xyz_t* const pos, const xyz_t* const target) {
+    f32 diffX = target->x - pos->x;
+    f32 diffZ = target->z - pos->z;
 
-  return atans_table(diffZ, diffX);
+    return atans_table(diffZ, diffX);
 }
 
 /**
@@ -429,12 +427,11 @@ extern s16 search_position_angleY(const xyz_t* const pos,
  * @param target Pointer to the second xyz_t structure representing the target position.
  * @return The angle in the X axis (pitch) between the two xyz_t structures.
  */
-extern s16 search_position_angleX(const xyz_t* const pos,
-                                  const xyz_t* const target) {
-  f32 diffXZ = search_position_distanceXZ(pos, target);
-  f32 diffY = pos->y - target->y;
+extern s16 search_position_angleX(const xyz_t* const pos, const xyz_t* const target) {
+    f32 diffXZ = search_position_distanceXZ(pos, target);
+    f32 diffY = pos->y - target->y;
 
-  return atans_table(diffXZ, diffY);
+    return atans_table(diffXZ, diffY);
 }
 
 /**
@@ -450,49 +447,48 @@ extern s16 search_position_angleX(const xyz_t* const pos,
  * @param minStep Minimum allowed step size.
  * @return The difference between the updated input variable value and the target value.
  */
-extern f32 add_calc(f32* pValue, f32 target, f32 fraction, f32 maxStep,
-                    f32 minStep) {
-  f32 negMinStep;
-  f32 stepSize;
+extern f32 add_calc(f32* pValue, f32 target, f32 fraction, f32 maxStep, f32 minStep) {
+    f32 negMinStep;
+    f32 stepSize;
 
-  if (*pValue != target) {
-    stepSize = fraction * (target - *pValue);
-    negMinStep = -minStep;
+    if (*pValue != target) {
+        stepSize = fraction * (target - *pValue);
+        negMinStep = -minStep;
 
-    if ((stepSize <= negMinStep) || (minStep <= stepSize)) {
-      if (stepSize > maxStep) {
-        stepSize = maxStep;
-      } else if (stepSize < -maxStep) {
-        stepSize = -maxStep;
-      }
+        if ((stepSize <= negMinStep) || (minStep <= stepSize)) {
+            if (stepSize > maxStep) {
+                stepSize = maxStep;
+            } else if (stepSize < -maxStep) {
+                stepSize = -maxStep;
+            }
 
-      *pValue += stepSize;
+            *pValue += stepSize;
 
-      if (stepSize > 0.0f) {
-        if (*pValue > target) {
-          *pValue = target;
+            if (stepSize > 0.0f) {
+                if (*pValue > target) {
+                    *pValue = target;
+                }
+            } else {
+                if (*pValue < target) {
+                    *pValue = target;
+                }
+            }
+        } else {
+            if (stepSize > 0.0f) {
+                *pValue += minStep;
+                if (*pValue > target) {
+                    *pValue = target;
+                }
+            } else {
+                *pValue += negMinStep;
+                if (*pValue < target) {
+                    *pValue = target;
+                }
+            }
         }
-      } else {
-        if (*pValue < target) {
-          *pValue = target;
-        }
-      }
-    } else {
-      if (stepSize > 0.0f) {
-        *pValue += minStep;
-        if (*pValue > target) {
-          *pValue = target;
-        }
-      } else {
-        *pValue += negMinStep;
-        if (*pValue < target) {
-          *pValue = target;
-        }
-      }
     }
-  }
 
-  return target - *pValue;
+    return target - *pValue;
 }
 
 /**
@@ -507,19 +503,19 @@ extern f32 add_calc(f32* pValue, f32 target, f32 fraction, f32 maxStep,
  * @param maxStep Maximum allowed step size.
  */
 extern void add_calc2(f32* pValue, f32 target, f32 fraction, f32 maxStep) {
-  f32 stepSize;
+    f32 stepSize;
 
-  if (*pValue != target) {
-    stepSize = fraction * (target - *pValue);
+    if (*pValue != target) {
+        stepSize = fraction * (target - *pValue);
 
-    if (stepSize > maxStep) {
-      stepSize = maxStep;
-    } else if (stepSize < -maxStep) {
-      stepSize = -maxStep;
+        if (stepSize > maxStep) {
+            stepSize = maxStep;
+        } else if (stepSize < -maxStep) {
+            stepSize = -maxStep;
+        }
+
+        *pValue += stepSize;
     }
-
-    *pValue += stepSize;
-  }
 }
 
 /**
@@ -530,19 +526,20 @@ extern void add_calc2(f32* pValue, f32 target, f32 fraction, f32 maxStep) {
  * @param maxStep Maximum allowed step size.
  */
 extern void add_calc0(f32* pValue, f32 fraction, f32 maxStep) {
-  f32 stepSize = *pValue * fraction;
+    f32 stepSize = *pValue * fraction;
 
-  if (stepSize > maxStep) {
-    stepSize = maxStep;
-  } else if (stepSize < -maxStep) {
-    stepSize = -maxStep;
-  }
+    if (stepSize > maxStep) {
+        stepSize = maxStep;
+    } else if (stepSize < -maxStep) {
+        stepSize = -maxStep;
+    }
 
-  *pValue -= stepSize;
+    *pValue -= stepSize;
 }
 
 /**
- * @brief Add a calculated value to a short integer variable to approach a target angle with minimum and maximum step limits.
+ * @brief Add a calculated value to a short integer variable to approach a target angle with minimum and maximum step
+ * limits.
  *
  * This function adds a calculated step size to the input short integer variable to approach the target angle.
  * The step size is calculated based on the fraction and is limited by the minimum and maximum step values.
@@ -554,51 +551,51 @@ extern void add_calc0(f32* pValue, f32 fraction, f32 maxStep) {
  * @param minStep Minimum allowed step size.
  * @return The difference between the updated input variable angle and the target angle.
  */
-extern s16 add_calc_short_angle2(s16* pValue, s16 target, f32 fraction,
-                                 s16 maxStep, s16 minStep) {
-  s16 stepSize = 0;
-  s16 diff = target - *pValue;
+extern s16 add_calc_short_angle2(s16* pValue, s16 target, f32 fraction, s16 maxStep, s16 minStep) {
+    s16 stepSize = 0;
+    s16 diff = target - *pValue;
 
-  if (*pValue != target) {
-    stepSize = (s16)(diff * fraction);
+    if (*pValue != target) {
+        stepSize = (s16)(diff * fraction);
 
-    if ((stepSize > minStep) || (stepSize < -minStep)) {
-      if (stepSize > maxStep) {
-        stepSize = maxStep;
-      } else if (stepSize < -maxStep) {
-        stepSize = -maxStep;
-      }
+        if ((stepSize > minStep) || (stepSize < -minStep)) {
+            if (stepSize > maxStep) {
+                stepSize = maxStep;
+            } else if (stepSize < -maxStep) {
+                stepSize = -maxStep;
+            }
 
-      *pValue += stepSize;
+            *pValue += stepSize;
 
-      if (stepSize > 0) {
-        if ((s16)(target - *pValue) < 0) {
-          *pValue = target;
+            if (stepSize > 0) {
+                if ((s16)(target - *pValue) < 0) {
+                    *pValue = target;
+                }
+            } else {
+                if ((s16)(target - *pValue) > 0) {
+                    *pValue = target;
+                }
+            }
+        } else {
+            if (diff >= 0) {
+                *pValue += minStep;
+                if ((s16)(target - *pValue) < 0) {
+                    *pValue = target;
+                }
+            } else {
+                *pValue -= minStep;
+                if ((s16)(target - *pValue) > 0) {
+                    *pValue = target;
+                }
+            }
         }
-      } else {
-        if ((s16)(target - *pValue) > 0) {
-          *pValue = target;
-        }
-      }
-    } else {
-      if (diff >= 0) {
-        *pValue += minStep;
-        if ((s16)(target - *pValue) < 0) {
-          *pValue = target;
-        }
-      } else {
-        *pValue -= minStep;
-        if ((s16)(target - *pValue) > 0) {
-          *pValue = target;
-        }
-      }
     }
-  }
-  return target - *pValue;
+    return target - *pValue;
 }
 
 /**
- * @brief Add a calculated value to a short integer angle variable to approach a target angle with minimum and maximum step limits.
+ * @brief Add a calculated value to a short integer angle variable to approach a target angle with minimum and maximum
+ * step limits.
  *
  * This function adds a calculated step size to the input short integer angle variable to approach the target angle.
  * The step size is calculated based on the fraction and is limited by the minimum and maximum step values.
@@ -611,37 +608,36 @@ extern s16 add_calc_short_angle2(s16* pValue, s16 target, f32 fraction,
  * @param minStep Minimum allowed step size.
  * @return The difference between the updated input variable angle and the target angle.
  */
-extern s16 add_calc_short_angle3(s16* pValue, s16 target, f32 fraction,
-                                 s16 maxStep, s16 minStep) {
-  f32 stepSize;
-  s32 uTarget;
-  s32 newValue;
-  s32 uValue;
+extern s16 add_calc_short_angle3(s16* pValue, s16 target, f32 fraction, s16 maxStep, s16 minStep) {
+    f32 stepSize;
+    s32 uTarget;
+    s32 newValue;
+    s32 uValue;
 
-  if (target != *pValue) {
-    uValue = (u16)*pValue;
-    uTarget = (u16)target;
+    if (target != *pValue) {
+        uValue = (u16)*pValue;
+        uTarget = (u16)target;
 
-    if (uValue > uTarget) {
-      uTarget += 65536; /* Add 360 short degrees */
+        if (uValue > uTarget) {
+            uTarget += 65536; /* Add 360 short degrees */
+        }
+
+        stepSize = (uTarget - uValue) * fraction;
+
+        if (stepSize > maxStep) {
+            stepSize = maxStep;
+        } else if (stepSize < minStep) {
+            stepSize = minStep;
+        }
+
+        newValue = uValue + (s32)stepSize;
+        if (newValue > uTarget) {
+            newValue = uTarget;
+        }
+        *pValue = newValue;
     }
 
-    stepSize = (uTarget - uValue) * fraction;
-
-    if (stepSize > maxStep) {
-      stepSize = maxStep;
-    } else if (stepSize < minStep) {
-      stepSize = minStep;
-    }
-
-    newValue = uValue + (s32)stepSize;
-    if (newValue > uTarget) {
-      newValue = uTarget;
-    }
-    *pValue = newValue;
-  }
-
-  return target - *pValue;
+    return target - *pValue;
 }
 
 /**
@@ -651,10 +647,10 @@ extern s16 add_calc_short_angle3(s16* pValue, s16 target, f32 fraction,
  * @param src Pointer to the source rgba_t variable.
  */
 extern void rgba_t_move(rgba_t* dest, const rgba_t* const src) {
-  dest->r = src->r;
-  dest->g = src->g;
-  dest->b = src->b;
-  dest->a = src->a;
+    dest->r = src->r;
+    dest->g = src->g;
+    dest->b = src->b;
+    dest->a = src->a;
 }
 
 /**
@@ -662,7 +658,9 @@ extern void rgba_t_move(rgba_t* dest, const rgba_t* const src) {
  *
  * @return 0
  */
-extern int none_proc1() { return 0; }
+extern int none_proc1() {
+    return 0;
+}
 
 /**
  * @brief No-op function meant for use in actor profiles.
@@ -670,7 +668,8 @@ extern int none_proc1() { return 0; }
  * @param actor Pointer to an ACTOR structure.
  * @param game Pointer to a GAME structure.
  */
-extern void none_proc2(ACTOR* actor, GAME* game) {}
+extern void none_proc2(ACTOR* actor, GAME* game) {
+}
 
 /**
  * @brief Check if the game is in pause state.
@@ -678,11 +677,13 @@ extern void none_proc2(ACTOR* actor, GAME* game) {}
  * @param play Pointer to a GAME_PLAY structure.
  * @return TRUE if the game is in pause state, FALSE otherwise.
  */
-extern int _Game_play_isPause(GAME_PLAY* play) { return (play->pause.enabled != 0); }
+extern int _Game_play_isPause(GAME_PLAY* play) {
+    return (play->pause.enabled != 0);
+}
 
 /**
  * @brief Calculate a percentage with respect to minimum and maximum values, and apply scaling.
- * 
+ *
  * - If `x` is closer to 0 than `min`, return 0
  * - If `x` is further from 0 than `max`, return the sign of `x`
  * - Otherwise, scale `x` by `scale` and return it.
@@ -695,26 +696,25 @@ extern int _Game_play_isPause(GAME_PLAY* play) { return (play->pause.enabled != 
  * @param shift_by_min Flag to shift the percentage by the minimum value (1 to shift, 0 not to shift).
  * @return Scaled percentage of the input value within the specified range.
  */
-extern f32 check_percent_abs(f32 x, f32 min, f32 max, f32 scale,
-                             int shift_by_min) {
-  if ((-min <= x) && (x <= min)) {
-    return 0.0f;
-  }
-  if (x >= max) {
-    return 1.0f;
-  }
-  if (x <= -max) {
-    return -1.0f;
-  }
-  if (shift_by_min) {
-    if (x > 0.0f) {
-      return (x - min) * scale;
-    } else {
-      return (x + min) * scale;
+extern f32 check_percent_abs(f32 x, f32 min, f32 max, f32 scale, int shift_by_min) {
+    if ((-min <= x) && (x <= min)) {
+        return 0.0f;
     }
-  } else {
-    return x * scale;
-  }
+    if (x >= max) {
+        return 1.0f;
+    }
+    if (x <= -max) {
+        return -1.0f;
+    }
+    if (shift_by_min) {
+        if (x > 0.0f) {
+            return (x - min) * scale;
+        } else {
+            return (x + min) * scale;
+        }
+    } else {
+        return x * scale;
+    }
 }
 
 /**
@@ -730,49 +730,48 @@ extern f32 check_percent_abs(f32 x, f32 min, f32 max, f32 scale,
  * @param brakeDist Braking distance.
  * @return Percentage of completion.
  */
-extern f32 get_percent_forAccelBrake(const f32 now, const f32 start, const f32 end,
-                                     const f32 accelerateDist, const f32 brakeDist) {
-  f32 percent;
-  f32 total_delta;
-  f32 now_delta;
-  f32 step;
+extern f32 get_percent_forAccelBrake(f32 now, f32 start, f32 end, f32 accelerateDist, f32 brakeDist) {
+    f32 percent;
+    f32 total_delta;
+    f32 now_delta;
+    f32 step;
 
-  if (now >= end) {
-    return 1.0f;
-  }
-  if (now <= start) {
-    return 0.0f;
-  }
-  total_delta = end - start;
-  now_delta = now - start;
-  if (total_delta < (accelerateDist + brakeDist)) {
-    return 0.0f;
-  }
-
-  step = 1.0f / (((2.0f * total_delta) - accelerateDist) - brakeDist);
-  if (accelerateDist != 0.0f) {
-    if (now_delta <= accelerateDist) {
-      percent = (now_delta * (step * now_delta));
-      percent /= accelerateDist;
-      return percent;
+    if (now >= end) {
+        return 1.0f;
     }
-    percent = step * accelerateDist;
-  } else {
-    percent = 0.0f;
-  }
-  if (now_delta <= (total_delta - brakeDist)) {
-    percent += (step * 2.0f) * (now_delta - accelerateDist);
+    if (now <= start) {
+        return 0.0f;
+    }
+    total_delta = end - start;
+    now_delta = now - start;
+    if (total_delta < (accelerateDist + brakeDist)) {
+        return 0.0f;
+    }
+
+    step = 1.0f / (((2.0f * total_delta) - accelerateDist) - brakeDist);
+    if (accelerateDist != 0.0f) {
+        if (now_delta <= accelerateDist) {
+            percent = (now_delta * (step * now_delta));
+            percent /= accelerateDist;
+            return percent;
+        }
+        percent = step * accelerateDist;
+    } else {
+        percent = 0.0f;
+    }
+    if (now_delta <= (total_delta - brakeDist)) {
+        percent += (step * 2.0f) * (now_delta - accelerateDist);
+        return percent;
+    }
+    percent += (2.0f * step * ((total_delta - accelerateDist) - brakeDist));
+    if (brakeDist != 0.0f) {
+        percent += step * brakeDist;
+        if (now_delta < total_delta) {
+            f32 diff = total_delta - now_delta;
+            percent -= step * diff * diff / brakeDist;
+        }
+    }
     return percent;
-  }
-  percent += (2.0f * step * ((total_delta - accelerateDist) - brakeDist));
-  if (brakeDist != 0.0f) {
-    percent += step * brakeDist;
-    if (now_delta < total_delta) {
-      f32 diff = total_delta - now_delta;
-      percent -= step * diff * diff / brakeDist;
-    }
-  }
-  return percent;
 }
 
 /**
@@ -782,18 +781,16 @@ extern f32 get_percent_forAccelBrake(const f32 now, const f32 start, const f32 e
  * @param wpos Pointer to the 3D world position (xyz_t).
  * @param screen_pos Pointer to the resulting 2D screen position (xyz_t).
  */
-extern void Game_play_Projection_Trans(GAME_PLAY* const play, xyz_t* world_pos,
-                                       xyz_t* screen_pos) {
-  f32 w;
+extern void Game_play_Projection_Trans(GAME_PLAY* const play, xyz_t* world_pos, xyz_t* screen_pos) {
+    f32 w;
 
-  Matrix_mult(&play->projection_matrix, 0);
-  Matrix_Position(world_pos, screen_pos);
-  w = play->projection_matrix.ww +
-      ((play->projection_matrix.wx * world_pos->x) +
-       (play->projection_matrix.wy * world_pos->y) +
-       (play->projection_matrix.wz * world_pos->z));
-  screen_pos->x = (SCREEN_WIDTH_F / 2.0f) + ((screen_pos->x / w) * (SCREEN_WIDTH_F / 2.0f));
-  screen_pos->y = (SCREEN_HEIGHT_F / 2.0f) - ((screen_pos->y / w) * (SCREEN_HEIGHT_F / 2.0f));
+    Matrix_mult(&play->projection_matrix, 0);
+    Matrix_Position(world_pos, screen_pos);
+    w = play->projection_matrix.ww +
+        ((play->projection_matrix.wx * world_pos->x) + (play->projection_matrix.wy * world_pos->y) +
+         (play->projection_matrix.wz * world_pos->z));
+    screen_pos->x = (SCREEN_WIDTH_F / 2.0f) + ((screen_pos->x / w) * (SCREEN_WIDTH_F / 2.0f));
+    screen_pos->y = (SCREEN_HEIGHT_F / 2.0f) - ((screen_pos->y / w) * (SCREEN_HEIGHT_F / 2.0f));
 }
 
 /**
@@ -805,20 +802,20 @@ extern void Game_play_Projection_Trans(GAME_PLAY* const play, xyz_t* world_pos,
  * @return Percentage of the input value within the specified range.
  */
 extern f32 get_percent(const int max, const int min, const int x) {
-  f32 total_delta;
-  f32 percent;
+    f32 total_delta;
+    f32 percent;
 
-  percent = 1.0f;
-  if (x < min) {
-    percent = 0.0f;
-  } else if (x < max) {
-    total_delta = max - min;
-    if (total_delta != 0.0f) {
-      percent = (f32)(x - min) / total_delta;
-      if (percent > 1.0f) {
-        percent = 1.0f;
-      }
+    percent = 1.0f;
+    if (x < min) {
+        percent = 0.0f;
+    } else if (x < max) {
+        total_delta = max - min;
+        if (total_delta != 0.0f) {
+            percent = (f32)(x - min) / total_delta;
+            if (percent > 1.0f) {
+                percent = 1.0f;
+            }
+        }
     }
-  }
-  return percent;
+    return percent;
 }
