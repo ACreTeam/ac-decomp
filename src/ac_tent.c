@@ -76,7 +76,8 @@ static void aTnt_ChangeFg(ACTOR* actor, int type) {
         if (mSN_ClearSnowman(name) == 0) {
             int dug = FALSE;
 
-            if ((((*name >= BURIED_PITFALL_START) && (*name <= BURIED_PITFALL_END)) || (*name == SHINE_SPOT))) {
+            if ((((*name >= BURIED_PITFALL_HOLE_START) && (*name <= BURIED_PITFALL_HOLE_END)) ||
+                 (*name == SHINE_SPOT))) {
                 dug = TRUE;
             }
 

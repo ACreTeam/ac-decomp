@@ -17,6 +17,14 @@ extern "C" {
 #define mPlayer_DEBT3 49800  /* Basement */
 #define mPlayer_DEBT4 798000 /* Upper floor */
 
+/* These are in frames */
+#define mPlayer_SUNBURN_TIME_VILLAGE (15 * mTM_SECONDS_IN_MINUTE * FRAMES_PER_SECOND)
+#define mPlayer_SUNBURN_TIME_ISLAND (5 * mTM_SECONDS_IN_MINUTE * FRAMES_PER_SECOND)
+
+#define mPlayer_SUNBURN_MAX_RANK 8
+
+#define mPlayer_RADIO_EXCERCISE_COMMAND_RING_BUFFER_SIZE 8
+
 typedef struct player_actor_s PLAYER_ACTOR;
 
 #define mPlayer_FORCE_POSITION_ANGLE_NONE 0
@@ -30,6 +38,8 @@ typedef struct player_actor_s PLAYER_ACTOR;
 
 #define mPlayer_WALK_FLAG_SET_POS (1 << 1)
 #define mPlayer_WALK_FLAG_RESET_MORPH (1 << 2)
+
+#define mPlayer_NET_CATCH_TABLE_COUNT 8
 
 enum {
     mPlayer_JOINT_ROOT,
@@ -66,7 +76,7 @@ enum {
     mPlayer_ADDRESSABLE_TRUE,
     mPlayer_ADDRESSABLE_FALSE_MOVEMENT,
     mPlayer_ADDRESSABLE_FALSE_TALKING,
-    mPlayer_ADDRESSABLE_FALSE_USING_TOOL,
+    mPlayer_ADDRESSABLE_FALSE_READY_NET,
 
     mPlayer_ADDRESSABLE_NUM
 };
@@ -214,6 +224,61 @@ enum {
 };
 
 #define mPlayer_MAIN_INDEX_VALID(idx) ((idx) >= 0 && (idx) < mPlayer_INDEX_NUM)
+
+enum {
+    mPlayer_REQUEST_PRIORITY_0,
+    mPlayer_REQUEST_PRIORITY_1,
+    mPlayer_REQUEST_PRIORITY_2,
+    mPlayer_REQUEST_PRIORITY_3,
+    mPlayer_REQUEST_PRIORITY_4,
+    mPlayer_REQUEST_PRIORITY_5,
+    mPlayer_REQUEST_PRIORITY_6,
+    mPlayer_REQUEST_PRIORITY_7,
+    mPlayer_REQUEST_PRIORITY_8,
+    mPlayer_REQUEST_PRIORITY_9,
+    mPlayer_REQUEST_PRIORITY_10,
+    mPlayer_REQUEST_PRIORITY_11,
+    mPlayer_REQUEST_PRIORITY_12,
+    mPlayer_REQUEST_PRIORITY_13,
+    mPlayer_REQUEST_PRIORITY_14,
+    mPlayer_REQUEST_PRIORITY_15,
+    mPlayer_REQUEST_PRIORITY_16,
+    mPlayer_REQUEST_PRIORITY_17,
+    mPlayer_REQUEST_PRIORITY_18,
+    mPlayer_REQUEST_PRIORITY_19,
+    mPlayer_REQUEST_PRIORITY_20,
+    mPlayer_REQUEST_PRIORITY_21,
+    mPlayer_REQUEST_PRIORITY_22,
+    mPlayer_REQUEST_PRIORITY_23,
+    mPlayer_REQUEST_PRIORITY_24,
+    mPlayer_REQUEST_PRIORITY_25,
+    mPlayer_REQUEST_PRIORITY_26,
+    mPlayer_REQUEST_PRIORITY_27,
+    mPlayer_REQUEST_PRIORITY_28,
+    mPlayer_REQUEST_PRIORITY_29,
+    mPlayer_REQUEST_PRIORITY_30,
+    mPlayer_REQUEST_PRIORITY_31,
+    mPlayer_REQUEST_PRIORITY_32,
+    mPlayer_REQUEST_PRIORITY_33,
+    mPlayer_REQUEST_PRIORITY_34,
+    mPlayer_REQUEST_PRIORITY_35,
+    mPlayer_REQUEST_PRIORITY_36,
+    mPlayer_REQUEST_PRIORITY_37,
+    mPlayer_REQUEST_PRIORITY_38,
+    mPlayer_REQUEST_PRIORITY_39,
+    mPlayer_REQUEST_PRIORITY_40,
+    mPlayer_REQUEST_PRIORITY_41,
+    mPlayer_REQUEST_PRIORITY_42,
+    mPlayer_REQUEST_PRIORITY_43,
+    mPlayer_REQUEST_PRIORITY_44,
+    mPlayer_REQUEST_PRIORITY_45,
+
+    mPlayer_REQUEST_PRIORITY_NUM
+};
+
+#define mPlayer_REQUEST_PRIORITY_NONE -1
+
+#define mPlayer_REQUEST_PRIORITY_VALID(prio) ((prio) >= 0 && (prio) < mPlayer_REQUEST_PRIORITY_NUM)
 
 enum {
     mPlayer_ANIM_WAIT1,
@@ -378,6 +443,35 @@ enum {
 };
 
 enum {
+    mPlayer_ITEM_MAIN_NONE,
+    mPlayer_ITEM_MAIN_AXE_NORMAL,
+    mPlayer_ITEM_MAIN_NET_NORMAL,
+    mPlayer_ITEM_MAIN_NET_SWING,
+    mPlayer_ITEM_MAIN_NET_STOP,
+    mPlayer_ITEM_MAIN_TUMBLE,
+    mPlayer_ITEM_MAIN_TUBMLE_GETUP,
+    mPlayer_ITEM_MAIN_NET_PULL,
+    mPlayer_ITEM_MAIN_NET_PUTAWAY,
+    mPlayer_ITEM_MAIN_NET_COMPLETE_COLLECTION,
+    mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+    mPlayer_ITEM_MAIN_ROD_NORMAL,
+    mPlayer_ITEM_MAIN_ROD_READY,
+    mPlayer_ITEM_MAIN_ROD_CAST,
+    mPlayer_ITEM_MAIN_ROD_AIR,
+    mPlayer_ITEM_MAIN_ROD_RELAX,
+    mPlayer_ITEM_MAIN_ROD_COLLECT,
+    mPlayer_ITEM_MAIN_ROD_VIB,
+    mPlayer_ITEM_MAIN_ROD_FLY,
+    mPlayer_ITEM_MAIN_ROD_PUTAWAY,
+    mPlayer_ITEM_MAIN_SCOOP_NORMAL,
+    mPlayer_ITEM_MAIN_BALLOON_NORMAL,
+    mPlayer_ITEM_MAIN_WINDMILL_NORMAL,
+    mPlayer_ITEM_MAIN_FAN_NORMAL,
+
+    mPlayer_ITEM_MAIN_NUM,
+};
+
+enum {
     mPlayer_ITEM_KIND_AXE,
     mPlayer_ITEM_KIND_AXE_USE_1,
     mPlayer_ITEM_KIND_AXE_USE_2,
@@ -469,6 +563,8 @@ enum {
     mPlayer_ITEM_KIND_NUM /* Are there more? */
 };
 
+#define mPlayer_ITEM_KIND_NONE -1
+
 #define mPlayer_ITEM_KIND_CHECK(kind, min, max) ((kind) >= (min) && (kind) < ((max) + 1))
 #define mPlayer_ITEM_IS_AXE(kind) mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_AXE, mPlayer_ITEM_KIND_GOLD_AXE)
 #define mPlayer_ITEM_IS_NET(kind) mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_NET, mPlayer_ITEM_KIND_GOLD_NET)
@@ -483,6 +579,9 @@ enum {
     mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_YELLOW_PINWHEEL, mPlayer_ITEM_KIND_FANCY_PINWHEEL)
 #define mPlayer_ITEM_IS_FAN(kind) \
     mPlayer_ITEM_KIND_CHECK(kind, mPlayer_ITEM_KIND_BLUEBELL_FAN, mPlayer_ITEM_KIND_LEAF_FAN)
+#define mPlayer_ITEM_IS_NOT_TOOL(kind)                                                                    \
+    (mPlayer_ITEM_IS_UMBRELLA(kind) || mPlayer_ITEM_IS_BALLOON(kind) || mPlayer_ITEM_IS_WINDMILL(kind) || \
+     mPlayer_ITEM_IS_FAN(kind))
 
 #define mPlayer_ITEM_KIND_VALID(kind) ((kind) >= 0 && kind < mPlayer_ITEM_KIND_NUM)
 
@@ -591,6 +690,59 @@ enum {
 
     mPlayer_DRAW_TYPE_NUM
 };
+
+enum {
+    mPlayer_SHADOW_TYPE_NORMAL,
+    mPlayer_SHADOW_TYPE_WORLD_POS,
+    mPlayer_SHADOW_TYPE_ANIME_POS,
+    mPlayer_SHADOW_TYPE_NONE,
+
+    mPlayer_SHADOW_TYPE_NUM
+};
+
+enum {
+    mPlayer_STATUS_FOR_BEE_WAIT,
+    mPlayer_STATUS_FOR_BEE_ATTACK,
+    mPlayer_STATUS_FOR_BEE_ENTER_BUILDING,
+
+    mPlayer_STATUS_FOR_BEE_NUM
+};
+
+enum {
+    mPlayer_NET_CATCH_TYPE_INSECT,
+    mPlayer_NET_CATCH_TYPE_UNK1,
+
+    mPlayer_NET_CATCH_TYPE_NUM
+};
+
+enum {
+    mPlayer_ABLE_ITEM_CAN_USE_ALL,
+    mPlayer_ABLE_ITEM_CAN_USE_UMBRELLA,
+    mPlayer_ABLE_ITEM_RESTRICTED,
+    mPlayer_ABLE_ITEM_NONE,
+
+    mPlayer_ABLE_ITEM_NUM
+};
+
+enum {
+    mPlayer_AXE_HIT_NONE,
+    mPlayer_AXE_HIT_REFLECT,
+    mPlayer_AXE_HIT_TREE,
+
+    mPlayer_AXE_HIT_NUM
+};
+
+enum {
+    mPlayer_AXE_BREAK_FROM_SWING,
+    mPlayer_AXE_BREAK_FROM_REFLECT,
+
+    mPlayer_AXE_BREAK_FROM_NUM
+};
+
+#define mPlayer_SETUP_TEXTURE_ANIMATION_NONE (0 << 0)
+/* Where is (1 << 0)? */
+#define mPlayer_SETUP_TEXTURE_ANIMATION_EYE (1 << 1)
+#define mPlayer_SETUP_TEXTURE_ANIMATION_MOUTH (1 << 2)
 
 typedef struct player_request_return_demo_s {
     int prev_main_index;
@@ -745,6 +897,10 @@ typedef struct player_request_stung_mosquito_s {
     u32 label;
 } mPlayer_request_stung_mosquito_c;
 
+typedef struct player_request_notice_mosquito_s {
+    u32 label;
+} mPlayer_request_notice_mosquito_c;
+
 typedef struct player_request_switch_on_lighthouse_s {
     s16 angle_y;
     xyz_t pos;
@@ -795,7 +951,7 @@ typedef struct player_request_wade_s {
 
 typedef struct player_request_wade_snowball_s {
     int dir;
-    xyz_t pos;
+    xyz_t snowball_dist;
     u32 label;
 } mPlayer_request_wade_snowball_c;
 
@@ -927,7 +1083,7 @@ typedef struct player_request_reflect_scoop_s {
 typedef struct player_request_putin_scoop_s {
     xyz_t dig_pos;
     mActor_name_t item;
-    int _10;
+    int get_gold_scoop_flag;
 } mPlayer_request_putin_scoop_c;
 
 typedef struct player_request_putaway_scoop_s {
@@ -1039,7 +1195,7 @@ typedef struct player_request_radio_exercise_s {
 
 typedef struct player_request_demo_geton_boat_wade_s {
     int dir;
-    f32 speed; // TODO: check this
+    f32 border_ofs;
 } mPlayer_request_demo_geton_boat_wade_c;
 
 typedef struct player_request_demo_getoff_boat_s {
@@ -1116,6 +1272,7 @@ typedef union {
     mPlayer_request_shock_c shock;
     mPlayer_request_push_snowball_c push_snowball;
     mPlayer_request_stung_mosquito_c stung_mosquito;
+    mPlayer_request_notice_mosquito_c notice_mosquito;
     mPlayer_request_switch_on_lighthouse_c switch_on_lighthouse;
     mPlayer_request_demo_geton_boat_c demo_geton_boat;
     mPlayer_request_demo_getoff_boat_standup_c demo_getoff_boat_standup;
@@ -1219,6 +1376,7 @@ typedef union {
     mPlayer_request_shock_c shock;
     mPlayer_request_push_snowball_c push_snowball;
     mPlayer_request_stung_mosquito_c stung_mosquito;
+    mPlayer_request_notice_mosquito_c notice_mosquito;
     mPlayer_request_switch_on_lighthouse_c switch_on_lighthouse;
     mPlayer_request_demo_geton_boat_c demo_geton_boat;
     mPlayer_request_demo_getoff_boat_standup_c demo_getoff_boat_standup;
@@ -1305,6 +1463,10 @@ typedef struct player_main_wait_s {
     int radio_exercise_command;
 } mPlayer_main_wait_c;
 
+typedef struct player_main_door_s {
+    u32 label;
+} mPlayer_main_door_c;
+
 typedef struct player_main_wade_s {
     int dir;
     xyz_t start_pos;
@@ -1332,6 +1494,49 @@ typedef struct player_main_pickup_jump_s {
     int exchange_flag;
 } mPlayer_main_pickup_jump_c;
 
+typedef struct player_main_swing_axe_s {
+    /* 0x00 */ xyz_t target_pos;
+    /* 0x0C */ mActor_name_t item;
+    /* 0x0E */ u16 axe_damage_no;
+    /* 0x10 */ int tree_ut_x;
+    /* 0x14 */ int tree_ut_z;
+    /* 0x18 */ int bee_flag;
+    /* 0x1C */ s16 bee_angle_y;
+    /* 0x20 */ int bee_counter;
+} mPlayer_main_swing_axe_c;
+
+typedef struct player_main_reflect_axe_s {
+    xyz_t target_pos;
+    mActor_name_t item;
+    u16 axe_damage_no;
+    ACTOR* reflect_actor_p;
+} mPlayer_main_reflect_axe_c;
+
+typedef struct player_main_broken_axe_s {
+    union {
+        mPlayer_main_swing_axe_c swing_axe;
+        mPlayer_main_reflect_axe_c reflect_axe;
+    } axe;
+    int break_type; /* mPlayer_AXE_BREAK_FROM_* */
+    f32 _28;
+    int _2C;
+} mPlayer_main_broken_axe_c;
+
+typedef struct player_main_dig_scoop_s {
+    xyz_t target_pos;
+    mActor_name_t item;
+} mPlayer_main_dig_scoop_c;
+
+typedef struct player_main_fill_scoop_s {
+    xyz_t target_pos;
+} mPlayer_main_fill_scoop_c;
+
+typedef struct player_main_reflect_scoop_s {
+    xyz_t target_pos;
+    mActor_name_t item;
+    ACTOR* reflect_actor_p;
+} mPlayer_main_reflect_scoop_c;
+
 typedef struct player_main_get_scoop_s {
     xyz_t target_pos;
     mActor_name_t item;
@@ -1349,6 +1554,12 @@ typedef struct player_main_putaway_scoop_s {
     int submenu_flag;
 } mPlayer_main_putaway_scoop_c;
 
+typedef struct player_main_putin_scoop_s {
+    xyz_t target_pos;
+    mActor_name_t item;
+    int get_gold_scoop_flag; // TODO: check this
+} mPlayer_main_putin_scoop_c;
+
 typedef struct player_main_wash_car_s {
     int anime_idx;
     int change_anime_idx;
@@ -1359,6 +1570,51 @@ typedef struct player_main_wash_car_s {
     int ret_order;
     int effect_flag;
 } mPlayer_main_wash_car_c;
+
+typedef struct player_main_swing_net_s {
+    f32 swing_timer;
+} mPlayer_main_swing_net_c;
+
+typedef struct player_main_demo_wade_s {
+    int dir;
+    xyz_t start_pos;
+    xyz_t end_pos;
+    f32 timer;
+} mPlayer_main_demo_wade_c;
+
+typedef struct player_main_shake_tree_s {
+    xyz_t target_pos;
+    mActor_name_t item;
+    int tree_ut_x;
+    int tree_ut_z;
+    int bee_flag;
+    s16 bee_angle_y;
+    int bee_spawn_timer;
+} mPlayer_main_shake_tree_c;
+
+typedef struct player_main_stung_bee_s {
+    f32 timer;
+} mPlayer_main_stung_bee_c;
+
+typedef struct player_main_push_snowball_s {
+    u32 label;
+} mPlayer_main_push_snowball_c;
+
+typedef struct player_main_wade_snowball_s {
+    int dir;
+    xyz_t start_pos;
+    xyz_t end_pos;
+    f32 timer;
+    xyz_t snowball_dist;
+    u32 snowball_label;
+} mPlayer_main_wade_snowball_c;
+
+typedef struct player_main_demo_geton_boat_wade_s {
+    int dir;
+    xyz_t start_pos;
+    xyz_t end_pos;
+    f32 timer;
+} mPlayer_main_demo_geton_boat_wade_c;
 
 typedef struct player_main_demo_geton_boat_sitdown_s {
     s16 angle_z;
@@ -1384,12 +1640,27 @@ typedef union {
     mPlayer_main_return_outdoor_c return_outdoor;
     mPlayer_main_return_outdoor2_c return_outdoor2;
     mPlayer_main_wait_c wait;
+    mPlayer_main_door_c door;
     mPlayer_main_wade_c wade;
     mPlayer_main_pickup_c pickup;
     mPlayer_main_pickup_jump_c pickup_jump;
+    mPlayer_main_swing_axe_c swing_axe;
+    mPlayer_main_reflect_axe_c reflect_axe;
+    mPlayer_main_broken_axe_c broken_axe;
+    mPlayer_main_swing_net_c swing_net;
+    mPlayer_main_dig_scoop_c dig_scoop;
+    mPlayer_main_fill_scoop_c fill_scoop;
+    mPlayer_main_reflect_scoop_c reflect_scoop;
     mPlayer_main_get_scoop_c get_scoop;
     mPlayer_main_putaway_scoop_c putaway_scoop;
+    mPlayer_main_putin_scoop_c putin_scoop;
+    mPlayer_main_demo_wade_c demo_wade;
     mPlayer_main_wash_car_c wash_car;
+    mPlayer_main_shake_tree_c shake_tree;
+    mPlayer_main_stung_bee_c stung_bee;
+    mPlayer_main_push_snowball_c push_snowball;
+    mPlayer_main_wade_snowball_c wade_snowball;
+    mPlayer_main_demo_geton_boat_wade_c demo_geton_boat_wade;
     mPlayer_main_demo_geton_boat_sitdown_c demo_geton_boat_sitdown;
     mPlayer_main_demo_getoff_boat_standup_c demo_getoff_boat_standup;
     mPlayer_main_uki_c uki;
@@ -1412,6 +1683,10 @@ typedef struct controller_data_s {
     mActor_name_t equiped_item;
 } mPlayer_Controller_Data_c;
 
+typedef struct player_eye_pattern_s {
+    s16 pattern;
+    s16 timer;
+} mPlayer_eye_pattern_c;
 
 /* sizeof(struct player_actor_s) == 0x13A8 */
 struct player_actor_s {
@@ -1425,15 +1700,14 @@ struct player_actor_s {
     /* 0x0A88 */ s_xyz item_joint_data[8];
     /* 0x0AB8 */ s_xyz item_morph_data[8];
     /* 0x0AE8 */ Mtx item_work_mtx[2][4]; /* swapped between frames */
-    /* 0x0CE8 */ s16 eye_pattern_normal;
-    /* 0x0CEA */ s16 eye_pattern_normal_timer;
+    /* 0x0CE8 */ mPlayer_eye_pattern_c eye_pattern_normal;
     /* 0x0CEC */ int blink_count;
     /* 0x0CF0 */ int eye_tex_idx;
     /* 0x0CF4 */ int mouth_tex_idx;
     /* 0x0CF8 */ int now_main_index;
     /* 0x0CFC */ int prev_main_index;
     /* 0x0D00 */ int changed_main_index;
-    /* 0x0D04 */ int item_main_index;
+    /* 0x0D04 */ int now_item_main_index;
     /* 0x0D08 */ int requested_main_index;
     /* 0x0D0C */ int requested_main_index_priority;
     /* 0x0D10 */ int requested_main_index_changed;
@@ -1443,8 +1717,12 @@ struct player_actor_s {
     /* 0x0DA8 */ u8 _0DA8[0x0DB4 - 0x0DA8];                           /* unused */
     /* 0x0DB4 */ int animation0_idx;
     /* 0x0DB8 */ int animation1_idx;
-    /* 0x0DBC */ int _0DBC;
-    /* 0x0DC0 */ int _0DC0[9];
+    /* 0x0DBC */ int part_table_idx;
+    /* 0x0DC0 */ int _0DC0;
+    /* 0x0DC4 */ int item_shape_addr[2];
+    /* 0x0DCC */ int item_anim_addr[2];
+    /* 0x0DD4 */ int item_shape_segaddr[2];
+    /* 0x0DDC */ int item_anim_segaddr[2];
     /* 0x0DE4 */ int item_shape_type[2];
     /* 0x0DEC */ int item_animation_idx[2];
     /* 0x0DF4 */ int item_bank_idx;
@@ -1466,10 +1744,10 @@ struct player_actor_s {
     /* 0x0E70 */ u32 item_net_catch_label;
     /* 0x0E74 */ s8 item_net_catch_type;
     /* 0x0E75 */ s8 item_net_has_catch;
-    /* 0x0E78 */ u32 item_net_catch_label_request_table[8];
-    /* 0x0E98 */ s8 item_net_catch_type_request_table[8];
-    /* 0x0EA0 */ xyz_t item_net_catch_pos_request_table[8];
-    /* 0x0F00 */ f32 item_net_catch_radius_request_table[8];
+    /* 0x0E78 */ u32 item_net_catch_label_request_table[mPlayer_NET_CATCH_TABLE_COUNT];
+    /* 0x0E98 */ s8 item_net_catch_type_request_table[mPlayer_NET_CATCH_TABLE_COUNT];
+    /* 0x0EA0 */ xyz_t item_net_catch_pos_request_table[mPlayer_NET_CATCH_TABLE_COUNT];
+    /* 0x0F00 */ f32 item_net_catch_radius_request_table[mPlayer_NET_CATCH_TABLE_COUNT];
     /* 0x0F20 */ int item_net_catch_request_use_count;
     /* 0x0F24 */ u32 item_net_catch_label_request_force;
     /* 0x0F28 */ s8 item_net_catch_type_request_force;
@@ -1477,7 +1755,7 @@ struct player_actor_s {
     /* 0x0F30 */ ACTOR* fishing_rod_actor_p;
     /* 0x0F34 */ xyz_t item_rod_top_pos;
     /* 0x0F40 */ xyz_t item_rod_virtual_top_pos;
-    /* 0x0F4C */ int update_item_rod_top_pos;
+    /* 0x0F4C */ int item_rod_top_pos_set;
     /* 0x0F50 */ s16 item_rod_angle_z;
     /* 0x0F54 */ ClObjTris_c item_axe_tris;
     /* 0x0F68 */ ClObjTrisElem_c item_axe_tris_elem_tbl[1];
@@ -1534,18 +1812,18 @@ struct player_actor_s {
     /* 0x11F9 */ s8 bgm_volume_mode;
     /* 0x11FC */ int crash_snowball_for_wade;
     /* 0x1200 */ xyz_t snowball_dist;
-    /* 0x120C */ int wade_request_flag;
+    /* 0x120C */ int request_wade_dir;
     /* 0x1210 */ u16 cancel_wade_timer;
-    /* 0x1214 */ int cancel_wade_flag;
-    /* 0x1218 */ f32 geton_boat_wade;
-    /* 0x121C */ u16 frame_timer;
+    /* 0x1214 */ int excute_cancel_wade;
+    /* 0x1218 */ f32 geton_boat_wade_border_start;
+    /* 0x121C */ u16 player_frame_counter;
     /* 0x121E */ s8 bee_chase_bgm_flag;
     /* 0x121F */ s8 status_for_bee;
-    /* 0x1220 */ void* angle_force_speak_label;
+    /* 0x1220 */ u32 able_force_speak_label;
     /* 0x1224 */ int player_sunburn_rankup;
     /* 0x1228 */ int player_sunburn_rankdown;
-    /* 0x122C */ s8 radio_exercise_command_ring_buffer[8];
-    /* 0x1234 */ s8 radio_exercise_ring_buffer_cmd_num;
+    /* 0x122C */ s8 radio_exercise_command_ring_buffer[mPlayer_RADIO_EXCERCISE_COMMAND_RING_BUFFER_SIZE];
+    /* 0x1234 */ s8 radio_exercise_ring_buffer_cmd_timer;
     /* 0x1238 */ int radio_exercise_command_ring_buffer_index;
     /* 0x123C */ int radio_exercise_continue_cmd_idx;
     /* 0x1240 */ f32 radio_exercise_cmd_timer;

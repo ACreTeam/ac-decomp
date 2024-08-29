@@ -8,6 +8,14 @@
 extern "C" {
 #endif
 
+typedef mActor_name_t (*aHTBL_SEARCH_PICK_UP_ITEM_LAYER2_PROC)(GAME*);
+
+typedef struct htable_clip_s {
+    aHTBL_SEARCH_PICK_UP_ITEM_LAYER2_PROC search_pick_up_item_layer2_proc;
+    xyz_t pickup_pos;
+    s16 pickup_counter;
+} aHTBL_Clip_c;
+
 extern ACTOR_PROFILE Htable_Profile;
 
 #ifdef __cplusplus
@@ -15,4 +23,3 @@ extern ACTOR_PROFILE Htable_Profile;
 #endif
 
 #endif
-

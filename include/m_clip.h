@@ -25,6 +25,8 @@
 #include "ac_quest_manager_clip.h"
 #include "ac_shop_goods_h.h"
 #include "ac_shop_design.h"
+#include "ac_effectbg.h"
+#include "ac_htable.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,7 +40,7 @@ typedef struct clip_s {
     /* 0x020 */ int arrange_ftr_num;
     /* 0x024 */ void* _024;
     /* 0x028 */ void* misin_clip;
-    /* 0x02C */ void* _02C;
+    /* 0x02C */ aHTBL_Clip_c* htbl_clip;
     /* 0x030 */ void* _030;
     /* 0x034 */ void* _034;
     /* 0x038 */ void* _038;
@@ -72,7 +74,7 @@ typedef struct clip_s {
     /* 0x0A8 */ void* _0A8;
     /* 0x0AC */ aGYO_Clip_c* gyo_clip;
     /* 0x0B0 */ aSG_Clip_c* shop_goods_clip;
-    /* 0x0B4 */ void* _0B4;
+    /* 0x0B4 */ EffectBG_MAKE_EFFECTBG_PROC make_effect_bg_proc;
     /* 0x0B8 */ aShopUmbrella_Clip_c* shop_umbrella_clip;
     /* 0x0BC */ aAR_Clip_c* arrange_room_clip;
     /* 0x0C0 */ void* _0C0;

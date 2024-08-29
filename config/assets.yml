@@ -10286,9 +10286,6 @@ config/rel.yml:
   mFM_rail_pal_11:
     addrs: [0x80F8C428, 0x80F8C448]
     type: pal16
-  mFM_rail_pal_12:
-    addrs: [0x80F8C448, 0x80F8C468]
-    type: pal16
   # ac_koinobori
 
   # NPC draw data assets

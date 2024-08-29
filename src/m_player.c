@@ -7,6 +7,10 @@
 #include "sys_matrix.h"
 #include "ac_tools.h"
 #include "m_rcp.h"
+#include "ac_my_room.h"
+#include "ac_insect.h"
+#include "ac_set_ovl_insect.h"
+#include "m_house.h"
 
 /* Common */
 #include "../src/m_player_controller.c_inc"
@@ -197,18 +201,18 @@ static int Player_actor_request_main_demo_getoff_boat_standup_all(GAME*, const x
 static int Player_actor_request_main_demo_get_golden_item2_all(GAME*, int, int);
 static int Player_actor_request_main_demo_get_golden_axe_wait_all(GAME*, int);
 static int Player_actor_check_request_main_priority(GAME*, int);
-static void* Player_actor_get_door_label(GAME*);
+static u32 Player_actor_get_door_label(GAME*);
 static int Player_actor_Set_Item_net_catch_request_table(ACTOR*, GAME*, u32, s8, const xyz_t*, f32);
 static f32 Player_actor_Get_Item_net_catch_swing_timer(ACTOR*, GAME*);
-static u8 Player_actor_Set_Item_net_catch_request_force(ACTOR*, GAME*, u32, s8);
+static int Player_actor_Set_Item_net_catch_request_force(ACTOR*, GAME*, u32, s8);
 static void Player_actor_Set_force_position_angle(GAME*, const xyz_t*, const s_xyz*, u8);
 static u8 Player_actor_Get_force_position_angle(GAME*, xyz_t*, s_xyz*);
 static int Player_actor_Get_WadeEndPos(GAME*, xyz_t*);
-static int Player_actor_Check_Label_main_push_snowball(GAME*, void*);
+static int Player_actor_Check_Label_main_push_snowball(GAME*, u32);
 static int Player_actor_SetParam_for_push_snowball(GAME*, const xyz_t*, s16, f32);
 static int Player_actor_able_submenu_request_main_index(GAME*);
 static int Player_actor_check_able_change_camera_normal_index(ACTOR*);
-static int Player_actor_Check_able_force_speak_label(GAME*, ACTOR*);
+static int Player_actor_Check_able_force_speak_label(GAME*, u32);
 static int Player_actor_check_cancel_request_change_proc_index(int);
 static u32 Player_actor_Get_item_net_catch_label(ACTOR*);
 static int Player_actor_Change_item_net_catch_label(ACTOR*, u32, s8);
@@ -225,17 +229,19 @@ static int Player_actor_Set_ScrollDemo_forWade_snowball(ACTOR*, int, const xyz_t
 static int Player_actor_Check_tree_shaken(ACTOR*, const xyz_t*);
 static int Player_actor_Check_tree_shaken_little(ACTOR*, const xyz_t*);
 static int Player_actor_Check_tree_shaken_big(ACTOR*, const xyz_t*);
-static int Player_actor_Check_Label_main_wade_snowball(GAME*, void*);
+static int Player_actor_Check_Label_main_wade_snowball(GAME*, u32);
 static int Player_actor_GetSnowballPos_forWadeSnowball(ACTOR*, xyz_t*);
 static int Player_actor_CheckCondition_forWadeSnowball(GAME*, const xyz_t*, s16);
 static mActor_name_t Player_actor_Get_itemNo_forWindow(ACTOR*);
 static int Player_actor_check_cancel_event_without_priority(GAME*);
 static int Player_actor_CheckScene_AbleSubmenu(void);
-static int Player_actor_Check_stung_mosquito(GAME*, ACTOR*);
+static int Player_actor_Check_stung_mosquito(GAME*, u32);
 
 static int Player_actor_request_main_walk_all(GAME*, xyz_t*, f32, int, int);
 static int Player_actor_request_main_run_all(GAME*, f32, int, int);
 static int Player_actor_request_main_dash_all(GAME*, f32, int, int);
+
+static void Player_actor_Refuse_pickup_demo_ct(ACTOR*);
 
 static void Player_actor_init_value(ACTOR* actorx, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
@@ -255,7 +261,7 @@ static void Player_actor_init_value(ACTOR* actorx, GAME* game) {
                                                   actorx->world.position.z, 0, 0, 0, -1, -1, -1, EMPTY_NO, -1, -1, -1);
     player->animation0_idx = -1;
     player->animation1_idx = -1;
-    player->_0DBC = -1;
+    player->part_table_idx = -1;
     player->item_shape_type[0] = -1;
     player->item_shape_type[1] = -1;
     player->item_shape_type[2] = -1;

@@ -450,7 +450,7 @@ extern void mMsm_DepositItemBlock(mActor_name_t* fg_items, mActor_name_t item, i
                     int hole_num = mCoBG_BnumUnum2HoleNumber(block_x, block_z, ut_x, ut_z);
 
                     if (hole_num != -1) {
-                        *fg_items = BURIED_PITFALL_START + hole_num;
+                        *fg_items = BURIED_PITFALL_HOLE_START + hole_num;
                     }
                 }
 

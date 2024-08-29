@@ -472,19 +472,19 @@ extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s_xyz* sbase, xyz
 /**
  * Calculates and applies transformation to world coordinates based on animation data.
  *
- * @param calcx X-coordinate for calculation base.
- * @param calcy Y-coordinate for calculation base.
- * @param calcz Z-coordinate for calculation base.
- * @param base Base position result.
- * @param calcp Position calculation parameters.
- * @param val Angle value for rotation.
- * @param trans Transformation to apply.
+ * @param calc_pos Calculated position result.
+ * @param base_pos Base world position.
+ * @param trans_x X-coordinate for translation.
+ * @param trans_y Y-coordinate for translation.
+ * @param trans_z Z-coordinate for translation.
+ * @param angle_y Angle value for rotation.
+ * @param scale Scaling factor.
  * @param keyframe Skeleton info structure containing animation data.
- * @param animation_flag Flags determining which transformations to apply.
+ * @param trans_flag Flags determining which transformations to apply.
  */
-extern void cKF_SkeletonInfo_R_AnimationMove_CulcTransToWorld(f32 calcx, f32 calcy, f32 calcz, xyz_t* base,
-                                                              xyz_t* calcp, s16 val, xyz_t* trans,
-                                                              cKF_SkeletonInfo_R_c* keyframe, int animation_flag);
+extern void cKF_SkeletonInfo_R_AnimationMove_CulcTransToWorld(xyz_t* calc_pos, const xyz_t* base_pos, f32 trans_x,
+                                                              f32 trans_y, f32 trans_z, s16 angle_y, const xyz_t* scale,
+                                                              cKF_SkeletonInfo_R_c* keyframe, int trans_flag);
 
 #ifdef __cplusplus
 }

@@ -315,7 +315,7 @@ extern mActor_name_t bg_item_fg_sub_dig2take_conv(mActor_name_t item) {
     mActor_name_t dig_item;
 
     dig_item = item;
-    if ((item >= BURIED_PITFALL_START) && (item <= BURIED_PITFALL_END)) {
+    if ((item >= BURIED_PITFALL_HOLE_START) && (item <= BURIED_PITFALL_HOLE_END)) {
         dig_item = ITM_PITFALL;
     }
 

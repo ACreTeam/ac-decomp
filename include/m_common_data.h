@@ -245,7 +245,7 @@ typedef struct common_data_s {
     /* 0x0285BE */ s8 player_actor_exists;
     /* 0x0285BF */ s8 complete_payment_type;
     /* 0x0285C0 */ s8 player_decoy_flag;
-    /* 0x0285C1 */ u8 _285C1;
+    /* 0x0285C1 */ s8 axe_damage;
     /* 0x0285C2 */ u8 make_npc2_actor;
     /* 0x0285C4 */ s16 event_id;
     /* 0x0285C6 */ u8 event_title_flags;
@@ -308,7 +308,7 @@ typedef struct common_data_s {
     /* 0x02DB46 */ mCD_persistent_data_c travel_persistent_data; /* used for checking if travelling back to town */
     /* 0x02DBA2 */ s16 island_weather;
     /* 0x02DBA4 */ s16 island_weather_intensity;
-    /* 0x02DBA6 */ s16 _2DBA6;
+    /* 0x02DBA6 */ s16 sunburn_time;
     /* 0x02DBA8 */ u8 memcard_slot;
     /* 0X02DBAC */ int my_room_message_control_flags;
     /* 0x02DBB0 */ s16 can_look_goki_count;

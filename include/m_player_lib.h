@@ -106,6 +106,10 @@ extern int mPlib_request_main_demo_getoff_train_type1(GAME* game);
 extern int mPlib_check_player_actor_main_index_OutDoorMove2(GAME* game);
 extern int mPlib_Check_SetOrderSubmenu(void);
 extern void mPlib_Clear_change_data_from_submenu(void);
+extern int mPlib_strength_request_main_wade_priority(GAME* game);
+extern int mPlib_strength_request_main_demo_wade_priority(GAME* game);
+extern int mPlib_strength_request_main_demo_geton_boat_wade_priority(GAME* game);
+extern int mPlib_strength_request_main_wade_snowball_priority(GAME* game);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 
@@ -119,6 +123,10 @@ extern void mPlib_request_main_give_type1(GAME* game, mActor_name_t item, int mo
 #define GET_PLAYER_ACTOR(play) get_player_actor_withoutCheck(play)
 #define GET_PLAYER_ACTOR_NOW() get_player_actor_withoutCheck((GAME_PLAY*)gamePT)
 #define GET_PLAYER_ACTOR_GAME(game) get_player_actor_withoutCheck((GAME_PLAY*)(game))
+
+#define GET_PLAYER_ACTOR_ACTOR(play) ((ACTOR*)GET_PLAYER_ACTOR(play))
+#define GET_PLAYER_ACTOR_NOW_ACTOR() ((ACTOR*)GET_PLAYER_ACTOR_NOW())
+#define GET_PLAYER_ACTOR_GAME_ACTOR(game) ((ACTOR*)GET_PLAYER_ACTOR_GAME(game))
 
 #ifdef __cplusplus
 }

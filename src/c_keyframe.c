@@ -893,7 +893,7 @@ extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1, cKF_Skel
     s_xyz* applyjoint;
 
     if ((info1 == NULL) || (info2 == NULL) || (flag == NULL)) {
-        return 0;
+        return cKF_STATE_NONE;
     }
     joint = (F32_IS_ZERO(info1->morph_counter)) ? &info1->current_joint->x : &info1->target_joint->x;
 
@@ -930,7 +930,7 @@ extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1, cKF_Skel
         if (info1->morph_counter <= 0.0f) {
             info1->morph_counter = 0.0f;
         }
-        return 0;
+        return cKF_STATE_NONE;
     }
     cKF_SkeletonInfo_R_morphJoint(info1);
     info1->morph_counter += 0.5f;
@@ -1210,25 +1210,25 @@ extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s_xyz* sbase, xyz
     keyframe->fixed_counter = count;
 }
 
-extern void cKF_SkeletonInfo_R_AnimationMove_CulcTransToWorld(f32 calcx, f32 calcy, f32 calcz, xyz_t* base,
-                                                              xyz_t* calcp, s16 val, xyz_t* trans,
-                                                              cKF_SkeletonInfo_R_c* keyframe, int animation_flag) {
+extern void cKF_SkeletonInfo_R_AnimationMove_CulcTransToWorld(xyz_t* calc_pos, const xyz_t* base_pos, f32 trans_x,
+                                                              f32 trans_y, f32 trans_z, s16 angle_y, const xyz_t* scale,
+                                                              cKF_SkeletonInfo_R_c* keyframe, int trans_flag) {
     f32 sin, cos;
     f32 j_x, j_z;
     s_xyz* cur_joint = keyframe->current_joint;
 
-    if (animation_flag & cKF_ANIMATION_TRANS_XZ) {
-        j_x = cur_joint->x - calcx;
-        j_z = cur_joint->z - calcz;
+    if (trans_flag & cKF_ANIMATION_TRANS_XZ) {
+        j_x = cur_joint->x - trans_x;
+        j_z = cur_joint->z - trans_z;
 
-        sin = sin_s(val);
-        cos = cos_s(val);
+        sin = sin_s(angle_y);
+        cos = cos_s(angle_y);
 
-        base->x = calcp->x + trans->x * ((j_x * cos) + (j_z * sin));
-        base->z = calcp->z + trans->z * ((-j_x * sin) + (j_z * cos));
+        calc_pos->x = base_pos->x + scale->x * ((j_x * cos) + (j_z * sin));
+        calc_pos->z = base_pos->z + scale->z * ((-j_x * sin) + (j_z * cos));
     }
 
-    if (animation_flag & cKF_ANIMATION_TRANS_Y) {
-        base->y = calcp->y + trans->y * (cur_joint->y - calcy);
+    if (trans_flag & cKF_ANIMATION_TRANS_Y) {
+        calc_pos->y = base_pos->y + scale->y * (cur_joint->y - trans_y);
     }
 }
