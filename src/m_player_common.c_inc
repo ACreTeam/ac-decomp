@@ -2299,7 +2299,7 @@ static void Player_actor_putin_furniture(GAME* game, int slot, mActor_name_t ite
     }
 }
 
-static int Player_actor_Check_AnimationFrame_PerfectEqual(ACTOR* actorx, f32 frame) {
+static int Player_actor_Check_AnimationFrame_PerfectEquel(ACTOR* actorx, f32 frame) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
     cKF_FrameControl_c* fc_p = &kf0_p->frame_control;
@@ -4771,13 +4771,13 @@ static int Player_actor_check_request_change_item(GAME* game) {
 }
 
 static int Player_actor_check_item_is_fish(mActor_name_t item) {
-/* @BUG - these macros should be swapped */
-#ifndef BUGFIXES
-    if (ITEM_NAME_GET_CAT(item) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_TYPE(item) == ITEM1_CAT_FISH) {
+#if defined(BUGFIXES)
+    if (ITEM_NAME_GET_TYPE(item) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_CAT(item) == ITEM1_CAT_FISH) {
         return TRUE;
     }
 #else
-    if (ITEM_NAME_GET_TYPE(item) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_CAT(item) == ITEM1_CAT_FISH) {
+    // @BUG - these macros should be swapped
+    if (ITEM_NAME_GET_CAT(item) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_TYPE(item) == ITEM1_CAT_FISH) {
         return TRUE;
     }
 #endif
@@ -6242,17 +6242,23 @@ static int Player_actor_Set_shake_tree_table(ACTOR* actorx, GAME* game, mActor_n
 
         if (little_flag == FALSE) {
             for (i = 0; i < 3; i++) {
-/* @BUG - *shake_ut_z_p is missing an = sign */
-#ifndef BUGFIXES
-                if ((*shake_ut_x_p == tree_ut_x) && (*shake_ut_z_p = tree_ut_z)) {
-#else
+#if defined(BUGFIXES)
                 if ((*shake_ut_x_p == tree_ut_x) && (*shake_ut_z_p == tree_ut_z)) {
-#endif
                     Player_actor_Set_EffectBgTree(game, item, EffectBG_EFFECT_SHAKE_LARGE, tree_ut_x, tree_ut_z);
                     *shake_timer_p = 84.0f;
                     *shake_tree_little_p = FALSE;
                     return TRUE;
                 }
+
+#else
+                // @BUG - *shake_ut_z_p is missing an = sign
+                if ((*shake_ut_x_p == tree_ut_x) && (*shake_ut_z_p = tree_ut_z)) {
+                    Player_actor_Set_EffectBgTree(game, item, EffectBG_EFFECT_SHAKE_LARGE, tree_ut_x, tree_ut_z);
+                    *shake_timer_p = 84.0f;
+                    *shake_tree_little_p = FALSE;
+                    return TRUE;
+                }
+#endif
 
                 shake_timer_p++;
                 shake_ut_x_p++;

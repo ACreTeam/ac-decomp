@@ -1,10 +1,10 @@
-void Player_actor_Set_ItemNoSubmenu(mActor_name_t item) {
+static void Player_actor_Set_ItemNoSubmenu(mActor_name_t item) {
     if (mEv_CheckTitleDemo() <= 0) {
         Common_Get(now_private)->equipment = item;
     }
 }
 
-mActor_name_t Player_actor_Get_ItemNoSubmenu() {
+mActor_name_t Player_actor_Get_ItemNoSubmenu(void) {
     if (mEv_CheckTitleDemo() > 0) {
         return mPlib_Get_controller_data_for_title_demo_p()->equiped_item;
     } else {
@@ -12,19 +12,18 @@ mActor_name_t Player_actor_Get_ItemNoSubmenu() {
     }
 }
 
-s8 Player_actor_Get_ItemKind_from_submenu() {
+static s8 Player_actor_Get_ItemKind_from_submenu(void) {
     return mPlib_Get_ItemNoToItemKind(Player_actor_Get_ItemNoSubmenu());
 }
 
-s8 Player_actor_Get_ItemKind_fromScene() {
+static s8 Player_actor_Get_ItemKind_fromScene(void) {
     if (Player_actor_CheckScene_AbleOutItem(Save_Get(scene_no)) != 0) {
         return Player_actor_Get_ItemKind_from_submenu();
     }
     return -1;
 }
 
-
-s8 Player_actor_Get_ItemKind(ACTOR* actor, int kind) {
+static s8 Player_actor_Get_ItemKind(ACTOR* actor, int kind) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     int able = Player_actor_CheckPlayer_AbleLoadItem(kind);
     s8 scene_kind = Player_actor_Get_ItemKind_fromScene();
@@ -51,7 +50,7 @@ s8 Player_actor_Get_ItemKind(ACTOR* actor, int kind) {
     return -1;
 }
 
-int Player_actor_Get_BasicItemMainIndex_fromItemKind(int kind) {
+static int Player_actor_Get_BasicItemMainIndex_fromItemKind(int kind) {
     static s8 data[] = {
         1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
         10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 20,
@@ -65,8 +64,7 @@ int Player_actor_Get_BasicItemMainIndex_fromItemKind(int kind) {
     }
 }
 
-
-void Player_actor_birth_umbrella(ACTOR* actor, GAME* game) {
+static void Player_actor_birth_umbrella(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     int is_umbrella;
     aTOL_Clip_c* tools;
@@ -109,17 +107,17 @@ ACTOR* Player_actor_Get_umbrella_p(ACTOR* actor, GAME* game) {
     return NULL;
 }
 
-int Player_actor_Item_CulcAnimation_Base(ACTOR* actor) {
+static int Player_actor_Item_CulcAnimation_Base(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
     return cKF_SkeletonInfo_R_play(&player->item_keyframe);
 }
 
-int Player_actor_Item_CulcAnimation_Base2(ACTOR* actor) {
+static int Player_actor_Item_CulcAnimation_Base2(ACTOR* actor) {
     return Player_actor_Item_CulcAnimation_Base(actor) == 1;
 }
 
-void Player_actor_Item_SetAnimation_Base(ACTOR* actor, f32 frame) {
+static void Player_actor_Item_SetAnimation_Base(ACTOR* actor, f32 frame) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     cKF_SkeletonInfo_R_c* keyf = &player->item_keyframe;
 
@@ -128,8 +126,8 @@ void Player_actor_Item_SetAnimation_Base(ACTOR* actor, f32 frame) {
     keyf->frame_control.current_frame = frame;
 }
 
-void Player_actor_Item_DMA_Data(ACTOR* actor, int skl_idx, int anim_idx, int mode, f32 speed, f32 morph_speed,
-                                f32 frame) {
+static void Player_actor_Item_DMA_Data(ACTOR* actor, int skl_idx, int anim_idx, int mode, f32 speed, f32 morph_speed,
+                                       f32 frame) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     int change_bank = Player_actor_Change_ItemBank();
 
@@ -161,8 +159,7 @@ void Player_actor_Item_DMA_Data(ACTOR* actor, int skl_idx, int anim_idx, int mod
     }
 }
 
-
-void Player_actor_Item_Set_Command_forUki(ACTOR* actor, int command) {
+static void Player_actor_Item_Set_Command_forUki(ACTOR* actor, int command) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -171,8 +168,7 @@ void Player_actor_Item_Set_Command_forUki(ACTOR* actor, int command) {
     }
 }
 
-
-void Player_actor_Item_Set_RightHandPos_forUki(ACTOR* actor, int arg0) {
+static void Player_actor_Item_Set_RightHandPos_forUki(ACTOR* actor, int arg0) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -204,8 +200,7 @@ void Player_actor_Item_Set_RightHandPos_forUki(ACTOR* actor, int arg0) {
     }
 }
 
-
-void Player_actor_Item_Set_LeftHandPos_forUki(ACTOR* actor, int arg0) {
+static void Player_actor_Item_Set_LeftHandPos_forUki(ACTOR* actor, int arg0) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -237,8 +232,7 @@ void Player_actor_Item_Set_LeftHandPos_forUki(ACTOR* actor, int arg0) {
     }
 }
 
-
-void Player_actor_Item_Set_PosSpeed_forUki(ACTOR* actor) {
+static void Player_actor_Item_Set_PosSpeed_forUki(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -247,7 +241,7 @@ void Player_actor_Item_Set_PosSpeed_forUki(ACTOR* actor) {
     }
 }
 
-void Player_actor_Item_Set_AngleSpeedY_forUki(ACTOR* actor) {
+static void Player_actor_Item_Set_AngleSpeedY_forUki(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -266,7 +260,7 @@ void Player_actor_Item_Set_AngleSpeedY_forUki(ACTOR* actor) {
     }
 }
 
-void Player_actor_Item_Set_RodTopPos_forUki(ACTOR* actor) {
+static void Player_actor_Item_Set_RodTopPos_forUki(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -275,9 +269,8 @@ void Player_actor_Item_Set_RodTopPos_forUki(ACTOR* actor) {
     }
 }
 
-
-void Player_actor_LoadOrDestruct_Item(ACTOR* actor, int kind, int anim_idx, int mode, f32 speed, f32 morph_speed,
-                                      f32 frame) {
+static void Player_actor_LoadOrDestruct_Item(ACTOR* actor, int kind, int anim_idx, int mode, f32 speed, f32 morph_speed,
+                                             f32 frame) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     int umbrella;
     int rod;
@@ -320,8 +313,7 @@ void Player_actor_LoadOrDestruct_Item(ACTOR* actor, int kind, int anim_idx, int 
     }
 }
 
-
-void Player_actor_CorrectSomething_net(ACTOR* actor, xyz_t* pos) {
+static void Player_actor_CorrectSomething_net(ACTOR* actor, xyz_t* pos) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     TOOLS_ACTOR* label = (TOOLS_ACTOR*)player->item_net_catch_label;
 
@@ -334,7 +326,7 @@ void Player_actor_CorrectSomething_net(ACTOR* actor, xyz_t* pos) {
     }
 }
 
-int Player_actor_Check_ItemAnimationToItemKind(int kind, int anim) {
+static int Player_actor_Check_ItemAnimationToItemKind(int kind, int anim) {
     int res;
 
     if (mPlayer_ITEM_IS_AXE(kind) != FALSE) {

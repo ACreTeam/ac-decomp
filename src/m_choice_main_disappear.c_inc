@@ -1,56 +1,51 @@
 static int mChoice_Main_Disappear_SetScale(mChoice_c* choice, GAME* game) {
-  const f32 max = 10.2f;
-  
-  if (choice->timer < max) {
-    f32 scale;
-    
-    choice->timer += 1.0f;
-    scale = 1.0f - get_percent_forAccelBrake(choice->timer, 0.0f, max, 0.0f, 0.0f);
-    choice->scale = scale;
-    choice->center_x = choice->center_x_begin + scale * (choice->center_x_target - choice->center_x_begin);
-    choice->center_y = choice->center_y_begin + scale * (choice->center_y_target - choice->center_y_begin);
-    return FALSE;
-  }
-  else {
-    choice->timer = 0.0f;
-    choice->scale = 0.0f;
-    choice->center_x = choice->center_x_begin;
-    choice->center_y = choice->center_y_begin;
-    return TRUE;
-  }
+    if (choice->timer < 10.2f) {
+        f32 scale;
+
+        choice->timer += 1.0f;
+        scale = 1.0f - get_percent_forAccelBrake(choice->timer, 0.0f, 10.2f, 0.0f, 0.0f);
+        choice->scale = scale;
+        choice->center_x = choice->center_x_begin + scale * (choice->center_x_target - choice->center_x_begin);
+        choice->center_y = choice->center_y_begin + scale * (choice->center_y_target - choice->center_y_begin);
+        return FALSE;
+    } else {
+        choice->timer = 0.0f;
+        choice->scale = 0.0f;
+        choice->center_x = choice->center_x_begin;
+        choice->center_y = choice->center_y_begin;
+        return TRUE;
+    }
 }
 
 static void mChoice_request_main_index_fromDisappear(mChoice_c* choice, GAME* game, int closed_flag) {
-  if (closed_flag) {
-    mChoice_Change_request_main_index(choice, mChoice_MAIN_HIDE);
-  }
+    if (closed_flag) {
+        mChoice_Change_request_main_index(choice, mChoice_MAIN_HIDE);
+    }
 }
 
 static void mChoice_Main_Disappear(mChoice_c* choice, GAME* game) {
-  int closed_flag = mChoice_Main_Disappear_SetScale(choice, game);
+    int closed_flag = mChoice_Main_Disappear_SetScale(choice, game);
 
-  mChoice_request_main_index_fromDisappear(choice, game, closed_flag);
-  mChoice_MainSetup(choice, game);
+    mChoice_request_main_index_fromDisappear(choice, game, closed_flag);
+    mChoice_MainSetup(choice, game);
 }
 
 static void mChoice_MainSetup_Disappear(mChoice_c* choice, GAME* game) {
-  if (choice->no_b_flag && choice->selected_choice_idx == (choice->data.choice_num - 1)) {
-    if (choice->no_close_flag) {
-      mChoice_sound_ZOOMDOWN_LONG();
-      mMsg_Get_base_window_p()->status_flags |= mMsg_STATUS_FLAG_NO_ZOOMDOWN;
+    if (choice->no_b_flag && choice->selected_choice_idx == (choice->data.choice_num - 1)) {
+        if (choice->no_close_flag) {
+            mChoice_sound_ZOOMDOWN_LONG();
+            mMsg_Get_base_window_p()->status_flags |= mMsg_STATUS_FLAG_NO_ZOOMDOWN;
+        } else {
+            mChoice_sound_ZOOMDOWN_SHORT();
+        }
+    } else {
+        mChoice_sound_SENTAKU_KETTEI();
     }
-    else {
-      mChoice_sound_ZOOMDOWN_SHORT();
-    }
-  }
-  else {
-    mChoice_sound_SENTAKU_KETTEI();
-  }
 
-  choice->scale = 1.0f;
-  choice->main_index = mChoice_MAIN_DISAPPEAR;
-  choice->requested_main_index = -1;
-  choice->window_visible_flag = TRUE;
-  choice->timer = 0.0f;
-  choice->font_visible_flag = FALSE;
+    choice->scale = 1.0f;
+    choice->main_index = mChoice_MAIN_DISAPPEAR;
+    choice->requested_main_index = -1;
+    choice->window_visible_flag = TRUE;
+    choice->timer = 0.0f;
+    choice->font_visible_flag = FALSE;
 }

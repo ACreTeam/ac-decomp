@@ -50,6 +50,7 @@ typedef enum audio_sound_effects {
     NA_SE_MONEY1,
     NA_SE_MONEY2,
     NA_SE_COIN,
+    NA_SE_TEMOCHI_KAZAGURUMA,
 
     NA_SE_52 = 0x52,
 
@@ -133,8 +134,9 @@ typedef enum audio_sound_effects {
     NA_SE_ROTATE = 0x41A,
 
     NA_SE_41C = 0x41C,
-
-    NA_SE_SOFT_CHAIR_SIT = 0x41F,
+    NA_SE_AXE_HIT,
+    NA_SE_AXE_CUT,
+    NA_SE_SOFT_CHAIR_SIT,
     NA_SE_HARD_CHAIR_SIT,
     NA_SE_BUBU_CHAIR_SIT,
     NA_SE_SOFT_CHAIR_STANDUP,

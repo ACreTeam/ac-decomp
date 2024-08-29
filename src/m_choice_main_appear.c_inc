@@ -1,48 +1,46 @@
 static int mChoice_Main_Appear_SetScale(mChoice_c* choice, GAME* game) {
-  int res;
-  const f32 max = 10.2f;
+    int res;
 
-  if (choice->timer < max) {
-    f32 scale;
-    
-    choice->timer += 1.0f;
-    scale = get_percent_forAccelBrake(choice->timer, 0.0f, max, 0.0f, 0.0f);
-    choice->scale = scale;
-    choice->center_x = choice->center_x_begin + scale * (choice->center_x_target - choice->center_x_begin);
-    choice->center_y = choice->center_y_begin + scale * (choice->center_y_target - choice->center_y_begin);
-    res = FALSE;
-  }
-  else {
-    choice->timer = 0.0f;
-    choice->scale = 1.0f;
-    choice->center_x = choice->center_x_target;
-    choice->center_y = choice->center_y_target;
-    res = TRUE;
-  }
+    if (choice->timer < 10.2f) {
+        f32 scale;
 
-  return res;
+        choice->timer += 1.0f;
+        scale = get_percent_forAccelBrake(choice->timer, 0.0f, 10.2f, 0.0f, 0.0f);
+        choice->scale = scale;
+        choice->center_x = choice->center_x_begin + scale * (choice->center_x_target - choice->center_x_begin);
+        choice->center_y = choice->center_y_begin + scale * (choice->center_y_target - choice->center_y_begin);
+        res = FALSE;
+    } else {
+        choice->timer = 0.0f;
+        choice->scale = 1.0f;
+        choice->center_x = choice->center_x_target;
+        choice->center_y = choice->center_y_target;
+        res = TRUE;
+    }
+
+    return res;
 }
 
 static void mChoice_request_main_index_fromAppear(mChoice_c* choice, GAME* game, int open_flag) {
-  if (open_flag) {
-    mChoice_Change_request_main_index(choice, mChoice_MAIN_NORMAL);
-  }
+    if (open_flag) {
+        mChoice_Change_request_main_index(choice, mChoice_MAIN_NORMAL);
+    }
 }
 
 static void mChoice_Main_Appear(mChoice_c* choice, GAME* game) {
-  int open_flag = mChoice_Main_Appear_SetScale(choice, game);
+    int open_flag = mChoice_Main_Appear_SetScale(choice, game);
 
-  mChoice_request_main_index_fromAppear(choice, game, open_flag);
-  mChoice_MainSetup(choice, game);
+    mChoice_request_main_index_fromAppear(choice, game, open_flag);
+    mChoice_MainSetup(choice, game);
 }
 
 static void mChoice_MainSetup_Appear(mChoice_c* choice, GAME* game) {
-  choice->scale = 0.0f;
-  choice->main_index = mChoice_MAIN_APPEAR;
-  choice->requested_main_index = -1;
-  choice->window_visible_flag = TRUE;
-  choice->timer = 0.0f;
-  mChoice_Clear_ChoseNum(choice);
-  mChoice_sound_SENTAKU_OPEN();
-  mChoice_Set_DisplayScaleAndDisplayPos(choice);
+    choice->scale = 0.0f;
+    choice->main_index = mChoice_MAIN_APPEAR;
+    choice->requested_main_index = -1;
+    choice->window_visible_flag = TRUE;
+    choice->timer = 0.0f;
+    mChoice_Clear_ChoseNum(choice);
+    mChoice_sound_SENTAKU_OPEN();
+    mChoice_Set_DisplayScaleAndDisplayPos(choice);
 }
