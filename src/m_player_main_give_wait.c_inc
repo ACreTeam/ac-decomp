@@ -51,7 +51,7 @@ static void Player_actor_setup_main_Give_wait(ACTOR* actorx, GAME* game) {
     }
 }
 
-static void Player_actor_settle_main_Give_wait(ACTOR* actorx) {
+static void Player_actor_settle_main_Give_wait(ACTOR* actorx, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     mPlayer_main_give_wait_c* main_give_wait_p = &player->main_data.give_wait;
 

@@ -1,0 +1,183 @@
+static int Player_actor_request_main_pickup(GAME* game, mActor_name_t item, const xyz_t* target_pos_p,
+                                            const xyz_t* item_pos_p, int slot_idx, int signboard_flag) {
+    if (Player_actor_check_able_request_main_index_for_reset(mPlayer_INDEX_PICKUP) == FALSE) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_pickup_c* req_pickup_p = &player->requested_main_index_data.pickup;
+
+        req_pickup_p->inv_slot = slot_idx;
+        req_pickup_p->item = item;
+        req_pickup_p->target_pos = *target_pos_p;
+        req_pickup_p->item_pos = *item_pos_p;
+        req_pickup_p->flag = signboard_flag;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_PICKUP, mPlayer_REQUEST_PRIORITY_8);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Pickup(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    f32 morph_counter;
+    mPlayer_request_pickup_c* req_pickup_p = &player->requested_main_index_data.pickup;
+    mPlayer_main_pickup_c* main_pickup_p = &player->main_data.pickup;
+    int slot_idx;
+    mActor_name_t item;
+    xyz_t* target_pos_p;
+    xyz_t* item_pos_p;
+    int signboard_flag;
+    int anim1_idx;
+    int part_table_idx;
+
+    slot_idx = req_pickup_p->inv_slot;
+    item = req_pickup_p->item;
+    target_pos_p = &req_pickup_p->target_pos;
+    item_pos_p = &req_pickup_p->item_pos;
+    signboard_flag = req_pickup_p->flag;
+
+    main_pickup_p->target_pos = *target_pos_p;
+    main_pickup_p->item_pos = *item_pos_p;
+    main_pickup_p->signboard_flag = signboard_flag;
+    main_pickup_p->scale = 0.01f;
+    main_pickup_p->timer = 0.0f;
+    main_pickup_p->item = item;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_PICKUP1, -6.0f, &anim1_idx, &part_table_idx);
+
+    if (signboard_flag) {
+        aSIGN_erase_white_sign(game, target_pos_p);
+    }
+
+    Player_actor_putin_item(slot_idx, item, target_pos_p);
+
+    if (slot_idx >= 0) {
+        main_pickup_p->exchange_flag = FALSE;
+    } else if (mEv_CheckTitleDemo() > 0) {
+        main_pickup_p->exchange_flag = FALSE;
+    } else {
+        main_pickup_p->exchange_flag = TRUE;
+    }
+
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_PICKUP1, anim1_idx, 1.0f, 1.0f, 0.5f, -6.0f,
+                                     cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_PICK_UP);
+    Player_actor_setup_main_Base(actorx, game);
+
+    if (item == ITM_FOOD_COCONUT) {
+        mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_PICKUP_COCONUT);
+    }
+}
+
+static void Player_actor_Movement_Pickup(ACTOR* actorx) {
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static int Player_actor_CulcAnimation_Pickup(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_ObjCheck_Pickup(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Pickup(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_SetSound_Pickup(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc0_p, 10.0f)) {
+        Player_actor_sound_ITEM_GET(actorx);
+    }
+
+    if (Player_actor_Check_AnimationFrame(fc0_p, 20.0f)) {
+        Player_actor_sound_GASAGOSO(actorx);
+    }
+}
+
+static void Player_actor_SearchAnimation_Pickup(ACTOR* actorx, GAME* game, f32 frame) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_SetSound_Pickup(actorx);
+        Player_actor_Set_FootMark_Base1(actorx, game, FALSE, FALSE);
+    }
+}
+
+static void Player_actor_Set_Item_Pickup(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_pickup_c* main_pickup_p = &player->main_data.pickup;
+    f32* scale_p = &main_pickup_p->scale;
+    xyz_t* item_pos_p = &main_pickup_p->item_pos;
+    xyz_t* left_hand_pos_p = &player->left_hand_pos;
+    f32* timer_p = &main_pickup_p->timer;
+
+    (*timer_p) += 1.0f;
+    if (*timer_p > 40.0f) {
+        *timer_p = 40.0f;
+        *scale_p = 0.0f;
+        *item_pos_p = *left_hand_pos_p;
+    } else {
+        xyz_t* item_ofs_p = &main_pickup_p->item_offset;
+
+        if (*timer_p < 20.0f) {
+            item_ofs_p->x = item_pos_p->x - left_hand_pos_p->x;
+            item_ofs_p->y = item_pos_p->y - left_hand_pos_p->y;
+            item_ofs_p->z = item_pos_p->z - left_hand_pos_p->z;
+        } else {
+            f32 p = 1.0f - (*timer_p - 20.0f) / 20.0f;
+
+            if (p < 0.0f) {
+                p = 0.0f;
+            } else if (p > 1.0f) {
+                p = 1.0f;
+            }
+
+            *scale_p = p * 0.01f;
+            item_pos_p->x = left_hand_pos_p->x + p * item_ofs_p->x;
+            item_pos_p->y = left_hand_pos_p->y + p * item_ofs_p->y;
+            item_pos_p->z = left_hand_pos_p->z + p * item_ofs_p->z;
+        }
+    }
+}
+
+static void Player_actor_request_proc_index_fromPickup(ACTOR* actorx, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (end_flag) {
+        mPlayer_main_pickup_c* main_pickup_p = &player->main_data.pickup;
+
+        if (main_pickup_p->exchange_flag) {
+            Player_actor_request_main_pickup_exchange(game, &main_pickup_p->target_pos, main_pickup_p->item,
+                                                      mPlayer_REQUEST_PRIORITY_21);
+        } else {
+            Player_actor_SettleRequestMainIndexPriority(actorx);
+
+            if (main_pickup_p->item == ITM_GOLDEN_SHOVEL && mPlib_Check_golden_item_get_demo_end(3) == FALSE) {
+                Player_actor_request_main_demo_get_golden_item_all(game, 3, mPlayer_REQUEST_PRIORITY_34);
+            } else {
+                Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+            }
+        }
+    }
+}
+
+static void Player_actor_main_Pickup(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    Player_actor_Movement_Pickup(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Pickup(actorx, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Pickup(actorx, game, last_anim0_cur_frame);
+    Player_actor_Set_Item_Pickup(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Pickup(actorx, game);
+    Player_actor_BGcheck_Pickup(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromPickup(actorx, game, end_flag);
+}

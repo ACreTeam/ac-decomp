@@ -12,6 +12,9 @@
 #include "ac_insect.h"
 #include "ac_set_ovl_insect.h"
 #include "m_house.h"
+#include "ac_sign.h"
+#include "m_msg.h"
+#include "m_choice.h"
 
 /* Static function declarations, add as needed for intellisense */
 static int Player_actor_check_request_main_able(GAME* game, int request_main_index, int priority);
@@ -59,11 +62,97 @@ static void Player_actor_Set_now_item_main_index(ACTOR* actorx, int item_main_in
 static void Player_actor_SetEffect_forTakeout_item(ACTOR* actorx, GAME* game);
 static void Player_actor_Set_FootMark_Base1(ACTOR* actorx, GAME* game, int disable_effect, int disable_sound);
 static s8 Player_actor_Get_ItemKind_from_submenu(void);
+static int Player_actor_Set_shake_tree_table(ACTOR* actorx, GAME* game, mActor_name_t item, int tree_ut_x,
+                                             int tree_ut_z, int little_flag);
+static int Player_actor_Check_BirthBee_common(ACTOR* actorx, mActor_name_t item, int tree_ut_x, int tree_ut_z,
+                                              s16* angle_y_p);
+static void Player_actor_Set_status_for_bee(ACTOR* actorx, s8 v);
+static int Player_actor_check_able_request_main_index_for_reset(int request_main_index);
+static void Player_actor_putin_item(int slot, mActor_name_t item, xyz_t* pos_p);
+static void Player_actor_putin_item_layer2(int slot, mActor_name_t item, xyz_t* pos_p);
+static void Player_actor_putin_furniture(GAME* game, int slot, mActor_name_t item);
+
+static void Player_actor_sound_SetStatus(ACTOR* actor);
+static void Player_actor_set_sound_common1(xyz_t* pos, u16 id);
+static void Player_actor_set_sound_common2(ACTOR* actor, u16 id);
+static void Player_actor_sound_FootStep1(ACTOR* actor, u16 id);
+static void Player_actor_sound_FootStep2(ACTOR* actor);
+static void Player_actor_sound_Tumble(ACTOR* actor);
+static void Player_actor_sound_AMI_FURI(ACTOR* actor);
+static void Player_actor_sound_AMI_HIT(ACTOR* actor);
+static void Player_actor_sound_AMI_GET(ACTOR* actor);
+static void Player_actor_sound_GASAGOSO(ACTOR* actor);
+static void Player_actor_sound_AXE_FURI(ACTOR* actor);
+static void Player_actor_sound_AXE_HIT(ACTOR* actor, xyz_t* pos);
+static void Player_actor_sound_AXE_CUT(ACTOR* actor, xyz_t* pos);
+static void Player_actor_sound_SIT(ACTOR* actor, int ftr_idx);
+static void Player_actor_sound_STANDUP(ACTOR* actor, int ftr_idx);
+static void Player_actor_sound_JUMP(ACTOR* actor);
+static void Player_actor_sound_LANDING(ACTOR* actor);
+static void Player_actor_sound_ITEM_GET(ACTOR* actor);
+static void Player_actor_sound_BED_IN(ACTOR* actor);
+static void Player_actor_sound_BED_NEGAERI(ACTOR* actor);
+static void Player_actor_sound_BED_OUT(ACTOR* actor);
+static void Player_actor_sound_ROD_STROKE(ACTOR* actor);
+static void Player_actor_sound_ROD_STROKE_small(ACTOR* actor);
+static void Player_actor_sound_ROD_BACK(ACTOR* actor);
+static void Player_actor_sound_scoop1(ACTOR* actor);
+static void Player_actor_sound_scoop_umeru(ACTOR* actor);
+static void Player_actor_sound_scoop_hit(ACTOR* actor);
+static void Player_actor_sound_scoop_shigemi(ACTOR* actor);
+static void Player_actor_sound_ITEM_HORIDASHI(ACTOR* actor);
+static void Player_actor_sound_slip(ACTOR* actor);
+static void Player_actor_sound_tree_touch(xyz_t* pos);
+static void Player_actor_sound_tree_yurasu(xyz_t* pos);
+static void Player_actor_sound_kirikabu_scoop(ACTOR* actor);
+static void Player_actor_sound_kirikabu_out(ACTOR* actor);
+static void Player_actor_sound_knock(ACTOR* actor);
+static void Player_actor_sound_coin_gasagoso(ACTOR* actor);
+static void Player_actor_sound_araiiki(ACTOR* actor);
+static void Player_actor_sound_zassou_nuku(xyz_t* pos);
+static void Player_actor_sound_hachi_sasareru(ACTOR* actor);
+static void Player_actor_sound_wear(ACTOR* actor);
+static void Player_actor_sound_dai_ue_kakunou(ACTOR* actor);
+static void Player_actor_sound_umbrella_rotate(ACTOR* actor);
+static u16 Player_actor_sound_Get_bgm_num_forCompletePayment();
+static u16 Player_actor_sound_Get_bgm_num_forDemoGetGoldenItem(int type);
+static void Player_actor_sound_camera_move1(void);
+static void Player_actor_sound_camera_move2();
+static void Player_actor_sound_karaburi(ACTOR* actor);
+static void Player_actor_sound_scoop_tree_hit(ACTOR* actor);
+static void Player_actor_sound_scoop_item_hit(ACTOR* actor);
+static void Player_actor_sound_axe_ball_hit(ACTOR* actor);
+static void Player_actor_sound_axe_broken1(ACTOR* actor);
+static void Player_actor_sound_axe_broken2(ACTOR* actor);
+static void Player_actor_sound_axe_broken3(ACTOR* actor);
+static void Player_actor_sound_uchiwa(ACTOR* actor);
+static void Player_actor_sound_move_temochi_kazaguruma(ACTOR* actor);
+
+static void Player_actor_set_viblation_Shake_tree(void);
 
 static int Player_actor_Item_main(ACTOR* actorx, GAME* game);
 static void Player_actor_LoadOrDestruct_Item(ACTOR* actor, int kind, int anim_idx, int mode, f32 speed, f32 morph_speed,
                                              f32 frame);
 static int Player_actor_Get_BasicItemMainIndex_fromItemKind(int kind);
+
+static int Player_actor_CheckController_forPickup(GAME* game);
+static int Player_actor_CheckController_forAxe(GAME* game);
+static int Player_actor_CheckController_forNet(GAME* game);
+static int Player_actor_CheckController_forRod(GAME* game);
+static int Player_actor_CheckController_forScoop(GAME* game);
+static int Player_actor_CheckController_forUmbrella(GAME* game);
+static int Player_actor_CheckController_forFan(GAME* game, int type);
+static int Player_actor_CheckController_forShake_tree(GAME* game);
+static f32 Player_actor_CheckController_forStruggle_pitfall(void);
+static int Player_actor_CheckController_forDush(void);
+static f32 Player_actor_GetController_move_percentX(void);
+static f32 Player_actor_GetController_move_percentY(void);
+static f32 Player_actor_GetController_move_percentR(void);
+static s16 Player_actor_GetController_move_angle(void);
+static s16 Player_actor_GetController_old_move_angle(void);
+static f32 Player_actor_GetController_recognize_percentR(void);
+static f32 Player_actor_GetController_old_recognize_percentR(void);
+static int Player_actor_CheckController_forRadio_exercise(GAME* game);
 
 /* Common */
 #include "../src/m_player_controller.c_inc"
@@ -219,9 +308,9 @@ static void Player_actor_Set_old_sound_frame_counter(ACTOR* actorx);
 static void Player_actor_change_proc_index(ACTOR* actorx, GAME* game);
 
 static int Player_actor_request_main_invade_all(GAME*, int);
-static int Player_actor_request_main_refuse(GAME*, int);
-static int Player_actor_request_main_return_demo_all(GAME*, int, f32, int);
-static int Player_actor_request_main_wait_all(GAME*, f32, f32, int, int);
+// static int Player_actor_request_main_refuse(GAME*, int);
+// static int Player_actor_request_main_return_demo_all(GAME*, int, f32, int);
+// static int Player_actor_request_main_wait_all(GAME*, f32, f32, int, int);
 static int Player_actor_request_main_talk_all(GAME*, ACTOR*, int, f32, int, int);
 static int Player_actor_request_main_hold(GAME*, int, int, const xyz_t*, f32, int, int);
 static int Player_actor_request_main_recieve_wait(GAME*, ACTOR*, int, int, mActor_name_t, int, int);
@@ -294,7 +383,7 @@ static int Player_actor_request_main_walk_all(GAME*, xyz_t*, f32, int, int);
 static int Player_actor_request_main_run_all(GAME*, f32, int, int);
 static int Player_actor_request_main_dash_all(GAME*, f32, int, int);
 
-static void Player_actor_Refuse_pickup_demo_ct(ACTOR*);
+// static void Player_actor_Refuse_pickup_demo_ct(ACTOR*);
 
 static void Player_actor_init_value(ACTOR* actorx, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
@@ -457,7 +546,7 @@ extern void Player_actor_dt(ACTOR* actorx, GAME* game) {
 
 typedef void (*mPlayer_REQUEST_MAIN_CHANGE_FROM_SUBMENU_PROC)(ACTOR*, GAME*);
 
-static void Player_actor_request_main_wait_from_submenu(ACTOR*, GAME*);
+// static void Player_actor_request_main_wait_from_submenu(ACTOR*, GAME*);
 static void Player_actor_request_main_putin_scoop_from_submenu(ACTOR*, GAME*);
 static void Player_actor_request_main_give_from_submenu(ACTOR*, GAME*);
 static void Player_actor_request_main_demo_wait_from_submenu(ACTOR*, GAME*);

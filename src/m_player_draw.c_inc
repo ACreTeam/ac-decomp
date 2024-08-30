@@ -316,7 +316,7 @@ static void Player_actor_draw_Normal(ACTOR* actorx, GAME* game) {
         mPlayer_main_pickup_jump_c* main_pickup_jump = NULL;
 
         if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_PICKUP) {
-            if (player->main_data.pickup.exchange_flag == FALSE) {
+            if (player->main_data.pickup.signboard_flag == FALSE) {
                 item = player->main_data.pickup.item;
                 item_scale = player->main_data.pickup.scale;
                 item_pos_p = &player->main_data.pickup.item_pos;
