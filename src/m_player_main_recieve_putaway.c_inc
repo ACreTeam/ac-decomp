@@ -48,7 +48,7 @@ static void Player_actor_setup_main_Recieve_putaway(ACTOR* actorx, GAME* game) {
     Player_actor_sound_GASAGOSO(actorx);
 }
 
-static void Player_actor_settle_main_Recieve_putaway(ACTOR* actorx) {
+static void Player_actor_settle_main_Recieve_putaway(ACTOR* actorx, GAME* game) {
     Player_actor_Unset_item_matrix_set(actorx);
 }
 

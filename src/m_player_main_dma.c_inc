@@ -1,5 +1,5 @@
 
-int Player_actor_request_main_dma(GAME* game, int flag) {
+static int Player_actor_request_main_dma(GAME* game, int flag) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DMA, flag) != FALSE) {
         Player_actor_request_main_index(game, mPlayer_INDEX_DMA, flag);
         return TRUE;
@@ -7,11 +7,11 @@ int Player_actor_request_main_dma(GAME* game, int flag) {
     return FALSE;
 }
 
-void Player_actor_setup_main_Dma(void) { 
-    Player_actor_setup_main_Base(); 
+static void Player_actor_setup_main_Dma(ACTOR* actorx, GAME* game) {
+    Player_actor_setup_main_Base(actorx, game);
 }
 
-void Player_actor_request_proc_index_fromDma(ACTOR* actorx, GAME* game) {
+static void Player_actor_request_proc_index_fromDma(ACTOR* actorx, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     Object_Exchange_c* exchange = &play->object_exchange;
     int bank_idx = mSc_bank_regist_check(exchange, 14);
@@ -55,7 +55,8 @@ void Player_actor_request_proc_index_fromDma(ACTOR* actorx, GAME* game) {
         }
     }
 }
-void Player_actor_main_Dma(ACTOR* actor, GAME* game) {
+
+static void Player_actor_main_Dma(ACTOR* actor, GAME* game) {
     Player_actor_Reinput_force_position_angle(actor, game);
     Player_actor_request_proc_index_fromDma(actor, game);
 }

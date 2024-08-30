@@ -995,26 +995,27 @@ typedef struct player_request_standup_bed_s {
 typedef struct player_request_pickup_s {
     int inv_slot;
     mActor_name_t item;
-    xyz_t end_pos;
-    xyz_t start_pos;
+    xyz_t target_pos;
+    xyz_t item_pos;
     int flag;
 } mPlayer_request_pickup_c;
 
 typedef struct player_request_pickup_jump_s {
     int inv_slot;
     mActor_name_t item;
-    xyz_t start_pos;
-    int flag;
+    xyz_t item_pos;
+    int ftr_flag;
+    int knife_and_fork_flag;
 } mPlayer_request_pickup_jump_c;
 
 typedef struct player_request_pickup_furniture_s {
     int inv_slot;
     mActor_name_t item;
-    xyz_t start_pos;
+    xyz_t item_pos;
 } mPlayer_request_pickup_furniture_c;
 
 typedef struct player_request_pickup_exchange_s {
-    xyz_t end_pos;
+    xyz_t target_pos;
     mActor_name_t item;
 } mPlayer_request_pickup_exchange_c;
 
@@ -1171,8 +1172,8 @@ typedef struct player_request_ready_pitfall_s {
 } mPlayer_request_ready_pitfall_c;
 
 typedef struct player_request_remove_grass_s {
-    xyz_t start_pos;
-    xyz_t end_pos;
+    xyz_t grass_pos;
+    xyz_t target_pos;
 } mPlayer_request_remove_grass_c;
 
 typedef struct player_request_change_cloth_s {
@@ -1481,8 +1482,8 @@ typedef struct player_main_pickup_s {
     f32 scale;
     f32 timer;
     mActor_name_t item;
-    int ftr_flag;
     int exchange_flag;
+    int signboard_flag;
 } mPlayer_main_pickup_c;
 
 typedef struct player_main_pickup_jump_s {
@@ -1491,8 +1492,25 @@ typedef struct player_main_pickup_jump_s {
     xyz_t item_offset;
     f32 scale;
     mActor_name_t item;
+    int ftr_flag;
     int exchange_flag;
 } mPlayer_main_pickup_jump_c;
+
+typedef struct player_main_pickup_furniture_s {
+    xyz_t target_pos;
+    xyz_t item_pos;
+    xyz_t item_offset;
+    f32 scale;
+    mActor_name_t item;
+    int exchange_flag;
+} mPlayer_main_pickup_furniture_c;
+
+typedef struct player_main_pickup_exchange_s {
+    xyz_t target_pos;
+    mActor_name_t item;
+    int msg_mode;
+    int submenu_flag;
+} mPlayer_main_pickup_exchange_c;
 
 typedef struct player_main_swing_axe_s {
     /* 0x00 */ xyz_t target_pos;
@@ -1658,6 +1676,11 @@ typedef struct player_main_stung_bee_s {
     f32 timer;
 } mPlayer_main_stung_bee_c;
 
+typedef struct player_main_remove_grass_s {
+    xyz_t grass_pos;
+    xyz_t target_pos;
+} mPlayer_main_remove_grass_c;
+
 typedef struct player_main_push_snowball_s {
     u32 label;
 } mPlayer_main_push_snowball_c;
@@ -1706,6 +1729,8 @@ typedef union {
     mPlayer_main_wade_c wade;
     mPlayer_main_pickup_c pickup;
     mPlayer_main_pickup_jump_c pickup_jump;
+    mPlayer_main_pickup_furniture_c pickup_furniture;
+    mPlayer_main_pickup_exchange_c pickup_exchange;
     mPlayer_main_swing_axe_c swing_axe;
     mPlayer_main_reflect_axe_c reflect_axe;
     mPlayer_main_broken_axe_c broken_axe;
@@ -1729,6 +1754,7 @@ typedef union {
     mPlayer_main_wash_car_c wash_car;
     mPlayer_main_shake_tree_c shake_tree;
     mPlayer_main_stung_bee_c stung_bee;
+    mPlayer_main_remove_grass_c remove_grass;
     mPlayer_main_push_snowball_c push_snowball;
     mPlayer_main_wade_snowball_c wade_snowball;
     mPlayer_main_demo_geton_boat_wade_c demo_geton_boat_wade;
