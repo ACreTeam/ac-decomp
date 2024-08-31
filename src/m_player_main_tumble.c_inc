@@ -134,11 +134,11 @@ static void Player_actor_request_proc_index_fromTumble(GAME* game, int arg1, int
 }
 
 static void Player_actor_main_Tumble(ACTOR* actor, GAME* game) {
-    int arg1;
+    int is_stopped;
     int calc;
     f32 frame_calc;
 
-    arg1 = Player_actor_Movement_Tumble(actor);
+    is_stopped = Player_actor_Movement_Tumble(actor);
     Player_actor_Reinput_force_position_angle(actor, game);
     calc = Player_actor_CulcAnimation_Tumble(actor, &frame_calc);
     Player_actor_SearchAnimation_Tumble(actor, game, frame_calc, calc);
@@ -147,5 +147,5 @@ static void Player_actor_main_Tumble(ACTOR* actor, GAME* game) {
     Player_actor_ObjCheck_Tumble(actor, game);
     Player_actor_BGcheck_Tumble(actor);
     Player_actor_Item_main(actor, game);
-    Player_actor_request_proc_index_fromTumble(game, arg1, calc);
+    Player_actor_request_proc_index_fromTumble(game, is_stopped, calc);
 }

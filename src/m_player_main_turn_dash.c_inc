@@ -1,0 +1,97 @@
+static int Player_actor_request_main_turn_dash(GAME* game, s16 angle, int prio) {
+    PLAYER_ACTOR* player;
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_TURN_DASH, prio)) {
+        player = GET_PLAYER_ACTOR_GAME(game);
+        player->requested_main_index_data.turn_dash.target_angle_y = angle;
+        Player_actor_request_main_index(game, mPlayer_INDEX_TURN_DASH, prio);
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static int Player_actor_request_main_turn_dash_all(GAME* game, s16 angle, int prio) {
+    return Player_actor_request_main_turn_dash(game, angle, prio) != FALSE;
+}
+
+static void Player_actor_setup_main_Turn_dash_common(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int anim_idx;
+    int part_table_idx;
+
+    player->main_data.turn_dash.target_angle_y = player->requested_main_index_data.turn_dash.target_angle_y;
+
+    Player_actor_SetupItem_Base1(actor, mPlayer_ANIM_RUN_SLIP1, -5.0f, &anim_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_RUN_SLIP1, anim_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actor, game);
+    Player_actor_sound_slip(actor);
+    Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_TURN_ASIMOTO, actor->world.position, 2,
+                                                   actor->world.angle.y, game, 0xFFFF,
+                                                   actor->bg_collision_check.result.unit_attribute, 0);
+}
+
+static void Player_actor_setup_main_Turn_dash(ACTOR* actor, GAME* game) {
+    Player_actor_setup_main_Turn_dash_common(actor, game);
+}
+
+static void Player_actor_settle_main_Turn_dash(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_TURN_FOOTPRINT, player->right_foot_pos, 2,
+                                                   actor->world.angle.y, game, 0xFFFF,
+                                                   actor->bg_collision_check.result.unit_attribute, 0);
+    actor->world.angle.y = actor->shape_info.rotation.y;
+}
+
+static int Player_actor_Movement_Turn_dash(ACTOR* actor) {
+    return Player_actor_Movement_Base_Braking_common(actor, 0.261f);
+}
+
+static int Player_actor_ChangeDirection_Turn_dash(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    s16* rot = &actor->shape_info.rotation.y;
+    s16 target = player->main_data.turn_dash.target_angle_y;
+
+    return add_calc_short_angle3(rot, target, 1.0f - sqrtf(0.5), 2500, 50) == 0;
+}
+
+static int Player_actor_CulcAnimation_Turn_dash(ACTOR* actor) { 
+    return Player_actor_CulcAnimation_Base(actor); 
+}
+
+static void Player_actor_ObjCheck_Turn_dash(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Turn_dash(ACTOR* actor) { 
+    Player_actor_BGcheck_common_type1(actor); 
+}
+
+static void Player_actor_request_proc_index_fromTurn_dash_common(ACTOR* actor, GAME* game, int is_stopped,
+                                                                 int rotdiff) {
+    if (is_stopped != 0 && rotdiff != 0) {
+        Player_actor_SettleRequestMainIndexPriority(actor);
+        Player_actor_request_main_wait_all(game, -12.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_request_proc_index_fromTurn_dash(ACTOR* actor, GAME* game, int arg2, int arg3) {
+    Player_actor_request_proc_index_fromTurn_dash_common(actor, game, arg2, arg3);
+}
+
+static void Player_actor_main_Turn_dash(ACTOR* actor, GAME* game) {
+    int is_stopped;
+    int rotdiff;
+
+    is_stopped = Player_actor_Movement_Turn_dash(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    rotdiff = Player_actor_ChangeDirection_Turn_dash(actor);
+    Player_actor_CulcAnimation_Turn_dash(actor);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Turn_dash(actor, game);
+    Player_actor_BGcheck_Turn_dash(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromTurn_dash(actor, game, is_stopped, rotdiff);
+}
