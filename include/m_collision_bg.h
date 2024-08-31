@@ -343,6 +343,7 @@ extern int mCoBG_GetBlockBgCheckMode(void);
 extern void mCoBG_GroundCheckOnly(xyz_t* reverse_pos, ACTOR* actor, f32 check_range, f32 offset_y, s16 check_type);
 extern f32 mCoBG_Wpos2BgUtCenterHeight_AddColumn(xyz_t pos);
 extern f32 mCoBG_UtNum2UtCenterY_Keep(int ut_x, int ut_z);
+extern int mCoBG_RegistDecalCircle(const xyz_t* pos_p, f32 radius_start, f32 radius_end, s16 timer);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();
