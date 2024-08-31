@@ -16,7 +16,7 @@ static int Player_actor_request_main_wait_all(GAME* game, f32 morph_speed, f32 _
 }
 
 static void Player_actor_request_main_wait_from_submenu(ACTOR* actor, GAME* game) {
-    Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, 31);
+    Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_31);
 }
 
 static void Player_actor_setup_main_Wait(ACTOR* actor, GAME* game) {
@@ -76,29 +76,29 @@ static void Player_actor_BGcheck_Wait(ACTOR* actor) {
 static void Player_actor_request_proc_index_fromWait(ACTOR* actor, GAME* game) {
 
     if (!actor->bg_collision_check.result.on_ground) {
-        Player_actor_request_main_fall_all(game, -5.0f, 1, 1);
+        Player_actor_request_main_fall_all(game, -5.0f, 1, mPlayer_REQUEST_PRIORITY_1);
     }
 
-    Player_actor_CheckAndRequest_main_axe_all(game, 4);
+    Player_actor_CheckAndRequest_main_axe_all(game, mPlayer_REQUEST_PRIORITY_4);
 
     if (Player_actor_CheckController_forNet(game) != 0) {
-        Player_actor_request_main_ready_net(game, 4);
+        Player_actor_request_main_ready_net(game, mPlayer_REQUEST_PRIORITY_4);
     }
 
     if (Player_actor_CheckController_forRod(game) != 0) {
-        Player_actor_request_main_ready_rod(game, 4);
+        Player_actor_request_main_ready_rod(game, mPlayer_REQUEST_PRIORITY_4);
     }
 
-    Player_actor_CheckAndRequest_main_scoop_all(game, 4);
-    Player_actor_CheckAndRequest_main_umbrella_all(game, 4);
-    Player_actor_CheckAndRequest_main_fan_all(game, 1, 1, 4);
+    Player_actor_CheckAndRequest_main_scoop_all(game, mPlayer_REQUEST_PRIORITY_4);
+    Player_actor_CheckAndRequest_main_umbrella_all(game, mPlayer_REQUEST_PRIORITY_4);
+    Player_actor_CheckAndRequest_main_fan_all(game, 1, 1, mPlayer_REQUEST_PRIORITY_4);
     Player_actor_CheckAndRequest_main_shake_tree_all(game);
 
     if ((Player_actor_GetController_move_percentX()) || (Player_actor_GetController_move_percentY())) {
-        Player_actor_request_main_walk_all(game, NULL, -5.0f, 4, 1);
+        Player_actor_request_main_walk_all(game, NULL, -5.0f, 4, mPlayer_REQUEST_PRIORITY_1);
     }
     Player_actor_CheckAndRequest_main_pickup_all(game);
-    Player_actor_CheckAndRequest_main_radio_exercise_all(game, 0);
+    Player_actor_CheckAndRequest_main_radio_exercise_all(game, mPlayer_REQUEST_PRIORITY_0);
 }
 
 static void Player_actor_main_Wait(ACTOR* actor, GAME* game) {

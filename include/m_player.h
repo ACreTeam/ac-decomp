@@ -583,7 +583,7 @@ enum {
     (mPlayer_ITEM_IS_UMBRELLA(kind) || mPlayer_ITEM_IS_BALLOON(kind) || mPlayer_ITEM_IS_WINDMILL(kind) || \
      mPlayer_ITEM_IS_FAN(kind))
 
-#define mPlayer_ITEM_KIND_VALID(kind) ((kind) >= 0 && kind < mPlayer_ITEM_KIND_NUM)
+#define mPlayer_ITEM_KIND_VALID(kind) (mPlayer_ITEM_KIND_CHECK(kind, 0, mPlayer_ITEM_KIND_NUM))
 
 enum {
     mPlayer_ITEM_DATA_AXE,      // model
@@ -1719,6 +1719,19 @@ typedef struct player_main_putaway_uki_s {
     f32 unk0;
 } mPlayer_main_putaway_uki_c;
 
+typedef struct player_main_balloon_s {
+    int balloon_shape_type;
+} mPlayer_main_balloon_c;
+
+typedef struct player_main_turn_dash_s {
+    s16 target_angle_y;
+} mPlayer_main_turn_dash_c;
+
+typedef struct player_main_fall_s {
+    f32 morph_speed;
+    int flags;
+} mPlayer_main_turn_fall_c;
+
 typedef union {
     mPlayer_main_intro_c intro;
     mPlayer_main_return_demo_c return_demo;
@@ -1762,6 +1775,9 @@ typedef union {
     mPlayer_main_demo_getoff_boat_standup_c demo_getoff_boat_standup;
     mPlayer_main_uki_c uki;
     mPlayer_main_putaway_uki_c putaway_uki;
+    mPlayer_main_balloon_c balloon;
+    mPlayer_main_turn_dash_c turn_dash;
+    mPlayer_main_turn_fall_c fall;
     u8 force_size[72]; // TEMP
 } mPlayer_main_data;
 
