@@ -37,7 +37,7 @@ static void Player_actor_setup_main_Wait(ACTOR* actor, GAME* game) {
 
     absspeed = ABS(speed);
 
-    Player_actor_SetupItem_Base1(actor, 0, -absspeed, &anim_idx, &part_table_idx);
+    Player_actor_SetupItem_Base1(actor, mPlayer_ANIM_WAIT1, -absspeed, &anim_idx, &part_table_idx);
     Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_WAIT1, anim_idx, 1.0f, 1.0f, 0.5f, speed,
                                      part_table_idx);
 
