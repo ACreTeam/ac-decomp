@@ -24,6 +24,8 @@ extern "C" {
 #define USHT_MIN ((f32)USHT_MIN_S)
 #define USHT_MAX ((f32)USHT_MAX_S)
 
+#define FLT_MAX (3.4028235e+38f)
+
 /* Macro to generate a random float in the range of [0, n) */
 #define RANDOM_F(n) (fqrand() * (f32)(n))
 

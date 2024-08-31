@@ -162,6 +162,8 @@ typedef enum audio_sound_effects {
     NA_SE_SCOOP_ITEM_HIT,
     NA_SE_AXE_BALL_HIT,
 
+    NA_SE_461 = 0x461,
+
     NA_SE_COIN_GASAGOSO = 0x465,
 
 } AudioSE;
