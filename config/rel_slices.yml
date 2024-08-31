@@ -1172,6 +1172,10 @@ ef_halloween.c:
     .text: [0x8060D44C, 0x8060D654]
     .rodata: [0x8064C1C0, 0x8064C1D0]
     .data: [0x806D2600, 0x806D2618]
+ef_halloween_smoke.c:
+    .text: [0x8060D654, 0x8060D8D8]
+    .rodata: [0x8064C1D0, 0x8064C1E0]
+    .data: [0x806D2618, 0x806D2660]
 ef_hanabi_dummy.c:
     .text: [0x8060E6D8, 0x8060E9B8]
     .rodata: [0x8064C2A0, 0x8064C2C0]
@@ -1187,6 +1191,10 @@ ef_make_hem.c:
     .text: [0x806162B0, 0x8061710C]
     .rodata: [0x8064C818, 0x8064C860]
     .data: [0x806D3160, 0x806D31B8]
+ef_pun.c:
+    .text: [0x8061A650, 0x8061A824]
+    .rodata: [0x8064CAB8, 0x8064CAC0]
+    .data: [0x806D33D8, 0x806D33F0]
 ef_tent_lamp.c:
     .text: [0x80622304, 0x8062260C]
     .rodata: [0x8064CF10, 0x8064CF38]
@@ -1290,10 +1298,8 @@ data/npc/model/tex/bea_9.c:
     .data: [0x806F8F20, 0x806FA140]
 data/npc/model/tex/bea_10.c:
     .data: [0x806FA140, 0x806FB360]
-
 data/field/bg/acre/bg_data.c:
     .data: [0x806FE048, 0x8074B840]
-
 # dataobject.obj files
 data/field/bg/flower/obj_flower.c:
     .data: [0x8074FE80, 0x807508C0]
@@ -2787,7 +2793,6 @@ data/field/bg/acre/grd_s_t_st1_3/grd_s_t_st1_3.c:
     .data: [0x80DD5280, 0x80DD61A0]
 data/field/bg/acre/rom_toudai/rom_toudai.c:
     .data: [0x80F08520, 0x80F0B020]
-
 # acres
 # data/field/bg/acre/grd_post_office/grd_post_office.c:
     # .data: [0x80C5DBA0, 0x80C63408]
