@@ -53,8 +53,8 @@ static void Player_actor_SearchAnimation_Run(ACTOR* actor, GAME* game, f32 frame
     }
 }
 
-static void Player_actor_Movement_Run(ACTOR* actor, GAME* game, f32*) { 
-    Player_actor_Movement_Walk(actor, game); 
+static void Player_actor_Movement_Run(ACTOR* actor, GAME* game, f32* frame) { 
+    Player_actor_Movement_Walk(actor, game, frame); 
 }
 
 static void Player_actor_ObjCheck_Run(ACTOR* actor, GAME* game) { 
