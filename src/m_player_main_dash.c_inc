@@ -109,7 +109,7 @@ static void Player_actor_BGcheck_Dash(ACTOR* actor) {
 }
 
 static int Player_actor_Check_FlatPlace(ACTOR* actor) {
-    static xy_t offset[] = {
+    static const xy_t offset[] = {
         {0.0f, 0.0f},        {20.0f, 0.0f},        {-20.0f, 0.0f},     {0.0f, 28.284271f},
         {20.0f, 28.284271f}, {-20.0f, 28.284271f}, {0.0f, 56.568542f}, {20.0f, 56.568542f},
         {-20, 56.568542f},   {0.0f, 84.85281f},    {20.0f, 84.85281f}, {-20.0f, 84.85281f},
