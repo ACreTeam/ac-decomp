@@ -26,15 +26,33 @@ enum {
     mSc_DIRECT_NUM
 };
 
+enum {
+    mSc_ITEM_TYPE_BGITEM,
+    mSc_ITEM_TYPE_DUMMY,
+    mSc_ITEM_TYPE_BGPOLICEITEM,
+    mSc_ITEM_TYPE_BGPOSTITEM,
+
+    mSc_ITEM_TYPE_NUM
+};
+
+enum {
+    mSc_ROOM_TYPE_OUTDOORS,
+    mSc_ROOM_TYPE_MY_ROOM,
+    mSc_ROOM_TYPE_NPC_ROOM,
+    mSc_ROOM_TYPE_MISC_ROOM,
+
+    mSc_ROOM_TYPE_NUM
+};
+
 typedef struct door_data_s {
-    int next_scene_id;
-    u8 exit_orientation;
-    u8 exit_type; // 0 = normal, 1 = restart game?
-    u16 extra_data;
-    s_xyz exit_position;
-    mActor_name_t door_actor_name;
-    u8 wipe_type;
-    u8 pad[3]; // possibly necessary due to struct copy
+    /* 0x00 */ int next_scene_id;
+    /* 0x04 */ u8 exit_orientation;
+    /* 0x05 */ u8 exit_type; // 0 = normal, 1 = restart game?
+    /* 0x06 */ u16 extra_data;
+    /* 0x08 */ s_xyz exit_position;
+    /* 0x0E */ mActor_name_t door_actor_name;
+    /* 0x10 */ u8 wipe_type;
+    /* 0x11 */ u8 pad[3]; // possibly necessary due to struct copy
 } Door_data_c;
 
 #define mSc_OBJECT_BANK_NUM 70
@@ -91,45 +109,49 @@ enum {
 };
 
 typedef struct {
-    u8 type;
-    u8 num_actors;
-    Actor_data* data_p;
+    /* 0x00 */ u8 type;
+    /* 0x01 */ u8 num_actors;
+    /* 0x04 */ Actor_data* data_p;
 } Scene_Word_Data_Actor_c;
 
 typedef struct {
-    u8 type;
-    u8 num_ctrl_actors;
-    s16* ctrl_actor_profile_p;
+    /* 0x00 */ u8 type;
+    /* 0x01 */ u8 num_ctrl_actors;
+    /* 0x04 */ s16* ctrl_actor_profile_p;
 } Scene_Word_Data_Ctrl_Actor_c;
 
 typedef struct {
-    u8 type;
-    u8 num_banks;
-    s16* banks_p;
+    /* 0x00 */ u8 type;
+    /* 0x01 */ u8 num_banks;
+    /* 0x04 */ s16* banks_p;
 } Scene_Word_Data_Object_Bank_c;
 
 typedef struct {
-    u8 type;
-    u8 num_doors;
-    Door_data_c* door_data_p;
+    /* 0x00 */ u8 type;
+    /* 0x01 */ u8 num_doors;
+    /* 0x04 */ Door_data_c* door_data_p;
 } Scene_Word_Data_Door_Data_c;
 
 typedef struct {
-    u8 type;
-    u8 item_type;
-    u8 bg_num;
-    u16 bg_disp_size;
-    u8 room_type;
-    u8 draw_type;
+    /* 0x00 */ u8 type;
+    /* 0x01 */ u8 item_type;
+    /* 0x02 */ u8 bg_num;
+    /* 0x04 */ u16 bg_disp_size;
+    /* 0x06 */ u8 room_type;
+    /* 0x07 */ u8 draw_type;
 } Scene_Word_Data_FieldCt_c;
 
 typedef struct {
-    u8 type;
-    u8 arrange_ftr_num;
+    /* 0x00 */ u8 type;
+    /* 0x01 */ u8 arrange_ftr_num;
 } Scene_Word_Data_ArrangeFurniture_ct_c;
 
 typedef struct {
-    u8 type;
+    /* 0x00 */ u8 type;
+    /* 0x01 */ u8 param0;
+    /* 0x02 */ u8 param1;
+    /* 0x03 */ u8 param2;
+    /* 0x04 */ u32 param3;
 } Scene_Word_Data_Misc_c;
 
 typedef union scene_word_u {
@@ -142,9 +164,68 @@ typedef union scene_word_u {
     Scene_Word_Data_ArrangeFurniture_ct_c arrange_ftr_ct;
 } Scene_Word_u;
 
+#define mSc_DATA_PLAYER(actor_data_p)                               \
+    {                                                               \
+        mSc_SCENE_DATA_TYPE_PLAYER_PTR, 1, 0, 0, (u32)actor_data_p, \
+    }
+
+#define mSc_DATA_CTRL_ACTORS(n_actors, ctrl_actor_list_p)                           \
+    {                                                                               \
+        mSc_SCENE_DATA_TYPE_CTRL_ACTOR_PTR, n_actors, 0, 0, (u32)ctrl_actor_list_p, \
+    }
+
+#define mSc_DATA_ACTORS(n_actors, actor_data_p)                           \
+    {                                                                     \
+        mSc_SCENE_DATA_TYPE_ACTOR_PTR, n_actors, 0, 0, (u32)actor_data_p, \
+    }
+
+#define mSc_DATA_OBJ_BANK(n_banks, bank_list_p)                                        \
+    {                                                                                  \
+        mSc_SCENE_DATA_TYPE_OBJECT_EXCHANGE_BANK_PTR, n_banks, 0, 0, (u32)bank_list_p, \
+    }
+
+#define mSc_DATA_DOOR_DATA(n_doors, door_data_list_p)                            \
+    {                                                                            \
+        mSc_SCENE_DATA_TYPE_DOOR_DATA_PTR, n_doors, 0, 0, (u32)door_data_list_p, \
+    }
+
+#define mSc_DATA_FIELDCT(item_type, bg_num, bg_disp_size, room_type, draw_type)                  \
+    {                                                                                            \
+        mSc_SCENE_DATA_TYPE_FIELD_CT,                                                            \
+        item_type,                                                                               \
+        bg_num,                                                                                  \
+        0,                                                                                       \
+        ((((u32)bg_disp_size & 0xFFFF) << 16) | ((room_type & 0xFF) << 8) | (draw_type & 0xFF)), \
+    }
+
+#define mSc_DATA_MY_ROOM_CT()                       \
+    {                                               \
+        mSc_SCENE_DATA_TYPE_MY_ROOM_CT, 0, 0, 0, 0, \
+    }
+
+#define mSc_DATA_ARRANGE_ROOM_CT()                       \
+    {                                                    \
+        mSc_SCENE_DATA_TYPE_ARRANGE_ROOM_CT, 0, 0, 0, 0, \
+    }
+
+#define mSc_DATA_ARRANGE_FTR(ftr_num)                               \
+    {                                                               \
+        mSc_SCENE_DATA_TYPE_ARRANGE_FURNITURE_CT, ftr_num, 0, 0, 0, \
+    }
+
+#define mSc_DATA_SOUND(p0, p1)                   \
+    {                                            \
+        mSc_SCENE_DATA_TYPE_SOUND, p0, p1, 0, 0, \
+    }
+
+#define mSc_DATA_END()                       \
+    {                                        \
+        mSc_SCENE_DATA_TYPE_END, 0, 0, 0, 0, \
+    }
+
 typedef struct door_info_s {
-    u8 num_doors;
-    Door_data_c* door_data_p;
+    /* 0x00 */ u8 num_doors;
+    /* 0x04 */ Door_data_c* door_data_p;
 } Door_info_c;
 
 extern Scene_Word_u test01_info[];
