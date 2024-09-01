@@ -1282,6 +1282,14 @@ data/npc/model/mdl/wls_1.c:
     .data: [0x806E9AC0, 0x806EBFF0]
 data/npc/model/tex/wls_1.c:
     .data: [0x806EC000, 0x806ECFA0]
+data/scene/BG_TEST01.c:
+    .data: [0x806ECFA0, 0x806ECFF0]
+data/scene/BG_TEST01_XLU.c:
+    .data: [0x806ECFF0, 0x806ED040]
+data/scene/broker_shop.c:
+    .data: [0x806ED040, 0x806ED0C0]
+data/scene/buggy.c:
+    .data: [0x806ED0C0, 0x806ED128]
 data/npc/model/mdl/bea_1.c:
     .data: [0x806EF078, 0x806F1030]
 data/npc/model/tex/bea_1.c:
@@ -1527,6 +1535,8 @@ data/npc/model/tex/duk_9.c:
     .data: [0x808433A0, 0x808445C0]
 data/npc/model/tex/duk_10.c:
     .data: [0x808445C0, 0x808457E0]
+data/scene/event_notification.c:
+    .data: [0x808457E0, 0x80845830]
 data/npc/model/mdl/elp_1.c:
     .data: [0x80845830, 0x808479A0]
 data/npc/model/tex/elp_1.c:
@@ -1543,6 +1553,10 @@ data/npc/model/tex/elp_6.c:
     .data: [0x8084D440, 0x8084E660]
 data/npc/model/tex/elp_7.c:
     .data: [0x8084E660, 0x8084F880]
+data/scene/fg_tool_in.c:
+    .data: [0x8084F880, 0x8084F940]
+data/scene/field_tool_field.c:
+    .data: [0x8084F940, 0x8084F9B0]
 data/npc/model/mdl/flg_1.c:
     .data: [0x80857D80, 0x808597E0]
 data/npc/model/tex/flg_1.c:
@@ -1665,6 +1679,8 @@ data/npc/model/tex/xsq_1.c:
     .data: [0x808BE240, 0x808BF660]
 data/item/item_name.c:
     .data: [0x808BF660, 0x808C8830]
+data/scene/kamakura.c:
+    .data: [0x808C8830, 0x808C88A8]
 data/npc/model/mdl/boa_1.c:
     .data: [0x808C88A8, 0x808CAF48]
 data/npc/model/tex/boa_1.c:
@@ -1701,6 +1717,8 @@ data/npc/model/tex/kal_5.c:
     .data: [0x808DCC60, 0x808DDF00]
 data/npc/model/tex/kal_6.c:
     .data: [0x808DDF00, 0x808DF1A0]
+data/scene/lighthouse.c:
+    .data: [0x808DF1A0, 0x808DF220]
 data/npc/model/mdl/lon_1.c:
     .data: [0x808E1A10, 0x808E3F78]
 data/npc/model/tex/lon_1.c:
@@ -1711,6 +1729,16 @@ data/npc/model/tex/lon_3.c:
     .data: [0x808E6540, 0x808E7820]
 data/npc/model/tex/lon_4.c:
     .data: [0x808E7820, 0x808E8B00]
+data/scene/museum_entrance.c:
+    .data: [0x808E8B00, 0x808E8C08]
+data/scene/museum_fish.c:
+    .data: [0x808E8C08, 0x808E8CB0]
+data/scene/museum_fossil.c:
+    .data: [0x808E8CB0, 0x808E8D30]
+data/scene/museum_insect.c:
+    .data: [0x808E8D30, 0x808E8DF0]
+data/scene/museum_picture.c:
+    .data: [0x808E8DF0, 0x808E8EA0]
 data/npc/model/mdl/mos_1.c:
     .data: [0x808EAEA0, 0x808ECAC8]
 data/npc/model/tex/mos_1.c:
@@ -1751,6 +1779,12 @@ data/npc/model/tex/mus_10.c:
     .data: [0x809033E0, 0x80904600]
 data/model/mural/obj_mural.c:
     .data: [0x80904600, 0x80904700]
+data/scene/NEEDLEWORK.c:
+    .data: [0x80911C68, 0x80911D20]
+data/scene/npc_room01.c:
+    .data: [0x80911D20, 0x80911DC8]
+data/scene/npc_room_island.c:
+    .data: [0x80911DC8, 0x80911E70]
 data/npc/model/mdl/hgh_1.c:
     .data: [0x80911E70, 0x80914610]
 data/npc/model/tex/hgh_1.c:
@@ -1781,6 +1815,38 @@ data/npc/model/tex/ost_3.c:
     .data: [0x8097EBC0, 0x8097F920]
 data/npc/model/tex/ost_4.c:
     .data: [0x8097F920, 0x80980680]
+data/scene/player_room_island.c:
+    .data: [0x80980680, 0x80980728]
+data/scene/player_room_ll1.c:
+    .data: [0x80980728, 0x809807E8]
+data/scene/player_room_ll2.c:
+    .data: [0x809807E8, 0x80980890]
+data/scene/player_room_l.c:
+    .data: [0x80980890, 0x80980938]
+data/scene/player_room_m.c:
+    .data: [0x80980938, 0x809809E0]
+data/scene/player_room_s.c:
+    .data: [0x809809E0, 0x80980A88]
+data/scene/PLAYER_SELECT2.c:
+    .data: [0x80980A88, 0x80980AD0]
+data/scene/PLAYER_SELECT3.c:
+    .data: [0x80980AD0, 0x80980B18]
+data/scene/PLAYER_SELECT4.c:
+    .data: [0x80980B18, 0x80980B60]
+data/scene/player_select.c:
+    .data: [0x80980B60, 0x80980BA8]
+data/scene/police_box.c:
+    .data: [0x80980BA8, 0x80980C48]
+data/scene/post_office.c:
+    .data: [0x80980C48, 0x80980D00]
+data/scene/p_room_bm_ll1.c:
+    .data: [0x80980D00, 0x80980D80]
+data/scene/p_room_bm_l.c:
+    .data: [0x80980D80, 0x80980E00]
+data/scene/p_room_bm_m.c:
+    .data: [0x80980E00, 0x80980E80]
+data/scene/p_room_bm_s.c:
+    .data: [0x80980E80, 0x80980F00]
 data/npc/model/mdl/pgn_1.c:
     .data: [0x80980F28, 0x80983140]
 data/npc/model/tex/pgn_1.c:
@@ -1881,6 +1947,22 @@ data/npc/model/tex/rhn_3.c:
     .data: [0x809BEF40, 0x809C0160]
 data/npc/model/tex/rhn_4.c:
     .data: [0x809C0160, 0x809C1380]
+data/scene/shop01.c:
+    .data: [0x809C8B98, 0x809C8C20]
+data/scene/shop02.c:
+    .data: [0x809C8C20, 0x809C8CA8]
+data/scene/shop03.c:
+    .data: [0x809C8CA8, 0x809C8D28]
+data/scene/shop04_1f.c:
+    .data: [0x809C8D28, 0x809C8DB0]
+data/scene/shop04_2f.c:
+    .data: [0x809C8DB0, 0x809C8E38]
+data/scene/start_demo1.c:
+    .data: [0x809C8E38, 0x809C8EA8]
+data/scene/start_demo2.c:
+    .data: [0x809C8EA8, 0x809C8F18]
+data/scene/start_demo3.c:
+    .data: [0x809C8F18, 0x809C8FA0]
 data/npc/model/mdl/snt_1.c:
     .data: [0x809C9148, 0x809CAD30]
 data/npc/model/tex/snt_1.c:
@@ -1947,6 +2029,33 @@ data/npc/model/mdl/rcs_1.c:
     .data: [0x80C09AC0, 0x80C0BBA8]
 data/npc/model/tex/rcs_1.c:
     .data: [0x80C0BBC0, 0x80C0C960]
+data/scene/tent.c:
+    .data: [0x80C0C960, 0x80C0C9D8]
+
+data/scene/test_fd_npc_land.c:
+    .data: [0x80C0C9D8, 0x80C0CA68]
+data/scene/water_test.c:
+    .data: [0x80C0CA68, 0x80C0CAE8]
+data/scene/test_step01.c:
+    .data: [0x80C0CAE8, 0x80C0CB18]
+data/scene/title_demo.c:
+    .data: [0x80C0CB18, 0x80C0CBA0]
+# acres
+# data/field/bg/acre/grd_post_office/grd_post_office.c:
+    # .data: [0x80C5DBA0, 0x80C63408]
+
+# scenes
+data/scene/test01.c:
+    .data: [0x80C2C800, 0x80C2C888]
+data/scene/test02.c:
+    .data: [0x80C2C888, 0x80C2C8D8]
+data/scene/test03.c:
+    .data: [0x80C2C8D8, 0x80C2C960]
+data/scene/test04.c:
+    .data: [0x80C2C960, 0x80C2C9B0]
+data/scene/test05.c:
+    .data: [0x80C2C9B0, 0x80C2C9F8]
+
 data/npc/model/mdl/tig_1.c:
     .data: [0x80C2C9F8, 0x80C2EE88]
 data/npc/model/tex/tig_1.c:
@@ -2797,9 +2906,6 @@ data/field/bg/acre/grd_s_t_st1_3/grd_s_t_st1_3.c:
     .data: [0x80DD5280, 0x80DD61A0]
 data/field/bg/acre/rom_toudai/rom_toudai.c:
     .data: [0x80F08520, 0x80F0B020]
-# acres
-# data/field/bg/acre/grd_post_office/grd_post_office.c:
-    # .data: [0x80C5DBA0, 0x80C63408]
 
 # map submenu
 data/submenu/map/kan_tizu.c:
