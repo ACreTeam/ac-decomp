@@ -1091,7 +1091,7 @@ extern void cKF_SkeletonInfo_R_AnimationMove_dt(cKF_SkeletonInfo_R_c* keyframe) 
     keyframe->animation_enabled = 0;
 }
 
-extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s_xyz* sbase, xyz_t* move, s16 yidle,
+extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t* move, s16 yidle,
                                                   cKF_SkeletonInfo_R_c* keyframe) {
     f32 fc = keyframe->fixed_counter;
     f32 count = 1.0f + fc;
@@ -1162,14 +1162,14 @@ extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s_xyz* sbase, xyz
         Matrix_rotateXYZ(keyframe->current_joint[1].x, keyframe->current_joint[1].y, keyframe->current_joint[1].z, 0);
         Matrix_to_rotate2_new(get_Matrix_now(), update_base, 0);
         Matrix_pull();
-        sbase->x = angley + angle_c + (update_base->x - base_x);
+        *sbase = angley + angle_c + (update_base->x - base_x);
     }
 
     if (base != NULL) {
         cur_joint = keyframe->current_joint;
         sub = 0;
         if (sbase != NULL) {
-            sub = sbase->x - yidle;
+            sub = *sbase - yidle;
         }
         if (an_flag & cKF_ANIMATION_TRANS_XZ) {
             f32 move_x, move_z;

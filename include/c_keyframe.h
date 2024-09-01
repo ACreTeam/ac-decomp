@@ -466,7 +466,7 @@ extern void cKF_SkeletonInfo_R_AnimationMove_dt(cKF_SkeletonInfo_R_c* keyframe);
  * @param yidle Y-axis idle angle.
  * @param keyframe Skeleton info structure containing animation data.
  */
-extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s_xyz* sbase, xyz_t* move, s16 yidle,
+extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t* move, s16 yidle,
                                                   cKF_SkeletonInfo_R_c* keyframe);
 
 /**
