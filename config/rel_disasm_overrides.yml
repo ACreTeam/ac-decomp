@@ -19,3 +19,6 @@ symbol_aligns:
     0x80F85720: 32 # dataobject/obj/.data/grd_player_select_evw_anime_1 (TU is aligned to 32)
     0x80FACE20: 32 # dataobject/obj/.data/rom_shop4_1_floor_tex_pal
     0x8074B840: 32 # dataobject/obj/.data/mFM_obj_a_01_flower_pal
+    0x808DF220: 32 # obj_otiba01_pal
+    0x809C8FA0: 32 # ef_hanabira01_0
+    0x80C0CBA0: 32 # crw_anrium1_pal

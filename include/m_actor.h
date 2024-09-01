@@ -1152,20 +1152,20 @@ struct actor_s {
 #define mActor_NONE_PROC1 ((mActor_proc)none_proc1)
 
 typedef struct actor_list_s {
-    int num_actors;
-    ACTOR* actor;
+    /* 0x00 */ int num_actors;
+    /* 0x04 */ ACTOR* actor;
 } Actor_list;
 
 typedef struct actor_info_s {
-    int total_num;
-    Actor_list list[ACTOR_PART_NUM];
+    /* 0x00 */ int total_num;
+    /* 0x04 */ Actor_list list[ACTOR_PART_NUM];
 } Actor_info;
 
 typedef struct actor_data_s {
-    s16 profile;
-    s_xyz position;
-    s_xyz rotation;
-    s16 arg;
+    /* 0x00 */ s16 profile;
+    /* 0x02 */ s_xyz position;
+    /* 0x08 */ s_xyz rotation;
+    /* 0x0E */ s16 arg;
 } Actor_data;
 
 extern void Actor_world_to_eye(ACTOR* actor, f32 eye_height);
