@@ -2278,6 +2278,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITM_DIARY_END (ITM_DIARY_START + 16)
 
 #define ITM_TICKET_START 0x2C00
+#define ITM_TICKET_END (ITM_TICKET_START + 95)
 
 #define ITM_INSECT_START 0x2D00
 #define ITM_INSECT00 (ITM_INSECT_START + 0)
