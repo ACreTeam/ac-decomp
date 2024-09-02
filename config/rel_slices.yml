@@ -533,6 +533,9 @@ ac_set_ovl_insect.c:
 ac_shop_design.c:
     .text: [0x8049C748, 0x8049D51C]
     .data: [0x8068E3C0, 0x8068E430]
+ac_shop_level.c:
+    .text: [0x8049F40C, 0x8049FEC4]
+    .data: [0x8068E520, 0x8068E708]
 ac_sign.c:
     .text: [0x804A127C, 0x804A3328]
     .rodata: [0x80645D18, 0x80645D78]
