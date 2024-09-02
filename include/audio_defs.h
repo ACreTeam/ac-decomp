@@ -90,6 +90,7 @@ typedef enum audio_sound_effects {
     NA_SE_HANABI3 = HANABI(0x112),
     NA_SE_EAT = 0x113,
 
+    NA_SE_11B = 0x11B,
     NA_SE_WEAR = 0x11C,
 
     NA_SE_SCOOP1 = 0x11E,
