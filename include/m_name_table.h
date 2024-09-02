@@ -226,6 +226,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
   (ITEM_NAME_GET_TYPE(n) == NAME_TYPE_FTR0 || ITEM_NAME_GET_TYPE(n) == NAME_TYPE_FTR1)
 
 #define ITEM_IS_ITEM1(n) (ITEM_NAME_GET_TYPE(n) == NAME_TYPE_ITEM1)
+#define ITEM_IS_CARPET(n) ((n) >= ITM_CARPET_START && (n) < ITM_CARPET_END)
+#define ITEM_IS_WALL(n) ((n) >= ITM_WALL_START && (n) < ITM_WALL_END)
 
 #define GET_NAME_ITEM0_CATEGORY(f) (((f) & 0x0800) >> 11) /* enviornmental or static background objects */
 #define GET_NAME_ITEM1_CATEGORY(f) (((f) & 0x0F00) >> 8)
