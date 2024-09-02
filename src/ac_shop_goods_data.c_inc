@@ -1,0 +1,971 @@
+extern Gfx obj_apple2_modelT[];
+extern Gfx obj_axeT_mat_model[];
+extern Gfx obj_axeT_gfx_model[];
+extern Gfx obj_paper_mat_model[];
+extern Gfx obj_paper_gfx_model[];
+extern Gfx obj_carpetT_mat_model[];
+extern Gfx obj_carpetT_gfx_model[];
+extern Gfx item_fish_modelT[];
+extern Gfx obj_shop_fossil_mat_model[];
+extern Gfx obj_shop_fossil_gfx_model[];
+extern Gfx obj_fukuT_mat_model[];
+extern Gfx obj_fukuT_gfx_model[];
+extern Gfx item_kabu_modelT[];
+extern Gfx obj_shop_kanbanT_mat_model[];
+extern Gfx obj_shop_kanbanT_gfx_model[];
+extern Gfx obj_shop_kaza1_model[];
+extern Gfx obj_shop_kaza2_model[];
+extern Gfx obj_shop_kaza3_model[];
+extern Gfx obj_shop_kaza4_model[];
+extern Gfx obj_shop_kaza5_model[];
+extern Gfx obj_shop_kaza6_model[];
+extern Gfx obj_shop_kaza7_model[];
+extern Gfx obj_shop_kaza8_model[];
+extern Gfx item_matutake_modelT[];
+extern Gfx obj_mdT_mat_model[];
+extern Gfx obj_mdT_gfx_model[];
+extern Gfx obj_shop_cnaegiT_mat_model[];
+extern Gfx obj_shop_cnaegiT_gfx_model[];
+extern Gfx obj_naegiT_mat_model[];
+extern Gfx obj_naegiT_gfx_model[];
+extern Gfx obj_netT_mat_model[];
+extern Gfx obj_netT_gfx_model[];
+extern Gfx item_orange_modelT[];
+extern Gfx obj_paintT_a_mat_model[];
+extern Gfx obj_paintT_b_mat_model[];
+extern Gfx obj_paintT_c_mat_model[];
+extern Gfx obj_paintT_d_mat_model[];
+extern Gfx obj_paintT_e_mat_model[];
+extern Gfx obj_paintT_f_mat_model[];
+extern Gfx obj_paintT_g_mat_model[];
+extern Gfx obj_paintT_h_mat_model[];
+extern Gfx obj_paintT_i_mat_model[];
+extern Gfx obj_paintT_j_mat_model[];
+extern Gfx obj_paintT_k_mat_model[];
+extern Gfx obj_paintT_l_mat_model[];
+extern Gfx obj_paintT_gfx_model[];
+extern Gfx obj_rodT_mat_model[];
+extern Gfx obj_rodT_gfx_model[];
+extern Gfx obj_rod_lineT_mat_model[];
+extern Gfx obj_rod_lineT_gfx_model[];
+extern Gfx obj_sangoT_mat_model[];
+extern Gfx obj_sangoT_gfx_model[];
+extern Gfx obj_seed_mat_model[];
+extern Gfx obj_seed_gfx_model[];
+extern Gfx obj_honegaiT_mat_model[];
+extern Gfx obj_honegaiT_gfx_model[];
+extern Gfx obj_horagaiT_mat_model[];
+extern Gfx obj_horagaiT_gfx_model[];
+extern Gfx obj_komagaiT_mat_model[];
+extern Gfx obj_komagaiT_gfx_model[];
+extern Gfx obj_takaragaiT_mat_model[];
+extern Gfx obj_takaragaiT_gfx_model[];
+extern Gfx obj_ougigaiT_mat_model[];
+extern Gfx obj_ougigaiT_gfx_model[];
+extern Gfx obj_sakuragaiT_mat_model[];
+extern Gfx obj_sakuragaiT_gfx_model[];
+extern Gfx obj_shakogaiT_mat_model[];
+extern Gfx obj_shakogaiT_gfx_model[];
+extern Gfx obj_shovelT_mat_model[];
+extern Gfx obj_shovelT_gfx_model[];
+extern Gfx obj_soldoutT_mat_model[];
+extern Gfx obj_soldoutT_gfx_model[];
+extern Gfx obj_ticketT_mat_model[];
+extern Gfx obj_ticketT_gfx_model[];
+extern Gfx obj_axe2T_mat_model[];
+extern Gfx obj_axe2T_gfx_model[];
+extern Gfx obj_net2T_mat_model[];
+extern Gfx obj_net2T_gfx_model[];
+extern Gfx obj_rod2T_mat_model[];
+extern Gfx obj_rod2T_gfx_model[];
+extern Gfx obj_rod2_lineT_mat_model[];
+extern Gfx obj_rod2_lineT_gfx_model[];
+extern Gfx obj_shovel2T_mat_model[];
+extern Gfx obj_shovel2T_gfx_model[];
+extern Gfx obj_g2T_mat_model[];
+extern Gfx obj_g2T_gfx_model[];
+extern Gfx obj_nagagutuT_mat_model[];
+extern Gfx obj_nagagutuT_gfx_model[];
+extern Gfx obj_g1T_mat_model[];
+extern Gfx obj_g1T_gfx_model[];
+extern Gfx obj_shop_utiwa1_mat_model[];
+extern Gfx obj_shop_utiwa1_gfx_model[];
+extern Gfx obj_shop_utiwa2_mat_model[];
+extern Gfx obj_shop_utiwa2_gfx_model[];
+extern Gfx obj_shop_utiwa3_mat_model[];
+extern Gfx obj_shop_utiwa3_gfx_model[];
+extern Gfx obj_shop_utiwa4_mat_model[];
+extern Gfx obj_shop_utiwa4_gfx_model[];
+extern Gfx obj_shop_utiwa5_mat_model[];
+extern Gfx obj_shop_utiwa5_gfx_model[];
+extern Gfx obj_shop_utiwa6_mat_model[];
+extern Gfx obj_shop_utiwa6_gfx_model[];
+extern Gfx obj_shop_utiwa7_mat_model[];
+extern Gfx obj_shop_utiwa7_gfx_model[];
+extern Gfx obj_shop_utiwa8_mat_model[];
+extern Gfx obj_shop_utiwa8_gfx_model[];
+extern Gfx obj_wallT_mat_model[];
+extern Gfx obj_wallT_gfx_model[];
+extern Gfx int_iid_diary_model[];
+extern Gfx int_iid_funediary_model[];
+extern Gfx int_iid_mdiary_model[];
+extern Gfx int_iid_newediary_model[];
+extern Gfx int_ike_nikki_fan1_on_model[];
+extern Gfx int_ike_nikki_fan2_on_model[];
+extern Gfx int_ike_nikki_fan3_on_model[];
+extern Gfx int_ike_nikki_fan4_on_model[];
+extern Gfx int_ike_nikki_fan5_on_model[];
+extern Gfx int_ike_nikki_wafu1_on_model[];
+extern Gfx bag_DL_mode[];
+extern Gfx bag_DL_vtx[];
+extern Gfx obj_shop_candy_modelT[];
+extern Gfx obj_item_cocoT_mat_model[];
+extern Gfx obj_item_cocoT_gfx_model[];
+extern Gfx nuts_DL_mode[];
+extern Gfx nuts_DL_vtx[];
+extern Gfx obj_otosiT_mat_model[];
+extern Gfx obj_otosiT_gfx_model[];
+extern Gfx peach_DL_mode[];
+extern Gfx peach_DL_vtx[];
+extern Gfx pear_DL_mode[];
+extern Gfx pear_DL_vtx[];
+extern Gfx int_nog_collegenote_model[];
+extern Gfx int_nog_harddiaryT_model[];
+extern Gfx int_nog_schoolnote_model[];
+extern Gfx int_nog_systemnote_model[];
+extern Gfx int_nog_tudurinoteT_model[];
+extern Gfx int_tak_nikki01_on_model[];
+
+typedef struct ac_shop_goods_data_s {
+    mActor_name_t item_start;
+    mActor_name_t item_end;
+    Gfx* gfx0[2];
+    Gfx* gfx1[2];
+    Gfx* xlu_gfx0[2];
+    Gfx* xlu_gfx1[2];
+    int flags;
+} aSG_data_c;
+
+// clang-format off
+static const aSG_data_c l_shop_goods_dsp_table[] = {
+    {
+        ITM_PAPER00,
+        ITM_PAPER_END - 1,
+        { obj_paper_mat_model, obj_paper_mat_model },
+        { obj_paper_gfx_model, obj_paper_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        0xFE0E,
+        0xFE0E,
+        { obj_soldoutT_mat_model, obj_soldoutT_mat_model },
+        { obj_soldoutT_gfx_model, obj_soldoutT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        0xFE10,
+        0xFE18,
+        { obj_soldoutT_mat_model, obj_soldoutT_mat_model },
+        { obj_soldoutT_gfx_model, obj_soldoutT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_CARPET00,
+        ITM_CARPET66,
+        { obj_carpetT_mat_model, obj_carpetT_mat_model },
+        { obj_carpetT_gfx_model, obj_carpetT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_WALL00,
+        ITM_WALL66,
+        { obj_wallT_mat_model, obj_wallT_mat_model },
+        { obj_wallT_gfx_model, obj_wallT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_CLOTH000,
+        ITM_CLOTH254,
+        { NULL, obj_wallT_mat_model },
+        { NULL, obj_wallT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_AXE,
+        ITM_AXE,
+        { obj_axeT_mat_model, obj_axeT_mat_model },
+        { obj_axeT_gfx_model, obj_axeT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_AXE_USE_1,
+        ITM_AXE_USE_7,
+        { obj_axeT_mat_model, obj_axeT_mat_model },
+        { obj_axeT_gfx_model, obj_axeT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_SHOVEL,
+        ITM_SHOVEL,
+        { obj_shovelT_mat_model, obj_shovelT_mat_model },
+        { obj_shovelT_gfx_model, obj_shovelT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_NET,
+        ITM_NET,
+        { obj_netT_mat_model, obj_netT_mat_model },
+        { obj_netT_gfx_model, obj_netT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_ROD,
+        ITM_ROD,
+        { obj_rodT_mat_model, obj_rodT_mat_model },
+        { obj_rodT_gfx_model, obj_rodT_gfx_model },
+        { obj_rod_lineT_mat_model, obj_rod_lineT_mat_model },
+        { obj_rod_lineT_gfx_model, obj_rod_lineT_gfx_model },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_SAPLING,
+        ITM_SAPLING,
+        { obj_naegiT_mat_model, obj_naegiT_mat_model },
+        { obj_naegiT_gfx_model, obj_naegiT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_WHITE_PANSY_BAG,
+        ITM_YELLOW_TULIP_BAG,
+        { obj_seed_mat_model, obj_seed_mat_model },
+        { obj_seed_gfx_model, obj_seed_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_CEDAR_SAPLING,
+        ITM_CEDAR_SAPLING,
+        { obj_shop_cnaegiT_mat_model, obj_shop_cnaegiT_mat_model },
+        { obj_shop_cnaegiT_gfx_model, obj_shop_cnaegiT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_YELLOW_PINWHEEL,
+        ITM_YELLOW_PINWHEEL,
+        { obj_shop_kaza1_model, obj_shop_kaza1_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_RED_PINWHEEL,
+        ITM_RED_PINWHEEL,
+        { obj_shop_kaza2_model, obj_shop_kaza2_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_TIGER_PINWHEEL,
+        ITM_TIGER_PINWHEEL,
+        { obj_shop_kaza3_model, obj_shop_kaza3_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_GREEN_PINWHEEL,
+        ITM_GREEN_PINWHEEL,
+        { obj_shop_kaza4_model, obj_shop_kaza4_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_PINK_PINWHEEL,
+        ITM_PINK_PINWHEEL,
+        { obj_shop_kaza5_model, obj_shop_kaza5_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_STRIPED_PINWHEEL,
+        ITM_STRIPED_PINWHEEL,
+        { obj_shop_kaza6_model, obj_shop_kaza6_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_FLOWER_PINWHEEL,
+        ITM_FLOWER_PINWHEEL,
+        { obj_shop_kaza7_model, obj_shop_kaza7_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_FANCY_PINWHEEL,
+        ITM_FANCY_PINWHEEL,
+        { obj_shop_kaza8_model, obj_shop_kaza8_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_BLUEBELL_FAN,
+        ITM_BLUEBELL_FAN,
+        { obj_shop_utiwa1_mat_model, obj_shop_utiwa1_mat_model },
+        { obj_shop_utiwa1_gfx_model, obj_shop_utiwa1_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_PLUM_FAN,
+        ITM_PLUM_FAN,
+        { obj_shop_utiwa2_mat_model, obj_shop_utiwa2_mat_model },
+        { obj_shop_utiwa2_gfx_model, obj_shop_utiwa2_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_BAMBOO_FAN,
+        ITM_BAMBOO_FAN,
+        { obj_shop_utiwa3_mat_model, obj_shop_utiwa3_mat_model },
+        { obj_shop_utiwa3_gfx_model, obj_shop_utiwa3_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_CLOUD_FAN,
+        ITM_CLOUD_FAN,
+        { obj_shop_utiwa4_mat_model, obj_shop_utiwa4_mat_model },
+        { obj_shop_utiwa4_gfx_model, obj_shop_utiwa4_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_MAPLE_FAN,
+        ITM_MAPLE_FAN,
+        { obj_shop_utiwa5_mat_model, obj_shop_utiwa5_mat_model },
+        { obj_shop_utiwa5_gfx_model, obj_shop_utiwa5_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_FAN_FAN,
+        ITM_FAN_FAN,
+        { obj_shop_utiwa6_mat_model, obj_shop_utiwa6_mat_model },
+        { obj_shop_utiwa6_gfx_model, obj_shop_utiwa6_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_FLOWER_FAN,
+        ITM_FLOWER_FAN,
+        { obj_shop_utiwa7_mat_model, obj_shop_utiwa7_mat_model },
+        { obj_shop_utiwa7_gfx_model, obj_shop_utiwa7_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_LEAF_FAN,
+        ITM_LEAF_FAN,
+        { obj_shop_utiwa8_mat_model, obj_shop_utiwa8_mat_model },
+        { obj_shop_utiwa8_gfx_model, obj_shop_utiwa8_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_FOOD_APPLE,
+        ITM_FOOD_APPLE,
+        { obj_apple2_modelT, obj_apple2_modelT },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_FOOD_PEACH,
+        ITM_FOOD_PEACH,
+        { peach_DL_mode, peach_DL_mode },
+        { peach_DL_vtx, peach_DL_vtx },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_FOOD_ORANGE,
+        ITM_FOOD_ORANGE,
+        { item_orange_modelT, item_orange_modelT },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_FISH00,
+        ITM_FISH39,
+        { item_fish_modelT, item_fish_modelT },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_FOOD_MUSHROOM,
+        ITM_FOOD_MUSHROOM,
+        { item_matutake_modelT, item_matutake_modelT },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_KABU_10,
+        ITM_KABU_SPOILED,
+        { item_kabu_modelT, item_kabu_modelT },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_FOOD_CANDY,
+        ITM_FOOD_CANDY,
+        { obj_shop_candy_modelT, obj_shop_candy_modelT },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_FOOD_CHERRY,
+        ITM_FOOD_CHERRY,
+        { nuts_DL_mode, nuts_DL_mode },
+        { nuts_DL_vtx, nuts_DL_vtx },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_FOOD_PEAR,
+        ITM_FOOD_PEAR,
+        { pear_DL_mode, pear_DL_mode },
+        { pear_DL_vtx, pear_DL_vtx },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_FOOD_COCONUT,
+        ITM_FOOD_COCONUT,
+        { obj_item_cocoT_mat_model, obj_item_cocoT_mat_model },
+        { obj_item_cocoT_gfx_model, obj_item_cocoT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_MONEY_1000,
+        ITM_MONEY_100,
+        { bag_DL_mode, bag_DL_mode },
+        { bag_DL_vtx, bag_DL_vtx },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_MINIDISK00,
+        ITM_MINIDISK54,
+        { obj_mdT_mat_model, obj_mdT_mat_model },
+        { obj_mdT_gfx_model, obj_mdT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_TICKET_START,
+        ITM_TICKET_END,
+        { obj_ticketT_mat_model, obj_ticketT_mat_model },
+        { obj_ticketT_gfx_model, obj_ticketT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_HUKUBUKURO_BAG,
+        ITM_HUKUBUKURO_PRESENT,
+        { obj_fukuT_mat_model, obj_fukuT_mat_model },
+        { obj_fukuT_gfx_model, obj_fukuT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DUST0_EMPTY_CAN,
+        ITM_DUST0_EMPTY_CAN,
+        { obj_g2T_mat_model, obj_g2T_mat_model },
+        { obj_g2T_gfx_model, obj_g2T_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DUST1_BOOT,
+        ITM_DUST1_BOOT,
+        { obj_nagagutuT_mat_model, obj_nagagutuT_mat_model },
+        { obj_nagagutuT_gfx_model, obj_nagagutuT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DUST2_OLD_TIRE,
+        ITM_DUST2_OLD_TIRE,
+        { obj_g1T_mat_model, obj_g1T_mat_model },
+        { obj_g1T_gfx_model, obj_g1T_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_FOSSIL,
+        ITM_FOSSIL,
+        { obj_shop_fossil_mat_model, obj_shop_fossil_mat_model },
+        { obj_shop_fossil_gfx_model, obj_shop_fossil_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_PITFALL,
+        ITM_PITFALL,
+        { obj_otosiT_mat_model, obj_otosiT_mat_model },
+        { obj_otosiT_gfx_model, obj_otosiT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_SHELL1,
+        ITM_SHELL1,
+        { obj_komagaiT_mat_model, obj_komagaiT_mat_model },
+        { obj_komagaiT_gfx_model, obj_komagaiT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_SHELL3,
+        ITM_SHELL3,
+        { obj_takaragaiT_mat_model, obj_takaragaiT_mat_model },
+        { obj_takaragaiT_gfx_model, obj_takaragaiT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_SHELL2,
+        ITM_SHELL2,
+        { obj_honegaiT_mat_model, obj_honegaiT_mat_model },
+        { obj_honegaiT_gfx_model, obj_honegaiT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_SHELL6,
+        ITM_SHELL6,
+        { obj_horagaiT_mat_model, obj_horagaiT_mat_model },
+        { obj_horagaiT_gfx_model, obj_horagaiT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_SHELL4,
+        ITM_SHELL4,
+        { obj_sakuragaiT_mat_model, obj_sakuragaiT_mat_model },
+        { obj_sakuragaiT_gfx_model, obj_sakuragaiT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_SHELL0,
+        ITM_SHELL0,
+        { obj_ougigaiT_mat_model, obj_ougigaiT_mat_model },
+        { obj_ougigaiT_gfx_model, obj_ougigaiT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_SHELL5,
+        ITM_SHELL5,
+        { obj_shakogaiT_mat_model, obj_shakogaiT_mat_model },
+        { obj_shakogaiT_gfx_model, obj_shakogaiT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_SHELL7,
+        ITM_SHELL7,
+        { obj_sangoT_mat_model, obj_sangoT_mat_model },
+        { obj_sangoT_gfx_model, obj_sangoT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_RED_PAINT,
+        ITM_RED_PAINT,
+        { obj_paintT_a_mat_model, obj_paintT_a_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_ORANGE_PAINT,
+        ITM_ORANGE_PAINT,
+        { obj_paintT_b_mat_model, obj_paintT_b_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_YELLOW_PAINT,
+        ITM_YELLOW_PAINT,
+        { obj_paintT_c_mat_model, obj_paintT_c_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_PALE_GREEN_PAINT,
+        ITM_PALE_GREEN_PAINT,
+        { obj_paintT_d_mat_model, obj_paintT_d_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_GREEN_PAINT,
+        ITM_GREEN_PAINT,
+        { obj_paintT_e_mat_model, obj_paintT_e_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_SKY_BLUE_PAINT,
+        ITM_SKY_BLUE_PAINT,
+        { obj_paintT_f_mat_model, obj_paintT_f_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_BLUE_PAINT,
+        ITM_BLUE_PAINT,
+        { obj_paintT_g_mat_model, obj_paintT_g_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_PURPLE_PAINT,
+        ITM_PURPLE_PAINT,
+        { obj_paintT_h_mat_model, obj_paintT_h_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_PINK_PAINT,
+        ITM_PINK_PAINT,
+        { obj_paintT_i_mat_model, obj_paintT_i_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_BLACK_PAINT,
+        ITM_BLACK_PAINT,
+        { obj_paintT_j_mat_model, obj_paintT_j_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_WHITE_PAINT,
+        ITM_WHITE_PAINT,
+        { obj_paintT_k_mat_model, obj_paintT_k_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_BROWN_PAINT,
+        ITM_BROWN_PAINT,
+        { obj_paintT_l_mat_model, obj_paintT_l_mat_model },
+        { obj_paintT_gfx_model, obj_paintT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+    {
+        ITM_GOLDEN_NET,
+        ITM_GOLDEN_NET,
+        { obj_net2T_mat_model, obj_net2T_mat_model },
+        { obj_net2T_gfx_model, obj_net2T_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_GOLDEN_AXE,
+        ITM_GOLDEN_AXE,
+        { obj_axe2T_mat_model, obj_axe2T_mat_model },
+        { obj_axe2T_gfx_model, obj_axe2T_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_GOLDEN_SHOVEL,
+        ITM_GOLDEN_SHOVEL,
+        { obj_shovel2T_mat_model, obj_shovel2T_mat_model },
+        { obj_shovel2T_gfx_model, obj_shovel2T_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_GOLDEN_ROD,
+        ITM_GOLDEN_ROD,
+        { obj_rod2T_mat_model, obj_rod2T_mat_model },
+        { obj_rod2T_gfx_model, obj_rod2T_gfx_model },
+        { obj_rod2_lineT_mat_model, obj_rod2_lineT_mat_model },
+        { obj_rod2_lineT_gfx_model, obj_rod2_lineT_gfx_model },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_SIGNBOARD,
+        ITM_SIGNBOARD,
+        { obj_shop_kanbanT_mat_model, obj_shop_kanbanT_mat_model },
+        { obj_shop_kanbanT_gfx_model, obj_shop_kanbanT_gfx_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY00,
+        ITM_DIARY00,
+        { int_nog_collegenote_model, int_nog_collegenote_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY01,
+        ITM_DIARY01,
+        { int_nog_schoolnote_model, int_nog_schoolnote_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY02,
+        ITM_DIARY02,
+        { int_nog_systemnote_model, int_nog_systemnote_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY03,
+        ITM_DIARY03,
+        { int_nog_harddiaryT_model, int_nog_harddiaryT_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY04,
+        ITM_DIARY04,
+        { int_nog_tudurinoteT_model, int_nog_tudurinoteT_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY05,
+        ITM_DIARY05,
+        { int_iid_diary_model, int_iid_diary_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY06,
+        ITM_DIARY06,
+        { int_iid_funediary_model, int_iid_funediary_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY07,
+        ITM_DIARY07,
+        { int_iid_mdiary_model, int_iid_mdiary_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY08,
+        ITM_DIARY08,
+        { int_iid_newediary_model, int_iid_newediary_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY09,
+        ITM_DIARY09,
+        { int_tak_nikki01_on_model, int_tak_nikki01_on_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY10,
+        ITM_DIARY10,
+        { int_ike_nikki_fan1_on_model, int_ike_nikki_fan1_on_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY11,
+        ITM_DIARY11,
+        { int_ike_nikki_fan2_on_model, int_ike_nikki_fan2_on_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY12,
+        ITM_DIARY12,
+        { int_ike_nikki_fan3_on_model, int_ike_nikki_fan3_on_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY13,
+        ITM_DIARY13,
+        { int_ike_nikki_fan4_on_model, int_ike_nikki_fan4_on_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY14,
+        ITM_DIARY14,
+        { int_ike_nikki_fan5_on_model, int_ike_nikki_fan5_on_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        ITM_DIARY15,
+        ITM_DIARY15,
+        { int_ike_nikki_wafu1_on_model, int_ike_nikki_wafu1_on_model },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        aSG_DATA_ROTATE_Y_FLAG
+    },
+    {
+        EMPTY_NO,
+        EMPTY_NO,
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        { NULL, NULL },
+        0
+    },
+};
+// clang-format on
