@@ -8,6 +8,14 @@
 extern "C" {
 #endif
 
+typedef struct shop_level_actor_s SHOP_LEVEL_ACTOR;
+
+struct shop_level_actor_s {
+    ACTOR actor_class;
+    int bx;
+    int bz;
+};
+
 extern ACTOR_PROFILE Shop_Level_Profile;
 
 #ifdef __cplusplus
@@ -15,4 +23,3 @@ extern ACTOR_PROFILE Shop_Level_Profile;
 #endif
 
 #endif
-

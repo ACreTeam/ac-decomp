@@ -591,6 +591,7 @@ extern int mEv_ArbeitPlayer(u32 player_no);
 extern u16 mEv_get_special_event_type();
 extern void mEv_ClearEventSaveInfo(mEv_event_save_c* event_save_data);
 extern void mEv_EventON(u32 event_kind);
+extern void mEv_EventOFF(u32 event_kind);
 extern int mEv_CheckGateway();
 extern int mEv_check_schedule(int event);
 extern mEv_place_data_c* mEv_get_common_place(int type, u8 id);
