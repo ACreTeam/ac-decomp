@@ -1204,6 +1204,9 @@ ef_make_hem.c:
     .text: [0x806162B0, 0x8061710C]
     .rodata: [0x8064C818, 0x8064C860]
     .data: [0x806D3160, 0x806D31B8]
+ef_otosiana.c:
+    .text: [0x8061A4E0, 0x8061A650]
+    .data: [0x806D33B8, 0x806D33D8]
 ef_pun.c:
     .text: [0x8061A650, 0x8061A824]
     .rodata: [0x8064CAB8, 0x8064CAC0]
