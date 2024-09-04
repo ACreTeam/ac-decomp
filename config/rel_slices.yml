@@ -1215,6 +1215,10 @@ ef_pun_sekimen.c:
     .text: [0x8061A824, 0x8061AA20]
     .rodata: [0x8064CAC0, 0x8064CAD8]
     .data: [0x806D33F0, 0x806D3408]
+ef_pun_yuge.c:
+    .text: [0x8061AA20, 0x8061AE9C]
+    .rodata: [0x8064CAD8, 0x8064CB08]
+    .data: [0x806D3408, 0x806D3478]
 ef_tent_lamp.c:
     .text: [0x80622304, 0x8062260C]
     .rodata: [0x8064CF10, 0x8064CF38]
