@@ -142,6 +142,11 @@ m_fuusen.c:
     .bss: [0x81295C70, 0x81295C80]
 m_huusui_room.c:
     .text: [0x803B1908, 0x803B1968]
+m_handbill.c:
+    .text: [0x803B1968, 0x803B2E88]
+    .rodata: [0x80642288, 0x80642478]
+    .data: [0x806546B0, 0x806546C8]
+    .bss: [0x81295C80, 0x81296128]
 m_home.c:
     .text: [0x803B2E88, 0x803B3688]
     .data: [0x806546C8, 0x80655340]
