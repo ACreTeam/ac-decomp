@@ -1,4 +1,4 @@
-static int Player_actor_request_main_door(GAME* game, int priority) {
+static int  Player_actor_request_main_invade(GAME* game, int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_INVADE, priority)) {
         Player_actor_request_main_index(game, mPlayer_INDEX_INVADE, priority);
 
@@ -8,7 +8,7 @@ static int Player_actor_request_main_door(GAME* game, int priority) {
     return FALSE;
 }
 
-static int Player_actor_request_main_door_all(GAME* game, int priority) {
+static int Player_actor_request_main_invade_all(GAME* game, int priority) {
     return Player_actor_request_main_invade(game, priority) != 0;
 }
 

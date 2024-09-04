@@ -22,7 +22,7 @@ static int Player_actor_request_main_wait_open_furniture(GAME* game, int priorit
     return FALSE;
 }
 
-static void Player_actor_setup_main_Open_furniture(ACTOR* actor, GAME* game) {
+static void Player_actor_setup_main_Wait_open_furniture(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     cKF_SkeletonInfo_R_c* keyf;
     mPlayer_request_wait_open_furniture_c* req_open = &player->requested_main_index_data.wait_open_furniture;
@@ -50,7 +50,7 @@ static void Player_actor_Movement_Wait_open_furniture(ACTOR* actor) {
 
 static int Player_actor_CulcAnimation_Wait_open_furniture(ACTOR* actor) {
     f32 frame_calc;
-    
+
     return Player_actor_CulcAnimation_Base2(actor, &frame_calc);
 }
 
