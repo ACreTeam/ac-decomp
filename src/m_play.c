@@ -586,7 +586,7 @@ void Game_play_move(GAME_PLAY* play) {
         play->game.doing_point = 2;
         mPO_business_proc(play);
         play->game.doing_point = 3;
-        mTRC_move(play);
+        mTRC_move(&play->game);
         play->game.doing_point = 4;
         Balloon_move(play);
         mEnv_ManagePointLight(play, &play->kankyo, &play->global_light);

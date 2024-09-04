@@ -1148,18 +1148,18 @@ static void mBD_set_writing_body(Submenu* submenu, mSM_MenuInfo_c* menu_info, GA
     }
 }
 
-/* TODO: @nonmatching - prolog instruction swap (likely due to way variables are accessed) */
 static void mBD_set_writing_header(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_info, f32 x, f32 y,
                                    rgba_t* color) {
     mBD_Ovl_c* board_ovl = submenu->overlay->board_ovl;
     Mail_ct_c* mail_content = &board_ovl->mail.content;
     u8* str_p;
-    int i = mail_content->header_back_start;
+    u8* header_back_start_p = &mail_content->header_back_start;
+    int i = *header_back_start_p;
     int header_len = 0;
     int len;
 
     if (menu_info->proc_status == mSM_OVL_PROC_PLAY) {
-        if (menu_info->data0 == mSM_BD_OPEN_WRITE_ISLAND) {
+        if (menu_info->data0 == 3) {
             mFont_SetLineStrings(game, mail_content->header, board_ovl->lengths[mBD_FIELD_HEADER], x, y, color->r,
                                  color->g, color->b, 255, FALSE, TRUE, 1.0f, 1.0f, mFont_MODE_POLY);
         } else {
@@ -1169,8 +1169,8 @@ static void mBD_set_writing_header(Submenu* submenu, GAME* game, mSM_MenuInfo_c*
                 len = board_ovl->header_name_len;
             }
 
-            mFont_SetLineStrings(game, mail_content->header, mail_content->header_back_start, x, y, color->r, color->g,
-                                 color->b, 255, FALSE, TRUE, 1.0f, 1.0f, mFont_MODE_POLY);
+            mFont_SetLineStrings(game, mail_content->header, *header_back_start_p, x, y, color->r, color->g, color->b,
+                                 255, FALSE, TRUE, 1.0f, 1.0f, mFont_MODE_POLY);
 
             str_p = mail_content->header;
             while (i-- != 0) {
@@ -1192,7 +1192,7 @@ static void mBD_set_writing_header(Submenu* submenu, GAME* game, mSM_MenuInfo_c*
     } else {
         u8 tmp_header[MAIL_HEADER_LEN + PLAYER_NAME_LEN];
 
-        if (menu_info->data0 == mSM_BD_OPEN_WRITE_ISLAND || menu_info->data0 == mSM_BD_OPEN_READ_ISLAND) {
+        if (menu_info->data0 == 3 || menu_info->data0 == 4) {
             mem_copy(tmp_header, mail_content->header, board_ovl->lengths[mBD_FIELD_HEADER]);
             len = board_ovl->lengths[mBD_FIELD_HEADER];
         } else if (mail_content->mail_type == mMl_TYPE_SHOP_SALE_LEAFLET ||

@@ -319,6 +319,10 @@ m_titledemo.c:
     .rodata: [0x80643330, 0x80643350]
     .data: [0x8065E2D8, 0x8065E2F0]
     .bss: [0x8129F408, 0x8129F410]
+m_train_control.c:
+    .text: [0x803F2428, 0x803F33DC]
+    .rodata: [0x80643350, 0x806433B0]
+    .data: [0x8065E2F0, 0x8065E378]
 m_time.c:
     .text: [0x803F33DC, 0x803F3E58]
     .rodata: [0x806433B0, 0x806433D8]
