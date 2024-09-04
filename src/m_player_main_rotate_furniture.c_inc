@@ -1,0 +1,125 @@
+static int Player_actor_request_main_rotate_furniture(GAME* game, int ftr_no, s16 angle, xyz_t* pos, int type,
+                                                      int priority) {
+    if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_HOLD &&
+        Player_actor_check_request_main_able(game, mPlayer_INDEX_ROTATE_FURNITURE, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.rotate_furniture.ftrNo = ftr_no;
+        player->requested_main_index_data.rotate_furniture.angle_y = angle;
+        player->requested_main_index_data.rotate_furniture.player_pos = *pos;
+        player->requested_main_index_data.rotate_furniture.rotate_type = type;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_ROTATE_FURNITURE, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Rotate_furniture(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_rotate_furniture_c* main_rot = &player->main_data.rotate_furniture;
+    s16 angle;
+    int anim_type;
+    int rotate_type;
+    mPlayer_request_rotate_furniture_c* req_rot = &player->requested_main_index_data.rotate_furniture;
+    f32 x;
+    f32 z;
+    xyz_t pos;
+
+    main_rot->ftr_no = req_rot->ftrNo;
+
+    angle = req_rot->angle_y;
+    x = req_rot->player_pos.x;
+    z = req_rot->player_pos.z;
+
+    actor->world.angle.y = angle;
+    actor->shape_info.rotation.y = angle;
+    actor->world.position.x = x;
+    actor->world.position.z = z;
+
+    if (Common_Get(clip).my_room_clip != NULL) {
+        Common_Get(clip).my_room_clip->ftrId2wpos_proc(&pos, main_rot->ftr_no);
+        main_rot->pos.x = pos.x - actor->world.position.x;
+        main_rot->pos.z = pos.z - actor->world.position.z;
+    }
+
+    rotate_type = req_rot->rotate_type;
+
+    main_rot->rotate_type = rotate_type;
+
+    if (rotate_type != 4) {
+        anim_type = mPlayer_ANIM_LTURN1;
+    } else {
+        anim_type = mPlayer_ANIM_RTURN1;
+    }
+
+    Player_actor_InitAnimation_Base2(actor, game, anim_type, anim_type, 1.0f, 1.0f, 0.5f, -5.0f, 0, 0);
+    main_rot->_10 = 0;
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_Movement_Rotate_furniture(ACTOR* actor) { 
+    Player_actor_Movement_Base_Stop(actor, FALSE); 
+}
+
+static int Player_actor_CulcAnimation_rotate_furniture(ACTOR* actor) {
+    f32 frame_calc;
+    
+    return Player_actor_CulcAnimation_Base2(actor, &frame_calc);
+}
+
+static void Player_actor_ChangeAnimationHold_rotate_furniture(ACTOR* actor, GAME* game, int arg) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (arg != 0 && player->main_data.rotate_furniture._10 == 0) {
+        Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_HOLD_WAIT1, mPlayer_ANIM_HOLD_WAIT1, 1.0f, 1.0f,
+                                         0.5f, -12.0f, 0);
+        player->main_data.rotate_furniture._10 = 1;
+    }
+}
+
+static void Player_actor_ObjCheck_rotate_furniture(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_rotate_furniture(ACTOR* actor) { 
+    Player_actor_BGcheck_common_type3(actor); 
+}
+
+static void Player_actor_request_proc_index_fromRotate_furniture(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Common_Get(clip).my_room_clip != NULL) {
+        int ftr_no = player->main_data.rotate_furniture.ftr_no;
+        int judge = Common_Get(clip).my_room_clip->judge_player_action_proc(NULL, NULL, ftr_no);
+
+        if (judge != player->main_data.rotate_furniture.rotate_type) {
+            int index = Player_actor_Get_Index_fromAngle(actor->world.angle.y);
+            int flags = 0;
+
+            if (!player->main_data.rotate_furniture._10) {
+                flags |= 1;
+            }
+
+            Player_actor_request_main_hold(game, ftr_no, index, &actor->world.position, -12.0f, flags,
+                                           mPlayer_REQUEST_PRIORITY_22);
+        }
+    }
+}
+
+static void Player_actor_main_Rotate_furniture(ACTOR* actor, GAME* game) {
+    int arg;
+
+    Player_actor_Movement_Rotate_furniture(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    arg = Player_actor_CulcAnimation_rotate_furniture(actor);
+    Player_actor_ChangeAnimationHold_rotate_furniture(actor, game, arg);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_rotate_furniture(actor, game);
+    Player_actor_BGcheck_rotate_furniture(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromRotate_furniture(actor, game);
+}
