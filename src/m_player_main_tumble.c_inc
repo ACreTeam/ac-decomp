@@ -114,7 +114,7 @@ static void Player_actor_SetEffect_Tumble(ACTOR* actor, GAME* game, int base) {
 }
 
 static void Player_actor_SearchAnimation_Tumble(ACTOR* actor, GAME* game, f32 frame, int base) {
-    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, game, frame)) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
         Player_actor_SetEffect_Tumble(actor, game, base);
     }
 }

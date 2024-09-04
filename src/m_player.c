@@ -33,7 +33,7 @@ static int Player_actor_Movement_Base_Braking_common(ACTOR* actorx, f32 brake_am
 static int Player_actor_Movement_Base_Braking(ACTOR* actorx);
 static void Player_actor_Movement_Base_Stop(ACTOR* actorx, int use_position_speed_y);
 static int Player_actor_CulcAnimation_Base2(ACTOR* actorx, f32* last_anim0_current_frame_p);
-static int Player_actor_Check_AnimationFrame_PerfectEquel(ACTOR* actorx, GAME* game, f32 frame);
+static int Player_actor_Check_AnimationFrame_PerfectEquel(ACTOR* actorx, f32 frame);
 static int Player_actor_Check_AnimationFrame(cKF_FrameControl_c* fc_p, f32 target_frame);
 static void Player_actor_set_eye_pattern(ACTOR* actorx, int idx);
 static void Player_actor_set_eye_pattern_normal(ACTOR* actorx);

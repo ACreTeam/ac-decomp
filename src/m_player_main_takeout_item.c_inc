@@ -63,7 +63,7 @@ static void Player_actor_ObjCheck_Takeout_item(ACTOR* actorx, GAME* game) {
 }
 
 static void Player_actor_SearchAnimation_Takeout_item(ACTOR* actorx, GAME* game, f32 frame) {
-    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, game, frame) == FALSE) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
         Player_actor_Set_FootMark_Base1(actorx, game, FALSE, FALSE);
     }
 }

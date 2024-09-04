@@ -2299,7 +2299,7 @@ static void Player_actor_putin_furniture(GAME* game, int slot, mActor_name_t ite
     }
 }
 
-static int Player_actor_Check_AnimationFrame_PerfectEquel(ACTOR* actorx, GAME* game, f32 frame) {
+static int Player_actor_Check_AnimationFrame_PerfectEquel(ACTOR* actorx, f32 frame) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
     cKF_FrameControl_c* fc_p = &kf0_p->frame_control;

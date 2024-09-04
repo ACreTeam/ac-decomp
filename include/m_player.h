@@ -811,11 +811,12 @@ typedef struct player_request_close_funriture_s {
 } mPlayer_request_close_furniture_c;
 
 typedef struct player_request_lie_bed_s {
-    int direct;
+    int direction; 
     s16 angle;
     xyz_t wpos;
-    int ftr_name;
+    int flags;
 } mPlayer_request_lie_bed_c;
+
 
 typedef struct player_request_door_s {
     s16 angle_y;
@@ -975,6 +976,12 @@ typedef struct player_request_rotate_furniture_s {
     xyz_t player_pos;
     int rotate_type;
 } mPlayer_request_rotate_furniture_c;
+
+typedef struct player_request_open_furniture_s {
+    s16 angle_y;
+    xyz_t player_pos;
+    int anim_idx;
+} mPlayer_request_open_furniture_c;
 
 typedef struct player_request_wait_open_furniture_s {
     int anim_idx;
@@ -1288,6 +1295,7 @@ typedef union {
     mPlayer_request_push_c push;
     mPlayer_request_pull_c pull;
     mPlayer_request_rotate_furniture_c rotate_furniture;
+    mPlayer_request_open_furniture_c open_furniture;
     mPlayer_request_wait_open_furniture_c wait_open_furniture;
     mPlayer_request_wait_close_furniture_c wait_close_furniture;
     mPlayer_request_roll_bed_c roll_bed;
@@ -1392,6 +1400,7 @@ typedef union {
     mPlayer_request_push_c push;
     mPlayer_request_pull_c pull;
     mPlayer_request_rotate_furniture_c rotate_furniture;
+    mPlayer_request_open_furniture_c open_furniture;
     mPlayer_request_wait_open_furniture_c wait_open_furniture;
     mPlayer_request_wait_close_furniture_c wait_close_furniture;
     mPlayer_request_roll_bed_c roll_bed;
@@ -1467,6 +1476,49 @@ typedef struct player_main_wait_s {
 typedef struct player_main_door_s {
     u32 label;
 } mPlayer_main_door_c;
+
+typedef struct player_main_outdoor_s {
+    int is_demo;
+} mPlayer_main_outdoor_c;
+
+typedef struct player_main_hold_s {
+    int ftr_no;
+    s16 angle_y;
+    xyz_t player_pos;
+    int flags;
+} mPlayer_main_hold_c;
+
+typedef struct player_main_push_s {
+    int ftr_no;
+} mPlayer_main_push_c;
+
+typedef struct player_main_pull_s {
+    int ftr_no;
+    xyz_t start_pos;
+    xyz_t ofs;
+    f32 timer; 
+} mPlayer_main_pull_c;
+
+typedef struct player_main_rotate_furniture_s {
+    int ftr_no;
+    xyz_t pos;
+    int _10;
+    int rotate_type; 
+} mPlayer_main_rotate_furniture_c;
+
+typedef struct player_main_open_furniture_s {
+    s16 angle_y;
+    xyz_t player_pos;
+    int anim_idx;
+} mPlayer_main_open_furniture_c;
+
+typedef struct player_main_lie_bed_s {
+    int flags;
+} mPlayer_main_lie_bed_c;
+
+typedef struct player_main_wait_bed_s {
+    int flags;
+} mPlayer_main_wait_bed_c;
 
 typedef struct player_main_wade_s {
     int dir;
@@ -1739,6 +1791,14 @@ typedef union {
     mPlayer_main_return_outdoor2_c return_outdoor2;
     mPlayer_main_wait_c wait;
     mPlayer_main_door_c door;
+    mPlayer_main_outdoor_c outdoor;
+    mPlayer_main_hold_c hold;
+    mPlayer_main_push_c push;
+    mPlayer_main_pull_c pull;
+    mPlayer_main_rotate_furniture_c rotate_furniture;
+    mPlayer_main_open_furniture_c open_furniture;
+    mPlayer_main_lie_bed_c lie_bed;
+    mPlayer_main_wait_bed_c wait_bed;
     mPlayer_main_wade_c wade;
     mPlayer_main_pickup_c pickup;
     mPlayer_main_pickup_jump_c pickup_jump;

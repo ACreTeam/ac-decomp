@@ -122,7 +122,7 @@ static void Player_actor_SetEffect_Walk(ACTOR* actor, GAME* game, f32 left_targe
 }
 
 static void Player_actor_SearchAnimation_Walk(ACTOR* actor, GAME* game, f32 frame) {
-    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, game, frame)) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
         Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
         Player_actor_SetEffect_Walk(actor, game, 1.0f, 9.0f);
     }
