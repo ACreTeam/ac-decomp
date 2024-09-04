@@ -219,6 +219,11 @@ m_needlework.c:
     .text: [0x803C98EC, 0x803C9F7C]
     .data: [0x8065ABC0, 0x8065AE30]
     .bss: [0x81298F60, 0x81299180]
+m_notice.c:
+    .text: [0x803C9F7C, 0x803CB340]
+    .rodata: [0x80642978, 0x806429B8]
+    .data: [0x8065AE30, 0x8065AEE8]
+    .bss: [0x81299180, 0x81299240]
 m_npc.c:
     .text: [0x803CB340, 0x803D7570]
     .rodata: [0x806429B8, 0x806429F0]
