@@ -1,25 +1,25 @@
-void Player_actor_Item_net_CulcJointAngle_dummy_net_base(s_xyz* angle, const s_xyz* base, s16 min, s16 max, f32 frac){
+static void Player_actor_Item_net_CulcJointAngle_dummy_net_base(s_xyz* angle, const s_xyz* base, s16 min, s16 max, f32 frac){
     
     add_calc_short_angle2(&angle->x, base->x, 1.0f - sqrtf(1.0f - frac), min >> 1, max >> 1);
     add_calc_short_angle2(&angle->y, base->y, 1.0f - sqrtf(1.0f - frac), min >> 1, max >> 1);
     add_calc_short_angle2(&angle->z, base->z, 1.0f - sqrtf(1.0f - frac), min >> 1, max >> 1);
 }
 
-void Player_actor_Item_net_CulcJointAngle_dummy_net_reset(ACTOR* actor){
+static void Player_actor_Item_net_CulcJointAngle_dummy_net_reset(ACTOR* actor){
     static const s_xyz basic_angle = {0, 182, -7281};
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     
     Player_actor_Item_net_CulcJointAngle_dummy_net_base(&player->net_angle,&basic_angle, 2730, 100, 0.2f);
 }
 
-void Player_actor_Item_net_CulcJointAngle_dummy_net_ready(ACTOR* actor){
+static void Player_actor_Item_net_CulcJointAngle_dummy_net_ready(ACTOR* actor){
     static s_xyz basic_angle = {0, 364, -11832};
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     
     Player_actor_Item_net_CulcJointAngle_dummy_net_base(&player->net_angle,&basic_angle, 2730, 100, 0.2f);
 }
 
-void Player_actor_Item_net_CulcJointAngle_dummy_net_common(ACTOR* actor, const xyz_t* start_angle, const xyz_t* arg2, const xyz_t* end_left_angle, const xyz_t* end_right_angle){
+static void Player_actor_Item_net_CulcJointAngle_dummy_net_common(ACTOR* actor, const xyz_t* start_angle, const xyz_t* arg2, const xyz_t* end_left_angle, const xyz_t* end_right_angle){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     f32 sp = (player->keyframe0.frame_control.speed - 0.22f) / 0.38f;
     s_xyz base;
@@ -73,7 +73,7 @@ void Player_actor_Item_net_CulcJointAngle_dummy_net_common(ACTOR* actor, const x
     Player_actor_Item_net_CulcJointAngle_dummy_net_base(net_angle, &base, 2730, 100, 0.2f);
 }
 
-void Player_actor_Item_net_CulcJointAngle_dummy_net_walk(ACTOR* actor){
+static void Player_actor_Item_net_CulcJointAngle_dummy_net_walk(ACTOR* actor){
     static const xyz_t basic_start_move_angle = {0, 182.0f, -7281.0f};
     static const xyz_t basic_end_left_turn_angle = {0, -4551.0f, -4551.0f};
     static const xyz_t basic_end_right_turn_angle = {0, 4551.0f, -4551.0f};
@@ -83,7 +83,7 @@ void Player_actor_Item_net_CulcJointAngle_dummy_net_walk(ACTOR* actor){
 }
 
 
-void Player_actor_Item_net_CulcJointAngle_dummy_net_zero(ACTOR* actor){
+static void Player_actor_Item_net_CulcJointAngle_dummy_net_zero(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
     Player_actor_Item_net_CulcJointAngle_dummy_net_base(&player->net_angle,&ZeroSVec, 2730, 100, 0.2f); 
@@ -91,7 +91,7 @@ void Player_actor_Item_net_CulcJointAngle_dummy_net_zero(ACTOR* actor){
 }
 
 
-void Player_actor_Item_net_CulcJointAngle_dummy_net_ready_walk(ACTOR* actor){
+static void Player_actor_Item_net_CulcJointAngle_dummy_net_ready_walk(ACTOR* actor){
     static const xyz_t basic_start_move_angle = { 0.0f, 364.0f, -11832.0f };
     static const xyz_t basic_end_left_turn_angle = {0, -4551.0f, -4551.0f};
     static const xyz_t basic_end_right_turn_angle = {0, 4551.0f, -4551.0f};
@@ -102,7 +102,7 @@ void Player_actor_Item_net_CulcJointAngle_dummy_net_ready_walk(ACTOR* actor){
 
 
 
-void Player_actor_Item_net_CulcJointAngle_dummy_net_turn(ACTOR* actor){
+static void Player_actor_Item_net_CulcJointAngle_dummy_net_turn(ACTOR* actor){
     static const xyz_t basic_angle = { 0.0f, -4551.0f, -4551.0f };
     
     Player_actor_Item_net_CulcJointAngle_dummy_net_common(actor, &basic_angle, &basic_angle, &basic_angle, &basic_angle);
@@ -110,14 +110,14 @@ void Player_actor_Item_net_CulcJointAngle_dummy_net_turn(ACTOR* actor){
 
 
 
-void Player_actor_Item_net_CulcJointAngle_dummy_net_slip(ACTOR* actor){
+static void Player_actor_Item_net_CulcJointAngle_dummy_net_slip(ACTOR* actor){
     static const xyz_t basic_angle = {0.0f, 0.0f, -11832.0f};
     
  
     Player_actor_Item_net_CulcJointAngle_dummy_net_common(actor, &basic_angle, &basic_angle, &basic_angle, &basic_angle);
 }
 
-void Player_actor_Item_net_CulcJointAngle_dummy_net_swing(ACTOR* actor){
+static void Player_actor_Item_net_CulcJointAngle_dummy_net_swing(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
     if(player->keyframe0.frame_control.current_frame >= 0.5f){
@@ -130,7 +130,7 @@ void Player_actor_Item_net_CulcJointAngle_dummy_net_swing(ACTOR* actor){
 
 typedef void (*mPlayer_item_net_proc)(ACTOR*);
 
-void Player_actor_Item_net_CulcJointAngle_dummy_net(ACTOR* actor) {
+static void Player_actor_Item_net_CulcJointAngle_dummy_net(ACTOR* actor) {
     static mPlayer_item_net_proc proc[] = {
         Player_actor_Item_net_CulcJointAngle_dummy_net_reset, Player_actor_Item_net_CulcJointAngle_dummy_net_reset,
         Player_actor_Item_net_CulcJointAngle_dummy_net_reset, Player_actor_Item_net_CulcJointAngle_dummy_net_reset,
@@ -210,20 +210,20 @@ void Player_actor_Item_net_CulcJointAngle_dummy_net(ACTOR* actor) {
     }
 }
 
-int Player_actor_Item_main_net_normal(ACTOR* actor){
+static int Player_actor_Item_main_net_normal(ACTOR* actor, GAME* game){
     Player_actor_Item_CulcAnimation_Base(actor);
     Player_actor_Item_net_CulcJointAngle_dummy_net(actor);
     return 0;
 }
 
-int Player_actor_Item_main_net_stop(ACTOR* actor){
+static int Player_actor_Item_main_net_stop(ACTOR* actor, GAME* game){
     int ret = Player_actor_Item_CulcAnimation_Base2(actor);
     
     Player_actor_Item_net_CulcJointAngle_dummy_net(actor);
     return ret;
 }
  
-void Player_actor_Item_draw_net_After_dummy_net(ACTOR* actor){
+static void Player_actor_Item_draw_net_After_dummy_net(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
     Matrix_rotateXYZ(player->net_angle.x, player->net_angle.y, player->net_angle.z, 1);
@@ -232,7 +232,7 @@ void Player_actor_Item_draw_net_After_dummy_net(ACTOR* actor){
 typedef void (*mPlayer_item_net_draw_proc)(void* arg, GAME* game, cKF_SkeletonInfo_R_c* keyframe, Gfx** joint_shape,
                                            u8* joint_flags, s_xyz* joint_rot, xyz_t* joint_pos);
 
-int Player_actor_Item_draw_net_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+static int Player_actor_Item_draw_net_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
                                      u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     static const mPlayer_item_net_draw_proc proc[] = {
         NULL, NULL, (mPlayer_item_net_draw_proc)Player_actor_Item_draw_net_After_dummy_net, NULL, NULL, NULL,
@@ -247,7 +247,7 @@ int Player_actor_Item_draw_net_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe,
     return TRUE;
 }
 
-void Player_actor_Item_draw_net(ACTOR* actor, GAME* game){
+static void Player_actor_Item_draw_net(ACTOR* actor, GAME* game){
     GAME_PLAY* play = (GAME_PLAY*)game;
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     

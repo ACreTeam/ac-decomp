@@ -1,8 +1,8 @@
-s16 Player_actor_Item_Get_goal_balloon_lean_angle(ACTOR* actor){
+static s16 Player_actor_Item_Get_goal_balloon_lean_angle(ACTOR* actor){
     return -actor->shape_info.rotation.x;
 }
 
-void Player_actor_Item_Setup_main_balloon_normal(ACTOR* actor, GAME* game, int kind){
+static void Player_actor_Item_Setup_main_balloon_normal(ACTOR* actor, GAME* game, int kind){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     int check = FALSE;
     
@@ -27,13 +27,13 @@ void Player_actor_Item_Setup_main_balloon_normal(ACTOR* actor, GAME* game, int k
     
 }
 
-void Player_actor_Item_set_balloon_lean_angle(ACTOR* actor){
+static void Player_actor_Item_set_balloon_lean_angle(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     s16 angle =  Player_actor_Item_Get_goal_balloon_lean_angle(actor);
     add_calc_short_angle2(&player->balloon_lean_angle, angle, 1.0f - sqrtf(0.91f), 250, 0);
 }
 
-void Player_actor_Item_CulcAnimation_balloon_normal(ACTOR* actor){
+static void Player_actor_Item_CulcAnimation_balloon_normal(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     f32 speed = player->item_keyframe.frame_control.speed;
     f32 cur = player->item_keyframe.frame_control.current_frame;
@@ -54,7 +54,7 @@ void Player_actor_Item_CulcAnimation_balloon_normal(ACTOR* actor){
 }
  
 
-void Player_actor_Item_Movement_balloon_normal(ACTOR* actor) {
+static void Player_actor_Item_Movement_balloon_normal(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     f32 max = player->item_keyframe.frame_control.max_frames;
     int index;
@@ -165,7 +165,7 @@ void Player_actor_Item_Movement_balloon_normal(ACTOR* actor) {
 }
 
 
-void Player_actor_Item_PlayAnimation_balloon_normal(ACTOR* actor){
+static void Player_actor_Item_PlayAnimation_balloon_normal(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     f32 cur = player->item_keyframe.frame_control.current_frame;
     f32 max = player->item_keyframe.frame_control.max_frames;
@@ -191,13 +191,13 @@ void Player_actor_Item_PlayAnimation_balloon_normal(ACTOR* actor){
     }
 }
 
-int Player_actor_Item_main_balloon_normal(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_balloon_normal(ACTOR* actor, GAME* game){
     Player_actor_Item_set_balloon_lean_angle(actor);
     Player_actor_Item_CulcAnimation_balloon_normal(actor);
     return 0;
 } 
 
-int Player_actor_Item_draw_balloon_Before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+static int Player_actor_Item_draw_balloon_Before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos){
 
     switch(joint_idx){  
@@ -218,7 +218,7 @@ int Player_actor_Item_draw_balloon_Before(GAME* game, cKF_SkeletonInfo_R_c* keyf
     return 1;
 }
 
-int Player_actor_Item_draw_balloon_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+static int Player_actor_Item_draw_balloon_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos){
     switch(joint_idx){  
         case 1:
@@ -238,7 +238,7 @@ int Player_actor_Item_draw_balloon_After(GAME* game, cKF_SkeletonInfo_R_c* keyfr
 
     return 1;   
 }
-void Player_actor_Item_draw_balloon(ACTOR* actor, GAME* game) {
+static void Player_actor_Item_draw_balloon(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     Mtx* item_mtx;
     GAME_PLAY* play = (GAME_PLAY*)game;

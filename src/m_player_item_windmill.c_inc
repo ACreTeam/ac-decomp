@@ -1,4 +1,4 @@
-void Player_actor_Item_windmill_CulcParam(ACTOR* actor){
+static void Player_actor_Item_windmill_CulcParam(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     xyz_t pos;
     
@@ -104,7 +104,7 @@ static void Player_actor_Item_windmill_CulcRotationSpeed(ACTOR* actor, GAME* gam
     }
 }
 
-int Player_actor_Item_main_windmill_normal(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_windmill_normal(ACTOR* actor, GAME* game){
     Player_actor_Item_windmill_CulcParam(actor);
     Player_actor_Item_windmill_CulcRotationSpeed(actor, game);
     Player_actor_Item_CulcAnimation_Base(actor);
@@ -113,7 +113,7 @@ int Player_actor_Item_main_windmill_normal(ACTOR* actor, GAME* game){
     return 0;
 }
 
-void Player_actor_Item_draw_windmill_After_kaza1_fan(ACTOR* actor){
+static void Player_actor_Item_draw_windmill_After_kaza1_fan(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     s_xyz* angle = &player->windmill_angle;
     xyz_t* item_end = &player->other_item_end_pos;
@@ -132,7 +132,7 @@ void Player_actor_Item_draw_windmill_After_kaza1_fan(ACTOR* actor){
 typedef void (*mPlayer_item_windmill_draw_proc)(void* arg, GAME* game, cKF_SkeletonInfo_R_c* keyframe, Gfx** joint_shape,
                                            u8* joint_flags, s_xyz* joint_rot, xyz_t* joint_pos);
 
-int Player_actor_Item_draw_windmill_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+static int Player_actor_Item_draw_windmill_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
                                      u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     static const mPlayer_item_windmill_draw_proc proc[] = {
         NULL,NULL, (mPlayer_item_windmill_draw_proc)Player_actor_Item_draw_windmill_After_kaza1_fan,
@@ -147,7 +147,7 @@ int Player_actor_Item_draw_windmill_After(GAME* game, cKF_SkeletonInfo_R_c* keyf
     return 1;
 }
 
-void Player_actor_Item_draw_rod(ACTOR* actor, GAME* game){
+static void Player_actor_Item_draw_windmill(ACTOR* actor, GAME* game){
     GAME_PLAY* play = (GAME_PLAY*)game;
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     Mtx* mtx;

@@ -1,4 +1,4 @@
-void Player_actor_Item_Set_Scale_forUki_normal(ACTOR* actor, GAME* game) {
+static void Player_actor_Item_Set_Scale_forUki_normal(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     ACTOR* rod = player->fishing_rod_actor_p;
     f32 scale = 0.01f;
@@ -14,7 +14,7 @@ void Player_actor_Item_Set_Scale_forUki_normal(ACTOR* actor, GAME* game) {
     }
 }
 
-void Player_actor_Item_Set_Value_forUki_normal(ACTOR* actor, GAME* game){
+static void Player_actor_Item_Set_Value_forUki_normal(ACTOR* actor, GAME* game){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     
     Player_actor_Item_Set_Command_forUki(actor, 1);
@@ -25,7 +25,7 @@ void Player_actor_Item_Set_Value_forUki_normal(ACTOR* actor, GAME* game){
     Player_actor_Item_Set_Scale_forUki_normal(actor, game);
 }
 
-int Player_actor_Item_main_rod_normal(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_rod_normal(ACTOR* actor, GAME* game){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     
     Player_actor_Item_CulcAnimation_Base(actor);
@@ -33,7 +33,7 @@ int Player_actor_Item_main_rod_normal(ACTOR* actor, GAME* game){
     return 0;
 }
 
-void Player_actor_Item_Set_Value_forUki_ready(ACTOR* actor){
+static void Player_actor_Item_Set_Value_forUki_ready(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
 
     Player_actor_Item_Set_Command_forUki(actor, 2);
@@ -44,7 +44,7 @@ void Player_actor_Item_Set_Value_forUki_ready(ACTOR* actor){
     
 }
 
-int Player_actor_Item_main_rod_ready(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_rod_ready(ACTOR* actor, GAME* game){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
 
     Player_actor_Item_CulcAnimation_Base(actor);
@@ -52,7 +52,7 @@ int Player_actor_Item_main_rod_ready(ACTOR* actor, GAME* game){
     return 0;
 }
 
-void Player_actor_Item_Set_CastGoalPoint_forUki_cast(ACTOR* actor, int index){
+static void Player_actor_Item_Set_CastGoalPoint_forUki_cast(ACTOR* actor, int index){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;  
 
     if(index == mPlayer_INDEX_CAST_ROD){
@@ -65,7 +65,7 @@ void Player_actor_Item_Set_CastGoalPoint_forUki_cast(ACTOR* actor, int index){
     }
 }
 
-void Player_actor_Item_Set_Value_forUki_cast(ACTOR* actor){
+static void Player_actor_Item_Set_Value_forUki_cast(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
 
     Player_actor_Item_Set_Command_forUki(actor, 3);
@@ -76,7 +76,7 @@ void Player_actor_Item_Set_Value_forUki_cast(ACTOR* actor){
     
 }
 
-int Player_actor_Item_Check_Status_forUki_cast(ACTOR* actor){
+static int Player_actor_Item_Check_Status_forUki_cast(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -91,7 +91,7 @@ int Player_actor_Item_Check_Status_forUki_cast(ACTOR* actor){
     return 0;
 }
 
-int Player_actor_Item_main_rod_cast(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_rod_cast(ACTOR* actor, GAME* game){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     int status;
     
@@ -102,7 +102,7 @@ int Player_actor_Item_main_rod_cast(ACTOR* actor, GAME* game){
     return status;
 }
 
-void Player_actor_Item_Set_Value_forUki_air(ACTOR* actor){
+static void Player_actor_Item_Set_Value_forUki_air(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
 
     Player_actor_Item_Set_Command_forUki(actor, 4);
@@ -112,7 +112,7 @@ void Player_actor_Item_Set_Value_forUki_air(ACTOR* actor){
     Player_actor_Item_Set_RodTopPos_forUki(actor);    
 }
 
-int Player_actor_Item_main_rod_air(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_rod_air(ACTOR* actor, GAME* game){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
 
     Player_actor_Item_CulcAnimation_Base(actor);
@@ -120,7 +120,7 @@ int Player_actor_Item_main_rod_air(ACTOR* actor, GAME* game){
     return 0;
 }
 
-void Player_actor_Item_SetFrame_forUki_relax(ACTOR* actor, GAME* game){
+static void Player_actor_Item_SetFrame_forUki_relax(ACTOR* actor, GAME* game){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -143,7 +143,7 @@ void Player_actor_Item_SetFrame_forUki_relax(ACTOR* actor, GAME* game){
     }
 }
 
-void Player_actor_Item_Set_Value_forUki_relax(ACTOR* actor){
+static void Player_actor_Item_Set_Value_forUki_relax(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     
     Player_actor_Item_Set_RightHandPos_forUki(actor, player->now_main_index);
@@ -152,7 +152,7 @@ void Player_actor_Item_Set_Value_forUki_relax(ACTOR* actor){
     Player_actor_Item_Set_RodTopPos_forUki(actor);   
 }
 
-int Player_actor_Item_Check_Status_forUki_relax(ACTOR* actor){
+static int Player_actor_Item_Check_Status_forUki_relax(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;    
 
@@ -164,13 +164,13 @@ int Player_actor_Item_Check_Status_forUki_relax(ACTOR* actor){
     }
 }
 
-int Player_actor_Item_main_rod_relax(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_rod_relax(ACTOR* actor, GAME* game){
     Player_actor_Item_SetFrame_forUki_relax(actor,game);
     Player_actor_Item_Set_Value_forUki_relax(actor);
     return Player_actor_Item_Check_Status_forUki_relax(actor);    
 }
 
-void Player_actor_Item_Set_Value_forUki_collect(ACTOR* actor){
+static void Player_actor_Item_Set_Value_forUki_collect(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     
     Player_actor_Item_Set_Command_forUki(actor, 6);
@@ -180,7 +180,7 @@ void Player_actor_Item_Set_Value_forUki_collect(ACTOR* actor){
     Player_actor_Item_Set_RodTopPos_forUki(actor);    
 }
 
-int Player_actor_Item_Check_Status_forUki_collect(ACTOR* actor){
+static int Player_actor_Item_Check_Status_forUki_collect(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -194,13 +194,13 @@ int Player_actor_Item_Check_Status_forUki_collect(ACTOR* actor){
     return 1;
 }
 
-int Player_actor_Item_main_rod_collect(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_rod_collect(ACTOR* actor, GAME* game){
     Player_actor_Item_CulcAnimation_Base(actor);
     Player_actor_Item_Set_Value_forUki_collect(actor);
     return Player_actor_Item_Check_Status_forUki_collect(actor);    
 }
 
-void Player_actor_Item_SetFrame_forUki_vib(ACTOR* actor){
+static void Player_actor_Item_SetFrame_forUki_vib(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -233,7 +233,7 @@ void Player_actor_Item_SetFrame_forUki_vib(ACTOR* actor){
     }     
 }
 
-void Player_actor_Item_Set_Value_forUki_vib(ACTOR* actor){
+static void Player_actor_Item_Set_Value_forUki_vib(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     
     Player_actor_Item_Set_Command_forUki(actor, 6);
@@ -244,7 +244,7 @@ void Player_actor_Item_Set_Value_forUki_vib(ACTOR* actor){
     Player_actor_Item_Set_RodTopPos_forUki(actor);    
 }
 
-int Player_actor_Item_Check_Status_forUki_vib(ACTOR* actor){
+static int Player_actor_Item_Check_Status_forUki_vib(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -258,13 +258,13 @@ int Player_actor_Item_Check_Status_forUki_vib(ACTOR* actor){
     return 0;    
 }
 
-int Player_actor_Item_main_rod_vib(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_rod_vib(ACTOR* actor, GAME* game){
     Player_actor_Item_SetFrame_forUki_vib(actor);
     Player_actor_Item_Set_Value_forUki_vib(actor);
     return Player_actor_Item_Check_Status_forUki_vib(actor);    
 }
 
-void Player_actor_Item_Set_Value_forUki_fly(ACTOR* actor){
+static void Player_actor_Item_Set_Value_forUki_fly(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     
     Player_actor_Item_Set_Command_forUki(actor, 6);
@@ -275,7 +275,7 @@ void Player_actor_Item_Set_Value_forUki_fly(ACTOR* actor){
     Player_actor_Item_Set_RodTopPos_forUki(actor);    
 }
 
-int Player_actor_Item_Check_Status_forUki_fly(ACTOR* actor){
+static int Player_actor_Item_Check_Status_forUki_fly(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -289,13 +289,13 @@ int Player_actor_Item_Check_Status_forUki_fly(ACTOR* actor){
     return 0;    
 }
 
-int Player_actor_Item_main_rod_fly(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_rod_fly(ACTOR* actor, GAME* game){
     Player_actor_Item_CulcAnimation_Base(actor);
     Player_actor_Item_Set_Value_forUki_fly(actor);
     return Player_actor_Item_Check_Status_forUki_fly(actor);    
 }
 
-void Player_actor_Item_Set_GyoeiScale_forUki_putaway(ACTOR* actor, int index){
+static void Player_actor_Item_Set_GyoeiScale_forUki_putaway(ACTOR* actor, int index){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     
     if(index == mPlayer_INDEX_PUTAWAY_ROD){
@@ -316,7 +316,7 @@ void Player_actor_Item_Set_GyoeiScale_forUki_putaway(ACTOR* actor, int index){
     }
 }
 
-void Player_actor_Item_Set_Value_forUki_putaway(ACTOR* actor){
+static void Player_actor_Item_Set_Value_forUki_putaway(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     
     Player_actor_Item_Set_Command_forUki(actor, 5);
@@ -327,7 +327,7 @@ void Player_actor_Item_Set_Value_forUki_putaway(ACTOR* actor){
     Player_actor_Item_Set_RodTopPos_forUki(actor);      
 }
 
-int Player_actor_Item_main_rod_putaway(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_rod_putaway(ACTOR* actor, GAME* game){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     
     Player_actor_Item_CulcAnimation_Base(actor);
@@ -336,7 +336,7 @@ int Player_actor_Item_main_rod_putaway(ACTOR* actor, GAME* game){
     return 0;
 }
 
-void Player_actor_Item_draw_net_After_main4_sao(ACTOR* actor){
+static void Player_actor_Item_draw_net_After_main4_sao(ACTOR* actor){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor; 
     
     Matrix_Position_VecX(&player->item_rod_top_pos, 1050.0f);
@@ -345,7 +345,7 @@ void Player_actor_Item_draw_net_After_main4_sao(ACTOR* actor){
 typedef void (*mPlayer_item_rod_draw_proc)(void* arg, GAME* game, cKF_SkeletonInfo_R_c* keyframe, Gfx** joint_shape,
                                            u8* joint_flags, s_xyz* joint_rot, xyz_t* joint_pos);
 
-int Player_actor_Item_draw_rod_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+static int Player_actor_Item_draw_rod_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
                                      u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     static const mPlayer_item_net_draw_proc proc[] = {
         NULL,NULL,NULL,NULL, (mPlayer_item_rod_draw_proc)Player_actor_Item_draw_net_After_main4_sao,
@@ -360,7 +360,7 @@ int Player_actor_Item_draw_rod_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe,
     return 1;
 }
 
-void Player_actor_Item_draw_rod(ACTOR* actor, GAME* game){
+static void Player_actor_Item_draw_rod(ACTOR* actor, GAME* game){
     GAME_PLAY* play = (GAME_PLAY*)game;
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     Mtx* mtx;

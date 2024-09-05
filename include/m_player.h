@@ -471,6 +471,9 @@ enum {
     mPlayer_ITEM_MAIN_NUM,
 };
 
+#define mPlayer_ITEM_MAIN_VALID(main_index) ((main_index) >= (mPlayer_ITEM_MAIN_NONE) && (main_index) < (mPlayer_ITEM_MAIN_NUM))
+
+
 enum {
     mPlayer_ITEM_KIND_AXE,
     mPlayer_ITEM_KIND_AXE_USE_1,

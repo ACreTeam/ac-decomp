@@ -1,8 +1,8 @@
-int Player_actor_Item_main_axe_normal(ACTOR* actor, GAME* game){
+static int Player_actor_Item_main_axe_normal(ACTOR* actor, GAME* game){
     return 0;
 } 
 
-void Player_actor_Item_draw_axe(ACTOR* actor, GAME* game){
+static void Player_actor_Item_draw_axe(ACTOR* actor, GAME* game){
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     int shape_type;
     
