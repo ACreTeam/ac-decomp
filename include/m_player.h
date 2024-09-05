@@ -1522,6 +1522,14 @@ typedef struct player_main_wait_bed_s {
     int flags;
 } mPlayer_main_wait_bed_c;
 
+typedef struct player_main_sitdown_s {
+    int ftrID;
+} mPlayer_main_sitdown_c;
+
+typedef struct player_main_sitdown_wait_s {
+    int ftrID;
+} mPlayer_main_sitdown_wait_c;
+
 typedef struct player_main_wade_s {
     int dir;
     xyz_t start_pos;
@@ -1815,6 +1823,8 @@ typedef union {
     mPlayer_main_open_furniture_c open_furniture;
     mPlayer_main_lie_bed_c lie_bed;
     mPlayer_main_wait_bed_c wait_bed;
+    mPlayer_main_sitdown_c sitdown;
+    mPlayer_main_sitdown_wait_c sitdown_wait;
     mPlayer_main_wade_c wade;
     mPlayer_main_pickup_c pickup;
     mPlayer_main_pickup_jump_c pickup_jump;

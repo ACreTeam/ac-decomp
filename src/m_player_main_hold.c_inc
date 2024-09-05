@@ -46,7 +46,7 @@ static Player_actor_request_main_hold(GAME* game, int ftr_no, int index, const x
     return FALSE;
 }
 
-static void Player_actor_setup_main_OutdoorPlayer_actor_setup_main_Hold(ACTOR* actor, GAME* game) {
+static void Player_actor_setup_main_Hold(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     int flags = player->requested_main_index_data.hold.flags;
 
