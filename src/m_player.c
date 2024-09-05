@@ -320,7 +320,7 @@ static int Player_actor_request_main_close_furniture(GAME*, int);
 static int Player_actor_request_main_lie_bed(GAME*, int, const xyz_t*, int, int, int);
 static int Player_actor_request_main_hide(GAME*, int);
 static int Player_actor_request_main_groundhog(GAME*, int);
-static int Player_actor_request_main_door(GAME*, const xyz_t*, s16, int, void*, int);
+static int Player_actor_request_main_door(GAME*, const xyz_t*, s16, int, u32, int);
 static int Player_actor_request_main_outdoor(GAME*, int, int, int);
 static int Player_actor_request_main_wash_car_all(GAME*, const xyz_t*, const xyz_t*, s16, ACTOR*, int);
 static int Player_actor_request_main_rotate_octagon_all(GAME*, ACTOR*, int, int, const xyz_t*, s16, int);

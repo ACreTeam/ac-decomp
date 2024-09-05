@@ -28,9 +28,9 @@ static void Player_actor_setup_main_Door(ACTOR* actor, GAME* game) {
     player->main_data.door.label = player->requested_main_index_data.door.label;
     actor->world.angle.y = player->requested_main_index_data.door.angle_y;
     cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyf, 0.0f, 1000.0f, 0.0f, 0, 0, 0x4000);
-    cKF_SkeletonInfo_R_AnimationMove_ct_base(
-        9.0f, &actor->world.position, &player->requested_main_index_data.door.player_pos, actor->shape_info.rotation.y,
-        player->requested_main_index_data.door.angle_y, keyf, 5);
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actor->world.position, &player->requested_main_index_data.door.player_pos,
+                                             actor->shape_info.rotation.y,
+                                             player->requested_main_index_data.door.angle_y, 9.0f, keyf, 5);
     Player_actor_InitAnimation_Base2(actor, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.5f, -9.0f, 0, 0);
     Player_actor_setup_main_Base(actor, game);
     mBGMPsComp_scene_mode(0xC);
@@ -49,11 +49,11 @@ static void Player_actor_Movement_Door(ACTOR* actor) {
     Player_actor_Set_force_shadow_position_fromWorldPosition(actor);
 }
 
-static void Player_actor_ObjCheck_Door(ACTOR* actor, GAME* game) { 
-    Player_actor_Excute_Corect_forStand(actor, game); 
+static void Player_actor_ObjCheck_Door(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static Player_actor_main_Door(ACTOR* actor, GAME* game) {
+static void Player_actor_main_Door(ACTOR* actor, GAME* game) {
     f32 frame_calc;
 
     Player_actor_CulcAnimation_Door(actor, &frame_calc);

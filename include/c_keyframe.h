@@ -24,7 +24,7 @@ extern "C" {
 
 #define cKF_ANIMATION_TRANS_XZ (1 << 0) // Translation on XZ
 #define cKF_ANIMATION_TRANS_Y (1 << 1)  // Translation on Y
-#define cKF_ANIMATION_ROT_X (1 << 2)    // Rotation on the X axis
+#define cKF_ANIMATION_ROT_Y (1 << 2)    // Rotation on the X axis
 
 enum {
     cKF_STATE_NONE,
@@ -439,16 +439,16 @@ extern void cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(cKF_SkeletonInfo_R_c
 /**
  * Adjusts the base position and correction for a skeleton info structure based on animation flags.
  *
- * @param counter Animation counter to determine the phase of movement.
  * @param basepos Original base position of the model.
  * @param correctpos Corrected base position of the model.
  * @param ybase Base Y angle for rotation.
  * @param yidle Idle Y angle for rotation.
+ * @param counter Animation counter to determine the phase of movement.
  * @param keyframe Skeleton info structure to modify.
  * @param an_flag Animation flags to determine which corrections to apply.
  */
-extern void cKF_SkeletonInfo_R_AnimationMove_ct_base(f32 counter, xyz_t* basepos, xyz_t* correctpos, s16 ybase,
-                                                     s16 yidle, cKF_SkeletonInfo_R_c* keyframe, int animation_flag);
+extern void cKF_SkeletonInfo_R_AnimationMove_ct_base(xyz_t* basepos, xyz_t* correctpos, s16 ybase, s16 yidle,
+                                                     f32 counter, cKF_SkeletonInfo_R_c* keyframe, int animation_flag);
 
 /**
  * Resets animation movement and flags for a skeleton info structure.
@@ -462,11 +462,11 @@ extern void cKF_SkeletonInfo_R_AnimationMove_dt(cKF_SkeletonInfo_R_c* keyframe);
  *
  * @param base Base position to modify.
  * @param sbase Base rotation to modify.
- * @param move Movement amount to apply.
+ * @param scale Scaling amount to apply.
  * @param yidle Y-axis idle angle.
  * @param keyframe Skeleton info structure containing animation data.
  */
-extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t* move, s16 yidle,
+extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t* scale, s16 yidle,
                                                   cKF_SkeletonInfo_R_c* keyframe);
 
 /**

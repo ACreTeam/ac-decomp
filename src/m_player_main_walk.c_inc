@@ -56,11 +56,11 @@ static void Player_actor_setup_main_Walk_common(ACTOR* actor, GAME* game) {
     Player_actor_setup_main_Base(actor, game);
 }
 
-static void Player_actor_setup_main_Walk(ACTOR* actor, GAME* game) { 
-    Player_actor_setup_main_Walk_common(actor, game); 
+static void Player_actor_setup_main_Walk(ACTOR* actor, GAME* game) {
+    Player_actor_setup_main_Walk_common(actor, game);
 }
 
-static void Player_actor_settle_main_Walk(ACTOR* actor) {
+static void Player_actor_settle_main_Walk(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
     switch (player->requested_main_index) {
@@ -219,12 +219,12 @@ static void Player_actor_Movement_Walk(ACTOR* actor, GAME* game, f32* frame) {
     Player_actor_Movement_Base(actor);
 }
 
-static void Player_actor_ObjCheck_Walk(ACTOR* actor, GAME* game) { 
-    Player_actor_Excute_Corect_forStand(actor, game); 
+static void Player_actor_ObjCheck_Walk(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Walk(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Walk(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromWalk(ACTOR* actor, GAME* game) {

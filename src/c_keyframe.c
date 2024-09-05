@@ -617,7 +617,7 @@ extern void cKF_Si3_draw_SV_R_child(GAME* game, cKF_SkeletonInfo_R_c* keyframe, 
 
     joint1 = cur_joint[1];
 
-    if ((joint_num[0] == 0) && (keyframe->animation_enabled & cKF_ANIMATION_ROT_X)) {
+    if ((joint_num[0] == 0) && (keyframe->animation_enabled & cKF_ANIMATION_ROT_Y)) {
         joint1.x = keyframe->base_model_rotation.x;
         joint1.y = keyframe->updated_base_model_rotation.y;
         joint1.z = keyframe->updated_base_model_rotation.z;
@@ -1030,8 +1030,8 @@ extern void cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(cKF_SkeletonInfo_R_c
     keyframe->updated_base_model_rotation.z = anglez;
 }
 
-extern void cKF_SkeletonInfo_R_AnimationMove_ct_base(f32 counter, xyz_t* basepos, xyz_t* correctpos, s16 ybase,
-                                                     s16 yidle, cKF_SkeletonInfo_R_c* keyframe, int an_flag) {
+extern void cKF_SkeletonInfo_R_AnimationMove_ct_base(xyz_t* basepos, xyz_t* correctpos, s16 ybase, s16 yidle,
+                                                     f32 counter, cKF_SkeletonInfo_R_c* keyframe, int an_flag) {
     int sub;
 
     keyframe->animation_enabled = an_flag;
@@ -1059,7 +1059,7 @@ extern void cKF_SkeletonInfo_R_AnimationMove_ct_base(f32 counter, xyz_t* basepos
     keyframe->base_angle_y = yidle;
     keyframe->model_angle_correction = 0;
 
-    if (an_flag & cKF_ANIMATION_ROT_X) {
+    if (an_flag & cKF_ANIMATION_ROT_Y) {
         sub = ybase - yidle;
         if (sub > 0x8000) {
             sub = -(0x10000 - sub);
@@ -1082,7 +1082,7 @@ extern void cKF_SkeletonInfo_R_AnimationMove_dt(cKF_SkeletonInfo_R_c* keyframe) 
     if (an_flag & cKF_ANIMATION_TRANS_Y) {
         cur_joint->y = keyframe->base_model_translation.y;
     }
-    if (an_flag & cKF_ANIMATION_ROT_X) {
+    if (an_flag & cKF_ANIMATION_ROT_Y) {
         cur_joint = keyframe->current_joint;
         cur_joint[1].x = keyframe->base_model_rotation.x;
         cur_joint[1].y = keyframe->base_model_rotation.y;
@@ -1091,7 +1091,7 @@ extern void cKF_SkeletonInfo_R_AnimationMove_dt(cKF_SkeletonInfo_R_c* keyframe) 
     keyframe->animation_enabled = 0;
 }
 
-extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t* move, s16 yidle,
+extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t* scale, s16 yidle,
                                                   cKF_SkeletonInfo_R_c* keyframe) {
     f32 fc = keyframe->fixed_counter;
     f32 count = 1.0f + fc;
@@ -1117,7 +1117,7 @@ extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t
         correct_y = 0.0f;
     }
 
-    if (an_flag & cKF_ANIMATION_ROT_X) {
+    if (an_flag & cKF_ANIMATION_ROT_Y) {
         mangle_y = keyframe->model_angle_correction;
         if (count > 0.5f) {
             keyframe->model_angle_correction -= (s16)(int)(mangle_y * correct_y);
@@ -1153,7 +1153,7 @@ extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t
         keyframe->model_world_position_correction.z = 0.0f;
     }
 
-    if ((sbase != NULL) && (an_flag & cKF_ANIMATION_ROT_X)) {
+    if ((sbase != NULL) && (an_flag & cKF_ANIMATION_ROT_Y)) {
         angley = keyframe->base_angle_y;
         angle_c = keyframe->model_angle_correction;
         base_x = keyframe->base_model_rotation.x;
@@ -1184,9 +1184,9 @@ extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t
             cos = cos_s(sub);
 
             temp1 = (trans_x * cos) + (trans_z * sin);
-            move_x = move->x * (cur_joint->x - temp1);
+            move_x = scale->x * (cur_joint->x - temp1);
             temp1 = (-trans_x * sin) + (trans_z * cos);
-            move_z = move->z * (cur_joint->z - temp1);
+            move_z = scale->z * (cur_joint->z - temp1);
 
             sin = sin_s(yidle);
             cos = cos_s(yidle);
@@ -1199,7 +1199,7 @@ extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t
             base->z = temp2 + (keyframe->base_world_position.z + base_z);
         }
         if (an_flag & cKF_ANIMATION_TRANS_Y) {
-            base->y = move->y * (cur_joint->y - keyframe->base_model_translation.y) +
+            base->y = scale->y * (cur_joint->y - keyframe->base_model_translation.y) +
                       (keyframe->base_world_position.y + keyframe->model_world_position_correction.y);
         }
     }

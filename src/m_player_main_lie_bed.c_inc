@@ -85,8 +85,8 @@ static void Player_actor_setup_main_Lie_bed(ACTOR* actor, GAME* game) {
     actor->world.angle.y = angle;
 
     cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyf, 0.0f, 1000.0f, 0.0f, 0, 0, 0x4000);
-    cKF_SkeletonInfo_R_AnimationMove_ct_base(17.0f, &actor->world.position, &req_lie->wpos,
-                                             actor->shape_info.rotation.y, req_lie->angle, keyf, 3);
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actor->world.position, &req_lie->wpos, actor->shape_info.rotation.y,
+                                             req_lie->angle, 17.0f, keyf, 3);
     Player_actor_InitAnimation_Base2(actor, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.5f, -5.0f, 0, 0);
     Player_actor_setup_main_Base(actor, game);
     Player_actor_sound_JUMP(actor);
