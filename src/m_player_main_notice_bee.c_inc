@@ -1,0 +1,148 @@
+static int Player_actor_request_main_notice_bee_all(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_NOTICE_BEE, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_NOTICE_BEE, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Notice_bee(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_notice_bee_c* notice_bee_p = &player->main_data.notice_bee;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    int anim1_idx;
+    int part_table_idx;
+
+    notice_bee_p->timer = 0.0f;
+    notice_bee_p->msg_mode = 0;
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_HATI3, -5.0f, &anim1_idx, &part_table_idx);
+    cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(kf0_p, 0.0f, 1000.0f, 0.0f, 0, 0, DEG2SHORT_ANGLE2(90.0f));
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actorx->world.position, &actorx->world.position,
+                                             actorx->shape_info.rotation.y, actorx->shape_info.rotation.y, 5.0f, kf0_p,
+                                             cKF_ANIMATION_ROT_Y);
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_HATI3, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     cKF_FRAMECONTROL_STOP, part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Notice_bee(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_dt(kf0_p);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+    mBGMPsComp_delete_ps_demo(BGM_BEE_STUNG, 0x168);
+}
+
+static int Player_actor_CulcAnimation_Notice_bee(ACTOR* actorx, f32* last_anim0_cur_frame) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame);
+}
+
+static void Player_actor_Movement_Notice_bee(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_base(&actorx->world.position, &actorx->shape_info.rotation.y, &actorx->scale,
+                                          actorx->world.angle.y, kf0_p);
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static void Player_actor_set_eye_pattern_Notice_bee(ACTOR* actorx, int end_flag) {
+    if (end_flag) {
+        if (Common_Get(player_decoy_flag) == FALSE) {
+            Player_actor_set_eye_pattern_normal(actorx);
+        }
+    } else {
+        Player_actor_set_tex_anime_pattern(actorx);
+    }
+}
+
+static void Player_actor_ObjCheck_Notice_bee(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Notice_bee(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_Notice_bee_demo_ct(ACTOR* actorx) {
+    rgba_t window_color;
+
+    mDemo_Set_msg_num(0x17B4);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(CAMERA2_PROCESS_ITEM);
+    mDemo_Set_ListenAble();
+    window_color.r = 225;
+    window_color.g = 165;
+    window_color.b = 255;
+    window_color.a = 255;
+    mDemo_Set_talk_window_color(&window_color);
+    mBGMPsComp_make_ps_demo(BGM_BEE_STUNG, 0x168);
+    mBGMPsComp_delete_ps_quiet();
+}
+
+static int Player_actor_MessageControl_Notice_bee(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_notice_bee_c* notice_bee_p = &player->main_data.notice_bee;
+    int* msg_mode_p = &notice_bee_p->msg_mode;
+    f32* timer_p = &notice_bee_p->timer;
+
+    switch (*msg_mode_p) {
+        case 0: {
+            if (*timer_p < 0.0f) {
+                (*timer_p) += 1.0f;
+            } else {
+                *msg_mode_p = 1;
+            }
+            break;
+        }
+
+        case 1: {
+            if (mDemo_Check(mDemo_TYPE_REPORT, actorx) == FALSE) {
+                mDemo_Request(mDemo_TYPE_REPORT, actorx, &Player_actor_Notice_bee_demo_ct);
+            } else {
+                *msg_mode_p = 2;
+            }
+            break;
+        }
+
+        case 2: {
+            if (mDemo_Check(mDemo_TYPE_REPORT, actorx) == FALSE) {
+                *msg_mode_p = 3;
+            }
+            break;
+        }
+
+        default: {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_request_proc_index_fromNotice_bee(ACTOR* actorx, GAME* game, int anim_end_flag,
+                                                           int msg_end_flag) {
+    if (anim_end_flag && msg_end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Notice_bee(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int anim_end_flag;
+    int msg_end_flag;
+
+    anim_end_flag = Player_actor_CulcAnimation_Notice_bee(actorx, &last_anim0_cur_frame);
+    Player_actor_Movement_Notice_bee(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_Notice_bee(actorx, anim_end_flag);
+    Player_actor_ObjCheck_Notice_bee(actorx, game);
+    Player_actor_BGcheck_Notice_bee(actorx);
+    Player_actor_Item_main(actorx, game);
+    msg_end_flag = Player_actor_MessageControl_Notice_bee(actorx);
+    Player_actor_request_proc_index_fromNotice_bee(actorx, game, anim_end_flag, msg_end_flag);
+}

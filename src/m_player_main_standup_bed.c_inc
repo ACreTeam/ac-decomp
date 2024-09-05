@@ -125,7 +125,7 @@ static void Player_actor_setup_main_Standup_bed(ACTOR* actor, GAME* game) {
     cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyf, 0.0f, 1000.0f, 0.0f, 0, 0, 0x4000);
     rot = actor->shape_info.rotation.y;
 
-    cKF_SkeletonInfo_R_AnimationMove_ct_base(3.0f, &actor->world.position, &actor->world.position, rot, rot, keyf, 3);
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actor->world.position, &actor->world.position, rot, rot, 3.0f, keyf, 3);
     Player_actor_InitAnimation_Base2(actor, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.5f, -3.0f, 0, 0);
     Player_actor_setup_main_Base(actor, game);
     Player_actor_sound_BED_OUT(actor);

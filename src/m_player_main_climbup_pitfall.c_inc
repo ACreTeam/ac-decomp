@@ -1,0 +1,103 @@
+static int Player_actor_request_main_climbup_pitfall_all(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_CLIMBUP_PITFALL, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_CLIMBUP_PITFALL, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static int Player_actor_Get_PlayerAnimeIndex_fromItemKind_Climbup_pitfall(int item_kind) {
+    if (mPlayer_ITEM_IS_UMBRELLA(item_kind) != FALSE) {
+        return mPlayer_ANIM_DERU2;
+    } else {
+        return mPlayer_ANIM_DERU1;
+    }
+}
+
+static void Player_actor_setup_main_Climbup_pitfall(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    int item_kind = Player_actor_Get_ItemKind(actorx, player->requested_main_index);
+    int anim0_idx = Player_actor_Get_PlayerAnimeIndex_fromItemKind_Climbup_pitfall(item_kind);
+    int anim1_idx;
+    int part_table_idx;
+
+    if (Common_Get(clip).bg_item_clip != NULL && Common_Get(clip).bg_item_clip->pit_exit_proc != NULL) {
+        xyz_t* player_pos_p = &actorx->world.position;
+        int ut_x;
+        int ut_z;
+
+        if (mFI_Wpos2UtNum(&ut_x, &ut_z, *player_pos_p)) {
+            mActor_name_t* fg_p = mFI_GetUnitFG(*player_pos_p);
+
+            if (fg_p != NULL) {
+                Common_Get(clip).bg_item_clip->pit_exit_proc(*fg_p, ut_x, ut_z, EMPTY_NO);
+            }
+        }
+    }
+
+    Player_actor_SetupItem_Base1(actorx, anim0_idx, -5.0f, &anim1_idx, &part_table_idx);
+    cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(kf0_p, 0.0f, 1000.0f, 0.0f, 0, 0, DEG2SHORT_ANGLE2(90.0f));
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actorx->world.position, &actorx->world.position,
+                                             actorx->shape_info.rotation.y, actorx->shape_info.rotation.y, 5.0f, kf0_p,
+                                             cKF_ANIMATION_TRANS_XZ | cKF_ANIMATION_TRANS_Y);
+    Player_actor_InitAnimation_Base2(actorx, game, anim0_idx, anim0_idx, 1.0f, 1.0f, 1.0f, -5.0f, cKF_FRAMECONTROL_STOP,
+                                     mPlayer_PART_TABLE_NORMAL);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Climbup_pitfall(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_dt(kf0_p);
+}
+
+static int Player_actor_CulcAnimation_Climbup_pitfall(ACTOR* actorx, f32* last_anim0_cur_frame) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame);
+}
+
+static void Player_actor_Movement_Climbup_pitfall(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_base(&actorx->world.position, &actorx->shape_info.rotation.y, &actorx->scale,
+                                          actorx->world.angle.y, kf0_p);
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static void Player_actor_SearchAnimation_Climbup_pitfall(ACTOR* actorx) {
+    Player_actor_AppearShadow_fromAnimationFrame(actorx, 12.0f, 44.0f);
+}
+
+static void Player_actor_set_eye_pattern_Climbup_pitfall(ACTOR* actorx) {
+    Player_actor_set_tex_anime_pattern(actorx);
+}
+
+static void Player_actor_ObjCheck_Climbup_pitfall(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_request_proc_index_fromClimbup_pitfall(ACTOR* actorx, GAME* game, int end_flag) {
+
+    if (end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Climbup_pitfall(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    end_flag = Player_actor_CulcAnimation_Climbup_pitfall(actorx, &last_anim0_cur_frame);
+    Player_actor_Movement_Climbup_pitfall(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_SearchAnimation_Climbup_pitfall(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_Climbup_pitfall(actorx);
+    Player_actor_ObjCheck_Climbup_pitfall(actorx, game);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromClimbup_pitfall(actorx, game, end_flag);
+}

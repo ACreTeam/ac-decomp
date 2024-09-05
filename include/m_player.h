@@ -811,12 +811,11 @@ typedef struct player_request_close_funriture_s {
 } mPlayer_request_close_furniture_c;
 
 typedef struct player_request_lie_bed_s {
-    int direction; 
+    int direction;
     s16 angle;
     xyz_t wpos;
     int flags;
 } mPlayer_request_lie_bed_c;
-
 
 typedef struct player_request_door_s {
     s16 angle_y;
@@ -1496,14 +1495,14 @@ typedef struct player_main_pull_s {
     int ftr_no;
     xyz_t start_pos;
     xyz_t ofs;
-    f32 timer; 
+    f32 timer;
 } mPlayer_main_pull_c;
 
 typedef struct player_main_rotate_furniture_s {
     int ftr_no;
     xyz_t pos;
     int _10;
-    int rotate_type; 
+    int rotate_type;
 } mPlayer_main_rotate_furniture_c;
 
 typedef struct player_main_open_furniture_s {
@@ -1591,6 +1590,10 @@ typedef struct player_main_broken_axe_s {
     f32 _28;
     int _2C;
 } mPlayer_main_broken_axe_c;
+
+typedef struct player_main_relax_rod_s {
+    int bee_flag;
+} mPlayer_main_relax_rod_c;
 
 typedef struct player_main_dig_scoop_s {
     xyz_t target_pos;
@@ -1724,9 +1727,19 @@ typedef struct player_main_shake_tree_s {
     int bee_spawn_timer;
 } mPlayer_main_shake_tree_c;
 
+typedef struct player_main_struggle_pitfall_s {
+    f32 button_presses;
+    f32 target_anim_speed;
+} mPlayer_main_struggle_pitfall_c;
+
 typedef struct player_main_stung_bee_s {
     f32 timer;
 } mPlayer_main_stung_bee_c;
+
+typedef struct player_main_notice_bee_s {
+    f32 timer;
+    int msg_mode;
+} mPlayer_main_notice_bee_c;
 
 typedef struct player_main_remove_grass_s {
     xyz_t grass_pos;
@@ -1808,6 +1821,7 @@ typedef union {
     mPlayer_main_reflect_axe_c reflect_axe;
     mPlayer_main_broken_axe_c broken_axe;
     mPlayer_main_swing_net_c swing_net;
+    mPlayer_main_relax_rod_c relax_rod;
     mPlayer_main_dig_scoop_c dig_scoop;
     mPlayer_main_fill_scoop_c fill_scoop;
     mPlayer_main_reflect_scoop_c reflect_scoop;
@@ -1826,7 +1840,9 @@ typedef union {
     mPlayer_main_putin_item_c putin_item;
     mPlayer_main_wash_car_c wash_car;
     mPlayer_main_shake_tree_c shake_tree;
+    mPlayer_main_struggle_pitfall_c struggle_pitfall;
     mPlayer_main_stung_bee_c stung_bee;
+    mPlayer_main_notice_bee_c notice_bee;
     mPlayer_main_remove_grass_c remove_grass;
     mPlayer_main_push_snowball_c push_snowball;
     mPlayer_main_wade_snowball_c wade_snowball;

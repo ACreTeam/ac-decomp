@@ -110,6 +110,7 @@ extern int mPlib_strength_request_main_wade_priority(GAME* game);
 extern int mPlib_strength_request_main_demo_wade_priority(GAME* game);
 extern int mPlib_strength_request_main_demo_geton_boat_wade_priority(GAME* game);
 extern int mPlib_strength_request_main_wade_snowball_priority(GAME* game);
+extern void mPlib_change_player_face(GAME* game);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 

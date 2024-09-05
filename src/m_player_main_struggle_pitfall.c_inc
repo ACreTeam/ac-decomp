@@ -1,0 +1,123 @@
+static int Player_actor_request_main_struggle_pitfall_all(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_STRUGGLE_PITFALL, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_STRUGGLE_PITFALL, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Struggle_pitfall(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    mPlayer_main_struggle_pitfall_c* struggle_pitfall_p = &player->main_data.struggle_pitfall;
+    int anim1_idx;
+    int part_table_idx;
+
+    struggle_pitfall_p->button_presses = 0.0f;
+    struggle_pitfall_p->target_anim_speed = 0.5f;
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_MOGAKU1, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_MOGAKU1, mPlayer_ANIM_MOGAKU1, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     mPlayer_PART_TABLE_NORMAL);
+    player->draw_effect_idx = eEC_EFFECT_ASE2 + 1;
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Struggle_pitfall(ACTOR* actorx, GAME* game) {
+    eEC_CLIP->effect_kill_proc(eEC_EFFECT_ASE2, RSV_NO);
+}
+
+static void Player_actor_Movement_Struggle_pitfall(ACTOR* actorx) {
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static int Player_actor_ControlAnimationSpeed_Struggle_pitfall(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_struggle_pitfall_c* struggle_pitfall_p = &player->main_data.struggle_pitfall;
+    f32 add_button_push_amt;
+    f32 old_recognize_percentR;
+    f32 now_recognize_percentR;
+    f32 d_recognize_percentR;
+    f32 abs_d_recognize_percentR;
+
+    if (struggle_pitfall_p->button_presses >= 20.0f) {
+        return TRUE;
+    }
+
+    add_button_push_amt = 0.0f;
+    add_button_push_amt += Player_actor_CheckController_forStruggle_pitfall();
+    old_recognize_percentR = Player_actor_GetController_old_recognize_percentR();
+    now_recognize_percentR = Player_actor_GetController_recognize_percentR();
+    d_recognize_percentR = old_recognize_percentR - now_recognize_percentR;
+    abs_d_recognize_percentR = ABS(d_recognize_percentR);
+    add_button_push_amt += abs_d_recognize_percentR * 0.5f;
+
+    if (old_recognize_percentR > 0.0f && now_recognize_percentR > 0.0f) {
+        int now_move_angle = Player_actor_GetController_move_angle();
+        int old_move_angle = Player_actor_GetController_old_move_angle();
+        int d_move_angle = (s16)(old_move_angle - now_move_angle);
+        int abs_d_move_angle = ABS(d_move_angle);
+
+        add_button_push_amt += (f32)abs_d_move_angle * 0.00002f;
+    }
+
+    {
+        f32* target_anim_speed_p = &struggle_pitfall_p->target_anim_speed;
+
+        struggle_pitfall_p->button_presses += add_button_push_amt;
+        (*target_anim_speed_p) += add_button_push_amt * 0.25f;
+        (*target_anim_speed_p) -= 0.00435f;
+
+        if (*target_anim_speed_p > 1.0f) {
+            *target_anim_speed_p = 1.0f;
+        } else if (*target_anim_speed_p < 0.5f) {
+            *target_anim_speed_p = 0.5f;
+        }
+
+        {
+            cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+            cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+            f32* speed_p = &fc0_p->speed;
+
+            (*speed_p) += (*target_anim_speed_p - *speed_p) * 0.10875f;
+        }
+    }
+
+    return FALSE;
+}
+
+static int Player_actor_CulcAnimation_Struggle_pitfall(ACTOR* actorx) {
+    f32 dummy;
+
+    return Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_set_eye_pattern_Struggle_pitfall(ACTOR* actorx) {
+    Player_actor_set_tex_anime_pattern(actorx);
+    Player_actor_set_eye_pattern(actorx, 6);
+}
+
+static void Player_actor_ObjCheck_Struggle_pitfall(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_request_proc_index_fromStruggle_pitfall(GAME* game, int end_flag) {
+
+    if (end_flag) {
+        Player_actor_request_main_climbup_pitfall_all(game, mPlayer_REQUEST_PRIORITY_29);
+    }
+}
+
+static void Player_actor_main_Struggle_pitfall(ACTOR* actorx, GAME* game) {
+    int end_flag;
+
+    Player_actor_Movement_Struggle_pitfall(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_ControlAnimationSpeed_Struggle_pitfall(actorx);
+    Player_actor_CulcAnimation_Struggle_pitfall(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_Struggle_pitfall(actorx);
+    Player_actor_ObjCheck_Struggle_pitfall(actorx, game);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromStruggle_pitfall(game, end_flag);
+}

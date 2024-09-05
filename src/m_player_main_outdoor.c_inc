@@ -38,25 +38,25 @@ static void Player_actor_setup_main_Outdoor(ACTOR* actor, GAME* game) {
     Player_actor_setup_main_Base(actor, game);
 }
 
-void Player_actor_settle_main_Outdoor(ACTOR* actor, GAME* game) { 
-    mDemo_End(actor); 
+static void Player_actor_settle_main_Outdoor(ACTOR* actor, GAME* game) {
+    mDemo_End(actor);
 }
 
-int Player_actor_CulcAnimation_Outdoor(ACTOR* actor, f32* calc_frame) {
+static int Player_actor_CulcAnimation_Outdoor(ACTOR* actor, f32* calc_frame) {
     return Player_actor_CulcAnimation_Base2(actor, calc_frame);
 }
 
-int Player_actor_Movement_Outdoor(ACTOR* actor, int calc) {
+static int Player_actor_Movement_Outdoor(ACTOR* actor, int calc) {
     Player_actor_Set_force_shadow_position_fromAnimePosition(actor);
     Player_actor_Movement_Base_Stop(actor, FALSE);
     return calc;
 }
 
-void Player_actor_ObjCheck_Outdoor(ACTOR* actor, GAME* game) { 
-    Player_actor_Excute_Corect_forOutdoor(actor, game); 
+static void Player_actor_ObjCheck_Outdoor(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forOutdoor(actor, game);
 }
 
-void Player_actor_request_proc_index_fromOutdoor(GAME* game, int arg1) {
+static void Player_actor_request_proc_index_fromOutdoor(GAME* game, int arg1) {
     if (arg1 != 0) {
         if (Common_Get(complete_payment_type) != 0) {
             Player_actor_request_main_complete_payment(game, mPlayer_REQUEST_PRIORITY_44);
@@ -67,27 +67,26 @@ void Player_actor_request_proc_index_fromOutdoor(GAME* game, int arg1) {
     }
 }
 
-void Player_actor_Demo_Outdoor_Demo_ct(ACTOR* actor) {
-
+static void Player_actor_Demo_Outdoor_Demo_ct(ACTOR* actor) {
 }
 
-int Player_actor_Request_Demo_Outdoor(ACTOR* actor) {
+static int Player_actor_Request_Demo_Outdoor(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
     if (player->main_data.outdoor.is_demo == FALSE) {
         if (mDemo_Check(mDemo_TYPE_OUTDOOR, actor)) {
             player->main_data.outdoor.is_demo = TRUE;
-            return 0;
+            return FALSE;
         } else {
             mDemo_Request(mDemo_TYPE_OUTDOOR, actor, Player_actor_Demo_Outdoor_Demo_ct);
-            return 0;
+            return FALSE;
         }
     }
 
-    return 1;
+    return TRUE;
 }
 
-void Player_actor_main_Outdoor(ACTOR* actor, GAME* game) {
+static void Player_actor_main_Outdoor(ACTOR* actor, GAME* game) {
     int arg1;
     f32 frame_calc;
 
