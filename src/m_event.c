@@ -18,13 +18,6 @@ enum {
     mEv_INIT_NUM
 };
 
-static int n_today_events = 0;
-static int status_edge = 0;
-static int funeral = 0;
-static int dead = 0;
-static lbRTC_year_t weekday1st_year = 0;
-static lbRTC_weekday_t weekday1st[lbRTC_MONTHS_MAX];
-
 typedef union ymdh {
     struct {
         u8 year;
@@ -34,6 +27,8 @@ typedef union ymdh {
     };
     u32 raw;
 } mEv_ymdh_u;
+
+static int update_save_area(void);
 
 extern void mEv_ClearSpecialEvent(mEv_special_c* special_event) {
     special_event->type = -1;
@@ -301,26 +296,56 @@ extern void mEv_GetEventWeather(s16* weather, s16* intensity) {
     }
 }
 
-#include "m_event_schedule.c_inc"
+static mEv_event_today_c event_today[mEv_TODAY_EVENT_NUM];
+static int n_today_events = 0;
+
+#include "../src/m_event_schedule.c_inc"
+
+static int status_edge = 0;
 
 static int event_rumor_table[] = {
-    mEv_EVENT_RUMOR_NEW_YEARS_DAY,          mEv_EVENT_RUMOR_KAMAKURA,         mEv_EVENT_RUMOR_VALENTINES_DAY,
-    mEv_EVENT_RUMOR_GROUNDHOG_DAY,          mEv_EVENT_RUMOR_APRILFOOLS_DAY,   mEv_EVENT_RUMOR_CHERRY_BLOSSOM_FESTIVAL,
-    mEv_EVENT_RUMOR_SPRING_SPORTS_FAIR,     mEv_EVENT_RUMOR_HARVEST_FESTIVAL, mEv_EVENT_76,
-    mEv_EVENT_RUMOR_FISHING_TOURNEY_1,      mEv_EVENT_TALK_FISHING_TOURNEY_1, mEv_EVENT_RUMOR_MORNING_AEROBICS,
-    mEv_EVENT_TALK_MORNING_AEROBICS,        mEv_EVENT_RUMOR_FIREWORKS_SHOW,   mEv_EVENT_76,
-    mEv_EVENT_RUMOR_METEOR_SHOWER,          mEv_EVENT_RUMOR_HARVEST_MOON_DAY, mEv_EVENT_RUMOR_FALL_SPORTS_FAIR,
-    mEv_EVENT_RUMOR_MUSHROOM_SEASON,        mEv_EVENT_TALK_MUSHROOM_SEASON,   mEv_EVENT_RUMOR_HALLOWEEN,
-    mEv_EVENT_RUMOR_FISHING_TOURNEY_2,      mEv_EVENT_TALK_FISHING_TOURNEY_2, mEv_EVENT_RUMOR_TOY_DAY,
-    mEv_EVENT_RUMOR_NEW_YEARS_EVE_COUNTDOWN
+    mEv_EVENT_RUMOR_NEW_YEARS_DAY,           mEv_EVENT_RUMOR_KAMAKURA,         mEv_EVENT_RUMOR_VALENTINES_DAY,
+    mEv_EVENT_RUMOR_GROUNDHOG_DAY,           mEv_EVENT_RUMOR_APRILFOOLS_DAY,   mEv_EVENT_RUMOR_CHERRY_BLOSSOM_FESTIVAL,
+    mEv_EVENT_RUMOR_SPRING_SPORTS_FAIR,      mEv_EVENT_RUMOR_HARVEST_FESTIVAL, mEv_EVENT_76,
+    mEv_EVENT_RUMOR_FISHING_TOURNEY_1,       mEv_EVENT_TALK_FISHING_TOURNEY_1, mEv_EVENT_RUMOR_MORNING_AEROBICS,
+    mEv_EVENT_TALK_MORNING_AEROBICS,         mEv_EVENT_RUMOR_FIREWORKS_SHOW,   mEv_EVENT_76,
+    mEv_EVENT_RUMOR_METEOR_SHOWER,           mEv_EVENT_RUMOR_HARVEST_MOON_DAY, mEv_EVENT_RUMOR_FALL_SPORTS_FAIR,
+    mEv_EVENT_RUMOR_MUSHROOM_SEASON,         mEv_EVENT_TALK_MUSHROOM_SEASON,   mEv_EVENT_RUMOR_HALLOWEEN,
+    mEv_EVENT_RUMOR_FISHING_TOURNEY_2,       mEv_EVENT_TALK_FISHING_TOURNEY_2, mEv_EVENT_RUMOR_TOY_DAY,
+    mEv_EVENT_RUMOR_NEW_YEARS_EVE_COUNTDOWN,
 };
 
 static int n_event_rumors = ARRAY_COUNT(event_rumor_table);
 
-static u16 special_event_types[] = { mEv_EVENT_SHOP_SALE, mEv_EVENT_DESIGNER,       mEv_EVENT_BROKER_SALE,
-                                     mEv_EVENT_ARTIST,    mEv_EVENT_CARPET_PEDDLER, mEv_EVENT_GYPSY };
+static u8 index_today[mEv_EVENT_NUM];
+static s16 special_event_types[] = {
+    mEv_EVENT_SHOP_SALE, mEv_EVENT_DESIGNER,       mEv_EVENT_BROKER_SALE,
+    mEv_EVENT_ARTIST,    mEv_EVENT_CARPET_PEDDLER, mEv_EVENT_GYPSY,
+};
 
 static int n_special_event_type = ARRAY_COUNT(special_event_types);
+
+static int funeral = 0;
+static int dead = 0;
+static lbRTC_year_t weekday1st_year = 0;
+static lbRTC_weekday_t weekday1st[16];
+static int n_rumor;
+static int rumor_table[40];
+
+// clang-format off
+BSS_ORDER_GROUP_START
+    BSS_ORDER_ITEM(n_today_events)
+    BSS_ORDER_ITEM(status_edge)
+    BSS_ORDER_ITEM(funeral)
+    BSS_ORDER_ITEM(dead)
+    BSS_ORDER_ITEM(weekday1st_year)
+    BSS_ORDER_ITEM(weekday1st)
+    BSS_ORDER_ITEM(event_today)
+    BSS_ORDER_ITEM(index_today)
+    BSS_ORDER_ITEM(n_rumor)
+    BSS_ORDER_ITEM(rumor_table)
+BSS_ORDER_GROUP_END
+// clang-format on
 
 static int last_day_of_month(lbRTC_month_t month) {
     static lbRTC_day_t last_day[lbRTC_MONTHS_MAX] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
@@ -510,8 +535,6 @@ static lbRTC_day_t m_weekday2day(lbRTC_month_t month, u8 day_enc) {
     return day;
 }
 
-static lbRTC_weekday_t weekday1st[lbRTC_MONTHS_MAX];
-
 extern int mEv_weekday2day(lbRTC_month_t month, int week, int weekday) {
     lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
     lbRTC_day_t day = 0;
@@ -570,9 +593,6 @@ static int get_end_time(u32 active_hours) {
 
     return hour;
 }
-
-static mEv_event_today_c event_today[mEv_TODAY_EVENT_NUM];
-static u8 index_today[mEv_EVENT_NUM];
 
 extern int mEv_get_end_time(int event_type) {
     u8 idx = index_today[event_type];
@@ -818,12 +838,24 @@ static int get_special_event_end_time(s16 event_type) {
 
 #define mEv_YearMonthDayHour(y, m, d, h) ((u32)(((u8)(y) << 24) | ((u8)(m) << 16) | ((u8)(d) << 8) | ((u8)(h))))
 
-/* @nonmatching TODO: This function needs a lot of help matching. Current best scratch: https://decomp.me/scratch/0EXoP
- */
 static int init_special_event(int new_event) {
+    s16 type;
     lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
     mEv_special_c* special_ev = &Save_Get(event_save_data).special;
     int res = FALSE;
+    int next_event_day_gap;
+    u16 sale_day;
+    int player_id;
+    int seed;
+    mEv_MonthDay_u special_monthday[3];
+    mEv_MonthDay_u special_end_monthday;
+    mEv_schedule_date_u rtc_sched;
+    mEv_ymdh_u special_ymdh;
+    mEv_ymdh_u rtc_ymdh;
+    mEv_ymdh_u special_end_ymdh;
+    mEv_save_common_data_c* ev_save_common;
+    u16* dates_p;
+    s16 event_year;
 
     switch (Common_Get(last_scene_no)) {
         case SCENE_BUGGY:
@@ -849,143 +881,125 @@ static int init_special_event(int new_event) {
             if (Save_Get(event_save_common).special_event.type == mEv_EVENT_SHOP_SALE) {
                 return FALSE;
             }
-        }
-
-        // fallthrough case
-        default: {
-            mEv_ymdh_u rtc_ymdh;
-            mEv_ymdh_u special_ymdh;
-            mEv_ymdh_u special_end_ymdh;
-            mEv_MonthDay_u special_monthday;
-            mEv_schedule_date_u rtc_sched;
-            u16 special_end_monthday;
-            u16 sale_day_monthday;
-            mEv_save_common_data_c* ev_save_common = Save_GetPointer(event_save_common);
-
-            // u16 rtc_monthday = mEv_MonthDay(Common_Get(time.rtc_time.month), Common_Get(time.rtc_time.day));
-            // u32 rtc_ymdh = (u32)(((Common_Get(time.rtc_time.year) % 100) << 24) | (rtc_monthday << 8) |
-            // Common_Get(time.rtc_time.hour));
-            //  u32 special_ymdh = (u32)(((Save_Get(event_year_ymd.year) % 100) << 24) |
-            //  (Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL0] << 8)); u32 special_end_ymdh = (u32)(
-            //    (((Save_Get(event_year_ymd.year) % 100) - ((Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL2]
-            //    < Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL0] && rtc_monthday <
-            //    Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL0]) ? 1 : 2)) << 24) |
-            //    (Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL0] << 8) |
-            //    (u8)get_special_event_end_time(Save_Get(event_save_common).special_event.type)
-            //  );
-
-            rtc_sched.raw = 0;
-            rtc_sched.d.month = rtc_time->month;
-            rtc_sched.d.day = rtc_time->day;
-
-            rtc_ymdh.raw = (rtc_sched.md) << 8;
-            rtc_ymdh.year = rtc_time->year % 100;
-            rtc_ymdh.hour = rtc_time->hour;
-
-            special_ymdh.raw = ev_save_common->dates[mEv_SAVE_DATE_SPECIAL0] << 8;
-            special_ymdh.year = Save_Get(event_year) % 100;
-
-            // special_end_ymdh.raw = (special_ymdh.month_day.raw) << 8;
-            special_end_ymdh.year =
-                (Save_Get(event_year) % 100) +
-                ((ev_save_common->dates[mEv_SAVE_DATE_SPECIAL0] > ev_save_common->dates[mEv_SAVE_DATE_SPECIAL2] &&
-                  ev_save_common->dates[mEv_SAVE_DATE_SPECIAL0] > rtc_sched.md)
-                     ? 0
-                     : -1);
-            special_end_ymdh.hour = get_special_event_end_time(ev_save_common->special_event.type);
-
-            if (check_ymdh_range(rtc_ymdh.raw, special_ymdh.raw, special_end_ymdh.raw) == FALSE || new_event) {
-                int seed = Common_Get(now_private)->player_ID.player_id;
-                s16 type;
-                int next_event_day_gap;
-
-                res |= TRUE;
-                mEv_ClearSpecialEvent(special_ev);
-                seed += 1 + rtc_time->year - rtc_time->month + rtc_time->day + rtc_time->hour;
-                /* Sale Day */
-                sale_day_monthday = after_n_day(
-                    ((lbRTC_NOVEMBER) << 8) | m_weekday2day(lbRTC_NOVEMBER, mEv_SCHEDULE_4TH_WEEKDAY(lbRTC_THURSDAY)),
-                    1);
-
-                do {
-                sad_label:
-                    /* Select a new unique random event */
-                    do {
-                        type = special_event_types[seed % n_special_event_type];
-                        seed++;
-                    } while (type == Save_Get(event_save_common).special_event.type);
-
-                    mFAs_SetFieldRank();
-                    next_event_day_gap = 1 + ((rtc_time->day + rtc_time->month * rtc_time->sec) %
-                                              ((mFAs_FIELDRANK_SIX + 1) - mFAs_GetFieldRank()));
-
-                    if (next_event_day_gap == 1) {
-                        next_event_day_gap = 2; // minimum of 2 days between special events
-                    }
-
-                    special_monthday.raw = after_n_day(rtc_sched.md, next_event_day_gap);
-                    if ((u16)rtc_sched.md <= sale_day_monthday && (u16)sale_day_monthday <= (u32)special_monthday.raw) {
-                        /* Force the next special event to be Crazy Redd since Sale Day falls between now and the rolled
-                         * event date */
-                        special_monthday.raw = sale_day_monthday;
-                        type = mEv_EVENT_BROKER_SALE;
-                    }
-
-                    /* Set event start hour */
-                    Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL3] = 6;
-
-                    switch (type) {
-                        case mEv_EVENT_GYPSY:
-                            break;
-
-                        case mEv_EVENT_SHOP_SALE: {
-                            lbRTC_day_t last_day = last_day_of_month(special_monthday.month);
-
-                            if (special_monthday.day != last_day &&
-                                (special_monthday.raw < mEv_MonthDay(lbRTC_JANUARY, 1) ||
-                                 special_monthday.raw > mEv_MonthDay(lbRTC_JANUARY, 3)) &&
-                                mEv_CheckEvent(mEv_SAVED_RENEWSHOP) != TRUE) {
-                                /* Set shop sale starting hour randomly between 12PM and 7PM */
-                                Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL3] = 12 + RANDOM(8);
-                                goto hate_gotos;
-                            }
-                            goto sad_label;
-                        }
-
-                        case mEv_EVENT_BROKER_SALE: {
-                            if (special_monthday.raw != mEv_MonthDay(lbRTC_JULY, 4)) {
-                                /* Set broker sale start hour to 6PM when it's not the Fireworks Festival */
-                                Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL3] = 18;
-                                goto hate_gotos;
-                            }
-                            goto sad_label;
-                        }
-
-                        default:
-                            goto hate_gotos;
-                            break;
-                    }
-                } while (special_monthday.raw == mEv_MonthDay(lbRTC_DECEMBER, 31));
-
-                Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL3] = 21; // default event start time is 9pm?
-
-            hate_gotos: {
-                mEv_save_common_data_c* ev_save_common = Save_GetPointer(event_save_common);
-                u16 year;
-
-                special_end_monthday = after_n_day(special_monthday.raw, type != mEv_EVENT_SHOP_SALE); // ??
-                year = rtc_time->year;
-                ev_save_common->special_event.type = type;
-                ev_save_common->dates[mEv_SAVE_DATE_SPECIAL0] = rtc_sched.md;         // current date
-                ev_save_common->dates[mEv_SAVE_DATE_SPECIAL1] = special_monthday.raw; // start date
-                ev_save_common->dates[mEv_SAVE_DATE_SPECIAL2] = special_end_monthday; // end date
-                Save_Set(event_year, year);
-                Save_Get(post_office).leaflet_recipient_flags.event_flags =
-                    0b1111; // deliver leaflet to all players if necessary for event
-            }
-            }
             break;
         }
+    }
+
+    ev_save_common = Save_GetPointer(event_save_common);
+    dates_p = ev_save_common->dates;
+    event_year = Save_Get(event_year);
+    type = ev_save_common->special_event.type;
+
+    rtc_sched.raw = 0;
+    rtc_sched.d.month = rtc_time->month;
+    rtc_sched.d.day = rtc_time->day;
+
+    special_monthday[0].raw = dates_p[mEv_SAVE_DATE_SPECIAL1];
+
+    special_ymdh.raw = (dates_p[mEv_SAVE_DATE_SPECIAL0] << 8) & 0x000FFFF00;
+    special_ymdh.year = event_year % 100;
+
+    rtc_ymdh.raw = (rtc_sched.md) << 8;
+    rtc_ymdh.year = rtc_time->year % 100;
+    rtc_ymdh.hour = rtc_time->hour;
+    special_end_ymdh.raw = (dates_p[mEv_SAVE_DATE_SPECIAL2] << 8) & 0x000FFFF00;
+    special_end_ymdh.year = (event_year % 100) + ((dates_p[mEv_SAVE_DATE_SPECIAL0] > dates_p[mEv_SAVE_DATE_SPECIAL2] &&
+                                                   dates_p[mEv_SAVE_DATE_SPECIAL0] > rtc_sched.md)
+                                                      ? 1
+                                                      : 0);
+
+    special_end_ymdh.hour = get_special_event_end_time(type);
+
+    if (check_ymdh_range(rtc_ymdh.raw, special_ymdh.raw, special_end_ymdh.raw) == FALSE || new_event) {
+        int player_id = Common_Get(now_private)->player_ID.player_id;
+        int n;
+        int seed = player_id;
+        int sale_weekday;
+
+        res |= TRUE;
+        mEv_ClearSpecialEvent(special_ev);
+
+        player_id = (player_id & 0x00FFFFFF) + 1;
+        seed = player_id + (rtc_time->year - rtc_time->month) + rtc_time->day + rtc_time->hour;
+
+        /* Sale Day */
+        sale_weekday = m_weekday2day(lbRTC_NOVEMBER, mEv_SCHEDULE_4TH_WEEKDAY(lbRTC_THURSDAY));
+        sale_day = (((lbRTC_NOVEMBER) << 8) | sale_weekday);
+        sale_day = after_n_day(sale_day, 1);
+
+        while (TRUE) {
+            /* Select a new unique random event */
+            type = special_event_types[seed % n_special_event_type];
+            seed++;
+
+            if (type == Save_Get(event_save_common).special_event.type) {
+                continue;
+            }
+
+            mFAs_SetFieldRank();
+            next_event_day_gap = 1 + ((rtc_time->day + rtc_time->month * rtc_time->sec) %
+                                      ((mFAs_FIELDRANK_SIX + 1) - mFAs_GetFieldRank()));
+
+            if (next_event_day_gap == 1) {
+                next_event_day_gap = 2; // minimum of 2 days between special events
+            }
+
+            special_monthday[0].raw = after_n_day(rtc_sched.md, next_event_day_gap);
+            if (rtc_sched.md <= sale_day && sale_day <= special_monthday[0].raw) {
+                /* Force the next special event to be Crazy Redd since Sale Day falls between now and the rolled
+                 * event date */
+                special_monthday[0].raw = sale_day;
+                type = mEv_EVENT_BROKER_SALE;
+            }
+
+            /* Set event start hour */
+            Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL3] = 6;
+
+            switch (type) {
+                case mEv_EVENT_SHOP_SALE: {
+                    lbRTC_day_t last_day = last_day_of_month(special_monthday[0].month);
+
+                    if (special_monthday[0].day != last_day &&
+                        (special_monthday[0].raw < mEv_MonthDay(lbRTC_JANUARY, 1) ||
+                         special_monthday[0].raw > mEv_MonthDay(lbRTC_JANUARY, 3)) &&
+                        mEv_CheckEvent(mEv_SAVED_RENEWSHOP) != TRUE) {
+                        /* Set shop sale starting hour randomly between 12PM and 7PM */
+                        Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL3] = 12 + RANDOM(8);
+                        break;
+                    }
+                    continue;
+                }
+
+                case mEv_EVENT_BROKER_SALE: {
+                    if (special_monthday[0].raw != mEv_MonthDay(lbRTC_JULY, 4)) {
+                        /* Set broker sale start hour to 6PM when it's not the Fireworks Festival */
+                        Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL3] = 18;
+                        break;
+                    }
+                    continue;
+                }
+
+                case mEv_EVENT_GYPSY: {
+                    if (special_monthday[0].raw != mEv_MonthDay(lbRTC_DECEMBER, 31)) {
+                        Save_Get(event_save_common).dates[mEv_SAVE_DATE_SPECIAL3] =
+                            21; // default event start time is 9pm?
+                        break;
+                    }
+                    continue;
+                }
+            }
+
+            break;
+        }
+
+        special_end_monthday.raw = after_n_day(special_monthday[0].raw, type != mEv_EVENT_SHOP_SALE); // ??
+        Save_Get(event_save_common).special_event.type = type;
+        dates_p[mEv_SAVE_DATE_SPECIAL0] = rtc_sched.md;             // current date
+        dates_p[mEv_SAVE_DATE_SPECIAL1] = special_monthday[0].raw;  // start date
+        dates_p[mEv_SAVE_DATE_SPECIAL2] = special_end_monthday.raw; // end date
+        Save_Set(event_year, rtc_time->year);
+        Save_Get(post_office).leaflet_recipient_flags.event_flags =
+            0b1111; // deliver leaflet to all players if necessary for event
     }
 
     return res;
@@ -1755,12 +1769,14 @@ static void update_schedule_today(Event_c* event) {
         }
 
         if (type != 0 && gamePT->frame_counter == 0) {
-            mEv_schedule_c new_ev_sched = { {
-                                                { 100, 0, 0, 23 },
-                                                { 100, 0, 0, 0 },
-                                            },
-                                            0,
-                                            0 };
+            mEv_schedule_c new_ev_sched = {
+                {
+                    { 100, 0, 0, 23 },
+                    { 100, 0, 0, 0 },
+                },
+                0,
+                0,
+            };
 
             new_ev_sched.type = type;
             new_ev_sched.date[1].d.month = rtc_time->month;
@@ -1797,12 +1813,14 @@ static void update_schedule_today(Event_c* event) {
         }
 
         if (type != 0) {
-            mEv_schedule_c new_ev_sched = { {
-                                                { 100, 0, 0, 23 },
-                                                { 100, 0, 0, 0 },
-                                            },
-                                            0,
-                                            0 };
+            mEv_schedule_c new_ev_sched = {
+                {
+                    { 100, 0, 0, 0 },
+                    { 100, 0, 0, 23 },
+                },
+                0,
+                0,
+            };
 
             new_ev_sched.type = type;
             new_ev_sched.date[1].d.month = rtc_time->month;
@@ -2462,9 +2480,6 @@ extern void mEv_erase_FG_all_in_common_place() {
     }
 }
 
-static int n_rumor = 0;
-static int rumor_table[40];
-
 extern void mEv_clear_rumor() {
     n_rumor = 0;
 }
@@ -2780,12 +2795,12 @@ extern void mEv_toland_clear_common() {
         keep_flags[i] = 0;
     }
 
-    mem_clear(Common_GetPointer(event_common), sizeof(Common_Get(event_common)), 0);
-    mem_clear(Common_GetPointer(special_event_common), sizeof(Common_Get(special_event_common)), 0);
+    mem_clear((u8*)Common_GetPointer(event_common), sizeof(Common_Get(event_common)), 0);
+    mem_clear((u8*)Common_GetPointer(special_event_common), sizeof(Common_Get(special_event_common)), 0);
 }
 
 extern void mGH_animal_return_init() {
-    mem_clear(Save_GetPointer(return_animal), sizeof(Save_Get(return_animal)), 0);
+    mem_clear((u8*)Save_GetPointer(return_animal), sizeof(Save_Get(return_animal)), 0);
     Save_Get(return_animal).npc_id = EMPTY_NO; // ??
 }
 
@@ -2864,7 +2879,7 @@ extern void mMC_mask_cat_init() {
     MaskCat_c* mask_cat = Save_GetPointer(mask_cat);
     u8 cloth_no = mask_cat->cloth_no;
 
-    mem_clear(mask_cat, sizeof(Save_Get(mask_cat)), 0);
+    mem_clear((u8*)mask_cat, sizeof(Save_Get(mask_cat)), 0);
     mPr_ClearPersonalID(&mask_cat->design.creator_pid);
     Save_Get(mask_cat).cloth_no = cloth_no;
 }
@@ -2877,10 +2892,10 @@ extern int mMC_check_birth() {
     if (Save_Get(mask_cat).talk_idx >= mMC_TALK_IDX_MAX) {
         /* Talked more than the maximum amount of times allowed */
         mMC_mask_cat_init();
-        return TRUE;
+        return FALSE;
     }
 
-    return FALSE;
+    return TRUE;
 }
 
 extern int mMC_check_birth_day() {
