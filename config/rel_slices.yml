@@ -1015,6 +1015,11 @@ m_birthday_ovl.c:
     .rodata: [0x8064AE90, 0x8064AEB8]
     .data: [0x806C7BE0, 0x806C7C60]
     .bss: [0x8133E0C0, 0x8133E0C8]
+m_board_ovl.c:
+    .text: [0x805C4E94, 0x805C67DC]
+    .rodata: [0x8064AEB8, 0x8064AF28]
+    .data: [0x806C7C60, 0x806C8880]
+    .bss: [0x8133E0C8, 0x8133E210]
 m_catalog_ovl.c:
     .text: [0x805C9254, 0x805CC1F4]
     .rodata: [0x8064AF90, 0x8064B090]

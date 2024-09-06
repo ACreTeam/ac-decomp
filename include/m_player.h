@@ -882,10 +882,10 @@ typedef struct player_request_mail_jump_s {
 } mPlayer_request_mail_jump_c;
 
 typedef struct player_request_shock_s {
-    f32 timer;
+    f32 start_time;
     s16 target_angle_y;
     u8 bee_chase_bgm_flag;
-    int axe_broke_flag;
+    int axe_flag;
 } mPlayer_request_shock_c;
 
 typedef struct player_request_push_snowball_s {
@@ -1746,6 +1746,16 @@ typedef struct player_main_remove_grass_s {
     xyz_t target_pos;
 } mPlayer_main_remove_grass_c;
 
+typedef struct player_main_shock_s {
+    f32 start_time;
+    s16 target_angle_y;
+    f32 timer;
+    f32 end_time;
+    u8 bee_chase_bgm_flag;
+    int axe_flag;
+    int bgm_stop_flag;
+} mPlayer_main_shock_c;
+
 typedef struct player_main_push_snowball_s {
     u32 label;
 } mPlayer_main_push_snowball_c;
@@ -1844,6 +1854,7 @@ typedef union {
     mPlayer_main_stung_bee_c stung_bee;
     mPlayer_main_notice_bee_c notice_bee;
     mPlayer_main_remove_grass_c remove_grass;
+    mPlayer_main_shock_c shock;
     mPlayer_main_push_snowball_c push_snowball;
     mPlayer_main_wade_snowball_c wade_snowball;
     mPlayer_main_demo_geton_boat_wade_c demo_geton_boat_wade;
