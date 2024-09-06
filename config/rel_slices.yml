@@ -92,6 +92,11 @@ m_demo.c:
 m_eappli.c:
     .text: [0x8039A5E0, 0x8039A960]
     .bss: [0x81295150, 0x81295550]
+m_event.c:
+    .text: [0x8039A960, 0x8039F510]
+    .rodata: [0x80641F00, 0x80641F38]
+    .data: [0x80651918, 0x806522F8]
+    .bss: [0x81295550, 0x81295790]
 m_fbdemo.c:
     .text: [0x803A0350, 0x803A0ABC]
     .rodata: [0x80641F40, 0x80641F60]

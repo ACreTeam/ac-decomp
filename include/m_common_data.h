@@ -137,7 +137,7 @@ typedef struct Save_s {
                                     fail of town ranking */
     /* 0x021395 */ u8 clear_grass; /* set by Wisp, removes all weeds */
     /* 0x021396 */ u8 _021396[2];
-    /* 0x021398 */ lbRTC_year_t event_year; /* might not exist and just be lbRTC_year_t */
+    /* 0x021398 */ s16 event_year;
     /* 0x02139A */ u8 unused_2139C[6];
     /* 0x0213A0 */ u8 keep_house_size[PLAYER_NUM]; /* saved flags for house sizes */
     /* 0x0213A4 */ lbRTC_ymd_c force_remove_date;  /* last time the NPC force remove timer was updated */
