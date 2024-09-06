@@ -4,6 +4,7 @@ FROM ubuntu:24.04 as build
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y \
+        cmake \
         git \
         ninja-build \
         python3 \
