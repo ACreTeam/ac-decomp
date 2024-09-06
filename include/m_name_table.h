@@ -489,6 +489,14 @@ extern int mNT_check_unknown(mActor_name_t item_no);
    ((item) == GOLD_TREE_BEES) \
   )
 
+#define IS_ITEM_PALM_TREE(item) ((item) >= TREE_PALM_SAPLING && (item) < TREE_PALM_FRUIT)
+
+#define IS_ITEM_TREE_STUMP(item) ((item >= TREE_STUMP001 && (item) <= TREE_STUMP004) || \
+    (item) >= TREE_PALM_STUMP001 && (item) <= TREE_PALM_STUMP004 || \
+    (item) >= CEDAR_TREE_STUMP001 && (item) <= CEDAR_TREE_STUMP004 || \
+    (item) >= GOLD_TREE_STUMP001 && (item) <= GOLD_TREE_STUMP004 \
+)
+
 #define IS_ITEM_SHAKEABLE_TREE(item) (IS_ITEM_MED_TREE(item) || IS_ITEM_LARGE_TREE(item) || IS_ITEM_FULL_TREE(item))
 
 #define IS_ITEM_BEE_TREE(item) ((item) == TREE_BEES || (item) == CEDAR_TREE_BEES || (item) == GOLD_TREE_BEES)
