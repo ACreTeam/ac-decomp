@@ -258,16 +258,16 @@ static void Player_actor_sound_umbrella_rotate(ACTOR* actor) {
     Player_actor_set_sound_common2(actor, NA_SE_UMBRELLA_ROTATE);
 }
 
-static u16 Player_actor_sound_Get_bgm_num_forCompletePayment() {
+static u8 Player_actor_sound_Get_bgm_num_forCompletePayment(void) {
     switch (Common_Get(complete_payment_type)) {
-        case 1:
+        case mPlayer_COMPLETE_PAYMENT_TYPE_ARBEIT:
             return NA_SE_MONEY0;
         default:
             return NA_SE_MONEY1;
     }
 }
 
-static u16 Player_actor_sound_Get_bgm_num_forDemoGetGoldenItem(int type) {
+static u8 Player_actor_sound_Get_bgm_num_forDemoGetGoldenItem(int type) {
     switch (type) {
         case 0:
             return NA_SE_MONEY0;

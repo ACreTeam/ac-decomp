@@ -2376,25 +2376,27 @@ extern void mSP_SelectRandomItemToAGB() {
     xyz_t* wpos_p;
     mActor_name_t* start_p;
     mActor_name_t* item_p;
-    f32 x_pos;
+    Save_t* save;
+    xyz_t tpos;
 
     xyz_t wpos = { 0.0f, 0.0f, 0.0f };
     int bx = 0;
     int bz = 0;
 
     mFI_BlockKind2BkNum(&bx, &bz, mRF_BLOCKKIND_ISLAND_LEFT);
+    save = &Common_Get(save.save);
 
     /* convert all unit island items to valid items */
     for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
-        item_p = &Save_Get(island).fgblock[0][i].items[0][0];
+        item_p = &save->island.fgblock[0][i].items[0][0];
 
         mFI_BkNum2WposXZ(&wpos.x, &wpos.z, bx + i, bz);
         wpos.x += mFI_UT_WORLDSIZE_HALF_X_F;
         wpos.z += mFI_UT_WORLDSIZE_HALF_Z_F;
-        x_pos = wpos.x;
+        tpos.x = wpos.x;
 
         for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
-            wpos.x = x_pos;
+            wpos.x = tpos.x;
 
             for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
                 // this matches instructions but out of order and wrong registers
@@ -2408,9 +2410,10 @@ extern void mSP_SelectRandomItemToAGB() {
     }
 
     /* add correctly placed signboard actor */
+    save = Common_GetPointer(save.save);
     for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
-        start_p = &Save_Get(island).fgblock[0][i].items[0][0];
-        item_p = &Save_Get(island).fgblock[0][i].items[0][0];
+        start_p = &save->island.fgblock[0][i].items[0][0];
+        item_p = &save->island.fgblock[0][i].items[0][0];
 
         for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
             for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
@@ -2424,9 +2427,10 @@ extern void mSP_SelectRandomItemToAGB() {
     }
 
     /* remove incorrectly placed signboard actors */
+    save = Common_GetPointer(save.save);
     for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
-        start_p = &Save_Get(island).fgblock[0][i].items[0][0];
-        item_p = &Save_Get(island).fgblock[0][i].items[0][0];
+        start_p = &save->island.fgblock[0][i].items[0][0];
+        item_p = &save->island.fgblock[0][i].items[0][0];
 
         for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
             for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {

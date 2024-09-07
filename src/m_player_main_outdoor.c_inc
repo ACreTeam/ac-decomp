@@ -61,8 +61,8 @@ static void Player_actor_request_proc_index_fromOutdoor(GAME* game, int arg1) {
         if (Common_Get(complete_payment_type) != 0) {
             Player_actor_request_main_complete_payment(game, mPlayer_REQUEST_PRIORITY_44);
         } else {
-            Player_actor_request_main_return_outdoor_all(game, mPlayer_INDEX_WAIT, mPlayer_REQUEST_PRIORITY_45, 3.0f,
-                                                         0.0f);
+            Player_actor_request_main_return_outdoor_all(game, mPlayer_INDEX_WAIT, 3.0f, 0.0f,
+                                                         mPlayer_REQUEST_PRIORITY_45);
         }
     }
 }

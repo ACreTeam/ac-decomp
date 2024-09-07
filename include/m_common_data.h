@@ -259,7 +259,7 @@ typedef struct common_data_s {
     /* 0x02883A */ s8 goki_shocked_flag;
     /* 0x02883B */ u8 time_changed_flag;
     /* 0x02883C */ u8 unable_to_wade_flag;
-    /* 0x02883D */ u8 _02883D;
+    /* 0x02883D */ u8 fail_emu_flag;
     /* 0x02883E */ u8 train_coming_flag;        /* state tracker for when train is going to spawn/has spawned */
     /* 0x02883F */ u8 train_exists_flag;        /* state tracker for when train exists */
     /* 0x028840 */ u8 train_control_state;      /* current train state */
