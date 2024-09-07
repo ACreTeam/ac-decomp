@@ -3572,9 +3572,9 @@ static int Player_actor_CheckAndRequest_main_umbrella_all(GAME* game, int prio) 
     return FALSE;
 }
 
-static int Player_actor_CheckAndRequest_main_fan_all(GAME* game, int check_trigger, int param_2, int prio) {
+static int Player_actor_CheckAndRequest_main_fan_all(GAME* game, int check_trigger, int start_swing, int prio) {
     if (Player_actor_CheckController_forFan(game, check_trigger) && Player_actor_CheckAbleSpeed_forItem(game)) {
-        return Player_actor_request_main_swing_fan_all(game, param_2, prio);
+        return Player_actor_request_main_swing_fan_all(game, start_swing, prio);
     }
 
     return FALSE;

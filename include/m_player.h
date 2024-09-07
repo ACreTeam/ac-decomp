@@ -471,8 +471,8 @@ enum {
     mPlayer_ITEM_MAIN_NUM,
 };
 
-#define mPlayer_ITEM_MAIN_VALID(main_index) ((main_index) >= (mPlayer_ITEM_MAIN_NONE) && (main_index) < (mPlayer_ITEM_MAIN_NUM))
-
+#define mPlayer_ITEM_MAIN_VALID(main_index) \
+    ((main_index) >= (mPlayer_ITEM_MAIN_NONE) && (main_index) < (mPlayer_ITEM_MAIN_NUM))
 
 enum {
     mPlayer_ITEM_KIND_AXE,
@@ -667,6 +667,7 @@ enum {
     mPlayer_PART_TABLE_AXE,
     mPlayer_PART_TABLE_PICK_UP,
     mPlayer_PART_TABLE_NET,
+    mPlayer_PART_TABLE_FAN,
 
     mPlayer_PART_TABLE_NUM
 };
@@ -892,8 +893,8 @@ typedef struct player_request_shock_s {
 } mPlayer_request_shock_c;
 
 typedef struct player_request_push_snowball_s {
-    u32 type;
-    int wade_type;
+    u32 label;
+    int wade_flag;
 } mPlayer_request_push_snowball_c;
 
 typedef struct player_request_stung_mosquito_s {
@@ -1191,11 +1192,11 @@ typedef struct player_request_change_cloth_s {
     int prev_main_index;
     mActor_name_t cloth_item;
     u16 cloth_idx;
-    int _10;
+    int try_on_flag;
 } mPlayer_request_change_cloth_c;
 
 typedef struct player_request_swing_fan_s {
-    int anim_idx;
+    int start_swing;
 } mPlayer_request_swing_fan_c;
 
 typedef struct player_request_radio_exercise_s {
@@ -1604,6 +1605,7 @@ typedef struct player_main_broken_axe_s {
 
 typedef struct player_main_relax_rod_s {
     int bee_flag;
+    int mosquito_flag
 } mPlayer_main_relax_rod_c;
 
 typedef struct player_main_dig_scoop_s {
@@ -1767,9 +1769,41 @@ typedef struct player_main_shock_s {
     int bgm_stop_flag;
 } mPlayer_main_shock_c;
 
+typedef struct player_main_knock_door_s {
+    mPlayer_request_knock_door_c request_data;
+} mPlayer_main_knock_door_c;
+
+typedef struct player_main_change_cloth_s {
+    ACTOR* talk_actor;
+    int turn_flag;
+    int prev_main_index;
+    mActor_name_t cloth_item;
+    u16 cloth_idx;
+} mPlayer_main_change_cloth_c;
+
 typedef struct player_main_push_snowball_s {
     u32 label;
 } mPlayer_main_push_snowball_c;
+
+typedef struct player_main_complete_payment_s {
+    f32 timer;
+    int msg_mode;
+} mPlayer_main_complete_payment_c;
+
+typedef struct player_main_fail_emu_s {
+    f32 timer;
+    int msg_mode;
+} mPlayer_main_fail_emu_c;
+
+typedef struct player_main_stung_mosquito_s {
+    u32 label;
+} mPlayer_main_stung_mosquito_c;
+
+typedef struct player_main_notice_mosquito_s {
+    u32 label;
+    f32 timer;
+    int msg_mode;
+} mPlayer_main_notice_mosquito_c;
 
 typedef struct player_main_wade_snowball_s {
     int dir;
@@ -1868,7 +1902,13 @@ typedef union {
     mPlayer_main_notice_bee_c notice_bee;
     mPlayer_main_remove_grass_c remove_grass;
     mPlayer_main_shock_c shock;
+    mPlayer_main_knock_door_c knock_door;
+    mPlayer_main_change_cloth_c change_cloth;
     mPlayer_main_push_snowball_c push_snowball;
+    mPlayer_main_complete_payment_c complete_payment;
+    mPlayer_main_fail_emu_c fail_emu;
+    mPlayer_main_stung_mosquito_c stung_mosquito;
+    mPlayer_main_notice_mosquito_c notice_mosquito;
     mPlayer_main_wade_snowball_c wade_snowball;
     mPlayer_main_demo_geton_boat_wade_c demo_geton_boat_wade;
     mPlayer_main_demo_geton_boat_sitdown_c demo_geton_boat_sitdown;

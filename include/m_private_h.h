@@ -9,6 +9,11 @@ extern "C" {
 
 typedef struct private_s Private_c;
 
+typedef struct private_cloth_s {
+    u16 idx;
+    mActor_name_t item;
+} mPr_cloth_c;
+
 #ifdef __cplusplus
 }
 #endif

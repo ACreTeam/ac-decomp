@@ -185,11 +185,6 @@ typedef struct private_mother_mail_info_s {
     mPr_mother_mail_data_c data;
 } mPr_mother_mail_info_c;
 
-typedef struct private_cloth_s {
-    u16 idx;
-    mActor_name_t item;
-} mPr_cloth_c;
-
 struct private_s {
     /* 0x0000 */ PersonalID_c player_ID;      /* player's id info */
     /* 0x0014 */ s8 gender;                   /* gender/sex of player */
