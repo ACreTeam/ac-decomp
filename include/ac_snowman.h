@@ -24,7 +24,9 @@ typedef struct snowman_actor_s {
   int msg_info;
   int snowman_part;
   s_xyz head_vec;
-  u8 _1F2[0x1FC - 0x1F2];
+  u8 _1F2[0x1F8 - 0x1F2];
+  s16 unk_1F8;
+  u8 _1FA[0x2];
 } SNOWMAN_ACTOR;
 
 extern ACTOR_PROFILE Snowman_Profile;
