@@ -262,7 +262,9 @@ static void Player_actor_ObjCheck_Swing_axe(ACTOR* actor, GAME* game, int) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Swing_axe(ACTOR* actor, int) { Player_actor_BGcheck_common_type1(actor); }
+static void Player_actor_BGcheck_Swing_axe(ACTOR* actor, int) { 
+    Player_actor_BGcheck_common_type1(actor); 
+}
 
 static void Player_actor_request_proc_index_fromSwing_axe(ACTOR* actor, GAME* game, int arg, int arg2) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;

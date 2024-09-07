@@ -1603,9 +1603,13 @@ typedef struct player_main_broken_axe_s {
     int _2C;
 } mPlayer_main_broken_axe_c;
 
+typedef struct player_main_slip_net_s {
+    f32 _00;
+} mPlayer_main_slip_net_c;
+
 typedef struct player_main_relax_rod_s {
     int bee_flag;
-    int mosquito_flag
+    int mosquito_flag;
 } mPlayer_main_relax_rod_c;
 
 typedef struct player_main_dig_scoop_s {
@@ -1773,7 +1777,7 @@ typedef struct player_main_knock_door_s {
     mPlayer_request_knock_door_c request_data;
 } mPlayer_main_knock_door_c;
 
-typedef struct player_main_change_cloth_s {
+typedef struct player_main_change_netcloth_s {
     ACTOR* talk_actor;
     int turn_flag;
     int prev_main_index;
@@ -1878,6 +1882,7 @@ typedef union {
     mPlayer_main_reflect_axe_c reflect_axe;
     mPlayer_main_broken_axe_c broken_axe;
     mPlayer_main_swing_net_c swing_net;
+    mPlayer_main_slip_net_c slip_net;
     mPlayer_main_relax_rod_c relax_rod;
     mPlayer_main_dig_scoop_c dig_scoop;
     mPlayer_main_fill_scoop_c fill_scoop;
