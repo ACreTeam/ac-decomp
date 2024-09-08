@@ -1,4 +1,4 @@
-static int Player_actor_request_main_fall_all(GAME* game, int flags, int prio, f32 speed) {
+static int Player_actor_request_main_fall_all(GAME* game, f32 speed, int flags, int prio) {
     PLAYER_ACTOR* player;
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_FALL, prio)) {
         player = GET_PLAYER_ACTOR_GAME(game);
