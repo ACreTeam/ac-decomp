@@ -1,0 +1,15 @@
+static int Player_actor_request_main_demo_get_golden_item2_all(GAME* game, int type, int prio) {
+    return Player_actor_request_main_demo_get_golden_item_common(game, mPlayer_INDEX_DEMO_GET_GOLDEN_ITEM2, type, prio);
+}
+
+static void Player_actor_setup_main_Demo_get_golden_item2(ACTOR* actorx, GAME* game) {
+    Player_actor_setup_main_Demo_get_golden_item(actorx, game);
+}
+
+static void Player_actor_settle_main_Demo_get_golden_item2(ACTOR* actorx, GAME* game) {
+    Player_actor_settle_main_Demo_get_golden_item(actorx, game);
+}
+
+static void Player_actor_main_Demo_get_golden_item2(ACTOR* actorx, GAME* game) {
+    Player_actor_main_Demo_get_golden_item(actorx, game);
+}

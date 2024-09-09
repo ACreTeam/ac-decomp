@@ -1,0 +1,87 @@
+static int Player_actor_request_main_demo_geton_boat_wade_all(GAME* game, int dir, f32 border_ofs, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DEMO_GETON_BOAT_WADE, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_demo_geton_boat_wade_c* req_demo_geton_boat_wade_p =
+            &player->requested_main_index_data.demo_geton_boat_wade;
+
+        req_demo_geton_boat_wade_p->dir = dir;
+        req_demo_geton_boat_wade_p->border_ofs = border_ofs;
+        Player_actor_request_main_index(game, mPlayer_INDEX_DEMO_GETON_BOAT_WADE, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Demo_geton_boat_wade(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    mPlayer_request_demo_geton_boat_wade_c* req_demo_geton_boat_wade_p =
+        &player->requested_main_index_data.demo_geton_boat_wade;
+    mPlayer_main_demo_geton_boat_wade_c* demo_geton_boat_wade_p = &player->main_data.demo_geton_boat_wade;
+    xyz_t* pos_p = &actorx->world.position;
+    int dir = req_demo_geton_boat_wade_p->dir;
+    f32 border_ofs = req_demo_geton_boat_wade_p->border_ofs;
+    int anim1_idx;
+    int part_table_idx;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_RIDEWAIT, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_RIDEWAIT, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     part_table_idx);
+    demo_geton_boat_wade_p->dir = dir;
+    demo_geton_boat_wade_p->start_pos = *pos_p;
+    Player_actor_Culc_wade_end_pos(pos_p, &demo_geton_boat_wade_p->end_pos, dir, border_ofs);
+    demo_geton_boat_wade_p->timer = 0.0f;
+    Player_actor_setup_main_Base(actorx, game);
+
+    {
+        xyz_t camera_pos = demo_geton_boat_wade_p->end_pos;
+
+        camera_pos.y += actorx->eye.position.y - pos_p->y;
+        Camera2_request_main_wade(play, &camera_pos, 9, 36.0f);
+    }
+
+    Player_actor_setup_main_Demo_geton_boat_wade_other_func2(actorx, game);
+}
+
+static void Player_actor_settle_main_Demo_geton_boat_wade(ACTOR* actorx, GAME* game) {
+    mDemo_End(actorx);
+}
+
+static void Player_actor_Movement_Demo_geton_boat_wade(ACTOR* actorx) {
+    Player_actor_Movement_Demo_geton_boat_wait(actorx);
+}
+
+static int Player_actor_CulcAnimation_Demo_geton_boat_wade(ACTOR* actorx) {
+    return Player_actor_CulcAnimation_Demo_geton_boat_wait(actorx);
+}
+
+static int Player_actor_able_request_proc_index_fromDemo_geton_boat_wade_common(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_demo_geton_boat_wade_c* demo_geton_boat_wade_p = &player->main_data.demo_geton_boat_wade;
+
+    if (demo_geton_boat_wade_p->timer > 36.0f) {
+        return TRUE;
+    }
+
+    demo_geton_boat_wade_p->timer += 1.0f;
+    return FALSE;
+}
+
+static void Player_actor_request_proc_index_fromDemo_geton_boat_wade(ACTOR* actorx, GAME* game) {
+    if (Player_actor_able_request_proc_index_fromDemo_geton_boat_wade_common(actorx)) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_demo_geton_boat_wait_all(game, mPlayer_REQUEST_PRIORITY_19);
+    }
+}
+
+static void Player_actor_main_Demo_geton_boat_wade(ACTOR* actorx, GAME* game) {
+    Player_actor_main_Demo_geton_boat_wade_other_func1(actorx, game);
+    Player_actor_Movement_Demo_geton_boat_wade(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_CulcAnimation_Demo_geton_boat_wade(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromDemo_geton_boat_wade(actorx, game);
+}

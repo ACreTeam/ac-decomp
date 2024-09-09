@@ -1823,7 +1823,7 @@ static void Nas_GroupSeq(group* grp) {
             }
 
             grp->tempo_acceleration -= (u16)AG.max_tempo;
-            grp->unk016++;
+            grp->counter++;
 
             if (grp->flags.stop_seq_script == TRUE) {
                 return;
@@ -1998,8 +1998,8 @@ static void Nas_GroupSeq(group* grp) {
                             case 0xC6: // stop script
                                 grp->flags.stop_seq_script = TRUE;
                                 return;
-                            case 0xC5: //
-                                grp->unk016 = Nas_ReadWordData(m);
+                            case 0xC5: // update counter
+                                grp->counter = Nas_ReadWordData(m);
                                 break;
                             case 0xEF: //
                                 Nas_ReadWordData(m);
@@ -2154,7 +2154,7 @@ extern void Nas_InitMySeq(group* grp) {
     grp->short_note_velocity_tbl = DEFAULT_VTABLE;
     grp->short_note_gate_time_tbl = DEFAULT_GTABLE;
     grp->script_counter = 0;
-    grp->unk016 = 0;
+    grp->counter = 0;
 
     for (i = 0; i < AUDIO_SUBTRACK_NUM; i++) {
         Nas_InitSubTrack(grp->subtracks[i]);

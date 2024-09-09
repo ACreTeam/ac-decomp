@@ -56,7 +56,7 @@ static void Player_actor_setup_main_Broken_axe(ACTOR* actor, GAME* game) {
     Player_actor_setup_main_Base(actor, game);
 }
 
-static void Player_actor_settle_main_Broken_axe(ACTOR* actor) {
+static void Player_actor_settle_main_Broken_axe(ACTOR* actor, GAME* game) {
     mBGMPsComp_delete_ps_demo(125, 0x168);
     actor->speed = 0.0f;
 }
@@ -67,21 +67,19 @@ static void Player_actor_Movement_Broken_axe(ACTOR* actor) {
 
     if (player->animation0_idx == mPlayer_ANIM_AXE_BREAK1 && cur < 15.0f) {
         mPlayer_main_broken_axe_c* main_axe = &player->main_data.broken_axe;
-        void* main_ref;
+        mPlayer_main_axe_common_c* axe_data_p;
 
         switch (main_axe->break_type) {
             default:
-                main_ref = &main_axe->axe.reflect_axe;
+                axe_data_p = &main_axe->axe.reflect_axe.axe_common;
                 break;
             case mPlayer_AXE_BREAK_FROM_SWING:
-                main_ref = &main_axe->axe.swing_axe;
+                axe_data_p = &main_axe->axe.swing_axe.axe_common;
                 break;
         }
-        Player_actor_Movement_Reflect_axe_common(actor, main_ref, 1);
-
+        Player_actor_Movement_Reflect_axe_common(actor, axe_data_p, mPlayer_REQUEST_PRIORITY_1);
     } else {
         add_calc_short_angle2(&actor->shape_info.rotation.y, 0, 1.0f - sqrtf(0.5), 2500, 50);
-
         actor->world.angle.y = actor->shape_info.rotation.y;
     }
 }
@@ -130,8 +128,8 @@ static void Player_actor_ObjCheck_Broken_axe(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Broken_axe(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Broken_axe(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_Broken_axe_demo_ct(ACTOR* actor) {

@@ -1,0 +1,80 @@
+static int Player_actor_request_main_switch_on_lighthouse_all(GAME* game, const xyz_t* pos_p, s16 angle_y, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_SWITCH_ON_LIGHTHOUSE, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_switch_on_lighthouse_c* req_switch_on_lighthouse_p =
+            &player->requested_main_index_data.switch_on_lighthouse;
+
+        req_switch_on_lighthouse_p->pos = *pos_p;
+        req_switch_on_lighthouse_p->pos.y = player->actor_class.world.position.y;
+        req_switch_on_lighthouse_p->angle_y = angle_y;
+        Player_actor_request_main_index(game, mPlayer_INDEX_SWITCH_ON_LIGHTHOUSE, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_settle_main_Switch_on_lighthouse(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_dt(kf0_p);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static void Player_actor_setup_main_Switch_on_lighthouse(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    mPlayer_request_switch_on_lighthouse_c* req_switch_on_lighthouse_p =
+        &player->requested_main_index_data.switch_on_lighthouse;
+
+    actorx->world.angle.y = req_switch_on_lighthouse_p->angle_y;
+
+    cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(kf0_p, 0.0f, 1000.0f, 0.0f, 0, 0, DEG2SHORT_ANGLE2(90.0f));
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actorx->world.position, &req_switch_on_lighthouse_p->pos,
+                                             actorx->shape_info.rotation.y, req_switch_on_lighthouse_p->angle_y, 9.0f,
+                                             kf0_p, cKF_ANIMATION_TRANS_XZ | cKF_ANIMATION_ROT_Y);
+
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_LIGHT_ON1, mPlayer_ANIM_LIGHT_ON1, 1.0f, 1.0f, 0.5f,
+                                     9.0f, cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static int Player_actor_CulcAnimation_Switch_on_lighthouse(ACTOR* actorx) {
+    f32 dummy;
+
+    return Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_Movement_Switch_on_lighthouse(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_base(&actorx->world.position, &actorx->shape_info.rotation.y, &actorx->scale,
+                                          actorx->world.angle.y, kf0_p);
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static void Player_actor_ObjCheck_Switch_on_lighthouse(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_request_proc_index_fromSwitch_on_lighthouse(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Switch_on_lighthouse(ACTOR* actorx, GAME* game) {
+    int end_flag;
+
+    end_flag = Player_actor_CulcAnimation_Switch_on_lighthouse(actorx);
+    Player_actor_Movement_Switch_on_lighthouse(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Switch_on_lighthouse(actorx, game);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromSwitch_on_lighthouse(actorx, game, end_flag);
+}

@@ -25,6 +25,12 @@ typedef struct audio_staffroll_info_s {
     /* 0x12 */ s8 beat;
 } StaffRollInfo_c;
 
+typedef struct radio_s {
+    /* 0x000 */ s8 unk0;
+    /* 0x004 */ f32 unk4;
+    /* 0x008 */ u16 tempo;
+} Radio_c;
+
 enum {
     STAFFROLL_PART_START,
     STAFFROLL_PART_INTRO,
@@ -112,7 +118,7 @@ extern void sAdos_KishaStatusTrg(u8 state);
 extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 distance1, u32 ongenNum2, u16 angle2,
                                    f32 distance2);
 
-extern void sAdos_GetRadioCounter(void* p);
+extern int sAdos_GetRadioCounter(Radio_c* radio);
 extern void sAdos_GetKappaCounter(void* p);
 extern void sAdos_GetStaffRollInfo(StaffRollInfo_c* info);
 
@@ -141,7 +147,7 @@ extern void sAdo_FurnitureInstPos(u32 id, const xyz_t* pos);
 extern void sAdo_Set_ongenpos_refuse_fg(int state);
 
 extern int sAdo_GameframeEnd_Check();
-extern int sAdo_GetSoundFrameCounter();
+extern u32 sAdo_GetSoundFrameCounter();
 
 extern int sAdo_CheckOnPlussBridge(const xyz_t* pos, u32 atr);
 extern void sAdo_RegistPlussBridge(const xyz_t* pos);

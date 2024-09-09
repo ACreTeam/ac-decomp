@@ -31,7 +31,7 @@ extern void Na_GetStaffRollInfo(StaffRollInfo_c* info) {
     s32 temp;
     s32 mouth_type = 0;
     s32 blink;
-    s32 group_unk16;
+    s32 counter;
     s32 i;
 
     if (AG.groups[sou_now_bgm_handle].flags.enabled) {
@@ -195,7 +195,7 @@ extern void Na_GetStaffRollInfo(StaffRollInfo_c* info) {
     }
 
     info->blink_flag = blink;
-    group_unk16 = group->unk016;
+    counter = group->counter;
 
     switch (seq_num) {
         case 1:
@@ -218,7 +218,7 @@ extern void Na_GetStaffRollInfo(StaffRollInfo_c* info) {
     }
 
     temp = info->beat * 48;
-    info->_01 = group_unk16 / temp;
-    group_unk16 -= info->_01 * temp;
-    info->percent = (f32)group_unk16 / temp;
+    info->_01 = counter / temp;
+    counter -= info->_01 * temp;
+    info->percent = (f32)counter / temp;
 }

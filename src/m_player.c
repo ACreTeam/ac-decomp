@@ -15,6 +15,9 @@
 #include "ac_sign.h"
 #include "m_msg.h"
 #include "m_choice.h"
+#include "ac_ball.h"
+#include "ac_snowman.h"
+#include "ac_boat_demo.h"
 
 /* Static function declarations, add as needed for intellisense */
 static int Player_actor_check_request_main_able(GAME* game, int request_main_index, int priority);
@@ -337,7 +340,7 @@ static int Player_actor_request_main_shock_all(GAME*, f32, s16, s8, int, int);
 static int Player_actor_request_main_change_cloth_forNPC(GAME*, mActor_name_t, u16, int);
 static int Player_actor_request_main_push_snowball_all(GAME*, u32, int, int);
 static int Player_actor_request_main_stung_mosquito_all(GAME*, u32, int);
-static int Player_actor_request_main_switch_on_lighthouse_all(GAME*, const xyz_t*, int, int);
+static int Player_actor_request_main_switch_on_lighthouse_all(GAME*, const xyz_t*, s16, int);
 static int Player_actor_request_main_demo_geton_boat_all(GAME*, const xyz_t*, s16, int);
 static int Player_actor_request_main_demo_getoff_boat_standup_all(GAME*, const xyz_t*, s16, int);
 static int Player_actor_request_main_demo_get_golden_item2_all(GAME*, int, int);

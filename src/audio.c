@@ -297,8 +297,8 @@ extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 dis
     Na_KishaStatusLevel(speed, ongenNum1, angle1, distance1, ongenNum2, angle2, distance2);
 }
 
-extern void sAdos_GetRadioCounter(void* p) {
-    Na_GetRadioCounter(p);
+extern int sAdos_GetRadioCounter(Radio_c* radio) {
+    return Na_GetRadioCounter(radio);
 }
 
 extern void sAdos_GetKappaCounter(void* p) {
@@ -470,7 +470,7 @@ extern int sAdo_GameframeEnd_Check() {
     return S_ongenpos_refuse_fg;
 }
 
-extern int sAdo_GetSoundFrameCounter() {
+extern u32 sAdo_GetSoundFrameCounter() {
 
     return Na_GetSoundFrameCounter();
 }

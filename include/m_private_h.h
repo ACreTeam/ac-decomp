@@ -2,6 +2,7 @@
 #define M_PRIVATE_H_H
 
 #include "types.h"
+#include "m_actor_type.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -4566,9 +4566,9 @@ static int Player_actor_Check_HitAxe(ACTOR* actorx, xyz_t* axe_pos_p) {
     }
 
     if (swing_axe_p != NULL) {
-        pos_p = &swing_axe_p->target_pos;
+        pos_p = &swing_axe_p->axe_common.target_pos;
     } else {
-        pos_p = &reflect_axe_p->target_pos;
+        pos_p = &reflect_axe_p->axe_common.target_pos;
     }
 
     if (pos_p != NULL && Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 15.0f) != FALSE) {

@@ -537,7 +537,7 @@ struct group_ {
     /* 0x010 */ u16 delay;
     /* 0x012 */ u16 fade_timer;
     /* 0x014 */ u16 stored_fade_timer;
-    /* 0x016 */ u16 unk016;
+    /* 0x016 */ u16 counter;
     /* 0x018 */ u8* seq_data;
     /* 0x01C */ f32 fade_volume;
     /* 0x020 */ f32 fade_velocity;
