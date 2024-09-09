@@ -23,10 +23,10 @@ static int Player_actor_request_main_reflect_axe_all(GAME* game, const xyz_t* po
 
 static void Player_actor_setup_main_Reflect_axe_common(mPlayer_request_reflect_axe_c* req_axe,
                                                        mPlayer_main_reflect_axe_c* main_axe) {
-    main_axe->target_pos = req_axe->goal_pos;
+    main_axe->axe_common.target_pos = req_axe->goal_pos;
     main_axe->reflect_actor_p = req_axe->hit_actor;
-    main_axe->item = req_axe->hit_item;
-    main_axe->axe_damage_no = req_axe->axe_damage_no;
+    main_axe->axe_common.item = req_axe->hit_item;
+    main_axe->axe_common.axe_damage_no = req_axe->axe_damage_no;
 }
 
 static void Player_actor_setup_main_Reflect_axe(ACTOR* actor, GAME* game) {
@@ -41,17 +41,17 @@ static void Player_actor_setup_main_Reflect_axe(ACTOR* actor, GAME* game) {
     Player_actor_setup_main_Base(actor, game);
 }
 
-static void Player_actor_settle_main_Reflect_axe(ACTOR* actor) {
+static void Player_actor_settle_main_Reflect_axe(ACTOR* actor, GAME* game) {
     actor->speed = 0.0f;
     actor->world.angle.y = actor->shape_info.rotation.y;
 }
 
-static int Player_actor_Movement_Reflect_axe_common(ACTOR* actor, mPlayer_main_reflect_axe_c* main_axe, int) {
+static int Player_actor_Movement_Reflect_axe_common(ACTOR* actor, mPlayer_main_axe_common_c* axe_common_p,
+                                                    int priority) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
-    f32 cur;
-    cur = player->keyframe0.frame_control.current_frame;
+    f32 cur = player->keyframe0.frame_control.current_frame;
 
-    Player_actor_Movement_axe_common(actor, &main_axe->target_pos);
+    Player_actor_Movement_axe_common(actor, &axe_common_p->target_pos);
 
     if (cur < 15.0f) {
         actor->world.angle.y = actor->shape_info.rotation.y;
@@ -59,7 +59,7 @@ static int Player_actor_Movement_Reflect_axe_common(ACTOR* actor, mPlayer_main_r
 }
 
 static void Player_actor_Movement_Reflect_axe(ACTOR* actor, mPlayer_main_reflect_axe_c* main_axe, int flag) {
-    Player_actor_Movement_Reflect_axe_common(actor, main_axe, flag);
+    Player_actor_Movement_Reflect_axe_common(actor, &main_axe->axe_common, flag);
 }
 
 static int Player_actor_CulcAnimation_Reflect_axe(ACTOR* actor, f32* frame_calc, int) {
@@ -89,7 +89,7 @@ static void Player_actor_SetOrderNPC_Reflect_axe(ACTOR* actor, mPlayer_main_refl
     int rock;
     if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 15.0f)) {
         ACTOR* reflect_actor = main_axe->reflect_actor_p;
-        mActor_name_t item = main_axe->item;
+        mActor_name_t item = main_axe->axe_common.item;
 
         if (reflect_actor != NULL) {
             switch (reflect_actor->id) {
@@ -115,7 +115,7 @@ static void Player_actor_SetOrderNPC_Reflect_axe(ACTOR* actor, mPlayer_main_refl
         }
 
         if (rock) {
-            if (Player_actor_Search_STONE_TC(actor, &main_axe->target_pos)) {
+            if (Player_actor_Search_STONE_TC(actor, &main_axe->axe_common.target_pos)) {
                 return;
             };
         }
@@ -140,14 +140,14 @@ static void Player_actor_SetSound_Reflect_axe(ACTOR* actor, mPlayer_main_reflect
                     break;
             }
         } else {
-            Player_actor_sound_AXE_HIT(actor, &main_axe->target_pos);
+            Player_actor_sound_AXE_HIT(actor, &main_axe->axe_common.target_pos);
             Player_actor_set_viblation_Axe_hard();
         }
     }
 }
 
 static void Player_actor_ChangeItemNo_Reflect_axe(ACTOR* actor, mPlayer_main_reflect_axe_c* main_axe, int) {
-    Player_actor_ChangeItemNo_axe_common(actor, main_axe->axe_damage_no);
+    Player_actor_ChangeItemNo_axe_common(actor, main_axe->axe_common.axe_damage_no);
 }
 
 static void Player_actor_informed_insects_Reflect_axe(ACTOR* actor, mPlayer_main_reflect_axe_c* main_axe, int) {
@@ -158,7 +158,7 @@ static void Player_actor_informed_insects_Reflect_axe(ACTOR* actor, mPlayer_main
             int ut_x;
             int ut_z;
 
-            mFI_Wpos2UtNum(&ut_x, &ut_z, main_axe->target_pos);
+            mFI_Wpos2UtNum(&ut_x, &ut_z, main_axe->axe_common.target_pos);
             Common_Get(clip).insect_clip->set_pl_act_tim_proc(1, ut_x, ut_z);
         }
     }
@@ -181,8 +181,8 @@ static void Player_actor_ObjCheck_Reflect_axe(ACTOR* actor, GAME* game, int) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Reflect_axe(ACTOR* actor, int) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Reflect_axe(ACTOR* actor, int) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromReflect_axe(ACTOR* actor, GAME* game, int arg, int arg2) {
@@ -201,7 +201,8 @@ static void Player_actor_request_proc_index_fromReflect_axe(ACTOR* actor, GAME* 
                 Player_actor_SettleRequestMainIndexPriority(actor);
                 Player_actor_Set_status_for_bee(actor, 1);
 
-            } else if ((fc->current_frame >= 31.0f) && (!Player_actor_CheckAndRequest_main_axe_all(game, mPlayer_REQUEST_PRIORITY_4)) &&
+            } else if ((fc->current_frame >= 31.0f) &&
+                       (!Player_actor_CheckAndRequest_main_axe_all(game, mPlayer_REQUEST_PRIORITY_4)) &&
                        ((Player_actor_GetController_move_percentX()) || (Player_actor_GetController_move_percentY()))) {
                 Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
             }

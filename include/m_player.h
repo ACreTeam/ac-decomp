@@ -23,7 +23,7 @@ extern "C" {
 
 #define mPlayer_SUNBURN_MAX_RANK 8
 
-#define mPlayer_RADIO_EXCERCISE_COMMAND_RING_BUFFER_SIZE 8
+#define mPlayer_RADIO_EXERCISE_COMMAND_RING_BUFFER_SIZE 8
 
 typedef struct player_actor_s PLAYER_ACTOR;
 
@@ -743,6 +743,38 @@ enum {
     mPlayer_AXE_BREAK_FROM_NUM
 };
 
+enum {
+    mPlayer_RADIO_EXERCISE_CMD0,
+    mPlayer_RADIO_EXERCISE_CMD1,
+    mPlayer_RADIO_EXERCISE_CMD2,
+    mPlayer_RADIO_EXERCISE_CMD3,
+    mPlayer_RADIO_EXERCISE_CMD4,
+    mPlayer_RADIO_EXERCISE_CMD5,
+    mPlayer_RADIO_EXERCISE_CMD6,
+    mPlayer_RADIO_EXERCISE_CMD7,
+    mPlayer_RADIO_EXERCISE_CMD8,
+    mPlayer_RADIO_EXERCISE_CMD9,
+    mPlayer_RADIO_EXERCISE_CMD10,
+    mPlayer_RADIO_EXERCISE_CMD11,
+    mPlayer_RADIO_EXERCISE_CMD12,
+    mPlayer_RADIO_EXERCISE_CMD13,
+    mPlayer_RADIO_EXERCISE_CMD14,
+    mPlayer_RADIO_EXERCISE_CMD15,
+    mPlayer_RADIO_EXERCISE_CMD16,
+    mPlayer_RADIO_EXERCISE_CMD17,
+
+    mPlayer_RADIO_EXERCISE_CMD_NUM
+};
+
+enum {
+    mPlayer_GOLDEN_ITEM_TYPE_AXE,
+    mPlayer_GOLDEN_ITEM_TYPE_NET,
+    mPlayer_GOLDEN_ITEM_TYPE_ROD,
+    mPlayer_GOLDEN_ITEM_TYPE_SHOVEL,
+
+    mPlayer_GOLDEN_ITEM_TYPE_NUM
+};
+
 #define mPlayer_SETUP_TEXTURE_ANIMATION_NONE (0 << 0)
 /* Where is (1 << 0)? */
 #define mPlayer_SETUP_TEXTURE_ANIMATION_EYE (1 << 1)
@@ -921,7 +953,7 @@ typedef struct player_request_demo_getoff_boat_standup_s {
 } mPlayer_request_demo_getoff_boat_standup_c;
 
 typedef struct player_request_demo_get_golden_item_s {
-    u32 label;
+    int type;
 } mPlayer_request_demo_get_golden_item_c;
 
 typedef struct player_request_walk_s {
@@ -1200,8 +1232,8 @@ typedef struct player_request_swing_fan_s {
 } mPlayer_request_swing_fan_c;
 
 typedef struct player_request_radio_exercise_s {
-    int anim_idx;
-    f32 morph_speed;
+    int cmd;
+    f32 speed;
 } mPlayer_request_radio_exercise_c;
 
 typedef struct player_request_demo_geton_boat_wade_s {
@@ -1575,10 +1607,14 @@ typedef struct player_main_pickup_exchange_s {
     int submenu_flag;
 } mPlayer_main_pickup_exchange_c;
 
-typedef struct player_main_swing_axe_s {
+typedef struct player_main_axe_common_s {
     /* 0x00 */ xyz_t target_pos;
     /* 0x0C */ mActor_name_t item;
     /* 0x0E */ u16 axe_damage_no;
+} mPlayer_main_axe_common_c;
+
+typedef struct player_main_swing_axe_s {
+    /* 0x00 */ mPlayer_main_axe_common_c axe_common;
     /* 0x10 */ int tree_ut_x;
     /* 0x14 */ int tree_ut_z;
     /* 0x18 */ int bee_flag;
@@ -1587,17 +1623,17 @@ typedef struct player_main_swing_axe_s {
 } mPlayer_main_swing_axe_c;
 
 typedef struct player_main_reflect_axe_s {
-    xyz_t target_pos;
-    mActor_name_t item;
-    u16 axe_damage_no;
-    ACTOR* reflect_actor_p;
+    /* 0x00 */ mPlayer_main_axe_common_c axe_common;
+    /* 0x10 */ ACTOR* reflect_actor_p;
 } mPlayer_main_reflect_axe_c;
 
+typedef union player_main_axe_u {
+    mPlayer_main_swing_axe_c swing_axe;
+    mPlayer_main_reflect_axe_c reflect_axe;
+} mPlayer_main_axe_u;
+
 typedef struct player_main_broken_axe_s {
-    union {
-        mPlayer_main_swing_axe_c swing_axe;
-        mPlayer_main_reflect_axe_c reflect_axe;
-    } axe;
+    mPlayer_main_axe_u axe;
     int break_type; /* mPlayer_AXE_BREAK_FROM_* */
     f32 _28;
     int _2C;
@@ -1809,6 +1845,13 @@ typedef struct player_main_notice_mosquito_s {
     int msg_mode;
 } mPlayer_main_notice_mosquito_c;
 
+typedef struct player_main_radio_exercise_s {
+    int cmd;
+    int _04;
+    int _08;
+    int _0C;
+} mPlayer_main_radio_exercise_c;
+
 typedef struct player_main_wade_snowball_s {
     int dir;
     xyz_t start_pos;
@@ -1834,6 +1877,16 @@ typedef struct player_main_demo_getoff_boat_standup_s {
     s16 angle_y;
     s16 angle_z;
 } mPlayer_main_demo_getoff_boat_standup_c;
+
+typedef struct player_main_demo_get_golden_item_s {
+    f32 timer;
+    int msg_mode;
+    int type;
+} mPlayer_main_demo_get_golden_item_c;
+
+typedef struct player_main_demo_get_golden_axe_wait_s {
+    f32 timer;
+} mPlayer_main_demo_get_golden_axe_wait_c;
 
 typedef struct player_main_uki_s {
     xyz_t cast_goal_point;
@@ -1914,10 +1967,13 @@ typedef union {
     mPlayer_main_fail_emu_c fail_emu;
     mPlayer_main_stung_mosquito_c stung_mosquito;
     mPlayer_main_notice_mosquito_c notice_mosquito;
+    mPlayer_main_radio_exercise_c radio_exercise;
     mPlayer_main_wade_snowball_c wade_snowball;
     mPlayer_main_demo_geton_boat_wade_c demo_geton_boat_wade;
     mPlayer_main_demo_geton_boat_sitdown_c demo_geton_boat_sitdown;
     mPlayer_main_demo_getoff_boat_standup_c demo_getoff_boat_standup;
+    mPlayer_main_demo_get_golden_item_c demo_get_golden_item;
+    mPlayer_main_demo_get_golden_axe_wait_c demo_get_golden_axe_wait;
     mPlayer_main_uki_c uki;
     mPlayer_main_putaway_uki_c putaway_uki;
     mPlayer_main_balloon_c balloon;
@@ -2080,12 +2136,12 @@ struct player_actor_s {
     /* 0x1220 */ u32 able_force_speak_label;
     /* 0x1224 */ int player_sunburn_rankup;
     /* 0x1228 */ int player_sunburn_rankdown;
-    /* 0x122C */ s8 radio_exercise_command_ring_buffer[mPlayer_RADIO_EXCERCISE_COMMAND_RING_BUFFER_SIZE];
+    /* 0x122C */ s8 radio_exercise_command_ring_buffer[mPlayer_RADIO_EXERCISE_COMMAND_RING_BUFFER_SIZE];
     /* 0x1234 */ s8 radio_exercise_ring_buffer_cmd_timer;
     /* 0x1238 */ int radio_exercise_command_ring_buffer_index;
     /* 0x123C */ int radio_exercise_continue_cmd_idx;
     /* 0x1240 */ f32 radio_exercise_cmd_timer;
-    /* 0x1244 */ int old_sound_frame_counter;
+    /* 0x1244 */ u32 old_sound_frame_counter;
     /* 0x1248 */ s16 boat_angleZ;
     /* 0x124C */ int change_color_request;
     /* 0x1250 */ int change_color_flag;

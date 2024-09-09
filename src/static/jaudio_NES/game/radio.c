@@ -2,14 +2,12 @@
 #include "jaudio_NES/game64.h"
 #include "jaudio_NES/audiowork.h"
 
-
-s16 Na_GetRadioCounter(radio* radio) {
-    int unk16;
+int Na_GetRadioCounter(Radio_c* radio) {
+    int counter;
     u16 tempo = 0;
-    
+
     group* group = nullptr;
     int unused = 0;
-    
 
     if (AG.groups[sou_now_bgm_handle].flags.enabled != 0 && AG.groups[sou_now_bgm_handle].seq_id == 0xDA) {
         group = &(AG.groups)[sou_now_bgm_handle];
@@ -18,23 +16,23 @@ s16 Na_GetRadioCounter(radio* radio) {
         return -1;
     }
 
-    unk16 = group->unk016;
+    counter = group->counter;
 
     (void)unused;
 
-    if (unk16 < 0x2E8) {
+    if (counter < 744) {
         radio->unk0 = 0;
     } else {
-        unk16 -= 0x2E8;
-        radio->unk0 = (s8)(unk16 / 0x300);
-        unk16 = unk16 - (radio->unk0 * 0x300);
+        counter -= 744;
+        radio->unk0 = (s8)(counter / 768);
+        counter = counter - (radio->unk0 * 768);
         radio->unk0++;
     }
     if (radio->unk0 == 9) {
-        radio->unk4 = unk16 / 216.0f;
+        radio->unk4 = counter / 216.0f;
 
     } else {
-        radio->unk4 = unk16 / 768.0f;
+        radio->unk4 = counter / 768.0f;
     }
 
     radio->tempo = AG.groups[sou_now_bgm_handle].tempo / 48;

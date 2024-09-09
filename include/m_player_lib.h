@@ -113,6 +113,7 @@ extern int mPlib_strength_request_main_wade_snowball_priority(GAME* game);
 extern void mPlib_change_player_face(GAME* game);
 extern void mPlib_change_player_cloth_info(mPr_cloth_c* cloth_p, mActor_name_t cloth_item);
 extern int mPlib_Get_status_for_bee(void);
+extern int mPlib_request_main_demo_get_golden_item2_type1(GAME* game, int golden_item_type);
 
 extern mPlayer_change_data_from_submenu_c* mPlib_Get_change_data_from_submenu_p();
 
