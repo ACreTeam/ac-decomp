@@ -18,6 +18,11 @@
 #include "ac_ball.h"
 #include "ac_snowman.h"
 #include "ac_boat_demo.h"
+#include "ac_balloon.h"
+#include "ac_uki.h"
+#include "ac_insect.h"
+#include "ac_gyoei.h"
+#include "ac_gyo_release.h"
 
 /* Static function declarations, add as needed for intellisense */
 static int Player_actor_check_request_main_able(GAME* game, int request_main_index, int priority);

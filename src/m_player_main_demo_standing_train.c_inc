@@ -1,0 +1,47 @@
+static int Player_actor_request_main_demo_standing_train_all(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DEMO_STANDING_TRAIN, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_DEMO_STANDING_TRAIN, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Demo_standing_train(ACTOR* actorx, GAME* game) {
+    int anim1_idx;
+    int part_table_idx;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_WAIT1, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_WAIT1, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_CulcAnimation_Demo_standing_train(ACTOR* actorx) {
+    f32 dummy;
+
+    Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_Movement_Demo_standing_train(ACTOR* actorx) {
+    if (Player_actor_Get_DemoChangeAngleY()) {
+        s16 goal_angle_y = Player_actor_Get_DemoAngleY();
+
+        add_calc_short_angle2(&actorx->world.angle.y, goal_angle_y, 1.0f - sqrtf(0.5f), 2500, 50);
+        actorx->shape_info.rotation.y = actorx->world.angle.y;
+        if (goal_angle_y == actorx->world.angle.y) {
+            Player_actor_Set_DemoChangeAngleY(FALSE);
+        }
+    }
+
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static void Player_actor_main_Demo_standing_train(ACTOR* actorx, GAME* game) {
+    Player_actor_Movement_Demo_standing_train(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_CulcAnimation_Demo_standing_train(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_Item_main(actorx, game);
+}

@@ -129,7 +129,7 @@ static void Player_actor_Item_SetAnimation_Base(ACTOR* actor, f32 frame) {
 static void Player_actor_Item_DMA_Data(ACTOR* actor, int skl_idx, int anim_idx, int mode, f32 speed, f32 morph_speed,
                                        f32 frame) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
-    int change_bank = Player_actor_Change_ItemBank();
+    int change_bank = Player_actor_Change_ItemBank(actor, skl_idx, anim_idx);
 
     if ((skl_idx >= 0) && (mPlib_Get_Item_DataPointerType(skl_idx) != 0)) {
         cKF_Skeleton_R_c* skeleton;
