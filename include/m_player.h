@@ -1088,11 +1088,11 @@ typedef struct player_request_reflect_axe_s {
 } mPlayer_request_reflect_axe_c;
 
 typedef struct player_request_notice_net_s {
-    int _00;
+    int already_collected;
 } mPlayer_request_notice_net_c;
 
 typedef struct player_request_putaway_net_s {
-    int _00;
+    int exchange_flag;
 } mPlayer_request_putaway_net_c;
 
 typedef struct player_request_cast_rod_s {
@@ -1757,6 +1757,27 @@ typedef struct player_main_swing_net_s {
     f32 swing_timer;
 } mPlayer_main_swing_net_c;
 
+typedef struct player_main_pull_net_s {
+    f32 timer;
+    int already_collected;
+} mPlayer_main_pull_net_c;
+
+typedef struct player_main_stop_net_s {
+    int _00;
+} mPlayer_main_stop_net_c;
+
+typedef struct player_main_notice_net_s {
+    int state;
+    int not_full_pocket;
+    int in_swap;
+    int already_collected;
+    int end_effect_flag;
+} mPlayer_main_notice_net_c;
+
+typedef struct player_main_putaway_net_s {
+    int exchange_flag;
+} mPlayer_main_putaway_net_c;
+
 typedef struct player_main_demo_wade_s {
     int dir;
     xyz_t start_pos;
@@ -1929,6 +1950,10 @@ typedef union {
     mPlayer_main_reflect_axe_c reflect_axe;
     mPlayer_main_broken_axe_c broken_axe;
     mPlayer_main_swing_net_c swing_net;
+    mPlayer_main_pull_net_c pull_net;
+    mPlayer_main_stop_net_c stop_net;
+    mPlayer_main_notice_net_c notice_net;
+    mPlayer_main_putaway_net_c putaway_net;
     mPlayer_main_slip_net_c slip_net;
     mPlayer_main_relax_rod_c relax_rod;
     mPlayer_main_dig_scoop_c dig_scoop;
