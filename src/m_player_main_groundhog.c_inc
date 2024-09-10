@@ -1,0 +1,40 @@
+static int Player_actor_request_main_groundhog(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_GROUNDHOG, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_GROUNDHOG, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Groundhog(ACTOR* actorx, GAME* game) {
+    int anim1_idx;
+    int part_table_idx;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_WAIT1, 0.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_WAIT1, anim1_idx, 1.0f, 1.0f, 0.5f, 0.0f,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_CulcAnimation_Groundhog(ACTOR* actorx) {
+    Player_actor_CulcAnimation_Base(actorx);
+}
+
+static void Player_actor_ObjCheck_Groundhog(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Groundhog(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_main_Groundhog(ACTOR* actorx, GAME* game) {
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_CulcAnimation_Groundhog(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Groundhog(actorx, game);
+    Player_actor_BGcheck_Groundhog(actorx);
+    Player_actor_Item_main(actorx, game);
+}

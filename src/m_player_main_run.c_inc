@@ -25,7 +25,8 @@ static void Player_actor_setup_main_Run_common(ACTOR* actor, GAME* game) {
     absspeed = ABS(speed);
 
     Player_actor_SetupItem_Base3(actor, mPlayer_ANIM_RUN1, -absspeed, &anim_idx, &part_table_idx);
-    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_RUN1, anim_idx, frame, 1.0f, 0.5f, speed, part_table_idx);
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_RUN1, anim_idx, frame, 1.0f, 0.5f, speed,
+                                     part_table_idx);
 
     if (flags & 1) {
         Player_actor_SetEffect_forTakeout_item(actor, game);
@@ -34,12 +35,12 @@ static void Player_actor_setup_main_Run_common(ACTOR* actor, GAME* game) {
     Player_actor_setup_main_Base(actor, game);
 }
 
-static void Player_actor_setup_main_Run(ACTOR* actor, GAME* game) { 
-    Player_actor_setup_main_Run_common(actor, game); 
+static void Player_actor_setup_main_Run(ACTOR* actor, GAME* game) {
+    Player_actor_setup_main_Run_common(actor, game);
 }
 
-static void Player_actor_CulcAnimation_Run(ACTOR* actor, f32* frame_calc, f32 frame) {
-    Player_actor_CulcAnimation_Walk(actor, frame_calc, frame);
+static void Player_actor_CulcAnimation_Run(ACTOR* actor, f32 over_speed_normalize_NoneZero, f32* frame_calc) {
+    Player_actor_CulcAnimation_Walk(actor, over_speed_normalize_NoneZero, frame_calc);
 }
 
 static void Player_actor_SetEffect_Run(ACTOR* actor, GAME* game, f32 left_target_frame, f32 right_target_frame) {
@@ -53,16 +54,16 @@ static void Player_actor_SearchAnimation_Run(ACTOR* actor, GAME* game, f32 frame
     }
 }
 
-static void Player_actor_Movement_Run(ACTOR* actor, GAME* game, f32* frame) { 
-    Player_actor_Movement_Walk(actor, game, frame); 
+static void Player_actor_Movement_Run(ACTOR* actor, GAME* game, f32* frame) {
+    Player_actor_Movement_Walk(actor, game, frame);
 }
 
-static void Player_actor_ObjCheck_Run(ACTOR* actor, GAME* game) { 
-    Player_actor_Excute_Corect_forStand(actor, game); 
+static void Player_actor_ObjCheck_Run(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Run(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Run(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromRun_common(ACTOR* actor, GAME* game) {
@@ -107,12 +108,12 @@ static void Player_actor_request_proc_index_fromRun(ACTOR* actor, GAME* game) {
 }
 
 static void Player_actor_main_Run(ACTOR* actor, GAME* game) {
-    f32 frame;
+    f32 over_speed_normalize_NoneZero;
     f32 frame_calc;
 
-    Player_actor_Movement_Run(actor, game, &frame);
+    Player_actor_Movement_Run(actor, game, &over_speed_normalize_NoneZero);
     Player_actor_Reinput_force_position_angle(actor, game);
-    Player_actor_CulcAnimation_Run(actor, &frame_calc, frame);
+    Player_actor_CulcAnimation_Run(actor, over_speed_normalize_NoneZero, &frame_calc);
     Player_actor_SearchAnimation_Run(actor, game, frame_calc);
     Player_actor_set_lean_angle(actor);
     Player_actor_set_eye_pattern_normal(actor);

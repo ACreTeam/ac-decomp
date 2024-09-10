@@ -867,14 +867,14 @@ typedef struct player_request_outdoor_s {
 
 typedef struct player_request_demo_wait_s {
     int umbrella_flag;
-    int _04;
+    u32 label;
 } mPlayer_request_demo_wait_c;
 
 typedef struct player_request_demo_walk_s {
     f32 goal_pos_x;
     f32 goal_pos_z;
     f32 speed;
-    int _0C;
+    int wait_flag;
 } mPlayer_request_demo_walk_c;
 
 typedef struct player_request_demo_geton_train_s {
@@ -1187,7 +1187,7 @@ typedef struct player_request_release_creature_insect_s {
 } mPlayer_request_release_creature_insect_c;
 
 typedef struct player_request_release_creature_balloon_s {
-    int _00;
+    int balloon_type;
 } mPlayer_request_release_creature_balloon_c;
 
 typedef union {
@@ -1198,6 +1198,7 @@ typedef union {
 
 typedef struct player_request_release_creature_s {
     int type;
+    int gold_scoop_flag;
     mPlayer_request_release_creature_u data;
     ACTOR* actor;
 } mPlayer_request_release_creature_c;
@@ -1261,26 +1262,6 @@ typedef struct player_request_putin_scoop_from_submenu_s {
 } mPlayer_request_putin_scoop_from_submenu_data_c;
 
 typedef struct {
-    int type;
-    int got_gold_scoop;
-    s16 angle_y;
-    s16 item;
-} mPlayer_request_release_creature_gyoei_from_submenu_c;
-
-typedef struct {
-    int type;
-    int got_gold_scoop;
-    xyz_t wpos;
-    int insect_type;
-} mPlayer_request_release_creature_insect_from_submenu_c;
-
-typedef struct {
-    int type;
-    int got_gold_scoop;
-    int balloon_shape_type;
-} mPlayer_request_release_creature_balloon_from_submenu_c;
-
-typedef struct {
     int _0;
     ACTOR* speak_actor;
 } mPlayer_request_demo_wait_from_submenu_c;
@@ -1288,9 +1269,6 @@ typedef struct {
 typedef union {
     mPlayer_request_give_from_submenu_c give_from_submenu;
     mPlayer_request_putin_scoop_from_submenu_data_c putin_scoop_from_submenu;
-    mPlayer_request_release_creature_gyoei_from_submenu_c release_creature_gyoei_from_submenu;
-    mPlayer_request_release_creature_insect_from_submenu_c release_creature_insect_from_submenu;
-    mPlayer_request_release_creature_balloon_from_submenu_c release_creature_balloon_from_submenu;
     mPlayer_request_demo_wait_from_submenu_c demo_wait_from_submenu;
     mPlayer_request_return_demo_c return_demo;
     mPlayer_request_wait_c wait;
@@ -1391,9 +1369,6 @@ typedef struct player_request_knock_door_s {
 typedef union {
     mPlayer_request_give_from_submenu_c give_from_submenu;
     mPlayer_request_putin_scoop_from_submenu_data_c putin_scoop_from_submenu;
-    mPlayer_request_release_creature_gyoei_from_submenu_c release_creature_gyoei_from_submenu;
-    mPlayer_request_release_creature_insect_from_submenu_c release_creature_insect_from_submenu;
-    mPlayer_request_release_creature_balloon_from_submenu_c release_creature_balloon_from_submenu;
     mPlayer_request_demo_wait_from_submenu_c demo_wait_from_submenu;
     mPlayer_request_return_demo_c return_demo;
     mPlayer_request_return_outdoor_c return_outdoor;
@@ -1748,6 +1723,19 @@ typedef struct player_main_putin_item_s {
     f32 timer;
 } mPlayer_main_putin_item_c;
 
+typedef struct player_main_demo_wait_s {
+    int effect_id;
+    u32 label;
+} mPlayer_main_demo_wait_c;
+
+typedef struct player_main_release_creature_s {
+    int type;
+    int golden_scoop_flag;
+    ACTOR* release_actor_p;
+    f32 timer;
+    int actor_birth_flag;
+} mPlayer_main_release_creature_c;
+
 typedef struct player_main_wash_car_s {
     int anime_idx;
     int change_anime_idx;
@@ -1758,6 +1746,12 @@ typedef struct player_main_wash_car_s {
     int ret_order;
     int effect_flag;
 } mPlayer_main_wash_car_c;
+
+typedef struct player_main_rotate_octagon_s {
+    ACTOR* talk_actor_p;
+    int turn_flag;
+    int return_main_index;
+} mPlayer_main_rotate_octagon_c;
 
 typedef struct player_main_swing_net_s {
     f32 swing_timer;
@@ -1953,7 +1947,10 @@ typedef union {
     mPlayer_main_give_wait_c give_wait;
     mPlayer_main_takeout_item_c takeout_item;
     mPlayer_main_putin_item_c putin_item;
+    mPlayer_main_demo_wait_c demo_wait;
+    mPlayer_main_release_creature_c release_creature;
     mPlayer_main_wash_car_c wash_car;
+    mPlayer_main_rotate_octagon_c rotate_octagon;
     mPlayer_main_shake_tree_c shake_tree;
     mPlayer_main_struggle_pitfall_c struggle_pitfall;
     mPlayer_main_stung_bee_c stung_bee;

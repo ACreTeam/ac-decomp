@@ -1,0 +1,116 @@
+static int Player_actor_request_main_throw_money_all(GAME* game, const xyz_t* pos_p, s16 angle_y, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_THROW_MONEY, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_throw_money_c* req_throw_money_p = &player->requested_main_index_data.throw_money;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_THROW_MONEY, priority);
+
+        req_throw_money_p->pos = *pos_p;
+        req_throw_money_p->angle_y = angle_y;
+
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static void Player_actor_setup_main_Throw_money(ACTOR* actorx, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    mPlayer_request_throw_money_c* req_throw_money_p = &player->requested_main_index_data.throw_money;
+
+    cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(kf0_p, 0.0f, 1000.0f, 0.0f, 0, 0, DEG2SHORT_ANGLE2(90.0f));
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actorx->world.position, &req_throw_money_p->pos,
+                                             actorx->shape_info.rotation.y, req_throw_money_p->angle_y, 5.0f, kf0_p,
+                                             cKF_ANIMATION_TRANS_XZ | cKF_ANIMATION_ROT_Y);
+
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_SAISEN1, mPlayer_ANIM_SAISEN1, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);
+    Player_actor_setup_main_Base(actorx, game);
+
+    if (Camera2_Check_main_index(play, CAMERA2_PROCESS_NORMAL)) {
+        Camera2_request_main_simple(play, &play->camera.lookat.center, &play->camera.direction,
+                                    play->camera.focus_distance, 0, 9);
+    }
+}
+
+static void Player_actor_settle_main_Throw_money(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_dt(kf0_p);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static int Player_actor_CulcAnimation_Throw_money(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_Movement_Throw_money(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_base(&actorx->world.position, &actorx->shape_info.rotation.y, &actorx->scale,
+                                          actorx->world.angle.y, kf0_p);
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static void Player_actor_ObjCheck_Throw_money(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Throw_money(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_SetSound_Throw_money(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc0_p, 9.0f)) {
+        Player_actor_sound_coin_gasagoso(actorx);
+    }
+}
+
+static void Player_actor_SetEffect_Throw_money(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc0_p, 33.0f)) {
+        eEC_CLIP->effect_make_proc(eEC_EFFECT_COIN, actorx->world.position, 2, 0, game, RSV_NO, 0, 0);
+    }
+}
+
+static void Player_actor_SearchAnimation_Throw_money(ACTOR* actorx, GAME* game, f32 frame) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_SetSound_Throw_money(actorx);
+        Player_actor_SetEffect_Throw_money(actorx, game);
+    }
+}
+
+static void Player_actor_request_proc_index_fromThrow_money(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_pray_all(game, &actorx->world.position, actorx->shape_info.rotation.y,
+                                           mPlayer_REQUEST_PRIORITY_19);
+    }
+}
+
+static void Player_actor_main_Throw_money(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    end_flag = Player_actor_CulcAnimation_Throw_money(actorx, &last_anim0_cur_frame);
+    Player_actor_Movement_Throw_money(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_SearchAnimation_Throw_money(actorx, game, last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Throw_money(actorx, game);
+    Player_actor_BGcheck_Throw_money(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromThrow_money(actorx, game, end_flag);
+}

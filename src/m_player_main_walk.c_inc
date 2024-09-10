@@ -75,9 +75,9 @@ static void Player_actor_settle_main_Walk(ACTOR* actor, GAME* game) {
     }
 }
 
-static void Player_actor_CulcAnimation_Walk(ACTOR* actor, f32* frame_calc, f32 frame) {
+static void Player_actor_CulcAnimation_Walk(ACTOR* actor, f32 over_speed_normalize_NoneZero, f32* frame_calc) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
-    f32 sp = (actor->speed * frame) / 7.5f;
+    f32 sp = (actor->speed * over_speed_normalize_NoneZero) / 7.5f;
 
     sp = sqrtf(sp);
     sp = 0.6f * sp;
@@ -270,12 +270,12 @@ static void Player_actor_request_proc_index_fromWalk(ACTOR* actor, GAME* game) {
 }
 
 static void Player_actor_main_Walk(ACTOR* actor, GAME* game) {
-    f32 frame;
+    f32 over_speed_normalize_NoneZero;
     f32 calc_frame;
 
-    Player_actor_Movement_Walk(actor, game, &frame);
+    Player_actor_Movement_Walk(actor, game, &over_speed_normalize_NoneZero);
     Player_actor_Reinput_force_position_angle(actor, game);
-    Player_actor_CulcAnimation_Walk(actor, &calc_frame, frame);
+    Player_actor_CulcAnimation_Walk(actor, over_speed_normalize_NoneZero, &calc_frame);
     Player_actor_SearchAnimation_Walk(actor, game, calc_frame);
     Player_actor_set_lean_angle(actor);
     Player_actor_set_eye_pattern_normal(actor);

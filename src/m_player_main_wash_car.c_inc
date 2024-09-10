@@ -1,0 +1,129 @@
+static int Player_actor_request_main_wash_car_all(GAME* game, const xyz_t* car_pos_p, const xyz_t* orig_pos_p,
+                                                  s16 orig_angle_y, ACTOR* parent_actor, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_WASH_CAR, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_wash_car_c* req_wash_car_p = &player->requested_main_index_data.wash_car;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_WASH_CAR, prio);
+        req_wash_car_p->car_pos = *car_pos_p;
+        req_wash_car_p->orig_pos = *orig_pos_p;
+        req_wash_car_p->parent_actor = parent_actor;
+        req_wash_car_p->orig_angle_y = orig_angle_y;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Wash_car(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_wash_car_c* req_wash_car_p = &player->requested_main_index_data.wash_car;
+    mPlayer_main_wash_car_c* wash_car_p = &player->main_data.wash_car;
+
+    actorx->world.position = req_wash_car_p->car_pos;
+    wash_car_p->ret_pos = req_wash_car_p->orig_pos;
+    wash_car_p->ret_angle_y = req_wash_car_p->orig_angle_y;
+    wash_car_p->control_actor = req_wash_car_p->parent_actor;
+    wash_car_p->anime_idx = 0;
+    wash_car_p->change_anime_idx = 0;
+    wash_car_p->counter = 0;
+    wash_car_p->ret_order = FALSE;
+    wash_car_p->effect_flag = FALSE;
+
+    actorx->shape_info.rotation.y = 0;
+    actorx->world.angle.y = 0;
+
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_WASH1, mPlayer_ANIM_WASH1, 1.0f, 1.0f, 0.0f, 0.0f,
+                                     cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Wash_car(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_wash_car_c* wash_car_p = &player->main_data.wash_car;
+
+    actorx->world.position = wash_car_p->ret_pos;
+    actorx->world.angle.y = actorx->shape_info.rotation.y = wash_car_p->ret_angle_y;
+    eEC_CLIP->effect_kill_proc(eEC_EFFECT_ASE2, RSV_NO);
+}
+
+static int Player_actor_CulcAnimation_Wash_car(ACTOR* actorx, GAME* game, f32* last_anim0_cur_frame_p) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+    mPlayer_main_wash_car_c* wash_car_p = &player->main_data.wash_car;
+    int* counter_p = &wash_car_p->counter;
+    int* change_anime_idx_p = &wash_car_p->change_anime_idx;
+    int end_flag;
+
+    if (*change_anime_idx_p) {
+        int* anime_idx_p = &wash_car_p->anime_idx;
+        static const u8 data[] = {
+            mPlayer_ANIM_WASH1, mPlayer_ANIM_WASH2, mPlayer_ANIM_WASH3, mPlayer_ANIM_WASH4, mPlayer_ANIM_WASH5,
+        };
+        int anim_idx;
+        f32 speed;
+
+        (*anime_idx_p)++;
+        if (*anime_idx_p < 0 || *anime_idx_p >= 5) {
+            *anime_idx_p = 0;
+        }
+
+        anim_idx = data[*anime_idx_p];
+        speed = fc0_p->speed;
+        Player_actor_InitAnimation_Base2(actorx, game, anim_idx, anim_idx, 1.0f, 1.0f, speed, 0.0f,
+                                         cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);
+        *counter_p = 0;
+        *change_anime_idx_p = FALSE;
+        wash_car_p->effect_flag = TRUE;
+    }
+
+    end_flag = Player_actor_CulcAnimation_Base3(actorx, last_anim0_cur_frame_p);
+    if (end_flag) {
+        if (*counter_p >= 3) {
+            eEC_CLIP->effect_kill_proc(eEC_EFFECT_ASE2, RSV_NO);
+            *change_anime_idx_p = TRUE;
+        } else {
+            (*counter_p)++;
+            fc0_p->current_frame = 1.0f;
+        }
+    }
+
+    return end_flag;
+}
+
+static void Player_actor_SetEffect_Wash_car(ACTOR* actorx, f32 frame) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+        mPlayer_main_wash_car_c* wash_car_p = &player->main_data.wash_car;
+
+        if (wash_car_p->change_anime_idx == FALSE) {
+            wash_car_p->effect_flag = TRUE;
+        }
+    } else {
+        eEC_CLIP->effect_kill_proc(eEC_EFFECT_ASE2, RSV_NO);
+    }
+}
+
+static void Player_actor_SearchAnimation_Wash_car(ACTOR* actorx, f32 frame) {
+    Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame); // Unnecessary call, a leftover or mistake
+    Player_actor_SetEffect_Wash_car(actorx, frame);
+}
+
+static void Player_actor_request_proc_index_fromWash_car(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_wash_car_c* wash_car_p = &player->main_data.wash_car;
+
+    if (wash_car_p->ret_order) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_tired_all(game, mPlayer_REQUEST_PRIORITY_19);
+    }
+}
+
+static void Player_actor_main_Wash_car(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+
+    Player_actor_CulcAnimation_Wash_car(actorx, game, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Wash_car(actorx, last_anim0_cur_frame);
+    Player_actor_request_proc_index_fromWash_car(actorx, game);
+}

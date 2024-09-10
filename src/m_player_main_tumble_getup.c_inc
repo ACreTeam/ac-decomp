@@ -18,6 +18,7 @@ static void Player_actor_setup_Item_Tumble_getup(ACTOR* actor, GAME* game, int k
 
     if (check && balloon) {
         s_xyz angle;
+        xyz_t pos;
         f32 frame;
 
         player->main_data.balloon.balloon_shape_type = mPlib_Get_ItemKindTOBalloonShapeType(kind);
@@ -29,8 +30,9 @@ static void Player_actor_setup_Item_Tumble_getup(ACTOR* actor, GAME* game, int k
         angle.y = actor->shape_info.rotation.y;
         angle.z = 0;
 
+        pos = player->right_hand_pos;
         Ac_Balloon_request_fly(player->balloon_actor, game, player->main_data.balloon.balloon_shape_type, &angle,
-                               player->balloon_angle.z, player->right_hand_pos, frame, 7.0f);
+                               player->balloon_angle.z, &pos, frame, 7.0f);
     } else {
         player->main_data.balloon.balloon_shape_type = -1;
     }
@@ -111,7 +113,8 @@ static void Player_actor_request_proc_index_fromTumble_getup(ACTOR* actor, GAME*
             Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
         } else {
             type = player->main_data.balloon.balloon_shape_type;
-            Player_actor_request_main_release_creature_all(game, 2, 0, &type, player->balloon_actor, mPlayer_REQUEST_PRIORITY_30);
+            Player_actor_request_main_release_creature_all(game, 2, 0, &type, player->balloon_actor,
+                                                           mPlayer_REQUEST_PRIORITY_30);
         }
     }
 }
