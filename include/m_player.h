@@ -1769,7 +1769,7 @@ typedef struct player_main_stop_net_s {
 typedef struct player_main_notice_net_s {
     int state;
     int not_full_pocket;
-    int in_swap;
+    int exchange_flag;
     int already_collected;
     int end_effect_flag;
 } mPlayer_main_notice_net_c;
