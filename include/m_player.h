@@ -1105,7 +1105,7 @@ typedef struct player_request_notice_rod_s {
 
 typedef struct player_request_putaway_rod_s {
     s16 angle_y;
-    int _04;
+    int exchange_flag;
 } mPlayer_request_putaway_rod_c;
 
 typedef struct player_request_dig_scoop_s {
@@ -1778,6 +1778,25 @@ typedef struct player_main_putaway_net_s {
     int exchange_flag;
 } mPlayer_main_putaway_net_c;
 
+typedef struct player_main_cast_rod_s {
+    xyz_t bobber_target_pos;
+} mPlayer_main_cast_rod_c;
+
+typedef struct player_main_notice_rod_s {
+    f32 _00;
+    int state;
+    int not_full_pocket;
+    int exchange_flag;
+    int already_collected;
+    int end_effect_flag;
+} mPlayer_main_notice_rod_c;
+
+typedef struct player_main_putaway_rod_s {
+    f32 timer;
+    s16 angle_y;
+    int exchange_flag;
+} mPlayer_main_putaway_rod_c;
+
 typedef struct player_main_demo_wade_s {
     int dir;
     xyz_t start_pos;
@@ -1955,7 +1974,10 @@ typedef union {
     mPlayer_main_notice_net_c notice_net;
     mPlayer_main_putaway_net_c putaway_net;
     mPlayer_main_slip_net_c slip_net;
+    mPlayer_main_cast_rod_c cast_rod;
     mPlayer_main_relax_rod_c relax_rod;
+    mPlayer_main_notice_rod_c notice_rod;
+    mPlayer_main_putaway_rod_c putaway_rod;
     mPlayer_main_dig_scoop_c dig_scoop;
     mPlayer_main_fill_scoop_c fill_scoop;
     mPlayer_main_reflect_scoop_c reflect_scoop;

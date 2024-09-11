@@ -3911,6 +3911,7 @@ static void Player_actor_SetupItem_Base1(ACTOR* actorx, int anim1_idx, f32 item_
     }
 }
 
+// Usage in the calls seem wrong (fairly random indexes), for anim_idx and item_main_index
 static void Player_actor_SetupItem_Base2(ACTOR* actorx, int item_kind, int anim_idx, int item_main_index,
                                          f32 morph_speed, f32 start_frame, int mode) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
