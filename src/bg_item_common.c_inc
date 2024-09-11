@@ -1115,7 +1115,7 @@ static void bg_item_tree_fruit_drop(mActor_name_t fg_item, int ut_x, int ut_z, x
     }
 }
 
-static void bIT_actor_dig_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames, u16 wait_frames) {
+static int bIT_actor_dig_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames, u16 wait_frames) {
     int ut_x;
     int ut_z;
 
@@ -1124,7 +1124,7 @@ static void bIT_actor_dig_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u
         mFI_UtNum2DepositOFF(ut_x, ut_z);
     }
 
-    bIT_actor_hole_effect_entry(bIT_CLIP->bg_item_common_p->hole, fg_item, pos, frames, wait_frames, 1, 0);
+    return bIT_actor_hole_effect_entry(bIT_CLIP->bg_item_common_p->hole, fg_item, pos, frames, wait_frames, 1, 0);
 }
 
 static void bIT_actor_bury_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames) {

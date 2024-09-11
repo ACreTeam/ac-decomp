@@ -28,7 +28,7 @@ typedef void (*bIT_SHADOW_DRAW_PROC)(GAME*, bIT_ShadowData_c*, int);
 typedef void (*bIT_SINGLE_DRAW_PROC)(GAME* game, mActor_name_t fg_no, xyz_t* pos, f32 scale_f, bIT_DRAW_BF_PROC draw_bf,
                                      bIT_DRAW_AF_PROC draw_af, rgba_t* col);
 typedef int (*bIT_TREE_CUTCOUNT_CHECK_PROC)(GAME* game, int ut_x, int ut_z);
-typedef void (*bIT_DIG_HOLE_EFFECT_ENTRY_PROC)(mActor_name_t fg_item, xyz_t* pos, u16 frames, u16 wait_frames);
+typedef int (*bIT_DIG_HOLE_EFFECT_ENTRY_PROC)(mActor_name_t fg_item, xyz_t* pos, u16 frames, u16 wait_frames);
 typedef void (*bIT_BURY_HOLE_EFFECT_ENTRY_PROC)(mActor_name_t fg_item, xyz_t* pos, u16 frames);
 typedef int (*bIT_PIT_FALL_PROC)(mActor_name_t pit_fg_item, int ut_x, int ut_z, mActor_name_t fg_item_in_pit);
 typedef int (*bIT_PIT_FALL_STOP_PROC)(mActor_name_t pit_fg_item, int ut_x, int ut_z, mActor_name_t fg_item_in_pit);
