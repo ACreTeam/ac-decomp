@@ -1783,7 +1783,7 @@ typedef struct player_main_cast_rod_s {
 } mPlayer_main_cast_rod_c;
 
 typedef struct player_main_notice_rod_s {
-    f32 _00;
+    f32 timer;
     int state;
     int not_full_pocket;
     int exchange_flag;
