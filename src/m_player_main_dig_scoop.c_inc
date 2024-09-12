@@ -41,9 +41,9 @@ static void Player_actor_setup_main_Dig_scoop(ACTOR* actor, GAME* game) {
 
 static void Player_actor_Movement_Dig_scoop(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
-    mPlayer_main_swing_axe_c* main_axe = &player->main_data.swing_axe;
+    mPlayer_main_fill_scoop_c* main_scoop = &player->main_data.fill_scoop;
 
-    Player_actor_Movement_axe_common(actor, &main_axe->axe_common.target_pos);
+    Player_actor_Movement_axe_common(actor, &main_scoop->target_pos);
 
     actor->world.angle.y = actor->shape_info.rotation.y;
 }
