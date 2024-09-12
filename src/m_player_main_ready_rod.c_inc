@@ -21,7 +21,7 @@ static void Player_actor_setup_main_Ready_rod(ACTOR* actor, GAME* game) {
 }
 
 static void Player_actor_Movement_Ready_rod(ACTOR* actor) {
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static void Player_actor_CulcAnimation_Ready_rod(ACTOR* actor, f32* frame_calc) {
@@ -32,8 +32,8 @@ static void Player_actor_ObjCheck_Ready_rod(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Ready_rod(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Ready_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_SearchAnimation_Ready_rod(ACTOR* actor, GAME* game, f32 frame) {
@@ -48,7 +48,7 @@ static void Player_actor_request_proc_index_fromReady_rod(ACTOR* actor, GAME* ga
     };
 
     static const f32 array_addZ[] = {
-        0.0f, -10.0f, -10.0f, 10.0f, 10.0f,
+        0.0f, 10.0f, 10.0f, -10.0f, -10.0f,
     };
 
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;

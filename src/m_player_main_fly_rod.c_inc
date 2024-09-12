@@ -23,8 +23,8 @@ static void Player_actor_settle_main_Fly_rod(ACTOR* actor, GAME* game) {
     Player_actor_settle_main_Fly_rod_other_func2(actor, game);
 }
 
-static void Player_actor_Movement_Fly_rod(ACTOR* actor) { 
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f); 
+static void Player_actor_Movement_Fly_rod(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Fly_rod(ACTOR* actor, f32* frame_calc) {
@@ -41,8 +41,8 @@ static void Player_actor_ObjCheck_Fly_rod(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Fly_rod(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Fly_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromFly_rod(ACTOR* actor, GAME* game, int ready, int status) {

@@ -110,7 +110,7 @@ static void Player_actor_SetTexPallet_Change_cloth(ACTOR* actorx, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     int anim0_idx = player->animation0_idx;
     int menu_flag = anim0_idx == mPlayer_ANIM_MENU_CHANGE1;
-    f32 frame = menu_flag ? 18.0f : 36.0f;
+    f32 frame = menu_flag ? 36.0f : 18.0f;
     cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
     cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
 

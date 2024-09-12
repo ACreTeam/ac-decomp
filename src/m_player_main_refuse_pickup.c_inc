@@ -69,7 +69,7 @@ static void Player_actor_request_proc_index_fromRefuse_pickup(ACTOR* actor, GAME
     }
 }
 
-static void Player_actor_main_Intro(ACTOR* actor, GAME* game) {
+static void Player_actor_main_Refuse_pickup(ACTOR* actor, GAME* game) {
     Player_actor_Movement_Refuse_pickup(actor);
     Player_actor_Reinput_force_position_angle(actor, game);
     Player_actor_CulcAnimation_Refuse_pickup(actor);

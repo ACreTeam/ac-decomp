@@ -146,6 +146,8 @@ typedef enum audio_sound_effects {
     NA_SE_HARD_CHAIR_STANDUP,
 
     NA_SE_BUBU_CHAIR_STANDUP = 0x429,
+    NA_SE_JUMP,
+    NA_SE_LANDING,
     NA_SE_FTR_DOOR_OPEN = 0x42C,
     NA_SE_FTR_DOOR_CLOSE = 0x42D,
     NA_SE_DRAWER_OPEN = 0x42E,
@@ -153,9 +155,6 @@ typedef enum audio_sound_effects {
     NA_SE_DAI_UE_KAKUNOU = 0x430,
 
     NA_SE_UMBRELLA_ROTATE = 0x432,
-
-    NA_SE_JUMP,
-    NA_SE_LANDING,
 
     NA_SE_KARABURI = 0x43A,
 

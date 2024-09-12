@@ -87,7 +87,7 @@ static int Player_actor_HitBGCheck_Swing_net(ACTOR* actor, GAME* game, ACTOR** h
                 if (line_check & 4) {
                     wpos.y = 20.0f;
                 } else {
-                    wpos.y = mCoBG_GetWaterHeight_File(player->net_end_pos, "../m_player_main_swing_net.c_inc", 171);
+                    wpos.y = mCoBG_GetWaterHeight_File(player->net_end_pos, __FILE__, 171);
                 }
 
                 Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_SWING_NET, wpos, 2, actor->world.angle.y,
@@ -291,7 +291,7 @@ static void Player_actor_CorrectSomething_Swing_net(ACTOR* actor) {
 }
 
 static void Player_actor_Movement_Swing_net(ACTOR* actor) {
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Swing_net(ACTOR* actor, f32* frame_calc, int check_type) {
@@ -316,8 +316,8 @@ static void Player_actor_ObjCheck_Swing_net(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Swing_net(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Swing_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromSwing_net(ACTOR* actor, GAME* game, int end_flag, int hit,

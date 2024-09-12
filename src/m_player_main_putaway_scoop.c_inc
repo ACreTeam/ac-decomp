@@ -27,7 +27,7 @@ static void Player_actor_setup_main_Putaway_scoop(ACTOR* actor, GAME* game) {
     main_scoop->submenu_flag = req_scoop->_10;
 
     Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_PUTAWAY_D1, mPlayer_ANIM_PUTAWAY_D1, 1.0f, 1.0f, 0.5f,
-                                     -5.0f, 0, 0);
+                                     -3.0f, 0, 0);
     Player_actor_setup_main_Base(actor, game);
     Player_actor_sound_GASAGOSO(actor);
 }
@@ -44,8 +44,8 @@ static void Player_actor_ObjCheck_Putaway_scoop(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Putaway_scoop(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Putaway_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_SearchAnimation_Putaway_scoop(ACTOR* actor, GAME* game, f32 frame) {
@@ -54,7 +54,7 @@ static void Player_actor_SearchAnimation_Putaway_scoop(ACTOR* actor, GAME* game,
     }
 }
 
-void Player_actor_Set_Item_Putaway_scoop(ACTOR* actor) {
+static void Player_actor_Set_Item_Putaway_scoop(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     mPlayer_main_putaway_scoop_c* main_scoop = &player->main_data.putaway_scoop;
 

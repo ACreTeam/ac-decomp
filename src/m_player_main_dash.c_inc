@@ -36,7 +36,7 @@ static void Player_actor_setup_main_Dash(ACTOR* actor, GAME* game) {
 }
 
 static void Player_actor_CulcAnimation_Dash(ACTOR* actor, f32* frame_calc, f32 frame) {
-    Player_actor_CulcAnimation_Run(actor, frame_calc, frame);
+    Player_actor_CulcAnimation_Run(actor, frame, frame_calc);
 }
 
 static int Player_actor_SetEffectRemoveFlower_Dash(ACTOR* actor, GAME* game, s16 angle) {
@@ -96,23 +96,23 @@ static void Player_actor_SearchAnimation_Dash(ACTOR* actor, GAME* game, f32 fram
     }
 }
 
-static void Player_actor_Movement_Dash(ACTOR* actor, GAME* game, f32* frame) { 
-    Player_actor_Movement_Run(actor, game, frame); 
+static void Player_actor_Movement_Dash(ACTOR* actor, GAME* game, f32* frame) {
+    Player_actor_Movement_Run(actor, game, frame);
 }
 
-static void Player_actor_ObjCheck_Dash(ACTOR* actor, GAME* game) { 
-    Player_actor_Excute_Corect_forStand(actor, game); 
+static void Player_actor_ObjCheck_Dash(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Dash(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Dash(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static int Player_actor_Check_FlatPlace(ACTOR* actor) {
     static const xy_t offset[] = {
-        {0.0f, 0.0f},        {20.0f, 0.0f},        {-20.0f, 0.0f},     {0.0f, 28.284271f},
-        {20.0f, 28.284271f}, {-20.0f, 28.284271f}, {0.0f, 56.568542f}, {20.0f, 56.568542f},
-        {-20, 56.568542f},   {0.0f, 84.85281f},    {20.0f, 84.85281f}, {-20.0f, 84.85281f},
+        { 0.0f, 0.0f },        { 20.0f, 0.0f },        { -20.0f, 0.0f },     { 0.0f, 28.284271f },
+        { 20.0f, 28.284271f }, { -20.0f, 28.284271f }, { 0.0f, 56.568542f }, { 20.0f, 56.568542f },
+        { -20, 56.568542f },   { 0.0f, 84.85281f },    { 20.0f, 84.85281f }, { -20.0f, 84.85281f },
     };
     xyz_t norm;
     s16 angle = actor->shape_info.rotation.y;
@@ -171,7 +171,8 @@ static void Player_actor_request_proc_index_fromDash_common(ACTOR* actor, GAME* 
     speed = (player->keyframe0.frame_control.speed * player->keyframe0.frame_control.speed) / 0.048f;
 
     if (Player_actor_Get_DiffWorldAngleToControllerAngle(actor) >= 18204) {
-        Player_actor_request_main_turn_dash_all(game, Player_actor_Get_ControllerAngle(game), mPlayer_REQUEST_PRIORITY_3);
+        Player_actor_request_main_turn_dash_all(game, Player_actor_Get_ControllerAngle(game),
+                                                mPlayer_REQUEST_PRIORITY_3);
     }
 
     if (speed < 4.875f) {

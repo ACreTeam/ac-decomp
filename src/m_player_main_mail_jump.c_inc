@@ -20,7 +20,7 @@ static void Player_actor_setup_main_Mail_jump(ACTOR* actorx, GAME* game) {
     int anim1_idx;
     int part_table_idx;
 
-    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_CONFIRM1, -6.0f, &anim1_idx, &part_table_idx);
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_CONFIRM1, -8.0f, &anim1_idx, &part_table_idx);
 
     if (part_table_idx != mPlayer_PART_TABLE_NORMAL) {
         part_table_idx = mPlayer_PART_TABLE_NET;

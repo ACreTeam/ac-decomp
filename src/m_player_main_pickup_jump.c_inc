@@ -47,7 +47,7 @@ static void Player_actor_setup_main_Pickup_jump(ACTOR* actorx, GAME* game) {
     main_pickup_jump_p->scale = 0.01f;
     main_pickup_jump_p->item = item;
 
-    Player_actor_SetupItem_Base1(actorx, anim0_idx, -6.0f, &anim1_idx, &part_table_idx);
+    Player_actor_SetupItem_Base1(actorx, anim0_idx, -5.0f, &anim1_idx, &part_table_idx);
 
     if (ftr_flag == FALSE) {
         Player_actor_putin_item_layer2(slot_idx, item, item_pos_p);
@@ -65,7 +65,7 @@ static void Player_actor_setup_main_Pickup_jump(ACTOR* actorx, GAME* game) {
         Common_Get(clip).htbl_clip->pickup_counter = 2;
     }
 
-    Player_actor_InitAnimation_Base2(actorx, game, anim0_idx, anim1_idx, 1.0f, 1.0f, 0.5f, -6.0f, cKF_FRAMECONTROL_STOP,
+    Player_actor_InitAnimation_Base2(actorx, game, anim0_idx, anim1_idx, 1.0f, 1.0f, 0.5f, 0.0f, cKF_FRAMECONTROL_STOP,
                                      mPlayer_PART_TABLE_PICK_UP);
     Player_actor_setup_main_Base(actorx, game);
     Player_actor_sound_dai_ue_kakunou(actorx);
@@ -89,7 +89,7 @@ static void Player_actor_Movement_Pickup_jump_common(ACTOR* actorx, xyz_t* targe
                               DEG2SHORT_ANGLE2(13.73291015625f), DEG2SHORT_ANGLE2(0.274658203125f));
     }
 
-    Player_actor_Movement_Base_Braking_common(actorx, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
 }
 
 static void Player_actor_Movement_Pickup_jump(ACTOR* actorx) {

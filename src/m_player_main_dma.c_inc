@@ -24,9 +24,9 @@ static void Player_actor_request_proc_index_fromDma(ACTOR* actorx, GAME* game) {
         if (exchange->banks[bank_idx + 1].bank_id > 0 && exchange->banks[bank_idx + 2].bank_id > 0 &&
             exchange->banks[bank_idx + 3].bank_id > 0 && exchange->banks[bank_idx + 4].bank_id > 0 &&
             exchange->banks[bank_idx + 5].bank_id > 0 && exchange->banks[bank_idx + 6].bank_id > 0) {
-            Player_actor_ItemBank_ct(actor, play);
+            Player_actor_ItemBank_ct(actorx, game);
             if (actor->requested_main_index_priority == mPlayer_REQUEST_PRIORITY_41) {
-                Player_actor_SettleRequestMainIndexPriority(actor);
+                Player_actor_SettleRequestMainIndexPriority(actorx);
             }
             keyf = &actor->keyframe0;
             type = actor->actor_class.actor_specific;
@@ -46,9 +46,9 @@ static void Player_actor_request_proc_index_fromDma(ACTOR* actorx, GAME* game) {
                 mPlib_request_main_groundhog_type1(game);
             } else {
                 if (Common_Get(fail_emu_flag) == TRUE) {
-                    Player_actor_request_main_fail_emu(play, mPlayer_REQUEST_PRIORITY_43);
+                    Player_actor_request_main_fail_emu(game, mPlayer_REQUEST_PRIORITY_43);
                 } else {
-                    Player_actor_request_main_intro_all(play, mPlayer_REQUEST_PRIORITY_43);
+                    Player_actor_request_main_intro_all(game, mPlayer_REQUEST_PRIORITY_43);
                 }
             }
             Camera2_request_main_normal(play, 1, 1);

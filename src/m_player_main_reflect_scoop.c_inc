@@ -29,7 +29,7 @@ static void Player_actor_setup_main_Reflect_scoop(ACTOR* actor, GAME* game) {
     Player_actor_setup_main_Base(actor, game);
 }
 
-static Player_actor_settle_main_Reflect_scoop(ACTOR* actor, GAME* game) {
+static void Player_actor_settle_main_Reflect_scoop(ACTOR* actor, GAME* game) {
     actor->speed = 0.0f;
     actor->world.angle.y = actor->shape_info.rotation.y;
 }
@@ -246,8 +246,8 @@ static void Player_actor_ObjCheck_Reflect_scoop(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Reflect_scoop(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Reflect_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromReflect_scoop(ACTOR* actor, GAME* game, int end_flag) {
@@ -259,7 +259,7 @@ static void Player_actor_request_proc_index_fromReflect_scoop(ACTOR* actor, GAME
     } else {
         cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
 
-        if (Player_actor_Check_AnimationFrame(fc, 29.0f)) {
+        if (Player_actor_Check_AnimationFrame(fc, 29.5f)) {
             Player_actor_SettleRequestMainIndexPriority(actor);
             Player_actor_Set_status_for_bee(actor, TRUE);
         } else {

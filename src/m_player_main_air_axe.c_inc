@@ -32,8 +32,8 @@ static void Player_actor_SetEffect_Air_axe(ACTOR* actor, GAME* game) {
     Player_actor_SetEffectStart_axe_common(actor, game);
 }
 
-static void Player_actor_SetSound_Air_axe(ACTOR* actor) { 
-    Player_actor_SetSound_AXE_FURI_Swing_axe(actor, 0); 
+static void Player_actor_SetSound_Air_axe(ACTOR* actor) {
+    Player_actor_SetSound_AXE_FURI_Swing_axe(actor, 0);
 }
 
 static void Player_actor_SearchAnimation_Air_axe(ACTOR* actor, GAME* game, f32 frame) {
@@ -48,20 +48,20 @@ static void Player_actor_ObjCheck_Air_axe(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Air_axe(ACTOR* actor) { 
+static void Player_actor_BGcheck_Air_axe(ACTOR* actor) {
     Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromAir_axe(ACTOR* actor, GAME* game, int arg) {
     if (arg != 0) {
         Player_actor_SettleRequestMainIndexPriority(actor);
-        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_4);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
     } else {
         PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
         cKF_SkeletonInfo_R_c* kf = &player->keyframe0;
 
-        if (Player_actor_Check_AnimationFrame(&kf->frame_control, 35.0f)) {
+        if (Player_actor_Check_AnimationFrame(&kf->frame_control, 35.5f)) {
             Player_actor_SettleRequestMainIndexPriority(actor);
             Player_actor_Set_status_for_bee(actor, TRUE);
         } else if ((kf->frame_control.current_frame >= 36.0f) &&

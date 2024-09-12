@@ -1,4 +1,4 @@
-static int Player_actor_request_main_door(GAME* game, const xyz_t* pos, s16 angle_y, int type, u32 label,
+static int Player_actor_request_main_door(GAME* game, const xyz_t* pos, s16 angle_y, int type, void* label,
                                           int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DOOR, priority)) {
         PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
@@ -7,7 +7,7 @@ static int Player_actor_request_main_door(GAME* game, const xyz_t* pos, s16 angl
         player->requested_main_index_data.door.player_pos.y = player->actor_class.world.position.y;
         player->requested_main_index_data.door.angle_y = angle_y;
         player->requested_main_index_data.door.type = type;
-        player->requested_main_index_data.door.label = label;
+        player->requested_main_index_data.door.label = (u32)label;
 
         Player_actor_request_main_index(game, mPlayer_INDEX_DOOR, priority);
 

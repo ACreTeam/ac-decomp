@@ -34,7 +34,7 @@ static void Player_actor_setup_main_Putin_scoop(ACTOR* actor, GAME* game) {
     main_scoop->item = req_scoop->item;
     main_scoop->get_gold_scoop_flag = req_scoop->get_gold_scoop_flag;
 
-    Player_actor_SetupItem_Base1(actor, mPlayer_ANIM_FILL_UP_I1, 5.0f, &anim_idx, &part_table);
+    Player_actor_SetupItem_Base1(actor, mPlayer_ANIM_FILL_UP_I1, -5.0f, &anim_idx, &part_table);
 
     Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_FILL_UP_I1, mPlayer_ANIM_FILL_UP_I1, 1.0f, 1.0f, 0.5f,
                                      -5.0f, 0, 0);
@@ -83,8 +83,8 @@ static void Player_actor_ObjCheck_Putin_scoop(ACTOR* actor, GAME* game) {
     Player_actor_ObjCheck_Fill_scoop(actor, game);
 }
 
-static void Player_actor_BGcheck_Putin_scoop(ACTOR* actor) { 
-    Player_actor_BGcheck_Fill_scoop(actor); 
+static void Player_actor_BGcheck_Putin_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_Fill_scoop(actor);
 }
 
 static void Player_actor_lean_angle_Putin_scoop(ACTOR* actor) {
@@ -99,7 +99,7 @@ static void Player_actor_request_proc_index_fromPutin_scoop(ACTOR* actor, GAME* 
     mPlayer_main_putin_scoop_c* main_scoop = &player->main_data.putin_scoop;
 
     if (!main_scoop->get_gold_scoop_flag) {
-        Player_actor_request_proc_index_fromFill_scoop(actor);
+        Player_actor_request_proc_index_fromFill_scoop(actor, game, end_flag);
     } else if (end_flag) {
         Player_actor_SettleRequestMainIndexPriority(actor);
         Player_actor_request_main_demo_get_golden_item_all(game, mPlayer_GOLDEN_ITEM_TYPE_SHOVEL,

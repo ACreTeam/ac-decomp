@@ -743,6 +743,10 @@ m_mark_room_ovl.c:
     .rodata: [0x806465C8, 0x806465D0]
     .data: [0x8069CAF0, 0x8069E580]
     .bss: [0x81300BD8, 0x813010D0]
+m_player.c:
+    .text: [0x804D3B24, 0x80508E58]
+    .rodata: [0x806465D0, 0x80648ED0]
+    .data: [0x8069E580, 0x8069E918]
 m_random_field_ovl.c:
     .text: [0x80508E58, 0x8050B3D0]
     .rodata: [0x80648ED0, 0x80648ED8]

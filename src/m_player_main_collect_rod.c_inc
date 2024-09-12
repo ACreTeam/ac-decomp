@@ -23,12 +23,12 @@ static void Player_actor_setup_main_Collect_rod(ACTOR* actor, GAME* game) {
                                                    actor->bg_collision_check.result.unit_attribute, 0);
 }
 
-static void Player_actor_settle_main_Collect_rod() { 
-    Player_actor_settle_main_Collect_rod_other_func2();
+static void Player_actor_settle_main_Collect_rod(ACTOR* actorx, GAME* game) {
+    Player_actor_settle_main_Collect_rod_other_func2(actorx, game);
 }
 
 static void Player_actor_Movement_Collect_rod(ACTOR* actor) {
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Collect_rod(ACTOR* actor, f32* frame_calc) {
@@ -45,11 +45,11 @@ static void Player_actor_ObjCheck_Collect_rod(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Collect_rod(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Collect_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
-static void Player_actor_request_proc_index_fromAir_rod(ACTOR* actor, GAME* game, int ready, int status) {
+static void Player_actor_request_proc_index_fromCollect_rod(ACTOR* actor, GAME* game, int ready, int status) {
     if (ready && status != 0) {
         Player_actor_SettleRequestMainIndexPriority(actor);
         Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);

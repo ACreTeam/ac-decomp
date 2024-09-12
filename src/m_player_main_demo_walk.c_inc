@@ -117,13 +117,13 @@ static int Player_actor_Movement_Demo_walk(ACTOR* actorx, f32* over_speed_normal
         now_speed = actorx->speed;
         if (now_speed != speed) {
             if (now_speed < speed) {
-                now_speed += 0.609f;
+                now_speed += 0.60899997f;
 
                 if (now_speed > speed) {
                     now_speed = speed;
                 }
             } else if (now_speed > speed) {
-                now_speed -= 0.32625f;
+                now_speed -= 0.32625001f;
                 if (now_speed < speed) {
                     now_speed = speed;
                 }

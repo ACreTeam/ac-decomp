@@ -71,7 +71,7 @@ static int Player_actor_CulcAnimation_Sitdown(ACTOR* actor, f32* frame_calc) {
 static void Player_actor_SetSound_Sitdown(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
-    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 20.0f)) {
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 18.0f)) {
         Player_actor_sound_SIT(actor, player->main_data.sitdown.ftrID);
     }
 }

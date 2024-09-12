@@ -46,9 +46,9 @@ static void Player_actor_setup_main_Broken_axe(ACTOR* actor, GAME* game) {
     main_axe->_2C = 0;
 
     if (break_type != mPlayer_AXE_BREAK_FROM_SWING) {
-        Player_actor_setup_main_Reflect_axe_common(req_swing, &main_axe->axe.reflect_axe);
+        Player_actor_setup_main_Reflect_axe_common(req_ref, &main_axe->axe.reflect_axe);
     } else {
-        Player_actor_setup_main_Swing_axe_common(req_ref, &main_axe->axe.swing_axe);
+        Player_actor_setup_main_Swing_axe_common(req_swing, &main_axe->axe.swing_axe);
     }
 
     Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_AXE_BREAK1, mPlayer_ANIM_AXE_BREAK1, 1.0f, 1.0f, 0.5f,
@@ -186,7 +186,7 @@ static int Player_actor_MessageControl_Broken_axe(ACTOR* actor) {
     return 0;
 }
 
-static void Player_actor_request_proc_index_fromSwing_axe(ACTOR* actor, GAME* game, int arg) {
+static void Player_actor_request_proc_index_fromBroken_axe(ACTOR* actor, GAME* game, int arg) {
     if (arg != 0) {
         Player_actor_SettleRequestMainIndexPriority(actor);
         Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);

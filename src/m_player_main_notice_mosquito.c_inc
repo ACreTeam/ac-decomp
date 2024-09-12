@@ -41,7 +41,7 @@ static void Player_actor_settle_main_Notice_mosquito(ACTOR* actorx, GAME* game) 
 static void Player_actor_Movement_Notice_mosquito(ACTOR* actorx) {
     add_calc_short_angle2(&actorx->shape_info.rotation.y, 0, 1.0f - sqrtf(0.5f), 2500, 50);
     actorx->world.angle.y = actorx->shape_info.rotation.y;
-    Player_actor_Movement_Base_Braking_common(actorx, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Notice_mosquito(ACTOR* actorx) {

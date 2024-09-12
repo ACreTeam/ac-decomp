@@ -4,7 +4,7 @@ static void Player_actor_Set_ItemNoSubmenu(mActor_name_t item) {
     }
 }
 
-mActor_name_t Player_actor_Get_ItemNoSubmenu(void) {
+static mActor_name_t Player_actor_Get_ItemNoSubmenu(void) {
     if (mEv_CheckTitleDemo() > 0) {
         return mPlib_Get_controller_data_for_title_demo_p()->equiped_item;
     } else {
@@ -51,7 +51,7 @@ static s8 Player_actor_Get_ItemKind(ACTOR* actor, int kind) {
 }
 
 static int Player_actor_Get_BasicItemMainIndex_fromItemKind(int kind) {
-    static s8 data[] = {
+    static const s8 data[] = {
         1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
         10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 20,
         20, 21, 21, 21, 21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 23, 23, 23,
@@ -187,8 +187,8 @@ static void Player_actor_Item_Set_RightHandPos_forUki(ACTOR* actor, int arg0) {
                 cos = cos_s(rot);
                 sin = sin_s(rot);
 
-                pos.z += (-2.0f * cos) - (12.0f * sin);
-                pos.x += (12.0f * cos) + (-2.0f * sin);
+                pos.z += (12.0f * cos) - (-2.0f * sin);
+                pos.x += (-2.0f * cos) + (12.0f * sin);
                 pos.y += 17.5f;
 
                 rod->right_hand_pos = pos;
@@ -219,9 +219,9 @@ static void Player_actor_Item_Set_LeftHandPos_forUki(ACTOR* actor, int arg0) {
                 cos = cos_s(rot);
                 sin = sin_s(rot);
 
-                pos.z += (-2.0f * cos) - (12.0f * sin);
-                pos.x += (12.0f * cos) + (-2.0f * sin);
-                pos.y += 17.5f;
+                pos.z += (10.0f * cos) - (8.0f * sin);
+                pos.x += (8.0f * cos) + (10.0f * sin);
+                pos.y += 24.0f;
 
                 rod->left_hand_pos = pos;
                 break;
@@ -269,8 +269,8 @@ static void Player_actor_Item_Set_RodTopPos_forUki(ACTOR* actor) {
     }
 }
 
-static void Player_actor_LoadOrDestruct_Item(ACTOR* actor, int kind, int anim_idx, int mode, f32 speed, f32 morph_speed,
-                                             f32 frame) {
+static void Player_actor_LoadOrDestruct_Item(ACTOR* actor, int kind, int anim_idx, f32 speed, f32 morph_speed,
+                                             f32 frame, int mode) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     int umbrella;
     int rod;

@@ -1,4 +1,4 @@
-static int Player_actor_request_main_complete_payment_all(GAME* game, int prio) {
+static int Player_actor_request_main_complete_payment(GAME* game, int prio) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_COMPLETE_PAYMENT, prio)) {
         Player_actor_request_main_index(game, mPlayer_INDEX_COMPLETE_PAYMENT, prio);
         return TRUE;
@@ -37,7 +37,7 @@ static int Player_actor_CulcAnimation_Complete_payment(ACTOR* actorx, f32* last_
 static void Player_actor_Movement_Complete_payment(ACTOR* actorx) {
     add_calc_short_angle2(&actorx->shape_info.rotation.y, 0, 1.0f - sqrtf(0.5f), 2500, 50);
     actorx->world.angle.y = actorx->shape_info.rotation.y;
-    Player_actor_Movement_Base_Braking_common(actorx, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
 }
 
 static void Player_actor_set_eye_pattern_Complete_payment(ACTOR* actorx, int end_flag) {

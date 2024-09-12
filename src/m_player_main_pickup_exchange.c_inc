@@ -26,7 +26,7 @@ static void Player_actor_setup_main_Pickup_exchange(ACTOR* actorx, GAME* game) {
     main_pickup_exchange_p->msg_mode = 0;
     main_pickup_exchange_p->submenu_flag = FALSE;
 
-    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_PICKUP_WAIT1, -6.0f, &anim1_idx, &part_table_idx);
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_PICKUP_WAIT1, -5.0f, &anim1_idx, &part_table_idx);
 
     if (anim1_idx != mPlayer_ANIM_PICKUP_WAIT1) {
         part_table_idx = mPlayer_PART_TABLE_NET;

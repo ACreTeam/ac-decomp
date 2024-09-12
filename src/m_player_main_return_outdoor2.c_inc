@@ -58,7 +58,7 @@ static void Player_actor_request_proc_index_fromReturn_outdoor2(ACTOR* actor, GA
         if (prev != mPlayer_INDEX_DEMO_WAIT) {
             Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, 1);
         } else {
-            Player_actor_request_main_demo_wait_all(game, 0, NULL, 19);
+            Player_actor_request_main_demo_wait_all(game, FALSE, 0, 19);
         }
     }
 }

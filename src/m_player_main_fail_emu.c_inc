@@ -1,4 +1,4 @@
-static int Player_actor_request_main_fail_emu_all(GAME* game, int prio) {
+static int Player_actor_request_main_fail_emu(GAME* game, int prio) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_FAIL_EMU, prio)) {
         Player_actor_request_main_index(game, mPlayer_INDEX_FAIL_EMU, prio);
         return TRUE;
@@ -24,7 +24,7 @@ static void Player_actor_settle_main_Fail_emu(ACTOR* actorx, GAME* game) {
 }
 
 static void Player_actor_Movement_Fail_emu(ACTOR* actorx) {
-    Player_actor_Movement_Base_Braking_common(actorx, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actorx, 0.23925f);
 }
 
 static int Player_actor_CulcAnimation_Fail_emu(ACTOR* actorx) {

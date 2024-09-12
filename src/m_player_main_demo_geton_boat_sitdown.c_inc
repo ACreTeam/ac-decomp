@@ -28,9 +28,9 @@ static void Player_actor_Movement_Demo_geton_boat_sitdown(ACTOR* actorx, GAME* g
         (player->force_position_angle_flag & mPlayer_FORCE_POSITION_ANGLE_POSZ)) {
         xyz_t* pos_p = &actorx->world.position;
 
-        add_calc(&pos_p->x, player->force_position.x, 1.0f - sqrtf(0.2f), 0.2f, 0.15f);
-        add_calc(&pos_p->y, player->force_position.y, 1.0f - sqrtf(0.2f), 0.2f, 0.15f);
-        add_calc(&pos_p->z, player->force_position.z, 1.0f - sqrtf(0.2f), 0.2f, 0.15f);
+        add_calc(&pos_p->x, player->force_position.x, 1.0f - sqrtf(0.19999999f), 0.2f, 0.15f);
+        add_calc(&pos_p->y, player->force_position.y, 1.0f - sqrtf(0.19999999f), 0.2f, 0.15f);
+        add_calc(&pos_p->z, player->force_position.z, 1.0f - sqrtf(0.19999999f), 0.2f, 0.15f);
 
         Player_actor_Get_force_position_angle(game, NULL, &actorx->world.angle);
         Player_actor_Get_force_position_angle(game, NULL, &actorx->shape_info.rotation);
@@ -41,7 +41,7 @@ static void Player_actor_Movement_Demo_geton_boat_sitdown(ACTOR* actorx, GAME* g
         s16 boat_angle_z = player->boat_angleZ;
         s16* angle_z_p = &demo_geton_boat_sitdown_p->angle_z;
 
-        add_calc_short_angle2(angle_z_p, boat_angle_z, 1.0f - sqrtf(0.2f), 150, 100);
+        add_calc_short_angle2(angle_z_p, boat_angle_z, 1.0f - sqrtf(0.19999999f), 150, 100);
     }
 }
 

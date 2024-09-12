@@ -84,7 +84,7 @@ static int Player_actor_CulcAnimation_Demo_get_golden_item(ACTOR* actorx) {
 static void Player_actor_Movement_Demo_get_golden_item(ACTOR* actorx) {
     add_calc_short_angle2(&actorx->shape_info.rotation.y, 0, 1.0f - sqrtf(0.5f), 2500, 50);
     actorx->world.angle.y = actorx->shape_info.rotation.y;
-    Player_actor_Movement_Base_Braking_common(actorx, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
 }
 
 static void Player_actor_set_eye_pattern_Demo_get_golden_item(ACTOR* actorx, int end_flag) {

@@ -15,13 +15,13 @@ static void Player_actor_setup_main_Vib_rod(ACTOR* actor, GAME* game) {
 
     Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_UMB_OPEN1, mPlayer_INDEX_OUTDOOR, -5.0f, frame, 1);
     Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_TURI_HIKI1, mPlayer_ANIM_TURI_HIKI1, 1.0f, 1.0f, 0.5f,
-                                     0.0f, 1, 0);
+                                     -3.0f, 1, 0);
     Player_actor_setup_main_Base(actor, game);
 }
 
 static void Player_actor_Movement_Vib_rod(ACTOR* actor) {
     Player_actor_SetPlayerAngle_forUki(actor);
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Vib_rod(ACTOR* actor) {
@@ -34,8 +34,8 @@ static void Player_actor_ObjCheck_Vib_rod(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Vib_rod(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Vib_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromVib_rod(GAME* game, int status) {

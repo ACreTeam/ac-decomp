@@ -17,7 +17,7 @@ static void Player_actor_setup_main_Rotate_umbrella(ACTOR* actorx, GAME* game) {
 }
 
 static void Player_actor_Movement_Rotate_umbrella(ACTOR* actorx) {
-    Player_actor_Movement_Base_Braking_common(actorx, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Rotate_umbrella(ACTOR* actorx, f32* last_anim0_cur_frame) {

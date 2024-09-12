@@ -44,12 +44,12 @@ static void Player_actor_setup_Item_Tumble_getup(ACTOR* actor, GAME* game, int k
     }
 
     if (check == FALSE) {
-        Player_actor_LoadOrDestruct_Item(actor, kind, mPlib_Get_BasicItemAnimeIndex_fromItemKind(kind), 1, 0.5f, speed,
-                                         -1.0f);
+        Player_actor_LoadOrDestruct_Item(actor, kind, mPlib_Get_BasicItemAnimeIndex_fromItemKind(kind), 0.5f, speed,
+                                         -1.0f, cKF_FRAMECONTROL_REPEAT);
         Player_actor_Set_now_item_main_index(actor, Player_actor_Get_BasicItemMainIndex_fromItemKind(kind));
         player->item_kind = kind;
     } else {
-        Player_actor_LoadOrDestruct_Item(actor, kind, mPlayer_ANIM_RTURN1, 0, 0.5f, speed, -1.0f);
+        Player_actor_LoadOrDestruct_Item(actor, kind, mPlayer_ANIM_RTURN1, 0.5f, speed, -1.0f, cKF_FRAMECONTROL_STOP);
         Player_actor_Set_now_item_main_index(actor, mPlayer_INDEX_RETURN_OUTDOOR2);
         player->item_kind = kind;
     }
@@ -74,8 +74,8 @@ static int Player_actor_Get_PlayerAnimeIndex_fromItemKind_Tumble_getup(int kind)
         mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
         mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
         mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
-        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_A1,
-        mPlayer_ANIM_KOKERU_A1,       mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_A1,
+        mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
         mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
         mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
         mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
@@ -106,15 +106,17 @@ static void Player_actor_setup_main_Tumble_getup(ACTOR* actor, GAME* game) {
 
 static void Player_actor_request_proc_index_fromTumble_getup(ACTOR* actor, GAME* game, int calc) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
-    int type;
+
     if (calc != 0) {
         if (player->main_data.balloon.balloon_shape_type < 0) {
             Player_actor_SettleRequestMainIndexPriority(actor);
             Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
         } else {
-            type = player->main_data.balloon.balloon_shape_type;
-            Player_actor_request_main_release_creature_all(game, 2, 0, &type, player->balloon_actor,
-                                                           mPlayer_REQUEST_PRIORITY_30);
+            mPlayer_request_release_creature_u release_creature;
+
+            release_creature.balloon.balloon_type = player->main_data.balloon.balloon_shape_type;
+            Player_actor_request_main_release_creature_all(game, mPlayer_CREATURE_BALLOON, FALSE, &release_creature,
+                                                           player->balloon_actor, mPlayer_REQUEST_PRIORITY_30);
         }
     }
 }

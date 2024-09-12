@@ -11,7 +11,7 @@ static void Player_actor_sound_SetStatus(ACTOR* actor) {
     f32 speed;
 
     status = player->now_main_index;
-    speed = player->keyframe0.frame_control.speed / 0.6f;
+    speed = player->keyframe0.frame_control.speed / 0.59999996f;
 
     switch (status) {
         case mPlayer_INDEX_READY_WALK_NET:

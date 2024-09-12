@@ -12,7 +12,7 @@ static int Player_actor_Check_able_request_main_wait_bed(GAME* game) {
     }
 }
 
-static int Player_actor_request_main_hold(GAME* game, int priority) {
+static int Player_actor_request_main_wait_bed(GAME* game, int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_WAIT_BED, priority) &&
         Player_actor_Check_able_request_main_wait_bed(game)) {
         Player_actor_request_main_index(game, mPlayer_INDEX_WAIT_BED, priority);
@@ -37,8 +37,8 @@ static void Player_actor_setup_main_Wait_bed(ACTOR* actor, GAME* game) {
     Player_actor_setup_main_Base(actor, game);
 }
 
-static void Player_actor_Movement_Wait_bed(ACTOR* actor) { 
-    Player_actor_Movement_Base_Stop(actor, FALSE); 
+static void Player_actor_Movement_Wait_bed(ACTOR* actor) {
+    Player_actor_Movement_Base_Stop(actor, FALSE);
 }
 
 static int Player_actor_CulcAnimation_Wait_bed(ACTOR* actor) {

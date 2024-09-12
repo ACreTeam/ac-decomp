@@ -1,4 +1,4 @@
-static int Player_actor_request_main_cast_rod(GAME* game, int priority) {
+static int Player_actor_request_main_air_rod(GAME* game, int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_AIR_ROD, priority)) {
         Player_actor_request_main_index(game, mPlayer_INDEX_AIR_ROD, priority);
 
@@ -17,9 +17,9 @@ static void Player_actor_setup_main_Air_rod(ACTOR* actor, GAME* game) {
 
     kind = Player_actor_Get_ItemKind_from_submenu();
 
-    Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_RUN_SLIP1, mPlayer_INDEX_FALL, -5.0f, frame, 0);
+    Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_RUN_SLIP1, mPlayer_INDEX_FALL, 0.0f, frame, 0);
     Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_NOT_SAO_SWING1, mPlayer_ANIM_NOT_SAO_SWING1,
-                                     player_frame, player_frame, 0.5f, -5.0f, 0, 0);
+                                     player_frame, player_frame, 0.5f, 0.0f, 0, 0);
     Player_actor_setup_main_Base(actor, game);
 
     Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_SWING_ROD, actor->world.position, 2,
@@ -27,8 +27,8 @@ static void Player_actor_setup_main_Air_rod(ACTOR* actor, GAME* game) {
                                                    actor->bg_collision_check.result.unit_attribute, 0);
 }
 
-static void Player_actor_Movement_Air_rod(ACTOR* actor) { 
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f); 
+static void Player_actor_Movement_Air_rod(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Air_rod(ACTOR* actor, f32* frame_calc) {
@@ -53,14 +53,14 @@ static void Player_actor_ObjCheck_Air_rod(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Air_rod(ACTOR* actor) { 
+static void Player_actor_BGcheck_Air_rod(ACTOR* actor) {
     Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromAir_rod(ACTOR* actor, GAME* game, int ready) {
     if (ready) {
         Player_actor_SettleRequestMainIndexPriority(actor);
-        Player_actor_request_main_wait_all(game, 0.0f, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
     }
 }
 

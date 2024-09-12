@@ -21,8 +21,8 @@ static void Player_actor_setup_main_Stop_net(ACTOR* actor, GAME* game) {
     Player_actor_setup_main_Base(actor, game);
 }
 
-static void Player_actor_Movement_Pull_net(ACTOR* actor) { 
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f);
+static void Player_actor_Movement_Stop_net(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Stop_net(ACTOR* actor) {
@@ -35,8 +35,8 @@ static void Player_actor_ObjCheck_Stop_net(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Stop_net(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Stop_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromStop_net(GAME* game, int ready) {

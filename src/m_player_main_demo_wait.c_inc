@@ -1,10 +1,10 @@
-static int Player_actor_request_main_demo_wait_all(GAME* game, int umbrella_flag, u32 label, int prio) {
+static int Player_actor_request_main_demo_wait_all(GAME* game, int umbrella_flag, void* label, int prio) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DEMO_WAIT, prio)) {
         PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
         mPlayer_request_demo_wait_c* req_demo_wait_p = &player->requested_main_index_data.demo_wait;
 
         req_demo_wait_p->umbrella_flag = umbrella_flag;
-        req_demo_wait_p->label = label;
+        req_demo_wait_p->label = (u32)label;
         Player_actor_request_main_index(game, mPlayer_INDEX_DEMO_WAIT, prio);
         return TRUE;
     }
@@ -17,7 +17,7 @@ static void Player_actor_request_main_demo_wait_from_submenu(ACTOR* actorx, GAME
     mPlayer_change_data_from_submenu_c* change_data_p = mPlib_Get_change_data_from_submenu_p();
     mPlayer_request_demo_wait_c* req_demo_wait_p = &change_data_p->request_main_data.demo_wait;
 
-    Player_actor_request_main_demo_wait_all(game, req_demo_wait_p->umbrella_flag, req_demo_wait_p->label,
+    Player_actor_request_main_demo_wait_all(game, req_demo_wait_p->umbrella_flag, (void*)req_demo_wait_p->label,
                                             mPlayer_REQUEST_PRIORITY_31);
 }
 

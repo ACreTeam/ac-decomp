@@ -110,7 +110,7 @@ static void Player_actor_settle_main_Notice_net(ACTOR* actor, GAME* game) {
         u32 label = player->item_net_catch_label;
 
         if (label != 0 && player->item_net_catch_type == 0) {
-            ((aINS_INSECT_ACTOR*)label)->patience = 1000.0f;
+            ((aINS_INSECT_ACTOR*)label)->patience = 100.0f;
             ((ACTOR*)label)->drawn = TRUE;
             ((ACTOR*)label)->actor_specific = 1;
         }
@@ -118,7 +118,7 @@ static void Player_actor_settle_main_Notice_net(ACTOR* actor, GAME* game) {
 }
 
 static void Player_actor_Movement_Notice_net(ACTOR* actor) {
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static void Player_actor_CorrectSomething_Notice_net(ACTOR* actor) {
@@ -149,7 +149,9 @@ static void Player_actor_ObjCheck_Notice_net(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Notice_net(ACTOR* actor) { Player_actor_BGcheck_common_type1(actor); }
+static void Player_actor_BGcheck_Notice_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
 
 static void Player_actor_DeleteMark_Notice_net(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
