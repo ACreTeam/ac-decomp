@@ -1405,6 +1405,8 @@ data/npc/model/tex/brd_9.c:
     .data: [0x8077D980, 0x8077E6A0]
 data/npc/model/tex/brd_10.c:
     .data: [0x8077E6A0, 0x8077F3C0]
+data/player/BOY_part_data.c:
+    .data: [0x807D5F60, 0x807D5FE8]
 data/npc/model/mdl/fox_1.c:
     .data: [0x807D5FE8, 0x807D8098]
 data/npc/model/tex/fox_1.c:
