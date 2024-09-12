@@ -83,7 +83,7 @@ static void Player_actor_SearchAnimation_Stung_bee(ACTOR* actorx, GAME* game, f3
     }
 }
 
-static void Player_actor_set_eye_pattern_Stung_bee(ACTOR* actorx) {
+static void Player_actor_set_tex_anime_Stung_bee(ACTOR* actorx) {
     Player_actor_set_tex_anime_pattern(actorx);
 }
 

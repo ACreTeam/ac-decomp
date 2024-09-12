@@ -19,7 +19,7 @@ typedef void (*mPlayer_DRAW_BEFORE_PROC)(ACTOR*, GAME*, cKF_SkeletonInfo_R_c*, G
 static int Player_actor_draw_Before(GAME* game, cKF_SkeletonInfo_R_c* kf, int joint_no, Gfx** gfx_pp, u8* work_flag,
                                     void* arg, s_xyz* rot, xyz_t* pos) {
     // clang-format off
-    static mPlayer_DRAW_BEFORE_PROC proc[] = {
+    static const mPlayer_DRAW_BEFORE_PROC proc[] = {
         NULL,
         NULL,
         NULL,
@@ -142,7 +142,7 @@ typedef void (*mPlayer_DRAW_AFTER_PROC)(ACTOR*, GAME*, cKF_SkeletonInfo_R_c*, Gf
 static int Player_actor_draw_After(GAME* game, cKF_SkeletonInfo_R_c* kf, int joint_no, Gfx** gfx_pp, u8* work_flag,
                                    void* arg, s_xyz* rot, xyz_t* pos) {
     // clang-format off
-    static mPlayer_DRAW_AFTER_PROC proc[] = {
+    static const mPlayer_DRAW_AFTER_PROC proc[] = {
         NULL,
         NULL,
         NULL,
@@ -193,8 +193,8 @@ static void Player_actor_draw_Normal(ACTOR* actorx, GAME* game) {
     int moving_in_boat;
     GAME_PLAY* play = (GAME_PLAY*)game;
 
-    eye_tex_p = Player_actor_Get_eye_tex_p(player);
-    mouth_tex_p = Player_actor_Get_mouth_tex_p(player);
+    eye_tex_p = Player_actor_Get_eye_tex_p(actorx);
+    mouth_tex_p = Player_actor_Get_mouth_tex_p(actorx);
     graph = game->graph;
     moving_in_boat = FALSE;
 
@@ -306,7 +306,7 @@ static void Player_actor_draw_Normal(ACTOR* actorx, GAME* game) {
         CLOSE_DISP(graph);
     }
 
-    Player_actor_Item_draw(player, game);
+    Player_actor_Item_draw(actorx, game);
 
     {
         mActor_name_t item = EMPTY_NO;
@@ -324,7 +324,7 @@ static void Player_actor_draw_Normal(ACTOR* actorx, GAME* game) {
         } else if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_PICKUP_JUMP) {
             mPlayer_main_pickup_jump_c* main_pickup_jump2 = &player->main_data.pickup_jump;
 
-            if (main_pickup_jump2->exchange_flag == FALSE) {
+            if (main_pickup_jump2->ftr_flag == FALSE) {
                 main_pickup_jump = main_pickup_jump2;
                 item = main_pickup_jump2->item;
                 item_scale = main_pickup_jump2->scale;

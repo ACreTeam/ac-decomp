@@ -33,7 +33,7 @@ static void Player_actor_setup_main_Swing_fan(ACTOR* actorx, GAME* game) {
 }
 
 static void Player_actor_Movement_Swing_fan(ACTOR* actorx) {
-    Player_actor_Movement_Base_Braking_common(actorx, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Swing_fan(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
@@ -60,7 +60,7 @@ static void Player_actor_ObjCheck_Swing_fan(ACTOR* actorx, GAME* game) {
     Player_actor_Excute_Corect_forStand(actorx, game);
 }
 
-static void Player_actor_BGCheck_Swing_fan(ACTOR* actorx) {
+static void Player_actor_BGcheck_Swing_fan(ACTOR* actorx) {
     Player_actor_BGcheck_common_type1(actorx);
 }
 

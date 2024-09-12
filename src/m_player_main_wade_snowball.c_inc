@@ -35,7 +35,7 @@ static void Player_actor_setup_main_Wade_snowball(ACTOR* actor, GAME* game) {
     player->main_data.wade_snowball.start_pos = *world_pos;
     player->main_data.wade_snowball.start_pos = *world_pos;
 
-    Player_actor_Culc_wade_end_pos(world_pos, end_pos, dir, 18.0f);
+    Player_actor_Culc_wade_end_pos(world_pos, end_pos, dir, 18.00001f);
 
     player->main_data.wade_snowball.timer = 0.0f;
 
@@ -89,7 +89,7 @@ static void Player_actor_Movement_Wade_snowball(ACTOR* actor) {
     start_pos = &main_wade_snowball_p->start_pos;
     end_pos = &main_wade_snowball_p->end_pos;
 
-    brake = get_percent_forAccelBrake(player->main_data.wade_snowball.timer, 0.0f, 36.0f, 1.20f, 34.8f);
+    brake = get_percent_forAccelBrake(player->main_data.wade_snowball.timer, 0.0f, 36.0f, 1.1999999f, 34.8f);
     actor->world.position.x = start_pos->x + (brake * (end_pos->x - start_pos->x));
     actor->world.position.y = start_pos->y + (brake * (end_pos->y - start_pos->y));
     actor->world.position.z = start_pos->z + (brake * (end_pos->z - start_pos->z));
@@ -120,7 +120,7 @@ static void Player_actor_request_proc_index_fromWade_snowball(ACTOR* actor, GAME
         Player_actor_SettleRequestMainIndexPriority(actor);
 
         if (anim_idx != mPlayer_ANIM_WAIT1 && player->crash_snowball_for_wade == FALSE) {
-            Player_actor_request_main_push_snowball_all(game, player->main_data.wade_snowball.snowball_label, 1,
+            Player_actor_request_main_push_snowball_all(game, (void*)player->main_data.wade_snowball.snowball_label, 1,
                                                         mPlayer_REQUEST_PRIORITY_2);
         } else {
             Player_actor_request_main_walk_all(game, &player->main_data.wade_snowball.end_pos, -5.0f, 6, 1);

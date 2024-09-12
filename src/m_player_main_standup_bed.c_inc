@@ -138,7 +138,7 @@ static int Player_actor_CulcAnimation_Standup_bed(ACTOR* actor, f32* frame_calc)
 static void Player_actor_SetSound_Standup_bed(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
-    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 20.0f)) {
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 23.0f)) {
         Player_actor_sound_LANDING(actor);
     }
 }

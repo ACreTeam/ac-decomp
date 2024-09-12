@@ -25,8 +25,8 @@ static void Player_actor_setup_main_Pull_net(ACTOR* actor, GAME* game) {
 
     main_pull->timer = 0.0f;
 
-    Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_HOLD_WAIT1, mPlayer_INDEX_WAIT, -5.0f, -1.0f, 0);
-    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_GET_M1, mPlayer_ANIM_GET_M1, 1.0f, 1.0f, 0.5f, -5.0f, 0,
+    Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_HOLD_WAIT1, mPlayer_INDEX_WAIT, -10.0f, -1.0f, 0);
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_GET_M1, mPlayer_ANIM_GET_M1, 1.0f, 1.0f, 0.5f, 10.0f, 0,
                                      0);
 
     if (player->item_net_catch_label != 0) {
@@ -51,14 +51,14 @@ static void Player_actor_Movement_Pull_net(ACTOR* actor) {
         actor->world.angle.y = actor->shape_info.rotation.y;
     }
 
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static void Player_actor_CorrectSomething_Pull_net(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     xyz_t* pos;
 
-    if (player->keyframe0.frame_control.current_frame > 17.0f) {
+    if (player->keyframe0.frame_control.current_frame > 15.0f) {
         u32 label = player->item_net_catch_label;
 
         if (label != 0 && player->item_net_catch_type == 0) {
@@ -81,8 +81,8 @@ static void Player_actor_ObjCheck_Pull_net(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Pull_net(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Pull_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_SearchAnimation_Pull_net(ACTOR* actor, GAME* game, f32 frame) {

@@ -59,7 +59,7 @@ static void Player_actor_SetEffectHit_Dig_scoop(ACTOR* actor, GAME* game, const 
     s16 arg;
 
     if (player->animation0_idx == mPlayer_ANIM_DIG_KABU1) {
-        if (Player_actor_Check_AnimationFrame(fc, 17.0f)) {
+        if (Player_actor_Check_AnimationFrame(fc, 42.0f)) {
             effect_idx = eEC_EFFECT_DIG_SCOOP;
             if (main_index != mPlayer_INDEX_GET_SCOOP) {
                 arg = 0;
@@ -201,8 +201,8 @@ static void Player_actor_ObjCheck_Dig_scoop(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Dig_scoop(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Dig_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static int Player_actor_lean_angle_scoop_common(ACTOR* actor, const xyz_t* pos, f32 frame) {

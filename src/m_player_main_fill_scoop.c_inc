@@ -118,7 +118,7 @@ static void Player_actor_SetSound_Fill_scoop(ACTOR* actor) {
     }
 }
 
-static void Player_actor_SearchAnimation_Dig_scoop(ACTOR* actor, GAME* game, f32 frame) {
+static void Player_actor_SearchAnimation_Fill_scoop(ACTOR* actor, GAME* game, f32 frame) {
     if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
         Player_actor_Reset_Hole_Fill_scoop(actor);
         Player_actor_SetEffect_Fill_scoop(actor, game);
@@ -131,11 +131,11 @@ static void Player_actor_ObjCheck_Fill_scoop(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Fill_scoop(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Fill_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
-static int Player_actor_lean_angle_scoop_common(ACTOR* actor, const xyz_t* pos, f32 frame) {
+static int Player_actor_lean_angle_Fill_scoop(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     f32 mod = 0.0f;
 

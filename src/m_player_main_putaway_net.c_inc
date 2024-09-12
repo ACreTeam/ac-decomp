@@ -29,7 +29,7 @@ static void Player_actor_setup_main_Putaway_net(ACTOR* actor, GAME* game) {
 }
 
 static void Player_actor_Movement_Putaway_net(ACTOR* actor) {
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Putaway_net(ACTOR* actor, f32* frame_calc) {
@@ -68,8 +68,8 @@ static void Player_actor_ObjCheck_Putaway_net(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Putaway_net(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Putaway_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromPutaway_net(ACTOR* actor, GAME* game, int end_flag) {

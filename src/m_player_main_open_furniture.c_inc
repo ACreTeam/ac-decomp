@@ -42,7 +42,7 @@ static void Player_actor_setup_main_Open_furniture(ACTOR* actor, GAME* game) {
 
     cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyf, 0.0f, 1000.0f, 200.0f, 0, 0, 0x4000);
     cKF_SkeletonInfo_R_AnimationMove_ct_base(&actor->world.position, &actor->world.position,
-                                             actor->shape_info.rotation.y, 0, 0.0f, keyf, 1);
+                                             actor->shape_info.rotation.y, 0, 5.0f, keyf, 1);
     Player_actor_InitAnimation_Base2(actor, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.5f, -5.0f, 0, 0);
     Player_actor_setup_main_Base(actor, game);
 }

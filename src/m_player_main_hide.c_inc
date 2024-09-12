@@ -1,4 +1,4 @@
-static int Player_actor_request_main_hide_all(GAME* game, int prio) {
+static int Player_actor_request_main_hide(GAME* game, int prio) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_HIDE, prio)) {
         Player_actor_request_main_index(game, mPlayer_INDEX_HIDE, prio);
         return TRUE;

@@ -33,11 +33,11 @@ static void Player_actor_ObjCheck_Ready_net(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Ready_net(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Ready_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
-static void Player_actor_request_proc_index_fromSlip_net(ACTOR* actor, GAME* game) {
+static void Player_actor_request_proc_index_fromReady_net(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
     if (mPlib_check_player_warp_forEvent() != FALSE) {

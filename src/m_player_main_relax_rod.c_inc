@@ -8,7 +8,7 @@ static int Player_actor_request_main_relax_rod(GAME* game, int priority) {
     return FALSE;
 }
 
-static void Player_actor_setup_main_Air_rod(ACTOR* actor, GAME* game) {
+static void Player_actor_setup_main_Relax_rod(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     mPlayer_main_relax_rod_c* main_relax = &player->main_data.relax_rod;
     int kind = Player_actor_Get_ItemKind_from_submenu();
@@ -17,7 +17,7 @@ static void Player_actor_setup_main_Air_rod(ACTOR* actor, GAME* game) {
     main_relax->mosquito_flag = FALSE;
 
     Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_UMB_OPEN1, mPlayer_INDEX_WADE, -5.0f, 180.0f, 1);
-    Player_actor_InitAnimation_Base2(actor, game, eEC_EFFECT_TURI_MIZU, eEC_EFFECT_TURI_MIZU, 1.0f, 1.0f, 0.5f, -5.0f,
+    Player_actor_InitAnimation_Base2(actor, game, eEC_EFFECT_TURI_MIZU, eEC_EFFECT_TURI_MIZU, 1.0f, 1.0f, 0.5f, -3.0f,
                                      1, 0);
     Player_actor_setup_main_Base(actor, game);
 }
@@ -37,8 +37,8 @@ static void Player_actor_ObjCheck_Relax_rod(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Relax_rod(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Relax_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromRelax_rod(ACTOR* actor, GAME* game, int status) {
@@ -89,7 +89,7 @@ static void Player_actor_request_proc_index_fromRelax_rod(ACTOR* actor, GAME* ga
     }
 }
 
-void Player_actor_main_Relax_rod(ACTOR* actor, GAME* game) {
+static void Player_actor_main_Relax_rod(ACTOR* actor, GAME* game) {
     int status;
 
     Player_actor_Movement_Relax_rod(actor);

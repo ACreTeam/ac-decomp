@@ -278,7 +278,7 @@ enum {
 
 #define mPlayer_REQUEST_PRIORITY_NONE -1
 
-#define mPlayer_REQUEST_PRIORITY_VALID(prio) ((prio) >= 0 && (prio) < mPlayer_REQUEST_PRIORITY_NUM)
+#define mPlayer_REQUEST_PRIORITY_VALID(prio) ((prio) >= 0 && (prio) <= mPlayer_REQUEST_PRIORITY_45)
 
 enum {
     mPlayer_ANIM_WAIT1,
@@ -1817,6 +1817,7 @@ typedef struct player_main_notice_rod_s {
     f32 timer;
     int state;
     int not_full_pocket;
+    s16 angle_y;
     int exchange_flag;
     int already_collected;
     int end_effect_flag;
@@ -1869,7 +1870,7 @@ typedef struct player_main_shock_s {
     s16 target_angle_y;
     f32 timer;
     f32 end_time;
-    u8 bee_chase_bgm_flag;
+    s8 bee_chase_bgm_flag;
     int axe_flag;
     int bgm_stop_flag;
 } mPlayer_main_shock_c;
@@ -2264,7 +2265,7 @@ struct player_actor_s {
     /* 0x1300 */ void* (*get_door_label_proc)(GAME*);
     /* 0x1304 */ int (*Set_Item_net_catch_request_table_proc)(ACTOR*, GAME*, u32, s8, const xyz_t*, f32);
     /* 0x1308 */ f32 (*Get_Item_net_catch_swing_timer_proc)(ACTOR*, GAME*);
-    /* 0x130C */ u8 (*Set_Item_net_catch_request_force_proc)(ACTOR*, GAME*, u32, s8);
+    /* 0x130C */ int (*Set_Item_net_catch_request_force_proc)(ACTOR*, GAME*, u32, s8);
     /* 0x1310 */ void (*Set_force_position_angle_proc)(GAME*, const xyz_t*, const s_xyz*, u8);
     /* 0x1314 */ u8 (*Get_force_position_angle_proc)(GAME*, xyz_t*, s_xyz*);
     /* 0x1318 */ int (*Get_WadeEndPos_proc)(GAME*, xyz_t*);

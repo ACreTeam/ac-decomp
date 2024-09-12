@@ -31,7 +31,7 @@ static void Player_actor_setup_main_Standup(ACTOR* actor, GAME* game) {
     cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyf, 0.0f, 1000.0f, 0.0f, 0, 0, 0x4000);
     cKF_SkeletonInfo_R_AnimationMove_ct_base(&actor->world.position, &actor->world.position,
                                              actor->shape_info.rotation.y, 0, 0.0f, keyf, 1);
-    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_STANDUP1, mPlayer_ANIM_STANDUP1, 1.0f, 1.0f, 0.5f, -5.0f,
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_STANDUP1, mPlayer_ANIM_STANDUP1, 1.0f, 1.0f, 0.5f, -3.0f,
                                      0, 0);
     Player_actor_setup_main_Base(actor, game);
     Player_actor_sound_STANDUP(actor, ftr_no);
@@ -56,7 +56,7 @@ static void Player_actor_ControlShadow_Standup(ACTOR* actor) {
 static void Player_actor_SetSound_Standup(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
-    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 20.0f)) {
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 17.0f)) {
         Player_actor_sound_LANDING(actor);
     }
 }

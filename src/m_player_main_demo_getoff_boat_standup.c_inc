@@ -82,7 +82,7 @@ static void Player_actor_Movement_Demo_getoff_boat_standup(ACTOR* actorx) {
             &player->main_data.demo_getoff_boat_standup;
         s16* angle_z_p = &demo_getoff_boat_standup_p->angle_z;
 
-        add_calc_short_angle2(angle_z_p, 0, 1.0f - sqrtf(0.2f), 150, 100);
+        add_calc_short_angle2(angle_z_p, 0, 1.0f - sqrtf(0.19999999f), 150, 100);
     }
 }
 

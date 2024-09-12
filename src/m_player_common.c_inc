@@ -1136,7 +1136,8 @@ static void Player_actor_SetupItem_common(ACTOR* actorx) {
     int item_kind = Player_actor_Get_ItemKind(actorx, main_idx);
 
     if (item_kind < 0) {
-        Player_actor_LoadOrDestruct_Item(actorx, -1, -1, 0.0f, 0.0f, 1.0f, mPlayer_ITEM_IS_BALLOON(item_kind) == FALSE);
+        Player_actor_LoadOrDestruct_Item(actorx, -1, -1, 0.0f, 0.0f, -1.0f,
+                                         mPlayer_ITEM_IS_BALLOON(item_kind) == FALSE);
         Player_actor_Set_now_item_main_index(actorx, mPlayer_ITEM_MAIN_NONE);
         player->item_kind = item_kind;
     }
@@ -1486,7 +1487,7 @@ static int Player_actor_Movement_Base_Braking_common(ACTOR* actorx, f32 brake_am
 }
 
 static int Player_actor_Movement_Base_Braking(ACTOR* actorx) {
-    return Player_actor_Movement_Base_Braking_common(actorx, 0.326525f);
+    return Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
 }
 
 static void Player_actor_SetPlayerAngle_forUki(ACTOR* actorx) {
@@ -1554,16 +1555,16 @@ static int Player_actor_CheckAbleMoveWadeBG(GAME* game, const xyz_t* pos_p, int 
     target_pos = *pos_p;
     switch (dir) {
         case mFI_MOVEDIR_RIGHT:
-            target_pos.x = world_border_pos.x + 18.0f + mFI_BK_WORLDSIZE_X_F;
+            target_pos.x = world_border_pos.x + 18.00001f + mFI_BK_WORLDSIZE_X_F;
             break;
         case mFI_MOVEDIR_LEFT:
-            target_pos.x = world_border_pos.x - 18.0f;
+            target_pos.x = world_border_pos.x - 18.00001f;
             break;
         case mFI_MOVEDIR_UP:
-            target_pos.z = world_border_pos.z - 18.0f;
+            target_pos.z = world_border_pos.z - 18.00001f;
             break;
         case mFI_MOVEDIR_DOWN:
-            target_pos.z = world_border_pos.z + 18.0f + mFI_BK_WORLDSIZE_Z_F;
+            target_pos.z = world_border_pos.z + 18.00001f + mFI_BK_WORLDSIZE_Z_F;
             break;
         default:
             return FALSE;
@@ -1586,7 +1587,7 @@ static int Player_actor_CheckAbleMoveWadeBlock(GAME* game, const xyz_t* pos_p, s
     if (move_percentX > stick_range &&
         ((DEG2SHORT_ANGLE2(90.0f) - angle_range) < angle_y && angle_y < (DEG2SHORT_ANGLE2(90.0f) + angle_range)) &&
         mFI_ScrollCheck(*pos_p, mFI_MOVEDIR_RIGHT)) {
-        f32 border_x = (mFI_BK_WORLDSIZE_X_F - 18.0f);
+        f32 border_x = (mFI_BK_WORLDSIZE_X_F - 18.00001f);
 
         if (mCoBG_GetBlockBgCheckMode() == mCoBG_BLOCK_BGCHECK_MODE_INTRO_DEMO) {
             border_x -= mFI_UNIT_BASE_SIZE_F;
@@ -1606,7 +1607,7 @@ static int Player_actor_CheckAbleMoveWadeBlock(GAME* game, const xyz_t* pos_p, s
                (DEG2SHORT_ANGLE2(-90.0f) - angle_range < (int)angle_y &&
                 (int)angle_y < DEG2SHORT_ANGLE2(-90.0f) + angle_range) &&
                mFI_ScrollCheck(*pos_p, mFI_MOVEDIR_LEFT)) {
-        f32 border_x = 18.0f;
+        f32 border_x = 18.00001f;
 
         if (mCoBG_GetBlockBgCheckMode() == mCoBG_BLOCK_BGCHECK_MODE_INTRO_DEMO) {
             border_x += mFI_UNIT_BASE_SIZE_F;
@@ -1627,7 +1628,7 @@ static int Player_actor_CheckAbleMoveWadeBlock(GAME* game, const xyz_t* pos_p, s
              ((DEG2SHORT_ANGLE2(180.0f) - angle_range) < (int)angle_y ||
               (int)angle_y < (DEG2SHORT_ANGLE2(-180.0f) + angle_range)) &&
              mFI_ScrollCheck(*pos_p, mFI_MOVEDIR_UP)) {
-        f32 border_z = 18.0f;
+        f32 border_z = 18.00001f;
 
         if (mCoBG_GetBlockBgCheckMode() == mCoBG_BLOCK_BGCHECK_MODE_INTRO_DEMO) {
             border_z += mFI_UNIT_BASE_SIZE_F;
@@ -1648,7 +1649,7 @@ static int Player_actor_CheckAbleMoveWadeBlock(GAME* game, const xyz_t* pos_p, s
              ((-angle_range < (int)angle_y && (int)angle_y <= DEG2SHORT_ANGLE2(0.0f)) ||
               (int)angle_y >= DEG2SHORT_ANGLE2(0.0f) && (int)angle_y < angle_range) &&
              mFI_ScrollCheck(*pos_p, mFI_MOVEDIR_DOWN)) {
-        f32 border_z = (mFI_BK_WORLDSIZE_Z_F - 18.0f);
+        f32 border_z = (mFI_BK_WORLDSIZE_Z_F - 18.00001f);
 
         if (mCoBG_GetBlockBgCheckMode() == mCoBG_BLOCK_BGCHECK_MODE_INTRO_DEMO) {
             border_z -= mFI_UNIT_BASE_SIZE_F;
@@ -1677,25 +1678,25 @@ static int Player_actor_CheckAbleMoveDemoWadeBlock(ACTOR* actorx) {
 
         mFI_WpostoLposInBK(&local_pos, actorx->world.position);
 
-        if (dir_x > 0.0f && local_pos.x >= (mFI_BK_WORLDSIZE_X_F - 18.0f)) {
+        if (dir_x > 0.0f && local_pos.x >= (mFI_BK_WORLDSIZE_X_F - 18.00001f)) {
             if (mFI_ScrollCheck(actorx->world.position, mFI_MOVEDIR_RIGHT)) {
                 return mFI_MOVEDIR_RIGHT;
             }
         }
 
-        if (dir_x < 0.0f && local_pos.x <= (18.0f)) {
+        if (dir_x < 0.0f && local_pos.x <= (18.00001f)) {
             if (mFI_ScrollCheck(actorx->world.position, mFI_MOVEDIR_LEFT)) {
                 return mFI_MOVEDIR_LEFT;
             }
         }
 
-        if (dir_z < 0.0f && local_pos.z <= (18.0f)) {
+        if (dir_z < 0.0f && local_pos.z <= (18.00001f)) {
             if (mFI_ScrollCheck(actorx->world.position, mFI_MOVEDIR_UP)) {
                 return mFI_MOVEDIR_UP;
             }
         }
 
-        if (dir_z > 0.0f && local_pos.z >= (mFI_BK_WORLDSIZE_Z_F - 18.0f)) {
+        if (dir_z > 0.0f && local_pos.z >= (mFI_BK_WORLDSIZE_Z_F - 18.00001f)) {
             if (mFI_ScrollCheck(actorx->world.position, mFI_MOVEDIR_DOWN)) {
                 return mFI_MOVEDIR_DOWN;
             }
@@ -2557,9 +2558,9 @@ static void Player_actor_AppearShadow_fromAnimationFrame(ACTOR* actorx, f32 appe
     }
 }
 
-static u32 Player_actor_get_door_label(GAME* game) {
+static void* Player_actor_get_door_label(GAME* game) {
     if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_DOOR) {
-        return GET_PLAYER_ACTOR_GAME(game)->main_data.door.label;
+        return (void*)GET_PLAYER_ACTOR_GAME(game)->main_data.door.label;
     }
 
     return 0;
@@ -3714,7 +3715,7 @@ static int Player_actor_Set_ScrollDemo_forWade_snowball(ACTOR* actorx, int reque
     return FALSE;
 }
 
-static void Player_actor_SetForMark_for_settle_main(ACTOR* actorx, GAME* game) {
+static void Player_actor_SetFootMark_for_settle_main(ACTOR* actorx, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     int main_index = player->now_main_index;
 
@@ -4787,7 +4788,7 @@ static int Player_actor_check_item_is_fish(mActor_name_t item) {
 }
 
 static int Player_actor_Check_CommonFootMark_AnimeFrame_fromAnimeIndex(f32 cur_frame, f32 speed, f32 end_frame,
-                                                                       int anim_idx, const s16** data_table_p,
+                                                                       int anim_idx, const s16* const* data_table_p,
                                                                        const u8* len_table_p) {
     if (anim_idx >= 0 && anim_idx < mPlayer_ANIM_NUM) {
         const s16* data_p = data_table_p[anim_idx];
@@ -4976,7 +4977,7 @@ static int Player_actor_Check_RightFootMark_AnimeFrame_fromAnimeIndex(f32 cur_fr
     static const s16 right_data_taisou7_2[] = { -1 };
     static const s16 right_data_omairi_us1[] = { -1 };
 
-    static const s16* data_p_table[] = {
+    static const s16* const data_p_table[] = {
         right_data_wait1,
         right_data_walk1,
         right_data_axe1,
@@ -5462,7 +5463,7 @@ static int Player_actor_Check_LeftFootMark_AnimeFrame_fromAnimeIndex(f32 cur_fra
     static const s16 left_data_taisou7_2[] = { -1 };
     static const s16 left_data_omairi_us1[] = { -1 };
 
-    static const s16* data_p_table[] = {
+    static const s16* const data_p_table[] = {
         left_data_wait1,
         left_data_walk1,
         left_data_axe1,
@@ -6000,7 +6001,7 @@ static void Player_actor_Set_FootMark_Base1(ACTOR* actorx, GAME* game, int disab
     }
 }
 
-static void Player_actor_Set_FootMark_Base2(ACTOR* actorx, GAME* game, int disable_effect, int type) {
+static void Player_actor_Set_FootMark_Base2(ACTOR* actorx, GAME* game, int disable_effect, u16 type) {
     if (Player_actor_Set_FootMark_MarkOnly(actorx, game, disable_effect) &&
         Player_actor_CheckAble_FootMark_Sound(actorx)) {
         Player_actor_sound_FootStep1(actorx, type);
@@ -6784,7 +6785,7 @@ static int Player_actor_CheckAndRequest_KnockDoor(ACTOR* actorx, GAME* game, int
 static int Player_actor_CheckAndRequest_ItemInOut(ACTOR* actorx, GAME* game, int main_index) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     s8 able_hand_all_item_in_demo = player->able_hand_all_item_in_demo;
-    s8 item_kind = Player_actor_Get_ItemKind_fromScene();
+    int item_kind = Player_actor_Get_ItemKind_fromScene();
 
     if (item_kind >= 0 && able_hand_all_item_in_demo == FALSE) {
         int request_main_index = player->requested_main_index;
@@ -7004,21 +7005,21 @@ static void Player_actor_Set_bgm_volume(ACTOR* actorx, int main_index) {
     }
 }
 
-static int Player_actor_Check_Label_main_push_snowball(GAME* game, u32 label) {
+static int Player_actor_Check_Label_main_push_snowball(GAME* game, void* label) {
     PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
 
-    if (player->now_main_index == mPlayer_INDEX_PUSH_SNOWBALL && player->main_data.push_snowball.label == label) {
+    if (player->now_main_index == mPlayer_INDEX_PUSH_SNOWBALL && player->main_data.push_snowball.label == (u32)label) {
         return TRUE;
     }
 
     return FALSE;
 }
 
-static int Player_actor_Check_Label_main_wade_snowball(GAME* game, u32 label) {
+static int Player_actor_Check_Label_main_wade_snowball(GAME* game, void* label) {
     PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
 
     if (player->now_main_index == mPlayer_INDEX_WADE_SNOWBALL &&
-        player->main_data.wade_snowball.snowball_label == label) {
+        player->main_data.wade_snowball.snowball_label == (u32)label) {
         return TRUE;
     }
 
@@ -7755,15 +7756,15 @@ static int Player_actor_check_cancel_event_without_priority(GAME* game) {
     return FALSE;
 }
 
-static int Player_actor_Check_able_force_speak_label(GAME* game, u32 label) {
+static int Player_actor_Check_able_force_speak_label(GAME* game, void* label) {
     PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
-    u32 able_force_speak_label = player->able_force_speak_label;
+    u32 able_force_speak_label = (u32)player->able_force_speak_label;
 
     if (able_force_speak_label == 0) {
         return TRUE;
     }
 
-    if (able_force_speak_label == label) {
+    if (able_force_speak_label == (u32)label) {
         return TRUE;
     }
 
@@ -7798,14 +7799,14 @@ static int Player_actor_CheckAndSet_UZAI_forNpc(ACTOR* actorx) {
     return FALSE;
 }
 
-static int Player_actor_Check_stung_mosquito(GAME* game, u32 label) {
+static int Player_actor_Check_stung_mosquito(GAME* game, void* label) {
     int main_index = GET_PLAYER_ACTOR_GAME(game)->now_main_index;
 
     switch (main_index) {
         case mPlayer_INDEX_STUNG_MOSQUITO: {
             u32 stung_label = GET_PLAYER_ACTOR_GAME(game)->requested_main_index_data.stung_mosquito.label;
 
-            if (stung_label == label) {
+            if (stung_label == (u32)label) {
                 return TRUE;
             }
             break;
@@ -7813,7 +7814,7 @@ static int Player_actor_Check_stung_mosquito(GAME* game, u32 label) {
         case mPlayer_INDEX_NOTICE_MOSQUITO: {
             u32 notice_label = GET_PLAYER_ACTOR_GAME(game)->requested_main_index_data.notice_mosquito.label;
 
-            if (notice_label == label) {
+            if (notice_label == (u32)label) {
                 return TRUE;
             }
             break;
@@ -7833,7 +7834,7 @@ static void Player_actor_Reset_bee_chase(ACTOR* actorx) {
     }
 }
 
-static void Player_actor_Check_player_sunburn_ChangeDay(ACTOR* actorx) {
+static void Player_actor_Check_player_sunburn_ChangeDay(void) {
     if (mEv_CheckTitleDemo() <= 0) {
         mActor_name_t field_id = mFI_GetFieldId();
 
@@ -8045,7 +8046,7 @@ static int Player_actor_Set_player_sunburn_rankup(ACTOR* actorx) {
 }
 
 static void Player_actor_Check_player_sunburn_for_dt(ACTOR* actorx) {
-    Player_actor_Check_player_sunburn_ChangeDay(actorx);
+    Player_actor_Check_player_sunburn_ChangeDay();
     Player_actor_Check_player_sunburn_rankdown_interval(actorx);
     Player_actor_Check_player_sunburn_rankdown(actorx);
     Player_actor_Set_player_sunburn_rankup(actorx);
@@ -8053,14 +8054,14 @@ static void Player_actor_Check_player_sunburn_for_dt(ACTOR* actorx) {
 }
 
 static void Player_actor_Check_player_sunburn_for_main(ACTOR* actorx) {
-    Player_actor_Check_player_sunburn_ChangeDay(actorx);
+    Player_actor_Check_player_sunburn_ChangeDay();
     Player_actor_Check_player_sunburn_rankdown_interval(actorx);
     Player_actor_Check_player_sunburn_rankdown(actorx);
     Player_actor_Check_player_sunburn_rankup(actorx);
 }
 
 static void Player_actor_Check_player_sunburn_for_ct(ACTOR* actorx) {
-    Player_actor_Check_player_sunburn_ChangeDay(actorx);
+    Player_actor_Check_player_sunburn_ChangeDay();
     Player_actor_Check_player_sunburn_rankdown_interval(actorx);
     Player_actor_Check_player_sunburn_rankdown(actorx);
     Player_actor_Set_player_sunburn_rankdown(actorx);
@@ -8183,26 +8184,26 @@ static void Player_actor_Set_RadioExerciseCommand(ACTOR* actorx, GAME* game, int
     Player_actor_Set_RadioExerciseCommandRingBuffer(actorx, command);
 }
 
-static int Player_actor_Check_radio_exercise_command(ACTOR* actorx, int continue_idx, f32* timer_p) {
-    static s8 Player_actor_radio_exercise_command_key_data_type1[] = { 6, 0, 3 };
-    static s8 Player_actor_radio_exercise_command_key_data_type2_1[] = { 1, 4, 3, 5, 2 };
-    static s8 Player_actor_radio_exercise_command_key_data_type2_2[] = { 2, 5, 3, 4, 1 };
-    static s8 Player_actor_radio_exercise_command_key_data_type3[] = { 3, 0, 3 };
-    static s8 Player_actor_radio_exercise_command_key_data_type4_1_1[] = { 5, 0, 5 };
-    static s8 Player_actor_radio_exercise_command_key_data_type4_1_2[] = { 7, 0, 5 };
-    static s8 Player_actor_radio_exercise_command_key_data_type4_2_1[] = { 4, 0, 4 };
-    static s8 Player_actor_radio_exercise_command_key_data_type4_2_2[] = { 8, 0, 4 };
-    static s8 Player_actor_radio_exercise_command_key_data_type5_1_1[] = { 2, 0, 2 };
-    static s8 Player_actor_radio_exercise_command_key_data_type5_1_2[] = { 1, 0, 2 };
-    static s8 Player_actor_radio_exercise_command_key_data_type5_2_1[] = { 1, 0, 1 };
-    static s8 Player_actor_radio_exercise_command_key_data_type5_2_2[] = { 2, 0, 1 };
-    static s8 Player_actor_radio_exercise_command_key_data_type6_1_1[] = { 8, 0, 8 };
-    static s8 Player_actor_radio_exercise_command_key_data_type6_1_2[] = { 4, 0, 8 };
-    static s8 Player_actor_radio_exercise_command_key_data_type6_2_1[] = { 7, 0, 7 };
-    static s8 Player_actor_radio_exercise_command_key_data_type6_2_2[] = { 5, 0, 7 };
-    static s8 Player_actor_radio_exercise_command_key_data_type7_1[] = { 6, 8, 2, 5, 3, 4, 1, 7 };
-    static s8 Player_actor_radio_exercise_command_key_data_type7_2[] = { 6, 7, 1, 4, 3, 5, 2, 8 };
+static s8 Player_actor_radio_exercise_command_key_data_type1[] = { 6, 0, 3 };
+static s8 Player_actor_radio_exercise_command_key_data_type2_1[] = { 1, 4, 3, 5, 2 };
+static s8 Player_actor_radio_exercise_command_key_data_type2_2[] = { 2, 5, 3, 4, 1 };
+static s8 Player_actor_radio_exercise_command_key_data_type3[] = { 3, 0, 3 };
+static s8 Player_actor_radio_exercise_command_key_data_type4_1_1[] = { 5, 0, 5 };
+static s8 Player_actor_radio_exercise_command_key_data_type4_1_2[] = { 7, 0, 5 };
+static s8 Player_actor_radio_exercise_command_key_data_type4_2_1[] = { 4, 0, 4 };
+static s8 Player_actor_radio_exercise_command_key_data_type4_2_2[] = { 8, 0, 4 };
+static s8 Player_actor_radio_exercise_command_key_data_type5_1_1[] = { 2, 0, 2 };
+static s8 Player_actor_radio_exercise_command_key_data_type5_1_2[] = { 1, 0, 2 };
+static s8 Player_actor_radio_exercise_command_key_data_type5_2_1[] = { 1, 0, 1 };
+static s8 Player_actor_radio_exercise_command_key_data_type5_2_2[] = { 2, 0, 1 };
+static s8 Player_actor_radio_exercise_command_key_data_type6_1_1[] = { 8, 0, 8 };
+static s8 Player_actor_radio_exercise_command_key_data_type6_1_2[] = { 4, 0, 8 };
+static s8 Player_actor_radio_exercise_command_key_data_type6_2_1[] = { 7, 0, 7 };
+static s8 Player_actor_radio_exercise_command_key_data_type6_2_2[] = { 5, 0, 7 };
+static s8 Player_actor_radio_exercise_command_key_data_type7_1[] = { 6, 8, 2, 5, 3, 4, 1, 7 };
+static s8 Player_actor_radio_exercise_command_key_data_type7_2[] = { 6, 7, 1, 4, 3, 5, 2, 8 };
 
+static int Player_actor_Check_radio_exercise_command(ACTOR* actorx, int continue_idx, f32* timer_p) {
     // clang-format off
     static s8* command_key_p_data[] = {
         Player_actor_radio_exercise_command_key_data_type1,

@@ -57,7 +57,7 @@ static void Player_actor_Movement_Demo_wade(ACTOR* actorx) {
     xyz_t* end_pos_p = &main_demo_wade_p->end_pos;
     xyz_t* pos_p = &actorx->world.position;
     f32 timer = main_demo_wade_p->timer;
-    f32 percent = get_percent_forAccelBrake(timer, 0.0f, 36.0f, 1.2f, 34.8f);
+    f32 percent = get_percent_forAccelBrake(timer, 0.0f, 36.0f, 1.1999999f, 34.8f);
 
     pos_p->x = start_pos_p->x + percent * (end_pos_p->x - start_pos_p->x);
     pos_p->y = start_pos_p->y + percent * (end_pos_p->y - start_pos_p->y);

@@ -34,7 +34,7 @@ static void Player_actor_setup_main_Pickup_furniture(ACTOR* actorx, GAME* game) 
     main_pickup_furniture_p->scale = 0.01f;
     main_pickup_furniture_p->item = item;
 
-    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_PICKUP1, -6.0f, &anim1_idx, &part_table_idx);
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_PICKUP1, -5.0f, &anim1_idx, &part_table_idx);
     Player_actor_putin_furniture(game, slot_idx, item);
 
     if (slot_idx >= 0 || ITEM_IS_MYMANNIQUIN(item) || ITEM_IS_MYUMBRELLA(item)) {
@@ -43,7 +43,7 @@ static void Player_actor_setup_main_Pickup_furniture(ACTOR* actorx, GAME* game) 
         main_pickup_furniture_p->exchange_flag = TRUE;
     }
 
-    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_PICKUP1, anim1_idx, 1.0f, 1.0f, 0.5f, -6.0f,
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_PICKUP1, anim1_idx, 1.0f, 1.0f, 0.5f, 0.0f,
                                      cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_PICK_UP);
     Player_actor_setup_main_Base(actorx, game);
 }
@@ -66,7 +66,7 @@ static void Player_actor_Movement_Pickup_furniture_common(ACTOR* actorx, xyz_t* 
                               DEG2SHORT_ANGLE2(13.73291015625f), DEG2SHORT_ANGLE2(0.274658203125f));
     }
 
-    Player_actor_Movement_Base_Braking_common(actorx, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
 }
 
 static void Player_actor_Movement_Pickup_furniture(ACTOR* actorx) {

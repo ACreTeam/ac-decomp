@@ -175,6 +175,15 @@ config/rel.yml:
   mbg_v:
     addrs: [0x80684BB0, 0x80684C30]
     type: vtx
+  # m_player
+  tol_sponge_1_v:
+    addrs: [0x8069E580, 0x8069E620]
+    type: vtx
+  tol_sponge_1_pal:
+    addrs: [0x8069E620, 0x8069E640]
+    type: pal16
+  tol_sponge_1_main1_tex_txt:
+    addrs: [0x8069E640, 0x8069E6C0]
   aKOI_obj_e_koinobori_a_pal:
     addrs: [0x806C5900, 0x806C5920]
     type: pal16

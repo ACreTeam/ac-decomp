@@ -130,8 +130,8 @@ static void Player_actor_ObjCheck_Get_scoop(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Get_scoop(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Get_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static int Player_actor_lean_angle_Get_scoop(ACTOR* actor) {
@@ -249,7 +249,7 @@ static void Player_actor_Set_Item_Get_scoop(ACTOR* actor) {
     if (fc->current_frame <= 21.0f) {
         main_scoop->scale = 0.0f;
     } else if (fc->current_frame < 27.0f) {
-        main_scoop->scale = (0.0017f * (fc->current_frame - 21.0f));
+        main_scoop->scale = (0.0016666666f * (fc->current_frame - 21.0f));
     } else {
         main_scoop->scale = 0.01f;
     }
@@ -271,7 +271,7 @@ static void Player_actor_request_proc_index_fromGet_scoop(ACTOR* actor, GAME* ga
     }
 }
 
-static void Player_actor_main_Pull_net(ACTOR* actor, GAME* game) {
+static void Player_actor_main_Get_scoop(ACTOR* actor, GAME* game) {
     int end_flag;
     f32 frame_calc;
     int cntrl;

@@ -490,6 +490,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
   )
 
 #define IS_ITEM_PALM_TREE(item) ((item) >= TREE_PALM_SAPLING && (item) < TREE_PALM_FRUIT)
+#define IS_ITEM_ANY_PALM_TREE(item) ((item) >= TREE_PALM_SAPLING && (item) <= TREE_PALM_FRUIT)
 
 #define IS_ITEM_TREE_STUMP(item) ((item >= TREE_STUMP001 && (item) <= TREE_STUMP004) || \
     (item) >= TREE_PALM_STUMP001 && (item) <= TREE_PALM_STUMP004 || \

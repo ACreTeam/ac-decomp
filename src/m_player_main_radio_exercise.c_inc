@@ -77,7 +77,7 @@ static void Player_actor_Set_RadioExerciseCommand_Radio_exercise(ACTOR* actorx, 
 }
 
 static void Player_actor_Movement_Radio_exercise(ACTOR* actorx) {
-    Player_actor_Movement_Base_Braking_common(actorx, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Radio_exercise(ACTOR* actorx) {
@@ -155,7 +155,7 @@ static void Player_actor_ObjCheck_Radio_exercise(ACTOR* actorx, GAME* game) {
     Player_actor_Excute_Corect_forStand(actorx, game);
 }
 
-static void Player_actor_BGCheck_Radio_exercise(ACTOR* actorx) {
+static void Player_actor_BGcheck_Radio_exercise(ACTOR* actorx) {
     Player_actor_BGcheck_common_type1(actorx);
 }
 

@@ -18,12 +18,12 @@ static void Player_actor_setup_Item_Tumble(ACTOR* actor, GAME* game, int kind, f
     }
 
     if (check == FALSE) {
-        Player_actor_LoadOrDestruct_Item(actor, kind, mPlib_Get_BasicItemAnimeIndex_fromItemKind(kind), 1, 0.5f, speed,
-                                         -1.0f);
+        Player_actor_LoadOrDestruct_Item(actor, kind, mPlib_Get_BasicItemAnimeIndex_fromItemKind(kind), 0.5f, speed,
+                                         -1.0f, cKF_FRAMECONTROL_REPEAT);
         Player_actor_Set_now_item_main_index(actor, Player_actor_Get_BasicItemMainIndex_fromItemKind(kind));
         player->item_kind = kind;
     } else {
-        Player_actor_LoadOrDestruct_Item(actor, kind, mPlayer_ANIM_GET1, 0, 0.5f, speed, -1.0f);
+        Player_actor_LoadOrDestruct_Item(actor, kind, mPlayer_ANIM_GET1, 0.5f, speed, -1.0f, cKF_FRAMECONTROL_STOP);
         Player_actor_Set_now_item_main_index(actor, mPlayer_INDEX_RETURN_OUTDOOR);
         player->item_kind = kind;
     }
@@ -119,12 +119,12 @@ static void Player_actor_SearchAnimation_Tumble(ACTOR* actor, GAME* game, f32 fr
     }
 }
 
-static void Player_actor_ObjCheck_Tumble(ACTOR* actor, GAME* game) { 
-    Player_actor_Excute_Corect_forStand(actor, game); 
+static void Player_actor_ObjCheck_Tumble(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Tumble(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Tumble(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromTumble(GAME* game, int arg1, int arg2) {

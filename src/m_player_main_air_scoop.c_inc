@@ -1,4 +1,4 @@
-static int Player_actor_request_main_Air_scoop_all(GAME* game, int priority) {
+static int Player_actor_request_main_air_scoop_all(GAME* game, int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_AIR_SCOOP, priority)) {
         Player_actor_request_main_index(game, mPlayer_INDEX_AIR_SCOOP, priority);
 
@@ -17,7 +17,7 @@ static void Player_actor_setup_main_Air_scoop(ACTOR* actor, GAME* game) {
 }
 
 static void Player_actor_Movement_Air_scoop(ACTOR* actor) {
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Air_scoop(ACTOR* actor, f32* frame_calc) {
@@ -43,8 +43,8 @@ static void Player_actor_ObjCheck_Air_scoop(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Air_scoop(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Air_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromAir_scoop(ACTOR* actor, GAME* game, int end_flag) {

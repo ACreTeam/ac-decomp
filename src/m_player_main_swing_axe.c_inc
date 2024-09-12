@@ -119,20 +119,12 @@ static mActor_name_t Player_actor_Get_TreeNoToStumpNo(ACTOR* actor, GAME* game, 
             }
 
             if (check <= 0) {
-                int palm;
-
                 mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_CHOP_TREE);
-                palm = FALSE;
-
-                if (IS_ITEM_PALM_TREE(item)) {
-                    palm = TRUE;
-                }
-
-                if (palm != FALSE) {
+                if (IS_ITEM_ANY_PALM_TREE(item) != FALSE) {
                     mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_CHOP_PALM_TREE);
                 }
 
-                return bg_item_fg_sub(item, 0);
+                return bg_item_fg_sub((mActor_name_t)item, 0);
             }
         }
     }
@@ -149,13 +141,9 @@ static void Player_actor_CutTree_Swing_axe(ACTOR* actor, GAME* game, mPlayer_mai
 
         if (mFI_Wpos2UtNum(&ut_x, &ut_z, main_axe->axe_common.target_pos)) {
             mActor_name_t tree = Player_actor_Get_TreeNoToStumpNo(actor, game, item, ut_x, ut_z, main_axe, flag);
-            int check = FALSE;
+            s16 type;
 
-            if (IS_ITEM_TREE_STUMP(tree)) {
-                check = TRUE;
-            }
-
-            if (check != FALSE) {
+            if (IS_ITEM_TREE_STUMP(tree) != FALSE) {
                 mNT_offset_table_c* ofs_tbl = obj_hight_table_item0_nogrow(tree);
 
                 mCoBG_SetPlussOffset(main_axe->axe_common.target_pos, ofs_tbl->table.centerRight_offset,
@@ -163,16 +151,16 @@ static void Player_actor_CutTree_Swing_axe(ACTOR* actor, GAME* game, mPlayer_mai
                 mFI_SetFG_common(tree, main_axe->axe_common.target_pos, TRUE);
 
                 if (main_axe->axe_common.target_pos.x > actor->world.position.x) {
-                    flag = 1;
+                    type = EffectBG_EFFECT_CUT_LEFT;
                 } else {
-                    flag = 2;
+                    type = EffectBG_EFFECT_CUT_RIGHT;
                 }
                 Player_actor_set_viblation_Axe_cut();
             } else {
-                flag = 0;
+                type = EffectBG_EFFECT_SHAKE;
                 Player_actor_set_viblation_Axe_hard();
             }
-            Player_actor_Set_EffectBgTree(game, item, flag, ut_x, ut_z);
+            Player_actor_Set_EffectBgTree(game, item, type, ut_x, ut_z);
         }
     }
 }

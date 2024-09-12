@@ -39,16 +39,16 @@ static int Player_actor_CulcAnimation_Fall(ACTOR* actor) {
     return Player_actor_CulcAnimation_Base2(actor, &frame_calc);
 }
 
-static void Player_actor_Movement_Fall(ACTOR* actor) { 
-    Player_actor_Movement_Base_Braking(actor); 
+static void Player_actor_Movement_Fall(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking(actor);
 }
 
-static void Player_actor_ObjCheck_Fall(ACTOR* actor, GAME* game) { 
-    Player_actor_Excute_Corect_forStand(actor, game); 
+static void Player_actor_ObjCheck_Fall(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Fall(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Fall(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromFall_common(ACTOR* actor, GAME* game) {
@@ -63,7 +63,7 @@ static void Player_actor_request_proc_index_fromFall_common(ACTOR* actor, GAME* 
     player_kind = Player_actor_Get_ItemKind(actor, player->now_main_index);
 
     if (kind != player_kind) {
-        Player_actor_request_main_fall_all(game, 0.0f, 1, mPlayer_REQUEST_PRIORITY_0);
+        Player_actor_request_main_fall_all(game, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
     }
 }
 

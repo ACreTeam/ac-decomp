@@ -24,7 +24,7 @@ static void Player_actor_CulcAnimation_Ready_walk_net(ACTOR* actor, f32* frame_c
     f32 sp = (actor->speed * speed) / 1.8f;
 
     sp = sqrtf(sp);
-    sp = 0.6f * sp;
+    sp = 0.252f * sp;
 
     if (actor->bg_collision_check.result.hit_wall_count == 2) {
         sp = 0.22f;
@@ -69,9 +69,9 @@ static void Player_actor_Movement_Ready_walk_net(ACTOR* actor, GAME* game, f32* 
         mod = 0.5f;
     } else {
         if (movePR <= 0.05f) {
-            mod = 0.1f;
+            mod = 0.01f;
         } else {
-            mod = 0.1f + (0.5157895f * (movePR - 0.05f));
+            mod = 0.01f + (0.5157895f * (movePR - 0.05f));
         }
     }
 
@@ -122,8 +122,8 @@ static void Player_actor_ObjCheck_Ready_walk_net(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Ready_walk_net(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Ready_walk_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_request_proc_index_fromReady_walk_net(ACTOR* actor, GAME* game) {

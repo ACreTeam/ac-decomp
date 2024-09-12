@@ -1,13 +1,9 @@
-typedef int (*mPlayer_item_proc)(ACTOR* actor, int, int);
-
-extern Gfx tol_sponge_1_model[];
+typedef void (*mPlayer_item_proc)(ACTOR* actor, int, int);
 
 static void Player_actor_Item_Setup_main(ACTOR* actor, int now, int last) {
     static const mPlayer_item_proc proc[] = {
-        NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, (mPlayer_item_proc)Player_actor_Item_Setup_main_balloon_normal,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &Player_actor_Item_Setup_main_balloon_normal,
         NULL, NULL,
     };
 

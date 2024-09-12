@@ -80,7 +80,7 @@ static void Player_actor_CulcAnimation_Walk(ACTOR* actor, f32 over_speed_normali
     f32 sp = (actor->speed * over_speed_normalize_NoneZero) / 7.5f;
 
     sp = sqrtf(sp);
-    sp = 0.6f * sp;
+    sp = 0.59999996f * sp;
 
     if (actor->bg_collision_check.result.hit_wall_count == 2) {
         if (!(actor->bg_collision_check.result.hit_wall & mCoBG_HIT_WALL_RIGHT) ||
@@ -143,9 +143,9 @@ static void Player_actor_Movement_Walk(ACTOR* actor, GAME* game, f32* frame) {
         mod = 0.5f;
     } else {
         if (movePR <= 0.05f) {
-            mod = 0.1f;
+            mod = 0.0099999998f;
         } else {
-            mod = 0.1f + (0.5157895f * (movePR - 0.05f));
+            mod = 0.0099999998f + (0.5157895f * (movePR - 0.05f));
         }
     }
 

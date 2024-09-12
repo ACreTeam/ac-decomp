@@ -353,6 +353,8 @@ typedef int (*mCoBG_LINECHECK_PROC)(mActor_name_t);
 
 extern int mCoBG_LineCheck_RemoveFg(xyz_t* rev_pos, xyz_t start_pos, xyz_t end_pos, mCoBG_LINECHECK_PROC check_proc,
                                     int category);
+extern int mCoBG_GetMoveBgHeight(f32* move_bg_height, xyz_t* pos_p);
+extern int mCoBG_WoodSoundEffect(const xyz_t* pos_p);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();

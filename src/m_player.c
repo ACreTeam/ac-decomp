@@ -23,8 +23,54 @@
 #include "ac_insect.h"
 #include "ac_gyoei.h"
 #include "ac_gyo_release.h"
+#include "jsyswrap.h"
+#include "ac_set_ovl_gyoei.h"
+#include "m_vibctl.h"
+#include "m_debug.h"
 
 /* Static function declarations, add as needed for intellisense */
+static void Player_actor_Item_Setup_main(ACTOR* actor, int now, int last);
+static mActor_name_t Player_actor_Get_ItemNoSubmenu(void);
+static int Player_actor_request_main_broken_axe_type_swing(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+                                                           int hit_ut_x, int hit_ut_z, int priority);
+static int Player_actor_request_main_swing_axe_all(GAME* game, const xyz_t* pos, mActor_name_t hit_item, u16 damage_no,
+                                                   int hit_ut_x, int hit_ut_z, int priority);
+static int Player_actor_request_main_broken_axe_type_reflect(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+                                                             ACTOR* hit_actor, int priority);
+static int Player_actor_request_main_reflect_axe_all(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+                                                     u16 damage_no, ACTOR* hit_actor, int priority);
+static int Player_actor_request_main_air_axe_all(GAME* game, int priority);
+static int Player_actor_request_main_rotate_umbrella_all(GAME* game, int prio);
+static int Player_actor_request_main_swing_fan_all(GAME* game, int start_swing, int prio);
+static int Player_actor_request_main_wade_all(GAME* game, int dir, int priority);
+static int Player_actor_request_main_demo_wade_all(GAME* game, int dir, int priority);
+static int Player_actor_request_main_demo_geton_boat_wade_all(GAME* game, int dir, f32 border_ofs, int prio);
+static int Player_actor_request_main_wade_snowball_all(GAME* game, int dir, const xyz_t* snowball_dist_p, int priority);
+static int Player_actor_Check_ItemAnimationToItemKind(int kind, int anim);
+static int Player_actor_request_main_dig_scoop_all(GAME* game, const xyz_t* pos, mActor_name_t name, int priority);
+static int Player_actor_request_main_fill_scoop_all(GAME* game, const xyz_t* pos, int priority);
+static int Player_actor_request_main_reflect_scoop_all(GAME* game, const xyz_t* pos, mActor_name_t item,
+                                                       ACTOR* hit_actor, int priority);
+static int Player_actor_request_main_air_scoop_all(GAME* game, int priority);
+static int Player_actor_request_main_get_scoop_all(GAME* game, const xyz_t* pos, mActor_name_t item, int priority);
+static int Player_actor_request_main_shake_tree_all(GAME* game, const xyz_t* target_pos_p, mActor_name_t item,
+                                                    int tree_ut_x, int tree_ut_z, int priority);
+static int Player_actor_request_main_ready_pitfall_all(GAME* game, const xyz_t* pos_p, int prio);
+static int Player_actor_request_main_knock_door(GAME* game, const xyz_t* pos_p, s16 angle_y, int prio);
+static s8 Player_actor_Get_ItemKind_fromScene(void);
+static int Player_actor_request_main_putin_item(GAME* game, int priority);
+static int Player_actor_request_main_takeout_item(GAME* game, int priority);
+static void Player_actor_Refuse_pickup_demo_ct(ACTOR* actor);
+static int Player_actor_request_main_pickup_jump(GAME* game, int slot_idx, mActor_name_t item, const xyz_t* item_pos_p,
+                                                 int ftr_flag, int knife_and_fork_flag);
+static int Player_actor_request_main_pickup_furniture(GAME* game, int slot_idx, mActor_name_t item,
+                                                      const xyz_t* item_pos_p);
+static int Player_actor_request_main_remove_grass(GAME* game, const xyz_t* target_pos_p, const xyz_t* grass_pos_p);
+static int Player_actor_request_main_pickup(GAME* game, mActor_name_t item, const xyz_t* target_pos_p,
+                                            const xyz_t* item_pos_p, int slot_idx, int signboard_flag);
+static int Player_actor_request_main_radio_exercise_all(GAME* game, int cmd, f32 speed, int prio);
+static void Player_actor_request_main_change_from_submenu(ACTOR* actorx, GAME* game);
+static void Player_actor_request_change_item(GAME* game);
 static int Player_actor_check_request_main_able(GAME* game, int request_main_index, int priority);
 static void Player_actor_request_main_index(GAME* game, int request_index, int priority);
 static void Player_actor_InitAnimation_Base1(ACTOR* actorx, GAME* game, int anim0_idx, int anim1_idx, f32 anim0_frame,
@@ -139,8 +185,8 @@ static void Player_actor_sound_move_temochi_kazaguruma(ACTOR* actor);
 static void Player_actor_set_viblation_Shake_tree(void);
 
 static int Player_actor_Item_main(ACTOR* actorx, GAME* game);
-static void Player_actor_LoadOrDestruct_Item(ACTOR* actor, int kind, int anim_idx, int mode, f32 speed, f32 morph_speed,
-                                             f32 frame);
+static void Player_actor_LoadOrDestruct_Item(ACTOR* actor, int kind, int anim_idx, f32 speed, f32 morph_speed,
+                                             f32 frame, int mode);
 static int Player_actor_Get_BasicItemMainIndex_fromItemKind(int kind);
 
 static int Player_actor_CheckController_forPickup(GAME* game);
@@ -161,6 +207,169 @@ static s16 Player_actor_GetController_old_move_angle(void);
 static f32 Player_actor_GetController_recognize_percentR(void);
 static f32 Player_actor_GetController_old_recognize_percentR(void);
 static int Player_actor_CheckController_forRadio_exercise(GAME* game);
+
+static void Player_actor_ct_forCorect(ACTOR* actorx, GAME* game);
+static void Player_actor_set_eye_pattern(ACTOR* actorx, int idx);
+static void Player_actor_set_mouth_pattern(ACTOR* actorx, int idx);
+static void Player_actor_Set_old_sound_frame_counter(ACTOR* actorx);
+static void Player_actor_change_proc_index(ACTOR* actorx, GAME* game);
+
+static int Player_actor_request_main_fail_emu(GAME* game, int prio);
+static int Player_actor_request_main_intro_all(GAME* game, int prio);
+static int Player_actor_request_main_wait_all(GAME* game, f32 morph_speed, f32 _04, int flags, int priority);
+
+static int Player_actor_request_main_invade_all(GAME*, int);
+// static int Player_actor_request_main_refuse(GAME*, int);
+// static int Player_actor_request_main_return_demo_all(GAME*, int, f32, int);
+// static int Player_actor_request_main_wait_all(GAME*, f32, f32, int, int);
+static int Player_actor_request_main_talk_all(GAME*, ACTOR*, int, f32, int, int);
+static int Player_actor_request_main_hold(GAME*, int, int, const xyz_t*, f32, int, int);
+static int Player_actor_request_main_recieve_wait(GAME*, ACTOR*, int, int, mActor_name_t, int, int);
+static int Player_actor_request_main_give_all(GAME*, ACTOR*, int, int, mActor_name_t, int, int, int, int);
+static int Player_actor_request_main_sitdown(GAME*, int, const xyz_t*, int, int);
+static int Player_actor_request_main_close_furniture(GAME*, int);
+static int Player_actor_request_main_lie_bed(GAME*, int, const xyz_t*, int, int, int);
+static int Player_actor_request_main_hide(GAME*, int);
+static int Player_actor_request_main_groundhog(GAME*, int);
+static int Player_actor_request_main_door(GAME*, const xyz_t*, s16, int, void*, int);
+static int Player_actor_request_main_outdoor(GAME*, int, int, int);
+static int Player_actor_request_main_wash_car_all(GAME*, const xyz_t*, const xyz_t*, s16, ACTOR*, int);
+static int Player_actor_request_main_rotate_octagon_all(GAME*, ACTOR*, int, int, const xyz_t*, s16, int);
+static int Player_actor_request_main_throw_money_all(GAME*, const xyz_t*, s16, int);
+static int Player_actor_request_main_pray_all(GAME*, const xyz_t*, s16, int);
+static int Player_actor_request_main_mail_jump_all(GAME*, const xyz_t*, s16, int);
+static int Player_actor_request_main_demo_wait_all(GAME*, int, void*, int);
+static int Player_actor_request_main_demo_walk_all(GAME*, f32, f32, f32, int, int);
+static int Player_actor_request_main_demo_geton_train(GAME*, const xyz_t*, s16, int);
+static int Player_actor_request_main_demo_getoff_train(GAME*, const xyz_t*, s16, int);
+static int Player_actor_request_main_demo_standing_train_all(GAME*, int);
+static int Player_actor_request_main_stung_bee_all(GAME*, int);
+static int Player_actor_request_main_shock_all(GAME*, f32, s16, s8, int, int);
+static int Player_actor_request_main_change_cloth_forNPC(GAME*, mActor_name_t, u16, int);
+static int Player_actor_request_main_push_snowball_all(GAME*, void*, int, int);
+static int Player_actor_request_main_stung_mosquito_all(GAME*, void*, int);
+static int Player_actor_request_main_switch_on_lighthouse_all(GAME*, const xyz_t*, s16, int);
+static int Player_actor_request_main_demo_geton_boat_all(GAME*, const xyz_t*, s16, int);
+static int Player_actor_request_main_demo_getoff_boat_standup_all(GAME*, const xyz_t*, s16, int);
+static int Player_actor_request_main_demo_get_golden_item2_all(GAME*, int, int);
+static int Player_actor_request_main_demo_get_golden_axe_wait_all(GAME*, int);
+static int Player_actor_check_request_main_priority(GAME*, int);
+static void* Player_actor_get_door_label(GAME*);
+static int Player_actor_Set_Item_net_catch_request_table(ACTOR*, GAME*, u32, s8, const xyz_t*, f32);
+static f32 Player_actor_Get_Item_net_catch_swing_timer(ACTOR*, GAME*);
+static int Player_actor_Set_Item_net_catch_request_force(ACTOR*, GAME*, u32, s8);
+static void Player_actor_Set_force_position_angle(GAME*, const xyz_t*, const s_xyz*, u8);
+static u8 Player_actor_Get_force_position_angle(GAME*, xyz_t*, s_xyz*);
+static int Player_actor_Get_WadeEndPos(GAME*, xyz_t*);
+static int Player_actor_Check_Label_main_push_snowball(GAME*, void*);
+static int Player_actor_SetParam_for_push_snowball(GAME*, const xyz_t*, s16, f32);
+static int Player_actor_able_submenu_request_main_index(GAME*);
+static int Player_actor_check_able_change_camera_normal_index(ACTOR*);
+static int Player_actor_Check_able_force_speak_label(GAME*, void*);
+static int Player_actor_check_cancel_request_change_proc_index(int);
+static u32 Player_actor_Get_item_net_catch_label(ACTOR*);
+static int Player_actor_Change_item_net_catch_label(ACTOR*, u32, s8);
+static int Player_actor_Check_StopNet(ACTOR*, xyz_t*);
+static int Player_actor_Check_HitAxe(ACTOR*, xyz_t*);
+static int Player_actor_Check_VibUnit_OneFrame(ACTOR*, const xyz_t*);
+static int Player_actor_Check_HitScoop(ACTOR*, xyz_t*);
+static int Player_actor_Check_DigScoop(ACTOR*, xyz_t*);
+static int Player_actor_check_request_change_item(GAME*);
+static int Player_actor_Check_RotateOctagon(GAME*);
+static int Player_actor_Check_end_stung_bee(ACTOR*);
+static int Player_actor_Get_status_for_bee(ACTOR*);
+static int Player_actor_Set_ScrollDemo_forWade_snowball(ACTOR*, int, const xyz_t*);
+static int Player_actor_Check_tree_shaken(ACTOR*, const xyz_t*);
+static int Player_actor_Check_tree_shaken_little(ACTOR*, const xyz_t*);
+static int Player_actor_Check_tree_shaken_big(ACTOR*, const xyz_t*);
+static int Player_actor_Check_Label_main_wade_snowball(GAME*, void*);
+static int Player_actor_GetSnowballPos_forWadeSnowball(ACTOR*, xyz_t*);
+static int Player_actor_CheckCondition_forWadeSnowball(GAME*, const xyz_t*, s16);
+static mActor_name_t Player_actor_Get_itemNo_forWindow(ACTOR*);
+static int Player_actor_check_cancel_event_without_priority(GAME*);
+static int Player_actor_CheckScene_AbleSubmenu(void);
+static int Player_actor_Check_stung_mosquito(GAME*, void*);
+
+static int Player_actor_request_main_walk_all(GAME*, xyz_t*, f32, int, int);
+static int Player_actor_request_main_run_all(GAME*, f32, int, int);
+static int Player_actor_request_main_dash_all(GAME*, f32, int, int);
+static int Player_actor_request_main_return_outdoor2_all(GAME* game, int prev_index, int now_index, f32 time, f32 arg5);
+static int Player_actor_request_main_fall_all(GAME* game, f32 speed, int flags, int prio);
+static int Player_actor_request_main_ready_net(GAME* game, int priority);
+static int Player_actor_request_main_ready_rod(GAME* game, int priority);
+static int Player_actor_request_main_slip_net(GAME* game, int priority);
+static int Player_actor_request_main_turn_dash_all(GAME* game, s16 angle, int prio);
+static int Player_actor_request_main_tumble(GAME* game, int priority);
+static int Player_actor_request_main_tumble_getup(GAME* game, int prio);
+static int Player_actor_request_main_release_creature_all(GAME* game, int type, int gold_scoop_flag,
+                                                          mPlayer_request_release_creature_u* release_data,
+                                                          ACTOR* release_actor_p, int prio);
+static int Player_actor_request_main_complete_payment(GAME* game, int prio);
+static int Player_actor_request_main_push(GAME* game, int ftr_no, s16 angle_y, xyz_t* pos, int priority);
+static int Player_actor_request_main_pull(GAME* game, int ftr_no, s16 angle, xyz_t* start_pos, xyz_t* end_pos,
+                                          xyz_t* ofs, int priority);
+static int Player_actor_request_main_rotate_furniture(GAME* game, int ftr_no, s16 angle, xyz_t* pos, int type,
+                                                      int priority);
+static int Player_actor_request_main_open_furniture(GAME* game, s16 angle, xyz_t* pos, int anim_idx, int priority);
+static int Player_actor_request_main_wait_open_furniture(GAME* game, int priority);
+static int Player_actor_request_main_wait_bed(GAME* game, int priority);
+static int Player_actor_request_main_roll_bed(GAME* game, int direction, int priority);
+static int Player_actor_request_main_standup_bed(GAME* game, int move_direction, int priority);
+static int Player_actor_request_main_pickup_exchange(GAME* game, const xyz_t* target_pos_p, mActor_name_t item,
+                                                     int priority);
+static int Player_actor_request_main_demo_get_golden_item_all(GAME* game, int type, int prio);
+static int Player_actor_request_main_sitdown_wait(GAME* game, int ftr_no, int priority);
+static int Player_actor_request_main_standup(GAME* game, int ftr_no, int priority);
+static int Player_actor_request_main_swing_net(GAME* game, int priority);
+static int Player_actor_request_main_ready_walk_net(GAME* game, int priority);
+static int Player_actor_request_main_pull_net(GAME* game, int priority);
+static int Player_actor_request_main_stop_net(GAME* game, int priority);
+static int Player_actor_request_main_notice_net(GAME* game, int already_collected, int priority);
+static int Player_actor_request_main_putaway_net(GAME* game, int exchange_flag, int priority);
+static int Player_actor_request_main_cast_rod(GAME* game, const xyz_t* pos, int priority);
+static int Player_actor_request_main_air_rod(GAME* game, int priority);
+static int Player_actor_request_main_relax_rod(GAME* game, int priority);
+static int Player_actor_request_main_vib_rod(GAME* game, int priority);
+static int Player_actor_request_main_collect_rod(GAME* game, int priority);
+static int Player_actor_request_main_fly_rod(GAME* game, int priority);
+static int Player_actor_request_main_notice_rod(GAME* game, s16 angle, int priority);
+static int Player_actor_request_main_putaway_rod(GAME* game, s16 angle, int exchange_flag, int priority);
+static int Player_actor_request_main_recieve_stretch(GAME* game, ACTOR* talk_actor_p, int turn_flag, int ret_main_index,
+                                                     mActor_name_t item, int surface_flag, int priority);
+static int Player_actor_request_main_recieve(GAME* game, ACTOR* talk_actor_p, int turn_flag, int ret_main_index,
+                                             mActor_name_t item, int surface_flag, int priority);
+static int Player_actor_request_main_recieve_putaway(GAME* game, ACTOR* talk_actor_p, int turn_flag, int ret_main_index,
+                                                     mActor_name_t item, int surface_flag, int priority);
+static int Player_actor_request_main_give_wait_all(GAME* game, ACTOR* talk_actor_p, int turn_flag, int ret_main_index,
+                                                   mActor_name_t item, int surface_flag, int priority);
+static int Player_actor_request_main_demo_geton_train_wait_all(GAME* game, int prio);
+static int Player_actor_request_main_tired_all(GAME* game, int priority);
+static int Player_actor_request_main_fall_pitfall_all(GAME* game, int prio);
+static int Player_actor_request_main_struggle_pitfall_all(GAME* game, int prio);
+static int Player_actor_request_main_climbup_pitfall_all(GAME* game, int prio);
+static int Player_actor_request_main_notice_bee_all(GAME* game, int prio);
+static int Player_actor_request_main_notice_mosquito(GAME* game, u32 label, int prio);
+static int Player_actor_request_main_demo_geton_boat_sitdown_all(GAME* game, int prio);
+static int Player_actor_request_main_demo_geton_boat_wait_all(GAME* game, int prio);
+static int Player_actor_request_main_demo_getoff_boat_all(GAME* game, const xyz_t* pos_p, s16 angle_y, int prio);
+
+#ifdef MUST_MATCH
+#ifndef __INTELLISENSE__
+/* Force assetrip to detect these assets. They're used in a .c_inc file. */
+FORCESTRIP static Vtx tol_sponge_1_v_0[] = {
+#include "assets/tol_sponge_1_v.inc"
+};
+FORCESTRIP static u16 tol_sponge_1_pal_0[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/tol_sponge_1_pal.inc"
+};
+FORCESTRIP static u8 tol_sponge_1_main1_tex_txt_0[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/tol_sponge_1_main1_tex_txt.inc"
+};
+#endif
+#endif
+
+/* Tool Models */
+#include "../src/m_player_tools.c_inc"
 
 /* Common */
 #include "../src/m_player_controller.c_inc"
@@ -306,90 +515,6 @@ static int Player_actor_CheckController_forRadio_exercise(GAME* game);
 #include "../src/m_player_main_demo_get_golden_item.c_inc"
 #include "../src/m_player_main_demo_get_golden_item2.c_inc"
 #include "../src/m_player_main_demo_get_golden_axe_wait.c_inc"
-
-/* TODO: looks like all the c_inc files are included before the player funcs in this file based on rodata ordering */
-
-static void Player_actor_ct_forCorect(ACTOR* actorx, GAME* game);
-static void Player_actor_set_eye_pattern(ACTOR* actorx, int idx);
-static void Player_actor_set_mouth_pattern(ACTOR* actorx, int idx);
-static void Player_actor_Set_old_sound_frame_counter(ACTOR* actorx);
-static void Player_actor_change_proc_index(ACTOR* actorx, GAME* game);
-
-static int Player_actor_request_main_invade_all(GAME*, int);
-// static int Player_actor_request_main_refuse(GAME*, int);
-// static int Player_actor_request_main_return_demo_all(GAME*, int, f32, int);
-// static int Player_actor_request_main_wait_all(GAME*, f32, f32, int, int);
-static int Player_actor_request_main_talk_all(GAME*, ACTOR*, int, f32, int, int);
-static int Player_actor_request_main_hold(GAME*, int, int, const xyz_t*, f32, int, int);
-static int Player_actor_request_main_recieve_wait(GAME*, ACTOR*, int, int, mActor_name_t, int, int);
-static int Player_actor_request_main_give_all(GAME*, ACTOR*, int, int, mActor_name_t, int, int, int, int);
-static int Player_actor_request_main_sitdown(GAME*, int, const xyz_t*, int, int);
-static int Player_actor_request_main_close_furniture(GAME*, int);
-static int Player_actor_request_main_lie_bed(GAME*, int, const xyz_t*, int, int, int);
-static int Player_actor_request_main_hide(GAME*, int);
-static int Player_actor_request_main_groundhog(GAME*, int);
-static int Player_actor_request_main_door(GAME*, const xyz_t*, s16, int, u32, int);
-static int Player_actor_request_main_outdoor(GAME*, int, int, int);
-static int Player_actor_request_main_wash_car_all(GAME*, const xyz_t*, const xyz_t*, s16, ACTOR*, int);
-static int Player_actor_request_main_rotate_octagon_all(GAME*, ACTOR*, int, int, const xyz_t*, s16, int);
-static int Player_actor_request_main_throw_money_all(GAME*, const xyz_t*, s16, int);
-static int Player_actor_request_main_pray_all(GAME*, const xyz_t*, s16, int);
-static int Player_actor_request_main_mail_jump_all(GAME*, const xyz_t*, s16, int);
-static int Player_actor_request_main_demo_wait_all(GAME*, int, u32, int);
-static int Player_actor_request_main_demo_walk_all(GAME*, f32, f32, f32, int, int);
-static int Player_actor_request_main_demo_geton_train(GAME*, const xyz_t*, s16, int);
-static int Player_actor_request_main_demo_getoff_train(GAME*, const xyz_t*, s16, int);
-static int Player_actor_request_main_demo_standing_train_all(GAME*, int);
-static int Player_actor_request_main_stung_bee_all(GAME*, int);
-static int Player_actor_request_main_shock_all(GAME*, f32, s16, s8, int, int);
-static int Player_actor_request_main_change_cloth_forNPC(GAME*, mActor_name_t, u16, int);
-static int Player_actor_request_main_push_snowball_all(GAME*, u32, int, int);
-static int Player_actor_request_main_stung_mosquito_all(GAME*, u32, int);
-static int Player_actor_request_main_switch_on_lighthouse_all(GAME*, const xyz_t*, s16, int);
-static int Player_actor_request_main_demo_geton_boat_all(GAME*, const xyz_t*, s16, int);
-static int Player_actor_request_main_demo_getoff_boat_standup_all(GAME*, const xyz_t*, s16, int);
-static int Player_actor_request_main_demo_get_golden_item2_all(GAME*, int, int);
-static int Player_actor_request_main_demo_get_golden_axe_wait_all(GAME*, int);
-static int Player_actor_check_request_main_priority(GAME*, int);
-static u32 Player_actor_get_door_label(GAME*);
-static int Player_actor_Set_Item_net_catch_request_table(ACTOR*, GAME*, u32, s8, const xyz_t*, f32);
-static f32 Player_actor_Get_Item_net_catch_swing_timer(ACTOR*, GAME*);
-static int Player_actor_Set_Item_net_catch_request_force(ACTOR*, GAME*, u32, s8);
-static void Player_actor_Set_force_position_angle(GAME*, const xyz_t*, const s_xyz*, u8);
-static u8 Player_actor_Get_force_position_angle(GAME*, xyz_t*, s_xyz*);
-static int Player_actor_Get_WadeEndPos(GAME*, xyz_t*);
-static int Player_actor_Check_Label_main_push_snowball(GAME*, u32);
-static int Player_actor_SetParam_for_push_snowball(GAME*, const xyz_t*, s16, f32);
-static int Player_actor_able_submenu_request_main_index(GAME*);
-static int Player_actor_check_able_change_camera_normal_index(ACTOR*);
-static int Player_actor_Check_able_force_speak_label(GAME*, u32);
-static int Player_actor_check_cancel_request_change_proc_index(int);
-static u32 Player_actor_Get_item_net_catch_label(ACTOR*);
-static int Player_actor_Change_item_net_catch_label(ACTOR*, u32, s8);
-static int Player_actor_Check_StopNet(ACTOR*, xyz_t*);
-static int Player_actor_Check_HitAxe(ACTOR*, xyz_t*);
-static int Player_actor_Check_VibUnit_OneFrame(ACTOR*, const xyz_t*);
-static int Player_actor_Check_HitScoop(ACTOR*, xyz_t*);
-static int Player_actor_Check_DigScoop(ACTOR*, xyz_t*);
-static int Player_actor_check_request_change_item(GAME*);
-static int Player_actor_Check_RotateOctagon(GAME*);
-static int Player_actor_Check_end_stung_bee(ACTOR*);
-static int Player_actor_Get_status_for_bee(ACTOR*);
-static int Player_actor_Set_ScrollDemo_forWade_snowball(ACTOR*, int, const xyz_t*);
-static int Player_actor_Check_tree_shaken(ACTOR*, const xyz_t*);
-static int Player_actor_Check_tree_shaken_little(ACTOR*, const xyz_t*);
-static int Player_actor_Check_tree_shaken_big(ACTOR*, const xyz_t*);
-static int Player_actor_Check_Label_main_wade_snowball(GAME*, u32);
-static int Player_actor_GetSnowballPos_forWadeSnowball(ACTOR*, xyz_t*);
-static int Player_actor_CheckCondition_forWadeSnowball(GAME*, const xyz_t*, s16);
-static mActor_name_t Player_actor_Get_itemNo_forWindow(ACTOR*);
-static int Player_actor_check_cancel_event_without_priority(GAME*);
-static int Player_actor_CheckScene_AbleSubmenu(void);
-static int Player_actor_Check_stung_mosquito(GAME*, u32);
-
-static int Player_actor_request_main_walk_all(GAME*, xyz_t*, f32, int, int);
-static int Player_actor_request_main_run_all(GAME*, f32, int, int);
-static int Player_actor_request_main_dash_all(GAME*, f32, int, int);
 
 // static void Player_actor_Refuse_pickup_demo_ct(ACTOR*);
 

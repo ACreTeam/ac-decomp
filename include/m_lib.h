@@ -34,8 +34,8 @@ extern "C" {
 
 /* degrees -> short angle */
 #define DEG2SHORT_ANGLE(deg) ((s16)((deg) * (65536.0f / 360.0f)))
-
 #define DEG2SHORT_ANGLE2(deg) ((int)((deg) * (65536.0f / 360.0f)))
+#define DEG2SHORT_ANGLE3(deg) ((deg) * (65536.0f / 360.0f))
 
 /* short angle -> degrees */
 #define SHORT2DEG_ANGLE(s) ((((f32)(s)) / (65536.0f / 360.0f)))

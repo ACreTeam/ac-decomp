@@ -24,8 +24,8 @@ static void Player_actor_setup_main_Putin_item(ACTOR* actorx, GAME* game) {
     main_putin_item_p->back_request_data = *req_putin_item_p;
     main_putin_item_p->timer = 0.0f;
 
-    Player_actor_LoadOrDestruct_Item(actorx, item_kind, mPlib_Get_BasicItemAnimeIndex_fromItemKind(item_kind),
-                                     cKF_FRAMECONTROL_REPEAT, 0.5f, 5.0f, -1.0f);
+    Player_actor_LoadOrDestruct_Item(actorx, item_kind, mPlib_Get_BasicItemAnimeIndex_fromItemKind(item_kind), 0.5f,
+                                     5.0f, -1.0f, cKF_FRAMECONTROL_REPEAT);
     Player_actor_Set_now_item_main_index(actorx, Player_actor_Get_BasicItemMainIndex_fromItemKind(item_kind));
     player->item_kind = item_kind;
 
@@ -57,7 +57,7 @@ static void Player_actor_setup_main_Putin_item(ACTOR* actorx, GAME* game) {
 }
 
 static void Player_actor_Movement_Putin_item(ACTOR* actorx) {
-    Player_actor_Movement_Base_Braking_common(actorx, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Putin_item(ACTOR* actorx, f32* last_anim0_cur_frame_p) {

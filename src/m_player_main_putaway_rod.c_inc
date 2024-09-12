@@ -26,14 +26,14 @@ static void Player_actor_setup_main_Putaway_rod(ACTOR* actor, GAME* game) {
 
     Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_TRANS_WAIT1, mPlayer_INDEX_HOLD, -5.0f, -1.0f, 0);
     Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_PUTAWAY_T1, mPlayer_ANIM_PUTAWAY_T1, 1.0f, 1.0f, 0.5f,
-                                     -5.0f, 0, 0);
+                                     -3.0f, 0, 0);
     Player_actor_setup_main_Base(actor, game);
 
     Player_actor_sound_GASAGOSO(actor);
 }
 
 static void Player_actor_Movement_Putaway_rod(ACTOR* actor) {
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Putaway_rod(ACTOR* actor, f32* frame_calc) {
@@ -44,8 +44,8 @@ static void Player_actor_ObjCheck_Putaway_rod(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Putaway_rod(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Putaway_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_SearchAnimation_Putaway_rod(ACTOR* actor, GAME* game, f32 frame) {

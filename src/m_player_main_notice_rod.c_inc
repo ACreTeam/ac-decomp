@@ -12,7 +12,7 @@ static int Player_actor_request_main_notice_rod(GAME* game, s16 angle, int prior
     return FALSE;
 }
 
-static void Player_actor_setup_main_Notice_net(ACTOR* actor, GAME* game) {
+static void Player_actor_setup_main_Notice_rod(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
     mPlayer_request_notice_rod_c* req_notice = &player->requested_main_index_data.notice_rod;
@@ -55,7 +55,7 @@ static void Player_actor_setup_main_Notice_net(ACTOR* actor, GAME* game) {
     Player_actor_setup_main_Base(actor, game);
 }
 
-static void Player_actor_settle_main_Notice_rod(ACTOR* actor) {
+static void Player_actor_settle_main_Notice_rod(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
 
@@ -69,7 +69,7 @@ static void Player_actor_settle_main_Notice_rod(ACTOR* actor) {
 static void Player_actor_Movement_Notice_rod(ACTOR* actor) {
     add_calc_short_angle2(&actor->shape_info.rotation.y, 0, 1.0f - sqrtf(0.5), 2500, 50);
     actor->world.angle.y = actor->shape_info.rotation.y;
-    Player_actor_Movement_Base_Braking_common(actor, 0.32625f);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
 }
 
 static int Player_actor_CulcAnimation_Notice_rod(ACTOR* actor, f32* frame_calc) {
@@ -88,8 +88,8 @@ static void Player_actor_ObjCheck_Notice_rod(ACTOR* actor, GAME* game) {
     Player_actor_Excute_Corect_forStand(actor, game);
 }
 
-static void Player_actor_BGcheck_Notice_rod(ACTOR* actor) { 
-    Player_actor_BGcheck_common_type1(actor); 
+static void Player_actor_BGcheck_Notice_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
 }
 
 static void Player_actor_SearchAnimation_Notice_rod(ACTOR* actor, GAME* game, f32 frame) {
@@ -203,7 +203,7 @@ static int Player_actor_MessageControl_Notice_rod(ACTOR* actor, GAME* game, int 
     mMsg_Window_c* win = mMsg_Get_base_window_p();
     int choice;
 
-    if (main_notice->timer < 48.0f) {
+    if (main_notice->timer < 42.0f) {
         main_notice->timer += 1.0f;
         return -1;
     }
