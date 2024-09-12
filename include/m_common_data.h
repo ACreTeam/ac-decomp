@@ -241,7 +241,8 @@ typedef struct common_data_s {
     /* 0x028592 */ s16 demo_profiles[2]; /* demo_profiles[0] is for demo_clip, demo_profiles[1] is for demo_clip2 */
     /* 0x028596 */ u16 copy_protect_code;
     /* 0x028598 */ int event_keep_flags[4];
-    /* 0x0285A8 */ u8 _285A8[0x0285BE - 0x0285A8];
+    /* 0x0285A8 */ u8 _285A8[0x0285BD - 0x0285A8];
+    /* 0x0285BD */ s8 player_warp_request;
     /* 0x0285BE */ s8 player_actor_exists;
     /* 0x0285BF */ s8 complete_payment_type;
     /* 0x0285C0 */ s8 player_decoy_flag;
@@ -258,8 +259,8 @@ typedef struct common_data_s {
     /* 0x028839 */ s8 player_bee_chase_flag;
     /* 0x02883A */ s8 goki_shocked_flag;
     /* 0x02883B */ u8 time_changed_flag;
-    /* 0x02883C */ u8 unable_to_wade_flag;
-    /* 0x02883D */ u8 fail_emu_flag;
+    /* 0x02883C */ s8 unable_wade;
+    /* 0x02883D */ s8 fail_emu_flag;
     /* 0x02883E */ u8 train_coming_flag;        /* state tracker for when train is going to spawn/has spawned */
     /* 0x02883F */ u8 train_exists_flag;        /* state tracker for when train exists */
     /* 0x028840 */ u8 train_control_state;      /* current train state */

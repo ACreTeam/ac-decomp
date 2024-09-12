@@ -87,6 +87,8 @@ enum {
 #define mPr_ORIGINAL_DESIGN_COUNT 8
 #define mPr_RADIOCARD_MAX_DAYS 13
 
+#define mPr_ORIGINAL_DESIGN_IDX_VALID(idx) ((idx) >= 0 && (idx) < mPr_ORIGINAL_DESIGN_COUNT)
+
 #define mPr_GET_ITEM_COND(all_cond, slot_no) (((all_cond) >> (((u32)(slot_no)) << 1)) & mPr_ITEM_COND_NUM)
 #define mPr_SET_ITEM_COND(all_cond, slot_no, cond) \
     (((all_cond) & ~((u32)mPr_ITEM_COND_NUM << ((u32)(slot_no) << 1))) | ((u32)(cond) << ((u32)(slot_no) << 1)))

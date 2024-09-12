@@ -308,7 +308,7 @@ extern int mFI_UnregistMoveActorList(mActor_name_t actor_name, int bx, int bz);
 extern int mFI_AddMoveActorList(mActor_name_t actor_name, int bx, int bz, int ut_x, int ut_z, s16 arg);
 extern mFM_move_actor_c* mFI_MoveActorListDma(int bx, int bz);
 extern void mFI_InitMoveActorBitData();
-extern void mFI_SetPlayerWade(GAME_PLAY* play);
+extern void mFI_SetPlayerWade(GAME* game);
 extern int mFI_CheckPlayerWade(int wade);
 extern int mFI_GetPlayerWade();
 extern int mFI_GetNextBlockNum(int* bx, int* bz);

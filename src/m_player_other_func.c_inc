@@ -6,8 +6,7 @@ void Player_actor_ct_other_func1(ACTOR* actor, GAME* game) {
     actor->unknown_b4 = 1;
 
     Actor_info_make_actor(&play->actor_info, game, mAc_PROFILE_FIELD_DRAW, actor->world.position.x,
-                          actor->world.position.y, actor->world.position.z, 0, 0, 0, -1, -1,
-                          -1, EMPTY_NO, -1, -1, -1);
+                          actor->world.position.y, actor->world.position.z, 0, 0, 0, -1, -1, -1, EMPTY_NO, -1, -1, -1);
 }
 
 void Player_actor_setup_main_Wade_other_func1(ACTOR* actor, GAME* game) {
@@ -253,13 +252,12 @@ void Player_actor_move_other_func1(ACTOR* actor, GAME* game) {
 
 void Player_actor_move_other_func2(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
-    GAME_PLAY* play = (GAME_PLAY*)game;
 
     Player_actor_set_eye_PositionAndAngle(actor);
     Player_actor_sound_SetStatus(actor);
     Player_actor_Set_Indoor_Camera_Index(actor, game);
     Player_actor_check_forward(actor, game);
-    mFI_SetPlayerWade(play);
+    mFI_SetPlayerWade(game);
     Player_actor_check_little_shake_tree(actor, game);
     Player_actor_check_shake_tree_timer(actor);
     Player_actor_check_pitfall(actor, game);

@@ -350,6 +350,13 @@ enum {
     mEv_SPECIAL_STATE_NUM
 };
 
+enum {
+    mEv_EVENT_MAIL_VT_DAY, /* Valentine's day */
+    mEv_EVENT_MAIL_WT_DAY, /* White day */
+
+    mEv_EVENT_MAIL_NUM
+};
+
 #define mEv_STATUS_ACTIVE (1 << 0)    /* event is active */
 #define mEv_STATUS_STOP (1 << 1)      /* event is stopped */
 #define mEv_STATUS_SHOW (1 << 2)      /* event is shown */

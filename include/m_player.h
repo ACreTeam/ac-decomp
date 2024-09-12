@@ -775,6 +775,37 @@ enum {
     mPlayer_GOLDEN_ITEM_TYPE_NUM
 };
 
+enum {
+    mPlayer_USE_FACE_ROM_TYPE_TEX,
+    mPlayer_USE_FACE_ROM_TYPE_PAL,
+
+    mPlayer_USE_FACE_ROM_TYPE_NUM
+};
+
+enum {
+    mPlayer_EYE_TEX0,
+    mPlayer_EYE_TEX1,
+    mPlayer_EYE_TEX2,
+    mPlayer_EYE_TEX3,
+    mPlayer_EYE_TEX4,
+    mPlayer_EYE_TEX5,
+    mPlayer_EYE_TEX6,
+    mPlayer_EYE_TEX7,
+
+    mPlayer_EYE_TEX_NUM
+};
+
+enum {
+    mPlayer_MOUTH_TEX0,
+    mPlayer_MOUTH_TEX1,
+    mPlayer_MOUTH_TEX2,
+    mPlayer_MOUTH_TEX3,
+    mPlayer_MOUTH_TEX4,
+    mPlayer_MOUTH_TEX5,
+
+    mPlayer_MOUTH_TEX_NUM
+};
+
 #define mPlayer_SETUP_TEXTURE_ANIMATION_NONE (0 << 0)
 /* Where is (1 << 0)? */
 #define mPlayer_SETUP_TEXTURE_ANIMATION_EYE (1 << 1)
@@ -1987,10 +2018,10 @@ typedef struct {
 
 typedef struct controller_data_s {
     MCON mcon;
-    s8 on;
-    s8 now;
-    s8 unk3A;
-    s8 unk3B;
+    s8 trigger_btn_a;
+    s8 btn_a;
+    s8 trigger_btn_b;
+    s8 btn_b;
     mActor_name_t equiped_item;
 } mPlayer_Controller_Data_c;
 
@@ -2174,10 +2205,10 @@ struct player_actor_s {
     /* 0x12D0 */ int (*request_main_demo_standing_train_all_proc)(GAME*, int);
     /* 0x12D4 */ int (*request_main_stung_bee_all_proc)(GAME*, int);
     /* 0x12D8 */ int (*request_main_shock_all_proc)(GAME*, f32, s16, s8, int, int);
-    /* 0x12DC */ int (*request_main_change_cloth_forNPC_proc)(GAME*, mActor_name_t, int);
+    /* 0x12DC */ int (*request_main_change_cloth_forNPC_proc)(GAME*, mActor_name_t, u16, int);
     /* 0x12E0 */ int (*request_main_push_snowball_all_proc)(GAME*, void*, int, int);
-    /* 0x12E4 */ int (*request_main_stung_mosquito_all_proc)(GAME*, int, int);
-    /* 0x12E8 */ int (*request_main_switch_on_lighthouse_all_proc)(GAME*, const xyz_t*, int, int);
+    /* 0x12E4 */ int (*request_main_stung_mosquito_all_proc)(GAME*, void*, int);
+    /* 0x12E8 */ int (*request_main_switch_on_lighthouse_all_proc)(GAME*, const xyz_t*, s16, int);
     /* 0x12EC */ int (*request_main_demo_geton_boat_all_proc)(GAME*, const xyz_t*, s16, int);
     /* 0x12F0 */ int (*request_main_demo_getoff_boat_standup_all_proc)(GAME*, const xyz_t*, s16, int);
     /* 0x12F4 */ int (*request_main_demo_get_golden_item2_all_proc)(GAME*, int, int);
@@ -2194,7 +2225,7 @@ struct player_actor_s {
     /* 0x1320 */ int (*SetParam_for_push_snowball_proc)(GAME*, const xyz_t*, s16, f32);
     /* 0x1324 */ int (*able_submenu_request_main_index_proc)(GAME*);
     /* 0x1328 */ int (*check_able_change_camera_normal_index_proc)(ACTOR*);
-    /* 0x132C */ int (*Check_able_force_speak_label_proc)(GAME*, ACTOR*);
+    /* 0x132C */ int (*Check_able_force_speak_label_proc)(GAME*, void*);
     /* 0x1330 */ int (*check_cancel_request_change_proc_index_proc)(int);
     /* 0x1334 */ u32 (*Get_item_net_catch_label_proc)(ACTOR*);
     /* 0x1338 */ int (*Change_item_net_catch_label_proc)(ACTOR*, u32, s8);
@@ -2217,7 +2248,7 @@ struct player_actor_s {
     /* 0x137C */ mActor_name_t (*Get_itemNo_forWindow_proc)(ACTOR*);
     /* 0x1380 */ int (*check_cancel_event_without_priority_proc)(GAME*);
     /* 0x1384 */ int (*CheckScene_AbleSubmenu_proc)();
-    /* 0x1388 */ int (*Check_stung_mosquito_proc)(GAME*, ACTOR*);
+    /* 0x1388 */ int (*Check_stung_mosquito_proc)(GAME*, void*);
     /* 0x138C */ int a_btn_pressed;
     /* 0x1390 */ int a_btn_triggers_submenu;
     /* 0x1394 */ mActor_name_t item_in_front; /* item directly in front of the player */

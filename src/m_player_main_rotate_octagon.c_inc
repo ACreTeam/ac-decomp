@@ -39,7 +39,7 @@ static void Player_actor_setup_main_Rotate_octagon(ACTOR* actorx, GAME* game) {
     Player_actor_setup_main_Base(actorx, game);
 }
 
-static void Player_actor_settle_main_Rotate_octagon(ACTOR* actorx) {
+static void Player_actor_settle_main_Rotate_octagon(ACTOR* actorx, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
 

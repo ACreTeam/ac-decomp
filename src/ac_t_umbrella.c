@@ -19,17 +19,19 @@ static void aTUMB_actor_ct(ACTOR* actor, GAME* game);
 static void aTUMB_actor_move(ACTOR* actor, GAME* game);
 static void aTUMB_actor_draw(ACTOR* actor, GAME* game);
 
-ACTOR_PROFILE T_Umbrella_Profile = { mAc_PROFILE_T_UMBRELLA,
-                                     ACTOR_PART_BG,
-                                     ACTOR_STATE_NO_DRAW_WHILE_CULLED | ACTOR_STATE_NO_MOVE_WHILE_CULLED,
-                                     EMPTY_NO,
-                                     ACTOR_OBJ_BANK_UMBRELLA,
-                                     sizeof(UMBRELLA_ACTOR),
-                                     &aTUMB_actor_ct,
-                                     NONE_ACTOR_PROC,
-                                     &aTUMB_actor_move,
-                                     &aTUMB_actor_draw,
-                                     NULL };
+ACTOR_PROFILE T_Umbrella_Profile = {
+    mAc_PROFILE_T_UMBRELLA,
+    ACTOR_PART_BG,
+    ACTOR_STATE_NO_DRAW_WHILE_CULLED | ACTOR_STATE_NO_MOVE_WHILE_CULLED,
+    EMPTY_NO,
+    ACTOR_OBJ_BANK_UMBRELLA,
+    sizeof(UMBRELLA_ACTOR),
+    &aTUMB_actor_ct,
+    NONE_ACTOR_PROC,
+    &aTUMB_actor_move,
+    &aTUMB_actor_draw,
+    NULL,
+};
 
 extern Gfx e_umb01_model[];
 extern Gfx kasa_umb01_model[];
