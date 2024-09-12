@@ -382,10 +382,10 @@ extern void cKF_SkeletonInfo_R_combine_work_set(cKF_SkeletonInfo_R_combine_work_
  * @param joint Pointer to the joint data.
  * @param flag Pointer to the current joint flag.
  * @param combine Pointer to the combine work set structure.
- * @param cwork_num Pointer to the current work layer number.
+ * @param part_table Pointer to the current part table.
  */
 extern void cKF_SkeletonInfo_R_combine_translation(s16** joint, int* flag, cKF_SkeletonInfo_R_combine_work_c* combine,
-                                                   s8* cwork_num);
+                                                   s8* part_table);
 
 /**
  * Combines rotation data from multiple animation layers for a joint, modifying it based on animation flags.
@@ -393,34 +393,34 @@ extern void cKF_SkeletonInfo_R_combine_translation(s16** joint, int* flag, cKF_S
  * @param joint Pointer to the current joint's rotation data.
  * @param flag Pointer to the animation flag affecting the current joint.
  * @param combine Pointer to the combine work set structure containing animation layer data.
- * @param cwork_num Pointer to the layer number being processed.
+ * @param part_table Pointer to the current part table.
  */
 extern void cKF_SkeletonInfo_R_combine_rotation(s16** joint, int* flag, cKF_SkeletonInfo_R_combine_work_c* combine,
-                                                s8* cwork_num);
+                                                s8* part_table);
 
 /**
  * Combines and plays two sets of animation data, applying translations and rotations from both.
  *
  * @param info1 First skeleton info structure to combine.
  * @param info2 Second skeleton info structure to combine.
- * @param flag Pointer to a flag determining the combination behavior.
+ * @param part_table Pointer to the part table determining the combination behavior.
  * @return Status of the combination and play operation.
  */
-extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1, cKF_SkeletonInfo_R_c* info2, s8* flag);
+extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1, cKF_SkeletonInfo_R_c* info2, s8* part_table);
 
 /**
  * Combines and plays three sets of animation data, applying translations and rotations, and updates playback state.
  *
- * @param arg1 Result of playing first animation.
- * @param arg2 Result of playing second animation.
- * @param arg3 Result of playing third animation.
+ * @param state1 Result of playing first animation.
+ * @param state2 Result of playing second animation.
+ * @param state3 Result of playing third animation.
  * @param info1 First skeleton info structure to combine.
  * @param info2 Second skeleton info structure to combine.
  * @param info3 Third skeleton info structure to combine.
- * @param flag Pointer to a flag determining the combination behavior.
+ * @param part_table Pointer to the part table determining the combination behavior.
  */
-extern void cKF_SkeletonInfo_R_T_combine_play(int* arg1, int* arg2, int* arg3, cKF_SkeletonInfo_R_c* info1,
-                                              cKF_SkeletonInfo_R_c* info2, cKF_SkeletonInfo_R_c* info3, s8* flag);
+extern void cKF_SkeletonInfo_R_T_combine_play(int* state1, int* state2, int* state3, cKF_SkeletonInfo_R_c* info1,
+                                              cKF_SkeletonInfo_R_c* info2, cKF_SkeletonInfo_R_c* info3, s8* part_table);
 
 /**
  * Sets base shape translation and rotation for a skeleton info structure.
