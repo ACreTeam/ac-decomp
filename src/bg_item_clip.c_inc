@@ -62,7 +62,7 @@ static void bit_cmn_single_draw(GAME* game, mActor_name_t fg_no, xyz_t* pos, f32
                                 bIT_DRAW_AF_PROC draw_af, rgba_t* col);
 static int bIT_actor_player_drop_entry(GAME* game, mActor_name_t fg_item, int ut_x, int ut_z, s16 layer);
 static int BIT_actor_tree_cutcount_check(GAME* game, int ut_x, int ut_z);
-static void bIT_actor_dig_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames, u16 wait_frames);
+static int bIT_actor_dig_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames, u16 wait_frames);
 static void bIT_actor_bury_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames);
 static void bIT_actor_fly_entry(mActor_name_t fg_item, xyz_t* pos, s16 angle_y);
 static int bIT_drop_entry_v1(mActor_name_t fg_item, xyz_t* pos, xyz_t* target_pos);
