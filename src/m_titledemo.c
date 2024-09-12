@@ -126,7 +126,7 @@ static void mTD_game_end_init(GAME_PLAY* play) {
     play->fb_fade_type = 10; // TODO: enum/define
     play->fb_wipe_type = 3;  // TODO: enum/define
 
-    mPlib_request_main_invade_type1(play);
+    mPlib_request_main_invade_type1((GAME*)play);
     mBGMPsComp_make_ps_wipe(0x521C); // TODO: enum/define
 }
 

@@ -8131,8 +8131,8 @@ static int Player_actor_Check_AbleRadioExercise(ACTOR* actorx) {
 
 static int Player_actor_Get_RadioExerciseCommandRingBufferIndex(int base_idx, int ofs) {
     base_idx += ofs;
-    if (base_idx >= mPlayer_RADIO_EXCERCISE_COMMAND_RING_BUFFER_SIZE) {
-        return base_idx - mPlayer_RADIO_EXCERCISE_COMMAND_RING_BUFFER_SIZE;
+    if (base_idx >= mPlayer_RADIO_EXERCISE_COMMAND_RING_BUFFER_SIZE) {
+        return base_idx - mPlayer_RADIO_EXERCISE_COMMAND_RING_BUFFER_SIZE;
     } else {
         return base_idx;
     }
@@ -8142,7 +8142,7 @@ static s8 Player_actor_Get_RadioExerciseCommand(int base_idx, s8* command_ring_b
     int idx = Player_actor_Get_RadioExerciseCommandRingBufferIndex(base_idx, ofs);
 
     /* @BUG - this should probably be || idx >= mPlayer_RADIO_EXCERCISE_COMMAND_RING_BUFFER_SIZE */
-    if (idx < 0 && idx < mPlayer_RADIO_EXCERCISE_COMMAND_RING_BUFFER_SIZE) {
+    if (idx < 0 && idx < mPlayer_RADIO_EXERCISE_COMMAND_RING_BUFFER_SIZE) {
         idx = 0;
     }
 

@@ -511,7 +511,7 @@ extern int goto_other_scene(GAME_PLAY* play, Door_data_c* door_data, int update_
             play->next_scene_no = door_data->next_scene_id;
 
             if (update_player_mode) {
-                mPlib_request_main_invade_type1(play);
+                mPlib_request_main_invade_type1((GAME*)play);
             }
 
             restore_fgdata_all(play);

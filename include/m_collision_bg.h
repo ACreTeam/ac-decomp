@@ -345,6 +345,15 @@ extern f32 mCoBG_Wpos2BgUtCenterHeight_AddColumn(xyz_t pos);
 extern f32 mCoBG_UtNum2UtCenterY_Keep(int ut_x, int ut_z);
 extern int mCoBG_RegistDecalCircle(const xyz_t* pos_p, f32 radius_start, f32 radius_end, s16 timer);
 
+typedef int (*mCoBG_LINECHECK_PROC)(mActor_name_t);
+
+#define mCoBG_LINECHECK_CAT_WALL (1 << 0)
+#define mCoBG_LINECHECK_CAT_GROUND (1 << 1)
+#define mCoBG_LINECHECK_CAT_WATER (1 << 2)
+
+extern int mCoBG_LineCheck_RemoveFg(xyz_t* rev_pos, xyz_t start_pos, xyz_t end_pos, mCoBG_LINECHECK_PROC check_proc,
+                                    int category);
+
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();
 extern void mCoBG_InitDecalCircle();

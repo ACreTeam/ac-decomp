@@ -9,16 +9,16 @@ extern "C" {
 #endif
 
 typedef struct actor_dlftbl_s {
-  u32 rom_start; // unused in AC
-  u32 rom_end; // unused in AC
-  u8* ram_start; // used only with a check, but never set in AC
-  u8* ram_end; // unused in AC
-  u8* alloc_buf; // used in AC but only on free check and data is never allocated
-  ACTOR_PROFILE* profile; // profile for the actor
-  int unk; // unused in AC
-  u16 flags; // related to memory pinning but functionally useless in AC since alloc_buf is never allocated
-  s8 num_actors; // number of this type of actor that currently exist
-  s8 unk2; // unused in AC
+    /* 0x00 */ u32 rom_start;          // unused in AC
+    /* 0x04 */ u32 rom_end;            // unused in AC
+    /* 0x08 */ u8* ram_start;          // used only with a check, but never set in AC
+    /* 0x0C */ u8* ram_end;            // unused in AC
+    /* 0x10 */ u8* alloc_buf;          // used in AC but only on free check and data is never allocated
+    /* 0x14 */ ACTOR_PROFILE* profile; // profile for the actor
+    /* 0x18 */ int unk;                // unused in AC
+    /* 0x1C */ u16 flags; // related to memory pinning but functionally useless in AC since alloc_buf is never allocated
+    /* 0x1E */ s8 num_actors; // number of this type of actor that currently exist
+    /* 0x1F */ s8 unk2;       // unused in AC
 } ACTOR_DLFTBL;
 
 extern int actor_dlftbls_num;

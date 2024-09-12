@@ -5,7 +5,8 @@ static int Player_actor_CheckController_forPickup(GAME* game) {
         PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
         s8 kind = Player_actor_Get_ItemKind(actorx, player->now_main_index);
 
-        return !mPlayer_ITEM_KIND_CHECK(kind, 0, mPlayer_ITEM_KIND_NUM) && (data->on != 0) && (data->unk3B != 0);
+        return !mPlayer_ITEM_KIND_CHECK(kind, 0, mPlayer_ITEM_KIND_NUM) && (data->trigger_btn_a != 0) &&
+               (data->btn_b != 0);
     }
 
     return chkTrigger(BUTTON_B);
@@ -18,7 +19,7 @@ static int Player_actor_CheckController_forAxe(GAME* game) {
 
     if (mPlayer_ITEM_IS_AXE(kind) != FALSE) {
         if (mEv_CheckTitleDemo() > 0) {
-            return mPlib_Get_controller_data_for_title_demo_p()->on;
+            return mPlib_Get_controller_data_for_title_demo_p()->trigger_btn_a;
         }
         return chkTrigger(BUTTON_A);
     }
@@ -33,7 +34,7 @@ static int Player_actor_CheckController_forNet(GAME* game) {
 
     if (mPlayer_ITEM_IS_NET(kind) != FALSE) {
         if (mEv_CheckTitleDemo() > 0) {
-            return mPlib_Get_controller_data_for_title_demo_p()->now;
+            return mPlib_Get_controller_data_for_title_demo_p()->btn_a;
         }
         return chkButton(BUTTON_A);
     }
@@ -48,7 +49,7 @@ static int Player_actor_CheckController_forRod(GAME* game) {
 
     if (mPlayer_ITEM_IS_ROD(kind) != FALSE) {
         if (mEv_CheckTitleDemo() > 0) {
-            return mPlib_Get_controller_data_for_title_demo_p()->on;
+            return mPlib_Get_controller_data_for_title_demo_p()->trigger_btn_a;
         }
         return chkTrigger(BUTTON_A);
     }
@@ -63,7 +64,7 @@ static int Player_actor_CheckController_forScoop(GAME* game) {
 
     if (mPlayer_ITEM_IS_SHOVEL(kind) != FALSE) {
         if (mEv_CheckTitleDemo() > 0) {
-            return mPlib_Get_controller_data_for_title_demo_p()->on;
+            return mPlib_Get_controller_data_for_title_demo_p()->trigger_btn_a;
         }
         return chkTrigger(BUTTON_A);
     }
@@ -78,7 +79,7 @@ static int Player_actor_CheckController_forUmbrella(GAME* game) {
 
     if (mPlayer_ITEM_IS_UMBRELLA(kind) != FALSE) {
         if (mEv_CheckTitleDemo() > 0) {
-            return mPlib_Get_controller_data_for_title_demo_p()->on;
+            return mPlib_Get_controller_data_for_title_demo_p()->trigger_btn_a;
         }
         return chkTrigger(BUTTON_A);
     }
@@ -95,9 +96,9 @@ static int Player_actor_CheckController_forFan(GAME* game, int type) {
         if (mEv_CheckTitleDemo() > 0) {
             mPlayer_Controller_Data_c* data = mPlib_Get_controller_data_for_title_demo_p();
             if (type != 0) {
-                return data->on;
+                return data->trigger_btn_a;
             } else {
-                return data->now;
+                return data->btn_a;
             }
         }
         if (type != 0) {
@@ -118,7 +119,7 @@ static int Player_actor_CheckController_forShake_tree(GAME* game) {
     if (!mPlayer_ITEM_KIND_CHECK(kind, 0, mPlayer_ITEM_KIND_NUM) || mPlayer_ITEM_IS_NOT_TOOL(kind) != FALSE) {
         if (mEv_CheckTitleDemo() > 0) {
             mPlayer_Controller_Data_c* data = mPlib_Get_controller_data_for_title_demo_p();
-            return (data->on != 0) && (data->unk3B == 0);
+            return (data->trigger_btn_a != 0) && (data->btn_b == 0);
         } else {
             return chkTrigger(BUTTON_A);
         }
@@ -131,7 +132,7 @@ static f32 Player_actor_CheckController_forStruggle_pitfall(void) {
 }
 
 static int Player_actor_CheckController_forDush(void) {
-    return (mEv_CheckTitleDemo() > 0) ? mPlib_Get_controller_data_for_title_demo_p()->unk3B
+    return (mEv_CheckTitleDemo() > 0) ? mPlib_Get_controller_data_for_title_demo_p()->btn_b
                                       : mPlib_CheckButtonOnly_forDush();
 }
 

@@ -17,7 +17,7 @@ static void aNRTC_think_title(NPC_ACTOR* actor, GAME_PLAY* play) {
 
     play->fb_wipe_type = 3;
     play->fb_fade_type = 4;
-    mPlib_request_main_invade_type1(play);
+    mPlib_request_main_invade_type1((GAME*)play);
     Actor_info_save_actor(play);
     rtc->think_idx = aNRTC_THINK_WAIT;
 }

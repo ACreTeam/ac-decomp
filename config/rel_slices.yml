@@ -256,6 +256,11 @@ m_player_call.c:
     .text: [0x803D8AEC, 0x803D8CEC]
     .data: [0x8065B9A0, 0x8065B9C8]
     .bss: [0x8129CC98, 0x8129CCA8]
+m_player_lib.c:
+    .text: [0x803D8CEC, 0x803DE8A0]
+    .rodata: [0x80642A10, 0x806431C8]
+    .data: [0x8065B9C8, 0x8065BE98]
+    .bss: [0x8129CCA8, 0x8129CD40]
 m_police_box.c:
     .text: [0x803DE8A0, 0x803DEE38]
     .rodata: [0x806431C8, 0x806431D8]

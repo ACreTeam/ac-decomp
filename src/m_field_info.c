@@ -2010,11 +2010,11 @@ extern void mFI_InitMoveActorBitData() {
 
 static int l_player_wade;
 
-extern void mFI_SetPlayerWade(GAME_PLAY* play) {
-    PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
+extern void mFI_SetPlayerWade(GAME* game) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
 
     if (player != NULL) {
-        if (mPlib_check_player_actor_main_index_AllWade(play) == TRUE) {
+        if (mPlib_check_player_actor_main_index_AllWade(game) == TRUE) {
             if (l_player_wade == mFI_WADE_NONE || l_player_wade == mFI_WADE_END) {
                 l_player_wade = mFI_WADE_START;
             } else {
