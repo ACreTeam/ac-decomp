@@ -1,7 +1,7 @@
 typedef struct gyoei_type_s {
     short size;
     short search_area;
-    int byte_time;
+    int bite_time;
 } aGYO_type_c;
 
 // clang-format off
