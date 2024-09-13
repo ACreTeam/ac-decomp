@@ -2070,7 +2070,7 @@ typedef struct controller_data_s {
     s8 btn_a;
     s8 trigger_btn_b;
     s8 btn_b;
-    mActor_name_t equiped_item;
+    mActor_name_t equipped_item;
 } mPlayer_Controller_Data_c;
 
 typedef struct player_eye_pattern_s {

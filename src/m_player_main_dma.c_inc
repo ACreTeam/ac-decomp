@@ -14,7 +14,7 @@ static void Player_actor_setup_main_Dma(ACTOR* actorx, GAME* game) {
 static void Player_actor_request_proc_index_fromDma(ACTOR* actorx, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     Object_Exchange_c* exchange = &play->object_exchange;
-    int bank_idx = mSc_bank_regist_check(exchange, 14);
+    int bank_idx = mSc_bank_regist_check(exchange, ACTOR_OBJ_BANK_14);
     PLAYER_ACTOR* actor = (PLAYER_ACTOR*)actorx;
     int i;
     cKF_SkeletonInfo_R_c* keyf;

@@ -188,14 +188,9 @@ static void Player_actor_Item_net_CulcJointAngle_dummy_net(ACTOR* actor) {
 
     };
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
-    int valid = FALSE;
     int index = player->now_main_index;
 
-    if (mPlayer_MAIN_INDEX_VALID(index)) {
-        valid = TRUE;
-    }
-
-    if (valid == FALSE || proc[index] == NULL) {
+    if (mPlayer_MAIN_INDEX_VALID(index) == FALSE || proc[index] == NULL) {
         return;
     } else {
         proc[index](actor);

@@ -61,6 +61,6 @@ extern Actor_data TEST_FD_NPC_LAND_actor_data[] = {
 };
 
 extern s16 TEST_FD_NPC_LAND_object_bank[] = {
-    ACTOR_OBJ_BANK_48,      // 0
+    ACTOR_OBJ_BANK_UKI,     // 0
     ACTOR_OBJ_BANK_AC_SIGN, // 1
 };

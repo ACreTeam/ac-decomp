@@ -48,5 +48,5 @@ extern Actor_data TITLE_DEMO_actor_data[] = {
 };
 
 extern s16 TITLE_DEMO_object_bank[] = {
-    ACTOR_OBJ_BANK_48, // 0
+    ACTOR_OBJ_BANK_UKI, // 0
 };
