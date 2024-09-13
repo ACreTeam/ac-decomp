@@ -83,6 +83,8 @@ typedef enum audio_sound_effects {
 
     NA_SE_ROD_STROKE = 0x109,
     NA_SE_ROD_BACK,
+    NA_SE_10B,
+    NA_SE_10C,
 
     NA_SE_HANABI0 = HANABI(0x10F),
     NA_SE_HANABI1 = HANABI(0x110),

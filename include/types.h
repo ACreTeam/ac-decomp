@@ -91,6 +91,8 @@ typedef u32 unknown;
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
+#define FLOOR(n, f) (((n) / (f)) * (f))
+
 #define F32_IS_ZERO(v) (fabsf(v) < 0.008f)
 
 /* ARGB8 color format (32 bits) to RGB5A3 color format (16 bits) */

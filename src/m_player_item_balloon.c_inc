@@ -4,13 +4,8 @@ static s16 Player_actor_Item_Get_goal_balloon_lean_angle(ACTOR* actor) {
 
 static void Player_actor_Item_Setup_main_balloon_normal(ACTOR* actor, int item_kind, int kind) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
-    int check = FALSE;
 
-    if (mPlayer_ITEM_IS_BALLOON(kind)) {
-        check = TRUE;
-    }
-
-    if (check == FALSE) {
+    if (mPlayer_ITEM_IS_BALLOON(kind) == FALSE) {
         player->balloon_lean_angle = Player_actor_Item_Get_goal_balloon_lean_angle(actor);
         player->balloon_angle = ZeroSVec;
         player->balloon_anim_max_frame = player->item_keyframe.frame_control.max_frames;

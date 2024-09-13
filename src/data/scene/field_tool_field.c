@@ -47,5 +47,5 @@ extern Actor_data FIELD_TOOL_FIELD_actor_data[] = {
 };
 
 extern s16 FIELD_TOOL_FIELD_object_bank[] = {
-    ACTOR_OBJ_BANK_48, // 0
+    ACTOR_OBJ_BANK_UKI, // 0
 };

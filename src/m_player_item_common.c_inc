@@ -6,7 +6,7 @@ static void Player_actor_Set_ItemNoSubmenu(mActor_name_t item) {
 
 static mActor_name_t Player_actor_Get_ItemNoSubmenu(void) {
     if (mEv_CheckTitleDemo() > 0) {
-        return mPlib_Get_controller_data_for_title_demo_p()->equiped_item;
+        return mPlib_Get_controller_data_for_title_demo_p()->equipped_item;
     } else {
         return Common_Get(now_private)->equipment;
     }
@@ -17,7 +17,7 @@ static s8 Player_actor_Get_ItemKind_from_submenu(void) {
 }
 
 static s8 Player_actor_Get_ItemKind_fromScene(void) {
-    if (Player_actor_CheckScene_AbleOutItem(Save_Get(scene_no)) != 0) {
+    if (Player_actor_CheckScene_AbleOutItem(Save_Get(scene_no))) {
         return Player_actor_Get_ItemKind_from_submenu();
     }
     return -1;
@@ -33,16 +33,11 @@ static s8 Player_actor_Get_ItemKind(ACTOR* actor, int kind) {
     } else if (player->able_hand_all_item_in_demo != FALSE) {
         return scene_kind;
     } else {
-        if (able == 0) {
+        if (able == mPlayer_ABLE_ITEM_CAN_USE_ALL) {
             return scene_kind;
-        } else if (able == 1) {
-            int holdable = mPlayer_ITEM_IS_UMBRELLA(scene_kind) || mPlayer_ITEM_IS_BALLOON(scene_kind) ||
-                                   mPlayer_ITEM_IS_WINDMILL(scene_kind) || mPlayer_ITEM_IS_FAN(scene_kind)
-
-                               ? TRUE
-                               : FALSE;
-
-            if (holdable) {
+        } else if (able == mPlayer_ABLE_ITEM_CAN_USE_UMBRELLA) {
+            if ((mPlayer_ITEM_IS_UMBRELLA(scene_kind) || mPlayer_ITEM_IS_BALLOON(scene_kind) ||
+                 mPlayer_ITEM_IS_WINDMILL(scene_kind) || mPlayer_ITEM_IS_FAN(scene_kind)) != FALSE) {
                 return scene_kind;
             }
         }
@@ -51,36 +46,110 @@ static s8 Player_actor_Get_ItemKind(ACTOR* actor, int kind) {
 }
 
 static int Player_actor_Get_BasicItemMainIndex_fromItemKind(int kind) {
+    // clang-format off
     static const s8 data[] = {
-        1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-        10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 20,
-        20, 21, 21, 21, 21, 21, 21, 21, 21, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23, 23, 23, 23, 23, 23, 23,
+        mPlayer_ITEM_MAIN_AXE_NORMAL,
+        mPlayer_ITEM_MAIN_AXE_NORMAL,
+        mPlayer_ITEM_MAIN_AXE_NORMAL,
+        mPlayer_ITEM_MAIN_AXE_NORMAL,
+        mPlayer_ITEM_MAIN_AXE_NORMAL,
+        mPlayer_ITEM_MAIN_AXE_NORMAL,
+        mPlayer_ITEM_MAIN_AXE_NORMAL,
+        mPlayer_ITEM_MAIN_AXE_NORMAL,
+        mPlayer_ITEM_MAIN_AXE_NORMAL,
+        mPlayer_ITEM_MAIN_NET_NORMAL,
+        mPlayer_ITEM_MAIN_NET_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_UMBRELLA_NORMAL,
+        mPlayer_ITEM_MAIN_ROD_NORMAL,
+        mPlayer_ITEM_MAIN_ROD_NORMAL,
+        mPlayer_ITEM_MAIN_SCOOP_NORMAL,
+        mPlayer_ITEM_MAIN_SCOOP_NORMAL,
+        mPlayer_ITEM_MAIN_BALLOON_NORMAL,
+        mPlayer_ITEM_MAIN_BALLOON_NORMAL,
+        mPlayer_ITEM_MAIN_BALLOON_NORMAL,
+        mPlayer_ITEM_MAIN_BALLOON_NORMAL,
+        mPlayer_ITEM_MAIN_BALLOON_NORMAL,
+        mPlayer_ITEM_MAIN_BALLOON_NORMAL,
+        mPlayer_ITEM_MAIN_BALLOON_NORMAL,
+        mPlayer_ITEM_MAIN_BALLOON_NORMAL,
+        mPlayer_ITEM_MAIN_WINDMILL_NORMAL,
+        mPlayer_ITEM_MAIN_WINDMILL_NORMAL,
+        mPlayer_ITEM_MAIN_WINDMILL_NORMAL,
+        mPlayer_ITEM_MAIN_WINDMILL_NORMAL,
+        mPlayer_ITEM_MAIN_WINDMILL_NORMAL,
+        mPlayer_ITEM_MAIN_WINDMILL_NORMAL,
+        mPlayer_ITEM_MAIN_WINDMILL_NORMAL,
+        mPlayer_ITEM_MAIN_WINDMILL_NORMAL,
+        mPlayer_ITEM_MAIN_FAN_NORMAL,
+        mPlayer_ITEM_MAIN_FAN_NORMAL,
+        mPlayer_ITEM_MAIN_FAN_NORMAL,
+        mPlayer_ITEM_MAIN_FAN_NORMAL,
+        mPlayer_ITEM_MAIN_FAN_NORMAL,
+        mPlayer_ITEM_MAIN_FAN_NORMAL,
+        mPlayer_ITEM_MAIN_FAN_NORMAL,
+        mPlayer_ITEM_MAIN_FAN_NORMAL,
     };
+    // clang-format on
 
     if (mPlayer_ITEM_KIND_VALID(kind)) {
         return data[kind];
     } else {
-        return 0;
+        return mPlayer_ITEM_MAIN_NONE;
     }
 }
 
 static void Player_actor_birth_umbrella(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
-    int is_umbrella;
     aTOL_Clip_c* tools;
     s8 kind;
 
     if (player->umbrella_actor == NULL) {
         tools = Common_Get(clip).tools_clip;
         if (tools != NULL &&
-            (player->umbrella_state == 1 || player->umbrella_state == 4 || player->umbrella_state == 2)) {
-            is_umbrella = FALSE;
+            (player->umbrella_state == aTOL_ACTION_TAKEOUT || player->umbrella_state == aTOL_ACTION_S_TAKEOUT ||
+             player->umbrella_state == aTOL_ACTION_PUTAWAY)) {
             kind = player->item_kind;
-            if (mPlayer_ITEM_IS_UMBRELLA(kind)) {
-                is_umbrella = TRUE;
-            }
 
-            if (is_umbrella) {
+            if (mPlayer_ITEM_IS_UMBRELLA(kind) != FALSE) {
                 player->umbrella_actor = tools->aTOL_birth_proc(kind - mPlayer_ITEM_KIND_UMBRELLA00,
                                                                 player->umbrella_state, actor, game, -1, 0);
 
@@ -131,7 +200,7 @@ static void Player_actor_Item_DMA_Data(ACTOR* actor, int skl_idx, int anim_idx, 
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     int change_bank = Player_actor_Change_ItemBank(actor, skl_idx, anim_idx);
 
-    if ((skl_idx >= 0) && (mPlib_Get_Item_DataPointerType(skl_idx) != 0)) {
+    if ((skl_idx >= 0) && (mPlib_Get_Item_DataPointerType(skl_idx) != mPlayer_ITEM_DATA_TYPE_GFX)) {
         cKF_Skeleton_R_c* skeleton;
         cKF_SkeletonInfo_R_c* keyf;
         s_xyz* joint_work;
@@ -168,7 +237,7 @@ static void Player_actor_Item_Set_Command_forUki(ACTOR* actor, int command) {
     }
 }
 
-static void Player_actor_Item_Set_RightHandPos_forUki(ACTOR* actor, int arg0) {
+static void Player_actor_Item_Set_RightHandPos_forUki(ACTOR* actor, int main_index) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -177,10 +246,10 @@ static void Player_actor_Item_Set_RightHandPos_forUki(ACTOR* actor, int arg0) {
         xyz_t pos;
         f32 sin;
         f32 cos;
-        switch (arg0) {
-            case 0x35:
-            case 0x36:
-            case 0x37:
+        switch (main_index) {
+            case mPlayer_INDEX_COLLECT_ROD:
+            case mPlayer_INDEX_VIB_ROD:
+            case mPlayer_INDEX_FLY_ROD:
                 pos = actor->world.position;
                 rot = actor->shape_info.rotation.y;
 
@@ -200,7 +269,7 @@ static void Player_actor_Item_Set_RightHandPos_forUki(ACTOR* actor, int arg0) {
     }
 }
 
-static void Player_actor_Item_Set_LeftHandPos_forUki(ACTOR* actor, int arg0) {
+static void Player_actor_Item_Set_LeftHandPos_forUki(ACTOR* actor, int main_index) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
 
@@ -209,10 +278,10 @@ static void Player_actor_Item_Set_LeftHandPos_forUki(ACTOR* actor, int arg0) {
         xyz_t pos;
         f32 sin;
         f32 cos;
-        switch (arg0) {
-            case 0x35:
-            case 0x36:
-            case 0x37:
+        switch (main_index) {
+            case mPlayer_INDEX_COLLECT_ROD:
+            case mPlayer_INDEX_VIB_ROD:
+            case mPlayer_INDEX_FLY_ROD:
                 pos = actor->world.position;
                 rot = actor->shape_info.rotation.y;
 
@@ -249,11 +318,11 @@ static void Player_actor_Item_Set_AngleSpeedY_forUki(ACTOR* actor) {
         int y = player->shape_angle_delta.y;
 
         if (y > 0) {
-            if (y > 0x8000) {
-                y = -(0x10000 - y);
+            if (y > DEG2SHORT_ANGLE2(180.0f)) {
+                y = -(DEG2SHORT_ANGLE2(360.0f) - y);
             }
-        } else if (y < -0x8000) {
-            y += 0x10000;
+        } else if (y < DEG2SHORT_ANGLE2(-180.0f)) {
+            y += DEG2SHORT_ANGLE2(360.0f);
         }
 
         rod->angle_speed_y = y;
@@ -286,20 +355,22 @@ static void Player_actor_LoadOrDestruct_Item(ACTOR* actor, int kind, int anim_id
 
     if (!umbrella) {
         if (player->umbrella_actor != NULL && Common_Get(clip).tools_clip != NULL) {
-            Common_Get(clip).tools_clip->aTOL_chg_request_mode_proc(actor, player->umbrella_actor, 3);
+            Common_Get(clip).tools_clip->aTOL_chg_request_mode_proc(actor, player->umbrella_actor,
+                                                                    aTOL_ACTION_DESTRUCT);
             player->umbrella_actor = NULL;
         }
 
-        player->umbrella_state = 4;
+        player->umbrella_state = aTOL_ACTION_S_TAKEOUT;
     } else {
         TOOLS_ACTOR* tool = (TOOLS_ACTOR*)player->umbrella_actor;
         if (tool != NULL && (kind - mPlayer_ITEM_KIND_UMBRELLA00) != tool->tool_name) {
             if (Common_Get(clip).tools_clip != NULL) {
-                Common_Get(clip).tools_clip->aTOL_chg_request_mode_proc(actor, player->umbrella_actor, 3);
+                Common_Get(clip).tools_clip->aTOL_chg_request_mode_proc(actor, player->umbrella_actor,
+                                                                        aTOL_ACTION_DESTRUCT);
                 player->umbrella_actor = NULL;
             }
 
-            player->umbrella_state = 4;
+            player->umbrella_state = aTOL_ACTION_S_TAKEOUT;
         }
     }
 
@@ -317,7 +388,7 @@ static void Player_actor_CorrectSomething_net(ACTOR* actor, xyz_t* pos) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     TOOLS_ACTOR* label = (TOOLS_ACTOR*)player->item_net_catch_label;
 
-    if (label != NULL && player->item_net_catch_type == 0) {
+    if (label != NULL && player->item_net_catch_type == mPlayer_NET_CATCH_TYPE_INSECT) {
         Matrix_push();
         Matrix_translate(pos->x, pos->y, pos->z, FALSE);
         Matrix_get(&label->matrix_work);

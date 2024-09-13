@@ -31,7 +31,7 @@ static void Player_actor_setup_main_Takeout_item(ACTOR* actorx, GAME* game) {
     if (mPlayer_ITEM_IS_UMBRELLA(item_kind) != FALSE) {
         ACTOR* umbrella_p;
 
-        player->umbrella_state = 1;
+        player->umbrella_state = aTOL_ACTION_TAKEOUT;
         umbrella_p = Player_actor_Get_umbrella_p(actorx, game);
         Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_UMB_OPEN1, mPlayer_ANIM_UMB_OPEN1, 1.0f, 1.0f, 0.5f,
                                          -5.0f, cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);

@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_actor.h"
+#include "libultra/ultratypes.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,12 +17,12 @@ enum {
     aUKI_STATUS_FLOAT,
     aUKI_STATUS_VIB,
     aUKI_STATUS_COMEBACK,
-    aUKI_STATUS_7,
+    aUKI_STATUS_CATCH,
 
     aUKI_STATUS_NUM
 };
 
-typedef void (*aUKI_SET_VALUE_PROC)(ACTOR* actorx, xyz_t pos, xyz_t pos_speed, int param_4, int command);
+typedef void (*aUKI_SET_VALUE_PROC)(ACTOR* actorx, xyz_t pos, xyz_t pos_speed, int angle_speed_y, int command);
 typedef mActor_name_t (*aUKI_GET_FISH_TYPE)(ACTOR* actorx);
 
 /* sizeof(UKI_ACTOR) == 0x2B8 */

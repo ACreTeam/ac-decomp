@@ -2551,6 +2551,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ETC_SNOWMAN_BALL_A (ETC_START + 13)
 #define ETC_SNOWMAN_BALL_B (ETC_START + 14)
 #define ETC_TRAIN_WINDOW (ETC_START + 17)
+#define ETC_UKI (ETC_START + 18)
 
 #define MISC_ACTOR_START 0x9000
 #define MISC_ACTOR_SAMPLE MISC_ACTOR_START

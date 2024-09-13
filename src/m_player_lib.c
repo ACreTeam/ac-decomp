@@ -3360,7 +3360,7 @@ extern mPlayer_Controller_Data_c* mPlib_Get_controller_data_for_title_demo_p(voi
 
 extern void mPlib_Clear_controller_data_for_title_demo(void) {
     bzero(&controller_data_for_title_demo, sizeof(controller_data_for_title_demo));
-    controller_data_for_title_demo.equiped_item = ITM_PAPER_START; /* @BUG - this should be a tool, not paper */
+    controller_data_for_title_demo.equipped_item = ITM_PAPER_START; /* @BUG - this should be a tool, not paper */
 }
 
 extern void mPlib_SetData1_controller_data_for_title_demo(int btn_a, int btn_b, f32 stick_x, f32 stick_y) {
@@ -3382,7 +3382,7 @@ extern void mPlib_SetData1_controller_data_for_title_demo(int btn_a, int btn_b, 
 }
 
 extern void mPlib_SetData2_controller_data_for_title_demo(mActor_name_t item) {
-    controller_data_for_title_demo.equiped_item = item;
+    controller_data_for_title_demo.equipped_item = item;
 }
 
 extern int mPlib_Check_CorrectPlayerPos_forEvent(void) {

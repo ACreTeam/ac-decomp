@@ -56,7 +56,7 @@ extern Actor_data TEST03_actor_data[] = {
 };
 
 extern s16 TEST03_object_bank[] = {
-    ACTOR_OBJ_BANK_48,       // 0
+    ACTOR_OBJ_BANK_UKI,      // 0
     ACTOR_OBJ_BANK_PSNOWMAN, // 1
     ACTOR_OBJ_BANK_AIRPLANE, // 2
     ACTOR_OBJ_BANK_MURAL,    // 3

@@ -78,13 +78,13 @@ static int Player_actor_Item_Check_Status_forUki_cast(ACTOR* actor) {
 
     if (rod != NULL) {
         switch (rod->status) {
-            case 4:
-            case 5:
-                return 1;
+            case aUKI_STATUS_FLOAT:
+            case aUKI_STATUS_VIB:
+                return TRUE;
         }
     }
 
-    return 0;
+    return FALSE;
 }
 
 static int Player_actor_Item_main_rod_cast(ACTOR* actor, GAME* game) {
@@ -124,7 +124,7 @@ static void Player_actor_Item_SetFrame_forUki_relax(ACTOR* actor, GAME* game) {
         f32 frame = player->item_keyframe.frame_control.current_frame;
         f32 target;
         xyz_t pos;
-        if (rod->status != 3) {
+        if (rod->status != aUKI_STATUS_CAST) {
             f32 end_pos = 2.0f + (61.5f + actor->world.position.y);
 
             Player_actor_Get_ItemRodVirtualTopPos(actor, &pos);

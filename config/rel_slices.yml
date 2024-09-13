@@ -675,6 +675,10 @@ ac_train_window.c:
     .text: [0x804AC510, 0x804AD428]
     .rodata: [0x80645FA8, 0x80645FF8]
     .data: [0x8068F600, 0x8068F830]
+ac_uki.c:
+    .text: [0x804AD644, 0x804AFC14]
+    .rodata: [0x80646010, 0x806460D8]
+    .data: [0x8068F858, 0x8068FC68]
 bg_cherry_item.c:
     .text: [0x804AFC14, 0x804B6FB4]
     .rodata: [0x806460D8, 0x80646178]

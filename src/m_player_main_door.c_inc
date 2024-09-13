@@ -33,7 +33,7 @@ static void Player_actor_setup_main_Door(ACTOR* actor, GAME* game) {
                                              player->requested_main_index_data.door.angle_y, 9.0f, keyf, 5);
     Player_actor_InitAnimation_Base2(actor, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.5f, -9.0f, 0, 0);
     Player_actor_setup_main_Base(actor, game);
-    mBGMPsComp_scene_mode(0xC);
+    mBGMPsComp_scene_mode(12);
 }
 
 static int Player_actor_CulcAnimation_Door(ACTOR* actor, f32* frame_calc) {
@@ -45,7 +45,7 @@ static void Player_actor_Movement_Door(ACTOR* actor) {
 
     cKF_SkeletonInfo_R_AnimationMove_base(&actor->world.position, &actor->shape_info.rotation.y, &actor->scale,
                                           actor->world.angle.y, &player->keyframe0);
-    Player_actor_Movement_Base_Stop(actor, 0);
+    Player_actor_Movement_Base_Stop(actor, FALSE);
     Player_actor_Set_force_shadow_position_fromWorldPosition(actor);
 }
 
