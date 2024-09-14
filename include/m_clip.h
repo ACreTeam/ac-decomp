@@ -24,6 +24,10 @@
 #include "ac_handOverItem.h"
 #include "ac_quest_manager_clip.h"
 #include "ac_shop_goods_h.h"
+#include "ac_shop_design.h"
+#include "ac_effectbg.h"
+#include "ac_htable.h"
+#include "ac_sign.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,13 +41,19 @@ typedef struct clip_s {
     /* 0x020 */ int arrange_ftr_num;
     /* 0x024 */ void* _024;
     /* 0x028 */ void* misin_clip;
-    /* 0x02C */ void* _02C;
+    /* 0x02C */ aHTBL_Clip_c* htbl_clip;
     /* 0x030 */ void* _030;
     /* 0x034 */ void* _034;
     /* 0x038 */ void* _038;
     /* 0x03C */ void* _03C;
     /* 0x040 */ aNPC_Clip_c* npc_clip;
-    /* 0x044 */ void* _044[(0x060 - 0x044) / sizeof(void*)];
+    /* 0x044 */ void* _044;
+    /* 0x048 */ void* _048;
+    /* 0x04C */ void* _04C;
+    /* 0x050 */ void* _050;
+    /* 0x054 */ aSD_Clip_c* shop_design_clip;
+    /* 0x058 */ void* _058;
+    /* 0x05C */ void* _05C;
     /* 0x060 */ aSM_Clip_c* shop_manekin_clip;
     /* 0x064 */ void* _064;
     /* 0x068 */ CLIP_NONE_PROC _068;
@@ -65,7 +75,7 @@ typedef struct clip_s {
     /* 0x0A8 */ void* _0A8;
     /* 0x0AC */ aGYO_Clip_c* gyo_clip;
     /* 0x0B0 */ aSG_Clip_c* shop_goods_clip;
-    /* 0x0B4 */ void* _0B4;
+    /* 0x0B4 */ EffectBG_MAKE_EFFECTBG_PROC make_effect_bg_proc;
     /* 0x0B8 */ aShopUmbrella_Clip_c* shop_umbrella_clip;
     /* 0x0BC */ aAR_Clip_c* arrange_room_clip;
     /* 0x0C0 */ void* _0C0;
@@ -78,7 +88,7 @@ typedef struct clip_s {
     /* 0x0DC */ aAL_Clip_c* animal_logo_clip;
     /* 0x0E0 */ void* _0E0;
     /* 0x0E4 */ void* _0E4;
-    /* 0x0E8 */ void* _0E8;
+    /* 0x0E8 */ SIGN_ACTOR* sign_control_actor;
     /* 0x0EC */ aAPC_Clip_c* aprilfool_control_clip;
     /* 0x0F0 */ aEvMgr_Clip_c* event_manager_clip;
     /* 0x0F4 */ aGHC_Clip_c* groundhog_control_clip;

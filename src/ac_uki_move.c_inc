@@ -1,0 +1,991 @@
+static void set_collision(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    CollisionCheck_Uty_ActorWorldPosSetPipeC(actorx, &uki->col_pipe);
+    CollisionCheck_setOC(game, &play->collision_check, &uki->col_pipe.collision_obj);
+}
+
+static void aUKI_set_value(ACTOR* actorx, xyz_t pos, xyz_t pos_speed, int angle_speed_y, int command) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    uki->right_hand_pos = pos;
+    uki->position_speed = pos_speed;
+    uki->angle_speed_y = angle_speed_y;
+    uki->command = command;
+}
+
+static mActor_name_t aUKI_get_fish_type(ACTOR* actorx) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    // clang-format off
+    static mActor_name_t fish_data[] = {
+        ITM_FISH00,
+        ITM_FISH01,
+        ITM_FISH02,
+        ITM_FISH03,
+        ITM_FISH04,
+        ITM_FISH05,
+        ITM_FISH06,
+        ITM_FISH07,
+        ITM_FISH08,
+        ITM_FISH09,
+        ITM_FISH10,
+        ITM_FISH11,
+        ITM_FISH12,
+        ITM_FISH13,
+        ITM_FISH14,
+        ITM_FISH15,
+        ITM_FISH16,
+        ITM_FISH17,
+        ITM_FISH18,
+        ITM_FISH19,
+        ITM_FISH20,
+        ITM_FISH21,
+        ITM_FISH22,
+        ITM_FISH23,
+        ITM_FISH24,
+        ITM_FISH25,
+        ITM_FISH26,
+        ITM_FISH27,
+        ITM_FISH28,
+        ITM_FISH29,
+        ITM_FISH30,
+        ITM_FISH31,
+        ITM_FISH32,
+        ITM_FISH33,
+        ITM_FISH34,
+        ITM_FISH35,
+        ITM_FISH36,
+        ITM_FISH37,
+        ITM_FISH38,
+        ITM_FISH39,
+        ITM_FISH39,
+        ITM_DUST0_EMPTY_CAN,
+        ITM_DUST1_BOOT,
+        ITM_DUST2_OLD_TIRE,
+        ITM_FISH22,
+    };
+    // clang-format on
+    mActor_name_t item = EMPTY_NO;
+
+    if (uki->gyo_type >= 0 && uki->gyo_type < aSOG_FISH_TYPE_EXTENDED_NUM) {
+        item = fish_data[uki->gyo_type];
+    }
+
+    return item;
+}
+
+static void aUKI_chase_color(int* col_p, u32 target, int step) {
+    u32 now = *col_p;
+
+    if (now != target) {
+        int n_step = (f32)step * 0.5f;
+
+        if (n_step > 0) {
+            int d = now - target;
+
+            if (d > n_step) {
+                *col_p = now + n_step;
+            } else {
+                *col_p = target;
+            }
+        } else {
+            int d = now - target;
+
+            if (d < n_step) {
+                *col_p = now - -n_step;
+            } else {
+                *col_p = target;
+            }
+        }
+    }
+}
+
+static void aUKI_BGcheck(ACTOR* actorx) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    f32 ground_y;
+    f32 water_y;
+    f32 y;
+
+    switch (mCoBG_Wpos2Attribute(actorx->world.position, NULL)) {
+        case mCoBG_ATTRIBUTE_SEA:
+        case mCoBG_ATTRIBUTE_WAVE:
+        case mCoBG_ATTRIBUTE_SAND: {
+            ground_y = mCoBG_GetBgY_AngleS_FromWpos(NULL, actorx->world.position, 0.0f);
+            water_y = mCoBG_GetWaterHeight_File(actorx->world.position, __FILE__, 237);
+            uki->range = 5.0f;
+            if ((water_y - ground_y) < 10.0f) {
+                y = 0.0f;
+            } else {
+                y = -12.0f;
+            }
+
+            if (uki->proc == 6 && (water_y - ground_y) < 20.0f) {
+                actorx->world.angle.y += DEG2SHORT_ANGLE2(180.0f);
+            }
+            break;
+        }
+
+        case mCoBG_ATTRIBUTE_WATERFALL: {
+            uki->range = 11.0f;
+            y = -12.0f;
+            break;
+        }
+
+        default: {
+            if (uki->proc == 4) {
+                if (uki->cast_timer != 0) {
+                    uki->range = 12.0f;
+                    y = 0.0f;
+                } else {
+                    chase_f(&uki->range, 40.0f, 0.05f);
+                    y = -12.0f;
+                }
+            } else {
+                uki->range = 12.0f;
+                y = -12.0f;
+            }
+            break;
+        }
+    }
+
+    switch (uki->proc) {
+        case 0:
+        case 3:
+        case 5:
+            mCoBG_BgCheckControll(NULL, actorx, uki->range, y, TRUE, TRUE, 1);
+            break;
+        default:
+            mCoBG_BgCheckControll(NULL, actorx, uki->range, y, TRUE, FALSE, 1);
+            break;
+    }
+}
+
+static void aUKI_touch_vib_proc(UKI_ACTOR* uki) {
+    static aUKI_vib_c vib_data_table[] = {
+        // clang-format off
+        {  60, 0, 1, 10 },
+        {  70, 0, 1, 10 },
+        {  80, 0, 1, 10 },
+        {  90, 0, 1, 10 },
+        { 100, 0, 1, 10 },
+        { 100, 1, 2,  9 },
+        { 100, 2, 2,  7 },
+        { 100, 2, 2,  7 },
+        // clang-format on
+    };
+
+    if (uki->gyo_type >= 0) {
+        s16 idx = gyoei_type[uki->gyo_type].size;
+        aUKI_vib_c* vib_p = &vib_data_table[idx];
+
+        mVibctl_simple_entry(vib_p->n_frames, mVibctl_VIB_PROG_FFF, vib_p->attack_frames, vib_p->sustain_frames,
+                             vib_p->release_frames, 0.0f);
+    }
+}
+
+static void aUKI_bite_vib_proc(ACTOR* actorx) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    static aUKI_vib_c vib_data_table[] = {
+        // clang-format off
+        {  40, 5, 60, 3 },
+        {  50, 5, 60, 3 },
+        {  60, 5, 60, 3 },
+        {  70, 5, 60, 3 },
+        {  80, 5, 60, 3 },
+        {  90, 5, 60, 3 },
+        { 100, 5, 60, 3 },
+        { 100, 5, 60, 3 },
+        // clang-format on
+    };
+
+    if (uki->gyo_type >= 0) {
+        s16 idx = gyoei_type[uki->gyo_type].size;
+        aUKI_vib_c* vib_p = &vib_data_table[idx];
+
+        mVibctl_simple_entry(vib_p->n_frames, mVibctl_VIB_PROG_IMPACT, vib_p->attack_frames, vib_p->sustain_frames,
+                             vib_p->release_frames, 0.0f);
+    }
+}
+
+static void aUKI_clear_spd(ACTOR* actorx) {
+    actorx->speed = 0.0f;
+    actorx->position_speed.x = 0.0f;
+    actorx->position_speed.z = 0.0f;
+}
+
+static void aUKI_parabola_init(UKI_ACTOR* uki, const xyz_t* p0, const xyz_t* p1, s16 timer, u8 type) {
+    f32 y_param;
+    f32 f = (f32)(int)timer;
+    f32 step = f * 0.5f;
+    f32 dx = p1->x - p0->x;
+    f32 dy = p1->y - p0->y;
+    f32 dz = p1->z - p0->z;
+
+    if (dy > 100.0f) {
+        y_param = 12.0f;
+    } else {
+        y_param = 4.5f;
+    }
+
+    switch (type) {
+        case 0: {
+            uki->parabola_vec[0].x = dx / f;
+            uki->parabola_vec[0].y = dy / f;
+            uki->parabola_vec[0].z = dz / f;
+            break;
+        }
+        case 1: {
+            uki->parabola_vec[1].y = (2.0f * (y_param * f - dy)) / SQ(f);
+            uki->parabola_vec[0].x = dx / step;
+            uki->parabola_vec[0].y = y_param - uki->parabola_vec[1].y;
+            uki->parabola_vec[0].z = dz / step;
+            uki->parabola_vec[1].x = uki->parabola_vec[0].x / f;
+            uki->parabola_vec[1].z = uki->parabola_vec[0].z / f;
+            break;
+        }
+        case 2: {
+            uki->parabola_acc[1].y = (2.0f * (y_param * f - dy)) / SQ(f);
+            uki->parabola_acc[0].x = dx / step;
+            uki->parabola_acc[0].y = y_param - uki->parabola_acc[1].y;
+            uki->parabola_acc[0].z = dz / step;
+            uki->parabola_acc[1].x = uki->parabola_acc[0].x / f;
+            uki->parabola_acc[1].z = uki->parabola_acc[0].z / f;
+            break;
+        }
+    }
+}
+
+static void aUKI_parabola_move(ACTOR* actorx, u8 type) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    switch (type) {
+        case 0:
+            xyz_t_add(&actorx->world.position, &uki->parabola_vec[0], &actorx->world.position);
+            break;
+        case 1:
+            xyz_t_add(&actorx->world.position, &uki->parabola_vec[0], &actorx->world.position);
+            xyz_t_sub(&uki->parabola_vec[0], &uki->parabola_vec[1], &uki->parabola_vec[0]);
+            break;
+        case 2:
+            xyz_t_add(&uki->uki_pos, &uki->parabola_acc[0], &uki->uki_pos);
+            xyz_t_sub(&uki->parabola_acc[0], &uki->parabola_acc[1], &uki->parabola_acc[0]);
+            break;
+    }
+}
+
+static s16 aUKI_Get_flow_angle(ACTOR* actorx) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    xyz_t flow;
+
+    mCoBG_GetWaterFlow(&flow, actorx->bg_collision_check.result.unit_attribute);
+    return atans_table(flow.z, flow.x);
+}
+
+static void aUKI_effect_sibuki(ACTOR* actorx, GAME* game, s16 arg) {
+    xyz_t pos = actorx->world.position;
+    s16 flow_angle;
+
+    pos.y = mCoBG_GetWaterHeight_File(actorx->world.position, __FILE__, 575);
+    flow_angle = aUKI_Get_flow_angle(actorx);
+
+    eEC_CLIP->effect_make_proc(eEC_EFFECT_TURI_MIZU, pos, 1, flow_angle, game, EMPTY_NO, arg, 0);
+}
+
+static void aUKI_effect_hamon(ACTOR* actorx, GAME* game, s16 arg) {
+    xyz_t pos = actorx->world.position;
+    s16 flow_angle;
+
+    pos.y = mCoBG_GetWaterHeight_File(actorx->world.position, __FILE__, 603);
+    flow_angle = aUKI_Get_flow_angle(actorx);
+
+    eEC_CLIP->effect_make_proc(eEC_EFFECT_TURI_HAMON, pos, 1, flow_angle, game, EMPTY_NO, arg, 0);
+}
+
+static void aUKI_movement(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    s16 flow_angle;
+
+    flow_angle = aUKI_Get_flow_angle(actorx);
+    if (actorx->player_distance_xz < 130.0f ||
+        actorx->bg_collision_check.result.unit_attribute == mCoBG_ATTRIBUTE_WATERFALL) {
+        if (uki->gyo_command != 1) {
+            if (uki->touch_timer != 5) {
+                uki->touch_timer = 0;
+            }
+
+            chase_f(&actorx->speed, 0.45f, 0.1f);
+        } else {
+            chase_f(&actorx->speed, 0.225f, 0.1f);
+        }
+
+        actorx->position_speed.x = actorx->speed * sin_s(flow_angle);
+        actorx->position_speed.z = actorx->speed * cos_s(flow_angle);
+    } else {
+        if (uki->gyo_command != 1) {
+            if (uki->touch_timer != 5) {
+                uki->touch_timer = 0;
+            }
+        }
+
+        actorx->speed = 0.8f;
+        actorx->position_speed.x = actorx->speed * sin_s(actorx->player_angle_y);
+        actorx->position_speed.z = actorx->speed * cos_s(actorx->player_angle_y);
+    }
+
+    if (actorx->player_distance_xz > 127.0f && (play->game_frame % 10) == 0) {
+        aUKI_effect_hamon(actorx, game, 4);
+    }
+}
+
+static void aUKI_coast_wave(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    switch (mCoBG_Wpos2Attribute(actorx->world.position, NULL)) {
+        case mCoBG_ATTRIBUTE_WAVE:
+        case mCoBG_ATTRIBUTE_SAND:
+            aUKI_clear_spd(actorx);
+            if (uki->coast_flag == FALSE) {
+                uki->coast_flag = TRUE;
+            }
+            break;
+        default:
+            aUKI_movement(actorx, game);
+            Actor_position_move(actorx);
+            break;
+    }
+}
+
+static void aUKI_vib_calc(ACTOR* actorx, f32 height, f32 max_speed_y, f32 gravity) {
+    if (actorx->world.position.y < height) {
+        actorx->max_velocity_y = max_speed_y;
+    } else {
+        actorx->max_velocity_y = -max_speed_y;
+    }
+
+    actorx->gravity = gravity;
+}
+
+static void aUKI_set_spd_relations_in_water(ACTOR* actorx, GAME* game) {
+    static s16 angl_add_table[] = { DEG2SHORT_ANGLE2(1.40625f), DEG2SHORT_ANGLE2(5.625f) };
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    s16 flow_angle;
+    int idx;
+    f32 water_height = mCoBG_GetWaterHeight_File(actorx->world.position, __FILE__, 772);
+
+    if (uki->gyo_command == 2) {
+        if (uki->gyo_status == 4) {
+            f32 height = water_height + 7.5f;
+
+            if (uki->touch_timer != 6) {
+                aUKI_vib_calc(actorx, height, 2.0f, 1.0f);
+                if (actorx->world.position.y >= height) {
+                    uki->touch_timer = 6;
+                }
+            } else {
+                aUKI_vib_calc(actorx, height, 0.3f, 0.1f);
+            }
+        } else {
+            f32 height = water_height - 7.5f;
+
+            if (uki->touch_timer != 5) {
+                aUKI_vib_calc(actorx, height, 1.5f, 0.5f);
+                if (actorx->world.position.y < (water_height - 7.5f)) {
+                    uki->touch_timer = 5;
+                }
+            } else {
+                aUKI_vib_calc(actorx, height, 0.3f, 0.1f);
+            }
+        }
+    } else if (uki->gyo_command == 1) {
+        if (uki->touched_flag) {
+            uki->touched_flag = FALSE;
+            uki->touch_timer = 2;
+            aUKI_effect_hamon(actorx, game, 2);
+            aUKI_touch_vib_proc(uki);
+        }
+
+        switch (uki->touch_timer) {
+            case 4:
+                aUKI_vib_calc(actorx, water_height, 0.3f, -0.050000005f);
+                break;
+            case 0:
+            case 2:
+                water_height -= 1.7f;
+                aUKI_vib_calc(actorx, water_height, 0.9f, 1.0f);
+                if (actorx->world.position.y < water_height) {
+                    uki->touch_timer = 3;
+                }
+                break;
+            case 3:
+                aUKI_vib_calc(actorx, water_height, 0.9f, 1.0f);
+                if (actorx->world.position.y >= water_height) {
+                    uki->touch_timer = 4;
+                }
+                break;
+            default:
+                break;
+        }
+    } else {
+        if (uki->proc == 4) {
+            flow_angle = aUKI_Get_flow_angle(actorx);
+            idx = ABS((s16)(actorx->world.angle.y - flow_angle)) > DEG2SHORT_ANGLE2(90.0f);
+
+            chase_angle(&actorx->world.angle.y, flow_angle, angl_add_table[idx]);
+            actorx->shape_info.rotation.y = actorx->world.angle.y;
+        }
+
+        if (actorx->bg_collision_check.result.unit_attribute == mCoBG_ATTRIBUTE_WATERFALL) {
+            if (actorx->world.position.y < water_height) {
+                if (uki->touch_timer == 5) {
+                    aUKI_vib_calc(actorx, water_height, 0.9f, 1.0f);
+                } else {
+                    aUKI_vib_calc(actorx, water_height, 0.3f, -0.050000005f);
+                }
+            } else {
+                actorx->max_velocity_y = -3.0f;
+                actorx->gravity = 3.0f;
+            }
+
+            switch (uki->proc) {
+                case 4:
+                case 6:
+                case 7:
+                    uki->gyo_status = 1;
+                    actorx->position_speed.y = 0.0f;
+                    uki->gyo_command = 0;
+                    break;
+            }
+        } else {
+            if (uki->touch_timer == 5) {
+                aUKI_vib_calc(actorx, water_height, 0.9f, 1.0f);
+                if (actorx->world.position.y >= water_height) {
+                    aUKI_effect_hamon(actorx, game, 1);
+                    uki->touch_timer = 0;
+                }
+            } else {
+                aUKI_vib_calc(actorx, water_height, 0.3f, -0.050000005f);
+            }
+        }
+    }
+}
+
+static void aUKI_color(ACTOR* actorx) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    f32 water_height = mCoBG_GetWaterHeight_File(actorx->world.position, __FILE__, 911);
+
+    if (actorx->world.position.y < (water_height - 3.0f)) {
+        aUKI_chase_color(&uki->color[0], 100, -52);
+        aUKI_chase_color(&uki->color[1], 100, -52);
+        aUKI_chase_color(&uki->color[2], 128, -43);
+    } else {
+        aUKI_chase_color(&uki->color[0], 255, 52);
+        aUKI_chase_color(&uki->color[1], 255, 52);
+        aUKI_chase_color(&uki->color[2], 255, 43);
+    }
+}
+
+static u8 aUKI_force_command(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    u8 res = FALSE;
+
+    switch (uki->command) {
+        case 8:
+            res = TRUE;
+            aUKI_set_proc(actorx, game, aUKI_PROC_FORCE, 0);
+            break;
+        case 7:
+            res = TRUE;
+            aUKI_clear_spd(actorx);
+            uki->frame_timer = 52;
+            aUKI_parabola_init(uki, &actorx->world.position, &uki->right_hand_pos, uki->frame_timer, 1);
+            uki->status = aUKI_STATUS_COMEBACK;
+            aUKI_effect_sibuki(actorx, game, 1);
+            sAdo_OngenTrgStart(NA_SE_10C, &actorx->world.position);
+            aUKI_set_proc(actorx, game, aUKI_PROC_FORCE, 0);
+            break;
+    }
+
+    return res;
+}
+
+static void aUKI_carry(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    actorx->world.position = uki->right_hand_pos;
+    uki->uki_pos = uki->right_hand_pos;
+
+    if (uki->command == 2) {
+        int timer;
+
+        if (uki->frame_timer == 0) {
+            timer = 0;
+        } else {
+            timer = --uki->frame_timer;
+        }
+
+        if (timer == 0) {
+            aUKI_set_proc(actorx, game, aUKI_PROC_READY, 0);
+        }
+    }
+}
+
+static void aUKI_ready(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    int timer;
+
+    if (uki->frame_timer == 0) {
+        timer = 0;
+    } else {
+        timer = --uki->frame_timer;
+    }
+
+    if (timer == 0) {
+        switch (uki->command) {
+            case 3:
+                aUKI_set_proc(actorx, game, aUKI_PROC_CAST, 0);
+                break;
+            case 4:
+                aUKI_set_proc(actorx, game, aUKI_PROC_AIR, 0);
+                break;
+        }
+    } else {
+        aUKI_parabola_move(actorx, 0);
+    }
+}
+
+static void aUKI_air(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    int timer;
+
+    aUKI_parabola_move(actorx, 0);
+    if (uki->frame_timer == 0) {
+        timer = 0;
+    } else {
+        timer = --uki->frame_timer;
+    }
+
+    if (timer == 0) {
+        aUKI_clear_spd(actorx);
+        aUKI_set_proc(actorx, game, aUKI_PROC_CARRY, 0);
+    }
+}
+
+static void aUKI_cast(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    int timer;
+
+    aUKI_parabola_move(actorx, 1);
+    if (actorx->bg_collision_check.result.is_in_water) {
+        uki->hit_water_flag = TRUE;
+        aUKI_effect_sibuki(actorx, game, 3);
+        mVibctl_simple_entry(50, mVibctl_VIB_PROG_FFF, 0, 1, 15, 0.0f);
+        uki->status = aUKI_STATUS_FLOAT;
+        sAdo_OngenTrgStart(NA_SE_10B, &actorx->world.position);
+        aUKI_set_proc(actorx, game, aUKI_PROC_WAIT, 0);
+    }
+}
+
+static void aUKI_wait(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    uki->hit_water_flag = FALSE;
+    uki->uki_pos = actorx->world.position;
+    chase_f(&actorx->position_speed.y, actorx->max_velocity_y, actorx->gravity);
+
+    if (aUKI_force_command(actorx, game) == FALSE) {
+        int timer;
+
+        if (uki->cast_timer == 0) {
+            timer = 0;
+        } else {
+            timer = --uki->cast_timer;
+        }
+
+        if (timer == 0 && uki->gyo_command == 1) {
+            aUKI_set_proc(actorx, game, aUKI_PROC_TOUCH, 0);
+        } else if (uki->command == 6) {
+            int timer;
+
+            aUKI_clear_spd(actorx);
+            if (uki->frame_timer == 0) {
+                timer = 0;
+            } else {
+                timer = --uki->frame_timer;
+            }
+
+            if (timer == 0) {
+                aUKI_set_proc(actorx, game, aUKI_PROC_HIT, 1);
+            }
+        } else {
+            aUKI_coast_wave(actorx, game);
+        }
+    }
+}
+
+static void aUKI_hit(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    int timer;
+
+    if (uki->frame_timer == 0) {
+        timer = 0;
+    } else {
+        timer = --uki->frame_timer;
+    }
+
+    if (timer == 0) {
+        if (uki->gyo_status == 5) {
+            aUKI_set_proc(actorx, game, aUKI_PROC_CATCH, 0);
+        } else {
+            uki->gyo_command = 0;
+            uki->gyo_status = 0;
+            aUKI_set_proc(actorx, game, aUKI_PROC_CARRY, 0);
+        }
+    } else {
+        aUKI_parabola_move(actorx, 1);
+        aUKI_parabola_move(actorx, 2);
+    }
+}
+
+static void aUKI_touch(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    chase_f(&actorx->position_speed.y, actorx->max_velocity_y, actorx->gravity);
+    if (aUKI_force_command(actorx, game) == FALSE) {
+        if (uki->gyo_command == 2) {
+            aUKI_touch_vib_proc(uki);
+            aUKI_set_proc(actorx, game, aUKI_PROC_BITE, 0);
+        } else if (uki->command == 6) {
+            int timer;
+
+            aUKI_clear_spd(actorx);
+            if (uki->frame_timer == 0) {
+                timer = 0;
+            } else {
+                timer = --uki->frame_timer;
+            }
+
+            if (timer == 0) {
+                aUKI_set_proc(actorx, game, aUKI_PROC_HIT, 1);
+            }
+        } else {
+            aUKI_movement(actorx, game);
+        }
+
+        Actor_position_move(actorx);
+    }
+}
+
+static void aUKI_bite(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    // clang-format off
+    static s16 angl[] = {
+        DEG2SHORT_ANGLE2(10.1513671875f),
+        DEG2SHORT_ANGLE2(9.4647216796875f),
+        DEG2SHORT_ANGLE2(8.778076171875f),
+        DEG2SHORT_ANGLE2(8.778076171875f),
+        DEG2SHORT_ANGLE2(8.0914306640625f),
+        DEG2SHORT_ANGLE2(7.40478515625f),
+        DEG2SHORT_ANGLE2(7.03125f),
+        DEG2SHORT_ANGLE2(7.03125),
+    };
+    // clang-format on
+    // clang-format off
+    static f32 spd[] = {
+        0.1f,
+        0.2f,
+        0.3f,
+        0.3f,
+        0.4f,
+        0.6f,
+        0.8f,
+        0.8f,
+    };
+    // clang-format on
+
+    chase_f(&actorx->position_speed.y, actorx->max_velocity_y, actorx->gravity);
+    if (aUKI_force_command(actorx, game) == FALSE) {
+        if (uki->gyo_command == 2) {
+            if (uki->command == 6) {
+                int timer;
+
+                if (uki->frame_timer == 0) {
+                    timer = 0;
+                } else {
+                    timer = --uki->frame_timer;
+                }
+
+                if (timer == 0) {
+                    aUKI_clear_spd(actorx);
+                    aUKI_set_proc(actorx, game, aUKI_PROC_HIT, 3);
+                    aUKI_parabola_init(uki, &uki->uki_pos, &uki->left_hand_pos, uki->frame_timer, 2);
+                    uki->gyo_status = 5;
+                } else {
+                    s16 idx = gyoei_type[uki->gyo_type].size;
+                    f32 angle = angl[idx];
+
+                    actorx->world.angle.y += (int)(angle * 0.5f);
+                    actorx->shape_info.rotation.y = actorx->world.angle.y;
+                    actorx->speed = spd[idx];
+                    actorx->position_speed.x = actorx->speed * sin_s(actorx->world.angle.y);
+                    actorx->position_speed.z = actorx->speed * cos_s(actorx->world.angle.y);
+                    Actor_position_move(actorx);
+
+                    uki->uki_pos = uki->gyo_pos;
+                    uki->gyo_status = 4;
+
+                    if (uki->status != aUKI_STATUS_VIB) {
+                        aUKI_bite_vib_proc(actorx);
+                    }
+
+                    uki->status = aUKI_STATUS_VIB;
+                }
+            } else {
+                if ((game->frame_counter % 10) == 0) {
+                    aUKI_touch_vib_proc(uki);
+                }
+
+                Actor_position_move(actorx);
+            }
+        } else {
+            aUKI_set_proc(actorx, game, aUKI_PROC_WAIT, 0);
+        }
+    }
+}
+
+static void aUKI_catch(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    actorx->world.position = uki->right_hand_pos;
+    uki->uki_pos = uki->left_hand_pos;
+
+    switch (uki->command) {
+        case 1:
+            uki->gyo_command = 0;
+            uki->gyo_status = 8;
+            aUKI_set_proc(actorx, game, aUKI_PROC_CARRY, 0);
+            break;
+        case 5:
+            aUKI_set_proc(actorx, game, aUKI_PROC_GET, 0);
+            break;
+    }
+}
+
+static void aUKI_get(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    actorx->world.position = uki->right_hand_pos;
+    uki->uki_pos = uki->left_hand_pos;
+
+    if (uki->command == 1) {
+        uki->gyo_command = 0;
+        uki->gyo_status = 0;
+        aUKI_set_proc(actorx, game, aUKI_PROC_CARRY, 0);
+    }
+}
+
+static void aUKI_force(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    if (uki->status == aUKI_STATUS_COMEBACK) {
+        int timer;
+
+        if (uki->frame_timer == 0) {
+            timer = 0;
+        } else {
+            timer = --uki->frame_timer;
+        }
+
+        if (timer == 0) {
+            aUKI_set_proc(actorx, game, aUKI_PROC_CARRY, 0);
+        } else {
+            aUKI_parabola_move(actorx, 1);
+        }
+    } else {
+        aUKI_force_command(actorx, game);
+    }
+}
+
+static void aUKI_set_proc_carry(ACTOR* actorx, GAME* game, int arg) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    actorx->position_speed.y = 0.0f;
+    uki->frame_timer = 4;
+    uki->status = aUKI_STATUS_CARRY;
+}
+
+static void aUKI_set_proc_ready(ACTOR* actorx, GAME* game, int arg) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    ACTOR* player_actor = GET_PLAYER_ACTOR_GAME_ACTOR(game);
+    xyz_t target_pos;
+
+    uki->frame_timer = 32;
+    target_pos = actorx->world.position;
+    target_pos.x -= 30.0f * sin_s(player_actor->shape_info.rotation.y);
+    target_pos.z -= 30.0f * cos_s(player_actor->shape_info.rotation.y);
+    aUKI_parabola_init(uki, &actorx->world.position, &target_pos, 20, 0);
+    uki->status = aUKI_STATUS_READY;
+}
+
+static void aUKI_set_proc_air(ACTOR* actorx, GAME* game, int arg) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    uki->frame_timer = 14;
+    aUKI_parabola_init(uki, &actorx->world.position, &uki->uki_pos, uki->frame_timer, 0);
+    uki->status = aUKI_STATUS_CARRY;
+}
+
+static void aUKI_set_proc_cast(ACTOR* actorx, GAME* game, int arg) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    uki->frame_timer = 50;
+    uki->cast_timer = 40;
+    aUKI_parabola_init(uki, &actorx->world.position, &uki->cast_goal_point, uki->frame_timer, 1);
+    uki->status = aUKI_STATUS_CAST;
+}
+
+static void aUKI_set_proc_wait(ACTOR* actorx, GAME* game, int arg) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    uki->frame_timer = 12;
+    uki->gyo_status = 1;
+    uki->gyo_type = -1;
+    uki->child_actor = NULL;
+}
+
+static void aUKI_set_proc_hit(ACTOR* actorx, GAME* game, int arg) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Submenu* submenu_p = &play->submenu;
+
+    xyz_t_move(&submenu_p->water_pos, &actorx->world.position);
+    uki->frame_timer = 52;
+    aUKI_parabola_init(uki, &actorx->world.position, &uki->right_hand_pos, uki->frame_timer, 1);
+    uki->status = aUKI_STATUS_COMEBACK;
+
+    if (uki->coast_flag) {
+        uki->coast_flag = FALSE;
+    } else {
+        aUKI_effect_sibuki(actorx, game, arg);
+    }
+
+    sAdo_OngenTrgStart(NA_SE_10C, &actorx->world.position);
+}
+
+static void aUKI_set_proc_touch(ACTOR* actorx, GAME* game, int arg) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    aUKI_clear_spd(actorx);
+    aUKI_movement(actorx, game);
+    Actor_position_move(actorx);
+
+    uki->frame_timer = 12;
+    uki->gyo_status = 2;
+}
+
+static void aUKI_set_proc_bite(ACTOR* actorx, GAME* game, int arg) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+    static s16 timer[] = { 26, 39, 39, 39, 52, 65, 78, 78 };
+
+    aUKI_clear_spd(actorx);
+    aUKI_effect_sibuki(actorx, game, 0);
+
+    switch (uki->gyo_type) {
+        case aSOG_FISH_TYPE_EMPTY_CAN:
+        case aSOG_FISH_TYPE_BOOT:
+        case aSOG_FISH_TYPE_OLD_TIRE:
+            uki->frame_timer = 26;
+            break;
+        default:
+            uki->frame_timer = (int)((f32)(int)timer[gyoei_type[uki->gyo_type].size] * 2.0f);
+            break;
+    }
+
+    uki->gyo_status = 3;
+}
+
+static void aUKI_set_proc_catch(ACTOR* actorx, GAME* game, int arg) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    uki->frame_timer = 20;
+    uki->gyo_status = 6;
+    uki->status = aUKI_STATUS_CATCH;
+}
+
+static void aUKI_set_proc_get(ACTOR* actorx, GAME* game, int arg) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    uki->gyo_status = 7;
+}
+
+typedef void (*aUKI_INIT_PROC)(ACTOR*, GAME*, int);
+
+static void aUKI_set_proc(ACTOR* actorx, GAME* game, int proc, int arg) {
+    // clang-format off
+    static aUKI_INIT_PROC init_proc[] = {
+        &aUKI_set_proc_carry,
+        &aUKI_set_proc_ready,
+        &aUKI_set_proc_air,
+        &aUKI_set_proc_cast,
+        &aUKI_set_proc_wait,
+        &aUKI_set_proc_hit,
+        &aUKI_set_proc_touch,
+        &aUKI_set_proc_bite,
+        &aUKI_set_proc_catch,
+        &aUKI_set_proc_get,
+        (aUKI_INIT_PROC)&none_proc1,
+    };
+    // clang-format on
+
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    (*init_proc[proc])(actorx, game, arg);
+    uki->proc = proc;
+}
+
+typedef void (*aUKI_MOVE_PROC)(ACTOR*, GAME*);
+
+static void aUKI_actor_move(ACTOR* actorx, GAME* game) {
+    UKI_ACTOR* uki = (UKI_ACTOR*)actorx;
+
+    if (uki->command != 0) {
+        // clang-format off
+        static aUKI_MOVE_PROC Uki_move_proc[] = {
+            &aUKI_carry,
+            &aUKI_ready,
+            &aUKI_air,
+            &aUKI_cast,
+            &aUKI_wait,
+            &aUKI_hit,
+            &aUKI_touch,
+            &aUKI_bite,
+            &aUKI_catch,
+            &aUKI_get,
+            &aUKI_force,
+        };
+        // clang-format on
+
+        ACTOR* player_actor;
+        f32 sin;
+        f32 cos;
+
+        actorx->dw_proc = &aUKI_actor_draw;
+        player_actor = GET_PLAYER_ACTOR_GAME_ACTOR(game);
+        sin = sin_s(player_actor->shape_info.rotation.y);
+        cos = cos_s(player_actor->shape_info.rotation.y);
+
+        uki->right_hand_pos.x += 3.0f * sin + -7.0f * cos;
+        uki->right_hand_pos.y += 6.0f;
+        uki->right_hand_pos.z += 3.0f * cos - -7.0f * sin;
+
+        (*Uki_move_proc[uki->proc])(actorx, game);
+        aUKI_BGcheck(actorx);
+        aUKI_set_spd_relations_in_water(actorx, game);
+        aUKI_color(actorx);
+        set_collision(actorx, game);
+
+    } else {
+        actorx->dw_proc = NULL;
+    }
+}

@@ -4,10 +4,10 @@
 #include "m_name_table.h"
 #include "m_play.h"
 
-mActor_proc Player_actor_ct_func;
-mActor_proc Player_actor_dt_func;
-mActor_proc Player_actor_move_func;
-mActor_proc Player_actor_draw_func;
+static mActor_proc Player_actor_ct_func;
+static mActor_proc Player_actor_dt_func;
+static mActor_proc Player_actor_move_func;
+static mActor_proc Player_actor_draw_func;
 
 void Player_actor_ct_call(ACTOR* actor, GAME* game);
 void Player_actor_dt_call(ACTOR* actor, GAME* game);

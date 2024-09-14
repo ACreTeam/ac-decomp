@@ -1,0 +1,51 @@
+static int  Player_actor_request_main_invade(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_INVADE, priority)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_INVADE, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static int Player_actor_request_main_invade_all(GAME* game, int priority) {
+    return Player_actor_request_main_invade(game, priority) != 0;
+}
+
+static void Player_actor_setup_main_Invade(ACTOR* actor, GAME* game) {
+    int anim_idx;
+    int part_table_idx;
+
+    Player_actor_SetupItem_Base1(actor, mPlayer_ANIM_WAIT1, -5.0f, &anim_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actor, game, 0, anim_idx, 1.0f, 1.0f, 0.5f, -5.0f, part_table_idx);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_Movement_Invade(ACTOR* actor) { 
+    Player_actor_Movement_Base_Braking(actor); 
+}
+
+static void Player_actor_CulcAnimation_Invade(ACTOR* actor) {
+    f32 frame_calc;
+
+    Player_actor_CulcAnimation_Base2(actor, &frame_calc);
+}
+
+static void Player_actor_ObjCheck_Invade(ACTOR* actor, GAME* game) { 
+    Player_actor_Excute_Corect_forStand(actor, game); 
+}
+
+static void Player_actor_BGcheck_Invade(ACTOR* actor) { 
+    Player_actor_BGcheck_common_type2(actor); 
+}
+
+static void Player_actor_main_Invade(ACTOR* actor, GAME* game) {
+    Player_actor_Movement_Invade(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Invade(actor);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Invade(actor, game);
+    Player_actor_BGcheck_Invade(actor);
+    Player_actor_Item_main(actor, game);
+}

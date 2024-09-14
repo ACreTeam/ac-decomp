@@ -1,0 +1,175 @@
+static int Player_actor_request_main_change_cloth_all(GAME* game, ACTOR* talk_actor_p, int turn_flag,
+                                                      int prev_main_index, mActor_name_t cloth_item, u16 cloth_idx,
+                                                      int try_on_flag, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_CHANGE_CLOTH, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_change_cloth_c* req_change_cloth_p = &player->requested_main_index_data.change_cloth;
+
+        req_change_cloth_p->talk_actor = talk_actor_p;
+        req_change_cloth_p->turn_flag = turn_flag;
+        req_change_cloth_p->prev_main_index = prev_main_index;
+        req_change_cloth_p->cloth_item = cloth_item;
+        req_change_cloth_p->cloth_idx = cloth_idx;
+        req_change_cloth_p->try_on_flag = try_on_flag;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_CHANGE_CLOTH, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static int Player_actor_request_main_change_cloth_forNPC(GAME* game, mActor_name_t cloth_item, u16 cloth_idx,
+                                                         int try_on_flag) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+    ACTOR* talk_actor_p;
+    int turn_flag;
+    int prev_main_index = player->now_main_index;
+
+    if (prev_main_index == mPlayer_INDEX_TALK) {
+        mPlayer_main_talk_c* talk_p = &player->main_data.talk;
+
+        talk_actor_p = talk_p->talk_actor_p;
+        turn_flag = talk_p->turn_flag;
+    } else {
+        talk_actor_p = NULL;
+        turn_flag = FALSE;
+    }
+
+    return Player_actor_request_main_change_cloth_all(game, talk_actor_p, turn_flag, prev_main_index, cloth_item,
+                                                      cloth_idx, try_on_flag, mPlayer_REQUEST_PRIORITY_19);
+}
+
+static void Player_actor_setup_main_Change_cloth(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    mPlayer_request_change_cloth_c* req_change_cloth_p = &player->requested_main_index_data.change_cloth;
+    mPlayer_main_change_cloth_c* change_cloth_p = &player->main_data.change_cloth;
+    int try_on_flag = req_change_cloth_p->try_on_flag;
+    int anim0_idx = try_on_flag ? mPlayer_ANIM_MENU_CHANGE1 : mPlayer_ANIM_ITAZURA1;
+    int anim1_idx;
+    int part_table_idx;
+    f32 speed = try_on_flag ? 1.0f : 0.5f;
+
+    change_cloth_p->talk_actor = req_change_cloth_p->talk_actor;
+    change_cloth_p->turn_flag = req_change_cloth_p->turn_flag;
+    change_cloth_p->prev_main_index = req_change_cloth_p->prev_main_index;
+    change_cloth_p->cloth_item = req_change_cloth_p->cloth_item;
+    change_cloth_p->cloth_idx = req_change_cloth_p->cloth_idx;
+
+    Player_actor_SetupItem_Base1(actorx, anim0_idx, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base2(actorx, game, anim0_idx, anim1_idx, 1.0f, 1.0f, speed, -5.0f,
+                                     cKF_FRAMECONTROL_STOP, part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+
+    if (try_on_flag == FALSE) {
+        eEC_CLIP->effect_make_proc(eEC_EFFECT_HALLOWEEN, player->feel_pos, 2, actorx->shape_info.rotation.y, game,
+                                   RSV_NO, 0, 0);
+    }
+}
+
+static void Player_actor_Movement_Change_cloth(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    int anim0_idx = player->animation0_idx;
+
+    if (anim0_idx != mPlayer_ANIM_MENU_CHANGE1) {
+        Player_actor_Movement_Base_Stop(actorx, FALSE);
+    } else {
+        GAME_PLAY* play = (GAME_PLAY*)game;
+        Camera2* camera2_p = &play->camera;
+        s_xyz* dir_p = &camera2_p->direction;
+        s16 dir_y = dir_p->y + DEG2SHORT_ANGLE2(180.0f);
+
+        add_calc_short_angle2(&actorx->shape_info.rotation.y, dir_y, 1.0f - sqrtf(0.5f), 2500, 50);
+        actorx->world.angle.y = actorx->shape_info.rotation.y;
+        Player_actor_Movement_Base_Stop(actorx, FALSE);
+    }
+}
+
+static int Player_actor_CulcAnimation_Change_cloth(ACTOR* actorx, f32* last_anim0_cur_frame) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame);
+}
+
+static void Player_actor_SetEffect_Change_cloth(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    int anim0_idx = player->animation0_idx;
+
+    if (anim0_idx == mPlayer_ANIM_MENU_CHANGE1) {
+        cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+        cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+        if (Player_actor_Check_AnimationFrame(fc0_p, 16.0f)) {
+            Player_actor_sound_wear(actorx);
+            eEC_CLIP->effect_make_proc(eEC_EFFECT_KIGAE, player->feel_pos, 2, actorx->shape_info.rotation.y, game,
+                                       RSV_NO, 0, 0);
+        }
+    }
+}
+
+static void Player_actor_SetTexPallet_Change_cloth(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    int anim0_idx = player->animation0_idx;
+    int menu_flag = anim0_idx == mPlayer_ANIM_MENU_CHANGE1;
+    f32 frame = menu_flag ? 36.0f : 18.0f;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc0_p, frame)) {
+        mPlayer_main_change_cloth_c* change_cloth_p = &player->main_data.change_cloth;
+        mActor_name_t cloth_item = change_cloth_p->cloth_item;
+        u16 cloth_idx = change_cloth_p->cloth_idx;
+
+        if (menu_flag == FALSE) {
+            mPlib_change_player_cloth_info(&Now_Private->cloth, cloth_item);
+            mPr_SetItemCollectBit(cloth_item);
+        }
+
+        mPlib_change_player_cloth(game, cloth_idx);
+    }
+}
+
+static void Player_actor_SearchAnimation_Change_cloth(ACTOR* actorx, GAME* game, f32 frame) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_SetEffect_Change_cloth(actorx, game);
+        Player_actor_SetTexPallet_Change_cloth(actorx, game);
+    }
+}
+
+static void Player_actor_set_eye_pattern_Change_cloth(ACTOR* actorx) {
+    Player_actor_set_tex_anime_pattern(actorx);
+}
+
+static void Player_actor_ObjCheck_Change_cloth(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_request_proc_index_fromChange_cloth(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+        mPlayer_main_change_cloth_c* change_cloth_p = &player->main_data.change_cloth;
+        int prev_main_index = change_cloth_p->prev_main_index;
+
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        if (prev_main_index != mPlayer_INDEX_TALK) {
+            Player_actor_request_main_demo_wait_all(game, FALSE, 0, mPlayer_REQUEST_PRIORITY_19);
+        } else {
+            Player_actor_request_main_talk_all(game, change_cloth_p->talk_actor, change_cloth_p->turn_flag, -12.0f,
+                                               FALSE, mPlayer_REQUEST_PRIORITY_19);
+        }
+    }
+}
+
+static void Player_actor_main_Change_cloth(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    Player_actor_Movement_Change_cloth(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Change_cloth(actorx, &last_anim0_cur_frame);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_SearchAnimation_Change_cloth(actorx, game, last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_Change_cloth(actorx);
+    Player_actor_ObjCheck_Change_cloth(actorx, game);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromChange_cloth(actorx, game, end_flag);
+}

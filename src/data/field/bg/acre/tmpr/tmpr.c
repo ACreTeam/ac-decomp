@@ -1,27 +1,30 @@
 #include "libforest/gbi_extensions.h"
 
-// clang-format off
-
-static Vtx tmpr_v[] = { }; // TODO: include asset
-
-extern u8 earth_tex_dummy[];
+extern u8 bridge_2_pal_dummy[];
+extern u8 bridge_2_tex_dummy[];
+extern u8 water_2_tex_dummy[];
+extern u8 water_1_tex_dummy[];
 extern u8 river_tex_dummy[];
 extern u8 grass_tex_dummy[];
-extern u8 water_1_tex_dummy[];
-extern u8 water_2_tex_dummy[];
-extern u8 bridge_2_tex_dummy[];
-extern u16 bridge_2_pal_dummy[];
+extern u8 earth_tex_dummy[];
 
-Gfx tmpr_modelT[] = {
-    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+static Vtx tmpr_v[] = {
+#include "assets/field/bg/tmpr_v.inc"
+};
+
+extern Gfx tmpr_modelT[] = {
+    gsSPTexture(65535, 65535, 0, 0, G_ON),
     gsDPPipeSync(),
-    gsDPSetCombineLERP(PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, 1, 0, TEXEL0, TEXEL1, COMBINED, 0, SHADE, TEXEL0, COMBINED, 0, PRIM_LOD_FRAC, PRIMITIVE),
+    gsDPSetCombineLERP(PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, 1, 0, TEXEL0, TEXEL1, COMBINED, 0, SHADE, TEXEL0,
+                       COMBINED, 0, PRIM_LOD_FRAC, PRIMITIVE),
     gsDPSetPrimColor(0, 50, 255, 255, 255, 50),
-    gsDPSetEnvColor(0, 100, 255, 255),
+    gsDPSetEnvColor(0x00, 0x64, 0xFF, 0xFF),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_ZB_XLU_SURF2),
     gsDPSetTextureLUT(G_TT_NONE),
-    gsDPLoadTextureBlock_4b(water_1_tex_dummy, G_IM_FMT_I, 32, 32, 15, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
-    gsDPLoadMultiBlock_4b(water_2_tex_dummy, 0x0040, 1, G_IM_FMT_I, 32, 32, 15, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
+    gsDPLoadTextureBlock_4b(water_1_tex_dummy, G_IM_FMT_I, 32, 32, 15, G_TX_NOMIRROR | G_TX_WRAP,
+                            G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
+    gsDPLoadMultiBlock_4b(water_2_tex_dummy, 0x0040, 1, G_IM_FMT_I, 32, 32, 15, G_TX_NOMIRROR | G_TX_WRAP,
+                          G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
     gsSPDisplayList(0x08000000),
     gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
     gsSPVertex(&tmpr_v[152], 22, 0),
@@ -36,13 +39,14 @@ Gfx tmpr_modelT[] = {
     gsSP2Triangles(18, 17, 15, 0, 18, 15, 10, 0),
     gsSP2Triangles(18, 10, 13, 0, 19, 18, 13, 0),
     gsSP2Triangles(19, 13, 20, 0, 21, 19, 20, 0),
-    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+    gsSPTexture(65535, 65535, 0, 0, G_ON),
     gsDPPipeSync(),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
     gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
     gsDPSetTextureLUT(G_TT_RGBA16),
-    gsDPLoadTLUT_pal16(15, 0x80FD90E0),
-    gsDPLoadTextureBlock_4b(bridge_2_tex_dummy, G_IM_FMT_CI, 128, 32, 15, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_WRAP, 7, 5, G_TX_NOLOD, G_TX_NOLOD),
+    gsDPLoadTLUT_pal16(15, bridge_2_pal_dummy),
+    gsDPLoadTextureBlock_4b(bridge_2_tex_dummy, G_IM_FMT_CI, 128, 32, 15, G_TX_NOMIRROR | G_TX_CLAMP,
+                            G_TX_NOMIRROR | G_TX_WRAP, 7, 5, G_TX_NOLOD, G_TX_NOLOD),
     gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
     gsSPVertex(&tmpr_v[174], 32, 0),
     gsSP2Triangles(0, 1, 2, 0, 0, 2, 3, 0),
@@ -63,14 +67,15 @@ Gfx tmpr_modelT[] = {
     gsSPEndDisplayList(),
 };
 
-Gfx tmpr_model[] = {
-    gsSPTexture(0xFFFF, 0xFFFF, 0, G_TX_RENDERTILE, G_ON),
+extern Gfx tmpr_model[] = {
+    gsSPTexture(65535, 65535, 0, 0, G_ON),
     gsDPPipeSync(),
     gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_OPA_SURF2),
     gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
     gsDPSetTextureLUT(G_TT_RGBA16),
     gsDPLoadTLUT_pal16(15, 0x09000000),
-    gsDPLoadTextureBlock_4b(earth_tex_dummy, G_IM_FMT_CI, 64, 64, 15, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_CLAMP, 6, 6, G_TX_NOLOD, G_TX_NOLOD),
+    gsDPLoadTextureBlock_4b(earth_tex_dummy, G_IM_FMT_CI, 64, 64, 15, G_TX_NOMIRROR | G_TX_WRAP,
+                            G_TX_NOMIRROR | G_TX_CLAMP, 6, 6, G_TX_NOLOD, G_TX_NOLOD),
     gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
     gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
     gsSPVertex(&tmpr_v[0], 32, 0),
@@ -89,7 +94,8 @@ Gfx tmpr_model[] = {
     gsSP2Triangles(5, 3, 6, 0, 7, 5, 8, 0),
     gsDPPipeSync(),
     gsDPLoadTLUT_pal16(15, 0x09000000),
-    gsDPLoadTextureBlock_4b(river_tex_dummy, G_IM_FMT_CI, 64, 32, 15, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_CLAMP, 6, 5, G_TX_NOLOD, G_TX_NOLOD),
+    gsDPLoadTextureBlock_4b(river_tex_dummy, G_IM_FMT_CI, 64, 32, 15, G_TX_NOMIRROR | G_TX_WRAP,
+                            G_TX_NOMIRROR | G_TX_CLAMP, 6, 5, G_TX_NOLOD, G_TX_NOLOD),
     gsSPVertex(&tmpr_v[41], 32, 0),
     gsSP2Triangles(0, 1, 2, 0, 0, 3, 1, 0),
     gsSP2Triangles(4, 5, 6, 0, 5, 7, 6, 0),
@@ -114,7 +120,8 @@ Gfx tmpr_model[] = {
     gsSP1Triangle(26, 5, 3, 0),
     gsDPPipeSync(),
     gsDPLoadTLUT_pal16(15, 0x09000000),
-    gsDPLoadTextureBlock_4b(grass_tex_dummy, G_IM_FMT_CI, 32, 32, 15, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
+    gsDPLoadTextureBlock_4b(grass_tex_dummy, G_IM_FMT_CI, 32, 32, 15, G_TX_NOMIRROR | G_TX_WRAP,
+                            G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
     gsSPVertex(&tmpr_v[100], 32, 0),
     gsSP2Triangles(0, 1, 2, 0, 1, 3, 2, 0),
     gsSP2Triangles(4, 5, 3, 0, 5, 2, 3, 0),
@@ -140,5 +147,3 @@ Gfx tmpr_model[] = {
     gsSP1Triangle(17, 19, 18, 0),
     gsSPEndDisplayList(),
 };
-
-// clang-format on

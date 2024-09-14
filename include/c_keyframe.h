@@ -24,7 +24,7 @@ extern "C" {
 
 #define cKF_ANIMATION_TRANS_XZ (1 << 0) // Translation on XZ
 #define cKF_ANIMATION_TRANS_Y (1 << 1)  // Translation on Y
-#define cKF_ANIMATION_ROT_X (1 << 2)    // Rotation on the X axis
+#define cKF_ANIMATION_ROT_Y (1 << 2)    // Rotation on the X axis
 
 enum {
     cKF_STATE_NONE,
@@ -382,10 +382,10 @@ extern void cKF_SkeletonInfo_R_combine_work_set(cKF_SkeletonInfo_R_combine_work_
  * @param joint Pointer to the joint data.
  * @param flag Pointer to the current joint flag.
  * @param combine Pointer to the combine work set structure.
- * @param cwork_num Pointer to the current work layer number.
+ * @param part_table Pointer to the current part table.
  */
 extern void cKF_SkeletonInfo_R_combine_translation(s16** joint, int* flag, cKF_SkeletonInfo_R_combine_work_c* combine,
-                                                   s8* cwork_num);
+                                                   s8* part_table);
 
 /**
  * Combines rotation data from multiple animation layers for a joint, modifying it based on animation flags.
@@ -393,34 +393,34 @@ extern void cKF_SkeletonInfo_R_combine_translation(s16** joint, int* flag, cKF_S
  * @param joint Pointer to the current joint's rotation data.
  * @param flag Pointer to the animation flag affecting the current joint.
  * @param combine Pointer to the combine work set structure containing animation layer data.
- * @param cwork_num Pointer to the layer number being processed.
+ * @param part_table Pointer to the current part table.
  */
 extern void cKF_SkeletonInfo_R_combine_rotation(s16** joint, int* flag, cKF_SkeletonInfo_R_combine_work_c* combine,
-                                                s8* cwork_num);
+                                                s8* part_table);
 
 /**
  * Combines and plays two sets of animation data, applying translations and rotations from both.
  *
  * @param info1 First skeleton info structure to combine.
  * @param info2 Second skeleton info structure to combine.
- * @param flag Pointer to a flag determining the combination behavior.
+ * @param part_table Pointer to the part table determining the combination behavior.
  * @return Status of the combination and play operation.
  */
-extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1, cKF_SkeletonInfo_R_c* info2, s8* flag);
+extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1, cKF_SkeletonInfo_R_c* info2, s8* part_table);
 
 /**
  * Combines and plays three sets of animation data, applying translations and rotations, and updates playback state.
  *
- * @param arg1 Result of playing first animation.
- * @param arg2 Result of playing second animation.
- * @param arg3 Result of playing third animation.
+ * @param state1 Result of playing first animation.
+ * @param state2 Result of playing second animation.
+ * @param state3 Result of playing third animation.
  * @param info1 First skeleton info structure to combine.
  * @param info2 Second skeleton info structure to combine.
  * @param info3 Third skeleton info structure to combine.
- * @param flag Pointer to a flag determining the combination behavior.
+ * @param part_table Pointer to the part table determining the combination behavior.
  */
-extern void cKF_SkeletonInfo_R_T_combine_play(int* arg1, int* arg2, int* arg3, cKF_SkeletonInfo_R_c* info1,
-                                              cKF_SkeletonInfo_R_c* info2, cKF_SkeletonInfo_R_c* info3, s8* flag);
+extern void cKF_SkeletonInfo_R_T_combine_play(int* state1, int* state2, int* state3, cKF_SkeletonInfo_R_c* info1,
+                                              cKF_SkeletonInfo_R_c* info2, cKF_SkeletonInfo_R_c* info3, s8* part_table);
 
 /**
  * Sets base shape translation and rotation for a skeleton info structure.
@@ -439,16 +439,16 @@ extern void cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(cKF_SkeletonInfo_R_c
 /**
  * Adjusts the base position and correction for a skeleton info structure based on animation flags.
  *
- * @param counter Animation counter to determine the phase of movement.
  * @param basepos Original base position of the model.
  * @param correctpos Corrected base position of the model.
  * @param ybase Base Y angle for rotation.
  * @param yidle Idle Y angle for rotation.
+ * @param counter Animation counter to determine the phase of movement.
  * @param keyframe Skeleton info structure to modify.
  * @param an_flag Animation flags to determine which corrections to apply.
  */
-extern void cKF_SkeletonInfo_R_AnimationMove_ct_base(f32 counter, xyz_t* basepos, xyz_t* correctpos, s16 ybase,
-                                                     s16 yidle, cKF_SkeletonInfo_R_c* keyframe, int animation_flag);
+extern void cKF_SkeletonInfo_R_AnimationMove_ct_base(xyz_t* basepos, xyz_t* correctpos, s16 ybase, s16 yidle,
+                                                     f32 counter, cKF_SkeletonInfo_R_c* keyframe, int animation_flag);
 
 /**
  * Resets animation movement and flags for a skeleton info structure.
@@ -462,29 +462,29 @@ extern void cKF_SkeletonInfo_R_AnimationMove_dt(cKF_SkeletonInfo_R_c* keyframe);
  *
  * @param base Base position to modify.
  * @param sbase Base rotation to modify.
- * @param move Movement amount to apply.
+ * @param scale Scaling amount to apply.
  * @param yidle Y-axis idle angle.
  * @param keyframe Skeleton info structure containing animation data.
  */
-extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s_xyz* sbase, xyz_t* move, s16 yidle,
+extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t* scale, s16 yidle,
                                                   cKF_SkeletonInfo_R_c* keyframe);
 
 /**
  * Calculates and applies transformation to world coordinates based on animation data.
  *
- * @param calcx X-coordinate for calculation base.
- * @param calcy Y-coordinate for calculation base.
- * @param calcz Z-coordinate for calculation base.
- * @param base Base position result.
- * @param calcp Position calculation parameters.
- * @param val Angle value for rotation.
- * @param trans Transformation to apply.
+ * @param calc_pos Calculated position result.
+ * @param base_pos Base world position.
+ * @param trans_x X-coordinate for translation.
+ * @param trans_y Y-coordinate for translation.
+ * @param trans_z Z-coordinate for translation.
+ * @param angle_y Angle value for rotation.
+ * @param scale Scaling factor.
  * @param keyframe Skeleton info structure containing animation data.
- * @param animation_flag Flags determining which transformations to apply.
+ * @param trans_flag Flags determining which transformations to apply.
  */
-extern void cKF_SkeletonInfo_R_AnimationMove_CulcTransToWorld(f32 calcx, f32 calcy, f32 calcz, xyz_t* base,
-                                                              xyz_t* calcp, s16 val, xyz_t* trans,
-                                                              cKF_SkeletonInfo_R_c* keyframe, int animation_flag);
+extern void cKF_SkeletonInfo_R_AnimationMove_CulcTransToWorld(xyz_t* calc_pos, const xyz_t* base_pos, f32 trans_x,
+                                                              f32 trans_y, f32 trans_z, s16 angle_y, const xyz_t* scale,
+                                                              cKF_SkeletonInfo_R_c* keyframe, int trans_flag);
 
 #ifdef __cplusplus
 }

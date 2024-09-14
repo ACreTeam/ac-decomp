@@ -1,0 +1,99 @@
+static int Player_actor_request_main_recieve(GAME* game, ACTOR* talk_actor_p, int turn_flag, int ret_main_index,
+                                             mActor_name_t item, int surface_flag, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_RECIEVE, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_recieve_c* req_recieve_p = &player->requested_main_index_data.recieve;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_RECIEVE, priority);
+        req_recieve_p->talk_actor = talk_actor_p;
+        req_recieve_p->turn_flag = turn_flag;
+        req_recieve_p->prev_main_index = ret_main_index;
+        req_recieve_p->item = item;
+        req_recieve_p->on_surface_flag = surface_flag;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Recieve(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_recieve_c* req_recieve_p = &player->requested_main_index_data.recieve;
+    mPlayer_main_recieve_c* main_recieve_p = &player->main_data.recieve;
+    mActor_name_t item;
+    int anim0_idx;
+    int anim1_idx;
+    int part_table_idx;
+
+    item = req_recieve_p->item;
+    main_recieve_p->talk_actor_p = req_recieve_p->talk_actor;
+    main_recieve_p->turn_flag = req_recieve_p->turn_flag;
+    main_recieve_p->ret_main_index = req_recieve_p->prev_main_index;
+    main_recieve_p->item = item;
+    main_recieve_p->surface_flag = req_recieve_p->on_surface_flag;
+
+    if (Player_actor_check_item_is_fish(item)) {
+        anim0_idx = mPlayer_ANIM_GET_PULL_F1;
+    } else if (main_recieve_p->surface_flag) {
+        anim0_idx = mPlayer_ANIM_RETURN_MAIL2;
+    } else {
+        anim0_idx = mPlayer_ANIM_GET_PULL1;
+    }
+
+    Player_actor_SetupItem_Base1(actorx, anim0_idx, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base2(actorx, game, anim0_idx, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f, cKF_FRAMECONTROL_STOP,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+    Player_actor_Change_ItemParent(actorx);
+    Player_actor_Set_item_matrix_set(actorx);
+}
+
+static void Player_actor_Movement_Recieve(ACTOR* actorx) {
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static int Player_actor_CulcAnimation_Recieve(ACTOR* actorx) {
+    f32 dummy;
+
+    return Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_ObjCheck_Recieve(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_request_proc_index_fromRecieve(ACTOR* actorx, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (end_flag) {
+        int after_mode = Common_Get(clip).handOverItem_clip->player_after_mode;
+        mPlayer_main_recieve_c* main_recieve_p = &player->main_data.recieve;
+        ACTOR* talk_actor_p = main_recieve_p->talk_actor_p;
+        int turn_flag = main_recieve_p->turn_flag;
+        int ret_main_index = main_recieve_p->ret_main_index;
+        mActor_name_t item = main_recieve_p->item;
+
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        switch (after_mode) {
+            case aHOI_REQUEST_PUTAWAY:
+                Player_actor_request_main_recieve_putaway(game, talk_actor_p, turn_flag, ret_main_index, item,
+                                                          main_recieve_p->surface_flag, mPlayer_REQUEST_PRIORITY_19);
+                break;
+        }
+    }
+}
+
+static void Player_actor_main_Recieve(ACTOR* actorx, GAME* game) {
+    int end_flag;
+
+    Player_actor_Movement_Recieve(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Recieve(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Recieve(actorx, game);
+    Player_actor_BGcheck_Wait(actorx);
+    Player_actor_Set_item_matrix_set(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromRecieve(actorx, game, end_flag);
+}

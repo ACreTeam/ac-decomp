@@ -34,7 +34,8 @@ static void change_FGUnit(STRUCTURE_ACTOR* buggy, int type) {
 
     if (mSN_ClearSnowman(unit_fg) == FALSE) {
         dug = FALSE;
-        if ((((*unit_fg >= BURIED_PITFALL_START) && (*unit_fg <= BURIED_PITFALL_END)) || (*unit_fg == SHINE_SPOT))) {
+        if ((((*unit_fg >= BURIED_PITFALL_HOLE_START) && (*unit_fg <= BURIED_PITFALL_HOLE_END)) ||
+             (*unit_fg == SHINE_SPOT))) {
             dug = TRUE;
         }
 
@@ -132,7 +133,8 @@ static int aBGY_check_player2(GAME_PLAY* play) {
     y = player->actor_class.world.angle.y;
 
     res = 0;
-    if ((y > DEG2SHORT_ANGLE2(135.0f)) && (y < DEG2SHORT_ANGLE2(225.0f)) && (player->actor_class.speed > 0.0f)) { // 0x6000 && 0xA000
+    if ((y > DEG2SHORT_ANGLE2(135.0f)) && (y < DEG2SHORT_ANGLE2(225.0f)) &&
+        (player->actor_class.speed > 0.0f)) { // 0x6000 && 0xA000
         res = 1;
     }
 
@@ -230,7 +232,7 @@ static void aBGY_open_wait(STRUCTURE_ACTOR* buggy, GAME_PLAY* play) {
         return;
     }
 
-    if (mPlib_check_player_actor_main_index_OutDoorMove(play) != FALSE) {
+    if (mPlib_check_player_actor_main_index_OutDoorMove(&play->game) != FALSE) {
         return;
     }
 
@@ -264,12 +266,7 @@ static void aBGY_open_door(STRUCTURE_ACTOR* buggy, GAME_PLAY* play) {
 }
 
 static void aBGY_setup_action(STRUCTURE_ACTOR* buggy, int action) {
-    static aSTR_MOVE_PROC process[] = {
-        &aBGY_close_wait,
-        &aBGY_open_wait,
-        &aBGY_close_door,
-        &aBGY_open_door
-    };
+    static aSTR_MOVE_PROC process[] = { &aBGY_close_wait, &aBGY_open_wait, &aBGY_close_door, &aBGY_open_door };
 
     static cKF_Animation_R_c* animation[] = { &cKF_ba_r_obj_s_uranai, &cKF_ba_r_obj_w_uranai };
     static f32 start_idx[] = { 1.0f, 17.0f, 17.0f, 1.0f };
@@ -314,7 +311,7 @@ static void aBGY_actor_move(ACTOR* actor, GAME* game) {
         (mDemo_Check(mDemo_TYPE_SCROLL3, &player->actor_class) == FALSE) && ((bx1 != bx2) || (bz1 != bz2))) {
         Actor_delete(actor);
     } else {
-        
+
         buggy->keyframe_state = cKF_SkeletonInfo_R_play(&buggy->keyframe);
 
         buggy->action_proc(buggy, play);

@@ -1,0 +1,71 @@
+static int Player_actor_request_main_ready_net(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_READY_NET, priority)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_READY_NET, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Ready_net(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int anim_idx;
+    int part_table_idx;
+
+    Player_actor_SetupItem_Base1(actor, mPlayer_ANIM_KAMAE_WAIT_M1, -5.0f, &anim_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_KAMAE_WAIT_M1, mPlayer_ANIM_KAMAE_WAIT_M1, 1.0f, 1.0f,
+                                     0.5f, -5.0f, 0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static int Player_actor_Movement_Ready_net(ACTOR* actor) {
+    return Player_actor_Movement_Base_Braking_common(actor, 0.23925f);
+}
+
+static void Player_actor_CulcAnimation_Ready_net(ACTOR* actor) {
+    f32 frame_calc;
+
+    Player_actor_CulcAnimation_Base2(actor, &frame_calc);
+}
+
+static void Player_actor_ObjCheck_Ready_net(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Ready_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromReady_net(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (mPlib_check_player_warp_forEvent() != FALSE) {
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_34);
+        return;
+    } else {
+        s8 kind = player->item_kind;
+        s8 getkind = Player_actor_Get_ItemKind(actor, player->now_main_index);
+        if (kind != getkind) {
+            Player_actor_request_main_wait_all(game, 0.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_34);
+            return;
+        }
+    }
+    if (!Player_actor_CheckController_forNet(game)) {
+        Player_actor_request_main_swing_net(game, mPlayer_REQUEST_PRIORITY_22);
+    } else if (Player_actor_GetController_move_percentX() || Player_actor_GetController_move_percentY()) {
+        Player_actor_request_main_ready_walk_net(game, mPlayer_REQUEST_PRIORITY_12);
+    }
+}
+
+static void Player_actor_main_Ready_net(ACTOR* actor, GAME* game) {
+    Player_actor_Movement_Ready_net(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Ready_net(actor);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Ready_net(actor, game);
+    Player_actor_BGcheck_Ready_net(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromReady_net(actor, game);
+}

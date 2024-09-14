@@ -624,7 +624,7 @@ static int bIT_common_bury_after(mActor_name_t fg_bury_item, mActor_name_t fg_ho
         int hole_no = mCoBG_GetHoleNumber(*bury_pos);
 
         if (hole_no != -1) {
-            *buried_item_p = BURIED_PITFALL_START + hole_no;
+            *buried_item_p = BURIED_PITFALL_HOLE_START + hole_no;
         } else {
             *buried_item_p = EMPTY_NO;
         }
@@ -1115,7 +1115,7 @@ static void bg_item_tree_fruit_drop(mActor_name_t fg_item, int ut_x, int ut_z, x
     }
 }
 
-static void bIT_actor_dig_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames, u16 wait_frames) {
+static int bIT_actor_dig_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames, u16 wait_frames) {
     int ut_x;
     int ut_z;
 
@@ -1124,7 +1124,7 @@ static void bIT_actor_dig_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u
         mFI_UtNum2DepositOFF(ut_x, ut_z);
     }
 
-    bIT_actor_hole_effect_entry(bIT_CLIP->bg_item_common_p->hole, fg_item, pos, frames, wait_frames, 1, 0);
+    return bIT_actor_hole_effect_entry(bIT_CLIP->bg_item_common_p->hole, fg_item, pos, frames, wait_frames, 1, 0);
 }
 
 static void bIT_actor_bury_hole_effect_entry(mActor_name_t fg_item, xyz_t* pos, u16 frames) {
@@ -2907,7 +2907,7 @@ static int bIT_actor_pit_fall(mActor_name_t pit_fg_item, int ut_x, int ut_z, mAc
 
     mFI_UtNum2CenterWpos(&pos, ut_x, ut_z);
     pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, -1.0f);
-    pitfall_fg_no = pit_fg_item - BURIED_PITFALL_START;
+    pitfall_fg_no = pit_fg_item - BURIED_PITFALL_HOLE_START;
     mFI_SetFG_common(pitfall_fg_no + 0x43, pos, FALSE);
     hole_fg_no = pitfall_fg_no + HOLE_START;
     bIT_actor_pit_entry(common->pit, 1, hole_fg_no, &pos, fg_item_in_pit);

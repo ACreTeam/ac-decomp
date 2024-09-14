@@ -1,0 +1,86 @@
+static int Player_actor_request_main_demo_getoff_train(GAME* game, const xyz_t* pos_p, s16 angle_y, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DEMO_GETOFF_TRAIN, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_demo_getoff_train_c* req_demo_getoff_train_p =
+            &player->requested_main_index_data.demo_getoff_train;
+
+        req_demo_getoff_train_p->player_pos = *pos_p;
+        req_demo_getoff_train_p->angle_y = angle_y;
+        Player_actor_request_main_index(game, mPlayer_INDEX_DEMO_GETOFF_TRAIN, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Demo_getoff_train(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    mPlayer_request_demo_getoff_train_c* req_demo_getoff_train_p = &player->requested_main_index_data.demo_getoff_train;
+
+    actorx->world.angle.y = req_demo_getoff_train_p->angle_y;
+    cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(kf0_p, 0.0f, 1000.0f, 0.0f, 0, 0, DEG2SHORT_ANGLE2(90.0f));
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actorx->world.position, &req_demo_getoff_train_p->player_pos,
+                                             actorx->shape_info.rotation.y, req_demo_getoff_train_p->angle_y, 5.0f,
+                                             kf0_p,
+                                             cKF_ANIMATION_TRANS_XZ | cKF_ANIMATION_TRANS_Y | cKF_ANIMATION_ROT_Y);
+
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_OUTTRAIN1, mPlayer_ANIM_OUTTRAIN1, 1.0f, 1.0f, 0.5f,
+                                     -5.0f, cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Demo_getoff_train(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_dt(kf0_p);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static int Player_actor_CulcAnimation_Demo_getoff_train(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_SearchAnimation_Demo_getoff_train(ACTOR* actorx, GAME* game, f32 frame) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_Set_FootMark_Base1(actorx, game, TRUE, FALSE);
+    }
+}
+
+static void Player_actor_Movement_Demo_getoff_train(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_base(&actorx->world.position, &actorx->shape_info.rotation.y, &actorx->scale,
+                                          actorx->world.angle.y, kf0_p);
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static void Player_actor_request_proc_index_fromDemo_getoff_train(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+
+        if (Player_actor_request_main_demo_wait_all(game, FALSE, 0, mPlayer_REQUEST_PRIORITY_19)) {
+            if (Player_actor_Get_DemoOrder() == 3) {
+                Player_actor_Set_DemoOrder(0);
+            }
+        }
+    }
+}
+
+static void Player_actor_main_Demo_getoff_train(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    end_flag = Player_actor_CulcAnimation_Demo_getoff_train(actorx, &last_anim0_cur_frame);
+    Player_actor_Movement_Demo_getoff_train(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_SearchAnimation_Demo_getoff_train(actorx, game, last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromDemo_getoff_train(actorx, game, end_flag);
+}

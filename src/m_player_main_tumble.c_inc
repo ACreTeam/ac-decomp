@@ -1,0 +1,151 @@
+static int Player_actor_request_main_tumble(GAME* game, int priority) {
+    PLAYER_ACTOR* player;
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_TUMBLE, priority)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_TUMBLE, priority);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_Item_Tumble(ACTOR* actor, GAME* game, int kind, f32 speed) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    int check = FALSE;
+
+    if (mPlayer_ITEM_IS_NET(kind)) {
+        check = TRUE;
+    }
+
+    if (check == FALSE) {
+        Player_actor_LoadOrDestruct_Item(actor, kind, mPlib_Get_BasicItemAnimeIndex_fromItemKind(kind), 0.5f, speed,
+                                         -1.0f, cKF_FRAMECONTROL_REPEAT);
+        Player_actor_Set_now_item_main_index(actor, Player_actor_Get_BasicItemMainIndex_fromItemKind(kind));
+        player->item_kind = kind;
+    } else {
+        Player_actor_LoadOrDestruct_Item(actor, kind, mPlayer_ANIM_GET1, 0.5f, speed, -1.0f, cKF_FRAMECONTROL_STOP);
+        Player_actor_Set_now_item_main_index(actor, mPlayer_INDEX_RETURN_OUTDOOR);
+        player->item_kind = kind;
+    }
+}
+
+static int Player_actor_Get_PlayerAnimeIndex_fromItemKind_Tumble(int kind) {
+    static const u8 data[] = {
+        mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1,
+        mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1,
+        mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,
+        mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_A1,
+        mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1,
+        mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1,
+    };
+
+    if (mPlayer_ITEM_KIND_VALID(kind)) {
+        return data[kind];
+    } else {
+        return mPlayer_ANIM_KOKERU1;
+    }
+}
+
+static void Player_actor_effect_Tumble(ACTOR* actor, GAME* game, s16 arg) {
+    Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_TUMBLE, actor->world.position, 2, actor->world.angle.y,
+                                                   game, 0xFFFF, actor->bg_collision_check.result.unit_attribute, arg);
+}
+
+static void Player_actor_setup_main_Tumble(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int kind = Player_actor_Get_ItemKind(actor, player->requested_main_index);
+    int anim_idx = Player_actor_Get_PlayerAnimeIndex_fromItemKind_Tumble(kind);
+
+    Player_actor_setup_Item_Tumble(actor, game, kind, -5.0f);
+    Player_actor_InitAnimation_Base2(actor, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.5f, -5.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+    Player_actor_sound_Tumble(actor);
+    Player_actor_effect_Tumble(actor, game, 0);
+    mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_TUMBLE);
+}
+
+static int Player_actor_Movement_Tumble(ACTOR* actor) {
+    return Player_actor_Movement_Base_Braking_common(actor, 0.175f);
+}
+
+static void Player_actor_recover_lean_angle_Tumble(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 cur = 17.0f - player->keyframe0.frame_control.current_frame;
+
+    if (cur > 0.0f) {
+        add_calc_short_angle2(&actor->shape_info.rotation.x, 0, 1.0f - sqrtf(1.0f - (1.0f / cur)), 1820, 0);
+    } else {
+        actor->shape_info.rotation.x = 0;
+    }
+}
+
+static int Player_actor_CulcAnimation_Tumble(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetEffect_Tumble(ACTOR* actor, GAME* game, int base) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc, 10.0f) != FALSE) {
+        Player_actor_set_viblation_Tumble();
+
+    } else if (Player_actor_Check_AnimationFrame(fc, 15.0f) != FALSE) {
+        Player_actor_effect_Tumble(actor, game, 1);
+    } else if (Player_actor_Check_AnimationFrame(fc, 17.0f) != FALSE) {
+        Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_TUMBLE_BODYPRINT, actor->world.position, 2,
+                                                       actor->world.angle.y, game, 0xFFFF,
+                                                       actor->bg_collision_check.result.unit_attribute, 0);
+    }
+}
+
+static void Player_actor_SearchAnimation_Tumble(ACTOR* actor, GAME* game, f32 frame, int base) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetEffect_Tumble(actor, game, base);
+    }
+}
+
+static void Player_actor_ObjCheck_Tumble(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Tumble(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromTumble(GAME* game, int arg1, int arg2) {
+    if (arg1 != 0 && arg2 != 0) {
+        Player_actor_request_main_tumble_getup(game, mPlayer_REQUEST_PRIORITY_21);
+    }
+}
+
+static void Player_actor_main_Tumble(ACTOR* actor, GAME* game) {
+    int is_stopped;
+    int calc;
+    f32 frame_calc;
+
+    is_stopped = Player_actor_Movement_Tumble(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    calc = Player_actor_CulcAnimation_Tumble(actor, &frame_calc);
+    Player_actor_SearchAnimation_Tumble(actor, game, frame_calc, calc);
+    Player_actor_recover_lean_angle_Tumble(actor);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_ObjCheck_Tumble(actor, game);
+    Player_actor_BGcheck_Tumble(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromTumble(game, is_stopped, calc);
+}

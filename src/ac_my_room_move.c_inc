@@ -741,7 +741,7 @@ static void aMR_SetPullMoveAnime(FTR_ACTOR* ftr_actor, GAME* game, MY_ROOM_ACTOR
     cKF_SkeletonInfo_R_init_standard_stop(keyframe, &cKF_ba_r_furniture_stop, NULL);
     cKF_SkeletonInfo_R_play(keyframe);
     cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyframe, 0.0f, 0.0f, 0.0f, 0, 0, 0);
-    cKF_SkeletonInfo_R_AnimationMove_ct_base(0.0f, pos, pos, 0, 0, keyframe, TRUE);
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(pos, pos, 0, 0, 0.0f, keyframe, TRUE);
     cKF_SkeletonInfo_R_init_standard_stop_morph(keyframe, &cKF_ba_r_furniture_pull, NULL, -3.0f);
     cKF_SkeletonInfo_R_play(keyframe);
 }
@@ -763,7 +763,7 @@ static void aMR_SetPushMoveAnime(FTR_ACTOR* ftr_actor, GAME* game, MY_ROOM_ACTOR
     cKF_SkeletonInfo_R_init_standard_stop(keyframe, &cKF_ba_r_furniture_stop, NULL);
     cKF_SkeletonInfo_R_play(keyframe);
     cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyframe, 0.0f, 0.0f, 0.0f, 0, 0, 0);
-    cKF_SkeletonInfo_R_AnimationMove_ct_base(0.0f, pos, pos, 0, 0, keyframe, TRUE);
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(pos, pos, 0, 0, 0.0f, keyframe, TRUE);
     cKF_SkeletonInfo_R_init_standard_stop(keyframe, &cKF_ba_r_furniture_push, NULL);
     cKF_SkeletonInfo_R_play(keyframe);
 }
@@ -2354,7 +2354,7 @@ static void aMR_BirthWait(FTR_ACTOR* ftr_actor, GAME* game, MY_ROOM_ACTOR* my_ro
         if (ftr_actor->id == my_room->rsv_ftr[i].free_no) {
             if (my_room->rsv_ftr[i].frames <= 0) {
                 ftr_actor->state = aFTR_STATE_BIRTH;
-                sAdo_OngenTrgStart(NA_SE_BIRTH_FTR, &ftr_actor->position);
+                sAdo_OngenTrgStart(NA_SE_ITEM_HORIDASHI, &ftr_actor->position);
             }
 
             break;
@@ -2885,7 +2885,7 @@ static void My_Room_Actor_move(ACTOR* actorx, GAME* game) {
         if (md_ftr_actor != NULL) {
             u16 md_angle = md_ftr_actor->s_angle_y;
 
-            if (my_room->bgm_info.md_no != BGM_AEROBICS) {
+            if (my_room->bgm_info.md_no != BGM_SPORTSFAIR_AEROBICS) {
                 mBGMPsComp_MDPlayerPos_param_set(&md_ftr_actor->position, md_angle,
                                                  aMR_Fname2ConpoIndex(md_ftr_actor->name), (u32)md_ftr_actor);
             }

@@ -1,0 +1,337 @@
+static int Player_actor_request_main_notice_rod(GAME* game, s16 angle, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_NOTICE_ROD, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_NOTICE_ROD, priority);
+
+        player->requested_main_index_data.notice_rod.angle_y = angle;
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Notice_rod(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
+    mPlayer_request_notice_rod_c* req_notice = &player->requested_main_index_data.notice_rod;
+    UKI_ACTOR* uki;
+    int type;
+
+    main_notice->timer = 0.0f;
+    main_notice->state = 0;
+    main_notice->angle_y = req_notice->angle_y;
+    main_notice->exchange_flag = FALSE;
+    main_notice->already_collected = FALSE;
+    main_notice->end_effect_flag = FALSE;
+
+    uki = (UKI_ACTOR*)player->fishing_rod_actor_p;
+    type = uki->gyo_type;
+
+    if (uki != NULL && type >= aSOG_FISH_TYPE_CRUCIAN_CARP) {
+        int free_space = mPlib_Get_space_putin_item();
+
+        if (free_space >= 0) {
+            Player_actor_putin_item(free_space, uki->get_fish_type_proc(&uki->actor_class), NULL);
+            main_notice->not_full_pocket = TRUE;
+        } else {
+            main_notice->not_full_pocket = FALSE;
+        }
+
+        if (type < aSOG_FISH_TYPE_NUM + 1) {
+            main_notice->already_collected = mSM_CHECK_LAST_FISH_GET(type);
+            mSM_COLLECT_FISH_SET(type);
+        }
+    } else {
+        main_notice->not_full_pocket = FALSE;
+    }
+
+    if (type == aSOG_FISH_TYPE_BARRED_KNIFEJAW) {
+        mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_NOTICE_FISHING_ROD);
+    }
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_GET_T2, mPlayer_ANIM_GET_T2, 1.0f, 1.0f, 0.5f, -3.0f, 0,
+                                     0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_settle_main_Notice_rod(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
+
+    if (!main_notice->already_collected) {
+        mBGMPsComp_delete_ps_fanfare(0x28, 0x168);
+    } else {
+        mBGMPsComp_delete_ps_fanfare(0x4C, 0x168);
+    }
+}
+
+static void Player_actor_Movement_Notice_rod(ACTOR* actor) {
+    add_calc_short_angle2(&actor->shape_info.rotation.y, 0, 1.0f - sqrtf(0.5), 2500, 50);
+    actor->world.angle.y = actor->shape_info.rotation.y;
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Notice_rod(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_set_eye_pattern_Notice_rod(ACTOR* actor, int end_flag) {
+    if (end_flag) {
+        Player_actor_set_eye_pattern_normal(actor);
+    } else {
+        Player_actor_set_tex_anime_pattern(actor);
+    }
+}
+
+static void Player_actor_ObjCheck_Notice_rod(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Notice_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_SearchAnimation_Notice_rod(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+    }
+}
+
+static void Player_actor_AppearMark_Notice_rod(ACTOR* actor) {
+    static int use_mark_gyoei_type = aSOG_FISH_TYPE_KILLIFISH;
+
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
+
+    if (!main_notice->end_effect_flag) {
+        UKI_ACTOR* uki = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+        if (uki != NULL) {
+            int type = uki->gyo_type;
+
+            if (type >= aSOG_FISH_TYPE_CRUCIAN_CARP) {
+                int killfish = FALSE;
+
+                if (type == use_mark_gyoei_type) {
+                    killfish = TRUE;
+                }
+
+                if (killfish) {
+                    Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_YAJIRUSHI, player->left_hand_pos, 2, 0,
+                                                                   gamePT, RSV_NO, 0, 0);
+                    main_notice->end_effect_flag = TRUE;
+                }
+            }
+        }
+    }
+}
+
+static void Player_actor_DeleteMark_Notice_rod(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
+
+    if (main_notice->end_effect_flag) {
+        Common_Get(clip).effect_clip->effect_kill_proc(eEC_EFFECT_YAJIRUSHI, RSV_NO);
+        main_notice->end_effect_flag = FALSE;
+    }
+}
+
+static int Player_actor_Get_sakana_msg_num(int msg_offs) {
+    int ret_msg_no = msg_offs + 0x2FA9;
+
+    if (msg_offs < 0x20) {
+        ret_msg_no = msg_offs + 0x1327;
+    }
+
+    return ret_msg_no;
+}
+
+static void Player_actor_Notice_rod_demo_ct(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    rgba_t color;
+    mMsg_Window_c* win = mMsg_Get_base_window_p();
+    UKI_ACTOR* uki = (UKI_ACTOR*)player->fishing_rod_actor_p;
+    int msg_no = 0x1327;
+
+    if (uki != NULL) {
+        int type = uki->gyo_type;
+
+        if (type >= aSOG_FISH_TYPE_CRUCIAN_CARP) {
+            if (type < aSOG_FISH_TYPE_NUM + 1) {
+                if (player->now_main_index == mPlayer_INDEX_NOTICE_ROD) {
+                    mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
+                    u8 str[16];
+
+                    if (main_notice->already_collected) {
+                        mIN_copy_name_str(str, uki->get_fish_type_proc(&uki->actor_class));
+                        mMsg_Set_item_str_art(win, mMsg_ITEM_STR0, str, sizeof(str),
+                                              mIN_get_item_article(uki->get_fish_type_proc(&uki->actor_class)));
+                        msg_no = 0x1349;
+                    } else {
+                        msg_no = Player_actor_Get_sakana_msg_num(type);
+                    }
+                } else {
+                    msg_no = Player_actor_Get_sakana_msg_num(type);
+                }
+            } else {
+                msg_no = type + 0x1997;
+            }
+        }
+    }
+
+    mDemo_Set_msg_num(msg_no);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(CAMERA2_PROCESS_ITEM);
+    mDemo_Set_ListenAble();
+    mMsg_Set_LockContinue(win);
+
+    color.r = 185;
+    color.g = 245;
+    color.b = 80;
+    color.a = 255;
+
+    mDemo_Set_talk_window_color(&color);
+    mChoice_Clear_ChoseNum(mChoice_Get_base_window_p());
+    mBGMPsComp_make_ps_fanfare(0x28, 0x168);
+}
+
+static int Player_actor_MessageControl_Notice_rod(ACTOR* actor, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
+    int* state_p = &main_notice->state;
+    mMsg_Window_c* win = mMsg_Get_base_window_p();
+    int choice;
+
+    if (main_notice->timer < 42.0f) {
+        main_notice->timer += 1.0f;
+        return -1;
+    }
+
+    switch (*state_p) {
+        case 0:
+
+            if (!mDemo_Check(mDemo_TYPE_REPORT, actor)) {
+                mDemo_Request(mDemo_TYPE_REPORT, actor, Player_actor_Notice_rod_demo_ct);
+            } else if (main_notice->already_collected) {
+                *state_p = 1;
+            } else {
+                *state_p = 3;
+            }
+
+            return -1;
+
+        case 1:
+            if (end_flag) {
+                Player_actor_AppearMark_Notice_rod(actor);
+                if (mMsg_Check_MainNormalContinue(win)) {
+                    mMsg_Set_continue_msg_num(win, 0x134A);
+                    mMsg_Unset_LockContinue(win);
+                    *state_p = 2;
+                }
+            }
+            return -1;
+
+        case 2:
+            if (!mMsg_Check_MainNormal(win)) {
+                Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_YATTA2, mPlayer_ANIM_YATTA2, 1.0f, 1.0f,
+                                                 0.5f, -5.0f, 0, 0);
+                mBGMPsComp_delete_ps_fanfare(0x28, 0x168);
+                mBGMPsComp_make_ps_fanfare(0x4C, 0x168);
+                mMsg_Set_LockContinue(win);
+                Player_actor_DeleteMark_Notice_rod(actor);
+
+                *state_p = 3;
+            }
+            return -1;
+
+        case 3:
+
+            if (end_flag) {
+                if (!main_notice->already_collected) {
+                    Player_actor_AppearMark_Notice_rod(actor);
+                }
+                if (main_notice->not_full_pocket) {
+                    mMsg_Set_CancelNormalContinue(win);
+                    *state_p = 5;
+                } else {
+                    mMsg_Set_continue_msg_num(win, 0x1348);
+                    *state_p = 4;
+                }
+                mMsg_Unset_LockContinue(win);
+            }
+            return -1;
+
+        case 4:
+            choice = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+
+            if (choice == mChoice_CHOICE0) {
+                main_notice->exchange_flag = TRUE;
+                *state_p = 5;
+            } else if (choice == mChoice_CHOICE1) {
+                main_notice->exchange_flag = FALSE;
+                *state_p = 5;
+            }
+
+            return -1;
+
+        case 5:
+            if (!mDemo_Check(mDemo_TYPE_REPORT, actor)) {
+                *state_p = 6;
+                Player_actor_DeleteMark_Notice_rod(actor);
+            }
+            return -1;
+
+        default:
+            if (main_notice->not_full_pocket) {
+                return 0x39;
+            } else {
+                return !main_notice->exchange_flag ? 0x53 : 0x39;
+            }
+    }
+}
+
+static void Player_actor_request_proc_index_fromNotice_rod(ACTOR* actor, GAME* game, int msg_control) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
+    UKI_ACTOR* uki;
+
+    switch (msg_control) {
+        case 0x39:
+            Player_actor_request_main_putaway_rod(game, main_notice->angle_y, main_notice->exchange_flag,
+                                                  mPlayer_REQUEST_PRIORITY_29);
+            break;
+
+        case 0x53:
+            uki = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+            if (uki != NULL) {
+                mPlayer_request_release_creature_u release_data;
+                ACTOR* fish = uki->child_actor;
+
+                bzero(&release_data, sizeof(mPlayer_request_release_creature_u));
+                Player_actor_request_main_release_creature_all(game, 1, 0, &release_data, fish,
+                                                               mPlayer_REQUEST_PRIORITY_30);
+            }
+
+            break;
+    }
+}
+
+static void Player_actor_main_Notice_rod(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int end_flag;
+    int cntrl;
+
+    Player_actor_Movement_Notice_rod(actor);
+    end_flag = Player_actor_CulcAnimation_Notice_rod(actor, &frame_calc);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_SearchAnimation_Notice_rod(actor, game, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_Notice_rod(actor, end_flag);
+    Player_actor_ObjCheck_Notice_rod(actor, game);
+    Player_actor_BGcheck_Notice_rod(actor);
+    cntrl = Player_actor_MessageControl_Notice_rod(actor, game, end_flag);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromNotice_rod(actor, game, cntrl);
+}

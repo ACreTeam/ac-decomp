@@ -320,17 +320,19 @@ static void Scene_Proc_Sound(GAME_PLAY* play, Scene_Word_u* data);
 typedef void (*mSc_SCENE_WORD_PROC)(GAME_PLAY*, Scene_Word_u*);
 
 extern void Scene_ct(GAME_PLAY* play, Scene_Word_u* scene_data) {
-    static mSc_SCENE_WORD_PROC Scene_Proc[mSc_SCENE_DATA_TYPE_NUM] = { &Scene_Proc_Player_Ptr,
-                                                                       &Scene_Proc_Ctrl_Actor_Ptr,
-                                                                       &Scene_Proc_Actor_Ptr,
-                                                                       &Scene_Proc_Object_Exchange_Bank_Ptr,
-                                                                       &Scene_Proc_Door_Data_Ptr,
-                                                                       &Scene_Proc_Field_ct,
-                                                                       &Scene_Proc_MyRoom_ct,
-                                                                       &Scene_Proc_ArrangeRoom_ct,
-                                                                       &Scene_Proc_ArrangeFurniture_ct,
-                                                                       &Scene_Proc_Sound,
-                                                                       NULL };
+    static mSc_SCENE_WORD_PROC Scene_Proc[mSc_SCENE_DATA_TYPE_NUM] = {
+        &Scene_Proc_Player_Ptr,
+        &Scene_Proc_Ctrl_Actor_Ptr,
+        &Scene_Proc_Actor_Ptr,
+        &Scene_Proc_Object_Exchange_Bank_Ptr,
+        &Scene_Proc_Door_Data_Ptr,
+        &Scene_Proc_Field_ct,
+        &Scene_Proc_MyRoom_ct,
+        &Scene_Proc_ArrangeRoom_ct,
+        &Scene_Proc_ArrangeFurniture_ct,
+        &Scene_Proc_Sound,
+        NULL,
+    };
 
     /* Initialize all scene data */
     while (TRUE) {
@@ -447,8 +449,12 @@ static void Scene_Proc_Sound(GAME_PLAY* play, Scene_Word_u* scene_data) {
 }
 
 static void set_item_info(GAME_PLAY* play, Scene_Word_Data_FieldCt_c* field_ct) {
-    static s16 profile_table[4] = { mAc_PROFILE_BGITEM, mAc_PROFILE_DUMMY, mAc_PROFILE_BGPOLICEITEM,
-                                    mAc_PROFILE_BGPOSTITEM };
+    static s16 profile_table[4] = {
+        mAc_PROFILE_BGITEM,
+        mAc_PROFILE_DUMMY,
+        mAc_PROFILE_BGPOLICEITEM,
+        mAc_PROFILE_BGPOSTITEM,
+    };
 
     int item_type = field_ct->item_type;
 
@@ -505,7 +511,7 @@ extern int goto_other_scene(GAME_PLAY* play, Door_data_c* door_data, int update_
             play->next_scene_no = door_data->next_scene_id;
 
             if (update_player_mode) {
-                mPlib_request_main_invade_type1(play);
+                mPlib_request_main_invade_type1((GAME*)play);
             }
 
             restore_fgdata_all(play);

@@ -2,9 +2,6 @@ ctors.s:
     .ctors: [0x800a97b4, 0x800a97c0] # remove trailing 0s from ctor area
 #dolphin/os/__start.c:
 #    .init: [0x80003100, 0x80003354]
-dolphin/__ppc_eabi_init.cpp:
-    .init: [0x80003354, 0x800033a8]
-    .text: [0x8007fdfc, 0x8007fe90]
 runtime/__mem.c:
     .init: [0x800033a8, 0x800034e0]
 TRK/init/mem_TRK.c:
@@ -21,8 +18,6 @@ jsyswrap.cpp:
     .ctors: [0x800a9784, 0x800a9788]
     .data: [0x800afe50, 0x800b05e8]
     .bss: [0x800e2318, 0x800e2640]
-version.c:
-    .data: [0x800b05e8, 0x800b0608]
 initial_menu.c:
     .text: [0x80007188, 0x80007e58]
     .rodata: [0x800a97e8, 0x800a97f8]
@@ -33,23 +28,112 @@ dvderr.c:
     .rodata: [0x800a97f8, 0x800a9838]
     .data: [0x800b0a60, 0x800b9140]
     .bss: [0x800e2790, 0x800e2b88]
-bootdata/gam_win1.c:
-    .data: [0x800b9140, 0x800bb500]
-bootdata/gam_win2.c:
-    .data: [0x800bb500, 0x800bd820]
-bootdata/gam_win3.c:
-    .data: [0x800bd820, 0x800be460]
-bootdata/logo_nin.c:
-    .data: [0x800be460, 0x800c3140]
-nintendo_hi_0.c:
-    .data: [0x800c3140, 0x800cca40]
-jaudio_NES/dummyprobe.c:
+jaudio_NES/game/dummyprobe.c:
     .text: [0x800083f8, 0x80008400]
-# jaudio_NES/game64.c: # TODO: finish
+jaudio_NES/game/audioheaders.c:
+    .data: [0x800cca40, 0x800ce880]
+jaudio_NES/game/verysimple.c:
+   .text: [0x80008400, 0x80008480]
+   .sdata: [0x80217b80, 0x80217b88]
+# jaudio_NES/game/game64.c: # TODO: finish
 #     .rodata: [0x800a9938, 0x800a9b98]
-#jaudio_NES/verysimple.c:
-#    .text: [0x80008400, 0x80008480]
-#    .sdata: [0x80217b80, 0x80217b88]
+jaudio_NES/game/melody.c:
+    .text: [0x8001561c, 0x80015a4c]
+    .rodata: [0x800a9b98, 0x800aa500]
+    .sbss: [0x80218390, 0x802183a0]
+    .sdata2: [0x80218d58, 0x80218d60]
+jaudio_NES/game/rhythm.c:
+    .text: [0x80015a4c, 0x800165ec]
+    .bss: [0x8017bdd8, 0x8017be80]
+    .sdata: [0x80217bd0, 0x80217bd8]
+    .sbss: [0x802183a0, 0x802183b0]
+    .sdata2: [0x80218d60, 0x80218d78]
+jaudio_NES/game/radio.c:
+    .text: [0x800165ec, 0x8001676c]
+    .sdata2: [0x80218d78, 0x80218d88]
+jaudio_NES/game/kappa.c:
+    .text: [0x8001676c,0x80016840]
+    .sbss: [0x802183b0, 0x802183b8]
+jaudio_NES/game/staff.c:
+    .text: [0x80016840, 0x80016d20]
+    .data: [0x800cfe10, 0x800cff20]
+    .sbss: [0x802183b8, 0x802183c8]
+    .sdata2: [0x80218d98, 0x80218da0]
+jaudio_NES/internal/aictrl.c:
+    .text: [0x80017e80, 0x80018640]
+    .rodata: [0x800aa500, 0x800aa518]
+    .bss: [0x8017cfa0, 0x8017cfc0]
+    .sbss: [0x802183f0, 0x80218420]
+    .sdata2: [0x80218da8, 0x80218db8]
+jaudio_NES/internal/sample.c:
+    .text: [0x80018640, 0x80018920]
+jaudio_NES/internal/dummyrom.c:
+    .text: [0x80018920, 0x80018bc0]
+    .rodata: [0x800aa518, 0x800aa528]
+#    .bss: [0x8020d78c, 0x8020d7a0] # placed in common bss
+    .sbss: [0x80218420, 0x80218440]
+jaudio_NES/internal/audiothread.c:
+    .text: [0x80018bc0, 0x800190e0]
+    .rodata: [0x800aa528, 0x800aa538]
+    .bss: [0x8017cfc0, 0x80180020]
+    .sbss: [0x80218440, 0x80218460]
+    .sdata2: [0x80218db8, 0x80218dc0]
+jaudio_NES/internal/neosthread.c:
+    .text: [0x800190e0, 0x80019380]
+    .rodata: [0x800aa538, 0x800aa558]
+    .bss: [0x80180020, 0x80186440]
+    .sdata: [0x80217be0, 0x80217be8]
+    .sbss: [0x80218460, 0x80218478]
+jaudio_NES/internal/streamctrl.c:
+    .text: [0x80019380, 0x80019760]
+    .data: [0x800d01a8, 0x800d0278]
+    .bss: [0x80186440, 0x801864b0]
+    .sdata2: [0x80218dc0, 0x80218dd0]
+jaudio_NES/internal/dspbuf.c:
+    .text: [0x80019760, 0x80019ae0]
+    .rodata: [0x800aa558, 0x800aa570]
+    .bss: [0x801864b0, 0x801864c0]
+    .sbss: [0x80218478, 0x80218488]
+jaudio_NES/internal/cpubuf.c:
+    .text: [0x80019ae0, 0x80019dc0]
+    .bss: [0x801864c0, 0x801864d0]
+    .sbss: [0x80218488, 0x80218498]
+jaudio_NES/internal/playercall.c:
+    .text: [0x80019dc0, 0x8001a0c0]
+    .bss: [0x801864d0,0x80186590]
+jaudio_NES/internal/dvdthread.c:
+    .text: [0x8001a0c0, 0x8001ada0]
+    .data: [0x800d0278, 0x800d0298]
+    .bss: [0x80186590, 0x8018f1a8]
+    .sbss: [0x80218498, 0x802184e8]   
+jaudio_NES/internal/sub_sys.c:
+    .text: [0x80024ae0, 0x80026120]
+    .rodata: [0x800aa700, 0x800aa720]
+    .data: [0x800d0300, 0x800d0390]
+    .sbss: [0x80218510, 0x80218528]
+    .sdata2: [0x80218e48, 0x80218e60]
+jaudio_NES/internal/os.c:
+    .text: [0x80026120, 0x80026300]
+jaudio_NES/internal/astest.c:
+    .text: [0x80026300, 0x80026400]
+jaudio_NES/internal/track.c:
+    .text: [0x80028e60, 0x8002c920]
+    .rodata: [0x800aa720, 0x800aa780]
+    .data: [0x800d36f0, 0x800d3b00]
+    .sbss: [0x80218540, 0x80218548]
+    .sdata2: [0x80218ec8, 0x80218f08]
+jaudio_NES/internal/dspboot.c:
+    .text: [0x8002c920, 0x8002cd20]
+    .rodata: [0x800aa780, 0x800aa7a0]
+    .data: [0x800d3b00, 0x800d5500]
+    .sdata2: [0x80218f08, 0x80218f10]
+jaudio_NES/internal/dspproc.c:
+    .text: [0x8002cd20, 0x8002cfe0]
+    .sdata: [0x80217c18, 0x80217c20]
+jaudio_NES/internal/random.c:
+    .text: [0x80031ce0, 0x80031d80]
+    .sdata: [0x80217c38, 0x80217c40]
+    .sdata2: [0x80218f60, 0x80218f70]
 Famicom/famicom.cpp:
     .text: [0x80041614, 0x80046888] # TODO: get ~J2DOrthoGraph's dtor in here somehow? 0x800468fc, also add in JUTGamePad::getPortStatus when JUTGamePad is linked?
     .rodata: [0x800aa9a8, 0x800aaa30]
@@ -83,8 +167,6 @@ libu64/gfxprint.c:
     .text: [0x8005af30, 0x8005b9a8]
     .data: [0x800dc7f0, 0x800dc810]
     .sbss: [0x80218630, 0x80218638]
-libu64/gfxprint_data.c:
-    .data: [0x800dc810, 0x800dd090]
 libu64/pad.c:
     .text: [0x8005b9a8, 0x8005ba2c]
 libc64/aprintf.c:
@@ -271,6 +353,11 @@ dolphin/os/OSRestoreInterrupts.c:
 dolphin/os/OSRtc.c:
     .text: [0x8007d050, 0x8007db20]
     .bss: [0x80207400, 0x80207458]
+dolphin/__ppc_eabi_init.cpp:
+    .init: [0x80003354, 0x800033a8]
+    .text: [0x8007fdfc, 0x8007fe90]
+dolphin/gx/GXStubs.c:
+    .text: [0x800998d4, 0x800998d8]
 MSL_C/rand.c:
     .text: [0x8009f46c, 0x8009f494]
     .sdata: [0x80218260, 0x80218268]
@@ -279,6 +366,8 @@ TRK/mainloop.c:
 TRK/nubevent.c:
     .text: [0x800A20EC, 0x800A2314]
     .bss: [0x802095C8, 0x802095F0]
+dolphin/amcstubs/AmcExi2Stubs.c:
+    .text: [0x800a8cc0, 0x800a8cf0]
 #TRK/nubinit.c: #things break, fix later
 #    .text: [0x800A2314, 0x800A2494]
 #    .rodata: [0x800AF750, 0x800AF770]
@@ -291,7 +380,17 @@ TRK/nubevent.c:
 #    .bss: [0x8020AFC0, 0x8020AFC8]
 dolphin/odenotstub/odenotstub.c:
     .text: [0x800a9770, 0x800a9780]
-dolphin/amcstubs/AmcExi2Stubs.c:
-    .text: [0x800a8cc0, 0x800a8cf0]
-dolphin/gx/GXStubs.c:
-    .text: [0x800998d4, 0x800998d8]
+version.c:
+    .data: [0x800b05e8, 0x800b0608]
+bootdata/gam_win1.c:
+    .data: [0x800b9140, 0x800bb500]
+bootdata/gam_win2.c:
+    .data: [0x800bb500, 0x800bd820]
+bootdata/gam_win3.c:
+    .data: [0x800bd820, 0x800be460]
+bootdata/logo_nin.c:
+    .data: [0x800be460, 0x800c3140]
+nintendo_hi_0.c:
+    .data: [0x800c3140, 0x800cca40]
+libu64/gfxprint_data.c:
+    .data: [0x800dc810, 0x800dd090]

@@ -1,0 +1,229 @@
+static void Player_actor_request_main_reflect_axe_common(mPlayer_request_reflect_axe_c* req_axe, const xyz_t* pos,
+                                                         mActor_name_t hit_item, u16 damage_no, ACTOR* hit_actor) {
+    req_axe->goal_pos = *pos;
+    req_axe->hit_item = hit_item;
+    req_axe->hit_actor = hit_actor;
+    req_axe->axe_damage_no = damage_no;
+}
+
+static int Player_actor_request_main_reflect_axe_all(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+                                                     u16 damage_no, ACTOR* hit_actor, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_REFLECT_AXE, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        Player_actor_request_main_reflect_axe_common(&player->requested_main_index_data.reflect_axe, pos, hit_item,
+                                                     damage_no, hit_actor);
+        Player_actor_request_main_index(game, mPlayer_INDEX_REFLECT_AXE, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Reflect_axe_common(mPlayer_request_reflect_axe_c* req_axe,
+                                                       mPlayer_main_reflect_axe_c* main_axe) {
+    main_axe->axe_common.target_pos = req_axe->goal_pos;
+    main_axe->reflect_actor_p = req_axe->hit_actor;
+    main_axe->axe_common.item = req_axe->hit_item;
+    main_axe->axe_common.axe_damage_no = req_axe->axe_damage_no;
+}
+
+static void Player_actor_setup_main_Reflect_axe(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_reflect_axe_c* main_axe = &player->main_data.reflect_axe;
+    mPlayer_request_reflect_axe_c* req_axe = &player->requested_main_index_data.reflect_axe;
+
+    Player_actor_setup_main_Reflect_axe_common(req_axe, main_axe);
+
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_AXE_HANE1, mPlayer_ANIM_AXE_HANE1, 1.0f, 1.0f, 0.5f,
+                                     -5.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_settle_main_Reflect_axe(ACTOR* actor, GAME* game) {
+    actor->speed = 0.0f;
+    actor->world.angle.y = actor->shape_info.rotation.y;
+}
+
+static int Player_actor_Movement_Reflect_axe_common(ACTOR* actor, mPlayer_main_axe_common_c* axe_common_p,
+                                                    int priority) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 cur = player->keyframe0.frame_control.current_frame;
+
+    Player_actor_Movement_axe_common(actor, &axe_common_p->target_pos);
+
+    if (cur < 15.0f) {
+        actor->world.angle.y = actor->shape_info.rotation.y;
+    }
+}
+
+static void Player_actor_Movement_Reflect_axe(ACTOR* actor, mPlayer_main_reflect_axe_c* main_axe, int flag) {
+    Player_actor_Movement_Reflect_axe_common(actor, &main_axe->axe_common, flag);
+}
+
+static int Player_actor_CulcAnimation_Reflect_axe(ACTOR* actor, f32* frame_calc, int) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetEffectHit_Reflect_axe(ACTOR* actor, GAME* game, s16 arg2, int) {
+    Player_actor_SetEffectHit_axe_common(actor, game, arg2);
+}
+
+static void Player_actor_SetEffect_Reflect_axe(ACTOR* actor, GAME* game, int arg) {
+    Player_actor_SetEffectHit_Reflect_axe(actor, game, 2, arg);
+    Player_actor_SetEffectStart_axe_common(actor, game);
+}
+
+static void Player_actor_SetAngleSpeedF_Reflect_axe(ACTOR* actor, int) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 15.0f)) {
+        actor->speed = 4.8f;
+        actor->world.angle.y = actor->shape_info.rotation.y + 0x8000;
+    }
+}
+
+static void Player_actor_SetOrderNPC_Reflect_axe(ACTOR* actor, mPlayer_main_reflect_axe_c* main_axe, int) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int rock;
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 15.0f)) {
+        ACTOR* reflect_actor = main_axe->reflect_actor_p;
+        mActor_name_t item = main_axe->axe_common.item;
+
+        if (reflect_actor != NULL) {
+            switch (reflect_actor->id) {
+                case mAc_PROFILE_SNOWMAN:
+                    ((SNOWMAN_ACTOR*)reflect_actor)->unk_1F8 |= 2;
+                    return;
+
+                case mAc_PROFILE_BALL:
+                    ((BALL_ACTOR*)reflect_actor)->unk208 |= 8;
+                    return;
+
+                default:
+                    if (Player_actor_CheckAndSet_UZAI_forNpc(reflect_actor)) {
+                        return;
+                    }
+            }
+        }
+
+        rock = FALSE;
+
+        if (IS_ITEM_STONE_TC(item)) {
+            rock = TRUE;
+        }
+
+        if (rock) {
+            if (Player_actor_Search_STONE_TC(actor, &main_axe->axe_common.target_pos)) {
+                return;
+            };
+        }
+    }
+}
+
+static void Player_actor_SetSound_Reflect_axe(ACTOR* actor, mPlayer_main_reflect_axe_c* main_axe, int) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_SetSound_AXE_FURI_axe_common(actor);
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 15.0f)) {
+        ACTOR* reflect_actor = main_axe->reflect_actor_p;
+
+        if (reflect_actor != NULL) {
+            Player_actor_set_viblation_Axe_soft();
+
+            switch (reflect_actor->id) {
+                case mAc_PROFILE_SNOWMAN:
+                    return;
+                default:
+                    Player_actor_sound_axe_ball_hit(actor);
+                    break;
+            }
+        } else {
+            Player_actor_sound_AXE_HIT(actor, &main_axe->axe_common.target_pos);
+            Player_actor_set_viblation_Axe_hard();
+        }
+    }
+}
+
+static void Player_actor_ChangeItemNo_Reflect_axe(ACTOR* actor, mPlayer_main_reflect_axe_c* main_axe, int) {
+    Player_actor_ChangeItemNo_axe_common(actor, main_axe->axe_common.axe_damage_no);
+}
+
+static void Player_actor_informed_insects_Reflect_axe(ACTOR* actor, mPlayer_main_reflect_axe_c* main_axe, int) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 15.0f)) {
+        if (Common_Get(clip).insect_clip != NULL && Common_Get(clip).insect_clip->set_pl_act_tim_proc != NULL) {
+            int ut_x;
+            int ut_z;
+
+            mFI_Wpos2UtNum(&ut_x, &ut_z, main_axe->axe_common.target_pos);
+            Common_Get(clip).insect_clip->set_pl_act_tim_proc(1, ut_x, ut_z);
+        }
+    }
+}
+
+static void Player_actor_SearchAnimation_Reflect_axe(ACTOR* actor, GAME* game, mPlayer_main_reflect_axe_c* main_axe,
+                                                     int flag, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetEffect_Reflect_axe(actor, game, flag);
+        Player_actor_SetAngleSpeedF_Reflect_axe(actor, flag);
+        Player_actor_SetOrderNPC_Reflect_axe(actor, main_axe, flag);
+        Player_actor_SetSound_Reflect_axe(actor, main_axe, flag);
+        Player_actor_Set_FootMark_Base1(actor, game, 0, 0);
+        Player_actor_ChangeItemNo_Reflect_axe(actor, main_axe, flag);
+        Player_actor_informed_insects_Reflect_axe(actor, main_axe, flag);
+    }
+}
+
+static void Player_actor_ObjCheck_Reflect_axe(ACTOR* actor, GAME* game, int) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Reflect_axe(ACTOR* actor, int) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromReflect_axe(ACTOR* actor, GAME* game, int arg, int arg2) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    mPlayer_main_reflect_axe_c* main_swing = &player->main_data.reflect_axe;
+
+    if (arg2 == 0) {
+        if (arg != 0) {
+            Player_actor_SettleRequestMainIndexPriority(actor);
+            Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+        } else {
+            cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+
+            if (Player_actor_Check_AnimationFrame(fc, 30.5f)) {
+                Player_actor_SettleRequestMainIndexPriority(actor);
+                Player_actor_Set_status_for_bee(actor, 1);
+
+            } else if ((fc->current_frame >= 31.0f) &&
+                       (!Player_actor_CheckAndRequest_main_axe_all(game, mPlayer_REQUEST_PRIORITY_4)) &&
+                       ((Player_actor_GetController_move_percentX()) || (Player_actor_GetController_move_percentY()))) {
+                Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+            }
+        }
+    }
+}
+
+static void Player_actor_main_Reflect_axe(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 frame_calc;
+    mPlayer_main_reflect_axe_c* main_axe = &player->main_data.reflect_axe;
+    int arg;
+
+    Player_actor_Movement_Reflect_axe(actor, main_axe, 0);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    arg = Player_actor_CulcAnimation_Reflect_axe(actor, &frame_calc, 0);
+    Player_actor_SearchAnimation_Reflect_axe(actor, game, main_axe, 0, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_ObjCheck_Reflect_axe(actor, game, 0);
+    Player_actor_BGcheck_Reflect_axe(actor, 0);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromReflect_axe(actor, game, arg, 0);
+}

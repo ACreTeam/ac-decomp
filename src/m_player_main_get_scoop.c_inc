@@ -1,0 +1,291 @@
+static int Player_actor_request_main_get_scoop_all(GAME* game, const xyz_t* pos, mActor_name_t item, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_GET_SCOOP, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.get_scoop.dig_pos = *pos;
+        player->requested_main_index_data.get_scoop.item = item;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_GET_SCOOP, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Get_scoop(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int free_space;
+    mActor_name_t item;
+    mActor_name_t* fg_unit;
+    mActor_name_t fg_item;
+    xyz_t* pos;
+    mPlayer_request_get_scoop_c* req_scoop = &player->requested_main_index_data.get_scoop;
+    mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
+
+    item = req_scoop->item;
+    pos = &req_scoop->dig_pos;
+
+    main_scoop->target_pos = *pos;
+    main_scoop->scale = 0.0f;
+    main_scoop->timer = 0.0f;
+    main_scoop->msg_mode = 0;
+    main_scoop->submenu_flag = FALSE;
+
+    free_space = mPlib_Get_space_putin_item_forTICKET(&item);
+
+    fg_unit = mFI_GetUnitFG(req_scoop->dig_pos);
+    main_scoop->item = item;
+
+    fg_item = item;
+    if (fg_unit != NULL && *fg_unit == SHINE_SPOT) {
+        fg_item = SHINE_SPOT;
+    }
+
+    Common_Get(clip).bg_item_clip->dig_hole_effect_entry_proc(fg_item, &req_scoop->dig_pos, 12, 40);
+
+    if (free_space >= 0) {
+        Player_actor_putin_item(free_space, item, NULL);
+        main_scoop->success_flag = TRUE;
+    } else {
+        main_scoop->success_flag = FALSE;
+    }
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_GET_D1, mPlayer_ANIM_GET_D1, 1.0f, 1.0f, 0.5f, -5.0f, 0,
+                                     0);
+    Player_actor_setup_main_Base(actor, game);
+    mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_DIG_SCOOP);
+}
+
+static void Player_actor_settle_main_Get_scoop(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Common_Get(clip).bg_item_clip) {
+        mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
+        xyz_t* left_hand = &player->left_hand_pos;
+        mActor_name_t item = main_scoop->item;
+
+        if (!main_scoop->success_flag && !main_scoop->submenu_flag && main_scoop->item) {
+            Common_Get(clip).bg_item_clip->drop_entry_v1_proc(item, left_hand, &main_scoop->target_pos);
+        }
+    }
+    mBGMPsComp_delete_ps_fanfare(0x28, 0x168);
+}
+
+static void Player_actor_Movement_Get_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
+
+    f32 timer = main_scoop->timer;
+    xyz_t* pos = &main_scoop->target_pos;
+
+    if (timer < 86.0f) {
+        Player_actor_Movement_axe_common(actor, pos);
+    } else {
+        add_calc_short_angle2(&actor->shape_info.rotation.y, 0, 1.0f - sqrtf(0.5), 2500, 50);
+    }
+
+    actor->world.angle.y = actor->shape_info.rotation.y;
+}
+
+static int Player_actor_CulcAnimation_Get_scoop(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetEffect_Get_scoop(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
+
+    Player_actor_SetEffectHit_Dig_scoop(actor, game, &main_scoop->target_pos, player->now_main_index);
+}
+
+static void Player_actor_Put_Hole_Get_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc, 20.0f) && Common_Get(clip).bg_item_clip) {
+        mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
+
+        mCoBG_RegistDecalCircle(&main_scoop->target_pos, 0.0f, 19.0f, 12);
+    }
+}
+
+static void Player_actor_SearchAnimation_Get_scoop(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetEffect_Get_scoop(actor, game);
+        Player_actor_Put_Hole_Get_scoop(actor);
+        Player_actor_SetSound_Dig_scoop(actor);
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+    }
+}
+
+static void Player_actor_set_eye_pattern_Get_scoop(ACTOR* actor, int end_flag) {
+    if (end_flag) {
+        Player_actor_set_eye_pattern_normal(actor);
+    } else {
+        Player_actor_set_tex_anime_pattern(actor);
+    }
+}
+
+static void Player_actor_ObjCheck_Get_scoop(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Get_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static int Player_actor_lean_angle_Get_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    s16 ang = 0;
+    mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
+
+    if (player->keyframe0.frame_control.current_frame < 21.0f) {
+        f32 x;
+        f32 y;
+        f32 z;
+
+        x = main_scoop->target_pos.x - actor->world.position.x;
+        y = main_scoop->target_pos.y - actor->world.position.y;
+        z = main_scoop->target_pos.z - actor->world.position.z;
+
+        if (x != 0.0f || z != 0.0f) {
+            ang = atans_table(Math3DVecLength2D(x, z), -y);
+        }
+    }
+
+    add_calc_short_angle2(&actor->shape_info.rotation.x, ang, 1.0f - sqrtf(0.5), 273, 0);
+}
+
+static void Player_actor_Get_scoop_demo_ct(ACTOR* actor) {
+    rgba_t color;
+    mMsg_Window_c* win = mMsg_Get_base_window_p();
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
+    u8 str[16];
+    mActor_name_t item = main_scoop->item;
+
+    mIN_copy_name_str(str, item);
+    mMsg_Set_item_str_art(win, 0, str, sizeof(str), mIN_get_item_article(item));
+    mDemo_Set_msg_num(0x17AF);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(CAMERA2_PROCESS_ITEM);
+    mDemo_Set_ListenAble();
+    mMsg_Set_LockContinue(win);
+
+    color.r = 185;
+    color.g = 245;
+    color.b = 80;
+    color.a = 255;
+
+    mDemo_Set_talk_window_color(&color);
+    mChoice_Clear_ChoseNum(mChoice_Get_base_window_p());
+    mBGMPsComp_make_ps_fanfare(0x28, 0x168);
+}
+
+static int Player_actor_MessageControl_Get_scoop(ACTOR* actor, int end_flag) {
+    mMsg_Window_c* win = mMsg_Get_base_window_p();
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
+    int choice;
+
+    if (main_scoop->timer < 86.0f) {
+        main_scoop->timer += 1.0f;
+        return -1;
+    }
+
+    switch (main_scoop->msg_mode) {
+        case 0:
+            if (!mDemo_Check(mDemo_TYPE_REPORT, actor)) {
+                mDemo_Request(mDemo_TYPE_REPORT, actor, Player_actor_Get_scoop_demo_ct);
+            } else {
+                main_scoop->msg_mode = 1;
+            }
+            return -1;
+
+        case 1:
+            if (end_flag) {
+                if (main_scoop->success_flag) {
+                    mMsg_Set_CancelNormalContinue(win);
+
+                    main_scoop->msg_mode = 3;
+                } else {
+                    mMsg_Set_continue_msg_num(win, 0x17B3);
+
+                    main_scoop->msg_mode = 2;
+                }
+                mMsg_Unset_LockContinue(win);
+            }
+            return -1;
+
+        case 2:
+            choice = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+
+            if (choice == mChoice_CHOICE0) {
+                main_scoop->submenu_flag = TRUE;
+                main_scoop->msg_mode = 3;
+            } else if (choice == mChoice_CHOICE1) {
+                main_scoop->submenu_flag = FALSE;
+                main_scoop->msg_mode = 3;
+            }
+
+            return -1;
+        default:
+            if (!mDemo_Check(mDemo_TYPE_REPORT, actor)) {
+                if (main_scoop->success_flag) {
+                    return 0x3F;
+                } else {
+                    return !main_scoop->submenu_flag + 0x3F;
+                }
+            }
+            return -1;
+    }
+}
+
+static void Player_actor_Set_Item_Get_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+    mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
+
+    if (fc->current_frame <= 21.0f) {
+        main_scoop->scale = 0.0f;
+    } else if (fc->current_frame < 27.0f) {
+        main_scoop->scale = (0.0016666666f * (fc->current_frame - 21.0f));
+    } else {
+        main_scoop->scale = 0.01f;
+    }
+}
+
+static void Player_actor_request_proc_index_fromGet_scoop(ACTOR* actor, GAME* game, int cntrl) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
+
+    switch (cntrl) {
+        case 0x3F:
+            Player_actor_request_main_putaway_scoop_all(game, &main_scoop->target_pos, main_scoop->item,
+                                                        main_scoop->submenu_flag, mPlayer_REQUEST_PRIORITY_21);
+            break;
+        case 0x40:
+            Player_actor_request_main_putin_scoop_all(game, &main_scoop->target_pos, EMPTY_NO, FALSE,
+                                                      mPlayer_REQUEST_PRIORITY_21);
+            break;
+    }
+}
+
+static void Player_actor_main_Get_scoop(ACTOR* actor, GAME* game) {
+    int end_flag;
+    f32 frame_calc;
+    int cntrl;
+
+    Player_actor_Movement_Get_scoop(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    end_flag = Player_actor_CulcAnimation_Get_scoop(actor, &frame_calc);
+    Player_actor_SearchAnimation_Get_scoop(actor, game, frame_calc);
+    Player_actor_set_eye_pattern_Get_scoop(actor, end_flag);
+    Player_actor_ObjCheck_Get_scoop(actor, game);
+    Player_actor_BGcheck_Get_scoop(actor);
+    Player_actor_lean_angle_Get_scoop(actor);
+    Player_actor_Set_Item_Get_scoop(actor);
+    cntrl = Player_actor_MessageControl_Get_scoop(actor, end_flag);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromGet_scoop(actor, game, cntrl);
+}

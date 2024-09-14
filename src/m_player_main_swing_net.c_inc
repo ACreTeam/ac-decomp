@@ -1,0 +1,361 @@
+static int Player_actor_request_main_swing_net(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_SWING_NET, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        s8 kind = Player_actor_Get_ItemKind(&player->actor_class, player->now_main_index);
+        int net = FALSE;
+
+        if (mPlayer_ITEM_IS_NET(kind)) {
+            net = TRUE;
+        }
+
+        if (net) {
+            Player_actor_request_main_index(game, mPlayer_INDEX_SWING_NET, priority);
+
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Swing_net(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int kind = Player_actor_Get_ItemKind_from_submenu();
+    mPlayer_main_swing_net_c* main_swing = &player->main_data.swing_net;
+
+    main_swing->swing_timer = 0.0f;
+
+    Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_PICKUP1, mPlayer_INDEX_REFUSE_PICKUP, -5.0f, -1.0f, 1);
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_NET_SWING1, mPlayer_ANIM_NET_SWING1, 1.0f, 1.0f, 0.5f,
+                                     -5.0f, 0, 0);
+
+    Player_actor_setup_main_Base(actor, game);
+    Player_actor_Reset_Item_net_catch_request_table(actor);
+
+    player->item_net_catch_label = 0;
+    player->item_net_catch_type = 0;
+    player->item_net_has_catch = FALSE;
+
+    Player_actor_sound_AMI_FURI(actor);
+}
+
+static void Player_actor_SetEffect_Swing_net(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    xyz_t pos;
+    f32 cur = player->keyframe0.frame_control.current_frame;
+
+    if (8.5f < cur) {
+        if (cur <= 9.0f) {
+            s16 rot = actor->world.angle.y;
+            s16 attr;
+
+            pos = actor->world.position;
+            pos.x += (50.0f * sin_s(rot));
+
+            pos.z += (50.0f * cos_s(rot));
+
+            attr = mCoBG_Wpos2Attribute(pos, NULL);
+            Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_SWING_NET, pos, 2, rot, game, RSV_NO, attr, 0);
+        }
+    }
+}
+
+static void Player_actor_settle_main_Swing_net(ACTOR* actor, GAME* game) {
+    Player_actor_SetEffect_Swing_net(actor, game);
+}
+
+static int Player_actor_HitBGCheck_Swing_net(ACTOR* actor, GAME* game, ACTOR** hit_actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    xyz_t pos;
+    xyz_t wpos;
+    f32 cur = player->keyframe0.frame_control.current_frame;
+
+    *hit_actor = NULL;
+
+    if (cur > 6.0f) {
+        int line_check;
+
+        if (Player_actor_Check_OBJtoLine_forItem_net(actor, hit_actor)) {
+            return TRUE;
+        }
+
+        line_check = mCoBG_LineCheck_RemoveFg(&pos, player->net_start_pos, player->net_end_pos, 0, 7);
+
+        if (line_check & 4 || line_check & 8) {
+            if (Common_Get(clip).effect_clip != NULL) {
+                wpos = player->net_end_pos;
+                if (line_check & 4) {
+                    wpos.y = 20.0f;
+                } else {
+                    wpos.y = mCoBG_GetWaterHeight_File(player->net_end_pos, __FILE__, 171);
+                }
+
+                Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_SWING_NET, wpos, 2, actor->world.angle.y,
+                                                               game, RSV_NO, mCoBG_Wpos2Attribute(wpos, NULL), 1);
+            }
+        }
+        if (line_check & 1 || line_check & 2) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+static int Player_actor_Item_CheckLocalCapture_forNet(const xyz_t* net_top_col, const xyz_t* arg1, const xyz_t* arg2,
+                                                      const xyz_t* catch_pos_table, f32 sq, f32 rad_req) {
+    f32 len;
+    f32 x_calc;
+    f32 y_calc;
+    f32 z_calc;
+    f32 mod;
+    xyz_t calc2;
+    xyz_t calc_pos;
+
+    xyz_t arg1_calc;
+    f32 sq_c;
+
+    mod = (arg2->x * (catch_pos_table->x - net_top_col->x)) + (arg2->y * (catch_pos_table->y - net_top_col->y)) +
+          (arg2->z * (catch_pos_table->z - net_top_col->z));
+
+    x_calc = net_top_col->x + (arg2->x * mod);
+    y_calc = net_top_col->y + (arg2->y * mod);
+    z_calc = net_top_col->z + (arg2->z * mod);
+
+    if (Player_actor_Get_ItemKind_from_submenu() == mPlayer_ITEM_KIND_GOLD_NET) {
+        len = 21.0f + rad_req;
+    } else {
+        len = 15.0f + rad_req;
+    }
+
+    calc_pos.x = catch_pos_table->x - x_calc;
+    calc_pos.y = catch_pos_table->y - y_calc;
+    calc_pos.z = catch_pos_table->z - z_calc;
+
+    if (Math3DVecLengthSquare(&calc_pos) > SQ(len)) {
+        return FALSE;
+    }
+
+    calc2.x = catch_pos_table->x - net_top_col->x;
+    calc2.y = catch_pos_table->y - net_top_col->y;
+    calc2.z = catch_pos_table->z - net_top_col->z;
+    len = Math3DVecLength(&calc2);
+
+    if (len != 0.0f) {
+        f32 inv = rad_req * (1.0f / len);
+        arg1_calc.x = calc2.x * inv;
+        arg1_calc.y = calc2.y * inv;
+        arg1_calc.z = calc2.z * inv;
+    }
+
+    sq_c =
+        (arg1->x * (calc2.x - arg1_calc.x)) + (arg1->y * (calc2.y - arg1_calc.y)) + (arg1->z * (calc2.z - arg1_calc.z));
+
+    if (sq_c > sq) {
+        return 0;
+    }
+
+    if (sq_c < 0.0f) {
+        return !((arg1->x * (calc2.x + arg1_calc.x)) + (arg1->y * (calc2.y + arg1_calc.y)) +
+                     (arg1->z * (calc2.z + arg1_calc.z)) <
+                 0.0f);
+    }
+    return TRUE;
+}
+
+static int Player_actor_CheckCaptureForce_forNet(ACTOR* actor, u32* label_req, s8* type_req) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (player->item_net_catch_label_request_force != 0) {
+        *label_req = player->item_net_catch_label_request_force;
+        *type_req = player->item_net_catch_type_request_force;
+
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static int Player_actor_CheckCapture_forNet(ACTOR* actor, u32* label_req, s8* type_req) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int catch_num;
+    u32* req_label_table;
+    s8* type_table;
+    xyz_t* catch_pos_table;
+    f32* rad_req;
+    xyz_t* top_col;
+
+    if (Player_actor_CheckCaptureForce_forNet(actor, label_req, type_req)) {
+        return TRUE;
+    }
+
+    catch_num = player->item_net_catch_request_use_count;
+
+    if (catch_num > 0 && catch_num <= mPlayer_NET_CATCH_TABLE_COUNT) {
+        f32 len;
+        int i = 0;
+        f32 inv;
+        xyz_t arg1;
+        xyz_t arg2;
+
+        req_label_table = player->item_net_catch_label_request_table;
+        type_table = player->item_net_catch_type_request_table;
+        catch_pos_table = player->item_net_catch_pos_request_table;
+        rad_req = player->item_net_catch_radius_request_table;
+        top_col = &player->net_top_col_pos;
+
+        if (Player_actor_Get_ItemKind_from_submenu() == mPlayer_ITEM_KIND_GOLD_NET) {
+            len = 60.0f;
+        } else {
+            len = 50.0f;
+        };
+
+        arg1.x = player->net_bot_col_pos.x - top_col->x;
+        arg1.y = player->net_bot_col_pos.y - top_col->y;
+        arg1.z = player->net_bot_col_pos.z - top_col->z;
+
+        inv = 1.0f / len;
+
+        arg2.x = arg1.x * inv;
+        arg2.y = arg1.y * inv;
+        arg2.z = arg1.z * inv;
+
+        for (i = 0; i < catch_num; i++) {
+            if (Player_actor_Item_CheckLocalCapture_forNet(top_col, &arg1, &arg2, catch_pos_table, SQ(len), *rad_req)) {
+                *label_req = *req_label_table;
+                *type_req = *type_table;
+                return TRUE;
+            }
+            req_label_table++;
+            type_table++;
+            catch_pos_table++;
+            rad_req++;
+        }
+    }
+    return FALSE;
+}
+
+static int Player_actor_CatchSomethingCheck_common(ACTOR* actor, f32 frame) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int ret = 0;
+
+    if (player->keyframe0.frame_control.current_frame > frame) {
+        mPlayer_main_swing_net_c* main_swing = &player->main_data.swing_net;
+        u32 label;
+        s8 type;
+        u32 pl_label = player->item_net_catch_label;
+
+        main_swing->swing_timer += 0.5f;
+
+        if (pl_label == 0) {
+            if (Player_actor_CheckCapture_forNet(actor, &label, &type)) {
+                player->item_net_catch_label = label;
+                player->item_net_catch_type = type;
+
+                if (type == 0 && label != 0) {
+                    player->item_net_catch_insect_idx = ((aINS_INSECT_ACTOR*)label)->type;
+                } else if (label != 0) {
+                    if (((ACTOR*)label)->id == mAc_PROFILE_BEE) {
+                        player->item_net_catch_insect_idx = aSOI_INSECT_TYPE_BEE;
+                    } else {
+                        player->item_net_catch_insect_idx = aSOI_INSECT_TYPE_ANT;
+                    }
+                } else {
+                    player->item_net_catch_insect_idx = aSOI_INSECT_TYPE_INVALID;
+                }
+                Player_actor_sound_AMI_GET(actor);
+                ret = 1;
+            }
+
+        } else {
+            ret = 2;
+        }
+    }
+    Player_actor_Reset_Item_net_catch_request_table(actor);
+    return ret;
+}
+
+static int Player_actor_CatchSomethingCheck_Swing_net(ACTOR* actor) {
+    return Player_actor_CatchSomethingCheck_common(actor, 6.0f);
+}
+
+static void Player_actor_CorrectSomething_Swing_net(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    xyz_t* pos = &player->net_pos;
+    u32 label = player->item_net_catch_label;
+
+    if (label != 0 && player->item_net_catch_type == 0) {
+        ((ACTOR*)label)->drawn = FALSE;
+    }
+
+    Player_actor_CorrectSomething_net(actor, pos);
+}
+
+static void Player_actor_Movement_Swing_net(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Swing_net(ACTOR* actor, f32* frame_calc, int check_type) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (check_type == 0) {
+        return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+    } else {
+        player->keyframe0.frame_control.current_frame -= 0.5f;
+        *frame_calc = player->keyframe0.frame_control.current_frame;
+        return FALSE;
+    }
+}
+
+static void Player_actor_SearchAnimation_Swing_net(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+    }
+}
+
+static void Player_actor_ObjCheck_Swing_net(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Swing_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromSwing_net(ACTOR* actor, GAME* game, int end_flag, int hit,
+                                                          int check_type, ACTOR* hit_actor) {
+    if (end_flag != FALSE || hit != FALSE) {
+        if (check_type != 0) {
+            if (Player_actor_request_main_pull_net(game, mPlayer_REQUEST_PRIORITY_26) && check_type == 2 &&
+                hit != FALSE) {
+                Player_actor_sound_AMI_HIT(actor);
+                Player_actor_set_viblation_Swing_net();
+            }
+        } else if (Player_actor_request_main_stop_net(game, mPlayer_REQUEST_PRIORITY_26)) {
+            Player_actor_CheckAndSet_UZAI_forNpc(hit_actor);
+
+            if (hit != FALSE) {
+                Player_actor_sound_AMI_HIT(actor);
+                Player_actor_set_viblation_Swing_net();
+            }
+        }
+    }
+}
+
+static void Player_actor_main_Swing_net(ACTOR* actor, GAME* game) {
+    int end_flag;
+    f32 frame_calc;
+    u32 label;
+    int hit_check = Player_actor_HitBGCheck_Swing_net(actor, game, (ACTOR**)&label);
+    int check_type = Player_actor_CatchSomethingCheck_Swing_net(actor);
+
+    Player_actor_CorrectSomething_Swing_net(actor);
+    Player_actor_Movement_Swing_net(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    end_flag = Player_actor_CulcAnimation_Swing_net(actor, &frame_calc, hit_check);
+    Player_actor_SearchAnimation_Swing_net(actor, game, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Swing_net(actor, game);
+    Player_actor_BGcheck_Swing_net(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromSwing_net(actor, game, end_flag, hit_check, check_type, (ACTOR*)label);
+}

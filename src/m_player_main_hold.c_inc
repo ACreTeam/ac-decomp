@@ -1,0 +1,169 @@
+static int Player_actor_Check_able_request_main_hold(GAME* game) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+    switch (player->now_main_index) {
+        case mPlayer_INDEX_WAIT:
+        case mPlayer_INDEX_WALK:
+        case mPlayer_INDEX_RUN:
+        case mPlayer_INDEX_DASH:
+        case mPlayer_INDEX_HOLD:
+        case mPlayer_INDEX_PUSH:
+        case mPlayer_INDEX_PULL:
+        case mPlayer_INDEX_ROTATE_FURNITURE:
+            return TRUE;
+
+        case mPlayer_INDEX_TUMBLE:
+        case mPlayer_INDEX_TUMBLE_GETUP:
+        case mPlayer_INDEX_TURN_DASH:
+        case mPlayer_INDEX_FALL:
+        case mPlayer_INDEX_WADE:
+        case mPlayer_INDEX_DOOR:
+        case mPlayer_INDEX_OUTDOOR:
+        case mPlayer_INDEX_INVADE:
+        default:
+
+            return FALSE;
+    }
+}
+
+static Player_actor_request_main_hold(GAME* game, int ftr_no, int index, const xyz_t* pos, f32 speed, int flags,
+                                      int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_HOLD, priority) &&
+        Player_actor_Check_able_request_main_hold(game)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.hold.ftr_no = ftr_no;
+        player->requested_main_index_data.hold.angle_y = Player_actor_Get_Angle_fromIndex(index);
+        player->requested_main_index_data.hold.player_pos = *pos;
+        player->requested_main_index_data.hold.morph_speed = speed;
+        player->requested_main_index_data.hold.flags = flags;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_HOLD, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Hold(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int flags = player->requested_main_index_data.hold.flags;
+
+    player->main_data.hold.ftr_no = player->requested_main_index_data.hold.ftr_no;
+    player->main_data.hold.angle_y = player->requested_main_index_data.hold.angle_y;
+    player->main_data.hold.player_pos = player->requested_main_index_data.hold.player_pos;
+
+    if (flags & 1) {
+        Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_HOLD_WAIT1, mPlayer_ANIM_HOLD_WAIT1, 1.0f, 1.0f,
+                                         0.5f, player->requested_main_index_data.hold.morph_speed, 0);
+    }
+
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static int Player_actor_CulcAnimation_Hold(ACTOR* actor) {
+    f32 calc_frame;
+
+    return Player_actor_CulcAnimation_Base2(actor, &calc_frame);
+}
+
+static void Player_actor_Movement_Hold(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 x = player->main_data.hold.player_pos.x;
+    f32 z = player->main_data.hold.player_pos.z;
+    s16 angle = player->main_data.hold.angle_y;
+
+    add_calc_short_angle2(&actor->shape_info.rotation.y, angle, 1.0f - sqrtf(0.5), 8192, 50);
+    actor->world.angle.y = actor->shape_info.rotation.y;
+    add_calc(&actor->world.position.x, x, 1.0f - sqrtf(0.9), 500.0f, 0.5f);
+    add_calc(&actor->world.position.z, z, 1.0f - sqrtf(0.9), 500.0f, 0.5f);
+
+    Player_actor_Movement_Base_Stop(actor, FALSE);
+}
+
+static void Player_actor_ObjCheck_Hold(ACTOR* actor, GAME* game) { 
+    Player_actor_Excute_Corect_forStand(actor, game); 
+}
+
+static void Player_actor_BGcheck_Hold(ACTOR* actor) { 
+    Player_actor_BGcheck_common_type3(actor); 
+}
+
+static void Player_actor_request_proc_index_fromHold(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Common_Get(clip).my_room_clip != NULL) {
+        int state;
+        xyz_t wpos0;
+        xyz_t wpos1;
+        xyz_t pull_pos;
+        int ftr_no;
+        xyz_t* pos;
+        s16 angle;
+
+        ftr_no = player->main_data.hold.ftr_no;
+        state = Common_Get(clip).my_room_clip->judge_player_action_proc(&wpos0, &wpos1, ftr_no);
+        angle = player->main_data.hold.angle_y;
+        pos = &player->main_data.hold.player_pos;
+        switch (state) {
+            case 0:
+                Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_34);
+                break;
+            case 2:
+                Player_actor_request_main_push(game, ftr_no, angle, pos, mPlayer_REQUEST_PRIORITY_21);
+                break;
+            case 3:
+                pull_pos.x = wpos1.x - wpos0.x;
+                pull_pos.z = wpos1.z - wpos0.z;
+
+                Player_actor_request_main_pull(game, ftr_no, angle, pos, &wpos1, &pull_pos,
+                                               mPlayer_REQUEST_PRIORITY_21);
+                break;
+            case 4:
+            case 5:
+                Player_actor_request_main_rotate_furniture(game, ftr_no, angle, pos, state,
+                                                           mPlayer_REQUEST_PRIORITY_21);
+                break;
+            case 6:
+                Player_actor_request_main_open_furniture(game, angle, pos, 0x2D, mPlayer_REQUEST_PRIORITY_21);
+                break;
+            case 7:
+                Player_actor_request_main_open_furniture(game, angle, pos, 0x2B, mPlayer_REQUEST_PRIORITY_21);
+                break;
+            case 8:
+                Player_actor_request_main_open_furniture(game, angle, pos, 0x2C, mPlayer_REQUEST_PRIORITY_21);
+                break;
+            case 9:
+                if (player->animation0_idx != mPlayer_ANIM_HOLD_WAIT_O1) {
+                    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_HOLD_WAIT_O1, mPlayer_ANIM_HOLD_WAIT_O1,
+                                                     1.0f, 1.0f, 0.5f, -4.0f, 0);
+                }
+                break;
+            case 10:
+                if (player->animation0_idx != mPlayer_ANIM_HOLD_WAIT_H1) {
+                    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_HOLD_WAIT_H1, mPlayer_ANIM_HOLD_WAIT_H1,
+                                                     1.0f, 1.0f, 0.5f, -4.0f, 0);
+                }
+                break;
+            case 1:
+                if (player->animation0_idx != mPlayer_ANIM_HOLD_WAIT1) {
+                    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_HOLD_WAIT1, mPlayer_ANIM_HOLD_WAIT1,
+                                                     1.0f, 1.0f, 0.5f, -4.0f, 0);
+                }
+                break;
+        }
+    }
+}
+
+static void Player_actor_main_Hold(ACTOR* actor, GAME* game) {
+    Player_actor_Movement_Hold(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Hold(actor);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Hold(actor, game);
+    Player_actor_BGcheck_Hold(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromHold(actor, game);
+}

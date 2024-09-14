@@ -1,0 +1,230 @@
+static int Player_actor_request_main_demo_walk_all(GAME* game, f32 goal_pos_x, f32 goal_pos_z, f32 speed, int wait_flag,
+                                                   int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DEMO_WALK, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_demo_walk_c* req_demo_walk_p = &player->requested_main_index_data.demo_walk;
+
+        req_demo_walk_p->goal_pos_x = goal_pos_x;
+        req_demo_walk_p->goal_pos_z = goal_pos_z;
+        req_demo_walk_p->speed = speed;
+        req_demo_walk_p->wait_flag = wait_flag;
+        Player_actor_request_main_index(game, mPlayer_INDEX_DEMO_WALK, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Demo_walk(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_demo_walk_c* req_demo_walk_p = &player->requested_main_index_data.demo_walk;
+    int anim0_idx = mPlayer_ANIM_WALK1;
+    int anim1_idx;
+    int part_table_idx;
+
+    mPlib_Set_goal_player_demo_walk(req_demo_walk_p->goal_pos_x, req_demo_walk_p->goal_pos_z, req_demo_walk_p->speed);
+    mPlib_Set_continue_player_after_demo_walk(req_demo_walk_p->wait_flag);
+    mPlib_Set_end_player_demo_walk(FALSE);
+
+    if (mPlib_Get_continue_player_after_demo_walk() == FALSE) {
+        xyz_t demo_pos;
+        f32 dist;
+
+        Player_actor_Get_DemoPosition(&demo_pos);
+        dist = Math3DLengthSquare2D(demo_pos.x, demo_pos.z, actorx->world.position.x, actorx->world.position.z);
+        if (dist < SQ(10.0f)) {
+            anim0_idx = mPlayer_ANIM_WAIT1;
+        }
+    }
+
+    Player_actor_SetupItem_Base1(actorx, anim0_idx, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actorx, game, anim0_idx, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f, part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_CulcAnimation_Demo_walk(ACTOR* actorx, f32 over_speed_normalize_NoneZero,
+                                                 f32* last_anim0_cur_frame_p) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    f32 dummy;
+
+    if (player->animation0_idx != mPlayer_ANIM_WAIT1) {
+        Player_actor_CulcAnimation_Walk(actorx, over_speed_normalize_NoneZero, last_anim0_cur_frame_p);
+    } else {
+        Player_actor_CulcAnimation_Base2(actorx, &dummy);
+    }
+}
+
+static void Player_actor_SearchAnimation_Demo_walk(ACTOR* actorx, GAME* game, f32 frame) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (player->animation0_idx != mPlayer_ANIM_WAIT1) {
+        Player_actor_SearchAnimation_Walk(actorx, game, frame);
+    }
+}
+
+static int Player_actor_Movement_Demo_walk(ACTOR* actorx, f32* over_speed_normalize_NoneZero_p) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    f32 over_speed_normalize_NoneZero =
+        Player_actor_Culc_over_speed_normalize_NoneZero(actorx, &actorx->world.position);
+    xyz_t demo_pos;
+    f32 demo_posX;
+    f32 demo_posZ;
+    f32 dx;
+    f32 dz;
+    f32 speed;
+    s16 goal_angle_y;
+
+    Player_actor_Get_DemoPosition(&demo_pos);
+    demo_posX = demo_pos.x;
+    demo_posZ = demo_pos.z;
+    dx = demo_posX - actorx->world.position.x;
+    dz = demo_posZ - actorx->world.position.z;
+    speed = Player_actor_Get_DemoMoveSpeedF();
+    goal_angle_y = actorx->world.angle.y;
+
+    if (dx != 0.0f || dz != 0.0f) {
+        f32 speed_mod = speed / 3.525f;
+
+        goal_angle_y = atans_table(dz, dx);
+        if (speed_mod >= 1.0f) {
+            speed_mod = 0.5f;
+        } else if (speed_mod <= 0.05f) {
+            speed_mod = 0.01f;
+        } else {
+            speed_mod = 0.01f + (speed_mod - 0.05f) * 0.5157895f;
+        }
+
+        speed_mod = sqrtf(1.0f - speed_mod);
+        add_calc_short_angle2(&actorx->world.angle.y, goal_angle_y, 1.0f - speed_mod, 2500, 50);
+        if (player->animation0_idx != mPlayer_ANIM_WAIT1) {
+            actorx->shape_info.rotation.y = actorx->world.angle.y;
+        }
+    }
+
+    {
+        f32 cos;
+        f32 now_speed;
+
+        speed /= over_speed_normalize_NoneZero;
+        cos = cos_s(goal_angle_y - actorx->world.angle.y);
+
+        if (cos <= 0.0f) {
+            speed = 0.0f;
+        } else {
+            speed *= cos;
+        }
+
+        now_speed = actorx->speed;
+        if (now_speed != speed) {
+            if (now_speed < speed) {
+                now_speed += 0.60899997f;
+
+                if (now_speed > speed) {
+                    now_speed = speed;
+                }
+            } else if (now_speed > speed) {
+                now_speed -= 0.32625001f;
+                if (now_speed < speed) {
+                    now_speed = speed;
+                }
+            }
+
+            actorx->speed = now_speed;
+        }
+    }
+
+    {
+        f32 dist = sqrtf(SQ(dx) + SQ(dz));
+
+        if (actorx->speed < 0.5f) {
+            actorx->speed = 0.5f;
+            speed = 0.5f;
+        }
+
+        if (dist >= speed * 2.0f) {
+            if (over_speed_normalize_NoneZero == 1.0f) {
+                xyz_t wpos = actorx->world.position;
+                s16 angle_y = actorx->world.angle.y;
+                f32 speed = actorx->speed;
+                f32 speedX = (speed * 0.5f) * sin_s(angle_y);
+                f32 speedZ = (speed * 0.5f) * cos_s(angle_y);
+                f32 tmp;
+
+                wpos.x += speedX;
+                wpos.z += speedZ;
+                tmp = Player_actor_Culc_over_speed_normalize_NoneZero(actorx, &wpos);
+                if (tmp != 1.0f) {
+                    actorx->speed /= tmp;
+                    over_speed_normalize_NoneZero = tmp;
+                }
+            }
+        } else if (dist < 0.5f) {
+            actorx->speed = dist;
+        } else {
+            actorx->speed = dist / 2.0f;
+        }
+    }
+
+    Player_actor_Movement_Base(actorx);
+    {
+        f32 now_dx = demo_posX - actorx->world.position.x;
+        f32 now_dz = demo_posZ - actorx->world.position.z;
+
+        now_dx = ABS(now_dx);
+        if (now_dx < 0.5f) {
+            actorx->world.position.x = demo_posX;
+        }
+
+        now_dz = ABS(now_dz);
+        if (now_dz < 0.5f) {
+            actorx->world.position.z = demo_posZ;
+        }
+
+        *over_speed_normalize_NoneZero_p = over_speed_normalize_NoneZero;
+        if (demo_posX == actorx->world.position.x && demo_posZ == actorx->world.position.z) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_ObjCheck_Demo_walk(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Demo_walk(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_request_proc_index_fromDemo_walk(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        mPlib_Set_end_player_demo_walk(TRUE);
+        if (mPlib_Get_continue_player_after_demo_walk() == FALSE) {
+            if (Player_actor_request_main_demo_wait_all(game, FALSE, 0, mPlayer_REQUEST_PRIORITY_19)) {
+                if (Player_actor_Get_DemoOrder() == 1) {
+                    Player_actor_Set_DemoOrder(0);
+                }
+            }
+        }
+    } else {
+        Player_actor_Set_ScrollDemo_forDemo_wade(actorx);
+    }
+}
+
+static void Player_actor_main_Demo_walk(ACTOR* actorx, GAME* game) {
+    f32 over_speed_normalize_NoneZero;
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    end_flag = Player_actor_Movement_Demo_walk(actorx, &over_speed_normalize_NoneZero);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_CulcAnimation_Demo_walk(actorx, over_speed_normalize_NoneZero, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Demo_walk(actorx, game, last_anim0_cur_frame);
+    Player_actor_set_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Demo_walk(actorx, game);
+    Player_actor_BGcheck_Demo_walk(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromDemo_walk(actorx, game, end_flag);
+}

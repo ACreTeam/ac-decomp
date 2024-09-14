@@ -1,0 +1,125 @@
+static int Player_actor_request_main_putin_item(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_PUTIN_ITEM, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_putin_item_c* req_putin_item_p = &player->requested_main_index_data.putin_item;
+
+        req_putin_item_p->request_main_index = player->requested_main_index;
+        Player_actor_request_main_index(game, mPlayer_INDEX_PUTIN_ITEM, priority);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Putin_item(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_putin_item_c* req_putin_item_p = &player->requested_main_index_data.putin_item;
+    mPlayer_main_putin_item_c* main_putin_item_p = &player->main_data.putin_item;
+    int item_kind;
+    int anim_idx;
+    f32 morph_counter;
+
+    item_kind = Player_actor_Get_ItemKind_from_submenu();
+
+    main_putin_item_p->back_request_data = *req_putin_item_p;
+    main_putin_item_p->timer = 0.0f;
+
+    Player_actor_LoadOrDestruct_Item(actorx, item_kind, mPlib_Get_BasicItemAnimeIndex_fromItemKind(item_kind), 0.5f,
+                                     5.0f, -1.0f, cKF_FRAMECONTROL_REPEAT);
+    Player_actor_Set_now_item_main_index(actorx, Player_actor_Get_BasicItemMainIndex_fromItemKind(item_kind));
+    player->item_kind = item_kind;
+
+    if (mPlayer_ITEM_IS_UMBRELLA(item_kind) != FALSE) {
+        anim_idx = mPlayer_ANIM_UMB_CLOSE1;
+        morph_counter = -5.0f;
+
+        if (player->umbrella_actor != NULL) {
+            if (Common_Get(clip).tools_clip != NULL) {
+                Common_Get(clip).tools_clip->aTOL_chg_request_mode_proc(actorx, player->umbrella_actor,
+                                                                        aTOL_ACTION_PUTAWAY);
+            }
+        } else {
+            ACTOR* umbrella_p;
+
+            player->umbrella_state = aTOL_ACTION_PUTAWAY;
+            umbrella_p = Player_actor_Get_umbrella_p(actorx, game);
+            player->umbrella_actor = umbrella_p;
+        }
+    } else {
+        anim_idx = mPlayer_ANIM_PUTAWAY1;
+        morph_counter = 9.0f;
+    }
+
+    Player_actor_InitAnimation_Base2(actorx, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.5f, morph_counter,
+                                     cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);
+    Player_actor_setup_main_Base(actorx, game);
+    Player_actor_sound_GASAGOSO(actorx);
+}
+
+static void Player_actor_Movement_Putin_item(ACTOR* actorx) {
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Putin_item(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_ObjCheck_Putin_item(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Putin_item(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_SetItemScale_Putin_item(ACTOR* actorx) {
+    int item_kind = Player_actor_Get_ItemKind_from_submenu();
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_putin_item_c* main_putin_item_p = &player->main_data.putin_item;
+    f32* timer_p = &main_putin_item_p->timer;
+
+    if (mPlayer_ITEM_IS_UMBRELLA(item_kind) == FALSE) {
+        f32 timer = *timer_p;
+
+        if (*timer_p < 18.0f) {
+            (*timer_p) += 1.0f;
+            player->item_scale = 1.0f - get_percent_forAccelBrake(*timer_p, 0.0f, 18.0f, 0.0f, 0.0f);
+        }
+    }
+}
+
+static void Player_actor_SearchAnimation_Putin_item(ACTOR* actorx, GAME* game, f32 frame) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_Set_FootMark_Base1(actorx, game, FALSE, FALSE);
+    }
+}
+
+static void Player_actor_request_proc_index_fromPutin_item(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+        mPlayer_main_putin_item_c* main_putin_item_p = &player->main_data.putin_item;
+
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        bcopy(&main_putin_item_p->back_request_data.request_data, &player->requested_main_index_data,
+              sizeof(mPlayer_request_backup_u));
+        Player_actor_request_main_index(game, main_putin_item_p->back_request_data.request_main_index,
+                                        mPlayer_REQUEST_PRIORITY_37);
+    }
+}
+
+static void Player_actor_main_Putin_item(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    Player_actor_Movement_Putin_item(actorx);
+    end_flag = Player_actor_CulcAnimation_Putin_item(actorx, &last_anim0_cur_frame);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_SetItemScale_Putin_item(actorx);
+    Player_actor_SearchAnimation_Putin_item(actorx, game, last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Putin_item(actorx, game);
+    Player_actor_BGcheck_Putin_item(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromPutin_item(actorx, game, end_flag);
+}

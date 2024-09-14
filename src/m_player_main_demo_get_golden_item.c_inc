@@ -1,0 +1,203 @@
+static int Player_actor_request_main_demo_get_golden_item_common(GAME* game, int main_index, int type, int prio) {
+    if (Player_actor_check_request_main_able(game, main_index, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_demo_get_golden_item_c* req_demo_get_golden_item_p =
+            &player->requested_main_index_data.demo_get_golden_item;
+
+        Player_actor_request_main_index(game, main_index, prio);
+        req_demo_get_golden_item_p->type = type;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static int Player_actor_request_main_demo_get_golden_item_all(GAME* game, int type, int prio) {
+    return Player_actor_request_main_demo_get_golden_item_common(game, mPlayer_INDEX_DEMO_GET_GOLDEN_ITEM, type, prio);
+}
+
+static void Player_actor_request_main_demo_get_golden_item_from_submenu(ACTOR* actorx, GAME* game) {
+    Player_actor_request_main_demo_get_golden_item_all(game, mPlayer_GOLDEN_ITEM_TYPE_SHOVEL,
+                                                       mPlayer_REQUEST_PRIORITY_31);
+}
+
+static void Player_actor_setup_main_Demo_get_golden_item(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_demo_get_golden_item_c* req_demo_get_golden_item_p;
+    mPlayer_main_demo_get_golden_item_c* demo_get_golden_item_p;
+    s16 item_kind;
+    int anim0_idx;
+    int anim1_idx;
+    int part_table_idx;
+    int dummy;
+    int type;
+
+    item_kind = Player_actor_Get_ItemKind(actorx, player->requested_main_index);
+    anim0_idx = mPlayer_ANIM_YATTA1;
+    part_table_idx = mPlayer_PART_TABLE_NET;
+    req_demo_get_golden_item_p = &player->requested_main_index_data.demo_get_golden_item;
+    demo_get_golden_item_p = &player->main_data.demo_get_golden_item;
+    type = player->requested_main_index_data.demo_get_golden_item.type;
+
+    demo_get_golden_item_p->timer = 0.0f;
+    demo_get_golden_item_p->msg_mode = 0;
+    demo_get_golden_item_p->type = type;
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_YATTA1, -5.0f, &anim1_idx, &dummy);
+
+    if (mPlayer_ITEM_IS_BALLOON(item_kind) != FALSE) {
+        anim0_idx = mPlayer_ANIM_YATTA3;
+        anim1_idx = mPlayer_ANIM_YATTA3;
+        part_table_idx = mPlayer_PART_TABLE_NORMAL;
+    }
+
+    Player_actor_InitAnimation_Base2(actorx, game, anim0_idx, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f, cKF_FRAMECONTROL_STOP,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+
+    if (type >= 0 && type < mPlayer_GOLDEN_ITEM_TYPE_NUM) {
+        u8 bgm_num = Player_actor_sound_Get_bgm_num_forDemoGetGoldenItem(type);
+
+        mBGMPsComp_make_ps_fanfare(bgm_num, 0x168);
+    }
+}
+
+static void Player_actor_settle_main_Demo_get_golden_item(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_demo_get_golden_item_c* demo_get_golden_item_p = &player->main_data.demo_get_golden_item;
+    int type = demo_get_golden_item_p->type;
+
+    if (type >= 0 && type < mPlayer_GOLDEN_ITEM_TYPE_NUM) {
+        static u8 data[] = { (1 << 0), (1 << 1), (1 << 2), (1 << 3) };
+        u8 bgm_num = Player_actor_sound_Get_bgm_num_forDemoGetGoldenItem(type);
+
+        mBGMPsComp_delete_ps_fanfare(bgm_num, 0x168);
+        Now_Private->golden_items_collected |= data[type];
+    }
+}
+
+static int Player_actor_CulcAnimation_Demo_get_golden_item(ACTOR* actorx) {
+    f32 dummy;
+
+    return Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_Movement_Demo_get_golden_item(ACTOR* actorx) {
+    add_calc_short_angle2(&actorx->shape_info.rotation.y, 0, 1.0f - sqrtf(0.5f), 2500, 50);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
+}
+
+static void Player_actor_set_eye_pattern_Demo_get_golden_item(ACTOR* actorx, int end_flag) {
+    if (end_flag) {
+        Player_actor_set_eye_pattern_normal(actorx);
+    } else {
+        Player_actor_set_tex_anime_pattern(actorx);
+    }
+}
+
+static void Player_actor_ObjCheck_Demo_get_golden_item(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Demo_get_golden_item(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type2(actorx);
+}
+
+static void Player_actor_Demo_get_golden_item_demo_ct(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_demo_get_golden_item_c* demo_get_golden_item_p = &player->main_data.demo_get_golden_item;
+    int type = demo_get_golden_item_p->type;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    rgba_t window_color;
+    int msg_no;
+
+    switch (type) {
+        case mPlayer_GOLDEN_ITEM_TYPE_AXE:
+            msg_no = 0x306F;
+            break;
+        case mPlayer_GOLDEN_ITEM_TYPE_NET:
+            msg_no = 0x306D;
+            break;
+        case mPlayer_GOLDEN_ITEM_TYPE_ROD:
+            msg_no = 0x306E;
+            break;
+        default:
+            msg_no = 0x3070;
+            break;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(CAMERA2_PROCESS_ITEM);
+    mDemo_Set_ListenAble();
+    mMsg_Set_LockContinue(msg_p);
+
+    window_color.r = 185;
+    window_color.g = 245;
+    window_color.b = 80;
+    window_color.a = 255;
+    mDemo_Set_talk_window_color(&window_color);
+    mChoice_CLEAR_CHOSENUM();
+}
+
+static int Player_actor_MessageControl_Demo_get_golden_item(ACTOR* actorx, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_demo_get_golden_item_c* demo_get_golden_item_p = &player->main_data.demo_get_golden_item;
+    f32* timer_p = &demo_get_golden_item_p->timer;
+    int* msg_mode_p = &demo_get_golden_item_p->msg_mode;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (*timer_p < 42.0f) {
+        (*timer_p) += 1.0f;
+        return FALSE;
+    }
+
+    switch (*msg_mode_p) {
+        case 0: {
+            if (mDemo_Check(mDemo_TYPE_REPORT, actorx) == FALSE) {
+                mDemo_Request(mDemo_TYPE_REPORT, actorx, &Player_actor_Demo_get_golden_item_demo_ct);
+            } else {
+                *msg_mode_p = 1;
+            }
+            return FALSE;
+        }
+        case 1: {
+            if (end_flag) {
+                mMsg_Unset_LockContinue(msg_p);
+                *msg_mode_p = 2;
+            }
+            return FALSE;
+        }
+        case 2: {
+            if (mDemo_Check(mDemo_TYPE_REPORT, actorx) == FALSE) {
+                *msg_mode_p = 3;
+            }
+            return FALSE;
+        }
+        default:
+            return TRUE;
+    }
+}
+
+static void Player_actor_request_proc_index_fromDemo_get_golden_item(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Demo_get_golden_item(ACTOR* actorx, GAME* game) {
+    int anim_end_flag;
+    int msg_end_flag;
+
+    anim_end_flag = Player_actor_CulcAnimation_Demo_get_golden_item(actorx);
+    Player_actor_Movement_Demo_get_golden_item(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_Demo_get_golden_item(actorx, anim_end_flag);
+    Player_actor_ObjCheck_Demo_get_golden_item(actorx, game);
+    Player_actor_BGcheck_Demo_get_golden_item(actorx);
+    Player_actor_Item_main(actorx, game);
+    msg_end_flag = Player_actor_MessageControl_Demo_get_golden_item(actorx, anim_end_flag);
+    Player_actor_request_proc_index_fromDemo_get_golden_item(actorx, game, msg_end_flag);
+}

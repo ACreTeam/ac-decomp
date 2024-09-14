@@ -1,0 +1,209 @@
+static int Player_actor_request_main_radio_exercise_all(GAME* game, int cmd, f32 speed, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_RADIO_EXERCISE, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_radio_exercise_c* req_radio_exercise_p = &player->requested_main_index_data.radio_exercise;
+
+        req_radio_exercise_p->cmd = cmd;
+        req_radio_exercise_p->speed = speed;
+        Player_actor_request_main_index(game, mPlayer_INDEX_RADIO_EXERCISE, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Radio_exercise(ACTOR* actorx, GAME* game) {
+    // clang-format off
+    static const u8 anime_index_data[mPlayer_RADIO_EXERCISE_CMD_NUM] = {
+        mPlayer_ANIM_TAISOU1,
+        mPlayer_ANIM_TAISOU2_1,
+        mPlayer_ANIM_TAISOU2_2,
+        mPlayer_ANIM_TAISOU3,
+        mPlayer_ANIM_TAISOU4_1,
+        mPlayer_ANIM_TAISOU4_1,
+        mPlayer_ANIM_TAISOU4_2,
+        mPlayer_ANIM_TAISOU4_2,
+        mPlayer_ANIM_TAISOU5_1,
+        mPlayer_ANIM_TAISOU5_1,
+        mPlayer_ANIM_TAISOU5_2,
+        mPlayer_ANIM_TAISOU5_2,
+        mPlayer_ANIM_TAISOU6_1,
+        mPlayer_ANIM_TAISOU6_1,
+        mPlayer_ANIM_TAISOU6_2,
+        mPlayer_ANIM_TAISOU6_2,
+        mPlayer_ANIM_TAISOU7_1,
+        mPlayer_ANIM_TAISOU7_2,
+    };
+    // clang-format on
+
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_SkeletonInfo_R_c* kf1_p = &player->keyframe1;
+    mPlayer_request_radio_exercise_c* req_radio_exercise_p = &player->requested_main_index_data.radio_exercise;
+    mPlayer_main_radio_exercise_c* radio_exercise_p = &player->main_data.radio_exercise;
+    int cmd = req_radio_exercise_p->cmd;
+    int anim_idx;
+
+    if (cmd < 0 || cmd >= mPlayer_RADIO_EXERCISE_CMD_NUM) {
+        cmd = mPlayer_RADIO_EXERCISE_CMD0;
+    }
+
+    radio_exercise_p->cmd = cmd;
+    radio_exercise_p->_04 = TRUE;
+    radio_exercise_p->_08 = 0;
+    radio_exercise_p->_0C = 0;
+
+    player->radio_exercise_continue_cmd_idx = -1;
+    player->radio_exercise_cmd_timer = 0.0f;
+
+    anim_idx = anime_index_data[cmd];
+    Player_actor_InitAnimation_Base2(actorx, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.0f, -5.0f, cKF_FRAMECONTROL_STOP,
+                                     mPlayer_PART_TABLE_NORMAL);
+    kf0_p->frame_control.speed = req_radio_exercise_p->speed;
+    kf1_p->frame_control.speed = req_radio_exercise_p->speed;
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Radio_exercise(ACTOR* actorx, GAME* game) {
+    // nothing
+}
+
+static void Player_actor_Set_RadioExerciseCommand_Radio_exercise(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_radio_exercise_c* radio_exercise_p = &player->main_data.radio_exercise;
+
+    Player_actor_Set_RadioExerciseCommand(actorx, game, radio_exercise_p->_04);
+    radio_exercise_p->_04 = FALSE;
+}
+
+static void Player_actor_Movement_Radio_exercise(ACTOR* actorx) {
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Radio_exercise(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    Radio_c radio;
+    f32 target_speed = 0.0f;
+    u32 old_sound_frame_counter = player->old_sound_frame_counter;
+    u32 now_sound_frame_counter = sAdo_GetSoundFrameCounter();
+    int radio_counter = sAdos_GetRadioCounter(&radio);
+    f32 dummy;
+
+    if (radio_counter == 0) {
+        target_speed = (int)radio.tempo * 0.012f;
+    }
+
+    if (target_speed <= 0.0f) {
+        target_speed = 0.5f;
+    }
+
+    if (now_sound_frame_counter != old_sound_frame_counter) {
+        u32 d_sound_frame_counter;
+
+        if (now_sound_frame_counter > old_sound_frame_counter) {
+            d_sound_frame_counter = 0;
+            d_sound_frame_counter += now_sound_frame_counter;
+            d_sound_frame_counter -= old_sound_frame_counter;
+        } else {
+            d_sound_frame_counter = -1;
+            d_sound_frame_counter -= old_sound_frame_counter;
+            d_sound_frame_counter = now_sound_frame_counter + d_sound_frame_counter;
+        }
+
+        if (d_sound_frame_counter > 5) {
+            d_sound_frame_counter = 5;
+        }
+
+        target_speed *= (int)d_sound_frame_counter;
+    }
+
+    {
+        // clang-format off
+        static f32 data[mPlayer_RADIO_EXERCISE_CMD_NUM] = {
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.25f,
+            0.25f,
+            0.25f,
+            0.25f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+            0.5f,
+        };
+        // clang-format on
+
+        f32* speed_p = &player->keyframe0.frame_control.speed;
+
+        target_speed *= data[player->main_data.radio_exercise.cmd];
+        add_calc2(speed_p, target_speed, 0.3f, 0.5f);
+        player->keyframe1.frame_control.speed = *speed_p;
+    }
+
+    return Player_actor_CulcAnimation_Base3(actorx, &dummy);
+}
+
+static void Player_actor_ObjCheck_Radio_exercise(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Radio_exercise(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_request_proc_index_fromRadio_exercise(ACTOR* actorx, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_radio_exercise_c* radio_exercise_p = &player->main_data.radio_exercise;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+    f32 cur_frame = fc0_p->current_frame;
+
+    if (radio_exercise_p->_0C == FALSE) {
+        if (cur_frame >= fc0_p->end_frame - 24.0f) {
+            radio_exercise_p->_0C = TRUE;
+        }
+    } else {
+        Player_actor_CheckAndRequest_main_radio_exercise_all(game, TRUE);
+    }
+
+    if (radio_exercise_p->_08 == FALSE) {
+        if (cur_frame >= fc0_p->end_frame - 0.5f) {
+            Player_actor_SettleRequestMainIndexPriority(actorx);
+            Player_actor_Set_status_for_bee(actorx, TRUE);
+            radio_exercise_p->_08 = TRUE;
+        }
+    } else if (end_flag) {
+        int next_radio_cmd = player->radio_exercise_continue_cmd_idx;
+        f32 exercise_cmd_timer = player->radio_exercise_cmd_timer;
+
+        if (next_radio_cmd >= 0 && next_radio_cmd < mPlayer_RADIO_EXERCISE_CMD_NUM && exercise_cmd_timer <= 0.0f) {
+            Player_actor_request_main_radio_exercise_all(game, next_radio_cmd, fc0_p->speed,
+                                                         mPlayer_REQUEST_PRIORITY_4);
+        } else {
+            Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 4, mPlayer_REQUEST_PRIORITY_1);
+        }
+    }
+}
+
+static void Player_actor_main_Radio_exercise(ACTOR* actorx, GAME* game) {
+    int end_flag;
+
+    Player_actor_Set_RadioExerciseCommand_Radio_exercise(actorx, game);
+    Player_actor_Movement_Radio_exercise(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Radio_exercise(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Radio_exercise(actorx, game);
+    Player_actor_BGcheck_Radio_exercise(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromRadio_exercise(actorx, game, end_flag);
+}

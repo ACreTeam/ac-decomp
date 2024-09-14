@@ -1101,7 +1101,7 @@ static void aMR_MiniDiskCommonDt(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
         my_room->bgm_info.last_md_no = -1;
 
         /* Don't delete for aerobics radio music */
-        if (my_room->bgm_info.md_no != BGM_AEROBICS) {
+        if (my_room->bgm_info.md_no != BGM_SPORTSFAIR_AEROBICS) {
             mBGMPsComp_MDPlayerPos_delete();
         }
     }
@@ -1134,7 +1134,7 @@ static void aMR_ChangeMDBgm(ACTOR* actorx, FTR_ACTOR* ftr_actor) {
             if (my_room->bgm_info.md_no != -1) {
                 mBGMPsComp_make_ps_room(my_room->bgm_info.md_no, 0);
 
-                if (my_room->bgm_info.md_no != BGM_AEROBICS) {
+                if (my_room->bgm_info.md_no != BGM_SPORTSFAIR_AEROBICS) {
                     mBGMPsComp_MDPlayerPos_make();
                 }
 
@@ -1150,12 +1150,12 @@ static void aMR_ChangeMDBgm(ACTOR* actorx, FTR_ACTOR* ftr_actor) {
             my_room->bgm_info.last_md_no = my_room->bgm_info.md_no;
         } else {
             mBGMPsComp_delete_ps_room(my_room->bgm_info.last_md_no, 0);
-            if (my_room->bgm_info.last_md_no != BGM_AEROBICS) {
+            if (my_room->bgm_info.last_md_no != BGM_SPORTSFAIR_AEROBICS) {
                 mBGMPsComp_MDPlayerPos_delete();
             }
 
             mBGMPsComp_make_ps_room(my_room->bgm_info.md_no, 0);
-            if (my_room->bgm_info.md_no != BGM_AEROBICS) {
+            if (my_room->bgm_info.md_no != BGM_SPORTSFAIR_AEROBICS) {
                 mBGMPsComp_MDPlayerPos_make();
             }
 
@@ -2209,7 +2209,7 @@ extern mActor_name_t aMR_FurnitureFg_to_FurnitureFgWithDirect(mActor_name_t item
 
 extern void aMR_RadioCommonMove(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
     if (ftr_actor->haniwa_state == 1) {
-        aMR_ReserveBgm(actorx, BGM_AEROBICS, ftr_actor, 0);
+        aMR_ReserveBgm(actorx, BGM_SPORTSFAIR_AEROBICS, ftr_actor, 0);
         ftr_actor->haniwa_state = 0;
     } else if (ftr_actor->switch_changed_flag) {
         if (ftr_actor->switch_bit == FALSE) {
@@ -2219,7 +2219,7 @@ extern void aMR_RadioCommonMove(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
             ftr_actor->switch_bit = FALSE;
         } else {
             aMR_OneMDSwitchOn_TheOtherSwitchOff(ftr_actor);
-            aMR_ReserveBgm(actorx, BGM_AEROBICS, ftr_actor, 0);
+            aMR_ReserveBgm(actorx, BGM_SPORTSFAIR_AEROBICS, ftr_actor, 0);
             aMR_ChangeMDBgm(actorx, ftr_actor);
             ftr_actor->switch_bit = TRUE;
         }
@@ -2227,7 +2227,7 @@ extern void aMR_RadioCommonMove(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
 }
 
 extern int aMR_RadioBgmNow(void) {
-    if (mBGMPsComp_execute_bgm_num_get() == BGM_AEROBICS) {
+    if (mBGMPsComp_execute_bgm_num_get() == BGM_SPORTSFAIR_AEROBICS) {
         return TRUE;
     }
 

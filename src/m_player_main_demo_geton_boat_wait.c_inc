@@ -1,0 +1,55 @@
+static int Player_actor_request_main_demo_geton_boat_wait_all(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DEMO_GETON_BOAT_WAIT, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_DEMO_GETON_BOAT_WAIT, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Demo_geton_boat_wait(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    int anim1_idx;
+    int part_table_idx;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_RIDEWAIT, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_RIDEWAIT, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_Movement_Demo_geton_boat_wait(ACTOR* actorx) {
+    // nothing
+}
+
+static int Player_actor_CulcAnimation_Demo_geton_boat_wait(ACTOR* actorx) {
+    f32 dummy;
+
+    return Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_request_proc_index_fromDemo_geton_boat_wait(ACTOR* actorx) {
+    s16 angle_y = actorx->shape_info.rotation.y;
+    f32 speed;
+
+    if (Common_Get(clip).demo_clip2 != NULL && Common_Get(clip).demo_clip2->type == mDemo_CLIP_TYPE_BOAT_DEMO) {
+        BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)Common_Get(clip).demo_clip2->demo_class;
+
+        speed = boat_demo->boat_speed;
+    } else {
+        speed = 0.625f;
+    }
+
+    angle_y += DEG2SHORT_ANGLE2(180.0f);
+    Player_actor_Set_ScrollDemo_forDemo_geton_boat_wade(actorx, angle_y, ((speed * 0.5f) * 36.0f) * 0.05f);
+}
+
+static void Player_actor_main_Demo_geton_boat_wait(ACTOR* actorx, GAME* game) {
+    Player_actor_Movement_Demo_geton_boat_wait(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_CulcAnimation_Demo_geton_boat_wait(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromDemo_geton_boat_wait(actorx);
+}

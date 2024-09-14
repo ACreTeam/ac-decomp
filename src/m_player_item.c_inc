@@ -1,0 +1,147 @@
+typedef void (*mPlayer_item_proc)(ACTOR* actor, int, int);
+
+static void Player_actor_Item_Setup_main(ACTOR* actor, int now, int last) {
+    static const mPlayer_item_proc proc[] = {
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, &Player_actor_Item_Setup_main_balloon_normal,
+        NULL, NULL,
+    };
+
+    if (now != last) {
+        if (proc[now] != NULL) {
+            proc[now](actor, now, last);
+        }
+    }
+}
+typedef int (*mPlayer_item_main_proc)(ACTOR* actor, GAME*);
+
+static int Player_actor_Item_main(ACTOR* actor, GAME* game) {
+    static const mPlayer_item_main_proc proc[] = {
+        NULL,
+        Player_actor_Item_main_axe_normal,
+        Player_actor_Item_main_net_normal,
+        Player_actor_Item_main_net_normal,
+        Player_actor_Item_main_net_stop,
+        Player_actor_Item_main_net_normal,
+        Player_actor_Item_main_net_normal,
+        Player_actor_Item_main_net_normal,
+        Player_actor_Item_main_net_normal,
+        Player_actor_Item_main_net_normal,
+        Player_actor_Item_main_umbrella_normal,
+        Player_actor_Item_main_rod_normal,
+        Player_actor_Item_main_rod_ready,
+        Player_actor_Item_main_rod_cast,
+        Player_actor_Item_main_rod_air,
+        Player_actor_Item_main_rod_relax,
+        Player_actor_Item_main_rod_collect,
+        Player_actor_Item_main_rod_vib,
+        Player_actor_Item_main_rod_fly,
+        Player_actor_Item_main_rod_putaway,
+        Player_actor_Item_main_scoop_normal,
+        Player_actor_Item_main_balloon_normal,
+        Player_actor_Item_main_windmill_normal,
+        Player_actor_Item_main_fan_normal,
+    };
+
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int now_index = player->now_item_main_index;
+
+    if (mPlayer_ITEM_MAIN_VALID(now_index)) {
+        Player_actor_Item_main_other_func1(actor, game);
+        if (now_index == mPlayer_ITEM_MAIN_NONE) {
+            Player_actor_Item_Set_Command_forUki(actor, 0);
+        } else {
+            if (proc[now_index] != NULL) {
+                return proc[now_index](actor, game);
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+typedef void (*mPlayer_item_draw_proc)(ACTOR* actor, GAME*);
+
+static void Player_actor_Item_draw(ACTOR* actor, GAME* game) {
+    static const mPlayer_item_draw_proc proc[] = {
+        NULL,
+        Player_actor_Item_draw_axe,
+        Player_actor_Item_draw_net,
+        Player_actor_Item_draw_net,
+        Player_actor_Item_draw_net,
+        Player_actor_Item_draw_net,
+        Player_actor_Item_draw_net,
+        Player_actor_Item_draw_net,
+        Player_actor_Item_draw_net,
+        Player_actor_Item_draw_net,
+        Player_actor_Item_draw_umbrella,
+        Player_actor_Item_draw_rod,
+        Player_actor_Item_draw_rod,
+        Player_actor_Item_draw_rod,
+        Player_actor_Item_draw_rod,
+        Player_actor_Item_draw_rod,
+        Player_actor_Item_draw_rod,
+        Player_actor_Item_draw_rod,
+        Player_actor_Item_draw_rod,
+        Player_actor_Item_draw_rod,
+        Player_actor_Item_draw_scoop,
+        Player_actor_Item_draw_balloon,
+        Player_actor_Item_draw_windmill,
+        Player_actor_Item_draw_fan,
+    };
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int now_index = player->now_item_main_index;
+
+    if (mPlayer_ITEM_MAIN_VALID(now_index)) {
+        GRAPH* graph = game->graph;
+
+        if (now_index == mPlayer_ITEM_MAIN_NONE) {
+            if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_WASH_CAR) {
+                Mtx* mtx;
+
+                _texture_z_light_fog_prim(graph);
+                Matrix_push();
+                Matrix_put(&player->right_hand_mtx);
+                mtx = _Matrix_to_Mtx_new(game->graph);
+
+                if (mtx != NULL) {
+                    OPEN_POLY_OPA_DISP(graph);
+
+                    gSPMatrix(__polyOpa++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+                    gSPDisplayList(__polyOpa++, tol_sponge_1_model);
+
+                    CLOSE_POLY_OPA_DISP(graph);
+
+                    Matrix_pull();
+                }
+            }
+            player->item_rod_top_pos_set = 0;
+            player->balloon_start_pos_set_flag = 0;
+        } else {
+            if (proc[now_index] != NULL) {
+                f32 scale = player->item_scale;
+                Mtx* mtx;
+
+                Matrix_push();
+                Matrix_put(&player->right_hand_mtx);
+
+                if (scale != 1.0f) {
+                    Matrix_scale(scale, scale, scale, 1);
+                }
+                mtx = _Matrix_to_Mtx_new(game->graph);
+
+                if (mtx != NULL) {
+                    _texture_z_light_fog_prim(graph);
+
+                    OPEN_POLY_OPA_DISP(graph);
+
+                    gSPMatrix(__polyOpa++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+                    CLOSE_POLY_OPA_DISP(graph);
+                    proc[now_index](actor, game);
+                }
+                Matrix_pull();
+            }
+        }
+    }
+}

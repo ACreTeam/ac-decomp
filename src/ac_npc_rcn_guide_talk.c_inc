@@ -1,0 +1,170 @@
+enum {
+    aNRG_TALK_DEMAND_PAYMENT,
+    aNRG_TALK_MENU_OPEN_WAIT,
+    aNRG_TALK_MENU_CLOSE_WAIT,
+    aNRG_TALK_DEMO_START_WAIT,
+    aNRG_TALK_DEMO_END_WAIT,
+    aNRG_TALK_FINISHED,
+
+    aNRG_TALK_NUM
+};
+
+static void aNRG_demand_payment_change_talk_proc(NPC_RCN_GUIDE_ACTOR* rcn_guide, int talk_proc_idx);
+
+static void aNRG_demand_payment_talk_proc(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    u16 order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1();
+        aNRG_demand_payment_change_talk_proc(rcn_guide, aNRG_TALK_MENU_OPEN_WAIT);
+    }
+}
+
+static void aNRG_menu_open_wait_talk_proc(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
+        Submenu* submenu = &play->submenu;
+        int idx = mPr_GetPossessionItemIdxWithCond(Now_Private, ITM_MONEY_1000, mPr_ITEM_COND_QUEST);
+
+        mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_QUEST, idx);
+        mMsg_SET_LOCKCONTINUE();
+        aNRG_demand_payment_change_talk_proc(rcn_guide, aNRG_TALK_MENU_CLOSE_WAIT);
+    }
+}
+
+static void aNRG_menu_close_wait_talk_proc(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+
+    if (submenu->open_flag == FALSE) {
+        if (submenu->item_p->item == EMPTY_NO) {
+            mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+            mMsg_request_main_appear_wait_type1(msg_p);
+            mMsg_ChangeMsgData(msg_p, 0x07EB); /* 'You better pay it all back, or I will have to...' */
+            mMsg_Set_ForceNext(msg_p);
+            mMsg_Unset_LockContinue(msg_p);
+            aNRG_demand_payment_change_talk_proc(rcn_guide, aNRG_TALK_DEMAND_PAYMENT); /* Go back to first state */
+        } else {
+            aNRG_demand_payment_change_talk_proc(rcn_guide, aNRG_TALK_DEMO_START_WAIT); /* Handed over the Bells */
+        }
+    }
+}
+
+static void aNRG_demo_start_wait_talk_proc(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    if (Common_Get(clip).handOverItem_clip->request_mode == aHOI_REQUEST_TRANS_WAIT) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 3);
+        aNRG_demand_payment_change_talk_proc(rcn_guide, aNRG_TALK_DEMO_END_WAIT);
+    }
+}
+
+static void aNRG_demo_end_wait_talk_proc(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    if (Common_Get(clip).handOverItem_clip->master_actor == NULL) {
+        mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+        aNRG_set_shop_address(rcn_guide);
+        rcn_guide->next_think_idx = aNRC_THINK_EXIT_TURN;
+        mMsg_request_main_appear_wait_type1(msg_p);
+        mMsg_Set_ForceNext(msg_p);
+        aNRG_demand_payment_change_talk_proc(rcn_guide, aNRG_TALK_FINISHED);
+    }
+}
+
+static void aNRG_demand_payment_change_talk_proc(NPC_RCN_GUIDE_ACTOR* rcn_guide, int talk_proc_idx) {
+    // clang-format off
+    static aNRG_TALK_PROC talk_proc[] = {
+        &aNRG_demand_payment_talk_proc,
+        &aNRG_menu_open_wait_talk_proc,
+        &aNRG_menu_close_wait_talk_proc,
+        &aNRG_demo_start_wait_talk_proc,
+        &aNRG_demo_end_wait_talk_proc,
+        (aNRG_TALK_PROC)&none_proc1,
+    };
+    // clang-format on
+
+    rcn_guide->talk_proc = talk_proc[talk_proc_idx];
+}
+
+static void aNRG_set_force_talk_info(ACTOR* actorx) {
+    // clang-format off
+    static aNRG_talk_data_c dt_tbl[] = {
+        { 0x07DE,  TRUE, CAMERA2_PROCESS_NORMAL,  TRUE,    (aNRG_TALK_PROC)&none_proc1 }, /* Step down from train station */
+        { 0x07DF,  TRUE,   CAMERA2_PROCESS_TALK, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Ask about call from Rover */
+        { 0x07E1,  TRUE,   CAMERA2_PROCESS_TALK, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Show houses */
+        { 0x07E2,  TRUE, CAMERA2_PROCESS_NORMAL, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player tries leaving acre */
+        { 0x07E4, FALSE, CAMERA2_PROCESS_NORMAL, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player enters empty house */
+        { 0x07E3, FALSE, CAMERA2_PROCESS_NORMAL, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player enters taken house */
+        { 0x07E5,  TRUE,   CAMERA2_PROCESS_TALK,  TRUE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player exits taken house */
+        { 0x07E6,  TRUE,   CAMERA2_PROCESS_TALK,  TRUE, &aNRG_demand_payment_talk_proc }, /* Player exits empty house */
+    };
+    // clang-format on
+
+    NPC_RCN_GUIDE_ACTOR* rcn_guide = (NPC_RCN_GUIDE_ACTOR*)actorx;
+    int talk_idx = rcn_guide->talk_idx;
+    aNRG_talk_data_c* data = &dt_tbl[talk_idx];
+
+    mDemo_Set_msg_num(data->msg_no);
+    mDemo_Set_talk_turn(data->turn_flag);
+    mDemo_Set_camera(data->camera_type);
+    rcn_guide->talk_proc_idx = aNRG_TALK_DEMAND_PAYMENT;
+    rcn_guide->talk_proc = data->talk_proc;
+    if (data->melody_flag == TRUE) {
+        rcn_guide->npc_class.talk_info.melody_inst = rcn_guide->melody_copy;
+    } else {
+        rcn_guide->npc_class.talk_info.melody_inst = 0;
+    }
+
+    if (talk_idx == 0) {
+        mBGMPsComp_make_ps_quiet(0);
+    }
+}
+
+static void aNRG_force_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aNRG_set_force_talk_info);
+}
+
+static void aNRG_set_norm_talk_info(ACTOR* actorx) {
+    static aNRG_talk_data_c dt_tbl[] = {
+        { 0x0820, TRUE, CAMERA2_PROCESS_TALK, FALSE, (aNRG_TALK_PROC)&none_proc1 }, /* Normal talk about houses */
+    };
+
+    NPC_RCN_GUIDE_ACTOR* rcn_guide = (NPC_RCN_GUIDE_ACTOR*)actorx;
+    aNRG_talk_data_c* data = &dt_tbl[rcn_guide->talk_idx];
+
+    mDemo_Set_msg_num(data->msg_no);
+    mDemo_Set_talk_turn(data->turn_flag);
+    mDemo_Set_camera(data->camera_type);
+    rcn_guide->talk_proc_idx = aNRG_TALK_DEMAND_PAYMENT;
+    rcn_guide->talk_proc = data->talk_proc;
+    if (data->melody_flag == TRUE) {
+        rcn_guide->npc_class.talk_info.melody_inst = rcn_guide->melody_copy;
+    } else {
+        rcn_guide->npc_class.talk_info.melody_inst = 0;
+    }
+}
+
+static void aNRG_norm_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, &aNRG_set_norm_talk_info);
+}
+
+static int aNRG_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_RCN_GUIDE_ACTOR* rcn_guide = (NPC_RCN_GUIDE_ACTOR*)actorx;
+
+    rcn_guide->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)&none_proc1;
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aNRG_talk_end_chk(ACTOR* actorx, GAME* game) {
+    NPC_RCN_GUIDE_ACTOR* rcn_guide = (NPC_RCN_GUIDE_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int res = FALSE;
+
+    (*rcn_guide->talk_proc)(rcn_guide, play);
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE && mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {
+        /* We're done talking so move onto the next schedule step */
+        aNRG_setup_think_proc(rcn_guide, play, rcn_guide->next_think_idx);
+        res = TRUE;
+    }
+
+    return res;
+}

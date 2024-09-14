@@ -1,0 +1,89 @@
+static int Player_actor_request_main_air_axe_all(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_AIR_AXE, priority)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_AIR_AXE, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Air_axe(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_swing_axe_c* main_axe = &player->main_data.swing_axe;
+    mPlayer_request_swing_axe_c* req_axe = &player->requested_main_index_data.swing_axe;
+
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_AXE_SUKA1, mPlayer_ANIM_AXE_SUKA1, 1.0f, 1.0f, 0.5f,
+                                     -5.0f, 0, 0);
+    Player_actor_SetEffectStart_axe_common(actor, game);
+
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_Movement_Air_axe(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625002f);
+}
+
+static int Player_actor_CulcAnimation_Air_axe(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetEffect_Air_axe(ACTOR* actor, GAME* game) {
+    Player_actor_SetEffectStart_axe_common(actor, game);
+}
+
+static void Player_actor_SetSound_Air_axe(ACTOR* actor) {
+    Player_actor_SetSound_AXE_FURI_Swing_axe(actor, 0);
+}
+
+static void Player_actor_SearchAnimation_Air_axe(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetEffect_Air_axe(actor, game);
+        Player_actor_SetSound_Air_axe(actor);
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+    }
+}
+
+static void Player_actor_ObjCheck_Air_axe(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Air_axe(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromAir_axe(ACTOR* actor, GAME* game, int arg) {
+    if (arg != 0) {
+        Player_actor_SettleRequestMainIndexPriority(actor);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    } else {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+        cKF_SkeletonInfo_R_c* kf = &player->keyframe0;
+
+        if (Player_actor_Check_AnimationFrame(&kf->frame_control, 35.5f)) {
+            Player_actor_SettleRequestMainIndexPriority(actor);
+            Player_actor_Set_status_for_bee(actor, TRUE);
+        } else if ((kf->frame_control.current_frame >= 36.0f) &&
+                   (!Player_actor_CheckAndRequest_main_axe_all(game, mPlayer_REQUEST_PRIORITY_4)) &&
+                   ((Player_actor_GetController_move_percentX()) || (Player_actor_GetController_move_percentY()))) {
+            Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+        }
+    }
+}
+
+static void Player_actor_main_Air_axe(ACTOR* actor, GAME* game) {
+    int arg;
+    f32 frame_calc;
+
+    Player_actor_Movement_Air_axe(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    arg = Player_actor_CulcAnimation_Air_axe(actor, &frame_calc);
+    Player_actor_SearchAnimation_Air_axe(actor, game, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_ObjCheck_Air_axe(actor, game);
+    Player_actor_BGcheck_Air_axe(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromAir_axe(actor, game, arg);
+}

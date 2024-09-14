@@ -1,0 +1,76 @@
+static int Player_actor_request_main_return_outdoor2_all(GAME* game, int prev_index, int now_index, f32 time,
+                                                         f32 arg5) {
+
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_RETURN_OUTDOOR2, now_index)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.return_outdoor2.prev_main_index = prev_index;
+        player->requested_main_index_data.return_outdoor2.time = time;
+        player->requested_main_index_data.return_outdoor2._08 = arg5;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_RETURN_OUTDOOR2, now_index);
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static void Player_actor_setup_main_Return_outdoor2(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int anim_idx;
+    int part_table_idx;
+    f32 _08 = player->requested_main_index_data.return_outdoor2._08;
+
+    Player_actor_SetupItem_Base1(actor, 0, -5.0f, &anim_idx, &part_table_idx);
+    player->main_data.return_outdoor2.timer = 0.0f;
+    player->main_data.return_outdoor2.max_timer = player->requested_main_index_data.return_outdoor2.time;
+    player->main_data.return_outdoor2.prev_main_index =
+        player->requested_main_index_data.return_outdoor2.prev_main_index;
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_WAIT1, anim_idx, 1.0f, 1.0f, 0.5f, _08, part_table_idx);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_CulcAnimation_Return_outdoor2(ACTOR* actor) {
+    f32 base;
+
+    Player_actor_CulcAnimation_Base2(actor, &base);
+}
+
+static void Player_actor_Movement_Return_outdoor2(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking(actor);
+}
+
+static void Player_actor_ObjCheck_Return_outdoor2(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Return_outdoor2(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromReturn_outdoor2(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 max_timer = player->main_data.return_outdoor2.max_timer;
+    int prev = player->main_data.return_outdoor2.prev_main_index;
+    player->main_data.return_outdoor2.timer += 1.0f;
+
+    if (player->main_data.return_outdoor2.timer >= max_timer) {
+        if (prev != mPlayer_INDEX_DEMO_WAIT) {
+            Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, 1);
+        } else {
+            Player_actor_request_main_demo_wait_all(game, FALSE, 0, 19);
+        }
+    }
+}
+
+static void Player_actor_main_Return_outdoor2(ACTOR* actor, GAME* game) {
+    Player_actor_Movement_Return_outdoor2(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Return_outdoor2(actor);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Return_outdoor2(actor, game);
+    Player_actor_BGcheck_Return_outdoor2(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromReturn_outdoor2(actor, game);
+}

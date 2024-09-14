@@ -1,0 +1,92 @@
+static int Player_actor_request_main_stung_mosquito_all(GAME* game, void* label, int prio) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+    int main_index = player->now_main_index;
+
+    if (mEv_CheckTitleDemo() > 0) {
+        return FALSE;
+    }
+
+    if (Common_Get(clip).demo_clip != NULL) {
+        return FALSE;
+    }
+
+    if (main_index == mPlayer_INDEX_RELAX_ROD) {
+        mPlayer_main_relax_rod_c* relax_rod_p = &player->main_data.relax_rod;
+
+        relax_rod_p->mosquito_flag = TRUE;
+        return FALSE;
+    }
+
+    if (Player_actor_Check_is_demo_mode(main_index)) {
+        return FALSE;
+    }
+
+    if (mPlib_Get_status_for_bee() != TRUE) {
+        return FALSE;
+    }
+
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_STUNG_MOSQUITO, prio)) {
+        mPlayer_request_stung_mosquito_c* req_stung_mosquito_p = &player->requested_main_index_data.stung_mosquito;
+
+        req_stung_mosquito_p->label = (u32)label;
+        Player_actor_request_main_index(game, mPlayer_INDEX_STUNG_MOSQUITO, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Stung_mosquito(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_stung_mosquito_c* req_stung_mosquito_p = &player->requested_main_index_data.stung_mosquito;
+    mPlayer_main_stung_mosquito_c* stung_mosquito_p = &player->main_data.stung_mosquito;
+    int anim1_idx;
+    int part_table_idx;
+
+    stung_mosquito_p->label = req_stung_mosquito_p->label;
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_MOSQUITO1, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_MOSQUITO1, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_PICK_UP);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_Movement_Stung_mosquito(ACTOR* actorx) {
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Stung_mosquito(ACTOR* actorx) {
+    f32 dummy;
+
+    return Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_ObjCheck_Stung_mosquito(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Stung_mosquito(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_request_proc_index_fromStung_mosquito(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+        mPlayer_main_stung_mosquito_c* stung_mosquito_p = &player->main_data.stung_mosquito;
+
+        Player_actor_request_main_notice_mosquito(game, stung_mosquito_p->label, mPlayer_REQUEST_PRIORITY_26);
+    }
+}
+
+static void Player_actor_main_Stung_mosquito(ACTOR* actorx, GAME* game) {
+    int end_flag;
+
+    Player_actor_Movement_Stung_mosquito(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Stung_mosquito(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_tex_anime_pattern(actorx);
+    Player_actor_ObjCheck_Stung_mosquito(actorx, game);
+    Player_actor_BGcheck_Stung_mosquito(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromStung_mosquito(actorx, game, end_flag);
+}

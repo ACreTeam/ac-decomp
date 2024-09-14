@@ -18,8 +18,8 @@ void aEMJ_act_init_proc(NPC_ACTOR* actor, GAME_PLAY* play) {
 }
 
 void aEMJ_act_proc(NPC_ACTOR* actor, GAME_PLAY* play, int idx) {
-    static aNPC_SUB_PROC act_proc[] = {aEMJ_act_init_proc, (aNPC_SUB_PROC)mActor_NONE_PROC1,
-                                       (aNPC_SUB_PROC)mActor_NONE_PROC1};
+    static aNPC_SUB_PROC act_proc[] = { aEMJ_act_init_proc, (aNPC_SUB_PROC)mActor_NONE_PROC1,
+                                        (aNPC_SUB_PROC)mActor_NONE_PROC1 };
 
     act_proc[idx](actor, play);
 }
@@ -27,13 +27,13 @@ void aEMJ_act_proc(NPC_ACTOR* actor, GAME_PLAY* play, int idx) {
 void aEMJ_appear(NPC_ACTOR* actor, GAME_PLAY* play) {
     EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
 
-    if (majin->npc_class.draw._04 == 1) {
+    if (majin->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
         aEMJ_setup_think_proc(actor, 1);
     }
 }
 
 void aEMJ_retire(NPC_ACTOR* actor, GAME_PLAY* play) {
-    if (actor->draw._04 == 1) {
+    if (actor->draw.main_animation_state == cKF_STATE_STOPPED) {
         ((NPC_ACTOR*)(actor->actor_class.parent_actor))->npc_info.animal = (Animal_c*)1;
         Actor_delete(&actor->actor_class);
     }
@@ -64,9 +64,9 @@ void aEMJ_think_init_proc(ACTOR* actor, GAME* game) {
 
 void aEMJ_setup_think_proc(NPC_ACTOR* actor, int idx) {
     static NPC_DT_PROCS dt_tbl[] = {
-        {aEMJ_appear, (aNPC_SUB_PROC)none_proc1},
-        {(aNPC_SUB_PROC)none_proc1, aEMJ_force_talk_request},
-        {aEMJ_retire, (aNPC_SUB_PROC)none_proc1},
+        { aEMJ_appear, (aNPC_SUB_PROC)none_proc1 },
+        { (aNPC_SUB_PROC)none_proc1, aEMJ_force_talk_request },
+        { aEMJ_retire, (aNPC_SUB_PROC)none_proc1 },
     };
     EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
 
@@ -106,7 +106,7 @@ void aEMJ_schedule_main_proc(NPC_ACTOR* actor, GAME_PLAY* play) {
 }
 
 void aEMJ_schedule_proc(NPC_ACTOR* actor, GAME_PLAY* play, int idx) {
-    static aNPC_SUB_PROC sche_proc[] = {aEMJ_schedule_init_proc, aEMJ_schedule_main_proc};
+    static aNPC_SUB_PROC sche_proc[] = { aEMJ_schedule_init_proc, aEMJ_schedule_main_proc };
 
     sche_proc[idx](actor, play);
 }
@@ -132,8 +132,8 @@ void aEMJ_set_force_talk_info() {
     mDemo_Set_msg_num(msg_num);
 }
 
-void aEMJ_force_talk_request(NPC_ACTOR* actor, GAME_PLAY* play) { 
-    mDemo_Request(10, &actor->actor_class, aEMJ_set_force_talk_info); 
+void aEMJ_force_talk_request(NPC_ACTOR* actor, GAME_PLAY* play) {
+    mDemo_Request(10, &actor->actor_class, aEMJ_set_force_talk_info);
 }
 
 int aEMJ_talk_init(ACTOR* actor, GAME* play) {

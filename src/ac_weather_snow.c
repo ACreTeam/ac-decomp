@@ -72,7 +72,7 @@ static void aWeatherSnow_ct(aWeather_Priv*, GAME*) {
 }
 
 static int aWeatherSnow_CheckSnowBorder(aWeather_Priv* priv, GAME_PLAY* play) {
-    WEATHER_ACTOR* weather = Common_Get(clip.weather_clip)->actor;
+    WEATHER_ACTOR* weather = (WEATHER_ACTOR*)Common_Get(clip.weather_clip)->actor;
     int ret = 0;
     f32 wtemp, ptemp;
     if (weather != NULL) {
@@ -120,7 +120,7 @@ static void aWeatherSnow_CheckSnowScroll(aWeather_Priv* priv, GAME_PLAY* play) {
 
     if (Common_Get(clip.weather_clip) != NULL) {
         f32 y;
-        WEATHER_ACTOR* weather = Common_Get(clip.weather_clip)->actor;
+        WEATHER_ACTOR* weather = (WEATHER_ACTOR*)Common_Get(clip.weather_clip)->actor;
 
         if (weather != NULL) {
             y = 230.0f + weather->pos.y;
@@ -135,7 +135,7 @@ static void aWeatherSnow_CheckSnowScroll(aWeather_Priv* priv, GAME_PLAY* play) {
 static void aWeatherSnow_SetWind2Snow(aWeather_Priv* priv) {
 
     if (Common_Get(clip.weather_clip) != NULL) {
-        WEATHER_ACTOR* weather = Common_Get(clip.weather_clip)->actor;
+        WEATHER_ACTOR* weather = (WEATHER_ACTOR*)Common_Get(clip.weather_clip)->actor;
         if (weather != NULL) {
             priv->pos.x += weather->wind_info.x;
             priv->pos.y += weather->wind_info.y;

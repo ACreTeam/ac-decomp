@@ -1,0 +1,111 @@
+static int Player_actor_request_main_fail_emu(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_FAIL_EMU, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_FAIL_EMU, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Fail_emu(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_fail_emu_c* fail_emu_p = &player->main_data.fail_emu;
+
+    fail_emu_p->timer = 0.0f;
+    fail_emu_p->msg_mode = 0;
+
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_WAIT1, mPlayer_ANIM_WAIT1, 1.0f, 1.0f, 0.5f, 0.0f,
+                                     cKF_FRAMECONTROL_REPEAT, mPlayer_PART_TABLE_NORMAL);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Fail_emu(ACTOR* actorx, GAME* game) {
+    Common_Set(fail_emu_flag, FALSE);
+}
+
+static void Player_actor_Movement_Fail_emu(ACTOR* actorx) {
+    Player_actor_Movement_Base_Braking_common(actorx, 0.23925f);
+}
+
+static int Player_actor_CulcAnimation_Fail_emu(ACTOR* actorx) {
+    f32 dummy;
+
+    return Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_ObjCheck_Fail_emu(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Fail_emu(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_Fail_emu_demo_ct(ACTOR* actorx) {
+    rgba_t window_color;
+
+    mDemo_Set_msg_num(0x2B6A);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_ListenAble();
+
+    window_color.r = 255;
+    window_color.g = 255;
+    window_color.b = 20;
+    window_color.a = 255;
+    mDemo_Set_talk_window_color(&window_color);
+    mChoice_CLEAR_CHOSENUM();
+}
+
+static int Player_actor_MessageControl_Fail_emu(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_fail_emu_c* fail_emu_p = &player->main_data.fail_emu;
+    f32* timer_p = &fail_emu_p->timer;
+    int* msg_mode_p = &fail_emu_p->msg_mode;
+
+    if (*timer_p < 42.0f) {
+        (*timer_p) += 1.0f;
+        return FALSE;
+    }
+
+    switch (*msg_mode_p) {
+        case 0: {
+            if (mDemo_Check(mDemo_TYPE_REPORT, actorx) == FALSE) {
+                mDemo_Request(mDemo_TYPE_REPORT, actorx, &Player_actor_Fail_emu_demo_ct);
+            } else {
+                *msg_mode_p = 1;
+            }
+
+            return FALSE;
+        }
+        case 1: {
+            if (mDemo_Check(mDemo_TYPE_REPORT, actorx) == FALSE) {
+                *msg_mode_p = 2;
+            }
+            return FALSE;
+        }
+        default: {
+            return TRUE;
+        }
+    }
+}
+
+static void Player_actor_request_proc_index_fromFail_emu(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Fail_emu(ACTOR* actorx, GAME* game) {
+    int end_flag;
+
+    Player_actor_Movement_Fail_emu(actorx);
+    Player_actor_CulcAnimation_Fail_emu(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_tex_anime_pattern(actorx);
+    Player_actor_ObjCheck_Fail_emu(actorx, game);
+    Player_actor_BGcheck_Fail_emu(actorx);
+    end_flag = Player_actor_MessageControl_Fail_emu(actorx);
+    Player_actor_request_proc_index_fromFail_emu(actorx, game, end_flag);
+}

@@ -1,0 +1,338 @@
+typedef enum player_status_level_s {
+    mPlayer_WAIT,
+    mPlayer_WALK,
+    mPlayer_RUN,
+    mPlayer_DASH,
+} mPlayer_STATUS_LEVEL;
+
+static void Player_actor_sound_SetStatus(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int status;
+    f32 speed;
+
+    status = player->now_main_index;
+    speed = player->keyframe0.frame_control.speed / 0.59999996f;
+
+    switch (status) {
+        case mPlayer_INDEX_READY_WALK_NET:
+        case mPlayer_INDEX_DEMO_WALK:
+        case mPlayer_INDEX_WALK:
+            status = mPlayer_WALK;
+            break;
+        case mPlayer_INDEX_RUN:
+            status = mPlayer_RUN;
+            break;
+        case mPlayer_INDEX_DASH:
+            status = mPlayer_DASH;
+            break;
+        default:
+            status = 0;
+            break;
+    }
+    if (speed > 1.0f) {
+        speed = 1.0f;
+    } else if (speed < 0.0f) {
+        speed = 0.0f;
+    }
+    sAdo_PlayerStatusLevel(speed, status);
+}
+
+static void Player_actor_set_sound_common1(xyz_t* pos, u16 id) {
+    sAdo_OngenTrgStart(id, pos);
+}
+
+static void Player_actor_set_sound_common2(ACTOR* actor, u16 id) {
+    Player_actor_set_sound_common1(&actor->world.position, id);
+}
+
+static void Player_actor_sound_FootStep1(ACTOR* actor, u16 id) {
+    xyz_t* pos = &actor->world.position;
+    xyz_t apos;
+    int check;
+    u32 attr;
+
+    apos = *pos;
+
+    attr = mCoBG_Wpos2Attribute(apos, 0);
+    if (sAdo_CheckOnPlussBridge(pos, attr)) {
+        id = 0x420A;
+    }
+
+    sAdo_PlyWalkSe(id, pos);
+}
+
+static void Player_actor_sound_FootStep2(ACTOR* actor) {
+    int floorId;
+
+    floorId = Common_Get(floor_idx);
+    if (floorId >= 0) {
+        if (mRmTp_SoundStepWalkSE(&actor->world.position) != 0) {
+            sAdo_PlyWalkSeRoom(0xFF, &actor->world.position);
+        } else if (floorId < 0x56) {
+            sAdo_PlyWalkSeRoom(floorId, &actor->world.position);
+        }
+    } else {
+        u16 label = sAdo_Get_WalkLabel(actor->bg_collision_check.result.unit_attribute);
+        Player_actor_sound_FootStep1(actor, label);
+    }
+}
+
+static void Player_actor_sound_Tumble(ACTOR* actor) {
+    u16 label = sAdo_Get_KokeruLabel(actor->bg_collision_check.result.unit_attribute);
+    Player_actor_set_sound_common2(actor, label);
+}
+
+static void Player_actor_sound_AMI_FURI(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_set_sound_common1(&player->net_pos, NA_SE_TOOL_FURI);
+}
+
+static void Player_actor_sound_AMI_HIT(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_set_sound_common1(&player->net_pos, NA_SE_AMI_HIT);
+}
+
+static void Player_actor_sound_AMI_GET(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_set_sound_common1(&player->net_pos, NA_SE_TOOL_GET);
+}
+
+static void Player_actor_sound_GASAGOSO(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_GASAGOSO);
+}
+
+static void Player_actor_sound_AXE_FURI(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_TOOL_FURI);
+}
+
+static void Player_actor_sound_AXE_HIT(ACTOR* actor, xyz_t* pos) {
+    xyz_t posA;
+
+    posA.x = pos->x;
+    posA.z = pos->z;
+    posA.y = actor->world.position.y + 20.0f;
+
+    Player_actor_set_sound_common1(&posA, NA_SE_AXE_HIT);
+}
+
+static void Player_actor_sound_AXE_CUT(ACTOR* actor, xyz_t* pos) {
+    xyz_t posA;
+
+    posA.x = pos->x;
+    posA.z = pos->z;
+    posA.y = actor->world.position.y + 20.0f;
+
+    Player_actor_set_sound_common1(&posA, NA_SE_AXE_CUT);
+}
+
+static void Player_actor_sound_SIT(ACTOR* actor, int ftr_idx) {
+    int id = mRmTp_GetFtrActionSE(ftr_idx, mRmTp_CHAIR_ACTION_SIT);
+
+    if (id >= 0) {
+        Player_actor_set_sound_common2(actor, id);
+    } else {
+        Player_actor_set_sound_common2(actor, NA_SE_HARD_CHAIR_SIT);
+    }
+}
+
+static void Player_actor_sound_STANDUP(ACTOR* actor, int ftr_idx) {
+    int id = mRmTp_GetFtrActionSE(ftr_idx, 1);
+
+    if (id >= 0) {
+        Player_actor_set_sound_common2(actor, id);
+    } else {
+        Player_actor_set_sound_common2(actor, NA_SE_HARD_CHAIR_STANDUP);
+    }
+}
+
+static void Player_actor_sound_JUMP(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_JUMP);
+}
+
+static void Player_actor_sound_LANDING(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_LANDING);
+}
+
+static void Player_actor_sound_ITEM_GET(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_ITEM_GET);
+}
+
+static void Player_actor_sound_BED_IN(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_BED_IN);
+}
+
+static void Player_actor_sound_BED_NEGAERI(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_BED_NEGAERI);
+}
+
+static void Player_actor_sound_BED_OUT(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_BED_OUT);
+}
+
+static void Player_actor_sound_ROD_STROKE(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_ROD_STROKE);
+}
+
+static void Player_actor_sound_ROD_STROKE_small(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_ROD_STROKE_SMALL);
+}
+
+static void Player_actor_sound_ROD_BACK(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_ROD_BACK);
+}
+
+static void Player_actor_sound_scoop1(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_SCOOP1);
+}
+
+static void Player_actor_sound_scoop_umeru(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_SCOOP_UMERU);
+}
+
+static void Player_actor_sound_scoop_hit(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_SCOOP_HIT);
+}
+
+static void Player_actor_sound_scoop_shigemi(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_SCOOP_SHIGEMI);
+}
+
+static void Player_actor_sound_ITEM_HORIDASHI(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_ITEM_HORIDASHI);
+}
+
+static void Player_actor_sound_slip(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, 0x4129);
+}
+
+static void Player_actor_sound_tree_touch(xyz_t* pos) {
+    sAdo_OngenTrgStart(NA_SE_TREE_TOUCH, pos);
+}
+
+static void Player_actor_sound_tree_yurasu(xyz_t* pos) {
+    sAdo_OngenTrgStart(NA_SE_TREE_YURASU, pos);
+}
+
+static void Player_actor_sound_kirikabu_scoop(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_KIRIBASU_SCOOP);
+}
+
+static void Player_actor_sound_kirikabu_out(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_KIRIBASU_OUT);
+}
+
+static void Player_actor_sound_knock(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_SOUND_KNOCK);
+}
+
+static void Player_actor_sound_coin_gasagoso(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_COIN_GASAGOSO);
+}
+
+static void Player_actor_sound_araiiki(ACTOR* actor) {
+    s8 gender = Common_Get(now_private)->gender;
+
+    Player_actor_set_sound_common2(actor, (gender == 0) ? (u16)NA_SE_ARAIIKI_BOY : (u16)NA_SE_ARAIIKI_GIRL);
+}
+
+static void Player_actor_sound_zassou_nuku(xyz_t* pos) {
+    sAdo_OngenTrgStart(NA_SE_ZASSOU_NUKU, pos);
+}
+
+static void Player_actor_sound_hachi_sasareru(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_HACHI_SASARERU);
+}
+
+static void Player_actor_sound_wear(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_WEAR);
+}
+
+static void Player_actor_sound_dai_ue_kakunou(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_DAI_UE_KAKUNOU);
+}
+
+static void Player_actor_sound_umbrella_rotate(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_UMBRELLA_ROTATE);
+}
+
+static u8 Player_actor_sound_Get_bgm_num_forCompletePayment(void) {
+    switch (Common_Get(complete_payment_type)) {
+        case mPlayer_COMPLETE_PAYMENT_TYPE_ARBEIT:
+            return NA_SE_MONEY0;
+        default:
+            return NA_SE_MONEY1;
+    }
+}
+
+static u8 Player_actor_sound_Get_bgm_num_forDemoGetGoldenItem(int type) {
+    switch (type) {
+        case 0:
+            return NA_SE_MONEY0;
+        case 1:
+            return NA_SE_MONEY2;
+        case 2:
+            return NA_SE_COIN;
+        default:
+            return NA_SE_MONEY1;
+    }
+}
+
+static void Player_actor_sound_camera_move1(void) {
+    sAdo_SysTrgStart(NA_SE_CAMERA_MOVE1);
+}
+
+static void Player_actor_sound_camera_move2() {
+    sAdo_SysTrgStart(NA_SE_CAMERA_MOVE2);
+}
+
+static void Player_actor_sound_karaburi(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_KARABURI);
+}
+
+static void Player_actor_sound_scoop_tree_hit(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_SCOOP_TREE_HIT);
+}
+
+static void Player_actor_sound_scoop_item_hit(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_SCOOP_ITEM_HIT);
+}
+
+static void Player_actor_sound_axe_ball_hit(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_SCOOP_ITEM_HIT);
+}
+
+static void Player_actor_sound_axe_broken1(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_TOOL_BROKEN1);
+}
+
+static void Player_actor_sound_axe_broken2(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_TOOL_BROKEN2);
+}
+
+static void Player_actor_sound_axe_broken3(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_TOOL_BROKEN3);
+}
+
+static void Player_actor_sound_uchiwa(ACTOR* actor) {
+    Player_actor_set_sound_common2(actor, NA_SE_UCHIWA);
+}
+
+static void Player_actor_sound_move_temochi_kazaguruma(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 speed;
+
+    speed = ABS(player->item_keyframe.frame_control.speed / 44.0f);
+
+    if (speed > 1.0f) {
+        speed = 1.0f;
+    } else if (speed < 0.0f) {
+        speed = 0.0f;
+    }
+    if (speed != 0.0f) {
+        sAdo_kazagurumaLevel(speed);
+        sAdo_OngenPos((u32)player, NA_SE_TEMOCHI_KAZAGURUMA, &actor->world.position);
+    }
+}

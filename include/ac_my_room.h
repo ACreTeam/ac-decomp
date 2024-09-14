@@ -296,6 +296,9 @@ extern u8 aMR_GetAlphaEdge(u16 ftr_name);
 extern int aMR_DrawDolphinMode(u16 ftr_name);
 extern Gfx* aMR_IconNo2Gfx1(int icon_no);
 extern Gfx* aMR_IconNo2Gfx2(int icon_no);
+extern int aMR_RadioBgmNow(void);
+extern void aMR_ThrowItem_FurnitureLock(void);
+extern void aMR_ThrowItem_FurnitureUnlock(void);
 
 #ifdef __cplusplus
 }

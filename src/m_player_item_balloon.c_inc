@@ -1,0 +1,285 @@
+static s16 Player_actor_Item_Get_goal_balloon_lean_angle(ACTOR* actor) {
+    return -actor->shape_info.rotation.x;
+}
+
+static void Player_actor_Item_Setup_main_balloon_normal(ACTOR* actor, int item_kind, int kind) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (mPlayer_ITEM_IS_BALLOON(kind) == FALSE) {
+        player->balloon_lean_angle = Player_actor_Item_Get_goal_balloon_lean_angle(actor);
+        player->balloon_angle = ZeroSVec;
+        player->balloon_anim_max_frame = player->item_keyframe.frame_control.max_frames;
+        player->balloon_anim_speed = 0.0f;
+        player->balloon_stop_movement_flag = TRUE;
+        player->balloon_add_rot_z = 30.0f;
+        player->ballon_add_rot_x = 0;
+        player->balloon_add_rot_x_counter = 0;
+        player->balloon_current_frame = 0.0f;
+    }
+
+    player->item_keyframe.frame_control.current_frame = player->balloon_anim_max_frame;
+    player->item_keyframe.frame_control.speed = player->balloon_anim_speed;
+}
+
+static void Player_actor_Item_set_balloon_lean_angle(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    s16 angle = Player_actor_Item_Get_goal_balloon_lean_angle(actor);
+    add_calc_short_angle2(&player->balloon_lean_angle, angle, 1.0f - sqrtf(0.90999999f), 250, 0);
+}
+
+static void Player_actor_Item_CulcAnimation_balloon_normal(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 speed = player->item_keyframe.frame_control.speed;
+    f32 cur = player->item_keyframe.frame_control.current_frame;
+    f32 max = player->item_keyframe.frame_control.max_frames;
+
+    player->balloon_anim_max_frame = cur;
+    cur += speed;
+    player->balloon_anim_speed = speed;
+
+    if (cur > max) {
+        cur = max;
+    } else if (cur < 0.5f * max) {
+        cur = 0.5f * max;
+    }
+
+    player->item_keyframe.frame_control.current_frame = cur;
+}
+
+static void Player_actor_Item_Movement_balloon_normal(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 max = player->item_keyframe.frame_control.max_frames;
+    int index;
+
+    if (player->item_scale == 1.0f) {
+        f32 speed = (26.0f * (player->item_keyframe.frame_control.current_frame - 1.0f)) / (max - 1.0f);
+        xyz_t pos = ZeroVec;
+
+        if (player->balloon_stop_movement_flag == FALSE) {
+            s16 ang = player->balloon_lean_angle;
+            s16 rot = actor->shape_info.rotation.y;
+            s16 target;
+            f32 cos = cos_s(ang);
+            xyz_t right_hand = player->right_hand_move;
+
+            pos.y -= right_hand.y * cos;
+
+            {
+                f32 cos = cos_s(DEG2SHORT_ANGLE2(90.0f) - ang);
+                f32 sin = sin_s(rot);
+                f32 cos2 = cos_s(rot);
+                f32 poscalc = ((sin * right_hand.x) + (cos2 * right_hand.z));
+
+                pos.y -= poscalc * cos;
+            }
+
+            {
+                f32 balloon_add_rot_z = player->balloon_add_rot_z;
+                s16 add_z_angle;
+
+                balloon_add_rot_z -= (0.0014f * player->balloon_angle.z);
+                add_z_angle = player->balloon_angle.z + (int)balloon_add_rot_z;
+
+                if (add_z_angle > 0x800) {
+                    add_z_angle = 0x800;
+                } else if (add_z_angle < -0x800) {
+                    add_z_angle = -0x800;
+                }
+
+                player->balloon_angle.z = add_z_angle;
+                player->balloon_add_rot_z = balloon_add_rot_z;
+            }
+
+            {
+                f32 sin = sin_s(rot);
+                f32 cos2 = cos_s(rot);
+                s16 balloon_angle_z = (s16)(-1200.0f * ((sin * right_hand.x) + (cos2 * right_hand.z)));
+                s16 balloon_angle_x = player->balloon_angle.x;
+                int xang = ABS(balloon_angle_x);
+                int zang = ABS(balloon_angle_z);
+
+                if (zang - xang < 0) {
+                    add_calc_short_angle2(&player->balloon_angle.x, balloon_angle_z, 1.0f - sqrtf(0.9f), 2500, 0);
+                } else {
+                    add_calc_short_angle2(&player->balloon_angle.x, balloon_angle_z, 1.0f - sqrtf(0.6f), 2500, 0);
+                }
+            }
+
+            {
+                int index = player->now_main_index;
+                s16 add_x_angle = player->ballon_add_rot_x;
+
+                if (index == mPlayer_INDEX_WALK || index == mPlayer_INDEX_RUN) {
+                    s16 counter = player->balloon_add_rot_x_counter;
+                    f32 sin;
+
+                    counter += (s16)(400.0f * actor->speed);
+                    sin = sin_s(counter);
+                    player->balloon_add_rot_x_counter = counter;
+
+                    target = (s16)(1000.0f * sin);
+                } else {
+                    target = 0;
+                }
+
+                add_calc_short_angle2(&add_x_angle, target, 1.0f - sqrtf(0.6f), 2500, 0);
+                player->ballon_add_rot_x = add_x_angle;
+            }
+        }
+
+        speed += pos.y;
+        if (speed < 13.0f) {
+            speed = 13.0f;
+        } else if (speed > 26.0f) {
+            speed = 26.0f;
+        }
+
+        player->item_keyframe.frame_control.current_frame = 1.0f + ((speed * (max - 1.0f)) / 26.0f);
+    } else {
+        player->balloon_angle.z = 0;
+    }
+
+    {
+        f32 item_speed = player->item_keyframe.frame_control.speed;
+        f32 cur = player->item_keyframe.frame_control.current_frame;
+        f32 curmax = 0.7f * max;
+
+        if (cur >= max) {
+            item_speed = -0.085f;
+        } else if (item_speed <= 0.0f && cur <= curmax) {
+            item_speed = 0.0f;
+        } else {
+            item_speed += 0.0039585f;
+        }
+
+        player->item_keyframe.frame_control.speed = item_speed;
+    }
+}
+
+static void Player_actor_Item_PlayAnimation_balloon_normal(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 cur = player->item_keyframe.frame_control.current_frame;
+    f32 max = player->item_keyframe.frame_control.max_frames;
+
+    if (player->balloon_current_frame != cur) {
+        f32 cur_diff = cur - player->balloon_current_frame;
+        f32 old_speed = player->item_keyframe.frame_control.speed;
+
+        if (cur_diff >= 0.0f) {
+            player->item_keyframe.frame_control.start_frame = 1.0f;
+            player->item_keyframe.frame_control.end_frame = max;
+        } else {
+            player->item_keyframe.frame_control.end_frame = 1.0f;
+            player->item_keyframe.frame_control.start_frame = max;
+        }
+
+        player->item_keyframe.frame_control.speed = cur_diff;
+        Player_actor_Item_CulcAnimation_Base(actor);
+        player->item_keyframe.frame_control.current_frame = cur;
+        player->balloon_current_frame = cur;
+        player->item_keyframe.frame_control.speed = old_speed;
+    }
+}
+
+static int Player_actor_Item_main_balloon_normal(ACTOR* actor, GAME* game) {
+    Player_actor_Item_set_balloon_lean_angle(actor);
+    Player_actor_Item_CulcAnimation_balloon_normal(actor);
+    return 0;
+}
+
+static int Player_actor_Item_draw_balloon_Before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx,
+                                                 Gfx** joint_shape, u8* joint_flags, void* arg, s_xyz* joint_rot,
+                                                 xyz_t* joint_pos) {
+
+    switch (joint_idx) {
+        case 1:
+        case 2:
+        case 3:
+
+            OPEN_POLY_OPA_DISP(game->graph);
+
+            gDPPipeSync(POLY_OPA_DISP++);
+            gDPSetTexEdgeAlpha(POLY_OPA_DISP++, 80);
+
+            CLOSE_POLY_OPA_DISP(game->graph);
+
+            break;
+    }
+
+    return 1;
+}
+
+static int Player_actor_Item_draw_balloon_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx,
+                                                Gfx** joint_shape, u8* joint_flags, void* arg, s_xyz* joint_rot,
+                                                xyz_t* joint_pos) {
+    switch (joint_idx) {
+        case 1:
+        case 2:
+        case 3:
+
+            OPEN_POLY_OPA_DISP(game->graph);
+
+            gDPPipeSync(POLY_OPA_DISP++);
+            gDPSetTexEdgeAlpha(POLY_OPA_DISP++, 144);
+
+            CLOSE_POLY_OPA_DISP(game->graph);
+
+            break;
+    }
+
+    return 1;
+}
+static void Player_actor_Item_draw_balloon(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    Mtx* item_mtx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    s16 angle;
+    s16 rot;
+    GRAPH* graph;
+    f32 scale;
+    s_xyz* angle_p = &player->balloon_angle;
+
+    if (!_Game_play_isPause(play)) {
+        Player_actor_Item_Movement_balloon_normal(actor);
+        Player_actor_Item_PlayAnimation_balloon_normal(actor);
+    }
+
+    item_mtx = player->item_work_mtx[play->game.frame_counter % 2];
+    graph = play->game.graph;
+
+    Matrix_push();
+
+    rot = actor->shape_info.rotation.y;
+    scale = player->item_scale;
+    angle = DEG2SHORT_ANGLE2(-90.0f) + player->balloon_lean_angle + angle_p->x + player->ballon_add_rot_x;
+
+    Matrix_translate(player->right_hand_pos.x, player->right_hand_pos.y, player->right_hand_pos.z, 0);
+    Matrix_RotateY(rot, 1);
+    Matrix_RotateX(angle, 1);
+    Matrix_RotateZ(0x4000, 1);
+    Matrix_RotateX(player->balloon_angle.z, 1);
+    Matrix_scale(actor->scale.x * scale, actor->scale.y * scale, actor->scale.z * scale, 1);
+
+    OPEN_POLY_OPA_DISP(graph);
+
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+    CLOSE_POLY_OPA_DISP(graph);
+
+    Setpos_HiliteReflect_init(&player->right_hand_pos, play);
+
+    cKF_Si3_draw_R_SV(&play->game, &player->item_keyframe, item_mtx, Player_actor_Item_draw_balloon_Before,
+                      Player_actor_Item_draw_balloon_After, actor);
+    Matrix_pull();
+
+    player->item_rod_top_pos_set = FALSE;
+
+    if (player->balloon_start_pos_set_flag == FALSE) {
+        player->other_item_start_pos = player->other_item_end_pos;
+        player->balloon_start_pos_set_flag = TRUE;
+    }
+
+    if (player->balloon_stop_movement_flag != FALSE) {
+        player->balloon_stop_movement_flag = FALSE;
+    }
+}

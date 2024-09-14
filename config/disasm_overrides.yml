@@ -1,9 +1,24 @@
 trim_ctors: true
 
 symbol_aligns:
+  0x80008480: 32
+  0x80016d20: 32
+  0x80018920: 32
+  0x800190e0: 32
+  0x80019380: 32
+  0x80019760: 32
+  0x8001a0c0: 32
+  0x80026400: 32
+  0x8002c920: 32 # __DSPCheckMXICBoot2__FP16STRUCT_DSP_TASK2
+  0x80031d80: 32
+  0x8001ada0: 32
+  0x8002cfe0: 32
+  0x8018f1a8: 8
   0x80207458: 8 # align RunQueue to 0x001251d8
   0x800b9140: 32 # align gam_win_moji1_tex to 32 bytes
   0x801f71c0: 32 # align texture_buffer_data to 32 bytes
   0x800daaa0: 32 # align texture_cache_data_func to 32 bytes
   0x80206f30: 16 # malloc.c align 16 bytes
   0x800ab260: 32
+  0x800d3b00: 32 # dspboot data section has alignment to 32
+  0x801864b0: 8 # dspbuf align 8 (not sure why this doesn't happen)

@@ -1,0 +1,210 @@
+static int Player_actor_Check_able_request_main_standup_bed(GAME* game) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+    int index = player->now_main_index;
+
+    switch (index) {
+        case mPlayer_INDEX_WAIT_BED:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
+static int Player_actor_request_main_standup_bed(GAME* game, int move_direction, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_STANDUP_BED, priority) &&
+        Player_actor_Check_able_request_main_standup_bed(game)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        xyz_t pos = player->actor_class.world.position;
+        s16 rot = player->actor_class.shape_info.rotation.y;
+        f32 x;
+        f32 z;
+
+        if (move_direction == 1) {
+            if (rot == 0) {
+                x = 40.0f;
+                z = 5.0f;
+            } else {
+                x = 40.0f;
+                z = -5.0f;
+            }
+        } else if (move_direction == 2) {
+            if (rot == 0) {
+                x = -40.0f;
+                z = -5.0f;
+            } else {
+                x = -40.0f;
+                z = 5.0f;
+            }
+        } else if (move_direction == 3) {
+            if (rot == 0x4000) {
+                x = 5.0f;
+                z = -40.0f;
+            } else {
+                x = -5.0f;
+                z = -40.0f;
+            }
+        } else {
+            if (rot == 0x4000) {
+                x = 5.0f;
+                z = 40.0f;
+            } else {
+                x = -5.0f;
+                z = 40.0f;
+            }
+        }
+
+        pos.x += x;
+        pos.z += z;
+
+        if (!Player_actor_SearchPosition_npc_forStand(game, &pos)) {
+            PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+            player->requested_main_index_data.standup_bed.move_dir = move_direction;
+            Player_actor_request_main_index(game, mPlayer_INDEX_STANDUP_BED, priority);
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+static void Player_actor_settle_main_Standup_bed(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    cKF_SkeletonInfo_R_AnimationMove_dt(&player->keyframe0);
+    actor->world.angle.y = actor->shape_info.rotation.y;
+    actor->shape_info.rotation.x = 0;
+    actor->world.angle.x = 0;
+    actor->shape_info.rotation.z = 0;
+    actor->world.angle.z = 0;
+    actor->shape_info.shadow_size_change_rate = 1.0f;
+    actor->shape_info.shadow_alpha_change_rate = 1.0f;
+}
+
+static int Player_actor_Get_BasicPlayerAnimeIndex_Standup_bed(int direction, s16 angle) {
+    if (angle == 0) {
+        if (direction == 1) {
+            return mPlayer_ANIM_OUTBED_R1;
+        }
+        if (direction == 2) {
+            return mPlayer_ANIM_OUTBED_L1;
+        }
+    } else if (angle == 0x4000) {
+        if (direction == 3) {
+            return mPlayer_ANIM_OUTBED_R1;
+        }
+        if (direction == 4) {
+            return mPlayer_ANIM_OUTBED_L1;
+        }
+    } else if (angle == -0x8000) {
+        if (direction == 1) {
+            return mPlayer_ANIM_OUTBED_L1;
+        }
+        if (direction == 2) {
+            return mPlayer_ANIM_OUTBED_R1;
+        }
+    } else if (angle == -0x4000) {
+        if (direction == 3) {
+            return mPlayer_ANIM_OUTBED_L1;
+        }
+        if (direction == 4) {
+            return mPlayer_ANIM_OUTBED_R1;
+        }
+    }
+
+    return mPlayer_ANIM_OUTBED_R1;
+}
+
+static void Player_actor_setup_main_Standup_bed(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    cKF_SkeletonInfo_R_c* keyf;
+    mPlayer_request_standup_bed_c* req_up = &player->requested_main_index_data.standup_bed;
+    int anim_idx;
+    s16 rot;
+
+    keyf = &player->keyframe0;
+    anim_idx = Player_actor_Get_BasicPlayerAnimeIndex_Standup_bed(req_up->move_dir, actor->shape_info.rotation.y);
+    cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyf, 0.0f, 1000.0f, 0.0f, 0, 0, 0x4000);
+    rot = actor->shape_info.rotation.y;
+
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actor->world.position, &actor->world.position, rot, rot, 3.0f, keyf, 3);
+    Player_actor_InitAnimation_Base2(actor, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.5f, -3.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+    Player_actor_sound_BED_OUT(actor);
+}
+
+static int Player_actor_CulcAnimation_Standup_bed(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetSound_Standup_bed(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 23.0f)) {
+        Player_actor_sound_LANDING(actor);
+    }
+}
+
+static void Player_actor_SearchAnimation_Standup_bed(ACTOR* actor, f32 frame) {
+    f32 per;
+    f32 mod;
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+    f32 cur;
+    s16 target_x;
+    s16 target_y;
+    int angle;
+
+    Player_actor_AppearShadow_fromAnimationFrame(actor, 12.0f, 8.0f);
+    cur = fc0_p->current_frame;
+    per = get_percent_forAccelBrake(cur, 1.0f, 21.0f, 3.0f, 3.0f);
+
+    target_x = (int)(-16384.0f * (1.0f - per));
+    add_calc_short_angle2(&actor->shape_info.rotation.x, target_x, 1.0f - sqrtf(0.5), 1820, 50);
+
+    per = get_percent_forAccelBrake(cur, 1.0f, 18.0f, 3.0f, 3.0f);
+    target_y = actor->world.angle.y;
+
+    if (player->animation0_idx == mPlayer_ANIM_OUTBED_R1) {
+        mod = 16384.0f;
+    } else {
+        mod = -16384.0f;
+    }
+
+    target_y += (s16)(int)(mod * per);
+    add_calc_short_angle2(&actor->shape_info.rotation.y, target_y, 1.0f - sqrtf(0.5), 1820, 50);
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetSound_Standup_bed(actor);
+    }
+}
+
+static void Player_actor_Movement_Standup_bed(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    cKF_SkeletonInfo_R_AnimationMove_base(&actor->world.position, &actor->shape_info.rotation.y, &actor->scale,
+                                          actor->world.angle.y, &player->keyframe0);
+    Player_actor_Movement_Base_Stop(actor, FALSE);
+}
+
+static void Player_actor_ObjCheck_Standup_bed(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_request_proc_index_fromStandup_bed(ACTOR* actor, GAME* game, int arg) {
+    if (arg != 0) {
+        Player_actor_SettleRequestMainIndexPriority(actor);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, 1);
+    }
+}
+
+static void Player_actor_main_Standup_bed(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int arg = Player_actor_CulcAnimation_Standup_bed(actor, &frame_calc);
+
+    Player_actor_SearchAnimation_Standup_bed(actor, frame_calc);
+    Player_actor_Movement_Standup_bed(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Standup_bed(actor, game);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromStandup_bed(actor, game, arg);
+}

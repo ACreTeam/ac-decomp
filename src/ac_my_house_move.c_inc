@@ -200,12 +200,12 @@ static int aMHS_check_player_in_intro_demo(STRUCTURE_ACTOR* my_house, GAME_PLAY*
         return 0;
     }
 
-    intro_demo = (INTRO_DEMO_ACTOR*)clip->class;
+    intro_demo = (INTRO_DEMO_ACTOR*)clip->demo_class;
     if (intro_demo == NULL || clip->type != mDemo_CLIP_TYPE_INTRO_DEMO || mEv_CheckFirstIntro() == FALSE) {
         return 0;
     }
 
-    if (my_house->arg3_f == TRUE && intro_demo->player_in_intro_demo == TRUE) {
+    if (my_house->arg3_f == TRUE && intro_demo->player_in_house == TRUE) {
         return 1;
     }
 
@@ -214,7 +214,7 @@ static int aMHS_check_player_in_intro_demo(STRUCTURE_ACTOR* my_house, GAME_PLAY*
 
         my_house->arg3_f = TRUE;
         action = my_house->action;
-        intro_demo->selected_house = action;
+        intro_demo->house_idx = action;
         intro_demo->player_intro_demo_state =
             mPr_NullCheckPersonalID(&Save_Get(homes[action]).ownerID) ? aID_STATE_TAKEN_HOUSE : aID_STATE_FREE_HOUSE;
         return 2;
@@ -400,12 +400,12 @@ static void aMHS_open_door(STRUCTURE_ACTOR* my_house, GAME_PLAY* play) {
             aMHS_goto_next_pl_scene(play, my_house);
 
             if (Common_Get(clip).demo_clip != NULL && Common_Get(clip).demo_clip->type == mDemo_CLIP_TYPE_INTRO_DEMO) {
-                demo_class = Common_Get(clip).demo_clip->class;
+                demo_class = Common_Get(clip).demo_clip->demo_class;
 
                 if (demo_class != NULL) {
                     intro_demo = (INTRO_DEMO_ACTOR*)demo_class;
 
-                    intro_demo->player_in_intro_demo = FALSE;
+                    intro_demo->player_in_house = FALSE;
                 }
             }
 

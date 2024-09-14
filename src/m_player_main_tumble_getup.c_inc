@@ -1,0 +1,136 @@
+static int Player_actor_request_main_tumble_getup(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_TUMBLE_GETUP, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_TUMBLE_GETUP, prio);
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static void Player_actor_setup_Item_Tumble_getup(ACTOR* actor, GAME* game, int kind, f32 speed) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int check = FALSE;
+    ACTOR* balloon = player->balloon_actor;
+
+    if (mPlayer_ITEM_IS_BALLOON(kind)) {
+        check = TRUE;
+    }
+
+    if (check && balloon) {
+        s_xyz angle;
+        xyz_t pos;
+        f32 frame;
+
+        player->main_data.balloon.balloon_shape_type = mPlib_Get_ItemKindTOBalloonShapeType(kind);
+        kind = -1;
+        Player_actor_Set_ItemNoSubmenu(EMPTY_NO);
+        frame = player->item_keyframe.frame_control.current_frame;
+
+        angle.x = player->balloon_lean_angle + player->balloon_angle.x + player->ballon_add_rot_x;
+        angle.y = actor->shape_info.rotation.y;
+        angle.z = 0;
+
+        pos = player->right_hand_pos;
+        Ac_Balloon_request_fly(player->balloon_actor, game, player->main_data.balloon.balloon_shape_type, &angle,
+                               player->balloon_angle.z, &pos, frame, 7.0f);
+    } else {
+        player->main_data.balloon.balloon_shape_type = -1;
+    }
+
+    check = FALSE;
+
+    if (mPlayer_ITEM_IS_NET(kind)) {
+        check = TRUE;
+    }
+
+    if (check == FALSE) {
+        Player_actor_LoadOrDestruct_Item(actor, kind, mPlib_Get_BasicItemAnimeIndex_fromItemKind(kind), 0.5f, speed,
+                                         -1.0f, cKF_FRAMECONTROL_REPEAT);
+        Player_actor_Set_now_item_main_index(actor, Player_actor_Get_BasicItemMainIndex_fromItemKind(kind));
+        player->item_kind = kind;
+    } else {
+        Player_actor_LoadOrDestruct_Item(actor, kind, mPlayer_ANIM_RTURN1, 0.5f, speed, -1.0f, cKF_FRAMECONTROL_STOP);
+        Player_actor_Set_now_item_main_index(actor, mPlayer_INDEX_RETURN_OUTDOOR2);
+        player->item_kind = kind;
+    }
+}
+
+static int Player_actor_Get_PlayerAnimeIndex_fromItemKind_Tumble_getup(int kind) {
+    static const u8 data[] = {
+        mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_A1,
+        mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_A1,
+        mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_A1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_A1,
+        mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1,
+        mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_N1, mPlayer_ANIM_KOKERU_GETUP_A1,
+        mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_A1,
+        mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_A1, mPlayer_ANIM_KOKERU_GETUP_A1,
+        mPlayer_ANIM_KOKERU_GETUP_A1,
+    };
+
+    if (mPlayer_ITEM_KIND_VALID(kind)) {
+        return data[kind];
+    } else {
+        return mPlayer_ANIM_KOKERU_GETUP1;
+    }
+}
+
+static void Player_actor_setup_main_Tumble_getup(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int kind = Player_actor_Get_ItemKind(actor, player->requested_main_index);
+    int anim_idx = Player_actor_Get_PlayerAnimeIndex_fromItemKind_Tumble_getup(kind);
+
+    Player_actor_setup_Item_Tumble_getup(actor, game, kind, -5.0f);
+    Player_actor_InitAnimation_Base2(actor, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.5f, -5.0f, 0, 0);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_request_proc_index_fromTumble_getup(ACTOR* actor, GAME* game, int calc) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (calc != 0) {
+        if (player->main_data.balloon.balloon_shape_type < 0) {
+            Player_actor_SettleRequestMainIndexPriority(actor);
+            Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+        } else {
+            mPlayer_request_release_creature_u release_creature;
+
+            release_creature.balloon.balloon_type = player->main_data.balloon.balloon_shape_type;
+            Player_actor_request_main_release_creature_all(game, mPlayer_CREATURE_BALLOON, FALSE, &release_creature,
+                                                           player->balloon_actor, mPlayer_REQUEST_PRIORITY_30);
+        }
+    }
+}
+
+static void Player_actor_main_Tumble_getup(ACTOR* actor, GAME* game) {
+    int calc;
+    f32 frame_calc;
+
+    Player_actor_Movement_Tumble(actor);
+    calc = Player_actor_CulcAnimation_Tumble(actor, &frame_calc);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_ObjCheck_Tumble(actor, game);
+    Player_actor_BGcheck_Tumble(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromTumble_getup(actor, game, calc);
+}

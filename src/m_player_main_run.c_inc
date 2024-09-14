@@ -1,0 +1,124 @@
+static int Player_actor_request_main_run_all(GAME* game, f32 speed, int flags, int priority) {
+    PLAYER_ACTOR* player;
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_RUN, priority)) {
+        player = GET_PLAYER_ACTOR_GAME(game);
+        Player_actor_request_main_index(game, mPlayer_INDEX_RUN, priority);
+
+        player->requested_main_index_data.run.morph_speed = speed;
+        player->requested_main_index_data.run.flags = flags;
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Run_common(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int flags = player->requested_main_index_data.run.flags;
+    int anim_idx;
+    int part_table_idx;
+    f32 speed = player->requested_main_index_data.run.morph_speed;
+    f32 absspeed;
+    f32 frame = player->keyframe0.frame_control.current_frame;
+
+    absspeed = ABS(speed);
+
+    Player_actor_SetupItem_Base3(actor, mPlayer_ANIM_RUN1, -absspeed, &anim_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_RUN1, anim_idx, frame, 1.0f, 0.5f, speed,
+                                     part_table_idx);
+
+    if (flags & 1) {
+        Player_actor_SetEffect_forTakeout_item(actor, game);
+    }
+
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_setup_main_Run(ACTOR* actor, GAME* game) {
+    Player_actor_setup_main_Run_common(actor, game);
+}
+
+static void Player_actor_CulcAnimation_Run(ACTOR* actor, f32 over_speed_normalize_NoneZero, f32* frame_calc) {
+    Player_actor_CulcAnimation_Walk(actor, over_speed_normalize_NoneZero, frame_calc);
+}
+
+static void Player_actor_SetEffect_Run(ACTOR* actor, GAME* game, f32 left_target_frame, f32 right_target_frame) {
+    Player_actor_SetEffect_Walk(actor, game, left_target_frame, right_target_frame);
+}
+
+static void Player_actor_SearchAnimation_Run(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+        Player_actor_SetEffect_Walk(actor, game, 1.0f, 9.0f);
+    }
+}
+
+static void Player_actor_Movement_Run(ACTOR* actor, GAME* game, f32* frame) {
+    Player_actor_Movement_Walk(actor, game, frame);
+}
+
+static void Player_actor_ObjCheck_Run(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Run(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromRun_common(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 speed;
+
+    Player_actor_Set_ScrollDemo_forWade(actor, game, mEv_CheckTitleDemo() <= 0);
+
+    if (!actor->bg_collision_check.result.on_ground) {
+        Player_actor_request_main_fall_all(game, -5.0f, 1, mPlayer_REQUEST_PRIORITY_1);
+    }
+
+    Player_actor_CheckAndRequest_main_axe_all(game, mPlayer_REQUEST_PRIORITY_4);
+
+    if (Player_actor_CheckController_forNet(game) != 0) {
+        Player_actor_request_main_ready_net(game, mPlayer_REQUEST_PRIORITY_4);
+    }
+
+    if (Player_actor_CheckController_forRod(game) != 0) {
+        Player_actor_request_main_ready_rod(game, mPlayer_REQUEST_PRIORITY_4);
+    }
+
+    Player_actor_CheckAndRequest_main_scoop_all(game, mPlayer_REQUEST_PRIORITY_4);
+    Player_actor_CheckAndRequest_main_umbrella_all(game, mPlayer_REQUEST_PRIORITY_4);
+    Player_actor_CheckAndRequest_main_fan_all(game, 1, 1, mPlayer_REQUEST_PRIORITY_4);
+    Player_actor_CheckAndRequest_main_shake_tree_all(game);
+    Player_actor_CheckAndRequest_main_pickup_all(game);
+
+    speed = (player->keyframe0.frame_control.speed * player->keyframe0.frame_control.speed) / 0.048f;
+
+    if (speed < 3.525f) {
+        Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+
+    if (speed >= 4.875f) {
+        Player_actor_request_main_dash_all(game, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_request_proc_index_fromRun(ACTOR* actor, GAME* game) {
+    Player_actor_request_proc_index_fromRun_common(actor, game);
+}
+
+static void Player_actor_main_Run(ACTOR* actor, GAME* game) {
+    f32 over_speed_normalize_NoneZero;
+    f32 frame_calc;
+
+    Player_actor_Movement_Run(actor, game, &over_speed_normalize_NoneZero);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Run(actor, over_speed_normalize_NoneZero, &frame_calc);
+    Player_actor_SearchAnimation_Run(actor, game, frame_calc);
+    Player_actor_set_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Run(actor, game);
+    Player_actor_BGcheck_Run(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromRun(actor, game);
+}

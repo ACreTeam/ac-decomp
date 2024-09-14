@@ -1,0 +1,78 @@
+static int Player_actor_request_main_mail_jump_all(GAME* game, const xyz_t* pos_p, s16 angle_y, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_MAIL_JUMP, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_mail_jump_c* req_mail_jump_p = &player->requested_main_index_data.mail_jump;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_MAIL_JUMP, prio);
+        req_mail_jump_p->pos = *pos_p;
+        req_mail_jump_p->angle_y = angle_y;
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Mail_jump(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    mPlayer_request_mail_jump_c* req_mail_jump_p = &player->requested_main_index_data.mail_jump;
+    int anim1_idx;
+    int part_table_idx;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_CONFIRM1, -8.0f, &anim1_idx, &part_table_idx);
+
+    if (part_table_idx != mPlayer_PART_TABLE_NORMAL) {
+        part_table_idx = mPlayer_PART_TABLE_NET;
+    }
+
+    cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(kf0_p, 0.0f, 1000.0f, 0.0f, 0, 0, DEG2SHORT_ANGLE2(90.0f));
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actorx->world.position, &req_mail_jump_p->pos,
+                                             actorx->shape_info.rotation.y, req_mail_jump_p->angle_y, 8.0f, kf0_p,
+                                             cKF_ANIMATION_ROT_Y | cKF_ANIMATION_TRANS_XZ);
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_CONFIRM1, anim1_idx, 1.0f, 1.0f, 0.5f, -8.0f,
+                                     cKF_FRAMECONTROL_STOP, part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Mail_jump(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_dt(kf0_p);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static int Player_actor_CulcAnimation_Mail_jump(ACTOR* actorx) {
+    f32 dummy;
+
+    return Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_Movement_Mail_jump(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_base(&actorx->world.position, &actorx->shape_info.rotation.y, &actorx->scale,
+                                          actorx->world.angle.y, kf0_p);
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static void Player_actor_ObjCheck_Mail_jump(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Mail_jump(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_main_Mail_jump(ACTOR* actorx, GAME* game) {
+    Player_actor_CulcAnimation_Mail_jump(actorx);
+    Player_actor_Movement_Mail_jump(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Mail_jump(actorx, game);
+    Player_actor_BGcheck_Mail_jump(actorx);
+    Player_actor_Item_main(actorx, game);
+}

@@ -1,0 +1,407 @@
+typedef void (*aNRG_THINK_INIT_PROC)(NPC_RCN_GUIDE_ACTOR*, GAME_PLAY*);
+
+typedef struct npc_rcn_guide_setup_think_s {
+    aNRG_THINK_PROC think_proc;
+    aNRG_THINK_INIT_PROC think_init_proc;
+    aNPC_TALK_REQUEST_PROC talk_request_proc;
+    u8 talk_idx;
+    u8 next_think_idx;
+} aNRG_setup_think_c;
+
+static void aNRG_approach(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    if (rcn_guide->npc_class.action.step == aNPC_ACTION_END_STEP && rcn_guide->npc_class.action.idx == 2) {
+        aNRG_setup_think_proc(rcn_guide, play, aNRG_THINK_INTRODUCE);
+    }
+}
+
+static void aNRG_turn(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    if (rcn_guide->npc_class.action.step == aNPC_ACTION_END_STEP && rcn_guide->npc_class.action.idx == 3) {
+        aNRG_setup_think_proc(rcn_guide, play, rcn_guide->next_think_idx);
+    }
+}
+
+static void aNRG_take_with(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    if (rcn_guide->npc_class.action.step == aNPC_ACTION_END_STEP && rcn_guide->npc_class.action.idx == 2) {
+        int path = rcn_guide->path;
+
+        if (path >= 1) {
+            aNRG_setup_think_proc(rcn_guide, play, aNRC_THINK_EXPLAIN);
+        } else {
+            aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, 2240,
+                                 1500);
+            path++;
+        }
+
+        rcn_guide->path = path;
+    }
+}
+
+static void aNRG_decide_house_wait(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    int next_think_idx = -1;
+
+    if (GET_PLAYER_ACTOR_NOW()->excute_cancel_wade) {
+        /* Player is trying to leave the acre, so let them know they can't */
+        next_think_idx = aNRC_THINK_STOP_WADE;
+    } else if (Common_Get(clip).demo_clip != NULL && Common_Get(clip).demo_clip->type == mDemo_CLIP_TYPE_INTRO_DEMO) {
+        ACTOR* demo_actor = (ACTOR*)Common_Get(clip).demo_clip->demo_class;
+
+        if (demo_actor != NULL) {
+            INTRO_DEMO_ACTOR* intro_demo = (INTRO_DEMO_ACTOR*)demo_actor;
+
+            switch (intro_demo->player_intro_demo_state) {
+                case 1:
+                    next_think_idx = aNRC_THINK_BEFORE_OPEN_DOOR_TALK;
+                    break;
+                case 2:
+                    next_think_idx = aNRC_THINK_BEFORE_OPEN_DOOR_TALK2;
+                    break;
+            }
+        }
+    }
+
+    if (next_think_idx >= 0) {
+        aNRG_setup_think_proc(rcn_guide, play, next_think_idx);
+    }
+}
+
+static void aNRG_enter_wait(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    if (Common_Get(clip).demo_clip != NULL && Common_Get(clip).demo_clip->type == mDemo_CLIP_TYPE_INTRO_DEMO) {
+        ACTOR* demo_actor = (ACTOR*)Common_Get(clip).demo_clip->demo_class;
+
+        if (demo_actor != NULL) {
+            INTRO_DEMO_ACTOR* intro_demo = (INTRO_DEMO_ACTOR*)demo_actor;
+
+            intro_demo->player_in_house = TRUE;
+            aNRG_setup_think_proc(rcn_guide, play, aNRC_THINK_WAIT);
+        }
+    }
+}
+
+static void aNRG_exit(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    static s16 moveX[] = { 2240, 2240, 2240, 2240 };
+    static s16 moveZ[] = { 1900, 1980, 1300, 1220 };
+
+    if (rcn_guide->npc_class.action.step == aNPC_ACTION_END_STEP) {
+        f32 posZ = rcn_guide->npc_class.actor_class.world.position.z;
+        int idx;
+
+        if (posZ < 1540.0f) {
+            if (posZ <= 1220.0f) {
+                idx = -1;
+            } else if (posZ <= 1300.0f) {
+                idx = 3;
+            } else {
+                idx = 2;
+            }
+        } else {
+            if (posZ >= 1980.0f) {
+                idx = -1;
+            } else if (posZ >= 1900.0f) {
+                idx = 1;
+            } else {
+                idx = 0;
+            }
+        }
+
+        if (idx == -1) {
+            if (Common_Get(clip).demo_clip != NULL && Common_Get(clip).demo_clip->type == mDemo_CLIP_TYPE_INTRO_DEMO) {
+                ACTOR* demo_actor = (ACTOR*)Common_Get(clip).demo_clip->demo_class;
+
+                if (demo_actor != NULL) {
+                    INTRO_DEMO_ACTOR* intro_demo = (INTRO_DEMO_ACTOR*)demo_actor;
+
+                    intro_demo->rcn_guide_actor_p = NULL;
+                    Actor_delete(&rcn_guide->npc_class.actor_class);
+                    play->submenu.start_refuse = FALSE;
+                }
+            }
+        } else {
+            aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, moveX[idx],
+                                 moveZ[idx]);
+        }
+    }
+}
+
+static void aNRG_restart_wait(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    int think_idx;
+
+    if (mPlib_check_player_actor_main_index_OutDoorMove2(&play->game) == FALSE) {
+        switch (rcn_guide->npc_class.actor_class.actor_specific) {
+            case 1:
+                think_idx = aNRC_THINK_DECIDE_HOUSE;
+                break;
+            default:
+                think_idx = aNRC_THINK_RESTART_TALK;
+                break;
+        }
+
+        aNRG_setup_think_proc(rcn_guide, play, think_idx);
+    }
+}
+
+static void aNRG_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_RCN_GUIDE_ACTOR* rcn_guide = (NPC_RCN_GUIDE_ACTOR*)nactorx;
+
+    (*rcn_guide->think_proc)(rcn_guide, play);
+}
+
+static void aNRG_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_RCN_GUIDE_ACTOR* rcn_guide = (NPC_RCN_GUIDE_ACTOR*)nactorx;
+    int think_idx;
+
+    switch (rcn_guide->npc_class.actor_class.actor_specific) {
+        case 1:
+        case 2:
+            think_idx = aNRC_THINK_RESTART_WAIT;
+            break;
+        default:
+            think_idx = aNRC_THINK_CALL;
+            break;
+    }
+
+    aNRG_setup_think_proc(rcn_guide, play, think_idx);
+    rcn_guide->npc_class.condition_info.hide_request = FALSE;
+}
+
+static void aNRG_call_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    s16 angle_y = atans_table(980.0f - rcn_guide->npc_class.actor_class.world.position.z,
+                              2320.0f - rcn_guide->npc_class.actor_class.world.position.x);
+
+    rcn_guide->npc_class.actor_class.shape_info.rotation.y = angle_y;
+    rcn_guide->npc_class.actor_class.world.angle.y = angle_y;
+}
+
+static void aNRG_approach_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    f32 x;
+    f32 z;
+
+    /* Player cannot open the start menu */
+    play->submenu.start_refuse = TRUE;
+    /* Make the player stand around waiting */
+    mPlib_request_main_demo_wait_type1(&play->game, 0, NULL);
+
+    if (player != NULL) {
+        /* Move to a bit below where the player is */
+        x = player->actor_class.world.position.x;
+        z = player->actor_class.world.position.z + 70.0f;
+    } else {
+        /* Move to a predefined position -- how would the player even be NULL? */
+        x = 2320.0f;
+        z = 1050.0f;
+    }
+
+    /* Request action to move to desired location */
+    aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, x, z);
+}
+
+static void aNRG_introduce_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_ACT_OBJ_DEFAULT, 0, 0);
+}
+
+static void aNRG_turn_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    mPlib_request_main_demo_wait_type1(&play->game, 0, NULL);
+    aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, 2240, 1300);
+}
+
+static void aNRG_take_with_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    if (Common_Get(clip).demo_clip != NULL && Common_Get(clip).demo_clip->type == mDemo_CLIP_TYPE_INTRO_DEMO) {
+        ACTOR* demo_actor = (ACTOR*)Common_Get(clip).demo_clip->demo_class;
+
+        if (demo_actor != NULL) {
+            INTRO_DEMO_ACTOR* intro_demo = (INTRO_DEMO_ACTOR*)demo_actor;
+
+            intro_demo->talk_flag = TRUE;
+        }
+    }
+
+    aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, 2240, 1300);
+}
+
+static void aNRG_before_open_door_talk2_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    INTRO_DEMO_ACTOR* intro_demo = (INTRO_DEMO_ACTOR*)Common_Get(clip).demo_clip->demo_class;
+
+    aNRG_set_house_master_name(intro_demo->house_idx);
+}
+
+static void aNRG_exit_turn_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
+    static s16 moveX[] = { 2240, 2240 };
+    static s16 moveZ[] = { 1900, 1300 };
+    int idx = 0;
+
+    if (rcn_guide->npc_class.actor_class.world.position.z < 1540.0f) {
+        idx = 1;
+    }
+
+    aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, moveX[idx],
+                         moveZ[idx]);
+    if (Common_Get(clip).demo_clip != NULL && Common_Get(clip).demo_clip->type == mDemo_CLIP_TYPE_INTRO_DEMO) {
+        ACTOR* demo_actor = (ACTOR*)Common_Get(clip).demo_clip->demo_class;
+
+        if (demo_actor != NULL) {
+            INTRO_DEMO_ACTOR* intro_demo = (INTRO_DEMO_ACTOR*)demo_actor;
+
+            intro_demo->talk_flag = TRUE;
+        }
+    }
+    rcn_guide->next_think_idx = aNRC_THINK_EXIT;
+}
+
+static void aNRG_setup_think_proc(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play, int think_idx) {
+    // clang-format off
+    static aNRG_setup_think_c dt_tbl[] = {
+        {
+            (aNRG_THINK_PROC)&none_proc1,
+            &aNRG_call_init,
+            &aNRG_force_talk_request,
+            aNRG_FORCE_TALK_CALL,
+            aNRC_THINK_APPROACH,
+        },
+        {
+            &aNRG_approach,
+            &aNRG_approach_init,
+            (aNPC_TALK_REQUEST_PROC)&none_proc1,
+            aNRG_FORCE_TALK_CALL,
+            aNRC_THINK_APPROACH,
+        },
+        {
+            (aNRG_THINK_PROC)&none_proc1,
+            &aNRG_introduce_init,
+            &aNRG_force_talk_request,
+            aNRG_FORCE_TALK_INTRODUCE,
+            aNRC_THINK_TURN,
+        },
+        {
+            &aNRG_turn,
+            &aNRG_turn_init,
+            (aNPC_TALK_REQUEST_PROC)&none_proc1,
+            aNRG_FORCE_TALK_CALL,
+            aNRC_THINK_TAKE_WITH,
+        },
+        {
+            &aNRG_take_with,
+            &aNRG_take_with_init,
+            (aNPC_TALK_REQUEST_PROC)&none_proc1,
+            aNRG_FORCE_TALK_CALL,
+            aNRC_THINK_TAKE_WITH,
+        },
+        {
+            (aNRG_THINK_PROC)&none_proc1,
+            (aNRG_THINK_INIT_PROC)&none_proc1,
+            &aNRG_force_talk_request,
+            aNRG_FORCE_TALK_EXPLAIN,
+            aNRC_THINK_DECIDE_HOUSE_WAIT,
+        },
+        {
+            &aNRG_decide_house_wait,
+            &aNRG_introduce_init,
+            &aNRG_norm_talk_request,
+            aNRG_NORM_TALK_DECIDE_HOUSE,
+            aNRC_THINK_DECIDE_HOUSE_WAIT,
+        },
+        {
+            (aNRG_THINK_PROC)&none_proc1,
+            (aNRG_THINK_INIT_PROC)&none_proc1,
+            &aNRG_force_talk_request,
+            aNRG_FORCE_TALK_STOP_WADE,
+            aNRC_THINK_DECIDE_HOUSE_WAIT,
+        },
+        {
+            (aNRG_THINK_PROC)&none_proc1,
+            (aNRG_THINK_INIT_PROC)&none_proc1,
+            &aNRG_force_talk_request,
+            aNRG_FORCE_TALK_BEFORE_OPEN_DOOR_TALK,
+            aNRC_THINK_ENTER_WAIT,
+        },
+        {
+            (aNRG_THINK_PROC)&none_proc1,
+            &aNRG_before_open_door_talk2_init,
+            &aNRG_force_talk_request,
+            aNRG_FORCE_TALK_BEFORE_OPEN_DOOR2_TALK,
+            aNRC_THINK_ENTER_WAIT,
+        },
+        {
+            &aNRG_enter_wait,
+            (aNRG_THINK_INIT_PROC)&none_proc1,
+            (aNPC_TALK_REQUEST_PROC)&none_proc1,
+            aNRG_FORCE_TALK_CALL,
+            aNRC_THINK_ENTER_WAIT,
+        },
+        {
+            &aNRG_restart_wait,
+            (aNRG_THINK_INIT_PROC)&none_proc1,
+            (aNPC_TALK_REQUEST_PROC)&none_proc1,
+            aNRG_FORCE_TALK_CALL,
+            aNRC_THINK_RESTART_WAIT,
+        },
+        {
+            (aNRG_THINK_PROC)&none_proc1,
+            (aNRG_THINK_INIT_PROC)&none_proc1,
+            &aNRG_force_talk_request,
+            aNRG_FORCE_TALK_HOUSE_TAKEN,
+            aNRC_THINK_DECIDE_HOUSE_WAIT,
+        },
+        {
+            (aNRG_THINK_PROC)&none_proc1,
+            (aNRG_THINK_INIT_PROC)&none_proc1,
+            &aNRG_force_talk_request,
+            aNRG_FORCE_TALK_HOUSE_VACANT,
+            aNRC_THINK_DECIDE_HOUSE_WAIT,
+        },
+        {
+            &aNRG_turn,
+            &aNRG_exit_turn_init,
+            (aNPC_TALK_REQUEST_PROC)&none_proc1,
+            aNRG_FORCE_TALK_CALL,
+            aNRC_THINK_EXIT_TURN,
+        },
+        {
+            &aNRG_exit,
+            (aNRG_THINK_INIT_PROC)&none_proc1,
+            (aNPC_TALK_REQUEST_PROC)&none_proc1,
+            aNRG_FORCE_TALK_CALL,
+            aNRC_THINK_EXIT,
+        },
+        {
+            (aNRG_THINK_PROC)&none_proc1,
+            (aNRG_THINK_INIT_PROC)&none_proc1,
+            (aNPC_TALK_REQUEST_PROC)&none_proc1,
+            aNRG_FORCE_TALK_CALL,
+            aNRC_THINK_WAIT,
+        },
+    };
+    // clang-format on
+    aNRG_setup_think_c* think_data = &dt_tbl[think_idx];
+
+    rcn_guide->think_idx = think_idx;
+    rcn_guide->think_proc = think_data->think_proc;
+    rcn_guide->npc_class.talk_info.talk_request_proc = think_data->talk_request_proc;
+    rcn_guide->talk_idx = think_data->talk_idx;
+    rcn_guide->next_think_idx = think_data->next_think_idx;
+    (*think_data->think_init_proc)(rcn_guide, play);
+}
+
+static void aNRG_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { &aNRG_think_init_proc, &aNRG_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aNRG_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = &aNRG_think_proc;
+    Common_Get(clip).npc_clip->think_proc(nactorx, play, aNPC_THINK_SPECIAL, 0);
+}
+
+static void aNRG_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int res = Common_Get(clip).npc_clip->think_proc(nactorx, play, -1, 1);
+
+    if (res == 0) {
+        Common_Get(clip).npc_clip->think_proc(nactorx, play, -1, 2);
+    }
+}
+
+static void aNRG_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { &aNRG_schedule_init_proc, &aNRG_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}

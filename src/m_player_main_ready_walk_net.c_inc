@@ -1,0 +1,180 @@
+static int Player_actor_request_main_ready_walk_net(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_READY_WALK_NET, priority)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_READY_WALK_NET, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Ready_walk_net(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int anim_idx;
+    int part_table_idx;
+
+    Player_actor_SetupItem_Base1(actor, mPlayer_ANIM_KAMAE_MOVE_M1, -5.0f, &anim_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_KAMAE_MOVE_M1, mPlayer_ANIM_KAMAE_MOVE_M1, 1.0f, 1.0f,
+                                     0.5f, -5.0f, 0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_CulcAnimation_Ready_walk_net(ACTOR* actor, f32* frame_calc, f32 speed) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 sp = (actor->speed * speed) / 1.8f;
+
+    sp = sqrtf(sp);
+    sp = 0.252f * sp;
+
+    if (actor->bg_collision_check.result.hit_wall_count == 2) {
+        sp = 0.22f;
+    } else {
+        if (actor->bg_collision_check.result.hit_wall_count == 1) {
+            f32 mod = sin_s(actor->bg_collision_check.wall_info[0].angleY - actor->world.angle.y);
+
+            mod = ABS(mod);
+
+            sp *= sqrtf(mod);
+        }
+
+        if (sp < 0.22f) {
+            sp = 0.22f;
+        }
+    }
+
+    player->keyframe0.frame_control.speed = sp;
+    player->keyframe1.frame_control.speed = sp;
+    Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SearchAnimation_Ready_walk_net(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+        Player_actor_SetEffect_Walk(actor, game, 6.0f, 9.0f);
+    }
+}
+
+static void Player_actor_Movement_Ready_walk_net(ACTOR* actor, GAME* game, f32* frame) {
+    f32 movePR = Player_actor_GetController_move_percentR();
+    s16 angle = Player_actor_Get_ControllerAngle(game);
+    f32 mod;
+    s16 target = actor->world.angle.y;
+    f32 over_norm;
+    f32 cos;
+    f32 old_speed;
+    int angle2;
+    s16 angle3;
+
+    if (movePR >= 1.0f) {
+        mod = 0.5f;
+    } else {
+        if (movePR <= 0.05f) {
+            mod = 0.01f;
+        } else {
+            mod = 0.01f + (0.5157895f * (movePR - 0.05f));
+        }
+    }
+
+    add_calc_short_angle2(&target, angle, 1.0f - sqrtf(1.0f - mod), 2500, 50);
+
+    actor->world.angle.y = actor->shape_info.rotation.y = target;
+
+    over_norm = Player_actor_Culc_over_speed_normalize_NoneZero(actor, &actor->world.position);
+    movePR = (1.8f * movePR) / over_norm;
+
+    angle3 = Player_actor_Get_ControllerAngle(game) - actor->world.angle.y;
+
+    angle2 = ABS(angle3);
+
+    if (angle2 > 0x8000) {
+        angle2 = 0x10000 - angle2;
+    }
+
+    cos = cos_s(angle2);
+
+    if (cos <= 0.0f) {
+        movePR = 0.0f;
+    } else {
+        movePR *= cos;
+    }
+
+    old_speed = actor->speed;
+    if (old_speed != movePR) {
+        if (old_speed < movePR) {
+            old_speed += 0.60899997f;
+            if (old_speed > movePR) {
+                old_speed = movePR;
+            }
+        } else if (old_speed > movePR) {
+            old_speed -= 0.32625002f;
+            if (old_speed < movePR) {
+                old_speed = movePR;
+            }
+        }
+        actor->speed = old_speed;
+    }
+
+    *frame = over_norm;
+    Player_actor_Movement_Base(actor);
+}
+
+static void Player_actor_ObjCheck_Ready_walk_net(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Ready_walk_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromReady_walk_net(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 speed;
+    f32 percent_x;
+    f32 percent_y;
+    s8 kind;
+    s8 getkind;
+
+    if (mPlib_check_player_warp_forEvent()) {
+        Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_22);
+
+    } else {
+        if (!actor->bg_collision_check.result.on_ground) {
+            Player_actor_request_main_fall_all(game, -5.0f, 1, mPlayer_REQUEST_PRIORITY_1);
+        }
+
+        if (!Player_actor_CheckController_forNet(game) != 0) {
+            Player_actor_request_main_swing_net(game, mPlayer_REQUEST_PRIORITY_22);
+        }
+
+        speed = actor->speed;
+
+        percent_x = Player_actor_GetController_move_percentX();
+        percent_y = Player_actor_GetController_move_percentY();
+
+        if (speed == 0.0f && percent_x == 0.0f && percent_y == 0.0f) {
+            Player_actor_request_main_ready_net(game, mPlayer_REQUEST_PRIORITY_13);
+        }
+
+        kind = player->item_kind;
+        getkind = Player_actor_Get_ItemKind(actor, player->now_main_index);
+        if (kind != getkind) {
+            Player_actor_request_main_walk_all(game, NULL, 0.0f, 0, mPlayer_REQUEST_PRIORITY_22);
+        }
+    }
+}
+
+static void Player_actor_main_Ready_walk_net(ACTOR* actor, GAME* game) {
+    f32 frame;
+    f32 calc_frame;
+
+    Player_actor_Movement_Ready_walk_net(actor, game, &frame);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Ready_walk_net(actor, &calc_frame, frame);
+    Player_actor_SearchAnimation_Ready_walk_net(actor, game, calc_frame);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Ready_walk_net(actor, game);
+    Player_actor_BGcheck_Ready_walk_net(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromReady_walk_net(actor, game);
+}

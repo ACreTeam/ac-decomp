@@ -68,7 +68,7 @@ typedef enum bank_id {
     ACTOR_OBJ_BANK_27,
     ACTOR_OBJ_BANK_UMBRELLA,
     ACTOR_OBJ_BANK_29,
-    ACTOR_OBJ_BANK_30,
+    ACTOR_OBJ_BANK_SHOP_GOODS,
     ACTOR_OBJ_BANK_31,
     ACTOR_OBJ_BANK_32,
     ACTOR_OBJ_BANK_33,
@@ -86,7 +86,7 @@ typedef enum bank_id {
     ACTOR_OBJ_BANK_KEITAI,
     ACTOR_OBJ_BANK_46,
     ACTOR_OBJ_BANK_47,
-    ACTOR_OBJ_BANK_48,
+    ACTOR_OBJ_BANK_UKI,
     ACTOR_OBJ_BANK_49,
     ACTOR_OBJ_BANK_50,
     ACTOR_OBJ_BANK_51,
@@ -449,7 +449,7 @@ typedef enum bank_id {
     ACTOR_OBJ_BANK_408,
     ACTOR_OBJ_BANK_EF_MUSEUM,
     ACTOR_OBJ_BANK_EF_MINSECT,
-    ACTOR_OBJ_BANK_411,
+    ACTOR_OBJ_BANK_AC_SIGN,
     ACTOR_OBJ_BANK_MURAL,
     ACTOR_OBJ_BANK_413,
     ACTOR_OBJ_BANK_414,
@@ -1152,20 +1152,20 @@ struct actor_s {
 #define mActor_NONE_PROC1 ((mActor_proc)none_proc1)
 
 typedef struct actor_list_s {
-    int num_actors;
-    ACTOR* actor;
+    /* 0x00 */ int num_actors;
+    /* 0x04 */ ACTOR* actor;
 } Actor_list;
 
 typedef struct actor_info_s {
-    int total_num;
-    Actor_list list[ACTOR_PART_NUM];
+    /* 0x00 */ int total_num;
+    /* 0x04 */ Actor_list list[ACTOR_PART_NUM];
 } Actor_info;
 
 typedef struct actor_data_s {
-    s16 profile;
-    s_xyz position;
-    s_xyz rotation;
-    s16 arg;
+    /* 0x00 */ s16 profile;
+    /* 0x02 */ s_xyz position;
+    /* 0x08 */ s_xyz rotation;
+    /* 0x0E */ s16 arg;
 } Actor_data;
 
 extern void Actor_world_to_eye(ACTOR* actor, f32 eye_height);

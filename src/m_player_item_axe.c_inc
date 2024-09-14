@@ -1,0 +1,25 @@
+static int Player_actor_Item_main_axe_normal(ACTOR* actor, GAME* game) {
+    return 0;
+}
+
+static void Player_actor_Item_draw_axe(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int shape_type;
+
+    Matrix_push();
+    Matrix_Position_VecZ(&player->axe_pos, 1500.0f);
+    Matrix_pull();
+
+    shape_type = player->item_shape_type[player->item_bank_idx];
+
+    if (mPlayer_ITEM_DATA_VALID(shape_type)) {
+        OPEN_POLY_OPA_DISP(game->graph);
+
+        gSPDisplayList(POLY_OPA_DISP++, mPlib_Get_Item_DataPointer(shape_type));
+
+        CLOSE_POLY_OPA_DISP(game->graph);
+    }
+
+    player->item_rod_top_pos_set = FALSE;
+    player->balloon_start_pos_set_flag = FALSE;
+}

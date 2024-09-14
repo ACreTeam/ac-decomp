@@ -57,6 +57,46 @@ enum background_attribute {
     mCoBG_ATTRIBUTE_SAND,
     mCoBG_ATTRIBUTE_WOOD,
     mCoBG_ATTRIBUTE_SEA,
+
+    mCoBG_ATTRIBUTE_25,
+    mCoBG_ATTRIBUTE_26,
+    mCoBG_ATTRIBUTE_27,
+    mCoBG_ATTRIBUTE_28,
+    mCoBG_ATTRIBUTE_29,
+    mCoBG_ATTRIBUTE_30,
+    mCoBG_ATTRIBUTE_31,
+    mCoBG_ATTRIBUTE_32,
+    mCoBG_ATTRIBUTE_33,
+    mCoBG_ATTRIBUTE_34,
+    mCoBG_ATTRIBUTE_35,
+    mCoBG_ATTRIBUTE_36,
+    mCoBG_ATTRIBUTE_37,
+    mCoBG_ATTRIBUTE_38,
+    mCoBG_ATTRIBUTE_39,
+    mCoBG_ATTRIBUTE_40,
+    mCoBG_ATTRIBUTE_41,
+    mCoBG_ATTRIBUTE_42,
+    mCoBG_ATTRIBUTE_43,
+    mCoBG_ATTRIBUTE_44,
+    mCoBG_ATTRIBUTE_45,
+    mCoBG_ATTRIBUTE_46,
+    mCoBG_ATTRIBUTE_47,
+    mCoBG_ATTRIBUTE_48,
+    mCoBG_ATTRIBUTE_49,
+    mCoBG_ATTRIBUTE_50,
+    mCoBG_ATTRIBUTE_51,
+    mCoBG_ATTRIBUTE_52,
+    mCoBG_ATTRIBUTE_53,
+    mCoBG_ATTRIBUTE_54,
+    mCoBG_ATTRIBUTE_55,
+    mCoBG_ATTRIBUTE_56,
+    mCoBG_ATTRIBUTE_57,
+    mCoBG_ATTRIBUTE_58,
+    mCoBG_ATTRIBUTE_59,
+    mCoBG_ATTRIBUTE_60,
+    mCoBG_ATTRIBUTE_61,
+    mCoBG_ATTRIBUTE_62,
+    mCoBG_ATTRIBUTE_63,
     // ...
 
     mCoBG_ATTRIBUTE_NONE = 100
@@ -92,6 +132,13 @@ enum {
     mCoBG_AREA_E,
 
     mCoBG_AREA_NUM
+};
+
+enum {
+    mCoBG_BLOCK_BGCHECK_MODE_NORMAL,
+    mCoBG_BLOCK_BGCHECK_MODE_INTRO_DEMO,
+
+    mCoBG_BLOCK_BGCHECK_MODE_NUM
 };
 
 /* sizeof(mCoBG_CollisionData_c) == 4*/
@@ -291,12 +338,30 @@ extern void mCoBG_BgCheckControll_RemoveDirectedUnitColumn(xyz_t* reverse_pos, A
                                                            s16 check_type, int ut_x, int ut_z);
 extern xyz_t mCoBG_UniqueWallCheck(ACTOR* actorx, f32 range, f32 y_ofs);
 extern xyz_t mCoBG_ScopeWallCheck(ACTOR* actorx, const xyz_t* pos, f32 x, f32 z, f32 range, f32 y_ofs);
+extern int mCoBG_ScrollCheck(xyz_t start_pos, xyz_t end_pos, f32 radius);
+extern int mCoBG_GetBlockBgCheckMode(void);
+extern void mCoBG_GroundCheckOnly(xyz_t* reverse_pos, ACTOR* actor, f32 check_range, f32 offset_y, s16 check_type);
+extern f32 mCoBG_Wpos2BgUtCenterHeight_AddColumn(xyz_t pos);
+extern f32 mCoBG_UtNum2UtCenterY_Keep(int ut_x, int ut_z);
+extern int mCoBG_RegistDecalCircle(const xyz_t* pos_p, f32 radius_start, f32 radius_end, s16 timer);
+
+typedef int (*mCoBG_LINECHECK_PROC)(mActor_name_t);
+
+#define mCoBG_LINECHECK_CAT_WALL (1 << 0)
+#define mCoBG_LINECHECK_CAT_GROUND (1 << 1)
+#define mCoBG_LINECHECK_CAT_WATER (1 << 2)
+
+extern int mCoBG_LineCheck_RemoveFg(xyz_t* rev_pos, xyz_t start_pos, xyz_t end_pos, mCoBG_LINECHECK_PROC check_proc,
+                                    int category);
+extern int mCoBG_GetMoveBgHeight(f32* move_bg_height, xyz_t* pos_p);
+extern int mCoBG_WoodSoundEffect(const xyz_t* pos_p);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();
 extern void mCoBG_InitDecalCircle();
 
 extern void mCoBG_CalcTimerDecalCircle();
+extern int mCoBG_ChangeBlockBgCheckMode(int mode);
 
 extern f32 mCoBG_GetWaterHeight_File(xyz_t wpos, char* file, int line);
 #define mCoBG_GetWaterHeight(wpos) mCoBG_GetWaterHeight_File(wpos, __FILE__, __LINE__)

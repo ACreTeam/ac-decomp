@@ -1,0 +1,127 @@
+static int Player_actor_request_main_demo_wait_all(GAME* game, int umbrella_flag, void* label, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DEMO_WAIT, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_demo_wait_c* req_demo_wait_p = &player->requested_main_index_data.demo_wait;
+
+        req_demo_wait_p->umbrella_flag = umbrella_flag;
+        req_demo_wait_p->label = (u32)label;
+        Player_actor_request_main_index(game, mPlayer_INDEX_DEMO_WAIT, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_request_main_demo_wait_from_submenu(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_change_data_from_submenu_c* change_data_p = mPlib_Get_change_data_from_submenu_p();
+    mPlayer_request_demo_wait_c* req_demo_wait_p = &change_data_p->request_main_data.demo_wait;
+
+    Player_actor_request_main_demo_wait_all(game, req_demo_wait_p->umbrella_flag, (void*)req_demo_wait_p->label,
+                                            mPlayer_REQUEST_PRIORITY_31);
+}
+
+static void Player_actor_setup_main_Demo_wait(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_demo_wait_c* req_demo_wait_p = &player->requested_main_index_data.demo_wait;
+    mPlayer_main_demo_wait_c* demo_wait_p = &player->main_data.demo_wait;
+    int anim1_idx;
+    int part_table_idx;
+
+    if (req_demo_wait_p->umbrella_flag) {
+        player->unable_hand_item_in_demo = TRUE;
+    }
+
+    demo_wait_p->effect_id = 0;
+    demo_wait_p->label = req_demo_wait_p->label;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_WAIT1, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_WAIT1, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Demo_wait(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_demo_wait_c* demo_wait_p = &player->main_data.demo_wait;
+
+    if (demo_wait_p->effect_id > 0) {
+        eEC_CLIP->effect_kill_proc(demo_wait_p->effect_id - 1, RSV_NO);
+    }
+}
+
+static void Player_actor_Movement_Demo_wait(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (Player_actor_Get_DemoChangeAngleY()) {
+        s16 target_angle_y = Player_actor_Get_DemoAngleY();
+
+        add_calc_short_angle2(&actorx->world.angle.y, target_angle_y, 1.0f - sqrtf(0.5f), 2500, 50);
+        actorx->shape_info.rotation.y = actorx->world.angle.y;
+        if (target_angle_y == actorx->world.angle.y) {
+            Player_actor_Set_DemoChangeAngleY(FALSE);
+        }
+    }
+
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static int Player_actor_CulcAnimation_Demo_wait(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_SearchAnimation_Demo_wait(ACTOR* actorx, f32 frame) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+        mPlayer_main_demo_wait_c* demo_wait_p = &player->main_data.demo_wait;
+
+        Player_actor_Set_FeelEffect_common(actorx, &demo_wait_p->effect_id);
+    }
+}
+
+static void Player_actor_ChangeAnimation_FromDemoOrder_Demo_wait(ACTOR* actorx, GAME* game, int order, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_demo_wait_c* demo_wait_p = &player->main_data.demo_wait;
+
+    Player_actor_ChangeAnimation_FromDemoOrder_common(actorx, game, order, end_flag, &demo_wait_p->effect_id);
+}
+
+static void Player_actor_SetEffect_FromDemoOrder_Demo_wait(ACTOR* actorx, GAME* game, int order) {
+    Player_actor_SetEffect_FromDemoOrder_common(actorx, game, order);
+}
+
+static void Player_actor_ObjCheck_Demo_wait(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forBrake(actorx, game);
+}
+
+static void Player_actor_request_proc_index_fromDemo_wait(GAME* game) {
+    if (Player_actor_Get_DemoOrder() == 1) {
+        f32 pos_x;
+        f32 pos_z;
+        f32 speed;
+
+        mPlib_Get_goal_player_demo_walk(&pos_x, &pos_z, &speed);
+        Player_actor_request_main_demo_walk_all(game, pos_x, pos_z, speed, mPlib_Get_end_player_demo_walk(),
+                                                mPlayer_REQUEST_PRIORITY_19);
+    }
+}
+
+static void Player_actor_main_Demo_wait(ACTOR* actorx, GAME* game) {
+    int effect_order;
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    effect_order = Player_actor_RecieveDemoOrder_EffectOrder();
+    Player_actor_Movement_Demo_wait(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Demo_wait(actorx, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Demo_wait(actorx, last_anim0_cur_frame);
+    Player_actor_ChangeAnimation_FromDemoOrder_Demo_wait(actorx, game, effect_order, end_flag);
+    Player_actor_SetEffect_FromDemoOrder_Demo_wait(actorx, game, effect_order);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Demo_wait(actorx, game);
+    Player_actor_BGcheck_Wait(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromDemo_wait(game);
+}

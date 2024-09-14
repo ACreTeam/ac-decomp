@@ -14,8 +14,8 @@ extern void Na_BgmStart(u8);
 extern void Na_BgmCrossfadeStart(u8);
 extern void Na_BgmStop(u16);
 extern void Na_SysTrgStart(u16);
-extern void Na_PlyWalkSe(int, u16, f32);
-extern void Na_PlyWalkSeRoom(int, u16, f32);
+extern void Na_PlyWalkSe(u16, u16, f32);
+extern void Na_PlyWalkSeRoom(u8, u16, f32);
 extern void Na_NpcWalkSe(int, u16, f32);
 extern void Na_NpcWalkSeRoom(int, u16, f32);
 extern void Na_PlayerStatusLevel(f32, int);
@@ -60,6 +60,9 @@ extern u8 Na_CheckNeosBoot();
 extern void Na_RestartPrepare();
 extern u8 Na_CheckRestartReady();
 extern void Na_Restart();
+
+extern u8 sou_now_bgm_handle;
+extern u8 sou_chime_status;
 
 #ifdef __cplusplus
 }

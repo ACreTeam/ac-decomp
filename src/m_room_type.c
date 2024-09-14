@@ -2110,7 +2110,7 @@ extern void mRmTp_CopyWallData(u8* dst, int wall_no) {
             int room_idx = mRmTp_GetPlayerRoomIdx();
             int valid2 = mHS_get_pl_no_detail(room_idx) >= 0 && mHS_get_pl_no_detail(room_idx) < PLAYER_NUM;
             int player_no = valid2 ? mHS_get_pl_no_detail(room_idx) : 0;
-            mNW_original_design_c* original = &Save_Get(private[player_no]).my_org[tex_idx & 7];
+            mNW_original_design_c* original = &Save_Get(private_data[player_no]).my_org[tex_idx & 7];
 
             mNW_CopyOriginalPalette(dst, original);
             mNW_CopyOriginalTexture(dst + mNW_PALETTE_SIZE, original);
@@ -2137,7 +2137,7 @@ extern void mRmTp_CopyFloorData(u8* dst, int floor_no) {
             int room_idx = mRmTp_GetPlayerRoomIdx();
             int valid2 = mHS_get_pl_no_detail(room_idx) >= 0 && mHS_get_pl_no_detail(room_idx) < PLAYER_NUM;
             int player_no = valid2 ? mHS_get_pl_no_detail(room_idx) : 0;
-            mNW_original_design_c* original = &Save_Get(private[player_no]).my_org[tex_idx & 7];
+            mNW_original_design_c* original = &Save_Get(private_data[player_no]).my_org[tex_idx & 7];
 
             mNW_CopyOriginalPalette(dst, original);
             mNW_CopyOriginalTexture(dst + mNW_PALETTE_SIZE, original);

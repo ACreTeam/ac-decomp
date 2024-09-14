@@ -12,8 +12,9 @@ extern "C" {
 #define VOICE_MODE_SILENT 2
 
 /* audio is monophonic */
-#define MONO(id) (id | 0x1000)
-#define SE_FLAG_15(id) (id | 0x8000)
+#define MONO(id) ((id) | 0x1000)
+#define HANABI(id) ((id) | 0x2000) /* TODO: better name, this probably is some echo effect modifier */
+#define SE_FLAG_15(id) ((id) | 0x8000)
 
 // TODO: Make the rest of Sound Effects with parameters
 #define SE_REGISTER MONO(0x50)
@@ -44,16 +45,16 @@ typedef enum audio_sound_effects {
     NA_SE_DRAWER_SHUT = 0x3A,
 
     NA_SE_ITEM_GET = 0x40,
-    NA_SE_ITEM_HORIDASHI = 0x47,
-
+    NA_SE_47 = 0x47,
     NA_SE_MONEY0 = 0x49,
     NA_SE_MONEY1,
     NA_SE_MONEY2,
     NA_SE_COIN,
+    NA_SE_TEMOCHI_KAZAGURUMA,
 
     NA_SE_52 = 0x52,
 
-    NA_SE_BIRTH_FTR = 0x57,
+    NA_SE_ITEM_HORIDASHI = 0x57,
     NA_SE_CLEAN_UP_FTR = 0x58,
 
     NA_SE_TOOL_FURI = 0x5A, // swing?
@@ -74,15 +75,24 @@ typedef enum audio_sound_effects {
     NA_SE_STONECOIN_ROLL = 0x7D,
     NA_SE_STONECOIN_DRAG = 0x7E,
 
-    NA_SE_A8 = 0xA8,
+    NA_SE_TRAIN_RIDE = 0x8D,
 
-    NA_SE_CF = 0xCF,
+    NA_SE_GOKI_MOVE = 0xA8,
+
+    NA_SE_KA_BUZZ = 0xCF,
 
     NA_SE_ROD_STROKE = 0x109,
     NA_SE_ROD_BACK,
+    NA_SE_10B,
+    NA_SE_10C,
 
+    NA_SE_HANABI0 = HANABI(0x10F),
+    NA_SE_HANABI1 = HANABI(0x110),
+    NA_SE_HANABI2 = HANABI(0x111),
+    NA_SE_HANABI3 = HANABI(0x112),
     NA_SE_EAT = 0x113,
 
+    NA_SE_11B = 0x11B,
     NA_SE_WEAR = 0x11C,
 
     NA_SE_SCOOP1 = 0x11E,
@@ -92,6 +102,10 @@ typedef enum audio_sound_effects {
 
     NA_SE_TREE_TOUCH = 0x134,
     NA_SE_TREE_YURASU,
+
+    NA_SE_PUN_YUGE = 0x13B,
+
+    NA_SE_DOYON = 0x13F,
 
     NA_SE_KIRIBASU_SCOOP = 0x148,
     NA_SE_KIRIBASU_OUT,
@@ -115,6 +129,9 @@ typedef enum audio_sound_effects {
 
     NA_SE_TOILE_CHAIR_SIT = 0x410,
 
+    NA_SE_TRAINDOOR0 = 0x412,
+    NA_SE_TRAINDOOR1,
+
     NA_SE_BED_IN = 0x415,
     NA_SE_BED_NEGAERI,
     NA_SE_BED_OUT,
@@ -122,14 +139,17 @@ typedef enum audio_sound_effects {
     NA_SE_ROTATE = 0x41A,
 
     NA_SE_41C = 0x41C,
-
-    NA_SE_SOFT_CHAIR_SIT = 0x41F,
+    NA_SE_AXE_HIT,
+    NA_SE_AXE_CUT,
+    NA_SE_SOFT_CHAIR_SIT,
     NA_SE_HARD_CHAIR_SIT,
     NA_SE_BUBU_CHAIR_SIT,
     NA_SE_SOFT_CHAIR_STANDUP,
     NA_SE_HARD_CHAIR_STANDUP,
 
     NA_SE_BUBU_CHAIR_STANDUP = 0x429,
+    NA_SE_JUMP,
+    NA_SE_LANDING,
     NA_SE_FTR_DOOR_OPEN = 0x42C,
     NA_SE_FTR_DOOR_CLOSE = 0x42D,
     NA_SE_DRAWER_OPEN = 0x42E,
@@ -137,9 +157,6 @@ typedef enum audio_sound_effects {
     NA_SE_DAI_UE_KAKUNOU = 0x430,
 
     NA_SE_UMBRELLA_ROTATE = 0x432,
-
-    NA_SE_JUMP,
-    NA_SE_LANDING,
 
     NA_SE_KARABURI = 0x43A,
 
@@ -149,12 +166,122 @@ typedef enum audio_sound_effects {
     NA_SE_SCOOP_ITEM_HIT,
     NA_SE_AXE_BALL_HIT,
 
+    NA_SE_461 = 0x461,
+
     NA_SE_COIN_GASAGOSO = 0x465,
 
 } AudioSE;
 
 typedef enum bgm_e {
-    BGM_AEROBICS = 27,
+    BGM_SILENCE,
+    BGM_FIELD_00,
+    BGM_FIELD_01,
+    BGM_FIELD_02,
+    BGM_FIELD_03,
+    BGM_FIELD_04,
+    BGM_FIELD_05,
+    BGM_FIELD_06,
+    BGM_FIELD_07,
+    BGM_FIELD_08,
+    BGM_FIELD_09,
+    BGM_FIELD_10,
+    BGM_FIELD_11,
+    BGM_FIELD_12,
+    BGM_FIELD_13,
+    BGM_FIELD_14,
+    BGM_FIELD_15,
+    BGM_FIELD_16,
+    BGM_FIELD_17,
+    BGM_FIELD_18,
+    BGM_FIELD_19,
+    BGM_FIELD_20,
+    BGM_FIELD_21,
+    BGM_FIELD_22,
+    BGM_FIELD_23,
+    BGM_BROKERS_SHOP,
+    BGM_FORTUNE_TELLER,
+    BGM_SPORTSFAIR_AEROBICS,
+    BGM_SPORTSFAIR_FOOTRACE,
+    BGM_SPORTSFAIR_BALLTOSS,
+    BGM_HARVEST_MOON,
+    BGM_NEW_YEARS_1HR,
+    BGM_NEW_YEARS_30MIN,
+    BGM_NEW_YEARS_10MIN,
+    BGM_NEW_YEARS_5MIN,
+    BGM_NEW_YEARS_NOW,
+    BGM_NEW_YEARS_DAY,
+    BGM_SHOP1,
+    BGM_SHOP2,
+    BGM_SHOP3,
+    BGM_DIG_ITEM,
+    BGM_POST_OFFICE0,
+    BGM_INTRO_TRAIN,
+    BGM_INTRO_KK,
+    BGM_SHOP0,
+    BGM_POLICE_BOX,
+    BGM_SAVE,
+    BGM_INTRO_ARRIVE,
+    BGM_INTRO_RCN_GUIDE,
+    BGM_INTRO_SELECT_HOUSE,
+    BGM_INTRO_SELECT_HOUSE2,
+    BGM_INTRO_FIND_SHOP,
+    BGM_INTRO_CHORES,
+    BGM_HALLOWEEN,
+    BGM_XMAS_EVE,
+    BGM_FIREWORKS_FESTIVAL,
+    BGM_CHERRY_BLOSSOM_FESTIVAL,
+    BGM_NEW_YEARS_PARTY,
+    BGM_KK_HAZURE0,
+    BGM_NEW_YEARS_WISH,
+    BGM_SPORTSFAIR_TUGOFWAR,
+    BGM_NEW_YEARS_MORNING,
+    BGM_POST_OFFICE1,
+    BGM_TRAIN_PULL_INTO_TOWN,
+    BGM_TRAIN_BOARD,
+    BGM_ENTER_HOUSE,
+    BGM_RESET,
+    BGM_BEE_CHASE,
+    BGM_BEE_STUNG,
+    BGM_RAIN,
+    BGM_TITLE,
+    BGM_TRAIN_ARRIVAL_WAIT,
+    BGM_INTRO_NEW_TOWN,
+    BGM_INTRO_CHORES_COMPLETE,
+    BGM_DEBT_PAID,
+    BGM_ALL_INSECTS,
+    BGM_ALL_FISH,
+    BGM_KAMAKURA,
+    BGM_RESET2,
+    BGM_SHOP0_LATE,
+    BGM_SHOP1_LATE,
+    BGM_SHOP2_LATE,
+    BGM_SHOP3_LATE,
+    BGM_NINTENDO0,
+    BGM_NINTENDO1,
+    BGM_NINTENDO2,
+    BGM_NINTENDO3,
+    BGM_NINTENDO4,
+    BGM_MUSEUM,
+    BGM_TAILORS,
+    BGM_90,
+    BGM_ISLAND,
+    BGM_KAPPA_SONG0,
+    BGM_KAPPA_SONG1,
+    BGM_KAPPA_SONG2,
+    BGM_KAPPA_SONG3,
+    BGM_KAPPA_SONG4,
+    BGM_KAPPA_SONG5,
+    BGM_KAPPA_SONG6,
+    BGM_KAPPA_SONG7,
+    BGM_KAPPA_SONG8,
+    BGM_KAPPA_SONG9,
+    BGM_KAPPA_SONG10,
+    BGM_KAPPA_SONG11,
+    BGM_KAPPA_SONG12,
+    BGM_KAPPA_SONG13,
+    BGM_KAPPA_SONG14,
+    BGM_KAPPA_SONG15,
+    // TODO: others
     BGM_MD0 = 128,
 } BGM_e;
 

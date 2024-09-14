@@ -1,0 +1,100 @@
+static int Player_actor_request_main_rotate_octagon_all(GAME* game, ACTOR* talk_actor_p, int turn_flag,
+                                                        int ret_main_index, const xyz_t* pos_p, s16 angle_y,
+                                                        int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_ROTATE_OCTAGON, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_rotate_octagon_c* req_rotate_octagon_p = &player->requested_main_index_data.rotate_octagon;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_ROTATE_OCTAGON, priority);
+
+        req_rotate_octagon_p->talk_actor = talk_actor_p;
+        req_rotate_octagon_p->turn_flag = turn_flag;
+        req_rotate_octagon_p->prev_main_index = ret_main_index;
+        req_rotate_octagon_p->pos = *pos_p;
+        req_rotate_octagon_p->angle_y = angle_y;
+
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static void Player_actor_setup_main_Rotate_octagon(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    mPlayer_request_rotate_octagon_c* req_rotate_octagon_p = &player->requested_main_index_data.rotate_octagon;
+    mPlayer_main_rotate_octagon_c* rotate_octagon_p = &player->main_data.rotate_octagon;
+
+    rotate_octagon_p->talk_actor_p = req_rotate_octagon_p->talk_actor;
+    rotate_octagon_p->turn_flag = req_rotate_octagon_p->turn_flag;
+    rotate_octagon_p->return_main_index = req_rotate_octagon_p->prev_main_index;
+
+    cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(kf0_p, 0.0f, 1000.0f, 0.0f, 0, 0, DEG2SHORT_ANGLE2(90.0f));
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actorx->world.position, &req_rotate_octagon_p->pos,
+                                             actorx->shape_info.rotation.y, req_rotate_octagon_p->angle_y, 5.0f, kf0_p,
+                                             cKF_ANIMATION_TRANS_XZ | cKF_ANIMATION_ROT_Y);
+
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_FUKUBIKI1, mPlayer_ANIM_FUKUBIKI1, 1.0f, 1.0f, 0.5f,
+                                     -5.0f, cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Rotate_octagon(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_dt(kf0_p);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static void Player_actor_Movement_Rotate_octagon(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+
+    cKF_SkeletonInfo_R_AnimationMove_base(&actorx->world.position, &actorx->shape_info.rotation.y, &actorx->scale,
+                                          actorx->world.angle.y, kf0_p);
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static int Player_actor_CulcAnimation_Rotate_octagon(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_ObjCheck_Rotate_octagon(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Rotate_octagon(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_request_proc_index_fromRotate_octagon(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+        mPlayer_main_rotate_octagon_c* rotate_octagon_p = &player->main_data.rotate_octagon;
+        int return_main_index = rotate_octagon_p->return_main_index;
+
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        if (return_main_index != mPlayer_INDEX_TALK) {
+            Player_actor_request_main_demo_wait_all(game, FALSE, 0, mPlayer_REQUEST_PRIORITY_19);
+        } else {
+            Player_actor_request_main_talk_all(game, rotate_octagon_p->talk_actor_p, rotate_octagon_p->turn_flag, -5.0f,
+                                               FALSE, mPlayer_REQUEST_PRIORITY_19);
+        }
+    }
+}
+
+static void Player_actor_main_Rotate_octagon(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    end_flag = Player_actor_CulcAnimation_Rotate_octagon(actorx, &last_anim0_cur_frame);
+    Player_actor_Movement_Rotate_octagon(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Rotate_octagon(actorx, game);
+    Player_actor_BGcheck_Rotate_octagon(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromRotate_octagon(actorx, game, end_flag);
+}

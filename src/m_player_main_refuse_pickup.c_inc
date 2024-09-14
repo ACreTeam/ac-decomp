@@ -1,0 +1,82 @@
+
+static int Player_actor_request_main_refuse_pickup_all(GAME* game, int flag) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_REFUSE_PICKUP, flag) != FALSE) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_REFUSE_PICKUP, flag);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static void Player_actor_Refuse_pickup_demo_ct(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    int msg;
+    rgba_t color;
+
+    Player_actor_request_main_refuse_pickup_all(gamePT, 0x13);
+
+    msg = (Common_Get(field_type) == 0) ? 0x17AD : 0x17AE;
+
+    if (player->refuse_pickup_knife_fork_flag != FALSE) {
+        msg = 0x3B59;
+    }
+
+    mDemo_Set_msg_num(msg);
+    mDemo_Set_talk_display_name(0);
+    mDemo_Set_ListenAble();
+
+    color.r = 255;
+    color.g = 255;
+    color.b = 20;
+    color.a = 255;
+
+    mDemo_Set_talk_window_color(&color);
+}
+
+static void Player_actor_setup_main_Refuse_pickup(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int anim_idx;
+    int part_table_idx;
+
+    Player_actor_SetupItem_Base1(actor, 0, -5.0f, &anim_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_WAIT1, anim_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_Movement_Refuse_pickup(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.23925f);
+}
+
+static void Player_actor_CulcAnimation_Refuse_pickup(ACTOR* actor) {
+    f32 base;
+
+    Player_actor_CulcAnimation_Base2(actor, &base);
+}
+
+static void Player_actor_ObjCheck_Refuse_pickup(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Refuse_pickup(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromRefuse_pickup(ACTOR* actor, GAME* game) {
+    if (mDemo_Check(mDemo_TYPE_REPORT, actor) == 0) {
+        Player_actor_SettleRequestMainIndexPriority(actor);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, 1);
+    }
+}
+
+static void Player_actor_main_Refuse_pickup(ACTOR* actor, GAME* game) {
+    Player_actor_Movement_Refuse_pickup(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Refuse_pickup(actor);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Refuse_pickup(actor, game);
+    Player_actor_BGcheck_Refuse_pickup(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromRefuse_pickup(actor, game);
+}

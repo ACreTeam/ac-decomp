@@ -197,6 +197,7 @@ ORDERSTRINGS = f"{PYTHON} {PPCDIS}/orderstrings.py"
 ORDERFLOATS = f"{PYTHON} {PPCDIS}/orderfloats.py"
 ASSETRIP = f"{PYTHON} {PPCDIS}/assetrip.py"
 ASSETINC = f"{PYTHON} {PPCDIS}/assetinc.py"
+BATCHASSETRIP = f"{PYTHON} {PPCDIS}/batchassetrip.py"
 FORCEACTIVEGEN = f"{PYTHON} {PPCDIS}/forceactivegen.py"
 ELF2DOL = f"{PYTHON} {PPCDIS}/elf2dol.py"
 ELF2REL = f"{PYTHON} {PPCDIS}/elf2rel.py"
@@ -209,16 +210,18 @@ FORCEFILESGEN = f"{PYTHON} {PPCDIS}/forcefilesgen.py"
 TOOLS = "tools"
 CODEWARRIOR = os.path.join(TOOLS, "1.3.2")
 CODEWARRIOR_RODATA_POOL_FIX = os.path.join(TOOLS, "1.3.2r")
+ORTHRUS = os.path.join(TOOLS, "orthrus")
 SDK_CW = os.path.join(TOOLS, "1.2.5n")
 CC = os.path.join(CODEWARRIOR, "mwcceppc.exe")
 CC_R = os.path.join(CODEWARRIOR_RODATA_POOL_FIX, "mwcceppc.exe")
 OCC = os.path.join(SDK_CW, "mwcceppc.exe")
 LD = os.path.join(CODEWARRIOR, "mwldeppc.exe")
 if platform != "win32":
-    CC = f"wibo {CC}"
-    CC_R = f"wibo {CC_R}"
-    OCC = f"wibo {OCC}"
     LD = f"wibo {LD}"
+    SJISWRAP = f"wibo {TOOLS}/sjiswrap.exe"
+else:
+    ORTHRUS = os.path.join(TOOLS, "orthrus.exe")
+    SJISWRAP = os.path.join(TOOLS, "sjiswrap.exe")
 
 # DevkitPPC
 DEVKITPPC = os.environ.get("DEVKITPPC")
@@ -232,8 +235,6 @@ PAL16DIS = f"{PYTHON} {TOOLS}/converters/pal16dis.py"
 
 # JSystem JKernel archive tool
 ARC_TOOL = f"{PYTHON} {TOOLS}/arc_tool.py"
-
-ICONV = f"{PYTHON} tools/sjis.py" # TODO: get actual iconv working(?)
 
 # N64 SDK path for GBI
 N64SDK = os.environ.get("N64_SDK")
@@ -255,6 +256,7 @@ REL_DISASM_OVERRIDES = f"{CONFIG}/rel_disasm_overrides.yml"
 # Binaries
 DOL = f"{ORIG}/static.dol" # read in python code
 REL = f"{ORIG}/foresta.rel" # read in python code
+REL_SZS = f"{ORIG}/foresta.rel.szs"
 DOL_YML = f"{CONFIG}/dol.yml"
 REL_YML = f"{CONFIG}/rel.yml"
 DOL_SHA = f"{ORIG}/static.dol.sha1"
@@ -288,6 +290,7 @@ DOL_ELF = f"{BUILDDIR}/static.elf"
 REL_PLF = f"{BUILDDIR}/foresta.plf"
 DOL_OUT = f"{OUTDIR}/static.dol"
 REL_OUT = f"{OUTDIR}/foresta.rel"
+REL_SZS_OUT = f"{OUTDIR}/foresta.rel.szs"
 DOL_MAP = f"{OUTDIR}/static.map"
 REL_MAP = f"{OUTDIR}/foresta.map"
 
@@ -442,11 +445,28 @@ FAMICOM_BASE = CFLAGS + [
 ] + DOL_DEFINES
 JAUDIO_BASE = CFLAGS + [
     "-lang=c++",
+    "-char signed",
     "-sdata 8",
     "-sdata2 8",
     "-enum int",
     "-common on"
 ] + DOL_DEFINES
+JAUDIO_FUNC_ALIGN_32 = [
+    "-func_align 32",
+    "-str readonly",
+    "-inline off"
+]
+JAUDIO_USER = [
+    "-d _LANGUAGE_C_PLUS_PLUS",
+    "-O0",
+    "-char unsigned",
+    "-fp hard",
+    "-lang=c++",
+    "-sdata 8",
+    "-sdata2 8",
+    "-enum int",
+    "-common on"
+]
 
 JSYSTEM_CFLAGS = ' '.join(JSYSTEM_BASE + LOCAL_CFLAGS)
 JSYSTEM_JGADGET_CFLAGS = ' '.join(JSYSTEM_JGADGET_BASE + LOCAL_CFLAGS)
@@ -464,6 +484,8 @@ EXTERNAL_REL_CFLAGS = ' '.join(BASE_REL_CFLAGS)
 PREPROCESS_CFLAGS = ' '.join(PREPROCESSOR_CFLAGS)
 FAMICOM_CLFAGS = ' '.join(FAMICOM_BASE + LOCAL_CFLAGS)
 JAUDIO_CFLAGS = ' '.join(JAUDIO_BASE + LOCAL_CFLAGS)
+JAUDIO_FUNC_ALIGN_32_CFLAGS = ' '.join(JAUDIO_BASE + JAUDIO_FUNC_ALIGN_32 + LOCAL_CFLAGS)
+JAUDIO_USER_CFLAGS = ' '.join(JAUDIO_USER + LOCAL_CFLAGS)
 
 DOL_LDFLAGS = ' '.join([
     "-maxerrors 1",

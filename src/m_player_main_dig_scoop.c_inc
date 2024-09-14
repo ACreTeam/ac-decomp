@@ -1,0 +1,279 @@
+static int Player_actor_request_main_dig_scoop_all(GAME* game, const xyz_t* pos, mActor_name_t name, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DIG_SCOOP, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.dig_scoop.dig_pos = *pos;
+        player->requested_main_index_data.dig_scoop.item = name;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_DIG_SCOOP, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Dig_scoop(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_dig_scoop_c* main_scoop = &player->main_data.dig_scoop;
+    mPlayer_request_dig_scoop_c* req_scoop = &player->requested_main_index_data.dig_scoop;
+    mActor_name_t item = req_scoop->item;
+    int stump = FALSE;
+    int anim_idx;
+
+    if (IS_ITEM_TREE_STUMP(item)) {
+        stump = TRUE;
+    }
+
+    anim_idx = mPlayer_ANIM_DIG1;
+
+    if (stump) {
+        anim_idx = mPlayer_ANIM_DIG_KABU1;
+    }
+
+    main_scoop->target_pos = req_scoop->dig_pos;
+    main_scoop->item = item;
+
+    Player_actor_InitAnimation_Base2(actor, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.5f, -5.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+    mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_DIG_SCOOP);
+}
+
+static void Player_actor_Movement_Dig_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_fill_scoop_c* main_scoop = &player->main_data.fill_scoop;
+
+    Player_actor_Movement_axe_common(actor, &main_scoop->target_pos);
+
+    actor->world.angle.y = actor->shape_info.rotation.y;
+}
+
+static int Player_actor_CulcAnimation_Dig_scoop(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetEffectHit_Dig_scoop(ACTOR* actor, GAME* game, const xyz_t* pos, int main_index) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+    int effect_idx;
+    s16 arg;
+
+    if (player->animation0_idx == mPlayer_ANIM_DIG_KABU1) {
+        if (Player_actor_Check_AnimationFrame(fc, 42.0f)) {
+            effect_idx = eEC_EFFECT_DIG_SCOOP;
+            if (main_index != mPlayer_INDEX_GET_SCOOP) {
+                arg = 0;
+            } else {
+                arg = 3;
+            }
+        } else {
+            return;
+        }
+    } else {
+        if (Player_actor_Check_AnimationFrame(fc, 14.0f)) {
+            effect_idx = eEC_EFFECT_DIG_HOLE;
+            arg = 0;
+        } else if (Player_actor_Check_AnimationFrame(fc, 15.0f)) {
+            effect_idx = eEC_EFFECT_DIG_HOLE;
+            arg = 1;
+        } else if (Player_actor_Check_AnimationFrame(fc, 16.0f)) {
+            effect_idx = eEC_EFFECT_DIG_HOLE;
+            arg = 2;
+        } else if (Player_actor_Check_AnimationFrame(fc, 22.0f)) {
+            effect_idx = eEC_EFFECT_DIG_SCOOP;
+            if (main_index != mPlayer_INDEX_GET_SCOOP) {
+                arg = 0;
+            } else {
+                arg = 3;
+            }
+        } else {
+            return;
+        }
+    }
+
+    Common_Get(clip).effect_clip->effect_make_proc(effect_idx, *pos, 2, actor->shape_info.rotation.y, game, RSV_NO,
+                                                   mCoBG_Wpos2Attribute(*pos, NULL), arg);
+}
+
+static void Player_actor_SetEffect_Dig_scoop(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_dig_scoop_c* main_scoop = &player->main_data.dig_scoop;
+
+    Player_actor_SetEffectHit_Dig_scoop(actor, game, &main_scoop->target_pos, player->now_main_index);
+}
+
+static void Player_actor_Put_Hole_Dig_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 mod;
+
+    if (Common_Get(clip).bg_item_clip != NULL) {
+        cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+
+        if (player->animation0_idx == mPlayer_ANIM_DIG_KABU1) {
+            mod = 20.0f;
+        } else {
+            mod = 0.0f;
+        }
+
+        if (Player_actor_Check_AnimationFrame(fc, mod + 20.0f)) {
+            mPlayer_main_dig_scoop_c* main_scoop = &player->main_data.dig_scoop;
+            xyz_t* pos = &main_scoop->target_pos;
+            mActor_name_t item = main_scoop->item;
+
+            if (Common_Get(clip).bg_item_clip->dig_hole_effect_entry_proc(item, pos, 12, 0)) {
+                mCoBG_RegistDecalCircle(pos, 0.0f, 19.0f, 12);
+                if (item != EMPTY_NO) {
+                    int spot = FALSE;
+
+                    if (item != EMPTY_NO && item != SHINE_SPOT) {
+                        spot = TRUE;
+                    }
+
+                    if (spot) {
+                        Common_Get(clip).bg_item_clip->fly_entry_proc(item, pos, actor->shape_info.rotation.y);
+                    }
+                }
+            }
+        }
+    }
+}
+
+static void Player_actor_SetSound_Dig_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 mod;
+    int anim;
+    cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+    int anim_idx;
+
+    anim_idx = player->animation0_idx;
+    anim = anim_idx == mPlayer_ANIM_DIG_KABU1;
+
+    if (anim) {
+        mod = 20.0f;
+    } else {
+        mod = 0.0f;
+    }
+
+    if (Player_actor_Check_AnimationFrame(fc, (mod + 20.0f) - 5.0f)) {
+        if (anim) {
+            Player_actor_sound_kirikabu_out(actor);
+        } else {
+            Player_actor_sound_scoop1(actor);
+            Player_actor_set_viblation_Dig_scoop();
+        }
+    }
+
+    if (anim && Player_actor_Check_AnimationFrame(fc, 15.0f)) {
+        Player_actor_sound_kirikabu_scoop(actor);
+        Player_actor_set_viblation_Dig_scoop_stump();
+    }
+    if (anim_idx == mPlayer_ANIM_GET_D1 && Player_actor_Check_AnimationFrame(fc, 21.0f)) {
+        Player_actor_sound_ITEM_HORIDASHI(actor);
+    }
+}
+
+static void Player_actor_informed_insects_Dig_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 14.0f) &&
+        Common_Get(clip).insect_clip != NULL && Common_Get(clip).insect_clip->set_pl_act_tim_proc != NULL) {
+        int ut_x;
+        int ut_z;
+        mPlayer_main_dig_scoop_c* main_scoop = &player->main_data.dig_scoop;
+        xyz_t* pos = &main_scoop->target_pos;
+
+        mFI_Wpos2UtNum(&ut_x, &ut_z, *pos);
+        Common_Get(clip).insect_clip->set_pl_act_tim_proc(3, ut_x, ut_z);
+    }
+}
+
+static void Player_actor_SearchAnimation_Dig_scoop(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetEffect_Dig_scoop(actor, game);
+        Player_actor_Put_Hole_Dig_scoop(actor);
+        Player_actor_SetSound_Dig_scoop(actor);
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+        Player_actor_informed_insects_Dig_scoop(actor);
+    }
+}
+
+static void Player_actor_ObjCheck_Dig_scoop(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Dig_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static int Player_actor_lean_angle_scoop_common(ACTOR* actor, const xyz_t* pos, f32 frame) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    s16 ang = 0;
+
+    if (player->keyframe0.frame_control.current_frame < frame) {
+        f32 x;
+        f32 y;
+        f32 z;
+
+        x = pos->x - actor->world.position.x;
+        y = pos->y - actor->world.position.y;
+        z = pos->z - actor->world.position.z;
+
+        if (x != 0.0f || z != 0.0f) {
+            ang = atans_table(Math3DVecLength2D(x, z), -y);
+        }
+    }
+
+    add_calc_short_angle2(&actor->shape_info.rotation.x, ang, 1.0f - sqrtf(0.5), 273, 0);
+}
+
+static void Player_actor_lean_angle_Dig_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_dig_scoop_c* main_scoop = &player->main_data.dig_scoop;
+
+    Player_actor_lean_angle_scoop_common(actor, &main_scoop->target_pos, 21.0f);
+}
+
+static void Player_actor_request_proc_index_fromDig_scoop(ACTOR* actor, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (end_flag != 0) {
+        Player_actor_SettleRequestMainIndexPriority(actor);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    } else {
+        f32 mod;
+        cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+
+        if (player->animation0_idx == mPlayer_ANIM_DIG_KABU1) {
+            mod = 20.0f;
+        } else {
+            mod = 0.0f;
+        }
+
+        if (Player_actor_Check_AnimationFrame(fc, 34.5f + mod)) {
+            Player_actor_SettleRequestMainIndexPriority(actor);
+            Player_actor_Set_status_for_bee(actor, TRUE);
+        } else {
+            f32 cur_frame = fc->current_frame;
+
+            if (cur_frame >= (35.0f + mod) && !Player_actor_CheckAndRequest_main_scoop_all(game, 4) &&
+                (Player_actor_GetController_move_percentX() || Player_actor_GetController_move_percentY())) {
+                Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+            }
+        }
+    }
+}
+static void Player_actor_main_Dig_scoop(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int end_flag;
+
+    Player_actor_Movement_Dig_scoop(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    end_flag = Player_actor_CulcAnimation_Dig_scoop(actor, &frame_calc);
+    Player_actor_SearchAnimation_Dig_scoop(actor, game, frame_calc);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_ObjCheck_Dig_scoop(actor, game);
+    Player_actor_BGcheck_Dig_scoop(actor);
+    Player_actor_lean_angle_Dig_scoop(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromDig_scoop(actor, game, end_flag);
+}

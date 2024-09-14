@@ -1,0 +1,32 @@
+static int Player_actor_request_main_demo_geton_train_wait_all(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DEMO_GETON_TRAIN_WAIT, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_DEMO_GETON_TRAIN_WAIT, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Demo_geton_train_wait(ACTOR* actorx, GAME* game) {
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_INTRAIN_WAIT1, mPlayer_ANIM_INTRAIN_WAIT1, 1.0f, 1.0f,
+                                     0.5f, -5.0f, mPlayer_PART_TABLE_NORMAL);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_Movement_Demo_geton_train_wait(ACTOR* actorx) {
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static void Player_actor_CulcAnimation_Demo_geton_train_wait(ACTOR* actorx) {
+    f32 dummy;
+
+    Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_main_Demo_geton_train_wait(ACTOR* actorx, GAME* game) {
+    Player_actor_Movement_Demo_geton_train_wait(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_CulcAnimation_Demo_geton_train_wait(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+}

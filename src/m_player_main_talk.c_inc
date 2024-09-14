@@ -1,0 +1,210 @@
+static int Player_actor_request_main_talk_all(GAME* game, ACTOR* talk_actor_p, int turn_flag, f32 morph_speed,
+                                              int umbrella_flag, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_TALK, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.talk.talk_actor = talk_actor_p;
+        player->requested_main_index_data.talk.turn_flag = turn_flag;
+        player->requested_main_index_data.talk.morph_speed = morph_speed;
+        player->requested_main_index_data.talk.umbrella_flag = umbrella_flag;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_TALK, priority);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Talk(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_talk_c* req_talk_p = &player->requested_main_index_data.talk;
+    mPlayer_main_talk_c* main_talk_p = &player->main_data.talk;
+    f32 morph_speed = req_talk_p->morph_speed;
+    int anim1_idx;
+    int part_table_idx;
+
+    if (req_talk_p->umbrella_flag) {
+        player->unable_hand_item_in_demo = TRUE;
+    }
+
+    main_talk_p->talk_actor_p = req_talk_p->talk_actor;
+    main_talk_p->turn_flag = req_talk_p->turn_flag;
+    main_talk_p->feel_type = 0;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_WAIT1, -ABS(morph_speed), &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_WAIT1, anim1_idx, 1.0f, 1.0f, 0.5f, morph_speed,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Talk(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    int ef = player->main_data.talk.feel_type;
+
+    if (ef > 0) {
+        eEC_CLIP->effect_kill_proc(ef - 1, RSV_NO);
+    }
+}
+
+static void Player_actor_Movement_Talk(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_talk_c* main_talk_p = &player->main_data.talk;
+    ACTOR* talk_actor_p = main_talk_p->talk_actor_p;
+    int turn_flag = main_talk_p->turn_flag;
+
+    Player_actor_Movement_Base_Braking(actorx);
+    if (turn_flag) {
+        if (talk_actor_p != NULL) {
+            s16 target_angle = DEG2SHORT_ANGLE2(-180.0f) + talk_actor_p->player_angle_y;
+            s16 cur_angle = add_calc_short_angle2(&actorx->shape_info.rotation.y, target_angle, 1.0f - sqrtf(0.5f),
+                                                  DEG2SHORT_ANGLE2(13.73291015625f), DEG2SHORT_ANGLE2(0.274658203125f));
+
+            actorx->world.angle.y = actorx->shape_info.rotation.y;
+            if (mDemo_Check_SpeakerAble() == FALSE && mDemo_Check_DiffAngle_forTalk(cur_angle)) {
+                mDemo_Set_SpeakerAble();
+            }
+        }
+    } else {
+        mDemo_Set_SpeakerAble();
+    }
+}
+
+static int Player_actor_CulcAnimation_Talk(ACTOR* actorx, f32* last_cur_anim0_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_cur_anim0_frame_p);
+}
+
+static void Player_actor_Set_FeelEffect_common(ACTOR* actorx, int* feel_type_p) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (player->animation0_idx == mPlayer_ANIM_GAAAN1 &&
+        Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 5.0f)) {
+        player->draw_effect_idx = eEC_EFFECT_SHOCK + 1;
+    }
+}
+
+static void Player_actor_SearchAnimation_Talk(ACTOR* actorx, f32 last_cur_anim0_frame) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, last_cur_anim0_frame) == FALSE) {
+        Player_actor_Set_FeelEffect_common(actorx, &player->main_data.talk.feel_type);
+    }
+}
+
+static void Player_actor_ChangeAnimation_FromDemoOrder_common(ACTOR* actorx, GAME* game, int order, int end_flag,
+                                                              int* feel_type_p) {
+    int anim0_idx;
+    int anim1_idx;
+    int part_table_idx;
+    int mode;
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (order > 0) {
+        switch (order) {
+            case 0xFF:
+                anim0_idx = mPlayer_ANIM_WAIT1;
+                mode = cKF_FRAMECONTROL_REPEAT;
+
+                if (*feel_type_p > 0) {
+                    /* @BUG? - shouldn't this be subtracting 1 to get the real type of the effect? */
+                    eEC_CLIP->effect_kill_proc(*feel_type_p, RSV_NO);
+                    *feel_type_p = 0;
+                }
+                break;
+            case 2:
+                anim0_idx = mPlayer_ANIM_GAAAN1;
+                mode = cKF_FRAMECONTROL_STOP;
+                break;
+            case 0xFE:
+                anim0_idx = mPlayer_ANIM_BIKU1;
+                mode = cKF_FRAMECONTROL_STOP;
+                break;
+            default:
+                return;
+        }
+    } else {
+
+        if (end_flag != FALSE) {
+            int now_anim0_idx = player->animation0_idx;
+
+            if (now_anim0_idx == mPlayer_ANIM_GAAAN1) {
+                anim0_idx = mPlayer_ANIM_GAAAN2;
+                mode = cKF_FRAMECONTROL_REPEAT;
+            } else if (now_anim0_idx == mPlayer_ANIM_BIKU1) {
+                anim0_idx = mPlayer_ANIM_WAIT1;
+                mode = cKF_FRAMECONTROL_REPEAT;
+            } else {
+                return;
+            }
+        } else {
+            return;
+        }
+    }
+
+    Player_actor_SetupItem_Base1(actorx, anim0_idx, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base2(actorx, game, anim0_idx, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f, mode, part_table_idx);
+}
+
+static void Player_actor_ChangeAnimation_FromDemoOrder_Talk(ACTOR* actorx, GAME* game, int order, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    Player_actor_ChangeAnimation_FromDemoOrder_common(actorx, game, order, end_flag, &player->main_data.talk.feel_type);
+}
+
+static void Player_actor_SetEffect_FromDemoOrder_common(ACTOR* actorx, GAME* game, int order) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (order > 0) {
+        switch (order) {
+            case 0xFD:
+                eEC_CLIP->effect_make_proc(eEC_EFFECT_HALLOWEEN, player->feel_pos, 2, actorx->shape_info.rotation.y,
+                                           game, RSV_NO, 0, 0);
+                break;
+        }
+    }
+}
+
+static void Player_actor_SetEffect_FromDemoOrder_Talk(ACTOR* actorx, GAME* game, int order) {
+    Player_actor_SetEffect_FromDemoOrder_common(actorx, game, order);
+}
+
+static void Player_actor_set_eye_pattern_Talk(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    int anim0_idx = player->animation0_idx;
+
+    if (anim0_idx == mPlayer_ANIM_GAAAN1 || anim0_idx == mPlayer_ANIM_BIKU1) {
+        Player_actor_set_tex_anime_pattern(actorx);
+    } else if (anim0_idx == mPlayer_ANIM_GAAAN2) {
+        Player_actor_set_eye_pattern(actorx, 6);
+        Player_actor_set_mouth_pattern(actorx, 5);
+    } else {
+        Player_actor_set_eye_pattern_normal(actorx);
+        Player_actor_set_mouth_pattern(actorx, 0);
+    }
+}
+
+static void Player_actor_ObjCheck_Talk(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forBrake(actorx, game);
+}
+
+static void Player_actor_BGcheck_Talk(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_main_Talk(ACTOR* actorx, GAME* game) {
+    int order;
+    f32 last_cur_anim0_frame;
+    int end_flag;
+
+    order = Player_actor_RecieveDemoOrder_EffectOrder();
+    Player_actor_Movement_Talk(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Talk(actorx, &last_cur_anim0_frame);
+    Player_actor_SearchAnimation_Talk(actorx, last_cur_anim0_frame);
+    Player_actor_ChangeAnimation_FromDemoOrder_Talk(actorx, game, order, end_flag);
+    Player_actor_SetEffect_FromDemoOrder_Talk(actorx, game, order);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_Talk(actorx);
+    Player_actor_ObjCheck_Talk(actorx, game);
+    Player_actor_BGcheck_Talk(actorx);
+    Player_actor_Item_main(actorx, game);
+}

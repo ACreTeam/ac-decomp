@@ -1,0 +1,179 @@
+static void Player_actor_Item_windmill_CulcParam(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    xyz_t pos;
+
+    if (player->balloon_start_pos_set_flag != FALSE) {
+        pos.x = player->other_item_end_pos.x - player->other_item_start_pos.x;
+        pos.y = player->other_item_end_pos.y - player->other_item_start_pos.y;
+        pos.z = player->other_item_end_pos.z - player->other_item_start_pos.z;
+
+    } else {
+        pos = ZeroVec;
+    }
+
+    if (pos.x != 0.0f || pos.y != 0.0f || pos.z != 0.0f) {
+        f32 len;
+        f32 dist;
+        f32 sq_len;
+
+        len = Math3DVecLengthSquare2D(pos.x, pos.z);
+        dist = sqrtf(len + (pos.y * pos.y));
+
+        player->other_item_move_dist = dist;
+
+        sq_len = sqrtf(len);
+        player->windmill_param.x = atans_table(sq_len, pos.y);
+        player->windmill_param.y = atans_table(pos.z, pos.x);
+
+    } else {
+        player->other_item_move_dist = 0.0f;
+        player->windmill_param.x = 0;
+        player->windmill_param.y = 0;
+    }
+}
+static void Player_actor_Item_windmill_CulcRotationSpeed(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int angle_x;
+    int angle_y;
+    s16 n_angle_x;
+    f32 target;
+    cKF_SkeletonInfo_R_c* kf_p = &player->item_keyframe;
+    xyz_t* wpos_p = &actor->world.position;
+    xyz_t* last_wpos_p = &actor->last_world_position;
+    xyz_t* shape_angle_delta_p = &player->shape_angle_delta;
+    s_xyz* windmill_angle_p = &player->windmill_angle;
+    s_xyz* windmill_param_p = &player->windmill_param;
+    f32 power;
+
+    angle_x = windmill_angle_p->x;
+    angle_y = windmill_angle_p->y;
+    target = 0.0f;
+
+    if ((wpos_p->x != last_wpos_p->x || wpos_p->y != last_wpos_p->y || wpos_p->z != last_wpos_p->z ||
+         shape_angle_delta_p->x != 0.0f || shape_angle_delta_p->y != 0.0f || shape_angle_delta_p->z != 0.0f) &&
+        (!mPlib_check_player_actor_main_index_AllWade(game))) {
+        f32 dist = player->other_item_move_dist;
+
+        if (dist != 0.0f) {
+            s16 y_diff = (s16)(windmill_param_p->y - angle_y);
+            s16 x_diff = (s16)(windmill_param_p->x - angle_x);
+
+            target += 0.0f + (8.0f * (dist * (ABS(cos_s(x_diff)) * cos_s(y_diff))));
+        }
+    }
+
+    power = mEnv_GetWindPowerF_Windmill();
+    if (power != 0.0f) {
+        f32 targetm;
+        s16 wind_angle = (s16)mEnv_GetWindAngleS();
+        s16 ty = wind_angle - angle_y;
+        s16 tx = 0 - angle_x;
+
+        targetm = 10.0f * (power * (cos_s(ty) * ABS(cos_s(tx))));
+        if (target * targetm >= 0.0f) {
+            target += targetm;
+        }
+    }
+
+    {
+        f32 fracmv;
+        f32 minm;
+        f32 maxm;
+        f32 speed;
+
+        fracmv = 0.005f * target;
+        minm = 0.005f * target;
+        maxm = 0.03f * target;
+
+        fracmv = ABS(fracmv);
+        minm = ABS(minm);
+        maxm = ABS(maxm);
+
+        fracmv += 0.02f;
+        minm += 0.1f;
+        maxm += 0.3f;
+
+        speed = kf_p->frame_control.speed;
+        add_calc(&speed, target, 1.0f - sqrtf(1.0f - fracmv), maxm * 0.5f, minm * 0.5f);
+        kf_p->frame_control.speed = speed;
+    }
+}
+
+static int Player_actor_Item_main_windmill_normal(ACTOR* actor, GAME* game) {
+    Player_actor_Item_windmill_CulcParam(actor);
+    Player_actor_Item_windmill_CulcRotationSpeed(actor, game);
+    Player_actor_Item_CulcAnimation_Base(actor);
+    Player_actor_sound_move_temochi_kazaguruma(actor);
+
+    return 0;
+}
+
+static void Player_actor_Item_draw_windmill_After_kaza1_fan(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    s_xyz* angle = &player->windmill_angle;
+    xyz_t* item_end = &player->other_item_end_pos;
+
+    player->other_item_start_pos = *item_end;
+
+    Matrix_Position_Zero(item_end);
+
+    Matrix_to_rotate_new(get_Matrix_now(), angle, 0);
+
+    angle->x *= -1;
+    angle->y += 0x8000;
+}
+
+typedef void (*mPlayer_item_windmill_draw_proc)(void* arg, GAME* game, cKF_SkeletonInfo_R_c* keyframe,
+                                                Gfx** joint_shape, u8* joint_flags, s_xyz* joint_rot, xyz_t* joint_pos);
+
+static int Player_actor_Item_draw_windmill_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx,
+                                                 Gfx** joint_shape, u8* joint_flags, void* arg, s_xyz* joint_rot,
+                                                 xyz_t* joint_pos) {
+    static const mPlayer_item_windmill_draw_proc proc[] = {
+        NULL,
+        NULL,
+        (mPlayer_item_windmill_draw_proc)Player_actor_Item_draw_windmill_After_kaza1_fan,
+    };
+
+    if (joint_idx >= 0 && joint_idx < 3) {
+        if (proc[joint_idx] != NULL) {
+            proc[joint_idx](arg, game, keyframe, joint_shape, joint_flags, joint_rot, joint_pos);
+        }
+    }
+
+    return 1;
+}
+
+static void Player_actor_Item_draw_windmill(ACTOR* actor, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    Mtx* mtx;
+    cKF_SkeletonInfo_R_c* keyf;
+    Mtx* item_mtx;
+    GRAPH* graph;
+    int ang;
+
+    item_mtx = player->item_work_mtx[play->game.frame_counter % 2];
+    graph = play->game.graph;
+    keyf = &player->item_keyframe;
+
+    Matrix_push();
+    OPEN_POLY_OPA_DISP(graph);
+    ang = (s16)(-0.5f * actor->shape_info.rotation.x);
+
+    Matrix_RotateY(ang, 1);
+
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+    CLOSE_POLY_OPA_DISP(graph);
+
+    cKF_Si3_draw_R_SV(game, keyf, item_mtx, NULL, Player_actor_Item_draw_windmill_After, &player->actor_class);
+    Matrix_pull();
+
+    player->item_rod_top_pos_set = FALSE;
+
+    if (player->balloon_start_pos_set_flag == FALSE) {
+        player->other_item_start_pos = player->other_item_end_pos;
+        player->balloon_start_pos_set_flag = TRUE;
+    }
+}

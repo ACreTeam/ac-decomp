@@ -1,0 +1,60 @@
+static int Player_actor_request_main_vib_rod(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_VIB_ROD, priority)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_VIB_ROD, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Vib_rod(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 frame = player->item_keyframe.frame_control.current_frame;
+    int kind = Player_actor_Get_ItemKind_from_submenu();
+
+    Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_UMB_OPEN1, mPlayer_INDEX_OUTDOOR, -5.0f, frame, 1);
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_TURI_HIKI1, mPlayer_ANIM_TURI_HIKI1, 1.0f, 1.0f, 0.5f,
+                                     -3.0f, 1, 0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_Movement_Vib_rod(ACTOR* actor) {
+    Player_actor_SetPlayerAngle_forUki(actor);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Vib_rod(ACTOR* actor) {
+    f32 frame_calc;
+
+    return Player_actor_CulcAnimation_Base2(actor, &frame_calc);
+}
+
+static void Player_actor_ObjCheck_Vib_rod(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Vib_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromVib_rod(GAME* game, int status) {
+    if (status != 0) {
+        Player_actor_request_main_fly_rod(game, mPlayer_REQUEST_PRIORITY_27);
+    }
+}
+
+static void Player_actor_main_Vib_rod(ACTOR* actor, GAME* game) {
+    int status;
+
+    Player_actor_Movement_Vib_rod(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Vib_rod(actor);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Vib_rod(actor, game);
+    Player_actor_BGcheck_Vib_rod(actor);
+    status = Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromVib_rod(game, status);
+    Player_actor_main_Vib_rod_other_func2(actor, game);
+}

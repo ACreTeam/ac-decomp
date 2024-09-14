@@ -1,0 +1,286 @@
+static int Player_actor_request_main_walk_all(GAME* game, xyz_t* pos, f32 speed, int flags, int priority) {
+    PLAYER_ACTOR* player;
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_WALK, priority)) {
+        player = GET_PLAYER_ACTOR_GAME(game);
+
+        if (flags & 2) {
+            if (pos != NULL) {
+                player->requested_main_index_data.walk.pos = *pos;
+            } else {
+                player->requested_main_index_data.walk.pos.x = 0.0f;
+                player->requested_main_index_data.walk.pos.y = 0.0f;
+                player->requested_main_index_data.walk.pos.z = 0.0f;
+            }
+        }
+
+        player->requested_main_index_data.walk.morph_speed = speed;
+        player->requested_main_index_data.walk.flags = flags;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_WALK, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Walk_common(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int flags = player->requested_main_index_data.walk.flags;
+    int anim_idx;
+    int part_table_idx;
+    f32 speed = player->requested_main_index_data.walk.morph_speed;
+    f32 absspeed;
+    f32 frame;
+
+    if (flags & 2) {
+        actor->world.position = player->requested_main_index_data.walk.pos;
+    }
+
+    if (player->requested_main_index_data.walk.flags & 4) {
+        frame = 1.0f;
+    } else {
+        frame = player->keyframe0.frame_control.current_frame;
+    }
+
+    absspeed = ABS(speed);
+
+    Player_actor_SetupItem_Base3(actor, mPlayer_ANIM_WALK1, -absspeed, &anim_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_WALK1, anim_idx, frame, 1.0f, 0.5f, speed,
+                                     part_table_idx);
+
+    if (flags & 1) {
+        Player_actor_SetEffect_forTakeout_item(actor, game);
+    }
+
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_setup_main_Walk(ACTOR* actor, GAME* game) {
+    Player_actor_setup_main_Walk_common(actor, game);
+}
+
+static void Player_actor_settle_main_Walk(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    switch (player->requested_main_index) {
+        case mPlayer_INDEX_WAIT:
+
+            if (2.0f < player->keyframe0.frame_control.current_frame &&
+                    player->keyframe0.frame_control.current_frame < 9.0f ||
+                10.0f < player->keyframe0.frame_control.current_frame) {
+                Player_actor_sound_FootStep2(actor);
+            }
+            break;
+    }
+}
+
+static void Player_actor_CulcAnimation_Walk(ACTOR* actor, f32 over_speed_normalize_NoneZero, f32* frame_calc) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 sp = (actor->speed * over_speed_normalize_NoneZero) / 7.5f;
+
+    sp = sqrtf(sp);
+    sp = 0.59999996f * sp;
+
+    if (actor->bg_collision_check.result.hit_wall_count == 2) {
+        if (!(actor->bg_collision_check.result.hit_wall & mCoBG_HIT_WALL_RIGHT) ||
+            !(actor->bg_collision_check.result.hit_wall & mCoBG_HIT_WALL_LEFT))
+            sp = 0.22f;
+    } else {
+        if (actor->bg_collision_check.result.hit_wall_count == 1) {
+            f32 mod = sin_s(actor->bg_collision_check.wall_info[0].angleY - actor->world.angle.y);
+
+            mod = ABS(mod);
+
+            sp *= sqrtf(mod);
+        }
+
+        if (sp < 0.22f) {
+            sp = 0.22f;
+        }
+    }
+
+    player->keyframe0.frame_control.speed = sp;
+    player->keyframe1.frame_control.speed = sp;
+    Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetEffect_Walk(ACTOR* actor, GAME* game, f32 left_target_frame, f32 right_target_frame) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc, left_target_frame) != FALSE) {
+        Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_WALK_ASIMOTO, player->left_foot_pos, 2,
+                                                       player->left_foot_angle.y, game, 0xFFFF,
+                                                       actor->bg_collision_check.result.unit_attribute, 0);
+
+    } else if (Player_actor_Check_AnimationFrame(fc, right_target_frame) != FALSE) {
+        Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_WALK_ASIMOTO, player->right_foot_pos, 2,
+                                                       player->right_foot_angle.y, game, 0xFFFF,
+                                                       actor->bg_collision_check.result.unit_attribute, 0);
+    }
+}
+
+static void Player_actor_SearchAnimation_Walk(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+        Player_actor_SetEffect_Walk(actor, game, 1.0f, 9.0f);
+    }
+}
+
+static void Player_actor_Movement_Walk(ACTOR* actor, GAME* game, f32* frame) {
+    f32 movePR = Player_actor_GetController_move_percentR();
+    s16 angle = Player_actor_Get_ControllerAngle(game);
+    f32 mod;
+    s16 target = actor->world.angle.y;
+    f32 over_norm;
+    f32 cos;
+    f32 old_speed;
+    int angle2;
+    int angle3;
+
+    if (movePR >= 1.0f) {
+        mod = 0.5f;
+    } else {
+        if (movePR <= 0.05f) {
+            mod = 0.0099999998f;
+        } else {
+            mod = 0.0099999998f + (0.5157895f * (movePR - 0.05f));
+        }
+    }
+
+    add_calc_short_angle2(&target, angle, 1.0f - sqrtf(1.0f - mod), 2500, 50);
+
+    actor->world.angle.y = actor->shape_info.rotation.y = target;
+
+    over_norm = Player_actor_Culc_over_speed_normalize_NoneZero(actor, &actor->world.position);
+
+    if (Player_actor_CheckController_forDush()) {
+        movePR = (7.5f * movePR) / over_norm;
+    } else {
+        movePR = (4.875f * movePR) / over_norm;
+    }
+
+    angle3 = Player_actor_Get_ControllerAngle(game) - actor->world.angle.y;
+
+    angle2 = ABS(angle3);
+
+    if (angle2 > 0x8000) {
+        angle2 = 0x10000 - angle2;
+    }
+
+    cos = cos_s(angle2);
+
+    if (cos <= 0.0f) {
+        movePR = 0.0f;
+    } else {
+        movePR *= cos;
+    }
+
+    old_speed = actor->speed;
+    if (old_speed != movePR) {
+        if (old_speed < movePR) {
+            old_speed += 0.60899997f;
+            if (old_speed > movePR) {
+                old_speed = movePR;
+            }
+        } else if (old_speed > movePR) {
+            old_speed -= 0.32625002f;
+            if (old_speed < movePR) {
+                old_speed = movePR;
+            }
+        }
+        actor->speed = old_speed;
+    }
+
+    if (over_norm == 1.0f) {
+        xyz_t pos = actor->world.position;
+        f32 sp_norm;
+        f32 sin;
+        f32 cos;
+        s16 angle = actor->world.angle.y;
+        f32 mod;
+
+        sin = 0.5f * old_speed * sin_s(angle);
+        cos = 0.5f * old_speed * cos_s(angle);
+
+        pos.x += sin;
+        pos.z += cos;
+
+        sp_norm = Player_actor_Culc_over_speed_normalize_NoneZero(actor, &pos);
+
+        if (sp_norm != 1.0f) {
+            over_norm = sp_norm;
+            actor->speed /= sp_norm;
+        }
+    }
+
+    *frame = over_norm;
+    Player_actor_Movement_Base(actor);
+}
+
+static void Player_actor_ObjCheck_Walk(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Walk(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromWalk(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 speed;
+    f32 percent_x;
+    f32 percent_y;
+
+    Player_actor_Set_ScrollDemo_forWade(actor, game, mEv_CheckTitleDemo() <= 0);
+
+    if (!actor->bg_collision_check.result.on_ground) {
+        Player_actor_request_main_fall_all(game, -5.0f, 1, mPlayer_REQUEST_PRIORITY_1);
+    }
+
+    Player_actor_CheckAndRequest_main_axe_all(game, mPlayer_REQUEST_PRIORITY_4);
+
+    if (Player_actor_CheckController_forNet(game) != 0) {
+        Player_actor_request_main_ready_net(game, mPlayer_REQUEST_PRIORITY_4);
+    }
+
+    if (Player_actor_CheckController_forRod(game) != 0) {
+        Player_actor_request_main_ready_rod(game, mPlayer_REQUEST_PRIORITY_4);
+    }
+
+    Player_actor_CheckAndRequest_main_scoop_all(game, mPlayer_REQUEST_PRIORITY_4);
+    Player_actor_CheckAndRequest_main_umbrella_all(game, mPlayer_REQUEST_PRIORITY_4);
+    Player_actor_CheckAndRequest_main_fan_all(game, 1, 1, mPlayer_REQUEST_PRIORITY_4);
+    Player_actor_CheckAndRequest_main_shake_tree_all(game);
+    Player_actor_CheckAndRequest_main_pickup_all(game);
+
+    speed = actor->speed;
+
+    if ((player->keyframe0.frame_control.speed * player->keyframe0.frame_control.speed) / 0.048f >= 3.525f) {
+        Player_actor_request_main_run_all(game, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+
+    percent_x = Player_actor_GetController_move_percentX();
+    percent_y = Player_actor_GetController_move_percentY();
+
+    if (speed == 0.0f && percent_x == 0.0f && percent_y == 0.0f) {
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Walk(ACTOR* actor, GAME* game) {
+    f32 over_speed_normalize_NoneZero;
+    f32 calc_frame;
+
+    Player_actor_Movement_Walk(actor, game, &over_speed_normalize_NoneZero);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Walk(actor, over_speed_normalize_NoneZero, &calc_frame);
+    Player_actor_SearchAnimation_Walk(actor, game, calc_frame);
+    Player_actor_set_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Walk(actor, game);
+    Player_actor_BGcheck_Walk(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromWalk(actor, game);
+}

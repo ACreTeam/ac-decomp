@@ -1,0 +1,66 @@
+static int Player_actor_request_main_intro_all(GAME* game, int flag) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_INTRO, flag) != FALSE) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_INTRO, flag);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Intro(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int anim_idx;
+    int part_table_idx;
+
+    Player_actor_SetupItem_Base1(actor, 0, -5.0f, &anim_idx, &part_table_idx);
+    player->main_data.intro.timer = 0.0f;
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_WAIT1, anim_idx, 1.0f, 1.0f, 0.5f, 0.0f, part_table_idx);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_CulcAnimation_Intro(ACTOR* actor) {
+    f32 base;
+
+    Player_actor_CulcAnimation_Base2(actor, &base);
+}
+
+static void Player_actor_Movement_Intro(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking(actor);
+}
+
+static void Player_actor_ObjCheck_Intro(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Intro(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_ResetCameraPos_Intro(GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    if (Camera2_Check_main_index(play, mPlayer_INDEX_INTRO) != 0) {
+        Camera2_request_main_normal(play, 1, 1);
+    }
+}
+
+static void Player_actor_request_proc_index_fromIntro(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    player->main_data.intro.timer += 1.0f;
+    if (player->main_data.intro.timer >= 4.0f) {
+        Player_actor_request_main_wait_all(game, 0.0f, 0.0f, 0, 1);
+    }
+}
+
+static void Player_actor_main_Intro(ACTOR* actor, GAME* game) {
+    Player_actor_Movement_Intro(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Intro(actor);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Intro(actor, game);
+    Player_actor_BGcheck_Intro(actor);
+    Player_actor_ResetCameraPos_Intro(game);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromIntro(actor, game);
+}

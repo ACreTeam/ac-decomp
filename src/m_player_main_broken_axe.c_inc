@@ -1,0 +1,212 @@
+static int Player_actor_request_main_broken_axe_type_reflect(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+                                                             ACTOR* hit_actor, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_BROKEN_AXE, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_reflect_axe_c* main_axe = &player->requested_main_index_data.reflect_axe;
+
+        main_axe->break_flag = TRUE;
+        Player_actor_request_main_reflect_axe_common(main_axe, pos, hit_item, 0, hit_actor);
+        Player_actor_request_main_index(game, mPlayer_INDEX_BROKEN_AXE, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+static int Player_actor_request_main_broken_axe_type_swing(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+                                                           int hit_ut_x, int hit_ut_z, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_BROKEN_AXE, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_swing_axe_c* main_axe = &player->requested_main_index_data.swing_axe;
+
+        main_axe->break_flag = FALSE;
+        Player_actor_request_main_swing_axe_common(main_axe, pos, hit_item, 0, hit_ut_x, hit_ut_z);
+        Player_actor_request_main_index(game, mPlayer_INDEX_BROKEN_AXE, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Broken_axe(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_request_reflect_axe_c* req_ref;
+    mPlayer_main_broken_axe_c* main_axe = &player->main_data.broken_axe;
+    mPlayer_request_swing_axe_c* req_swing;
+
+    int break_type;
+
+    req_swing = &player->requested_main_index_data.swing_axe;
+    req_ref = &player->requested_main_index_data.reflect_axe;
+    break_type = req_ref->break_flag;
+
+    main_axe->break_type = req_swing->break_flag;
+    main_axe->_28 = 0.0f;
+    main_axe->_2C = 0;
+
+    if (break_type != mPlayer_AXE_BREAK_FROM_SWING) {
+        Player_actor_setup_main_Reflect_axe_common(req_ref, &main_axe->axe.reflect_axe);
+    } else {
+        Player_actor_setup_main_Swing_axe_common(req_swing, &main_axe->axe.swing_axe);
+    }
+
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_AXE_BREAK1, mPlayer_ANIM_AXE_BREAK1, 1.0f, 1.0f, 0.5f,
+                                     -5.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_settle_main_Broken_axe(ACTOR* actor, GAME* game) {
+    mBGMPsComp_delete_ps_demo(125, 0x168);
+    actor->speed = 0.0f;
+}
+
+static void Player_actor_Movement_Broken_axe(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 cur = player->keyframe0.frame_control.current_frame;
+
+    if (player->animation0_idx == mPlayer_ANIM_AXE_BREAK1 && cur < 15.0f) {
+        mPlayer_main_broken_axe_c* main_axe = &player->main_data.broken_axe;
+        mPlayer_main_axe_common_c* axe_data_p;
+
+        switch (main_axe->break_type) {
+            default:
+                axe_data_p = &main_axe->axe.reflect_axe.axe_common;
+                break;
+            case mPlayer_AXE_BREAK_FROM_SWING:
+                axe_data_p = &main_axe->axe.swing_axe.axe_common;
+                break;
+        }
+        Player_actor_Movement_Reflect_axe_common(actor, axe_data_p, mPlayer_REQUEST_PRIORITY_1);
+    } else {
+        add_calc_short_angle2(&actor->shape_info.rotation.y, 0, 1.0f - sqrtf(0.5), 2500, 50);
+        actor->world.angle.y = actor->shape_info.rotation.y;
+    }
+}
+
+static int Player_actor_CulcAnimation_Broken_axe(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetEffect_Broken_axe(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    xyz_t pos;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 15.0f)) {
+        s16 rot = actor->world.angle.y;
+
+        pos = actor->world.position;
+
+        Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_SWING_AXE, pos, 2, actor->shape_info.rotation.y, game,
+                                                       RSV_NO, actor->bg_collision_check.result.unit_attribute, 3);
+    }
+}
+
+static void Player_actor_SearchAnimation_Broken_axe(ACTOR* actor, GAME* game, int flag, f32 frame) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (player->animation0_idx == mPlayer_ANIM_AXE_BREAK1) {
+        mPlayer_main_broken_axe_c* main_axe = &player->main_data.broken_axe;
+
+        if (main_axe->break_type != mPlayer_AXE_BREAK_FROM_SWING) {
+            Player_actor_SearchAnimation_Reflect_axe(actor, game, &main_axe->axe.reflect_axe, 1, frame);
+        } else {
+            Player_actor_SetAngleSpeedF_Reflect_axe(actor, 1);
+            Player_actor_SearchAnimation_Swing_axe(actor, game, &main_axe->axe.swing_axe, 1, frame);
+        }
+        if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+            Player_actor_SetEffect_Broken_axe(actor, game);
+        }
+        if (flag != 0) {
+            Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_AXE_BREAKWAIT1, mPlayer_ANIM_AXE_BREAKWAIT1,
+                                             1.0f, 1.0f, 0.5f, 0.0f, 0);
+        }
+    }
+}
+
+static void Player_actor_ObjCheck_Broken_axe(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Broken_axe(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_Broken_axe_demo_ct(ACTOR* actor) {
+    rgba_t color;
+
+    mDemo_Set_msg_num(0x3067);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(CAMERA2_PROCESS_ITEM);
+    mDemo_Set_ListenAble();
+
+    color.r = 225;
+    color.g = 165;
+    color.b = 255;
+    color.a = 255;
+
+    mDemo_Set_talk_window_color(&color);
+    mBGMPsComp_make_ps_demo(125, 0x168);
+}
+
+static int Player_actor_MessageControl_Broken_axe(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_broken_axe_c* main_axe = &player->main_data.broken_axe;
+
+    int* _2Cp = &main_axe->_2C;
+
+    switch (main_axe->_2C) {
+        f32* _28p;
+        case 0:
+            _28p = &main_axe->_28;
+            if (*_28p < 80.0f) {
+                *_28p += 1.0f;
+            } else {
+                *_2Cp = 1;
+            }
+            break;
+        case 1:
+            if (!mDemo_Check(mDemo_TYPE_REPORT, actor)) {
+                mDemo_Request(mDemo_TYPE_REPORT, actor, Player_actor_Broken_axe_demo_ct);
+            } else {
+                *_2Cp = 2;
+            }
+            break;
+
+        case 2:
+            if (!mDemo_Check(mDemo_TYPE_REPORT, actor)) {
+                *_2Cp = 3;
+            }
+            break;
+
+        default:
+            return 1;
+    }
+
+    return 0;
+}
+
+static void Player_actor_request_proc_index_fromBroken_axe(ACTOR* actor, GAME* game, int arg) {
+    if (arg != 0) {
+        Player_actor_SettleRequestMainIndexPriority(actor);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Broken_axe(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int arg;
+    int cnt;
+
+    Player_actor_Movement_Broken_axe(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    arg = Player_actor_CulcAnimation_Broken_axe(actor, &frame_calc);
+    Player_actor_SearchAnimation_Broken_axe(actor, game, arg, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_ObjCheck_Broken_axe(actor, game);
+    Player_actor_BGcheck_Broken_axe(actor);
+    Player_actor_Item_main(actor, game);
+    cnt = Player_actor_MessageControl_Broken_axe(actor);
+    Player_actor_request_proc_index_fromBroken_axe(actor, game, cnt);
+}

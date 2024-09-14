@@ -60,7 +60,7 @@ extern void sAdo_SysTrgStart(u16 id) {
     Na_SysTrgStart(id);
 }
 
-extern void sAdo_PlyWalkSe(int walk, const xyz_t* pos) {
+extern void sAdo_PlyWalkSe(u16 walk, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;
@@ -69,7 +69,7 @@ extern void sAdo_PlyWalkSe(int walk, const xyz_t* pos) {
     Na_PlyWalkSe(walk, scalc, fcalc);
 }
 
-extern void sAdo_PlyWalkSeRoom(int walk, const xyz_t* pos) {
+extern void sAdo_PlyWalkSeRoom(u8 walk, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;
@@ -228,7 +228,7 @@ extern void sAdo_SetRhythmInfo(TempoBeat_c* rhythm) {
     Na_SetRhythmInfo(rhythm);
 }
 
-extern int sAdo_InstCountGet() {
+extern s8 sAdo_InstCountGet() {
 
     return Na_InstCountGet();
 }
@@ -297,8 +297,8 @@ extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 dis
     Na_KishaStatusLevel(speed, ongenNum1, angle1, distance1, ongenNum2, angle2, distance2);
 }
 
-extern void sAdos_GetRadioCounter(void* p) {
-    Na_GetRadioCounter(p);
+extern int sAdos_GetRadioCounter(Radio_c* radio) {
+    return Na_GetRadioCounter(radio);
 }
 
 extern void sAdos_GetKappaCounter(void* p) {
@@ -306,9 +306,8 @@ extern void sAdos_GetKappaCounter(void* p) {
     Na_GetKappaCounter(p);
 }
 
-extern void sAdos_GetStaffRollInfo(void* p) {
-
-    Na_GetStaffRollInfo(p);
+extern void sAdos_GetStaffRollInfo(StaffRollInfo_c* info) {
+    Na_GetStaffRollInfo(info);
 }
 
 extern void sAdos_TTKK_ARM(u8 mode) {
@@ -401,10 +400,10 @@ u16 sAdo_Get_WalkLabel(int type) {
     return ret;
 }
 
-int sAdo_Get_KokeruLabel(int type) {
+u16 sAdo_Get_KokeruLabel(int type) {
 
     u16 label = sAdo_Get_WalkLabel(type);
-    int ret;
+    u16 ret;
 
     switch (label) {
         case 0x4201:
@@ -471,7 +470,7 @@ extern int sAdo_GameframeEnd_Check() {
     return S_ongenpos_refuse_fg;
 }
 
-extern int sAdo_GetSoundFrameCounter() {
+extern u32 sAdo_GetSoundFrameCounter() {
 
     return Na_GetSoundFrameCounter();
 }

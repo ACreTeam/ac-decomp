@@ -1,0 +1,102 @@
+
+static int Player_actor_request_main_putaway_scoop_all(GAME* game, const xyz_t* pos, mActor_name_t item, int _10,
+                                                       int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_PUTAWAY_SCOOP, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.putaway_scoop.dig_pos = *pos;
+        player->requested_main_index_data.putaway_scoop.item = item;
+        player->requested_main_index_data.putaway_scoop._10 = _10;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_PUTAWAY_SCOOP, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Putaway_scoop(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_putaway_scoop_c* main_scoop = &player->main_data.putaway_scoop;
+    mPlayer_request_putaway_scoop_c* req_scoop = &player->requested_main_index_data.putaway_scoop;
+
+    main_scoop->target_pos = req_scoop->dig_pos;
+    main_scoop->item = req_scoop->item;
+    main_scoop->scale = 0.01f;
+    main_scoop->submenu_flag = req_scoop->_10;
+
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_PUTAWAY_D1, mPlayer_ANIM_PUTAWAY_D1, 1.0f, 1.0f, 0.5f,
+                                     -3.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+    Player_actor_sound_GASAGOSO(actor);
+}
+
+static void Player_actor_Movement_Putaway_scoop(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625002f);
+}
+
+static int Player_actor_CulcAnimation_Putaway_scoop(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_ObjCheck_Putaway_scoop(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Putaway_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_SearchAnimation_Putaway_scoop(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+    }
+}
+
+static void Player_actor_Set_Item_Putaway_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_putaway_scoop_c* main_scoop = &player->main_data.putaway_scoop;
+
+    main_scoop->scale *= 0.89125f;
+}
+
+static void Player_actor_request_proc_index_fromPutaway_scoop(ACTOR* actor, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    if (end_flag) {
+        mPlayer_main_putaway_scoop_c* main_scoop = &player->main_data.putaway_scoop;
+
+        if (main_scoop->submenu_flag) {
+            mSM_open_submenu_new2(&play->submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_EXCHANGE, main_scoop->item,
+                                  &main_scoop->target_pos, actor->shape_info.rotation.y);
+        } else {
+            Player_actor_SettleRequestMainIndexPriority(actor);
+            if (main_scoop->item == ITM_GOLDEN_SHOVEL &&
+                !mPlib_Check_golden_item_get_demo_end(mPlayer_GOLDEN_ITEM_TYPE_SHOVEL)) {
+                Player_actor_request_main_demo_get_golden_item_all(game, mPlayer_GOLDEN_ITEM_TYPE_SHOVEL,
+                                                                   mPlayer_REQUEST_PRIORITY_34);
+            } else {
+                Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+            }
+        }
+    }
+}
+
+static void Player_actor_main_Putaway_scoop(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int end_flag;
+
+    Player_actor_Movement_Putaway_scoop(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    end_flag = Player_actor_CulcAnimation_Putaway_scoop(actor, &frame_calc);
+    Player_actor_SearchAnimation_Putaway_scoop(actor, game, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_ObjCheck_Putaway_scoop(actor, game);
+    Player_actor_BGcheck_Putaway_scoop(actor);
+    Player_actor_Set_Item_Putaway_scoop(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromPutaway_scoop(actor, game, end_flag);
+}

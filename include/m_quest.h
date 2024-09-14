@@ -223,13 +223,13 @@ extern void mQst_SetFirstJobStart(mQst_errand_c* errand);
 extern void mQst_SetFirstJobChangeCloth(mQst_errand_c* errand, mActor_name_t item);
 extern void mQst_SetFirstJobSeed(mQst_errand_c* errand);
 extern void mQst_SetFirstJobHello(mQst_errand_c* errand);
-extern void mQst_SetFirstJobFurniture(mQst_errand_c* errand, AnmPersonalID_c* pid, mActor_name_t item, u8 slot);
+extern void mQst_SetFirstJobFurniture(mQst_errand_c* errand, AnmPersonalID_c* pid, mActor_name_t item, int slot);
 extern void mQst_SetFirstJobLetter(mQst_errand_c* errand, AnmPersonalID_c* pid);
 extern void mQst_SetFirstJobLetter2(mQst_errand_c* errand, AnmPersonalID_c* pid);
 extern void mQst_SetFirstJobOpenQuest(mQst_errand_c* errand);
-extern void mQst_SetFirstJobCarpet(mQst_errand_c* errand, AnmPersonalID_c* pid, mActor_name_t item, u8 slot);
-extern void mQst_SetFirstJobAxe(mQst_errand_c* errand, AnmPersonalID_c* pid, mActor_name_t item, u8 slot);
-extern void mQst_SetFirstJobAxe2(mQst_errand_c* errand, AnmPersonalID_c* pid, mActor_name_t item, u8 slot);
+extern void mQst_SetFirstJobCarpet(mQst_errand_c* errand, AnmPersonalID_c* pid, mActor_name_t item, int slot);
+extern void mQst_SetFirstJobAxe(mQst_errand_c* errand, AnmPersonalID_c* pid, mActor_name_t item, int slot);
+extern void mQst_SetFirstJobAxe2(mQst_errand_c* errand, AnmPersonalID_c* pid, mActor_name_t item, int slot);
 extern void mQst_SetFirstJobNotice(mQst_errand_c* errand);
 extern int mQst_GetRandom(int max);
 extern void mQst_GetGoods_common(mActor_name_t* item, AnmPersonalID_c* pid, int category, mActor_name_t* exist_table,

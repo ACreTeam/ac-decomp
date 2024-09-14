@@ -1,0 +1,198 @@
+static int Player_actor_request_main_pickup_furniture(GAME* game, int slot_idx, mActor_name_t item,
+                                                      const xyz_t* item_pos_p) {
+    if (Player_actor_check_able_request_main_index_for_reset(mPlayer_INDEX_PICKUP_FURNITURE) == FALSE) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_pickup_furniture_c* req_pickup_furniture_p =
+            &player->requested_main_index_data.pickup_furniture;
+
+        req_pickup_furniture_p->inv_slot = slot_idx;
+        req_pickup_furniture_p->item = item;
+        req_pickup_furniture_p->item_pos = *item_pos_p;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_PICKUP_FURNITURE, mPlayer_REQUEST_PRIORITY_8);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Pickup_furniture(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_pickup_furniture_c* req_pickup_furniture_p = &player->requested_main_index_data.pickup_furniture;
+    mPlayer_main_pickup_furniture_c* main_pickup_furniture_p = &player->main_data.pickup_furniture;
+    int slot_idx;
+    mActor_name_t item;
+    xyz_t* item_pos_p;
+    int anim1_idx;
+    int part_table_idx;
+
+    slot_idx = req_pickup_furniture_p->inv_slot;
+    item = req_pickup_furniture_p->item;
+    item_pos_p = &req_pickup_furniture_p->item_pos;
+
+    main_pickup_furniture_p->target_pos = main_pickup_furniture_p->item_pos = *item_pos_p;
+    main_pickup_furniture_p->scale = 0.01f;
+    main_pickup_furniture_p->item = item;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_PICKUP1, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_putin_furniture(game, slot_idx, item);
+
+    if (slot_idx >= 0 || ITEM_IS_MYMANNIQUIN(item) || ITEM_IS_MYUMBRELLA(item)) {
+        main_pickup_furniture_p->exchange_flag = FALSE;
+    } else {
+        main_pickup_furniture_p->exchange_flag = TRUE;
+    }
+
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_PICKUP1, anim1_idx, 1.0f, 1.0f, 0.5f, 0.0f,
+                                     cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_PICK_UP);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Pickup_furniture(ACTOR* actorx, GAME* game) {
+    if (Common_Get(clip).my_room_clip != NULL) {
+        Common_Get(clip).my_room_clip->leaf_pickuped_proc();
+    }
+}
+
+static void Player_actor_Movement_Pickup_furniture_common(ACTOR* actorx, xyz_t* target_pos_p) {
+    xyz_t* player_pos_p = &actorx->world.position;
+    f32 dx = target_pos_p->x - player_pos_p->x;
+    f32 dz = target_pos_p->z - player_pos_p->z;
+
+    if (dx != 0.0f || dz != 0.0f) {
+        s16 target_angle_y = atans_table(dz, dx);
+
+        add_calc_short_angle2(&actorx->shape_info.rotation.y, target_angle_y, 1.0f - sqrtf(0.5f),
+                              DEG2SHORT_ANGLE2(13.73291015625f), DEG2SHORT_ANGLE2(0.274658203125f));
+    }
+
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
+}
+
+static void Player_actor_Movement_Pickup_furniture(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_pickup_furniture_c* main_pickup_furniture_p = &player->main_data.pickup_furniture;
+
+    Player_actor_Movement_Pickup_furniture_common(actorx, &main_pickup_furniture_p->target_pos);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static int Player_actor_CulcAnimation_Pickup_furniture(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_ObjCheck_Pickup_furniture(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Pickup_furniture(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type3(actorx);
+}
+
+static void Player_actor_Set_Item_Pickup_furniture(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_pickup_furniture_c* main_pickup_furniture_p = &player->main_data.pickup_furniture;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    f32 cur_frame = kf0_p->frame_control.current_frame;
+    xyz_t* item_pos_p = &main_pickup_furniture_p->item_pos;
+    f32* scale_p = &main_pickup_furniture_p->scale;
+    xyz_t* left_hand_pos_p = &player->left_hand_pos;
+    xyz_t* item_ofs_p = &main_pickup_furniture_p->item_offset;
+
+    if (cur_frame <= 10.0f) {
+        if (Common_Get(clip).my_room_clip->ftr2leaf_proc()) {
+            Common_Get(clip).my_room_clip->leaf_start_pos_proc(item_pos_p);
+        }
+
+        item_ofs_p->x = item_pos_p->x - left_hand_pos_p->x;
+        item_ofs_p->y = item_pos_p->y - left_hand_pos_p->y;
+        item_ofs_p->z = item_pos_p->z - left_hand_pos_p->z;
+    } else if (cur_frame <= 20.0f) {
+        f32 p = 1.0f - (cur_frame - 10.0f) * 0.1f;
+
+        item_pos_p->x = left_hand_pos_p->x + p * item_ofs_p->x;
+        item_pos_p->y = left_hand_pos_p->y + p * item_ofs_p->y;
+        item_pos_p->z = left_hand_pos_p->z + p * item_ofs_p->z;
+    } else {
+        *item_pos_p = *left_hand_pos_p;
+    }
+
+    if (cur_frame <= 10.0f) {
+        *scale_p = 0.01f;
+    } else if (cur_frame <= 20.0f) {
+        *scale_p = 0.01f - ((cur_frame - 10.0f) * 0.01f) * 0.1f;
+    } else {
+        *scale_p = 0.0f;
+    }
+
+    if (*scale_p > 0.01f) {
+        *scale_p = 0.01f;
+    } else if (*scale_p < 0.0f) {
+        *scale_p = 0.0f;
+    }
+
+    if (Common_Get(clip).my_room_clip != NULL) {
+        if (Common_Get(clip).my_room_clip->ftr2leaf_proc()) {
+            Common_Get(clip).my_room_clip->set_leaf_proc(item_pos_p, *scale_p);
+        }
+    }
+}
+
+static void Player_actor_SetSound_Pickup_furniture(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc0_p, 10.0f)) {
+        Player_actor_sound_ITEM_GET(actorx);
+    }
+
+    if (Player_actor_Check_AnimationFrame(fc0_p, 20.0f)) {
+        Player_actor_sound_GASAGOSO(actorx);
+    }
+}
+
+static void Player_actor_SearchAnimation_Pickup_furniture(ACTOR* actorx, GAME* game, f32 frame) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_Set_Item_Pickup_furniture(actorx);
+        Player_actor_SetSound_Pickup_furniture(actorx, game);
+        Player_actor_Set_FootMark_Base1(actorx, game, FALSE, FALSE);
+    }
+}
+
+static void Player_actor_request_proc_index_fromPickup_furniture(ACTOR* actorx, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (end_flag) {
+        mPlayer_main_pickup_furniture_c* main_pickup_furniture_p = &player->main_data.pickup_furniture;
+
+        if (main_pickup_furniture_p->exchange_flag) {
+            Player_actor_request_main_pickup_exchange(game, &main_pickup_furniture_p->target_pos,
+                                                      main_pickup_furniture_p->item, mPlayer_REQUEST_PRIORITY_21);
+        } else {
+            if (main_pickup_furniture_p->item == ITM_GOLDEN_SHOVEL &&
+                mPlib_Check_golden_item_get_demo_end(3) == FALSE) {
+                Player_actor_request_main_demo_get_golden_item_all(game, 3, mPlayer_REQUEST_PRIORITY_34);
+            } else {
+                Player_actor_SettleRequestMainIndexPriority(actorx);
+                Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+            }
+        }
+    }
+}
+
+static void Player_actor_main_Pickup_furniture(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    Player_actor_Movement_Pickup_furniture(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Pickup_furniture(actorx, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Pickup_furniture(actorx, game, last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Pickup_furniture(actorx, game);
+    Player_actor_BGcheck_Pickup_furniture(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromPickup_furniture(actorx, game, end_flag);
+}

@@ -14,11 +14,11 @@ Gfx obj_mural_model[] = {
 
     /* @BUG - These commands were never updated for Dolphin and therefore render broken */
 #ifndef BUGFIXES
-    gsDPLoadTLUT_pal16(15, 0x08000000),
-    gsDPLoadTextureBlock_4b(0x09000000, G_IM_FMT_CI, 32, 32, 15, G_TX_MIRROR | G_TX_WRAP, G_TX_MIRROR | G_TX_CLAMP, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
+    gsDPLoadTLUT_pal16(15, anime_1_txt),
+    gsDPLoadTextureBlock_4b(anime_2_txt, G_IM_FMT_CI, 32, 32, 15, G_TX_MIRROR | G_TX_WRAP, G_TX_MIRROR | G_TX_CLAMP, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
 #else
-    gsDPLoadTLUT_Dolphin(15, 16, 1, 0x08000000),
-    gsDPLoadTextureBlock_4b_Dolphin(0x09000000, G_IM_FMT_CI, 32, 32, 15, GX_MIRROR, GX_CLAMP, 0, 0),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, anime_1_txt),
+    gsDPLoadTextureBlock_4b_Dolphin(anime_2_txt, G_IM_FMT_CI, 32, 32, 15, GX_MIRROR, GX_CLAMP, 0, 0),
 #endif
     gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
     gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),

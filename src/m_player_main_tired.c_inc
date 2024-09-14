@@ -1,0 +1,63 @@
+static int Player_actor_request_main_tired_all(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_TIRED, priority)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_TIRED, priority);
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+static void Player_actor_setup_main_Tired(ACTOR* actorx, GAME* game) {
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_TIRED1, mPlayer_ANIM_TIRED1, 1.0f, 1.0f, 0.5f, 0.0f,
+                                     mPlayer_PART_TABLE_NORMAL);
+    Player_actor_set_eye_pattern(actorx, 4);
+    Player_actor_set_mouth_pattern(actorx, 4);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_Movement_Tired(ACTOR* actorx) {
+    Player_actor_Movement_Base_Braking_common(actorx, 0.23925f);
+}
+
+static void Player_actor_CulcAnimation_Tired(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_SetEffect_Tired(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc0_p, 10.0f)) {
+        Player_actor_sound_araiiki(actorx);
+        eEC_CLIP->effect_make_proc(eEC_EFFECT_DUST, player->feel_pos, 2, actorx->shape_info.rotation.y, game, RSV_NO, 0,
+                                   0);
+    }
+}
+
+static void Player_actor_SearchAnimation_Tired(ACTOR* actorx, GAME* game, f32 frame) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_SetEffect_Tired(actorx, game);
+    }
+}
+
+static void Player_actor_ObjCheck_Tired(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Tired(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_main_Tired(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+
+    Player_actor_Movement_Tired(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_CulcAnimation_Tired(actorx, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Tired(actorx, game, last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_ObjCheck_Tired(actorx, game);
+    Player_actor_BGcheck_Tired(actorx);
+    Player_actor_Item_main(actorx, game);
+}

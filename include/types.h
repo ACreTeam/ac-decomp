@@ -4,7 +4,7 @@
 #include "../tools/ppcdis/include/ppcdis.h"
 
 #ifdef IS_REL
-//#pragma section const_type sconst_type ".rodata" ".rodata" data_mode=far_abs code_mode=pc_rel
+// #pragma section const_type sconst_type ".rodata" ".rodata" data_mode=far_abs code_mode=pc_rel
 #endif
 
 typedef signed char s8;
@@ -41,15 +41,16 @@ typedef u32 unknown;
 
 #define TRUE 1
 #define FALSE 0
+
 #define NULL ((void*)0)
 #define nullptr 0
 
 #define AT_ADDRESS(x) : (x)
 
-#define ALIGN_PREV(u, align) (u & (~(align-1)))
-#define ALIGN_NEXT(u, align) ((u + (align-1)) & (~(align-1)))
-#define IS_ALIGNED(X, N) (((X) & ((N)-1)) == 0)
-#define IS_NOT_ALIGNED(X, N) (((X) & ((N)-1)) != 0)
+#define ALIGN_PREV(u, align) (u & (~(align - 1)))
+#define ALIGN_NEXT(u, align) ((u + (align - 1)) & (~(align - 1)))
+#define IS_ALIGNED(X, N) (((X) & ((N) - 1)) == 0)
+#define IS_NOT_ALIGNED(X, N) (((X) & ((N) - 1)) != 0)
 
 #define FLAG_ON(V, F) (((V) & (F)) == 0)
 #define FLAG_OFF(V, F) (((V) & (F)) != 0)
@@ -82,43 +83,52 @@ typedef u32 unknown;
 #define BUTTON_B 0x4000
 #define BUTTON_A 0x8000
 
+#define FRAMES_PER_SECOND 60
+
 #define ARRAY_SIZE(arr, type) (sizeof(arr) / sizeof(type))
 #define ARRAY_COUNT(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
+#define FLOOR(n, f) (((n) / (f)) * (f))
+
 #define F32_IS_ZERO(v) (fabsf(v) < 0.008f)
 
 /* ARGB8 color format (32 bits) to RGB5A3 color format (16 bits) */
-#define ARGB8_to_RGB5A3(argb8) \
-  ((u16)(((argb8) & 0xFF000000) >= 0xE0000000 ? \
-   /* Fully opaque, 5 bits per color channel */ (0x8000 | ((((argb8) >> 16) & 0xF8) << 7) | ((((argb8) >> 8) & 0xF8) << 2) | (((argb8) & 0xFF) >> 3)) : \
-   /* 3 bits of transparency, 4 bits per color channel */ (((((argb8) >> 24) & 0xE0) << 7) | ((((argb8) >> 16) & 0xF0) << 4) | (((argb8) >> 8) & 0xF0) | (((argb8) & 0xF0) >> 4))))
+#define ARGB8_to_RGB5A3(argb8)                                                                                     \
+    ((u16)(((argb8) & 0xFF000000) >= 0xE0000000                                                                    \
+               ? /* Fully opaque, 5 bits per color channel */ (0x8000 | ((((argb8) >> 16) & 0xF8) << 7) |          \
+                                                               ((((argb8) >> 8) & 0xF8) << 2) |                    \
+                                                               (((argb8) & 0xFF) >> 3))                            \
+               : /* 3 bits of transparency, 4 bits per color channel */ (                                          \
+                     ((((argb8) >> 24) & 0xE0) << 7) | ((((argb8) >> 16) & 0xF0) << 4) | (((argb8) >> 8) & 0xF0) | \
+                     (((argb8) & 0xF0) >> 4))))
 
-#define GPACK_RGB5A3(r, g, b, a) ARGB8_to_RGB5A3((((a) & 0xFF) << 24) | (((r) & 0xFF) << 16) | (((g) & 0xFF) << 8) | ((b) & 0xFF))
+#define GPACK_RGB5A3(r, g, b, a) \
+    ARGB8_to_RGB5A3((((a) & 0xFF) << 24) | (((r) & 0xFF) << 16) | (((g) & 0xFF) << 8) | ((b) & 0xFF))
 
 #pragma section RX "forcestrip"
-#ifndef __INTELLISENSE__ 
-    #define FORCESTRIP __declspec(section "forcestrip")
+#ifndef __INTELLISENSE__
+#define FORCESTRIP __declspec(section "forcestrip")
 #else
-    #define FORCESTRIP
+#define FORCESTRIP
 #endif
 
 #ifdef MUST_MATCH
-    #define MATCH_FORCESTRIP FORCESTRIP
+#define MATCH_FORCESTRIP FORCESTRIP
 #else
-    #define MATCH_FORCESTRIP
+#define MATCH_FORCESTRIP
 #endif
 
 #if !defined(__INTELLISENSE__) && defined(MUST_MATCH)
-    #define BSS_ORDER_GROUP_START FORCESTRIP ORDER_BSS_DATA {
-    #define BSS_ORDER_GROUP_END }
-    #define BSS_ORDER_ITEM(v) ORDER_BSS(v)
+#define BSS_ORDER_GROUP_START FORCESTRIP ORDER_BSS_DATA {
+#define BSS_ORDER_GROUP_END }
+#define BSS_ORDER_ITEM(v) ORDER_BSS(v)
 #else
-    #define BSS_ORDER_GROUP_START
-    #define BSS_ORDER_GROUP_END
-    #define BSS_ORDER_ITEM(v)
+#define BSS_ORDER_GROUP_START
+#define BSS_ORDER_GROUP_END
+#define BSS_ORDER_ITEM(v)
 #endif
 
 #ifndef __cplusplus

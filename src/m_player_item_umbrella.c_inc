@@ -1,0 +1,17 @@
+static int Player_actor_Item_main_umbrella_normal(ACTOR* actor, GAME* game) {
+    Player_actor_Get_umbrella_p(actor, game);
+    return 0;
+}
+
+static void Player_actor_Item_draw_umbrella(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    TOOLS_ACTOR* umbrella = (TOOLS_ACTOR*)Player_actor_Get_umbrella_p(actor, game);
+
+    if (umbrella != NULL) {
+        Matrix_get(&umbrella->matrix_work);
+        umbrella->init_matrix = TRUE;
+    }
+
+    player->item_rod_top_pos_set = FALSE;
+    player->balloon_start_pos_set_flag = FALSE;
+}

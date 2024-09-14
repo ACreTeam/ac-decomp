@@ -2,22 +2,18 @@
 #define STAFF_H
 
 #include "types.h"
+#include "audio.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct staff_roll_info_s{
-    s16 unk0;
-    int unk4;
-    f64 unk8;
-}StaffRoll;
-
-extern void Na_GetStaffRollInfo(void*);
+extern void Na_StaffRollInit(void);
+extern void Na_StaffRollStart(s16 seq_no);
+extern void Na_GetStaffRollInfo(StaffRollInfo_c* info);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

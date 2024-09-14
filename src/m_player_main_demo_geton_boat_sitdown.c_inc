@@ -1,0 +1,89 @@
+static int Player_actor_request_main_demo_geton_boat_sitdown_all(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DEMO_GETON_BOAT_SITDOWN, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_DEMO_GETON_BOAT_SITDOWN, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Demo_geton_boat_sitdown(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_demo_geton_boat_sitdown_c* demo_geton_boat_sitdown_p = &player->main_data.demo_geton_boat_sitdown;
+    int anim1_idx;
+    int part_table_idx;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_RIDE2, -5.0f, &anim1_idx, &part_table_idx);
+    demo_geton_boat_sitdown_p->angle_z = 0;
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_RIDE2, anim1_idx, 1.0f, 1.0f, 0.5f, 0.0f,
+                                     cKF_FRAMECONTROL_STOP, part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_Movement_Demo_geton_boat_sitdown(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if ((player->force_position_angle_flag & mPlayer_FORCE_POSITION_ANGLE_POSX) &&
+        (player->force_position_angle_flag & mPlayer_FORCE_POSITION_ANGLE_POSY) &&
+        (player->force_position_angle_flag & mPlayer_FORCE_POSITION_ANGLE_POSZ)) {
+        xyz_t* pos_p = &actorx->world.position;
+
+        add_calc(&pos_p->x, player->force_position.x, 1.0f - sqrtf(0.19999999f), 0.2f, 0.15f);
+        add_calc(&pos_p->y, player->force_position.y, 1.0f - sqrtf(0.19999999f), 0.2f, 0.15f);
+        add_calc(&pos_p->z, player->force_position.z, 1.0f - sqrtf(0.19999999f), 0.2f, 0.15f);
+
+        Player_actor_Get_force_position_angle(game, NULL, &actorx->world.angle);
+        Player_actor_Get_force_position_angle(game, NULL, &actorx->shape_info.rotation);
+    }
+
+    {
+        mPlayer_main_demo_geton_boat_sitdown_c* demo_geton_boat_sitdown_p = &player->main_data.demo_geton_boat_sitdown;
+        s16 boat_angle_z = player->boat_angleZ;
+        s16* angle_z_p = &demo_geton_boat_sitdown_p->angle_z;
+
+        add_calc_short_angle2(angle_z_p, boat_angle_z, 1.0f - sqrtf(0.19999999f), 150, 100);
+    }
+}
+
+static int Player_actor_CulcAnimation_Demo_geton_boat_sitdown(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_SetSound_Demo_geton_boat_sitdown(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc0_p, 15.0f)) {
+        Player_actor_sound_JUMP(actorx);
+    } else if (Player_actor_Check_AnimationFrame(fc0_p, 28.0f)) {
+        Player_actor_sound_SIT(actorx, -1);
+    }
+}
+
+static void Player_actor_SearchAnimation_Demo_geton_boat_sitdown(ACTOR* actorx, f32 frame) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_SetSound_Demo_geton_boat_sitdown(actorx);
+    }
+}
+
+static void Player_actor_request_proc_index_fromDemo_geton_boat_sitdown(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_demo_geton_boat_wait_all(game, mPlayer_REQUEST_PRIORITY_19);
+    }
+}
+
+static void Player_actor_main_Demo_geton_boat_sitdown(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    Player_actor_Movement_Demo_geton_boat_sitdown(actorx, game);
+    Player_actor_Reset_force_position_angle(actorx);
+    end_flag = Player_actor_CulcAnimation_Demo_geton_boat_sitdown(actorx, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Demo_geton_boat_sitdown(actorx, last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromDemo_geton_boat_sitdown(actorx, game, end_flag);
+}

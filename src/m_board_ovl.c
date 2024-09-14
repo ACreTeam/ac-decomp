@@ -757,7 +757,7 @@ static void mBD_roll_control(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
             menu_info->speed[1] = 1.0f;
         } else if (dist > 2) {
             board_ovl->center_line = line - 2;
-            menu_info->speed[1] = -1.0f;
+            menu_info->speed[1] = 1.0f;
         }
 
         pos = (f32)((board_ovl->center_line - 2) * 16);
@@ -1021,7 +1021,6 @@ static void mBD_set_point(Submenu* submenu, GAME* game, f32 x, f32 y) {
     CLOSE_DISP(graph);
 }
 
-/* TODO: @nonmatching - float operation incorrectness in default switch case & cursol_draw call */
 static void mBD_set_cursol(Submenu* submenu, GAME* game, f32 x, f32 y) {
     mBD_Ovl_c* board_ovl = submenu->overlay->board_ovl;
 
@@ -1030,10 +1029,8 @@ static void mBD_set_cursol(Submenu* submenu, GAME* game, f32 x, f32 y) {
     } else {
         mED_Ovl_c* editor_ovl = submenu->overlay->editor_ovl;
         f32 ofs_x;
-        f32 ofs_y;
-        f32 t_x;
-        f32 t_y;
         f32 line;
+        f32 ofs_y;
 
         switch (board_ovl->field) {
             case mBD_FIELD_HEADER: {
@@ -1044,32 +1041,33 @@ static void mBD_set_cursol(Submenu* submenu, GAME* game, f32 x, f32 y) {
                 }
 
                 ofs_x = (f32)editor_ovl->_26 + (f32)ox + -7.0f;
-                ofs_y = 0.0f;
                 line = 0.0f;
+                ofs_y = 0.0f;
                 break;
             }
 
             case mBD_FIELD_BODY: {
                 ofs_x = (f32)editor_ovl->_26 + -7.0f;
                 ofs_y = 12.0f;
-                line = (f32)(editor_ovl->_24 + 1);
+                line = editor_ovl->_24 + 1;
                 break;
             }
 
             default: {
-                ofs_x = 192.0f - (f32)mFont_GetStringWidth(board_ovl->mail.content.footer,
-                                                           board_ovl->lengths[mBD_FIELD_FOOTER], TRUE);
+                int width =
+                    mFont_GetStringWidth(board_ovl->mail.content.footer, board_ovl->lengths[mBD_FIELD_FOOTER], TRUE);
+
+                ofs_x = 192.0f;
+                ofs_x -= width;
+                ofs_x += editor_ovl->_26 + -7.0f;
                 line = 7.0f;
-                ofs_x += (f32)editor_ovl->_26 + -7.0f;
-                // ofs_x = tmp + tmp2;
                 ofs_y = 24.0f;
                 break;
             }
         }
 
-        t_x = x + 64.0f + ofs_x;
-        t_y = (line * 16.0f);
-        (*submenu->overlay->editor_ovl->cursol_draw)(submenu, game, x + 64.0f + ofs_x, -y + 36.0f - t_y - ofs_y);
+        (*submenu->overlay->editor_ovl->cursol_draw)(submenu, game, 64.0f + x + ofs_x,
+                                                     36.0f - ((y - line * 16.0f) - ofs_y));
     }
 }
 
@@ -1096,7 +1094,7 @@ static void mBD_set_writing_body(Submenu* submenu, mSM_MenuInfo_c* menu_info, GA
     mBD_Ovl_c* board_ovl = submenu->overlay->board_ovl;
     u8* str = board_ovl->mail.content.body;
     u8* str_p;
-    u8* str_end_p = str + submenu->overlay->board_ovl->lengths[mBD_FIELD_BODY];
+    u8* str_end_p = str + board_ovl->lengths[mBD_FIELD_BODY];
     int body_len;
     int i;
     int width = 0;
@@ -1148,18 +1146,18 @@ static void mBD_set_writing_body(Submenu* submenu, mSM_MenuInfo_c* menu_info, GA
     }
 }
 
-/* TODO: @nonmatching - prolog instruction swap (likely due to way variables are accessed) */
 static void mBD_set_writing_header(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_info, f32 x, f32 y,
                                    rgba_t* color) {
     mBD_Ovl_c* board_ovl = submenu->overlay->board_ovl;
     Mail_ct_c* mail_content = &board_ovl->mail.content;
     u8* str_p;
-    int i = mail_content->header_back_start;
+    u8* header_back_start_p = &mail_content->header_back_start;
+    int i = *header_back_start_p;
     int header_len = 0;
     int len;
 
     if (menu_info->proc_status == mSM_OVL_PROC_PLAY) {
-        if (menu_info->data0 == mSM_BD_OPEN_WRITE_ISLAND) {
+        if (menu_info->data0 == 3) {
             mFont_SetLineStrings(game, mail_content->header, board_ovl->lengths[mBD_FIELD_HEADER], x, y, color->r,
                                  color->g, color->b, 255, FALSE, TRUE, 1.0f, 1.0f, mFont_MODE_POLY);
         } else {
@@ -1169,8 +1167,8 @@ static void mBD_set_writing_header(Submenu* submenu, GAME* game, mSM_MenuInfo_c*
                 len = board_ovl->header_name_len;
             }
 
-            mFont_SetLineStrings(game, mail_content->header, mail_content->header_back_start, x, y, color->r, color->g,
-                                 color->b, 255, FALSE, TRUE, 1.0f, 1.0f, mFont_MODE_POLY);
+            mFont_SetLineStrings(game, mail_content->header, *header_back_start_p, x, y, color->r, color->g, color->b,
+                                 255, FALSE, TRUE, 1.0f, 1.0f, mFont_MODE_POLY);
 
             str_p = mail_content->header;
             while (i-- != 0) {
@@ -1192,7 +1190,7 @@ static void mBD_set_writing_header(Submenu* submenu, GAME* game, mSM_MenuInfo_c*
     } else {
         u8 tmp_header[MAIL_HEADER_LEN + PLAYER_NAME_LEN];
 
-        if (menu_info->data0 == mSM_BD_OPEN_WRITE_ISLAND || menu_info->data0 == mSM_BD_OPEN_READ_ISLAND) {
+        if (menu_info->data0 == 3 || menu_info->data0 == 4) {
             mem_copy(tmp_header, mail_content->header, board_ovl->lengths[mBD_FIELD_HEADER]);
             len = board_ovl->lengths[mBD_FIELD_HEADER];
         } else if (mail_content->mail_type == mMl_TYPE_SHOP_SALE_LEAFLET ||

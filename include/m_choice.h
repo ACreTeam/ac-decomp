@@ -124,6 +124,8 @@ extern void mChoice_no_b_set(mChoice_c* choice);
 extern void mChoice_no_b_close_set(mChoice_c* choice);
 
 /* Macros */
+#define mChoice_CHECK_MAIN_NORMAL() mChoice_check_main_normal(mChoice_Get_base_window_p())
+
 #define mChoice_GET_CHOSENUM() mChoice_Get_ChoseNum(mChoice_Get_base_window_p())
 #define mChoice_CLEAR_CHOSENUM() mChoice_Clear_ChoseNum(mChoice_Get_base_window_p())
 #define mChoice_NO_B_SET() mChoice_no_b_set(mChoice_Get_base_window_p())

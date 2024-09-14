@@ -2,16 +2,16 @@
 #define RADIO_H
 
 #include "types.h"
+#include "audio.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern void Na_GetKappaCounter(void*);
+extern int Na_GetRadioCounter(Radio_c* radio);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif

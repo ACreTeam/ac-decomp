@@ -1,0 +1,106 @@
+static int Player_actor_request_main_swing_fan_all(GAME* game, int start_swing, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_SWING_FAN, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_swing_fan_c* req_swing_fan_p = &player->requested_main_index_data.swing_fan;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_SWING_FAN, prio);
+        req_swing_fan_p->start_swing = start_swing;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Swing_fan(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf1_p = &player->keyframe1;
+    mPlayer_request_swing_fan_c* req_swing_fan_p = &player->requested_main_index_data.swing_fan;
+    f32 frame;
+    f32 morph_counter;
+
+    if (req_swing_fan_p->start_swing) {
+        frame = 1.0f;
+        morph_counter = -5.0f;
+    } else {
+        frame = kf1_p->frame_control.current_frame;
+        morph_counter = 0.0f;
+    }
+
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_UTIWA_D1, mPlayer_ANIM_WAIT1, 1.0f, frame, 0.5f,
+                                     morph_counter, cKF_FRAMECONTROL_REPEAT, mPlayer_PART_TABLE_FAN);
+    Player_actor_setup_main_Base(actorx, game);
+    Player_actor_set_eye_pattern(actorx, 5);
+}
+
+static void Player_actor_Movement_Swing_fan(ACTOR* actorx) {
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Swing_fan(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_SetSound_Swing_fan(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc0_p, 1.5f)) {
+        Player_actor_sound_uchiwa(actorx);
+    }
+}
+
+static void Player_actor_SearchAnimation_Swing_fan(ACTOR* actorx, f32 frame) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_SetSound_Swing_fan(actorx);
+    }
+}
+
+static void Player_actor_ObjCheck_Swing_fan(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Swing_fan(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_request_proc_index_fromSwing_fan(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc0_p, 7.5f)) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_Set_status_for_bee(actorx, TRUE);
+    } else {
+        f32 cur_frame = fc0_p->current_frame;
+
+        if (cur_frame >= 8.0f &&
+            Player_actor_CheckAndRequest_main_fan_all(game, FALSE, FALSE, mPlayer_REQUEST_PRIORITY_4) == FALSE) {
+            if (Player_actor_GetController_move_percentX() || Player_actor_GetController_move_percentY()) {
+                Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+            }
+
+            if (cur_frame >= fc0_p->end_frame - 0.5f) {
+                f32 delay_frames = player->keyframe1.frame_control.current_frame;
+
+                Player_actor_SettleRequestMainIndexPriority(actorx);
+                Player_actor_request_main_wait_all(game, -5.0f, delay_frames, 2, mPlayer_REQUEST_PRIORITY_1);
+            }
+        }
+    }
+}
+
+static void Player_actor_main_Swing_fan(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+
+    Player_actor_Movement_Swing_fan(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_CulcAnimation_Swing_fan(actorx, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Swing_fan(actorx, last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_ObjCheck_Swing_fan(actorx, game);
+    Player_actor_BGcheck_Swing_fan(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromSwing_fan(actorx, game);
+}

@@ -1,0 +1,57 @@
+static int Player_actor_request_main_sitdown_wait(GAME* game, int ftr_no, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_SITDOWN_WAIT, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.sitdown_wait.ftrID = ftr_no;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_SITDOWN_WAIT, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Sitdown_wait(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_sitdown_wait_c* main_sitdown_wait = &player->main_data.sitdown_wait;
+    mPlayer_request_sitdown_wait_c* req_sitdown_wait = &player->requested_main_index_data.sitdown_wait;
+
+    main_sitdown_wait->ftrID = req_sitdown_wait->ftrID;
+
+    Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_SITDOWN_WAIT1, mPlayer_ANIM_SITDOWN_WAIT1, 1.0f, 1.0f,
+                                     0.5f, -5.0f, 0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_Movement_Sitdown_wait(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Movement_Base_Stop(actor, FALSE);
+}
+
+static int Player_actor_CulcAnimation_Sitdown_wait(ACTOR* actor) {
+    f32 frame_calc;
+
+    return Player_actor_CulcAnimation_Base2(actor, &frame_calc);
+}
+
+static void Player_actor_request_proc_index_fromSitdown_wait(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int ftr_no = player->main_data.sitdown_wait.ftrID;
+
+    if ((Player_actor_GetController_move_percentX()) || (Player_actor_GetController_move_percentY())) {
+        Player_actor_request_main_standup(game, ftr_no, mPlayer_REQUEST_PRIORITY_22);
+    }
+}
+
+static void Player_actor_main_Sitdown_wait(ACTOR* actor, GAME* game) {
+    Player_actor_Movement_Sitdown_wait(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Sitdown_wait(actor);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromSitdown_wait(actor, game);
+    Player_actor_main_Sitdown_wait_other_func2(actor, game);
+}

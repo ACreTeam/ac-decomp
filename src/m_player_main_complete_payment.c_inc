@@ -1,0 +1,150 @@
+static int Player_actor_request_main_complete_payment(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_COMPLETE_PAYMENT, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_COMPLETE_PAYMENT, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Complete_payment(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_complete_payment_c* complete_payment_p = &player->main_data.complete_payment;
+    u8 bgm_num;
+
+    complete_payment_p->timer = 0.0f;
+    complete_payment_p->msg_mode = 0;
+
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_YATTA1, mPlayer_ANIM_YATTA1, 1.0f, 1.0f, 0.5f, 0.0f,
+                                     cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);
+    Player_actor_setup_main_Base(actorx, game);
+    bgm_num = Player_actor_sound_Get_bgm_num_forCompletePayment();
+    mBGMPsComp_make_ps_fanfare(bgm_num, 0x168);
+}
+
+static void Player_actor_settle_main_Complete_payment(ACTOR* actorx, GAME* game) {
+    u8 bgm_num;
+
+    bgm_num = Player_actor_sound_Get_bgm_num_forCompletePayment();
+    mBGMPsComp_delete_ps_fanfare(bgm_num, 0x168);
+    Common_Set(complete_payment_type, mPlayer_COMPLETE_PAYMENT_TYPE_NONE);
+}
+
+static int Player_actor_CulcAnimation_Complete_payment(ACTOR* actorx, f32* last_anim0_cur_frame) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame);
+}
+
+static void Player_actor_Movement_Complete_payment(ACTOR* actorx) {
+    add_calc_short_angle2(&actorx->shape_info.rotation.y, 0, 1.0f - sqrtf(0.5f), 2500, 50);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
+}
+
+static void Player_actor_set_eye_pattern_Complete_payment(ACTOR* actorx, int end_flag) {
+    if (end_flag) {
+        Player_actor_set_eye_pattern_normal(actorx);
+    } else {
+        Player_actor_set_tex_anime_pattern(actorx);
+    }
+}
+
+static void Player_actor_ObjCheck_Complete_payment(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Complete_payment(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type2(actorx);
+}
+
+static void Player_actor_Complete_payment_demo_ct(ACTOR* actorx) {
+    rgba_t window_color;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int msg_no;
+
+    switch (Common_Get(complete_payment_type)) {
+        case mPlayer_COMPLETE_PAYMENT_TYPE_ARBEIT:
+            msg_no = 0x17B6;
+            break;
+        default:
+            msg_no = 0x17B7;
+            break;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(CAMERA2_PROCESS_ITEM);
+    mDemo_Set_ListenAble();
+    mMsg_Set_LockContinue(msg_p);
+
+    window_color.r = 185;
+    window_color.g = 245;
+    window_color.b = 80;
+    window_color.a = 255;
+    mDemo_Set_talk_window_color(&window_color);
+    mChoice_CLEAR_CHOSENUM();
+}
+
+static int Player_actor_MessageControl_Complete_payment(ACTOR* actorx, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_complete_payment_c* complete_payment_p = &player->main_data.complete_payment;
+    f32* timer_p = &complete_payment_p->timer;
+    int* msg_mode_p = &complete_payment_p->msg_mode;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (*timer_p < 42.0f) {
+        (*timer_p) += 1.0f;
+        return FALSE;
+    }
+
+    switch (*msg_mode_p) {
+        case 0: {
+            if (mDemo_Check(mDemo_TYPE_REPORT, actorx) == FALSE) {
+                mDemo_Request(mDemo_TYPE_REPORT, actorx, &Player_actor_Complete_payment_demo_ct);
+            } else {
+                *msg_mode_p = 1;
+            }
+
+            return FALSE;
+        }
+        case 1: {
+            if (end_flag) {
+                mMsg_Unset_LockContinue(msg_p);
+                *msg_mode_p = 2;
+            }
+
+            return FALSE;
+        }
+        case 2: {
+            if (mDemo_Check(mDemo_TYPE_REPORT, actorx) == FALSE) {
+                *msg_mode_p = 3;
+            }
+            return FALSE;
+        }
+        default: {
+            return TRUE;
+        }
+    }
+}
+
+static void Player_actor_request_proc_index_fromComplete_payment(GAME* game, int end_flag) {
+    if (end_flag) {
+        Player_actor_request_main_return_outdoor_all(game, mPlayer_INDEX_WAIT, 3.0f, -5.0f,
+                                                     mPlayer_REQUEST_PRIORITY_45);
+    }
+}
+
+static void Player_actor_main_Complete_payment(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int anim_end_flag;
+    int msg_end_flag;
+
+    anim_end_flag = Player_actor_CulcAnimation_Complete_payment(actorx, &last_anim0_cur_frame);
+    Player_actor_Movement_Complete_payment(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_Complete_payment(actorx, anim_end_flag);
+    Player_actor_ObjCheck_Complete_payment(actorx, game);
+    Player_actor_BGcheck_Complete_payment(actorx);
+    msg_end_flag = Player_actor_MessageControl_Complete_payment(actorx, anim_end_flag);
+    Player_actor_request_proc_index_fromComplete_payment(game, msg_end_flag);
+}

@@ -11,6 +11,33 @@ extern "C" {
 #include <PR/mbi.h>
 #include "dolphin/gx.h"
 
+#define SOFTSPRITE_MTX_SEG 0x07
+#define ANIME_1_TXT_SEG 0x08
+#define ANIME_2_TXT_SEG 0x09
+#define ANIME_3_TXT_SEG 0x0A
+#define ANIME_4_TXT_SEG 0x0B
+#define ANIME_5_TXT_SEG 0x0C
+#define ANIME_6_TXT_SEG 0x0D
+
+#define ANIME_4_TXT_SIZE 0x800
+#define ANIME_6_MODEL_SIZE 0x408
+
+#define SEG_EQUALS(seg_addr, seg) (seg_addr == SEGMENT_ADDR(seg, 0))
+
+#define softsprite_mtx SEGMENT_ADDR(SOFTSPRITE_MTX_SEG, 0)
+#define anime_1_txt SEGMENT_ADDR(ANIME_1_TXT_SEG, 0)
+#define anime_1_model SEGMENT_ADDR(ANIME_1_TXT_SEG, 0)
+#define anime_2_txt SEGMENT_ADDR(ANIME_2_TXT_SEG, 0)
+#define anime_2_model SEGMENT_ADDR(ANIME_2_TXT_SEG, 0)
+#define anime_3_txt SEGMENT_ADDR(ANIME_3_TXT_SEG, 0)
+#define anime_3_model SEGMENT_ADDR(ANIME_3_TXT_SEG, 0)
+#define anime_4_txt SEGMENT_ADDR(ANIME_4_TXT_SEG, 0)
+#define anime_4_model SEGMENT_ADDR(ANIME_4_TXT_SEG, 0)
+#define anime_5_txt SEGMENT_ADDR(ANIME_5_TXT_SEG, 0)
+#define anime_5_model SEGMENT_ADDR(ANIME_5_TXT_SEG, 0)
+#define anime_6_txt SEGMENT_ADDR(ANIME_6_TXT_SEG, 0)
+#define anime_6_model SEGMENT_ADDR(ANIME_6_TXT_SEG, 0)
+
 /* New Microcode Command Ids */
 #define G_TRIN 0x09
 #define G_TRIN_INDEPEND 0x0A
@@ -98,7 +125,7 @@ extern "C" {
 #define G_DECAL_EQUAL 0x20
 #define G_DECAL_ALWAYS 0x30
 #define G_DECAL_SPECIAL 0x40
-#define G_DECAL_ALL G_DECAL_ALWAYS | G_DECAL_SPECIAL
+#define G_DECAL_ALL (G_DECAL_ALWAYS | G_DECAL_SPECIAL)
 
 /* Indicies for G_SPECIAL_1 */
 #define G_SPECIAL_NONE 0
@@ -192,7 +219,7 @@ extern "C" {
 #define COMBINER_TEV_GET_Ad1(words)((words.w0 >>  0) & 7)
 
 typedef struct {
-    int cmd:8;
+    unsigned int cmd:8;
     unsigned int a0:4;
     unsigned int c0:5;
     unsigned int Aa0:3;
@@ -273,12 +300,12 @@ typedef struct {
     unsigned int sl:14; /* Start of S coordinate */
     unsigned int slen:10; /* Length of S coordinate */
     
-    unsigned int isDolphin:1; /* If true, format is Gsettilesize_dolphin. If false, format is Gsettilesize2 */
+    s8 isDolphin:1; /* If true, format is Gsettilesize_Dolphin. If false, format is Gsettilesize2 */
     unsigned int pad:4;
     unsigned int tile:3; /* Tile descriptor */
     unsigned int tl:14; /* Start of T coordinate */
     unsigned int tlen:10; /* Length of T coordinate */
-} Gsettilesize_dolphin;
+} Gsettilesize_Dolphin;
 
 typedef struct {
     int cmd:8; /* Command */
@@ -314,8 +341,9 @@ typedef struct {
     unsigned int level:3;
     unsigned int tile:3;
     unsigned int on:8; /* Should be 7 bits w/ 1 bit padding, but emulator doesn't do this */
-    unsigned short s:16;
-    unsigned short t:16;
+
+    unsigned short s;
+    unsigned short t;
 } Gtexture_internal;
 
 typedef struct {
@@ -333,6 +361,229 @@ typedef struct {
 
     unsigned int data;
 } Gmovemem;
+
+typedef struct Gsettexedgealpha {
+    unsigned int cmd:8;
+    unsigned int unused0:24;
+
+    unsigned int unused1:24;
+    unsigned int tex_edge_alpha:8;
+} Gsettexedgealpha;
+
+typedef struct {
+    int		            cmd:8;
+    unsigned int		x0:10;
+    unsigned int		x0frac:2;
+    unsigned int		y0:10;
+    unsigned int		y0frac:2;
+    unsigned int        pad:8;
+    unsigned int		x1:10;
+    unsigned int		x1frac:2;
+    unsigned int		y1:10;
+    unsigned int		y1frac:2;
+} Gscissor;
+
+typedef struct {
+    int		            cmd:8;
+    unsigned int		x0:10;
+    unsigned int		x0frac:2;
+    unsigned int		y0:10;
+    unsigned int		y0frac:2;
+    unsigned int	    pad:8;
+    unsigned int		x1:10;
+    unsigned int		x1frac:2;
+    unsigned int		y1:10;
+    unsigned int		y1frac:2;
+} Gfillrect2;
+
+typedef struct Gnoop {
+    unsigned int cmd: 8;
+    unsigned int tag: 8;
+    unsigned int param0: 16;
+
+    unsigned int param1;
+} Gnoop;
+
+typedef struct Gmtx {
+    unsigned int cmd: 8;
+    unsigned int par: 8;
+    unsigned int pad: 8;
+    unsigned int type: 8;
+
+    unsigned int addr;
+} Gmtx;
+
+typedef struct Gvtx {
+    unsigned int cmd: 8;
+    unsigned int pad0: 4;
+    unsigned int n: 8;
+    unsigned int pad1: 4;
+    unsigned int vn:8;
+
+    unsigned int addr;
+} Gvtx;
+
+typedef struct Gline3D_new {
+    unsigned int cmd: 8;
+    unsigned int v0: 8;
+    unsigned int v1: 8;
+    unsigned int wd: 8;
+
+    unsigned int pad;
+} Gline3D_new;
+
+typedef struct Gtri1 {
+    unsigned int cmd: 8;
+    unsigned int v0: 8;
+    unsigned int v1: 8;
+    unsigned int v2: 8;
+
+    unsigned int pad;
+} Gtri1;
+
+typedef struct Gtri2 {
+    int cmd: 8;
+    unsigned int t0v0: 8;
+    unsigned int t0v1: 8;
+    unsigned int t0v2: 8;
+
+    unsigned int pad: 8;
+    unsigned int t1v0: 8;
+    unsigned int t1v1: 8;
+    unsigned int t1v2: 8;
+} Gtri2;
+
+typedef struct Gtrin_independ {
+    unsigned int cmd: 8; // 32
+    unsigned int count: 7; // 24
+    unsigned int f2v2: 5; // 17
+    unsigned int f2v1: 5; // 12
+    unsigned int f2v0: 5; // 7
+    unsigned int f1v2_1: 2; // 2
+
+    unsigned int f1v2_0: 3; // 32
+    unsigned int f1v1: 5; // 29
+    unsigned int f1v0: 5; // 24
+    unsigned int f0v2: 5; // 19
+    unsigned int f0v1: 5; // 14
+    unsigned int f0v0: 5; // 9
+    unsigned int pad: 3; // 4
+    unsigned int is7bit: 1; // 1
+} Gtrin_independ;
+
+typedef struct Gtrin {
+    unsigned int f3v2: 5; // 32
+    unsigned int f3v1: 5; // 27
+    unsigned int f3v0: 5; // 22
+    unsigned int f2v2: 5; // 17
+    unsigned int f2v1: 5; // 12
+    unsigned int f2v0: 5; // 7
+    unsigned int f1v2_1: 2; // 2
+
+    unsigned int f1v2_0: 3; // 32
+    unsigned int f1v1: 5; // 29
+    unsigned int f1v0: 5; // 24
+    unsigned int f0v2: 5; // 19
+    unsigned int f0v1: 5; // 14
+    unsigned int f0v0: 5; // 9
+    unsigned int pad: 3; // 32
+    unsigned int is7bit: 1; // 1
+} Gtrin;
+
+typedef struct Gtrin_7b {
+    unsigned int f2v2: 7; // 32
+    unsigned int f2v1: 7; // 25
+    unsigned int f2v0: 7; // 18
+    unsigned int f1v2: 7; // 11
+    unsigned int f1v1_1: 4; // 4
+
+    unsigned int f1v1_0: 3; // 32
+    unsigned int f1v0: 7; // 29
+    unsigned int f0v2: 7; // 22
+    unsigned int f0v1: 7; // 15
+    unsigned int f0v0: 7; // 8
+    unsigned int is7bit: 1; // 1
+} Gtrin_7b;
+
+typedef struct Gquad_independ {
+    unsigned int cmd: 8; // 32
+    unsigned int count: 7; // 24
+    unsigned int unused: 5; // 17
+    unsigned int f1v3: 5; // 12
+    unsigned int f1v2: 5; // 7
+    unsigned int f1v1_1: 2; // 2
+
+    unsigned int f1v1_0: 3; // 32
+    unsigned int f1v0: 5; // 29
+    unsigned int f0v3: 5; // 24
+    unsigned int f0v2: 5; // 19
+    unsigned int f0v1: 5; // 14
+    unsigned int f0v0: 5; // 9
+    unsigned int pad: 3; // 4
+    unsigned int is7bit: 1; // 1
+} Gquad_independ;
+
+typedef struct Gquad {
+    unsigned int f2v3: 5; // 32
+    unsigned int f2v2: 5; // 27
+    unsigned int f2v1: 5; // 22
+    unsigned int f2v0: 5; // 17
+    unsigned int f1v3: 5; // 12
+    unsigned int f1v2: 5; // 7
+    unsigned int f1v1_1: 2; // 2
+
+    unsigned int f1v1_0: 3; // 32
+    unsigned int f1v0: 5; // 29
+    unsigned int f0v3: 5; // 24
+    unsigned int f0v2: 5; // 19
+    unsigned int f0v1: 5; // 14
+    unsigned int f0v0: 5; // 9
+    unsigned int pad: 3; // 4
+    unsigned int is7bit: 1; // 1
+} Gquad;
+
+typedef struct Gquad_7b {
+    unsigned int f1v3: 7; // 32
+    unsigned int f1v2: 7; // 25
+    unsigned int f1v1: 7; // 18
+    unsigned int f1v0_1: 4; // 11
+    unsigned int f1v0_0: 3; // 7
+    unsigned int pad: 4; // 4
+
+    unsigned int f0v3: 7; // 32
+    unsigned int f0v2: 7; // 25
+    unsigned int f0v1: 7; // 18
+    unsigned int f0v0: 7; // 11
+    unsigned int pad0: 3; // 4
+    unsigned int is7bit: 1; // 1
+} Gquad_7b;
+
+typedef struct Gquad0 {
+    int cmd: 8;
+    unsigned int v0: 8;
+    unsigned int v1: 8;
+    unsigned int v2: 8;
+
+    unsigned int pad: 24;
+    unsigned int v3: 8;
+} Gquad0;
+
+typedef struct Gculldl {
+    int cmd: 8;
+    unsigned int pad0: 8;
+    unsigned int vstart: 16;
+
+    unsigned int pad1: 16;
+    unsigned int vend: 16;
+} Gculldl;
+
+typedef struct Gspecial1 {
+    int cmd: 8;
+    int mode: 8;
+    unsigned int param0: 16;
+
+    unsigned int param1;
+} Gspecial1;
 
 typedef struct {
     unsigned char col[3];
@@ -363,22 +614,52 @@ typedef struct {
 } combiner_tev_alpha;
 
 /* New Command Macros */
+#define gDPParam2(cmd, tag, param, extra) \
+do { \
+  Gfx* _g = (Gfx*)(pkt); \
+  _g->words.w0 = (u32)(_SHIFTL(cmd, 24, 8) | _SHIFTL(tag, 16, 8) | _SHIFTL(param, 0, 16)); \
+  _g->words.w1 = (u32)(extra); \
+} while(0)
+
 #define gsDPParam2(cmd, tag, param, extra) \
 {{ \
 	_SHIFTL(cmd, 24, 8) | _SHIFTL(tag, 16, 8) | _SHIFTL(param, 0, 16), extra \
 }}
 
-#define gsDPNoOpTag2(tag, param, extra) gsDPParam2(G_NOOP, tag, param, extra) 
+#define gDPNoOpTag2(tag, param, extra) gDPParam2(G_NOOP, tag, param, extra)
+#define gsDPNoOpTag2(tag, param, extra) gsDPParam2(G_NOOP, tag, param, extra)
+
+#define gDPNoOpHere() gDPNoOpTag2(G_TAG_HERE, __LINE__, __FILE__)
 #define	gsDPNoOpHere() gsDPNoOpTag2(G_TAG_HERE, __LINE__, __FILE__)
+
+#define gDPNoOpString(str, param) gDPNoOpTag2(G_TAG_STRING, param, str)
 #define gsDPNoOpString(str, param) gsDPNoOpTag2(G_TAG_STRING, param, str)
+
+#define gDPNoOpWord(word, param) gDPNoOpTag2(G_TAG_WORD, param, word)
 #define gsDPNoOpWord(word, param) gsDPNoOpTag2(G_TAG_WORD, param, word)
+
+#define gDPNoOpFloat(float, param) gDPNoOpTag2(G_TAG_FLOAT, param, float)
 #define gsDPNoOpFloat(float, param) gsDPNoOpTag2(G_TAG_FLOAT, param, float)
+
+#define gDPNoOpQuiet() gDPNoOpTag2(G_TAG_INFO, 0, 0)
 #define gsDPNoOpQuiet() gsDPNoOpTag2(G_TAG_INFO, 0, 0)
+
+#define gDPNoOpVerbose() gDPNoOpTag2(G_TAG_INFO, 0xF, 0)
 #define gsDPNoOpVerbose() gsDPNoOpTag2(G_TAG_INFO, 0xF, 0)
+
+#define gDPNoOpCallBack(callback, param) gDPNoOpTag2(G_TAG_CALLBACK, param, callback)
 #define gsDPNoOpCallBack(callback, param) gsDPNoOpTag2(G_TAG_CALLBACK, param, callback)
+
+#define gDPNoOpOpenDisp() gDPNoOpTag2(G_TAG_OPENDISP, __LINE__, __FILE__)
 #define gsDPNoOpOpenDisp() gsDPNoOpTag2(G_TAG_OPENDISP, __LINE__, __FILE__)
+
+#define gDPNoOpCloseDisp() gDPNoOpTag2(G_TAG_CLOSEDISP, __LINE__, __FILE__)
 #define gsDPNoOpCloseDisp() gsDPNoOpTag2(G_TAG_CLOSEDISP, __LINE__, __FILE__)
+
+#define gDPNoOpFill() gDPNoOpTag2(G_TAG_FILL, 0, 0)
 #define gsDPNoOpFill() gsDPNoOpTag2(G_TAG_FILL, 0, 0)
+
+#define gDPNoOpTag3(tag, extra, param) gDPNoOpTag2(tag, param, extra)
 #define gsDPNoOpTag3(tag, extra, param) gsDPNoOpTag2(tag, param, extra)
 
 #define G_TLUT_DOLPHIN 2
@@ -394,7 +675,7 @@ do { \
     _SHIFTL(G_LOADTLUT, 24, 8) | _SHIFTL(G_TLUT_DOLPHIN, 22, 2) | _SHIFTL(name, 16, 4) | _SHIFTL(unk, 14, 2) | _SHIFTL(count, 0, 14), (unsigned int)addr \
 }}
 
-#define gsDPSetTextureImage_Dolphin(fmt, siz, h, w, img) \
+#define gsDPSetTextureImage_Dolphin(fmt, siz, w, h, img) \
 {{ \
     _SHIFTL(G_SETTIMG, 24, 8) | _SHIFTL(fmt, 21, 3) | _SHIFTL(siz, 19, 2) | _SHIFTL(1, 18, 1) | \
         _SHIFTL((h/4)-1, 10, 8) | _SHIFTL((w-1), 0, 10), (unsigned int)img \
@@ -439,7 +720,7 @@ do { \
 
 #define G_DOLPHIN_TLUT_DEFAULT_MODE 15 // used almost always? CI palettes are forced to GX_TF_RGB5A3
 #define gsDPLoadTextureBlock_4b_Dolphin(timg, fmt, w, h, pal, ws, wt, ss, st) \
-    gsDPSetTextureImage_Dolphin(fmt, G_IM_SIZ_4b, h, w, timg), \
+    gsDPSetTextureImage_Dolphin(fmt, G_IM_SIZ_4b, w, h, timg), \
     gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, pal, ws, wt, ss, st)
 
 #define gDPLoadTextureTile_4b_Dolphin(pkt, timg, fmt, w, h) \
@@ -448,7 +729,11 @@ do { \
     gDPSetTile_Dolphin(pkt, G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 0, 0, 0, 0, 0) \
 } while (0);
 
-#define gsSPNTriangles(n) \
+#define gsDPLoadMultiBlock_4b_Dolphin(timg, tile, fmt, w, h, pal, ws, wt, ss, st) \
+    gsDPSetTextureImage_Dolphin(fmt, G_IM_SIZ_4b, w, h, timg), \
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, tile, pal, ws, wt, ss, st)
+
+#define gsSPNTriangles_Independ(n) \
 {{ \
     _SHIFTL(G_TRIN_INDEPEND, 24, 8) | _SHIFTL(n-1, 17, 7), 0 \
 }}
@@ -488,7 +773,7 @@ do { \
 
 #define gSPNTrianglesInit_7b(n, v0, v1, v2, v3, v4, v5) \
 {{ \
-    (unsigned long long)((((unsigned long long)gsSPNTriangles(n)) << 32) | (gsSPNWTriangleData2(v3, v4, v5) << 22) | \
+    (unsigned long long)((((unsigned long long)gsSPNTriangles_Independ(n)) << 32) | (gsSPNWTriangleData2(v3, v4, v5) << 22) | \
         (gsSPNTriangleData2(v0, v1, v2) << 1)) | G_VTX_MODE_7bit \
 }}
 
@@ -512,8 +797,14 @@ do { \
 
 #define gsSPNTrianglesInit_7b(n, v0, v1, v2, v3, v4, v5) \
 {{ \
-    (unsigned long long)((((unsigned long long)gsSPNTriangles(n)) << 32) | (gsSPNWTriangleData2(v3, v4, v5) << 22) | \
+    (unsigned long long)((((unsigned long long)gsSPNTriangles_Independ(n)) << 32) | (gsSPNWTriangleData2(v3, v4, v5) << 22) | \
         (gsSPNTriangleData2(v0, v1, v2) << 1)) | G_VTX_MODE_7bit \
+}}
+
+#define gsSPNTriangles(n, v0, v1, v2, v3, v4, v5, v6, v7, v8) \
+{{ \
+    _SHIFTL(G_TRIN, 24, 8) | _SHIFTL(n-1, 17, 7) | _SHIFTL(gsSPNTriangleData1(v6, v7, v8, 0), 2, 15) | _SHIFTL(_SHIFTR(gsSPNTriangleData1(v3, v4, v5, 0), 13, 2), 0, 2), \
+    _SHIFTL(gsSPNTriangleData1(v3, v4, v5, 0), 19, 13) | _SHIFTL(gsSPNTriangleData1(v0, v1, v2, 0), 4, 15) | _SHIFTL(G_VTX_MODE_5bit, 0, 1) \
 }}
 
 #define gDPSetTexEdgeAlpha(pkt, alpha) \

@@ -1,0 +1,304 @@
+static void Player_actor_request_main_swing_axe_common(mPlayer_request_swing_axe_c* req_axe, const xyz_t* pos,
+                                                       mActor_name_t hit_item, u16 damage_no, int hit_ut_x,
+                                                       int hit_ut_z) {
+    req_axe->goal_pos = *pos;
+    req_axe->hit_item = hit_item;
+    req_axe->hit_ut_x = hit_ut_x;
+    req_axe->hit_ut_z = hit_ut_z;
+    req_axe->axe_damage_no = damage_no;
+}
+
+static int Player_actor_request_main_swing_axe_all(GAME* game, const xyz_t* pos, mActor_name_t hit_item, u16 damage_no,
+                                                   int hit_ut_x, int hit_ut_z, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_SWING_AXE, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        Player_actor_request_main_swing_axe_common(&player->requested_main_index_data.swing_axe, pos, hit_item,
+                                                   damage_no, hit_ut_x, hit_ut_z);
+        Player_actor_request_main_index(game, mPlayer_INDEX_SWING_AXE, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Swing_axe_common(mPlayer_request_swing_axe_c* req_axe,
+                                                     mPlayer_main_swing_axe_c* main_axe) {
+    main_axe->axe_common.target_pos = req_axe->goal_pos;
+    main_axe->axe_common.item = req_axe->hit_item;
+    main_axe->tree_ut_x = req_axe->hit_ut_x;
+    main_axe->tree_ut_z = req_axe->hit_ut_z;
+    main_axe->axe_common.axe_damage_no = req_axe->axe_damage_no;
+    main_axe->bee_flag = FALSE;
+    main_axe->bee_angle_y = 0;
+    main_axe->bee_counter = 0;
+}
+
+static void Player_actor_setup_main_Swing_axe(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_swing_axe_c* main_axe = &player->main_data.swing_axe;
+    mPlayer_request_swing_axe_c* req_axe = &player->requested_main_index_data.swing_axe;
+
+    Player_actor_setup_main_Swing_axe_common(req_axe, main_axe);
+
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_AXE_SWING1, mPlayer_ANIM_AXE_SWING1, 1.0f, 1.0f, 0.5f,
+                                     -5.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_Movement_axe_common(ACTOR* actor, xyz_t* axe_pos) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 z;
+    f32 x;
+
+    x = axe_pos->x - actor->world.position.x;
+    z = axe_pos->z - actor->world.position.z;
+
+    if (x != 0.0f || z != 0.0f) {
+        s16 target = atans_table(z, x);
+        add_calc_short_angle2(&actor->shape_info.rotation.y, target, 1.0f - sqrtf(0.5), 2500, 50);
+    }
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625002f);
+}
+
+static void Player_actor_Movement_Swing_axe(ACTOR* actor, mPlayer_main_swing_axe_c* main_axe, int) {
+    Player_actor_Movement_axe_common(actor, &main_axe->axe_common.target_pos);
+
+    actor->world.angle.y = actor->shape_info.rotation.y;
+}
+
+static int Player_actor_CulcAnimation_Swing_axe(ACTOR* actor, f32* frame_calc, int) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetEffectHit_axe_common(ACTOR* actor, GAME* game, s16 arg2) {
+    static xyz_t offset = { -7.0f, 20.0f, 24.0f };
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    xyz_t pos;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 15.0f)) {
+        s16 rot = actor->world.angle.y;
+        f32 sin = sin_s(rot);
+        f32 cos = cos_s(rot);
+
+        pos = actor->world.position;
+        pos.y += offset.y;
+        pos.z += (offset.z * cos) - (offset.x * sin);
+        pos.x += (offset.z * sin) + (offset.x * cos);
+        Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_SWING_AXE, pos, 2, actor->shape_info.rotation.y, game,
+                                                       RSV_NO, actor->bg_collision_check.result.unit_attribute, arg2);
+    }
+}
+
+static void Player_actor_SetEffectHit_Swing_axe(ACTOR* actor, GAME* game, s16 arg2, int arg3) {
+    Player_actor_SetEffectHit_axe_common(actor, game, arg2);
+}
+
+static void Player_actor_SetEffectStart_Swing_axe(ACTOR* actor, GAME* game, int arg2) {
+    Player_actor_SetEffectStart_axe_common(actor, game);
+}
+
+static void Player_actor_SetEffect_Swing_axe(ACTOR* actor, GAME* game, int arg2) {
+    Player_actor_SetEffectHit_Swing_axe(actor, game, 0, arg2);
+    Player_actor_SetEffectStart_Swing_axe(actor, game, arg2);
+}
+
+static mActor_name_t Player_actor_Get_TreeNoToStumpNo(ACTOR* actor, GAME* game, mActor_name_t item, int ut_x, int ut_z,
+                                                      mPlayer_main_swing_axe_c* main_axe, int flag) {
+    if (Common_Get(clip).bg_item_clip != NULL) {
+        if (Common_Get(clip).bg_item_clip->tree_cutcount_check_proc != NULL) {
+            xyz_t pos;
+
+            int check = Common_Get(clip).bg_item_clip->tree_cutcount_check_proc(game, ut_x, ut_z);
+
+            if (!IS_ITEM_BEE_TREE(item)) {
+                Common_Get(clip).bg_item_clip->item_tree_fruit_drop_proc(item, ut_x, ut_z, &pos);
+            } else if (mPlib_able_birth_bee() && flag == FALSE) {
+                main_axe->bee_counter = 5;
+            }
+
+            if (check <= 0) {
+                mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_CHOP_TREE);
+                if (IS_ITEM_ANY_PALM_TREE(item) != FALSE) {
+                    mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_CHOP_PALM_TREE);
+                }
+
+                return bg_item_fg_sub((mActor_name_t)item, 0);
+            }
+        }
+    }
+    return item;
+}
+
+static void Player_actor_CutTree_Swing_axe(ACTOR* actor, GAME* game, mPlayer_main_swing_axe_c* main_axe, int flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 15.0f)) {
+        int ut_x;
+        int ut_z;
+        mActor_name_t item = main_axe->axe_common.item;
+
+        if (mFI_Wpos2UtNum(&ut_x, &ut_z, main_axe->axe_common.target_pos)) {
+            mActor_name_t tree = Player_actor_Get_TreeNoToStumpNo(actor, game, item, ut_x, ut_z, main_axe, flag);
+            s16 type;
+
+            if (IS_ITEM_TREE_STUMP(tree) != FALSE) {
+                mNT_offset_table_c* ofs_tbl = obj_hight_table_item0_nogrow(tree);
+
+                mCoBG_SetPlussOffset(main_axe->axe_common.target_pos, ofs_tbl->table.centerRight_offset,
+                                     ofs_tbl->table.unit_attribute);
+                mFI_SetFG_common(tree, main_axe->axe_common.target_pos, TRUE);
+
+                if (main_axe->axe_common.target_pos.x > actor->world.position.x) {
+                    type = EffectBG_EFFECT_CUT_LEFT;
+                } else {
+                    type = EffectBG_EFFECT_CUT_RIGHT;
+                }
+                Player_actor_set_viblation_Axe_cut();
+            } else {
+                type = EffectBG_EFFECT_SHAKE;
+                Player_actor_set_viblation_Axe_hard();
+            }
+            Player_actor_Set_EffectBgTree(game, item, type, ut_x, ut_z);
+        }
+    }
+}
+
+static void Player_actor_SetSound_AXE_FURI_axe_common(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 10.0f)) {
+        Player_actor_sound_AXE_FURI(actor);
+    }
+}
+
+static void Player_actor_SetSound_AXE_FURI_Swing_axe(ACTOR* actor, int) {
+    Player_actor_SetSound_AXE_FURI_axe_common(actor);
+}
+
+static void Player_actor_SetSound_Swing_axe(ACTOR* actor, xyz_t* pos, int arg2) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_SetSound_AXE_FURI_Swing_axe(actor, arg2);
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 15.0f)) {
+        Player_actor_sound_AXE_CUT(actor, pos);
+    }
+}
+
+static void Player_actor_ChangeItemNo_axe_common(ACTOR* actor, mActor_name_t item) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 15.0f)) {
+        mActor_name_t sub = Player_actor_Get_ItemNoSubmenu();
+        if (sub != item) {
+            int anim_idx;
+            int part_table_idx;
+
+            Player_actor_Set_ItemNoSubmenu(item);
+            Common_Set(axe_damage, 0);
+
+            Player_actor_SetupItem_Base1(actor, player->animation1_idx, 0.0f, &anim_idx, &part_table_idx);
+
+            switch ((u16)item) {
+                case ITM_AXE_USE_2:
+                    Player_actor_sound_axe_broken1(actor);
+                    break;
+                case ITM_AXE_USE_5:
+                    Player_actor_sound_axe_broken2(actor);
+                    break;
+
+                case EMPTY_NO:
+                    Player_actor_sound_axe_broken3(actor);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    }
+}
+
+static void Player_actor_ChangeItemNo_Swing_axe(ACTOR* actor, mPlayer_main_swing_axe_c* main, int flag) {
+    Player_actor_ChangeItemNo_axe_common(actor, main->axe_common.axe_damage_no);
+}
+
+static void Player_actor_SearchAnimation_Swing_axe(ACTOR* actor, GAME* game, mPlayer_main_swing_axe_c* main_axe,
+                                                   int flag, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetEffect_Swing_axe(actor, game, flag);
+        Player_actor_CutTree_Swing_axe(actor, game, main_axe, flag);
+        Player_actor_SetSound_Swing_axe(actor, &main_axe->axe_common.target_pos, flag);
+        Player_actor_ChangeItemNo_Swing_axe(actor, main_axe, flag);
+        Player_actor_Set_FootMark_Base1(actor, game, 0, 0);
+    }
+}
+
+static void Player_actor_Check_BirthBee_Swing_axe(ACTOR* actor, mPlayer_main_swing_axe_c* main_axe, int arg) {
+    if (arg == 0 && main_axe->bee_counter > 0) {
+        if (Player_actor_Check_BirthBee_common(actor, main_axe->axe_common.item, main_axe->tree_ut_x,
+                                               main_axe->tree_ut_z, &main_axe->bee_angle_y)) {
+            main_axe->bee_counter = 0;
+            main_axe->bee_flag = 1;
+        } else {
+            main_axe->bee_counter--;
+        }
+    }
+}
+
+static void Player_actor_ObjCheck_Swing_axe(ACTOR* actor, GAME* game, int) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Swing_axe(ACTOR* actor, int) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromSwing_axe(ACTOR* actor, GAME* game, int arg, int arg2) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    mPlayer_main_swing_axe_c* main_swing = &player->main_data.swing_axe;
+
+    if (arg2 == 0) {
+        if (arg != 0) {
+            Player_actor_SettleRequestMainIndexPriority(actor);
+            Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, 1);
+        } else {
+            cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+            f32 current = fc->current_frame;
+
+            if (main_swing->bee_flag != 0) {
+                if (current >= 17.0f) {
+                    Player_actor_request_main_shock_all(game, 60.0f, main_swing->bee_angle_y, 1, 1,
+                                                        mPlayer_REQUEST_PRIORITY_21);
+                }
+            } else if (Player_actor_Check_AnimationFrame(fc, 16.5f)) {
+                Player_actor_SettleRequestMainIndexPriority(actor);
+                Player_actor_Set_status_for_bee(actor, 1);
+
+            } else if ((current >= 17.0f) && (!Player_actor_CheckAndRequest_main_axe_all(game, 4)) &&
+                       ((Player_actor_GetController_move_percentX()) || (Player_actor_GetController_move_percentY()))) {
+                Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+            }
+        }
+    }
+}
+
+static void Player_actor_main_Swing_axe(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 frame_calc;
+    mPlayer_main_swing_axe_c* main_axe = &player->main_data.swing_axe;
+    int arg;
+
+    Player_actor_Movement_Swing_axe(actor, main_axe, 0);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    arg = Player_actor_CulcAnimation_Swing_axe(actor, &frame_calc, 0);
+    Player_actor_SearchAnimation_Swing_axe(actor, game, main_axe, 0, frame_calc);
+    Player_actor_Check_BirthBee_Swing_axe(actor, main_axe, 0);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_ObjCheck_Swing_axe(actor, game, 0);
+    Player_actor_BGcheck_Swing_axe(actor, 0);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromSwing_axe(actor, game, arg, 0);
+}

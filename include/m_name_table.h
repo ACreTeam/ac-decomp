@@ -36,6 +36,10 @@ enum {
   NAME_TYPE_NUM
 };
 
+#define ITEM0_CAT_OBJ 0
+#define ITEM0_CAT_PLANT 8
+#define ITEM0_CAT_SIGN 9
+
 enum {
   ITEM1_CAT_PAPER,
   ITEM1_CAT_MONEY,
@@ -141,6 +145,7 @@ typedef struct offset_table_s {
 /* TODO: these should be calculated via definitions later */
 #define NPC_NUM 236
 #define NPC_ISLANDER_NUM 18
+#define ALL_NPC_NUM NPC_NUM + 2 // include the two test villagers
 
 #define TICKET_STACK_MAX 5
 #define WISP_STACK_MAX 5
@@ -211,6 +216,9 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITEM_IS_RSVCPORG(n) ((n) >= RSV_CPORIGINAL_FLD0_00 && (n) <= RSV_CPORIGINAL_FLD7_11)
 #define ITEM_IS_RSVGBAORG(n) ((n) >= RSV_GBAORIGINAL0 && (n) <= RSV_GBAORIGINAL7)
 
+#define ITEM_IS_MYMANNIQUIN(n) ((n) >= FTR_CLOTH_MANNIQUIN_MY_ORIGINAL0 && (n) <= FTR_CLOTH_MYMANNIQUIN_END)
+#define ITEM_IS_MYUMBRELLA(n) ((n) >= FTR_MYUMBRELLA_START && (n) <= FTR_MYUMBRELLA_END)
+
 #define PAPER2TYPE(n) ((n) % PAPER_UNIQUE_NUM)
 #define PAPER2STACK(n) ((n) / PAPER_UNIQUE_NUM)
 
@@ -218,6 +226,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
   (ITEM_NAME_GET_TYPE(n) == NAME_TYPE_FTR0 || ITEM_NAME_GET_TYPE(n) == NAME_TYPE_FTR1)
 
 #define ITEM_IS_ITEM1(n) (ITEM_NAME_GET_TYPE(n) == NAME_TYPE_ITEM1)
+#define ITEM_IS_CARPET(n) ((n) >= ITM_CARPET_START && (n) < ITM_CARPET_END)
+#define ITEM_IS_WALL(n) ((n) >= ITM_WALL_START && (n) < ITM_WALL_END)
 
 #define GET_NAME_ITEM0_CATEGORY(f) (((f) & 0x0800) >> 11) /* enviornmental or static background objects */
 #define GET_NAME_ITEM1_CATEGORY(f) (((f) & 0x0F00) >> 8)
@@ -280,11 +290,241 @@ extern int mNT_check_unknown(mActor_name_t item_no);
    ((item) == GOLD_TREE_BEES) \
   )
 
+// @BUG - they check for money tree variants twice
+#define IS_ITEM_COLLIDEABLE_TREE(item) \
+  (((item) == TREE_S0) || \
+   ((item) == TREE_APPLE_S0) || \
+   ((item) == TREE_ORANGE_S0) || \
+   ((item) == TREE_PEACH_S0) || \
+   ((item) == TREE_PEAR_S0) || \
+   ((item) == TREE_CHERRY_S0) || \
+   ((item) == TREE_1000BELLS_S0) || \
+   ((item) == TREE_10000BELLS_S0) || \
+   ((item) == TREE_30000BELLS_S0) || \
+   ((item) == TREE_1000BELLS_S0) || \
+   ((item) == TREE_10000BELLS_S0) || \
+   ((item) == TREE_30000BELLS_S0) || \
+   ((item) == TREE_100BELLS_S0) || \
+   ((item) == TREE_PALM_S0) || \
+   ((item) == CEDAR_TREE_S0) || \
+   ((item) == GOLD_TREE_S0) || \
+   ((item) == TREE_S1) || \
+   ((item) == TREE_APPLE_S1) || \
+   ((item) == TREE_ORANGE_S1) || \
+   ((item) == TREE_PEACH_S1) || \
+   ((item) == TREE_PEAR_S1) || \
+   ((item) == TREE_CHERRY_S1) || \
+   ((item) == TREE_1000BELLS_S1) || \
+   ((item) == TREE_10000BELLS_S1) || \
+   ((item) == TREE_30000BELLS_S1) || \
+   ((item) == TREE_1000BELLS_S1) || \
+   ((item) == TREE_10000BELLS_S1) || \
+   ((item) == TREE_30000BELLS_S1) || \
+   ((item) == TREE_100BELLS_S1) || \
+   ((item) == TREE_PALM_S1) || \
+   ((item) == CEDAR_TREE_S1) || \
+   ((item) == GOLD_TREE_S1) || \
+   ((item) == TREE_S2) || \
+   ((item) == TREE_APPLE_S2) || \
+   ((item) == TREE_ORANGE_S2) || \
+   ((item) == TREE_PEACH_S2) || \
+   ((item) == TREE_PEAR_S2) || \
+   ((item) == TREE_CHERRY_S2) || \
+   ((item) == TREE_1000BELLS_S2) || \
+   ((item) == TREE_10000BELLS_S2) || \
+   ((item) == TREE_30000BELLS_S2) || \
+   ((item) == TREE_1000BELLS_S2) || \
+   ((item) == TREE_10000BELLS_S2) || \
+   ((item) == TREE_30000BELLS_S2) || \
+   ((item) == TREE_100BELLS_S2) || \
+   ((item) == TREE_PALM_S2) || \
+   ((item) == CEDAR_TREE_S2) || \
+   ((item) == GOLD_TREE_S2) || \
+   ((item) == TREE) || \
+   ((item) == TREE_APPLE_FRUIT) || \
+   ((item) == TREE_ORANGE_FRUIT) || \
+   ((item) == TREE_PEACH_FRUIT) || \
+   ((item) == TREE_PEAR_FRUIT) || \
+   ((item) == TREE_CHERRY_FRUIT) || \
+   ((item) == TREE_1000BELLS) || \
+   ((item) == TREE_10000BELLS) || \
+   ((item) == TREE_30000BELLS) || \
+   ((item) == TREE_100BELLS) || \
+   ((item) == TREE_PALM_FRUIT) || \
+   ((item) == CEDAR_TREE) || \
+   ((item) == GOLD_TREE) || \
+   ((item) == GOLD_TREE_SHOVEL) || \
+   ((item) == TREE_APPLE_NOFRUIT_0) || \
+   ((item) == TREE_ORANGE_NOFRUIT_0) || \
+   ((item) == TREE_PEACH_NOFRUIT_0) || \
+   ((item) == TREE_PEAR_NOFRUIT_0) || \
+   ((item) == TREE_CHERRY_NOFRUIT_0) || \
+   ((item) == TREE_PALM_NOFRUIT_0) || \
+   ((item) == TREE_APPLE_NOFRUIT_1) || \
+   ((item) == TREE_ORANGE_NOFRUIT_1) || \
+   ((item) == TREE_PEACH_NOFRUIT_1) || \
+   ((item) == TREE_PEAR_NOFRUIT_1) || \
+   ((item) == TREE_CHERRY_NOFRUIT_1) || \
+   ((item) == TREE_PALM_NOFRUIT_1) || \
+   ((item) == TREE_APPLE_NOFRUIT_2) || \
+   ((item) == TREE_ORANGE_NOFRUIT_2) || \
+   ((item) == TREE_PEACH_NOFRUIT_2) || \
+   ((item) == TREE_PEAR_NOFRUIT_2) || \
+   ((item) == TREE_CHERRY_NOFRUIT_2) || \
+   ((item) == TREE_PALM_NOFRUIT_2) || \
+   ((item) == TREE_BEES) || \
+   ((item) == TREE_FTR) || \
+   ((item) == TREE_LIGHTS) || \
+   ((item) == TREE_PRESENT) || \
+   ((item) == TREE_BELLS) || \
+   ((item) == CEDAR_TREE_BELLS) || \
+   ((item) == CEDAR_TREE_FTR) || \
+   ((item) == CEDAR_TREE_BEES) || \
+   ((item) == CEDAR_TREE_LIGHTS) || \
+   ((item) == GOLD_TREE_BELLS) || \
+   ((item) == GOLD_TREE_FTR) || \
+   ((item) == GOLD_TREE_BEES) \
+  )
+
+#define IS_ITEM_XMAS_TREE(item) ((item) == TREE_LIGHTS || (item) == CEDAR_TREE_LIGHTS)
+#define IS_ITEM_SMALL_TREE(item) ( \
+  ((item) == TREE_S0) || \
+  ((item) == TREE_APPLE_S0) || \
+  ((item) == TREE_ORANGE_S0) || \
+  ((item) == TREE_PEACH_S0) || \
+  ((item) == TREE_PEAR_S0) || \
+  ((item) == TREE_CHERRY_S0) || \
+  ((item) == TREE_1000BELLS_S0) || \
+  ((item) == TREE_10000BELLS_S0) || \
+  ((item) == TREE_30000BELLS_S0) || \
+  ((item) == TREE_1000BELLS_S0) || \
+  ((item) == TREE_10000BELLS_S0) || \
+  ((item) == TREE_30000BELLS_S0) || \
+  ((item) == TREE_100BELLS_S0) || \
+  ((item) == TREE_PALM_S0) || \
+  ((item) == CEDAR_TREE_S0) || \
+  ((item) == GOLD_TREE_S0) \
+)
+#define IS_ITEM_MED_TREE(item) ( \
+  ((item) == TREE_S1) || \
+  ((item) == TREE_APPLE_S1) || \
+  ((item) == TREE_ORANGE_S1) || \
+  ((item) == TREE_PEACH_S1) || \
+  ((item) == TREE_PEAR_S1) || \
+  ((item) == TREE_CHERRY_S1) || \
+  ((item) == TREE_1000BELLS_S1) || \
+  ((item) == TREE_10000BELLS_S1) || \
+  ((item) == TREE_30000BELLS_S1) || \
+  ((item) == TREE_1000BELLS_S1) || \
+  ((item) == TREE_10000BELLS_S1) || \
+  ((item) == TREE_30000BELLS_S1) || \
+  ((item) == TREE_100BELLS_S1) || \
+  ((item) == TREE_PALM_S1) || \
+  ((item) == CEDAR_TREE_S1) || \
+  ((item) == GOLD_TREE_S1) \
+)
+#define IS_ITEM_LARGE_TREE(item) ( \
+  ((item) == TREE_S2) || \
+  ((item) == TREE_APPLE_S2) || \
+  ((item) == TREE_ORANGE_S2) || \
+  ((item) == TREE_PEACH_S2) || \
+  ((item) == TREE_PEAR_S2) || \
+  ((item) == TREE_CHERRY_S2) || \
+  ((item) == TREE_1000BELLS_S2) || \
+  ((item) == TREE_10000BELLS_S2) || \
+  ((item) == TREE_30000BELLS_S2) || \
+  ((item) == TREE_1000BELLS_S2) || \
+  ((item) == TREE_10000BELLS_S2) || \
+  ((item) == TREE_30000BELLS_S2) || \
+  ((item) == TREE_100BELLS_S2) || \
+  ((item) == TREE_PALM_S2) || \
+  ((item) == CEDAR_TREE_S2) || \
+  ((item) == GOLD_TREE_S2) \
+)
+
+#define IS_ITEM_FULL_TREE(item) \
+  (((item) == TREE) || \
+   ((item) == TREE_APPLE_FRUIT) || \
+   ((item) == TREE_ORANGE_FRUIT) || \
+   ((item) == TREE_PEACH_FRUIT) || \
+   ((item) == TREE_PEAR_FRUIT) || \
+   ((item) == TREE_CHERRY_FRUIT) || \
+   ((item) == TREE_1000BELLS) || \
+   ((item) == TREE_10000BELLS) || \
+   ((item) == TREE_30000BELLS) || \
+   ((item) == TREE_100BELLS) || \
+   ((item) == TREE_PALM_FRUIT) || \
+   ((item) == CEDAR_TREE) || \
+   ((item) == GOLD_TREE) || \
+   ((item) == GOLD_TREE_SHOVEL) || \
+   ((item) == TREE_APPLE_NOFRUIT_0) || \
+   ((item) == TREE_ORANGE_NOFRUIT_0 ) || \
+   ((item) == TREE_PEACH_NOFRUIT_0) || \
+   ((item) == TREE_PEAR_NOFRUIT_0) || \
+   ((item) == TREE_CHERRY_NOFRUIT_0) || \
+   ((item) == TREE_PALM_NOFRUIT_0) || \
+   ((item) == TREE_APPLE_NOFRUIT_1) || \
+   ((item) == TREE_ORANGE_NOFRUIT_1 ) || \
+   ((item) == TREE_PEACH_NOFRUIT_1) || \
+   ((item) == TREE_PEAR_NOFRUIT_1) || \
+   ((item) == TREE_CHERRY_NOFRUIT_1) || \
+   ((item) == TREE_PALM_NOFRUIT_1) || \
+   ((item) == TREE_APPLE_NOFRUIT_2) || \
+   ((item) == TREE_ORANGE_NOFRUIT_2 ) || \
+   ((item) == TREE_PEACH_NOFRUIT_2) || \
+   ((item) == TREE_PEAR_NOFRUIT_2) || \
+   ((item) == TREE_CHERRY_NOFRUIT_2) || \
+   ((item) == TREE_PALM_NOFRUIT_2) || \
+   ((item) == TREE_BEES) || \
+   ((item) == TREE_FTR) || \
+   ((item) == TREE_LIGHTS) || \
+   ((item) == TREE_PRESENT) || \
+   ((item) == TREE_BELLS) || \
+   ((item) == CEDAR_TREE_BELLS) || \
+   ((item) == CEDAR_TREE_FTR) || \
+   ((item) == CEDAR_TREE_BEES) || \
+   ((item) == CEDAR_TREE_LIGHTS) || \
+   ((item) == GOLD_TREE_BELLS) || \
+   ((item) == GOLD_TREE_FTR) || \
+   ((item) == GOLD_TREE_BEES) \
+  )
+
+#define IS_ITEM_PALM_TREE(item) ((item) >= TREE_PALM_SAPLING && (item) < TREE_PALM_FRUIT)
+#define IS_ITEM_ANY_PALM_TREE(item) ((item) >= TREE_PALM_SAPLING && (item) <= TREE_PALM_FRUIT)
+
+#define IS_ITEM_TREE_STUMP(item) ((item >= TREE_STUMP001 && (item) <= TREE_STUMP004) || \
+    (item) >= TREE_PALM_STUMP001 && (item) <= TREE_PALM_STUMP004 || \
+    (item) >= CEDAR_TREE_STUMP001 && (item) <= CEDAR_TREE_STUMP004 || \
+    (item) >= GOLD_TREE_STUMP001 && (item) <= GOLD_TREE_STUMP004 \
+)
+
+#define IS_ITEM_HITTABLE_TREE(item) (IS_ITEM_SMALL_TREE(item) || IS_ITEM_MED_TREE(item) || IS_ITEM_LARGE_TREE(item) || IS_ITEM_FULL_TREE(item))
+#define IS_ITEM_SHAKEABLE_TREE(item) (IS_ITEM_MED_TREE(item) || IS_ITEM_LARGE_TREE(item) || IS_ITEM_FULL_TREE(item))
+
+#define IS_ITEM_BEE_TREE(item) ((item) == TREE_BEES || (item) == CEDAR_TREE_BEES || (item) == GOLD_TREE_BEES)
+
+#define IS_ITEM_STONE(item) ((item) >= ROCK_A && (item) <= ROCK_E)
+#define IS_ITEM_STONE_TC(item) (((item) >= MONEY_ROCK_A && (item) <= MONEY_ROCK_E) || (item) == MONEY_FLOWER_SEED) /* TC is ten coin */
+#define IS_ITEM_ROCK(item) (((item) >= ROCK_A && (item) <= ROCK_E) || ((item) >= MONEY_ROCK_A && (item) <= MONEY_ROCK_E) || (item) == MONEY_FLOWER_SEED)
+
 #define IS_ITEM_GRASS(item) ((item) >= GRASS_A && (item) <= GRASS_C) /* aka IS_ITEM_WEED */
 
 #define IS_ITEM_HANIWA(item) ((item) >= HANIWA_START && (item) <= HANIWA_END)
 
 #define IS_ITEM_DIARY(item) ((item) >= ITM_DIARY_START && (item) <= (ITM_DIARY_END-1))
+
+#define IS_ITEM_AXE(item) ((item) == ITM_AXE || ((item) >= ITM_AXE_USE_1 && (item) <= ITM_AXE_USE_7))
+#define IS_ITEM_GOLDEN_TOOL(item) ((item) >= ITM_GOLDEN_NET && (item) <= ITM_GOLDEN_ROD)
+
+#define ITEM_IS_HOLE(item) ((item) >= HOLE_START && (item) <= HOLE_END)
+#define ITEM_IS_BURIED_PITFALL_HOLE(item) ((item) >= BURIED_PITFALL_HOLE_START && (item) <= BURIED_PITFALL_HOLE_END)
+#define ITEM_IS_BURIED_PITFALL_HOLE_RSV(item) ((item) >= BURIED_PITFALL_HOLE_RSV_START && (item) <= BURIED_PITFALL_HOLE_RSV_END)
+
+#define ITEM_IS_PLAYER_HOUSE(item) ((item) >= HOUSE0 && (item) < (HOUSE3 + 1))
+#define ITEM_IS_NPC_HOUSE(item) ((item) >= NPC_HOUSE_START && (item) < NPC_HOUSE_END)
+#define ITEM_IS_ISLAND_NPC_HOUSE(item) ((item) >= COTTAGE_NPC && (item) < COTTAGE_NPC_END)
+
+#define ITEM_IS_SIGNBOARD(item) ((item) >= SIGNBOARD_START && (item) <= SIGNBOARD_END)
 
 #define BG_CATEGORY 0
 #define ENV_CATEGORY 8
@@ -333,33 +573,60 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define HOLE23 (HOLE_START + 23)
 #define HOLE24 (HOLE_START + 24)
 #define HOLE_END HOLE24
-#define BURIED_PITFALL_START 0x002A
-#define BURIED_PITFALL00 (BURIED_PITFALL_START + 0)
-#define BURIED_PITFALL01 (BURIED_PITFALL_START + 1)
-#define BURIED_PITFALL02 (BURIED_PITFALL_START + 2)
-#define BURIED_PITFALL03 (BURIED_PITFALL_START + 3)
-#define BURIED_PITFALL04 (BURIED_PITFALL_START + 4)
-#define BURIED_PITFALL05 (BURIED_PITFALL_START + 5)
-#define BURIED_PITFALL06 (BURIED_PITFALL_START + 6)
-#define BURIED_PITFALL07 (BURIED_PITFALL_START + 7)
-#define BURIED_PITFALL08 (BURIED_PITFALL_START + 8)
-#define BURIED_PITFALL09 (BURIED_PITFALL_START + 9)
-#define BURIED_PITFALL10 (BURIED_PITFALL_START + 10)
-#define BURIED_PITFALL11 (BURIED_PITFALL_START + 11)
-#define BURIED_PITFALL12 (BURIED_PITFALL_START + 12)
-#define BURIED_PITFALL13 (BURIED_PITFALL_START + 13)
-#define BURIED_PITFALL14 (BURIED_PITFALL_START + 14)
-#define BURIED_PITFALL15 (BURIED_PITFALL_START + 15)
-#define BURIED_PITFALL16 (BURIED_PITFALL_START + 16)
-#define BURIED_PITFALL17 (BURIED_PITFALL_START + 17)
-#define BURIED_PITFALL18 (BURIED_PITFALL_START + 18)
-#define BURIED_PITFALL19 (BURIED_PITFALL_START + 19)
-#define BURIED_PITFALL20 (BURIED_PITFALL_START + 20)
-#define BURIED_PITFALL21 (BURIED_PITFALL_START + 21)
-#define BURIED_PITFALL22 (BURIED_PITFALL_START + 22)
-#define BURIED_PITFALL23 (BURIED_PITFALL_START + 23)
-#define BURIED_PITFALL24 (BURIED_PITFALL_START + 24)
-#define BURIED_PITFALL_END BURIED_PITFALL24
+#define BURIED_PITFALL_HOLE_START 0x002A
+#define BURIED_PITFALL_HOLE00 (BURIED_PITFALL_HOLE_START + 0)
+#define BURIED_PITFALL_HOLE01 (BURIED_PITFALL_HOLE_START + 1)
+#define BURIED_PITFALL_HOLE02 (BURIED_PITFALL_HOLE_START + 2)
+#define BURIED_PITFALL_HOLE03 (BURIED_PITFALL_HOLE_START + 3)
+#define BURIED_PITFALL_HOLE04 (BURIED_PITFALL_HOLE_START + 4)
+#define BURIED_PITFALL_HOLE05 (BURIED_PITFALL_HOLE_START + 5)
+#define BURIED_PITFALL_HOLE06 (BURIED_PITFALL_HOLE_START + 6)
+#define BURIED_PITFALL_HOLE07 (BURIED_PITFALL_HOLE_START + 7)
+#define BURIED_PITFALL_HOLE08 (BURIED_PITFALL_HOLE_START + 8)
+#define BURIED_PITFALL_HOLE09 (BURIED_PITFALL_HOLE_START + 9)
+#define BURIED_PITFALL_HOLE10 (BURIED_PITFALL_HOLE_START + 10)
+#define BURIED_PITFALL_HOLE11 (BURIED_PITFALL_HOLE_START + 11)
+#define BURIED_PITFALL_HOLE12 (BURIED_PITFALL_HOLE_START + 12)
+#define BURIED_PITFALL_HOLE13 (BURIED_PITFALL_HOLE_START + 13)
+#define BURIED_PITFALL_HOLE14 (BURIED_PITFALL_HOLE_START + 14)
+#define BURIED_PITFALL_HOLE15 (BURIED_PITFALL_HOLE_START + 15)
+#define BURIED_PITFALL_HOLE16 (BURIED_PITFALL_HOLE_START + 16)
+#define BURIED_PITFALL_HOLE17 (BURIED_PITFALL_HOLE_START + 17)
+#define BURIED_PITFALL_HOLE18 (BURIED_PITFALL_HOLE_START + 18)
+#define BURIED_PITFALL_HOLE19 (BURIED_PITFALL_HOLE_START + 19)
+#define BURIED_PITFALL_HOLE20 (BURIED_PITFALL_HOLE_START + 20)
+#define BURIED_PITFALL_HOLE21 (BURIED_PITFALL_HOLE_START + 21)
+#define BURIED_PITFALL_HOLE22 (BURIED_PITFALL_HOLE_START + 22)
+#define BURIED_PITFALL_HOLE23 (BURIED_PITFALL_HOLE_START + 23)
+#define BURIED_PITFALL_HOLE24 (BURIED_PITFALL_HOLE_START + 24)
+#define BURIED_PITFALL_HOLE_END BURIED_PITFALL_HOLE24
+#define BURIED_PITFALL_HOLE_RSV_START 0x0043
+#define BURIED_PITFALL_HOLE_RSV00 (BURIED_PITFALL_HOLE_RSV_START + 0)
+#define BURIED_PITFALL_HOLE_RSV01 (BURIED_PITFALL_HOLE_RSV_START + 1)
+#define BURIED_PITFALL_HOLE_RSV02 (BURIED_PITFALL_HOLE_RSV_START + 2)
+#define BURIED_PITFALL_HOLE_RSV03 (BURIED_PITFALL_HOLE_RSV_START + 3)
+#define BURIED_PITFALL_HOLE_RSV04 (BURIED_PITFALL_HOLE_RSV_START + 4)
+#define BURIED_PITFALL_HOLE_RSV05 (BURIED_PITFALL_HOLE_RSV_START + 5)
+#define BURIED_PITFALL_HOLE_RSV06 (BURIED_PITFALL_HOLE_RSV_START + 6)
+#define BURIED_PITFALL_HOLE_RSV07 (BURIED_PITFALL_HOLE_RSV_START + 7)
+#define BURIED_PITFALL_HOLE_RSV08 (BURIED_PITFALL_HOLE_RSV_START + 8)
+#define BURIED_PITFALL_HOLE_RSV09 (BURIED_PITFALL_HOLE_RSV_START + 9)
+#define BURIED_PITFALL_HOLE_RSV10 (BURIED_PITFALL_HOLE_RSV_START + 10)
+#define BURIED_PITFALL_HOLE_RSV11 (BURIED_PITFALL_HOLE_RSV_START + 11)
+#define BURIED_PITFALL_HOLE_RSV12 (BURIED_PITFALL_HOLE_RSV_START + 12)
+#define BURIED_PITFALL_HOLE_RSV13 (BURIED_PITFALL_HOLE_RSV_START + 13)
+#define BURIED_PITFALL_HOLE_RSV14 (BURIED_PITFALL_HOLE_RSV_START + 14)
+#define BURIED_PITFALL_HOLE_RSV15 (BURIED_PITFALL_HOLE_RSV_START + 15)
+#define BURIED_PITFALL_HOLE_RSV16 (BURIED_PITFALL_HOLE_RSV_START + 16)
+#define BURIED_PITFALL_HOLE_RSV17 (BURIED_PITFALL_HOLE_RSV_START + 17)
+#define BURIED_PITFALL_HOLE_RSV18 (BURIED_PITFALL_HOLE_RSV_START + 18)
+#define BURIED_PITFALL_HOLE_RSV19 (BURIED_PITFALL_HOLE_RSV_START + 19)
+#define BURIED_PITFALL_HOLE_RSV20 (BURIED_PITFALL_HOLE_RSV_START + 20)
+#define BURIED_PITFALL_HOLE_RSV21 (BURIED_PITFALL_HOLE_RSV_START + 21)
+#define BURIED_PITFALL_HOLE_RSV22 (BURIED_PITFALL_HOLE_RSV_START + 22)
+#define BURIED_PITFALL_HOLE_RSV23 (BURIED_PITFALL_HOLE_RSV_START + 23)
+#define BURIED_PITFALL_HOLE_RSV24 (BURIED_PITFALL_HOLE_RSV_START + 24)
+#define BURIED_PITFALL_HOLE_RSV_END BURIED_PITFALL_HOLE_RSV24
 #define SHINE_SPOT 0x005C
 #define HOLE_SHINE 0x005D
 #define TREE_BEES 0x005E
@@ -535,39 +802,40 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 /* end of environmental objects */
 
 #define SIGNBOARD_START 0x0900
-#define SIGNBOARD (SIGNBOARD_START)
-#define SIGNBOARD0_PLR0 (SIGNBOARD_START + 1)
-#define SIGNBOARD1_PLR0 (SIGNBOARD0_PLR0 + 1)
-#define SIGNBOARD2_PLR0 (SIGNBOARD1_PLR0 + 1)
-#define SIGNBOARD3_PLR0 (SIGNBOARD2_PLR0 + 1)
-#define SIGNBOARD4_PLR0 (SIGNBOARD3_PLR0 + 1)
-#define SIGNBOARD5_PLR0 (SIGNBOARD4_PLR0 + 1)
-#define SIGNBOARD6_PLR0 (SIGNBOARD5_PLR0 + 1)
-#define SIGNBOARD7_PLR0 (SIGNBOARD6_PLR0 + 1)
-#define SIGNBOARD0_PLR1 (SIGNBOARD7_PLR0 + 1)
-#define SIGNBOARD1_PLR1 (SIGNBOARD0_PLR1 + 1)
-#define SIGNBOARD2_PLR1 (SIGNBOARD1_PLR1 + 1)
-#define SIGNBOARD3_PLR1 (SIGNBOARD2_PLR1 + 1)
-#define SIGNBOARD4_PLR1 (SIGNBOARD3_PLR1 + 1)
-#define SIGNBOARD5_PLR1 (SIGNBOARD4_PLR1 + 1)
-#define SIGNBOARD6_PLR1 (SIGNBOARD5_PLR1 + 1)
-#define SIGNBOARD7_PLR1 (SIGNBOARD6_PLR1 + 1)
-#define SIGNBOARD0_PLR2 (SIGNBOARD7_PLR1 + 1)
-#define SIGNBOARD1_PLR2 (SIGNBOARD0_PLR2 + 1)
-#define SIGNBOARD2_PLR2 (SIGNBOARD1_PLR2 + 1)
-#define SIGNBOARD3_PLR2 (SIGNBOARD2_PLR2 + 1)
-#define SIGNBOARD4_PLR2 (SIGNBOARD3_PLR2 + 1)
-#define SIGNBOARD5_PLR2 (SIGNBOARD4_PLR2 + 1)
-#define SIGNBOARD6_PLR2 (SIGNBOARD5_PLR2 + 1)
-#define SIGNBOARD7_PLR2 (SIGNBOARD6_PLR2 + 1)
-#define SIGNBOARD0_PLR3 (SIGNBOARD7_PLR2 + 1)
-#define SIGNBOARD1_PLR3 (SIGNBOARD0_PLR3 + 1)
-#define SIGNBOARD2_PLR3 (SIGNBOARD1_PLR3 + 1)
-#define SIGNBOARD3_PLR3 (SIGNBOARD2_PLR3 + 1)
-#define SIGNBOARD4_PLR3 (SIGNBOARD3_PLR3 + 1)
-#define SIGNBOARD5_PLR3 (SIGNBOARD4_PLR3 + 1)
-#define SIGNBOARD6_PLR3 (SIGNBOARD5_PLR3 + 1)
-#define SIGNBOARD7_PLR3 (SIGNBOARD6_PLR3 + 1)
+#define SIGNBOARD0_PLR0 (SIGNBOARD_START + 0)
+#define SIGNBOARD1_PLR0 (SIGNBOARD_START + 1)
+#define SIGNBOARD2_PLR0 (SIGNBOARD_START + 2)
+#define SIGNBOARD3_PLR0 (SIGNBOARD_START + 3)
+#define SIGNBOARD4_PLR0 (SIGNBOARD_START + 4)
+#define SIGNBOARD5_PLR0 (SIGNBOARD_START + 5)
+#define SIGNBOARD6_PLR0 (SIGNBOARD_START + 6)
+#define SIGNBOARD7_PLR0 (SIGNBOARD_START + 7)
+#define SIGNBOARD0_PLR1 (SIGNBOARD_START + 8)
+#define SIGNBOARD1_PLR1 (SIGNBOARD_START + 9)
+#define SIGNBOARD2_PLR1 (SIGNBOARD_START + 10)
+#define SIGNBOARD3_PLR1 (SIGNBOARD_START + 11)
+#define SIGNBOARD4_PLR1 (SIGNBOARD_START + 12)
+#define SIGNBOARD5_PLR1 (SIGNBOARD_START + 13)
+#define SIGNBOARD6_PLR1 (SIGNBOARD_START + 14)
+#define SIGNBOARD7_PLR1 (SIGNBOARD_START + 15)
+#define SIGNBOARD0_PLR2 (SIGNBOARD_START + 16)
+#define SIGNBOARD1_PLR2 (SIGNBOARD_START + 17)
+#define SIGNBOARD2_PLR2 (SIGNBOARD_START + 18)
+#define SIGNBOARD3_PLR2 (SIGNBOARD_START + 19)
+#define SIGNBOARD4_PLR2 (SIGNBOARD_START + 20)
+#define SIGNBOARD5_PLR2 (SIGNBOARD_START + 21)
+#define SIGNBOARD6_PLR2 (SIGNBOARD_START + 22)
+#define SIGNBOARD7_PLR2 (SIGNBOARD_START + 23)
+#define SIGNBOARD0_PLR3 (SIGNBOARD_START + 24)
+#define SIGNBOARD1_PLR3 (SIGNBOARD_START + 25)
+#define SIGNBOARD2_PLR3 (SIGNBOARD_START + 26)
+#define SIGNBOARD3_PLR3 (SIGNBOARD_START + 27)
+#define SIGNBOARD4_PLR3 (SIGNBOARD_START + 28)
+#define SIGNBOARD5_PLR3 (SIGNBOARD_START + 29)
+#define SIGNBOARD6_PLR3 (SIGNBOARD_START + 30)
+#define SIGNBOARD7_PLR3 (SIGNBOARD_START + 31)
+#define SIGNBOARD (SIGNBOARD_START + 32)
+#define SIGNBOARD_END (SIGNBOARD)
 
 #define FTR0_START 0x1000
 #define FTR_CLASSIC_WARDROBE 0x1004
@@ -593,6 +861,10 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define FTR_DRACAENA_EAST 0x13B1
 #define FTR_DRACAENA_NORTH 0x13B2
 #define FTR_DRACAENA_WEST 0x13B3
+
+#define FTR_MANHOLE_COVER 0x1444
+
+#define FTR_BATH_MAT 0x154C
 
 #define HANIWA_START 0x15B0
 #define FTR_HANIWA000_SOUTH (HANIWA_START +   0)
@@ -2016,6 +2288,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITM_DIARY_END (ITM_DIARY_START + 16)
 
 #define ITM_TICKET_START 0x2C00
+#define ITM_TICKET_END (ITM_TICKET_START + 95)
 
 #define ITM_INSECT_START 0x2D00
 #define ITM_INSECT00 (ITM_INSECT_START + 0)
@@ -2174,6 +2447,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define DOOR1 (DOOR0 + 1) /* 0x4001 */
 
 #define EXIT_DOOR 0x4080
+#define EXIT_DOOR1 (EXIT_DOOR + 1) /* 0x4081 */
 
 #define NPC_HOUSE_START 0x5000
 #define NPC_HOUSE000 NPC_HOUSE_START
@@ -2263,6 +2537,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define BOAT (STRUCTURE_START + 79)
 #define COTTAGE_MY (STRUCTURE_START + 80)
 #define COTTAGE_NPC (STRUCTURE_START + 81)
+#define COTTAGE_NPC_END (COTTAGE_NPC + 1)
 #define PORT_SIGN (STRUCTURE_START + 82)
 #define STRUCTURE_END (STRUCTURE_START + 83)
 
@@ -2276,6 +2551,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ETC_SNOWMAN_BALL_A (ETC_START + 13)
 #define ETC_SNOWMAN_BALL_B (ETC_START + 14)
 #define ETC_TRAIN_WINDOW (ETC_START + 17)
+#define ETC_UKI (ETC_START + 18)
 
 #define MISC_ACTOR_START 0x9000
 #define MISC_ACTOR_SAMPLE MISC_ACTOR_START
@@ -2751,6 +3027,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define DUMMY_DOUZOU 0xF11D
 #define DUMMY_NAMEPLATE 0xF11F
 #define DUMMY_MUSEUM 0xF120
+#define DUMMY_BRIDGE 0xF121
 #define DUMMY_FLAG 0xF122
 #define DUMMY_COTTAGE_MY 0xF123
 #define DUMMY_COTTAGE_NPC 0xF124
@@ -2790,6 +3067,31 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define RSV_POLICE_ITEM_31 0xF147
 #define RSV_POLICE_ITEM_END 0xF148
 
+#define RSV_SHOP_PAPER 0xFE00
+#define RSV_SHOP_CLOTH 0xFE01
+#define RSV_SHOP_FTR 0xFE02
+#define RSV_SHOP_CARPET 0xFE03
+#define RSV_SHOP_WALL 0xFE04
+#define RSV_SHOP_HALLOWEEN 0xFE05
+#define RSV_SHOP_TOOL 0xFE06
+#define RSV_SHOP_EVENT 0xFE07
+#define RSV_SHOP_PLANT 0xFE08
+#define RSV_SHOP_RARE 0xFE09
+#define RSV_SHOP_UMBRELLA 0xFE0A
+#define RSV_SHOP_PAINT 0xFE0B
+#define RSV_SHOP_SIGNBOARD 0xFE0C
+#define RSV_SHOP_FE0D 0xFE0D
+#define RSV_SHOP_SOLD_PAPER 0xFE0E
+#define RSV_SHOP_SOLD_CLOTH 0xFE0F
+#define RSV_SHOP_SOLD_FTR 0xFE10
+#define RSV_SHOP_SOLD_CARPET 0xFE11
+#define RSV_SHOP_SOLD_WALL 0xFE12
+#define RSV_SHOP_SOLD_PLANT 0xFE13
+#define RSV_SHOP_SOLD_TOOL 0xFE14
+#define RSV_SHOP_SOLD_RARE 0xFE15
+#define RSV_SHOP_SOLD_UMBRELLA 0xFE16
+#define RSV_SHOP_SOLD_PAINT 0xFE17
+#define RSV_SHOP_SOLD_SIGNBOARD 0xFE18
 #define RSV_DOOR 0xFE1B
 #define RSV_FE1C 0xFE1C
 #define RSV_FE1F 0xFE1F
@@ -2801,6 +3103,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define RSV_CLOTH5 0xFE25
 #define RSV_CLOTH6 0xFE26
 #define RSV_CLOTH7 0xFE27
+#define RSV_SIGNBOARD 0xFE30
 #define RSV_NW_ORIGINAL0 0xFE31
 #define RSV_NW_ORIGINAL1 0xFE32
 #define RSV_NW_ORIGINAL2 0xFE33

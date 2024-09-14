@@ -86,7 +86,7 @@ typedef struct Save_s {
     /* 0x00001A */ u16
         copy_protect; /* 'unique' value between [1, 65520] used for copy protection (see mCD_get_land_copyProtect) */
     /* 0x00001C */ u8 pad_1C[4];
-    /* 0x000020 */ Private_c private[PLAYER_NUM];                        /* player data */
+    /* 0x000020 */ Private_c private_data[PLAYER_NUM];                   /* player data */
     /* 0x009120 */ mLd_land_info_c land_info;                            /* town name & id */
     /* 0x00912C */ mNtc_board_post_c noticeboard[mNtc_BOARD_POST_COUNT]; /* noticeboard posts */
     /* 0x009CE4 */ u8 pad_9CE4[4];
@@ -137,7 +137,7 @@ typedef struct Save_s {
                                     fail of town ranking */
     /* 0x021395 */ u8 clear_grass; /* set by Wisp, removes all weeds */
     /* 0x021396 */ u8 _021396[2];
-    /* 0x021398 */ lbRTC_year_t event_year; /* might not exist and just be lbRTC_year_t */
+    /* 0x021398 */ s16 event_year;
     /* 0x02139A */ u8 unused_2139C[6];
     /* 0x0213A0 */ u8 keep_house_size[PLAYER_NUM]; /* saved flags for house sizes */
     /* 0x0213A4 */ lbRTC_ymd_c force_remove_date;  /* last time the NPC force remove timer was updated */
@@ -241,11 +241,12 @@ typedef struct common_data_s {
     /* 0x028592 */ s16 demo_profiles[2]; /* demo_profiles[0] is for demo_clip, demo_profiles[1] is for demo_clip2 */
     /* 0x028596 */ u16 copy_protect_code;
     /* 0x028598 */ int event_keep_flags[4];
-    /* 0x0285A8 */ u8 _285A8[0x0285BE - 0x0285A8];
+    /* 0x0285A8 */ u8 _285A8[0x0285BD - 0x0285A8];
+    /* 0x0285BD */ s8 player_warp_request;
     /* 0x0285BE */ s8 player_actor_exists;
-    /* 0x0285BF */ s8 payment_completed_type;
+    /* 0x0285BF */ s8 complete_payment_type;
     /* 0x0285C0 */ s8 player_decoy_flag;
-    /* 0x0285C1 */ u8 _285C1;
+    /* 0x0285C1 */ s8 axe_damage;
     /* 0x0285C2 */ u8 make_npc2_actor;
     /* 0x0285C4 */ s16 event_id;
     /* 0x0285C6 */ u8 event_title_flags;
@@ -258,8 +259,8 @@ typedef struct common_data_s {
     /* 0x028839 */ s8 player_bee_chase_flag;
     /* 0x02883A */ s8 goki_shocked_flag;
     /* 0x02883B */ u8 time_changed_flag;
-    /* 0x02883C */ u8 unable_to_wade_flag;
-    /* 0x02883D */ u8 _02883D;
+    /* 0x02883C */ s8 unable_wade;
+    /* 0x02883D */ s8 fail_emu_flag;
     /* 0x02883E */ u8 train_coming_flag;        /* state tracker for when train is going to spawn/has spawned */
     /* 0x02883F */ u8 train_exists_flag;        /* state tracker for when train exists */
     /* 0x028840 */ u8 train_control_state;      /* current train state */
@@ -308,7 +309,7 @@ typedef struct common_data_s {
     /* 0x02DB46 */ mCD_persistent_data_c travel_persistent_data; /* used for checking if travelling back to town */
     /* 0x02DBA2 */ s16 island_weather;
     /* 0x02DBA4 */ s16 island_weather_intensity;
-    /* 0x02DBA6 */ s16 _2DBA6;
+    /* 0x02DBA6 */ s16 sunburn_time;
     /* 0x02DBA8 */ u8 memcard_slot;
     /* 0X02DBAC */ int my_room_message_control_flags;
     /* 0x02DBB0 */ s16 can_look_goki_count;

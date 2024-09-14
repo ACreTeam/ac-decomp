@@ -1,0 +1,125 @@
+static int Player_actor_request_main_stung_bee_all(GAME* game, int prio) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+    int main_index = player->now_main_index;
+
+    if (main_index == mPlayer_INDEX_RELAX_ROD) {
+        mPlayer_main_relax_rod_c* relax_rod_p = &player->main_data.relax_rod;
+
+        relax_rod_p->bee_flag = TRUE;
+        return FALSE;
+    } else if (Player_actor_Check_is_demo_mode(main_index)) {
+        return FALSE;
+    } else if (Player_actor_check_request_main_able(game, mPlayer_INDEX_STUNG_BEE, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_STUNG_BEE, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Stung_bee(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_stung_bee_c* stung_bee_p = &player->main_data.stung_bee;
+    int anim1_idx;
+    int part_table_idx;
+
+    stung_bee_p->timer = 0.0f;
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_HATI1, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_HATI1, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     cKF_FRAMECONTROL_STOP, part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+    mBGMPsComp_make_ps_quiet(0x168);
+    if (player->bee_chase_bgm_flag) {
+        player->bee_chase_bgm_flag = FALSE;
+        mBGMPsComp_delete_ps_happening(BGM_BEE_CHASE, 0);
+    }
+
+    Player_actor_sound_hachi_sasareru(actorx);
+}
+
+static void Player_actor_Movement_Stung_bee(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_stung_bee_c* stung_bee_p = &player->main_data.stung_bee;
+    f32* timer_p = &stung_bee_p->timer;
+
+    Player_actor_Movement_Base_Braking(actorx);
+    if (*timer_p > 94.0f) {
+        add_calc_short_angle2(&actorx->shape_info.rotation.y, DEG2SHORT_ANGLE2(180.0f), 1.0f - sqrtf(0.5f), 2500, 50);
+        actorx->world.angle.y = actorx->shape_info.rotation.y;
+    }
+}
+
+static int Player_actor_CulcAnimation_Stung_bee(ACTOR* actorx, f32* last_anim0_cur_frame) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame);
+}
+
+static void Player_actor_ChangeAnimation_Stung_bee(ACTOR* actorx, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (end_flag && player->animation0_idx == mPlayer_ANIM_HATI1) {
+        int anim1_idx;
+        int part_table_idx;
+
+        Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_HATI2, -5.0f, &anim1_idx, &part_table_idx);
+        Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_HATI2, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                         cKF_FRAMECONTROL_STOP, part_table_idx);
+    }
+}
+
+static void Player_actor_SearchAnimation_Stung_bee(ACTOR* actorx, GAME* game, f32 frame) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE &&
+        player->animation0_idx == mPlayer_ANIM_HATI2) {
+        cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+        cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+        if (Player_actor_Check_AnimationFrame(fc0_p, 21.0f)) {
+            mNpc_SetTalkBee();
+            Common_Set(player_bee_swell_flag, TRUE);
+            Common_Set(player_bee_chase_flag, FALSE);
+            mPlib_change_player_face(game);
+        }
+    }
+}
+
+static void Player_actor_set_tex_anime_Stung_bee(ACTOR* actorx) {
+    Player_actor_set_tex_anime_pattern(actorx);
+}
+
+static void Player_actor_ObjCheck_Stung_bee(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Stung_bee(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_request_proc_index_fromStung_bee(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_stung_bee_c* stung_bee_p = &player->main_data.stung_bee;
+    f32* timer_p = &stung_bee_p->timer;
+
+    if (*timer_p > 252.0f) {
+        Player_actor_request_main_notice_bee_all(game, mPlayer_REQUEST_PRIORITY_26);
+    } else {
+        (*timer_p) += 1.0f;
+    }
+}
+
+static void Player_actor_main_Stung_bee(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    Player_actor_Movement_Stung_bee(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Stung_bee(actorx, &last_anim0_cur_frame);
+    Player_actor_ChangeAnimation_Stung_bee(actorx, game, end_flag);
+    Player_actor_SearchAnimation_Stung_bee(actorx, game, last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_tex_anime_Stung_bee(actorx);
+    Player_actor_ObjCheck_Stung_bee(actorx, game);
+    Player_actor_BGcheck_Stung_bee(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromStung_bee(actorx, game);
+}

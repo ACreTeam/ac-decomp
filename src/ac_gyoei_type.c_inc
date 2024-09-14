@@ -1,0 +1,55 @@
+typedef struct gyoei_type_s {
+    short size;
+    short search_area;
+    int bite_time;
+} aGYO_type_c;
+
+// clang-format off
+static aGYO_type_c gyoei_type[] = {
+    { 1, 3, 4 }, // aSOG_FISH_TYPE_CRUCIAN_CARP
+    { 2, 3, 2 }, // aSOG_FISH_TYPE_BROOK_TROUT
+    { 4, 2, 3 }, // aSOG_FISH_TYPE_CARP
+    { 4, 2, 3 }, // aSOG_FISH_TYPE_KOI
+    { 4, 3, 4 }, // aSOG_FISH_TYPE_CATFISH
+    { 1, 3, 3 }, // aSOG_FISH_TYPE_SMALL_BASS
+    { 3, 2, 2 }, // aSOG_FISH_TYPE_BASS
+    { 4, 1, 1 }, // aSOG_FISH_TYPE_LARGE_BASS
+    { 1, 4, 4 }, // aSOG_FISH_TYPE_BLUEGILL
+    { 5, 2, 4 }, // aSOG_FISH_TYPE_GIANT_CATFISH
+    { 5, 2, 1 }, // aSOG_FISH_TYPE_GIANT_SNAKEHEAD
+    { 4, 2, 3 }, // aSOG_FISH_TYPE_BARBEL_STEED
+    { 3, 3, 3 }, // aSOG_FISH_TYPE_DACE
+    { 1, 3, 3 }, // aSOG_FISH_TYPE_PALE_CHUB
+    { 0, 2, 1 }, // aSOG_FISH_TYPE_BITTERLING
+    { 0, 3, 3 }, // aSOG_FISH_TYPE_LOACH
+    { 0, 3, 3 }, // aSOG_FISH_TYPE_POND_SMELT
+    { 1, 2, 1 }, // aSOG_FISH_TYPE_SWEETFISH
+    { 1, 1, 1 }, // aSOG_FISH_TYPE_CHERRY_SALMON
+    { 4, 1, 1 }, // aSOG_FISH_TYPE_LARGE_CHAR
+    { 3, 2, 2 }, // aSOG_FISH_TYPE_RAINBOW_TROUT
+    { 5, 1, 1 }, // aSOG_FISH_TYPE_STRINGFISH
+    { 4, 2, 1 }, // aSOG_FISH_TYPE_SALMON
+    { 0, 2, 3 }, // aSOG_FISH_TYPE_GOLDFISH
+    { 1, 4, 3 }, // aSOG_FISH_TYPE_PIRANHA
+    { 3, 3, 2 }, // aSOG_FISH_TYPE_AROWANA
+    { 2, 1, 1 }, // aSOG_FISH_TYPE_EEL
+    { 1, 2, 4 }, // aSOG_FISH_TYPE_FRESHWATER_GOBY
+    { 1, 2, 2 }, // aSOG_FISH_TYPE_ANGELFISH
+    { 0, 2, 3 }, // aSOG_FISH_TYPE_GUPPY
+    { 0, 2, 3 }, // aSOG_FISH_TYPE_POPEYED_GOLDFISH
+    { 5, 2, 0 }, // aSOG_FISH_TYPE_COELACANTH
+    { 1, 4, 4 }, // aSOG_FISH_TYPE_CRAWFISH
+    { 0, 4, 3 }, // aSOG_FISH_TYPE_FROG
+    { 0, 2, 2 }, // aSOG_FISH_TYPE_KILLIFISH
+    { 3, 2, 4 }, // aSOG_FISH_TYPE_JELLYFISH
+    { 4, 3, 2 }, // aSOG_FISH_TYPE_SEA_BASS
+    { 4, 2, 1 }, // aSOG_FISH_TYPE_RED_SNAPPER
+    { 4, 2, 0 }, // aSOG_FISH_TYPE_BARRED_KNIFEJAW
+    { 6, 1, 1 }, // aSOG_FISH_TYPE_ARAPAIMA
+    { 7, 1, 1 }, // aSOG_FISH_TYPE_WHALE
+    { 0, 1, 3 }, // aSOG_FISH_TYPE_EMPTY_CAN
+    { 3, 2, 4 }, // aSOG_FISH_TYPE_BOOT
+    { 4, 2, 4 }, // aSOG_FISH_TYPE_OLD_TIRE
+    { 4, 2, 1 }, // aSOG_FISH_TYPE_SALMON2
+};
+// clang-format on

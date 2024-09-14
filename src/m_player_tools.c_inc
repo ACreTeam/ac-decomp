@@ -1,0 +1,57 @@
+
+static Vtx tol_sponge_1_v[] = {
+#include "assets/tol_sponge_1_v.inc"
+};
+
+static u16 tol_sponge_1_pal[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/tol_sponge_1_pal.inc"
+};
+
+static u8 tol_sponge_1_main1_tex_txt[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/tol_sponge_1_main1_tex_txt.inc"
+};
+
+// clang-format off
+static const Gfx tol_sponge_1_model[] = {
+    gsSPTexture(0, 0, 0, 0, G_ON),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2),
+    gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, COMBINED, 0, 0, 0, 0, COMBINED),
+    gsDPLoadTLUT_Dolphin(15, 16, 1, tol_sponge_1_pal),
+    gsDPLoadTextureBlock_4b_Dolphin(tol_sponge_1_main1_tex_txt, G_IM_FMT_CI, 16, 16, 15, GX_REPEAT, GX_REPEAT, 0, 0),
+    gsDPSetTileSize(0, 0, 0, 124, 124),
+    gsDPSetPrimColor(0, 128, 255, 255, 255, 255),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
+    gsSPVertex(&tol_sponge_1_v[0], 10, 0),
+    gsSPNTrianglesInit_5b(
+        16, // tri count
+        0, 1, 2, // tri0
+        3, 1, 4, // tri1
+        1, 5, 6 // tri2
+    ),
+    gsSPNTriangles_5b(
+        3, 4, 7, // tri0
+        0, 2, 8, // tri1
+        0, 8, 9, // tri2
+        6, 9, 7 // tri3
+    ),
+    gsSPNTriangles_5b(
+        8, 2, 3, // tri0
+        7, 9, 3, // tri1
+        3, 2, 1, // tri2
+        6, 4, 1 // tri3
+    ),
+    gsSPNTriangles_5b(
+        5, 1, 0, // tri0
+        3, 9, 8, // tri1
+        5, 0, 6, // tri2
+        9, 6, 0 // tri3
+    ),
+    gsSPNTriangles_5b(
+        4, 6, 7, // tri0
+        0, 0, 0, // tri1
+        0, 0, 0, // tri2
+        0, 0, 0 // tri3
+    ),
+    gsSPEndDisplayList(),
+};
+// clang-format on

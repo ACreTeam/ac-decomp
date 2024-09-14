@@ -16,7 +16,8 @@ static void change_FGUnit(ACTOR* actor, int type) {
         if (mSN_ClearSnowman(name) == 0) {
             int dug = FALSE;
 
-            if ((((*name >= BURIED_PITFALL_START) && (*name <= BURIED_PITFALL_END)) || (*name == SHINE_SPOT))) {
+            if ((((*name >= BURIED_PITFALL_HOLE_START) && (*name <= BURIED_PITFALL_HOLE_END)) ||
+                 (*name == SHINE_SPOT))) {
                 dug = TRUE;
             }
 
@@ -37,9 +38,9 @@ static void change_FGUnit(ACTOR* actor, int type) {
 
 static void aBRS_set_bgOffset(STRUCTURE_ACTOR* windmill, int idx) {
     static mCoBG_OffsetTable_c height_table_ct[9] = {
-        {0x64, 9, 9, 9, 9, 9, 0}, {0x64, 9, 9, 9, 9, 9, 0}, {0x64, 9, 9, 9, 9, 9, 0},
-        {0x64, 9, 9, 9, 9, 9, 0}, {0x64, 9, 9, 9, 9, 9, 0}, {0x64, 9, 9, 9, 9, 9, 0},
-        {0x64, 9, 9, 9, 9, 9, 0}, {0x64, 9, 9, 9, 9, 9, 0}, {0x64, 9, 9, 9, 9, 9, 0},
+        { 0x64, 9, 9, 9, 9, 9, 0 }, { 0x64, 9, 9, 9, 9, 9, 0 }, { 0x64, 9, 9, 9, 9, 9, 0 },
+        { 0x64, 9, 9, 9, 9, 9, 0 }, { 0x64, 9, 9, 9, 9, 9, 0 }, { 0x64, 9, 9, 9, 9, 9, 0 },
+        { 0x64, 9, 9, 9, 9, 9, 0 }, { 0x64, 9, 9, 9, 9, 9, 0 }, { 0x64, 9, 9, 9, 9, 9, 0 },
     };
 
     static mCoBG_OffsetTable_c* height_table[2] = {
@@ -182,7 +183,7 @@ static void aBRS_open_wait(STRUCTURE_ACTOR* actor, GAME_PLAY* play) {
     if (actor == GET_PLAYER_ACTOR_NOW()->get_door_label_proc(gamePT)) {
         aBRS_rewrite_out_data(&actor->actor_class, play);
         goto_other_scene(play, &aBRS_br_shop_door_data, 1);
-    } else if (mPlib_check_player_actor_main_index_OutDoorMove(play) == 0) {
+    } else if (mPlib_check_player_actor_main_index_OutDoorMove(&play->game) == 0) {
         if (aBRS_check_player(&actor->actor_class, play) == 0) {
             if (aBRS_open_check(&actor->actor_class) != 2) {
                 aBRS_setup_action(actor, 2);

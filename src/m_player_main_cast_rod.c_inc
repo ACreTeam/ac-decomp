@@ -1,0 +1,82 @@
+static int Player_actor_request_main_cast_rod(GAME* game, const xyz_t* pos, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_CAST_ROD, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.cast_rod.bobber_target_pos = *pos;
+        Player_actor_request_main_index(game, mPlayer_INDEX_CAST_ROD, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Cast_rod(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+    f32 frame = player->item_keyframe.frame_control.current_frame;
+    mPlayer_request_cast_rod_c* req_cast = &player->requested_main_index_data.cast_rod;
+    mPlayer_main_cast_rod_c* main_cast = &player->main_data.cast_rod;
+    int kind = Player_actor_Get_ItemKind_from_submenu();
+
+    main_cast->bobber_target_pos = req_cast->bobber_target_pos;
+
+    Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_UMBRELLA1, mPlayer_INDEX_TURN_DASH, 0.0f, frame, 0);
+    Player_actor_setup_main_Base(actor, game);
+
+    Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_SWING_ROD, actor->world.position, 2,
+                                                   actor->shape_info.rotation.y, game, RSV_NO,
+                                                   actor->bg_collision_check.result.unit_attribute, 0);
+}
+
+static void Player_actor_Movement_Cast_rod(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Cast_rod(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetSound_Cast_rod(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 20.0f)) {
+        Player_actor_sound_ROD_STROKE(actor);
+    }
+}
+
+static void Player_actor_SearchAnimation_Cast_rod(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetSound_Cast_rod(actor);
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+    }
+}
+
+static void Player_actor_ObjCheck_Cast_rod(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Cast_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromCast_rod(GAME* game, int ready) {
+    if (ready) {
+        Player_actor_request_main_relax_rod(game, mPlayer_REQUEST_PRIORITY_22);
+    }
+}
+
+static void Player_actor_main_Cast_rod(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int end_flag;
+
+    Player_actor_Movement_Cast_rod(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    end_flag = Player_actor_CulcAnimation_Cast_rod(actor, &frame_calc);
+    Player_actor_SearchAnimation_Cast_rod(actor, game, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Cast_rod(actor, game);
+    Player_actor_BGcheck_Cast_rod(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromCast_rod(game, end_flag);
+}

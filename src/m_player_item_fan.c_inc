@@ -1,0 +1,17 @@
+static int Player_actor_Item_main_fan_normal(ACTOR* actor, GAME* game) {
+    return 0;
+}
+
+static void Player_actor_Item_draw_fan(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int type;
+
+    type = player->item_shape_type[player->item_bank_idx];
+
+    OPEN_POLY_OPA_DISP(game->graph);
+    gSPDisplayList(POLY_OPA_DISP++, mPlib_Get_Item_DataPointer(type));
+
+    CLOSE_POLY_OPA_DISP(game->graph);
+    player->item_rod_top_pos_set = FALSE;
+    player->balloon_start_pos_set_flag = FALSE;
+}

@@ -1,0 +1,144 @@
+static int Player_actor_request_main_wade_snowball_all(GAME* game, int dir, const xyz_t* snowball_dist_p,
+                                                       int priority) {
+    if (GET_PLAYER_ACTOR_GAME(game)->now_main_index == mPlayer_INDEX_PUSH_SNOWBALL) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        if (Player_actor_check_request_main_able(game, mPlayer_INDEX_WADE_SNOWBALL, priority)) {
+            player->requested_main_index_data.wade_snowball.dir = dir;
+            player->requested_main_index_data.wade_snowball.snowball_dist = *snowball_dist_p;
+            player->requested_main_index_data.wade_snowball.label = player->main_data.push_snowball.label;
+
+            Player_actor_request_main_index(game, mPlayer_INDEX_WADE_SNOWBALL, priority);
+
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Wade_snowball(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    xyz_t* world_pos;
+    xyz_t camera_pos;
+    int dir;
+    f32 t;
+    xyz_t* end_pos;
+
+    Player_actor_setup_main_Wade_snowball_other_func1(actor, game);
+    dir = player->requested_main_index_data.wade_snowball.dir;
+
+    player->main_data.wade_snowball.dir = dir;
+    world_pos = &actor->world.position;
+    end_pos = &player->main_data.wade_snowball.end_pos;
+
+    player->main_data.wade_snowball.start_pos = *world_pos;
+    player->main_data.wade_snowball.start_pos = *world_pos;
+
+    Player_actor_Culc_wade_end_pos(world_pos, end_pos, dir, 18.00001f);
+
+    player->main_data.wade_snowball.timer = 0.0f;
+
+    player->main_data.wade_snowball.snowball_dist = player->requested_main_index_data.wade_snowball.snowball_dist;
+    player->main_data.wade_snowball.snowball_label = player->requested_main_index_data.wade_snowball.label;
+
+    Player_actor_setup_main_Base(actor, game);
+    camera_pos = player->main_data.wade_snowball.end_pos;
+
+    camera_pos.y += actor->eye.position.y - world_pos->y;
+
+    Camera2_request_main_wade(play, &camera_pos, 9, 36.0f);
+
+    Player_actor_setup_main_Wade_snowball_other_func2(actor, game);
+}
+
+static void Player_actor_settle_main_Wade_snowball(ACTOR* actor, GAME* game) {
+    mDemo_End(actor);
+}
+
+static void Player_actor_ChangeAnimation_Wade_snowball(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (player->animation0_idx != mPlayer_ANIM_WAIT1 && player->crash_snowball_for_wade != FALSE) {
+        int anim_idx;
+        int part_table_idx;
+        Player_actor_SetupItem_Base1(actor, mPlayer_ANIM_WAIT1, -5.0f, &anim_idx, &part_table_idx);
+        Player_actor_InitAnimation_Base1(actor, game, mPlayer_ANIM_WAIT1, anim_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                         part_table_idx);
+    }
+}
+
+static int Player_actor_CulcAnimation_Wade_snowball(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (player->animation0_idx == mPlayer_ANIM_WAIT1) {
+        f32 calc_frame;
+        return Player_actor_CulcAnimation_Base2(actor, &calc_frame);
+    } else {
+        return 0;
+    }
+}
+
+static void Player_actor_Movement_Wade_snowball(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_wade_snowball_c* main_wade_snowball_p = &player->main_data.wade_snowball;
+    xyz_t* start_pos;
+    xyz_t* end_pos;
+    f32 brake;
+
+    start_pos = &main_wade_snowball_p->start_pos;
+    end_pos = &main_wade_snowball_p->end_pos;
+
+    brake = get_percent_forAccelBrake(player->main_data.wade_snowball.timer, 0.0f, 36.0f, 1.1999999f, 34.8f);
+    actor->world.position.x = start_pos->x + (brake * (end_pos->x - start_pos->x));
+    actor->world.position.y = start_pos->y + (brake * (end_pos->y - start_pos->y));
+    actor->world.position.z = start_pos->z + (brake * (end_pos->z - start_pos->z));
+
+    Player_actor_Movement_Base_Stop(actor, FALSE);
+}
+
+static void Player_actor_BGcheck_Wade_snowball(ACTOR* actor) {
+    Player_actor_BGcheck_common_type2(actor);
+}
+
+static int Player_actor_able_request_proc_index_fromWade_snowball_common(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (player->main_data.wade_snowball.timer > 36.0f) {
+        return TRUE;
+    } else {
+        player->main_data.wade_snowball.timer += 1.0f;
+        return FALSE;
+    }
+}
+
+static void Player_actor_request_proc_index_fromWade_snowball(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_able_request_proc_index_fromWade_snowball_common(actor)) {
+        int anim_idx = player->animation0_idx;
+        Player_actor_SettleRequestMainIndexPriority(actor);
+
+        if (anim_idx != mPlayer_ANIM_WAIT1 && player->crash_snowball_for_wade == FALSE) {
+            Player_actor_request_main_push_snowball_all(game, (void*)player->main_data.wade_snowball.snowball_label, 1,
+                                                        mPlayer_REQUEST_PRIORITY_2);
+        } else {
+            Player_actor_request_main_walk_all(game, &player->main_data.wade_snowball.end_pos, -5.0f, 6, 1);
+        }
+    }
+}
+
+static void Player_actor_main_Wade_snowball(ACTOR* actor, GAME* game) {
+    if (Player_actor_Request_Wade(actor) != FALSE) {
+        Player_actor_main_Wade_snowball_other_func1(actor, game);
+        Player_actor_Movement_Wade_snowball(actor);
+        Player_actor_Reinput_force_position_angle(actor, game);
+        Player_actor_ChangeAnimation_Wade_snowball(actor, game);
+        Player_actor_CulcAnimation_Wade_snowball(actor);
+        Player_actor_recover_lean_angle(actor);
+        Player_actor_set_eye_pattern_normal(actor);
+        Player_actor_BGcheck_Wade_snowball(actor);
+        Player_actor_Item_main(actor, game);
+        Player_actor_request_proc_index_fromWade_snowball(actor, game);
+    }
+}

@@ -1,0 +1,174 @@
+static int Player_actor_request_main_shock_all(GAME* game, f32 start_time, s16 target_angle_y, s8 bee_chase_bgm_flag,
+                                               int axe_flag, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_SHOCK, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_shock_c* req_shock_p = &player->requested_main_index_data.shock;
+
+        req_shock_p->start_time = start_time;
+        req_shock_p->target_angle_y = target_angle_y;
+        req_shock_p->bee_chase_bgm_flag = bee_chase_bgm_flag;
+        req_shock_p->axe_flag = axe_flag;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_SHOCK, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Shock(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_shock_c* req_shock_p = &player->requested_main_index_data.shock;
+    mPlayer_main_shock_c* shock_p = &player->main_data.shock;
+    int anim1_idx;
+    int part_table_idx;
+
+    shock_p->start_time = req_shock_p->start_time;
+    shock_p->target_angle_y = req_shock_p->target_angle_y;
+    shock_p->timer = 0.0f;
+    shock_p->end_time = req_shock_p->start_time + 44.0f;
+    shock_p->bee_chase_bgm_flag = req_shock_p->bee_chase_bgm_flag;
+    shock_p->axe_flag = req_shock_p->axe_flag;
+    shock_p->bgm_stop_flag = FALSE;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_WAIT1, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_WAIT1, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Shock(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_shock_c* shock_p = &player->main_data.shock;
+
+    if (shock_p->bee_chase_bgm_flag) {
+        player->bee_chase_bgm_flag = TRUE;
+        mBGMPsComp_delete_ps_quiet();
+        mBGMPsComp_make_ps_happening(BGM_BEE_CHASE, 0x168);
+    }
+}
+
+static void Player_actor_Movement_Shock(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_shock_c* shock_p = &player->main_data.shock;
+
+    Player_actor_Movement_Base_Braking(actorx);
+    add_calc_short_angle2(&actorx->shape_info.rotation.y, shock_p->target_angle_y, 1.0f - sqrtf(0.5f), 2500, 50);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static int Player_actor_CulcAnimation_Shock(ACTOR* actorx, f32* last_anim0_cur_frame) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame);
+}
+
+static void Player_actor_Set_FeelEffect_Shock(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    int anim0_idx = player->animation0_idx;
+
+    if (anim0_idx == mPlayer_ANIM_GAAAN1) {
+        cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+        cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+        if (Player_actor_Check_AnimationFrame(fc0_p, 5.0f)) {
+            player->draw_effect_idx = eEC_EFFECT_SHOCK + 1;
+        }
+    }
+}
+
+static void Player_actor_SearchAnimation_Shock(ACTOR* actorx, f32 frame) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_Set_FeelEffect_Shock(actorx);
+    }
+}
+
+static void Player_actor_ChangeAnimation_Shock(ACTOR* actorx, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    int now_anim_idx = player->animation0_idx;
+    int anim0_idx;
+    int anim1_idx;
+    int mode;
+    int part_table_idx;
+    mPlayer_main_shock_c* shock_p = &player->main_data.shock;
+
+    if (now_anim_idx == mPlayer_ANIM_WAIT1) {
+        if (shock_p->timer >= shock_p->start_time) {
+            anim0_idx = mPlayer_ANIM_GAAAN1;
+            mode = cKF_FRAMECONTROL_STOP;
+        } else {
+            return;
+        }
+
+    } else if (now_anim_idx == mPlayer_ANIM_GAAAN1) {
+        if (end_flag) {
+            anim0_idx = mPlayer_ANIM_GAAAN2;
+            mode = cKF_FRAMECONTROL_REPEAT;
+        } else {
+            return;
+        }
+
+    } else {
+        return;
+    }
+
+    Player_actor_SetupItem_Base1(actorx, anim0_idx, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base2(actorx, game, anim0_idx, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f, mode, part_table_idx);
+}
+
+static void Player_actor_set_eye_pattern_Shock(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    int now_anim_idx = player->animation0_idx;
+
+    if (now_anim_idx == mPlayer_ANIM_GAAAN1) {
+        Player_actor_set_tex_anime_pattern(actorx);
+    } else if (now_anim_idx == mPlayer_ANIM_GAAAN2) {
+        Player_actor_set_eye_pattern(actorx, 6);
+        Player_actor_set_mouth_pattern(actorx, 5);
+    } else {
+        Player_actor_set_eye_pattern_normal(actorx);
+        Player_actor_set_mouth_pattern(actorx, 0);
+    }
+}
+
+static void Player_actor_ObjCheck_Shock(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Shock(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_request_proc_index_fromShock(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_shock_c* shock_p = &player->main_data.shock;
+    f32* timer_p = &shock_p->timer;
+
+    if (*timer_p < shock_p->end_time) {
+        (*timer_p) += 1.0f;
+        if (shock_p->bee_chase_bgm_flag && shock_p->axe_flag && shock_p->bgm_stop_flag == FALSE) {
+            if (*timer_p >= 12.0f) {
+                mBGMPsComp_make_ps_quiet(0);
+                shock_p->bgm_stop_flag = TRUE;
+            }
+        }
+    } else {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Shock(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    Player_actor_Movement_Shock(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Shock(actorx, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Shock(actorx, last_anim0_cur_frame);
+    Player_actor_ChangeAnimation_Shock(actorx, game, end_flag);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_Shock(actorx);
+    Player_actor_ObjCheck_Shock(actorx, game);
+    Player_actor_BGcheck_Shock(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromShock(actorx, game);
+}

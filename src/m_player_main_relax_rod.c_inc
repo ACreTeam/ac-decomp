@@ -1,0 +1,105 @@
+static int Player_actor_request_main_relax_rod(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_RELAX_ROD, priority)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_RELAX_ROD, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Relax_rod(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_relax_rod_c* main_relax = &player->main_data.relax_rod;
+    int kind = Player_actor_Get_ItemKind_from_submenu();
+
+    main_relax->bee_flag = FALSE;
+    main_relax->mosquito_flag = FALSE;
+
+    Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_UMB_OPEN1, mPlayer_INDEX_WADE, -5.0f, 180.0f, 1);
+    Player_actor_InitAnimation_Base2(actor, game, eEC_EFFECT_TURI_MIZU, eEC_EFFECT_TURI_MIZU, 1.0f, 1.0f, 0.5f, -3.0f,
+                                     1, 0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_Movement_Relax_rod(ACTOR* actor) {
+    Player_actor_SetPlayerAngle_forUki(actor);
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625002f);
+}
+
+static int Player_actor_CulcAnimation_Relax_rod(ACTOR* actor) {
+    f32 frame_calc;
+
+    return Player_actor_CulcAnimation_Base2(actor, &frame_calc);
+}
+
+static void Player_actor_ObjCheck_Relax_rod(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Relax_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromRelax_rod(ACTOR* actor, GAME* game, int status) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    UKI_ACTOR* uki = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+    if (mPlib_check_player_warp_forEvent()) {
+        uki->command = 8;
+    }
+
+    switch (status) {
+        case 3:
+            if (!mPlib_check_player_warp_forEvent()) {
+                uki->command = 3;
+                break;
+            }
+
+            break;
+
+        case 5:
+            Player_actor_request_main_vib_rod(game, mPlayer_REQUEST_PRIORITY_26);
+            break;
+
+        case 6:
+            if (!mPlib_check_player_warp_forEvent()) {
+                Player_actor_request_main_collect_rod(game, mPlayer_REQUEST_PRIORITY_26);
+            } else {
+                uki->command = 7;
+            }
+            break;
+
+        default:
+
+            if (uki != NULL) {
+                if (Player_actor_CheckController_forRod(game)) {
+                    if (!mPlib_check_player_warp_forEvent()) {
+                        uki->command = 6;
+                    } else {
+                        uki->command = 7;
+                    }
+                } else if (!mPlib_check_player_warp_forEvent() &&
+                           (player->main_data.relax_rod.bee_flag || player->main_data.relax_rod.mosquito_flag)) {
+                    uki->command = 8;
+                    uki->command = 7;
+                }
+            }
+            break;
+    }
+}
+
+static void Player_actor_main_Relax_rod(ACTOR* actor, GAME* game) {
+    int status;
+
+    Player_actor_Movement_Relax_rod(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CulcAnimation_Relax_rod(actor);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Relax_rod(actor, game);
+    Player_actor_BGcheck_Relax_rod(actor);
+    status = Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromRelax_rod(actor, game, status);
+    Player_actor_main_Relax_rod_other_func2(actor, game);
+}

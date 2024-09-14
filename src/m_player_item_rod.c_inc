@@ -1,0 +1,388 @@
+static void Player_actor_Item_Set_Scale_forUki_normal(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    ACTOR* rod = player->fishing_rod_actor_p;
+    f32 scale = 0.01f;
+
+    if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_TAKEOUT_ITEM ||
+        mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_PUTIN_ITEM) {
+        scale *= player->item_scale;
+    }
+
+    if (rod != NULL) {
+        rod->scale.x = rod->scale.y = rod->scale.z = scale;
+    }
+}
+
+static void Player_actor_Item_Set_Value_forUki_normal(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_Set_Command_forUki(actor, 1);
+    Player_actor_Item_Set_RightHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_PosSpeed_forUki(actor);
+    Player_actor_Item_Set_AngleSpeedY_forUki(actor);
+    Player_actor_Item_Set_RodTopPos_forUki(actor);
+    Player_actor_Item_Set_Scale_forUki_normal(actor, game);
+}
+
+static int Player_actor_Item_main_rod_normal(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_CulcAnimation_Base(actor);
+    Player_actor_Item_Set_Value_forUki_normal(actor, game);
+    return 0;
+}
+
+static void Player_actor_Item_Set_Value_forUki_ready(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_Set_Command_forUki(actor, 2);
+    Player_actor_Item_Set_RightHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_PosSpeed_forUki(actor);
+    Player_actor_Item_Set_AngleSpeedY_forUki(actor);
+    Player_actor_Item_Set_RodTopPos_forUki(actor);
+}
+
+static int Player_actor_Item_main_rod_ready(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_CulcAnimation_Base(actor);
+    Player_actor_Item_Set_Value_forUki_ready(actor);
+    return 0;
+}
+
+static void Player_actor_Item_Set_CastGoalPoint_forUki_cast(ACTOR* actor, int index) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (index == mPlayer_INDEX_CAST_ROD) {
+        UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+        if (rod != NULL) {
+            rod->cast_goal_point = player->main_data.uki.cast_goal_point;
+        }
+    }
+}
+
+static void Player_actor_Item_Set_Value_forUki_cast(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_Set_Command_forUki(actor, 3);
+    Player_actor_Item_Set_RightHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_PosSpeed_forUki(actor);
+    Player_actor_Item_Set_AngleSpeedY_forUki(actor);
+    Player_actor_Item_Set_RodTopPos_forUki(actor);
+}
+
+static int Player_actor_Item_Check_Status_forUki_cast(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+    if (rod != NULL) {
+        switch (rod->status) {
+            case aUKI_STATUS_FLOAT:
+            case aUKI_STATUS_VIB:
+                return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static int Player_actor_Item_main_rod_cast(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int status;
+
+    Player_actor_Item_CulcAnimation_Base(actor);
+    Player_actor_Item_Set_Value_forUki_cast(actor);
+    status = Player_actor_Item_Check_Status_forUki_cast(actor);
+    Player_actor_Item_Set_CastGoalPoint_forUki_cast(actor, player->now_main_index);
+    return status;
+}
+
+static void Player_actor_Item_Set_Value_forUki_air(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_Set_Command_forUki(actor, 4);
+    Player_actor_Item_Set_RightHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_PosSpeed_forUki(actor);
+    Player_actor_Item_Set_AngleSpeedY_forUki(actor);
+    Player_actor_Item_Set_RodTopPos_forUki(actor);
+}
+
+static int Player_actor_Item_main_rod_air(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_CulcAnimation_Base(actor);
+    Player_actor_Item_Set_Value_forUki_air(actor);
+    return 0;
+}
+
+static void Player_actor_Item_SetFrame_forUki_relax(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+    if (rod != NULL) {
+        f32 frame = player->item_keyframe.frame_control.current_frame;
+        f32 target;
+        xyz_t pos;
+        if (rod->status != aUKI_STATUS_CAST) {
+            f32 end_pos = 2.0f + (61.5f + actor->world.position.y);
+
+            Player_actor_Get_ItemRodVirtualTopPos(actor, &pos);
+            target = 200.0f + (9.1f * (pos.y - end_pos));
+        } else {
+            target = 180.0f;
+        }
+
+        add_calc2(&frame, target, 1.0f - sqrtf(0.25f), 360.0f);
+        Player_actor_Item_SetAnimation_Base(actor, frame);
+    }
+}
+
+static void Player_actor_Item_Set_Value_forUki_relax(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_Set_RightHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_PosSpeed_forUki(actor);
+    Player_actor_Item_Set_AngleSpeedY_forUki(actor);
+    Player_actor_Item_Set_RodTopPos_forUki(actor);
+}
+
+static int Player_actor_Item_Check_Status_forUki_relax(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+    if (rod != NULL) {
+        return rod->status;
+    } else {
+        return 6;
+    }
+}
+
+static int Player_actor_Item_main_rod_relax(ACTOR* actor, GAME* game) {
+    Player_actor_Item_SetFrame_forUki_relax(actor, game);
+    Player_actor_Item_Set_Value_forUki_relax(actor);
+    return Player_actor_Item_Check_Status_forUki_relax(actor);
+}
+
+static void Player_actor_Item_Set_Value_forUki_collect(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_Set_Command_forUki(actor, 6);
+    Player_actor_Item_Set_RightHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_PosSpeed_forUki(actor);
+    Player_actor_Item_Set_AngleSpeedY_forUki(actor);
+    Player_actor_Item_Set_RodTopPos_forUki(actor);
+}
+
+static int Player_actor_Item_Check_Status_forUki_collect(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+    if (rod != NULL) {
+        switch (rod->status) {
+            case 7:
+                return 0;
+        }
+    }
+
+    return 1;
+}
+
+static int Player_actor_Item_main_rod_collect(ACTOR* actor, GAME* game) {
+    Player_actor_Item_CulcAnimation_Base(actor);
+    Player_actor_Item_Set_Value_forUki_collect(actor);
+    return Player_actor_Item_Check_Status_forUki_collect(actor);
+}
+
+static void Player_actor_Item_SetFrame_forUki_vib(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+    if (rod != NULL) {
+        f32 frame = player->item_keyframe.frame_control.current_frame;
+        f32 target;
+        xyz_t* left_hand;
+        xyz_t* wpos;
+        xyz_t pos;
+        f32 left_hand_len;
+        f32 wpos_len;
+        f32 diff;
+
+        left_hand = &player->left_hand_pos;
+        wpos = &rod->actor_class.world.position;
+        Player_actor_Get_ItemRodVirtualTopPos(actor, &pos);
+        left_hand_len = Math3DLengthSquare(left_hand, &pos);
+        wpos_len = Math3DLengthSquare(wpos, &pos);
+
+        diff = (left_hand_len + wpos_len) - Math3DLengthSquare(wpos, left_hand);
+        if (diff <= 0.0f) {
+            target = 180.0f;
+        } else {
+            target = 180.0f + (0.01f * diff);
+        }
+
+        add_calc2(&frame, target, 1.0f - sqrtf(0.25f), 360.0f);
+        Player_actor_Item_SetAnimation_Base(actor, frame);
+    }
+}
+
+static void Player_actor_Item_Set_Value_forUki_vib(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_Set_Command_forUki(actor, 6);
+    Player_actor_Item_Set_RightHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_LeftHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_PosSpeed_forUki(actor);
+    Player_actor_Item_Set_AngleSpeedY_forUki(actor);
+    Player_actor_Item_Set_RodTopPos_forUki(actor);
+}
+
+static int Player_actor_Item_Check_Status_forUki_vib(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+    if (rod != NULL) {
+        switch (rod->status) {
+            case 6:
+                return 1;
+        }
+    }
+
+    return 0;
+}
+
+static int Player_actor_Item_main_rod_vib(ACTOR* actor, GAME* game) {
+    Player_actor_Item_SetFrame_forUki_vib(actor);
+    Player_actor_Item_Set_Value_forUki_vib(actor);
+    return Player_actor_Item_Check_Status_forUki_vib(actor);
+}
+
+static void Player_actor_Item_Set_Value_forUki_fly(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_Set_Command_forUki(actor, 6);
+    Player_actor_Item_Set_RightHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_LeftHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_PosSpeed_forUki(actor);
+    Player_actor_Item_Set_AngleSpeedY_forUki(actor);
+    Player_actor_Item_Set_RodTopPos_forUki(actor);
+}
+
+static int Player_actor_Item_Check_Status_forUki_fly(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+    if (rod != NULL) {
+        switch (rod->status) {
+            case 7:
+                return 1;
+        }
+    }
+
+    return 0;
+}
+
+static int Player_actor_Item_main_rod_fly(ACTOR* actor, GAME* game) {
+    Player_actor_Item_CulcAnimation_Base(actor);
+    Player_actor_Item_Set_Value_forUki_fly(actor);
+    return Player_actor_Item_Check_Status_forUki_fly(actor);
+}
+
+static void Player_actor_Item_Set_GyoeiScale_forUki_putaway(ACTOR* actor, int index) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (index == mPlayer_INDEX_PUTAWAY_ROD) {
+        UKI_ACTOR* rod = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+        if (rod != NULL) {
+            f32 scale = (30.0f - player->main_data.putaway_uki.unk0) / 30.0f;
+
+            if (scale > 1.0f) {
+                scale = 1.0f;
+            } else if (scale < 0.0f) {
+                scale = 0.0f;
+            }
+
+            rod->gyo_scale = scale;
+        }
+    }
+}
+
+static void Player_actor_Item_Set_Value_forUki_putaway(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_Set_Command_forUki(actor, 5);
+    Player_actor_Item_Set_RightHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_LeftHandPos_forUki(actor, player->now_main_index);
+    Player_actor_Item_Set_PosSpeed_forUki(actor);
+    Player_actor_Item_Set_AngleSpeedY_forUki(actor);
+    Player_actor_Item_Set_RodTopPos_forUki(actor);
+}
+
+static int Player_actor_Item_main_rod_putaway(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_Item_CulcAnimation_Base(actor);
+    Player_actor_Item_Set_Value_forUki_putaway(actor);
+    Player_actor_Item_Set_GyoeiScale_forUki_putaway(actor, player->now_main_index);
+    return 0;
+}
+
+static void Player_actor_Item_draw_net_After_main4_sao(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Matrix_Position_VecX(&player->item_rod_top_pos, 1050.0f);
+}
+
+typedef void (*mPlayer_item_rod_draw_proc)(void* arg, GAME* game, cKF_SkeletonInfo_R_c* keyframe, Gfx** joint_shape,
+                                           u8* joint_flags, s_xyz* joint_rot, xyz_t* joint_pos);
+
+static int Player_actor_Item_draw_rod_After(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx,
+                                            Gfx** joint_shape, u8* joint_flags, void* arg, s_xyz* joint_rot,
+                                            xyz_t* joint_pos) {
+    static const mPlayer_item_net_draw_proc proc[] = {
+        NULL, NULL, NULL, NULL, (mPlayer_item_rod_draw_proc)Player_actor_Item_draw_net_After_main4_sao,
+    };
+
+    if (joint_idx >= 0 && joint_idx < 5) {
+        if (proc[joint_idx] != NULL) {
+            proc[joint_idx](arg, game, keyframe, joint_shape, joint_flags, joint_rot, joint_pos);
+        }
+    }
+
+    return 1;
+}
+
+static void Player_actor_Item_draw_rod(ACTOR* actor, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    Mtx* mtx;
+    cKF_SkeletonInfo_R_c* keyf;
+    Mtx* item_mtx;
+    GRAPH* graph;
+
+    item_mtx = player->item_work_mtx[play->game.frame_counter % 2];
+    graph = play->game.graph;
+    keyf = &player->item_keyframe;
+
+    Matrix_Position_VecZ(&player->item_rod_virtual_top_pos, 6000.0f);
+    Matrix_push();
+    Matrix_RotateZ(player->item_rod_angle_z, 1);
+
+    mtx = _Matrix_to_Mtx_new(play->game.graph);
+
+    if (mtx != NULL) {
+        OPEN_POLY_OPA_DISP(graph);
+
+        gSPMatrix(POLY_OPA_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+        CLOSE_POLY_OPA_DISP(graph);
+
+        cKF_Si3_draw_R_SV(game, keyf, item_mtx, NULL, Player_actor_Item_draw_rod_After, &player->actor_class);
+        player->item_rod_top_pos_set = TRUE;
+    }
+
+    player->balloon_start_pos_set_flag = FALSE;
+
+    Matrix_pull();
+}

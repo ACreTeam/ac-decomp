@@ -1,0 +1,275 @@
+static int Player_actor_request_main_notice_net(GAME* game, int already_collected, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_NOTICE_NET, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.notice_net.already_collected = already_collected;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_NOTICE_NET, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Notice_net(ACTOR* actor, GAME* game) {
+    static int use_mark_insect_type[] = {
+        aSOI_INSECT_TYPE_ANT,
+        aSOI_INSECT_TYPE_MOSQUITO,
+    };
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_notice_net_c* main_notice = &player->main_data.notice_net;
+    mPlayer_request_notice_net_c* req_notice = &player->requested_main_index_data.notice_net;
+    u32 label;
+
+    main_notice->state = 0;
+    main_notice->exchange_flag = FALSE;
+    main_notice->already_collected = req_notice->already_collected;
+
+    main_notice->end_effect_flag = FALSE;
+
+    label = player->item_net_catch_label;
+
+    if (label != 0) {
+        mActor_name_t item;
+        int idx = player->item_net_catch_insect_idx;
+        s8 type = player->item_net_catch_type;
+
+        if (type == 0) {
+            item = ((aINS_INSECT_ACTOR*)label)->item;
+        } else if (player->item_net_catch_insect_idx == aSOI_INSECT_TYPE_BEE) {
+            item = ITM_INSECT08;
+        } else {
+            item = ITM_INSECT38;
+        }
+
+        if (idx < 0) {
+            main_notice->not_full_pocket = FALSE;
+        } else {
+            int free_space = mPlib_Get_space_putin_item_forHITODAMA(&item);
+            int i;
+            int mark_check;
+
+            if (free_space >= 0) {
+                Player_actor_putin_item(free_space, item, NULL);
+                main_notice->not_full_pocket = TRUE;
+            } else {
+                main_notice->not_full_pocket = FALSE;
+            }
+
+            if (idx != aSOI_INSECT_TYPE_SPIRIT) {
+                mSM_COLLECT_INSECT_SET(idx);
+            }
+
+            mark_check = FALSE;
+            for (i = 0; i < 2; i++) {
+                if (idx == use_mark_insect_type[i]) {
+                    mark_check = TRUE;
+                }
+            }
+
+            if (mark_check) {
+                Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_YAJIRUSHI, player->left_hand_pos, 2, 0, game,
+                                                               RSV_NO, 0, 0);
+                main_notice->end_effect_flag = TRUE;
+            }
+        }
+    } else {
+        main_notice->not_full_pocket = FALSE;
+    }
+    actor->shape_info.rotation.y = 0;
+    actor->world.angle.y = 0;
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_settle_main_Notice_net(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int idx = player->item_net_catch_insect_idx;
+    mPlayer_main_notice_net_c* main_notice = &player->main_data.notice_net;
+
+    if (idx < 0) {
+        idx = aSOI_INSECT_TYPE_BEE;
+    }
+
+    if (main_notice->already_collected != FALSE) {
+        mBGMPsComp_delete_ps_fanfare(0x4B, 0x168);
+    } else {
+        mBGMPsComp_delete_ps_fanfare(0x28, 0x168);
+    }
+
+    if (idx == aSOI_INSECT_TYPE_BEE) {
+        Common_Set(player_bee_chase_flag, FALSE);
+
+        if (player->bee_chase_bgm_flag != FALSE) {
+            player->bee_chase_bgm_flag = FALSE;
+            mBGMPsComp_delete_ps_happening(0x43, FALSE);
+        }
+    }
+
+    if (!main_notice->not_full_pocket) {
+        u32 label = player->item_net_catch_label;
+
+        if (label != 0 && player->item_net_catch_type == 0) {
+            ((aINS_INSECT_ACTOR*)label)->patience = 100.0f;
+            ((ACTOR*)label)->drawn = TRUE;
+            ((ACTOR*)label)->actor_specific = 1;
+        }
+    }
+}
+
+static void Player_actor_Movement_Notice_net(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
+}
+
+static void Player_actor_CorrectSomething_Notice_net(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_CorrectSomething_net(actor, &player->left_hand_pos);
+}
+
+static int Player_actor_CulcAnimation_Notice_net(ACTOR* actor) {
+    f32 frame_calc;
+
+    return Player_actor_CulcAnimation_Base2(actor, &frame_calc);
+}
+
+static void Player_actor_set_eye_pattern_Notice_net(ACTOR* actor, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (end_flag) {
+        Player_actor_set_eye_pattern_normal(actor);
+    } else if (player->animation0_idx == mPlayer_ANIM_YATTA2) {
+        Player_actor_set_tex_anime_pattern(actor);
+    } else {
+        Player_actor_set_eye_pattern_normal(actor);
+    }
+}
+
+static void Player_actor_ObjCheck_Notice_net(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Notice_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_DeleteMark_Notice_net(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_notice_net_c* main_notice = &player->main_data.notice_net;
+
+    if (main_notice->end_effect_flag) {
+        Common_Get(clip).effect_clip->effect_kill_proc(eEC_EFFECT_YAJIRUSHI, RSV_NO);
+        main_notice->end_effect_flag = FALSE;
+    }
+}
+
+static int Player_actor_MessageControl_Notice_net(ACTOR* actor, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mMsg_Window_c* win = mMsg_Get_base_window_p();
+    mPlayer_main_notice_net_c* main_notice = &player->main_data.notice_net;
+    int choice;
+    switch (main_notice->state) {
+        case 0:
+            if (main_notice->already_collected) {
+                if (end_flag != FALSE && mMsg_Check_MainNormalContinue(win)) {
+                    mMsg_Set_continue_msg_num(win, 0xA4F);
+                    mMsg_Unset_LockContinue(win);
+                    main_notice->state = 1;
+                }
+            } else {
+                main_notice->state = 2;
+            }
+            return -1;
+
+        case 1:
+            if (!mMsg_Check_MainNormal(win)) {
+                Player_actor_SetupItem_Base2(actor, Player_actor_Get_ItemKind_from_submenu(), mPlayer_ANIM_GET_PUTAWAY1,
+                                             mPlayer_INDEX_RUN, -5.0f, -1.0f, 0);
+                Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_YATTA2, mPlayer_ANIM_YATTA2, 1.0f, 1.0f,
+                                                 0.5f, -5.0f, 0, 0);
+                mBGMPsComp_delete_ps_fanfare(0x28, 0x168);
+                mBGMPsComp_make_ps_fanfare(0x4B, 0x168);
+                mMsg_Set_LockContinue(win);
+                Player_actor_DeleteMark_Notice_net(actor);
+
+                main_notice->state = 2;
+            }
+            return -1;
+
+        case 2:
+
+            if (main_notice->not_full_pocket) {
+                mMsg_Set_CancelNormalContinue(win);
+                main_notice->state = 4;
+            } else {
+                mMsg_Set_continue_msg_num(win, 0xA4D);
+                main_notice->state = 3;
+            }
+            mMsg_Unset_LockContinue(win);
+            return -1;
+
+        case 3:
+            choice = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+
+            if (choice == mChoice_CHOICE0) {
+                main_notice->exchange_flag = TRUE;
+                main_notice->state = 4;
+            } else if (choice == mChoice_CHOICE1) {
+                main_notice->exchange_flag = FALSE;
+                main_notice->state = 4;
+            }
+
+            return -1;
+
+        case 4:
+            if (!mDemo_Check(mDemo_TYPE_REPORT, actor)) {
+                main_notice->state = 5;
+                Player_actor_DeleteMark_Notice_net(actor);
+            }
+            return -1;
+
+        default:
+            if (main_notice->not_full_pocket) {
+                return 0x30;
+            } else {
+                return !main_notice->exchange_flag ? 0x53 : 0x30;
+            }
+    }
+}
+
+static void Player_actor_request_proc_index_fromNotice_net(ACTOR* actor, GAME* game, int msg_control) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_notice_net_c* main_notice = &player->main_data.notice_net;
+
+    if (msg_control == 0x30) {
+        Player_actor_request_main_putaway_net(game, main_notice->exchange_flag, mPlayer_REQUEST_PRIORITY_28);
+    } else if (msg_control == 0x53) {
+        if (player->item_net_catch_type == 0) {
+            u32 label = player->item_net_catch_label;
+            mPlayer_request_release_creature_u release_data;
+
+            bzero(&release_data, sizeof(mPlayer_request_release_creature_u));
+            Player_actor_request_main_release_creature_all(game, 0, 0, &release_data, (ACTOR*)label,
+                                                           mPlayer_REQUEST_PRIORITY_30);
+        } else {
+            Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_34);
+        }
+    }
+}
+
+static void Player_actor_main_Notice_net(ACTOR* actor, GAME* game) {
+    int end_flag;
+    int msg_cntrl;
+
+    Player_actor_Movement_Notice_net(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_CorrectSomething_Notice_net(actor);
+    end_flag = Player_actor_CulcAnimation_Notice_net(actor);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_Notice_net(actor, end_flag);
+    Player_actor_ObjCheck_Notice_net(actor, game);
+    Player_actor_BGcheck_Notice_net(actor);
+    msg_cntrl = Player_actor_MessageControl_Notice_net(actor, game, end_flag);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromNotice_net(actor, game, msg_cntrl);
+}

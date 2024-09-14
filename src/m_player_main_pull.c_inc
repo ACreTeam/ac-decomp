@@ -1,0 +1,137 @@
+static int Player_actor_request_main_pull(GAME* game, int ftr_no, s16 angle, xyz_t* start_pos, xyz_t* end_pos,
+                                          xyz_t* ofs, int priority) {
+    if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_HOLD &&
+        Player_actor_check_request_main_able(game, mPlayer_INDEX_PULL, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.pull.ftrNo = ftr_no;
+        player->requested_main_index_data.pull.angle_y = angle;
+        player->requested_main_index_data.pull.start_pos = *start_pos;
+        player->requested_main_index_data.pull.end_pos = *end_pos;
+        player->requested_main_index_data.pull.ofs = *ofs;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_PULL, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_settle_main_Pull(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    cKF_SkeletonInfo_R_AnimationMove_dt(&player->keyframe0);
+    actor->world.position.x = player->main_data.pull.start_pos.x;
+    actor->world.position.z = player->main_data.pull.start_pos.z;
+}
+
+static void Player_actor_setup_main_Pull(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_pull_c* main_pull = &player->main_data.pull;
+    s16 angle;
+    cKF_SkeletonInfo_R_c* keyf;
+    mPlayer_request_pull_c* req_pull = &player->requested_main_index_data.pull;
+    f32 x;
+    f32 z;
+
+    keyf = &player->keyframe0;
+    main_pull->ftr_no = req_pull->ftrNo;
+    main_pull->start_pos = req_pull->end_pos;
+    main_pull->ofs = req_pull->ofs;
+    main_pull->timer = 0.0f;
+
+    angle = req_pull->angle_y;
+    x = req_pull->start_pos.x;
+    z = req_pull->start_pos.z;
+
+    actor->world.angle.y = angle;
+    actor->shape_info.rotation.y = angle;
+    actor->world.position.x = x;
+    actor->world.position.z = z;
+
+    cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyf, 0.0f, 1000.0f, 200.0f, 0, 0, 0x4000);
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actor->world.position, &actor->world.position,
+                                             actor->shape_info.rotation.y, 0, 0.0f, keyf, 1);
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_PULL1, mPlayer_ANIM_PULL1, 1.0f, 1.0f, 0.5f, -5.0f, 0,
+                                     0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static int Player_actor_CulcAnimation_Pull(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_Movement_Pull(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    xyz_t* ofs;
+    f32* timer_p;
+    mPlayer_main_pull_c* main_pull = &player->main_data.pull;
+
+    cKF_SkeletonInfo_R_AnimationMove_base(&actor->world.position, &actor->shape_info.rotation.y, &actor->scale,
+                                          actor->world.angle.y, &player->keyframe0);
+
+    timer_p = &main_pull->timer;
+    ofs = &main_pull->ofs;
+    *timer_p += 1.0f;
+
+    if (*timer_p >= 6.0f) {
+        f32 dis;
+
+        if (*timer_p > 34.0f) {
+            *timer_p = 34.0f;
+        }
+
+        dis = (*timer_p - 6.0f) / 28.0f;
+
+        if (dis >= 1.0f) {
+            actor->world.position.x += ofs->x;
+            actor->world.position.z += ofs->z;
+        } else if (dis > 0.0f) {
+            actor->world.position.x += ofs->x * dis;
+            actor->world.position.z += ofs->z * dis;
+        }
+    }
+
+    Actor_position_moveF(actor);
+}
+
+static void Player_actor_SearchAnimation_Pull(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+    }
+}
+
+static void Player_actor_ObjCheck_Pull(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Pull(ACTOR* actor) {
+    Player_actor_BGcheck_common_type3(actor);
+}
+
+static void Player_actor_request_proc_index_fromPull(ACTOR* actor, GAME* game, int arg) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (arg != 0) {
+        int ftr = player->main_data.pull.ftr_no;
+        int angle = Player_actor_Get_Index_fromAngle(actor->world.angle.y);
+        Player_actor_request_main_hold(game, ftr, angle, &actor->world.position, -12.0f, 1,
+                                       mPlayer_REQUEST_PRIORITY_22);
+    }
+}
+
+static void Player_actor_main_Pull(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int arg = Player_actor_CulcAnimation_Pull(actor, &frame_calc);
+
+    Player_actor_Movement_Pull(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_SearchAnimation_Pull(actor, game, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Pull(actor, game);
+    Player_actor_BGcheck_Pull(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromPull(actor, game, arg);
+}

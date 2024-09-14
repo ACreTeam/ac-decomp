@@ -1088,7 +1088,7 @@ extern int mSC_LightHouse_travel_check() {
 }
 
 extern void mSC_change_player_freeze(GAME_PLAY* play) {
-    if (mPlib_get_player_actor_main_index((GAME*)play) != 74) {
+    if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_DEMO_WAIT) {
         mPlib_request_main_demo_wait_type1((GAME*)play, 0, NULL);
     }
 }

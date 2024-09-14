@@ -1,0 +1,176 @@
+static int Player_actor_Check_able_request_main_lie_bed(GAME* game) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+    int index = player->now_main_index;
+
+    switch (index) {
+        case mPlayer_INDEX_WAIT:
+        case mPlayer_INDEX_WALK:
+        case mPlayer_INDEX_RUN:
+        case mPlayer_INDEX_DASH:
+            return TRUE;
+
+        default:
+            return FALSE;
+    }
+}
+
+static int Player_actor_request_main_lie_bed(GAME* game, int direction, const xyz_t* pos, int dir, int flags,
+                                             int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_LIE_BED, priority) &&
+        Player_actor_Check_able_request_main_lie_bed(game)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.lie_bed.direction = dir;
+        player->requested_main_index_data.lie_bed.angle = Player_actor_Get_Angle_fromDirection(direction);
+        player->requested_main_index_data.lie_bed.wpos = *pos;
+        player->requested_main_index_data.lie_bed.wpos.y = player->actor_class.world.position.y;
+        player->requested_main_index_data.lie_bed.flags = flags;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_LIE_BED, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static int Player_actor_Get_BasicPlayerAnimeIndex_Lie_bed(int direction, s16 angle) {
+    if (angle == 0) {
+        if (direction == 1) {
+            return mPlayer_ANIM_INBED_L1;
+        }
+        if (direction == 2) {
+            return mPlayer_ANIM_INBED_R1;
+        }
+    } else if (angle == 0x4000) {
+        if (direction == 3) {
+            return mPlayer_ANIM_INBED_L1;
+        }
+        if (direction == 4) {
+            return mPlayer_ANIM_INBED_R1;
+        }
+    } else if (angle == -0x8000) {
+        if (direction == 1) {
+            return mPlayer_ANIM_INBED_R1;
+        }
+        if (direction == 2) {
+            return mPlayer_ANIM_INBED_L1;
+        }
+    } else if (angle == -0x4000) {
+        if (direction == 3) {
+            return mPlayer_ANIM_INBED_R1;
+        }
+        if (direction == 4) {
+            return mPlayer_ANIM_INBED_L1;
+        }
+    }
+
+    return mPlayer_ANIM_INBED_R1;
+}
+
+static void Player_actor_setup_main_Lie_bed(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    cKF_SkeletonInfo_R_c* keyf;
+    mPlayer_main_lie_bed_c* main_lie = &player->main_data.lie_bed;
+    mPlayer_request_lie_bed_c* req_lie = &player->requested_main_index_data.lie_bed;
+    int anim_idx;
+    s16 angle;
+
+    keyf = &player->keyframe0;
+    anim_idx = Player_actor_Get_BasicPlayerAnimeIndex_Lie_bed(req_lie->direction, req_lie->angle);
+
+    main_lie->flags = req_lie->flags;
+    angle = req_lie->angle;
+
+    actor->world.angle.y = angle;
+
+    cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyf, 0.0f, 1000.0f, 0.0f, 0, 0, 0x4000);
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actor->world.position, &req_lie->wpos, actor->shape_info.rotation.y,
+                                             req_lie->angle, 17.0f, keyf, 3);
+    Player_actor_InitAnimation_Base2(actor, game, anim_idx, anim_idx, 1.0f, 1.0f, 0.5f, -5.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+    Player_actor_sound_JUMP(actor);
+}
+
+static void Player_actor_settle_main_Lie_bed(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    cKF_SkeletonInfo_R_AnimationMove_dt(&player->keyframe0);
+    actor->shape_info.rotation.x = -0x4000;
+    actor->world.angle.y = actor->shape_info.rotation.y;
+    actor->shape_info.shadow_size_change_rate = 0.0f;
+    actor->shape_info.shadow_alpha_change_rate = 0.0f;
+}
+
+static int Player_actor_CulcAnimation_Lie_bed(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetSound_Lie_bed(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 20.0f)) {
+        Player_actor_sound_BED_IN(actor);
+    }
+}
+
+static void Player_actor_SearchAnimation_Lie_bed(ACTOR* actor, f32 frame) {
+    f32 per;
+    f32 mod;
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+    f32 cur;
+    s16 target_x;
+    s16 target_y;
+    int angle;
+
+    Player_actor_DisappearShadow_fromAnimationFrame(actor, 0.0f, 15.0f);
+    cur = fc0_p->current_frame;
+    per = sqrtf(get_percent_forAccelBrake(cur, 4.0f, 19.0f, 0.0f, 0.0f));
+
+    target_x = (int)(-16384.0f * per);
+    add_calc_short_angle2(&actor->shape_info.rotation.x, target_x, 1.0f - sqrtf(0.5), 1820, 50);
+    per = (get_percent_forAccelBrake(cur, 4.0f, 19.0f, 0.0f, 0.0f));
+    per = sqrtf(per);
+    target_y = actor->world.angle.y;
+
+    if (player->animation0_idx == mPlayer_ANIM_INBED_R1) {
+        mod = 16384.0f;
+    } else {
+        mod = -16384.0f;
+    }
+
+    angle = (s16)(mod * per);
+    target_y += angle;
+    add_calc_short_angle2(&actor->shape_info.rotation.y, target_y, 1.0f - sqrtf(0.5), 1820, 50);
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetSound_Lie_bed(actor);
+    }
+}
+
+static void Player_actor_Movement_Lie_bed(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    cKF_SkeletonInfo_R_AnimationMove_base(&actor->world.position, &actor->shape_info.rotation.y, &actor->scale,
+                                          actor->world.angle.y, &player->keyframe0);
+    Player_actor_Movement_Base_Stop(actor, FALSE);
+}
+
+static void Player_actor_request_proc_index_fromLie_bed(GAME* game, int arg) {
+    if (arg != 0) {
+        Player_actor_request_main_wait_bed(game, mPlayer_REQUEST_PRIORITY_21);
+    }
+}
+
+static void Player_actor_main_Lie_bed(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int arg = Player_actor_CulcAnimation_Lie_bed(actor, &frame_calc);
+
+    Player_actor_SearchAnimation_Lie_bed(actor, frame_calc);
+    Player_actor_Movement_Lie_bed(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromLie_bed(game, arg);
+}

@@ -1,0 +1,71 @@
+static int Player_actor_request_main_rotate_umbrella_all(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_ROTATE_UMBRELLA, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_ROTATE_UMBRELLA, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Rotate_umbrella(ACTOR* actorx, GAME* game) {
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_UMB_ROT1, mPlayer_ANIM_UMB_ROT1, 1.0f, 1.0f, 1.0f,
+                                     -5.0f, cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);
+    Player_actor_setup_main_Base(actorx, game);
+    eEC_CLIP->effect_make_proc(eEC_EFFECT_KASAMIZU, actorx->world.position, 2, actorx->shape_info.rotation.y, game,
+                               RSV_NO, 0, 0);
+    Player_actor_sound_umbrella_rotate(actorx);
+}
+
+static void Player_actor_Movement_Rotate_umbrella(ACTOR* actorx) {
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Rotate_umbrella(ACTOR* actorx, f32* last_anim0_cur_frame) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame);
+}
+
+static void Player_actor_ObjCheck_Rotate_umbrella(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Rotate_umbrella(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_request_proc_index_fromRotate_umbrella(ACTOR* actorx, GAME* game, int end_flag) {
+    if (end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    } else {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+        cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+        cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+
+        if (Player_actor_Check_AnimationFrame(fc0_p, 19.5f)) {
+            Player_actor_SettleRequestMainIndexPriority(actorx);
+            Player_actor_Set_status_for_bee(actorx, TRUE);
+        } else {
+            if (fc0_p->current_frame >= 20.0f &&
+                Player_actor_CheckAndRequest_main_umbrella_all(game, mPlayer_REQUEST_PRIORITY_4) == FALSE) {
+                if (Player_actor_GetController_move_percentX() || Player_actor_GetController_move_percentY()) {
+                    Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+                }
+            }
+        }
+    }
+}
+
+static void Player_actor_main_Rotate_umbrella(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    Player_actor_Movement_Rotate_umbrella(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Rotate_umbrella(actorx, &last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_tex_anime_pattern(actorx);
+    Player_actor_ObjCheck_Rotate_umbrella(actorx, game);
+    Player_actor_BGcheck_Rotate_umbrella(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromRotate_umbrella(actorx, game, end_flag);
+}

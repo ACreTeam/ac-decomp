@@ -27,8 +27,8 @@ static void aMFU_dma(mActor_name_t ftr_name, u8* data) {
     int player_no = mHS_get_pl_no(house_no);
     u32 manekin_no = ((ftr_name - FTR_MYUMBRELLA_START) >> 2);
 
-    mNW_CopyOriginalTexture(data, &Save_Get(private[player_no]).my_org[manekin_no & 7]);
-    mNW_CopyOriginalPalette(data + mNW_DESIGN_TEX_SIZE, &Save_Get(private[player_no]).my_org[manekin_no & 7]);
+    mNW_CopyOriginalTexture(data, &Save_Get(private_data[player_no]).my_org[manekin_no & 7]);
+    mNW_CopyOriginalPalette(data + mNW_DESIGN_TEX_SIZE, &Save_Get(private_data[player_no]).my_org[manekin_no & 7]);
 }
 
 static aFTR_vtable_c aMFU_func = {

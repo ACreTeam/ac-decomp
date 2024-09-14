@@ -364,8 +364,8 @@ static void mISL_agb_to_gc_fllot_bit(mHm_fllot_bit_c* gc, u32* agb) {
     gc->wall_original = (u32)gc->wall_original;
     gc->floor_original = (u32)gc->floor_original;
 #else
-    gc->wall_original = agb->wall_original;
-    gc->floor_original = agb->floor_original;
+    gc->wall_original = ((mHm_fllot_bit_c*)(agb))->wall_original;
+    gc->floor_original = ((mHm_fllot_bit_c*)(agb))->floor_original;
 #endif
 }
 
@@ -738,7 +738,7 @@ static void mISL_toHole(mActor_name_t* fg, u16* deposit, int bx, int bz) {
                     hole_no = 0;
                 }
 
-                fg[0] = BURIED_PITFALL_START + hole_no;
+                fg[0] = BURIED_PITFALL_HOLE_START + hole_no;
                 deposit[0] &= ~(1 << ut_x);
             }
 
@@ -749,8 +749,6 @@ static void mISL_toHole(mActor_name_t* fg, u16* deposit, int bx, int bz) {
     }
 }
 
-/* @nonmatching */
-#ifndef MUST_MATCH
 extern void mISL_agb_to_gc(Island_c* gc, Island_agb_c* agb) {
     int island_x_blocks[mISL_FG_BLOCK_X_NUM];
     int i;
@@ -762,7 +760,7 @@ extern void mISL_agb_to_gc(Island_c* gc, Island_agb_c* agb) {
         mISL_agb_to_gc_cottage(&gc->cottage, &agb->cottage);
         bcopy(&agb->flag_design, &gc->flag_design, sizeof(mNW_original_design_c));
         mISL_agb_to_gc_animal(&gc->animal, &agb->animal);
-        mISL_short((u16*)gc->deposit, (u16*)agb->deposit, sizeof(gc->deposit) / sizeof(u16));
+        mISL_short(gc->deposit[0], agb->deposit[0], sizeof(gc->deposit) / sizeof(u16));
         bcopy(agb->bg_data, gc->bg_data, sizeof(gc->bg_data));
         mISL_gc_to_agb_time(&gc->renew_time, &agb->renew_time);
         gc->last_song_to_island = agb->last_song_to_island;
@@ -773,18 +771,12 @@ extern void mISL_agb_to_gc(Island_c* gc, Island_agb_c* agb) {
             mFI_GetIslandBlockNumX(island_x_blocks);
 
             for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
-                int idx = i + island_x_blocks[0];
-                mActor_name_t* fg_p = &gc->fgblock[0][i].items[0][0];
-                u16* deposit_p = (u16*)&gc->deposit[(u16)i]; // the access to deposit is strange, casting to u16 is
-                                                             // incorrect but it makes all other instructions correct
+                /* This may be fakematch */
+                int x = i + 1;
 
-                mISL_toHole(fg_p, deposit_p, idx, mISL_BLOCK_Z);
+                mISL_toHole((mActor_name_t*)&gc->fgblock[0][i], gc->deposit[--x], (i) + island_x_blocks[0],
+                            mISL_BLOCK_Z);
             }
         }
     }
 }
-#else
-extern asm void mISL_agb_to_gc(Island_c* gc, Island_agb_c* agb) {
-#include "asm/803b5948.s"
-}
-#endif

@@ -1,93 +1,89 @@
 static int mMsg_Main_Appear_SetScale(mMsg_Window_c* msg_p, GAME* game) {
-  const f32 max = 18.0f;
+    if (msg_p->timer < 18.0f) {
+        f32 scale;
 
-  if (msg_p->timer < max) {
-    f32 scale;
-
-    msg_p->timer += 1.0f;
-    scale = get_percent_forAccelBrake(msg_p->timer, 0.0f, max, 0.0f, 0.0f);
-    msg_p->window_scale = scale;
-    msg_p->text_scale = scale;
-    return FALSE;
-  }
-  else {
-    msg_p->window_scale = 1.0f;
-    msg_p->text_scale = 1.0f;
-    msg_p->timer = 0.0f;
-    return TRUE;
-  }
+        msg_p->timer += 1.0f;
+        scale = get_percent_forAccelBrake(msg_p->timer, 0.0f, 18.0f, 0.0f, 0.0f);
+        msg_p->window_scale = scale;
+        msg_p->text_scale = scale;
+        return FALSE;
+    } else {
+        msg_p->window_scale = 1.0f;
+        msg_p->text_scale = 1.0f;
+        msg_p->timer = 0.0f;
+        return TRUE;
+    }
 }
 
 static void mMsg_request_main_index_fromAppear(mMsg_Window_c* msg_p, GAME* game, int scale_done_flag) {
-  if (scale_done_flag && mMsg_request_main_cursol(msg_p, FALSE, 5)) {
-    mMsg_SetTimer(msg_p, 20.0f);
-  }
+    if (scale_done_flag && mMsg_request_main_cursol(msg_p, FALSE, 5)) {
+        mMsg_SetTimer(msg_p, 20.0f);
+    }
 }
 
 static void mMsg_Main_Appear(mMsg_Window_c* msg_p, GAME* game) {
-  int scaling_done_flag = mMsg_Main_Appear_SetScale(msg_p, game);
-  mMsg_request_main_index_fromAppear(msg_p, game, scaling_done_flag);
-  mMsg_MainSetup_Window(msg_p, game);
+    int scaling_done_flag = mMsg_Main_Appear_SetScale(msg_p, game);
+    mMsg_request_main_index_fromAppear(msg_p, game, scaling_done_flag);
+    mMsg_MainSetup_Window(msg_p, game);
 }
 
 static void mMsg_MainSetup_Appear(mMsg_Window_c* msg_p, GAME* game) {
-  mMsg_Request_MainAppear_Data_c* appear_data = &msg_p->request_data.request_main_appear;
-  int msg_no = appear_data->msg_no;
+    mMsg_Request_MainAppear_Data_c* appear_data = &msg_p->request_data.request_main_appear;
+    int msg_no = appear_data->msg_no;
 
-  if (mMsg_LoadMsgData(msg_p->msg_data, msg_no, FALSE)) {
-    ACTOR* actor = appear_data->speaker_actor;
-    int show_name = appear_data->name_shown_flag;
+    if (mMsg_LoadMsgData(msg_p->msg_data, msg_no, FALSE)) {
+        ACTOR* actor = appear_data->speaker_actor;
+        int show_name = appear_data->name_shown_flag;
 
-    mMsg_Set_client_actor_p(msg_p, actor, show_name);
-    msg_p->window_background_color = appear_data->window_color;
-    mMsg_sound_spec_change_voice(msg_p);
-    mMsg_sound_voice_mode(msg_p);
-    msg_p->main_index = mMsg_INDEX_APPEAR;
-    msg_p->draw_flag = TRUE;
-    msg_p->window_scale = 0.0f;
-    msg_p->text_scale = 0.0f;
-    msg_p->timer = 0.0f;
-    msg_p->show_continue_button = FALSE;
-    msg_p->requested_main_index = -1;
-    msg_p->requested_priority = 4;
-    msg_p->start_text_cursor_idx = 0;
-    msg_p->end_text_cursor_idx = 0;
+        mMsg_Set_client_actor_p(msg_p, actor, show_name);
+        msg_p->window_background_color = appear_data->window_color;
+        mMsg_sound_spec_change_voice(msg_p);
+        mMsg_sound_voice_mode(msg_p);
+        msg_p->main_index = mMsg_INDEX_APPEAR;
+        msg_p->draw_flag = TRUE;
+        msg_p->window_scale = 0.0f;
+        msg_p->text_scale = 0.0f;
+        msg_p->timer = 0.0f;
+        msg_p->show_continue_button = FALSE;
+        msg_p->requested_main_index = -1;
+        msg_p->requested_priority = 4;
+        msg_p->start_text_cursor_idx = 0;
+        msg_p->end_text_cursor_idx = 0;
 
-    if (msg_p->client_actor_p != NULL) {
-      switch (mNpc_GetNpcSex(msg_p->client_actor_p)) {
-        case mPr_SEX_MALE:
-          msg_p->name_background_color.r = 70;
-          msg_p->name_background_color.g = 245;
-          msg_p->name_background_color.b = 255;
-          msg_p->name_text_color.r = 0;
-          msg_p->name_text_color.g = 0;
-          msg_p->name_text_color.b = 15;
-          break;
-        
-        case mPr_SEX_FEMALE:
-          msg_p->name_background_color.r = 235;
-          msg_p->name_background_color.g = 140;
-          msg_p->name_background_color.b = 210;
-          msg_p->name_text_color.r = 45;
-          msg_p->name_text_color.g = 0;
-          msg_p->name_text_color.b = 30;
-          break;
+        if (msg_p->client_actor_p != NULL) {
+            switch (mNpc_GetNpcSex(msg_p->client_actor_p)) {
+                case mPr_SEX_MALE:
+                    msg_p->name_background_color.r = 70;
+                    msg_p->name_background_color.g = 245;
+                    msg_p->name_background_color.b = 255;
+                    msg_p->name_text_color.r = 0;
+                    msg_p->name_text_color.g = 0;
+                    msg_p->name_text_color.b = 15;
+                    break;
 
-        default:
-          msg_p->name_background_color.r = 185;
-          msg_p->name_background_color.g = 255;
-          msg_p->name_background_color.b = 0;
-          msg_p->name_text_color.r = 0;
-          msg_p->name_text_color.g = 30;
-          msg_p->name_text_color.b = 0;
-          break;
-      }
+                case mPr_SEX_FEMALE:
+                    msg_p->name_background_color.r = 235;
+                    msg_p->name_background_color.g = 140;
+                    msg_p->name_background_color.b = 210;
+                    msg_p->name_text_color.r = 45;
+                    msg_p->name_text_color.g = 0;
+                    msg_p->name_text_color.b = 30;
+                    break;
+
+                default:
+                    msg_p->name_background_color.r = 185;
+                    msg_p->name_background_color.g = 255;
+                    msg_p->name_background_color.b = 0;
+                    msg_p->name_text_color.r = 0;
+                    msg_p->name_text_color.g = 30;
+                    msg_p->name_text_color.b = 0;
+                    break;
+            }
+        }
+
+        msg_p->data_loaded = TRUE;
+        emu64_refresh();
+    } else {
+        msg_p->data_loaded = FALSE;
     }
-
-    msg_p->data_loaded = TRUE;
-    emu64_refresh();
-  }
-  else {
-    msg_p->data_loaded = FALSE;
-  }
 }

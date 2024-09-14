@@ -1,0 +1,377 @@
+static void Player_actor_draw_Before_head(ACTOR* actorx, GAME* game, cKF_SkeletonInfo_R_c* kf, Gfx** gfx_pp, u8* flag,
+                                          s_xyz* rot, xyz_t* pos) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    s_xyz* head_angle = &player->head_angle;
+
+    if (head_angle->x != 0 || head_angle->y != 0 || head_angle->z != 0) {
+        Matrix_push();
+        Matrix_mult(&MtxF_clear, 0);
+        Matrix_softcv3_mult(&ZeroVec, rot);
+        Matrix_RotateX(head_angle->x, 1);
+        Matrix_RotateY(head_angle->y, 1);
+        Matrix_to_rotate2_new(get_Matrix_now(), rot, 0);
+        Matrix_pull();
+    }
+}
+
+typedef void (*mPlayer_DRAW_BEFORE_PROC)(ACTOR*, GAME*, cKF_SkeletonInfo_R_c*, Gfx**, u8*, s_xyz*, xyz_t*);
+
+static int Player_actor_draw_Before(GAME* game, cKF_SkeletonInfo_R_c* kf, int joint_no, Gfx** gfx_pp, u8* work_flag,
+                                    void* arg, s_xyz* rot, xyz_t* pos) {
+    // clang-format off
+    static const mPlayer_DRAW_BEFORE_PROC proc[] = {
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &Player_actor_draw_Before_head,
+        NULL,
+    };
+    // clang-format on
+
+    ACTOR* actorx = (ACTOR*)arg;
+
+    if (joint_no >= 0 && joint_no < mPlayer_JOINT_NUM && proc[joint_no] != NULL) {
+        (*proc[joint_no])(actorx, game, kf, gfx_pp, work_flag, rot, pos);
+    }
+
+    return TRUE;
+}
+
+static void Player_actor_draw_After_Culc_FootMarkPos(xyz_t* pos, s_xyz* rot) {
+    Matrix_Position_Zero(pos);
+    Matrix_to_rotate_new(get_Matrix_now(), rot, 0);
+}
+
+static void Player_actor_draw_After_head(ACTOR* actorx, GAME* game, cKF_SkeletonInfo_R_c* kf, Gfx** gfx_pp, u8* flag,
+                                         s_xyz* rot, xyz_t* pos) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    Matrix_Position_Zero(&player->head_pos);
+}
+
+static void Player_actor_draw_After_Lfoot3(ACTOR* actorx, GAME* game, cKF_SkeletonInfo_R_c* kf, Gfx** gfx_pp, u8* flag,
+                                           s_xyz* rot, xyz_t* pos) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    Player_actor_draw_After_Culc_FootMarkPos(&player->left_foot_pos, &player->left_foot_angle);
+}
+
+static void Player_actor_draw_After_Larm2(ACTOR* actorx, GAME* game, cKF_SkeletonInfo_R_c* kf, Gfx** gfx_pp, u8* flag,
+                                          s_xyz* rot, xyz_t* pos) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (player->item_matrix_set) {
+        HANDOVERITEM_ACTOR* hoi_actor = Common_Get(clip).handOverItem_clip->handOverItem_p;
+
+        if (hoi_actor != NULL) {
+            Matrix_get(&hoi_actor->tools_class.matrix_work);
+            hoi_actor->tools_class.init_matrix = TRUE;
+        }
+
+        player->item_matrix_set = FALSE;
+    }
+
+    Matrix_Position_VecX(&player->left_hand_pos, 1100.0f);
+    Matrix_get(&player->left_hand_mtx);
+}
+
+static void Player_actor_draw_After_Rfoot3(ACTOR* actorx, GAME* game, cKF_SkeletonInfo_R_c* kf, Gfx** gfx_pp, u8* flag,
+                                           s_xyz* rot, xyz_t* pos) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    Player_actor_draw_After_Culc_FootMarkPos(&player->right_foot_pos, &player->right_foot_angle);
+}
+
+static void Player_actor_draw_After_feel(ACTOR* actorx, GAME* game, cKF_SkeletonInfo_R_c* kf, Gfx** gfx_pp, u8* flag,
+                                         s_xyz* rot, xyz_t* pos) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    xyz_t* feel_pos = &player->feel_pos;
+
+    Matrix_Position_Zero(feel_pos);
+    if (player->draw_effect_idx > 0) {
+        Common_Get(clip).effect_clip->effect_make_proc(player->draw_effect_idx - 1, *feel_pos, 2,
+                                                       player->actor_class.shape_info.rotation.y, game, RSV_NO, 0, 0);
+        player->draw_effect_idx = 0;
+    }
+
+    if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_WASH_CAR) {
+        mPlayer_main_wash_car_c* wash_car = &player->main_data.wash_car;
+
+        if (wash_car->effect_flag) {
+            Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_ASE2, *feel_pos, 2, 0, game, RSV_NO, 0, 0);
+            wash_car->effect_flag = FALSE;
+        }
+    }
+}
+
+static void Player_actor_draw_After_hand(ACTOR* actorx, GAME* game, cKF_SkeletonInfo_R_c* kf, Gfx** gfx_pp, u8* flag,
+                                         s_xyz* rot, xyz_t* pos) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    xyz_t last_hand_pos = player->right_hand_pos;
+
+    Matrix_Position_Zero(&player->right_hand_pos);
+    player->right_hand_move.x = player->right_hand_pos.x - last_hand_pos.x;
+    player->right_hand_move.y = player->right_hand_pos.y - last_hand_pos.y;
+    player->right_hand_move.z = player->right_hand_pos.z - last_hand_pos.z;
+    Matrix_get(&player->right_hand_mtx);
+}
+
+typedef void (*mPlayer_DRAW_AFTER_PROC)(ACTOR*, GAME*, cKF_SkeletonInfo_R_c*, Gfx**, u8*, s_xyz*, xyz_t*);
+
+static int Player_actor_draw_After(GAME* game, cKF_SkeletonInfo_R_c* kf, int joint_no, Gfx** gfx_pp, u8* work_flag,
+                                   void* arg, s_xyz* rot, xyz_t* pos) {
+    // clang-format off
+    static const mPlayer_DRAW_AFTER_PROC proc[] = {
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &Player_actor_draw_After_Lfoot3,
+        NULL,
+        NULL,
+        NULL,
+        &Player_actor_draw_After_Rfoot3,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &Player_actor_draw_After_Larm2,
+        NULL,
+        NULL,
+        NULL,
+        &Player_actor_draw_After_hand,
+        NULL,
+        NULL,
+        NULL,
+        &Player_actor_draw_After_head,
+        &Player_actor_draw_After_feel,
+    };
+    // clang-format on
+
+    ACTOR* actorx = (ACTOR*)arg;
+
+    if (joint_no >= 0 && joint_no < mPlayer_JOINT_NUM && proc[joint_no] != NULL) {
+        (*proc[joint_no])(actorx, game, kf, gfx_pp, work_flag, rot, pos);
+    }
+
+    return TRUE;
+}
+
+static void Player_actor_draw_Normal(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    int buf_idx = game->frame_counter % 2;
+    int now_main_index = player->now_main_index;
+    cKF_SkeletonInfo_R_c* kf = &player->keyframe0;
+    Mtx* mtx = player->work_mtx[buf_idx];
+    u8* eye_tex_p;
+    u8* mouth_tex_p;
+    GRAPH* graph;
+    int moving_in_boat;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    eye_tex_p = Player_actor_Get_eye_tex_p(actorx);
+    mouth_tex_p = Player_actor_Get_mouth_tex_p(actorx);
+    graph = game->graph;
+    moving_in_boat = FALSE;
+
+    _texture_z_light_fog_prim(graph);
+    OPEN_POLY_OPA_DISP(graph);
+
+    if (now_main_index == mPlayer_INDEX_DEMO_GETON_BOAT_SITDOWN ||
+        now_main_index == mPlayer_INDEX_DEMO_GETON_BOAT_WAIT || now_main_index == mPlayer_INDEX_DEMO_GETON_BOAT_WADE ||
+        now_main_index == mPlayer_INDEX_DEMO_GETOFF_BOAT_STANDUP) {
+        moving_in_boat = TRUE;
+    }
+
+    if (moving_in_boat) {
+        s16 boat_angle_z;
+
+        if (now_main_index == mPlayer_INDEX_DEMO_GETON_BOAT_SITDOWN) {
+            boat_angle_z = -player->main_data.demo_geton_boat_sitdown.angle_z;
+        } else if (now_main_index == mPlayer_INDEX_DEMO_GETOFF_BOAT_STANDUP) {
+            boat_angle_z = -player->main_data.demo_getoff_boat_standup.angle_z;
+        } else {
+            boat_angle_z = -player->boat_angleZ;
+        }
+
+        Matrix_push();
+        Matrix_RotateZ(boat_angle_z, 1);
+    }
+
+    gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, eye_tex_p);
+    gSPSegment(POLY_OPA_DISP++, ANIME_2_TXT_SEG, mouth_tex_p);
+    gSPSegment(POLY_OPA_DISP++, ANIME_3_TXT_SEG, mPlib_get_player_tex_p(game));
+    gSPSegment(POLY_OPA_DISP++, ANIME_4_TXT_SEG, mPlib_get_player_pallet_p(game));
+    gSPSegment(POLY_OPA_DISP++, ANIME_5_TXT_SEG, mPlib_get_player_face_pallet_p(game));
+
+    CLOSE_POLY_OPA_DISP(graph);
+
+    if (player->change_color_flag) {
+        int color_frame = (int)(player->change_color_timer / 9.96f);
+
+        if ((color_frame & 1)) {
+            player->change_color_near = 1;
+            player->change_color_far = 1;
+        } else {
+            static const int color_data[4][3] = {
+                { 255, 255, 100 }, // r
+                { 100, 255, 100 }, // g
+                { 255, 255, 100 }, // b
+                { 255, 100, 100 }, // a?
+            };
+
+            int color_idx = color_frame / 2;
+
+            if (color_idx >= 0 && color_idx < 4) {
+                xyz_t diff;
+                f32 diff_len;
+                View* v = &play->view;
+                xyz_t* eye_p = &v->eye;
+
+                player->change_color_rgb[0] = color_data[0][color_idx];
+                player->change_color_rgb[1] = color_data[1][color_idx];
+                player->change_color_rgb[2] = color_data[2][color_idx];
+
+                diff.x = v->center.x - eye_p->x;
+                diff.y = v->center.y - eye_p->y;
+                diff.z = v->center.z - eye_p->z;
+                diff_len = Math3DVecLength(&diff);
+
+                if (diff_len > 0.0f) {
+                    f32 dx = player->actor_class.world.position.x - eye_p->x;
+                    f32 dy = player->actor_class.world.position.y - eye_p->y;
+                    f32 dz = player->actor_class.world.position.z - eye_p->z;
+
+                    f32 percent = (dx * diff.x + dy * diff.y + dz * diff.z) / diff_len;
+                    f32 t0;
+                    f32 t1;
+                    f32 t2;
+
+                    t0 = diff_len - 352.0f;
+                    t1 = diff_len * 0.25f;
+                    t2 = 2.0f / 14.1f;
+
+                    player->change_color_near = (int)(210.0f + (diff_len - percent) / diff_len);
+                    player->change_color_far =
+                        player->change_color_near + (int)(780.0f + t0 * (t2 / 2.0f) + t1 * (t2 / 2.0f));
+                } else {
+                    player->change_color_near = 1;
+                    player->change_color_far = 1;
+                }
+            } else {
+                player->change_color_near = 1;
+                player->change_color_far = 1;
+            }
+        }
+
+        OPEN_DISP(graph);
+        SET_POLY_OPA_DISP(gfx_set_fog_nosync(NOW_POLY_OPA_DISP, player->change_color_rgb[0],
+                                             player->change_color_rgb[1], player->change_color_rgb[2], 255,
+                                             player->change_color_near, player->change_color_far));
+        CLOSE_DISP(graph);
+    }
+
+    cKF_Si3_draw_R_SV(game, kf, mtx, &Player_actor_draw_Before, &Player_actor_draw_After, player);
+
+    if (player->change_color_flag) {
+        /* Revert to standard fog color */
+        OPEN_DISP(graph);
+        SET_POLY_OPA_DISP(gfx_set_fog_nosync(NOW_POLY_OPA_DISP, play->global_light.fogColor[0],
+                                             play->global_light.fogColor[1], play->global_light.fogColor[2], 0,
+                                             play->global_light.fogNear, play->global_light.fogFar));
+        CLOSE_DISP(graph);
+    }
+
+    Player_actor_Item_draw(actorx, game);
+
+    {
+        mActor_name_t item = EMPTY_NO;
+        f32 item_scale = 0.0f;
+        xyz_t* item_pos_p = NULL;
+        int flag = FALSE;
+        mPlayer_main_pickup_jump_c* main_pickup_jump = NULL;
+
+        if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_PICKUP) {
+            if (player->main_data.pickup.signboard_flag == FALSE) {
+                item = player->main_data.pickup.item;
+                item_scale = player->main_data.pickup.scale;
+                item_pos_p = &player->main_data.pickup.item_pos;
+            }
+        } else if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_PICKUP_JUMP) {
+            mPlayer_main_pickup_jump_c* main_pickup_jump2 = &player->main_data.pickup_jump;
+
+            if (main_pickup_jump2->ftr_flag == FALSE) {
+                main_pickup_jump = main_pickup_jump2;
+                item = main_pickup_jump2->item;
+                item_scale = main_pickup_jump2->scale;
+                item_pos_p = &main_pickup_jump2->item_pos;
+                flag = TRUE;
+            }
+        } else if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_GET_SCOOP) {
+            item = player->main_data.get_scoop.item;
+            item_scale = player->main_data.get_scoop.scale;
+            if (player->keyframe0.frame_control.current_frame <= 42.0f) {
+                item_pos_p = &player->scoop_pos;
+            } else {
+                item_pos_p = &player->left_hand_pos;
+            }
+        } else if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_PUTAWAY_SCOOP) {
+            item = player->main_data.putaway_scoop.item;
+            item_scale = player->main_data.putaway_scoop.scale;
+            item_pos_p = &player->left_hand_pos;
+        }
+
+        if (item_scale > 0.0f && item != EMPTY_NO && item_pos_p != NULL) {
+            if (mFI_GET_TYPE(mFI_GetFieldId()) == mFI_FIELD_FG) {
+                if (Common_Get(clip).bg_item_clip != NULL && Common_Get(clip).bg_item_clip->single_draw_proc != NULL) {
+                    Common_Get(clip).bg_item_clip->single_draw_proc(game, item, item_pos_p, item_scale, NULL, NULL,
+                                                                    NULL);
+                }
+            } else {
+                if (Common_Get(clip).shop_goods_clip != NULL &&
+                    Common_Get(clip).shop_goods_clip->single_draw_proc != NULL) {
+                    s16 item_angle_y;
+                    int uz;
+                    int ux;
+
+                    if (main_pickup_jump != NULL && mFI_Wpos2UtNum(&ux, &uz, main_pickup_jump->target_pos)) {
+                        item_angle_y = Common_Get(clip).shop_goods_clip->single_get_angle_y_proc(uz, ux, flag);
+                    } else {
+                        item_angle_y = 0;
+                    }
+
+                    Common_Get(clip).shop_goods_clip->single_draw_proc(game, item, item_pos_p, item_scale, item_angle_y,
+                                                                       flag);
+                }
+            }
+        }
+    }
+
+    if (moving_in_boat) {
+        Matrix_pull();
+    }
+}

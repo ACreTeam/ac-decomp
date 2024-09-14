@@ -1,0 +1,135 @@
+static int Player_actor_request_main_ready_rod(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_READY_ROD, priority)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_READY_ROD, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Ready_rod(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int kind = Player_actor_Get_ItemKind_from_submenu();
+
+    Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_UMBRELLA1, mPlayer_INDEX_TUMBLE_GETUP, -5.0f, -1.0f, 0);
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_SAO_SWING1, mPlayer_ANIM_SAO_SWING1, 1.0f, 1.0f, 0.5f,
+                                     -5.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+
+    player->item_rod_angle_z = 0;
+}
+
+static void Player_actor_Movement_Ready_rod(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
+}
+
+static void Player_actor_CulcAnimation_Ready_rod(ACTOR* actor, f32* frame_calc) {
+    Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_ObjCheck_Ready_rod(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Ready_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_SearchAnimation_Ready_rod(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_Set_FootMark_Base1(actor, game, 0, 0);
+    }
+}
+
+static void Player_actor_request_proc_index_fromReady_rod(ACTOR* actor, GAME* game) {
+    static const f32 array_addX[] = {
+        0.0f, -10.0f, 10.0f, -10.0f, 10.0f,
+    };
+
+    static const f32 array_addZ[] = {
+        0.0f, 10.0f, 10.0f, -10.0f, -10.0f,
+    };
+
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    xyz_t pos;
+
+    if (player->keyframe0.frame_control.current_frame >= 10.0f) {
+        s16 rot;
+        int ready;
+        int i;
+        int attr;
+        f32 sin;
+        f32 arg;
+        f32 cos;
+        f32 y;
+
+        rot = actor->shape_info.rotation.y;
+
+        sin = sin_s(rot) * 100.0f;
+        cos = cos_s(rot) * 100.0f;
+
+        y = actor->world.position.y;
+
+        pos.x = actor->world.position.x + sin;
+        pos.z = actor->world.position.z + (cos);
+        pos.y = 0.0f;
+
+        ready = TRUE;
+
+        for (i = 0; i < 5; i++) {
+            xyz_t wpos = pos;
+            f32 height;
+
+            wpos.x += array_addX[i];
+            wpos.y = 0.0f;
+
+            wpos.z += array_addZ[i];
+
+            attr = mCoBG_Wpos2BgAttribute_Original(wpos);
+
+            if (mCoBG_GetMoveBgHeight(&arg, &wpos) != -1) {
+                ready = FALSE;
+                break;
+
+            } else if (!mCoBG_CheckWaterAttribute(attr)) {
+                ready = FALSE;
+                break;
+            }
+            height = mCoBG_GetWaterHeight_File(wpos, "m_player_main_ready_rod.c_inc", 165);
+            wpos.y = height;
+
+            if ((wpos.y - y) >= 60.0f) {
+                ready = FALSE;
+                break;
+            }
+        }
+
+        if (ready) {
+            f32 height = mCoBG_GetWaterHeight_File(pos, "m_player_main_ready_rod.c_inc", 177);
+            pos.y = height;
+
+            if ((pos.y - y) < 60.0f) {
+                Player_actor_request_main_cast_rod(game, &pos, mPlayer_REQUEST_PRIORITY_21);
+                return;
+            }
+        }
+        Player_actor_request_main_air_rod(game, mPlayer_REQUEST_PRIORITY_21);
+    }
+}
+
+static void Player_actor_main_Ready_rod(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+
+    Player_actor_Movement_Ready_rod(actor);
+    Player_actor_CulcAnimation_Ready_rod(actor, &frame_calc);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_SearchAnimation_Ready_rod(actor, game, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Ready_rod(actor, game);
+    Player_actor_BGcheck_Ready_rod(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromReady_rod(actor, game);
+}

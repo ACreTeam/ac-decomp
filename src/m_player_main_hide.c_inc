@@ -1,0 +1,17 @@
+static int Player_actor_request_main_hide(GAME* game, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_HIDE, prio)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_HIDE, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Hide(ACTOR* actorx, GAME* game) {
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_main_Hide(ACTOR* actorx, GAME* game) {
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_recover_lean_angle(actorx);
+}

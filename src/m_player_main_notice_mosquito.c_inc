@@ -1,0 +1,140 @@
+static int Player_actor_request_main_notice_mosquito(GAME* game, u32 label, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_NOTICE_MOSQUITO, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_notice_mosquito_c* req_notice_mosquito_p = &player->requested_main_index_data.notice_mosquito;
+
+        req_notice_mosquito_p->label = label;
+        Player_actor_request_main_index(game, mPlayer_INDEX_NOTICE_MOSQUITO, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Notice_mosquito(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_notice_mosquito_c* req_notice_mosquito_p = &player->requested_main_index_data.notice_mosquito;
+    mPlayer_main_notice_mosquito_c* notice_mosquito_p = &player->main_data.notice_mosquito;
+    cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+    int anim1_idx;
+    int part_table_idx;
+
+    notice_mosquito_p->label = req_notice_mosquito_p->label;
+    notice_mosquito_p->timer = 0.0f;
+    notice_mosquito_p->msg_mode = 0;
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_MOSQUITO2, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_MOSQUITO2, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     mPlayer_PART_TABLE_PICK_UP);
+    Player_actor_set_eye_pattern(actorx, 4);
+    Player_actor_set_mouth_pattern(actorx, 4);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Notice_mosquito(ACTOR* actorx, GAME* game) {
+    mBGMPsComp_delete_ps_demo(BGM_BEE_STUNG, 0x168);
+
+    if (Save_Get(scene_no) == SCENE_MUSEUM_ROOM_INSECT) {
+        mBGMPsComp_museum_status(4);
+    }
+}
+
+static void Player_actor_Movement_Notice_mosquito(ACTOR* actorx) {
+    add_calc_short_angle2(&actorx->shape_info.rotation.y, 0, 1.0f - sqrtf(0.5f), 2500, 50);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+    Player_actor_Movement_Base_Braking_common(actorx, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Notice_mosquito(ACTOR* actorx) {
+    f32 dummy;
+
+    return Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_ObjCheck_Notice_mosquito(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Notice_mosquito(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_Notice_mosquito_demo_ct(ACTOR* actorx) {
+    rgba_t window_color;
+
+    mDemo_Set_msg_num(0x3063);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(CAMERA2_PROCESS_ITEM);
+    mDemo_Set_ListenAble();
+    window_color.r = 225;
+    window_color.g = 165;
+    window_color.b = 255;
+    window_color.a = 255;
+    mDemo_Set_talk_window_color(&window_color);
+    mBGMPsComp_make_ps_demo(BGM_BEE_STUNG, 0x168);
+
+    if (Save_Get(scene_no) == SCENE_MUSEUM_ROOM_INSECT) {
+        mBGMPsComp_museum_status(0);
+    }
+}
+
+static int Player_actor_MessageControl_Notice_mosquito(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_notice_mosquito_c* notice_mosquito_p = &player->main_data.notice_mosquito;
+    int* msg_mode_p = &notice_mosquito_p->msg_mode;
+
+    switch (*msg_mode_p) {
+        case 0: {
+            f32* timer_p = &notice_mosquito_p->timer;
+
+            if (*timer_p < 0.0f) {
+                (*timer_p) += 1.0f;
+            } else {
+                *msg_mode_p = 1;
+            }
+            break;
+        }
+
+        case 1: {
+            if (mDemo_Check(mDemo_TYPE_REPORT, actorx) == FALSE) {
+                mDemo_Request(mDemo_TYPE_REPORT, actorx, &Player_actor_Notice_mosquito_demo_ct);
+            } else {
+                *msg_mode_p = 2;
+            }
+            break;
+        }
+
+        case 2: {
+            if (mDemo_Check(mDemo_TYPE_REPORT, actorx) == FALSE) {
+                *msg_mode_p = 3;
+            }
+            break;
+        }
+
+        default: {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_request_proc_index_fromNotice_mosquito(ACTOR* actorx, GAME* game, int msg_end_flag) {
+    if (msg_end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Notice_mosquito(ACTOR* actorx, GAME* game) {
+    int msg_end_flag;
+
+    Player_actor_Movement_Notice_mosquito(actorx);
+    Player_actor_CulcAnimation_Notice_mosquito(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_ObjCheck_Notice_mosquito(actorx, game);
+    Player_actor_BGcheck_Notice_mosquito(actorx);
+    msg_end_flag = Player_actor_MessageControl_Notice_mosquito(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromNotice_mosquito(actorx, game, msg_end_flag);
+}

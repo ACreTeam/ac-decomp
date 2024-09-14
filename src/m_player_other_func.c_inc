@@ -1,0 +1,306 @@
+
+static void Player_actor_ct_other_func1(ACTOR* actor, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    play->submenu.start_refuse = TRUE;
+    actor->unknown_b4 = 1;
+
+    Actor_info_make_actor(&play->actor_info, game, mAc_PROFILE_FIELD_DRAW, actor->world.position.x,
+                          actor->world.position.y, actor->world.position.z, 0, 0, 0, -1, -1, -1, EMPTY_NO, -1, -1, -1);
+}
+
+static void Player_actor_setup_main_Wade_other_func1(ACTOR* actor, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    play->object_exchange._1954 = TRUE;
+}
+
+static void Player_actor_setup_main_Wade_snowball_other_func1(ACTOR* actor, GAME* game) {
+    Player_actor_setup_main_Wade_other_func1(actor, game);
+}
+
+static void Player_actor_setup_main_Wade_other_func2(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    xyz_t pos = player->main_data.wade.end_pos;
+
+    mFI_SetBearActor(play, pos, TRUE);
+
+    Common_Set(in_initial_block, FALSE);
+}
+
+static void Player_actor_setup_main_Wade_snowball_other_func2(ACTOR* actor, GAME* game) {
+    Player_actor_setup_main_Wade_other_func2(actor, game);
+}
+
+static void Player_actor_setup_main_Demo_wade_other_func2(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    xyz_t pos = player->main_data.wade.end_pos;
+
+    mFI_SetBearActor(play, pos, TRUE);
+
+    Common_Set(in_initial_block, FALSE);
+}
+
+static void Player_actor_setup_main_Demo_geton_boat_wade_other_func2(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    xyz_t pos = player->main_data.wade.end_pos;
+
+    mFI_SetBearActor(play, pos, TRUE);
+
+    Common_Set(in_initial_block, FALSE);
+}
+
+static void Player_actor_ChangeFace_for_Wade(ACTOR* actor, GAME* game, f32 timer) {
+    if (18.0f <= timer && timer < 19.0f) {
+        int rank = 0;
+
+        rank |= Player_actor_Set_player_sunburn_rankup(actor);
+        rank |= Player_actor_Set_player_sunburn_rankdown(actor);
+
+        if (rank != 0) {
+            mPlib_change_player_face_pallet(game);
+        }
+    }
+}
+
+static void Player_actor_main_Wade_other_func1(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_ChangeFace_for_Wade(actor, game, player->main_data.wade.timer);
+}
+
+static void Player_actor_main_Demo_wade_other_func1(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_ChangeFace_for_Wade(actor, game, player->main_data.wade.timer);
+}
+
+static void Player_actor_main_Wade_snowball_other_func1(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_ChangeFace_for_Wade(actor, game, player->main_data.wade.timer);
+}
+
+static void Player_actor_main_Demo_geton_boat_wade_other_func1(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_ChangeFace_for_Wade(actor, game, player->main_data.wade.timer);
+}
+
+static void Player_actor_main_Sitdown_wait_other_func2(ACTOR* actor, GAME* game) {
+    if (Common_Get(clip.my_room_clip)) {
+        Common_Get(clip.my_room_clip)->call_sit_down_ongen_pos_se_proc(&actor->world.position);
+    }
+}
+
+static void Player_actor_main_Relax_rod_other_func2(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    Player_actor_request_camera2_main_simple_fishing(actor, game);
+}
+
+static void Player_actor_main_Vib_rod_other_func2(ACTOR* actor, GAME* game) {
+    Player_actor_request_camera2_main_simple_fishing(actor, game);
+}
+
+static void Player_actor_main_Collect_rod_other_func2(ACTOR* actor, GAME* game) {
+    Player_actor_request_camera2_main_simple_return(actor, game);
+}
+
+static void Player_actor_main_Fly_rod_other_func2(ACTOR* actor, GAME* game) {
+    Player_actor_request_camera2_main_simple_return(actor, game);
+}
+
+static void Player_actor_settle_main_Collect_rod_other_func2(ACTOR* actor, GAME* game) {
+    Player_actor_request_camera2_main_normal(game);
+}
+
+static void Player_actor_settle_main_Fly_rod_other_func2(ACTOR* actor, GAME* game) {
+    Player_actor_request_camera2_change_priority(game);
+}
+
+static void Player_actor_set_nextgoto_info_type0(ACTOR* actor) {
+    GAME_PLAY* play = (GAME_PLAY*)gamePT;
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+
+    if (goto_other_scene(play, Common_GetPointer(structure_exit_door_data), TRUE) != TRUE) {
+        mDemo_End(actor);
+    } else {
+        aMR_SaveWaltzTempo2();
+        mBGMPsComp_make_ps_wipe(0x195);
+    }
+    player->update_scene_bg_mode = TRUE;
+}
+
+static void Player_actor_set_nextgoto_info_type1(ACTOR* actor) {
+    GAME_PLAY* play = (GAME_PLAY*)gamePT;
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (goto_next_scene(play, player->item_in_front - DOOR_START, TRUE) != TRUE) {
+        mDemo_End(actor);
+    } else {
+        int scene = Common_Get(door_data).next_scene_id - 1;
+
+        if (scene == SCENE_DEPART_2 || scene == SCENE_MUSEUM_ENTRANCE || scene == SCENE_MUSEUM_ROOM_PAINTING ||
+            scene == SCENE_MUSEUM_ROOM_FOSSIL || scene == SCENE_MUSEUM_ROOM_INSECT || scene == SCENE_MUSEUM_ROOM_FISH) {
+            play->fb_fade_type = 12;
+            mBGMForce_room_nonstop_start();
+        } else {
+            mBGMPsComp_make_ps_wipe(0x249);
+        }
+    }
+}
+
+static int Player_actor_check_bg_for_next_goto(ACTOR* actor, mActor_name_t door) {
+    mCoBG_Collision_u* col;
+
+    if (mFI_GET_TYPE(mFI_GetFieldId()) == mFI_FIELD_PLAYER0_ROOM) {
+        if (door >= DOOR_START && door < EXIT_DOOR) {
+            col = mFI_GetUnitCol(actor->world.position);
+            if (col->data.center != col->data.top_left || col->data.center != col->data.bot_left ||
+                col->data.center != col->data.top_right || col->data.center != col->data.bot_right) {
+                return TRUE;
+            }
+            return FALSE;
+        }
+        return TRUE;
+    }
+    return TRUE;
+}
+
+static void Player_actor_check_nextgoto(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    mActor_name_t door = player->item_in_front;
+
+    if (ITEM_NAME_GET_TYPE(door) == NAME_TYPE_WARP && Player_actor_check_bg_for_next_goto(actor, door) != FALSE &&
+        mEv_CheckTitleDemo() <= 0 && play->fb_wipe_mode == 0) {
+        if (door >= EXIT_DOOR && door < EXIT_DOOR1) {
+            mDemo_Request(mDemo_TYPE_EXITSCENE, actor, Player_actor_set_nextgoto_info_type0);
+
+            if (player->update_scene_bg_mode != FALSE) {
+                mBGMPsComp_scene_mode(0xE);
+                player->update_scene_bg_mode = FALSE;
+            }
+        } else if (door >= DOOR_START && door < EXIT_DOOR) {
+            if ((mFI_GetUnitCol(actor->world.position)->data.center !=
+                     mFI_GetUnitCol(actor->world.position)->data.top_left ||
+                 mFI_GetUnitCol(actor->world.position)->data.center !=
+                     mFI_GetUnitCol(actor->world.position)->data.bot_left ||
+                 mFI_GetUnitCol(actor->world.position)->data.center !=
+                     mFI_GetUnitCol(actor->world.position)->data.top_right ||
+                 mFI_GetUnitCol(actor->world.position)->data.center !=
+                     mFI_GetUnitCol(actor->world.position)->data.bot_right) &&
+                mFI_GET_TYPE(mFI_GetFieldId()) == mFI_FIELD_PLAYER0_ROOM) {
+                aMR_SaveWaltzTempo2();
+                mBGMPsComp_make_ps_wipe(0x10E);
+            }
+            mDemo_Request(mDemo_TYPE_EXITSCENE, actor, Player_actor_set_nextgoto_info_type1);
+        }
+    }
+}
+
+static void Player_actor_check_forward(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    s16 rot = actor->shape_info.rotation.y;
+    xyz_t pos;
+    mActor_name_t* item;
+
+    pos.x = actor->world.position.x + 0.00061037019f * sins(rot);
+    pos.z = actor->world.position.z + 0.00061037019f * coss(rot);
+    pos.y = 0.0f;
+
+    pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos(pos, 0.0f);
+
+    item = mFI_GetUnitFG(pos);
+
+    player->forward_ut_pos.x = pos.x;
+    player->forward_ut_pos.z = pos.z;
+    player->forward_ut_pos.y = pos.y;
+
+    if (item != NULL) {
+        player->item_in_front = *item;
+    } else {
+        player->item_in_front = EMPTY_NO;
+    }
+
+    Player_actor_check_nextgoto(actor, game);
+
+    if (chkTrigger(BUTTON_A)) {
+        player->a_btn_pressed = TRUE;
+    } else {
+        player->a_btn_pressed = FALSE;
+    }
+}
+
+static void Player_actor_move_other_func1(ACTOR* actor, GAME* game) {
+    Player_actor_cancel_request_change_proc_index_by_A_btn(actor);
+    Player_actor_request_main_change_from_submenu(actor, game);
+    Player_actor_request_change_item(game);
+    Player_actor_cancel_request_change_proc_index(actor);
+    Player_actor_change_proc_index(actor, game);
+    Player_actor_Reset_excute_cancel_wade(actor);
+    Player_actor_Set_OldAngle(actor);
+    Player_actor_Culc_player_frame_counter(actor);
+    Player_actor_Check_player_sunburn_ChangeDay();
+    Player_actor_Check_player_sunburn_for_main(actor);
+    Player_actor_Check_player_change_color_for_main(actor);
+}
+
+static void Player_actor_move_other_func2(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_set_eye_PositionAndAngle(actor);
+    Player_actor_sound_SetStatus(actor);
+    Player_actor_Set_Indoor_Camera_Index(actor, game);
+    Player_actor_check_forward(actor, game);
+    mFI_SetPlayerWade(game);
+    Player_actor_check_little_shake_tree(actor, game);
+    Player_actor_check_shake_tree_timer(actor);
+    Player_actor_check_pitfall(actor, game);
+    Player_actor_set_ripple(actor, game);
+
+    SETREG(PLAYERREG, 87, player->now_main_index);
+    SETREG(PLAYERREG, 88, player->requested_main_index_priority);
+    SETREG(PLAYERREG, 89, actor->world.angle.y);
+    SETREG(PLAYERREG, 90, actor->shape_info.rotation.y);
+    SETREG(PLAYERREG, 91, actor->world.position.x);
+    SETREG(PLAYERREG, 92, actor->world.position.y);
+    SETREG(PLAYERREG, 93, actor->world.position.z);
+
+    Player_actor_Set_old_sound_frame_counter(actor);
+}
+
+static void Player_actor_draw_other_func2(ACTOR* actor, GAME* game) {
+    Player_actor_SetPosition_OBJtoLine_forItem(actor, game);
+}
+
+static void Player_actor_change_main_index_other_func1(ACTOR* actor, GAME* game) {
+}
+
+static void Player_actor_change_main_index_other_func2(ACTOR* actor, GAME* game) {
+}
+
+static void Player_actor_settle_main_other_func2(ACTOR* actor, GAME* game) {
+    Player_actor_SetFootMark_for_settle_main(actor, game);
+}
+
+static void Player_actor_SetActorUki(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    if (Player_actor_CheckScene_AbleOutItem(Save_Get(scene_no)) != FALSE && player->fishing_rod_actor_p == NULL) {
+        player->fishing_rod_actor_p = Actor_info_name_search(&play->actor_info, mAc_PROFILE_UKI, ACTOR_PART_BG);
+    }
+}
+
+static void Player_actor_Item_main_other_func1(ACTOR* actor, GAME* game) {
+    Player_actor_SetActorUki(actor, game);
+}
+
+static void Player_actor_setup_main_Demo_geton_boat_other_func2(ACTOR* actor, GAME* game) {
+    Common_Set(sunburn_time, 0);
+}

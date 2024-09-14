@@ -53,6 +53,7 @@ void DSPHalt();
 void DSPSendMailToDSP(u32 mail);
 u32 DSPCheckMailToDSP();
 u32 DSPCheckMailFromDSP();
+u32 DSPReadMailFromDSP();
 u32 DSPGetDMAStatus();
 
 DSPTaskInfo* DSPAddTask(DSPTaskInfo* task);

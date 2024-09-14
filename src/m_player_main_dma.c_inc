@@ -1,0 +1,62 @@
+
+static int Player_actor_request_main_dma(GAME* game, int flag) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_DMA, flag) != FALSE) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_DMA, flag);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Dma(ACTOR* actorx, GAME* game) {
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_request_proc_index_fromDma(ACTOR* actorx, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Object_Exchange_c* exchange = &play->object_exchange;
+    int bank_idx = mSc_bank_regist_check(exchange, ACTOR_OBJ_BANK_14);
+    PLAYER_ACTOR* actor = (PLAYER_ACTOR*)actorx;
+    int i;
+    cKF_SkeletonInfo_R_c* keyf;
+    u16 type;
+
+    if (exchange->banks[bank_idx].bank_id > 0) {
+        if (exchange->banks[bank_idx + 1].bank_id > 0 && exchange->banks[bank_idx + 2].bank_id > 0 &&
+            exchange->banks[bank_idx + 3].bank_id > 0 && exchange->banks[bank_idx + 4].bank_id > 0 &&
+            exchange->banks[bank_idx + 5].bank_id > 0 && exchange->banks[bank_idx + 6].bank_id > 0) {
+            Player_actor_ItemBank_ct(actorx, game);
+            if (actor->requested_main_index_priority == mPlayer_REQUEST_PRIORITY_41) {
+                Player_actor_SettleRequestMainIndexPriority(actorx);
+            }
+            keyf = &actor->keyframe0;
+            type = actor->actor_class.actor_specific;
+            cKF_SkeletonInfo_R_ct(keyf, mPlib_get_player_mdl_p(), NULL, actor->joint_data, actor->morph_data);
+
+            actor->keyframe1 = *keyf;
+
+            if ((type & 7) == 1) {
+                mPlib_request_main_outdoor_type1(game, 1, 0);
+            } else if ((type & 7) == 2) {
+                mPlib_request_main_outdoor_type1(game, 0, 0);
+            } else if ((type & 7) == 3) {
+                mPlib_request_main_outdoor_type1(game, 0, 1);
+            } else if ((type & 7) == 4) {
+                mPlib_request_main_hide_type1(game);
+            } else if ((type & 7) == 5) {
+                mPlib_request_main_groundhog_type1(game);
+            } else {
+                if (Common_Get(fail_emu_flag) == TRUE) {
+                    Player_actor_request_main_fail_emu(game, mPlayer_REQUEST_PRIORITY_43);
+                } else {
+                    Player_actor_request_main_intro_all(game, mPlayer_REQUEST_PRIORITY_43);
+                }
+            }
+            Camera2_request_main_normal(play, 1, 1);
+        }
+    }
+}
+
+static void Player_actor_main_Dma(ACTOR* actor, GAME* game) {
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_request_proc_index_fromDma(actor, game);
+}

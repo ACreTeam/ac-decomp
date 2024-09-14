@@ -7,51 +7,48 @@
 Decompilation in progress of Animal Crossing (GAFE01)
 
 A decompilation of the original N64 version of the game is being worked on [here](https://github.com/zeldaret/af).
+
 ## Cloning
 
 Use `--recursive` when cloning to have ppcdis in the repository. 
 
 ## Building
 
-> ℹ️ When using Windows, it's recommended to use WSL.
+> [!NOTE]
+> On Windows, the build is known to run disproportionately slow when ran natively, so WSL is recommended.
 
 ### Docker
 
-1. [Dump a copy of the game](./docs/extract_game.md) and extract **main.dol** and **foresta.rel.szs**.
-2. Decompress **foresta.rel.szs** with yaz0 found in *tools/* (`yaz0 -d foresta.rel.szs foresta.rel`).
-3. Place **main.dol** and **foresta.rel** in *dump/*.
-4. Place **forest_1st.arc** and **forest_2nd.arc** in *dump/*.
-5. Download the [CodeWarrior 1.3.2 and 1.2.5n compilers](https://files.decomp.dev/compilers_20230715.zip) and extract them to *tools/1.3.2/* and *tools/1.2.5n/*, respectively.
-6. Download the [CodeWarrior 1.3.2r compiler](https://mega.nz/file/WuBFTCLT#TmB5R4-1mEFkk4G1Vjn9_cHXRD9wOIH9CtOLaVSWEas) and extract it to *tools/1.3.2r/*.
-7. Install Docker.
-8. Build the Docker image (`docker build -t ac-decomp .`).
-9. Run configure.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 configure.py`).
-10. Run build.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 build.py`).
+1. [Dump a copy of the game](./docs/extract_game.md) and extract all files.
+2. Place **main.dol**, **foresta.rel.szs**, **forest_1st.arc**, and **forest_2nd.arc** in *dump/*.
+3. Install Docker.
+4. Set up the Docker image. If using MacOS or Linux (including WSL), run `chmod +x docker-setup.sh && ./docker-setup.sh`. If using Windows, run the `docker-setup.bat` file.
+5. Run configure.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 configure.py`).
+6. Run build.py (`docker run --rm -v ${PWD}:/ac-decomp ac-decomp python3 build.py`).
 
 ### Build manually
 
-> ℹ️ When building manually from a work directory originally used for Docker, you will need to run `sudo ninja -t clean` for the build to execute properly.
+> [!TIP]
+> When building manually from a work directory previously used for Docker, `sudo ninja -t clean` will need to be ran for the build to execute properly.
 
-1. [Dump a copy of the game](./docs/extract_game.md) and extract **main.dol** and **foresta.rel.szs**.
-2. Decompress **foresta.rel.szs** with yaz0 found in *tools/* (`yaz0 -d foresta.rel.szs foresta.rel`).
-3. Place **main.dol** and **foresta.rel** in *dump/*.
-4. Place **forest_1st.arc** and **forest_2nd.arc** in *dump/*.
-5. Download the [CodeWarrior 1.3.2 and 1.2.5n compilers](https://files.decomp.dev/compilers_20230715.zip) and extract them to *tools/1.3.2/* and *tools/1.2.5n/*, respectively.
-6. Download the [CodeWarrior 1.3.2r compiler](https://mega.nz/file/WuBFTCLT#TmB5R4-1mEFkk4G1Vjn9_cHXRD9wOIH9CtOLaVSWEas) and extract it to *tools/1.3.2r/*.
-7. Install Python, pip, and [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages#package-managers) using your package manager of choice.
-8. Install Python modules from requirements.txt (`pip install -r requirements.txt`).
-9. Install [wibo](https://github.com/decompals/wibo)
+1. [Dump a copy of the game](./docs/extract_game.md) and extract all files.
+2. Place **main.dol**, **foresta.rel.szs**, **forest_1st.arc**, and **forest_2nd.arc** in *dump/*.
+3. Download the [CodeWarrior 1.3.2, 1.3.2r, and 1.2.5n compilers](https://files.decomp.dev/compilers_latest.zip) and extract them to *tools/1.3.2/*, *tools/1.3.2r/*, and *tools/1.2.5n/*, respectively.
+4. Install Python, pip, and [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages#package-managers) using a package manager of choice.
+    - If using an ARM-based device, cmake will also need to be installed.
+5. Install Python modules from requirements.txt (`pip install -r requirements.txt`).
+6. Install [wibo](https://github.com/decompals/wibo)
     - Wibo is a lightweight Wine replacement that's tailor-made for use with decomp projects. Regular Wine can be used if preferred, but for the purposes of this guide, these instructions will use wibo.
-    - Download [the latest GitHub release](https://github.com/decompals/wibo/releases/latest) and run `install ./wibo /usr/bin` to install it to your system.
-10. Install devkitPPC.
-    - To get devkitPPC, you'll need [devkitPro Pacman](https://devkitpro.org/wiki/devkitPro_pacman#Installing_devkitPro_Pacman).
+    - Download [the latest GitHub release](https://github.com/decompals/wibo/releases/latest) and run `install ./wibo /usr/bin` to install it to the system.
+7. Install devkitPPC.
+    - [devkitPro Pacman](https://devkitpro.org/wiki/devkitPro_pacman#Installing_devkitPro_Pacman) is needed to get devkitPPC.
         - Run `dkp-pacman -S devkitPPC` once dkp-pacman is installed to install devkitPPC.
         - Set the `DEVKITPPC` environment variable to */opt/devkitpro/devkitPPC*.
-11. Set the `N64_SDK` environment variable to the path of your libultra or equivalent headers. If you need headers, you can use the ones from [ultralib](https://github.com/decompals/ultralib).
+8. Set the `N64_SDK` environment variable to the path of libultra or equivalent headers. Headers from [ultralib](https://github.com/decompals/ultralib) can be used.
     - Headers should be located at `$N64_SDK/ultra/usr/include`.
-    - You may need to modify `Gpopmtx`'s `param` member to be `unsigned int` in **gbi.h**.
-12. Run `python3 configure.py`.
-13. Run `python3 build.py`.
+    - `Gpopmtx`'s `param` member must be modified to be `unsigned int` in **gbi.h**.
+9. Run `python3 configure.py`.
+10. Run `python3 build.py`.
 
 ## Quick Guides
 - [Dumping Game Files](./docs/extract_game.md)

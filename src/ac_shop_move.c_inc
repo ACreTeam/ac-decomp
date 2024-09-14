@@ -234,7 +234,7 @@ static void aSHOP_open_wait(STRUCTURE_ACTOR* shop, GAME_PLAY* play) {
     actor = &shop->actor_class;
     game = &play->game;
 
-    if (mPlib_check_player_actor_main_index_OutDoorMove(play) != FALSE) {
+    if (mPlib_check_player_actor_main_index_OutDoorMove(&play->game) != FALSE) {
         return;
     }
 

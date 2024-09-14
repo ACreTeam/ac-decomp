@@ -87,6 +87,8 @@ enum {
 #define mPr_ORIGINAL_DESIGN_COUNT 8
 #define mPr_RADIOCARD_MAX_DAYS 13
 
+#define mPr_ORIGINAL_DESIGN_IDX_VALID(idx) ((idx) >= 0 && (idx) < mPr_ORIGINAL_DESIGN_COUNT)
+
 #define mPr_GET_ITEM_COND(all_cond, slot_no) (((all_cond) >> (((u32)(slot_no)) << 1)) & mPr_ITEM_COND_NUM)
 #define mPr_SET_ITEM_COND(all_cond, slot_no, cond) \
     (((all_cond) & ~((u32)mPr_ITEM_COND_NUM << ((u32)(slot_no) << 1))) | ((u32)(cond) << ((u32)(slot_no) << 1)))
@@ -184,11 +186,6 @@ typedef struct private_mother_mail_info_s {
     lbRTC_ymd_c date;
     mPr_mother_mail_data_c data;
 } mPr_mother_mail_info_c;
-
-typedef struct private_cloth_s {
-    u16 idx;
-    mActor_name_t item;
-} mPr_cloth_c;
 
 struct private_s {
     /* 0x0000 */ PersonalID_c player_ID;      /* player's id info */

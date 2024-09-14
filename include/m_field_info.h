@@ -6,6 +6,7 @@
 #include "m_lib.h"
 #include "m_collision_bg.h"
 #include "m_field_make.h"
+#include "m_bg_type.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,11 +25,14 @@ extern "C" {
 #define mFI_UT_WORLDSIZE_HALF_X_F (mFI_UT_WORLDSIZE_X_F / 2.0f)
 #define mFI_UT_WORLDSIZE_HALF_Z_F (mFI_UT_WORLDSIZE_X_F / 2.0f)
 
-#define mFI_BK_WORLDSIZE_X (mFI_UT_WORLDSIZE_X * UT_X_NUM)
-#define mFI_BK_WORLDSIZE_Z (mFI_UT_WORLDSIZE_Z * UT_Z_NUM)
+#define mFI_BK_WORLDSIZE_BASE (mFI_UNIT_BASE_SIZE * UT_BASE_NUM)
+#define mFI_BK_WORLDSIZE_BASE_F ((f32)mFI_BK_WORLDSIZE_BASE)
 
-#define mFI_BK_WORLDSIZE_X_F (mFI_UT_WORLDSIZE_X_F * UT_X_NUM)
-#define mFI_BK_WORLDSIZE_Z_F (mFI_UT_WORLDSIZE_Z_F * UT_Z_NUM)
+#define mFI_BK_WORLDSIZE_X mFI_BK_WORLDSIZE_BASE
+#define mFI_BK_WORLDSIZE_Z mFI_BK_WORLDSIZE_BASE
+
+#define mFI_BK_WORLDSIZE_X_F mFI_BK_WORLDSIZE_BASE_F
+#define mFI_BK_WORLDSIZE_Z_F mFI_BK_WORLDSIZE_BASE_F
 
 #define mFI_POS2UT(pos) ((int)((pos) / mFI_UNIT_BASE_SIZE_F))
 
@@ -140,7 +144,16 @@ enum {
 };
 
 /* Not sure about these other than the island one */
-enum { mFI_CLIMATE_0, mFI_CLIMATE_ISLAND, mFI_CLIMATE_2, mFI_CLIMATE_3, mFI_CLIMATE_4, mFI_CLIMATE_5, mFI_CLIMATE_NUM };
+enum {
+    mFI_CLIMATE_0,
+    mFI_CLIMATE_ISLAND,
+    mFI_CLIMATE_2,
+    mFI_CLIMATE_3,
+    mFI_CLIMATE_4,
+    mFI_CLIMATE_5,
+
+    mFI_CLIMATE_NUM,
+};
 
 enum {
     mFI_DIGSTATUS_MISS,
@@ -185,7 +198,12 @@ typedef struct visible_block_item_info_s {
 } mFI_item_table_c;
 
 enum {
-    mFI_SOUND_SOURCE_POND = 3, // TODO: might not be correct name
+    mFI_SOUND_SOURCE_NONE,
+    mFI_SOUND_SOURCE_RIVER,
+    mFI_SOUND_SOURCE_OCEAN,
+    mFI_SOUND_SOURCE_POND,
+
+    mFI_SOUND_SOURCE_NUM
 };
 
 extern void mFI_ClearFieldData();
@@ -290,7 +308,7 @@ extern int mFI_UnregistMoveActorList(mActor_name_t actor_name, int bx, int bz);
 extern int mFI_AddMoveActorList(mActor_name_t actor_name, int bx, int bz, int ut_x, int ut_z, s16 arg);
 extern mFM_move_actor_c* mFI_MoveActorListDma(int bx, int bz);
 extern void mFI_InitMoveActorBitData();
-extern void mFI_SetPlayerWade(GAME_PLAY* play);
+extern void mFI_SetPlayerWade(GAME* game);
 extern int mFI_CheckPlayerWade(int wade);
 extern int mFI_GetPlayerWade();
 extern int mFI_GetNextBlockNum(int* bx, int* bz);

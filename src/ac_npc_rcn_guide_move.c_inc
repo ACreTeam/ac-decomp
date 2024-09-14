@@ -1,0 +1,39 @@
+static int aNRG_set_request_act(NPC_RCN_GUIDE_ACTOR* rcn_guide, u8 act_prio, u8 act_idx, u8 act_type, u16 obj, int x,
+                                int z) {
+    u16 args[6];
+    int res = FALSE;
+
+    if (act_prio >= rcn_guide->npc_class.request.act_priority) {
+        bzero(args, sizeof(args));
+        args[0] = obj;
+        args[2] = x;
+        args[3] = z;
+        rcn_guide->npc_class.request.act_priority = act_prio;
+        rcn_guide->npc_class.request.act_idx = act_idx;
+        rcn_guide->npc_class.request.act_type = act_type;
+        mem_copy((u8*)rcn_guide->npc_class.request.act_args, (u8*)args, sizeof(args));
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static void aNRG_set_house_master_name(int house_idx) {
+    mMsg_SET_FREE_STR(mMsg_FREE_STR0, Save_Get(private_data[mHS_get_pl_no(house_idx)]).player_ID.player_name,
+                      PLAYER_NAME_LEN);
+}
+
+static void aNRG_set_shop_address(NPC_RCN_GUIDE_ACTOR* rcn_guide) {
+    static u8 choume_str[] = { 'Q', 'A', 'B', 'C', 'D', 'E', 'F' };
+    u8 str[1];
+
+    /* Set the row (Z) string */
+    mMsg_SET_FREE_STR(mMsg_FREE_STR1, &choume_str[rcn_guide->shop_bz], 1);
+    /* Set the column (X) string */
+    mFont_UnintToString(str, sizeof(str), rcn_guide->shop_bx, sizeof(str), TRUE, FALSE, TRUE);
+    mMsg_SET_FREE_STR(mMsg_FREE_STR2, str, sizeof(str));
+}
+
+static void aNRG_actor_move(ACTOR* actorx, GAME* game) {
+    Common_Get(clip).npc_clip->move_proc(actorx, game);
+}

@@ -1,0 +1,109 @@
+static int Player_actor_request_main_putaway_net(GAME* game, int exchange_flag, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_PUTAWAY_NET, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.putaway_net.exchange_flag = exchange_flag;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_PUTAWAY_NET, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Putaway_net(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    int kind = Player_actor_Get_ItemKind_from_submenu();
+    mPlayer_main_putaway_net_c* main_putaway = &player->main_data.putaway_net;
+    mPlayer_request_putaway_net_c* req_putaway = &player->requested_main_index_data.putaway_net;
+
+    main_putaway->exchange_flag = req_putaway->exchange_flag;
+
+    Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_LTURN1, mPlayer_INDEX_WALK, -5.0f, -1.0f, 0);
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_PUTAWAY_M1, mPlayer_ANIM_PUTAWAY_M1, 1.0f, 1.0f, 0.5f,
+                                     -5.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+
+    Player_actor_sound_GASAGOSO(actor);
+}
+
+static void Player_actor_Movement_Putaway_net(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Putaway_net(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_CorrectSomething_Putaway_net(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    u32 label = player->item_net_catch_label;
+
+    if (label != 0) {
+        cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+
+        if (Player_actor_Check_AnimationFrame(fc, 17.0f)) {
+            if (player->item_net_catch_type == 0) {
+                Common_Get(clip).insect_clip->dt_proc((ACTOR*)label, game);
+            }
+        } else if (fc->current_frame < 17.0f) {
+            if (player->item_net_catch_type == 0) {
+                ((ACTOR*)label)->scale.x *= 0.89125f;
+                ((ACTOR*)label)->scale.y *= 0.89125f;
+                ((ACTOR*)label)->scale.z *= 0.89125f;
+            }
+            Player_actor_CorrectSomething_net(actor, &player->left_hand_pos);
+        }
+    }
+}
+
+static void Player_actor_SearchAnimation_Putaway_net(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_CorrectSomething_Putaway_net(actor, game);
+    }
+}
+
+static void Player_actor_ObjCheck_Putaway_net(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Putaway_net(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromPutaway_net(ACTOR* actor, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    mPlayer_main_putaway_net_c* main_putaway = &player->main_data.putaway_net;
+
+    if (end_flag) {
+        if (main_putaway->exchange_flag) {
+            if (player->item_net_catch_type == 0) {
+                mSM_open_submenu_new2(
+                    &play->submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_EXCHANGE,
+                    (mActor_name_t)(((aINS_INSECT_ACTOR*)player->item_net_catch_label)->type + ITM_INSECT_START), NULL,
+                    actor->shape_info.rotation.y);
+            }
+        } else {
+            Player_actor_SettleRequestMainIndexPriority(actor);
+            Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+        }
+    }
+}
+
+static void Player_actor_main_Putaway_net(ACTOR* actor, GAME* game) {
+    int end_flag;
+    f32 frame_calc;
+
+    Player_actor_Movement_Putaway_net(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    end_flag = Player_actor_CulcAnimation_Putaway_net(actor, &frame_calc);
+    Player_actor_SearchAnimation_Putaway_net(actor, game, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Putaway_net(actor, game);
+    Player_actor_BGcheck_Putaway_net(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromPutaway_net(actor, game, end_flag);
+}

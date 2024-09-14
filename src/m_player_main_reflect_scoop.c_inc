@@ -1,0 +1,290 @@
+static int Player_actor_request_main_reflect_scoop_all(GAME* game, const xyz_t* pos, mActor_name_t item,
+                                                       ACTOR* hit_actor, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_REFLECT_SCOOP, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.reflect_scoop.dig_pos = *pos;
+        player->requested_main_index_data.reflect_scoop.item = item;
+        player->requested_main_index_data.reflect_scoop.hit_actor = hit_actor;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_REFLECT_SCOOP, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Reflect_scoop(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_reflect_scoop_c* main_scoop = &player->main_data.reflect_scoop;
+    mPlayer_request_reflect_scoop_c* req_scoop = &player->requested_main_index_data.reflect_scoop;
+
+    main_scoop->target_pos = req_scoop->dig_pos;
+    main_scoop->item = req_scoop->item;
+    main_scoop->reflect_actor_p = req_scoop->hit_actor;
+
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_NOT_DIG1, mPlayer_ANIM_NOT_DIG1, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     0, 0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_settle_main_Reflect_scoop(ACTOR* actor, GAME* game) {
+    actor->speed = 0.0f;
+    actor->world.angle.y = actor->shape_info.rotation.y;
+}
+
+static int Player_actor_Movement_Reflect_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_swing_axe_c* main_axe = &player->main_data.swing_axe;
+    cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+    f32 cur_frame = fc->current_frame;
+
+    Player_actor_Movement_axe_common(actor, &main_axe->axe_common.target_pos);
+
+    if (cur_frame < 13.0f) {
+        actor->world.angle.y = actor->shape_info.rotation.y;
+    }
+}
+
+static int Player_actor_CulcAnimation_Reflect_scoop(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetEffectHit_Reflect_scoop(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+
+    if (Player_actor_Check_AnimationFrame(fc, 13.0f)) {
+        u32 item;
+        s16 attr;
+        f32 sin;
+        f32 cos;
+        xyz_t* pos;
+        int check;
+        s16 rot;
+        int stone;
+        xyz_t ac_pos;
+        mPlayer_main_reflect_scoop_c* main_scoop;
+        ACTOR* reflected;
+        int col_tree;
+
+        main_scoop = &player->main_data.reflect_scoop;
+        pos = &main_scoop->target_pos;
+        item = main_scoop->item;
+        reflected = main_scoop->reflect_actor_p;
+
+        attr = -1;
+        check = IS_ITEM_COLLIDEABLE_TREE(item);
+
+        if (check) {
+            int ut_x;
+            int ut_z;
+
+            if (mFI_Wpos2UtNum(&ut_x, &ut_z, *pos)) {
+                Player_actor_Set_EffectBgTree(game, item, 3, ut_x, ut_z);
+            }
+
+            attr = 7;
+        }
+
+        stone = FALSE;
+
+        if (IS_ITEM_STONE_TC(item)) {
+            stone = TRUE;
+        }
+
+        if (stone) {
+            Player_actor_Search_STONE_TC(actor, pos);
+            if (attr < 0) {
+                attr = 7;
+            }
+        }
+
+        if (reflected) {
+            switch (reflected->id) {
+                case mAc_PROFILE_SNOWMAN:
+                    ((SNOWMAN_ACTOR*)reflected)->unk_1F8 |= 2;
+                    break;
+
+                case mAc_PROFILE_BALL:
+                    ((BALL_ACTOR*)reflected)->unk208 |= 4;
+                    break;
+            }
+        }
+
+        rot = actor->shape_info.rotation.y;
+        ac_pos = actor->world.position;
+
+        sin = sin_s(rot);
+        cos = cos_s(rot);
+
+        ac_pos.x += (37.0f * sin) + (2.0f * cos);
+        ac_pos.z += (37.0f * cos) - (2.0f * sin);
+
+        if (attr < 0 && (ITEM_NAME_GET_TYPE((u16)item) >= 4 || ITEM_NAME_GET_TYPE((u16)item) < 1)) {
+            attr = mCoBG_Wpos2Attribute(ac_pos, NULL);
+        }
+
+        if (attr >= 0) {
+            Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_DIG_SCOOP, ac_pos, 2, rot, game, RSV_NO, attr, 1);
+        }
+    }
+}
+
+static void Player_actor_SetEffect_Reflect_scoop(ACTOR* actor, GAME* game) {
+    Player_actor_SetEffectHit_Reflect_scoop(actor, game);
+}
+
+static void Player_actor_SetAngleSpeedF_Reflect_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 13.0f)) {
+        actor->speed = 4.8f;
+        actor->world.angle.y = actor->shape_info.rotation.y + 0x8000;
+    }
+}
+
+static void Player_actor_SetOrderNPC_Reflect_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    mPlayer_main_reflect_scoop_c* main_scoop = &player->main_data.reflect_scoop;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 13.0f)) {
+        Player_actor_CheckAndSet_UZAI_forNpc(main_scoop->reflect_actor_p);
+    }
+}
+
+static void Player_actor_SetSound_Reflect_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 13.0f)) {
+        mPlayer_main_reflect_scoop_c* main_scoop;
+        ACTOR* reflected;
+        u32 item;
+        xyz_t* pos;
+        int check;
+
+        main_scoop = &player->main_data.reflect_scoop;
+        pos = &main_scoop->target_pos;
+        item = main_scoop->item;
+        reflected = main_scoop->reflect_actor_p;
+
+        if (reflected == NULL) {
+            if (mCoBG_Wpos2Attribute(*pos, NULL) == mCoBG_ATTRIBUTE_BUSH) {
+                Player_actor_sound_scoop_shigemi(actor);
+                Player_actor_set_viblation_Reflect_scoop_soft();
+                return;
+            }
+        } else {
+            Player_actor_set_viblation_Reflect_scoop_soft();
+            switch (reflected->id) {
+                case mAc_PROFILE_SNOWMAN:
+                    return;
+
+                default:
+                    Player_actor_sound_scoop_item_hit(actor);
+                    break;
+            }
+            return;
+        }
+        check = IS_ITEM_COLLIDEABLE_TREE(item) ? TRUE : FALSE;
+
+        if (check || item == DUMMY_RESERVE) {
+            Player_actor_sound_scoop_tree_hit(actor);
+            Player_actor_set_viblation_Reflect_scoop_hard();
+        } else {
+            int type = ITEM_NAME_GET_TYPE(item);
+            switch (type) {
+                case NAME_TYPE_FTR0:
+                case NAME_TYPE_ITEM1:
+                case NAME_TYPE_FTR1:
+                    Player_actor_sound_scoop_item_hit(actor);
+                    Player_actor_set_viblation_Reflect_scoop_soft();
+
+                    break;
+                default:
+                    if (mCoBG_WoodSoundEffect(pos)) {
+                        Player_actor_sound_scoop_tree_hit(actor);
+                        Player_actor_set_viblation_Reflect_scoop_hard();
+                    } else {
+                        Player_actor_sound_scoop_hit(actor);
+                        Player_actor_set_viblation_Reflect_scoop_hard();
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+static void Player_actor_informed_insects_Reflect_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 13.0f) &&
+        Common_Get(clip).insect_clip != NULL && Common_Get(clip).insect_clip->set_pl_act_tim_proc != NULL) {
+        int ut_x;
+        int ut_z;
+        mPlayer_main_reflect_scoop_c* main_scoop = &player->main_data.reflect_scoop;
+        xyz_t pos = main_scoop->target_pos;
+
+        mFI_Wpos2UtNum(&ut_x, &ut_z, pos);
+        Common_Get(clip).insect_clip->set_pl_act_tim_proc(2, ut_x, ut_z);
+    }
+}
+
+static void Player_actor_SearchAnimation_Reflect_scoop(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetEffect_Reflect_scoop(actor, game);
+        Player_actor_SetAngleSpeedF_Reflect_scoop(actor);
+        Player_actor_SetOrderNPC_Reflect_scoop(actor);
+        Player_actor_SetSound_Reflect_scoop(actor);
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+        Player_actor_informed_insects_Reflect_scoop(actor);
+    }
+}
+
+static void Player_actor_ObjCheck_Reflect_scoop(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Reflect_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromReflect_scoop(ACTOR* actor, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (end_flag != 0) {
+        Player_actor_SettleRequestMainIndexPriority(actor);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    } else {
+        cKF_FrameControl_c* fc = &player->keyframe0.frame_control;
+
+        if (Player_actor_Check_AnimationFrame(fc, 29.5f)) {
+            Player_actor_SettleRequestMainIndexPriority(actor);
+            Player_actor_Set_status_for_bee(actor, TRUE);
+        } else {
+            f32 cur_frame = fc->current_frame;
+
+            if (cur_frame >= 30.0f && !Player_actor_CheckAndRequest_main_scoop_all(game, 4) &&
+                (Player_actor_GetController_move_percentX() || Player_actor_GetController_move_percentY())) {
+                Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+            }
+        }
+    }
+}
+
+static void Player_actor_main_Reflect_scoop(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int end_flag;
+
+    Player_actor_Movement_Reflect_scoop(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    end_flag = Player_actor_CulcAnimation_Reflect_scoop(actor, &frame_calc);
+    Player_actor_SearchAnimation_Reflect_scoop(actor, game, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_ObjCheck_Reflect_scoop(actor, game);
+    Player_actor_BGcheck_Reflect_scoop(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromReflect_scoop(actor, game, end_flag);
+}

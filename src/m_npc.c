@@ -362,6 +362,8 @@ extern void mNpc_CopyAnimalMemory(Anmmem_c* dst, Anmmem_c* src) {
 */
 
 extern void mNpc_AddFriendship(Anmmem_c* memory, int amount) {
+    int friendship;
+
 /* @BUG - devs checked for memory being NULL *after* deferencing it */
 #ifdef BUGFIXES
     if (memory == NULL) {
@@ -369,7 +371,7 @@ extern void mNpc_AddFriendship(Anmmem_c* memory, int amount) {
     }
 #endif
 
-    int friendship = memory->friendship + amount;
+    friendship = memory->friendship + amount;
 
 #ifndef BUGFIXES
     if (memory == NULL) {
@@ -410,7 +412,7 @@ extern void mNpc_RenewalAnimalMemory() {
         for (j = 0; j < ANIMAL_MEMORY_NUM; j++) {
             if (mNpc_CheckFreeAnimalMemory(memory) == FALSE &&
                 mLd_CheckThisLand(memory->memory_player_id.land_name, memory->memory_player_id.land_id) == TRUE) {
-                priv = Save_Get(private);
+                priv = Save_Get(private_data);
 
                 for (k = 0; k < PLAYER_NUM; k++) {
                     if (mPr_NullCheckPersonalID(&priv->player_ID) == FALSE &&
@@ -481,7 +483,7 @@ extern int mNpc_GetOldPlayerAnimalMemoryIdx(Anmmem_c* memory, int num) {
     for (i = 0; i < num; i++) {
         if (mNpc_CheckFreeAnimalMemory(memory) == FALSE &&
             mLd_CheckThisLand(memory->memory_player_id.land_name, memory->memory_player_id.land_id) == TRUE) {
-            priv = Save_Get(private);
+            priv = Save_Get(private_data);
 
             for (j = 0; j < PLAYER_NUM; j++) {
                 if (mPr_NullCheckPersonalID(&priv->player_ID) == FALSE &&
@@ -756,7 +758,7 @@ static int mNpc_GetAnimalMemoryFriend_Land_Sex(Anmmem_c* memory, int num, int se
         if (mNpc_CheckFreeAnimalMemory(memory) == FALSE) {
             priv_idx = mPr_GetPrivateIdx(&memory->memory_player_id);
 
-            if (priv_idx != -1 && Save_Get(private[priv_idx]).gender == sex &&
+            if (priv_idx != -1 && Save_Get(private_data[priv_idx]).gender == sex &&
                 mNpc_SelectBestFriend(&best_friend, memory, &best_friendship) == TRUE) {
                 res = i;
             }
@@ -1757,7 +1759,7 @@ static void mNpc_SendEventPresentMailSex(int* selected, u8* type, Animal_c* anim
 
 /* this used to be mNpc_SendEventPresentMail_common in DnM and DnM+ (handled both valentine's day & white day) */
 
-extern int mNpc_SendVtdayMail() {
+extern int mNpc_SendVtdayMail(int type) {
     u8 types[ANIMAL_NUM_MAX];
     int other_sex_best_friends[ANIMAL_NUM_MAX];
     Animal_c* animal_p;
@@ -3176,7 +3178,7 @@ static int mNpc_DecideRemoveAnimalNo_Friend(Animal_c* animal, int ignored_idx, i
     n_players = 0;
     num_possible = 0;
     remove_bitfield = 0;
-    priv_p = Save_Get(private);
+    priv_p = Save_Get(private_data);
 
     for (i = 0; i < PLAYER_NUM; i++) {
         if (mPr_NullCheckPersonalID(&priv_p->player_ID) == FALSE) {
@@ -3190,7 +3192,7 @@ static int mNpc_DecideRemoveAnimalNo_Friend(Animal_c* animal, int ignored_idx, i
         for (i = 0; i < ANIMAL_NUM_MAX; i++) {
             if (mNpc_CheckFreeAnimalInfo(animal) == FALSE && i != ignored_idx) {
                 met = 0;
-                priv_p = Save_Get(private);
+                priv_p = Save_Get(private_data);
 
                 for (j = 0; j < PLAYER_NUM; j++) {
                     if (mPr_NullCheckPersonalID(&priv_p->player_ID) == FALSE) {
@@ -3456,7 +3458,7 @@ extern void mNpc_FirstClearGoodbyMail() {
 }
 
 static void mNpc_SetGoodbyAnimalMail(Anm_GoodbyMail_c* goodby_mail, AnmPersonalID_c* anm_id) {
-    Private_c* priv = Save_Get(private);
+    Private_c* priv = Save_Get(private_data);
     int i;
 
     if (anm_id != NULL && mNpc_CheckFreeAnimalPersonalID(anm_id) == FALSE) {
@@ -3519,7 +3521,7 @@ static int mNpc_SendGoodbyAnimalMailOne(Mail_c* mail, PersonalID_c* pid, int pla
 }
 
 static void mNpc_SendGoodbyAnimalMail(Anm_GoodbyMail_c* goodby_mail) {
-    Private_c* priv = Save_Get(private);
+    Private_c* priv = Save_Get(private_data);
     int i;
 
     if (mNpc_CheckFreeAnimalPersonalID(&goodby_mail->id) == FALSE) {
@@ -7083,7 +7085,7 @@ static int mNpc_SendHPMail_analysis(PersonalID_c* pid, AnmPersonalID_c* anm_id, 
 }
 
 extern void mNpc_SendHPMail() {
-    Private_c* priv = Save_Get(private);
+    Private_c* priv = Save_Get(private_data);
     Private_c* priv_p;
     Animal_c* animal = Save_Get(animals);
     AnmHPMail_c* hp_mail;

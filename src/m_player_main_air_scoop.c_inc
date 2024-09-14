@@ -1,0 +1,71 @@
+static int Player_actor_request_main_air_scoop_all(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_AIR_SCOOP, priority)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_AIR_SCOOP, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Air_scoop(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_DIG_SUKA1, mPlayer_ANIM_DIG_SUKA1, 1.0f, 1.0f, 0.5f,
+                                     -5.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+}
+
+static void Player_actor_Movement_Air_scoop(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Air_scoop(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetSound_Air_scoop(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 13.0f)) {
+        Player_actor_sound_karaburi(actor);
+    }
+}
+
+static void Player_actor_SearchAnimation_Air_scoop(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetSound_Air_scoop(actor);
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+    }
+}
+
+static void Player_actor_ObjCheck_Air_scoop(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Air_scoop(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromAir_scoop(ACTOR* actor, GAME* game, int end_flag) {
+    if (end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actor);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Air_scoop(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int end_flag;
+
+    Player_actor_Movement_Air_scoop(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    end_flag = Player_actor_CulcAnimation_Air_scoop(actor, &frame_calc);
+    Player_actor_SearchAnimation_Air_scoop(actor, game, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_ObjCheck_Air_scoop(actor, game);
+    Player_actor_BGcheck_Air_scoop(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromAir_scoop(actor, game, end_flag);
+}

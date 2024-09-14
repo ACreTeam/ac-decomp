@@ -9,6 +9,8 @@ import json
 import os
 import pickle
 import re
+import subprocess
+import yaml
 from io import StringIO
 
 from sys import executable as PYTHON, platform
@@ -29,6 +31,11 @@ if os.path.exists("dump/main.dol"):
 assert os.path.exists("tools/1.3.2/mwcceppc.exe") and \
     os.path.exists("tools/1.2.5n/mwcceppc.exe"), \
        "Error: Codewarrior not found!"
+
+# Check if foresta.rel.szs exists but not foresta.rel, and if so, decompress
+if not os.path.exists(c.REL) and os.path.exists(c.REL_SZS):
+    print("Decompressing foresta.rel.szs to foresta.rel")
+    subprocess.call([f'./{c.ORTHRUS}', 'ncompress', 'yaz0', '-d', c.REL_SZS, c.REL])
 
 # Check binaries were added
 assert os.path.exists(c.DOL) and os.path.exists(c.REL), \
@@ -91,11 +98,12 @@ n.variable("ld", c.LD)
 n.variable("devkitppc", c.DEVKITPPC)
 n.variable("as", c.AS)
 n.variable("cpp", c.CPP)
-n.variable("iconv", c.ICONV)
 n.variable("forcefilesgen", c.FORCEFILESGEN)
 n.variable("vtxdis", c.VTXDIS)
 n.variable("pal16dis", c.PAL16DIS)
 n.variable("arctool", c.ARC_TOOL)
+n.variable("sjiswrap", c.SJISWRAP)
+n.variable("batchassetrip", c.BATCHASSETRIP)
 n.newline()
 
 ##############
@@ -115,7 +123,7 @@ n.newline()
 
 # Windows can't use && without this statement
 ALLOW_CHAIN = "cmd /c " if os.name == "nt" else ""
-mwcc_cmd = ALLOW_CHAIN + f"$cpp -M $in -MF $out.d $cppflags && $cc $cflags -c $in -o $out"
+mwcc_cmd = ALLOW_CHAIN + f"$cpp -M $in -MF $out.d $cppflags && $sjiswrap $cc $cflags -c $in -o $out"
 
 n.rule(
     "relextern",
@@ -179,6 +187,12 @@ n.rule(
 )
 
 n.rule(
+    "batchassetrip",
+    command = "$batchassetrip $in $asset_yml",
+    description="Batch asset rip $asset_yml"
+)
+
+n.rule(
     "forceactivegen",
     command = "$forceactivegen $in $out",
     description = "LCF FORCEACTIVEGEN generation $in"
@@ -219,7 +233,7 @@ n.rule(
 
 n.rule(
     "ccs",
-    command = ALLOW_CHAIN + f"$cpp -M $in -MF $out.d $cppflags && $cc $cflags -S $in -o $out",
+    command = ALLOW_CHAIN + f"$cpp -M $in -MF $out.d $cppflags && $sjiswrap $cc $cflags -S $in -o $out",
     description = "CC -S $in",
     deps = "gcc",
     depfile = "$out.d"
@@ -229,12 +243,6 @@ n.rule(
     "ld",
     command = "$ld $ldflags -map $map -lcf $lcf $in -o $out",
     description = "LD $out",
-)
-
-n.rule(
-    "iconv",
-    command = "$iconv $in $out",
-    description = "iconv $in",
 )
 
 n.rule(
@@ -259,6 +267,12 @@ n.rule(
     "arctool",
     command = "$arctool -v $in $out",
     description = "$arctool -v $in $out"
+)
+
+n.rule(
+    "sjiswrap",
+    command = "$sjiswrap $in",
+    description = "sjiswrap $in",
 )
 
 ##########
@@ -492,16 +506,29 @@ class AssetInclude(GeneratedInclude):
             return
 
         # Build
+        binary = None
+        asset_entries = {}
+        expected_files = []
         for inc in includes:
-            n.build(
-                inc.asset_path,
-                rule="assetrip",
-                inputs=inc.asset.binary,
-                variables={
-                    "addrs" : f"{inc.asset.start:x} {inc.asset.end:x}"
-                }
-            )
+            if binary == None:
+                binary = inc.asset.binary
+            asset_entries[inc.asset_path] = [inc.asset.start, inc.asset.end]
+            expected_files.append(inc.asset_path)
 
+        with open(f"{c.BUILDDIR}/{binary[7:10]}_assetrip.yml", 'w') as asset_yml:
+            yaml.dump(asset_entries, asset_yml)
+        
+        n.build(
+            outputs=expected_files,
+            rule = "batchassetrip",
+            inputs = binary,
+            variables = {
+                "asset_yml": f"{c.BUILDDIR}/{binary[7:10]}_assetrip.yml"
+            }
+        )
+
+        # Include
+        for inc in includes:
             if inc.asset.convtype == "vtx":
                 n.build(
                     inc.path,
@@ -623,14 +650,19 @@ class AsmSource(Source):
             rule = "as",
             inputs = self.src_path
         )
-        
+
 class CSource(Source):
     def __init__(self, ctx: c.SourceContext, path: str):
         if path.startswith("src/static/dolphin/"):
             self.cflags = c.SDK_FLAGS
             self.cc = c.OCC
         elif path.startswith("src/static/jaudio_NES/"):
-            self.cflags = c.JAUDIO_CFLAGS
+            if path.startswith("src/static/jaudio_NES/internal/"):
+                self.cflags = c.JAUDIO_FUNC_ALIGN_32_CFLAGS
+            elif path.startswith("src/static/jaudio_NES/game/"):
+                self.cflags = c.JAUDIO_USER_CFLAGS
+            else:
+                self.cflags = c.JAUDIO_CFLAGS
             self.cc = c.CC
         elif path.startswith("src/static/JSystem/JGadget/"):
             self.cflags = c.JSYSTEM_JGADGET_CFLAGS
@@ -665,7 +697,6 @@ class CSource(Source):
         else:
             self.cflags = ctx.cflags
             self.cc = c.CC_R
-        self.iconv_path = f"$builddir/iconv/{path}"
 
  # Find generated includes
         with open(path, encoding="utf-8") as f:
@@ -676,15 +707,9 @@ class CSource(Source):
         
     def build(self):
         n.build(
-            self.iconv_path,
-            rule="iconv",
-            inputs=self.src_path
-        )
-
-        n.build(
             self.o_path,
             rule = "cc",
-            inputs = self.iconv_path,
+            inputs = self.src_path,
             implicit = [inc.path for inc in self.gen_includes],
             variables = {
                 "cc" : self.cc,
@@ -696,7 +721,7 @@ class CSource(Source):
         n.build(
             self.s_path,
             rule = "ccs",
-            inputs = self.iconv_path,
+            inputs = self.src_path,
             implicit = [inc.path for inc in self.gen_includes],
             variables = {
                 "cflags" : self.cflags
@@ -900,6 +925,7 @@ n.build(
     inputs = c.REL_SHA,
     implicit = [c.REL_OUT]
 )
+
 n.default(c.REL_OK)
 
 # Optional full binary disassembly

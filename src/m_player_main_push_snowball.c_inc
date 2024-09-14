@@ -1,0 +1,89 @@
+static int Player_actor_request_main_push_snowball_all(GAME* game, void* label, int wade_flag, int prio) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+    mPlayer_request_push_snowball_c* req_push_snowball_p = &player->requested_main_index_data.push_snowball;
+    int main_index = player->now_main_index;
+
+    if (main_index == mPlayer_INDEX_PUSH_SNOWBALL) {
+        return FALSE;
+    }
+
+    if (main_index == mPlayer_INDEX_WADE_SNOWBALL) {
+        mPlayer_main_wade_snowball_c* wade_snowball_p = &player->main_data.wade_snowball;
+
+        /* When wading between acres, check the snowball label is the same as the one pushed */
+        if (wade_snowball_p->snowball_label != (u32)label) {
+            return FALSE;
+        }
+    }
+
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_PUSH_SNOWBALL, prio)) {
+        req_push_snowball_p->label = (u32)label;
+        req_push_snowball_p->wade_flag = wade_flag;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_PUSH_SNOWBALL, prio);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Push_snowball(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_push_snowball_c* req_push_snowball_p = &player->requested_main_index_data.push_snowball;
+    mPlayer_main_push_snowball_c* push_snowball_p = &player->main_data.push_snowball;
+    int anim1_idx;
+    int part_table_idx;
+
+    push_snowball_p->label = req_push_snowball_p->label;
+
+    if (req_push_snowball_p->wade_flag == FALSE) {
+        player->crash_snowball_for_wade = FALSE;
+    }
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_PUSH_YUKI1, -5.0f, &anim1_idx, &part_table_idx);
+
+    if (anim1_idx != mPlayer_ANIM_PUSH_YUKI1) {
+        part_table_idx = mPlayer_PART_TABLE_NET;
+    }
+
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_PUSH_YUKI1, anim1_idx, 0.0f, 0.0f, 0.5f, -5.0f,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static int Player_actor_CulcAnimation_Push_snowball(ACTOR* actorx, f32* last_anim0_cur_frame) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame);
+}
+
+static void Player_actor_SetEffect_Push_snowball(ACTOR* actorx, GAME* game, f32 l_target_frame, f32 r_target_frame) {
+    Player_actor_SetEffect_Run(actorx, game, l_target_frame, r_target_frame);
+}
+
+static void Player_actor_SearchAnimation_Push_snowball(ACTOR* actorx, GAME* game, f32 frame) {
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_Set_FootMark_Base1(actorx, game, FALSE, FALSE);
+        Player_actor_SetEffect_Push_snowball(actorx, game, 1.0f, 9.0f);
+    }
+}
+
+static void Player_actor_request_proc_index_fromPush_snowball(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (player->crash_snowball_for_wade) {
+        /* The snowball 'crashed' while wading, so revert to wait state */
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Push_snowball(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_CulcAnimation_Push_snowball(actorx, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Push_snowball(actorx, game, last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromPush_snowball(actorx, game);
+}

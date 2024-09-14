@@ -1,0 +1,172 @@
+static int Player_actor_request_main_shake_tree_all(GAME* game, const xyz_t* target_pos_p, mActor_name_t item,
+                                                    int tree_ut_x, int tree_ut_z, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_SHAKE_TREE, priority)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_shake_tree_c* req_shake_tree_p = &player->requested_main_index_data.shake_tree;
+
+        req_shake_tree_p->pos = *target_pos_p;
+        req_shake_tree_p->item = item;
+        req_shake_tree_p->ut_x = tree_ut_x;
+        req_shake_tree_p->ut_z = tree_ut_z;
+        Player_actor_request_main_index(game, mPlayer_INDEX_SHAKE_TREE, priority);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Shake_tree(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_shake_tree_c* req_shake_tree_p = &player->requested_main_index_data.shake_tree;
+    mPlayer_main_shake_tree_c* main_shake_tree_p = &player->main_data.shake_tree;
+    int anim1_idx;
+    int part_table_idx;
+
+    main_shake_tree_p->target_pos = req_shake_tree_p->pos;
+    main_shake_tree_p->item = req_shake_tree_p->item;
+    main_shake_tree_p->tree_ut_x = req_shake_tree_p->ut_x;
+    main_shake_tree_p->tree_ut_z = req_shake_tree_p->ut_z;
+    main_shake_tree_p->bee_flag = FALSE;
+    main_shake_tree_p->bee_angle_y = 0;
+    main_shake_tree_p->bee_spawn_timer = 0;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_SHAKE1, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_SHAKE1, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     cKF_FRAMECONTROL_STOP, part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+    mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_SHAKE_TREE);
+}
+
+static void Player_actor_Movement_Shake_tree(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_shake_tree_c* main_shake_tree_p = &player->main_data.shake_tree;
+
+    Player_actor_Movement_axe_common(actorx, &main_shake_tree_p->target_pos);
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static int Player_actor_CulcAnimation_Shake_tree(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_SetEffect_Shake_tree(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 10.0f)) {
+        mPlayer_main_shake_tree_c* main_shake_tree_p = &player->main_data.shake_tree;
+        int ut_x = main_shake_tree_p->tree_ut_x;
+        int ut_z = main_shake_tree_p->tree_ut_z;
+        xyz_t* target_pos_p = &main_shake_tree_p->target_pos;
+        mActor_name_t item = main_shake_tree_p->item;
+
+        if (IS_ITEM_COLLIDEABLE_TREE(item) != FALSE && ut_x >= 0 && ut_z >= 0) {
+            if (Player_actor_Set_shake_tree_table(actorx, game, item, ut_x, ut_z, FALSE)) {
+                Player_actor_sound_tree_yurasu(target_pos_p);
+                Player_actor_set_viblation_Shake_tree();
+
+                if (Common_Get(clip).bg_item_clip != NULL &&
+                    Common_Get(clip).bg_item_clip->item_tree_fruit_drop_proc != NULL) {
+                    if (!IS_ITEM_BEE_TREE(item)) {
+                        xyz_t drop_pos;
+
+                        Common_Get(clip).bg_item_clip->item_tree_fruit_drop_proc(item, ut_x, ut_z, &drop_pos);
+                    } else if (mPlib_able_birth_bee()) {
+                        main_shake_tree_p->bee_spawn_timer = 5;
+                    }
+                }
+            }
+        }
+    }
+}
+
+static void Player_actor_SetSound_Shake_tree(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_shake_tree_c* main_shake_tree_p = &player->main_data.shake_tree;
+
+    if (main_shake_tree_p->bee_flag) {
+        if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 18.0f)) {
+            mBGMPsComp_make_ps_quiet(0);
+        }
+    }
+}
+
+static void Player_actor_SearchAnimation_Shake_tree(ACTOR* actorx, GAME* game, f32 frame) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_SetEffect_Shake_tree(actorx, game);
+        Player_actor_SetSound_Shake_tree(actorx);
+    }
+}
+
+static void Player_actor_Check_BirthBee_Shake_tree(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_shake_tree_c* main_shake_tree_p = &player->main_data.shake_tree;
+    int* spawn_timer_p = &main_shake_tree_p->bee_spawn_timer;
+
+    if (*spawn_timer_p > 0) {
+        mActor_name_t item = main_shake_tree_p->item;
+        int ut_x = main_shake_tree_p->tree_ut_x;
+        int ut_z = main_shake_tree_p->tree_ut_z;
+
+        if (Player_actor_Check_BirthBee_common(actorx, item, ut_x, ut_z, &main_shake_tree_p->bee_angle_y)) {
+            *spawn_timer_p = 0;
+            main_shake_tree_p->bee_flag = TRUE;
+        } else {
+            (*spawn_timer_p)--;
+        }
+    }
+}
+
+static void Player_actor_ObjCheck_Shake_tree(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Shake_tree(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_request_proc_index_fromShake_tree(ACTOR* actorx, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_shake_tree_c* main_shake_tree_p = &player->main_data.shake_tree;
+
+    if (end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    } else {
+        cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+        cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+        f32 cur_frame = fc0_p->current_frame;
+
+        if (main_shake_tree_p->bee_flag) {
+            if (cur_frame >= 30.0f) {
+                Player_actor_request_main_shock_all(game, 24.0f, main_shake_tree_p->bee_angle_y, TRUE, FALSE,
+                                                    mPlayer_REQUEST_PRIORITY_21);
+            }
+        } else if (Player_actor_Check_AnimationFrame(fc0_p, 29.5f)) {
+            Player_actor_SettleRequestMainIndexPriority(actorx);
+            Player_actor_Set_status_for_bee(actorx, TRUE);
+        } else if (cur_frame >= 30.0f) {
+            if (Player_actor_GetController_move_percentX() || Player_actor_GetController_move_percentY()) {
+                Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+            }
+        }
+    }
+}
+
+static void Player_actor_main_Shake_tree(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    Player_actor_Movement_Shake_tree(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Shake_tree(actorx, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Shake_tree(actorx, game, last_anim0_cur_frame);
+    Player_actor_Check_BirthBee_Shake_tree(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_tex_anime_pattern(actorx);
+    Player_actor_ObjCheck_Shake_tree(actorx, game);
+    Player_actor_BGcheck_Shake_tree(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromShake_tree(actorx, game, end_flag);
+}

@@ -4,10 +4,12 @@ blocked_pointers:
 blocked_targets:
   - 0x800A97E0 # boot.c local static const tbl, also start of .rodata
   - 0x80008000
+  - 0x80018800
+  - 0x800189C0
   - 0x801F6C7C # tcs_bad
   - 0x801F6C7D # ics_bad
   - 0x800a9a90
-  - 0x800a9838
+  # - 0x800a9838
   - 0x800a9938
   - 0x800a9a3a
   - 0x800a99f6

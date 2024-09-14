@@ -1,0 +1,104 @@
+static int Player_actor_request_main_remove_grass(GAME* game, const xyz_t* target_pos_p, const xyz_t* grass_pos_p) {
+    if (Player_actor_check_able_request_main_index_for_reset(mPlayer_INDEX_REMOVE_GRASS) == FALSE) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_remove_grass_c* req_remove_grass_p = &player->requested_main_index_data.remove_grass;
+
+        req_remove_grass_p->target_pos = *target_pos_p;
+        req_remove_grass_p->grass_pos = *grass_pos_p;
+        Player_actor_request_main_index(game, mPlayer_INDEX_REMOVE_GRASS, mPlayer_REQUEST_PRIORITY_8);
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Remove_grass(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_remove_grass_c* req_remove_grass_p = &player->requested_main_index_data.remove_grass;
+    mPlayer_main_remove_grass_c* main_remove_grass_p = &player->main_data.remove_grass;
+    int anim1_idx;
+    int part_table_idx;
+
+    main_remove_grass_p->target_pos = req_remove_grass_p->target_pos;
+    main_remove_grass_p->grass_pos = req_remove_grass_p->grass_pos;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_ZASSOU1, -6.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_ZASSOU1, anim1_idx, 1.0f, 1.0f, 0.5f, -6.0f,
+                                     cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_PICK_UP);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_Movement_Remove_grass(ACTOR* actorx) {
+    Player_actor_Movement_Base_Stop(actorx, FALSE);
+}
+
+static int Player_actor_CulcAnimation_Remove_grass(ACTOR* actorx, f32* last_anim0_cur_frame_p) {
+    return Player_actor_CulcAnimation_Base2(actorx, last_anim0_cur_frame_p);
+}
+
+static void Player_actor_ChangeFGNumber_Remove_grass(ACTOR* actorx, GAME* game) {
+    if (Common_Get(clip).bg_item_clip != NULL && Common_Get(clip).bg_item_clip->fly_entry_proc != NULL) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+        cKF_SkeletonInfo_R_c* kf0_p = &player->keyframe0;
+        cKF_FrameControl_c* fc0_p = &kf0_p->frame_control;
+        if (Player_actor_Check_AnimationFrame(fc0_p, 17.0f)) {
+            mPlayer_main_remove_grass_c* main_remove_grass_p = &player->main_data.remove_grass;
+            xyz_t* grass_pos_p = &main_remove_grass_p->grass_pos;
+            xyz_t* target_pos_p = &main_remove_grass_p->target_pos;
+            mActor_name_t* fg_p = mFI_GetUnitFG(*target_pos_p);
+
+            if (fg_p != NULL) {
+                if (IS_ITEM_GRASS(*fg_p) != FALSE) {
+                    s16 angle_y = DEG2SHORT_ANGLE2(110.0f) + actorx->shape_info.rotation.y;
+
+                    Common_Get(clip).bg_item_clip->fly_entry_proc(*fg_p, grass_pos_p, angle_y);
+                    eEC_CLIP->effect_make_proc(eEC_EFFECT_DIG_MUD, *grass_pos_p, 2, 0, game, RSV_NO,
+                                               mCoBG_Wpos2Attribute(*grass_pos_p, NULL), 8);
+                    Player_actor_sound_zassou_nuku(grass_pos_p);
+                    Player_actor_set_viblation_Remove_grass();
+                }
+            }
+        }
+    }
+}
+
+static void Player_actor_SearchAnimation_Remove_grass(ACTOR* actorx, GAME* game, f32 frame) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (Player_actor_Check_AnimationFrame_PerfectEquel(actorx, frame) == FALSE) {
+        Player_actor_ChangeFGNumber_Remove_grass(actorx, game);
+    }
+}
+
+static void Player_actor_ObjCheck_Remove_grass(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Remove_grass(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_request_proc_index_fromRemove_grass(ACTOR* actorx, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    if (end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Remove_grass(ACTOR* actorx, GAME* game) {
+    f32 last_anim0_cur_frame;
+    int end_flag;
+
+    Player_actor_Movement_Remove_grass(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    end_flag = Player_actor_CulcAnimation_Remove_grass(actorx, &last_anim0_cur_frame);
+    Player_actor_SearchAnimation_Remove_grass(actorx, game, last_anim0_cur_frame);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Remove_grass(actorx, game);
+    Player_actor_BGcheck_Remove_grass(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromRemove_grass(actorx, game, end_flag);
+}

@@ -1,0 +1,81 @@
+static int Player_actor_request_main_air_rod(GAME* game, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_AIR_ROD, priority)) {
+        Player_actor_request_main_index(game, mPlayer_INDEX_AIR_ROD, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_setup_main_Air_rod(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    f32 player_frame = player->keyframe0.frame_control.current_frame;
+    f32 frame = player->item_keyframe.frame_control.current_frame;
+
+    int kind;
+
+    kind = Player_actor_Get_ItemKind_from_submenu();
+
+    Player_actor_SetupItem_Base2(actor, kind, mPlayer_ANIM_RUN_SLIP1, mPlayer_INDEX_FALL, 0.0f, frame, 0);
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_NOT_SAO_SWING1, mPlayer_ANIM_NOT_SAO_SWING1,
+                                     player_frame, player_frame, 0.5f, 0.0f, 0, 0);
+    Player_actor_setup_main_Base(actor, game);
+
+    Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_SWING_ROD, actor->world.position, 2,
+                                                   actor->shape_info.rotation.y, game, RSV_NO,
+                                                   actor->bg_collision_check.result.unit_attribute, 0);
+}
+
+static void Player_actor_Movement_Air_rod(ACTOR* actor) {
+    Player_actor_Movement_Base_Braking_common(actor, 0.32625001f);
+}
+
+static int Player_actor_CulcAnimation_Air_rod(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetSound_Air_rod(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 20.0f)) {
+        Player_actor_sound_ROD_STROKE_small(actor);
+    }
+}
+
+static void Player_actor_SearchAnimation_Air_rod(ACTOR* actor, GAME* game, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetSound_Air_rod(actor);
+        Player_actor_Set_FootMark_Base1(actor, game, FALSE, FALSE);
+    }
+}
+static void Player_actor_ObjCheck_Air_rod(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_BGcheck_Air_rod(ACTOR* actor) {
+    Player_actor_BGcheck_common_type1(actor);
+}
+
+static void Player_actor_request_proc_index_fromAir_rod(ACTOR* actor, GAME* game, int ready) {
+    if (ready) {
+        Player_actor_SettleRequestMainIndexPriority(actor);
+        Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+    }
+}
+
+static void Player_actor_main_Air_rod(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int end_flag;
+
+    Player_actor_Movement_Air_rod(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    end_flag = Player_actor_CulcAnimation_Air_rod(actor, &frame_calc);
+    Player_actor_SearchAnimation_Air_rod(actor, game, frame_calc);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_tex_anime_pattern(actor);
+    Player_actor_ObjCheck_Air_rod(actor, game);
+    Player_actor_BGcheck_Air_rod(actor);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromAir_rod(actor, game, end_flag);
+}

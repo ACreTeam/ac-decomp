@@ -1,0 +1,118 @@
+static int Player_actor_Check_able_request_main_sitdown(GAME* game) {
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+    int index = player->now_main_index;
+
+    switch (index) {
+        case mPlayer_INDEX_WAIT:
+        case mPlayer_INDEX_WALK:
+        case mPlayer_INDEX_RUN:
+        case mPlayer_INDEX_DASH:
+            return TRUE;
+
+        default:
+            return FALSE;
+    }
+}
+
+static int Player_actor_request_main_sitdown(GAME* game, int index, const xyz_t* pos, int ftr_no, int priority) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_SITDOWN, priority) &&
+        Player_actor_Check_able_request_main_sitdown(game)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+
+        player->requested_main_index_data.sitdown.angle = Player_actor_Get_Angle_fromIndex(index);
+        player->requested_main_index_data.sitdown.pos = *pos;
+        player->requested_main_index_data.sitdown.pos.y = player->actor_class.world.position.y;
+
+        player->requested_main_index_data.sitdown.ftrID = ftr_no;
+        Player_actor_request_main_index(game, mPlayer_INDEX_SITDOWN, priority);
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_settle_main_Sitdown(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    cKF_SkeletonInfo_R_AnimationMove_dt(&player->keyframe0);
+    actor->world.angle.y = actor->shape_info.rotation.y;
+    actor->shape_info.shadow_size_change_rate = 0.0f;
+    actor->shape_info.shadow_alpha_change_rate = 0.0f;
+}
+
+static void Player_actor_setup_main_Sitdown(ACTOR* actor, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    cKF_SkeletonInfo_R_c* keyf;
+    mPlayer_main_sitdown_c* main_sitdown = &player->main_data.sitdown;
+    mPlayer_request_sitdown_c* req_sitdown = &player->requested_main_index_data.sitdown;
+    s16 angle;
+
+    keyf = &player->keyframe0;
+
+    main_sitdown->ftrID = req_sitdown->ftrID;
+    angle = req_sitdown->angle;
+
+    actor->world.angle.y = angle;
+
+    cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyf, 0.0f, 1000.0f, 0.0f, 0, 0, 0x4000);
+    cKF_SkeletonInfo_R_AnimationMove_ct_base(&actor->world.position, &req_sitdown->pos, actor->shape_info.rotation.y,
+                                             req_sitdown->angle, 5.0f, keyf, 5);
+    Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_SITDOWN1, mPlayer_ANIM_SITDOWN1, 1.0f, 1.0f, 0.5f, -3.0f,
+                                     0, 0);
+    Player_actor_setup_main_Base(actor, game);
+    Player_actor_sound_JUMP(actor);
+}
+
+static int Player_actor_CulcAnimation_Sitdown(ACTOR* actor, f32* frame_calc) {
+    return Player_actor_CulcAnimation_Base2(actor, frame_calc);
+}
+
+static void Player_actor_SetSound_Sitdown(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (Player_actor_Check_AnimationFrame(&player->keyframe0.frame_control, 18.0f)) {
+        Player_actor_sound_SIT(actor, player->main_data.sitdown.ftrID);
+    }
+}
+
+static void Player_actor_SearchAnimation_Sitdown(ACTOR* actor, f32 frame) {
+    if (!Player_actor_Check_AnimationFrame_PerfectEquel(actor, frame)) {
+        Player_actor_SetSound_Sitdown(actor);
+    }
+    Player_actor_DisappearShadow_fromAnimationFrame(actor, 0.0f, 15.0f);
+}
+
+static void Player_actor_Movement_Sitdown(ACTOR* actor) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    cKF_SkeletonInfo_R_AnimationMove_base(&actor->world.position, &actor->shape_info.rotation.y, &actor->scale,
+                                          actor->world.angle.y, &player->keyframe0);
+    Player_actor_Movement_Base_Stop(actor, FALSE);
+}
+
+static void Player_actor_ObjCheck_Sitdown(ACTOR* actor, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actor, game);
+}
+
+static void Player_actor_request_proc_index_fromSitdown(ACTOR* actor, GAME* game, int arg) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+
+    if (arg != 0) {
+        Player_actor_request_main_sitdown_wait(game, player->main_data.sitdown.ftrID, mPlayer_REQUEST_PRIORITY_21);
+    }
+}
+
+static void Player_actor_main_Sitdown(ACTOR* actor, GAME* game) {
+    f32 frame_calc;
+    int arg = Player_actor_CulcAnimation_Sitdown(actor, &frame_calc);
+
+    Player_actor_SearchAnimation_Sitdown(actor, frame_calc);
+    Player_actor_Movement_Sitdown(actor);
+    Player_actor_Reinput_force_position_angle(actor, game);
+    Player_actor_recover_lean_angle(actor);
+    Player_actor_set_eye_pattern_normal(actor);
+    Player_actor_ObjCheck_Sitdown(actor, game);
+    Player_actor_Item_main(actor, game);
+    Player_actor_request_proc_index_fromSitdown(actor, game, arg);
+}

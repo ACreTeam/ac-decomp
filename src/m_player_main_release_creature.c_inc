@@ -1,0 +1,300 @@
+static int Player_actor_request_main_release_creature_all(GAME* game, int type, int gold_scoop_flag,
+                                                          mPlayer_request_release_creature_u* release_data,
+                                                          ACTOR* release_actor_p, int prio) {
+    if (Player_actor_check_request_main_able(game, mPlayer_INDEX_RELEASE_CREATURE, prio)) {
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_release_creature_c* req_release_creature_p =
+            &player->requested_main_index_data.release_creature;
+
+        Player_actor_request_main_index(game, mPlayer_INDEX_RELEASE_CREATURE, prio);
+        req_release_creature_p->type = type;
+        req_release_creature_p->gold_scoop_flag = gold_scoop_flag;
+        req_release_creature_p->data = *release_data;
+        req_release_creature_p->actor = release_actor_p;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void Player_actor_request_main_release_creature_from_submenu(ACTOR* actorx, GAME* game) {
+    mPlayer_change_data_from_submenu_c* data_p = mPlib_Get_change_data_from_submenu_p();
+    mPlayer_request_release_creature_c* req_release_creature_p = &data_p->request_main_data.release_creature;
+
+    Player_actor_request_main_release_creature_all(game, req_release_creature_p->type,
+                                                   req_release_creature_p->gold_scoop_flag,
+                                                   &req_release_creature_p->data, NULL, mPlayer_REQUEST_PRIORITY_31);
+}
+
+static void Player_actor_setup_main_Release_creature(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_request_release_creature_c* req_release_creature_p = &player->requested_main_index_data.release_creature;
+    mPlayer_main_release_creature_c* release_creature_p = &player->main_data.release_creature;
+    int type = req_release_creature_p->type;
+    int gold_scoop_flag = req_release_creature_p->gold_scoop_flag;
+    ACTOR* release_actor_p = req_release_creature_p->actor;
+    int anim1_idx;
+    int part_table_idx;
+
+    if (release_actor_p == NULL) {
+        if (type == mPlayer_CREATURE_GYOEI) {
+            GAME_PLAY* play = (GAME_PLAY*)game;
+            mPlayer_request_release_creature_gyoei_c* gyoei_data_p = &req_release_creature_p->data.gyoei;
+
+            release_actor_p = Actor_info_make_actor(
+                &play->actor_info, game, mAc_PROFILE_GYO_RELEASE, actorx->world.position.x, actorx->world.position.y,
+                actorx->world.position.z, 0, gyoei_data_p->angle_y, 0, play->block_table.block_x,
+                play->block_table.block_z, -1, EMPTY_NO, gyoei_data_p->_02, -1, -1);
+        } else if (type == mPlayer_CREATURE_INSECT) {
+            mPlayer_request_release_creature_insect_c* insect_data_p = &req_release_creature_p->data.insect;
+
+            release_actor_p =
+                Common_Get(clip).insect_clip->make_actor_proc(game, insect_data_p->type, &insect_data_p->pos);
+        } else {
+            ACTOR* actor_p = player->balloon_actor;
+
+            release_actor_p = actor_p;
+            if (actor_p != NULL) {
+                s_xyz angle;
+                f32 sin;
+                f32 cos;
+                xyz_t pos;
+
+                angle.x = 0;
+                angle.y = actorx->shape_info.rotation.y;
+                angle.z = 0;
+
+                sin = sin_s(angle.y);
+                cos = cos_s(angle.y);
+
+                pos = actorx->world.position;
+                pos.y += 17.5f;
+                pos.x += 12.5f * sin + 10.0f * cos;
+                pos.z += 10.0f * cos - 12.5f * sin;
+
+                Ac_Balloon_request_fly(player->balloon_actor, game, req_release_creature_p->data.balloon.balloon_type,
+                                       &angle, 0, &pos, -1.0f, 7.0f);
+            }
+        }
+
+        release_creature_p->actor_birth_flag = TRUE;
+    } else {
+        release_creature_p->actor_birth_flag = FALSE;
+    }
+
+    release_creature_p->type = type;
+    release_creature_p->golden_scoop_flag = gold_scoop_flag;
+    release_creature_p->release_actor_p = release_actor_p;
+    release_creature_p->timer = 0.0f;
+
+    Player_actor_SetupItem_Base1(actorx, mPlayer_ANIM_WAIT1, -5.0f, &anim1_idx, &part_table_idx);
+    Player_actor_InitAnimation_Base1(actorx, game, mPlayer_ANIM_WAIT1, anim1_idx, 1.0f, 1.0f, 0.5f, -5.0f,
+                                     part_table_idx);
+    Player_actor_setup_main_Base(actorx, game);
+}
+
+static void Player_actor_settle_main_Release_creature(ACTOR* actorx, GAME* game) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    player->head_angle = ZeroSVec;
+}
+
+static void Player_actor_Movement_Release_creature(ACTOR* actorx) {
+    Player_actor_Movement_Base_Braking_common(actorx, 0.23925f);
+}
+
+static void Player_actor_CulcAnimation_Release_creature(ACTOR* actorx) {
+    f32 dummy;
+
+    Player_actor_CulcAnimation_Base2(actorx, &dummy);
+}
+
+static void Player_actor_ObjCheck_Release_creature(ACTOR* actorx, GAME* game) {
+    Player_actor_Excute_Corect_forStand(actorx, game);
+}
+
+static void Player_actor_BGcheck_Release_creature(ACTOR* actorx) {
+    Player_actor_BGcheck_common_type1(actorx);
+}
+
+static void Player_actor_add_calc_head_angle(ACTOR* actorx, const s_xyz* target_angle_p) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_release_creature_c* release_creature_p = &player->main_data.release_creature;
+    s_xyz* head_angle_p = &player->head_angle;
+
+    if (release_creature_p->type == mPlayer_CREATURE_BALLOON) {
+        if (target_angle_p->x != 0) {
+            add_calc_short_angle2(&head_angle_p->x, target_angle_p->x, 1.0f - sqrtf(0.75f), 500, 0);
+        } else {
+            add_calc_short_angle2(&head_angle_p->x, target_angle_p->x, 1.0f - sqrtf(0.5f), 500, 0);
+        }
+
+        if (target_angle_p->y != 0) {
+            add_calc_short_angle2(&head_angle_p->y, target_angle_p->y, 1.0f - sqrtf(0.75f), 500, 0);
+        } else {
+            add_calc_short_angle2(&head_angle_p->y, target_angle_p->y, 1.0f - sqrtf(0.5f), 200, 0);
+        }
+    } else {
+        add_calc_short_angle2(&head_angle_p->x, target_angle_p->x, 1.0f - sqrtf(0.5f), 500, 0);
+        add_calc_short_angle2(&head_angle_p->y, target_angle_p->y, 1.0f - sqrtf(0.5f), 500, 0);
+    }
+}
+
+static int Player_actor_Look_Release_creature(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_release_creature_c* release_creature_p = &player->main_data.release_creature;
+    ACTOR* actor_p;
+    int type = release_creature_p->type;
+    int exist_flag;
+    int ret = TRUE;
+
+    if (type == mPlayer_CREATURE_GYOEI) {
+        if (release_creature_p->actor_birth_flag == FALSE) {
+            if (player->fishing_rod_actor_p != NULL) {
+                UKI_ACTOR* uki = (UKI_ACTOR*)player->fishing_rod_actor_p;
+
+                actor_p = uki->child_actor;
+                release_creature_p->release_actor_p = actor_p;
+            } else {
+                actor_p = release_creature_p->release_actor_p;
+            }
+        } else {
+            actor_p = release_creature_p->release_actor_p;
+        }
+    } else {
+        actor_p = release_creature_p->release_actor_p;
+    }
+
+    if (actor_p == NULL) {
+        Player_actor_add_calc_head_angle(actorx, &ZeroSVec);
+        return TRUE;
+    }
+
+    if (type == mPlayer_CREATURE_INSECT) {
+        aINS_INSECT_ACTOR* insect_actor = (aINS_INSECT_ACTOR*)actor_p;
+
+        exist_flag = insect_actor->insect_flags.destruct == FALSE;
+    } else if (type == mPlayer_CREATURE_GYOEI) {
+        GYO_RELEASE_ACTOR* gyo_release = (GYO_RELEASE_ACTOR*)actor_p;
+
+        exist_flag = gyo_release->exist_flag != FALSE;
+    } else if (type == mPlayer_CREATURE_BALLOON) {
+        BALLOON_ACTOR* balloon_actor = (BALLOON_ACTOR*)actor_p;
+        int main_mode = balloon_actor->main_mode;
+        int setup_mode = balloon_actor->setup_mode;
+
+        if (main_mode == 1 || setup_mode >= 0) {
+            exist_flag = TRUE;
+            ret = FALSE;
+        } else {
+            exist_flag = FALSE;
+        }
+    } else {
+        Player_actor_add_calc_head_angle(actorx, &ZeroSVec);
+        return TRUE;
+    }
+
+    if (exist_flag == FALSE) {
+        release_creature_p->release_actor_p = NULL;
+        Player_actor_add_calc_head_angle(actorx, &ZeroSVec);
+        return ret;
+    } else {
+        f32* timer_p = &release_creature_p->timer;
+        s_xyz angle = ZeroSVec;
+
+        if (*timer_p < 60.0f) {
+            xyz_t dist;
+            f32 dist_xz;
+
+            dist.x = actor_p->world.position.x - actorx->eye.position.x;
+            dist.y = actor_p->world.position.y - actorx->eye.position.y;
+            dist.z = actor_p->world.position.z - actorx->eye.position.z;
+
+            if (type == mPlayer_CREATURE_BALLOON) {
+                dist.y += 50.0f;
+            }
+
+            dist_xz = Math3DVecLength2D(dist.x, dist.z);
+            if ((dist_xz >= 18.0f && type != mPlayer_CREATURE_BALLOON) ||
+                (dist_xz >= 10.0f && type == mPlayer_CREATURE_BALLOON)) {
+                int dist_angle_y = atans_table(dist.z, dist.x);
+                int diff_angle_y = dist_angle_y - actorx->shape_info.rotation.y;
+                int abs_diff_angle_y;
+                int dist_angle_x = atans_table(dist_xz, dist.y);
+                int diff_angle_x = dist_angle_x - actorx->shape_info.rotation.x;
+                int abs_diff_angle_x;
+
+                if (diff_angle_y > DEG2SHORT_ANGLE2(180.0f)) {
+                    diff_angle_y -= DEG2SHORT_ANGLE2(360.0f);
+                } else if (diff_angle_y < DEG2SHORT_ANGLE2(-180.0f)) {
+                    diff_angle_y += DEG2SHORT_ANGLE2(360.0f);
+                }
+
+                abs_diff_angle_y = ABS(diff_angle_y);
+
+                if (abs_diff_angle_y < DEG2SHORT_ANGLE2(60.0f)) {
+                    angle.x = dist_angle_y - actorx->shape_info.rotation.y;
+                } else if (diff_angle_y > 0) {
+                    angle.x = DEG2SHORT_ANGLE2(60.0f);
+                } else {
+                    angle.x = DEG2SHORT_ANGLE2(-60.0f);
+                }
+
+                if (diff_angle_x > DEG2SHORT_ANGLE2(180.0f)) {
+                    diff_angle_x -= DEG2SHORT_ANGLE2(360.0f);
+                } else if (diff_angle_x < DEG2SHORT_ANGLE2(-180.0f)) {
+                    diff_angle_x += DEG2SHORT_ANGLE2(360.0f);
+                }
+
+                abs_diff_angle_x = ABS(diff_angle_x);
+
+                if (abs_diff_angle_x < DEG2SHORT_ANGLE2(30.0f)) {
+                    angle.y = dist_angle_x - actorx->shape_info.rotation.x;
+                } else if (diff_angle_x > 0) {
+                    angle.y = DEG2SHORT_ANGLE2(30.0f);
+                } else {
+                    angle.y = DEG2SHORT_ANGLE2(-30.0f);
+                }
+            }
+        }
+
+        Player_actor_add_calc_head_angle(actorx, &angle);
+    }
+
+    return ret;
+}
+
+static void Player_actor_request_proc_index_fromRelease_creature(ACTOR* actorx, GAME* game, int end_flag) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+    mPlayer_main_release_creature_c* release_creature_p = &player->main_data.release_creature;
+    f32* timer_p = &release_creature_p->timer;
+
+    (*timer_p) += 1.0f;
+    if (*timer_p >= 84.0f && end_flag) {
+        Player_actor_SettleRequestMainIndexPriority(actorx);
+
+        if (release_creature_p->golden_scoop_flag == FALSE) {
+            Player_actor_request_main_wait_all(game, -5.0f, 0.0f, 0, mPlayer_REQUEST_PRIORITY_1);
+        } else {
+            Player_actor_request_main_demo_get_golden_item_all(game, mPlayer_GOLDEN_ITEM_TYPE_SHOVEL,
+                                                               mPlayer_REQUEST_PRIORITY_34);
+        }
+
+        *timer_p = 84.0f;
+    }
+}
+
+static void Player_actor_main_Release_creature(ACTOR* actorx, GAME* game) {
+    int end_flag;
+
+    Player_actor_Movement_Release_creature(actorx);
+    Player_actor_Reinput_force_position_angle(actorx, game);
+    Player_actor_CulcAnimation_Release_creature(actorx);
+    Player_actor_recover_lean_angle(actorx);
+    Player_actor_set_eye_pattern_normal(actorx);
+    Player_actor_ObjCheck_Release_creature(actorx, game);
+    Player_actor_BGcheck_Release_creature(actorx);
+    end_flag = Player_actor_Look_Release_creature(actorx);
+    Player_actor_Item_main(actorx, game);
+    Player_actor_request_proc_index_fromRelease_creature(actorx, game, end_flag);
+}
