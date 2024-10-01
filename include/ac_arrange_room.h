@@ -19,7 +19,7 @@ typedef struct arrange_room_actor_clip_s {
 
 struct arrange_room_actor_s {
   ACTOR actor_class;
-  int _174;
+  u8* vram_segment;
   u8* wall_data_p;
   int wall_num;
   u8* floor_data_p;

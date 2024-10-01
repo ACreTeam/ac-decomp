@@ -433,6 +433,10 @@ ac_animal_logo.c:
     .data: [0x8065FB68, 0x8065FBA8]
 ac_animal_logo_misc.c:
     .text: [0x804117D4, 0x80411A60]
+ac_arrange_room.c:
+    .text: [0x80411A70, 0x80411F64]
+    .rodata: [0x80643A88, 0x80643A90]
+    .data: [0x8065FBD0, 0x8065FBF8]
 ac_ball.c:
     .text: [0x80411F64, 0x80413DD4]
     .rodata: [0x80643A90, 0x80643B60]

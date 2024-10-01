@@ -2548,6 +2548,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ETC_MBG (ETC_START + 3)
 #define ETC_BOXTRICK (ETC_START + 4)
 #define ETC_BOXMANAGER (ETC_START + 5)
+#define ETC_ARRANGE_ROOM (ETC_START + 6)
 #define ETC_SNOWMAN_BALL_A (ETC_START + 13)
 #define ETC_SNOWMAN_BALL_B (ETC_START + 14)
 #define ETC_TRAIN_WINDOW (ETC_START + 17)
