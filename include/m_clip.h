@@ -28,6 +28,7 @@
 #include "ac_effectbg.h"
 #include "ac_htable.h"
 #include "ac_sign.h"
+#include "ac_boxTrick01.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,7 +38,7 @@ typedef void (*CLIP_NONE_PROC)();
 
 /* sizeof(Clip_c) == 0x104 */
 typedef struct clip_s {
-    /* 0x000 */ void* _000[(0x020 - 0x000) / sizeof(void*)];
+    /* 0x000 */ BoxTrick01_data_c box_trick_data[4];
     /* 0x020 */ int arrange_ftr_num;
     /* 0x024 */ void* _024;
     /* 0x028 */ void* misin_clip;

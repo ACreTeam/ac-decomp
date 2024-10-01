@@ -8,11 +8,18 @@
 extern "C" {
 #endif
 
+// sizeof(BoxTrick01_data_c) == 0x8
+typedef struct box_trick_data_s {
+    /* 0x0 */ u8 block_x;
+    /* 0x1 */ u8 block_z;
+    /* 0x4 */ void* data;
+} BoxTrick01_data_c;
+
 typedef struct box_trick01_s{
     ACTOR actor_class;
-    u8 pad[0x17C - 0x174];
+    int block_x;
+    int block_z;
 }BOXTRICK01_ACTOR;
-
 
 extern ACTOR_PROFILE BoxTrick01_Profile;
 
