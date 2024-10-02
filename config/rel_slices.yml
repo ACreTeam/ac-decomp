@@ -540,6 +540,11 @@ ac_quest_talk_init.c:
     .text: [0x80489A34, 0x8048D768]
     .rodata: [0x80644CA8, 0x80644D10]
     .data: [0x8068B048, 0x8068B310]
+ac_ride_off_demo.c:
+    .text: [0x80496218, 0x804967A4]
+    .rodata: [0x80644D90, 0x80644DB0]
+    .data: [0x8068BB28, 0x8068BB80]
+    .bss: [0x812FCCD8, 0x812FCCE0]
 ac_rope.c:
     .text: [0x804967A4, 0x80496AB8]
     .rodata: [0x80644DB0, 0x80644DB8]
