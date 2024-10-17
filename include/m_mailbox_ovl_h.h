@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+typedef struct mailbox_ovl_s mMB_Ovl_c;
+
 #ifdef __cplusplus
 }
 #endif

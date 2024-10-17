@@ -526,6 +526,11 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define ITEM_IS_SIGNBOARD(item) ((item) >= SIGNBOARD_START && (item) <= SIGNBOARD_END)
 
+#define ITEM_IS_FLOWER_BAG(item) ((item) >= ITM_WHITE_PANSY_BAG && (item) <= ITM_YELLOW_TULIP_BAG)
+#define ITEM_IS_EXERCISE_CARD(item) ((item) >= ITM_EXCERCISE_CARD00 && (item) <= ITM_EXCERCISE_CARD12)
+#define ITEM_IS_BALLOON(item) ((item) >= ITM_BALLOON_START && (item) <= ITM_BUNNY_O_BALLOON)
+#define ITEM_IS_UMBRELLA(item) ((item) >= ITM_UMBRELLA_START && (item) <= ITM_UMBRELLA_END)
+
 #define BG_CATEGORY 0
 #define ENV_CATEGORY 8
 

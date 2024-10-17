@@ -9,7 +9,12 @@
 extern "C" {
 #endif
 
-struct music_ovl_s;
+struct music_ovl_s {
+    u8 title[mIN_ITEM_NAME_LEN];
+    s16 title_width;
+    mActor_name_t title_md_item;
+    u32 mark_flg[2];
+};
 
 extern void mMU_music_ovl_set_proc(Submenu* submenu);
 extern void mMU_music_ovl_construct(Submenu* submenu);

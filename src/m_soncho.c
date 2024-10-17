@@ -377,7 +377,9 @@ static mActor_name_t mSC_Radio_have_taisou_card() {
     Private_c* priv = Common_Get(now_private);
 
     for (i = 0; i < 13; i++) {
-        if (mPr_GetPossessionItemSumWithCond(priv, ITM_EXCERCISE_CARD00 + i, mPr_ITEM_COND_NORMAL) > 0) {
+        int sum = mPr_GetPossessionItemSumWithCond(priv, ITM_EXCERCISE_CARD00 + i, mPr_ITEM_COND_NORMAL);
+        
+        if (sum > 0) {
             return ITM_EXCERCISE_CARD00 + i;
         }
     }
@@ -550,7 +552,7 @@ extern int mSC_Radio_Set_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor) {
                         msg_no = 0x3423;
                     }
 
-                    if ((u32)mPr_GetPossessionItemSumWithCond(Common_Get(now_private), EMPTY_NO,
+                    if (mPr_GetPossessionItemSumWithCond(Common_Get(now_private), EMPTY_NO,
                                                               mPr_ITEM_COND_NORMAL) == 0) {
                         taisou_actor->talk_proc = mSCR_TALK_NEXT;
                     } else {
@@ -574,7 +576,7 @@ extern int mSC_Radio_Set_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor) {
                         msg_no = 0x342F;
                     }
 
-                    if ((u32)mPr_GetPossessionItemSumWithCond(Common_Get(now_private), EMPTY_NO,
+                    if (mPr_GetPossessionItemSumWithCond(Common_Get(now_private), EMPTY_NO,
                                                               mPr_ITEM_COND_NORMAL) == 0) {
                         taisou_actor->talk_proc = mSCR_TALK_NEXT;
                     } else {
@@ -628,7 +630,7 @@ extern int mSC_Radio_Set_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor) {
                         msg_no = 0x342F;
                     }
 
-                    if ((u32)mPr_GetPossessionItemSumWithCond(Common_Get(now_private), EMPTY_NO,
+                    if (mPr_GetPossessionItemSumWithCond(Common_Get(now_private), EMPTY_NO,
                                                               mPr_ITEM_COND_NORMAL) == 0) {
                         taisou_actor->talk_proc = mSCR_TALK_NEXT;
                     } else {
@@ -785,7 +787,7 @@ static void mSCR_talk_before_give(TAISOU_NPC0_ACTOR* taisou_actor, GAME_PLAY* pl
     mMsg_Window_c* msg_win = mMsg_Get_base_window_p();
 
     if (mMsg_Check_MainNormalContinue(msg_win)) {
-        if ((u32)mPr_GetPossessionItemSumWithCond(Common_Get(now_private), EMPTY_NO, mPr_ITEM_COND_NORMAL) == 0) {
+        if (mPr_GetPossessionItemSumWithCond(Common_Get(now_private), EMPTY_NO, mPr_ITEM_COND_NORMAL) == 0) {
             mMsg_Set_continue_msg_num(msg_win, mSC_Radio_msg(taisou_actor, 2));
             taisou_actor->talk_proc = mSCR_TALK_9;
         } else {

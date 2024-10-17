@@ -31,6 +31,9 @@
 #include "m_player.h"
 #include "m_cpmail_ovl_h.h"
 #include "m_cporiginal_ovl_h.h"
+#include "m_haniwa_ovl_h.h"
+#include "m_mailbox_ovl_h.h"
+#include "m_needlework_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -175,8 +178,8 @@ struct submenu_overlay_s {
     /* 0x98C */ mED_Ovl_c* editor_ovl;
     /* 0x990 */ mBD_Ovl_c* board_ovl;
     /* 0x994 */ mAD_Ovl_c* address_ovl;
-    /* 0x998 */ void* _998;
-    /* 0x99C */ void* _99C;
+    /* 0x998 */ mMB_Ovl_c* mailbox_ovl;
+    /* 0x99C */ mHW_Ovl_c* haniwa_ovl;
     /* 0x9A0 */ mTI_Ovl_c* timeIn_ovl;
     /* 0x9A4 */ mEE_Ovl_c* editEndChk_ovl;
     /* 0x9A8 */ mWR_Ovl_c* warning_ovl;
@@ -189,9 +192,9 @@ struct submenu_overlay_s {
     /* 0x9C4 */ void* _9C4;
     /* 0x9C8 */ void* _9C8;
     /* 0x9CC */ mCL_Ovl_c* catalog_ovl;
-    /* 0x9D0 */ mMU_Overlay_c* music_ovl;
+    /* 0x9D0 */ mMU_Ovl_c* music_ovl;
     /* 0x9D4 */ mBN_Overlay_c* bank_ovl;
-    /* 0x9D8 */ void* needlework_ovl;
+    /* 0x9D8 */ mNW_Ovl_c* needlework_ovl;
     /* 0x9DC */ mCO_Ovl_c* cporiginal_ovl;
     /* 0x9E0 */ void* _9E0;
     /* 0x9E4 */ void* _9E4;

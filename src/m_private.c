@@ -436,7 +436,7 @@ extern int mPr_GetPossessionItemIdxKindWithCond(Private_c* priv, mActor_name_t k
     return idx;
 }
 
-extern int mPr_GetPossessionItemSum(Private_c* priv, mActor_name_t item) {
+extern u32 mPr_GetPossessionItemSum(Private_c* priv, mActor_name_t item) {
     int sum = 0;
 
     if (priv != NULL) {
@@ -454,7 +454,7 @@ extern int mPr_GetPossessionItemSum(Private_c* priv, mActor_name_t item) {
     return sum;
 }
 
-extern int mPr_GetPossessionItemSumWithCond(Private_c* priv, mActor_name_t item, u32 cond) {
+extern u32 mPr_GetPossessionItemSumWithCond(Private_c* priv, mActor_name_t item, u32 cond) {
     int sum = 0;
 
     if (priv != NULL) {
@@ -472,7 +472,7 @@ extern int mPr_GetPossessionItemSumWithCond(Private_c* priv, mActor_name_t item,
     return sum;
 }
 
-extern int mPr_GetPossessionItemSumFGTypeWithCond_cancel(Private_c* priv, mActor_name_t fg_type, u32 cond,
+extern u32 mPr_GetPossessionItemSumFGTypeWithCond_cancel(Private_c* priv, mActor_name_t fg_type, u32 cond,
                                                          mActor_name_t cancel_item) {
     int sum = 0;
 
@@ -492,7 +492,7 @@ extern int mPr_GetPossessionItemSumFGTypeWithCond_cancel(Private_c* priv, mActor
     return sum;
 }
 
-extern int mPr_GetPossessionItemSumItemCategoryWithCond_cancel(Private_c* priv, u8 item1_type, u32 cond,
+extern u32 mPr_GetPossessionItemSumItemCategoryWithCond_cancel(Private_c* priv, u8 item1_type, u32 cond,
                                                                mActor_name_t cancel_item) {
     int sum = 0;
 
@@ -512,7 +512,7 @@ extern int mPr_GetPossessionItemSumItemCategoryWithCond_cancel(Private_c* priv, 
     return sum;
 }
 
-extern int mPr_GetPossessionItemSumItemCategoryWithCond(Private_c* priv, u8 item1_type, u32 cond) {
+extern u32 mPr_GetPossessionItemSumItemCategoryWithCond(Private_c* priv, u8 item1_type, u32 cond) {
     int sum = 0;
 
     if (priv != NULL) {
@@ -531,7 +531,7 @@ extern int mPr_GetPossessionItemSumItemCategoryWithCond(Private_c* priv, u8 item
     return sum;
 }
 
-extern int mPr_GetPossessionItemSumKindWithCond(Private_c* priv, mActor_name_t kind_start, mActor_name_t kind_end,
+extern u32 mPr_GetPossessionItemSumKindWithCond(Private_c* priv, mActor_name_t kind_start, mActor_name_t kind_end,
                                                 u32 cond) {
     int sum = 0;
 

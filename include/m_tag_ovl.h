@@ -15,6 +15,39 @@ extern "C" {
 
 #define mTG_TAG_FLAG_EDGE_FOOT_SELECT (1 << 0)
 
+#define mTG_MAIL_FLAG_PRESENT (1 << 0)
+#define mTG_MAIL_FLAG_RECV (1 << 1)
+
+enum {
+    mTG_MARK_CHK,
+    mTG_MARK_ON,
+    mTG_MARK_OFF,
+    mTG_MARK_RVS,
+    mTG_MARK_CLR,
+    mTG_MARK_CHK_ALL0,
+
+    mTG_MARK_NUM
+};
+
+enum {
+    mTG_MARK_TYPE_NONE,
+    mTG_MARK_TYPE_INV_FG_ITEM,
+    mTG_MARK_TYPE_INV_PLAYERROOM_ITEM,
+    mTG_MARK_TYPE_INV_OTHERROOM_ITEM,
+    mTG_MARK_TYPE_INV_SELL_ITEM,
+    mTG_MARK_TYPE_INV_FG_MAIL,
+    mTG_MARK_TYPE_INV_MAILBOX,
+    mTG_MARK_TYPE_CPMAIL_MAIL,
+    mTG_MARK_TYPE_MAILBOX,
+    mTG_MARK_TYPE_CPMAIL_CPMAIL,
+    mTG_MARK_TYPE_MUSIC,
+    mTG_MARK_TYPE_NEEDLEWORK_ORIGINAL,
+    mTG_MARK_TYPE_CPORIGINAL_ORIGINAL,
+
+    mTG_MARK_TYPE_NUM
+};
+
+
 enum {
     mTG_TYPE_NONE,
     mTG_TYPE_FIELD_DEFAULT,
@@ -175,8 +208,8 @@ struct tag_ovl_s {
     /* 0x2F2 */ u8 _2F2[0x3C4 - 0x2F2];
 };
 
-extern int mTG_mark_main(Submenu*, mSM_MenuInfo_c*, int, int);
-extern int mTG_mark_mainX(Submenu*, mSM_MenuInfo_c*, int, int, int, int);
+extern int mTG_mark_main(Submenu*, mSM_MenuInfo_c*, int, int*);
+extern int mTG_mark_mainX(Submenu*, mSM_MenuInfo_c*, int, int, int, int*);
 
 extern void mTG_tag_ovl_construct(Submenu* submenu);
 extern void mTG_tag_ovl_destruct(Submenu* submenu);

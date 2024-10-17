@@ -564,8 +564,8 @@ static void mHD_open_end_proc_item_type6(Submenu* submenu, int idx, int table) {
     mHD_drop_item(submenu, tag, &Save_Get(homes[menu_info->data1]).haniwa.items[idx].item, NULL);
     if (flag == TRUE) {
         submenu->overlay->tag_ovl->item_name_wait_time = 0;
-        submenu->overlay->tag_ovl->chg_tag_func_proc(submenu, tag->table, mTG_TYPE_HANIWA_PUT_ITEM, 0, tag->pos[0],
-                                                     tag->pos[1]);
+        submenu->overlay->tag_ovl->chg_tag_func_proc(submenu, tag->table, mTG_TYPE_HANIWA_PUT_ITEM, 0, tag->base_pos[0],
+                                                     tag->base_pos[1]);
     }
 }
 

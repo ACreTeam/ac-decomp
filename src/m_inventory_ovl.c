@@ -1274,7 +1274,7 @@ static void mIV_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
                                                              0.0f, 0.0f);
                 tag_ovl->item_name_wait_time = 0;
                 submenu->overlay->tag_ovl->chg_tag_func_proc(submenu, mTG_TABLE_ITEM, mTG_TYPE_QUEST_ITEM, 0,
-                                                             tag_ovl->tags[0].pos[0], tag_ovl->tags[0].pos[1]);
+                                                             tag_ovl->tags[0].base_pos[0], tag_ovl->tags[0].base_pos[1]);
                 break;
             case mSM_IV_OPEN_SEND_MAIL:
                 submenu->overlay->tag_ovl->chg_tag_func_proc(submenu, mTG_TABLE_MAIL, mTG_TYPE_NONE, unselected_num,
@@ -1708,10 +1708,10 @@ static void mIV_set_mail(Submenu* submenu, mSM_MenuInfo_c* menu_info, GRAPH* gra
     int menu_flag;
     int mark_flag;
 
-    if (inv_ovl->remove_timer > 0 && (tag->table == mTG_TABLE_MAIL || inv_ovl->_5E4 == 1)) {
-        if (inv_ovl->_5E4 == 1) {
-            select_mask = inv_ovl->_5E2;
-        } else if (inv_ovl->_5E4 == 0) {
+    if (inv_ovl->remove_timer > 0 && (tag->table == mTG_TABLE_MAIL || inv_ovl->mail_mark_flag == TRUE)) {
+        if (inv_ovl->mail_mark_flag == TRUE) {
+            select_mask = inv_ovl->mail_mark_bitfield2;
+        } else if (inv_ovl->mail_mark_flag == FALSE) {
             select_mask = 1 << tag_ovl->get_table_idx_proc(tag);
         }
     }
@@ -1739,7 +1739,7 @@ static void mIV_set_mail(Submenu* submenu, mSM_MenuInfo_c* menu_info, GRAPH* gra
                 scale = 1.0f;
             }
 
-            if ((inv_ovl->_5E2 & (1 << i)) != 0 && inv_ovl->_5E4 == 0) {
+            if ((inv_ovl->mail_mark_bitfield2 & (1 << i)) != 0 && inv_ovl->mail_mark_flag == FALSE) {
                 mark_flag = TRUE;
             } else {
                 mark_flag = FALSE;
@@ -2079,9 +2079,9 @@ static void mIV_inventory_ovl_init(Submenu* submenu, mSM_MenuInfo_c* menu_info, 
     inv_ovl->page_order[1] = mIV_PAGE_FISH_COLLECTION;
     inv_ovl->page_order[2] = mIV_PAGE_INSECT_COLLECTION;
     inv_ovl->page_move_timer = 0;
-    inv_ovl->_5E4 = 0;
+    inv_ovl->mail_mark_flag = FALSE;
     inv_ovl->item_mark_bitfield = 0;
-    inv_ovl->_5E2 = 0;
+    inv_ovl->mail_mark_bitfield2 = 0;
     inv_ovl->wc_flag = FALSE;
 
     if (menu_info->data0 == mSM_IV_OPEN_MAILBOX) {

@@ -37,7 +37,6 @@ enum {
 #define aMR_FTR_BANK_NUM 100
 #define aMR_FTR_BANK_SIZE 0x800
 
-#define aMR_CLIP (Common_Get(clip).my_room_clip)
 #define aMR_BOUNDS_OK(x, z) \
     ((x) > (aMR_MIN_BOUND - 1) && (x) < (aMR_MAX_BOUND + 1) && (z) > (aMR_MIN_BOUND - 1) && (z) < (aMR_MAX_BOUND + 1))
 

@@ -96,8 +96,8 @@ struct inventory_ovl_s {
     mIV_pl_eff_c pl_eff[mIV_PLAYER_EFFECT_NUM];
     mIV_SET_COLLECT_ITEMNO_PROC set_collect_itemNo_proc;
     u16 item_mark_bitfield;
-    u16 _5E2;
-    s16 _5E4;
+    u16 mail_mark_bitfield2;
+    s16 mail_mark_flag;
     u8 _5E6[2];
     u16 mail_mark_bitfield;
     u8 original_flag;

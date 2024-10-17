@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-typedef struct music_ovl_s mMU_Overlay_c;
+typedef struct music_ovl_s mMU_Ovl_c;
 
 #ifdef __cplusplus
 }
