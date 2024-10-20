@@ -172,7 +172,7 @@ static int sChk_font_sub(u8* font_p) {
     int res = FALSE;
 
     /* This check seems wrong lol */
-    if (font != 0xFF && (font >= 0xFF || font >= mMl_FONT_NUM || font < mMl_FONT_0)) {
+    if (font != 0xFF && (font >= 0xFF || font >= mMl_FONT_NUM || font < mMl_FONT_RECV)) {
         mFRm_ERRORLINE(612);
         res = TRUE;
     }

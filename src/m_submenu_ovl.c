@@ -1527,7 +1527,7 @@ static void mSM_draw_mail(GRAPH* graph, f32 pos_x, f32 pos_y, f32 scale, Mail_c*
 
     if (mMl_check_send_mail(mail)) {
         type = mSM_MAIL_SEND;
-    } else if (mail->content.font == mMl_FONT_4 || mail->content.font == mMl_FONT_2) {
+    } else if (mail->content.font == mMl_FONT_RECV_PLAYER_PRESENT_READ || mail->content.font == mMl_FONT_RECV_READ) {
         type = mSM_MAIL_NORMAL2;
     } else {
         type = mSM_MAIL_NORMAL;

@@ -47,6 +47,20 @@ enum {
     mTG_MARK_TYPE_NUM
 };
 
+enum {
+    mTG_CHANGE_ORIGINAL_MARK_NONE,
+    mTG_CHANGE_ORIGINAL_MARK_DECIDE,
+    mTG_CHANGE_ORIGINAL_MARK_MOVE,
+
+    mTG_CHANGE_ORIGINAL_MARK_NUM
+};
+
+enum {
+    mTG_CHANGE_MAIL_MARK_DECIDE,
+    mTG_CHANGE_MAIL_MARK_MOVE,
+
+    mTG_CHANGE_MAIL_MARK_NUM
+};
 
 enum {
     mTG_TYPE_NONE,
@@ -158,10 +172,15 @@ enum {
     mTG_TABLE_GBA,
     mTG_TABLE_GBA_NW,
     mTG_TABLE_CARD,
-    mTG_TABLE_GBA_NW2,
+    mTG_TABLE_CARD_NW,
 
     mTG_TABLE_NUM
 };
+
+#define mTG_RETURN_CLOSE 0
+#define mTG_RETURN_KEEP 1
+
+#define mTG_MARK_IDX_UNSET 0x7FFF
 
 /* sizeof(mTG_tag_c) == 0xB4 */
 typedef struct tag_s {
@@ -193,6 +212,28 @@ typedef void (*mTG_EXCHANGE_PROC)(Submenu*, mSM_MenuInfo_c*);
 typedef Mail_c* (*mTG_GET_MAIL_POINTER_PROC)(Submenu*, mHD_Ovl_c*);
 typedef int (*mTG_GET_TABLE_IDX_PROC)(mTG_tag_c*);
 
+typedef struct tag_cpmail_mark_pos_s {
+    Mail_c* _00;
+    f32 pos[2];
+} mTG_cpmail_mark_pos_c;
+
+typedef struct tag_cpmail_mark_s {
+    Mail_c* _00[4];
+    Mail_c* mail_tbl[4];
+    f32 _20[2][2];
+    f32 _30[2][2];
+    s16 idx_tbl[4];
+    s16 mode;
+    s16 _4A;
+} mTG_cpmail_mark_c;
+
+typedef struct tag_cporiginal_mark_s {
+    f32 _00[2][2];
+    f32 _10[2][2];
+    s16 needlework_idx;
+    s16 cporiginal_idx;
+} mTG_cporiginal_mark_c;
+
 /* TODO */
 struct tag_ovl_s {
     /* 0x000 */ int sel_tag_idx;
@@ -205,7 +246,19 @@ struct tag_ovl_s {
     /* 0x2E8 */ mTG_GET_MAIL_POINTER_PROC get_mail_pointer_proc;
     /* 0x2EC */ mTG_GET_TABLE_IDX_PROC get_table_idx_proc;
     /* 0x2F0 */ s16 item_name_wait_time;
-    /* 0x2F2 */ u8 _2F2[0x3C4 - 0x2F2];
+    /* 0x2F4 */ mTG_cpmail_mark_pos_c _2F4[4];
+    /* 0x324 */ mTG_cpmail_mark_c cpmail_mark[1];
+    /* 0x370 */ f32 _370;
+    /* 0x374 */ int _374;
+    /* 0x378 */ mActor_name_t _378[2];
+    /* 0x37C */ int _37C[5];
+    /* 0x390 */ mTG_cporiginal_mark_c cporiginal_mark[1];
+    /* 0x3B4 */ f32 _3B4;
+    /* 0x3B8 */ u16 needlework_mark_flg;
+    /* 0x3BA */ u16 cporiginal_mark_flg;
+    /* 0x3BC */ s16 needlework_mark_max;
+    /* 0x3BE */ s16 cporiginal_mark_max;
+    /* 0x3C0 */ s16 change_original_mark_mode;
 };
 
 extern int mTG_mark_main(Submenu*, mSM_MenuInfo_c*, int, int*);

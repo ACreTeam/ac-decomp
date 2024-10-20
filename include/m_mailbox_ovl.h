@@ -8,6 +8,8 @@
 extern "C" {
 #endif
 
+#define mMB_MAIL_COUNT HOME_MAILBOX_SIZE
+
 typedef int (*mMB_GET_LAST_MAIL_IDX_PROC)(void);
 
 struct mailbox_ovl_s {

@@ -212,6 +212,7 @@ typedef struct shop_s {
   /* 0x13C */ int visitor_flag; /* set when a foreign player enters Nook's shop, required for Nookington's */
 } Shop_c;
 
+#define mSP_GC_FAMICOM_TABLE_CNT 8 // update this if the # of items in mSP_gc_famicom_table is changed
 extern mActor_name_t mSP_gc_famicom_table[];
 
 extern int mSP_CollectCheck(mActor_name_t item);

@@ -69,7 +69,7 @@ typedef enum audio_sound_effects {
     NA_SE_TOOL_FURI = 0x5A, // swing?
     NA_SE_AMI_HIT = 0x5C,
     NA_SE_TOOL_GET,
-
+    NA_SE_5E = 0x5E,
     NA_SE_5F = 0x5F,
     NA_SE_60 = 0x60,
 
@@ -157,6 +157,8 @@ typedef enum audio_sound_effects {
     NA_SE_SOFT_CHAIR_STANDUP,
     NA_SE_HARD_CHAIR_STANDUP,
 
+    NA_SE_426 = 0x426,
+
     NA_SE_BUBU_CHAIR_STANDUP = 0x429,
     NA_SE_JUMP,
     NA_SE_LANDING,
@@ -174,6 +176,7 @@ typedef enum audio_sound_effects {
     NA_SE_KARABURI = 0x43A,
 
     NA_SE_ROD_STROKE_SMALL = 0x445,
+    NA_SE_446 = 0x446,
 
     NA_SE_SCOOP_TREE_HIT = 0x448,
     NA_SE_SCOOP_ITEM_HIT,

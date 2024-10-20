@@ -1571,7 +1571,7 @@ static void mNpc_GetRemailData(Mail_c* mail, PersonalID_c* pid, AnmPersonalID_c*
     int paper_no;
 
     (*get_remail[cond])(mail, pid, anm_id, remail, foreign);
-    mail->content.font = mMl_FONT_0;
+    mail->content.font = mMl_FONT_RECV;
     mail->content.mail_type = mMl_TYPE_MAIL;
     mPr_CopyPersonalID(&mail->header.recipient.personalID, pid);
     mail->header.recipient.type = mMl_NAME_TYPE_PLAYER;
@@ -1680,7 +1680,7 @@ static void mNpc_LoadMailDataCommon2(Mail_c* mail, PersonalID_c* pid, AnmPersona
     mem_copy(mail->content.header, super, MAIL_HEADER_LEN);
     mem_copy(mail->content.footer, ps, MAIL_FOOTER_LEN);
     mail->content.header_back_start = header_back_start;
-    mail->content.font = mMl_FONT_0;
+    mail->content.font = mMl_FONT_RECV;
     mail->content.mail_type = mMl_TYPE_MAIL;
     mPr_CopyPersonalID(&mail->header.recipient.personalID, pid);
     mail->header.recipient.type = mMl_NAME_TYPE_PLAYER;
@@ -1920,7 +1920,7 @@ static void mNpc_GetXmasCardData(Mail_c* mail, PersonalID_c* pid) {
     mHandbill_Load_HandbillFromRom(mail->content.header, &header_back_start, mail->content.footer, mail->content.body,
                                    0xD7);
     mail->content.header_back_start = header_back_start;
-    mail->content.font = mMl_FONT_0;
+    mail->content.font = mMl_FONT_RECV;
     mail->content.mail_type = mMl_TYPE_XMAS;
     mPr_CopyPersonalID(&mail->header.recipient.personalID, pid);
     mail->header.recipient.type = mMl_NAME_TYPE_PLAYER;

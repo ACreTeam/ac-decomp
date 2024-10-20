@@ -603,7 +603,7 @@ static void mQst_GetRemailData(Mail_c* letter, PersonalID_c* recipient_id, AnmPe
     mem_copy(letter->content.header, header, MAIL_HEADER_LEN);
     mem_copy(letter->content.footer, footer, MAIL_FOOTER_LEN);
     letter->content.header_back_start = header_back_pos;
-    letter->content.font = mMl_FONT_0;
+    letter->content.font = mMl_FONT_RECV;
     letter->content.mail_type = 0;
 
     mPr_CopyPersonalID(&letter->header.recipient.personalID, recipient_id);

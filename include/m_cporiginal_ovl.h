@@ -39,6 +39,7 @@ extern void mCO_swap_image(Submenu* submenu, mActor_name_t item0, mActor_name_t 
 extern int mCO_top_folder(Submenu* submenu);
 extern u8* mCO_get_folder_name(Submenu* submenu, int folder);
 extern u8* mCO_get_image_name(Submenu* submenu, int folder, int idx);
+extern int mCO_check_mark_flg(Submenu* submenu, int idx);
 extern int mCO_check_hide_flg(Submenu* submenu, int folder, int idx);
 extern void mCO_on_hide_flg(Submenu* submenu, int folder, int idx);
 extern void mCO_clear_hide_flg(Submenu* submenu);

@@ -27,7 +27,9 @@ struct cpmail_ovl_s {
     u32 _BB0;
     u32 mark_bitfield;
     int mark_flag;
-    u8 _BBC[0xBC4 - 0xBBC];
+    u8 _BBC;
+    u32 mark_bitfield2;
+    // u8 _BBC[0xBC4 - 0xBBC];
 };
 
 extern void mCM_cpmail_ovl_construct(Submenu* submenu);

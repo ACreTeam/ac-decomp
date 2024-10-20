@@ -1863,14 +1863,14 @@ static int aMR_JudgeBreedNewFurniture(GAME* game, u16 ftr_no, int* ut_x, int* ut
         u16 angle;
 
         if (mCoBG_CheckUtFlat(&player_pos) == FALSE) {
-            return -2;
+            return aMR_JUDGE_CANT_PLACE_FTR;
         }
 
         if (aMR_CLIP != NULL && my_room != NULL && aMR_CheckReserveFlag(my_room, 0) == FALSE) {
             *rotation = 0;
             *square_offset = 0;
             *layer = 0;
-            return -2;
+            return aMR_JUDGE_CANT_PLACE_FTR;
         }
 
         aMR_Wpos2PlaceNumber(&cur_ut_x, &cur_ut_z, player_pos, 0);
@@ -1907,7 +1907,7 @@ static int aMR_JudgeBreedNewFurniture(GAME* game, u16 ftr_no, int* ut_x, int* ut
 
                     for (i = 0; i < 5; i++) {
                         if (aMR_WeightPossible((ACTOR*)my_room, profile->shape) == FALSE) {
-                            return -1;
+                            return aMR_JUDGE_MAX_FTR;
                         }
 
                         target_ut_x = cur_ut_x;
@@ -1975,7 +1975,7 @@ static int aMR_JudgeBreedNewFurniture(GAME* game, u16 ftr_no, int* ut_x, int* ut
                     for (i = 0; i < 5; i++) {
                         angle_idx = (int)angle_idx;
                         if (aMR_WeightPossible((ACTOR*)my_room, profile->shape) == FALSE) {
-                            return -1;
+                            return aMR_JUDGE_MAX_FTR;
                         }
 
                         target_ut_x = cur_ut_x;
@@ -2084,16 +2084,16 @@ static int aMR_JudgeBreedNewFurniture(GAME* game, u16 ftr_no, int* ut_x, int* ut
                     }
                 }
 
-                return -2;
+                return aMR_JUDGE_CANT_PLACE_FTR;
             }
         }
 
-        return -1;
+        return aMR_JUDGE_MAX_FTR;
     } else {
         *rotation = 0;
         *square_offset = 0;
         *layer = 0;
-        return -3;
+        return aMR_JUDGE_OTHER_ROOM;
     }
 }
 

@@ -31,11 +31,11 @@ enum {
 };
 
 enum {
-    mMl_FONT_0,
-    mMl_FONT_SEND,
-    mMl_FONT_2,
-    mMl_FONT_3,
-    mMl_FONT_4,
+    mMl_FONT_RECV,                     /* Received letter (with or without a present attached), unread */
+    mMl_FONT_SEND,                     /* Player-written letter */
+    mMl_FONT_RECV_READ,                /* Recieved letter, with/without present, and then read it */
+    mMl_FONT_RECV_PLAYER_PRESENT,      /* Recieved letter where present was attached, unread */
+    mMl_FONT_RECV_PLAYER_PRESENT_READ, /* Recieved letter where present was attached, read */
 
     mMl_FONT_NUM
 };

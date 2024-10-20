@@ -19,6 +19,10 @@ extern "C" {
 #define aMR_NO_FTR_ID 200
 #define aMR_NO_FTR_ID2 201
 
+#define aMR_JUDGE_MAX_FTR -1
+#define aMR_JUDGE_CANT_PLACE_FTR -2
+#define aMR_JUDGE_OTHER_ROOM -3
+
 typedef struct my_room_actor_s MY_ROOM_ACTOR;
 
 enum {

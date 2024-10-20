@@ -20,6 +20,7 @@ struct needlework_ovl_s {
 extern u8 mNW_get_image_no(Submenu* submenu, int slot_no);
 extern u8* mNW_get_image_name(Submenu* submenu, int idx);
 extern int mNW_check_hide_flg(Submenu* submenu, int idx);
+extern int mNW_check_mark_flg(Submenu* submenu, int idx);
 extern void mNW_on_hide_flg(Submenu* submenu, int idx);
 extern void mNW_clear_hide_flg(Submenu* submenu);
 extern void mNW_draw_original(Submenu* submenu, GRAPH* graph, f32 pos_x, f32 pos_y, f32 scale, int idx, int color_flag);

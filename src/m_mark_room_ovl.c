@@ -2932,7 +2932,7 @@ static void mMkRm_SendMarkLetter(mHm_hs_c* house, int points, int room_size, u8*
     mMl_clear_mail(&letter);
     mHandbill_Load_HandbillFromRom(letter.content.header, &header_back_start, letter.content.footer,
                                    letter.content.body, handbill_no);
-    letter.content.font = mMl_FONT_0;
+    letter.content.font = mMl_FONT_RECV;
     letter.content.header_back_start = header_back_start;
     letter.content.mail_type = mMl_TYPE_HRA;
     letter.content.paper_type = 51; /* wing paper */
