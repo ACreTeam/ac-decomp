@@ -177,6 +177,22 @@ enum {
     mTG_TABLE_NUM
 };
 
+enum {
+    mTG_WIN_ITEM,
+    mTG_WIN_QITEM,
+    mTG_WIN_SELECT,
+
+    mTG_WIN_NUM  
+};
+
+enum {
+    mTG_STR0,
+    mTG_STR1,
+    mTG_STR2,
+
+    mTG_STR_NUM
+};
+
 #define mTG_RETURN_CLOSE 0
 #define mTG_RETURN_KEEP 1
 
@@ -227,14 +243,34 @@ typedef struct tag_cpmail_mark_s {
     s16 _4A;
 } mTG_cpmail_mark_c;
 
+enum {
+    mTG_ORG_TYPE_NW,
+    mTG_ORG_TYPE_CO,
+
+    mTG_ORG_TYPE_NUM
+};
+
 typedef struct tag_cporiginal_mark_s {
-    f32 _00[2][2];
-    f32 _10[2][2];
-    s16 needlework_idx;
-    s16 cporiginal_idx;
+    f32 _00[mTG_ORG_TYPE_NUM][2];
+    f32 _10[mTG_ORG_TYPE_NUM][2];
+    s16 idx[mTG_ORG_TYPE_NUM];
 } mTG_cporiginal_mark_c;
 
-/* TODO */
+typedef struct tag_cporiginal_mark_entry_s {
+    mActor_name_t item;
+    float pos[2];
+} mTG_cporiginal_mark_entry_c;
+
+/* sizeof(mTG_mark_original_c) == 0x34 */
+typedef struct tag_mark_original_s {
+    /* 0x00 */ mTG_cporiginal_mark_c mark[1];
+    /* 0x24 */ f32 move_percent;
+    /* 0x28 */ u16 mark_flg[mTG_ORG_TYPE_NUM];
+    /* 0x2C */ s16 mark_max[mTG_ORG_TYPE_NUM];
+    /* 0x30 */ s16 mark_mode;
+} mTG_mark_original_c;
+
+/* sizeof(mTG_Ovl_c) == 0x3C4 */
 struct tag_ovl_s {
     /* 0x000 */ int sel_tag_idx;
     /* 0x004 */ int ret_tag_idx;
@@ -249,16 +285,10 @@ struct tag_ovl_s {
     /* 0x2F4 */ mTG_cpmail_mark_pos_c _2F4[4];
     /* 0x324 */ mTG_cpmail_mark_c cpmail_mark[1];
     /* 0x370 */ f32 _370;
-    /* 0x374 */ int _374;
-    /* 0x378 */ mActor_name_t _378[2];
-    /* 0x37C */ int _37C[5];
-    /* 0x390 */ mTG_cporiginal_mark_c cporiginal_mark[1];
-    /* 0x3B4 */ f32 _3B4;
-    /* 0x3B8 */ u16 needlework_mark_flg;
-    /* 0x3BA */ u16 cporiginal_mark_flg;
-    /* 0x3BC */ s16 needlework_mark_max;
-    /* 0x3BE */ s16 cporiginal_mark_max;
-    /* 0x3C0 */ s16 change_original_mark_mode;
+    /* 0x374 */ u16 nw_gba_flags;
+    /* 0x376 */ u16 _02;
+    /* 0x378 */ mTG_cporiginal_mark_entry_c original_entries[mTG_ORG_TYPE_NUM];
+    /* 0x390 */ mTG_mark_original_c original_mark;
 };
 
 extern int mTG_mark_main(Submenu*, mSM_MenuInfo_c*, int, int*);

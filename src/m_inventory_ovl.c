@@ -1259,7 +1259,7 @@ static void mIV_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
             case mSM_IV_OPEN_MINIDISK:
             case mSM_IV_OPEN_SHRINE:
             case mSM_IV_OPEN_CURATOR:
-            case mSM_IV_OPEN_16:
+            case mSM_IV_OPEN_PASSWORD:
                 submenu->overlay->tag_ovl->chg_tag_func_proc(submenu, mTG_TABLE_ITEM, mTG_TYPE_NONE, unselected_num,
                                                              0.0f, 0.0f);
                 break;
@@ -1992,7 +1992,7 @@ static void mIV_inventory_ovl_init(Submenu* submenu, mSM_MenuInfo_c* menu_info, 
             break;
         }
 
-        case mSM_IV_OPEN_16: {
+        case mSM_IV_OPEN_PASSWORD: {
             inv_ovl->selectable_item_bitfield = menu_info->data1;
             inv_ovl->selectable_mail_bitfield = 0;
             break;

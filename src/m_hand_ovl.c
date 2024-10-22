@@ -452,7 +452,7 @@ static void mHD_open_sack(Submenu* submenu) {
     hand_ovl->info.next_act = mHD_ACTION_SASU;
     hand_ovl->info.wait_timer = 42;
     sAdo_SysTrgStart(MONO(NA_SE_52));
-    submenu->overlay->inventory_ovl->disp_money_change_frames = amount / 42;
+    submenu->overlay->inventory_ovl->disp_money_chg_step = amount / 42;
 }
 
 static void mHD_drop_mail(Submenu* submenu, Mail_c* mail) {

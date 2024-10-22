@@ -105,7 +105,7 @@ enum {
     mSM_IV_OPEN_EXCHANGE,
     mSM_IV_OPEN_CPMAIL,
     mSM_IV_OPEN_CURATOR,
-    mSM_IV_OPEN_16,
+    mSM_IV_OPEN_PASSWORD,
 
     mSM_IV_OPEN_NUM
 };

@@ -1090,6 +1090,11 @@ m_submenu_ovl.c:
     .rodata: [0x8064B870, 0x8064B900]
     .data: [0x806CE550, 0x806CF928]
     .bss: [0x813405C0, 0x81340FC8]
+m_tag_ovl.c:
+    .text: [0x805EF6CC, 0x805FF3C4]
+    .rodata: [0x8064B900, 0x8064BA00]
+    .data: [0x806CF928, 0x806D1320]
+    .bss: [0x81340FC8, 0x81341390]
 m_timeIn_ovl.c:
     .text: [0x805FF3C4, 0x80600370]
     .rodata: [0x8064BA00, 0x8064BA58]

@@ -21,6 +21,30 @@
 #include "m_music_ovl.h"
 #include "m_mark_room.h"
 #include "ac_set_ovl_insect.h"
+#include "m_editor_ovl.h"
+#include "m_editEndChk_ovl.h"
+#include "sys_matrix.h"
+#include "m_roll_lib.h"
+#include "m_house.h"
+
+static void mTG_mark_main_CLR(Submenu* submenu, mSM_MenuInfo_c* menu_info);
+
+enum {
+    mTG_QSTR_TYPE_NONE,
+    mTG_QSTR_TYPE_ITEM,
+    mTG_QSTR_TYPE_MAIL,
+    mTG_QSTR_TYPE_FROM_MUSEUM,
+    mTG_QSTR_TYPE_TO_MUSEUM,
+    mTG_QSTR_TYPE_XMAS_SNOWMAN_SPNPC,
+    mTG_QSTR_TYPE_SHOP,
+    mTG_QSTR_TYPE_MOTHER,
+    mTG_QSTR_TYPE_ANGLER,
+    mTG_QSTR_TYPE_OMIKUJI,
+    mTG_QSTR_TYPE_POST_OFFICE,
+    mTG_QSTR_TYPE_HAPPY_ROOM,
+
+    mTG_QSTR_TYPE_NUM
+};
 
 static mTG_Ovl_c tag_ovl_data;
 
@@ -132,7 +156,7 @@ static u8 str_happy_room[7] = "the HRA";
 static u8 postoffice_str[15] = "the post office";
 static u8 mother_str[4] = "home";
 static u8 str_otodokemono[12] = "Delivery for";
-static u8 str_otegami[9] = "letter to";
+static u8 str_otegami[9] = "Letter to";
 static u8 str_title0[5] = "to\xD3  ";
 static u8 str_title1[5] = "from\xD3";
 static u8 str_title2[5] = "'s   ";
@@ -179,6 +203,7 @@ static void mTG_take_proc(Submenu*, mSM_MenuInfo_c*);
 static void mTG_m100_proc(Submenu*, mSM_MenuInfo_c*);
 static void mTG_m1000_proc(Submenu*, mSM_MenuInfo_c*);
 static void mTG_m10000_proc(Submenu*, mSM_MenuInfo_c*);
+static void mTG_m30000_proc(Submenu*, mSM_MenuInfo_c*);
 static void mTG_1catch_proc(Submenu*, mSM_MenuInfo_c*);
 static void mTG_order_proc(Submenu*, mSM_MenuInfo_c*);
 static void mTG_bury_proc(Submenu*, mSM_MenuInfo_c*);
@@ -338,6 +363,11 @@ static mTG_tag_word_c mTG_tag_word_1000 = {
 static mTG_tag_word_c mTG_tag_word_10000 = {
     "10000           ",
     &mTG_m10000_proc,
+};
+
+static mTG_tag_word_c mTG_tag_word_30000 = {
+    "30000           ",
+    &mTG_m30000_proc,
 };
 
 static mTG_tag_word_c mTG_tag_word_okane = {
@@ -751,11 +781,26 @@ static mTG_tag_word_c* mTG_dump_item[] = {
     &mTG_tag_word_yameru,
 };
 
+static mTG_tag_word_c* mTG_money_sack1[] = {
+    &mTG_tag_word_100,
+    &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_money_sack2[] = {
+    &mTG_tag_word_100,
+    &mTG_tag_word_1000,
+    &mTG_tag_word_yameru,
+};
+
 static mTG_tag_word_c* mTG_money_sack3[] = {
     &mTG_tag_word_100,
     &mTG_tag_word_1000,
     &mTG_tag_word_10000,
     &mTG_tag_word_yameru,
+};
+
+static mTG_tag_word_c* mTG_money_sack4[] = {
+    &mTG_tag_word_100, &mTG_tag_word_1000, &mTG_tag_word_10000, &mTG_tag_word_30000, &mTG_tag_word_yameru,
 };
 
 static mTG_tag_word_c* mTG_quest_item[] = {
@@ -1189,8 +1234,8 @@ static int mTG_return_tag_init(Submenu* submenu, int ret_type, int type) {
     return ret_idx;
 }
 
-static u16 mTG_get_item_name_wait_time(mTG_tag_c* tag) {
-    u16 time;
+static s16 mTG_get_item_name_wait_time(mTG_tag_c* tag) {
+    s16 time;
 
     tag->scale = 0.0f;
     if (tag->table == mTG_TABLE_CATALOG_WC) {
@@ -1316,6 +1361,16 @@ static void mTG_set_tag_win_scale_p(mTG_tag_c* tag, int win_type, f32 x, f32 y) 
             &tag_win_data_pix_arrow_offset_item,
         },
         {
+            { 0.5217391f, 0.88235295f },
+            { -92.0f, 34.0f },
+            1.0f,
+            52.5f,
+            67.5f,
+            { 22.0f, -12.0f },
+            { 10.0f, -4.0f },
+            &tag_win_data_pix_arrow_offset_quest,
+        },
+        {
             { 0.5714286f, 0.43243244f },
             { -61.25f, 64.75f },
             0.875f,
@@ -1371,7 +1426,7 @@ static int mTG_check_edge_right_item(mTG_tag_c* tag) {
     f32 edge;
     int res = FALSE;
 
-    if (tag->str2_type == 0) {
+    if (tag->str2_type == mTG_QSTR_TYPE_NONE) {
         edge = 64.75f;
     } else {
         edge = 92.0f;
@@ -1397,6 +1452,20 @@ static int mTG_check_edge_right_select(mTG_tag_c* tag, f32* right_edge) {
     *right_edge = (tag->base_pos[0] + tag->body_ofs[0] + margin) - 134.0f;
 
     if (*right_edge <= 0.0f) {
+        res = TRUE;
+    }
+
+    return res;
+}
+
+/* @unused @fabricated */
+static int mTG_check_edge_left_select(mTG_tag_c* tag, f32* left_edge) {
+    f32 margin = tag->body_scale[0] * 122.5f * 0.5f;
+    int res = FALSE;
+
+    *left_edge = (tag->base_pos[0] + tag->body_ofs[0] - margin) - -134.0f;
+
+    if (*left_edge <= 0.0f) {
         res = TRUE;
     }
 
@@ -1539,7 +1608,7 @@ static int mTG_strcpy(u8* dst, u8* src, int dst_max, int src_max) {
 
 static int mTG_strcat_color(u8* str, u8* src, int str_max, int src_max, rgba_t* color) {
     /* 0x7F 0x05 0x00 0x00 0x00 0x00 */
-    static u8 font_color_base[] = { CHAR_CONTROL_CODE, mFont_CONT_CODE_COLOR, 0, 0, 0, 0 };
+    static u8 font_color_base[] = { CHAR_CONTROL_CODE, mFont_CONT_CODE_SET_COLOR_CHAR, 0, 0, 0, 0 };
     int str_len = mMl_strlen(str, str_max, CHAR_SPACE);
     int src_len = mMl_strlen(src, src_max, CHAR_SPACE);
 
@@ -1598,15 +1667,15 @@ static int mTG_init_tag_data_item_win_sub_mail_item_mail(mTG_tag_c* tag, mTG_str
 
     if (mail->header.recipient.type == mMl_NAME_TYPE_MUSEUM) {
         str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_VIOLET;
-        tag->str2_type = 4;
+        tag->str2_type = mTG_QSTR_TYPE_TO_MUSEUM;
         type = mTG_MAIL_TYPE_FROM_THE;
     } else if (mail->header.sender.type == mMl_NAME_TYPE_MUSEUM) {
         str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_GREEN;
-        tag->str2_type = 3;
+        tag->str2_type = mTG_QSTR_TYPE_FROM_MUSEUM;
         type = mTG_MAIL_TYPE_FROM2;
     } else {
         str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_VIOLET;
-        tag->str2_type = 2;
+        tag->str2_type = mTG_QSTR_TYPE_MAIL;
     }
 
     return type;
@@ -1616,7 +1685,7 @@ static int mTG_init_tag_data_item_win_sub_mail_item_xmas(mTG_tag_c* tag, mTG_str
     mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(SP_NPC_SANTA), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
     str_infos[1].str_len = PLAYER_NAME_LEN;
     str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_PURPLE;
-    tag->str2_type = 5;
+    tag->str2_type = mTG_QSTR_TYPE_XMAS_SNOWMAN_SPNPC;
 
     return mTG_MAIL_TYPE_FROM;
 }
@@ -1625,7 +1694,7 @@ static int mTG_init_tag_data_item_win_sub_mail_item_tanukiti(mTG_tag_c* tag, mTG
     mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(SP_NPC_SHOP_MASTER), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
     str_infos[1].str_len = PLAYER_NAME_LEN;
     str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_INDIGO;
-    tag->str2_type = 6;
+    tag->str2_type = mTG_QSTR_TYPE_SHOP;
 
     return mTG_MAIL_TYPE_FROM;
 }
@@ -1634,7 +1703,7 @@ static int mTG_init_tag_data_item_win_sub_mail_item_tunekiti(mTG_tag_c* tag, mTG
     mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(SP_NPC_BROKER), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
     str_infos[1].str_len = PLAYER_NAME_LEN;
     str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_INDIGO;
-    tag->str2_type = 6;
+    tag->str2_type = mTG_QSTR_TYPE_SHOP;
 
     return mTG_MAIL_TYPE_FROM;
 }
@@ -1643,7 +1712,7 @@ static int mTG_init_tag_data_item_win_sub_mail_item_mother(mTG_tag_c* tag, mTG_s
     mTG_strcpy(str_infos[1].str, mother_str, mTG_TAG_SEL_STRING_LEN, sizeof(mother_str));
     str_infos[1].str_len = sizeof(mother_str);
     str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_INDIGO;
-    tag->str2_type = 7;
+    tag->str2_type = mTG_QSTR_TYPE_MOTHER;
 
     return mTG_MAIL_TYPE_FROM2;
 }
@@ -1652,7 +1721,7 @@ static int mTG_init_tag_data_item_win_sub_mail_item_omikuji(mTG_tag_c* tag, mTG_
     mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(SP_NPC_EV_MIKO), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
     str_infos[1].str_len = PLAYER_NAME_LEN;
     str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_INDIGO;
-    tag->str2_type = 9;
+    tag->str2_type = mTG_QSTR_TYPE_OMIKUJI;
 
     return mTG_MAIL_TYPE_FROM_S;
 }
@@ -1661,7 +1730,7 @@ static int mTG_init_tag_data_item_win_sub_mail_item_happy(mTG_tag_c* tag, mTG_st
     mTG_strcpy(str_infos[1].str, str_happy_room, mTG_TAG_SEL_STRING_LEN, sizeof(str_happy_room));
     str_infos[1].str_len = sizeof(str_happy_room);
     str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_GREEN;
-    tag->str2_type = 11;
+    tag->str2_type = mTG_QSTR_TYPE_HAPPY_ROOM;
 
     return mTG_MAIL_TYPE_FROM;
 }
@@ -1670,7 +1739,7 @@ static int mTG_init_tag_data_item_win_sub_mail_item_snowman(mTG_tag_c* tag, mTG_
     mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(ETC_SNOWMAN_BALL_A), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
     str_infos[1].str_len = PLAYER_NAME_LEN;
     str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_PURPLE;
-    tag->str2_type = 5;
+    tag->str2_type = mTG_QSTR_TYPE_XMAS_SNOWMAN_SPNPC;
 
     return mTG_MAIL_TYPE_FROM;
 }
@@ -1679,7 +1748,7 @@ static int mTG_init_tag_data_item_win_sub_mail_item_angler(mTG_tag_c* tag, mTG_s
     mTG_strcpy(str_infos[1].str, mNpc_GetNpcWorldNameP(SP_NPC_ANGLER), mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
     str_infos[1].str_len = PLAYER_NAME_LEN;
     str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_PURPLE;
-    tag->str2_type = 8;
+    tag->str2_type = mTG_QSTR_TYPE_ANGLER;
 
     return mTG_MAIL_TYPE_FROM;
 }
@@ -1689,7 +1758,7 @@ static int mTG_init_tag_data_item_win_sub_mail_item_postoffice(mTG_tag_c* tag, m
     mTG_strcpy(str_infos[1].str, postoffice_str, mTG_TAG_SEL_STRING_LEN, sizeof(postoffice_str));
     str_infos[1].str_len = sizeof(postoffice_str);
     str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_GREEN;
-    tag->str2_type = 10;
+    tag->str2_type = mTG_QSTR_TYPE_POST_OFFICE;
 
     return mTG_MAIL_TYPE_FROM2;
 }
@@ -1698,7 +1767,7 @@ static int mTG_init_tag_data_item_win_sub_mail_item_sp_npc(mTG_tag_c* tag, mTG_s
     mTG_strcpy(str_infos[1].str, mail->header.sender.personalID.player_name, mTG_TAG_SEL_STRING_LEN, PLAYER_NAME_LEN);
     str_infos[1].str_len = PLAYER_NAME_LEN;
     str_infos[1].color_idx = mTG_MAIL_NAME_COLOR_PURPLE;
-    tag->str2_type = 5;
+    tag->str2_type = mTG_QSTR_TYPE_XMAS_SNOWMAN_SPNPC;
 
     return mTG_MAIL_TYPE_FROM;
 }
@@ -1708,7 +1777,7 @@ static rgba_t str_color[] = {
     { 205,  40,  40, 255 },
     { 100,  65, 195, 255 },
     {  60, 150,  65, 255 },
-    {  54,  20, 255, 255 },
+    { 165,  30, 255, 255 },
     {  60,  50, 155, 255 },
     { 225,  30, 220, 255 },
     {   0,   0,   0, 255 },
@@ -1810,7 +1879,7 @@ static void mTG_init_tag_data_item_win_sub_mail_item(Submenu* submenu, mTG_tag_c
 
         mail_type = (*proc[mail->content.mail_type])(tag, str_infos, mail);
     } else if (tag->table == mTG_TABLE_ITEM) {
-        tag->str2_type = 0;
+        tag->str2_type = mTG_QSTR_TYPE_NONE;
         win_type = mTG_WIN_TYPE_SELECT;
 
         /* Show quest item info */
@@ -1832,14 +1901,14 @@ static void mTG_init_tag_data_item_win_sub_mail_item(Submenu* submenu, mTG_tag_c
 
                 scale = 0.75f;
                 mail_type = mTG_MAIL_TYPE_FROM3;
-                tag->str2_type = 1;
+                tag->str2_type = mTG_QSTR_TYPE_ITEM;
             }
         }
     } else {
-        tag->str2_type = 0;
+        tag->str2_type = mTG_QSTR_TYPE_NONE;
     }
 
-    if (tag->str2_type == 0) {
+    if (tag->str2_type == mTG_QSTR_TYPE_NONE) {
         if (itemCond == mPr_ITEM_COND_PRESENT) {
             mem_copy(tag->str0, present_str, sizeof(present_str));
         } else if (itemNo >= ITM_MY_ORG_UMBRELLA0 && itemNo <= ITM_MY_ORG_UMBRELLA7) {
@@ -1852,10 +1921,10 @@ static void mTG_init_tag_data_item_win_sub_mail_item(Submenu* submenu, mTG_tag_c
         win_type = mTG_WIN_TYPE_ITEM;
     }
 
-    if (tag->str2_type != 0) {
-        if (tag->str2_type == 1) {
+    if (tag->str2_type != mTG_QSTR_TYPE_NONE) {
+        if (tag->str2_type == mTG_QSTR_TYPE_ITEM) {
             mTG_strcpy(tag->str2, str_otodokemono, mTG_TAG_SEL_STRING_LEN, sizeof(str_otodokemono));
-        } else if (tag->str2_type == 9) {
+        } else if (tag->str2_type == mTG_QSTR_TYPE_OMIKUJI) {
             mTG_strcpy(tag->str2, str_omikuji, mTG_TAG_SEL_STRING_LEN, sizeof(str_omikuji));
         } else {
             mTG_strcpy(tag->str2, str_otegami, mTG_TAG_SEL_STRING_LEN, sizeof(str_otegami));
@@ -1976,12 +2045,12 @@ static void mTG_init_tag_data_cpmail_wc_win(Submenu* submenu, int folder_idx) {
 
     if (len <= 0 || cpmail_ovl->page_order[0] == tag->tag_row) {
         tag->arrow_dir = 0;
-        tag->str2_type = 0;
+        tag->str2_type = mTG_QSTR_TYPE_NONE;
     } else {
         f32 width = mFont_GetStringWidth(tag->str0, len, TRUE);
 
         mTG_set_tag_win_scale_p(tag, mTG_WIN_TYPE_ITEM, width * 0.875f, 0.0f);
-        tag->str2_type = 0;
+        tag->str2_type = mTG_QSTR_TYPE_NONE;
         tag->body_ofs[0] *= -1.0f;
         tag->arrow_dir = 2;
         submenu->overlay->tag_ovl->item_name_wait_time = mTG_get_item_name_wait_time(tag);
@@ -1998,12 +2067,12 @@ static void mTG_init_tag_data_cporiginal_wc_win(Submenu* submenu) {
 
     if (len <= 0 || mCO_top_folder(submenu) == tag->tag_row) {
         tag->arrow_dir = 0;
-        tag->str2_type = 0;
+        tag->str2_type = mTG_QSTR_TYPE_NONE;
     } else {
         f32 width = mFont_GetStringWidth(tag->str0, len, TRUE);
 
         mTG_set_tag_win_scale_p(tag, mTG_WIN_TYPE_ITEM, width * 0.875f, 0.0f);
-        tag->str2_type = 0;
+        tag->str2_type = mTG_QSTR_TYPE_NONE;
         tag->body_ofs[0] *= -1.0f;
         tag->arrow_dir = 2;
         submenu->overlay->tag_ovl->item_name_wait_time = mTG_get_item_name_wait_time(tag);
@@ -2014,7 +2083,7 @@ static void mTG_init_tag_data_needlework_win(Submenu* submenu, int idx) {
     mTG_tag_c* tag = &submenu->overlay->tag_ovl->tags[0];
     int len;
 
-    tag->str2_type = 0;
+    tag->str2_type = mTG_QSTR_TYPE_NONE;
     if (tag->table == mTG_TABLE_CPORIGINAL) {
         int hide = mCO_check_hide_flg(submenu, mCO_top_folder(submenu), idx);
 
@@ -2215,19 +2284,19 @@ static void mTG_init_tag_data_select_win_after_item(mTG_tag_c* tag, mTG_tag_c* i
         left_flag = TRUE;
     }
 
-    if (item_tag->str2_type != 0) {
-        scale_x = 68.0f;
-        scale_y = 184.0f;
+    if (item_tag->str2_type != mTG_QSTR_TYPE_NONE) {
+        scale_x = 184.0f;
+        scale_y = 68.0f;
         data_p = &tag_add_item_data[1];
     } else {
-        scale_x = 28.0f;
-        scale_y = 129.5f;
+        scale_x = 129.5f;
+        scale_y = 28.0f;
         data_p = &tag_add_item_data[0];
     }
 
     tag->base_pos[1] += data_p->down_min[0][1] + (item_tag->body_ofs[1] - item_tag->body_scale[1] * scale_y * 0.5f) +
                         item_tag->_04[1] * data_p->down_min[1][1];
-    tag->body_ofs[1] = (data_p->up_min[0][1] + tag->_04[1] * data_p->up_min[1][1]) - tag->body_scale[1] * 129.0f * 0.5f;
+    tag->body_ofs[1] = (data_p->up_min[0][1] + tag->_04[1] * data_p->up_min[1][1]) - tag->body_scale[1] * 129.5f * 0.5f;
 
     tag->base_pos[0] += item_tag->body_ofs[0] - item_tag->body_scale[0] * scale_x * 0.5f;
     tag->body_ofs[0] = tag->body_scale[0] * 122.5f * 0.5f;
@@ -2930,7 +2999,7 @@ static int mTG_make_money_sack(Submenu* submenu, mSM_MenuInfo_c* menu_info, mAct
         hand_ovl->info.catch_pg = 0;
         mTG_mark_main_CLR(submenu, menu_info);
         mTG_return_tag_init(submenu, mTG_TYPE_NONE, mTG_RETURN_CLOSE);
-        submenu->overlay->inventory_ovl->disp_money_change_frames = -(amount / 42);
+        submenu->overlay->inventory_ovl->disp_money_chg_step = -(amount / 42);
         sAdo_SysTrgStart(MONO(NA_SE_52));
         res = TRUE;
     }
@@ -3247,13 +3316,13 @@ static void mTG_get_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
                 } else {
                     sAdo_SysTrgStart(MONO(NA_SE_52));
                     submenu->overlay->hand_ovl->info.wait_timer = 42;
-                    inventory_ovl->disp_money_change_frames = change_money / 42;
+                    inventory_ovl->disp_money_chg_step = change_money / 42;
 
-                    if (ABS(inventory_ovl->disp_money_change_frames) % 5 == 0) {
-                        if (inventory_ovl->disp_money_change_frames > 0) {
-                            inventory_ovl->disp_money_change_frames--;
+                    if (ABS(inventory_ovl->disp_money_chg_step) % 5 == 0) {
+                        if (inventory_ovl->disp_money_chg_step > 0) {
+                            inventory_ovl->disp_money_chg_step--;
                         } else {
-                            inventory_ovl->disp_money_change_frames++;
+                            inventory_ovl->disp_money_chg_step++;
                         }
                     }
                 }
@@ -3803,7 +3872,7 @@ static void mTG_plant_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
                 pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 0.0f);
                 sAdo_OngenTrgStart(NA_SE_2A, &pos);
                 mTG_return_tag_init(submenu, mTG_TYPE_NONE, mTG_RETURN_CLOSE);
-                mTG_close_window(submenu, menu_info, TRUE);
+                mTG_close_window(submenu, menu_info, FALSE);
                 return;
             }
         }
@@ -3857,7 +3926,7 @@ static void mTG_field_put_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
 
         if (put_cnt != 0) {
             mTG_return_tag_init(submenu, mTG_TYPE_NONE, mTG_RETURN_CLOSE);
-            mTG_close_window(submenu, menu_info, TRUE);
+            mTG_close_window(submenu, menu_info, FALSE);
         } else if (bad_famicom_cnt != 0) {
             mTG_open_warning_window(submenu, menu_info, mWR_WARNING_PUT_FAMI);
         } else {
@@ -4309,7 +4378,7 @@ static int mTG_mark_main_sub(Submenu* submenu, int menu_type, int param, int tab
                  (mark_type != mTG_MARK_TYPE_INV_PLAYERROOM_ITEM ||
                   ((mark_type == mTG_MARK_TYPE_INV_PLAYERROOM_ITEM && type != NAME_TYPE_FTR0 &&
                     type != NAME_TYPE_FTR1) &&
-                   (!ITEM_IS_UMBRELLA(item) && !ITEM_IS_CLOTH(item)))) &&
+                   (!ITEM_IS_UMBRELLA2(item) && !ITEM_IS_CLOTH(item)))) &&
                  (mEv_CheckFirstJob() == FALSE || mark_type == mTG_MARK_TYPE_INV_PLAYERROOM_ITEM ||
                   type != NAME_TYPE_ITEM1 || category != ITEM1_CAT_PLANT))) {
                 return TRUE;
@@ -4493,7 +4562,7 @@ static int mTG_bit_chk_all0(u8* flags, u8* bits, int count) {
     return res;
 }
 
-static int mTG_mark_mainX(Submenu* submenu, mSM_MenuInfo_c* menu_info, int table, int table_idx, int mode,
+extern int mTG_mark_mainX(Submenu* submenu, mSM_MenuInfo_c* menu_info, int table, int table_idx, int mode,
                           int* chk_result) {
     int mark_res;
     Mail_c* mail;
@@ -4567,7 +4636,7 @@ static void mTG_mark_main_CLR(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     }
 }
 
-static int mTG_mark_main(Submenu* submenu, mSM_MenuInfo_c* menu_info, int mode, int* chk_result) {
+extern int mTG_mark_main(Submenu* submenu, mSM_MenuInfo_c* menu_info, int mode, int* chk_result) {
     mTG_Ovl_c* tag_ovl = submenu->overlay->tag_ovl;
     mTG_tag_c* tag = &tag_ovl->tags[0];
     int idx = mTG_get_table_idx(tag);
@@ -5090,7 +5159,7 @@ static void mTG_nw_room_put_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info, in
         }
 
         mTG_return_tag_init(submenu, mTG_TYPE_NONE, mTG_RETURN_CLOSE);
-        mTG_close_window(submenu, menu_info, TRUE);
+        mTG_close_window(submenu, menu_info, FALSE);
         mMkRm_ReportChangePlayerRoom();
     } else if (res == aMR_JUDGE_MAX_FTR) {
         mTG_open_warning_window(submenu, menu_info, mWR_WARNING_PUT_MAX_FURNITURE);
@@ -5227,11 +5296,11 @@ static void mTG_change_original_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info
         }
 
         tag_ovl = submenu->overlay->tag_ovl;
-        tag_ovl->needlework_mark_flg = needlework_ovl->mark_flg;
-        tag_ovl->cporiginal_mark_flg = cporiginal_ovl->mark_flg;
-        tag_ovl->needlework_mark_max = mPr_ORIGINAL_DESIGN_COUNT;
-        tag_ovl->cporiginal_mark_max = mCO_ORIGINAL_NUM;
-        tag_ovl->change_original_mark_mode = mTG_CHANGE_ORIGINAL_MARK_DECIDE;
+        tag_ovl->original_mark.mark_flg[mTG_ORG_TYPE_NW] = needlework_ovl->mark_flg;
+        tag_ovl->original_mark.mark_flg[mTG_ORG_TYPE_CO] = cporiginal_ovl->mark_flg;
+        tag_ovl->original_mark.mark_max[mTG_ORG_TYPE_NW] = mPr_ORIGINAL_DESIGN_COUNT;
+        tag_ovl->original_mark.mark_max[mTG_ORG_TYPE_CO] = mCO_ORIGINAL_NUM;
+        tag_ovl->original_mark.mark_mode = mTG_CHANGE_ORIGINAL_MARK_DECIDE;
 
         sAdo_SysTrgStart(NA_SE_MENU_EXIT);
 
@@ -5406,7 +5475,7 @@ static void mTG_cpack_change_mail_mark_move(Submenu* submenu, mIV_Ovl_c* inv_ovl
                 y1 = cpmail_mark->_30[i][1];
                 tmp = tag_ovl->_370;
 
-                if (1.0f - tmp <= 0.01f) {
+                if (1.0f - tmp <= 0.00999999f) {
                     pos_p->pos[0] = x1;
                     pos_p->pos[1] = y1;
                     cpmail_mark->_4A |= (1 << i);
@@ -5932,7 +6001,7 @@ static int mTG_move_cursol_between_table_inventory_left(Submenu* submenu, mTG_ta
             } else {
                 tag->table = mTG_TABLE_ITEM;
                 tag->tag_col = 4;
-                tag->tag_row--;
+                tag->tag_row -= 2;
                 if (tag->tag_row < 0) {
                     tag->tag_row = 0;
                 }
@@ -6102,7 +6171,7 @@ static int mTG_move_cursol_between_table_inventory_upper(Submenu* submenu, mTG_t
         }
     } else if (tag->table == mTG_TABLE_MONEY) {
         if (mTG_move_check_hand_item(submenu, mTG_TABLE_PLAYER)) {
-            tag->table = mTG_TABLE_MONEY;
+            tag->table = mTG_TABLE_PLAYER;
             return TRUE;
         }
     }
@@ -6673,4 +6742,2139 @@ static int mTG_select_tag_decide_item_normal(Submenu* submenu, mActor_name_t ite
     return ret_tag_type;
 }
 
-//
+static int mTG_select_tag_decide_item(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    int idx = mTG_get_table_idx(tag);
+    mActor_name_t item = Now_Private->inventory.pockets[idx];
+    mIV_Ovl_c* inv_ovl = submenu->overlay->inventory_ovl;
+    int ret_tag_type = mTG_TYPE_NONE;
+
+    if (item != EMPTY_NO) {
+        if (menu_info->menu_type == mSM_OVL_INVENTORY) {
+            switch (menu_info->data0) {
+                case mSM_IV_OPEN_NORMAL:
+                    return mTG_select_tag_decide_item_normal(submenu, item, idx);
+                case mSM_IV_OPEN_SELL:
+                    if (inv_ovl->item_mark_bitfield != 0 && (inv_ovl->item_mark_bitfield & (1 << idx)) != 0) {
+                        ret_tag_type = mTG_TYPE_SELL_ALL_ITEM;
+                    } else {
+                        ret_tag_type = mTG_TYPE_SELL_ITEM;
+                    }
+                    break;
+                case mSM_IV_OPEN_GIVE:
+                    ret_tag_type = mTG_TYPE_GIVE_ITEM;
+                    break;
+                case mSM_IV_OPEN_TAKE:
+                    ret_tag_type = mTG_TYPE_QUEST_ITEM;
+                    break;
+                case mSM_IV_OPEN_SHRINE:
+                    ret_tag_type = mTG_TYPE_SHRINE_ITEM;
+                    break;
+                case mSM_IV_OPEN_PUTIN_FTR:
+                case mSM_IV_OPEN_MINIDISK:
+                    ret_tag_type = mTG_TYPE_PUTIN_ITEM;
+                    break;
+                case mSM_IV_OPEN_CURATOR:
+                    ret_tag_type = mTG_TYPE_TAG_HAND_OVER_CURATOR;
+                    break;
+                case mSM_IV_OPEN_PASSWORD:
+                    ret_tag_type = mTG_TYPE_TAG_PASSWORD_ITEM;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            ret_tag_type = mTG_TYPE_CATCH_ITEM;
+        }
+    }
+
+    return ret_tag_type;
+}
+
+static int mTG_select_tag_decide_mail(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    static int mail_next_type[] = {
+        mTG_TYPE_DEF_SMAIL,
+        mTG_TYPE_DEF_SMAIL_PRE,
+        mTG_TYPE_DEF_RMAIL,
+        mTG_TYPE_DEF_RMAIL_PRE,
+    };
+    Mail_c* mail = mTG_get_mail_pointer(submenu, NULL);
+    mIV_Ovl_c* inv_ovl = submenu->overlay->inventory_ovl;
+    int ret_tag_type = mTG_TYPE_NONE;
+
+    if (tag->table == mTG_TABLE_MAIL && inv_ovl->mail_mark_bitfield2 != 0) {
+        int idx = mTG_get_table_idx(&submenu->overlay->tag_ovl->tags[0]);
+
+        if ((inv_ovl->mail_mark_bitfield2 & (1 << idx)) != 0) {
+            switch (menu_info->menu_type) {
+                case mSM_OVL_MAILBOX:
+                    ret_tag_type = mTG_TYPE_FIELD_MAIL_MARK;
+                    break;
+                case mSM_OVL_CPMAIL:
+                    ret_tag_type = mTG_TYPE_CPACK_MAIL_MARK;
+                    break;
+                default:
+                    ret_tag_type = mTG_TYPE_FIELD_MAIL_MARK;
+                    break;
+            }
+        }
+    }
+
+    if (menu_info->menu_type == mSM_OVL_MAILBOX && tag->table == mTG_TABLE_MBOX) {
+        mMB_Ovl_c* mailbox_ovl = submenu->overlay->mailbox_ovl;
+
+        if (mailbox_ovl != NULL) {
+            int idx = mTG_get_table_idx(&submenu->overlay->tag_ovl->tags[0]);
+
+            if ((mailbox_ovl->mark_bitfield & (1 << idx)) != 0) {
+                ret_tag_type = mTG_TYPE_FIELD_MAIL_MARK2;
+            }
+        }
+    }
+
+    if (menu_info->menu_type == mSM_OVL_CPMAIL && tag->table == mTG_TABLE_CPMAIL) {
+        mCM_Ovl_c* cpmail_ovl = submenu->overlay->cpmail_ovl;
+
+        if (cpmail_ovl != NULL) {
+            int idx = mTG_get_table_idx(&submenu->overlay->tag_ovl->tags[0]);
+
+            if ((cpmail_ovl->mark_bitfield & (1 << idx)) != 0) {
+                ret_tag_type = mTG_TYPE_CPACK_MAIL_MARK;
+            }
+        }
+    }
+
+    if (ret_tag_type != mTG_TYPE_NONE) {
+        return ret_tag_type;
+    }
+
+    if (mMl_check_not_used_mail(mail) != TRUE) {
+        if (menu_info->menu_type == mSM_OVL_CPMAIL) {
+            if (mail->content.font == mMl_FONT_RECV_PLAYER_PRESENT || mail->content.font == mMl_FONT_RECV) {
+                return mTG_TYPE_ROOM_RMAIL;
+            } else {
+                return mTG_TYPE_DEF_RMAIL;
+            }
+        }
+
+        if (menu_info->menu_type == mSM_OVL_MAILBOX) {
+            if (mail->content.font == mMl_FONT_RECV_PLAYER_PRESENT || mail->content.font == mMl_FONT_RECV ||
+                mail->present != EMPTY_NO) {
+                return mTG_TYPE_ROOM_RMAIL;
+            } else {
+                return mTG_TYPE_DEF_RMAIL;
+            }
+        }
+
+        /* mSM_OVL_INVENTORY */
+        if (menu_info->data0 == mSM_IV_OPEN_SEND_MAIL) {
+            if (mMl_check_send_mail(mail)) {
+                return mTG_TYPE_SEND_MAIL;
+            }
+        } else {
+            int mail_flags = 0;
+            int ret;
+
+            if (mail->present != EMPTY_NO) {
+                mail_flags |= mTG_MAIL_FLAG_PRESENT;
+            }
+
+            if (!mMl_check_send_mail(mail)) {
+                mail_flags |= mTG_MAIL_FLAG_RECV;
+            }
+
+            ret = mail_next_type[mail_flags];
+            if (Common_Get(field_type) != mFI_FIELDTYPE2_FG || mail->content.font == mMl_FONT_RECV_PLAYER_PRESENT ||
+                mail->content.font == mMl_FONT_RECV) {
+                if (ret == mTG_TYPE_DEF_SMAIL) {
+                    ret = mTG_TYPE_ROOM_SMAIL;
+                } else if (ret == mTG_TYPE_DEF_RMAIL) {
+                    ret = mTG_TYPE_ROOM_RMAIL;
+                }
+            }
+
+            return ret;
+        }
+    }
+
+    return mTG_TYPE_NONE;
+}
+
+static int mTG_select_tag_decide_money(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    int ret_tag_type = mTG_TYPE_MONEY_SACK;
+    u32 money = Now_Private->inventory.wallet;
+    mTG_tag_data_c* tag_data_p = &mTG_label_table[mTG_TYPE_MONEY_SACK];
+
+    if (money >= 30000) {
+        tag_data_p->words = mTG_money_sack4;
+        tag_data_p->lines = ARRAY_COUNT(mTG_money_sack4);
+    } else if (money >= 10000) {
+        tag_data_p->words = mTG_money_sack3;
+        tag_data_p->lines = ARRAY_COUNT(mTG_money_sack3);
+    } else if (money >= 1000) {
+        tag_data_p->words = mTG_money_sack2;
+        tag_data_p->lines = ARRAY_COUNT(mTG_money_sack2);
+    } else if (money >= 100) {
+        tag_data_p->words = mTG_money_sack1;
+        tag_data_p->lines = ARRAY_COUNT(mTG_money_sack1);
+    } else {
+        ret_tag_type = mTG_TYPE_NONE;
+    }
+
+    return ret_tag_type;
+}
+
+static int mTG_select_tag_decide_player(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mActor_name_t item = Now_Private->equipment;
+    int ret_tag_type = mTG_TYPE_NONE;
+
+    if (item != EMPTY_NO) {
+        if (ITEM_IS_MYUMBRELLA_TOOL(item)) {
+            ret_tag_type = mTG_TYPE_TAG_REMOVE;
+        } else {
+            ret_tag_type = mTG_TYPE_CATCH_ITEM;
+        }
+    }
+
+    return ret_tag_type;
+}
+
+static int mTG_select_tag_decide_bg(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    return mTG_TYPE_NONE;
+}
+
+static int mTG_select_tag_decide_haniwa(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mActor_name_t item = Save_Get(homes[menu_info->data1]).haniwa.items[tag->tag_col].item;
+    int ret_tag_type = mTG_TYPE_NONE;
+
+    if (item != EMPTY_NO) {
+        if (menu_info->data0 == 0) {
+            ret_tag_type = mTG_TYPE_HANIWA_ITEM;
+        } else if (Save_Get(homes[menu_info->data1]).haniwa.items[tag->tag_col].exchange_type != mHm_HANIWA_TRADE_1) {
+            ret_tag_type = mTG_TYPE_HANIWA_GET_ITEM;
+        }
+    }
+
+    return ret_tag_type;
+}
+
+static int mTG_select_tag_decide_collect(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    submenu->overlay->tag_ovl->item_name_wait_time = 0;
+    return mTG_TYPE_NONE;
+}
+
+static int mTG_select_tag_decide_wchange(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mIV_Ovl_c* inv_ovl = submenu->overlay->inventory_ovl;
+
+    if (inv_ovl->page_order[0] != tag->tag_row) {
+        mTG_mark_main_CLR(submenu, menu_info);
+        inv_ovl->next_page_id = tag->tag_row;
+        inv_ovl->page_move_timer = 40;
+        submenu->overlay->hand_ovl->nop_hand_func(submenu);
+        sAdo_SysTrgStart(NA_SE_41C);
+    }
+
+    return mTG_TYPE_NONE;
+}
+
+static int mTG_select_tag_decide_cpmail_wchange(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mCM_Ovl_c* cpmail_ovl = submenu->overlay->cpmail_ovl;
+
+    if (cpmail_ovl->page_order[0] != tag->tag_row) {
+        cpmail_ovl->next_page_id = tag->tag_row;
+        cpmail_ovl->page_move_timer = 40;
+        submenu->overlay->hand_ovl->nop_hand_func(submenu);
+        sAdo_SysTrgStart(NA_SE_41C);
+        cpmail_ovl->mark_bitfield = 0;
+    }
+
+    return mTG_TYPE_NONE;
+}
+
+static int mTG_select_tag_decide_cpmail_title(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mCM_Ovl_c* cpmail_ovl = submenu->overlay->cpmail_ovl;
+
+    mSM_open_submenu_new2(submenu, mSM_OVL_EDITOR, mED_TYPE_CP_TITLE, mCM_FOLDER_NAME_LEN,
+                          &cpmail_ovl->card_mail->folder_names[cpmail_ovl->page_order[0]], mCM_FOLDER_NAME_MAX_WIDTH);
+    menu_info->proc_status = mSM_OVL_PROC_WAIT;
+    submenu->overlay->hand_ovl->nop_hand_func(submenu);
+
+    return mTG_TYPE_NONE;
+}
+
+static int mTG_select_tag_decide_catalog(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mCL_Ovl_c* catalog_ovl = submenu->overlay->catalog_ovl;
+    mCL_Menu_c* catalog_menu = &catalog_ovl->menu_data[catalog_ovl->page_order[0]];
+    int idx = catalog_menu->top_idx + tag->tag_row;
+    int ret_tag_type = mTG_TYPE_NONE;
+
+    if (catalog_menu->item_list[idx] != EMPTY_NO) {
+        ret_tag_type = mTG_TYPE_ORDER_ITEM;
+    }
+
+    return ret_tag_type;
+}
+
+static int mTG_select_tag_decide_catalog_wchange(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mCL_Ovl_c* catalog_ovl = submenu->overlay->catalog_ovl;
+
+    if (catalog_ovl->page_order[0] != tag->tag_row) {
+        mCL_Menu_c* catalog_menu;
+
+        catalog_ovl->page_no = tag->tag_row;
+        catalog_ovl->page_timer = 40;
+
+        catalog_menu = &catalog_ovl->menu_data[tag->tag_row];
+        catalog_menu->top_idx = 0;
+        catalog_menu->y_idx = 0;
+        submenu->overlay->hand_ovl->nop_hand_func(submenu);
+        sAdo_SysTrgStart(NA_SE_41C);
+        submenu->overlay->tag_ovl->item_name_wait_time = mTG_get_item_name_wait_time(tag);
+    }
+
+    return mTG_TYPE_NONE;
+}
+
+static int mTG_select_tag_decide_music_main(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mMU_Ovl_c* music_ovl = submenu->overlay->music_ovl;
+    int idx = mTG_get_table_idx(&submenu->overlay->tag_ovl->tags[0]);
+    int ret_tag_type = mTG_TYPE_NONE;
+
+    if (ChkRoomMusicBox(idx)) {
+        int i;
+        int n = 0;
+
+        for (i = 0; i < MINIDISK_NUM; i++) {
+            if (ChkMusicBox(music_ovl->mark_flg, i)) {
+                n++;
+            }
+        }
+
+        if (n >= 1 && ChkMusicBox(music_ovl->mark_flg, idx)) {
+            ret_tag_type = mTG_TYPE_MUSIC_SELECT_MANY;
+        } else {
+            ret_tag_type = mTG_TYPE_MUSIC_SELECT;
+        }
+    }
+
+    return ret_tag_type;
+}
+
+static int mTG_select_tag_decide_needlework(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    int idx = mTG_get_table_idx(&submenu->overlay->tag_ovl->tags[0]); // @cleanup - unused
+
+    switch (menu_info->data0) {
+        case 1:
+            if (Common_Get(field_type) == mFI_FIELDTYPE2_PLAYER_ROOM && Save_Get(scene_no) != SCENE_COTTAGE_MY) {
+                if (mSc_IS_SCENE_BASEMENT(Save_Get(scene_no))) {
+                    return mTG_TYPE_TAG_NW_UG_ROOM;
+                } else {
+                    return mTG_TYPE_TAG_NW_MY_ROOM;
+                }
+            } else {
+                return mTG_TYPE_TAG_NW_OT_ROOM;
+            }
+            break;
+        case 0:
+        default:
+            switch (menu_info->data3) {
+                case 0:
+                default:
+                    return mTG_TYPE_TAG_NW_SELECT;
+                case 1:
+                    return mTG_TYPE_TAG_NW_SELECT_CHANGE;
+                case 2:
+                    return mTG_TYPE_TAG_NW_SELECT_PUT;
+            }
+            break;
+    }
+}
+
+static int mTG_select_tag_decide_inv_wc_org(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mIV_Ovl_c* inv_ovl = submenu->overlay->inventory_ovl;
+
+    mTG_mark_main_CLR(submenu, menu_info);
+    inv_ovl->original_flag = FALSE;
+    inv_ovl->wc_flag = TRUE;
+    mSM_open_submenu_new(submenu, mSM_OVL_NEEDLEWORK, 1, 0, NULL);
+    menu_info->proc_status = mSM_OVL_PROC_WAIT;
+    menu_info->next_proc_status = mSM_OVL_PROC_WAIT;
+    submenu->overlay->hand_ovl->nop_hand_func(submenu);
+    sAdo_SysTrgStart(NA_SE_MENU_EXIT);
+
+    return mTG_TYPE_NONE;
+}
+
+static int mTG_select_tag_decide_cporiginal(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mCO_Ovl_c* cporiginal_ovl = submenu->overlay->cporiginal_ovl;
+    int idx = mTG_get_table_idx(&submenu->overlay->tag_ovl->tags[0]);
+
+    if ((cporiginal_ovl->mark_flg & (1 << idx)) != 0) {
+        return mTG_TYPE_CHANGE_ORIGINAL;
+    } else {
+        return mTG_TYPE_CATCH_ITEM;
+    }
+}
+
+static int mTG_select_tag_decide_cporiginal_nw(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mNW_Ovl_c* needlework_ovl = submenu->overlay->needlework_ovl;
+    int idx = mTG_get_table_idx(&submenu->overlay->tag_ovl->tags[0]);
+
+    if ((needlework_ovl->mark_flg & (1 << idx)) != 0) {
+        return mTG_TYPE_CHANGE_ORIGINAL;
+    } else {
+        return mTG_TYPE_CATCH_ITEM;
+    }
+}
+
+static int mTG_select_tag_decide_cporiginal_wc(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    if (tag->tag_row != mCO_top_folder(submenu)) {
+        mCO_change_up_folder(submenu, tag->tag_row);
+        submenu->overlay->hand_ovl->nop_hand_func(submenu);
+        sAdo_SysTrgStart(NA_SE_41C);
+        mCO_clear_mark_flg(submenu);
+    }
+
+    return mTG_TYPE_NONE;
+}
+
+static int mTG_select_tag_decide_cporiginal_ti(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    u8* folder_name;
+
+    folder_name = mCO_get_folder_name(submenu, mCO_top_folder(submenu));
+    mSM_open_submenu_new2(submenu, mSM_OVL_EDITOR, mED_TYPE_CP_TITLE, mCO_FOLDER_NAME_LEN, folder_name,
+                          mCO_FOLDER_NAME_MAX_WIDTH);
+    menu_info->proc_status = mSM_OVL_PROC_WAIT;
+    return mTG_TYPE_NONE;
+}
+
+static int mTG_select_tag_decide_gba_nw(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mTG_Ovl_c* tag_ovl = submenu->overlay->tag_ovl;
+    int ret_tag_type = mTG_TYPE_NONE;
+
+    if (!mTG_check_hand_condition(submenu)) {
+        if ((tag_ovl->nw_gba_flags & 0x4) != 0) {
+            tag->arrow_dir = 0;
+            tag_ovl->nw_gba_flags &= ~0x4;
+            ret_tag_type = mTG_TYPE_TAG_PUT_CHK;
+        } else {
+            tag_ovl->nw_gba_flags |= 0x1;
+        }
+    } else {
+        sAdo_SysTrgStart(MONO(NA_SE_A));
+    }
+
+    return ret_tag_type;
+}
+
+static void mTG_hand_drop_item(Submenu* submenu, mTG_tag_c* tag) {
+    mHD_Ovl_c* hand_ovl = submenu->overlay->hand_ovl;
+    int table;
+    int category;
+
+    if (hand_ovl->info.act == mHD_ACTION_CLOSE_KEEP) {
+        hand_ovl->info.next_act = mHD_ACTION_OPEN;
+        mTG_init_tag_data_item_win(submenu);
+        if (hand_ovl->info.ret_flag == TRUE) {
+            table = hand_ovl->info.hold_tbl;
+        } else {
+            table = tag->table;
+        }
+
+        if (table == mTG_TABLE_PLAYER) {
+            category = ITEM_NAME_GET_CAT(hand_ovl->info.item);
+            switch (category) {
+                case ITEM1_CAT_TOOL:
+                    submenu->overlay->segment.change_player_main_anime_idx = mIV_ANIM_CATCH;
+                    sAdo_SysTrgStart(NA_SE_5E);
+                    break;
+                case ITEM1_CAT_CLOTH:
+                    submenu->overlay->segment.change_player_main_anime_idx = mIV_ANIM_CHANGE;
+                    sAdo_SysTrgStart(NA_SE_WEAR);
+                    break;
+                case ITEM1_CAT_FRUIT:
+                case ITEM1_CAT_KABU:
+                    mTG_island_check_fruit_eat(hand_ovl->info.item);
+                    submenu->overlay->segment.change_player_main_anime_idx = mIV_ANIM_EAT;
+                    break;
+            }
+        } else if (table == mTG_TABLE_NEEDLEWORK) {
+            mNW_clear_mark_flg(submenu);
+        }
+    } else if (hand_ovl->info.act == mHD_ACTION_SASU) {
+        hand_ovl->info.act = mHD_ACTION_OPEN;
+        hand_ovl->info.next_act = mHD_ACTION_OPEN;
+    }
+}
+
+static void mTG_drop_item(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mHD_Ovl_c* hand_ovl = submenu->overlay->hand_ovl;
+    Mail_c* mail;
+    u32 amount;
+    u32 money;
+    int idx;
+
+    switch (tag->table) {
+        case mTG_TABLE_MAIL:
+        case mTG_TABLE_MBOX:
+        case mTG_TABLE_CPMAIL:
+            mail = mTG_get_mail_pointer(submenu, NULL);
+            if (mMl_check_not_used_mail(&hand_ovl->info.mail) != TRUE) {
+                mTG_hand_drop_item(submenu, tag);
+            } else if (mMl_check_not_used_mail(mail) != TRUE && hand_ovl->info.item != EMPTY_NO) {
+                if (mTG_check_item_on_mail(hand_ovl->info.item, hand_ovl->info.item_cond)) {
+                    if (!mMl_check_set_present_myself(mail) && mail->present != EMPTY_NO &&
+                        mPr_GetPossessionItemIdx(Now_Private, EMPTY_NO) == -1) {
+                        mTG_open_warning_window(submenu, menu_info, mWR_WARNING_PR_LEAVE);
+                        mTG_init_tag_data_item_win(submenu);
+                    } else if ((menu_info->menu_type == mSM_OVL_INVENTORY &&
+                                menu_info->data0 == mSM_IV_OPEN_EXCHANGE) &&
+                               ((hand_ovl->info.item == ITM_SIGNBOARD && mail->present != EMPTY_NO) ||
+                                mail->present == ITM_SIGNBOARD)) {
+                        sAdo_SysTrgStart(MONO(NA_SE_A));
+                    } else {
+                        mTG_hand_drop_item(submenu, tag);
+                    }
+                } else {
+                    if (hand_ovl->info.item_cond == mPr_ITEM_COND_QUEST) {
+                        mTG_open_warning_window(submenu, menu_info, mWR_WARNING_PR_QUEST);
+                    } else if (hand_ovl->info.item_cond == mPr_ITEM_COND_PRESENT) {
+                        mTG_open_warning_window(submenu, menu_info, mWR_WARNING_PRESENT_MAIL);
+                    } else if (ITEM_IS_EXERCISE_CARD(hand_ovl->info.item)) {
+                        mTG_open_warning_window(submenu, menu_info, mWR_WARNING_PR_CARD);
+                    } else if (hand_ovl->info.item == ITM_KNIFE_AND_FORK) {
+                        mTG_open_warning_window(submenu, menu_info, mWR_WARNING_PR_FORK);
+                    } else {
+                        mTG_open_warning_window(submenu, menu_info, mWR_WARNING_PR_FOOD);
+                    }
+
+                    mTG_init_tag_data_item_win(submenu);
+                }
+            }
+            break;
+        case mTG_TABLE_MONEY:
+            amount = mTG_itemNo_to_amount(hand_ovl->info.item);
+            money = Now_Private->inventory.wallet;
+
+            if (money + amount <= mPr_WALLET_MAX) {
+                hand_ovl->info.next_act = mHD_ACTION_OPEN;
+            } else {
+                mTG_open_warning_window(submenu, menu_info, mWR_WARNING_MONEY);
+            }
+            break;
+        case mTG_TABLE_GBA:
+        case mTG_TABLE_CARD:
+            idx = mTG_get_table_idx(tag);
+            if (idx != hand_ovl->info.hold_idx) {
+                sAdo_SysTrgStart(MONO(NA_SE_A));
+            } else {
+                mTG_hand_drop_item(submenu, tag);
+            }
+            break;
+        default:
+            mTG_hand_drop_item(submenu, tag);
+            break;
+    }
+}
+
+static void mTG_drop_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
+    mTG_Ovl_c* tag_ovl = submenu->overlay->tag_ovl;
+    mTG_tag_c* tag = &tag_ovl->tags[tag_ovl->sel_tag_idx];
+
+    mTG_return_tag_init(submenu, mTG_TYPE_NONE, mTG_RETURN_CLOSE);
+    mTG_drop_item(submenu, menu_info, tag);
+}
+
+static void mTG_hand_return_item(Submenu* submenu, mTG_tag_c* tag) {
+    mHD_Ovl_c* hand_ovl = submenu->overlay->hand_ovl;
+    mActor_name_t item = hand_ovl->info.item;
+    mActor_name_t dst_item;
+    Mail_c* mail;
+
+    switch (hand_ovl->info.hold_tbl) {
+        case mTG_TABLE_ITEM:
+            dst_item = Now_Private->inventory.pockets[(u8)hand_ovl->info.hold_idx];
+
+            if (dst_item == EMPTY_NO) {
+                hand_ovl->info.ret_flag = TRUE;
+            } else if (hand_ovl->info.item_cond == mPr_ITEM_COND_NORMAL &&
+                       mPr_GET_ITEM_COND(Now_Private->inventory.item_conditions, hand_ovl->info.hold_idx) ==
+                           mPr_ITEM_COND_NORMAL) {
+                if (ITEM_NAME_GET_TYPE(item) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_CAT(item) == ITEM1_CAT_TICKET &&
+                    ITEM_NAME_GET_TYPE(dst_item) == NAME_TYPE_ITEM1 &&
+                    ITEM_NAME_GET_CAT(dst_item) == ITEM1_CAT_TICKET && TICKET_MONTH(item) == TICKET_MONTH(dst_item) &&
+                    (TICKET_COUNT(item) + TICKET_COUNT(dst_item)) <= TICKET_STACK_MAX) {
+                    hand_ovl->info.ret_flag = TRUE;
+                } else if (ITEM_IS_WISP(item) && ITEM_IS_WISP(dst_item) &&
+                           (WISP_COUNT(dst_item) + WISP_COUNT(item)) <= WISP_STACK_MAX) {
+                    hand_ovl->info.ret_flag = TRUE;
+                } else if (ITEM_IS_PAPER(item) && ITEM_IS_PAPER(dst_item) &&
+                           (PAPER2TYPE(item - ITM_PAPER_START) == PAPER2TYPE(dst_item - ITM_PAPER_START)) &&
+                           ((1 + PAPER2STACK(dst_item - ITM_PAPER_START)) +
+                            (1 + PAPER2STACK(item - ITM_PAPER_START))) <= PAPER_STACK_MAX) {
+                    hand_ovl->info.ret_flag = TRUE;
+                }
+            }
+            break;
+        case mTG_TABLE_NEEDLEWORK:
+        case mTG_TABLE_CPORIGINAL:
+        case mTG_TABLE_CPORIGINAL_NW:
+        case mTG_TABLE_GBA:
+        case mTG_TABLE_GBA_NW:
+        case mTG_TABLE_CARD:
+        case mTG_TABLE_CARD_NW:
+            hand_ovl->info.ret_flag = TRUE;
+            break;
+        case mTG_TABLE_MAIL:
+        case mTG_TABLE_MBOX:
+        case mTG_TABLE_CPMAIL:
+            mail = mTG_get_mail_pointer(submenu, hand_ovl);
+            if (mMl_check_not_used_mail(mail) != TRUE) {
+                if (item != EMPTY_NO && mTG_check_item_on_mail(item, hand_ovl->info.item_cond)) {
+                    hand_ovl->info.ret_flag = TRUE;
+                }
+            } else {
+                if (mMl_check_not_used_mail(&hand_ovl->info.mail) != TRUE) {
+                    hand_ovl->info.ret_flag = TRUE;
+                }
+            }
+            break;
+        case mTG_TABLE_MONEY:
+            if (ITEM_NAME_GET_TYPE(item) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_CAT(item) == ITEM1_CAT_MONEY &&
+                hand_ovl->info.item_cond == mPr_ITEM_COND_NORMAL &&
+                Now_Private->inventory.wallet + mTG_itemNo_to_amount(item) <= mPr_WALLET_MAX) {
+                hand_ovl->info.ret_flag = TRUE;
+            }
+            break;
+        case mTG_TABLE_PLAYER:
+            if (ITEM_NAME_GET_TYPE(item) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_CAT(item) == ITEM1_CAT_TOOL &&
+                hand_ovl->info.item_cond == mPr_ITEM_COND_NORMAL) {
+                hand_ovl->info.ret_flag = TRUE;
+            }
+            break;
+        case mTG_TABLE_HANIWA:
+            hand_ovl->info.ret_flag = TRUE;
+            break;
+    }
+
+    if (hand_ovl->info.ret_flag == FALSE && item != EMPTY_NO) {
+        int i;
+
+        for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++) {
+            if (Now_Private->inventory.pockets[i] == EMPTY_NO) {
+                hand_ovl->info.hold_idx = i;
+                hand_ovl->info.hold_tbl = mTG_TABLE_ITEM;
+                hand_ovl->info.ret_flag = TRUE;
+                hand_ovl->info.catch_pg = 0;
+                break;
+            }
+        }
+    }
+
+    if (hand_ovl->info.ret_flag == TRUE) {
+        mTG_hand_drop_item(submenu, tag);
+    }
+}
+
+static int mTG_check_move_proc(Submenu* submenu, mTG_tag_c* tag) {
+    mIV_Ovl_c* inv_ovl = submenu->overlay->inventory_ovl;
+    int idx;
+    int res = TRUE;
+
+    if (inv_ovl != NULL) {
+        switch (tag->table) {
+            case mTG_TABLE_ITEM:
+                idx = mTG_get_table_idx(tag);
+                if (mNT_check_unknown(Now_Private->inventory.pockets[idx]) == TRUE) {
+                    res = FALSE;
+                } else if ((inv_ovl->selectable_item_bitfield &
+                            (1 << (tag->tag_col + tag->tag_row * mIV_ITEM_COLUMNS))) == 0) {
+                    res = FALSE;
+                }
+                break;
+            case mTG_TABLE_MAIL:
+                if ((inv_ovl->selectable_mail_bitfield & (1 << (tag->tag_col + tag->tag_row * mIV_MAIL_COLUMNS))) ==
+                    0) {
+                    res = FALSE;
+                }
+                break;
+        }
+    }
+
+    return res;
+}
+
+static void mTG_mark_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mTG_Ovl_c* tag_ovl = submenu->overlay->tag_ovl;
+    int chk_result;
+    int chk_rvs_result;
+
+    if (mTG_check_hand_condition(submenu) && mTG_check_move_proc(submenu, tag) &&
+        mTG_mark_main(submenu, menu_info, mTG_MARK_CHK, &chk_result)) {
+        if (mTG_mark_main(submenu, menu_info, mTG_MARK_RVS, &chk_rvs_result)) {
+            if (chk_result != chk_rvs_result) {
+                if (chk_result == FALSE) {
+                    if (menu_info->menu_type == mSM_OVL_INVENTORY && menu_info->data0 == mSM_IV_OPEN_NORMAL) {
+                        mTG_tag_c* main_tag = &tag_ovl->tags[0];
+
+                        /* Deselect the opposite inventory table's selected items */
+                        if (main_tag->table == mTG_TABLE_ITEM) {
+                            mTG_mark_mainX(submenu, menu_info, mTG_TABLE_MAIL, 0, mTG_MARK_CLR, NULL);
+                        } else if (main_tag->table == mTG_TABLE_MAIL) {
+                            mTG_mark_mainX(submenu, menu_info, mTG_TABLE_ITEM, 0, mTG_MARK_CLR, NULL);
+                        }
+                    }
+
+                    sAdo_SysTrgStart(NA_SE_45E);
+                } else {
+                    sAdo_SysTrgStart(NA_SE_45F);
+                }
+            }
+        } else {
+            sAdo_SysTrgStart(MONO(NA_SE_A));
+        }
+    } else {
+        sAdo_SysTrgStart(MONO(NA_SE_A));
+    }
+}
+
+static void mTG_move_cancel(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    int move_dir;
+    int sfx;
+
+    if (menu_info->menu_type == mSM_OVL_INVENTORY && menu_info->data0 == mSM_IV_OPEN_EXCHANGE) {
+        mTG_exchange_proc(submenu, menu_info);
+        return;
+    }
+
+    if (mTG_check_hand_condition(submenu)) {
+        switch (menu_info->menu_type) {
+            case mSM_OVL_CPMAIL:
+            case mSM_OVL_CPORIGINAL:
+            case mSM_OVL_GBA:
+                menu_info->proc_status = mSM_OVL_PROC_WAIT;
+                mSM_open_submenu(submenu, mSM_OVL_EDITENDCHK, mEE_TYPE_CPACK, 0);
+                sAdo_SysTrgStart(NA_SE_5F);
+                return;
+        }
+
+        sfx = NA_SE_31;
+        switch (menu_info->menu_type) {
+            case mSM_OVL_INVENTORY:
+            case mSM_OVL_CATALOG:
+                move_dir = mSM_MOVE_OUT_RIGHT;
+                break;
+            case mSM_OVL_NEEDLEWORK:
+                move_dir = mSM_MOVE_OUT_RIGHT;
+                if (menu_info->data0 == 2) {
+                    move_dir = -1;
+                }
+                break;
+            case mSM_OVL_MAILBOX:
+                move_dir = mSM_MOVE_OUT_LEFT;
+                sfx = SE_FLAG_15(NA_SE_ZOOMDOWN_SHORT);
+                break;
+            default:
+                move_dir = mSM_MOVE_OUT_LEFT;
+                break;
+        }
+
+        if (move_dir != -1) {
+            submenu->overlay->move_chg_base_proc(menu_info, move_dir);
+        }
+
+        if (sfx >= 0) {
+            sAdo_SysTrgStart(sfx);
+        }
+    } else {
+        mTG_hand_return_item(submenu, tag);
+    }
+}
+
+typedef int (*mTG_DECIDE_PROC)(Submenu*, mSM_MenuInfo_c*, mTG_tag_c*);
+
+static void mTG_move_decide(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    static mTG_DECIDE_PROC decide_proc[] = {
+        &mTG_select_tag_decide_item,
+        &mTG_select_tag_decide_mail,
+        &mTG_select_tag_decide_money,
+        &mTG_select_tag_decide_player,
+        &mTG_select_tag_decide_bg,
+        &mTG_select_tag_decide_mail,
+        &mTG_select_tag_decide_haniwa,
+        &mTG_select_tag_decide_collect,
+        &mTG_select_tag_decide_wchange,
+        &mTG_select_tag_decide_mail,
+        &mTG_select_tag_decide_cpmail_wchange,
+        &mTG_select_tag_decide_cpmail_title,
+        (mTG_DECIDE_PROC)NULL,
+        (mTG_DECIDE_PROC)NULL,
+        &mTG_select_tag_decide_catalog,
+        &mTG_select_tag_decide_catalog_wchange,
+        &mTG_select_tag_decide_music_main,
+        &mTG_select_tag_decide_needlework,
+        &mTG_select_tag_decide_cporiginal,
+        &mTG_select_tag_decide_inv_wc_org,
+        &mTG_select_tag_decide_cporiginal_nw,
+        &mTG_select_tag_decide_cporiginal_wc,
+        &mTG_select_tag_decide_cporiginal_ti,
+        &mTG_select_tag_decide_cporiginal_nw,
+        &mTG_select_tag_decide_gba_nw,
+        &mTG_select_tag_decide_cporiginal_nw,
+        &mTG_select_tag_decide_gba_nw,
+    };
+
+    if (!mTG_check_move_proc(submenu, tag)) {
+        sAdo_SysTrgStart(MONO(NA_SE_A));
+        return;
+    }
+
+    if (mTG_check_hand_condition(submenu) == TRUE || tag->table == mTG_TABLE_CPMAIL_WC ||
+        tag->table == mTG_TABLE_CPORIGINAL_WC || tag->table == mTG_TABLE_CARD_NW || tag->table == mTG_TABLE_GBA_NW) {
+        int tag_type = (*decide_proc[tag->table])(submenu, menu_info, tag);
+
+        if (menu_info->menu_type == mSM_OVL_INVENTORY && tag_type != mTG_TYPE_NONE) {
+            mIV_Ovl_c* inv_ovl = submenu->overlay->inventory_ovl;
+
+            switch (tag->table) {
+                case mTG_TABLE_ITEM:
+                    if ((inv_ovl->item_mark_bitfield & (1 << mTG_get_table_idx(tag))) == 0) {
+                        inv_ovl->item_mark_bitfield = 0;
+                    }
+                    inv_ovl->mail_mark_bitfield2 = 0;
+                    break;
+                case mTG_TABLE_MAIL:
+                    if ((inv_ovl->mail_mark_bitfield2 & (1 << mTG_get_table_idx(tag))) == 0) {
+                        inv_ovl->mail_mark_bitfield2 = 0;
+                    }
+                    inv_ovl->item_mark_bitfield = 0;
+                    break;
+                default:
+                    inv_ovl->item_mark_bitfield = 0;
+                    inv_ovl->mail_mark_bitfield2 = 0;
+                    break;
+            }
+        }
+
+        if (tag_type != mTG_TYPE_NONE) {
+            submenu->overlay->tag_ovl->item_name_wait_time = 0;
+            mTG_chg_tag_func(submenu, tag->table, tag_type, 0, tag->base_pos[0], tag->base_pos[1]);
+            sAdo_SysTrgStart(NA_SE_32);
+        }
+    } else {
+        mTG_drop_item(submenu, menu_info, tag);
+    }
+}
+
+static void mTG_move_catch(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    if (
+        // clang-format off
+        (menu_info->menu_type == mSM_OVL_INVENTORY && (menu_info->data0 == mSM_IV_OPEN_NORMAL || menu_info->data0 == mSM_IV_OPEN_EXCHANGE)) ||
+        (menu_info->menu_type == mSM_OVL_HANIWA && (menu_info->data0 == 0)) ||
+        (menu_info->menu_type == mSM_OVL_CPMAIL && (tag->table != mTG_TABLE_CPMAIL_WC)) ||
+        (menu_info->menu_type == mSM_OVL_MAILBOX) ||
+        (menu_info->menu_type == mSM_OVL_NEEDLEWORK && (menu_info->data0 != 0)) ||
+        (menu_info->menu_type == mSM_OVL_CPORIGINAL && (tag->table == mTG_TABLE_CPORIGINAL_NW || tag->table == mTG_TABLE_CPORIGINAL)) ||
+        (menu_info->menu_type == mSM_OVL_GBA && (tag->table == mTG_TABLE_GBA || tag->table == mTG_TABLE_CARD))
+        // clang-format on
+    ) {
+        if (mTG_check_move_proc(submenu, tag)) {
+            if (mTG_check_hand_condition(submenu) == TRUE) {
+                mTG_catch_proc(submenu, menu_info);
+            } else {
+                mTG_drop_item(submenu, menu_info, tag);
+            }
+        } else {
+            sAdo_SysTrgStart(MONO(NA_SE_A));
+        }
+    }
+}
+
+static void mTG_move_change(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    int row;
+
+    if (menu_info->menu_type == mSM_OVL_INVENTORY && menu_info->data0 == mSM_IV_OPEN_NORMAL &&
+        mTG_check_hand_condition(submenu) == TRUE) {
+        mIV_Ovl_c* inv_ovl = submenu->overlay->inventory_ovl;
+        int idx_y;
+
+        if (inv_ovl->page_order[0] == mIV_PAGE_INVENTORY) {
+            idx_y = 0;
+        } else if (inv_ovl->page_order[0] == mIV_PAGE_FISH_COLLECTION) {
+            idx_y = 2;
+        } else {
+            idx_y = 1;
+        }
+
+        mTG_init_tag_data(submenu, mTG_TABLE_WCHANGE, mTG_TYPE_NONE, 0.0f, 0.0f, 0, idx_y);
+        mTG_select_tag_decide_wchange(submenu, menu_info, tag);
+    } else if (menu_info->menu_type == mSM_OVL_CATALOG && mTG_check_hand_condition(submenu) == TRUE) {
+        tag->tag_row = (submenu->overlay->catalog_ovl->page_order[0] + 1) % mCL_MENU_NUM;
+        mTG_select_tag_decide_catalog_wchange(submenu, menu_info, tag);
+        mTG_init_tag_data(submenu, mTG_TABLE_CATALOG, mTG_TYPE_NONE, 0.0f, 0.0f, 0, 0);
+    } else if (menu_info->menu_type == mSM_OVL_CPMAIL) {
+        row = tag->tag_row;
+        tag->tag_row = (submenu->overlay->cpmail_ovl->page_order[0] + 1) % mCM_PAGE_COUNT;
+        mTG_select_tag_decide_cpmail_wchange(submenu, menu_info, tag);
+        tag->tag_row = row;
+    } else if (menu_info->menu_type == mSM_OVL_CPORIGINAL) {
+        row = tag->tag_row;
+        tag->tag_row = (mCO_top_folder(submenu) + 1) % mCO_PAGE_NUM;
+        mTG_select_tag_decide_cporiginal_wc(submenu, menu_info, tag);
+        tag->tag_row = row;
+    }
+}
+
+static void mTG_move_move(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mHD_Ovl_c* hand_ovl = submenu->overlay->hand_ovl;
+
+    if (hand_ovl->info.act == mHD_ACTION_CLOSE_KEEP || hand_ovl->info.act == mHD_ACTION_SASU) {
+        if (mTG_move_cursol_base(submenu, tag, menu_info)) {
+            mTG_init_tag_data_item_win(submenu);
+            sAdo_SysTrgStart(NA_SE_CURSOL);
+        }
+    }
+}
+
+static void mTG_move_base(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    u32 trigger = submenu->overlay->menu_control.trigger;
+
+    if (trigger & (BUTTON_B | BUTTON_START | BUTTON_Y)) {
+        mTG_move_cancel(submenu, menu_info, tag);
+    } else if (trigger & BUTTON_A) {
+        mTG_move_decide(submenu, menu_info, tag);
+    } else if (trigger & BUTTON_L) {
+        mTG_move_catch(submenu, menu_info, tag);
+    } else if (trigger & BUTTON_R) {
+        mTG_move_change(submenu, menu_info, tag);
+    } else if (trigger & BUTTON_X) {
+        mTG_mark_proc(submenu, menu_info, tag);
+    } else {
+        mTG_move_move(submenu, menu_info, tag);
+    }
+}
+
+static void mTG_move_base_mailbox(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mMB_Ovl_c* mailbox_ovl = submenu->overlay->mailbox_ovl;
+
+    if (mailbox_ovl->mark_flag == 2) {
+        mTG_check_trans_mail_mark(submenu, menu_info, tag);
+        mailbox_ovl->display_flag = TRUE;
+    } else if (mailbox_ovl->open_flag == TRUE && mTG_check_trans_mail(submenu, menu_info, tag)) {
+        mailbox_ovl->display_flag = TRUE;
+    } else {
+        mTG_move_base(submenu, menu_info, tag);
+        mailbox_ovl->display_flag = FALSE;
+    }
+}
+
+static void mTG_move_cpmail(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mCM_Ovl_c* cmpmail_ovl = submenu->overlay->cpmail_ovl;
+
+    if (cmpmail_ovl->mark_flag == 2) {
+        mTG_cpack_change_mail_mark(submenu, menu_info, tag);
+    } else {
+        mTG_move_base(submenu, menu_info, tag);
+    }
+}
+
+static void mTG_change_original_mark_move(Submenu* submenu, mNW_Ovl_c* nw_ovl, mCO_Ovl_c* co_ovl, int mark_idx) {
+    mTG_Ovl_c* tag_ovl = submenu->overlay->tag_ovl;
+    mTG_cporiginal_mark_c* mark_p = &tag_ovl->original_mark.mark[mark_idx];
+    int i;
+
+    add_calc(&tag_ovl->original_mark.move_percent, 1.0f, 1.0f - sqrtf(0.5f), 0.175f, 0.005f);
+    if (tag_ovl->original_mark.move_percent >= 0.99f) {
+        for (i = 0; i < 2; i++) {
+            mTG_cporiginal_mark_entry_c* entry_p = &tag_ovl->original_entries[i];
+
+            entry_p->pos[0] = mark_p->_10[i][0];
+            entry_p->pos[1] = mark_p->_10[i][1];
+            entry_p->item = EMPTY_NO;
+        }
+
+        mCO_swap_image(submenu, RSV_NW_ORIGINAL0 + mark_p->idx[mTG_ORG_TYPE_NW],
+                       RSV_CPORIGINAL_FLD0_00 + mCO_top_folder(submenu) * mCO_ORIGINAL_NUM +
+                           mark_p->idx[mTG_ORG_TYPE_CO]);
+        mCO_clear_hide_flg(submenu);
+        mNW_clear_hide_flg(submenu);
+        tag_ovl->original_mark.mark_flg[mTG_ORG_TYPE_NW] &= ~(1 << mark_p->idx[mTG_ORG_TYPE_NW]);
+        tag_ovl->original_mark.mark_flg[mTG_ORG_TYPE_CO] &= ~(1 << mark_p->idx[mTG_ORG_TYPE_CO]);
+        sAdo_SysTrgStart(NA_SE_446);
+        tag_ovl->original_mark.mark_mode = mTG_CHANGE_ORIGINAL_MARK_DECIDE;
+    } else {
+        for (i = 0; i < 2; i++) {
+            mTG_cporiginal_mark_entry_c* entry_p = &tag_ovl->original_entries[i];
+            f32 x0 = mark_p->_00[i][0];
+            f32 x1 = mark_p->_10[i][0];
+            f32 y0 = mark_p->_00[i][1];
+            f32 y1 = mark_p->_10[i][1];
+
+            entry_p->pos[0] = x0 + (x1 - x0) * tag_ovl->original_mark.move_percent;
+            entry_p->pos[1] = y0 + (y1 - y0) * tag_ovl->original_mark.move_percent;
+        }
+    }
+
+    mTG_init_tag_data_item_win(submenu);
+}
+
+static void mTG_change_original_mark_decide(Submenu* submenu, mNW_Ovl_c* nw_ovl, mCO_Ovl_c* co_ovl, int mark_idx) {
+    static int table_no[] = { mTG_TABLE_CPORIGINAL_NW, mTG_TABLE_CPORIGINAL };
+    int k;
+    mTG_Ovl_c* tag_ovl = submenu->overlay->tag_ovl;
+    mTG_mark_original_c* original_mark_p = &tag_ovl->original_mark;
+    s16 idx1[mTG_ORG_TYPE_NUM];
+    s16 idx0[mTG_ORG_TYPE_NUM];
+    s16 mark_max;
+    int i;
+    int j;
+    int cp_org_top = co_ovl->page_order[0];
+    mTG_cporiginal_mark_entry_c* entry_p;
+    mTG_cporiginal_mark_c* mark_p = &tag_ovl->original_mark.mark[mark_idx];
+
+    for (i = 0; i < mTG_ORG_TYPE_NUM; i++) {
+        mark_max = original_mark_p->mark_max[i];
+        idx1[i] = -1;
+        for (j = 0; j < mark_max; j++) {
+            if ((original_mark_p->mark_flg[i] & (1 << j)) != 0) {
+                mark_p->idx[i] = j;
+                idx1[i] = j;
+                idx0[1 - i] = j;
+                break;
+            }
+        }
+    }
+
+    if (idx1[mTG_ORG_TYPE_NW] < 0 && idx1[mTG_ORG_TYPE_CO] < 0) {
+        original_mark_p->mark_mode = mTG_CHANGE_ORIGINAL_MARK_NONE;
+    } else {
+        original_mark_p->move_percent = 0.0f;
+        original_mark_p->mark_mode = mTG_CHANGE_ORIGINAL_MARK_MOVE;
+        for (k = 0; k < mTG_ORG_TYPE_NUM; k++) {
+            entry_p = &tag_ovl->original_entries[k];
+
+            mTG_set_hand_pos(submenu, mark_p->_00[k], table_no[k], idx1[k]);
+            mTG_set_hand_pos(submenu, mark_p->_10[k], table_no[1 - k], idx0[k]);
+
+            switch (k) {
+                case mTG_ORG_TYPE_NW:
+                    entry_p->item = RSV_NW_ORIGINAL0 + idx1[k];
+                    mNW_on_hide_flg(submenu, idx1[k]);
+                    mNW_clear_mark_flg(submenu);
+                    break;
+                case mTG_ORG_TYPE_CO:
+                    entry_p->item = RSV_CPORIGINAL_FLD0_00 + mCO_top_folder(submenu) * mCO_ORIGINAL_NUM + idx1[k];
+                    mCO_on_hide_flg(submenu, cp_org_top, idx1[k]);
+                    mCO_clear_mark_flg(submenu);
+                    break;
+            }
+
+            mTG_change_original_mark_move(submenu, nw_ovl, co_ovl, mark_idx);
+        }
+
+        mTG_init_tag_data_item_win(submenu);
+    }
+}
+
+static int mTG_change_cporiginal_mark_main(Submenu* submenu, mNW_Ovl_c* nw_ovl, mCO_Ovl_c* co_ovl) {
+    switch (submenu->overlay->tag_ovl->original_mark.mark_mode) {
+        case mTG_CHANGE_ORIGINAL_MARK_DECIDE:
+            mTG_change_original_mark_decide(submenu, nw_ovl, co_ovl, 0);
+            break;
+        case mTG_CHANGE_ORIGINAL_MARK_MOVE:
+            mTG_change_original_mark_move(submenu, nw_ovl, co_ovl, 0);
+            break;
+    }
+
+    return TRUE;
+}
+
+static void mTG_change_cporiginal_mark(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    mTG_change_cporiginal_mark_main(submenu, submenu->overlay->needlework_ovl, submenu->overlay->cporiginal_ovl);
+}
+
+static void mTG_move_base_cporiginal(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    if (submenu->overlay->tag_ovl->original_mark.mark_mode != mTG_CHANGE_ORIGINAL_MARK_NONE) {
+        mTG_change_cporiginal_mark(submenu, menu_info, tag);
+    } else {
+        mTG_move_base(submenu, menu_info, tag);
+    }
+}
+
+static void mTG_move_delete(Submenu* submenu, mTG_tag_c* tag) {
+    mIV_Ovl_c* inv_ovl = submenu->overlay->inventory_ovl;
+
+    inv_ovl->remove_timer--;
+    if (inv_ovl->remove_timer == 0) {
+        int idx = mTG_get_table_idx(tag);
+
+        if (tag->table == mTG_TABLE_ITEM) {
+            u32 cond = mPr_GET_ITEM_COND(Now_Private->inventory.item_conditions, idx);
+
+            if ((cond & mPr_ITEM_COND_PRESENT) != 0) {
+                Now_Private->inventory.item_conditions =
+                    mPr_SET_ITEM_COND(Now_Private->inventory.item_conditions, (u32)idx, mPr_ITEM_COND_NORMAL);
+                inv_ovl->item_scale_type[idx] = mIV_ITEM_SCALE_TYPE_NONE;
+            } else {
+                mActor_name_t item = Now_Private->inventory.pockets[idx];
+
+                if (ITEM_IS_EXERCISE_CARD(item) || item == ITM_KNIFE_AND_FORK) {
+                    mPr_SetPossessionItem(Now_Private, (u32)idx, EMPTY_NO, mPr_ITEM_COND_NORMAL);
+                    inv_ovl->item_scale_type[idx] = mIV_ITEM_SCALE_TYPE_NONE;
+                } else {
+                    u8* scale_p = inv_ovl->item_scale_type;
+                    int i;
+
+                    mPr_SetPossessionItem(Now_Private, (u32)idx, EMPTY_NO, mPr_ITEM_COND_NORMAL);
+                    for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++) {
+                        *scale_p++ = mIV_ITEM_SCALE_TYPE_NONE;
+                    }
+                }
+            }
+
+            mTG_init_tag_data_item_win(submenu);
+        } else {
+            mMB_Ovl_c* mailbox_ovl;
+            mCM_Ovl_c* cpmail_ovl;
+
+            mailbox_ovl = submenu->overlay->mailbox_ovl;
+            cpmail_ovl = submenu->overlay->cpmail_ovl;
+
+            if (inv_ovl->mail_mark_flag == 0 &&
+                ((mailbox_ovl != NULL && mailbox_ovl->mark_flag == 0) || mailbox_ovl == NULL) &&
+                ((cpmail_ovl != NULL && cpmail_ovl->mark_flag == 0) || cpmail_ovl == NULL)) {
+                mMl_clear_mail(mTG_get_mail_pointer(submenu, NULL));
+            } else {
+                if (inv_ovl->mail_mark_flag == 1) {
+                    int i;
+
+                    for (i = 0; i < mPr_INVENTORY_MAIL_COUNT; i++) {
+                        if (mMl_check_not_used_mail(&Now_Private->mail[i]) != TRUE &&
+                            (inv_ovl->mail_mark_bitfield2 & (1 << i)) != 0) {
+                            mMl_clear_mail(&Now_Private->mail[i]);
+                            inv_ovl->mail_mark_bitfield2 &= ~(1 << i);
+                        }
+                    }
+
+                    inv_ovl->mail_mark_flag = 0;
+                    inv_ovl->mail_mark_bitfield2 = 0;
+                }
+
+                if (mailbox_ovl != NULL) {
+                    if (mailbox_ovl->mark_flag == 1) {
+                        int i;
+
+                        for (i = 0; i < mMB_MAIL_COUNT; i++) {
+                            if ((mailbox_ovl->mark_bitfield & (1 << i)) != 0) {
+                                mMl_clear_mail(&Common_Get(now_home)->mailbox[i]);
+                            }
+                        }
+
+                        mailbox_ovl->mark_flag = 0;
+                        mailbox_ovl->mark_bitfield = 0;
+                    }
+                }
+
+                if (cpmail_ovl != NULL) {
+                    if (cpmail_ovl->mark_flag == 1) {
+                        int i;
+                        int page = cpmail_ovl->page_order[0];
+
+                        for (i = 0; i < mCM_MAIL_COUNT; i++) {
+                            if ((cpmail_ovl->mark_bitfield & (1 << i)) != 0) {
+                                mMl_clear_mail(&cpmail_ovl->card_mail->mail[page][i]);
+                            }
+                        }
+
+                        cpmail_ovl->mark_bitfield = 0;
+                        cpmail_ovl->mark_flag = 0;
+                    }
+                }
+            }
+        }
+
+        mTG_init_tag_data_item_win(submenu);
+    }
+}
+
+static void mTG_select_tag_base(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    u32 trigger = submenu->overlay->menu_control.trigger;
+
+    if (trigger & (BUTTON_B | BUTTON_START | BUTTON_Y)) {
+        if (menu_info->menu_type == mSM_OVL_INVENTORY && menu_info->data0 == mSM_IV_OPEN_QUEST) {
+            mTG_close_window(submenu, menu_info, TRUE);
+        } else {
+            mTG_Ovl_c* tag_ovl = submenu->overlay->tag_ovl;
+            mTG_tag_c* last_tag = &tag_ovl->tags[tag_ovl->sel_tag_idx - 1];
+
+            mTG_return_tag_init(submenu, last_tag->type, mTG_RETURN_KEEP);
+            sAdo_SysTrgStart(MONO(NA_SE_3));
+        }
+    } else if (trigger & (BUTTON_A)) {
+        mTG_label_table[tag->type].words[tag->tag_row]->move_proc(submenu, menu_info);
+    } else {
+        int max = mTG_label_table[tag->type].lines - 1;
+
+        if (trigger & (BUTTON_CDOWN | BUTTON_CUP)) {
+            if (trigger & (BUTTON_CDOWN)) {
+                if (tag->tag_row < max) {
+                    tag->tag_row++;
+                    sAdo_SysTrgStart(NA_SE_CURSOL);
+                }
+            } else {
+                if (tag->tag_row > 0) {
+                    tag->tag_row--;
+                    sAdo_SysTrgStart(NA_SE_CURSOL);
+                }
+            }
+        }
+    }
+}
+
+static int mTG_normal_move(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_Ovl_c* tag_ovl, mTG_tag_c* tag,
+                           mIV_Ovl_c* inv_ovl) {
+    if (menu_info->menu_type == mSM_OVL_INVENTORY && menu_info->data0 == mSM_IV_OPEN_EXCHANGE &&
+        mTG_check_hand_condition(submenu)) {
+        mTG_exchange_proc(submenu, menu_info);
+        return TRUE;
+    }
+
+    if (tag_ovl->sel_tag_idx > tag_ovl->ret_tag_idx) {
+        mTG_return_tag_func(submenu, tag_ovl, tag);
+    } else if (menu_info->menu_type != submenu->current_menu_type) {
+        return TRUE;
+    } else if (tag->type == mTG_TYPE_NONE) {
+        if (inv_ovl != NULL && inv_ovl->remove_timer > 0) {
+            mTG_move_delete(submenu, tag);
+        } else {
+            if (tag_ovl->item_name_wait_time > 0) {
+                tag_ovl->item_name_wait_time--;
+            } else {
+                tag->scale += 0.125f;
+                if (tag->scale > 1.0f) {
+                    tag->scale = 1.0f;
+                }
+            }
+
+            if (menu_info->menu_type == mSM_OVL_MAILBOX) {
+                mTG_move_base_mailbox(submenu, menu_info, tag);
+            } else if (menu_info->menu_type == mSM_OVL_CPMAIL) {
+                mTG_move_cpmail(submenu, menu_info, tag);
+            } else if (menu_info->menu_type == mSM_OVL_CPORIGINAL) {
+                mTG_move_base_cporiginal(submenu, menu_info, tag);
+            } else {
+                mTG_move_base(submenu, menu_info, tag);
+            }
+        }
+    } else if (tag->scale >= 1.0f) {
+        if (tag->type == mTG_TYPE_HANIWA_PRICE) {
+            mTG_mv_priceSet(submenu, menu_info, tag);
+        } else {
+            mTG_select_tag_base(submenu, menu_info, tag);
+        }
+    } else {
+        mTG_tag_c* main_tag = &tag_ovl->tags[0];
+
+        if (tag_ovl->sel_tag_idx == 1 && main_tag->arrow_dir != 0 && main_tag->scale < 1.0f) {
+            main_tag->scale += 0.125f;
+            if (main_tag->scale > 1.0f) {
+                main_tag->scale = 1.0f;
+            }
+
+            submenu->overlay->menu_control.hand_move_func(submenu);
+            return TRUE;
+        }
+
+        if (tag_ovl->sel_tag_idx == 1 && main_tag->arrow_dir != 0) {
+            tag->scale += 0.185f;
+        } else {
+            tag->scale += 0.125f;
+        }
+
+        if (tag->scale > 1.0f) {
+            tag->scale = 1.0f;
+        }
+    }
+
+    return FALSE;
+}
+
+static void mTG_move_func(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
+    mTG_Ovl_c* tag_ovl = submenu->overlay->tag_ovl;
+    mTG_tag_c* tag = &tag_ovl->tags[tag_ovl->sel_tag_idx];
+    mHD_Ovl_c* hand_ovl = submenu->overlay->hand_ovl;
+    mIV_Ovl_c* inv_ovl = submenu->overlay->inventory_ovl;
+
+    if (tag_ovl->sel_tag_idx < 0 || tag_ovl->sel_tag_idx >= mTG_TAG_NUM) {
+        return;
+    }
+
+    if (hand_ovl->info.wait_timer > 0 && inv_ovl != NULL) {
+        hand_ovl->info.wait_timer--;
+        if (tag_ovl->sel_tag_idx > tag_ovl->ret_tag_idx) {
+            mTG_return_tag_func(submenu, tag_ovl, tag);
+        }
+
+        if (hand_ovl->info.wait_timer == 0) {
+            if (tag->table == mTG_TABLE_PLAYER) {
+                if (!ITEM_IS_MYUMBRELLA_TOOL(Now_Private->equipment)) {
+                    hand_ovl->info.next_act = mHD_ACTION_CLOSE;
+                    hand_ovl->info.item = Now_Private->equipment;
+                    hand_ovl->info.item_cond = mPr_ITEM_COND_NORMAL;
+                    hand_ovl->info.hold_tbl = mTG_TABLE_PLAYER;
+                    hand_ovl->info.hold_idx = 0;
+                }
+
+                Now_Private->equipment = EMPTY_NO;
+                mTG_init_tag_data_item_win(submenu);
+                submenu->overlay->segment.change_player_main_anime_idx = mIV_ANIM_WALK;
+            } else {
+                inv_ovl->disp_money = Now_Private->inventory.wallet;
+                inv_ovl->disp_money_chg_step = 0;
+
+                if (menu_info->menu_type == mSM_OVL_HANIWA) {
+                    sAdo_SysTrgStart(MONO(NA_SE_REGISTER));
+                }
+
+                if (menu_info->menu_type == mSM_OVL_INVENTORY && menu_info->data0 == mSM_IV_OPEN_EXCHANGE &&
+                    mTG_check_hand_condition(submenu)) {
+                    mTG_exchange_proc(submenu, menu_info);
+                    return;
+                }
+
+                mTG_init_tag_data_item_win(submenu);
+            }
+        } else if (inv_ovl->disp_money != Now_Private->inventory.wallet) {
+            inv_ovl->disp_money += inv_ovl->disp_money_chg_step;
+        }
+    } else if (hand_ovl->info.move_flag == FALSE && hand_ovl->info.act != mHD_ACTION_CLOSE &&
+               hand_ovl->info.act != mHD_ACTION_CLOSE2 && hand_ovl->info.act != mHD_ACTION_OPEN) {
+        if (tag_ovl->nw_gba_flags & 0x1) {
+            mTG_return_tag_init(submenu, mTG_TYPE_NONE, mTG_RETURN_KEEP);
+            tag_ovl->nw_gba_flags &= ~0x1;
+            tag_ovl->nw_gba_flags |= 0x2;
+        } else if (tag_ovl->nw_gba_flags & 0x2) {
+            if (tag_ovl->sel_tag_idx > tag_ovl->ret_tag_idx) {
+                mTG_return_tag_func(submenu, tag_ovl, tag);
+            } else {
+                tag_ovl->nw_gba_flags &= ~0x2;
+                tag_ovl->nw_gba_flags |= 0x4;
+                mTG_move_decide(submenu, menu_info, tag);
+            }
+        } else if (submenu->overlay->segment.player_anime_timer <= 0) {
+            if (mTG_normal_move(submenu, menu_info, tag_ovl, tag, inv_ovl)) {
+                return;
+            }
+        } else if (tag->table == mTG_TABLE_NEEDLEWORK && tag_ovl->sel_tag_idx > tag_ovl->ret_tag_idx) {
+            mTG_return_tag_func(submenu, tag_ovl, tag);
+        }
+    } else if (tag_ovl->sel_tag_idx > tag_ovl->ret_tag_idx) {
+        mTG_return_tag_func(submenu, tag_ovl, tag);
+    }
+
+    submenu->overlay->menu_control.hand_move_func(submenu);
+    if ((submenu->menu_type == mSM_OVL_NEEDLEWORK || submenu->menu_type == mSM_OVL_CPORIGINAL ||
+         submenu->menu_type == mSM_OVL_GBA) &&
+        hand_ovl->info.item != EMPTY_NO) {
+        if (submenu->menu_type == mSM_OVL_GBA && (tag->table == mTG_TABLE_GBA_NW || tag->table == mTG_TABLE_CARD_NW) &&
+            tag_ovl->sel_tag_idx == 1 && tag_ovl->tags[tag_ovl->sel_tag_idx].type == mTG_TYPE_TAG_PUT_CHK) {
+            tag_ovl->nw_gba_flags &= ~0x8;
+        } else {
+            tag_ovl->nw_gba_flags |= 0x8;
+        }
+    } else {
+        tag_ovl->nw_gba_flags &= ~0x8;
+    }
+}
+
+enum {
+    mTG_TAG_COLOR_NORMAL,
+    mTG_TAG_COLOR_CPEDIT,
+    mTG_TAG_COLOR_CATALOG,
+    mTG_TAG_COLOR_MUSIC,
+
+    mTG_TAG_COLOR_NUM
+};
+
+// clang-format off
+static rgba_t mTG_select_col_type_on[] = {
+    { 120,  35, 255, 255 },
+    {  70,  70, 100, 255 },
+    { 135,  20, 225, 255 },
+    { 255, 215,  50, 255 },
+};
+// clang-format on
+
+// clang-format off
+static rgba_t mTG_select_col_type_off[] = {
+    { 140, 150, 190, 255 },
+    { 130, 130, 150, 255 },
+    { 145, 135, 195, 255 },
+    { 115, 110,  70, 255 },
+};
+// clang-format on
+
+static int mTG_get_special_color(mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
+    int color = mTG_TAG_COLOR_NORMAL;
+
+    if (menu_info->menu_type == mSM_OVL_CATALOG) {
+        color = mTG_TAG_COLOR_CATALOG;
+    } else if (menu_info->menu_type == mSM_OVL_MUSIC) {
+        color = mTG_TAG_COLOR_MUSIC;
+    }
+
+    return color;
+}
+
+typedef struct {
+    Gfx* frame;
+    Gfx* frame_shadow;
+    Gfx* left_arrow;
+    Gfx* right_arrow;
+} mTG_disp_data_c;
+
+extern Gfx sen_itemw_wakuT_model[];
+extern Gfx sen_itemw_kage_model[];
+extern Gfx sen_itemw_yajirushi_model[];
+extern Gfx sen_itemw_yajirushi2T_model[];
+
+extern Gfx sen_qitem_wakuT_model[];
+extern Gfx sen_qitem_kage_model[];
+extern Gfx sen_qitem_yajirushiT_model[];
+extern Gfx sen_qitem_yajirushi2T_model[];
+extern Gfx sen_qitem_yajirushi3_model[];
+extern Gfx sen_qitem_yajirushi4T_model[];
+extern Gfx sen_qitem_yajirushi5_model[];
+extern Gfx sen_qitem_yajirushi6T_model[];
+
+extern Gfx sen_win_wakuT_model[];
+extern Gfx sen_win_kageT_model[];
+extern Gfx sen_win_yajirushiT_model[];
+extern Gfx sen_win_yajirushi2T_model[];
+
+extern Gfx sen_item2_DL_mode[];
+extern Gfx sen_win_cursor_model[];
+
+static void mTG_set_win_field(GRAPH* graph, Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag, f32 pos_x,
+                              f32 pos_y, int win_type, int draw_no) {
+    // clang-format off
+    static rgba_t p_col_table[][4] = {
+        {
+            { 255, 245, 140, 255 },
+            { 190, 235, 245, 255 },
+            { 205, 245, 255, 255 },
+            { 215, 255, 255, 255 },
+        },
+        {
+            { 255, 245, 140, 255 },
+            { 205, 195, 255, 255 },
+            { 215, 205, 255, 255 },
+            { 215, 205, 255, 255 },
+        },
+        {
+            { 255, 195, 255, 255 },
+            { 215, 215, 255, 255 },
+            { 215, 215, 255, 255 },
+            { 215, 215, 255, 255 },
+        },
+        {
+            {  20,  20,  20, 255 },
+            {  20,  20,  20, 255 },
+            {  20,  20,  20, 255 },
+            {  20,  20,  20, 255 },
+        },
+    };
+    // clang-format on
+
+    // clang-format off
+    static rgba_t e_col_table[][4] = {
+        {
+            { 215, 165,  60, 255 },
+            { 120, 120, 200, 255 },
+            { 110, 110, 200, 255 },
+            { 110, 110, 200, 255 },
+        },
+        {
+            { 215, 165,  60, 255 },
+            { 110, 110, 140, 255 },
+            { 110, 110, 140, 255 },
+            { 110, 110, 140, 255 },
+        },
+        {
+            { 195,  65, 110, 255 },
+            { 150,  75, 250, 255 },
+            { 150,  75, 250, 255 },
+            { 150,  75, 250, 255 },
+        },
+        {
+            {  20, 225, 225, 255 },
+            {  20, 225, 225, 255 },
+            {  20, 225, 225, 255 },
+            {  20, 225, 225, 255 },
+        },
+    };
+    // clang-format on
+
+    // clang-format off
+    static rgba_t wc_cporiginal_color_e[] = {
+        { 105,  80,  70, 255 },
+        {  60,  50,  35, 255 },
+        {  75,  55,  45, 255 },
+        {  75,  55,  45, 255 },
+        {  65,  45,  15, 255 },
+        {  65,  55,  25, 255 },
+        {  65,  45,  30, 255 },
+        {  65,  55,  50, 255 },
+    };
+    // clang-format on
+
+    // clang-format off
+    static rgba_t wc_cporiginal_color_p[] = {
+        { 255, 245, 160, 255 },
+        { 255, 215, 150, 255 },
+        { 245, 195, 130, 255 },
+        { 225, 175, 110, 255 },
+        { 205, 155,  90, 255 },
+        { 185, 135,  70, 255 },
+        { 165, 115,  50, 255 },
+        { 155,  95,  40, 255 },
+    };
+    // clang-format on
+
+    // clang-format off
+    static rgba_t wc_cpmail_color_e[] = {
+        { 255, 125,  35, 255 },
+        {  50, 120, 190, 255 },
+        { 110,  75,  90, 255 },
+        {  70, 130,  90, 255 },
+        { 135,  80,  60, 255 },
+        {  90,  80, 150, 255 },
+        { 130,  90,  90, 255 },
+        {  90, 145, 100, 255 },
+    };
+    // clang-format on
+
+    // clang-format off
+    static rgba_t wc_cpmail_color_p[] = {
+        { 255, 215,  40, 255 },
+        {  60, 255, 255, 255 },
+        { 255, 110, 255, 255 },
+        {  75, 225, 165, 255 },
+        { 255, 155, 110, 255 },
+        { 185, 165, 255, 255 },
+        { 255, 125, 150, 255 },
+        { 155, 255,  90, 255 },
+    };
+    // clang-format on
+
+    // clang-format off
+    static mTG_disp_data_c tag_disp_data[mTG_WIN_NUM] = {
+        { sen_itemw_wakuT_model, sen_itemw_kage_model, sen_itemw_yajirushi_model, sen_itemw_yajirushi2T_model },
+        { sen_qitem_wakuT_model, sen_qitem_kage_model, sen_qitem_yajirushiT_model, sen_qitem_yajirushi2T_model },
+        { sen_win_wakuT_model, sen_win_kageT_model, sen_win_yajirushiT_model, sen_win_yajirushi2T_model },
+    };
+    // clang-format on
+
+    static mTG_disp_data_c quest_up_disp = {
+        sen_qitem_wakuT_model,
+        sen_qitem_kage_model,
+        sen_qitem_yajirushi3_model,
+        sen_qitem_yajirushi4T_model,
+    };
+
+    static mTG_disp_data_c quest_low_disp = {
+        sen_qitem_wakuT_model,
+        sen_qitem_kage_model,
+        sen_qitem_yajirushi5_model,
+        sen_qitem_yajirushi6T_model,
+    };
+
+    static mTG_disp_data_c sel_low_disp = {
+        sen_win_wakuT_model,
+        sen_win_kageT_model,
+        sen_win_yajirushiT_model,
+        sen_win_yajirushi2T_model,
+    };
+
+    // clang-format off
+    static rgba_t cursol_color[] = {
+        { 215,  30, 215, 255 },
+        { 235,  60,  60, 255 },
+        { 255,   0, 255, 255 },
+        {   0, 255, 255, 255 },
+    };
+    // clang-format on
+
+    mTG_Ovl_c* tag_ovl;
+    mTG_disp_data_c* disp_data_p;
+    mTG_tag_data_c* tag_data_p;
+    rgba_t* color_p;
+    int special_color;
+
+    tag_ovl = submenu->overlay->tag_ovl;
+    tag_data_p = &mTG_label_table[tag->type];
+    special_color = mTG_get_special_color(menu_info, tag);
+    disp_data_p = &tag_disp_data[win_type];
+
+    if (win_type == mTG_WIN_QITEM) {
+        if (mTG_quest_disp_up_check(tag) == TRUE) {
+            disp_data_p = &quest_up_disp;
+        } else if (mTG_quest_disp_low_check(tag) == TRUE) {
+            disp_data_p = &quest_low_disp;
+        }
+    } else if (win_type == mTG_WIN_SELECT && (tag->flags & mTG_TAG_FLAG_EDGE_FOOT_SELECT) == 0 &&
+               tag_ovl->sel_tag_idx == 1) {
+        disp_data_p = &sel_low_disp;
+    }
+
+    /* Setup tag DL env */
+    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
+    Matrix_translate(tag->base_pos[0] + pos_x, tag->base_pos[1] + pos_y, 140.0f, 1);
+    Matrix_scale(tag->scale, tag->scale, 1.0f, 1);
+
+    OPEN_POLY_OPA_DISP(graph);
+    gSPDisplayList(POLY_OPA_DISP++, sen_item2_DL_mode);
+    gDPSetAlphaCompare(POLY_OPA_DISP++, G_AC_THRESHOLD);
+    gDPSetBlendColor(POLY_OPA_DISP++, 255, 255, 255, 40);
+
+    /* Draw window shadow */
+    Matrix_push();
+    Matrix_translate(tag->body_ofs[0], tag->body_ofs[1], 0.0f, 1);
+    Matrix_scale(tag->body_scale[0] * tag->_34, tag->body_scale[1] * tag->_34, 1.0f, 1);
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(POLY_OPA_DISP++, disp_data_p->frame_shadow);
+    Matrix_pull();
+
+    /* Draw arrow */
+    if (tag->arrow_dir != 0) {
+        Matrix_push();
+        Matrix_scale(tag->arrow_scale[0], tag->arrow_scale[1], 1.0f, 1);
+        gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+
+        if (tag->table == mTG_TABLE_CPORIGINAL_WC) {
+            color_p = &wc_cporiginal_color_e[tag->tag_row];
+        } else if (tag->table == mTG_TABLE_CPMAIL_WC) {
+            color_p = &wc_cpmail_color_e[tag->tag_row];
+        } else {
+            color_p = &e_col_table[special_color][draw_no];
+        }
+
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, color_p->r, color_p->g, color_p->b, 255);
+
+        if (tag->arrow_dir == 1) {
+            gSPDisplayList(POLY_OPA_DISP++, disp_data_p->left_arrow);
+        } else {
+            gSPDisplayList(POLY_OPA_DISP++, disp_data_p->right_arrow);
+        }
+
+        Matrix_pull();
+    }
+
+    if (tag->table == mTG_TABLE_CPORIGINAL_WC) {
+        color_p = &wc_cporiginal_color_p[tag->tag_row];
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, color_p->r, color_p->g, color_p->b, 255);
+        color_p = &wc_cporiginal_color_e[tag->tag_row];
+        gDPSetEnvColor(POLY_OPA_DISP++, color_p->r, color_p->g, color_p->b, 150);
+    } else if (tag->table == mTG_TABLE_CPMAIL_WC) {
+        color_p = &wc_cpmail_color_p[tag->tag_row];
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, color_p->r, color_p->g, color_p->b, 255);
+        color_p = &wc_cpmail_color_e[tag->tag_row];
+        gDPSetEnvColor(POLY_OPA_DISP++, color_p->r, color_p->g, color_p->b, 150);
+    } else {
+        color_p = &p_col_table[special_color][draw_no];
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, color_p->r, color_p->g, color_p->b, 255);
+        color_p = &e_col_table[special_color][draw_no];
+        gDPSetEnvColor(POLY_OPA_DISP++, color_p->r, color_p->g, color_p->b, 150);
+    }
+
+    /* Draw window */
+    Matrix_push();
+    Matrix_translate(tag->body_ofs[0], tag->body_ofs[1], 0.0f, 1);
+    Matrix_scale(tag->body_scale[0] * tag->_34, tag->body_scale[1] * tag->_34, 1.0f, 1);
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(POLY_OPA_DISP++, disp_data_p->frame);
+    Matrix_pull();
+
+    if (tag_data_p->words != NULL && tag->type != mTG_TYPE_HANIWA_PRICE) {
+        f32 cursor_ofs;
+        f32 x;
+        f32 y;
+
+        if (tag->type == mTG_TYPE_CP_DELETE2) {
+            cursor_ofs = (f32)(2 + tag->tag_row);
+        } else if (tag->type == mTG_TYPE_DUMP_MAIL || tag->type == mTG_TYPE_DUMP_ITEM ||
+                   tag->type == mTG_TYPE_DUMP_MAIL_MARK_CONF) {
+            cursor_ofs = (f32)(1 + tag->tag_row);
+        } else if (tag->type == mTG_TYPE_TAG_PUT_CHK) {
+            cursor_ofs = (f32)(2 + tag->tag_row);
+        } else {
+            cursor_ofs = (f32)tag->tag_row;
+        }
+
+        x = tag->text_ofs[0] + (tag->_34 * -4.0f + tag->body_ofs[0]);
+        y = (tag->text_ofs[1] + (tag->_34 * -8.0f + tag->body_ofs[1])) - cursor_ofs * 16.0f * tag->_34;
+        Matrix_translate(x, y, 0.0f, 1);
+        gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        color_p = &cursol_color[special_color];
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, color_p->r, color_p->g, color_p->b, 255);
+        gSPDisplayList(POLY_OPA_DISP++, sen_win_cursor_model);
+    }
+
+    /* Cleanup */
+    gDPSetAlphaCompare(POLY_OPA_DISP++, G_AC_NONE);
+    gDPSetBlendColor(POLY_OPA_DISP++, 255, 255, 255, 8);
+
+    CLOSE_POLY_OPA_DISP(graph);
+}
+
+static void mTG_price_draw(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y, f32 scale, f32 ofs_x, f32 ofs_y,
+                           mTG_tag_c* tag) {
+    static int sel_col[] = { 255, 20, 20 };
+    static int not_sel_col[] = { 155, 50, 95 };
+    u8 price_str[6];
+    u32 price = submenu->overlay->haniwa_ovl->price;
+    int col = tag->tag_col;
+    int* color_p;
+    mTG_tag_data_c* tag_data_p = &mTG_label_table[tag->type];
+    mTG_tag_word_c** words_p = tag_data_p->words;
+    mTG_tag_word_c* word_p;
+    int i;
+
+    // clang-format off
+    mFont_SetLineStrings(
+        game,
+        words_p[0]->str, mTG_TAG_STR_LEN,
+        pos_x, pos_y,
+        mTG_select_col_type_on[0].r, mTG_select_col_type_on[0].g, mTG_select_col_type_on[0].b, 255,
+        FALSE,
+        TRUE,
+        scale, scale,
+        mFont_MODE_POLY
+    );
+    // clang-format on
+
+    mFont_UnintToString(price_str, sizeof(price_str), price, sizeof(price_str) - 1, FALSE, TRUE, TRUE);
+
+    pos_x += 7.0f * scale;
+    pos_y += ofs_y;
+
+    // clang-format off
+    mFont_SetLineStrings(
+        game,
+        /* @BUG - this should definitely be words_p[1]->str, only works since the second item is sequential in data */
+#ifndef BUGFIXES
+        words_p[0][1].str, mTG_TAG_STR_LEN,
+#else
+        words_p[1]->str, mTG_TAG_STR_LEN,
+#endif
+        pos_x + scale * (5 + mFont_GetStringWidth(price_str, sizeof(price_str), TRUE)), pos_y,
+        mTG_select_col_type_on[0].r, mTG_select_col_type_on[0].g, mTG_select_col_type_on[0].b, 255,
+        FALSE,
+        TRUE,
+        scale, scale,
+        mFont_MODE_POLY
+    );
+    // clang-format on
+
+    /* Skip comma */
+    if (col >= 2) {
+        col++;
+    }
+
+    for (i = 0; i < (int)sizeof(price_str); i++) {
+        if (i == col) {
+            color_p = sel_col;
+        } else if (i == 2) {
+            color_p = not_sel_col;
+        } else {
+            color_p = not_sel_col;
+        }
+
+        // clang-format off
+        mFont_SetLineStrings(
+            game,
+            &price_str[i], 1,
+            pos_x, pos_y,
+            color_p[0], color_p[1], color_p[2], 255,
+            FALSE,
+            TRUE,
+            scale, scale,
+            mFont_MODE_POLY
+        );
+        // clang-format on
+
+        pos_x += scale * (f32)mFont_GetStringWidth(&price_str[i], 1, TRUE);
+    }
+}
+
+static void mTG_set_questItemInfo_sub(GAME* game, u8* str, int max_len, f32 x, f32 y, f32 scale) {
+    int len = mMl_strlen(str, max_len, CHAR_SPACE);
+
+    // clang-format off
+    mFont_SetLineStrings(
+        game,
+        str, len,
+        x, y,
+        90, 60, 50, 255,
+        FALSE,
+        TRUE,
+        scale, scale,
+        mFont_MODE_POLY
+    );
+    // clang-format on
+}
+
+static void mTG_set_questItemInfo(GAME* game, mTG_tag_c* tag, f32 pos_x, f32 pos_y, f32 scale, f32 ofs_x, f32 ofs_y) {
+    static int draw_turn_normal[] = { mTG_STR2, mTG_STR0, mTG_STR1 };
+    static int draw_turn_omikuji[] = { mTG_STR0, mTG_STR2, mTG_STR1 };
+    u8* str_p;
+    int len;
+    int* draw_turn_p = tag->str2_type == mTG_QSTR_TYPE_OMIKUJI ? draw_turn_omikuji : draw_turn_normal;
+    int i;
+
+    for (i = 0; i < mTG_STR_NUM; i++, draw_turn_p++) {
+        switch (*draw_turn_p) {
+            case mTG_STR0:
+                str_p = tag->str0;
+                len = mTG_TAG_SEL_STRING_LEN;
+                break;
+            case mTG_STR1:
+                str_p = tag->str1;
+                len = mTG_TAG_SEL_STRING_LEN;
+                break;
+            case mTG_STR2:
+                str_p = tag->str2;
+                len = mTG_TAG_SEL_STRING_LEN;
+                break;
+        }
+
+        mTG_set_questItemInfo_sub(game, str_p, len, pos_x, pos_y, scale);
+        pos_y += ofs_y;
+    }
+}
+
+static void mTG_set_select(GAME* game, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag, mTG_tag_word_c** words_p, int n_words,
+                           f32 pos_x, f32 pos_y, f32 scale, f32 ofs) {
+    rgba_t* color_p;
+    int special_color;
+    int i;
+
+    special_color = mTG_get_special_color(menu_info, tag);
+    for (i = 0; i < n_words; i++) {
+        if (i == tag->tag_row) {
+            color_p = &mTG_select_col_type_on[special_color];
+        } else {
+            color_p = &mTG_select_col_type_off[special_color];
+        }
+
+        // clang-format off
+        mFont_SetLineStrings(
+            game,
+            words_p[0]->str, mTG_TAG_STR_LEN,
+            pos_x, pos_y,
+            color_p->r, color_p->g, color_p->b, 255,
+            FALSE,
+            TRUE,
+            scale, scale,
+            mFont_MODE_POLY
+        );
+        // clang-format on
+
+        words_p++;
+        pos_y += ofs;
+    }
+}
+
+static void mTG_set_character(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game, GRAPH* graph, mTG_tag_c* tag,
+                              f32 base_x, f32 base_y) {
+    f32 scale_rate = tag->scale * 0.875f;
+
+    if (!F32_IS_ZERO(tag->scale)) {
+        f32 pos_x = 160.0f + (tag->base_pos[0] + base_x + tag->scale * (tag->body_ofs[0] + tag->text_ofs[0]));
+        f32 pos_y = 120.0f - (tag->base_pos[1] + base_y + tag->scale * (tag->body_ofs[1] + tag->text_ofs[1]));
+        mTG_tag_data_c* tag_data_p = &mTG_label_table[tag->type];
+
+        submenu->overlay->set_char_matrix_proc(graph);
+        if (tag->type == mTG_TYPE_CP_DELETE2) {
+            // clang-format off
+            mFont_SetLineStrings(
+                game,
+                mTG_tag_str_hontoni, sizeof(mTG_tag_str_hontoni),
+                pos_x, pos_y,
+                140, 60, 255, 255,
+                FALSE,
+                TRUE,
+                scale_rate, scale_rate,
+                mFont_MODE_POLY
+            );
+            // clang-format on
+            pos_y += 16.0f * scale_rate;
+
+            // clang-format off
+            mFont_SetLineStrings(
+                game,
+                mTG_tag_str_iidesuka, sizeof(mTG_tag_str_iidesuka),
+                pos_x, pos_y,
+                140, 60, 255, 255,
+                FALSE,
+                TRUE,
+                scale_rate, scale_rate,
+                mFont_MODE_POLY
+            );
+            // clang-format on
+            pos_y += 16.0f * scale_rate;
+        } else if (tag->type == mTG_TYPE_DUMP_MAIL || tag->type == mTG_TYPE_DUMP_ITEM ||
+                   tag->type == mTG_TYPE_DUMP_MAIL_MARK_CONF) {
+            // clang-format off
+            mFont_SetLineStrings(
+                game,
+                mTG_tag_str_suteruno, sizeof(mTG_tag_str_suteruno),
+                pos_x, pos_y,
+                220, 30, 220, 255,
+                FALSE,
+                TRUE,
+                scale_rate, scale_rate,
+                mFont_MODE_POLY
+            );
+            // clang-format on
+            pos_y += 16.0f * scale_rate;
+        } else if (tag->type == mTG_TYPE_TAG_PUT_CHK) {
+            // clang-format off
+            mFont_SetLineStrings(
+                game,
+                mTG_tag_str_put_chk1, sizeof(mTG_tag_str_put_chk1),
+                pos_x, pos_y,
+                220, 30, 220, 255,
+                FALSE,
+                TRUE,
+                scale_rate, scale_rate,
+                mFont_MODE_POLY
+            );
+            // clang-format on
+            pos_y += 16.0f * scale_rate;
+
+            // clang-format off
+            mFont_SetLineStrings(
+                game,
+                mTG_tag_str_put_chk2, sizeof(mTG_tag_str_put_chk2),
+                pos_x, pos_y,
+                220, 30, 220, 255,
+                FALSE,
+                TRUE,
+                scale_rate, scale_rate,
+                mFont_MODE_POLY
+            );
+            // clang-format on
+            pos_y += 16.0f * scale_rate;
+        }
+
+        if (tag->type == mTG_TYPE_HANIWA_PRICE) {
+            mTG_price_draw(submenu, game, pos_x, pos_y, scale_rate, 12.0f * scale_rate, 16.0f * scale_rate, tag);
+        } else {
+            mTG_set_select(game, menu_info, tag, tag_data_p->words, tag_data_p->lines, pos_x, pos_y, scale_rate,
+                           16.0f * scale_rate);
+        }
+    }
+}
+
+static void mTG_set_character_item(Submenu* submenu, GAME* game, GRAPH* graph, mTG_tag_c* tag, f32 base_x, f32 base_y) {
+    static rgba_t item_name_color[] = {
+        { 90, 60, 50, 255 },
+        { 40, 30, 30, 255 },
+    };
+    static rgba_t wc_cporiginal_color_char[] = {
+        { 80, 50, 50, 255 }, { 80, 50, 50, 255 }, { 80, 50, 50, 255 }, { 70, 50, 50, 255 },
+        { 70, 50, 50, 255 }, { 60, 40, 40, 255 }, { 60, 40, 40, 255 }, { 50, 30, 30, 255 },
+    };
+    static rgba_t wc_cpmail_color_char[] = {
+        { 70, 40, 20, 255 }, { 20, 60, 90, 255 }, { 60, 30, 70, 255 }, { 10, 70, 50, 255 },
+        { 70, 50, 20, 255 }, { 60, 50, 70, 255 }, { 70, 20, 30, 255 }, { 50, 70, 10, 255 },
+    };
+    f32 scale_rate = tag->scale;
+
+    if (!F32_IS_ZERO(scale_rate)) {
+        f32 pos_x;
+        f32 pos_y;
+        rgba_t* color_p;
+
+        if (tag->table == mTG_TABLE_CATALOG_WC) {
+            color_p = &item_name_color[1];
+        } else if (tag->table == mTG_TABLE_CPORIGINAL_WC) {
+            color_p = &wc_cporiginal_color_char[tag->tag_row];
+        } else if (tag->table == mTG_TABLE_CPMAIL_WC) {
+            color_p = &wc_cpmail_color_char[tag->tag_row];
+        } else {
+            color_p = &item_name_color[0];
+        }
+
+        pos_x = 160.0f + (tag->base_pos[0] + base_x + scale_rate * (tag->body_ofs[0] + tag->text_ofs[0]));
+        pos_y = 120.0f - (tag->base_pos[1] + base_y + scale_rate * (tag->body_ofs[1] + tag->text_ofs[1]));
+
+        submenu->overlay->set_char_matrix_proc(graph);
+
+        // clang-format off
+        mFont_SetLineStrings(
+            game,
+            tag->str0, mTG_TAG_STR_LEN,
+            pos_x, pos_y,
+            color_p->r, color_p->g, color_p->b, 255,
+            FALSE,
+            TRUE,
+            scale_rate * 0.875f, scale_rate * 0.875f,
+            mFont_MODE_POLY
+        );
+        // clang-format on
+    }
+}
+
+static void mTG_set_character_q_item(Submenu* submenu, GAME* game, GRAPH* graph, mTG_tag_c* tag, f32 base_x,
+                                     f32 base_y) {
+    f32 scale_rate = tag->scale;
+
+    if (!F32_IS_ZERO(scale_rate)) {
+        f32 pos_x;
+        f32 pos_y;
+
+        pos_x = 160.0f + (tag->base_pos[0] + base_x + scale_rate * (tag->body_ofs[0] + tag->text_ofs[0]));
+        pos_y = 120.0f - (tag->base_pos[1] + base_y + scale_rate * (tag->body_ofs[1] + tag->text_ofs[1]));
+
+        submenu->overlay->set_char_matrix_proc(graph);
+        scale_rate *= 0.75f;
+        mTG_set_questItemInfo(game, tag, pos_x, pos_y, scale_rate, 12.0f * scale_rate, 16.0f * scale_rate);
+    }
+}
+
+static void mTG_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GRAPH* graph, GAME* game, mTG_tag_c* tag,
+                       f32 base_x, f32 base_y, int draw_no) {
+    if (tag->type == mTG_TYPE_NONE) {
+        if (tag->arrow_dir != 0) {
+            if (tag->str2_type != mTG_QSTR_TYPE_NONE) {
+                mTG_set_win_field(graph, submenu, menu_info, tag, base_x, base_y, mTG_WIN_QITEM, 0);
+                mTG_set_character_q_item(submenu, game, graph, tag, base_x, base_y);
+            } else {
+                mTG_set_win_field(graph, submenu, menu_info, tag, base_x, base_y, mTG_WIN_ITEM, 0);
+                mTG_set_character_item(submenu, game, graph, tag, base_x, base_y);
+            }
+        }
+    } else {
+        mTG_set_win_field(graph, submenu, menu_info, tag, base_x, base_y, mTG_WIN_SELECT, draw_no);
+        mTG_set_character(submenu, menu_info, game, graph, tag, base_x, base_y);
+    }
+}
+
+extern Gfx inv_item_shadow_mode[];
+extern Gfx inv_item_mode[];
+
+static void mTG_draw_mail(Submenu* submenu, GRAPH* graph, Mail_c* mail, f32 x, f32 y) {
+    OPEN_POLY_OPA_DISP(graph);
+    gSPDisplayList(POLY_OPA_DISP++, inv_item_shadow_mode);
+    CLOSE_POLY_OPA_DISP(graph);
+    submenu->overlay->draw_mail_proc(graph, x + 4.0f, y - 4.0f, 1.0f, mail, TRUE, TRUE, FALSE);
+
+    OPEN_POLY_OPA_DISP(graph);
+    gSPDisplayList(POLY_OPA_DISP++, inv_item_mode);
+    CLOSE_POLY_OPA_DISP(graph);
+    submenu->overlay->draw_mail_proc(graph, x, y, 1.0f, mail, TRUE, FALSE, FALSE);
+}
+
+static void mTG_single_draw_mail(Submenu* submenu, GRAPH* graph, mTG_Ovl_c* tag_ovl) {
+    Mail_c* mail;
+    int i;
+    mTG_cpmail_mark_pos_c* mark_pos = tag_ovl->_2F4;
+
+    for (i = 0; i < 4; i++) {
+        f32 x = mark_pos->pos[0];
+        f32 y = mark_pos->pos[1];
+
+        mail = mark_pos->_00;
+        if (mail != NULL && mMl_check_not_used_mail(mail) == FALSE) {
+            mTG_draw_mail(submenu, graph, mail, x, y);
+        }
+
+        mark_pos++;
+    }
+}
+
+static void mTG_single_draw_original(Submenu* submenu, GRAPH* graph, mTG_Ovl_c* tag_ovl) {
+    mActor_name_t item;
+    int i;
+    mTG_cporiginal_mark_entry_c* entry_p = tag_ovl->original_entries;
+
+    for (i = 0; i < mTG_ORG_TYPE_NUM; i++) {
+        f32 x = entry_p->pos[0];
+        f32 y = entry_p->pos[1];
+
+        item = entry_p->item;
+        if (item != EMPTY_NO) {
+            mSM_draw_original(submenu, graph, x, y, 1.0f, item, FALSE);
+        }
+
+        entry_p++;
+    }
+}
+
+static void mTG_draw_func(Submenu* submenu, GAME* game, int menu_type) {
+    if (submenu->menu_type == menu_type) {
+        GRAPH* graph = game->graph;
+        Submenu_Overlay_c* overlay_p = submenu->overlay;
+        mTG_Ovl_c* tag_ovl = overlay_p->tag_ovl;
+        mTG_tag_c* tag;
+        mSM_MenuInfo_c* menu_info = &overlay_p->menu_info[menu_type];
+        int i;
+        int max;
+
+        if (menu_info->proc_status != mSM_OVL_PROC_MOVE && menu_info->proc_status != mSM_OVL_PROC_END) {
+            mTG_single_draw_mail(submenu, graph, tag_ovl);
+            mTG_single_draw_original(submenu, graph, tag_ovl);
+
+            if ((tag_ovl->nw_gba_flags & 0x8) == 0) {
+                submenu->overlay->menu_control.hand_draw_func(submenu, game);
+            }
+
+            max = overlay_p->tag_ovl->sel_tag_idx + 1;
+            tag = overlay_p->tag_ovl->tags;
+            for (i = 0; i < max; i++, tag++) {
+                mTG_set_dl(submenu, menu_info, graph, game, tag, menu_info->position[0], menu_info->position[1], i);
+            }
+
+            if ((tag_ovl->nw_gba_flags & 0x8) != 0) {
+                submenu->overlay->menu_control.hand_draw_func(submenu, game);
+            }
+        }
+    }
+}
+
+extern void mTG_tag_ovl_construct(Submenu* submenu) {
+    Submenu_Overlay_c* overlay_p = submenu->overlay;
+    mSM_Control_c* menu_control = &overlay_p->menu_control;
+    mTG_Ovl_c* tag_ovl_p;
+    mTG_tag_c* tag;
+    int i;
+
+    if (submenu->overlay->tag_ovl == NULL) {
+        mem_clear((u8*)&tag_ovl_data, sizeof(tag_ovl_data), 0);
+        menu_control->tag_move_func = &mTG_move_func;
+        menu_control->tag_draw_func = &mTG_draw_func;
+
+        tag_ovl_p = &tag_ovl_data;
+        overlay_p->tag_ovl = tag_ovl_p;
+
+        submenu->overlay->tag_ovl->set_hand_pos_proc = &mTG_set_hand_pos;
+        submenu->overlay->tag_ovl->init_tag_data_item_win_proc = &mTG_init_tag_data_item_win;
+        submenu->overlay->tag_ovl->chg_tag_func_proc = &mTG_chg_tag_func;
+        submenu->overlay->tag_ovl->get_table_idx_proc = &mTG_get_table_idx;
+        submenu->overlay->tag_ovl->get_mail_pointer_proc = &mTG_get_mail_pointer;
+        submenu->overlay->tag_ovl->exchange_proc = &mTG_exchange_proc;
+
+        tag = tag_ovl_p->tags;
+        for (i = 0; i < mTG_TAG_NUM; i++, tag++) {
+            tag->type = mTG_TYPE_NONE;
+        }
+
+        tag_ovl_p->sel_tag_idx = -1;
+        tag_ovl_p->ret_tag_idx = -1;
+    }
+}
+
+extern void mTG_tag_ovl_destruct(Submenu* submenu) {
+    submenu->overlay->tag_ovl = NULL;
+}

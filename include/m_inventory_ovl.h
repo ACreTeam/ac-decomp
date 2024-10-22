@@ -15,6 +15,10 @@ extern "C" {
 #define mIV_ITEM_JOINT_NUM 8
 #define mIV_PLAYER_EFFECT_NUM 20
 #define mIV_COLLECT_NUM 40
+#define mIV_ITEM_COLUMNS 5
+#define mIV_ITEM_ROWS 3
+#define mIV_MAIL_COLUMNS 2
+#define mIV_MAIL_ROWS 5
 
 enum {
     mIV_ITEM_SCALE_TYPE_NONE,
@@ -80,7 +84,7 @@ struct inventory_ovl_s {
     u16 selectable_mail_bitfield;
 
     u32 disp_money;
-    int disp_money_change_frames;
+    int disp_money_chg_step;
 
     xyz_t shovel_pos;
     xyz_t release_pos;

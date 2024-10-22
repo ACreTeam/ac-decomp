@@ -12,6 +12,7 @@ extern "C" {
 #define mCO_PAGE_NUM 8
 #define mCO_ORIGINAL_NUM 12
 #define mCO_FOLDER_NAME_LEN 12
+#define mCO_FOLDER_NAME_MAX_WIDTH 120
 
 /* TODO: find a better place for this */
 typedef struct card_original_s {
@@ -36,10 +37,12 @@ struct cporiginal_s {
 };
 
 extern void mCO_swap_image(Submenu* submenu, mActor_name_t item0, mActor_name_t item1);
+extern void mCO_change_up_folder(Submenu* submenu, int idx);
 extern int mCO_top_folder(Submenu* submenu);
 extern u8* mCO_get_folder_name(Submenu* submenu, int folder);
 extern u8* mCO_get_image_name(Submenu* submenu, int folder, int idx);
 extern int mCO_check_mark_flg(Submenu* submenu, int idx);
+extern void mCO_clear_mark_flg(Submenu* submenu);
 extern int mCO_check_hide_flg(Submenu* submenu, int folder, int idx);
 extern void mCO_on_hide_flg(Submenu* submenu, int folder, int idx);
 extern void mCO_clear_hide_flg(Submenu* submenu);
