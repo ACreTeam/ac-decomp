@@ -1,5 +1,5 @@
-#ifndef M_MAILBOX_OVL_H_H
-#define M_MAILBOX_OVL_H_H
+#ifndef M_CPORIGINAL_H_H
+#define M_CPORIGINAL_H_H
 
 #include "types.h"
 
@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-typedef struct mailbox_ovl_s mMB_Ovl_c;
+typedef struct cporiginal_s mCO_Ovl_c;
 
 #ifdef __cplusplus
 }

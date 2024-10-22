@@ -70,7 +70,7 @@ static int mMkRm_NoMarkLetter(int arrange_idx, int handbill_no) {
 
     mMl_clear_mail(&mail);
     mHandbill_Load_HandbillFromRom(mail.content.header, &header_back_start, mail.content.footer, mail.content.body, handbill_no);
-    mail.content.font = mMl_FONT_0;
+    mail.content.font = mMl_FONT_RECV;
     mail.content.header_back_start = header_back_start;
     mail.content.mail_type = mMl_TYPE_HRA;
     mail.content.paper_type = 51; /* wing paper */

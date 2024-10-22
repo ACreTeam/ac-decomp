@@ -344,6 +344,10 @@ extern void mCoBG_GroundCheckOnly(xyz_t* reverse_pos, ACTOR* actor, f32 check_ra
 extern f32 mCoBG_Wpos2BgUtCenterHeight_AddColumn(xyz_t pos);
 extern f32 mCoBG_UtNum2UtCenterY_Keep(int ut_x, int ut_z);
 extern int mCoBG_RegistDecalCircle(const xyz_t* pos_p, f32 radius_start, f32 radius_end, s16 timer);
+extern int mCoBG_CheckAcceptDesignSign(const xyz_t* pos_p);
+extern void mCoBG_VirtualBGCheck(xyz_t* rev_pos_p, mCoBG_Check_c* bg_check, const xyz_t* start_pos_p,
+                                 const xyz_t* end_pos_p, s16 angle_y, s16 water_flag, s16 ground_flag, f32 range,
+                                 f32 ground_dist, s16 attr_wall, s16 rev_type, s16 check_type);
 
 typedef int (*mCoBG_LINECHECK_PROC)(mActor_name_t);
 

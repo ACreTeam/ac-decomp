@@ -1094,7 +1094,7 @@ extern void mSP_ShopItsumoChirashi(int house_no, int shop_level, mActor_name_t i
             mMl_clear_mail(&leaflet);
             mHandbill_Load_HandbillFromRom(leaflet.content.header, &header_back_start, leaflet.content.footer,
                                            leaflet.content.body, rare_chirashi_bunmen[shop_level][type & 1]);
-            leaflet.content.font = mMl_FONT_0;
+            leaflet.content.font = mMl_FONT_RECV;
             leaflet.content.header_back_start = header_back_start;
             leaflet.content.mail_type = mMl_TYPE_SHOP_SALE_LEAFLET;
             leaflet.content.paper_type = ITM_PAPER55; // simple paper
@@ -1226,7 +1226,7 @@ extern void mSP_SetRenewalChiraswhi_AppoDay() {
                 mMl_clear_mail(&leaflet);
                 mHandbill_Load_HandbillFromRom(content->header, &header_back_start, content->footer, content->body,
                                                chirashi_idx_appoday[shop_level]);
-                leaflet.content.font = mMl_FONT_0;
+                leaflet.content.font = mMl_FONT_RECV;
                 leaflet.content.header_back_start = header_back_start;
                 leaflet.content.mail_type = mMl_TYPE_SHOP_SALE_LEAFLET;
                 leaflet.content.paper_type = ITM_PAPER55; // simple paper

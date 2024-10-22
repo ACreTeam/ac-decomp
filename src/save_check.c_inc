@@ -2,581 +2,574 @@
 #include "m_house.h"
 
 static int sChk_block_num_sub(u32 block_x, u32 block_z) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (block_x > FG_BLOCK_X_NUM && block_x != 0xFF) {
-    mFRm_ERRORLINE(79);
-    res = TRUE;
-  }
+    if (block_x > FG_BLOCK_X_NUM && block_x != 0xFF) {
+        mFRm_ERRORLINE(79);
+        res = TRUE;
+    }
 
-  if (block_z > FG_BLOCK_Z_NUM && block_z != 0xFF) {
-    mFRm_ERRORLINE(90);
-    res = TRUE;
-  }
+    if (block_z > FG_BLOCK_Z_NUM && block_z != 0xFF) {
+        mFRm_ERRORLINE(90);
+        res = TRUE;
+    }
 
-  if (block_z == mISL_BLOCK_Z && (block_x == mISL_BLOCK_X0 || block_x == mISL_BLOCK_X1)) {
-    res = FALSE;
-  }
+    if (block_z == mISL_BLOCK_Z && (block_x == mISL_BLOCK_X0 || block_x == mISL_BLOCK_X1)) {
+        res = FALSE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_ut_num_sub(u32 ut_x, u32 ut_z) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (ut_x >= UT_X_NUM && ut_x != 0xFF) {
-    mFRm_ERRORLINE(140);
-    res = TRUE;
-  }
+    if (ut_x >= UT_X_NUM && ut_x != 0xFF) {
+        mFRm_ERRORLINE(140);
+        res = TRUE;
+    }
 
-  if (ut_z >= UT_Z_NUM && ut_z != 0xFF) {
-    mFRm_ERRORLINE(151);
-    res = TRUE;
-  }
+    if (ut_z >= UT_Z_NUM && ut_z != 0xFF) {
+        mFRm_ERRORLINE(151);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_ItemFG_sub(mActor_name_t item) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (item != EMPTY_NO && (ITEM_NAME_GET_TYPE(item) >= NAME_TYPE_WARP || ITEM_NAME_GET_TYPE(item) < NAME_TYPE_FTR0)) {
-    mFRm_ERRORLINE(201);
-    res = TRUE;
-  }
+    if (item != EMPTY_NO && (ITEM_NAME_GET_TYPE(item) >= NAME_TYPE_WARP || ITEM_NAME_GET_TYPE(item) < NAME_TYPE_FTR0)) {
+        mFRm_ERRORLINE(201);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_cloth_sub(mActor_name_t item) {
-  int valid_cloth;
-  int res = FALSE;
+    int valid_cloth;
+    int res = FALSE;
 
-  valid_cloth = item == RSV_CLOTH || (item >= ITM_CLOTH_START && item < ITM_CLOTH_END);
+    valid_cloth = item == RSV_CLOTH || (item >= ITM_CLOTH_START && item < ITM_CLOTH_END);
 
-  if (valid_cloth == FALSE && item != EMPTY_NO) {
-    mFRm_ERRORLINE(247);
-    res = TRUE;
-  }
+    if (valid_cloth == FALSE && item != EMPTY_NO) {
+        mFRm_ERRORLINE(247);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_fruit_sub(mActor_name_t item) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (item < ITM_FOOD_APPLE || item > ITM_FOOD_ORANGE) {
-    mFRm_ERRORLINE(288);
-    res = TRUE;
-  }
+    if (item < ITM_FOOD_APPLE || item > ITM_FOOD_ORANGE) {
+        mFRm_ERRORLINE(288);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_OSRTCTime_sub(OSRTCTime* time) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (time->year < GAME_YEAR_MIN || time->year > GAME_YEAR_MAX) {
-    res = TRUE;
-  }
-
-  if (time->month == 0 || time->month > lbRTC_MONTHS_MAX) {
-    res = TRUE;
-  }
-
-  if (time->day == 0 || time->day > 31) {
-    res = TRUE;
-  }
-
-  if (time->weekday > lbRTC_SATURDAY) {
-    res = TRUE;
-  }
-
-  if (time->hour > 23) {
-    res = TRUE;
-  }
-
-  if (time->min > 59) {
-    res = TRUE;
-  }
-
-  if (time->sec > 59) {
-    res = TRUE;
-  }
-
-  if (res == TRUE) {
-    if (time->year == 0 && time->month == 0 && time->day == 0 && time->weekday == 0 && time->hour == 0 && time->min == 0 && time->sec == 0) {
-      res = FALSE;
+    if (time->year < GAME_YEAR_MIN || time->year > GAME_YEAR_MAX) {
+        res = TRUE;
     }
-    else if (mTM_AreTimesEqual(time, &mTM_rtcTime_clear_code) == TRUE) {
-      res = FALSE;
-    }
-    else {
-      mFRm_ERRORLINE(379);
-    }
-  }
 
-  return res;
+    if (time->month == 0 || time->month > lbRTC_MONTHS_MAX) {
+        res = TRUE;
+    }
+
+    if (time->day == 0 || time->day > 31) {
+        res = TRUE;
+    }
+
+    if (time->weekday > lbRTC_SATURDAY) {
+        res = TRUE;
+    }
+
+    if (time->hour > 23) {
+        res = TRUE;
+    }
+
+    if (time->min > 59) {
+        res = TRUE;
+    }
+
+    if (time->sec > 59) {
+        res = TRUE;
+    }
+
+    if (res == TRUE) {
+        if (time->year == 0 && time->month == 0 && time->day == 0 && time->weekday == 0 && time->hour == 0 &&
+            time->min == 0 && time->sec == 0) {
+            res = FALSE;
+        } else if (mTM_AreTimesEqual(time, &mTM_rtcTime_clear_code) == TRUE) {
+            res = FALSE;
+        } else {
+            mFRm_ERRORLINE(379);
+        }
+    }
+
+    return res;
 }
 
 static int sChk_lbRTC_ymd_c_sub(lbRTC_ymd_c* ymd) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (ymd->year < GAME_YEAR_MIN || ymd->year > GAME_YEAR_MAX) {
-    res = TRUE;
-  }
-
-  if (ymd->month == 0 || ymd->month > lbRTC_MONTHS_MAX) {
-    res = TRUE;
-  }
-
-  if (ymd->day == 0 || ymd->day > 31) {
-    res = TRUE;
-  }
-
-  if (res == TRUE) {
-    if (ymd->year == 0 && ymd->month == 0 && ymd->day == 0) {
-      res = FALSE;
+    if (ymd->year < GAME_YEAR_MIN || ymd->year > GAME_YEAR_MAX) {
+        res = TRUE;
     }
-    else if (ymd->year == mTM_rtcTime_ymd_clear_code.year && ymd->month == mTM_rtcTime_ymd_clear_code.month && ymd->day == mTM_rtcTime_ymd_clear_code.day) {
-      res = FALSE;
-    }
-    else {
-      mFRm_ERRORLINE(464);
-    }
-  }
 
-  return res;
+    if (ymd->month == 0 || ymd->month > lbRTC_MONTHS_MAX) {
+        res = TRUE;
+    }
+
+    if (ymd->day == 0 || ymd->day > 31) {
+        res = TRUE;
+    }
+
+    if (res == TRUE) {
+        if (ymd->year == 0 && ymd->month == 0 && ymd->day == 0) {
+            res = FALSE;
+        } else if (ymd->year == mTM_rtcTime_ymd_clear_code.year && ymd->month == mTM_rtcTime_ymd_clear_code.month &&
+                   ymd->day == mTM_rtcTime_ymd_clear_code.day) {
+            res = FALSE;
+        } else {
+            mFRm_ERRORLINE(464);
+        }
+    }
+
+    return res;
 }
 
 static int sChk_Mail_nm_c_sub(Mail_nm_c* mail_name, int depth) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (mail_name->type >= mMl_NAME_TYPE_NUM && mail_name->type != mMl_NAME_TYPE_CLEAR) {
-    mFRm_ERRORLINE(519);
-    res = TRUE;
-  }
+    if (mail_name->type >= mMl_NAME_TYPE_NUM && mail_name->type != mMl_NAME_TYPE_CLEAR) {
+        mFRm_ERRORLINE(519);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_Mail_hdr_c_sub(Mail_hdr_c* mail_header, int depth) {
-  int res = FALSE;
-  
-  res |= sChk_Mail_nm_c_sub(&mail_header->recipient, depth + 1);
-  res |= sChk_Mail_nm_c_sub(&mail_header->sender, depth + 1);
-  
-  return res;
+    int res = FALSE;
+
+    res |= sChk_Mail_nm_c_sub(&mail_header->recipient, depth + 1);
+    res |= sChk_Mail_nm_c_sub(&mail_header->sender, depth + 1);
+
+    return res;
 }
 
 static int sChk_font_sub(u8* font_p) {
-  int font = *font_p;
-  int res = FALSE;
+    int font = *font_p;
+    int res = FALSE;
 
-  /* This check seems wrong lol */
-  if (font != 0xFF && (font >= 0xFF || font >= mMl_FONT_NUM || font < mMl_FONT_0)) {
-    mFRm_ERRORLINE(612);
-    res = TRUE;
-  }
+    /* This check seems wrong lol */
+    if (font != 0xFF && (font >= 0xFF || font >= mMl_FONT_NUM || font < mMl_FONT_RECV)) {
+        mFRm_ERRORLINE(612);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_header_back_start_sub(u8* header_back_start_p) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (*header_back_start_p > MAIL_HEADER_LEN) {
-    mFRm_ERRORLINE(657);
-    res = TRUE;
-  }
+    if (*header_back_start_p > MAIL_HEADER_LEN) {
+        mFRm_ERRORLINE(657);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_paper_type_sub(u8* paper_type) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (*paper_type > (ITM_PAPER63 - ITM_PAPER00)) {
-    mFRm_ERRORLINE(701);
-    res = TRUE;
-  }
+    if (*paper_type > (ITM_PAPER63 - ITM_PAPER00)) {
+        mFRm_ERRORLINE(701);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_Mail_ct_c_sub(Mail_ct_c* contents, int depth) {
-  int res = sChk_font_sub(&contents->font);
-  
-  res |= sChk_header_back_start_sub(&contents->header_back_start);
+    int res = sChk_font_sub(&contents->font);
 
-  if (contents->mail_type > mMl_TYPE_12) {
-    mFRm_ERRORLINE(766);
-    res = TRUE;
-  }
+    res |= sChk_header_back_start_sub(&contents->header_back_start);
 
-  res |= sChk_paper_type_sub(&contents->paper_type);
+    if (contents->mail_type > mMl_TYPE_NUM) {
+        mFRm_ERRORLINE(766);
+        res = TRUE;
+    }
 
-  return res;
+    res |= sChk_paper_type_sub(&contents->paper_type);
+
+    return res;
 }
 
 static int sChk_Mail_c_sub(Mail_c* mail, int depth) {
-  int res = FALSE;
-    
-  res |= sChk_Mail_hdr_c_sub(&mail->header, depth + 1);
-  res |= sChk_ItemFG_sub(mail->present);
-  res |= sChk_Mail_ct_c_sub(&mail->content, depth + 1);
+    int res = FALSE;
 
-  return res;
+    res |= sChk_Mail_hdr_c_sub(&mail->header, depth + 1);
+    res |= sChk_ItemFG_sub(mail->present);
+    res |= sChk_Mail_ct_c_sub(&mail->content, depth + 1);
+
+    return res;
 }
 
 static int sChk_mHm_rmsz_c_sub(mHm_rmsz_c* room_size, int depth) {
-  lbRTC_ymd_c order_date_copy;
-  int res;
+    lbRTC_ymd_c order_date_copy;
+    int res;
 
-  order_date_copy.day = room_size->upgrade_order_date.day;
-  order_date_copy.month = room_size->upgrade_order_date.month;
-  order_date_copy.year = room_size->upgrade_order_date.year;
+    order_date_copy.day = room_size->upgrade_order_date.day;
+    order_date_copy.month = room_size->upgrade_order_date.month;
+    order_date_copy.year = room_size->upgrade_order_date.year;
 
-  res = sChk_lbRTC_ymd_c_sub(&order_date_copy);
+    res = sChk_lbRTC_ymd_c_sub(&order_date_copy);
 
-  if (room_size->size >= mHm_HOMESIZE_NUM) {
-    mFRm_ERRORLINE(880);
-    res = TRUE;
-  }
+    if (room_size->size >= mHm_HOMESIZE_NUM) {
+        mFRm_ERRORLINE(880);
+        res = TRUE;
+    }
 
-  if (room_size->next_size >= mHm_HOMESIZE_NUM) {
-    mFRm_ERRORLINE(894);
-    res = TRUE;
-  }
+    if (room_size->next_size >= mHm_HOMESIZE_NUM) {
+        mFRm_ERRORLINE(894);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_Haniwa_Item_c_sub(Haniwa_Item_c* haniwa_item, int depth) {
-  int res = sChk_ItemFG_sub(haniwa_item->item);
+    int res = sChk_ItemFG_sub(haniwa_item->item);
 
-  if (haniwa_item->exchange_type > mHm_HANIWA_TRADE_3) {
-    mFRm_ERRORLINE(947);
-    res = TRUE;
-  }
+    if (haniwa_item->exchange_type > mHm_HANIWA_TRADE_3) {
+        mFRm_ERRORLINE(947);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_Haniwa_c_sub(Haniwa_c* haniwa, int depth) {
-  int i;
-  int res = FALSE;
+    int i;
+    int res = FALSE;
 
-  for (i = 0; i < HANIWA_ITEM_HOLD_NUM; i++) {
-    res |= sChk_Haniwa_Item_c_sub(haniwa->items + i, depth + 1);
-  }
+    for (i = 0; i < HANIWA_ITEM_HOLD_NUM; i++) {
+        res |= sChk_Haniwa_Item_c_sub(haniwa->items + i, depth + 1);
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_outlook_pal_sub(u8 outlook_pal) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (outlook_pal >= mHm_OUTLOOK_PAL_NUM) {
-    mFRm_ERRORLINE(1035);
-    res = TRUE;
-  }
+    if (outlook_pal >= mHm_OUTLOOK_PAL_NUM) {
+        mFRm_ERRORLINE(1035);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_mHm_goki_c_sub(mHm_goki_c* goki, int depth) {
-  return sChk_OSRTCTime_sub(&goki->time);
+    return sChk_OSRTCTime_sub(&goki->time);
 }
 
 static int sChk_mHm_hs_c_sub(mHm_hs_c* house, int depth) {
-  int i;
-  int res = FALSE;
+    int i;
+    int res = FALSE;
 
-  res |= sChk_lbRTC_ymd_c_sub(&house->hra_mark_time);
-  res |= sChk_mHm_rmsz_c_sub(&house->size_info, depth + 1);
-  res |= sChk_outlook_pal_sub(house->outlook_pal);
-  res |= sChk_outlook_pal_sub(house->ordered_outlook_pal);
-  res |= sChk_outlook_pal_sub(house->next_outlook_pal);
+    res |= sChk_lbRTC_ymd_c_sub(&house->hra_mark_time);
+    res |= sChk_mHm_rmsz_c_sub(&house->size_info, depth + 1);
+    res |= sChk_outlook_pal_sub(house->outlook_pal);
+    res |= sChk_outlook_pal_sub(house->ordered_outlook_pal);
+    res |= sChk_outlook_pal_sub(house->next_outlook_pal);
 
-  for (i = 0; i < HOME_MAILBOX_SIZE; i++) {
-    res |= sChk_Mail_c_sub(house->mailbox + i, depth + 1);
-  }
+    for (i = 0; i < HOME_MAILBOX_SIZE; i++) {
+        res |= sChk_Mail_c_sub(house->mailbox + i, depth + 1);
+    }
 
-  res |= sChk_Haniwa_c_sub(&house->haniwa, depth + 1);
-  res |= sChk_mHm_goki_c_sub(&house->goki, depth + 1);
+    res |= sChk_Haniwa_c_sub(&house->haniwa, depth + 1);
+    res |= sChk_mHm_goki_c_sub(&house->goki, depth + 1);
 
-  return res;
+    return res;
 }
 
 static int sChk_AnmPersonalID_c_sub(AnmPersonalID_c* pid, int depth) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (ITEM_NAME_GET_TYPE(pid->npc_id) != NAME_TYPE_NPC && pid->npc_id != EMPTY_NO) {
-    mFRm_ERRORLINE(1200);
-    res = TRUE;
-  }
+    if (ITEM_NAME_GET_TYPE(pid->npc_id) != NAME_TYPE_NPC && pid->npc_id != EMPTY_NO) {
+        mFRm_ERRORLINE(1200);
+        res = TRUE;
+    }
 
-  if (pid->looks > mNpc_LOOKS_NUM) {
-    mFRm_ERRORLINE(1214);
-    res = TRUE;
-  }
+    if (pid->looks > mNpc_LOOKS_NUM) {
+        mFRm_ERRORLINE(1214);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_Anmplmail_c_sub(Anmplmail_c* animal_player_mail, int depth) {
-  int res = FALSE;
+    int res = FALSE;
 
-  res |= sChk_font_sub(&animal_player_mail->font);
-  res |= sChk_paper_type_sub(&animal_player_mail->paper_type);
-  res |= sChk_ItemFG_sub(animal_player_mail->present);
-  res |= sChk_header_back_start_sub(&animal_player_mail->header_back_start);
-  res |= sChk_lbRTC_ymd_c_sub(&animal_player_mail->date);
+    res |= sChk_font_sub(&animal_player_mail->font);
+    res |= sChk_paper_type_sub(&animal_player_mail->paper_type);
+    res |= sChk_ItemFG_sub(animal_player_mail->present);
+    res |= sChk_header_back_start_sub(&animal_player_mail->header_back_start);
+    res |= sChk_lbRTC_ymd_c_sub(&animal_player_mail->date);
 
-  return res;
+    return res;
 }
 
 static int sChk_Anmmem_c_sub(Anmmem_c* animal_memory, int depth) {
-  int res = FALSE;
+    int res = FALSE;
 
-  res |= sChk_OSRTCTime_sub(&animal_memory->last_speak_time);
-  res |= sChk_Anmplmail_c_sub(&animal_memory->letter, depth + 1);
+    res |= sChk_OSRTCTime_sub(&animal_memory->last_speak_time);
+    res |= sChk_Anmplmail_c_sub(&animal_memory->letter, depth + 1);
 
-  return res;
+    return res;
 }
 
 static int sChk_Anmhome_c_sub(Anmhome_c* animal_home, int depth) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (animal_home->type_unused > 5) {
-    mFRm_ERRORLINE(1365);
-    res = TRUE;
-  }
+    if (animal_home->type_unused > 5) {
+        mFRm_ERRORLINE(1365);
+        res = TRUE;
+    }
 
-  res |= sChk_block_num_sub(animal_home->block_x, animal_home->block_z);
-  res |= sChk_ut_num_sub(animal_home->ut_x, animal_home->ut_z);
+    res |= sChk_block_num_sub(animal_home->block_x, animal_home->block_z);
+    res |= sChk_ut_num_sub(animal_home->ut_x, animal_home->ut_z);
 
-  return res;
+    return res;
 }
 
 static int sChk_Animal_c_sub(Animal_c* animal, int depth) {
-  int i;
-  int res = FALSE;
+    int i;
+    int res = FALSE;
 
-  res |= sChk_AnmPersonalID_c_sub(&animal->id, depth + 1);
+    res |= sChk_AnmPersonalID_c_sub(&animal->id, depth + 1);
 
-  for (i = 0; i < ANIMAL_MEMORY_NUM; i++) {
-    res |= sChk_Anmmem_c_sub(animal->memories + i, depth + 1);
-  }
+    for (i = 0; i < ANIMAL_MEMORY_NUM; i++) {
+        res |= sChk_Anmmem_c_sub(animal->memories + i, depth + 1);
+    }
 
-  res |= sChk_Anmhome_c_sub(&animal->home_info, depth + 1);
+    res |= sChk_Anmhome_c_sub(&animal->home_info, depth + 1);
 
-  if (animal->mood >= mNpc_MOOD_NUM) {
-    mFRm_ERRORLINE(1458);
-    res = TRUE;
-  }
+    if (animal->mood >= mNpc_MOOD_NUM) {
+        mFRm_ERRORLINE(1458);
+        res = TRUE;
+    }
 
-  res |= sChk_cloth_sub(animal->cloth);
+    res |= sChk_cloth_sub(animal->cloth);
 
-  if ((animal->is_home & ~1)) {
-    mFRm_ERRORLINE(1474);
-    res = TRUE;
-  }
+    if ((animal->is_home & ~1)) {
+        mFRm_ERRORLINE(1474);
+        res = TRUE;
+    }
 
-  res |= sChk_cloth_sub(animal->present_cloth);
+    res |= sChk_cloth_sub(animal->present_cloth);
 
-  return res;
+    return res;
 }
 
 static int sChk_Kabu_price_c_sub(Kabu_price_c* kabu_price, int depth) {
-  int res = FALSE;
-  int i;
+    int res = FALSE;
+    int i;
 
-  for (i = 0; i < lbRTC_WEEK; i++) {
-    if (kabu_price->daily_price[i] < Kabu_PRICE_MIN || kabu_price->daily_price[i] > Kabu_PRICE_MAX) {
-      mFRm_ERRORLINE(1531);
-      res = TRUE;
+    for (i = 0; i < lbRTC_WEEK; i++) {
+        if (kabu_price->daily_price[i] < Kabu_PRICE_MIN || kabu_price->daily_price[i] > Kabu_PRICE_MAX) {
+            mFRm_ERRORLINE(1531);
+            res = TRUE;
 
-      break;
+            break;
+        }
     }
-  }
 
-  if (kabu_price->trade_market >= Kabu_TRADE_MARKET_TYPE_NUM) {
-    mFRm_ERRORLINE(1554);
-    res = TRUE;
-  }
+    if (kabu_price->trade_market >= Kabu_TRADE_MARKET_TYPE_NUM) {
+        mFRm_ERRORLINE(1554);
+        res = TRUE;
+    }
 
-  res |= sChk_OSRTCTime_sub(&kabu_price->update_time);
+    res |= sChk_OSRTCTime_sub(&kabu_price->update_time);
 
-  return res;
+    return res;
 }
 
 static int sChk_PostOffice_c_sub(PostOffice_c* post_office, int depth) {
-  int i;
-  int res = FALSE;
+    int i;
+    int res = FALSE;
 
-  if (post_office->keep_mail_sum_players < 0 || post_office->keep_mail_sum_players > mPO_KEEP_MAIL_PLAYERS_MAX) {
-    mFRm_ERRORLINE(1617);
-    res = TRUE;
-  }
+    if (post_office->keep_mail_sum_players < 0 || post_office->keep_mail_sum_players > mPO_KEEP_MAIL_PLAYERS_MAX) {
+        mFRm_ERRORLINE(1617);
+        res = TRUE;
+    }
 
-  if (post_office->keep_mail_sum_npcs < 0) {
-    mFRm_ERRORLINE(1632);
-    res = TRUE;
-  }
+    if (post_office->keep_mail_sum_npcs < 0) {
+        mFRm_ERRORLINE(1632);
+        res = TRUE;
+    }
 
-  if (post_office->mail_recipient_flags & (u16)(~0b1111)) {
-    mFRm_ERRORLINE(1647);
-    res = TRUE;
-  }
+    if (post_office->mail_recipient_flags & (u16)(~0b1111)) {
+        mFRm_ERRORLINE(1647);
+        res = TRUE;
+    }
 
-  for (i = 0; i < mPO_MAIL_STORAGE_SIZE; i++) {
-    res |= sChk_Mail_c_sub(post_office->mail + i, depth + 1);
-  }
+    for (i = 0; i < mPO_MAIL_STORAGE_SIZE; i++) {
+        res |= sChk_Mail_c_sub(post_office->mail + i, depth + 1);
+    }
 
-  res |= sChk_Mail_c_sub(&post_office->leaflet, depth + 1);
-  res |= sChk_Mail_c_sub(&post_office->event_leaflet, depth + 1);
+    res |= sChk_Mail_c_sub(&post_office->leaflet, depth + 1);
+    res |= sChk_Mail_c_sub(&post_office->event_leaflet, depth + 1);
 
-  if (post_office->leaflet_recipient_flags.leaflet_flags & (u16)(~0b1111)) {
-    mFRm_ERRORLINE(1668);
-    res = TRUE;
-  }
+    if (post_office->leaflet_recipient_flags.leaflet_flags & (u16)(~0b1111)) {
+        mFRm_ERRORLINE(1668);
+        res = TRUE;
+    }
 
-  if (post_office->leaflet_recipient_flags.event_flags & (u16)(~0b1111)) {
-    mFRm_ERRORLINE(1682);
-    res = TRUE;
-  }
+    if (post_office->leaflet_recipient_flags.event_flags & (u16)(~0b1111)) {
+        mFRm_ERRORLINE(1682);
+        res = TRUE;
+    }
 
-  res |= sChk_OSRTCTime_sub(&post_office->delivery_time);
+    res |= sChk_OSRTCTime_sub(&post_office->delivery_time);
 
-  return res;
+    return res;
 }
 
 static int sChk_PoliceBox_c_sub(PoliceBox_c* police_box, int depth) {
-  int i;
-  int res = FALSE;
+    int i;
+    int res = FALSE;
 
-  for (i = 0; i < mPB_POLICE_BOX_ITEM_STORAGE_COUNT; i++) {
-    res |= sChk_ItemFG_sub(police_box->keep_items[i]);
-  }
+    for (i = 0; i < mPB_POLICE_BOX_ITEM_STORAGE_COUNT; i++) {
+        res |= sChk_ItemFG_sub(police_box->keep_items[i]);
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_Config_c_sub(Config_c* config, int depth) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (config->sound_mode > Config_SOUND_MODE_NUM) {
-    mFRm_ERRORLINE(1775);
-    res = TRUE;
-  }
+    if (config->sound_mode > Config_SOUND_MODE_NUM) {
+        mFRm_ERRORLINE(1775);
+        res = TRUE;
+    }
 
-  if (config->voice_mode > Config_VOICE_MODE_NUM) {
-    mFRm_ERRORLINE(1789);
-    res = TRUE;
-  }
+    if (config->voice_mode > Config_VOICE_MODE_NUM) {
+        mFRm_ERRORLINE(1789);
+        res = TRUE;
+    }
 
-  if (config->vibration_enabled & (~1)) {
-    mFRm_ERRORLINE(1803);
-    res = TRUE;
-  }
+    if (config->vibration_enabled & (~1)) {
+        mFRm_ERRORLINE(1803);
+        res = TRUE;
+    }
 
-  return res;
+    return res;
 }
 
 static int sChk_mMsr_time_c_sub(mMsr_time_c* mushroom_time, int depth) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (mushroom_time->year < GAME_YEAR_MIN && mushroom_time->year > GAME_YEAR_MAX) {
-    res = TRUE;
-  }
-
-  if (mushroom_time->month == 0 || mushroom_time->month > lbRTC_DECEMBER) {
-    res = TRUE;
-  }
-
-  if (mushroom_time->day == 0 || mushroom_time->day > 31) {
-    res = TRUE;
-  }
-
-  if (mushroom_time->hour > 23) {
-    res = TRUE;
-  }
-
-  if (res == TRUE) {
-    if (
-      mushroom_time->year == 0 &&
-      mushroom_time->month == 0 &&
-      mushroom_time->day == 0 &&
-      mushroom_time->hour == 0 &&
-      mushroom_time->hour_quarter == 0
-    ) {
-      res = FALSE;
+    if (mushroom_time->year < GAME_YEAR_MIN && mushroom_time->year > GAME_YEAR_MAX) {
+        res = TRUE;
     }
-    else {
-      mFRm_ERRORLINE(1876);
-    }
-  }
 
-  return res;
+    if (mushroom_time->month == 0 || mushroom_time->month > lbRTC_DECEMBER) {
+        res = TRUE;
+    }
+
+    if (mushroom_time->day == 0 || mushroom_time->day > 31) {
+        res = TRUE;
+    }
+
+    if (mushroom_time->hour > 23) {
+        res = TRUE;
+    }
+
+    if (res == TRUE) {
+        if (mushroom_time->year == 0 && mushroom_time->month == 0 && mushroom_time->day == 0 &&
+            mushroom_time->hour == 0 && mushroom_time->hour_quarter == 0) {
+            res = FALSE;
+        } else {
+            mFRm_ERRORLINE(1876);
+        }
+    }
+
+    return res;
 }
 
 static int sChk_MaskCat_c_sub(MaskCat_c* mask_cat, int depth) {
-  int valid_cloth;
-  int res = FALSE;
+    int valid_cloth;
+    int res = FALSE;
 
-  if (mask_cat->palette_no >= mNW_PALETTE_NUM) {
-    mFRm_ERRORLINE(1935);
-    res = TRUE;
-  }
+    if (mask_cat->palette_no >= mNW_PALETTE_NUM) {
+        mFRm_ERRORLINE(1935);
+        res = TRUE;
+    }
 
-  /* This is definitely a macro */
-  valid_cloth = (mActor_name_t)(mask_cat->cloth_no + ITM_CLOTH_START) >= ITM_CLOTH_START && (mActor_name_t)(mask_cat->cloth_no + ITM_CLOTH_START) < ITM_CLOTH_END;
-  if (valid_cloth == FALSE) {
-    mFRm_ERRORLINE(1949);
-    res = TRUE;
-  }
+    /* This is definitely a macro */
+    valid_cloth = (mActor_name_t)(mask_cat->cloth_no + ITM_CLOTH_START) >= ITM_CLOTH_START &&
+                  (mActor_name_t)(mask_cat->cloth_no + ITM_CLOTH_START) < ITM_CLOTH_END;
+    if (valid_cloth == FALSE) {
+        mFRm_ERRORLINE(1949);
+        res = TRUE;
+    }
 
-  if (mask_cat->talk_idx > mMC_TALK_IDX_MAX) {
-    mFRm_ERRORLINE(1963);
-    res = TRUE;
-  }
+    if (mask_cat->talk_idx > mMC_TALK_IDX_MAX) {
+        mFRm_ERRORLINE(1963);
+        res = TRUE;
+    }
 
-  res |= sChk_OSRTCTime_sub(&mask_cat->time);
+    res |= sChk_OSRTCTime_sub(&mask_cat->time);
 
-  return res;
+    return res;
 }
 
 static int sChk_check_save_data() {
-  int res = FALSE;
-  Save_t* save = Common_GetPointer(save.save);
-  int i;
+    int res = FALSE;
+    Save_t* save = Common_GetPointer(save.save);
+    int i;
 
-  for (i = 0; i < mHS_HOUSE_NUM; i++) {
-    res |= sChk_mHm_hs_c_sub(save->homes + i, 1);
-  }
+    for (i = 0; i < mHS_HOUSE_NUM; i++) {
+        res |= sChk_mHm_hs_c_sub(save->homes + i, 1);
+    }
 
-  for (i = 0; i < ANIMAL_NUM_MAX; i++) {
-    res |= sChk_Animal_c_sub(save->animals + i, 1);
-  }
+    for (i = 0; i < ANIMAL_NUM_MAX; i++) {
+        res |= sChk_Animal_c_sub(save->animals + i, 1);
+    }
 
-  res |= sChk_AnmPersonalID_c_sub(&save->last_removed_animal_id, 1);
-  res |= sChk_Kabu_price_c_sub(&save->kabu_price_schedule, 1);
-  res |= sChk_fruit_sub(save->fruit);
-  res |= sChk_OSRTCTime_sub(&save->all_grow_renew_time);
-  res |= sChk_PostOffice_c_sub(&save->post_office, 1);
-  res |= sChk_PoliceBox_c_sub(&save->police_box, 1);
-  res |= sChk_Config_c_sub(&save->config, 1);
-  res |= sChk_lbRTC_ymd_c_sub(&save->renew_time);
-  res |= sChk_OSRTCTime_sub(&save->last_grow_time);
-  res |= sChk_mMsr_time_c_sub(&save->mushroom_time, 1);
-  res |= sChk_lbRTC_ymd_c_sub(&save->_021322);
-  res |= sChk_OSRTCTime_sub(&save->_02136E);
-  res |= sChk_OSRTCTime_sub(&save->treasure_buried_time);
-  res |= sChk_OSRTCTime_sub(&save->treasure_checked_time);
-  res |= sChk_lbRTC_ymd_c_sub(&save->force_remove_date);
-  res |= sChk_MaskCat_c_sub(&save->mask_cat, 1);
+    res |= sChk_AnmPersonalID_c_sub(&save->last_removed_animal_id, 1);
+    res |= sChk_Kabu_price_c_sub(&save->kabu_price_schedule, 1);
+    res |= sChk_fruit_sub(save->fruit);
+    res |= sChk_OSRTCTime_sub(&save->all_grow_renew_time);
+    res |= sChk_PostOffice_c_sub(&save->post_office, 1);
+    res |= sChk_PoliceBox_c_sub(&save->police_box, 1);
+    res |= sChk_Config_c_sub(&save->config, 1);
+    res |= sChk_lbRTC_ymd_c_sub(&save->renew_time);
+    res |= sChk_OSRTCTime_sub(&save->last_grow_time);
+    res |= sChk_mMsr_time_c_sub(&save->mushroom_time, 1);
+    res |= sChk_lbRTC_ymd_c_sub(&save->_021322);
+    res |= sChk_OSRTCTime_sub(&save->_02136E);
+    res |= sChk_OSRTCTime_sub(&save->treasure_buried_time);
+    res |= sChk_OSRTCTime_sub(&save->treasure_checked_time);
+    res |= sChk_lbRTC_ymd_c_sub(&save->force_remove_date);
+    res |= sChk_MaskCat_c_sub(&save->mask_cat, 1);
 
-  return res;
+    return res;
 }

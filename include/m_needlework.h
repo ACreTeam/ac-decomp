@@ -42,6 +42,13 @@ enum {
   mNW_PALETTE_NUM
 };
 
+enum {
+  mNW_TYPE_MANEKIN,
+  mNW_TYPE_UMBRELLA,
+  
+  mNW_TYPE_NUM
+};
+
 typedef struct original_texture_s {
   u8 data[mNW_DESIGN_TEX_SIZE];
 } ATTRIBUTE_ALIGN(32) mNW_original_tex_c;

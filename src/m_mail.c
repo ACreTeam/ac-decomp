@@ -199,7 +199,7 @@ extern int mMl_check_send_mail(Mail_c* mail) {
 extern int mMl_check_set_present_myself(Mail_c* mail) {
     u8 font = mail->content.font;
 
-    if (font == mMl_FONT_SEND || font == mMl_FONT_3 || font == mMl_FONT_4) {
+    if (font == mMl_FONT_SEND || font == mMl_FONT_RECV_PLAYER_PRESENT || font == mMl_FONT_RECV_PLAYER_PRESENT_READ) {
         return TRUE;
     }
 
@@ -235,7 +235,7 @@ static void mMl_get_mail_to_player_com(Mail_c* mail, PersonalID_c* recipient_pid
 
     mMl_clear_mail(mail);
     (*get_proc[proc_type])(mail, mail_no);
-    mail->content.font = mMl_FONT_0;
+    mail->content.font = mMl_FONT_RECV;
     mail->content.mail_type = mail_type;
 
     mPr_CopyPersonalID(&mail->header.recipient.personalID, recipient_pid);

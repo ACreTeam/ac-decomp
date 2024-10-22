@@ -454,7 +454,7 @@ static void mFR_GetFishPresentMail(mFR_record_c* record, Mail_c* mail) {
   );
 
   mail->content.header_back_start = header_back_start;
-  mail->content.font = mMl_FONT_0;
+  mail->content.font = mMl_FONT_RECV;
   mail->content.mail_type = mMl_TYPE_FISHING_CONTENST;
   mail->present = present;
   mail->content.paper_type = 15; // deep sea paper

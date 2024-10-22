@@ -57,7 +57,7 @@ static void aSL_SetShopRenewalChirashi_Notice(int shop_level, lbRTC_time_c* time
             mHandbill_Load_HandbillFromRom(content->header, &header_back_start, content->footer, content->body,
                                            renewal_chirashi_bunmen[shop_level & 3]);
             content->header_back_start = header_back_start;
-            content->font = mMl_FONT_0;
+            content->font = mMl_FONT_RECV;
             content->paper_type = (u8)ITM_PAPER55;
             content->mail_type = mMl_TYPE_SHOP_SALE_LEAFLET;
             mPr_CopyPersonalID(&mail.header.recipient.personalID, &Save_Get(private_data[player_no]).player_ID);

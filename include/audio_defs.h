@@ -17,16 +17,19 @@ extern "C" {
 #define SE_FLAG_15(id) ((id) | 0x8000)
 
 // TODO: Make the rest of Sound Effects with parameters
-#define SE_REGISTER MONO(0x50)
+#define SE_REGISTER MONO(NA_SE_REGISTER)
 
 typedef enum audio_sound_effects {
     NA_SE_START,
     NA_SE_CURSOL,
     NA_SE_MENU_EXIT,
 
+    NA_SE_3 = 3,
+
     NA_SE_ZOOMUP = 4,
     NA_SE_ZOOMDOWN_SHORT,
 
+    NA_SE_A = 0xA,
     NA_SE_PAGE_OKURI = 0xB,
 
     NA_SE_SENTAKU_OPEN,
@@ -39,8 +42,12 @@ typedef enum audio_sound_effects {
     NA_SE_25 = 0x25,
     NA_SE_26 = 0x26,
 
+    NA_SE_2A = 0x2A,
+
     NA_SE_MENU_PAUSE = 0x30,
     NA_SE_31 = 0x31,
+    NA_SE_32 = 0x32,
+    NA_SE_33 = 0x33,
 
     NA_SE_DRAWER_SHUT = 0x3A,
 
@@ -52,6 +59,8 @@ typedef enum audio_sound_effects {
     NA_SE_COIN,
     NA_SE_TEMOCHI_KAZAGURUMA,
 
+    NA_SE_REGISTER = 0x50,
+
     NA_SE_52 = 0x52,
 
     NA_SE_ITEM_HORIDASHI = 0x57,
@@ -60,7 +69,8 @@ typedef enum audio_sound_effects {
     NA_SE_TOOL_FURI = 0x5A, // swing?
     NA_SE_AMI_HIT = 0x5C,
     NA_SE_TOOL_GET,
-
+    NA_SE_5E = 0x5E,
+    NA_SE_5F = 0x5F,
     NA_SE_60 = 0x60,
 
     NA_SE_GASAGOSO = 0x69,
@@ -147,6 +157,8 @@ typedef enum audio_sound_effects {
     NA_SE_SOFT_CHAIR_STANDUP,
     NA_SE_HARD_CHAIR_STANDUP,
 
+    NA_SE_426 = 0x426,
+
     NA_SE_BUBU_CHAIR_STANDUP = 0x429,
     NA_SE_JUMP,
     NA_SE_LANDING,
@@ -158,13 +170,20 @@ typedef enum audio_sound_effects {
 
     NA_SE_UMBRELLA_ROTATE = 0x432,
 
+    NA_SE_435 = 0x435,
+    NA_SE_436 = 0x436,
+
     NA_SE_KARABURI = 0x43A,
 
     NA_SE_ROD_STROKE_SMALL = 0x445,
+    NA_SE_446 = 0x446,
 
     NA_SE_SCOOP_TREE_HIT = 0x448,
     NA_SE_SCOOP_ITEM_HIT,
     NA_SE_AXE_BALL_HIT,
+
+    NA_SE_45E = 0x45E,
+    NA_SE_45F = 0x45F,
 
     NA_SE_461 = 0x461,
 

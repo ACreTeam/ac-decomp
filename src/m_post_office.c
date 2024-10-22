@@ -164,7 +164,7 @@ static void mPO_delivery_mail_with_item(Mail_c* mail, int mail_no, mActor_name_t
     mHandbill_Load_HandbillFromRom(mail->content.header, &header_back_start, mail->content.footer, mail->content.body,
                                    mail_no);
 
-    mail->content.font = mMl_FONT_0;
+    mail->content.font = mMl_FONT_RECV;
     mail->content.header_back_start = header_back_start;
     mail->content.mail_type = 7;
     mail->content.paper_type = ITM_PAPER55;

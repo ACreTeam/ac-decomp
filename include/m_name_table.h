@@ -207,6 +207,11 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define NPC_HOUSE_ID_TO_NPC_ID(house) (house + 0x9000)
 #define NPC_ID_TO_NPC_HOUSE_ID(npc) (npc - 0x9000)
 
+#define TICKET_MONTH(n) (1 + (((n) >> 3) & 0xF))
+#define TICKET_COUNT(n) (1 + ((n) & 7))
+#define WISP_COUNT(n) (ITEM_IS_WISP(n) ? (1 + (n) - ITM_SPIRIT0) : 0)
+
+#define ITEM_IS_INSECT(n) ((n) >= ITM_INSECT_START && (n) < ITM_INSECT_END)
 #define ITEM_IS_WISP(n) ((n) >= ITM_SPIRIT0 && (n) <= ITM_SPIRIT4)
 #define ITEM_IS_PAPER(n) ((n) >= ITM_PAPER_START && (n) <= (ITM_PAPER_END - 1))
 #define ITEM_IS_CLOTH(n) ((n) >= ITM_CLOTH_START && (n) < ITM_CLOTH_END)
@@ -525,6 +530,15 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITEM_IS_ISLAND_NPC_HOUSE(item) ((item) >= COTTAGE_NPC && (item) < COTTAGE_NPC_END)
 
 #define ITEM_IS_SIGNBOARD(item) ((item) >= SIGNBOARD_START && (item) <= SIGNBOARD_END)
+
+#define ITEM_IS_FLOWER_BAG(item) ((item) >= ITM_WHITE_PANSY_BAG && (item) <= ITM_YELLOW_TULIP_BAG)
+#define ITEM_IS_EXERCISE_CARD(item) ((item) >= ITM_EXCERCISE_CARD00 && (item) <= ITM_EXCERCISE_CARD12)
+#define ITEM_IS_BALLOON(item) ((item) >= ITM_BALLOON_START && (item) <= ITM_BUNNY_O_BALLOON)
+#define ITEM_IS_UMBRELLA(item) ((item) >= ITM_UMBRELLA_START && (item) <= ITM_UMBRELLA_END)
+#define ITEM_IS_UMBRELLA2(item) ((item) >= ITM_UMBRELLA_START && (item) <= ITM_MY_ORG_UMBRELLA7)
+#define ITEM_IS_MYUMBRELLA_TOOL(item) ((item) >= ITM_MY_ORG_UMBRELLA0 && (item) <= ITM_MY_ORG_UMBRELLA7)
+#define ITEM_IS_SCOOP(item) ((item) >= ITM_SHOVEL && (item) <= ITM_SHOVEL)
+#define ITEM_IS_GOLD_SCOOP(item) ((item) >= ITM_GOLDEN_SHOVEL && (item) <= ITM_GOLDEN_SHOVEL)
 
 #define BG_CATEGORY 0
 #define ENV_CATEGORY 8

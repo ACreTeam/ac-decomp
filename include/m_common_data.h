@@ -356,6 +356,19 @@ extern common_data_t common_data;
 #define Get_Island() (Save_Get(island))
 #define Get_Island_Villager() (Get_Island().animal)
 
+#define GetRoomMusicBox() (Save_Get(scene_no) == SCENE_COTTAGE_MY \
+                             ? Save_Get(island).cottage.music_box \
+                             : Save_Get(homes[mHS_get_arrange_idx(Common_Get(player_no))]).music_box)
+#define ChkMusicBox(box, n) (((box)[((n) / 32) & 1] >> ((n) & 31)) & 1)
+#define SetMusicBox(box, n) ((box)[((n) / 32) & 1] |= (1 << ((n) & 31)))
+#define ClrMusicBox(box, n) ((box)[((n) / 32) & 1] &= ~(u32)(1 << ((n) & 31)))
+#define ChkRoomMusicBox(n) ChkMusicBox(GetRoomMusicBox(), n)
+#define SetRoomMusicBox(n) SetMusicBox(GetRoomMusicBox(), n)
+#define ClrRoomMusicBox(n) ClrMusicBox(GetRoomMusicBox(), n)
+
+#define CLIP(n) (Common_Get(clip).n)
+#define aMR_CLIP (Common_Get(clip).my_room_clip)
+
 extern void common_data_reinit();
 extern void common_data_init();
 extern void common_data_clear();

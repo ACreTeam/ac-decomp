@@ -86,7 +86,7 @@ static void mHD_hand_pos_get(Submenu* submenu, f32* pos, int table_type, int tab
             pos[1] += 23.0f;
         }
     } else if ((table_type == mTG_TABLE_GBA || table_type == mTG_TABLE_GBA_NW || table_type == mTG_TABLE_CARD ||
-                table_type == mTG_TABLE_GBA_NW2 || table_type == mTG_TABLE_CPORIGINAL ||
+                table_type == mTG_TABLE_CARD_NW || table_type == mTG_TABLE_CPORIGINAL ||
                 table_type == mTG_TABLE_CPORIGINAL_NW) &&
                item != EMPTY_NO) {
         pos[0] += -2.0f;
@@ -178,7 +178,7 @@ static void mHD_drop_item(Submenu* submenu, mTG_tag_c* tag, mActor_name_t* item,
         table = tag->table;
     }
 
-    if (item != NULL && *item != EMPTY_NO && table != mTG_TABLE_GBA_NW2 && table != mTG_TABLE_GBA_NW) {
+    if (item != NULL && *item != EMPTY_NO && table != mTG_TABLE_CARD_NW && table != mTG_TABLE_GBA_NW) {
         now_item = *item;
         mTG_mark_mainX(submenu, menu_info, table, table_idx, 2, 0);
 
@@ -222,11 +222,11 @@ static void mHD_drop_item(Submenu* submenu, mTG_tag_c* tag, mActor_name_t* item,
                 sAdo_SysTrgStart(NA_SE_41C);
 
                 if (mail != NULL) {
-                    if (mail->content.font == mMl_FONT_0) {
-                        mail->content.font = mMl_FONT_3;
+                    if (mail->content.font == mMl_FONT_RECV) {
+                        mail->content.font = mMl_FONT_RECV_PLAYER_PRESENT;
                         hand_ovl->info.item_cond = mPr_ITEM_COND_PRESENT;
-                    } else if (mail->content.font == mMl_FONT_2) {
-                        mail->content.font = mMl_FONT_4;
+                    } else if (mail->content.font == mMl_FONT_RECV_READ) {
+                        mail->content.font = mMl_FONT_RECV_PLAYER_PRESENT_READ;
                         hand_ovl->info.item_cond = mPr_ITEM_COND_PRESENT;
                     }
                 }
@@ -280,16 +280,16 @@ static void mHD_drop_item(Submenu* submenu, mTG_tag_c* tag, mActor_name_t* item,
 
         mTG_mark_mainX(submenu, menu_info, table, table_idx, 2, 0);
 
-        if (table == mTG_TABLE_GBA_NW || table == mTG_TABLE_GBA_NW2) {
+        if (table == mTG_TABLE_GBA_NW || table == mTG_TABLE_CARD_NW) {
             mGB_copy_image(submenu, hand_ovl->info.item, *item);
         } else if (item != NULL) {
             *item = hand_ovl->info.item;
 
             if (mail != NULL) {
-                if (mail->content.font == mMl_FONT_0) {
-                    mail->content.font = mMl_FONT_3;
-                } else if (mail->content.font == mMl_FONT_2) {
-                    mail->content.font = mMl_FONT_4;
+                if (mail->content.font == mMl_FONT_RECV) {
+                    mail->content.font = mMl_FONT_RECV_PLAYER_PRESENT;
+                } else if (mail->content.font == mMl_FONT_RECV_READ) {
+                    mail->content.font = mMl_FONT_RECV_PLAYER_PRESENT_READ;
                 }
             }
         }
@@ -452,7 +452,7 @@ static void mHD_open_sack(Submenu* submenu) {
     hand_ovl->info.next_act = mHD_ACTION_SASU;
     hand_ovl->info.wait_timer = 42;
     sAdo_SysTrgStart(MONO(NA_SE_52));
-    submenu->overlay->inventory_ovl->disp_money_change_frames = amount / 42;
+    submenu->overlay->inventory_ovl->disp_money_chg_step = amount / 42;
 }
 
 static void mHD_drop_mail(Submenu* submenu, Mail_c* mail) {
@@ -564,8 +564,8 @@ static void mHD_open_end_proc_item_type6(Submenu* submenu, int idx, int table) {
     mHD_drop_item(submenu, tag, &Save_Get(homes[menu_info->data1]).haniwa.items[idx].item, NULL);
     if (flag == TRUE) {
         submenu->overlay->tag_ovl->item_name_wait_time = 0;
-        submenu->overlay->tag_ovl->chg_tag_func_proc(submenu, tag->table, mTG_TYPE_HANIWA_PUT_ITEM, 0, tag->pos[0],
-                                                     tag->pos[1]);
+        submenu->overlay->tag_ovl->chg_tag_func_proc(submenu, tag->table, mTG_TYPE_HANIWA_PUT_ITEM, 0, tag->base_pos[0],
+                                                     tag->base_pos[1]);
     }
 }
 
@@ -589,7 +589,7 @@ static void mHD_open_end_proc_item_type17(Submenu* submenu, int idx, int table) 
                 }
                 break;
             case mTG_TABLE_GBA_NW:
-            case mTG_TABLE_GBA_NW2:
+            case mTG_TABLE_CARD_NW:
                 tmp_item = RSV_NW_ORIGINAL0 + idx;
                 break;
             case mTG_TABLE_CPORIGINAL:
@@ -664,7 +664,7 @@ static void mHD_open_end_proc_item(Submenu* submenu) {
         &mHD_open_end_proc_item_type17, /* mTG_TABLE_GBA */
         &mHD_open_end_proc_item_type17, /* mTG_TABLE_GBA_NW */
         &mHD_open_end_proc_item_type17, /* mTG_TABLE_CARD */
-        &mHD_open_end_proc_item_type17, /* mTG_TABLE_GBA_NW2 */
+        &mHD_open_end_proc_item_type17, /* mTG_TABLE_CARD_NW */
     };
 
     mSM_MenuInfo_c* menu_info;

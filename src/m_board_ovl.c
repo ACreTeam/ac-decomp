@@ -1194,7 +1194,8 @@ static void mBD_set_writing_header(Submenu* submenu, GAME* game, mSM_MenuInfo_c*
             mem_copy(tmp_header, mail_content->header, board_ovl->lengths[mBD_FIELD_HEADER]);
             len = board_ovl->lengths[mBD_FIELD_HEADER];
         } else if (mail_content->mail_type == mMl_TYPE_SHOP_SALE_LEAFLET ||
-                   mail_content->mail_type == mMl_TYPE_BROKER_SALE_LEAFLET || mail_content->mail_type == mMl_TYPE_5) {
+                   mail_content->mail_type == mMl_TYPE_BROKER_SALE_LEAFLET ||
+                   mail_content->mail_type == mMl_TYPE_OMIKUJI) {
             mem_copy(tmp_header, mail_content->header, MAIL_HEADER_LEN);
             len = MAIL_HEADER_LEN;
         } else {
