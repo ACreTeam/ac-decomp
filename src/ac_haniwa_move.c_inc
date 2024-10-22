@@ -337,12 +337,12 @@ static void aHNW_menu_open_wait(ACTOR* actor, GAME* game) {
             }
 
             case mSM_OVL_INVENTORY: {
-                mSM_open_submenu(submenu, mSM_OVL_INVENTORY, 2, arg1);
+                mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_HANIWA_ENTRUST, arg1);
                 break;
             }
 
             case mSM_OVL_NEEDLEWORK: {
-                mSM_open_submenu(submenu, mSM_OVL_NEEDLEWORK, 0, arg1);
+                mSM_open_submenu(submenu, mSM_OVL_NEEDLEWORK, mNW_OPEN_DESIGN, arg1);
                 break;
             }
         }

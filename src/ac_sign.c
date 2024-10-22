@@ -547,7 +547,7 @@ static void aSIGN_menu_open_wait(SIGN_ACTOR* sign, GAME* game) {
 
     if (mMsg_CHECK_MAIN_WAIT()) {
 
-        mSM_open_submenu(submenu_p, mSM_OVL_NEEDLEWORK, 0, player_no);
+        mSM_open_submenu(submenu_p, mSM_OVL_NEEDLEWORK, mNW_OPEN_DESIGN, player_no);
         aSIGN_setup_action(sign, aSIGN_ACTION_MENU_END_WAIT);
         mMsg_request_main_forceoff();
     }

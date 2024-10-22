@@ -1084,6 +1084,10 @@ m_map_ovl.c:
     .rodata: [0x8064B628, 0x8064B6B0]
     .data: [0x806CD9C0, 0x806CE008]
     .bss: [0x81340468, 0x81340488]
+m_needlework_ovl.c:
+    .text: [0x805E9768, 0x805EAAC0]
+    .rodata: [0x8064B778, 0x8064B7A8]
+    .data: [0x806CE350, 0x806CE3C8]
 m_notice_ovl.c:
     .text: [0x805EAAC0, 0x805EC550]
     .rodata: [0x8064B7A8, 0x8064B830]
