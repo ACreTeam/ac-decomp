@@ -1587,17 +1587,17 @@ static void mSM_draw_mail(GRAPH* graph, f32 pos_x, f32 pos_y, f32 scale, Mail_c*
 }
 
 extern void mSM_draw_original(Submenu* submenu, GRAPH* graph, f32 pos_x, f32 pos_y, f32 scale, mActor_name_t item,
-                              int color_flag) {
+                              int shadow_flag) {
     if (ITEM_IS_RSVNWORG(item)) {
-        mNW_draw_original(submenu, graph, pos_x, pos_y, scale, item - RSV_NW_ORIGINAL0, color_flag);
+        mNW_draw_original(submenu, graph, pos_x, pos_y, scale, item - RSV_NW_ORIGINAL0, shadow_flag);
     }
 
     if (ITEM_IS_RSVCPORG(item)) {
-        mCO_draw_cporiginal(submenu, graph, pos_x, pos_y, scale, item - RSV_NW_ORIGINAL0, color_flag);
+        mCO_draw_cporiginal(submenu, graph, pos_x, pos_y, scale, item - RSV_NW_ORIGINAL0, shadow_flag);
     }
 
     if (ITEM_IS_RSVGBAORG(item)) {
-        mGB_draw_gba(submenu, graph, pos_x, pos_y, scale, item - RSV_GBAORIGINAL0, color_flag);
+        mGB_draw_gba(submenu, graph, pos_x, pos_y, scale, item - RSV_GBAORIGINAL0, shadow_flag);
     }
 }
 

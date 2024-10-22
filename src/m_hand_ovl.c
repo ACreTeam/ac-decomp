@@ -79,7 +79,7 @@ static void mHD_hand_pos_get(Submenu* submenu, f32* pos, int table_type, int tab
 
     if (table_type == mTG_TABLE_NEEDLEWORK && item != EMPTY_NO && !(item >= RSV_CLOTH && item <= RSV_CLOTH7) &&
         !(item >= ITM_MY_ORG_UMBRELLA0 && item <= ITM_MY_ORG_UMBRELLA7)) {
-        if (submenu->overlay->menu_info[mSM_OVL_NEEDLEWORK].data0 == 0) {
+        if (submenu->overlay->menu_info[mSM_OVL_NEEDLEWORK].data0 == mNW_OPEN_DESIGN) {
             pos[0] += -11.0f;
             pos[1] += 23.0f;
         } else {

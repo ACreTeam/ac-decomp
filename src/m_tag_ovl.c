@@ -1161,9 +1161,9 @@ static f32 mTG_set_hand_pos_offset(Submenu* submenu, int table) {
     if (submenu->overlay->needlework_ovl != NULL) {
         int nw_type = submenu->overlay->menu_info[mSM_OVL_NEEDLEWORK].data0;
 
-        if (nw_type == 0) {
+        if (nw_type == mNW_OPEN_DESIGN) {
             res = 21.0f;
-        } else if (nw_type == 1 && table == mTG_TABLE_NEEDLEWORK) {
+        } else if (nw_type == mNW_OPEN_INV && table == mTG_TABLE_NEEDLEWORK) {
             res = 46.0f;
         }
     } else if (submenu->overlay->inventory_ovl != NULL) {
@@ -6497,7 +6497,7 @@ static int mTG_move_cursol_between_table_inventory(Submenu* submenu, mTG_tag_c* 
 
     if ((menu_info->menu_type == mSM_OVL_INVENTORY &&
          (menu_info->data0 == mSM_IV_OPEN_NORMAL || menu_info->data0 == mSM_IV_OPEN_EXCHANGE)) ||
-        (menu_info->menu_type == mSM_OVL_NEEDLEWORK && menu_info->data0 == 1)) {
+        (menu_info->menu_type == mSM_OVL_NEEDLEWORK && menu_info->data0 == mNW_OPEN_INV)) {
         if ((trigger & BUTTON_CLEFT) != 0) {
             res = mTG_move_cursol_between_table_inventory_left(submenu, tag);
         } else if ((trigger & BUTTON_CDOWN) != 0) {
@@ -7095,7 +7095,7 @@ static int mTG_select_tag_decide_inv_wc_org(Submenu* submenu, mSM_MenuInfo_c* me
     mTG_mark_main_CLR(submenu, menu_info);
     inv_ovl->original_flag = FALSE;
     inv_ovl->wc_flag = TRUE;
-    mSM_open_submenu_new(submenu, mSM_OVL_NEEDLEWORK, 1, 0, NULL);
+    mSM_open_submenu_new(submenu, mSM_OVL_NEEDLEWORK, mNW_OPEN_INV, 0, NULL);
     menu_info->proc_status = mSM_OVL_PROC_WAIT;
     menu_info->next_proc_status = mSM_OVL_PROC_WAIT;
     submenu->overlay->hand_ovl->nop_hand_func(submenu);
@@ -7465,7 +7465,7 @@ static void mTG_move_cancel(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag
                 break;
             case mSM_OVL_NEEDLEWORK:
                 move_dir = mSM_MOVE_OUT_RIGHT;
-                if (menu_info->data0 == 2) {
+                if (menu_info->data0 == mNW_OPEN_CPORIGINAL) {
                     move_dir = -1;
                 }
                 break;
@@ -7572,7 +7572,7 @@ static void mTG_move_catch(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_
         (menu_info->menu_type == mSM_OVL_HANIWA && (menu_info->data0 == 0)) ||
         (menu_info->menu_type == mSM_OVL_CPMAIL && (tag->table != mTG_TABLE_CPMAIL_WC)) ||
         (menu_info->menu_type == mSM_OVL_MAILBOX) ||
-        (menu_info->menu_type == mSM_OVL_NEEDLEWORK && (menu_info->data0 != 0)) ||
+        (menu_info->menu_type == mSM_OVL_NEEDLEWORK && (menu_info->data0 != mNW_OPEN_DESIGN)) ||
         (menu_info->menu_type == mSM_OVL_CPORIGINAL && (tag->table == mTG_TABLE_CPORIGINAL_NW || tag->table == mTG_TABLE_CPORIGINAL)) ||
         (menu_info->menu_type == mSM_OVL_GBA && (tag->table == mTG_TABLE_GBA || tag->table == mTG_TABLE_CARD))
         // clang-format on
