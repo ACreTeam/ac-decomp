@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-typedef struct bank_ovl_s mBN_Overlay_c;
+typedef struct bank_ovl_s mBN_Ovl_c;
 
 #ifdef __cplusplus
 }

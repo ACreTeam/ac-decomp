@@ -36,6 +36,7 @@
 #include "m_needlework_ovl_h.h"
 #include "m_gba_ovl_h.h"
 #include "m_cpedit_ovl_h.h"
+#include "m_cpwarning_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -191,11 +192,11 @@ struct submenu_overlay_s {
     /* 0x9B8 */ mNT_Ovl_c* notice_ovl;
     /* 0x9BC */ mBR_Ovl_c* birthday_ovl;
     /* 0x9C0 */ mCM_Ovl_c* cpmail_ovl;
-    /* 0x9C4 */ void* _9C4;
+    /* 0x9C4 */ mCW_Ovl_c* cpwarning_ovl;
     /* 0x9C8 */ mCE_Ovl_c* cpedit_ovl;
     /* 0x9CC */ mCL_Ovl_c* catalog_ovl;
     /* 0x9D0 */ mMU_Ovl_c* music_ovl;
-    /* 0x9D4 */ mBN_Overlay_c* bank_ovl;
+    /* 0x9D4 */ mBN_Ovl_c* bank_ovl;
     /* 0x9D8 */ mNW_Ovl_c* needlework_ovl;
     /* 0x9DC */ mCO_Ovl_c* cporiginal_ovl;
     /* 0x9E0 */ void* _9E0;
