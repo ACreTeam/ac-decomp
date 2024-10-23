@@ -1051,6 +1051,10 @@ m_catalog_ovl.c:
     .text: [0x805C9254, 0x805CC1F4]
     .rodata: [0x8064AF90, 0x8064B090]
     .data: [0x806C8AB0, 0x806CB838]
+m_cpedit_ovl.c:
+    .text: [0x805CC1F4, 0x805CC3E8]
+    .data: [0x806CB838, 0x806CB850]
+    .bss: [0x8133E210, 0x8133E218]
 m_editEndChk_ovl.c:
     .text: [0x805D7A64, 0x805D8498]
     .rodata: [0x8064B2C0, 0x8064B300]

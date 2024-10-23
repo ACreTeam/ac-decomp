@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+typedef struct cpedit_ovl_s mCE_Ovl_c;
+
 #ifdef __cplusplus
 }
 #endif
