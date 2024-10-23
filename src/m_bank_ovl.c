@@ -21,7 +21,7 @@ static mActor_name_t aNSM_itemNo[MONEY_NUM] = {
   ITM_MONEY_30000
 };
 
-static void mBN_now_bell_2_bell(mBN_Overlay_c* bank_ovl) {
+static void mBN_now_bell_2_bell(mBN_Ovl_c* bank_ovl) {
   int diff = bank_ovl->now_bell - bank_ovl->player_bell;
   bank_ovl->bell = ABS(diff);
 }
@@ -50,7 +50,7 @@ static int mBN_total_item_bell() {
   return total_item_bell;
 }
 
-static void mBN_bank_ok(Submenu* submenu, mSM_MenuInfo_c* menu, mBN_Overlay_c* bank_ovl) {
+static void mBN_bank_ok(Submenu* submenu, mSM_MenuInfo_c* menu, mBN_Ovl_c* bank_ovl) {
   if (bank_ovl->bank_bell < 0) {
     bank_ovl->bank_bell = 0;
   }
@@ -135,7 +135,7 @@ static void mBN_move_Move(Submenu* submenu, mSM_MenuInfo_c* menu) {
 static void mBN_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu) {
   Submenu_Overlay_c* overlay = submenu->overlay;
   int trigger = overlay->menu_control.trigger;
-  mBN_Overlay_c* bank_ovl = overlay->bank_ovl;
+  mBN_Ovl_c* bank_ovl = overlay->bank_ovl;
 
   if (trigger & BUTTON_B) {
     (*overlay->move_chg_base_proc)(menu, mSM_MOVE_OUT_TOP);
@@ -243,7 +243,7 @@ extern Gfx tyo_win_moji3T_model[];
 
 static void mBN_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
   GRAPH* g = game->graph;
-  mBN_Overlay_c* bank_ovl = submenu->overlay->bank_ovl;
+  mBN_Ovl_c* bank_ovl = submenu->overlay->bank_ovl;
   Gfx* gfx;
   u8 s;
   u8 t;
@@ -316,7 +316,7 @@ static void mBN_set_character_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* m
   static rgba_t bank_bell_col = { 170, 60, 145, 255 };
   static rgba_t now_bell_col = { 115, 50, 215, 255 };
   
-  mBN_Overlay_c* bank_ovl;
+  mBN_Ovl_c* bank_ovl;
   int cursol;
   f32 width;
   f32 digit_x;
@@ -401,7 +401,7 @@ extern void mBN_bank_ovl_set_proc(Submenu* submenu) {
 
 static void mBN_bank_ovl_init(Submenu* submenu) {
   Submenu_Overlay_c* overlay = submenu->overlay;
-  mBN_Overlay_c* bank_ovl = overlay->bank_ovl;
+  mBN_Ovl_c* bank_ovl = overlay->bank_ovl;
   int i;
 
   overlay->menu_control.animation_flag = FALSE;
@@ -431,13 +431,13 @@ static void mBN_bank_ovl_init(Submenu* submenu) {
   bank_ovl->cursol = 0;
 }
 
-static mBN_Overlay_c bn_ovl_data;
+static mBN_Ovl_c bn_ovl_data;
 
 extern void mBN_bank_ovl_construct(Submenu* submenu) {
   Submenu_Overlay_c* overlay = submenu->overlay;
 
   if (overlay->bank_ovl == NULL) {
-    mem_clear((u8*)&bn_ovl_data, sizeof(mBN_Overlay_c), 0);
+    mem_clear((u8*)&bn_ovl_data, sizeof(mBN_Ovl_c), 0);
     overlay->bank_ovl = &bn_ovl_data;
   }
 
