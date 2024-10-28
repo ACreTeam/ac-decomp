@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+typedef struct mscore_ovl_s mMS_Ovl_c;
+
 #ifdef __cplusplus
 }
 #endif

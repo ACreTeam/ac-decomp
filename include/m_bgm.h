@@ -12,7 +12,7 @@ extern "C" {
 enum {
     mBGM_PAUSE_0,
     mBGM_PAUSE_1,
-    mBGM_PAUSE_2,
+    mBGM_PAUSE_MSCORE,
     mBGM_PAUSE_NOTICE,
     mBGM_PAUSE_4,
     mBGM_PAUSE_STOP,

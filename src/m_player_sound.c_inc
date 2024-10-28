@@ -261,22 +261,22 @@ static void Player_actor_sound_umbrella_rotate(ACTOR* actor) {
 static u8 Player_actor_sound_Get_bgm_num_forCompletePayment(void) {
     switch (Common_Get(complete_payment_type)) {
         case mPlayer_COMPLETE_PAYMENT_TYPE_ARBEIT:
-            return NA_SE_MONEY0;
+            return BGM_INTRO_CHORES_COMPLETE;
         default:
-            return NA_SE_MONEY1;
+            return BGM_DEBT_PAID;
     }
 }
 
 static u8 Player_actor_sound_Get_bgm_num_forDemoGetGoldenItem(int type) {
     switch (type) {
-        case 0:
-            return NA_SE_MONEY0;
-        case 1:
-            return NA_SE_MONEY2;
-        case 2:
-            return NA_SE_COIN;
+        case mPlayer_GOLDEN_ITEM_TYPE_AXE:
+            return BGM_INTRO_CHORES_COMPLETE;
+        case mPlayer_GOLDEN_ITEM_TYPE_NET:
+            return BGM_ALL_INSECTS;
+        case mPlayer_GOLDEN_ITEM_TYPE_ROD:
+            return BGM_ALL_FISH;
         default:
-            return NA_SE_MONEY1;
+            return BGM_DEBT_PAID;
     }
 }
 
