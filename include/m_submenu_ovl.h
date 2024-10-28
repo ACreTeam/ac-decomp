@@ -37,6 +37,7 @@
 #include "m_gba_ovl_h.h"
 #include "m_cpedit_ovl_h.h"
 #include "m_cpwarning_ovl_h.h"
+#include "m_mscore_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -187,7 +188,7 @@ struct submenu_overlay_s {
     /* 0x9A4 */ mEE_Ovl_c* editEndChk_ovl;
     /* 0x9A8 */ mWR_Ovl_c* warning_ovl;
     /* 0x9AC */ mRP_Ovl_c* repay_ovl;
-    /* 0x9B0 */ void* _9B0;
+    /* 0x9B0 */ mMS_Ovl_c* mscore_ovl;
     /* 0x9B4 */ mMP_Overlay_c* map_ovl;
     /* 0x9B8 */ mNT_Ovl_c* notice_ovl;
     /* 0x9BC */ mBR_Ovl_c* birthday_ovl;

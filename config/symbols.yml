@@ -34376,6 +34376,8 @@ global:
     0x80AF0D00: onp__x_tex_rgb_ia8
     0x80AF0F00: onp__y2_tex_rgb_ia8
     0x80AF1100: onp__y_tex_rgb_ia8
+    0x80AF1300: onp_hyouji_v
+    0x80AF14C0: onp_win_rmoji_model
     0x80AF1520: onp_win_zT_model
     0x80AF1570: onp_win_mojiT_model
     0x80AF15D8: onp_win_rT_model
@@ -57523,8 +57525,8 @@ src/dataobject.obj:
     0x80AD4C00: lat_tegami_fusen_tex
     0x80AEF740: onp_hyouji_v
     0x80AF1300: onp_hyouji_v
-    0x80AF14C0: onp_win_rmoji_model
-    0x80AF68A8: onp_win_rmoji_model
+    # 0x80AF14C0: onp_win_rmoji_model
+    0x80AF68A8: onp_win_rmoji_model_1
     0x80AF6B40: inv_mwin_nwaku_tex
     0x80AFBB60: kan_hyouji_v
     0x80AFC700: kan_hyouji_v
