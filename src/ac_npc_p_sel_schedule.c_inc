@@ -1,0 +1,88 @@
+static int aNPS_setup_game_start(GAME_PLAY* play) {
+    static Door_data_c door_data = {
+        SCENE_START_DEMO, mSc_DIRECT_NORTH, 0, 0, { 120, 0, 340 }, EMPTY_NO, 3, { 0, 0, 0 }
+    };
+    s32 chan;
+    int res = FALSE;
+
+    if (mCD_InitGameStart_bg(0, -1, 0, &chan) == 0) {
+        goto_other_scene(play, &door_data, TRUE);
+        Common_Set(transition.wipe_type, 3);
+        Common_Set(map_flag, FALSE);
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static void aNPS_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_P_SEL_ACTOR* p_sel = (NPC_P_SEL_ACTOR*)nactorx;
+    u32 alpha;
+
+    if (!p_sel->talk_end_flag) {
+        if (p_sel->strum_timer == 0) {
+            nactorx->talk_info.talk_request_proc = &aNPS_talk_request;
+        } else {
+            p_sel->strum_timer--;
+        }
+    } else {
+        if (p_sel->strum_timer == 0) {
+            if (aNPS_setup_game_start(play) == TRUE) {
+                p_sel->strum_timer = -1;
+                play->fade_color_value.c.a = 255;
+            }
+        } else if (p_sel->strum_timer > 0) {
+            if (p_sel->strum_timer < 70) {
+                alpha = 255 * (1.0f - p_sel->strum_timer / 70.0f);
+                play->fade_color_value.c.a = (u8)alpha;
+            }
+
+            p_sel->strum_timer--;
+        }
+    }
+
+    if (p_sel->bgm_stop_timer == 0) {
+        mBGMPsComp_make_ps_wipe(0x421C);
+        p_sel->bgm_stop_timer = -1;
+    } else if (p_sel->bgm_stop_timer > 0) {
+        p_sel->bgm_stop_timer--;
+    }
+}
+
+static void aNPS_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_P_SEL_ACTOR* p_sel = (NPC_P_SEL_ACTOR*)nactorx;
+
+    nactorx->request.act_priority = 4;
+    nactorx->request.act_idx = aNPC_ACT_TALK;
+    nactorx->request.act_type = aNPC_ACT_TYPE_DEFAULT;
+}
+
+static void aNPS_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPS_THINK_PROC think_proc[] = { &aNPS_think_init_proc, &aNPS_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aNPS_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_P_SEL_ACTOR* p_sel = (NPC_P_SEL_ACTOR*)nactorx;
+
+    nactorx->draw._5BE = 1;
+    nactorx->think.think_proc = &aNPS_think_proc;
+    nactorx->talk_info.default_animation = aNPC_ANIM_4HAKU_E1;
+    p_sel->strum_timer = 440;
+    p_sel->bgm_stop_timer = -1;
+
+    CLIP(npc_clip)->think_proc(nactorx, play, aNPC_THINK_IN_BLOCK, 0);
+}
+
+static void aNPS_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (CLIP(npc_clip)->think_proc(nactorx, play, -1, 1) == 0) {
+        CLIP(npc_clip)->think_proc(nactorx, play, -1, 2);
+    }
+}
+
+static void aNPS_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { &aNPS_schedule_init_proc, &aNPS_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}

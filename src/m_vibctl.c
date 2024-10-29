@@ -390,7 +390,7 @@ static void mVibInfo_set_target_elem(mVibInfo_c* vib_info) {
 }
 
 static void mVibInfo_force(mVibInfo_c* vib_info) {
-  if (Save_Get(config.vibration_enabled)) {
+  if (Save_Get(config.vibration_disabled)) {
     mVibInfo_set_force_stop(vib_info, mVibctl_FLAG_FORCE_STOP0);
   }
   else {

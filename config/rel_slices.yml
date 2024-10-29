@@ -839,6 +839,10 @@ ac_npc_guide2.c:
     .text: [0x80554B00, 0x80556714]
     .rodata: [0x806496A0, 0x80649720]
     .data: [0x806A6508, 0x806A67E0]
+ac_npc_p_sel.c:
+    .text: [0x805662C0, 0x80567000]
+    .rodata: [0x806498C0, 0x806498F8]
+    .data: [0x806BE3F0, 0x806BE480]
 ac_npc_rcn_guide.c:
     .text: [0x8056EED0, 0x8056FFF0]
     .rodata: [0x806499C0, 0x806499E8]

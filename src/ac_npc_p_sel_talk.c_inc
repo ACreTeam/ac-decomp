@@ -1,0 +1,236 @@
+static int aNPS_setup_sound_option(void) {
+    static u8 sound_mode[] = { Config_SOUND_MODE_STEREO, Config_SOUND_MODE_MONO, Config_SOUND_MODE_HEADPHONES };
+    int order;
+    int res;
+    int idx;
+
+    order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    res = FALSE;
+
+    if (order != 0) {
+        idx = 0;
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                idx = 0;
+                break;
+            case mChoice_CHOICE1:
+                idx = 1;
+                break;
+            case mChoice_CHOICE2:
+                idx = 2;
+                break;
+        }
+
+        OSSetSoundMode(sound_mode[idx] == Config_SOUND_MODE_MONO ? OS_SOUND_MODE_MONO : OS_SOUND_MODE_STEREO);
+        Save_Get(config).sound_mode = sound_mode[idx];
+        sAdo_SetOutMode(aNPS_sound_mode[idx]);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static int aNPS_setup_voice_option(void) {
+    static u8 voice_mode[] = { Config_VOICE_MODE_ANIMALESE, Config_VOICE_MODE_CLICK, Config_VOICE_MODE_SILENT };
+    int order;
+    int res;
+    int idx;
+
+    order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    res = FALSE;
+
+    if (order != 0) {
+        idx = 0;
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                idx = 0;
+                break;
+            case mChoice_CHOICE1:
+                idx = 1;
+                break;
+            case mChoice_CHOICE2:
+                idx = 2;
+                break;
+        }
+
+        Save_Get(config).voice_mode = voice_mode[idx];
+        sAdo_SetVoiceMode(aNPS_voice_mode[idx]);
+        mMsg_sound_spec_change_voice_force(mMsg_Get_base_window_p());
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static int aNPS_setup_yure_option(void) {
+    int order;
+    int res;
+    int disabled;
+
+    order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    res = FALSE;
+
+    if (order != 0) {
+        disabled = TRUE;
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                disabled = FALSE;
+                mVibctl_entry(75, mVibctl_VIB_PROG_NON, mVibctl_VIB_PROG_FFF, mVibctl_VIB_PROG_P, 0, 16, 45, 0.0f);
+                break;
+            case mChoice_CHOICE1:
+                disabled = TRUE;
+                break;
+        }
+
+        Save_Get(config).vibration_disabled = disabled;
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static void aNPS_chk_setup_sound(NPC_P_SEL_ACTOR* p_sel, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        int next_talk_idx = -1;
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                next_talk_idx = aNPS_TALK_WAIT;
+                break;
+            case mChoice_CHOICE1:
+                next_talk_idx = aNPS_TALK_SETUP_YURE;
+                p_sel->next_talk_idx = aNPS_TALK_CONFIRM_INPUT_DATA;
+                break;
+        }
+
+        if (next_talk_idx != -1) {
+            aNPS_change_talk_proc(p_sel, next_talk_idx);
+        }
+    }
+}
+
+static void aNPS_setup_sound(NPC_P_SEL_ACTOR* p_sel, GAME_PLAY* play) {
+    if (aNPS_setup_sound_option() == TRUE) {
+        aNPS_change_talk_proc(p_sel, aNPS_TALK_SETUP_VOICE);
+    }
+}
+
+static void aNPS_setup_yure(NPC_P_SEL_ACTOR* p_sel, GAME_PLAY* play) {
+    if (aNPS_setup_yure_option() == TRUE) {
+        aNPS_change_talk_proc(p_sel, aNPS_TALK_SETUP_SOUND);
+    }
+}
+
+static void aNPS_setup_voice(NPC_P_SEL_ACTOR* p_sel, GAME_PLAY* play) {
+    if (aNPS_setup_voice_option() == TRUE) {
+        aNPS_change_talk_proc(p_sel, p_sel->next_talk_idx);
+    }
+}
+
+static void aNPS_confirm_input_data(NPC_P_SEL_ACTOR* p_sel, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNPS_change_talk_proc(p_sel, aNPS_TALK_CONFIRM_INPUT_DATA2);
+                break;
+            default:
+                aNPS_change_talk_proc(p_sel, aNPS_TALK_SETUP_VOICE);
+                break;
+        }
+    }
+}
+
+static void aNPS_confirm_input_data2(NPC_P_SEL_ACTOR* p_sel, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNPS_change_talk_proc(p_sel, aNPS_TALK_WAIT);
+                break;
+            default:
+                aNPS_change_talk_proc(p_sel, aNPS_TALK_SETUP_YURE);
+                break;
+        }
+    }
+}
+
+static void aNPS_change_talk_proc(NPC_P_SEL_ACTOR* p_sel, int talk_idx) {
+    static aNPS_TALK_PROC process[] = {
+        &aNPS_chk_setup_sound,     &aNPS_setup_sound, &aNPS_setup_voice,           &aNPS_confirm_input_data,
+        &aNPS_confirm_input_data2, &aNPS_setup_yure,  (aNPS_TALK_PROC)&none_proc1,
+    };
+
+    p_sel->talk_idx = talk_idx;
+    p_sel->talk_proc = process[talk_idx];
+}
+
+static void aNPS_set_talk_info_talk_request(ACTOR* actorx) {
+    int msg_no = !mFRm_CheckSaveData() ? 0x09C7 : 0x09CA;
+
+    mDemo_Set_msg_num(msg_no);
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+}
+
+static void aNPS_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aNPS_set_talk_info_talk_request);
+}
+
+static int aNPS_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_P_SEL_ACTOR* p_sel = (NPC_P_SEL_ACTOR*)actorx;
+
+    mDemo_Set_ListenAble();
+    aNPS_change_talk_proc(p_sel, aNPS_TALK_CHK_SETUP_SOUND);
+    p_sel->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)&none_proc1;
+    mMsg_SET_IDLING_REQ();
+    return TRUE;
+}
+
+static int aNPS_talk_end_chk(ACTOR* actorx, GAME* game) {
+    NPC_P_SEL_ACTOR* p_sel = (NPC_P_SEL_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int res = FALSE;
+
+    (*p_sel->talk_proc)(p_sel, play);
+    if (mMsg_Check_idling_now(msg_p) == TRUE) {
+        mMsg_request_main_disappear_wait_type1(msg_p);
+        p_sel->strum_timer = 150;
+        p_sel->bgm_stop_timer = 80;
+        bzero(&play->fade_color_value, sizeof(rgba8888));
+        aNPS_think_init_proc(&p_sel->npc_class, play);
+        p_sel->talk_end_flag = TRUE;
+        res = TRUE;
+    } else {
+        int silent_counter = p_sel->silent_counter;
+
+        if (mMsg_Check_MainNormal(msg_p) == TRUE || mChoice_CHECK_MAIN_NORMAL() == TRUE) {
+            silent_counter++;
+            if (silent_counter > 600) {
+                silent_counter = 600;
+            }
+        } else {
+            silent_counter = 0;
+        }
+
+        if (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0) == 0) {
+            if (silent_counter >= 600) {
+                if (p_sel->npc_class.draw.animation_id != aNPC_ANIM_4HAKU_E1) {
+                    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0, 255);
+                }
+            } else {
+                if (p_sel->npc_class.draw.animation_id == aNPC_ANIM_4HAKU_E1) {
+                    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0, 253);
+                }
+            }
+        }
+
+        p_sel->silent_counter = silent_counter;
+    }
+
+    return res;
+}
