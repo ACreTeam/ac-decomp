@@ -10,9 +10,6 @@
 #define AUDIO_THREAD_FLAG_NEOS (1 << 2)
 
 extern volatile int intcount;
-OSThread jac_audioThread[3];
-OSThread jac_neosThread;
-OSThread jac_dvdThread;
 
 extern void NeosSync(void);
 

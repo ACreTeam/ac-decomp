@@ -1,4 +1,4 @@
-#include <string.h> /* strchr */
+#include "dolphin/string.h" /* strchr */
 
 #include "libultra/xprintf.h"
 

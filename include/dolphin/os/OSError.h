@@ -1,32 +1,37 @@
-#ifndef OS_ERROR_H
-#define OS_ERROR_H
-#include "types.h"
+#ifndef _DOLPHIN_OSERROR_H_
+#define _DOLPHIN_OSERROR_H_
+
+#include <dolphin/os/OSContext.h>
 
 #ifdef __cplusplus
-extern "C"{
+extern "C" {
 #endif
 
-typedef enum {
-    OS_ERR_SYSTEM_RESET,
-    OS_ERR_MACHINE_CHECK,
-    OS_ERR_DSI,
-    OS_ERR_ISI,
-    OS_ERR_EXT_INTERRUPT,
-    OS_ERR_ALIGMENT,
-    OS_ERR_PROGRAM,
-    OS_ERR_FP_UNAVAIL,
-    OS_ERR_DECREMENTER,
-    OS_ERR_SYSTEM_CALL,
-    OS_ERR_TRACE,
-    OS_ERR_PERF_MONITOR,
-    OS_ERR_IABR,
-    OS_ERR_SMI,
-    OS_ERR_THERMAL_INT,
-    OS_ERR_PROTECTION,
-    OS_ERR_FP_EXCEPTION,
-    OS_ERR_MAX,
-};
+typedef u16 OSError;
+typedef void (*OSErrorHandler)(OSError error, OSContext *context, ...);
+
+#define OS_ERROR_SYSTEM_RESET        0
+#define OS_ERROR_MACHINE_CHECK       1
+#define OS_ERROR_DSI                 2
+#define OS_ERROR_ISI                 3
+#define OS_ERROR_EXTERNAL_INTERRUPT  4
+#define OS_ERROR_ALIGNMENT           5
+#define OS_ERROR_PROGRAM             6
+#define OS_ERROR_FLOATING_POINT      7
+#define OS_ERROR_DECREMENTER         8
+#define OS_ERROR_SYSTEM_CALL         9
+#define OS_ERROR_TRACE              10
+#define OS_ERROR_PERFORMACE_MONITOR 11
+#define OS_ERROR_BREAKPOINT         12
+#define OS_ERROR_SYSTEM_INTERRUPT   13
+#define OS_ERROR_THERMAL_INTERRUPT  14
+#define OS_ERROR_PROTECTION         15
+#define OS_ERROR_MAX                (OS_ERROR_THERMAL_INTERRUPT + 1)
+
+OSErrorHandler OSSetErrorHandler(OSError error, OSErrorHandler handler);
+
 #ifdef __cplusplus
 }
 #endif
+
 #endif

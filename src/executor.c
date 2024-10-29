@@ -17,7 +17,7 @@ void _prolog() {
             (*constructor)();
         }
     }
-    foresta_main();
+    main();
 }
 
 void _epilog() {

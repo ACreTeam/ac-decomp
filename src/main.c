@@ -86,7 +86,7 @@ u32 entry(void) {
     return 0;
 }
 
-void foresta_main(void) {
+void main(void) {
     OSReport("どうぶつの森 main2 開始\n");
     HotStartEntry = &entry;
 }

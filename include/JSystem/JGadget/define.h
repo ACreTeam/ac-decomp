@@ -25,23 +25,11 @@ private:
   int mLine;
 };
 
-#ifdef DEBUG
-
-#define JGADGET_ASSERTWARN(cond)                                                           \
-  ((cond) || ((JGadget_outMessage(JGadget_outMessage::warning, __FILE__, __LINE__) << (#cond)), false))
-
-#define JGADGET_EXITWARN(cond)                                                           \
-  if (!(cond)) { JGadget_outMessage(JGadget_outMessage::warning, __FILE__, __LINE__) << (#cond), false; return false; }
-
-#else
-
 #define JGADGET_ASSERTWARN(cond)                                                           \
   ((cond) || (false))
 
 #define JGADGET_EXITWARN(cond)                                                           \
   if (!(cond)) { false; return false; }
-
-#endif
 
 }
 #endif

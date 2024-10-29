@@ -26,6 +26,7 @@ u32 __busclock AT_ADDRESS(0x800000F8);
 #define OSNanosecondsToTicks(nsec) (((nsec) * (OS_TIMER_CLOCK / 125000)) / 8000)
 
 OSTime OSGetTime(void);
+OSTime __OSGetSystemTime(void);
 OSTick OSGetTick(void);
 
 typedef struct OSCalendarTime_s {

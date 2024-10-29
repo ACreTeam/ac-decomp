@@ -15,6 +15,8 @@
 
 #include "../src/static/libforest/emu64/emu64_utility.cc"
 
+extern void OSInitFastCast(void);
+
 static aflags_c aflags;
 
 static u8 texture_buffer_data[TEX_BUFFER_DATA_SIZE];
@@ -75,7 +77,7 @@ extern void emu64_texture_cache_data_entry_set(void* begin, void* end) {
     texture_cache_data_entry_num++;
 }
 
-static texture_cache_t* texture_cache_select(void* addr) {
+extern texture_cache_t* texture_cache_select(void* addr) {
     int i;
 
     if (aflags[AFLAGS_SKIP_TEXTURE_CONV] >= 1 || (addr >= _f_rodata && addr <= _e_data)) {
@@ -120,7 +122,7 @@ MATCH_FORCESTRIP static u32 texture_cache_get_heap_size(texture_cache_t* cache) 
     return cache->buffer_end - cache->buffer_start;
 }
 
-static void* texture_cache_alloc(texture_cache_t* cache, size_t size) {
+extern void* texture_cache_alloc(texture_cache_t* cache, size_t size) {
     u32 new_pos;
 
     cache->last_alloc_start = cache->buffer_current;
@@ -140,7 +142,7 @@ static void* texture_cache_alloc(texture_cache_t* cache, size_t size) {
     return cache->last_alloc_start;
 }
 
-static void* texture_cache_data_search(void* original_addr) {
+extern void* texture_cache_data_search(void* original_addr) {
     int i;
 
     for (i = 0; i < texture_cache_num; i++) {
@@ -152,7 +154,7 @@ static void* texture_cache_data_search(void* original_addr) {
     return nullptr;
 }
 
-static int texture_cache_data_entry(void* original_addr, void* converted_addr) {
+extern int texture_cache_data_entry(void* original_addr, void* converted_addr) {
     if (texture_cache_num < TEXTURE_CACHE_LIST_SIZE && original_addr != nullptr && converted_addr != nullptr) {
         texture_cache_entry_t* entry = &texture_cache_list[texture_cache_num++];
 
@@ -165,11 +167,11 @@ static int texture_cache_data_entry(void* original_addr, void* converted_addr) {
     return -1;
 }
 
-static void* texture_cache_bss_search(void* original_addr) {
+extern void* texture_cache_bss_search(void* original_addr) {
     return nullptr;
 }
 
-static int texture_cache_bss_entry(void* original_addr, void* converted_addr) {
+extern int texture_cache_bss_entry(void* original_addr, void* converted_addr) {
     return -1;
 }
 
@@ -435,7 +437,7 @@ void emu64::printInfo() {
 
     // Display segment table.
     this->Printf0("セグメントテーブル表示\n");
-    for (i = 0; i < NUM_SEGMENTS; i++) {
+    for (i = 0; i < EMU64_NUM_SEGMENTS; i++) {
         this->Printf0("%2d %08x %08x\n", i, this->segments[i], convert_partial_address(this->segments[i]));
     }
 }
@@ -4939,7 +4941,7 @@ void emu64::dl_G_MOVEWORD() {
             u32 segment = moveword->offset / 4;
             EMU64_WARNF("gsSPSegmentA(%d, 0x%08x),", segment, moveword->data);
             this->segments[segment] = (0x80000000 + (moveword->data & 0x0FFFFFFF));
-            if (segment >= NUM_SEGMENTS ||
+            if (segment >= EMU64_NUM_SEGMENTS ||
                 (moveword->data != 0 && (moveword->data < 0x80000000 || moveword->data > 0x83000000))) {
                 sprintf(s1, "gsSPSegmentA no=%d", segment);
                 sprintf(s2, "base=%s", this->segchk(moveword->data));
@@ -5130,7 +5132,7 @@ void emu64::dl_G_MOVEMEM() {
                         this->lights[l_idx].attenuation.k1 = 0.0f;
                         this->lights[l_idx].attenuation.kq = 0.0;
                     }
-                    EMU64_INFOF("\n");
+                    EMU64_INFO("\n");
                     break;
                 }
             }

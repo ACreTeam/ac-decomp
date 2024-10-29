@@ -55,7 +55,7 @@ JKRDvdArchive::~JKRDvdArchive()
     }
 }
 
-#ifdef DEBUG
+#if DEBUG
 CW_FORCE_STRINGS(JKRDvdArchive_cpp, __FILE__, "isMounted()", "mMountCount == 1")
 #endif
 

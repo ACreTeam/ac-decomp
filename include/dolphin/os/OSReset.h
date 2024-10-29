@@ -30,6 +30,7 @@ u32 OSGetResetCode();
 void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu);
 BOOL OSGetResetSwitchState();
 void OSGetSaveRegion(void** start, void** end);
+void OSRegisterResetFunction(OSResetFunctionInfo* info);
 
 #ifdef __cplusplus
 }

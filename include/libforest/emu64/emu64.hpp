@@ -23,7 +23,7 @@
 #define EMU64_TEX_BLOCK_SIZE_Y 4
 
 #define NUM_COMMANDS 64
-#define NUM_SEGMENTS 16
+#define EMU64_NUM_SEGMENTS 16
 #define DL_MAX_STACK_LEVEL 18
 #define DL_HISTORY_COUNT 16
 #define NUM_TILES 8
@@ -494,70 +494,6 @@ class emu64_print {
 
 #define EMU64_ASSERT(cond) EMU64_PANICLINE(cond, __LINE__)
 
-class emu64_print {
-  public:
-    void Printf(const char* fmt, ...) {
-        va_list list;
-
-        if ((this->print_flags & EMU64_PRINTF_FLAG)) {
-            va_start(list, fmt);
-            this->Vprintf(fmt, list);
-            va_end(list);
-        }
-    }
-
-    void Printf0(const char* fmt, ...) {
-        va_list list;
-
-        va_start(list, fmt);
-        this->Vprintf(fmt, list);
-        va_end(list);
-    }
-
-    void Printf1(const char* fmt, ...) {
-        va_list list;
-
-        if ((this->print_flags & EMU64_PRINTF1_FLAG)) {
-            va_start(list, fmt);
-            this->Vprintf(fmt, list);
-            va_end(list);
-        }
-    }
-
-    void Printf2(const char* fmt, ...) {
-        va_list list;
-
-        if ((this->print_flags & EMU64_PRINTF2_FLAG)) {
-            va_start(list, fmt);
-            this->Vprintf(fmt, list);
-            va_end(list);
-        }
-    }
-
-    void Printf3(const char* fmt, ...) {
-        va_list list;
-
-        if ((this->print_flags & EMU64_PRINTF3_FLAG)) {
-            va_start(list, fmt);
-            this->Vprintf(fmt, list);
-            va_end(list);
-        }
-    }
-
-  protected:
-    u8 print_flags;
-
-  private:
-    void Vprintf(const char* fmt, std::__tag_va_List* va_list) {
-        vprintf(fmt, va_list);
-    }
-};
-
-#define EMU64_ASSERTLINE(cond, line)        \
-    if (!(cond)) {                          \
-        this->panic(#cond, __FILE__, line); \
-    }
-
 #define EMU64_PRINTF(msg, ...) this->Printf0(msg, __VA_ARGS__);
 
 #ifdef EMU64_DEBUG
@@ -603,8 +539,6 @@ class emu64_print {
     do {                                   \
     } while (0)
 #endif
-
-#define EMU64_ASSERT(cond) EMU64_ASSERTLINE(cond, __LINE__)
 
 #define EMU64_PRINT_MEMBER(member)                        \
     do {                                                  \
@@ -786,7 +720,7 @@ class emu64 : public emu64_print {
     /* 0x0060 */ ucode_info* ucode_info_p;
     /* 0x0064 */ int ucode_type; // maybe?
     /* 0x0068 */ int _0068;      /* ??? */
-    /* 0x006C */ u32 segments[NUM_SEGMENTS];
+    /* 0x006C */ u32 segments[EMU64_NUM_SEGMENTS];
     /* 0x00AC */ u32 DL_stack[DL_MAX_STACK_LEVEL];
     /* 0x00F4 */ s8 DL_stack_level;
     /* 0x00F8 */ u32 othermode_high;

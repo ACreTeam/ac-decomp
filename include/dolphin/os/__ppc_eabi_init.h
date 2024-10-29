@@ -1,6 +1,8 @@
 #ifndef PPC_EABI_INIT_H
 #define PPC_EABI_INIT_H
 
+#include "types.h"
+
 #ifdef __cplusplus
 extern "C"{
 #endif
@@ -61,7 +63,6 @@ DECL_BSS_SECTION(_sbss2);
 void __init_hardware(void);
 void __flush_cache(void*, size_t);
 void __init_user(void);
-void __fini_cpp(void);
 void _ExitProcess(void);
 
 typedef struct RomSection {

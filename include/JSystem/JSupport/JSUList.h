@@ -3,9 +3,6 @@
 
 #include "types.h"
 
-#ifdef __cplusplus
-extern "C" {
-
 class JSUPtrLink;
 
 class JSUPtrList
@@ -174,11 +171,11 @@ public:
     bool insertChild(JSUTree<T> *before, JSUTree<T> *child) { return this->insert(before, child); }
 
     JSUTree<T> *getEndChild() const { return nullptr; }
-    JSUTree<T> *getFirstChild() const { return (JSUTree<T> *)getFirstLink(); }
+    JSUTree<T> *getFirstChild() const { return (JSUTree<T> *)this->getFirstLink(); }
     JSUTree<T> *getLastChild() const { return (JSUTree<T> *)this->getLast(); }
-    JSUTree<T> *getNextChild() const { return (JSUTree<T> *)mNext; }
+    JSUTree<T> *getNextChild() const { return (JSUTree<T> *)this->mNext; }
     JSUTree<T> *getPrevChild() const { return (JSUTree<T> *)this->getPrev(); }
-    u32 getNumChildren() const { return mLinkCount; }
+    u32 getNumChildren() const { return this->mLinkCount; }
     T *getObject() const { return (T *)this->mData; }
     JSUTree<T> *getParent() const { return (JSUTree<T> *)this->mPtrList; }
 };
@@ -222,8 +219,5 @@ public:
 private:
     JSUTree<T> *mTree;
 };
-
-}
-#endif
 
 #endif /* JSULIST_H */

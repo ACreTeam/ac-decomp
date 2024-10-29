@@ -6,10 +6,10 @@
 namespace JGadget {
 
 TNodeLinkList::~TNodeLinkList() {
-  #ifdef DEBUG
+#if DEBUG
   Confirm();
   clear();
-  #endif
+#endif
   JGADGET_ASSERTWARN(empty());
   //this->oNode_.clear_();
 }
@@ -190,4 +190,3 @@ bool TNodeLinkList::Confirm_iterator(const_iterator it) const {
 }
 
 } // namespace JGadget
-

@@ -92,7 +92,6 @@ public:
     }
 
     TLinkListNode& operator*() const {
-      JUT_ASSERT(p_!=0);
       return *this->p_;
     }
 

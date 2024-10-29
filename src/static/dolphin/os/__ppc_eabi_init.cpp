@@ -1,18 +1,21 @@
-#include "types.h"
-#include "dolphin/os.h"
-#include "dolphin/BASE/ppcarch.h"
 #include "dolphin/os/__ppc_eabi_init.h"
+
+#include "dolphin/base/PPCArch.h"
+#include "dolphin/os.h"
+#include "types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 static void __init_cpp(void);
+static void __fini_cpp(void);
 
+/* clang-format off */
 __declspec(section ".init") asm void __init_hardware(void) {
     nofralloc
     mfmsr r0
-    ori r0,r0,0x2000
+    ori r0, r0, 0x2000
     mtmsr r0
     mflr r31
     bl __OSPSInit
@@ -21,7 +24,7 @@ __declspec(section ".init") asm void __init_hardware(void) {
     blr
 }
 
-__declspec(section ".init") asm void __flush_cache(void) {
+__declspec(section ".init") asm void __flush_cache(void* address, u32 size) {
 	nofralloc
 	lis r5, 0xFFFFFFF1@h
 	ori r5, r5, 0xFFFFFFF1@l
@@ -38,29 +41,29 @@ loop:
 	isync 
 	blr
 }
+/* clang-format on */
 
-
-
-void __init_user(void) { __init_cpp(); }
-
-static void __init_cpp(void)
-{
-	voidfunctionptr* constructor;
-	/*
-	 *	call static initializers
-	 */
-	for (constructor = _ctors; *constructor; constructor++) {
-		(*constructor)();
-	}
+asm void __init_user(void) {
+	fralloc
+    bl __init_cpp
 }
 
+static void __init_cpp(void) {
+    voidfunctionptr* constructor;
 
-void __fini_cpp(void)
-{
-	// UNUSED FUNCTION
+    for (constructor = _ctors; *constructor; constructor++) {
+        (*constructor)();
+    }
 }
 
-void _ExitProcess(void) { PPCHalt(); }
+static void __fini_cpp(void) {
+    // UNUSED FUNCTION
+}
+
+void _ExitProcess(void) {
+    PPCHalt();
+}
+
 #ifdef __cplusplus
 }
 #endif
