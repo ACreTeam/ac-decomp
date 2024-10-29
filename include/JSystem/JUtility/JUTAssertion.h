@@ -44,22 +44,8 @@ namespace JUTAssertion
 #define JUT_MINMAX_ASSERT(...)
 #define JUT_MAX_ASSERT(...)
 #define JUT_LOG_F(...)
-
-#if defined(DEBUG) || 1
 #define JUT_ASSERT(...)
 #define JUT_ASSERT_F(...)
-#else
-
-#define JUT_ASSERT(COND)                                                             \
-  ((COND)) ?  (void)0 : (JUTAssertion::showAssert(JUTAssertion::getSDevice(), __FILE__, __LINE__, #COND),  OSHalt("Halt"));
-
-#define JUT_ASSERT_F(COND, ...)                                                              \
-  if ((COND) == false)                                                                               \
-  {                                                                                          \
-    JUTAssertion::showAssert_f(JUTAssertion::getSDevice(), __FILE__, __LINE__, __VA_ARGS__); \
-    OSHalt("Halt");                                                                          \
-  }
-#endif
 
 }
 #endif

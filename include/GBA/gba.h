@@ -13,7 +13,7 @@ extern "C" {
 #define GBA_CHAN3 3
 #define GBA_MAX_CHAN 4
 
-#define GBA_ALL_KEY_MASK 0x03ff
+#define GBA_ALL_KEY_MASK 0x03FF
 #define GBA_A_BUTTON 0x0001
 #define GBA_B_BUTTON 0x0002
 #define GBA_SELECT_BUTTON 0x0004
@@ -25,7 +25,7 @@ extern "C" {
 #define GBA_R_BUTTON 0x0100
 #define GBA_L_BUTTON 0x0200
 
-#define GBA_JSTAT_MASK 0x3a
+#define GBA_JSTAT_MASK 0x3A
 #define GBA_JSTAT_FLAGS_SHIFT 4
 #define GBA_JSTAT_FLAGS_MASK 0x30
 #define GBA_JSTAT_PSF1 0x20
@@ -41,9 +41,11 @@ extern "C" {
 
 #define GBA_JOYBOOT_PROGRAM_SIZE_MAX 0x40000
 
-#define GBA_JOYBOOT_BOOTPARAM_OFFSET 0xc8
+#define GBA_JOYBOOT_BOOTPARAM_OFFSET 0xC8
 #define GBA_JOYBOOT_BOOTPARAM_SIZE 0x18
+
 typedef void (*GBACallback)(s32 chan, s32 ret);
+
 void GBAInit(void);
 s32 GBAGetStatus(s32 chan, u8* status);
 s32 GBAGetStatusAsync(s32 chan, u8* status, GBACallback callback);
@@ -58,6 +60,7 @@ s32 GBAJoyBoot(s32 chan, s32 palette_color, s32 palette_speed, u8* programp, s32
                u8* status);
 s32 GBAJoyBootAsync(s32 chan, s32 palette_color, s32 palette_speed, u8* programp, s32 length,
                     u8* status, GBACallback callback);
+
 #ifdef __cplusplus
 }
 #endif

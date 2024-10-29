@@ -126,7 +126,7 @@ u32 __OSMaskInterrupts(u32);
 u32 __OSUnmaskInterrupts(u32);
 
 u32 SetInterruptMask(OSInterruptMask mask, OSInterruptMask current);
-void __OSDispatchInterrupt(OSException exception, OSContext* context);
+void __OSDispatchInterrupt(__OSException exception, OSContext* context);
 
 
 #ifdef __cplusplus

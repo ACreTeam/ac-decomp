@@ -2,7 +2,7 @@
 #define BOOTDATA_H
 
 #include "types.h"
-#include "PR/mbi.h"
+#include "PR/gbi.h"
 
 #ifdef __cplusplus
 extern "C" {

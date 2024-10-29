@@ -1,48 +1,19 @@
 #include "bootdata.h"
 #include "libforest/gbi_extensions.h"
 
-static u8 gam_win_moji1_tex[] ATTRIBUTE_ALIGN(32) = {
-#include "assets/bootdata/gam_win_moji1_tex.inc"
-};
-
-static u8 gam_win_moji2_tex[] ATTRIBUTE_ALIGN(32) = {
-#include "assets/bootdata/gam_win_moji2_tex.inc"
-};
-
-static u8 yes[] = {
-#include "assets/bootdata/yes.inc"
-};
-
-static u8 no[] = {
-#include "assets/bootdata/no.inc"
-};
-
-static u8 att_win_waku1_tex[] ATTRIBUTE_ALIGN(32) = {
-#include "assets/bootdata/att_win_waku1_tex.inc"
-};
-
-static u8 att_win_waku2_tex[] ATTRIBUTE_ALIGN(32) = {
-#include "assets/bootdata/att_win_waku2_tex.inc"
-};
-
-static u8 att_win_waku3_tex[] ATTRIBUTE_ALIGN(32) = {
-#include "assets/bootdata/att_win_waku3_tex.inc"
-};
-
-static u8 att_win_waku4_tex[] ATTRIBUTE_ALIGN(32) = {
-#include "assets/bootdata/att_win_waku4_tex.inc"
-};
-
-static u8 att_win_waku5_tex[] ATTRIBUTE_ALIGN(32) = {
-#include "assets/bootdata/att_win_waku5_tex.inc"
-};
-
-static u8 att_win_waku6_tex[] ATTRIBUTE_ALIGN(32) = {
-#include "assets/bootdata/att_win_waku6_tex.inc"
-};
+#include "assets/bootdata/win1/gam_win_moji1_tex.inc"
+#include "assets/bootdata/win1/gam_win_moji2_tex.inc"
+#include "assets/bootdata/win1/yes.inc"
+#include "assets/bootdata/win1/no.inc"
+#include "assets/bootdata/win1/att_win_waku1_tex.inc"
+#include "assets/bootdata/win1/att_win_waku2_tex.inc"
+#include "assets/bootdata/win1/att_win_waku3_tex.inc"
+#include "assets/bootdata/win1/att_win_waku4_tex.inc"
+#include "assets/bootdata/win1/att_win_waku5_tex.inc"
+#include "assets/bootdata/win1/att_win_waku6_tex.inc"
 
 static Vtx gam_win1_v[] = {
-#include "assets/bootdata/gam_win1_v.inc"
+#include "assets/bootdata/win1/gam_win1_v.inc"
 };
 
 Gfx gam_win1_cursor_model[] = {

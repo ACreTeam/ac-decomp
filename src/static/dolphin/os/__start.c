@@ -1,19 +1,20 @@
 #include "dolphin/os.h"
 #include "dolphin/db.h"
-#include "TRK/trk.h"
+#include "TRK/dolphin_trk.h"
 #include "dolphin/os/__ppc_eabi_init.h"
 
-__declspec(section ".init")void __init_registers(void);
-__declspec(section ".init")void __init_data(void);
+__declspec(section ".init") void __init_registers(void);
+__declspec(section ".init") void __init_data(void);
 
-int main(int argc, char **argv);
+int main(int argc, char** argv);
 
-__declspec(section ".init") void __check_pad3(void){
-    if((*(u16*)0x800030E4 & 0xEEF) == 0xEEF){
-        OSResetSystem(0,0,0);
+__declspec(section ".init") void __check_pad3(void) {
+    if ((*(u16*)0x800030E4 & 0xEEF) == 0xEEF) {
+        OSResetSystem(0, 0, 0);
     }
 }
 
+/* clang-format off */
 __declspec(section ".init") asm void __start(void){
     nofralloc
 
@@ -48,7 +49,7 @@ ar:
 h:
     li r5, 0x0
     cmplwi r7, 2
-    beq+ met
+    beq met
     cmplwi r7, 3
     bne- d
     li r5, 0x1
@@ -119,20 +120,22 @@ __declspec(section ".init") asm void __init_registers(void){
     ori r13, r13, 0xFB80
     blr
 }
-void __copy_rom_section(void* dst, const void* src, size_t size){
+/* clang-format on */
+
+inline void __copy_rom_section(void* dst, const void* src, size_t size) {
     if (size && (dst != src)) {
-    memcpy(dst, src, size);
-    __flush_cache(dst, size);
+        memcpy(dst, src, size);
+        __flush_cache(dst, size);
     }
 }
 
-void __init_bss_section(void* dst, size_t size){
+inline void __init_bss_section(void* dst, size_t size) {
     if (size) {
-    memset(dst, 0, size);
+        memset(dst, 0, size);
     }
 }
 
-__declspec(section ".init") static void __init_data(void){
+__declspec(section ".init") static void __init_data(void) {
     RomSection* rs;
     BssSection* bs;
 

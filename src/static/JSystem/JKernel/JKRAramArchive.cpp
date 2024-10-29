@@ -110,7 +110,7 @@ void JKRAramArchive::unmountFixed() {
   mIsMounted = false;
 }
 
-#ifdef DEBUG
+#if DEBUG
 CW_FORCE_STRINGS(JKRAramArchive_cpp, __FILE__, "isMounted()",
   "mMountCount == 1")
 #endif

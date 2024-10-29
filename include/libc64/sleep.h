@@ -4,13 +4,12 @@
 #include "types.h"
 #include "dolphin/os/OSTime.h"
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 void csleep(OSTime c);
-void msleep(int);
+void msleep(u32);
 
 #ifdef __cplusplus
 }

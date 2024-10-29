@@ -28,22 +28,22 @@ extern "C" {
 #define CHAR_ACUTE_I 14
 #define CHAR_CIRCUMFLEX_I 15
 #define CHAR_DIARESIS_I 16
-#define CHAR_ETH 17                 /* Đ */
+#define CHAR_ETH 17
 #define CHAR_TILDE_N 18
 #define CHAR_GRAVE_O 19
 #define CHAR_ACUTE_O 20
 #define CHAR_CIRCUMFLEX_O 21
 #define CHAR_TILDE_O 22
 #define CHAR_DIARESIS_O 23
-#define CHAR_OE 24                   /* Ø */
+#define CHAR_OE 24
 #define CHAR_GRAVE_U 25
 #define CHAR_ACUTE_U 26
 #define CHAR_CIRCUMFLEX_U 27
 #define CHAR_DIARESIS_U 28
-#define CHAR_LOWER_BETA 29           /* β */
-#define CHAR_THORN 30                /* Þ */
+#define CHAR_LOWER_BETA 29
+#define CHAR_THORN 30
 #define CHAR_GRAVE_a 31
-#define CHAR_SPACE 32                /* ' ' */
+#define CHAR_SPACE 32
 #define CHAR_EXCLAMATION 33
 #define CHAR_QUOTATION 34
 #define CHAR_ACUTE_a 35
@@ -144,8 +144,8 @@ extern "C" {
 #define CHAR_ACUTE_i 130
 #define CHAR_CIRCUMFLEX_i 131
 #define CHAR_DIARESIS_i 132
-#define CHAR_INTERPUNCT 133           /* · */
-#define CHAR_LOWER_ETH 134            /* đ */
+#define CHAR_INTERPUNCT 133
+#define CHAR_LOWER_ETH 134
 #define CHAR_TILDE_n 135
 #define CHAR_GRAVE_o 136
 #define CHAR_ACUTE_o 137
@@ -162,10 +162,10 @@ extern "C" {
 #define CHAR_DIARESIS_y 148
 #define CHAR_LOWER_THORN 149
 #define CHAR_ACUTE_Y 150
-#define CHAR_BROKEN_BAR 151           /* ¦ */
-#define CHAR_SILCROW 152              /* § */
+#define CHAR_BROKEN_BAR 151
+#define CHAR_SILCROW 152
 #define CHAR_FEMININE_ORDINAL 153
-#define CHAR_MASCULINE_ORDINAL 154        /* ° */
+#define CHAR_MASCULINE_ORDINAL 154
 #define CHAR_DOUBLE_VERTICAL_BAR 155
 #define CHAR_LATIN_MU 156
 #define CHAR_SUPERSCRIPT_THREE 157

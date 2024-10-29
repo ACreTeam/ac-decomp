@@ -1,9 +1,7 @@
 #include "bootdata.h"
 #include "libforest/gbi_extensions.h"
 
-u8 nintendo_376x104[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/bootdata/nintendo_376x104.inc"
-};
 
 Vtx logo_nin_v[] = {
   #include "assets/bootdata/logo_nin_v.inc"

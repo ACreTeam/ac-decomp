@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_music_ovl_h.h"
 #include "m_submenu_ovl.h"
+#include "m_item_name.h"
 
 #ifdef __cplusplus
 extern "C" {

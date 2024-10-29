@@ -1,12 +1,6 @@
 #ifndef TYPES_H
 #define TYPES_H
 
-#include "../tools/ppcdis/include/ppcdis.h"
-
-#ifdef IS_REL
-// #pragma section const_type sconst_type ".rodata" ".rodata" data_mode=far_abs code_mode=pc_rel
-#endif
-
 typedef signed char s8;
 typedef signed short s16;
 typedef signed long s32;
@@ -14,7 +8,10 @@ typedef signed long long s64;
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned long u32;
+#ifndef _SIZE_T_DEF
+#define _SIZE_T_DEF
 typedef unsigned long size_t;
+#endif
 typedef unsigned long long u64;
 typedef unsigned int uint;
 
@@ -42,10 +39,16 @@ typedef u32 unknown;
 #define TRUE 1
 #define FALSE 0
 
+#ifndef NULL
 #define NULL ((void*)0)
+#endif
 #define nullptr 0
 
+#ifdef __MWERKS__
 #define AT_ADDRESS(x) : (x)
+#else
+#define AT_ADDRESS(x) __attribute__((section(".data." #x)))
+#endif
 
 #define ALIGN_PREV(u, align) (u & (~(align - 1)))
 #define ALIGN_NEXT(u, align) ((u + (align - 1)) & (~(align - 1)))
@@ -88,8 +91,12 @@ typedef u32 unknown;
 #define ARRAY_SIZE(arr, type) (sizeof(arr) / sizeof(type))
 #define ARRAY_COUNT(arr) (int)(sizeof(arr) / sizeof(arr[0]))
 
+#ifndef MAX
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef MIN
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#endif
 
 #define FLOOR(n, f) (((n) / (f)) * (f))
 
@@ -115,13 +122,15 @@ typedef u32 unknown;
 #define FORCESTRIP
 #endif
 
-#ifdef MUST_MATCH
+#if defined(MUST_MATCH) && defined(__MWERKS__)
 #define MATCH_FORCESTRIP FORCESTRIP
 #else
 #define MATCH_FORCESTRIP
 #endif
 
 #if !defined(__INTELLISENSE__) && defined(MUST_MATCH)
+#define ORDER_BSS_DATA static asm void order_bss()
+#define ORDER_BSS(s) lis r3, s @ha
 #define BSS_ORDER_GROUP_START FORCESTRIP ORDER_BSS_DATA {
 #define BSS_ORDER_GROUP_END }
 #define BSS_ORDER_ITEM(v) ORDER_BSS(v)
@@ -134,6 +143,31 @@ typedef u32 unknown;
 #ifndef __cplusplus
 // Some definitions rely on wchar_t being defined
 typedef short wchar_t;
+#endif
+
+#if DEBUG
+#define ASSERTLINE(line, cond) \
+    ((cond) || (OSPanic(__FILE__, line, "Failed assertion " #cond), 0))
+
+#define ASSERTMSGLINE(line, cond, msg) \
+    ((cond) || (OSPanic(__FILE__, line, msg), 0))
+
+// This is dumb but we dont have a Metrowerks way to do variadic macros in the macro to make this done in a not scrubby way.
+#define ASSERTMSG1LINE(line, cond, msg, arg1) \
+    ((cond) || (OSPanic(__FILE__, line, msg, arg1), 0))
+    
+#define ASSERTMSG2LINE(line, cond, msg, arg1, arg2) \
+    ((cond) || (OSPanic(__FILE__, line, msg, arg1, arg2), 0))
+
+#define ASSERTMSGLINEV(line, cond, ...) \
+    ((cond) || (OSPanic(__FILE__, line, __VA_ARGS__), 0))
+
+#else
+#define ASSERTLINE(line, cond) (void)0
+#define ASSERTMSGLINE(line, cond, msg) (void)0
+#define ASSERTMSG1LINE(line, cond, msg, arg1) (void)0
+#define ASSERTMSG2LINE(line, cond, msg, arg1, arg2) (void)0
+#define ASSERTMSGLINEV(line, cond, ...) (void)0
 #endif
 
 #endif

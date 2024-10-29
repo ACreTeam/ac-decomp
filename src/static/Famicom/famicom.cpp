@@ -24,17 +24,17 @@
 #include "JSystem/JUtility/JUTGamePad.h"
 #include "nintendo_hi_0.h"
 #include "m_nmibuf.h"
-//#include "JSystem/J2D/J2DGrafContext.h" // needed for ~J2DOrthoGraph
+// #include "JSystem/J2D/J2DGrafContext.h" // needed for ~J2DOrthoGraph
 
 /* For some reason, there are a bunch of unused implicit one-byte 4-byte-aligned bss variables */
 #ifdef MUST_MATCH
-static u8 __unused_implicit[0x40];
+static u8 __unused_implicit[0x40] ATTRIBUTE_ALIGN(32);
 #endif
 
 static u8 commentImageBuffer[CARD_COMMENT_SIZE + 0x5800];
 u8 save_game_image = false;
 FamicomCommon famicomCommon;
-static u8 famicomCommonSave[0x1980 + sizeof(FamicomSaveDataHeader)];
+u8 famicomCommonSave[0x1980 + sizeof(FamicomSaveDataHeader)];
 u8** nesrom_filename_ptrs = nullptr;
 static char* nesrom_filename_strbuf = nullptr;
 u8 InputValid[4];
@@ -598,7 +598,7 @@ static void SetupExternCommentImage(u8* embedded_save_comment_img, u8* dst, u8* 
     switch (famicomCommon.memcard_game_header.flags0.comment_type) {
         case MEMCARD_COMMENT_TYPE_NONE:
             break;
-        case MEMCARD_COMMENT_TYPE_COPY_ROM:
+        case MEMCARD_COMMENT_TYPE_COPY_ROM: {
             memcpy(dst, rom_file_comment_img, CARD_COMMENT_SIZE);
             u8 temp = dst[CARD_COMMENT_SIZE];
             dst[CARD_COMMENT_SIZE] = '\0';
@@ -611,23 +611,26 @@ static void SetupExternCommentImage(u8* embedded_save_comment_img, u8* dst, u8* 
                 break;
             }
             // Fallthrough in the case where "] ROM " doesn't exist
-        case MEMCARD_COMMENT_TYPE_DEFAULT:
+        }
+        case MEMCARD_COMMENT_TYPE_DEFAULT: {
             strncpy((char*)dst, "Animal Crossing", 32);
             strncpy((char*)dst + 32, "NES Cassette Save Data  ", 32);
             dst += CARD_COMMENT_SIZE;
             break;
-        case MEMCARD_COMMENT_TYPE_COPY_EMBEDDED:
+        }
+        case MEMCARD_COMMENT_TYPE_COPY_EMBEDDED: {
             memcpy(dst, embedded_save_comment_img, CARD_COMMENT_SIZE);
             dst += CARD_COMMENT_SIZE;
             embedded_save_comment_img += CARD_COMMENT_SIZE;
             break;
+        }
     }
 
     rom_file_comment_img += CARD_COMMENT_SIZE;
     switch (famicomCommon.memcard_game_header.flags0.banner_type) {
         case MEMCARD_BANNER_TYPE_NONE:
             break;
-        case MEMCARD_BANNER_TYPE_DEFAULT:
+        case MEMCARD_BANNER_TYPE_DEFAULT: {
             void* banner = JKRFileLoader::getGlbResource("/FAMICOM/newdisk_system.bti.szs");
             ResTIMG* banner_data = (ResTIMG*)banner;
             if (banner_data != nullptr) {
@@ -638,17 +641,20 @@ static void SetupExternCommentImage(u8* embedded_save_comment_img, u8* dst, u8* 
                 famicomCommon.memcard_game_header.flags1.banner_fmt = banner_fmt;
             }
             break;
-        case MEMCARD_BANNER_TYPE_COPY_ROM:
+        }
+        case MEMCARD_BANNER_TYPE_COPY_ROM: {
             size = getBannerSizeFromFormat(famicomCommon.memcard_game_header.flags1.banner_fmt);
             memcpy(dst, rom_file_comment_img, size);
             dst += size;
             break;
-        case MEMCARD_BANNER_TYPE_COPY_EMBEDDED:
+        }
+        case MEMCARD_BANNER_TYPE_COPY_EMBEDDED: {
             size = getBannerSizeFromFormat(famicomCommon.memcard_game_header.flags1.banner_fmt);
             memcpy(dst, embedded_save_comment_img, size);
             dst += size;
             embedded_save_comment_img += size;
             break;
+        }
     }
 
     size_t banner_size = getBannerSizeFromFormat(famicomCommon.memcard_game_header.flags1.banner_fmt);
@@ -656,7 +662,7 @@ static void SetupExternCommentImage(u8* embedded_save_comment_img, u8* dst, u8* 
     switch (famicomCommon.memcard_game_header.flags0.icon_type) {
         case MEMCARD_ICON_TYPE_NONE:
             break;
-        case MEMCARD_ICON_TYPE_DEFAULT:
+        case MEMCARD_ICON_TYPE_DEFAULT: {
             void* icon = JKRFileLoader::getGlbResource("/FAMICOM/newdisk.bti.szs");
             ResTIMG* icon_data = (ResTIMG*)icon;
             if (icon_data != nullptr) {
@@ -669,14 +675,17 @@ static void SetupExternCommentImage(u8* embedded_save_comment_img, u8* dst, u8* 
                 size = getIconSizeFromFormat(icon_fmts);
             }
             break;
-        case MEMCARD_ICON_TYPE_COPY_ROM:
+        }
+        case MEMCARD_ICON_TYPE_COPY_ROM: {
             size = getIconSizeFromFormat(famicomCommon.memcard_game_header.icon_format);
             memcpy(dst, rom_file_comment_img, size);
             break;
-        case MEMCARD_ICON_TYPE_COPY_EMBEDDED:
+        }
+        case MEMCARD_ICON_TYPE_COPY_EMBEDDED: {
             size = getIconSizeFromFormat(famicomCommon.memcard_game_header.icon_format);
             memcpy(dst, embedded_save_comment_img, size);
             break;
+        }
     }
     
     size_t icon_size = getIconSizeFromFormat(famicomCommon.memcard_game_header.icon_format); // unnecessary
@@ -849,7 +858,7 @@ static s32 memcard_data_save(
             case CARD_RESULT_READY:
                 break; // success
             case CARD_RESULT_NOENT:
-            case CARD_RESULT_INSSPACE:
+            case CARD_RESULT_INSSPACE: {
                 s32 del_res = CARDDelete(chan, temp_name);
                 if (del_res == CARD_RESULT_NOFILE) {
                     goto exit; // temp file didn't exist?
@@ -866,6 +875,7 @@ static s32 memcard_data_save(
                     goto exit; // still failed to create
                 }
                 break;
+            }
             default:
                 // Failed to create file.
                 OSReport("ファイル作成失敗\n");

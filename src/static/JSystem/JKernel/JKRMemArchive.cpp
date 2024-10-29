@@ -54,7 +54,7 @@ JKRMemArchive::~JKRMemArchive()
     }
 }
 
-#ifdef DEBUG // function is needed to generate certain strings first, however this is not what the original function looks like
+#if DEBUG // function is needed to generate certain strings first, however this is not what the original function looks like
 void JKRMemArchive::fixedInit(s32)
 {
     JUT_ASSERT(isMounted());

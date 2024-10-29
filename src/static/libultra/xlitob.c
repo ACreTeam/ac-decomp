@@ -1,4 +1,4 @@
-#include <stdlib.h> /* lldiv & lldiv_t */
+#include "gcc/stdlib.h" /* lldiv & lldiv_t */
 #include "_mem.h" /* memcpy */
 #include "libultra/xprintf.h"
 
@@ -7,7 +7,7 @@
 u8 ldigs[] = "0123456789abcdef";
 u8 udigs[] = "0123456789ABCDEF";
 
-static void _Litob(_Pft* args, u8 type) {
+extern void _Litob(_Pft* args, u8 type) {
   u8* numMap;
   int base;
   int idx;

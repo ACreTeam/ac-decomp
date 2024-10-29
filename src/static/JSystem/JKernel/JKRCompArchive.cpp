@@ -22,7 +22,7 @@ JKRCompArchive::JKRCompArchive(long entryNum, EMountDirection mountDirection)
   }
 }
 
-#ifdef DEBUG
+#if DEBUG
 void stringGen() {
   JUT_PANIC("isMounted()");
   JUT_PANIC("mMountCount == 1");

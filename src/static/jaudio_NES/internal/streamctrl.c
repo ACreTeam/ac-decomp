@@ -24,14 +24,14 @@ JSTREAM J_STREAM = {
 // clang-format on
 
 /* @fabricated -- necessary for float ordering */
-#pragma force_active on
+#pragma function_align 4
 MATCH_FORCESTRIP static f32 Jac_VolMoveStreamBGM(s32 l, s32 r) {
     // AISetStreamVolLeft((s32)(f32)l);
     // AISetStreamVolRight((s32)(f32)r);
     return l;
 }
-#pragma force_active reset
 
+#pragma function_align 32
 extern void StreamMain(void) {
     static DVDFileInfo finfo;
     static DVDCommandBlock cmd;

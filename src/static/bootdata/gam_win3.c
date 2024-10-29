@@ -1,16 +1,11 @@
 #include "bootdata.h"
 #include "libforest/gbi_extensions.h"
 
-static u8 gam_win_moji3_tex[] ATTRIBUTE_ALIGN(32) = {
-#include "assets/bootdata/gam_win_moji3_tex_1.inc"
-};
-
-static u8 gam_win_moji5_tex[] ATTRIBUTE_ALIGN(32) = {
-#include "assets/bootdata/gam_win_moji5_tex.inc"
-};
+#include "assets/bootdata/win3/gam_win_moji3_tex.inc"
+#include "assets/bootdata/win3/gam_win_moji5_tex.inc"
 
 static Vtx gam_win3_v[] = {
-#include "assets/bootdata/gam_win3_v.inc"
+#include "assets/bootdata/win3/gam_win3_v.inc"
 };
 
 Gfx gam_win3_moji_model[] = {
