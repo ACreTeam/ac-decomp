@@ -72,7 +72,7 @@ static void aNRTC_talk_request(ACTOR* actor, GAME*);
 
 static void aNRTC_change_talk_proc(NPC_RTC_ACTOR* rtc, int idx);
 
-static u8 aNRTC_sound_mode[] = { Config_SOUND_MODE_0, Config_SOUND_MODE_1, Config_SOUND_MODE_2 };
+static u8 aNRTC_sound_mode[] = { Config_SOUND_MODE_STEREO, Config_SOUND_MODE_MONO, Config_SOUND_MODE_HEADPHONES };
 static u8 aNRTC_voice_mode[] = { Config_VOICE_MODE_ANIMALESE, Config_VOICE_MODE_CLICK, Config_VOICE_MODE_SILENT };
 
 static void aNRTC_actor_ct(ACTOR* actor, GAME* game) {

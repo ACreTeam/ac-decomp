@@ -8,9 +8,9 @@ extern "C" {
 #endif
 
 enum {
-  Config_SOUND_MODE_0,
-  Config_SOUND_MODE_1,
-  Config_SOUND_MODE_2,
+  Config_SOUND_MODE_STEREO,
+  Config_SOUND_MODE_MONO,
+  Config_SOUND_MODE_HEADPHONES,
 
   Config_SOUND_MODE_NUM
 };
@@ -27,7 +27,7 @@ enum {
 typedef struct config_s {
   /* 0x00 */ u8 sound_mode; /* mono, stereo, ... */
   /* 0x01 */ u8 voice_mode; /* silent, babblese, animalese */
-  /* 0x02 */ u8 vibration_enabled; /* true/false */
+  /* 0x02 */ u8 vibration_disabled; /* true/false */
   /* 0x03 */ u8 unused; /* might not exist */
 } Config_c;
 

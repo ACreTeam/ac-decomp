@@ -45,6 +45,7 @@ extern s32 mCD_GetThisLandSlotNo_code(int* player_no, s32* slot_card_results);
 extern void mCD_save_data_aram_malloc();
 extern void mCD_set_aram_save_data();
 extern void mCD_init_card();
+extern s32 mCD_InitGameStart_bg(int chan, int file_no, int sound_mode, s32* mounted_chan);
 
 extern void mCD_PrintErrInfo(gfxprint_t* gfxprint);
 extern void mCD_InitAll();

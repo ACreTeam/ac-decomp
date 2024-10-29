@@ -475,7 +475,7 @@ static int sChk_Config_c_sub(Config_c* config, int depth) {
         res = TRUE;
     }
 
-    if (config->vibration_enabled & (~1)) {
+    if (config->vibration_disabled & (~1)) {
         mFRm_ERRORLINE(1803);
         res = TRUE;
     }
