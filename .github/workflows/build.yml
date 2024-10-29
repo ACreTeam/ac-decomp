@@ -39,7 +39,7 @@ jobs:
 
     # Upload progress if we're on the main branch
     - name: Upload progress
-      if: github.ref == 'refs/heads/main'
+      if: github.ref == 'refs/heads/master'
       continue-on-error: true
       env:
         PROGRESS_SLUG: animalcrossing
