@@ -2,7 +2,7 @@
 
 #include "m_common_data.h"
 
-#include "../src/actor/ac_ev_dokutu_talk.c_inc"
+#include "../src/actor/npc/event/ac_ev_dokutu_talk.c_inc"
 
 static void aEVD_actor_ct(ACTOR* actorx, GAME* game);
 static void aEVD_actor_dt(ACTOR* actorx, GAME* game);

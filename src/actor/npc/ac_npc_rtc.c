@@ -161,5 +161,5 @@ static void aNRTC_actor_draw(ACTOR* actor, GAME* game) {
     Common_Get(clip.npc_clip)->draw_proc(actor, game);
 }
 
-#include "../src/actor/ac_npc_rtc_think.c.inc"
-#include "../src/actor/ac_npc_rtc_talk.c.inc"
+#include "../src/actor/npc/ac_npc_rtc_think.c.inc"
+#include "../src/actor/npc/ac_npc_rtc_talk.c.inc"

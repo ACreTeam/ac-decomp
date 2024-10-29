@@ -44,7 +44,7 @@ ACTOR_PROFILE BgPoliceItem_Profile = {
     NULL,
 };
 
-#include "../src/bg_police_item_data.c_inc"
+#include "../src/bg_item/bg_police_item_data.c_inc"
 
-#include "../src/bg_police_item_move.c_inc"
-#include "../src/bg_police_item_draw.c_inc"
+#include "../src/bg_item/bg_police_item_move.c_inc"
+#include "../src/bg_item/bg_police_item_draw.c_inc"

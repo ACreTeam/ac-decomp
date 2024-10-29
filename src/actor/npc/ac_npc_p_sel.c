@@ -158,5 +158,5 @@ static void aNPS_actor_draw(ACTOR* actorx, GAME* game) {
     CLIP(npc_clip)->draw_proc(actorx, game);
 }
 
-#include "../src/actor/ac_npc_p_sel_schedule.c_inc"
-#include "../src/actor/ac_npc_p_sel_talk.c_inc"
+#include "../src/actor/npc/ac_npc_p_sel_schedule.c_inc"
+#include "../src/actor/npc/ac_npc_p_sel_talk.c_inc"

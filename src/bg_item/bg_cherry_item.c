@@ -204,9 +204,9 @@ static void bit_cmn_single_drawS_shadow(GAME* game, bg_item_common_info_c* commo
 static int bIT_actor_hole_effect_entry(bg_item_hole_c* hole, mActor_name_t fg_item, xyz_t* pos, u16 frames,
                                        u16 wait_frames, s16 mode, s16 wait_type);
 
-#include "../src/bg_cherry_item_data.c_inc"
-#include "../src/bg_item_clip.c_inc"
-#include "../src/bg_item_common.c_inc"
+#include "../src/bg_item/bg_cherry_item_data.c_inc"
+#include "../src/bg_item/bg_item_clip.c_inc"
+#include "../src/bg_item/bg_item_common.c_inc"
 
 extern u16 obj_g_hole_pal[];
 extern u16 obj_b_hole_pal[];
@@ -281,5 +281,5 @@ static void bCI_actor_dt(ACTOR* actorx, GAME* game) {
     bIT_clip_dt();
 }
 
-#include "../src/bg_cherry_item_move.c_inc"
-#include "../src/bg_cherry_item_draw.c_inc"
+#include "../src/bg_item/bg_cherry_item_move.c_inc"
+#include "../src/bg_item/bg_cherry_item_draw.c_inc"

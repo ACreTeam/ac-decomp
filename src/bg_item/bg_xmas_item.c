@@ -214,9 +214,9 @@ static int bIT_actor_hole_effect_entry(bg_item_hole_c* hole, mActor_name_t fg_it
 static void bXI_draw_loop_type1_xtree(GRAPH* graph, Gfx** gfx_pp, bg_item_draw_list_c* draw_list,
                                       bg_item_draw_pos_c* draw_pos, Gfx** display_list_table);
 
-#include "../src/bg_xmas_item_data.c_inc"
-#include "../src/bg_item_clip.c_inc"
-#include "../src/bg_item_common.c_inc"
+#include "../src/bg_item/bg_xmas_item_data.c_inc"
+#include "../src/bg_item/bg_item_clip.c_inc"
+#include "../src/bg_item/bg_item_common.c_inc"
 
 extern u16 obj_g_hole_pal[];
 extern u16 obj_b_hole_pal[];
@@ -301,5 +301,5 @@ static void bXI_actor_dt(ACTOR* actorx, GAME* game) {
     bIT_clip_dt();
 }
 
-#include "../src/bg_xmas_item_move.c_inc"
-#include "../src/bg_xmas_item_draw.c_inc"
+#include "../src/bg_item/bg_xmas_item_move.c_inc"
+#include "../src/bg_item/bg_xmas_item_draw.c_inc"
