@@ -393,7 +393,7 @@ extern int mNpc_BlockNum2ReservedUtNum(int* ut_x, int* ut_z, int bx, int bz);
 extern void mNpc_MakeReservedListBeforeFieldct(Anmhome_c* reserved, int reserved_num, u8* reserved_count);
 extern void mNpc_MakeReservedListAfterFieldct(Anmhome_c* reserved, int reserved_num, u8* reserved_count, u8 bx_max,
                                               u8 bz_max);
-extern mNpc_InitNpcData();
+extern void mNpc_InitNpcData();
 extern void mNpc_InitNpcList(mNpc_NpcList_c* npclist, int count);
 extern void mNpc_SetNpcList(mNpc_NpcList_c* npclist, Animal_c* animal, int count, int malloc_flag);
 extern void mNpc_SetNpcinfo(ACTOR* actor, s8 npc_info_idx);

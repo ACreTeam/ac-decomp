@@ -89,7 +89,7 @@ extern void mMmd_SetFish(int fish_no) {
   }
 }
 
-extern mMmd_GetDisplayInfo(mActor_name_t item) {
+extern int mMmd_GetDisplayInfo(mActor_name_t item) {
   if (item >= FTR_DINO_TRICERA_SKULL && item <= FTR_DINO_TRILOBITE_WEST) {
     int fossil_idx;
     int valid = FALSE;

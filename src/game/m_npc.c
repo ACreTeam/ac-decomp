@@ -2760,7 +2760,7 @@ static void mNpc_SetNpcHome(Animal_c* animal, Anmhome_c* reserved, u8 reserved_n
     }
 }
 
-extern mNpc_InitNpcData() {
+extern void mNpc_InitNpcData() {
     static Anmhome_c reserved[60];
 
     u8 reserved_num = 0;

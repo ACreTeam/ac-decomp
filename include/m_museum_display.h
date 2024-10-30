@@ -92,7 +92,7 @@ extern void mMmd_SetFossil(int fossil_no);
 extern void mMmd_SetArt(int art_no);
 extern void mMmd_SetInsect(int insect_no);
 extern void mMmd_SetFish(int fish_no);
-extern mMmd_GetDisplayInfo(mActor_name_t item);
+extern int mMmd_GetDisplayInfo(mActor_name_t item);
 extern int mMmd_RequestMuseumDisplay(mActor_name_t item);
 extern void mMmd_MakeMuseumDisplayData();
 extern void mMmd_DeletePresentedByPlayer(u8 player_no);

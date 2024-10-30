@@ -1387,7 +1387,7 @@ config.libs = [
             Object(Matching, "game/m_editEndChk_ovl.c"),
             Object(Matching, "game/m_editor_ovl.c"),
             Object(Matching, "game/m_event.c"),
-            Object(NonMatching, "game/m_event_map_npc.c"),
+            Object(Matching, "game/m_event_map_npc.c"),
             Object(Matching, "game/m_fbdemo.c"),
             Object(Matching, "game/m_fbdemo_fade.c"),
             Object(Matching, "game/m_fbdemo_triforce.c"),
