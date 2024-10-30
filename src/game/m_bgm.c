@@ -286,6 +286,24 @@ static mBGMElem_default_set(mBGMElem* elem) {
 #define mBGMClock_CHK_hh (((1 << 5) - 1) << 12)
 #define mBGMClock_CHK_DD (((1 << 5) - 1) << 17)
 #define mBGMClock_CHK_MM (((1 << 4) - 1) << 22)
+#define mBGMClock_CHK_ALL (mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm | mBGMClock_CHK_ss)
+
+#define mBGMClock_MONTH_TO_BGM_MONTH(month) (((month) << 22) & 0x03C00000)
+#define mBGMClock_DAY_TO_BGM_DAY(day) (((day) << 17) & 0x3E0000)
+#define mBGMClock_HOUR_TO_BGM_HOUR(hour) (((hour) << 12) & 0x1F000)
+#define mBGMClock_MIN_TO_BGM_MIN(min) (((min) << 6) & 0xFC0)
+#define mBGMClock_SEC_TO_BGM_SEC(sec) (((sec) << 0) & 0x3F)
+
+#define mBGMClock_TIME_TO_BGM_TIME(month, day, hour, min, sec)                                                 \
+    ((mBGMClock_MONTH_TO_BGM_MONTH(month) | mBGMClock_DAY_TO_BGM_DAY(day) | mBGMClock_HOUR_TO_BGM_HOUR(hour) | \
+      mBGMClock_MIN_TO_BGM_MIN(min) | mBGMClock_SEC_TO_BGM_SEC(sec)))
+
+#define mBGMClock_RTCTIME_TO_BGM_TIME(time) \
+    (mBGMClock_TIME_TO_BGM_TIME((time).month, (time).day, (time).hour, (time).min, (time).sec))
+
+#define mBGMClock_TIME_TO_SHOP_CLOSE_TIME(time)                                       \
+    (mBGMClock_HOUR_TO_BGM_HOUR((time).hour) | mBGMClock_MIN_TO_BGM_MIN((time).min) | \
+     mBGMClock_SEC_TO_BGM_SEC((time).sec))
 
 static int mBGMClock_after_time_check(mBGMClock* clock, u32 check_time, u32 check_mask) {
     u32 t_now = clock->now & check_mask;
@@ -345,9 +363,7 @@ static int mBGMClock_range_time_check(mBGMClock* clock, u32 check_time0, u32 che
 
 static void mBGMClock_now_set(mBGMClock* clock) {
     clock->before = clock->now;
-    clock->now = ((Common_Get(time.rtc_time).month & 0x0F) << 22) | ((Common_Get(time.rtc_time).day & 0x1F) << 17) |
-                 ((Common_Get(time.rtc_time).hour & 0x1F) << 12) | ((Common_Get(time.rtc_time).min & 0x3F) << 6) |
-                 ((Common_Get(time.rtc_time).sec & 0x3F) << 0);
+    clock->now = mBGMClock_RTCTIME_TO_BGM_TIME(Common_Get(time.rtc_time));
 }
 
 static void mBGMClock_move(mBGMClock* clock, GAME* game) {
@@ -445,10 +461,10 @@ static void mBGMRoom_shop_close_time_set(mBGMRoom* room) {
             time.hour = mSP_GetShopCloseTime_Bgm();
 
             lbRTC_Sub_mm(&time, 5);
-            room->shop_close_time1 = ((time.hour & 0x1F) << 12) | ((time.min & 0x3F) << 6) | ((time.sec & 0x3F) << 0);
+            room->shop_close_time1 = mBGMClock_TIME_TO_SHOP_CLOSE_TIME(time);
 
             lbRTC_Sub_ss(&time, 5);
-            room->shop_close_time0 = ((time.hour & 0x1F) << 12) | ((time.min & 0x3F) << 6) | ((time.sec & 0x3F) << 0);
+            room->shop_close_time0 = mBGMClock_TIME_TO_SHOP_CLOSE_TIME(time);
         }
     }
 }
@@ -669,7 +685,8 @@ static int mBGMTime_silent_check(mBGMTime* time) {
     }
 
     /* Silent between XX:59:52 and XX:00:16 */
-    return mBGMClock_range_time_check(&M_bgm.clock, (59 << 6) | (52 << 0), (0 << 6) | (16 << 0),
+    return mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_MIN_TO_BGM_MIN(59) | mBGMClock_SEC_TO_BGM_SEC(52),
+                                      mBGMClock_MIN_TO_BGM_MIN(0) | mBGMClock_SEC_TO_BGM_SEC(16),
                                       mBGMClock_CHK_mm | mBGMClock_CHK_ss);
 }
 
@@ -953,18 +970,15 @@ static void mBGMFieldSchedEv_Info_ev_now_set_Silence_0(mBGMFieldSchedEv_Info* sc
     int event_now = FALSE;
 
     if ((sched_ev_info->flag & 4) &&
-        mBGMClock_over_time_check(&M_bgm.clock, (12 << 22) | (31 << 17) | (23 << 12) | (59 << 6) | (0 << 0),
-                                  mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                      mBGMClock_CHK_ss) &&
+        mBGMClock_over_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_DECEMBER, 31, 23, 59, 0),
+                                  mBGMClock_CHK_ALL) &&
         mBGMFieldSchedEv_bl_attr_evdata_get(&mbgm_event_data[mBGMFieldSchedEv_EVENT_SILENCE_0], game) ==
             mBGM_BL_ATTR_ACTIVE) {
         sched_ev_info->flag |= 0x10;
     }
 
-    if (mBGMClock_range_time_check(&M_bgm.clock, (12 << 22) | (31 << 17) | (23 << 12) | (59 << 6) | (0 << 0),
-                                   (1 << 22) | (1 << 17) | (0 << 12) | (0 << 6) | (0 << 0),
-                                   mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                       mBGMClock_CHK_ss)) {
+    if (mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_DECEMBER, 31, 23, 59, 0),
+                                   mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 0, 0, 0), mBGMClock_CHK_ALL)) {
         if ((sched_ev_info->flag & 0x10)) {
             if (mEv_check_status(mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN, mEv_STATUS_PLAYSOUND)) {
                 event_now = TRUE;
@@ -986,10 +1000,8 @@ static void mBGMFieldSchedEv_Info_ev_now_set_Silence_0(mBGMFieldSchedEv_Info* sc
 static void mBGMFieldSchedEv_Info_ev_now_set_CountDown_1(mBGMFieldSchedEv_Info* sched_ev_info, mBGMEventData* data,
                                                          GAME* game, int ev_start_flag) {
     if (mEv_check_status(mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN, mEv_STATUS_ACTIVE) &&
-        mBGMClock_range_time_check(&M_bgm.clock, (12 << 22) | (31 << 17) | (23 << 12) | (0 << 6) | (0 << 0),
-                                   (12 << 22) | (31 << 17) | (23 << 12) | (30 << 6) | (0 << 0),
-                                   mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                       mBGMClock_CHK_ss)) {
+        mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_DECEMBER, 31, 23, 0, 0),
+                                   mBGMClock_TIME_TO_BGM_TIME(lbRTC_DECEMBER, 31, 23, 30, 0), mBGMClock_CHK_ALL)) {
         sched_ev_info->flag |= 1;
     } else {
         sched_ev_info->flag &= ~1;
@@ -999,10 +1011,8 @@ static void mBGMFieldSchedEv_Info_ev_now_set_CountDown_1(mBGMFieldSchedEv_Info* 
 static void mBGMFieldSchedEv_Info_ev_now_set_CountDown_2(mBGMFieldSchedEv_Info* sched_ev_info, mBGMEventData* data,
                                                          GAME* game, int ev_start_flag) {
     if (mEv_check_status(mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN, mEv_STATUS_ACTIVE) &&
-        mBGMClock_range_time_check(&M_bgm.clock, (12 << 22) | (31 << 17) | (23 << 12) | (30 << 6) | (0 << 0),
-                                   (12 << 22) | (31 << 17) | (23 << 12) | (50 << 6) | (0 << 0),
-                                   mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                       mBGMClock_CHK_ss)) {
+        mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_DECEMBER, 31, 23, 30, 0),
+                                   mBGMClock_TIME_TO_BGM_TIME(lbRTC_DECEMBER, 31, 23, 50, 0), mBGMClock_CHK_ALL)) {
         sched_ev_info->flag |= 1;
     } else {
         sched_ev_info->flag &= ~1;
@@ -1012,10 +1022,8 @@ static void mBGMFieldSchedEv_Info_ev_now_set_CountDown_2(mBGMFieldSchedEv_Info* 
 static void mBGMFieldSchedEv_Info_ev_now_set_CountDown_3(mBGMFieldSchedEv_Info* sched_ev_info, mBGMEventData* data,
                                                          GAME* game, int ev_start_flag) {
     if (mEv_check_status(mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN, mEv_STATUS_ACTIVE) &&
-        mBGMClock_range_time_check(&M_bgm.clock, (12 << 22) | (31 << 17) | (23 << 12) | (50 << 6) | (0 << 0),
-                                   (12 << 22) | (31 << 17) | (23 << 12) | (55 << 6) | (0 << 0),
-                                   mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                       mBGMClock_CHK_ss)) {
+        mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_DECEMBER, 31, 23, 50, 0),
+                                   mBGMClock_TIME_TO_BGM_TIME(lbRTC_DECEMBER, 31, 23, 55, 0), mBGMClock_CHK_ALL)) {
         sched_ev_info->flag |= 1;
     } else {
         sched_ev_info->flag &= ~1;
@@ -1025,10 +1033,8 @@ static void mBGMFieldSchedEv_Info_ev_now_set_CountDown_3(mBGMFieldSchedEv_Info* 
 static void mBGMFieldSchedEv_Info_ev_now_set_CountDown_4(mBGMFieldSchedEv_Info* sched_ev_info, mBGMEventData* data,
                                                          GAME* game, int ev_start_flag) {
     if (mEv_check_status(mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN, mEv_STATUS_ACTIVE) &&
-        mBGMClock_range_time_check(&M_bgm.clock, (12 << 22) | (31 << 17) | (23 << 12) | (55 << 6) | (0 << 0),
-                                   (1 << 22) | (1 << 17) | (0 << 12) | (0 << 6) | (0 << 0),
-                                   mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                       mBGMClock_CHK_ss)) {
+        mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_DECEMBER, 31, 23, 55, 0),
+                                   mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 0, 0, 0), mBGMClock_CHK_ALL)) {
         sched_ev_info->flag |= 1;
     } else {
         sched_ev_info->flag &= ~1;
@@ -1039,12 +1045,10 @@ static void mBGMFieldSchedEv_Info_ev_now_set_CountDown_5(mBGMFieldSchedEv_Info* 
                                                          GAME* game, int ev_start_flag) {
     int event_now = FALSE;
 
-    if (mBGMClock_range_time_check(&M_bgm.clock, (1 << 22) | (1 << 17) | (0 << 12) | (0 << 6) | (0 << 0),
-                                   (1 << 22) | (1 << 17) | (1 << 12) | (0 << 6) | (0 << 0),
-                                   mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                       mBGMClock_CHK_ss)) {
+    if (mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 0, 0, 0),
+                                   mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 1, 0, 0), mBGMClock_CHK_ALL)) {
         if ((sched_ev_info->flag & 4) &&
-            mBGMClock_over_time_check(&M_bgm.clock, (1 << 22) | (1 << 17) | (0 << 12) | (0 << 6) | (0 << 0),
+            mBGMClock_over_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 0, 0, 0),
                                       mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
                                           mBGMClock_CHK_ss) &&
             mBGMFieldSchedEv_bl_attr_evdata_get(&mbgm_event_data[mBGMFieldSchedEv_EVENT_COUNTDOWN_5], game) !=
@@ -1076,12 +1080,10 @@ static void mBGMFieldSchedEv_Info_ev_now_set_CountDown_6(mBGMFieldSchedEv_Info* 
                                                          GAME* game, int ev_start_flag) {
     int event_now = FALSE;
 
-    if (mBGMClock_range_time_check(&M_bgm.clock, (1 << 22) | (1 << 17) | (0 << 12) | (0 << 6) | (0 << 0),
-                                   (1 << 22) | (1 << 17) | (1 << 12) | (0 << 6) | (0 << 0),
-                                   mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                       mBGMClock_CHK_ss)) {
+    if (mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 0, 0, 0),
+                                   mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 1, 0, 0), mBGMClock_CHK_ALL)) {
         if ((sched_ev_info->flag & 4) &&
-            mBGMClock_over_time_check(&M_bgm.clock, (1 << 22) | (1 << 17) | (0 << 12) | (0 << 6) | (0 << 0),
+            mBGMClock_over_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 0, 0, 0),
                                       mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
                                           mBGMClock_CHK_ss) &&
             mBGMFieldSchedEv_bl_attr_evdata_get(&mbgm_event_data[mBGMFieldSchedEv_EVENT_COUNTDOWN_6], game) !=
@@ -1112,10 +1114,8 @@ static void mBGMFieldSchedEv_Info_ev_now_set_CountDown_6(mBGMFieldSchedEv_Info* 
 
 static void mBGMFieldSchedEv_Info_ev_now_set_Hotaru(mBGMFieldSchedEv_Info* sched_ev_info, mBGMEventData* data,
                                                     GAME* game, int ev_start_flag) {
-    if (mBGMClock_range_time_check(&M_bgm.clock, (1 << 22) | (1 << 17) | (0 << 12) | (0 << 6) | (0 << 0),
-                                   (1 << 22) | (1 << 17) | (1 << 12) | (0 << 6) | (0 << 0),
-                                   mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                       mBGMClock_CHK_ss)) {
+    if (mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 0, 0, 0),
+                                   mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 1, 0, 0), mBGMClock_CHK_ALL)) {
         sched_ev_info->flag |= 1;
     } else {
         sched_ev_info->flag &= ~1;
@@ -1124,10 +1124,8 @@ static void mBGMFieldSchedEv_Info_ev_now_set_Hotaru(mBGMFieldSchedEv_Info* sched
 
 static void mBGMFieldSchedEv_Info_ev_now_set_NewYear01(mBGMFieldSchedEv_Info* sched_ev_info, mBGMEventData* data,
                                                        GAME* game, int ev_start_flag) {
-    if (mBGMClock_range_time_check(&M_bgm.clock, (1 << 22) | (1 << 17) | (1 << 12) | (0 << 6) | (0 << 0),
-                                   (1 << 22) | (1 << 17) | (18 << 12) | (0 << 6) | (0 << 0),
-                                   mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                       mBGMClock_CHK_ss)) {
+    if (mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 1, 0, 0),
+                                   mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 18, 0, 0), mBGMClock_CHK_ALL)) {
         sched_ev_info->flag |= 1;
     } else {
         sched_ev_info->flag &= ~1;
@@ -1136,10 +1134,8 @@ static void mBGMFieldSchedEv_Info_ev_now_set_NewYear01(mBGMFieldSchedEv_Info* sc
 
 static void mBGMFieldSchedEv_Info_ev_now_set_NewYear02(mBGMFieldSchedEv_Info* sched_ev_info, mBGMEventData* data,
                                                        GAME* game, int ev_start_flag) {
-    if (mBGMClock_range_time_check(&M_bgm.clock, (1 << 22) | (1 << 17) | (18 << 12) | (0 << 6) | (0 << 0),
-                                   (1 << 22) | (2 << 17) | (0 << 12) | (0 << 6) | (0 << 0),
-                                   mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                       mBGMClock_CHK_ss)) {
+    if (mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 18, 0, 0),
+                                   mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 2, 0, 0, 0), mBGMClock_CHK_ALL)) {
         sched_ev_info->flag |= 1;
     } else {
         sched_ev_info->flag &= ~1;
@@ -1275,10 +1271,8 @@ static void mBGMFieldSchedEv_sp_flag(mBGMFieldSchedEv* sched_ev) {
 
     if ((((info0->flag & (4 | 1)) == (4 | 1) && info0->attr != mBGM_BL_ATTR_INACTIVE) ||
          ((info1->flag & (4 | 1)) == (4 | 1) && info1->attr != mBGM_BL_ATTR_INACTIVE)) &&
-        mBGMClock_range_time_check(&M_bgm.clock, (1 << 22) | (1 << 17) | (0 << 12) | (0 << 6) | (0 << 0),
-                                   (1 << 22) | (1 << 17) | (0 << 12) | (1 << 6) | (0 << 0),
-                                   mBGMClock_CHK_MM | mBGMClock_CHK_DD | mBGMClock_CHK_hh | mBGMClock_CHK_mm |
-                                       mBGMClock_CHK_ss)) {
+        mBGMClock_range_time_check(&M_bgm.clock, mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 0, 0, 0),
+                                   mBGMClock_TIME_TO_BGM_TIME(lbRTC_JANUARY, 1, 0, 1, 0), mBGMClock_CHK_ALL)) {
         mBGMTime_new_year_ev_flag_set();
     } else {
         mBGMTime_new_year_ev_flag_clr();
