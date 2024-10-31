@@ -2,6 +2,7 @@
 #define M_LEDIT_OVL_H
 
 #include "types.h"
+#include "m_submenu.h"
 
 #ifdef __cplusplus
 extern "C" {
