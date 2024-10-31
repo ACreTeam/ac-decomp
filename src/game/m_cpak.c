@@ -9,7 +9,7 @@ mCPk_c* g_paks_info_p = {
 };
 
 extern int mCPk_PakOpen(mCPk_c* pak, int pak_idx) {
-    sCPk_PakOpen(&pak->save_pak);
+    return sCPk_PakOpen(&pak->save_pak);
 }
 
 extern int mCPk_InitPak(int pak_idx){
@@ -23,6 +23,3 @@ extern int mCPk_SavePak(Private_c* private_data, Animal_c* animals, mCPk_c* cpak
 extern mCPk_c* mCPk_get_pkinfo(){
     return g_paks_info_p;
 }
-
-
-

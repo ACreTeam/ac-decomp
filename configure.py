@@ -911,7 +911,7 @@ config.libs = [
             Object(Matching, "padmgr.c"),
             Object(Matching, "player_select.c"),
             Object(Matching, "PreRender.c"),
-            Object(NonMatching, "s_cpak.c"),
+            Object(Matching, "s_cpak.c"),
             Object(Matching, "save_menu.c"),
             Object(Matching, "second_game.c"),
             Object(Matching, "THA_GA.c"),
