@@ -929,7 +929,7 @@ config.libs = [
             Object(NonMatching, "actor/ac_arrange_ftr.c"),
             Object(Matching, "actor/ac_arrange_room.c"),
             Object(Matching, "actor/ac_ball.c"),
-            Object(NonMatching, "actor/ac_balloon.c"),
+            Object(Matching, "actor/ac_balloon.c"),
             Object(NonMatching, "actor/ac_bee.c"),
             Object(Matching, "actor/ac_birth_control.c"),
             Object(Matching, "actor/ac_boat.c"),
