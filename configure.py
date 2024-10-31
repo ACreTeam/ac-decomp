@@ -939,7 +939,7 @@ config.libs = [
             Object(Matching, "actor/ac_boxTrick01.c"),
             Object(Matching, "actor/ac_br_shop.c"),
             Object(Matching, "actor/ac_bridge_a.c"),
-            Object(NonMatching, "actor/ac_broker_design.c"),
+            Object(Matching, "actor/ac_broker_design.c"),
             Object(Matching, "actor/ac_buggy.c"),
             Object(NonMatching, "actor/ac_conveni.c"),
             Object(Matching, "actor/ac_cottage.c"),

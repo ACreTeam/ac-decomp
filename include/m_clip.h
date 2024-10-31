@@ -29,6 +29,7 @@
 #include "ac_htable.h"
 #include "ac_sign.h"
 #include "ac_boxTrick01.h"
+#include "ac_broker_design.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,7 +70,7 @@ typedef struct clip_s {
     /* 0x08C */ aSTR_Clip_c* structure_clip;
     /* 0x090 */ eEC_EffectControl_Clip_c* effect_clip;
     /* 0x094 */ aTOL_Clip_c* tools_clip;
-    /* 0x098 */ void* _098;
+    /* 0x098 */ aBD_clip_c* broker_design_clip;
     /* 0x09C */ aMI_Clip_c* my_indoor_clip;
     /* 0x0A0 */ mDemo_Clip_c* demo_clip;  /* can be multiple clip classes */
     /* 0x0A4 */ mDemo_Clip_c* demo_clip2; /* can be multiple clip classes */
