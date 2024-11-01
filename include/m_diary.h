@@ -21,6 +21,7 @@ typedef struct diary_data_s {
 } mDi_data_c;
 
 extern int mDi_strlen(u8* str, int max_len, u8 end_char);
+extern void mDi_init_diary(mDi_entry_c* entry_p);
 
 #ifdef __cplusplus
 }
