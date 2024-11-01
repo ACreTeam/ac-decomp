@@ -1,6 +1,7 @@
 #ifndef JSYSWRAPPER_H
 #define JSYSWRAPPER_H
 
+#include "dolphin/pad.h"
 #include "types.h"
 #include "JSystem/JKernel/JKREnum.h"
 #include "JSystem/JUtility/JUTEnum.h"
@@ -48,6 +49,8 @@ extern int JC_JKRHeap_dump(void* heap);
 extern s32 JC_JKRHeap_getTotalFreeSize(void* heap);
 
 extern void JC_JKRExpHeap_changeGroupID(void* expheap, u8 groupId);
+
+extern void JC_JUTGamePad_getPadStatus(PADStatus* status, int padId);
 
 extern void* JC__JKRDvdToMainRam_byName(const char* name, u8* buf, JKRExpandSwitch expandSwitch);
 extern BOOL JC__JKRDetachResource(void* ptr);
@@ -137,6 +140,7 @@ extern void* JW_Alloc(size_t size, int align);
 extern void JW_Free(void* ptr);
 extern s32 JW_Resize(void* ptr, size_t new_size);
 extern size_t JW_GetMemBlockSize(void* ptr);
+extern void JW_JUTXfb_clearIndex(void);
 extern void JW_JUTReport(int x, int y, int show_count, const char* fmt, ...);
 
 extern int JC_JKRDecomp_checkCompressed(u8* bufp);

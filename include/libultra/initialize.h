@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 extern void __osInitialize_common();
+extern BOOL osIsEnableShutdown(void);
 
 #ifdef __cplusplus
 }

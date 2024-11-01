@@ -516,10 +516,10 @@ libultra/ultra.c:
 	.text       start:0x8005D01C end:0x8005D15C
 	.bss        start:0x80206F60 end:0x80206FA0
 
-libultra/coss.c:
+libultra/gu/coss.c:
 	.text       start:0x8005D15C end:0x8005D184
 
-libultra/lookat.c:
+libultra/gu/lookat.c:
 	.text       start:0x8005D184 end:0x8005D52C
 	.sdata2     start:0x80219138 end:0x80219158
 
@@ -539,11 +539,11 @@ libultra/gu/ortho.c:
 	.text       start:0x8005E218 end:0x8005E414
 	.sdata2     start:0x802191C8 end:0x802191D8
 
-libultra/perspective.c:
+libultra/gu/perspective.c:
 	.text       start:0x8005E414 end:0x8005E654
 	.sdata2     start:0x802191D8 end:0x80219200
 
-libultra/rotate.c:
+libultra/gu/rotate.c:
 	.text       start:0x8005E654 end:0x8005E7D4
 	.sdata      start:0x80217DF0 end:0x80217DF8
 	.sdata2     start:0x80219200 end:0x80219208

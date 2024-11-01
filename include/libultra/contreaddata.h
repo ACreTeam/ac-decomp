@@ -8,6 +8,7 @@ extern "C" {
 #endif
 
 extern u8 __osResetSwitchPressed;
+extern u8 __osResetKeyStep;
 
 #ifdef __cplusplus
 }

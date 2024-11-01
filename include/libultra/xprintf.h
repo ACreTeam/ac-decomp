@@ -35,8 +35,8 @@ typedef void* (*PrintCallback)(void*, const char*, int);
 #define FLAGS_HASH 8
 #define FLAGS_ZERO 16
 
-static void _Litob(_Pft* args, u8 type);
-static void _Ldtob(_Pft* args, u8 type);
+extern void _Litob(_Pft* args, u8 type);
+extern void _Ldtob(_Pft* args, u8 type);
 extern int _Printf(void* (*prout_func)(void*, const char*, int), void* arg,
                    const char* fmt, va_list ap);
 

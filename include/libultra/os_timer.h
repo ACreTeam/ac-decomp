@@ -11,6 +11,9 @@ extern "C" {
 #endif
 
 extern int osSetTimer(OSTimer* t, OSTime countdown, OSTime interval, OSMessageQueue* mq, OSMessage msg);
+extern void osStopTimerAll(void);
+
+extern OSTimer* __osTimerList;
 
 #ifdef __cplusplus
 }
