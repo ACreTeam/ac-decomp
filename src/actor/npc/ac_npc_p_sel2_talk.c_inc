@@ -1,0 +1,1450 @@
+static void aNPS2_set_str_ct_player_name(int player_no) {
+    Common_Set(player_no, player_no);
+    Common_Set(now_private, Save_GetPointer(private_data[player_no]));
+}
+
+static int aNPS2_GetCardPrivateNameCopy(u8* name, int idx) {
+    return mCD_GetCardPrivateNameCopy(name, idx);
+}
+
+static void aNPS2_set_slot_name(int slot, int str_no) {
+    u8 str[mMsg_FREE_STRING_LEN];
+
+    mString_Load_StringFromRom(str, sizeof(str), 0x6CD + slot);
+    mMsg_SET_FREE_STR(str_no, str, mMsg_FREE_STRING_LEN);
+}
+
+static void aNPS2_set_str_cpak_name(u8* cpak_name) {
+    mMsg_SET_FREE_STR_CL(mMsg_FREE_STR2, cpak_name, 8, 3);
+}
+
+static int aNPS2_card_player_idx(NPC_P_SEL2_ACTOR* p_sel2) {
+    u8 name[PLAYER_NAME_LEN];
+    int res;
+
+    if (aNPS2_GetCardPrivateNameCopy(name, p_sel2->card_file_idx)) {
+        int pl_no;
+
+        aNPS2_set_str_cpak_name(name);
+        pl_no = mCD_CheckCardPlayerNative(p_sel2->card_file_idx);
+        p_sel2->player_no = pl_no;
+        if (pl_no < 0) {
+            res = 3;
+        } else if (pl_no >= PLAYER_NUM) {
+            res = 1;
+        } else {
+            if (Save_Get(private_data[pl_no]).exists == TRUE) {
+                res = 2;
+            } else {
+                res = 0;
+            }
+
+            aNPS2_set_str_ct_player_name(pl_no);
+        }
+    } else {
+        res = 3;
+    }
+
+    return res;
+}
+
+static int aNPS2_make_msg(NPC_P_SEL2_ACTOR* p_sel2, int idx) {
+    if (idx < 0) {
+        return p_sel2->base_message2 + -1 + -idx;
+    } else {
+        return p_sel2->base_message + idx;
+    }
+}
+
+static void aNPS2_Sub_Date(lbRTC_time_c* dst, lbRTC_time_c* src) {
+    lbRTC_Sub_ss(dst, src->sec);
+    lbRTC_Sub_mm(dst, src->min);
+    lbRTC_Sub_hh(dst, src->hour);
+    dst->day = 0;
+    dst->month = 0;
+    dst->year = 0;
+}
+
+static void mPO_clear_delivery_mail(int house_idx) {
+    Mail_c* po_mail = Save_Get(post_office).mail;
+    s16 keep_mail_sum = Save_Get(post_office).keep_mail_sum_players;
+    int arrange_idx;
+    int i;
+
+    for (i = 0; i < mPO_MAIL_STORAGE_SIZE; i++) {
+        if (mMl_check_not_used_mail(po_mail) == FALSE) {
+            arrange_idx = mMl_hunt_for_send_address(po_mail);
+            if (arrange_idx == house_idx) {
+                keep_mail_sum--;
+                if (keep_mail_sum < 0) {
+                    keep_mail_sum = 0;
+                }
+
+                mMl_clear_mail(po_mail);
+            }
+        }
+
+        po_mail++;
+    }
+
+    Save_Get(post_office).keep_mail_sum_players = keep_mail_sum;
+}
+
+static int aNPS2_get_pl_no(int select_idx) {
+    Private_c* priv = Save_Get(private_data);
+    int i;
+
+    for (i = 0; i < PLAYER_NUM; i++) {
+        if (mPr_NullCheckPersonalID(&priv->player_ID) == FALSE) {
+            if (select_idx == 0) {
+                break;
+            }
+
+            select_idx--;
+        }
+
+        priv++;
+    }
+
+    return i;
+}
+
+static void aNPS2_set_str_byebye_name(int player_no) {
+    Private_c* priv = Save_GetPointer(private_data[player_no]);
+
+    mMsg_SET_FREE_STR_CL(mMsg_FREE_STR1, priv->player_ID.player_name, PLAYER_NAME_LEN, 4);
+}
+
+static int aNPS2_player_no_set(NPC_P_SEL2_ACTOR* p_sel2, int select_idx) {
+    int pl_no = aNPS2_get_pl_no(select_idx);
+
+    aNPS2_set_str_byebye_name(pl_no);
+    if (Save_Get(private_data[pl_no]).exists == TRUE) {
+        p_sel2->player_no = pl_no;
+        aNPS2_set_str_ct_player_name(pl_no);
+        return 0;
+    }
+
+    return 1;
+}
+
+static void aNPS2_time_check(void) {
+    lbRTC_time_c now_time;
+    lbRTC_time_c new_time;
+
+    if (Common_Get(time_changed_flag)) {
+        lbRTC_GetTime(&now_time);
+        aNPS2_Sub_Date(&now_time, Common_GetPointer(old_time));
+        new_time = Common_Get(newly_set_time);
+        lbRTC_Add_Date(&new_time, &now_time);
+        lbRTC_GetTime(&now_time);
+        if (lbRTC_IsOverTime(&now_time, &new_time) == lbRTC_LESS) {
+            Save_Set(npc_force_go_home, TRUE);
+        }
+
+        lbRTC_SetTime(&new_time);
+        lbRTC_GetTime(Common_GetPointer(time.rtc_time));
+    }
+}
+
+static int aNPS2_setup_yure_option(void) {
+    int order_value = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int res = FALSE;
+
+    if (order_value) {
+        int disabled = TRUE;
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                mVibctl_entry(75, mVibctl_VIB_PROG_NON, mVibctl_VIB_PROG_FFF, mVibctl_VIB_PROG_P, 0, 16, 45, 0.0f);
+                disabled = FALSE;
+                break;
+            case mChoice_CHOICE1:
+                disabled = TRUE;
+                break;
+        }
+
+        Save_Get(config).vibration_disabled = disabled;
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static int aNPS2_setup_sound_option(void) {
+    static u8 sound_mode[] = { Config_SOUND_MODE_STEREO, Config_SOUND_MODE_MONO, Config_SOUND_MODE_HEADPHONES };
+    int order_value = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int res = FALSE;
+
+    if (order_value) {
+        int idx = 0;
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                idx = 0;
+                break;
+            case mChoice_CHOICE1:
+                idx = 1;
+                break;
+            case mChoice_CHOICE2:
+                idx = 2;
+                break;
+        }
+
+        OSSetSoundMode(sound_mode[idx] == Config_SOUND_MODE_MONO ? OS_SOUND_MODE_MONO : OS_SOUND_MODE_STEREO);
+        Save_Get(config).sound_mode = sound_mode[idx];
+        sAdo_SetOutMode(aNPS2_sound_mode[idx]);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static int aNPS2_setup_voice_option(void) {
+    static u8 voice_mode[] = { Config_VOICE_MODE_ANIMALESE, Config_VOICE_MODE_CLICK, Config_VOICE_MODE_SILENT };
+    int order;
+    int res;
+
+    order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    res = FALSE;
+
+    if (order != 0) {
+        int idx = 0;
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                idx = 0;
+                break;
+            case mChoice_CHOICE1:
+                idx = 1;
+                break;
+            case mChoice_CHOICE2:
+                idx = 2;
+                break;
+        }
+
+        Save_Get(config).voice_mode = voice_mode[idx];
+        sAdo_SetVoiceMode(aNPS2_voice_mode[idx]);
+        mMsg_sound_spec_change_voice_force(mMsg_Get_base_window_p());
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static int aNPS2_count_player_sum(void) {
+    Private_c* priv = Save_Get(private_data);
+    int player_sum = 0;
+    int i;
+
+    for (i = 0; i < PLAYER_NUM; i++) {
+        if (mPr_NullCheckPersonalID(&priv->player_ID) == FALSE) {
+            player_sum++;
+        }
+
+        priv++;
+    }
+
+    return player_sum;
+}
+
+static void aNPS2_copy_player_name(u8* str, u8** names_pp, int count) {
+    Private_c* priv = Save_GetPointer(private_data[0]);
+    int i = 0;
+
+    while (count != 0) {
+        if (mPr_NullCheckPersonalID(&priv->player_ID) == FALSE) {
+            mem_copy(str + (i * 16), priv->player_ID.player_name, PLAYER_NAME_LEN);
+            names_pp[i] = str + (i * 16);
+            i++;
+            count--;
+        }
+
+        priv++;
+    }
+}
+
+static void aNPS2_copy_player_name2(u8* str, u8** names_pp, int count) {
+    Private_c* priv = Save_GetPointer(private_data[2]);
+    int i = 0;
+
+    while (count != 0) {
+        if (mPr_NullCheckPersonalID(&priv->player_ID) == FALSE) {
+            mem_copy(str + (i * mChoice_CHOICE_STRING_LEN), priv->player_ID.player_name, PLAYER_NAME_LEN);
+            names_pp[i] = str + (i * mChoice_CHOICE_STRING_LEN);
+            i++;
+            count--;
+        }
+
+        priv++;
+    }
+}
+
+static void aNPS2_copy_hokanohito(NPC_P_SEL2_ACTOR* p_sel2, u8* str) {
+    mChoice_c* choice_win = mChoice_Get_base_window_p();
+
+    mChoice_Load_ChoseStringFromRom(choice_win, &str[2 * mChoice_CHOICE_STRING_LEN], 0x1B9, (ACTOR*)p_sel2);
+    mChoice_Load_ChoseStringFromRom(choice_win, &str[3 * mChoice_CHOICE_STRING_LEN], 0x29, (ACTOR*)p_sel2);
+}
+
+static void aNPS2_set_choice_str(NPC_P_SEL2_ACTOR* p_sel2, int type) {
+    static u8 new_player_str[7] = "I'm new";
+    mChoice_c* choice_win = mChoice_Get_base_window_p();
+    u8* str_p[mChoice_CHOICE_NUM];
+    u8* str = static_str;
+    int player_sum = p_sel2->player_sum;
+    int i;
+
+    mem_clear(str, sizeof(static_str), CHAR_SPACE);
+    for (i = 0; i < mChoice_CHOICE_NUM; i++) {
+        str_p[i] = NULL;
+    }
+
+    switch (player_sum) {
+        case 1:
+        case 2:
+        case 3:
+            aNPS2_copy_player_name(str, str_p, player_sum);
+            if (type == 0) {
+                mChoice_Load_ChoseStringFromRom(choice_win, str + (player_sum * mChoice_CHOICE_STRING_LEN), 0x29,
+                                                (ACTOR*)p_sel2);
+            } else {
+                mem_copy(str + (player_sum * mChoice_CHOICE_STRING_LEN), new_player_str, sizeof(new_player_str));
+            }
+            str_p[player_sum] = str + (player_sum * mChoice_CHOICE_STRING_LEN);
+            break;
+        case 4:
+            aNPS2_copy_player_name(str, str_p, player_sum);
+            break;
+    }
+
+    // clang-format off
+    mChoice_Set_choice_data(
+        choice_win,
+        str_p[0], mChoice_CHOICE_STRING_LEN,
+        str_p[1], mChoice_CHOICE_STRING_LEN,
+        str_p[2], mChoice_CHOICE_STRING_LEN,
+        str_p[3], mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN
+    );
+    // clang-format on
+}
+
+static void aNPS2_set_choice_str2(NPC_P_SEL2_ACTOR* p_sel2, int type) {
+    mChoice_c* choice_win = mChoice_Get_base_window_p();
+    u8* str_p[mChoice_CHOICE_NUM];
+    u8* str = static_str;
+    int i;
+
+    mem_clear(str, sizeof(static_str), CHAR_SPACE);
+    for (i = 0; i < mChoice_CHOICE_NUM; i++) {
+        str_p[i] = str + (i * mChoice_CHOICE_STRING_LEN);
+    }
+
+    if (type == 0) {
+        aNPS2_copy_player_name(str, str_p, 2);
+    } else {
+        aNPS2_copy_player_name2(str, str_p, 2);
+    }
+
+    aNPS2_copy_hokanohito(p_sel2, str);
+
+    // clang-format off
+    mChoice_Set_choice_data(
+        choice_win,
+        str_p[0], mChoice_CHOICE_STRING_LEN,
+        str_p[1], mChoice_CHOICE_STRING_LEN,
+        str_p[2], mChoice_CHOICE_STRING_LEN,
+        str_p[3], mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN
+    );
+    // clang-format on
+}
+
+static int aNPS2_get_free_pl_no(void) {
+    Private_c* priv = Save_Get(private_data);
+    int i;
+
+    for (i = 0; i < PLAYER_NUM; i++) {
+        if (mPr_NullCheckPersonalID(&priv->player_ID) == TRUE) {
+            break;
+        }
+
+        priv++;
+    }
+
+    return i;
+}
+
+static int aNPS2_get_only_one_pl_no(void) {
+    Private_c* priv = Save_Get(private_data);
+    int i;
+
+    for (i = 0; i < PLAYER_NUM; i++) {
+        if (mPr_NullCheckPersonalID(&priv->player_ID) == FALSE) {
+            break;
+        }
+
+        priv++;
+    }
+
+    return i;
+}
+
+static int aNPS2_chk_friendship_npc(void) {
+    PersonalID_c* pid = &Now_Private->player_ID;
+    Animal_c* animal = Save_Get(animals);
+    int i;
+    int res = FALSE;
+
+    for (i = 0; i < ANIMAL_NUM_MAX; i++) {
+        if (mNpc_CheckFriendship(pid, animal) != -1) {
+            res = TRUE;
+            break;
+        }
+
+        animal++;
+    }
+
+    return res;
+}
+
+static mActor_name_t aNPS2_decide_birthday_npc(void) {
+    PersonalID_c* pid = &Now_Private->player_ID;
+    Animal_c* animal = Save_Get(animals);
+    int friendship_tbl[ANIMAL_NUM_MAX];
+    int anm_idx_tbl[ANIMAL_NUM_MAX];
+    int friend_count = 0;
+    mActor_name_t npc_name;
+    int i;
+
+    for (i = 0; i < ANIMAL_NUM_MAX; i++) {
+        int idx = mNpc_CheckFriendship(pid, animal);
+
+        if (idx != -1) {
+            friendship_tbl[friend_count] = animal->memories[idx].friendship;
+            anm_idx_tbl[friend_count] = i;
+            friend_count++;
+        }
+
+        animal++;
+    }
+
+    if (friend_count > 0) {
+        int max_friendship_val = -1;
+        int max_idx = -1;
+
+        for (i = 0; i < friend_count; i++) {
+            if (max_friendship_val < friendship_tbl[i]) {
+                max_friendship_val = friendship_tbl[i];
+                max_idx = anm_idx_tbl[i];
+            }
+        }
+
+        if (max_idx == -1) {
+            max_idx = 0;
+        }
+
+        return Save_Get(animals[max_idx]).id.npc_id;
+    }
+
+    return Save_Get(animals[0]).id.npc_id;
+}
+
+static int aNPS2_chk_setup_birthday_demo(void) {
+    return !Save_Get(cheated_flag) && !mEv_ArbeitPlayer(Common_Get(player_no)) &&
+           Common_Get(time.rtc_time).month == Now_Private->birthday.month &&
+           Common_Get(time.rtc_time).day == Now_Private->birthday.day &&
+           Common_Get(time.rtc_time).year != Now_Private->celebrated_birthday_year &&
+           mPr_GetPossessionItemIdx(Now_Private, EMPTY_NO) != -1 && aNPS2_chk_friendship_npc() == TRUE;
+}
+
+enum {
+    aNPS2_DOOR_EXIT_TYPE_HOME,
+    aNPS2_DOOR_EXIT_TYPE_STATION0,
+    aNPS2_DOOR_EXIT_TYPE_STATION1,
+    aNPS2_DOOR_EXIT_TYPE_DEMO2,
+
+    aNPS_DOOR_EXIT_TYPE_NUM
+};
+
+typedef struct npc_p_sel2_door_data_s {
+    int scene_no;
+    u8 drt;
+    u8 type;
+    u16 arg;
+    s16 pos_x;
+    s16 pos_z;
+} aNPS2_door_data_c;
+
+static void aNPS2_make_door_data(Door_data_c* door_data, int type, NPC_P_SEL2_ACTOR* p_sel2) {
+    static aNPS2_door_data_c demo2_data = { SCENE_START_DEMO2, mSc_DIRECT_NORTH, 0, 0, 120, 340 };
+    static aNPS2_door_data_c home_data = { SCENE_FG, mSc_DIRECT_SOUTH, 1, 1, 2240, 2240 };
+    static aNPS2_door_data_c station_data = { SCENE_FG, mSc_DIRECT_SOUTH, 0, 0, 1979, 760 };
+    static aNPS2_door_data_c* data[] = { &home_data, &station_data, &station_data, &demo2_data };
+    static s16 homeX[] = { 2128, 2352, 2128, 2352 };
+    static s16 homeZ[] = { 1488, 1488, 1768, 1768 };
+    static u8 drt[] = { mSc_DIRECT_SOUTH_EAST, mSc_DIRECT_SOUTH_WEST, mSc_DIRECT_SOUTH_EAST, mSc_DIRECT_SOUTH_WEST };
+    aNPS2_door_data_c* data_p = data[type];
+
+    door_data->next_scene_id = data_p->scene_no;
+    door_data->exit_orientation = data_p->drt;
+    door_data->exit_type = data_p->type;
+    door_data->extra_data = data_p->arg;
+    door_data->exit_position.x = data_p->pos_x;
+    door_data->exit_position.y = 0;
+    door_data->exit_position.z = data_p->pos_z;
+    door_data->door_actor_name = EMPTY_NO;
+    door_data->wipe_type = 3;
+
+    if (type == aNPS2_DOOR_EXIT_TYPE_HOME) {
+        int arrange_idx = mHS_get_arrange_idx(p_sel2->player_no);
+        int pl_no = p_sel2->player_no;
+
+        door_data->exit_position.x = homeX[arrange_idx];
+        door_data->exit_position.z = homeZ[arrange_idx];
+        door_data->exit_orientation = drt[arrange_idx];
+        door_data->door_actor_name = HOUSE0 + arrange_idx;
+        Common_Get(transition).wipe_type = 1;
+        Now_Private->birthday_present_npc = EMPTY_NO;
+
+        if ((Now_Private->state_flags & mPr_FLAG_BIRTHDAY_ACTIVE) != 0) {
+            Common_Set(demo_profiles[1], mAc_PROFILE_PRESENT_DEMO);
+            Now_Private->birthday_present_npc = aNPS2_decide_birthday_npc();
+            Now_Private->celebrated_birthday_year = Common_Get(time.rtc_time).year;
+        } else if (Common_Get(reset_flag) == TRUE) {
+            Common_Set(demo_profiles[1], mAc_PROFILE_RESET_DEMO);
+        } else if (!mSC_LightHouse_travel_check()) {
+            if (mSC_LightHouse_Event_Check(pl_no)) {
+                Common_Set(demo_profiles[1], mAc_PROFILE_PRESENT_DEMO);
+            } else if (mPr_GetPossessionItemSum(Now_Private, EMPTY_NO) != 0) {
+                if (mSM_CHECK_ALL_FISH_GET() && !mSC_trophy_get(mSC_TROPHY_GOLDEN_ROD)) {
+                    Common_Set(demo_profiles[1], mAc_PROFILE_PRESENT_DEMO);
+                } else if (mSM_CHECK_ALL_INSECT_GET() && !mSC_trophy_get(mSC_TROPHY_GOLDEN_NET)) {
+                    Common_Set(demo_profiles[1], mAc_PROFILE_PRESENT_DEMO);
+                }
+            }
+        }
+    } else if (type == aNPS2_DOOR_EXIT_TYPE_DEMO2) {
+        Common_Get(transition).wipe_type = 3;
+        mGH_animal_return_init();
+    } else {
+        Common_Set(demo_profiles[0], mAc_PROFILE_RIDE_OFF_DEMO);
+        if (Common_Get(reset_flag) == TRUE) {
+            Common_Set(demo_profiles[1], mAc_PROFILE_RESET_DEMO);
+        }
+
+        Common_Get(transition).wipe_type = 4;
+    }
+}
+
+static int aNPS2_setup_game_start(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int type = p_sel2->talk_idx - 23;
+    Door_data_c door_data;
+    u8 has_map;
+
+    aNPS2_make_door_data(&door_data, type, p_sel2);
+    if (goto_other_scene(play, &door_data, TRUE) != TRUE) {
+        return FALSE;
+    }
+
+    mBGMPsComp_make_ps_wipe(0x11C2);
+    has_map = FALSE;
+    switch (p_sel2->talk_idx) {
+        case 23:
+            has_map = TRUE;
+            if (mEv_CheckFirstJob() == TRUE) {
+                mQst_errand_c* fj_p = mQst_GetFirstJobData();
+
+                switch (fj_p->base.quest_kind) {
+                    case mQst_ERRAND_FIRSTJOB_CHANGE_CLOTH:
+                    case mQst_ERRAND_FIRSTJOB_PLANT_FLOWER:
+                    case mQst_ERRAND_FIRSTJOB_DELIVER_FTR:
+                    case mQst_ERRAND_FIRSTJOB_INTRODUCTIONS:
+                    case mQst_ERRAND_FIRSTJOB_START:
+                        has_map = FALSE;
+                        break;
+                }
+            }
+            break;
+        case 24:
+            Common_Set(submenu_disabled, TRUE);
+            has_map = TRUE;
+            break;
+        case 25:
+            Common_Set(submenu_disabled, TRUE);
+            if (mPr_GetThisLandMapIdx(Now_Private->maps, mPr_FOREIGN_MAP_COUNT) != -1) {
+                has_map = TRUE;
+            } else {
+                has_map = FALSE;
+            }
+            break;
+        case 26:
+            has_map = FALSE;
+            break;
+    }
+
+    Common_Set(map_flag, has_map);
+    return TRUE;
+}
+
+typedef struct npc_p_sel2_start_data_s {
+    int type;
+} aNPS2_start_data_c;
+
+static int aNPS2_setup_load_data(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    static aNPS2_start_data_c start_data_0 = { mCD_START_COND_1 };
+    static aNPS2_start_data_c start_data_1 = { mCD_START_COND_INCOMING_FOREIGNER };
+    static aNPS2_start_data_c start_data_2 = { mCD_START_COND_INCOMING_FOREIGNER };
+    static aNPS2_start_data_c start_data_3 = { mCD_START_COND_2 };
+    static aNPS2_start_data_c* start_data[] = { &start_data_0, &start_data_1, &start_data_2, &start_data_3 };
+    int type = p_sel2->talk_idx - 23;
+    aNPS2_start_data_c* data_p = start_data[type];
+    s32 result;
+
+    return mCD_InitGameStart_bg(p_sel2->player_no, p_sel2->card_file_idx, data_p->type, &result);
+}
+
+static void aNPS2_setup_yure(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    if (aNPS2_setup_yure_option() == TRUE) {
+        aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_WHATS_HAPPEN);
+    }
+}
+
+static void aNPS2_setup_sound(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    if (aNPS2_setup_sound_option() == TRUE) {
+        aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_SETUP_VOICE);
+    }
+}
+
+static void aNPS2_setup_voice(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    if (aNPS2_setup_voice_option() == TRUE) {
+        aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_SETUP_VOICE_OK);
+    }
+}
+
+static void aNPS2_setup_voice_ok(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_WHATS_HAPPEN);
+                break;
+            case mChoice_CHOICE1:
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_SETUP_SOUND);
+                break;
+        }
+    }
+}
+
+static void aNPS2_whats_happen(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    // clang-format off
+    static int next_talk_idx[] = {
+        aNPS2_TALK_CHK_OPTION,
+        aNPS2_TALK_SELECT_PLAYER,
+        aNPS2_TALK_START_TYPE1,
+        aNPS2_TALK_START_TYPE2,
+        aNPS2_TALK_CHK_KITAKU_PLAYER,
+        aNPS2_TALK_RETURN_TITLE,
+        aNPS2_TALK_SELECT_CARD_PLAYER,
+        aNPS2_TALK_CHK_CLR_PASSPORT_FILE,
+    };
+    // clang-format on
+
+    // clang-format off
+    static int msg_no[] = {
+         3, // aNPS2_TALK_CHK_OPTION
+        17, // aNPS2_TALK_SELECT_PLAYER
+        22, // aNPS2_TALK_START_TYPE1
+        24, // aNPS2_TALK_START_TYPE2
+        35, // aNPS2_TALK_CHK_KITAKU_PLAYER
+        38, // aNPS2_TALK_RETURN_TITLE
+        17, // aNPS2_TALK_SELECT_CARD_PLAYER
+        -2, // aNPS2_TALK_CHK_CLR_PASSPORT_FILE
+    };
+    // clang-format on
+
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int idx = -1;
+    int passport_slot;
+    int player_num;
+
+    if (order != 0) {
+        if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+            switch (mChoice_GET_CHOSENUM()) {
+                case mChoice_CHOICE0:
+                    p_sel2->card_file_idx = -1;
+                    passport_slot = mCD_CheckPassportFile();
+                    p_sel2->passport_slot = passport_slot;
+
+                    if (passport_slot != -1) {
+                        aNPS2_set_slot_name(passport_slot, mMsg_FREE_STR3);
+
+                        if (mCD_CheckBrokenPassportFile(passport_slot) == TRUE) {
+                            idx = 7;
+                        } else {
+                            player_num = mCD_GetPlayerNum();
+                            p_sel2->card_player_num = player_num;
+
+                            if (player_num < 1) {
+                                idx = 5;
+                            } else if (player_num == 1) {
+                                p_sel2->card_file_idx = 0;
+                                idx = 2 + aNPS2_card_player_idx(p_sel2);
+                            } else {
+                                p_sel2->card_player_idx = 0;
+                                idx = 6;
+                            }
+                        }
+                    } else {
+                        p_sel2->card_file_idx = -1;
+                        idx = 1;
+                    }
+                    break;
+                case mChoice_CHOICE1:
+                    idx = 0;
+                    break;
+            }
+
+            if (idx != -1) {
+                mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, msg_no[idx]));
+                aNPS2_change_talk_proc(p_sel2, play, next_talk_idx[idx]);
+                mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+            }
+        }
+    }
+}
+
+static void aNPS2_chk_option(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 3 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        int next_talk_idx = -1;
+
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                next_talk_idx = aNPS2_TALK_SETUP_SOUND;
+                break;
+            case mChoice_CHOICE1:
+                next_talk_idx = aNPS2_TALK_SETUP_YURE;
+                break;
+            case mChoice_CHOICE2:
+                next_talk_idx = aNPS2_TALK_CHK_OPTION2;
+                break;
+            case mChoice_CHOICE3:
+                next_talk_idx = aNPS2_TALK_WHATS_HAPPEN;
+                break;
+        }
+
+        if (next_talk_idx != -1) {
+            aNPS2_change_talk_proc(p_sel2, play, next_talk_idx);
+        }
+    }
+}
+
+static void aNPS2_chk_option2(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int msg_no;
+    int pl_no;
+
+    if (order == 3 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        int next_talk_idx = -1;
+
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                switch (p_sel2->player_sum) {
+                    case 1:
+                        pl_no = aNPS2_get_only_one_pl_no();
+                        aNPS2_set_str_ct_player_name(pl_no);
+                        msg_no = aNPS2_make_msg(p_sel2, 25);
+                        next_talk_idx = aNPS2_TALK_WHATS_HAPPEN;
+                        break;
+                    case 4:
+                        aNPS2_set_choice_str2(p_sel2, 0);
+                        msg_no = aNPS2_make_msg(p_sel2, 7);
+                        next_talk_idx = aNPS2_TALK_CHK_CLR_PL_DATA3;
+                        break;
+                    default:
+                        aNPS2_set_choice_str(p_sel2, 0);
+                        msg_no = aNPS2_make_msg(p_sel2, 7);
+                        next_talk_idx = aNPS2_TALK_CHK_CLR_PL_DATA;
+                        break;
+                }
+
+                mMsg_SET_CONTINUE_MSG_NUM(msg_no);
+                break;
+            case mChoice_CHOICE1:
+                next_talk_idx = aNPS2_TALK_CHK_CLR_VILLAGE_DATA_CARTRIDGE;
+                msg_no = aNPS2_make_msg(p_sel2, 13);
+                mMsg_SET_CONTINUE_MSG_NUM(msg_no);
+                break;
+            case mChoice_CHOICE2:
+                next_talk_idx = aNPS2_TALK_TI_MENU_OPEN_MSG_WAIT;
+                break;
+            case mChoice_CHOICE3:
+                next_talk_idx = aNPS2_TALK_WHATS_HAPPEN;
+                break;
+        }
+
+        if (next_talk_idx != -1) {
+            aNPS2_change_talk_proc(p_sel2, play, next_talk_idx);
+        }
+    }
+}
+
+static void aNPS2_chk_clr_village_data_cartridge(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 2 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        int next_talk_idx = -1;
+
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE1:
+                next_talk_idx = aNPS2_TALK_CLR_VILLAGE_DATA_CARTRIDGE;
+                break;
+            case mChoice_CHOICE0:
+                next_talk_idx = aNPS2_TALK_WHATS_HAPPEN;
+                break;
+        }
+
+        if (next_talk_idx != -1) {
+            aNPS2_change_talk_proc(p_sel2, play, next_talk_idx);
+        }
+    }
+}
+
+static void aNPS2_clr_village_data_cartridge(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int slot;
+
+    switch (order) {
+        case 1:
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 2);
+            mMsg_SET_LOCKCONTINUE();
+            break;
+        case 2:
+            switch (mCD_EraseLand_bg(&slot)) {
+                case mCD_TRANS_ERR_NONE:
+                    mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 15));
+                    break;
+                case mCD_TRANS_ERR_NOCARD:
+                    mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 38));
+                    break;
+                case mCD_TRANS_ERR_IOERROR:
+                    mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 33));
+                    break;
+                case mCD_TRANS_ERR_BUSY:
+                    // card is still working so exit for now
+                    return;
+                default:
+                    mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 33));
+                    break;
+            }
+
+            mMsg_UNSET_LOCKCONTINUE();
+            aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_RETURN_TITLE);
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+            break;
+    }
+}
+
+static void aNPS2_chk_clr_pl_data(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int player_sum;
+    int chose_num;
+    static int next_talk_idx[] = { aNPS2_TALK_CHK_CLR_PL_DATA2, aNPS2_TALK_WHATS_HAPPEN, aNPS2_TALK_WHATS_HAPPEN };
+    static int msg_no[] = { 8, 9, 12 };
+    int idx;
+
+    if (order == 4 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        player_sum = p_sel2->player_sum;
+        chose_num = mChoice_GET_CHOSENUM();
+
+        if (player_sum == PLAYER_NUM) {
+            idx = aNPS2_player_no_set(p_sel2, chose_num);
+        } else if (chose_num < player_sum) {
+            idx = aNPS2_player_no_set(p_sel2, chose_num);
+        } else {
+            idx = 2;
+        }
+
+        mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, msg_no[idx]));
+        aNPS2_change_talk_proc(p_sel2, play, next_talk_idx[idx]);
+    }
+}
+
+static void aNPS2_chk_clr_pl_data2(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int next_talk_idx = -1;
+
+    if (order == 5 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE1:
+                next_talk_idx = aNPS2_TALK_CLR_PL_DATA;
+                break;
+            case mChoice_CHOICE0:
+                next_talk_idx = aNPS2_TALK_WHATS_HAPPEN;
+                break;
+        }
+
+        if (next_talk_idx != -1) {
+            aNPS2_change_talk_proc(p_sel2, play, next_talk_idx);
+        }
+    }
+}
+
+static void aNPS2_chk_clr_pl_data3(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int idx;
+    static int next_talk_idx[] = {
+        // clang-format off
+        aNPS2_TALK_CHK_CLR_PL_DATA2,
+        aNPS2_TALK_WHATS_HAPPEN,
+        aNPS2_TALK_WHATS_HAPPEN,
+        aNPS2_TALK_CHK_CLR_PL_DATA3,
+        aNPS2_TALK_CHK_CLR_PL_DATA4,
+        // clang-format on
+    };
+    static int msg_no[] = {
+        // clang-format off
+        8, // aNPS2_TALK_CHK_CLR_PL_DATA2
+        9, // aNPS2_TALK_WHATS_HAPPEN
+        12, // aNPS2_TALK_WHATS_HAPPEN
+        34, // aNPS2_TALK_CHK_CLR_PL_DATA3
+        34, // aNPS2_TALK_CHK_CLR_PL_DATA4
+        // clang-format on
+    };
+    int chose_num;
+
+    if (order == 4 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        idx = 0;
+        chose_num = mChoice_GET_CHOSENUM();
+        switch (chose_num) {
+            case mChoice_CHOICE0:
+            case mChoice_CHOICE1:
+                if (p_sel2->talk_idx == aNPS2_TALK_CHK_CLR_PL_DATA4) {
+                    chose_num += 2;
+                }
+
+                idx = aNPS2_player_no_set(p_sel2, chose_num);
+                break;
+            case mChoice_CHOICE2:
+                if (p_sel2->talk_idx == aNPS2_TALK_CHK_CLR_PL_DATA3) {
+                    idx = 4;
+                    aNPS2_set_choice_str2(p_sel2, 1);
+                } else {
+                    idx = 3;
+                    aNPS2_set_choice_str2(p_sel2, 0);
+                }
+                break;
+            case mChoice_CHOICE3:
+                idx = 2;
+                break;
+        }
+
+        mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, msg_no[idx]));
+        aNPS2_change_talk_proc(p_sel2, play, next_talk_idx[idx]);
+    }
+}
+
+static void aNPS2_chk_clr_passport_file(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE1:
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_CLR_PASSPORT_FILE);
+                break;
+            case mChoice_CHOICE0:
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_WHATS_HAPPEN);
+                break;
+        }
+    }
+}
+
+static void aNPS2_clr_passport_file(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (order) {
+        case 1:
+            mMsg_SET_LOCKCONTINUE();
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 2);
+            break;
+        case 2:
+            switch (mCD_ErasePassportFile_bg(p_sel2->passport_slot)) {
+                case mCD_RESULT_SUCCESS:
+                    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+                    aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_WHATS_HAPPEN);
+                    mMsg_Unset_LockContinue(msg_p);
+                    mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, -6));
+                    break;
+                case mCD_RESULT_ERROR:
+                    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+                    aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_RETURN_TITLE);
+                    mMsg_Unset_LockContinue(msg_p);
+                    mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, -4));
+                    break;
+            }
+            break;
+    }
+}
+
+static void aNPS2_clr_pl_data(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int slot;
+
+    switch (order) {
+        case 1:
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 2);
+            mMsg_SET_LOCKCONTINUE();
+            break;
+        case 2:
+            switch (mCD_SaveErasePlayer_bg(&slot)) {
+                case mCD_TRANS_ERR_NONE:
+                    p_sel2->player_sum--;
+                    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+                    mMsg_UNSET_LOCKCONTINUE();
+                    aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_WHATS_HAPPEN);
+                    break;
+                case mCD_TRANS_ERR_BUSY:
+                    break;
+                case mCD_TRANS_ERR_NOCARD:
+                    aNPS2_set_slot_name(slot, mMsg_FREE_STR4);
+                    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+                    mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 38));
+                    mMsg_UNSET_LOCKCONTINUE();
+                    aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_RETURN_TITLE);
+                    break;
+                case mCD_TRANS_ERR_IOERROR:
+                    aNPS2_set_slot_name(slot, mMsg_FREE_STR4);
+                    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+                    mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 33));
+                    mMsg_UNSET_LOCKCONTINUE();
+                    aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_RETURN_TITLE);
+                    break;
+            }
+            break;
+        case 0:
+            break;
+    }
+}
+
+static void aNPS2_ti_menu_open_msg_wait(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        aNPS2_change_talk_proc(p_sel2, play, p_sel2->talk_idx + 1);
+    }
+}
+
+static void aNPS2_ti_menu_open_wait(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
+        aNPS2_change_talk_proc(p_sel2, play, p_sel2->talk_idx + 1);
+    }
+}
+
+static void aNPS2_ti_menu_close_wait(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+
+    if (submenu->open_flag == FALSE && mMsg_CHECK_NOT_SERIES_MAIN_WAIT() == TRUE) {
+        mMsg_SET_FORCENEXT();
+
+        switch (p_sel2->talk_idx) {
+            case aNPS2_TALK_TI_MENU_CLOSE_WAIT:
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_WHATS_HAPPEN);
+                break;
+        }
+    }
+}
+
+static void aNPS2_select_player(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int chose_num;
+
+    if (order == 6 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        chose_num = mChoice_GET_CHOSENUM();
+
+        if (chose_num == p_sel2->player_sum) {
+            // create new player
+            p_sel2->player_no = aNPS2_get_free_pl_no();
+            mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 19));
+            aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_START_TYPE3);
+        } else {
+            // load player
+            p_sel2->player_no = aNPS2_get_pl_no(chose_num);
+            aNPS2_set_str_ct_player_name(p_sel2->player_no);
+
+            if (Save_Get(private_data[p_sel2->player_no]).exists == TRUE) {
+                // load player which is not travelling
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_START_TYPE0);
+                mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 18));
+            } else {
+                // load player which is travelling
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_CHK_FUZAI_PLAYER);
+                mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 29));
+            }
+        }
+    }
+}
+
+static void aNPS2_select_card_player(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int chose_num;
+    int idx;
+    static int next_talk_idx[] = {
+        // clang-format off
+        aNPS2_TALK_START_TYPE1,
+        aNPS2_TALK_START_TYPE2,
+        aNPS2_TALK_CHK_KITAKU_PLAYER,
+        aNPS2_TALK_RETURN_TITLE,
+        aNPS2_TALK_SELECT_CARD_PLAYER,
+        // clang-format on
+    };
+    static int msg_no[] = {
+        // clang-format off
+        22,
+        24,
+        35,
+        38,
+        -1,
+        // clang-format on
+    };
+
+    if (order == 6 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        chose_num = mChoice_GET_CHOSENUM();
+
+        if (chose_num == p_sel2->card_player_next_choice_idx) {
+            p_sel2->card_player_idx += 3;
+            if (p_sel2->card_player_idx >= p_sel2->card_player_num) {
+                p_sel2->card_player_idx = 0;
+            }
+
+            idx = 4;
+        } else {
+            p_sel2->card_file_idx = p_sel2->card_player_idx + chose_num;
+            idx = aNPS2_card_player_idx(p_sel2);
+        }
+
+        if (idx != -1) {
+            mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, msg_no[idx]));
+            aNPS2_change_talk_proc(p_sel2, play, next_talk_idx[idx]);
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        }
+    }
+}
+
+static void aNPS2_chk_fuzai_player(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 7 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_START_TYPE0);
+                break;
+            case mChoice_CHOICE1:
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_SELECT_PLAYER);
+                break;
+        }
+    }
+}
+
+static void aNPS2_chk_kitaku_player(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 1 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_START_TYPE1);
+                break;
+            case mChoice_CHOICE1:
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_WHATS_HAPPEN);
+                break;
+        }
+    }
+}
+
+static void aNPS2_game_start_wait(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    switch (order) {
+        case 1:
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 2);
+            mMsg_SET_LOCKCONTINUE();
+
+            // If the current time is before the last save time, the player "cheated" so set the cheated flag
+            if (lbRTC_IsOverTime(&Save_Get(save_check).time, Common_GetPointer(time.rtc_time)) == lbRTC_LESS) {
+                Save_Set(cheated_flag, TRUE);
+                Save_Set(npc_force_go_home, TRUE);
+            }
+
+            aNPS2_time_check();
+            if (p_sel2->talk_idx == aNPS2_TALK_START_TYPE0) {
+                if (aNPS2_chk_setup_birthday_demo() == TRUE) {
+                    Now_Private->state_flags |= mPr_FLAG_BIRTHDAY_ACTIVE;
+                } else {
+                    Now_Private->state_flags &= ~mPr_FLAG_BIRTHDAY_ACTIVE;
+                }
+            }
+        // fallthrough 1 -> 2, is this a mistake??
+        case 2:
+            switch (aNPS2_setup_load_data(p_sel2, play)) {
+                case mCD_TRANS_ERR_NONE:
+                    mMsg_UNSET_LOCKCONTINUE();
+                    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+                    break;
+                case mCD_TRANS_ERR_NOCARD:
+                case mCD_TRANS_ERR_IOERROR:
+                    mMsg_UNSET_LOCKCONTINUE();
+                    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+                    mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 33));
+                    aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_RETURN_TITLE);
+                    break;
+                case mCD_TRANS_ERR_WRONG_LAND:
+                    mMsg_UNSET_LOCKCONTINUE();
+                    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+                    mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, -7));
+                    aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_RETURN_TITLE);
+                    break;
+                case mCD_TRANS_ERR_BUSY:
+                    break;
+            }
+            break;
+    }
+
+    if (mDemo_Check(mDemo_TYPE_SPEAK, (ACTOR*)p_sel2) == FALSE) {
+        p_sel2->start_flag = TRUE;
+    }
+}
+
+static void aNPS2_return_title(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    if (mDemo_Check(mDemo_TYPE_SPEAK, (ACTOR*)p_sel2) == FALSE) {
+        play->fb_fade_type = 4;
+        mPlib_request_main_invade_type1((GAME*)play);
+        Actor_info_save_actor(play);
+        aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_WAIT);
+    }
+}
+
+static void aNPS2_clr_pl_data_init(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    int pl_no = p_sel2->player_no;
+
+    mPO_clear_delivery_mail(mHS_get_arrange_idx(pl_no));
+    mPr_ClearPrivateInfo(Save_GetPointer(private_data[pl_no]));
+    mHm_ClearHomeInfo(mHS_get_arrange_idx(pl_no));
+    mMmd_DeletePresentedByPlayer(pl_no);
+    mEv_ClearPersonalEventFlag(pl_no);
+    mGH_animal_return_init();
+    mSC_LightHouse_Delete_Player(pl_no);
+    mNpc_AllClearHPMailPlayerIdx(pl_no);
+    mNW_InitPrivateOriginalData(pl_no);
+}
+
+static void aNPS2_ti_menu_open_wait_init(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1();
+}
+
+static void aNPS2_ti_menu_close_wait_init(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+
+    switch (p_sel2->talk_idx) {
+        case aNPS2_TALK_TI_MENU_CLOSE_WAIT:
+            mSM_open_submenu(submenu, mSM_OVL_TIMEIN, mTI_OVL_OPEN_NORMAL, 0);
+            break;
+    }
+
+    mMsg_REQUEST_MAIN_APPEAR_WAIT_TYPE1();
+}
+
+static void aNPS2_select_player_init(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    aNPS2_set_choice_str(p_sel2, 1);
+}
+
+static void aNPS2_select_card_player_init(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
+    u8* str_p[mChoice_CHOICE_NUM];
+    u8* str = static_str;
+    mChoice_c* choice_win = mChoice_Get_base_window_p();
+    int i;
+
+    mem_clear(str, sizeof(static_str), CHAR_SPACE);
+    for (i = 0; i < mChoice_CHOICE_NUM; i++) {
+        str_p[i] = NULL;
+    }
+
+    p_sel2->card_player_next_choice_idx = -1;
+    if (p_sel2->card_player_num <= PLAYER_NUM) {
+        for (i = 0; i < p_sel2->card_player_num; i++) {
+            str_p[i] = str + (i * mChoice_CHOICE_STRING_LEN);
+            if (!aNPS2_GetCardPrivateNameCopy(str_p[i], i)) {
+                mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 38));
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_RETURN_TITLE);
+                return;
+            }
+        }
+    } else {
+        for (i = 0; i < 3 && (i + p_sel2->card_player_idx) < p_sel2->card_player_num; i++) {
+            str_p[i] = str + (i * mChoice_CHOICE_STRING_LEN);
+            if (!aNPS2_GetCardPrivateNameCopy(str_p[i], i + p_sel2->card_player_idx)) {
+                mMsg_SET_CONTINUE_MSG_NUM(aNPS2_make_msg(p_sel2, 38));
+                aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_RETURN_TITLE);
+                return;
+            }
+        }
+
+        str_p[i] = str + (i * mChoice_CHOICE_STRING_LEN);
+        p_sel2->card_player_next_choice_idx = i;
+        mChoice_Load_ChoseStringFromRom(choice_win, str_p[i], 0x1B9, (ACTOR*)p_sel2);
+    }
+
+    // clang-format off
+    mChoice_Set_choice_data(
+        choice_win,
+        str_p[0], mChoice_CHOICE_STRING_LEN,
+        str_p[1], mChoice_CHOICE_STRING_LEN,
+        str_p[2], mChoice_CHOICE_STRING_LEN,
+        str_p[3], mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN
+    );
+    // clang-format on
+}
+
+typedef void (*aNPS2_TALK_INIT_PROC)(NPC_P_SEL2_ACTOR*, GAME_PLAY*);
+
+static void aNPS2_talk_init_proc(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play, int talk_idx) {
+    // clang-format off
+    static aNPS2_TALK_INIT_PROC init_proc[] = {
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        &aNPS2_clr_pl_data_init,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        &aNPS2_ti_menu_open_wait_init,
+        &aNPS2_ti_menu_close_wait_init,
+        &aNPS2_select_player_init,
+        &aNPS2_select_card_player_init,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+        (aNPS2_TALK_INIT_PROC)&none_proc1,
+    };
+    // clang-foramt on
+
+    (*init_proc[talk_idx])(p_sel2, play);
+}
+
+static void aNPS2_change_talk_proc(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play, int talk_idx) {
+    // clang-format off
+    static aNPS2_TALK_PROC process[] = {
+        &aNPS2_setup_yure,
+        &aNPS2_setup_sound,
+        &aNPS2_setup_voice,
+        &aNPS2_setup_voice_ok,
+        &aNPS2_whats_happen,
+        &aNPS2_chk_option,
+        &aNPS2_chk_option2,
+        &aNPS2_chk_clr_village_data_cartridge,
+        &aNPS2_clr_village_data_cartridge,
+        &aNPS2_chk_clr_pl_data,
+        &aNPS2_chk_clr_pl_data2,
+        &aNPS2_chk_clr_pl_data3,
+        &aNPS2_chk_clr_pl_data3,
+        &aNPS2_chk_clr_passport_file,
+        &aNPS2_clr_passport_file,
+        &aNPS2_clr_pl_data,
+        &aNPS2_ti_menu_open_msg_wait,
+        &aNPS2_ti_menu_open_wait,
+        &aNPS2_ti_menu_close_wait,
+        &aNPS2_select_player,
+        &aNPS2_select_card_player,
+        &aNPS2_chk_fuzai_player,
+        &aNPS2_chk_kitaku_player,
+        &aNPS2_game_start_wait,
+        &aNPS2_game_start_wait,
+        &aNPS2_game_start_wait,
+        &aNPS2_game_start_wait,
+        &aNPS2_return_title,
+        (aNPS2_TALK_PROC)&none_proc1,
+    };
+    // clang-format on
+
+    p_sel2->talk_idx = talk_idx;
+    p_sel2->talk_proc = process[talk_idx];
+    aNPS2_talk_init_proc(p_sel2, play, talk_idx);
+}
+
+static void aNPS2_set_talk_info_talk_request(ACTOR* actorx) {
+    mDemo_Set_msg_num(aNPS2_make_msg((NPC_P_SEL2_ACTOR*)actorx, 0));
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+}
+
+static void aNPS2_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aNPS2_set_talk_info_talk_request);
+}
+
+static int aNPS2_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_P_SEL2_ACTOR* p_sel2 = (NPC_P_SEL2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int slot = mCD_SLOT_A;
+    int now_slot;
+
+    aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_WHATS_HAPPEN);
+    mDemo_Set_ListenAble();
+    p_sel2->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)&none_proc1;
+    p_sel2->start_flag = FALSE;
+    mDemo_Set_talk_return_demo_wait(TRUE);
+
+    now_slot = mCD_GetThisLandSlotNo();
+    if (now_slot == mCD_SLOT_A || now_slot == mCD_SLOT_B) {
+        slot = now_slot;
+    } else if (Common_Get(memcard_slot) == mCD_SLOT_A || Common_Get(memcard_slot) == mCD_SLOT_B) {
+        slot = Common_Get(memcard_slot);
+    }
+
+    aNPS2_set_slot_name(slot, mMsg_FREE_STR4);
+    return TRUE;
+}
+
+static int aNPS2_talk_end_chk(ACTOR* actorx, GAME* game) {
+    NPC_P_SEL2_ACTOR* p_sel2 = (NPC_P_SEL2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int res = FALSE;
+
+    (*p_sel2->talk_proc)(p_sel2, play);
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE) {
+        aNPS2_think_init_proc((NPC_ACTOR*)actorx, play);
+        p_sel2->talk_end_flag = TRUE;
+        res = TRUE;
+    }
+
+    return res;
+}

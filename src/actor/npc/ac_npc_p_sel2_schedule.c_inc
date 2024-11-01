@@ -1,0 +1,40 @@
+static void aNPS2_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_P_SEL2_ACTOR* p_sel2 = (NPC_P_SEL2_ACTOR*)nactorx;
+
+    if (nactorx->action.step == aNPC_ACTION_END_STEP && !p_sel2->talk_end_flag) {
+        nactorx->talk_info.talk_request_proc = &aNPS2_talk_request;
+    }
+}
+
+static void aNPS2_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_P_SEL2_ACTOR* p_sel2 = (NPC_P_SEL2_ACTOR*)nactorx;
+
+    nactorx->request.act_priority = 4;
+    nactorx->request.act_idx = aNPC_ACT_WAIT;
+    nactorx->request.act_type = aNPC_ACT_TYPE_DEFAULT;
+}
+
+static void aNPS2_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { &aNPS2_think_init_proc, &aNPS2_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aNPS2_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_P_SEL2_ACTOR* p_sel2 = (NPC_P_SEL2_ACTOR*)nactorx;
+
+    nactorx->think.think_proc = &aNPS2_think_proc;
+    CLIP(npc_clip)->think_proc(nactorx, play, aNPC_THINK_IN_BLOCK, 0);
+}
+
+static void aNPS2_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!CLIP(npc_clip)->think_proc(nactorx, play, -1, 1)) {
+        CLIP(npc_clip)->think_proc(nactorx, play, -1, 2);
+    }
+}
+
+static void aNPS2_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { &aNPS2_schedule_init_proc, &aNPS2_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}

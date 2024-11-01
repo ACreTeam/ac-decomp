@@ -13,7 +13,10 @@ extern "C" {
 #define mSC_RADIO_DAYS 13
 #define mSC_LIGHTHOUSE_DAYS 17
 
+#define mSC_TROPHY_GOLDEN_NET 28
 #define mSC_TROPHY_GOLDEN_AXE 29
+#define mSC_TROPHY_GOLDEN_SCOOP 30 // assumed
+#define mSC_TROPHY_GOLDEN_ROD 31
 
 enum {
   mSC_EVENT_NEW_YEARS_DAY,

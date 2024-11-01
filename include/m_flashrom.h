@@ -10,6 +10,7 @@ extern "C" {
 #endif
 
 #define mFRm_SAVE_ID ('GAFE')
+#define mFRm_VERSION 6
 
 #define mFRm_ERROR_INFO_NUM 10
 #define mFRm_NO_ERROR_NO 7

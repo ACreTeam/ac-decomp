@@ -166,14 +166,15 @@ typedef struct Save_s {
     /* 0x024188 */ u8 _24188;
     /* 0x024189 */ u8 _24189;
     /* 0x02418A */ u8 town_day;
-    /* 0x02418B */ u8 _2418B[0x241A0 - 0x2418B];
+    /* 0x02418B */ u8 _2418B[0x24198 - 0x2418B];
+    /* 0x024198 */ OSTime travel_hard_time;
     /* 0x0241A0 */ lbRTC_time_c saved_auto_nwrite_time; /* save data notice time used for fishing tourney results? */
-    /* 0x0241A8 */ u8 _241A8[0x26000 - 0x241A8];
+    /* 0x0241A8 */ u8 _241A8[0x242A0 - 0x241A8];
 } Save_t;
 
 typedef union save_u {
     Save_t save;
-    // u8 raw[0x26000]; /* Temp to force length */
+    u8 __force_sector_align[mCD_ALIGN_SECTORSIZE(sizeof(Save_t))]; /* memcard sector-size aligned */
 } Save;
 
 typedef struct transition_s {
@@ -239,7 +240,7 @@ typedef struct common_data_s {
     /* 0x028590 */ u8 remove_cut_tree_info_bitfield; /* resets the cut tree states for trees in a visible acre */
     /* 0x028591 */ s8 floor_idx;
     /* 0x028592 */ s16 demo_profiles[2]; /* demo_profiles[0] is for demo_clip, demo_profiles[1] is for demo_clip2 */
-    /* 0x028596 */ u16 copy_protect_code;
+    /* 0x028596 */ u16 copy_protect;
     /* 0x028598 */ int event_keep_flags[4];
     /* 0x0285A8 */ u8 _285A8[0x0285BD - 0x0285A8];
     /* 0x0285BD */ s8 player_warp_request;
