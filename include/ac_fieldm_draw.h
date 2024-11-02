@@ -8,6 +8,13 @@
 extern "C" {
 #endif
 
+typedef struct fieldm_actor_s FIELDM_ACTOR;
+
+struct fieldm_actor_s {
+    ACTOR actor_class;
+    int _174[4];
+};
+
 extern ACTOR_PROFILE Fieldm_Draw_Profile;
 
 #ifdef __cplusplus
@@ -15,4 +22,3 @@ extern ACTOR_PROFILE Fieldm_Draw_Profile;
 #endif
 
 #endif
-

@@ -1482,14 +1482,14 @@ actor/ac_mscore_control.c:
 	.text       start:0x001A59A0 end:0x001A616C
 	.data       start:0x000528D0 end:0x00052938
 
-actor/ac_countdown_npc0.c:
+actor/npc/ac_countdown_npc0.c:
 	.text       start:0x001A616C end:0x001A6308
 	.text       start:0x001A6308 end:0x001A6354
 	.text       start:0x001A6354 end:0x001A6DA4
 	.rodata     start:0x00007EB0 end:0x00007EB8
 	.data       start:0x00052938 end:0x000529F8
 
-actor/ac_countdown_npc1.c:
+actor/npc/ac_countdown_npc1.c:
 	.text       start:0x001A6DA4 end:0x001A6F40
 	.text       start:0x001A6F40 end:0x001A6F8C
 	.text       start:0x001A6F8C end:0x001A7EF4
@@ -1612,13 +1612,13 @@ actor/npc/event/ac_ev_yomise.c:
 	.rodata     start:0x00008040 end:0x00008058
 	.data       start:0x00053A28 end:0x00053AB8
 
-actor/ac_go_home_npc.c:
+actor/npc/ac_go_home_npc.c:
 	.text       start:0x001B6CA0 end:0x001B6E30
 	.text       start:0x001B6E30 end:0x001B7030
 	.rodata     start:0x00008058 end:0x00008060
 	.data       start:0x00053AB8 end:0x00053AF8
 
-actor/ac_halloween_npc.c:
+actor/npc/ac_halloween_npc.c:
 	.text       start:0x001B7030 end:0x001B719C
 	.text       start:0x001B719C end:0x001B7270
 	.text       start:0x001B7270 end:0x001B7DC4
@@ -1626,42 +1626,42 @@ actor/ac_halloween_npc.c:
 	.rodata     start:0x00008060 end:0x00008080
 	.data       start:0x00053AF8 end:0x00053BB0
 
-actor/ac_hanabi_npc0.c:
+actor/npc/ac_hanabi_npc0.c:
 	.text       start:0x001B826C end:0x001B8408
 	.text       start:0x001B8408 end:0x001B8460
 	.text       start:0x001B8460 end:0x001B8D8C
 	.rodata     start:0x00008080 end:0x000080A0
 	.data       start:0x00053BB0 end:0x00053C58
 
-actor/ac_hanabi_npc1.c:
+actor/npc/ac_hanabi_npc1.c:
 	.text       start:0x001B8D8C end:0x001B8F30
 	.text       start:0x001B8F30 end:0x001B8F88
 	.text       start:0x001B8F88 end:0x001B96D4
 	.rodata     start:0x000080A0 end:0x000080B8
 	.data       start:0x00053C58 end:0x00053D68
 
-actor/ac_hanami_npc0.c:
+actor/npc/ac_hanami_npc0.c:
 	.text       start:0x001B96D4 end:0x001B9870
 	.text       start:0x001B9870 end:0x001B98BC
 	.text       start:0x001B98BC end:0x001B9EC8
 	.rodata     start:0x000080B8 end:0x000080C8
 	.data       start:0x00053D68 end:0x00053E28
 
-actor/ac_hanami_npc1.c:
+actor/npc/ac_hanami_npc1.c:
 	.text       start:0x001B9EC8 end:0x001BA064
 	.text       start:0x001BA064 end:0x001BA0B0
 	.text       start:0x001BA0B0 end:0x001BA8AC
 	.rodata     start:0x000080C8 end:0x000080E8
 	.data       start:0x00053E28 end:0x00053EC8
 
-actor/ac_hatumode_npc0.c:
+actor/npc/ac_hatumode_npc0.c:
 	.text       start:0x001BA8AC end:0x001BAB98
 	.text       start:0x001BAB98 end:0x001BAE44
 	.text       start:0x001BAE44 end:0x001BBA90
 	.rodata     start:0x000080E8 end:0x00008100
 	.data       start:0x00053EC8 end:0x00053F80
 
-actor/ac_kamakura_npc0.c:
+actor/npc/ac_kamakura_npc0.c:
 	.text       start:0x001BBA90 end:0x001BBC34
 	.text       start:0x001BBC34 end:0x001BBCF8
 	.data       start:0x00053F80 end:0x00053FC0
@@ -1997,13 +1997,13 @@ actor/npc/ac_npc_totakeke.c:
 	.rodata     start:0x00008960 end:0x00008980
 	.data       start:0x000747D0 end:0x000748A0
 
-actor/ac_present_npc.c:
+actor/npc/ac_present_npc.c:
 	.text       start:0x00217630 end:0x002177CC
 	.text       start:0x002177CC end:0x0021830C
 	.rodata     start:0x00008980 end:0x000089A0
 	.data       start:0x000748A0 end:0x000749A0
 
-actor/ac_taisou_npc0.c:
+actor/npc/ac_taisou_npc0.c:
 	.text       start:0x0021830C end:0x00218624
 	.text       start:0x00218624 end:0x0021872C
 	.text       start:0x0021872C end:0x00219468
@@ -2011,14 +2011,14 @@ actor/ac_taisou_npc0.c:
 	.data       start:0x000749A0 end:0x00074BF8
 	.bss        start:0x000C0AD8 end:0x000C0AE8
 
-actor/ac_tamaire_npc0.c:
+actor/npc/ac_tamaire_npc0.c:
 	.text       start:0x00219468 end:0x002196D8
 	.text       start:0x002196D8 end:0x002198A8
 	.text       start:0x002198A8 end:0x00219F14
 	.rodata     start:0x000089D0 end:0x000089E0
 	.data       start:0x00074BF8 end:0x00074CB8
 
-actor/ac_tamaire_npc1.c:
+actor/npc/ac_tamaire_npc1.c:
 	.text       start:0x00219F14 end:0x0021A330
 	.text       start:0x0021A330 end:0x0021A4D0
 	.text       start:0x0021A4D0 end:0x0021B27C
@@ -2026,49 +2026,49 @@ actor/ac_tamaire_npc1.c:
 	.data       start:0x00074CB8 end:0x00074DC8
 	.bss        start:0x000C0AE8 end:0x000C0AF0
 
-actor/ac_tokyoso_npc0.c:
+actor/npc/ac_tokyoso_npc0.c:
 	.text       start:0x0021B27C end:0x0021B628
 	.text       start:0x0021B628 end:0x0021B7C8
 	.text       start:0x0021B7C8 end:0x0021BFC8
 	.rodata     start:0x00008A28 end:0x00008A38
 	.data       start:0x00074DC8 end:0x00074EA8
 
-actor/ac_tokyoso_npc1.c:
+actor/npc/ac_tokyoso_npc1.c:
 	.text       start:0x0021BFC8 end:0x0021C28C
 	.text       start:0x0021C28C end:0x0021C464
 	.text       start:0x0021C464 end:0x0021D5A0
 	.rodata     start:0x00008A38 end:0x00008A50
 	.data       start:0x00074EA8 end:0x00074FC8
 
-actor/ac_tukimi_npc0.c:
+actor/npc/ac_tukimi_npc0.c:
 	.text       start:0x0021D5A0 end:0x0021D73C
 	.text       start:0x0021D73C end:0x0021D77C
 	.text       start:0x0021D77C end:0x0021DC80
 	.rodata     start:0x00008A50 end:0x00008A60
 	.data       start:0x00074FC8 end:0x000750A0
 
-actor/ac_tukimi_npc1.c:
+actor/npc/ac_tukimi_npc1.c:
 	.text       start:0x0021DC80 end:0x0021DE1C
 	.text       start:0x0021DE1C end:0x0021DE68
 	.text       start:0x0021DE68 end:0x0021E450
 	.rodata     start:0x00008A60 end:0x00008A70
 	.data       start:0x000750A0 end:0x000751B0
 
-actor/ac_tunahiki_npc0.c:
+actor/npc/ac_tunahiki_npc0.c:
 	.text       start:0x0021E450 end:0x0021E7F0
 	.text       start:0x0021E7F0 end:0x0021E994
 	.text       start:0x0021E994 end:0x0021EDB8
 	.rodata     start:0x00008A70 end:0x00008A88
 	.data       start:0x000751B0 end:0x00075238
 
-actor/ac_tunahiki_npc1.c:
+actor/npc/ac_tunahiki_npc1.c:
 	.text       start:0x0021EDB8 end:0x0021F13C
 	.text       start:0x0021F13C end:0x0021F3C0
 	.text       start:0x0021F3C0 end:0x0021FE08
 	.rodata     start:0x00008A88 end:0x00008AE8
 	.data       start:0x00075238 end:0x000752E8
 
-actor/ac_turi_npc0.c:
+actor/npc/ac_turi_npc0.c:
 	.text       start:0x0021FE08 end:0x0022004C
 	.text       start:0x0022004C end:0x002200C8
 	.text       start:0x002200C8 end:0x00220698
@@ -2076,20 +2076,20 @@ actor/ac_turi_npc0.c:
 	.data       start:0x000752E8 end:0x000753D0
 	.bss        start:0x000C0AF0 end:0x000C0B08
 
-actor/ac_groundhog_npc0.c:
+actor/npc/ac_groundhog_npc0.c:
 	.text       start:0x00220698 end:0x002208A0
 	.text       start:0x002208A0 end:0x0022098C
 	.text       start:0x0022098C end:0x00221008
 	.rodata     start:0x00008AF0 end:0x00008B18
 	.data       start:0x000753D0 end:0x00075480
 
-actor/ac_harvest_npc0.c:
+actor/npc/ac_harvest_npc0.c:
 	.text       start:0x00221008 end:0x00221234
 	.text       start:0x00221234 end:0x00221908
 	.rodata     start:0x00008B18 end:0x00008B28
 	.data       start:0x00075480 end:0x00075558
 
-actor/ac_harvest_npc1.c:
+actor/npc/ac_harvest_npc1.c:
 	.text       start:0x00221908 end:0x00221B10
 	.text       start:0x00221B10 end:0x00221FD4
 	.rodata     start:0x00008B28 end:0x00008B30
