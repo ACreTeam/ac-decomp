@@ -122,6 +122,8 @@ typedef enum audio_sound_effects {
     NA_SE_SCOOP_UMERU = 0x120,
     NA_SE_SCOOP_HIT,
 
+    NA_SE_12D = 0x12D,
+
     NA_SE_TREE_TOUCH = 0x134,
     NA_SE_TREE_YURASU,
 

@@ -372,7 +372,7 @@ config.libs = [
         "objects": [
             Object(Matching, "libultra/contquery.c"),
             Object(NonMatching, "libultra/contreaddata.c"),
-            Object(Matching, "libultra/controller.c"), 
+            Object(Matching, "libultra/controller.c"),
             Object(Matching, "libultra/contsetch.c"),
             Object(Matching, "libultra/gu/coss.c"),
             Object(Matching, "libultra/createmesgqueue.c"),
@@ -982,7 +982,7 @@ config.libs = [
             Object(NonMatching, "actor/ac_hatumode_control.c"),
             Object(NonMatching, "actor/ac_hatumode_npc0.c"),
             Object(NonMatching, "actor/ac_house.c"),
-            Object(NonMatching, "actor/ac_house_clock.c"),
+            Object(Matching, "actor/ac_house_clock.c"),
             Object(NonMatching, "actor/ac_house_goki.c"),
             Object(NonMatching, "actor/ac_htable.c"),
             Object(Matching, "actor/ac_ins_amenbo.c"),
