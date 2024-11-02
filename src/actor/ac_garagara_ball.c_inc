@@ -1,0 +1,152 @@
+static void aGRBL_make(const xyz_t* src_pos, aGRGR_ball_c* ball, const xyz_t* pos, int ball_type) {
+    bzero(ball, sizeof(aGRGR_ball_c));
+    ball->pos = *pos;
+    ball->old_pos = *pos;
+    ball->ball_type = ball_type;
+    ball->status = aGRBL_STATUS_START;
+    ball->src_pos = *src_pos;
+    ball->old_on_ground = FALSE;
+    ball->on_ground = FALSE;
+    ball->hit_wall = FALSE;
+    ball->hit_wall_angle = 0;
+    ball->vel_y = -0.15f - RANDOM_F(0.1f);
+    ball->acc_y = -0.15f;
+    ball->max_vel_y = -1.0f;
+    ball->vel_xz = 0.225f + RANDOM_F(0.1f);
+    ball->angle = DEG2SHORT_ANGLE2(90.0f);
+    ball->angle += (int)(RANDOM_F((f32)DEG2SHORT_ANGLE2(22.5f)) - (f32)DEG2SHORT_ANGLE2(11.25f));
+}
+
+static void aGRBL_bgCheck(aGRGR_ball_c* ball) {
+    f32 ground_y = ball->src_pos.y;
+    f32 x_max = ball->src_pos.x + 20.0f;
+    f32 x_min = ball->src_pos.x - 20.0f;
+    f32 z_min = ball->src_pos.z - 7.0f;
+    f32 z_max = ball->src_pos.z + 7.0f;
+
+    ball->old_on_ground = ball->on_ground;
+    ball->on_ground = FALSE;
+
+    if (ball->pos.y - 2.0f < ground_y) {
+        ball->pos.y = 2.0f + ground_y;
+        ball->on_ground = TRUE;
+    }
+
+    ball->hit_wall = FALSE;
+    if (x_max < ball->pos.x) {
+        ball->pos.x = x_max;
+        ball->hit_wall = TRUE;
+        ball->hit_wall_angle = DEG2SHORT_ANGLE2(-90.0f);
+    }
+
+    if (ball->pos.x < x_min) {
+        ball->pos.x = x_min;
+        ball->hit_wall = TRUE;
+        ball->hit_wall_angle = DEG2SHORT_ANGLE2(90.0f);
+    }
+
+    if (z_max < ball->pos.z) {
+        ball->pos.z = z_max;
+        ball->hit_wall = TRUE;
+        ball->hit_wall_angle = DEG2SHORT_ANGLE2(-180.0f);
+    }
+
+    if (ball->pos.z < z_min) {
+        ball->pos.z = z_min;
+        ball->hit_wall = TRUE;
+        ball->hit_wall_angle = DEG2SHORT_ANGLE2(0.0f);
+    }
+}
+
+static void aGRBL_move_position(aGRGR_ball_c* ball) {
+    ball->vel_y += ball->acc_y;
+
+    if (ball->vel_y < ball->max_vel_y) {
+        ball->vel_y = ball->max_vel_y;
+    }
+
+    ball->pos.y += ball->vel_y;
+    ball->pos.x += ball->vel_xz * sin_s(ball->angle);
+    ball->pos.z += ball->vel_xz * cos_s(ball->angle);
+}
+
+static void aGRBL_NoneMove(aGRGR_ball_c* ball, GAME* game) {
+    // nothing
+}
+
+static void aGRBL_StartMove(aGRGR_ball_c* ball, GAME* game) {
+    ball->status = aGRBL_STATUS_KOROKORO;
+    aGRBL_move_position(ball);
+    aGRBL_bgCheck(ball);
+}
+
+static void aGRBL_KorokoroMove(aGRGR_ball_c* ball, GAME* game) {
+    if (ball->hit_wall) {
+        s16 diff;
+
+        diff = (s16)(ball->angle + DEG2SHORT_ANGLE2(180.0f)) - ball->hit_wall_angle;
+        ball->angle -= diff;
+        ball->vel_xz *= 0.985f;
+    }
+
+    if (ball->on_ground) {
+        if (ball->old_on_ground == TRUE) {
+            ball->vel_xz *= 0.99f;
+        } else {
+            ball->vel_y *= -0.4f;
+        }
+    }
+
+    aGRBL_move_position(ball);
+    aGRBL_bgCheck(ball);
+}
+
+static void aGRBL_DeleteMove(aGRGR_ball_c* ball, GAME* game) {
+    // nothing
+}
+
+typedef void (*aGRBL_MOVE_PROC)(aGRGR_ball_c*, GAME*);
+
+static void aGRBL_move(aGRGR_ball_c* ball, GAME* game) {
+    static aGRBL_MOVE_PROC ball_move_table[] = {
+        &aGRBL_NoneMove,
+        &aGRBL_StartMove,
+        &aGRBL_KorokoroMove,
+        &aGRBL_DeleteMove,
+    };
+
+    (*ball_move_table[ball->status])(ball, game);
+    ball->old_pos = ball->pos;
+}
+
+extern u8 act_fukutama1_tex[];
+extern u8 act_fukutama2_tex[];
+extern u8 act_fukutama3_tex[];
+extern u8 act_fukutama4_tex[];
+
+static u8* aGRBL_texture_table[] = {
+    act_fukutama1_tex,
+    act_fukutama2_tex,
+    act_fukutama3_tex,
+    act_fukutama4_tex,
+};
+
+extern Gfx act_fukutama_modelT[];
+
+static void aGRBL_draw(aGRGR_ball_c* ball, GAME* game) {
+    if (ball->status != aGRBL_STATUS_NONE) {
+        Mtx* mtx = GRAPH_ALLOC_TYPE(game->graph, Mtx, 1);
+        GAME_PLAY* play = (GAME_PLAY*)game;
+
+        _texture_z_light_fog_prim(game->graph);
+        OPEN_DISP(game->graph);
+
+        suMtxMakeTS(mtx, 0.01f, 0.01f, 0.01f, ball->pos.x, ball->pos.y, ball->pos.z);
+        gSPMatrix(NEXT_POLY_OPA_DISP, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPMatrix(NEXT_POLY_OPA_DISP, play->billboard_mtx_p, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_MODELVIEW);
+        gSPSegment(NEXT_POLY_OPA_DISP, ANIME_1_TXT_SEG, aGRBL_texture_table[ball->ball_type]);
+        gSPDisplayList(NEXT_POLY_OPA_DISP, act_fukutama_modelT);
+
+        CLOSE_DISP(game->graph);
+    }
+}

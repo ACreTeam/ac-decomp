@@ -959,7 +959,7 @@ config.libs = [
             Object(NonMatching, "actor/ac_fieldm_draw.c"),
             Object(Matching, "actor/ac_flag.c"),
             Object(Matching, "actor/ac_fuusen.c"),
-            Object(NonMatching, "actor/ac_garagara.c"),
+            Object(Matching, "actor/ac_garagara.c"),
             Object(NonMatching, "actor/ac_ghog.c"),
             Object(Matching, "actor/ac_go_home_npc.c"),
             Object(Matching, "actor/ac_goza.c"),

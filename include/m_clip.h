@@ -30,6 +30,7 @@
 #include "ac_sign.h"
 #include "ac_boxTrick01.h"
 #include "ac_broker_design.h"
+#include "ac_garagara.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -80,7 +81,7 @@ typedef struct clip_s {
     /* 0x0B4 */ EffectBG_MAKE_EFFECTBG_PROC make_effect_bg_proc;
     /* 0x0B8 */ aShopUmbrella_Clip_c* shop_umbrella_clip;
     /* 0x0BC */ aAR_Clip_c* arrange_room_clip;
-    /* 0x0C0 */ void* _0C0;
+    /* 0x0C0 */ aGRGR_clip_c* garagara_clip;
     /* 0x0C4 */ void* _0C4;
     /* 0x0C8 */ void* shrine_clip;
     /* 0x0CC */ void* _0CC;

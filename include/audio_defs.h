@@ -71,7 +71,7 @@ typedef enum audio_sound_effects {
     NA_SE_TEMOCHI_KAZAGURUMA,
 
     NA_SE_REGISTER = 0x50,
-
+    NA_SE_51 = 0x51,
     NA_SE_52 = 0x52,
 
     NA_SE_ITEM_HORIDASHI = 0x57,
