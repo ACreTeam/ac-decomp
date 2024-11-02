@@ -7,7 +7,7 @@ static void Player_actor_Item_draw_axe(ACTOR* actor, GAME* game) {
     int shape_type;
 
     Matrix_push();
-    Matrix_Position_VecZ(&player->axe_pos, 1500.0f);
+    Matrix_Position_VecZ(1500.0f, &player->axe_pos);
     Matrix_pull();
 
     shape_type = player->item_shape_type[player->item_bank_idx];

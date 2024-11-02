@@ -742,7 +742,7 @@ static void mIV_pl_shape_item_draw_rod(Submenu* submenu, GAME* game) {
     if (mtx != NULL) {
         xyz_t pos;
 
-        Matrix_Position_VecZ(&pos, 1500.0f);
+        Matrix_Position_VecZ(1500.0f, &pos);
         cKF_Si3_draw_R_SV(game, item_kf, mtx, NULL, NULL, NULL);
         Matrix_put(&submenu->overlay->inventory_ovl->item_mtx);
         Matrix_translate(0.0f, 0.0f, 1500.0f, 1);

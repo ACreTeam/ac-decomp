@@ -6,65 +6,68 @@
 #include "MSL_C/w_math.h"
 #include "libforest/gbi_extensions.h"
 
+// clang-format off
 Mtx Mtx_clear = gdSPDefMtx(
     1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
     0.0f, 0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 0.0f, 1.0f
 );
+// clang-format on
 
+// clang-format off
 MtxF MtxF_clear = { {
     {1.0f, 0.0f, 0.0f, 0.0f},
     {0.0f, 1.0f, 0.0f, 0.0f},
     {0.0f, 0.0f, 1.0f, 0.0f},
     {0.0f, 0.0f, 0.0f, 1.0f},
 } };
+// clang-format on
 
 static MtxF* Matrix_stack = NULL;
 static MtxF* Matrix_now = NULL;
 
-
-void new_Matrix(GAME* game){
-   Matrix_now =  THA_alloc16(&game->tha, 0x500);
-   Matrix_stack = Matrix_now;
+void new_Matrix(GAME* game) {
+    Matrix_now = THA_alloc16(&game->tha, 0x500);
+    Matrix_stack = Matrix_now;
 }
-void Matrix_push(){
+
+void Matrix_push() {
     Matrix_copy_MtxF(Matrix_now + 1, Matrix_now);
     Matrix_now++;
 }
 
-void Matrix_pull(){
+void Matrix_pull() {
     Matrix_now--;
 }
 
-void Matrix_get(MtxF* dest){
+void Matrix_get(MtxF* dest) {
     Matrix_copy_MtxF(dest, Matrix_now);
 }
 
-void Matrix_put(MtxF* src){
+void Matrix_put(MtxF* src) {
     Matrix_copy_MtxF(Matrix_now, src);
 }
 
-MtxF* get_Matrix_now(void){
+MtxF* get_Matrix_now(void) {
     return (Matrix_now);
 }
 
-void Matrix_mult(MtxF* m, u8 mode){
+void Matrix_mult(MtxF* m, u8 mode) {
     MtxF* curm = get_Matrix_now();
 
-    if(mode == 1){
+    if (mode == 1) {
         Skin_Matrix_MulMatrix(curm, m, curm);
-    }
-    else{
+    } else {
         Matrix_copy_MtxF(Matrix_now, m);
     }
 }
 
-void Matrix_translate(f32 x, f32 y, f32 z, u8 mode){
+void Matrix_translate(f32 x, f32 y, f32 z, u8 mode) {
     MtxF* curm = Matrix_now;
     f32 tx, ty;
 
-    if(mode == 1){
+    if (mode == 1) {
         tx = curm->xx;
         ty = curm->xy;
         curm->xw += tx * x + ty * y + curm->xz * z;
@@ -77,16 +80,15 @@ void Matrix_translate(f32 x, f32 y, f32 z, u8 mode){
         tx = curm->wx;
         ty = curm->wy;
         curm->ww += tx * x + ty * y + curm->wz * z;
-    }
-    else{
-        Skin_Matrix_SetTranslate(curm, x, y , z);
+    } else {
+        Skin_Matrix_SetTranslate(curm, x, y, z);
     }
 }
 
-void Matrix_scale(f32 x, f32 y, f32 z, u8 mode){
+void Matrix_scale(f32 x, f32 y, f32 z, u8 mode) {
     MtxF* curm = Matrix_now;
 
-    if(mode == 1){
+    if (mode == 1) {
         curm->xx *= x;
         curm->yx *= x;
         curm->zx *= x;
@@ -99,20 +101,19 @@ void Matrix_scale(f32 x, f32 y, f32 z, u8 mode){
         curm->wx *= x;
         curm->wy *= y;
         curm->wz *= z;
-    }
-    else{
+    } else {
         Skin_Matrix_SetScale(curm, x, y, z);
     }
 }
 
-void Matrix_RotateX(s16 x, int mode){
+void Matrix_RotateX(s16 x, int mode) {
     MtxF* curm;
     f32 sin;
     f32 cos;
     f32 fp, st2;
 
-    if(mode == 1){
-        if(x != 0){
+    if (mode == 1) {
+        if (x != 0) {
             curm = Matrix_now;
 
             sin = sin_s(x);
@@ -120,22 +121,22 @@ void Matrix_RotateX(s16 x, int mode){
 
             fp = curm->xy;
             st2 = curm->xz;
-            curm->xy = (fp * cos)+ (st2 * sin);
+            curm->xy = (fp * cos) + (st2 * sin);
             curm->xz = -(fp * sin) + (st2 * cos);
 
             fp = curm->yy;
             st2 = curm->yz;
-            curm->yy = (fp * cos)+ (st2 * sin);
+            curm->yy = (fp * cos) + (st2 * sin);
             curm->yz = -(fp * sin) + (st2 * cos);
-            
+
             fp = curm->zy;
             st2 = curm->zz;
-            curm->zy = (fp * cos)+ (st2 * sin);
+            curm->zy = (fp * cos) + (st2 * sin);
             curm->zz = -(fp * sin) + (st2 * cos);
 
             fp = curm->wy;
             st2 = curm->wz;
-            curm->wy = (fp * cos)+ (st2 * sin);
+            curm->wy = (fp * cos) + (st2 * sin);
             curm->wz = -(fp * sin) + (st2 * cos);
         }
     } else {
@@ -144,7 +145,7 @@ void Matrix_RotateX(s16 x, int mode){
         if (x != 0) {
             sin = sin_s(x);
             cos = cos_s(x);
-            
+
         } else {
             sin = 0.0f;
             cos = 1.0f;
@@ -168,13 +169,13 @@ void Matrix_RotateX(s16 x, int mode){
     }
 }
 
-void Matrix_RotateY(s16 y, int mode){
+void Matrix_RotateY(s16 y, int mode) {
     MtxF* curm;
     f32 sin;
     f32 cos;
     f32 fp, st2;
 
-    if(mode == 1){
+    if (mode == 1) {
         if (y != 0) {
             curm = Matrix_now;
 
@@ -207,8 +208,7 @@ void Matrix_RotateY(s16 y, int mode){
         if (y != 0) {
             sin = sin_s(y);
             cos = cos_s(y);
-            
-            
+
         } else {
             sin = 0.0f;
             cos = 1.0f;
@@ -239,31 +239,31 @@ void Matrix_RotateZ(s16 z, int mode) {
     f32 cos;
     f32 fp, st2;
 
-    if(mode == 1){
+    if (mode == 1) {
         if (z != 0) {
             curm = Matrix_now;
 
             sin = sin_s(z);
             cos = cos_s(z);
-            
+
             fp = curm->xx;
             st2 = curm->xy;
-            curm->xx = (fp * cos)+ (st2 * sin);
+            curm->xx = (fp * cos) + (st2 * sin);
             curm->xy = -(fp * sin) + (st2 * cos);
 
             fp = curm->yx;
             st2 = curm->yy;
-            curm->yx = (fp * cos)+ (st2 * sin);
+            curm->yx = (fp * cos) + (st2 * sin);
             curm->yy = -(fp * sin) + (st2 * cos);
 
             fp = curm->zx;
             st2 = curm->zy;
-            curm->zx = (fp * cos)+ (st2 * sin);
+            curm->zx = (fp * cos) + (st2 * sin);
             curm->zy = -(fp * sin) + (st2 * cos);
 
             fp = curm->wx;
             st2 = curm->wy;
-            curm->wx = (fp * cos)+ (st2 * sin);
+            curm->wx = (fp * cos) + (st2 * sin);
             curm->wy = -(fp * sin) + (st2 * cos);
         }
     } else {
@@ -272,7 +272,7 @@ void Matrix_RotateZ(s16 z, int mode) {
         if (z != 0) {
             sin = sin_s(z);
             cos = cos_s(z);
-            
+
         } else {
             sin = 0.0f;
             cos = 1.0f;
@@ -297,34 +297,34 @@ void Matrix_RotateZ(s16 z, int mode) {
     }
 }
 
-void Matrix_rotateXYZ(s16 x, s16 y, s16 z, int mode){
+void Matrix_rotateXYZ(s16 x, s16 y, s16 z, int mode) {
     MtxF* curm = Matrix_now;
     f32 sin;
     f32 cos;
     f32 fp, st2;
 
-    if(mode == 1){
+    if (mode == 1) {
         sin = sin_s(z);
         cos = cos_s(z);
 
         fp = curm->xx;
         st2 = curm->xy;
-        curm->xx = (fp * cos)+ (st2 * sin);
+        curm->xx = (fp * cos) + (st2 * sin);
         curm->xy = -(fp * sin) + (st2 * cos);
 
         fp = curm->yx;
         st2 = curm->yy;
-        curm->yx = (fp * cos)+ (st2 * sin);
+        curm->yx = (fp * cos) + (st2 * sin);
         curm->yy = -(fp * sin) + (st2 * cos);
 
         fp = curm->zx;
         st2 = curm->zy;
-        curm->zx = (fp * cos)+ (st2 * sin);
+        curm->zx = (fp * cos) + (st2 * sin);
         curm->zy = -(fp * sin) + (st2 * cos);
 
         fp = curm->wx;
         st2 = curm->wy;
-        curm->wx = (fp * cos)+ (st2 * sin);
+        curm->wx = (fp * cos) + (st2 * sin);
         curm->wy = -(fp * sin) + (st2 * cos);
 
         if (y != 0) {
@@ -338,17 +338,17 @@ void Matrix_rotateXYZ(s16 x, s16 y, s16 z, int mode){
 
             fp = curm->yx;
             st2 = curm->yz;
-            curm->yx = (fp * cos)- (st2 * sin);
+            curm->yx = (fp * cos) - (st2 * sin);
             curm->yz = (fp * sin) + (st2 * cos);
 
             fp = curm->zx;
             st2 = curm->zz;
-            curm->zx = (fp * cos)- (st2 * sin);
+            curm->zx = (fp * cos) - (st2 * sin);
             curm->zz = (fp * sin) + (st2 * cos);
 
             fp = curm->wx;
             st2 = curm->wz;
-            curm->wx = (fp * cos)- (st2 * sin);
+            curm->wx = (fp * cos) - (st2 * sin);
             curm->wz = (fp * sin) + (st2 * cos);
         }
 
@@ -358,22 +358,22 @@ void Matrix_rotateXYZ(s16 x, s16 y, s16 z, int mode){
 
             fp = curm->xy;
             st2 = curm->xz;
-            curm->xy = (fp * cos)+ (st2 * sin);
+            curm->xy = (fp * cos) + (st2 * sin);
             curm->xz = -(fp * sin) + (st2 * cos);
 
             fp = curm->yy;
             st2 = curm->yz;
-            curm->yy = (fp * cos)+ (st2 * sin);
+            curm->yy = (fp * cos) + (st2 * sin);
             curm->yz = -(fp * sin) + (st2 * cos);
 
             fp = curm->zy;
             st2 = curm->zz;
-            curm->zy = (fp * cos)+ (st2 * sin);
+            curm->zy = (fp * cos) + (st2 * sin);
             curm->zz = -(fp * sin) + (st2 * cos);
 
             fp = curm->wy;
             st2 = curm->wz;
-            curm->wy = (fp * cos)+ (st2 * sin);
+            curm->wy = (fp * cos) + (st2 * sin);
             curm->wz = -(fp * sin) + (st2 * cos);
         }
     } else {
@@ -391,21 +391,21 @@ void Matrix_softcv3_mult(xyz_t* pos, s_xyz* rot) {
 
     fp = curm->xx;
     st2 = curm->xy;
-    
+
     curm->xw = curm->xw + (fp * pos->x + st2 * pos->y + curm->xz * pos->z);
-    curm->xx = (fp * cos) + (st2 * sin); 
-    curm->xy = -(fp * sin) + (st2 * cos); 
+    curm->xx = (fp * cos) + (st2 * sin);
+    curm->xy = -(fp * sin) + (st2 * cos);
 
     fp = curm->yx;
     st2 = curm->yy;
-    
+
     curm->yw = curm->yw + (fp * pos->x + st2 * pos->y + curm->yz * pos->z);
     curm->yx = (fp * cos) + (st2 * sin);
     curm->yy = -(fp * sin) + (st2 * cos);
 
     fp = curm->zx;
     st2 = curm->zy;
-    
+
     curm->zw = curm->zw + (curm->zx * pos->x + curm->zy * pos->y + curm->zz * pos->z);
     curm->zx = (fp * cos) + (st2 * sin);
     curm->zy = -(fp * sin) + (st2 * cos);
@@ -416,53 +416,51 @@ void Matrix_softcv3_mult(xyz_t* pos, s_xyz* rot) {
     curm->wx = (fp * cos) + (st2 * sin);
     curm->wy = -(fp * sin) + (st2 * cos);
 
-    if(rot->y != 0){
-        
+    if (rot->y != 0) {
+
         sin = sin_s(rot->y);
         cos = cos_s(rot->y);
-            
+
         fp = curm->xx;
         st2 = curm->xz;
         curm->xx = (fp * cos) - (st2 * sin);
         curm->xz = (fp * sin) + (st2 * cos);
-        
+
         fp = curm->yx;
         st2 = curm->yz;
         curm->yx = (fp * cos) - (st2 * sin);
         curm->yz = (fp * sin) + (st2 * cos);
-        
+
         fp = curm->zx;
         st2 = curm->zz;
         curm->zx = (fp * cos) - (st2 * sin);
         curm->zz = (fp * sin) + (st2 * cos);
-        
-            
+
         fp = curm->wx;
         st2 = curm->wz;
         curm->wx = (fp * cos) - (st2 * sin);
         curm->wz = (fp * sin) + (st2 * cos);
     }
 
-    
-    if(rot->x != 0){
+    if (rot->x != 0) {
         sin = sin_s(rot->x);
-        cos = cos_s(rot->x);        
-            
+        cos = cos_s(rot->x);
+
         fp = curm->xy;
         st2 = curm->xz;
         curm->xy = (fp * cos) + (st2 * sin);
         curm->xz = -(fp * sin) + (st2 * cos);
-        
+
         fp = curm->yy;
         st2 = curm->yz;
         curm->yy = (fp * cos) + (st2 * sin);
         curm->yz = -(fp * sin) + (st2 * cos);
-        
+
         fp = curm->zy;
         st2 = curm->zz;
         curm->zy = (fp * cos) + (st2 * sin);
         curm->zz = -(fp * sin) + (st2 * cos);
-        
+
         fp = curm->wy;
         st2 = curm->wz;
         curm->wy = (fp * cos) + (st2 * sin);
@@ -470,11 +468,10 @@ void Matrix_softcv3_mult(xyz_t* pos, s_xyz* rot) {
     }
 }
 
-void Matrix_softcv3_load(s_xyz* src, f32 x, f32 y, f32 z){
+void Matrix_softcv3_load(s_xyz* src, f32 x, f32 y, f32 z) {
     MtxF* curm = Matrix_now;
     f32 sin, cos;
     f32 ss, sc;
-
 
     sin = sin_s(src->y);
     cos = cos_s(src->y);
@@ -489,51 +486,48 @@ void Matrix_softcv3_load(s_xyz* src, f32 x, f32 y, f32 z){
     curm->wx = 0.0f;
     curm->ww = 1.0f;
 
-    if(src->x != 0){
-    ss = sin_s(src->x);
-    sc = cos_s(src->x);
+    if (src->x != 0) {
+        ss = sin_s(src->x);
+        sc = cos_s(src->x);
 
-    
-    curm->zz = cos * sc;
-    curm->zy = cos * ss;
+        curm->zz = cos * sc;
+        curm->zy = cos * ss;
 
-    curm->xz = sin * sc;
-    curm->xy = sin * ss;
-     
-    curm->yz = -ss;
-    curm->yy = sc;
+        curm->xz = sin * sc;
+        curm->xy = sin * ss;
+
+        curm->yz = -ss;
+        curm->yy = sc;
+    } else {
+        curm->zz = cos;
+        curm->xz = sin;
+        curm->yz = 0.0f;
+        curm->zy = 0.0f;
+        curm->xy = 0.0f;
+        curm->yy = 1.0f;
     }
-    else{
-    curm->zz = cos;
-    curm->xz = sin;
-    curm->yz = 0.0f;
-    curm->zy = 0.0f;
-    curm->xy = 0.0f;
-    curm->yy = 1.0f;
-    }
-    if(src->z != 0){
+    if (src->z != 0) {
         sin = sin_s(src->z);
         cos = cos_s(src->z);
 
         ss = curm->xy;
         sc = curm->xx;
-        
+
         curm->xx = (sc * cos) + (ss * sin);
         curm->xy = -(sc * sin) + (ss * cos);
 
         ss = curm->zy;
         sc = curm->zx;
-        
+
         curm->zx = (sc * cos) + (ss * sin);
         curm->zy = -(sc * sin) + (ss * cos);
 
         ss = curm->yy;
         curm->yx = curm->yy * sin;
         curm->yy = ss * cos;
+    } else {
+        curm->yx = 0.0f;
     }
-    else{
-    curm->yx = 0.0f;
-}
 }
 
 Mtx* _MtxF_to_Mtx(MtxF* src, Mtx* dest) {
@@ -611,20 +605,19 @@ Mtx* _Matrix_to_Mtx(Mtx* dest) {
     return _MtxF_to_Mtx(Matrix_now, dest);
 }
 
-Mtx* _Matrix_to_Mtx_new(GRAPH* graph){
+Mtx* _Matrix_to_Mtx_new(GRAPH* graph) {
     return _Matrix_to_Mtx(GRAPH_ALLOC(graph, sizeof(Mtx)));
-    
 }
 
-void Matrix_Position(xyz_t* old_pos, xyz_t* new_pos){
+void Matrix_Position(xyz_t* old_pos, xyz_t* new_pos) {
     MtxF* curm = Matrix_now;
-    
+
     new_pos->x = (curm->xx * old_pos->x) + (curm->xy * old_pos->y) + (curm->xz * old_pos->z) + curm->xw;
     new_pos->y = (curm->yx * old_pos->x) + (curm->yy * old_pos->y) + (curm->yz * old_pos->z) + curm->yw;
     new_pos->z = (curm->zx * old_pos->x) + (curm->zy * old_pos->y) + (curm->zz * old_pos->z) + curm->zw;
 }
 
-void Matrix_Position_Zero(xyz_t* v){
+void Matrix_Position_Zero(xyz_t* v) {
     MtxF* curm = Matrix_now;
 
     v->x = curm->xw;
@@ -632,22 +625,20 @@ void Matrix_Position_Zero(xyz_t* v){
     v->z = curm->zw;
 }
 
-void Matrix_Position_VecX(xyz_t* v, f32 x){
-     MtxF* curm = Matrix_now;
+void Matrix_Position_VecX(f32 x, xyz_t* v) {
+    MtxF* curm = Matrix_now;
 
     v->x = curm->xw + (curm->xx * x);
     v->y = curm->yw + (curm->yx * x);
     v->z = curm->zw + (curm->zx * x);
-    
 }
-void Matrix_Position_VecZ(xyz_t* v, f32 z){
-     MtxF* curm = Matrix_now;
+void Matrix_Position_VecZ(f32 z, xyz_t* v) {
+    MtxF* curm = Matrix_now;
 
     v->x = curm->xw + (curm->xz * z);
     v->y = curm->yw + (curm->yz * z);
     v->z = curm->zw + (curm->zz * z);
 }
-
 
 void Matrix_copy_MtxF(MtxF* dest, MtxF* src) {
     dest->xx = src->xx;
@@ -706,7 +697,7 @@ void Matrix_reverse(MtxF* curm) {
     curm->yz = fp;
 }
 
-void Matrix_to_rotate_new(MtxF* curm, s_xyz* vec, int flag){
+void Matrix_to_rotate_new(MtxF* curm, s_xyz* vec, int flag) {
     f32 temp;
     f32 temp2;
     f32 temp3;
@@ -728,10 +719,10 @@ void Matrix_to_rotate_new(MtxF* curm, s_xyz* vec, int flag){
             vec->z = (fatan2(curm->yx, curm->yy) * 10430.3779297f);
         } else {
             temp = curm->xx;
-            
+
             temp2 = curm->yx;
             temp *= temp;
-            temp += curm->zx * curm->zx;           
+            temp += curm->zx * curm->zx;
             temp += (temp2 * temp2);
             /* temp = xx^2+zx^2+yx^2 == 1 for a rotation matrix */
             temp = temp2 / sqrtf(temp);
@@ -739,7 +730,7 @@ void Matrix_to_rotate_new(MtxF* curm, s_xyz* vec, int flag){
             temp2 = curm->xy;
             temp3 = curm->yy;
             temp2 *= temp2;
-            temp2 += curm->zy * curm->zy;           
+            temp2 += curm->zy * curm->zy;
             temp2 += (temp3 * temp3);
             /* temp2 = xy^2+zy^2+yy^2 == 1 for a rotation matrix */
             temp2 = temp3 / sqrtf(temp2);
@@ -772,10 +763,10 @@ void Matrix_to_rotate2_new(MtxF* curm, s_xyz* v, int flag) {
             v->x = (fatan2(curm->zy, curm->zz) * 10430.3779297f);
         } else {
             temp = curm->xy;
-            
+
             temp2 = curm->zy;
             temp *= temp;
-            temp += curm->yy * curm->yy;           
+            temp += curm->yy * curm->yy;
             temp += (temp2 * temp2);
             /* temp = zx^2+yy^2+zy^2 == 1 for a rotation matrix */
             temp = temp2 / sqrtf(temp);
@@ -783,7 +774,7 @@ void Matrix_to_rotate2_new(MtxF* curm, s_xyz* v, int flag) {
             temp2 = curm->xz;
             temp3 = curm->zz;
             temp2 *= temp2;
-            temp2 += curm->yz * curm->yz;           
+            temp2 += curm->yz * curm->yz;
             temp2 += (temp3 * temp3);
             /* temp2 = xz^2+yz^2+zz^2 == 1 for a rotation matrix */
             temp2 = temp3 / sqrtf(temp2);
@@ -856,7 +847,7 @@ void Matrix_RotateVector(s16 angle, xyz_t* axis, u8 mode) {
 
             temp2 = axis->z * ((1.0f - cos) * axis->y);
             temp3 = axis->x * sin;
-            curm->zy = temp2 + temp3 ;
+            curm->zy = temp2 + temp3;
             curm->yz = temp2 - temp3;
 
             curm->wx = 0.0f;
@@ -887,8 +878,8 @@ void Matrix_RotateVector(s16 angle, xyz_t* axis, u8 mode) {
     }
 }
 
-void suMtxMakeTS(Mtx *mtx, f32 scaleX, f32 scaleY, f32 scaleZ, f32 translateX, f32 translateY, f32 translateZ) {
-     struct {
+void suMtxMakeTS(Mtx* mtx, f32 scaleX, f32 scaleY, f32 scaleZ, f32 translateX, f32 translateY, f32 translateZ) {
+    struct {
         s16 intPart[4][4];
         u16 fracPart[4][4];
     }* mu = (void*)mtx;
@@ -926,13 +917,13 @@ void suMtxMakeTS(Mtx *mtx, f32 scaleX, f32 scaleY, f32 scaleZ, f32 translateX, f
     mu->intPart[3][2] = ((u32)fp >> 16) & 0xFFFF;
     mu->intPart[3][3] = 1;
     mtx->m[3][3] = (u32)fp << 16;
-
 }
 
 // S(RxRyRz)T where S is a scale matrix, Rx/Ry/Rz are rotations about the x/y/z axes, and T is a translation
-void suMtxMakeSRT(Mtx* mtx, f32 scaleX, f32 scaleY, f32 scaleZ, s16 rotX, s16 rotY, s16 rotZ, f32 translateX, f32 translateY, f32 translateZ) {
+void suMtxMakeSRT(Mtx* mtx, f32 scaleX, f32 scaleY, f32 scaleZ, s16 rotX, s16 rotY, s16 rotZ, f32 translateX,
+                  f32 translateY, f32 translateZ) {
     int fp;
-     struct {
+    struct {
         s16 intPart[4][4];
         u16 fracPart[4][4];
     }* mu = (void*)mtx;
@@ -944,51 +935,51 @@ void suMtxMakeSRT(Mtx* mtx, f32 scaleX, f32 scaleY, f32 scaleZ, s16 rotX, s16 ro
     f32 cosZ = cos_s(rotZ);
 
     fp = cosY * cosZ * scaleX * 0x10000;
-    mu->intPart[0][0] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[0][0] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[0][0] = fp & 0xFFFF;
 
     fp = cosY * sinZ * scaleX * 0x10000;
-    mu->intPart[0][1] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[0][1] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[0][1] = fp & 0xFFFF;
-    
+
     fp = -sinY * scaleX * 0x10000;
-    mu->intPart[0][2] = ((u32) fp >> 0x10) & 0xFFFF;
-    mu->fracPart[0][2] = fp  & 0xFFFF;
+    mu->intPart[0][2] = ((u32)fp >> 0x10) & 0xFFFF;
+    mu->fracPart[0][2] = fp & 0xFFFF;
 
     fp = ((sinX * sinY * cosZ) - (cosX * sinZ)) * scaleY * 0x10000;
-    mu->intPart[1][0] = ((u32) fp >> 0x10) & 0xFFFF;
-    mu->fracPart[1][0] = fp  & 0xFFFF;
+    mu->intPart[1][0] = ((u32)fp >> 0x10) & 0xFFFF;
+    mu->fracPart[1][0] = fp & 0xFFFF;
 
     fp = ((sinX * sinY * sinZ) + (cosX * cosZ)) * scaleY * 0x10000;
-    mu->intPart[1][1] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[1][1] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[1][1] = fp & 0xFFFF;
 
     fp = sinX * cosY * scaleY * 0x10000;
-    mu->intPart[1][2] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[1][2] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[1][2] = fp & 0xFFFF;
 
     fp = ((cosX * sinY * cosZ) + (sinX * sinZ)) * scaleZ * 0x10000;
-    mu->intPart[2][0] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[2][0] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[2][0] = fp & 0xFFFF;
 
     fp = ((cosX * sinY * sinZ) - (sinX * cosZ)) * scaleZ * 0x10000;
-    mu->intPart[2][1] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[2][1] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[2][1] = fp & 0xFFFF;
 
     fp = cosX * cosY * scaleZ * 0x10000;
-    mu->intPart[2][2] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[2][2] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[2][2] = fp & 0xFFFF;
 
     fp = translateX * 0x10000;
-    mu->intPart[3][0] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[3][0] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[3][0] = fp & 0xFFFF;
 
     fp = translateY * 0x10000;
-    mu->intPart[3][1] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[3][1] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[3][1] = fp & 0xFFFF;
 
     fp = translateZ * 0x10000;
-    mu->intPart[3][2] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[3][2] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[3][2] = fp & 0xFFFF;
 
     mu->intPart[0][3] = mu->intPart[1][3] = mu->intPart[2][3] = 0;
@@ -998,7 +989,8 @@ void suMtxMakeSRT(Mtx* mtx, f32 scaleX, f32 scaleY, f32 scaleZ, s16 rotX, s16 ro
 }
 
 // S(RzRxRy)T where S is a scale matrix, Rx/Ry/Rz are rotations, and T is a translation
-void suMtxMakeSRT_ZXY(Mtx* mtx, f32 scaleX, f32 scaleY, f32 scaleZ, s16 rotX, s16 rotY, s16 rotZ, f32 translateX, f32 translateY, f32 translateZ) {
+void suMtxMakeSRT_ZXY(Mtx* mtx, f32 scaleX, f32 scaleY, f32 scaleZ, s16 rotX, s16 rotY, s16 rotZ, f32 translateX,
+                      f32 translateY, f32 translateZ) {
     int fp;
     struct {
         s16 intPart[4][4];
@@ -1012,51 +1004,51 @@ void suMtxMakeSRT_ZXY(Mtx* mtx, f32 scaleX, f32 scaleY, f32 scaleZ, s16 rotX, s1
     f32 cosZ = cos_s(rotZ); // likely sp+38
 
     fp = ((cosY * cosZ) + (sinX * sinY * sinZ)) * scaleX * 0x10000;
-    mu->intPart[0][0] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[0][0] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[0][0] = fp & 0xFFFF;
 
     fp = cosX * sinZ * scaleX * 0x10000;
-    mu->intPart[0][1] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[0][1] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[0][1] = fp & 0xFFFF;
 
-    fp = ( - (sinY * cosZ) + (sinX * cosY * sinZ) ) * scaleX * 0x10000;
-    mu->intPart[0][2] = ((u32) fp >> 0x10) & 0xFFFF;
+    fp = (-(sinY * cosZ) + (sinX * cosY * sinZ)) * scaleX * 0x10000;
+    mu->intPart[0][2] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[0][2] = fp & 0xFFFF;
 
-    fp = (- (cosY * sinZ) + (sinX * sinY * cosZ) ) * scaleY * 0x10000;
-    mu->intPart[1][0] = ((u32) fp >> 0x10) & 0xFFFF;
+    fp = (-(cosY * sinZ) + (sinX * sinY * cosZ)) * scaleY * 0x10000;
+    mu->intPart[1][0] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[1][0] = fp & 0xFFFF;
 
     fp = cosX * cosZ * scaleY * 0x10000;
-    mu->intPart[1][1] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[1][1] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[1][1] = fp & 0xFFFF;
 
     fp = ((sinY * sinZ) + (sinX * cosY * cosZ)) * scaleY * 0x10000;
-    mu->intPart[1][2] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[1][2] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[1][2] = fp & 0xFFFF;
 
     fp = cosX * sinY * scaleZ * 0x10000;
-    mu->intPart[2][0] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[2][0] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[2][0] = fp & 0xFFFF;
 
     fp = -sinX * scaleZ * 0x10000;
-    mu->intPart[2][1] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[2][1] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[2][1] = fp & 0xFFFF;
 
     fp = cosX * cosY * scaleZ * 0x10000;
-    mu->intPart[2][2] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[2][2] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[2][2] = fp & 0xFFFF;
 
     fp = translateX * 0x10000;
-    mu->intPart[3][0] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[3][0] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[3][0] = fp & 0xFFFF;
 
     fp = translateY * 0x10000;
-    mu->intPart[3][1] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[3][1] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[3][1] = fp & 0xFFFF;
 
     fp = translateZ * 0x10000;
-    mu->intPart[3][2] = ((u32) fp >> 0x10) & 0xFFFF;
+    mu->intPart[3][2] = ((u32)fp >> 0x10) & 0xFFFF;
     mu->fracPart[3][2] = fp & 0xFFFF;
 
     mu->intPart[0][3] = mu->intPart[1][3] = mu->intPart[2][3] = 0;
@@ -1064,4 +1056,3 @@ void suMtxMakeSRT_ZXY(Mtx* mtx, f32 scaleX, f32 scaleY, f32 scaleZ, s16 rotX, s1
     mu->intPart[3][3] = 1;
     mu->fracPart[3][3] = 0;
 }
-

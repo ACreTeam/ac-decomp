@@ -241,11 +241,11 @@ static void Player_actor_Item_draw_net(ACTOR* actor, GAME* game) {
 
     Matrix_push();
     Matrix_rotateXYZ(0, 3000, 0, 1);
-    Matrix_Position_VecZ(&player->net_start_pos, -2400.0f);
-    Matrix_Position_VecZ(&player->net_end_pos, 5500.0f);
-    Matrix_Position_VecZ(&player->net_pos, 4000.0f);
-    Matrix_Position_VecZ(&player->net_top_col_pos, 4000.0f);
-    Matrix_Position_VecZ(&player->net_bot_col_pos, 4000.0f);
+    Matrix_Position_VecZ(-2400.0f, &player->net_start_pos);
+    Matrix_Position_VecZ(5500.0f, &player->net_end_pos);
+    Matrix_Position_VecZ(4000.0f, &player->net_pos);
+    Matrix_Position_VecZ(4000.0f, &player->net_top_col_pos);
+    Matrix_Position_VecZ(4000.0f, &player->net_bot_col_pos);
     Matrix_pull();
     cKF_Si3_draw_R_SV(&play->game, &player->item_keyframe, player->item_work_mtx[game->frame_counter % 2], NULL,
                       Player_actor_Item_draw_net_After, &player->actor_class);

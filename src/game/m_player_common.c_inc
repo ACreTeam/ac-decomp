@@ -6045,49 +6045,49 @@ static void Player_actor_Set_EffectBgTree(GAME* game, mActor_name_t item, s16 bg
 
         if (IS_ITEM_XMAS_TREE(item) != FALSE) {
             if (FGTreeType_check(item) == mNT_TREE_TYPE_CEDAR) {
-                variant = 12;
+                variant = EffectBG_VARIANT_CEDAR_XMAS;
             } else {
-                variant = 3;
+                variant = EffectBG_VARIANT_TREE_XMAS;
             }
         } else if (IS_ITEM_SMALL_TREE(item) != FALSE) {
             if (FGTreeType_check(item) == mNT_TREE_TYPE_PALM) {
-                variant = 4;
+                variant = EffectBG_VARIANT_PALM_SMALL;
             } else if (FGTreeType_check(item) == mNT_TREE_TYPE_CEDAR) {
-                variant = 8;
+                variant = EffectBG_VARIANT_CEDAR_SMALL;
             } else if (FGTreeType_check(item) == mNT_TREE_TYPE_GOLD) {
-                variant = 13;
+                variant = EffectBG_VARIANT_GOLD_SMALL;
             } else {
-                variant = -1;
+                variant = EffectBG_VARIANT_TREE_SMALL;
             }
         } else if (IS_ITEM_MED_TREE(item) != FALSE) {
             if (FGTreeType_check(item) == mNT_TREE_TYPE_PALM) {
-                variant = 5;
+                variant = EffectBG_VARIANT_PALM_MED;
             } else if (FGTreeType_check(item) == mNT_TREE_TYPE_CEDAR) {
-                variant = 9;
+                variant = EffectBG_VARIANT_CEDAR_MED;
             } else if (FGTreeType_check(item) == mNT_TREE_TYPE_GOLD) {
-                variant = 14;
+                variant = EffectBG_VARIANT_GOLD_MED;
             } else {
-                variant = 0;
+                variant = EffectBG_VARIANT_TREE_MED;
             }
         } else if (IS_ITEM_LARGE_TREE(item) != FALSE) {
             if (FGTreeType_check(item) == mNT_TREE_TYPE_PALM) {
-                variant = 6;
+                variant = EffectBG_VARIANT_PALM_LARGE;
             } else if (FGTreeType_check(item) == mNT_TREE_TYPE_CEDAR) {
-                variant = 10;
+                variant = EffectBG_VARIANT_CEDAR_LARGE;
             } else if (FGTreeType_check(item) == mNT_TREE_TYPE_GOLD) {
-                variant = 15;
+                variant = EffectBG_VARIANT_GOLD_LARGE;
             } else {
-                variant = 1;
+                variant = EffectBG_VARIANT_TREE_LARGE;
             }
         } else {
             if (FGTreeType_check(item) == mNT_TREE_TYPE_PALM) {
-                variant = 7;
+                variant = EffectBG_VARIANT_PALM_FULL;
             } else if (FGTreeType_check(item) == mNT_TREE_TYPE_CEDAR) {
-                variant = 11;
+                variant = EffectBG_VARIANT_CEDAR_FULL;
             } else if (FGTreeType_check(item) == mNT_TREE_TYPE_GOLD) {
-                variant = 16;
+                variant = EffectBG_VARIANT_GOLD_FULL;
             } else {
-                variant = 2;
+                variant = EffectBG_VARIANT_TREE_FULL;
             }
         }
 

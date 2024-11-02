@@ -92,7 +92,7 @@ static void Player_actor_draw_After_Larm2(ACTOR* actorx, GAME* game, cKF_Skeleto
         player->item_matrix_set = FALSE;
     }
 
-    Matrix_Position_VecX(&player->left_hand_pos, 1100.0f);
+    Matrix_Position_VecX(1100.0f, &player->left_hand_pos);
     Matrix_get(&player->left_hand_mtx);
 }
 

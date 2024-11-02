@@ -331,7 +331,7 @@ static int Player_actor_Item_main_rod_putaway(ACTOR* actor, GAME* game) {
 static void Player_actor_Item_draw_net_After_main4_sao(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
-    Matrix_Position_VecX(&player->item_rod_top_pos, 1050.0f);
+    Matrix_Position_VecX(1050.0f, &player->item_rod_top_pos);
 }
 
 typedef void (*mPlayer_item_rod_draw_proc)(void* arg, GAME* game, cKF_SkeletonInfo_R_c* keyframe, Gfx** joint_shape,
@@ -365,7 +365,7 @@ static void Player_actor_Item_draw_rod(ACTOR* actor, GAME* game) {
     graph = play->game.graph;
     keyf = &player->item_keyframe;
 
-    Matrix_Position_VecZ(&player->item_rod_virtual_top_pos, 6000.0f);
+    Matrix_Position_VecZ(6000.0f, &player->item_rod_virtual_top_pos);
     Matrix_push();
     Matrix_RotateZ(player->item_rod_angle_z, 1);
 

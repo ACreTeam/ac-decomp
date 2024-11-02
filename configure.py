@@ -951,7 +951,7 @@ config.libs = [
             Object(Matching, "actor/ac_douzou.c"),
             Object(Matching, "actor/ac_dummy.c"),
             Object(Matching, "actor/ac_dump.c"),
-            Object(NonMatching, "actor/ac_effectbg.c"),
+            Object(Matching, "actor/ac_effectbg.c"),
             Object(NonMatching, "actor/ac_event_manager.c"),
             Object(Matching, "actor/ac_fallS.c"),
             Object(Matching, "actor/ac_fallSESW.c"),

@@ -83,6 +83,14 @@ typedef enum audio_sound_effects {
     NA_SE_5E = 0x5E,
     NA_SE_5F = 0x5F,
     NA_SE_60 = 0x60,
+    NA_SE_61 = 0x61,
+
+    NA_SE_63 = 0x63,
+    NA_SE_64 = 0x64,
+    NA_SE_65 = 0x65,
+    NA_SE_66 = 0x66,
+    NA_SE_67 = 0x67,
+    NA_SE_68 = 0x68,
 
     NA_SE_GASAGOSO = 0x69,
     NA_SE_6A = 0x6A,
@@ -102,6 +110,7 @@ typedef enum audio_sound_effects {
 
     NA_SE_KA_BUZZ = 0xCF,
 
+    NA_SE_108 = 0x108,
     NA_SE_ROD_STROKE = 0x109,
     NA_SE_ROD_BACK,
     NA_SE_10B,

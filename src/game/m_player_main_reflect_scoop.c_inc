@@ -82,7 +82,7 @@ static void Player_actor_SetEffectHit_Reflect_scoop(ACTOR* actor, GAME* game) {
             int ut_z;
 
             if (mFI_Wpos2UtNum(&ut_x, &ut_z, *pos)) {
-                Player_actor_Set_EffectBgTree(game, item, 3, ut_x, ut_z);
+                Player_actor_Set_EffectBgTree(game, item, EffectBG_EFFECT_SHAKE_SMALL, ut_x, ut_z);
             }
 
             attr = 7;
