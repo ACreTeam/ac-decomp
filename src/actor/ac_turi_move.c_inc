@@ -1,0 +1,103 @@
+static void aTUR_set_bgOffset(ACTOR* actorx, int idx) {
+    // clang-format off
+    static mCoBG_OffsetTable_c height_table_ct_l[] = { 
+        { mCoBG_ATTRIBUTE_NONE,  0,  0,  0,  0,  0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 10,  0, 10, 10, 10, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 10,  0, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 10,  0, 10, 10, 10, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 10, 10, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10,  0, 10, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10,  0, 10, 10, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 0 , 10, 1 },
+        { mCoBG_ATTRIBUTE_NONE,  0,  0,  0,  0,  0, 0 },
+    };
+    // clang-format on
+
+    // clang-format off
+    static mCoBG_OffsetTable_c height_table_ct_r[] = {
+        { mCoBG_ATTRIBUTE_NONE, 10,  0, 10, 10, 10, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 10,  0, 1 },
+        { mCoBG_ATTRIBUTE_NONE,  0,  0,  0,  0,  0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10,  0, 10, 10, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 10, 10, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10, 10,  0, 1 },
+        { mCoBG_ATTRIBUTE_NONE,  0,  0,  0,  0,  0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10,  0, 10, 10, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 10, 10, 10,  0, 10, 1 },
+    };
+    // clang-format on
+
+    static mCoBG_OffsetTable_c* height_table[] = {
+        height_table_ct_l,
+        height_table_ct_r,
+        height_table_ct_l,
+        height_table_ct_r,
+    };
+
+    static f32 addX[] = { -mFI_UNIT_BASE_SIZE_F, 0.0f, mFI_UNIT_BASE_SIZE_F };
+    static f32 addZ[] = { -mFI_UNIT_BASE_SIZE_F, 0.0f, mFI_UNIT_BASE_SIZE_F };
+
+    mCoBG_OffsetTable_c* height_tbl_p = height_table[idx];
+    xyz_t pos;
+    int type = idx & 1;
+    int z;
+    int x;
+
+    for (z = 0; z < 3; z++) {
+        pos.z = actorx->home.position.z + addZ[z];
+
+        for (x = 0; x < 3; x++) {
+            if (type == 0) {
+                if (z * 3 + x != 0 && z * 3 + x != 8) {
+                    pos.x = actorx->home.position.x + addX[x];
+
+                    mCoBG_SetPluss5PointOffset_file(pos, *height_tbl_p, __FILE__, 121);
+                }
+            } else {
+                if (z * 3 + x != 2 && z * 3 + x != 6) {
+                    pos.x = actorx->home.position.x + addX[x];
+
+                    mCoBG_SetPluss5PointOffset_file(pos, *height_tbl_p, __FILE__, 127);
+                }
+            }
+
+            height_tbl_p++;
+        }
+    }
+}
+
+static void aTUR_wait(TURI_ACTOR* turi, GAME_PLAY* play) {
+    // empty
+}
+
+static void aTUR_setup_action(TURI_ACTOR* turi, int act_idx) {
+    static void* process[] = { &aTUR_wait };
+
+    turi->structure_class.action_proc = (aSTR_MOVE_PROC)process[act_idx];
+    turi->structure_class.action = act_idx;
+}
+
+static void aTUR_actor_move(ACTOR* actorx, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    TURI_ACTOR* turi = (TURI_ACTOR*)actorx;
+    ACTOR* player_actor = GET_PLAYER_ACTOR_ACTOR(play);
+    int turi_bx;
+    int turi_bz;
+    int player_bx;
+    int player_bz;
+
+    mFI_Wpos2BlockNum(&turi_bx, &turi_bz, actorx->world.position);
+    mFI_Wpos2BlockNum(&player_bx, &player_bz, player_actor->world.position);
+
+    if (!mDemo_Check(mDemo_TYPE_SCROLL, player_actor) && !mDemo_Check(mDemo_TYPE_SCROLL2, player_actor) && !mDemo_Check(mDemo_TYPE_SCROLL3, player_actor) && (turi_bx != player_bx || turi_bz != player_bz)) {
+        Actor_delete(actorx);
+    } else {
+        (*turi->structure_class.action_proc)((STRUCTURE_ACTOR*)turi, play);
+    }
+}
+
+static void aTUR_actor_init(ACTOR* actorx, GAME* game) {
+    mFI_SetFG_common(DUMMY_TURI, actorx->home.position, FALSE);
+    aTUR_actor_move(actorx, game);
+    actorx->mv_proc = &aTUR_actor_move;
+}

@@ -31,6 +31,7 @@
 #include "ac_boxTrick01.h"
 #include "ac_broker_design.h"
 #include "ac_garagara.h"
+#include "ac_turi_clip.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -90,7 +91,7 @@ typedef struct clip_s {
     /* 0x0D8 */ void* _0D8;
     /* 0x0DC */ aAL_Clip_c* animal_logo_clip;
     /* 0x0E0 */ void* _0E0;
-    /* 0x0E4 */ void* _0E4;
+    /* 0x0E4 */ aTRC_clip_c* turi_clip;
     /* 0x0E8 */ SIGN_ACTOR* sign_control_actor;
     /* 0x0EC */ aAPC_Clip_c* aprilfool_control_clip;
     /* 0x0F0 */ aEvMgr_Clip_c* event_manager_clip;

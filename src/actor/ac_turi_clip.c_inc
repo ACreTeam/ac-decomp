@@ -1,0 +1,184 @@
+static aTRC_clip_c aTRC_clip;
+
+static void aTRC_clip_ct(void) {
+    aTRC_clip.get_msgno_proc = &aTRC_clip_get_msgno;
+    aTRC_clip.random_topsize_proc = &aTRC_clip_random_topsize;
+    aTRC_clip.set_topname_proc = &aTRC_clip_set_topname;
+    aTRC_clip.fish_rndsize_proc = &aTRC_clip_fish_rndsize;
+    CLIP(turi_clip) = &aTRC_clip;
+}
+
+static void aTRC_clip_dt(void) {
+    CLIP(turi_clip) = NULL;
+}
+
+static aEANG_event_data_c* get_fish_save_area(void) {
+    lbRTC_time_c now_time = Common_Get(time.rtc_time);
+    aEANG_event_data_c* fish_p;
+
+    if (now_time.month == lbRTC_JUNE) {
+        fish_p = (aEANG_event_data_c*)mEv_get_save_area(0x1D, 0);
+    } else {
+        fish_p = (aEANG_event_data_c*)mEv_get_save_area(0x36, 0);
+    }
+
+    return fish_p;
+}
+
+static int get_top_of_angler_size(void) {
+    aEANG_event_data_c* fish_p = get_fish_save_area();
+
+    return fish_p->size;
+}
+
+static void set_top_of_angler_pID(PersonalID_c pID) {
+    aEANG_event_data_c* fish_p = get_fish_save_area();
+
+    mPr_CopyPersonalID(&fish_p->pID, &pID);
+}
+
+static PersonalID_c* getP_top_of_angler_pID(void) {
+    aEANG_event_data_c* fish_p = get_fish_save_area();
+
+    return &fish_p->pID;
+}
+
+extern int aTRC_clip_fish_rndsize(int size_rank) {
+    return mFR_fish_rndsize(size_rank);
+}
+
+extern int aTRC_clip_get_msgno(mActor_name_t item) {
+    switch (item) {
+        case ITM_FISH00:
+            return 0x10F6;
+        case ITM_FISH01:
+            return 0x10F7;
+        case ITM_FISH02:
+            return 0x10F8;
+        case ITM_FISH03:
+            return 0x10F9;
+        case ITM_FISH04:
+            return 0x10FA;
+        case ITM_FISH05:
+            return 0x1112;
+        case ITM_FISH06:
+            return 0x1116;
+        case ITM_FISH07:
+            return 0x111A;
+        case ITM_FISH08:
+            return 0x10FB;
+        case ITM_FISH09:
+            return 0x10FC;
+        case ITM_FISH10:
+            return 0x10FD;
+        case ITM_FISH11:
+            return 0x10FE;
+        case ITM_FISH12:
+            return 0x10FF;
+        case ITM_FISH13:
+            return 0x1100;
+        case ITM_FISH14:
+            return 0x1101;
+        case ITM_FISH15:
+            return 0x1102;
+        case ITM_FISH16:
+            return 0x110C;
+        case ITM_FISH17:
+            return 0x1103;
+        case ITM_FISH18:
+            return 0x1104;
+        case ITM_FISH19:
+            return 0x1105;
+        case ITM_FISH20:
+            return 0x1106;
+        case ITM_FISH21:
+            return 0x1107;
+        case ITM_FISH22:
+            return 0x1108;
+        case ITM_FISH23:
+            return 0x1109;
+        case ITM_FISH24:
+            return 0x110A;
+        case ITM_FISH25:
+            return 0x110B;
+        case ITM_FISH26:
+            return 0x110D;
+        case ITM_FISH27:
+            return 0x17E6;
+        case ITM_FISH28:
+            return 0x17E7;
+        case ITM_FISH29:
+            return 0x17E8;
+        case ITM_FISH30:
+            return 0x17E9;
+        case ITM_FISH31:
+            return 0x17EA;
+        case ITM_FISH32:
+            return 0x2FB0;
+        case ITM_FISH33:
+            return 0x2FAF;
+        case ITM_FISH34:
+            return 0x2FB2;
+        case ITM_FISH35:
+            return 0x2FB3;
+        case ITM_FISH36:
+            return 0x2FB4;
+        case ITM_FISH37:
+            return 0x2FB5;
+        case ITM_FISH38:
+            return 0x2FB6;
+        case ITM_FISH39:
+            return 0x2FB1;
+        default:
+            return 0x10F2;
+    }
+}
+
+extern void aTRC_clip_random_topsize(void) {
+    u8 npc_name[ANIMAL_NAME_LEN];
+    mActor_name_t npc_id;
+    static u8 l_name[] = { 0x98, 0xA6, 0x8F, 0xA1, CHAR_SPACE }; // untranslated, JP "ケニッチ"
+    aEANG_event_data_c* fish_p = get_fish_save_area();
+    lbRTC_time_c now_time = Common_Get(time.rtc_time);
+    lbRTC_hour_t hour = now_time.hour;
+    int size;
+
+    if (fish_p != NULL) {
+        size = mFR_make_NpcRecord(hour);
+
+        if (size > fish_p->size) {
+            // update record info
+            fish_p->size = size;
+            set_top_of_angler_pID(Now_Private->player_ID);
+            
+            // clear relevant ids
+            fish_p->pID.land_id = RSV_NO;
+            fish_p->pID.player_id = RSV_NO;
+
+            // get villager name for size record, preferring a villager participating in the event
+            if (mEvMN_GetJointEventRandomNpc(&npc_id) == TRUE) {
+                mNpc_GetNpcWorldNameTableNo(npc_name, npc_id);
+            } else {
+                mNpc_GetRandomAnimalName(npc_name);
+            }
+
+            // overwrite player name & town name with villager name & dummy town name respectively
+            mem_copy(fish_p->pID.player_name, npc_name, sizeof(npc_name));
+            mLd_ClearLandName(fish_p->pID.land_name);
+            mem_copy(fish_p->pID.land_name, l_name, sizeof(l_name));
+            mEv_fishRecord_set(&fish_p->pID, size);
+        }
+    }
+}
+
+extern void aTRC_clip_set_topname(void) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    u8 num_str[mString_DEFAULT_STR_SIZE];
+    PersonalID_c* pID_p;
+    int len;
+
+    len = mString_Load_NumberStringAddUnitFromRom(num_str, get_top_of_angler_size(), 0x29E);
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR1, num_str, len);
+    pID_p = getP_top_of_angler_pID();
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR0, pID_p->player_name, PLAYER_NAME_LEN);
+}
