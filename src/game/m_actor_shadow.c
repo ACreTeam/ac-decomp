@@ -377,7 +377,9 @@ void mAc_NormalActorShadow(ACTOR* actor, GAME_PLAY* play, f32 rad) {
     mAc_ActorShadowDraw(actor, play, 0, mActorShadow_offset0, rad);
 }
 
-void mAc_UnagiActorShadow(ACTOR* actor, GAME_PLAY* play, xyz_t pos) {
+void mAc_UnagiActorShadow(ACTOR* actor, GAME* game, xyz_t pos) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    
     mAc_ActorShadowDraw(actor, play, 1, pos, 1.0f);
 }
 

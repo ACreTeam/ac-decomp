@@ -28,7 +28,7 @@ void mAc_ActorShadowDraw(ACTOR *, GAME_PLAY *, int, xyz_t, f32);
 void mActorShadow_SetForceShadowPos(ACTOR *, xyz_t *);
 void mActorShadow_UnSetForceShadowPos(ACTOR *);
 void mAc_NormalActorShadow(ACTOR *, GAME_PLAY *, f32);
-void mAc_UnagiActorShadow(ACTOR *, GAME_PLAY *, xyz_t);
+void mAc_UnagiActorShadow(ACTOR *, GAME *, xyz_t);
 void mAc_ActorShadowCircle(ACTOR *, LightsN *, GAME_PLAY *);
 void mAc_ActorShadowEllipse(ACTOR *, LightsN *, GAME_PLAY *);
 

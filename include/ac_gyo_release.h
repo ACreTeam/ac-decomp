@@ -15,7 +15,7 @@ struct gyo_release_actor_s {
     /* 0x000 */ ACTOR actor_class;
     /* 0x174 */ ACTOR* gyoei_actor_p;
     /* 0x178 */ int gyo_type;
-    /* 0x17C */ int size_type;
+    /* 0x17C */ s16 size_type;
     /* 0x180 */ int anime_frame;
     /* 0x184 */ int segment;
     /* 0x188 */ int _188;

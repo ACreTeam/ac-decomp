@@ -963,7 +963,7 @@ config.libs = [
             Object(Matching, "actor/ac_groundhog_control.c"),
             Object(Matching, "actor/ac_gyo_kage.c"),
             Object(NonMatching, "actor/ac_gyo_kaseki.c"),
-            Object(NonMatching, "actor/ac_gyo_release.c"),
+            Object(Matching, "actor/ac_gyo_release.c"),
             Object(NonMatching, "actor/ac_gyo_test.c"),
             Object(NonMatching, "actor/ac_gyoei.c"),
             Object(Matching, "actor/ac_handOverItem.c"),
