@@ -68,7 +68,7 @@ enum {
 static mIV_Ovl_c inv_ovl_data;
 
 // clang-format off
-#define F(n) aSOG_FISH_TYPE_##n
+#define F(n) aGYO_TYPE_##n
 
 /* Fish collection layout */
 static u8 mIV_fish_collect_list[] = {

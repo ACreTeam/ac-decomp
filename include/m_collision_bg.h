@@ -202,6 +202,14 @@ typedef struct wall_info_s {
     s16 type;
 } mCoBG_WallInfo_c;
 
+enum {
+    mCoBG_WALL_TYPE0,
+    mCoBG_WALL_TYPE1,
+
+    // TODO
+    mCoBG_WALL_TYPE_NUM
+};
+
 typedef struct collision_bg_check_s {
     mCoBG_Collision_u collision_units[5];
     mCoBG_CheckResult_c result;

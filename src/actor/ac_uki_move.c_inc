@@ -68,7 +68,7 @@ static mActor_name_t aUKI_get_fish_type(ACTOR* actorx) {
     // clang-format on
     mActor_name_t item = EMPTY_NO;
 
-    if (uki->gyo_type >= 0 && uki->gyo_type < aSOG_FISH_TYPE_EXTENDED_NUM) {
+    if (uki->gyo_type >= 0 && uki->gyo_type < aGYO_TYPE_EXTENDED_NUM) {
         item = fish_data[uki->gyo_type];
     }
 
@@ -892,9 +892,9 @@ static void aUKI_set_proc_bite(ACTOR* actorx, GAME* game, int arg) {
     aUKI_effect_sibuki(actorx, game, 0);
 
     switch (uki->gyo_type) {
-        case aSOG_FISH_TYPE_EMPTY_CAN:
-        case aSOG_FISH_TYPE_BOOT:
-        case aSOG_FISH_TYPE_OLD_TIRE:
+        case aGYO_TYPE_EMPTY_CAN:
+        case aGYO_TYPE_BOOT:
+        case aGYO_TYPE_OLD_TIRE:
             uki->frame_timer = 26;
             break;
         default:

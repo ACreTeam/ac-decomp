@@ -15,7 +15,7 @@
 
 /* sizeof(aSOG_term_info_c) == 4 */
 typedef struct term_info_s {
-  /* 0x00 */ s16 type; /* fish type (aSOG_FISH_TYPE_*) */
+  /* 0x00 */ s16 type; /* fish type (aGYO_TYPE_*) */
   /* 0x02 */ u8 spawn_area; /* spawn area (aSOG_SPAWN_AREA_*) */
   /* 0x03 */ u8 weight; /* weight value */
 } aSOG_term_info_c;
@@ -26,7 +26,7 @@ typedef struct term_list_s {
   /* 0x04 */ aSOG_term_info_c* term_info; /* pointer to term info items */
 } aSOG_term_list_c;
 
-#define FISH_SPAWN(fish, area, weight) { aSOG_FISH_TYPE_##fish, aSOG_SPAWN_AREA_##area, weight }
+#define FISH_SPAWN(fish, area, weight) { aGYO_TYPE_##fish, aSOG_SPAWN_AREA_##area, weight }
 
 static aSOG_term_info_c r_m1_t0[14] = {
   FISH_SPAWN(CRUCIAN_CARP, RIVER, 5),
@@ -1329,13 +1329,13 @@ static int aSOG_gyoei_place_check(u8 spawn_area, u32 block_type) {
  * @param block_type Current acre type flags
  * @param info_count Number of spawns in spawn_info
  * @param env_rate Town environment rating spawn % modifier rate
- * @return Spawn is invalid: aSOG_FISH_TYPE_INVALID/aSOG_FISH_TYPE_NUM, otherwise index into the spawn_info table to try spawning
+ * @return Spawn is invalid: aGYO_TYPE_INVALID/aGYO_TYPE_NUM, otherwise index into the spawn_info table to try spawning
  **/
 static int aSOG_gyoei_get_idx_sub(aSOG_gyoei_spawn_info_weight_f_c* spawn_info, int* set_table, u32 block_type, int info_count, f32 env_rate) {
   f32 total_spawn_weight = 0.0f;
   f32 selected_weight;
   f32 now_weight;
-  int selected_idx = aSOG_FISH_TYPE_INVALID;
+  int selected_idx = aGYO_TYPE_INVALID;
   aSOG_gyoei_spawn_info_weight_f_c* spawn_info_p = spawn_info;
   int* set_table_p = set_table;
   int i;
@@ -1366,7 +1366,7 @@ static int aSOG_gyoei_get_idx_sub(aSOG_gyoei_spawn_info_weight_f_c* spawn_info, 
       if (selected_weight >= now_weight) {
         *set_table_p = TRUE;
         if (!aSOG_gyoei_place_check(spawn_info_p->spawn_area, block_type)) {
-          selected_idx = aSOG_FISH_TYPE_NUM;
+          selected_idx = aGYO_TYPE_NUM;
         }
         else {
           selected_idx = i;
@@ -1389,7 +1389,7 @@ static int aSOG_gyoei_get_idx_sub(aSOG_gyoei_spawn_info_weight_f_c* spawn_info, 
  * @param spawn_info Pointer to the possible spawns
  * @param info_count Number of spawns in spawn_info
  * @param block_type Current acre type flags
- * @return Spawn is invalid: aSOG_FISH_TYPE_INVALID/aSOG_FISH_TYPE_NUM, otherwise index into the spawn_info table to try spawning
+ * @return Spawn is invalid: aGYO_TYPE_INVALID/aGYO_TYPE_NUM, otherwise index into the spawn_info table to try spawning
  **/
 static int aSOG_gyoei_get_idx(aSOG_gyoei_spawn_info_weight_f_c* spawn_info, int info_count, u32 block_type) {
   static f32 env_rate_table[mFAs_FIELDRANK_NUM] = {
@@ -1402,13 +1402,13 @@ static int aSOG_gyoei_get_idx(aSOG_gyoei_spawn_info_weight_f_c* spawn_info, int 
     1.000f  /* Field Rank 6 */
   };
 
-  int set_table[aSOG_FISH_TYPE_NUM];
+  int set_table[aGYO_TYPE_NUM];
   f32 env_rate;
   int field_rank;
   int i;
-  int idx = aSOG_FISH_TYPE_INVALID;
+  int idx = aGYO_TYPE_INVALID;
   
-  bzero(set_table, aSOG_FISH_TYPE_NUM * sizeof(int));
+  bzero(set_table, aGYO_TYPE_NUM * sizeof(int));
   field_rank = mFAs_GetFieldRank();
 
   if (field_rank < mFAs_FIELDRANK_ZERO || field_rank > mFAs_FIELDRANK_SIX) {
@@ -1425,7 +1425,7 @@ static int aSOG_gyoei_get_idx(aSOG_gyoei_spawn_info_weight_f_c* spawn_info, int 
   /* keep trying to roll a fish until a valid one is found for the current acre or all have been exhausted */
   for (i = 0; i < info_count; i++) {
     idx = aSOG_gyoei_get_idx_sub(spawn_info, set_table, block_type, info_count, env_rate);
-    if (idx == aSOG_FISH_TYPE_INVALID || idx != aSOG_FISH_TYPE_NUM) {
+    if (idx == aGYO_TYPE_INVALID || idx != aGYO_TYPE_NUM) {
       break;
     }
   }
@@ -1454,7 +1454,7 @@ static int aSOG_gyoei_set_gyoei_data(aSOG_set_data_c* set_data, int* block_xz, i
   u32 attribute;
   xyz_t wpos;
 
-  if (type != aSOG_FISH_TYPE_INVALID) {
+  if (type != aGYO_TYPE_INVALID) {
     fg_p = fg_idx_table;
     for (ut_z = 0; ut_z < UT_TOTAL_NUM - 1; ut_z++) {
       *fg_p++ = 0xffff;
@@ -1469,7 +1469,7 @@ static int aSOG_gyoei_set_gyoei_data(aSOG_set_data_c* set_data, int* block_xz, i
           if (ut_z >= 2 && ut_z < UT_Z_NUM - 2 && ut_x >= 2 && ut_x < UT_X_NUM - 2) {
             attribute = collision_data->data.unit_attribute;
             switch (set_data->type) {
-              case aSOG_FISH_TYPE_LARGE_CHAR:
+              case aGYO_TYPE_LARGE_CHAR:
               {
                 if (attribute == mCoBG_ATTRIBUTE_WATERFALL) {
                   valid_fg_num++;
@@ -1479,11 +1479,11 @@ static int aSOG_gyoei_set_gyoei_data(aSOG_set_data_c* set_data, int* block_xz, i
               }
 
               /* ocean fish */
-              case aSOG_FISH_TYPE_COELACANTH:
-              case aSOG_FISH_TYPE_JELLYFISH:
-              case aSOG_FISH_TYPE_SEA_BASS:
-              case aSOG_FISH_TYPE_RED_SNAPPER:
-              case aSOG_FISH_TYPE_BARRED_KNIFEJAW:
+              case aGYO_TYPE_COELACANTH:
+              case aGYO_TYPE_JELLYFISH:
+              case aGYO_TYPE_SEA_BASS:
+              case aGYO_TYPE_RED_SNAPPER:
+              case aGYO_TYPE_BARRED_KNIFEJAW:
               {
                 if (attribute == mCoBG_ATTRIBUTE_SEA && attribute != mCoBG_ATTRIBUTE_WAVE) {
                     f32 bg_y;
@@ -1504,8 +1504,8 @@ static int aSOG_gyoei_set_gyoei_data(aSOG_set_data_c* set_data, int* block_xz, i
                 break;
               }
 
-              case aSOG_FISH_TYPE_SALMON:
-              case aSOG_FISH_TYPE_SALMON2:
+              case aGYO_TYPE_SALMON:
+              case aGYO_TYPE_SALMON2:
               {
                 if (mCoBG_CheckWaterAttribute(attribute)) {
                   if (attribute == mCoBG_ATTRIBUTE_SEA && attribute != mCoBG_ATTRIBUTE_WAVE) {
@@ -1534,7 +1534,7 @@ static int aSOG_gyoei_set_gyoei_data(aSOG_set_data_c* set_data, int* block_xz, i
                 break;
               }
 
-              case aSOG_FISH_TYPE_WHALE:
+              case aGYO_TYPE_WHALE:
               {
                 if (ut_z >= 5 && ut_z < UT_Z_NUM - 5 && ut_x >= 5 && ut_x < UT_X_NUM - 5 && mCoBG_CheckWaterAttribute(attribute)) {
                   valid_fg_num++;
@@ -1587,7 +1587,7 @@ static int aSOG_gyoei_set_gyoei_data(aSOG_set_data_c* set_data, int* block_xz, i
 static int aSOG_gyoei_decide_gyoei(aSOG_set_data_c* set_data, int* block_xz, aSOG_gyoei_spawn_info_weight_f_c* spawn_info, int info_count, u32 block_type) {
   int res = FALSE;
   int idx = aSOG_gyoei_get_idx(spawn_info, info_count, block_type); // decide fish
-  if (idx != aSOG_FISH_TYPE_INVALID) {
+  if (idx != aGYO_TYPE_INVALID) {
     aSOG_gyoei_spawn_info_weight_f_c* selected_info = spawn_info + idx;
     int spawn_area = selected_info->spawn_area;
     if (spawn_area < aSOG_SPAWN_AREA_NUM) {
@@ -1616,7 +1616,7 @@ static int aSOG_gyoei_make(aSOG_set_data_c* set_data, int* block_xz, GAME* game)
     init_data.fish_type = set_data->type;
 
     switch (init_data.fish_type) {
-      case aSOG_FISH_TYPE_LARGE_CHAR:
+      case aGYO_TYPE_LARGE_CHAR:
       {
         aSOG_get_fall_attribute_position(&wpos);
         break;

@@ -1,0 +1,63 @@
+extern u8 act_gyoei02_0_int_i4[];
+extern u8 act_gyoei02_1_int_i4[];
+extern u8 act_gyoei02_2_int_i4[];
+extern u8 act_gyoei02_3_int_i4[];
+
+// clang-format off
+static u8* aGYO_texture_table[] = {
+    act_gyoei02_0_int_i4,
+    act_gyoei02_1_int_i4,
+    act_gyoei02_2_int_i4,
+    act_gyoei02_3_int_i4,
+};
+// clang-format on
+
+// clang-format off
+static u8 aGYO_2tile_texture_idx[][2] = {
+    { 0, 3 },
+    { 0, 3 },
+    { 0, 3 },
+    { 0, 3 },
+    { 0, 3 },
+    { 2, 3 },
+    { 2, 3 },
+    { 2, 3 },
+    { 2, 3 },
+    { 2, 3 },
+    { 2, 1 },
+    { 2, 1 },
+    { 2, 1 },
+    { 2, 1 },
+    { 2, 1 },
+    { 0, 1 },
+    { 0, 1 },
+    { 0, 1 },
+    { 0, 1 },
+    { 0, 1 },
+};
+// clang-format on
+
+// clang-format off
+static u8 aGYO_prim_f[] = {
+    51,
+    102,
+    153,
+    204,
+    255,
+    204,
+    153,
+    102,
+    51,
+    0,
+    51,
+    102,
+    153,
+    204,
+    255,
+    204,
+    153,
+    102,
+    51,
+    0,
+};
+// clang-format on

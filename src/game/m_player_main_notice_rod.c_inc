@@ -29,7 +29,7 @@ static void Player_actor_setup_main_Notice_rod(ACTOR* actor, GAME* game) {
     uki = (UKI_ACTOR*)player->fishing_rod_actor_p;
     type = uki->gyo_type;
 
-    if (uki != NULL && type >= aSOG_FISH_TYPE_CRUCIAN_CARP) {
+    if (uki != NULL && type >= aGYO_TYPE_CRUCIAN_CARP) {
         int free_space = mPlib_Get_space_putin_item();
 
         if (free_space >= 0) {
@@ -39,7 +39,7 @@ static void Player_actor_setup_main_Notice_rod(ACTOR* actor, GAME* game) {
             main_notice->not_full_pocket = FALSE;
         }
 
-        if (type < aSOG_FISH_TYPE_NUM + 1) {
+        if (type < aGYO_TYPE_NUM + 1) {
             main_notice->already_collected = mSM_CHECK_LAST_FISH_GET(type);
             mSM_COLLECT_FISH_SET(type);
         }
@@ -47,7 +47,7 @@ static void Player_actor_setup_main_Notice_rod(ACTOR* actor, GAME* game) {
         main_notice->not_full_pocket = FALSE;
     }
 
-    if (type == aSOG_FISH_TYPE_BARRED_KNIFEJAW) {
+    if (type == aGYO_TYPE_BARRED_KNIFEJAW) {
         mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_NOTICE_FISHING_ROD);
     }
     Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_GET_T2, mPlayer_ANIM_GET_T2, 1.0f, 1.0f, 0.5f, -3.0f, 0,
@@ -99,7 +99,7 @@ static void Player_actor_SearchAnimation_Notice_rod(ACTOR* actor, GAME* game, f3
 }
 
 static void Player_actor_AppearMark_Notice_rod(ACTOR* actor) {
-    static int use_mark_gyoei_type = aSOG_FISH_TYPE_KILLIFISH;
+    static int use_mark_gyoei_type = aGYO_TYPE_KILLIFISH;
 
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
@@ -110,7 +110,7 @@ static void Player_actor_AppearMark_Notice_rod(ACTOR* actor) {
         if (uki != NULL) {
             int type = uki->gyo_type;
 
-            if (type >= aSOG_FISH_TYPE_CRUCIAN_CARP) {
+            if (type >= aGYO_TYPE_CRUCIAN_CARP) {
                 int killfish = FALSE;
 
                 if (type == use_mark_gyoei_type) {
@@ -157,8 +157,8 @@ static void Player_actor_Notice_rod_demo_ct(ACTOR* actor) {
     if (uki != NULL) {
         int type = uki->gyo_type;
 
-        if (type >= aSOG_FISH_TYPE_CRUCIAN_CARP) {
-            if (type < aSOG_FISH_TYPE_NUM + 1) {
+        if (type >= aGYO_TYPE_CRUCIAN_CARP) {
+            if (type < aGYO_TYPE_NUM + 1) {
                 if (player->now_main_index == mPlayer_INDEX_NOTICE_ROD) {
                     mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
                     u8 str[16];
