@@ -32,6 +32,7 @@
 #include "ac_broker_design.h"
 #include "ac_garagara.h"
 #include "ac_turi_clip.h"
+#include "ac_hatumode_control.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -83,7 +84,7 @@ typedef struct clip_s {
     /* 0x0B8 */ aShopUmbrella_Clip_c* shop_umbrella_clip;
     /* 0x0BC */ aAR_Clip_c* arrange_room_clip;
     /* 0x0C0 */ aGRGR_clip_c* garagara_clip;
-    /* 0x0C4 */ void* _0C4;
+    /* 0x0C4 */ aHTMD_clip_c* hatumode_clip;
     /* 0x0C8 */ void* shrine_clip;
     /* 0x0CC */ void* _0CC;
     /* 0x0D0 */ void* _0D0;

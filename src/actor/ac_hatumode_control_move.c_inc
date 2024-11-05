@@ -1,0 +1,131 @@
+static void aHTC_ready(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+    
+    if (hatumode_p != NULL && hatumode_p->state == 1) {
+        hatumode_control->actor_class.world.position.x = 20 + hatumode_p->yashiro_pos[0];
+        hatumode_control->actor_class.world.position.z = 40 + hatumode_p->yashiro_pos[1];
+        hatumode_control->actor_class.world.position.y = hatumode_p->yashiro_pos[2];
+        aHTC_setup_move_proc(hatumode_control, 1);
+    }
+}
+
+static void aHTC_wait(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+    
+    if (hatumode_p->flags0 & 0x8000) {
+        aHTC_setup_move_proc(hatumode_control, 2);
+    }
+}
+
+static void aHTC_set_talk_info_local(ACTOR* actorx) {
+    rgba_t window_color;
+
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_ListenAble();
+    window_color.r = 255;
+    window_color.g = 60;
+    window_color.b = 40;
+    window_color.a = 255;
+    mDemo_Set_talk_window_color(&window_color);
+}
+
+static void aHTC_request(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)hatumode_control;
+
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        if (mSP_money_check(50)) {
+            aHTC_setup_move_proc(hatumode_control, 3);
+            mDemo_Set_msg_num(0x112C);
+        } else {
+            aHTC_setup_move_proc(hatumode_control, 4);
+            mDemo_Set_msg_num(0x112E);
+        }
+    } else {
+        if (mDemo_Get_talk_actor() == NULL) {
+            mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aHTC_set_talk_info_local);
+        }
+    }
+}
+
+static void aHTC_select(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE()) {
+        if (mChoice_GET_CHOSENUM() == mChoice_CHOICE0) {
+            aHTC_setup_move_proc(hatumode_control, 7);
+            mMsg_SET_CONTINUE_MSG_NUM(0x112D);
+        } else {
+            aHTC_setup_move_proc(hatumode_control, 4);
+            mMsg_SET_CONTINUE_MSG_NUM(0x112E);
+        }
+    }
+}
+
+static void aHTC_nomoney(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play) {
+    if (!mDemo_Check(mDemo_TYPE_SPEAK, (ACTOR*)hatumode_control)) {
+        aHTC_setup_move_proc(hatumode_control, 5);
+    }
+}
+
+static void aHTC_inori(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play) {
+    xyz_t pos;
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    pos.x = 20 + hatumode_p->yashiro_pos[0];
+    pos.y = hatumode_p->yashiro_pos[2];
+    pos.z = 85 + hatumode_p->yashiro_pos[1];
+
+    if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_PRAY) {
+        mPlib_request_main_pray_type1((GAME*)play, &pos, DEG2SHORT_ANGLE2(180.0f));
+    } else {
+        aHTC_setup_move_proc(hatumode_control, 6);
+    }
+}
+
+static void aHTC_inori_end(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_WAIT) {
+        aHTC_setup_move_proc(hatumode_control, 1);
+        hatumode_p->flags0 &= ~0x8000;
+    }
+}
+
+static void aHTC_pay(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play) {
+    if (!mDemo_Check(mDemo_TYPE_SPEAK, (ACTOR*)hatumode_control)) {
+        aHTC_setup_move_proc(hatumode_control, 8);
+        mSP_get_sell_price(50);
+    }
+}
+
+static void aHTC_saisen(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play) {
+    xyz_t pos;
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    pos.x = 20 + hatumode_p->yashiro_pos[0];
+    pos.y = hatumode_p->yashiro_pos[2];
+    pos.z = 85 + hatumode_p->yashiro_pos[1];
+
+    if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_THROW_MONEY) {
+        mPlib_request_main_throw_money_type1((GAME*)play, &pos, DEG2SHORT_ANGLE2(180.0f));
+    } else {
+        aHTC_setup_move_proc(hatumode_control, 6);
+    }
+}
+
+static void aHTC_setup_move_proc(HATUMODE_CONTROL_ACTOR* hatumode_control, s16 move_proc_idx) {
+    // clang-format off
+    static aHTC_MOVE_PROC process[] = {
+        &aHTC_ready,
+        &aHTC_wait,
+        &aHTC_request,
+        &aHTC_select,
+        &aHTC_nomoney,
+        &aHTC_inori,
+        &aHTC_inori_end,
+        &aHTC_pay,
+        &aHTC_saisen,
+    };
+    // clang-format on
+
+    hatumode_control->move_proc = process[move_proc_idx];
+}

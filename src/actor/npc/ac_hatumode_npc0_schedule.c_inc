@@ -1,0 +1,292 @@
+static int aHN0_flag2_wait_check(HATUMODE_NPC0_ACTOR* h_npc) {
+    u16 bit;
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+    
+    bit = 0;
+    switch (h_npc->think_idx) {
+        case 3:
+            bit = 0x01 << ((((ACTOR*)h_npc)->npc_id - SP_NPC_EV_HATUMODE_0) & 1);
+            break;
+        case 13:
+            bit = 0x04 << (((((ACTOR*)h_npc)->npc_id - SP_NPC_EV_HATUMODE_0) & 1) ^ 1);
+            break;
+        case 28:
+            bit = 0x10 << (((((ACTOR*)h_npc)->npc_id - SP_NPC_EV_HATUMODE_0) & 1) ^ 1);
+            break;
+    }
+
+    if (hatumode_p->flags1 & bit) {
+        hatumode_p->flags1 &= ~bit;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void aHN0_birth(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    if (CLIP(hatumode_clip) != NULL) {
+        aHN0_set_start_position(h_npc);
+        if (h_npc->npc_class.actor_class.npc_id - SP_NPC_EV_HATUMODE_0 == 0) {
+            aHN0_setup_think_proc(h_npc, play, 0);
+        } else {
+            aHN0_setup_think_proc(h_npc, play, 1);
+        }
+    } else {
+        h_npc->think_proc_idx = aHN0_THINK_PROC_BIRTH;
+    }
+}
+
+static void aHN0_ready1(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    if (hatumode_p->state == 1 || mFI_SetOyasiroPos(hatumode_p->yashiro_pos)) {
+        hatumode_p->state = 1;
+        hatumode_p->cur_npc_idx = 0;
+        h_npc->root = 5;
+        aHN0_setup_think_proc(h_npc, play, 4);
+    }
+}
+
+static void aHN0_ready2(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+    static u8 root_table[] = { 5, 4, 9, 3 };
+    static u8 proc_idx_table[] = { 4, 27, 27, 20 };
+    int idx = h_npc->npc_class.actor_class.npc_id - SP_NPC_EV_HATUMODE_0;
+    
+    if (hatumode_p != NULL && hatumode_p->state == 1) {
+        h_npc->npc_class.actor_class.state_bitfield |= ACTOR_STATE_NO_MOVE_WHILE_CULLED;
+        h_npc->root = root_table[idx];
+        aHN0_setup_think_proc(h_npc, play, proc_idx_table[idx]);
+    }
+}
+
+static void aHN0_turn_next(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    if (h_npc->npc_class.action.idx == aNPC_ACT_TURN) {
+        aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
+    }
+}
+
+static void aHN0_flag2_wait(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    if (aHN0_flag2_wait_check(h_npc)) {
+        if (h_npc->think_idx == 28 && (hatumode_p->flags0 & 0x4000) != 0) {
+            hatumode_p->flags0 &= ~0x4000;
+            aHN0_setup_think_proc(h_npc, play, 43);
+        } else {
+            aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
+        }
+    }
+}
+
+static void aHN0_anime_wait(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    if (cKF_FrameControl_stop_proc(&h_npc->npc_class.draw.main_animation.keyframe.frame_control) == cKF_STATE_STOPPED) {
+        aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
+    }
+}
+
+static void aHN0_anime_wait_saisen(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    if (cKF_FrameControl_stop_proc(&h_npc->npc_class.draw.main_animation.keyframe.frame_control) == cKF_STATE_STOPPED) {
+        aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
+    } else if (cKF_FrameControl_passCheck_now(&h_npc->npc_class.draw.main_animation.keyframe.frame_control, 33.0f) == TRUE) {
+        ACTOR* actorx = (ACTOR*)h_npc;
+
+        eEC_CLIP->effect_make_proc(eEC_EFFECT_COIN, actorx->world.position, 1, actorx->shape_info.rotation.y, (GAME*)play, actorx->npc_id, 0, 0);
+    }
+}
+
+static void aHN0_timer_wait(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    if (h_npc->timer > 0) {
+        h_npc->timer--;
+    } else {
+        aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
+    }
+}
+
+static void aHN0_move_bf(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    if (!h_npc->npc_class.collision.turn_flag) {
+        aHN0_setup_think_proc(h_npc, play, h_npc->move_think_idx);
+    }
+
+    CLIP(npc_clip)->set_dst_pos_proc(&h_npc->npc_class, h_npc->pos[0], h_npc->pos[1]);
+}
+
+static void aHN0_move_wait(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    if (h_npc->npc_class.action.idx == aNPC_ACT_WALK2) {
+        aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
+        h_npc->npc_class.actor_class.status_data.weight = MASSTYPE_IMMOVABLE;
+    } else if ((s16)h_npc->npc_class.movement.target_pos_x != h_npc->pos[0] || (s16)h_npc->npc_class.movement.target_pos_z != h_npc->pos[1]) {
+        h_npc->move_think_idx = h_npc->think_idx - 1;
+        aHN0_setup_think_proc(h_npc, play, 33);
+    }
+}
+
+static void aHN0_aisatu_wait(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    if (hatumode_p->flags0 & 0x2000) {
+        aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
+    }
+}
+
+static void aHN0_aisatu2_wait(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    if (hatumode_p->flags0 & 0x1000) {
+        aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
+    }
+}
+
+static void aHN0_to_omairi(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    hatumode_p->cur_npc_idx = h_npc->npc_class.actor_class.npc_id - SP_NPC_EV_HATUMODE_0;
+    aHN0_setup_think_proc(h_npc, play, 2);
+}
+
+static void aHN0_player_move(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    if (CLIP(hatumode_clip)->player_move_proc(play, h_npc->player)) {
+        aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
+        h_npc->player++;
+    }
+}
+
+static void aHN0_player_wait(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    CLIP(hatumode_clip)->look_player_proc((ACTOR*)h_npc);
+    if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_DEMO_WALK) {
+        aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
+    }
+}
+
+static void aHN0_kasasimai(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_WAIT) {
+        if (mPlib_Check_now_handin_item()) {
+            mPlib_request_main_demo_wait_type1((GAME*)play, TRUE, NULL);
+        } else {
+            aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
+            hatumode_p->flags0 |= 0x8000;
+        }
+    }
+}
+
+static void aHN0_sanpai_wait(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    if ((hatumode_p->flags0 & 0x8000) == 0) {
+        hatumode_p->flags0 |= 0x4000;
+        hatumode_p->flags1 &= ~(1 << ((h_npc->npc_class.actor_class.npc_id - SP_NPC_EV_HATUMODE_0) & 1));
+        aHN0_setup_think_proc(h_npc, play, 10);
+    }
+}
+
+typedef void (*aHN0_THINK_PROC)(HATUMODE_NPC0_ACTOR*, GAME_PLAY*);
+
+// clang-format off
+static aHN0_THINK_PROC proc_table[] = {
+    (aHN0_THINK_PROC)&none_proc1,
+    &aHN0_birth,
+    &aHN0_ready1,
+    &aHN0_ready2,
+    &aHN0_turn_next,
+    &aHN0_flag2_wait,
+    &aHN0_anime_wait,
+    &aHN0_anime_wait_saisen,
+    &aHN0_timer_wait,
+    &aHN0_move_wait,
+    &aHN0_move_bf,
+    &aHN0_aisatu_wait,
+    &aHN0_aisatu2_wait,
+    &aHN0_to_omairi,
+    &aHN0_player_move,
+    &aHN0_player_wait,
+    &aHN0_kasasimai,
+    &aHN0_sanpai_wait,
+};
+// clang-format on
+
+static void aHN0_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HATUMODE_NPC0_ACTOR* h_npc = (HATUMODE_NPC0_ACTOR*)nactorx;
+
+    if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)nactorx) != TRUE) {
+        if (h_npc->npc_class.action.step == aNPC_ACTION_END_STEP) {
+            h_npc->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+        }
+
+        if (h_npc->npc_class.action.step == aNPC_ACTION_END_STEP || h_npc->npc_class.action.idx == aNPC_ACT_WAIT) {
+            (*proc_table[h_npc->think_proc_idx])(h_npc, play);
+        }
+    }
+}
+
+static void aHN0_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HATUMODE_NPC0_ACTOR* h_npc = (HATUMODE_NPC0_ACTOR*)nactorx;
+
+    aHN0_birth(h_npc, play);
+    nactorx->actor_class.status_data.weight = MASSTYPE_IMMOVABLE;
+    nactorx->condition_info.hide_request = FALSE;
+    nactorx->think.interrupt_flags = 0;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+}
+
+static void aHN0_setup_think_proc(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play, u8 think_idx) {
+    // clang-format off
+    static aNPC_TALK_REQUEST_PROC talk_request_table[] = {
+        (aNPC_TALK_REQUEST_PROC)&none_proc1,
+        &aHN0_norm_talk_request,
+        &aHN0_force_talk_request,
+    };
+    // clang-format on
+
+    h_npc->think_idx = think_idx;
+    if (CLIP(hatumode_clip) != NULL) {
+        h_npc->npc_class.talk_info.talk_request_proc = talk_request_table[CLIP(hatumode_clip)->think_init_proc((ACTOR*)h_npc, play)];
+    } else {
+        h_npc->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)&none_proc1;
+        h_npc->think_proc_idx = aHN0_THINK_PROC_BIRTH;
+    }
+
+    h_npc->think_change_flag = TRUE;
+}
+
+static void aHN0_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    switch (proc_type) {
+        case aNPC_THINK_PROC_INIT:
+            aHN0_think_init_proc(nactorx, play);
+            break;
+        case aNPC_THINK_PROC_MAIN:
+            aHN0_think_main_proc(nactorx, play);
+            break;
+    }
+}
+
+static void aHN0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = &aHN0_think_proc;
+    CLIP(npc_clip)->think_proc(nactorx, play, aNPC_THINK_SPECIAL, FALSE);
+
+}
+
+static void aHN0_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HATUMODE_NPC0_ACTOR* h_npc = (HATUMODE_NPC0_ACTOR*)nactorx;
+
+    if (!CLIP(npc_clip)->think_proc(nactorx, play, -1, 1)) {
+        CLIP(npc_clip)->think_proc(nactorx, play, -1, 2);
+    } else {
+        if (nactorx->collision.turn_flag == TRUE && h_npc->think_proc_idx == aHN0_THINK_PROC_MOVE_WAIT) {
+            h_npc->move_think_idx = h_npc->think_idx - 1;
+            aHN0_setup_think_proc(h_npc, play, 33);
+        }
+    }
+}
+
+static void aHN0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    switch (proc_type) {
+        case aNPC_SCHEDULE_PROC_INIT:
+            aHN0_schedule_init_proc(nactorx, play);
+            break;
+        case aNPC_SCHEDULE_PROC_MAIN:
+            aHN0_schedule_main_proc(nactorx, play);
+            break;
+    }
+}

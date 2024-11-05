@@ -1,0 +1,187 @@
+static int aHN0_set_request_act(HATUMODE_NPC0_ACTOR* hatumode_npc0, u8 prio, u8 idx, u8 type, u16 obj, s16 move_x, s16 move_z) {
+    int res = FALSE;
+
+    if (prio >= hatumode_npc0->npc_class.request.act_priority) {
+        u16 args[6];
+        
+        bzero(args, sizeof(args));
+        args[0] = obj;
+        args[2] = move_x;
+        args[3] = move_z;
+        hatumode_npc0->npc_class.request.act_priority = prio;
+        hatumode_npc0->npc_class.request.act_idx = idx;
+        hatumode_npc0->npc_class.request.act_type = type;
+        mem_copy((u8*)hatumode_npc0->npc_class.request.act_args, (u8*)args, sizeof(args));
+        res = TRUE;
+    }
+
+    return res;
+}
+
+static int aHN0_make_msg(HATUMODE_NPC0_ACTOR* hatumode_npc0) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+    int idx = (4 + (hatumode_npc0->npc_class.actor_class.npc_id - SP_NPC_EV_HATUMODE_0) - hatumode_p->cur_npc_idx) & 3;
+    
+    switch (idx) {
+        case 1:
+            return hatumode_npc0->base_msg + 3 + RANDOM(3);
+        case 2:
+            return hatumode_npc0->base_msg + 6 + RANDOM(3);
+        case 3:
+            return hatumode_npc0->base_msg + 9 + RANDOM(3);
+        default:
+            return hatumode_npc0->base_msg + 12 + RANDOM(3);
+    }
+}
+
+
+enum {
+    aHN0_TALK_WAIT,
+    aHN0_TALK_STOP_PLAYER,
+    aHN0_TALK_SAISEN_SURU,
+
+    aHN0_TALK_NUM
+};
+
+static int aHN0_change_talk_proc(HATUMODE_NPC0_ACTOR* hatumode_npc0, int talk_idx);
+
+static void aHN0_talk_stop_player(HATUMODE_NPC0_ACTOR* hatumode_npc0, GAME_PLAY* play) {
+    if (!mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)hatumode_npc0) && !mDemo_Check(mDemo_TYPE_SPEAK, (ACTOR*)hatumode_npc0)) {
+        aHN0_change_talk_proc(hatumode_npc0, aHN0_TALK_WAIT);
+    }
+}
+
+static void aHN0_talk_saisen_suru(HATUMODE_NPC0_ACTOR* hatumode_npc0, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE()) {
+        if (mChoice_GET_CHOSENUM() == mChoice_CHOICE0) {
+            aHN0_change_talk_proc(hatumode_npc0, aHN0_TALK_STOP_PLAYER);
+            mMsg_SET_CONTINUE_MSG_NUM(hatumode_npc0->base_msg + 1);
+            hatumode_npc0->next_think_idx = 0x22;
+            hatumode_npc0->player = 0;
+            mDemo_Set_talk_return_demo_wait(TRUE);
+        } else {
+            aHN0_change_talk_proc(hatumode_npc0, aHN0_TALK_WAIT);
+            mMsg_SET_CONTINUE_MSG_NUM(hatumode_npc0->base_msg + 2);
+        }
+    }
+}
+
+static int aHN0_change_talk_proc(HATUMODE_NPC0_ACTOR* hatumode_npc0, int talk_idx) {
+    // clang-format off
+    static aHN0_TALK_PROC proc[] = {
+        (aHN0_TALK_PROC)&none_proc1,
+        &aHN0_talk_stop_player,
+        &aHN0_talk_saisen_suru,
+    };
+    // clang-format on
+
+    hatumode_npc0->talk_proc = proc[talk_idx];
+    return TRUE;
+}
+
+typedef struct {
+    u8 change_msg;
+    u8 talk_idx;
+} aHN0_talk_info_c;
+
+static void aHTC_clip_talk_info(ACTOR* actorx, int type) {
+    // clang-format off
+    static aHN0_talk_info_c dt_tbl0[] = {
+        { 1, aHN0_TALK_WAIT },
+        { 0, aHN0_TALK_WAIT },
+    };
+    // clang-format on
+
+    // clang-format off
+    static aHN0_talk_info_c dt_tbl1[] = {
+        { 0, aHN0_TALK_SAISEN_SURU },
+        { 0, aHN0_TALK_SAISEN_SURU },
+        { 2, aHN0_TALK_WAIT },
+        { 2, aHN0_TALK_WAIT },
+    };
+    // clang-format on
+
+    HATUMODE_NPC0_ACTOR* hatumode_npc0 = (HATUMODE_NPC0_ACTOR*)actorx;
+    aHN0_talk_info_c* data_p;
+
+    if (type != 0) {
+        data_p = &dt_tbl1[hatumode_npc0->talk_idx];
+    } else {
+        data_p = &dt_tbl0[hatumode_npc0->talk_idx];
+    }
+
+    switch (data_p->change_msg) {
+        case 0:
+            mDemo_Set_msg_num(hatumode_npc0->base_msg);
+            break;
+        case 1:
+            mDemo_Set_msg_num(hatumode_npc0->base_msg + 15 + RANDOM(3));
+            break;
+        case 2:
+            mDemo_Set_msg_num(aHN0_make_msg(hatumode_npc0));
+            break;
+    }
+
+    mDemo_Set_talk_turn(TRUE);
+    mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+    aHN0_change_talk_proc(hatumode_npc0, data_p->talk_idx);
+}
+
+static int aHTMD_clip_set_start(ACTOR* actorx) {
+    int idx = actorx->npc_id - SP_NPC_EV_HATUMODE_0;
+    static s16 table_x[] = { 20, 40, -40, 40, -40 };
+    static s16 table_z[] = { -10, 40, 40, 0, 0 };
+    static u8 table_root[] = { 0, 4, 9, 3, 8 };
+
+    actorx->world.position.x += (f32)table_x[idx];
+    actorx->world.position.z += (f32)table_z[idx];
+    return table_root[idx];
+}
+
+static u8 aHTMD_next_position(u8 root, s16* pos) {
+    static s16 aHN0_posX[] = { 20, 0, 40, 0, 40, -60, -60, 100, 100 };
+    static s16 aHN0_posZ[] = { 75, 160, 160, 200, 200, 75, 200, 75, 200 };
+    static u8 aHN0_root[] = { 0, 5, 6, 3, 1, 0, 7, 8, 4, 2 };
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    root++;
+    if (root == 10) {
+        root = 5;
+    } else if (root == 5) {
+        root = 0;
+    }
+
+    pos[0] = hatumode_p->yashiro_pos[0] + aHN0_posX[aHN0_root[root]];
+    pos[1] = hatumode_p->yashiro_pos[1] + aHN0_posZ[aHN0_root[root]];
+    return root;
+}
+
+static int aHTMD_clip_player_move(GAME_PLAY* play, int root) {
+    static s16 aHN0_posX[] = { 20, 20, -80, 120 };
+    static s16 aHN0_posZ[] = { 120, 85, 85, 85 };
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_DEMO_WALK) {
+        mPlib_request_main_demo_walk_type1((GAME*)play, hatumode_p->yashiro_pos[0] + aHN0_posX[root], hatumode_p->yashiro_pos[1] + aHN0_posZ[root], 2.0f, FALSE);
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static int aHTMD_clip_look_player(ACTOR* actorx) {
+    HATUMODE_NPC0_ACTOR* hatumode_npc0 = (HATUMODE_NPC0_ACTOR*)actorx;
+    
+    if (hatumode_npc0->npc_class.action.step == aNPC_ACTION_END_STEP || hatumode_npc0->npc_class.action.idx == aNPC_ACT_WAIT) {
+        s16 d_ang = actorx->player_angle_y - actorx->shape_info.rotation.y;
+        u8 act_idx = aNPC_ACT_TURN;
+
+        if (ABS(d_ang) < DEG2SHORT_ANGLE2(67.5f)) {
+            act_idx = aNPC_ACT_WAIT;
+        }
+
+        aHN0_set_request_act(hatumode_npc0, 4, act_idx, aNPC_ACT_TYPE_SEARCH, aNPC_ACT_OBJ_PLAYER, 0, 0);
+    }
+
+    return FALSE;
+}

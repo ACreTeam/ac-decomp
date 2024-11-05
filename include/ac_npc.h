@@ -123,6 +123,13 @@ enum {
     aNPC_THINK_TYPE_NUM
 };
 
+enum {
+    aNPC_THINK_PROC_INIT,
+    aNPC_THINK_PROC_MAIN,
+
+    aNPC_THINK_PROC_NUM
+};
+
 typedef void (*aNPC_TALK_REQUEST_PROC)(ACTOR*, GAME*);
 typedef int (*aNPC_TALK_INIT_PROC)(ACTOR*, GAME*);
 typedef int (*aNPC_TALK_END_CHECK_PROC)(ACTOR*, GAME*);
@@ -152,6 +159,7 @@ typedef void (*aNPC_MOVE_PROC)(ACTOR*, GAME*);
 typedef void (*aNPC_MOVE_BEFORE_PROC)(ACTOR*, GAME*);
 typedef void (*aNPC_MOVE_AFTER_PROC)(ACTOR*, GAME*);
 typedef void (*aNPC_DRAW_PROC)(ACTOR*, GAME*);
+typedef void (*aNPC_SET_DST_POS_PROC)(NPC_ACTOR*, f32, f32);
 
 typedef void (*aNPC_REBUILD_DMA_PROC)();
 typedef void (*aNPC_TALK_DEMO_PROC)(ACTOR*);
@@ -186,7 +194,7 @@ struct ac_npc_clip_s {
     /* 0x110 */ aNPC_TALK_DEMO_PROC talk_demo_proc;
     /* 0x114 */ aNPC_ANIMATION_INIT_PROC animation_init_proc;
     /* 0x118 */ aNPC_CHG_SCHEDULE_PROC chg_schedule_proc;
-    /* 0x11C */ void* _11C;
+    /* 0x11C */ aNPC_SET_DST_POS_PROC set_dst_pos_proc;
     /* 0x120 */ aNPC_CLIP_THINK_PROC think_proc;
     /* 0x124 */ aNPC_FORCE_CALL_REQ_PROC force_call_req_proc;
     /* 0x128 */ void* _128;
@@ -512,6 +520,13 @@ enum {
     aNPC_SCHEDULE_TYPE_SPECIAL,
 
     aNPC_SCHEDULE_TYPE_NUM
+};
+
+enum {
+    aNPC_SCHEDULE_PROC_INIT,
+    aNPC_SCHEDULE_PROC_MAIN,
+
+    aNPC_SCHEDULE_PROC_NUM
 };
 
 struct npc_actor_s {

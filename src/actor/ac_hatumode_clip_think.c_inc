@@ -1,0 +1,220 @@
+static void aHN0_aisatu_local(HATUMODE_NPC0_ACTOR* hatumode_npc) {
+    switch (mNpc_GetNpcLooks((ACTOR*)hatumode_npc)) {
+        case mNpc_LOOKS_KO_GIRL:
+        case mNpc_LOOKS_SPORT_MAN:
+            CLIP(npc_clip)->animation_init_proc((ACTOR*)hatumode_npc, aNPC_ANIM_AISATU1, FALSE);
+            break;
+        case mNpc_LOOKS_GIRL:
+        case mNpc_LOOKS_BOY:
+            CLIP(npc_clip)->animation_init_proc((ACTOR*)hatumode_npc, aNPC_ANIM_AISATU2, FALSE);
+            break;
+        case mNpc_LOOKS_GRIM_MAN:
+            CLIP(npc_clip)->animation_init_proc((ACTOR*)hatumode_npc, aNPC_ANIM_AISATU3, FALSE);
+            break;
+        case mNpc_LOOKS_NANIWA_LADY:
+            CLIP(npc_clip)->animation_init_proc((ACTOR*)hatumode_npc, aNPC_ANIM_AISATU4, FALSE);
+            break;
+    }
+}
+
+static void aHN0_normal_wait_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    aHN0_set_request_act(hatumode_npc, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_ACT_OBJ_DEFAULT, 0, 0);
+}
+
+static void aHN0_move_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    aHN0_set_request_act(hatumode_npc, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, hatumode_npc->pos[0], hatumode_npc->pos[1]);
+    hatumode_npc->timer = 20;
+    hatumode_npc->npc_class.actor_class.status_data.weight = MASSTYPE_HEAVY;
+}
+
+static void aHN0_turn_f_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)hatumode_npc;
+
+    aHN0_set_request_act(hatumode_npc, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actorx->world.position.x, actorx->world.position.z - 10.0f);
+}
+
+static void aHN0_saisen_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    switch (hatumode_npc->think_idx) {
+        case 4:
+            CLIP(npc_clip)->animation_init_proc((ACTOR*)hatumode_npc, aNPC_ANIM_SAISEN1, FALSE);
+            break;
+        case 5:
+            CLIP(npc_clip)->animation_init_proc((ACTOR*)hatumode_npc, aNPC_ANIM_OMAIRI1, FALSE);
+            if (aSHR_GET_CLIP() != NULL) {
+                aSHR_GET_CLIP()->anime_play_proc();
+            }
+            break; 
+    }
+
+    hatumode_npc->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_STOP;
+}
+
+static void aHN0_omairi_af_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    aHN0_normal_wait_init(hatumode_npc, play);
+    CLIP(npc_clip)->animation_init_proc((ACTOR*)hatumode_npc, aNPC_ANIM_WAIT1, FALSE);
+    hatumode_npc->timer = 120;
+}
+
+static void aHN0_turn_move_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    aHN0_set_request_act(hatumode_npc, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, hatumode_npc->pos[0], hatumode_npc->pos[1]);
+}
+
+static void aHN0_next_pos_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    aHN0_normal_wait_init(hatumode_npc, play);
+    hatumode_npc->root = aHTMD_next_position(hatumode_npc->root, hatumode_npc->pos);
+    hatumode_npc->timer = 0;
+
+    switch (hatumode_npc->think_idx) {
+        case 10:
+            hatumode_p->flags1 |= (0x10 << ((hatumode_npc->npc_class.actor_class.npc_id - SP_NPC_EV_HATUMODE_0) & 1));
+            break;
+        case 29:
+            hatumode_p->flags1 |= (0x04 << ((hatumode_npc->npc_class.actor_class.npc_id - SP_NPC_EV_HATUMODE_0) & 1));
+            break;
+        case 24:
+            hatumode_p->flags1 |= (0x01 << ((hatumode_npc->npc_class.actor_class.npc_id - SP_NPC_EV_HATUMODE_0) & 1));
+            break;
+    }
+}
+
+static void aHN0_move_bf_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    aHN0_normal_wait_init(hatumode_npc, play);
+    CLIP(npc_clip)->animation_init_proc((ACTOR*)hatumode_npc, aNPC_ANIM_WAIT1, FALSE);
+}
+
+static void aHN0_turn_aisatu_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)hatumode_npc;
+    f32 x;
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    if ((hatumode_npc->npc_class.actor_class.npc_id - SP_NPC_EV_HATUMODE_0) & 1) {
+        x = 10.0f;
+    } else {
+        x = -10.0f;
+    }
+
+    aHN0_set_request_act(hatumode_npc, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actorx->world.position.x + x, actorx->world.position.z);
+    hatumode_p->flags0 |= 0x1000;
+}
+
+static void aHN0_aisatu_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    aHN0_aisatu_local(hatumode_npc);
+    hatumode_p->flags0 &= ~(0x2000 | 0x1000);
+}
+
+static void aHN0_aisatu2_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    aHN0_aisatu_local(hatumode_npc);
+    hatumode_p->flags0 |= 0x2000;
+}
+
+static void aHN0_haigo_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    hatumode_npc->pos[0] = 20 + hatumode_p->yashiro_pos[0];
+    hatumode_npc->pos[1] = 115 + hatumode_p->yashiro_pos[1];
+    aHN0_turn_move_init(hatumode_npc, play);
+}
+
+typedef struct {
+    u8 think_proc_idx;
+    u8 think_init;
+    u8 talk_req;
+    u8 talk_idx;
+    u8 next_think_idx;
+} aHN0_think_data_c;
+
+// clang-format off
+// TODO: enum for the various think idx values & enum/definitions for the talk idx type
+static aHN0_think_data_c dt_tbl[] = {
+    { aHN0_THINK_PROC_READY1, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NONE, 0x00, 0x00 },
+    { aHN0_THINK_PROC_READY2, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NONE, 0x00, 0x01 },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_TURN_F, aHN0_TALK_REQ_NONE, 0x00, 0x02 },
+    { aHN0_THINK_PROC_FLAG2_WAIT, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NORM, 0x00, 0x02 },
+    { aHN0_THINK_PROC_ANIME_WAIT_SAISEN, aHN0_THINK_INIT_SAISEN, aHN0_TALK_REQ_NONE, 0x00, 0x04 },
+    { aHN0_THINK_PROC_ANIME_WAIT, aHN0_THINK_INIT_SAISEN, aHN0_TALK_REQ_NONE, 0x00, 0x05 },
+    { aHN0_THINK_PROC_TIMER_WAIT, aHN0_THINK_INIT_OMAIRI_AF, aHN0_TALK_REQ_NORM, 0x01, 0x07 },
+    { aHN0_THINK_PROC_TIMER_WAIT, aHN0_THINK_INIT_NEXT_POS, aHN0_TALK_REQ_NONE, 0x00, 0x07 },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_TURN_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x08 },
+    { aHN0_THINK_PROC_MOVE_WAIT, aHN0_THINK_INIT_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x08 },
+    { aHN0_THINK_PROC_TIMER_WAIT, aHN0_THINK_INIT_NEXT_POS, aHN0_TALK_REQ_NONE, 0x00, 0x0A },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_TURN_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x0B },
+    { aHN0_THINK_PROC_MOVE_WAIT, aHN0_THINK_INIT_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x0C },
+    { aHN0_THINK_PROC_FLAG2_WAIT, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NONE, 0x00, 0x0D },
+    { aHN0_THINK_PROC_TIMER_WAIT, aHN0_THINK_INIT_NEXT_POS, aHN0_TALK_REQ_NONE, 0x00, 0x0E },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_TURN_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x0F },
+    { aHN0_THINK_PROC_MOVE_WAIT, aHN0_THINK_INIT_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x0F },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_TURN_AISATU, aHN0_TALK_REQ_NONE, 0x00, 0x11 },
+    { aHN0_THINK_PROC_AISATU_WAIT, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NONE, 0x00, 0x12 },
+    { aHN0_THINK_PROC_ANIME_WAIT, aHN0_THINK_INIT_AISATU, aHN0_TALK_REQ_NONE, 0x00, 0x13 },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_TURN_F, aHN0_TALK_REQ_NONE, 0x00, 0x14 },
+    { aHN0_THINK_PROC_AISATU2_WAIT, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NORM, 0x02, 0x14 },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_TURN_AISATU, aHN0_TALK_REQ_NONE, 0x00, 0x16 },
+    { aHN0_THINK_PROC_ANIME_WAIT, aHN0_THINK_INIT_AISATU2, aHN0_TALK_REQ_NONE, 0x00, 0x17 },
+    { aHN0_THINK_PROC_TIMER_WAIT, aHN0_THINK_INIT_NEXT_POS, aHN0_TALK_REQ_NONE, 0x00, 0x18 },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_TURN_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x19 },
+    { aHN0_THINK_PROC_MOVE_WAIT, aHN0_THINK_INIT_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x19 },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_TURN_F, aHN0_TALK_REQ_NONE, 0x00, 0x1B },
+    { aHN0_THINK_PROC_FLAG2_WAIT, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NORM, 0x03, 0x1B },
+    { aHN0_THINK_PROC_TIMER_WAIT, aHN0_THINK_INIT_NEXT_POS, aHN0_TALK_REQ_NONE, 0x00, 0x1D },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_TURN_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x1E },
+    { aHN0_THINK_PROC_MOVE_WAIT, aHN0_THINK_INIT_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x1E },
+    { aHN0_THINK_PROC_TO_OMAIRI, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NONE, 0x00, 0x20 },
+    { aHN0_THINK_PROC_MOVE_BF, aHN0_THINK_INIT_MOVE_BF, aHN0_TALK_REQ_NONE, 0x00, 0x21 },
+    { aHN0_THINK_PROC_PLAYER_MOVE, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NONE, 0x00, 0x22 },
+    { aHN0_THINK_PROC_PLAYER_WAIT, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NONE, 0x00, 0x23 },
+    { aHN0_THINK_PROC_TIMER_WAIT, aHN0_THINK_INIT_NEXT_POS, aHN0_TALK_REQ_NONE, 0x00, 0x24 },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_TURN_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x25 },
+    { aHN0_THINK_PROC_MOVE_WAIT, aHN0_THINK_INIT_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x26 },
+    { aHN0_THINK_PROC_PLAYER_MOVE, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NONE, 0x00, 0x27 },
+    { aHN0_THINK_PROC_PLAYER_WAIT, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NONE, 0x00, 0x28 },
+    { aHN0_THINK_PROC_KASASIMAI, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NONE, 0x00, 0x29 },
+    { aHN0_THINK_PROC_SANPAI_WAIT, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_NONE, 0x00, 0x2A },
+    { aHN0_THINK_PROC_TURN_NEXT, aHN0_THINK_INIT_HAIGO, aHN0_TALK_REQ_NONE, 0x00, 0x2B },
+    { aHN0_THINK_PROC_MOVE_WAIT, aHN0_THINK_INIT_MOVE, aHN0_TALK_REQ_NONE, 0x00, 0x2C },
+    { aHN0_THINK_PROC_NONE, aHN0_THINK_INIT_NORMAL_WAIT, aHN0_TALK_REQ_FORCE, 0x00, 0x1D },
+};
+// clang-format on
+
+typedef void (*aHN0_THINK_INIT_PROC)(HATUMODE_NPC0_ACTOR*, GAME_PLAY*);
+
+// clang-format off
+static aHN0_THINK_INIT_PROC init_table[] = {
+    (aHN0_THINK_INIT_PROC)&none_proc1,
+    &aHN0_normal_wait_init,
+    &aHN0_move_init,
+    &aHN0_turn_f_init,
+    &aHN0_saisen_init,
+    &aHN0_omairi_af_init,
+    &aHN0_next_pos_init,
+    &aHN0_turn_move_init,
+    &aHN0_move_bf_init,
+    &aHN0_turn_aisatu_init,
+    &aHN0_aisatu_init,
+    &aHN0_aisatu2_init,
+    &aHN0_haigo_init,
+};
+// clang-format on
+
+static int aHTMD_clip_think_init(ACTOR* actorx, GAME_PLAY* play) {
+    HATUMODE_NPC0_ACTOR* hatumode_npc = (HATUMODE_NPC0_ACTOR*)actorx;
+    aHN0_think_data_c* data_p = &dt_tbl[hatumode_npc->think_idx];
+
+    hatumode_npc->think_proc_idx = data_p->think_proc_idx;
+    hatumode_npc->talk_idx = data_p->talk_idx;
+    hatumode_npc->next_think_idx = data_p->next_think_idx;
+    (*init_table[data_p->think_init])(hatumode_npc, play);
+
+    if (data_p->talk_req == aHN0_TALK_REQ_NONE) {
+        hatumode_npc->npc_class.head.lock_flag = TRUE;
+    } else {
+        hatumode_npc->npc_class.head.lock_flag = FALSE;
+    }
+
+    return data_p->talk_req;
+}

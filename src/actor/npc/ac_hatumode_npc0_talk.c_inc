@@ -1,0 +1,81 @@
+static void aEv_init_hatumode_save_area(void) {
+    aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
+
+    if (hatumode_p == NULL) {
+        hatumode_p = (aEv_hatumode_save_c*)mEv_reserve_save_area(1, 7);
+        hatumode_p->state = 0;
+    } else {
+        hatumode_p->state = 1;
+    }
+
+    hatumode_p->flags0 = 0;
+    hatumode_p->flags1 = 0;
+}
+
+static int aHN0_set_start_position(HATUMODE_NPC0_ACTOR* h_npc) {
+    ACTOR* actorx = (ACTOR*)h_npc;
+
+    if (CLIP(hatumode_clip) == NULL) {
+        return FALSE;
+    }
+
+    h_npc->root = CLIP(hatumode_clip)->set_start_proc(actorx);
+    actorx->shape_info.rotation.y = DEG2SHORT_ANGLE2(180.0f);
+    actorx->world.angle.y = DEG2SHORT_ANGLE2(180.0f);
+    h_npc->npc_class.movement.mv_angl = actorx->world.angle.y;
+    return TRUE;
+}
+
+static void aHN0_set_force_talk_info(ACTOR* actorx) {
+    if (CLIP(hatumode_clip) != NULL) {
+        CLIP(hatumode_clip)->talk_info_proc(actorx, 0);
+    }
+}
+
+static void aHN0_force_talk_request(ACTOR* actorx, GAME* game) {
+    HATUMODE_NPC0_ACTOR* h_npc = (HATUMODE_NPC0_ACTOR*)actorx;
+
+    if (!h_npc->think_change_flag) {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aHN0_set_force_talk_info);
+    } else {
+        h_npc->think_change_flag = FALSE;
+    }
+}
+
+static void aHN0_set_norm_talk_info(ACTOR* actorx) {
+    if (CLIP(hatumode_clip) != NULL) {
+        CLIP(hatumode_clip)->talk_info_proc(actorx, 1);
+    }
+}
+
+static void aHN0_norm_talk_request(ACTOR* actorx, GAME* game) {
+    HATUMODE_NPC0_ACTOR* h_npc = (HATUMODE_NPC0_ACTOR*)actorx;
+
+    if (!h_npc->think_change_flag) {
+        mDemo_Request(mDemo_TYPE_TALK, actorx, &aHN0_set_norm_talk_info);
+    } else {
+        h_npc->think_change_flag = FALSE;
+    }
+}
+
+static int aHN0_talk_init(ACTOR* actorx, GAME* game) {
+    HATUMODE_NPC0_ACTOR* h_npc = (HATUMODE_NPC0_ACTOR*)actorx;
+
+    h_npc->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)&none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    return TRUE;
+}
+
+static int aHN0_talk_end_chk(ACTOR* actorx, GAME* game) {
+    HATUMODE_NPC0_ACTOR* h_npc = (HATUMODE_NPC0_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int res = FALSE;
+
+    (*h_npc->talk_proc)(h_npc, play);
+    if (!mDemo_Check(mDemo_TYPE_SPEAK, actorx) && !mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        aHN0_setup_think_proc(h_npc, play, h_npc->next_think_idx);
+        res = TRUE;
+    }
+    return res;
+}
