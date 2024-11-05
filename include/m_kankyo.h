@@ -124,7 +124,7 @@ extern void mEnv_regist_nature(Kankyo* kankyo, NATURE_PROC nature_proc, void* ar
 extern int mEnv_unregist_nature(Kankyo* kankyo, NATURE_PROC nature_proc);
 extern void Global_kankyo_ct(GAME* game, Kankyo* kankyo);
 extern void mEnv_GetRoomPrimColor(u8* r, u8* g, u8* b, GAME_PLAY* play);
-extern void Global_kankyo_set_room_prim(GAME_PLAY* play);
+extern void Global_kankyo_set_room_prim(GAME* game);
 extern int mEnv_RequestChangeLightON(GAME_PLAY* play, int light_on_type, int play_sfx);
 extern int mEnv_RequestChangeLightOFF(GAME_PLAY* play, int light_off_type, f32 step);
 extern void mEnv_ManagePointLight(GAME_PLAY* play, Kankyo* kankyo, Global_light* global_light);

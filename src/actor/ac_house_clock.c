@@ -261,13 +261,12 @@ static int aHC_DrawClockBefore(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int j
 static int aHC_DrawClockAfter(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
                                u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     HOUSE_CLOCK_ACTOR* house_clock = (HOUSE_CLOCK_ACTOR*)arg;
-    GAME_PLAY* play = (GAME_PLAY*)game;
     s16 clock_num = house_clock->clock.clock_num;
     xyz_t pos;
     xyz_t ofs = { 0.0f, 0.0f, 0.0f };
 
     if (clock_num == aHC_TYPE_MUSEUM) {
-        Global_kankyo_set_room_prim(play);
+        Global_kankyo_set_room_prim(game);
     }
 
     if (joint_idx == aHC_draw_data[clock_num].short_joint_no) {

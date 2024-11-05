@@ -167,7 +167,7 @@ static void Arrange_Room_Actor_draw(ACTOR* actor, GAME* game) {
     ARRANGE_ROOM_ACTOR* arrange_room = (ARRANGE_ROOM_ACTOR*)actor;
     GAME_PLAY* play = (GAME_PLAY*)game;
 
-    Global_kankyo_set_room_prim((GAME_PLAY*)game);
+    Global_kankyo_set_room_prim(game);
     aAR_DrawFloor(&arrange_room->actor_class, &play->game);
     aAR_DrawWall(&arrange_room->actor_class, &play->game);
 }

@@ -1929,16 +1929,16 @@ extern void mEnv_GetRoomPrimColor(u8* r, u8* g, u8* b, GAME_PLAY* play) {
     b[0] = color[2];
 }
 
-extern void Global_kankyo_set_room_prim(GAME_PLAY* play) {
+extern void Global_kankyo_set_room_prim(GAME* game) {
     u8 r;
     u8 g;
     u8 b;
     GRAPH* graph;
 
-    mEnv_GetRoomPrimColor(&r, &g, &b, play);
+    mEnv_GetRoomPrimColor(&r, &g, &b, (GAME_PLAY*)game);
 
     {
-        graph = play->game.graph;
+        graph = game->graph;
         OPEN_DISP(graph);
 
         gDPPipeSync(NOW_POLY_OPA_DISP++);

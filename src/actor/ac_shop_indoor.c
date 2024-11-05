@@ -286,7 +286,6 @@ static void aSI_DrawShopFloor(ACTOR* actorx, GAME* game) {
     u8* tex1;
     u8* tex2;
     u8* tex3;
-    GAME_PLAY* play = (GAME_PLAY*)game;
 
     pal = (u16*)shop_indoor->floor_data_p[data_idx];
     tex0 = (u8*)(shop_indoor->floor_data_p[data_idx] + aMI_PAL_SIZE);
@@ -296,7 +295,7 @@ static void aSI_DrawShopFloor(ACTOR* actorx, GAME* game) {
 
     _texture_z_light_fog_prim_xlu(game->graph);
     _texture_z_light_fog_prim(game->graph);
-    Global_kankyo_set_room_prim(play);
+    Global_kankyo_set_room_prim(game);
 
     if (shop_indoor->floor_data_p[data_idx] != NULL) {
         if (aSI_disp_data_table[shop_level].floor_gfx != NULL) {
@@ -359,7 +358,7 @@ static void aSI_DrawShopFukubiki(ACTOR* actorx, GAME* game) {
         Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
 
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-        Global_kankyo_set_room_prim(play);
+        Global_kankyo_set_room_prim(game);
         gSPDisplayList(NEXT_POLY_OPA_DISP, aSI_disp_data_table[shop_level].fukubiki_gfx);
 
         CLOSE_DISP(game->graph);
@@ -409,7 +408,7 @@ static void aSI_DrawShopWall(ACTOR* actorx, GAME* game) {
         Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
 
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-        Global_kankyo_set_room_prim(play);
+        Global_kankyo_set_room_prim(game);
         gSPDisplayList(NEXT_POLY_OPA_DISP, aSI_disp_data_table[shop_level].wall_gfx);
 
         CLOSE_DISP(game->graph);
@@ -431,7 +430,7 @@ static void aSI_DrawShopWall(ACTOR* actorx, GAME* game) {
         Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
 
         gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-        Global_kankyo_set_room_prim(play);
+        Global_kankyo_set_room_prim(game);
         gSPDisplayList(NEXT_POLY_XLU_DISP, aSI_disp_data_table[shop_level].wall_xlu_gfx);
 
         CLOSE_DISP(game->graph);

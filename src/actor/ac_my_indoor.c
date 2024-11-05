@@ -405,10 +405,9 @@ static void aMI_DrawMyStep(ACTOR* actorx, GAME* game) {
     };
 
     MY_INDOOR_ACTOR* my_indoor = (MY_INDOOR_ACTOR*)actorx;
-    GAME_PLAY* play = (GAME_PLAY*)game;
     int i;
 
-    Global_kankyo_set_room_prim(play);
+    Global_kankyo_set_room_prim(game);
     _texture_z_light_fog_prim(game->graph);
 
     for (i = 0; i < aMI_STEP_TYPE_NUM; i++) {
@@ -436,7 +435,6 @@ static void aMI_DrawMyStep(ACTOR* actorx, GAME* game) {
 
 static void aMI_DrawMyFloor(ACTOR* actorx, GAME* game) {
     MY_INDOOR_ACTOR* my_indoor = (MY_INDOOR_ACTOR*)actorx;
-    GAME_PLAY* play = (GAME_PLAY*)game;
     GRAPH* graph;
     aMI_bank_c* bank = &my_indoor->banks[my_indoor->floor_bank_idx];
     u8* data_p = bank->floor_data_p;
@@ -446,7 +444,7 @@ static void aMI_DrawMyFloor(ACTOR* actorx, GAME* game) {
     u8* tex3 = data_p + aMI_PAL_SIZE + 3 * aMI_TEX_SIZE;
     aMI_disp_wall_floor_c* disp_info = &aMI_size_dsp_table[my_indoor->room_kind].main;
 
-    Global_kankyo_set_room_prim(play);
+    Global_kankyo_set_room_prim(game);
 
     if (disp_info->floor_model != NULL) {
         graph = game->graph;
@@ -596,7 +594,7 @@ static void aMI_DrawMyOriginalFloor(ACTOR* actorx, GAME* game) {
         disp = &aMI_size_dsp_table[my_indoor->room_kind].new2;
     }
 
-    Global_kankyo_set_room_prim((GAME_PLAY*)game);
+    Global_kankyo_set_room_prim(game);
 
     if (disp->floor_model != NULL) {
         graph = game->graph;
@@ -627,7 +625,6 @@ static void aMI_DrawMyOriginalFloor(ACTOR* actorx, GAME* game) {
 
 static void aMI_DrawMyWall(ACTOR* actorx, GAME* game) {
     MY_INDOOR_ACTOR* my_indoor = (MY_INDOOR_ACTOR*)actorx;
-    GAME_PLAY* play = (GAME_PLAY*)game;
     GRAPH* graph;
     aMI_bank_c* bank = &my_indoor->banks[my_indoor->wall_bank_idx];
     u8* data_p = bank->wall_data_p;
@@ -636,7 +633,7 @@ static void aMI_DrawMyWall(ACTOR* actorx, GAME* game) {
     u8* tex1 = data_p + aMI_PAL_SIZE + 1 * aMI_TEX_SIZE;
     aMI_disp_wall_floor_c* disp_info = &aMI_size_dsp_table[my_indoor->room_kind].main;
 
-    Global_kankyo_set_room_prim(play);
+    Global_kankyo_set_room_prim(game);
 
     if (disp_info->wall_model != NULL) {
         graph = game->graph;
@@ -678,7 +675,7 @@ static void aMI_DrawMyOriginalWall(ACTOR* actorx, GAME* game) {
         disp = &aMI_size_dsp_table[my_indoor->room_kind].new2;
     }
 
-    Global_kankyo_set_room_prim((GAME_PLAY*)game);
+    Global_kankyo_set_room_prim(game);
 
     if (disp->wall_model != NULL) {
         graph = game->graph;
