@@ -195,14 +195,15 @@ struct quest_manager_regist_s {
     int animal_idx;
 };
 
-typedef struct quest_manager_normal_info_s {
+#define aQMgr_NORMAL_TRADE_ITEM_NUM 5
+
+typedef struct {
     Anmmem_c* memory;
-    Anmplmail_c* anmplmail;
-    u32 pay;
-    int player_num_items;          // valid items to trade
-    int player_give_item_idx;      // index to give item away
-    mActor_name_t player_items[4]; // items which the player has in their inventory which match 'player_num_items'
-    mActor_name_t selected_item;
+    Anmplmail_c* mail;
+    int pay;
+    int item_idx;
+    int free_idx;
+    mActor_name_t trade_items[aQMgr_NORMAL_TRADE_ITEM_NUM];
 } aQMgr_normal_info_c;
 
 typedef struct quest_manager_talk_wait_s {
@@ -214,6 +215,8 @@ typedef struct quest_manager_choice_s {
     int choice_num;
     int talk_action;
 } aQMgr_choice_c;
+
+#define aQMgr_LAST_STR_NUM 7
 
 typedef int (*aQMgr_TALK_COMMON_PROC)(QUEST_MANAGER_ACTOR*, int);
 typedef void (*aQMgr_ACTOR_CLEAR_REGIST_PROC)(aQMgr_regist_c*, int);
@@ -256,7 +259,7 @@ struct quest_manager_actor {
     /* 0x95C */ u8 errand_next[mPr_ERRAND_QUEST_NUM];
     /* 0x962 */ Mail_c mail;
     /* 0xA8C */ Anmmem_c* mail_memory;
-    /* 0xA90 */ u8 last_strings[7];
+    /* 0xA90 */ u8 last_strings[aQMgr_LAST_STR_NUM];
     /* 0xA98 */ mActor_name_t give_item;
     /* 0xA9C */ int _A9C;
 };

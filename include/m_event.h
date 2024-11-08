@@ -116,7 +116,7 @@ enum event_type {
     mEv_SPNPC_EVENT, /* special NPC events */
     mEv_SAVED_EVENT, /* events saved to data */
     mEv_TYPE2_EVENT, /* unused? */
-    mEv_TYPE3_EVENT, /* unused? */
+    mEv_TYPE_RUMOR,
     mEv_TYPE4_EVENT, /* unused? */
     mEv_DAILY_EVENT, /* checked daily always? aSL_ReportShopOpen2Event has event 3 */
     mEv_SPECL_EVENT, /* ??? secondary special npc event data? */
@@ -172,6 +172,33 @@ enum events {
     mEv_SAVED_GATEWAY_PLR2,
     mEv_SAVED_GATEWAY_PLR3,
     mEv_SAVED_GATEWAY_FRGN, /* Foreigner */
+
+    /* Rumors */
+    mEv_RUMOR_NEW_YEARS_DAY = (int)mEv_SET(mEv_TYPE_RUMOR, 0),
+    mEv_RUMOR_KAMAKURA,
+    mEv_RUMOR_VALENTINES_DAY,
+    mEv_RUMOR_GROUNDHOG_DAY,
+    mEv_RUMOR_CHERRY_BLOSSOM_FESTIVAL,
+    mEv_RUMOR_CHERRY_BLOSSOM_FESTIVAL2,
+    mEv_RUMOR_SPRING_SPORTS_FAIR,
+    mEv_RUMOR_HARVEST_FESTIVAL,
+    mEv_RUMOR_KOINOBORI,
+    mEv_RUMOR_SUMMER_FISHING_TOURNEY,
+    mEv_RUMOR_SUMMER_FISHING_TOURNEY2,
+    mEv_RUMOR_MORNING_AEROBICS,
+    mEv_RUMOR_MORNING_AEROBICS2,
+    mEv_RUMOR_FIREWORKS_SHOW,
+    mEv_RUMOR_FIREWORKS_SHOW2, // reminder it happens weekly, unused in AC
+    mEv_RUMOR_METEOR_SHOWER,
+    mEv_RUMOR_HARVEST_MOON_DAY,
+    mEv_RUMOR_FALL_SPORTS_FAIR,
+    mEv_RUMOR_MUSHROOM_SEASON,
+    mEv_RUMOR_TALK_MUSHROOM_SEASON,
+    mEv_RUMOR_HALLOWEEN,
+    mEv_RUMOR_FALL_FISHING_TOURNEY,
+    mEv_RUMOR_FALL_FISHING_TOURNEY2,
+    mEv_RUMOR_TOY_DAY,
+    mEv_RUMOR_NEW_YEARS_EVE_COUNTDOWN,
 
     mEv_DAILY_0 = (int)mEv_SET(mEv_DAILY_EVENT, 0), /* unused */
     mEv_DAILY_1,                                    /* unused */

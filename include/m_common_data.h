@@ -367,6 +367,8 @@ extern common_data_t common_data;
 #define SetRoomMusicBox(n) SetMusicBox(GetRoomMusicBox(), n)
 #define ClrRoomMusicBox(n) ClrMusicBox(GetRoomMusicBox(), n)
 
+#define NowPrivate_GetItemCond(i) mPr_GET_ITEM_COND(Now_Private->inventory.item_conditions, i)
+
 #define CLIP(n) (Common_Get(clip).n)
 #define aMR_CLIP (Common_Get(clip).my_room_clip)
 

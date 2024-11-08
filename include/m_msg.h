@@ -349,6 +349,7 @@ extern void mMsg_sound_unset_voice_silent(mMsg_Window_c* msg_p, int update_mode)
 #define mMsg_UNSET_LOCKCONTINUE() mMsg_Unset_LockContinue(mMsg_Get_base_window_p())
 #define mMsg_SET_FORCENEXT() mMsg_Set_ForceNext(mMsg_Get_base_window_p())
 #define mMsg_SET_CANCELNORMALCONTINUE() mMsg_Set_CancelNormalContinue(mMsg_Get_base_window_p())
+#define mMsg_SET_ITEM_STR(str_no, str, str_len) mMsg_Set_item_str(mMsg_Get_base_window_p(), str_no, str, str_len)
 #define mMsg_SET_ITEM_STR_ART(str_no, str, str_len, item_no) \
     mMsg_Set_item_str_art(mMsg_Get_base_window_p(), str_no, str, str_len, mIN_get_item_article(item_no))
 #define mMsg_SET_FREE_STR(str_no, str, str_len) mMsg_Set_free_str(mMsg_Get_base_window_p(), str_no, str, str_len)
@@ -370,6 +371,7 @@ extern void mMsg_sound_unset_voice_silent(mMsg_Window_c* msg_p, int update_mode)
 
 #define mMsg_REQUEST_MAIN_DISAPPEAR() mMsg_request_main_disappear(mMsg_Get_base_window_p())
 #define mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1() mMsg_request_main_disappear_wait_type1(mMsg_Get_base_window_p())
+#define mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE2() mMsg_request_main_disappear_wait_type2(mMsg_Get_base_window_p())
 #define mMsg_REQUEST_MAIN_APPEAR() mMsg_request_main_appear(mMsg_Get_base_window_p())
 #define mMsg_REQUEST_MAIN_APPEAR_WAIT_TYPE1() mMsg_request_main_appear_wait_type1(mMsg_Get_base_window_p());
 #define mMsg_REQUEST_MAIN_APPEAR_WAIT_TYPE2() mMsg_request_main_appear_wait_type2(mMsg_Get_base_window_p());

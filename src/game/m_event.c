@@ -2491,7 +2491,7 @@ extern int mEv_spread_rumor(int type) {
 
 extern int mEv_get_rumor() {
     if (n_rumor != 0) {
-        return rumor_table[gamePT->frame_counter % n_rumor] | mEv_SET(mEv_TYPE3_EVENT, 0);
+        return rumor_table[gamePT->frame_counter % n_rumor] | mEv_SET(mEv_TYPE_RUMOR, 0);
     }
 
     return 0;
