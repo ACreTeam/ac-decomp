@@ -1,6 +1,8 @@
 #include "ef_effect_control.h"
 
 #include "m_common_data.h"
+#include "m_rcp.h"
+#include "sys_matrix.h"
 
 extern Gfx ef_star01_00_modelT[];
 
