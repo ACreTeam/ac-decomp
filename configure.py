@@ -242,7 +242,8 @@ cflags_foresta = [
     "-sdata 0",
     "-sdata2 0",
     "-d IS_REL",
-    '-requireprotos',
+    "-requireprotos",
+    "-sym on",
 ]
 
 config.linker_version = "GC/1.3.2"
@@ -275,7 +276,7 @@ def JSystemLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
 def Rel(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": lib_name,
-        "mw_version": "GC/1.3.2r",
+        "mw_version": "GC/1.3.2",
         "cflags": cflags_foresta,
         "progress_category": "game",
         "objects": objects,
@@ -766,7 +767,7 @@ config.libs = [
     },
     {
         "lib": "Famicom",
-        "mw_version": "GC/1.3.2r",
+        "mw_version": "GC/1.3.2",
         "cflags": [
             *cflags_static,
             "-sdata 0",

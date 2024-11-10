@@ -25,7 +25,7 @@ const f64 pows[] = { 10e0L, 10e1L, 10e3L, 10e7L, 10e15L, 10e31L, 10e63L, 10e127L
 #define _CSIGN 1
 #define _ILONG 0
 #define _MBMAX 8
-#define NAN 2
+#define NAN_2 2
 #define INF 1
 #define FINITE -1
 #define _DFRAC ((1 << _DOFF) - 1)
@@ -159,14 +159,14 @@ s16 _Ldunscale(s16* pex, _Pft* px) {
 
     if (xchar == _DMAX) { /* NaN or INF */
         *pex = 0;
-        return (s16)(ps[_D0] & _DFRAC || ps[_D1] || ps[_D2] || ps[_D3] ? NAN : INF);
+        return (s16)(ps[_D0] & _DFRAC || ps[_D1] || ps[_D2] || ps[_D3] ? NAN_2 : INF);
     } else if (0 < xchar) {
         ps[_D0] = (ps[_D0] & ~_DMASK) | (_DBIAS << _DOFF);
         *pex = xchar - (_DBIAS - 1);
         return FINITE;
     }
     if (0 > xchar) {
-        return NAN;
+        return NAN_2;
     } else {
         *pex = 0;
         return 0;
@@ -279,4 +279,3 @@ void _Genld(_Pft* px, u8 code, u8* p, s16 nsig, s16 xexp) {
         }
     }
 }
-
