@@ -1,10 +1,28 @@
 #ifndef W_MATH_H
 #define W_MATH_H
 
-extern inline float sqrtf(float x) {
+#ifndef BUGFIXES
+#define SQRTF_LINKAGE extern
+#else
+// making the function static instead of extern resolves the bug
+#define SQRTF_LINKAGE static
+#endif
+
+/**
+ * Float square root implementation.
+ * 
+ * NOTE: this function causes a bug in the Metrowerks C Compiler from GC MW 1.3.X
+ * to be exhibited. Weak extern inlined functions that contain an initialized
+ * static variable turn off data pooling for the translation unit which they are
+ * included in. As w_math.h seems to be included in a top-level header that
+ * the AC devs used, every translation unit in foresta.rel includes sqrtf.
+ * The effect is that the .rodata section has pooling entirely disabled.
+ */
+SQRTF_LINKAGE inline float sqrtf(float x) {
     static const double _half = .5;
     static const double _three = 3.0;
     volatile float y;
+
     if (x > 0.0f) {
         double guess = __frsqrte((double)x);                  // returns an approximation to
         guess = _half * guess * (_three - guess * guess * x); // now have 12 sig bits
@@ -13,8 +31,13 @@ extern inline float sqrtf(float x) {
         y = (float)(x * guess);
         return y;
     }
+
     return x;
 }
+
+#ifdef SQRTF_LINKAGE
+#undef SQRTF_LINKAGE
+#endif
 
 extern inline double fabs(double x) {
     return __fabs(x);
