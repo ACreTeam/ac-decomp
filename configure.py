@@ -107,6 +107,12 @@ parser.add_argument(
     help="path to sjiswrap.exe (optional)",
 )
 parser.add_argument(
+    "--orthrus",
+    metavar="BINARY",
+    type=Path,
+    help="path to orthrus[.exe] (optional)",
+)
+parser.add_argument(
     "--verbose",
     action="store_true",
     help="print verbose output",
@@ -138,6 +144,7 @@ config.compilers_path = args.compilers
 config.generate_map = args.map
 config.non_matching = args.non_matching
 config.sjiswrap_path = args.sjiswrap
+config.orthrus_path = args.orthrus
 config.progress = args.progress
 if not is_windows():
     config.wrapper = args.wrapper
@@ -152,6 +159,7 @@ config.dtk_tag = "v1.2.0"
 config.objdiff_tag = "v2.3.4"
 config.sjiswrap_tag = "v1.2.0"
 config.wibo_tag = "0.6.11"
+config.orthrus_tag = "v0.2.0"
 
 # Project
 config.config_path = Path("config") / config.version / "config.yml"
@@ -1485,7 +1493,7 @@ config.libs = [
             Object(Matching, "game/m_vibctl.c"),
             Object(Matching, "game/m_view.c"),
             Object(Matching, "game/m_warning_ovl.c"),
-            Object(NonMatching, "game/m_watch_my_step.c"),
+            Object(Equivalent, "game/m_watch_my_step.c"),
         ],
     ),
     Rel(

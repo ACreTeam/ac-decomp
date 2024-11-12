@@ -140,6 +140,8 @@ class ProjectConfig:
         self.sjiswrap_path: Optional[Path] = None  # If None, download
         self.objdiff_tag: Optional[str] = None  # Git tag
         self.objdiff_path: Optional[Path] = None  # If None, download
+        self.orthrus_tag: Optional[str] = None  # Git tag
+        self.orthrus_path: Optional[Path] = None  # If None, download
 
         # Project config
         self.non_matching: bool = False
@@ -366,6 +368,7 @@ def generate_build_ninja(
     build_path = config.out_path()
     progress_path = build_path / "progress.json"
     report_path = build_path / "report.json"
+    foresta_szs_path = build_path / "foresta" / "foresta.rel.szs"
     build_tools_path = config.build_dir / "tools"
     download_tool = config.tools_dir / "download_tool.py"
     n.rule(
@@ -473,6 +476,22 @@ def generate_build_ninja(
     else:
         sys.exit("ProjectConfig.sjiswrap_tag missing")
 
+    if config.orthrus_path:
+        orthrus = config.orthrus_path
+    elif config.orthrus_tag:
+        orthrus = build_tools_path / f"orthrus{EXE}"
+        n.build(
+            outputs=orthrus,
+            rule="download_tool",
+            implicit=download_tool,
+            variables={
+                "tool": "orthrus",
+                "tag": config.orthrus_tag,
+            },
+        )
+    else:
+        sys.exit("ProjectConfig.orthrus_tag missing")
+
     wrapper = config.compiler_wrapper()
     # Only add an implicit dependency on wibo if we download it
     wrapper_implicit: Optional[Path] = None
@@ -530,7 +549,7 @@ def generate_build_ninja(
     n.build(
         outputs="tools",
         rule="phony",
-        inputs=[dtk, sjiswrap, wrapper, compilers, binutils, objdiff],
+        inputs=[dtk, sjiswrap, wrapper, compilers, binutils, objdiff, orthrus],
     )
     n.newline()
 
@@ -1013,6 +1032,11 @@ def generate_build_ninja(
             rspfile="$rspfile",
             rspfile_content="$in_newline",
         )
+        n.rule(
+            name="compressrel",
+            command=f"{dtk} yaz0 compress $in -o $out",
+            description="Compress REL"
+        )
         generated_rels: List[str] = []
         for idx, link in enumerate(build_config["links"]):
             # Map module names to link steps
@@ -1041,6 +1065,12 @@ def generate_build_ninja(
                     rels_to_generate,
                 )
             )
+            rel_compressed_outputs = list(
+                map(
+                    lambda step: f"{step.output()}.szs",
+                    rels_to_generate
+                )
+            )
             rel_names = list(
                 map(
                     lambda step: step.name,
@@ -1058,6 +1088,13 @@ def generate_build_ninja(
                     "rspfile": config.out_path() / f"rel{idx}.rsp",
                     "names": rel_names_arg,
                 },
+                order_only="post-link",
+            )
+            n.build(
+                outputs=rel_compressed_outputs,
+                rule="compressrel",
+                inputs=rel_outputs,
+                implicit=[dtk],
                 order_only="post-link",
             )
             n.newline()
@@ -1239,9 +1276,9 @@ def generate_build_ninja(
         if config.non_matching:
             n.default(link_outputs)
         elif config.progress:
-            n.default(progress_path)
+            n.default([progress_path, foresta_szs_path])
         else:
-            n.default(ok_path)
+            n.default([ok_path, foresta_szs_path])
     else:
         n.default(build_config_path)
 

@@ -273,16 +273,17 @@ extern void watch_my_step_draw(GAME_PLAY* play) {
     CLOSE_DISP(g);
 
     if (S_watch_my_step.mode >= 3) {
+        /* nonmatch starts here */
         f32 text_opacity = (S_watch_my_step.opacity - 0.5f) * 2.0f;
 
         if (text_opacity > 0.0f) {
-            /* nonmatch starts here */
-            int a = text_opacity * 255.0f;
-            f32 x = 160.0f + (S_watch_my_step.pos_x - 0.5f * (S_watch_my_step.scale * 120.0f + 40.0f));
-            f32 y = 120.0f + (S_watch_my_step.pos_y - 0.5f * (S_watch_my_step.scale * 7.0f + 23.0f));
+            f32 x = (160.0f + (S_watch_my_step.pos_x - 0.5f * (S_watch_my_step.scale * 120.0f + 40.0f)) + 10.0f);
+            f32 y = (120.0f + (S_watch_my_step.pos_y - 0.5f * (S_watch_my_step.scale * 7.0f + 23.0f) + 5.0f));
+            
             mFont_SetLineStrings(game, S_watch_my_step.item_name, mIN_ITEM_NAME_LEN,
-                                 (1.0f - S_watch_my_step.scale) + x + 10.0f, S_watch_my_step.scale * 3.0f + y + 5.0f,
-                                 45, 45, 35, a, FALSE, TRUE, 0.875f, 0.875f, mFont_MODE_POLY);
+                                 (1.0f - S_watch_my_step.scale) + x, // x
+                                 (S_watch_my_step.scale * 3.0f) + y, // y
+                                 45, 45, 35, 255.0f * text_opacity, FALSE, TRUE, 0.875f, 0.875f, mFont_MODE_POLY);
         }
     }
 }
