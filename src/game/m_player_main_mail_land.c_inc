@@ -51,7 +51,7 @@ static void Player_actor_request_proc_index_fromMail_land(ACTOR* actorx, GAME* g
 
         if (Player_actor_Check_AnimationFrame(fc0_p, 16.5f)) {
             Player_actor_SettleRequestMainIndexPriority(actorx);
-            Player_actor_Set_status_for_bee(actorx, TRUE);
+            Player_actor_Set_status_for_bee(actorx, mPlayer_STATUS_FOR_BEE_ATTACK);
         } else if (fc0_p->current_frame <= 16.0f &&
                    (Player_actor_GetController_move_percentX() || Player_actor_GetController_move_percentY())) {
             Player_actor_request_main_walk_all(game, NULL, -5.0f, 0, mPlayer_REQUEST_PRIORITY_1);

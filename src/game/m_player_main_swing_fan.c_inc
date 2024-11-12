@@ -71,7 +71,7 @@ static void Player_actor_request_proc_index_fromSwing_fan(ACTOR* actorx, GAME* g
 
     if (Player_actor_Check_AnimationFrame(fc0_p, 7.5f)) {
         Player_actor_SettleRequestMainIndexPriority(actorx);
-        Player_actor_Set_status_for_bee(actorx, TRUE);
+        Player_actor_Set_status_for_bee(actorx, mPlayer_STATUS_FOR_BEE_ATTACK);
     } else {
         f32 cur_frame = fc0_p->current_frame;
 

@@ -43,7 +43,7 @@ static void Player_actor_request_proc_index_fromRotate_umbrella(ACTOR* actorx, G
 
         if (Player_actor_Check_AnimationFrame(fc0_p, 19.5f)) {
             Player_actor_SettleRequestMainIndexPriority(actorx);
-            Player_actor_Set_status_for_bee(actorx, TRUE);
+            Player_actor_Set_status_for_bee(actorx, mPlayer_STATUS_FOR_BEE_ATTACK);
         } else {
             if (fc0_p->current_frame >= 20.0f &&
                 Player_actor_CheckAndRequest_main_umbrella_all(game, mPlayer_REQUEST_PRIORITY_4) == FALSE) {

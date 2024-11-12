@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 typedef void (*mActor_proc)(ACTOR*, GAME*);
-#define NONE_ACTOR_PROC ((mActor_proc) & none_proc1)
+#define NONE_ACTOR_PROC ((mActor_proc)&none_proc1)
 
 #define mAc_MAX_ACTORS 200
 
@@ -432,7 +432,7 @@ typedef enum bank_id {
     ACTOR_OBJ_BANK_389,
     ACTOR_OBJ_BANK_390,
     ACTOR_OBJ_BANK_TAMA,
-    ACTOR_OBJ_BANK_392,
+    ACTOR_OBJ_BANK_BEE,
     ACTOR_OBJ_BANK_393,
     ACTOR_OBJ_BANK_ROPE,
     ACTOR_OBJ_BANK_CRACKER,

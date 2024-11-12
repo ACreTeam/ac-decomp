@@ -274,7 +274,7 @@ static void Player_actor_request_proc_index_fromSwing_axe(ACTOR* actor, GAME* ga
                 }
             } else if (Player_actor_Check_AnimationFrame(fc, 16.5f)) {
                 Player_actor_SettleRequestMainIndexPriority(actor);
-                Player_actor_Set_status_for_bee(actor, 1);
+                Player_actor_Set_status_for_bee(actor, mPlayer_STATUS_FOR_BEE_ATTACK);
 
             } else if ((current >= 17.0f) && (!Player_actor_CheckAndRequest_main_axe_all(game, 4)) &&
                        ((Player_actor_GetController_move_percentX()) || (Player_actor_GetController_move_percentY()))) {

@@ -177,7 +177,7 @@ static void Player_actor_request_proc_index_fromRadio_exercise(ACTOR* actorx, GA
     if (radio_exercise_p->_08 == FALSE) {
         if (cur_frame >= fc0_p->end_frame - 0.5f) {
             Player_actor_SettleRequestMainIndexPriority(actorx);
-            Player_actor_Set_status_for_bee(actorx, TRUE);
+            Player_actor_Set_status_for_bee(actorx, mPlayer_STATUS_FOR_BEE_ATTACK);
             radio_exercise_p->_08 = TRUE;
         }
     } else if (end_flag) {

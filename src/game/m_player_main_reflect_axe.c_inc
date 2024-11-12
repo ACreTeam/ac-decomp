@@ -199,7 +199,7 @@ static void Player_actor_request_proc_index_fromReflect_axe(ACTOR* actor, GAME* 
 
             if (Player_actor_Check_AnimationFrame(fc, 30.5f)) {
                 Player_actor_SettleRequestMainIndexPriority(actor);
-                Player_actor_Set_status_for_bee(actor, 1);
+                Player_actor_Set_status_for_bee(actor, mPlayer_STATUS_FOR_BEE_ATTACK);
 
             } else if ((fc->current_frame >= 31.0f) &&
                        (!Player_actor_CheckAndRequest_main_axe_all(game, mPlayer_REQUEST_PRIORITY_4)) &&

@@ -110,6 +110,8 @@ typedef enum audio_sound_effects {
 
     NA_SE_GOKI_MOVE = 0xA8,
 
+    NA_SE_B0 = 0xB0,
+
     NA_SE_KA_BUZZ = 0xCF,
 
     NA_SE_108 = 0x108,

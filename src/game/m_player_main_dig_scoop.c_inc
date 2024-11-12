@@ -251,7 +251,7 @@ static void Player_actor_request_proc_index_fromDig_scoop(ACTOR* actor, GAME* ga
 
         if (Player_actor_Check_AnimationFrame(fc, 34.5f + mod)) {
             Player_actor_SettleRequestMainIndexPriority(actor);
-            Player_actor_Set_status_for_bee(actor, TRUE);
+            Player_actor_Set_status_for_bee(actor, mPlayer_STATUS_FOR_BEE_ATTACK);
         } else {
             f32 cur_frame = fc->current_frame;
 
