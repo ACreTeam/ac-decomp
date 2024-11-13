@@ -4,6 +4,26 @@
 #include "m_demo.h"
 #include "m_name_table.h"
 
+// TODO: move function declarations and struct declarations into ac_museum_fish.h
+// maybe we move all the different .text sections into .inc files
+
+/*
+ NEW KNOWLEDGE:
+Cuyler — Today at 10:56 AM
+    yeah, the _move, _draw, _ct, _dt, and _save funcs all take ACTOR*, GAME*
+    thankfully the ZZZ_Profile data objects give us the class size, just re-type it to ACTOR_PROFILE
+Roeming — Today at 10:55 AM
+    hmm, not sure I understand
+Cuyler — Today at 10:55 AM
+    so AC is a weird pseudo-inheritance class system since it's C
+    all classes which inherit from ACTOR have an "actor profile"
+    which is basically like a weird C++ vtable
+
+    There will be data with this C file `ACTOR_PROFILE Museum_Fish_Profile;`
+    and part of that data will be the size of our UNK_FISH_STRUCT,
+    `Museum_Fish_Profile->class_size;`
+*/
+
 typedef struct {
     s16 unk0;
     s16 unk2;
@@ -106,7 +126,7 @@ void mfish_normal_light_set(UNK_FISH_STRUCT* r30, GAME_PLAY* r31)
     xyz_t r5;
     r5.x = 320;
     r5.y = 0;
-    r5.z = 252;
+    r5.z = 240;
 
     lights = Global_light_read(&r31->global_light, r31->game.graph);
     LightsN_list_check(lights, r31->global_light.list, &r5);
