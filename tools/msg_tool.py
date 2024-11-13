@@ -566,7 +566,7 @@ def decode_file(data_path: str, table_path: str, out_path: str):
     output_buffer = []
 
     with open(data_path, "rb") as df, open(table_path, "rb") as tf, open(
-        out_path, "w"
+        out_path, "w", encoding="utf-8"
     ) as of:
         while True:
             bytes = tf.read(4)
@@ -664,7 +664,7 @@ def encode_file(
     current_entry = None
     recording = False
 
-    with open(file_path, "r") as tf, open(data_path, "wb") as df, open(
+    with open(file_path, "r", encoding="utf-8") as tf, open(data_path, "wb") as df, open(
         table_path, "wb"
     ) as tabf:
         for line in tf:
