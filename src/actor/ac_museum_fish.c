@@ -3,9 +3,9 @@
 #include "m_play.h"
 #include "m_demo.h"
 #include "m_name_table.h"
-
-// TODO: move function declarations and struct declarations into ac_museum_fish.h
-// maybe we move all the different .text sections into .inc files
+#include "m_item_name.h"
+#include "m_msg.h"
+#include "m_common_data.h"
 
 /*
  NEW KNOWLEDGE:
@@ -24,66 +24,57 @@ Cuyler — Today at 10:55 AM
     `Museum_Fish_Profile->class_size;`
 */
 
-typedef struct {
-    s16 unk0;
-    s16 unk2;
-} UNK_FISH_STRUCT_2S16;
-
-typedef struct {
-    ACTOR actor;
-    u8 _00_padding[0x14BAC];
-    int unk_14d20;
-    int unk_14d24;
-    UNK_FISH_STRUCT_2S16 unk_14d28[1];
-
-    u8 _14d28_padding[0x8c];
-    s16 unk_14db8;
-    s16 unk_14dba;
-} UNK_FISH_STRUCT;
-
-void Museum_Fish_Prv_data_init();
-void Museum_Fish_Actor_ct();
-void Museum_Fish_Actor_dt();
-int Museum_Fish_GetMsgNo(UNK_FISH_STRUCT* r31);
-void Museum_Fish_Check_Talk_Distance();
-void Museum_Fish_Set_MsgFishInfo();
-void Museum_Fish_set_talk_info();
-void Museum_Fish_Talk_process();
-void Museum_Fish_Actor_move();
-void Museum_Fish_Suisou_draw();
-void kusa_before_disp();
-void Museum_Fish_Kusa_Draw();
-void Museum_Fish_Actor_draw();
-void mfish_cull_check();
-void mfish_point_ligh_pos_get();
-void mfish_point_light_ct();
-void mfish_point_light_dt(UNK_FISH_STRUCT* r30, GAME_PLAY* r31);
-void mfish_point_light_mv();
-void mfish_normal_light_set();
-
-void Museum_Fish_Prv_data_init() { }
-void Museum_Fish_Actor_ct() { }
-void Museum_Fish_Actor_dt(UNK_FISH_STRUCT* r30, GAME_PLAY* r31) {
-    mfish_point_light_dt(r30, r31);
+void Museum_Fish_Prv_data_init() {
 }
-int Museum_Fish_GetMsgNo(UNK_FISH_STRUCT* r29) 
-{ 
-    s16 temp = r29->unk_14d28[r29->unk_14d24].unk2;
-    mNT_FishIdx2FishItemNo(r29->unk_14d28[r29->unk_14d24].unk0);
-    mNT_FishIdx2FishItemNo(temp);
-
-    // TODO: start here
-
+void Museum_Fish_Actor_ct(ACTOR* actor, GAME* game) {
 }
-void Museum_Fish_Check_Talk_Distance() { }
-void Museum_Fish_Set_MsgFishInfo() { }
-void Museum_Fish_set_talk_info(UNK_FISH_STRUCT* r31) 
-{ 
-    static rgba_t window_color = {255,255,0xcd,255};
+void Museum_Fish_Actor_dt(ACTOR* actor, GAME* game) {
+    mfish_point_light_dt(actor, game);
+}
+int Museum_Fish_GetMsgNo(ACTOR* actorx) {
+    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+
+    static u8 item_name[20];
+    int itemArticle;
+    mMsg_Window_c* msg;
+
+    // who donated the fish?
+    int playerNumber = actor->unk_14d28[actor->unk_14d24].unk2;
+    mActor_name_t actorName = mNT_FishIdx2FishItemNo(actor->unk_14d28[actor->unk_14d24].unk0);
+    mIN_copy_name_str(item_name, actorName);
+    mMsg_Set_item_str_art(mMsg_Get_base_window_p(), 0, item_name, 0x10, mIN_get_item_article(actorName));
+
+    if (playerNumber >= 1 && playerNumber <= 4) {
+        mMsg_Set_free_str(mMsg_Get_base_window_p(), 0,
+                          common_data.save.save.private_data[playerNumber - 1].player_ID.player_name, 8);
+    }
+
+    if (actor->unk_14d24 < actor->unk_14d20 - 1) {
+        if (playerNumber >= 1 && playerNumber <= 4) {
+            return 0x2fa2;
+        } else {
+            return 0x2fa3;
+        }
+    }
+
+    if (playerNumber >= 1 && playerNumber <= 4) {
+        return 0x2f9f;
+    } else {
+        return 0x2fa0;
+    }
+}
+void Museum_Fish_Check_Talk_Distance() {
+}
+void Museum_Fish_Set_MsgFishInfo() {
+}
+void Museum_Fish_set_talk_info(ACTOR* actorx) {
+    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+
+    static rgba_t window_color = { 255, 255, 0xcd, 255 };
     int r3;
-    if(r31->unk_14d20 > 0) { // maybe related to if there are fish in the tank
-        r3 = Museum_Fish_GetMsgNo(r31);
-        r31->unk_14d24 += 1; // maybe iterating through the fish donation record, given which fish are donated?
+    if (actor->unk_14d20 > 0) { // maybe related to if there are fish in the tank
+        r3 = Museum_Fish_GetMsgNo(actorx);
+        actor->unk_14d24 += 1; // maybe iterating through the fish donation record, given which fish are donated?
     } else {
         r3 = 0x2fa1;
     }
@@ -95,40 +86,49 @@ void Museum_Fish_set_talk_info(UNK_FISH_STRUCT* r31)
     mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
     mDemo_Set_use_zoom_sound(TRUE);
 }
-void Museum_Fish_Talk_process() { }
-void Museum_Fish_Actor_move() { }
-void Museum_Fish_Suisou_draw() { }
-void kusa_before_disp() { }
-void Museum_Fish_Kusa_Draw() { }
-void Museum_Fish_Actor_draw() { }
-void mfish_cull_check() { }
-void mfish_point_ligh_pos_get() { }
-void mfish_point_light_ct() { }
+void Museum_Fish_Talk_process() {
+}
+void Museum_Fish_Actor_move(ACTOR* actor, GAME* game) {
+}
+void Museum_Fish_Suisou_draw(ACTOR* actor, GAME* game) {
+}
+void kusa_before_disp() {
+}
+void Museum_Fish_Kusa_Draw(ACTOR* actor, GAME* game) {
+}
+void Museum_Fish_Actor_draw(ACTOR* actor, GAME* game) {
+}
+void mfish_cull_check() {
+}
+void mfish_point_ligh_pos_get() {
+}
+void mfish_point_light_ct(ACTOR* actor, GAME* game) {
+}
 
+void mfish_point_light_dt(ACTOR* actorx, GAME* game) {
+    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
 
-void mfish_point_light_dt(UNK_FISH_STRUCT* r30, GAME_PLAY* r31) 
-{ 
-    if (r30->unk_14db8 != -1) {
-        mEnv_CancelReservedPointLight(r30->unk_14db8, r31);
+    if (actor->unk_14db8 != -1) {
+        mEnv_CancelReservedPointLight(actor->unk_14db8, (GAME_PLAY*)game);
     }
 
-    if (r30->unk_14dba != -1) {
-        mEnv_CancelReservedPointLight(r30->unk_14dba, r31);
+    if (actor->unk_14dba != -1) {
+        mEnv_CancelReservedPointLight(actor->unk_14dba, (GAME_PLAY*)game);
     }
 }
-void mfish_point_light_mv() { }
+void mfish_point_light_mv(ACTOR* actor, GAME* game) {
+}
 
-void mfish_normal_light_set(UNK_FISH_STRUCT* r30, GAME_PLAY* r31) 
-{ 
+void mfish_normal_light_set(ACTOR* actor, GAME* _game) {
     LightsN* lights;
-
+    GAME_PLAY* game = (GAME_PLAY*)_game;
     // TODO: figure out where these are actually coming from
     xyz_t r5;
     r5.x = 320;
     r5.y = 0;
     r5.z = 240;
 
-    lights = Global_light_read(&r31->global_light, r31->game.graph);
-    LightsN_list_check(lights, r31->global_light.list, &r5);
-    LightsN_disp(lights, r31->game.graph);
+    lights = Global_light_read(&game->global_light, game->game.graph);
+    LightsN_list_check(lights, game->global_light.list, &r5);
+    LightsN_disp(lights, game->game.graph);
 }
