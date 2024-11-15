@@ -186,7 +186,6 @@ extern void watch_my_step_move(GAME_PLAY* play) {
     }
 }
 
-// TODO: @nonmatching
 extern void watch_my_step_draw(GAME_PLAY* play) {
     GAME* game = (GAME*)play;
     GRAPH* g = play->game.graph;
@@ -255,7 +254,7 @@ extern void watch_my_step_draw(GAME_PLAY* play) {
 
                 Matrix_push();
                 Matrix_scale(S_watch_my_step.scale * 0.75f + 0.25f, S_watch_my_step.scale * 0.23333335f + 0.76666665f,
-                             0.1f, 1);
+                             1.0f, 1);
 
                 gSPMatrix(font_gfx++, _Matrix_to_Mtx_new(g), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 Matrix_pull();
@@ -273,17 +272,16 @@ extern void watch_my_step_draw(GAME_PLAY* play) {
     CLOSE_DISP(g);
 
     if (S_watch_my_step.mode >= 3) {
-        /* nonmatch starts here */
         f32 text_opacity = (S_watch_my_step.opacity - 0.5f) * 2.0f;
 
         if (text_opacity > 0.0f) {
-            f32 x = (160.0f + (S_watch_my_step.pos_x - 0.5f * (S_watch_my_step.scale * 120.0f + 40.0f)) + 10.0f);
-            f32 y = (120.0f + (S_watch_my_step.pos_y - 0.5f * (S_watch_my_step.scale * 7.0f + 23.0f) + 5.0f));
-            
-            mFont_SetLineStrings(game, S_watch_my_step.item_name, mIN_ITEM_NAME_LEN,
-                                 (1.0f - S_watch_my_step.scale) + x, // x
-                                 (S_watch_my_step.scale * 3.0f) + y, // y
-                                 45, 45, 35, 255.0f * text_opacity, FALSE, TRUE, 0.875f, 0.875f, mFont_MODE_POLY);
+            mFont_SetLineStrings(
+                game, S_watch_my_step.item_name, mIN_ITEM_NAME_LEN,
+                (10.0f + ((S_watch_my_step.pos_x + 160.0f) - (0.5f * (40.0f + (S_watch_my_step.scale * 120.0f))))) +
+                    (1.0f - S_watch_my_step.scale),
+                120.0f + ((3.0f * S_watch_my_step.scale) +
+                          (5.0f + (S_watch_my_step.pos_y - (0.5f * (23.0f + (S_watch_my_step.scale * 7.0f)))))),
+                45, 45, 35, (int)(255.0f * text_opacity), FALSE, TRUE, 0.875f, 0.875f, mFont_MODE_FONT);
         }
     }
 }
@@ -322,7 +320,7 @@ static void navigate_camera_move(GAME_PLAY* play) {
         }
 
         case 2: {
-            add_calc(&S_navigate.opacity, 0.0f, 1.0f - sqrtf(0.8), 0.075f, 0.005f);
+            add_calc(&S_navigate.opacity, 0.0f, 1.0f - sqrtf(0.8), 0.05f, 0.005f);
 
             if (S_navigate.opacity < 0.0001f) {
                 S_navigate.mode++;

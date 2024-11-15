@@ -1493,7 +1493,7 @@ config.libs = [
             Object(Matching, "game/m_vibctl.c"),
             Object(Matching, "game/m_view.c"),
             Object(Matching, "game/m_warning_ovl.c"),
-            Object(Equivalent, "game/m_watch_my_step.c"),
+            Object(Matching, "game/m_watch_my_step.c"),
         ],
     ),
     Rel(
