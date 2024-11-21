@@ -822,28 +822,7 @@ actor/ac_museum_picture.c:
 	.bss        start:0x000A16B0 end:0x000A16C0
 
 actor/ac_museum_fish.c:
-	.text       start:0x000BF554 end:0x000C1428
-	.text       start:0x000C1428 end:0x000C869C
-	.text       start:0x000C869C end:0x000CA20C
-	.text       start:0x000CA20C end:0x000CC160
-	.text       start:0x000CC160 end:0x000CF450
-	.text       start:0x000CF450 end:0x000D0D24
-	.text       start:0x000D0D24 end:0x000D3110
-	.text       start:0x000D3110 end:0x000D46C8
-	.text       start:0x000D46C8 end:0x000D6128
-	.text       start:0x000D6128 end:0x000D7650
-	.text       start:0x000D7650 end:0x000D8EAC
-	.text       start:0x000D8EAC end:0x000DA238
-	.text       start:0x000DA238 end:0x000DC1B8
-	.text       start:0x000DC1B8 end:0x000DD860
-	.text       start:0x000DD860 end:0x000DE3AC
-	.text       start:0x000DE3AC end:0x000DFE04
-	.text       start:0x000DFE04 end:0x000E0DF4
-	.text       start:0x000E0DF4 end:0x000E39E4
-	.text       start:0x000E39E4 end:0x000E5DD8
-	.text       start:0x000E5DD8 end:0x000E7788
-	.text       start:0x000E7788 end:0x000E8F9C
-	.text       start:0x000E8F9C end:0x000E9F58
+	.text       start:0x000BF554 end:0x000E9F58
 	.rodata     start:0x000030D0 end:0x00003410
 	.data       start:0x00037A58 end:0x00038F08
 	.bss        start:0x000A16C0 end:0x000A16D8
