@@ -4,7 +4,7 @@
 #include "m_random_field.h"
 #include "m_common_data.h"
 
-static int l_arrive_stay_count[ANIMAL_NUM_MAX]; /* TODO: swap with l_goal_block when bss ordering is fixed */
+static u32 l_arrive_stay_count[ANIMAL_NUM_MAX]; /* TODO: swap with l_goal_block when bss ordering is fixed */
 static int l_goal_block[mNpcW_GOAL_BLOCK_NUM][2];
 
 #define mNpcW_TIME_2_SEC(hour, min, sec) ((hour) * 3600 + (min) * 60 + (sec))
@@ -616,14 +616,14 @@ extern int mNpcW_GetAppearStatusWay(u8* status, u8* way, Animal_c* animal) {
     res = TRUE;
   }
   else {
-    *status = mNpcW_APPEAR_STATUS_0;
+    *status = mNpcW_APPEAR_STATUS_REGULAR;
     *way = mNpcW_APPEAR_WAY_NUM;
   }
 
   return res;
 }
 
-extern int* mNpcW_GetArriveStayCountP(int idx) {
+extern u32* mNpcW_GetArriveStayCountP(int idx) {
   if (idx >= 0 && idx < ANIMAL_NUM_MAX) {
     return &l_arrive_stay_count[idx];
   }

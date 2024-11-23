@@ -41,8 +41,8 @@ enum {
 
 /* TODO: figure out remaining enums */
 enum {
-  mNpcW_APPEAR_STATUS_0,
-  mNpcW_APPEAR_STATUS_1,
+  mNpcW_APPEAR_STATUS_REGULAR,
+  mNpcW_APPEAR_STATUS_GUEST,
 
   mNpcW_APPEAR_STATUS_NUM
 };
@@ -58,10 +58,10 @@ enum {
 
 /* TODO: figure out remaining enums */
 enum {
-  mNpcW_INFO_STATUS_0,
+  mNpcW_INFO_STATUS_NONE,
   mNpcW_INFO_STATUS_WALKING,
-  mNpcW_INFO_STATUS_2,
-  mNpcW_INFO_STATUS_3,
+  mNpcW_INFO_STATUS_STAY_IN_BLOCK,
+  mNpcW_INFO_STATUS_ARRIVE,
   mNpcW_INFO_STATUS_4,
 
   mNpcW_INFO_STATUS_NUM
@@ -95,7 +95,7 @@ extern int mNpcW_ChangeNpcWalk(mNpc_walk_c* walk, mNpcW_info_c* info);
 extern void mNpcW_SetGoalBlock(mNpcW_info_c* info);
 extern void mNpcW_InitNpcWalk(mNpc_walk_c* walk);
 extern int mNpcW_GetAppearStatusWay(u8* status, u8* way, Animal_c* animal);
-extern int* mNpcW_GetArriveStayCountP(int idx);
+extern u32* mNpcW_GetArriveStayCountP(int idx);
 extern int mNpcW_GetWalkInfoStatusGoalAnimalIdx(int* status, int* goal, int idx);
 extern int mNpcW_GetNearGate(int* target_ut_x, int* target_ut_z, int block_x, int block_z, int ut_x, int ut_z);
 

@@ -1043,7 +1043,7 @@ config.libs = [
             Object(Matching, "actor/ac_s_car.c"),
             Object(Matching, "actor/ac_sample.c"),
             Object(Matching, "actor/ac_set_manager.c"),
-            Object(NonMatching, "actor/ac_set_npc_manager.c"),
+            Object(Matching, "actor/ac_set_npc_manager.c"),
             Object(Matching, "actor/ac_set_ovl_gyoei.c"),
             Object(Matching, "actor/ac_set_ovl_insect.c"),
             Object(Matching, "actor/ac_shop.c"),
