@@ -1,0 +1,62 @@
+
+void mfish_unagi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_unagi_get_next_rail_type() {
+    return;
+}
+
+void mfish_unagi_aim_wind_angle_calc() {
+    return;
+}
+
+void mfish_unagi_rail_move_init() {
+    return;
+}
+
+void mfish_unagi_rail_move() {
+    return;
+}
+
+void mfish_unagi_normal_to_reverse_init() {
+    return;
+}
+
+void mfish_unagi_normal_to_reverse() {
+    return;
+}
+
+void mfish_unagi_rail_move_reverse_init() {
+    return;
+}
+
+void mfish_unagi_rail_move_reverse() {
+    return;
+}
+
+void mfish_unagi_reverse_to_normal_init() {
+    return;
+}
+
+void mfish_unagi_reverse_to_normal() {
+    return;
+}
+
+void mfish_unagi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_unagi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                             void* arg, s_xyz* joint1, xyz_t* trans) {
+    return;
+}
+
+void mfish_unagi_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}

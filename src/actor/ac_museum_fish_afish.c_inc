@@ -1,0 +1,49 @@
+
+void mfish_afish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_afish_dummy_process_init() {
+    return;
+}
+
+void mfish_afish_dummy_process() {
+    return;
+}
+
+void mfish_afish_normal_process_init() {
+    return;
+}
+
+void mfish_afish_normal_process() {
+    return;
+}
+
+void mfish_afish_turn_process_init() {
+    return;
+}
+
+void mfish_afish_turn_process() {
+    return;
+}
+
+void mfish_afish_base_FishMove() {
+    return;
+}
+
+void mfish_afish_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_afish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_afish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}

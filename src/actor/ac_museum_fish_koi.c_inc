@@ -1,0 +1,80 @@
+
+void mfish_koi_tail_anim_set() {
+    return;
+}
+
+void mfish_koi_move_smooth() {
+    return;
+}
+
+void mfish_koi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_koi_dummy_process_init() {
+    return;
+}
+
+void mfish_koi_dummy_process() {
+    return;
+}
+
+void mfish_koi_normal_process_init() {
+    return;
+}
+
+void mfish_koi_normal_process() {
+    return;
+}
+
+void mfish_koi_turn_process_init() {
+    return;
+}
+
+void mfish_koi_turn_process() {
+    return;
+}
+
+void mfish_koi_peck_process_init() {
+    return;
+}
+
+void mfish_koi_peck_process() {
+    return;
+}
+
+void mfish_koi_long_move_process_init() {
+    return;
+}
+
+void mfish_koi_long_move_process() {
+    return;
+}
+
+void mfish_koi_base_FishMove() {
+    return;
+}
+
+void mfish_koi_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_koi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_koi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                           void* arg, s_xyz* joint1, xyz_t* trans) {
+    return;
+}
+
+void mfish_koi_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}

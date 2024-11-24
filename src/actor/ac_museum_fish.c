@@ -11,11 +11,16 @@
 #include "m_player_lib.h"
 #include "m_debug_mode.h"
 #include "libforest/gbi_extensions.h"
+#include "m_rcp.h"
 
 // found useful macros
 #define MY_MAX(a, b) (((a) >= (b)) ? (a) : (b))
 #define MY_CLAMP(v, l, h) MIN(MY_MAX((l), (v)), (h))
 #define ARRAY_LEN(a) (sizeof(a) / sizeof(*a))
+
+#define CALC_EASE(x) (1 - sqrtf(1 - (x)))
+#define CALC_EASE2(x) CALC_EASE(CALC_EASE(x))
+#define SHORT2DEG_ANGLE2(x) ((x) * (360.0f / 65536.0f))
 
 // delete this stuff later
 typedef Mtx;
@@ -134,7 +139,7 @@ ACTOR_PROFILE Museum_Fish_Profile = {
     NULL
 };
 
-xyz_t suisou_pos[5] = { 
+static xyz_t suisou_pos[5] = { 
     { 220.0f, 40.0f, 220.0f }, 
     { 420.0f, 40.0f, 220.0f }, 
     { 220.0f, 40.0f, 460.0f }, 
@@ -696,12 +701,12 @@ void Museum_Fish_Actor_ct(ACTOR* actorx, GAME* gamex) {
         // 0x1300 : kusa_model
         // 0x1338 : kusa_anime
         // 0x1370 : kusa_start_frame
-        actor->prvFish2[i]._54C = kusa_model[i];
-        cKF_SkeletonInfo_R_ct(&actor->prvFish2[i]._00, kusa_model[i], kusa_anime[i], &actor->prvFish2[i]._4F0,
-                              &actor->prvFish2[i]._514);
-        cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&actor->prvFish2[i]._00, kusa_anime[i], NULL,
+        actor->prvKusa[i]._54C = kusa_model[i];
+        cKF_SkeletonInfo_R_ct(&actor->prvKusa[i]._00._00, kusa_model[i], kusa_anime[i], &actor->prvKusa[i]._4F0,
+                              &actor->prvKusa[i]._514);
+        cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&actor->prvKusa[i]._00._00, kusa_anime[i], NULL,
                                                                  kusa_group_tbl[i] == 2 ? 1.5f : 0.5f, 0.0f);
-        actor->prvFish2[i]._00.frame_control.current_frame = kusa_start_frame[i];
+        actor->prvKusa[i]._00._00.frame_control.current_frame = kusa_start_frame[i];
         actor->_101f0 = qrand();
         actor->_101f4 = qrand();
     }
@@ -837,8 +842,45 @@ void Museum_Fish_set_talk_info(ACTOR* actorx) {
     mDemo_Set_use_zoom_sound(TRUE);
 }
 
-void Museum_Fish_Talk_process() {
-    // NOT BAD
+void Museum_Fish_Talk_process(ACTOR* actorx, GAME* game) {
+    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+
+    if (mDemo_Check(8, actorx) != 0) {
+        GAME_PLAY* _gamePT;
+        PLAYER_ACTOR* playerActor = get_player_actor_withoutCheck((GAME_PLAY*)game);
+        s_xyz rotation = playerActor->actor_class.shape_info.rotation;
+        add_calc_short_angle2(&rotation.y, DEG2SHORT_ANGLE(-180), 0.3f, DEG2SHORT_ANGLE(22.5f), 0);
+
+        _gamePT = (GAME_PLAY*)gamePT;
+        get_player_actor_withoutCheck(_gamePT)->Set_force_position_angle_proc(&_gamePT->game, NULL, &rotation, 32);
+        if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) != 0) {
+            int choseNum = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+            if (choseNum != -1) {
+                if (choseNum == 0) {
+                    mMsg_Window_c* windowC;
+                    int msgNum = Museum_Fish_GetMsgNo(actorx);
+                    actor->fishDisplayMsgIter += 1;
+                    mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msgNum);
+                    mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+                } else {
+                    mMsg_Set_CancelNormalContinue(mMsg_Get_base_window_p());
+                    mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+                }
+            }
+        }
+    } else {
+        if (chkTrigger(BUTTON_A) != 0 && mDemo_Get_talk_actor() == 0) {
+            int i;
+            for (i = 0; i < 5; i++) {
+                if (Museum_Fish_Check_Talk_Distance(game, i)) {
+                    Museum_Fish_Set_MsgFishInfo(actorx, i);
+                    mDemo_Request(8, actorx, &Museum_Fish_set_talk_info);
+                }
+            }
+        }
+    }
+    // line 16C
+
     return;
 }
 
@@ -850,9 +892,9 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     MUSEUM_FISH_PRIVATE_DATA* prv;
 
-    mfish_point_light_mv(actorx, game);
+    mfish_point_light_mv(actorx, &play->game);
     old_14db4 = actor->_14db4;
-    mfish_get_player_area(actor, game);
+    mfish_get_player_area(actor, &play->game);
 
     if (actor->_14db4 != old_14db4) {
         PLAYER_ACTOR* player;
@@ -879,33 +921,30 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
     }
 
     for (i = 0; i < 0xe; i++) {
-        cKF_SkeletonInfo_R_play(&actor->prvFish2[i]._00);
+        cKF_SkeletonInfo_R_play(&actor->prvKusa[i]._00._00);
         if (kusa_group_tbl[i] == 2) {
-            add_calc2(&actor->prvFish2[i]._540, -2.25f, 1.75f, 1.75f);
-            add_calc_short_angle2(&actor->prvFish2[i]._53A, DEG2SHORT_ANGLE(3.5f),
-                                  1.0f - sqrtf(1.0f - (1.0f - sqrtf(0.9f))), 20, 4);
+            add_calc2(&actor->prvKusa[i]._540, -2.25f, 1.75f, 1.75f);
+            add_calc_short_angle2(&actor->prvKusa[i]._53A, DEG2SHORT_ANGLE(3.5f), CALC_EASE2(0.1f), 20, 4);
         } else {
-            actor->prvFish2[i]._540 *= 0.9f;
-            add_calc_short_angle2(&actor->prvFish2[i]._53A, DEG2SHORT_ANGLE(3.5f),
-                                  1.0f - sqrtf(1.0f - (1.0f - sqrtf(0.9f))), 20, 4);
+            actor->prvKusa[i]._540 *= 0.9f;
+            add_calc_short_angle2(&actor->prvKusa[i]._53A, DEG2SHORT_ANGLE(0), CALC_EASE2(0.1f), 22, 4);
         }
-        actor->prvFish2[i]._548 *= 0.98f;
+        actor->prvKusa[i]._548 *= 0.98f;
 
-        actor->prvFish2[i]._538 += actor->prvFish2[i]._53A;
-        actor->prvFish2[i]._53C += actor->prvFish2[i]._53A >> 1;
+        actor->prvKusa[i]._538 += actor->prvKusa[i]._53A;
+        actor->prvKusa[i]._53C += actor->prvKusa[i]._53A >> 1;
 
-        add_calc_short_angle2(&actor->prvFish2[i]._53A, DEG2SHORT_ANGLE(0), 1.0f - sqrtf(1.0f - (1.0f - sqrtf(0.9f))),
-                              20, 4);
+        add_calc_short_angle2(&actor->prvKusa[i]._53A, DEG2SHORT_ANGLE(0), CALC_EASE2(0.1f), 22, 4);
     }
 
-    Museum_Fish_Kusa_Check(actor, game);
-    Museum_Fish_Object_Check(actor, game);
+    Museum_Fish_Kusa_Check(actor, &play->game);
+    Museum_Fish_Object_Check(actor, &play->game);
 
     for (i = 0; i < 20; i++) {
         actor->_14d50[i]--;
         if (actor->_14d50[i] < 0) {
-            common_data.clip.effect_clip->effect_make_proc(0x6e, suisou_awa_pos[i], 2, 0, game, -1, suisou_awa_group[i],
-                                                           0);
+            common_data.clip.effect_clip->effect_make_proc(0x6e, suisou_awa_pos[i], 2, 0, &play->game, -1,
+                                                           suisou_awa_group[i], 0);
             if (actor->_14d78[i] > 0) {
                 actor->_14d78[i]--;
 
@@ -917,7 +956,8 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
         }
     }
 
-    Museum_Fish_Talk_process(actor, game);
+    // TODO: check if this is broken after we changed this above
+    Museum_Fish_Talk_process(actorx, game);
     prv = actor->prvFish;
     for (i = 0; i < 40; i++, prv++) {
         if (prv->_62E & 1) {
@@ -944,7 +984,8 @@ extern Gfx obj_suisou1_modelT[];
 extern Gfx obj_museum5_model[];
 extern Gfx obj_museum5_modelT[];
 
-void Museum_Fish_Suisou_draw(MUSEUM_FISH_ACTOR* actor, GAME* game, int r5) {
+void Museum_Fish_Suisou_draw(ACTOR* actorx, GAME* game, int r5) {
+    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
     GAME_PLAY* play = (GAME_PLAY*)game;
     GRAPH* graph = play->game.graph;
     if (r5 < 4) {
@@ -993,16 +1034,103 @@ void Museum_Fish_Suisou_draw(MUSEUM_FISH_ACTOR* actor, GAME* game, int r5) {
     }
 }
 
-void kusa_before_disp() {
-    return;
+int kusa_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** mjoint_m, u8* joint_f, void* arg,
+                     s_xyz* joint1, xyz_t* trans) {
+    MUSEUM_FISH_KUSA_DATA* actor = (MUSEUM_FISH_KUSA_DATA*)arg;
+    if (joint_num > 0) {
+        f32 v = (actor->_54C == &cKF_bs_r_obj_museum5_kusa3) ? 35.0f : 20.f;
+
+        joint1->y += (s16)(sin_s(actor->_538 + (joint_num * DEG2SHORT_ANGLE(90))) * 1274.0f);
+        joint1->x += (s16)(sin_s(actor->_53C + (joint_num * DEG2SHORT_ANGLE(90))) * 4369.0f);
+
+        trans->y -= actor->_548 * (v * joint_num);
+        trans->z += actor->_540 * (v * joint_num);
+    }
+    return 1;
 }
 
-void Museum_Fish_Kusa_Draw(ACTOR* actor, GAME* game) {
-    return;
+void Museum_Fish_Kusa_Draw(ACTOR* actorx, GAME* game, int r5) {
+    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (mfish_cull_check(game, &kusa_pos[r5], 0.0f, 0.0f, 120.0f)) {
+        Mtx* mtx;
+        if (play->game.frame_counter % 2 != 0) {
+            mtx = &actor->prvKusa[r5]._00._70;
+        } else {
+            mtx = &actor->prvKusa[r5]._00._2b0;
+        }
+        OPEN_DISP(game->graph);
+        Matrix_translate(kusa_pos[r5].x, 0, kusa_pos[r5].z, 0);
+        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        CLOSE_DISP(game->graph);
+        cKF_Si3_draw_R_SV(game, &actor->prvKusa[r5]._00._00, mtx, kusa_before_disp, NULL, &actor->prvKusa[r5]);
+    }
 }
 
-void Museum_Fish_Actor_draw(ACTOR* actor, GAME* game) {
-    return;
+extern EVW_ANIME_DATA obj_suisou1_evw_anime, obj_museum5_evw_anime;
+extern Gfx act_mus_fish_set_mode;
+void Museum_Fish_Actor_draw(ACTOR* actorx, GAME* game) {
+    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int i;
+
+    _texture_z_light_fog_prim(game->graph);
+    _texture_z_light_fog_prim_xlu(game->graph);
+
+    if (!GETREG(TAKREG, 90)) {
+        for (i = 0; i < 14; i++) {
+            Museum_Fish_Kusa_Draw(actorx, game, i);
+        }
+    }
+
+    if (!GETREG(TAKREG, 92)) {
+        MUSEUM_FISH_PRIVATE_DATA* prv;
+        GRAPH* graph;
+        graph = play->game.graph;
+        OPEN_DISP(graph);
+        gSPDisplayList(NEXT_POLY_OPA_DISP, &act_mus_fish_set_mode);
+        CLOSE_DISP(graph);
+
+        prv = actor->prvFish;
+        for (i = 0; i < 40; i++, prv++) {
+            if (prv->_62E & 1 && prv->_59C != 0x23 && prv->_59C != 0x21 &&
+                mfish_cull_check(game, &prv->_5B8, prv->init_data._08 + 50.0f, prv->init_data._08 + 10.0f,
+                                 prv->init_data._08 + 10.0f)) {
+                mfish_dw[i](prv, game);
+            }
+        }
+
+        if (actor->prvFish[0x23]._62E & 1 &&
+            mfish_cull_check(game, &actor->prvFish[0x23]._5A0, actor->prvFish[0x23].init_data._08 + 10.0f,
+                             actor->prvFish[0x23].init_data._04, actor->prvFish[0x23].init_data._04)) {
+            mfish_dw[0x23](&actor->prvFish[0x23], game);
+        }
+
+        if (!GETREG(TAKREG, 82)) {
+            mfish_normal_light_set(actorx, game);
+        }
+
+        if (actor->prvFish[0x21]._62E & 1) {
+            mfish_dw[0x21](&actor->prvFish[0x21], game);
+        }
+
+        if (GETREG(TAKREG, 92) == 1) {
+            mfish_normal_light_set(actorx, game);
+        }
+    }
+
+    if (!GETREG(TAKREG, 91)) {
+        if (!GETREG(TAKREG, 88)) {
+            Evw_Anime_Set(play, &obj_museum5_evw_anime);
+            Museum_Fish_Suisou_draw(actorx, game, 0x5);
+        }
+
+        for (i = 0; i < 4; i++) {
+            Evw_Anime_Set(play, &obj_suisou1_evw_anime);
+            Museum_Fish_Suisou_draw(actorx, game, i);
+        }
+    }
 }
 
 BOOL mfish_cull_check(GAME* game, xyz_t* worldPos, f32 x, f32 y, f32 _y) {
@@ -1014,24 +1142,94 @@ BOOL mfish_cull_check(GAME* game, xyz_t* worldPos, f32 x, f32 y, f32 _y) {
     return FALSE;
 }
 
-void mfish_point_ligh_pos_get() {
-    return;
+void mfish_point_ligh_pos_get(ACTOR* actorx, GAME* game, int r5) {
+    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    f32 a, b, c, d;
+    xyz_t _30;
+    xyz_t _24;
+    xyz_t _18;
+    xyz_t _0c;
+
+    int r;
+    f32 v;
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
+
+    _30 = player->actor_class.world.position;
+
+    if (_30.z < 100.0f) {
+        r = 4;
+    } else if (_30.z > 100.0f && _30.z < 340.0f) {
+        if (r5 == 0) {
+            r = 0;
+        } else {
+            r = 1;
+        }
+    } else if (_30.z > 340.0f && _30.z < 580.0f) {
+        if (r5 == 0) {
+            r = 2;
+        } else {
+            r = 3;
+        }
+    } else {
+        return;
+    }
+
+    if (r < 4) {
+        a = 60.0f;
+        b = 60.0f;
+        c = 60.0f;
+        d = 60.0f;
+        _0c = suisou_pos[r];
+        _18 = _30;
+    } else {
+        a = 200.0f;
+        c = 35.0f;
+        d = 20.0f;
+        b = 200.0f;
+        _0c = suisou_pos[r];
+        _18 = _30;
+        if (r5 == 0) {
+            _18.x -= d;
+        } else {
+            _18.x += d;
+        }
+    }
+
+    if (_18.x > _0c.x + a) {
+        _18.x = _0c.x + a;
+    } else if (_18.x < _0c.x - b) {
+        _18.x = _0c.x - b;
+    }
+
+    if (_18.z > _0c.z + c) {
+        _18.z = _0c.z + c;
+    } else if (_18.z < _0c.z - d) {
+        _18.z = _0c.z - d;
+    }
+
+    actor->_14d08[r5] = _18;
+
+    xyz_t_sub(&_18, &_30, &_24);
+
+    v = sqrtf(_24.x * _24.x + _24.z * _24.z);
+
+    actor->_14dbc[r5] = (u8)(((60.0f - CLAMP(v, 0.0f, 60.0f)) / 60.0f) * 55.0f);
 }
 
-void mfish_point_light_ct(ACTOR* actorx, GAME* gamex) {
-    MUSEUM_FISH_ACTOR* actor;
-    GAME_PLAY* game;
-    game = (GAME_PLAY*)gamex;
-    actor = (MUSEUM_FISH_ACTOR*)actorx;
-    mfish_point_ligh_pos_get(actor, game, 0);
-    mfish_point_ligh_pos_get(actor, game, 1);
-    actor->_14db8 = mEnv_ReservePointLight(game, &actor->_14d08, 0, 0x96, 0xff, (u8)actor->_14dbc);
-    actor->_14dba = mEnv_ReservePointLight(game, &actor->_14d14, 0, 0x96, 0xff, (u8)actor->_14dbe);
+void mfish_point_light_ct(ACTOR* actorx, GAME* game) {
+    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    mfish_point_ligh_pos_get(actorx, game, 0);
+    mfish_point_ligh_pos_get(actorx, game, 1);
+    actor->_14db8 = mEnv_ReservePointLight(play, &actor->_14d08[0], 0, 0x96, 0xff, (u8)actor->_14dbc[0]);
+    actor->_14dba = mEnv_ReservePointLight(play, &actor->_14d08[1], 0, 0x96, 0xff, (u8)actor->_14dbc[1]);
     actor->_14dc0 = 0;
 }
 
 void mfish_point_light_dt(ACTOR* actorx, GAME* game) {
     MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
 
     if (actor->_14db8 != -1) {
         mEnv_CancelReservedPointLight(actor->_14db8, (GAME_PLAY*)game);
@@ -1042,8 +1240,20 @@ void mfish_point_light_dt(ACTOR* actorx, GAME* game) {
     }
 }
 
-void mfish_point_light_mv(ACTOR* actor, GAME* game) {
-    return;
+void mfish_point_light_mv(ACTOR* actorx, GAME* game) {
+    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    mfish_point_ligh_pos_get(actorx, game, 0);
+    mfish_point_ligh_pos_get(actorx, game, 1);
+
+    mEnv_OperateReservedPointLight(actor->_14db8, &actor->_14d08[0], 0, 0x96, 0xff, (u8)actor->_14dbc[0]);
+    mEnv_OperateReservedPointLight(actor->_14dba, &actor->_14d08[1], 0, 0x96, 0xff, (u8)actor->_14dbc[1]);
+    actor->actor.world.position = actor->_14d08[0];
+    actor->actor.world.position.x = sin_s(actor->_14dc0) * 200.0f;
+    actor->actor.world.position.y = sin_s(actor->_14dc0 * 2) * 10.0f;
+    actor->actor.world.position.z = cos_s(actor->_14dc0) * 200.0f;
+    actor->_14dc0 += 0x111;
 }
 
 void mfish_normal_light_set(ACTOR* actor, GAME* _game) {
@@ -1060,1301 +1270,24 @@ void mfish_normal_light_set(ACTOR* actor, GAME* _game) {
     LightsN_disp(lights, game->game.graph);
 }
 
-f32 Rnd_EX_f(f32 v) {
-    f32 rand1 = 2 * fqrand2();
-    f32 rand2 = fqrand();
-    if (rand2 > (rand1 * rand1)) {
-        if (rand1 > 0) {
-            rand1 = sqrtf(rand2);
-        } else {
-            rand1 = -sqrtf(rand2);
-        }
-    }
-    rand1 = (1.0f + rand1) * 0.5f;
-    return v * rand1;
-}
-
-f32 Rnd_EX_fx(f32 v1) {
-    f32 rand1 = 2 * fqrand2();
-    f32 rand2 = fqrand();
-    if (rand2 > (rand1 * rand1)) {
-        if (rand1 > 0) {
-            rand1 = sqrtf(rand2);
-        } else {
-            rand1 = -sqrtf(rand2);
-        }
-    }
-    rand1 = rand1 / 2;
-    return v1 * rand1;
-}
-
-void mfish_base_FishMove() {
-    return;
-}
-
-int mfish_PosWallCheck(MUSEUM_FISH_PRIVATE_DATA* priv, xyz_t* pos) {
-    u32 flag = 0;
-    xyz_t p = suisou_pos[priv->_630];
-    f32 a, b, c, d;
-
-    if (priv->_630 < 4) {
-        a = priv->init_data._28 + 45;
-        b = priv->init_data._28 + 45;
-        c = priv->init_data._28 + 45;
-        d = priv->init_data._28 + 45;
-    } else {
-        a = priv->init_data._28 + 180;
-        b = priv->init_data._28 + 180;
-        c = priv->init_data._28 + 5;
-        d = priv->init_data._28 + 45;
-    }
-
-    if (pos->x > p.x + a) {
-        flag |= 4;
-    } else if (pos->x < p.x - b) {
-        flag |= 2;
-    }
-
-    if (pos->z > p.z + c) {
-        flag |= 8;
-    } else if (pos->z < p.z - d) {
-        flag |= 0x10;
-    }
-
-    return flag;
-}
-
-void mfish_WallCheck() {
-    return;
-}
-
-s16 mfish_get_hide_camera_angle(MUSEUM_FISH_PRIVATE_DATA* priv) {
-    s16 v = priv->_60C.z;
-    if (v > 0 || (priv->_630 == 2 && fqrand() < 0.8f)) {
-        if (v > DEG2SHORT_ANGLE(90)) {
-            v = DEG2SHORT_ANGLE(90) + DEG2SHORT_ANGLE(45 * fqrand());
-        } else {
-            v = DEG2SHORT_ANGLE(90) - DEG2SHORT_ANGLE(45 * fqrand());
-        }
-    } else {
-        if (v > DEG2SHORT_ANGLE(-90)) {
-            v = DEG2SHORT_ANGLE(-90) + DEG2SHORT_ANGLE(45 * fqrand());
-        } else {
-            v = DEG2SHORT_ANGLE(-90) - DEG2SHORT_ANGLE(45 * fqrand());
-        }
-    }
-    return v;
-}
-
-void mfish_dummy_process_init() {
-    mfish_get_hide_camera_angle(0);
-}
-
-void mfish_dummy_process() {
-    return;
-}
-
-void mfish_normal_process_init() {
-    return;
-}
-
-void mfish_normal_process() {
-    return;
-}
-
-void mfish_turn_process_init() {
-    return;
-}
-
-void mfish_turn_process() {
-    return;
-}
-
-void mfish_peck_process_init() {
-    return;
-}
-
-void mfish_peck_process() {
-    return;
-}
-
-void mfish_ground_peck_process_init() {
-    return;
-}
-
-void mfish_ground_peck_process() {
-    return;
-}
-
-void mfish_base_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_onefish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    YET_SKELETON* huh = &actor->_38;
-    // looks like it loads from 0x38, which i labeled as the skeleton,
-    // but then it adds like 0x514 to it, so this must be huge
-
-    // cKF_SkeletonInfo_R_ct(&huh->_00, huh->_00); //TODO
-    return;
-}
-
-void mfish_onefish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    cKF_SkeletonInfo_R_play(&actor->_38._00);
-    return;
-}
-
-int mfish_before_disp(GAME* r3, cKF_SkeletonInfo_R_c* r4, int r5, Gfx** r6, u8* r7, void* arg, s_xyz* r9, xyz_t* r10) {
-
-    MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
-    if (r5 == 2) {
-        int v, t;
-        if (actor->_630 != 4) {
-            v = 2;
-        } else if (actor->init_data._20 > 0.7f) {
-            v = 1;
-        } else if (actor->init_data._20 > 0.5f) {
-            v = 2;
-        } else {
-            v = 3;
-        }
-        t = r9->y - (actor->_61C * v);
-        r9->y = MY_CLAMP(t, DEG2SHORT_ANGLE(-60), DEG2SHORT_ANGLE(60));
-        t = r9->x - (actor->_61C >> 1);
-        r9->x = MY_CLAMP(t, DEG2SHORT_ANGLE(-25), DEG2SHORT_ANGLE(25));
-    }
-    return 1;
-}
-
-void mfish_onefish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    YET_SKELETON* skele;
-    Mtx* mtx;
-    GAME_PLAY* play;
-    GRAPH* graph;
-
-    play = (GAME_PLAY*)gamex;
-    skele = &actor->_38;
-
-    if (play->game.frame_counter % 2 != 0) {
-        mtx = &skele->_70;
-    } else {
-        mtx = &skele->_2b0;
-    }
-
-    graph = play->game.graph;
-
-    Matrix_translate(actor->_5A0.x, actor->_5A0.y + actor->_5B0, actor->_5A0.z, 0);
-    Matrix_RotateY(actor->_60C.z, 1);
-
-    Matrix_translate(0, 0.25f * actor->init_data._04, 0.5f * actor->init_data._24, 1);
-    Matrix_RotateX(actor->_60C.x, 1);
-    Matrix_RotateZ(MY_CLAMP(-(actor->_61C >> 1), DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20)), 1);
-    Matrix_translate(0, 0.25f * -actor->init_data._04, 0.5f * -actor->init_data._24, 1);
-    Matrix_scale(actor->init_data._00, actor->init_data._00, actor->init_data._00, 1);
-
-    OPEN_DISP(graph);
-    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(play->game.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    CLOSE_DISP(graph);
-
-    cKF_Si3_draw_R_SV(&play->game, &skele->_00, mtx, &mfish_before_disp, 0, actor);
-}
-
-void mfish_ani_base_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_ani_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_ani_base_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void Museum_Fish_BigFishObjCheck() {
-    return;
-}
-
-void Museum_Fish_ObjBGCheck() {
-    return;
-}
-
-void Museum_Fish_DonkoBGCheck() {
-    return;
-}
-
-void Museum_Fish_objchk_pos_set() {
-    return;
-}
-
-void Museum_Fish_BGCheck() {
-    return;
-}
-
-void Museum_Fish_Kusa_Check() {
-    static int kusa_group_tbl[] = { 0, 2, 1, 3, 3, 4, 4, 4, 4, 4, 0, 2, 1, 3 };
-}
-
-void Museum_Fish_Object_Check() {
-    return;
-}
-
-void mfish_body_wind_anime_play() {
-    return;
-}
-
-void mfish_get_player_angle() {
-    return;
-}
-
-void mfish_peck_check() {
-    return;
-}
-
-void mfish_peck_wall_check() {
-    return;
-}
-
-void mfish_ground_peck_before_check() {
-    return;
-}
-
-void mfish_get_player_area() {
-    return;
-}
-
-void mfish_get_flow_vec(xyz_t* pos, MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
-    return;
-}
-
-void mfish_get_escape_angle() {
-    return;
-}
-
-void mfish_move_smooth() {
-    return;
-}
-
-void mfish_hamon_make() {
-    return;
-}
-
-void mfish_afish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_afish_dummy_process_init() {
-    return;
-}
-
-void mfish_afish_dummy_process() {
-    return;
-}
-
-void mfish_afish_normal_process_init() {
-    return;
-}
-
-void mfish_afish_normal_process() {
-    return;
-}
-
-void mfish_afish_turn_process_init() {
-    return;
-}
-
-void mfish_afish_turn_process() {
-    return;
-}
-
-void mfish_afish_base_FishMove() {
-    return;
-}
-
-void mfish_afish_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_afish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_afish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_aroana_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_aroana_dummy_process_init() {
-    return;
-}
-
-void mfish_aroana_dummy_process() {
-    return;
-}
-
-void mfish_aroana_normal_process_init() {
-    return;
-}
-
-void mfish_aroana_normal_process() {
-    return;
-}
-
-void mfish_aroana_turn_process_init() {
-    return;
-}
-
-void mfish_aroana_turn_process() {
-    return;
-}
-
-void mfish_aroana_long_move_process_init() {
-    return;
-}
-
-void mfish_aroana_long_move_process() {
-    return;
-}
-
-void mfish_aroana_base_FishMove() {
-    return;
-}
-
-void mfish_aroana_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_aroana_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_aroana_before_disp() {
-    return;
-}
-
-void mfish_aroana_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_koi_tail_anim_set() {
-    return;
-}
-
-void mfish_koi_move_smooth() {
-    return;
-}
-
-void mfish_koi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_koi_dummy_process_init() {
-    return;
-}
-
-void mfish_koi_dummy_process() {
-    return;
-}
-
-void mfish_koi_normal_process_init() {
-    return;
-}
-
-void mfish_koi_normal_process() {
-    return;
-}
-
-void mfish_koi_turn_process_init() {
-    return;
-}
-
-void mfish_koi_turn_process() {
-    return;
-}
-
-void mfish_koi_peck_process_init() {
-    return;
-}
-
-void mfish_koi_peck_process() {
-    return;
-}
-
-void mfish_koi_long_move_process_init() {
-    return;
-}
-
-void mfish_koi_long_move_process() {
-    return;
-}
-
-void mfish_koi_base_FishMove() {
-    return;
-}
-
-void mfish_koi_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_koi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_koi_before_disp() {
-    return;
-}
-
-void mfish_koi_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_kaseki_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_kaseki_normal_init() {
-    return;
-}
-
-void mfish_kaseki_normal() {
-    return;
-}
-
-void mfish_kaseki_move_wall_smooth() {
-    return;
-}
-
-void mfish_kaseki_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_kaseki_before_disp() {
-    return;
-}
-
-void mfish_kaseki_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_bass_tail_anim_set(MUSEUM_FISH_PRIVATE_DATA* actor, s32 r4) {
-    if (r4 == 0) {
-        actor->_640 = 0xf;
-        actor->_5B4 = 4;
-    } else if (r4 == 1 && actor->_640 == 0) {
-        actor->_640 = 0x14;
-        actor->_5B4 = 3;
-    }
-}
-
-void mfish_bass_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
-    GAME_PLAY* play = (GAME_PLAY*)game;
-    f32 t;
-    xyz_t pos;
-    add_calc2(&actor->_5E8, actor->_5AC, 1 - actor->init_data._18, 0.01f + 0.001f * GETREG(TAKREG, 20));
-    actor->_5D0 = actor->_5E8 * sin_s(actor->_60C.z);
-    actor->_5D8 = actor->_5E8 * cos_s(actor->_60C.z);
-
-    add_calc(&actor->_5D4, MAX(ABS(actor->_5E8 * sin_s(actor->_60C.x)), 0.1f), 0.1f, 0.1f, 0.005f);
-    t = add_calc(&actor->_5A0.y, actor->_5F4 + actor->init_data._0C, 0.1f, actor->_5D4, 0);
-    if (fabsf(t) < 0.08f) {
-        add_calc_short_angle2(&actor->_612.x, 0, 1.0f - sqrtf(0.97), DEG2SHORT_ANGLE(1.0f + (0.5f * actor->_5B0)) >> 1,
-                              9);
-    }
-    mfish_move_smooth(actor, game);
-    mfish_get_flow_vec(&pos, actor, game);
-    actor->_5A0.y += actor->_5D0 + actor->_5DC.x;
-    actor->_5A0.z += actor->_5D0 + actor->_5DC.x;
-    actor->_5A0.y = actor->_5A0.y + actor->_5DC.y;
-    actor->_5A0.y = MAX(60, MIN(110, actor->_5A0.y));
-}
-
-void mfish_bass_dummy_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
-    actor->_634 = mfish_get_hide_camera_angle(actor);
-
-    if ((actor->_62E & 0x1E) != 0) {
-        // works with temp instead of cast
-        if ((s16)(actor->_612.z - actor->_62C) > 0) {
-            actor->_634 = actor->_62C + DEG2SHORT_ANGLE(90);
-        } else {
-            actor->_634 = actor->_62C - DEG2SHORT_ANGLE(90);
-        }
-    } else {
-        add_calc_short_angle2(&actor->_634, actor->_612.z, 1.0f - sqrtf(0.5), DEG2SHORT_ANGLE(22.5), 0x5b);
-    }
-
-    actor->_5EC = 0.0f;
-    actor->_34 = &mfish_bass_dummy_process;
-
-    return;
-}
-
-void mfish_bass_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor) {
-    // no clue what's going on here
-    add_calc_short_angle2(&actor->_612.z, actor->_634, 1.0f - sqrtf(1.0f - (1.0f - sqrtf(1.0f))), 0x1c7, 0x2d);
-    actor->_622 =
-        add_calc_short_angle2(&actor->_60C.z, actor->_612.z, 1.0f - sqrtf(1.0f - (1.0f - sqrtf(0.75))), 0xe3, 0x2d);
-    add_calc_short_angle2(&actor->_61C, actor->_622, 1.0f - sqrtf(1.0f - (1.0f - sqrtf(0.75))), 0xe3, 0x2d);
-}
-
-void mfish_bass_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* fishActor) {
-    f32 ra;
-    f32 t;
-    f32 temp;
-
-    ra = fqrand() * fishActor->init_data._14 + fishActor->init_data._10;
-    t = (ra) / MAX(fishActor->init_data._14 + fishActor->init_data._10, 1);
-
-    if (fqrand() > 0.25f && !(fishActor->_62E & 0x200)) {
-        fishActor->_62E |= 0x200;
-    } else {
-        fishActor->_62E &= ~0x200;
-    }
-
-    if (ra > fishActor->_5E8) {
-        f32 v2;
-        fishActor->_5F0 = ra;
-        fishActor->_5AC = 0.15f + Rnd_EX_fx(0.1f);
-        mfish_bass_tail_anim_set(fishActor, 0);
-    }
-
-    fishActor->_5F4 = t * Rnd_EX_fx(10);
-    temp = (fishActor->_5F4 + fishActor->init_data._0C - fishActor->_5A0.y);
-    fishActor->_612.x = DEG2SHORT_ANGLE2(temp * -(2 * fishActor->_5B0 + 10));
-
-    fishActor->_612.x = CLAMP(fishActor->_612.x, DEG2SHORT_ANGLE(-50), DEG2SHORT_ANGLE(50));
-    fishActor->_5D4 = 0;
-
-    if (fqrand() > fishActor->init_data._1C) {
-        int diff;
-
-        fishActor->_612.z += (s16)Rnd_EX_fx(fishActor->init_data._30 * 2.0f);
-        diff = fishActor->_612.z - fishActor->_60C.z;
-        if (ABS((s16)diff) < DEG2SHORT_ANGLE(20)) {
-            if ((s16)diff > 0) {
-                fishActor->_612.z += DEG2SHORT_ANGLE(20);
-            } else {
-                fishActor->_612.z += DEG2SHORT_ANGLE(-20);
-            }
-        }
-
-        if ((fishActor->_62E & 0x200) == 0) {
-            fishActor->_632 = DEG2SHORT_ANGLE(t * 15 + 20);
-        } else {
-            fishActor->_632 = DEG2SHORT_ANGLE(t * 30 + 20);
-        }
-    } else {
-        if ((s16)(fishActor->_612.z - fishActor->_60C.z) > 0) {
-            fishActor->_612.z += DEG2SHORT_ANGLE(15);
-        } else {
-            fishActor->_612.z += DEG2SHORT_ANGLE(-15);
-        }
-
-        if ((fishActor->_62E & 0x200) == 0) {
-            fishActor->_632 = DEG2SHORT_ANGLE(t * 15 + 20);
-        } else {
-            fishActor->_632 = DEG2SHORT_ANGLE((GETREG(TAKREG, 42) + 40.0f) * t + 30);
-        }
-    }
-    if ((s16)(fishActor->_612.z - fishActor->_60C.z) > 0) {
-        fishActor->_636 = DEG2SHORT_ANGLE(0);
-    } else {
-        fishActor->_636 = DEG2SHORT_ANGLE(-180);
-    }
-
-    fishActor->_62E &= ~0xC0;
-    fishActor->_5EC = 0;
-    fishActor->_34 = mfish_bass_normal_process;
-}
-
-void mfish_bass_normal_process(MUSEUM_FISH_PRIVATE_DATA* actorx) {
-    return;
-}
-
-void mfish_bass_turn_process_init() {
-    return;
-}
-
-void mfish_bass_turn_process() {
-    return;
-}
-
-void mfish_bass_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-
-    mfish_onefish_ct(actor, gamex);
-    mfish_base_ct(actor, gamex);
-
-    actor->_34 = mfish_bass_normal_process;
-
-    if (actor->_59C == 7) {
-        actor->_5B0 = 0;
-    } else if (actor->_59C == 6) {
-        actor->_5B0 = 0.5f;
-    } else {
-        actor->_5B0 = 1;
-    }
-
-    actor->_624 = 0xb;
-
-    return;
-}
-
-void mfish_bass_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_bass_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele;
-    Mtx* mtx;
-    GRAPH* graph;
-    GAME_PLAY* play;
-
-    play = (GAME_PLAY*)gamex;
-
-    skele = &actor->_38;
-
-    if (play->game.frame_counter % 2 != 0) {
-        mtx = &skele->_70;
-    } else {
-        mtx = &skele->_2b0;
-    }
-
-    graph = play->game.graph;
-
-    Matrix_translate(actor->_5A0.x, actor->_5A0.y, actor->_5A0.z, 0);
-    Matrix_RotateY(actor->_60C.z, 1);
-
-    Matrix_translate(0, 0.25f * actor->init_data._04, 0.5f * actor->init_data._24, 1);
-    Matrix_RotateX(actor->_60C.x, 1);
-    Matrix_RotateZ(MY_CLAMP(-(actor->_61C >> 1), DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20)), 1);
-    Matrix_translate(0, 0.25f * -actor->init_data._04, 0.5f * -actor->init_data._24, 1);
-    Matrix_scale(actor->init_data._00, actor->init_data._00, actor->init_data._00, 1);
-
-    OPEN_DISP(graph);
-    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(play->game.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    CLOSE_DISP(graph);
-
-    cKF_Si3_draw_R_SV(&play->game, &skele->_00, mtx, &mfish_before_disp, 0, actor);
-    return;
-}
-
-void mfish_seafish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_seafish_normal_init() {
-    return;
-}
-
-void mfish_seafish_normal() {
-    return;
-}
-
-void mfish_seafish_turn_init() {
-    return;
-}
-
-void mfish_seafish_turn() {
-    return;
-}
-
-void mfish_seafish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_seafish_before_disp() {
-    return;
-}
-
-void mfish_seafish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_tai_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_tai_normal_init() {
-    return;
-}
-
-void mfish_tai_normal() {
-    return;
-}
-
-void mfish_tai_turn_init() {
-    return;
-}
-
-void mfish_tai_turn() {
-    return;
-}
-
-void mfish_tai_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_tai_before_disp() {
-    return;
-}
-
-void mfish_tai_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_small_fish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_sfish_normal_init() {
-    return;
-}
-
-void mfish_sfish_normal() {
-    return;
-}
-
-void mfish_sfish_turn_init() {
-    return;
-}
-
-void mfish_sfish_turn() {
-    return;
-}
-
-void mfish_small_fish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_sfish_before_disp() {
-    return;
-}
-
-void mfish_small_fish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_gupi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_gupi_normal_init() {
-    return;
-}
-
-void mfish_gupi_normal() {
-    return;
-}
-
-void mfish_gupi_turn_init() {
-    return;
-}
-
-void mfish_gupi_turn() {
-    return;
-}
-
-void mfish_gupi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_gupi_before_disp() {
-    return;
-}
-
-void mfish_gupi_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_medaka_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_medaka_normal_init() {
-    return;
-}
-
-void mfish_medaka_normal() {
-    return;
-}
-
-void mfish_medaka_turn_init() {
-    return;
-}
-
-void mfish_medaka_turn() {
-    return;
-}
-
-void mfish_medaka_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_medaka_before_disp() {
-    return;
-}
-
-void mfish_medaka_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_kingyo_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_kingyo_normal_init() {
-    return;
-}
-
-void mfish_kingyo_normal() {
-    return;
-}
-
-void mfish_kingyo_turn_init() {
-    return;
-}
-
-void mfish_kingyo_turn() {
-    return;
-}
-
-void mfish_kingyo_peck_init() {
-    return;
-}
-
-void mfish_kingyo_peck() {
-    return;
-}
-
-void mfish_kingyo_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_kingyo_before_disp() {
-    return;
-}
-
-void mfish_kingyo_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_dojou_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_dojou_normal_init() {
-    return;
-}
-
-void mfish_dojou_normal() {
-    return;
-}
-
-void mfish_dojou_turn_init() {
-    return;
-}
-
-void mfish_dojou_turn() {
-    return;
-}
-
-void mfish_dojou_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_dojou_before_disp() {
-    return;
-}
-
-void mfish_dojou_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_donko_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_donko_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_donko_before_disp() {
-    return;
-}
-
-void mfish_donko_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_big_fish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_big_fish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_bfish_before_disp() {
-    return;
-}
-
-void mfish_big_fish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_ito_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_ito_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_ito_before_disp() {
-    return;
-}
-
-void mfish_ito_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_unagi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_unagi_get_next_rail_type() {
-    return;
-}
-
-void mfish_unagi_aim_wind_angle_calc() {
-    return;
-}
-
-void mfish_unagi_rail_move_init() {
-    return;
-}
-
-void mfish_unagi_rail_move() {
-    return;
-}
-
-void mfish_unagi_normal_to_reverse_init() {
-    return;
-}
-
-void mfish_unagi_normal_to_reverse() {
-    return;
-}
-
-void mfish_unagi_rail_move_reverse_init() {
-    return;
-}
-
-void mfish_unagi_rail_move_reverse() {
-    return;
-}
-
-void mfish_unagi_reverse_to_normal_init() {
-    return;
-}
-
-void mfish_unagi_reverse_to_normal() {
-    return;
-}
-
-void mfish_unagi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_unagi_before_disp() {
-    return;
-}
-
-void mfish_unagi_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_namazu_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_namazu_body_wind_anime_play() {
-    return;
-}
-
-void mfish_namazu_normal_process_init() {
-    return;
-}
-
-void mfish_namazu_normal_process() {
-    return;
-}
-
-void mfish_namazu_dummy_process_init() {
-    return;
-}
-
-void mfish_namazu_dummy_process() {
-    return;
-}
-
-void mfish_namazu_turn_process_init() {
-    return;
-}
-
-void mfish_namazu_turn_process() {
-    return;
-}
-
-void mfish_namazu_ground_sweep_process_init() {
-    return;
-}
-
-void mfish_namazu_ground_sweep_process() {
-    return;
-}
-
-void mfish_namazu_base_FishMove() {
-    return;
-}
-
-void mfish_namazu_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_namazu_before_disp() {
-    return;
-}
-
-void mfish_namazu_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_zarigani_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_zarigani_normal_process_init() {
-    return;
-}
-
-void mfish_zarigani_normal_process() {
-    return;
-}
-
-void mfish_zarigani_wait_process_init() {
-    return;
-}
-
-void mfish_zarigani_wait_process() {
-    return;
-}
-
-void mfish_zarigani_stand_process_init() {
-    return;
-}
-
-void mfish_zarigani_stand_process() {
-    return;
-}
-
-void mfish_zarigani_jump_process_init() {
-    return;
-}
-
-void mfish_zarigani_jump_process() {
-    return;
-}
-
-void mfish_zarigani_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_zarigani_before_disp() {
-    return;
-}
-
-void mfish_zarigani_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_kurage_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_kurage_normal_init() {
-    return;
-}
-
-void mfish_kurage_normal() {
-    return;
-}
-
-void mfish_kurage_turn_init() {
-    return;
-}
-
-void mfish_kurage_turn() {
-    return;
-}
-
-void mfish_kurage_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_kurage_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_hasu_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_hasu_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_hasu_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_kaeru_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_kaeru_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void hasu_before_disp() {
-    return;
-}
-
-void hasu_after_disp() {
-    return;
-}
-
-void mfish_kaeru_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
+#include "../src/actor/ac_museum_fish_base.c_inc"
+#include "../src/actor/ac_museum_fish_afish.c_inc"
+#include "../src/actor/ac_museum_fish_aroana.c_inc"
+#include "../src/actor/ac_museum_fish_koi.c_inc"
+#include "../src/actor/ac_museum_fish_kaseki.c_inc"
+#include "../src/actor/ac_museum_fish_bass.c_inc"
+#include "../src/actor/ac_museum_fish_seafish.c_inc"
+#include "../src/actor/ac_museum_fish_tai.c_inc"
+#include "../src/actor/ac_museum_fish_small_fish.c_inc"
+#include "../src/actor/ac_museum_fish_gupi.c_inc"
+#include "../src/actor/ac_museum_fish_medaka.c_inc"
+#include "../src/actor/ac_museum_fish_kingyo.c_inc"
+#include "../src/actor/ac_museum_fish_dojou.c_inc"
+#include "../src/actor/ac_museum_fish_donko.c_inc"
+#include "../src/actor/ac_museum_fish_big_fish.c_inc"
+#include "../src/actor/ac_museum_fish_ito.c_inc"
+#include "../src/actor/ac_museum_fish_unagi.c_inc"
+#include "../src/actor/ac_museum_fish_namazu.c_inc"
+#include "../src/actor/ac_museum_fish_zarigani.c_inc"
+#include "../src/actor/ac_museum_fish_kurage.c_inc"
+#include "../src/actor/ac_museum_fish_hasu.c_inc"

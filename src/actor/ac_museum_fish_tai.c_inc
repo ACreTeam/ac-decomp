@@ -1,0 +1,38 @@
+
+void mfish_tai_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_tai_normal_init() {
+    return;
+}
+
+void mfish_tai_normal() {
+    return;
+}
+
+void mfish_tai_turn_init() {
+    return;
+}
+
+void mfish_tai_turn() {
+    return;
+}
+
+void mfish_tai_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_tai_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                           void* arg, s_xyz* joint1, xyz_t* trans) {
+    return;
+}
+
+void mfish_tai_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}

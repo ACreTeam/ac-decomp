@@ -1,0 +1,33 @@
+
+void mfish_kurage_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_kurage_normal_init() {
+    return;
+}
+
+void mfish_kurage_normal() {
+    return;
+}
+
+void mfish_kurage_turn_init() {
+    return;
+}
+
+void mfish_kurage_turn() {
+    return;
+}
+
+void mfish_kurage_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}
+
+void mfish_kurage_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    return;
+}

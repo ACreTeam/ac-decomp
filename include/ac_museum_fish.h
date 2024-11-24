@@ -54,9 +54,8 @@ typedef struct _FISH_PRIVATE_DATA {
     void* _590;
     s32 _59C; // fish num
     xyz_t _5A0;
-    f32 _5AC;
-    f32 _5B0;
-    f32 _5B4;
+    xyz_t _5AC;
+    xyz_t _5B8;
     f32 _5D0;
     f32 _5D4;
     f32 _5D8;
@@ -67,21 +66,26 @@ typedef struct _FISH_PRIVATE_DATA {
     f32 _5F4;
     s_xz _60C;
     s_xz _612;
+    s16 _61A;
     s16 _61C;
     s16 _622;
     s16 _624;
     s16 _626;
+    s16 _628;
+    s16 _62A;
     s16 _62C;
     s16 _62E;
     s16 _630;
     s16 _632;
     s16 _634;
     s16 _636;
+    s16 _63E;
     s16 _640;
 } MUSEUM_FISH_PRIVATE_DATA;
 
-typedef struct _MUSEUM_FISH_PRIVATE_DATA2 {
-    cKF_SkeletonInfo_R_c _00;
+// Holds data for the underwater grass
+typedef struct _MUSEUM_FISH_KUSA_DATA {
+    YET_SKELETON _00;
     s_xyz _4F0;
     s_xyz _514;
     s16 _538;
@@ -90,7 +94,7 @@ typedef struct _MUSEUM_FISH_PRIVATE_DATA2 {
     float _540;
     float _548;
     void* _54C;
-} MUSEUM_FISH_PRIVATE_DATA2;
+} MUSEUM_FISH_KUSA_DATA; // size 558
 
 typedef struct _FISH_DISPLAY_MSG_INFO {
     s16 fishName;
@@ -98,14 +102,14 @@ typedef struct _FISH_DISPLAY_MSG_INFO {
 } FISH_DISPLAY_MSG_INFO;
 
 typedef struct _MUSEUM_FISH_ACTOR {
-    ACTOR actor;                          // offset: 0, size: 0x174
-    MUSEUM_FISH_PRIVATE_DATA prvFish[40]; // offset: 0x264 size: 0x648 * 40
-    MUSEUM_FISH_PRIVATE_DATA2 prvFish2[14];
+    ACTOR actor; // offset: 0, size: 0x174
+    int _174;
+    MUSEUM_FISH_PRIVATE_DATA prvFish[40]; // offset: 0x178 size: 0xFB48
+    MUSEUM_FISH_KUSA_DATA prvKusa[14];    // offset: 0xFCB8 size: 0x4AD0
     s16 _101f0;
     s16 _101f4;
     void* _14788;
-    xyz_t _14d08;
-    xyz_t _14d14;
+    xyz_t _14d08[2];
     int numFishDisplayed;                         // offset: 0x14d20, size: 4
     int fishDisplayMsgIter;                       // offset: 0x14d24, size: 4
     FISH_DISPLAY_MSG_INFO fishDisplayMsgInfo[10]; // offset: 0x14d28, size: 4*10
@@ -113,15 +117,14 @@ typedef struct _MUSEUM_FISH_ACTOR {
     s16 _14d50[0x10];
     s16 _14d78[0x10];
     s16 _14db4;
-    s16 _14db6; // offset: 0x14db6, size: 2
-    s16 _14db8; // offset: 0x14db8, size: 2
-    s16 _14dba; // offset: 0x14dba, size: 2
-    s16 _14dbc; // offset: 0x14dbc, size: 2
-    s16 _14dbe; // offset: 0x14dbe, size: 2
-    s16 _14dc0; // offset: 0x14dc0, size: 2
-    s16 _14dc2; // offset: 0x14dc2, size: 2
-    s16 _14dc4; // offset: 0x14dc4, size: 2
-    s16 _14dc8; // offset: 0x14dc8, size: 2
+    s16 _14db6;    // offset: 0x14db6, size: 2
+    s16 _14db8;    // offset: 0x14db8, size: 2
+    s16 _14dba;    // offset: 0x14dba, size: 2
+    s16 _14dbc[2]; // offset: 0x14dbc, size: 4
+    s16 _14dc0;    // offset: 0x14dc0, size: 2
+    s16 _14dc2;    // offset: 0x14dc2, size: 2
+    s16 _14dc4;    // offset: 0x14dc4, size: 2
+    s16 _14dc8;    // offset: 0x14dc8, size: 2
 } MUSEUM_FISH_ACTOR;
 
 void Museum_Fish_Prv_data_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game, int fishNum, int r6);
@@ -133,12 +136,12 @@ void Museum_Fish_Set_MsgFishInfo();
 void Museum_Fish_set_talk_info();
 void Museum_Fish_Talk_process();
 void Museum_Fish_Actor_move(ACTOR* actor, GAME* game);
-void Museum_Fish_Suisou_draw(MUSEUM_FISH_ACTOR* actor, GAME* game, int r5);
-void kusa_before_disp();
-void Museum_Fish_Kusa_Draw(ACTOR* actor, GAME* game);
+void Museum_Fish_Suisou_draw(ACTOR* actor, GAME* game, int r5);
+int kusa_before_disp(GAME* r3, cKF_SkeletonInfo_R_c* r4, int r5, Gfx** r6, u8* r7, void* arg, s_xyz* r9, xyz_t* r10);
+void Museum_Fish_Kusa_Draw(ACTOR* actor, GAME* game, int r5);
 void Museum_Fish_Actor_draw(ACTOR* actor, GAME* game);
 BOOL mfish_cull_check(GAME* game, xyz_t* worldPos, f32 x, f32 y, f32 _y);
-void mfish_point_ligh_pos_get();
+void mfish_point_ligh_pos_get(ACTOR* actorx, GAME* game, int r5);
 void mfish_point_light_ct(ACTOR* actor, GAME* game);
 void mfish_point_light_dt(ACTOR* r30, GAME* r31);
 void mfish_point_light_mv(ACTOR* actor, GAME* game);
@@ -148,7 +151,7 @@ f32 Rnd_EX_f(f32 v1);
 f32 Rnd_EX_fx(f32 v1);
 void mfish_base_FishMove();
 int mfish_PosWallCheck(MUSEUM_FISH_PRIVATE_DATA* priv, xyz_t* pos);
-void mfish_WallCheck();
+BOOL mfish_WallCheck(MUSEUM_FISH_PRIVATE_DATA* priv);
 s16 mfish_get_hide_camera_angle(MUSEUM_FISH_PRIVATE_DATA* priv);
 void mfish_dummy_process_init();
 void mfish_dummy_process();
@@ -209,7 +212,8 @@ void mfish_aroana_long_move_process();
 void mfish_aroana_base_FishMove();
 void mfish_aroana_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_aroana_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_aroana_before_disp();
+void mfish_aroana_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                              void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_aroana_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_koi_tail_anim_set();
 void mfish_koi_move_smooth();
@@ -227,14 +231,16 @@ void mfish_koi_long_move_process();
 void mfish_koi_base_FishMove();
 void mfish_koi_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_koi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_koi_before_disp();
+void mfish_koi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                           void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_koi_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_kaseki_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_kaseki_normal_init();
 void mfish_kaseki_normal();
 void mfish_kaseki_move_wall_smooth();
 void mfish_kaseki_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_kaseki_before_disp();
+void mfish_kaseki_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                              void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_kaseki_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_bass_tail_anim_set();
 void mfish_bass_base_FishMove();
@@ -253,7 +259,8 @@ void mfish_seafish_normal();
 void mfish_seafish_turn_init();
 void mfish_seafish_turn();
 void mfish_seafish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_seafish_before_disp();
+void mfish_seafish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                               void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_seafish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_tai_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_tai_normal_init();
@@ -261,7 +268,8 @@ void mfish_tai_normal();
 void mfish_tai_turn_init();
 void mfish_tai_turn();
 void mfish_tai_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_tai_before_disp();
+void mfish_tai_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                           void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_tai_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_small_fish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_sfish_normal_init();
@@ -269,7 +277,8 @@ void mfish_sfish_normal();
 void mfish_sfish_turn_init();
 void mfish_sfish_turn();
 void mfish_small_fish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_sfish_before_disp();
+void mfish_sfish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                             void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_small_fish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_gupi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_gupi_normal_init();
@@ -277,7 +286,8 @@ void mfish_gupi_normal();
 void mfish_gupi_turn_init();
 void mfish_gupi_turn();
 void mfish_gupi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_gupi_before_disp();
+void mfish_gupi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                            void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_gupi_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_medaka_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_medaka_normal_init();
@@ -285,7 +295,8 @@ void mfish_medaka_normal();
 void mfish_medaka_turn_init();
 void mfish_medaka_turn();
 void mfish_medaka_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_medaka_before_disp();
+void mfish_medaka_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                              void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_medaka_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_kingyo_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_kingyo_normal_init();
@@ -295,7 +306,8 @@ void mfish_kingyo_turn();
 void mfish_kingyo_peck_init();
 void mfish_kingyo_peck();
 void mfish_kingyo_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_kingyo_before_disp();
+void mfish_kingyo_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                              void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_kingyo_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_dojou_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_dojou_normal_init();
@@ -303,19 +315,23 @@ void mfish_dojou_normal();
 void mfish_dojou_turn_init();
 void mfish_dojou_turn();
 void mfish_dojou_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_dojou_before_disp();
+void mfish_dojou_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                             void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_dojou_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_donko_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_donko_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_donko_before_disp();
+void mfish_donko_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                             void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_donko_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_big_fish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_big_fish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_bfish_before_disp();
+void mfish_bfish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                             void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_big_fish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_ito_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_ito_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_ito_before_disp();
+void mfish_ito_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                           void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_ito_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_unagi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_unagi_get_next_rail_type();
@@ -329,7 +345,8 @@ void mfish_unagi_rail_move_reverse();
 void mfish_unagi_reverse_to_normal_init();
 void mfish_unagi_reverse_to_normal();
 void mfish_unagi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_unagi_before_disp();
+void mfish_unagi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                             void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_unagi_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_namazu_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_namazu_body_wind_anime_play();
@@ -343,7 +360,8 @@ void mfish_namazu_ground_sweep_process_init();
 void mfish_namazu_ground_sweep_process();
 void mfish_namazu_base_FishMove();
 void mfish_namazu_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_namazu_before_disp();
+void mfish_namazu_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                              void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_namazu_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_zarigani_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_zarigani_normal_process_init();
@@ -355,7 +373,8 @@ void mfish_zarigani_stand_process();
 void mfish_zarigani_jump_process_init();
 void mfish_zarigani_jump_process();
 void mfish_zarigani_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_zarigani_before_disp();
+void mfish_zarigani_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                                void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_zarigani_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_kurage_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_kurage_normal_init();
@@ -369,7 +388,8 @@ void mfish_hasu_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_hasu_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_kaeru_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_kaeru_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void hasu_before_disp();
+void hasu_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f, void* arg,
+                      s_xyz* joint1, xyz_t* trans);
 void hasu_after_disp();
 void mfish_kaeru_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
