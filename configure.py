@@ -1058,7 +1058,7 @@ config.libs = [
             Object(NonMatching, "actor/ac_snowman.c"),
             Object(NonMatching, "actor/ac_station.c"),
             Object(Matching, "actor/ac_structure.c"),
-            Object(NonMatching, "actor/ac_super.c"),
+            Object(Matching, "actor/ac_super.c"),
             Object(Matching, "actor/ac_tama.c"),
             Object(Matching, "actor/ac_tent.c"),
             Object(NonMatching, "actor/ac_tokyoso_control.c"),

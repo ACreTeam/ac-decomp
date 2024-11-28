@@ -1,0 +1,106 @@
+extern Gfx obj_s_shop3_window_model[];
+extern Gfx obj_w_shop3_window_model[];
+
+static int aSPR_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                   u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    SUPER_ACTOR* super;
+    GRAPH* graph;
+    int l;
+
+    super = (SUPER_ACTOR*)arg;
+    graph = game->graph;
+
+    if (joint_idx == 1) {
+        OPEN_POLY_OPA_DISP(graph);
+
+        l = 0.5f + (255 * super->struct_class.arg0_f);
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, l, 255, 255, 220, 0);
+
+        CLOSE_POLY_OPA_DISP(graph);
+    } else if (joint_idx == 7) {
+        *joint_shape = NULL;
+    }
+
+    return TRUE;
+}
+
+static int aSPR_actor_draw_after(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    static Gfx* mdl[] = { obj_s_shop3_window_model, obj_w_shop3_window_model };
+
+    SUPER_ACTOR* super;
+    GRAPH* graph;
+    Mtx* mtx;
+    int winter;
+    int l;
+    int r;
+    int g;
+    int b;
+
+    super = (SUPER_ACTOR*)arg;
+    graph = game->graph;
+
+    if (joint_idx == 7) {
+        mtx = _Matrix_to_Mtx_new(graph);
+        if (mtx != NULL) {
+            if (super->struct_class.arg0_f > 0.0f) {
+                l = super->struct_class.arg0_f * 120.0f + 0.5f;
+                r = 255;
+                g = 255;
+                b = 220;
+            } else {
+                l = 0;
+                r = 0;
+                g = 0;
+                b = 0;
+            }
+
+            winter = super->struct_class.season == mTM_SEASON_WINTER;
+
+            _texture_z_light_fog_prim_xlu(graph);
+
+            OPEN_POLY_XLU_DISP(graph);
+
+            gDPSetPrimColor(POLY_XLU_DISP++, 0, l, r, g, b, 0);
+            gSPMatrix(POLY_XLU_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPDisplayList(POLY_XLU_DISP++, mdl[winter]);
+
+            CLOSE_POLY_XLU_DISP(graph);
+        }
+    }
+
+    return TRUE;
+}
+
+static void aSPR_actor_draw(ACTOR* actor, GAME* game) {
+    GRAPH* graph;
+    cKF_SkeletonInfo_R_c* keyframe;
+    Mtx* mtx;
+    u16* pal;
+    GAME_PLAY* play;
+    SUPER_ACTOR* super;
+
+    graph = game->graph;
+    play = (GAME_PLAY*)game;
+    super = (SUPER_ACTOR*)actor;
+    keyframe = &super->struct_class.keyframe;
+
+    mtx = GRAPH_ALLOC_TYPE(graph, Mtx, (u32)keyframe->skeleton->num_shown_joints);
+    if (mtx == NULL) {
+        return;
+    }
+
+    pal = Common_Get(clip).structure_clip->get_pal_segment_proc(aSTR_PAL_SHOP3);
+
+    _texture_z_light_fog_prim_npc(graph);
+
+    OPEN_POLY_OPA_DISP(graph);
+
+    gSPSegment(POLY_OPA_DISP++, 8, pal);
+
+    CLOSE_POLY_OPA_DISP(graph);
+
+    cKF_Si3_draw_R_SV(game, keyframe, mtx, &aSPR_actor_draw_before, &aSPR_actor_draw_after, actor);
+    _texture_z_light_fog_prim_shadow(graph);
+    (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, &aSPR_shadow_data, FALSE);
+}

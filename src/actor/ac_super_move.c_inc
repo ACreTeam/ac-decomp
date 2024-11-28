@@ -1,0 +1,368 @@
+extern cKF_Animation_R_c cKF_ba_r_obj_s_shop3;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_shop3;
+
+// clang-format off
+static Door_data_c aSPR_super_door_data = {
+    SCENE_SUPER,
+    mSc_DIRECT_NORTH,
+    FALSE,
+    0,
+    {320, 0, 460},
+    EMPTY_NO,
+    1,
+    {0, 0, 0},
+};
+// clang-format on
+
+static void aSPR_set_door_SE(SUPER_ACTOR* super, u16 se_no) {
+    sAdo_OngenTrgStart(se_no, &super->struct_class.actor_class.world.position);
+}
+
+static void aSPR_rewrite_out_data(SUPER_ACTOR* super, GAME_PLAY* play) {
+    Door_data_c* out_data_p = Common_GetPointer(structure_exit_door_data);
+    xyz_t pos;
+
+    if (play->fb_wipe_mode == 0) {
+        out_data_p->next_scene_id = Save_Get(scene_no);
+        out_data_p->exit_orientation = mSc_DIRECT_SOUTH_WEST;
+        out_data_p->exit_type = 0;
+        out_data_p->extra_data = 3;
+
+        pos.x = super->struct_class.actor_class.world.position.x - 62.0f;
+        pos.z = super->struct_class.actor_class.world.position.z + 118.57f;
+        pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 0.0f);
+
+        out_data_p->exit_position.x = (s16)pos.x;
+        out_data_p->exit_position.y = (s16)pos.y;
+        out_data_p->exit_position.z = (s16)pos.z;
+        out_data_p->door_actor_name = SHOP2;
+        out_data_p->wipe_type = 1;
+        mBGMPsComp_make_ps_wipe(0x2168);
+    }
+}
+
+static int aSPR_check_player2(GAME_PLAY* play) {
+    ACTOR* player = GET_PLAYER_ACTOR_ACTOR(play);
+    int ret = FALSE;
+
+    if ((u16)player->world.angle.y > DEG2SHORT_ANGLE2(90.0f) && (u16)player->world.angle.y < DEG2SHORT_ANGLE2(180.0f) &&
+        player->speed > 0.0f) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aSPR_check_player(ACTOR* actorx, GAME_PLAY* play) {
+    ACTOR* player = GET_PLAYER_ACTOR_ACTOR(play);
+    int ret = 0;
+    f32 dx;
+    f32 dz;
+    f32 dist;
+
+    if (player == NULL) {
+        return 0;
+    }
+
+    dx = player->world.position.x - (actorx->world.position.x - 38.0f);
+    dz = player->world.position.z - (actorx->world.position.z + 96.0f);
+    dist = SQ(dx) + SQ(dz);
+
+    if ((u16)player->shape_info.rotation.y > DEG2SHORT_ANGLE2(90.0f) && (u16)player->shape_info.rotation.y < DEG2SHORT_ANGLE2(180.f) &&
+        dist < 240.0f) {
+        ret = 2;
+    } else if (dist < 820.0f) {
+        ret = 1;
+    }
+
+    return ret;
+}
+
+static void aSPR_set_talk_info_close_wait(ACTOR* actorx) {
+    rgba_t window_color;
+    int msg_no;
+    int now_sec;
+    int status;
+
+    now_sec = Common_Get(time.now_sec);
+    if (mSP_CheckFukubikiDay() != FALSE) {
+        if (now_sec >= (6 * mTM_SECONDS_IN_HOUR)) {
+            msg_no = mSP_ShopOpen() == mSP_SHOP_STATUS_PRE ? 0x7D6 : 0x7D7;
+        } else {
+            msg_no = 0x7CF;
+        }
+    } else {
+        switch (mSP_ShopOpen()) {
+            case mSP_SHOP_STATUS_PRE: // 0
+            case mSP_SHOP_STATUS_END: // 1
+                msg_no = 0x7CF;
+                break;
+            case mSP_SHOP_STATUS_PREEVENT: // 4
+                msg_no = 0x7D3;
+                break;
+            case mSP_SHOP_STATUS_ENDEVENT: // 5
+                msg_no = 0x7D9;
+                break;
+            case mSP_SHOP_STATUS_RENEW: // 3
+                msg_no = 0x7D8;
+                break;
+            default:
+                msg_no = 0x7CF;
+                break;
+        }
+    }
+
+    mDemo_Set_msg_num(msg_no);
+
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(TRUE);
+    mPlib_Set_able_hand_all_item_in_demo(TRUE);
+    mDemo_Set_ListenAble();
+
+    window_color.r = 145;
+    window_color.g = 60;
+    window_color.b = 40;
+    window_color.a = 255;
+    mDemo_Set_talk_window_color(&window_color);
+}
+
+static f32 aSPR_ctrl_light(SUPER_ACTOR* super) {
+    f32 ret = 0.0f;
+
+    if ((mSP_ShopOpen() == mSP_SHOP_STATUS_OPEN || mSP_ShopOpen() == mSP_SHOP_STATUS_OPENEVENT) == TRUE) {
+        ret = 1.0f;
+    } else if (super->struct_class.action == aSPR_ACTION_PL_INTO_WAIT) {
+        ret = 1.0f;
+    }
+
+    return ret;
+}
+
+static void aSPR_set_bgOffset(SUPER_ACTOR* super, int offs) {
+    // clang-format off
+    static mCoBG_OffsetTable_c height_table_ct[] = {
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 0, 12, 12, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 0, 12, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 0, 12, 12, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 12, 12, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 12, 12, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 0, 12, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 0, 12, 12, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 12, 12, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 12, 12, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 18, 18, 12, 18, 18, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 18, 18, 18, 18, 18, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 18, 18, 18, 0, 18, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 0, 12, 12, 12, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 12, 12, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 12, 12, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 18, 12, 18, 18, 18, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 18, 18, 18, 18, 18, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 18, 18, 18, 18, 0, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 0, 12, 12, 12, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 12, 12, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 12, 12, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 12, 0, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 0, 12, 12, 12, 1 },
+        { mCoBG_ATTRIBUTE_NONE, 12, 12, 12, 12, 0, 1 },
+    };
+    // clang-format on
+
+    static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
+
+    // clang-format off
+    static f32 addX[] = {
+        -mFI_UT_WORLDSIZE_X_F,
+        0.0,
+        -(2 * mFI_UT_WORLDSIZE_X_F),
+        -mFI_UT_WORLDSIZE_X_F,
+        0.0,
+        mFI_UT_WORLDSIZE_X_F,
+        -(3 * mFI_UT_WORLDSIZE_X_F),
+        -(2 * mFI_UT_WORLDSIZE_X_F),
+        -mFI_UT_WORLDSIZE_X_F,
+        0.0,
+        mFI_UT_WORLDSIZE_X_F,
+        (2 * mFI_UT_WORLDSIZE_X_F),
+        -(3 * mFI_UT_WORLDSIZE_X_F),
+        -(2 * mFI_UT_WORLDSIZE_X_F),
+        -mFI_UT_WORLDSIZE_X_F,
+        0.0,
+        mFI_UT_WORLDSIZE_X_F,
+        (2 * mFI_UT_WORLDSIZE_X_F),
+        -(2 * mFI_UT_WORLDSIZE_X_F),
+        -mFI_UT_WORLDSIZE_X_F,
+        0.0,
+        mFI_UT_WORLDSIZE_X_F,
+        -mFI_UT_WORLDSIZE_X_F,
+        0.0,
+
+    };
+    // clang-format on
+    // clang-format off
+    static f32 addZ[] = {
+        (2 * mFI_UT_WORLDSIZE_Z_F),
+        (2 * mFI_UT_WORLDSIZE_Z_F),
+        mFI_UT_WORLDSIZE_Z_F,
+        mFI_UT_WORLDSIZE_Z_F,
+        mFI_UT_WORLDSIZE_Z_F,
+        mFI_UT_WORLDSIZE_Z_F,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f,
+        -mFI_UT_WORLDSIZE_Z_F,
+        -mFI_UT_WORLDSIZE_Z_F,
+        -mFI_UT_WORLDSIZE_Z_F,
+        -mFI_UT_WORLDSIZE_Z_F,
+        -mFI_UT_WORLDSIZE_Z_F,
+        -mFI_UT_WORLDSIZE_Z_F,
+        -(2 * mFI_UT_WORLDSIZE_Z_F),
+        -(2 * mFI_UT_WORLDSIZE_Z_F),
+        -(2 * mFI_UT_WORLDSIZE_Z_F),
+        -(2 * mFI_UT_WORLDSIZE_Z_F),
+        -(3 * mFI_UT_WORLDSIZE_Z_F),
+        -(3 * mFI_UT_WORLDSIZE_Z_F),
+    };
+    // clang-format on
+
+    mCoBG_OffsetTable_c* offset;
+    xyz_t pos;
+    int i;
+
+    offset = height_table[offs];
+    for (i = 0; i < ARRAY_COUNT(height_table_ct); i++) {
+        pos.z = super->struct_class.actor_class.home.position.z + addZ[i];
+        pos.x = super->struct_class.actor_class.home.position.x + addX[i];
+        mCoBG_SetPluss5PointOffset_file(pos, *offset, __FILE__, 430);
+
+        offset++;
+    }
+}
+
+static void aSPR_close_wait(SUPER_ACTOR* super, GAME_PLAY* play) {
+    ACTOR* actorx;
+
+    actorx = (ACTOR*)super;
+
+    if (mDemo_Check(mDemo_TYPE_TALK, actorx) == TRUE) {
+        return;
+    }
+
+    if ((mSP_ShopOpen() == mSP_SHOP_STATUS_OPEN) || (mSP_ShopOpen() == mSP_SHOP_STATUS_OPENEVENT)) {
+        if (aSPR_check_player(actorx, play) != 0) {
+            aSPR_setup_action(super, aSPR_ACTION_OPEN_DOOR);
+        }
+        return;
+    }
+
+    if (aSPR_check_player(actorx, play) == 2) {
+        mDemo_Request(mDemo_TYPE_TALK, actorx, &aSPR_set_talk_info_close_wait);
+    }
+}
+
+static void aSPR_open_wait(SUPER_ACTOR* super, GAME_PLAY* play) {
+    ACTOR* actorx;
+    xyz_t pos;
+
+    actorx = (ACTOR*)super;
+    if (!mPlib_check_player_actor_main_index_OutDoorMove((GAME*)play)) {
+        if (mSP_ShopOpen() != mSP_SHOP_STATUS_OPEN && mSP_ShopOpen() != mSP_SHOP_STATUS_OPENEVENT) {
+            aSPR_setup_action(super, aSPR_ACTION_CLOSE_DOOR);
+        } else if (aSPR_check_player(actorx, play) != 2) {
+            if (aSPR_check_player(actorx, play) == 0) {
+                aSPR_setup_action(super, aSPR_ACTION_CLOSE_DOOR);
+            }
+        } else if (aSPR_check_player2(play)) {
+            pos.y = GET_PLAYER_ACTOR_ACTOR(play)->world.position.y;
+            pos.x = actorx->world.position.x - 45.0f;
+            pos.z = actorx->world.position.z + 102.5f;
+            mSP_SetTanukiShopStatus();
+
+            if (mPlib_request_main_door_type1((GAME*)play, &pos, DEG2SHORT_ANGLE(135.0f), TRUE, super)) {
+                aSPR_setup_action(super, aSPR_ACTION_PL_INTO_WAIT);
+            }
+        }
+    }
+}
+
+static void aSPR_close_door(SUPER_ACTOR* super, GAME_PLAY* play) {
+    if (super->struct_class.keyframe_state == cKF_STATE_STOPPED) {
+        aSPR_setup_action(super, aSPR_ACTION_CLOSE_WAIT);
+    }
+}
+
+static void aSPR_open_door(SUPER_ACTOR* super, GAME_PLAY* play) {
+    if (super->struct_class.keyframe_state == cKF_STATE_STOPPED) {
+        aSPR_setup_action(super, aSPR_ACTION_OPEN_WAIT);
+    }
+}
+
+static void aSPR_pl_into_wait(SUPER_ACTOR* super, GAME_PLAY* play) {
+    if (super != GET_PLAYER_ACTOR_NOW()->get_door_label_proc(gamePT)) {
+        return;
+    }
+
+    aSPR_rewrite_out_data(super, play);
+    goto_other_scene(play, &aSPR_super_door_data, FALSE);
+}
+
+static void aSPR_setup_action(SUPER_ACTOR* super, int action) {
+    static cKF_Animation_R_c* ani[] = { &cKF_ba_r_obj_s_shop3, &cKF_ba_r_obj_w_shop3 };
+    static f32 anime_spd[] = { 0.0f, 0.0f, 0.5f, 0.5f, 0.0f };
+    static f32 set[] = { 1.0f, 16.0f, 16.0f, 1.0f, 16.0f };
+    static f32 end[] = { 1.0f, 16.0f, 1.0f, 16.0f, 16.0f };
+
+    // clang-format off
+    static void* process[] = {
+        &aSPR_close_wait,
+        &aSPR_open_wait,
+        &aSPR_close_door,
+        &aSPR_open_door,
+        &aSPR_pl_into_wait,
+    };
+    // clang-format on
+
+    int winter;
+
+    winter = super->struct_class.season == mTM_SEASON_WINTER;
+
+    cKF_SkeletonInfo_R_init(&super->struct_class.keyframe, super->struct_class.keyframe.skeleton, ani[winter], 1.0f,
+                            end[action], set[action], anime_spd[action], 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+
+    switch (action) {
+        case aSPR_ACTION_CLOSE_DOOR:
+            aSPR_set_door_SE(super, NA_SE_44C);
+            break;
+        case aSPR_ACTION_OPEN_DOOR:
+            aSPR_set_door_SE(super, NA_SE_44B);
+            break;
+    }
+
+    super->struct_class.action_proc = process[action];
+    super->struct_class.action = action;
+}
+
+static void aSPR_actor_move(ACTOR* actor, GAME* game) {
+    SUPER_ACTOR* super;
+    GAME_PLAY* play;
+    s16 target;
+    xyz_t pos;
+
+    super = (SUPER_ACTOR*)actor;
+    play = (GAME_PLAY*)game;
+
+    super->struct_class.keyframe_state = cKF_SkeletonInfo_R_play(&super->struct_class.keyframe);
+    super->struct_class.keyframe_saved_keyframe = super->struct_class.keyframe.frame_control.current_frame;
+
+    (*super->struct_class.action_proc)((STRUCTURE_ACTOR*)super, play);
+    chase_f(&super->struct_class.arg0_f, aSPR_ctrl_light(super), 0.019532442f); // approx sqrt(0.000385f)
+}
+
+static void aSPR_actor_init(ACTOR* actor, GAME* game) {
+    mFI_SetFG_common(DUMMY_SHOP2, actor->home.position, FALSE);
+    aSPR_actor_move(actor, game);
+    actor->mv_proc = aSPR_actor_move;
+}
