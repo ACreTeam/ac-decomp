@@ -951,7 +951,7 @@ config.libs = [
             Object(Matching, "actor/ac_bridge_a.c"),
             Object(Matching, "actor/ac_broker_design.c"),
             Object(Matching, "actor/ac_buggy.c"),
-            Object(NonMatching, "actor/ac_conveni.c"),
+            Object(Matching, "actor/ac_conveni.c"),
             Object(Matching, "actor/ac_cottage.c"),
             Object(NonMatching, "actor/ac_count02.c"),
             Object(NonMatching, "actor/ac_countdown.c"),

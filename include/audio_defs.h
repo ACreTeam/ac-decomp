@@ -210,6 +210,9 @@ typedef enum audio_sound_effects {
     NA_SE_SCOOP_ITEM_HIT,
     NA_SE_AXE_BALL_HIT,
 
+    NA_SE_44B = 0x44B,
+    NA_SE_44C = 0x44C,
+
     NA_SE_45E = 0x45E,
     NA_SE_45F = 0x45F,
 
