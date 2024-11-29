@@ -20,6 +20,11 @@ extern "C" {
 #define eEC_DEFAULT_DEATH_DIST (800.0f)
 #define eEC_IGNORE_DEATH_DIST (-1000.203064f) // ignore death range check when set to this
 
+#define eEC_BUSH_HAPPA_TREE (0 << 13)
+#define eEC_BUSH_HAPPA_PALM (1 << 13)
+#define eEC_BUSH_HAPPA_CEDAR (2 << 13)
+#define eEC_BUSH_HAPPA_GOLD (3 << 13)
+
 enum effect_type {
     eEC_EFFECT_SHOCK,
     eEC_EFFECT_DUST,

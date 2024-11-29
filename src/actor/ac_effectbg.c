@@ -646,17 +646,17 @@ static void EffectBG_Make_Leafs(EffectBg_c* efbg, GAME* game, xyz_t pos, s16 cou
         }
     } else if (type == EffectBG_EFFECT_CUT_RIGHT_PALM) {
         bush_yuki_type = 0;
-        bush_happa_type = 0x2000 | 4;
+        bush_happa_type = eEC_BUSH_HAPPA_PALM | 4;
     } else if (type == EffectBG_EFFECT_CUT_RIGHT_CEDAR) {
         bush_yuki_type = 0;
-        bush_happa_type = 0x4000 | 4;
+        bush_happa_type = eEC_BUSH_HAPPA_CEDAR | 4;
     } else if (type == EffectBG_EFFECT_CUT_RIGHT_GOLD) {
         bush_yuki_type = 0;
 
         if (Common_Get(time).term_idx == mTM_TERM_4) {
-            bush_happa_type = 0x4000 | 0x2000 | 6;
+            bush_happa_type = eEC_BUSH_HAPPA_CEDAR | eEC_BUSH_HAPPA_PALM | 6;
         } else {
-            bush_happa_type = 0x4000 | 0x2000 | 4;
+            bush_happa_type = eEC_BUSH_HAPPA_CEDAR | eEC_BUSH_HAPPA_PALM | 4;
         }
     } else {
         if (Common_Get(time).term_idx == 4) {
@@ -669,11 +669,11 @@ static void EffectBG_Make_Leafs(EffectBg_c* efbg, GAME* game, xyz_t pos, s16 cou
     }
 
     if ((efbg->status & EffectBg_STATUS_GOLD) != 0 || efbg->variant == EffectBG_VARIANT_GOLD_SMALL) {
-        bush_happa_type |= 0x4000 | 0x2000;
+        bush_happa_type |= eEC_BUSH_HAPPA_CEDAR | eEC_BUSH_HAPPA_PALM;
     } else if ((efbg->status & EffectBg_STATUS_PALM) != 0 || efbg->variant == EffectBG_VARIANT_PALM_SMALL) {
-        bush_happa_type |= 0x2000;
+        bush_happa_type |= eEC_BUSH_HAPPA_PALM;
     } else if ((efbg->status & EffectBg_STATUS_CEDAR) != 0 || efbg->variant == EffectBG_VARIANT_CEDAR_SMALL) {
-        bush_happa_type |= 0x4000;
+        bush_happa_type |= eEC_BUSH_HAPPA_CEDAR;
     }
 
     while (count-- != 0) {

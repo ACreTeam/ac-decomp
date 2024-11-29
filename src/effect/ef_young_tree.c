@@ -84,30 +84,26 @@ static void eYoung_Tree_mv(eEC_Effect_c* effect, GAME* game) {
             } else {
                 uVar2 = 4;
             }
-            
+
             if (effect->arg1 == 1) {
-                uVar2 |= 0x2000;
+                uVar2 |= eEC_BUSH_HAPPA_PALM;
             } else if (effect->arg1 == 2) {
-                uVar2 |= 0x4000;
+                uVar2 |= eEC_BUSH_HAPPA_CEDAR;
             } else if (effect->arg1 == 3) {
-                uVar2 |= 0x6000;
+                uVar2 |= eEC_BUSH_HAPPA_PALM | eEC_BUSH_HAPPA_CEDAR;
             }
-        
+
             effPos.x = effPos.x + fqrand2() * 30.0f;
             effPos.y = effPos.y + fqrand() * 30.0f;
             uVar2 |= 0x8000;
-            
-            (*Common_Get(clip.effect_clip)->effect_make_proc)(
-                0x33, effPos, 2, 0, game, 0xFFFF, 0, uVar2
-            );
-            
+
+            eEC_CLIP->effect_make_proc(eEC_EFFECT_BUSH_HAPPA, effPos, 2, 0, game, 0xFFFF, 0, uVar2);
+
             if (effect->effect_specific[0] == 3) {
                 effPos2 = effect->position;
                 effPos2.x = effPos2.x + fqrand2() * 30.0f;
                 effPos2.y = effPos2.y + fqrand() * 30.0f;
-                (*Common_Get(clip.effect_clip)->effect_make_proc)(
-                    0x34, effPos2, 2, 0, game, 0xFFFF, 0, 0
-                );
+                eEC_CLIP->effect_make_proc(eEC_EFFECT_BUSH_YUKI, effPos2, 2, 0, game, 0xFFFF, 0, 0);
             }
         }
     }
@@ -176,7 +172,7 @@ static void eYoung_Tree_dw(eEC_Effect_c* effect, GAME* game) {
     } else if (effect->arg1 == 2) {
         if (effect->effect_specific[0] == 3) {
             gSPDisplayList(NEXT_POLY_XLU_DISP, &ef_w_young_cedar_modelT);
-        } else{ 
+        } else {
             gSPDisplayList(NEXT_POLY_XLU_DISP, &ef_s_young_cedar_modelT);
         }
     } else if (effect->effect_specific[0] == 3) {
