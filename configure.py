@@ -1346,7 +1346,7 @@ config.libs = [
             Object(NonMatching, "effect/ef_walk_asimoto.c"),
             Object(NonMatching, "effect/ef_warau.c"),
             Object(NonMatching, "effect/ef_yajirushi.c"),
-            Object(NonMatching, "effect/ef_young_tree.c"),
+            Object(Matching, "effect/ef_young_tree.c"),
             Object(Matching, "effect/ef_yukidama.c"),
             Object(Matching, "effect/ef_yukidaruma.c"),
             Object(Matching, "effect/ef_yukihane.c"),

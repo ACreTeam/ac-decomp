@@ -192,17 +192,17 @@ typedef struct field_display_list_info_s {
 } mFM_field_draw_info_c;
 
 typedef struct field_pal_s {
-    u16* earth_pal;
-    u16* cliff_pal;
-    u16* bush_pal;
-    u16* flower0_pal;
-    u16* flower1_pal;
-    u16* flower2_pal;
-    u16* grass_pal;
-    u16* tree_pal;
-    u16* cedar_tree_pal; // probably?
-    u16* palm_tree_pal;
-    u16* golden_tree_pal;
+/* 0x00 */ u16* earth_pal;
+/* 0x04 */ u16* cliff_pal;
+/* 0x08 */ u16* bush_pal;
+/* 0x0C */ u16* flower0_pal;
+/* 0x10 */ u16* flower1_pal;
+/* 0x14 */ u16* flower2_pal;
+/* 0x18 */ u16* grass_pal;
+/* 0x1C */ u16* tree_pal;
+/* 0x20 */ u16* cedar_tree_pal; // probably?
+/* 0x24 */ u16* palm_tree_pal;
+/* 0x28 */ u16* golden_tree_pal;
 } mFM_field_pal_c;
 
 typedef struct field_bg_sound_source_s {
