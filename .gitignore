@@ -42,3 +42,4 @@ temp/
 # Ignore the N64 SDK headers since we download them
 include/PR/
 include/gcc/
+include/compiler/gcc/stdlib.h

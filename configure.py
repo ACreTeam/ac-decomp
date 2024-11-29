@@ -2680,7 +2680,7 @@ N64_SDK_urls = [
     "https://raw.githubusercontent.com/decompals/ultralib/main/include/PR/gs2dex.h",
     "https://raw.githubusercontent.com/decompals/ultralib/main/include/PR/mbi.h",
     "https://raw.githubusercontent.com/decompals/ultralib/main/include/PR/ultratypes.h",
-    "https://raw.githubusercontent.com/decompals/ultralib/main/include/gcc/stdlib.h",
+    "https://raw.githubusercontent.com/decompals/ultralib/main/include/compiler/gcc/stdlib.h",
 ]
 
 # If we don't have these downloaded, we need to grab em
