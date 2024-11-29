@@ -3,10 +3,17 @@
 
 #include "types.h"
 #include "m_actor.h"
+#include "ac_structure.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct station_actor_s STATION_ACTOR;
+
+struct station_actor_s {
+    STRUCTURE_ACTOR struct_class;
+};
 
 extern ACTOR_PROFILE Station_Profile;
 
@@ -15,4 +22,3 @@ extern ACTOR_PROFILE Station_Profile;
 #endif
 
 #endif
-

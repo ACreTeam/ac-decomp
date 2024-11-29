@@ -180,7 +180,7 @@ config.ldflags = [
 if args.debug:
     config.ldflags.append("-g")
 if args.map:
-    config.ldflags.append("-nomapunused")
+    config.ldflags.append("-mapunused")
 
 # Use for any additional files that should cause a re-configure when modified
 config.reconfig_deps = []
@@ -1056,7 +1056,7 @@ config.libs = [
             Object(Matching, "actor/ac_shrine.c"),
             Object(Matching, "actor/ac_sign.c"),
             Object(NonMatching, "actor/ac_snowman.c"),
-            Object(NonMatching, "actor/ac_station.c"),
+            Object(Matching, "actor/ac_station.c"),
             Object(Matching, "actor/ac_structure.c"),
             Object(Matching, "actor/ac_super.c"),
             Object(Matching, "actor/ac_tama.c"),

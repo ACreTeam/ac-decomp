@@ -33,6 +33,7 @@
 #include "ac_garagara.h"
 #include "ac_turi_clip.h"
 #include "ac_hatumode_control.h"
+#include "ac_station_clip.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -91,7 +92,7 @@ typedef struct clip_s {
     /* 0x0D4 */ CLIP_NONE_PROC ball_redma_proc; /* removed in DnM+ */
     /* 0x0D8 */ void* _0D8;
     /* 0x0DC */ aAL_Clip_c* animal_logo_clip;
-    /* 0x0E0 */ void* _0E0;
+    /* 0x0E0 */ aSTC_clip_c* station_clip;
     /* 0x0E4 */ aTRC_clip_c* turi_clip;
     /* 0x0E8 */ SIGN_ACTOR* sign_control_actor;
     /* 0x0EC */ aAPC_Clip_c* aprilfool_control_clip;

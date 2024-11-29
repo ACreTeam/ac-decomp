@@ -9,21 +9,21 @@ static f32 calc_speed1(ACTOR* actor0, ACTOR* actor1) {
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor1;
 
     if (F32_IS_ZERO(actor1->speed)) {
-        return 0.8f + train0->tr_speed;
+        return 0.8f + train0->arg1_f;
     }
 
-    if (actor1->speed < train0->tr_speed) {
-        return train0->tr_speed + (0.5f * -(actor1->speed - train0->tr_speed));
+    if (actor1->speed < train0->arg1_f) {
+        return train0->arg1_f + (0.5f * -(actor1->speed - train0->arg1_f));
     }
 
-    return train0->tr_speed;
+    return train0->arg1_f;
 }
 
 static f32 calc_speed2(ACTOR* actor) {
     TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
-    int should_stop = F32_IS_ZERO(train1->tr0_pos);
+    int should_stop = F32_IS_ZERO(train1->arg1_f);
 
-    return should_stop == FALSE ? train1->tr0_pos : -0.23f;
+    return should_stop == FALSE ? train1->arg1_f : -0.23f;
 }
 
 static void aTR1_position_move(ACTOR* actor) {
@@ -35,7 +35,7 @@ static void aTR1_position_move(ACTOR* actor) {
     f32 base_x_pos;
 
     tr_back_calc = train1->actor_class.world.position.x;
-    base_x_pos = -125.0f + train0->tr1_pos;
+    base_x_pos = -125.0f + train0->arg0_f;
     tr_back_calc += 0.5f * train1->actor_class.speed;
 
     diff = tr_back_calc - base_x_pos;
@@ -70,7 +70,7 @@ static void aTR1_passenger_ctrl(ACTOR* actor) {
     xyz_t pos;
     s_xyz rot;
 
-    if (train1->player_pass_exists == 1) {
+    if (train1->arg0 == 1) {
         pos.x = train1->actor_class.world.position.x + 60.0f;
         pos.y = train1->actor_class.world.position.y + 20.0f;
         pos.z = train1->actor_class.world.position.z + 20.0f;
@@ -81,7 +81,7 @@ static void aTR1_passenger_ctrl(ACTOR* actor) {
             ->Set_force_position_angle_proc(gamePT, &pos, &rot,
                                             mPlayer_FORCE_POSITION_ANGLE_POSX | mPlayer_FORCE_POSITION_ANGLE_POSY |
                                                 mPlayer_FORCE_POSITION_ANGLE_POSZ | mPlayer_FORCE_POSITION_ANGLE_ROTY);
-    } else if (train1->player_pass_leaving == 1) {
+    } else if (train1->arg1 == 1) {
         pos.x = train1->actor_class.world.position.x + 2.0f;
         pos.y = train1->actor_class.world.position.y + 16.0f;
         pos.z = train1->actor_class.world.position.z + 20.0f;
@@ -92,9 +92,7 @@ static void aTR1_passenger_ctrl(ACTOR* actor) {
     }
 }
 
-static void aTR1_setupAction(ACTOR* actor, int action) {
-    TRAIN1_ACTOR* train1 = (TRAIN1_ACTOR*)actor;
-
+static void aTR1_setupAction(TRAIN1_ACTOR* train1, int action) {
     static cKF_Animation_R_c* anime_table[] = { &cKF_ba_r_obj_train1_3_open, &cKF_ba_r_obj_train1_3_close };
     static f32 anime_end[] = { 24.0f, 32.0f };
     static int animeSeqNoTable[] = { 0, 0, 0, 0, 0, 1, 1, 0, 0 };
@@ -111,11 +109,11 @@ static void aTR1_setupAction(ACTOR* actor, int action) {
     end = anime_end[seq_no];
 
     tr_speed = 1.0f;
-    train1->tr_action = action;
+    train1->action = action;
 
-    if ((train1->tr_action == 6) || (train1->tr_action == 4)) {
-        if ((mEv_CheckTitleDemo() == 0) && (tr_speed != train1->tr_speed)) {
-            aTR1_OngenTrgStart(actor, 43);
+    if ((train1->action == 6) || (train1->action == 4)) {
+        if ((mEv_CheckTitleDemo() == 0) && (tr_speed != train1->arg0_f)) {
+            aTR1_OngenTrgStart((ACTOR*)train1, 43);
         } else {
             tr_speed = end;
         }
@@ -130,15 +128,15 @@ static void aTR1_actor_move(ACTOR* actor, GAME* game) {
     TRAIN0_ACTOR* train0 = (TRAIN0_ACTOR*)actor->parent_actor;
     cKF_SkeletonInfo_R_c* keyframe = &train1->keyframe;
 
-    train1->anim_state = cKF_SkeletonInfo_R_play(keyframe);
+    train1->keyframe_state = cKF_SkeletonInfo_R_play(keyframe);
     if (mEv_CheckTitleDemo() <= 0) {
         aTR1_position_move((ACTOR*)train1);
     }
     aTR1_passenger_ctrl((ACTOR*)train1);
 
-    if (train0->tr_action != train1->tr_action) {
-        aTR1_setupAction((ACTOR*)train1, train0->tr_action);
+    if (train0->action != train1->action) {
+        aTR1_setupAction(train1, train0->action);
     }
 
-    train1->tr_speed = 0.0f;
+    train1->arg0_f = 0.0f;
 }

@@ -1,0 +1,73 @@
+extern Gfx obj_s_shop4_window_model[];
+extern Gfx obj_w_shop4_window_model[];
+
+static int aSTA_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                   u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    switch (joint_idx) {
+        case 4:
+            Matrix_RotateZ(-Common_Get(time.rad_hour), 1);
+            break;
+        case 2:
+            Matrix_RotateZ(-Common_Get(time.rad_min), 1);
+            break;
+    }
+
+    return TRUE;
+}
+
+static void aSTA_actor_draw(ACTOR* actor, GAME* game) {
+    // clang-format off
+    static bIT_ShadowData_c* shadow_low_data[] = {
+        &aSTA_shadow_low_data0,
+        &aSTA_shadow_low_data1,
+        &aSTA_shadow_low_data2,
+    };
+    // clang-format on
+
+    // clang-format off
+    static bIT_ShadowData_c* shadow_hi_data[] = {
+        &aSTA_shadow_hi_data0,
+        &aSTA_shadow_hi_data1,
+        &aSTA_shadow_hi_data2,
+    };
+    // clang-format on
+
+    GRAPH* graph;
+    STATION_ACTOR* station;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    cKF_SkeletonInfo_R_c* keyframe;
+    Mtx* mtx;
+    u16* pal;
+    LightsN* lights;
+    int type;
+    xyz_t light_pos;
+
+    graph = game->graph;
+    station = (STATION_ACTOR*)actor;
+    keyframe = &station->struct_class.keyframe;
+    light_pos = actor->world.position;
+
+    mtx = GRAPH_ALLOC_TYPE(graph, Mtx, (u32)keyframe->skeleton->num_shown_joints);
+    if (mtx == NULL) {
+        return;
+    }
+
+    light_pos.y += 1000.0f;
+    lights = Global_light_read(&play->global_light, game->graph);
+    LightsN_list_check(lights, play->global_light.list, &light_pos);
+    LightsN_disp(lights, game->graph);
+
+    pal = Common_Get(clip).structure_clip->get_pal_segment_proc(station->struct_class.structure_pal);
+    _texture_z_light_fog_prim_npc(graph);
+
+    OPEN_POLY_OPA_DISP(graph);
+
+    gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, pal);
+
+    CLOSE_POLY_OPA_DISP(graph);
+
+    cKF_Si3_draw_R_SV(game, keyframe, mtx, &aSTA_actor_draw_before, NULL, actor);
+    type = station->struct_class.structure_type - aSTR_TYPE_STATION1;
+    (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, shadow_low_data[type], FALSE);
+    (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, shadow_hi_data[type], TRUE);
+}

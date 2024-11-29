@@ -35,33 +35,32 @@ extern Gfx obj_train1_2_model[];
 static void aTR0_actor_ct(ACTOR* actor, GAME* GAME) {
     TRAIN0_ACTOR* train0 = (TRAIN0_ACTOR*)actor;
 
-    cKF_SkeletonInfo_R_ct(&train0->keyframe, &cKF_bs_r_obj_train1_1, NULL, train0->work, train0->target);
+    cKF_SkeletonInfo_R_ct(&train0->keyframe, &cKF_bs_r_obj_train1_1, NULL, train0->work_area, train0->morph_area);
     cKF_SkeletonInfo_R_init(&train0->keyframe, train0->keyframe.skeleton, &cKF_ba_r_obj_train1_1, 1.0f, 25.0f, 1.0f,
                             0.5f, 0.0f, 1, NULL);
     cKF_SkeletonInfo_R_play(&train0->keyframe);
     train0->actor_class.cull_width = 600.0f;
-    train0->actor_class.world.angle.y = 16384;
-    train0->tr_action = 5;
+    train0->actor_class.world.angle.y = DEG2SHORT_ANGLE2(90.0f);
+    train0->action = 5;
 }
 
 static void aTR0_actor_dt(ACTOR* actor, GAME* game) {
-
     TRAIN0_ACTOR* train0 = (TRAIN0_ACTOR*)actor;
-
     xyz_t tr_home_pos;
+    ACTOR* engineer_p;
 
     tr_home_pos = train0->actor_class.home.position;
+    mFI_SetFG_common(EMPTY_NO, tr_home_pos, FALSE);
 
-    mFI_SetFG_common(0, tr_home_pos, 0);
-
-    if (train0->tr_actor_p != NULL) {
-        Actor_delete(train0->tr_actor_p);
-        train0->tr_actor_p = NULL;
+    engineer_p = (ACTOR*)train0->arg3;
+    if (engineer_p != NULL) {
+        Actor_delete(engineer_p);
+        train0->arg3 = (int)NULL;
     }
+
     cKF_SkeletonInfo_R_dt(&train0->keyframe);
-    Common_Set(train_exists_flag, 0);
+    Common_Set(train_exists_flag, FALSE);
 }
 
 #include "../src/actor/ac_train0_move.c_inc"
-
 #include "../src/actor/ac_train0_draw.c_inc"

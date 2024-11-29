@@ -28,7 +28,7 @@ static void aID_train_birth_wait(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) 
     aID_change_player_demo_standing_train(&play->game);
     if (train != NULL) {
         intro_demo->train1_actor_p = train;
-        train->player_pass_exists = TRUE;
+        train->arg0 = TRUE;
         aID_setupAction(intro_demo, play, aID_ACT_RIDE_TRAIN);
     }
 }
@@ -37,7 +37,7 @@ static void aID_ride_train(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* play) {
     TRAIN1_ACTOR* train = intro_demo->train1_actor_p;
 
     aID_change_player_demo_standing_train(&play->game);
-    if (train->tr_action == 5) {
+    if (train->action == 5) {
         aID_setupAction(intro_demo, play, aID_ACT_RIDE_OFF_PLAYER);
     }
 }
@@ -228,7 +228,7 @@ static void aID_ride_off_player_init(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* pl
     ACTOR* station_master = Actor_info_fgName_search(&play->actor_info, SP_NPC_STATION_MASTER, ACTOR_PART_NPC);
 
     intro_demo->station_master_actor_p = station_master;
-    train->player_pass_exists = FALSE;
+    train->arg0 = FALSE;
     mPlib_request_main_demo_getoff_train_type1(&play->game);
     intro_demo->_1A0 = 0;
     mCoBG_SetAttribute(enter_pos, mCoBG_ATTRIBUTE_STONE);

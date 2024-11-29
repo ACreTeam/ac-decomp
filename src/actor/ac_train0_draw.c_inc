@@ -1,35 +1,28 @@
-static void aTR0_actor_draw(ACTOR* actor, GAME* game){
+static void aTR0_actor_draw(ACTOR* actor, GAME* game) {
     u16* pal = (*Common_Get(clip).structure_clip->get_pal_segment_proc)(0x39);
     GRAPH* graph = game->graph;
     cKF_SkeletonInfo_R_c* keyf;
     TRAIN0_ACTOR* train0 = (TRAIN0_ACTOR*)actor;
-
     Mtx* mtx;
-    Gfx* gfx;
 
     keyf = &train0->keyframe;
     mtx = GRAPH_ALLOC_TYPE(graph, Mtx, keyf->skeleton->num_shown_joints);
-
-    if (mtx != NULL){
+    if (mtx != NULL) {
         _texture_z_light_fog_prim_npc(graph);
         Matrix_push();
-        Matrix_translate(train0->tr1_pos, train0->actor_class.world.position.y, 
-            train0->actor_class.world.position.z, 0);
-        Matrix_scale(train0->actor_class.scale.x, train0->actor_class.scale.y, 
-            train0->actor_class.scale.z, 1);
+        Matrix_translate(train0->arg0_f, train0->actor_class.world.position.y, train0->actor_class.world.position.z, 0);
+        Matrix_scale(train0->actor_class.scale.x, train0->actor_class.scale.y, train0->actor_class.scale.z, 1);
 
-        OPEN_DISP(graph);
-        gfx = NOW_POLY_OPA_DISP;
-        
-        gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-        gSPSegment(gfx++, G_MWO_SEGMENT_8, pal); 
-        gDPLoadTLUT_Dolphin(gfx++, 15, 16, 1, pal);
-        gSPDisplayList(gfx++, obj_train1_2_model);
-        
-        SET_POLY_OPA_DISP(gfx);
-        CLOSE_DISP(graph);
-        
+        OPEN_POLY_OPA_DISP(graph);
+
+        gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPSegment(POLY_OPA_DISP++, G_MWO_SEGMENT_8, pal);
+        gDPLoadTLUT_Dolphin(POLY_OPA_DISP++, 15, 16, 1, pal);
+        gSPDisplayList(POLY_OPA_DISP++, obj_train1_2_model);
+
+        CLOSE_POLY_OPA_DISP(graph);
+
         Matrix_pull();
-        cKF_Si3_draw_R_SV(game, keyf, mtx, NULL,NULL,train0);
+        cKF_Si3_draw_R_SV(game, keyf, mtx, NULL, NULL, train0);
     }
 }

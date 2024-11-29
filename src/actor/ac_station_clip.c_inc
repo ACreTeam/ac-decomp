@@ -1,0 +1,511 @@
+static aSTC_clip_c aSTC_clip;
+
+static int aSTC_clip_change_talk_proc(ACTOR* actorx, int talk_idx);
+
+static void aSTC_clip_ct(void) {
+    aSTC_clip.change_talk_proc = &aSTC_clip_change_talk_proc;
+    CLIP(station_clip) = &aSTC_clip;
+}
+
+static void aSTC_clip_dt(void) {
+    CLIP(station_clip) = NULL;
+}
+
+static void aSTC_clip_change_sound(NPC_STATION_MASTER_ACTOR* master, u8 bgm_no) {
+    if (master->sound != bgm_no) {
+        switch (master->sound) {
+            case BGM_TRAIN_PULL_INTO_TOWN:
+            case BGM_TRAIN_ARRIVAL_WAIT:
+                mBGMPsComp_delete_ps_demo(master->sound, 0x168);
+                break;
+        }
+
+        mBGMPsComp_make_ps_demo(bgm_no, 0x168);
+        if (master->sound == BGM_FIELD_00) {
+            mBGMPsComp_delete_ps_quiet();
+        }
+
+        master->sound = bgm_no;
+    }
+}
+
+static void aSTM_set_slot_name(int slot_no, int str_no) {
+    u8 slot_name[mString_DEFAULT_STR_SIZE];
+
+    mString_Load_StringFromRom(slot_name, sizeof(slot_name), 0x6CD + slot_no);
+    mMsg_SET_FREE_STR(str_no, slot_name, sizeof(slot_name));
+}
+
+static int aSTM_chk_train_local(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    STRUCTURE_ACTOR* train1_p = (STRUCTURE_ACTOR*)Actor_info_fgName_search(&play->actor_info, TRAIN1, ACTOR_PART_ITEM);
+    int ret;
+
+    if (train1_p == NULL || train1_p->action > 5 || Common_Get(train_action) > 5) {
+        master->train_actor_p = NULL;
+        Common_Set(train_coming_flag, 4);
+        ret = 0;
+    } else {
+        master->train_actor_p = (ACTOR*)train1_p;
+        ret = 1;
+        Common_Set(train_coming_flag, 2);
+        aSTC_clip_change_sound(master, BGM_TRAIN_ARRIVAL_WAIT);
+    }
+
+    return ret;
+}
+
+static void aSTM_cardproc(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    // clang-format off
+    static u8 next_talk_act[] = {
+        aSTM_TALK_CHK_TRAIN2_TALK,
+        aSTM_TALK_BEFORE_SAVE_TALK,
+        aSTM_TALK_CHK_TRAIN2_TALK,
+        aSTM_TALK_BEFORE_SAVE_TALK,
+        aSTM_TALK_CHK_OVER_SAVE_TALK,
+        aSTM_TALK_END_WAIT,
+        aSTM_TALK_END_WAIT,
+        aSTM_TALK_CHK_REPAIRID,
+        aSTM_TALK_END_WAIT,
+        aSTM_TALK_END_WAIT,
+        aSTM_TALK_END_WAIT,
+        aSTM_TALK_END_WAIT,
+        aSTM_TALK_END_WAIT,
+        aSTM_TALK_END_WAIT,
+        aSTM_TALK_END_WAIT,
+        aSTM_TALK_END_WAIT,
+        aSTM_TALK_END_WAIT,
+        aSTM_TALK_CHK_REPAIRID,
+        aSTM_TALK_END_WAIT,
+    };
+    // clang-format on
+
+    // clang-format off
+    static u8 msg_no[] = {
+        8,
+        12,
+        8,
+        18,
+        27,
+        9,
+        10,
+        19,
+        3,
+        4,
+        31,
+        5,
+        36,
+        30,
+        37,
+        38,
+        39,
+        11,
+        40,
+    };
+    // clang-format on
+
+    ACTOR* actorx = (ACTOR*)master;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    mCPk_c* cpak_p = mCPk_get_pkinfo();
+    int talk_idx = -1;
+    s32 chan;
+    int card_ret = mCD_CheckStation_bg(&chan);
+
+    master->station_check_res = card_ret;
+    switch (card_ret) {
+        case mCD_TRANS_ERR_NONE:
+            talk_idx = aSTM_chk_train_local(master, play);
+            break;
+        case mCD_TRANS_ERR_NONE_NEXTLAND:
+            talk_idx = 2 + aSTM_chk_train_local(master, play);
+            break;
+        case mCD_TRANS_ERR_TRAVEL_DATA_EXISTS:
+            talk_idx = 4;
+            break;
+        case mCD_TRANS_ERR_CORRUPT:
+            talk_idx = 5;
+            break;
+        case mCD_TRANS_ERR_IOERROR:
+            talk_idx = 6;
+            break;
+        case mCD_TRANS_ERR_BROKEN_WRONGENCODING:
+            master->station_err = card_ret;
+            talk_idx = 7;
+            break;
+        case mCD_TRANS_ERR_NO_TOWN_DATA:
+            talk_idx = 8;
+            break;
+        case mCD_TRANS_ERR_NOCARD:
+            talk_idx = 9;
+            break;
+        case mCD_TRANS_ERR_TRAVEL_DATA_MISSING:
+            talk_idx = 10;
+            break;
+        case mCD_TRANS_ERR_NO_SPACE:
+            talk_idx = 11;
+            break;
+        case mCD_TRANS_ERR_WRONG_LAND:
+            talk_idx = 12;
+            break;
+        case mCD_TRANS_ERR_LAND_EXIST:
+            talk_idx = 13;
+            break;
+        case mCD_TRANS_ERR_NO_FILES:
+            talk_idx = 14;
+            break;
+        case mCD_TRANS_ERR_DAMAGED:
+            talk_idx = 15;
+            break;
+        case mCD_TRANS_ERR_NOT_MEMCARD:
+            talk_idx = 16;
+            break;
+        case mCD_TRANS_ERR_REPAIR:
+            master->station_err = card_ret;
+            talk_idx = 17;
+            break;
+        case mCD_TRANS_ERR_WRONGDEVICE:
+            talk_idx = 18;
+            break;
+        default:
+            talk_idx = 9;
+            break;
+        case mCD_TRANS_ERR_BUSY:
+            break;
+    }
+
+    if (talk_idx != -1) {
+        if (chan == 0 || chan == 1) {
+            aSTM_set_slot_name(chan == 0, mMsg_FREE_STR3);
+            aSTM_set_slot_name(chan, mMsg_FREE_STR5);
+            aSTM_set_slot_name(chan, mMsg_FREE_STR4);
+        }
+
+        master->chan = chan;
+        mMsg_UNSET_LOCKCONTINUE();
+        mMsg_Set_continue_msg_num(msg_p, 0x0943 + msg_no[talk_idx]);
+        aSTC_clip_change_talk_proc(actorx, next_talk_act[talk_idx]);
+    }
+}
+
+static void aSTM_chk_leave_talk(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_CHK_LEAVE_TALK2);
+                break;
+            case mChoice_CHOICE1:
+                aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aSTM_chk_leave_talk2(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mMsg_SET_LOCKCONTINUE();
+        aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_CARDPROC);
+    }
+}
+
+static void aSTM_repairid_after(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        mMsg_SET_LOCKCONTINUE();
+        aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_CARDPROC);
+    }
+}
+
+static void aSTM_chk_train_talk(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    static u8 next_talk_act[] = { aSTM_TALK_CHK_TRAIN2_TALK, aSTM_TALK_BEFORE_SAVE_TALK };
+    static u8 msg_no[] = { 8, 12 };
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int idx;
+
+    if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        idx = aSTM_chk_train_local(master, play);
+        mMsg_Set_continue_msg_num(msg_p, 0x0943 + msg_no[idx]);
+        aSTC_clip_change_talk_proc((ACTOR*)master, next_talk_act[idx]);
+    }
+}
+
+static void aSTM_chk_train2_talk(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        if (master->station_check_res == mCD_TRANS_ERR_NONE_NEXTLAND) {
+            mMsg_Set_continue_msg_num(msg_p, 0x0955);
+        } else {
+            mMsg_Set_continue_msg_num(msg_p, 0x094F);
+        }
+
+        aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_BEFORE_SAVE_TALK);
+        aSTC_clip_change_sound(master, BGM_TRAIN_ARRIVAL_WAIT);
+    }
+}
+
+static void aSTM_before_save_talk(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_SAVE_TALK);
+        mMsg_Set_LockContinue(msg_p);
+        Actor_info_save_actor(play);
+    }
+}
+
+static void aSTM_save_talk(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    static int msg_no[] = { 0x0950, 0x0964 };
+    static u8 next_think_idx[] = { 13, 10 };
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int idx;
+    int res;
+    s32 chan;
+    int next_msg_no;
+
+    if (master->station_check_res == mCD_TRANS_ERR_NONE_NEXTLAND) {
+        res = mCD_SaveStation_NextLand_bg(&chan);
+    } else {
+        res = mCD_SaveStation_Passport_bg(&chan);
+    }
+
+    switch (res) {
+        case mCD_TRANS_ERR_NONE:
+            mMsg_Unset_LockContinue(msg_p);
+            idx = master->train_actor_p == NULL;
+            mMsg_Set_continue_msg_num(msg_p, msg_no[idx]);
+            master->next_think_idx = next_think_idx[idx];
+            aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_SAVE_TALK_END);
+            mEv_SetGateway();
+            mDemo_Set_talk_return_demo_wait(TRUE);
+            break;
+        case mCD_TRANS_ERR_BUSY:
+            break;
+        default:
+            if (chan == 0 || chan == 1) {
+                aSTM_set_slot_name(chan == 0, mMsg_FREE_STR3);
+                aSTM_set_slot_name(chan, mMsg_FREE_STR5);
+                aSTM_set_slot_name(chan, mMsg_FREE_STR4);
+            }
+
+            aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_SAVE_ERROR);
+            switch (res) {
+                case mCD_TRANS_ERR_BROKEN_WRONGENCODING:
+                    next_msg_no = 0x0956;
+                    aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_CHK_REPAIRID);
+                    master->station_err = res;
+                    break;
+                case mCD_TRANS_ERR_REPAIR:
+                    next_msg_no = 0x094E;
+                    aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_CHK_REPAIRID);
+                    master->station_err = res;
+                    break;
+                case mCD_TRANS_ERR_CORRUPT:
+                    next_msg_no = 0x094C;
+                    break;
+                case mCD_TRANS_ERR_IOERROR:
+                    next_msg_no = 0x094D;
+                    break;
+                case mCD_TRANS_ERR_NO_TOWN_DATA:
+                    next_msg_no = 0x0946;
+                    break;
+                case mCD_TRANS_ERR_NOCARD:
+                    next_msg_no = 0x0947;
+                    break;
+                case mCD_TRANS_ERR_TRAVEL_DATA_MISSING:
+                    next_msg_no = 0x0962;
+                    break;
+                case mCD_TRANS_ERR_NO_SPACE:
+                    next_msg_no = 0x0948;
+                    break;
+                case mCD_TRANS_ERR_WRONG_LAND:
+                    next_msg_no = 0x0967;
+                    break;
+                case mCD_TRANS_ERR_LAND_EXIST:
+                    next_msg_no = 0x0961;
+                    break;
+                case mCD_TRANS_ERR_NO_FILES:
+                    next_msg_no = 0x0968;
+                    break;
+                case mCD_TRANS_ERR_DAMAGED:
+                    next_msg_no = 0x0969;
+                    break;
+                case mCD_TRANS_ERR_NOT_MEMCARD:
+                    next_msg_no = 0x096A;
+                    break;
+                case mCD_TRANS_ERR_WRONGDEVICE:
+                    next_msg_no = 0x096B;
+                    break;
+                default:
+                    next_msg_no = 0x0946;
+                    break;
+            }
+
+            mMsg_Unset_LockContinue(msg_p);
+            mMsg_Set_continue_msg_num(msg_p, next_msg_no);
+
+            if (Common_Get(player_no) < PLAYER_NUM) {
+                master->next_think_idx = 8;
+            } else {
+                master->next_think_idx = 9;
+            }
+
+            mMsg_Set_ForceNext(msg_p);
+            mBGMPsComp_make_ps_quiet(0x168);
+            mBGMPsComp_delete_ps_demo(master->sound, 0x168);
+            master->sound = BGM_SILENCE;
+            if (master->train_actor_p == NULL) {
+                Common_Set(train_coming_flag, 0);
+            }
+            break;
+    }
+}
+
+static void aSTM_save_error(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)master;
+
+    if (!mDemo_Check(mDemo_TYPE_SPEAK, actorx) && !mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        switch (master->happening_sound) {
+            case BGM_INTRO_ARRIVE:
+                mBGMPsComp_delete_ps_happening(BGM_INTRO_ARRIVE, 0x168);
+                mBGMPsComp_make_ps_happening(BGM_INTRO_NEW_TOWN, 0x168);
+                master->happening_sound = BGM_INTRO_NEW_TOWN;
+                break;
+        }
+
+        mBGMPsComp_delete_ps_quiet();
+    }
+}
+
+static void aSTM_chk_over_save_talk(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                master->next_think_idx = 8;
+                aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_END_WAIT);
+                break;
+            case mChoice_CHOICE1:
+                aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_CHK_TRAIN_TALK);
+                aSTC_clip_change_sound(master, BGM_TRAIN_ARRIVAL_WAIT);
+                break;
+        }
+    }
+}
+
+static void aSTM_save_talk_end(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)master;
+
+    if (master->sound != BGM_FIELD_00 && master->next_think_idx == 10) {
+        if (mMsg_CHECK_MAINDISAPPEAR()) {
+            if (master->sound != BGM_SILENCE) {
+                mBGMPsComp_delete_ps_demo(master->sound, 0x168);
+            }
+
+            mBGMPsComp_make_ps_quiet(0x21C);
+            master->sound = BGM_FIELD_00;
+        }
+    }
+    
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_DEMO_WAIT) {
+            mPlib_request_main_demo_wait_type1((GAME*)play, FALSE, NULL);
+        } else {
+            aSTC_clip_change_talk_proc(actorx, aSTM_TALK_END_WAIT);
+        }
+    }
+}
+
+static void aSTM_sayonara(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINDISAPPEAR()) {
+        mBGMPsComp_scene_mode(7);
+        aSTC_clip_change_sound(master, BGM_TRAIN_BOARD);
+    }
+}
+
+static void aSTM_chk_repairid(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_REPAIRID_BF);
+                break;
+            case mChoice_CHOICE1:
+                aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aSTM_repairid_bf(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        mMsg_Set_LockContinue(msg_p);
+        aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_REPAIRID);
+    }
+}
+
+static void aSTM_repairid(NPC_STATION_MASTER_ACTOR* master, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int res = mCD_card_format_bg(master->chan);
+
+    switch (res) {
+        case mCD_RESULT_SUCCESS:
+            mMsg_Unset_LockContinue(msg_p);
+            if (master->station_err == mCD_TRANS_ERR_BROKEN_WRONGENCODING) {
+                mMsg_Set_continue_msg_num(msg_p, 0x095A);
+            } else {
+                mMsg_Set_continue_msg_num(msg_p, 0x0954);
+            }
+
+            aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_REPAIRID_AFTER);
+            break;
+        case mCD_RESULT_ERROR:
+            mMsg_Unset_LockContinue(msg_p);
+            if (master->station_err == mCD_TRANS_ERR_BROKEN_WRONGENCODING) {
+                mMsg_Set_continue_msg_num(msg_p, 0x0958);
+            } else {
+                mMsg_Set_continue_msg_num(msg_p, 0x0952);
+            }
+
+            aSTC_clip_change_talk_proc((ACTOR*)master, aSTM_TALK_END_WAIT);
+            break;
+    }
+}
+
+static int aSTC_clip_change_talk_proc(ACTOR* actorx, int talk_act) {
+    // clang-format off
+    static aSTM_TALK_PROC proc[] = {
+        &aSTM_chk_leave_talk,
+        &aSTM_chk_leave_talk2,
+        &aSTM_sayonara,
+        &aSTM_chk_train_talk,
+        &aSTM_chk_train2_talk,
+        &aSTM_before_save_talk,
+        &aSTM_save_talk,
+        &aSTM_chk_over_save_talk,
+        &aSTM_save_talk_end,
+        &aSTM_save_error,
+        &aSTM_chk_repairid,
+        &aSTM_repairid_bf,
+        &aSTM_repairid,
+        &aSTM_repairid_after,
+        &aSTM_cardproc,
+        (aSTM_TALK_PROC)&none_proc1,
+    };
+    // clang-format on
+
+    NPC_STATION_MASTER_ACTOR* master = (NPC_STATION_MASTER_ACTOR*)actorx;
+
+    master->talk_proc = proc[talk_act];
+    return TRUE;
+}

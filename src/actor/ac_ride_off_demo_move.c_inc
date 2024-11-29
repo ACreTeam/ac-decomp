@@ -25,7 +25,7 @@ static void aROD_train_birth_wait(ACTOR* actor, GAME* game) {
 
     if (train != NULL) {
         ride_off->train_actor = train;
-        train->player_pass_exists = TRUE;
+        train->arg0 = TRUE;
         aROD_setupAction(actor, game, 2);
     }
 }
@@ -36,7 +36,7 @@ static void aROD_ride_train(ACTOR* actor, GAME* game) {
 
     aROD_change_player_demo_standing_train(game);
 
-    if (train->tr_action == 5) {
+    if (train->action == 5) {
         aROD_setupAction(actor, game, 3);
     }
 }
@@ -101,7 +101,7 @@ static void aROD_ride_off_player_init(ACTOR* actor, GAME* game) {
 
     ride_off->station_master_actor = Actor_info_fgName_search(&play->actor_info, SP_NPC_STATION_MASTER, ACTOR_PART_NPC);
 
-    train->player_pass_exists = FALSE;
+    train->arg0 = FALSE;
     mPlib_request_main_demo_getoff_train_type1(game);
     ride_off->_188 = 0;
     mCoBG_SetAttribute(enter_pos, mCoBG_ATTRIBUTE_STONE);
@@ -137,4 +137,3 @@ static void aROD_actor_move(ACTOR* actor, GAME* game) {
 
     ride_off->current_proc(actor, game);
 }
-

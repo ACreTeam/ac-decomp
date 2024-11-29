@@ -84,11 +84,11 @@ enum {
 /* This is also a priority table where lower = higher priority */
 enum {
     mCD_TRANS_ERR_NONE,
-    mCD_TRANS_ERR_1,
+    mCD_TRANS_ERR_NONE_NEXTLAND, // leave town
     mCD_TRANS_ERR_IOERROR,
-    mCD_TRANS_ERR_3,
+    mCD_TRANS_ERR_DAMAGED,
     mCD_TRANS_ERR_BROKEN_WRONGENCODING,
-    mCD_TRANS_ERR_5,
+    mCD_TRANS_ERR_REPAIR,
     mCD_TRANS_ERR_NOT_MEMCARD,
     mCD_TRANS_ERR_WRONG_LAND,
     mCD_TRANS_ERR_INVALID_NOLAND_CODE,
@@ -100,13 +100,13 @@ enum {
     mCD_TRANS_ERR_OTHER_TOWN,
     mCD_TRANS_ERR_15,
     mCD_TRANS_ERR_16,
-    mCD_TRANS_ERR_17,
+    mCD_TRANS_ERR_CORRUPT,
     mCD_TRANS_ERR_18,
-    mCD_TRANS_ERR_19,
-    mCD_TRANS_ERR_20,
+    mCD_TRANS_ERR_TRAVEL_DATA_MISSING,
+    mCD_TRANS_ERR_TRAVEL_DATA_EXISTS,
     mCD_TRANS_ERR_WRONGDEVICE,
     mCD_TRANS_ERR_NOCARD,
-    mCD_TRANS_ERR_23,
+    mCD_TRANS_ERR_NO_TOWN_DATA,
     mCD_TRANS_ERR_GENERIC,
     mCD_TRANS_ERR_BUSY,
 
@@ -241,6 +241,10 @@ extern int mCD_CheckCardPlayerNative(int idx);
 extern int mCD_CheckPassportFile(void);
 extern int mCD_CheckBrokenPassportFile(int slot);
 extern int mCD_GetPlayerNum(void);
+
+extern int mCD_CheckStation_bg(s32* chan);
+extern int mCD_SaveStation_NextLand_bg(s32* chan);
+extern int mCD_SaveStation_Passport_bg(s32* chan);
 
 extern void mCD_PrintErrInfo(gfxprint_t* gfxprint);
 extern void mCD_InitAll();

@@ -710,7 +710,9 @@ def generate_build_ninja(
     n.comment("Source files")
 
     def map_path(path: Path) -> Path:
-        return path.parent / (path.name + ".MAP")
+        if path.suffix == '.plf' or path.suffix == '.elf':
+            return path.with_suffix('.map')
+        return path.parent / (path.name + ".map")
 
     class LinkStep:
         def __init__(self, config: Dict[str, Any]) -> None:

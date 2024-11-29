@@ -1,0 +1,37 @@
+typedef void (*aSTA_ACT_PROC)(STATION_ACTOR*, GAME_PLAY*);
+
+static void aSTA_wait(STATION_ACTOR* station, GAME_PLAY* play) {
+    // nothing
+}
+
+static void aSTA_setup_action(STATION_ACTOR* station, int action) {
+    // clang-format off
+    static cKF_Animation_R_c* ani[][2] = {
+        { &cKF_ba_r_obj_s_station1, &cKF_ba_r_obj_w_station1 },
+        { &cKF_ba_r_obj_s_station2, &cKF_ba_r_obj_w_station2 },
+        { &cKF_ba_r_obj_s_station3, &cKF_ba_r_obj_w_station3 },
+    };
+    // clang-format on
+
+    static void* process[] = { &aSTA_wait };
+    int season = station->struct_class.season == mTM_SEASON_WINTER;
+
+    cKF_SkeletonInfo_R_init(&station->struct_class.keyframe, station->struct_class.keyframe.skeleton,
+                            ani[station->struct_class.arg0][season], 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+                            cKF_FRAMECONTROL_STOP, NULL);
+    station->struct_class.action_proc = process[action];
+    station->struct_class.action = action;
+}
+
+static void aSTA_actor_move(ACTOR* actorx, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    STATION_ACTOR* station = (STATION_ACTOR*)actorx;
+
+    (*(aSTA_ACT_PROC)station->struct_class.action_proc)(station, play);
+}
+
+static void aSTA_actor_init(ACTOR* actorx, GAME* game) {
+    mFI_SetFG_common(DUMMY_STATION, actorx->home.position, FALSE);
+    aSTA_actor_move(actorx, game);
+    actorx->mv_proc = &aSTA_actor_move;
+}
