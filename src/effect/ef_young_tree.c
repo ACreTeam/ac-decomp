@@ -90,7 +90,7 @@ static void eYoung_Tree_mv(eEC_Effect_c* effect, GAME* game) {
             } else if (effect->arg1 == 2) {
                 uVar2 |= eEC_BUSH_HAPPA_CEDAR;
             } else if (effect->arg1 == 3) {
-                uVar2 |= eEC_BUSH_HAPPA_PALM | eEC_BUSH_HAPPA_CEDAR;
+                uVar2 |= eEC_BUSH_HAPPA_GOLD;
             }
 
             effPos.x = effPos.x + fqrand2() * 30.0f;
