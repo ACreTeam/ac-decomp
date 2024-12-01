@@ -968,7 +968,7 @@ config.libs = [
             Object(Matching, "actor/ac_flag.c"),
             Object(Matching, "actor/ac_fuusen.c"),
             Object(Matching, "actor/ac_garagara.c"),
-            Object(NonMatching, "actor/ac_ghog.c"),
+            Object(Matching, "actor/ac_ghog.c"),
             Object(Matching, "actor/ac_goza.c"),
             Object(Matching, "actor/ac_groundhog_control.c"),
             Object(Matching, "actor/ac_gyo_kage.c"),

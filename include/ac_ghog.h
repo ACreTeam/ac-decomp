@@ -3,10 +3,13 @@
 
 #include "types.h"
 #include "m_actor.h"
+#include "ac_structure.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef STRUCTURE_ACTOR GHOG_ACTOR;
 
 extern ACTOR_PROFILE Ghog_Profile;
 
@@ -15,4 +18,3 @@ extern ACTOR_PROFILE Ghog_Profile;
 #endif
 
 #endif
-
