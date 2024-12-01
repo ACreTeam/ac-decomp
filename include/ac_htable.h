@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_actor.h"
+#include "ac_structure.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,6 +16,8 @@ typedef struct htable_clip_s {
     xyz_t pickup_pos;
     s16 pickup_counter;
 } aHTBL_Clip_c;
+
+typedef STRUCTURE_ACTOR HTABLE_ACTOR;
 
 extern ACTOR_PROFILE Htable_Profile;
 
