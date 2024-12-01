@@ -29,6 +29,11 @@ typedef enum audio_sound_effects {
     NA_SE_ZOOMUP = 4,
     NA_SE_ZOOMDOWN_SHORT,
 
+    NA_SE_6 = 0x6,
+    NA_SE_7 = 0x7,
+    NA_SE_8 = 0x8,
+    NA_SE_9 = 0x9,
+
     NA_SE_A = 0xA,
     NA_SE_PAGE_OKURI = 0xB,
 

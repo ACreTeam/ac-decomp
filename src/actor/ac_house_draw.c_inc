@@ -1,0 +1,281 @@
+extern Gfx obj_s_shop2_window_model[];
+extern Gfx obj_w_shop2_window_model[];
+
+static int aHUS_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                   u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    HOUSE_ACTOR* house;
+    GRAPH* graph;
+    int b;
+    int rg;
+
+    house = (HOUSE_ACTOR*)arg;
+    graph = game->graph;
+
+    if (joint_idx == 1 || joint_idx == 3) {
+        OPEN_POLY_OPA_DISP(graph);
+
+        b = 0.5f + (150 * aHUS_GET_LIGHT_PERCENT(house));
+        rg = 0.5f + (255 * aHUS_GET_LIGHT_PERCENT(house));
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, rg, rg, b, 255);
+
+        CLOSE_POLY_OPA_DISP(graph);
+    }
+
+    if (joint_idx == 7) {
+        *joint_shape = NULL;
+    }
+
+    return TRUE;
+}
+
+extern Gfx obj_s_house1_windowL_model[];
+extern Gfx obj_s_house1_windowR_model[];
+
+extern Gfx obj_s_house2_window_model[];
+
+extern Gfx obj_s_house3_windowL_model[];
+extern Gfx obj_s_house3_windowR_model[];
+
+extern Gfx obj_s_house4_windowL_model[];
+extern Gfx obj_s_house4_windowR_model[];
+
+extern Gfx obj_s_house5_windowL_model[];
+extern Gfx obj_s_house5_windowR_model[];
+
+extern Gfx obj_w_house1_windowL_model[];
+extern Gfx obj_w_house1_windowR_model[];
+
+extern Gfx obj_w_house2_window_model[];
+
+extern Gfx obj_w_house3_windowL_model[];
+extern Gfx obj_w_house3_windowR_model[];
+
+extern Gfx obj_w_house4_windowL_model[];
+extern Gfx obj_w_house4_windowR_model[];
+
+extern Gfx obj_w_house5_windowL_model[];
+extern Gfx obj_w_house5_windowR_model[];
+
+static int aHUS_actor_draw_after(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    static Gfx* window_model_table[][2][2] = {
+        {
+            { obj_s_house1_windowL_model, obj_s_house1_windowR_model },
+            { obj_w_house1_windowL_model, obj_w_house1_windowR_model },
+        },
+        {
+            { obj_s_house2_window_model, NULL },
+            { obj_w_house2_window_model, NULL },
+        },
+        {
+            { obj_s_house3_windowL_model, obj_s_house3_windowR_model },
+            { obj_w_house3_windowL_model, obj_w_house3_windowR_model },
+        },
+        {
+            { obj_s_house4_windowL_model, obj_s_house4_windowR_model },
+            { obj_w_house4_windowL_model, obj_w_house4_windowR_model },
+        },
+        {
+            { obj_s_house5_windowL_model, obj_s_house5_windowR_model },
+            { obj_w_house5_windowL_model, obj_w_house5_windowR_model },
+        },
+    };
+
+    static xyz_t window_light_offset_table[] = { { -100.0f, 0.0f, 0.0f }, { 100.0f, 0.0f, 0.0f } };
+
+    GRAPH* graph;
+    HOUSE_ACTOR* house;
+    u16* pal_p;
+    int season;
+    int type;
+    int l;
+    int r;
+    int g;
+    int b;
+    Mtx* mtx;
+    xyz_t posR;
+    xyz_t posL;
+    int mod_l;
+
+    house = (HOUSE_ACTOR*)arg;
+    graph = game->graph;
+
+    if (joint_idx == 7) {
+        mtx = _Matrix_to_Mtx_new(graph);
+        if (mtx != NULL) {
+            if (aHUS_GET_LIGHT_PERCENT(house) > 0.0f) {
+                l = aHUS_GET_LIGHT_PERCENT(house) * 120.0f + 0.5f;
+                r = 255;
+                g = 255;
+                b = 150;
+            } else {
+                l = 0;
+                r = 0;
+                g = 0;
+                b = 0;
+            }
+
+            pal_p = CLIP(structure_clip)->get_pal_segment_proc(house->structure_pal);
+            type = house->structure_type;
+            season = house->season == mTM_SEASON_WINTER;
+
+            _texture_z_light_fog_prim_shadow(graph);
+
+            OPEN_SHADOW_DISP(graph);
+
+            gSPSegment(SHADOW_DISP++, ANIME_1_TXT_SEG, pal_p);
+            gDPSetPrimColor(SHADOW_DISP++, 0, l, r, g, b, 0);
+            gSPMatrix(SHADOW_DISP++, mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            
+            // @cleanup - why check this so late? we already deferenced house multiple times
+            if (house != NULL) {
+                posL.x = house->actor_class.world.position.x + window_light_offset_table[0].x;
+                posL.y = house->actor_class.world.position.y + window_light_offset_table[0].y;
+                posL.z = house->actor_class.world.position.z + window_light_offset_table[0].z;
+                mCoBG_GetBgY_AngleS_FromWpos(NULL, posL, 0.0f); // @cleanup - leftover call? completely unused, waste of cycles
+
+                posR.x = house->actor_class.world.position.x + window_light_offset_table[1].x;
+                posR.y = house->actor_class.world.position.y + window_light_offset_table[1].y;
+                posR.z = house->actor_class.world.position.z + window_light_offset_table[1].z;
+                mCoBG_GetBgY_AngleS_FromWpos(NULL, posR, 0.0f); // @cleanup - leftover call? completely unused, waste of cycles
+
+                mod_l = REGADDR(mREG, 10) + l;
+                gDPSetPrimColor(SHADOW_DISP++, 0, mod_l, r, g, b, 0);
+                gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | 0x40 | 0x10);
+
+                if (REGADDR(mREG, 13) == 5) {
+                    gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH);
+                } else if (REGADDR(mREG, 13) == 1) {
+                    gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | 0x10);
+                } else if (REGADDR(mREG, 13) == 2) {
+                    gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH);
+                } else if (REGADDR(mREG, 13) == 3) {
+                    gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | 0x40 | 0x10);
+                } else if (REGADDR(mREG, 13) == 4) {
+                    gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | 0x40);
+                }
+
+                if (REGADDR(mREG, 13) >= 0) {
+                    if (window_model_table[type][season][1] != NULL) {
+                        gSPDisplayList(SHADOW_DISP++, window_model_table[type][season][1]);
+                    }
+
+                    gSPDisplayList(SHADOW_DISP++, window_model_table[type][season][0]);
+                }
+
+                mod_l = REGADDR(mREG, 11) + l;
+                gDPSetPrimColor(SHADOW_DISP++, 0, mod_l, r, g, b, 0);
+                gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | 0x40);
+
+                if (REGADDR(mREG, 15) == 5) {
+                    gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH);
+                } else if (REGADDR(mREG, 15) == 1) {
+                    gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | 0x10);
+                } else if (REGADDR(mREG, 15) == 2) {
+                    gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH);
+                } else if (REGADDR(mREG, 15) == 3) {
+                    gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | 0x40 | 0x10);
+                } else if (REGADDR(mREG, 15) == 4) {
+                    gSPLoadGeometryMode(SHADOW_DISP++, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | 0x40);
+                }
+
+                if (REGADDR(mREG, 15) >= 0) {
+                    if (window_model_table[type][season][1] != NULL) {
+                        gSPDisplayList(SHADOW_DISP++, window_model_table[type][season][1]);
+                    }
+
+                    gSPDisplayList(SHADOW_DISP++, window_model_table[type][season][0]);
+                }
+
+                gSPClearGeometryMode(SHADOW_DISP++, 0x40 | 0x10);
+            }
+
+            CLOSE_SHADOW_DISP(graph);
+        }
+    }
+
+    return TRUE;
+}
+
+static void aHUS_actor_draw_ta_set(ACTOR* actorx, GAME* game) {
+    // clang-format off
+    static u8 edge_alpha[][2] = {
+        { 64, 64 },
+        { 91, 91 },
+        { 63,  3 },
+        { 92, 92 },
+        { 48, 48 },
+    };
+    // clang-format on
+    // clang-format off
+    static int adjust_mode[][2] = {
+        { G_TA_DOLPHIN, G_TA_DOLPHIN },
+        { G_TA_N64, G_TA_N64 },
+        { G_TA_DOLPHIN, G_TA_N64 },
+        { G_TA_DOLPHIN, G_TA_DOLPHIN },
+        { G_TA_DOLPHIN, G_TA_DOLPHIN },
+    };
+    // clang-format on
+
+    GRAPH* graph = game->graph;
+    HOUSE_ACTOR* house = (HOUSE_ACTOR*)actorx;
+    int type = house->structure_type;
+    int season = house->season == mTM_SEASON_WINTER;
+    u8 a = GETREG(MYKREG, 1) + edge_alpha[type][season];
+    int adjust = adjust_mode[type][season];
+
+    OPEN_DISP(graph);
+
+    gDPSetTextureAdjustMode(NEXT_POLY_OPA_DISP, adjust);
+    gDPSetTextureAdjustMode(NEXT_SHADOW_DISP, adjust);
+    gDPSetTexEdgeAlpha(NEXT_POLY_OPA_DISP, a);
+    gDPSetTexEdgeAlpha(NEXT_SHADOW_DISP, a);
+
+    CLOSE_DISP(graph);
+}
+
+static void aHUS_actor_draw_ta_clr(ACTOR* actorx, GAME* game) {
+    GRAPH* graph = game->graph;
+
+    OPEN_DISP(graph);
+
+    gDPSetTextureAdjustMode(NEXT_POLY_OPA_DISP, G_TA_N64);
+    gDPSetTextureAdjustMode(NEXT_SHADOW_DISP, G_TA_N64);
+    gDPSetTexEdgeAlpha(NEXT_POLY_OPA_DISP, 144);
+    gDPSetTexEdgeAlpha(NEXT_SHADOW_DISP, 144);
+
+    CLOSE_DISP(graph);
+}
+
+static void aHUS_actor_draw(ACTOR* actorx, GAME* game) {
+    GRAPH* graph;
+    cKF_SkeletonInfo_R_c* keyframe;
+    Mtx* mtx;
+    u16* pal;
+    HOUSE_ACTOR* house;
+
+    graph = game->graph;
+    house = (HOUSE_ACTOR*)actorx;
+    keyframe = &house->keyframe;
+
+    mtx = GRAPH_ALLOC_TYPE(graph, Mtx, (u32)keyframe->skeleton->num_shown_joints);
+    if (mtx == NULL) {
+        return;
+    }
+
+    aHUS_actor_draw_ta_set(actorx, game);
+    pal = Common_Get(clip).structure_clip->get_pal_segment_proc(house->structure_pal);
+
+    _texture_z_light_fog_prim_npc(graph);
+
+    OPEN_POLY_OPA_DISP(graph);
+
+    gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, pal);
+
+    CLOSE_POLY_OPA_DISP(graph);
+
+    cKF_Si3_draw_R_SV(game, keyframe, mtx, &aHUS_actor_draw_before, &aHUS_actor_draw_after, actorx);
+
+    CLIP(bg_item_clip)->draw_shadow_proc(game, aHUS_shadow_data[house->structure_type], TRUE);
+    aHUS_actor_draw_ta_clr(actorx, game);
+}

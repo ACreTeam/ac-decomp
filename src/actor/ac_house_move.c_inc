@@ -1,0 +1,485 @@
+static void aHUS_set_door_SE_sub(ACTOR* actorx, u16 se_no) {
+    sAdo_OngenTrgStart(se_no, &actorx->world.position);
+}
+
+static void change_FGUnit(ACTOR* actorx, int keep_flag) {
+    mActor_name_t* fg_p;
+    mActor_name_t item;
+    xyz_t pos;
+
+    xyz_t_move(&pos, &actorx->world.position);
+    pos.z += 2 * mFI_UT_WORLDSIZE_Z_F;
+
+    if (keep_flag == FALSE) {
+        mFI_SetFG_common(EMPTY_NO, pos, TRUE);
+    } else {
+        fg_p = mFI_GetUnitFG(pos);
+
+        if (fg_p != NULL) {
+            if (!mSN_ClearSnowman(fg_p)) {
+                item = *fg_p;
+
+                if ((ITEM_IS_BURIED_PITFALL_HOLE(item) || item == SHINE_SPOT) == TRUE) {
+                    item = bg_item_fg_sub_dig2take_conv(item);
+                    mPB_keep_item(item);
+                    mFI_SetFG_common(RSV_NO, pos, TRUE);
+                    mFI_Wpos2DepositOFF(pos);
+                } else {
+                    mFI_Wpos2DepositOFF(pos);
+                    mPB_keep_item(*fg_p);
+                    mFI_SetFG_common(RSV_NO, pos, TRUE);
+                }
+            } else {
+                mFI_SetFG_common(RSV_NO, pos, TRUE);
+            }
+        }
+    }
+}
+
+static void aHUS_set_doorSE(HOUSE_ACTOR* house) {
+    static f32 chk_pat_in[] = { 10.0f, 14.0f, 35.0f, 50.0f };
+    static f32 chk_pat_out[] = { 2.0f, 8.0f, 33.0f, 40.0f };
+    static u16 se_no[] = { NA_SE_6, NA_SE_7, NA_SE_8, NA_SE_9 };
+    
+    f32* chk_pat_p;
+    int i;
+
+    switch (house->request_type) {
+        case aHUS_REQUEST_NPC_OPEN_DOOR:
+        case aHUS_REQUEST_PLAYER_LEAVE:
+            chk_pat_p = chk_pat_in;
+            break;
+        // case aHUS_REQUEST_NPC_CLOSE_DOOR:
+        case aHUS_REQUEST_PLAYER_ENTER:
+        default:
+            chk_pat_p = chk_pat_out;
+            break;
+    }
+
+    for (i = 0; i < 4; i++) {
+        if (cKF_FrameControl_passCheck_now(&house->keyframe.frame_control, *chk_pat_p)) {
+            aHUS_set_door_SE_sub((ACTOR*)house, se_no[i]);
+            break;
+        }
+
+        chk_pat_p++;
+    }
+}
+
+// clang-format off
+static Door_data_c aHUS_npc_house_door_data = {
+    SCENE_NPC_HOUSE,
+    mSc_DIRECT_NORTH,
+    0,
+    0,
+    { 160, 0, 300 },
+    EMPTY_NO,
+    1,
+    { 0, 0, 0 },
+};
+// clang-format on
+
+static int aHUS_odekake_check(HOUSE_ACTOR* house, GAME_PLAY* play) {
+    Animal_c* animal_p;
+    int ret;
+    int idx;
+    ACTOR* npc_actor_p;
+    int status;
+    int goal;
+    mActor_name_t name;
+
+    animal_p = aHUS_GET_ANIMAL_P(house);
+    idx = aHUS_GET_ANIMAL_IDX(house);
+    ret = FALSE;
+    house->arg0_f = 0.0f;
+    name = Common_Get(npclist[idx]).name;
+    npc_actor_p = Actor_info_fgName_search(&play->actor_info, Common_Get(npclist[idx]).name, ACTOR_PART_NPC);
+
+    if (mEvNM_CheckJointEvent(name)) {
+        house->arg0_f = 1.0f;
+        ret = TRUE;
+    } else if (mNpc_CheckNpcExistBlock(idx, play->block_table.block_x, play->block_table.block_z) && npc_actor_p != NULL) {
+        if (animal_p->is_home == TRUE) {
+            if (house->arg3 == 2) {
+                house->arg0_f = 2.0f;
+                ret = TRUE;
+            }
+        } else if (mNpcW_GetWalkInfoStatusGoalAnimalIdx(&status, &goal, idx) && status == mNpcW_INFO_STATUS_WALKING && goal == mNpcW_GOAL_MY_HOME && !animal_p->is_home) {
+            house->arg0_f = 1.0f;
+            ret = TRUE;
+        }
+    } else {
+        if (animal_p->is_home == TRUE) {
+            if (house->arg3 == 2) {
+                house->arg0_f = 2.0f;
+                ret = TRUE;
+            }
+        } else {
+            house->arg0_f = 1.0f;
+            ret = TRUE;
+        }
+    }
+
+    return ret;
+}
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_house1;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_house1;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_house2;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_house2;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_house3;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_house3;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_house4;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_house4;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_house5;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_house5;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_house1_out;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_house1_out;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_house2_out;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_house2_out;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_house3_out;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_house3_out;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_house4_out;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_house4_out;
+
+extern cKF_Animation_R_c cKF_ba_r_obj_s_house5_out;
+extern cKF_Animation_R_c cKF_ba_r_obj_w_house5_out;
+
+static void aHUS_setup_animation(HOUSE_ACTOR* house, f32 speed) {
+    static cKF_Animation_R_c* animation[][5][2] = {
+        {
+            { &cKF_ba_r_obj_s_house1, &cKF_ba_r_obj_w_house1 },
+            { &cKF_ba_r_obj_s_house2, &cKF_ba_r_obj_w_house2 },
+            { &cKF_ba_r_obj_s_house3, &cKF_ba_r_obj_w_house3 },
+            { &cKF_ba_r_obj_s_house4, &cKF_ba_r_obj_w_house4 },
+            { &cKF_ba_r_obj_s_house5, &cKF_ba_r_obj_w_house5 },
+        },
+        {
+            { &cKF_ba_r_obj_s_house1_out, &cKF_ba_r_obj_w_house1_out },
+            { &cKF_ba_r_obj_s_house2_out, &cKF_ba_r_obj_w_house2_out },
+            { &cKF_ba_r_obj_s_house3_out, &cKF_ba_r_obj_w_house3_out },
+            { &cKF_ba_r_obj_s_house4_out, &cKF_ba_r_obj_w_house4_out },
+            { &cKF_ba_r_obj_s_house5_out, &cKF_ba_r_obj_w_house5_out },
+        },
+    };
+
+    static f32 start_idx[] = { 1.0f, 25.0f, 1.0f, 1.0f };
+    static f32 end_idx[] = { 51.0f, 51.0f, 51.0f, 51.0f };
+    int type;
+    cKF_Animation_R_c* anim_p;
+    int season;
+    f32 start;
+    f32 end;
+
+    season = house->season == mTM_SEASON_WINTER;
+    switch (house->request_type) {
+        case aHUS_REQUEST_PLAYER_ENTER:
+            type = 2;
+            break;
+        case aHUS_REQUEST_NUM:
+            type = 1;
+            break; // what would trigger this??
+        default:
+            type = 0;
+            break;
+    }
+
+    anim_p = animation[type != 0][house->structure_type - aSTR_TYPE_HOUSE1][season];
+    start = start_idx[type];
+    end = end_idx[type];
+
+    cKF_SkeletonInfo_R_init(&house->keyframe, house->keyframe.skeleton, anim_p, start, end, start, speed, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+}
+
+static void aHUS_rewrite_out_data(HOUSE_ACTOR* house, GAME_PLAY* play) {
+    Door_data_c* out_data_p = Common_GetPointer(structure_exit_door_data);
+    mActor_name_t name;
+    xyz_t pos;
+
+    if (play->fb_wipe_mode == 0) {
+        name = NPC_START + (house->actor_class.npc_id - NPC_HOUSE_START);
+        if (mNpc_SearchAnimalinfo(Save_Get(animals), name, ANIMAL_NUM_MAX) == -1) {
+            name = RSV_NO;
+        }
+        Common_Set(house_owner_name, name);
+
+        out_data_p->next_scene_id = Save_Get(scene_no);
+        out_data_p->exit_orientation = mSc_DIRECT_SOUTH;
+        out_data_p->exit_type = 0;
+        out_data_p->extra_data = 2;
+
+        pos.x = house->actor_class.home.position.x;
+        pos.z = house->actor_class.home.position.z + 60.0f;
+        pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 0.0f);
+
+        out_data_p->exit_position.x = (s16)pos.x;
+        out_data_p->exit_position.y = (s16)pos.y;
+        out_data_p->exit_position.z = (s16)pos.z;
+        out_data_p->door_actor_name = house->actor_class.npc_id;
+        out_data_p->wipe_type = 1;
+    }
+}
+
+static void aHUS_set_talk_info_check_player(ACTOR* actorx) {
+    HOUSE_ACTOR* house = (HOUSE_ACTOR*)actorx;
+    rgba_t window_color;
+    int msg_no;
+
+    if (house->arg0_f == 2.0f) {
+        msg_no = 0x1363 + aHUS_GET_LOOKS(house); // Sleeping
+    } else {
+        msg_no = 0x2AFE; // I'm not in right now.
+    }
+
+    mDemo_Set_msg_num(msg_no);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+    mPlib_Set_able_hand_all_item_in_demo(mPlayer_ABLE_ITEM_CAN_USE_UMBRELLA);
+    mDemo_Set_ListenAble();
+
+    window_color.r = 145;
+    window_color.g = 60;
+    window_color.b = 40;
+    window_color.a = 255;
+    mDemo_Set_talk_window_color(&window_color);
+}
+
+static int aHUS_check_player(HOUSE_ACTOR* house, GAME_PLAY* play) {
+    int ret = 0;
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    mNPS_schedule_c* sched_p;
+    Animal_c* animal_p;
+    mActor_name_t name;
+
+    if (player == NULL) {
+        return 0;
+    }
+
+    name = house->actor_class.npc_id;
+    name = name - NPC_HOUSE_START + DUMMY_NPC_HOUSE_000;
+    if ((mActor_name_t)player->item_in_front == name && chkTrigger(BUTTON_A)) {
+        if ((mEv_CheckFirstJob() == TRUE || mEv_check_status(mEv_EVENT_HALLOWEEN, mEv_STATUS_ACTIVE)) == TRUE) {
+            house->arg3 = 0;
+        } else {
+            animal_p = aHUS_GET_ANIMAL_P(house);
+            sched_p = mNPS_get_schedule_area(&animal_p->id);
+            house->arg3 = sched_p->current_type;
+        }
+
+        if (aHUS_odekake_check(house, play)) {
+            mDemo_Request(mDemo_TYPE_SPEAK, (ACTOR*)house, &aHUS_set_talk_info_check_player);
+        } else {
+            ret = 2;
+        }
+    }
+
+    return ret;
+}
+
+static void aHUS_open_door_demo_ct(ACTOR* actorx) {
+    mDemo_Set_house_info(mFI_UNIT_BASE_SIZE_F, mDemo_DIRECT_S);
+    mDemo_Set_camera(CAMERA2_PROCESS_DOOR);
+}
+
+static int aHUS_check_open(HOUSE_ACTOR* house, GAME_PLAY* play) {
+    int ret = 0;
+    int request;
+
+    if (mDemo_Check(mDemo_TYPE_DOOR, (ACTOR*)house)) {
+        return 2;
+    } else {
+        request = house->request_type;
+
+        if (request == 0) {
+            if (aHUS_check_player(house, play) == 2) {
+                mDemo_Request(mDemo_TYPE_DOOR, (ACTOR*)house, &aHUS_open_door_demo_ct);
+            }
+
+            ret = 0;
+        } else if (request == 1 || request == 2) {
+            ret = 1;
+        } else if (request == 3) {
+            ret = 2;
+        } else if (request == 4) {
+            ret = 3;
+        }
+    }
+
+    return ret;
+}
+
+static void aHUS_set_bgOffset(ACTOR* actorx, int idx) {
+    // clang-format off
+    static mCoBG_OffsetTable_c height_table_ct[] = {
+        { mCoBG_ATTRIBUTE_NONE, 7, 7, 7, 7, 7, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 7, 7, 7, 7, 7, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 7, 7, 7, 7, 7, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 7, 7, 7, 7, 7, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 7, 7, 7, 7, 7, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 7, 7, 7, 7, 7, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 7, 7, 7, 7, 7, 0 },
+        { mCoBG_ATTRIBUTE_NONE, 7, 7, 7, 7, 7, 0 },
+    };
+    // clang-format on
+    static mCoBG_OffsetTable_c* height_table[] = { height_table_ct, height_table_ct };
+    static f32 addX[] = { -mFI_UT_WORLDSIZE_X_F, 0.0f, mFI_UT_WORLDSIZE_X_F };
+    static f32 addZ[] = { mFI_UT_WORLDSIZE_Z_F, 0.0f, -mFI_UT_WORLDSIZE_Z_F };
+    mCoBG_OffsetTable_c* ofs_p = height_table[idx];
+    xyz_t pos;
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        pos.z = actorx->home.position.z + addZ[i];
+
+        pos.x = actorx->home.position.x + addX[0];
+        mCoBG_SetPluss5PointOffset_file(pos, ofs_p[0], __FILE__, 620);
+
+        pos.x = actorx->home.position.x + addX[1];
+        mCoBG_SetPluss5PointOffset_file(pos, ofs_p[1], __FILE__, 624);
+
+        pos.x = actorx->home.position.x + addX[2];
+        mCoBG_SetPluss5PointOffset_file(pos, ofs_p[2], __FILE__, 628);
+
+        ofs_p += 3;
+    }
+}
+
+static f32 aHUS_ctrl_light(HOUSE_ACTOR* house) {
+    Animal_c* animal_p = aHUS_GET_ANIMAL_P(house);
+    mNPS_schedule_c* sched_p = mNPS_get_schedule_area(&animal_p->id);
+    int now_sec = Common_Get(time.now_sec);
+    mActor_name_t name;
+
+    if (sched_p == NULL) {
+        return 0.0f;
+    }
+
+    name = Common_Get(npclist[aHUS_GET_ANIMAL_IDX(house)]).name;
+    if (mEvNM_CheckJointEvent(name) && !mEv_CheckArbeit()) {
+        return 0.0f;
+    }
+
+    if (sched_p->current_type == mNPS_SCHED_IN_HOUSE && animal_p->is_home == TRUE &&
+        (now_sec >= (18 * mTM_SECONDS_IN_HOUR) || now_sec <= (5 * mTM_SECONDS_IN_HOUR))) {
+        if (house->request_type == 2) {
+            return 0.0f;
+        } else {
+            return 1.0f;
+        }
+    } else {
+        return 0.0f;
+    }
+}
+
+static void aHUS_wait(HOUSE_ACTOR* house, GAME_PLAY* play) {
+    int next_act = -1;
+
+    switch (aHUS_check_open(house, play)) {
+        case 1:
+            next_act = aHUS_ACTION_OPEN_DOOR;
+            break;
+        case 3:
+            if (mPlib_check_player_outdoor_start((GAME*)play)) {
+                next_act = aHUS_ACTION_OPEN_DOOR;
+            }
+            break;
+        case 2:
+            next_act = aHUS_ACTION_OPEN_DOOR_WAIT;
+            break;
+    }
+
+    if (next_act != -1) {
+        aHUS_setup_action(house, next_act);
+    } else {
+        return;
+    }
+
+    switch (house->request_type) {
+        case 1:
+        case 2:
+        case 4:
+            aHUS_setup_animation(house, 0.5f);
+            break;
+        case 3:
+            break;
+    }
+}
+
+static void aHUS_open_door_wait(HOUSE_ACTOR* house, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)house;
+
+    if (actorx == GET_PLAYER_ACTOR_NOW()->get_door_label_proc(gamePT)) {
+        mBGMPsComp_make_ps_wipe(0x249);
+        house->request_type = 3;
+        aHUS_setup_animation(house, 0.5f);
+        aHUS_setup_action(house, aHUS_ACTION_OPEN_DOOR);
+    }
+}
+
+static void aHUS_open_door(HOUSE_ACTOR* house, GAME_PLAY* play) {
+    int next_act;
+
+    if (cKF_SkeletonInfo_R_play(&house->keyframe) == cKF_STATE_STOPPED) {
+        switch (house->request_type) {
+            case 3:
+                aHUS_rewrite_out_data(house, play);
+                goto_other_scene(play, &aHUS_npc_house_door_data, FALSE);
+                play->fb_fade_type = 9;
+                next_act = aHUS_ACTION_NEXT_SCENE_WAIT;
+                mDemo_End((ACTOR*)house);
+                break;
+            case 1:
+            case 2:
+                house->actor_class.state_bitfield = House_Profile.initial_flags_state;
+                next_act = aHUS_ACTION_WAIT;
+                break;
+            default:
+                next_act = aHUS_ACTION_WAIT;
+                break;
+        }
+
+        house->request_type = 0;
+        aHUS_setup_action(house, next_act);
+    }
+}
+
+static void aHUS_setup_action(HOUSE_ACTOR* house, int action) {
+    // clang-format off
+    static void* process[] = {
+        &aHUS_wait,
+        &aHUS_open_door_wait,
+        &aHUS_open_door,
+        &none_proc1,
+    };
+    // clang-format on
+
+    house->action_proc = process[action];
+}
+
+static void aHUS_actor_move(ACTOR* actorx, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    HOUSE_ACTOR* house = (HOUSE_ACTOR*)actorx;
+
+    aHUS_set_doorSE(house);
+    (*house->action_proc)((STRUCTURE_ACTOR*)house, play);
+    chase_f(&aHUS_GET_LIGHT_PERCENT(house), aHUS_ctrl_light(house), 0.019532442f);
+}
+
+static void aHUS_actor_init(ACTOR* actorx, GAME* game) {
+    mActor_name_t name;
+
+    name =actorx->npc_id;
+    name = name - NPC_HOUSE_START + DUMMY_NPC_HOUSE_000;
+    mFI_SetFG_common(name, actorx->home.position, FALSE);
+    aHUS_actor_move(actorx, game);
+    actorx->mv_proc = &aHUS_actor_move;
+}
