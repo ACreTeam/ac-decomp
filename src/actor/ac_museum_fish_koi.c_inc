@@ -1,28 +1,21 @@
+
 void mfish_koi_tail_anim_set(MUSEUM_FISH_PRIVATE_DATA* actor, s32 r4) {
     f32 temp;
+    f32 temp2;
+    f32 temp3;
     if (r4 == 0) {
-        actor->_640 = (int)(6.0f * fqrand()) + 25;
-        //! BUG: fqrand2 called without being used
-        // Maybe some kind of min-max macro, where we're multiplying fqrand2 by 0 (temp - temp),
-        // but including fqrand2() directly in the equation below generates extra fmuls instr for some reason.
-        // The only way around it we found was to call it like this.
-        fqrand2();
-        temp = 6.5f;
-        actor->_5AC.x = temp + (f32)(temp - temp);
+        actor->_640 = RANDOM_RANGE(25, 31);
+        actor->_5AC.x = RANDOM2F_RANGE(6.5f, 6.5f);
     } else if (r4 == 1) {
         if (actor->_640 == 0) {
-            actor->_640 = (int)(4.0f * fqrand()) + 20;
-            //! BUG: fqrand2 called without being used (see context above)
-            fqrand2();
-            temp = 5.0f;
-            actor->_5AC.x = temp + (f32)(temp - temp);
+            actor->_640 = RANDOM_RANGE(20, 24);
+            actor->_5AC.x = RANDOM2F_RANGE(5.0f, 5.0f);
         }
-    } else if (actor->_640 == 0) {
-        actor->_640 = (int)(6.0f * fqrand()) + 45;
-        //! BUG: fqrand2 called without being used (see context above)
-        fqrand2();
-        temp = 1.0f;
-        actor->_5AC.x = temp + (f32)(temp - temp);
+    } else {
+        if (actor->_640 == 0) {
+            actor->_640 = RANDOM_RANGE(45, 51);
+            actor->_5AC.x = RANDOM2F_RANGE(1.0f, 1.0f);
+        }
     }
 }
 
@@ -74,7 +67,7 @@ void mfish_koi_peck_process() {
     return;
 }
 
-void mfish_koi_long_move_process_init() {
+void mfish_koi_long_move_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
     return;
 }
 

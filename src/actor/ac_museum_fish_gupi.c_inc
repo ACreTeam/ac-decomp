@@ -1,10 +1,12 @@
 
 void mfish_gupi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    // NOT BAD
     GAME_PLAY* game = (GAME_PLAY*)gamex;
     return;
 }
 
 void mfish_gupi_normal_init() {
+    // NOT BAD
     return;
 }
 
@@ -13,6 +15,7 @@ void mfish_gupi_normal() {
 }
 
 void mfish_gupi_turn_init() {
+    // NOT BAD
     return;
 }
 

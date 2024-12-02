@@ -5,6 +5,7 @@ void mfish_medaka_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_medaka_normal_init() {
+    // NOT BAD
     return;
 }
 
@@ -13,6 +14,7 @@ void mfish_medaka_normal() {
 }
 
 void mfish_medaka_turn_init() {
+    // NOT BAD
     return;
 }
 

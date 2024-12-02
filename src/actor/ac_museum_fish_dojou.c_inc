@@ -5,6 +5,7 @@ void mfish_dojou_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_dojou_normal_init() {
+    // NOT BAD
     return;
 }
 
@@ -13,6 +14,7 @@ void mfish_dojou_normal() {
 }
 
 void mfish_dojou_turn_init() {
+    // NOT BAD
     return;
 }
 

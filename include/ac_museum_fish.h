@@ -17,15 +17,9 @@ typedef struct _FISH_PRIVATE_DATA;
 typedef void (*PRIV_FISH_CONSTRUCTOR)(struct _FISH_PRIVATE_DATA*, GAME*);
 typedef void (*PRIV_FISH_MOVE)(struct _FISH_PRIVATE_DATA*, GAME*);
 typedef void (*PRIV_FISH_DRAW)(struct _FISH_PRIVATE_DATA*, GAME*);
+typedef void (*PRIV_FISH_PROCESS)(struct _FISH_PRIVATE_DATA*, GAME*);
 
 // unsure temp structs
-
-typedef struct _YET_SKELETON {
-    cKF_SkeletonInfo_R_c _00;
-    Mtx _70;
-    u8 padding[0x200];
-    Mtx _2b0;
-} YET_SKELETON;
 
 typedef struct _MUSEUM_FISH_INIT_DATA {
     f32 _00;
@@ -44,18 +38,41 @@ typedef struct _MUSEUM_FISH_INIT_DATA {
     s16 _30;
 } MUSEUM_FISH_INIT_DATA; // size: 0x34
 
+#define artificial_padding(currentOffset, lastOffset, typeOfLastMember) \
+    u8 __##currentOffset##padding[currentOffset - lastOffset - sizeof(typeOfLastMember)]
+
+#define offsetof(structName, memberName) ((size_t) & (((structName*)0)->memberName))
+
+typedef struct _YET_SKELETON {
+    cKF_SkeletonInfo_R_c _00;
+    Mtx _70; // offset A8
+    artificial_padding(0x2b0, 0x70, Mtx);
+    Mtx _2b0;
+    artificial_padding(0x46C, 0x2b0, Mtx);
+    void* _46C;
+
+    artificial_padding(0x4F0, 0x46C, void*);
+    s_xyz _4F0;
+    artificial_padding(0x514, 0x4F0, s_xyz);
+    s_xyz _514;
+    artificial_padding(0x54C, 0x514, s_xyz);
+    void* _54C;
+    void* _550;
+} YET_SKELETON;
+
 typedef struct _FISH_PRIVATE_DATA {
     MUSEUM_FISH_INIT_DATA init_data;
-    void* _34; // function pointer to dummy_process function
+    PRIV_FISH_PROCESS _34; // size:4
     YET_SKELETON _38;
-    void* _4A4;
-    void* _584;
-    void* _588;
+
     void* _590;
+    s32 _594;
+    s32 _598;
     s32 _59C; // fish num
     xyz_t _5A0;
     xyz_t _5AC;
     xyz_t _5B8;
+    artificial_padding(0x5D0, 0x5B8, xyz_t);
     f32 _5D0;
     f32 _5D4;
     f32 _5D8;
@@ -64,10 +81,18 @@ typedef struct _FISH_PRIVATE_DATA {
     f32 _5EC;
     f32 _5F0;
     f32 _5F4;
-    s_xz _60C;
-    s_xz _612;
+    f32 _5F8;
+    f32 _5FC;
+    f32 _600;
+    f32 _604;
+    f32 _608;
+    s_xyz _60C;
+    s_xyz _612;
+    artificial_padding(0x61A, 0x612, s_xyz);
     s16 _61A;
     s16 _61C;
+    s16 _61E;
+    s16 _620;
     s16 _622;
     s16 _624;
     s16 _626;
@@ -79,6 +104,9 @@ typedef struct _FISH_PRIVATE_DATA {
     s16 _632;
     s16 _634;
     s16 _636;
+    s16 _638;
+    s16 _63A;
+    s16 _63C;
     s16 _63E;
     s16 _640;
 } MUSEUM_FISH_PRIVATE_DATA;
@@ -155,14 +183,14 @@ BOOL mfish_WallCheck(MUSEUM_FISH_PRIVATE_DATA* priv);
 s16 mfish_get_hide_camera_angle(MUSEUM_FISH_PRIVATE_DATA* priv);
 void mfish_dummy_process_init();
 void mfish_dummy_process();
-void mfish_normal_process_init();
-void mfish_normal_process();
-void mfish_turn_process_init();
-void mfish_turn_process();
-void mfish_peck_process_init();
-void mfish_peck_process();
-void mfish_ground_peck_process_init();
-void mfish_ground_peck_process();
+void mfish_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* actor);
+void mfish_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
+void mfish_turn_process_init(MUSEUM_FISH_PRIVATE_DATA* actor);
+void mfish_turn_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
+void mfish_peck_process_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
+void mfish_peck_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
+void mfish_ground_peck_process_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
+void mfish_ground_peck_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_base_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_onefish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
@@ -173,17 +201,17 @@ void mfish_ani_base_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_ani_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_ani_base_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void Museum_Fish_BigFishObjCheck();
-void Museum_Fish_ObjBGCheck();
+void Museum_Fish_ObjBGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex, f32 f1, f32 f2);
 void Museum_Fish_DonkoBGCheck();
 void Museum_Fish_objchk_pos_set();
-void Museum_Fish_BGCheck();
+void Museum_Fish_BGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void Museum_Fish_Kusa_Check();
 void Museum_Fish_Object_Check();
 void mfish_body_wind_anime_play();
 void mfish_get_player_angle();
-void mfish_peck_check();
-void mfish_peck_wall_check();
-void mfish_ground_peck_before_check();
+BOOL mfish_peck_check();
+BOOL mfish_peck_wall_check(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
+BOOL mfish_ground_peck_before_check();
 void mfish_get_player_area();
 void mfish_get_flow_vec(xyz_t* pos, MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_get_escape_angle();

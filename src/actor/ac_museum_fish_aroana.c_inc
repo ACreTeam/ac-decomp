@@ -1,10 +1,12 @@
 
 void mfish_aroana_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    // NOT BAD
     GAME_PLAY* game = (GAME_PLAY*)gamex;
     return;
 }
 
 void mfish_aroana_dummy_process_init() {
+    // NOT BAD
     return;
 }
 
@@ -29,6 +31,7 @@ void mfish_aroana_turn_process() {
 }
 
 void mfish_aroana_long_move_process_init() {
+    // NOT BAD
     return;
 }
 
@@ -41,7 +44,7 @@ void mfish_aroana_base_FishMove() {
 }
 
 void mfish_aroana_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
+    // NOT BAD
     GAME_PLAY* game = (GAME_PLAY*)gamex;
     return;
 }
@@ -58,7 +61,7 @@ void mfish_aroana_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
 }
 
 void mfish_aroana_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
+    // NOT BAD
     GAME_PLAY* game = (GAME_PLAY*)gamex;
     return;
 }

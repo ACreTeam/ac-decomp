@@ -5,6 +5,7 @@ void mfish_kingyo_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_kingyo_normal_init() {
+    // NOT BAD
     return;
 }
 
@@ -13,6 +14,7 @@ void mfish_kingyo_normal() {
 }
 
 void mfish_kingyo_turn_init() {
+    // NOT BAD
     return;
 }
 
@@ -21,6 +23,7 @@ void mfish_kingyo_turn() {
 }
 
 void mfish_kingyo_peck_init() {
+    // NOT BAD
     return;
 }
 

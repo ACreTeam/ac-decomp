@@ -5,6 +5,7 @@ void mfish_seafish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_seafish_normal_init() {
+    // NOT BAD
     return;
 }
 

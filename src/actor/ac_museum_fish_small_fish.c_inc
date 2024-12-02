@@ -5,6 +5,7 @@ void mfish_small_fish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_sfish_normal_init() {
+    // NOT BAD
     return;
 }
 
@@ -17,6 +18,7 @@ void mfish_sfish_turn_init() {
 }
 
 void mfish_sfish_turn() {
+    // NOT BAD
     return;
 }
 

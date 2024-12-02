@@ -1,7 +1,7 @@
 
 void mfish_afish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
+    // NOT BAD
 }
 
 void mfish_afish_dummy_process_init() {
@@ -39,11 +39,12 @@ void mfish_afish_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
 void mfish_afish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     GAME_PLAY* game = (GAME_PLAY*)gamex;
+    // NOT BAD
     return;
 }
 
 void mfish_afish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
+    // NOT BAD
     GAME_PLAY* game = (GAME_PLAY*)gamex;
     return;
 }

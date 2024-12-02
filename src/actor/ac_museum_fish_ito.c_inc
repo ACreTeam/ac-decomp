@@ -17,6 +17,7 @@ void mfish_ito_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint
 
 void mfish_ito_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
+    // NOT BAD
     GAME_PLAY* game = (GAME_PLAY*)gamex;
     return;
 }

@@ -12,6 +12,7 @@
 #include "m_debug_mode.h"
 #include "libforest/gbi_extensions.h"
 #include "m_rcp.h"
+#include "ac_gyoei.h"
 
 // found useful macros
 #define MY_MAX(a, b) (((a) >= (b)) ? (a) : (b))
@@ -21,6 +22,10 @@
 #define CALC_EASE(x) (1 - sqrtf(1 - (x)))
 #define CALC_EASE2(x) CALC_EASE(CALC_EASE(x))
 #define SHORT2DEG_ANGLE2(x) ((x) * (360.0f / 65536.0f))
+#define RANDOMF_RANGE(min, max) ((f32)(min) + (f32)RANDOM_F((f32)(max) - (f32)(min)))
+#define RANDOM2F_RANGE(min, max) ((f32)(min) + (f32)RANDOM2_F((f32)(max) - (f32)(min)))
+#define RANDOM_RANGE(min, max) ((int)(min) + (int)RANDOM((int)(max) - (int)(min)))
+#define RANDOM2_RANGE(min, max) ((int)(min) + (int)RANDOM2((int)(max) - (int)(min)))
 
 // delete this stuff later
 typedef Mtx;
@@ -678,10 +683,10 @@ void Museum_Fish_Prv_data_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game, int 
         actor->_5A0 = ZeroVec;
     }
 
-    actor->_5A0.y = mfish_init_data[fishNum]._0C + fqrand2() * 10.0f;
+    actor->_5A0.y = mfish_init_data[fishNum]._0C + RANDOM2_F(10);
     if (r6 == 1) {
-        actor->_5A0.x += fqrand2() * 90.0f;
-        actor->_5A0.z += fqrand2() * 90.0f;
+        actor->_5A0.x += RANDOM2_F(90);
+        actor->_5A0.z += RANDOM2_F(90);
     }
     actor->_34 = &mfish_normal_process;
     mfish_ct[fishNum](actor, game);
@@ -721,16 +726,16 @@ void Museum_Fish_Actor_ct(ACTOR* actorx, GAME* gamex) {
     for (i = 0; i < 40; i++, prv++) {
         prv->_62E &= ~1;
         if (mMmd_FishInfo(i)) {
-            prv->_584 = mfish_model_tbl[i];
-            prv->_588 = mfish_anime_init_tbl[i];
+            prv->_38._550 = mfish_model_tbl[i];
+            prv->_38._550 = mfish_anime_init_tbl[i];
             prv->_62E |= 1;
             Museum_Fish_Prv_data_init(prv, gamex, i, 1);
         }
     }
 
     for (i = 0; i < 20; i++) {
-        actor->_14d50[i] = 40.0f + 80.0f * fqrand();
-        actor->_14d78[i] = 2.0f + 3.0f * fqrand();
+        actor->_14d50[i] = RANDOMF_RANGE(80, 120);
+        actor->_14d78[i] = RANDOMF_RANGE(2, 5);
     }
 }
 
@@ -915,7 +920,7 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
         for (i = 0; i < 40; i++, prv++) {
             f32 v = search_position_distanceXZ(&p, &prv->_5A0);
             if (actor->_14db4 == prv->_630 && v < 60.0f) {
-                prv->_626 = fqrand() * 60.0f;
+                prv->_626 = RANDOM_F(60);
             }
         }
     }
@@ -947,11 +952,10 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
                                                            suisou_awa_group[i], 0);
             if (actor->_14d78[i] > 0) {
                 actor->_14d78[i]--;
-
-                actor->_14d50[i] = fqrand() * 8 + 2;
+                actor->_14d50[i] = RANDOMF_RANGE(2, 10);
             } else {
-                actor->_14d50[i] = fqrand() * 160 + 80;
-                actor->_14d78[i] = fqrand() * 3 + 2;
+                actor->_14d50[i] = RANDOMF_RANGE(160, 240);
+                actor->_14d78[i] = RANDOMF_RANGE(2, 5);
             }
         }
     }
@@ -971,7 +975,7 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
 
     for (i = 0; i < 5; i++) {
         if (i == 2) {
-            actor->_14d78[i] += (s16)DEG2SHORT_ANGLE2((float)GETREG(TAKREG, 20) * 0.1f + 0.5f + fqrand());
+            actor->_14d78[i] += (s16)DEG2SHORT_ANGLE2((float)GETREG(TAKREG, 20) * 0.1f + 0.5f + RANDOM_F(1));
         } else {
             actor->_14d78[i] += 8;
         }
