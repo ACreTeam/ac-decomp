@@ -90,8 +90,7 @@ Building
   ```
 
 - Copy your game's disc image to `orig/GAFE01_00`.
-  - Supported formats: ISO (GCM), RVZ, WIA, WBFS, CISO, NFS, GCZ, TGC
-  - After the initial build, the disc image can be deleted to save space.
+  - Supported formats: ISO (GCM), RVZ, WIA, WBFS, CISO, GCZ
 
 - Configure:
 
@@ -122,5 +121,4 @@ Credits
 =======
 
 - jamchamb, Cuyler36, NWPlayer123 and fraser125 for past documentation of Animal Crossing.
-- SeekyCt for [ppcdis](https://github.com/SeekyCt/ppcdis/) and helping setting up the project.
-- msg for helping with *tools/map.py*.
+- encounter and NWPlayer123 for [dtk-template](https://github.com/encounter/dtk-template) and setting up the current build system.
