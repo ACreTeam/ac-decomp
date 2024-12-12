@@ -38,27 +38,35 @@ typedef struct _MUSEUM_FISH_INIT_DATA {
     s16 _30;
 } MUSEUM_FISH_INIT_DATA; // size: 0x34
 
-#define artificial_padding(currentOffset, lastOffset, typeOfLastMember) \
+#define artificial_padding(lastOffset, currentOffset, typeOfLastMember) \
     u8 __##currentOffset##padding[currentOffset - lastOffset - sizeof(typeOfLastMember)]
 
 #define offsetof(structName, memberName) ((size_t) & (((structName*)0)->memberName))
 
 typedef struct _YET_SKELETON {
-    cKF_SkeletonInfo_R_c _00;
-    Mtx _70; // offset A8
-    artificial_padding(0x2b0, 0x70, Mtx);
+    cKF_SkeletonInfo_R_c _00; // offset 0, size 0x70
+    Mtx _70;                  // offset 70, size
+    artificial_padding(0x70, 0x2b0, Mtx);
     Mtx _2b0;
-    artificial_padding(0x46C, 0x2b0, Mtx);
+    artificial_padding(0x2b0, 0x46C, Mtx);
+
     void* _46C;
 
-    artificial_padding(0x4F0, 0x46C, void*);
+    artificial_padding(0x46C, 0x4F0, void*);
+
     s_xyz _4F0;
-    artificial_padding(0x514, 0x4F0, s_xyz);
+
+    artificial_padding(0x4F0, 0x514, s_xyz);
+
     s_xyz _514;
-    artificial_padding(0x54C, 0x514, s_xyz);
-    void* _54C;
-    void* _550;
-} YET_SKELETON;
+
+    artificial_padding(0x514, 0x538, s_xyz);
+    s_xyz _538;
+    xyz_t _540;
+    cKF_Skeleton_R_c* _54C;
+    cKF_Animation_R_c* _550;
+    void* _554;
+} YET_SKELETON; // size 558
 
 typedef struct _FISH_PRIVATE_DATA {
     MUSEUM_FISH_INIT_DATA init_data;
@@ -66,13 +74,13 @@ typedef struct _FISH_PRIVATE_DATA {
     YET_SKELETON _38;
 
     void* _590;
-    s32 _594;
-    s32 _598;
+    struct _FISH_PRIVATE_DATA* _594;
+    struct _FISH_PRIVATE_DATA* _598;
     s32 _59C; // fish num
     xyz_t _5A0;
     xyz_t _5AC;
     xyz_t _5B8;
-    artificial_padding(0x5D0, 0x5B8, xyz_t);
+    artificial_padding(0x5B8, 0x5D0, xyz_t);
     f32 _5D0;
     f32 _5D4;
     f32 _5D8;
@@ -88,7 +96,7 @@ typedef struct _FISH_PRIVATE_DATA {
     f32 _608;
     s_xyz _60C;
     s_xyz _612;
-    artificial_padding(0x61A, 0x612, s_xyz);
+    artificial_padding(0x612, 0x61A, s_xyz);
     s16 _61A;
     s16 _61C;
     s16 _61E;
@@ -109,20 +117,11 @@ typedef struct _FISH_PRIVATE_DATA {
     s16 _63C;
     s16 _63E;
     s16 _640;
-} MUSEUM_FISH_PRIVATE_DATA;
+    s16 _642;
+} MUSEUM_FISH_PRIVATE_DATA; // size 644
 
 // Holds data for the underwater grass
-typedef struct _MUSEUM_FISH_KUSA_DATA {
-    YET_SKELETON _00;
-    s_xyz _4F0;
-    s_xyz _514;
-    s16 _538;
-    s16 _53A;
-    s16 _53C;
-    float _540;
-    float _548;
-    void* _54C;
-} MUSEUM_FISH_KUSA_DATA; // size 558
+typedef YET_SKELETON MUSEUM_FISH_KUSA_DATA;
 
 typedef struct _FISH_DISPLAY_MSG_INFO {
     s16 fishName;
@@ -134,26 +133,30 @@ typedef struct _MUSEUM_FISH_ACTOR {
     int _174;
     MUSEUM_FISH_PRIVATE_DATA prvFish[40]; // offset: 0x178 size: 0xFB48
     MUSEUM_FISH_KUSA_DATA prvKusa[14];    // offset: 0xFCB8 size: 0x4AD0
-    s16 _101f0;
-    s16 _101f4;
-    void* _14788;
+    void* _14788;                         // offset: 0x14788 size: 4
+
+    artificial_padding(0x14788, 0x14d08, void*);
+
     xyz_t _14d08[2];
     int numFishDisplayed;                         // offset: 0x14d20, size: 4
     int fishDisplayMsgIter;                       // offset: 0x14d24, size: 4
     FISH_DISPLAY_MSG_INFO fishDisplayMsgInfo[10]; // offset: 0x14d28, size: 4*10
 
-    s16 _14d50[0x10];
-    s16 _14d78[0x10];
+    s16 _14d50[20];
+    s16 _14d78[20];
+    artificial_padding(0x14d78, 0x14daa, s16[20]);
+
+    s16 _14daa[5];
     s16 _14db4;
-    s16 _14db6;    // offset: 0x14db6, size: 2
-    s16 _14db8;    // offset: 0x14db8, size: 2
-    s16 _14dba;    // offset: 0x14dba, size: 2
-    s16 _14dbc[2]; // offset: 0x14dbc, size: 4
-    s16 _14dc0;    // offset: 0x14dc0, size: 2
-    s16 _14dc2;    // offset: 0x14dc2, size: 2
-    s16 _14dc4;    // offset: 0x14dc4, size: 2
-    s16 _14dc8;    // offset: 0x14dc8, size: 2
-} MUSEUM_FISH_ACTOR;
+    s16 _14db6;      // offset: 0x14db6, size: 2
+    s16 _14db8;      // offset: 0x14db8, size: 2
+    s16 _14dba;      // offset: 0x14dba, size: 2
+    s16 _14dbc[2];   // offset: 0x14dbc, size: 4
+    s16 _14dc0;      // offset: 0x14dc0, size: 2
+    s16 _14dc2;      // offset: 0x14dc2, size: 2
+    s16 _14dc4;      // offset: 0x14dc4, size: 2
+    s16 _14dc8;      // offset: 0x14dc8, size: 2
+} MUSEUM_FISH_ACTOR; // size 14DCA
 
 void Museum_Fish_Prv_data_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game, int fishNum, int r6);
 void Museum_Fish_Actor_ct(ACTOR* actor, GAME* game);
@@ -172,7 +175,7 @@ BOOL mfish_cull_check(GAME* game, xyz_t* worldPos, f32 x, f32 y, f32 _y);
 void mfish_point_ligh_pos_get(ACTOR* actorx, GAME* game, int r5);
 void mfish_point_light_ct(ACTOR* actor, GAME* game);
 void mfish_point_light_dt(ACTOR* r30, GAME* r31);
-void mfish_point_light_mv(ACTOR* actor, GAME* game);
+void mfish_point_light_mv(MUSEUM_FISH_ACTOR* actor, GAME* game);
 void mfish_normal_light_set();
 
 f32 Rnd_EX_f(f32 v1);
@@ -203,7 +206,7 @@ void mfish_ani_base_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void Museum_Fish_BigFishObjCheck();
 void Museum_Fish_ObjBGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex, f32 f1, f32 f2);
 void Museum_Fish_DonkoBGCheck();
-void Museum_Fish_objchk_pos_set();
+void Museum_Fish_objchk_pos_set(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void Museum_Fish_BGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void Museum_Fish_Kusa_Check();
 void Museum_Fish_Object_Check();
@@ -214,7 +217,7 @@ BOOL mfish_peck_wall_check(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 BOOL mfish_ground_peck_before_check();
 void mfish_get_player_area();
 void mfish_get_flow_vec(xyz_t* pos, MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_get_escape_angle();
+s16 mfish_get_escape_angle(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_move_smooth();
 void mfish_hamon_make();
 void mfish_afish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
