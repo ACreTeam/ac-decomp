@@ -27,7 +27,6 @@ f32 Rnd_EX_fx(f32 v) {
 }
 
 void mfish_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
-    GAME_PLAY* play = (GAME_PLAY*)game;
     f32 t;
     xyz_t pos;
     if (actor->_59C == 0x18 && actor->_34 != mfish_peck_process) {
@@ -522,7 +521,6 @@ void mfish_onefish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
 int mfish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f, void* arg,
                       s_xyz* joint1, xyz_t* trans) {
-
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
     if (joint_num == 2) {
         int v, t;
@@ -546,7 +544,6 @@ int mfish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num,
 }
 
 void mfish_onefish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
     YET_SKELETON* skele;
     Mtx* mtx;
     GRAPH* graph;

@@ -1040,8 +1040,8 @@ void Museum_Fish_Suisou_draw(ACTOR* actorx, GAME* game, int r5) {
     }
 }
 
-int kusa_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** mjoint_m, u8* joint_f, void* arg,
-                     s_xyz* joint1, xyz_t* trans) {
+BOOL kusa_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** mjoint_m, u8* joint_f, void* arg,
+                      s_xyz* joint1, xyz_t* trans) {
     MUSEUM_FISH_KUSA_DATA* actor = (MUSEUM_FISH_KUSA_DATA*)arg;
     if (joint_num > 0) {
         f32 v = (actor->_54C == &cKF_bs_r_obj_museum5_kusa3) ? 35.0f : 20.f;

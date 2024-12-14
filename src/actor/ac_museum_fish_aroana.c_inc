@@ -10,24 +10,158 @@ void mfish_aroana_dummy_process_init() {
     return;
 }
 
-void mfish_aroana_dummy_process() {
-    return;
+void mfish_aroana_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor) {
+    actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(2.5f),
+                                        DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_61C, actor->_622, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(2.0f), DEG2SHORT_ANGLE(0.25f));
+    add_calc2(&actor->_5EC, 0.05f, 0.25f, 0.025f);
+    add_calc2(&actor->_5E8, actor->_5F0, 0.1f, actor->_5EC);
+    add_calc0(&actor->_5F0, 0.01f, 0.001f);
 }
 
-void mfish_aroana_normal_process_init() {
-    return;
+// close copy of mfish_afish_normal_process_init
+
+void mfish_aroana_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
+    f32 v = RANDOM_F(actor->init_data._14) + actor->init_data._10;
+
+    f32 v2 = v / MAX(actor->init_data._14 + actor->init_data._10, 1.0f);
+    if (v > actor->_5E8) {
+        actor->_5F0 = v;
+    }
+    actor->_5F4 = Rnd_EX_fx(10.0f) * v2;
+    actor->_612.x = atans_table(actor->_5E8, actor->_5F4 + actor->init_data._0C - actor->_5A0.y) >> 4;
+    actor->_5D4 = 0.0f;
+
+    if (RANDOM_F(1.0f) > actor->init_data._1C) {
+        actor->_612.y += (s16)Rnd_EX_fx(actor->init_data._30 * 2.0f);
+
+        if (ABS((s16)(actor->_612.y - actor->_60C.y)) < DEG2SHORT_ANGLE(20)) {
+            if ((s16)(actor->_612.y - actor->_60C.y) > 0) {
+                actor->_612.y += DEG2SHORT_ANGLE(20);
+            } else {
+                actor->_612.y -= DEG2SHORT_ANGLE(20);
+            }
+        }
+        actor->_632 = DEG2SHORT_ANGLE(v2 * 20.0f + 10.0f);
+    } else {
+        if ((s16)(actor->_612.y - actor->_60C.y) > 0) {
+            actor->_612.y += DEG2SHORT_ANGLE(20);
+        } else {
+            actor->_612.y -= DEG2SHORT_ANGLE(20);
+        }
+        actor->_632 = DEG2SHORT_ANGLE(v2 * 30.0f + 20.0f);
+    }
+
+    if ((s16)(actor->_60C.y - actor->_612.y) > 0) {
+        actor->_636 = 0;
+    } else {
+        actor->_636 = DEG2SHORT_ANGLE(-180);
+    }
+
+    actor->_62E &= ~0xC0;
+    actor->_5EC = 0.0f;
+    actor->_34 = mfish_aroana_normal_process;
 }
 
-void mfish_aroana_normal_process() {
-    return;
+void mfish_aroana_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
+    s16 temp;
+    if (actor->_632 > DEG2SHORT_ANGLE(20)) {
+        add_calc2(&actor->_5EC, ((actor->_632 - DEG2SHORT_ANGLE(20)) / DEG2SHORT_ANGLE(2)) * 0.002f + 0.03f, 0.25f,
+                  0.02f);
+        add_calc2(&actor->_5E8, actor->_5F0, CALC_EASE(0.2f), actor->_5EC * 0.5f);
+    } else if (actor->_626 > actor->_628 - 10) {
+        add_calc2(&actor->_5EC, 0.25f, 0.2f, 0.5f);
+        add_calc2(&actor->_5E8, actor->_5F0, CALC_EASE(0.05f), actor->_5EC * 0.5f);
+    }
+    add_calc_short_angle2(&actor->_632, 0, CALC_EASE2(0.05f), DEG2SHORT_ANGLE(0.375), DEG2SHORT_ANGLE(0.125));
+    temp = DEG2SHORT_ANGLE2((actor->_5E8 * 4.0f) / (actor->init_data._14 + actor->init_data._10) + 6.0f);
+    actor->_636 += temp;
+
+    actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(actor->_632 * sin_s(actor->_636)),
+                                        CALC_EASE2(0.2f), DEG2SHORT_ANGLE(3.75f), DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_61C, actor->_622, CALC_EASE2(0.1f), DEG2SHORT_ANGLE(3.75f), DEG2SHORT_ANGLE(0.25f));
+
+    if (actor->_5E8 < 0.01f && actor->_632 < DEG2SHORT_ANGLE(1)) {
+        if (fqrand() < 0.01f) {
+            mfish_aroana_long_move_process_init(actor);
+        } else {
+            mfish_aroana_dummy_process_init(actor);
+        }
+    } else if (actor->_5E8 > 0.01f && actor->_62E & 0x1e) {
+        if ((s16)(actor->_60C.y - actor->_62C) > 0) {
+            actor->_612.y = actor->_62C + DEG2SHORT_ANGLE(112.5f);
+        } else {
+            actor->_612.y = actor->_62C - DEG2SHORT_ANGLE(112.5f);
+        }
+        actor->_632 = 0;
+    }
 }
 
-void mfish_aroana_turn_process_init() {
-    return;
+void mfish_aroana_turn_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
+    s16 s3 = DEG2SHORT_ANGLE(RANDOM_F(55.0f)) + DEG2SHORT_ANGLE(45.0f);
+    actor->_61A = ABS(DEG2SHORT_ANGLE2(((s3 * (360.0f / 0x10000)) / 120.0f) * 2.5f + 2.0f));
+    if (actor->_62E & 0x1e) {
+        if ((s16)(actor->_60C.y - actor->_62C) < 0) {
+            s3 = -s3;
+        }
+    } else if (actor->_62E & 0xC0) {
+        if (actor->_62E & 0x40) {
+            s3 = ABS(s3);
+        } else {
+            s3 = -ABS(s3);
+        }
+    } else if (actor->_62E & 0x20 && (actor->_62A - actor->_60C.y) < 0) {
+        s3 = -s3;
+    }
+
+    if (s3 > 0) {
+        actor->_62E |= 0x40;
+    } else {
+        actor->_62E |= 0x80;
+    }
+
+    actor->_612.y += s3;
+
+    if (RANDOM_F(1.0f) < 0.2f) {
+        actor->_63E = RANDOM_F(2.0f) + 1.0f;
+    } else {
+        actor->_63E = 0;
+    }
+
+    actor->_5EC = 0.0f;
+    actor->_5F0 = actor->init_data._10 + actor->init_data._14 * 0.2f;
+    actor->_34 = mfish_afish_turn_process;
 }
 
-void mfish_aroana_turn_process() {
-    return;
+void mfish_aroana_turn_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
+    if (ABS(actor->_622) > DEG2SHORT_ANGLE(25)) {
+        add_calc2(&actor->_5EC, 0.1f, 0.15f, 0.1f);
+        add_calc2(&actor->_5E8, actor->_5F0, CALC_EASE(0.1f), actor->_5EC * 0.5f);
+    }
+
+    add_calc2(&actor->_5F0, MAX(actor->init_data._10, 0.0f), 0.15f, 0.2f);
+    add_calc_short_angle2(&actor->_632, 0, CALC_EASE2(0.5f), DEG2SHORT_ANGLE(2.5f), DEG2SHORT_ANGLE(0.25f));
+    actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(actor->_632 * sin_s(actor->_636)),
+                                        CALC_EASE(0.2f), actor->_61A >> 1, DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_61C, actor->_622, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(1.25f), DEG2SHORT_ANGLE(0.125f));
+    if (ABS((s16)(actor->_60C.y - actor->_612.y)) < DEG2SHORT_ANGLE(2) && actor->_5E8 < 0.1f) {
+        if (actor->_63E > 0) {
+            if (mfish_WallCheck(actor)) {
+                // actor->_640 = 10;
+                mfish_aroana_turn_process_init(actor);
+            } else {
+                // actor->_640 = 10;
+                mfish_aroana_normal_process_init(actor);
+            }
+            actor->_63E--;
+        } else {
+            if (RANDOM_F(1.0f) < 0.8f) {
+                mfish_aroana_long_move_process_init(actor);
+            } else {
+                mfish_aroana_dummy_process_init(actor);
+            }
+        }
+    }
 }
 
 void mfish_aroana_long_move_process_init() {
@@ -35,33 +169,114 @@ void mfish_aroana_long_move_process_init() {
     return;
 }
 
-void mfish_aroana_long_move_process() {
-    return;
+void mfish_aroana_long_move_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.1f), DEG2SHORT_ANGLE(1.25f),
+                                        DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_61C, actor->_622, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(1.25f), DEG2SHORT_ANGLE(0.25f));
+    add_calc2(&actor->_5EC, 0.05f, 0.25f, 0.025f);
+    add_calc2(&actor->_5E8, actor->_5F0, 0.1f, actor->_5EC);
+    if ((play->game_frame & 0x3f) == 0 && RANDOM_F(1.0f) > 0.25f) {
+        mfish_aroana_dummy_process_init(actor);
+    }
 }
 
-void mfish_aroana_base_FishMove() {
-    return;
+void mfish_aroana_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
+    xyz_t p;
+    if (actor->_34 != mfish_aroana_turn_process && actor->_34 != mfish_aroana_long_move_process &&
+        actor->_622 < DEG2SHORT_ANGLE(20)) {
+        add_calc0(&actor->_5E8, 1.0f - actor->init_data._18, GETREG(TAKREG, 0x13) * 0.001f + 0.02f);
+    } else {
+        add_calc0(&actor->_5E8, 1.0f - actor->init_data._18, GETREG(TAKREG, 0x14) * 0.001f + 0.001f);
+    }
+    add_calc0(&actor->_5EC, 0.5f, 0.01f);
+
+    actor->_5D0 = actor->_5E8 * sin_s(actor->_60C.y);
+    actor->_5D8 = actor->_5E8 * cos_s(actor->_60C.y);
+    add_calc(&actor->_5D4, MAX(ABS(actor->_5E8 * sin_s(actor->_60C.x)), 0.1f), 0.1f, 0.1f, 0.005f);
+    add_calc2(&actor->_5A0.y, actor->_5F4 + actor->init_data._0C, 0.1f, actor->_5D4);
+    mfish_move_smooth(actor, game);
+    mfish_get_flow_vec(&p, actor, game);
+    actor->_5A0.x += actor->_5D0 + actor->_5DC.x;
+    actor->_5A0.z += actor->_5D8 + actor->_5DC.z;
+    actor->_5A0.y += actor->_5DC.y;
+    actor->_5A0.y = MAX(110.f, MIN(60.f, actor->_5A0.y));
 }
 
 void mfish_aroana_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    // NOT BAD
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
+    if (actor->_5F8 > actor->init_data._08 * 20.f) {
+        actor->_5F8 = 0.0f;
+        actor->_626 = 0;
+    }
+
+    if (actor->_626-- <= 0) {
+        actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+        actor->_628 = actor->_626;
+        if (mfish_WallCheck(actor)) {
+            mfish_aroana_turn_process_init(actor);
+        } else {
+            mfish_aroana_normal_process_init(actor);
+        }
+    } else if (actor->_34 == mfish_aroana_normal_process) {
+        if ((actor->_62E & 0x1e && ABS((s16)(actor->_62C - actor->_60C.y)) < DEG2SHORT_ANGLE(30)) ||
+            (actor->_62E & 0x20 &&
+             ABS((s16)(DEG2SHORT_ANGLE(180) + actor->_62A - actor->_60C.y)) < DEG2SHORT_ANGLE(30))) {
+            actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+            actor->_628 = actor->_626;
+            mfish_aroana_turn_process_init(actor);
+        }
+    }
+
+    actor->_5AC.y = 0.0f;
+    actor->_638 += DEG2SHORT_ANGLE(5);
+    actor->_34(actor, gamex);
+    if (ABS(actor->_61C) > ABS(actor->_622) && ABS(actor->_622) > DEG2SHORT_ANGLE(2)) {
+        add_calc2(&actor->_5E8, MIN(0.2f, actor->_5E8), 0.2f, 0.5f);
+    }
+    add_calc_short_angle2(&actor->_60C.x, actor->_612.x, CALC_EASE(0.1f), DEG2SHORT_ANGLE(5), DEG2SHORT_ANGLE(0.5f));
+    add_calc_short_angle2(&actor->_612.x, 0, CALC_EASE(0.1f), DEG2SHORT_ANGLE(2.5f), DEG2SHORT_ANGLE(0.5f));
+    mfish_aroana_base_FishMove(actor, gamex);
 }
 
 void mfish_aroana_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
-}
-
-void mfish_aroana_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
-                              void* arg, s_xyz* joint1, xyz_t* trans) {
-    return;
-}
-
-void mfish_aroana_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     // NOT BAD
     GAME_PLAY* game = (GAME_PLAY*)gamex;
     return;
+}
+
+BOOL mfish_aroana_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+                              void* arg, s_xyz* joint1, xyz_t* trans) {
+    MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
+    int v;
+    if (joint_num == 1) {
+        Matrix_scale(1.0, sin_s(actor->_63A + actor->_63C) * 0.025f + 1.0f, sin_s(actor->_63A) * 0.025f + 1.0f, 1);
+    } else if (joint_num == 2) {
+        v = joint1->y - (actor->_61C << 1);
+        joint1->y = MIN(MAX(v, DEG2SHORT_ANGLE(-40)), DEG2SHORT_ANGLE(40));
+
+        v = joint1->x - (actor->_61C >> 2);
+        joint1->x = MIN(MAX(v, DEG2SHORT_ANGLE(-20)), DEG2SHORT_ANGLE(20));
+
+        Matrix_scale(1.0f, sin_s(actor->_63A + DEG2SHORT_ANGLE(270)) * 0.05f + 1.0f,
+                     sin_s(actor->_63A + DEG2SHORT_ANGLE(90)) * 0.05f + 1.0f, 1);
+    }
+    return 1;
+}
+
+void mfish_aroana_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    YET_SKELETON* skele = &actor->_38;
+    Mtx* mtxp;
+    if (gamex->frame_counter & 1) {
+        mtxp = &skele->_70;
+    } else {
+        mtxp = &skele->_2b0;
+    }
+    OPEN_DISP(gamex->graph);
+    Matrix_translate(actor->_5A0.x, actor->_5A0.y + actor->_5AC.y, actor->_5A0.z, 0);
+    Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data._24, 1);
+    Matrix_scale(actor->init_data._00, actor->init_data._00, actor->init_data._00, 1);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_aroana_before_disp, NULL, actor);
+    CLOSE_DISP(play->game.graph);
 }
