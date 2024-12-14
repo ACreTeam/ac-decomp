@@ -51,7 +51,7 @@ void mfish_bass_dummy_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
     return;
 }
 
-void mfish_bass_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor) {
+void mfish_bass_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     // no clue what's going on here
     add_calc_short_angle2(&actor->_612.y, actor->_634, CALC_EASE2(0.0f), 0x1c7, 0x2d);
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.25f), 0xe3, 0x2d);
@@ -66,7 +66,7 @@ void mfish_bass_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* fishActor) {
     ra = RANDOM_F(fishActor->init_data._14) + fishActor->init_data._10;
     t = (ra) / MAX(fishActor->init_data._14 + fishActor->init_data._10, 1);
 
-    if (RANDOM_F(1) > 0.25f && !(fishActor->_62E & 0x200)) {
+    if (RANDOM_F(1) > 0.25f && (fishActor->_62E & 0x200) == 0) {
         fishActor->_62E |= 0x200;
     } else {
         fishActor->_62E &= ~0x200;
@@ -218,7 +218,7 @@ void mfish_bass_turn_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
     actor->_34 = mfish_bass_turn_process;
 }
 
-void mfish_bass_turn_process(MUSEUM_FISH_PRIVATE_DATA* actor) {
+void mfish_bass_turn_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     int a;
     f32 v0, v1, v2, v3, v4;
     v0 = actor->_5AC.y * 0.2f + 0.05f;

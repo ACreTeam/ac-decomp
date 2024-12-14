@@ -1052,7 +1052,7 @@ BOOL kusa_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num,
         trans->y -= actor->_540.x * (v * joint_num);
         trans->z += actor->_540.z * (v * joint_num);
     }
-    return 1;
+    return TRUE;
 }
 
 void Museum_Fish_Kusa_Draw(ACTOR* actorx, GAME* game, int r5) {

@@ -159,7 +159,7 @@ void mfish_koi_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
     actor->_34 = mfish_aroana_normal_process;
 }
 
-void mfish_koi_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor) {
+void mfish_koi_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     s16 temp;
     if (ABS(actor->_632) > DEG2SHORT_ANGLE(20) || actor->_640 > 0) {
         add_calc2(&actor->_5EC, ((actor->_632 - DEG2SHORT_ANGLE(20)) / DEG2SHORT_ANGLE(2)) * 0.002f + 0.03f, 0.25f,
