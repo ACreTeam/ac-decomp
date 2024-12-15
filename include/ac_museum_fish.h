@@ -96,7 +96,7 @@ typedef struct _FISH_PRIVATE_DATA {
     f32 _608;
     s_xyz _60C;
     s_xyz _612;
-    artificial_padding(0x612, 0x61A, s_xyz);
+    s16 _618;
     s16 _61A;
     s16 _61C;
     s16 _61E;
@@ -292,13 +292,14 @@ void mfish_bass_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
 void mfish_seafish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_seafish_normal_init();
-void mfish_seafish_normal();
-void mfish_seafish_turn_init();
-void mfish_seafish_turn();
+void mfish_seafish_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
+void mfish_seafish_turn_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
+void mfish_seafish_turn(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_seafish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_seafish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+BOOL mfish_seafish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
                                void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_seafish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
+
 void mfish_tai_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_tai_normal_init();
 void mfish_tai_normal();

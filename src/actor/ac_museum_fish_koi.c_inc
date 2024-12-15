@@ -467,7 +467,7 @@ void mfish_koi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 
 BOOL mfish_koi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
                            void* arg, s_xyz* joint1, xyz_t* trans) {
-    MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)actor;
+    MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
     if (joint_num == 0) {
         trans->x *= actor->_5AC.z;
         trans->y *= actor->_5AC.z;
