@@ -717,7 +717,7 @@ void Museum_Fish_Actor_ct(ACTOR* actorx, GAME* gamex) {
     if (mMmd_FishInfo(0x21)) {
         actor->prvFish[0x21]._590 = &actor->_14788;
     } else {
-        mfish_hasu_ct((MUSEUM_FISH_PRIVATE_DATA*)&actor->_14788, gamex);
+        mfish_hasu_ct(&actor->_14788, gamex);
     }
 
     prv = actor->prvFish;
@@ -725,7 +725,7 @@ void Museum_Fish_Actor_ct(ACTOR* actorx, GAME* gamex) {
         prv->_62E &= ~1;
         if (mMmd_FishInfo(i)) {
             prv->_38._54C = mfish_model_tbl[i];
-            prv->_38._550 = mfish_anime_init_tbl[i];
+            prv->_38._550[0] = mfish_anime_init_tbl[i];
             prv->_62E |= 1;
             Museum_Fish_Prv_data_init(prv, gamex, i, 1);
         }

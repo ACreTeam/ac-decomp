@@ -504,8 +504,8 @@ void mfish_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 void mfish_onefish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     GAME_PLAY* game = (GAME_PLAY*)gamex;
     YET_SKELETON* s = &actor->_38;
-    cKF_SkeletonInfo_R_ct(&s->_00, s->_54C, s->_550, &s->_4F0, &s->_514);
-    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&s->_00, s->_550, NULL, 1.875f, 0.0f);
+    cKF_SkeletonInfo_R_ct(&s->_00, s->_54C, s->_550[0], &s->_4F0, &s->_514);
+    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&s->_00, s->_550[0], NULL, 1.875f, 0.0f);
     actor->_626 = actor->init_data._2C + (s16)(actor->init_data._2E * fqrand());
     actor->_628 = actor->_626;
     actor->_60C.x = DEG2SHORT_ANGLE(0);
