@@ -1,3 +1,5 @@
+// pretty sure all the floats in this file are correct
+
 f32 Rnd_EX_f(f32 v) {
     f32 rand1 = RANDOM2_F(2);
     f32 rand2 = RANDOM_F(1);
@@ -397,7 +399,7 @@ void mfish_ground_peck_process_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex
 void mfish_ground_peck_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     xyz_t p = suisou_pos[actor->_630];
     xyz_t_sub(&p, &actor->_5A0, &p);
-    actor->_5F4 = ((actor->init_data._08 * 0.3f + 64.0f) - (MAX(ABS(p.x), ABS(p.z)) * 0.15f)) - actor->init_data._0C;
+    actor->_5F4 = ((actor->init_data._08 * 0.3f + 65.0f) - (MAX(ABS(p.x), ABS(p.z)) * 0.15f)) - actor->init_data._0C;
     xyz_t_mult_v(&actor->_5DC, 0.1f);
 
     if (actor->_5A0.y > actor->_5F4 + actor->init_data._0C + 4.0f) {
@@ -505,7 +507,7 @@ void mfish_onefish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     GAME_PLAY* game = (GAME_PLAY*)gamex;
     YET_SKELETON* s = &actor->_38;
     cKF_SkeletonInfo_R_ct(&s->_00, s->_54C, s->_550[0], &s->_4F0, &s->_514);
-    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&s->_00, s->_550[0], NULL, 1.875f, 0.0f);
+    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&s->_00, s->_550[0], NULL, 1.0f, 0.0f);
     actor->_626 = actor->init_data._2C + (s16)(actor->init_data._2E * fqrand());
     actor->_628 = actor->_626;
     actor->_60C.x = DEG2SHORT_ANGLE(0);
@@ -774,7 +776,7 @@ void Museum_Fish_DonkoBGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Museum_Fish_objchk_pos_set(actor, gamex);
     // asm 17C
     a = (+00.0f + p.x);
-    b = (-45.5f + p.x);
+    b = (-45.0f + p.x);
     d = (-17.5f + p.z);
     c = (+45.0f + p.z);
 
@@ -1383,7 +1385,6 @@ void mfish_get_flow_vec(xyz_t* pos, MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game)
 }
 
 s16 mfish_get_escape_angle(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
-    // int ret;
     s16 v1 = atans_table(actor->_594->_5A0.z - actor->_5A0.z, actor->_594->_5A0.x - actor->_5A0.x);
     s16 v = actor->_60C.y - v1;
     if (ABS(v) < DEG2SHORT_ANGLE(90)) {

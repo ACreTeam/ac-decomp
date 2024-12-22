@@ -135,7 +135,7 @@ void mfish_kaseki_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     actor->_5A0.x += actor->_5D0;
     actor->_5A0.z += actor->_5D8;
     mfish_onefish_mv(actor, game);
-    actor->_38._00.frame_control.speed = actor->_5E8 * 0.74f + 0.25f;
+    actor->_38._00.frame_control.speed = actor->_5E8 * 0.75f + 0.25f;
     mfish_body_wind_anime_play(actor, game);
     Museum_Fish_BGCheck(actor, game);
     if (actor->_5A0.y < 55.0f - actor->init_data._04) {
