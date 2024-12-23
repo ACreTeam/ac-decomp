@@ -202,7 +202,7 @@
 #define MY_CLAMP(v, l, h) MIN(MY_MAX((l), (v)), (h))
 #define ARRAY_LEN(a) (sizeof(a) / sizeof(*a))
 
-#define CALC_EASE(x) (1 - sqrtf(1 - (x)))
+#define CALC_EASE(x) (1.0f - sqrtf(1.0f - (x)))
 #define CALC_EASE2(x) CALC_EASE(CALC_EASE(x))
 #define SHORT2DEG_ANGLE2(x) ((x) * (360.0f / 65536.0f))
 #define RANDOMF_RANGE(min, max) ((f32)(min) + (f32)RANDOM_F((f32)(max) - (f32)(min)))

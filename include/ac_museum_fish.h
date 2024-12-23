@@ -94,9 +94,7 @@ typedef struct _FISH_PRIVATE_DATA {
     xyz_t _5AC;
     xyz_t _5B8;
     artificial_padding(0x5B8, 0x5D0, xyz_t);
-    f32 _5D0;
-    f32 _5D4;
-    f32 _5D8;
+    xyz_t _5D0;
     xyz_t _5DC;
     f32 _5E8;
     f32 _5EC;
@@ -109,9 +107,7 @@ typedef struct _FISH_PRIVATE_DATA {
     f32 _608;
     s_xyz _60C;
     s_xyz _612;
-    s16 _618;
-    s16 _61A;
-    s16 _61C;
+    s_xyz _618;
     s16 _61E;
     s16 _620;
     s16 _622;

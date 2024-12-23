@@ -1,33 +1,217 @@
 
 void mfish_kurage_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
+    s16 s = qrand();
+    actor->_5E8 = actor->init_data._10 + RANDOM_F(actor->init_data._14);
+    actor->_5F0 = actor->_5E8;
+    actor->_60C.y = s;
+    actor->_612.y = actor->_60C.y;
+    actor->_60C.x = DEG2SHORT_ANGLE2(RANDOM2_F(100.0f));
+    actor->_612.x = actor->_60C.x;
+    actor->_5F4 = 0.05f;
+    actor->_5D0 = ZeroVec;
+    actor->_5AC = ZeroVec;
+    actor->_5AC.y = actor->_5E8;
+    actor->_638 = qrand();
+    actor->_618 = ZeroSVec;
+    actor->_622 = 0;
+    actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+    actor->_628 = actor->_626;
+    actor->_594 = NULL;
+    actor->_598 = NULL;
+    actor->_624 = 3;
+    mfish_kurage_normal_init(actor, gamex);
 }
 
-void mfish_kurage_normal_init() {
-    return;
+void mfish_kurage_normal_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+    actor->_628 = actor->_626;
+    actor->_5F0 = actor->init_data._10 + RANDOM_F(actor->init_data._14);
+    actor->_34 = mfish_kurage_normal;
 }
 
-void mfish_kurage_normal() {
-    return;
+void mfish_kurage_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    if (actor->_62E & 0x1e) {
+        mfish_kurage_turn_init(actor, gamex);
+    } else if (actor->_626 < 0) {
+        actor->_612.y = qrand();
+        actor->_612.x = qrand();
+
+        if (actor->_612.x > 0) {
+            actor->_612.x = MIN(DEG2SHORT_ANGLE(120), actor->_612.x);
+        } else {
+            actor->_612.x = MAX(DEG2SHORT_ANGLE(-120), actor->_612.x);
+        }
+
+        if (actor->_60C.x > DEG2SHORT_ANGLE(90) && actor->_612.x < (s16)(actor->_60C.x + DEG2SHORT_ANGLE(180))) {
+            //! BUG: should this be 179 degrees?
+            actor->_612.x = actor->_60C.x + (DEG2SHORT_ANGLE(180) - 1);
+        } else if (actor->_60C.x < DEG2SHORT_ANGLE(-90) &&
+                   actor->_612.x > (s16)(actor->_60C.x + DEG2SHORT_ANGLE(180))) {
+            actor->_612.x = actor->_60C.x - (DEG2SHORT_ANGLE(180) - 1);
+        }
+        actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+        actor->_628 = actor->_626;
+        actor->_5F0 = actor->init_data._10 + RANDOM_F(actor->init_data._14);
+    } else if (actor->_5F8 > actor->init_data._08 * 10.0f) {
+        f32 v = RANDOM_F(0.5f) + 0.5f;
+        actor->_5F8 = 0.0f;
+        if (RANDOM_F(1.0f) < 0.5) {
+            actor->_612.y += DEG2SHORT_ANGLE(v * 90.f);
+        } else {
+            actor->_612.y -= DEG2SHORT_ANGLE(v * 90.f);
+        }
+
+        if (actor->_612.x > 0) {
+            actor->_612.x = DEG2SHORT_ANGLE(90.0f + RANDOM2_F(60.0f));
+        } else {
+            actor->_612.x = DEG2SHORT_ANGLE(-90.0f + RANDOM2_F(60.0f));
+        }
+
+        actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+        actor->_626 >>= 1;
+        actor->_628 = actor->_626;
+        actor->_5F0 = actor->init_data._10 + RANDOM_F(actor->init_data._14);
+    }
 }
 
-void mfish_kurage_turn_init() {
-    return;
+void mfish_kurage_turn_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    //! BUG: cast needed to match? maybe i've been making assumptions about what these functions have taken as args
+    MUSEUM_FISH_PRIVATE_DATA* actor2 = (MUSEUM_FISH_PRIVATE_DATA*)actor;
+    if (actor->_60C.x * (s16)(actor2->_60C.y - actor2->_62C) > 0) {
+        actor->_612.y = actor->_62C + DEG2SHORT_ANGLE(135);
+    } else {
+        actor->_612.y = actor->_62C + DEG2SHORT_ANGLE(-135);
+    }
+    actor->_5F0 = actor->init_data._14 + actor->init_data._10;
+    actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+    actor->_628 = actor->_626;
+    actor->_34 = mfish_kurage_turn;
 }
 
-void mfish_kurage_turn() {
-    return;
+void mfish_kurage_turn(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    if ((s16)(actor->_612.x - actor->_60C.x) == 0 && (s16)(actor->_612.y - actor->_60C.y) == 0) {
+        mfish_kurage_normal_init(actor, gamex);
+    } else if (actor->_626 < 0) {
+        actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+        actor->_628 = actor->_626;
+        actor->_5F0 = actor->init_data._14 + actor->init_data._10;
+    }
 }
 
 void mfish_kurage_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    f32 v;
+    xyz_t p;
+    f32 t;
 
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
+    actor->_34(actor, gamex);
+    actor->_5F4 = GETREG(TAKREG, 0x55) * 0.001f + 0.035f;
+    actor->_632 += actor->_63A;
+    actor->_63C += actor->_618.y;
+    if (actor->_62E & 0x20) {
+        add_calc_short_angle2(&actor->_618.y, DEG2SHORT_ANGLE(8), CALC_EASE(0.5f), DEG2SHORT_ANGLE(0.5f),
+                              DEG2SHORT_ANGLE(0.05f));
+    } else {
+        add_calc_short_angle2(&actor->_618.y, DEG2SHORT_ANGLE(2), CALC_EASE(0.5f), DEG2SHORT_ANGLE(0.5f),
+                              DEG2SHORT_ANGLE(0.05f));
+    }
+    actor->_622 = DEG2SHORT_ANGLE(actor->_5E8 * 12.0f + 0.2f + GETREG(TAKREG, 0x1a) * 0.1f);
+    if (actor->_626 > actor->_628 - 20) {
+        add_calc2(&actor->_5EC, 0.1f, 0.5f, 0.02f);
+    }
+    add_calc2(&actor->_5E8, actor->_5F0, 0.1f, actor->_5EC);
+    add_calc2(&actor->_5AC.y, actor->_5F0, 0.1f, 0.25f);
+    add_calc2(&actor->_5F0, 0.1f, 0.1f, 0.01f);
+    add_calc_short_angle2(&actor->_63A, (s16)DEG2SHORT_ANGLE2((GETREG(TAKREG, 0x56) + 13.0f) * 0.5f), CALC_EASE2(0.1f),
+                          DEG2SHORT_ANGLE(0.25f), DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_60C.x, (s16)actor->_612.x, CALC_EASE2(GETREG(TAKREG, 0x18) * 0.01f + 0.1f),
+                          (s16)(actor->_622 >> 1) >> 1, DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_60C.y, (s16)actor->_612.y, CALC_EASE2(GETREG(TAKREG, 0x18) * 0.01f + 0.1f),
+                          (s16)(actor->_622 >> 1) >> 1, DEG2SHORT_ANGLE(0.25f));
+    v = actor->_5E8 * sin_s(actor->_60C.x) * (sin_s(actor->_63A) * 0.1f + 0.9f);
+    actor->_5D0.x = sin_s(actor->_60C.y) * v;
+    actor->_5D0.z = cos_s(actor->_60C.y) * v;
+    actor->_5D0.y = actor->_5E8 * cos_s(actor->_60C.x) * (sin_s(actor->_63A) * 0.1f + 0.9f);
+    mfish_get_flow_vec(&p, actor, gamex);
+
+    if (actor->_5FC < 120.f) {
+        add_calc2(&actor->_5DC.x, (120.f - actor->_5FC) * (GETREG(TAKREG, 0x3c) * 0.0001f + 0.01f),
+                  GETREG(TAKREG, 0x3d) * 0.01f + 0.25f, GETREG(TAKREG, 0x3e) * 0.01f + 0.2f);
+
+    } else if (actor->_600 < 120.f) {
+        add_calc2(&actor->_5DC.x, -(120.f - actor->_600) * (GETREG(TAKREG, 0x3c) * 0.0001f + 0.01f),
+                  GETREG(TAKREG, 0x3d) * 0.01f + 0.25f, GETREG(TAKREG, 0x3e) * 0.01f + 0.2f);
+    }
+
+    if (actor->_604 < 20.f) {
+        add_calc2(&actor->_5DC.z, (20.f - actor->_604) * (GETREG(TAKREG, 0x3c) * 0.0001f + 0.01f),
+                  GETREG(TAKREG, 0x3d) * 0.01f + 0.25f, GETREG(TAKREG, 0x3e) * 0.01f + 0.2f);
+
+    } else if (actor->_608 < 20.f) {
+        add_calc2(&actor->_5DC.z, -(20.f - actor->_608) * (GETREG(TAKREG, 0x3c) * 0.0001f + 0.01f),
+                  GETREG(TAKREG, 0x3d) * 0.01f + 0.25f, GETREG(TAKREG, 0x3e) * 0.01f + 0.2f);
+    }
+
+    if (actor->_5A0.y < (55.0f + actor->init_data._08) + 10.0f) {
+        t = (10.f - (actor->_5A0.y - (55.0f + actor->init_data._08)));
+        t *= (GETREG(TAKREG, 0x3C) * 0.0001f + 0.01f);
+
+        add_calc2(&actor->_5DC.y, t, GETREG(TAKREG, 0x3D) * 0.01f + 0.25f, GETREG(TAKREG, 0x3E) * 0.01f + 0.2f);
+    } else if (actor->_5A0.y > (110.0f - actor->init_data._08) - 10.0f) {
+        t = -(10.f - ((110.0f - actor->init_data._08) - actor->_5A0.y));
+        t *= (GETREG(TAKREG, 0x3C) * 0.0001f + 0.01f);
+
+        add_calc2(&actor->_5DC.y, t, GETREG(TAKREG, 0x3D) * 0.01f + 0.25f, GETREG(TAKREG, 0x3E) * 0.01f + 0.2f);
+    }
+
+    actor->_5A0.x += actor->_5D0.x + actor->_5DC.x;
+    actor->_5A0.y += actor->_5D0.y + actor->_5DC.y;
+    actor->_5A0.z += actor->_5D0.z + actor->_5DC.z;
+
+    actor->_5B8 = actor->_5A0;
+
+    Museum_Fish_BGCheck(actor, gamex);
+    if (actor->_5A0.y < 55.0f + actor->init_data._08) {
+        actor->_5A0.y = 55.0f + actor->init_data._08;
+        actor->_612.x = DEG2SHORT_ANGLE(-30);
+    } else if (actor->_5A0.y > 110.f - actor->init_data._08 - actor->_608 * 0.2f) {
+        actor->_5A0.y = 110.f - actor->init_data._08 - actor->_608 * 0.2f;
+        if (actor->_612.x > 0) {
+            actor->_612.x = DEG2SHORT_ANGLE(120);
+        } else {
+            actor->_612.x = DEG2SHORT_ANGLE(-120);
+        }
+    }
+    actor->_626--;
 }
 
-void mfish_kurage_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+extern Gfx act_mus_kurage_sakana_body_model[];
+extern Gfx act_mus_kurage_sakana_foot_model[];
 
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
+void mfish_kurage_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    f32 a = (actor->_5E8 - 0.1f) * (-0.3f + GETREG(TAKREG, 0x1b) * 0.01f);
+    a += (actor->_5F4 * sin_s(actor->_632) + 1.0f);
+
+    OPEN_DISP(gamex->graph);
+    Matrix_translate(actor->_5A0.x, actor->_5A0.y, actor->_5A0.z, 0);
+    Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
+    Matrix_scale(actor->init_data._00 * a, actor->init_data._00 * (1.0f / SQ(a)), actor->init_data._00 * a, 1);
+    Matrix_push();
+
+    Matrix_RotateY(actor->_63C, 1);
+    Matrix_scale((GETREG(TAKREG, 0x4b) * 0.01f + 0.1f) * sin_s(actor->_63C) + 1.0f, 1.0f,
+                 (GETREG(TAKREG, 0x4b) * 0.01f + 0.1f) * cos_s(actor->_63C) + 1.0f, 1);
+    Matrix_RotateY(-actor->_63C, 1);
+    gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(NEXT_POLY_XLU_DISP, act_mus_kurage_sakana_body_model);
+
+    Matrix_pull();
+
+    Matrix_RotateY(actor->_63C, 1);
+    Matrix_scale((GETREG(TAKREG, 0x4b) * 0.01f + 0.1f) * sin_s(actor->_63C) + 1.0f, 1.0f,
+                 (GETREG(TAKREG, 0x4b) * 0.01f + 0.1f) * cos_s(actor->_63C) + 1.0f, 1);
+    Matrix_RotateY(-actor->_63C, 1);
+    gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(NEXT_POLY_XLU_DISP, act_mus_kurage_sakana_foot_model);
+
+    CLOSE_DISP(gamex->graph);
 }
