@@ -5,7 +5,10 @@
 #include "m_rcp.h"
 
 
-static f32 eKasamizutama_scale_table;
+static f32 eKasamizutama_scale_table[] = {
+    0.0f, 0.1f, 0.3f, 0.5f, 0.7f, 0.9f, 1.0f, 0.9f, 0.7f, 0.5f
+};
+
 extern Gfx ef_koke_suiteki01_0_int_i4[];
 extern Gfx ef_koke_suiteki01_00_modelT[];
 
@@ -38,7 +41,7 @@ static void eKasamizutama_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
     f32 sin = 2.5f * sin_s(rand_angle);
     
     Matrix_RotateY(angle, 0);
-    Matrix_RotateX(-0x2000, 1);
+    Matrix_RotateX(DEG2SHORT_ANGLE2(-45.0f), 1);
     
     pos.x = (sin) * sin_s(rand);
     pos.y = 2.5f * cos_s(rand_angle);
@@ -57,13 +60,16 @@ static void eKasamizutama_mv(eEC_Effect_c* effect, GAME* game) {
 }
 
 static void eKasamizutama_dw(eEC_Effect_c* effect, GAME* game) {
-    effect->scale.x = effect->scale.y = effect->scale.z = *(f32*)(&eKasamizutama_scale_table + (s16) ((s16)(20 - effect->timer) >> 1)) * 0.005f;
+    s16 remain = 20 - effect->timer;
+    s16 frame = remain >> 1;
+    
+    effect->scale.x = effect->scale.y = effect->scale.z = eKasamizutama_scale_table[frame] * 0.005f;
     _texture_z_light_fog_prim_xlu(game->graph);
 
     OPEN_DISP(game->graph);
     
     eEC_CLIP->auto_matrix_xlu_proc(game, &effect->position, &effect->scale);
-    gSPSegment(NEXT_POLY_XLU_DISP, 8, ef_koke_suiteki01_0_int_i4);
+    gSPSegment(NEXT_POLY_XLU_DISP, ANIME_1_TXT_SEG, ef_koke_suiteki01_0_int_i4);
     gSPDisplayList(NEXT_POLY_XLU_DISP, ef_koke_suiteki01_00_modelT);
     
     CLOSE_DISP(game->graph);
