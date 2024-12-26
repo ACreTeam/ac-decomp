@@ -127,7 +127,8 @@ typedef struct _FISH_PRIVATE_DATA {
     s16 _63E;
     s16 _640;
     s16 _642;
-} MUSEUM_FISH_PRIVATE_DATA; // size 644
+    s16 _644;
+} MUSEUM_FISH_PRIVATE_DATA; // size 648
 
 // Holds data for the underwater grass
 typedef YET_SKELETON MUSEUM_FISH_KUSA_DATA;
@@ -431,7 +432,7 @@ void mfish_zarigani_stand_process();
 void mfish_zarigani_jump_process_init();
 void mfish_zarigani_jump_process();
 void mfish_zarigani_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_zarigani_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+BOOL mfish_zarigani_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
                                 void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_zarigani_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
