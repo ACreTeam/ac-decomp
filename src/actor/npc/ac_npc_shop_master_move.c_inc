@@ -1,0 +1,81 @@
+static u8 aNSM_get_zone(xyz_t* wpos) {
+    if (wpos->x < 120.0f) {
+        if (wpos->z < 180.0f) {
+            return aNSM_ZONE_1;
+        } else {
+            return aNSM_ZONE_2;
+        }
+    }
+    if (wpos->z < 160.0f) {
+        return aNSM_ZONE_0;
+    } else {
+        return aNSM_ZONE_3;
+    }
+}
+
+static u8 aNSM_get_next_zone(u8 p1, u8 p2) {
+    static u8 next_zone[][4] = {
+        {aNSM_ZONE_0, aNSM_ZONE_1, aNSM_ZONE_1, aNSM_ZONE_1},
+        {aNSM_ZONE_0, aNSM_ZONE_1, aNSM_ZONE_2, aNSM_ZONE_2},
+        {aNSM_ZONE_1, aNSM_ZONE_1, aNSM_ZONE_2, aNSM_ZONE_3},
+        {aNSM_ZONE_2, aNSM_ZONE_2, aNSM_ZONE_2, aNSM_ZONE_3},
+    };
+
+    return next_zone[p2][p1];
+}
+
+static void aNSM_search_player(NPC_SHOP_MASTER_ACTOR* shop_master, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)shop_master;
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+
+    if (player != NULL) {
+        s16 angle = actorx->shape_info.rotation.y - shop_master->player_angle;
+        if (ABS(angle) > DEG2SHORT_ANGLE(90.0f)) {
+            aNSC_setupAction(shop_master, play, aNSC_ACTION_TURN);
+        } else {
+            chase_angle(&actorx->shape_info.rotation.y, shop_master->player_angle, DEG2SHORT_ANGLE(11.25f));
+            actorx->world.angle.y = actorx->shape_info.rotation.y;
+        }
+    }
+}
+
+static void aNSM_search_player2(NPC_SHOP_MASTER_ACTOR* shop_master, GAME_PLAY* play) {
+    static f32 posX[4] = { 220.0, 100.0, 100.0, 220.0 };
+    static f32 posZ[4] = { 140.0, 140.0, 220.0, 220.0 };
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    if (player != NULL) {
+        f32 dx = posX[shop_master->next_zone] - shop_master->npc_class.actor_class.world.position.x;
+        f32 dz = posZ[shop_master->next_zone] - shop_master->npc_class.actor_class.world.position.z;
+
+        s16 angle = atans_table(dz, dx);
+        chase_angle(&shop_master->npc_class.actor_class.shape_info.rotation.y, angle, DEG2SHORT_ANGLE(11.25f));
+
+        shop_master->npc_class.actor_class.world.angle.y = shop_master->npc_class.actor_class.shape_info.rotation.y;
+
+        if (SQ(dx) + SQ(dz) < 200.0f) {
+            shop_master->next_zone = aNSM_get_next_zone(shop_master->player_zone, shop_master->zone);
+        }
+    }
+}
+
+static int aNSM_check_safe_zone(NPC_SHOP_MASTER_ACTOR* shop_master, PLAYER_ACTOR* player) {
+    int res = FALSE;
+    if (player->actor_class.world.position.z > 280.0f && shop_master->zone == aNSM_ZONE_3) {
+        res = TRUE;
+    }
+    return res;
+}
+
+void aNSM_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_SHOP_MASTER_ACTOR* shop_master = (NPC_SHOP_MASTER_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    CLIP(npc_clip)->move_before_proc(actorx, game);
+    aNSC_BGcheck(actorx);
+    aNSC_set_zone_data(shop_master, (ACTOR*)player);
+    aNSC_set_player_angl(shop_master);
+    (*shop_master->proc)(shop_master, play);
+    aNSC_talk_demo_proc(actorx);
+    CLIP(npc_clip)->move_after_proc(actorx, game);
+    aNSC_sell_camera(shop_master, play);
+}
