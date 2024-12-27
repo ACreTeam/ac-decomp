@@ -227,6 +227,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define PAPER2TYPE(n) ((n) % PAPER_UNIQUE_NUM)
 #define PAPER2STACK(n) ((n) / PAPER_UNIQUE_NUM)
+#define PAPEROFQUANT(n, q) (ITM_PAPER_START + (q - 1) * PAPER_UNIQUE_NUM + PAPER2TYPE(n))
 
 #define ITEM_IS_FTR(n) \
   (ITEM_NAME_GET_TYPE(n) == NAME_TYPE_FTR0 || ITEM_NAME_GET_TYPE(n) == NAME_TYPE_FTR1)

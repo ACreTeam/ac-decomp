@@ -85,7 +85,8 @@ typedef struct home_size_info_s {
     /* 0x05 */ u8 renew : 1;            /* refresh house size & 'outlook' palette */
     /* 0x05 */ u8 statue_ordered : 1;   /* set when statue is ordered from Nook */
     /* 0x05 */ u8 basement_ordered : 1; /* set when basement has been ordered */
-    /* 0x05 */ u8 pad : 5;              /* unused? */
+    /* 0x05 */ u8 pad_1 : 1;              /* unused? */
+    /* 0x05 */ u8 pad : 4;
 } mHm_rmsz_c;
 
 /* sizeof(Haniwa_Item_c) == 8 */
