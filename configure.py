@@ -1156,7 +1156,7 @@ config.libs = [
             Object(NonMatching, "actor/npc/event/ac_ev_artist.c"),
             Object(Matching, "actor/npc/event/ac_ev_broker.c"),
             Object(NonMatching, "actor/npc/event/ac_ev_broker2.c"),
-            Object(NonMatching, "actor/npc/event/ac_ev_carpetPeddler.c"),
+            Object(Matching, "actor/npc/event/ac_ev_carpetPeddler.c"),
             Object(Matching, "actor/npc/event/ac_ev_castaway.c"),
             Object(NonMatching, "actor/npc/event/ac_ev_designer.c"),
             Object(Matching, "actor/npc/event/ac_ev_dokutu.c"),

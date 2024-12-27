@@ -1,0 +1,300 @@
+int aECPD_check_possession() {
+    mActor_name_t* pocket = Now_Private->inventory.pockets;
+    int i;
+    int res = FALSE;
+    for (i = mPr_POCKETS_SLOT_COUNT; i > 0; i--) {
+        if (ITEM_NAME_GET_TYPE(*pocket) == NAME_TYPE_ITEM1) {
+            if (ITEM_NAME_GET_CAT(*pocket) == ITEM1_CAT_CARPET) {
+                res = TRUE;
+                break;
+            }
+        }
+        pocket += 1;
+    }
+    return res;
+}
+
+void aECPD_msg_win_open_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    if (mMsg_Check_not_series_main_wait(mMsg_Get_base_window_p()) == TRUE) {
+        peddler->setup_action(peddler, play, peddler->next_action);
+    }
+}
+
+void aECPD_demo_start_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    if (CLIP(handOverItem_clip)->request_mode == aHOI_REQUEST_TRANS_WAIT) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x1, 0x3);
+        peddler->setup_action(peddler, play, peddler->next_action);
+    }
+}
+
+void aECPD_1st_check(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+        int action = -1;
+        switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+            case mChoice_CHOICE0:
+                action = eECPD_ACTION_2ND_CHECK;
+                break;
+            case mChoice_CHOICE1:
+                action = eECPD_ACTION_NONE;
+                break;
+        }
+        if (action != -1) {
+            peddler->setup_action(peddler, play, action);
+        }
+    }
+}
+
+void aECPD_2nd_check(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    static int next_msg[4] = { mString_CARPETPEDDLER_START+ 1, mString_CARPETPEDDLER_START + 4,
+                               mString_CARPETPEDDLER_START + 3, mString_CARPETPEDDLER_START + 5 };
+    static int next_act[4] = { eECPD_ACTION_NONE, eECPD_ACTION_NONE, eECPD_ACTION_NONE, eECPD_ACTION_GRAD_MESSAGE };
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        int next = -1;
+        switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+            case mChoice_CHOICE0:
+                if (aECPD_check_possession() == FALSE) {
+                    next = 1;
+                } else if (mSP_money_check(peddler->price) == FALSE) {
+                    next = 2;
+                } else {
+                    next = 3;
+                }
+                break;
+            case mChoice_CHOICE1:
+                next = 0;
+                break;
+        }
+        if (next != -1) {
+            mMsg_Set_continue_msg_num(msg_p, next_msg[next]);
+            mMsg_Set_ForceNext(msg_p);
+            peddler->setup_action(peddler, play, next_act[next]);
+        }
+    }
+}
+
+void aECPD_grad_message(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    if (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x9)) {
+        if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x9, 0x0);
+            peddler->setup_action(peddler, play, eECPD_ACTION_MENU_OPEN_WAIT);
+        }
+    }
+}
+
+void aECPD_menu_open_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    if (mMsg_Check_main_wait(mMsg_Get_base_window_p()) == TRUE) {
+        peddler->setup_action(peddler, play, eECPD_ACTION_MENU_CLOSE_WAIT);
+    }
+}
+
+void aECPD_menu_close_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    if (play->submenu.open_flag == FALSE) {
+        Submenu_Item_c* submenu_item = play->submenu.item_p;
+        if (submenu_item->item == EMPTY_NO) {
+            peddler->next_action = eECPD_ACTION_NONE;
+            mMsg_Set_continue_msg_num(msg_p, mString_CARPETPEDDLER_START + 6);
+            peddler->setup_action(peddler, play, eECPD_ACTION_MSG_WIN_OPEN_WAIT);
+            mMsg_Unset_LockContinue(msg_p);
+        } else {
+            peddler->next_action = eECPD_ACTION_DEMO0_END_WAIT;
+            peddler->setup_action(peddler, play, eECPD_ACTION_DEMO_START_WAIT);
+        }
+    }
+}
+
+void aECPD_demo0_end_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    static int next_act[2] = { eECPD_ACTION_DEMO_START_WAIT, eECPD_ACTION_MSG_WIN_OPEN_WAIT };
+    static int over_next_act_idx[2] = { eECPD_ACTION_DEMO1_END_WAIT, eECPD_ACTION_REFUSE_TRADE_IN };
+    static int msg_no[2] = { mString_CARPETPEDDLER_START + 7, mString_CARPETPEDDLER_START + 9 };
+    int next;
+    if (CLIP(handOverItem_clip)->master_actor == NULL) {
+        mActor_name_t item = CLIP(handOverItem_clip)->item;
+        if (ITEM_NAME_GET_TYPE(item) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_CAT(item) == ITEM1_CAT_CARPET) {
+            peddler->npc_class.left_hand.item = peddler->carpet;
+            mPlib_request_main_give_type1((GAME*)play, ITM_MONEY_10000, aHOI_REQUEST_PUTAWAY, FALSE, FALSE);
+            next = 0;
+        } else {
+            peddler->trade_in_item = item;
+            next = 1;
+            peddler->npc_class.left_hand.present_flag = CLIP(handOverItem_clip)->present_flag;
+        }
+        peddler->next_action = over_next_act_idx[next];
+        mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg_no[next]);
+        peddler->setup_action(peddler, play, next_act[next]);
+    }
+}
+
+void aECPD_demo1_end_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    if (CLIP(handOverItem_clip)->master_actor == NULL) {
+        peddler->next_action = eECPD_ACTION_DEMO2_START_WAIT;
+        peddler->setup_action(peddler, play, eECPD_ACTION_MSG_WIN_OPEN_WAIT);
+    }
+}
+
+void aECPD_demo2_start_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    if ((int)mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x1) == 0x2) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x0, peddler->carpet);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x1, 0x7);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x2, 0x0);
+        peddler->setup_action(peddler, play, eECPD_ACTION_DEMO2_START_CHECK);
+    }
+}
+
+void aECPD_demo2_start_check(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    if (CLIP(handOverItem_clip)->master_actor == (ACTOR*)peddler) {
+        peddler->setup_action(peddler, play, eECPD_ACTION_DEMO2_END_WAIT);
+    }
+}
+
+void aECPD_demo2_end_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    if (peddler->npc_class.action.idx == aNPC_ACT_TRANS) {
+        if (CLIP(handOverItem_clip)->master_actor == NULL) {
+            mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+            peddler->setup_action(peddler, play, eECPD_ACTION_NONE);
+        }
+    }
+}
+
+void aECPD_refuse_trade_in(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    if ((int)mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x1) == 0x2) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x0, peddler->trade_in_item);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x1, 0x7);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x2, 0x0);
+        mPr_SetFreePossessionItem(Now_Private, peddler->trade_in_item, mPr_ITEM_COND_NORMAL);
+        peddler->setup_action(peddler, play, eECPD_ACTION_REFUSE_TRADE_IN_END_WAIT);
+    }
+}
+
+void aECPD_refuse_trade_in_end_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    if (CLIP(handOverItem_clip)->master_actor == NULL) {
+        if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+            peddler->setup_action(peddler, play, eECPD_ACTION_GRAD_MESSAGE);
+        }
+    }
+}
+
+void aECPD_msg_win_open_wait_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    mMsg_request_main_appear_wait_type1(mMsg_Get_base_window_p());
+}
+
+void aECPD_1st_check_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    mActor_name_t item;
+    u8 item_str[8];
+    u8 price_str[6];
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int price = eECPD_PRICE_START;
+    int i;
+    for (i = 0; i != Save_Get(event_save_data).special.event.arabian.used; i++) {
+        price *= 2;
+    }
+    peddler->price = price;
+    mFont_UnintToString(price_str, sizeof(price_str), price, 0x5, TRUE, FALSE, TRUE);
+    mMsg_Set_free_str(msg_p, 0x0, price_str, sizeof(price_str));
+    mSP_SelectRandomItem_New(NULL, &item, 0x1, NULL, 0x0, mSP_KIND_CARPET, mSP_LISTTYPE_EVENT, FALSE);
+    mIN_copy_name_str(item_str, item);
+    mMsg_Set_item_str_art(msg_p, mMsg_ITEM_STR0, item_str, mIN_ITEM_NAME_LEN, mIN_get_item_article(item));
+    peddler->carpet = item;
+}
+
+void aECPD_grad_message_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+}
+
+void aECPD_menu_open_wait_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    mMsg_request_main_disappear_wait_type1(mMsg_Get_base_window_p());
+}
+
+void aECPD_menu_close_wait_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    mSM_open_submenu(&play->submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_TAKE, 0x0);
+    mMsg_Set_LockContinue(mMsg_Get_base_window_p());
+}
+
+void aECPD_demo0_end_wait_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    Submenu_Item_c* submenu_item = play->submenu.item_p;
+    if (ITEM_NAME_GET_TYPE(submenu_item->item) == NAME_TYPE_ITEM1 &&
+        ITEM_NAME_GET_CAT(submenu_item->item) == ITEM1_CAT_CARPET) {
+
+        int count = Save_Get(event_save_data).special.event.arabian.used;
+        count += 1;
+        if (count > eECPD_PRICE_MULT_CAP) {
+            count = eECPD_PRICE_MULT_CAP;
+        }
+        Save_Get(event_save_data).special.event.arabian.used = count;
+
+        mPr_SetPossessionItem(Now_Private, submenu_item->slot_no, peddler->carpet, mPr_ITEM_COND_NORMAL);
+        mSP_get_sell_price(peddler->price);
+    }
+}
+
+void aECPD_demo2_start_check_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    mMsg_Set_LockContinue(mMsg_Get_base_window_p());
+}
+
+void aECPD_refuse_trade_in_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
+    ACTOR* temp = CLIP(handOverItem_clip)->master_actor;
+    CLIP(handOverItem_clip)->master_actor = CLIP(handOverItem_clip)->target_actor;
+    CLIP(handOverItem_clip)->target_actor = temp;
+}
+
+void aECPD_init_proc(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play, int action) {
+    static aECPD_INIT_PROC init_proc[15] = {
+        (aECPD_INIT_PROC)none_proc1, aECPD_msg_win_open_wait_init, (aECPD_INIT_PROC)none_proc1,
+        aECPD_1st_check_init,        (aECPD_INIT_PROC)none_proc1,  aECPD_grad_message_init,
+        aECPD_menu_open_wait_init,   aECPD_menu_close_wait_init,   aECPD_demo0_end_wait_init,
+        (aECPD_INIT_PROC)none_proc1, (aECPD_INIT_PROC)none_proc1,  aECPD_demo2_start_check_init,
+        (aECPD_INIT_PROC)none_proc1, aECPD_refuse_trade_in_init,   (aECPD_INIT_PROC)none_proc1
+    };
+    init_proc[action](peddler, play);
+}
+
+void aECPD_setupAction(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play, int action) {
+    static aECPD_INIT_PROC process[15] = { (aECPD_INIT_PROC)none_proc1,
+                                           aECPD_msg_win_open_wait,
+                                           aECPD_demo_start_wait,
+                                           aECPD_1st_check,
+                                           aECPD_2nd_check,
+                                           aECPD_grad_message,
+                                           aECPD_menu_open_wait,
+                                           aECPD_menu_close_wait,
+                                           aECPD_demo0_end_wait,
+                                           aECPD_demo1_end_wait,
+                                           aECPD_demo2_start_wait,
+                                           aECPD_demo2_start_check,
+                                           aECPD_demo2_end_wait,
+                                           aECPD_refuse_trade_in,
+                                           aECPD_refuse_trade_in_end_wait };
+    peddler->proc = process[action];
+    aECPD_init_proc(peddler, play, action);
+}
+
+void aECPD_set_talk_info(ACTOR* actorx) {
+    mDemo_Set_msg_num(mString_CARPETPEDDLER_START);
+}
+
+void aECPD_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aECPD_set_talk_info);
+}
+
+int aECPD_talk_init(ACTOR* actorx, GAME* game) {
+    EV_CARPETPEDDLER_ACTOR* peddler = (EV_CARPETPEDDLER_ACTOR*)actorx;
+    peddler->setup_action(peddler, (GAME_PLAY*)game, eECPD_ACTION_1ST_CHECK);
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+int aECPD_talk_end_chk(ACTOR* actorx, GAME* game) {
+    int res = FALSE;
+    EV_CARPETPEDDLER_ACTOR* peddler = (EV_CARPETPEDDLER_ACTOR*)actorx;
+    peddler->proc(peddler, (GAME_PLAY*)game);
+    if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)peddler) == FALSE) {
+        mEv_set_status(mEv_EVENT_CARPET_PEDDLER, mEv_STATUS_TALK);
+        res = TRUE;
+    }
+    return res;
+}
+
+void aECPD_actor_move(ACTOR* actorx, GAME* game) {
+    CLIP(npc_clip)->move_proc(actorx, game);
+}
