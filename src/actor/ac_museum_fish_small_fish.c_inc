@@ -195,6 +195,6 @@ void mfish_small_fish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Matrix_translate(0.0f, 0.0f, -actor->init_data._24 * 0.5f, 1);
     Matrix_scale(actor->init_data._00, actor->init_data._00, actor->init_data._00, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_zarigani_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_sfish_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }
