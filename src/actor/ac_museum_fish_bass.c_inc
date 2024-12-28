@@ -170,7 +170,7 @@ void mfish_bass_turn_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
     s16 a;
     s16 b;
 
-    b = a = DEG2SHORT_ANGLE(90) + DEG2SHORT_ANGLE(RANDOM_F(75));
+    b = a = DEG2SHORT_ANGLE(45) + DEG2SHORT_ANGLE(RANDOM_F(75));
     actor->_618.y =
         DEG2SHORT_ANGLE((actor->_5AC.y * 4.0f + 4.0f) * (SHORT2DEG_ANGLE2(a) / 120.0f) + 2.0f + actor->_5AC.y);
     if (actor->_62E & 0x1e) {

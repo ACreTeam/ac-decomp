@@ -33,7 +33,7 @@ void mfish_tai_normal_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 void mfish_tai_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
     s16 ss = (ABS(actor->_622) * ((0.75f * actor->init_data._30) / 32749.0f));
-    // extra extsh here
+
     int s = (s16)MIN(DEG2SHORT_ANGLE2(25), MAX(ss, DEG2SHORT_ANGLE2(5)));
 
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(sin_s(actor->_636) * actor->_632),
