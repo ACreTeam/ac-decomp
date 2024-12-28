@@ -122,7 +122,7 @@ void mfish_zarigani_stand_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) 
         }
     }
 
-    v = (-(actor->_60C.x * (360.0f / 0x10000)) / 90.0f);
+    v = (-SHORT2DEG_ANGLE2(actor->_60C.x) / 90.0f);
     v *= (20.0f + GETREG(TAKREG, 0x1b) * 0.1f);
     actor->_5AC.x = sin_s(actor->_60C.y) * v;
     actor->_5AC.z = cos_s(actor->_60C.y) * v;
@@ -155,7 +155,7 @@ void mfish_zarigani_jump_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         mfish_zarigani_wait_process_init(actor, gamex);
         return;
     }
-    actor->_5AC.y = (actor->_60C.x * (360.f / 0x10000)) / 90.f;
+    actor->_5AC.y = SHORT2DEG_ANGLE2(actor->_60C.x) / 90.f;
     actor->_5AC.y *= 20.f + GETREG(TAKREG, 0x1c) * 0.1f;
 }
 

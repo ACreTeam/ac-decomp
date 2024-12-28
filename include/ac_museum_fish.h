@@ -17,6 +17,7 @@ typedef struct _FISH_PRIVATE_DATA;
 typedef void (*PRIV_FISH_CONSTRUCTOR)(struct _FISH_PRIVATE_DATA*, GAME*);
 typedef void (*PRIV_FISH_MOVE)(struct _FISH_PRIVATE_DATA*, GAME*);
 typedef void (*PRIV_FISH_DRAW)(struct _FISH_PRIVATE_DATA*, GAME*);
+// typedef void (*PRIV_FISH_PROCESS)(struct _FISH_PRIVATE_DATA*, GAME*);
 typedef void (*PRIV_FISH_PROCESS)(struct _FISH_PRIVATE_DATA*, GAME*);
 
 // unsure temp structs
@@ -316,7 +317,7 @@ void mfish_tai_normal();
 void mfish_tai_turn_init();
 void mfish_tai_turn();
 void mfish_tai_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_tai_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+BOOL mfish_tai_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
                            void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_tai_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
@@ -418,7 +419,7 @@ void mfish_namazu_ground_sweep_process_init();
 void mfish_namazu_ground_sweep_process();
 void mfish_namazu_base_FishMove();
 void mfish_namazu_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_namazu_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+BOOL mfish_namazu_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
                               void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_namazu_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 

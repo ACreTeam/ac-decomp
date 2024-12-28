@@ -124,9 +124,11 @@ void mfish_dummy_process_init(MUSEUM_FISH_PRIVATE_DATA* prv) {
 
 void mfish_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     // no clue what's going on here
-    add_calc_short_angle2(&actor->_612.y, actor->_634, CALC_EASE2(0.0f), DEG2SHORT_ANGLE(3.75f), 0x2d);
-    actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.5f), DEG2SHORT_ANGLE(5.0f), 0x2d);
-    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.5f), DEG2SHORT_ANGLE(5.0f), 0x2d);
+    add_calc_short_angle2(&actor->_612.y, actor->_634, CALC_EASE2(0.0f), DEG2SHORT_ANGLE(3.75f),
+                          DEG2SHORT_ANGLE(0.25f));
+    actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.5f), DEG2SHORT_ANGLE(5.0f),
+                                        DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.5f), DEG2SHORT_ANGLE(5.0f), DEG2SHORT_ANGLE(0.25f));
 
     if (actor->_630 == 2) {
         if (actor->_612.y < 0) {
@@ -334,9 +336,9 @@ void mfish_peck_process_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     actor->_632 = DEG2SHORT_ANGLE((fVar8 * 30.0f) + 20.0f);
 
     if (qrand() & 0x8000) {
-        actor->_636 = 0x4000;
+        actor->_636 = DEG2SHORT_ANGLE(90);
     } else {
-        actor->_636 = -0x4000;
+        actor->_636 = DEG2SHORT_ANGLE(-90);
     }
 
     actor->_62E &= ~0xC0;
@@ -1034,7 +1036,7 @@ void Museum_Fish_Kusa_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
                         if (t > 4.0f) {
                             xyz_t_mult_v(&actor->prvKusa[j]._540, 4.0f / t);
                         }
-                        actor->prvKusa[j]._538.y = 0x27d;
+                        actor->prvKusa[j]._538.y = DEG2SHORT_ANGLE(3.5f);
                     }
                 }
                 // asm 3fc-410

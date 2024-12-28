@@ -29,7 +29,7 @@ void mfish_kaseki_normal_init() {
 
 void mfish_kaseki_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     s16 s = ABS(actor->_622) * (actor->init_data._30 * (GETREG(TAKREG, 0x1d) * 0.001f + 0.5f) / 32749.0f);
-    s = MIN(actor->_634, MAX(s, 0x38E));
+    s = MIN(actor->_634, MAX(s, DEG2SHORT_ANGLE(5)));
     add_calc_short_angle2(&actor->_632, 0, CALC_EASE(0.5), DEG2SHORT_ANGLE(5), DEG2SHORT_ANGLE(0.5f));
     actor->_636 += 455;
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(actor->_632 * sin_s(actor->_636)),

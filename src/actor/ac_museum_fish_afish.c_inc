@@ -103,7 +103,7 @@ void mfish_afish_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
 void mfish_afish_turn_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
     s16 s3 = DEG2SHORT_ANGLE(RANDOM_F(75.0f)) + DEG2SHORT_ANGLE(45.0f);
-    actor->_618.y = ABS(DEG2SHORT_ANGLE2(((s3 * (360.0f / 0x10000)) / 120.0f) * 4.0f + 2.5f));
+    actor->_618.y = ABS(DEG2SHORT_ANGLE2((SHORT2DEG_ANGLE2(s3) / 120.0f) * 4.0f + 2.5f));
     if (actor->_62E & 0x1e) {
         if ((s16)(actor->_60C.y - actor->_62C) < 0) {
             s3 = -s3;
