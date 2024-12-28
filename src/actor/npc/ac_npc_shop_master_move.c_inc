@@ -58,9 +58,9 @@ static void aNSM_search_player2(NPC_SHOP_MASTER_ACTOR* shop_master, GAME_PLAY* p
     }
 }
 
-static int aNSM_check_safe_zone(NPC_SHOP_MASTER_ACTOR* shop_master, PLAYER_ACTOR* player) {
+static int aNSM_check_safe_zone(NPC_SHOP_MASTER_ACTOR* shop_master, ACTOR* player) {
     int res = FALSE;
-    if (player->actor_class.world.position.z > 280.0f && shop_master->zone == aNSM_ZONE_3) {
+    if (player->world.position.z > 280.0f && shop_master->zone == aNSM_ZONE_3) {
         res = TRUE;
     }
     return res;
@@ -72,6 +72,7 @@ static int aNSM_check_safe_zone(NPC_SHOP_MASTER_ACTOR* shop_master, PLAYER_ACTOR
 #define aNSC_search_player aNSM_search_player
 #define aNSC_search_player2 aNSM_search_player2
 #define aNSC_ANIME_FILE "../src/actor/npc/ac_npc_shop_master_anime.c"
+#define aNSC_POS_Z_MAX 260.0f
 
 #include "../src/actor/npc/ac_npc_shop_common.c"
 
@@ -81,6 +82,7 @@ static int aNSM_check_safe_zone(NPC_SHOP_MASTER_ACTOR* shop_master, PLAYER_ACTOR
 #undef aNSC_search_player
 #undef aNSC_search_player2
 #undef aNSC_ANIME_FILE
+#undef aNSC_POS_Z_MAX
 
 void aNSM_actor_move(ACTOR* actorx, GAME* game) {
     NPC_SHOP_MASTER_ACTOR* shop_master = (NPC_SHOP_MASTER_ACTOR*)actorx;

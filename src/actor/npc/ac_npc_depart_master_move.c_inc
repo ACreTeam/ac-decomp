@@ -1,0 +1,138 @@
+static u8 aNDM_get_zone_sub(f32 pos, f32* chk_p, int count) {
+    int i;
+
+    for (i = 0; i < count; i++) {
+        if (pos < *chk_p) {
+            break;
+        }
+
+        chk_p++;
+    }
+
+    return i;
+}
+
+static u8 aNDM_get_zone(xyz_t wpos) {
+    static f32 chk0[] = { 200.0f, 320.0f, 440.0f };
+    static f32 chk1[] = { 280.0f, 400.0f, 440.0f };
+
+    u8 zone;
+
+    if (wpos.x < 220.0f) {
+        zone = aNDM_get_zone_sub(wpos.z, chk0, ARRAY_COUNT(chk0));
+    } else {
+        zone = aNDM_get_zone_sub(wpos.z, chk1, ARRAY_COUNT(chk1));
+
+        if (zone == 2) {
+            if (wpos.x >= 360.0f) {
+                zone = 4;
+            }
+        }
+
+        zone += 4;
+    }
+
+    return zone;
+}
+
+static u8 aNDM_get_next_zone(u8 p1, u8 p2) {
+    static u8 next_zone[9][9] = {
+        { 0x00, 0x01, 0x01, 0x01, 0x04, 0x04, 0x04, 0x04, 0x04 },
+        { 0x00, 0x01, 0x02, 0x02, 0x00, 0x00, 0x02, 0x02, 0x02 },
+        { 0x01, 0x01, 0x02, 0x03, 0x01, 0x01, 0x03, 0x03, 0x03 },
+        { 0x02, 0x02, 0x02, 0x03, 0x07, 0x07, 0x07, 0x07, 0x07 },
+        { 0x00, 0x00, 0x00, 0x00, 0x04, 0x05, 0x05, 0x05, 0x05 },
+        { 0x04, 0x04, 0x06, 0x06, 0x04, 0x05, 0x06, 0x06, 0x06 },
+        { 0x05, 0x05, 0x07, 0x07, 0x05, 0x05, 0x06, 0x07, 0x08 },
+        { 0x03, 0x03, 0x03, 0x03, 0x06, 0x06, 0x06, 0x07, 0x06 },
+        { 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x08 },
+    };
+
+    return next_zone[p2][p1];
+}
+
+static void aNDM_search_player(NPC_DEPART_MASTER_ACTOR* depart_master, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)depart_master;
+    ACTOR* player = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (player != NULL) {
+        s16 angle = actorx->shape_info.rotation.y - depart_master->player_angle;
+        if (ABS(angle) > DEG2SHORT_ANGLE(90.0f)) {
+            aNSC_setupAction(depart_master, play, 66);
+        } else {
+            chase_angle(&actorx->shape_info.rotation.y, depart_master->player_angle, DEG2SHORT_ANGLE(11.25f));
+            actorx->world.angle.y = actorx->shape_info.rotation.y;
+        }
+    }
+}
+
+static void aNDM_search_player2(NPC_DEPART_MASTER_ACTOR* depart_master, GAME_PLAY* play) {
+    static float posX[9] = {
+        140.0f, 140.0f, 140.0f, 140.0f, 300.0f, 300.0f, 300.0f, 300.0f, 400.0f,
+    };
+
+    static float posZ[9] = {
+        180.0f, 260.0f, 380.0f, 480.0f, 180.0f, 340.0f, 420.0f, 480.0f, 420.0f,
+    };
+
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    if (player != NULL) {
+        f32 dx = posX[depart_master->next_zone] - depart_master->npc_class.actor_class.world.position.x;
+        f32 dz = posZ[depart_master->next_zone] - depart_master->npc_class.actor_class.world.position.z;
+
+        s16 angle = atans_table(dz, dx);
+        chase_angle(&depart_master->npc_class.actor_class.shape_info.rotation.y, angle, DEG2SHORT_ANGLE(11.25f));
+
+        depart_master->npc_class.actor_class.world.angle.y = depart_master->npc_class.actor_class.shape_info.rotation.y;
+
+        if (SQ(dx) + SQ(dz) < 200.0f) {
+            depart_master->next_zone = aNDM_get_next_zone(depart_master->player_zone, depart_master->zone);
+        }
+    }
+}
+
+static int aNDM_check_safe_zone(NPC_DEPART_MASTER_ACTOR* depart_master, ACTOR* player) {
+    int res = FALSE;
+    if ((player->world.position.z > 520.0f && depart_master->zone == 7) ||
+        (player->world.position.z < 120.0f && depart_master->zone == 4)) {
+        res = TRUE;
+    }
+    return res;
+}
+
+#define aNSC_get_zone aNDM_get_zone
+#define aNSC_get_next_zone aNDM_get_next_zone
+#define aNSC_check_safe_zone aNDM_check_safe_zone
+#define aNSC_search_player aNDM_search_player
+#define aNSC_search_player2 aNDM_search_player2
+#define aNSC_ANIME_FILE "../src/actor/npc/ac_npc_depart_master_anime.c"
+#define aNSC_POS_Z_MAX 500.0f
+
+#include "../src/actor/npc/ac_npc_shop_common.c"
+
+#undef aNSC_get_zone
+#undef aNSC_get_next_zone
+#undef aNSC_check_safe_zone
+#undef aNSC_search_player
+#undef aNSC_search_player2
+#undef aNSC_ANIME_FILE
+#undef aNSC_POS_Z_MAX
+
+void aNDM_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_DEPART_MASTER_ACTOR* depart_master = (NPC_DEPART_MASTER_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    CLIP(npc_clip)->move_before_proc(actorx, game);
+    aNSC_BGcheck(actorx);
+
+    if (actorx->world.position.z < 138.0f) {
+        actorx->world.position.z = 138.0f;
+    }
+
+    aNSC_set_zone_data(depart_master, (ACTOR*)player);
+    aNSC_set_player_angl(depart_master);
+    (*depart_master->proc)(depart_master, play);
+    aNSC_talk_demo_proc(actorx);
+    CLIP(npc_clip)->move_after_proc(actorx, game);
+    aNSC_sell_camera(depart_master, play);
+}

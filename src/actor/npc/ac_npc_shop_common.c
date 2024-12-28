@@ -690,11 +690,11 @@ static void aNSC_set_buy_sum_str(mActor_name_t item, u32 p2) {
 #ifndef aNSC_MAMEDANUKI
 static int aNSC_decide_next_move_act(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     int res;
-    PLAYER_ACTOR* player;
+    ACTOR* player;
     if ((shop_common->npc_class.collision.pipe.collision_obj.collision_flags0 & 0x2) != 0) {
         return aNSC_ACTION_WAIT;
     } else {
-        player = GET_PLAYER_ACTOR(play);
+        player = GET_PLAYER_ACTOR_ACTOR(play);
         if (player == NULL) {
             return shop_common->action;
         }
@@ -1836,7 +1836,7 @@ static void aNSC_say_hello_approach(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLA
 
 static void aNSC_say_hello_approach(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     ACTOR* actorx = (ACTOR*)shop_common;
-    f32 z = 260.0;
+    f32 z = aNSC_POS_Z_MAX;
     if (actorx->world.position.z > z) {
         actorx->world.position.z = z;
         aNSC_setupAction(shop_common, play, aNSC_ACTION_SAY_HELLO_END_WAIT);
@@ -1860,7 +1860,7 @@ static void aNSC_say_hello_end_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLA
 #ifndef aNSC_MAMEDANUKI
 
 static void aNSC_check_col_chg_or_make_basement(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
-    f32 z = 260.0;
+    f32 z = aNSC_POS_Z_MAX;
     if (((ACTOR*)shop_common)->world.position.z > z) {
         ((ACTOR*)shop_common)->world.position.z = z;
         aNSC_set_stop_spd(shop_common);
@@ -1882,7 +1882,7 @@ static void aNSC_check_col_chg_or_make_basement(NPC_SHOP_COMMON_ACTOR* shop_comm
 }
 
 static void aNSC_check_roof_col_order(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
-    f32 z = 260.0;
+    f32 z = aNSC_POS_Z_MAX;
     int unk = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
     if (((ACTOR*)shop_common)->world.position.z > z) {
         ((ACTOR*)shop_common)->world.position.z = z;
@@ -1945,8 +1945,8 @@ static void aNSC_present_balloon_start_wait(NPC_SHOP_COMMON_ACTOR* shop_common, 
 
 static void aNSC_present_balloon_trans_move(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     ACTOR* actorx = (ACTOR*)shop_common;
-    if (actorx->world.position.z > 260.0f) {
-        actorx->world.position.z = 260.0f;
+    if (actorx->world.position.z > aNSC_POS_Z_MAX) {
+        actorx->world.position.z = aNSC_POS_Z_MAX;
         aNSC_setupAction(shop_common, play, aNSC_ACTION_PRESENT_BALLOON_TRANS_TAKEOUT);
     }
 }

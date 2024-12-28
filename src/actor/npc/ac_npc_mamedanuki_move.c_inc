@@ -1065,6 +1065,8 @@ static void aNMD_weight_ctrl(ACTOR* actorx) {
 #define aNSC_search_player aNMD_search_player
 #define aNSC_search_player2 aNMD_search_player2
 #define aNSC_ANIME_FILE "../src/actor/npc/ac_npc_mamedanuki_anime.c"
+#define aNSC_POS_Z_MAX 500.0f
+
 
 #include "../src/actor/npc/ac_npc_shop_common.c"
 
@@ -1074,6 +1076,7 @@ static void aNMD_weight_ctrl(ACTOR* actorx) {
 #undef aNSC_search_player2
 #undef aNSC_MAMEDANUKI
 #undef aNSC_ANIME_FILE
+#undef aNSC_POS_Z_MAX
 
 void aNMD_actor_move(ACTOR* actorx, GAME* game) {
     NPC_MAMEDANUKI_ACTOR* mamedanuki = (NPC_MAMEDANUKI_ACTOR*)actorx;
