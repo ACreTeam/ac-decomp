@@ -4,8 +4,8 @@ Animal Crossing
 
 [Build Status]: https://github.com/Prakxo/ac-decomp/actions/workflows/build.yml/badge.svg
 [actions]: https://github.com/Prakxo/ac-decomp/actions/workflows/build.yml
-[DOL Progress]: https://img.shields.io/endpoint?label=DOL&url=https%3A%2F%2Fprogress.decomp.club%2Fdata%2Fanimalcrossing%2Fus%2Fdol%2F%3Fmode%3Dshield%26measure%3Dcode
-[REL Progress]: https://img.shields.io/endpoint?label=REL&url=https%3A%2F%2Fprogress.decomp.club%2Fdata%2Fanimalcrossing%2Fus%2Frel%2F%3Fmode%3Dshield%26measure%3Dcode
+[DOL Progress]: https://decomp.dev/ACReTeam/ac-decomp.svg?mode=shield&measure=code&category=dol&label=DOL
+[REL Progress]: https://decomp.dev/ACReTeam/ac-decomp.svg?mode=shield&measure=code&category=modules&label=REL
 [Discord Badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
 [discord]: https://discord.gg/hKx3FJJgrV
 
