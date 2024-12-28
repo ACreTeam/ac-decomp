@@ -541,6 +541,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITEM_IS_MYUMBRELLA_TOOL(item) ((item) >= ITM_MY_ORG_UMBRELLA0 && (item) <= ITM_MY_ORG_UMBRELLA7)
 #define ITEM_IS_SCOOP(item) ((item) >= ITM_SHOVEL && (item) <= ITM_SHOVEL)
 #define ITEM_IS_GOLD_SCOOP(item) ((item) >= ITM_GOLDEN_SHOVEL && (item) <= ITM_GOLDEN_SHOVEL)
+#define ITEM_IS_PAINT(item) ((item) >= ITM_RED_PAINT && (item) <= ITM_BROWN_PAINT)
 
 #define BG_CATEGORY 0
 #define ENV_CATEGORY 8

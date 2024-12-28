@@ -1,29 +1,83 @@
+enum aNSC_action {
+    aNSC_ACTION_EMPTY,
+    aNSC_ACTION_SAY_HELLO_APPROACH,
+    aNSC_ACTION_SAY_HELLO_END_WAIT,
+    aNSC_ACTION_03_SAY_HELLO_END_WAIT,
+    aNSC_ACTION_CHECK_ROOF_COL_ORDER,
+    aNSC_ACTION_CHECK_ROOF_COL_ORDER2,
+    aNSC_ACTION_CHECK_COL_CHG_OR_MAKE_BASEMENT,
+    aNSC_ACTION_PRESENT_BALLOON_START_WAIT,
+    aNSC_ACTION_PRESENT_BALLOON_TRANS_MOVE,
+    aNSC_ACTION_PRESENT_BALLOON_TRANS_TAKEOUT,
+    aNSC_ACTION_PRESENT_BALLOON_TRANS_WAIT,
+    aNSC_ACTION_PRESENT_BALLOON_END_WAIT,
+    aNSC_ACTION_REQUEST_Q_START_WAIT,
+    aNSC_ACTION_REQUEST_Q_ANSWER_WAIT,
+    aNSC_ACTION_REQUEST_Q_ANSWER_WAIT2,
+    aNSC_ACTION_REQUEST_Q_END_WAIT,
+    aNSC_ACTION_ANSWER_BUY_ITEM,
+    aNSC_ACTION_BUY_MENU_OPEN_WAIT,
+    aNSC_ACTION_BUY_MENU_CLOSE_WAIT,
+    aNSC_ACTION_MSG_WIN_OPEN_WAIT,
+    aNSC_ACTION_BUY_SUM_CHECK,
+    aNSC_ACTION_BUY_CHECK,
+    aNSC_ACTION_BUY_AFTER_SERVICE,
+    aNSC_ACTION_BUY_CONTINUE_CHECK,
+    aNSC_ACTION_RECEIVE_CHECK,
+    aNSC_ACTION_19_ANSWER_BUY_ITEM,
+    aNSC_ACTION_0x1a_UNUSED,
+    aNSC_ACTION_0x1b_UNUSED,
+    aNSC_ACTION_MSG_WIN_OPEN_WAIT2,
+    aNSC_ACTION_ORDER_CHECK,
+    aNSC_ACTION_SELL_CHECK_BEFORE,
+    aNSC_ACTION_SELL_CHECK,
+    aNSC_ACTION_SELL_ANSWER0,
+    aNSC_ACTION_21_REQUEST_Q_END_WAIT,
+    aNSC_ACTION_SELL_ITEM_WITHOUT_TICKET,
+    aNSC_ACTION_SELL_ITEM_WITH_TICKET,
+    aNSC_ACTION_SELL_ITEM_POCKETS_FULL,
+    aNSC_ACTION_SELL_ITEM_INSUFICIENT_FUNDS,
+    aNSC_ACTION_SHOW_ITEM_CHECK,
+    aNSC_ACTION_CHG_CLOTH_START_WAIT,
+    aNSC_ACTION_CHG_CLOTH_END_WAIT,
+    aNSC_ACTION_PW_ENTRY_SEND_ADDR_START_WAIT,
+    aNSC_ACTION_2A_BUY_MENU_OPEN_WAIT,
+    aNSC_ACTION_0x2b_UNUSED,
+    aNSC_ACTION_PW_MSG_WIN_OPEN_WAIT,
+    aNSC_ACTION_PW_SEND_ADDR_CHECK,
+    aNSC_ACTION_PW_SEL_ITEM_START_WAIT,
+    aNSC_ACTION_2F_BUY_MENU_OPEN_WAIT,
+    aNSC_ACTION_0x30_UNUSED,
+    aNSC_ACTION_0x31_UNUSED,
+    aNSC_ACTION_PW_SEND_CHECK,
+    aNSC_ACTION_PW_RETRY_SEL_ITEM_CHECK,
+    aNSC_ACTION_PC_INPUT_PW_START_WAIT,
+    aNSC_ACTION_35_BUY_MENU_OPEN_WAIT,
+    aNSC_ACTION_0x36_UNUSED,
+    aNSC_ACTION_PC_MSG_WIN_OPEN_WAIT,
+    aNSC_ACTION_PC_RETRY_INPUT_PW_CHECK,
+    aNSC_ACTION_PC_PRESENT_START_WAIT,
+    aNSC_ACTION_PC_PRESENT_TRANS_TAKEOUT,
+    aNSC_ACTION_PC_PRESENT_TRANS_WAIT,
+    aNSC_ACTION_PC_PRESENT_END_WAIT,
+    aNSC_ACTION_WAIT,
+    aNSC_ACTION_0x3e_WAIT,
+    aNSC_ACTION_WALK_PL_OTHER_ZONE,
+    aNSC_ACTION_0x40_WAIT,
+    aNSC_ACTION_0x41_WALK_PL_OTHER_ZONE,
+    aNSC_ACTION_TURN,
+    aNSC_ACTION_GOODBYE_WAIT,
+#ifdef aNSC_MAMEDANUKI
+    aNSC_ACTION_GOODBYE_WAIT2,
+#endif
+    aNSC_ACTION_SAY_GOODBYE,
+    aNSC_ACTION_EXIT_WAIT,
+    aNSC_ACTION_NUM
+};
+
 static void aNSC_set_animation(NPC_SHOP_COMMON_ACTOR* shop_common, int action) {
-    static aNSC_animation_data anime[70] = {
-        { aNPC_ANIM_WAIT1, FALSE },    { aNPC_ANIM_WALK1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WALK1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WALK1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WALK1, TRUE },
-        { aNPC_ANIM_TRANSFER1, TRUE }, { aNPC_ANIM_TRANS_WAIT1, TRUE }, { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, TRUE },       { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_TRANSFER1, TRUE },   { aNPC_ANIM_TRANS_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, TRUE },     { aNPC_ANIM_WAIT1, FALSE },      { aNPC_ANIM_WALK1, FALSE },
-        { aNPC_ANIM_WALK1, FALSE },    { aNPC_ANIM_RUN1, FALSE },       { aNPC_ANIM_RUN1, FALSE },
-        { aNPC_ANIM_WALK1, FALSE },    { aNPC_ANIM_WAIT1, FALSE },      { aNPC_ANIM_WAIT1, TRUE },
-        { aNPC_ANIM_WAIT1, FALSE }
+    static aNSC_animation_data anime[aNSC_ACTION_NUM] = {
+#include aNSC_ANIME_FILE // This is very cursed
     };
 
     aNSC_animation_data* data = &anime[action];
@@ -34,6 +88,7 @@ static void aNSC_BGcheck(ACTOR* actor) {
     mCoBG_BgCheckControll(NULL, actor, 8.0f, 0.0f, 1, 0, 0);
 }
 
+#ifndef aNSC_MAMEDANUKI
 static int aNSC_check_present_balloon() {
     int idx;
     int res = 0;
@@ -48,6 +103,7 @@ static int aNSC_check_present_balloon() {
 
     return res;
 }
+#endif
 
 static void aNSC_calc_talk_start_tim(NPC_SHOP_COMMON_ACTOR* shop_common) {
     int ivar1 = shop_common->talk_start_tim;
@@ -344,7 +400,7 @@ static void aNSC_set_sell_camera(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* 
     f32 bg_y;
 
     player = GET_PLAYER_ACTOR(play);
-    mFI_UtNum2CenterWpos(&wpos, shop_common->ut_x, shop_common->ut_y);
+    mFI_UtNum2CenterWpos(&wpos, shop_common->ut_x, shop_common->ut_z);
     bg_y = mCoBG_GetBgY_OnlyCenter_FromWpos2(wpos, -40.0);
     wpos.y = bg_y;
     Camera2_request_main_talk_pos(play, (ACTOR*)player, &wpos, 5);
@@ -400,6 +456,7 @@ static void aNSC_set_run_spd(NPC_SHOP_COMMON_ACTOR* shop_common) {
     shop_common->npc_class.movement.deceleration = 0.8;
 }
 
+#ifndef aNSC_MAMEDANUKI
 static void aNSC_set_rehouse_order_date(mHm_hs_c* home) {
     lbRTC_time_c* now = &Common_Get(time).rtc_time;
     home->size_info.upgrade_order_date.year = now->year;
@@ -413,6 +470,7 @@ static void aNSC_set_make_basement_info() {
     home->size_info.basement_ordered = TRUE;
     aNSC_set_rehouse_order_date(home);
 }
+#endif
 
 static mPr_catalog_order_c* aNSC_getP_free_ftr_order() {
     int i;
@@ -464,9 +522,11 @@ static void aNSC_set_item_name_str(mActor_name_t itm, u32 p2) {
     mMsg_Set_item_str_art(mMsg_Get_base_window_p(), p2, buff, 0x10, art);
 }
 
-static void aNSC_set_item_str(NPC_SHOP_COMMON_ACTOR* shop_common, mActor_name_t itm) {
-    u32 value;
+static void aNSC_set_item_str(ACTOR* actorx) {
+    NPC_SHOP_COMMON_ACTOR* shop_common = (NPC_SHOP_COMMON_ACTOR*)actorx;
     u16 item = shop_common->sell_item;
+    u32 value;
+
     aNSC_set_item_name_str(item, 0);
     value = mSP_ItemNo2ItemPrice(item);
     aNSC_set_value_str(value, 4);
@@ -552,7 +612,7 @@ static int aNSC_pc_check_password_user(mMpswd_password_c* pswd) {
 static int aNSC_pc_check_password(NPC_SHOP_COMMON_ACTOR* shop_common) {
     static aNSC_PC_CHECK_PASSWORD_PROC pc_check_password_proc[6] = {
         aNSC_pc_check_password_famicom,  aNSC_pc_check_password_npc,         aNSC_pc_check_password_card_e,
-        aNSC_pc_check_password_magazine, aNSC_pc_check_password_card_e_mini, aNSC_pc_check_password_user
+        aNSC_pc_check_password_magazine, aNSC_pc_check_password_user, aNSC_pc_check_password_card_e_mini,
     };
 
     int res = aNSC_PSW_RES_0;
@@ -600,7 +660,7 @@ static int aNSC_check_possession_item_make_password(NPC_SHOP_COMMON_ACTOR* shop_
 }
 
 static void aNSC_set_buy_sum_str(mActor_name_t item, u32 p2) {
-    static int tanni_string_num[10] = { 0x566, 0x575, 0x584, 0x593, 0x5a2, 0x5b1, 0x5c0, 0x5cf, 0x5de, 0x5ed };
+    static int tani_string_num[10] = { 0x566, 0x575, 0x584, 0x593, 0x5a2, 0x5b1, 0x5c0, 0x5cf, 0x5de, 0x5ed };
     mActor_name_t type;
     u8 buff[16];
     u32 str_no;
@@ -610,8 +670,8 @@ static void aNSC_set_buy_sum_str(mActor_name_t item, u32 p2) {
 
     switch (ITEM_NAME_GET_TYPE(item)) {
         case NAME_TYPE_ITEM1:
-            str_no = p2 + tanni_string_num[aNSC_item_tanni_type[ITEM_NAME_GET_CAT((mActor_name_t)item)]
-                                                               [ITEM_NAME_GET_INDEX(item)]];
+            str_no = p2 + tani_string_num[aNSC_item_tanni_type[ITEM_NAME_GET_CAT((mActor_name_t)item)]
+                                                              [ITEM_NAME_GET_INDEX(item)]];
             str_no -= 1;
             break;
         case NAME_TYPE_FTR0:
@@ -627,6 +687,7 @@ static void aNSC_set_buy_sum_str(mActor_name_t item, u32 p2) {
     mMsg_Set_free_str(mMsg_Get_base_window_p(), 8, buff, 0x10);
 }
 
+#ifndef aNSC_MAMEDANUKI
 static int aNSC_decide_next_move_act(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     int res;
     PLAYER_ACTOR* player;
@@ -637,7 +698,7 @@ static int aNSC_decide_next_move_act(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PL
         if (player == NULL) {
             return shop_common->action;
         }
-        if (aNSM_check_safe_zone(shop_common, player) == TRUE) {
+        if (aNSC_check_safe_zone(shop_common, player) == TRUE) {
             return aNSC_ACTION_WAIT;
         } else {
             if (shop_common->npc_class.actor_class.player_distance_xz < aNSC_PLAYER_DISTANCE ||
@@ -646,8 +707,9 @@ static int aNSC_decide_next_move_act(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PL
             } else {
                 f32 player_distance_xz = shop_common->npc_class.actor_class.player_distance_xz;
                 if (shop_common->player_zone != shop_common->zone) {
-                    if (shop_common->action != 0x3f && shop_common->action != 0x41) {
-                        shop_common->next_zone = aNSM_get_next_zone(shop_common->player_zone, shop_common->zone);
+                    if (shop_common->action != aNSC_ACTION_WALK_PL_OTHER_ZONE &&
+                        shop_common->action != aNSC_ACTION_0x41_WALK_PL_OTHER_ZONE) {
+                        shop_common->next_zone = aNSC_get_next_zone(shop_common->player_zone, shop_common->zone);
                     }
                     if (player_distance_xz < 90.0f) {
                         return aNSC_ACTION_WALK_PL_OTHER_ZONE;
@@ -666,20 +728,72 @@ static int aNSC_decide_next_move_act(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PL
         }
     }
 }
+#else
+static int aNSC_decide_next_move_act(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
+    ACTOR* player = GET_PLAYER_ACTOR_ACTOR(play);
+    ACTOR* talk_actor = mDemo_Get_talk_actor();
+    int res;
 
+    if (player == NULL) {
+        res = shop_common->action;
+    } else if ((shop_common->npc_class.collision.pipe.collision_obj.collision_flags0 & 0x2) != 0 &&
+               shop_common->npc_class.collision.pipe.collision_obj.collided_actor == player) {
+        res = aNSC_ACTION_WAIT;
+    } else if (talk_actor != NULL && talk_actor != (ACTOR*)shop_common && mDemo_Check_ListenAble() == TRUE &&
+               ((shop_common->npc_class.collision.pipe.collision_obj.collision_flags0 & 2) != 0 ||
+                shop_common->action == aNSC_ACTION_WAIT)) {
+        res = aNSC_ACTION_WAIT;
+    } else if (player->world.position.z < 120.0f && (shop_common->zone == 2 || shop_common->zone == 3)) {
+        res = aNSC_ACTION_WAIT;
+    } else {
+        f32 dist = shop_common->npc_class.actor_class.player_distance_xz;
+
+        if (dist < 80.0f || shop_common->talk_start_tim == 0) {
+            res = aNSC_ACTION_WAIT;
+        } else if (shop_common->player_zone != shop_common->zone) {
+            if (shop_common->action != aNSC_ACTION_WALK_PL_OTHER_ZONE &&
+                shop_common->action != aNSC_ACTION_0x41_WALK_PL_OTHER_ZONE) {
+                shop_common->next_zone = aNSC_get_next_zone(shop_common, shop_common->player_zone, shop_common->zone);
+            }
+
+            if (dist < 110.0f) {
+                res = aNSC_ACTION_WALK_PL_OTHER_ZONE;
+            } else {
+                res = aNSC_ACTION_0x41_WALK_PL_OTHER_ZONE;
+            }
+        } else {
+            shop_common->next_zone = shop_common->zone;
+            if (dist < 110.0f) {
+                res = aNSC_ACTION_0x3e_WAIT;
+            } else {
+                res = aNSC_ACTION_0x40_WAIT;
+            }
+        }
+    }
+
+    return res;
+}
+#endif
+
+#ifndef aNSC_MAMEDANUKI
 static void aNSC_set_zone_data(NPC_SHOP_COMMON_ACTOR* shop_common, ACTOR* a2) {
     ACTOR* actorx = (ACTOR*)shop_common;
-    xyz_t pos1;
-    xyz_t pos2;
 
-    pos1 = shop_common->npc_class.actor_class.world.position;
-    shop_common->zone = aNSM_get_zone(&pos1);
-
+    shop_common->zone = aNSC_get_zone(shop_common->npc_class.actor_class.world.position);
     if (a2 != NULL) {
-        pos2 = a2->world.position;
-        shop_common->player_zone = aNSM_get_zone(&pos2);
+        shop_common->player_zone = aNSC_get_zone(a2->world.position);
     }
 }
+#else
+static void aNSC_set_zone_data(NPC_SHOP_COMMON_ACTOR* shop_common, ACTOR* a2) {
+    ACTOR* actorx = (ACTOR*)shop_common;
+
+    shop_common->zone = aNSC_get_zone(shop_common, shop_common->npc_class.actor_class.world.position);
+    if (a2 != NULL) {
+        shop_common->player_zone = aNSC_get_zone(shop_common, a2->world.position);
+    }
+}
+#endif
 
 static void aNSC_set_player_angl(NPC_SHOP_COMMON_ACTOR* shop_common) {
     shop_common->player_angle = shop_common->npc_class.actor_class.player_angle_y;
@@ -881,19 +995,33 @@ static int aNSC_check_same_month_ticket(mActor_name_t ticket) {
 }
 
 static int aNSC_get_msg_no(int msg_no) {
-    int res = 0x82a;
+#ifndef aNSC_MAMEDANUKI
     if (msg_no < 0) {
-        return res;
+        msg_no = 0x082A;
     } else if (msg_no < 100) {
-        res = msg_no + 0x107b;
+        msg_no += 0x107B;
     } else if (msg_no < 200) {
-        res = msg_no + 0x2baf;
+        msg_no += 0x2BAF;
     } else if (msg_no < 300) {
-        res = msg_no + 0x2de6;
+        msg_no += 0x2DE6;
     } else {
-        res = msg_no + 0x3cd2;
+        msg_no += 0x3CD2;
     }
-    return res;
+
+    return msg_no;
+#else
+    if (msg_no < 0) {
+        msg_no = 0x082A;
+    } else if (msg_no < 200) {
+        msg_no += 0x16FD;
+    } else if (msg_no < 300) {
+        msg_no += 0x2DE7;
+    } else {
+        msg_no += 0x3CF0;
+    }
+
+    return msg_no;
+#endif
 }
 
 static void aNSC_Set_continue_msg_num(mMsg_Window_c* msg_p, NPC_SHOP_COMMON_ACTOR* shop_common, int msg_no) {
@@ -923,27 +1051,31 @@ static void aNSC_set_player_angle() {
                                                           mPlayer_FORCE_POSITION_ANGLE_ROTY);
 }
 
-static void aNSC_set_talk_info_show_item(NPC_SHOP_COMMON_ACTOR* actor, mActor_name_t item) {
-    aNSC_set_item_str(actor, item);
+static void aNSC_set_talk_info_show_item(ACTOR* actorx) {
+    aNSC_set_item_str(actorx);
     aNSC_set_player_angle();
     mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
     mDemo_Set_msg_num(aNSC_get_msg_no(aNSC_MSG_SHOW_ITEM));
 }
 
-static void aNSC_set_talk_info_show_cloth(NPC_SHOP_COMMON_ACTOR* actor, mActor_name_t cloth) {
-    PositionAngle pa;
-    aNSC_set_item_str(actor, cloth);
+static void aNSC_set_talk_info_show_cloth(ACTOR* actorx) {
+    aNSC_set_item_str(actorx);
     aNSC_set_player_angle();
     mDemo_Set_camera(CAMERA2_PROCESS_NUM);
+#ifndef aNSC_MAMEDANUKI
     mDemo_Set_msg_num(aNSC_get_msg_no(aNSC_MSG_SHOW_CLOTH));
+#else
+    mDemo_Set_msg_num(aNSC_get_msg_no(aNSC_ACTION_WAIT));
+#endif
 }
 
-static void aNSC_set_talk_info_sell_item(NPC_SHOP_COMMON_ACTOR* actor, mActor_name_t p2) {
-    mActor_name_t item = actor->sell_item;
+static void aNSC_set_talk_info_sell_item(ACTOR* actorx) {
+    NPC_SHOP_COMMON_ACTOR* shop_common = (NPC_SHOP_COMMON_ACTOR*)actorx;
+    mActor_name_t item = shop_common->sell_item;
     u8 camera_type;
     int msg_no = aNSC_MSG_BUY_ONE_OFFER;
 
-    aNSC_set_item_str(actor, p2);
+    aNSC_set_item_str(actorx);
     aNSC_set_player_angle();
 
     if (ITEM_NAME_GET_TYPE(item) == NAME_TYPE_FTR0 || ITEM_NAME_GET_TYPE(item) == NAME_TYPE_FTR1 ||
@@ -969,9 +1101,11 @@ static void aNSC_set_talk_info_sell_item(NPC_SHOP_COMMON_ACTOR* actor, mActor_na
     mDemo_Set_msg_num(aNSC_get_msg_no(msg_no));
 }
 
-static void aNSC_set_talk_info_message_ctrl() {
+static void aNSC_set_talk_info_message_ctrl(ACTOR* actorx) {
     mDemo_Set_msg_num(aNSC_get_msg_no(aNSC_MSG_INTERACT_START));
 }
+
+#ifndef aNSC_MAMEDANUKI
 
 static void aNSC_set_talk_info_message_ctrl_aprilfool(ACTOR* actorx, GAME* game) {
     int msg_num = Common_Get(clip).aprilfool_control_clip->get_msg_num_proc(SP_NPC_SHOP_MASTER, 0);
@@ -982,6 +1116,201 @@ static void aNSC_set_talk_info_message_ctrl_tokubai() {
     int msg_num = aNSC_get_msg_no(aNSC_MSG_GREET_DEPART);
     mDemo_Set_msg_num(msg_num);
 }
+
+#endif
+
+#ifdef aNSC_MAMEDANUKI
+
+static void aNSC_set_talk_info_fukubiki(ACTOR* actorx) {
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+    mDemo_Set_msg_num(0x10E2);
+}
+
+static void aNSC_message_ctrl_force_talk_start_normal_day(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
+    mActor_name_t sell_item = shop_common->sell_item;
+
+    if (sell_item != EMPTY_NO) {
+        int next_act_idx = aNSC_ACTION_SELL_CHECK_BEFORE;
+
+        if (ITEM_NAME_GET_TYPE(sell_item) == NAME_TYPE_ITEM1) {
+            switch (ITEM_NAME_GET_CAT(sell_item)) {
+                case ITEM1_CAT_CLOTH:
+                case ITEM1_CAT_CARPET:
+                case ITEM1_CAT_WALL:
+                    next_act_idx = aNSC_ACTION_SHOW_ITEM_CHECK;
+                    break;
+                default:
+                    if (ITEM_IS_PAINT(sell_item) && mLd_PlayerManKindCheck()) {
+                        next_act_idx = aNSC_ACTION_REQUEST_Q_END_WAIT;
+                    }
+                    break;
+            }
+        }
+
+        aNSC_setupAction(shop_common, play, next_act_idx);
+    }
+}
+
+static void aNSC_message_ctrl_force_talk_start_fukubiki_day(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
+    aNSC_setupAction(shop_common, play, aNSC_ACTION_SAY_HELLO_END_WAIT);
+}
+
+static void aNSC_message_ctrl_norm_talk_start_normal_day(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
+    aNSC_setupAction(shop_common, play, aNSC_ACTION_REQUEST_Q_ANSWER_WAIT);
+}
+
+static void aNSC_message_ctrl_norm_talk_start_fukubiki_day(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
+    aNSC_setupAction(shop_common, play, aNSC_ACTION_SAY_HELLO_END_WAIT);
+}
+
+static void aNSC_message_ctrl_talk_request_normal_day(NPC_SHOP_COMMON_ACTOR* shop_common, PLAYER_ACTOR* player) {
+    shop_common->sell_item = EMPTY_NO;
+
+    if (player->a_btn_pressed == TRUE) {
+        mActor_name_t fg_item;
+        int ux;
+        int uz;
+
+        mFI_Wpos2UtNum(&ux, &uz, player->forward_ut_pos);
+        fg_item = CLIP(shop_design_clip)->unitNum2ItemNo_proc(ux, uz);
+
+        if (fg_item != EMPTY_NO && fg_item != RSV_NO) {
+            mDemo_REQUEST_PROC req_proc = (mDemo_REQUEST_PROC)none_proc1;
+
+            shop_common->sell_item = fg_item;
+            shop_common->ut_x = ux;
+            shop_common->ut_z = uz;
+
+            switch (ITEM_NAME_GET_TYPE(fg_item)) {
+                case NAME_TYPE_FTR0:
+                case NAME_TYPE_FTR1:
+                    req_proc = aNSC_set_talk_info_sell_item;
+                    break;
+                case NAME_TYPE_ITEM1:
+                    switch (ITEM_NAME_GET_CAT(fg_item)) {
+                        case ITEM1_CAT_CARPET:
+                        case ITEM1_CAT_WALL:
+                            req_proc = aNSC_set_talk_info_show_item;
+                            break;
+                        case ITEM1_CAT_CLOTH:
+                            req_proc = aNSC_set_talk_info_show_cloth;
+                            break;
+                        default:
+                            req_proc = aNSC_set_talk_info_sell_item;
+                            break;
+                    }
+                    break;
+            }
+
+            mDemo_Request(mDemo_TYPE_SPEAK, (ACTOR*)shop_common, req_proc);
+            shop_common->talk_start_tim = -1;
+        }
+    }
+}
+
+static void aNSC_message_ctrl_talk_request_fukubiki_day(NPC_SHOP_COMMON_ACTOR* shop_common, PLAYER_ACTOR* player) {
+    if (player->a_btn_pressed == TRUE) {
+        mActor_name_t fg_item;
+        int ux;
+        int uz;
+
+        mFI_Wpos2UtNum(&ux, &uz, player->forward_ut_pos);
+        fg_item = CLIP(shop_design_clip)->unitNum2ItemNo_proc(ux, uz);
+
+        if (fg_item != EMPTY_NO && fg_item != RSV_NO) {
+            mDemo_Request(mDemo_TYPE_SPEAK, (ACTOR*)shop_common, &aNSC_set_talk_info_fukubiki);
+            shop_common->talk_start_tim = -1;
+        }
+    }
+}
+
+static int aNSC_message_ctrl_sub(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play, PLAYER_ACTOR* player,
+                                 int day_type) {
+    static aNSC_TALK_PROC force_talk_start_proc[] = { &aNSC_message_ctrl_force_talk_start_normal_day,
+                                                      &aNSC_message_ctrl_force_talk_start_fukubiki_day };
+    static aNSC_TALK_PROC norm_talk_start_proc[] = { &aNSC_message_ctrl_norm_talk_start_normal_day,
+                                                     &aNSC_message_ctrl_norm_talk_start_fukubiki_day };
+    static aNSC_TALK_REQ_PROC request_proc[] = { &aNSC_message_ctrl_talk_request_normal_day,
+                                                 &aNSC_message_ctrl_talk_request_fukubiki_day };
+    static mDemo_REQUEST_PROC set_talk_info_proc[] = { &aNSC_set_talk_info_message_ctrl, &aNSC_set_talk_info_fukubiki };
+
+    ACTOR* actorx = (ACTOR*)shop_common;
+    int ret = FALSE;
+
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        if (!mDemo_Check_ListenAble()) {
+            aNSC_calc_talk_start_tim(shop_common);
+
+            if (actorx->player_distance_xz < 85.0f || shop_common->talk_start_tim == 0) {
+                if (chase_angle(&actorx->shape_info.rotation.y, shop_common->player_angle, DEG2SHORT_ANGLE2(11.25f)) ==
+                    TRUE) {
+                    (*force_talk_start_proc[day_type])(shop_common, play);
+                    shop_common->talk_start_tim = -1;
+                    aNMD_selectIdx = (aNMD_selectIdx + 1) & 1;
+                    aNSC_Set_ListenAble(shop_common);
+                    ret = TRUE;
+                }
+
+                actorx->world.angle.y = actorx->shape_info.rotation.y;
+            }
+        }
+    } else if (mDemo_Check(mDemo_TYPE_TALK, actorx) == TRUE) {
+        if (!mDemo_Check_ListenAble()) {
+            if (chase_angle(&actorx->shape_info.rotation.y, shop_common->player_angle, DEG2SHORT_ANGLE2(11.25f)) ==
+                TRUE) {
+                (*norm_talk_start_proc[day_type])(shop_common, play);
+                aNSC_Set_ListenAble(shop_common);
+                ret = TRUE;
+            }
+
+            actorx->world.angle.y = actorx->shape_info.rotation.y;
+        }
+    } else if (mDemo_Get_talk_actor() == NULL) {
+        if (aNMD_selectIdx > 1) {
+            aNMD_selectIdx = 0;
+        }
+
+        if (actorx == aNMD_actor_p[aNMD_selectIdx]) {
+            (*request_proc[day_type])(shop_common, player);
+        } else {
+            shop_common->talk_start_tim = -1;
+        }
+
+        mDemo_Request(mDemo_TYPE_TALK, actorx, set_talk_info_proc[day_type]);
+    }
+
+    return ret;
+}
+
+static int aNSC_message_ctrl(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
+    ACTOR* player_actorx = GET_PLAYER_ACTOR_ACTOR(play);
+    int ret = FALSE;
+
+    if (player_actorx != NULL && CLIP(shop_design_clip) != NULL) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)player_actorx;
+
+        if (player->item_in_front == EXIT_DOOR1) {
+            int next_act_idx;
+
+            if ((ACTOR*)shop_common == aNMD_actor_p[aNMD_selectIdx]) {
+                next_act_idx = aNSC_ACTION_GOODBYE_WAIT;
+            } else {
+                next_act_idx = aNSC_ACTION_GOODBYE_WAIT2;
+            }
+
+            aNSC_setupAction(shop_common, play, next_act_idx);
+            ret = TRUE;
+        } else if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
+            ret = aNSC_message_ctrl_sub(shop_common, play, player, aNSC_DAY_FUKUBIKI);
+        } else {
+            ret = aNSC_message_ctrl_sub(shop_common, play, player, aNSC_DAY_NORMAL);
+        }
+    }
+
+    return ret;
+}
+
+#else
 
 static int aNSC_message_ctrl(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(play);
@@ -997,7 +1326,8 @@ static int aNSC_message_ctrl(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play
             if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
                 if (mDemo_Check_ListenAble() == FALSE) {
                     aNSC_calc_talk_start_tim(shop_common);
-                    if (shop_common->npc_class.actor_class.player_distance_xz < 80.0f || shop_common->talk_start_tim == 0) {
+                    if (shop_common->npc_class.actor_class.player_distance_xz < 80.0f ||
+                        shop_common->talk_start_tim == 0) {
                         if (chase_angle(&shop_common->npc_class.actor_class.shape_info.rotation.y,
                                         shop_common->player_angle, DEG2SHORT_ANGLE(11.25f)) == TRUE) {
                             mActor_name_t item = shop_common->sell_item;
@@ -1056,17 +1386,17 @@ static int aNSC_message_ctrl(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play
                     shop_common->sell_item = EMPTY_NO;
 
                     if (player->a_btn_pressed == TRUE) {
-                        int ut_x, ut_y;
+                        int ut_x, ut_z;
                         u16 item;
 
                         xyz_t wpos = player->forward_ut_pos;
-                        mFI_Wpos2UtNum(&ut_x, &ut_y, wpos);
-                        item = CLIP(shop_design_clip)->unitNum2ItemNo_proc(ut_x, ut_y);
+                        mFI_Wpos2UtNum(&ut_x, &ut_z, wpos);
+                        item = CLIP(shop_design_clip)->unitNum2ItemNo_proc(ut_x, ut_z);
                         if (item != EMPTY_NO && item != RSV_NO) {
                             void* sell_proc = none_proc1;
                             shop_common->sell_item = item;
                             shop_common->ut_x = ut_x;
-                            shop_common->ut_y = ut_y;
+                            shop_common->ut_z = ut_z;
 
                             switch (ITEM_NAME_GET_TYPE(item)) {
                                 case NAME_TYPE_FTR0:
@@ -1110,6 +1440,8 @@ static int aNSC_message_ctrl(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play
 
     return res;
 }
+
+#endif
 
 static mActor_name_t aNSC_exchange_itemNo[2] = { ITM_MONEY_30000, EMPTY_NO };
 
@@ -1231,6 +1563,37 @@ static int aNSC_buy_item_only_one(u32* bells, mActor_name_t itm, u8* p3, int sel
     return next;
 }
 
+#ifdef aNSC_MAMEDANUKI
+
+static void aNSC_set_talk_info_start_wait(ACTOR* actorx) {
+    int msg_no;
+
+    if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_EVENT) {
+        msg_no = 0x1722;
+    } else if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
+        msg_no = 0x10E1;
+    } else {
+        msg_no = 0x1713;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aNSC_start_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)shop_common;
+
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        if (!mDemo_Check_ListenAble()) {
+            aNSC_Set_ListenAble(shop_common);
+            aNSC_setupAction(shop_common, play, aNSC_ACTION_SAY_HELLO_APPROACH);
+        }
+    } else {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aNSC_set_talk_info_start_wait);
+    }
+}
+
+#else
+
 static int aNSC_get_start_call_msg_no(ACTOR* actorx) {
     int no;
     if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_EVENT) {
@@ -1246,8 +1609,12 @@ static int aNSC_get_start_call_msg_no(ACTOR* actorx) {
 }
 
 static void aNSC_set_talk_info_start_wait(ACTOR* actorx) {
-    static u32 rehouse_msg[4] = { aNSC_MSG_MEDIUM_BUILT, aNSC_MSG_LARGE_BUILT, aNSC_MSG_UPPER_BUILT,
-                                  aNSC_MSG_STATUE_BUILT };
+    static u32 rehouse_msg[4] = {
+        aNSC_MSG_MEDIUM_BUILT,
+        aNSC_MSG_LARGE_BUILT,
+        aNSC_MSG_UPPER_BUILT,
+        aNSC_MSG_STATUE_BUILT,
+    };
     static u32 rehouse_loan[4] = { aNSC_LOAN_MEDIUM, aNSC_LOAN_LARGE, aNSC_LOAN_UPPER, aNSC_LOAN_STATUE };
     u8 player_no = Common_Get(player_no);
     int idx = mHS_get_arrange_idx(player_no);
@@ -1450,6 +1817,22 @@ static void aNSC_start_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play)
     }
     mDemo_Request(mDemo_TYPE_SPEAK, actorx, proc);
 }
+#endif
+
+#ifdef aNSC_MAMEDANUKI
+
+static void aNSC_say_hello_approach(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)shop_common;
+
+    if (actorx->world.position.z < 160.0f) {
+        actorx->world.position.z = 160.0f;
+        aNSC_setupAction(shop_common, play, shop_common->action + 1);
+    } else if (!mDemo_Check(mDemo_TYPE_SPEAK, actorx) && !mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        aNSC_setupAction(shop_common, play, shop_common->action + 1);
+    }
+}
+
+#else
 
 static void aNSC_say_hello_approach(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     ACTOR* actorx = (ACTOR*)shop_common;
@@ -1462,6 +1845,8 @@ static void aNSC_say_hello_approach(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLA
     }
 }
 
+#endif
+
 static void aNSC_say_hello_end_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     ACTOR* actorx = (ACTOR*)shop_common;
     if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE) {
@@ -1471,6 +1856,8 @@ static void aNSC_say_hello_end_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLA
         }
     }
 }
+
+#ifndef aNSC_MAMEDANUKI
 
 static void aNSC_check_col_chg_or_make_basement(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     f32 z = 260.0;
@@ -1598,6 +1985,8 @@ static void aNSC_present_balloon_end_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GA
     }
 }
 
+#endif
+
 static void aNSC_set_talk_info_request_Q_start_wait() {
     mDemo_Set_msg_num(aNSC_get_msg_no(aNSC_MSG_INTERACT_START));
     mDemo_Set_talk_turn(0x0);
@@ -1616,11 +2005,13 @@ static void aNSC_request_Q_start_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_P
 }
 
 static void aNSC_request_Q_answer_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
-    static int msg_no[5] = { aNSC_MSG_OTHER, aNSC_MSG_SELL_START, aNSC_MSG_ORDER_FULL, aNSC_MSG_SHOW_CATALOGUE,
-                             aNSC_MSG_INTERACT_CANCEl };
-    static int next_act_idx[5] = { aNSC_ACTION_REQUEST_Q_ANSWER_WAIT2, aNSC_ACTION_ANSWER_BUY_ITEM,
-                                   aNSC_ACTION_REQUEST_Q_ANSWER_WAIT, aNSC_ACTION_19_ANSWER_BUY_ITEM,
-                                   aNSC_ACTION_REQUEST_Q_END_WAIT };
+    static int msg_no[5] = {
+        aNSC_MSG_OTHER, aNSC_MSG_SELL_START, aNSC_MSG_ORDER_FULL, aNSC_MSG_SHOW_CATALOGUE, aNSC_MSG_INTERACT_CANCEL,
+    };
+    static int next_act_idx[5] = {
+        aNSC_ACTION_REQUEST_Q_ANSWER_WAIT2, aNSC_ACTION_ANSWER_BUY_ITEM,    aNSC_ACTION_REQUEST_Q_ANSWER_WAIT,
+        aNSC_ACTION_19_ANSWER_BUY_ITEM,     aNSC_ACTION_REQUEST_Q_END_WAIT,
+    };
     int res = mDemo_Get_OrderValue(mDemo_TYPE_4, 0x9);
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     if (res != 0) {
@@ -1737,13 +2128,16 @@ static void aNSC_buy_menu_close_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PL
 }
 
 static void aNSC_msg_win_open_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
-    static int msg_no_table[8] = { aNSC_MSG_SELL_OFFER,     aNSC_MSG_SELL_CANCEL,      aNSC_MSG_KABU_ON_SUNDAY,
-                                   aNSC_MSG_JUNK_ACCEPT,    aNSC_MSG_SELL_QUEST,       aNSC_MSG_REHOUSE_MEDIUM,
-                                   aNSC_MSG_BUY_MANY_OFFER, aNSC_MSG_BUY_REFUSE_PLURAL };
-    static int next_act_idx[8] = { aNSC_ACTION_BUY_CHECK,          aNSC_ACTION_BUY_CONTINUE_CHECK,
-                                   aNSC_ACTION_REQUEST_Q_END_WAIT, aNSC_ACTION_REQUEST_Q_ANSWER_WAIT,
-                                   aNSC_ACTION_RECEIVE_CHECK,      aNSC_ACTION_BUY_SUM_CHECK,
-                                   aNSC_ACTION_BUY_CHECK,          aNSC_ACTION_BUY_CHECK };
+    static int msg_no_table[8] = {
+        aNSC_MSG_SELL_OFFER, aNSC_MSG_SELL_CANCEL,    aNSC_MSG_KABU_ON_SUNDAY, aNSC_MSG_JUNK_ACCEPT,
+        aNSC_MSG_SELL_QUEST, aNSC_MSG_REHOUSE_MEDIUM, aNSC_MSG_BUY_MANY_OFFER, aNSC_MSG_BUY_REFUSE_PLURAL,
+    };
+    static int next_act_idx[8] = {
+        aNSC_ACTION_BUY_CHECK,          aNSC_ACTION_BUY_CONTINUE_CHECK,
+        aNSC_ACTION_REQUEST_Q_END_WAIT, aNSC_ACTION_REQUEST_Q_ANSWER_WAIT,
+        aNSC_ACTION_RECEIVE_CHECK,      aNSC_ACTION_BUY_SUM_CHECK,
+        aNSC_ACTION_BUY_CHECK,          aNSC_ACTION_BUY_CHECK,
+    };
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     if (mMsg_Check_not_series_main_wait(msg_p) == TRUE) {
         int action;
@@ -1756,7 +2150,11 @@ static void aNSC_msg_win_open_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY
             action = aNSC_check_buy_item(shop_common, submenu);
         }
         if (action == aNSC_CHECK_BUY_OFFER_BUY_ALL) {
-            msg_no = aNSC_MSG_TAKE_OFF_HANDS;
+#ifdef aNSC_MAMEDANUKI
+            msg_no = 0x173D;
+#else
+            msg_no = 0x108A;
+#endif
         } else {
             msg_no = aNSC_get_msg_no(msg_no_table[action]);
         }
@@ -1792,8 +2190,12 @@ static void aNSC_buy_sum_check(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* pl
 
 static void aNSC_buy_check(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     static int msg_no[4] = { aNSC_MSG_BREAK_BAG, aNSC_MSG_SELL_NORMAL, aNSC_MSG_SELL_CANCEL, aNSC_MSG_MONEY_OVERFLOW };
-    static int next_act_idx[4] = { aNSC_ACTION_BUY_AFTER_SERVICE, aNSC_ACTION_BUY_CONTINUE_CHECK,
-                                   aNSC_ACTION_BUY_CONTINUE_CHECK, aNSC_ACTION_REQUEST_Q_ANSWER_WAIT };
+    static int next_act_idx[4] = {
+        aNSC_ACTION_BUY_AFTER_SERVICE,
+        aNSC_ACTION_BUY_CONTINUE_CHECK,
+        aNSC_ACTION_BUY_CONTINUE_CHECK,
+        aNSC_ACTION_REQUEST_Q_ANSWER_WAIT,
+    };
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     int n1 = aNSC_get_msg_no(aNSC_MSG_SELL_OFFER);
     int n2 = aNSC_get_msg_no(aNSC_MSG_BUY_MANY_OFFER);
@@ -1883,7 +2285,11 @@ static void aNSC_buy_continue_check(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLA
                     action = 0;
                     break;
                 case mChoice_CHOICE1:
+#ifdef aNSC_MAMEDANUKI
+                    aNSC_Set_continue_msg_num(msg_p, shop_common, aNSC_get_msg_no(aNSC_MSG_3C));
+#else
                     aNSC_Set_continue_msg_num(msg_p, shop_common, aNSC_get_msg_no(aNSC_MSG_CANCEL));
+#endif
                     action = 1;
                     break;
             }
@@ -2093,9 +2499,13 @@ static void aNSC_show_item_check(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* 
                         aNSC_request_show_camera(play, aNSC_REQUEST_SHOW_TYPE_CARPET);
                         break;
                     default:
-                        CLIP(shop_manekin_clip)->change2naked_manekin_proc(shop_common->ut_x, shop_common->ut_y);
+                        CLIP(shop_manekin_clip)->change2naked_manekin_proc(shop_common->ut_x, shop_common->ut_z);
                         action = aNSC_ACTION_CHG_CLOTH_START_WAIT;
+#ifndef aNSC_MAMEDANUKI
                         msg_no = aNSC_MSG_CONFIRM_CLOTH;
+#else
+                        msg_no = aNSC_MSG_3E;
+#endif
                         shop_common->next_action = aNSC_ACTION_SELL_CHECK_BEFORE;
                         shop_common->player_cloth = Now_Private->cloth.item;
                         shop_common->change_cloth = shop_common->sell_item;
@@ -2110,7 +2520,11 @@ static void aNSC_show_item_check(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* 
                         msg_no = aNSC_MSG_SHOW_CARPET_DECLINE;
                         break;
                     default:
+#ifndef aNSC_MAMEDANUKI
                         msg_no = aNSC_MSG_CANCEL_CLOTH;
+#else
+                        msg_no = aNSC_MSG_3F;
+#endif
                         break;
                 }
                 break;
@@ -2290,15 +2704,17 @@ static void aNSC_pc_input_pw_start_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME
 }
 
 static void aNSC_pc_msg_win_open_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
-    static int msg_no[10] = { aNSC_MSG_PSWD_WRONG,           aNSC_MSG_PSWD_GOOD_FAMICON,    aNSC_MSG_PSWD_GOOD_NPC,
-                              aNSC_MSG_PSWD_GOOD_MAGAZINE_1, aNSC_MSG_PSWD_CARDE,           aNSC_MSG_PSWD_GOOD_USER,
-                              aNSC_MSG_PSWD_GOOD_CARDEM,     aNSC_MSG_PSWD_GOOD_MAGAZINE_2, aNSC_MSG_PSWD_BAD,
-                              aNSC_MSG_PSWD_DECLINE };
-    static int next_act_idx[10] = { aNSC_ACTION_PC_RETRY_INPUT_PW_CHECK, aNSC_ACTION_PC_PRESENT_START_WAIT,
-                                    aNSC_ACTION_PC_PRESENT_START_WAIT,   aNSC_ACTION_PC_PRESENT_START_WAIT,
-                                    aNSC_ACTION_REQUEST_Q_END_WAIT,      aNSC_ACTION_PC_PRESENT_START_WAIT,
-                                    aNSC_ACTION_PC_PRESENT_START_WAIT,   aNSC_ACTION_REQUEST_Q_END_WAIT,
-                                    aNSC_ACTION_PC_RETRY_INPUT_PW_CHECK, aNSC_ACTION_REQUEST_Q_ANSWER_WAIT };
+    static int msg_no[10] = {
+        aNSC_MSG_PSWD_WRONG, aNSC_MSG_PSWD_GOOD_FAMICON, aNSC_MSG_PSWD_GOOD_NPC,    aNSC_MSG_PSWD_GOOD_MAGAZINE_1,
+        aNSC_MSG_PSWD_CARDE, aNSC_MSG_PSWD_GOOD_USER,    aNSC_MSG_PSWD_GOOD_CARDEM, aNSC_MSG_PSWD_GOOD_MAGAZINE_2,
+        aNSC_MSG_PSWD_BAD,   aNSC_MSG_PSWD_DECLINE,
+    };
+    static int next_act_idx[10] = {
+        aNSC_ACTION_PC_RETRY_INPUT_PW_CHECK, aNSC_ACTION_PC_PRESENT_START_WAIT, aNSC_ACTION_PC_PRESENT_START_WAIT,
+        aNSC_ACTION_PC_PRESENT_START_WAIT,   aNSC_ACTION_REQUEST_Q_END_WAIT,    aNSC_ACTION_PC_PRESENT_START_WAIT,
+        aNSC_ACTION_PC_PRESENT_START_WAIT,   aNSC_ACTION_REQUEST_Q_END_WAIT,    aNSC_ACTION_PC_RETRY_INPUT_PW_CHECK,
+        aNSC_ACTION_REQUEST_Q_ANSWER_WAIT,
+    };
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     if (mMsg_Check_not_series_main_wait(msg_p) == TRUE) {
         int act = aNSC_pc_check_password(shop_common);
@@ -2376,7 +2792,7 @@ static void aNSC_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
         if (act != shop_common->action) {
             aNSC_setupAction(shop_common, play, act);
         } else {
-            aNSM_search_player(shop_common, play);
+            aNSC_search_player(shop_common, play);
         }
     }
 }
@@ -2387,7 +2803,7 @@ static void aNSC_walk_pl_other_zone(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLA
         if (act != shop_common->action) {
             aNSC_setupAction(shop_common, play, act);
         } else {
-            aNSM_search_player2(shop_common, play);
+            aNSC_search_player2(shop_common, play);
         }
     }
 }
@@ -2417,6 +2833,9 @@ static void aNSC_goodbye_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* pla
         if (mDemo_Check_ListenAble() == FALSE) {
             s16 player_angle = shop_common->player_angle;
             if (chase_angle(&actorx->shape_info.rotation.y, player_angle, DEG2SHORT_ANGLE(11.25f)) == TRUE) {
+#ifdef aNSC_MAMEDANUKI
+                mBGMForce_room_nonstop_start();
+#endif
                 aNSC_Set_ListenAble(shop_common);
                 aNSC_setupAction(shop_common, play, aNSC_ACTION_SAY_GOODBYE);
             }
@@ -2425,6 +2844,15 @@ static void aNSC_goodbye_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* pla
         mDemo_Request(mDemo_TYPE_SPEAK, actorx, aNSC_set_talk_info_goodbye_wait);
     }
 }
+
+#ifdef aNSC_MAMEDANUKI
+
+static void aNSC_goodbye_wait2(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
+    chase_angle(&shop_common->npc_class.actor_class.shape_info.rotation.y, shop_common->player_angle,
+                DEG2SHORT_ANGLE2(11.25f));
+}
+
+#endif
 
 static void aNSC_say_goodbye(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
@@ -2435,14 +2863,41 @@ static void aNSC_say_goodbye(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play
 }
 
 static void aNSC_exit_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
+#ifdef aNSC_MAMEDANUKI
+    // clang-format off
+    static Door_data_c stairs = {
+        SCENE_DEPART,
+        mSc_DIRECT_SOUTH,
+        0,
+        0,
+        { 300, 40, 65 },
+        EMPTY_NO,
+        2,
+        0,
+        0
+    };
+    // clang-format on
+
     if (mMsg_Check_main_wait(mMsg_Get_base_window_p()) == TRUE) {
-        goto_other_scene(play, &Common_Get(structure_exit_door_data), TRUE);
+        goto_other_scene(play, &stairs, TRUE);
+        if (play->fb_wipe_mode == 0) {
+            play->fb_fade_type = 12;
+            mBGMPsComp_volume_talk_end();
+            mBGMPsComp_make_ps_wipe(0x195);
+        }
+    }
+
+#else
+
+    if (mMsg_Check_main_wait(mMsg_Get_base_window_p()) == TRUE) {
+        goto_other_scene(play, Common_GetPointer(structure_exit_door_data), TRUE);
         if (play->fb_wipe_mode == 0) {
             mBGMPsComp_scene_mode(0xe);
             mBGMPsComp_volume_talk_end();
             mBGMPsComp_make_ps_wipe(0x195);
         }
     }
+#endif
 }
 
 static void aNSC_say_hello_approach_init(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
@@ -2453,6 +2908,8 @@ static void aNSC_say_hello_end_wait_init(NPC_SHOP_COMMON_ACTOR* shop_common, GAM
     shop_common->next_zone = shop_common->zone;
     aNSC_set_stop_spd(shop_common);
 }
+
+#ifndef aNSC_MAMEDANUKI
 
 static void aNSC_check_col_chg_or_make_basement_init(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     aNSC_set_walk_spd(shop_common);
@@ -2492,6 +2949,8 @@ static void aNSC_present_balloon_end_wait_init(NPC_SHOP_COMMON_ACTOR* shop_commo
     shop_common->npc_class.left_hand.item_actor_p = NULL;
     shop_common->npc_class.head.lock_flag = FALSE;
 }
+
+#endif
 
 static void aNSC_request_Q_answer_wait_init(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x9, 0x0);
@@ -2583,7 +3042,7 @@ static void aNSC_sell_answer0_init(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY
             case ITEM1_CAT_CLOTH:
                 if (!aNSC_money_check(shop_common->value) || !mPr_GetPossessionItemSum(Now_Private, 0) ||
                     shop_common->action == aNSC_ACTION_21_REQUEST_Q_END_WAIT) {
-                    CLIP(shop_manekin_clip)->naked2cloth_proc(shop_common->ut_x, shop_common->ut_y);
+                    CLIP(shop_manekin_clip)->naked2cloth_proc(shop_common->ut_x, shop_common->ut_z);
                 }
                 shop_common->is_selling = FALSE;
                 break;
@@ -2599,7 +3058,7 @@ static void aNSC_sell_answer1_init(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY
 static void aNSC_sell_item_init(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     aNSC_get_sell_price(shop_common->value);
     if (CLIP(shop_design_clip) != NULL) {
-        CLIP(shop_design_clip)->reportGoodsSale_proc(shop_common->ut_x, shop_common->ut_y);
+        CLIP(shop_design_clip)->reportGoodsSale_proc(shop_common->ut_x, shop_common->ut_z);
     }
     shop_common->sell_item = EMPTY_NO;
 }
@@ -2692,6 +3151,16 @@ static void aNSC_init_proc(NPC_SHOP_COMMON_ACTOR *shop_common, GAME_PLAY* play, 
 		aNSC_say_hello_approach_init,
 		aNSC_say_hello_end_wait_init,
 		aNSC_say_hello_end_wait_init,
+#ifdef aNSC_MAMEDANUKI
+        aNSC_say_hello_approach_init,
+		aNSC_say_hello_end_wait_init,
+        (aNSC_INIT_PROC)none_proc1,
+        (aNSC_INIT_PROC)none_proc1,
+        (aNSC_INIT_PROC)none_proc1,
+        (aNSC_INIT_PROC)none_proc1,
+        (aNSC_INIT_PROC)none_proc1,
+        (aNSC_INIT_PROC)none_proc1,
+#else
 		aNSC_check_roof_col_order_init,
 		aNSC_check_roof_col_order2_init,
 		aNSC_check_col_chg_or_make_basement_init,
@@ -2700,6 +3169,7 @@ static void aNSC_init_proc(NPC_SHOP_COMMON_ACTOR *shop_common, GAME_PLAY* play, 
 		aNSC_present_balloon_trans_takeout_init,
 		(aNSC_INIT_PROC)none_proc1,
 		aNSC_present_balloon_end_wait_init,
+#endif
 		(aNSC_INIT_PROC)none_proc1,
 		aNSC_request_Q_answer_wait_init,
 		aNSC_request_Q_answer_wait_init,
@@ -2756,6 +3226,9 @@ static void aNSC_init_proc(NPC_SHOP_COMMON_ACTOR *shop_common, GAME_PLAY* play, 
 		aNSC_run_pl_same_zone_init,
 		aNSC_wait_init,
 		aNSC_goodbye_wait_init,
+#ifdef aNSC_MAMEDANUKI
+        aNSC_goodbye_wait_init,
+#endif
 		aNSC_say_goodbye_init,
 		aNSC_exit_wait
     };
@@ -2768,6 +3241,16 @@ static void aNSC_setupAction(NPC_SHOP_COMMON_ACTOR *shop_common, GAME_PLAY *play
 		aNSC_say_hello_approach,
 		aNSC_say_hello_end_wait,
 		aNSC_say_hello_end_wait,
+#ifdef aNSC_MAMEDANUKI
+        aNSC_say_hello_approach,
+		aNSC_say_hello_end_wait,
+        (aNSC_ACTION_PROC)none_proc1,
+        (aNSC_ACTION_PROC)none_proc1,
+        (aNSC_ACTION_PROC)none_proc1,
+        (aNSC_ACTION_PROC)none_proc1,
+        (aNSC_ACTION_PROC)none_proc1,
+        (aNSC_ACTION_PROC)none_proc1,
+#else
 		aNSC_check_roof_col_order,
 		aNSC_check_roof_col_order2,
 		aNSC_check_col_chg_or_make_basement,
@@ -2776,6 +3259,7 @@ static void aNSC_setupAction(NPC_SHOP_COMMON_ACTOR *shop_common, GAME_PLAY *play
 		aNSC_present_balloon_trans_takeout,
 		aNSC_present_balloon_trans_wait,
 		aNSC_present_balloon_end_wait,
+#endif
 		aNSC_request_Q_start_wait,
 		aNSC_request_Q_answer_wait,
 		aNSC_request_Q_answer_wait2,
@@ -2832,6 +3316,9 @@ static void aNSC_setupAction(NPC_SHOP_COMMON_ACTOR *shop_common, GAME_PLAY *play
 		aNSC_walk_pl_other_zone,
 		aNSC_turn,
 		aNSC_goodbye_wait,
+#ifdef aNSC_MAMEDANUKI
+        aNSC_goodbye_wait2,
+#endif
 		aNSC_say_goodbye,
 		aNSC_exit_wait
     };

@@ -1,12 +1,12 @@
-static u8 aNSM_get_zone(xyz_t* wpos) {
-    if (wpos->x < 120.0f) {
-        if (wpos->z < 180.0f) {
+static u8 aNSM_get_zone(xyz_t wpos) {
+    if (wpos.x < 120.0f) {
+        if (wpos.z < 180.0f) {
             return aNSM_ZONE_1;
         } else {
             return aNSM_ZONE_2;
         }
     }
-    if (wpos->z < 160.0f) {
+    if (wpos.z < 160.0f) {
         return aNSM_ZONE_0;
     } else {
         return aNSM_ZONE_3;
@@ -31,7 +31,7 @@ static void aNSM_search_player(NPC_SHOP_MASTER_ACTOR* shop_master, GAME_PLAY* pl
     if (player != NULL) {
         s16 angle = actorx->shape_info.rotation.y - shop_master->player_angle;
         if (ABS(angle) > DEG2SHORT_ANGLE(90.0f)) {
-            aNSC_setupAction(shop_master, play, aNSC_ACTION_TURN);
+            aNSC_setupAction(shop_master, play, 66);
         } else {
             chase_angle(&actorx->shape_info.rotation.y, shop_master->player_angle, DEG2SHORT_ANGLE(11.25f));
             actorx->world.angle.y = actorx->shape_info.rotation.y;
@@ -65,6 +65,22 @@ static int aNSM_check_safe_zone(NPC_SHOP_MASTER_ACTOR* shop_master, PLAYER_ACTOR
     }
     return res;
 }
+
+#define aNSC_get_zone aNSM_get_zone
+#define aNSC_get_next_zone aNSM_get_next_zone
+#define aNSC_check_safe_zone  aNSM_check_safe_zone
+#define aNSC_search_player aNSM_search_player
+#define aNSC_search_player2 aNSM_search_player2
+#define aNSC_ANIME_FILE "../src/actor/npc/ac_npc_shop_master_anime.c"
+
+#include "../src/actor/npc/ac_npc_shop_common.c"
+
+#undef aNSC_get_zone
+#undef aNSC_get_next_zone
+#undef aNSC_check_safe_zone
+#undef aNSC_search_player
+#undef aNSC_search_player2
+#undef aNSC_ANIME_FILE
 
 void aNSM_actor_move(ACTOR* actorx, GAME* game) {
     NPC_SHOP_MASTER_ACTOR* shop_master = (NPC_SHOP_MASTER_ACTOR*)actorx;

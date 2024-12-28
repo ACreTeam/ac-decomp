@@ -30,10 +30,6 @@ void aNSM_actor_draw(ACTOR* actorx, GAME* game);
 void aNSM_actor_init(ACTOR* actorx, GAME* game);
 void aNSM_actor_save(ACTOR* actorx, GAME* game);
 
-static void aNSM_talk_request(ACTOR* actorx, GAME* game);
-static int aNSM_talk_init(ACTOR* actorx, GAME* game);
-static int aNSM_talk_end_chk(ACTOR* actorx, GAME* game);
-
 // clang-format off
 ACTOR_PROFILE Npc_Shop_Master_Profile = {
     mAc_PROFILE_NPC_SHOP_MASTER,    
@@ -42,6 +38,11 @@ ACTOR_PROFILE Npc_Shop_Master_Profile = {
     SP_NPC_SHOP_MASTER,
     ACTOR_OBJ_BANK_KEEP,
     sizeof(NPC_SHOP_MASTER_ACTOR),
+    &aNSM_actor_ct,
+    &aNSM_actor_dt,
+    &aNSM_actor_init,
+    mActor_NONE_PROC1,
+    &aNSM_actor_save,
 };
 // clang-format on
 
@@ -58,7 +59,7 @@ static void aNSC_sell_camera(NPC_SHOP_MASTER_ACTOR* shop_master, GAME_PLAY* play
 
 void aNSM_actor_ct(ACTOR* actorx, GAME* game) {
     static aNPC_ct_data_c ct_data = {
-        &aNSM_actor_move, &aNSM_actor_draw, 0, &aNSM_talk_request, &aNSM_talk_init, &aNSM_talk_end_chk, TRUE,
+        &aNSM_actor_move, &aNSM_actor_draw, 0, NULL, NULL, NULL, 1,
     };
 
     NPC_SHOP_MASTER_ACTOR* shop_master = (NPC_SHOP_MASTER_ACTOR*)actorx;
@@ -74,7 +75,7 @@ void aNSM_actor_ct(ACTOR* actorx, GAME* game) {
 
     if (Common_Get(door_data).door_actor_name == RSV_NO) {
         shop_master->npc_class.talk_info.melody_inst = 0;
-        action = aNSC_ACTION_WAIT;
+        action = 61;
     } else {
         action = 0;
     }
@@ -99,4 +100,3 @@ void aNSM_actor_draw(ACTOR* actorx, GAME* game) {
 }
 
 #include "../src/actor/npc/ac_npc_shop_master_move.c_inc"
-#include "../src/actor/npc/ac_npc_shop_common.c"

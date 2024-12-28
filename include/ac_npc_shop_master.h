@@ -21,8 +21,6 @@ typedef NPC_SHOP_COMMON_ACTOR NPC_SHOP_MASTER_ACTOR;
 
 extern ACTOR_PROFILE Npc_Shop_Master_Profile;
 
-#define aNSC_PLAYER_DISTANCE (f32)60.0
-
 #ifdef __cplusplus
 extern "C" {
 #endif
