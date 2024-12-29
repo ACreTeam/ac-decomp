@@ -209,6 +209,9 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define TICKET_MONTH(n) (1 + (((n) >> 3) & 0xF))
 #define TICKET_COUNT(n) (1 + ((n) & 7))
+#define TICKET_TO_MONTH(month) (((month) - 1) << 3)
+#define TICKET_TO_COUNT(cnt) ((cnt) & 7)
+#define TICKET_GET_ITEM(month, cnt) (ITM_TICKET_START | (((month) - 1) << 3) | ((cnt) & 7))
 #define WISP_COUNT(n) (ITEM_IS_WISP(n) ? (1 + (n) - ITM_SPIRIT0) : 0)
 
 #define ITEM_IS_INSECT(n) ((n) >= ITM_INSECT_START && (n) < ITM_INSECT_END)

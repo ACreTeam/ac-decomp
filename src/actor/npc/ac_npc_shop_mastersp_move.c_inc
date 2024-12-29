@@ -1,0 +1,123 @@
+static s16 aSHM_ftr_revise_x(mActor_name_t item) {
+    if (mRmTp_ItemNo2FtrSize(item) == mRmTp_FTRSIZE_1x1) {
+        return -(mFI_UT_WORLDSIZE_X / 2);
+    }
+
+    return 0;
+}
+
+static s16 aSHM_ftr_revise_z(mActor_name_t item) {
+    if (mRmTp_ItemNo2FtrSize(item) == mRmTp_FTRSIZE_2x2) {
+        return 0;
+    }
+
+    return -mFI_UT_WORLDSIZE_Z;
+}
+
+static void aSHM_set_base_position(ACTOR* actorx, GAME_PLAY* play) {
+    NPC_SHOP_MASTERSP_ACTOR* shop_mastersp = (NPC_SHOP_MASTERSP_ACTOR*)actorx;
+    int level = mSP_GetShopLevel();
+    mActor_name_t* item_p = Save_Get(shop).lottery_items;
+    static s16 base_table_x[] = { 160, 240, 240, 240 };
+    static s16 base_table_z[] = { 140, 140, 300, 300 };
+    ACTOR* player = GET_PLAYER_ACTOR_ACTOR(play);
+
+    shop_mastersp->base_pos[0][0] = base_table_x[level];
+    shop_mastersp->base_pos[0][1] = base_table_z[level];
+
+    actorx->world.position.x = shop_mastersp->base_pos[0][0];
+    actorx->world.position.z = shop_mastersp->base_pos[0][1];
+
+    shop_mastersp->base_pos[1][0] = base_table_x[level];
+    shop_mastersp->base_pos[1][1] = base_table_z[level] - 2;
+    shop_mastersp->base_pos[1][0] += aSHM_ftr_revise_x(item_p[0]);
+    shop_mastersp->base_pos[1][1] += aSHM_ftr_revise_z(item_p[0]);
+
+    shop_mastersp->base_pos[2][0] = base_table_x[level] + 80;
+    shop_mastersp->base_pos[2][1] = base_table_z[level] - 2;
+    shop_mastersp->base_pos[2][0] += aSHM_ftr_revise_x(item_p[1]);
+    shop_mastersp->base_pos[2][1] += aSHM_ftr_revise_z(item_p[1]);
+
+    shop_mastersp->base_pos[3][0] = base_table_x[level] - 80;
+    shop_mastersp->base_pos[3][1] = base_table_z[level] - 2;
+    shop_mastersp->base_pos[3][0] += aSHM_ftr_revise_x(item_p[2]);
+    shop_mastersp->base_pos[3][1] += aSHM_ftr_revise_z(item_p[2]);
+
+    shop_mastersp->base_pos[4][0] = shop_mastersp->base_pos[0][0] - 80;
+    shop_mastersp->base_pos[4][1] = shop_mastersp->base_pos[0][1];
+
+    shop_mastersp->base_pos[5][0] = shop_mastersp->base_pos[4][0];
+    shop_mastersp->base_pos[5][1] = shop_mastersp->base_pos[4][1] + 80;
+
+    shop_mastersp->base_pos[6][0] = shop_mastersp->base_pos[5][0] + 40;
+    shop_mastersp->base_pos[6][1] = shop_mastersp->base_pos[5][1];
+
+    shop_mastersp->base_pos[7][0] = shop_mastersp->base_pos[0][0] + 80;
+    shop_mastersp->base_pos[7][1] = shop_mastersp->base_pos[0][1];
+
+    shop_mastersp->base_pos[8][0] = shop_mastersp->base_pos[7][0];
+    shop_mastersp->base_pos[8][1] = shop_mastersp->base_pos[7][1] + 80;
+
+    shop_mastersp->base_pos[9][0] = shop_mastersp->base_pos[8][0] - 40;
+    shop_mastersp->base_pos[9][1] = shop_mastersp->base_pos[8][1];
+
+    shop_mastersp->base_pos[10][0] = player->world.position.x;
+    shop_mastersp->base_pos[10][1] = player->world.position.z - 60.0f;
+}
+
+static void aSHM_set_avoid_pos(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp) {
+    static u8 root1[1] = { 1 };
+    static u8 root2[3] = { 4, 5, 6 };
+    static u8 root3[3] = { 5, 4, 0 };
+    static u8 root4[2] = { 7, 2 };
+    static u8 root5[2] = { 8, 9 };
+    static u8 root6[3] = { 8, 7, 0 };
+    static u8 root7[2] = { 4, 3 };
+    static u8 root8[2] = { 5, 6 };
+    static u8 root10[3] = { 7, 8, 10 };
+    static u8* root_table[10] = { root1, root2, root3, root4, root5, root6, root7, root8, root3, root10 };
+
+    shop_mastersp->now_idx = root_table[shop_mastersp->root][shop_mastersp->root_idx];
+}
+
+static void aSHM_set_start_avoid_pos(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, s16 root) {
+    shop_mastersp->root = root;
+    shop_mastersp->root_idx = 0;
+    aSHM_set_avoid_pos(shop_mastersp);
+}
+
+static int aSHM_set_next_avoid_pos(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp) {
+    static s16 root_max[] = { 1, 3, 3, 2, 2, 3, 2, 2, 3, 3 };
+
+    shop_mastersp->root_idx++;
+    if (shop_mastersp->root_idx < root_max[shop_mastersp->root]) {
+        aSHM_set_avoid_pos(shop_mastersp);
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static int aSHM_set_request_act(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, u8 prio, u8 act_idx, u8 act_type, u16 act_obj, s16 pos_x, s16 pos_z) {
+    int ret = FALSE;
+
+    if (prio >= shop_mastersp->npc_class.request.act_priority) {
+        u16 args[aNPC_REQUEST_ARG_NUM];
+
+        bzero(args, sizeof(args));
+        args[0] = act_obj;
+        args[2] = pos_x;
+        args[3] = pos_z;
+        shop_mastersp->npc_class.request.act_priority = prio;
+        shop_mastersp->npc_class.request.act_idx = act_idx;
+        shop_mastersp->npc_class.request.act_type = act_type;
+        mem_copy((u8*)shop_mastersp->npc_class.request.act_args, (u8*)args, sizeof(args));
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aSHM_actor_move(ACTOR* actorx, GAME* game) {
+    CLIP(npc_clip)->move_proc(actorx, game);
+}

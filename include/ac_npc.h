@@ -352,11 +352,13 @@ typedef struct npc_action_s {
     aNPC_ACTION_PROC act_proc;
 } aNPC_action_c;
 
+#define aNPC_REQUEST_ARG_NUM 6
+
 typedef struct npc_request_s {
     u8 act_priority;
     u8 act_idx;
     u8 act_type;
-    u16 act_args[6];
+    u16 act_args[aNPC_REQUEST_ARG_NUM];
     u8 umb_flag;
     u8 _11;
     u8 head_priority;

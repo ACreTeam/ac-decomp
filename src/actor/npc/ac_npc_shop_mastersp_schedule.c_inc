@@ -1,0 +1,303 @@
+static void aSHM_set_start_think(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    int think_idx;
+    ACTOR* actorx = (ACTOR*)shop_mastersp;
+
+    if (!mLd_PlayerManKindCheck() && mEv_CheckEvent(mEv_SAVED_HRATALK_PLR0 + Common_Get(player_no)) == TRUE) {
+        think_idx = aSHM_THINK_HAPPY_ACADEMY;
+    } else {
+        actorx->talk_distance = 55.0f;
+
+        if (check_null_lottery()) {
+            think_idx = aSHM_THINK_NORMAL_WAIT2;
+        } else if (ABS(actorx->player_angle_y) < 4000) {
+            actorx->talk_distance = 100.0f;
+            think_idx = aSHM_THINK_NORMAL_WAIT;
+        } else {
+            think_idx = aSHM_THINK_NORMAL_WAIT3;
+        }
+    }
+
+    aSHM_setup_think_proc(shop_mastersp, play, think_idx);
+}
+
+static void aSHM_normal_wait_common(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    if (player_go_away(play)) {
+        aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_4);
+    } else if (player_buy(shop_mastersp, play)) {
+        aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_5);
+    }
+}
+
+static void aSHM_normal_wait(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)shop_mastersp;
+
+    if (ABS(actorx->player_angle_y) > 4000) {
+        aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_NORMAL_WAIT3);
+        actorx->talk_distance = 55.0f;
+    }
+
+    aSHM_normal_wait_common(shop_mastersp, play);
+}
+
+static void aSHM_normal_wait2(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)shop_mastersp;
+
+    if (ABS(actorx->player_angle_y) > 4000) {
+        actorx->talk_distance = 55.0f;
+    } else {
+        actorx->talk_distance = 100.0f;
+    }
+
+    aSHM_normal_wait_common(shop_mastersp, play);
+}
+
+static void aSHM_normal_wait3(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)shop_mastersp;
+
+    if (ABS(actorx->player_angle_y) < 4000) {
+        aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_NORMAL_WAIT);
+        actorx->talk_distance = 100.0f;
+    }
+
+    aSHM_normal_wait_common(shop_mastersp, play);
+}
+
+static void aSHM_normal_turn(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)shop_mastersp;
+
+    if (nactorx->action.idx == aNPC_ACT_TURN) {
+        aSHM_set_start_think(shop_mastersp, play);
+    }
+}
+
+static void aSHM_move(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    if (shop_mastersp->npc_class.action.idx == aNPC_ACT_WALK2 || shop_mastersp->npc_class.action.idx == aNPC_ACT_WAIT) {
+        if (aSHM_set_next_avoid_pos(shop_mastersp)) {
+            aSHM_setup_think_proc(shop_mastersp, play, shop_mastersp->move_think_idx);
+        } else {
+            aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_MOVE);
+        }
+    }
+}
+
+static void aSHM_move_turn(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    if (shop_mastersp->npc_class.action.idx == aNPC_ACT_TURN) {
+        aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_MOVE);
+    }
+}
+
+static void aSHM_move_player(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_DEMO_WALK) {
+        mPlib_request_main_demo_walk_type1((GAME*)play, shop_mastersp->base_pos[0][0],
+                                           shop_mastersp->base_pos[0][1] + 2 * mFI_UT_WORLDSIZE_Z, 2.0f, FALSE);
+    } else {
+        aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_WAIT_PLAYER);
+    }
+}
+
+static void aSHM_wait_player(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_DEMO_WALK) {
+        aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_WAIT_PLAYER2);
+    }
+}
+
+static void aSHM_wait_player2(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    xyz_t pos;
+    ACTOR* actorx = (ACTOR*)shop_mastersp;
+
+    if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_ROTATE_OCTAGON) {
+        pos.x = shop_mastersp->base_pos[0][0];
+        pos.y = actorx->world.position.y;
+        pos.z = shop_mastersp->base_pos[0][1] + 2 * mFI_UT_WORLDSIZE_Z - 2;
+        mPlib_request_main_rotate_octagon_type1((GAME*)play, &pos, DEG2SHORT_ANGLE2(180.0f));
+    } else {
+        aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_WAIT_PLAYER3);
+    }
+}
+
+static void aSHM_wait_player3(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    if (mPlib_Check_RotateOctagon()) {
+        aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_WAIT_PLAYER4);
+
+        if (CLIP(garagara_clip) != NULL) {
+            CLIP(garagara_clip)->garagara_anime_start_proc(shop_mastersp->result);
+        }
+    }
+}
+
+static void aSHM_wait_player4(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    if (!mPlib_Check_RotateOctagon()) {
+        aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_WIN1 + shop_mastersp->result);
+    }
+}
+
+static void aSHM_hirou(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    mActor_name_t* item_p = Save_Get(shop).lottery_items;
+
+    if (shop_mastersp->timer == 10) {
+        aSHM_remove_gift(shop_mastersp, item_p[shop_mastersp->result]);
+    }
+
+    if (shop_mastersp->timer > 0) {
+        shop_mastersp->timer--;
+        return;
+    }
+
+    mFI_UtNumtoFGSet_common(RSV_SHOP_SOLD_FTR, shop_mastersp->ut[0], shop_mastersp->ut[1], FALSE);
+    aSHM_set_start_avoid_pos(shop_mastersp, shop_mastersp->root + 1);
+    shop_mastersp->move_think_idx = aSHM_THINK_10;
+    aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_MOVE_TURN);
+}
+
+static void aSHM_happy_academy3(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    GAME* game = (GAME*)play;
+
+    if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_DEMO_WAIT) {
+        mPlib_request_main_wait_type3(game);
+    } else {
+        aSHM_setup_think_proc(shop_mastersp, play, aSHM_THINK_NORMAL_TURN);
+    }
+}
+
+static void aSHM_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_SHOP_MASTERSP_ACTOR* shop_mastersp = (NPC_SHOP_MASTERSP_ACTOR*)nactorx;
+
+    if (shop_mastersp->think_idx == aSHM_THINK_HAPPY_ACADEMY3) {
+        (*shop_mastersp->think_proc)(shop_mastersp, play);
+    } else if (shop_mastersp->think_idx == aSHM_THINK_NORMAL_WAIT ||
+               shop_mastersp->think_idx == aSHM_THINK_NORMAL_WAIT2 ||
+               shop_mastersp->think_idx == aSHM_THINK_NORMAL_WAIT3) {
+        (*shop_mastersp->think_proc)(shop_mastersp, play);
+    } else if (shop_mastersp->npc_class.action.step == aNPC_ACTION_END_STEP) {
+        (*shop_mastersp->think_proc)(shop_mastersp, play);
+    } else if (shop_mastersp->npc_class.action.idx == aNPC_ACT_WALK2) {
+        shop_mastersp->npc_class.movement.mv_add_angl = DEG2SHORT_ANGLE2(22.5f);
+    }
+}
+
+static void aSHM_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_SHOP_MASTERSP_ACTOR* shop_mastersp = (NPC_SHOP_MASTERSP_ACTOR*)nactorx;
+    lbRTC_time_c rtc_time = Common_Get(time.rtc_time);
+
+    shop_mastersp->npc_class.actor_class.status_data.weight = MASSTYPE_HEAVY;
+    shop_mastersp->npc_class.condition_info.hide_request = FALSE;
+    aSHM_set_start_think(shop_mastersp, play);
+    shop_mastersp->month = rtc_time.month;
+}
+
+static void aSHM_normal_wait_init(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    aSHM_set_request_act(shop_mastersp, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_SEARCH, aNPC_ACT_OBJ_PLAYER, 0, 0);
+}
+
+static void aSHM_normal_turn_init(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)shop_mastersp;
+
+    aSHM_set_request_act(shop_mastersp, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT,
+                         actorx->world.position.x, actorx->world.position.z + 10);
+}
+
+static void aSHM_move_init(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    aSHM_set_request_act(shop_mastersp, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT,
+                         shop_mastersp->base_pos[shop_mastersp->now_idx][0],
+                         shop_mastersp->base_pos[shop_mastersp->now_idx][1]);
+}
+
+static void aSHM_move_turn_init(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    aSHM_set_request_act(shop_mastersp, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT,
+                         shop_mastersp->base_pos[shop_mastersp->now_idx][0],
+                         shop_mastersp->base_pos[shop_mastersp->now_idx][1]);
+}
+
+static void aSHM_fade_out_init(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    // nothing
+}
+
+static void aSHM_hirou_init(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    aSHM_set_request_act(shop_mastersp, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT,
+                         shop_mastersp->base_pos[shop_mastersp->now_idx][0],
+                         shop_mastersp->base_pos[shop_mastersp->now_idx][1] - 10);
+    shop_mastersp->timer = 20;
+}
+
+static void aSHM_happy_academy_init(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    shop_mastersp->move_think_idx = aSHM_THINK_HAPPY_ACADEMY2;
+    aSHM_set_start_avoid_pos(shop_mastersp, 9);
+}
+
+static void aSHM_happy_academy2_init(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    mEv_EventOFF(mEv_SAVED_HRATALK_PLR0 + Common_Get(player_no));
+    shop_mastersp->move_think_idx = aSHM_THINK_HAPPY_ACADEMY3;
+    aSHM_set_start_avoid_pos(shop_mastersp, 5);
+}
+
+typedef struct {
+    aSHM_THINK_PROC think_proc;
+    aSHM_THINK_PROC think_init_proc;
+    aNPC_TALK_REQUEST_PROC talk_request_proc;
+    u8 talk_idx;
+    u8 next_think_idx;
+} aSHM_think_data_c;
+
+static void aSHM_setup_think_proc(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play, int think_idx) {
+    // clang-format off
+    static aSHM_think_data_c dt_tbl[aSHM_THINK_NUM] = {
+        {aSHM_normal_wait, aSHM_normal_wait_init, aSHM_norm_talk_request, 0x00, aSHM_THINK_NORMAL_TURN},
+        {aSHM_normal_wait2, aSHM_normal_wait_init, aSHM_norm_talk_request, 0x01, aSHM_THINK_NORMAL_TURN},
+        {aSHM_normal_wait3, aSHM_normal_wait_init, aSHM_norm_talk_request, 0x02, aSHM_THINK_NORMAL_TURN},
+        {aSHM_normal_turn, aSHM_normal_turn_init, (aNPC_TALK_REQUEST_PROC)none_proc1, 0x00, aSHM_THINK_NORMAL_TURN},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_normal_wait_init, aSHM_force_talk_request, 0x00, aSHM_THINK_FADE_OUT},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_normal_wait_init, aSHM_force_talk_request, 0x01, aSHM_THINK_NORMAL_TURN},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_normal_wait_init, aSHM_force_talk_request, 0x02, aSHM_THINK_MOVE_TURN},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_normal_wait_init, aSHM_force_talk_request, 0x03, aSHM_THINK_MOVE_TURN},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_normal_wait_init, aSHM_force_talk_request, 0x04, aSHM_THINK_MOVE_TURN},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_normal_wait_init, aSHM_force_talk_request, 0x05, aSHM_THINK_NORMAL_TURN},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_normal_wait_init, aSHM_force_talk_request, 0x06, aSHM_THINK_MOVE_TURN},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_normal_wait_init, aSHM_force_talk_request, 0x07, aSHM_THINK_NORMAL_TURN},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_normal_wait_init, aSHM_force_talk_request, 0x08, aSHM_THINK_NORMAL_TURN},
+        {aSHM_move, aSHM_move_init, (aNPC_TALK_REQUEST_PROC)none_proc1, 0x00, aSHM_THINK_MOVE_TURN},
+        {aSHM_move_turn, aSHM_move_turn_init, (aNPC_TALK_REQUEST_PROC)none_proc1, 0x00, aSHM_THINK_MOVE},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_fade_out_init, (aNPC_TALK_REQUEST_PROC)none_proc1, 0x00, aSHM_THINK_FADE_OUT},
+        {aSHM_move_player, (aSHM_THINK_PROC)none_proc1, (aNPC_TALK_REQUEST_PROC)none_proc1, 0x00, aSHM_THINK_MOVE_PLAYER},
+        {aSHM_wait_player, (aSHM_THINK_PROC)none_proc1, (aNPC_TALK_REQUEST_PROC)none_proc1, 0x00, aSHM_THINK_WAIT_PLAYER},
+        {aSHM_wait_player2, (aSHM_THINK_PROC)none_proc1, (aNPC_TALK_REQUEST_PROC)none_proc1, 0x00, aSHM_THINK_WAIT_PLAYER2},
+        {aSHM_wait_player3, (aSHM_THINK_PROC)none_proc1, (aNPC_TALK_REQUEST_PROC)none_proc1, 0x00, aSHM_THINK_WAIT_PLAYER3},
+        {aSHM_wait_player4, (aSHM_THINK_PROC)none_proc1, (aNPC_TALK_REQUEST_PROC)none_proc1, 0x00, aSHM_THINK_WAIT_PLAYER4},
+        {aSHM_hirou, aSHM_hirou_init, (aNPC_TALK_REQUEST_PROC)none_proc1, 0x00, aSHM_THINK_HIROU},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_happy_academy_init, aSHM_force_talk_request, 0x09, aSHM_THINK_MOVE_TURN},
+        {(aSHM_THINK_PROC)none_proc1, aSHM_happy_academy2_init, aSHM_force_talk_request, 0x0A, aSHM_THINK_MOVE_TURN},
+        {aSHM_happy_academy3, aSHM_normal_wait_init, (aNPC_TALK_REQUEST_PROC)none_proc1, 0x00, aSHM_THINK_HAPPY_ACADEMY3},
+    };
+    // clang-format on
+
+    aSHM_think_data_c* data_p = &dt_tbl[think_idx];
+
+    shop_mastersp->think_idx = think_idx;
+    shop_mastersp->think_proc = data_p->think_proc;
+    shop_mastersp->npc_class.talk_info.talk_request_proc = data_p->talk_request_proc;
+    shop_mastersp->talk_idx = data_p->talk_idx;
+    shop_mastersp->next_think_idx = data_p->next_think_idx;
+    (*data_p->think_init_proc)(shop_mastersp, play);
+}
+
+static void aSHM_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aSHM_think_init_proc, aSHM_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aSHM_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = aSHM_think_proc;
+    CLIP(npc_clip)->think_proc(nactorx, play, aNPC_THINK_IN_BLOCK, 0);
+}
+
+static void aSHM_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!CLIP(npc_clip)->think_proc(nactorx, play, -1, 1)) {
+        CLIP(npc_clip)->think_proc(nactorx, play, -1, 2);
+    }
+}
+
+static void aSHM_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { aSHM_schedule_init_proc, aSHM_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}

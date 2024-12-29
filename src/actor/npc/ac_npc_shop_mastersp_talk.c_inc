@@ -1,0 +1,421 @@
+static int player_go_away(GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (playerx != NULL && CLIP(shop_design_clip) != NULL) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)playerx;
+        mActor_name_t front_item = player->item_in_front;
+
+        if (front_item == EXIT_DOOR1) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static int player_buy(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+    int ux;
+    int uz;
+    mActor_name_t item;
+
+    if (shop_mastersp->timer > 0) {
+        shop_mastersp->timer--;
+        return FALSE;
+    }
+
+    if (playerx != NULL) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)playerx;
+
+        if (player->a_btn_pressed == TRUE) {
+            mFI_Wpos2UtNum(&ux, &uz, player->forward_ut_pos);
+            item = CLIP(shop_design_clip)->unitNum2ItemNo_proc(ux, uz);
+
+            if (item != EMPTY_NO && item != RSV_SHOP_SOLD_FTR && item != RSV_NO) {
+                shop_mastersp->timer = 10;
+                return TRUE;
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+static int check_null_lottery(void) {
+    mActor_name_t* item_p = Save_Get(shop).lottery_items;
+    int i;
+
+    for (i = 0; i < mSP_LOTTERY_ITEM_COUNT; i++) {
+        if (item_p[i] != EMPTY_NO && item_p[i] != RSV_SHOP_SOLD_FTR) {
+            return FALSE;
+        }
+    }
+
+    return TRUE;
+}
+
+static int search_lottery_ticket(int idx, int month) {
+    mActor_name_t item = Now_Private->inventory.pockets[idx];
+
+    if (NowPrivate_GetItemCond(idx) == mPr_ITEM_COND_NORMAL && ITEM_NAME_GET_TYPE(item) == NAME_TYPE_ITEM1 &&
+        ITEM_NAME_GET_CAT(item - ITEM1_NO_START) == ITEM1_CAT_TICKET && TICKET_MONTH(item) == month) {
+        return TICKET_COUNT(item);
+    }
+
+    return 0;
+}
+
+static int check_lottery_ticket(int month) {
+    int i;
+    int count = 0;
+
+    for (i = 0; i < mPr_POCKETS_SLOT_COUNT && count < aSHM_REQ_TICKET_NUM; i++) {
+        count += search_lottery_ticket(i, month);
+    }
+
+    return count >= aSHM_REQ_TICKET_NUM;
+}
+
+static void uketori_lottery_ticket_amari(int idx, int count, int month) {
+    mActor_name_t item = Now_Private->inventory.pockets[idx];
+
+    mPr_SetPossessionItem(Now_Private, idx, ITM_TICKET_START | TICKET_TO_MONTH(month) | (TICKET_TO_COUNT(item) - count),
+                          mPr_ITEM_COND_NORMAL);
+}
+
+static void uketori_lottery_ticket(int month) {
+    int i;
+    int count;
+    int req = aSHM_REQ_TICKET_NUM;
+
+    for (i = 0; i < mPr_POCKETS_SLOT_COUNT && req > 0; i++) {
+        count = search_lottery_ticket(i, month);
+        if (count != 0) {
+            if (count <= req) {
+                mPr_SetPossessionItem(Now_Private, i, EMPTY_NO, mPr_ITEM_COND_NORMAL);
+            } else {
+                uketori_lottery_ticket_amari(i, req, month);
+            }
+
+            req -= count;
+        }
+    }
+}
+
+static void aSHM_get_Fgitem_pos(mActor_name_t item, int* ux, int* uz) {
+    mActor_name_t* fg_p = mFI_BkNumtoUtFGTop(0, 0);
+    int i;
+
+    for (i = 0; i < UT_TOTAL_NUM; i++) {
+        if (item == *fg_p) {
+            *ux = i % UT_X_NUM;
+            *uz = i / UT_X_NUM;
+            break;
+        }
+
+        fg_p++;
+    }
+}
+
+static void aSHM_remove_gift(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, mActor_name_t item) {
+    int ux;
+    int uz;
+    int ftrID;
+
+    aSHM_get_Fgitem_pos(item, &ux, &uz);
+
+    if (aMR_CLIP != NULL && aMR_CLIP->unitNum2ftrItemNoftrId_proc(NULL, &ftrID, ux, uz, mCoBG_LAYER0)) {
+        aMR_CLIP->ftrId2extinguishFtr_proc(ftrID);
+    }
+
+    shop_mastersp->ut[0] = ux;
+    shop_mastersp->ut[1] = uz;
+}
+
+static int to_atari(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp) {
+    u8 name_str[mIN_ITEM_NAME_LEN];
+    mActor_name_t* item_p = Save_Get(shop).lottery_items;
+
+    if (item_p[shop_mastersp->result] == RSV_SHOP_SOLD_FTR || item_p[shop_mastersp->result] == EMPTY_NO) {
+        return FALSE;
+    }
+
+    mIN_copy_name_str(name_str, item_p[shop_mastersp->result]);
+    mMsg_SET_ITEM_STR_ART(mMsg_FREE_STR0, name_str, mIN_ITEM_NAME_LEN, item_p[shop_mastersp->result]);
+    mPr_SetFreePossessionItem(Now_Private, item_p[shop_mastersp->result], mPr_ITEM_COND_PRESENT);
+    aSHM_set_start_avoid_pos(shop_mastersp, shop_mastersp->result * 3);
+    shop_mastersp->move_think_idx = aSHM_THINK_HIROU;
+    return TRUE;
+}
+
+static void fukubiki_before_process(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp) {
+    int rng = RANDOM(100);
+
+    uketori_lottery_ticket(shop_mastersp->month);
+    aSHM_change_talk_proc(shop_mastersp, aSHM_TALK_STOP_PLAYER);
+    shop_mastersp->next_think_idx = aSHM_THINK_MOVE_PLAYER;
+
+    if (rng < aSHM_FIRST_PLACE_PERCENT) {
+        shop_mastersp->result = aSHM_WON_FIRST_PLACE;
+    } else if (rng < aSHM_SECOND_PLACE_PERCENT) {
+        shop_mastersp->result = aSHM_WON_SECOND_PLACE;
+    } else if (rng < aSHM_THIRD_PLACE_PERCENT) {
+        shop_mastersp->result = aSHM_WON_THIRD_PLACE;
+    } else {
+        shop_mastersp->result = aSHM_DIDNT_WIN;
+    }
+
+    // If the prize was already won then we change to didn't win
+    if (shop_mastersp->result != aSHM_DIDNT_WIN && !to_atari(shop_mastersp)) {
+        shop_mastersp->result = aSHM_DIDNT_WIN;
+    }
+}
+
+static void aSHM_talk_try(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE()) {
+        shop_mastersp->result = mChoice_GET_CHOSENUM();
+
+        switch (shop_mastersp->result) {
+            case mChoice_CHOICE0:
+                if (check_lottery_ticket(shop_mastersp->month)) {
+                    mMsg_SET_CONTINUE_MSG_NUM(0x10D4);
+                    fukubiki_before_process(shop_mastersp);
+                } else {
+                    mMsg_SET_CONTINUE_MSG_NUM(0x10D3);
+                    aSHM_change_talk_proc(shop_mastersp, aSHM_TALK_END_WAIT);
+                }
+                break;
+            case mChoice_CHOICE1:
+                aSHM_change_talk_proc(shop_mastersp, aSHM_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aSHM_talk_hazure(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 3) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        if (check_lottery_ticket(shop_mastersp->month)) {
+            mMsg_SET_CONTINUE_MSG_NUM(0x10D7);
+            aSHM_change_talk_proc(shop_mastersp, aSHM_TALK_TALK_RETRY);
+        } else {
+            mMsg_SET_CONTINUE_MSG_NUM(0x10D6);
+            aSHM_change_talk_proc(shop_mastersp, aSHM_TALK_TALK_TAMAKESI);
+        }
+    }
+}
+
+static void aSHM_talk_retry(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 2) {
+        if (CLIP(garagara_clip) != NULL) {
+            CLIP(garagara_clip)->delete_ball_proc();
+        }
+
+        shop_mastersp->result = mChoice_GET_CHOSENUM();
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        switch (shop_mastersp->result) {
+            case mChoice_CHOICE0:
+                fukubiki_before_process(shop_mastersp);
+                break;
+            case mChoice_CHOICE1:
+                aSHM_change_talk_proc(shop_mastersp, aSHM_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aSHM_stop_player(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)shop_mastersp;
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 1) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        sAdo_OngenTrgStart(NA_SE_7F, &actorx->world.position);
+    }
+
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx) && !mDemo_Check(mDemo_TYPE_SPEAK, actorx)) {
+        if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_DEMO_WAIT) {
+            mPlib_request_main_demo_wait_type1((GAME*)play, FALSE, NULL);
+        } else {
+            aSHM_change_talk_proc(shop_mastersp, aSHM_TALK_END_WAIT);
+        }
+    }
+}
+
+static void aSHM_give_player(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    mActor_name_t* item_p = Save_Get(shop).lottery_items;
+
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 2);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, item_p[shop_mastersp->result]);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, aHOI_REQUEST_PUTAWAY);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, FALSE);
+
+    item_p[shop_mastersp->result] = RSV_SHOP_SOLD_FTR;
+    aSHM_change_talk_proc(shop_mastersp, aSHM_TALK_STOP_PLAYER);
+    aSHM_set_start_avoid_pos(shop_mastersp, shop_mastersp->root + 1);
+
+    if (check_null_lottery() || !check_lottery_ticket(shop_mastersp->month)) {
+        shop_mastersp->move_think_idx = aSHM_THINK_11;
+    } else {
+        shop_mastersp->move_think_idx = aSHM_THINK_12;
+    }
+}
+
+static void aSHM_talk_tamakesi(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)shop_mastersp;
+
+    if (!mDemo_Check(mDemo_TYPE_SPEAK, actorx) && !mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        if (CLIP(garagara_clip) != NULL) {
+            CLIP(garagara_clip)->delete_ball_proc();
+        }
+    }
+}
+
+static void aSHM_say_goodbye(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_idling_now(msg_p) == TRUE) {
+        mMsg_request_main_disappear_wait_type1(msg_p);
+        aSHM_change_talk_proc(shop_mastersp, aSHM_TALK_EXIT_WAIT);
+    }
+}
+
+static void aSHM_exit_wait(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
+        goto_other_scene(play, Common_GetPointer(structure_exit_door_data), TRUE);
+
+        if (play->fb_wipe_mode == 0) {
+            mBGMPsComp_scene_mode(14);
+            mBGMPsComp_volume_talk_end();
+            mBGMPsComp_make_ps_wipe(0x195);
+        }
+    }
+}
+
+static int aSHM_change_talk_proc(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, int talk_proc) {
+    // clang-format off
+    static aSHM_TALK_PROC proc[aSHM_TALK_NUM] = {
+        &aSHM_talk_try,
+        &aSHM_talk_hazure,
+        &aSHM_talk_retry,
+        &aSHM_stop_player,
+        &aSHM_give_player,
+        &aSHM_talk_tamakesi,
+        (aSHM_TALK_PROC)&none_proc1,
+        &aSHM_say_goodbye,
+        &aSHM_exit_wait,
+    };
+    // clang-format on
+
+    int ret = TRUE;
+
+    shop_mastersp->talk_proc = proc[talk_proc];
+    
+    if (talk_proc == aSHM_TALK_STOP_PLAYER) {
+        mDemo_Set_talk_return_demo_wait(TRUE);
+    }
+
+    if (talk_proc == aSHM_TALK_SAY_GOODBYE) {
+        mMsg_SET_IDLING_REQ();
+    }
+
+    return ret;
+}
+
+typedef struct {
+    int msg_no;
+    int talk_proc;
+    u8 turn;
+    u8 cam_type;
+} aSHM_talk_data_c;
+
+static void aSHM_set_force_talk_info(ACTOR* actorx) {
+    // clang-format off
+    static aSHM_talk_data_c dt_tbl[] = {
+        {0x109E, aSHM_TALK_SAY_GOODBYE, FALSE, CAMERA2_PROCESS_NORMAL},
+        {0x10E0, aSHM_TALK_END_WAIT, TRUE, CAMERA2_PROCESS_NORMAL},
+        {0x10D9, aSHM_TALK_STOP_PLAYER, TRUE, CAMERA2_PROCESS_TALK},
+        {0x10DA, aSHM_TALK_STOP_PLAYER, TRUE, CAMERA2_PROCESS_TALK},
+        {0x10DB, aSHM_TALK_STOP_PLAYER, TRUE, CAMERA2_PROCESS_TALK},
+        {0x10D5, aSHM_TALK_TALK_HAZURE, TRUE, CAMERA2_PROCESS_TALK},
+        {0x10E3, aSHM_TALK_GIVE_PLAYER, TRUE, CAMERA2_PROCESS_TALK},
+        {0x10DC, aSHM_TALK_TALK_TAMAKESI, TRUE, CAMERA2_PROCESS_TALK},
+        {0x10DD, aSHM_TALK_TALK_RETRY, TRUE, CAMERA2_PROCESS_TALK},
+        {0x10E6, aSHM_TALK_STOP_PLAYER, TRUE, CAMERA2_PROCESS_NORMAL},
+        {0x082A, aSHM_TALK_STOP_PLAYER, TRUE, CAMERA2_PROCESS_TALK},
+    };
+    // clang-format on
+
+    NPC_SHOP_MASTERSP_ACTOR* shop_mastersp = (NPC_SHOP_MASTERSP_ACTOR*)actorx;
+    aSHM_talk_data_c* data_p = &dt_tbl[shop_mastersp->talk_idx];
+
+    mDemo_Set_msg_num(data_p->msg_no);
+    mDemo_Set_talk_turn(data_p->turn);
+    mDemo_Set_camera(data_p->cam_type);
+    aSHM_change_talk_proc(shop_mastersp, data_p->talk_proc);
+
+    if (shop_mastersp->talk_idx != 0 && shop_mastersp->talk_idx != 1) {
+        if (shop_mastersp->npc_class.talk_info.melody_inst != 0) {
+            shop_mastersp->melody_bak = shop_mastersp->npc_class.talk_info.melody_inst;
+        }
+
+        shop_mastersp->npc_class.talk_info.melody_inst = 0;
+    }
+}
+
+static void aSHM_force_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aSHM_set_force_talk_info);
+}
+
+static void aSHM_set_norm_talk_info(ACTOR* actorx) {
+    // clang-format off
+    static aSHM_talk_data_c dt_tbl[] = {
+        {0x10D1, aSHM_TALK_TALK_TRY, TRUE, CAMERA2_PROCESS_TALK},
+        {0x10DF, aSHM_TALK_END_WAIT, TRUE, CAMERA2_PROCESS_TALK},
+        {0x10E4, aSHM_TALK_END_WAIT, TRUE, CAMERA2_PROCESS_TALK},
+    };
+    // clang-format on
+
+    NPC_SHOP_MASTERSP_ACTOR* shop_mastersp = (NPC_SHOP_MASTERSP_ACTOR*)actorx;
+    aSHM_talk_data_c* data_p = &dt_tbl[shop_mastersp->talk_idx];
+
+    mDemo_Set_msg_num(data_p->msg_no);
+    mDemo_Set_talk_turn(data_p->turn);
+    mDemo_Set_camera(data_p->cam_type);
+    aSHM_change_talk_proc(shop_mastersp, data_p->talk_proc);
+}
+
+static void aSHM_norm_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, &aSHM_set_norm_talk_info);
+}
+
+static int aSHM_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_SHOP_MASTERSP_ACTOR* shop_mastersp = (NPC_SHOP_MASTERSP_ACTOR*)actorx;
+
+    shop_mastersp->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)&none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    return TRUE;
+}
+
+static int aSHM_talk_end_chk(ACTOR* actorx, GAME* game) {
+    NPC_SHOP_MASTERSP_ACTOR* shop_mastersp = (NPC_SHOP_MASTERSP_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    (*shop_mastersp->talk_proc)(shop_mastersp, play);
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        aSHM_setup_think_proc(shop_mastersp, play, shop_mastersp->next_think_idx);
+        ret = TRUE;
+
+        if (shop_mastersp->melody_bak != 0) {
+            shop_mastersp->npc_class.talk_info.melody_inst = shop_mastersp->melody_bak;
+        }
+    }
+
+    return ret;
+}
