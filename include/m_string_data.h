@@ -21,8 +21,6 @@ extern "C" {
 #define mString_CARPETPEDDLER_START 0x48a
 #define mString_TOTAKEKE_START 0x1b93
 
->>>>>>> 69b951b (Implement & link ac_npc_totakeke.c)
-
 #ifdef __cplusplus
 }
 #endif
