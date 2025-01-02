@@ -19,6 +19,9 @@ extern "C" {
 #define mString_HANIWA_MSG2 0x76C
 #define mString_HANIWA_MSG3 0x76D
 #define mString_CARPETPEDDLER_START 0x48a
+#define mString_TOTAKEKE_START 0x1b93
+
+>>>>>>> 69b951b (Implement & link ac_npc_totakeke.c)
 
 #ifdef __cplusplus
 }
