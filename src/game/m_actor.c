@@ -620,14 +620,14 @@ static int Actor_data_bank_regist_check(int* bank_id, ACTOR_PROFILE* profile, AC
     return res;
 }
 
-static int Actor_malloc_actor_class(ACTOR** actor_pp, ACTOR_PROFILE* profile, ACTOR_DLFTBL* dlftbl, const char* unk,
+static int Actor_malloc_actor_class(ACTOR** actor_pp, ACTOR_PROFILE* profile, ACTOR_DLFTBL* dlftbl, const char* name,
                                     mActor_name_t id) {
     aNPC_draw_data_c draw_data;
 
     switch (ITEM_NAME_GET_TYPE(id)) {
         case NAME_TYPE_SPNPC:
         case NAME_TYPE_NPC: {
-            *actor_pp = (*Common_Get(clip).npc_clip->get_actor_area_proc)(profile->class_size, unk, 1);
+            *actor_pp = CLIP(npc_clip)->get_actor_area_proc(profile->class_size, name, 1);
             (*Common_Get(clip).npc_clip->dma_draw_data_proc)(&draw_data, id); // leftover?
             break;
         }

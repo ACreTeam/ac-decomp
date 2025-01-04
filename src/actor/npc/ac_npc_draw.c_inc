@@ -1,0 +1,345 @@
+//
+
+static int aNPC_check_mask_cat_type(ACTOR* actorx) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    int ret = aNPC_MASK_CAT_TYPE_NONE;
+
+    switch (nactorx->actor_class.npc_id) {
+        case SP_NPC_MASK_CAT:
+            ret = aNPC_MASK_CAT_TYPE_MASKCAT;
+            break;
+        case SP_NPC_MASK_CAT2:
+            if (nactorx->npc_info.mask != NULL && nactorx->npc_info.mask->npc_id == SP_NPC_MASK_CAT2) {
+                ret = aNPC_MASK_CAT_TYPE_MASKCAT;
+            }
+            break;
+    }
+
+    return ret;
+}
+
+static void aNPC_set_shadow_pos(NPC_ACTOR* nactorx) {
+    xyz_t scale;
+
+    scale.x = 0.01f;
+    scale.y = nactorx->actor_class.scale.y;
+    scale.z = 0.01f;
+
+    cKF_SkeletonInfo_R_AnimationMove_CulcTransToWorld(&nactorx->draw.shadow_pos, &nactorx->actor_class.world.position,
+                                                      0.0f, 1000.0f, 0.0f, nactorx->actor_class.shape_info.rotation.y,
+                                                      &scale, &nactorx->draw.main_animation.keyframe,
+                                                      cKF_ANIMATION_TRANS_XZ | cKF_ANIMATION_TRANS_Y);
+    nactorx->actor_class.shape_info.shadow_position = &nactorx->draw.shadow_pos;
+}
+
+static void aNPC_set_chn_base(GAME* game, NPC_ACTOR* nactorx, s_xyz* rot_p, xyz_t* trans_p) {
+    ACTOR* actorx = (ACTOR*)nactorx;
+
+    if (nactorx->draw.chn_base_type == aNPC_CHN_BASE_TYPE_RELATIVE) {
+        Matrix_softcv3_load(&actorx->shape_info.rotation, actorx->world.position.x,
+                            actorx->world.position.y + actorx->shape_info.ofs_y * actorx->scale.y,
+                            actorx->world.position.z);
+    }
+
+    Matrix_scale(0.01f, actorx->scale.y, 0.01f, 1);
+    Matrix_translate(trans_p->x, trans_p->y, trans_p->z, 1);
+    Matrix_scale(actorx->scale.x * 100.0f, 1.0f, actorx->scale.z * 100.0f, 1);
+    bzero(trans_p, sizeof(xyz_t));
+}
+
+static void aNPC_set_head_angl(GAME* game, NPC_ACTOR* nactorx, s_xyz* rot_p, xyz_t* trans_p) {
+    s_xyz world_rot;
+
+    Matrix_to_rotate_new(get_Matrix_now(), &world_rot, 0);
+    aNPC_search_eye_target(nactorx, (GAME_PLAY*)game, &world_rot, rot_p);
+    rot_p->x = nactorx->head.angle_y;
+    rot_p->y = nactorx->head.angle_x;
+}
+
+typedef void (*aNPC_DRAW_BEFORE_PROC)(GAME* game, NPC_ACTOR* nactorx, s_xyz* rot_p, xyz_t* trans_p);
+
+static int aNPC_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    // clang-format off
+    static aNPC_DRAW_BEFORE_PROC before_proc[] = {
+        &aNPC_set_chn_base,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        &aNPC_set_head_angl,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+        (aNPC_DRAW_BEFORE_PROC)&none_proc1,
+    };
+    // clang-format on
+
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)arg;
+
+    (*before_proc[joint_idx])(game, nactorx, joint_rot, joint_pos);
+    return TRUE;
+}
+
+static void aNPC_set_right_hand_item(GAME* game, NPC_ACTOR* nactorx, int joint_idx) {
+    TOOLS_ACTOR* item_p;
+
+    Matrix_Position_Zero(&nactorx->right_hand.pos);
+    item_p = (TOOLS_ACTOR*)nactorx->right_hand.item_actor_p;
+    if (item_p != NULL) {
+        f32 scale = 1.0f / (nactorx->actor_class.scale.x * 100.0f);
+
+        Matrix_push();
+        Matrix_scale(scale, scale, scale, 1);
+        Matrix_get(&item_p->matrix_work);
+        item_p->init_matrix = TRUE;
+        Matrix_pull();
+    }
+}
+
+static void aNPC_set_left_hand_item(GAME* game, NPC_ACTOR* nactorx, int joint_idx) {
+    TOOLS_ACTOR* item_p;
+
+    Matrix_Position_Zero(&nactorx->left_hand.pos);
+    item_p = (TOOLS_ACTOR*)nactorx->left_hand.item_actor_p;
+    if (item_p != NULL) {
+        Matrix_push();
+        Matrix_translate(nactorx->left_hand.pos.x, nactorx->left_hand.pos.y, nactorx->left_hand.pos.z, 0);
+        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_get(&item_p->matrix_work);
+        item_p->init_matrix = TRUE;
+        Matrix_pull();
+    }
+}
+
+static void aNPC_set_foot_eff(GAME* game, NPC_ACTOR* nactorx, int joint_idx) {
+    int idx;
+
+    if (joint_idx == aNPC_JOINT_RFOOT3) {
+        idx = 1;
+    } else {
+        idx = 0;
+    }
+
+    Matrix_Position_Zero(&nactorx->feet[idx]);
+}
+
+static void aNPC_set_feel_eff(GAME* game, NPC_ACTOR* nactorx, int joint_idx) {
+    if (nactorx->draw.feel_effect != NULL) {
+        aNPC_set_feel_effect(game, nactorx);
+    } else {
+        aNPC_set_other_effect(game, nactorx);
+    }
+}
+
+static void aNPC_set_accessory_mtx(NPC_ACTOR* nactorx, int joint_idx) {
+    if (joint_idx == nactorx->accessory.pos_joint_idx) {
+        TOOLS_ACTOR* accessory = (TOOLS_ACTOR*)nactorx->accessory.accessory;
+
+        if (accessory != NULL) {
+            f32 scale = 1.0f / (nactorx->actor_class.scale.x * 100.0f);
+
+            Matrix_push();
+            Matrix_scale(scale, scale, scale, 1);
+            Matrix_get(&accessory->matrix_work);
+            accessory->init_matrix = TRUE;
+            Matrix_pull();
+        }
+    }
+}
+
+typedef void (*aNPC_DRAW_AFTER_PROC)(GAME* game, NPC_ACTOR* nactorx, int joint_idx);
+
+static int aNPC_actor_draw_after(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                 u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    // clang-format off
+    static aNPC_DRAW_AFTER_PROC after_proc[] = {
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        &aNPC_set_foot_eff,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        &aNPC_set_foot_eff,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        &aNPC_set_left_hand_item,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        &aNPC_set_right_hand_item,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        (aNPC_DRAW_AFTER_PROC)&none_proc1,
+        &aNPC_set_feel_eff,
+    };
+    // clang-format on
+
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)arg;
+
+    (*after_proc[joint_idx])(game, nactorx, joint_idx);
+    aNPC_set_accessory_mtx(nactorx, joint_idx);
+    return TRUE;
+}
+
+static void aNPC_actor_draw_sub(ACTOR* actorx, GAME* game) {
+    // clang-format off
+    static Gfx xlu_env_disp[] = {
+        gsDPPipeSync(),
+        gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_FOG | G_LIGHTING | G_SHADING_SMOOTH),
+        gsDPSetOtherMode(G_AD_NOTPATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_AA_ZB_XLU_SURF2),
+        gsSPTexture(65535, 65535, 0, 0, G_ON),
+        gsDPSetCombineLERP(TEXEL0, 0, SHADE, 0, PRIMITIVE, 0, ENVIRONMENT, 0, COMBINED, 0, PRIM_LOD_FRAC, COMBINED, 0, 0, 0, COMBINED),
+        gsSPEndDisplayList(),
+    };
+    // clang-format on
+
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* kf_p = &nactorx->draw.main_animation.keyframe;
+    GRAPH* graph = game->graph;
+    Mtx* mtx = GRAPH_ALLOC_TYPE(graph, Mtx, kf_p->skeleton->num_shown_joints);
+
+    if (mtx != NULL) {
+        aNPC_draw_tex_data_c* draw_tex_p = &nactorx->draw.draw_tex_data;
+        u8* eye_tex_p = draw_tex_p->eye_texture[nactorx->draw.tex_anim[aNPC_TEX_ANIM_EYE].pattern];
+        u8* mouth_tex_p = draw_tex_p->mouth_texture[nactorx->draw.tex_anim[aNPC_TEX_ANIM_MOUTH].pattern];
+        Gfx* gfx; // manually split out so we can handle wisp which uses XLU and others which use OPA
+        int xlu;
+
+        OPEN_DISP(graph);
+
+        switch (actorx->npc_id) {
+            case SP_NPC_EV_GHOST: {
+                EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)nactorx;
+
+                xlu = TRUE;
+                gfx = NOW_POLY_XLU_DISP;
+
+                gSPDisplayList(gfx++, xlu_env_disp);
+                if (ghost->alpha > 127) {
+                    gDPPipeSync(gfx++);
+                    gDPSetRenderMode(gfx++,
+                                     Z_CMP | Z_UPD | IM_RD | CVG_DST_FULL | ZMODE_XLU | FORCE_BL | G_RM_FOG_SHADE_A,
+                                     Z_CMP | Z_UPD | IM_RD | CVG_DST_FULL | ZMODE_XLU | FORCE_BL |
+                                         GBL_c2(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA));
+                }
+                break;
+            }
+            
+            default:
+                xlu = FALSE;
+                _texture_z_light_fog_prim_npc(graph);
+                gfx = NOW_POLY_OPA_DISP;
+        }
+
+        gDPSetTexEdgeAlpha(gfx++, 127);
+        gDPSetTextureAdjustMode(gfx++, G_TA_DOLPHIN);
+
+        if (aNPC_check_mask_cat_type(actorx) == aNPC_MASK_CAT_TYPE_MASKCAT) {
+            MaskCat_c* mask_cat = Save_GetPointer(mask_cat);
+
+            gSPSegment(gfx++, ANIME_1_TXT_SEG, mask_cat->design.design.data);
+            gDPLoadTLUT_Dolphin(gfx++, 13, 16, 1, mNW_PaletteIdx2Palette(mask_cat->palette_no));
+        } else {
+            if (eye_tex_p != NULL) {
+                gSPSegment(gfx++, ANIME_1_TXT_SEG, eye_tex_p);
+            }
+
+            if (mouth_tex_p != NULL) {
+                gSPSegment(gfx++, ANIME_2_TXT_SEG, mouth_tex_p);
+            }
+        }
+
+        gSPSegment(gfx++, ANIME_4_TXT_SEG, draw_tex_p->texture);
+        gDPLoadTLUT_Dolphin(gfx++, 15, 16, 1, draw_tex_p->palette);
+
+        if ((int)nactorx->draw.cloth_idx != aNPC_CLOTH_IDX_NONE) {
+            u8* tex_p;
+            u16* pal_p;
+
+            if (nactorx->draw.cloth_idx == aNPC_CLOTH_IDX_ORG) {
+                int org_idx;
+
+                if (nactorx->npc_info.animal == NULL) {
+                    org_idx = 0;
+                } else {
+                    org_idx = nactorx->npc_info.animal->cloth_original_id;
+                }
+
+                tex_p = Save_Get(needlework).original_design[org_idx & 3].design.data;
+                pal_p = mNW_PaletteIdx2Palette(Save_Get(needlework).original_design[org_idx & 3].palette);
+            } else {
+                NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+                aNPC_cloth_c* cloth_p = ctrl->cloth + (int)nactorx->draw.cloth_idx - 1;
+                
+                tex_p = (u8*)cloth_p->texture_bank.ram_start;
+                pal_p = (u16*)cloth_p->palette_bank.ram_start;
+            }
+
+            gSPSegment(gfx++, ANIME_3_TXT_SEG, tex_p);
+            gDPLoadTLUT_Dolphin(gfx++, 14, 16, 1, pal_p);
+        }
+
+        if (xlu == TRUE) {
+            SET_POLY_XLU_DISP(gfx);
+        } else {
+            SET_POLY_OPA_DISP(gfx);
+        }
+
+        CLOSE_DISP(graph);
+
+        cKF_Si3_draw_R_SV(game, kf_p, mtx, &aNPC_actor_draw_before, &aNPC_actor_draw_after, actorx);
+
+        OPEN_DISP(graph);
+
+        if (xlu == TRUE) {
+            gfx = NOW_POLY_XLU_DISP;
+        } else {
+            gfx = NOW_POLY_OPA_DISP;
+        }
+
+        gDPSetTexEdgeAlpha(gfx++, 144);
+        gDPSetTextureAdjustMode(gfx++, G_TA_N64);
+
+        if (xlu == TRUE) {
+            SET_POLY_XLU_DISP(gfx);
+        } else {
+            SET_POLY_OPA_DISP(gfx);
+        }
+
+        CLOSE_DISP(graph);
+    }
+}
+
+static void aNPC_actor_draw(ACTOR* actorx, GAME* game) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+
+    if (nactorx->condition_info.hide_flg == FALSE) {
+        aNPC_actor_draw_sub(actorx, game);
+        aNPC_set_shadow_pos(nactorx);
+    }
+}

@@ -90,8 +90,8 @@ typedef struct tools_s {
     /* 0x1C8 */ int work2;
 } TOOLS_ACTOR;
 
-typedef ACTOR* (*ToolBirthProc)(int, int, ACTOR*, GAME*, s16, int*);
-typedef int (*ToolChgRequestModeProc)(ACTOR*, ACTOR*, int);
+typedef ACTOR* (*ToolBirthProc)(int kind, int mode, ACTOR* parent_actor, GAME* game, s16 arg, int* bank_id);
+typedef int (*ToolChgRequestModeProc)(ACTOR* parent_actor, ACTOR* tool, int mode);
 
 typedef struct ToolClip {
     ToolBirthProc aTOL_birth_proc;

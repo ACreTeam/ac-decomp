@@ -1,0 +1,20 @@
+static void aNPC_OngenTrgStart(NPC_ACTOR* nactorx, u16 se_no) {
+    sAdo_OngenTrgStart(se_no, &nactorx->actor_class.world.position);
+}
+
+static void aNPC_WalkSe(xyz_t* pos_p) {
+    u32 attr;
+    u16 se_no;
+
+    attr = mCoBG_Wpos2Attribute(*pos_p, NULL);
+    se_no = sAdo_Get_WalkLabel(attr);
+    if (sAdo_CheckOnPlussBridge(pos_p, attr)) {
+        se_no = NA_SE_FOOTSTEP_PLUSSBRIDGE;
+    }
+
+    sAdo_NpcWalkSe(se_no, pos_p);
+}
+
+static void aNPC_TumbleSe(xyz_t* pos_p) {
+    sAdo_OngenTrgStart(sAdo_Get_KokeruLabel(mCoBG_Wpos2Attribute(*pos_p, NULL)), pos_p);
+}

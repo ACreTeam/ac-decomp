@@ -53,7 +53,7 @@ static void aTOL_check_data_bank(int id, ACTOR* actor) {
     }
 }
 
-static ACTOR* aTOL_birth_proc(int name, int id, ACTOR* tool, GAME* game, s16 arg, int* arg5) {
+static ACTOR* aTOL_birth_proc(int kind, int mode, ACTOR* parent_actor, GAME* game, s16 arg, int* bank_id) {
     static s16 profile_table[] = {
         mAc_PROFILE_T_UMBRELLA, mAc_PROFILE_T_UMBRELLA, mAc_PROFILE_T_UMBRELLA, mAc_PROFILE_T_UMBRELLA,
         mAc_PROFILE_T_UMBRELLA, mAc_PROFILE_T_UMBRELLA, mAc_PROFILE_T_UMBRELLA, mAc_PROFILE_T_UMBRELLA,
@@ -74,34 +74,35 @@ static ACTOR* aTOL_birth_proc(int name, int id, ACTOR* tool, GAME* game, s16 arg
         mAc_PROFILE_T_REI2,     mAc_PROFILE_T_ZINNIA1,  mAc_PROFILE_T_ZINNIA2,  mAc_PROFILE_T_COBRA1,
     };
 
-    TOOLS_ACTOR* child;
+    ACTOR* child;
     GAME_PLAY* play = (GAME_PLAY*)game;
 
-    aTOL_check_data_bank(name, tool);
-
-    child = (TOOLS_ACTOR*)Actor_info_make_child_actor(&play->actor_info, tool, game, profile_table[name], 0.0f, 0.0f,
+    aTOL_check_data_bank(kind, parent_actor);
+    child = Actor_info_make_child_actor(&play->actor_info, parent_actor, game, profile_table[kind], 0.0f, 0.0f,
                                                       0.0f, 0, 0, 0, -1, 0, arg, -1);
 
     if (child != NULL) {
-        child->work0 = id;
-        child->tool_name = name;
+        TOOLS_ACTOR* tool = (TOOLS_ACTOR*)child;
+
+        tool->work0 = mode;
+        tool->tool_name = kind;
     }
 
-    if (arg5 != NULL) {
-        *arg5 = -1;
+    if (bank_id != NULL) {
+        *bank_id = -1;
     }
 
-    return &child->actor_class;
+    return child;
 }
 
-static int aTOL_chg_request_mode_proc(ACTOR* actor, ACTOR* tool, int id) {
+static int aTOL_chg_request_mode_proc(ACTOR* actor, ACTOR* tool, int mode) {
     TOOLS_ACTOR* t_actor = (TOOLS_ACTOR*)tool;
 
     if (actor != tool->parent_actor) {
         return FALSE;
     }
 
-    t_actor->work0 = id;
+    t_actor->work0 = mode;
     return TRUE;
 }
 

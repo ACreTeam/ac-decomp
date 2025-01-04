@@ -27,7 +27,7 @@ static void aNRG_take_with(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
         if (path >= 1) {
             aNRG_setup_think_proc(rcn_guide, play, aNRC_THINK_EXPLAIN);
         } else {
-            aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, 2240,
+            aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_RUN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, 2240,
                                  1500);
             path++;
         }
@@ -116,7 +116,7 @@ static void aNRG_exit(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
                 }
             }
         } else {
-            aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, moveX[idx],
+            aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_RUN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, moveX[idx],
                                  moveZ[idx]);
         }
     }
@@ -192,7 +192,7 @@ static void aNRG_approach_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) 
     }
 
     /* Request action to move to desired location */
-    aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, x, z);
+    aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_RUN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, x, z);
 }
 
 static void aNRG_introduce_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {
@@ -215,7 +215,7 @@ static void aNRG_take_with_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play)
         }
     }
 
-    aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, 2240, 1300);
+    aNRG_set_request_act(rcn_guide, 4, aNPC_ACT_RUN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, 2240, 1300);
 }
 
 static void aNRG_before_open_door_talk2_init(NPC_RCN_GUIDE_ACTOR* rcn_guide, GAME_PLAY* play) {

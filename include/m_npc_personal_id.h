@@ -10,12 +10,12 @@ extern "C" {
 #endif
 
 enum {
-  mNpc_LOOKS_GIRL,
-  mNpc_LOOKS_KO_GIRL,
-  mNpc_LOOKS_BOY,
-  mNpc_LOOKS_SPORT_MAN,
-  mNpc_LOOKS_GRIM_MAN,
-  mNpc_LOOKS_NANIWA_LADY,
+  mNpc_LOOKS_GIRL, // 'normal'
+  mNpc_LOOKS_KO_GIRL, // 'peppy'
+  mNpc_LOOKS_BOY, // 'lazy'
+  mNpc_LOOKS_SPORT_MAN, // 'jock'
+  mNpc_LOOKS_GRIM_MAN, // 'cranky'
+  mNpc_LOOKS_NANIWA_LADY, // 'snooty'
   mNpc_LOOKS_UNSET,
 
   mNpc_LOOKS_NUM = mNpc_LOOKS_UNSET

@@ -18,7 +18,7 @@ eEC_PROFILE_c iam_ef_clacker = {
     // clang-format on
 };
 
-void eClacker_Make_Effect(eEC_Effect_c* effect, GAME* game) {
+static void eClacker_Make_Effect(eEC_Effect_c* effect, GAME* game) {
     static s16 angle_tbl[] = {0x071C, 0x58E3, 0xAAAB};
     int i;
 

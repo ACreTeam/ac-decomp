@@ -114,7 +114,7 @@ static void aNRTC_think_proc(NPC_ACTOR* actor, GAME_PLAY* play, int idx) {
 
 static void aNRTC_schedule_init_proc(NPC_ACTOR* actor, GAME_PLAY* play) {
     NPC_RTC_ACTOR* rtc = (NPC_RTC_ACTOR*)actor;
-    rtc->npc_class.draw._5BE = 1;
+    rtc->npc_class.draw.anim_speed_type = aNPC_ANIM_SPEED_TYPE_FREE;
     rtc->npc_class.talk_info.default_animation = aNPC_ANIM_4HAKU_E1;
     rtc->bgm_timer = -1;
     rtc->fade_timer = 0;

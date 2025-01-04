@@ -1,0 +1,83 @@
+enum {
+    aNPC_SCHEDULE_IN_HOUSE_STEP_GO_HOME,
+    aNPC_SCHEDULE_IN_HOUSE_STEP_PITFALL,
+    aNPC_SCHEDULE_IN_HOUSE_STEP_INTO_HOUSE,
+    aNPC_SCHEDULE_IN_HOUSE_STEP_HIDE,
+
+    aNPC_SCHEDULE_IN_HOUSE_STEP_NUM
+};
+
+static void aNPC_in_house_schedule_think_init(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static int think_idx[] = { aNPC_THINK_GO_HOME, aNPC_THINK_PITFALL, aNPC_THINK_INTO_HOUSE, aNPC_THINK_WAIT };
+    
+    aNPC_think_init_proc(nactorx, play, think_idx[nactorx->schedule.step]);
+}
+
+static void aNPC_in_house_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_think_main_proc(nactorx, play);
+
+    if (nactorx->think.end_flag == TRUE) {
+        u8 step;
+
+        switch (nactorx->schedule.step) {
+            case aNPC_SCHEDULE_IN_HOUSE_STEP_GO_HOME:
+                if (nactorx->condition_info.pitfall_flag == TRUE) {
+                    step = aNPC_SCHEDULE_IN_HOUSE_STEP_PITFALL;
+                } else {
+                    step = aNPC_SCHEDULE_IN_HOUSE_STEP_INTO_HOUSE;
+                }
+                break;
+            case aNPC_SCHEDULE_IN_HOUSE_STEP_PITFALL:
+                step = aNPC_SCHEDULE_IN_HOUSE_STEP_GO_HOME;
+                break;
+            default:
+                step = nactorx->schedule.step + 1;
+                break;
+        }
+
+        nactorx->schedule.step = step;
+        aNPC_in_house_schedule_think_init(nactorx, play);
+    } else {
+        if (nactorx->schedule.type != nactorx->npc_info.schedule->current_type && nactorx->condition_info.talk_condition == aNPC_TALK_TYPE_NONE) {
+            switch (nactorx->schedule.step) {
+                case aNPC_SCHEDULE_IN_HOUSE_STEP_GO_HOME:
+                case aNPC_SCHEDULE_IN_HOUSE_STEP_HIDE:
+                    if (nactorx->npc_info.schedule->current_type == mNPS_SCHED_SLEEP) {
+                        if (!mNpc_CheckIslandAnimal(aNPC_GET_ANM(nactorx))) {
+                            aNPC_set_schedule(nactorx, play);
+                        }
+                    } else {
+                        aNPC_set_schedule(nactorx, play);
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+static void aNPC_in_house_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u8 hide = FALSE;
+    u8 step = aNPC_SCHEDULE_IN_HOUSE_STEP_GO_HOME;
+
+    if (aNPC_GET_ANM(nactorx)->is_home == TRUE) {
+        step = aNPC_SCHEDULE_IN_HOUSE_STEP_HIDE;
+        hide = TRUE;
+        nactorx->actor_class.world.position.x = nactorx->npc_info.list->house_position.x + mFI_UT_WORLDSIZE_HALF_X_F;
+        nactorx->actor_class.world.position.z = nactorx->npc_info.list->house_position.z + mFI_UT_WORLDSIZE_HALF_Z_F;
+    } else if (nactorx->condition_info.entrance_flag == aNPC_ENTRANCE_TYPE_AT) {
+        step = aNPC_SCHEDULE_IN_HOUSE_STEP_INTO_HOUSE;
+    }
+
+    aNPC_set_hide_flg(nactorx, hide);
+    nactorx->schedule.step = step;
+    aNPC_in_house_schedule_think_init(nactorx, play);
+}
+
+static void aNPC_in_house_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC sche_proc[] = {
+        &aNPC_in_house_schedule_init_proc,
+        &aNPC_in_house_schedule_main_proc,
+    };
+
+    (*sche_proc[proc_type])(nactorx, play);
+}

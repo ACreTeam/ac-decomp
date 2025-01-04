@@ -1,0 +1,621 @@
+static void aNPC_BGcheck(NPC_ACTOR* nactorx, ACTOR* actorx) {
+    int flag = mCoBG_DIDNT_HIT_WALL;
+
+    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_BGCHECK) == 0) {
+        switch (nactorx->collision.check_kind) {
+            case aNPC_BG_CHECK_TYPE_NONE:
+                mCoBG_InitBgCheckResult(&actorx->bg_collision_check.result);
+                break;
+            case aNPC_BG_CHECK_TYPE_ONLY_GROUND:
+                mCoBG_GroundCheckOnly(NULL, actorx, nactorx->collision.BGcheck_radius, 0.0f, 0);
+                break;
+            case aNPC_BG_CHECK_TYPE_NORMAL:
+                mCoBG_BgCheckControll(NULL, actorx, nactorx->collision.BGcheck_radius, 0.0f, TRUE, FALSE, 1);
+                break;
+            case aNPC_BG_CHECK_TYPE_RANGE:
+                mCoBG_BgCheckControll(NULL, actorx, nactorx->collision.BGcheck_radius, 0.0f, TRUE, FALSE, 1);
+                mCoBG_UniqueWallCheck(actorx, nactorx->collision.BGcheck_radius, 0.0f);
+                break;
+        }
+
+        if ((actorx->bg_collision_check.result.hit_wall & mCoBG_HIT_WALL_FRONT) ||
+            (actorx->bg_collision_check.result.hit_attribute_wall & mCoBG_HIT_WALL_FRONT) ||
+            actorx->bg_collision_check.result.unk_flag4) {
+            flag = mCoBG_HIT_WALL_FRONT | mCoBG_HIT_WALL;
+        }
+    } else {
+        mCoBG_InitBgCheckResult(&actorx->bg_collision_check.result);
+    }
+
+    nactorx->collision.collision_flag = flag;
+}
+
+static int aNPC_blockRangeCheck(NPC_ACTOR* nactorx, xyz_t pos) {
+    int bx;
+    int bz;
+    int ret = TRUE;
+
+    if (mFI_Wpos2BlockNum(&bx, &bz, pos) == TRUE) {
+        if (bx != nactorx->actor_class.block_x || bz != nactorx->actor_class.block_z) {
+            ret = FALSE;
+        } else {
+            f32 dx = pos.x - bx * mFI_BK_WORLDSIZE_X_F;
+            f32 dz = pos.z - bz * mFI_BK_WORLDSIZE_Z_F;
+            f32 min = nactorx->collision.BGcheck_radius;
+            f32 max = mFI_BK_WORLDSIZE_BASE_F - min;
+
+            if (dx <= min || dx >= max || dz <= min || dz >= max) {
+                ret = FALSE;
+            }
+        }
+    } else {
+        ret = FALSE;
+    }
+
+    return ret;
+}
+
+static int aNPC_circleRangeCheck(NPC_ACTOR* nactorx, xyz_t* rev_pos_p, xyz_t pos) {
+    f32 dx = pos.x - nactorx->movement.range_center_x;
+    f32 dz = pos.z - nactorx->movement.range_center_z;
+    xyz_t tmp;
+    f32 radius = nactorx->movement.range_radius;
+    f32 radiusSq = SQ(radius);
+    int ret = TRUE;
+
+    if (SQ(dx) + SQ(dz) > radiusSq) {
+        s16 angle = atans_table(dz, dx);
+
+        tmp.x = radius * sin_s(angle) - dx;
+        tmp.z = radius * cos_s(angle) - dz;
+        ret = FALSE;
+    } else {
+        tmp.x = 0.0f;
+        tmp.z = 0.0f;
+    }
+
+    if (rev_pos_p != NULL) {
+        xyz_t_move(rev_pos_p, &tmp);
+    }
+
+    return ret;
+}
+
+// is this supposed to be 'Revise'?
+static void aNPC_circleRangeRevice(NPC_ACTOR* nactorx) {
+    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV) == 0 &&
+        (nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_LOVE_CHECK) == 0 &&
+        nactorx->collision.check_kind == aNPC_BG_CHECK_TYPE_RANGE) {
+        xyz_t rev_pos;
+        int res = aNPC_circleRangeCheck(nactorx, &rev_pos, nactorx->actor_class.world.position);
+
+        if (nactorx->movement.range_type == aNPC_MOVE_RANGE_TYPE_CIRCLE) {
+            if (nactorx->action.type != aNPC_ACT_TYPE_SEARCH ||
+                (nactorx->movement.target != NULL && nactorx->movement.target->part != ACTOR_PART_PLAYER)) {
+                nactorx->actor_class.world.position.x += rev_pos.x;
+                nactorx->actor_class.world.position.z += rev_pos.z;
+            }
+        } else if (res == TRUE && nactorx->condition_info.entrance_flag == aNPC_ENTRANCE_TYPE_NONE) {
+            nactorx->movement.range_type = aNPC_MOVE_RANGE_TYPE_CIRCLE;
+        }
+    }
+}
+
+static int aNPC_moveRangeCheck2(NPC_ACTOR* nactorx, xyz_t* rev_pos_p, xyz_t pos, u8 range_type) {
+    int ret = TRUE;
+
+    if (rev_pos_p != NULL) {
+        bzero(rev_pos_p, sizeof(xyz_t));
+    }
+
+    switch (range_type) {
+        case aNPC_MOVE_RANGE_TYPE_BLOCK:
+            ret = aNPC_blockRangeCheck(nactorx, pos);
+            break;
+        case aNPC_MOVE_RANGE_TYPE_CIRCLE:
+            ret = aNPC_circleRangeCheck(nactorx, rev_pos_p, pos);
+            break;
+    }
+
+    return ret;
+}
+
+static int aNPC_moveRangeCheck(NPC_ACTOR* nactorx, xyz_t* rev_pos_p, xyz_t pos, u8 range_type) {
+    int ret = TRUE;
+
+    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK) == 0 &&
+        nactorx->collision.check_kind == aNPC_BG_CHECK_TYPE_RANGE) {
+        ret = aNPC_moveRangeCheck2(nactorx, rev_pos_p, pos, range_type);
+    }
+
+    return ret;
+}
+
+static u8 aNPC_entranceCheck_sub(xyz_t* pos_p) {
+    static u8 ret_code[] = { aNPC_ENTRANCE_TYPE_AT, aNPC_ENTRANCE_TYPE_NEARBY, aNPC_ENTRANCE_TYPE_NONE };
+    mActor_name_t* fg_p;
+    xyz_t pos;
+    int i;
+
+    xyz_t_move(&pos, pos_p);
+    for (i = 0; i < 2; i++) {
+        pos.z -= mFI_UT_WORLDSIZE_Z_F;
+        fg_p = mFI_GetUnitFG(pos);
+
+        if (fg_p != NULL && (ITEM_IS_DUMMY_NPC_HOUSE(*fg_p) || ITEM_IS_NPC_HOUSE(*fg_p) || *fg_p == COTTAGE_NPC ||
+                             *fg_p == DUMMY_COTTAGE_NPC)) {
+            break;
+        }
+    }
+
+    return ret_code[i];
+}
+
+static void aNPC_entranceCheck(NPC_ACTOR* nactorx) {
+    u8 entrance_flag = aNPC_ENTRANCE_TYPE_NONE;
+
+    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK) == 0) {
+        entrance_flag = aNPC_entranceCheck_sub(&nactorx->actor_class.world.position);
+    }
+
+    nactorx->condition_info.entrance_flag = entrance_flag;
+}
+
+static int aNPC_check_entrance_pl(GAME_PLAY* play, int home_ux, int home_uz) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+    int ret = FALSE;
+
+    if (playerx == NULL) {
+        ret = TRUE;
+    } else {
+        int ux;
+        int uz;
+
+        if (mFI_Wpos2UtNum(&ux, &uz, playerx->world.position) == TRUE) {
+            // if the player is on the house item or one unit below then count it
+            if (ux == home_ux && (uz == home_uz || uz == (home_uz + 1))) {
+                ret = TRUE;
+            }
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_check_entrance_npc(GAME_PLAY* play, NPC_ACTOR* owner, int home_ux, int home_uz) {
+    ACTOR* actorx = (ACTOR*)owner;
+    int n = play->actor_info.list[ACTOR_PART_NPC].num_actors;
+    ACTOR* chk_actorx = play->actor_info.list[ACTOR_PART_NPC].actor;
+    int ux;
+    int uz;
+    int ret = FALSE;
+
+    while (n != 0) {
+        if (chk_actorx != actorx) {
+            if (mFI_Wpos2UtNum(&ux, &uz, chk_actorx->world.position) == TRUE) {
+                // if the npc is on the house item or one unit below then count it
+                if (ux == home_ux && (uz == home_uz || uz == (home_uz + 1))) {
+                    ret = TRUE;
+                    break;
+                }
+            }
+        }
+
+        chk_actorx = chk_actorx->next_actor;
+        n--;
+    }
+
+    return ret;
+}
+
+static int aNPC_check_entrance_humanoid(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    Anmhome_c* home_p = &nactorx->npc_info.animal->home_info;
+    int home_ux = home_p->block_x * UT_X_NUM + home_p->ut_x;
+    int home_uz = home_p->block_z * UT_Z_NUM + home_p->ut_z;
+    int ret = aNPC_check_entrance_pl(play, home_ux, home_uz);
+
+    if (!ret) {
+        ret = aNPC_check_entrance_npc(play, nactorx, home_ux, home_uz);
+    }
+
+    return ret;
+}
+
+static void aNPC_set_over_friendship(NPC_ACTOR* nactorx) {
+    if (ITEM_NAME_GET_TYPE(nactorx->actor_class.npc_id) != NAME_TYPE_SPNPC) {
+        int over_friendship = 0;
+
+        switch (Now_Private->destiny.type) {
+            case mPr_DESTINY_UNPOPULAR:
+                over_friendship = -0x100;
+                break;
+            case mPr_DESTINY_POPULAR:
+                if (mNpc_GetLooks2Sex(nactorx->npc_info.animal->id.looks) != Now_Private->gender) {
+                    over_friendship = 0x100;
+                }
+                break;
+        }
+
+        nactorx->condition_info.over_friendship = over_friendship;
+    }
+}
+
+static f32 aNPC_forward_check_sub(NPC_ACTOR* nactorx, int type) {
+    static f32 chk_x_table[] = { mFI_UT_WORLDSIZE_HALF_X_F, -mFI_UT_WORLDSIZE_HALF_X_F };
+    f32 chk_x = chk_x_table[type];
+    s16 angle = nactorx->actor_class.world.angle.y;
+    f32 sin = sin_s(angle);
+    f32 cos = cos_s(angle);
+    xyz_t pos;
+    xyz_t rev_pos;
+    f32 ret;
+
+    pos.x = nactorx->actor_class.world.position.x + chk_x * cos;
+    pos.y = nactorx->actor_class.world.position.y;
+    pos.z = nactorx->actor_class.world.position.z - chk_x * sin;
+
+    if (aNPC_moveRangeCheck(nactorx, &rev_pos, pos, nactorx->movement.range_type) == TRUE) {
+        ret = mCoBG_Wpos2GroundCheckOnly(&pos, 0.0f);
+    } else if (nactorx->collision.check_kind == aNPC_BG_CHECK_TYPE_RANGE) {
+        ret = mFI_UT_WORLDSIZE_HALF_Z_F;
+    } else {
+        ret = 0.0f;
+    }
+
+    return ret;
+}
+
+static void aNPC_forward_check(NPC_ACTOR* nactorx) {
+    static int crs_flg[] = { mCoBG_HIT_WALL, mCoBG_HIT_WALL_FRONT };
+    int flg = nactorx->collision.collision_flag;
+    f32 res;
+    int i;
+
+    for (i = 0; i < 2; i++) {
+        res = aNPC_forward_check_sub(nactorx, i);
+        if (ABS(res) >= mFI_UT_WORLDSIZE_HALF_X_F) {
+            flg |= crs_flg[i];
+        }
+    }
+
+    nactorx->collision.collision_flag = flg;
+}
+
+static void aNPC_set_mv_angl(NPC_ACTOR* nactorx) {
+    s16 angle = atans_table(nactorx->movement.avoid_pos_z - nactorx->actor_class.world.position.z,
+                            nactorx->movement.avoid_pos_x - nactorx->actor_class.world.position.x);
+
+    nactorx->movement.mv_angl = angle;
+}
+
+static void aNPC_set_avoid_pos(NPC_ACTOR* nactorx, f32 avoid_pos_x, f32 avoid_pos_z, u8 avoid_dir) {
+    nactorx->movement.avoid_pos_x = avoid_pos_x;
+    nactorx->movement.avoid_pos_z = avoid_pos_z;
+    nactorx->movement.avoid_direction = avoid_dir;
+    aNPC_set_mv_angl(nactorx);
+}
+
+static void aNPC_set_dst_pos(NPC_ACTOR* nactorx, f32 dst_pos_x, f32 dst_pos_z) {
+    nactorx->movement.dst_pos_x = dst_pos_x;
+    nactorx->movement.dst_pos_z = dst_pos_z;
+    nactorx->movement.move_timer = 0;
+    aNPC_set_avoid_pos(nactorx, dst_pos_x, dst_pos_z, 0);
+}
+
+static void aNPC_check_feel_tim(NPC_ACTOR* nactorx) {
+    Animal_c* animal_p = nactorx->npc_info.animal;
+
+    if (animal_p != NULL) {
+        if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_FEEL_CHECK) == 0 &&
+            nactorx->condition_info.feel_tim > 0) {
+            nactorx->condition_info.feel_tim--;
+        }
+
+        if (nactorx->condition_info.feel_tim == 0) {
+            animal_p->mood = mNpc_FEEL_NORMAL;
+        }
+    }
+}
+
+static void aNPC_calc_move_timer(NPC_ACTOR* nactorx) {
+    int move_timer = nactorx->movement.move_timer;
+
+    move_timer++;
+    if (move_timer > 18000) {
+        move_timer = 18000;
+    }
+
+    nactorx->movement.move_timer = move_timer;
+}
+
+static void aNPC_calc_force_call_timer(NPC_ACTOR* nactorx) {
+    if (mDemo_Get_talk_actor() == NULL && nactorx->think.force_call_timer != 0) {
+        nactorx->think.force_call_timer--;
+    }
+}
+
+static void aNPC_calc_act_timer(NPC_ACTOR* nactorx) {
+    if (nactorx->action.act_timer != 0) {
+        nactorx->action.act_timer--;
+    }
+}
+
+static void aNPC_calc_timer(NPC_ACTOR* nactorx) {
+    aNPC_calc_move_timer(nactorx);
+    aNPC_calc_force_call_timer(nactorx);
+    aNPC_calc_act_timer(nactorx);
+}
+
+static void aNPC_position_move(ACTOR* actorx) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    f32 accel;
+
+    if (actorx->speed < nactorx->movement.speed.max_speed) {
+        accel = nactorx->movement.speed.acceleration;
+    } else {
+        accel = nactorx->movement.speed.deceleration;
+    }
+
+    chase_f(&actorx->speed, nactorx->movement.speed.max_speed, accel * 0.5f);
+    Actor_position_speed_set(actorx);
+    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_MOVE_Y) != 0) {
+        actorx->position_speed.y = 0.0f;
+    }
+
+    Actor_position_move(actorx);
+}
+
+static void aNPC_angle_calc(NPC_ACTOR* nactorx) {
+    chase_angle(&nactorx->actor_class.shape_info.rotation.y, nactorx->movement.mv_angl, nactorx->movement.mv_add_angl);
+    nactorx->actor_class.world.angle.y = nactorx->actor_class.shape_info.rotation.y;
+}
+
+static void aNPC_set_body_angle(NPC_ACTOR* nactorx) {
+    s16 angle;
+
+    if (nactorx->movement.override_body_angle_flag == TRUE) {
+        angle = nactorx->movement.body_angle;
+    } else {
+        angle = (nactorx->actor_class.speed * 3640.0f) / 3.0f;
+    }
+
+    chase_angle(&nactorx->actor_class.shape_info.rotation.x, angle, 224);
+}
+
+static void aNPC_around_obj_check(NPC_ACTOR* nactorx, ACTOR* actorx) {
+    if (ClObj_DID_COLLIDE(nactorx->collision.pipe.collision_obj)) {
+        ACTOR* collide_actor = nactorx->collision.pipe.collision_obj.collided_actor;
+        s16 angle;
+
+        if (collide_actor != nactorx->movement.target) {
+            angle = search_position_angleY(&actorx->world.position, &collide_actor->world.position);
+            angle -= actorx->shape_info.rotation.y;
+
+            if (ABS(angle) < DEG2SHORT_ANGLE2(90.0f)) {
+                int flag = nactorx->collision.collision_flag;
+
+                if (ABS(angle) < DEG2SHORT_ANGLE2(22.5f)) {
+                    flag |= mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT;
+                } else if (angle < 0) {
+                    flag |= mCoBG_HIT_WALL_FRONT;
+                } else {
+                    flag |= mCoBG_HIT_WALL;
+                }
+
+                nactorx->collision.collision_flag = flag;
+            }
+        }
+    }
+}
+
+static int aNPC_chk_avoid_and_search(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+    int ret = aNPC_FRIENDSHIP_NORMAL;
+
+    if (playerx != NULL) {
+        int bx;
+        int bz;
+
+        if (mFI_Wpos2BlockNum(&bx, &bz, playerx->world.position) == TRUE && bx == nactorx->actor_class.block_x &&
+            bz == nactorx->actor_class.block_z) {
+            if (nactorx->condition_info.friendship != NULL) {
+                int friendship = *nactorx->condition_info.friendship + nactorx->condition_info.over_friendship;
+
+                if (friendship < 0) {
+                    ret = aNPC_FRIENDSHIP_AVOID;
+                } else if (friendship > 128) {
+                    ret = aNPC_FRIENDSHIP_SEARCH;
+                }
+            }
+        }
+    }
+
+    return ret;
+}
+
+static void aNPC_calc_fatigue(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static int fatigue_add_table[] = {
+        -2, -2, -2, -2, -2, 1, 1, 1, 1, 2, 2, 2, 2, 0, 0, -2, -2, -2, -2, -2, 0, 0, 0, 0, 0, 0, 0, 0,  0,
+        0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  0,  0,  0,  0,  0, 0, 0, 0, 0, 0, 0, -2,
+    };
+
+    if (aNPC_chk_avoid_and_search(nactorx, play) == aNPC_FRIENDSHIP_NORMAL) {
+        int fatigue = nactorx->condition_info.fatigue;
+
+        fatigue += fatigue_add_table[nactorx->condition_info.action];
+        // fatigue = CLAMP(fatigue, 0, 1600);
+        if (fatigue < 0) {
+            fatigue = 0;
+        } else if (fatigue > 1600) {
+            fatigue = 1600;
+        }
+
+        nactorx->condition_info.fatigue = fatigue;
+    }
+}
+
+static void aNPC_set_condition_info(NPC_ACTOR* nactorx) {
+    nactorx->condition_info.under_fg_p = mFI_GetUnitFG(nactorx->actor_class.world.position);
+    mFI_Wpos2UtNum(&nactorx->condition_info.ut_x, &nactorx->condition_info.ut_z, nactorx->actor_class.world.position);
+}
+
+typedef struct {
+    int talk_flag;
+    s16 mv_angl_add;
+    u8 speed_type;
+} aNPC_setup_data_c;
+
+static void aNPC_setupAction(NPC_ACTOR* nactorx, u8 action) {
+    // clang-format off
+    static aNPC_setup_data_c setup_data[aNPC_ACTION_TYPE_NUM] = {
+        {FALSE, 0x0100, 0x00},
+        {FALSE, 0x0100, 0x00},
+        {FALSE, 0x0100, 0x00},
+        {FALSE, 0x0100, 0x00},
+        {FALSE, 0x0100, 0x00},
+        {FALSE, 0x0200, 0x01},
+        {FALSE, 0x0200, 0x01},
+        {FALSE, 0x0200, 0x01},
+        {FALSE, 0x0200, 0x01},
+        {FALSE, 0x0400, 0x02},
+        {FALSE, 0x0400, 0x02},
+        {FALSE, 0x0400, 0x02},
+        {FALSE, 0x0400, 0x02},
+        {FALSE, 0x0800, 0x00},
+        {FALSE, 0x0800, 0x00},
+        {FALSE, 0x0200, 0x00},
+        {FALSE, 0x0100, 0x00},
+        {FALSE, 0x0100, 0x00},
+        {FALSE, 0x0100, 0x00},
+        {FALSE, 0x0100, 0x00},
+        {FALSE, 0x0400, 0x00},
+        {FALSE, 0x0400, 0x00},
+        {FALSE, 0x0400, 0x00},
+        {FALSE, 0x0400, 0x00},
+        {FALSE, 0x0400, 0x00},
+        {FALSE, 0x0400, 0x00},
+        {FALSE, 0x0800, 0x00},
+        { TRUE, 0x0400, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        { TRUE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0000, 0x00},
+        {FALSE, 0x0800, 0x00},
+    };
+    // clang-format on
+
+    aNPC_setup_data_c* data_p = &setup_data[action];
+    aNPC_spd_c* speed_p = &aNPC_spd_data[data_p->speed_type];
+
+    nactorx->condition_info.action = action;
+    nactorx->movement.mv_add_angl = data_p->mv_angl_add;
+    nactorx->movement.speed.max_speed = speed_p->max_speed;
+    nactorx->movement.speed.acceleration = speed_p->acceleration;
+    nactorx->movement.speed.deceleration = speed_p->deceleration;
+
+    if (data_p->speed_type == 0) {
+        nactorx->actor_class.speed = 0.0f;
+    }
+
+    nactorx->talk_info.demo_code = aNPC_MANPU_CODE_NONE;
+    aNPC_Animation_init((ACTOR*)nactorx, aNPC_animeSeqNoTable[(int)action], data_p->talk_flag);
+}
+
+static void aNPC_actor_move_hide(ACTOR* actorx, GAME* game) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    aNPC_schedule_proc(nactorx, play);
+    aNPC_action_proc(nactorx, play);
+    aNPC_check_feel_tim(nactorx);
+}
+
+static void aNPC_actor_move_show_before(ACTOR* actorx, GAME* game) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+
+    aNPC_anime_proc(nactorx, game);
+    aNPC_tex_anm_ctrl(nactorx);
+    aNPC_position_move(actorx);
+    aNPC_BGcheck(nactorx, actorx);
+    aNPC_entranceCheck(nactorx);
+    aNPC_circleRangeRevice(nactorx);
+    aNPC_set_condition_info(nactorx);
+}
+
+static void aNPC_actor_move_show_after(ACTOR* actorx, GAME* game) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    aNPC_set_anime_speed(nactorx);
+    aNPC_set_body_angle(nactorx);
+    aNPC_check_feel_tim(nactorx);
+    aNPC_calc_timer(nactorx);
+    Actor_world_to_eye(actorx, nactorx->eye_y);
+
+    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_OBJ_COL_CHECK) == 0) {
+        CollisionCheck_Uty_ActorWorldPosSetPipeC(actorx, &nactorx->collision.pipe);
+        CollisionCheck_setOC(game, &play->collision_check, &nactorx->collision.pipe.collision_obj);
+    }
+}
+
+static void aNPC_actor_move_show(ACTOR* actorx, GAME* game) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    aNPC_set_over_friendship(nactorx);
+    aNPC_actor_move_show_before(actorx, game);
+
+    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_FORWARD_CHECK) == 0) {
+        aNPC_forward_check(nactorx);
+        aNPC_around_obj_check(nactorx, actorx);
+        aNPC_talk_area_check(nactorx, play);
+    }
+
+    aNPC_schedule_proc(nactorx, play);
+    aNPC_action_proc(nactorx, play);
+    aNPC_talk_request_check(actorx, game);
+    aNPC_angle_calc(nactorx);
+    aNPC_calc_fatigue(nactorx, play);
+    aNPC_actor_move_show_after(actorx, game);
+}
+
+static void aNPC_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+
+    if (nactorx->condition_info.hide_flg != nactorx->condition_info.hide_request) {
+        u8 hide_req = nactorx->condition_info.hide_request;
+
+        nactorx->condition_info.hide_flg = hide_req;
+        actorx->shape_info.draw_shadow = hide_req ^ 1;
+    }
+
+    if (nactorx->condition_info.hide_flg == TRUE) {
+        aNPC_actor_move_hide(actorx, game);
+    } else {
+        aNPC_actor_move_show(actorx, game);
+    }
+}

@@ -1,0 +1,160 @@
+enum {
+    aNPC_ACT_TRANS_STEP_MOVE,
+    aNPC_ACT_TRANS_STEP_TRANS,
+    aNPC_ACT_TRANS_STEP_TRANS_F,
+    aNPC_ACT_TRANS_STEP_WAIT,
+    aNPC_ACT_TRANS_STEP_WAIT_F,
+    aNPC_ACT_TRANS_STEP_SEND_MAIL,
+    aNPC_ACT_TRANS_STEP_SEND_MAIL_WAIT,
+
+    aNPC_ACT_TRANS_STEP_NUM
+};
+
+static void aNPC_act_trans_chg_step(NPC_ACTOR* nactorx, u8 step) {
+    // clang-format off
+    static u8 act_idx[] = {
+        aNPC_ACTION_TYPE_WALK,
+        aNPC_ACTION_TYPE_TRANSFER,
+        aNPC_ACTION_TYPE_TRANSFER_F,
+        aNPC_ACTION_TYPE_TRANSFER_WAIT,
+        aNPC_ACTION_TYPE_TRANSFER_F_WAIT,
+        aNPC_ACTION_TYPE_SEND_MAIL,
+        aNPC_ACTION_TYPE_TALK,
+    };
+    // clang-format on
+
+    u8 timer = 0;
+
+    switch (step) {
+        case aNPC_ACT_TRANS_STEP_MOVE:
+            timer = 80;
+            break;
+        case aNPC_ACT_TRANS_STEP_TRANS:
+        case aNPC_ACT_TRANS_STEP_SEND_MAIL:
+            aNPC_OngenTrgStart(nactorx, NA_SE_GASAGOSO);
+            break;
+    }
+
+    switch (step) {
+        case aNPC_ACT_TRANS_STEP_TRANS:
+        case aNPC_ACT_TRANS_STEP_WAIT: {
+            mActor_name_t item = nactorx->left_hand.item;
+
+            if (ITEM_IS_FISH(item) == TRUE) {
+                step++;
+            }
+
+            break;
+        }
+    }
+
+    nactorx->movement.demo_move_timer = timer;
+    nactorx->action.step = step;
+    aNPC_setupAction(nactorx, act_idx[step]);
+}
+
+static void aNPC_act_trans_set_arg_data(NPC_ACTOR* nactorx) {
+    u16* arg_data = nactorx->request.act_args;
+
+    nactorx->left_hand.item = arg_data[0];
+    nactorx->left_hand.after_mode = arg_data[1];
+    nactorx->left_hand.present_flag = arg_data[2];
+    nactorx->left_hand.requested_item_type = aNPC_ITEM_TYPE_LEFT_HAND;
+}
+
+static void aNPC_act_trans_move(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->movement.demo_move_timer != 0) {
+        nactorx->movement.demo_move_timer--;
+    }
+
+    if (!aNPC_act_search_move(nactorx) ||
+        (nactorx->collision.collision_flag & (mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT)) != 0 ||
+        nactorx->movement.demo_move_timer == 0) {
+        aNPC_act_trans_set_arg_data(nactorx);
+        aNPC_act_trans_chg_step(nactorx, aNPC_ACT_TRANS_STEP_TRANS);
+    }
+}
+
+static void aNPC_act_trans(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->draw.main_animation_state == cKF_STATE_STOPPED &&
+        CLIP(handOverItem_clip)->master_actor == (ACTOR*)nactorx) {
+        CLIP(handOverItem_clip)->chg_request_mode_proc((ACTOR*)nactorx, aHOI_REQUEST_TRANS_WAIT);
+        aNPC_act_trans_chg_step(nactorx, aNPC_ACT_TRANS_STEP_WAIT);
+    }
+}
+
+static void aNPC_act_trans_wait(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_check_manpu_demoCode((ACTOR*)nactorx);
+
+    if (CLIP(handOverItem_clip)->master_actor != (ACTOR*)nactorx) {
+        aNPC_clear_left_hand_info(nactorx);
+        aNPC_act_return_trans_item(nactorx);
+    }
+}
+
+static void aNPC_act_trans_send_mail(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->draw.main_animation_state == cKF_STATE_STOPPED &&
+        CLIP(handOverItem_clip)->master_actor == (ACTOR*)nactorx) {
+        CLIP(handOverItem_clip)->chg_request_mode_proc((ACTOR*)nactorx, aHOI_REQUEST_TRANS_WAIT);
+        aNPC_clear_left_hand_info(nactorx);
+        aNPC_act_trans_chg_step(nactorx, aNPC_ACT_TRANS_STEP_SEND_MAIL_WAIT);
+    }
+}
+
+static void aNPC_act_trans_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    // clang-format off
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_trans_move,
+        &aNPC_act_trans,
+        &aNPC_act_trans,
+        &aNPC_act_trans_wait,
+        &aNPC_act_trans_wait,
+        &aNPC_act_trans_send_mail,
+        &aNPC_act_trans_wait,
+    };
+    // clang-format on
+
+    if ((*nactorx->talk_info.talk_end_check_proc)((ACTOR*)nactorx, (GAME*)play) == TRUE) {
+        aNPC_setup_talk_end(nactorx);
+        nactorx->action.step = aNPC_ACTION_END_STEP;
+    } else {
+        aNPC_check_feel_demoCode((ACTOR*)nactorx);
+        (*act_proc[nactorx->action.step])(nactorx, play);
+    }
+}
+
+static void aNPC_act_trans_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aNPC_act_trans_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u8 step;
+    
+    nactorx->condition_info.trans_demo_flg_save = nactorx->condition_info.demo_flg;
+    nactorx->condition_info.demo_flg =
+        aNPC_COND_DEMO_SKIP_UZAI_CHECK | aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
+        aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_ITEM | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+        aNPC_COND_DEMO_SKIP_OBJ_COL_CHECK | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    nactorx->movement.arrival_area_radius = SQ(50.0f);
+    if (nactorx->request.act_args[0] == ITM_FORTUNE_SLIP) {
+        aNPC_act_trans_set_arg_data(nactorx);
+        step = aNPC_ACT_TRANS_STEP_SEND_MAIL;
+    } else if (nactorx->request.act_args[2] == 2) {
+        aNPC_act_trans_set_arg_data(nactorx);
+        step = aNPC_ACT_TRANS_STEP_TRANS;
+    } else {
+        step = aNPC_ACT_TRANS_STEP_MOVE;
+    }
+
+    aNPC_act_trans_chg_step(nactorx, step);
+}
+
+static void aNPC_act_trans_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_trans_init_proc,
+        &aNPC_act_trans_chg_data_proc,
+        &aNPC_act_trans_main_proc,
+    };
+
+    (*act_proc[type])(nactorx, play);
+}

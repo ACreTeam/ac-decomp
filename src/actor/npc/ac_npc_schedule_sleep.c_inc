@@ -1,0 +1,79 @@
+enum {
+    aNPC_SCHEDULE_SLEEP_STEP_SLEEP,
+    aNPC_SCHEDULE_SLEEP_STEP_PITFALL,
+
+    aNPC_SCHEDULE_SLEEP_STEP_NUM
+};
+
+static void aNPC_sleep_schedule_think_init(NPC_ACTOR* nactorx, GAME_PLAY* play, u8 step) {
+    static int think_idx[] = { aNPC_THINK_SLEEP, aNPC_THINK_PITFALL, aNPC_THINK_WAIT, aNPC_THINK_WAIT };
+    
+    nactorx->schedule.step = step;
+    aNPC_think_init_proc(nactorx, play, think_idx[step]);
+}
+
+static void aNPC_sleep_schedule_chg_schedule(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int feel = aNPC_get_feel_info(nactorx);
+
+    switch (feel) {
+        case mNpc_FEEL_UZAI_0:
+        case mNpc_FEEL_UZAI_1:
+            break;
+        default:
+            aNPC_set_feel_info(nactorx, mNpc_FEEL_NORMAL, 0);
+            break;
+    }
+
+    nactorx->condition_info.demo_flg = 0;
+    nactorx->right_hand.umbrella_disabled_flag = FALSE;
+    aNPC_set_schedule(nactorx, play);
+}
+
+static void aNPC_sleep_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_think_main_proc(nactorx, play);
+
+    if (nactorx->think.end_flag == TRUE) {
+        u8 step;
+
+        switch (nactorx->schedule.step) {
+            case aNPC_SCHEDULE_SLEEP_STEP_SLEEP:
+                step = aNPC_SCHEDULE_SLEEP_STEP_PITFALL;
+                break;
+            default:
+                step = aNPC_SCHEDULE_SLEEP_STEP_SLEEP;
+                aNPC_think_sleep_set_force_schedule(nactorx);
+                break;
+        }
+
+        aNPC_sleep_schedule_think_init(nactorx, play, step);
+    } else {
+        switch (nactorx->npc_info.schedule->current_type) {
+            case mNPS_SCHED_FIELD:
+                aNPC_sleep_schedule_chg_schedule(nactorx, play);
+                break;
+            case mNPS_SCHED_IN_HOUSE:
+                if (aNPC_check_home_block(nactorx) == TRUE) {
+                    aNPC_sleep_schedule_chg_schedule(nactorx, play);
+                }
+                break;
+
+        } 
+    }
+}
+
+static void aNPC_sleep_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_set_hide_flg(nactorx, aNPC_GET_ANM(nactorx)->is_home);
+    nactorx->right_hand.umbrella_disabled_flag = aNPC_GET_ANM(nactorx)->is_home;
+    nactorx->palActorIgnoreTimer = -1;
+    nactorx->schedule.step = aNPC_SCHEDULE_SLEEP_STEP_SLEEP;
+    aNPC_sleep_schedule_think_init(nactorx, play, aNPC_SCHEDULE_SLEEP_STEP_SLEEP);
+}
+
+static void aNPC_sleep_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC sche_proc[] = {
+        &aNPC_sleep_schedule_init_proc,
+        &aNPC_sleep_schedule_main_proc,
+    };
+
+    (*sche_proc[proc_type])(nactorx, play);
+}

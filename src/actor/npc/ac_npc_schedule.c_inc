@@ -1,0 +1,180 @@
+static void aNPC_set_hide_request(NPC_ACTOR* nactorx, u8 hide) {
+    nactorx->condition_info.hide_request = hide;
+    if (nactorx->condition_info.hide_flg != hide && hide != TRUE) {
+        aNPC_clear_all_morph_counter(nactorx);
+        nactorx->condition_info.fatigue = 0;
+    }
+}
+
+static void aNPC_set_hide_flg(NPC_ACTOR* nactorx, u8 hide_flg) {
+    u8 inv = hide_flg ^ 1;
+
+    nactorx->condition_info.hide_flg = inv;
+    aNPC_set_hide_request(nactorx, hide_flg);
+    nactorx->condition_info.hide_flg = hide_flg;
+    nactorx->actor_class.shape_info.draw_shadow = inv;
+}
+
+static int aNPC_check_chg_schedule(NPC_ACTOR* nactorx, int step) {
+    int ret = FALSE;
+
+    if (nactorx->schedule.step == step && nactorx->schedule.type != nactorx->npc_info.schedule->current_type &&
+        nactorx->condition_info.talk_condition == aNPC_TALK_TYPE_NONE) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aNPC_check_home_block(NPC_ACTOR* nactorx) {
+    int ret = FALSE;
+
+    if (nactorx->actor_class.block_x == aNPC_GET_ANM(nactorx)->home_info.block_x &&
+        nactorx->actor_class.block_z == aNPC_GET_ANM(nactorx)->home_info.block_z) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+#include "../src/actor/npc/ac_npc_schedule_field.c_inc"
+#include "../src/actor/npc/ac_npc_schedule_in_house.c_inc"
+#include "../src/actor/npc/ac_npc_schedule_sleep.c_inc"
+
+static void aNPC_stand_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!aNPC_think_chk_interrupt_proc(nactorx, play) && nactorx->action.step == aNPC_ACTION_END_STEP) {
+        if (nactorx->action.idx == aNPC_ACT_WAIT) {
+            aNPC_think_main_proc(nactorx, play);
+        } else {
+            aNPC_think_init_proc(nactorx, play, aNPC_THINK_WAIT);
+        }
+
+        nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+                                           aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV |
+                                           aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    }
+}
+
+static void aNPC_stand_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_set_hide_flg(nactorx, FALSE);
+    aNPC_think_init_proc(nactorx, play, aNPC_THINK_WAIT);
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+                                       aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV |
+                                       aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+}
+
+static void aNPC_stand_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC sche_proc[] = {
+        &aNPC_stand_schedule_init_proc,
+        &aNPC_stand_schedule_main_proc,
+    };
+
+    (*sche_proc[proc_type])(nactorx, play);
+}
+
+static void aNPC_wander_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_think_main_proc(nactorx, play);
+    if (nactorx->think.end_flag == TRUE) {
+        aNPC_think_init_proc(nactorx, play, aNPC_THINK_PITFALL);
+    }
+}
+
+static void aNPC_wander_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_set_hide_flg(nactorx, FALSE);
+    aNPC_think_init_proc(nactorx, play, aNPC_THINK_WANDER);
+}
+
+static void aNPC_wander_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC sche_proc[] = {
+        &aNPC_wander_schedule_init_proc,
+        &aNPC_wander_schedule_main_proc,
+    };
+
+    (*sche_proc[proc_type])(nactorx, play);
+}
+
+static void aNPC_walk_wander_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_set_hide_flg(nactorx, FALSE);
+    aNPC_think_init_proc(nactorx, play, aNPC_THINK_WALK_WANDER);
+}
+
+static void aNPC_walk_wander_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC sche_proc[] = {
+        &aNPC_walk_wander_schedule_init_proc,
+        &aNPC_wander_schedule_main_proc,
+    };
+
+    (*sche_proc[proc_type])(nactorx, play);
+}
+
+static void aNPC_special_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    (*nactorx->schedule.schedule_proc)(nactorx, play, proc_type);
+}
+
+static aNPC_SCHEDULE_PROC aNPC_sche_proc[] = {
+    &aNPC_field_schedule_proc,
+    &aNPC_in_house_schedule_proc,
+    &aNPC_sleep_schedule_proc,
+    &aNPC_stand_schedule_proc,
+    &aNPC_wander_schedule_proc,
+    &aNPC_walk_wander_schedule_proc,
+    &aNPC_special_schedule_proc,
+};
+
+static aNPC_SCHEDULE_PROC aNPC_island_sche_proc[] = {
+    &aNPC_field_schedule_proc,
+    &aNPC_in_house_schedule_proc,
+    &aNPC_in_house_schedule_proc,
+    &aNPC_stand_schedule_proc,
+    &aNPC_wander_schedule_proc,
+    &aNPC_walk_wander_schedule_proc,
+    &aNPC_special_schedule_proc,
+};
+
+static void aNPC_schedule_init(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    Animal_c* animal = aNPC_GET_ANM(nactorx);
+    int type = nactorx->schedule.type;
+
+    if (animal != NULL && mNpc_CheckIslandAnimal(animal) == TRUE) {
+        (*aNPC_island_sche_proc[type])(nactorx, play, aNPC_SCHEDULE_PROC_INIT);
+    } else {
+        (*aNPC_sche_proc[type])(nactorx, play, aNPC_SCHEDULE_PROC_INIT);
+    }
+}
+
+static void aNPC_chg_schedule(NPC_ACTOR* nactorx, GAME_PLAY* play, u8 type) {
+    nactorx->schedule.type = type;
+    aNPC_schedule_init(nactorx, play);
+}
+
+static void aNPC_set_schedule(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_chg_schedule(nactorx, play, nactorx->npc_info.schedule->current_type);
+}
+
+static void aNPC_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int type = nactorx->schedule.type;
+
+    if (type != aNPC_SCHEDULE_NONE) {
+        Animal_c* animal = aNPC_GET_ANM(nactorx);
+
+        if (animal != NULL && mNpc_CheckIslandAnimal(animal) == TRUE) {
+            (*aNPC_island_sche_proc[type])(nactorx, play, aNPC_SCHEDULE_PROC_MAIN);
+        } else {
+            (*aNPC_sche_proc[type])(nactorx, play, aNPC_SCHEDULE_PROC_MAIN);
+        }
+    }
+}
+
+static void aNPC_first_set_schedule(NPC_ACTOR* nactorx) {
+    mNPS_schedule_c* sched_p = mNPS_get_schedule_area(&aNPC_GET_ANM(nactorx)->id);
+
+    if (sched_p == NULL || (Common_Get(field_type) == mFI_FIELDTYPE2_FG && Save_Get(scene_no) != SCENE_FG)) {
+        sched_p = &nactorx->schedule.schedule;
+        sched_p->current_type = mNPS_SCHED_WANDER;
+        nactorx->schedule.type = aNPC_SCHEDULE_TYPE_WANDER;
+    } else {
+        nactorx->schedule.type = sched_p->current_type;
+    }
+
+    nactorx->npc_info.schedule = sched_p;
+}

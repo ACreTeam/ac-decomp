@@ -1,0 +1,153 @@
+enum {
+    aNPC_ACT_CHASE_INSECT_STEP_WAIT,
+    aNPC_ACT_CHASE_INSECT_STEP_WALK,
+    aNPC_ACT_CHASE_INSECT_STEP_RUN,
+    aNPC_ACT_CHASE_INSECT_STEP_TURN,
+    aNPC_ACT_CHASE_INSECT_STEP_SEARCH,
+
+    aNPC_ACT_CHASE_INSECT_STEP_NUM
+};
+
+static int aNPC_act_chase_insect_check_end(NPC_ACTOR* nactorx) {
+    ACTOR* target = nactorx->movement.target;
+    int ret = FALSE;
+
+    if (nactorx->action.act_timer == 0) {
+        ret = TRUE;
+    } else if (nactorx->action.act_obj == aNPC_ACT_OBJ_INSECT) {
+        switch (target->id) {
+            case mAc_PROFILE_ANT:
+                if (target->mv_proc == NULL && target->dw_proc == NULL) {
+                    ret = TRUE;
+                }
+                break;
+            case mAc_PROFILE_INSECT: {
+                aINS_INSECT_ACTOR* insect = (aINS_INSECT_ACTOR*)target;
+
+                if (!insect->exist_flag) {
+                    ret = TRUE;
+                }
+                break;
+            }
+            default:
+                ret = TRUE;
+                break;
+        }
+    } else {
+        aGYO_CTRL_ACTOR* gyo = (aGYO_CTRL_ACTOR*)target;
+
+        if (!gyo->exist) {
+            ret = TRUE;
+        }
+    }
+
+    return ret;
+}
+
+static void aNPC_act_chase_insect_chg_step(NPC_ACTOR* nactorx) {
+    // clang-format off
+    static u8 act_idx[] = {
+        aNPC_ACTION_TYPE_WAIT,
+        aNPC_ACTION_TYPE_WALK,
+        aNPC_ACTION_TYPE_RUN,
+        aNPC_ACTION_TYPE_TURN,
+    };
+    // clang-format on
+
+    u8 feel = aNPC_get_feel_info(nactorx);
+    ACTOR* target = nactorx->movement.target;
+    f32 dx = target->world.position.x - nactorx->actor_class.world.position.x;
+    f32 dz = target->world.position.z - nactorx->actor_class.world.position.z;
+    f32 dist = SQ(dx) + SQ(dz);
+    s16 angle = atans_table(dz, dx) - nactorx->actor_class.shape_info.rotation.y;
+    u8 step;
+
+    switch (nactorx->action.act_obj) {
+        case aNPC_ACT_OBJ_INSECT:
+            if (dist < SQ(80.0f)) {
+                if (ABS(angle) > DEG2SHORT_ANGLE2(22.5f)) {
+                    step = aNPC_ACT_CHASE_INSECT_STEP_TURN;
+                } else {
+                    step = aNPC_ACT_CHASE_INSECT_STEP_WAIT;
+                }
+            } else if (dist < SQ(120.0f)) {
+                step = aNPC_ACT_CHASE_INSECT_STEP_WALK;
+            } else {
+                step = aNPC_ACT_CHASE_INSECT_STEP_RUN;
+            }
+            break;
+        case aNPC_ACT_OBJ_FISH:
+            if (dist < SQ(100.0f)) {
+                if (ABS(angle) > DEG2SHORT_ANGLE2(22.5f)) {
+                    step = aNPC_ACT_CHASE_INSECT_STEP_TURN;
+                } else {
+                    step = aNPC_ACT_CHASE_INSECT_STEP_WAIT;
+                }
+            } else {
+                step = aNPC_ACT_CHASE_INSECT_STEP_WALK;
+            }
+            break;
+        default:
+            nactorx->action.step = aNPC_ACTION_END_STEP;
+            step = aNPC_ACTION_END_STEP;
+            break;
+    }
+
+    if (step != nactorx->action.step || feel != nactorx->action.feel) {
+        nactorx->action.step = step;
+        nactorx->action.feel = feel;
+        aNPC_setupAction(nactorx, act_idx[step]);
+    }
+}
+
+typedef int (*aNPC_ACT_CHASE_INSECT_PROC)(NPC_ACTOR* nactorx);
+
+static void aNPC_act_chase_insect_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static aNPC_ACT_CHASE_INSECT_PROC act_proc[] = {
+        &aNPC_act_wait,
+        &aNPC_act_search_move,
+        &aNPC_act_search_move,
+        &aNPC_act_search_turn,
+    };
+
+    if (aNPC_act_chase_insect_check_end(nactorx) == TRUE) {
+        nactorx->action.step = aNPC_ACTION_END_STEP;
+    } else {
+        u8 step;
+
+        switch (nactorx->draw.main_animation_state) {
+            case cKF_STATE_CONTINUE:
+                if (nactorx->movement.dst_pos_x == nactorx->movement.avoid_pos_x && nactorx->movement.dst_pos_z == nactorx->movement.avoid_pos_z) {
+                    aNPC_act_chase_insect_chg_step(nactorx);
+                }
+                break;
+        }
+
+        step = nactorx->action.step;
+        (*act_proc[step])(nactorx);
+        nactorx->action.step = step;
+    }
+}
+
+static void aNPC_act_chase_insect_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u16* arg_p = nactorx->request.act_args;
+
+    nactorx->action.act_obj = arg_p[0];
+    nactorx->action.act_obj_id = EMPTY_NO;
+}
+
+static void aNPC_act_chase_insect_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.step = aNPC_ACT_CHASE_INSECT_STEP_SEARCH;
+    nactorx->action.act_timer = 1 * FRAMES_PER_MINUTE;
+    aNPC_act_chase_insect_chg_step(nactorx);
+}
+
+static void aNPC_act_chase_insect_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_chase_insect_init_proc,
+        &aNPC_act_chase_insect_chg_data_proc,
+        &aNPC_act_chase_insect_main_proc,
+    };
+
+    (*act_proc[type])(nactorx, play);
+}

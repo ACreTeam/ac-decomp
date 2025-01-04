@@ -1,0 +1,498 @@
+// clang-format off
+static u8 aNPC_wait_action[] = {
+    aNPC_ACTION_TYPE_WAIT,
+    aNPC_ACTION_TYPE_WAIT_KI,
+    aNPC_ACTION_TYPE_WAIT_DO,
+    aNPC_ACTION_TYPE_WAIT_AI,
+    aNPC_ACTION_TYPE_WAIT_NEMU,
+    aNPC_ACTION_TYPE_WAIT,
+    aNPC_ACTION_TYPE_WAIT_DO,
+    aNPC_ACTION_TYPE_WAIT_AI,
+    aNPC_ACTION_TYPE_WAIT_DO,
+};
+// clang-format on
+
+// clang-format off
+static u8 aNPC_walk_action[] = {
+    aNPC_ACTION_TYPE_WALK,
+    aNPC_ACTION_TYPE_WALK_KI,
+    aNPC_ACTION_TYPE_WALK_DO,
+    aNPC_ACTION_TYPE_WALK_AI,
+    aNPC_ACTION_TYPE_WALK,
+    aNPC_ACTION_TYPE_WALK,
+    aNPC_ACTION_TYPE_WALK_DO,
+    aNPC_ACTION_TYPE_WALK_AI,
+    aNPC_ACTION_TYPE_WALK_DO,
+};
+// clang-format on
+
+// clang-format off
+static u8 aNPC_run_action[] = {
+    aNPC_ACTION_TYPE_RUN,
+    aNPC_ACTION_TYPE_RUN_KI,
+    aNPC_ACTION_TYPE_RUN_DO,
+    aNPC_ACTION_TYPE_RUN_AI,
+    aNPC_ACTION_TYPE_RUN,
+    aNPC_ACTION_TYPE_RUN,
+    aNPC_ACTION_TYPE_RUN_DO,
+    aNPC_ACTION_TYPE_RUN_AI,
+    aNPC_ACTION_TYPE_RUN_DO,
+};
+// clang-format on
+
+static void aNPC_setup_stay_my_house(NPC_ACTOR* nactorx) {
+    mNPS_schedule_c* sched_p = nactorx->npc_info.schedule;
+
+    nactorx->npc_info.animal->is_home = TRUE;
+    if (sched_p->saved_type == mNPS_SCHED_SLEEP && sched_p->current_type != mNPS_SCHED_SLEEP) {
+        sched_p->forced_timer = 0;
+        sched_p->current_type = sched_p->saved_type;
+    }
+}
+
+static int aNPC_request_house(NPC_ACTOR* nactorx, GAME_PLAY* play, int request) {
+    ACTOR* house_actor;
+    mActor_name_t house_item;
+    int ret = FALSE;
+
+    if (nactorx->actor_class.block_z == mISL_BLOCK_Z) {
+        house_item = COTTAGE_NPC;
+    } else {
+        house_item = NPC_HOUSE_START + (nactorx->npc_info.animal->id.npc_id - NPC_START);
+    }
+
+    house_actor = Actor_info_fgName_search(&play->actor_info, house_item, ACTOR_PART_ITEM);
+    if (house_actor != NULL && ((STRUCTURE_ACTOR*)house_actor)->request_type == 0) {
+        ((STRUCTURE_ACTOR*)house_actor)->request_type = request;
+        house_actor->state_bitfield |= ACTOR_STATE_NO_MOVE_WHILE_CULLED;
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aNPC_check_arrive_destination(NPC_ACTOR* nactorx) {
+    f32 range = nactorx->movement.arrival_area_radius;
+    f32 dist;
+    f32 distX = nactorx->movement.avoid_pos_x - nactorx->actor_class.world.position.x;
+    f32 distZ = nactorx->movement.avoid_pos_z - nactorx->actor_class.world.position.z;
+    int ret = FALSE;
+
+    dist = SQ(distX) + SQ(distZ);
+    if (dist < range) {
+        if (nactorx->movement.dst_pos_x == nactorx->movement.avoid_pos_x &&
+            nactorx->movement.dst_pos_z == nactorx->movement.avoid_pos_z) {
+            ret = TRUE;
+        } else {
+            aNPC_set_avoid_pos(nactorx, nactorx->movement.dst_pos_x, nactorx->movement.dst_pos_z, 0);
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_get_animal_idx(NPC_ACTOR* nactorx) {
+    Animal_c* target_animal = nactorx->npc_info.animal;
+    Animal_c* animal = Save_Get(animals);
+    int i;
+    int ret = -1;
+
+    for (i = 0; i < ANIMAL_NUM_MAX; i++) {
+        if (animal == target_animal) {
+            ret = i;
+            break;
+        }
+
+        animal++;
+    }
+
+    return ret;
+}
+
+static void aNPC_set_relation(NPC_ACTOR* nactorx0, NPC_ACTOR* nactorx1, int add) {
+    Animal_c* animal = nactorx0->npc_info.animal;
+
+    if (animal != NULL) {
+        int other_idx = aNPC_get_animal_idx(nactorx1);
+
+        if (other_idx != -1) {
+            u8* relation_p = animal->animal_relations + other_idx;
+            int relation = *relation_p + add;
+
+            if (relation < 0) {
+                relation = 0;
+            } else if (relation > 255) {
+                relation = 255;
+            }
+
+            *relation_p = relation;
+        }
+    }
+}
+
+static void aNPC_set_feel_info(NPC_ACTOR* nactorx, int feel, int timer) {
+    Animal_c* animal = nactorx->npc_info.animal;
+
+    if (animal != NULL) {
+        int feel_timer = nactorx->condition_info.feel_tim;
+
+        if (feel != animal->mood) {
+            animal->mood = feel;
+            if (feel == mNpc_FEEL_NORMAL) {
+                feel_timer = 0;
+            } else {
+                feel_timer = timer * FRAMES_PER_MINUTE;
+            }
+        } else {
+            feel_timer += timer * FRAMES_PER_MINUTE;
+            if (feel_timer > (10 * FRAMES_PER_MINUTE)) {
+                feel_timer = 10 * FRAMES_PER_MINUTE;
+            }
+        }
+
+        nactorx->condition_info.feel_tim = feel_timer;
+    }
+}
+
+static void aNPC_set_act_obj(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    switch (nactorx->action.act_obj) {
+        case aNPC_ACT_OBJ_PLAYER:
+            nactorx->movement.target = GET_PLAYER_ACTOR_ACTOR(play);
+            break;
+        case aNPC_ACT_OBJ_TARGET_NPC:
+            nactorx->movement.target =
+                Actor_info_fgName_search(&play->actor_info, nactorx->action.act_obj_id, ACTOR_PART_NPC);
+            break;
+        case aNPC_ACT_OBJ_BALL:
+            nactorx->movement.target = Actor_info_name_search(&play->actor_info, mAc_PROFILE_BALL, ACTOR_PART_BG);
+            break;
+        case aNPC_ACT_OBJ_INSECT:
+            if (CLIP(insect_clip) != NULL) {
+                nactorx->movement.target =
+                    CLIP(insect_clip)
+                        ->search_near_insect_proc(nactorx->actor_class.world.position.x,
+                                                  nactorx->actor_class.world.position.z, (GAME*)play);
+            } else {
+                nactorx->movement.target = NULL;
+            }
+            break;
+        case aNPC_ACT_OBJ_FISH:
+            /* @BUG - shouldn't this just check for gyo_clip? */
+            if (CLIP(gyo_clip)->make_gyoei_proc != NULL) {
+                nactorx->movement.target = CLIP(gyo_clip)->search_near_gyoei_proc(
+                    nactorx->actor_class.world.position.x, nactorx->actor_class.world.position.z);
+            } else {
+                nactorx->movement.target = NULL;
+            }
+            break;
+        default:
+            nactorx->movement.target = NULL;
+            break;
+    }
+}
+
+static int aNPC_check_live_target(ACTOR* actorx) {
+    int ret = TRUE;
+
+    if (actorx == NULL || (actorx->mv_proc == NULL && actorx->dw_proc == NULL)) {
+        ret = FALSE;
+    }
+
+    return ret;
+}
+
+static int aNPC_act_wait(NPC_ACTOR* nactorx) {
+    int ret = TRUE;
+
+    if (nactorx->draw.main_animation_state == cKF_STATE_CONTINUE) {
+        if (nactorx->draw.loop_flag == FALSE) {
+            if (nactorx->condition_info.fatigue < 200) {
+                ret = FALSE;
+            }
+        } else {
+            nactorx->draw.loop_flag--;
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_act_move(NPC_ACTOR* nactorx) {
+    int ret = TRUE;
+
+    aNPC_set_mv_angl(nactorx);
+    if (aNPC_check_arrive_destination(nactorx) == TRUE) {
+        ret = FALSE;
+    }
+
+    return ret;
+}
+
+static int aNPC_act_search_move(NPC_ACTOR* nactorx) {
+    ACTOR* target = nactorx->movement.target;
+    int ret = TRUE;
+
+    if (!aNPC_check_live_target(target)) {
+        ret = FALSE;
+    } else {
+        xyz_t dst_pos;
+        int bx;
+        int bz;
+
+        xyz_t_move(&dst_pos, &target->world.position);
+        if (!mFI_Wpos2BlockNum(&bx, &bz, target->world.position) || bx != nactorx->actor_class.block_x || bz != nactorx->actor_class.block_z) {
+            ret = FALSE;
+        } else {
+            ACTOR* actorx = (ACTOR*)nactorx;
+            ACTOR* speaker;
+            ACTOR* listener;
+
+            if (nactorx->movement.dst_pos_x == nactorx->movement.avoid_pos_x && nactorx->movement.dst_pos_z == nactorx->movement.avoid_pos_z) {
+                aNPC_set_dst_pos(nactorx, dst_pos.x, dst_pos.z);
+            } else {
+                nactorx->movement.dst_pos_x = dst_pos.x;
+                nactorx->movement.dst_pos_z = dst_pos.z;
+            }
+
+            aNPC_set_mv_angl(nactorx);
+            mDemo_Get_Talk_Actors(&speaker, &listener);
+
+            if ((target == speaker || target == listener) && actorx != speaker && actorx != listener) {
+                ret = FALSE;
+            } else if (aNPC_check_arrive_destination(nactorx) == TRUE) {
+                ret = FALSE;
+            }
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_act_avoid_move(NPC_ACTOR* nactorx) {
+    ACTOR* target = nactorx->movement.target;
+    int ret = TRUE;
+
+    if (!aNPC_check_live_target(target)) {
+        ret = FALSE;
+    } else {
+        xyz_t dst_pos;
+        s16 angle = atans_table(target->world.position.z - nactorx->actor_class.world.position.z, target->world.position.x - nactorx->actor_class.world.position.x);
+        static s16 offset_angl[] = { DEG2SHORT_ANGLE2(0.0f), DEG2SHORT_ANGLE2(45.0f), DEG2SHORT_ANGLE2(-45.0f) };
+        s16 check_angle;
+        mActor_name_t* fg_p;
+        xyz_t rev;
+        int i;
+
+        for (i = 0; i < 3; i++) {
+            check_angle = angle + offset_angl[i];
+            dst_pos.x = nactorx->actor_class.world.position.x - sin_s(check_angle) * mFI_UT_WORLDSIZE_X_F;
+            dst_pos.z = nactorx->actor_class.world.position.z - cos_s(check_angle) * mFI_UT_WORLDSIZE_Z_F;
+
+            if (aNPC_moveRangeCheck(nactorx, &rev, dst_pos, nactorx->movement.range_type) == TRUE) {
+                fg_p = mFI_GetUnitFG(dst_pos);
+                if (*fg_p == EMPTY_NO || ITEM_NAME_GET_TYPE(*fg_p) == NAME_TYPE_ITEM1 || ITEM_IS_FTR(*fg_p)) {
+                    break;
+                }
+            }
+        }
+
+        if (i >= 3) {
+            dst_pos.x = nactorx->movement.avoid_pos_x;
+            dst_pos.z = nactorx->movement.avoid_pos_z;
+        }
+
+        if (nactorx->movement.dst_pos_x == nactorx->movement.avoid_pos_x && nactorx->movement.dst_pos_z == nactorx->movement.avoid_pos_z) {
+            aNPC_set_dst_pos(nactorx, dst_pos.x, dst_pos.z);
+        } else {
+            nactorx->movement.dst_pos_x = dst_pos.x;
+            nactorx->movement.dst_pos_z = dst_pos.z;
+        }
+
+        aNPC_set_mv_angl(nactorx);
+        if (aNPC_check_arrive_destination(nactorx) == TRUE) {
+            ret = FALSE;
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_act_to_point_move(NPC_ACTOR* nactorx) {
+    if (nactorx->movement.dst_pos_x == nactorx->movement.avoid_pos_x && nactorx->movement.dst_pos_z == nactorx->movement.avoid_pos_z) {
+        aNPC_set_dst_pos(nactorx, nactorx->action.move_x, nactorx->action.move_z);
+    } else {
+        nactorx->movement.dst_pos_x = nactorx->action.move_x;
+        nactorx->movement.dst_pos_z = nactorx->action.move_z;
+    }
+
+    return aNPC_act_move(nactorx);
+}
+
+static int aNPC_act_turn(NPC_ACTOR* nactorx) {
+    int ret = TRUE;
+
+    if (nactorx->actor_class.shape_info.rotation.y == nactorx->movement.mv_angl) {
+        ret = FALSE;
+    }
+
+    return ret;
+}
+
+static int aNPC_act_search_turn(NPC_ACTOR* nactorx) {
+    ACTOR* target = nactorx->movement.target;
+    int ret = TRUE;
+
+    if (!aNPC_check_live_target(target)) {
+        ret = FALSE;
+    } else {
+        aNPC_set_dst_pos(nactorx, target->world.position.x, target->world.position.z);
+        if (nactorx->actor_class.shape_info.rotation.y == nactorx->movement.mv_angl) {
+            ret = FALSE;
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_act_to_point_turn(NPC_ACTOR* nactorx) {
+    int ret = TRUE;
+
+    aNPC_set_dst_pos(nactorx, nactorx->action.move_x, nactorx->action.move_z);
+    if (nactorx->actor_class.shape_info.rotation.y == nactorx->movement.mv_angl) {
+        ret = FALSE;
+    }
+
+    return ret;
+}
+
+static int aNPC_act_anm_seq(NPC_ACTOR* nactorx) {
+    int ret = TRUE;
+
+    if (nactorx->draw.main_animation_state == cKF_STATE_STOPPED) {
+        ret = FALSE;
+    }
+
+    return ret;
+}
+
+static void aNPC_act_return_trans_item(NPC_ACTOR* nactorx) {
+    if (nactorx->condition_info.talk_condition != aNPC_TALK_TYPE_NONE) {
+        if (aNPC_set_request_act(nactorx, 4, aNPC_ACT_TALK, aNPC_ACT_OBJ_DEFAULT, aNPC_req_default_data) == TRUE) {
+            nactorx->condition_info.demo_flg = nactorx->condition_info.trans_demo_flg_save;
+            nactorx->action.step = aNPC_ACTION_END_STEP;
+        }
+    } else {
+        if (nactorx->action.idx != aNPC_ACT_GREETING) {
+            nactorx->condition_info.demo_flg = 0;
+        }
+
+        nactorx->action.step = aNPC_ACTION_END_STEP;
+    }
+}
+
+static void aNPC_act_special_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    (*nactorx->action.act_proc)(nactorx, play, type);
+}
+
+// included act files
+
+#include "../src/actor/npc/ac_npc_act_wait.c_inc"
+#include "../src/actor/npc/ac_npc_act_walk.c_inc"
+#include "../src/actor/npc/ac_npc_act_turn.c_inc"
+#include "../src/actor/npc/ac_npc_act_chase_insect.c_inc"
+#include "../src/actor/npc/ac_npc_act_greeting.c_inc"
+#include "../src/actor/npc/ac_npc_act_talk.c_inc"
+#include "../src/actor/npc/ac_npc_act_into_house.c_inc"
+#include "../src/actor/npc/ac_npc_act_leave_house.c_inc"
+#include "../src/actor/npc/ac_npc_act_umb_open.c_inc"
+#include "../src/actor/npc/ac_npc_act_umb_close.c_inc"
+#include "../src/actor/npc/ac_npc_act_trans.c_inc"
+#include "../src/actor/npc/ac_npc_act_get.c_inc"
+#include "../src/actor/npc/ac_npc_act_ensou.c_inc"
+#include "../src/actor/npc/ac_npc_act_pitfall.c_inc"
+#include "../src/actor/npc/ac_npc_act_revive.c_inc"
+#include "../src/actor/npc/ac_npc_act_react_tool.c_inc"
+#include "../src/actor/npc/ac_npc_act_clap.c_inc"
+
+typedef void (*aNPC_ACT_PROC)(NPC_ACTOR* nactorx, GAME_PLAY* play, int type);
+
+static aNPC_ACT_PROC aNPC_act_proc[] = {
+    &aNPC_act_wait_proc,  
+    &aNPC_act_walk_proc,
+    &aNPC_act_walk_proc,
+    &aNPC_act_turn_proc,
+    &aNPC_act_turn_proc,
+    &aNPC_act_chase_insect_proc,
+    &aNPC_act_chase_insect_proc,
+    &aNPC_act_greeting_proc,
+    &aNPC_act_talk_proc,
+    &aNPC_act_into_house_proc,
+    &aNPC_act_leave_house_proc,
+    &aNPC_act_umb_open_proc,
+    &aNPC_act_umb_close_proc,
+    &aNPC_act_ensou_proc,
+    &aNPC_act_talk_proc,
+    &aNPC_act_react_tool_proc,
+    &aNPC_act_clap_proc,
+    &aNPC_act_trans_proc,
+    &aNPC_act_get_proc,
+    &aNPC_act_get_proc,
+    &aNPC_act_pitfall_proc,
+    &aNPC_act_revive_proc,
+    &aNPC_act_special_proc,
+};
+
+static void aNPC_chk_request_act(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->request.act_priority >= nactorx->action.priority && nactorx->request.act_priority != 0) {
+        u8 prev_idx = nactorx->action.idx;
+        u8 prev_obj = nactorx->action.act_obj;
+        mActor_name_t prev_obj_name = nactorx->action.act_obj_id;
+
+        nactorx->action.prev_idx = nactorx->action.idx;
+        nactorx->action.prev_step = nactorx->action.step;
+        nactorx->action.priority = nactorx->request.act_priority;
+        nactorx->action.idx = nactorx->request.act_idx;
+        nactorx->action.type = nactorx->request.act_type;
+
+        (*aNPC_act_proc[nactorx->action.idx])(nactorx, play, aNPC_ACTION_PROC_TYPE_CHG_DATA);
+        if (nactorx->action.act_obj != prev_obj || nactorx->action.act_obj_id != prev_obj_name) {
+            aNPC_set_act_obj(nactorx, play);
+        }
+
+        if (nactorx->request.act_idx != prev_idx) {
+            (*aNPC_act_proc[nactorx->action.idx])(nactorx, play, aNPC_ACTION_PROC_TYPE_INIT);
+        }
+    }
+
+    nactorx->request.act_priority = 0;
+}
+
+static int aNPC_set_request_act(NPC_ACTOR* nactorx, u8 prio, u8 act_idx, u8 act_type, u16* args) {
+    int ret = FALSE;
+
+    if (prio >= nactorx->request.act_priority) {
+        nactorx->request.act_priority = prio;
+        nactorx->request.act_idx = act_idx;
+        nactorx->request.act_type = act_type;
+
+        if (args != NULL) {
+            mem_copy((u8*)nactorx->request.act_args, (u8*)args, sizeof(nactorx->request.act_args));
+        }
+
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aNPC_action_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_chk_request_act(nactorx, play);
+
+    if (nactorx->action.step != aNPC_ACTION_END_STEP && nactorx->action.idx != aNPC_ACT_NONE) {
+        (*aNPC_act_proc[nactorx->action.idx])(nactorx, play, aNPC_ACTION_PROC_TYPE_MAIN);
+    }
+
+    if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        nactorx->action.priority = 0;
+    }
+}

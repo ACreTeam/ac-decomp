@@ -174,6 +174,7 @@ typedef struct collision_unit_info_s {
     mActor_name_t item;
 } mCoBG_UnitInfo_c;
 
+#define mCoBG_DIDNT_HIT_WALL 0
 #define mCoBG_HIT_WALL (1 << 0)       /* in contact with *any* wall        */
 #define mCoBG_HIT_WALL_FRONT (1 << 1) /* in contact with wall to the front */
 #define mCoBG_HIT_WALL_RIGHT (1 << 2) /* in contact with wall to the right */
@@ -183,13 +184,16 @@ typedef struct collision_unit_info_s {
 typedef struct collision_bg_check_result_s {
     u32 on_ground : 1;
     u32 hit_attribute_wall : 5;
-    u32 hit_wall : 5;
+    //
+    u32 hit_wall : 5; // 2 bits in prev byte
     u32 hit_wall_count : 3;
     u32 unk_flag0 : 1;
-    u32 unit_attribute : 6;
+    //
+    u32 unit_attribute : 6; // 1 bit in prev byte
     u32 is_on_move_bg_obj : 1;
     u32 is_in_water : 1;
     u32 unk_flag1 : 1;
+    //
     u32 unk_flag2 : 1;
     u32 unk_flag3 : 1;
     u32 unk_flag4 : 1;
@@ -356,6 +360,8 @@ extern int mCoBG_CheckAcceptDesignSign(const xyz_t* pos_p);
 extern void mCoBG_VirtualBGCheck(xyz_t* rev_pos_p, mCoBG_Check_c* bg_check, const xyz_t* start_pos_p,
                                  const xyz_t* end_pos_p, s16 angle_y, s16 water_flag, s16 ground_flag, f32 range,
                                  f32 ground_dist, s16 attr_wall, s16 rev_type, s16 check_type);
+extern f32 mCoBG_Wpos2GroundCheckOnly(const xyz_t* pos_p, f32 ground_dist);
+extern int mCoBG_Wpos2CheckNpc(xyz_t wpos);
 
 typedef int (*mCoBG_LINECHECK_PROC)(mActor_name_t);
 
@@ -370,6 +376,7 @@ extern int mCoBG_WoodSoundEffect(const xyz_t* pos_p);
 
 extern void mCoBG_InitMoveBgData();
 extern void mCoBG_InitBlockBgCheckMode();
+extern void mCoBG_InitBgCheckResult(mCoBG_CheckResult_c* check_result);
 extern void mCoBG_InitDecalCircle();
 
 extern void mCoBG_CalcTimerDecalCircle();

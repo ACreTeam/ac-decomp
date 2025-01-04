@@ -1,0 +1,84 @@
+enum {
+    aNPC_ACT_LEAVE_HOUSE_STEP_WAIT,
+    aNPC_ACT_LEAVE_HOUSE_STEP_OUT_OF_DOOR,
+    aNPC_ACT_LEAVE_HOUSE_STEP_TURN,
+
+    aNPC_ACT_LEAVE_HOUSE_STEP_NUM
+};
+
+static void aNPC_act_leave_house_chg_step(NPC_ACTOR* nactorx, u8 step) {
+    // clang-format off
+    static u8 act_idx[] = {
+        aNPC_ACTION_TYPE_WAIT,
+        aNPC_ACTION_TYPE_GO_OUT,
+        aNPC_ACTION_TYPE_TURN,
+    };
+    // clang-format on
+
+    nactorx->action.step = step;
+    aNPC_setupAction(nactorx, act_idx[step]);
+}
+
+static void aNPC_act_leave_house_wait(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+
+    if (ctrl->door_exit_actor == NULL && ctrl->door_exit_timer == 0) {
+        if (!aNPC_check_entrance_humanoid(nactorx, play)) {
+            if (play->fb_wipe_mode == 0 && play->fb_fade_type == 0) {
+                if (aNPC_request_house(nactorx, play, 2) == TRUE) {
+                    aNPC_act_leave_house_chg_step(nactorx, aNPC_ACT_LEAVE_HOUSE_STEP_OUT_OF_DOOR);
+                    nactorx->npc_info.animal->is_home = FALSE;
+                    aNPC_set_hide_request(nactorx, FALSE);
+                    ctrl->door_exit_actor = (ACTOR*)nactorx;
+                }
+            }
+        }
+    }
+}
+
+static void aNPC_act_leave_house_out_of_door(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!aNPC_act_anm_seq(nactorx)) {
+        aNPC_act_leave_house_chg_step(nactorx, aNPC_ACT_LEAVE_HOUSE_STEP_TURN);
+    }
+}
+
+static void aNPC_act_leave_house_turn(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!aNPC_act_turn(nactorx)) {
+        aNPC_reset_out_of_door_flg((NPC_CONTROL_ACTOR*)aNPC_ctrlActor, (ACTOR*)nactorx);
+        if (ITEM_NAME_GET_TYPE(nactorx->actor_class.npc_id) == NAME_TYPE_NPC) {
+            nactorx->palActorIgnoreTimer = 0;
+        }
+
+        nactorx->action.step = aNPC_ACTION_END_STEP;
+    }
+}
+
+static void aNPC_act_leave_house_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_leave_house_wait,      &aNPC_act_leave_house_out_of_door,
+        &aNPC_act_leave_house_turn,
+    };
+
+    (*act_proc[nactorx->action.step])(nactorx, play);
+}
+
+static void aNPC_act_leave_house_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->palActorIgnoreTimer = -1;
+    nactorx->movement.arrival_area_radius = 72.0f;
+    nactorx->condition_info.demo_flg =
+        aNPC_COND_DEMO_SKIP_UZAI_CHECK | aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
+        aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_ITEM | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+        aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+
+    aNPC_act_leave_house_chg_step(nactorx, aNPC_ACT_LEAVE_HOUSE_STEP_WAIT);
+}
+
+static void aNPC_act_leave_house_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_leave_house_init_proc,
+        (aNPC_SUB_PROC)&none_proc1,
+        &aNPC_act_leave_house_main_proc,
+    };
+
+    (*act_proc[type])(nactorx, play);
+}

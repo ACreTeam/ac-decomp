@@ -72,7 +72,7 @@ static void aHN0_actor_ct(ACTOR* actorx, GAME* game) {
             actorx->cull_radius = 800.0f;
         }
 
-        h_npc->npc_class.collision.priority = 0;
+        h_npc->npc_class.collision.check_kind = aNPC_BG_CHECK_TYPE_NONE;
         actorx->world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(actorx->world.position, 0.0f);
         actorx->position_speed.y = 0.0f;
         actorx->gravity = 0.0f;

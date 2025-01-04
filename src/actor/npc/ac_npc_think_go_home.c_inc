@@ -1,0 +1,61 @@
+static void aNPC_set_request_go_home_act(NPC_ACTOR* nactorx) {
+    u16 arg_data[aNPC_REQUEST_ARG_NUM];
+    f32 pos_x;
+    f32 pos_z;
+
+    bzero(arg_data, sizeof(arg_data));
+    pos_x = nactorx->npc_info.list->house_position.x + 20.0f;
+    pos_z = nactorx->npc_info.list->house_position.z + 60.0f;
+    aNPC_set_dst_pos(nactorx, pos_x, pos_z);
+    arg_data[2] = (int)pos_x;
+    arg_data[3] = (int)pos_z;
+    aNPC_set_request_act(nactorx, 1, aNPC_ACT_WALK, aNPC_ACT_TYPE_DEFAULT, arg_data);
+}
+
+static int aNPC_think_go_home_check_entrance(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int ret = FALSE;
+
+    if (aNPC_check_entrance_humanoid(nactorx, play) == TRUE) {
+        aNPC_set_request_act(nactorx, 1, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aNPC_think_go_home_next_act(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->condition_info.entrance_flag) {
+        if (nactorx->action.step == aNPC_ACTION_END_STEP && aNPC_think_go_home_check_entrance(nactorx, play) == FALSE) {
+            if (nactorx->action.idx == aNPC_ACT_WALK) {
+                nactorx->think.end_flag = TRUE;
+            } else {
+                aNPC_set_request_go_home_act(nactorx);
+            }
+        }
+    } else {
+        if (nactorx->action.step == aNPC_ACTION_END_STEP && nactorx->action.idx != aNPC_ACT_WALK) {
+            aNPC_set_request_go_home_act(nactorx);
+        }
+    }
+}
+
+static void aNPC_think_go_home_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!aNPC_think_chk_interrupt_proc(nactorx, play) && mDemo_CAN_ACTOR_TALK((ACTOR*)nactorx)) {
+        aNPC_think_go_home_next_act(nactorx, play);
+    }
+}
+
+static void aNPC_think_go_home_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->movement.range_type = aNPC_MOVE_RANGE_TYPE_BLOCK;
+    nactorx->think.interrupt_flags = aNPC_THINK_INTERRUPT_OBSTACLE;
+    aNPC_set_request_go_home_act(nactorx);
+}
+
+static void aNPC_think_go_home_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC think_proc[] = {
+        &aNPC_think_go_home_init_proc,
+        &aNPC_think_go_home_main_proc,
+    };
+
+    (*think_proc[proc_type])(nactorx, play);
+}

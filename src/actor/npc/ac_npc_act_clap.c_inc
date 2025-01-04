@@ -1,0 +1,22 @@
+static void aNPC_act_clap_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!mPlib_check_player_actor_main_index_catch_insect((GAME*)play) &&
+        !mPlib_check_player_actor_main_index_catch_fish((GAME*)play)) {
+        nactorx->action.step = aNPC_ACTION_END_STEP;
+    }
+}
+
+static void aNPC_act_clap_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.step = 0;
+    nactorx->movement.mv_angl = nactorx->actor_class.player_angle_y;
+    aNPC_setupAction(nactorx, aNPC_ACTION_TYPE_CLAP);
+}
+
+static void aNPC_act_clap_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_clap_init_proc,
+        (aNPC_SUB_PROC)&none_proc1,
+        &aNPC_act_clap_main_proc,
+    };
+
+    (*act_proc[type])(nactorx, play);
+}

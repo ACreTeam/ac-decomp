@@ -78,22 +78,22 @@ extern void sAdo_PlyWalkSeRoom(u8 walk, const xyz_t* pos) {
     Na_PlyWalkSeRoom(walk, scalc, fcalc);
 }
 
-extern void sAdo_NpcWalkSe(int walk, const xyz_t* pos) {
+extern void sAdo_NpcWalkSe(u16 se_no, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;
     sAdo_Calc_MicPosition_forTrig(&fcalc, &scalc, pos);
 
-    Na_NpcWalkSe(walk, scalc, fcalc);
+    Na_NpcWalkSe(se_no, scalc, fcalc);
 }
 
-extern void sAdo_NpcWalkSeRoom(int walk, const xyz_t* pos) {
+extern void sAdo_NpcWalkSeRoom(u16 se_no, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;
     sAdo_Calc_MicPosition_forTrig(&fcalc, &scalc, pos);
 
-    Na_NpcWalkSeRoom(walk, scalc, fcalc);
+    Na_NpcWalkSeRoom(se_no, scalc, fcalc);
 }
 
 extern void sAdo_PlayerStatusLevel(f32 speed, int p) {
@@ -360,41 +360,41 @@ extern void sAdo_SoftReset() {
     Na_SoftReset();
 }
 
-u16 sAdo_Get_WalkLabel(int type) {
+u16 sAdo_Get_WalkLabel(int attr) {
 
     u16 ret;
-    switch (type) {
-        case 0:
-        case 1:
-        case 2:
-            if (Common_Get(time.season) != 3) {
-                ret = 0x4201;
+    switch (attr) {
+        case mCoBG_ATTRIBUTE_GRASS0:
+        case mCoBG_ATTRIBUTE_GRASS1:
+        case mCoBG_ATTRIBUTE_GRASS2:
+            if (Common_Get(time.season) != mTM_SEASON_WINTER) {
+                ret = NA_SE_FOOTSTEP_GRASS;
             } else {
-                ret = 0x4206;
+                ret = NA_SE_FOOTSTEP_SNOW;
             }
             break;
-        case 4:
-        case 5:
-        case 6:
-            ret = 0x4202;
+        case mCoBG_ATTRIBUTE_SOIL0:
+        case mCoBG_ATTRIBUTE_SOIL1:
+        case mCoBG_ATTRIBUTE_SOIL2:
+            ret = NA_SE_FOOTSTEP_SOIL;
             break;
-        case 7:
-            ret = 0x4203;
+        case mCoBG_ATTRIBUTE_STONE:
+            ret = NA_SE_FOOTSTEP_STONE;
             break;
-        case 23:
-            ret = 0x4204;
+        case mCoBG_ATTRIBUTE_WOOD:
+            ret = NA_SE_FOOTSTEP_WOOD;
             break;
-        case 9:
-            ret = 0x4205;
+        case mCoBG_ATTRIBUTE_BUSH:
+            ret = NA_SE_FOOTSTEP_BUSH;
             break;
-        case 22:
-            ret = 0x4208;
+        case mCoBG_ATTRIBUTE_SAND:
+            ret = NA_SE_FOOTSTEP_SAND;
             break;
-        case 11:
-            ret = 0x4209;
+        case mCoBG_ATTRIBUTE_WAVE:
+            ret = NA_SE_FOOTSTEP_WAVE;
             break;
         default:
-            ret = 0x4202;
+            ret = NA_SE_FOOTSTEP_SOIL;
             break;
     }
     return ret;
@@ -406,32 +406,32 @@ u16 sAdo_Get_KokeruLabel(int type) {
     u16 ret;
 
     switch (label) {
-        case 0x4201:
-            ret = 0xe;
+        case NA_SE_FOOTSTEP_GRASS:
+            ret = NA_SE_TUMBLE_GRASS;
             break;
-        case 0x4206:
-            ret = 0x13;
+        case NA_SE_FOOTSTEP_SNOW:
+            ret = NA_SE_TUMBLE_SNOW;
             break;
-        case 0x4202:
-            ret = 0xf;
+        case NA_SE_FOOTSTEP_SOIL:
+            ret = NA_SE_TUMBLE_SOIL;
             break;
-        case 0x4203:
-            ret = 0x10;
+        case NA_SE_FOOTSTEP_STONE:
+            ret = NA_SE_TUMBLE_STONE;
             break;
-        case 0x4204:
-            ret = 0x11;
+        case NA_SE_FOOTSTEP_WOOD:
+            ret = NA_SE_TUMBLE_WOOD;
             break;
-        case 0x4205:
-            ret = 0x12;
+        case NA_SE_FOOTSTEP_BUSH:
+            ret = NA_SE_TUMBLE_BUSH;
             break;
-        case 0x4208:
-            ret = 0x156;
+        case NA_SE_FOOTSTEP_SAND:
+            ret = NA_SE_TUMBLE_SAND;
             break;
-        case 0x4209:
-            ret = 0x157;
+        case NA_SE_FOOTSTEP_WAVE:
+            ret = NA_SE_TUMBLE_WAVE;
             break;
         default:
-            ret = 15;
+            ret = NA_SE_TUMBLE_SOIL;
             break;
     }
     return ret;

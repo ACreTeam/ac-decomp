@@ -1,0 +1,300 @@
+static void aNPC_dma_cloth_data(ACTOR* actorx) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)actorx;
+    aNPC_cloth_c* cloth = ctrl->cloth;
+    int i;
+
+    for (i = 0; i < aNPC_CTRL_CLOTH_NUM; i++) {
+        if (cloth->cloth_item != EMPTY_NO && cloth->dma_flag == TRUE) {
+            if (ITEM_IS_NPC_CLOTH(cloth->cloth_item) == FALSE) {
+                cloth->cloth_item = ITM_CLOTH000;
+            }
+
+            mSc_background_dmacopy_controller(&cloth->texture_bank);
+            mSc_background_dmacopy_controller(&cloth->palette_bank);
+            if (cloth->texture_bank.state == 0 && cloth->palette_bank.state == 0) {
+                cloth->dma_flag = FALSE;
+            }
+        }
+
+        cloth++;
+    }
+}
+
+static u32 aNPC_getP_cloth_tex_rom(aNPC_cloth_c* cloth) {
+    u32 addr = JW_GetAramAddress(RESOURCE_TEX_BOY);
+    
+    return addr + (ITEM_IS_CLOTH(cloth->cloth_item) ? (cloth->cloth_item - ITM_CLOTH000) : 0) * aNPC_CLOTH_TEX_SIZE;
+}
+
+static u32 aNPC_getP_cloth_pal_rom(aNPC_cloth_c* cloth) {
+    u32 addr = JW_GetAramAddress(RESOURCE_PALLET_BOY);
+    
+    return addr + (ITEM_IS_CLOTH(cloth->cloth_item) ? (cloth->cloth_item - ITM_CLOTH000) : 0) * aNPC_CLOTH_PAL_SIZE;
+}
+
+static void aNPC_dma_cloth_tex_data_fg(aNPC_cloth_c* cloth) {
+    _JW_GetResourceAram(aNPC_getP_cloth_tex_rom(cloth), (u8*)cloth->texture_bank.ram_start, aNPC_CLOTH_TEX_SIZE);
+    DCStoreRangeNoSync(cloth->texture_bank.ram_start, aNPC_CLOTH_TEX_SIZE);
+}
+
+static void aNPC_dma_cloth_pal_data_fg(aNPC_cloth_c* cloth) {
+    _JW_GetResourceAram(aNPC_getP_cloth_pal_rom(cloth), (u8*)cloth->palette_bank.ram_start, aNPC_CLOTH_PAL_SIZE);
+    DCStoreRangeNoSync(cloth->palette_bank.ram_start, aNPC_CLOTH_PAL_SIZE);
+}
+
+static void aNPC_dma_cloth_data_fg(void) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+    aNPC_cloth_c* cloth = ctrl->cloth;
+    int i;
+
+    for (i = 0; i < aNPC_CTRL_CLOTH_NUM; i++) {
+        if (cloth->cloth_item != EMPTY_NO && cloth->dma_flag == TRUE) {
+            if (!ITEM_IS_NPC_CLOTH(cloth->cloth_item)) {
+                cloth->cloth_item = ITM_CLOTH000;
+            }
+
+            aNPC_dma_cloth_tex_data_fg(cloth);
+            aNPC_dma_cloth_pal_data_fg(cloth);
+            cloth->dma_flag = FALSE;
+            cloth->texture_bank.state = 0;
+            cloth->palette_bank.state = 0;
+        }
+
+        cloth++;
+    }
+}
+
+static void aNPC_reset_trans_condition_cloth_data(void) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+    aNPC_cloth_c* cloth = ctrl->cloth;
+    int i;
+
+    for (i = 0; i < aNPC_CTRL_CLOTH_NUM; i++) {
+        if (cloth->id != mSC_BANK_NONE && cloth->cloth_item != EMPTY_NO) {
+            cloth->dma_flag = TRUE;
+            cloth->texture_bank.state = 1;
+            cloth->palette_bank.state = 1;
+        } else {
+            cloth->cloth_item = EMPTY_NO;
+            cloth->in_use_count = 0;
+        }
+
+        cloth++;
+    }
+}
+
+static int aNPC_get_same_cloth_data_area(aNPC_cloth_c* cloth, mActor_name_t item) {
+    int i;
+
+    for (i = 0; i < aNPC_CTRL_CLOTH_NUM; i++) {
+        if (cloth->cloth_item == item) {
+            return i;
+        }
+
+        cloth++;
+    }
+
+    return -1;
+}
+
+static int aNPC_dma_cloth_data_check(aNPC_cloth_c* cloth, mActor_name_t item, NPC_ACTOR* nactorx) {
+    int idx;
+
+    if (item == RSV_CLOTH) {
+        idx = 1 + aNPC_CTRL_CLOTH_NUM;
+    } else {
+        idx = aNPC_get_same_cloth_data_area(cloth, item);
+        if (idx != -1) {
+            cloth[idx].init_flag = FALSE;
+            cloth[idx].in_use_count++;
+        }
+        idx += 1;
+    }
+
+    if (idx == (1 + aNPC_CTRL_CLOTH_NUM) && nactorx->npc_info.animal == NULL) {
+        idx = -1;
+    }
+
+    return idx;
+}
+
+static int aNPC_get_new_cloth_data_area(aNPC_cloth_c* cloth) {
+    int i;
+
+    for (i = 0; i < aNPC_CTRL_CLOTH_NUM; i++) {
+        if (cloth->id != mSC_BANK_NONE && cloth->cloth_item == EMPTY_NO) {
+            return i;
+        }
+
+        cloth++;
+    }
+
+    return -1;
+}
+
+static int aNPC_get_no_use_cloth_data_area(aNPC_cloth_c* cloth) {
+    int i;
+
+    for (i = 0; i < aNPC_CTRL_CLOTH_NUM; i++) {
+        if (cloth->id != mSC_BANK_NONE && cloth->dma_flag == FALSE && cloth->init_flag == FALSE && cloth->in_use_count == 0) {
+            return i;
+        }
+
+        cloth++;
+    }
+
+    return -1;
+}
+
+static void aNPC_cancel_cloth_data(NPC_ACTOR* nactorx) {
+    int idx = nactorx->draw.cloth_idx - 1;
+
+    if (idx >= 0 && idx < 9) {
+        NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+        aNPC_cloth_c* cloth = ctrl->cloth + idx;
+
+        cloth->in_use_count--;
+    }
+}
+
+static void aNPC_dma_regist_cloth_data(mActor_name_t item) {
+    if (item != RSV_CLOTH) {
+        NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+        aNPC_cloth_c* cloth = ctrl->cloth;
+        int idx = aNPC_get_same_cloth_data_area(cloth, item);
+
+        if (idx == -1) {
+            idx = aNPC_get_new_cloth_data_area(cloth);
+            
+            if (idx == -1) {
+                idx = aNPC_get_no_use_cloth_data_area(cloth);
+            }
+
+            if (idx != -1) {
+                cloth += idx;
+                cloth->dma_flag = TRUE;
+                cloth->init_flag = TRUE;
+                cloth->in_use_count = 0;
+                cloth->cloth_item = item;
+                cloth->texture_bank._14 = 0;
+                cloth->texture_bank.rom_addr = aNPC_getP_cloth_tex_rom(cloth);
+                cloth->texture_bank.state = 1;
+                cloth->palette_bank._14 = 0;
+                cloth->palette_bank.rom_addr = aNPC_getP_cloth_pal_rom(cloth);
+                cloth->palette_bank.state = 1;
+            }
+        }
+    }
+}
+
+static int aNPC_dma_regist_check_cloth_data(mActor_name_t item) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+    aNPC_cloth_c* cloth = ctrl->cloth;
+    int i;
+    int ret = FALSE;
+
+    if (item == RSV_CLOTH) {
+        return TRUE;
+    }
+
+    for (i = 0; i < aNPC_CTRL_CLOTH_NUM; i++) {
+        if (cloth->cloth_item == item && cloth->dma_flag == FALSE) {
+            ret = TRUE;
+            break;
+        }
+
+        cloth++;
+    }
+
+    return ret;
+}
+
+static void aNPC_keep_cloth_data_area(Object_Exchange_c* exc) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+    aNPC_cloth_c* cloth = ctrl->cloth;
+    int bank_id = exc->bank_idx;
+    Object_Bank_c* bank = exc->banks + bank_id;
+    int i;
+
+    for (i = 0; i < aNPC_CTRL_CLOTH_NUM; i++) {
+        if (mSc_secure_exchange_keep_bank(exc, 0, aNPC_CLOTH_TEX_SIZE + aNPC_CLOTH_PAL_SIZE) != NULL) {
+            cloth->texture_bank.size = aNPC_CLOTH_TEX_SIZE;
+            cloth->texture_bank.ram_start = bank->ram_start;
+            cloth->texture_bank.dma_start = bank->ram_start;
+
+            cloth->palette_bank.size = aNPC_CLOTH_PAL_SIZE;
+            cloth->palette_bank.ram_start = bank->ram_start + aNPC_CLOTH_TEX_SIZE;
+            cloth->palette_bank.dma_start = cloth->palette_bank.ram_start;
+
+            cloth->id = bank_id;
+            bank++;
+            bank_id++;
+        } else {
+            cloth->texture_bank.ram_start = NULL;
+            cloth->palette_bank.ram_start = NULL;
+            cloth->id = mSC_BANK_NONE;
+        }
+
+        cloth->cloth_item = EMPTY_NO;
+        cloth->texture_bank.bank_id = -1;
+        cloth->palette_bank.bank_id = -1;
+        cloth->in_use_count = 0;
+        cloth->dma_flag = FALSE;
+
+        cloth++;
+    }
+}
+
+static void aNPC_rebuild_cloth_data(void) {
+    aNPC_reset_trans_condition_cloth_data();
+    aNPC_dma_cloth_data_fg();
+}
+
+static int aNPC_change_cloth_data(NPC_ACTOR* nactorx) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+    mActor_name_t cloth = nactorx->draw.cloth_no;
+    int ret = FALSE;
+
+    if (ITEM_IS_NPC_CLOTH(cloth) == FALSE) {
+        cloth = ITM_CLOTH000;
+        nactorx->draw.cloth_no = ITM_CLOTH000;
+    }
+
+    if (cloth == RSV_CLOTH) {
+        nactorx->draw.cloth_idx = aNPC_CLOTH_IDX_ORG;
+        ret = TRUE;
+    } else {
+        aNPC_dma_regist_cloth_data(cloth);
+        aNPC_dma_cloth_data_fg();
+
+        if (aNPC_dma_regist_check_cloth_data(cloth) == TRUE) {
+            nactorx->draw.cloth_idx = aNPC_dma_cloth_data_check(ctrl->cloth, cloth, nactorx);
+            ret = TRUE;
+        }
+    }
+
+    if (nactorx->draw.cloth_idx == aNPC_CLOTH_IDX_ORG && nactorx->npc_info.animal == NULL) {
+        nactorx->draw.cloth_idx = -1;
+    }
+
+    return ret;
+}
+
+static void aNPC_setup_chg_cloth(NPC_ACTOR* nactorx, mActor_name_t cloth, u8 org_idx) {
+    nactorx->draw.cloth_no = cloth;
+    nactorx->draw.org_idx = org_idx;
+}
+
+static void aNPC_setup_next_cloth(NPC_ACTOR* nactorx, mActor_name_t cloth, u8 org_idx) {
+    nactorx->draw.next_cloth_no = cloth;
+    nactorx->draw.next_org_idx = org_idx;
+}
+
+static void aNPC_setup_cloth(NPC_ACTOR* nactorx, mActor_name_t cloth, u8 org_idx) {
+    Animal_c* animal = nactorx->npc_info.animal;
+
+    if (animal != NULL) {
+        animal->cloth = cloth;
+        animal->cloth_original_id = org_idx;
+    }
+}

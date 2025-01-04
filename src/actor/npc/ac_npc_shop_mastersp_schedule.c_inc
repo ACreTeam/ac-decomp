@@ -71,7 +71,7 @@ static void aSHM_normal_turn(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* 
 }
 
 static void aSHM_move(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
-    if (shop_mastersp->npc_class.action.idx == aNPC_ACT_WALK2 || shop_mastersp->npc_class.action.idx == aNPC_ACT_WAIT) {
+    if (shop_mastersp->npc_class.action.idx == aNPC_ACT_RUN || shop_mastersp->npc_class.action.idx == aNPC_ACT_WAIT) {
         if (aSHM_set_next_avoid_pos(shop_mastersp)) {
             aSHM_setup_think_proc(shop_mastersp, play, shop_mastersp->move_think_idx);
         } else {
@@ -170,7 +170,7 @@ static void aSHM_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
         (*shop_mastersp->think_proc)(shop_mastersp, play);
     } else if (shop_mastersp->npc_class.action.step == aNPC_ACTION_END_STEP) {
         (*shop_mastersp->think_proc)(shop_mastersp, play);
-    } else if (shop_mastersp->npc_class.action.idx == aNPC_ACT_WALK2) {
+    } else if (shop_mastersp->npc_class.action.idx == aNPC_ACT_RUN) {
         shop_mastersp->npc_class.movement.mv_add_angl = DEG2SHORT_ANGLE2(22.5f);
     }
 }
@@ -197,7 +197,7 @@ static void aSHM_normal_turn_init(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_P
 }
 
 static void aSHM_move_init(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* play) {
-    aSHM_set_request_act(shop_mastersp, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT,
+    aSHM_set_request_act(shop_mastersp, 4, aNPC_ACT_RUN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT,
                          shop_mastersp->base_pos[shop_mastersp->now_idx][0],
                          shop_mastersp->base_pos[shop_mastersp->now_idx][1]);
 }

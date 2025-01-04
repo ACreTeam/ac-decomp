@@ -1,0 +1,273 @@
+static void aNPC_make_accessory(ACTOR* actorx, GAME* game, s16 type, s16 joint) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+
+    if (CLIP(tools_clip) != NULL) {
+        ACTOR* acc_actor = CLIP(tools_clip)->aTOL_birth_proc(type, aTOL_ACTION_S_TAKEOUT, actorx, game, -1, NULL);
+
+        if (acc_actor != NULL) {
+            nactorx->accessory.type = type;
+            nactorx->accessory.pos_joint_idx = joint;
+            nactorx->accessory.accessory = acc_actor;
+            xyz_t_move(&acc_actor->world.position, &actorx->world.position);
+        }
+    }
+}
+
+static int aNPC_setP_friendship(NPC_ACTOR* nactorx) {
+    Animal_c* animal = aNPC_GET_ANM(nactorx);
+    int mem_idx;
+    s8* friendship_p = NULL;
+    int ret = FALSE;
+
+    mem_idx = mNpc_GetAnimalMemoryIdx(&Now_Private->player_ID, animal->memories, ANIMAL_MEMORY_NUM);
+    if (mem_idx != -1) {
+        friendship_p = &animal->memories[mem_idx].friendship;
+        ret = TRUE;
+    }
+
+    nactorx->condition_info.friendship = friendship_p;
+    return ret;
+}
+
+static void aNPC_check_force_use_umbrella(NPC_ACTOR* nactorx) {
+    u8 req = FALSE;
+
+    if (aNPC_GET_ANM(nactorx)->is_home == FALSE && Common_Get(weather) == mEnv_WEATHER_RAIN) {
+        req = TRUE;
+    }
+
+    nactorx->request.umb_flag = req;
+}
+
+static void aNPC_set_start_pos(ACTOR* actorx) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    Animal_c* animal = aNPC_GET_ANM(nactorx);
+    
+    mNpcW_GetAppearStatusWay(&nactorx->condition_info.appear_flag, &nactorx->condition_info.appear_rotation, animal);
+}
+
+static void aNPC_actor_schedule(NPC_ACTOR* nactorx, int type) {
+    mNPS_schedule_c* sched_p = &nactorx->schedule.schedule;
+
+    switch (type) {
+        case aNPC_CT_SCHED_TYPE_NORMAL:
+            aNPC_first_set_schedule(nactorx);
+            break;
+        case aNPC_CT_SCHED_TYPE_STAND:
+            sched_p->current_type = mNPS_SCHED_STAND;
+            nactorx->npc_info.schedule = sched_p;
+            nactorx->schedule.type = aNPC_SCHEDULE_TYPE_STAND;
+            break;
+        case aNPC_CT_SCHED_TYPE_WANDER:
+            sched_p->current_type = mNPS_SCHED_WANDER;
+            nactorx->npc_info.schedule = sched_p;
+            nactorx->schedule.type = aNPC_SCHEDULE_TYPE_WANDER;
+            break;
+        case aNPC_CT_SCHED_TYPE_WALK_WANDER:
+            sched_p->current_type = mNPS_SCHED_WALK_WANDER;
+            nactorx->npc_info.schedule = sched_p;
+            nactorx->schedule.type = aNPC_SCHEDULE_TYPE_WALK_WANDER;
+            break;
+        case aNPC_CT_SCHED_TYPE_SPECIAL:
+            sched_p->current_type = mNPS_SCHED_SPECIAL;
+            nactorx->npc_info.schedule = sched_p;
+            nactorx->schedule.type = aNPC_SCHEDULE_TYPE_SPECIAL;
+            break;
+        default:
+            sched_p->current_type = mNPS_SCHED_STAND;
+            nactorx->npc_info.schedule = sched_p;
+            nactorx->schedule.type = aNPC_SCHEDULE_TYPE_STAND;
+            break;
+    }
+}
+
+static void aNPC_actor_ct(ACTOR* actorx, GAME* game, aNPC_ct_data_c* ct_data) {
+    int name_type;
+    mActor_name_t org_name = actorx->npc_id;
+    mActor_name_t npc_name = org_name;
+    aNPC_draw_data_c draw_data;
+
+    name_type = ITEM_NAME_GET_TYPE(actorx->npc_id);
+    if (name_type != NAME_TYPE_NPC && name_type != NAME_TYPE_SPNPC) {
+        Actor_delete(actorx);
+        actorx->sv_proc = NULL;
+        actorx->dt_proc = NULL;
+        mNpc_RenewalSetNpc(actorx);
+    } else {
+        NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+        cKF_Skeleton_R_c* skeleton;
+        f32 scale;
+        f32 eye_y;
+
+        aNPC_dma_draw_data_proc(&draw_data, org_name);
+        mem_copy((u8*)&nactorx->draw.draw_tex_data, (u8*)&draw_data.tex_data, sizeof(draw_data.tex_data));
+        nactorx->draw.shape_bank = draw_data.model_bank;
+        nactorx->draw.tex_bank = draw_data.texture_bank;
+        nactorx->talk_info.type = draw_data.talk_type;
+        nactorx->draw.draw_type = draw_data.species_sub_idx;
+
+        if (aNPC_GET_ANM(nactorx) != NULL) {
+            nactorx->right_hand.umbrella_type = aNPC_GET_ANM(nactorx)->umbrella_id;
+        } else {
+            nactorx->right_hand.umbrella_type = draw_data.umbrella_type;
+        }
+
+        if (draw_data.accessory_type != -1) {
+            aNPC_make_accessory(actorx, game, draw_data.accessory_type, draw_data.accessory_joint);
+        }
+
+        skeleton = draw_data.model_skeleton;
+        eye_y = (f32)draw_data.eye_height;
+        scale = draw_data.scale;
+
+        cKF_SkeletonInfo_R_ct(&nactorx->draw.main_animation.keyframe, skeleton, NULL, nactorx->draw.main_animation.work, nactorx->draw.main_animation.morph);
+        cKF_SkeletonInfo_R_ct(&nactorx->draw.sub_animation0.keyframe, skeleton, NULL, nactorx->draw.sub_animation0.work, nactorx->draw.sub_animation0.morph);
+        cKF_SkeletonInfo_R_ct(&nactorx->draw.sub_animation1.keyframe, skeleton, NULL, nactorx->draw.sub_animation1.work, nactorx->draw.sub_animation1.morph);
+        Shape_Info_init(actorx, 0.0f, &mAc_ActorShadowEllipse, 9.0f, 17.0f);
+        actorx->shape_info.ofs_y = 2.0f;
+        
+        {
+            ClObjPipe_c* pipe_p = &nactorx->collision.pipe;
+
+            ClObjPipe_ct(game, pipe_p);
+            ClObjPipe_set5(game, pipe_p, actorx, &aNPC_CoInfoData);
+            CollisionCheck_Status_set3(&actorx->status_data, &aNPC_StatusData);
+            pipe_p->attribute.pipe.radius = draw_data.col_radius;
+            pipe_p->attribute.pipe.height = draw_data.col_height;
+        }
+
+        nactorx->move_proc = ct_data->move_proc;
+        nactorx->draw_proc = ct_data->draw_proc;
+
+        nactorx->draw.animation_id = aNPC_ANIM_NUM;
+        nactorx->draw.effect_pattern = 0xFF;
+        nactorx->draw.effect_type = -1;
+        nactorx->draw.anim_speed_type = aNPC_ANIM_SPEED_TYPE_LOCKED;
+
+        nactorx->collision.BGcheck_radius = 18.0f;
+        nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_RANGE;
+        
+        nactorx->eye_y = eye_y;
+        nactorx->action.idx = aNPC_ACT_NONE;
+
+        nactorx->left_hand.after_mode = aHOI_REQUEST_PUTAWAY;
+        nactorx->draw.main_animation.animation_id = -1;
+        nactorx->draw.sub_animation0.animation_id = -1;
+        nactorx->draw.sub_animation1.animation_id = -1;
+        nactorx->draw.sub_anim_type = aNPC_SUB_ANIM_NONE;
+
+        nactorx->talk_info.talk_request_proc = ct_data->talk_request_proc;
+        nactorx->talk_info.talk_init_proc = ct_data->talk_init_proc;
+        nactorx->talk_info.talk_end_check_proc = ct_data->talk_end_check_proc;
+        nactorx->talk_info.default_animation = -1;
+        nactorx->talk_info.default_turn_animation = -1;
+        nactorx->talk_info.default_act = aNPC_ACT_TALK;
+        nactorx->talk_info.turn = aNPC_TALK_TURN_NORMAL;
+
+        nactorx->schedule.type = aNPC_SCHEDULE_NONE;
+
+        nactorx->movement.range_center_x = (((int)actorx->block_x + 0.5f) * mFI_BK_WORLDSIZE_X_F);
+        nactorx->movement.range_center_z = (((int)actorx->block_z + 0.5f) * mFI_BK_WORLDSIZE_Z_F);
+        nactorx->movement.range_radius = 280.0f;
+        nactorx->movement.movement_ut_x = -1;
+        nactorx->movement.movement_ut_z = -1;
+
+        // @duplicate, already set above
+        nactorx->action.idx = aNPC_ACT_NONE;
+        nactorx->action.act_obj = aNPC_ACT_OBJ_DEFAULT;
+
+        nactorx->think.force_call_msg_no = -1;
+        nactorx->think.force_call_camera_type = CAMERA2_PROCESS_NORMAL;
+
+        nactorx->talk_info.feel = 0xFF;
+        nactorx->talk_info.memory = TRUE;
+
+        nactorx->head.angle_add_x = 0x200;
+        nactorx->head.angle_add_y = 0x400;
+
+        nactorx->draw.frame_sub_speed = 1.0f;
+
+        if (mEv_CheckTitleDemo() > 0) {
+            actorx->status_data.weight = 0;
+        }
+
+        xyz_t_move(&nactorx->feet[aNPC_FOOT_LEFT], &actorx->world.position);
+        xyz_t_move(&nactorx->feet[aNPC_FOOT_RIGHT], &actorx->world.position);
+        aNPC_set_hide_flg(nactorx, TRUE);
+        
+        if (name_type == NAME_TYPE_NPC) {
+            Animal_c* animal = aNPC_GET_ANM(nactorx);
+            mActor_name_t cloth = animal->cloth;
+            u8 org_idx;
+
+            if (animal->cloth == RSV_CLOTH) {
+                org_idx = animal->cloth_original_id;
+            } else {
+                org_idx = 0xFF;
+            }
+
+            aNPC_setup_next_cloth(nactorx, cloth, org_idx);
+            aNPC_setup_chg_cloth(nactorx, cloth, org_idx);
+
+            nactorx->condition_info.feel_tim = animal->mood_time * FRAMES_PER_MINUTE;
+            nactorx->talk_info.talk_end_check_proc = &aNPC_talk_end_check;
+            aNPC_set_start_pos(actorx);
+            aNPC_setP_friendship(nactorx);
+            aNPC_check_force_use_umbrella(nactorx);
+            nactorx->talk_info.melody_inst = draw_data.voice_type;
+            nactorx->talk_info.npc_voice_id = draw_data.voice_type;
+        } else {
+            mNpc_EventNpc_c* event_npc = mNpc_GetSameEventNpc(org_name);
+
+            if (event_npc != NULL) {
+                mActor_name_t texture_name = event_npc->texture_id;
+
+                npc_name = event_npc->npc_id; // r29
+                nactorx->npc_info.event = event_npc;
+                event_npc->exists = TRUE;
+                if (ITEM_NAME_GET_TYPE(texture_name) == NAME_TYPE_NPC) {
+                    aNPC_dma_draw_data_proc(&draw_data, texture_name);
+                }
+            } else {
+                mNpc_MaskNpc_c* mask_npc = mNpc_GetSameMaskNpc(org_name);
+
+                if (mask_npc != NULL) {
+                    mActor_name_t mask_id = mask_npc->npc_id;
+
+                    npc_name = mask_id; // r29
+                    nactorx->npc_info.mask = mask_npc;
+                    mask_npc->exists = TRUE;
+                    
+                    if (ITEM_NAME_GET_TYPE(npc_name) == NAME_TYPE_NPC) {
+                        aNPC_dma_draw_data_proc(&draw_data, mask_id);
+                    }
+                }
+            }
+
+            nactorx->talk_info.melody_inst = draw_data.voice_type;
+            nactorx->talk_info.npc_voice_id = draw_data.voice_type;
+            nactorx->right_hand.umbrella_disabled_flag = TRUE;
+        }
+
+        nactorx->npc_info.npc_name = npc_name;
+        actorx->max_velocity_y = -20.0f;
+        actorx->gravity = -1.0f;
+
+        {
+            mActor_name_t* fg_p = mFI_GetUnitFG(actorx->world.position);
+
+            if (fg_p != NULL && (ITEM_IS_HOLE(*fg_p) || *fg_p == HOLE_SHINE)) {
+                mFI_SetFG_common(EMPTY_NO, actorx->world.position, TRUE);
+            }
+        }
+
+        actorx->scale.x = scale;
+        actorx->scale.y = scale;
+        actorx->scale.z = scale;
+        actorx->unknown_b4 = TRUE;
+        
+        if (ct_data->sched_type != aNPC_CT_SCHED_TYPE_NONE) {
+            aNPC_actor_schedule(nactorx, ct_data->sched_type);
+        }
+    }
+}

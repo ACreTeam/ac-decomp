@@ -207,6 +207,7 @@ extern int mDemo_Check_DiffAngle_forTalk(s16 diff_angle);
 extern void mDemo_KeepCamera(int camera_type);
 
 #define mDemo_CAN_ACTOR_TALK(actor) (!mDemo_Check(mDemo_TYPE_SPEAK, (actor)) && !mDemo_Check(mDemo_TYPE_TALK, (actor)))
+#define mDemo_IS_ACTOR_TALKING(actor) (mDemo_Check(mDemo_TYPE_SPEAK, (actor)) == TRUE || mDemo_Check(mDemo_TYPE_TALK, (actor)) == TRUE)
 
 #ifdef __cplusplus
 }

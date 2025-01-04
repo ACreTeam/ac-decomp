@@ -40,12 +40,20 @@ typedef enum audio_sound_effects {
     NA_SE_SENTAKU_OPEN,
     NA_SE_SENTAKU_KETTEI,
 
+    NA_SE_TUMBLE_GRASS,
+    NA_SE_TUMBLE_SOIL,
+    NA_SE_TUMBLE_STONE,
+    NA_SE_TUMBLE_WOOD,
+    NA_SE_TUMBLE_BUSH,
+    NA_SE_TUMBLE_SNOW,
+
     NA_SE_ZOOMDOWN_LONG = 0x15,
     NA_SE_LIGHT_ON,
     NA_SE_LIGHT_OFF,
 
     NA_SE_25 = 0x25,
     NA_SE_26 = 0x26,
+    NA_SE_27 = 0x27,
 
     NA_SE_2A = 0x2A,
 
@@ -156,6 +164,9 @@ typedef enum audio_sound_effects {
 
     NA_SE_SOUND_KNOCK,
 
+    NA_SE_TUMBLE_SAND = 0x156,
+    NA_SE_TUMBLE_WAVE,
+
     NA_SE_ARAIIKI_BOY = 0x158,
     NA_SE_ARAIIKI_GIRL = 0x15A,
 
@@ -210,6 +221,8 @@ typedef enum audio_sound_effects {
 
     NA_SE_KARABURI = 0x43A,
 
+    NA_SE_43D = 0x43D,
+
     NA_SE_ROD_STROKE_SMALL = 0x445,
     NA_SE_446 = 0x446,
 
@@ -226,6 +239,19 @@ typedef enum audio_sound_effects {
     NA_SE_461 = 0x461,
 
     NA_SE_COIN_GASAGOSO = 0x465,
+
+    // Footsteps
+    NA_SE_FOOTSTEP_BEGIN = 0x4200,
+    NA_SE_FOOTSTEP_GRASS,
+    NA_SE_FOOTSTEP_SOIL,
+    NA_SE_FOOTSTEP_STONE,
+    NA_SE_FOOTSTEP_WOOD,
+    NA_SE_FOOTSTEP_BUSH,
+    NA_SE_FOOTSTEP_SNOW,
+    NA_SE_FOOTSTEP_7,
+    NA_SE_FOOTSTEP_SAND,
+    NA_SE_FOOTSTEP_WAVE,
+    NA_SE_FOOTSTEP_PLUSSBRIDGE,
 
 } AudioSE;
 

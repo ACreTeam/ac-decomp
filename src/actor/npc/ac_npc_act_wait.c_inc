@@ -1,0 +1,43 @@
+enum {
+    aNPC_ACT_WAIT_STEP_MAIN,
+
+    aNPC_ACT_WAIT_STEP_NUM
+};
+
+static void aNPC_act_wait_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->draw.main_animation_state == cKF_STATE_CONTINUE) {
+        u8 feel = aNPC_get_feel_info(nactorx);
+
+        if (nactorx->action.feel != feel) {
+            nactorx->action.feel = feel;
+            aNPC_setupAction(nactorx, aNPC_wait_action[feel]);
+        }
+    }
+
+    if (!aNPC_act_wait(nactorx)) {
+        nactorx->action.step = aNPC_ACTION_END_STEP;
+    }
+}
+
+static void aNPC_act_wait_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u16* arg_p = nactorx->request.act_args;
+
+    nactorx->action.act_obj = arg_p[0];
+    nactorx->action.act_obj_id = arg_p[1];
+
+    if (nactorx->action.feel != (u8)aNPC_get_feel_info(nactorx)) {
+        nactorx->action.step = aNPC_ACT_WAIT_STEP_MAIN;
+    }
+}
+
+static void aNPC_act_wait_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.step = aNPC_ACT_WAIT_STEP_MAIN;
+    nactorx->action.feel = aNPC_get_feel_info(nactorx);
+    aNPC_setupAction(nactorx, aNPC_wait_action[aNPC_get_feel_info(nactorx)]);
+}
+
+static void aNPC_act_wait_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = { &aNPC_act_wait_init_proc, &aNPC_act_wait_chg_data_proc, &aNPC_act_wait_main_proc };
+
+    (*act_proc[type])(nactorx, play);
+}

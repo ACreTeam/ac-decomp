@@ -14,6 +14,7 @@
 #include "m_private_h.h"
 #include "m_field_make.h"
 #include "m_name_table.h"
+#include "ac_npc_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -217,7 +218,7 @@ typedef struct animal_s {
     /* 0x8EA */ u8 removing; /* TRUE when the villager is leaving town, FALSE otherwise */
     /* 0x8EB */ u8
         cloth_original_id; /* 0xFF when not wearing an Able Sister's pattern, otherwise 0-3 indicating which pattern */
-    /* 0x8EC */ s8 umbrella_id; /* 0xFF when no umbrella, 0-31 when a standard umbrella, 32-35 when using an Able
+    /* 0x8EC */ u8 umbrella_id; /* 0xFF when no umbrella, 0-31 when a standard umbrella, 32-35 when using an Able
                                    Sister's pattern */
     /* 0x8ED */ u8 unk_8ED;     /* Exists according to mISL_gc_to_agb_animal, but seems unused in practice */
     /* 0x8EE */ mActor_name_t
@@ -371,7 +372,7 @@ extern int mNpc_GetPresentClothMemoryIdx_rnd(Anmmem_c* memory);
 extern int mNpc_CheckTalkPresentCloth(Animal_c* animal);
 extern void mNpc_ChangePresentCloth();
 extern u8* mNpc_GetWordEnding(ACTOR* actor);
-extern void mNpc_ResetWordEnding(ACTOR* actor);
+extern void mNpc_ResetWordEnding(NPC_ACTOR* nactorx);
 extern int mNpc_GetFreeEventNpcIdx();
 extern int mNpc_RegistEventNpc(mActor_name_t event_id, mActor_name_t texture_id, mActor_name_t npc_id,
                                mActor_name_t cloth_id);

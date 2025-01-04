@@ -1,0 +1,32 @@
+enum {
+    aNPC_ACT_ENSOU_STEP_ENSOU,
+
+    aNPC_ACT_ENSOU_STEP_NUM
+};
+
+static void aNPC_act_ensou_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u8 step = aNPC_ACT_ENSOU_STEP_ENSOU;
+
+    if (nactorx->draw.main_animation_state == cKF_STATE_CONTINUE) {
+        nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT;
+        step = aNPC_ACTION_END_STEP;
+    }
+
+    nactorx->action.step = step;
+}
+
+static void aNPC_act_ensou_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    nactorx->action.step = aNPC_ACT_ENSOU_STEP_ENSOU;
+    aNPC_setupAction(nactorx, aNPC_ACTION_TYPE_ENSOU_E);
+}
+
+static void aNPC_act_ensou_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_ensou_init_proc,
+        (aNPC_SUB_PROC)&none_proc1,
+        &aNPC_act_ensou_main_proc,
+    };
+
+    (*act_proc[type])(nactorx, play);
+}

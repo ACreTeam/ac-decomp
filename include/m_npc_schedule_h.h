@@ -14,6 +14,7 @@ enum {
   mNPS_SCHED_SLEEP, /* asleep in their house */
   mNPS_SCHED_STAND, /* standing around town?? */
   mNPS_SCHED_WANDER, /* wander around town */
+  mNPS_SCHED_WALK_WANDER, /* walk wander */
   mNPS_SCHED_SPECIAL, /* unique schedule method for each NPC actor type */
 
   mNPS_SCHED_TYPE_NUM

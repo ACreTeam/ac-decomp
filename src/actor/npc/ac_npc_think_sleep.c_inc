@@ -1,0 +1,48 @@
+static void aNPC_think_sleep_set_force_schedule(NPC_ACTOR* nactorx) {
+    mNPS_schedule_c* sched_p = nactorx->npc_info.schedule;
+    u8 type = mNPS_SCHED_FIELD;
+
+    if (aNPC_check_home_block(nactorx) == TRUE) {
+        type = mNPS_SCHED_IN_HOUSE;
+    }
+
+    sched_p->forced_type = type;
+    sched_p->forced_timer = 7200;
+}
+
+static void aNPC_think_sleep_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!aNPC_think_chk_interrupt_proc(nactorx, play) && nactorx->action.step == aNPC_ACTION_END_STEP) {
+        switch (nactorx->action.idx) {
+            case aNPC_ACT_TALK:
+            case aNPC_ACT_UMB_OPEN:
+                aNPC_think_sleep_set_force_schedule(nactorx);
+                break;
+            default:
+                switch(aNPC_get_feel_info(nactorx)) {
+                    case mNpc_FEEL_UZAI_0:
+                    case mNpc_FEEL_UZAI_1:
+                        break;
+                    default:
+                        aNPC_set_feel_info(nactorx, mNpc_FEEL_SLEEPY, -1);
+                        aNPC_set_request_act(nactorx, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+                        break;
+                }
+        }
+    }
+}
+
+static void aNPC_think_sleep_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_set_feel_info(nactorx, mNpc_FEEL_SLEEPY, -1);
+    nactorx->think.interrupt_flags = aNPC_THINK_INTERRUPT_ENTRANCE | aNPC_THINK_INTERRUPT_OBSTACLE | aNPC_THINK_INTERRUPT_FATIGUE;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK;
+    aNPC_set_request_act(nactorx, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+}
+
+static void aNPC_think_sleep_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC think_proc[] = {
+        &aNPC_think_sleep_init_proc,
+        &aNPC_think_sleep_main_proc,
+    };
+
+    (*think_proc[proc_type])(nactorx, play);
+}

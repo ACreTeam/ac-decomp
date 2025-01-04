@@ -57,6 +57,60 @@ enum {
     aNPC_JOINT_NUM
 };
 
+enum {
+    aNPC_ANIM_SPEED_TYPE_LOCKED,
+    aNPC_ANIM_SPEED_TYPE_FREE,
+
+    aNPC_ANIM_SPEED_TYPE_NUM
+};
+
+enum {
+    aNPC_SUB_ANIM_NONE,
+    aNPC_SUB_ANIM_UMBRELLA,
+    aNPC_SUB_ANIM_UTIWA, // paper fan
+    aNPC_SUB_ANIM_TUE, // Tortimer's cane
+
+    aNPC_SUB_ANIM_NUM
+};
+
+enum {
+    aNPC_TEX_ANIM_EYE,
+    aNPC_TEX_ANIM_MOUTH,
+
+    aNPC_TEX_ANIM_NUM
+};
+
+enum {
+    aNPC_CHN_BASE_TYPE_RELATIVE,
+    aNPC_CHN_BASE_TYPE_WORLD,
+
+    aNPC_CHN_BASE_TYPE_NUM
+};
+
+enum {
+    aNPC_CLOTH_IDX_NONE,
+    aNPC_CLOTH_IDX0,
+    aNPC_CLOTH_IDX1,
+    aNPC_CLOTH_IDX2,
+    aNPC_CLOTH_IDX3,
+    aNPC_CLOTH_IDX4,
+    aNPC_CLOTH_IDX5,
+    aNPC_CLOTH_IDX6,
+    aNPC_CLOTH_IDX7,
+    aNPC_CLOTH_IDX8,
+    aNPC_CLOTH_IDX9,
+    aNPC_CLOTH_IDX_ORG,
+
+    aNPC_CLOTH_IDX_NUM
+};
+
+enum {
+    aNPC_MASK_CAT_TYPE_NONE,
+    aNPC_MASK_CAT_TYPE_MASKCAT,
+
+    aNPC_MASK_CAT_TYPE_NUM
+};
+
 typedef struct ac_npc_clip_s aNPC_Clip_c;
 
 #define aNPC_EYE_TEX_NUM 8
@@ -104,7 +158,7 @@ enum {
 enum {
     aNPC_THINK_WAIT,
     aNPC_THINK_WANDER,
-    aNPC_THINK_WANDER2,
+    aNPC_THINK_WALK_WANDER,
     aNPC_THINK_GO_HOME,
     aNPC_THINK_INTO_HOUSE,
     aNPC_THINK_LEAVE_HOUSE,
@@ -131,6 +185,17 @@ enum {
     aNPC_THINK_PROC_NUM
 };
 
+enum {
+    aNPC_CT_SCHED_TYPE_NONE,
+    aNPC_CT_SCHED_TYPE_NORMAL,
+    aNPC_CT_SCHED_TYPE_STAND,
+    aNPC_CT_SCHED_TYPE_WANDER,
+    aNPC_CT_SCHED_TYPE_WALK_WANDER,
+    aNPC_CT_SCHED_TYPE_SPECIAL,
+
+    aNPC_CT_SCHED_TYPE_NUM
+};
+
 typedef void (*aNPC_TALK_REQUEST_PROC)(ACTOR*, GAME*);
 typedef int (*aNPC_TALK_INIT_PROC)(ACTOR*, GAME*);
 typedef int (*aNPC_TALK_END_CHECK_PROC)(ACTOR*, GAME*);
@@ -138,14 +203,34 @@ typedef int (*aNPC_TALK_END_CHECK_PROC)(ACTOR*, GAME*);
 typedef struct npc_ct_data_s {
     mActor_proc move_proc;
     mActor_proc draw_proc;
-    int _08;
+    int sched_type;
     aNPC_TALK_REQUEST_PROC talk_request_proc;
     aNPC_TALK_INIT_PROC talk_init_proc;
     aNPC_TALK_END_CHECK_PROC talk_end_check_proc;
     int _18;
 } aNPC_ct_data_c;
 
+enum {
+    aNPC_ATT_TYPE_NONE,
+    aNPC_ATT_TYPE_ACTOR,
+    aNPC_ATT_TYPE_POS,
+
+    aNPC_ATT_TYPE_NUM
+};
+
+typedef struct npc_attention_s {
+    u8 type;
+    ACTOR* actor;
+    xyz_t pos;
+} aNPC_attention_c;
+
+typedef struct npc_overlay_s {
+    u8* buf;
+    int used;
+} aNPC_overlay_c;
+
 typedef int (*aNPC_SETUP_ACTOR_PROC)(GAME_PLAY*, mActor_name_t, s8, int, s16, int, int, int, int);
+typedef void (*aNPC_GET_OVERLAY_AREA_PROC)(ACTOR_DLFTBL*, u8*, size_t, mActor_name_t);
 typedef void (*aNPC_DMA_DRAW_DATA_PROC)(aNPC_draw_data_c*, mActor_name_t);
 typedef void (*aNPC_FREE_OVERLAY_AREA_PROC)(ACTOR_DLFTBL*);
 typedef ACTOR* (*aNPC_GET_ACTOR_AREA_PROC)(size_t, const char*, int);
@@ -163,22 +248,31 @@ typedef void (*aNPC_DRAW_PROC)(ACTOR*, GAME*);
 typedef void (*aNPC_SET_DST_POS_PROC)(NPC_ACTOR*, f32, f32);
 
 typedef void (*aNPC_REBUILD_DMA_PROC)();
+typedef int (*aNPC_SET_REQUEST_ACT_PROC)(NPC_ACTOR* nactorx, u8 priority, u8 act_idx, u8 act_type, u16* arg_data);
+typedef int (*aNPC_SET_HEAD_REQUEST_PROC)(NPC_ACTOR* nactorx, u8 priority, u8 type, ACTOR* target_actor, xyz_t* target_pos);
 typedef void (*aNPC_TALK_DEMO_PROC)(ACTOR*);
 typedef void (*aNPC_ANIMATION_INIT_PROC)(ACTOR*, int, int);
 typedef void (*aNPC_CHG_SCHEDULE_PROC)(NPC_ACTOR*, GAME_PLAY*, u8);
 typedef int (*aNPC_CLIP_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*, int, int);
-
 typedef int (*aNPC_FORCE_CALL_REQ_PROC)(NPC_ACTOR*, int);
+typedef void (*aNPC_SET_START_POS_PROC)(ACTOR* actorx);
 
 struct ac_npc_clip_s {
     /* 0x000 */ aNPC_SETUP_ACTOR_PROC setupActor_proc;
-    /* 0x004 */ void* _004;
+    /* 0x004 */ aNPC_GET_OVERLAY_AREA_PROC get_overlay_area_proc;
     /* 0x008 */ aNPC_FREE_OVERLAY_AREA_PROC free_overlay_area_proc;
     /* 0x00C */ aNPC_GET_ACTOR_AREA_PROC get_actor_area_proc;
     /* 0x010 */ aNPC_FREE_ACTOR_AREA_PROC free_actor_area_proc;
     /* 0x014 */ aNPC_DMA_DRAW_DATA_PROC dma_draw_data_proc;
     /* 0x018 */ aNPC_SET_ATTENTION_REQUEST_PROC set_attention_request_proc;
-    /* 0x01C */ void* _01C[(0x0CC - 0x01C) / sizeof(void*)];
+    /* 0x01C */ NPC_ACTOR* keep_actors[9];
+    /* 0x040 */ int keep_actor_used[9];
+    /* 0x064 */ aNPC_overlay_c keep_n_overlay[1];
+    /* 0x06C */ aNPC_overlay_c keep_s_overlay[2];
+    /* 0x07C */ aNPC_overlay_c keep_k_overlay[3];
+    /* 0x094 */ aNPC_overlay_c keep_e_overlay[2];
+    /* 0x0A4 */ aNPC_attention_c attention_request;
+    /* 0x0B8 */ aNPC_attention_c attention;
     /* 0x0CC */ aNPC_BIRTH_CHECK_PROC birth_check_proc;
     /* 0x0D0 */ aNPC_CT_PROC ct_proc;
     /* 0x0D4 */ aNPC_DT_PROC dt_proc;
@@ -191,14 +285,16 @@ struct ac_npc_clip_s {
     /* 0x0F0 */ void* _0F0;
     /* 0x0F4 */ aNPC_DRAW_PROC draw_proc;
     /* 0x0F8 */ aNPC_REBUILD_DMA_PROC rebuild_dma_proc;
-    /* 0x0FC */ void* _0FC[(0x110 - 0x0FC) / sizeof(void*)];
+    /* 0x0FC */ void* _0FC[(0x108 - 0x0FC) / sizeof(void*)];
+    /* 0x108 */ aNPC_SET_REQUEST_ACT_PROC set_request_act_proc;
+    /* 0x10C */ aNPC_SET_HEAD_REQUEST_PROC set_head_request_act_proc;
     /* 0x110 */ aNPC_TALK_DEMO_PROC talk_demo_proc;
     /* 0x114 */ aNPC_ANIMATION_INIT_PROC animation_init_proc;
     /* 0x118 */ aNPC_CHG_SCHEDULE_PROC chg_schedule_proc;
     /* 0x11C */ aNPC_SET_DST_POS_PROC set_dst_pos_proc;
     /* 0x120 */ aNPC_CLIP_THINK_PROC think_proc;
     /* 0x124 */ aNPC_FORCE_CALL_REQ_PROC force_call_req_proc;
-    /* 0x128 */ void* _128;
+    /* 0x128 */ aNPC_SET_START_POS_PROC set_start_pos_proc;
 };
 
 typedef struct npc_info_s {
@@ -218,7 +314,51 @@ typedef struct npc_animation_s {
     s8 animation_id;
 } aNPC_ANIMATION_c;
 
-/* TODO: draw data */
+typedef struct {
+    int num_check_frames;
+    int* check_frame_tbl;
+} aNPC_se_data_c;
+
+enum {
+    aNPC_OTHER_SE_TYPE_NONE,
+    aNPC_OTHER_SE_TYPE1,
+
+    aNPC_OTHER_SE_TYPE_NUM
+};
+
+typedef struct {
+    aNPC_se_data_c se_data;
+    u16 se_no;
+} aNPC_other_se_data_c;
+
+#define aNPC_OTHER_SE_NUM 3
+
+typedef struct {
+    aNPC_se_data_c lfoot;
+    aNPC_se_data_c rfoot;
+    int other_se_type;
+    aNPC_other_se_data_c other_se[aNPC_OTHER_SE_NUM];
+} aNPC_se_c;
+
+typedef struct {
+    u8 seq_type;
+    u8 last_seq_type;
+    u8 seq_pattern;
+    u8 seq_counter;
+    u8 pattern;
+    f32 pattern_counter;
+    s8 pattern_stop_idx;
+    u8 loop_counter;
+    u8* fixed_pattern_seq;
+} aNPC_tex_anim_c;
+
+typedef struct {
+    s16 feel_type;
+    u8 max;
+    u8 set_num;
+    u8* set_p;
+} aNPC_feel_effect_c;
+
 typedef struct npc_draw_info_s {
     /* 0x000 */ int main_animation_frame;
     /* 0x004 */ int main_animation_state;
@@ -228,38 +368,50 @@ typedef struct npc_draw_info_s {
     /* 0x014 */ aNPC_ANIMATION_c main_animation;
     /* 0x1D0 */ aNPC_ANIMATION_c sub_animation0;
     /* 0x38C */ aNPC_ANIMATION_c sub_animation1;
-    /* 0x548 */ u8 _548[0x580 - 0x548];
+    /* 0x548 */ aNPC_se_c se;
     /* 0x580 */ int animation_id;
     /* 0x584 */ int texture_bank_idx;
-    /* 0x588 */ u8 _588[0x5B0 - 0x588];
+    /* 0x588 */ aNPC_tex_anim_c tex_anim[aNPC_TEX_ANIM_NUM]; // eye -> mouth
     /* 0x5B0 */ u8 draw_type;
-    /* 0x5B1 */ u8 _5B1;
-    /* 0x5B2 */ u8 _5B2;
-    /* 0x5B3 */ u8 _5B3;
-    /* 0x5B4 */ u8 _5B4;
-    /* 0x5B5 */ u8 _5B5;
-    /* 0x5B6 */ u8 _5B6;
-    /* 0x5B7 */ u8 _5B7;
-    /* 0x5B8 */ u8 _5B8;
-    /* 0x5B9 */ u8 _5B9;
-    /* 0x5BA */ u8 _5BA;
-    /* 0x5BB */ u8 _5BB;
-    /* 0x5BC */ u8 _5BC;
-    /* 0x5BD */ u8 _5BD;
-    /* 0x5BE */ u8 _5BE;
-    /* 0x5BE */ u8 _5BF[0x5D0 - 0x5BF];
-    /* 0x5D0 */ f32 animation_speed;
-    /* 0x5D4 */ u8 _5D4[0x5D8 - 0x5D4];
+    /* 0x5B1 */ u8 cloth_change_step;
+    /* 0x5B2 */ mActor_name_t next_cloth_no;
+    /* 0x5B4 */ mActor_name_t cloth_no;
+    /* 0x5B6 */ u8 next_org_idx;
+    /* 0x5B7 */ u8 org_idx;
+    /* 0x5B8 */ s8 cloth_idx;
+    /* 0x5B9 */ u8 chn_base_type;
+    /* 0x5BA */ u16 _5BA;
+    /* 0x5BC */ u8 umb_state;
+    /* 0x5BD */ u8 sub_anim_type;
+    /* 0x5BE */ u8 anim_speed_type;
+    /* 0x5BF */ u8 loop_flag;
+    /* 0x5C0 */ s16 effect_pattern;
+    /* 0x5C2 */ s16 effect_type;
+    /* 0x5C4 */ aNPC_feel_effect_c* feel_effect;
+    /* 0x5C8 */ f32 feel_effect_counter;
+    /* 0x5CC */ s16 shape_bank;
+    /* 0x5CE */ s16 tex_bank;
+    /* 0x5D0 */ f32 frame_speed;
+    /* 0x5D4 */ f32 frame_sub_speed;
     /* 0x5D8 */ xyz_t shadow_pos;
-    /* 0x5E4 */ u8 _5E4[0x630 - 0x5E4];
+    /* 0x5E4 */ aNPC_draw_tex_data_c draw_tex_data;
 } aNPC_draw_info_c;
 
 typedef void (*aNPC_THINK_PROC)(NPC_ACTOR*, GAME_PLAY*, int);
 
 #define aNPC_THINK_INTERRUPT_FRIENDSHIP (1 << 0)
 #define aNPC_THINK_INTERRUPT_FATIGUE (1 << 1)
-#define aNPC_THINK_INTERRUPT_OBSTANCE (1 << 2)
+#define aNPC_THINK_INTERRUPT_OBSTACLE (1 << 2)
 #define aNPC_THINK_INTERRUPT_ENTRANCE (1 << 3)
+
+enum {
+    aNPC_FORCE_CALL_NONE,
+    aNPC_FORCE_CALL_REQUEST,
+    aNPC_FORCE_CALL_SET,
+    aNPC_FORCE_CALL_START,
+
+    aNPC_FORCE_CALL_NUM
+};
 
 /* sizeof(aNPC_think_info_c) == 0x18 */
 typedef struct npc_think_info_s {
@@ -277,7 +429,7 @@ typedef void (*aNPC_SCHEDULE_PROC)(NPC_ACTOR*, GAME_PLAY*, int);
 
 typedef struct npc_schedule_info_s {
     u8 type;
-    u8 state;
+    u8 step;
     mNPS_schedule_c schedule;
     aNPC_SCHEDULE_PROC schedule_proc;
 } aNPC_schedule_info_c;
@@ -289,6 +441,7 @@ enum {
     aNPC_ACT_OBJ_TARGET_NPC,
     aNPC_ACT_OBJ_4,
     aNPC_ACT_OBJ_5,
+    aNPC_ACT_OBJ_BALL,
     aNPC_ACT_OBJ_INSECT,
     aNPC_ACT_OBJ_FISH,
 
@@ -304,14 +457,16 @@ enum {
     aNPC_ACT_TYPE_NUM
 };
 
+#define aNPC_ACT_NONE 0xFF
+
 enum {
     aNPC_ACT_WAIT,
     aNPC_ACT_WALK,
-    aNPC_ACT_WALK2,
+    aNPC_ACT_RUN,
     aNPC_ACT_TURN,
     aNPC_ACT_TURN2,
     aNPC_ACT_CHASE_INSECT,
-    aNPC_ACT_CHASE_INSECT2,
+    aNPC_ACT_CHASE_GYOEI,
     aNPC_ACT_GREETING,
     aNPC_ACT_TALK,
     aNPC_ACT_INTO_HOUSE,
@@ -324,12 +479,82 @@ enum {
     aNPC_ACT_CLAP,
     aNPC_ACT_TRANS,
     aNPC_ACT_GET,
-    aNPC_ACT_GET2,
+    aNPC_ACT_CHANGE_CLOTH,
     aNPC_ACT_PITFALL,
     aNPC_ACT_REVIVE,
     aNPC_ACT_SPECIAL,
 
     aNPC_ACT_NUM
+};
+
+enum {
+    aNPC_ACTION_PROC_TYPE_INIT,
+    aNPC_ACTION_PROC_TYPE_CHG_DATA,
+    aNPC_ACTION_PROC_TYPE_MAIN,
+
+    aNPC_ACTION_PROC_TYPE_NUM
+};
+
+enum {
+    aNPC_ACTION_TYPE_WAIT,
+    aNPC_ACTION_TYPE_WAIT_KI,
+    aNPC_ACTION_TYPE_WAIT_DO,
+    aNPC_ACTION_TYPE_WAIT_AI,
+    aNPC_ACTION_TYPE_WAIT_NEMU,
+    aNPC_ACTION_TYPE_WALK,
+    aNPC_ACTION_TYPE_WALK_KI,
+    aNPC_ACTION_TYPE_WALK_DO,
+    aNPC_ACTION_TYPE_WALK_AI,
+    aNPC_ACTION_TYPE_RUN,
+    aNPC_ACTION_TYPE_RUN_KI,
+    aNPC_ACTION_TYPE_RUN_DO,
+    aNPC_ACTION_TYPE_RUN_AI,
+    aNPC_ACTION_TYPE_TURN,
+    aNPC_ACTION_TYPE_TURN2,
+    aNPC_ACTION_TYPE_PAL_WAIT,
+    aNPC_ACTION_TYPE_GREETING0,
+    aNPC_ACTION_TYPE_GREETING1,
+    aNPC_ACTION_TYPE_GREETING2,
+    aNPC_ACTION_TYPE_GREETING3,
+    aNPC_ACTION_TYPE_GURATUKU,
+    aNPC_ACTION_TYPE_OTIRU1,
+    aNPC_ACTION_TYPE_OTIRU2,
+    aNPC_ACTION_TYPE_MOGAKU,
+    aNPC_ACTION_TYPE_DERU1,
+    aNPC_ACTION_TYPE_DERU2,
+    aNPC_ACTION_TYPE_TALK_TURN,
+    aNPC_ACTION_TYPE_TALK,
+    aNPC_ACTION_TYPE_OPEN_DOOR,
+    aNPC_ACTION_TYPE_GO_OUT,
+    aNPC_ACTION_TYPE_UMB_OPEN,
+    aNPC_ACTION_TYPE_UMB_CLOSE,
+    aNPC_ACTION_TYPE_TRANSFER_MOVE,
+    aNPC_ACTION_TYPE_TRANSFER,
+    aNPC_ACTION_TYPE_TRANSFER_WAIT,
+    aNPC_ACTION_TYPE_TRANSFER_F,
+    aNPC_ACTION_TYPE_TRANSFER_F_WAIT,
+    aNPC_ACTION_TYPE_SEND_MAIL,
+    aNPC_ACTION_TYPE_GET_MOVE,
+    aNPC_ACTION_TYPE_GET,
+    aNPC_ACTION_TYPE_GET_PULL,
+    aNPC_ACTION_TYPE_GET_PULL_WAIT,
+    aNPC_ACTION_TYPE_GET_PUTAWAY,
+    aNPC_ACTION_TYPE_GET_EAT,
+    aNPC_ACTION_TYPE_GET_CHANGE,
+    aNPC_ACTION_TYPE_GET_RETURN,
+    aNPC_ACTION_TYPE_GET_F,
+    aNPC_ACTION_TYPE_GET_PULL_F,
+    aNPC_ACTION_TYPE_GET_PULL_WAIT_F,
+    aNPC_ACTION_TYPE_GET_PUTAWAY_F,
+    aNPC_ACTION_TYPE_GET_RETURN_F,
+    aNPC_ACTION_TYPE_ESTIMATE_F,
+    aNPC_ACTION_TYPE_ENSOU_E,
+    aNPC_ACTION_TYPE_WAIT_E,
+    aNPC_ACTION_TYPE_GYAFUN1,
+    aNPC_ACTION_TYPE_GYAFUN2,
+    aNPC_ACTION_TYPE_CLAP,
+
+    aNPC_ACTION_TYPE_NUM
 };
 
 typedef void (*aNPC_ACTION_PROC)(NPC_ACTOR*, GAME_PLAY*, int);
@@ -341,9 +566,9 @@ typedef struct npc_action_s {
     u8 idx;
     u8 step;
     u8 type;
-    u8 prev_priority;
+    u8 prev_idx;
     u8 prev_step;
-    s16 act_timer;
+    u16 act_timer;
     u8 feel;
     u8 act_obj;
     u16 act_obj_id;
@@ -384,6 +609,14 @@ typedef struct npc_request_s {
 #define aNPC_COND_DEMO_SKIP_FOOTSTEPS_VFX (1 << 14)   /* 0x4000 */
 #define aNPC_COND_DEMO_SKIP_UZAI_CHECK (1 << 15)      /* 0x8000 */
 
+enum {
+    aNPC_ENTRANCE_TYPE_NONE, // not near any entrance
+    aNPC_ENTRANCE_TYPE_NEARBY, // near a house entrance
+    aNPC_ENTRANCE_TYPE_AT, // at a house entrance
+
+    aNPC_ENTRANCE_TYPE_NUM
+};
+
 typedef struct npc_condition_s {
     u8 hide_flg;
     u8 hide_request;
@@ -413,10 +646,20 @@ typedef struct npc_condition_s {
 
 typedef struct npc_uzai_s {
     int step;
-    u8 counter;
+    u8 tool;
     u8 flag;
     u8 cross;
 } aNPC_uzai_c;
+
+enum {
+    aNPC_ITEM_TYPE_NONE,
+    aNPC_ITEM_TYPE_UMBRELLA,
+    aNPC_ITEM_TYPE_KEITAI,
+    aNPC_ITEM_TYPE_PUTAWAY,
+    aNPC_ITEM_TYPE_LEFT_HAND,
+
+    aNPC_ITEM_TYPE_NUM
+};
 
 typedef struct npc_hand_s {
     u8 item_type;
@@ -430,6 +673,14 @@ typedef struct npc_hand_s {
     ACTOR* prev_item_actor_p;
     xyz_t pos;
 } aNPC_hand_c;
+
+enum {
+    aNPC_HEAD_TARGET_NONE,
+    aNPC_HEAD_TARGET_ACTOR,
+    aNPC_HEAD_TARGET_POS,
+
+    aNPC_HEAD_TARGET_NUM
+};
 
 typedef struct npc_head_s {
     s16 angle_x;
@@ -450,12 +701,31 @@ enum {
     aNPC_FOOT_NUM
 };
 
-typedef struct npc_movement_s {
+typedef struct npc_speed_s {
     f32 max_speed;
     f32 acceleration;
     f32 deceleration;
-    f32 target_pos_x;
-    f32 target_pos_z;
+} aNPC_spd_c;
+
+enum {
+    aNPC_MOVE_RANGE_TYPE_BLOCK,
+    aNPC_MOVE_RANGE_TYPE_CIRCLE,
+
+    aNPC_MOVE_RANGE_TYPE_NUM
+};
+
+enum {
+    aNPC_FRIENDSHIP_NORMAL, // default
+    aNPC_FRIENDSHIP_AVOID, // avoid player (hate player)
+    aNPC_FRIENDSHIP_SEARCH, // search for player (love player)
+
+    aNPC_FRIENDSHIP_NUM
+};
+
+typedef struct npc_movement_s {
+    aNPC_spd_c speed;
+    f32 dst_pos_x;
+    f32 dst_pos_z;
     f32 avoid_pos_x;
     f32 avoid_pos_z;
     s16 move_timer;
@@ -475,16 +745,48 @@ typedef struct npc_movement_s {
     u8 demo_move_timer;
 } aNPC_movement_c;
 
+enum {
+    aNPC_BG_CHECK_TYPE_NONE, // no collision
+    aNPC_BG_CHECK_TYPE_ONLY_GROUND, // only ground collision
+    aNPC_BG_CHECK_TYPE_NORMAL, // standard
+    aNPC_BG_CHECK_TYPE_RANGE, // standard plus range
+
+    aNPC_BG_CHECK_TYPE_NUM
+};
+
 typedef struct npc_collision_s {
     ClObjPipe_c pipe;
     f32 BGcheck_radius;
     u8 collision_flag;
-    u8 priority;
+    u8 check_kind;
     u8 turn_flag;
     u16 _24;
     s16 turn_angle;
     f32 bg_rev_add;
 } aNPC_collision_c;
+
+enum {
+    aNPC_TALK_TYPE_NONE,
+    aNPC_TALK_TYPE_START,
+    aNPC_TALK_TYPE_CONTINUE,
+
+    aNPC_TALK_TYPE_NUM
+};
+
+enum {
+    aNPC_TALK_TURN_NORMAL,
+    aNPC_TALK_TURN_HEAD,
+    aNPC_TALK_TURN_NONE,
+
+    aNPC_TALK_TURN_NUM
+};
+
+enum {
+    aNPC_MANPU_CODE_RESET_KEKE = 0xFD,
+    aNPC_MANPU_CODE_RESET_SIT = 0xFE,
+    aNPC_MANPU_CODE_RESET = 0xFF,
+    aNPC_MANPU_CODE_NONE = 0,
+};
 
 typedef struct npc_actor_talk_info_s {
     aNPC_TALK_REQUEST_PROC talk_request_proc;
@@ -525,6 +827,8 @@ enum {
     aNPC_SCHEDULE_TYPE_NUM
 };
 
+#define aNPC_SCHEDULE_NONE 0xFF
+
 enum {
     aNPC_SCHEDULE_PROC_INIT,
     aNPC_SCHEDULE_PROC_MAIN,
@@ -561,26 +865,40 @@ struct npc_actor_s {
     int _990;
 };
 
-typedef struct npc_control_cloth_s {
-    u8 dma_flag;
-    u8 init_flag;
-    s16 _02;
-    mActor_name_t cloth_item;
-    u8 in_use_count;
-    Object_Bank_c texture_bank;
-    Object_Bank_c palette_bank;
-} aNPC_cloth_c;
-
-typedef struct npc_control_actor_s {
-    ACTOR* actor_class;
-    aNPC_cloth_c cloth[10];
-    u8 _8F4[0x9D8 - 0x8F4]; // TODO
-} NPC_CONTROL_ACTOR;
-
 typedef struct npc_destruct_table_proc {
     aNPC_SUB_PROC unk0;
     aNPC_SUB_PROC unk4;
 } NPC_DT_PROCS;
+
+typedef struct {
+    aNPC_se_data_c* lfoot_data;
+    aNPC_se_data_c* rfoot_data;
+    int other_se_type;
+    aNPC_other_se_data_c* other_se_data;
+} aNPC_se_data_table_c;
+
+typedef struct {
+    cKF_Animation_R_c anim;
+    f32 start_frame;
+    f32 end_frame;
+    int mode;
+    f32 morph_counter;
+    u8* eye_seq_p;
+    s16 eye_seq_type;
+    s16 eye_seq_stop_frame;
+    u8* mouth_seq_p;
+    s16 mouth_seq_type;
+    s16 mouth_seq_stop_frame;
+    s16 feel_effect_set_frame;
+    s16 feel_effect_type;
+    aNPC_feel_effect_c* feel_effect;
+    aNPC_se_data_table_c* se_data_table;
+} aNPC_Animation_c;
+
+typedef struct {
+    aNPC_Animation_c* anim_p;
+    int anim_idx;
+} aNPC_anim_info_c;
 
 extern ACTOR_PROFILE Npc_Profile;
 

@@ -1,0 +1,680 @@
+static int aNPC_get_feel_info(NPC_ACTOR* nactorx) {
+    int ret = mNpc_FEEL_NORMAL;
+
+    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_FEEL_CHECK) == 0) {
+        Animal_c* animal = nactorx->npc_info.animal;
+
+        if (animal != NULL) {
+            ret = animal->mood;
+        }
+    }
+
+    return ret;
+}
+
+static void aNPC_clear_all_morph_counter(NPC_ACTOR* nactorx) {
+    nactorx->draw.main_animation.keyframe.morph_counter = 0.0f;
+    nactorx->draw.sub_animation0.keyframe.morph_counter = 0.0f;
+    nactorx->draw.sub_animation1.keyframe.morph_counter = 0.0f;
+}
+
+static int aNPC_check_talk_anime(NPC_ACTOR* nactorx, int seqNo) {
+    int feel;
+
+    switch (seqNo) {
+        case aNPC_ANIM_TALK_TURN1:
+
+            if (nactorx->talk_info.default_turn_animation != -1) {
+                seqNo = nactorx->talk_info.default_turn_animation;
+            } else {
+                // clang-format off
+                static int talk_def_anime[mNpc_FEEL_ALL_NUM] = {
+                    aNPC_ANIM_WALK1,
+                    aNPC_ANIM_WALK1,
+                    aNPC_ANIM_WALK_DO1,
+                    aNPC_ANIM_WALK_AI1,
+                    aNPC_ANIM_WALK1,
+                    aNPC_ANIM_WALK1,
+                    aNPC_ANIM_WALK_DO1,
+                    aNPC_ANIM_WALK_AI1,
+                    aNPC_ANIM_WALK_DO1,
+                };
+                // clang-format on
+
+                feel = nactorx->talk_info.feel;
+                if (feel == 0xFF) {
+                    feel = aNPC_get_feel_info(nactorx);
+                }
+
+                seqNo = talk_def_anime[feel];
+            }
+            break;
+        case aNPC_ANIM_TALK1:
+            if (nactorx->talk_info.default_animation != -1) {
+                seqNo = nactorx->talk_info.default_animation;
+            } else {
+                // clang-format off
+                static int talk_def_anime[mNpc_FEEL_ALL_NUM] = {
+                    aNPC_ANIM_WAIT1,
+                    aNPC_ANIM_WAIT1,
+                    aNPC_ANIM_WAIT_DO1,
+                    aNPC_ANIM_WAIT_AI1,
+                    aNPC_ANIM_WAIT_NEMU1,
+                    aNPC_ANIM_WAIT1,
+                    aNPC_ANIM_WAIT_DO1,
+                    aNPC_ANIM_WAIT_AI1,
+                    aNPC_ANIM_WAIT_DO1,
+                };
+                // clang-format on
+
+                feel = nactorx->talk_info.feel;
+                if (feel == 0xFF) {
+                    feel = aNPC_get_feel_info(nactorx);
+                }
+
+                seqNo = talk_def_anime[feel];
+            }
+            break;
+    }
+
+    return seqNo;
+}
+
+static void aNPC_set_anime_se_info(NPC_ACTOR* nactorx, aNPC_Animation_c* anim) {
+    if (anim->se_data_table != NULL) {
+        aNPC_se_data_table_c* data_table_p = anim->se_data_table;
+        aNPC_se_data_c* data_p;
+        aNPC_other_se_data_c* other_data_p;
+        aNPC_other_se_data_c* dst_data_p;
+        int n;
+        int i;
+
+        data_p = data_table_p->lfoot_data;
+        if (data_p != NULL) {
+            nactorx->draw.se.lfoot.num_check_frames = data_p->num_check_frames;
+            nactorx->draw.se.lfoot.check_frame_tbl = data_p->check_frame_tbl;
+        } else {
+            nactorx->draw.se.lfoot.num_check_frames = 0;
+        }
+
+        data_p = data_table_p->rfoot_data;
+        if (data_p != NULL) {
+            nactorx->draw.se.rfoot.num_check_frames = data_p->num_check_frames;
+            nactorx->draw.se.rfoot.check_frame_tbl = data_p->check_frame_tbl;
+        } else {
+            nactorx->draw.se.rfoot.num_check_frames = 0;
+        }
+
+        n = data_table_p->other_se_type;
+        if (n != aNPC_OTHER_SE_TYPE_NONE) {
+            nactorx->draw.se.other_se_type = n;
+            other_data_p = data_table_p->other_se_data;
+            dst_data_p = nactorx->draw.se.other_se;
+
+            while (n != 0) {
+                dst_data_p->se_data.num_check_frames = other_data_p->se_data.num_check_frames;
+                dst_data_p->se_data.check_frame_tbl = other_data_p->se_data.check_frame_tbl;
+                dst_data_p->se_no = other_data_p->se_no;
+                other_data_p++;
+                dst_data_p++;
+                n--;
+            }
+        } else {
+            aNPC_other_se_data_c* dst_data_p = nactorx->draw.se.other_se;
+            int i;
+
+            for (i = 0; i < aNPC_OTHER_SE_NUM; i++) {
+                dst_data_p->se_data.num_check_frames = 0;
+                dst_data_p++;
+            }
+        }
+    } else {
+        bzero(&nactorx->draw.se, sizeof(nactorx->draw.se));
+    }
+}
+
+static void aNPC_Animation_init(ACTOR* actorx, int seqNo, int talk_flag) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    aNPC_anim_info_c* info_main;
+    aNPC_anim_info_c* info_sub0;
+    aNPC_anim_info_c* info_sub1;
+    aNPC_Animation_c* main_anim;
+    aNPC_Animation_c* anim_sub0;
+    aNPC_Animation_c* anim_sub1;
+    cKF_SkeletonInfo_R_c* kf_main;
+    cKF_SkeletonInfo_R_c* kf_sub0;
+    cKF_SkeletonInfo_R_c* kf_sub1;
+    f32 start;
+    f32 tmp;
+
+    seqNo = aNPC_check_talk_anime(nactorx, seqNo);
+    aNPC_set_frame_sub_speed(nactorx, seqNo);
+    info_main = &aNPC_animeTable[seqNo];
+
+    if (nactorx->draw.sub_anim_type == aNPC_SUB_ANIM_NONE) {
+        info_sub0 = info_main;
+    } else {
+        info_sub0 = &aNPC_animeTable[aNPC_sub_animeSeqNoTable[nactorx->draw.sub_anim_type]];
+    }
+
+    if (nactorx->talk_info.type == 0) {
+        info_sub1 = info_main;
+    } else {
+        switch (nactorx->draw.shape_bank) {
+            case ACTOR_OBJ_BANK_286:
+            case ACTOR_OBJ_BANK_191:
+            case ACTOR_OBJ_BANK_148:
+            case ACTOR_OBJ_BANK_107:
+            case ACTOR_OBJ_BANK_253:
+            case ACTOR_OBJ_BANK_330:
+            case ACTOR_OBJ_BANK_291:
+            case ACTOR_OBJ_BANK_401:
+                info_sub1 = &aNPC_animeTable[aNPC_ANIM_KUTIPAKU2];
+                break;
+            default:
+                info_sub1 = &aNPC_animeTable[aNPC_ANIM_KUTIPAKU1];
+                break;
+        }
+    }
+
+    main_anim = info_main->anim_p;
+    kf_main = &nactorx->draw.main_animation.keyframe;
+
+    cKF_SkeletonInfo_R_init(
+        kf_main, kf_main->skeleton, &main_anim->anim, main_anim->start_frame, main_anim->end_frame,
+        (seqNo == nactorx->draw.animation_id) ? nactorx->draw.main_animation.keyframe.frame_control.current_frame
+                                              : main_anim->start_frame,
+        nactorx->draw.frame_speed * nactorx->draw.frame_sub_speed, main_anim->morph_counter, main_anim->mode, NULL);
+
+    if (main_anim->eye_seq_p != NULL) {
+        nactorx->draw.tex_anim[aNPC_TEX_ANIM_EYE].fixed_pattern_seq = main_anim->eye_seq_p;
+    } else {
+        nactorx->draw.tex_anim[aNPC_TEX_ANIM_EYE].fixed_pattern_seq = NULL;
+    }
+    nactorx->draw.tex_anim[aNPC_TEX_ANIM_EYE].seq_type = main_anim->eye_seq_type;
+    nactorx->draw.tex_anim[aNPC_TEX_ANIM_EYE].pattern_stop_idx = main_anim->eye_seq_stop_frame;
+
+    if (main_anim->mouth_seq_p != NULL) {
+        nactorx->draw.tex_anim[aNPC_TEX_ANIM_MOUTH].fixed_pattern_seq = main_anim->mouth_seq_p;
+    } else {
+        nactorx->draw.tex_anim[aNPC_TEX_ANIM_MOUTH].fixed_pattern_seq = NULL;
+    }
+    nactorx->draw.tex_anim[aNPC_TEX_ANIM_MOUTH].seq_type = main_anim->mouth_seq_type;
+    nactorx->draw.tex_anim[aNPC_TEX_ANIM_MOUTH].pattern_stop_idx = main_anim->mouth_seq_stop_frame;
+
+    if (nactorx->draw.effect_type != -1 && nactorx->draw.effect_type != main_anim->feel_effect_type) {
+        eEC_CLIP->effect_kill_proc(nactorx->draw.effect_type, actorx->npc_id);
+    }
+
+    nactorx->draw.effect_type = main_anim->feel_effect_type;
+    nactorx->draw.effect_pattern = main_anim->feel_effect_set_frame;
+    if (main_anim->feel_effect != NULL) {
+        nactorx->draw.feel_effect = main_anim->feel_effect;
+    } else {
+        nactorx->draw.feel_effect = NULL;
+    }
+
+    anim_sub0 = info_sub0->anim_p;
+    kf_sub0 = &nactorx->draw.sub_animation0.keyframe;
+    cKF_SkeletonInfo_R_init(kf_sub0, kf_sub0->skeleton, &anim_sub0->anim, anim_sub0->start_frame, anim_sub0->end_frame,
+                            anim_sub0->start_frame, nactorx->draw.frame_speed, anim_sub0->morph_counter,
+                            anim_sub0->mode, NULL);
+
+    anim_sub1 = info_sub1->anim_p;
+    kf_sub1 = &nactorx->draw.sub_animation1.keyframe;
+    cKF_SkeletonInfo_R_init(kf_sub1, kf_sub1->skeleton, &anim_sub1->anim, anim_sub1->start_frame, anim_sub1->end_frame,
+                            anim_sub1->start_frame, nactorx->draw.frame_speed, anim_sub1->morph_counter,
+                            anim_sub1->mode, NULL);
+
+    {
+        f32 speed = 0.5f;
+
+        if (main_anim->mouth_seq_type == 0 && main_anim->mouth_seq_p == NULL && talk_flag != TRUE) {
+            nactorx->draw.sub_animation1.keyframe.frame_control.current_frame = 1.0f;
+            speed = 0.0f;
+        }
+
+        nactorx->draw.sub_animation1.keyframe.frame_control.speed = speed;
+    }
+
+    nactorx->draw.animation_id = seqNo;
+    nactorx->draw.main_animation_state = cKF_STATE_NONE;
+    nactorx->draw.sub_animation0_state = cKF_STATE_NONE;
+    nactorx->draw.sub_animation1_state = cKF_STATE_NONE;
+    nactorx->draw.main_animation_frame = (int)nactorx->draw.main_animation.keyframe.frame_control.current_frame;
+    nactorx->draw.main_animation_frame_changed = TRUE;
+    aNPC_set_anime_se_info(nactorx, main_anim);
+}
+
+static int aNPC_check_anime_timing(NPC_ACTOR* nactorx, aNPC_se_data_c* se) {
+    int ret = FALSE;
+    cKF_FrameControl_c* fc_p = &nactorx->draw.main_animation.keyframe.frame_control;
+
+    if (nactorx->draw.main_animation.keyframe.frame_control.speed != 0.0f) {
+        int* pattern_p = se->check_frame_tbl;
+        int n;
+
+        for (n = se->num_check_frames; n != 0; n--) {
+            if (cKF_FrameControl_passCheck_now(fc_p, (f32)*pattern_p) == TRUE) {
+                ret = TRUE;
+                break;
+            }
+
+            pattern_p++;
+        }
+    }
+
+    return ret;
+}
+
+static void aNPC_anime_proc_foot(NPC_ACTOR* nactorx, GAME* game, xyz_t* pos_p, aNPC_se_data_c* se) {
+    if (aNPC_check_anime_timing(nactorx, se) == TRUE) {
+        ACTOR* actorx = (ACTOR*)nactorx;
+
+        switch (Save_Get(scene_no)) {
+            case SCENE_START_DEMO:
+            case SCENE_START_DEMO2:
+            case SCENE_START_DEMO3:
+                break;
+            default:
+                if (actorx->drawn) {
+                    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_BGCHECK) == 0 &&
+                        (nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_FOOTSTEPS_VFX) == 0) {
+                        s16 angleY = actorx->shape_info.rotation.y;
+                        mActor_name_t name_id = actorx->npc_id;
+                        s16 bg_attr = actorx->bg_collision_check.result.unit_attribute;
+
+                        eEC_CLIP->effect_make_proc(eEC_EFFECT_WALK_ASIMOTO, *pos_p, 1, angleY, game, name_id, bg_attr,
+                                                   0);
+                        eEC_CLIP->effect_make_proc(eEC_EFFECT_FOOTPRINT, *pos_p, 1, angleY, game, name_id, bg_attr, 0);
+                    }
+                }
+                break;
+        }
+
+        if (nactorx->draw.animation_id == aNPC_ANIM_KOKERU1) {
+            aNPC_TumbleSe(pos_p);
+        } else {
+            aNPC_WalkSe(pos_p);
+        }
+    }
+}
+
+static void aNPC_anime_proc_other(NPC_ACTOR* nactorx, aNPC_other_se_data_c* other_se_p) {
+    if (aNPC_check_anime_timing(nactorx, &other_se_p->se_data) == TRUE) {
+        aNPC_OngenTrgStart(nactorx, other_se_p->se_no);
+    }
+}
+
+static void aNPC_anime_se_proc(NPC_ACTOR* nactorx, GAME* game) {
+    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_FOOTSTEPS) == 0) {
+        aNPC_anime_proc_foot(nactorx, game, &nactorx->feet[0], &nactorx->draw.se.lfoot);
+        aNPC_anime_proc_foot(nactorx, game, &nactorx->feet[1], &nactorx->draw.se.rfoot);
+    }
+
+    {
+        aNPC_other_se_data_c* other_se_p = nactorx->draw.se.other_se;
+        int type = nactorx->draw.se.other_se_type;
+
+        while (type != 0) {
+            aNPC_anime_proc_other(nactorx, other_se_p);
+            other_se_p++;
+            type--;
+        }
+    }
+}
+
+static void aNPC_anime_proc(NPC_ACTOR* nactorx, GAME* game) {
+    cKF_FrameControl_c* fc_main = &nactorx->draw.main_animation.keyframe.frame_control;
+    int last_cur = (int)fc_main->current_frame;
+    s8* part_tbl = aNPC_part_tbl[nactorx->draw.sub_anim_type > aNPC_SUB_ANIM_NONE][nactorx->talk_info.type == 1];
+
+    // clang-format off
+    cKF_SkeletonInfo_R_T_combine_play(
+        &nactorx->draw.main_animation_state, &nactorx->draw.sub_animation0_state, &nactorx->draw.sub_animation1_state,
+        &nactorx->draw.main_animation.keyframe, &nactorx->draw.sub_animation0.keyframe, &nactorx->draw.sub_animation1.keyframe,
+        part_tbl
+    );
+    // clang-format on
+
+    nactorx->draw.main_animation_frame_changed = last_cur != (int)fc_main->current_frame;
+    nactorx->draw.main_animation_frame = (int)fc_main->current_frame;
+    aNPC_anime_se_proc(nactorx, game);
+}
+
+static int aNPC_check_kutipaku(NPC_ACTOR* nactorx) {
+    ACTOR* actorx = (ACTOR*)nactorx;
+    int ret = FALSE;
+
+    if (((mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE || mDemo_Check(mDemo_TYPE_SPEECH, actorx) == TRUE ||
+          mDemo_Check(mDemo_TYPE_TALK, actorx) == TRUE) &&
+         mMsg_Check_NowUtter() == TRUE) ||
+        nactorx->condition_info.greeting_flag) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+typedef struct {
+    u8 pattern;
+    u8 pattern_counter;
+} aNPC_anm_data_c;
+
+static aNPC_anm_data_c* aNPC_getP_anmData(int type, int pat, int counter, int part_type) {
+    static aNPC_anm_data_c eye_normal_blink[4] = {
+        { 0x00, 0x01 },
+        { 0x01, 0x01 },
+        { 0x02, 0x03 },
+        { 0x01, 0x01 },
+    };
+
+    static aNPC_anm_data_c eye_angry_blink[4] = {
+        { 0x03, 0x01 },
+        { 0x01, 0x01 },
+        { 0x02, 0x03 },
+        { 0x01, 0x01 },
+    };
+
+    static aNPC_anm_data_c eye_sadly_blink[4] = {
+        { 0x04, 0x01 },
+        { 0x01, 0x01 },
+        { 0x02, 0x03 },
+        { 0x01, 0x01 },
+    };
+
+    static aNPC_anm_data_c eye_laugh_blink[4] = {
+        { 0x05, 0x01 },
+        { 0x01, 0x01 },
+        { 0x02, 0x03 },
+        { 0x01, 0x01 },
+    };
+
+    static aNPC_anm_data_c eye_surprise_blink[4] = {
+        { 0x06, 0x01 },
+        { 0x01, 0x01 },
+        { 0x02, 0x03 },
+        { 0x01, 0x01 },
+    };
+
+    static aNPC_anm_data_c eye_cry_blink[4] = {
+        { 0x07, 0x01 },
+        { 0x01, 0x01 },
+        { 0x02, 0x03 },
+        { 0x01, 0x01 },
+    };
+
+    static aNPC_anm_data_c* eye_anm_table_type[7] = {
+        NULL, eye_normal_blink, eye_angry_blink, eye_sadly_blink, eye_laugh_blink, eye_surprise_blink, eye_cry_blink,
+    };
+
+    static aNPC_anm_data_c** eye_anm_table[2] = {
+        eye_anm_table_type,
+        eye_anm_table_type,
+    };
+
+    static aNPC_anm_data_c mouth_normal_move_typeA[6] = {
+        { 0x00, 0x01 }, { 0x01, 0x01 }, { 0x02, 0x01 }, { 0x01, 0x01 }, { 0x00, 0x01 }, { 0x00, 0x00 },
+    };
+
+    static aNPC_anm_data_c mouth_normal_move_typeB[4] = {
+        { 0x00, 0x01 },
+        { 0x01, 0x01 },
+        { 0x00, 0x01 },
+        { 0x00, 0x00 },
+    };
+
+    static aNPC_anm_data_c mouth_normal_move_typeC[8] = {
+        { 0x00, 0x01 }, { 0x01, 0x01 }, { 0x02, 0x01 }, { 0x01, 0x01 },
+        { 0x02, 0x01 }, { 0x01, 0x01 }, { 0x00, 0x01 }, { 0x00, 0x00 },
+    };
+
+    static aNPC_anm_data_c mouth_angry_move_typeA[6] = {
+        { 0x03, 0x01 }, { 0x04, 0x01 }, { 0x05, 0x01 }, { 0x04, 0x01 }, { 0x03, 0x01 }, { 0x00, 0x00 },
+    };
+
+    static aNPC_anm_data_c mouth_angry_move_typeB[4] = {
+        { 0x03, 0x01 },
+        { 0x04, 0x01 },
+        { 0x03, 0x01 },
+        { 0x00, 0x00 },
+    };
+
+    static aNPC_anm_data_c mouth_angry_move_typeC[8] = {
+        { 0x03, 0x01 }, { 0x04, 0x01 }, { 0x05, 0x01 }, { 0x04, 0x01 },
+        { 0x05, 0x01 }, { 0x04, 0x01 }, { 0x03, 0x01 }, { 0x00, 0x00 },
+    };
+
+    static aNPC_anm_data_c* mouth_anm_table_typeA[3] = {
+        NULL,
+        mouth_normal_move_typeA,
+        mouth_angry_move_typeA,
+    };
+
+    static aNPC_anm_data_c* mouth_anm_table_typeB[3] = {
+        NULL,
+        mouth_normal_move_typeB,
+        mouth_angry_move_typeB,
+    };
+
+    static aNPC_anm_data_c* mouth_anm_table_typeC[3] = {
+        NULL,
+        mouth_normal_move_typeC,
+        mouth_angry_move_typeC,
+    };
+
+    static aNPC_anm_data_c** mouth_anm_table[3] = {
+        mouth_anm_table_typeA,
+        mouth_anm_table_typeB,
+        mouth_anm_table_typeC,
+    };
+
+    static aNPC_anm_data_c*** anm_table[2] = {
+        eye_anm_table,
+        mouth_anm_table,
+    };
+
+    return &anm_table[part_type][pat][type][counter];
+}
+
+static u8 aNPC_get_seq_cnt(int type, int pat, int part_type) {
+    static u8 eye_seq_cnt_table_type[7] = {
+        0x00, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
+    };
+
+    static u8* eye_seq_cnt_table[2] = {
+        eye_seq_cnt_table_type,
+        eye_seq_cnt_table_type,
+    };
+
+    static u8 mouth_seq_cnt_table_typeA[3] = {
+        0x00,
+        0x04,
+        0x04,
+    };
+
+    static u8 mouth_seq_cnt_table_typeB[3] = {
+        0x00,
+        0x02,
+        0x02,
+    };
+
+    static u8 mouth_seq_cnt_table_typeC[3] = {
+        0x00,
+        0x06,
+        0x06,
+    };
+
+    static u8* mouth_seq_cnt_table[3] = {
+        mouth_seq_cnt_table_typeA,
+        mouth_seq_cnt_table_typeB,
+        mouth_seq_cnt_table_typeC,
+    };
+
+    static u8** seq_cnt_table[2] = {
+        eye_seq_cnt_table,
+        mouth_seq_cnt_table,
+    };
+
+    return seq_cnt_table[part_type][pat][type];
+}
+
+static void aNPC_set_tex_anime(aNPC_tex_anim_c* tex_anime, u8 type, int part_type, int wait_time, u8 loop_count) {
+    static f32 rnd_base[] = { 2.0f, 3.0f };
+    u8 pat = RANDOM_F(rnd_base[part_type]);
+    aNPC_anm_data_c* data_p = aNPC_getP_anmData(type, pat, 0, part_type);
+
+    tex_anime->seq_type = type;
+    tex_anime->seq_pattern = pat;
+    tex_anime->seq_counter = aNPC_get_seq_cnt(type, pat, part_type);
+    tex_anime->pattern = data_p->pattern;
+    if (wait_time == -1) {
+        tex_anime->pattern_counter = data_p->pattern_counter;
+    } else {
+        tex_anime->pattern_counter = wait_time;
+    }
+    tex_anime->loop_counter = loop_count;
+}
+
+static void aNPC_tex_anm_ctrl_stop_seq(aNPC_tex_anim_c* tex_anim) {
+    tex_anim->pattern = tex_anim->pattern_stop_idx;
+    tex_anim->pattern_counter = 0;
+    tex_anim->seq_counter = 0;
+    tex_anim->loop_counter = 1;
+}
+
+static void aNPC_tex_anm_ctrl_set_pat(aNPC_tex_anim_c* tex_anim, int part_type) {
+    aNPC_anm_data_c* data_p;
+
+    tex_anim->seq_counter--;
+    data_p = aNPC_getP_anmData(tex_anim->seq_type, tex_anim->seq_pattern, tex_anim->seq_counter, part_type);
+    tex_anim->pattern = data_p->pattern;
+    tex_anim->pattern_counter = data_p->pattern_counter;
+}
+
+static void aNPC_tex_anm_ctrl_rnd_seq(aNPC_tex_anim_c* tex_anim, int part_type) {
+    if (tex_anim->last_seq_type != tex_anim->seq_type) {
+        aNPC_set_tex_anime(tex_anim, tex_anim->seq_type, part_type, -1, 1 + RANDOM_F(3));
+    } else if (tex_anim->pattern_counter <= 0) {
+        if (tex_anim->seq_counter == 0) {
+            tex_anim->loop_counter--;
+            if (tex_anim->loop_counter == 0) {
+                aNPC_set_tex_anime(tex_anim, tex_anim->seq_type, part_type, 32 + RANDOM(16), 1 + RANDOM_F(3));
+            } else {
+                aNPC_set_tex_anime(tex_anim, tex_anim->seq_type, part_type, -1, tex_anim->loop_counter);
+            }
+        } else {
+            aNPC_tex_anm_ctrl_set_pat(tex_anim, part_type);
+        }
+    } else {
+        tex_anim->pattern_counter -= 0.5f;
+    }
+}
+
+static void aNPC_tex_anm_ctrl_talk_seq(aNPC_tex_anim_c* tex_anim, int part_type) {
+    if (tex_anim->last_seq_type != tex_anim->seq_type) {
+        aNPC_set_tex_anime(tex_anim, tex_anim->seq_type, part_type, 0, 1 + RANDOM_F(3));
+    } else if (tex_anim->pattern_counter <= 0) {
+        if (tex_anim->seq_counter == 0) {
+            tex_anim->loop_counter--;
+            if (tex_anim->loop_counter == 0) {
+                aNPC_set_tex_anime(tex_anim, tex_anim->seq_type, part_type, 0, 1 + RANDOM_F(3));
+            } else {
+                aNPC_set_tex_anime(tex_anim, tex_anim->seq_type, part_type, 0, tex_anim->loop_counter);
+            }
+        } else {
+            aNPC_tex_anm_ctrl_set_pat(tex_anim, part_type);
+        }
+    } else {
+        tex_anim->pattern_counter -= 0.25f;
+    }
+}
+
+static void aNPC_tex_anm_ctrl_fix_seq(NPC_ACTOR* nactorx, aNPC_tex_anim_c* tex_anim) {
+    tex_anim->pattern = tex_anim->fixed_pattern_seq[nactorx->draw.main_animation_frame - 1];
+}
+
+static void aNPC_tex_anm_ctrl(NPC_ACTOR* nactorx) {
+    u8 seq_type_bak;
+    aNPC_tex_anim_c* tex_anim = nactorx->draw.tex_anim;
+    int i;
+
+    for (i = 0; i < aNPC_TEX_ANIM_NUM; i++) {
+        seq_type_bak = tex_anim->seq_type;
+
+        if (tex_anim->fixed_pattern_seq == NULL) {
+            if (i == aNPC_TEX_ANIM_MOUTH) {
+                if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_KUTIPAKU) == 0) {
+                    if (aNPC_check_kutipaku(nactorx) == TRUE) {
+                        if (tex_anim->seq_type == 0) {
+                            tex_anim->seq_type = 1;
+                        }
+
+                        aNPC_tex_anm_ctrl_talk_seq(tex_anim, i);
+                    } else if (tex_anim->pattern_stop_idx != -1) {
+                        tex_anim->pattern = tex_anim->pattern_stop_idx;
+                    } else {
+                        tex_anim->pattern = 0;
+                    }
+                }
+            } else {
+                if (seq_type_bak == 0) {
+                    aNPC_tex_anm_ctrl_stop_seq(tex_anim);
+                } else {
+                    aNPC_tex_anm_ctrl_rnd_seq(tex_anim, i);
+                }
+            }
+        } else {
+            aNPC_tex_anm_ctrl_fix_seq(nactorx, tex_anim);
+        }
+
+        tex_anim->last_seq_type = tex_anim->seq_type;
+        tex_anim->seq_type = seq_type_bak;
+        tex_anim++;
+    }
+
+    if (nactorx->talk_info.type == 1) {
+        int timer = nactorx->talk_info.kutipaku_timer;
+
+        if (aNPC_check_kutipaku(nactorx) == TRUE &&
+            (nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_KUTIPAKU) == 0) {
+            nactorx->draw.sub_animation1.keyframe.frame_control.speed = 0.5f;
+            timer = 8;
+        } else if (timer > 0) {
+            nactorx->draw.sub_animation1.keyframe.frame_control.speed = 0.5f;
+            timer--;
+        } else {
+            nactorx->draw.sub_animation1.keyframe.frame_control.current_frame = 1.0f;
+            nactorx->draw.sub_animation1.keyframe.frame_control.speed = 0.0f;
+            timer = 0;
+        }
+
+        nactorx->talk_info.kutipaku_timer = timer;
+    }
+}
+
+static void aNPC_set_frame_sub_speed(NPC_ACTOR* nactorx, int seqNo) {
+    f32 speed;
+
+    switch (seqNo) {
+        case aNPC_ANIM_GET_CHANGE1:
+        case aNPC_ANIM_DERU1:
+        case aNPC_ANIM_DERU2:
+            speed = 2.0f;
+            break;
+        default:
+            speed = 1.0f;
+            break;
+    }
+
+    nactorx->draw.frame_sub_speed = speed;
+}
+
+static void aNPC_set_anime_speed(NPC_ACTOR* nactorx) {
+    if (nactorx->draw.anim_speed_type == aNPC_ANIM_SPEED_TYPE_LOCKED) {
+        nactorx->draw.frame_speed = 0.5f;
+    }
+
+    nactorx->draw.main_animation.keyframe.frame_control.speed =
+        nactorx->draw.frame_speed * nactorx->draw.frame_sub_speed;
+}

@@ -1,0 +1,1002 @@
+static int aNPC_actor_birth_check(ACTOR* actorx, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Actor_info* info = &play->actor_info;
+    Actor_list* list = &info->list[actorx->part];
+    ACTOR* actor_p = list->actor;
+    mActor_name_t npc_name = actorx->npc_id;
+    int n;
+    int ret = TRUE;
+
+    for (n = list->num_actors; n != 0; n--) {
+        if (actor_p != actorx && actor_p->npc_id == npc_name &&
+            (actor_p->mv_proc != NULL || actor_p->dw_proc != NULL)) {
+            Actor_delete(actorx);
+            actorx->sv_proc = NULL;
+            actorx->dt_proc = NULL;
+            mNpc_RenewalSetNpc(actorx);
+            ret = FALSE;
+            break;
+        }
+
+        actor_p = actor_p->next_actor;
+    }
+
+    if (ret == TRUE) {
+        mNpc_EventNpc_c* event_npc = Common_Get(event_npc);
+        int i;
+
+        for (i = 0; i < mNpc_EVENT_NPC_NUM; i++) {
+            if (event_npc->in_use == TRUE && event_npc->npc_id == npc_name) {
+                Actor_delete(actorx);
+                actorx->sv_proc = NULL;
+                actorx->dt_proc = NULL;
+                mNpc_RenewalSetNpc(actorx);
+                ret = FALSE;
+                break;
+            }
+
+            event_npc++;
+        }
+    }
+
+    return ret;
+}
+
+static void aNPC_rebuild_dma(void) {
+    aNPC_rebuild_cloth_data();
+}
+
+static void aNPC_set_attention_request_proc(u8 type, ACTOR* target_p, xyz_t* pos_p) {
+    aNPC_attention_c* attention_request = &CLIP(npc_clip)->attention_request;
+
+    attention_request->type = type;
+    attention_request->actor = target_p;
+    if (pos_p != NULL) {
+        xyz_t_move(&attention_request->pos, pos_p);
+    }
+}
+
+static int aNPC_get_draw_data_idx(mActor_name_t npc_name) {
+    int ret = -1;
+
+    switch (ITEM_NAME_GET_TYPE(npc_name)) {
+        case NAME_TYPE_SPNPC: {
+            mNpc_EventNpc_c* event_npc = mNpc_GetSameEventNpc(npc_name);
+
+            if (event_npc != NULL) {
+                if (ITEM_NAME_GET_TYPE(event_npc->texture_id) == NAME_TYPE_NPC) {
+                    ret = event_npc->texture_id - NPC_START;
+                } else {
+                    ret = ALL_NPC_NUM + event_npc->texture_id - SP_NPC_START;
+                }
+            } else {
+                mNpc_MaskNpc_c* mask_npc = mNpc_GetSameMaskNpc(npc_name);
+
+                if (mask_npc != NULL) {
+                    if (ITEM_NAME_GET_TYPE(mask_npc->npc_id) == NAME_TYPE_NPC) {
+                        ret = mask_npc->npc_id - NPC_START;
+                    } else {
+                        ret = ALL_NPC_NUM + mask_npc->npc_id - SP_NPC_START;
+                    }
+                } else {
+                    ret = ALL_NPC_NUM + npc_name - SP_NPC_START;
+                }
+            }
+        } break;
+
+        case NAME_TYPE_NPC:
+            ret = npc_name - NPC_START;
+            break;
+    }
+
+    return ret;
+}
+
+static int aNPC_check_dma_cloth_data(int idx) {
+    int ret = FALSE;
+
+    if (idx < ANIMAL_NUM_MAX) {
+        Animal_c* animal;
+
+        if (idx == -ANIMAL_NUM_MAX) {
+            animal = &Save_Get(island).animal;
+        } else {
+            animal = Save_GetPointer(animals[idx]);
+        }
+
+        if (!aNPC_dma_regist_check_cloth_data(animal->cloth)) {
+            aNPC_dma_regist_cloth_data(animal->cloth);
+        } else {
+            ret = TRUE;
+        }
+    } else {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aNPC_check_dma_cloth_data_sub(mActor_name_t cloth) {
+    int ret = TRUE;
+
+    if (!aNPC_dma_regist_check_cloth_data(cloth)) {
+        aNPC_dma_regist_cloth_data(cloth);
+        ret = FALSE;
+    }
+
+    return ret;
+}
+
+static int aNPC_check_dma_eventNpc_cloth_data(mNpc_EventNpc_c* event_npc) {
+    int ret = TRUE;
+
+    if (event_npc->cloth_id != EMPTY_NO) {
+        ret = aNPC_check_dma_cloth_data_sub(event_npc->cloth_id);
+    } else if (ITEM_NAME_GET_TYPE(event_npc->texture_id) == NAME_TYPE_NPC) {
+        int idx = mNpc_SearchAnimalinfo(Save_Get(animals), event_npc->texture_id, ANIMAL_NUM_MAX);
+
+        ret = aNPC_check_dma_cloth_data(idx);
+    }
+
+    return ret;
+}
+
+static int aNPC_check_dma_maskNpc_cloth_data(mNpc_MaskNpc_c* mask_npc) {
+    int ret = TRUE;
+
+    if (mask_npc->cloth_id != EMPTY_NO) {
+        ret = aNPC_check_dma_cloth_data_sub(mask_npc->cloth_id);
+    }
+
+    return ret;
+}
+
+static int aNPC_setupNpc_check(s8 idx, mActor_name_t name) {
+    int ret = FALSE;
+    int res;
+
+    if (ITEM_NAME_GET_TYPE(name) == NAME_TYPE_SPNPC) {
+        mNpc_EventNpc_c* event_npc = mNpc_GetSameEventNpc(name);
+
+        if (event_npc != NULL) {
+            res = aNPC_check_dma_eventNpc_cloth_data(event_npc);
+        } else {
+            mNpc_MaskNpc_c* mask_npc = mNpc_GetSameMaskNpc(name);
+
+            if (mask_npc != NULL) {
+                res = aNPC_check_dma_maskNpc_cloth_data(mask_npc);
+            } else {
+                res = TRUE;
+            }
+        }
+    } else {
+        res = aNPC_check_dma_cloth_data(idx);
+    }
+
+    if (res == TRUE) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aNPC_setupActor_sub(GAME_PLAY* play, s8 idx, mActor_name_t name, s16 profile, xyz_t* pos, s16 mvlist_no,
+                               s16 arg) {
+    int ret = FALSE;
+
+    if (aNPC_setupNpc_check(idx, name) == TRUE) {
+        if (Actor_info_make_actor(&play->actor_info, (GAME*)play, profile, pos->x, pos->y, pos->z, 0, 0, 0,
+                                  play->block_table.block_x, play->block_table.block_z, mvlist_no, name, arg, idx,
+                                  -1) != NULL) {
+            ret = TRUE;
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_setupActor_proc(GAME_PLAY* play, mActor_name_t name, s8 idx, int mvlist_no, s16 arg, int bx, int bz, int ux, int uz) {
+    // clang-format off
+    static s16 event_npc_profile_table[] = {
+        mAc_PROFILE_EV_ARTIST,
+        mAc_PROFILE_EV_BROKER,
+        mAc_PROFILE_EV_DESIGNER,
+        mAc_PROFILE_NPC_POST_GIRL,
+        mAc_PROFILE_NPC_GUIDE,
+        mAc_PROFILE_NPC_GUIDE2,
+        mAc_PROFILE_EV_CARPETPEDDLER,
+        mAc_PROFILE_EV_KABUPEDDLER,
+        mAc_PROFILE_NPC_SHOP_MASTER,
+        mAc_PROFILE_NPC_CONV_MASTER,
+        mAc_PROFILE_NPC_SUPER_MASTER,
+        mAc_PROFILE_NPC_DEPART_MASTER,
+        mAc_PROFILE_EV_GYPSY,
+        mAc_PROFILE_NPC_POLICE,
+        mAc_PROFILE_NPC_STATION_MASTER,
+        mAc_PROFILE_EV_SANTA,
+        mAc_PROFILE_NPC_POLICE2,
+        mAc_PROFILE_NPC_POST_MAN,
+        mAc_PROFILE_NPC_POST_GIRL,
+        mAc_PROFILE_EV_BROKER2,
+        mAc_PROFILE_NPC_RCN_GUIDE,
+        mAc_PROFILE_NPC_RCN_GUIDE,
+        mAc_PROFILE_NPC_RCN_GUIDE,
+        mAc_PROFILE_NPC_RCN_GUIDE,
+        mAc_PROFILE_NPC_P_SEL,
+        mAc_PROFILE_NPC_RCN_GUIDE2,
+        mAc_PROFILE_NPC_RCN_GUIDE2,
+        mAc_PROFILE_NPC_RCN_GUIDE2,
+        mAc_PROFILE_NPC_RCN_GUIDE2,
+        mAc_PROFILE_EV_ANGLER,
+        mAc_PROFILE_NPC_SHOP_MASTERSP,
+        mAc_PROFILE_NPC_P_SEL2,
+        mAc_PROFILE_HALLOWEEN_NPC,
+        mAc_PROFILE_HALLOWEEN_NPC,
+        mAc_PROFILE_HALLOWEEN_NPC,
+        mAc_PROFILE_HALLOWEEN_NPC,
+        mAc_PROFILE_HALLOWEEN_NPC,
+        mAc_PROFILE_EV_PUMPKIN,
+        mAc_PROFILE_NPC_MAMEDANUKI,
+        mAc_PROFILE_HANABI_NPC0,
+        mAc_PROFILE_HANABI_NPC1,
+        mAc_PROFILE_HANABI_NPC1,
+        mAc_PROFILE_HANABI_NPC1,
+        mAc_PROFILE_HANABI_NPC1,
+        mAc_PROFILE_EV_YOMISE,
+        mAc_PROFILE_TOKYOSO_NPC0,
+        mAc_PROFILE_TOKYOSO_NPC1,
+        mAc_PROFILE_TOKYOSO_NPC1,
+        mAc_PROFILE_TOKYOSO_NPC1,
+        mAc_PROFILE_TOKYOSO_NPC1,
+        mAc_PROFILE_HANAMI_NPC0,
+        mAc_PROFILE_HANAMI_NPC0,
+        mAc_PROFILE_HANAMI_NPC0,
+        mAc_PROFILE_HANAMI_NPC0,
+        mAc_PROFILE_HANAMI_NPC1,
+        mAc_PROFILE_NPC_MAMEDANUKI,
+        mAc_PROFILE_NPC_SLEEP_OBABA,
+        mAc_PROFILE_EV_YOMISE,
+        mAc_PROFILE_NPC_SHOP_MASTERSP,
+        mAc_PROFILE_NPC_SHOP_MASTERSP,
+        mAc_PROFILE_NPC_SHOP_MASTERSP,
+        mAc_PROFILE_EV_MIKO,
+        mAc_PROFILE_NPC_MAJIN,
+        mAc_PROFILE_TUKIMI_NPC1,
+        mAc_PROFILE_TUKIMI_NPC1,
+        mAc_PROFILE_TUKIMI_NPC1,
+        mAc_PROFILE_TUKIMI_NPC1,
+        mAc_PROFILE_TUKIMI_NPC1,
+        mAc_PROFILE_COUNTDOWN_NPC0,
+        mAc_PROFILE_COUNTDOWN_NPC1,
+        mAc_PROFILE_COUNTDOWN_NPC1,
+        mAc_PROFILE_COUNTDOWN_NPC1,
+        mAc_PROFILE_COUNTDOWN_NPC1,
+        mAc_PROFILE_TURI_NPC0,
+        mAc_PROFILE_TURI_NPC0,
+        mAc_PROFILE_TURI_NPC0,
+        mAc_PROFILE_TURI_NPC0,
+        mAc_PROFILE_TURI_NPC0,
+        mAc_PROFILE_TAISOU_NPC0,
+        mAc_PROFILE_TAISOU_NPC0,
+        mAc_PROFILE_TAISOU_NPC0,
+        mAc_PROFILE_TAISOU_NPC0,
+        mAc_PROFILE_TAISOU_NPC0,
+        mAc_PROFILE_TAMAIRE_NPC0,
+        mAc_PROFILE_TAMAIRE_NPC1,
+        mAc_PROFILE_TAMAIRE_NPC1,
+        mAc_PROFILE_TAMAIRE_NPC1,
+        mAc_PROFILE_TAMAIRE_NPC1,
+        mAc_PROFILE_HATUMODE_NPC0,
+        mAc_PROFILE_HATUMODE_NPC0,
+        mAc_PROFILE_HATUMODE_NPC0,
+        mAc_PROFILE_HATUMODE_NPC0,
+        mAc_PROFILE_HATUMODE_NPC0,
+        mAc_PROFILE_NPC_TOTAKEKE,
+        mAc_PROFILE_KAMAKURA_NPC0,
+        mAc_PROFILE_TUNAHIKI_NPC0,
+        mAc_PROFILE_TUNAHIKI_NPC1,
+        mAc_PROFILE_TUNAHIKI_NPC1,
+        mAc_PROFILE_TUNAHIKI_NPC1,
+        mAc_PROFILE_TUNAHIKI_NPC1,
+        mAc_PROFILE_EV_DOZAEMON,
+        mAc_PROFILE_NPC_MAJIN2,
+        mAc_PROFILE_NPC_RTC,
+        mAc_PROFILE_NPC_ENGINEER,
+        mAc_PROFILE_NPC_MAJIN3,
+        mAc_PROFILE_NPC_MAJIN4,
+        mAc_PROFILE_NPC_RESTART,
+        mAc_PROFILE_NPC_MAJIN5,
+        mAc_PROFILE_EV_DOKUTU,
+        mAc_PROFILE_NPC_CURATOR,
+        mAc_PROFILE_EV_SONCHO,
+        mAc_PROFILE_EV_GHOST,
+        mAc_PROFILE_NPC_NEEDLEWORK,
+        mAc_PROFILE_NPC_NEEDLEWORK,
+        mAc_PROFILE_NPC_SENDO,
+        mAc_PROFILE_PRESENT_NPC,
+        mAc_PROFILE_EV_SONCHO2,
+        mAc_PROFILE_NPC_MASK_CAT,
+        mAc_PROFILE_NPC_MASK_CAT2,
+        mAc_PROFILE_GO_HOME_NPC,
+        mAc_PROFILE_TAISOU_NPC0,
+        mAc_PROFILE_EV_SONCHO2,
+        mAc_PROFILE_NPC_SHASHO,
+        mAc_PROFILE_EV_CASTAWAY,
+        mAc_PROFILE_NPC_MAJIN,
+        mAc_PROFILE_NPC_MAJIN,
+        mAc_PROFILE_NPC_MAJIN,
+        mAc_PROFILE_NPC_SONCHO,
+        mAc_PROFILE_NPC_MAJIN,
+        mAc_PROFILE_EV_MAJIN,
+        mAc_PROFILE_HARVEST_NPC0,
+        mAc_PROFILE_HARVEST_NPC0,
+        mAc_PROFILE_HARVEST_NPC0,
+        mAc_PROFILE_HARVEST_NPC0,
+        mAc_PROFILE_HARVEST_NPC1,
+        mAc_PROFILE_EV_SPEECH_SONCHO,
+        mAc_PROFILE_GROUNDHOG_NPC0,
+        mAc_PROFILE_GROUNDHOG_NPC0,
+        mAc_PROFILE_GROUNDHOG_NPC0,
+        mAc_PROFILE_GROUNDHOG_NPC0,
+        mAc_PROFILE_GROUNDHOG_NPC0,
+        mAc_PROFILE_EV_TURKEY,
+        mAc_PROFILE_NPC_HEM,
+        mAc_PROFILE_KAMAKURA_NPC0,
+    };
+    // clang-format on
+
+    // clang-format off
+    static f32 pos_table[] = {
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + ( 0 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + ( 1 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + ( 2 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + ( 3 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + ( 4 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + ( 5 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + ( 6 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + ( 7 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + ( 8 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + ( 9 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + (10 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + (11 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + (12 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + (13 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + (14 * mFI_UNIT_BASE_SIZE_F),
+        (mFI_UNIT_BASE_SIZE_F * 0.5f) + (15 * mFI_UNIT_BASE_SIZE_F),
+    };
+    // clang-format on
+
+    s16 profile;
+    xyz_t pos;
+
+    profile = mAc_PROFILE_NORMAL_NPC;
+    switch (ITEM_NAME_GET_TYPE(name)) {
+        case NAME_TYPE_SPNPC:
+            switch (name) {
+                case SP_NPC_POST_GIRL:
+                    if (Common_Get(post_girl_npc_type) == 1) {
+                        name = SP_NPC_POST_GIRL2;
+                    }
+                    break;
+                case SP_NPC_SHOP_MASTER:
+                case SP_NPC_CONV_MASTER:
+                case SP_NPC_SUPER_MASTER:
+                case SP_NPC_DEPART_MASTER:
+                    if (mEv_CheckFirstJob() == TRUE) {
+                        name = SP_NPC_RCN_GUIDE2 + (name - SP_NPC_SHOP_MASTER);
+                    } else if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
+                        switch (name) {
+                            case SP_NPC_CONV_MASTER:
+                                name = SP_NPC_SHOP_MASTERSP_2;
+                                break;
+                            case SP_NPC_SUPER_MASTER:
+                                name = SP_NPC_SHOP_MASTERSP_3;
+                                break;
+                            case SP_NPC_DEPART_MASTER:
+                                name = SP_NPC_SHOP_MASTERSP_4;
+                                break;
+                            // case SP_NPC_SHOP_MASTER:
+                            default:
+                                name = SP_NPC_SHOP_MASTERSP;
+                                break;
+                        }
+                    }
+                    break;
+            }
+            profile = event_npc_profile_table[name - SP_NPC_START];
+            break;
+        case NAME_TYPE_NPC:
+            profile = mAc_PROFILE_NORMAL_NPC;
+            break;
+    }
+
+    {
+        f32 x;
+        f32 z;
+
+        mFI_BkNum2WposXZ(&x, &z, bx, bz);
+        pos.x = x + pos_table[ux];
+        pos.z = z + pos_table[uz];
+        pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos(pos, 0.0f);
+    }
+
+    aNPC_setupActor_sub(play, idx, name, profile, &pos, mvlist_no, arg);
+}
+
+static int aNPC_get_overlay_free_area_idx(aNPC_overlay_c* overlay, int max) {
+    int i;
+
+    for (i = 0; i < max; i++) {
+        if (!overlay->used) {
+            return i;
+        }
+
+        overlay++;
+    }
+
+    return -1;
+}
+
+static void aNPC_get_overlay_area_proc_sub(ACTOR_DLFTBL* dlftbl, size_t size, size_t max_size, aNPC_overlay_c* overlay, int max, mActor_name_t npc_name) {
+    int idx = aNPC_get_overlay_free_area_idx(overlay, max);
+
+    if (idx != -1) {
+        dlftbl->alloc_buf = overlay[idx].buf;
+        overlay[idx].used = TRUE;
+    } else {
+        dlftbl->alloc_buf = NULL;
+    }
+}
+
+// @optimization - this whole chain can be removed, it's unused in GC titles
+static void aNPC_get_overlay_area_proc(ACTOR_DLFTBL* dlftbl, u8* name_p, size_t size, mActor_name_t npc_name) {
+    switch (ITEM_NAME_GET_TYPE(npc_name)) {
+        case NAME_TYPE_NPC:
+            aNPC_get_overlay_area_proc_sub(dlftbl, size, 0x800, CLIP(npc_clip)->keep_n_overlay, 1, npc_name);
+            break;
+        case NAME_TYPE_SPNPC: {
+            mNpc_EventNpc_c* event_npc = mNpc_GetSameEventNpc(npc_name);
+
+            if (event_npc != NULL) {
+                aNPC_get_overlay_area_proc_sub(dlftbl, size, 0x2800, CLIP(npc_clip)->keep_e_overlay, 2, npc_name);
+            } else {
+                mNpc_MaskNpc_c* mask_npc = mNpc_GetSameMaskNpc(npc_name);
+
+                if (mask_npc != NULL) {
+                    aNPC_get_overlay_area_proc_sub(dlftbl, size, 0x3000, CLIP(npc_clip)->keep_k_overlay, 3, npc_name);
+                } else {
+                    switch (npc_name) {
+                        case SP_NPC_KABUPEDDLER:
+                        case SP_NPC_POLICE:
+                        case SP_NPC_STATION_MASTER:
+                        case SP_NPC_POST_MAN:
+                        case SP_NPC_EV_DOZAEMON:
+                        case SP_NPC_ENGINEER:
+                        case SP_NPC_MAJIN5:
+                        case SP_NPC_EV_SONCHO:
+                        case SP_NPC_EV_GHOST:
+                        case SP_NPC_SENDO:
+                        case SP_NPC_MASK_CAT:
+                        case SP_NPC_GO_HONE_NPC:
+                            aNPC_get_overlay_area_proc_sub(dlftbl, size, 0x3000, CLIP(npc_clip)->keep_k_overlay, 3, npc_name);
+                            break;
+                        default:
+                            aNPC_get_overlay_area_proc_sub(dlftbl, size, 0x2000, CLIP(npc_clip)->keep_s_overlay, 2, npc_name);
+                            break;
+                    }
+                }
+            }
+        }
+        break;
+    }
+}
+
+static void aNPC_free_overlay_area_proc(ACTOR_DLFTBL* dlftbl) {
+    aNPC_overlay_c* overlay_p;
+    int i;
+
+    overlay_p = CLIP(npc_clip)->keep_n_overlay;
+    for (i = 0; i < 1; i++) {
+        if (overlay_p->buf == dlftbl->alloc_buf) {
+            overlay_p->used = FALSE;
+            dlftbl->alloc_buf = NULL;
+            return;
+        }
+
+        overlay_p++;
+    }
+
+    overlay_p = CLIP(npc_clip)->keep_s_overlay;
+    for (i = 0; i < 2; i++) {
+        if (overlay_p->buf == dlftbl->alloc_buf) {
+            overlay_p->used = FALSE;
+            dlftbl->alloc_buf = NULL;
+            return;
+        }
+
+        overlay_p++;
+    }
+
+    overlay_p = CLIP(npc_clip)->keep_k_overlay;
+    for (i = 0; i < 3; i++) {
+        if (overlay_p->buf == dlftbl->alloc_buf) {
+            overlay_p->used = FALSE;
+            dlftbl->alloc_buf = NULL;
+            return;
+        }
+
+        overlay_p++;
+    }
+
+    overlay_p = CLIP(npc_clip)->keep_e_overlay;
+    for (i = 0; i < 2; i++) {
+        if (overlay_p->buf == dlftbl->alloc_buf) {
+            overlay_p->used = FALSE;
+            dlftbl->alloc_buf = NULL;
+            return;
+        }
+
+        overlay_p++;
+    }
+}
+
+static ACTOR* aNPC_get_actor_area_proc(size_t size, const char* actor_name, int line) {
+    NPC_ACTOR** actor = CLIP(npc_clip)->keep_actors;
+    int* used = CLIP(npc_clip)->keep_actor_used;
+    int i;
+
+    if (size > 0x9D0) {
+        return NULL;
+    }
+
+    for (i = 0; i < 9; i++) {
+        if (*actor != NULL && *used == FALSE) {
+            *used = TRUE;
+            return (ACTOR*)*actor;
+        }
+
+        actor++;
+        used++;
+    }
+
+    return NULL;
+}
+
+static void aNPC_free_actor_area_proc(ACTOR* actorx) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    NPC_ACTOR** actor = CLIP(npc_clip)->keep_actors;
+    int* used = CLIP(npc_clip)->keep_actor_used;
+    int i;
+
+    for (i = 0; i < 9; i++) {
+        if (*actor == nactorx) {
+            *used = FALSE;
+            break;
+        }
+
+        actor++;
+        used++;
+    }
+}
+
+static void aNPC_dma_draw_data_proc(aNPC_draw_data_c* draw_data_p, mActor_name_t npc_name) {
+    int idx = aNPC_get_draw_data_idx(npc_name);
+
+    mem_copy((u8*)draw_data_p, (u8*)&npc_draw_data_tbl[idx], sizeof(aNPC_draw_data_c));
+}
+
+typedef struct {
+    u64 align;
+    u8 buf[0x9D0];
+} aNPC_actor_class_overlay_c;
+
+typedef struct {
+    u64 align;
+    u8 buf[0x800];
+} aNPC_n_overlay_c;
+
+typedef struct {
+    u64 align;
+    u8 buf[0x2000];
+} aNPC_s_overlay_c;
+
+typedef struct {
+    u64 align;
+    u8 buf[0x3000];
+} aNPC_k_overlay_c;
+
+typedef struct {
+    u64 align;
+    u8 buf[0x2800];
+} aNPC_e_overlay_c;
+
+static aNPC_actor_class_overlay_c aNPC_n_actor_cl_tbl[9];
+static aNPC_n_overlay_c aNPC_n_overlay[1];
+static aNPC_s_overlay_c aNPC_s_overlay[2];
+static aNPC_k_overlay_c aNPC_k_overlay[3];
+static aNPC_e_overlay_c aNPC_e_overlay[2];
+
+static void aNPC_keep_actor_class(void) {
+    NPC_ACTOR** actor = CLIP(npc_clip)->keep_actors;
+    int* used = CLIP(npc_clip)->keep_actor_used;
+    int i;
+
+    for (i = 0; i < 9; i++) {
+        *actor = (NPC_ACTOR*)ALIGN_NEXT((u32)aNPC_n_actor_cl_tbl[i].buf, 16);
+        *used = FALSE;
+
+        actor++;
+        used++;
+    }
+}
+
+static void aNPC_free_actor_class(void) {
+    NPC_ACTOR** actor = CLIP(npc_clip)->keep_actors;
+    int i;
+
+    for (i = 0; i < 9; i++) {
+        if (*actor != NULL) {
+            *actor = NULL;
+        }
+        actor++;
+    }
+}
+
+static void aNPC_keep_n_overlay_area(aNPC_overlay_c* overlay_p) {
+    int i;
+
+    for (i = 0; i < 1; i++) {
+        overlay_p->buf = (u8*)&aNPC_n_overlay[i].buf;
+        overlay_p->used = FALSE;
+        overlay_p++;
+    }
+}
+
+static void aNPC_keep_s_overlay_area(aNPC_overlay_c* overlay_p) {
+    int i;
+
+    for (i = 0; i < 2; i++) {
+        overlay_p->buf = (u8*)&aNPC_s_overlay[i].buf;
+        overlay_p->used = FALSE;
+        overlay_p++;
+    }
+}
+
+static void aNPC_keep_k_overlay_area(aNPC_overlay_c* overlay_p) {
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        overlay_p->buf = (u8*)&aNPC_k_overlay[i].buf;
+        overlay_p->used = FALSE;
+        overlay_p++;
+    }
+}
+
+static void aNPC_keep_e_overlay_area(aNPC_overlay_c* overlay_p) {
+    int i;
+
+    for (i = 0; i < 2; i++) {
+        overlay_p->buf = (u8*)&aNPC_e_overlay[i].buf;
+        overlay_p->used = FALSE;
+        overlay_p++;
+    }
+}
+
+static void aNPC_free_overlay_area(aNPC_overlay_c* overlay_p, int n) {
+    int i;
+
+    for (i = 0; i != n; i++) {
+        if (overlay_p->buf != NULL) {
+            overlay_p->buf = NULL;
+        }
+
+        overlay_p++;
+    }
+}
+
+static void aNPC_actor_ct_c(ACTOR* actorx, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    Object_Exchange_c* obj_ex = &play->object_exchange;
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)actorx;
+
+    aNPC_ctrlActor = actorx;
+    aNPC_keep_cloth_data_area(obj_ex);
+
+    if (CLIP(npc_clip) == NULL) {
+        CLIP(npc_clip) = &aNPC_clip;
+        bzero(&aNPC_clip, sizeof(aNPC_clip));
+
+        CLIP(npc_clip)->setupActor_proc = &aNPC_setupActor_proc;
+        CLIP(npc_clip)->get_overlay_area_proc = &aNPC_get_overlay_area_proc;
+        CLIP(npc_clip)->free_overlay_area_proc = &aNPC_free_overlay_area_proc;
+        CLIP(npc_clip)->get_actor_area_proc = &aNPC_get_actor_area_proc;
+        CLIP(npc_clip)->free_actor_area_proc = &aNPC_free_actor_area_proc;
+        CLIP(npc_clip)->dma_draw_data_proc = &aNPC_dma_draw_data_proc;
+        CLIP(npc_clip)->set_attention_request_proc = &aNPC_set_attention_request_proc;
+        CLIP(npc_clip)->birth_check_proc = &aNPC_actor_birth_check;
+        CLIP(npc_clip)->ct_proc = &aNPC_actor_ct;
+        CLIP(npc_clip)->dt_proc = &aNPC_actor_dt;
+        CLIP(npc_clip)->save_proc = &aNPC_actor_save;
+        CLIP(npc_clip)->init_proc = &aNPC_actor_init;
+        CLIP(npc_clip)->move_proc = &aNPC_actor_move;
+        CLIP(npc_clip)->move_before_proc = &aNPC_actor_move_show_before;
+        CLIP(npc_clip)->move_after_proc = &aNPC_actor_move_show_after;
+        CLIP(npc_clip)->draw_proc = &aNPC_actor_draw;
+        CLIP(npc_clip)->rebuild_dma_proc = &aNPC_rebuild_dma;
+        CLIP(npc_clip)->set_request_act_proc = &aNPC_set_request_act;
+        CLIP(npc_clip)->set_head_request_act_proc = &aNPC_set_head_request;
+        CLIP(npc_clip)->talk_demo_proc = &aNPC_talk_demo_proc;
+        CLIP(npc_clip)->animation_init_proc = &aNPC_Animation_init;
+        CLIP(npc_clip)->chg_schedule_proc = &aNPC_chg_schedule;
+        CLIP(npc_clip)->set_dst_pos_proc = &aNPC_set_dst_pos;
+        CLIP(npc_clip)->think_proc = &aNPC_think_proc;
+        CLIP(npc_clip)->force_call_req_proc = &aNPC_force_call_req_proc;
+        CLIP(npc_clip)->set_start_pos_proc = &aNPC_set_start_pos;
+
+        aNPC_keep_actor_class();
+        aNPC_keep_n_overlay_area(CLIP(npc_clip)->keep_n_overlay);
+        aNPC_keep_s_overlay_area(CLIP(npc_clip)->keep_s_overlay);
+        aNPC_keep_k_overlay_area(CLIP(npc_clip)->keep_k_overlay);
+        aNPC_keep_e_overlay_area(CLIP(npc_clip)->keep_e_overlay);
+    }
+
+    if (play->block_table.block_z == mISL_BLOCK_Z) {
+        int bx;
+        int bz;
+        int ux;
+        int uz;
+        Island_c* island_p;
+        Animal_c* islander_p;
+        mNpc_NpcList_c* list_p;
+        mNPS_schedule_c* sched_p;
+        
+        island_p = &Save_Get(island);
+        islander_p = &island_p->animal;
+        list_p = &Common_Get(island_npclist[0]);
+
+        if (list_p->name == EMPTY_NO) {
+            mNpc_SetNpcList(list_p, islander_p, 1, TRUE);
+            bx = (int)islander_p->home_info.block_x;
+            bz = (int)islander_p->home_info.block_z;
+            ux = (int)islander_p->home_info.ut_x;
+            uz = (int)islander_p->home_info.ut_z;
+        } else {
+            int ret = mFI_Wpos2BkandUtNuminBlock(&bx, &bz, &ux, &uz, list_p->position);
+            
+            if (ret == FALSE) {
+                bx = (int)islander_p->home_info.block_x;
+                bz = (int)islander_p->home_info.block_z;
+                ux = (int)islander_p->home_info.ut_x;
+                uz = (int)islander_p->home_info.ut_z;
+            } else {
+                if (!mNpc_CheckNpcSet(bx, bz, ux, uz) && !mNpc_GetMakeUtNuminBlock_area(&ux, &uz, bx, bz, 0)) {
+                    bx = (int)islander_p->home_info.block_x;
+                    bz = (int)islander_p->home_info.block_z;
+                    ux = (int)islander_p->home_info.ut_x;
+                    uz = (int)islander_p->home_info.ut_z;
+                }
+            }
+        }
+
+        if (mFI_RegistMoveActorList(list_p->name, bx, bz, ux, uz, -ANIMAL_NUM_MAX, 0)) {
+            sched_p = Common_GetPointer(npc_schedule[ANIMAL_NUM_MAX]);
+            
+            if (sched_p->id != NULL) {
+                mNPS_reset_schedule_area(sched_p->id);
+            }
+
+            mNPS_set_island_schedule_area(&islander_p->id);
+        }
+    }
+}
+
+static void aNPC_actor_dt_c(ACTOR* actorx, GAME* game) {
+    if (CLIP(npc_clip) != NULL) {
+        aNPC_free_actor_class();
+        aNPC_free_overlay_area(CLIP(npc_clip)->keep_n_overlay, 1);
+        aNPC_free_overlay_area(CLIP(npc_clip)->keep_s_overlay, 2);
+        aNPC_free_overlay_area(CLIP(npc_clip)->keep_k_overlay, 3);
+        aNPC_free_overlay_area(CLIP(npc_clip)->keep_e_overlay, 2);
+        CLIP(npc_clip) = NULL;
+    }
+}
+
+static int aNPC_check_cond_to_greeting(NPC_ACTOR* nactorx) {
+    int ret = TRUE;
+
+    if (nactorx->actor_class.ct_proc != NULL || nactorx->palActor != NULL || nactorx->palActorIgnoreTimer != 0 || nactorx->condition_info.hide_flg == TRUE) {
+        ret = FALSE;
+    } else {
+        switch (aNPC_get_feel_info(nactorx)) {
+            case mNpc_FEEL_ANGRY:
+            case mNpc_FEEL_SAD:
+            case mNpc_FEEL_SLEEPY:
+                ret = FALSE;
+                break;
+        }
+    }
+
+    return ret;
+}
+
+static void aNPC_greeting_area_check(GAME_PLAY* play) {
+    Actor_list* list = &play->actor_info.list[ACTOR_PART_NPC];
+    ACTOR* actor = list->actor;
+    int n = list->num_actors;
+    xyz_t pos;
+    NPC_ACTOR* nactor;
+    ACTOR* next_actor;
+    int i;
+
+    n--;
+    for (n; n > 0; n--) {
+        nactor = (NPC_ACTOR*)actor;
+        i = n;
+
+        xyz_t_move(&pos, &actor->world.position);
+        if (aNPC_check_cond_to_greeting(nactor) == TRUE) {
+            next_actor = actor->next_actor;
+
+            for (i; i != 0; i--) {
+                NPC_ACTOR* next_nactor = next_nactor = (NPC_ACTOR*)next_actor;
+
+                if (aNPC_check_cond_to_greeting(next_nactor) == TRUE) {
+                    f32 dy = next_actor->world.position.y - pos.y;
+
+                    if (ABS(dy) < 40.0f) {
+                        f32 dx = next_actor->world.position.x - pos.x;
+                        f32 dz = next_actor->world.position.z - pos.z;
+                        f32 dist = SQ(dx) + SQ(dz);
+
+                        if (dist < SQ(80.0f)) {
+                            nactor->palActor = (ACTOR*)next_nactor;
+                            next_nactor->palActor = (ACTOR*)nactor;
+                            break;
+                        }
+                    }
+                }
+
+                next_actor = next_actor->next_actor;
+            }
+        }
+
+        actor = actor->next_actor;
+    }
+
+    actor = list->actor;
+    for (n = list->num_actors; n != 0; n--) {
+        NPC_ACTOR* nactor = (NPC_ACTOR*)actor;
+        
+        if (nactor->palActorIgnoreTimer > 0) {
+            nactor->palActorIgnoreTimer--;
+        }
+
+        actor = actor->next_actor;
+    }
+}
+
+static void aNPC_set_attention(void) {
+    aNPC_attention_c* attention_p = &CLIP(npc_clip)->attention;
+    aNPC_attention_c* req_p = &CLIP(npc_clip)->attention_request;
+
+    if (req_p->type != aNPC_ATTENTION_TYPE_NONE) {
+        mem_copy((u8*)attention_p, (u8*)req_p, sizeof(aNPC_attention_c));
+    } else {
+        bzero(attention_p, sizeof(aNPC_attention_c));
+    }
+
+    req_p->type = aNPC_ATTENTION_TYPE_NONE;
+}
+
+static void aNPC_force_reset_out_of_door_flg(NPC_CONTROL_ACTOR* ctrl) {
+    int timer;
+
+    ctrl->door_exit_actor = NULL;
+    timer = 1 * FRAMES_PER_SECOND + RANDOM(3) * FRAMES_PER_SECOND;
+    ctrl->door_exit_timer = timer;
+}
+
+static void aNPC_reset_out_of_door_flg(NPC_CONTROL_ACTOR* ctrl, ACTOR* actorx) {
+    if (ctrl->door_exit_actor == actorx) {
+        aNPC_force_reset_out_of_door_flg(ctrl);
+    }
+}
+
+static void aNPC_force_reset_umb_open_flg(NPC_CONTROL_ACTOR* ctrl) {
+    int timer;
+
+    ctrl->umbrella_open_actor = NULL;
+    timer = FRAMES_PER_SECOND * 0.5f + RANDOM_F(FRAMES_PER_SECOND * 0.5f);
+    ctrl->umbrella_open_timer = timer;
+}
+
+static void aNPC_reset_umb_open_flg(NPC_CONTROL_ACTOR* ctrl, ACTOR* actorx) {
+    if (ctrl->umbrella_open_actor == actorx) {
+        aNPC_force_reset_umb_open_flg(ctrl);
+    }
+}
+
+static void aNPC_actor_move_c(ACTOR* actorx, GAME* game) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    aNPC_dma_cloth_data(actorx);
+    if (mEv_CheckTitleDemo() <= 0) {
+        aNPC_greeting_area_check(play);
+    }
+
+    aNPC_set_attention();
+    if (mFI_ActorisBorn() == TRUE) {
+        aNPC_force_reset_out_of_door_flg(ctrl);
+        aNPC_force_reset_umb_open_flg(ctrl);
+    }
+
+    if (ctrl->door_exit_timer > 0 && ctrl->door_exit_timer < (3 * FRAMES_PER_SECOND)) {
+        ctrl->door_exit_timer--;
+    } else {
+        aNPC_force_reset_out_of_door_flg(ctrl);
+    }
+
+    if (ctrl->umbrella_open_timer > 0 && ctrl->umbrella_open_timer < (1 * FRAMES_PER_SECOND)) {
+        ctrl->umbrella_open_timer--;
+    } else {
+        aNPC_force_reset_umb_open_flg(ctrl);
+    }
+}
+
+static void aNPC_set_talk_area_info(GAME_PLAY* play) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (ctrl != NULL && playerx != NULL) {
+        aNPC_talk_area_c* talk_area = &ctrl->talk_area;
+
+        if (talk_area->frame_counter != play->game_frame) {
+            ACTOR* talk_actor = mDemo_Get_talk_actor();
+
+            if (talk_actor != NULL && talk_actor->part == ACTOR_PART_NPC) {
+                f32 dx;
+                f32 dz;
+                
+                talk_area->frame_counter = play->game_frame;
+                talk_area->talk_actor = talk_actor;
+
+                dx = talk_actor->world.position.x - playerx->world.position.x;
+                dz = talk_actor->world.position.z - playerx->world.position.z;
+                talk_area->radius = SQ(60.0f) + (SQ(dx) + SQ(dz)) * 0.25f;
+                talk_area->center_pos.x = (playerx->world.position.x + talk_actor->world.position.x) * 0.5f;
+                talk_area->center_pos.z = (playerx->world.position.z + talk_actor->world.position.z) * 0.5f;
+            }
+        }
+    }
+}
+
+static void aNPC_talk_area_check(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+    u8 turn = FALSE;
+
+    if (ctrl != NULL) {
+        aNPC_talk_area_c* talk_area = &ctrl->talk_area;
+
+        aNPC_set_talk_area_info(play);
+        if (talk_area->frame_counter == play->game_frame && talk_area->talk_actor != (ACTOR*)nactorx) {
+            f32 dx;
+            f32 dz;
+
+            dx = talk_area->center_pos.x - nactorx->actor_class.world.position.x;
+            dz = talk_area->center_pos.z - nactorx->actor_class.world.position.z;
+
+            if ((SQ(dx) + SQ(dz)) < talk_area->radius) {
+                s16 angle = atans_table(dz, dx);
+                s16 dangle = angle - nactorx->actor_class.shape_info.rotation.y;
+
+                if (ABS(dangle) < DEG2SHORT_ANGLE2(90.0f)) {
+                    nactorx->collision.turn_angle = angle + DEG2SHORT_ANGLE2(180.0f);
+                    turn = TRUE;
+                }
+            }
+        }
+    }
+
+    nactorx->collision.turn_flag = turn;
+}

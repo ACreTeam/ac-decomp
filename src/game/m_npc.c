@@ -14,6 +14,7 @@
 #include "m_mail_password_check.h"
 #include "libultra/libultra.h"
 #include "jsyswrap.h"
+#include "ac_npc.h"
 
 static int mNpc_CheckIslandAnimalID(AnmPersonalID_c* anm_id);
 
@@ -2071,10 +2072,9 @@ extern u8* mNpc_GetWordEnding(ACTOR* actor) {
     return word_ending;
 }
 
-extern void mNpc_ResetWordEnding(ACTOR* actor) {
-    if (actor != NULL && actor->part == ACTOR_PART_NPC) {
-        NPC_ACTOR* npc = (NPC_ACTOR*)actor;
-        Animal_c* animal = npc->npc_info.animal;
+extern void mNpc_ResetWordEnding(NPC_ACTOR* nactorx) {
+    if (nactorx != NULL && nactorx->actor_class.part == ACTOR_PART_NPC) {
+        Animal_c* animal = nactorx->npc_info.animal;
 
         if (animal != NULL) {
             mString_Load_StringFromRom(animal->catchphrase, ANIMAL_CATCHPHRASE_LEN,

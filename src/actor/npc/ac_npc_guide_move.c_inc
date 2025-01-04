@@ -120,22 +120,22 @@ static void aNGD_set_camera_eyes(NPC_GUIDE_ACTOR* guide) {
 }
 
 static void aNGD_set_walk_spd(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
-    guide->npc_class.movement.max_speed = 1.0f;
-    guide->npc_class.movement.acceleration = 0.1f;
-    guide->npc_class.movement.deceleration = 0.2f;
+    guide->npc_class.movement.speed.max_speed = 1.0f;
+    guide->npc_class.movement.speed.acceleration = 0.1f;
+    guide->npc_class.movement.speed.deceleration = 0.2f;
 }
 
 static void aNGD_set_walk_spd2(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
-    guide->npc_class.movement.max_speed = 1.5f;
-    guide->npc_class.movement.acceleration = 0.15f;
-    guide->npc_class.movement.deceleration = 0.3f;
+    guide->npc_class.movement.speed.max_speed = 1.5f;
+    guide->npc_class.movement.speed.acceleration = 0.15f;
+    guide->npc_class.movement.speed.deceleration = 0.3f;
 }
 
 static void aNGD_set_stop_spd(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
     guide->npc_class.actor_class.speed = 0.0f;
-    guide->npc_class.movement.max_speed = 0.0f;
-    guide->npc_class.movement.acceleration = 0.0f;
-    guide->npc_class.movement.deceleration = 0.0f;
+    guide->npc_class.movement.speed.max_speed = 0.0f;
+    guide->npc_class.movement.speed.acceleration = 0.0f;
+    guide->npc_class.movement.speed.deceleration = 0.0f;
 }
 
 static int aNGD_make_keitai(NPC_GUIDE_ACTOR* guide, GAME* game) {

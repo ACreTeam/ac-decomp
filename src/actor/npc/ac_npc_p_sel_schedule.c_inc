@@ -66,7 +66,7 @@ static void aNPS_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
 static void aNPS_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     NPC_P_SEL_ACTOR* p_sel = (NPC_P_SEL_ACTOR*)nactorx;
 
-    nactorx->draw._5BE = 1;
+    nactorx->draw.anim_speed_type = aNPC_ANIM_SPEED_TYPE_FREE;
     nactorx->think.think_proc = &aNPS_think_proc;
     nactorx->talk_info.default_animation = aNPC_ANIM_4HAKU_E1;
     p_sel->strum_timer = 440;

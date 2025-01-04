@@ -112,10 +112,10 @@ static void aHN0_move_bf(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
 }
 
 static void aHN0_move_wait(HATUMODE_NPC0_ACTOR* h_npc, GAME_PLAY* play) {
-    if (h_npc->npc_class.action.idx == aNPC_ACT_WALK2) {
+    if (h_npc->npc_class.action.idx == aNPC_ACT_RUN) {
         aHN0_setup_think_proc(h_npc, play, ++h_npc->think_idx);
         h_npc->npc_class.actor_class.status_data.weight = MASSTYPE_IMMOVABLE;
-    } else if ((s16)h_npc->npc_class.movement.target_pos_x != h_npc->pos[0] || (s16)h_npc->npc_class.movement.target_pos_z != h_npc->pos[1]) {
+    } else if ((s16)h_npc->npc_class.movement.dst_pos_x != h_npc->pos[0] || (s16)h_npc->npc_class.movement.dst_pos_z != h_npc->pos[1]) {
         h_npc->move_think_idx = h_npc->think_idx - 1;
         aHN0_setup_think_proc(h_npc, play, 33);
     }

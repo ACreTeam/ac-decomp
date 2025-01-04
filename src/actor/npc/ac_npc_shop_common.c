@@ -439,21 +439,21 @@ static void aNSC_talk_demo_proc(ACTOR* actorx) {
 
 static void aNSC_set_stop_spd(NPC_SHOP_COMMON_ACTOR* shop_common) {
     shop_common->npc_class.actor_class.speed = 0.0;
-    shop_common->npc_class.movement.max_speed = 0.0;
-    shop_common->npc_class.movement.acceleration = 0.0;
-    shop_common->npc_class.movement.deceleration = 0.0;
+    shop_common->npc_class.movement.speed.max_speed = 0.0;
+    shop_common->npc_class.movement.speed.acceleration = 0.0;
+    shop_common->npc_class.movement.speed.deceleration = 0.0;
 }
 
 static void aNSC_set_walk_spd(NPC_SHOP_COMMON_ACTOR* shop_common) {
-    shop_common->npc_class.movement.max_speed = 1.0;
-    shop_common->npc_class.movement.acceleration = 0.1;
-    shop_common->npc_class.movement.deceleration = 0.2;
+    shop_common->npc_class.movement.speed.max_speed = 1.0;
+    shop_common->npc_class.movement.speed.acceleration = 0.1;
+    shop_common->npc_class.movement.speed.deceleration = 0.2;
 }
 
 static void aNSC_set_run_spd(NPC_SHOP_COMMON_ACTOR* shop_common) {
-    shop_common->npc_class.movement.max_speed = 4.0;
-    shop_common->npc_class.movement.acceleration = 0.4;
-    shop_common->npc_class.movement.deceleration = 0.8;
+    shop_common->npc_class.movement.speed.max_speed = 4.0;
+    shop_common->npc_class.movement.speed.acceleration = 0.4;
+    shop_common->npc_class.movement.speed.deceleration = 0.8;
 }
 
 #ifndef aNSC_MAMEDANUKI

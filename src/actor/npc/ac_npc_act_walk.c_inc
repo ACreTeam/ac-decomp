@@ -1,0 +1,79 @@
+enum {
+    aNPC_ACT_WALK_STEP_MAIN,
+
+    aNPC_ACT_WALK_STEP_NUM
+};
+
+static void aNPC_act_walk_setupAction(NPC_ACTOR* nactorx, u8 feel) {
+    u8 act;
+    
+    nactorx->action.feel = feel;
+    if (nactorx->action.idx == aNPC_ACT_WALK) {
+        act = aNPC_walk_action[feel];
+    } else {
+        act = aNPC_run_action[feel];
+    }
+
+    aNPC_setupAction(nactorx, act);
+}
+
+typedef int (*aNPC_ACT_WALK_PROC)(NPC_ACTOR* nactorx);
+
+static void aNPC_act_walk_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static aNPC_ACT_WALK_PROC act_proc[] = {
+        &aNPC_act_move,
+        &aNPC_act_avoid_move,
+        &aNPC_act_search_move,
+        &aNPC_act_to_point_move,
+    };
+
+    if (nactorx->draw.main_animation_state == cKF_STATE_CONTINUE) {
+        u8 feel = aNPC_get_feel_info(nactorx);
+
+        if (nactorx->action.feel != feel) {
+            aNPC_act_walk_setupAction(nactorx, feel);
+        }
+    }
+
+    if (!(*act_proc[nactorx->action.type])(nactorx)) {
+        nactorx->action.step = aNPC_ACTION_END_STEP;
+    }
+}
+
+static void aNPC_act_walk_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u16* arg_p = nactorx->request.act_args;
+    s16 prev_move_x = nactorx->action.move_x;
+    s16 prev_move_z = nactorx->action.move_z;
+
+    nactorx->action.act_obj = arg_p[0];
+    nactorx->action.act_obj_id = arg_p[1];
+    nactorx->action.move_x = arg_p[2];
+    nactorx->action.move_z = arg_p[3];
+
+    if (nactorx->action.step == aNPC_ACTION_END_STEP && (nactorx->action.move_x != prev_move_x || nactorx->action.move_z != prev_move_z || nactorx->action.type == aNPC_ACT_TYPE_SEARCH)) {
+        nactorx->action.step = aNPC_ACT_WALK_STEP_MAIN;
+    }
+}
+
+static void aNPC_act_walk_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u16* arg_p = nactorx->request.act_args;
+    f32 range;
+    u8 feel;
+
+    nactorx->action.step = aNPC_ACT_WALK_STEP_MAIN;
+    if (arg_p[5] == 0) {
+        range = 72.0f;
+    } else {
+        range = (f32)arg_p[5];
+    }
+
+    nactorx->movement.arrival_area_radius = range;
+    feel = aNPC_get_feel_info(nactorx);
+    aNPC_act_walk_setupAction(nactorx, feel);
+}
+
+static void aNPC_act_walk_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = { &aNPC_act_walk_init_proc, &aNPC_act_walk_chg_data_proc, &aNPC_act_walk_main_proc };
+
+    (*act_proc[type])(nactorx, play);
+}

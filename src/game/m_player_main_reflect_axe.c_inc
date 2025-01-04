@@ -98,7 +98,7 @@ static void Player_actor_SetOrderNPC_Reflect_axe(ACTOR* actor, mPlayer_main_refl
                     return;
 
                 case mAc_PROFILE_BALL:
-                    ((BALL_ACTOR*)reflect_actor)->unk208 |= 8;
+                    ((BALL_ACTOR*)reflect_actor)->state_flags |= aBALL_STATE_PLAYER_HIT_AXE;
                     return;
 
                 default:

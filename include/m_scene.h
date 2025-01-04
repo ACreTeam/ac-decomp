@@ -56,6 +56,7 @@ typedef struct door_data_s {
 } Door_data_c;
 
 #define mSc_OBJECT_BANK_NUM 70
+#define mSC_BANK_NONE 0xFF
 
 typedef struct object_bank_s {
     s16 bank_id;

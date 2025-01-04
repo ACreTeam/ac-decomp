@@ -230,7 +230,7 @@ static void aSEN_sing_start_wait_init(NPC_SENDO_ACTOR* sendo, GAME_PLAY* play) {
 
     boat_demo->demo_act = aBTD_DEMO_MOVE_BOAT_END;
     sendo->npc_class.talk_info.default_animation = 123;
-    sendo->npc_class.draw._5BE = 1;
+    sendo->npc_class.draw.anim_speed_type = aNPC_ANIM_SPEED_TYPE_FREE;
 }
 
 static void aSEN_touch_wharf_end_wait_init(NPC_SENDO_ACTOR* sendo, GAME_PLAY* play) {
@@ -242,7 +242,7 @@ static void aSEN_arrive_call_init(NPC_SENDO_ACTOR* sendo, GAME_PLAY* play) {
     sendo->npc_class.head.angle_add_x = 512;
     sendo->npc_class.head.angle_add_y = 1024;
     sendo->npc_class.talk_info.default_animation = 124;
-    sendo->npc_class.draw._5BE = 0;
+    sendo->npc_class.draw.anim_speed_type = aNPC_ANIM_SPEED_TYPE_LOCKED;
 }
 
 static void aSEN_pl_ride_off_end_wait_init(NPC_SENDO_ACTOR* sendo, GAME_PLAY* play) {
@@ -318,11 +318,11 @@ static void aSEN_schedule_init_proc(NPC_ACTOR* npc_actorx, GAME_PLAY* play) {
     npc_actorx->palActorIgnoreTimer = -1;
     npc_actorx->talk_info.default_animation = 124;
     npc_actorx->actor_class.talk_distance = 60.0f;
-    npc_actorx->collision.priority = 1;
+    npc_actorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
     npc_actorx->actor_class.shape_info.draw_shadow = FALSE;
     npc_actorx->actor_class.state_bitfield |= ACTOR_STATE_NO_MOVE_WHILE_CULLED;
-    npc_actorx->actor_class.status_data.weight = 254;
-    npc_actorx->draw._5B9 = 1;
+    npc_actorx->actor_class.status_data.weight = MASSTYPE_HEAVY;
+    npc_actorx->draw.chn_base_type = aNPC_CHN_BASE_TYPE_WORLD; // base draw position is relative to world instead of actor position
     npc_actorx->actor_class.shape_info.rotation.y = DEG2SHORT_ANGLE(80.0f);
     npc_actorx->movement.mv_angl = DEG2SHORT_ANGLE(80.0f);
 
@@ -1281,7 +1281,7 @@ static void aSEN_actor_move(ACTOR* actorx, GAME* game) {
 
     aSEN_set_matrix(sendo);
 
-    if (sendo->npc_class.draw._5BE == 1) {
+    if (sendo->npc_class.draw.anim_speed_type == aNPC_ANIM_SPEED_TYPE_FREE) {
         sAdos_GetKappaCounter(&sendo->kappa_counter);
         aSEN_set_anime_current(sendo);
     }

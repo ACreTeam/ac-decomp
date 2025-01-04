@@ -1,0 +1,13 @@
+static void aNPC_think_into_house_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_set_dst_pos(nactorx, nactorx->npc_info.list->house_position.x + 20.0f, nactorx->npc_info.list->house_position.z + 20.0f);
+    aNPC_set_request_act(nactorx, 4, aNPC_ACT_INTO_HOUSE, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+}
+
+static void aNPC_think_into_house_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC think_proc[] = {
+        &aNPC_think_into_house_init_proc,
+        &aNPC_think_demo_allways,
+    };
+
+    (*think_proc[proc_type])(nactorx, play);
+}

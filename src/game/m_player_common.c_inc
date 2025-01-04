@@ -7788,7 +7788,7 @@ static int Player_actor_CheckAndSet_UZAI_forNpc(ACTOR* actorx) {
             mNpc_GetAnimalMemoryIdx(&Now_Private->player_ID, animal->memories, ANIMAL_MEMORY_NUM) != -1) {
             if (ITEM_NAME_GET_TYPE(actorx->npc_id) == NAME_TYPE_NPC &&
                 (npc_actor->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_UZAI_CHECK) == 0) {
-                npc_actor->uzai.counter++;
+                npc_actor->uzai.tool++;
                 npc_actor->uzai.flag = TRUE;
             }
         }

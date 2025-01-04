@@ -1,0 +1,49 @@
+static void aNPC_think_pitfall_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!aNPC_chk_talk_start(nactorx) && nactorx->action.step == aNPC_ACTION_END_STEP) {
+        if (nactorx->action.idx == aNPC_ACT_TALK) {
+            aNPC_set_request_act(nactorx, 4, aNPC_ACT_REVIVE, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+        } else {
+            nactorx->actor_class.status_data.weight = 50;
+            nactorx->palActorIgnoreTimer = 0;
+            aNPC_set_feel_info(nactorx, mNpc_FEEL_NORMAL, 0);
+            nactorx->talk_info.turn = aNPC_TALK_TURN_NORMAL;
+            nactorx->talk_info.default_animation = -1;
+            nactorx->condition_info.demo_flg = 0;
+            if (nactorx->right_hand.item_type == aNPC_ITEM_TYPE_UMBRELLA) {
+                nactorx->draw.sub_anim_type = aNPC_SUB_ANIM_UMBRELLA;
+            }
+
+            nactorx->condition_info.pitfall_flag = 0;
+            nactorx->think.end_flag = TRUE;
+        }
+    }
+}
+
+static void aNPC_think_pitfall_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    ACTOR* palActor = nactorx->palActor;
+
+    if (palActor != NULL && palActor->part == ACTOR_PART_NPC) {
+        ((NPC_ACTOR*)palActor)->palActor = NULL;
+    }
+    nactorx->actor_class.status_data.weight = MASSTYPE_IMMOVABLE;
+    nactorx->palActorIgnoreTimer = -1;
+    aNPC_set_feel_info(nactorx, mNpc_FEEL_PITFALL, -1);
+
+    {
+        xyz_t pos;
+
+        mFI_UtNum2CenterWpos(&pos, nactorx->condition_info.ut_x, nactorx->condition_info.ut_z);
+        aNPC_set_dst_pos(nactorx, pos.x, pos.z);
+    }
+
+    aNPC_set_request_act(nactorx, 4, aNPC_ACT_PITFALL, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+}
+
+static void aNPC_think_pitfall_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC think_proc[] = {
+        &aNPC_think_pitfall_init_proc,
+        &aNPC_think_pitfall_main_proc,
+    };
+
+    (*think_proc[proc_type])(nactorx, play);
+}

@@ -18,6 +18,10 @@ enum collision_type {
     ClObj_TYPE_NUM
 };
 
+#define ClObj_FLAG_COLLIDED (1 << 1)
+
+#define ClObj_DID_COLLIDE(obj) ((obj).collision_flags0 & ClObj_FLAG_COLLIDED)
+
 enum weight { MASS_IMMOVABLE, MASS_HEAVY, MASS_NORMAL };
 
 #define MASSTYPE_IMMOVABLE 0xFF

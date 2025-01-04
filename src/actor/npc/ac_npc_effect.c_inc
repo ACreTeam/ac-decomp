@@ -1,0 +1,61 @@
+static void aNPC_set_eff(GAME* game, NPC_ACTOR* nactorx, int effect_id, s16 arg0, s16 arg1) {
+    ACTOR* actorx = (ACTOR*)nactorx;
+    xyz_t pos;
+
+    Matrix_Position_Zero(&pos);
+    eEC_CLIP->effect_make_proc(effect_id, pos, 1, actorx->shape_info.rotation.y, game, actorx->npc_id, arg0, arg1);
+}
+
+typedef struct {
+    int effect_id;
+    s16 arg0;
+    s16 arg1;
+} aNPC_effect_data_c;
+
+static void aNPC_set_feel_effect(GAME* game, NPC_ACTOR* nactorx) {
+    // @BUG - this should've been marked static
+    aNPC_effect_data_c effect_data[mNpc_FEEL_ALL_NUM] = {
+        // clang-format off
+        {eEC_EFFECT_KONPU, 0, 0},
+        {eEC_EFFECT_KONPU, 0, 0},
+        {eEC_EFFECT_PUN_YUGE, 0, 0},
+        {eEC_EFFECT_DOYON, 0, 0},
+        {eEC_EFFECT_NEBOKE_AWA, 1, 1},
+        {eEC_EFFECT_KONPU, 0, 0},
+        {eEC_EFFECT_PUN_YUGE, 0, 0},
+        {eEC_EFFECT_DOYON, 0, 0},
+        {eEC_EFFECT_PUN_YUGE, 0, 0},
+        // clang-format on
+    };
+
+    aNPC_feel_effect_c* feel_effect_p = nactorx->draw.feel_effect;
+    aNPC_effect_data_c* data_p = &effect_data[feel_effect_p->feel_type];
+    f32 feel_counter = nactorx->draw.feel_effect_counter;
+    int set_num = feel_effect_p->set_num;
+    u32* set_p = (u32*)feel_effect_p->set_p;
+
+    while (set_num != 0) {
+        f32 tmp = (f32)*set_p - feel_counter;
+
+        if (tmp >= 0.0f && tmp < 0.5f) {
+            aNPC_set_eff(game, nactorx, data_p->effect_id, data_p->arg0, data_p->arg1);
+        }
+
+        set_p++;
+        set_num--;
+    }
+
+    feel_counter += 0.5f;
+    while (feel_counter > (f32)feel_effect_p->max) {
+        feel_counter -= (f32)feel_effect_p->max;
+    }
+
+    nactorx->draw.feel_effect_counter = feel_counter;
+}
+
+static void aNPC_set_other_effect(GAME* game, NPC_ACTOR* nactorx) {
+    if (cKF_FrameControl_passCheck_now(&nactorx->draw.main_animation.keyframe.frame_control,
+                                       (f32)nactorx->draw.effect_pattern) == TRUE) {
+        aNPC_set_eff(game, nactorx, nactorx->draw.effect_type, 0, 0);
+    }
+}

@@ -1,0 +1,78 @@
+static void aNPC_actor_init_common_proc(ACTOR* actorx, GAME* game) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    actorx->mv_proc = nactorx->move_proc;
+    actorx->dw_proc = nactorx->draw_proc;
+    if (nactorx->schedule.type != aNPC_SCHEDULE_NONE) {
+        aNPC_set_schedule(nactorx, play);
+        aNPC_action_proc(nactorx, play);
+    }
+
+    aNPC_clear_all_morph_counter(nactorx);
+    aNPC_anime_proc(nactorx, game);
+}
+
+static void aNPC_actor_init_for_normal(ACTOR* actorx, GAME* game) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+    Animal_c* animal = aNPC_GET_ANM(nactorx);
+
+    nactorx->draw.cloth_idx = aNPC_dma_cloth_data_check(ctrl->cloth, animal->cloth, nactorx);
+    aNPC_actor_init_common_proc(actorx, game);
+}
+
+static void aNPC_actor_init_for_special(ACTOR* actorx, GAME* game) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    mNpc_EventNpc_c* event_npc = mNpc_GetSameEventNpc(actorx->npc_id);
+
+    if (event_npc != NULL) {
+        mActor_name_t cloth = event_npc->cloth_id;
+        
+        if (cloth == EMPTY_NO) {
+            if (ITEM_NAME_GET_TYPE(event_npc->texture_id) == NAME_TYPE_NPC) {
+                int idx = mNpc_SearchAnimalinfo(Save_Get(animals), event_npc->texture_id, ANIMAL_NUM_MAX);
+                Animal_c* animal = Save_GetPointer(animals[idx]);
+
+                cloth = animal->cloth;
+            }
+        }
+
+        if (cloth != EMPTY_NO) {
+            NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+
+            nactorx->draw.cloth_idx = aNPC_dma_cloth_data_check(ctrl->cloth, cloth, nactorx);
+        }
+    } else {
+        mNpc_MaskNpc_c* mask_npc = mNpc_GetSameMaskNpc(actorx->npc_id);
+
+        if (mask_npc != NULL) {
+            mActor_name_t cloth = mask_npc->cloth_id;
+
+            if (cloth != EMPTY_NO) {
+                NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+
+                if (cloth == RSV_CLOTH && aNPC_GET_ANM(nactorx) == NULL) {
+                    cloth = ITM_CLOTH_START;
+                }
+
+                nactorx->draw.cloth_idx = aNPC_dma_cloth_data_check(ctrl->cloth, cloth, nactorx);
+            }
+        }
+    }
+
+    
+    aNPC_set_request_act(nactorx, 1, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+    aNPC_actor_init_common_proc(actorx, game);
+}
+
+static void aNPC_actor_init(ACTOR* actorx, GAME* game) {
+    switch (ITEM_NAME_GET_TYPE(actorx->npc_id)) {
+        case NAME_TYPE_NPC:
+            aNPC_actor_init_for_normal(actorx, game);
+            break;
+        case NAME_TYPE_SPNPC:
+            aNPC_actor_init_for_special(actorx, game);
+            break;
+    }
+}

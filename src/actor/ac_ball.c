@@ -161,7 +161,8 @@ static void aBALL_actor_ct(ACTOR* actor, GAME* game) {
 static void aBALL_actor_dt(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
 
-    if ((ball->unk208 & 1) || (ball->unk208 & 2) || (mRlib_Set_Position_Check(actor) == 0)) {
+    if ((ball->state_flags & aBALL_STATE_DEAD) || (ball->state_flags & aBALL_STATE_IN_HOLE) ||
+        (mRlib_Set_Position_Check(actor) == 0)) {
         Common_Set(ball_pos, ZeroVec);
     } else {
         Common_Set(ball_pos, actor->world.position);
@@ -183,7 +184,7 @@ static void aBALL_position_move(BALL_ACTOR* actor) {
         chase_f(&actor->actor_class.speed, actor->ball_max_speed, actor->ball_acceleration);
     }
 
-    if (!(actor->unk208 & 2)) {
+    if (!(actor->state_flags & aBALL_STATE_IN_HOLE)) {
         mRlib_spdF_Angle_to_spdXZ(&actor->actor_class.position_speed, &actor->actor_class.speed,
                                   &actor->actor_class.world.angle.y);
         chase_f(&actor->actor_class.position_speed.y, actor->actor_class.max_velocity_y, actor->actor_class.gravity);
@@ -243,7 +244,7 @@ static void aBALL_BGcheck(BALL_ACTOR* actor) {
         }
     }
 
-    if (actor->actor_class.bg_collision_check.result.hit_wall & 1) {
+    if (actor->actor_class.bg_collision_check.result.hit_wall & mCoBG_HIT_WALL) {
         hit_angle = mRlib_Get_HitWallAngleY(&actor->actor_class);
         rot = actor->actor_class.world.angle.y - (hit_angle + 0x8000);
         if (ABS(rot) < 0x4000) {
@@ -290,15 +291,16 @@ static void aBALL_OBJcheck(BALL_ACTOR* actor, GAME*) {
 
     wade = mFI_GetPlayerWade();
 
-    if (actor->ball_pipe.collision_obj.collision_flags0 & 2) {
+    if (ClObj_DID_COLLIDE(actor->ball_pipe.collision_obj)) {
         collided = actor->ball_pipe.collision_obj.collided_actor;
-        actor->ball_pipe.collision_obj.collision_flags0 &= ~2;
+        actor->ball_pipe.collision_obj.collision_flags0 &= ~ClObj_FLAG_COLLIDED;
 
         if (mQst_CheckSoccerTarget(collided) != 0) {
             mQst_NextSoccer(collided);
             actor->actor_class.speed = 0.0f;
             actor->actor_class.position_speed = ZeroVec;
-        } else if ((collided != NULL) && (!(actor->unk208 & 2)) && (wade != 1) && (wade != 2)) {
+        } else if ((collided != NULL) && (!(actor->state_flags & aBALL_STATE_IN_HOLE)) && (wade != mFI_WADE_START) &&
+                   (wade != mFI_WADE_INPROGRESS)) {
             if (actor->collider != collided) {
                 pos_speed = collided->position_speed;
                 actor->collider = collided;
@@ -343,14 +345,14 @@ static void aBALL_OBJcheck(BALL_ACTOR* actor, GAME*) {
 
                 actor->actor_class.world.angle.y = atans_table(newSpeedZ, newSpeedX);
                 actor->actor_class.speed *= 0.9f;
-                sAdo_OngenTrgStartSpeed(actor->actor_class.speed, 0x25, &actor->actor_class.world.position);
+                sAdo_OngenTrgStartSpeed(actor->actor_class.speed, NA_SE_25, &actor->actor_class.world.position);
                 actor->unk20C = GETREG(TAKREG, 15) + 30;
             } else {
                 collision = actor->actor_class.status_data.collision_vec;
 
                 xyz_t_add(&actor->actor_class.position_speed, &collision, &collisionSpeed);
 
-                if ((wade != 1) && (wade != 2)) {
+                if ((wade != mFI_WADE_START) && (wade != mFI_WADE_INPROGRESS)) {
                     actor->actor_class.speed =
                         sqrtf((collisionSpeed.x * collisionSpeed.x) + (collisionSpeed.z * collisionSpeed.z));
                     actor->actor_class.speed = CLAMP_MAX(actor->actor_class.speed, 11.0f);
@@ -376,21 +378,20 @@ static void aBALL_OBJcheck(BALL_ACTOR* actor, GAME*) {
 
 static void aBALL_House_Tree_Rev_Check(BALL_ACTOR* actor) {
     if (mRlib_HeightGapCheck_And_ReversePos(&actor->actor_class) != 1) {
-        actor->unk208 |= 1;
+        actor->state_flags |= aBALL_STATE_DEAD;
         Actor_delete(&actor->actor_class);
     }
 }
 
 static void aBALL_process_air_init(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
+    f32 bg_y;
 
-    f32 angle;
+    bg_y = mCoBG_GetBgY_AngleS_FromWpos(NULL, actor->world.position, 0.0f);
+    actor->shape_info.draw_shadow = TRUE;
 
-    angle = mCoBG_GetBgY_AngleS_FromWpos(NULL, actor->world.position, 0.0f);
-    actor->shape_info.draw_shadow = 1;
-
-    if ((ball->process_proc == aBALL_process_ground) && ((actor->world.position.y - angle) > 20.0f)) {
-        sAdo_OngenTrgStart(0x43D, &actor->world.position);
+    if ((ball->process_proc == aBALL_process_ground) && ((actor->world.position.y - bg_y) > 20.0f)) {
+        sAdo_OngenTrgStart(NA_SE_43D, &actor->world.position);
     }
 
     ball->process_proc = aBALL_process_air;
@@ -418,8 +419,7 @@ static void aBALL_process_air(ACTOR* actor, GAME* game) {
 static void aBALL_process_ground_init(ACTOR* actor, GAME* game) {
     BALL_ACTOR* ball = (BALL_ACTOR*)actor;
 
-    actor->shape_info.draw_shadow = 1;
-
+    actor->shape_info.draw_shadow = TRUE;
     if (actor->position_speed.y > 0.0f) {
         ball->process_proc = aBALL_process_air;
     } else {
@@ -461,7 +461,7 @@ static void aBALL_process_ground(ACTOR* actor, GAME* game) {
             if (speed_x < 1.0f) {
                 speed_z = ABS(actor->position_speed.z);
                 if (speed_z < 1.0f) {
-                    ball->unk208 |= 2;
+                    ball->state_flags |= aBALL_STATE_IN_HOLE;
                     ball->ball_pipe.attribute.pipe.height = 20;
                     ball->ball_pipe.attribute.pipe.radius = 18;
                     actor->status_data.weight = MASSTYPE_HEAVY;
@@ -513,8 +513,8 @@ static void aBALL_process_ground(ACTOR* actor, GAME* game) {
                 effect_type = 0;
             }
 
-            Common_Get(clip).effect_clip->effect_make_proc(0x33, actor->world.position, 1, actor->world.angle.y, game,
-                                                           actor->npc_id, 0, effect_type);
+            Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_BUSH_HAPPA, actor->world.position, 1,
+                                                           actor->world.angle.y, game, actor->npc_id, 0, effect_type);
         }
     }
 }
@@ -532,7 +532,7 @@ static void aBALL_set_spd_relations_in_water(ACTOR* actor, GAME* game) {
 
     int apply_angle;
 
-    height = mCoBG_GetWaterHeight_File(actor->world.position, "ac_ball.c", 0x361);
+    height = mCoBG_GetWaterHeight_File(actor->world.position, __FILE__, 0x361);
     add_calc0(&ball->ball_y, 0.5f, 100.0f);
     mCoBG_GetWaterFlow(&pos_flow, actor->bg_collision_check.result.unit_attribute);
 
@@ -549,8 +549,8 @@ static void aBALL_set_spd_relations_in_water(ACTOR* actor, GAME* game) {
 
     if (ball->timer < 0x20) {
         if (!(game->frame_counter & 3) && (ball->timer < 0x10) || !(game->frame_counter & 7)) {
-            Common_Get(clip).effect_clip->effect_make_proc(0x45, actor->world.position, 1, actor->world.angle.y, game,
-                                                           actor->npc_id, 1, 0);
+            Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_TURI_HAMON, actor->world.position, 1,
+                                                           actor->world.angle.y, game, actor->npc_id, 1, 0);
         }
         ball->timer++;
     }
@@ -686,24 +686,24 @@ static void aBALL_status_check(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player2;
     int i;
 
-    if (ball->unk208 & 4) {
+    if (ball->state_flags & aBALL_STATE_PLAYER_HIT_SCOOP) {
         player = GET_PLAYER_ACTOR(play);
-        ball->unk208 &= ~4;
+        ball->state_flags &= ~aBALL_STATE_PLAYER_HIT_SCOOP;
         if (aBALL_player_angle_distance_check(actor, player) || F32_IS_ZERO(actor->speed)) {
             actor->world.angle.y = player->actor_class.shape_info.rotation.y;
             actor->speed = 2.0f;
             actor->position_speed.y = 4.5f;
-            if (ball->unk208 & 2) {
+            if (ball->state_flags & aBALL_STATE_IN_HOLE) {
                 ball->ball_pipe.attribute.pipe.height = 30;
                 ball->ball_pipe.attribute.pipe.radius = 13;
-                ball->unk208 &= ~2;
+                ball->state_flags &= ~aBALL_STATE_IN_HOLE;
                 actor->status_data.weight = 0x64;
             }
         }
     }
-    if (ball->unk208 & 8) {
-        ball->unk208 &= ~8;
-        if (!(ball->unk208 & 2)) {
+    if (ball->state_flags & aBALL_STATE_PLAYER_HIT_AXE) {
+        ball->state_flags &= ~aBALL_STATE_PLAYER_HIT_AXE;
+        if (!(ball->state_flags & aBALL_STATE_IN_HOLE)) {
             player2 = GET_PLAYER_ACTOR(play);
             if (aBALL_player_angle_distance_check(actor, player2) || F32_IS_ZERO(actor->speed)) {
                 actor->world.angle.y = player2->actor_class.shape_info.rotation.y + 0x2000;
@@ -713,20 +713,21 @@ static void aBALL_status_check(ACTOR* actor, GAME* game) {
         }
     }
 
-    if (!(ball->unk208 & 1)) {
+    if (!(ball->state_flags & aBALL_STATE_DEAD)) {
         if (actor->bg_collision_check.result.is_in_water) {
-            sAdo_OngenTrgStart(0x27, &actor->world.position);
-            ball->unk208 |= 1;
+            sAdo_OngenTrgStart(NA_SE_27, &actor->world.position);
+            ball->state_flags |= aBALL_STATE_DEAD;
             if (Common_Get(clip).gyo_clip != NULL) {
                 Common_Get(clip).gyo_clip->ballcheck_gyoei_proc(&actor->world.position, 20.0f, 0);
             }
             ball->ball_pipe.attribute.pipe.height = 10;
-            Common_Get(clip).effect_clip->effect_make_proc(0x3A, actor->world.position, 1, 0, game, actor->npc_id, 1,
-                                                           0);
+            Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_AMI_MIZU, actor->world.position, 1, 0, game,
+                                                           actor->npc_id, 1, 0);
 
             for (i = 2; i < 6; i++) {
-                Common_Get(clip).effect_clip->effect_make_proc(0x3B, actor->world.position, 1, actor->world.angle.y,
-                                                               game, actor->npc_id, 0, i | FTR1_START);
+                Common_Get(clip).effect_clip->effect_make_proc(eEC_EFFECT_MIZUTAMA, actor->world.position, 1,
+                                                               actor->world.angle.y, game, actor->npc_id, 0,
+                                                               i | 0x3000);
             }
         }
     }
@@ -738,8 +739,8 @@ static void aBALL_actor_move(ACTOR* actor, GAME* game) {
 
     aBALL_House_Tree_Rev_Check(ball);
 
-    if (!(actor->state_bitfield & 0x40)) {
-        if (actor->bg_collision_check.result.is_in_water || (ball->unk208 & 2)) {
+    if (!(actor->state_bitfield & ACTOR_STATE_NO_CULL)) {
+        if (actor->bg_collision_check.result.is_in_water || (ball->state_flags & aBALL_STATE_IN_HOLE)) {
             Actor_delete(actor);
         }
         if (actor->speed == 0.0f) {

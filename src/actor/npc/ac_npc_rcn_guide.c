@@ -112,7 +112,7 @@ static void aNRG_actor_ct(ACTOR* actorx, GAME* game) {
     if (Common_Get(clip).npc_clip->birth_check_proc(actorx, &play->game) == TRUE) {
         rcn_guide->npc_class.schedule.schedule_proc = &aNRG_schedule_proc;
         Common_Get(clip).npc_clip->ct_proc(actorx, &play->game, &ct_data);
-        rcn_guide->npc_class.collision.priority = 2;
+        rcn_guide->npc_class.collision.check_kind = aNPC_BG_CHECK_TYPE_NORMAL;
         rcn_guide->melody_copy = rcn_guide->npc_class.talk_info.melody_inst;
 
         /* Set shop acre */

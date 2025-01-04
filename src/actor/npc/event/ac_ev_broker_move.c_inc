@@ -128,14 +128,14 @@ static void aEBRK_enter(EV_BROKER_ACTOR* broker) {
 
 static void aEBRK_set_spd_info(EV_BROKER_ACTOR* broker, int action) {
     if (action == aEBRK_ACTION_ENTER) {
-        broker->npc_class.movement.max_speed = 1.0f;
-        broker->npc_class.movement.acceleration = 0.1f;
-        broker->npc_class.movement.deceleration = 0.1f;
+        broker->npc_class.movement.speed.max_speed = 1.0f;
+        broker->npc_class.movement.speed.acceleration = 0.1f;
+        broker->npc_class.movement.speed.deceleration = 0.1f;
     } else {
         broker->npc_class.actor_class.speed = 0.0f;
-        broker->npc_class.movement.max_speed = 0.0f;
-        broker->npc_class.movement.acceleration = 0.0f;
-        broker->npc_class.movement.deceleration = 0.0f;
+        broker->npc_class.movement.speed.max_speed = 0.0f;
+        broker->npc_class.movement.speed.acceleration = 0.0f;
+        broker->npc_class.movement.speed.deceleration = 0.0f;
     }
 }
 

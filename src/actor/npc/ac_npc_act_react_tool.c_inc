@@ -1,0 +1,121 @@
+enum {
+    aNPC_ACT_REACT_TOOL_STEP_SURPRISE,
+    aNPC_ACT_REACT_TOOL_STEP_SURPRISE2,
+    aNPC_ACT_REACT_TOOL_STEP_SURPRISE_UZAI,
+    aNPC_ACT_REACT_TOOL_STEP_LOOK_PLAYER,
+
+    aNPC_ACT_REACT_TOOL_STEP_NUM
+};
+
+static void aNPC_act_react_tool_chg_step(NPC_ACTOR* nactorx, u8 step);
+
+static void aNPC_setup_react_tool_end(NPC_ACTOR* nactorx) {
+    nactorx->head.angle_add_x = 0x200;
+    nactorx->head.angle_add_y = 0x400;
+    nactorx->palActorIgnoreTimer = 0;
+    nactorx->condition_info.demo_flg = 0;
+    nactorx->action.step = aNPC_ACTION_END_STEP;
+}
+
+static void aNPC_act_react_tool_surprise(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!aNPC_act_anm_seq(nactorx)) {
+        aNPC_setup_react_tool_end(nactorx);
+    }
+}
+
+static void aNPC_act_react_tool_surprise2(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!aNPC_act_anm_seq(nactorx)) {
+        nactorx->act_react_tool_timer = 5 * FRAMES_PER_SECOND;
+        aNPC_act_react_tool_chg_step(nactorx, aNPC_ACT_REACT_TOOL_STEP_LOOK_PLAYER);
+    }
+}
+
+static void aNPC_act_react_tool_look_player(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (playerx != NULL) {
+        aNPC_set_head_request(nactorx, 4, aNPC_HEAD_TARGET_ACTOR, playerx, NULL);
+    }
+
+    nactorx->act_react_tool_timer--;
+    if (nactorx->act_react_tool_timer < 0) {
+        aNPC_setup_react_tool_end(nactorx);
+    }
+}
+
+static void aNPC_act_react_tool_chg_step(NPC_ACTOR* nactorx, u8 step) {
+    // clang-format off
+    static u8 act_idx[] = {
+        aNPC_ACTION_TYPE_GYAFUN1,
+        aNPC_ACTION_TYPE_GYAFUN2,
+        aNPC_ACTION_TYPE_GYAFUN2,
+        aNPC_ACTION_TYPE_WAIT,
+    };
+    // clang-format on
+
+    nactorx->action.step = step;
+    aNPC_setupAction(nactorx, act_idx[step]);
+}
+
+static void aNPC_act_react_tool_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    // clang-format off
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_react_tool_surprise,
+        &aNPC_act_react_tool_surprise2,
+        &aNPC_act_react_tool_surprise,
+        &aNPC_act_react_tool_look_player,
+    };
+    // clang-format on
+
+    (*act_proc[nactorx->action.step])(nactorx, play);
+}
+
+static void aNPC_act_react_tool_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play);
+
+static void aNPC_act_react_tool_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->action.idx == nactorx->action.prev_idx) {
+        aNPC_act_react_tool_init_proc(nactorx, play);
+    }
+}
+
+static void aNPC_act_react_tool_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u8 step = aNPC_ACT_REACT_TOOL_STEP_SURPRISE;
+    int feel = aNPC_get_feel_info(nactorx);
+
+    nactorx->movement.mv_angl = nactorx->actor_class.shape_info.rotation.y;
+    nactorx->head.angle_add_x = 0x600;
+    nactorx->head.angle_add_y = 0xC00;
+    nactorx->palActorIgnoreTimer = -1;
+
+    if (nactorx->think.force_call_flag == aNPC_FORCE_CALL_REQUEST) {
+        nactorx->condition_info.demo_flg = 0;
+    } else {
+        nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
+            aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_ITEM | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+            aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    }
+
+    switch (feel) {
+        case mNpc_FEEL_UZAI_0:
+        case mNpc_FEEL_UZAI_1:
+            step = aNPC_ACT_REACT_TOOL_STEP_SURPRISE_UZAI;
+            break;
+        default:
+            if (aNPC_check_look_player(nactorx, play)) {
+                step = aNPC_ACT_REACT_TOOL_STEP_SURPRISE2;
+            }
+            break;
+    }
+
+    aNPC_act_react_tool_chg_step(nactorx, step);
+}
+
+static void aNPC_act_react_tool_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_react_tool_init_proc,
+        &aNPC_act_react_tool_chg_data_proc,
+        &aNPC_act_react_tool_main_proc,
+    };
+
+    (*act_proc[type])(nactorx, play);
+}

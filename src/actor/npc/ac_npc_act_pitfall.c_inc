@@ -1,0 +1,105 @@
+enum {
+    aNPC_ACT_PITFALL_STEP_TOTTER,
+    aNPC_ACT_PITFALL_STEP_FALL,
+    aNPC_ACT_PITFALL_STEP_FALL2,
+    aNPC_ACT_PITFALL_STEP_STRUGGLE,
+
+    aNPC_ACT_PITFALL_STEP_NUM
+};
+
+static void aNPC_act_pitfall_chg_step(NPC_ACTOR* nactorx, u8 step) {
+    // clang-format off
+    static u8 act_idx[] = {
+        aNPC_ACTION_TYPE_GURATUKU,
+        aNPC_ACTION_TYPE_OTIRU1,
+        aNPC_ACTION_TYPE_OTIRU2,
+        aNPC_ACTION_TYPE_MOGAKU,
+    };
+    // clang-format on
+
+    nactorx->action.step = step;
+    aNPC_setupAction(nactorx, act_idx[step]);
+}
+
+static void aNPC_act_pitfall_totter(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int move_flag = FALSE;
+
+    if (nactorx->actor_class.shape_info.rotation.y == nactorx->movement.mv_angl) {
+        move_flag = TRUE;
+    }
+
+    move_flag &= chase_f(&nactorx->actor_class.world.position.x, nactorx->movement.dst_pos_x, 1.5f);
+    move_flag &= chase_f(&nactorx->actor_class.world.position.z, nactorx->movement.dst_pos_z, 1.5f);
+
+    if (!aNPC_act_anm_seq(nactorx) && move_flag == TRUE) {
+        u8 step;
+
+        if (nactorx->draw.sub_anim_type == aNPC_SUB_ANIM_NONE) {
+            step = aNPC_ACT_PITFALL_STEP_FALL;
+        } else {
+            nactorx->draw.sub_anim_type = aNPC_SUB_ANIM_NONE;
+            step = aNPC_ACT_PITFALL_STEP_FALL2;
+        }
+
+        aNPC_act_pitfall_chg_step(nactorx, step);
+    }
+}
+
+static void aNPC_act_pitfall_fall(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!aNPC_act_anm_seq(nactorx)) {
+        nactorx->talk_info.turn = aNPC_TALK_TURN_NONE;
+        nactorx->talk_info.default_animation = aNPC_ANIM_MOGAKU1;
+        nactorx->condition_info.demo_flg =
+            aNPC_COND_DEMO_SKIP_UZAI_CHECK | aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
+            aNPC_COND_DEMO_SKIP_ITEM | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+            aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+        aNPC_act_pitfall_chg_step(nactorx, aNPC_ACT_PITFALL_STEP_STRUGGLE);
+    }
+}
+
+static void aNPC_act_pitfall_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    // clang-format off
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_pitfall_totter,
+        &aNPC_act_pitfall_fall,
+        &aNPC_act_pitfall_fall,
+        (aNPC_SUB_PROC)&none_proc1,
+    };
+    // clang-format on
+
+    (*act_proc[nactorx->action.step])(nactorx, play);
+}
+
+static void aNPC_act_pitfall_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u8 step;
+    u32 demo_flg;
+
+    if (nactorx->talk_info.default_animation == aNPC_ANIM_MOGAKU1) {
+        step = aNPC_ACT_PITFALL_STEP_STRUGGLE;
+        demo_flg = aNPC_COND_DEMO_SKIP_UZAI_CHECK | aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK |
+                   aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_ITEM | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+                   aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV |
+                   aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    } else {
+        step = aNPC_ACT_PITFALL_STEP_TOTTER;
+        demo_flg = aNPC_COND_DEMO_SKIP_UZAI_CHECK | aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK |
+                   aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_ITEM |
+                   aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y |
+                   aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    }
+
+    nactorx->movement.mv_angl = 0;
+    nactorx->movement.mv_add_angl = DEG2SHORT_ANGLE2(22.5f);
+    aNPC_act_pitfall_chg_step(nactorx, step);
+    nactorx->condition_info.demo_flg = demo_flg;
+}
+
+static void aNPC_act_pitfall_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_pitfall_init_proc,
+        (aNPC_SUB_PROC)&none_proc1,
+        &aNPC_act_pitfall_main_proc,
+    };
+
+    (*act_proc[type])(nactorx, play);
+}

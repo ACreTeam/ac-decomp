@@ -219,6 +219,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITEM_IS_WISP(n) ((n) >= ITM_SPIRIT0 && (n) <= ITM_SPIRIT4)
 #define ITEM_IS_PAPER(n) ((n) >= ITM_PAPER_START && (n) <= (ITM_PAPER_END - 1))
 #define ITEM_IS_CLOTH(n) ((n) >= ITM_CLOTH_START && (n) < ITM_CLOTH_END)
+#define ITEM_IS_NPC_CLOTH(n) ((n) == RSV_CLOTH || ITEM_IS_CLOTH(n))
 
 #define ITEM_IS_RSVCLOTH(n) ((n) >= RSV_CLOTH && (n) <= RSV_CLOTH7)
 #define ITEM_IS_RSVNWORG(n) ((n) >= RSV_NW_ORIGINAL0 && (n) <= RSV_NW_ORIGINAL7)
@@ -532,6 +533,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define ITEM_IS_PLAYER_HOUSE(item) ((item) >= HOUSE0 && (item) < (HOUSE3 + 1))
 #define ITEM_IS_NPC_HOUSE(item) ((item) >= NPC_HOUSE_START && (item) < NPC_HOUSE_END)
+#define ITEM_IS_DUMMY_NPC_HOUSE(item) ((item) >= DUMMY_NPC_HOUSE_START && (item) < (DUMMY_NPC_HOUSE_END + 1))
 #define ITEM_IS_ISLAND_NPC_HOUSE(item) ((item) >= COTTAGE_NPC && (item) < COTTAGE_NPC_END)
 
 #define ITEM_IS_SIGNBOARD(item) ((item) >= SIGNBOARD_START && (item) <= SIGNBOARD_END)
@@ -545,6 +547,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITEM_IS_SCOOP(item) ((item) >= ITM_SHOVEL && (item) <= ITM_SHOVEL)
 #define ITEM_IS_GOLD_SCOOP(item) ((item) >= ITM_GOLDEN_SHOVEL && (item) <= ITM_GOLDEN_SHOVEL)
 #define ITEM_IS_PAINT(item) ((item) >= ITM_RED_PAINT && (item) <= ITM_BROWN_PAINT)
+#define ITEM_IS_TOOL(item) ((item) >= ITM_TOOL_START && (item) < ITM_TOOL_END)
 
 #define BG_CATEGORY 0
 #define ENV_CATEGORY 8
@@ -2715,11 +2718,11 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define SP_NPC_NEEDLEWORK0 (SP_NPC_START + 112) // D070
 #define SP_NPC_NEEDLEWORK1 (SP_NPC_START + 113) // D071
 #define SP_NPC_SENDO (SP_NPC_START + 114) // D072
-//
+#define SP_NPC_PRESENT_NPC (SP_NPC_START + 115) // D073
 #define SP_NPC_EV_SONCHO2 (SP_NPC_START + 116) // D074
 #define SP_NPC_MASK_CAT (SP_NPC_START + 117) // D075
 #define SP_NPC_MASK_CAT2 (SP_NPC_START + 118) // D076
-//
+#define SP_NPC_GO_HONE_NPC (SP_NPC_START + 119) // D077
 #define SP_NPC_SONCHO_D078 (SP_NPC_START + 120) // D078
 #define SP_NPC_SONCHO_D079 (SP_NPC_START + 121) // D079
 #define SP_NPC_SASHO (SP_NPC_START + 122) // D07A
@@ -3019,6 +3022,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define NPC_END      (NPC_START + 236)
 
 #define DUMMY_START 0xF000
+#define DUMMY_NPC_HOUSE_START (DUMMY_START + 5) // 0xF005
 #define DUMMY_NPC_HOUSE_000 (DUMMY_START + 5) // F005
 #define DUMMY_NPC_HOUSE_001 (DUMMY_START + 6) // F006
 #define DUMMY_NPC_HOUSE_002 (DUMMY_START + 7) // F007
@@ -3257,6 +3261,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define DUMMY_NPC_HOUSE_235 (DUMMY_START + 240) // F0F0
 #define DUMMY_NPC_HOUSE_236 (DUMMY_START + 241) // F0F1
 #define DUMMY_NPC_HOUSE_237 (DUMMY_START + 242) // F0F2
+#define DUMMY_NPC_HOUSE_END (DUMMY_START + 242) // F0F2
 #define DUMMY_HOUSE0 0xF0F3
 #define DUMMY_HOUSE1 0xF0F4
 #define DUMMY_HOUSE2 0xF0F5

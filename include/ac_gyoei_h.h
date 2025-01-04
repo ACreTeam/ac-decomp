@@ -22,7 +22,7 @@ typedef void (*aGYO_dt_proc)(ACTOR*, GAME*);
 typedef void (*aGYO_ballcheck_proc)(xyz_t*, f32, s16);
 typedef void (*aGYO_hitcheck_proc)(xyz_t*, s16);
 typedef int (*aGYO_chk_live_proc)(int, int, GAME*);
-typedef int (*aGYO_search_near_proc)(f32, f32);
+typedef ACTOR* (*aGYO_search_near_proc)(f32, f32);
 
 /* sizeof(aGYO_Clip_c) == 0x1C */
 typedef struct ac_gyoei_clip_s {

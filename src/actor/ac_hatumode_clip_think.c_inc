@@ -22,7 +22,7 @@ static void aHN0_normal_wait_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* 
 }
 
 static void aHN0_move_init(HATUMODE_NPC0_ACTOR* hatumode_npc, GAME_PLAY* play) {
-    aHN0_set_request_act(hatumode_npc, 4, aNPC_ACT_WALK2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, hatumode_npc->pos[0], hatumode_npc->pos[1]);
+    aHN0_set_request_act(hatumode_npc, 4, aNPC_ACT_RUN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, hatumode_npc->pos[0], hatumode_npc->pos[1]);
     hatumode_npc->timer = 20;
     hatumode_npc->npc_class.actor_class.status_data.weight = MASSTYPE_HEAVY;
 }

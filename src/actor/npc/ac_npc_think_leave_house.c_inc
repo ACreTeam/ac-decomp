@@ -1,0 +1,22 @@
+static void aNPC_think_leave_house_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    f32 x = nactorx->npc_info.list->house_position.x + 20.0f;
+    f32 z = nactorx->npc_info.list->house_position.z + 40.0f;
+
+    nactorx->actor_class.shape_info.rotation.y = 0;
+    nactorx->actor_class.world.angle.y = 0;
+    nactorx->actor_class.world.position.x = x;
+    nactorx->actor_class.world.position.z = z;
+    nactorx->actor_class.world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(nactorx->actor_class.world.position, 0.0f);
+    aNPC_set_dst_pos(nactorx, x, z + 40.0f);
+    nactorx->movement.range_type = aNPC_MOVE_RANGE_TYPE_BLOCK;
+    aNPC_set_request_act(nactorx, 4, aNPC_ACT_LEAVE_HOUSE, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+}
+
+static void aNPC_think_leave_house_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC think_proc[] = {
+        &aNPC_think_leave_house_init_proc,
+        &aNPC_think_demo_allways,
+    };
+
+    (*think_proc[proc_type])(nactorx, play);
+}

@@ -1,0 +1,41 @@
+static void aNPC_actor_dt(ACTOR* actorx, GAME* game) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    ACTOR* palActor = nactorx->palActor;
+
+    aNPC_reset_out_of_door_flg(ctrl, actorx);
+    aNPC_reset_umb_open_flg(ctrl, actorx);
+
+    if (eEC_CLIP != NULL) {
+        eEC_CLIP->effect_kill_all_proc(actorx->npc_id);
+    }
+
+    if (nactorx->right_hand.item_actor_p != NULL) {
+        Actor_delete(nactorx->right_hand.item_actor_p);
+        nactorx->right_hand.item_actor_p = NULL;
+    }
+
+    if (nactorx->accessory.accessory != NULL) {
+        Actor_delete(nactorx->accessory.accessory);
+        nactorx->accessory.accessory = NULL;
+    }
+
+    if (palActor != NULL && palActor->part == ACTOR_PART_NPC) {
+        ((NPC_ACTOR*)palActor)->palActor = NULL;
+    }
+
+    if (actorx->ct_proc == NULL) {
+        cKF_SkeletonInfo_R_dt(&nactorx->draw.main_animation.keyframe);
+        cKF_SkeletonInfo_R_dt(&nactorx->draw.sub_animation0.keyframe);
+        cKF_SkeletonInfo_R_dt(&nactorx->draw.sub_animation1.keyframe);
+        ClObjPipe_dt(game, &nactorx->collision.pipe);
+    }
+
+    if (nactorx->npc_info.event != NULL) {
+        mNpc_UnRegistEventNpc(nactorx->npc_info.event);
+    }
+
+    if (nactorx->npc_info.mask != NULL) {
+        mNpc_UnRegistMaskNpc(nactorx->npc_info.mask);
+    }
+}

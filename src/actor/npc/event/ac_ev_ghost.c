@@ -237,8 +237,8 @@ static void aEGH_actor_move(ACTOR* actorx, GAME* game) {
     step = 1;
     
     if (mDemo_Get_talk_actor() == actorx) {
-      ghost->npc_class.draw._5BE = 0;
-      ghost->npc_class.draw.animation_speed = 0.5f;
+      ghost->npc_class.draw.anim_speed_type = aNPC_ANIM_SPEED_TYPE_LOCKED;
+      ghost->npc_class.draw.frame_speed = 0.5f;
       target_alpha = 190;
     }
     else {
@@ -253,8 +253,8 @@ static void aEGH_actor_move(ACTOR* actorx, GAME* game) {
         step = 1;
       }
 
-      ghost->npc_class.draw._5BE = 1;
-      ghost->npc_class.draw.animation_speed = 0.25f;
+      ghost->npc_class.draw.anim_speed_type = aNPC_ANIM_SPEED_TYPE_FREE;
+      ghost->npc_class.draw.frame_speed = 0.25f;
     }
 
     delta_alpha = alpha - target_alpha;

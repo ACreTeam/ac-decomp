@@ -1,0 +1,152 @@
+static int aNPC_change_umbrella(NPC_ACTOR* nactorx) {
+    int ret = FALSE;
+
+    if (CLIP(tools_clip) != NULL) {
+        ACTOR* hand_actor;
+        int kind = nactorx->right_hand.umbrella_type;
+        int bank;
+
+        hand_actor = CLIP(tools_clip)->aTOL_birth_proc(kind, aTOL_ACTION_S_TAKEOUT, (ACTOR*)nactorx, gamePT, -1, &bank);
+        if (hand_actor != NULL) {
+            nactorx->right_hand.prev_item_actor_p = nactorx->right_hand.item_actor_p;
+            nactorx->right_hand.item_actor_p = hand_actor;
+            nactorx->draw.sub_anim_type = aNPC_SUB_ANIM_UMBRELLA;
+            xyz_t_move(&hand_actor->world.position, &nactorx->actor_class.world.position);
+            ret = TRUE;
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_putaway_right_item(NPC_ACTOR* nactorx) {
+    static u8 next_act_idx[] = { aNPC_ACT_UMB_CLOSE, aNPC_ACT_NONE };
+    int ret = TRUE;
+
+    if (CLIP(tools_clip) != NULL &&
+        CLIP(tools_clip)
+                ->aTOL_chg_request_mode_proc((ACTOR*)nactorx, nactorx->right_hand.item_actor_p, aTOL_ACTION_PUTAWAY) ==
+            TRUE) {
+        int idx = nactorx->right_hand.item_type - aNPC_ITEM_TYPE_UMBRELLA;
+
+        aNPC_set_request_act(nactorx, 4, next_act_idx[idx], aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+        ret = FALSE;
+    }
+
+    return ret;
+}
+
+static int aNPC_takeout_right_item(NPC_ACTOR* nactorx) {
+    static u8 next_act_idx[] = { aNPC_ACT_UMB_OPEN, aNPC_ACT_NONE };
+    static int itemIdx_table[] = { TOOL_UMBRELLA0, TOOL_KEITAI };
+    int ret = TRUE;
+
+    if (CLIP(tools_clip) != NULL) {
+        int requested = nactorx->right_hand.requested_item_type;
+        ACTOR* tool;
+        int kind;
+        int mode = aTOL_ACTION_TAKEOUT;
+        int bank;
+
+        if (requested == aNPC_ITEM_TYPE_UMBRELLA) {
+            if (nactorx->condition_info.talk_condition != aNPC_TALK_TYPE_NONE) {
+                return TRUE;
+            }
+
+            kind = nactorx->right_hand.umbrella_type;
+            if (nactorx->request.umb_flag == TRUE) {
+                mode = aTOL_ACTION_S_TAKEOUT;
+            } else {
+                mode = aTOL_ACTION_WAIT;
+            }
+        } else {
+            kind = itemIdx_table[requested - aNPC_ITEM_TYPE_UMBRELLA];
+        }
+
+        tool = CLIP(tools_clip)->aTOL_birth_proc(kind, mode, (ACTOR*)nactorx, gamePT, -1, &bank);
+        if (tool == NULL) {
+            if (bank != -1 && nactorx->request.umb_flag == TRUE) {
+                nactorx->request.umb_flag = FALSE;
+            }
+        } else {
+            nactorx->right_hand.item_type = requested;
+            nactorx->right_hand.requested_item_type = aNPC_ITEM_TYPE_NONE;
+            nactorx->right_hand.item_actor_p = tool;
+            if (mode == aTOL_ACTION_S_TAKEOUT) {
+                nactorx->draw.sub_anim_type = aNPC_SUB_ANIM_UMBRELLA;
+            }
+
+            aNPC_set_request_act(nactorx, 4, next_act_idx[requested - aNPC_ITEM_TYPE_UMBRELLA], aNPC_ACT_TYPE_DEFAULT,
+                                 aNPC_req_default_data);
+            xyz_t_move(&tool->world.position, &nactorx->actor_class.world.position);
+            ret = FALSE;
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_chk_right_hand(NPC_ACTOR* nactorx) {
+    int requested = nactorx->right_hand.requested_item_type;
+    int ret = TRUE;
+
+    switch (requested) {
+        case aNPC_ITEM_TYPE_NONE:
+            break;
+        case aNPC_ITEM_TYPE_PUTAWAY:
+            if (!aNPC_putaway_right_item(nactorx)) {
+                nactorx->right_hand.requested_item_type = aNPC_ITEM_TYPE_NONE;
+                ret = FALSE;
+            }
+            break;
+        default:
+            if (nactorx->right_hand.item_type == aNPC_ITEM_TYPE_NONE) {
+                ret = aNPC_takeout_right_item(nactorx);
+            } else {
+                ret = aNPC_putaway_right_item(nactorx);
+            }
+            break;
+    }
+
+    return ret;
+}
+
+static void aNPC_clear_left_hand_info(NPC_ACTOR* nactorx) {
+    nactorx->left_hand.item_type = aNPC_ITEM_TYPE_NONE;
+    nactorx->left_hand.item = EMPTY_NO;
+    nactorx->left_hand.after_mode = aHOI_REQUEST_NO_REQUEST;
+    nactorx->left_hand.present_flag = FALSE;
+    nactorx->left_hand.item_actor_p = NULL;
+}
+
+static int aNPC_chk_left_hand(NPC_ACTOR* nactorx) {
+    int ret = TRUE;
+
+    if (nactorx->left_hand.requested_item_type != aNPC_ITEM_TYPE_NONE) {
+        ACTOR* item_p;
+
+        switch (nactorx->right_hand.item_type) {
+            case aNPC_ITEM_TYPE_NONE:
+            case aNPC_ITEM_TYPE_UMBRELLA:
+                item_p = CLIP(handOverItem_clip)
+                             ->birth_proc(nactorx->left_hand.item, nactorx->left_hand.after_mode,
+                                          nactorx->left_hand.present_flag, (ACTOR*)nactorx);
+                if (item_p != NULL) {
+                    CLIP(handOverItem_clip)->chg_request_mode_proc((ACTOR*)nactorx, aHOI_REQUEST_TRANSFER);
+                    nactorx->left_hand.requested_item_type = aNPC_ITEM_TYPE_NONE;
+                    nactorx->left_hand.item_type = aNPC_ITEM_TYPE_LEFT_HAND;
+                    nactorx->left_hand.item_actor_p = item_p;
+                    aNPC_set_request_act(nactorx, 4, aNPC_ACT_TRANS, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+                }
+                break;
+            default:
+                nactorx->right_hand.requested_item_type = aNPC_ITEM_TYPE_PUTAWAY;
+                aNPC_chk_right_hand(nactorx);
+                break;
+        }
+
+        ret = FALSE;
+    }
+
+    return ret;
+}

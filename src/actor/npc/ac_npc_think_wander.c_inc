@@ -1,0 +1,214 @@
+static int aNPC_think_wander_check_ones_way(NPC_ACTOR* nactorx, u16* arg_data) {
+    s16 angle;
+    s16 d_angle;
+    xyz_t dst_pos;
+    int ret = FALSE;
+
+    dst_pos.x = arg_data[2];
+    dst_pos.y = 0.0f;
+    dst_pos.z = arg_data[3];
+    angle = search_position_angleY(&nactorx->actor_class.world.position, &dst_pos);
+    d_angle = angle - nactorx->actor_class.shape_info.rotation.y;
+
+    if (ABS(d_angle) > DEG2SHORT_ANGLE2(90.0f)) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aNPC_think_wander_move_next(u16* arg_data, NPC_ACTOR* nactorx) {
+    xyz_t dst_pos;
+    int sum = 0;
+    int ret = TRUE;
+    mActor_name_t* fg_p;
+    int bx;
+    int bz;
+
+    mFI_Wpos2BlockNum(&bx, &bz, nactorx->actor_class.world.position);
+    fg_p = mFI_BkNumtoUtFGTop(bx, bz);
+    if (fg_p == NULL) {
+        sum = 5;
+    } else {
+        mActor_name_t item;
+        f32 center_x = nactorx->movement.range_center_x;
+        f32 center_z = nactorx->movement.range_center_z;
+        f32 radius = nactorx->movement.range_radius;
+        int ux;
+        int uz;
+        s16 angle;
+
+        while (TRUE) {
+            // 0xFFFF, should've just been 0x10000 since fqrand upper bound is exclusive.
+            angle = (s16)RANDOM_F(DEG2SHORT_ANGLE2(360.0f) - 1);
+            dst_pos.x = center_x + sin_s(angle) * radius;
+            dst_pos.z = center_z + cos_s(angle) * radius;
+            mFI_Wpos2UtNum_inBlock(&ux, &uz, dst_pos);
+            item = *(fg_p + ux + uz * UT_X_NUM);
+            if ((item == EMPTY_NO || ITEM_IS_ITEM1(item) || ITEM_IS_FTR(item)) &&
+                mCoBG_Wpos2CheckNpc(dst_pos) == TRUE &&
+                aNPC_moveRangeCheck2(nactorx, NULL, dst_pos, nactorx->movement.range_type) == TRUE) {
+                s16 angleY;
+
+                if (nactorx->action.idx != aNPC_ACT_TURN) {
+                    break;
+                }
+
+                angleY = search_position_angleY(&nactorx->actor_class.world.position, &dst_pos);
+                if (ABS(angleY - nactorx->actor_class.shape_info.rotation.y) < DEG2SHORT_ANGLE2(22.5f)) {
+                    break;
+                }
+            } else if (sum > 4) {
+                break;
+            }
+
+            sum++;
+        }
+    }
+
+    if (sum <= 4) {
+        arg_data[2] = (int)dst_pos.x;
+        arg_data[3] = (int)dst_pos.z;
+    } else {
+        ret = FALSE;
+    }
+
+    return ret;
+}
+
+static void aNPC_think_wander_decide_next(NPC_ACTOR* nactorx) {
+    static int girl_decide_boarder[] = { 3, 6 }; // 40% wait, 30% walk, 30% run
+    static int ko_girl_decide_boarder[] = { 6, 8 }; // 70% wait, 20% walk, 10% run
+    static int boy_decide_boarder[] = { 5, 7 }; // 60% wait, 20% walk, 20% run
+    static int sport_man_decide_boarder[] = { 2, 4 }; // 30% wait, 20% walk, 50% run
+    static int grim_man_decide_boarder[] = { 3, 6 }; // 40% wait, 30% walk, 30% run
+    static int naniwa_lady_decide_boarder[] = { 4, 8 }; // 50% wait, 40% walk, 10% run
+    static int s_npc_decide_boarder[] = { 4, 8 }; // 50% wait, 40% walk, 10% run
+
+    // clang-format off
+    static int* decide_boarder[] = {
+        girl_decide_boarder,
+        ko_girl_decide_boarder,
+        boy_decide_boarder,
+        sport_man_decide_boarder,
+        grim_man_decide_boarder,
+        naniwa_lady_decide_boarder,
+    };
+    // clang-format on
+
+    u8 act_type;
+    u16 arg_data[aNPC_REQUEST_ARG_NUM];
+    u8 act_idx;
+
+    act_type = aNPC_ACT_TYPE_DEFAULT;
+    bzero(arg_data, sizeof(arg_data));
+
+    if (aNPC_check_fatigue(nactorx) == TRUE || aNPC_get_feel_info(nactorx) == mNpc_FEEL_SLEEPY) {
+        act_idx = aNPC_ACT_WAIT;
+    } else if (nactorx->action.idx == aNPC_ACT_TURN) {
+        act_idx = aNPC_ACT_WAIT;
+        if (nactorx->collision.collision_flag == 0) {
+            xyz_t pos;
+
+            pos.x = (int)nactorx->action.move_x;
+            pos.z = (int)nactorx->action.move_z;
+            if (aNPC_moveRangeCheck2(nactorx, NULL, pos, nactorx->movement.range_type) == TRUE) {
+                arg_data[2] = nactorx->action.move_x;
+                arg_data[3] = nactorx->action.move_z;
+                act_idx = aNPC_ACT_WALK;
+                act_type = aNPC_ACT_TYPE_TO_POINT;
+            }
+        }
+    } else {
+        int rng = RANDOM(10);
+        int* boarder_p;
+
+        if (aNPC_IS_NRM_NPC(nactorx)) {
+            boarder_p = decide_boarder[mNpc_GetNpcLooks((ACTOR*)nactorx)];
+        } else {
+            boarder_p = s_npc_decide_boarder;
+        }
+
+        if (nactorx->think.idx == aNPC_THINK_WALK_WANDER) {
+            if (rng > 5) {
+                act_idx = aNPC_ACT_WAIT;
+            } else {
+                act_idx = aNPC_ACT_WALK;
+            }
+        } else {
+            for (act_idx = aNPC_ACT_WAIT; act_idx < aNPC_ACT_RUN; act_idx++) {
+                if (rng <= *boarder_p) {
+                    break;
+                }
+                
+                boarder_p++;
+            }
+        }
+
+        switch (act_idx) {
+            case aNPC_ACT_WAIT:
+                break;
+            case aNPC_ACT_RUN: {
+                mNPS_schedule_c* sched_p = nactorx->npc_info.schedule;
+
+                if (sched_p != NULL && sched_p->current_type == mNPS_SCHED_FIELD && sched_p->current_type != sched_p->saved_type) {
+                    act_idx = aNPC_ACT_WALK;
+                }
+            }
+            // fallthrough 2 -> 1
+            case aNPC_ACT_WALK:
+                if (aNPC_think_wander_move_next(arg_data, nactorx) == FALSE) {
+                    act_idx = aNPC_ACT_WAIT;
+                } else {
+                    if (aNPC_think_wander_check_ones_way(nactorx, arg_data) == TRUE) {
+                        act_idx = aNPC_ACT_TURN;
+                    }
+
+                    act_type = aNPC_ACT_TYPE_TO_POINT;
+                }
+                break;
+        }
+    }
+
+    aNPC_set_request_act(nactorx, 1, act_idx, act_type, arg_data);
+}
+
+static void aNPC_think_wander_next_act(NPC_ACTOR* nactorx) {
+    if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        aNPC_think_wander_decide_next(nactorx);
+    }
+}
+
+static void aNPC_think_wander_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (aNPC_think_chk_interrupt_proc(nactorx, play) == FALSE) {
+        aNPC_think_wander_next_act(nactorx);
+    }
+}
+
+static void aNPC_think_wander_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int ux;
+    int uz;
+
+    mFI_Wpos2UtNum_inBlock(&ux, &uz, nactorx->actor_class.world.position);
+    if (ux == 0 || ux == (UT_X_NUM - 1) || uz == 0 || uz == (UT_Z_NUM - 1)) {
+        aNPC_think_in_block_chg_native_info((ACTOR*)nactorx, nactorx->actor_class.world.position.x, nactorx->actor_class.world.position.z);
+        nactorx->movement.range_type = aNPC_MOVE_RANGE_TYPE_BLOCK;
+        nactorx->movement.range_center_x = (0.5f + nactorx->actor_class.block_x) * mFI_BK_WORLDSIZE_X_F;
+        nactorx->movement.range_center_z = (0.5f + nactorx->actor_class.block_z) * mFI_BK_WORLDSIZE_Z_F;
+    }
+
+    nactorx->condition_info.demo_flg = 0;
+    nactorx->think.force_call_flag = aNPC_FORCE_CALL_NONE;
+    aNPC_set_request_act(nactorx, 1, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+}
+
+static void aNPC_think_wander_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    // clang-format off
+    static aNPC_SUB_PROC think_proc[] = {
+        &aNPC_think_wander_init_proc,
+        &aNPC_think_wander_main_proc,
+    };
+    // clang-format on
+
+    (*think_proc[proc_type])(nactorx, play);
+}

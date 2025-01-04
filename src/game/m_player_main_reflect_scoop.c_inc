@@ -108,7 +108,7 @@ static void Player_actor_SetEffectHit_Reflect_scoop(ACTOR* actor, GAME* game) {
                     break;
 
                 case mAc_PROFILE_BALL:
-                    ((BALL_ACTOR*)reflected)->unk208 |= 4;
+                    ((BALL_ACTOR*)reflected)->state_flags |= aBALL_STATE_PLAYER_HIT_SCOOP;
                     break;
             }
         }

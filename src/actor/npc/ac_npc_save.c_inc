@@ -1,0 +1,78 @@
+static void aNPC_actor_save_for_normal(ACTOR* actorx) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    Animal_c* animal = aNPC_GET_ANM(nactorx);
+
+    if (nactorx->action.idx == aNPC_ACT_INTO_HOUSE) {
+        int home_ux = animal->home_info.block_x * UT_X_NUM + animal->home_info.ut_x;
+        int home_uz = animal->home_info.block_z * UT_Z_NUM + animal->home_info.ut_z;
+
+        if (nactorx->condition_info.ut_x == home_ux && nactorx->condition_info.ut_z == home_uz) {
+            aNPC_setup_stay_my_house(nactorx);
+        }
+    }
+
+    aNPC_cancel_cloth_data(nactorx);
+    animal->cloth = nactorx->draw.next_cloth_no;
+    animal->cloth_original_id = nactorx->draw.next_org_idx;
+
+    if (nactorx->condition_info.feel_tim == 0) {
+        animal->mood = mNpc_FEEL_NORMAL;
+        animal->mood_time = 0;
+    } else {
+        int feel_tim;
+
+        switch (animal->mood) {
+            case mNpc_FEEL_PITFALL:
+                mFI_SetFG_common(EMPTY_NO, actorx->world.position, TRUE);
+            // fallthrough 5 -> 4, 7, & 8
+            case mNpc_FEEL_SLEEPY:
+            case mNpc_FEEL_UZAI_0:
+            case mNpc_FEEL_UZAI_1:
+                animal->mood = mNpc_FEEL_NORMAL;
+                feel_tim = 0;
+                break;
+            default:
+                feel_tim = nactorx->condition_info.feel_tim / FRAMES_PER_MINUTE;
+                break;
+        }
+
+        animal->mood_time = feel_tim;
+    }
+}
+
+static void aNPC_actor_save_for_special(ACTOR* actorx) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    mNpc_EventNpc_c* event_npc = nactorx->npc_info.event;
+
+    if (event_npc != NULL) {
+        if (event_npc->cloth_id != EMPTY_NO) {
+            aNPC_cancel_cloth_data(nactorx);
+        }
+    } else {
+        mNpc_MaskNpc_c* mask_npc = nactorx->npc_info.mask;
+
+        if (mask_npc != NULL) {
+            if (mask_npc->cloth_id != EMPTY_NO) {
+                aNPC_cancel_cloth_data(nactorx);
+            }
+        }
+    }
+}
+
+static void aNPC_actor_save(ACTOR* actorx, GAME* game) {
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+
+    if (mEv_CheckTitleDemo() <= 0) {
+        if (ITEM_NAME_GET_TYPE(actorx->npc_id) == NAME_TYPE_NPC) {
+            aNPC_actor_save_for_normal(actorx);
+        } else {
+            aNPC_actor_save_for_special(actorx);
+        }
+
+        if (nactorx->movement.move_timer >= 18000 && nactorx->npc_info.list != NULL) {
+            xyz_t_move(&actorx->world.position, &nactorx->npc_info.list->position);
+        }
+
+        mNpc_RenewalSetNpc(actorx);
+    }
+}

@@ -1,0 +1,214 @@
+static int aNPC_check_look_range(NPC_ACTOR* nactorx, xyz_t* pos_p) {
+    ACTOR* parent = nactorx->actor_class.parent_actor;
+    int ret = FALSE;
+    s16 angleY = search_position_angleY(&nactorx->actor_class.world.position, pos_p);
+    s16 actor_angleY = nactorx->actor_class.shape_info.rotation.y;
+
+    if (parent != NULL) {
+        actor_angleY += parent->shape_info.rotation.y;
+    }
+
+    angleY -= actor_angleY;
+    if (ABS(angleY) < DEG2SHORT_ANGLE2(67.5f)) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static ACTOR* aNPC_check_look_player(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    s16 actor_angleY;
+    s16 angleY;
+    ACTOR* playerx = NULL;
+
+    if (nactorx->actor_class.player_distance_xz < 120.0f) {
+        ACTOR* parent = nactorx->actor_class.parent_actor;
+
+        actor_angleY = nactorx->actor_class.shape_info.rotation.y;
+        if (parent != NULL) {
+            actor_angleY += parent->shape_info.rotation.y;
+        }
+
+        angleY = nactorx->actor_class.player_angle_y - actor_angleY;
+        if (ABS(angleY) < DEG2SHORT_ANGLE2(67.5f)) {
+            playerx = GET_PLAYER_ACTOR_ACTOR(play);
+        }
+    }
+
+    return playerx;
+}
+
+static void aNPC_check_attention(NPC_ACTOR* nactorx) {
+    aNPC_attention_c* att_p = &CLIP(npc_clip)->attention;
+    xyz_t pos;
+
+    if (att_p->type == aNPC_ATT_TYPE_NONE) {
+        return;
+    }
+
+    if (att_p->type == aNPC_ATT_TYPE_ACTOR) {
+        ACTOR* target = att_p->actor;
+
+        if (target == (ACTOR*)nactorx) {
+            return;
+        }
+
+        xyz_t_move(&pos, &target->world.position);
+    } else {
+        xyz_t_move(&pos, &att_p->pos);
+    }
+
+    switch(nactorx->actor_class.npc_id) {
+        case SP_NPC_EV_SPEECH_SONCHO:
+        case SP_NPC_EV_GROUNDHOG_0:
+        case SP_NPC_EV_GROUNDHOG_1:
+        case SP_NPC_EV_GROUNDHOG_2:
+        case SP_NPC_EV_GROUNDHOG_3:
+        case SP_NPC_EV_GROUNDHOG_4:
+            aNPC_set_head_request(nactorx, 2, att_p->type, att_p->actor, &att_p->pos);
+            break;
+        default:
+            if (aNPC_check_look_range(nactorx, &pos) == TRUE) {
+                aNPC_set_head_request(nactorx, 2, att_p->type, att_p->actor, &att_p->pos);
+            }
+            break;
+    }
+}
+
+static void aNPC_look_target(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    ACTOR* target = NULL;
+    u8 prio = 1;
+
+    if (nactorx->palActor != NULL) {
+        switch (nactorx->action.idx) {
+            case aNPC_ACT_GREETING:
+            case aNPC_ACT_TALK:
+                if (nactorx->talk_info.turn != aNPC_TALK_TURN_NONE) {
+                    target = nactorx->palActor;
+                    prio = 4;
+                }
+                break;
+        }
+    } else {
+        switch (nactorx->action.act_obj) {
+            case aNPC_ACT_OBJ_BALL:
+                if (nactorx->movement.target != NULL) {
+                    target = nactorx->movement.target;
+                }
+                break;
+            case aNPC_ACT_OBJ_INSECT:
+            case aNPC_ACT_OBJ_FISH:
+                if (nactorx->movement.target != NULL && nactorx->action.step == 0) {
+                    target = nactorx->movement.target;
+                }
+                break;
+        }
+
+        if (target == NULL) {
+            target = aNPC_check_look_player(nactorx, play);
+        }
+    }
+
+    if (target != NULL) {
+        aNPC_set_head_request(nactorx, prio, aNPC_HEAD_TARGET_ACTOR, target, NULL);
+    }
+
+    aNPC_check_attention(nactorx);
+}
+
+static int aNPC_check_condition_search_eye(NPC_ACTOR* nactorx) {
+    return aNPC_get_feel_info(nactorx) != mNpc_FEEL_SLEEPY;
+}
+
+static void aNPC_search_eye_target_sub(NPC_ACTOR* nactorx, xyz_t* target_eye, xyz_t* target_pos, s_xyz* angle) {
+    s16 angleX = -search_position_angleX(&nactorx->actor_class.eye.position, target_eye);
+    s16 angleY = search_position_angleY(&nactorx->actor_class.world.position, target_pos);
+
+    angleX += angle->x;
+    angleY -= angle->y;
+
+    if (angleX < DEG2SHORT_ANGLE2(-33.75f)) {
+        angleX = DEG2SHORT_ANGLE2(-33.75f);
+    }
+
+    if (ABS(angleY) > DEG2SHORT_ANGLE2(67.5f)) {
+        if (angleY < 0) {
+            angleY = DEG2SHORT_ANGLE2(-67.5f);
+        } else {
+            angleY = DEG2SHORT_ANGLE2(67.5f);
+        }
+    }
+
+    chase_angle(&nactorx->head.angle_x, angleX, nactorx->head.angle_add_x);
+    chase_angle(&nactorx->head.angle_y, angleY, nactorx->head.angle_add_y);
+}
+
+static void aNPC_search_eye_target(NPC_ACTOR* nactorx, GAME_PLAY* play, s_xyz* world_angle, s_xyz* joint_angle) {
+    if (nactorx->head.lock_flag == FALSE) {
+        aNPC_look_target(nactorx, play);
+    }
+
+    if (nactorx->request.head_priority != 0) {
+        nactorx->head.target_type = nactorx->request.head_type;
+        nactorx->head.target = nactorx->request.head_target;
+        xyz_t_move(&nactorx->head.pos, &nactorx->request.head_pos);
+    } else {
+        nactorx->head.target_type = aNPC_HEAD_TARGET_NONE;
+    }
+
+    if (aNPC_check_condition_search_eye(nactorx) == TRUE) {
+        switch (nactorx->head.target_type) {
+            case aNPC_HEAD_TARGET_ACTOR: {
+                ACTOR* target = nactorx->head.target;
+
+                aNPC_search_eye_target_sub(nactorx, &target->eye.position, &target->world.position, world_angle);
+                break;
+            }
+
+            case aNPC_HEAD_TARGET_POS: {
+                xyz_t* pos = &nactorx->head.pos;
+
+                aNPC_search_eye_target_sub(nactorx, pos, pos, world_angle);
+                break;
+            }
+
+            default: {
+                chase_angle(&nactorx->head.angle_x, joint_angle->y, nactorx->head.angle_add_x);
+                chase_angle(&nactorx->head.angle_y, joint_angle->x, nactorx->head.angle_add_y);
+                break;
+            }
+        }
+    }
+
+    nactorx->request.head_priority = 0;
+}
+
+static void aNPC_set_head_request_sub(NPC_ACTOR* nactorx, u8 prio, u8 type, ACTOR* target_actor, xyz_t* target_pos) {
+    nactorx->request.head_priority = prio;
+    nactorx->request.head_type = type;
+    nactorx->request.head_target = target_actor;
+
+    if (target_pos != NULL) {
+        xyz_t_move(&nactorx->request.head_pos, target_pos);
+    } else {
+        bzero(&nactorx->request.head_pos, sizeof(nactorx->request.head_pos));
+    }
+}
+
+static int aNPC_set_head_request(NPC_ACTOR* nactorx, u8 prio, u8 type, ACTOR* target_actor, xyz_t* target_pos) {
+    int ret = FALSE;
+
+    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_HEAD_LOOKAT) == 0 || prio == 4) {
+        if (nactorx->request.head_priority == prio) {
+            if (nactorx->request.head_type < type) {
+                aNPC_set_head_request_sub(nactorx, prio, type, target_actor, target_pos);
+                ret = TRUE;
+            }
+        } else if (nactorx->request.head_priority < prio) {
+            aNPC_set_head_request_sub(nactorx, prio, type, target_actor, target_pos);
+                ret = TRUE;
+        }
+    }
+
+    return ret;
+}

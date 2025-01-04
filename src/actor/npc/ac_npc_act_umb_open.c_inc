@@ -1,0 +1,47 @@
+enum {
+    aNPC_ACT_UMB_OPEN_STEP_OPEN,
+
+    aNPC_ACT_UMB_OPEN_STEP_NUM
+};
+
+static void aNPC_act_umb_open_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!aNPC_act_anm_seq(nactorx)) {
+        if (nactorx->request.umb_flag == TRUE) {
+            nactorx->request.umb_flag = FALSE;
+        } else {
+            aNPC_reset_umb_open_flg((NPC_CONTROL_ACTOR*)aNPC_ctrlActor, (ACTOR*)nactorx);
+        }
+
+        nactorx->palActorIgnoreTimer = 0;
+        nactorx->draw.sub_anim_type = aNPC_SUB_ANIM_UMBRELLA;
+        nactorx->condition_info.demo_flg = 0;
+        nactorx->action.step = aNPC_ACTION_END_STEP;
+    }
+}
+
+static void aNPC_act_umb_open_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.step = aNPC_ACT_UMB_OPEN_STEP_OPEN;
+    nactorx->palActorIgnoreTimer = -1;
+    nactorx->condition_info.demo_flg =
+        aNPC_COND_DEMO_SKIP_UZAI_CHECK | aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
+        aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_ITEM | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+        aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+
+    if (nactorx->request.umb_flag == TRUE) {
+        aNPC_setupAction(nactorx, aNPC_wait_action[aNPC_get_feel_info(nactorx)]);
+        nactorx->draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_STOP;
+        nactorx->draw.main_animation.keyframe.morph_counter = 0.0f;
+    } else {
+        aNPC_setupAction(nactorx, aNPC_ACTION_TYPE_UMB_OPEN);
+    }
+}
+
+static void aNPC_act_umb_open_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_umb_open_init_proc,
+        (aNPC_SUB_PROC)&none_proc1,
+        &aNPC_act_umb_open_main_proc,
+    };
+
+    (*act_proc[type])(nactorx, play);
+}
