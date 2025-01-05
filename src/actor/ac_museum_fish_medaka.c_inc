@@ -1,40 +1,175 @@
 
 void mfish_medaka_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
+    s16 s = qrand();
+    mfish_onefish_ct(actor, gamex);
+    actor->_5E8 = RANDOM_F(actor->init_data._14) + actor->init_data._10;
+    actor->_5F0 = actor->_5E8;
+    actor->_60C.y = s;
+    actor->_612.y = actor->_60C.y;
+    actor->_60C.x = DEG2SHORT_ANGLE(RANDOM2_F(actor->init_data._30 * 2.0f));
+    actor->_612.x = actor->_60C.x;
+    actor->_5F4 = 110.0f;
+    actor->_5D0.y = 0.0f;
+    actor->_5AC = ZeroVec;
+    actor->_638 = qrand();
+    actor->_622 = 0;
+    actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+    actor->_624 = 6;
+    mfish_medaka_normal_init(actor, gamex);
 }
 
-void mfish_medaka_normal_init() {
-    // NOT BAD
-    return;
+void mfish_medaka_normal_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    if (actor->_630 == 2) {
+        if (actor->_626 < 0) {
+            actor->_5F0 = actor->init_data._10 + Rnd_EX_f(actor->init_data._14);
+        }
+    } else {
+        actor->_5F0 = RANDOM_F(actor->init_data._14) + actor->init_data._10;
+    }
+    actor->_34 = mfish_medaka_normal;
 }
 
-void mfish_medaka_normal() {
-    return;
+void mfish_medaka_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    actor->_632 = DEG2SHORT_ANGLE(actor->_5E8 * 35.0f);
+    actor->_636 += DEG2SHORT_ANGLE(7.5f);
+    actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(actor->_632 * sin_s(actor->_636)),
+                                        CALC_EASE2(GETREG(TAKREG, 0x17) * 0.01f + 0.5f), DEG2SHORT_ANGLE(7.5f),
+                                        DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(5), DEG2SHORT_ANGLE(0.25f));
+    if (actor->_62E & 0x1e) {
+        mfish_medaka_turn_init(actor, gamex);
+    } else if (actor->_62E & 0x20) {
+        add_calc_short_angle2(&actor->_612.y, mfish_get_escape_angle(actor, gamex), CALC_EASE(0.5f),
+                              DEG2SHORT_ANGLE(15), DEG2SHORT_ANGLE(0.5f));
+    } else if (actor->_626 < 0) {
+        f32 v = RANDOM_F(1.0f);
+        actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+        actor->_628 = actor->_626;
+        actor->_5F0 = actor->init_data._10 + Rnd_EX_f(actor->init_data._14);
+        if (RANDOM_F(1.0f) < 0.5f) {
+            actor->_612.y += DEG2SHORT_ANGLE((v - 0.3f) * 90.f);
+        } else {
+            actor->_612.y -= DEG2SHORT_ANGLE((v - 0.3f) * 90.f);
+        }
+        if (ABS(actor->_612.x) > DEG2SHORT_ANGLE(20)) {
+            actor->_612.x = RANDOM2_F(actor->init_data._30 * 2.0f * (v - 0.3f));
+        }
+    } else if (actor->_5F8 > actor->init_data._08 * 30.f) {
+        f32 v = RANDOM_F(1.0f);
+        s16 s = search_position_angleY(&suisou_pos[actor->_630], &actor->_5A0);
+        actor->_5F8 = 0.0f;
+        actor->_612.y = s + DEG2SHORT_ANGLE(RANDOM2_F(90));
+        actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+        actor->_626 >>= 1;
+        actor->_628 = actor->_626;
+        actor->_5F0 = actor->init_data._14 + actor->init_data._10;
+    }
 }
 
-void mfish_medaka_turn_init() {
-    // NOT BAD
-    return;
+void mfish_medaka_turn_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    if ((s16)(actor->_60C.y - actor->_62C) > 0) {
+        actor->_612.y = actor->_62C + DEG2SHORT_ANGLE(115);
+    } else {
+        actor->_612.y = actor->_62C - DEG2SHORT_ANGLE(115);
+    }
+    actor->_5F0 = actor->init_data._14 + actor->init_data._10;
+    actor->_34 = mfish_medaka_turn;
 }
 
-void mfish_medaka_turn() {
-    return;
+void mfish_medaka_turn(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    actor->_632 = DEG2SHORT_ANGLE(actor->_5E8 * 15.0f);
+    actor->_636 += DEG2SHORT_ANGLE(7.5f);
+    actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(actor->_632 * sin_s(actor->_636)),
+                                        CALC_EASE2(GETREG(TAKREG, 0x17) * 0.01f + 0.05f), DEG2SHORT_ANGLE(7.5f),
+                                        DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(5), DEG2SHORT_ANGLE(0.25f));
+    if (ABS(actor->_622) < DEG2SHORT_ANGLE(1)) {
+        mfish_medaka_normal_init(actor, gamex);
+    }
 }
 
 void mfish_medaka_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    f32 v;
+    xyz_t p;
 
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
+    actor->_34(actor, gamex);
+    actor->_61E = add_calc_short_angle2(&actor->_60C.x, actor->_612.x, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(1.75f),
+                                        DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_618.x, actor->_61E, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(1.25f),
+                          DEG2SHORT_ANGLE(0.25f));
+
+    if (actor->_5E8 > actor->_5F0) {
+        add_calc2(&actor->_5E8, actor->_5F0, 0.2f, 0.05f);
+    } else {
+        add_calc2(&actor->_5E8, actor->_5F0, 0.1f, 0.02f);
+    }
+
+    if (ABS(actor->_60C.x) > DEG2SHORT_ANGLE(50)) {
+        add_calc2(&actor->_5F0, actor->init_data._14 + actor->init_data._10, 0.2f, 0.1f);
+    }
+
+    v = actor->_5E8 * cos_s(actor->_60C.x);
+    actor->_5D0.x = v * sin_s(actor->_60C.y);
+    actor->_5D0.z = v * cos_s(actor->_60C.y);
+    actor->_5D0.y = -actor->_5E8 * sin_s(actor->_60C.x);
+    mfish_get_flow_vec(&p, actor, gamex);
+    actor->_5A0.x += actor->_5D0.x + p.x;
+    actor->_5A0.y += actor->_5D0.y + p.y;
+    actor->_5A0.z += actor->_5D0.z + p.z;
+    mfish_onefish_mv(actor, gamex);
+    add_calc2(&actor->_38._00.frame_control.speed, actor->_5E8 * 2.0f + 0.5f, 0.2f, 0.1f);
+    actor->_5B8 = actor->_5A0;
+    Museum_Fish_BGCheck(actor, gamex);
+    if (actor->_5A0.y < 70.f + actor->init_data._08) {
+        actor->_5A0.y = 70.f + actor->init_data._08;
+        if (actor->_612.x > 0) {
+            actor->_612.x = DEG2SHORT_ANGLE(-30);
+        }
+    } else if (actor->_5A0.y > 100.f - actor->init_data._08) {
+        actor->_5A0.y = 100.f - actor->init_data._08;
+        actor->_612.x = DEG2SHORT_ANGLE(30);
+    } else {
+        actor->_626--;
+    }
+
+    actor->_612.x = MAX((s16)-actor->init_data._30, MIN(actor->init_data._30, actor->_612.x));
 }
 
-void mfish_medaka_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+BOOL mfish_medaka_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
                               void* arg, s_xyz* joint1, xyz_t* trans) {
-    return;
+    MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
+    if (joint_num == 1) {
+        int i = joint1->x + actor->_618.z;
+        joint1->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-30), DEG2SHORT_ANGLE(30));
+        i = joint1->y + actor->_618.z;
+        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-30), DEG2SHORT_ANGLE(30));
+    } else if (joint_num == 2) {
+        int i = joint1->y - (actor->_618.z * 3);
+        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-60), DEG2SHORT_ANGLE(60));
+        i = joint1->x - (actor->_618.z >> 1);
+        joint1->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-30), DEG2SHORT_ANGLE(30));
+    }
+    return TRUE;
 }
 
 void mfish_medaka_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
+    YET_SKELETON* skele = &actor->_38;
+    Mtx* mtxp;
+    s16 s;
+    if (gamex->frame_counter & 1) {
+        mtxp = &skele->_70;
+    } else {
+        mtxp = &skele->_2b0;
+    }
+    s = actor->_60C.x * (GETREG(TAKREG, 0x41) * 0.01f + 0.75f);
+    OPEN_DISP(gamex->graph);
+    Matrix_translate(actor->_5A0.x, actor->_5A0.y, actor->_5A0.z, 0);
+    Matrix_RotateY(actor->_60C.y, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data._24 * 1.5f, 1);
+    Matrix_RotateX(s, 1);
+    Matrix_translate(0.0f, 0.0f, -actor->init_data._24 * 0.5f, 1);
+    Matrix_scale(actor->init_data._00, actor->init_data._00, actor->init_data._00, 1);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_gupi_before_disp, NULL, actor);
+    CLOSE_DISP(gamex->graph);
 }

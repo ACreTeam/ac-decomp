@@ -348,7 +348,7 @@ void mfish_medaka_normal();
 void mfish_medaka_turn_init();
 void mfish_medaka_turn();
 void mfish_medaka_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_medaka_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+BOOL mfish_medaka_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
                               void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_medaka_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
