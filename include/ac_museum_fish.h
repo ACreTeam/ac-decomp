@@ -360,7 +360,7 @@ void mfish_kingyo_turn();
 void mfish_kingyo_peck_init();
 void mfish_kingyo_peck();
 void mfish_kingyo_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_kingyo_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+BOOL mfish_kingyo_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
                               void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_kingyo_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
