@@ -583,8 +583,10 @@ void mfish_onefish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_ani_base_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
+    mfish_onefish_ct(actor, gamex);
+    mfish_base_ct(actor, gamex);
+    actor->_34 = mfish_normal_process;
+    actor->_624 = 0;
 }
 
 void mfish_ani_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {

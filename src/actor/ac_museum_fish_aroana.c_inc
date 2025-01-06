@@ -1,16 +1,18 @@
 
 void mfish_aroana_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    // NOT BAD
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
+    mfish_onefish_ct(actor, gamex);
+    mfish_base_ct(actor, gamex);
+    actor->_34 = mfish_aroana_normal_process;
+    actor->_624 = 0;
 }
 
-void mfish_aroana_dummy_process_init() {
-    // NOT BAD
-    return;
+void mfish_aroana_dummy_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
+    actor->_5F0 = actor->_5E8;
+    actor->_5EC = 0.0f;
+    actor->_34 = mfish_aroana_dummy_process;
 }
 
-void mfish_aroana_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor) {
+void mfish_aroana_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(2.5f),
                                         DEG2SHORT_ANGLE(0.25f));
     add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(2.0f), DEG2SHORT_ANGLE(0.25f));
@@ -166,9 +168,10 @@ void mfish_aroana_turn_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     }
 }
 
-void mfish_aroana_long_move_process_init() {
-    // NOT BAD
-    return;
+void mfish_aroana_long_move_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
+    actor->_5F0 = MAX(actor->_5E8, 0.2f);
+    actor->_5EC = 0.0f;
+    actor->_34 = mfish_aroana_long_move_process;
 }
 
 void mfish_aroana_long_move_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
@@ -242,9 +245,10 @@ void mfish_aroana_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_aroana_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    // NOT BAD
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
-    return;
+    mfish_onefish_mv(actor, gamex);
+    mfish_aroana_base_mv(actor, gamex);
+    Museum_Fish_BGCheck(actor, gamex);
+    actor->_38._00.frame_control.speed = (actor->_5E8 * 2.0f) / (actor->init_data._10 + actor->init_data._14) + 0.5f;
 }
 
 BOOL mfish_aroana_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,

@@ -247,7 +247,7 @@ void mfish_afish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
 void mfish_aroana_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_aroana_dummy_process_init(MUSEUM_FISH_PRIVATE_DATA* actor);
-void mfish_aroana_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor);
+void mfish_aroana_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex);
 void mfish_aroana_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* actor);
 void mfish_aroana_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_aroana_turn_process_init(MUSEUM_FISH_PRIVATE_DATA* actor);
@@ -370,7 +370,7 @@ void mfish_dojou_normal();
 void mfish_dojou_turn_init();
 void mfish_dojou_turn();
 void mfish_dojou_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_dojou_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+BOOL mfish_dojou_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
                              void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_dojou_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
