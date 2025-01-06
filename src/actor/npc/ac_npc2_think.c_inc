@@ -1,0 +1,853 @@
+static void aNPC_chg_entrance_fg(mActor_name_t fg) {
+    mActor_name_t* fg_p = mFI_UtNum2UtFG(3, 8);
+    fg_p[0] = fg;
+    fg_p[1] = fg;
+}
+
+static int aNPC_check_uzai_cross(NPC_ACTOR* nactorx) {
+    int ret = FALSE;
+
+    if (ClObj_DID_COLLIDE(nactorx->collision.pipe.collision_obj)) {
+        ACTOR* collide_actor = nactorx->collision.pipe.collision_obj.collided_actor;
+
+        if (collide_actor->part == ACTOR_PART_PLAYER && !F32_IS_ZERO(gamePT->mcon.adjusted_pR)) {
+            // @BUG - this should access x and not z
+#ifndef BUGFIXES
+            f32 dx = nactorx->actor_class.world.position.z - collide_actor->world.position.x;
+#else
+            f32 dx = nactorx->actor_class.world.position.x - collide_actor->world.position.x;
+#endif
+            f32 dz = nactorx->actor_class.world.position.z - collide_actor->world.position.z;
+            s16 angleY = atans_table(dz, dx);
+            s16 d_angleY = angleY - collide_actor->world.angle.y;
+
+            if (ABS(d_angleY) < DEG2SHORT_ANGLE2(135.0f)) {
+                ret = TRUE;
+            }
+        }
+    }
+
+    return ret;
+}
+
+static void aNPC_check_uzai(NPC_ACTOR* nactorx) {
+    static int max_uzai_cross[] = { 600, 240 };
+    static int max_uzai_tool[] = { 3, 1 };
+    // clang-format off
+    static int base_msg_no_table[][mNpc_LOOKS_NUM] = {
+        {
+            0x2E11,
+            0x2E1C,
+            0x2E0C,
+            0x2E27,
+            0x2E2C,
+            0x2E37,
+        },
+        {
+            0x3579,
+            0x357C,
+            0x357F,
+            0x3582,
+            0x3585,
+            0x3588,
+        },
+    };
+    // clang-format on
+
+    if (aNPC_IS_NRM_NPC(nactorx)) {
+        int mem_idx =
+            mNpc_GetAnimalMemoryIdx(&Now_Private->player_ID, nactorx->npc_info.animal->memories, ANIMAL_MEMORY_NUM);
+
+        if (mem_idx != -1 && (nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_LOVE_CHECK) == 0) {
+            int step = nactorx->uzai.step;
+
+            if (aNPC_check_uzai_cross(nactorx) == TRUE) {
+                step += 2;
+            } else {
+                step -= 1;
+            }
+
+            if (step > max_uzai_cross[nactorx->uzai.cross == 1] ||
+                nactorx->uzai.tool == max_uzai_tool[nactorx->uzai.cross == 1]) {
+                Animal_c* animal = nactorx->npc_info.animal;
+                int msg_no;
+                f32 msg_max = 5;
+                int pushed = FALSE;
+                int islander = FALSE;
+
+                if (mNpc_CheckIslandAnimal(animal) == TRUE) {
+                    msg_max = 3;
+                    islander = TRUE;
+                }
+
+                mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_UZAI_PUSHED);
+                msg_no = base_msg_no_table[islander][animal->id.looks];
+                if (aNPC_force_call_req_proc(nactorx, msg_no + (int)RANDOM_F(msg_max)) == TRUE) {
+                    nactorx->uzai.tool = 0;
+                    nactorx->uzai.cross = 1;
+                    step = 0;
+                    aNPC_set_feel_info(nactorx, aNPC_uzai_feel[mNpc_GetNpcLooks((ACTOR*)nactorx)], 1);
+                    nactorx->think.force_call_camera_type = CAMERA2_PROCESS_TALK;
+                    nactorx->uzai.flag = 0;
+                }
+            } else {
+                if (step < 0) {
+                    step = 0;
+                }
+
+                nactorx->uzai.flag = 0;
+            }
+
+            nactorx->uzai.step = step;
+        }
+    }
+}
+
+static int aNPC_chk_talk_start(NPC_ACTOR* nactorx) {
+    ACTOR* palActor = nactorx->palActor;
+    int ret = FALSE;
+
+    if (palActor != NULL) {
+        switch (nactorx->condition_info.talk_condition) {
+            case aNPC_TALK_TYPE_START:
+                aNPC_set_request_act(nactorx, 4, nactorx->talk_info.default_act, aNPC_ACT_TYPE_DEFAULT,
+                                     aNPC_req_default_data);
+                ret = TRUE;
+                break;
+            case aNPC_TALK_TYPE_CONTINUE:
+                if (aNPC_chk_right_hand(nactorx) == TRUE) {
+                    aNPC_chk_left_hand(nactorx);
+                }
+
+                ret = TRUE;
+                break;
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_check_fatigue(NPC_ACTOR* nactorx) {
+    int ret = FALSE;
+
+    if (aNPC_IS_NRM_NPC(nactorx)) {
+        switch (nactorx->action.type) {
+            case aNPC_ACT_TYPE_DEFAULT:
+            case aNPC_ACT_TYPE_TO_POINT:
+                if ((nactorx->think.interrupt_flags & aNPC_THINK_INTERRUPT_FATIGUE) != 0 &&
+                    nactorx->condition_info.fatigue >= 1600) {
+                    ret = TRUE;
+                }
+                break;
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_drt_table[4] = {
+    aNPC_UNIT_DOWN,
+    aNPC_UNIT_RIGHT,
+    aNPC_UNIT_UP,
+    aNPC_UNIT_LEFT,
+};
+
+static int aNPC_back_drt_table[5] = {
+    aNPC_UNIT_LEFT, aNPC_UNIT_RIGHT, aNPC_UNIT_UP, 0, aNPC_UNIT_DOWN,
+};
+
+static int aNPC_left_drt_table[5] = {
+    aNPC_UNIT_UP, aNPC_UNIT_DOWN, aNPC_UNIT_RIGHT, 0, aNPC_UNIT_LEFT,
+};
+
+static int aNPC_right_drt_table[5] = {
+    aNPC_UNIT_DOWN, aNPC_UNIT_UP, aNPC_UNIT_LEFT, 0, aNPC_UNIT_RIGHT,
+};
+
+static int aNPC_pl_chk_drt_table[4] = {
+    aNPC_UNIT_UP,
+    aNPC_UNIT_DOWN,
+    aNPC_UNIT_LEFT,
+    aNPC_UNIT_RIGHT,
+};
+
+static int aNPC_add_numX[5] = {
+    1, -1, 0, 0, 0,
+};
+
+static int aNPC_add_numZ[5] = {
+    0, 0, 1, 0, -1,
+};
+
+typedef struct {
+    aNPC_unit_info_c unit_info;
+    int unit;
+    int move_dir;
+} aNPC_route_work_c;
+
+typedef struct {
+    aNPC_route_work_c work[aNPC2_UNIT_NUM];
+    int n_work;
+    u8 _34C[aNPC2_UNIT_NUM];
+    int* unit_info_p;
+    u8 dst_ux;
+    u8 dst_uz;
+    s8 dx;
+    s8 dz;
+    u8 now_ux;
+    u8 now_uz;
+    u8 now_dir;
+    u8 now_idx;
+    int* now_unit_p;
+    aNPC_route_work_c* now_work_p;
+    u8 first;
+    u8 initial_lookup;
+    u8 player_ux;
+    u8 player_uz;
+    int calc_dx;
+    int calc_dz;
+} aNPC_route_search_table_c;
+
+static aNPC_route_search_table_c tbl;
+
+static int aNPC_think_turn_this_unit(void) {
+    int ret = FALSE;
+
+    tbl.dx = tbl.dst_ux - tbl.now_ux;
+    tbl.dz = tbl.dst_uz - tbl.now_uz;
+
+    if (tbl.now_dir == aNPC_UNIT_UP || tbl.now_dir == aNPC_UNIT_DOWN) {
+        if (tbl.dx != 0) {
+            if (ABS(tbl.dx) > ABS(tbl.dz)) {
+                if (tbl.dx < 0) {
+                    if ((*tbl.now_unit_p) & aNPC_UNIT_LEFT) {
+                        tbl.now_dir = aNPC_UNIT_LEFT;
+                        ret = TRUE;
+                    }
+                } else {
+                    if ((*tbl.now_unit_p) & aNPC_UNIT_RIGHT) {
+                        tbl.now_dir = aNPC_UNIT_RIGHT;
+                        ret = TRUE;
+                    }
+                }
+            }
+        }
+    } else {
+        if (tbl.dz != 0) {
+            if (ABS(tbl.dz) > ABS(tbl.dx)) {
+                if (tbl.dz < 0) {
+                    if ((*tbl.now_unit_p) & aNPC_UNIT_UP) {
+                        tbl.now_dir = aNPC_UNIT_UP;
+                        ret = TRUE;
+                    }
+                } else {
+                    if ((*tbl.now_unit_p) & aNPC_UNIT_DOWN) {
+                        tbl.now_dir = aNPC_UNIT_DOWN;
+                        ret = TRUE;
+                    }
+                }
+            }
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_decide_turn_this_unit(void) {
+    int ret = FALSE;
+
+    if (((*tbl.now_unit_p) & aNPC_left_drt_table[tbl.now_dir >> 1]) != 0) {
+        tbl.now_dir = aNPC_left_drt_table[tbl.now_dir >> 1];
+    } else if (((*tbl.now_unit_p) & aNPC_right_drt_table[tbl.now_dir >> 1]) != 0) {
+        tbl.now_dir = aNPC_right_drt_table[tbl.now_dir >> 1];
+    } else {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aNPC_forward_search_turn_point(void) {
+    if (tbl.n_work >= aNPC2_UNIT_NUM) {
+        tbl.n_work = -1;
+        return aNPC_SEARCH_ROUTE_CANCEL;
+    }
+
+    if (!tbl.first) {
+        tbl.now_work_p = tbl.work + (tbl.n_work + 1);
+        tbl.n_work++;
+        tbl.now_work_p->unit_info.x = tbl.now_ux + aNPC_add_numX[tbl.now_dir >> 1];
+        tbl.now_work_p->unit_info.z = tbl.now_uz + aNPC_add_numZ[tbl.now_dir >> 1];
+        tbl.now_work_p->unit_info.direct = tbl.now_dir;
+        tbl.now_work_p->move_dir = tbl.now_dir;
+    } else {
+        tbl.now_work_p = tbl.work + tbl.n_work;
+        tbl.first = FALSE;
+    }
+
+    tbl.now_ux = tbl.now_work_p->unit_info.x;
+    tbl.now_uz = tbl.now_work_p->unit_info.z;
+    tbl.now_dir = tbl.now_work_p->unit_info.direct;
+    tbl.now_idx = tbl.now_ux + tbl.now_uz * aNPC2_UNIT_X_NUM;
+    tbl.now_unit_p = &tbl.now_work_p->unit;
+
+    if (!tbl.initial_lookup) {
+        *tbl.now_unit_p = tbl.unit_info_p[tbl.now_idx];
+    }
+
+    tbl.initial_lookup = FALSE;
+    tbl.calc_dx = tbl.player_ux - tbl.now_ux;
+    tbl.calc_dz = tbl.player_uz - tbl.now_uz;
+
+    if (ABS((int)tbl.calc_dx) + ABS((int)tbl.calc_dz) == 1) {
+        (*tbl.now_unit_p) &= aNPC_pl_chk_drt_table[ABS((int)tbl.calc_dx) * 2 + (((int)tbl.calc_dx + 1) >> 1) +
+                                                   (((int)tbl.calc_dz + 1) >> 1)] ^
+                             aNPC_UNIT_ALL;
+    }
+
+    if (*tbl.now_unit_p == 0) {
+        tbl.n_work = -1;
+        return aNPC_SEARCH_ROUTE_CANCEL;
+    }
+
+    if (tbl.now_ux == tbl.dst_ux && tbl.now_uz == tbl.dst_uz) {
+        return aNPC_SEARCH_ROUTE_CANCEL;
+    }
+
+    if (tbl._34C[tbl.now_idx] == TRUE) {
+        return aNPC_SEARCH_ROUTE_BACKWARD;
+    }
+
+    if (!aNPC_think_turn_this_unit() && ((*tbl.now_unit_p) & tbl.now_dir) == 0 &&
+        aNPC_decide_turn_this_unit() == TRUE) {
+        return aNPC_SEARCH_ROUTE_BACKWARD;
+    }
+
+    tbl._34C[tbl.now_idx] = TRUE;
+    tbl.now_work_p->unit_info.direct = tbl.now_dir;
+    (*tbl.now_unit_p) &= tbl.now_dir ^ aNPC_UNIT_ALL;
+    return aNPC_SEARCH_ROUTE_FORWARD;
+}
+
+static int aNPC_back_search_turn_point(void) {
+    int unit;
+    int back_dir;
+    int i;
+
+    tbl.initial_lookup = TRUE;
+    if (tbl.n_work == 0) {
+        if (((*tbl.now_unit_p) & aNPC_back_drt_table[tbl.now_dir >> 1]) == 0) {
+            if (((*tbl.now_unit_p) & aNPC_left_drt_table[tbl.now_dir >> 1]) == 0) {
+                if (((*tbl.now_unit_p) & aNPC_right_drt_table[tbl.now_dir >> 1]) == 0) {
+                    tbl.n_work = -1;
+                    return aNPC_SEARCH_ROUTE_CANCEL;
+                } else {
+                    tbl.now_work_p->unit_info.direct = aNPC_right_drt_table[tbl.now_dir >> 1];
+                }
+            } else {
+                tbl.now_work_p->unit_info.direct = aNPC_left_drt_table[tbl.now_dir >> 1];
+            }
+        } else {
+            tbl.now_work_p->unit_info.direct = aNPC_back_drt_table[tbl.now_dir >> 1];
+        }
+
+        tbl.first = TRUE;
+        return aNPC_SEARCH_ROUTE_FORWARD;
+    }
+
+    tbl.now_work_p = &tbl.work[--tbl.n_work];
+    tbl.now_ux = tbl.now_work_p->unit_info.x;
+    tbl.now_uz = tbl.now_work_p->unit_info.z;
+    tbl.now_dir = tbl.now_work_p->unit_info.direct;
+    tbl.now_idx = tbl.now_ux + tbl.now_uz * aNPC2_UNIT_X_NUM;
+    tbl.now_unit_p = &tbl.now_work_p->unit;
+
+    (*tbl.now_unit_p) &= ((u8)tbl.now_work_p->unit_info.direct ^ aNPC_UNIT_ALL);
+
+    if ((*tbl.now_unit_p) == 0) {
+        tbl.n_work = -1;
+        return aNPC_SEARCH_ROUTE_CANCEL;
+    }
+
+    unit = *tbl.now_unit_p;
+    back_dir = aNPC_back_drt_table[tbl.now_work_p->move_dir >> 1];
+    for (i = 0; i < 4; i++) {
+        if (unit & (1 << 3)) {
+            if (back_dir != aNPC_pl_chk_drt_table[i]) {
+                break;
+            }
+        }
+
+        unit <<= 1;
+    }
+
+    if (i == 4) {
+        tbl._34C[tbl.now_idx] = FALSE;
+        return aNPC_SEARCH_ROUTE_BACKWARD;
+    }
+
+    tbl.now_dir = aNPC_pl_chk_drt_table[i];
+    tbl.now_work_p->unit_info.direct = (u8)aNPC_pl_chk_drt_table[i];
+    tbl.initial_lookup = FALSE;
+    return aNPC_SEARCH_ROUTE_FORWARD;
+}
+
+static void aNPC_copy_route(NPC_CONTROL_ACTOR* ctrl, aNPC_route_search_table_c* search, int n) {
+    aNPC_unit_info_c* route = ctrl->route;
+    int dir;
+    int dir_flag;
+    int i;
+    int node_count;
+
+    route->x = search->work[1].unit_info.x;
+    route->z = search->work[1].unit_info.z;
+    dir = search->work[0].unit_info.direct;
+    route->direct = dir;
+    route++;
+
+    dir_flag = FALSE;
+    for (i = 1, node_count = 1; i <= n; i++) {
+        if (dir != search->work[i].unit_info.direct) {
+            if (dir_flag == TRUE) {
+                node_count++;
+                route->x = search->work[i].unit_info.x;
+                route->z = search->work[i].unit_info.z;
+                route->direct = dir;
+                route++;
+            }
+
+            dir_flag = FALSE;
+            node_count++;
+            route->x = search->work[i + 1].unit_info.x;
+            route->z = search->work[i + 1].unit_info.z;
+            route->direct = search->work[i].unit_info.direct;
+            route++;
+
+            dir = search->work[i].unit_info.direct;
+        } else {
+            dir_flag = TRUE;
+        }
+    }
+
+    route->x = search->work[n].unit_info.x;
+    route->z = search->work[n].unit_info.z;
+    route->direct = search->work[n].unit_info.direct;
+    ctrl->route_node_count = node_count;
+}
+
+typedef int (*aNPC_SEARCH_ROUTE_PROC)(void);
+
+static int aNPC_route_check(NPC_ACTOR* nactorx, GAME_PLAY* play, int dst_ux, int dst_uz, int turn_flag) {
+    static aNPC_SEARCH_ROUTE_PROC search_route_proc[] = {
+        &aNPC_forward_search_turn_point,
+        &aNPC_back_search_turn_point,
+    };
+
+    int ret = aNPC_ROUTE_ERROR;
+
+    if (nactorx->movement.movement_ut_x != dst_ux || nactorx->movement.movement_ut_z != dst_uz || turn_flag == TRUE) {
+        NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+        int* unit_info_p = (int*)ctrl->unit_info;
+        int dir;
+        int ux;
+        int uz;
+        int turn_unit_info = 0;
+
+        dir = aNPC_drt_table[((nactorx->actor_class.world.angle.y + DEG2SHORT_ANGLE2(45.0f)) >> 14) &
+                             3]; // >> 14 = / DEG2SHORT_ANGLE2(90.0f) [0x4000]
+        bzero(&tbl, sizeof(tbl));
+        mFI_Wpos2UtNum(&ux, &uz, nactorx->actor_class.world.position);
+        ux--;
+        uz--;
+
+        tbl.work[0].unit_info.x = ux;
+        tbl.work[0].unit_info.z = uz;
+        tbl.work[0].unit_info.direct = dir;
+        tbl.unit_info_p = unit_info_p;
+        tbl.dst_ux = dst_ux;
+        tbl.dst_uz = dst_uz;
+        tbl.first = TRUE;
+        tbl.initial_lookup = FALSE;
+
+        {
+            ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+            if (playerx == NULL) {
+                tbl.player_ux = 0xFF;
+                tbl.player_uz = 0xFF;
+            } else {
+                mFI_Wpos2UtNum(&ux, &uz, playerx->world.position);
+                ux--;
+                uz--;
+                tbl.player_ux = ux;
+                tbl.player_uz = uz;
+            }
+        }
+
+        if (turn_flag == TRUE) {
+            turn_unit_info = dir & *(unit_info_p + ux + uz * aNPC2_UNIT_X_NUM);
+            *(unit_info_p + ux + uz * aNPC2_UNIT_X_NUM) &= dir ^ aNPC_UNIT_ALL;
+        }
+
+        {
+            int res = aNPC_SEARCH_ROUTE_FORWARD;
+            int count = 0;
+
+            while (TRUE) {
+                res = (*search_route_proc[res])();
+                if (res == aNPC_SEARCH_ROUTE_CANCEL) {
+                    break;
+                }
+
+                if (count > (aNPC2_UNIT_X_NUM * (aNPC2_UNIT_Z_NUM - 1))) {
+                    tbl.n_work = -1;
+                    break;
+                }
+
+                count++;
+            }
+        }
+
+        if (tbl.n_work < 0) {
+            ret = aNPC_ROUTE_ERROR;
+        } else if (tbl.n_work == 0) {
+            ret = aNPC_ROUTE_FINISH;
+        } else {
+            aNPC_unit_info_c* route;
+            f32 pos_x;
+            f32 pos_z;
+
+            nactorx->movement.movement_ut_x = dst_ux;
+            nactorx->movement.movement_ut_z = dst_uz;
+            aNPC_copy_route(ctrl, &tbl, tbl.n_work);
+            if (dst_uz == (aNPC2_UNIT_Z_NUM - 1)) {
+                pos_x = 160.0f;
+                pos_z = 300.0f;
+            } else {
+                pos_x = (dst_ux + 1) * mFI_UT_WORLDSIZE_X_F;
+                pos_z = (dst_uz + 1) * mFI_UT_WORLDSIZE_Z_F;
+            }
+
+            aNPC_set_dst_pos(nactorx, pos_x, pos_z);
+            nactorx->movement.avoid_direction = 1;
+
+            ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+            route = ctrl->route;
+            pos_x = (route[0].x + 1.5f) * mFI_UT_WORLDSIZE_X_F;
+            pos_z = (route[0].z + 1.5f) * mFI_UT_WORLDSIZE_Z_F;
+            aNPC_set_avoid_pos(nactorx, pos_x, pos_z);
+            ret = aNPC_ROUTE_MOVING;
+        }
+
+        if (turn_flag == TRUE) {
+            *(unit_info_p + ux + uz * aNPC2_UNIT_X_NUM) |= turn_unit_info;
+        }
+    }
+
+    return ret;
+}
+
+static void aNPC_turn_to_another_route(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u16 arg_data[aNPC_REQUEST_ARG_NUM];
+    u8 act_idx = aNPC_ACT_WAIT;
+
+    bzero(arg_data, sizeof(arg_data));
+    if (aNPC_route_check(nactorx, play, nactorx->movement.movement_ut_x, nactorx->movement.movement_ut_z, TRUE) ==
+        aNPC_ROUTE_MOVING) {
+        act_idx = aNPC_ACT_TURN;
+        arg_data[2] = (int)nactorx->movement.avoid_pos_x;
+        arg_data[3] = (int)nactorx->movement.avoid_pos_z;
+    }
+
+    aNPC_set_request_act(nactorx, 1, act_idx, aNPC_ACT_TYPE_DEFAULT, arg_data);
+}
+
+static int aNPC_avoid_obstacle(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int ret = FALSE;
+
+    if ((nactorx->think.interrupt_flags & aNPC_THINK_INTERRUPT_OBSTACLE) != 0) {
+        if (ClObj_DID_COLLIDE(nactorx->collision.pipe.collision_obj)) {
+            if ((nactorx->collision.pipe.collision_obj.collision_flags1 & 1)) {
+                s16 d_angle = nactorx->actor_class.player_angle_y - nactorx->actor_class.shape_info.rotation.y;
+
+                if (ABS(d_angle) < DEG2SHORT_ANGLE2(45.0f)) {
+                    aNPC_turn_to_another_route(nactorx, play);
+                } else {
+                    aNPC_set_request_act(nactorx, 1, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+                }
+
+                ret = TRUE;
+            }
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_hate_player(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+    u16 arg_data[aNPC_REQUEST_ARG_NUM];
+    u8 act_idx;
+
+    bzero(arg_data, sizeof(arg_data));
+    arg_data[0] = aNPC_ACT_OBJ_PLAYER;
+
+    if (playerx == NULL) {
+        act_idx = aNPC_ACT_WAIT;
+    } else {
+        NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+        int safe_ux;
+        int safe_uz;
+        int player_ux;
+        int player_uz;
+        int idx;
+
+        mFI_Wpos2UtNum(&player_ux, &player_uz, playerx->world.position);
+        player_ux--;
+        player_uz--;
+
+        idx = (player_uz < 3) + (player_ux < 3) * 2;
+        safe_ux = ctrl->safe_ux[idx];
+        safe_uz = ctrl->safe_uz[idx];
+
+        if (nactorx->movement.movement_ut_x == safe_ux && nactorx->movement.movement_ut_z == safe_uz) {
+            if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+                if (nactorx->action.idx == aNPC_ACT_TURN) {
+                    act_idx = aNPC_ACT_WALK;
+                    arg_data[2] = (int)nactorx->movement.avoid_pos_x;
+                    arg_data[3] = (int)nactorx->movement.avoid_pos_z;
+                } else {
+                    act_idx = aNPC_ACT_WAIT;
+                }
+            } else {
+                act_idx = nactorx->action.idx;
+            }
+        } else {
+            if (aNPC_route_check(nactorx, play, safe_ux, safe_uz, FALSE) == aNPC_ROUTE_MOVING) {
+                aNPC_unit_info_c* route = ctrl->route;
+                int dir = route[0].direct;
+
+                if (dir !=
+                    aNPC_drt_table[(((nactorx->actor_class.world.angle.y + DEG2SHORT_ANGLE2(45.0f)) >> 14) & 3)]) {
+                    act_idx = aNPC_ACT_TURN;
+                } else {
+                    act_idx = aNPC_ACT_WALK;
+                }
+
+                arg_data[2] = (int)nactorx->movement.avoid_pos_x;
+                arg_data[3] = (int)nactorx->movement.avoid_pos_z;
+            } else {
+                act_idx = aNPC_ACT_WAIT;
+            }
+        }
+    }
+
+    return aNPC_set_request_act(nactorx, 1, act_idx, aNPC_ACT_TYPE_AVOID, arg_data);
+}
+
+static int aNPC_love_player(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int ret = FALSE;
+
+    if (Now_Private->gender != mNpc_GetLooks2Sex(aNPC_GET_LOOKS(nactorx))) {
+        NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+        ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+        u8 next_act = aNPC_ACT_WAIT;
+        u16 arg_data[aNPC_REQUEST_ARG_NUM];
+
+        bzero(arg_data, sizeof(arg_data));
+        arg_data[0] = aNPC_ACT_OBJ_PLAYER;
+        if (nactorx->think.force_call_flag == aNPC_FORCE_CALL_NONE && nactorx->think.force_call_timer == 0) {
+            nactorx->think.force_call_flag = aNPC_FORCE_CALL_REQUEST;
+        }
+
+        if (playerx != NULL) {
+            int player_ux;
+            int player_uz;
+
+            mFI_Wpos2UtNum(&player_ux, &player_uz, playerx->world.position);
+            player_ux--;
+            player_uz--;
+
+            if (nactorx->movement.movement_ut_x == player_ux && nactorx->movement.movement_ut_z == player_uz) {
+                if (nactorx->action.step == aNPC_ACTION_END_STEP && nactorx->action.idx == aNPC_ACT_TURN) {
+                    next_act = aNPC_ACT_WALK;
+                    arg_data[2] = (int)nactorx->movement.avoid_pos_x;
+                    arg_data[3] = (int)nactorx->movement.avoid_pos_z;
+                }
+            } else if (aNPC_route_check(nactorx, play, player_ux, player_uz, FALSE) == aNPC_ROUTE_MOVING) {
+                aNPC_unit_info_c* route = ctrl->route;
+                int dir = route[0].direct;
+
+                if (dir !=
+                    aNPC_drt_table[(((nactorx->actor_class.world.angle.y + DEG2SHORT_ANGLE2(45.0f)) >> 14) & 3)]) {
+                    next_act = aNPC_ACT_TURN;
+                } else {
+                    next_act = aNPC_ACT_WALK;
+                }
+
+                arg_data[2] = (int)nactorx->movement.avoid_pos_x;
+                arg_data[3] = (int)nactorx->movement.avoid_pos_z;
+            }
+        }
+
+        ret = aNPC_set_request_act(nactorx, 1, next_act, aNPC_ACT_TYPE_AVOID, arg_data);
+    }
+
+    return ret;
+}
+
+static int aNPC_chk_friendship_lv(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int ret = FALSE;
+    int friendship = (*nactorx->condition_info.friendship) + nactorx->condition_info.over_friendship;
+
+    if (friendship < 0) {
+        ret = aNPC_hate_player(nactorx, play);
+    } else if (friendship > 128) {
+        ret = aNPC_love_player(nactorx, play);
+    }
+
+    return ret;
+}
+
+static int aNPC_chk_friendship_sub(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    s8* friendship_p = nactorx->condition_info.friendship;
+    int ret = FALSE;
+
+    if (friendship_p == NULL) {
+        if (aNPC_IS_NRM_NPC(nactorx) && aNPC_setP_friendship(nactorx) == TRUE) {
+            ret = aNPC_chk_friendship_lv(nactorx, play);
+        }
+    } else {
+        ret = aNPC_chk_friendship_lv(nactorx, play);
+    }
+
+    return ret;
+}
+
+static int aNPC_chk_friendship(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int ret = FALSE;
+
+    if ((nactorx->think.interrupt_flags & aNPC_THINK_INTERRUPT_FRIENDSHIP) != 0 && !aNPC_IS_SP_NPC(nactorx)) {
+        switch (nactorx->action.idx) {
+            case aNPC_ACT_WAIT:
+            case aNPC_ACT_WALK:
+            case aNPC_ACT_RUN:
+                ret = aNPC_chk_friendship_sub(nactorx, play);
+                break;
+            default:
+                if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+                    ret = aNPC_chk_friendship_sub(nactorx, play);
+                }
+                break;
+        }
+    }
+
+    return ret;
+}
+
+static int aNPC_think_chk_interrupt_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int ret = FALSE;
+
+    if (aNPC_chk_talk_start(nactorx) == TRUE) {
+        ret = TRUE;
+    } else if (aNPC_chk_right_hand(nactorx) == FALSE) {
+        ret = TRUE;
+    } else if (aNPC_chk_left_hand(nactorx) == FALSE) {
+        ret = TRUE;
+    } else {
+        aNPC_check_uzai(nactorx);
+        if (!F32_IS_ZERO(nactorx->actor_class.speed)) {
+            if (aNPC_check_fatigue(nactorx) == TRUE) {
+                aNPC_set_request_act(nactorx, 1, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+                ret = TRUE;
+            } else {
+                ret = aNPC_avoid_obstacle(nactorx, play);
+            }
+        }
+
+        if (ret == FALSE) {
+            ret = aNPC_chk_friendship(nactorx, play);
+        }
+    }
+
+    return ret;
+}
+
+static void aNPC_think_wait_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_set_request_act(nactorx, 1, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+}
+
+static void aNPC_think_wait_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    if (proc_type == aNPC_THINK_PROC_INIT) {
+        aNPC_think_wait_init_proc(nactorx, play);
+    }
+}
+
+static void aNPC_think_hide_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (playerx != NULL && playerx->world.position.z < 270.0f &&
+        mEvNM_CheckJointEvent(nactorx->actor_class.npc_id) == FALSE) {
+        nactorx->think.end_flag = TRUE;
+    }
+}
+
+static void aNPC_think_hide_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC think_proc[] = {
+        &aNPC_think_wait_init_proc,
+        &aNPC_think_hide_main_proc,
+    };
+
+    (*think_proc[proc_type])(nactorx, play);
+}
+
+static void aNPC_think_special_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    (*nactorx->think.think_proc)(nactorx, play, proc_type);
+}
+
+#include "../src/actor/npc/ac_npc2_think_wander.c_inc"
+#include "../src/actor/npc/ac_npc2_think_out_of_room.c_inc"
+#include "../src/actor/npc/ac_npc2_think_exit_wait.c_inc"
+#include "../src/actor/npc/ac_npc2_think_into_room.c_inc"
+
+static aNPC_THINK_PROC aNPC_think_proc_tbl[] = {
+    &aNPC_think_wait_proc,
+    &aNPC_think_hide_proc,
+    &aNPC_think_wander_proc,
+    &aNPC_think_out_of_room_proc,
+    &aNPC_think_exit_wait_proc,
+    &aNPC_think_into_room_proc,
+    &aNPC_think_special_proc,
+};
+
+static void aNPC_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int think_idx) {
+    nactorx->think.interrupt_flags = aNPC_THINK_INTERRUPT_OBSTACLE |
+                                     aNPC_THINK_INTERRUPT_FATIGUE | aNPC_THINK_INTERRUPT_FRIENDSHIP;
+    nactorx->think.idx = think_idx;
+    (*aNPC_think_proc_tbl[think_idx])(nactorx, play, aNPC_THINK_PROC_INIT);
+    nactorx->think.end_flag = FALSE;
+}
+
+static void aNPC_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int think_idx = nactorx->think.idx;
+
+    (*aNPC_think_proc_tbl[think_idx])(nactorx, play, aNPC_THINK_PROC_MAIN);
+}
+
+static int aNPC_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int think_idx, int proc_type) {
+    int ret = FALSE;
+
+    switch (proc_type) {
+        case aNPC_THINK_TYPE_INIT:
+            aNPC_think_init_proc(nactorx, play, think_idx);
+            break;
+        case aNPC_THINK_TYPE_CHK_INTERRUPT:
+            ret = aNPC_think_chk_interrupt_proc(nactorx, play);
+            break;
+        case aNPC_THINK_TYPE_MAIN:
+            aNPC_think_main_proc(nactorx, play);
+            break;
+    }
+
+    return ret;
+}

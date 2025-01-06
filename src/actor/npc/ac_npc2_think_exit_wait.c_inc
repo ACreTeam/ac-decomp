@@ -1,0 +1,80 @@
+static void aNPC_think_exit_wait_decide_next_act_idx(NPC_ACTOR* nactorx) {
+    u16 arg_data[aNPC_REQUEST_ARG_NUM];
+    u8 act_idx = aNPC_ACT_WALK;
+    s16 angle = DEG2SHORT_ANGLE2(45.0f);
+
+    bzero(arg_data, sizeof(arg_data));
+    nactorx->condition_info.demo_flg =
+        aNPC_COND_DEMO_SKIP_FEEL_CHECK | aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
+        aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+        aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    if (nactorx->action.idx == aNPC_ACT_WALK) {
+        nactorx->action.step = 0;
+        angle = DEG2SHORT_ANGLE2(22.5f);
+    }
+
+    if (ABS(nactorx->actor_class.shape_info.rotation.y) > angle) {
+        act_idx = aNPC_ACT_TURN;
+    }
+
+    arg_data[2] = (int)nactorx->actor_class.world.position.x;
+    arg_data[3] = 360;
+    aNPC_set_request_act(nactorx, 4, act_idx, aNPC_ACT_TYPE_TO_POINT, arg_data);
+}
+
+static void aNPC_think_exit_wait_setup_exit_info(NPC_ACTOR* nactorx) {
+    aNPC_OngenTrgStart(nactorx, NA_SE_40B);
+    nactorx->actor_class.world.position.x = 0.0f;
+    nactorx->actor_class.world.position.z = 0.0f;
+    aNPC_set_hide_request(nactorx, TRUE);
+    aNPC_chg_entrance_fg(EXIT_DOOR);
+    nactorx->think.end_flag = TRUE;
+    nactorx->actor_class.status_data.weight = 50;
+}
+
+static int aNPC_think_exit_wait_chk_interrupt(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int ret = FALSE;
+
+    if (aNPC_chk_talk_start(nactorx) == TRUE) {
+        ret = TRUE;
+    } else if (aNPC_chk_right_hand(nactorx) == FALSE) {
+        ret = TRUE;
+    } else if (aNPC_chk_left_hand(nactorx) == FALSE) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aNPC_think_exit_wait_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (aNPC_think_exit_wait_chk_interrupt(nactorx, play) == FALSE) {
+        if (nactorx->action.step == aNPC_ACTION_END_STEP && !mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)nactorx)) {
+            if (nactorx->action.idx == aNPC_ACT_WALK && nactorx->actor_class.world.position.z >= 360.0f) {
+                aNPC_think_exit_wait_setup_exit_info(nactorx);
+            } else {
+                aNPC_think_exit_wait_decide_next_act_idx(nactorx);
+            }
+        }
+    }
+}
+
+static void aNPC_think_exit_wait_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.force_call_flag = aNPC_FORCE_CALL_NONE;
+    nactorx->actor_class.status_data.weight = MASSTYPE_HEAVY;
+    aNPC_set_be_out_home(nactorx);
+    aNPC_chg_entrance_fg(RSV_NO);
+    if (!mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)nactorx)) {
+        aNPC_think_exit_wait_decide_next_act_idx(nactorx);
+    }
+}
+
+static void aNPC_think_exit_wait_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    // clang-format off
+    static aNPC_SUB_PROC think_proc[] = {
+        &aNPC_think_exit_wait_init_proc,
+        &aNPC_think_exit_wait_main_proc,
+    };
+    // clang-format on
+
+    (*think_proc[proc_type])(nactorx, play);
+}

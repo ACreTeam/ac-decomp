@@ -39,6 +39,7 @@ static int aNPC_talk_end_check(ACTOR* actorx, GAME* game) {
     return ret;
 }
 
+#ifndef aNPC_NPC2
 static void aNPC_act_talk_chg_step(NPC_ACTOR* nactorx, u8 step) {
     // clang-format off
     static u8 act_idx[] = {
@@ -51,6 +52,34 @@ static void aNPC_act_talk_chg_step(NPC_ACTOR* nactorx, u8 step) {
     nactorx->action.step = step;
     aNPC_setupAction(nactorx, act_idx[step]);
 }
+#else
+static void aNPC_act_talk_chg_step(NPC_ACTOR* nactorx, u8 step) {
+    // clang-format off
+    static u8 act_idx[][3] = {
+        {
+            aNPC_ACTION_TYPE_TALK_TURN,
+            aNPC_ACTION_TYPE_TALK,
+            aNPC_ACTION_TYPE_TALK,
+        },
+        {
+            aNPC_ACTION_TYPE_WAIT_E,
+            aNPC_ACTION_TYPE_WAIT_E,
+            aNPC_ACTION_TYPE_WAIT_E,
+        },
+    };
+    // clang-format on
+    int idx;
+
+    if (nactorx->action.idx == aNPC_ACT_TALK) {
+        idx = 0;
+    } else {
+        idx = 1;
+    }
+
+    nactorx->action.step = step;
+    aNPC_setupAction(nactorx, act_idx[idx][step]);
+}
+#endif
 
 static void aNPC_act_talk_turn(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     if (!aNPC_act_turn(nactorx)) {
@@ -96,6 +125,7 @@ static void aNPC_act_talk_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     (*act_proc[nactorx->action.step])(nactorx, play);
 }
 
+#ifndef aNPC_NPC2
 static void aNPC_act_talk_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     u8 step = aNPC_ACT_TALK_STEP_TALK_TURN;
 
@@ -119,6 +149,29 @@ static void aNPC_act_talk_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
 
     aNPC_act_talk_chg_step(nactorx, step);
 }
+#else
+static void aNPC_act_talk_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u8 step = aNPC_ACT_TALK_STEP_TALK_TURN;
+
+    if (nactorx->action.idx == aNPC_ACT_WAIT_E) {
+        nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_OBJ_COL_CHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    } else {
+        nactorx->condition_info.demo_flg = 0;
+    }
+
+    if (nactorx->condition_info.talk_condition == aNPC_TALK_TYPE_CONTINUE) {
+        step = aNPC_ACT_TALK_STEP_TALK;
+    } else {
+        aNPC_Init_OrderValue();
+        if (nactorx->talk_info.turn != aNPC_TALK_TURN_NORMAL) {
+            step = aNPC_ACT_TALK_STEP_TALK_WAIT;
+        }
+        nactorx->condition_info.talk_condition = aNPC_TALK_TYPE_CONTINUE;
+    }
+
+    aNPC_act_talk_chg_step(nactorx, step);
+}
+#endif
 
 static void aNPC_act_talk_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
     static aNPC_SUB_PROC act_proc[] = { &aNPC_act_talk_init_proc, (aNPC_SUB_PROC)&none_proc1, &aNPC_act_talk_main_proc };

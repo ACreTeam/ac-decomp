@@ -1,3 +1,4 @@
+#ifndef aNPC_NPC2
 static int aNPC_change_umbrella(NPC_ACTOR* nactorx) {
     int ret = FALSE;
 
@@ -18,9 +19,14 @@ static int aNPC_change_umbrella(NPC_ACTOR* nactorx) {
 
     return ret;
 }
+#endif
 
 static int aNPC_putaway_right_item(NPC_ACTOR* nactorx) {
+#ifndef aNPC_NPC2
     static u8 next_act_idx[] = { aNPC_ACT_UMB_CLOSE, aNPC_ACT_NONE };
+#else
+    static u8 next_act_idx[] = { aNPC_ACT_NONE, aNPC_ACT_KEITAI_OFF };
+#endif
     int ret = TRUE;
 
     if (CLIP(tools_clip) != NULL &&
@@ -37,7 +43,11 @@ static int aNPC_putaway_right_item(NPC_ACTOR* nactorx) {
 }
 
 static int aNPC_takeout_right_item(NPC_ACTOR* nactorx) {
+#ifndef aNPC_NPC2
     static u8 next_act_idx[] = { aNPC_ACT_UMB_OPEN, aNPC_ACT_NONE };
+#else
+    static u8 next_act_idx[] = { aNPC_ACT_NONE, aNPC_ACT_KEITAI_ON };
+#endif
     static int itemIdx_table[] = { TOOL_UMBRELLA0, TOOL_KEITAI };
     int ret = TRUE;
 
@@ -72,9 +82,12 @@ static int aNPC_takeout_right_item(NPC_ACTOR* nactorx) {
             nactorx->right_hand.item_type = requested;
             nactorx->right_hand.requested_item_type = aNPC_ITEM_TYPE_NONE;
             nactorx->right_hand.item_actor_p = tool;
+
+#ifndef aNPC_NPC2
             if (mode == aTOL_ACTION_S_TAKEOUT) {
                 nactorx->draw.sub_anim_type = aNPC_SUB_ANIM_UMBRELLA;
             }
+#endif
 
             aNPC_set_request_act(nactorx, 4, next_act_idx[requested - aNPC_ITEM_TYPE_UMBRELLA], aNPC_ACT_TYPE_DEFAULT,
                                  aNPC_req_default_data);
@@ -136,7 +149,11 @@ static int aNPC_chk_left_hand(NPC_ACTOR* nactorx) {
                     nactorx->left_hand.requested_item_type = aNPC_ITEM_TYPE_NONE;
                     nactorx->left_hand.item_type = aNPC_ITEM_TYPE_LEFT_HAND;
                     nactorx->left_hand.item_actor_p = item_p;
+#ifndef aNPC_NPC2
                     aNPC_set_request_act(nactorx, 4, aNPC_ACT_TRANS, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+#else
+                    aNPC_set_request_act(nactorx, 4, aNPC_ACT_TRANS, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+#endif
                 }
                 break;
             default:

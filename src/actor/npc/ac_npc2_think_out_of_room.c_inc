@@ -1,0 +1,84 @@
+static u8 aNPC_think_out_of_room_route_check(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u8 act_idx = aNPC_ACT_WAIT;
+    int route_ret;
+    int i;
+
+    nactorx->movement.movement_ut_x = -1;
+    nactorx->movement.movement_ut_z = -1;
+    for (i = 2; i < 4; i++) {
+        route_ret = aNPC_route_check(nactorx, play, i, aNPC2_UNIT_Z_NUM - 1, FALSE);
+        if (route_ret == aNPC_ROUTE_MOVING) {
+            NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+            aNPC_unit_info_c* route = ctrl->route;
+            int dir = route[0].direct;
+
+            if (dir !=
+                aNPC_drt_table[(((nactorx->actor_class.world.angle.y + DEG2SHORT_ANGLE2(45.0f)) >> 14) & 3)]) {
+                act_idx = aNPC_ACT_TURN;
+            } else {
+                act_idx = aNPC_ACT_WALK;
+            }
+            break;
+        }
+
+        if (route_ret == aNPC_ROUTE_FINISH) {
+            nactorx->think.end_flag = TRUE;
+            act_idx = aNPC_ACT_WAIT;
+            break;
+        }
+    }
+
+    return act_idx;
+}
+
+static int aNPC_think_out_of_room_chk_interrupt(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    int ret = FALSE;
+
+    if (aNPC_chk_talk_start(nactorx) == TRUE) {
+        ret = TRUE;
+    } else if (aNPC_chk_right_hand(nactorx) == FALSE) {
+        ret = TRUE;
+    } else if (aNPC_chk_left_hand(nactorx) == FALSE) {
+        ret = TRUE;
+    } else {
+        if (!F32_IS_ZERO(nactorx->actor_class.speed)) {
+            ret = aNPC_avoid_obstacle(nactorx, play);
+        }
+    }
+
+    return ret;
+}
+
+static void aNPC_think_out_of_room_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (aNPC_think_out_of_room_chk_interrupt(nactorx, play) == FALSE) {
+        if (nactorx->actor_class.world.position.z >= 294.0f) {
+            nactorx->think.end_flag = TRUE;
+        } else {
+            if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+                u8 act_idx = aNPC_think_out_of_room_route_check(nactorx, play);
+
+                if (act_idx == nactorx->action.idx) {
+                    nactorx->action.step = 0;
+                }
+
+                aNPC_set_request_act(nactorx, 1, act_idx, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+            }
+        }
+    }
+}
+
+static void aNPC_think_out_of_room_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.force_call_flag = aNPC_FORCE_CALL_NONE;
+    aNPC_set_request_act(nactorx, 1, aNPC_think_out_of_room_route_check(nactorx, play), aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+}
+
+static void aNPC_think_out_of_room_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    // clang-format off
+    static aNPC_SUB_PROC think_proc[] = {
+        &aNPC_think_out_of_room_init_proc,
+        &aNPC_think_out_of_room_main_proc,
+    };
+    // clang-format on
+
+    (*think_proc[proc_type])(nactorx, play);
+}

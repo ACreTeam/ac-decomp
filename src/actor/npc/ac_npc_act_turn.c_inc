@@ -41,7 +41,11 @@ static void aNPC_act_turn_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
 
     nactorx->action.step = aNPC_ACT_TURN_STEP_MAIN;
     if (nactorx->action.type == aNPC_ACT_TYPE_AVOID) {
+#ifndef aNPC_NPC2
         aNPC_set_avoid_pos(nactorx, nactorx->action.move_x, nactorx->action.move_z, nactorx->request.act_args[4]);
+#else
+        aNPC_set_avoid_pos(nactorx, nactorx->action.move_x, nactorx->action.move_z);
+#endif
     } else {
         aNPC_set_dst_pos(nactorx, nactorx->action.move_x, nactorx->action.move_z);
     }

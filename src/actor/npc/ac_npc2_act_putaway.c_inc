@@ -1,0 +1,31 @@
+enum {
+    aNPC_ACT_PUTAWAY_STEP_PUTAWAY,
+
+    aNPC_ACT_PUTAWAY_STEP_NUM
+};
+
+static void aNPC_act_putaway_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!aNPC_act_anm_seq(nactorx) && CLIP(tools_clip) != NULL) {
+        if (CLIP(tools_clip)->aTOL_chg_request_mode_proc((ACTOR*)nactorx, nactorx->right_hand.item_actor_p, aTOL_ACTION_DESTRUCT) == TRUE) {
+            nactorx->right_hand.item_type = aNPC_ITEM_TYPE_NONE;
+            nactorx->right_hand.item_actor_p = NULL;
+            nactorx->action.step = aNPC_ACTION_END_STEP;
+        }
+    }
+}
+
+static void aNPC_act_putaway_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.step = aNPC_ACT_PUTAWAY_STEP_PUTAWAY;
+    nactorx->draw.sub_anim_type = aNPC_SUB_ANIM_NONE;
+    aNPC_setupAction(nactorx, aNPC_ACTION_TYPE_KEITAI_OFF);
+}
+
+static void aNPC_act_putaway_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_putaway_init_proc,
+        (aNPC_SUB_PROC)&none_proc1,
+        &aNPC_act_putaway_main_proc,
+    };
+
+    (*act_proc[proc_type])(nactorx, play);
+}

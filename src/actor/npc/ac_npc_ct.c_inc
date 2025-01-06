@@ -29,6 +29,7 @@ static int aNPC_setP_friendship(NPC_ACTOR* nactorx) {
     return ret;
 }
 
+#ifndef aNPC_NPC2
 static void aNPC_check_force_use_umbrella(NPC_ACTOR* nactorx) {
     u8 req = FALSE;
 
@@ -42,9 +43,149 @@ static void aNPC_check_force_use_umbrella(NPC_ACTOR* nactorx) {
 static void aNPC_set_start_pos(ACTOR* actorx) {
     NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
     Animal_c* animal = aNPC_GET_ANM(nactorx);
-    
+
     mNpcW_GetAppearStatusWay(&nactorx->condition_info.appear_flag, &nactorx->condition_info.appear_rotation, animal);
 }
+
+#else
+
+static int aNPC_set_start_pos_sub(ACTOR* actorx, int uz) {
+    int ux;
+    int* unit_info_p;
+    int unit_flag;
+    int i;
+    int ret;
+
+    unit_info_p = (int*)((NPC_CONTROL_ACTOR*)aNPC_ctrlActor)->unit_info;
+    unit_flag = 0;
+    i = 0;
+    ret = TRUE;
+    unit_info_p += uz * aNPC2_UNIT_X_NUM;
+    for (i; i < aNPC2_UNIT_X_NUM; i++) {
+        while (TRUE) {
+            ux = RANDOM(aNPC2_UNIT_X_NUM);
+            if (((unit_flag >> ux) & 1) == 0) {
+                break;
+            }
+        }
+
+        if (*(unit_info_p + ux) != 0) {
+            goto exit;
+        }
+
+        unit_flag |= (1 << ux);
+    }
+
+    ret = FALSE;
+exit:
+    actorx->world.position.x = (ux + 1.5f) * mFI_UT_WORLDSIZE_X_F;
+    actorx->world.position.z = (uz + 1.5f) * mFI_UT_WORLDSIZE_Z_F;
+    return ret;
+}
+
+static void aNPC_set_start_pos(ACTOR* actorx) {
+    static int uz_def_tbl[3][2] = {
+        { 1, 2 },
+        { 0, 3 },
+        { 4, 5 },
+    };
+
+    static f32 chk_val000[3] = {
+        0.4f,
+        0.1f,
+        0.0f,
+    };
+
+    static f32 chk_val001[3] = {
+        1.0f,
+        0.25f,
+        0.0f,
+    };
+
+    static f32 chk_val010[3] = {
+        0.14f,
+        1.0f,
+        0.0f,
+    };
+
+    static f32 chk_val011[3] = {
+        1.0f,
+        1.0f,
+        0.0f,
+    };
+
+    static f32 chk_val100[3] = {
+        0.3f,
+        0.0f,
+        1.0f,
+    };
+
+    static f32 chk_val101[3] = {
+        1.0f,
+        0.0f,
+        1.0f,
+    };
+
+    static f32 chk_val110[3] = {
+        0.0f,
+        1.0f,
+        1.0f,
+    };
+
+    static f32* chk_val_tbl[8] = {
+        chk_val000, chk_val001, chk_val010, chk_val011, chk_val100, chk_val101, chk_val110, NULL,
+    };
+
+    static s16 angl_tbl[] = {
+        DEG2SHORT_ANGLE2(0.0f),
+        DEG2SHORT_ANGLE2(90.0f),
+        DEG2SHORT_ANGLE2(180.0f),
+        DEG2SHORT_ANGLE2(270.0f),
+    };
+
+    f32 rnd;
+    int uz;
+    int j;
+    int idx;
+    int uz_tbl[3][2];
+    f32* check_p;
+    int i;
+    s16 angle;
+
+    i = 0;
+    mem_copy((u8*)uz_tbl, (u8*)uz_def_tbl, sizeof(uz_tbl));
+    uz = 0;
+    idx = 0;
+
+    while (TRUE) {
+        check_p = chk_val_tbl[i];
+        rnd = RANDOM_F(1.0f);
+        for (j = 0; j < 3; j++) {
+            if (rnd >= check_p[j]) {
+                idx = RANDOM(2);
+                uz = uz_tbl[j][idx];
+                break;
+            }
+        }
+
+        if (aNPC_set_start_pos_sub(actorx, uz) != TRUE) {
+            if (uz_tbl[j][0] == uz_tbl[j][1]) {
+            i |= 1 << j;
+        } else {
+            uz_tbl[j][idx] = uz_tbl[j][idx ^ 1];
+        }
+        } else {
+            angle = angl_tbl[RANDOM(ARRAY_COUNT(angl_tbl))];
+
+            actorx->shape_info.rotation.y = angle;
+            actorx->world.angle.y = angle;
+            ((NPC_ACTOR*)actorx)->movement.mv_angl = angle;
+            break;
+        }
+    }
+}
+
+#endif
 
 static void aNPC_actor_schedule(NPC_ACTOR* nactorx, int type) {
     mNPS_schedule_c* sched_p = &nactorx->schedule.schedule;
@@ -59,14 +200,26 @@ static void aNPC_actor_schedule(NPC_ACTOR* nactorx, int type) {
             nactorx->schedule.type = aNPC_SCHEDULE_TYPE_STAND;
             break;
         case aNPC_CT_SCHED_TYPE_WANDER:
+#ifndef aNPC_NPC2
             sched_p->current_type = mNPS_SCHED_WANDER;
             nactorx->npc_info.schedule = sched_p;
             nactorx->schedule.type = aNPC_SCHEDULE_TYPE_WANDER;
+#else
+            sched_p->current_type = aNPC_SCHEDULE_TYPE_IN_HOUSE;
+            nactorx->npc_info.schedule = sched_p;
+            nactorx->schedule.type = aNPC_SCHEDULE_TYPE_IN_HOUSE;
+#endif
             break;
         case aNPC_CT_SCHED_TYPE_WALK_WANDER:
+#ifndef aNPC_NPC2
             sched_p->current_type = mNPS_SCHED_WALK_WANDER;
             nactorx->npc_info.schedule = sched_p;
             nactorx->schedule.type = aNPC_SCHEDULE_TYPE_WALK_WANDER;
+#else
+            sched_p->current_type = aNPC_SCHEDULE_TYPE_IN_HOUSE;
+            nactorx->npc_info.schedule = sched_p;
+            nactorx->schedule.type = aNPC_SCHEDULE_TYPE_IN_HOUSE;
+#endif
             break;
         case aNPC_CT_SCHED_TYPE_SPECIAL:
             sched_p->current_type = mNPS_SCHED_SPECIAL;
@@ -120,12 +273,15 @@ static void aNPC_actor_ct(ACTOR* actorx, GAME* game, aNPC_ct_data_c* ct_data) {
         eye_y = (f32)draw_data.eye_height;
         scale = draw_data.scale;
 
-        cKF_SkeletonInfo_R_ct(&nactorx->draw.main_animation.keyframe, skeleton, NULL, nactorx->draw.main_animation.work, nactorx->draw.main_animation.morph);
-        cKF_SkeletonInfo_R_ct(&nactorx->draw.sub_animation0.keyframe, skeleton, NULL, nactorx->draw.sub_animation0.work, nactorx->draw.sub_animation0.morph);
-        cKF_SkeletonInfo_R_ct(&nactorx->draw.sub_animation1.keyframe, skeleton, NULL, nactorx->draw.sub_animation1.work, nactorx->draw.sub_animation1.morph);
+        cKF_SkeletonInfo_R_ct(&nactorx->draw.main_animation.keyframe, skeleton, NULL, nactorx->draw.main_animation.work,
+                              nactorx->draw.main_animation.morph);
+        cKF_SkeletonInfo_R_ct(&nactorx->draw.sub_animation0.keyframe, skeleton, NULL, nactorx->draw.sub_animation0.work,
+                              nactorx->draw.sub_animation0.morph);
+        cKF_SkeletonInfo_R_ct(&nactorx->draw.sub_animation1.keyframe, skeleton, NULL, nactorx->draw.sub_animation1.work,
+                              nactorx->draw.sub_animation1.morph);
         Shape_Info_init(actorx, 0.0f, &mAc_ActorShadowEllipse, 9.0f, 17.0f);
         actorx->shape_info.ofs_y = 2.0f;
-        
+
         {
             ClObjPipe_c* pipe_p = &nactorx->collision.pipe;
 
@@ -146,7 +302,7 @@ static void aNPC_actor_ct(ACTOR* actorx, GAME* game, aNPC_ct_data_c* ct_data) {
 
         nactorx->collision.BGcheck_radius = 18.0f;
         nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_RANGE;
-        
+
         nactorx->eye_y = eye_y;
         nactorx->action.idx = aNPC_ACT_NONE;
 
@@ -194,7 +350,7 @@ static void aNPC_actor_ct(ACTOR* actorx, GAME* game, aNPC_ct_data_c* ct_data) {
         xyz_t_move(&nactorx->feet[aNPC_FOOT_LEFT], &actorx->world.position);
         xyz_t_move(&nactorx->feet[aNPC_FOOT_RIGHT], &actorx->world.position);
         aNPC_set_hide_flg(nactorx, TRUE);
-        
+
         if (name_type == NAME_TYPE_NPC) {
             Animal_c* animal = aNPC_GET_ANM(nactorx);
             mActor_name_t cloth = animal->cloth;
@@ -213,7 +369,9 @@ static void aNPC_actor_ct(ACTOR* actorx, GAME* game, aNPC_ct_data_c* ct_data) {
             nactorx->talk_info.talk_end_check_proc = &aNPC_talk_end_check;
             aNPC_set_start_pos(actorx);
             aNPC_setP_friendship(nactorx);
+#ifndef aNPC_NPC2
             aNPC_check_force_use_umbrella(nactorx);
+#endif
             nactorx->talk_info.melody_inst = draw_data.voice_type;
             nactorx->talk_info.npc_voice_id = draw_data.voice_type;
         } else {
@@ -237,7 +395,7 @@ static void aNPC_actor_ct(ACTOR* actorx, GAME* game, aNPC_ct_data_c* ct_data) {
                     npc_name = mask_id; // r29
                     nactorx->npc_info.mask = mask_npc;
                     mask_npc->exists = TRUE;
-                    
+
                     if (ITEM_NAME_GET_TYPE(npc_name) == NAME_TYPE_NPC) {
                         aNPC_dma_draw_data_proc(&draw_data, mask_id);
                     }
@@ -250,6 +408,7 @@ static void aNPC_actor_ct(ACTOR* actorx, GAME* game, aNPC_ct_data_c* ct_data) {
         }
 
         nactorx->npc_info.npc_name = npc_name;
+#ifndef aNPC_NPC2
         actorx->max_velocity_y = -20.0f;
         actorx->gravity = -1.0f;
 
@@ -260,12 +419,16 @@ static void aNPC_actor_ct(ACTOR* actorx, GAME* game, aNPC_ct_data_c* ct_data) {
                 mFI_SetFG_common(EMPTY_NO, actorx->world.position, TRUE);
             }
         }
+#else
+        actorx->max_velocity_y = 0.0f;
+        actorx->gravity = 0.0f;
+#endif
 
         actorx->scale.x = scale;
         actorx->scale.y = scale;
         actorx->scale.z = scale;
         actorx->unknown_b4 = TRUE;
-        
+
         if (ct_data->sched_type != aNPC_CT_SCHED_TYPE_NONE) {
             aNPC_actor_schedule(nactorx, ct_data->sched_type);
         }

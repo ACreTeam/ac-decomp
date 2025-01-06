@@ -1,0 +1,20 @@
+enum {
+    aNPC_ACT_TAKEOUT_STEP_TAKEOUT,
+
+    aNPC_ACT_TAKEOUT_STEP_NUM
+};
+
+static void aNPC_act_takeout_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.step = aNPC_ACT_TAKEOUT_STEP_TAKEOUT;
+    aNPC_setupAction(nactorx, aNPC_ACTION_TYPE_KEITAI_ON);
+}
+
+static void aNPC_act_takeout_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_takeout_init_proc,
+        (aNPC_SUB_PROC)&none_proc1,
+        &aNPC_act_anm_seq_allways_proc,
+    };
+
+    (*act_proc[proc_type])(nactorx, play);
+}

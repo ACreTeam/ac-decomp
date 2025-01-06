@@ -2,6 +2,7 @@ static void aNPC_actor_save_for_normal(ACTOR* actorx) {
     NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
     Animal_c* animal = aNPC_GET_ANM(nactorx);
 
+#ifndef aNPC_NPC2
     if (nactorx->action.idx == aNPC_ACT_INTO_HOUSE) {
         int home_ux = animal->home_info.block_x * UT_X_NUM + animal->home_info.ut_x;
         int home_uz = animal->home_info.block_z * UT_Z_NUM + animal->home_info.ut_z;
@@ -10,6 +11,7 @@ static void aNPC_actor_save_for_normal(ACTOR* actorx) {
             aNPC_setup_stay_my_house(nactorx);
         }
     }
+#endif
 
     aNPC_cancel_cloth_data(nactorx);
     animal->cloth = nactorx->draw.next_cloth_no;
@@ -22,8 +24,10 @@ static void aNPC_actor_save_for_normal(ACTOR* actorx) {
         int feel_tim;
 
         switch (animal->mood) {
+#ifndef aNPC_NPC2
             case mNpc_FEEL_PITFALL:
                 mFI_SetFG_common(EMPTY_NO, actorx->world.position, TRUE);
+#endif
             // fallthrough 5 -> 4, 7, & 8
             case mNpc_FEEL_SLEEPY:
             case mNpc_FEEL_UZAI_0:
@@ -38,6 +42,12 @@ static void aNPC_actor_save_for_normal(ACTOR* actorx) {
 
         animal->mood_time = feel_tim;
     }
+
+#ifdef aNPC_NPC2
+    if (nactorx->schedule.type == aNPC_SCHEDULE_TYPE_FIELD && nactorx->think.idx == aNPC_THINK_EXIT_WAIT) {
+        aNPC_set_be_out_home(nactorx);
+    }
+#endif
 }
 
 static void aNPC_actor_save_for_special(ACTOR* actorx) {
@@ -69,9 +79,11 @@ static void aNPC_actor_save(ACTOR* actorx, GAME* game) {
             aNPC_actor_save_for_special(actorx);
         }
 
+#ifndef aNPC_NPC2
         if (nactorx->movement.move_timer >= 18000 && nactorx->npc_info.list != NULL) {
             xyz_t_move(&actorx->world.position, &nactorx->npc_info.list->position);
         }
+#endif
 
         mNpc_RenewalSetNpc(actorx);
     }

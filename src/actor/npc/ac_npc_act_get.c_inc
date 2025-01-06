@@ -107,11 +107,19 @@ static void aNPC_act_get_move(NPC_ACTOR* nactorx, GAME_PLAY* play) {
         nactorx->movement.demo_move_timer--;
     }
 
+#ifndef aNPC_NPC2
     if (!aNPC_act_search_move(nactorx) ||
         (nactorx->collision.collision_flag & (mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT)) != 0 ||
         nactorx->movement.demo_move_timer == 0) {
         aNPC_act_get_chg_step(nactorx, aNPC_ACT_GET_STEP_GET);
     }
+#else
+    if (!aNPC_act_demo_move(nactorx) ||
+        (nactorx->collision.collision_flag & (mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT)) != 0 ||
+        nactorx->movement.demo_move_timer == 0) {
+        aNPC_act_get_chg_step(nactorx, aNPC_ACT_GET_STEP_GET);
+    }
+#endif
 }
 
 static void aNPC_act_get(NPC_ACTOR* nactorx, GAME_PLAY* play) {
@@ -220,6 +228,7 @@ static void aNPC_act_get_chg_cloth(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     }
 }
 
+#ifndef aNPC_NPC2
 static void aNPC_act_get_chg_umb(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     if (nactorx->draw.umb_state == aNPC_CLOTH_CHG_STEP_END) {
         aNPC_act_get_putaway(nactorx, play);
@@ -283,6 +292,7 @@ static void aNPC_act_get_chg_cloth_and_umb(NPC_ACTOR* nactorx, GAME_PLAY* play) 
             break;
     }
 }
+#endif
 
 static void aNPC_act_get_return(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     if (nactorx->draw.main_animation_state == cKF_STATE_STOPPED) {
@@ -309,8 +319,13 @@ static void aNPC_act_get_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
         &aNPC_act_get_putaway,
         &aNPC_act_get_putaway,
         &aNPC_act_get_chg_cloth,
+#ifndef aNPC_NPC2
         &aNPC_act_get_chg_umb,
         &aNPC_act_get_chg_cloth_and_umb,
+#else
+        (aNPC_SUB_PROC)&none_proc1,
+        (aNPC_SUB_PROC)&none_proc1,
+#endif
         &aNPC_act_get_return,
         &aNPC_act_trans_wait,
         &aNPC_act_estimate

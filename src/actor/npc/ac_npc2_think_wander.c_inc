@@ -1,0 +1,86 @@
+static void aNPC_think_wander_decide_next(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
+    u8 act_type;
+    u16 arg_data[aNPC_REQUEST_ARG_NUM];
+    u8 act_idx;
+
+    act_type = aNPC_ACT_TYPE_DEFAULT;
+    bzero(arg_data, sizeof(arg_data));
+
+    if (aNPC_check_fatigue(nactorx) == TRUE) {
+        act_idx = aNPC_ACT_WAIT;
+    } else if (nactorx->action.idx == aNPC_ACT_TURN) {
+        act_idx = aNPC_ACT_WALK;
+        arg_data[2] = (int)nactorx->movement.avoid_pos_x;
+        arg_data[3] = (int)nactorx->movement.avoid_pos_z;
+    } else {
+        int x;
+        int z;
+
+        if (RANDOM_F(1.0f) < 0.75f) {
+            act_idx = aNPC_ACT_WAIT;
+        } else {
+            int* unit_info_p = (int*)ctrl->unit_info;
+            while (TRUE) {
+                x = RANDOM(aNPC2_UNIT_X_NUM);
+                z = RANDOM(aNPC2_UNIT_Z_NUM - 1);
+
+                if (*(unit_info_p + x + z * aNPC2_UNIT_X_NUM) != 0) {
+                    break;
+                }
+            }
+
+            if (aNPC_route_check(nactorx, play, x, z, FALSE) == aNPC_ROUTE_MOVING) {
+                aNPC_unit_info_c* route = ctrl->route;
+                int dir = route[0].direct;
+
+                if (dir !=
+                    aNPC_drt_table[(((nactorx->actor_class.world.angle.y + DEG2SHORT_ANGLE2(45.0f)) >> 14) & 3)]) {
+                    act_idx = aNPC_ACT_TURN;
+                } else {
+                    act_idx = aNPC_ACT_WALK;
+                }
+
+                arg_data[2] = (int)nactorx->movement.avoid_pos_x;
+                arg_data[3] = (int)nactorx->movement.avoid_pos_z;
+            } else {
+                act_idx = aNPC_ACT_WAIT;
+            }
+        }
+    }
+
+    if (act_idx == nactorx->action.idx) {
+        nactorx->action.step = 0;
+    }
+
+    aNPC_set_request_act(nactorx, 1, act_idx, act_type, arg_data);
+}
+
+static void aNPC_think_wander_next_act(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        aNPC_think_wander_decide_next(nactorx, play);
+    }
+}
+
+static void aNPC_think_wander_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (aNPC_think_chk_interrupt_proc(nactorx, play) == FALSE) {
+        aNPC_think_wander_next_act(nactorx, play);
+    }
+}
+
+static void aNPC_think_wander_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->condition_info.demo_flg = 0;
+    nactorx->think.force_call_flag = aNPC_FORCE_CALL_NONE;
+    aNPC_set_request_act(nactorx, 1, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
+}
+
+static void aNPC_think_wander_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    // clang-format off
+    static aNPC_SUB_PROC think_proc[] = {
+        &aNPC_think_wander_init_proc,
+        &aNPC_think_wander_main_proc,
+    };
+    // clang-format on
+
+    (*think_proc[proc_type])(nactorx, play);
+}

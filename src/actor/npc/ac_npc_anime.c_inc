@@ -28,7 +28,7 @@ static int aNPC_check_talk_anime(NPC_ACTOR* nactorx, int seqNo) {
                 seqNo = nactorx->talk_info.default_turn_animation;
             } else {
                 // clang-format off
-                static int talk_def_anime[mNpc_FEEL_ALL_NUM] = {
+                static int talk_turn_def_anime[mNpc_FEEL_ALL_NUM] = {
                     aNPC_ANIM_WALK1,
                     aNPC_ANIM_WALK1,
                     aNPC_ANIM_WALK_DO1,
@@ -46,7 +46,7 @@ static int aNPC_check_talk_anime(NPC_ACTOR* nactorx, int seqNo) {
                     feel = aNPC_get_feel_info(nactorx);
                 }
 
-                seqNo = talk_def_anime[feel];
+                seqNo = talk_turn_def_anime[feel];
             }
             break;
         case aNPC_ANIM_TALK1:
@@ -292,12 +292,17 @@ static void aNPC_anime_proc_foot(NPC_ACTOR* nactorx, GAME* game, xyz_t* pos_p, a
                 break;
         }
 
+#ifndef aNPC_NPC2
         if (nactorx->draw.animation_id == aNPC_ANIM_KOKERU1) {
             aNPC_TumbleSe(pos_p);
         } else {
             aNPC_WalkSe(pos_p);
         }
+#else
+        aNPC_WalkSeRoom(pos_p);
+#endif
     }
+
 }
 
 static void aNPC_anime_proc_other(NPC_ACTOR* nactorx, aNPC_other_se_data_c* other_se_p) {

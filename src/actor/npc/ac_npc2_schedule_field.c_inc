@@ -1,0 +1,56 @@
+enum {
+    aNPC_SCHEDULE_FIELD_STEP_OUT_OF_ROOM,
+    aNPC_SCHEDULE_FIELD_STEP_EXIT_WAIT,
+    aNPC_SCHEDULE_FIELD_STEP_HIDE,
+
+    aNPC_SCHEDULE_FIELD_STEP_NUM
+};
+
+static void aNPC_field_schedule_think_init(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static int think_idx[] = { aNPC_THINK_OUT_OF_ROOM, aNPC_THINK_EXIT_WAIT, aNPC_THINK_WAIT };
+
+    aNPC_think_init_proc(nactorx, play, think_idx[nactorx->schedule.step]);
+}
+
+static void aNPC_field_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    aNPC_think_main_proc(nactorx, play);
+
+    if (nactorx->think.end_flag == TRUE) {
+        nactorx->schedule.step++;
+        if (nactorx->schedule.step > aNPC_SCHEDULE_FIELD_STEP_HIDE) {
+            nactorx->schedule.step = aNPC_SCHEDULE_FIELD_STEP_HIDE;
+        }
+
+        aNPC_field_schedule_think_init(nactorx, play);
+    } else if (nactorx->schedule.step == aNPC_SCHEDULE_FIELD_STEP_HIDE) {
+        if (nactorx->schedule.type != nactorx->npc_info.schedule->current_type &&
+            nactorx->condition_info.talk_condition == aNPC_TALK_TYPE_NONE) {
+            aNPC_set_schedule(nactorx, play);
+        }
+    }
+}
+
+static void aNPC_field_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u8 step = aNPC_SCHEDULE_FIELD_STEP_OUT_OF_ROOM;
+    u8 hide = FALSE;
+
+    if (!aNPC_GET_ANM(nactorx)->is_home) {
+        step = aNPC_SCHEDULE_FIELD_STEP_HIDE;
+        hide = TRUE;
+        nactorx->actor_class.world.position.x = 0.0f;
+        nactorx->actor_class.world.position.z = 0.0f;
+    }
+
+    aNPC_set_hide_flg(nactorx, hide);
+    nactorx->schedule.step = step;
+    aNPC_field_schedule_think_init(nactorx, play);
+}
+
+static void aNPC_field_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC sche_proc[] = {
+        &aNPC_field_schedule_init_proc,
+        &aNPC_field_schedule_main_proc,
+    };
+
+    (*sche_proc[proc_type])(nactorx, play);
+}

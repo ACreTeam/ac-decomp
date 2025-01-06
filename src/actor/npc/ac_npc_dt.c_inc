@@ -3,8 +3,10 @@ static void aNPC_actor_dt(ACTOR* actorx, GAME* game) {
     NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
     ACTOR* palActor = nactorx->palActor;
 
+#ifndef aNPC_NPC2
     aNPC_reset_out_of_door_flg(ctrl, actorx);
     aNPC_reset_umb_open_flg(ctrl, actorx);
+#endif
 
     if (eEC_CLIP != NULL) {
         eEC_CLIP->effect_kill_all_proc(actorx->npc_id);

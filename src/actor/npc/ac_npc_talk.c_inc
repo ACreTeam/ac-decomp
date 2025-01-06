@@ -369,7 +369,7 @@ static int aNPC_check_timing_demoCode(ACTOR* actorx) {
         case 3:
             break;
     }
-
+#ifndef aNPC_NPC2
     switch (order) {
         case 3:
         case 5: {
@@ -406,6 +406,70 @@ static int aNPC_check_timing_demoCode(ACTOR* actorx) {
             break;
         }
     }
+#else
+    switch (order) {
+        case 3:
+        case 5: {
+            u16 args[aNPC_REQUEST_ARG_NUM];
+
+            bzero(args, sizeof(args));
+            args[0] = mDemo_Get_OrderValue(mDemo_ORDER_NPC1, 0);
+            if (aNPC_set_request_act(nactorx, 4, aNPC_ACT_GET, aNPC_ACT_TYPE_DEFAULT, args) == TRUE) {
+                aNPC_clear_timing_demoCode(type);
+                ret = FALSE;
+            }
+            break;
+        }
+        case 2:
+        case 4: {
+            u16 args[aNPC_REQUEST_ARG_NUM];
+
+            bzero(args, sizeof(args));
+            args[0] = mDemo_Get_OrderValue(mDemo_ORDER_NPC1, 0);
+            args[1] = mDemo_Get_OrderValue(mDemo_ORDER_NPC1, 1);
+            args[2] = mDemo_Get_OrderValue(mDemo_ORDER_NPC1, 2);
+            if (aNPC_set_request_act(nactorx, 4, aNPC_ACT_TRANS, aNPC_ACT_TYPE_DEFAULT, args) == TRUE) {
+                aNPC_clear_timing_demoCode(type);
+                ret = FALSE;
+            }
+            break;
+        }
+        case 6:
+            nactorx->right_hand.requested_item_type = aNPC_ITEM_TYPE_KEITAI;
+            aNPC_clear_timing_demoCode(type);
+            break;
+        case 7:
+            nactorx->right_hand.requested_item_type = aNPC_ITEM_TYPE_PUTAWAY;
+            aNPC_clear_timing_demoCode(type);
+            break;
+        case 8:
+            if (aNPC_set_request_act(nactorx, 4, aNPC_ACT_CONTRACT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data) == TRUE) {
+                aNPC_clear_timing_demoCode(type);
+                ret = FALSE;
+            }
+            break;
+        case 9:
+            if (aNPC_set_request_act(nactorx, 4, aNPC_ACT_NOT_CONTRACT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data) == TRUE) {
+                aNPC_clear_timing_demoCode(type);
+                ret = FALSE;
+            }
+            break;
+        case 13:
+            if (aNPC_set_request_act(nactorx, 4, aNPC_ACT_NOT_CONTRACT2, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data) == TRUE) {
+                aNPC_clear_timing_demoCode(type);
+                ret = FALSE;
+            }
+            break;
+        case 15: {
+            if (aNPC_set_request_act(nactorx, 4, aNPC_ACT_CHANGE_CLOTH, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data) == TRUE) {
+                Common_Set(npc_chg_cloth, Now_Private->cloth.item);
+                aNPC_clear_timing_demoCode(type);
+                ret = FALSE;
+            }
+            break;
+        }
+    }
+#endif
 
     return ret;
 }
@@ -467,6 +531,9 @@ static void aNPC_setup_talk_end(NPC_ACTOR* nactorx) {
     }
     nactorx->talk_info.feel = 0xFF;
     nactorx->condition_info.demo_flg = nactorx->condition_info.talk_demo_flg_save;
+#ifdef aNPC_NPC2
+    nactorx->talk_info.melody_inst = 0;
+#endif
 }
 
 static void aNPC_set_talk_info_talk_request_check(ACTOR* actorx) {
@@ -581,12 +648,20 @@ static void aNPC_talk_request_check(ACTOR* actorx, GAME* game) {
         nactorx->condition_info.talk_condition == aNPC_TALK_TYPE_NONE && !nactorx->condition_info.hide_flg) {
         if (mEv_CheckTitleDemo() == 0 || mEv_CheckTitleDemo() == -9) {
             if (nactorx->action.idx != aNPC_ACT_TALK) {
+#ifndef aNPC_NPC2
                 if (ITEM_NAME_GET_TYPE(actorx->npc_id) == NAME_TYPE_SPNPC &&
                     (nactorx->npc_info.animal == NULL || nactorx->npc_info.animal->mood != mNpc_FEEL_PITFALL)) {
                     aNPC_talk_request_event_npc(actorx, game);
                 } else {
                     aNPC_talk_request_normal_npc(actorx, game);
                 }
+#else
+                if (ITEM_NAME_GET_TYPE(actorx->npc_id) == NAME_TYPE_SPNPC) {
+                    aNPC_talk_request_event_npc(actorx, game);
+                } else {
+                    aNPC_talk_request_normal_npc(actorx, game);
+                }
+#endif
             }
         }
     }

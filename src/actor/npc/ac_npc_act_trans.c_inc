@@ -11,6 +11,7 @@ enum {
 };
 
 static void aNPC_act_trans_chg_step(NPC_ACTOR* nactorx, u8 step) {
+#ifndef aNPC_NPC2
     // clang-format off
     static u8 act_idx[] = {
         aNPC_ACTION_TYPE_WALK,
@@ -22,6 +23,19 @@ static void aNPC_act_trans_chg_step(NPC_ACTOR* nactorx, u8 step) {
         aNPC_ACTION_TYPE_TALK,
     };
     // clang-format on
+#else
+    // clang-format off
+    static u8 act_idx[] = {
+        aNPC_ACTION_TYPE_WALK,
+        aNPC_ACTION_TYPE_TRANSFER,
+        aNPC_ACTION_TYPE_TRANSFER,
+        aNPC_ACTION_TYPE_TRANS_WAIT,
+        aNPC_ACTION_TYPE_TRANS_WAIT,
+        aNPC_ACTION_TYPE_SEND_MAIL,
+        aNPC_ACTION_TYPE_TALK,
+    };
+    // clang-format on
+#endif
 
     u8 timer = 0;
 
@@ -67,12 +81,21 @@ static void aNPC_act_trans_move(NPC_ACTOR* nactorx, GAME_PLAY* play) {
         nactorx->movement.demo_move_timer--;
     }
 
+#ifndef aNPC_NPC2
     if (!aNPC_act_search_move(nactorx) ||
         (nactorx->collision.collision_flag & (mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT)) != 0 ||
         nactorx->movement.demo_move_timer == 0) {
         aNPC_act_trans_set_arg_data(nactorx);
         aNPC_act_trans_chg_step(nactorx, aNPC_ACT_TRANS_STEP_TRANS);
     }
+#else
+    if (!aNPC_act_demo_move(nactorx) ||
+        (nactorx->collision.collision_flag & (mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT)) != 0 ||
+        nactorx->movement.demo_move_timer == 0) {
+        aNPC_act_trans_set_arg_data(nactorx);
+        aNPC_act_trans_chg_step(nactorx, aNPC_ACT_TRANS_STEP_TRANS);
+    }
+#endif
 }
 
 static void aNPC_act_trans(NPC_ACTOR* nactorx, GAME_PLAY* play) {

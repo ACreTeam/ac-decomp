@@ -1,0 +1,108 @@
+enum {
+    aNPC_ACT_CONTRACT_STEP_CONTRACT1,
+    aNPC_ACT_CONTRACT_STEP_CONTRACT2,
+    aNPC_ACT_CONTRACT_STEP_CONTRACT3,
+
+    aNPC_ACT_CONTRACT_STEP_NUM
+};
+
+static void aNPC_act_contract_chg_step(NPC_ACTOR* nactorx, u8 step) {
+    static u8 act_idx[] = {
+        aNPC_ACTION_TYPE_CONTRACT,
+        aNPC_ACTION_TYPE_CONTRACT_PULL,
+        aNPC_ACTION_TYPE_CONTRACT_PUTAWAY,
+    };
+    
+    nactorx->action.step = step;
+    aNPC_setupAction(nactorx, act_idx[step]);
+}
+
+static int aNPC_act_contract_return_contract(NPC_ACTOR* nactorx) {
+    int ret = FALSE;
+
+    if (nactorx->condition_info.talk_condition != aNPC_TALK_TYPE_NONE) {
+        if (aNPC_set_request_act(nactorx, 4, aNPC_ACT_TALK, aNPC_ACT_OBJ_DEFAULT, aNPC_req_default_data) == TRUE) {
+            nactorx->condition_info.demo_flg = 0;
+            nactorx->action.step = aNPC_ACTION_END_STEP;
+            ret = TRUE;
+        }
+    } else {
+        nactorx->condition_info.demo_flg = 0;
+        nactorx->action.step = aNPC_ACTION_END_STEP;
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aNPC_act_contract1(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->draw.main_animation_state == cKF_STATE_STOPPED) {
+        ACTOR* item = CLIP(handOverItem_clip)->chg_master_proc((ACTOR*)nactorx);
+
+        if (item != NULL) {
+            CLIP(handOverItem_clip)->chg_request_mode_proc((ACTOR*)nactorx, aHOI_REQUEST_GET_PULL);
+            nactorx->left_hand.item_actor_p = item;
+            nactorx->left_hand.item = CLIP(handOverItem_clip)->item;
+            if (nactorx->action.idx == aNPC_ACT_NOT_CONTRACT) {
+                CLIP(handOverItem_clip)->player_after_mode = aHOI_REQUEST_RETURN;
+            }
+
+            aNPC_act_contract_chg_step(nactorx, aNPC_ACT_CONTRACT_STEP_CONTRACT2);
+        }
+    }
+}
+
+static void aNPC_act_contract2(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->draw.main_animation_state == cKF_STATE_STOPPED) {
+        switch (CLIP(handOverItem_clip)->player_after_mode) {
+            case aHOI_REQUEST_PUTAWAY:
+                CLIP(handOverItem_clip)->chg_request_mode_proc((ACTOR*)nactorx, aHOI_REQUEST_PUTAWAY);
+                aNPC_act_contract_chg_step(nactorx, aNPC_ACT_CONTRACT_STEP_CONTRACT3);
+                break;
+            case aHOI_REQUEST_RETURN:
+                aNPC_act_contract_return_contract(nactorx);
+                break;
+        }
+    }
+}
+
+static void aNPC_act_contract3(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->draw.main_animation_state == cKF_STATE_STOPPED) {
+        aNPC_clear_left_hand_info(nactorx);
+        aNPC_act_contract_return_contract(nactorx);
+    }
+}
+
+static void aNPC_act_contract_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_contract1,
+        &aNPC_act_contract2,
+        &aNPC_act_contract3,
+    };
+
+    if ((*nactorx->talk_info.talk_end_check_proc)((ACTOR*)nactorx, (GAME*)play) == TRUE) {
+        aNPC_setup_talk_end(nactorx);
+        nactorx->action.step = aNPC_ACTION_END_STEP;
+    } else {
+        (*act_proc[nactorx->action.step])(nactorx, play);
+    }
+}
+
+static void aNPC_act_contract_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aNPC_act_contract_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_ITEM | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_OBJ_COL_CHECK | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    aNPC_act_contract_chg_step(nactorx, aNPC_ACT_CONTRACT_STEP_CONTRACT1);
+}
+
+static void aNPC_act_contract_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_contract_init_proc,
+        &aNPC_act_contract_chg_data_proc,
+        &aNPC_act_contract_main_proc,
+    };
+
+    (*act_proc[proc_type])(nactorx, play);
+}

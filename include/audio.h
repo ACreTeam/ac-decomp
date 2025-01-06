@@ -63,7 +63,7 @@ extern void sAdo_SysTrgStart(u16 id);
 extern void sAdo_PlyWalkSe(u16 walk, const xyz_t* pos);
 extern void sAdo_PlyWalkSeRoom(u8 walk, const xyz_t* pos);
 extern void sAdo_NpcWalkSe(u16 se_no, const xyz_t* pos);
-extern void sAdo_NpcWalkSeRoom(u16 se_no, const xyz_t* pos);
+extern void sAdo_NpcWalkSeRoom(u8 se_no, const xyz_t* pos);
 
 extern void sAdo_PlayerStatusLevel(f32 speed, int p);
 

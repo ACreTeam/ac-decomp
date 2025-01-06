@@ -496,6 +496,7 @@ static aNPC_anim_info_c aNPC_animeTable[aNPC_ANIM_NUM] = {
 };
 // clang-format on
 
+#ifndef aNPC_NPC2
 // clang-format off
 static s16 aNPC_animeSeqNoTable[] = {
     aNPC_ANIM_WAIT1,
@@ -557,6 +558,55 @@ static s16 aNPC_animeSeqNoTable[] = {
     aNPC_ANIM_CLAP1,
 };
 // clang-format on
+#else
+// clang-format off
+static s16 aNPC_animeSeqNoTable[] = {
+    aNPC_ANIM_WAIT1,
+    aNPC_ANIM_WAIT_KI1,
+    aNPC_ANIM_WAIT_DO1,
+    aNPC_ANIM_WAIT_AI1,
+    aNPC_ANIM_WAIT_NEMU1,
+    aNPC_ANIM_WALK1,
+    aNPC_ANIM_WALK_KI1,
+    aNPC_ANIM_WALK_DO1,
+    aNPC_ANIM_WALK_AI1,
+    aNPC_ANIM_RUN1,
+    aNPC_ANIM_WALK_KI1,
+    aNPC_ANIM_WALK_DO1,
+    aNPC_ANIM_WALK_AI1,
+    aNPC_ANIM_WALK1,
+    aNPC_ANIM_WAIT1,
+    aNPC_ANIM_TALK_TURN1,
+    aNPC_ANIM_TALK1,
+    aNPC_ANIM_KEITAI_ON1,
+    aNPC_ANIM_KEITAI_OFF1,
+    aNPC_ANIM_WALK1,
+    aNPC_ANIM_TRANSFER1,
+    aNPC_ANIM_TRANS_WAIT1,
+    aNPC_ANIM_SEND_MAIL1,
+    aNPC_ANIM_WALK1,
+    aNPC_ANIM_GET1,
+    aNPC_ANIM_GET_PULL1,
+    aNPC_ANIM_GET_PULL_WAIT1,
+    aNPC_ANIM_GET_PUTAWAY1,
+    aNPC_ANIM_GET_EAT1,
+    aNPC_ANIM_GET_CHANGE1,
+    aNPC_ANIM_GET_RETURN1,
+    aNPC_ANIM_GET_F1,
+    aNPC_ANIM_GET_PULL_F1,
+    aNPC_ANIM_GET_PULL_WAIT_F1,
+    aNPC_ANIM_GET_PUTAWAY_F1,
+    aNPC_ANIM_GET_RETURN_F1,
+    aNPC_ANIM_ESTIMATE_F1,
+    aNPC_ANIM_CONTRACT1,
+    aNPC_ANIM_CONTRACT2,
+    aNPC_ANIM_CONTRACT3,
+    aNPC_ANIM_NOT_CONTRACT1,
+    aNPC_ANIM_4HAKU_E1,
+    aNPC_ANIM_WAIT_E1,
+};
+// clang-format on
+#endif
 
 static s16 aNPC_sub_animeSeqNoTable[] = { -1, aNPC_ANIM_UMBRELLA1, aNPC_ANIM_UTIWA_WAIT1, aNPC_ANIM_TUE1 };
 

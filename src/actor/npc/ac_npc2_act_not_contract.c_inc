@@ -1,0 +1,58 @@
+enum {
+    aNPC_ACT_NOT_CONTRACT_STEP_NOT_CONTRACT1,
+
+    aNPC_ACT_NOT_CONTRACT_STEP_NUM
+};
+
+static void aNPC_act_not_contract_chg_step(NPC_ACTOR* nactorx, u8 step) {
+    static u8 act_idx[] = {
+        aNPC_ACTION_TYPE_NOT_CONTRACT,
+    };
+    
+    nactorx->action.step = step;
+    aNPC_setupAction(nactorx, act_idx[step]);
+}
+
+static void aNPC_act_not_contract1(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->draw.main_animation_frame >= 18) {
+        if (nactorx->left_hand.item_actor_p != NULL) {
+            aNPC_clear_left_hand_info(nactorx);
+        } else if (nactorx->draw.main_animation_state == cKF_STATE_STOPPED && aNPC_act_contract_return_contract(nactorx) == TRUE) {
+            CLIP(handOverItem_clip)->chg_request_mode_proc((ACTOR*)nactorx, aHOI_REQUEST_RETURN_WAIT);
+            CLIP(handOverItem_clip)->player_after_mode = aHOI_REQUEST_PUTAWAY;
+        }
+    }
+}
+
+static void aNPC_act_not_contract_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_not_contract1,
+    };
+
+    if ((*nactorx->talk_info.talk_end_check_proc)((ACTOR*)nactorx, (GAME*)play) == TRUE) {
+        aNPC_setup_talk_end(nactorx);
+        nactorx->action.step = aNPC_ACTION_END_STEP;
+    } else {
+        (*act_proc[nactorx->action.step])(nactorx, play);
+    }
+}
+
+static void aNPC_act_not_contract_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aNPC_act_not_contract_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_ITEM | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_OBJ_COL_CHECK | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    CLIP(handOverItem_clip)->chg_request_mode_proc((ACTOR*)nactorx, aHOI_REQUEST_RETURN);
+    aNPC_act_not_contract_chg_step(nactorx, aNPC_ACT_NOT_CONTRACT_STEP_NOT_CONTRACT1);
+}
+
+static void aNPC_act_not_contract_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        &aNPC_act_not_contract_init_proc,
+        &aNPC_act_not_contract_chg_data_proc,
+        &aNPC_act_not_contract_main_proc,
+    };
+
+    (*act_proc[proc_type])(nactorx, play);
+}

@@ -87,7 +87,7 @@ extern void sAdo_NpcWalkSe(u16 se_no, const xyz_t* pos) {
     Na_NpcWalkSe(se_no, scalc, fcalc);
 }
 
-extern void sAdo_NpcWalkSeRoom(u16 se_no, const xyz_t* pos) {
+extern void sAdo_NpcWalkSeRoom(u8 se_no, const xyz_t* pos) {
 
     f32 fcalc;
     u16 scalc;

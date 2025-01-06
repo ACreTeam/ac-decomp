@@ -81,7 +81,9 @@ static void aNPC_look_target(NPC_ACTOR* nactorx, GAME_PLAY* play) {
 
     if (nactorx->palActor != NULL) {
         switch (nactorx->action.idx) {
+#ifndef aNPC_NPC2
             case aNPC_ACT_GREETING:
+#endif
             case aNPC_ACT_TALK:
                 if (nactorx->talk_info.turn != aNPC_TALK_TURN_NONE) {
                     target = nactorx->palActor;

@@ -2,6 +2,7 @@ static void aNPC_OngenTrgStart(NPC_ACTOR* nactorx, u16 se_no) {
     sAdo_OngenTrgStart(se_no, &nactorx->actor_class.world.position);
 }
 
+#ifndef aNPC_NPC2
 static void aNPC_WalkSe(xyz_t* pos_p) {
     u32 attr;
     u16 se_no;
@@ -18,3 +19,23 @@ static void aNPC_WalkSe(xyz_t* pos_p) {
 static void aNPC_TumbleSe(xyz_t* pos_p) {
     sAdo_OngenTrgStart(sAdo_Get_KokeruLabel(mCoBG_Wpos2Attribute(*pos_p, NULL)), pos_p);
 }
+#else
+static void aNPC_WalkSeRoom(xyz_t* pos_p) {
+    switch (Save_Get(scene_no)) {
+        case SCENE_START_DEMO:
+        case SCENE_START_DEMO2:
+        case SCENE_START_DEMO3:
+            sAdo_NpcWalkSe(NA_SE_207, pos_p);
+            break;
+        default: {
+            s8 floor_idx = Common_Get(floor_idx);
+
+            if (floor_idx >= 0 && floor_idx < FLOOR_ETC_END) {
+                sAdo_NpcWalkSeRoom(floor_idx, pos_p);
+            }
+
+            break;
+        }
+    }
+}
+#endif

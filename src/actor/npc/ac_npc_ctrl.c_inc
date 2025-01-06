@@ -46,6 +46,101 @@ static void aNPC_rebuild_dma(void) {
     aNPC_rebuild_cloth_data();
 }
 
+#ifdef aNPC_NPC2
+static void aNPC_set_safe_ut(NPC_CONTROL_ACTOR* ctrl) {
+    static int chkX[4][9] = {
+        { 0, 1, 0, 1, 2, 0, 2, 1, 2 },
+        { 0, 1, 0, 1, 2, 0, 2, 1, 2 },
+        { 5, 4, 5, 4, 3, 5, 3, 4, 3 },
+        { 5, 4, 5, 4, 3, 5, 3, 4, 3 },
+    };
+
+    static int chkZ[4][9] = {
+        { 0, 0, 1, 1, 0, 2, 1, 2, 2 },
+        { 5, 5, 4, 4, 5, 3, 4, 3, 3 },
+        { 0, 0, 1, 1, 0, 2, 1, 2, 2 },
+        { 5, 5, 4, 4, 5, 3, 4, 3, 3 },
+    };
+
+    int* unit_info_p = (int*)ctrl->unit_info;
+    int* safe_ux_p = ctrl->safe_ux;
+    int* safe_uz_p = ctrl->safe_uz;
+    int i;
+    int j;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 9; j++) {
+            if (*(unit_info_p + chkZ[i][j] * aNPC2_UNIT_X_NUM + chkX[i][j]) != 0) {
+                *safe_ux_p = chkX[i][j];
+                *safe_uz_p = chkZ[i][j];
+                break;
+            }
+        }
+
+        safe_ux_p++;
+        safe_uz_p++;
+    }
+}
+
+static int aNPC_make_unitInfo_sub(int ux, int uz, int* unit_info_p) {
+    int ret = 0;
+
+    if (*((unit_info_p + ux) + uz * aNPC2_UNIT_X_NUM) == 0) {
+        if (uz != 0 && *((unit_info_p + ux) + (uz - 1) * aNPC2_UNIT_X_NUM) == 0) {
+            ret |= aNPC_UNIT_UP;
+        }
+
+        if (uz != (aNPC2_UNIT_Z_NUM - 1) && *((unit_info_p + ux) + (uz + 1) * aNPC2_UNIT_X_NUM) == 0) {
+            ret |= aNPC_UNIT_DOWN;
+        }
+
+        if (ux != 0 && *((unit_info_p + (ux - 1)) + uz * aNPC2_UNIT_X_NUM) == 0) {
+            ret |= aNPC_UNIT_LEFT;
+        }
+
+        if (ux != (aNPC2_UNIT_X_NUM - 1) && *((unit_info_p + (ux + 1)) + uz * aNPC2_UNIT_X_NUM) == 0) {
+            ret |= aNPC_UNIT_RIGHT;
+        }
+    }
+
+    return ret;
+}
+
+static void aNPC_make_unitInfo(NPC_CONTROL_ACTOR* ctrl) {
+    int table[aNPC2_UNIT_Z_NUM][aNPC2_UNIT_X_NUM];
+    int x;
+    int z;
+    mActor_name_t* fg_p = mFI_UtNum2UtFG(1, 1);
+    
+    for (z = 0; z < aNPC2_UNIT_Z_NUM; z++) {
+        for (x = 0; x < aNPC2_UNIT_X_NUM; x++) {
+            table[z][x] = *fg_p != RSV_NO;
+            fg_p++;
+        }
+
+        fg_p += (UT_X_NUM - aNPC2_UNIT_X_NUM);
+    }
+
+    {
+        int* unit_info_p = (int*)ctrl->unit_info;
+
+        for (z = 0; z < aNPC2_UNIT_Z_NUM; z++) {
+            for (x = 0; x < aNPC2_UNIT_X_NUM; x++) {
+                *unit_info_p = aNPC_make_unitInfo_sub(x, z, (int*)table);
+                unit_info_p++;
+            }
+
+            // why are we doing this after every x row
+            ctrl->unit_info[6][2] = aNPC_UNIT_UP;
+            ctrl->unit_info[6][3] = aNPC_UNIT_UP;
+        }
+    }
+
+    aNPC_set_safe_ut(ctrl);
+}
+
+#endif
+
 static void aNPC_set_attention_request_proc(u8 type, ACTOR* target_p, xyz_t* pos_p) {
     aNPC_attention_c* attention_request = &CLIP(npc_clip)->attention_request;
 
@@ -195,7 +290,8 @@ static int aNPC_setupActor_sub(GAME_PLAY* play, s8 idx, mActor_name_t name, s16 
     return ret;
 }
 
-static int aNPC_setupActor_proc(GAME_PLAY* play, mActor_name_t name, s8 idx, int mvlist_no, s16 arg, int bx, int bz, int ux, int uz) {
+static int aNPC_setupActor_proc(GAME_PLAY* play, mActor_name_t name, s8 idx, int mvlist_no, s16 arg, int bx, int bz,
+                                int ux, int uz) {
     // clang-format off
     static s16 event_npc_profile_table[] = {
         mAc_PROFILE_EV_ARTIST,
@@ -423,6 +519,7 @@ static int aNPC_setupActor_proc(GAME_PLAY* play, mActor_name_t name, s8 idx, int
     aNPC_setupActor_sub(play, idx, name, profile, &pos, mvlist_no, arg);
 }
 
+#ifndef aNPC_NPC2
 static int aNPC_get_overlay_free_area_idx(aNPC_overlay_c* overlay, int max) {
     int i;
 
@@ -437,7 +534,8 @@ static int aNPC_get_overlay_free_area_idx(aNPC_overlay_c* overlay, int max) {
     return -1;
 }
 
-static void aNPC_get_overlay_area_proc_sub(ACTOR_DLFTBL* dlftbl, size_t size, size_t max_size, aNPC_overlay_c* overlay, int max, mActor_name_t npc_name) {
+static void aNPC_get_overlay_area_proc_sub(ACTOR_DLFTBL* dlftbl, size_t size, size_t max_size, aNPC_overlay_c* overlay,
+                                           int max, mActor_name_t npc_name) {
     int idx = aNPC_get_overlay_free_area_idx(overlay, max);
 
     if (idx != -1) {
@@ -478,16 +576,17 @@ static void aNPC_get_overlay_area_proc(ACTOR_DLFTBL* dlftbl, u8* name_p, size_t 
                         case SP_NPC_SENDO:
                         case SP_NPC_MASK_CAT:
                         case SP_NPC_GO_HONE_NPC:
-                            aNPC_get_overlay_area_proc_sub(dlftbl, size, 0x3000, CLIP(npc_clip)->keep_k_overlay, 3, npc_name);
+                            aNPC_get_overlay_area_proc_sub(dlftbl, size, 0x3000, CLIP(npc_clip)->keep_k_overlay, 3,
+                                                           npc_name);
                             break;
                         default:
-                            aNPC_get_overlay_area_proc_sub(dlftbl, size, 0x2000, CLIP(npc_clip)->keep_s_overlay, 2, npc_name);
+                            aNPC_get_overlay_area_proc_sub(dlftbl, size, 0x2000, CLIP(npc_clip)->keep_s_overlay, 2,
+                                                           npc_name);
                             break;
                     }
                 }
             }
-        }
-        break;
+        } break;
     }
 }
 
@@ -561,7 +660,9 @@ static ACTOR* aNPC_get_actor_area_proc(size_t size, const char* actor_name, int 
 
     return NULL;
 }
+#endif
 
+#ifndef aNPC_NPC2
 static void aNPC_free_actor_area_proc(ACTOR* actorx) {
     NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
     NPC_ACTOR** actor = CLIP(npc_clip)->keep_actors;
@@ -578,6 +679,11 @@ static void aNPC_free_actor_area_proc(ACTOR* actorx) {
         used++;
     }
 }
+#else
+static void aNPC_free_actor_area_proc(ACTOR* actorx) {
+    zelda_free(actorx);
+}
+#endif
 
 static void aNPC_dma_draw_data_proc(aNPC_draw_data_c* draw_data_p, mActor_name_t npc_name) {
     int idx = aNPC_get_draw_data_idx(npc_name);
@@ -585,6 +691,7 @@ static void aNPC_dma_draw_data_proc(aNPC_draw_data_c* draw_data_p, mActor_name_t
     mem_copy((u8*)draw_data_p, (u8*)&npc_draw_data_tbl[idx], sizeof(aNPC_draw_data_c));
 }
 
+#ifndef aNPC_NPC2
 typedef struct {
     u64 align;
     u8 buf[0x9D0];
@@ -693,6 +800,7 @@ static void aNPC_free_overlay_area(aNPC_overlay_c* overlay_p, int n) {
         overlay_p++;
     }
 }
+#endif
 
 static void aNPC_actor_ct_c(ACTOR* actorx, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
@@ -706,10 +814,16 @@ static void aNPC_actor_ct_c(ACTOR* actorx, GAME* game) {
         CLIP(npc_clip) = &aNPC_clip;
         bzero(&aNPC_clip, sizeof(aNPC_clip));
 
+#ifndef aNPC_NPC2
         CLIP(npc_clip)->setupActor_proc = &aNPC_setupActor_proc;
         CLIP(npc_clip)->get_overlay_area_proc = &aNPC_get_overlay_area_proc;
         CLIP(npc_clip)->free_overlay_area_proc = &aNPC_free_overlay_area_proc;
         CLIP(npc_clip)->get_actor_area_proc = &aNPC_get_actor_area_proc;
+#else
+        CLIP(npc_clip)->get_overlay_area_proc = (aNPC_GET_OVERLAY_AREA_PROC)&Actor_get_overlay_area;
+        CLIP(npc_clip)->free_overlay_area_proc = &Actor_free_overlay_area;
+        CLIP(npc_clip)->get_actor_area_proc = (aNPC_GET_ACTOR_AREA_PROC)&zelda_malloc;
+#endif
         CLIP(npc_clip)->free_actor_area_proc = &aNPC_free_actor_area_proc;
         CLIP(npc_clip)->dma_draw_data_proc = &aNPC_dma_draw_data_proc;
         CLIP(npc_clip)->set_attention_request_proc = &aNPC_set_attention_request_proc;
@@ -733,11 +847,17 @@ static void aNPC_actor_ct_c(ACTOR* actorx, GAME* game) {
         CLIP(npc_clip)->force_call_req_proc = &aNPC_force_call_req_proc;
         CLIP(npc_clip)->set_start_pos_proc = &aNPC_set_start_pos;
 
+#ifndef aNPC_NPC2
         aNPC_keep_actor_class();
         aNPC_keep_n_overlay_area(CLIP(npc_clip)->keep_n_overlay);
         aNPC_keep_s_overlay_area(CLIP(npc_clip)->keep_s_overlay);
         aNPC_keep_k_overlay_area(CLIP(npc_clip)->keep_k_overlay);
         aNPC_keep_e_overlay_area(CLIP(npc_clip)->keep_e_overlay);
+#else
+        if (Save_Get(scene_no) != SCENE_NPC_HOUSE) {
+            Common_Set(make_npc2_actor, TRUE);
+        }
+#endif
     }
 
     if (play->block_table.block_z == mISL_BLOCK_Z) {
@@ -749,7 +869,7 @@ static void aNPC_actor_ct_c(ACTOR* actorx, GAME* game) {
         Animal_c* islander_p;
         mNpc_NpcList_c* list_p;
         mNPS_schedule_c* sched_p;
-        
+
         island_p = &Save_Get(island);
         islander_p = &island_p->animal;
         list_p = &Common_Get(island_npclist[0]);
@@ -762,7 +882,7 @@ static void aNPC_actor_ct_c(ACTOR* actorx, GAME* game) {
             uz = (int)islander_p->home_info.ut_z;
         } else {
             int ret = mFI_Wpos2BkandUtNuminBlock(&bx, &bz, &ux, &uz, list_p->position);
-            
+
             if (ret == FALSE) {
                 bx = (int)islander_p->home_info.block_x;
                 bz = (int)islander_p->home_info.block_z;
@@ -780,7 +900,7 @@ static void aNPC_actor_ct_c(ACTOR* actorx, GAME* game) {
 
         if (mFI_RegistMoveActorList(list_p->name, bx, bz, ux, uz, -ANIMAL_NUM_MAX, 0)) {
             sched_p = Common_GetPointer(npc_schedule[ANIMAL_NUM_MAX]);
-            
+
             if (sched_p->id != NULL) {
                 mNPS_reset_schedule_area(sched_p->id);
             }
@@ -792,11 +912,13 @@ static void aNPC_actor_ct_c(ACTOR* actorx, GAME* game) {
 
 static void aNPC_actor_dt_c(ACTOR* actorx, GAME* game) {
     if (CLIP(npc_clip) != NULL) {
+#ifndef aNPC_NPC2
         aNPC_free_actor_class();
         aNPC_free_overlay_area(CLIP(npc_clip)->keep_n_overlay, 1);
         aNPC_free_overlay_area(CLIP(npc_clip)->keep_s_overlay, 2);
         aNPC_free_overlay_area(CLIP(npc_clip)->keep_k_overlay, 3);
         aNPC_free_overlay_area(CLIP(npc_clip)->keep_e_overlay, 2);
+#endif
         CLIP(npc_clip) = NULL;
     }
 }
@@ -804,7 +926,8 @@ static void aNPC_actor_dt_c(ACTOR* actorx, GAME* game) {
 static int aNPC_check_cond_to_greeting(NPC_ACTOR* nactorx) {
     int ret = TRUE;
 
-    if (nactorx->actor_class.ct_proc != NULL || nactorx->palActor != NULL || nactorx->palActorIgnoreTimer != 0 || nactorx->condition_info.hide_flg == TRUE) {
+    if (nactorx->actor_class.ct_proc != NULL || nactorx->palActor != NULL || nactorx->palActorIgnoreTimer != 0 ||
+        nactorx->condition_info.hide_flg == TRUE) {
         ret = FALSE;
     } else {
         switch (aNPC_get_feel_info(nactorx)) {
@@ -866,7 +989,7 @@ static void aNPC_greeting_area_check(GAME_PLAY* play) {
     actor = list->actor;
     for (n = list->num_actors; n != 0; n--) {
         NPC_ACTOR* nactor = (NPC_ACTOR*)actor;
-        
+
         if (nactor->palActorIgnoreTimer > 0) {
             nactor->palActorIgnoreTimer--;
         }
@@ -888,6 +1011,7 @@ static void aNPC_set_attention(void) {
     req_p->type = aNPC_ATTENTION_TYPE_NONE;
 }
 
+#ifndef aNPC_NPC2
 static void aNPC_force_reset_out_of_door_flg(NPC_CONTROL_ACTOR* ctrl) {
     int timer;
 
@@ -915,6 +1039,7 @@ static void aNPC_reset_umb_open_flg(NPC_CONTROL_ACTOR* ctrl, ACTOR* actorx) {
         aNPC_force_reset_umb_open_flg(ctrl);
     }
 }
+#endif
 
 static void aNPC_actor_move_c(ACTOR* actorx, GAME* game) {
     NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)actorx;
@@ -926,6 +1051,7 @@ static void aNPC_actor_move_c(ACTOR* actorx, GAME* game) {
     }
 
     aNPC_set_attention();
+#ifndef aNPC_NPC2
     if (mFI_ActorisBorn() == TRUE) {
         aNPC_force_reset_out_of_door_flg(ctrl);
         aNPC_force_reset_umb_open_flg(ctrl);
@@ -942,8 +1068,16 @@ static void aNPC_actor_move_c(ACTOR* actorx, GAME* game) {
     } else {
         aNPC_force_reset_umb_open_flg(ctrl);
     }
+#else
+    if (CLIP(npc_clip)->setupActor_proc == NULL && Common_Get(make_npc2_actor)) {
+        aNPC_make_unitInfo(ctrl);
+        ctrl->route_node_count = 0;
+        CLIP(npc_clip)->setupActor_proc = &aNPC_setupActor_proc;
+    }
+#endif
 }
 
+#ifndef aNPC_NPC2
 static void aNPC_set_talk_area_info(GAME_PLAY* play) {
     NPC_CONTROL_ACTOR* ctrl = (NPC_CONTROL_ACTOR*)aNPC_ctrlActor;
     ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
@@ -957,7 +1091,7 @@ static void aNPC_set_talk_area_info(GAME_PLAY* play) {
             if (talk_actor != NULL && talk_actor->part == ACTOR_PART_NPC) {
                 f32 dx;
                 f32 dz;
-                
+
                 talk_area->frame_counter = play->game_frame;
                 talk_area->talk_actor = talk_actor;
 
@@ -1000,3 +1134,4 @@ static void aNPC_talk_area_check(NPC_ACTOR* nactorx, GAME_PLAY* play) {
 
     nactorx->collision.turn_flag = turn;
 }
+#endif

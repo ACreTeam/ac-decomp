@@ -1,0 +1,42 @@
+static void aNPC_think_into_room_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        aNPC_chg_entrance_fg(EXIT_DOOR);
+        nactorx->actor_class.status_data.weight = 50;
+        nactorx->think.end_flag = TRUE;
+    }
+}
+
+static void aNPC_think_into_room_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    u16 arg_data[aNPC_REQUEST_ARG_NUM];
+
+    bzero(arg_data, sizeof(arg_data));
+    nactorx->think.force_call_flag = aNPC_FORCE_CALL_NONE;
+    nactorx->actor_class.status_data.weight = MASSTYPE_HEAVY;
+    nactorx->actor_class.world.position.x = 160.0f;
+    nactorx->actor_class.world.position.y = 40.0f;
+    nactorx->actor_class.world.position.z = 360.0f;
+    nactorx->actor_class.shape_info.rotation.y = DEG2SHORT_ANGLE2(180.0f);
+    nactorx->actor_class.world.angle.y = DEG2SHORT_ANGLE2(180.0f);
+    aNPC_set_hide_request(nactorx, FALSE);
+    aNPC_chg_entrance_fg(RSV_NO);
+    
+    aNPC_GET_ANM(nactorx)->is_home = TRUE;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FEEL_CHECK | aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
+        aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+        aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    aNPC_OngenTrgStart(nactorx, NA_SE_40B);
+    arg_data[2] = 160;
+    arg_data[3] = 300;
+    aNPC_set_request_act(nactorx, 4, aNPC_ACT_WALK, aNPC_ACT_TYPE_TO_POINT, arg_data);
+}
+
+static void aNPC_think_into_room_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    // clang-format off
+    static aNPC_SUB_PROC think_proc[] = {
+        &aNPC_think_into_room_init_proc,
+        &aNPC_think_into_room_main_proc,
+    };
+    // clang-format on
+
+    (*think_proc[proc_type])(nactorx, play);
+}
