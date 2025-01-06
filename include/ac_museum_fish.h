@@ -388,7 +388,7 @@ void mfish_big_fish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
 void mfish_ito_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_ito_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_ito_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+BOOL mfish_ito_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
                            void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_ito_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
