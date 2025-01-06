@@ -6,12 +6,6 @@
 #include "sys_matrix.h"
 #include "m_common_data.h"
 
-typedef struct bg_post_item_s {
-    ACTOR actor_class;
-    u8 keep_mail_sum;
-    u8 update_mail_flag;
-} BG_POST_ITEM_ACTOR;
-
 static void bPTI_actor_ct(ACTOR* actorx, GAME* game);
 static void bPTI_actor_draw(ACTOR* actorx, GAME* game);
 

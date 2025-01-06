@@ -10,6 +10,12 @@ extern "C" {
 
 extern ACTOR_PROFILE BgPostItem_Profile;
 
+typedef struct bg_post_item_s {
+    ACTOR actor_class;
+    u8 keep_mail_sum;
+    u8 update_mail_flag;
+} BG_POST_ITEM_ACTOR;
+
 #ifdef __cplusplus
 }
 #endif

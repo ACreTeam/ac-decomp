@@ -1,0 +1,600 @@
+void aPG_Set_continue_msg_num(NPC_POSTGIRL_ACTOR *postgirl, int msg) {
+    mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg + postgirl->npc_class.draw.draw_type);
+}
+
+void aPG_ChangeMsgData(NPC_POSTGIRL_ACTOR *postgirl, int msg) {
+    mMsg_Window_c *msg_p = mMsg_Get_base_window_p();
+    mMsg_ChangeMsgData(msg_p, msg + postgirl->npc_class.draw.draw_type);
+    mMsg_Set_ForceNext(msg_p);
+}
+
+void aPG_set_mail_address(Mail_c *mail) {
+    mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0, mail->header.recipient.personalID.player_name, aPG_ADDR_STR_LEN);
+}
+
+void aPG_set_loan_balance() {
+    u8 str[2];
+    int length;
+    u32 loan = 0;
+    mMsg_Window_c *msg_p = mMsg_Get_base_window_p();
+    
+    length = 0;
+    loan = Now_Private->inventory.loan;
+    mFont_UnintToString(str, aPG_LOAN_STR_LEN, loan - (loan / 1000000) * 1000000, 0x6, TRUE, FALSE, TRUE);
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR2, str, aPG_LOAN_STR_LEN);
+    loan = Now_Private->inventory.loan / 1000000;
+    if (loan != 0) {
+        int l;
+        mFont_UnintToString(str, aPG_LOAN_STR_LEN, loan, 0x6, TRUE, FALSE, TRUE);
+        l = mMsg_Get_Length_String(str, 0x7);
+        str[l] = CHAR_COMMA;
+        length = l;
+    }
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR1, str, length);
+}
+
+void aPG_set_post_status(NPC_POSTGIRL_ACTOR *postgirl) {
+    int status = 0;
+    if (mPO_get_keep_mail_sum() >= mPO_MAIL_STORAGE_SIZE) {
+        status |= aPG_STATUS_DESK_FULL; 
+    }
+    if (Now_Private->inventory.loan != 0) {
+        if (mEv_CheckFirstJob() == FALSE) {
+            status |= aPG_STATUS_DONE_FIRST_JOB;
+            aPG_set_loan_balance();
+        }
+    } else {
+        if (postgirl->has_bank_account == TRUE) {
+            status |= aPG_HAS_BANK_ACCOUNT;
+        }
+    }
+    postgirl->status = status;
+}
+
+void aPG_office_space_check(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    static int msg_no[2] = {0x8bd, 0x8bb};
+    static int next_act_idx[2] = {aPG_ACTION_29, aPG_ACTION_NONE};
+    int res = FALSE;
+    aPG_set_post_status(postgirl);
+    if (postgirl->status & aPG_STATUS_DESK_FULL) {
+        postgirl->is_desk_full = TRUE;
+        res = TRUE;
+    }
+    aPG_Set_continue_msg_num(postgirl, msg_no[res]);
+    postgirl->setup_action(postgirl, play, next_act_idx[res]);
+}
+
+int aPG_check_destination_mailbox(int idx) {
+    int res = FALSE;
+    if (mMl_chk_mail_free_space(Save_Get(homes)[idx].mailbox, HOME_MAILBOX_SIZE) != -1) {
+        res = TRUE;
+    }
+    return res;
+}
+
+int aPG_check_destination(Mail_c *mail){
+    int res = 0;
+    aPG_set_mail_address(mail);
+    switch (mail->header.recipient.type) {
+    case 0:
+        {
+            int addr = mMl_hunt_for_send_address(mail);
+            if (addr == -1) {
+                res = 1;
+            } else if (aPG_check_destination_mailbox(addr) == FALSE) {
+                res = 2;
+            } else if (mPO_count_mail(addr) >= HOME_MAILBOX_SIZE) {
+                res = 3;
+            }
+        }
+        break;
+    case 1:
+        {
+            AnmPersonalID_c anm_pid;
+            mMl_get_npcinfo_from_mail_name(&anm_pid, &mail->header.recipient);
+            if (mNpc_SearchAnimalPersonalID(&anm_pid) == -1) {
+                res = 1;
+            }
+        }
+        break;
+    }
+    return res;
+}
+
+void aPG_ask_for_business(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x9) != 0 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+        int choice = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+        int action = -1;
+        switch (postgirl->status) {
+        case aPG_STATUS_NONE:
+        case aPG_STATUS_DESK_FULL:
+            if (choice > mChoice_CHOICE0) {
+                choice += 1;
+            }
+            break;
+        }
+        switch (choice) {
+        case mChoice_CHOICE0:
+            if ((postgirl->status & aPG_STATUS_DESK_FULL) != 0) {
+                postgirl->is_desk_full = TRUE;
+                action = aPG_ACTION_NONE;
+            } else {
+                action = aPG_ACTION_21;
+            }
+            break;
+        case mChoice_CHOICE1:
+            if ((postgirl->status & aPG_HAS_BANK_ACCOUNT) != 0) {
+                action = aPG_ACTION_DEPOSIT_BEFORE;
+            } else {
+                action = aPG_ACTION_REPAY_BEFORE;
+            }
+            break;
+        case mChoice_CHOICE2:
+            if (mLd_PlayerManKindCheck() == FALSE) {
+                action = aPG_ACTION_CARD_CHECK_CONDITION;
+            } else {
+                action = aPG_ACTION_CARD_ERR_OTHERLAND;
+            }
+            break;
+        case 3:
+            action = aPG_ACTION_NONE;
+            break;
+        }
+        if (action >= 0) {
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x9, 0x0);
+            postgirl->setup_action(postgirl, play, action);
+        }
+    }
+}
+
+void aPG_msg_win_open_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    mMsg_Window_c *msg_p = mMsg_Get_base_window_p();
+    if (mMsg_Check_not_series_main_wait(msg_p) == TRUE) {
+        mMsg_Unset_LockContinue(msg_p);
+        postgirl->setup_action(postgirl, play, postgirl->next_action);
+    }
+}
+
+void aPG_receive_demo_start_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (CLIP(handOverItem_clip)->request_mode == aHOI_REQUEST_TRANS_WAIT) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x1, 0x8);
+        postgirl->setup_action(postgirl, play, aPG_ACTION_RECEIVE_DEMO_END_WAIT);
+    }
+}
+
+void aPG_receive_demo_end_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    // chase insect??
+    if (postgirl->npc_class.action.idx == aNPC_ACT_CHASE_INSECT) {
+        postgirl->_9ac->update_mail_flag = TRUE;
+        postgirl->setup_action(postgirl, play, aPG_ACTION_MSG_WIN_OPEN_WAIT);
+    }
+}
+
+void aPG_receive_after_msg_end_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+        aPG_office_space_check(postgirl, play);
+    }
+}
+
+void aPG_refuse_demo_start_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (CLIP(handOverItem_clip)->request_mode == aHOI_REQUEST_TRANS_WAIT) {
+        postgirl->setup_action(postgirl, play, aPG_ACTION_REFUSE_DEMO_STOP_WAIT);
+    }
+}
+
+void aPG_refuse_demo_stop_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (postgirl->npc_class.action.idx != aNPC_ACT_ENSOU) {
+        postgirl->next_action = aPG_ACTION_REFUSE_MSG_END_WAIT;
+        postgirl->setup_action(postgirl, play, aPG_ACTION_MSG_WIN_OPEN_WAIT);
+    }
+}
+
+void aPG_refuse_msg_end_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if ((int)mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x1) == 0xd) {
+        postgirl->setup_action(postgirl, play, aPG_ACTION_REFUSE_DEMO_AFTER);
+    }
+}
+
+void aPG_refuse_demo_after(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    int msg_data;
+    if (CLIP(handOverItem_clip)->master_actor == NULL) {
+        switch (postgirl->dest) {
+        case 2:
+            msg_data = 0x2dda;
+            break;
+        case 3:
+            msg_data = 0x2dde;
+            break;
+        default:
+            msg_data = 0x2ddc;
+            break;
+        }
+        aPG_ChangeMsgData(postgirl, msg_data);
+        postgirl->setup_action(postgirl, play, aPG_ACTION_REFUSE_AFTER_MSG_END_WAIT);
+        mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+    }
+}
+
+void aPG_refuse_after_msg_end_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x9) && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+        aPG_office_space_check(postgirl, play);
+    }
+}
+
+void aPG_msg_win_close_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (mMsg_Check_main_wait(mMsg_Get_base_window_p()) == TRUE) {
+        postgirl->setup_action(postgirl, play, postgirl->action + 1);
+    }
+}
+
+void aPG_repay_before(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    mMsg_Window_c *msg_p = mMsg_Get_base_window_p();
+    int no = 0x8d3 + postgirl->npc_class.draw.draw_type;
+    if (mMsg_Get_msg_num(msg_p) == no && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        postgirl->setup_action(postgirl, play, aPG_ACTION_MSG_WIN_CLOSE_WAIT);
+    }
+}
+
+void aPG_repay_menu_close_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    static int msg_no[3] = {0x8d7, 0x8e5, 0x8d5};
+    static int next_act_idx[2] = {aPG_ACTION_RECEIVE_DEMO_START_WAIT, aPG_ACTION_14};
+    if (play->submenu.open_flag == FALSE) {
+        int next_msg = 0;
+        int next_action = 0;
+        aPG_set_post_status(postgirl);
+        if (postgirl->loan == Now_Private->inventory.loan) {
+            next_msg = 1;
+            next_action = 1;
+        } else if ((postgirl->status & aPG_STATUS_DONE_FIRST_JOB) != 0) {
+            next_msg = 2;
+        } else {
+            Common_Get(complete_payment_type) = mPlayer_COMPLETE_PAYMENT_TYPE_HOUSE;
+        }
+        aPG_ChangeMsgData(postgirl, msg_no[next_msg]);
+        mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+        postgirl->next_action = aPG_ACTION_REPAY_AFTER;
+        postgirl->setup_action(postgirl, play, next_act_idx[next_action]);
+    }
+}
+
+void aPG_repay_after(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+        postgirl->setup_action(postgirl, play, aPG_ACTION_ASK_FOR_BUSINESS);
+    }
+}
+
+void aPG_card_err_otherland(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    int msg_no = postgirl->msg_no + postgirl->npc_class.draw.draw_type;
+    if (mMsg_Get_msg_num(mMsg_Get_base_window_p()) == msg_no) {
+        postgirl->setup_action(postgirl, play, aPG_ACTION_REPAY_AFTER);
+    }
+}
+
+void aPG_card_check_condition(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    mMsg_Window_c *msg_p = mMsg_Get_base_window_p();
+    int msg_no = postgirl->msg_no + postgirl->npc_class.draw.draw_type;
+    if (mMsg_Get_msg_num(msg_p) == msg_no && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        postgirl->setup_action(postgirl, play, aPG_ACTION_18); 
+    }
+}
+
+void aPG_card_save_menu_close_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (play->submenu.open_flag == FALSE) {
+        aPG_ChangeMsgData(postgirl, 0x8e9);
+        mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+        postgirl->msg_no = 0x8e9;
+        postgirl->next_action = aPG_ACTION_20;
+        postgirl->setup_action(postgirl, play, aPG_ACTION_MSG_WIN_OPEN_WAIT);
+    }
+}
+
+void aPG_receive_menu_close_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    static int msg_no[5] = {0x8e3, 0x8b9, 0x8e1, 0x8b5, 0x1bd7};
+    static int next_act_idx[5] = {aPG_ACTION_MSG_WIN_OPEN_WAIT, aPG_ACTION_RECEIVE_DEMO_START_WAIT, aPG_ACTION_REFUSE_DEMO_START_WAIT, aPG_ACTION_REFUSE_DEMO_START_WAIT, aPG_ACTION_REFUSE_DEMO_START_WAIT};
+    if (play->submenu.open_flag == FALSE) {
+        Submenu_Item_c *submenu_item;
+        int next = -1;
+        if (mMl_check_not_used_mail(&play->submenu.mail) == TRUE) {
+            postgirl->next_action = aPG_ACTION_CHECK_RECEIVE_AFTER;
+            next = 0;
+        } else {
+            int dest = aPG_check_destination(&play->submenu.mail);
+            switch (dest) {
+            case 0:
+                mPO_receipt_proc(&play->submenu.mail, mPO_SENDTYPE_MAIL);
+                postgirl->next_action = aPG_ACTION_RECEIVE_AFTER_MSG_END_WAIT;
+                next = 1;
+                break;
+            case 1:
+            case 2:
+            case 3:
+                submenu_item = play->submenu.item_p;
+                play->submenu.mail.content.font = mMl_FONT_SEND;
+                mMl_copy_mail(&Now_Private->mail[submenu_item->slot_no], &play->submenu.mail);
+                postgirl->dest = dest;
+                next = dest + 1;
+                break;
+            }
+            mMl_clear_mail(&play->submenu.mail);
+        }
+
+        if (next >= 0) {
+            aPG_ChangeMsgData(postgirl, msg_no[next]);
+            postgirl->setup_action(postgirl, play, next_act_idx[next]);
+        }
+    }
+}
+
+void aPG_check_receive_after(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+        int action = -1; 
+        switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+        case mChoice_CHOICE0:
+            action = aPG_ACTION_21;
+            break;
+        case mChoice_CHOICE1:
+            action = aPG_ACTION_NONE;
+            break;
+        }
+        if (action != -1) {
+            postgirl->setup_action(postgirl, play, action);
+        }
+    }
+}
+
+void aPG_deposit_before(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    mMsg_Window_c *msg_p = mMsg_Get_base_window_p();
+    int msg_no = postgirl->npc_class.draw.draw_type + 0x2de0;
+    if (msg_no == mMsg_Get_msg_num(msg_p)) {
+        if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+            postgirl->setup_action(postgirl, play, aPG_ACTION_25);
+        }
+    }
+}
+
+void aPG_deposit_menu_close_wait(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (play->submenu.open_flag == FALSE) {
+        u8 str[8];
+        aPG_ChangeMsgData(postgirl, 0x2de2);
+        mMsg_Set_ForceNext(mMsg_Get_base_window_p());
+        mFont_UnintToString(str, 0xb, Now_Private->bank_account, 0x9, 0x1, 0x0, 0x1);
+        mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR3, str, 0xb);
+        postgirl->next_action = aPG_ACTION_DEPOSIT_AFTER;
+        postgirl->setup_action(postgirl, play, aPG_ACTION_27);
+    }
+}
+
+void aPG_deposit_after(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+        postgirl->setup_action(postgirl, play, 0x0);
+    }
+}
+
+void aPG_loop_check(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play) {
+    if (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x9) && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+        int next = -1;
+        switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+        case mChoice_CHOICE0:
+            next = aPG_ACTION_21;
+            break;
+        case mChoice_CHOICE1:
+            aPG_Set_continue_msg_num(postgirl, 0x8b3);
+            next = 1;
+            break;
+        }
+        if (next != -1) {
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x9, 0x0);
+            postgirl->setup_action(postgirl, play, next);
+        }
+    }
+}
+
+void aPG_ask_for_business_init(ACTOR *actorx, GAME *game) {
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x9, 0x0);
+}
+
+void aPG_msg_win_open_wait_init(ACTOR *actorx, GAME *game) {
+    mMsg_request_main_appear_wait_type2(mMsg_Get_base_window_p(), 1);
+}
+
+void aPG_refuse_demo_stop_wait_init(ACTOR *actorx, GAME *game) {
+    NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
+    postgirl->npc_class.talk_info.default_animation = aNPC_ANIM_CONTRACT2;
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x1, 0x9);
+}
+
+void aPG_refuse_msg_end_wait_init(ACTOR *actorx, GAME *game) {
+    static int msg_no[3] = {0x8e1, 0x8b5, 0x1bd7};
+    mMsg_Window_c *msg_p = mMsg_Get_base_window_p();
+    NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
+    aPG_ChangeMsgData(postgirl, msg_no[postgirl->dest - 1]);
+    mMsg_Set_ForceNext(msg_p);
+    mMsg_Unset_LockContinue(msg_p);
+    postgirl->npc_class.talk_info.default_animation = -1;
+}
+
+void aPG_refuse_demo_after_init(ACTOR *actorx, GAME *game) {
+    mMsg_Set_LockContinue(mMsg_Get_base_window_p());
+}
+
+void aPG_refuse_after_msg_end_wait_init(ACTOR *actorx, GAME *game) {
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x9, 0);
+}
+
+void aPG_msg_win_close_wait_init(ACTOR *actorx, GAME *game) {
+    mMsg_request_main_disappear_wait_type2(mMsg_Get_base_window_p());
+}
+
+void aPG_repay_menu_close_wait_init(ACTOR *actorx, GAME *game) {
+    NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
+    GAME_PLAY *play = (GAME_PLAY *)game;
+    mSM_open_submenu(&play->submenu, mSM_OVL_REPAY, 0, 0);
+    postgirl->loan = Now_Private->inventory.loan;
+}
+
+void aPG_repay_after_recover_init(ACTOR *actorx, GAME *game) {
+    NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
+    postgirl->next_action = aPG_ACTION_REPAY_AFTER;
+    aPG_msg_win_open_wait_init(actorx, game);
+}
+
+void aPG_repay_after_init(ACTOR *actorx, GAME *game) {
+    NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
+    static int msg_no[8] = {0x31d7, 0x31d5, 0x8db, 0x8d9, 0x8df, 0x8dd, 0x8db, 0x8d9};
+    aPG_set_post_status(postgirl);
+    aPG_Set_continue_msg_num(postgirl, msg_no[postgirl->status]);
+}
+
+void aPG_card_err_otherland_init(ACTOR *actorx, GAME *game) {
+    NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
+    aPG_Set_continue_msg_num(postgirl, 0x1bd3);
+    postgirl->msg_no = 0x1bd3;
+}
+
+void aPG_card_check_condition_init(ACTOR *actorx, GAME *game) {
+    NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
+    aPG_Set_continue_msg_num(postgirl, 0x1be7);
+    postgirl->msg_no = 0x1be7;
+}
+
+void aPG_card_save_menu_close_wait_init(ACTOR *actorx, GAME *game) {
+    GAME_PLAY *play = (GAME_PLAY *)game;
+    Submenu *submenu = &play->submenu;
+    mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_CPMAIL, 0x0);
+    mMl_clear_mail(&submenu->mail);
+}
+
+void aPG_receive_menu_close_wait_init(ACTOR *actorx, GAME *game) {
+    GAME_PLAY *play = (GAME_PLAY *)game;
+    Submenu *submenu = &play->submenu;
+    mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_SEND_MAIL, 0x0);
+    mMl_clear_mail(&submenu->mail);
+}
+
+void aPG_deposit_menu_close_wait_init(ACTOR *actorx, GAME *game) {
+    GAME_PLAY *play = (GAME_PLAY *)game;
+    mSM_open_submenu(&play->submenu, mSM_OVL_BANK, 0x0, 0x0);
+}
+
+void aPG_deposit_after_recover_init(ACTOR *actorx, GAME *game) {
+    NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
+    postgirl->next_action = aPG_ACTION_DEPOSIT_AFTER;
+    aPG_msg_win_open_wait_init(actorx, game);
+}
+
+void aPG_loop_check_init(ACTOR *actorx, GAME *game) {
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x1, 0x0);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x9, 0x0);
+}
+
+void aPG_init_proc(ACTOR *actorx, GAME *game, int proc_idx) {
+    static aPG_INIT_PROC init_proc[30] = {
+		aPG_ask_for_business_init,
+		(aPG_INIT_PROC)none_proc1,
+		aPG_msg_win_open_wait_init,
+		(aPG_INIT_PROC)none_proc1,
+		(aPG_INIT_PROC)none_proc1,
+		(aPG_INIT_PROC)none_proc1,
+		(aPG_INIT_PROC)none_proc1,
+		aPG_refuse_demo_stop_wait_init,
+		aPG_refuse_msg_end_wait_init,
+		aPG_refuse_demo_after_init,
+		aPG_refuse_after_msg_end_wait_init,
+		(aPG_INIT_PROC)none_proc1,
+		aPG_msg_win_close_wait_init,
+		aPG_repay_menu_close_wait_init,
+		aPG_repay_after_recover_init,
+		aPG_repay_after_init,
+		aPG_card_err_otherland_init,
+		aPG_card_check_condition_init,
+		aPG_msg_win_close_wait_init,
+		aPG_card_save_menu_close_wait_init,
+		(aPG_INIT_PROC)none_proc1,
+		aPG_msg_win_close_wait_init,
+		aPG_receive_menu_close_wait_init,
+		(aPG_INIT_PROC)none_proc1,
+		(aPG_INIT_PROC)none_proc1,
+		aPG_msg_win_close_wait_init,
+		aPG_deposit_menu_close_wait_init,
+		aPG_deposit_after_recover_init,
+		aPG_repay_after_init,
+		aPG_loop_check_init
+    }; 
+    init_proc[proc_idx](actorx, game);
+}
+
+void aPG_setupAction(NPC_POSTGIRL_ACTOR *postgirl, GAME_PLAY *play, int action) {
+    static aPG_PROC process[30] = {
+		aPG_ask_for_business,
+		(aPG_PROC)none_proc1,
+		aPG_msg_win_open_wait,
+		aPG_receive_demo_start_wait,
+		aPG_receive_demo_end_wait,
+		aPG_receive_after_msg_end_wait,
+		aPG_refuse_demo_start_wait,
+		aPG_refuse_demo_stop_wait,
+		aPG_refuse_msg_end_wait,
+		aPG_refuse_demo_after,
+		aPG_refuse_after_msg_end_wait,
+		aPG_repay_before,
+		aPG_msg_win_close_wait,
+		aPG_repay_menu_close_wait,
+		aPG_msg_win_open_wait,
+		aPG_repay_after,
+		aPG_card_err_otherland,
+		aPG_card_check_condition,
+		aPG_msg_win_close_wait,
+		aPG_card_save_menu_close_wait,
+		aPG_card_err_otherland,
+		aPG_msg_win_close_wait,
+		aPG_receive_menu_close_wait,
+		aPG_check_receive_after,
+		aPG_deposit_before,
+		aPG_msg_win_close_wait,
+		aPG_deposit_menu_close_wait,
+		aPG_msg_win_open_wait,
+		aPG_deposit_after,
+		aPG_loop_check,
+    };
+    postgirl->action = action;
+    postgirl->process = process[action];
+    aPG_init_proc((ACTOR *)postgirl, (GAME *)play, action);
+}
+
+void aPG_set_talk_info(ACTOR *actorx) {
+    static int msg_no[8] = {0x31d3, 0x31d1, 0x08b1, 0x8ad, 0x8d1, 0x8cf, 0x8b1, 0x8ad};
+    NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
+    int msg = 0;
+    if (CLIP(aprilfool_control_clip) != NULL && CLIP(aprilfool_control_clip)->talk_chk_proc(actorx->npc_id) == FALSE) {
+        msg = CLIP(aprilfool_control_clip)->get_msg_num_proc(actorx->npc_id, 1);
+    } else {
+        aPG_set_post_status(postgirl);
+        msg = msg_no[postgirl->status] + postgirl->npc_class.draw.draw_type;
+    }
+    mDemo_Set_msg_num(msg);
+}
+
+void aPG_talk_request(ACTOR *actorx, GAME *game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aPG_set_talk_info);
+}
+
+int aPG_talk_init(ACTOR *actorx, GAME *game) {
+    NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
+    postgirl->setup_action(postgirl, (GAME_PLAY *)game, aPG_ACTION_ASK_FOR_BUSINESS);
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+int aPG_talk_end_chk(ACTOR *actorx, GAME *game) {
+    NPC_POSTGIRL_ACTOR *postgirl = (NPC_POSTGIRL_ACTOR *)actorx;
+    int res = FALSE;
+    postgirl->process(postgirl, (GAME_PLAY *)game);
+    if (mDemo_Get_talk_actor() != actorx) {
+        res = TRUE;
+    }
+    return res;
+}
+
+void aPG_actor_move(ACTOR *actor, GAME *game) {
+    CLIP(npc_clip)->move_proc(actor, game);
+}
