@@ -370,6 +370,8 @@ typedef enum bgm_e {
     BGM_KAPPA_SONG15,
     // TODO: others
     BGM_MD0 = 128,
+
+    BGM_TOTAKEKE_LIVE0 = 192,
 } BGM_e;
 
 #ifdef __cplusplus

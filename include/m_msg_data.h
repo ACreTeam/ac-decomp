@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+#define MSG_CARPETPEDDLER_START     0x048A
+#define MSG_TOTAKEKE_START          0x1B93
 #define MSG_SANTA_WISH_FTR          0x2B54
 #define MSG_SANTA_WISH_WALL         0x2B55
 #define MSG_SANTA_WISH_CARPET       0x2B56

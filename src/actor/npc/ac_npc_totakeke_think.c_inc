@@ -1,4 +1,4 @@
-void aNTT_wait(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_wait(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     ACTOR *actorx = (ACTOR *)totakeke;
     aNTT_event_save_c *save = (aNTT_event_save_c *)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 0xa);
     if (ABS(actorx->player_angle_y) > 4000) {
@@ -9,7 +9,7 @@ void aNTT_wait(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
         if (totakeke->think != aNTT_THINK_ROLL1) {
             aNTT_setup_think_proc(totakeke, play, 0x3);
         }
-    } else if (aNTT_bitcheck_func(save->bitfield, aNTT_FLAG_0) == 0) {
+    } else if (aNTT_bitcheck_func(save->bitfield, aNTT_FLAG_HELLO) == 0) {
         if (totakeke->think != aNTT_THINK_WAIT) {
             aNTT_setup_think_proc(totakeke, play, 0x1);
         }
@@ -18,39 +18,39 @@ void aNTT_wait(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     }
 }
 
-void aNTT_roll(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_roll(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     staffroll_light_proc_start(play); 
     if (totakeke->roll2_count > 0) {
         totakeke->roll2_count -= 1;
     } else {
         aNTT_setup_think_proc(totakeke, play, ++totakeke->think);
     }
-    CLIP(totakeke_clip)->_18(totakeke, play);
+    CLIP(mikanbox_clip)->roll_proc(totakeke, play);
 }
 
-void aNTT_roll1(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
-    u8 bgm = CLIP(totakeke_clip)->_14(totakeke);
+static void aNTT_roll1(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+    u8 bgm = CLIP(mikanbox_clip)->bgm_no_proc(totakeke);
     if (bgm == mBGMPsComp_execute_bgm_num_get()) {
-        if (CLIP(totakeke_clip) != NULL) {
-            CLIP(totakeke_clip)->_0C(totakeke, play, 0);
-            if (CLIP(totakeke_clip)->_10(0x2)) {
+        if (CLIP(mikanbox_clip) != NULL) {
+            CLIP(mikanbox_clip)->sound_proc(totakeke, play, 0);
+            if (CLIP(mikanbox_clip)->section_chk_proc(0x2)) {
                 aNTT_setup_think_proc(totakeke, play, ++totakeke->think);
             }
         }
-        CLIP(totakeke_clip)->_18(totakeke, play);
+        CLIP(mikanbox_clip)->roll_proc(totakeke, play);
     }
 }
 
-void aNTT_roll2(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_roll2(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     aWeather_Clip_c *weather;
     aNTT_event_save_c *save = (aNTT_event_save_c *)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 0xa);
-    if (CLIP(totakeke_clip) != NULL) {
-        CLIP(totakeke_clip)->_0C(totakeke, play, 0x0);
+    if (CLIP(mikanbox_clip) != NULL) {
+        CLIP(mikanbox_clip)->sound_proc(totakeke, play, 0x0);
     }
     staffroll_light_proc_start(play);
     totakeke->roll2_count += 1;
     totakeke->roll4_count += 1;
-    CLIP(totakeke_clip)->_18(totakeke, play);
+    CLIP(mikanbox_clip)->roll_proc(totakeke, play);
     weather = CLIP(weather_clip);
     if (weather != NULL) {
         if (totakeke->roll4_count == 0x15e0) {
@@ -75,41 +75,41 @@ void aNTT_roll2(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
         totakeke->_9a2 += 1;
         if (totakeke->_9a2 >= 0x10) {
             aNTT_setup_think_proc(totakeke, play, 0x8);
-            save->bitfield |= 0x8000;
-            save->bitfield &= ~(0x4000);
+            save->bitfield |= aNTT_FLAG_SP_ROLL_END;
+            save->bitfield &= ~aNTT_FLAG_SP_ROLL_DRAW;
         } else {
             aNTT_setup_think_proc(totakeke, play, 0x7);
         }
     }
 }
 
-void aNTT_roll4(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_roll4(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     aNTT_event_save_c *save = (aNTT_event_save_c *)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 0xa);
     totakeke->roll4_count += 1;
-    CLIP(totakeke_clip)->_18(totakeke, play);
+    CLIP(mikanbox_clip)->roll_proc(totakeke, play);
     if (totakeke->roll4_count >= 0x1d88 || totakeke->roll4_count <= 0x1c70) {
-        save->_15 = 0;
+        save->copyright_alpha = 0;
     } else if (totakeke->roll4_count > 0x1d38) {
-        save->_15 = 3.1875f * (0x1d88 - totakeke->roll4_count);
+        save->copyright_alpha = 3.1875f * (0x1d88 - totakeke->roll4_count);
     } else if (totakeke->roll4_count < 0x1cc0) {
-        save->_15 = 3.1875f * (totakeke->roll4_count - 0x1c70);
+        save->copyright_alpha = 3.1875f * (totakeke->roll4_count - 0x1c70);
     } else {
-        save->_15 = 0xff;
+        save->copyright_alpha = 255;
     }
 
-    if (CLIP(totakeke_clip) != NULL) {
-        CLIP(totakeke_clip)->_0C(totakeke, play, 0);
-        if (CLIP(totakeke_clip)->_10(0x4) && totakeke->roll4_count > 0x1d88) {
-            save->_15 = 0;
+    if (CLIP(mikanbox_clip) != NULL) {
+        CLIP(mikanbox_clip)->sound_proc(totakeke, play, 0);
+        if (CLIP(mikanbox_clip)->section_chk_proc(0x4) && totakeke->roll4_count > 0x1d88) {
+            save->copyright_alpha = 0;
             aNTT_setup_think_proc(totakeke, play, 0x9);
         }
     }
 }
 
-void aNTT_roll_end(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_roll_end(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     totakeke->npc_class.draw.main_animation.keyframe.frame_control.current_frame = totakeke->_9a0;
     if (totakeke->_9aa != 0) {
-        CLIP(totakeke_clip)->_1c(totakeke); 
+        CLIP(mikanbox_clip)->head_up_proc((ACTOR*)totakeke); 
     }
     if (staffroll_light_proc_end(play)) {
         aNTT_setup_think_proc(totakeke, play, totakeke->post_roll_think);
@@ -127,11 +127,11 @@ static aNTT_PROC proc_table[7] = {
     aNTT_roll_end
 };
 
-void aNTT_think_main_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_think_main_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     proc_table[totakeke->think_proc_id](totakeke, play);
 }
 
-void aNTT_think_init_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_think_init_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     totakeke->npc_class.actor_class.status_data.weight = 0xff;
     totakeke->npc_class.condition_info.hide_request = FALSE;
     aNTT_setup_think_proc(totakeke, play, 0);
@@ -153,7 +153,7 @@ static aNTT_think_data_c dt_tbl[13] = {
     {aNTT_THINK_NONE, 6, 2, aNTT_TALK_SELECT1, aNTT_THINK_NONE}
 };
 
-void aNTT_setup_think_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, u8 think_id) {
+static void aNTT_setup_think_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, u8 think_id) {
     static aNPC_TALK_REQUEST_PROC talk_request_table[3] = {
         (aNPC_TALK_REQUEST_PROC)none_proc1, 
         aNTT_norm_talk_request, 
@@ -169,12 +169,12 @@ void aNTT_setup_think_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, u8 thi
     totakeke->talk = think->talk;
     totakeke->pre_roll_think = think->pre_roll_think;
 
-    if (CLIP(totakeke_clip) != NULL) {
-        CLIP(totakeke_clip)->_08(totakeke, play, think->_01); 
+    if (CLIP(mikanbox_clip) != NULL) {
+        CLIP(mikanbox_clip)->think_init_proc(totakeke, play, think->think_init_idx); 
     }
 }
 
-void aNTT_think_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, int think_id) {
+static void aNTT_think_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, int think_id) {
     switch (think_id) {
     case 0x0:
         aNTT_think_init_proc(totakeke, play);
@@ -185,18 +185,18 @@ void aNTT_think_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, int think_id
     }
 }
 
-void aNTT_schedule_init_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_schedule_init_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     totakeke->npc_class.think.think_proc = (aNPC_THINK_PROC)aNTT_think_proc;    
     CLIP(npc_clip)->think_proc((NPC_ACTOR *)totakeke, play, aNPC_THINK_SPECIAL, 0);
 }
 
-void aNTT_schedule_main_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_schedule_main_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     if (CLIP(npc_clip)->think_proc((NPC_ACTOR *)totakeke, play, -1, 1) == FALSE) {
         CLIP(npc_clip)->think_proc((NPC_ACTOR *)totakeke, play, -1, 2);
     }
 }
 
-void aNTT_schedule_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, int schedule_id) {
+static void aNTT_schedule_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, int schedule_id) {
     switch (schedule_id) {
     case 0:
         aNTT_schedule_init_proc(totakeke, play);
@@ -206,4 +206,3 @@ void aNTT_schedule_proc(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play, int sched
         break;
     }
 }
-

@@ -1,0 +1,393 @@
+static u8 totakeke_str[aMIK_STRING_LEN * aMIK_STRING_NUM];
+
+// clang-format off
+static u8 page_table[] = {
+    0,
+    9,
+    18,
+    27,
+    37,
+    45,
+    53,
+    57,
+    66,
+    74,
+    82,
+    89,
+    96,
+    103,
+    112,
+    122,
+    124,
+};
+// clang-format on
+
+// clang-format off
+static u8 index_line_table[] = {
+    3, 6, 9, 12, 16, 18, 21, 25,
+    27, 30, 37, 40, 43, 45, 48, 51,
+    53, 57, 60, 66, 74, 82, 86, 89,
+    91, 96, 100, 103, 112, 116, 119, 122,
+};
+// clang-format on
+
+static void aMKBC_clip_set_string(int base) {
+    if (CLIP(mikanbox_clip) != NULL) {
+        u8* str_p = totakeke_str;
+        int page = mString_MIKANBOX_START + page_table[base];
+        int i;
+
+        for (i = 0; i < aMIK_STRING_NUM; i++) {
+            mString_Load_StringFromRom(str_p, aMIK_STRING_LEN, page);
+
+            page++;
+            if (page > mString_MIKANBOX_END) {
+                page = mString_MIKANBOX_END;
+            }
+
+            str_p += aMIK_STRING_LEN;
+        }
+    }
+}
+
+static void aMKBC_clip_roll_draw(GAME_PLAY* play, int timer, int page) {
+    aNTT_event_save_c* kk_save = (aNTT_event_save_c*)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 10);
+    GAME* game = (GAME*)play;
+    GRAPH* graph = game->graph;
+    int i;
+    int j;
+    int k;
+    int start_idx;
+    int end_idx;
+    u8* str_p;
+    f32 scale;
+    f32 pos_y;
+    int alpha;
+
+    if (kk_save == NULL || (kk_save->bitfield & aNTT_FLAG_SP_ROLL_DRAW) == 0 || CLIP(mikanbox_clip) == NULL) {
+        return;
+    }
+
+    str_p = totakeke_str;
+
+    mFont_SetMatrix(graph, mFont_MODE_FONT);
+    start_idx = page_table[page];
+    end_idx = page_table[page + 1];
+
+    if (timer < 40 || timer > 446) {
+        alpha = 0;
+    } else if (timer < 120) {
+        alpha = (u8)((timer - 40) * 3.1875f);
+    } else if (timer > 366) {
+        alpha = (u8)((446 - timer) * 3.1875f);
+    } else {
+        alpha = 255;
+    }
+
+    pos_y = 30.0f;
+    pos_y += ((start_idx + 10) - end_idx) * 10.0f;
+    for (i = 0, j = start_idx; i < 10 && j < end_idx; i++, j++) {
+        scale = 0.9f;
+
+        for (k = 0; k < ARRAY_COUNT(index_line_table); k++) {
+            if (index_line_table[k] == j) {
+                scale *= 0.85f;
+            }
+        }
+
+        mFont_SetLineStrings_AndSpace(game, str_p, aMIK_STRING_LEN, 150.0f, pos_y + i * 18.0f, 255, 255, 255, alpha,
+                                      FALSE, TRUE, TRUE, scale, scale, mFont_MODE_FONT);
+        str_p += aMIK_STRING_LEN;
+    }
+
+    mFont_UnSetMatrix(graph, mFont_MODE_FONT);
+}
+
+static int aNTT_draw_chk_proc(ACTOR* actorx, GAME_PLAY* play) {
+    s16 profile = actorx->id;
+    mActor_name_t name = actorx->npc_id;
+
+    if (profile == mAc_PROFILE_PLAYER || profile == mAc_PROFILE_WEATHER || profile == mAc_PROFILE_EFFECT_CONTROL ||
+        name == SP_NPC_TOTAKEKE || name == MIKANBOX || name == SP_NPC_MAJIN5) {
+        return FALSE;
+    }
+
+    // force cull all other actors
+    actorx->state_bitfield &= ~ACTOR_STATE_NO_CULL;
+    return TRUE;
+}
+
+static void aNTT_set_string(NPC_TOTAKEKE_ACTOR* kk) {
+    aNTT_event_save_c* kk_save = (aNTT_event_save_c*)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 10);
+
+    aMKBC_clip_set_string(kk->_9a2);
+    kk->roll2_count = 0;
+    kk_save->bitfield |= aNTT_FLAG_SP_ROLL_DRAW;
+}
+
+static void aNTT_roll_init(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play) {
+    aNTT_event_save_c* kk_save = (aNTT_event_save_c*)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 10);
+
+    kk_save->roll_flag = TRUE;
+    mBGMPsComp_make_ps_quiet(0x168);
+    staffroll_light_init(play);
+    kk->roll2_count = 180;
+    
+    if (CLIP(weather_clip) != NULL) {
+        CLIP(weather_clip)->change_weather(CLIP(weather_clip)->actor, mEnv_WEATHER_CLEAR, mEnv_WEATHER_INTENSITY_NONE);
+    }
+
+    kk_save->bitfield &= ~aNTT_FLAG_SP_ROLL_END;
+    kk->_9a0 = 255;
+    kk->show_timer = 0;
+    kk_save->_00 = 120;
+    kk->_9aa = 0;
+    kk->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT;
+}
+
+static void aNTT_roll1_init(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play) {
+    u8 bgm_no = CLIP(mikanbox_clip)->bgm_no_proc(kk);
+
+    mBGMPsComp_make_ps_demo(bgm_no, 0x168);
+    mBGMPsComp_delete_ps_quiet();
+    kk->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_KUTIPAKU | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT;
+    Camera2_request_main_staff_roll(play, GET_PLAYER_ACTOR_ACTOR(play), (ACTOR*)kk, 5);
+    play->draw_chk_proc = &aNTT_draw_chk_proc;
+}
+
+static void aNTT_roll2_init(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play) {
+    kk->_9a2 = 0;
+    aNTT_set_string(kk);
+    kk->roll4_count = 0;
+}
+
+static void aNTT_roll3_init(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play) {
+    aNTT_set_string(kk);
+}
+
+static void aNTT_roll_end_init(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play) {
+    u8 bgm_no = CLIP(mikanbox_clip)->bgm_no_proc(kk);
+
+    mBGMPsComp_delete_ps_demo(bgm_no, 0x168);
+    play->draw_chk_proc = (DRAW_CHK_PROC)&none_proc1;
+    
+    if (CLIP(weather_clip) != NULL) {
+        CLIP(weather_clip)->change_weather_instance(CLIP(weather_clip)->actor, mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather)), mEnv_SAVE_GET_WEATHER_INTENSITY(Save_Get(weather)));
+    }
+
+    mBGMPsComp_scene_mode(1);
+    if (CLIP(weather_clip) != NULL) {
+        CLIP(weather_clip)->start_sound();
+    }
+}
+
+static void aNTT_call_init(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play) {
+    aNTT_event_save_c* kk_save = (aNTT_event_save_c*)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 10);
+
+    staffroll_light_dt(play);
+    kk_save->roll_flag = FALSE;
+}
+
+// clang-format off
+static aNTT_PROC init_table[] = {
+    (aNTT_PROC)&none_proc1,
+    &aNTT_roll_init,
+    &aNTT_roll1_init,
+    &aNTT_roll2_init,
+    &aNTT_roll3_init,
+    &aNTT_roll_end_init,
+    &aNTT_call_init,
+};
+// clang-format on
+
+static void aMKBC_clip_think_init(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play, int init_idx) {
+    (*init_table[init_idx])(kk, play);
+}
+
+static StaffRollInfo_c staffroll_info;
+
+static void aMKBC_anime_stop(NPC_TOTAKEKE_ACTOR* kk) {
+    if (kk->_9a0 == 0xFF) {
+        kk->_9a0 = kk->npc_class.draw.main_animation.keyframe.frame_control.current_frame;
+    }
+
+    kk->npc_class.draw.main_animation.keyframe.frame_control.current_frame = kk->_9a0;
+}
+
+static void aMKBC_clip_head_up(ACTOR* actorx) {
+    xyz_t pos;
+
+    pos.x = actorx->world.position.x;
+    pos.y = actorx->world.position.y + 35.0f;
+    pos.z = actorx->world.position.z + 40.0f;
+    CLIP(npc_clip)->set_head_request_act_proc((NPC_ACTOR*)actorx, 4, aNPC_HEAD_TARGET_POS, NULL, &pos);
+}
+
+static void aMKBC_clip_sound_proc(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play, int idx) {
+    ACTOR* actorx = (ACTOR*)kk;
+
+    sAdos_GetStaffRollInfo(&staffroll_info);
+    if (staffroll_info.staffroll_part == STAFFROLL_PART_FINISH) {
+        aMKBC_anime_stop(kk);
+
+        if (kk->_9aa != 0) {
+            aMKBC_clip_head_up(actorx);
+        }
+    } else {
+        kk->npc_class.draw.tex_anim[aNPC_TEX_ANIM_MOUTH].pattern = staffroll_info.mouth_num;
+        if (staffroll_info.blink_flag) {
+            aMKBC_clip_head_up(actorx);
+            kk->_9aa = TRUE;
+        } else {
+            kk->_9aa = FALSE;
+        }
+
+        kk->npc_class.draw.main_animation.keyframe.frame_control.speed = 0.0f;
+
+        if (staffroll_info.staffroll_part == STAFFROLL_PART_FADEOUT) {
+            aMKBC_anime_stop(kk);
+        } else {
+            switch (staffroll_info.beat) {
+                case 3:
+                    if (kk->npc_class.draw.animation_id != aNPC_ANIM_3HAKU_E1) {
+                        CLIP(npc_clip)->animation_init_proc(actorx, aNPC_ANIM_3HAKU_E1, FALSE);
+                    }
+                    kk->npc_class.draw.main_animation.keyframe.frame_control.current_frame = 48.0f * (f32)staffroll_info.percent;
+                    break;
+                case 4:
+                    if (kk->npc_class.draw.animation_id != aNPC_ANIM_4HAKU_E1) {
+                        CLIP(npc_clip)->animation_init_proc(actorx, aNPC_ANIM_4HAKU_E1, FALSE);
+                    }
+                    kk->npc_class.draw.main_animation.keyframe.frame_control.current_frame = 64.0f * (f32)staffroll_info.percent;
+                    break;
+            }
+        }
+    }
+}
+
+static int aMKBC_clip_section_chk(int section) {
+    return staffroll_info.staffroll_part == section;
+}
+
+static u8 aMKBC_clip_bgm_no(NPC_TOTAKEKE_ACTOR* kk) {
+    return BGM_TOTAKEKE_LIVE0 + kk->song;
+}
+
+static void aMKBC_clip_roll_proc(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)kk;
+    mFI_block_tbl_c* table_p = &play->block_table;
+    aNTT_event_save_c* kk_save = (aNTT_event_save_c*)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 10);
+    int ux;
+    int uz;
+    int now_sec = Common_Get(time.now_sec);
+
+
+    kk->show_timer++;
+    if (kk->majin_flag) {
+        kk_save->_00 = 550;
+    }
+
+    if (kk->show_timer >= 4800) {
+        if (kk->majin_flag) {
+            kk_save->bitfield |= aNTT_FLAG_SP_DELETE_MAJIN;
+            kk->majin_flag = FALSE;
+        }
+
+        kk_save->_00 = 120;
+    } else if (now_sec >= mTM_TIME2SEC(20, 45, 0) && now_sec <= mTM_TIME2SEC(20, 55, 0)) {
+        if (kk->majin_flag == FALSE) {
+            if (kk->show_timer >= 3600 && kk->show_timer < 3610) {
+                mFI_Wpos2UtNum_inBlock(&ux, &uz, actorx->world.position);
+                kk->majin_flag = CLIP(npc_clip)->setupActor_proc(play, SP_NPC_MAJIN5, -1, -1, -1, table_p->block_x, table_p->block_z, ux, uz);
+            }
+        }
+    }
+}
+
+static void aMKBC_clip_set_itemstr(int str_no, u8 md_no) {
+    u8 item_name_str[mIN_ITEM_NAME_LEN];
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    mIN_copy_name_str(item_name_str, ITM_MINIDISK_START + md_no);
+    mMsg_Set_item_str_art(msg_p, str_no, item_name_str, mIN_ITEM_NAME_LEN, mIN_get_item_article(ITM_MINIDISK_START + md_no));
+}
+
+static void aMKBC_clip_set_itemstr3() {
+    aNTT_event_save_c* kk_save = (aNTT_event_save_c*)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 10);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    mMsg_Set_item_str(msg_p, mMsg_FREE_STR0, kk_save->request_str, mIN_ITEM_NAME_LEN);
+}
+
+static int aMKBC_count_merody(void) {
+    u32* collect_bit;
+    int i;
+    int j;
+    int k;
+    int count;
+    u32 bit;
+
+    collect_bit = Now_Private->aircheck_collect_bitfield;
+    j = ITM_MINIDISK_START;
+    count = 0;
+    for (i = 0; i < ARRAY_COUNT(Now_Private->aircheck_collect_bitfield); i++) {
+        bit = 1;
+        for (k = 0; j < ITM_MINIDISK52 && k < 32; j++, k++) {
+            if ((bit & collect_bit[i]) == 0) {
+                count++;
+            }
+
+            bit <<= 1;
+        }
+    }
+
+    return count;
+}
+
+static u8 aMKBC_clip_search_merody(void) {
+    int count;
+    int j;
+    int k;
+    int i;
+    u32 bit;
+    u32* collect_bit;
+
+    count = aMKBC_count_merody();
+    collect_bit = Now_Private->aircheck_collect_bitfield;
+    if (count == 0) {
+        count = aMKBC_NUM_GOOD_MD;
+        Now_Private->aircheck_collect_bitfield[0] = 0;
+        Now_Private->aircheck_collect_bitfield[1] = 0;
+    }
+
+    count = RANDOM(count);
+    j = ITM_MINIDISK_START;
+    for (i = 0; i < ARRAY_COUNT(Now_Private->aircheck_collect_bitfield); i++) {
+        bit = 1;
+        for (k = 0; j < ITM_MINIDISK52 && k < 32; j++, k++) {
+            if ((bit & collect_bit[i]) == 0) {
+                if (count > 0) {
+                    count--;
+                } else {
+                    return i * 32 + k;
+                }
+            }
+
+            bit <<= 1;
+        }
+    }
+
+    return 0;
+}
+
+static void aMKBC_clip_check_merody(u32 md_no) {
+    if (md_no < aMKBC_NUM_GOOD_MD) {
+        u32* collect_bit = Now_Private->aircheck_collect_bitfield;
+
+        if (md_no < 32) {
+            collect_bit[0] |= (1 << md_no);
+        } else {
+            collect_bit[1] |= (1 << (md_no - 32));
+        }
+    }
+}

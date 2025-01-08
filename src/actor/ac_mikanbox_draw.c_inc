@@ -1,0 +1,69 @@
+// clang-format off
+static Vtx obj_e_mikanbox_v[] = {
+    {{ {-2048,  128, 0}, 0, {  (0 << 5),  (0 << 5)}, {180, 180, 180, 180} }},
+    {{ {-2048, -128, 0}, 0, {  (0 << 5), (16 << 5)}, {180, 180, 180, 180} }},
+    {{ { 2048, -128, 0}, 0, {(256 << 5), (16 << 5)}, {180, 180, 180, 180} }},
+    {{ { 2048,  128, 0}, 0, {(256 << 5),  (0 << 5)}, {180, 180, 180, 180} }},
+};
+// clang-format on
+
+extern Gfx obj_e_mikanbox_copyrightT_model[];
+extern Gfx obj_e_mikanbox_copyrightT_model2[];
+
+static void aMIK_copyright_draw(GAME* game) {
+    GRAPH* graph = game->graph;
+    aNTT_event_save_c* kk_save = (aNTT_event_save_c*)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 10);
+    u8 alpha;
+    
+    if (kk_save == NULL || kk_save->copyright_alpha == 0) {
+        return;
+    }
+
+    alpha = kk_save->copyright_alpha;
+    mFont_SetMatrix(graph, mFont_MODE_FONT);
+
+    OPEN_DISP(graph);
+
+    gDPPipeSync(NEXT_FONT_DISP);
+    gDPSetPrimColor(NEXT_FONT_DISP, 0, 128, 255, 255, 255, alpha);
+    gSPDisplayList(NEXT_FONT_DISP, obj_e_mikanbox_copyrightT_model);
+    gSPVertex(NEXT_FONT_DISP, obj_e_mikanbox_v, 4, 0);
+    gSP2Triangles(NEXT_FONT_DISP, 0, 1, 2, 0, 0, 2, 3, 0);
+
+    Matrix_push();
+    Matrix_translate(0.0f, -900.0f, 0.0f, 1);
+    Matrix_scale(0.85f, 0.85f, 1.0f, 1);
+    gSPMatrix(NEXT_FONT_DISP, _Matrix_to_Mtx_new(graph), G_MTX_LOAD | G_MTX_NOPUSH);
+    gSPDisplayList(NEXT_FONT_DISP, obj_e_mikanbox_copyrightT_model2);
+    Matrix_pull();
+
+    CLOSE_DISP(graph);
+
+    mFont_UnSetMatrix(graph, mFont_MODE_FONT);
+}
+
+extern Gfx obj_e_mikanbox_model[];
+
+static void aMIK_actor_draw(ACTOR* actorx, GAME* game) {
+    GRAPH* graph = game->graph;
+    u16* pal = (u16*)CLIP(structure_clip)->get_pal_segment_proc(aSTR_PAL_MIKANBOX);
+    Mtx* mtx = _Matrix_to_Mtx_new(graph);
+
+    if (mtx != NULL) {
+        _texture_z_light_fog_prim_npc(graph);
+
+        OPEN_POLY_OPA_DISP(graph);
+
+        gDPSetTextureAdjustMode(POLY_OPA_DISP++, G_TA_DOLPHIN);
+        gDPSetTexEdgeAlpha(POLY_OPA_DISP++, 127);
+        gSPMatrix(POLY_OPA_DISP++, mtx, G_MTX_LOAD | G_MTX_NOPUSH);
+        gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, pal);
+        gSPDisplayList(POLY_OPA_DISP++, obj_e_mikanbox_model);
+        gDPSetTextureAdjustMode(POLY_OPA_DISP++, G_TA_N64);
+        gDPSetTexEdgeAlpha(POLY_OPA_DISP++, 144);
+
+        CLOSE_POLY_OPA_DISP(graph);
+    }
+
+    aMIK_copyright_draw(game);
+}

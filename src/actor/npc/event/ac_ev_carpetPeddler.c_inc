@@ -45,8 +45,8 @@ void aECPD_1st_check(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
 }
 
 void aECPD_2nd_check(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
-    static int next_msg[4] = { mString_CARPETPEDDLER_START+ 1, mString_CARPETPEDDLER_START + 4,
-                               mString_CARPETPEDDLER_START + 3, mString_CARPETPEDDLER_START + 5 };
+    static int next_msg[4] = { MSG_CARPETPEDDLER_START+ 1, MSG_CARPETPEDDLER_START + 4,
+                               MSG_CARPETPEDDLER_START + 3, MSG_CARPETPEDDLER_START + 5 };
     static int next_act[4] = { eECPD_ACTION_NONE, eECPD_ACTION_NONE, eECPD_ACTION_NONE, eECPD_ACTION_GRAD_MESSAGE };
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
@@ -94,7 +94,7 @@ void aECPD_menu_close_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
         Submenu_Item_c* submenu_item = play->submenu.item_p;
         if (submenu_item->item == EMPTY_NO) {
             peddler->next_action = eECPD_ACTION_NONE;
-            mMsg_Set_continue_msg_num(msg_p, mString_CARPETPEDDLER_START + 6);
+            mMsg_Set_continue_msg_num(msg_p, MSG_CARPETPEDDLER_START + 6);
             peddler->setup_action(peddler, play, eECPD_ACTION_MSG_WIN_OPEN_WAIT);
             mMsg_Unset_LockContinue(msg_p);
         } else {
@@ -107,7 +107,7 @@ void aECPD_menu_close_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
 void aECPD_demo0_end_wait(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
     static int next_act[2] = { eECPD_ACTION_DEMO_START_WAIT, eECPD_ACTION_MSG_WIN_OPEN_WAIT };
     static int over_next_act_idx[2] = { eECPD_ACTION_DEMO1_END_WAIT, eECPD_ACTION_REFUSE_TRADE_IN };
-    static int msg_no[2] = { mString_CARPETPEDDLER_START + 7, mString_CARPETPEDDLER_START + 9 };
+    static int msg_no[2] = { MSG_CARPETPEDDLER_START + 7, MSG_CARPETPEDDLER_START + 9 };
     int next;
     if (CLIP(handOverItem_clip)->master_actor == NULL) {
         mActor_name_t item = CLIP(handOverItem_clip)->item;
@@ -270,7 +270,7 @@ void aECPD_setupAction(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play, int act
 }
 
 void aECPD_set_talk_info(ACTOR* actorx) {
-    mDemo_Set_msg_num(mString_CARPETPEDDLER_START);
+    mDemo_Set_msg_num(MSG_CARPETPEDDLER_START);
 }
 
 void aECPD_talk_request(ACTOR* actorx, GAME* game) {

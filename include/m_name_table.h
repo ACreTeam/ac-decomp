@@ -3294,6 +3294,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define DUMMY_KOINOBORI 0xF114
 #define DUMMY_WINDMILL 0xF116
 #define DUMMY_LOTUS 0xF11B
+#define DUMMY_MIKANBOX 0xF11C
 #define DUMMY_DOUZOU 0xF11D
 #define DUMMY_NAMEPLATE 0xF11F
 #define DUMMY_MUSEUM 0xF120

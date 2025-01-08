@@ -1007,7 +1007,7 @@ config.libs = [
             Object(Matching, "actor/ac_lotus.c"),
             Object(NonMatching, "actor/ac_mailbox.c"),
             Object(Matching, "actor/ac_mbg.c"),
-            Object(NonMatching, "actor/ac_mikanbox.c"),
+            Object(Matching, "actor/ac_mikanbox.c"),
             Object(Matching, "actor/ac_mikuji.c"),
             Object(Matching, "actor/ac_misin.c"),
             Object(Matching, "actor/ac_mscore_control.c"),

@@ -1,0 +1,4 @@
+static void aMIK_actor_init(ACTOR* actorx, GAME* game) {
+    mFI_SetFG_common(DUMMY_MIKANBOX, actorx->home.position, FALSE);
+    actorx->mv_proc = NONE_ACTOR_PROC;
+}

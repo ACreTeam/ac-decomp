@@ -4,6 +4,7 @@
 #include "types.h"
 #include "m_actor.h"
 #include "ac_npc.h"
+#include "m_item_name.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,24 +12,18 @@ extern "C" {
 
 extern ACTOR_PROFILE Npc_Totakeke_Profile;
 
+// @BUG - this should've been updated to mIN_ITEM_NAME_LEN
+#ifndef BUGFIXES
 #define aNTT_REQUEST_STR_LEN 10
+#else
+#define aNTT_REQUEST_STR_LEN mIN_ITEM_NAME_LEN
+#endif
 
 typedef struct npc_totakeke_s NPC_TOTAKEKE_ACTOR;
-typedef struct npc_totakeke_clip_s aNTT_Clip_c;
+
 typedef struct npc_totakeke_think_data_s aNTT_think_data_c;
 typedef struct npc_totakeke_event_save_s aNTT_event_save_c;
 typedef struct npc_totakeke_event_common_s aNTT_event_common_c;
-
-typedef void (*aNTTrequest_str_PROC)(GAME*, s16, u8);
-typedef void (*aNTT_08_PROC)(NPC_TOTAKEKE_ACTOR*, GAME_PLAY*, u8);
-typedef void (*aNTT_0C_PROC)(NPC_TOTAKEKE_ACTOR*, GAME_PLAY*, int);
-typedef int (*aNTT_10_PROC)(int);
-typedef u8 (*aNTT_14_PROC)(NPC_TOTAKEKE_ACTOR*);
-typedef void (*aNTT_1C_PROC)(NPC_TOTAKEKE_ACTOR*);
-typedef void (*aNTT_20_PROC)(int, u8);
-typedef void (*aNTT_24_PROC)();
-typedef u8 (*aNTT_PICK_SONG_PROC)();
-typedef void (*aNTT_2C_PROC)(int);
 
 typedef void (*aNTT_PROC)(NPC_TOTAKEKE_ACTOR* totakeke, GAME_PLAY* play);
 
@@ -37,7 +32,7 @@ struct npc_totakeke_s {
     /* 0x994 */ aNTT_PROC proc;
     /* 0x998 */ s16 roll2_count;
     /* 0x99a */ s16 roll4_count;
-    /* 0x99c */ u16 _99c;
+    /* 0x99c */ s16 show_timer;
     /* 0x99e */ u8 song;
     /* 0x99f */ u8 _99f;
     /* 0x9a0 */ u8 _9a0;
@@ -49,50 +44,37 @@ struct npc_totakeke_s {
     /* 0x9a6 */ u8 post_roll_think;
     /* 0x9a7 */ u8 melody_inst;
     /* 0x9a8 */ u8 think_proc_id;
-    /* 0x9a9 */ u8 _9a9;
-    /* 0x9ac */ u8 _9aa;
-    /* 0x9ac */ u8 _9ab;
-};
-
-struct npc_totakeke_clip_s {
-    /* 0x000 */ int _00;
-    /* 0x004 */ aNTTrequest_str_PROC _04;
-    /* 0x008 */ aNTT_08_PROC _08;
-    /* 0x00c */ aNTT_0C_PROC _0C;
-    /* 0x010 */ aNTT_10_PROC _10;
-    /* 0x014 */ aNTT_14_PROC _14;
-    /* 0x018 */ aNTT_PROC _18;
-    /* 0x01c */ aNTT_1C_PROC _1c;
-    /* 0x020 */ aNTT_20_PROC _20;
-    /* 0x024 */ aNTT_24_PROC _24;
-    /* 0x028 */ aNTT_PICK_SONG_PROC pick_song;
-    /* 0x02c */ aNTT_2C_PROC _2c;
+    /* 0x9a9 */ u8 majin_flag;
+    /* 0x9aa */ u8 _9aa;
+    /* 0x9ab */ u8 _9ab;
 };
 
 struct npc_totakeke_think_data_s {
     /* 0x00 */ u8 think_proc_id;
-    /* 0x01 */ u8 _01;
+    /* 0x01 */ u8 think_init_idx;
     /* 0x02 */ u8 next_talk;
     /* 0x03 */ u8 talk;
     /* 0x04 */ u8 pre_roll_think;
 };
 
-#define aNTT_FLAG_0 1
-#define aNTT_FLAG_AIRCHECK_RECEIVED 1 << 4
+#define aNTT_FLAG_HELLO (1 << 0)
+#define aNTT_FLAG_1 (1 << 1)
+#define aNTT_FLAG_2 (1 << 2)
+#define aNTT_FLAG_3 (1 << 3)
+#define aNTT_FLAG_AIRCHECK_RECEIVED (1 << 4)
+#define aNTT_FLAG_5 (1 << 5)
+#define aNTT_FLAG_6 (1 << 6)
+#define aNTT_FLAG_7 (1 << 7)
+#define aNTT_FLAG_SP_DELETE_MAJIN (1 << 13)
+#define aNTT_FLAG_SP_ROLL_DRAW (1 << 14)
+#define aNTT_FLAG_SP_ROLL_END (1 << 15)
 
 struct npc_totakeke_event_save_s {
-    /* 0x00 */ u8 _00;
-    /* 0x01 */ u8 _01;
+    /* 0x00 */ s16 _00;
     /* 0x01 */ u16 bitfield;
-    /* 0x04 */ u8 request_str[aNTT_REQUEST_STR_LEN];
-    /* 0x0e */ u8 _0e;
-    /* 0x0f */ u8 _0f;
-    /* 0x10 */ u8 _10;
-    /* 0x11 */ u8 _11;
-    /* 0x12 */ u8 _12;
-    /* 0x13 */ u8 _13;
-    /* 0x14 */ u8 _14;
-    /* 0x15 */ u8 _15;
+    /* 0x04 */ u8 request_str[mIN_ITEM_NAME_LEN];
+    /* 0x14 */ u8 roll_flag;
+    /* 0x15 */ u8 copyright_alpha;
 };
 
 struct npc_totakeke_event_common_s {

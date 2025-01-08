@@ -1,6 +1,6 @@
-u16 aNTT_bitset_func(u16 field, int flag) {
+static u16 aNTT_bitset_func(u16 field, int flag) {
     u32 player_no = Common_Get(player_no);
-    aNTT_event_common_c *common = (aNTT_event_common_c *)mEv_get_common_area(mEv_EVENT_KK_SLIDER, 0x10);
+    aNTT_event_common_c* common = (aNTT_event_common_c*)mEv_get_common_area(mEv_EVENT_KK_SLIDER, 0x10);
     if (player_no == mPr_FOREIGNER) {
         common->foreigner_bitfield |= flag;
     } else {
@@ -9,9 +9,9 @@ u16 aNTT_bitset_func(u16 field, int flag) {
     return field;
 }
 
-int aNTT_bitcheck_func(int field, u16 flag) {
+static int aNTT_bitcheck_func(int field, u16 flag) {
     u16 player_no = Common_Get(player_no);
-    aNTT_event_common_c *common = (aNTT_event_common_c *)mEv_get_common_area(mEv_EVENT_KK_SLIDER, 0x10);
+    aNTT_event_common_c* common = (aNTT_event_common_c*)mEv_get_common_area(mEv_EVENT_KK_SLIDER, 0x10);
     if (player_no == mPr_FOREIGNER) {
         return common->foreigner_bitfield & flag;
     } else {
@@ -19,14 +19,14 @@ int aNTT_bitcheck_func(int field, u16 flag) {
     }
 }
 
-int aNTT_enso_init(NPC_TOTAKEKE_ACTOR *totakeke) {
-    totakeke->npc_class.request.act_priority = 0x4;
-    totakeke->npc_class.request.act_idx = 0xd;
-    totakeke->npc_class.request.act_type = 0x0;
+static int aNTT_enso_init(NPC_TOTAKEKE_ACTOR* totakeke) {
+    totakeke->npc_class.request.act_priority = 4;
+    totakeke->npc_class.request.act_idx = aNPC_ACT_ENSOU;
+    totakeke->npc_class.request.act_type = aNPC_ACT_TYPE_DEFAULT;
 }
 
-void aTTN_give_merody(NPC_TOTAKEKE_ACTOR *totakeke) {
-    aNTT_event_save_c *save = (aNTT_event_save_c *)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 0xa);
+static void aTTN_give_merody(NPC_TOTAKEKE_ACTOR* totakeke) {
+    aNTT_event_save_c* save = (aNTT_event_save_c*)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 0xa);
 
     if (mPr_GetPossessionItemSumWithCond(Now_Private, EMPTY_NO, mPr_ITEM_COND_NORMAL) == 0) {
         totakeke->post_roll_think = aNTT_THINK_POCKETS_FULL;
@@ -34,107 +34,106 @@ void aTTN_give_merody(NPC_TOTAKEKE_ACTOR *totakeke) {
         totakeke->post_roll_think = aNTT_THINK_GIVE_MERODY;
         mPr_SetFreePossessionItem(Now_Private, ITM_MINIDISK_START + totakeke->song, mPr_ITEM_COND_NORMAL);
         save->bitfield = aNTT_bitset_func(save->bitfield, aNTT_FLAG_AIRCHECK_RECEIVED);
-        CLIP(totakeke_clip)->_2c(totakeke->song);
+        CLIP(mikanbox_clip)->check_merody_proc(totakeke->song);
     }
 }
 
-void aNTT_talk_select0(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_talk_select0(NPC_TOTAKEKE_ACTOR* totakeke, GAME_PLAY* play) {
     int value = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x9);
-    aNTT_event_save_c *save = (aNTT_event_save_c *)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 0xa);
+    aNTT_event_save_c* save = (aNTT_event_save_c*)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 0xa);
     if (value == 0x1 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
         mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x9, 0x0);
-        save->bitfield = aNTT_bitset_func(save->bitfield, aNTT_FLAG_0);
+        save->bitfield = aNTT_bitset_func(save->bitfield, aNTT_FLAG_HELLO);
         switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
-        case mChoice_CHOICE0:
-            if (aNTT_bitcheck_func(save->bitfield, aNTT_FLAG_AIRCHECK_RECEIVED)) {
-                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), mString_TOTAKEKE_START + 4);
+            case mChoice_CHOICE0:
+                if (aNTT_bitcheck_func(save->bitfield, aNTT_FLAG_AIRCHECK_RECEIVED)) {
+                    mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), MSG_TOTAKEKE_START + 4);
+                    aNTT_change_talk_proc(totakeke, aNTT_TALK_NONE);
+                } else {
+                    mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), MSG_TOTAKEKE_START + 5);
+                    aNTT_change_talk_proc(totakeke, aNTT_TALK_SELECT1);
+                }
+                break;
+            case mChoice_CHOICE1:
                 aNTT_change_talk_proc(totakeke, aNTT_TALK_NONE);
-            } else {
-                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), mString_TOTAKEKE_START + 5);
-                aNTT_change_talk_proc(totakeke, aNTT_TALK_SELECT1);
-            }
-            break;
-        case mChoice_CHOICE1:
-            aNTT_change_talk_proc(totakeke, aNTT_TALK_NONE);
-            break;
+                break;
         }
     }
 }
 
-void aNTT_talk_select1(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_talk_select1(NPC_TOTAKEKE_ACTOR* totakeke, GAME_PLAY* play) {
     int value = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x9);
     if (value == 0x2 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
         int count;
         mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 0x9, 0x0);
         switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
-        case mChoice_CHOICE1:
-            mMsg_request_main_disappear_wait_type1(mMsg_Get_base_window_p());
-            aNTT_change_talk_proc(totakeke, aNTT_TALK_SUBMENU);
-            break;
-        case mChoice_CHOICE0:
-            totakeke->song = CLIP(totakeke_clip)->pick_song();
-            for (count = 0; count < 3 && totakeke->song == totakeke->_99f; count++) {
-                totakeke->song = CLIP(totakeke_clip)->pick_song();
-            }
-            totakeke->_99f = totakeke->song;
-            CLIP(totakeke_clip)->_20(0x1, totakeke->song);
-            CLIP(totakeke_clip)->_20(0x2, totakeke->song);
-            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), mString_TOTAKEKE_START + 10);
-            aNTT_change_talk_proc(totakeke, aNTT_TALK_STOP_PLAYER);
-            totakeke->pre_roll_think = aNTT_THINK_ROLL2;
-            aTTN_give_merody(totakeke);
-            break;
+            case mChoice_CHOICE1:
+                mMsg_request_main_disappear_wait_type1(mMsg_Get_base_window_p());
+                aNTT_change_talk_proc(totakeke, aNTT_TALK_SUBMENU);
+                break;
+            case mChoice_CHOICE0:
+                totakeke->song = CLIP(mikanbox_clip)->search_merody_proc();
+                for (count = 0; count < 3 && totakeke->song == totakeke->_99f; count++) {
+                    totakeke->song = CLIP(mikanbox_clip)->search_merody_proc();
+                }
+                totakeke->_99f = totakeke->song;
+                CLIP(mikanbox_clip)->set_itemstr_proc(mMsg_ITEM_STR1, totakeke->song);
+                CLIP(mikanbox_clip)->set_itemstr_proc(mMsg_ITEM_STR2, totakeke->song);
+                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), MSG_TOTAKEKE_START + 10);
+                aNTT_change_talk_proc(totakeke, aNTT_TALK_STOP_PLAYER);
+                totakeke->pre_roll_think = aNTT_THINK_ROLL2;
+                aTTN_give_merody(totakeke);
+                break;
         }
     }
 }
 
-void aNTT_talk_stop_player(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
-    ACTOR *actorx = (ACTOR *)totakeke;
-    GAME *game = (GAME *)play;
+static void aNTT_talk_stop_player(NPC_TOTAKEKE_ACTOR* totakeke, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)totakeke;
+    GAME* game = (GAME*)play;
     if (mMsg_Check_MainDisappear(mMsg_Get_base_window_p()) && totakeke->_9ab == FALSE) {
-        aWeather_Clip_c *clip = CLIP(weather_clip);
-        if (clip != NULL) {
-            clip->stop_sound();
+        if (CLIP(weather_clip) != NULL) {
+            CLIP(weather_clip)->stop_sound();
         }
         mBGMPsComp_scene_mode(0x5);
         totakeke->_9ab = TRUE;
     }
     if (mDemo_Check(mDemo_TYPE_TALK, actorx) == 0 && mDemo_Check(mDemo_TYPE_SPEAK, actorx) == 0x0) {
-        if (mPlib_get_player_actor_main_index(game) != 0x4a) {
-            mPlib_request_main_demo_wait_type1(game, 0x0, 0x0);
+        if (mPlib_get_player_actor_main_index(game) != mPlayer_INDEX_DEMO_WAIT) {
+            mPlib_request_main_demo_wait_type1(game, FALSE, NULL);
         } else {
             aNTT_change_talk_proc(totakeke, aNTT_TALK_NONE);
         }
     }
 }
 
-void aNTT_talk_submenu(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
-    Submenu *submenu = &play->submenu; 
-    aNTT_event_save_c *save = (aNTT_event_save_c *)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 0xa);
+static void aNTT_talk_submenu(NPC_TOTAKEKE_ACTOR* totakeke, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+    aNTT_event_save_c* save = (aNTT_event_save_c*)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 0xa);
     if (mMsg_Check_main_wait(mMsg_Get_base_window_p()) == TRUE) {
         aNTT_change_talk_proc(totakeke, aNTT_TALK_SUBMENU2);
-        mSM_open_submenu_new(submenu, mSM_OVL_LEDIT, 0x4, 0x0, save->request_str);
+        mSM_open_submenu_new(submenu, mSM_OVL_LEDIT, mLE_TYPE_REQUEST, 0, save->request_str);
         mMsg_request_main_appear_wait_type1(mMsg_Get_base_window_p());
     }
 }
 
-void aNTT_talk_submenu2(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_talk_submenu2(NPC_TOTAKEKE_ACTOR* totakeke, GAME_PLAY* play) {
     if (play->submenu.open_flag == FALSE && mMsg_Check_not_series_main_wait(mMsg_Get_base_window_p()) == TRUE) {
-        Submenu_Item_c *submenu_item = play->submenu.item_p;
-        CLIP(totakeke_clip)->_24();
+        Submenu_Item_c* submenu_item = play->submenu.item_p;
+        CLIP(mikanbox_clip)->set_itemstr3_proc();
         mMsg_Set_ForceNext(mMsg_Get_base_window_p());
         if (submenu_item->item == ITM_MINIDISK_END) {
-            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), mString_TOTAKEKE_START + 6);
+            mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), MSG_TOTAKEKE_START + 6);
             totakeke->post_roll_think = 0xc;
             totakeke->song = 0x37 + (int)RANDOM_F(3);
         } else {
             totakeke->song = submenu_item->item - ITM_MINIDISK_START;
             if (totakeke->song >= 0x34) {
-                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), mString_TOTAKEKE_START + 8);
+                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), MSG_TOTAKEKE_START + 8);
             } else {
-                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), mString_TOTAKEKE_START + 9);
+                mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), MSG_TOTAKEKE_START + 9);
             }
-            CLIP(totakeke_clip)->_20(0x2, totakeke->song);
+            CLIP(mikanbox_clip)->set_itemstr_proc(mMsg_ITEM_STR2, totakeke->song);
             aTTN_give_merody(totakeke);
         }
         aNTT_change_talk_proc(totakeke, aNTT_TALK_STOP_PLAYER);
@@ -142,26 +141,19 @@ void aNTT_talk_submenu2(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     }
 }
 
-void aNTT_talk_give(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
+static void aNTT_talk_give(NPC_TOTAKEKE_ACTOR* totakeke, GAME_PLAY* play) {
     int value = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x1);
     if (value == 0x2) {
-        mDemo_Set_OrderValue(0x5, 0x0, ITM_MINIDISK_START + totakeke->song);
-        mDemo_Set_OrderValue(0x5, 0x1, 0x7);
-        mDemo_Set_OrderValue(0x5, 0x2, 0x0);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x0, ITM_MINIDISK_START + totakeke->song);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x1, 0x7);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x2, 0x0);
         aNTT_change_talk_proc(totakeke, aNTT_TALK_NONE);
     }
 }
 
-int aNTT_change_talk_proc(NPC_TOTAKEKE_ACTOR *totakeke, int talk) {
-    static aNTT_PROC proc[7] = {
-        (aNTT_PROC)none_proc1,
-        aNTT_talk_select0,
-        aNTT_talk_select1,
-        aNTT_talk_stop_player,
-        aNTT_talk_submenu,
-        aNTT_talk_submenu2,
-        aNTT_talk_give
-    };
+static int aNTT_change_talk_proc(NPC_TOTAKEKE_ACTOR* totakeke, int talk) {
+    static aNTT_PROC proc[7] = { (aNTT_PROC)none_proc1, aNTT_talk_select0,  aNTT_talk_select1, aNTT_talk_stop_player,
+                                 aNTT_talk_submenu,     aNTT_talk_submenu2, aNTT_talk_give };
     totakeke->proc = proc[talk];
     if (talk == aNTT_TALK_STOP_PLAYER) {
         mEv_SetTitleDemo(-0x9);
@@ -171,16 +163,16 @@ int aNTT_change_talk_proc(NPC_TOTAKEKE_ACTOR *totakeke, int talk) {
     return TRUE;
 }
 
-void aNTT_set_force_talk_info(ACTOR *actorx) {
-    NPC_TOTAKEKE_ACTOR *totakeke = (NPC_TOTAKEKE_ACTOR *)actorx;
-    static u8 msg[3] = {0xc, 0xb, 0x7};
-    mDemo_Set_msg_num(mString_TOTAKEKE_START + msg[totakeke->talk]);
+static void aNTT_set_force_talk_info(ACTOR* actorx) {
+    NPC_TOTAKEKE_ACTOR* totakeke = (NPC_TOTAKEKE_ACTOR*)actorx;
+    static u8 msg[3] = { 0xc, 0xb, 0x7 };
+    mDemo_Set_msg_num(MSG_TOTAKEKE_START + msg[totakeke->talk]);
     mDemo_Set_talk_turn(TRUE);
     mDemo_Set_camera(TRUE);
     if (totakeke->talk == 0) {
         totakeke->proc = aNTT_talk_give;
     } else {
-        totakeke->proc = (void *)none_proc1;
+        totakeke->proc = (void*)none_proc1;
     }
     if (totakeke->npc_class.talk_info.melody_inst) {
         totakeke->melody_inst = totakeke->npc_class.talk_info.melody_inst;
@@ -188,62 +180,62 @@ void aNTT_set_force_talk_info(ACTOR *actorx) {
     totakeke->npc_class.talk_info.melody_inst = 0;
 }
 
-void aNTT_force_talk_request(ACTOR *actorx, GAME *game) {
-    NPC_TOTAKEKE_ACTOR *totakeke = (NPC_TOTAKEKE_ACTOR *)actorx;
+static void aNTT_force_talk_request(ACTOR* actorx, GAME* game) {
+    NPC_TOTAKEKE_ACTOR* totakeke = (NPC_TOTAKEKE_ACTOR*)actorx;
     if (totakeke->_9a1 == FALSE) {
-        mDemo_Request(0x8, (ACTOR *)totakeke, aNTT_set_force_talk_info);
+        mDemo_Request(mDemo_TYPE_SPEAK, (ACTOR*)totakeke, aNTT_set_force_talk_info);
     } else {
         totakeke->_9a1 = FALSE;
     }
 }
 
-void aNTT_set_norm_talk_info(ACTOR *actorx) {
-    NPC_TOTAKEKE_ACTOR *totakeke = (NPC_TOTAKEKE_ACTOR *)actorx;
-    static u8 msg[4] = {0x0, 0x1, 0x2, 0xd};
-    mDemo_Set_msg_num(mString_TOTAKEKE_START + msg[totakeke->talk]);
+static void aNTT_set_norm_talk_info(ACTOR* actorx) {
+    NPC_TOTAKEKE_ACTOR* totakeke = (NPC_TOTAKEKE_ACTOR*)actorx;
+    static u8 msg[4] = { 0x0, 0x1, 0x2, 0xd };
+    mDemo_Set_msg_num(MSG_TOTAKEKE_START + msg[totakeke->talk]);
     mDemo_Set_talk_turn(TRUE);
     mDemo_Set_camera(TRUE);
     switch (totakeke->talk) {
-    case 0:
-        totakeke->proc = (void *)none_proc1;
-        break;
-    case 3:
-        Now_Private->state_flags |= mPr_FLAG_TOTAKEKE_INTRODUCTION;
-        totakeke->proc = aNTT_talk_select0;
-        break;
-    default:
-        totakeke->proc = aNTT_talk_select0;
-        break;
+        case 0:
+            totakeke->proc = (void*)none_proc1;
+            break;
+        case 3:
+            Now_Private->state_flags |= mPr_FLAG_TOTAKEKE_INTRODUCTION;
+            totakeke->proc = aNTT_talk_select0;
+            break;
+        default:
+            totakeke->proc = aNTT_talk_select0;
+            break;
     }
 }
 
-void aNTT_norm_talk_request(ACTOR *actorx, GAME *game) {
-    NPC_TOTAKEKE_ACTOR *totakeke = (NPC_TOTAKEKE_ACTOR *)actorx;
+static void aNTT_norm_talk_request(ACTOR* actorx, GAME* game) {
+    NPC_TOTAKEKE_ACTOR* totakeke = (NPC_TOTAKEKE_ACTOR*)actorx;
     if (totakeke->_9a1 == FALSE) {
-        mDemo_Request(0x7, (ACTOR *)totakeke, aNTT_set_norm_talk_info);
+        mDemo_Request(mDemo_TYPE_TALK, (ACTOR*)totakeke, aNTT_set_norm_talk_info);
     } else {
         totakeke->_9a1 = FALSE;
     }
 }
 
-int aNTT_talk_init(ACTOR *actorx, GAME *game) {
-    NPC_TOTAKEKE_ACTOR *totakeke = (NPC_TOTAKEKE_ACTOR *)actorx;
-    totakeke->npc_class.talk_info.talk_request_proc = (void *)none_proc1;
+static int aNTT_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_TOTAKEKE_ACTOR* totakeke = (NPC_TOTAKEKE_ACTOR*)actorx;
+    totakeke->npc_class.talk_info.talk_request_proc = (void*)none_proc1;
     mDemo_Set_ListenAble();
     mDemo_Start(actorx);
     switch (totakeke->think) {
-    case aNTT_THINK_GIVE_MERODY:
-    case aNTT_THINK_POCKETS_FULL:
-    case aNTT_THINK_GIVE_LATER:
-        mEv_SetTitleDemo(0);
-        break;
+        case aNTT_THINK_GIVE_MERODY:
+        case aNTT_THINK_POCKETS_FULL:
+        case aNTT_THINK_GIVE_LATER:
+            mEv_SetTitleDemo(0);
+            break;
     }
     return TRUE;
 }
 
-int aNTT_talk_end_chk(ACTOR *actorx, GAME *game) {
-    NPC_TOTAKEKE_ACTOR *totakeke = (NPC_TOTAKEKE_ACTOR *)actorx;
-    GAME_PLAY *play = (GAME_PLAY *)game;
+static int aNTT_talk_end_chk(ACTOR* actorx, GAME* game) {
+    NPC_TOTAKEKE_ACTOR* totakeke = (NPC_TOTAKEKE_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
     int res = FALSE;
     totakeke->proc(totakeke, play);
     if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE && mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {

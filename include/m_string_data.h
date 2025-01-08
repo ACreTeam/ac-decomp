@@ -18,8 +18,8 @@ extern "C" {
 #define mString_HANIWA_MSG1 0x76B
 #define mString_HANIWA_MSG2 0x76C
 #define mString_HANIWA_MSG3 0x76D
-#define mString_CARPETPEDDLER_START 0x48a
-#define mString_TOTAKEKE_START 0x1b93
+#define mString_MIKANBOX_START 0x77B
+#define mString_MIKANBOX_END 0x7FE
 
 #ifdef __cplusplus
 }
