@@ -10,30 +10,28 @@ void mfish_hasu_ct(YET_SKELETON_2* actor, GAME* gamex) {
                                                              0.0);
 }
 
-void mfish_hasu_mv(YET_SKELETON* actor, GAME* gamex) {
-    cKF_SkeletonInfo_R_play(&actor->_00);
+void mfish_hasu_mv(YET_SKELETON_2* actor, GAME* gamex) {
+    cKF_SkeletonInfo_R_play(&actor->_00._00);
 }
 
-void mfish_hasu_dw(YET_SKELETON* actor, GAME* gamex) {
+void mfish_hasu_dw(YET_SKELETON_2* actor, GAME* gamex) {
     Mtx* mtxp;
     if (gamex->frame_counter & 1) {
-        mtxp = &actor->_70;
+        mtxp = &actor->_00._70;
     } else {
-        mtxp = &actor->_2b0;
+        mtxp = &actor->_00._2b0;
     }
     OPEN_DISP(gamex->graph);
     Matrix_translate(hasu_pos.x + GETREG(TAKREG, 0x42) * 0.1f, hasu_pos.y, hasu_pos.z + GETREG(TAKREG, 0x43) * 0.1f, 0);
     Matrix_RotateY(DEG2SHORT_ANGLE(-180), 1);
     Matrix_scale(0.01f, 0.01f, 0.01f, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &actor->_00, mtxp, NULL, NULL, NULL);
+    cKF_Si3_draw_R_SV(gamex, &actor->_00._00, mtxp, NULL, NULL, NULL);
     CLOSE_DISP(gamex->graph);
 }
 
 extern cKF_Animation_R_c cKF_ba_r_act_mus_kaeru_a1_big;
 void mfish_kaeru_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    //! TODO: grabbed keyframe from ghidra, probably a cast to a larger struct
-
     YET_SKELETON* skele = &actor->_38;
     YET_SKELETON_2* keyframe = actor->_590;
     skele->_550[1] = &cKF_ba_r_act_mus_kaeru_a1_big;

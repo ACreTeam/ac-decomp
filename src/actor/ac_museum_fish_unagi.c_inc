@@ -204,7 +204,7 @@ void mfish_unagi_reverse_to_normal_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* g
     target = search_position_angleY(&actor->_5A0, &unagi_reverse_to_normal_rail_pos[actor->_642]);
     add_calc_short_angle2(&actor->_612.y, target, CALC_EASE(0.5f + 0.01f * GETREG(TAKREG, 0x24)),
                           DEG2SHORT_ANGLE(GETREG(TAKREG, 0x25) + 5.0f) >> 1, DEG2SHORT_ANGLE(0.25f));
-    actor->_34 = mfish_unagi_rail_move_reverse;
+    actor->_34 = mfish_unagi_reverse_to_normal;
 }
 
 void mfish_unagi_reverse_to_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
@@ -247,6 +247,7 @@ void mfish_unagi_reverse_to_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex)
 }
 
 void mfish_unagi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    //! NOTE: wrong floats in this file, based on objdiff
     xyz_t p1, p2, p3;
     p1 = ZeroVec;
     p2 = ZeroVec;
@@ -311,27 +312,24 @@ BOOL mfish_unagi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joi
         trans->z += actor->_5F4 * sin_s(actor->_636 + DEG2SHORT_ANGLE(90));
     } else if (joint_num == 2) {
         int i;
-        i = (int)((1.0f + 0.01f * GETREG(TAKREG, 0x38)) * actor->_618.z);
-        i -= DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3c));
-        i += (s16)(actor->_632 * 0.75f * sin_s(actor->_636 + DEG2SHORT_ANGLE(90)));
-        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
+
+        i = DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3c)) - (int)(actor->_618.z * (1.0f + 0.01f * GETREG(TAKREG, 0x38)));
+        i += (s16)(actor->_632 * 0.75f * sin_s(actor->_636 + DEG2SHORT_ANGLE2(90)));
+        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE2(-90), DEG2SHORT_ANGLE2(90));
     } else if (joint_num == 3) {
         int i;
-        i = (int)((1.1f + 0.01f * GETREG(TAKREG, 0x39)) * actor->_38._538.x);
-        i -= DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3d));
+        i = DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3d)) - (int)(actor->_38._538.x * (1.1f + 0.01f * GETREG(TAKREG, 0x39)));
         i += (s16)(actor->_632 * sin_s(actor->_636 + DEG2SHORT_ANGLE(180)));
         joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
     } else if (joint_num == 4) {
         int i;
-        i = (int)((1.2f + 0.01f * GETREG(TAKREG, 0x3a)) * actor->_38._538.y);
-        i -= DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3e));
+        i = DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3e)) - (int)(actor->_38._538.y * (1.2f + 0.01f * GETREG(TAKREG, 0x3a)));
         i += (s16)(actor->_632 * 0.75f * sin_s(actor->_636 + DEG2SHORT_ANGLE(270)));
         joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
     } else if (joint_num == 5) {
         int i;
-        i = (int)((1.3f + 0.01f * GETREG(TAKREG, 0x3b)) * actor->_38._538.z);
-        i -= DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3f));
-        i += (s16)(actor->_632 * 0.5f * sin_s(actor->_636));
+        i = DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3f)) - (int)(actor->_38._538.z * (1.3f + 0.01f * GETREG(TAKREG, 0x3b)));
+        i += (s16)(actor->_632 * 0.5f * sin_s(actor->_636 + DEG2SHORT_ANGLE(0)));
         joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
     }
     return TRUE;
@@ -351,6 +349,6 @@ void mfish_unagi_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Matrix_translate(0.0f, 0.0f, actor->init_data._24, 1);
     Matrix_scale(actor->init_data._00, actor->init_data._00, actor->init_data._00, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_zarigani_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_unagi_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }

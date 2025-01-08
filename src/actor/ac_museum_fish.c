@@ -1158,7 +1158,7 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
     }
 
     if ((actor->prvFish[0x21]._62E & 1) == 0) {
-        mfish_hasu_mv((MUSEUM_FISH_PRIVATE_DATA*)&actor->_14788, game);
+        mfish_hasu_mv(&actor->_14788, game);
     }
 
     for (i = 0; i < 5; i++) {
@@ -1201,7 +1201,7 @@ void Museum_Fish_Suisou_draw(ACTOR* actorx, GAME* game, int r5) {
             CLOSE_DISP(graph);
 
             if ((actor->prvFish[0x21]._62E & 1) == 0) {
-                mfish_hasu_dw((MUSEUM_FISH_PRIVATE_DATA*)&actor->_14788, game);
+                mfish_hasu_dw(&actor->_14788, game);
             }
         }
     } else if (mfish_cull_check(game, &suisou_pos[4], 215.0f, 25.0f, 0.0f)) {
