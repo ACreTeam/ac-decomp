@@ -409,7 +409,7 @@ typedef enum bank_id {
     ACTOR_OBJ_BANK_366,
     ACTOR_OBJ_BANK_367,
     ACTOR_OBJ_BANK_368,
-    ACTOR_OBJ_BANK_369,
+    ACTOR_OBJ_BANK_HOUSE_GOKI,
     ACTOR_OBJ_BANK_NPC_SAO,
     ACTOR_OBJ_BANK_TUMBLER,
     ACTOR_OBJ_BANK_372,
@@ -1044,6 +1044,9 @@ enum {
 
     mAc_HILITE_NUM
 };
+
+#define mAc_CHK_HIT_WALL(actor, wall) ((actor)->bg_collision_check.result.hit_wall & (wall))
+#define mAc_CHK_HIT_ATR_WALL(actor, wall) ((actor)->bg_collision_check.result.hit_attribute_wall & (wall))
 
 /* sizeof(ACTOR_PROFILE) == 0x24 */
 struct actor_profile_s {

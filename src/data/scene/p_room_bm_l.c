@@ -42,7 +42,7 @@ extern s16 P_ROOM_BM_L_ctrl_actor_data[] = {
 };
 
 extern s16 P_ROOM_BM_L_object_bank[] = {
-    ACTOR_OBJ_BANK_369, // 0
+    ACTOR_OBJ_BANK_HOUSE_GOKI, // 0
 };
 
 extern Door_data_c P_ROOM_BM_L_door_data[] = {

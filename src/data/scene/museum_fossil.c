@@ -42,7 +42,7 @@ extern s16 MUSEUM_FOSSIL_ctrl_actor_data[] = {
 };
 
 extern s16 MUSEUM_FOSSIL_object_bank[] = {
-    ACTOR_OBJ_BANK_369, // 0
+    ACTOR_OBJ_BANK_HOUSE_GOKI, // 0
 };
 
 extern Door_data_c MUSEUM_FOSSIL_door_data[] = {

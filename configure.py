@@ -981,7 +981,7 @@ config.libs = [
             Object(Matching, "actor/ac_hatumode_control.c"),
             Object(Matching, "actor/ac_house.c"),
             Object(Matching, "actor/ac_house_clock.c"),
-            Object(NonMatching, "actor/ac_house_goki.c"),
+            Object(Matching, "actor/ac_house_goki.c"),
             Object(Matching, "actor/ac_htable.c"),
             Object(Matching, "actor/ac_ins_amenbo.c"),
             Object(Matching, "actor/ac_ins_batta.c"),

@@ -60,7 +60,7 @@ extern Actor_data PLAYER_ROOM_M_actor_data[] = {
 
 extern s16 PLAYER_ROOM_M_object_bank[] = {
     ACTOR_OBJ_BANK_ROOM_SUNSHINE, // 0
-    ACTOR_OBJ_BANK_369,           // 1
+    ACTOR_OBJ_BANK_HOUSE_GOKI,           // 1
 };
 
 extern Door_data_c PLAYER_ROOM_M_door_data[] = {

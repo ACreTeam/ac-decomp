@@ -93,6 +93,7 @@ typedef enum audio_sound_effects {
     NA_SE_CLEAN_UP_FTR = 0x58,
 
     NA_SE_TOOL_FURI = 0x5A, // swing?
+    NA_SE_GOKI_DEAD = 0x5B,
     NA_SE_AMI_HIT = 0x5C,
     NA_SE_TOOL_GET,
     NA_SE_5E = 0x5E,
@@ -151,6 +152,8 @@ typedef enum audio_sound_effects {
     NA_SE_SCOOP_HIT,
 
     NA_SE_12D = 0x12D,
+
+    NA_SE_GOKI_JUMP_AWAY = 0x132,
 
     NA_SE_TREE_TOUCH = 0x134,
     NA_SE_TREE_YURASU,

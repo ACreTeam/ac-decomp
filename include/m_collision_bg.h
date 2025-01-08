@@ -362,6 +362,7 @@ extern void mCoBG_VirtualBGCheck(xyz_t* rev_pos_p, mCoBG_Check_c* bg_check, cons
                                  f32 ground_dist, s16 attr_wall, s16 rev_type, s16 check_type);
 extern f32 mCoBG_Wpos2GroundCheckOnly(const xyz_t* pos_p, f32 ground_dist);
 extern int mCoBG_Wpos2CheckNpc(xyz_t wpos);
+extern void mCoBG_WallCheckOnly(xyz_t* rev_pos_p, ACTOR* actor, f32 range, f32 ground_dist, s16 rev_type, s16 check_type);
 
 typedef int (*mCoBG_LINECHECK_PROC)(mActor_name_t);
 
