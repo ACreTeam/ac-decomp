@@ -88,7 +88,7 @@ void mfish_gupi_turn(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
                                         DEG2SHORT_ANGLE(0.25f));
     add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(5), DEG2SHORT_ANGLE(0.25f));
     if (ABS(actor->_622) < DEG2SHORT_ANGLE(1)) {
-        mfish_sfish_normal_init(actor, gamex);
+        mfish_gupi_normal_init(actor, gamex);
     }
 }
 
@@ -183,8 +183,8 @@ BOOL mfish_gupi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int join
         s = joint1->x - (actor->_618.z >> 1);
         joint1->x = MY_CLAMP(s, -DEG2SHORT_ANGLE(30), DEG2SHORT_ANGLE(30));
         joint1->z += (s16)(actor->_618.x * (-1.3f + GETREG(TAKREG, 0x4e) * 0.1f));
-        Matrix_scale((GETREG(TAKREG, 0x4b) * 0.01f) * sin_s(actor->_63A) + 0.5f + 1.0f,
-                     (GETREG(TAKREG, 0x4c) * 0.01f) * cos_s(actor->_63A) + 0.1f + 1.0f, 1.0f, 1);
+        Matrix_scale((GETREG(TAKREG, 0x4b) * 0.01f) * cos_s(actor->_63A) + 0.05f + 1.0f,
+                     (GETREG(TAKREG, 0x4c) * 0.01f) * sin_s(actor->_63A) + 0.1f + 1.0f, 1.0f, 1);
     }
     return TRUE;
 }

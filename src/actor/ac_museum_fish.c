@@ -918,7 +918,7 @@ void Museum_Fish_Actor_ct(ACTOR* actorx, GAME* gamex) {
     }
 
     for (i = 0; i < 20; i++) {
-        actor->_14d50[i] = RANDOMF_RANGE(80, 120);
+        actor->_14d50[i] = RANDOMF_RANGE(40, 120);
         actor->_14d78[i] = RANDOMF_RANGE(2, 5);
     }
 }
@@ -1116,7 +1116,7 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
             add_calc2(&actor->prvKusa[j]._540.x, -4.0f, 0.5f, 0.5f);
             add_calc_short_angle2(&actor->prvKusa[j]._538.y, DEG2SHORT_ANGLE(3.5f), CALC_EASE2(0.1f), 22, 4);
         } else {
-            actor->prvKusa[j]._540.x *= 0.9f;
+            actor->prvKusa[j]._540.x *= 0.98f;
             add_calc_short_angle2(&actor->prvKusa[j]._538.y, DEG2SHORT_ANGLE(0), CALC_EASE2(0.1f), 22, 4);
         }
         actor->prvKusa[j]._540.z *= 0.98f;
@@ -1139,7 +1139,7 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
                 actor->_14d78[i]--;
                 actor->_14d50[i] = RANDOMF_RANGE(2, 10);
             } else {
-                actor->_14d50[i] = RANDOMF_RANGE(160, 240);
+                actor->_14d50[i] = RANDOMF_RANGE(80, 240);
                 actor->_14d78[i] = RANDOMF_RANGE(2, 5);
             }
         }
@@ -1184,7 +1184,7 @@ void Museum_Fish_Suisou_draw(ACTOR* actorx, GAME* game, int r5) {
         xyz_t* p = &suisou_pos[r5];
         if (mfish_cull_check(game, &suisou_pos[r5], 350.0f, 20.0f, 650.0f)) {
             Matrix_translate(suisou_pos[r5].x, 0, suisou_pos[r5].z, 0);
-            Matrix_scale(0.1f, 0.1f, 0.1f, 1);
+            Matrix_scale(0.01f, 0.01f, 0.01f, 1);
 
             OPEN_DISP(graph);
             gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(play->game.graph),

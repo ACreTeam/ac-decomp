@@ -6,8 +6,8 @@ extern cKF_Animation_R_c cKF_ba_r_obj_museum5_hasu;
 void mfish_hasu_ct(YET_SKELETON_2* actor, GAME* gamex) {
     cKF_SkeletonInfo_R_ct(&actor->_00._00, &cKF_bs_r_obj_museum5_hasu, &cKF_ba_r_obj_museum5_hasu, &actor->_00._4F0,
                           &actor->_00._526);
-    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&actor->_00._00, &cKF_ba_r_obj_museum5_hasu, NULL, 1.75,
-                                                             0.0);
+    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&actor->_00._00, &cKF_ba_r_obj_museum5_hasu, NULL, 0.5f,
+                                                             0.0f);
 }
 
 void mfish_hasu_mv(YET_SKELETON_2* actor, GAME* gamex) {
@@ -36,11 +36,11 @@ void mfish_kaeru_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     YET_SKELETON_2* keyframe = actor->_590;
     skele->_550[1] = &cKF_ba_r_act_mus_kaeru_a1_big;
     cKF_SkeletonInfo_R_ct(&skele->_00, skele->_54C, skele->_550[0], &skele->_4F0, &skele->_514);
-    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&skele->_00, skele->_550[0], NULL, 1.75f, 0.0f);
+    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&skele->_00, skele->_550[0], NULL, 0.5f, 0.0f);
     cKF_SkeletonInfo_R_ct(&keyframe->_00._00, &cKF_bs_r_obj_museum5_hasu, &cKF_ba_r_obj_museum5_hasu,
                           &keyframe->_00._4F0, &keyframe->_00._526);
-    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&keyframe->_00._00, &cKF_ba_r_obj_museum5_hasu, NULL,
-                                                             1.75f, 0.0f);
+    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&keyframe->_00._00, &cKF_ba_r_obj_museum5_hasu, NULL, 0.5f,
+                                                             0.0f);
     actor->_5A0.x = 453.9f;
     actor->_5A0.y = 116.0f;
     actor->_5A0.z = 250.4f;

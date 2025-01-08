@@ -129,7 +129,7 @@ void mfish_kingyo_peck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
                 actor->_612.y -= DEG2SHORT_ANGLE(90);
             }
         }
-        actor->_612.x += (s16)DEG2SHORT_ANGLE2(RANDOM_F(20.0f));
+        actor->_612.x += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(20.0f));
         actor->_5F0 = RANDOM_F(actor->init_data._14) + actor->init_data._10;
         if (actor->_5F0 < 0.1f) {
             actor->_5F0 = 0.1f;

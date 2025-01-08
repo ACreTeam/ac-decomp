@@ -80,7 +80,7 @@ void mfish_medaka_turn(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->_632 = DEG2SHORT_ANGLE(actor->_5E8 * 15.0f);
     actor->_636 += DEG2SHORT_ANGLE(7.5f);
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(actor->_632 * sin_s(actor->_636)),
-                                        CALC_EASE2(GETREG(TAKREG, 0x17) * 0.01f + 0.05f), DEG2SHORT_ANGLE(7.5f),
+                                        CALC_EASE2(GETREG(TAKREG, 0x17) * 0.01f + 0.5f), DEG2SHORT_ANGLE(7.5f),
                                         DEG2SHORT_ANGLE(0.25f));
     add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(5), DEG2SHORT_ANGLE(0.25f));
     if (ABS(actor->_622) < DEG2SHORT_ANGLE(1)) {

@@ -188,16 +188,16 @@ void mfish_seafish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     } else {
         add_calc2(&actor->_5A0.y, actor->_5F4 + actor->init_data._0C, 0.1f, 0.1f);
     }
-    add_calc0(&actor->_5F8, 0.2f, 0.05f);
+    add_calc0(&actor->_5F8, 0.25f, 0.05f);
     actor->_5F8 = MIN(1.0f, actor->_5F8);
     if (ABS(actor->_618.z) > DEG2SHORT_ANGLE(15) && ABS(actor->_622) - ABS(actor->_618.z) < 0) {
         add_calc2(&actor->_5E8, MAX(actor->_5F0, 0.8f), 0.5f, 0.25f);
     } else if (actor->_626 < actor->_628 - 80) {
         add_calc2(&actor->_5E8, actor->_5EC, 1.0f - actor->init_data._18, 0.0025f);
     } else if (actor->_5E8 > actor->_5F0) {
-        add_calc2(&actor->_5E8, actor->_5F0, 0.2f, 0.02f);
-    } else {
         add_calc2(&actor->_5E8, actor->_5F0, 0.1f, 0.01f);
+    } else {
+        add_calc2(&actor->_5E8, actor->_5F0, 0.2f, 0.02f);
     }
     actor->_38._00.frame_control.speed =
         (GETREG(TAKREG, 0x14) * 0.01f + 0.5f) * 0.5f + (GETREG(TAKREG, 0x15) * 0.01f + 1.2f) * actor->_5E8;

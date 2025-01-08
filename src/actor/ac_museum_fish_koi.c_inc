@@ -164,26 +164,26 @@ void mfish_koi_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     s16 temp;
     //! NOTE: wrong float somewhere in this file, just based on objdiffs colors changing
     if (ABS(actor->_632) > DEG2SHORT_ANGLE(20) || actor->_640 > 0) {
-        add_calc2(&actor->_5EC, ((actor->_632 - DEG2SHORT_ANGLE(20)) / DEG2SHORT_ANGLE(2)) * 0.002f + 0.03f, 0.25f,
-                  0.02f);
-        add_calc2(&actor->_5E8, actor->_5F0, CALC_EASE(0.2f), actor->_5EC * 0.5f);
+        add_calc2(&actor->_5EC, ((actor->_632 - DEG2SHORT_ANGLE(20)) / DEG2SHORT_ANGLE(2)) * 0.0035f + 0.03f, 0.35f,
+                  0.05f);
+        add_calc2(&actor->_5E8, actor->_5F0, CALC_EASE(0.4f), actor->_5EC * 0.5f);
     }
     add_calc_short_angle2(&actor->_632, 0, CALC_EASE2(0.05f), DEG2SHORT_ANGLE(0.375), DEG2SHORT_ANGLE(0.125));
-    temp = DEG2SHORT_ANGLE2((actor->_5E8 * 4.0f) / (actor->init_data._14 + actor->init_data._10) + 6.0f);
+    temp = DEG2SHORT_ANGLE2((actor->_5E8 * 2.0f) / (actor->init_data._14 + actor->init_data._10) + 3.0f);
     actor->_636 += temp;
 
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(actor->_632 * sin_s(actor->_636)),
                                         CALC_EASE2(0.2f), DEG2SHORT_ANGLE(2.5f), DEG2SHORT_ANGLE(0.125f));
-    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.1f), DEG2SHORT_ANGLE(2.0f),
+    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(2.0f),
                           DEG2SHORT_ANGLE(0.125f));
 
     if (actor->_5E8 < 0.01f && actor->_632 < DEG2SHORT_ANGLE(1)) {
-        if (fqrand() < 0.01f) {
+        if (fqrand() < 0.8f) {
             mfish_koi_long_move_process_init(actor);
         } else {
             mfish_koi_dummy_process_init(actor);
         }
-    } else if (actor->_5E8 > 0.01f && actor->_62E & 0x1e) {
+    } else if (actor->_5E8 > 1.0f && actor->_62E & 0x1e) {
         if ((s16)(actor->_60C.y - actor->_62C) > 0) {
             actor->_612.y = actor->_62C + DEG2SHORT_ANGLE(112.5f);
         } else {
@@ -194,8 +194,8 @@ void mfish_koi_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mfish_koi_turn_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
-    s16 s3 = DEG2SHORT_ANGLE(RANDOM_F(55.0f)) + DEG2SHORT_ANGLE(60.0f);
-    actor->_618.y = ABS(DEG2SHORT_ANGLE2((SHORT2DEG_ANGLE2(s3) / 120.0f) * 2.5f + 2.0f));
+    s16 s3 = DEG2SHORT_ANGLE(RANDOM_F(30.0f)) + DEG2SHORT_ANGLE(60.0f);
+    actor->_618.y = ABS(DEG2SHORT_ANGLE2((SHORT2DEG_ANGLE2(s3) / 120.0f) * 3.0f + 2.0f));
     if (actor->_62E & 0x1e) {
         if ((s16)(actor->_60C.y - actor->_62C) < 0) {
             s3 = -s3;
@@ -240,7 +240,7 @@ void mfish_koi_turn_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     add_calc_short_angle2(&actor->_632, 0, CALC_EASE2(0.5f), DEG2SHORT_ANGLE(2.5f), DEG2SHORT_ANGLE(0.25f));
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(actor->_632 * sin_s(actor->_636)),
                                         CALC_EASE(0.2f), actor->_618.y >> 1, DEG2SHORT_ANGLE(0.25f));
-    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(1.25f),
+    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.25f), DEG2SHORT_ANGLE(1.25f),
                           DEG2SHORT_ANGLE(0.25f));
     if (ABS(actor->_622) < DEG2SHORT_ANGLE(2) && actor->_5E8 < 0.1f) {
         if (actor->_63E > 0 && ABS(actor->_618.z) < DEG2SHORT_ANGLE(2)) {
@@ -301,7 +301,7 @@ void mfish_koi_peck_process_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
         actor->_5F4 = MAX(MIN(10, actor->_5F4), -10);
     }
 
-    actor->_632 = DEG2SHORT_ANGLE((fVar8 * 30.0f) + 20.0f);
+    actor->_632 = DEG2SHORT_ANGLE((fVar8 * 40.0f) + 30.0f);
 
     if (qrand() & 0x8000) {
         actor->_636 = DEG2SHORT_ANGLE(90);
@@ -325,24 +325,21 @@ void mfish_koi_peck_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         add_calc2(&actor->_5EC, ((actor->_632 - DEG2SHORT_ANGLE(20)) / DEG2SHORT_ANGLE(2)) * 0.0035f + 0.04f, 0.4f,
                   0.1f);
         add_calc2(&actor->_5E8, actor->_5F0, CALC_EASE(0.4f), actor->_5EC * 0.5f);
-        // add_calc(&actor->_5E8, actor->_5F0, CALC_EASE(0.1f), 0.5f, 0.05f);
-        // add_calc(&actor->_5E8, actor->_5F0, CALC_EASE(0.25f), (((actor->_632 - DEG2SHORT_ANGLE(20)) /
-        // DEG2SHORT_ANGLE(2)) * 0.04f + 0.01f) * 0.5f, 0.05f); } else if (actor->_626 > actor->_628 - 16) {
     }
 
-    add_calc_short_angle2(&actor->_632, 0, CALC_EASE2(0.25f), DEG2SHORT_ANGLE(0.375f), DEG2SHORT_ANGLE(0.125f));
+    add_calc_short_angle2(&actor->_632, 0, CALC_EASE2(0.05f), DEG2SHORT_ANGLE(0.375f), DEG2SHORT_ANGLE(0.125f));
     actor->_636 += DEG2SHORT_ANGLE(3.f);
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(sin_s(actor->_636) * actor->_632),
                                         CALC_EASE2(0.2f), DEG2SHORT_ANGLE(2.5f), DEG2SHORT_ANGLE(0.125f));
     add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(2.f), DEG2SHORT_ANGLE(0.125f));
 
     if (mfish_peck_wall_check(actor, gamex)) {
-        if (fqrand() < 0.9f) {
-            actor->_5E8 = -0.3f - fqrand() * 0.3f;
+        if (fqrand() < 0.8f) {
+            actor->_5E8 = -0.05f - fqrand() * 0.1f;
             actor->_5F0 = 0.05f;
             actor->_626 = DEG2SHORT_ANGLE(0.33f);
         } else {
-            actor->_5E8 = -1.0f - RANDOM_F(0.05f);
+            actor->_5E8 = -0.1f - RANDOM_F(0.05f);
             actor->_5F0 = 0.05f;
             actor->_626 = actor->init_data._2C + (s16)(fqrand() * actor->init_data._2E);
             // actor->_626 >>= 3;
@@ -360,9 +357,9 @@ void mfish_koi_long_move_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
 
 void mfish_koi_long_move_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
-    actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.1f), DEG2SHORT_ANGLE(2.f),
+    actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(2.f),
                                         DEG2SHORT_ANGLE(0.25f));
-    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(1.25f),
+    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.15f), DEG2SHORT_ANGLE(1.25f),
                           DEG2SHORT_ANGLE(0.25f));
     add_calc2(&actor->_5EC, 0.05f, 0.25f, 0.025f);
     add_calc2(&actor->_5E8, actor->_5F0, 0.1f, actor->_5EC);
@@ -387,7 +384,7 @@ void mfish_koi_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     actor->_5A0.x += actor->_5D0.x + actor->_5DC.x;
     actor->_5A0.z += actor->_5D0.z + actor->_5DC.z;
     actor->_5A0.y += actor->_5DC.y * 0.05f;
-    actor->_5A0.y = MAX(110.f, MIN(60.f, actor->_5A0.y));
+    actor->_5A0.y = MAX(60.f, MIN(110.f, actor->_5A0.y));
 }
 
 void mfish_koi_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
@@ -427,11 +424,11 @@ void mfish_koi_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->_638 += DEG2SHORT_ANGLE(10);
     actor->_34(actor, gamex);
     if (ABS(actor->_618.z) < ABS(actor->_622) && ABS(actor->_622) > DEG2SHORT_ANGLE(2)) {
-        add_calc2(&actor->_5E8, MAX(0.2f, actor->_5E8), 0.2f, 0.5f);
+        add_calc2(&actor->_5E8, MAX(0.1f, actor->_5E8), 0.2f, 0.25f);
     }
-    add_calc_short_angle2(&actor->_60C.x, actor->_612.x, CALC_EASE(0.1f), DEG2SHORT_ANGLE(1.5f),
+    add_calc_short_angle2(&actor->_60C.x, actor->_612.x, CALC_EASE(0.05f), DEG2SHORT_ANGLE(1.5f),
                           DEG2SHORT_ANGLE(0.05f));
-    add_calc_short_angle2(&actor->_612.x, 0, CALC_EASE(0.1f), DEG2SHORT_ANGLE(0.5f), DEG2SHORT_ANGLE(0.05f));
+    add_calc_short_angle2(&actor->_612.x, 0, CALC_EASE(0.05f), DEG2SHORT_ANGLE(0.5f), DEG2SHORT_ANGLE(0.05f));
     mfish_koi_base_FishMove(actor, gamex);
 }
 

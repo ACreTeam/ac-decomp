@@ -185,7 +185,7 @@ void mfish_afish_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->_5A0.x += actor->_5D0.x + actor->_5DC.x;
     actor->_5A0.z += actor->_5D0.z + actor->_5DC.z;
     actor->_5A0.y += actor->_5DC.y;
-    actor->_5A0.y = MAX(110.f, MIN(60.f, actor->_5A0.y));
+    actor->_5A0.y = MAX(60.f, MIN(110.f, actor->_5A0.y));
 }
 
 void mfish_afish_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {

@@ -273,8 +273,8 @@ void mfish_unagi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         }
     }
 
-    add_calc0(&actor->_5AC.x, 0.25f, 0.5f);
-    add_calc0(&actor->_5AC.z, 0.25f, 0.5f);
+    add_calc0(&actor->_5AC.x, 0.025f, 0.5f);
+    add_calc0(&actor->_5AC.z, 0.025f, 0.5f);
     p1.x = sin_s(actor->_612.y) * actor->_5E8;
     p1.z = cos_s(actor->_612.y) * actor->_5E8;
     p2.x = sin_s(actor->_60C.y) * actor->_5E8;

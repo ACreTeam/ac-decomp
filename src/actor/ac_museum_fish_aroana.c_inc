@@ -146,7 +146,7 @@ void mfish_aroana_turn_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     add_calc_short_angle2(&actor->_632, 0, CALC_EASE2(0.5f), DEG2SHORT_ANGLE(2.5f), DEG2SHORT_ANGLE(0.25f));
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(actor->_632 * sin_s(actor->_636)),
                                         CALC_EASE(0.2f), actor->_618.y >> 1, DEG2SHORT_ANGLE(0.25f));
-    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.3f), DEG2SHORT_ANGLE(1.25f),
+    add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.25f), DEG2SHORT_ANGLE(1.25f),
                           DEG2SHORT_ANGLE(0.125f));
     if (ABS((s16)(actor->_60C.y - actor->_612.y)) < DEG2SHORT_ANGLE(2) && actor->_5E8 < 0.1f) {
         if (actor->_63E > 0) {
@@ -206,7 +206,7 @@ void mfish_aroana_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     actor->_5A0.x += actor->_5D0.x + actor->_5DC.x;
     actor->_5A0.z += actor->_5D0.z + actor->_5DC.z;
     actor->_5A0.y += actor->_5DC.y;
-    actor->_5A0.y = MAX(110.f, MIN(60.f, actor->_5A0.y));
+    actor->_5A0.y = MAX(60.f, MIN(110.f, actor->_5A0.y));
 }
 
 void mfish_aroana_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {

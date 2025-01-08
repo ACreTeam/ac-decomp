@@ -200,7 +200,7 @@ void mfish_dojou_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Matrix_translate(actor->_5A0.x, actor->_5A0.y, actor->_5A0.z, 0);
     Matrix_RotateY(actor->_60C.y, 1);
     Matrix_translate(0.0f, 0.0f, actor->init_data._24 * (0.5f * cos_s(s) + ABS(cos_s(s))), 1);
-    Matrix_RotateY(s, 1);
+    Matrix_RotateX(s, 1);
     Matrix_translate(0.0f, 0.0f, -actor->init_data._24 * 0.5f * cos_s(s), 1);
     Matrix_scale(actor->init_data._00, actor->init_data._00, actor->init_data._00, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

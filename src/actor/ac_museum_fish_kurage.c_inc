@@ -121,7 +121,7 @@ void mfish_kurage_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     }
     add_calc2(&actor->_5E8, actor->_5F0, 0.1f, actor->_5EC);
     add_calc2(&actor->_5AC.y, actor->_5F0, 0.1f, 0.25f);
-    add_calc2(&actor->_5F0, 0.1f, 0.1f, 0.01f);
+    add_calc2(&actor->_5F0, 0.05f, 0.05f, 0.01f);
     add_calc_short_angle2(&actor->_63A, (s16)DEG2SHORT_ANGLE2((GETREG(TAKREG, 0x56) + 13.0f) * 0.5f), CALC_EASE2(0.1f),
                           DEG2SHORT_ANGLE(0.25f), DEG2SHORT_ANGLE(0.25f));
     add_calc_short_angle2(&actor->_60C.x, (s16)actor->_612.x, CALC_EASE2(GETREG(TAKREG, 0x18) * 0.01f + 0.1f),

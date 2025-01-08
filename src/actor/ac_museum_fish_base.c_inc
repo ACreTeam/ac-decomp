@@ -124,7 +124,7 @@ void mfish_dummy_process_init(MUSEUM_FISH_PRIVATE_DATA* prv) {
 
 void mfish_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     // no clue what's going on here
-    add_calc_short_angle2(&actor->_612.y, actor->_634, CALC_EASE2(0.0f), DEG2SHORT_ANGLE(3.75f),
+    add_calc_short_angle2(&actor->_612.y, actor->_634, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(3.75f),
                           DEG2SHORT_ANGLE(0.25f));
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.5f), DEG2SHORT_ANGLE(5.0f),
                                         DEG2SHORT_ANGLE(0.25f));
@@ -171,7 +171,7 @@ void mfish_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* fishActor) {
             }
         }
 
-        fishActor->_632 = DEG2SHORT_ANGLE(t * 15 + 20);
+        fishActor->_632 = DEG2SHORT_ANGLE(t * 30.f + 20.0f);
     } else {
         if ((s16)(fishActor->_612.y - fishActor->_60C.y) > 0) {
             fishActor->_612.y += DEG2SHORT_ANGLE(15);
@@ -179,7 +179,7 @@ void mfish_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* fishActor) {
             fishActor->_612.y += DEG2SHORT_ANGLE(-15);
         }
 
-        fishActor->_632 = DEG2SHORT_ANGLE((GETREG(TAKREG, 42) + 40.0f) * t + 30);
+        fishActor->_632 = DEG2SHORT_ANGLE((GETREG(TAKREG, 42) + 40.0f) * t + 30.0f);
     }
     if ((s16)(fishActor->_60C.y - fishActor->_612.y) > 0) {
         fishActor->_636 = DEG2SHORT_ANGLE(0);
@@ -354,7 +354,7 @@ void mfish_peck_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
     if (actor->_632 > DEG2SHORT_ANGLE(15)) {
         add_calc(&actor->_5E8, actor->_5F0, CALC_EASE(0.25f),
-                 (((actor->_632 - DEG2SHORT_ANGLE(20)) / DEG2SHORT_ANGLE(2)) * 0.04f + 0.01f) * 0.5f, 0.05f);
+                 (((actor->_632 - DEG2SHORT_ANGLE(20)) / DEG2SHORT_ANGLE(2)) * 0.04f + 0.1f) * 0.5f, 0.05f);
     } else if (actor->_626 > actor->_628 - 16) {
         add_calc(&actor->_5E8, actor->_5F0, CALC_EASE(0.1f), 0.5f, 0.05f);
     } else if (dist > 20) {
@@ -782,9 +782,9 @@ void Museum_Fish_DonkoBGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Museum_Fish_objchk_pos_set(actor, gamex);
     // asm 17C
     a = (+00.0f + p.x);
-    b = (-45.0f + p.x);
+    b = (+45.0f + p.x);
     d = (-17.5f + p.z);
-    c = (+45.0f + p.z);
+    c = (-45.0f + p.z);
 
     f27 = 76.0f - 6.0f * cos_s(DEG2SHORT_ANGLE2(180.0f * (actor->_5B8.x - p.x) / 55.0f));
     f26 = 76.0f - 6.0f * cos_s(DEG2SHORT_ANGLE2((actor->_5B8.x + sin_s(actor->_60C.y) - p.x) * 180.0f / 55.0f));
@@ -1113,8 +1113,8 @@ void Museum_Fish_Object_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
                                 test.y = -test.y - (f->init_data._04 + fj->init_data._04);
                             }
 
-                            test.y *= 0.2f + (GETREG(TAKREG, 0x11)) * 0.001f;
-                            f22 *= 0.2f + (GETREG(TAKREG, 0x12)) * 0.001f;
+                            test.y *= 0.2f + (GETREG(TAKREG, 0x11)) * 0.0001f;
+                            f22 *= 0.2f + (GETREG(TAKREG, 0x12)) * 0.0001f;
                             f->_62A = atans_table(test.z, test.x);
                             f->_62E |= 0x20;
                             fj->_62A = f->_62A + DEG2SHORT_ANGLE(180);

@@ -6,7 +6,7 @@ void mfish_small_fish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->_5F0 = actor->_5E8;
     actor->_60C.y = s;
     actor->_612.y = actor->_60C.y;
-    actor->_60C.x = DEG2SHORT_ANGLE(RANDOM_F(actor->init_data._30 * 2.0f));
+    actor->_60C.x = DEG2SHORT_ANGLE(RANDOM2_F(actor->init_data._30 * 2.0f));
     actor->_612.x = actor->_60C.x;
     actor->_5F4 = 110.0f;
     actor->_5D0.y = 0.0f;

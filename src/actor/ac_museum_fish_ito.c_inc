@@ -95,7 +95,7 @@ BOOL mfish_ito_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint
     } else if (joint_num == 2) {
         int i;
         i = joint1->y - 2 * actor->_618.z +
-            (int)(actor->_644 * (GETREG(TAKREG, 0x15) * 0.01f + 0.7f) *
+            (int)(actor->_644 * (GETREG(TAKREG, 0x15) * 0.01f + 0.75f) *
                   sin_s(actor->_646 + DEG2SHORT_ANGLE(-90.f + GETREG(TAKREG, 0x17))));
         joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-40), DEG2SHORT_ANGLE(40));
         i = joint1->x - (actor->_618.z >> 1);
