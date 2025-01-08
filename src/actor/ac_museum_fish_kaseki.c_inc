@@ -22,9 +22,10 @@ void mfish_kaseki_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Museum_Fish_BGCheck(actor, gamex);
 }
 
-void mfish_kaseki_normal_init() {
-    // NOT BAD
-    return;
+void mfish_kaseki_normal_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+    actor->_5F0 = actor->init_data._10 + RANDOM_F(actor->init_data._14);
+    actor->_34 = mfish_kaseki_normal;
 }
 
 void mfish_kaseki_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
@@ -184,6 +185,6 @@ void mfish_kaseki_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Matrix_translate(0.0f, 0.0f, actor->init_data._24, 1);
     Matrix_scale(actor->init_data._00, actor->init_data._00, actor->init_data._00, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_aroana_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_kaseki_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }

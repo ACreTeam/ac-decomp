@@ -262,7 +262,7 @@ BOOL mfish_aroana_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
 void mfish_aroana_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
 void mfish_koi_tail_anim_set(MUSEUM_FISH_PRIVATE_DATA* actor, s32 r4);
-void mfish_koi_move_smooth(MUSEUM_FISH_PRIVATE_DATA* actor);
+void mfish_koi_move_smooth(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_koi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_koi_dummy_process_init(MUSEUM_FISH_PRIVATE_DATA* actor);
 void mfish_koi_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
@@ -393,7 +393,7 @@ BOOL mfish_ito_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint
 void mfish_ito_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
 void mfish_unagi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_unagi_get_next_rail_type();
+s16 mfish_unagi_get_next_rail_type();
 void mfish_unagi_aim_wind_angle_calc();
 void mfish_unagi_rail_move_init();
 void mfish_unagi_rail_move();
@@ -404,7 +404,7 @@ void mfish_unagi_rail_move_reverse();
 void mfish_unagi_reverse_to_normal_init();
 void mfish_unagi_reverse_to_normal();
 void mfish_unagi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
-void mfish_unagi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
+BOOL mfish_unagi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
                              void* arg, s_xyz* joint1, xyz_t* trans);
 void mfish_unagi_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 

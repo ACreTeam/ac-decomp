@@ -85,12 +85,12 @@ void mfish_aroana_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
                           DEG2SHORT_ANGLE(0.25f));
 
     if (actor->_5E8 < 0.01f && actor->_632 < DEG2SHORT_ANGLE(1)) {
-        if (fqrand() < 0.01f) {
+        if (fqrand() < 0.8f) {
             mfish_aroana_long_move_process_init(actor);
         } else {
             mfish_aroana_dummy_process_init(actor);
         }
-    } else if (actor->_5E8 > 0.01f && actor->_62E & 0x1e) {
+    } else if (actor->_5E8 > 1.f && actor->_62E & 0x1e) {
         if ((s16)(actor->_60C.y - actor->_62C) > 0) {
             actor->_612.y = actor->_62C + DEG2SHORT_ANGLE(112.5f);
         } else {
@@ -133,7 +133,7 @@ void mfish_aroana_turn_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
 
     actor->_5EC = 0.0f;
     actor->_5F0 = actor->init_data._10 + actor->init_data._14 * 0.2f;
-    actor->_34 = mfish_afish_turn_process;
+    actor->_34 = mfish_aroana_turn_process;
 }
 
 void mfish_aroana_turn_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {

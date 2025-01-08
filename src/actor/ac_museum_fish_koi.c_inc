@@ -18,7 +18,7 @@ void mfish_koi_tail_anim_set(MUSEUM_FISH_PRIVATE_DATA* actor, s32 r4) {
     }
 }
 
-void mfish_koi_move_smooth(MUSEUM_FISH_PRIVATE_DATA* actor) {
+void mfish_koi_move_smooth(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     s16 vv;
     s16 v = 0;
     s16* o;
@@ -157,11 +157,12 @@ void mfish_koi_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
 
     actor->_62E &= ~0xC0;
     actor->_5EC = 0.0f;
-    actor->_34 = mfish_aroana_normal_process;
+    actor->_34 = mfish_koi_normal_process;
 }
 
 void mfish_koi_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     s16 temp;
+    //! NOTE: wrong float somewhere in this file, just based on objdiffs colors changing
     if (ABS(actor->_632) > DEG2SHORT_ANGLE(20) || actor->_640 > 0) {
         add_calc2(&actor->_5EC, ((actor->_632 - DEG2SHORT_ANGLE(20)) / DEG2SHORT_ANGLE(2)) * 0.002f + 0.03f, 0.25f,
                   0.02f);
@@ -178,9 +179,9 @@ void mfish_koi_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 
     if (actor->_5E8 < 0.01f && actor->_632 < DEG2SHORT_ANGLE(1)) {
         if (fqrand() < 0.01f) {
-            mfish_aroana_long_move_process_init(actor);
+            mfish_koi_long_move_process_init(actor);
         } else {
-            mfish_aroana_dummy_process_init(actor);
+            mfish_koi_dummy_process_init(actor);
         }
     } else if (actor->_5E8 > 0.01f && actor->_62E & 0x1e) {
         if ((s16)(actor->_60C.y - actor->_62C) > 0) {
@@ -245,16 +246,16 @@ void mfish_koi_turn_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
         if (actor->_63E > 0 && ABS(actor->_618.z) < DEG2SHORT_ANGLE(2)) {
             if (mfish_WallCheck(actor)) {
                 mfish_koi_tail_anim_set(actor, 1);
-                mfish_aroana_turn_process_init(actor);
+                mfish_koi_turn_process_init(actor);
             } else {
-                mfish_aroana_normal_process_init(actor);
+                mfish_koi_normal_process_init(actor);
             }
             actor->_63E--;
         } else {
             if (RANDOM_F(1.0f) < 0.8f) {
-                mfish_aroana_long_move_process_init(actor);
+                mfish_koi_long_move_process_init(actor);
             } else {
-                mfish_aroana_dummy_process_init(actor);
+                mfish_koi_dummy_process_init(actor);
             }
         }
     }
@@ -352,8 +353,9 @@ void mfish_koi_peck_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_koi_long_move_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
-    // NOT BAD
-    return;
+    actor->_5F0 = MAX(MIN(actor->_5E8, 0.5f), 0.05f);
+    actor->_5EC = 0.0f;
+    actor->_34 = mfish_koi_long_move_process;
 }
 
 void mfish_koi_long_move_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
@@ -368,7 +370,7 @@ void mfish_koi_long_move_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 
 void mfish_koi_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     xyz_t p;
-    if ((actor->_34 != mfish_aroana_turn_process && actor->_34 != mfish_aroana_long_move_process) ||
+    if ((actor->_34 != mfish_koi_turn_process && actor->_34 != mfish_koi_long_move_process) ||
         actor->_640 > DEG2SHORT_ANGLE(0)) {
         add_calc0(&actor->_5E8, 1.0f - actor->init_data._18, GETREG(TAKREG, 0x13) * 0.001f + 0.01f);
     } else {
@@ -380,7 +382,7 @@ void mfish_koi_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     actor->_5D0.z = actor->_5E8 * cos_s(actor->_60C.y) * cos_s(actor->_60C.x);
     add_calc(&actor->_5D0.y, MAX(ABS(actor->_5E8 * sin_s(actor->_60C.x)), 0.1f), 0.1f, 0.1f, 0.005f);
     add_calc2(&actor->_5A0.y, actor->_5F4 + actor->init_data._0C, 0.1f, actor->_5D0.y);
-    mfish_move_smooth(actor, game);
+    mfish_koi_move_smooth(actor, game);
     mfish_get_flow_vec(&p, actor, game);
     actor->_5A0.x += actor->_5D0.x + actor->_5DC.x;
     actor->_5A0.z += actor->_5D0.z + actor->_5DC.z;
@@ -389,6 +391,7 @@ void mfish_koi_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mfish_koi_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    //! NOTE: wrong floats in this file, based on objdiff
     if (actor->_5F8 > actor->init_data._08 * 20.f) {
         actor->_5F8 = 0.0f;
         actor->_626 = 0;
@@ -407,9 +410,9 @@ void mfish_koi_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
             mfish_koi_turn_process_init(actor);
         } else {
             mfish_koi_tail_anim_set(actor, 0);
-            mfish_aroana_normal_process_init(actor);
+            mfish_koi_normal_process_init(actor);
         }
-    } else if (actor->_34 == mfish_aroana_normal_process) {
+    } else if (actor->_34 == mfish_koi_normal_process) {
         if ((actor->_62E & 0x1e && ABS((s16)(actor->_62C - actor->_60C.y)) < DEG2SHORT_ANGLE(30)) ||
             (actor->_62E & 0x20 &&
              ABS((s16)(DEG2SHORT_ANGLE(180) + actor->_62A - actor->_60C.y)) < DEG2SHORT_ANGLE(30))) {
@@ -429,7 +432,7 @@ void mfish_koi_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     add_calc_short_angle2(&actor->_60C.x, actor->_612.x, CALC_EASE(0.1f), DEG2SHORT_ANGLE(1.5f),
                           DEG2SHORT_ANGLE(0.05f));
     add_calc_short_angle2(&actor->_612.x, 0, CALC_EASE(0.1f), DEG2SHORT_ANGLE(0.5f), DEG2SHORT_ANGLE(0.05f));
-    mfish_aroana_base_FishMove(actor, gamex);
+    mfish_koi_base_FishMove(actor, gamex);
 }
 
 void mfish_koi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
@@ -503,11 +506,11 @@ void mfish_koi_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Matrix_translate(actor->_5A0.x, actor->_5A0.y, actor->_5A0.z, 0);
     Matrix_RotateY(actor->_60C.y, 1);
     Matrix_translate(0.0f, actor->init_data._04 * 0.25f, actor->init_data._24 * 1.5f, 1);
-    Matrix_RotateY(actor->_60C.x, 1);
+    Matrix_RotateX(actor->_60C.x, 1);
     Matrix_RotateZ(MY_CLAMP(-(actor->_618.z >> 2), DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20)), 1);
     Matrix_translate(0.0f, -actor->init_data._04 * 0.25f, -actor->init_data._24 * 0.5f, 1);
     Matrix_scale(actor->init_data._00, actor->init_data._00, actor->init_data._00, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_aroana_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_koi_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }

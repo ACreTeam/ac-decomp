@@ -62,6 +62,7 @@ void mfish_bass_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mfish_bass_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* fishActor) {
+    //! NOTE: wrong floats in this file, based on objdiff
     f32 ra;
     f32 t;
     f32 temp;
@@ -132,6 +133,7 @@ void mfish_bass_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* fishActor) {
 }
 
 void mfish_bass_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
+    //! NOTE: wrong floats in this file, based on objdiff
     if (((actor->_62E & 0x200) != 0 && actor->_632 > DEG2SHORT_ANGLE(20)) || actor->_640 > 0) {
         f32 v = (actor->_5AC.y * 0.03f + 0.02f);
         add_calc2(&actor->_5EC,
@@ -281,6 +283,7 @@ void mfish_bass_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_bass_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    //! NOTE: wrong floats in this file, based on objdiff
     mfish_onefish_mv(actor, gamex);
 
     if (actor->_5F8 > actor->init_data._08 * 20.0f) {
@@ -297,7 +300,7 @@ void mfish_bass_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
             mfish_bass_turn_process_init(actor);
         } else {
             mfish_bass_tail_anim_set(actor, 0);
-            mfish_bass_turn_process_init(actor);
+            mfish_bass_normal_process_init(actor);
         }
     } else if (actor->_34 == &mfish_bass_normal_process) {
         if (((actor->_62E & 0x1e) && ABS((s16)(actor->_62C - actor->_60C.y)) < DEG2SHORT_ANGLE(30)) ||
@@ -359,7 +362,7 @@ void mfish_bass_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Matrix_translate(actor->_5A0.x, actor->_5A0.y, actor->_5A0.z, 0);
     Matrix_RotateY(actor->_60C.y, 1);
 
-    Matrix_translate(0, 0.25f * actor->init_data._04, 0.5f * actor->init_data._24, 1);
+    Matrix_translate(0, 0.25f * actor->init_data._04, 1.5f * actor->init_data._24, 1);
     Matrix_RotateX(actor->_60C.x, 1);
     Matrix_RotateZ(MY_CLAMP(-(actor->_618.z >> 1), DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20)), 1);
     Matrix_translate(0, 0.25f * -actor->init_data._04, 0.5f * -actor->init_data._24, 1);

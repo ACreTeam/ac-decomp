@@ -95,7 +95,7 @@ void mfish_afish_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
     if (actor->_5E8 < 0.01f && actor->_632 < DEG2SHORT_ANGLE(1)) {
         mfish_afish_dummy_process_init(actor);
-    } else if (actor->_5E8 > 0.01f && actor->_62E & 0x1e) {
+    } else if (actor->_5E8 > 1.0f && actor->_62E & 0x1e) {
         if ((s16)(actor->_60C.y - actor->_62C) > 0) {
             actor->_612.y = actor->_62C + DEG2SHORT_ANGLE(112.5f);
         } else {
@@ -178,7 +178,7 @@ void mfish_afish_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     add_calc0(&actor->_5EC, 0.5f, 0.01f);
     actor->_5D0.x = actor->_5E8 * cos_s(actor->_60C.x) * sin_s(actor->_60C.y);
     actor->_5D0.z = actor->_5E8 * cos_s(actor->_60C.x) * cos_s(actor->_60C.y);
-    add_calc(&actor->_5D0.y, MAX(ABS(actor->_5E8 * sin_s(actor->_60C.x)), 0.1f), 0.1f, 0.1f, 0.001f);
+    add_calc(&actor->_5D0.y, MAX(ABS(actor->_5E8 * sin_s(actor->_60C.x)), 0.1f), 0.1f, 0.1f, 0.005f);
     add_calc2(&actor->_5A0.y, actor->_5F4 + actor->init_data._0C, 0.1f, actor->_5D0.y);
     mfish_move_smooth(actor, gamex);
     mfish_get_flow_vec(&p, actor, gamex);

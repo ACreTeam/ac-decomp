@@ -22,9 +22,12 @@ void mfish_seafish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     mfish_seafish_normal_init(actor, game);
 }
 
-void mfish_seafish_normal_init() {
-    // NOT BAD
-    return;
+void mfish_seafish_normal_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
+    actor->_628 = actor->_626;
+    actor->_5F0 = actor->init_data._10 + RANDOM_F(actor->init_data._14);
+    actor->_5EC = Rnd_EX_f(0.15f) + 0.15f;
+    actor->_34 = mfish_seafish_normal;
 }
 
 void mfish_seafish_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
@@ -175,6 +178,7 @@ void mfish_seafish_turn(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mfish_seafish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    //! NOTE: wrong floats in this file, based on objdiff
     xyz_t p;
     actor->_34(actor, gamex);
     actor->_618.x += DEG2SHORT_ANGLE(actor->_5E8 * RANDOM_F(3.0f));
