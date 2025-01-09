@@ -306,7 +306,7 @@ void mfish_bass_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         if (((actor->_62E & 0x1e) && ABS((s16)(actor->_62C - actor->_60C.y)) < DEG2SHORT_ANGLE(30)) ||
             ((actor->_62E & 0x20) &&
              ABS((s16)((actor->_62A - DEG2SHORT_ANGLE(-180)) - actor->_60C.y)) < DEG2SHORT_ANGLE(30))) {
-            actor->_626 = actor->init_data._2C + (s16)(actor->init_data._2E * fqrand());
+            actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
             actor->_628 = actor->_626;
             mfish_bass_tail_anim_set(actor, 1);
             mfish_bass_turn_process_init(actor);

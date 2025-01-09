@@ -178,7 +178,7 @@ void mfish_koi_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
                           DEG2SHORT_ANGLE(0.125f));
 
     if (actor->_5E8 < 0.01f && actor->_632 < DEG2SHORT_ANGLE(1)) {
-        if (fqrand() < 0.8f) {
+        if (RANDOM_F(1.0f) < 0.8f) {
             mfish_koi_long_move_process_init(actor);
         } else {
             mfish_koi_dummy_process_init(actor);
@@ -293,11 +293,11 @@ void mfish_koi_peck_process_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     }
 
     if (atany < 0) {
-        actor->_5F4 = actor->_5F4 + fqrand() * 2.5f;
+        actor->_5F4 = actor->_5F4 + RANDOM_F(2.5f);
         actor->_5F4 = MAX(MIN(10, actor->_5F4), -10);
 
     } else {
-        actor->_5F4 = actor->_5F4 - fqrand() * 2.5f;
+        actor->_5F4 = actor->_5F4 - RANDOM_F(2.5f);
         actor->_5F4 = MAX(MIN(10, actor->_5F4), -10);
     }
 
@@ -334,14 +334,14 @@ void mfish_koi_peck_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(2.f), DEG2SHORT_ANGLE(0.125f));
 
     if (mfish_peck_wall_check(actor, gamex)) {
-        if (fqrand() < 0.8f) {
-            actor->_5E8 = -0.05f - fqrand() * 0.1f;
+        if (RANDOM_F(1.0f) < 0.8f) {
+            actor->_5E8 = -0.05f - RANDOM_F(0.1f);
             actor->_5F0 = 0.05f;
             actor->_626 = DEG2SHORT_ANGLE(0.33f);
         } else {
             actor->_5E8 = -0.1f - RANDOM_F(0.05f);
             actor->_5F0 = 0.05f;
-            actor->_626 = actor->init_data._2C + (s16)(fqrand() * actor->init_data._2E);
+            actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
             // actor->_626 >>= 3;
         }
         actor->_628 = actor->_626;

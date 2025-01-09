@@ -124,7 +124,7 @@ void mfish_seafish_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         }
     } else if (actor->_626 < 0) {
         // r in wrong register here
-        r = fqrand();
+        r = RANDOM_F(1.0f);
         actor->_612.y = actor->_60C.y;
         if ((actor->_608 - actor->_604) * cos_s(actor->_60C.y) < 0.0f) {
             actor->_612.y += (s16)(r * actor->init_data._30);

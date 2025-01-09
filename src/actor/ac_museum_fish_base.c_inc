@@ -260,8 +260,8 @@ void mfish_turn_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
 
     actor->_5F0 = actor->init_data._10 + actor->init_data._14 * 0.7f;
 
-    if (fqrand() < 0.2f) {
-        actor->_63E = fqrand() * 3.0f + 1.0f;
+    if (RANDOM_F(1.0f) < 0.2f) {
+        actor->_63E = RANDOM_F(3.0f) + 1.0f;
     } else {
         actor->_63E = 0;
     }
@@ -325,11 +325,11 @@ void mfish_peck_process_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     }
 
     if (atany < 0) {
-        actor->_5F4 = actor->_5F4 + fqrand() * 2.5f;
+        actor->_5F4 = actor->_5F4 + RANDOM_F(2.5f);
         actor->_5F4 = MAX(MIN(10, actor->_5F4), -10);
 
     } else {
-        actor->_5F4 = actor->_5F4 - fqrand() * 2.5f;
+        actor->_5F4 = actor->_5F4 - RANDOM_F(2.5f);
         actor->_5F4 = MAX(MIN(10, actor->_5F4), -10);
     }
 
@@ -369,12 +369,12 @@ void mfish_peck_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
                           DEG2SHORT_ANGLE(0.25f));
 
     if (mfish_peck_wall_check(actor, gamex)) {
-        if (fqrand() < 0.9f) {
-            actor->_5E8 = -0.3f - fqrand() * 0.3f;
+        if (RANDOM_F(1.0f) < 0.9f) {
+            actor->_5E8 = -0.3f - RANDOM_F(0.3f);
             actor->_626 = 10;
         } else {
             actor->_5E8 = -0.5f;
-            actor->_626 = actor->init_data._2C + (s16)(fqrand() * actor->init_data._2E);
+            actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
             actor->_626 >>= 3;
         }
         actor->_628 = actor->_626;
@@ -391,7 +391,7 @@ void mfish_ground_peck_process_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex
     actor->_626 = (int)(Rnd_EX_f(30.0f) + 15.0f) << 1;
 
     if (actor->_34 != mfish_ground_peck_process) {
-        actor->_63E = fqrand() * 2.0f + 3.0f;
+        actor->_63E = RANDOM_F(2.0f) + 3.0f;
     } else {
         actor->_63E--;
     }
@@ -433,7 +433,7 @@ void mfish_ground_peck_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
 void mfish_base_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     GAME_PLAY* play = (GAME_PLAY*)gamex;
-    f32 f = fqrand() * 2;
+    f32 f = RANDOM_F(2.0f);
     f32 s;
     s16 q = qrand();
     actor->_5E8 = f;
@@ -444,9 +444,9 @@ void mfish_base_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     if (actor->_59C == 4 || actor->_59C == 9) {
         actor->_5F4 = 0.0f;
     } else if (actor->_59C == 0x1b) {
-        actor->_5F4 = fqrand() * 5.0f;
+        actor->_5F4 = RANDOM_F(5.0f);
     } else {
-        actor->_5F4 = fqrand2() * 10.0f;
+        actor->_5F4 = RANDOM_F(10.0f);
     }
     actor->_5D0.y = 0.0;
     actor->_5AC = ZeroVec;
@@ -463,7 +463,7 @@ void mfish_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     }
 
     if (actor->_626-- <= 0) {
-        actor->_626 = actor->init_data._2C + (s16)(fqrand() * actor->init_data._2E);
+        actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
         actor->_628 = actor->_626;
         if (mfish_peck_check(actor, gamex)) {
             actor->_626 >>= 2;
@@ -480,7 +480,7 @@ void mfish_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         if ((actor->_62E & 0x1E && ABS((s16)(actor->_62C - actor->_60C.y)) < DEG2SHORT_ANGLE(30)) ||
             (actor->_62E & 0x20 &&
              ABS((s16)(actor->_62A + DEG2SHORT_ANGLE(180) - actor->_60C.y)) < DEG2SHORT_ANGLE(30))) {
-            actor->_626 = actor->init_data._2C + (s16)(fqrand() * actor->init_data._2E);
+            actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
             actor->_628 = actor->_626;
             mfish_turn_process_init(actor);
         }
@@ -512,7 +512,7 @@ void mfish_onefish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     YET_SKELETON* s = &actor->_38;
     cKF_SkeletonInfo_R_ct(&s->_00, s->_54C, s->_550[0], &s->_4F0, &s->_514);
     cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&s->_00, s->_550[0], NULL, 1.0f, 0.0f);
-    actor->_626 = actor->init_data._2C + (s16)(actor->init_data._2E * fqrand());
+    actor->_626 = actor->init_data._2C + (s16)RANDOM_F(actor->init_data._2E);
     actor->_628 = actor->_626;
     actor->_60C.x = DEG2SHORT_ANGLE(0);
     actor->_60C.y = DEG2SHORT_ANGLE(-90);
@@ -1257,7 +1257,7 @@ BOOL mfish_ground_peck_before_check(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex
     if (actor->_34 == mfish_ground_peck_process) {
         return actor->_63E > 0;
     } else if ((actor->_630 == 2) && (actor->_5A0.x < p.x + 20.0f) && (actor->_5A0.z > p.z - 10.0f) &&
-               (actor->_5A0.y < (actor->init_data._08 * 0.5f + 75.0f) - (v * 0.15f)) && (fqrand() > 0.2f)) {
+               (actor->_5A0.y < (actor->init_data._08 * 0.5f + 75.0f) - (v * 0.15f)) && (RANDOM_F(1.0f) > 0.2f)) {
         return TRUE;
     }
 

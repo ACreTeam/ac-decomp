@@ -59,7 +59,7 @@ void mfish_gupi_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     } else if (actor->_5F8 > actor->init_data._08 * 30.f) {
         s16 s;
         //! BUG: unused?
-        fqrand();
+        RANDOM_F(1.0f);
         s = search_position_angleY(&suisou_pos[actor->_630], &actor->_5A0);
         actor->_5F8 = 0.0f;
         actor->_612.y = s + DEG2SHORT_ANGLE(RANDOM2_F(90.0));
