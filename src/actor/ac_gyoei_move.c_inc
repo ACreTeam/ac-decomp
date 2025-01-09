@@ -1,0 +1,104 @@
+static void aGYO_position_move(aGYO_CTRL_ACTOR* ctrl) {
+    static f32 dec_step[] = {
+        1.0f, // aGYO_SIZE_XXS
+        1.0f, // aGYO_SIZE_XS
+        1.0f, // aGYO_SIZE_S
+        1.0f, // aGYO_SIZE_M
+        1.0f, // aGYO_SIZE_L
+        1.0f, // aGYO_SIZE_XL
+        1.0f, // aGYO_SIZE_XXL
+        0.0f, // aGYO_SIZE_WHALE
+    };
+    
+    xyz_t_move(&((ACTOR*)ctrl)->last_world_position, &((ACTOR*)ctrl)->world.position);
+    
+    if (ctrl->fwork0 <= 0.0f) {
+        ctrl->fwork0 += 19.0f;
+    } else {
+        ctrl->fwork0 -= dec_step[ctrl->size_type] * 0.5f;
+    }
+
+    chase_f(&((ACTOR*)ctrl)->speed, ctrl->speed, ctrl->speed_step * 0.5f);
+    Actor_position_moveF((ACTOR*)ctrl);
+}
+
+static void aGYO_BGcheck(aGYO_CTRL_ACTOR* ctrl) {
+    if ((ctrl->col_flags & 1) != 0) {
+        mCoBG_BgCheckControll(NULL, (ACTOR*)ctrl, ctrl->range, 0.0f, FALSE, FALSE, 1);
+    }
+}
+
+static void aGYO_cull_check(ACTOR* actorx, GAME_PLAY* play) {
+    Skin_Matrix_PrjMulVector(&play->projection_matrix, &actorx->world.position, &actorx->camera_position, &actorx->camera_w);
+    if (!Actor_draw_actor_no_culling_check(actorx)) {
+        f32 dist;
+        ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+        actorx->state_bitfield &= ~ACTOR_STATE_NO_CULL;
+        dist = search_position_distance(&actorx->world.position, &playerx->world.position);
+        if (dist > 600.0f && (actorx->block_x != play->block_table.block_x || actorx->block_z != play->block_table.block_z)) {
+            aGYO_destruct(actorx, (GAME*)play);
+        }
+    } else {
+        actorx->state_bitfield |= ACTOR_STATE_NO_CULL;
+    }
+}
+
+static u8 bite_check(void) {
+    GYOEI_ACTOR* gyoei = (GYOEI_ACTOR*)aGYO_ctrlActor;
+    aGYO_CTRL_ACTOR* ctrl = gyoei->ctrl;
+    s16 i;
+    u8 ret = FALSE;
+
+    for (i = 0; i < aGYO_MAX_GYOEI; i++) {
+        if ((ctrl->gyo_flags & 2) != 0) {
+            ret = TRUE;
+            break;
+        }
+
+        ctrl++;
+    }
+
+    return ret;
+}
+
+static void aGYO_actor_move(ACTOR* actorx, GAME* game) {
+    GYOEI_ACTOR* gyoei = (GYOEI_ACTOR*)actorx;
+    aGYO_CTRL_ACTOR* ctrl = gyoei->ctrl;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int i;
+
+    for (i = 0; i < aGYO_MAX_GYOEI; i++) {
+        if (ctrl->exist == TRUE) {
+            ((ACTOR*)ctrl)->state_bitfield &= ~ACTOR_STATE_24;
+
+            if ((((ACTOR*)ctrl)->state_bitfield & (ACTOR_STATE_NO_CULL | ACTOR_STATE_NO_MOVE_WHILE_CULLED)) != 0) {
+                aGYO_position_move(ctrl);
+                aGYO_BGcheck(ctrl);
+
+                if (bite_check()) {
+                    ctrl->gyo_flags |= 1;
+                } else {
+                    ctrl->gyo_flags &= ~1;
+                }
+
+                if ((ctrl->gyo_flags & 8) != 0) {
+                    ctrl->gyo_flags &= ~8;
+                    ctrl->gyo_flags |= 4;
+                    aGYO_change_data_area(&play->object_exchange);
+                }
+
+                (*((ACTOR*)ctrl)->mv_proc)((ACTOR*)ctrl, game);
+                Actor_world_to_eye((ACTOR*)ctrl, 0.0f);
+            }
+
+            aGYO_cull_check((ACTOR*)ctrl, play);
+            if ((ctrl->gyo_flags & 0x20) != 0) {
+                ctrl->gyo_flags &= ~0x20;
+                aGYO_destruct((ACTOR*)ctrl, game);
+            }
+        }
+
+        ctrl++;
+    }
+}

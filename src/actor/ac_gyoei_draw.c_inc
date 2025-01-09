@@ -1,0 +1,222 @@
+enum {
+    aGYO_ANIME_PAT_TYPE_NONE,
+    aGYO_ANIME_PAT_TYPE_FAST,
+    aGYO_ANIME_PAT_TYPE_SLOW,
+
+    aGYO_ANIME_PAT_TYPE_NUM
+};
+
+static int aGYO_anime_ptn[] = {
+    aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_SLOW,
+    aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_SLOW,
+    aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_SLOW,
+    aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_SLOW,
+    aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_SLOW,
+    aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_FAST,
+    aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_FAST,
+    aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_SLOW,
+    aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_FAST, aGYO_ANIME_PAT_TYPE_SLOW,
+    aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_SLOW, aGYO_ANIME_PAT_TYPE_SLOW,
+    aGYO_ANIME_PAT_TYPE_NONE, aGYO_ANIME_PAT_TYPE_NONE, aGYO_ANIME_PAT_TYPE_NONE, aGYO_ANIME_PAT_TYPE_NONE,
+    aGYO_ANIME_PAT_TYPE_NONE,
+};
+
+static int aGYO_anime_frame(aGYO_CTRL_ACTOR* ctrl) {
+    static int aGYO_frame_ptn1[] = { 1, 1, 0, 0, 2, 2, 0, 0 };
+    static int aGYO_frame_ptn2[] = { 1, 1, 1, 1, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 0 };
+
+    int idx = ctrl->anim_frame;
+    int ret;
+
+    idx++;
+    switch (aGYO_anime_ptn[ctrl->gyo_type]) {
+        case aGYO_ANIME_PAT_TYPE_FAST:
+            if (idx >= ARRAY_COUNT(aGYO_frame_ptn1)) {
+                idx = 0;
+                if ((ctrl->gyo_flags & 0x200) != 0) {
+                    ctrl->swork2--;
+                }
+            }
+
+            ret = aGYO_frame_ptn1[idx];
+            break;
+        case aGYO_ANIME_PAT_TYPE_SLOW:
+            if (idx >= ARRAY_COUNT(aGYO_frame_ptn2)) {
+                idx = 0;
+                if ((ctrl->gyo_flags & 0x200) != 0) {
+                    ctrl->swork2--;
+                }
+            }
+
+            ret = aGYO_frame_ptn2[idx];
+            break;
+        default:
+            idx = 0;
+            ret = 0;
+            break;
+    }
+
+    ctrl->anim_frame = idx;
+    return ret;
+}
+
+static void aGYO_actor_draw_fish(GRAPH* graph, aGYO_CTRL_ACTOR* ctrl, GAME* game) {
+    static f32 aGYO_hosei_y[] = {
+        0.0f, 0.0f, 2.2f, 2.2f, 2.2f, 0.0f, 1.5f, 2.2f, 0.0f, 2.2f, 2.2f, 2.2f, 1.5f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, 0.0f, 2.2f, 1.5f, 2.2f, 1.5f, 0.0f, 0.0f, 2.2f, 2.2f, 0.0f, 0.0f, 0.0f,
+        0.0f, 2.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+    };
+
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int frame;
+
+    Matrix_translate(((ACTOR*)ctrl)->world.position.x, ((ACTOR*)ctrl)->world.position.y - aGYO_hosei_y[ctrl->gyo_type],
+                     ((ACTOR*)ctrl)->world.position.z, 0);
+    Matrix_mult(&play->billboard_matrix, 1);
+
+    if (ctrl->gyo_type < (aGYO_TYPE_WHALE + 1) && (ctrl->gyo_flags & 0x200) != 0) {
+        int cnt;
+
+        if (ctrl->pattern_subcounter == 0) {
+            cnt = 0;
+        } else {
+            cnt = --ctrl->pattern_subcounter;
+        }
+
+        if (cnt != 0) {
+            if (aGYO_anime_ptn[ctrl->gyo_type] == aGYO_ANIME_PAT_TYPE_FAST) {
+                ctrl->move_counter += 0xE38;
+            } else {
+                ctrl->move_counter += 0xAAA;
+            }
+        } else {
+            if (ctrl->pattern_counter == 0) {
+                cnt = 0;
+            } else {
+                cnt = --ctrl->pattern_counter;
+            }
+
+            if (cnt == 0) {
+                ctrl->pattern_counter = (s16)RANDOM(15);
+
+                if (aGYO_anime_ptn[ctrl->gyo_type] == aGYO_ANIME_PAT_TYPE_FAST) {
+                    ctrl->pattern_subcounter = 9;
+                } else {
+                    ctrl->pattern_subcounter = 12;
+                }
+
+                if (RANDOM_F(2.0f) < 1.0f) {
+                    ctrl->move_counter = DEG2SHORT_ANGLE2(0.0f);
+                } else {
+                    ctrl->move_counter = DEG2SHORT_ANGLE2(180.0f);
+                }
+            }
+        }
+
+        ctrl->move_angle = DEG2SHORT_ANGLE2(13 * sin_s(ctrl->move_counter));
+        Matrix_RotateY(ctrl->move_angle, 1);
+    }
+
+    Matrix_scale(((ACTOR*)ctrl)->scale.x, ((ACTOR*)ctrl)->scale.y, ((ACTOR*)ctrl)->scale.z, 1);
+
+    if ((ctrl->gyo_flags & 0x200) != 0 && ctrl->swork2 <= 0) {
+        int cnt;
+
+        if (ctrl->swork3 == 0) {
+            cnt = 0;
+        } else {
+            cnt = --ctrl->swork3;
+        }
+
+        if (cnt == 0) {
+            ctrl->swork2 = RANDOM(3) + 1;
+            ctrl->swork3 = RANDOM2(10) + 15;
+        }
+
+        frame = 0;
+    } else {
+        frame = aGYO_anime_frame(ctrl);
+    }
+
+    OPEN_POLY_OPA_DISP(graph);
+
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_LOAD | G_MTX_NOPUSH);
+    gSPDisplayList(POLY_OPA_DISP++, ((Gfx**)aGYO_displayList[ctrl->gyo_type])[(int)(frame * 0.5f)]);
+
+    CLOSE_POLY_OPA_DISP(graph);
+
+    {
+        static xyz_t offset0 = { 0.0f, 0.0f, 0.0f };
+
+        mAc_UnagiActorShadow((ACTOR*)ctrl, game, offset0);
+    }
+}
+
+extern Gfx act_gyoei02_00_modelT[];
+
+static void aGYO_actor_draw_gyoei(GRAPH* graph, aGYO_CTRL_ACTOR* ctrl, GAME* game) {
+    s16 angleX;
+    s16 angleY;
+    int idx0;
+    int idx1;
+    u32 t;
+
+    angleX = ((ACTOR*)ctrl)->shape_info.rotation.x;
+    angleY = ((ACTOR*)ctrl)->shape_info.rotation.y + DEG2SHORT_ANGLE2(180.0f);
+    t = (u32)ctrl->fwork0;
+    idx0 = aGYO_2tile_texture_idx[t][0];
+    idx1 = aGYO_2tile_texture_idx[t][1];
+
+    if ((ctrl->gyo_flags & 0x100) != 0) {
+        int alpha = (ctrl->work0 - 10) * 6;
+
+        if (alpha <= 0) {
+            alpha = 0;
+        }
+
+        ctrl->alpha = alpha;
+    }
+
+    Matrix_translate(((ACTOR*)ctrl)->world.position.x, ((ACTOR*)ctrl)->world.position.y,
+                     ((ACTOR*)ctrl)->world.position.z, 0);
+    Matrix_RotateX(angleX, 1);
+    Matrix_RotateY(angleY, 1);
+    Matrix_scale(((ACTOR*)ctrl)->scale.x * 0.4f, ((ACTOR*)ctrl)->scale.y, ((ACTOR*)ctrl)->scale.z, 1);
+
+    OPEN_DISP(graph);
+
+    gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(graph), G_MTX_LOAD | G_MTX_NOPUSH);
+    gSPSegment(NEXT_POLY_XLU_DISP, ANIME_1_TXT_SEG, aGYO_texture_table[idx0]);
+    gSPSegment(NEXT_POLY_XLU_DISP, ANIME_2_TXT_SEG, aGYO_texture_table[idx1]);
+    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, aGYO_prim_f[t], 0, 0, 0, ctrl->alpha);
+    gSPDisplayList(NEXT_POLY_XLU_DISP, act_gyoei02_00_modelT);
+
+    CLOSE_DISP(graph);
+}
+
+static void aGYO_actor_draw(ACTOR* actorx, GAME* game) {
+    GYOEI_ACTOR* gyoei = (GYOEI_ACTOR*)actorx;
+    aGYO_CTRL_ACTOR* ctrl = gyoei->ctrl;
+    GRAPH* graph = game->graph;
+    int i;
+
+    Matrix_push();
+    _texture_z_light_fog_prim(graph);
+    _texture_z_light_fog_prim_xlu(graph);
+
+    for (i = 0; i < aGYO_MAX_GYOEI; i++) {
+        if (ctrl->exist == TRUE && ((ACTOR*)ctrl)->drawn &&
+            (((ACTOR*)ctrl)->state_bitfield & (ACTOR_STATE_NO_CULL | ACTOR_STATE_NO_DRAW_WHILE_CULLED)) ==
+                (ACTOR_STATE_NO_CULL | ACTOR_STATE_NO_DRAW_WHILE_CULLED)) {
+            if (ctrl->draw_type == aGYO_DRAW_TYPE_FISH) {
+                aGYO_actor_draw_fish(graph, ctrl, game);
+            } else {
+                aGYO_actor_draw_gyoei(graph, ctrl, game);
+            }
+        }
+
+        ctrl++;
+    }
+
+    Matrix_pull();
+}

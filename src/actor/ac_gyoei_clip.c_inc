@@ -1,0 +1,273 @@
+static int aGYO_searchCastFishNum(void) {
+    GYOEI_ACTOR* gyoei = (GYOEI_ACTOR*)aGYO_ctrlActor;
+    aGYO_CTRL_ACTOR* ctrl = gyoei->ctrl;
+    int i;
+
+    for (i = 0; i < aGYO_MAX_GYOEI; i++) {
+        if ((ctrl[i].gyo_flags & 4) != 0) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+static void aGYO_change_data_area(Object_Exchange_c* exc) {
+    int idx = aGYO_searchCastFishNum();
+    GYOEI_ACTOR* gyoei = (GYOEI_ACTOR*)aGYO_ctrlActor;
+    // @BUG - idx can be -1... why isn't this bounds checked?
+    aGYO_CTRL_ACTOR* ctrl = &gyoei->ctrl[idx];
+
+    ctrl->draw_type = aGYO_DRAW_TYPE_FISH;
+}
+
+static void aGYO_destruct(ACTOR* actorx, GAME* game) {
+    aGYO_CTRL_ACTOR* ctrl = (aGYO_CTRL_ACTOR*)actorx;
+
+    ctrl->exist = FALSE;
+    ctrl->gyo_flags = 0;
+    ClObjPipe_dt(game, &ctrl->col_pipe);
+}
+
+static int aGYO_searchRegistSpace(void) {
+    GYOEI_ACTOR* gyoei = (GYOEI_ACTOR*)aGYO_ctrlActor;
+    aGYO_CTRL_ACTOR* ctrl = gyoei->ctrl;
+    int i;
+
+    for (i = 0; i < aGYO_MAX_GYOEI; i++) {
+        if (!ctrl[i].exist) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+static void aGYO_setupActor(aGYO_Init_c* init_data, int idx) {
+    // clang-format off
+    static ACTOR_PROFILE Dummy_Profile = {
+        mAc_PROFILE_GYOEI,
+        ACTOR_PART_BG,
+        ACTOR_STATE_NO_DRAW_WHILE_CULLED | ACTOR_STATE_NO_MOVE_WHILE_CULLED,
+        EMPTY_NO,
+        ACTOR_OBJ_BANK_KEEP,
+        sizeof(ACTOR),
+        mActor_NONE_PROC1,
+        mActor_NONE_PROC1,
+        mActor_NONE_PROC1,
+        mActor_NONE_PROC1,
+        NULL,
+    };
+    // clang-format on
+
+    GYOEI_ACTOR* gyoei = (GYOEI_ACTOR*)aGYO_ctrlActor;
+    aGYO_CTRL_ACTOR* ctrl = &gyoei->ctrl[idx];
+    GAME_PLAY* play = (GAME_PLAY*)init_data->game;
+    Object_Exchange_c* exc = &play->object_exchange;
+
+    bzero(ctrl, sizeof(aGYO_CTRL_ACTOR));
+    ctrl->tools_class.actor_class.shape_info.ofs_y = 200.0f;
+    ctrl->exist = TRUE;
+    ctrl->draw_type = aGYO_DRAW_TYPE_GYOEI;
+    ctrl->gyo_type = init_data->fish_type;
+    ctrl->act_proc = (aGYO_ACT_PROC)&none_proc1;
+    ctrl->range = 40.0f;
+    ctrl->col_flags |= 1;
+
+    Actor_init_actor_class((ACTOR*)ctrl, &Dummy_Profile, NULL, play, -1, init_data->position.x, init_data->position.y,
+                           init_data->position.z, 0, 0, 0, play->block_table.block_x, play->block_table.block_z, -1,
+                           EMPTY_NO, 0);
+    Shape_Info_init((ACTOR*)ctrl, 0.0f, &mAc_ActorShadowCircle, 5.0f, 5.0f);
+    ctrl->tools_class.actor_class.shape_info.shadow_alpha_change_rate = 0.6f;
+    ctrl->tools_class.actor_class.world = ctrl->tools_class.actor_class.home;
+    ctrl->tools_class.actor_class.shape_info.rotation = ctrl->tools_class.actor_class.world.angle;
+    Actor_world_to_eye((ACTOR*)ctrl, 0.0f);
+    xyz_t_move(&ctrl->tools_class.actor_class.last_world_position, &ctrl->tools_class.actor_class.world.position);
+    ctrl->tools_class.actor_class.cull_width = 350.0f;
+    ctrl->tools_class.actor_class.cull_height = 700.0f;
+    ctrl->tools_class.actor_class.cull_distance = 1000.0f;
+    ctrl->tools_class.actor_class.cull_radius = 350.0f;
+
+    if ((mFI_BkNum2BlockKind(ctrl->tools_class.actor_class.block_x, ctrl->tools_class.actor_class.block_z) &
+         mRF_BLOCKKIND_OFFING) == mRF_BLOCKKIND_OFFING) {
+        ctrl->col_flags &= ~1;
+    }
+
+    if (ctrl->gyo_type == aGYO_TYPE_WHALE) {
+        ctrl->alpha = 50;
+        ctrl->tools_class.actor_class.cull_width = 450.0f;
+        ctrl->tools_class.actor_class.cull_radius = 450.0f;
+    } else {
+        ctrl->alpha = 120;
+    }
+
+    {
+        mActor_proc* init_proc;
+
+        switch (ctrl->gyo_type) {
+            case aGYO_TYPE_SALMON2:
+                ctrl->gyo_type = aGYO_TYPE_SALMON;
+            // fallthrough
+            case aGYO_TYPE_COELACANTH:
+            case aGYO_TYPE_JELLYFISH:
+            case aGYO_TYPE_SEA_BASS:
+            case aGYO_TYPE_RED_SNAPPER:
+            case aGYO_TYPE_BARRED_KNIFEJAW:
+            case aGYO_TYPE_WHALE:
+                init_proc = &aGYO_program_dlftbl[aGYO_GYO_TYPE_KASEKI];
+                break;
+            default:
+                init_proc = &aGYO_program_dlftbl[aGYO_GYO_TYPE_TEST];
+                break;
+        }
+
+        ctrl->tools_class.actor_class.mv_proc = *init_proc;
+    }
+
+    ctrl->tools_class.actor_class.drawn = TRUE;
+}
+
+static int aGYO_make_gyoei(aGYO_Init_c* init_data) {
+    int idx = aGYO_searchRegistSpace();
+    int ret = FALSE;
+
+    if (idx >= 0) {
+        aGYO_setupActor(init_data, idx);
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static f32 aGYO_escape_distance(s16 type) {
+    if (type == 0) {
+        return 150.0f;
+    } else {
+        return 30.0f;
+    }
+}
+
+static void aGYO_ballcheck(xyz_t* pos_p, f32 r, s16 type) {
+    GYOEI_ACTOR* gyoei = (GYOEI_ACTOR*)aGYO_ctrlActor;
+    aGYO_CTRL_ACTOR* ctrl = gyoei->ctrl;
+    int i;
+
+    for (i = 0; i < aGYO_MAX_GYOEI; i++) {
+        if (ctrl->exist == TRUE) {
+            f32 dist;
+            f32 escape_dist;
+
+            ctrl->escape_flag = FALSE;
+            dist = search_position_distance(&ctrl->tools_class.actor_class.world.position, pos_p);
+            escape_dist = aGYO_escape_distance(type);
+
+            if (dist < escape_dist) {
+                ctrl->escape_flag = TRUE;
+            }
+        }
+
+        ctrl++;
+    }
+}
+
+static void aGYO_hitcheck(xyz_t* pos_p, s16 size_type) {
+    GYOEI_ACTOR* gyoei = (GYOEI_ACTOR*)aGYO_ctrlActor;
+    aGYO_CTRL_ACTOR* ctrl = gyoei->ctrl;
+    int i;
+
+    for (i = 0; i < aGYO_MAX_GYOEI; i++) {
+        if (ctrl->exist == TRUE && ctrl->escape_flag != TRUE) {
+            f32 dist;
+            f32 escape_dist;
+
+            dist = search_position_distance(&ctrl->tools_class.actor_class.world.position, pos_p);
+
+            switch (size_type) {
+                case aGYO_SIZE_XXS:
+                    escape_dist = 70.0f;
+                    break;
+                case aGYO_SIZE_XS:
+                case aGYO_SIZE_S:
+                case aGYO_SIZE_M:
+                    escape_dist = 85.0f;
+                    break;
+                default:
+                    escape_dist = 100.0f;
+                    break;
+            }
+
+            if (dist < escape_dist) {
+                ctrl->escape_flag = TRUE;
+            }
+        }
+
+        ctrl++;
+    }
+}
+
+static int aGYO_chk_live_gyoei(int bx, int bz, GAME* game) {
+    GYOEI_ACTOR* gyoei = (GYOEI_ACTOR*)aGYO_ctrlActor;
+    aGYO_CTRL_ACTOR* ctrl = gyoei->ctrl;
+    int i;
+    int ret = FALSE;
+
+    for (i = 0; i < aGYO_MAX_GYOEI; i++) {
+        if (ctrl->exist == TRUE && ctrl->tools_class.actor_class.block_x == bx &&
+            ctrl->tools_class.actor_class.block_z == bz) {
+            ret = TRUE;
+            break;
+        }
+
+        ctrl++;
+    }
+
+    return ret;
+}
+
+static ACTOR* aGYO_search_near_gyoei(f32 pos_x, f32 pos_z) {
+    GYOEI_ACTOR* gyoei = (GYOEI_ACTOR*)aGYO_ctrlActor;
+    aGYO_CTRL_ACTOR* ctrl = gyoei->ctrl;
+    int i;
+    aGYO_CTRL_ACTOR* ret = NULL;
+    f32 min_dist = 819200.0f;
+
+    for (i = 0; i < aGYO_MAX_GYOEI; i++) {
+        if (ctrl->exist == TRUE) {
+            f32 dx = ((ACTOR*)ctrl)->world.position.x - pos_x;
+            f32 dz = ((ACTOR*)ctrl)->world.position.z - pos_z;
+            f32 dist = SQ(dx) + SQ(dz);
+
+            if (dist < min_dist) {
+                ret = ctrl;
+                min_dist = dist;
+            }
+        }
+
+        ctrl++;
+    }
+
+    return (ACTOR*)ret;
+}
+
+static int aGYO_init_dma_and_clip_area(void) {
+    int ret = FALSE;
+
+    CLIP(gyo_clip) = (aGYO_Clip_c*)zelda_malloc(sizeof(aGYO_Clip_c));
+    if (CLIP(gyo_clip) != NULL) {
+        CLIP(gyo_clip)->make_gyoei_proc = &aGYO_make_gyoei;
+        CLIP(gyo_clip)->dt_gyoei_proc = &aGYO_destruct;
+        CLIP(gyo_clip)->ballcheck_gyoei_proc = &aGYO_ballcheck;
+        CLIP(gyo_clip)->hitcheck_gyoei_proc = &aGYO_hitcheck;
+        CLIP(gyo_clip)->chk_live_gyoei_proc = &aGYO_chk_live_gyoei;
+        CLIP(gyo_clip)->search_near_gyoei_proc = &aGYO_search_near_gyoei;
+
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aGYO_free_clip_area(void) {
+    zelda_free(CLIP(gyo_clip));
+    CLIP(gyo_clip) = NULL;
+}

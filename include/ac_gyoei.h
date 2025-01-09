@@ -3,12 +3,14 @@
 
 #include "types.h"
 #include "ac_tools.h"
+#include "ac_gyoei_h.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #define aGYO_MAX_GYOEI 2
+#define aGYO_EXIST_MAX 4
 
 enum {
     aGYO_GYO_TYPE_TEST,
@@ -150,9 +152,12 @@ typedef struct gyoei_actor_s GYOEI_ACTOR;
 struct gyoei_actor_s {
     /* 0x000 */ ACTOR actor_class;
     /* 0x174 */ aGYO_CTRL_ACTOR ctrl[aGYO_MAX_GYOEI];
-    /* 0x614 */ u8 exist[4];
-    /* 0x618 */ int segment_type[4];
+    /* 0x614 */ u8 exist[aGYO_EXIST_MAX];
+    /* 0x618 */ int segment_type[aGYO_EXIST_MAX];
 };
+
+extern void aGTT_actor_init(ACTOR* actorx, GAME* game); // ac_gyo_test.c
+extern void aGKK_actor_init(ACTOR* actorx, GAME* game); // ac_gyo_kaseki
 
 extern ACTOR_PROFILE Gyoei_Profile;
 
