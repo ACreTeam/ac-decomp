@@ -41,11 +41,11 @@ void mfish_kaeru_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
                           &keyframe->_00._4F0, &keyframe->_00._526);
     cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&keyframe->_00._00, &cKF_ba_r_obj_museum5_hasu, NULL, 0.5f,
                                                              0.0f);
-    actor->_5A0.x = 453.9f;
-    actor->_5A0.y = 116.0f;
-    actor->_5A0.z = 250.4f;
+    actor->position.x = 453.9f;
+    actor->position.y = 116.0f;
+    actor->position.z = 250.4f;
     actor->_5AC = ZeroVec;
-    actor->_626 = 0;
+    actor->activityFrameCount = 0;
     actor->_612.x = 0;
     actor->_612.y = 0;
     actor->_612.z = 0;
@@ -84,7 +84,7 @@ void mfish_kaeru_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
             cKF_SkeletonInfo_R_init_standard_repeat_morph(&skele1->_00, skele1->_550[actor->_640], NULL, 0.f);
         }
         if (actor->_640 == 1) {
-            sAdo_OngenTrgStart(0x77, &actor->_5A0);
+            sAdo_OngenTrgStart(0x77, &actor->position);
             actor->_612.x = 1;
         }
     }
@@ -178,8 +178,8 @@ BOOL hasu_after_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, 
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
     YET_SKELETON_2* skele = actor->_590;
     if (joint_num == 9) {
-        Matrix_Position_Zero(&actor->_5A0);
-        actor->_5A0.y = skele->_564 * actor->init_data._00 * sin_s(skele->_56C) + 116.0f;
+        Matrix_Position_Zero(&actor->position);
+        actor->position.y = skele->_564 * actor->init_data.renderScale * sin_s(skele->_56C) + 116.0f;
     }
     return TRUE;
 }
@@ -203,10 +203,10 @@ void mfish_kaeru_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     cKF_Si3_draw_R_SV(gamex, &keyframe->_00._00, mtxp2, hasu_before_disp, hasu_after_disp, actor);
 
-    Matrix_translate(actor->_5A0.x + actor->_5AC.x, actor->_5A0.y, actor->_5A0.z + actor->_5AC.z, 0);
+    Matrix_translate(actor->position.x + actor->_5AC.x, actor->position.y, actor->position.z + actor->_5AC.z, 0);
     Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
     Matrix_translate(0.0f, 0.0f, actor->init_data._24, 1);
-    Matrix_scale(actor->init_data._00, actor->init_data._00, actor->init_data._00, 1);
+    Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, NULL, NULL, actor);
     CLOSE_DISP(gamex->graph);

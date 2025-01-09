@@ -5,6 +5,7 @@
 #include "m_actor.h"
 #include "c_keyframe.h"
 #include "libu64/u64types.h"
+#include "ac_gyoei.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,7 +24,7 @@ typedef void (*PRIV_FISH_PROCESS)(struct _FISH_PRIVATE_DATA*, GAME*);
 // unsure temp structs
 
 typedef struct _MUSEUM_FISH_INIT_DATA {
-    f32 _00;
+    f32 renderScale;
     f32 _04;
     f32 _08;
     f32 _0C;
@@ -34,8 +35,8 @@ typedef struct _MUSEUM_FISH_INIT_DATA {
     f32 _20;
     f32 _24;
     f32 _28;
-    s16 _2C;
-    s16 _2E;
+    s16 activeFramesMin;
+    s16 activeFramesRange;
     s16 _30;
 } MUSEUM_FISH_INIT_DATA; // size: 0x34
 
@@ -81,17 +82,19 @@ typedef struct _YET_SKELETON_2 {
     s16 _56C;
 } YET_SKELETON_2;
 
+typedef enum fish_type MUSEUM_FISH_TYPE;
+
 typedef struct _FISH_PRIVATE_DATA {
     MUSEUM_FISH_INIT_DATA init_data;
-    PRIV_FISH_PROCESS _34; // size:4
+    PRIV_FISH_PROCESS currentProcess; // size:4
     YET_SKELETON _38;
 
     YET_SKELETON_2* _590;
     struct _FISH_PRIVATE_DATA* _594;
     struct _FISH_PRIVATE_DATA* _598;
 
-    s32 _59C; // fish num
-    xyz_t _5A0;
+    MUSEUM_FISH_TYPE fishIDEnum;
+    xyz_t position;
     xyz_t _5AC;
     xyz_t _5B8;
     artificial_padding(0x5B8, 0x5D0, xyz_t);
@@ -113,12 +116,12 @@ typedef struct _FISH_PRIVATE_DATA {
     s16 _620;
     s16 _622;
     s16 _624;
-    s16 _626;
-    s16 _628;
+    s16 activityFrameCount;
+    s16 savedActivityFrameCount;
     s16 _62A;
     s16 _62C;
-    s16 _62E;
-    s16 _630;
+    s16 _62E_flags;
+    s16 group;
     s16 _632;
     s16 _634;
     s16 _636;
@@ -143,13 +146,13 @@ typedef struct _FISH_DISPLAY_MSG_INFO {
 typedef struct _MUSEUM_FISH_ACTOR {
     ACTOR actor; // offset: 0, size: 0x174
     int _174;
-    MUSEUM_FISH_PRIVATE_DATA prvFish[40]; // offset: 0x178 size: 0xFB48
-    MUSEUM_FISH_KUSA_DATA prvKusa[14];    // offset: 0xFCB8 size: 0x4AD0
-    YET_SKELETON_2 _14788;                // offset: 0x14788 size: 0x570
+    MUSEUM_FISH_PRIVATE_DATA prvFish[aGYO_TYPE_NUM]; // offset: 0x178 size: 0xFB48
+    MUSEUM_FISH_KUSA_DATA prvKusa[14];               // offset: 0xFCB8 size: 0x4AD0
+    YET_SKELETON_2 _14788;                           // offset: 0x14788 size: 0x570
 
     u8 _14cf8[16]; // temp
 
-    xyz_t _14d08[2];
+    xyz_t lightPosition[2];
     int numFishDisplayed;                         // offset: 0x14d20, size: 4
     int fishDisplayMsgIter;                       // offset: 0x14d24, size: 4
     FISH_DISPLAY_MSG_INFO fishDisplayMsgInfo[10]; // offset: 0x14d28, size: 4*10
@@ -160,15 +163,15 @@ typedef struct _MUSEUM_FISH_ACTOR {
 
     s16 _14daa[5];
     s16 _14db4;
-    s16 _14db6;      // offset: 0x14db6, size: 2
-    s16 _14db8;      // offset: 0x14db8, size: 2
-    s16 _14dba;      // offset: 0x14dba, size: 2
-    s16 _14dbc[2];   // offset: 0x14dbc, size: 4
-    s16 _14dc0;      // offset: 0x14dc0, size: 2
-    s16 _14dc2;      // offset: 0x14dc2, size: 2
-    s16 _14dc4;      // offset: 0x14dc4, size: 2
-    s16 _14dc8;      // offset: 0x14dc8, size: 2
-} MUSEUM_FISH_ACTOR; // size 14DCA
+    s16 _14db6;        // offset: 0x14db6, size: 2
+    s16 lightID1;      // offset: 0x14db8, size: 2
+    s16 lightID2;      // offset: 0x14dba, size: 2
+    s16 lightPower[2]; // offset: 0x14dbc, size: 4
+    s16 _14dc0;        // offset: 0x14dc0, size: 2
+    s16 _14dc2;        // offset: 0x14dc2, size: 2
+    s16 _14dc4;        // offset: 0x14dc4, size: 2
+    s16 _14dc8;        // offset: 0x14dc8, size: 2
+} MUSEUM_FISH_ACTOR;   // size 14DCA
 
 // ac_museum_fish.c_inc
 void Museum_Fish_Prv_data_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game, int fishNum, int r6);
