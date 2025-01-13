@@ -504,12 +504,12 @@ config.libs = [
     DolphinLib(
         "gba",
         [
-            Object(NonMatching, "dolphin/gba/GBA.c"),
-            Object(NonMatching, "dolphin/gba/GBAGetProcessStatus.c"),
-            Object(NonMatching, "dolphin/gba/GBAJoyBoot.c"),
-            Object(NonMatching, "dolphin/gba/GBARead.c"),
-            Object(NonMatching, "dolphin/gba/GBAWrite.c"),
-            Object(NonMatching, "dolphin/gba/GBAXfer.c"),
+            Object(Matching, "dolphin/gba/GBA.c"),
+            Object(Matching, "dolphin/gba/GBAGetProcessStatus.c"),
+            Object(Matching, "dolphin/gba/GBAJoyBoot.c"),
+            Object(Matching, "dolphin/gba/GBARead.c"),
+            Object(Matching, "dolphin/gba/GBAWrite.c"),
+            Object(Matching, "dolphin/gba/GBAXfer.c"),
         ],
     ),
     DolphinLib(
