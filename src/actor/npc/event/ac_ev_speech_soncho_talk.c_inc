@@ -1,0 +1,196 @@
+void aESS_setup_think_proc(ACTOR* actorx, int think_idx);
+
+void aESS_set_request_act(NPC_SPEECH_SONCHO* soncho) {
+    soncho->npc_class.request.act_priority = 0x4;
+    soncho->npc_class.request.act_idx = aNPC_ACT_SPECIAL;
+    soncho->npc_class.request.act_type = aNPC_ACT_TYPE_SEARCH;
+}
+
+void aESS_act_init_proc(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play) {
+    soncho->npc_class.action.step = 0;
+}
+
+void aESS_act_proc(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play, int act_idx) {
+    static aESS_PROC act_proc[] = { &aESS_act_init_proc, (aESS_PROC)mActor_NONE_PROC1, (aESS_PROC)mActor_NONE_PROC1 };
+    act_proc[act_idx](soncho, play);
+}
+
+void aESS_speech_start_wait(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)soncho;
+    GROUNDHOG_CONTROL_ACTOR* parent = (GROUNDHOG_CONTROL_ACTOR*)actorx->parent_actor;
+    if (parent != NULL && parent->action == aGHC_ACTION_SONCHO_SPEECH_END_WAIT) {
+        aESS_setup_think_proc(actorx, 3);
+    }
+}
+
+void aESS_think_main_proc(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play) {
+    aGHC_Clip_c* clip;
+    NPC_ACTOR* actor;
+    if (soncho->npc_class.action.idx == aNPC_ACT_SPECIAL) {
+        soncho->_998(soncho, play);
+    } else if (soncho->npc_class.action.step == 0xff) {
+        CLIP(npc_clip)->animation_init_proc((ACTOR*)soncho, 0x5, FALSE);
+        aESS_set_request_act(soncho);
+    }
+    clip = CLIP(groundhog_control_clip);
+    if (clip != NULL && (actor = (NPC_ACTOR*)clip->groundhog_npc_actor) != NULL) {
+        soncho->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+                                                    aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV |
+                                                    aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    } else {
+        soncho->npc_class.condition_info.demo_flg =
+            aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+            aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    }
+}
+
+void aESS_think_init_proc(ACTOR* actorx, GAME_PLAY* play) {
+    NPC_SPEECH_SONCHO* soncho = (NPC_SPEECH_SONCHO*)actorx;
+    int next = 0x4;
+    soncho->npc_class.action.act_proc = (aNPC_ACTION_PROC)aESS_act_proc;
+    aESS_set_request_act(soncho);
+    if (Common_Get(time).now_sec < 0x7080) {
+        next = 0;
+        if (CLIP(groundhog_control_clip) != NULL && CLIP(groundhog_control_clip)->now_term == 4) {
+            next = 0x1;
+        }
+    } else {
+        int* common = (int*)mEv_get_common_area(mEv_EVENT_GROUNDHOG_DAY, 0x0);
+        if (common != NULL && *common == 1) {
+            next = 2;
+        }
+    }
+    aESS_setup_think_proc((ACTOR*)soncho, next);
+}
+
+void aESS_setup_think_proc(ACTOR* actorx, int think_proc) {
+    static aESS_think_info dt_tbl[5] = {
+        { (aESS_PROC)mActor_NONE_PROC1, (aNPC_TALK_REQUEST_PROC)aESS_norm_talk_request,
+          (aNPC_TALK_END_CHECK_PROC)aESS_norm_talk_end_chk, TRUE },
+        { (aESS_PROC)mActor_NONE_PROC1, (aNPC_TALK_REQUEST_PROC)mActor_NONE_PROC1,
+          (aNPC_TALK_END_CHECK_PROC)mActor_NONE_PROC1, TRUE },
+        { aESS_speech_start_wait, (aNPC_TALK_REQUEST_PROC)mActor_NONE_PROC1,
+          (aNPC_TALK_END_CHECK_PROC)mActor_NONE_PROC1, FALSE },
+        { (aESS_PROC)mActor_NONE_PROC1, (aNPC_TALK_REQUEST_PROC)aESS_force_talk_request,
+          (aNPC_TALK_END_CHECK_PROC)aESS_force_talk_end_chk, TRUE },
+        { (aESS_PROC)mActor_NONE_PROC1, (aNPC_TALK_REQUEST_PROC)aESS_norm_talk_request,
+          (aNPC_TALK_END_CHECK_PROC)aESS_norm_talk_end_chk, TRUE },
+    };
+    NPC_SPEECH_SONCHO* soncho = (NPC_SPEECH_SONCHO*)actorx;
+    aESS_think_info* info = &dt_tbl[think_proc];
+    soncho->think_proc = think_proc;
+    soncho->_998 = info->proc;
+    soncho->npc_class.talk_info.talk_request_proc = info->talk_request_proc;
+    soncho->npc_class.talk_info.talk_end_check_proc = info->talk_end_check_proc;
+    soncho->npc_class.head.lock_flag = info->flag;
+}
+
+void aESS_think_proc(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play, int think_id) {
+    static aESS_THINK_PROC think_proc[] = { (aESS_PROC)aESS_think_init_proc, aESS_think_main_proc };
+    think_proc[think_id](soncho, play);
+}
+
+void aESS_schedule_init_proc(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)soncho;
+    soncho->npc_class.think.think_proc = (aNPC_THINK_PROC)aESS_think_proc;
+    soncho->npc_class.condition_info.demo_flg =
+        aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+        aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    soncho->npc_class.condition_info.hide_request = FALSE;
+    soncho->npc_class.palActorIgnoreTimer = -1;
+    actorx->status_data.weight = 0xfe;
+    soncho->npc_class.talk_info.turn = aNPC_TALK_TURN_NONE;
+    actorx->world.position.x -= 20.0f;
+
+    actorx->world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(actorx->world.position, -20.0f);
+    CLIP(npc_clip)->think_proc((NPC_ACTOR*)soncho, play, 0x9, 0);
+}
+
+void aESS_schedule_main_proc(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play) {
+    if (CLIP(npc_clip)->think_proc((NPC_ACTOR*)soncho, play, -1, 1) == FALSE) {
+        CLIP(npc_clip)->think_proc((NPC_ACTOR*)soncho, play, -1, 2);
+    }
+}
+
+void aESS_schedule_proc(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play, int sche_idx) {
+    static aESS_SCHEDULE_PROC sche_proc[] = { aESS_schedule_init_proc, aESS_schedule_main_proc };
+    sche_proc[sche_idx](soncho, play);
+}
+
+void aESS_set_norm_talk_info(ACTOR* actorx) {
+    int msg_no;
+    aGHC_Clip_c* clip = CLIP(groundhog_control_clip);
+    if (clip != NULL && clip->now_term != 5) {
+        msg_no = mString_SPEECH_SONCHO_START + 1 + (int)RANDOM_F(5);
+    } else {
+        switch (Common_Get(weather)) {
+            case mEnv_WEATHER_CLEAR:
+                msg_no = mString_SPEECH_SONCHO_START + 6 + (int)RANDOM_F(5);
+                break;
+            case mEnv_WEATHER_SNOW:
+                msg_no = mString_SPEECH_SONCHO_START + 11 + (int)RANDOM_F(5);
+                break;
+            default:
+                msg_no = mString_SPEECH_SONCHO_START + 6;
+                break;
+        }
+    }
+    mDemo_Set_msg_num(msg_no);
+}
+
+void aESS_norm_talk_request(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play) {
+    mDemo_Request(mDemo_TYPE_TALK, (ACTOR*)soncho, aESS_set_norm_talk_info);
+}
+
+void aESS_set_force_talk_info() {
+    mDemo_Set_msg_num(mString_SPEECH_SONCHO_START);
+    mDemo_Set_camera(CAMERA2_PROCESS_NUM);
+}
+
+void aESS_force_talk_request(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play) {
+    mDemo_Request(0xa, (ACTOR*)soncho, aESS_set_force_talk_info);
+}
+
+int aESS_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_SPEECH_SONCHO* soncho = (NPC_SPEECH_SONCHO*)actorx;
+    soncho->npc_class.talk_info.talk_request_proc = mActor_NONE_PROC1;
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+int aESS_norm_talk_end_chk(NPC_SPEECH_SONCHO* soncho) {
+    ACTOR* actorx = (ACTOR*)soncho;
+    int res = 0;
+    if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)soncho) == FALSE) {
+        int think_proc = 4;
+        if (CLIP(groundhog_control_clip) != NULL) {
+            switch (CLIP(groundhog_control_clip)->now_term) {
+                case 4:
+                    think_proc = 0x1;
+                    break;
+                case 5:
+                    break;
+                default:
+                    think_proc = 0;
+                    break;
+            }
+        }
+        aESS_setup_think_proc(actorx, think_proc);
+        res = TRUE;
+    }
+    return res;
+}
+
+int aESS_force_talk_end_chk(NPC_SPEECH_SONCHO* soncho) {
+    ACTOR* actorx = (ACTOR*)soncho;
+    int res = FALSE;
+    if (mDemo_Check(mDemo_TYPE_SPEECH, actorx) == FALSE) {
+        GROUNDHOG_CONTROL_ACTOR* parent = (GROUNDHOG_CONTROL_ACTOR*)actorx->parent_actor;
+        if (parent != NULL) {
+            parent->event_state = aGHC_EVENT_STATE_SONCHO_DONE;
+            aESS_setup_think_proc(actorx, 0x4);
+            res = TRUE;
+        }
+    }
+    return res;
+}

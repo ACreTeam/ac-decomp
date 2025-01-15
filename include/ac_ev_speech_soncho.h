@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_actor.h"
+#include "ac_npc.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -10,9 +11,29 @@ extern "C" {
 
 extern ACTOR_PROFILE Ev_Speech_Soncho_Profile;
 
+typedef struct ac_npc_speech_soncho NPC_SPEECH_SONCHO;
+
+typedef void (*aESS_PROC)(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play);
+typedef void (*aESS_THINK_PROC)(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play);
+typedef void (*aESS_SCHEDULE_PROC)(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play);
+
+struct ac_npc_speech_soncho {
+    NPC_ACTOR npc_class;
+    /* 0x994 */ int think_proc;
+    /* 0x998 */ aESS_PROC _998;
+};
+
+struct aess_think_info {
+    aESS_PROC proc;
+    aNPC_TALK_REQUEST_PROC talk_request_proc;
+    aNPC_TALK_END_CHECK_PROC talk_end_check_proc;
+    u8 flag;
+};
+
+typedef struct aess_think_info aESS_think_info;
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-
