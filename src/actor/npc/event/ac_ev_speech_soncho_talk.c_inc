@@ -27,7 +27,7 @@ void aESS_think_main_proc(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play) {
     aGHC_Clip_c* clip;
     NPC_ACTOR* actor;
     if (soncho->npc_class.action.idx == aNPC_ACT_SPECIAL) {
-        soncho->_998(soncho, play);
+        soncho->think_proc(soncho, play);
     } else if (soncho->npc_class.action.step == 0xff) {
         CLIP(npc_clip)->animation_init_proc((ACTOR*)soncho, 0x5, FALSE);
         aESS_set_request_act(soncho);
@@ -63,7 +63,7 @@ void aESS_think_init_proc(ACTOR* actorx, GAME_PLAY* play) {
     aESS_setup_think_proc((ACTOR*)soncho, next);
 }
 
-void aESS_setup_think_proc(ACTOR* actorx, int think_proc) {
+void aESS_setup_think_proc(ACTOR* actorx, int think_proc_idk) {
     static aESS_think_info dt_tbl[5] = {
         { (aESS_PROC)mActor_NONE_PROC1, (aNPC_TALK_REQUEST_PROC)aESS_norm_talk_request,
           (aNPC_TALK_END_CHECK_PROC)aESS_norm_talk_end_chk, TRUE },
@@ -77,9 +77,9 @@ void aESS_setup_think_proc(ACTOR* actorx, int think_proc) {
           (aNPC_TALK_END_CHECK_PROC)aESS_norm_talk_end_chk, TRUE },
     };
     NPC_SPEECH_SONCHO* soncho = (NPC_SPEECH_SONCHO*)actorx;
-    aESS_think_info* info = &dt_tbl[think_proc];
-    soncho->think_proc = think_proc;
-    soncho->_998 = info->proc;
+    aESS_think_info* info = &dt_tbl[think_proc_idk];
+    soncho->think_proc_idk = think_proc_idk;
+    soncho->think_proc = info->think_proc;
     soncho->npc_class.talk_info.talk_request_proc = info->talk_request_proc;
     soncho->npc_class.talk_info.talk_end_check_proc = info->talk_end_check_proc;
     soncho->npc_class.head.lock_flag = info->flag;
@@ -98,7 +98,7 @@ void aESS_schedule_init_proc(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play) {
         aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
     soncho->npc_class.condition_info.hide_request = FALSE;
     soncho->npc_class.palActorIgnoreTimer = -1;
-    actorx->status_data.weight = 0xfe;
+    actorx->status_data.weight = MASSTYPE_HEAVY;
     soncho->npc_class.talk_info.turn = aNPC_TALK_TURN_NONE;
     actorx->world.position.x -= 20.0f;
 
@@ -148,7 +148,7 @@ void aESS_set_force_talk_info() {
 }
 
 void aESS_force_talk_request(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play) {
-    mDemo_Request(0xa, (ACTOR*)soncho, aESS_set_force_talk_info);
+    mDemo_Request(mDemo_TYPE_SPEECH, (ACTOR*)soncho, aESS_set_force_talk_info);
 }
 
 int aESS_talk_init(ACTOR* actorx, GAME* game) {
@@ -160,22 +160,22 @@ int aESS_talk_init(ACTOR* actorx, GAME* game) {
 
 int aESS_norm_talk_end_chk(NPC_SPEECH_SONCHO* soncho) {
     ACTOR* actorx = (ACTOR*)soncho;
-    int res = 0;
+    int res = FALSE;
     if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)soncho) == FALSE) {
-        int think_proc = 4;
+        int think_proc_idk = 4;
         if (CLIP(groundhog_control_clip) != NULL) {
             switch (CLIP(groundhog_control_clip)->now_term) {
                 case 4:
-                    think_proc = 0x1;
+                    think_proc_idk = 0x1;
                     break;
                 case 5:
                     break;
                 default:
-                    think_proc = 0;
+                    think_proc_idk = 0;
                     break;
             }
         }
-        aESS_setup_think_proc(actorx, think_proc);
+        aESS_setup_think_proc(actorx, think_proc_idk);
         res = TRUE;
     }
     return res;

@@ -19,12 +19,12 @@ typedef void (*aESS_SCHEDULE_PROC)(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play);
 
 struct ac_npc_speech_soncho {
     NPC_ACTOR npc_class;
-    /* 0x994 */ int think_proc;
-    /* 0x998 */ aESS_PROC _998;
+    /* 0x994 */ int think_proc_idk;
+    /* 0x998 */ aESS_PROC think_proc;
 };
 
 struct aess_think_info {
-    aESS_PROC proc;
+    aESS_PROC think_proc;
     aNPC_TALK_REQUEST_PROC talk_request_proc;
     aNPC_TALK_END_CHECK_PROC talk_end_check_proc;
     u8 flag;

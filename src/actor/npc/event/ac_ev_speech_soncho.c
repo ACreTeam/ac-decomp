@@ -37,13 +37,15 @@ ACTOR_PROFILE Ev_Speech_Soncho_Profile = {
 // clang-format on
 
 void aESS_actor_ct(ACTOR* actorx, GAME* game) {
-    static aNPC_ct_data_c ct_data = { &aESS_actor_move,
-                                      &aESS_actor_draw,
-                                      5,
-                                      mActor_NONE_PROC1,
-                                      &aESS_talk_init,
-                                      (aNPC_TALK_END_CHECK_PROC)mActor_NONE_PROC1,
-                                      1 };
+    static aNPC_ct_data_c ct_data = {
+        &aESS_actor_move,
+        &aESS_actor_draw,
+        5,
+        mActor_NONE_PROC1,
+        &aESS_talk_init,
+        (aNPC_TALK_END_CHECK_PROC)mActor_NONE_PROC1,
+        1,
+    };
     NPC_SPEECH_SONCHO* soncho = (NPC_SPEECH_SONCHO*)actorx;
     if (CLIP(npc_clip)->birth_check_proc(actorx, game) == TRUE) {
         soncho->npc_class.schedule.schedule_proc = (aNPC_SCHEDULE_PROC)aESS_schedule_proc;
