@@ -1,13 +1,9 @@
 #include "ac_museum_fish.h"
-#include "m_demo.h"
-#include "m_name_table.h"
-#include "m_item_name.h"
 #include "m_msg.h"
 #include "m_common_data.h"
 #include "sys_matrix.h"
 #include "m_player_lib.h"
 #include "m_debug_mode.h"
-#include "libforest/gbi_extensions.h"
 #include "m_rcp.h"
 #include "ac_gyoei.h"
 
@@ -23,10 +19,6 @@
 #define RANDOM2F_RANGE(min, max) ((f32)(min) + (f32)RANDOM2_F((f32)(max) - (f32)(min)))
 #define RANDOM_RANGE(min, max) ((int)(min) + (int)RANDOM((int)(max) - (int)(min)))
 #define RANDOM2_RANGE(min, max) ((int)(min) + (int)RANDOM2((int)(max) - (int)(min)))
-
-// delete this stuff later
-typedef Mtx;
-typedef Gfx;
 
 // extern data
 // clang-format off
@@ -630,28 +622,31 @@ int unagi_rail_num_tbl[3] = {
     ARRAY_LEN(unagi_rail_pos3),
 };
 
-#include "../src/actor/ac_museum_fish_base.c_inc"
-#include "../src/actor/ac_museum_fish_afish.c_inc"
-#include "../src/actor/ac_museum_fish_aroana.c_inc"
-#include "../src/actor/ac_museum_fish_koi.c_inc"
-#include "../src/actor/ac_museum_fish_kaseki.c_inc"
-#include "../src/actor/ac_museum_fish_bass.c_inc"
-#include "../src/actor/ac_museum_fish_seafish.c_inc"
-#include "../src/actor/ac_museum_fish_tai.c_inc"
-#include "../src/actor/ac_museum_fish_small_fish.c_inc"
-#include "../src/actor/ac_museum_fish_gupi.c_inc"
-#include "../src/actor/ac_museum_fish_medaka.c_inc"
-#include "../src/actor/ac_museum_fish_kingyo.c_inc"
-#include "../src/actor/ac_museum_fish_dojou.c_inc"
-#include "../src/actor/ac_museum_fish_donko.c_inc"
-#include "../src/actor/ac_museum_fish_big_fish.c_inc"
-#include "../src/actor/ac_museum_fish_ito.c_inc"
-#include "../src/actor/ac_museum_fish_unagi.c_inc"
-#include "../src/actor/ac_museum_fish_namazu.c_inc"
-#include "../src/actor/ac_museum_fish_zarigani.c_inc"
-#include "../src/actor/ac_museum_fish_kurage.c_inc"
-#include "../src/actor/ac_museum_fish_hasu.c_inc"
+#include "../src/actor/ac_museum_fish_subfish.c_inc"
 
+// clang-format on
+
+void Museum_Fish_Prv_data_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game, int fishNum, int r6) {
+    actor->fishIDEnum = fishNum;
+    actor->init_data = mfish_init_data[fishNum];
+    actor->group = mfish_group_tbl[fishNum];
+
+    if (actor->group >= 0) {
+        actor->position = suisou_pos[actor->group];
+    } else {
+        actor->position = ZeroVec;
+    }
+
+    actor->position.y = mfish_init_data[fishNum]._0C + RANDOM2_F(10);
+    if (r6 == 1) {
+        actor->position.x += RANDOM2_F(90.f);
+        actor->position.z += RANDOM2_F(90.f);
+    }
+    actor->currentProcess = &mfish_normal_process;
+    mfish_ct[fishNum](actor, game);
+}
+
+// clang-format off
 cKF_Skeleton_R_c* kusa_model[14] = {
     &cKF_bs_r_obj_museum5_kusa1,
     &cKF_bs_r_obj_museum5_kusa1,
@@ -688,28 +683,7 @@ cKF_Animation_R_c* kusa_anime[14]= {
 float kusa_start_frame[14] = {
     25.0f, 0.0f, 25.0f, 0.0f, 50.0f, 0.0f, 20.0f, 60.0f, 80.0f, 0.0f, 0.0f, 25.0f, 0.0f, 75.0f
 };
-
 // clang-format on
-
-void Museum_Fish_Prv_data_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game, int fishNum, int r6) {
-    actor->fishIDEnum = fishNum;
-    actor->init_data = mfish_init_data[fishNum];
-    actor->group = mfish_group_tbl[fishNum];
-
-    if (actor->group >= 0) {
-        actor->position = suisou_pos[actor->group];
-    } else {
-        actor->position = ZeroVec;
-    }
-
-    actor->position.y = mfish_init_data[fishNum]._0C + RANDOM2_F(10);
-    if (r6 == 1) {
-        actor->position.x += RANDOM2_F(90);
-        actor->position.z += RANDOM2_F(90);
-    }
-    actor->currentProcess = &mfish_normal_process;
-    mfish_ct[fishNum](actor, game);
-}
 
 void Museum_Fish_Actor_ct(ACTOR* actorx, GAME* gamex) {
     MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;

@@ -623,7 +623,26 @@ void mfish_ani_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 void mfish_ani_base_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     mfish_onefish_dw(actor, gamex);
 }
-
+#include "../src/actor/ac_museum_fish_afish.c_inc"
+#include "../src/actor/ac_museum_fish_aroana.c_inc"
+#include "../src/actor/ac_museum_fish_koi.c_inc"
+#include "../src/actor/ac_museum_fish_kaseki.c_inc"
+#include "../src/actor/ac_museum_fish_bass.c_inc"
+#include "../src/actor/ac_museum_fish_seafish.c_inc"
+#include "../src/actor/ac_museum_fish_tai.c_inc"
+#include "../src/actor/ac_museum_fish_small_fish.c_inc"
+#include "../src/actor/ac_museum_fish_gupi.c_inc"
+#include "../src/actor/ac_museum_fish_medaka.c_inc"
+#include "../src/actor/ac_museum_fish_kingyo.c_inc"
+#include "../src/actor/ac_museum_fish_dojou.c_inc"
+#include "../src/actor/ac_museum_fish_donko.c_inc"
+#include "../src/actor/ac_museum_fish_big_fish.c_inc"
+#include "../src/actor/ac_museum_fish_ito.c_inc"
+#include "../src/actor/ac_museum_fish_unagi.c_inc"
+#include "../src/actor/ac_museum_fish_namazu.c_inc"
+#include "../src/actor/ac_museum_fish_zarigani.c_inc"
+#include "../src/actor/ac_museum_fish_kurage.c_inc"
+#include "../src/actor/ac_museum_fish_hasu.c_inc"
 void Museum_Fish_BigFishObjCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     int i;
     MUSEUM_FISH_PRIVATE_DATA* fish[2];
@@ -875,6 +894,10 @@ void Museum_Fish_objchk_pos_set(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     actor->_5B8 = actor->position;
     actor->_5B8.x += (actor->init_data._24 * sin_s(actor->_60C.y));
     actor->_5B8.z += (actor->init_data._24 * cos_s(actor->_60C.y));
+}
+
+void Museum_Fish_old_chk_pos_set() {
+    // UNUSED/STRIPPED
 }
 
 void Museum_Fish_BGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
