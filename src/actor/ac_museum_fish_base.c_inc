@@ -445,7 +445,7 @@ void mfish_base_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     } else if (actor->fishIDEnum == aGYO_TYPE_FRESHWATER_GOBY) {
         actor->_5F4 = RANDOM_F(5.0f);
     } else {
-        actor->_5F4 = RANDOM_F(10.0f);
+        actor->_5F4 = RANDOM2_F(10.0f);
     }
     actor->_5D0.y = 0.0;
     actor->_5AC = ZeroVec;

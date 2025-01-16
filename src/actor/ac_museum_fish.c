@@ -488,7 +488,7 @@ PRIV_FISH_DRAW mfish_dw[40] = {
 /* FROG             */ mfish_kaeru_dw,
 /* KILLIFISH        */ mfish_medaka_dw,
 /* JELLYFISH        */ mfish_kurage_dw,
-/* SEA_BASS         */ mfish_seafish_dw,
+/* SEA_BASS         */ mfish_ani_base_dw,
 /* RED_SNAPPER      */ mfish_tai_dw,
 /* BARRED_KNIFEJAW  */ mfish_tai_dw,
 /* ARAPAIMA         */ mfish_big_fish_dw
@@ -622,7 +622,7 @@ int unagi_rail_num_tbl[3] = {
     ARRAY_LEN(unagi_rail_pos3),
 };
 
-#include "../src/actor/ac_museum_fish_subfish.c_inc"
+#include "../src/actor/ac_museum_fish_base.c_inc"
 
 // clang-format on
 
