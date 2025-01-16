@@ -630,6 +630,28 @@ int unagi_rail_num_tbl[3] = {
     ARRAY_LEN(unagi_rail_pos3),
 };
 
+#include "../src/actor/ac_museum_fish_base.c_inc"
+#include "../src/actor/ac_museum_fish_afish.c_inc"
+#include "../src/actor/ac_museum_fish_aroana.c_inc"
+#include "../src/actor/ac_museum_fish_koi.c_inc"
+#include "../src/actor/ac_museum_fish_kaseki.c_inc"
+#include "../src/actor/ac_museum_fish_bass.c_inc"
+#include "../src/actor/ac_museum_fish_seafish.c_inc"
+#include "../src/actor/ac_museum_fish_tai.c_inc"
+#include "../src/actor/ac_museum_fish_small_fish.c_inc"
+#include "../src/actor/ac_museum_fish_gupi.c_inc"
+#include "../src/actor/ac_museum_fish_medaka.c_inc"
+#include "../src/actor/ac_museum_fish_kingyo.c_inc"
+#include "../src/actor/ac_museum_fish_dojou.c_inc"
+#include "../src/actor/ac_museum_fish_donko.c_inc"
+#include "../src/actor/ac_museum_fish_big_fish.c_inc"
+#include "../src/actor/ac_museum_fish_ito.c_inc"
+#include "../src/actor/ac_museum_fish_unagi.c_inc"
+#include "../src/actor/ac_museum_fish_namazu.c_inc"
+#include "../src/actor/ac_museum_fish_zarigani.c_inc"
+#include "../src/actor/ac_museum_fish_kurage.c_inc"
+#include "../src/actor/ac_museum_fish_hasu.c_inc"
+
 cKF_Skeleton_R_c* kusa_model[14] = {
     &cKF_bs_r_obj_museum5_kusa1,
     &cKF_bs_r_obj_museum5_kusa1,
@@ -1271,25 +1293,3 @@ void mfish_normal_light_set(ACTOR* actor, GAME* game) {
     LightsN_list_check(lights, play->global_light.list, &lightPos);
     LightsN_disp(lights, play->game.graph);
 }
-
-#include "../src/actor/ac_museum_fish_base.c_inc"
-#include "../src/actor/ac_museum_fish_afish.c_inc"
-#include "../src/actor/ac_museum_fish_aroana.c_inc"
-#include "../src/actor/ac_museum_fish_koi.c_inc"
-#include "../src/actor/ac_museum_fish_kaseki.c_inc"
-#include "../src/actor/ac_museum_fish_bass.c_inc"
-#include "../src/actor/ac_museum_fish_seafish.c_inc"
-#include "../src/actor/ac_museum_fish_tai.c_inc"
-#include "../src/actor/ac_museum_fish_small_fish.c_inc"
-#include "../src/actor/ac_museum_fish_gupi.c_inc"
-#include "../src/actor/ac_museum_fish_medaka.c_inc"
-#include "../src/actor/ac_museum_fish_kingyo.c_inc"
-#include "../src/actor/ac_museum_fish_dojou.c_inc"
-#include "../src/actor/ac_museum_fish_donko.c_inc"
-#include "../src/actor/ac_museum_fish_big_fish.c_inc"
-#include "../src/actor/ac_museum_fish_ito.c_inc"
-#include "../src/actor/ac_museum_fish_unagi.c_inc"
-#include "../src/actor/ac_museum_fish_namazu.c_inc"
-#include "../src/actor/ac_museum_fish_zarigani.c_inc"
-#include "../src/actor/ac_museum_fish_kurage.c_inc"
-#include "../src/actor/ac_museum_fish_hasu.c_inc"
