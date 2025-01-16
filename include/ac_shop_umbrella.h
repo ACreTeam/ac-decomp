@@ -8,13 +8,21 @@
 extern "C" {
 #endif
 
+enum {
+    aShopUmbrella_STATE_WAIT,
+    aShopUmbrella_STATE_DELETE,
+    aShopUmbrella_STATE_NONE,
+
+    aShopUmbrella_STATE_NUM
+};
+
 typedef struct shop_umbrella_actor_s SHOP_UMBRELLA_ACTOR;
 
 typedef void (*aShopUmbrella_UMBRELLA_DMA_AGAIN_PROC)();
 typedef void (*aShopUmbrella_DELETE_UMBRELLA_PROC)(int ut_x, int ut_z);
 
 typedef struct shop_umbrella_actor_clip_s {
-  SHOP_UMBRELLA_ACTOR* shop_umbrella_actor_p;
+  ACTOR* shop_umbrella_actor_p;
   aShopUmbrella_UMBRELLA_DMA_AGAIN_PROC umbrella_dma_again_proc;
   aShopUmbrella_DELETE_UMBRELLA_PROC delete_umbrella_proc;
 } aShopUmbrella_Clip_c;
@@ -49,4 +57,3 @@ extern ACTOR_PROFILE Shop_Umbrella_Profile;
 #endif
 
 #endif
-

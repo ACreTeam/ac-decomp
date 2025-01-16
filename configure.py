@@ -1052,7 +1052,7 @@ config.libs = [
             Object(Matching, "actor/ac_shop_indoor.c"),
             Object(Matching, "actor/ac_shop_level.c"),
             Object(Matching, "actor/ac_shop_manekin.c"),
-            Object(NonMatching, "actor/ac_shop_umbrella.c"),
+            Object(Matching, "actor/ac_shop_umbrella.c"),
             Object(Matching, "actor/ac_shrine.c"),
             Object(Matching, "actor/ac_sign.c"),
             Object(NonMatching, "actor/ac_snowman.c"),
