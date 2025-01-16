@@ -1,0 +1,213 @@
+// Pretty sure all the floats in this file are correct
+
+extern cKF_Skeleton_R_c cKF_bs_r_obj_museum5_hasu;
+extern cKF_Animation_R_c cKF_ba_r_obj_museum5_hasu;
+
+void mfish_hasu_ct(YET_SKELETON_2* actor, GAME* gamex) {
+    cKF_SkeletonInfo_R_ct(&actor->_00._00, &cKF_bs_r_obj_museum5_hasu, &cKF_ba_r_obj_museum5_hasu, &actor->_00._4F0,
+                          &actor->_00._526);
+    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&actor->_00._00, &cKF_ba_r_obj_museum5_hasu, NULL, 0.5f,
+                                                             0.0f);
+}
+
+void mfish_hasu_mv(YET_SKELETON_2* actor, GAME* gamex) {
+    cKF_SkeletonInfo_R_play(&actor->_00._00);
+}
+
+void mfish_hasu_dw(YET_SKELETON_2* actor, GAME* gamex) {
+    Mtx* mtxp;
+    if (gamex->frame_counter & 1) {
+        mtxp = &actor->_00._70;
+    } else {
+        mtxp = &actor->_00._2b0;
+    }
+    OPEN_DISP(gamex->graph);
+    Matrix_translate(hasu_pos.x + GETREG(TAKREG, 0x42) * 0.1f, hasu_pos.y, hasu_pos.z + GETREG(TAKREG, 0x43) * 0.1f, 0);
+    Matrix_RotateY(DEG2SHORT_ANGLE(-180), 1);
+    Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    cKF_Si3_draw_R_SV(gamex, &actor->_00._00, mtxp, NULL, NULL, NULL);
+    CLOSE_DISP(gamex->graph);
+}
+
+extern cKF_Animation_R_c cKF_ba_r_act_mus_kaeru_a1_big;
+void mfish_kaeru_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    YET_SKELETON* skele = &actor->_38;
+    YET_SKELETON_2* keyframe = actor->_590;
+    skele->_550[1] = &cKF_ba_r_act_mus_kaeru_a1_big;
+    cKF_SkeletonInfo_R_ct(&skele->_00, skele->_54C, skele->_550[0], &skele->_4F0, &skele->_514);
+    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&skele->_00, skele->_550[0], NULL, 0.5f, 0.0f);
+    cKF_SkeletonInfo_R_ct(&keyframe->_00._00, &cKF_bs_r_obj_museum5_hasu, &cKF_ba_r_obj_museum5_hasu,
+                          &keyframe->_00._4F0, &keyframe->_00._526);
+    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&keyframe->_00._00, &cKF_ba_r_obj_museum5_hasu, NULL, 0.5f,
+                                                             0.0f);
+    actor->position.x = 453.9f;
+    actor->position.y = 116.0f;
+    actor->position.z = 250.4f;
+    actor->_5AC = ZeroVec;
+    actor->activityFrameCount = 0;
+    actor->_612.x = 0;
+    actor->_612.y = 0;
+    actor->_612.z = 0;
+    actor->_60C = ZeroSVec;
+    actor->_5AC.x = -1.5f;
+    actor->_5AC.z = -2.0f;
+    actor->_60C.y = DEG2SHORT_ANGLE(135);
+    actor->_60C.y = DEG2SHORT_ANGLE(135);
+    actor->_640 = 0;
+    actor->_63E = RANDOM_F(8.0f) + 1.0f;
+    actor->_624 = 4;
+}
+
+void mfish_kaeru_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    GAME_PLAY* game = (GAME_PLAY*)gamex;
+    YET_SKELETON* skele1 = &actor->_38;
+    YET_SKELETON_2* skele2 = actor->_590;
+    cKF_SkeletonInfo_R_play(&skele1->_00);
+    cKF_SkeletonInfo_R_play(&skele2->_00._00);
+    skele2->_568 += DEG2SHORT_ANGLE(GETREG(TAKREG, 0xb) + 5.0f);
+    skele2->_56A += DEG2SHORT_ANGLE(GETREG(TAKREG, 0xb) + 5.0f);
+    skele2->_56C += DEG2SHORT_ANGLE(GETREG(TAKREG, 0xb) + 5.0f);
+    add_calc0(&skele2->_55C, 0.2f, GETREG(TAKREG, 0xc) * 0.1f + 0.5f);
+    add_calc0(&skele2->_560, 0.2f, GETREG(TAKREG, 0xc) * 0.1f + 0.5f);
+    add_calc0(&skele2->_564, 0.2f, GETREG(TAKREG, 0xc) * 0.1f + 0.5f);
+    // some other macro?
+    if ((float)__fabs(skele1->_00.frame_control.current_frame - skele1->_00.frame_control.start_frame) < 0.008f) {
+        actor->_63E--;
+        if (actor->_63E <= 0) {
+            if (actor->_640 == 1) {
+                actor->_640 = 0;
+            } else {
+                actor->_640 = 1;
+            }
+            actor->_63E = RANDOM_F(8.0f) + 1.0f;
+            cKF_SkeletonInfo_R_init_standard_repeat_morph(&skele1->_00, skele1->_550[actor->_640], NULL, 0.f);
+        }
+        if (actor->_640 == 1) {
+            sAdo_OngenTrgStart(0x77, &actor->position);
+            actor->_612.x = 1;
+        }
+    }
+
+    if (actor->_612.x > 0) {
+        actor->_612.x++;
+        if (actor->_612.x == GETREG(TAKREG, 0x31) + 0xf || actor->_612.x == (GETREG(TAKREG, 0x32) + 0x19)) {
+            s16 v = GETREG(TAKREG, 0x4d) + 0x3c;
+            xyz_t v1 = hasu_pos;
+            v1.x += (-32.6f + GETREG(TAKREG, 0x49) * 0.1f);
+            v1.y += 116.f;
+            v1.z += (-26.6f + GETREG(TAKREG, 0x4a) * 0.1f);
+            if (actor->_612.x == GETREG(TAKREG, 0x31) + 0xf) {
+                skele2->_564 = GETREG(TAKREG, 10) + 30.0f;
+                skele2->_56C = DEG2SHORT_ANGLE(-180);
+                if (RANDOM_F(1.0f) < GETREG(TAKREG, 0x2b) * 0.01f + 0.6f) {
+                    actor->_612.z = 1;
+                }
+            } else {
+                actor->_612.x = 0;
+            }
+            v1.x += -1.0f;
+            v1.y += -1.0f;
+            v1.z += -4.0f;
+            Common_Get(clip.effect_clip)->effect_make_proc(0x45, v1, 2, DEG2SHORT_ANGLE(0), gamex, -1, 6, v);
+        }
+    }
+
+    if (actor->_612.y > 0) {
+        actor->_612.y++;
+        if (actor->_612.y == GETREG(TAKREG, 0x33) + 0xd || actor->_612.y == GETREG(TAKREG, 0x34) + 0x17) {
+            xyz_t v1 = hasu_pos;
+            s16 v = GETREG(TAKREG, 0x4c) + 0x23;
+            v1.x += (-2.3f + GETREG(TAKREG, 0x47) * 0.1f);
+            v1.y += 116.f;
+            v1.z += (-13.7f + GETREG(TAKREG, 0x48) * 0.1f);
+            if (actor->_612.y == GETREG(TAKREG, 0x33) + 0xd) {
+                skele2->_560 = GETREG(TAKREG, 10) + 30.0f;
+                skele2->_56A = DEG2SHORT_ANGLE(-180);
+            } else {
+                actor->_612.y = 0;
+            }
+            v1.x += -1.f;
+            v1.y += -1.f;
+            v1.z += -4.f;
+            Common_Get(clip.effect_clip)->effect_make_proc(0x45, v1, 2, DEG2SHORT_ANGLE(0), gamex, -1, 6, v);
+        }
+    }
+
+    if (actor->_612.z > 0) {
+        actor->_612.z++;
+        if (actor->_612.z == GETREG(TAKREG, 0x35) + 0x17 || actor->_612.z == GETREG(TAKREG, 0x36) + 0x21) {
+            xyz_t v1 = hasu_pos;
+            s16 v = GETREG(TAKREG, 0x4b) + 10;
+            v1.x += (-7.7f + GETREG(TAKREG, 0x45) * 0.1f);
+            v1.y += 116.0f;
+            v1.z += (-32.3f + GETREG(TAKREG, 0x46) * 0.1f);
+            if (actor->_612.z == GETREG(TAKREG, 0x35) + 0x17) {
+                skele2->_55C = GETREG(TAKREG, 10) + 30.0f;
+                skele2->_568 = DEG2SHORT_ANGLE(-180);
+                if (RANDOM_F(1.0f) < GETREG(TAKREG, 0x2c) * 0.01f + 0.6f) {
+                    actor->_612.y = 1;
+                }
+            } else {
+                actor->_612.z = 0;
+            }
+            v1.x += -1.0f;
+            v1.y += -1.0f;
+            v1.z += -4.0f;
+            Common_Get(clip.effect_clip)->effect_make_proc(0x45, v1, 2, DEG2SHORT_ANGLE(0), gamex, -1, 6, v);
+        }
+    }
+}
+
+BOOL hasu_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f, void* arg,
+                      s_xyz* joint1, xyz_t* trans) {
+    MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
+    YET_SKELETON_2* v2 = actor->_590;
+    if (joint_num == 7) {
+        trans->z += v2->_55C * sin_s(v2->_568);
+    } else if (joint_num == 4) {
+        trans->z += v2->_560 * sin_s(v2->_56A);
+    } else if (joint_num == 9) {
+        trans->z += v2->_564 * sin_s(v2->_56C);
+    }
+    return TRUE;
+}
+
+BOOL hasu_after_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f, void* arg,
+                     s_xyz* joint1, xyz_t* trans) {
+    MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
+    YET_SKELETON_2* skele = actor->_590;
+    if (joint_num == 9) {
+        Matrix_Position_Zero(&actor->position);
+        actor->position.y = skele->_564 * actor->init_data.renderScale * sin_s(skele->_56C) + 116.0f;
+    }
+    return TRUE;
+}
+
+void mfish_kaeru_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
+    YET_SKELETON* skele = &actor->_38;
+    YET_SKELETON_2* keyframe = actor->_590;
+    Mtx *mtxp, *mtxp2;
+    if (gamex->frame_counter & 1) {
+        mtxp = &skele->_70;
+        mtxp2 = &keyframe->_00._70;
+    } else {
+        mtxp = &skele->_2b0;
+        mtxp2 = &keyframe->_00._2b0;
+    }
+
+    OPEN_DISP(gamex->graph);
+    Matrix_translate(hasu_pos.x + GETREG(TAKREG, 0x42) * 0.1f, hasu_pos.y, hasu_pos.z + GETREG(TAKREG, 0x43) * 0.1f, 0);
+    Matrix_RotateY(DEG2SHORT_ANGLE(-180), 1);
+    Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    cKF_Si3_draw_R_SV(gamex, &keyframe->_00._00, mtxp2, hasu_before_disp, hasu_after_disp, actor);
+
+    Matrix_translate(actor->position.x + actor->_5AC.x, actor->position.y, actor->position.z + actor->_5AC.z, 0);
+    Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data._24, 1);
+    Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, NULL, NULL, actor);
+    CLOSE_DISP(gamex->graph);
+}
