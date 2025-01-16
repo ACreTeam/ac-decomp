@@ -2005,6 +2005,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITM_CLOTH252 (ITM_CLOTH_START + 252)
 #define ITM_CLOTH253 (ITM_CLOTH_START + 253)
 #define ITM_CLOTH254 (ITM_CLOTH_START + 254)
+#define ITM_CLOTH_MANEKIN (ITM_CLOTH_START + 255)
 #define ITM_CLOTH_END (ITM_CLOTH_START + 255)
 
 #define ITM_ETC_START 0x2500

@@ -28,7 +28,7 @@ typedef void (*aSM_CHANGE2NAKEDMANEKIN_PROC)(int ut_x, int ut_z);
 typedef void (*aSM_NAKED2CLOTH_PROC)(int ut_x, int ut_z);
 
 typedef struct shop_manekin_clip_s {
-  SHOP_MANEKIN_ACTOR* shop_manekin_actor_p;
+  ACTOR* shop_manekin_actor_p;
   aSM_MANEKIN_DMA_AGAIN_PROC manekin_dma_again_proc;
   aSM_CHANGE2NAKEDMANEKIN_PROC change2naked_manekin_proc;
   aSM_NAKED2CLOTH_PROC naked2cloth_proc;
@@ -53,4 +53,3 @@ extern ACTOR_PROFILE Shop_Manekin_Profile;
 #endif
 
 #endif
-
