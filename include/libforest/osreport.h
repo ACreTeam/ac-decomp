@@ -2,7 +2,7 @@
 #define OSREPORT_H
 
 #include "types.h"
-#include "va_args.h"
+// #include "va_args.h"
 #include "dolphin/os/OSMutex.h"
 #include "dolphin/os/OSThread.h"
 

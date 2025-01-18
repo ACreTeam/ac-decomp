@@ -1,7 +1,7 @@
 #include "JSystem/JKernel/JKRDvdAramRipper.h"
 
 #include <_mem.h>
-#include <dolphin/string.h>
+#include <string.h>
 #include <dolphin/vi.h>
 
 #include "JSystem/JKernel/JKRDecomp.h"

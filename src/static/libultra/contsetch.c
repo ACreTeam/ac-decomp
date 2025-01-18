@@ -4,11 +4,11 @@
 
 s32 osContSetCh(u8 cont){
 
-    if (PAD_CONTROLLER_NUM >= cont){
+    if (PAD_MAX_CONTROLLERS >= cont){
         __osMaxControllers = cont;
     }
     else {
-     __osMaxControllers = PAD_CONTROLLER_NUM;
+     __osMaxControllers = PAD_MAX_CONTROLLERS;
     }
     return 0;
 }

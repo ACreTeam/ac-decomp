@@ -1,7 +1,7 @@
 #ifndef _JSYSTEM_JUT_JUTCONSOLE_H
 #define _JSYSTEM_JUT_JUTCONSOLE_H
 
-#include "va_args.h"
+// #include "va_args.h"
 #include "JSystem/JGadget/linklist.h"
 #include "JSystem/JKernel/JKRHeap.h"
 #include "JSystem/JUtility/JUTFont.h"

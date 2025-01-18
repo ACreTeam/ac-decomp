@@ -1,4 +1,4 @@
-#include "dolphin/string.h" /* strchr */
+#include "string.h" /* strchr */
 
 #include "libultra/xprintf.h"
 
@@ -229,4 +229,3 @@ void _Putfld(_Pft* px, va_list ap, u8 code, u8* ac) {
             break;
     }
 }
-

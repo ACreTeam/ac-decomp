@@ -1,4 +1,4 @@
-#include <dolphin/string.h>
+#include <string.h>
 #include <dolphin/os/OSCache.h>
 
 #include "JSystem/JSystem.h"

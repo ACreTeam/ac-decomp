@@ -2,9 +2,8 @@
 #define JUTGAMEPAD_H
 
 #include "types.h"
-#include "dolphin/os.h"
-#include "dolphin/os/OSTime.h"
-#include "dolphin/pad.h"
+#include <dolphin/os.h>
+#include <dolphin/pad.h>
 #include "JSystem/JKernel/JKRDisposer.h"
 #include "JSystem/JUtility/JUTAssertion.h"
 
@@ -103,7 +102,7 @@ public:
     static void checkResetSwitch();
 
     static bool mListInitialized;
-    static u8 mPadAssign[PAD_CONTROLLER_NUM];
+    static u8 mPadAssign[PAD_MAX_CONTROLLERS];
     static u32 mSuppressPadReset;
     static u32 sAnalogMode;
 
@@ -290,7 +289,7 @@ public:
 
         CRumble(JUTGamePad* gamePad) { this->clear(gamePad); }
 
-        static u8 mStatus[PAD_CONTROLLER_NUM];
+        static u8 mStatus[PAD_MAX_CONTROLLERS];
         static u32 mEnabled;
 
         static void startMotor(int port);
@@ -332,14 +331,14 @@ public:
     static PADStatus *getPadStatus(int idx) { return &mPadStatus[idx]; }
 
     static JSUList<JUTGamePad> mPadList;
-    static CButton mPadButton[PAD_CONTROLLER_NUM];
-    static CStick mPadMStick[PAD_CONTROLLER_NUM];
-    static CStick mPadSStick[PAD_CONTROLLER_NUM];
+    static CButton mPadButton[PAD_MAX_CONTROLLERS];
+    static CStick mPadMStick[PAD_MAX_CONTROLLERS];
+    static CStick mPadSStick[PAD_MAX_CONTROLLERS];
     static EStickMode sStickMode;
     static EClampMode sClampMode;
     static f32 sPressPoint;
     static f32 sReleasePoint;
-    static PADStatus mPadStatus[PAD_CONTROLLER_NUM];
+    static PADStatus mPadStatus[PAD_MAX_CONTROLLERS];
 
 
     CButton mButtons;     // _18

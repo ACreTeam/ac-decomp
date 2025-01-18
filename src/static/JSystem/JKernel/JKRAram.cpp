@@ -1,5 +1,5 @@
 #include <dolphin/ar.h>
-#include <dolphin/string.h>
+#include <string.h>
 
 #include "JSystem/JKernel/JKRDecomp.h"
 #include "JSystem/JKernel/JKRDvdRipper.h"

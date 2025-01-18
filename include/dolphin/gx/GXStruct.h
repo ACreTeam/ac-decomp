@@ -1,9 +1,9 @@
 #ifndef _DOLPHIN_GXSTRUCT
 #define _DOLPHIN_GXSTRUCT
 
+#include <dolphin/types.h>
 #include <dolphin/gx/GXEnum.h>
 #include <dolphin/vi.h>
-#include "types.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,11 +52,6 @@ typedef struct _GXLightObj {
   u32 dummy[16];
 } GXLightObj;
 
-typedef struct _GXVtxDescList {
-  GXAttr attr;
-  GXAttrType type;
-} GXVtxDescList;
-
 typedef struct _GXColorS10 {
   s16 r;
   s16 g;
@@ -71,6 +66,23 @@ typedef struct _GXTexRegion {
 typedef struct _GXTlutRegion {
   u32 dummy[4];
 } GXTlutRegion;
+
+typedef struct _GXFogAdjTable
+{
+    u16 r[10];
+} GXFogAdjTable;
+
+typedef struct _GXVtxDescList {
+    GXAttr attr;
+    GXAttrType type;
+} GXVtxDescList;
+
+typedef struct _GXVtxAttrFmtList {
+    GXAttr attr;
+    GXCompCnt cnt;
+    GXCompType type;
+    u8 frac;
+} GXVtxAttrFmtList;
 
 #ifdef __cplusplus
 }

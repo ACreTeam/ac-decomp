@@ -2,7 +2,8 @@
 #define EMU64_HPP
 
 #include "types.h"
-#include "va_args.h"
+// #include "va_args.h"
+#include <libc/stdarg.h>
 #include "MSL_C/printf.h"
 #include "libforest/gbi_extensions.h"
 #include "libforest/emu64/texture_cache.h"
@@ -131,7 +132,7 @@
 
 /* TODO: figure out where this actually belongs */
 namespace std {
-typedef struct __va_list_struct __tag_va_List;
+typedef va_list __tag_va_List;
 }
 
 float fastcast_float(register unsigned char* s) {
@@ -482,7 +483,7 @@ class emu64_print {
     u8 print_flags;
 
   private:
-    void Vprintf(const char* fmt, std::__tag_va_List* va_list) {
+    void Vprintf(const char* fmt, std::__tag_va_List va_list) {
         vprintf(fmt, va_list);
     }
 };

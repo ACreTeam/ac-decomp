@@ -4,7 +4,7 @@
 // Extra types for PC
 #ifdef TARGET_PC
 #include <dolphin/gx/GXStruct.h>
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

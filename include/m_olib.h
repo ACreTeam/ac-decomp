@@ -3,7 +3,7 @@
 
 #include "types.h"
 #include "libu64/u64types.h"
-#include "libc/math.h"
+#include "libc64/math64.h"
 
 #ifdef __cplusplus
 extern "C" {

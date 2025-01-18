@@ -1,7 +1,7 @@
 #ifndef DOLPHIN_GX_H
 #define DOLPHIN_GX_H
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,6 +9,7 @@ extern "C" {
 
 #include <dolphin/gx/GXEnum.h>
 #include <dolphin/gx/GXStruct.h>
+#include <dolphin/gx/GXRegs.h>
 
 #include <dolphin/gx/GXBump.h>
 #include <dolphin/gx/GXCommandList.h>
@@ -28,6 +29,7 @@ extern "C" {
 #include <dolphin/gx/GXTev.h>
 #include <dolphin/gx/GXTexture.h>
 #include <dolphin/gx/GXTransform.h>
+#include <dolphin/gx/GXVerify.h>
 #include <dolphin/gx/GXVert.h>
 
 #ifdef __cplusplus

@@ -1,7 +1,7 @@
 #ifndef _DOLPHIN_DVD_H
 #define _DOLPHIN_DVD_H
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,11 +54,12 @@ struct DVDCommandBlock {
 
 // Struct for file information (size 0x3C).
 // NB: we had this as DVDPlayer previously.
-struct DVDFileInfo {
-    DVDCommandBlock cBlock; // _00
-    u32 startAddr;          // _30
-    u32 length;             // _34
-    DVDCallback callback;   // _38
+struct DVDFileInfo
+{
+	/*0x00*/ DVDCommandBlock cb;
+    /*0x30*/ u32 startAddr;
+    /*0x34*/ u32 length;
+    /*0x38*/ DVDCallback callback;
 };
 
 // Struct for directory information (size 0xC).
@@ -119,7 +120,7 @@ void DVDResume();
 void DVDReset();
 
 BOOL DVDCancelAsync(DVDCommandBlock* block, DVDCBCallback callback);
-s32 DVDCancel(DVDCommandBlock* block);
+s32 DVDCancel(volatile DVDCommandBlock* block);
 
 s32 DVDChangeDisk(DVDCommandBlock* block, DVDDiskID* id);
 BOOL DVDChangeDiskAsync(DVDCommandBlock* block, DVDDiskID* id, DVDCBCallback callback);
@@ -152,7 +153,7 @@ BOOL DVDCheckDisk();
 void DVDPause();
 s32 DVDSeekPrio(DVDFileInfo* fileInfo, s32 offset, s32 prio);
 BOOL DVDSeekAsyncPrio(DVDFileInfo* fileInfo, s32 offset, DVDCallback callback, s32 prio);
-s32 DVDGetFileInfoStatus(DVDFileInfo* fileInfo);
+// s32 DVDGetFileInfoStatus(DVDFileInfo* fileInfo);
 BOOL DVDFastOpenDir(s32 entryNum, DVDDir* dir);
 BOOL DVDCancelAllAsync(DVDCBCallback callback);
 s32 DVDCancelAll();
@@ -164,7 +165,7 @@ void DVDDumpWaitingQueue();
 // Macro for reading.
 #define DVDReadAsync(fileInfo, addr, length, offset, callback) \
     DVDReadAsyncPrio((fileInfo), (addr), (length), (offset), (callback), 2)
-#define DVDGetFileInfoStatus(fileInfo) DVDGetCommandBlockStatus(&(fileInfo)->cBlock)
+#define DVDGetFileInfoStatus(fileInfo) DVDGetCommandBlockStatus(&(fileInfo)->cb)
 
 // Minimum transfer size.
 #define DVD_MIN_TRANSFER_SIZE 32
@@ -195,6 +196,33 @@ void DVDDumpWaitingQueue();
 #define DVD_RESULT_CANCELED -3
 
 #define DVD_AIS_SUCCESS 0
+
+#define DVD_MIN_TRANSFER_SIZE    32
+
+// could be bitfields
+#define DVD_INTTYPE_TC 1
+#define DVD_INTTYPE_DE 2
+// unk type 3
+#define DVD_INTTYPE_CVR 4
+
+#define DVD_COMMAND_NONE 0
+#define DVD_COMMAND_READ 1
+#define DVD_COMMAND_SEEK 2
+#define DVD_COMMAND_CHANGE_DISK 3
+#define DVD_COMMAND_BSREAD 4
+#define DVD_COMMAND_READID 5
+#define DVD_COMMAND_INITSTREAM 6
+#define DVD_COMMAND_CANCELSTREAM 7
+#define DVD_COMMAND_STOP_STREAM_AT_END 8
+#define DVD_COMMAND_REQUEST_AUDIO_ERROR 9
+#define DVD_COMMAND_REQUEST_PLAY_ADDR 10
+#define DVD_COMMAND_REQUEST_START_ADDR 11
+#define DVD_COMMAND_REQUEST_LENGTH 12
+#define DVD_COMMAND_AUDIO_BUFFER_CONFIG 13
+#define DVD_COMMAND_INQUIRY 14
+#define DVD_COMMAND_BS_CHANGE_DISK 15
+
+#define DVD_WATYPE_MAX 2
 
 DVDDiskID DiskID AT_ADDRESS(0x80000000);
 

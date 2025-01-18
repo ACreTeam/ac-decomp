@@ -1,5 +1,6 @@
 #include "dolphin/os/OSAudioSystem.h"
 #include "dolphin/dsp/dsp.h"
+#include <dolphin/os/OSArena.h>
 
 u8 DSPInitCode[] = { 0x02, 0x9F, 0x00, 0x10, 0x02, 0x9F, 0x00, 0x33, 0x02, 0x9F, 0x00, 0x34, 0x02, 0x9F, 0x00, 0x35,
                      0x02, 0x9F, 0x00, 0x36, 0x02, 0x9F, 0x00, 0x37, 0x02, 0x9F, 0x00, 0x38, 0x02, 0x9F, 0x00, 0x39,
@@ -17,7 +18,7 @@ void __OSInitAudioSystem(void) {
     u16 reg16;
     u32 start_tick;
 
-    memcpy(OSGetArenaHi() - 128, __DSPWorkBuffer, 128);
+    memcpy((void*)((int)OSGetArenaHi() - 128), __DSPWorkBuffer, 128);
     memcpy(__DSPWorkBuffer, &DSPInitCode, 128);
     DCFlushRange(__DSPWorkBuffer, 128);
 
@@ -74,7 +75,7 @@ void __OSInitAudioSystem(void) {
     while (__DSPRegs[5] & 1)
         ;
 
-    memcpy(__DSPWorkBuffer, OSGetArenaHi() - 128, 128);
+    memcpy(__DSPWorkBuffer, (void*)((int)OSGetArenaHi() - 128), 128);
 }
 
 void __OSStopAudioSystem(void) {

@@ -1,5 +1,5 @@
 #include <MSL_C/ctype.h>
-#include <dolphin/string.h>
+#include <string.h>
 #include "JSystem/JKernel/JKRFileLoader.h"
 
 JSUList<JKRFileLoader> JKRFileLoader::sVolumeList;

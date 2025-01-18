@@ -5,7 +5,7 @@
 #include "dolphin/os/OSAlloc.h"
 #include "dolphin/os/OSMemory.h"
 #include "dolphin/os/OSUtil.h"
-#include "dolphin/os/OSAddress.h"
+#include "dolphin/os.h"
 
 JKRHeap* JKRHeap::sSystemHeap;
 JKRHeap* JKRHeap::sCurrentHeap;

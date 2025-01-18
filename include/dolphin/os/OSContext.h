@@ -1,7 +1,7 @@
 #ifndef _DOLPHIN_OSCONTEXT_H_
 #define _DOLPHIN_OSCONTEXT_H_
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

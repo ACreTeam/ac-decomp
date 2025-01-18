@@ -4,7 +4,7 @@
 #include "dolphin/os/OSTime.h"
 #include "dolphin/base/PPCArch.h"
 #include "dolphin/hw_regs.h"
-#include "va_args.h"
+// #include "va_args.h"
 
 OSErrorHandler __OSErrorTable[16];
 

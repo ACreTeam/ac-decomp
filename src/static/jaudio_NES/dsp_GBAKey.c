@@ -1,5 +1,5 @@
 #include "gba/GBAPriv.h"
-#include "dolphin/os/OSAddress.h"
+#include "dolphin/os.h"
 #include "_mem.h"
 
 //TODO: remove this once ipldec is decompiled

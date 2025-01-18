@@ -1,6 +1,6 @@
 #include "m_card.h"
 
-#include "dolphin/private/card.h"
+#include "card/__card.h"
 #include "libultra/libultra.h"
 #include "m_malloc.h"
 #include "libc64/sleep.h"
@@ -351,4 +351,14 @@ static int mCD_bg_init_com(mCD_bg_info_c* bg_info, s32 chan, s32* result, void**
     }
 
     return res;
+}
+
+// @HACK - I think something here uses CARDGetSectorSize, maybe one of the debug funcs.
+// This got stripped but forces the inclusion of CARDGetSectorSize in the dol?
+// Same issue with CARDFormat.
+static void mCD_format_card_debug(void) {
+    u32 size;
+
+    CARDGetSectorSize(0, &size);
+    CARDFormat(0);
 }

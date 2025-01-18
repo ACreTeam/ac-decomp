@@ -1,7 +1,7 @@
 #include "sys_math.h"
 #include "libultra/libultra.h"
 #include "libc64/qrand.h"
-#include "libc/math.h"
+#include "libc64/math64.h"
 
 extern void init_rnd() {
     sqrand(osGetCount());

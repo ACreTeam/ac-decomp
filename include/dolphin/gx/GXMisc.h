@@ -1,6 +1,6 @@
 #ifndef RVL_SDK_GX_MISC_H
 #define RVL_SDK_GX_MISC_H
-#include "types.h"
+#include <dolphin/types.h>
 #include <dolphin/gx/GXEnum.h>
 
 #ifdef __cplusplus

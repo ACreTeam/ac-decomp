@@ -2,7 +2,7 @@
 #define JUTDIRECTPRINT_H
 
 #include "types.h"
-#include "va_args.h"
+// #include "va_args.h"
 #include "JSystem/JUtility/TColor.h"
 
 #ifdef __cplusplus
@@ -22,7 +22,7 @@ public:
     void changeFrameBuffer(void *framebuffer, u16 w, u16 h );
 
     // Inline/Unused
-    void printSub(u16, u16, const char *, __va_list_struct *, bool);
+    void printSub(u16, u16, const char *, va_list *, bool);
     void print(u16, u16, const char *, ...);
 
     bool isActive() const { return mFramebuffer != nullptr; }

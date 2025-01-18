@@ -1,5 +1,7 @@
-#include "types.h"
+#include <dolphin/gx.h>
 
-void __GXSetRange(void){
-    
+#include "gx/__gx.h"
+
+void __GXSetRange(float nearz, float fgSideX)
+{
 }

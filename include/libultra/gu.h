@@ -1,7 +1,7 @@
 #ifndef GU_H
 #define GU_H
-#include "PR/mbi.h"
 #include "types.h"
+#include "PR/mbi.h"
 #include "libultra/ultratypes.h"
 
 #ifndef MAX

@@ -1,7 +1,7 @@
 #ifndef VI_H
 #define VI_H
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

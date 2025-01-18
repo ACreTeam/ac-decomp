@@ -1,9 +1,10 @@
 #include "JSystem/JUtility/JUTGamePad.h"
 
+#include <dolphin/pad.h>
 #include "MSL_C/w_math.h"
 #include "MSL_C/math.h"
 
-static u32 channel_mask[PAD_CONTROLLER_NUM] = {
+static u32 channel_mask[PAD_MAX_CONTROLLERS] = {
   0x80000000 >> 0,
   0x80000000 >> 1,
   0x80000000 >> 2,
@@ -17,16 +18,16 @@ f32 JUTGamePad::sReleasePoint = 0.25f;
 u32 JUTGamePad::C3ButtonReset::sResetMaskPattern = 0xFFFF;
 
 JSUList<JUTGamePad> JUTGamePad::mPadList(false);
-PADStatus JUTGamePad::mPadStatus[PAD_CONTROLLER_NUM];
-JUTGamePad::CButton JUTGamePad::mPadButton[PAD_CONTROLLER_NUM];
-JUTGamePad::CStick JUTGamePad::mPadMStick[PAD_CONTROLLER_NUM];
-JUTGamePad::CStick JUTGamePad::mPadSStick[PAD_CONTROLLER_NUM];
+PADStatus JUTGamePad::mPadStatus[PAD_MAX_CONTROLLERS];
+JUTGamePad::CButton JUTGamePad::mPadButton[PAD_MAX_CONTROLLERS];
+JUTGamePad::CStick JUTGamePad::mPadMStick[PAD_MAX_CONTROLLERS];
+JUTGamePad::CStick JUTGamePad::mPadSStick[PAD_MAX_CONTROLLERS];
 
 bool JUTGamePad::mListInitialized = false;
-u8 JUTGamePad::mPadAssign[PAD_CONTROLLER_NUM];
+u8 JUTGamePad::mPadAssign[PAD_MAX_CONTROLLERS];
 u32 JUTGamePad::mSuppressPadReset = 0;
 u32 JUTGamePad::sAnalogMode = 0;
-u8 JUTGamePad::CRumble::mStatus[PAD_CONTROLLER_NUM];
+u8 JUTGamePad::CRumble::mStatus[PAD_MAX_CONTROLLERS];
 u32 JUTGamePad::CRumble::mEnabled = 0;
 JUTResetBtnCb JUTGamePad::C3ButtonReset::sCallback = nullptr;
 void* JUTGamePad::C3ButtonReset::sCallbackArg = nullptr;
@@ -100,7 +101,7 @@ void JUTGamePad::read() {
   u32 mask;
   u32 resetControllerMask = 0;
     
-  for (s32 i = 0; i < PAD_CONTROLLER_NUM; i++) {
+  for (s32 i = 0; i < PAD_MAX_CONTROLLERS; i++) {
     mask = 0x80000000 >> i;
 
     if (JUTGamePad::mPadStatus[i].err == 0) {
@@ -163,7 +164,7 @@ void JUTGamePad::read() {
 }
 
 void JUTGamePad::assign() {
-  for (s32 i = 0; i < PAD_CONTROLLER_NUM; i++) {
+  for (s32 i = 0; i < PAD_MAX_CONTROLLERS; i++) {
     if (JUTGamePad::mPadStatus[i].err == 0 && JUTGamePad::mPadAssign[i] == 0) {
       this->mPortNum = i;
       JUTGamePad::mPadAssign[i] = 1;
@@ -385,7 +386,7 @@ void JUTGamePad::CRumble::clear() {
 }
 
 void JUTGamePad::CRumble::clear(JUTGamePad* gamePad) {
-  if (0 <= gamePad->getPortNum() && gamePad->getPortNum() < PAD_CONTROLLER_NUM) {
+  if (0 <= gamePad->getPortNum() && gamePad->getPortNum() < PAD_MAX_CONTROLLERS) {
     JUTGamePad::CRumble::mStatus[gamePad->getPortNum()] = 0;
     this->stopMotorHard(gamePad->getPortNum());
   }
@@ -462,14 +463,14 @@ void JUTGamePad::CButton::setRepeat(u32 repeatMask, u32 repeatDelay, u32 repeatF
 }
 
 bool JUTGamePad::recalibrate(u32 channels) {
-  u32 channelMasks[PAD_CONTROLLER_NUM] = {
+  u32 channelMasks[PAD_MAX_CONTROLLERS] = {
     0x80000000 >> 0,
     0x80000000 >> 1,
     0x80000000 >> 2,
     0x80000000 >> 3
   };
 
-  for (int i = 0; i < PAD_CONTROLLER_NUM; i++) {
+  for (int i = 0; i < PAD_MAX_CONTROLLERS; i++) {
     if ((JUTGamePad::mSuppressPadReset & channelMasks[i]) != 0) {
       channels &= channelMasks[i] ^ 0xFFFFFFFF;
     }

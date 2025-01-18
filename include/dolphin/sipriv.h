@@ -42,8 +42,8 @@ u32 SIEnablePolling(u32 poll);
 u32 SIDisablePolling(u32 poll);
 BOOL SIGetResponse(s32 chan, void* data);
 
-BOOL SIRegisterPollingHandler(OSInterruptHandler handler);
-BOOL SIUnregisterPollingHandler(OSInterruptHandler handler);
+BOOL SIRegisterPollingHandler(__OSInterruptHandler handler);
+BOOL SIUnregisterPollingHandler(__OSInterruptHandler handler);
 
 u32 SIGetType(s32 chan);
 u32 SIGetTypeAsync(s32 chan, SITypeAndStatusCallback callback);

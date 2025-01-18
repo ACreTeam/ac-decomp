@@ -43,7 +43,7 @@ typedef struct _MUSEUM_FISH_INIT_DATA {
 #define artificial_padding(lastOffset, currentOffset, typeOfLastMember) \
     u8 __##currentOffset##padding[currentOffset - lastOffset - sizeof(typeOfLastMember)]
 
-#define offsetof(structName, memberName) ((size_t) & (((structName*)0)->memberName))
+// #define offsetof(structName, memberName) ((size_t) & (((structName*)0)->memberName))
 
 typedef struct _YET_SKELETON {
     cKF_SkeletonInfo_R_c _00; // offset 0, size 0x70

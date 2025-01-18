@@ -1,7 +1,7 @@
 #include "Famicom/famicom.h"
 #include "Famicom/famicomInternal.hpp"
 
-#include "dolphin/string.h"
+#include "libc/string.h"
 #include "dolphin/gx.h"
 #include "dolphin/os.h"
 #include "dolphin/mtx.h"
@@ -2151,7 +2151,7 @@ static int famicom_rom_load() {
 static void famicom_key_convert() {
     u32 input;
     
-    for (int i = 0; i < PAD_CONTROLLER_NUM; i++) {
+    for (int i = 0; i < PAD_MAX_CONTROLLERS; i++) {
 
         if (InputValid[i]) {
             input = InputData[i];
@@ -2222,7 +2222,7 @@ static void famicom_draw() {
     GXSetVtxDesc(GX_VA_TEX0, GX_DIRECT);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGB, GX_RGBA4, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_CLR_RGBA, GX_RGBX8, 9);
-    GXInitTexObj(&famicomTexObj, famicomCommon.wp->result_bufp, (u16)KS_NES_WIDTH, (u16)KS_NES_HEIGHT, (u32)GX_TF_RGB565, GX_CLAMP, GX_CLAMP, GX_FALSE);
+    GXInitTexObj(&famicomTexObj, famicomCommon.wp->result_bufp, (u16)KS_NES_WIDTH, (u16)KS_NES_HEIGHT, GX_TF_RGB565, GX_CLAMP, GX_CLAMP, GX_FALSE);
     GXInitTexObjLOD(&famicomTexObj, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
     GXLoadTexObj(&famicomTexObj, GX_TEXMAP0);
     GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY, GX_FALSE, GX_PTIDENTITY);
@@ -2334,7 +2334,7 @@ static void nogbaInput() {
     int port;
     u32 disconnected_ports = 0;
 
-    for (port = 0; port < PAD_CONTROLLER_NUM; port++) {
+    for (port = 0; port < PAD_MAX_CONTROLLERS; port++) {
         InputValid[port] = false;
 
         switch (GetPortStatus(port)) {
@@ -2366,7 +2366,7 @@ static void nogbaInput() {
         PADReset(disconnected_ports);
     }
 
-    for (int port = 0; port < PAD_CONTROLLER_NUM; port++) {
+    for (int port = 0; port < PAD_MAX_CONTROLLERS; port++) {
         if (InputValid[port]) {            
             InputTrigger[port] = InputData[port] & (InputButton[port] ^ InputData[port]); // Update trigger to only newly pressed buttons
             InputButton[port] = InputData[port]; // update pressed buttons

@@ -1,5 +1,5 @@
 #include "gba/gbaPriv.h"
-#include "dolphin/os/OSAlarm.h"
+#include <dolphin/os.h>
 
 // local declarations
 static BOOL OnReset(BOOL final);

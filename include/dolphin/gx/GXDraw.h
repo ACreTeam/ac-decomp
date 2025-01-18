@@ -1,7 +1,7 @@
 #ifndef _DOLPHIN_GXDRAW
 #define _DOLPHIN_GXDRAW
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

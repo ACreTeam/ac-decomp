@@ -1,7 +1,6 @@
 #include "dolphin/os/OSRtc.h"
 
 #include "dolphin/os/OSCache.h"
-#include "dolphin/os/OSExi.h"
 #include "dolphin/os.h"
 #include "types.h"
 
@@ -33,7 +32,7 @@ static inline BOOL ReadSram(void* buffer) {
   return !err;
 }
 
-void WriteSramCallback(EXIChannel chan, OSContext* ctx) {
+void WriteSramCallback(s32 chan, OSContext* ctx) {
   DOLPHIN_ASSERTLINE(!Scb.locked, 258);
   Scb.sync = WriteSram(Scb.sram + Scb.offset, Scb.offset, RTC_SRAM_SIZE - Scb.offset);
   DOLPHIN_ASSERTLINE(Scb.sync, 264);
@@ -210,14 +209,14 @@ extern void __OSSetBootMode(u8 mode) {
   }
 }
 
-extern u16 OSGetWirelessID(u32 chan) {
+extern u16 OSGetWirelessID(s32 chan) {
   OSSramEx* sramEx = __OSLockSramEx();
   u16 id = sramEx->wirelessPadID[chan];
   __OSUnlockSramEx(FALSE);
   return id;
 }
 
-extern void OSSetWirelessID(u32 chan, u16 id) {
+extern void OSSetWirelessID(s32 chan, u16 id) {
   OSSramEx* sramEx = __OSLockSramEx();
   if (sramEx->wirelessPadID[chan] != id) {
     sramEx->wirelessPadID[chan] = id;
@@ -227,4 +226,3 @@ extern void OSSetWirelessID(u32 chan, u16 id) {
     __OSUnlockSramEx(FALSE);
   }
 }
-

@@ -1,7 +1,7 @@
 #ifndef _DOLPHIN_GXCULL
 #define _DOLPHIN_GXCULL
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

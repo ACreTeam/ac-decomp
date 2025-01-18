@@ -5,7 +5,7 @@
 #include "types.h"
 #include "JSystem/JKernel/JKREnum.h"
 #include "JSystem/JUtility/JUTEnum.h"
-#include "va_args.h"
+// #include "va_args.h"
 #include "dolphin/gx.h"
 
 #ifdef __cplusplus

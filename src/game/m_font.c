@@ -11,7 +11,7 @@
 #include "sys_matrix.h"
 #include "MSL_C/w_math.h"
 #include "m_rcp.h"
-#include "libc/math.h"
+#include "libc64/math64.h"
 #include "libultra/libultra.h"
 
 #define mFont_CC_FONT 0, 0, 0, PRIMITIVE, PRIMITIVE, 0, TEXEL0, 0

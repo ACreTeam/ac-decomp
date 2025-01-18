@@ -31,7 +31,7 @@ static void padmgr_RumbleControl(void) {
     Motor_t* motor = this->rumble.motors;
     int i;
 
-    for (i = 0; i < PAD_CONTROLLER_NUM; i++) {
+    for (i = 0; i < PAD_MAX_CONTROLLERS; i++) {
         if (this->device_type[i] == PADMGR_TYPE_CONTROLLER && this->rumble.cooldown_frames == 0) {
             if (motor->last_command != motor->now_command) {
                 if (motor->now_command == PAD_MOTOR_STOP) {
@@ -58,11 +58,11 @@ static void padmgr_RumbleControl(void) {
 }
 
 static void padmgr_RumbleStop(void) {
-    static u32 stop_command[PAD_CONTROLLER_NUM] = { PAD_MOTOR_STOP, PAD_MOTOR_STOP, PAD_MOTOR_STOP, PAD_MOTOR_STOP };
+    static u32 stop_command[PAD_MAX_CONTROLLERS] = { PAD_MOTOR_STOP, PAD_MOTOR_STOP, PAD_MOTOR_STOP, PAD_MOTOR_STOP };
     int i;
 
     PADControlAllMotors(stop_command);
-    for (i = 0; i < PAD_CONTROLLER_NUM; i++) {
+    for (i = 0; i < PAD_MAX_CONTROLLERS; i++) {
         this->rumble.motors[i].last_command = PAD_MOTOR_STOP;
         this->rumble.motors[i].now_command = PAD_MOTOR_STOP;
         this->rumble.motors[i].frames = 0;

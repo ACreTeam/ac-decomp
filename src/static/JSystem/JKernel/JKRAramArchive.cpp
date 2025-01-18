@@ -1,5 +1,5 @@
 #include <dolphin/os/OSCache.h>
-#include <dolphin/string.h>
+#include <string.h>
 
 #include "JSystem/JKernel/JKRAram.h"
 #include "JSystem/JKernel/JKRArchive.h"

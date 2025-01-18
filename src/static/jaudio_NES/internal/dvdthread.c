@@ -4,7 +4,7 @@
 #include "dolphin/os.h"
 #include "dolphin/dvd.h"
 #include "dolphin/ar.h"
-#include "dolphin/string.h"
+#include "string.h"
 #include "dolphin/os/OSTime.h"
 
 typedef struct DVDCall_ {

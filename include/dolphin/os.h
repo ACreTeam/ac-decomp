@@ -10,7 +10,11 @@
 #include "libforest/osreport.h" /* OSReport funcs */
 #include "dolphin/os/OSReset.h"
 #include "dolphin/os/OSFont.h"
-#include "va_args.h"
+#include <dolphin/os/OSTime.h>
+#include <dolphin/os/OSAlarm.h>
+#include <dolphin/os/OSRtc.h>
+#include <dolphin/hw_regs.h>
+// #include "va_args.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,6 +73,73 @@ u32 OSGetConsoleType();
 
 typedef void (*OSExceptionHandler)(u8, OSContext*);
 OSExceptionHandler __OSSetExceptionHandler(u8, OSExceptionHandler);
+
+#include <dolphin/dvd.h>
+
+typedef struct OSBootInfo_s {
+    // total size: 0x40
+    DVDDiskID DVDDiskID; // offset 0x0, size 0x20
+    unsigned long magic; // offset 0x20, size 0x4
+    unsigned long version; // offset 0x24, size 0x4
+    unsigned long memorySize; // offset 0x28, size 0x4
+    unsigned long consoleType; // offset 0x2C, size 0x4
+    void * arenaLo; // offset 0x30, size 0x4
+    void * arenaHi; // offset 0x34, size 0x4
+    void * FSTLocation; // offset 0x38, size 0x4
+    unsigned long FSTMaxLength; // offset 0x3C, size 0x4
+} OSBootInfo;
+
+#define OS_CACHED_REGION_PREFIX 0x8000
+#define OS_UNCACHED_REGION_PREFIX 0xC000
+#define OS_PHYSICAL_MASK 0x3FFF
+
+#define OS_BASE_CACHED (OS_CACHED_REGION_PREFIX << 16)
+#define OS_BASE_UNCACHED (OS_UNCACHED_REGION_PREFIX << 16)
+
+#ifdef __MWERKS__
+u32 __OSPhysicalMemSize   : (OS_BASE_CACHED | 0x0028);
+volatile int __OSTVMode : (OS_BASE_CACHED | 0x00CC);
+OSThread *__gUnkThread1 : (OS_BASE_CACHED | 0x00D8);
+OSThreadQueue __OSActiveThreadQueue : (OS_BASE_CACHED | 0x00DC);
+OSThread *__gCurrentThread : (OS_BASE_CACHED | 0x00E4);
+u32 __OSSimulatedMemSize  : (OS_BASE_CACHED | 0x00F0);
+u32 __OSBusClock  : (OS_BASE_CACHED | 0x00F8);
+u32 __OSCoreClock : (OS_BASE_CACHED | 0x00FC);
+s32 __gUnknown800030C0[2] : (OS_BASE_CACHED | 0x30C0);
+u8 __gUnknown800030E3 : (OS_BASE_CACHED | 0x30E3);
+vu16 __OSDeviceCode AT_ADDRESS(OS_BASE_CACHED | 0x30E6);
+#else
+#define __OSBusClock  (*(u32 *)(OS_BASE_CACHED | 0x00F8))
+#define __OSCoreClock (*(u32 *)(OS_BASE_CACHED | 0x00FC))
+#endif
+#define OS_BUS_CLOCK   __OSBusClock
+#define OS_CORE_CLOCK  __OSCoreClock
+#define OS_TIMER_CLOCK (OS_BUS_CLOCK/4)
+
+#define OSTicksToSeconds(ticks)      ((ticks)   / (OS_TIMER_CLOCK))
+#define OSTicksToMilliseconds(ticks) ((ticks)   / (OS_TIMER_CLOCK/1000))
+#define OSTicksToMicroseconds(ticks) ((ticks)*8 / (OS_TIMER_CLOCK/125000))
+#define OSSecondsToTicks(sec) ((sec) * (OS_TIMER_CLOCK))
+#define OSMillisecondsToTicks(msec) ((msec) * (OS_TIMER_CLOCK / 1000))
+#define OSNanosecondsToTicks(nsec) (((nsec) * (OS_TIMER_CLOCK / 125000)) / 8000)
+#define OSMicrosecondsToTicks(usec) (((usec) * (OS_TIMER_CLOCK / 125000)) / 8)
+
+void *OSPhysicalToCached(u32 paddr);
+void *OSPhysicalToUncached(u32 paddr);
+u32 OSCachedToPhysical(void *caddr);
+u32 OSUncachedToPhysical(void *ucaddr);
+void *OSCachedToUncached(void *caddr);
+void *OSUncachedToCached(void *ucaddr);
+#if !DEBUG
+#define OSPhysicalToCached(paddr)    ((void*) ((u32)(OS_BASE_CACHED   + (u32)(paddr))))
+#define OSPhysicalToUncached(paddr)  ((void*) ((u32)(OS_BASE_UNCACHED + (u32)(paddr))))
+#define OSCachedToPhysical(caddr)    ((u32)   ((u32)(caddr)  - OS_BASE_CACHED))
+#define OSUncachedToPhysical(ucaddr) ((u32)   ((u32)(ucaddr) - OS_BASE_UNCACHED))
+#define OSCachedToUncached(caddr)    ((void*) ((u8*)(caddr)  + (OS_BASE_UNCACHED - OS_BASE_CACHED)))
+#define OSUncachedToCached(ucaddr)   ((void*) ((u8*)(ucaddr) - (OS_BASE_UNCACHED - OS_BASE_CACHED)))
+#endif
+
+#define OFFSET(addr, align) (((u32)(addr) & ((align)-1)))
 
 #ifdef __cplusplus
 }

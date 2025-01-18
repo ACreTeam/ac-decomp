@@ -1,7 +1,7 @@
-#include "compiler/gcc/stdlib.h" /* ldiv & ldiv_t */
-#include "_mem.h"       /* memcpy */
-
 #include "libultra/xprintf.h"
+
+#include "_mem.h"       /* memcpy */
+#include "compiler/gcc/stdlib.h" /* ldiv & ldiv_t */
 
 #define BUFF_LEN 0x20
 

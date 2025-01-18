@@ -45,6 +45,7 @@
 #include "m_common_data.h"
 #include "m_lib.h"
 #include "types.h"
+#include "dolphin/os.h"
 
 static BOOL l_lbRTC_isInitial = TRUE;
 static lbRTC_time_c l_lbRTC_Time;

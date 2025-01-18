@@ -4,7 +4,7 @@
 #include "types.h"
 #include "libu64/u64types.h"
 #include "PR/mbi.h"
-#include "va_args.h"
+// #include "va_args.h"
 
 #ifdef __cplusplus
 extern "C"{

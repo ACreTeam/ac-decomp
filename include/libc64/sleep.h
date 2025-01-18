@@ -2,7 +2,7 @@
 #define SLEEP_H
 
 #include "types.h"
-#include "dolphin/os/OSTime.h"
+#include <dolphin/os.h>
 
 #ifdef __cplusplus
 extern "C" {

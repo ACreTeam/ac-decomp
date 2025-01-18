@@ -104,7 +104,7 @@ typedef enum OSInterruptType {
 
 #define OS_INTRMASK_PI_PE (OS_INTRMASK_PI_PE_TOKEN | OS_INTRMASK_PI_PE_FINISH)
 
-typedef void (*OSInterruptHandler)(__OSInterrupt, OSContext*);
+typedef void (*__OSInterruptHandler)(__OSInterrupt, OSContext*);
 
 extern volatile u32 __OSLastInterruptSrr0;
 extern volatile s16 __OSLastInterrupt;
@@ -117,8 +117,8 @@ BOOL OSDisableInterrupts(void);
 BOOL OSEnableInterrupts(void);
 BOOL OSRestoreInterrupts(BOOL);
 
-OSInterruptHandler __OSSetInterruptHandler(__OSInterrupt, OSInterruptHandler);
-OSInterruptHandler __OSGetInterruptHandler(__OSInterrupt);
+__OSInterruptHandler __OSSetInterruptHandler(__OSInterrupt, __OSInterruptHandler);
+__OSInterruptHandler __OSGetInterruptHandler(__OSInterrupt);
 
 void __OSInterruptInit(void);
 

@@ -7,7 +7,7 @@
 #include "dolphin/mtx.h"
 #include "dolphin/os/OSFastCast.h"
 #include "dolphin/os.h"
-#include "va_args.h"
+// #include "va_args.h"
 #include "jsyswrap.h"
 #include "dolphin/PPCArch.h"
 

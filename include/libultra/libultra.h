@@ -11,7 +11,7 @@
 #include "libultra/os_thread.h"
 #include "libultra/os_pi.h"
 #include "libultra/initialize.h"
-#include "libc/math.h" /* TODO: sins and coss belong in libultra */
+#include "libc64/math64.h" /* TODO: sins and coss belong in libultra */
 
 #define N64_SCREEN_HEIGHT 240
 #define N64_SCREEN_WIDTH 320

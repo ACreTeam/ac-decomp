@@ -1,8 +1,8 @@
 #ifndef DOLPHIN_OSRTC_H
-#define DOLPHIN_OSTRC_H
+#define DOLPHIN_OSRTC_H
 
-#include "types.h"
-#include "dolphin/os/OSExi.h"
+#include <dolphin/types.h>
+#include <dolphin/exi.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,7 +27,7 @@ extern "C" {
 #define RTC_DEVICE 1
 #define RTC_FREQUENCY 3
 
-typedef struct OSSram_s {
+typedef struct OSSram {
   u16 checkSum;
   u16 checkSumInv;
   u32 ead0;
@@ -39,7 +39,7 @@ typedef struct OSSram_s {
   u8 flags;
 } OSSram;
 
-typedef struct OSSramEx_s {
+typedef struct OSSramEx {
   u8 flashID[2][12];
   u32 wirelessKeyboardID;
   u16 wirelessPadID[4];
@@ -50,7 +50,7 @@ typedef struct OSSramEx_s {
   u8 pad1[2];
 } OSSramEx;
 
-typedef struct SramControlBlock_s {
+typedef struct SramControlBlock {
   u8 sram[RTC_SRAM_SIZE];
   u32 offset;
   BOOL enabled;
@@ -63,15 +63,15 @@ typedef struct SramControlBlock_s {
 // extern void __OSGetRTC();
 // extern void __OSSetRTC();
 static inline BOOL ReadSram(void* buffer);
-static void WriteSramCallback(EXIChannel chan, OSContext* ctx);
+static void WriteSramCallback(s32 chan, OSContext* ctx);
 static BOOL WriteSram(void* buffer, u32 offset, u32 size);
 extern void __OSInitSram();
 static inline void* LockSram(u32 offset);
 extern OSSram* __OSLockSram();
 extern OSSramEx* __OSLockSramEx();
 static BOOL UnlockSram(BOOL commit, u32 offset);
-extern void __OSUnlockSram(BOOL commit);
-extern void __OSUnlockSramEx(BOOL commit);
+// extern void __OSUnlockSram(BOOL commit);
+// extern void __OSUnlockSramEx(BOOL commit);
 extern BOOL __OSSyncSram();
 // extern void __OSCheckSram();
 // extern void __OSReadROM();
@@ -89,8 +89,8 @@ extern void OSSetProgressiveMode(u32 on);
 extern void __OSSetBootMode(u8 mode);
 // extern void OSGetEuRgb60Mode();
 // extern void OSSetEuRgb60Mode();
-extern u16 OSGetWirelessID(u32 chan);
-extern void OSSetWirelessID(u32 chan, u16 id);
+extern u16 OSGetWirelessID(s32 chan);
+extern void OSSetWirelessID(s32 chan, u16 id);
 
 #define GET_SOUNDMODE(flags) ((flags) & (1 << 2))
 #define CLR_SOUNDMODE(flags) ((flags) & (~(1 << 2)))
