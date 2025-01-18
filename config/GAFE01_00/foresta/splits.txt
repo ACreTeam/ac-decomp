@@ -6408,7 +6408,11 @@ data/item/food_price.c:
 
 data/dataobject/dataobject_698220:
 	.data       start:0x00698220 end:0x006986F8
+
+data/item/ftr_price.c:
 	.data       start:0x006986F8 end:0x006990E0
+
+data/dataobject/dataobject_6990E0:
 	.data       start:0x006990E0 end:0x00699220
 	.data       start:0x00699220 end:0x00699820
 	.data       start:0x00699820 end:0x00699E20
