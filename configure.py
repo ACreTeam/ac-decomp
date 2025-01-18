@@ -2561,6 +2561,18 @@ config.libs = [
             Object(Matching, "data/field/bg/acre/rom_train_in/rom_train_in.c"),
             Object(Matching, "data/field/bg/acre/rom_uranai/rom_uranai_evw_anime.c"),
             Object(Matching, "data/field/bg/acre/rom_uranai/rom_uranai.c"),
+
+            Object(Matching, "data/item/binsen_price.c"),
+            Object(Matching, "data/item/cloth_price.c"),
+            Object(Matching, "data/item/carpet_price.c"),
+            Object(Matching, "data/item/wall_price.c"),
+            Object(Matching, "data/item/tool_price.c"),
+            Object(Matching, "data/item/plant_price.c"),
+            Object(Matching, "data/item/food_price.c"),
+            Object(Matching, "data/item/fish_price.c"),
+            Object(Matching, "data/item/md_price.c"),
+            Object(Matching, "data/item/diary_price.c"),
+            Object(Matching, "data/item/insect_price.c"),
         ],
     ),
 ]

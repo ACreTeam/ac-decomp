@@ -5970,7 +5970,11 @@ data/field/bg/acre/tmpr2/tmpr2.c:
 
 data/dataobject/dataobject_6207C0:
 	.data       start:0x006207C0 end:0x006208A8
+
+data/item/binsen_price.c:
 	.data       start:0x006208A8 end:0x00620930
+
+data/dataobject/dataobject_692030:
 	.data       start:0x00620930 end:0x00620950
 	.data       start:0x00620950 end:0x00620960
 	.data       start:0x00620960 end:0x00622160
@@ -5988,6 +5992,8 @@ data/field/bg/bush_pal.c:
 
 data/dataobject/dataobject_62B300:
 	.data       start:0x0062B300 end:0x0062B400
+
+data/item/carpet_price.c:
 	.data       start:0x0062B400 end:0x0062B488
 
 data/field/bg/cliff_pal.c:
@@ -5997,8 +6003,14 @@ data/dataobject/dataobject_62B620:
 	.data       start:0x0062B620 end:0x0062CE20
 	.data       start:0x0062CE20 end:0x0062E620
 	.data       start:0x0062E620 end:0x0062E878
+
+data/item/cloth_price.c:
 	.data       start:0x0062E878 end:0x0062EA78
+
+data/item/diary_price.c:
 	.data       start:0x0062EA78 end:0x0062EAA0
+
+data/dataobject/dataobject_62EAA0:
 	.data       start:0x0062EAA0 end:0x0062F960
 	.data       start:0x0062F960 end:0x00630480
 	.data       start:0x00630480 end:0x00631200
@@ -6387,8 +6399,14 @@ data/dataobject/dataobject_642D80:
 	.data       start:0x00696080 end:0x00696860
 	.data       start:0x00696860 end:0x006981A0
 	.data       start:0x006981A0 end:0x006981B0
+
+data/item/fish_price.c:
 	.data       start:0x006981B0 end:0x00698208
+
+data/item/food_price.c:
 	.data       start:0x00698208 end:0x00698220
+
+data/dataobject/dataobject_698220:
 	.data       start:0x00698220 end:0x006986F8
 	.data       start:0x006986F8 end:0x006990E0
 	.data       start:0x006990E0 end:0x00699220
@@ -7843,7 +7861,11 @@ data/dataobject/dataobject_788CA0:
 	.data       start:0x00879698 end:0x00879BA8
 	.data       start:0x00879BA8 end:0x0087A0B8
 	.data       start:0x0087A0B8 end:0x0087A0C8
+
+data/item/insect_price.c:
 	.data       start:0x0087A0C8 end:0x0087A140
+
+data/dataobject/dataobject_87A140:
 	.data       start:0x0087A140 end:0x0087EA40
 	.data       start:0x0087EA40 end:0x008805D8
 	.data       start:0x008805D8 end:0x00880640
@@ -7966,7 +7988,7 @@ data/submenu/map/kan_tizu.c:
 data/submenu/map/kan_tizu2.c:
 	.data       start:0x008C4720 end:0x008C6520
 
-data/dataobject/dataobject_8C6520:
+data/item/md_price.c:
 	.data       start:0x008C6520 end:0x008C65A0
 
 data/field/bg/acre/rom_museum1/rom_museum1.c:
@@ -8117,6 +8139,8 @@ data/dataobject/dataobject_8E4AB0:
 	.data       start:0x00935BD0 end:0x00936358
 	.data       start:0x00936358 end:0x00936AE0
 	.data       start:0x00936AE0 end:0x00937268
+
+data/item/plant_price.c:
 	.data       start:0x00937268 end:0x00937280
 
 data/field/bg/acre/myr_etc/myr_etc.c:
@@ -8570,7 +8594,7 @@ data/field/bg/acre/rom_tent/rom_tent.c:
 data/field/bg/acre/room01/room01.c:
 	.data       start:0x00AB7AE0 end:0x00AB9768
 
-data/dataobject/dataobject_AB9768:
+data/item/tool_price.c:
 	.data       start:0x00AB9768 end:0x00AB9840
 
 data/field/bg/acre/rom_train_in/rom_train_in.c:
@@ -8588,7 +8612,11 @@ data/field/bg/acre/rom_uranai/rom_uranai.c:
 
 data/dataobject/dataobject_AC8368:
 	.data       start:0x00AC8368 end:0x00AC8468
+
+data/item/wall_price.c:
 	.data       start:0x00AC8468 end:0x00AC84F0
+
+data/dataobject/dataobject_AC84F0:
 	.data       start:0x00AC84F0 end:0x00AC86F0
 	.data       start:0x00AC86F0 end:0x00AC88F0
 	.data       start:0x00AC88F0 end:0x00AC8CF0
