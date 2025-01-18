@@ -2573,6 +2573,13 @@ config.libs = [
             Object(Matching, "data/item/md_price.c"),
             Object(Matching, "data/item/diary_price.c"),
             Object(Matching, "data/item/insect_price.c"),
+            Object(Matching, "data/item/ftr_price.c"),
+
+            Object(Matching, "data/item/ftr_list.c"),
+            Object(Matching, "data/item/binsen_list.c"),
+            Object(Matching, "data/item/cloth_list.c"),
+            Object(Matching, "data/item/carpet_list.c"),
+            Object(Matching, "data/item/wall_list.c"),
         ],
     ),
 ]

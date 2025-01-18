@@ -5968,7 +5968,7 @@ data/field/bg/acre/tmpr2/tmpr2_evw_anime.c:
 data/field/bg/acre/tmpr2/tmpr2.c:
 	.data       start:0x0061F978 end:0x006207C0
 
-data/dataobject/dataobject_6207C0:
+data/item/binsen_list.c:
 	.data       start:0x006207C0 end:0x006208A8
 
 data/item/binsen_price.c:
@@ -5990,7 +5990,7 @@ data/dataobject/dataobject_692030:
 data/field/bg/bush_pal.c:
 	.data       start:0x0062B180 end:0x0062B300
 
-data/dataobject/dataobject_62B300:
+data/item/carpet_list.c:
 	.data       start:0x0062B300 end:0x0062B400
 
 data/item/carpet_price.c:
@@ -6002,6 +6002,8 @@ data/field/bg/cliff_pal.c:
 data/dataobject/dataobject_62B620:
 	.data       start:0x0062B620 end:0x0062CE20
 	.data       start:0x0062CE20 end:0x0062E620
+
+data/item/cloth_list.c:
 	.data       start:0x0062E620 end:0x0062E878
 
 data/item/cloth_price.c:
@@ -6406,7 +6408,7 @@ data/item/fish_price.c:
 data/item/food_price.c:
 	.data       start:0x00698208 end:0x00698220
 
-data/dataobject/dataobject_698220:
+data/item/ftr_list.c:
 	.data       start:0x00698220 end:0x006986F8
 
 data/item/ftr_price.c:
@@ -8614,7 +8616,7 @@ data/field/bg/acre/rom_uranai/rom_uranai_evw_anime.c:
 data/field/bg/acre/rom_uranai/rom_uranai.c:
 	.data       start:0x00AC2120 end:0x00AC8368
 
-data/dataobject/dataobject_AC8368:
+data/item/wall_list.c:
 	.data       start:0x00AC8368 end:0x00AC8468
 
 data/item/wall_price.c:

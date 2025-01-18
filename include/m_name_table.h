@@ -887,6 +887,10 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define FTR_MANHOLE_COVER 0x1444
 
+#define FTR_JACK_O_LANTERN 0x149C
+
+#define FTR_JACK_IN_THE_BOX 0x14C4
+
 #define FTR_BATH_MAT 0x154C
 
 #define HANIWA_START 0x15B0
@@ -2437,10 +2441,21 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 
 #define FTR_CALLIGRAPHY_PAD_WEST 0x313B
 
+#define FTR_NET 0x318C
 #define FTR_AXE 0x3190
+#define FTR_SHOVEL 0x3194
+#define FTR_FISHING_ROD 0x3198
+#define FTR_CRAB_STEW 0x319C
+#define FTR_FIREPLACE 0x31A0
+#define FTR_IGLOO_MODEL 0x31A4
+#define FTR_SNOWY_TREE_MODEL 0x31A8
 
+#define FTR_SNOWBOARD 0x31C4
+
+#define FTR_SNOW_BUNNY 0x31D4
 #define FTR_PAINTING15_UNUSED 0x31D8
 #define FTR_PAINTING16_UNUSED 0x31DC
+#define FTR_SLEIGH 0x31E0
 
 #define FTR_BOTTLE_ROCKET 0x31F0
 
@@ -2458,6 +2473,15 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define FTR_AUTUMN_MEDAL 0x32AC
 
 #define FTR_ANGLER_TROPHY 0x3374
+#define FTR_PANSY_MODEL1 0x3378
+#define FTR_PANSY_MODEL2 0x337C
+#define FTR_PANSY_MODEL3 0x3380
+#define FTR_COSMOS_MODEL1 0x3384
+#define FTR_COSMOS_MODEL2 0x3388
+#define FTR_COSMOS_MODEL3 0x338C
+#define FTR_TULIP_MODEL1 0x3390
+#define FTR_TULIP_MODEL2 0x3394
+#define FTR_TULIP_MODEL3 0x3398
 
 #define FTR_CORNUCOPIA 0x33B4
 #define FTR_JUDGES_BELL 0x33B8
