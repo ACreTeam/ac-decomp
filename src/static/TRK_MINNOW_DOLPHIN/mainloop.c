@@ -1,8 +1,4 @@
-#include "TRK/mainloop.h"
-#include "TRK/nubevent.h"
-#include "TRK/dispatch.h"
-#include "TRK/targimpl.h"
-#include "TRK/serpoll.h"
+#include "TRK/trk.h"
 
 void TRKNubMainLoop(void){
     
@@ -14,11 +10,11 @@ void TRKNubMainLoop(void){
     while(loop == FALSE){
         if(TRKGetNextEvent(&event) != FALSE){
             statInput = FALSE;
-            switch(event.mEventType){
+            switch(event.eventType){
                 case 0:
                 break;
                 case 2:
-                    msg = TRKGetBuffer(event.mBufferIndex);
+                    msg = TRKGetBuffer(event.msgBufID);
                     TRKDispatchMessage(msg);
                 break;
                 case 1:
@@ -34,7 +30,7 @@ void TRKNubMainLoop(void){
             }
             TRKDestructEvent(&event);
         }
-        else if((statInput == FALSE) || ((u8)*gTRKInputPendingPtr != 0)){
+        else if((statInput == FALSE) || (*(u8*)gTRKInputPendingPtr != 0)){
             statInput = TRUE;
             TRKGetInput();
         }

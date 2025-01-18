@@ -1,18 +1,15 @@
-#include "TRK/nubevent.h"
-#include "TRK/mutex_trk.h"
-#include "TRK/_mem_trk.h"
-#include "TRK/msgbuf.h"
+#include "TRK/trk.h"
 
 TRKEventQueue gTRKEventQueue;
 
-TRKResult TRKInitializeEventQueue(){
+DSError TRKInitializeEventQueue(){
     TRKInitializeMutex(&gTRKEventQueue);
     TRKAcquireMutex(&gTRKEventQueue);
-    gTRKEventQueue.mCurrEvtID = 0;
-	gTRKEventQueue.mNextSlotToOverwrite = 0;
-	gTRKEventQueue.mMax = 0x100;
+    gTRKEventQueue.count = 0;
+	gTRKEventQueue.next = 0;
+	gTRKEventQueue.eventID = 0x100;
     TRKReleaseMutex(&gTRKEventQueue);
-    return TRKSuccess;
+    return DS_NoError;
 }
 
 BOOL TRKGetNextEvent(TRKEvent* event){
@@ -20,11 +17,11 @@ BOOL TRKGetNextEvent(TRKEvent* event){
     BOOL res = FALSE;
     TRKAcquireMutex(&gTRKEventQueue);
 
-        if(gTRKEventQueue.mCurrEvtID > 0){
-            TRK_memcpy(event, &gTRKEventQueue.mEvents[gTRKEventQueue.mNextSlotToOverwrite], sizeof(TRKEvent));
-            gTRKEventQueue.mCurrEvtID--;
-            if(++gTRKEventQueue.mNextSlotToOverwrite == 2){
-                gTRKEventQueue.mNextSlotToOverwrite = 0;
+        if(gTRKEventQueue.count > 0){
+            TRK_memcpy(event, &gTRKEventQueue.events[gTRKEventQueue.next], sizeof(TRKEvent));
+            gTRKEventQueue.count--;
+            if(++gTRKEventQueue.next == 2){
+                gTRKEventQueue.next = 0;
             }
             res = TRUE;
         }
@@ -32,35 +29,35 @@ BOOL TRKGetNextEvent(TRKEvent* event){
     return res;
 }
 
-TRKResult TRKPostEvent(TRKEvent* event){
+DSError TRKPostEvent(TRKEvent* event){
 
-    TRKResult res = 0;
+    DSError res = 0;
     int evId;
 
     TRKAcquireMutex(&gTRKEventQueue);
 
-    if(gTRKEventQueue.mCurrEvtID == 2){
+    if(gTRKEventQueue.count == 2){
         res = 0x100;
     }
     else{
-        evId = (gTRKEventQueue.mNextSlotToOverwrite + gTRKEventQueue.mCurrEvtID) % 2;
-        TRK_memcpy(&gTRKEventQueue.mEvents[evId], event, sizeof(TRKEvent));
-        gTRKEventQueue.mEvents[evId].mMax = gTRKEventQueue.mMax;
-        gTRKEventQueue.mMax++;
-        if(gTRKEventQueue.mMax < 256){
-            gTRKEventQueue.mMax = 256;
+        evId = (gTRKEventQueue.next + gTRKEventQueue.count) % 2;
+        TRK_memcpy(&gTRKEventQueue.events[evId], event, sizeof(TRKEvent));
+        gTRKEventQueue.events[evId].eventID = gTRKEventQueue.eventID;
+        gTRKEventQueue.eventID++;
+        if(gTRKEventQueue.eventID < 256){
+            gTRKEventQueue.eventID = 256;
         }
-         gTRKEventQueue.mCurrEvtID++;
+         gTRKEventQueue.count++;
     }
     TRKReleaseMutex(&gTRKEventQueue);
     return res;
 }
 void TRKConstructEvent(TRKEvent* event, int type){
 
-    event->mEventType = type;
-    event->mMax = 0;
-    event->mBufferIndex = -1;
+    event->eventType = type;
+    event->eventID = 0;
+    event->msgBufID = -1;
 }
 void TRKDestructEvent(TRKEvent* event){
-    TRKReleaseBuffer(event->mBufferIndex);
+    TRKReleaseBuffer(event->msgBufID);
 }

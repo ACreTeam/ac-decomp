@@ -1,9 +1,8 @@
-#include "TRK/dispatch.h"
-#include "TRK/msghndlr.h"
+#include "TRK/trk.h"
 
 u32 gTRKDispatchTableSize;
 
-TRKResult (*gTRKDispatchTable[])(MessageBuffer*) = {
+DSError (*gTRKDispatchTable[])(MessageBuffer*) = {
     &TRKDoUnsupported,   &TRKDoConnect,        &TRKDoDisconnect,
     &TRKDoReset,         &TRKDoVersions,       &TRKDoSupportMask,
     &TRKDoCPUType,       &TRKDoUnsupported,    &TRKDoUnsupported,
@@ -17,16 +16,16 @@ TRKResult (*gTRKDispatchTable[])(MessageBuffer*) = {
     &TRKDoUnsupported,   &TRKDoUnsupported,    NULL,
 };
 
-TRKResult TRKInitializeDispatcher() {
+DSError TRKInitializeDispatcher() {
     gTRKDispatchTableSize = 32;
-    return TRKSuccess;
+    return DS_NoError;
 }
 
-TRKResult TRKDispatchMessage(MessageBuffer* mbuf) {
+DSError  TRKDispatchMessage(MessageBuffer* mbuf) {
 
     u8 buf;
     s16 val;
-    TRKResult res = TRKError500;
+    DSError res = DS_DispatchError;
 
     TRKSetBufferPosition(mbuf, 0);
     TRKReadBuffer1_ui8(mbuf, &buf);

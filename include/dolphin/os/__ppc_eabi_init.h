@@ -1,7 +1,7 @@
 #ifndef PPC_EABI_INIT_H
 #define PPC_EABI_INIT_H
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C"{

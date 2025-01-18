@@ -1,4 +1,6 @@
-#include "TRK/_mem_trk.h"
+#include "TRK/trk.h"
+
+void TRK_fill_mem(void *dst, int val, u32 length);
 
 __declspec(section ".init") void *TRK_memcpy(void *dst, const void *src, size_t n)
 {

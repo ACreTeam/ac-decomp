@@ -1,7 +1,8 @@
 #include "dolphin/os.h"
 #include "dolphin/db.h"
-#include "TRK/dolphin_trk.h"
+#include "TRK/trk.h"
 #include "dolphin/os/__ppc_eabi_init.h"
+#include <libc/stdlib.h>
 
 __declspec(section ".init") void __init_registers(void);
 __declspec(section ".init") void __init_data(void);

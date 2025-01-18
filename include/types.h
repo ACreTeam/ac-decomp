@@ -146,7 +146,7 @@ typedef u32 unknown;
 
 #ifndef __cplusplus
 // Some definitions rely on wchar_t being defined
-typedef short wchar_t;
+typedef unsigned short wchar_t;
 #endif
 
 // #if DEBUG

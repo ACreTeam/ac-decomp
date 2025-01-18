@@ -1,12 +1,4 @@
-#include "TRK/nubinit.h"
-#include "TRK/usr_put.h"
-#include "TRK/nubevent.h"
-#include "TRK/msgbuf.h"
-#include "TRK/dispatch.h"
-#include "TRK/dolphin_trk_glue.h"
-#include "TRK/targimpl.h"
-#include "TRK/serpoll.h"
-#include "TRK/dolphin_trk.h"
+#include "TRK/trk.h"
 
 BOOL gTRKBigEndian;
 
@@ -33,7 +25,7 @@ inline BOOL TRK_InitializeEndian(void)
     return res;
 }
 
-TRKResult TRKInitializeNub (void){
+DSError TRKInitializeNub (void){
     int res;
     res = TRK_InitializeEndian();
 
@@ -45,40 +37,39 @@ TRKResult TRKInitializeNub (void){
         res = TRKInitializeEventQueue();
     }
     
-    if(res == TRKSuccess){
+    if(res == DS_NoError){
         res = TRKInitializeMessageBuffers();
     }
     
-    if(res == TRKSuccess){
+    if(res == DS_NoError){
         res = TRKInitializeDispatcher();
     }
     
-    if(res == TRKSuccess){
-        TRKResult ures = TRKInitializeIntDrivenUART(0xE100, 1, 0, &gTRKInputPendingPtr);
+    if(res == DS_NoError){
+        DSError ures = TRKInitializeIntDrivenUART(0xE100, 1, 0, &gTRKInputPendingPtr);
         TRKTargetSetInputPendingPtr(gTRKInputPendingPtr);
-        if(ures != TRKSuccess){
+        if(ures != DS_NoError){
             res = ures;
         }
     }
 
-    if(res == TRKSuccess){
+    if(res == DS_NoError){
         res = TRKInitializeSerialHandler();
     }
 
-    if(res == TRKSuccess){
+    if(res == DS_NoError){
         res = TRKInitializeTarget();
     }
 
     return res;
 }
 
-TRKResult TRKTerminateNub(void){
+DSError TRKTerminateNub(void){
 
     TRKTerminateSerialHandler();
-    return TRKSuccess;
+    return DS_NoError;
 } 
 
 void TRKNubWelcome(void){
     TRK_board_display("MetroTRK for GAMECUBE v0.10");
 }
-
