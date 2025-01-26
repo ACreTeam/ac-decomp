@@ -124,6 +124,12 @@ typedef enum audio_sound_effects {
 
     NA_SE_TRAIN_RIDE = 0x8D,
 
+    NA_SE_SEMI0_CRY = 0x97,
+    NA_SE_SEMI1_CRY = 0x98,
+
+    NA_SE_SEMI2_CRY = 0x9A,
+    NA_SE_SEMI3_CRY = 0x9B,
+
     NA_SE_GOKI_MOVE = 0xA8,
 
     NA_SE_B0 = 0xB0,
@@ -142,6 +148,7 @@ typedef enum audio_sound_effects {
     NA_SE_HANABI3 = HANABI(0x112),
     NA_SE_EAT = 0x113,
     NA_SE_114 = 0x114,
+    NA_SE_SEMI_ESCAPE = 0x115,
 
     NA_SE_11B = 0x11B,
     NA_SE_WEAR = 0x11C,

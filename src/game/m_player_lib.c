@@ -2731,6 +2731,11 @@ extern int mPlib_Check_HitAxe(xyz_t* pos_p) {
     return GET_PLAYER_ACTOR_NOW()->Check_HitAxe_proc(GET_PLAYER_ACTOR_NOW_ACTOR(), pos_p);
 }
 
+/**
+ * @brief Checks if the player hit something with their axe in the same block
+ * @param pos_p Position to check
+ * @return TRUE if the player hit something with their axe in the same block, FALSE otherwise
+ */
 extern int mPlib_Check_VibUnit_OneFrame(const xyz_t* pos_p) {
     return GET_PLAYER_ACTOR_NOW()->Check_VibUnit_OneFrame_proc(GET_PLAYER_ACTOR_NOW_ACTOR(), pos_p);
 }
