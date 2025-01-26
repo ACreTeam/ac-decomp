@@ -243,7 +243,7 @@ typedef struct npc_overlay_s {
     int used;
 } aNPC_overlay_c;
 
-typedef int (*aNPC_SETUP_ACTOR_PROC)(GAME_PLAY*, mActor_name_t, s8, int, s16, int, int, int, int);
+typedef int (*aNPC_SETUP_ACTOR_PROC)(GAME_PLAY* play, mActor_name_t name, s8 idx, int mvlist_no, s16 arg, int bx, int bz, int ux, int uz);
 typedef void (*aNPC_GET_OVERLAY_AREA_PROC)(ACTOR_DLFTBL*, u8*, size_t, mActor_name_t);
 typedef void (*aNPC_DMA_DRAW_DATA_PROC)(aNPC_draw_data_c*, mActor_name_t);
 typedef void (*aNPC_FREE_OVERLAY_AREA_PROC)(ACTOR_DLFTBL*);
