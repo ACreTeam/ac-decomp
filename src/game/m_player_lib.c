@@ -3120,36 +3120,36 @@ extern int mPlib_Check_scoop_after(GAME* game, xyz_t* pos_p, mActor_name_t* item
 
                         if (is_stump) {
                             mCoBG_LineCheck_RemoveFg(&rev_pos, start_pos, end_pos, &mNT_ItIsStump,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                             mCoBG_LineCheck_RemoveFg(&rev3_pos, end_pos, start_pos, &mNT_ItIsStump,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                             mCoBG_LineCheck_RemoveFg(&rev2_pos, start2_pos, end2_pos, &mNT_ItIsStump,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                             mCoBG_LineCheck_RemoveFg(&rev4_pos, end2_pos, start2_pos, &mNT_ItIsStump,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                         } else if (is_stone_tencoin) {
                             mCoBG_LineCheck_RemoveFg(&rev_pos, start_pos, end_pos, &mNT_ItIsStoneCoin10,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                             mCoBG_LineCheck_RemoveFg(&rev3_pos, end_pos, start_pos, &mNT_ItIsStoneCoin10,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                             mCoBG_LineCheck_RemoveFg(&rev2_pos, start2_pos, end2_pos, &mNT_ItIsStoneCoin10,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                             mCoBG_LineCheck_RemoveFg(&rev4_pos, end2_pos, start2_pos, &mNT_ItIsStoneCoin10,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                         } else if (is_rsv) {
                             mCoBG_LineCheck_RemoveFg(&rev_pos, start_pos, end_pos, &mNT_ItIsReserveDummy,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                             mCoBG_LineCheck_RemoveFg(&rev3_pos, end_pos, start_pos, &mNT_ItIsReserveDummy,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                             mCoBG_LineCheck_RemoveFg(&rev2_pos, start2_pos, end2_pos, &mNT_ItIsReserveDummy,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                             mCoBG_LineCheck_RemoveFg(&rev4_pos, end2_pos, start2_pos, &mNT_ItIsReserveDummy,
-                                                     mCoBG_LINECHECK_CAT_WALL);
+                                                     mCoBG_LINE_CHECK_WALL);
                         } else if (!is_tree) {
-                            mCoBG_LineCheck_RemoveFg(&rev_pos, start_pos, end_pos, NULL, mCoBG_LINECHECK_CAT_WALL);
-                            mCoBG_LineCheck_RemoveFg(&rev3_pos, end_pos, start_pos, NULL, mCoBG_LINECHECK_CAT_WALL);
-                            mCoBG_LineCheck_RemoveFg(&rev2_pos, start2_pos, end2_pos, NULL, mCoBG_LINECHECK_CAT_WALL);
-                            mCoBG_LineCheck_RemoveFg(&rev4_pos, end2_pos, start2_pos, NULL, mCoBG_LINECHECK_CAT_WALL);
+                            mCoBG_LineCheck_RemoveFg(&rev_pos, start_pos, end_pos, NULL, mCoBG_LINE_CHECK_WALL);
+                            mCoBG_LineCheck_RemoveFg(&rev3_pos, end_pos, start_pos, NULL, mCoBG_LINE_CHECK_WALL);
+                            mCoBG_LineCheck_RemoveFg(&rev2_pos, start2_pos, end2_pos, NULL, mCoBG_LINE_CHECK_WALL);
+                            mCoBG_LineCheck_RemoveFg(&rev4_pos, end2_pos, start2_pos, NULL, mCoBG_LINE_CHECK_WALL);
                         }
 
                         if (!is_tree) {

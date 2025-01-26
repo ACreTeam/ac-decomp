@@ -377,113 +377,135 @@ enum {
 
 typedef int (*mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC)(mActor_name_t item);
 
-extern u32 mCoBG_Wpos2BgAttribute_Original(xyz_t wpos);
-extern u32 mCoBG_Wpos2Attribute(xyz_t wpos, s8* cant_dig);
-extern int mCoBG_CheckWaterAttribute(u32 attribute);
-extern f32 mCoBG_GetBgY_AngleS_FromWpos(s_xyz* angle_to_ground, xyz_t wpos, f32 offset_y);
-extern f32 mCoBG_GetShadowBgY_AngleS_FromWpos(s_xyz*, xyz_t, f32);
-extern int mCoBG_CheckWaterAttribute_OutOfSea(u32 attribute);
-extern int mCoBG_CheckHole_OrgAttr(u32 attribute);
-extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos(xyz_t wpos, f32 dist);
-extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos2(xyz_t wpos, f32 foot_dist);
-extern int mCoBG_Attribute2CheckPlant(u32 attribute, const xyz_t* wpos);
-extern void mCoBG_BgCheckControll(xyz_t* reverse_pos, ACTOR* actor, f32 check_range, f32 offset_y, s16 wall_attr_check,
-                                  s16 no_reverse, s16 check_type);
-extern int mCoBG_Height2GetLayer(f32 height);
-extern void mCoBG_SetPlussOffset(xyz_t wpos, s16 offset, s16 new_attrib);
-extern int mCoBG_GetLayer(const xyz_t* wpos);
-extern int mCoBG_BnumUnum2HoleNumber(int block_x, int block_z, int ut_x, int ut_z);
-extern int mCoBG_UtNum2BgAttr(int ut_x, int ut_z);
-extern f32 mCoBG_UtNum2UtCenterY(int ut_x, int ut_z);
-extern int mCoBG_CheckCliffAttr(u32 attribute);
-extern void mCoBG_SetPluss5PointOffset_file(xyz_t pos, mCoBG_OffsetTable_c ofs_data, char* file, int line);
-#define mCoBG_SetPluss5PointOffset(pos, ofs_data) mCoBG_SetPluss5PointOffset_file(pos, offsetptr, __FILE__, __LINE__);
-extern int mCoBG_Change2PoorAttr(mCoBG_Collision_u* col);
-extern int mCoBG_CheckHole(xyz_t wpos);
-extern int mCoBG_CheckSkySwing(xyz_t wpos);
-extern void mCoBG_Ut2SetDefaultOffset(int ut_x, int ut_z);
-extern int mCoBG_CheckWaveAttr(u32 attribute);
-extern int mCoBG_CheckPlant(xyz_t wpos);
-extern void mCoBG_InitBoatCollision();
-extern int mCoBG_CheckAttribute_BallRolling(s16* angles, const xyz_t* wpos);
-extern f32 mCoBG_CheckBallRollingArea(s16 angle, const xyz_t* wpos);
-extern int mCoBG_ExistHeightGap_KeepAndNow_Detail(xyz_t wpos);
-extern int mCoBG_GetHoleNumber(xyz_t wpos);
-extern int mCoBG_Attr2CheckPlaceNpc(u32 attribute);
-extern int mCoBG_ExistHeightGap_KeepAndNow(xyz_t wpos);
-extern void mCoBG_GetNorm_By3Point(xyz_t* normal, f32* v0, f32* v1, f32* v2);
-extern int mCoBG_SearchWaterLimitDistN(xyz_t* water_pos, xyz_t wpos, s16 angle, float max_dist, int divisor);
-extern f32 mCoBG_GetBalloonGroundY(const xyz_t* pos);
-extern void mCoBG_MakeBoatCollision(ACTOR* actor, xyz_t* pos, s16* angle_y);
-extern void mCoBG_DeleteBoatCollision(ACTOR* actor);
-extern void mCoBG_WaveCos2BgCheck(f32 wave_cos);
-extern int mCoBG_RegistMoveBg(mCoBG_bg_regist_c* bg_regist, xyz_t* wpos, xyz_t* last_wpos, s16* angle_y, f32 height,
-                              mCoBG_bg_size_c* bg_size, f32* scale_percent, mCoBG_bg_contact_c* bg_contact, xyz_t* ofs,
-                              int type, u32 attribute, f32 check_dist);
-extern void mCoBG_CrossOffMoveBg(int move_bg_idx);
-extern int mCoBG_CheckPlace(xyz_t wpos);
-extern int mCoBG_CheckSandHole_ClData(mCoBG_Collision_u* col);
-extern int mCoBG_GetHoleNumber_ClData(mCoBG_Collision_u* col);
-extern void mCoBG_GetBgNorm_FromWpos(xyz_t* norm, xyz_t wpos);
-extern int mCoBG_GetWaterFlow(xyz_t* water_flow, u32 attr);
-extern void mCoBG_SetAttribute(xyz_t pos, s16 attr);
-extern int mCoBG_GetPointInfoFrontLine(f32* line, f32* check_pos, f32* norm);
-extern int mCoBG_GetCrossCircleAndLine2Dvector(f32* cross0_xz, f32* cross1_xz, f32* point_xz, f32* vec_xz,
-                                               f32* center_xz, f32 radius);
-extern f32 mCoBG_GetVectorProductin2D(f32* vec0_xz, f32* vec1_xz);
-extern int mCoBG_GetCrossLineAndPerpendicular(f32* cross_xz, f32* start_xz, f32* end_xz, f32* point_xz);
-extern int mCoBG_RangeCheckLinePoint(f32* start_xz, f32* end_xz, f32* point_xz);
-extern int mCoBG_GetDistPointAndLine2D_Norm(f32* dist, f32* start_xz, f32* end_xz, f32* norm, f32* point_xz);
-extern f32 mCoBG_Get2VectorAngleF(f32* v0, f32* v1, u8 type);
-extern int mCoBG_CheckUtFlat(const xyz_t* pos);
-extern void mCoBG_BgCheckControll_RemoveDirectedUnitColumn(xyz_t* reverse_pos, ACTOR* actor, f32 check_range,
-                                                           f32 offset_y, s16 wall_attr_check, s16 no_reverse,
-                                                           s16 check_type, int ut_x, int ut_z);
-extern xyz_t mCoBG_UniqueWallCheck(ACTOR* actorx, f32 range, f32 y_ofs);
-extern xyz_t mCoBG_ScopeWallCheck(ACTOR* actorx, const xyz_t* pos, f32 x, f32 z, f32 range, f32 y_ofs);
-extern int mCoBG_ScrollCheck(xyz_t start_pos, xyz_t end_pos, f32 radius);
-extern int mCoBG_GetBlockBgCheckMode(void);
-extern void mCoBG_GroundCheckOnly(xyz_t* reverse_pos, ACTOR* actor, f32 check_range, f32 offset_y, s16 check_type);
-extern f32 mCoBG_Wpos2BgUtCenterHeight_AddColumn(xyz_t pos);
-extern f32 mCoBG_UtNum2UtCenterY_Keep(int ut_x, int ut_z);
-extern int mCoBG_RegistDecalCircle(const xyz_t* pos_p, f32 radius_start, f32 radius_end, s16 timer);
-extern int mCoBG_CheckAcceptDesignSign(const xyz_t* pos_p);
+extern u32 mCoBG_Wpos2Attribute(xyz_t pos, s8* cant_dig);
+extern void mCoBG_InitBgCheckResult(mCoBG_CheckResult_c* result);
+extern void mCoBG_BgCheckControll_RemoveDirectedUnitColumn(xyz_t* actor_revpos, ACTOR* actorx, f32 range, f32 ground_dist, s16 attr_wall, s16 rev_type, s16 check_type, int ux, int uz);
+extern void mCoBG_BgCheckControll(xyz_t* actor_revpos, ACTOR* actorx, f32 range, f32 ground_dist, s16 attr_wall, s16 rev_type, s16 check_type);
+extern void mCoBG_WallCheckOnly(xyz_t* actor_revpos, ACTOR* actorx, f32 range, f32 ground_dist, s16 rev_type, s16 check_type);
+extern void mCoBG_GroundCheckOnly(xyz_t* actor_revpos, ACTOR* actorx, f32 range, f32 ground_dist, s16 rev_type);
 extern void mCoBG_VirtualBGCheck(xyz_t* rev_pos_p, mCoBG_Check_c* bg_check, const xyz_t* start_pos_p,
                                  const xyz_t* end_pos_p, s16 angle_y, s16 water_flag, s16 ground_flag, f32 range,
                                  f32 ground_dist, s16 attr_wall, s16 rev_type, s16 check_type);
-extern f32 mCoBG_Wpos2GroundCheckOnly(const xyz_t* pos_p, f32 ground_dist);
-extern int mCoBG_Wpos2CheckNpc(xyz_t wpos);
-extern void mCoBG_WallCheckOnly(xyz_t* rev_pos_p, ACTOR* actor, f32 range, f32 ground_dist, s16 rev_type, s16 check_type);
+
+extern void mCoBG_RotateY(f32* pos, f32 rad);
+extern f32 mCoBG_GetVectorProductin2D(f32* vec0_xz, f32* vec1_xz);
+extern int mCoBG_JudgeCrossTriangleAndLine2D(xyz_t v0, xyz_t v1, xyz_t v2, xyz_t p, int dim);
+extern int mCoBG_GetDimension2Idx(f32 p0, f32 p1, f32 p2);
+extern int mCoBG_GetCrossTriangleAndLine3D(xyz_t* cross, xyz_t v0, xyz_t v1, xyz_t v2, xyz_t line0, xyz_t line1);
+extern f32 mCoBG_GetVectorScalar2D(f32* v0, f32* v1);
 extern int mCoBG_GetCrossJudge_2Vector(f32* vec0_p0, f32* vec0_p1, f32* vec1_p0, f32* vec1_p1);
 extern void mCoBG_GetCross2Line(f32* cross, f32* line0_p0, f32* line0_p1, f32* line1_p0, f32* line1_p1);
+extern f32 mCoBG_Get2VectorAngleF(f32* v0, f32* v1, u8 unit);
+extern s16 mCoBG_Get2VectorAngleS(f32* v0, f32* v1);
+extern int mCoBG_GetCrossLineAndPerpendicular(f32* cross, f32* p0, f32* p1, f32* target);
 extern int mCoBG_GetPointInfoFrontLine(f32* start, f32* point, f32* normal);
-extern int mCoBG_JudgePointInCircle(f32* point, f32* center, f32 radius);
-extern f32 mCoBG_WaveCos(void);
-extern mCoBG_bg_regist_c* mCoBG_Idx2RegistPointer(int move_bg_idx);
+extern int mCoBG_GetDistPointAndLine2D(f32* dist, f32* line0, f32* line1, f32* point);
+extern int mCoBG_GetDistPointAndLine2D_Norm(f32* dist, f32* line0, f32* line1, f32* normal, f32* point);
+extern int mCoBG_GetCrossCircleAndLine2Dvector(f32* cross0, f32* cross1, f32* point, f32* vec, f32* center, f32 radius);
+extern int mCoBG_GetCrossCircleAndLine2D(f32* cross0, f32* cross1, f32* p0, f32* p1, f32* center, f32 radius);
+extern void mCoBG_GetReverseVector2D(f32* vec);
+extern void mCoBG_GetUnitVector2D(f32* vec);
+extern int mCoBG_JudgePointInCircle_Xyz(const xyz_t* p, const xyz_t* center, f32 radius);
+extern int mCoBG_JudgePointInCircle(f32* p, f32* center, f32 radius);
+extern f32 mCoBG_GetAbsBiggerF(f32 a, f32 b);
+extern void mCoBG_GetNorm_By2Vector(f32* v0, f32* v1, xyz_t* normal);
+extern void mCoBG_GetNorm_By3Point(xyz_t* normal, f32* v0, f32* v1, f32* v2);
+extern int mCoBG_RangeCheckLinePoint(f32* start, f32* end, f32* point);
 
-typedef int (*mCoBG_LINECHECK_PROC)(mActor_name_t);
+extern void mCoBG_CalcTimerDecalCircle(void);
+extern int mCoBG_RegistDecalCircle(const xyz_t* pos, f32 start_radius, f32 end_radius, s16 timer);
+extern void mCoBG_InitDecalCircle(void);
+extern void mCoBG_CrossOffDecalCircle(int idx);
 
-#define mCoBG_LINECHECK_CAT_WALL (1 << 0)
-#define mCoBG_LINECHECK_CAT_GROUND (1 << 1)
-#define mCoBG_LINECHECK_CAT_WATER (1 << 2)
-
-extern int mCoBG_LineCheck_RemoveFg(xyz_t* rev_pos, xyz_t start_pos, xyz_t end_pos, mCoBG_LINECHECK_PROC check_proc,
-                                    int category);
+extern int mCoBG_JudgeMoveBgGroundCheck(f32* point, f32* goal, f32 dist);
 extern int mCoBG_GetMoveBgHeight(f32* move_bg_height, xyz_t* pos_p);
-extern int mCoBG_WoodSoundEffect(const xyz_t* pos_p);
+extern void mCoBG_InitMoveBgContact(mCoBG_bg_contact_c* contact);
+extern int mCoBG_RegistMoveBg(mCoBG_bg_regist_c* regist, xyz_t* wpos, xyz_t* old_wpos, s16* angleY, f32 height,
+                              mCoBG_bg_size_c* size, f32* scale_percent, mCoBG_bg_contact_c* contact, xyz_t* base_ofs,
+                              int type, u32 attribute, f32 check_dist);
+extern mCoBG_bg_regist_c* mCoBG_Idx2RegistPointer(int move_bg_idx);
+extern void mCoBG_CrossOffMoveBg(int move_bg_idx);
+extern void mCoBG_InitMoveBgData(void);
+extern void mCoBG_InitBoatCollision(void);
+extern void mCoBG_MakeBoatCollision(ACTOR* actor, xyz_t* pos, s16* angle_y);
+extern void mCoBG_DeleteBoatCollision(ACTOR* actor);
 
-extern void mCoBG_InitMoveBgData();
-extern void mCoBG_InitBlockBgCheckMode();
-extern void mCoBG_InitBgCheckResult(mCoBG_CheckResult_c* check_result);
-extern void mCoBG_InitDecalCircle();
+extern void mCoBG_GetSlopeSlideVector(xyz_t* vec, xyz_t pos);
+extern f32 mCoBG_GetBgY_AngleS_FromWpos(s_xyz* ground_angle, xyz_t pos, f32 ground_dist);
+extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos(xyz_t pos, f32 ground_dist);
+extern f32 mCoBG_Wpos2BgUtCenterHeight_AddColumn(xyz_t pos);
+extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos2(xyz_t pos, f32 ground_dist);
+extern void mCoBG_GetBgNorm_FromWpos(xyz_t* norm, xyz_t wpos);
+extern int mCoBG_ScrollCheck(xyz_t start, xyz_t end, f32 radius);
+extern int mCoBG_CheckPlace(xyz_t pos);
+extern int mCoBG_UtCheckPlace(int ux, int uz);
+extern int mCoBG_Attribute2CheckPlant(u32 attr, const xyz_t* pos);
+extern int mCoBG_CheckPlant(xyz_t pos);
+extern int mCoBG_Unit2CheckNpc(int ux, int uz);
+extern int mCoBG_Wpos2CheckNpc(xyz_t pos);
+extern int mCoBG_Attr2CheckPoorGround(u32 attr);
+extern int mCoBG_Attr2CheckPlaceNpc(u32 attr);
+extern int mCoBG_UtNum2BgAttr(int ux, int uz);
+extern f32 mCoBG_UtNum2UtCenterY(int ux, int uz);
+extern f32 mCoBG_UtNum2UtCenterY_Keep(int ux, int uz);
+extern u32 mCoBG_Wpos2BgAttribute_Original(xyz_t pos);
+extern int mCoBG_GetHoleNumber_ClData(mCoBG_Collision_u* col);
+extern int mCoBG_GetHoleNumber(xyz_t pos);
+extern int mCoBG_BnumUnum2HoleNumber(int bx, int bz, int b_ux, int b_uz);
+extern int mCoBG_CheckHole_OrgAttr(u32 attr);
+extern int mCoBG_CheckSandUt_ForFish(xyz_t* pos);
+extern int mCoBG_CheckSandHole_ClData(mCoBG_Collision_u* col);
+extern int mCoBG_BnumUnum2SandHole(int bx, int bz, int b_ux, int b_uz);
+extern int mCoBG_CheckHole(xyz_t pos);
+extern int mCoBG_CheckSkySwing(xyz_t pos);
+extern int mCoBG_CheckGrassX_ClData(mCoBG_Collision_u* col);
+extern int mCoBG_CheckGrassX(const xyz_t* pos);
+extern int mCoBG_CheckWave_ClData(mCoBG_Collision_u* col);
+extern int mCoBG_CheckWave(const xyz_t* pos);
+extern int mCoBG_CheckAcceptDesignSign(const xyz_t* pos_p);
+extern f32 mCoBG_GetBgHeightGapBetweenNowDefault(xyz_t pos);
+extern int mCoBG_ExistHeightGap_KeepAndNow(xyz_t pos);
+extern int mCoBG_SearchWaterLimitDistN(xyz_t* water_pos, xyz_t pos, s16 angle, f32 dist_limit, int divide);
+extern int mCoBG_CheckRoughPathInRoom(const xyz_t* pos);
+extern f32 mCoBG_GetBalloonGroundY(const xyz_t* pos);
+extern int mCoBG_CheckAttribute_BallRolling(s16* angle, const xyz_t* pos);
+extern f32 mCoBG_CheckBallRollingArea(s16 angle, const xyz_t* pos);
+extern f32 mCoBG_Wpos2GroundCheckOnly(const xyz_t* pos, f32 ground_dist);
+extern int mCoBG_ExistHeightGap_KeepAndNow_Detail(xyz_t pos);
+extern int mCoBG_Wpos2CheckSlateCol(const xyz_t* pos, int check_attr);
+extern int mCoBG_WoodSoundEffect(const xyz_t* pos);
+extern int mCoBG_CheckCliffAttr(u32 attr);
+extern f32 mCoBG_GetShadowBgY_AngleS_FromWpos(s_xyz* ground_angle, xyz_t pos, f32 ground_dist);
+extern int mCoBG_CheckUtFlat(const xyz_t* pos);
+extern int mCoBG_Height2GetLayer(f32 height);
+extern int mCoBG_GetLayer(const xyz_t* pos);
 
-extern void mCoBG_CalcTimerDecalCircle();
+extern void mCoBG_InitBlockBgCheckMode(void);
 extern int mCoBG_ChangeBlockBgCheckMode(int mode);
+extern int mCoBG_GetBlockBgCheckMode(void);
+extern xyz_t mCoBG_UniqueWallCheck(ACTOR* actorx, f32 range, f32 y_ofs);
+extern xyz_t mCoBG_ScopeWallCheck(ACTOR* actorx, const xyz_t* base_pos, f32 x, f32 z, f32 range, f32 y_ofs);
 
-extern f32 mCoBG_GetWaterHeight_File(xyz_t wpos, char* file, int line);
+extern void mCoBG_Ut2SetPlussOffset(int ux, int uz, s16 change_ofs, s16 attr);
+extern void mCoBG_SetPlussOffset(xyz_t wpos, s16 change_ofs, s16 attr);
+extern void mCoBG_SetAttribute(xyz_t pos, s16 attr);
+extern void mCoBG_Ut2SetPluss5PointOffset_file(int ux, int uz, mCoBG_OffsetTable_c ofs_data, char* file, int line);
+extern void mCoBG_SetPluss5PointOffset_file(xyz_t pos, mCoBG_OffsetTable_c ofs_data, char* file, int line);
+extern int mCoBG_Change2PoorAttr(mCoBG_Collision_u* col);
+extern void mCoBG_Ut2SetDefaultOffset(int ux, int uz);
+
+extern int mCoBG_LineCheck_RemoveFg(xyz_t* rev, xyz_t start_pos, xyz_t end_pos, mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_proc, int line_check_type);
+
+extern f32 mCoBG_GetBgY_AngleS_FromWpos2(s_xyz* ground_angle, xyz_t pos, f32 ground_dist);
+extern f32 mCoBG_GetWaterHeight_File(xyz_t pos, char* file, int line);
 #define mCoBG_GetWaterHeight(wpos) mCoBG_GetWaterHeight_File(wpos, __FILE__, __LINE__)
-
-extern int mCoBG_CheckSandUt_ForFish(xyz_t* wpos);
+extern int mCoBG_CheckWaterAttribute(u32 attr);
+extern int mCoBG_CheckWaterAttribute_OutOfSea(u32 attr);
+extern void mCoBG_WaveCos2BgCheck(f32 value);
+extern f32 mCoBG_WaveCos(void);
+extern int mCoBG_GetWaterFlow(xyz_t* flow, u32 attr);
+extern int mCoBG_CheckWaveAttr(u32 attr);
+extern int mCoBG_CheckSand2Sea(xyz_t* pos);
 
 #ifdef __cplusplus
 }
