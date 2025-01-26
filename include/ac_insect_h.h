@@ -88,6 +88,16 @@ enum {
     aINS_PROGRAM_NUM
 };
 
+enum {
+    aINS_BG_CHECK_TYPE_NONE,
+    aINS_BG_CHECK_TYPE_REG_ATTR,
+    aINS_BG_CHECK_TYPE_REG_NO_ATTR,
+    aINS_BG_CHECK_TYPE_NO_UNIT_COLUMN_ATTR,
+    aINS_BG_CHECK_TYPE_NO_UNIT_COLUMN_NO_ATTR,
+
+    aINS_BG_CHECK_TYPE_NUM
+};
+
 /* sizeof(aINS_Init_c) == 0x18 */
 typedef struct insect_init_s {
     /* 0x00 */ int insect_type;
