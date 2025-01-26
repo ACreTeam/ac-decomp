@@ -1383,7 +1383,7 @@ config.libs = [
             Object(Matching, "game/m_choice.c"),
             Object(Matching, "game/m_clip.c"),
             Object(Matching, "game/m_cockroach.c"),
-            Object(NonMatching, "game/m_collision_bg.c"),
+            Object(Matching, "game/m_collision_bg.c"),
             Object(Matching, "game/m_collision_obj.c"),
             Object(Matching, "game/m_common_data.c"),
             Object(Matching, "game/m_controller.c"),

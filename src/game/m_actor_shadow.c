@@ -148,7 +148,7 @@ void mActorShadow_GetShadowTopPos_GetSlideS(Shadow_Info* shadow) {
         wpos.y = shadow->position.y + base.y;
         wpos.z = shadow->position.z + base.z;
         res = 0;
-        bg_y = mCoBG_GetShadowBgY_AngleS_FromWpos(0.0f, NULL, wpos);
+        bg_y = mCoBG_GetShadowBgY_AngleS_FromWpos(NULL, wpos, 0.0f);
         if ((shadow->position.y - bg_y) > 20.0f) {
             shadow->unk34 = 28;
             return;
@@ -292,7 +292,7 @@ int mActorShadow_GetShadowKind(void) {
 }
 
 f32 mAc_GetShadowGroundY_NoneForce(const Shadow_Info* shadow) {
-    f32 res = mCoBG_GetShadowBgY_AngleS_FromWpos(0.0f, NULL, shadow->position);
+    f32 res = mCoBG_GetShadowBgY_AngleS_FromWpos(NULL, shadow->position, 0.0f);
     return res;
 }
 

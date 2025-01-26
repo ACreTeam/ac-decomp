@@ -55,7 +55,7 @@ static void eFootPrint_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
             int sum_angle_x = 0;
             int sum_angle_z = 0;
 
-            effect->position.y = 2.0f + mCoBG_GetShadowBgY_AngleS_FromWpos(0.0f, NULL, effect->position);
+            effect->position.y = 2.0f + mCoBG_GetShadowBgY_AngleS_FromWpos(NULL, effect->position, 0.0f);
             effect->effect_specific[2] = data->angle;
 
             /* Get the total ground angle (x & z) in a triangle around the effect position */

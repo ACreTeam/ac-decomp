@@ -1,0 +1,183 @@
+static u32 mCoBG_OffsetInRule(int ofs) {
+    if (ofs > 31) {
+        return 31;
+    }
+
+    return CLAMP(ofs, 0, ofs);
+}
+
+static void mCoBG_SetBestBgY(mCoBG_Collision_u* col, s16* change_ofs) {
+    u32 max = mCoBG_GetMaxOffset(col->data.center, col->data.top_left, col->data.bot_left, col->data.bot_right, col->data.top_right);
+    u32 min = mCoBG_GetMinOffset(col->data.center, col->data.top_left, col->data.bot_left, col->data.bot_right, col->data.top_right);
+}
+
+static void mCoBG_TidyChangeOffset(s16* change_ofs, mCoBG_Collision_u* col) {
+    if (
+        // clang-format off
+        col->data.center + *change_ofs > 31 ||
+        col->data.top_left + *change_ofs > 31 ||
+        col->data.bot_left + *change_ofs > 31 ||
+        col->data.bot_right + *change_ofs > 31 ||
+        col->data.top_right + *change_ofs > 31 ||
+        col->data.center + *change_ofs < 0 ||
+        col->data.top_left + *change_ofs < 0 ||
+        col->data.bot_left + *change_ofs < 0 ||
+        col->data.bot_right + *change_ofs < 0 ||
+        col->data.top_right + *change_ofs < 0
+        // clang-format on
+    ) {
+        mCoBG_SetBestBgY(col, change_ofs);
+    }
+}
+
+// @unused, @fabricated
+extern void mCoBG_Ut2SetPlussOffset(int ux, int uz, s16 change_ofs, s16 attr) {
+    xyz_t pos = { 0.0f, 0.0f, 0.0f };
+
+    if (mFI_UtNum2CenterWpos(&pos, ux, uz)) {
+        mCoBG_SetPlussOffset(pos, change_ofs, attr);
+    }
+}
+
+extern void mCoBG_SetPlussOffset(xyz_t wpos, s16 change_ofs, s16 attr) {
+    int ux;
+    int uz;
+
+    if (mFI_Wpos2UtNum(&ux, &uz, wpos)) {
+        mCoBG_Collision_u* col = mFI_UtNum2UtCol(ux, uz);
+        u8 keep_h = mFI_UtNum2UtKeepH(ux, uz);
+
+        if (keep_h == col->data.center) {
+            mCoBG_TidyChangeOffset(&change_ofs, col);
+        } else {
+            u32 gap = keep_h - col->data.center;
+
+            col->data.center = (u8)keep_h;
+            col->data.top_left += gap;
+            col->data.bot_left += gap;
+            col->data.bot_right += gap;
+            col->data.top_right += gap;
+            mCoBG_TidyChangeOffset(&change_ofs, col);
+        }
+
+        col->data.center += change_ofs;
+        col->data.bot_left += change_ofs;
+        col->data.top_left += change_ofs;
+        col->data.top_right += change_ofs;
+        col->data.bot_right += change_ofs;
+
+        if (attr != mCoBG_ATTRIBUTE_NONE) {
+            col->data.unit_attribute = (s16)attr;
+        }
+
+    }
+}
+
+extern void mCoBG_SetAttribute(xyz_t pos, s16 attr) {
+    mCoBG_Collision_u* col;
+    int ux;
+    int uz;
+
+    if (mFI_Wpos2UtNum(&ux, &uz, pos)) {
+        col = mFI_UtNum2UtCol(ux, uz);
+        if (attr != mCoBG_ATTRIBUTE_NONE) {
+            col->data.unit_attribute = (s16)attr;
+        }
+    }
+}
+
+extern void mCoBG_Ut2SetPluss5PointOffset_file(int ux, int uz, mCoBG_OffsetTable_c ofs_data, char* file, int line) {
+    xyz_t pos = { 0.0f, 0.0f, 0.0f };
+
+    if (mFI_UtNum2CenterWpos(&pos, ux, uz)) {
+        mCoBG_SetPluss5PointOffset_file(pos, ofs_data, file, line);
+    }
+}
+
+extern void mCoBG_SetPluss5PointOffset_file(xyz_t pos, mCoBG_OffsetTable_c ofs_data, char* file, int line) {
+    int ux;
+    int uz;
+
+    if (mFI_Wpos2UtNum(&ux, &uz, pos)) {
+        u8 keep_h = mFI_UtNum2UtKeepH(ux, uz);
+        mCoBG_Collision_u* col = mFI_UtNum2UtCol(ux, uz);
+
+        if (
+            // clang-format off
+            col->data.center == col->data.top_left &&
+            col->data.center == col->data.bot_left &&
+            col->data.center == col->data.bot_right &&
+            col->data.center == col->data.top_right
+            // clang-format on
+        ) {
+            col->data.center = mCoBG_OffsetInRule(keep_h + ofs_data.centerRight_offset);
+            col->data.top_left = mCoBG_OffsetInRule(keep_h + ofs_data.leftUp_offset);
+            col->data.bot_left = mCoBG_OffsetInRule(keep_h + ofs_data.leftDown_offset);
+            col->data.bot_right = mCoBG_OffsetInRule(keep_h + ofs_data.rightDown_offset);
+            col->data.top_right = mCoBG_OffsetInRule(keep_h + ofs_data.rightUp_offset);
+            col->data.slate_flag = (s8)ofs_data.shape;
+
+            if (ofs_data.unit_attribute != mCoBG_ATTRIBUTE_NONE) {
+                col->data.unit_attribute = ofs_data.unit_attribute;
+            }
+        } else if (
+            // clang-format off
+            ofs_data.centerRight_offset == 0 &&
+            ofs_data.leftUp_offset == 0 &&
+            ofs_data.leftDown_offset == 0 &&
+            ofs_data.rightDown_offset == 0 &&
+            ofs_data.rightUp_offset == 0
+            // clang-format on
+        ) {
+            if (col->data.slate_flag) {
+                col->data.center = keep_h;
+                col->data.top_left = keep_h;
+                col->data.bot_left = keep_h;
+                col->data.bot_right = keep_h;
+                col->data.top_right = keep_h;
+                col->data.slate_flag = FALSE;
+            } else {
+                col->data.center = keep_h;
+                col->data.top_left = keep_h;
+                col->data.bot_left = keep_h;
+                col->data.bot_right = keep_h;
+                col->data.top_right = keep_h;
+            }
+
+            if (ofs_data.unit_attribute != mCoBG_ATTRIBUTE_NONE) {
+                col->data.unit_attribute = ofs_data.unit_attribute;
+            }
+        }
+    }
+}
+
+typedef struct {
+    u8 src;
+    u8 dst;
+} mCoBG_change_poor_c;
+
+extern int mCoBG_Change2PoorAttr(mCoBG_Collision_u* col) {
+    static mCoBG_change_poor_c change_data[] = {
+        { mCoBG_ATTRIBUTE_GRASS0, mCoBG_ATTRIBUTE_GRASS2 },
+        { mCoBG_ATTRIBUTE_GRASS1, mCoBG_ATTRIBUTE_GRASS2 },
+        { mCoBG_ATTRIBUTE_SOIL0, mCoBG_ATTRIBUTE_SOIL2 },
+        { mCoBG_ATTRIBUTE_SOIL1, mCoBG_ATTRIBUTE_SOIL2 },
+    };
+    u8 attr = col->data.unit_attribute;
+    int i;
+
+    for (i = 0; i < ARRAY_COUNT(change_data); i++) {
+        if (attr == change_data[i].src) {
+            col->data.unit_attribute = change_data[i].dst;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+extern void mCoBG_Ut2SetDefaultOffset(int ux, int uz) {
+    static mCoBG_OffsetTable_c offset_data = { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, FALSE };
+
+    mCoBG_Ut2SetPluss5PointOffset_file(ux, uz, offset_data, __FILE__, 515);
+}

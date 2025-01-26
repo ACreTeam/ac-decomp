@@ -7,6 +7,7 @@ extern "C" {
 
 #include "types.h"
 
+#define SQRT_OF_2_DIV_2 0.70710678118654752440f
 #define SQRT_OF_2_F 1.41421356237309504880f
 #define SQRT_OF_3_F 1.73205080756887729353f
 

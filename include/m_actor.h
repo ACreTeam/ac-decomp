@@ -1077,7 +1077,7 @@ typedef struct actor_shape_info_s {
     /* 0x1C */ f32 shadow_alpha_change_rate;
     /* 0x20 */ int unk_20;
     /* 0x24 */ xyz_t* shadow_position;
-    /* 0x28 */ int unk_28;
+    /* 0x28 */ int move_bg_idx;
     /* 0x2C */ u8 draw_shadow; /* TRUE = shadow is drawn, FALSE = shadow is not drawn */
     /* 0x2D */ u8 unk_2D;
     /* 0x2E */ u8

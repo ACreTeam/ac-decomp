@@ -4650,7 +4650,7 @@ extern int mNpc_GetMakeUtNuminBlock_hard_area(int* ut_x, int* ut_z, int bx, int 
 
                     /* Check that the height of each point on the unit is equal*/
                     if ((int)center == col_p->data.top_left && center == col_p->data.bot_left &&
-                        center == col_p->data.top_right && (int)center == col_p->data.bot_right) {
+                        center == col_p->data.bot_right && (int)center == col_p->data.top_right) {
 
                         now_ut_x = 8 - j;
                         now_ut_z = 8 - i;
@@ -4839,7 +4839,7 @@ extern int mNpc_GetMakeUtNuminBlock_hide_hard_area(int* ut_x, int* ut_z, int bx,
 
                     /* Check that the height of each point on the unit is equal*/
                     if ((int)center == col_p->data.top_left && center == col_p->data.bot_left &&
-                        center == col_p->data.top_right && (int)center == col_p->data.bot_right &&
+                        center == col_p->data.bot_right && (int)center == col_p->data.top_right &&
                         ((hide_ut_bit[i] >> j) & 1) == 1) {
 
                         now_ut_x = 8 - j;

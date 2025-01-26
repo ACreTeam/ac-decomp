@@ -160,7 +160,7 @@ static int Player_actor_check_bg_for_next_goto(ACTOR* actor, mActor_name_t door)
         if (door >= DOOR_START && door < EXIT_DOOR) {
             col = mFI_GetUnitCol(actor->world.position);
             if (col->data.center != col->data.top_left || col->data.center != col->data.bot_left ||
-                col->data.center != col->data.top_right || col->data.center != col->data.bot_right) {
+                col->data.center != col->data.bot_right || col->data.center != col->data.top_right) {
                 return TRUE;
             }
             return FALSE;
@@ -190,9 +190,9 @@ static void Player_actor_check_nextgoto(ACTOR* actor, GAME* game) {
                  mFI_GetUnitCol(actor->world.position)->data.center !=
                      mFI_GetUnitCol(actor->world.position)->data.bot_left ||
                  mFI_GetUnitCol(actor->world.position)->data.center !=
-                     mFI_GetUnitCol(actor->world.position)->data.top_right ||
+                     mFI_GetUnitCol(actor->world.position)->data.bot_right ||
                  mFI_GetUnitCol(actor->world.position)->data.center !=
-                     mFI_GetUnitCol(actor->world.position)->data.bot_right) &&
+                     mFI_GetUnitCol(actor->world.position)->data.top_right) &&
                 mFI_GET_TYPE(mFI_GetFieldId()) == mFI_FIELD_PLAYER0_ROOM) {
                 aMR_SaveWaltzTempo2();
                 mBGMPsComp_make_ps_wipe(0x10E);

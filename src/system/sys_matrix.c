@@ -609,13 +609,25 @@ Mtx* _Matrix_to_Mtx_new(GRAPH* graph) {
     return _Matrix_to_Mtx(GRAPH_ALLOC(graph, sizeof(Mtx)));
 }
 
-void Matrix_Position(xyz_t* old_pos, xyz_t* new_pos) {
-    MtxF* curm = Matrix_now;
+void Matrix_Position(xyz_t* input_position, xyz_t* output_position) {
+    MtxF* current_matrix = Matrix_now;
 
-    new_pos->x = (curm->xx * old_pos->x) + (curm->xy * old_pos->y) + (curm->xz * old_pos->z) + curm->xw;
-    new_pos->y = (curm->yx * old_pos->x) + (curm->yy * old_pos->y) + (curm->yz * old_pos->z) + curm->yw;
-    new_pos->z = (curm->zx * old_pos->x) + (curm->zy * old_pos->y) + (curm->zz * old_pos->z) + curm->zw;
+    output_position->x = (current_matrix->xx * input_position->x) +
+                         (current_matrix->xy * input_position->y) +
+                         (current_matrix->xz * input_position->z) +
+                         current_matrix->xw;
+
+    output_position->y = (current_matrix->yx * input_position->x) +
+                         (current_matrix->yy * input_position->y) +
+                         (current_matrix->yz * input_position->z) +
+                         current_matrix->yw;
+
+    output_position->z = (current_matrix->zx * input_position->x) +
+                         (current_matrix->zy * input_position->y) +
+                         (current_matrix->zz * input_position->z) +
+                         current_matrix->zw;
 }
+
 
 void Matrix_Position_Zero(xyz_t* v) {
     MtxF* curm = Matrix_now;

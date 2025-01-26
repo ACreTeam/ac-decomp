@@ -676,7 +676,7 @@ static int aMR_GroundFlat(xyz_t* pos) {
     mCoBG_Collision_u* col = mFI_GetUnitCol(*pos);
 
     if (col->data.center == col->data.top_left && col->data.center == col->data.bot_left &&
-        col->data.center == col->data.top_right && col->data.center == col->data.bot_right) {
+        col->data.center == col->data.bot_right && col->data.center == col->data.top_right) {
         return TRUE;
     }
 

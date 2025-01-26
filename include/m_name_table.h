@@ -549,6 +549,9 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITEM_IS_PAINT(item) ((item) >= ITM_RED_PAINT && (item) <= ITM_BROWN_PAINT)
 #define ITEM_IS_TOOL(item) ((item) >= ITM_TOOL_START && (item) < ITM_TOOL_END)
 
+#define ITEM_IS_DUMMY_MAILBOX(item) ((item) >= DUMMY_MAILBOX0 && (item) <= DUMMY_MAILBOX3)
+#define ITEM_IS_SIGN(item) ((item) == DUMMY_RESERVE || ITEM_IS_SIGNBOARD(item))
+
 #define BG_CATEGORY 0
 #define ENV_CATEGORY 8
 
@@ -3047,6 +3050,10 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define NPC_END      (NPC_START + 236)
 
 #define DUMMY_START 0xF000
+#define DUMMY_MAILBOX0 (DUMMY_START + 1) // 0xF001
+#define DUMMY_MAILBOX1 (DUMMY_START + 2) // 0xF002
+#define DUMMY_MAILBOX2 (DUMMY_START + 3) // 0xF003
+#define DUMMY_MAILBOX3 (DUMMY_START + 4) // 0xF004
 #define DUMMY_NPC_HOUSE_START (DUMMY_START + 5) // 0xF005
 #define DUMMY_NPC_HOUSE_000 (DUMMY_START + 5) // F005
 #define DUMMY_NPC_HOUSE_001 (DUMMY_START + 6) // F006
@@ -3390,6 +3397,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define RSV_SHOP_SOLD_UMBRELLA 0xFE16
 #define RSV_SHOP_SOLD_PAINT 0xFE17
 #define RSV_SHOP_SOLD_SIGNBOARD 0xFE18
+#define RSV_HOLE 0xFE19
+#define RSV_TREE 0xFE1A
 #define RSV_DOOR 0xFE1B
 #define RSV_FE1C 0xFE1C
 #define RSV_FE1F 0xFE1F

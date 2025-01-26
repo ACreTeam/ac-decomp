@@ -2268,7 +2268,7 @@ static void mAGrw_GetDepositAbleFlatNum(u8* candidate_num, u8* flat_num, mActor_
 
                     /* Check if the unit collision data is a flat square */
                     if ((col->data.center == col->data.top_left) && (col->data.center == col->data.bot_left) &&
-                        (col->data.center == col->data.top_right) && (col->data.center == col->data.bot_right) &&
+                        (col->data.center == col->data.bot_right) && (col->data.center == col->data.top_right) &&
                         (mCoBG_CheckSandHole_ClData(col) != TRUE)) {
                         flat_num[0]++;
                     }
@@ -2298,7 +2298,7 @@ static void mAGrw_SetShineGroundBlock(mAGrw_SSPosInfo_c* pos_info, mActor_name_t
                 (mCoBG_CheckHole_OrgAttr(col->data.unit_attribute))) {
                 /* Check if the unit collision data is a flat square */
                 if ((col->data.center == col->data.top_left) && (col->data.center == col->data.bot_left) &&
-                    (col->data.center == col->data.top_right) && (col->data.center == col->data.bot_right) &&
+                    (col->data.center == col->data.bot_right) && (col->data.center == col->data.top_right) &&
                     (mCoBG_CheckSandHole_ClData(col) != TRUE)) {
                     if (selected_ut == 0) {
                         pos_info->ut_x = ut_x;

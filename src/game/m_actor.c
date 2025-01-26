@@ -100,7 +100,7 @@ extern void Shape_Info_init(ACTOR* actor, f32 ofs_y, mActor_shadow_proc shadow_p
     actor->shape_info.shadow_position = &actor->world.position; // ???
 #endif
 
-    actor->shape_info.unk_28 = -1;
+    actor->shape_info.move_bg_idx = -1;
     actor->shape_info.unk_2D = 0;
 }
 

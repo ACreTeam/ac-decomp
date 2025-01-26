@@ -10,6 +10,22 @@ extern "C" {
 
 #define mCoBG_HEIGHT_MAX 31
 
+#define mCoBG_ATR_NO_PLACE (0 << 3)
+#define mCoBG_ATR_PLACE (1 << 3)
+
+#define mCoBG_ATR_NO_NPC (0 << 4)
+#define mCoBG_ATR_NPC (1 << 4)
+
+enum {
+    mCoBG_PLANT0 = 0, /* Stay a sapling */
+    mCoBG_PLANT1 = 1, /* Grow until the first stage of growth */
+    mCoBG_PLANT2 = 2, /* Grow until the second stage of growth */
+    mCoBG_PLANT3 = 3, /* Grow until the third stage of growth */
+    mCoBG_PLANT4 = 4, /* Fully grow */
+
+    mCoBG_KILL_PLANT = 7 /* No growth, all plants die on this unit  */
+};
+
 enum field_layer {
     mCoBG_LAYER0,
     mCoBG_LAYER1,
@@ -103,13 +119,12 @@ enum background_attribute {
 };
 
 enum {
-    mCoBG_PLANT0 = 0, /* Stay a sapling */
-    mCoBG_PLANT1 = 1, /* Grow until the first stage of growth */
-    mCoBG_PLANT2 = 2, /* Grow until the second stage of growth */
-    mCoBG_PLANT3 = 3, /* Grow until the third stage of growth */
-    mCoBG_PLANT4 = 4, /* Fully grow */
+    mCoBG_DIM_XY,
+    mCoBG_DIM_XZ,
+    mCoBG_DIM_YZ,
+    mCoBG_DIM_ALL,
 
-    mCoBG_KILL_PLANT = 7 /* No growth, all plants die on this unit  */
+    mCoBG_DIM_NUM
 };
 
 enum {
@@ -141,14 +156,16 @@ enum {
     mCoBG_BLOCK_BGCHECK_MODE_NUM
 };
 
+extern int mCoBG_block_bgcheck_mode;
+
 /* sizeof(mCoBG_CollisionData_c) == 4*/
 typedef struct collision_bg_data_s {
-    /* 1------- -------- -------- -------- */ u32 shape : 1; /* collision shape */
+    /* 1------- -------- -------- -------- */ u32 slate_flag : 1; /* collision shape */
     /* -11111-- -------- -------- -------- */ u32 center : 5;
     /* ------11 111----- -------- -------- */ u32 top_left : 5;
     /* -------- ---11111 -------- -------- */ u32 bot_left : 5;
-    /* -------- -------- 11111--- -------- */ u32 top_right : 5;
-    /* -------- -------- -----111 11------ */ u32 bot_right : 5;
+    /* -------- -------- 11111--- -------- */ u32 bot_right : 5;
+    /* -------- -------- -----111 11------ */ u32 top_right : 5;
     /* -------- -------- -------- --111111 */ u32 unit_attribute : 6; /* background_attribute type */
 } mCoBG_CollisionData_c;
 
@@ -165,11 +182,10 @@ typedef struct collision_unit_info_s {
     f32 rightDown_offset;
     f32 rightUp_offset;
     f32 base_height;
-    f32 pos_x;
-    f32 pos_z;
+    f32 unit_pos[2];
     int ut_x;
     int ut_z;
-    int shape;
+    u32 slate_flag;
     u8 attribute;
     mActor_name_t item;
 } mCoBG_UnitInfo_c;
@@ -187,7 +203,7 @@ typedef struct collision_bg_check_result_s {
     //
     u32 hit_wall : 5; // 2 bits in prev byte
     u32 hit_wall_count : 3;
-    u32 unk_flag0 : 1;
+    u32 jump_flag : 1;
     //
     u32 unit_attribute : 6; // 1 bit in prev byte
     u32 is_on_move_bg_obj : 1;
@@ -214,6 +230,26 @@ enum {
     mCoBG_WALL_TYPE_NUM
 };
 
+enum {
+    mCoBG_WALL_UP,
+    mCoBG_WALL_LEFT,
+    mCoBG_WALL_DOWN,
+    mCoBG_WALL_RIGHT,
+    mCoBG_WALL_SLATE_UP,
+    mCoBG_WALL_SLATE_DOWN,
+
+    mCoBG_WALL_NUM
+};
+
+enum {
+    mCoBG_NORM_DIRECT_UP,
+    mCoBG_NORM_DIRECT_LEFT,
+    mCoBG_NORM_DIRECT_DOWN,
+    mCoBG_NORM_DIRECT_RIGHT,
+
+    mCoBG_NORM_DIRECT_NUM
+};
+
 typedef struct collision_bg_check_s {
     mCoBG_Collision_u collision_units[5];
     mCoBG_CheckResult_c result;
@@ -229,11 +265,19 @@ typedef struct bg_side_contact_s {
     s16 angle;
 } mCoBG_side_contact_c;
 
+typedef struct bg_on_contact_s {
+    s16 name;
+} mCoBG_on_contact_c;
+
+typedef struct bg_on_contact_inf_s {
+    mCoBG_on_contact_c contact[5];
+    int count;
+} mCoBG_on_contact_info_c;
+
 typedef struct bg_contact_s {
     mCoBG_side_contact_c side_contact[5];
     int side_count;
-    s16 on_contact_names[5];
-    int on_count;
+    mCoBG_on_contact_info_c on_contact;
 } mCoBG_bg_contact_c;
 
 typedef struct bg_size_s {
@@ -256,6 +300,12 @@ typedef struct bg_register_s {
     f32* scale_percent;
 } mCoBG_bg_regist_c;
 
+#define mCoBG_MOVE_REGIST_MAX 64
+typedef struct bg_mgr_s {
+    mCoBG_bg_regist_c* regist_p[mCoBG_MOVE_REGIST_MAX];
+    int count;
+} mCoBG_mBgMgr_c;
+
 typedef struct collision_offset_table_s {
     u8 unit_attribute;
     s8 centerRight_offset;
@@ -266,31 +316,72 @@ typedef struct collision_offset_table_s {
     s8 shape;
 } mCoBG_OffsetTable_c;
 
+typedef struct wall_height_s {
+    f32 top;
+    f32 bot;
+} mCoBG_WallHeight_c;
+
+#define mCoBG_WALL_COL_NUM 2
+
 typedef struct collision_actor_info_s {
-    mActor_name_t name_id;
-    u8 _02;
-    u8 on_ground;
+    s16 name;
+    u8 check_type;
+    u8 old_on_ground;
     u8 _04;
-    u8 in_water;
-    u8 _06[2]; // alignment?
+    u8 old_in_water;
+    // u8 _06[2]; // alignment?
     mCoBG_CheckResult_c* check_res_p;
-    xz_t speed_xz0;
-    xz_t speed_xz1;
+    f32 speed_xz0[2];
+    f32 speed_xz1[2];
     xyz_t center_pos;
     xyz_t old_center_pos;
     xyz_t rev_pos;
-    u8 _40[4];
-    f32 _44;
-    f32 _48;
-    f32 _4C;
-    u8 _50[0x20];
+    f32 range;
+    f32 ground_dist;
+    f32 old_ground_y;
+    f32 ground_y;
+    mCoBG_WallHeight_c wall_height;
+    mCoBG_WallInfo_c wall_info[mCoBG_WALL_COL_NUM];
+    s16 ut_count;
+    u32 _64;
+    int _68;
+    int _6C;
 } mCoBG_ActorInf_c;
 
+enum {
+    mCoBG_UNIT_RADIAN,
+    mCoBG_UNIT_DEGREE,
+    mCoBG_UNIT_SHORT,
+
+    mCoBG_UNIT_NUM
+};
+
+enum {
+    mCoBG_CHECK_TYPE_NORMAL,
+    mCoBG_CHECK_TYPE_PLAYER,
+
+    mCoBG_CHECK_TYPE_NUM
+};
+
+enum {
+    mCoBG_REVERSE_TYPE_REVERSE,
+    mCoBG_REVERSE_TYPE_NO_REVERSE,
+
+    mCoBG_REVERSE_TYPE_NUM
+};
+
+#define mCoBG_LINE_CHECK_WALL (1 << 0)
+#define mCoBG_LINE_CHECK_GROUND (1 << 1)
+#define mCoBG_LINE_CHECK_WATER (1 << 2)
+#define mCoBG_LINE_CHECK_UNDERWATER (1 << 3)
+
+typedef int (*mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC)(mActor_name_t item);
+
 extern u32 mCoBG_Wpos2BgAttribute_Original(xyz_t wpos);
-extern u32 mCoBG_Wpos2Attribute(xyz_t wpos, s8* is_diggable);
+extern u32 mCoBG_Wpos2Attribute(xyz_t wpos, s8* cant_dig);
 extern int mCoBG_CheckWaterAttribute(u32 attribute);
 extern f32 mCoBG_GetBgY_AngleS_FromWpos(s_xyz* angle_to_ground, xyz_t wpos, f32 offset_y);
-extern f32 mCoBG_GetShadowBgY_AngleS_FromWpos(f32, s_xyz*, xyz_t);
+extern f32 mCoBG_GetShadowBgY_AngleS_FromWpos(s_xyz*, xyz_t, f32);
 extern int mCoBG_CheckWaterAttribute_OutOfSea(u32 attribute);
 extern int mCoBG_CheckHole_OrgAttr(u32 attribute);
 extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos(xyz_t wpos, f32 dist);
@@ -302,11 +393,11 @@ extern int mCoBG_Height2GetLayer(f32 height);
 extern void mCoBG_SetPlussOffset(xyz_t wpos, s16 offset, s16 new_attrib);
 extern int mCoBG_GetLayer(const xyz_t* wpos);
 extern int mCoBG_BnumUnum2HoleNumber(int block_x, int block_z, int ut_x, int ut_z);
-extern u32 mCoBG_UtNum2BgAttr(int ut_x, int ut_z);
+extern int mCoBG_UtNum2BgAttr(int ut_x, int ut_z);
 extern f32 mCoBG_UtNum2UtCenterY(int ut_x, int ut_z);
 extern int mCoBG_CheckCliffAttr(u32 attribute);
-extern void mCoBG_SetPluss5PointOffset_file(xyz_t pos, mCoBG_OffsetTable_c offsetptr, const char* file, int line);
-#define mCoBG_SetPluss5PointOffset(pos, offsetptr) mCoBG_SetPluss5PointOffset_file(pos, offsetptr, __FILE__, __LINE__);
+extern void mCoBG_SetPluss5PointOffset_file(xyz_t pos, mCoBG_OffsetTable_c ofs_data, char* file, int line);
+#define mCoBG_SetPluss5PointOffset(pos, ofs_data) mCoBG_SetPluss5PointOffset_file(pos, offsetptr, __FILE__, __LINE__);
 extern int mCoBG_Change2PoorAttr(mCoBG_Collision_u* col);
 extern int mCoBG_CheckHole(xyz_t wpos);
 extern int mCoBG_CheckSkySwing(xyz_t wpos);
@@ -320,7 +411,7 @@ extern int mCoBG_ExistHeightGap_KeepAndNow_Detail(xyz_t wpos);
 extern int mCoBG_GetHoleNumber(xyz_t wpos);
 extern int mCoBG_Attr2CheckPlaceNpc(u32 attribute);
 extern int mCoBG_ExistHeightGap_KeepAndNow(xyz_t wpos);
-extern void mCoBG_GetNorm_By3Point(xyz_t* norm, xyz_t* p0, xyz_t* p1, xyz_t* p2);
+extern void mCoBG_GetNorm_By3Point(xyz_t* normal, f32* v0, f32* v1, f32* v2);
 extern int mCoBG_SearchWaterLimitDistN(xyz_t* water_pos, xyz_t wpos, s16 angle, float max_dist, int divisor);
 extern f32 mCoBG_GetBalloonGroundY(const xyz_t* pos);
 extern void mCoBG_MakeBoatCollision(ACTOR* actor, xyz_t* pos, s16* angle_y);
@@ -335,7 +426,7 @@ extern int mCoBG_CheckSandHole_ClData(mCoBG_Collision_u* col);
 extern int mCoBG_GetHoleNumber_ClData(mCoBG_Collision_u* col);
 extern void mCoBG_GetBgNorm_FromWpos(xyz_t* norm, xyz_t wpos);
 extern int mCoBG_GetWaterFlow(xyz_t* water_flow, u32 attr);
-extern void mCoBG_SetAttribute(xyz_t pos, u32 attr);
+extern void mCoBG_SetAttribute(xyz_t pos, s16 attr);
 extern int mCoBG_GetPointInfoFrontLine(f32* line, f32* check_pos, f32* norm);
 extern int mCoBG_GetCrossCircleAndLine2Dvector(f32* cross0_xz, f32* cross1_xz, f32* point_xz, f32* vec_xz,
                                                f32* center_xz, f32 radius);
@@ -363,6 +454,12 @@ extern void mCoBG_VirtualBGCheck(xyz_t* rev_pos_p, mCoBG_Check_c* bg_check, cons
 extern f32 mCoBG_Wpos2GroundCheckOnly(const xyz_t* pos_p, f32 ground_dist);
 extern int mCoBG_Wpos2CheckNpc(xyz_t wpos);
 extern void mCoBG_WallCheckOnly(xyz_t* rev_pos_p, ACTOR* actor, f32 range, f32 ground_dist, s16 rev_type, s16 check_type);
+extern int mCoBG_GetCrossJudge_2Vector(f32* vec0_p0, f32* vec0_p1, f32* vec1_p0, f32* vec1_p1);
+extern void mCoBG_GetCross2Line(f32* cross, f32* line0_p0, f32* line0_p1, f32* line1_p0, f32* line1_p1);
+extern int mCoBG_GetPointInfoFrontLine(f32* start, f32* point, f32* normal);
+extern int mCoBG_JudgePointInCircle(f32* point, f32* center, f32 radius);
+extern f32 mCoBG_WaveCos(void);
+extern mCoBG_bg_regist_c* mCoBG_Idx2RegistPointer(int move_bg_idx);
 
 typedef int (*mCoBG_LINECHECK_PROC)(mActor_name_t);
 
