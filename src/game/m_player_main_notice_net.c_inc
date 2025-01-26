@@ -14,8 +14,8 @@ static int Player_actor_request_main_notice_net(GAME* game, int already_collecte
 
 static void Player_actor_setup_main_Notice_net(ACTOR* actor, GAME* game) {
     static int use_mark_insect_type[] = {
-        aSOI_INSECT_TYPE_ANT,
-        aSOI_INSECT_TYPE_MOSQUITO,
+        aINS_INSECT_TYPE_ANT,
+        aINS_INSECT_TYPE_MOSQUITO,
     };
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     mPlayer_main_notice_net_c* main_notice = &player->main_data.notice_net;
@@ -37,7 +37,7 @@ static void Player_actor_setup_main_Notice_net(ACTOR* actor, GAME* game) {
 
         if (type == 0) {
             item = ((aINS_INSECT_ACTOR*)label)->item;
-        } else if (player->item_net_catch_insect_idx == aSOI_INSECT_TYPE_BEE) {
+        } else if (player->item_net_catch_insect_idx == aINS_INSECT_TYPE_BEE) {
             item = ITM_INSECT08;
         } else {
             item = ITM_INSECT38;
@@ -57,7 +57,7 @@ static void Player_actor_setup_main_Notice_net(ACTOR* actor, GAME* game) {
                 main_notice->not_full_pocket = FALSE;
             }
 
-            if (idx != aSOI_INSECT_TYPE_SPIRIT) {
+            if (idx != aINS_INSECT_TYPE_SPIRIT) {
                 mSM_COLLECT_INSECT_SET(idx);
             }
 
@@ -88,7 +88,7 @@ static void Player_actor_settle_main_Notice_net(ACTOR* actor, GAME* game) {
     mPlayer_main_notice_net_c* main_notice = &player->main_data.notice_net;
 
     if (idx < 0) {
-        idx = aSOI_INSECT_TYPE_BEE;
+        idx = aINS_INSECT_TYPE_BEE;
     }
 
     if (main_notice->already_collected != FALSE) {
@@ -97,7 +97,7 @@ static void Player_actor_settle_main_Notice_net(ACTOR* actor, GAME* game) {
         mBGMPsComp_delete_ps_fanfare(0x28, 0x168);
     }
 
-    if (idx == aSOI_INSECT_TYPE_BEE) {
+    if (idx == aINS_INSECT_TYPE_BEE) {
         Common_Set(player_bee_chase_flag, FALSE);
 
         if (player->bee_chase_bgm_flag != FALSE) {

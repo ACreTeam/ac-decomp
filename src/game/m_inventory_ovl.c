@@ -82,7 +82,7 @@ static u8 mIV_fish_collect_list[] = {
 // clang-format on
 
 // clang-format off
-#define I(n) aSOI_INSECT_TYPE_##n
+#define I(n) aINS_INSECT_TYPE_##n
 
 /* Insect collection layout */
 static u8 mIV_insect_collect_list[] = {

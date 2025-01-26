@@ -32,22 +32,22 @@ extern void aIBT_actor_init(ACTOR* actor, GAME* game) {
 
     insect->bg_type = 2;
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_LONG_LOCUST:
+        case aINS_INSECT_TYPE_LONG_LOCUST:
             insect->item = ITM_INSECT13;
             break;
-        case aSOI_INSECT_TYPE_MIGRATORY_LOCUST:
+        case aINS_INSECT_TYPE_MIGRATORY_LOCUST:
             insect->item = ITM_INSECT14;
             break;
-        case aSOI_INSECT_TYPE_CRICKET:
+        case aINS_INSECT_TYPE_CRICKET:
             insect->item = ITM_INSECT15;
             break;
-        case aSOI_INSECT_TYPE_GRASSHOPPER:
+        case aINS_INSECT_TYPE_GRASSHOPPER:
             insect->item = ITM_INSECT16;
             break;
-        case aSOI_INSECT_TYPE_BELL_CRICKET:
+        case aINS_INSECT_TYPE_BELL_CRICKET:
             insect->item = ITM_INSECT17;
             break;
-        case aSOI_INSECT_TYPE_PINE_CRICKET:
+        case aINS_INSECT_TYPE_PINE_CRICKET:
             insect->item = ITM_INSECT18;
             break;
     }
@@ -109,7 +109,7 @@ static int aIBT_check_live_condition(aINS_INSECT_ACTOR* insect) {
 
 static void aIBT_anime_proc(aINS_INSECT_ACTOR* insect) {
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_BELL_CRICKET:
+        case aINS_INSECT_TYPE_BELL_CRICKET:
             insect->_1E0 += 1.0f;
             break;
         default:
@@ -136,10 +136,10 @@ static int aIBT_check_ball(aINS_INSECT_ACTOR* insect) {
 
 static void aIBT_set_fly_se(aINS_INSECT_ACTOR* insect) {
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_LONG_LOCUST:
+        case aINS_INSECT_TYPE_LONG_LOCUST:
             sAdo_OngenPos((u32)insect, 0xA2, &insect->tools_actor.actor_class.world.position);
             break;
-        case aSOI_INSECT_TYPE_MIGRATORY_LOCUST:
+        case aINS_INSECT_TYPE_MIGRATORY_LOCUST:
             sAdo_OngenPos((u32)insect, 0xA3, &insect->tools_actor.actor_class.world.position);
             break;
     }
@@ -250,7 +250,7 @@ static void aIBT_set_avoid_jump_spd(aINS_INSECT_ACTOR* insect) {
     int absRot;
 
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_MIGRATORY_LOCUST:
+        case aINS_INSECT_TYPE_MIGRATORY_LOCUST:
             insect->tools_actor.actor_class.speed = 7.5f;
             insect->tools_actor.actor_class.position_speed.y = 9.0f;
             insect->tools_actor.actor_class.gravity = 0.6f;
@@ -373,7 +373,7 @@ static void aIBT_chg_direction(ACTOR* actor, GAME* game) {
         angle += (s16)(range[insect->s32_work0] * (2.0f * (fqrand() - 0.5f)));
         xyz_t_move(&pos, &insect->tools_actor.actor_class.world.position);
         mod = 53.0f;
-        if (insect->type == aSOI_INSECT_TYPE_MIGRATORY_LOCUST) {
+        if (insect->type == aINS_INSECT_TYPE_MIGRATORY_LOCUST) {
             mod = 218.0f;
         }
         pos.x += (mod * sin_s(angle));
@@ -421,7 +421,7 @@ static void aIBT_wait(ACTOR* actor, GAME* game) {
             int idx = insect->type - 15;
             if ((actor->bg_collision_check.result.on_ground) &&
                 (insect->patience < 20.0f)) {
-                if (insect->type == aSOI_INSECT_TYPE_BELL_CRICKET) {
+                if (insect->type == aINS_INSECT_TYPE_BELL_CRICKET) {
                     aIBT_anime_proc(insect);
                 }
                 if (insect->s32_work1 == 0) {
@@ -438,7 +438,7 @@ static void aIBT_wait(ACTOR* actor, GAME* game) {
             if (aIBT_chk_active_range(NULL, insect) == FALSE) {
                 action = aIBT_ACTION_JUMP;
             } else {
-                if ((insect->type == aSOI_INSECT_TYPE_LONG_LOCUST) || (insect->type == aSOI_INSECT_TYPE_MIGRATORY_LOCUST)) {
+                if ((insect->type == aINS_INSECT_TYPE_LONG_LOCUST) || (insect->type == aINS_INSECT_TYPE_MIGRATORY_LOCUST)) {
                     if ((int)(play->game_frame % 200) > 20) {
                         action = aIBT_ACTION_JUMP;
                     }

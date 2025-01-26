@@ -941,7 +941,7 @@ config.libs = [
         [
             Object(Matching, "actor/ac_airplane.c"),
             Object(Matching, "actor/ac_animal_logo.c"),
-            Object(NonMatching, "actor/ac_ant.c"),
+            Object(Matching, "actor/ac_ant.c"),
             Object(Matching, "actor/ac_aprilfool_control.c"),
             Object(Matching, "actor/ac_arrange_ftr.c"),
             Object(Matching, "actor/ac_arrange_room.c"),

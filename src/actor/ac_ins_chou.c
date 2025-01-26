@@ -41,16 +41,16 @@ extern void aICH_actor_init(ACTOR* actor, GAME* game) {
     }
     insect->bg_type = 2;
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_COMMON_BUTTERFLY:
+        case aINS_INSECT_TYPE_COMMON_BUTTERFLY:
             insect->item = ITM_INSECT00;
             break;
-        case aSOI_INSECT_TYPE_YELLOW_BUTTERFLY:
+        case aINS_INSECT_TYPE_YELLOW_BUTTERFLY:
             insect->item = ITM_INSECT01;
             break;
-        case aSOI_INSECT_TYPE_TIGER_BUTTERFLY:
+        case aINS_INSECT_TYPE_TIGER_BUTTERFLY:
             insect->item = ITM_INSECT02;
             break;
-        case aSOI_INSECT_TYPE_PURPLE_BUTTERFLY:
+        case aINS_INSECT_TYPE_PURPLE_BUTTERFLY:
             insect->item = ITM_INSECT03;
             break;
     }
@@ -60,7 +60,7 @@ extern void aICH_actor_init(ACTOR* actor, GAME* game) {
 
 static int aICH_check_live_condition(aINS_INSECT_ACTOR* insect, mActor_name_t* name) {
     int ret = TRUE;
-    if (insect->type != aSOI_INSECT_TYPE_PURPLE_BUTTERFLY) {
+    if (insect->type != aINS_INSECT_TYPE_PURPLE_BUTTERFLY) {
         if (mCoBG_ExistHeightGap_KeepAndNow(insect->tools_actor.actor_class.world.position) == TRUE) {
             ret = FALSE;
         } else if ((name == NULL) || (*name == RSV_NO)) {
@@ -154,7 +154,7 @@ static void aICH_flower_search(aINS_INSECT_ACTOR* insect) {
     unit = mFI_UtNum2UtFG(bx, bz);
 
     if ((!(fqrand() < 0.5f) || (unit == NULL) || (((*unit < FLOWER_PANSIES0))) || (*unit > FLOWER_TULIP2)) &&
-        (insect->type != aSOI_INSECT_TYPE_PURPLE_BUTTERFLY)) {
+        (insect->type != aINS_INSECT_TYPE_PURPLE_BUTTERFLY)) {
         aICH_flower_search_sub(insect, 1);
     }
 }
@@ -246,7 +246,7 @@ static void aICH_rest_check(aINS_INSECT_ACTOR* insect, GAME* game) {
     if (F32_IS_ZERO(insect->f32_work3)) {
         unit = mFI_GetUnitFG(insect->tools_actor.actor_class.world.position);
         if ((unit != NULL) && (*unit == FLOWER_PANSIES0)) {
-            aICH_setupAction(insect, aSOI_INSECT_TYPE_PURPLE_BUTTERFLY, game);
+            aICH_setupAction(insect, aINS_INSECT_TYPE_PURPLE_BUTTERFLY, game);
         }
     } else {
         insect->f32_work3 -= 0.5f;
@@ -342,8 +342,8 @@ static void aICH_BGcheck(ACTOR* actor) {
     if ((insect->tools_actor.actor_class.bg_collision_check.result.hit_wall & mCoBG_HIT_WALL_FRONT) != 0) {
         if (insect->f32_work2 <= 0.0f) {
             switch (insect->type) {
-                case aSOI_INSECT_TYPE_TIGER_BUTTERFLY:
-                case aSOI_INSECT_TYPE_PURPLE_BUTTERFLY:
+                case aINS_INSECT_TYPE_TIGER_BUTTERFLY:
+                case aINS_INSECT_TYPE_PURPLE_BUTTERFLY:
                     if (aICH_flower_search_sub(insect, 0) == TRUE) {
                         insect->f32_work2 = 10.0f;
                     }
@@ -381,10 +381,10 @@ static void aICH_avoid(ACTOR* actor, GAME* game) {
 
     aICH_anime_proc(insect);
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_TIGER_BUTTERFLY:
+        case aINS_INSECT_TYPE_TIGER_BUTTERFLY:
             base = -80.0f;
             break;
-        case aSOI_INSECT_TYPE_PURPLE_BUTTERFLY:
+        case aINS_INSECT_TYPE_PURPLE_BUTTERFLY:
             base = -100.0f;
             break;
         default:
@@ -415,10 +415,10 @@ static void aICH_fly(ACTOR* actor, GAME* game) {
     aICH_BGcheck(actor);
 
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_TIGER_BUTTERFLY:
+        case aINS_INSECT_TYPE_TIGER_BUTTERFLY:
             base = -40.0f;
             break;
-        case aSOI_INSECT_TYPE_PURPLE_BUTTERFLY:
+        case aINS_INSECT_TYPE_PURPLE_BUTTERFLY:
             base = -50.0f;
             break;
         default:
@@ -430,14 +430,14 @@ static void aICH_fly(ACTOR* actor, GAME* game) {
     aICH_loop_move_ctrl(insect);
 
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_TIGER_BUTTERFLY:
+        case aINS_INSECT_TYPE_TIGER_BUTTERFLY:
             if (insect->patience > 90.0f) {
                 aICH_setupAction(insect, aICH_ACTION_AVOID, game);
                 break;
             }
             aICH_rest_check(insect, game);
             break;
-        case aSOI_INSECT_TYPE_PURPLE_BUTTERFLY:
+        case aINS_INSECT_TYPE_PURPLE_BUTTERFLY:
             if (insect->patience > 90.0f) {
                 aICH_setupAction(insect, aICH_ACTION_AVOID, game);
                 break;
@@ -461,8 +461,8 @@ static void aICH_landing(ACTOR* actor, GAME* game) {
     if (aICH_check_patience(insect) == TRUE) {
         int action;
         switch (insect->type) {
-            case aSOI_INSECT_TYPE_TIGER_BUTTERFLY:
-            case aSOI_INSECT_TYPE_PURPLE_BUTTERFLY:
+            case aINS_INSECT_TYPE_TIGER_BUTTERFLY:
+            case aINS_INSECT_TYPE_PURPLE_BUTTERFLY:
                 action = aICH_ACTION_AVOID;
                 break;
             default:
@@ -479,8 +479,8 @@ static void aICH_landing(ACTOR* actor, GAME* game) {
         insect->bg_height = rest_wait_data[insect->light_flag].y;
         pos.z += rest_wait_data[insect->light_flag].z;
         switch (insect->type) {
-            case aSOI_INSECT_TYPE_COMMON_BUTTERFLY:
-            case aSOI_INSECT_TYPE_YELLOW_BUTTERFLY:
+            case aINS_INSECT_TYPE_COMMON_BUTTERFLY:
+            case aINS_INSECT_TYPE_YELLOW_BUTTERFLY:
                 insect->bg_height -= 3.0f;
                 break;
         }
@@ -503,8 +503,8 @@ static void aICH_hover(ACTOR* actor, GAME* game) {
     }
     if (aICH_check_patience(insect) == TRUE) {
         switch (insect->type) {
-            case aSOI_INSECT_TYPE_TIGER_BUTTERFLY:
-            case aSOI_INSECT_TYPE_PURPLE_BUTTERFLY:
+            case aINS_INSECT_TYPE_TIGER_BUTTERFLY:
+            case aINS_INSECT_TYPE_PURPLE_BUTTERFLY:
                 action = aICH_ACTION_AVOID;
                 break;
             default:
@@ -632,4 +632,3 @@ static void aICH_actor_move(ACTOR* actor, GAME* game) {
         insect->action_proc(actor,game);
     }
 }
-

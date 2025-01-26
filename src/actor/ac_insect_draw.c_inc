@@ -11,16 +11,16 @@ static void aINS_actor_draw_sub(GRAPH* graph, aINS_INSECT_ACTOR* insect, GAME* g
         angleY = angleX;
 
         switch (insect->type) {
-            case aSOI_INSECT_TYPE_LONG_LOCUST:
-            case aSOI_INSECT_TYPE_MIGRATORY_LOCUST:
-            case aSOI_INSECT_TYPE_GRASSHOPPER:
+            case aINS_INSECT_TYPE_LONG_LOCUST:
+            case aINS_INSECT_TYPE_MIGRATORY_LOCUST:
+            case aINS_INSECT_TYPE_GRASSHOPPER:
                 angleY = DEG2SHORT_ANGLE2(-90.0f);
                 break;
-            case aSOI_INSECT_TYPE_SPIDER:
+            case aINS_INSECT_TYPE_SPIDER:
                 angleX = DEG2SHORT_ANGLE2(90.0f);
                 break;
-            case aSOI_INSECT_TYPE_FIREFLY:
-            case aSOI_INSECT_TYPE_SPIRIT:
+            case aINS_INSECT_TYPE_FIREFLY:
+            case aINS_INSECT_TYPE_SPIRIT:
                 break;
             default:
                 angleX = DEG2SHORT_ANGLE2(90.0f);
@@ -39,12 +39,12 @@ static void aINS_actor_draw_sub(GRAPH* graph, aINS_INSECT_ACTOR* insect, GAME* g
                          insect->tools_actor.actor_class.world.position.z, 0);
 
         switch (insect->type) {
-            case aSOI_INSECT_TYPE_MOLE_CRICKET:
+            case aINS_INSECT_TYPE_MOLE_CRICKET:
                 Matrix_RotateY(angleY, 1);
                 Matrix_RotateX(angleX, 1);
                 Matrix_RotateZ(insect->tools_actor.actor_class.shape_info.rotation.z, 1);
                 break;
-            case aSOI_INSECT_TYPE_SPIDER:
+            case aINS_INSECT_TYPE_SPIDER:
                 switch (draw_type) {
                     case 2:
                         Matrix_RotateX(angleX, 1);
@@ -76,11 +76,11 @@ static void aINS_actor_draw_sub(GRAPH* graph, aINS_INSECT_ACTOR* insect, GAME* g
 
     /* initialize settings for env and billboard mtx */
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_FIREFLY:
+        case aINS_INSECT_TYPE_FIREFLY:
             gSPMatrix(gfx++, play->billboard_mtx_p, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_MODELVIEW);
             gDPSetEnvColor(gfx++, 0, 255, 155, alpha);
             break;
-        case aSOI_INSECT_TYPE_SPIRIT:
+        case aINS_INSECT_TYPE_SPIRIT:
             gSPMatrix(gfx++, play->billboard_mtx_p, G_MTX_NOPUSH | G_MTX_MUL | G_MTX_MODELVIEW);
             gDPSetEnvColor(gfx++, 255, 255, 255, alpha);
             break;
@@ -114,12 +114,12 @@ static void aINS_actor_draw(ACTOR* actorx, GAME* game) {
             (insect->tools_actor.actor_class.state_bitfield &
              (ACTOR_STATE_NO_CULL | ACTOR_STATE_NO_DRAW_WHILE_CULLED)) ==
                 (ACTOR_STATE_NO_CULL | ACTOR_STATE_NO_DRAW_WHILE_CULLED)) {
-            if (insect->tools_actor.init_matrix == TRUE && insect->type != aSOI_INSECT_TYPE_SPIRIT) {
+            if (insect->tools_actor.init_matrix == TRUE && insect->type != aINS_INSECT_TYPE_SPIRIT) {
                 draw_type = 0;
             }
 
             switch (insect->type) {
-                case aSOI_INSECT_TYPE_FIREFLY:
+                case aINS_INSECT_TYPE_FIREFLY:
                     draw_type = (int)insect->_1E0;
                     alpha = insect->alpha0 - insect->alpha2;
 
@@ -144,7 +144,7 @@ static void aINS_actor_draw(ACTOR* actorx, GAME* game) {
             aINS_actor_draw_sub(graph, insect, game, draw_type, alpha);
 
             switch (insect->type) {
-                case aSOI_INSECT_TYPE_FIREFLY: {
+                case aINS_INSECT_TYPE_FIREFLY: {
                     draw_type = insect->_1E4;
                     alpha = insect->alpha1 - insect->alpha2;
 
@@ -155,7 +155,7 @@ static void aINS_actor_draw(ACTOR* actorx, GAME* game) {
                     aINS_actor_draw_sub(graph, insect, game, draw_type, alpha);
                     break;
                 }
-                case aSOI_INSECT_TYPE_SPIRIT:
+                case aINS_INSECT_TYPE_SPIRIT:
                     break;
                 default:
                     aINS_actor_draw_sub(graph, insect, game, draw_type + 1, alpha);

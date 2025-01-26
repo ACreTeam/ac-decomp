@@ -212,7 +212,7 @@ static void aBEE_caught(ACTOR* actorx, GAME* game) {
     if (bee->insect_actor == NULL) {
         aINS_Init_c insect_data;
 
-        insect_data.insect_type = aSOI_INSECT_TYPE_BEE;
+        insect_data.insect_type = aINS_INSECT_TYPE_BEE;
         xyz_t_move(&insect_data.position, &bee->actor_class.world.position);
         insect_data.extra_data = 0;
         insect_data.game = game;

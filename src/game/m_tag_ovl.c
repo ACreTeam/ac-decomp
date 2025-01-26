@@ -4860,7 +4860,7 @@ static void mTG_bury_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
 
 static void mTG_insect_release_sub(mActor_name_t item, int gold_scoop) {
     if (ITEM_IS_WISP(item)) {
-        mPlib_request_main_release_creature_insect_from_submenu(aSOI_INSECT_TYPE_SPIRIT, gold_scoop);
+        mPlib_request_main_release_creature_insect_from_submenu(aINS_INSECT_TYPE_SPIRIT, gold_scoop);
     } else {
         mPlib_request_main_release_creature_insect_from_submenu(ITEM_IS_INSECT(item) ? item - ITM_INSECT_START : 0,
                                                                 gold_scoop);

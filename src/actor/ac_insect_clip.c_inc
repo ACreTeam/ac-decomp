@@ -65,13 +65,13 @@ static void aINS_destruct(ACTOR* actorx, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_SPIRIT:
+        case aINS_INSECT_TYPE_SPIRIT:
             /* If we didn't catch the spirit, update it's location */
             if ((ACTOR*)mPlib_Get_item_net_catch_label() != actorx) {
                 aINS_regist_set_block_table(actorx);
             }
         /* fallthrough spirit -> firefly */
-        case aSOI_INSECT_TYPE_FIREFLY:
+        case aINS_INSECT_TYPE_FIREFLY:
             if (insect->light_flag) {
                 Global_light_list_delete(&play->global_light, insect->light_list);
                 insect->light_flag = FALSE;
@@ -245,28 +245,28 @@ static void aINS_setupActor(ACTOR* actorx, aINS_Init_c* init) {
     actorx->cull_radius = 350.0f;
 
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_TIGER_BUTTERFLY:
-        case aSOI_INSECT_TYPE_PURPLE_BUTTERFLY:
-        case aSOI_INSECT_TYPE_ROBUST_CICADA:
-        case aSOI_INSECT_TYPE_WALKER_CICADA:
-        case aSOI_INSECT_TYPE_EVENING_CICADA:
-        case aSOI_INSECT_TYPE_BROWN_CICADA:
-        case aSOI_INSECT_TYPE_BEE:
-        case aSOI_INSECT_TYPE_COMMON_DRAGONFLY:
-        case aSOI_INSECT_TYPE_RED_DRAGONFLY:
-        case aSOI_INSECT_TYPE_DARNER_DRAGONFLY:
-        case aSOI_INSECT_TYPE_BANDED_DRAGONFLY:
+        case aINS_INSECT_TYPE_TIGER_BUTTERFLY:
+        case aINS_INSECT_TYPE_PURPLE_BUTTERFLY:
+        case aINS_INSECT_TYPE_ROBUST_CICADA:
+        case aINS_INSECT_TYPE_WALKER_CICADA:
+        case aINS_INSECT_TYPE_EVENING_CICADA:
+        case aINS_INSECT_TYPE_BROWN_CICADA:
+        case aINS_INSECT_TYPE_BEE:
+        case aINS_INSECT_TYPE_COMMON_DRAGONFLY:
+        case aINS_INSECT_TYPE_RED_DRAGONFLY:
+        case aINS_INSECT_TYPE_DARNER_DRAGONFLY:
+        case aINS_INSECT_TYPE_BANDED_DRAGONFLY:
             shadow_size = 8.0f;
             break;
 
-        case aSOI_INSECT_TYPE_BAGWORM:
-        case aSOI_INSECT_TYPE_PILL_BUG:
-        case aSOI_INSECT_TYPE_SPIDER:
-        case aSOI_INSECT_TYPE_MOSQUITO:
+        case aINS_INSECT_TYPE_BAGWORM:
+        case aINS_INSECT_TYPE_PILL_BUG:
+        case aINS_INSECT_TYPE_SPIDER:
+        case aINS_INSECT_TYPE_MOSQUITO:
             shadow_size = 4.0f;
             break;
 
-        case aSOI_INSECT_TYPE_ANT:
+        case aINS_INSECT_TYPE_ANT:
             shadow_size = 2.0f;
             break;
 

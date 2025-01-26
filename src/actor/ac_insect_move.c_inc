@@ -8,13 +8,13 @@ static void aINS_position_move(ACTOR* actorx) {
     actorx->position_speed.z = actorx->speed * cos_s(angleY);
 
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_COMMON_BUTTERFLY:
-        case aSOI_INSECT_TYPE_YELLOW_BUTTERFLY:
-        case aSOI_INSECT_TYPE_TIGER_BUTTERFLY:
-        case aSOI_INSECT_TYPE_PURPLE_BUTTERFLY:
-        case aSOI_INSECT_TYPE_FIREFLY:
-        case aSOI_INSECT_TYPE_MOSQUITO:
-        case aSOI_INSECT_TYPE_SPIRIT:
+        case aINS_INSECT_TYPE_COMMON_BUTTERFLY:
+        case aINS_INSECT_TYPE_YELLOW_BUTTERFLY:
+        case aINS_INSECT_TYPE_TIGER_BUTTERFLY:
+        case aINS_INSECT_TYPE_PURPLE_BUTTERFLY:
+        case aINS_INSECT_TYPE_FIREFLY:
+        case aINS_INSECT_TYPE_MOSQUITO:
+        case aINS_INSECT_TYPE_SPIRIT:
             break;
 
         default:
@@ -218,7 +218,7 @@ static void aINS_calc_alpha_time(aINS_INSECT_ACTOR* insect) {
     }
 
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_FIREFLY: {
+        case aINS_INSECT_TYPE_FIREFLY: {
             int alpha = insect->alpha2;
 
             alpha += 11;
@@ -299,27 +299,27 @@ static f32 aINS_get_catch_range(ACTOR* actorx) {
     f32 range = 8.0f;
 
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_COMMON_BUTTERFLY:
-        case aSOI_INSECT_TYPE_YELLOW_BUTTERFLY:
+        case aINS_INSECT_TYPE_COMMON_BUTTERFLY:
+        case aINS_INSECT_TYPE_YELLOW_BUTTERFLY:
             range = 24.0f;
             break;
-        case aSOI_INSECT_TYPE_ROBUST_CICADA:
-        case aSOI_INSECT_TYPE_WALKER_CICADA:
-        case aSOI_INSECT_TYPE_EVENING_CICADA:
-        case aSOI_INSECT_TYPE_BROWN_CICADA:
-        case aSOI_INSECT_TYPE_BEE:
-        case aSOI_INSECT_TYPE_DRONE_BEETLE:
-        case aSOI_INSECT_TYPE_DYNASTID_BEETLE:
-        case aSOI_INSECT_TYPE_FLAT_STAG_BEETLE:
-        case aSOI_INSECT_TYPE_JEWEL_BEETLE:
-        case aSOI_INSECT_TYPE_LONGHORN_BEETLE:
-        case aSOI_INSECT_TYPE_SAW_STAG_BEETLE:
-        case aSOI_INSECT_TYPE_MOUNTAIN_BEETLE:
-        case aSOI_INSECT_TYPE_GIANT_BEETLE:
+        case aINS_INSECT_TYPE_ROBUST_CICADA:
+        case aINS_INSECT_TYPE_WALKER_CICADA:
+        case aINS_INSECT_TYPE_EVENING_CICADA:
+        case aINS_INSECT_TYPE_BROWN_CICADA:
+        case aINS_INSECT_TYPE_BEE:
+        case aINS_INSECT_TYPE_DRONE_BEETLE:
+        case aINS_INSECT_TYPE_DYNASTID_BEETLE:
+        case aINS_INSECT_TYPE_FLAT_STAG_BEETLE:
+        case aINS_INSECT_TYPE_JEWEL_BEETLE:
+        case aINS_INSECT_TYPE_LONGHORN_BEETLE:
+        case aINS_INSECT_TYPE_SAW_STAG_BEETLE:
+        case aINS_INSECT_TYPE_MOUNTAIN_BEETLE:
+        case aINS_INSECT_TYPE_GIANT_BEETLE:
             range = aINS_get_catch_range_sub(actorx);
             break;
 
-        case aSOI_INSECT_TYPE_COCKROACH:
+        case aINS_INSECT_TYPE_COCKROACH:
             if (insect->flag == 4) {
                 range = aINS_get_catch_range_sub(actorx);
             }

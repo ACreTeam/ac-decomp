@@ -64,28 +64,28 @@ extern void aIKB_actor_init(ACTOR* actorx, GAME* game) {
     }
 
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_DRONE_BEETLE:
+        case aINS_INSECT_TYPE_DRONE_BEETLE:
             insect->item = ITM_INSECT19;
             break;
-        case aSOI_INSECT_TYPE_DYNASTID_BEETLE:
+        case aINS_INSECT_TYPE_DYNASTID_BEETLE:
             insect->item = ITM_INSECT20;
             break;
-        case aSOI_INSECT_TYPE_FLAT_STAG_BEETLE:
+        case aINS_INSECT_TYPE_FLAT_STAG_BEETLE:
             insect->item = ITM_INSECT21;
             break;
-        case aSOI_INSECT_TYPE_JEWEL_BEETLE:
+        case aINS_INSECT_TYPE_JEWEL_BEETLE:
             insect->item = ITM_INSECT22;
             break;
-        case aSOI_INSECT_TYPE_LONGHORN_BEETLE:
+        case aINS_INSECT_TYPE_LONGHORN_BEETLE:
             insect->item = ITM_INSECT23;
             break;
-        case aSOI_INSECT_TYPE_SAW_STAG_BEETLE:
+        case aINS_INSECT_TYPE_SAW_STAG_BEETLE:
             insect->item = ITM_INSECT29;
             break;
-        case aSOI_INSECT_TYPE_MOUNTAIN_BEETLE:
+        case aINS_INSECT_TYPE_MOUNTAIN_BEETLE:
             insect->item = ITM_INSECT30;
             break;
-        case aSOI_INSECT_TYPE_GIANT_BEETLE:
+        case aINS_INSECT_TYPE_GIANT_BEETLE:
             insect->item = ITM_INSECT31;
             break;
     }

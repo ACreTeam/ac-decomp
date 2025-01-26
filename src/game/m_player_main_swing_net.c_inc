@@ -255,12 +255,12 @@ static int Player_actor_CatchSomethingCheck_common(ACTOR* actor, f32 frame) {
                     player->item_net_catch_insect_idx = ((aINS_INSECT_ACTOR*)label)->type;
                 } else if (label != 0) {
                     if (((ACTOR*)label)->id == mAc_PROFILE_BEE) {
-                        player->item_net_catch_insect_idx = aSOI_INSECT_TYPE_BEE;
+                        player->item_net_catch_insect_idx = aINS_INSECT_TYPE_BEE;
                     } else {
-                        player->item_net_catch_insect_idx = aSOI_INSECT_TYPE_ANT;
+                        player->item_net_catch_insect_idx = aINS_INSECT_TYPE_ANT;
                     }
                 } else {
-                    player->item_net_catch_insect_idx = aSOI_INSECT_TYPE_INVALID;
+                    player->item_net_catch_insect_idx = aINS_INSECT_TYPE_INVALID;
                 }
                 Player_actor_sound_AMI_GET(actor);
                 ret = 1;

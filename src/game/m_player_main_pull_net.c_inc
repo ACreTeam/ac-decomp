@@ -32,7 +32,7 @@ static void Player_actor_setup_main_Pull_net(ACTOR* actor, GAME* game) {
     if (player->item_net_catch_label != 0) {
         int idx = player->item_net_catch_insect_idx;
 
-        if (idx == aSOI_INSECT_TYPE_SPIRIT) {
+        if (idx == aINS_INSECT_TYPE_SPIRIT) {
             main_pull->already_collected = FALSE;
         } else {
             main_pull->already_collected = mSM_CHECK_LAST_INSECT_GET(idx);
@@ -116,7 +116,7 @@ static void Player_actor_Pull_net_demo_ct(ACTOR* actor) {
         if (type != 0) {
             player->item_net_has_catch = TRUE;
         }
-        if (idx == aSOI_INSECT_TYPE_SPIRIT) {
+        if (idx == aINS_INSECT_TYPE_SPIRIT) {
             int item_idx = mPr_GetPossessionItemIdxKindWithCond(Save_GetPointer(private_data[Common_Get(player_no)]),
                                                                 ITM_SPIRIT0, ITM_SPIRIT4, FALSE);
 
@@ -132,7 +132,7 @@ static void Player_actor_Pull_net_demo_ct(ACTOR* actor) {
 
             if (main_pull->already_collected) {
                 if (type != 0) {
-                    if (idx != aSOI_INSECT_TYPE_COMMON_BUTTERFLY) {
+                    if (idx != aINS_INSECT_TYPE_COMMON_BUTTERFLY) {
                         mIN_copy_name_str(str, ITM_INSECT08);
                         item = ITM_INSECT08;
                     } else {

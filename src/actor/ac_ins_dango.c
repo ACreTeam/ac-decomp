@@ -44,12 +44,12 @@ extern void aIDG_actor_init(ACTOR* actor, GAME* game) {
     insect->bg_range = 2.0f;
 
     switch (insect->type) {
-        case aSOI_INSECT_TYPE_SPIDER:
+        case aINS_INSECT_TYPE_SPIDER:
             break;
-        case aSOI_INSECT_TYPE_PILL_BUG:
+        case aINS_INSECT_TYPE_PILL_BUG:
             insect->item = ITM_INSECT36;
             break;
-        case aSOI_INSECT_TYPE_ANT:
+        case aINS_INSECT_TYPE_ANT:
             insect->item = ITM_INSECT38;
             break;
     }
@@ -401,4 +401,3 @@ static void aIDG_actor_move(ACTOR* actor, GAME* game) {
         insect->action_proc(actor,game);
     }
 }
-

@@ -4507,12 +4507,12 @@ static int Player_actor_Change_item_net_catch_label(ACTOR* actorx, u32 label, s8
                     player->item_net_catch_insect_idx = insect_actor->type;
                 } else if (insect_actor != NULL) {
                     if (insect_actor->tools_actor.actor_class.id == mAc_PROFILE_BEE) {
-                        player->item_net_catch_insect_idx = aSOI_INSECT_TYPE_BEE;
+                        player->item_net_catch_insect_idx = aINS_INSECT_TYPE_BEE;
                     } else {
-                        player->item_net_catch_insect_idx = aSOI_INSECT_TYPE_ANT;
+                        player->item_net_catch_insect_idx = aINS_INSECT_TYPE_ANT;
                     }
                 } else {
-                    player->item_net_catch_insect_idx = aSOI_INSECT_TYPE_INVALID;
+                    player->item_net_catch_insect_idx = aINS_INSECT_TYPE_INVALID;
                 }
 
                 return TRUE;

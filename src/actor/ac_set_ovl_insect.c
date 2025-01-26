@@ -16,53 +16,53 @@ typedef struct insect_birth_sum_s {
   u8 additional_range; // min_birth_count + [0, n)
 } aSOI_insect_birth_sum_c;
 
-static aSOI_insect_birth_sum_c l_insect_birth_sum[aSOI_INSECT_TYPE_EXTENDED_NUM] = {
-  { 1, 0 }, // aSOI_INSECT_TYPE_COMMON_BUTTERFLY
-  { 1, 0 }, // aSOI_INSECT_TYPE_YELLOW_BUTTERFLY
-  { 1, 0 }, // aSOI_INSECT_TYPE_TIGER_BUTTERFLY
-  { 1, 0 }, // aSOI_INSECT_TYPE_PURPLE_BUTTERFLY
-  { 1, 0 }, // aSOI_INSECT_TYPE_ROBUST_CICADA
-  { 1, 0 }, // aSOI_INSECT_TYPE_WALKER_CICADA
-  { 1, 0 }, // aSOI_INSECT_TYPE_EVENING_CICADA
-  { 1, 0 }, // aSOI_INSECT_TYPE_BROWN_CICADA
-  { 1, 0 }, // aSOI_INSECT_TYPE_BEE
-  { 1, 0 }, // aSOI_INSECT_TYPE_COMMON_DRAGONFLY
-  { 6, 3 }, // aSOI_INSECT_TYPE_RED_DRAGONFLY
-  { 1, 0 }, // aSOI_INSECT_TYPE_DARNER_DRAGONFLY
-  { 1, 0 }, // aSOI_INSECT_TYPE_BANDED_DRAGONFLY
-  { 1, 0 }, // aSOI_INSECT_TYPE_LONG_LOCUST
-  { 1, 0 }, // aSOI_INSECT_TYPE_MIGRATORY_LOCUST
-  { 1, 0 }, // aSOI_INSECT_TYPE_CRICKET
-  { 1, 0 }, // aSOI_INSECT_TYPE_GRASSHOPPER
-  { 1, 0 }, // aSOI_INSECT_TYPE_BELL_CRICKET
-  { 1, 0 }, // aSOI_INSECT_TYPE_PINE_CRICKET
-  { 1, 0 }, // aSOI_INSECT_TYPE_DRONE_BEETLE
-  { 1, 0 }, // aSOI_INSECT_TYPE_DYNASTID_BEETLE
-  { 1, 0 }, // aSOI_INSECT_TYPE_FLAT_STAG_BEETLE
-  { 1, 0 }, // aSOI_INSECT_TYPE_JEWEL_BEETLE
-  { 1, 0 }, // aSOI_INSECT_TYPE_LONGHORN_BEETLE
-  { 1, 0 }, // aSOI_INSECT_TYPE_LADYBUG
-  { 1, 0 }, // aSOI_INSECT_TYPE_SPOTTED_LADYBUG
-  { 1, 0 }, // aSOI_INSECT_TYPE_MANTIS
-  { 6, 3 }, // aSOI_INSECT_TYPE_FIREFLY
-  { 1, 0 }, // aSOI_INSECT_TYPE_COCKROACH
-  { 1, 0 }, // aSOI_INSECT_TYPE_SAW_STAG_BEETLE
-  { 1, 0 }, // aSOI_INSECT_TYPE_MOUNTAIN_BEETLE
-  { 1, 0 }, // aSOI_INSECT_TYPE_GIANT_BEETLE
-  { 1, 0 }, // aSOI_INSECT_TYPE_SNAIL
-  { 1, 0 }, // aSOI_INSECT_TYPE_MOLE_CRICKET
-  { 1, 0 }, // aSOI_INSECT_TYPE_POND_SKATER
-  { 1, 0 }, // aSOI_INSECT_TYPE_BAGWORM
-  { 1, 0 }, // aSOI_INSECT_TYPE_PILL_BUG
-  { 1, 0 }, // aSOI_INSECT_TYPE_SPIDER
-  { 1, 0 }, // aSOI_INSECT_TYPE_ANT
-  { 1, 0 }, // aSOI_INSECT_TYPE_MOSQUITO
-  { 1, 0 }, // aSOI_INSECT_TYPE_SPIRIT
+static aSOI_insect_birth_sum_c l_insect_birth_sum[aINS_INSECT_TYPE_EXTENDED_NUM] = {
+  { 1, 0 }, // aINS_INSECT_TYPE_COMMON_BUTTERFLY
+  { 1, 0 }, // aINS_INSECT_TYPE_YELLOW_BUTTERFLY
+  { 1, 0 }, // aINS_INSECT_TYPE_TIGER_BUTTERFLY
+  { 1, 0 }, // aINS_INSECT_TYPE_PURPLE_BUTTERFLY
+  { 1, 0 }, // aINS_INSECT_TYPE_ROBUST_CICADA
+  { 1, 0 }, // aINS_INSECT_TYPE_WALKER_CICADA
+  { 1, 0 }, // aINS_INSECT_TYPE_EVENING_CICADA
+  { 1, 0 }, // aINS_INSECT_TYPE_BROWN_CICADA
+  { 1, 0 }, // aINS_INSECT_TYPE_BEE
+  { 1, 0 }, // aINS_INSECT_TYPE_COMMON_DRAGONFLY
+  { 6, 3 }, // aINS_INSECT_TYPE_RED_DRAGONFLY
+  { 1, 0 }, // aINS_INSECT_TYPE_DARNER_DRAGONFLY
+  { 1, 0 }, // aINS_INSECT_TYPE_BANDED_DRAGONFLY
+  { 1, 0 }, // aINS_INSECT_TYPE_LONG_LOCUST
+  { 1, 0 }, // aINS_INSECT_TYPE_MIGRATORY_LOCUST
+  { 1, 0 }, // aINS_INSECT_TYPE_CRICKET
+  { 1, 0 }, // aINS_INSECT_TYPE_GRASSHOPPER
+  { 1, 0 }, // aINS_INSECT_TYPE_BELL_CRICKET
+  { 1, 0 }, // aINS_INSECT_TYPE_PINE_CRICKET
+  { 1, 0 }, // aINS_INSECT_TYPE_DRONE_BEETLE
+  { 1, 0 }, // aINS_INSECT_TYPE_DYNASTID_BEETLE
+  { 1, 0 }, // aINS_INSECT_TYPE_FLAT_STAG_BEETLE
+  { 1, 0 }, // aINS_INSECT_TYPE_JEWEL_BEETLE
+  { 1, 0 }, // aINS_INSECT_TYPE_LONGHORN_BEETLE
+  { 1, 0 }, // aINS_INSECT_TYPE_LADYBUG
+  { 1, 0 }, // aINS_INSECT_TYPE_SPOTTED_LADYBUG
+  { 1, 0 }, // aINS_INSECT_TYPE_MANTIS
+  { 6, 3 }, // aINS_INSECT_TYPE_FIREFLY
+  { 1, 0 }, // aINS_INSECT_TYPE_COCKROACH
+  { 1, 0 }, // aINS_INSECT_TYPE_SAW_STAG_BEETLE
+  { 1, 0 }, // aINS_INSECT_TYPE_MOUNTAIN_BEETLE
+  { 1, 0 }, // aINS_INSECT_TYPE_GIANT_BEETLE
+  { 1, 0 }, // aINS_INSECT_TYPE_SNAIL
+  { 1, 0 }, // aINS_INSECT_TYPE_MOLE_CRICKET
+  { 1, 0 }, // aINS_INSECT_TYPE_POND_SKATER
+  { 1, 0 }, // aINS_INSECT_TYPE_BAGWORM
+  { 1, 0 }, // aINS_INSECT_TYPE_PILL_BUG
+  { 1, 0 }, // aINS_INSECT_TYPE_SPIDER
+  { 1, 0 }, // aINS_INSECT_TYPE_ANT
+  { 1, 0 }, // aINS_INSECT_TYPE_MOSQUITO
+  { 1, 0 }, // aINS_INSECT_TYPE_SPIRIT
 };
 
 /* sizeof(aSOI_term_info_c) == 0xC */
 typedef struct term_info_s {
-  /* 0x00 */ int type; /* insect type (aSOI_INSECT_TYPE_*) */
+  /* 0x00 */ int type; /* insect type (aINS_INSECT_TYPE_*) */
   /* 0x04 */ u8 spawn_area; /* spawn area (aSOI_SPAWN_AREA_*) */
   /* 0x05 */ u8 weight; /* weight value */
 } aSOI_term_info_c;
@@ -73,7 +73,7 @@ typedef struct term_list_s {
   /* 0x04 */ aSOI_term_info_c* term_info; /* pointer to term info items */
 } aSOI_term_list_c;
 
-#define INSECT_SPAWN(insect, area, weight) { aSOI_INSECT_TYPE_##insect, aSOI_SPAWN_AREA_##area, weight }
+#define INSECT_SPAWN(insect, area, weight) { aINS_INSECT_TYPE_##insect, aSOI_SPAWN_AREA_##area, weight }
 
 static aSOI_term_info_c l_insect_m3_t1[5] = {
   INSECT_SPAWN(COCKROACH, ON_FLOWER, 1), /* 5.26% */
@@ -978,7 +978,7 @@ typedef struct insect_set_data_s {
 } aSOI_set_data_c;
 
 static void aSOI_ins_clear_set_data(aSOI_set_data_c* set_data) {
-  set_data->type = 0; /* should this be aSOI_INSECT_TYPE_COMMON_BUTTERFLY? */
+  set_data->type = 0; /* should this be aINS_INSECT_TYPE_COMMON_BUTTERFLY? */
   set_data->ut_x = -1;
   set_data->ut_z = -1;
   set_data->should_spawn = FALSE;
@@ -1686,7 +1686,7 @@ static int aSOI_ins_get_idx(aSOI_insect_spawn_info_f_c* spawn_info, int info_num
   f32 total_weight = 0.0f;
   f32 env_rate;
   f32 selected_weight;
-  int selected = aSOI_INSECT_TYPE_INVALID;
+  int selected = aINS_INSECT_TYPE_INVALID;
   int i;
   int rank;
   aSOI_insect_spawn_info_f_c* spawn_info_p = spawn_info;
@@ -1738,7 +1738,7 @@ static int aSOI_ins_get_idx(aSOI_insect_spawn_info_f_c* spawn_info, int info_num
 }
 
 static void aSOI_ins_set_insect_data(aSOI_set_data_c* set_data, int type, aSetMgr_player_pos_c* player_pos) {
-  if (type != aSOI_INSECT_TYPE_INVALID) {
+  if (type != aINS_INSECT_TYPE_INVALID) {
     int live_ut_x;
     int live_ut_z;
 
@@ -1751,7 +1751,7 @@ static void aSOI_ins_set_insect_data(aSOI_set_data_c* set_data, int type, aSetMg
       set_data->should_spawn = TRUE;
       set_data->extra_data = 0;
 
-      if (type == aSOI_INSECT_TYPE_COCKROACH && mFI_GetBlockUtNum2FG(&item, player_pos->next_bx, player_pos->next_bz, live_ut_x, live_ut_z) == TRUE) {
+      if (type == aINS_INSECT_TYPE_COCKROACH && mFI_GetBlockUtNum2FG(&item, player_pos->next_bx, player_pos->next_bz, live_ut_x, live_ut_z) == TRUE) {
         if (aSOI_tree_check(item)) {
           set_data->extra_data = 4; // TODO: definition (*_ON_TREE)
         }
@@ -2045,7 +2045,7 @@ static void aSOI_ins_decide_insect(aSOI_set_data_c* set_data, aSetMgr_player_pos
   }
 
   spawn_idx = aSOI_ins_get_idx(spawn_info, info_num, candy_spawn | trash_spawn);
-  if (spawn_idx != aSOI_INSECT_TYPE_INVALID) {
+  if (spawn_idx != aINS_INSECT_TYPE_INVALID) {
     aSOI_insect_spawn_info_f_c* info = spawn_info + spawn_idx;
     int spawn_area = info->spawn_area;
 
@@ -2072,7 +2072,7 @@ static int aSOI_ins_make_sub(aSOI_set_data_c* set_data, aSetMgr_player_pos_c* pl
     insect_init.extra_data = set_data->extra_data;
     insect_init.game = game;
 
-    if (insect_init.insect_type == aSOI_INSECT_TYPE_ANT) {
+    if (insect_init.insect_type == aINS_INSECT_TYPE_ANT) {
       (*Common_Get(clip).insect_clip->make_ant_proc)(&insect_init, player_pos->next_bx, player_pos->next_bz);
       res = TRUE;
     }

@@ -714,7 +714,7 @@ enum {
 
 enum {
     mPlayer_NET_CATCH_TYPE_INSECT,
-    mPlayer_NET_CATCH_TYPE_UNK1,
+    mPlayer_NET_CATCH_TYPE_ANT,
 
     mPlayer_NET_CATCH_TYPE_NUM
 };
