@@ -183,7 +183,7 @@ static void Player_actor_informed_insects_Dig_scoop(ACTOR* actor) {
         xyz_t* pos = &main_scoop->target_pos;
 
         mFI_Wpos2UtNum(&ut_x, &ut_z, *pos);
-        Common_Get(clip).insect_clip->set_pl_act_tim_proc(3, ut_x, ut_z);
+        Common_Get(clip).insect_clip->set_pl_act_tim_proc(aINS_PL_ACT_DIG_SCOOP, ut_x, ut_z);
     }
 }
 

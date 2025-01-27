@@ -1091,7 +1091,7 @@ static int BIT_actor_tree_cutcount_check(GAME* game, int ut_x, int ut_z) {
 static void bg_item_tree_fruit_drop(mActor_name_t fg_item, int ut_x, int ut_z, xyz_t* drop_pos) {
     if (fg_item == TREE || fg_item == CEDAR_TREE || fg_item == GOLD_TREE) {
         if (Common_Get(clip).insect_clip != NULL && Common_Get(clip).insect_clip->set_pl_act_tim_proc != NULL) {
-            Common_Get(clip).insect_clip->set_pl_act_tim_proc(4, ut_x, ut_z);
+            Common_Get(clip).insect_clip->set_pl_act_tim_proc(aINS_PL_ACT_SHAKE_TREE, ut_x, ut_z);
         }
     } else if (fg_item == TREE_BEES || fg_item == CEDAR_TREE_BEES || fg_item == GOLD_TREE_BEES) {
         ACTOR* actor;

@@ -62,7 +62,7 @@ static int aIDG_check_strike_stone(aINS_INSECT_ACTOR* insect) {
     int bx, bz;
 
     ret = FALSE;
-    if ((aINS_CLIP->pl_action == 1) || (aINS_CLIP->pl_action == 2)) {
+    if ((aINS_CLIP->pl_action == aINS_PL_ACT_REFLECT_AXE) || (aINS_CLIP->pl_action == aINS_PL_ACT_REFLECT_SCOOP)) {
         mFI_Wpos2UtNum(&bx, &bz, insect->tools_actor.actor_class.world.position);
         if ((aINS_CLIP->pl_action_ut_x == bx) && (aINS_CLIP->pl_action_ut_z == bz)) {
             ret = TRUE;

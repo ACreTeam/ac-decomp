@@ -159,7 +159,7 @@ static void Player_actor_informed_insects_Reflect_axe(ACTOR* actor, mPlayer_main
             int ut_z;
 
             mFI_Wpos2UtNum(&ut_x, &ut_z, main_axe->axe_common.target_pos);
-            Common_Get(clip).insect_clip->set_pl_act_tim_proc(1, ut_x, ut_z);
+            Common_Get(clip).insect_clip->set_pl_act_tim_proc(aINS_PL_ACT_REFLECT_AXE, ut_x, ut_z);
         }
     }
 }

@@ -232,6 +232,7 @@ typedef enum audio_sound_effects {
     NA_SE_435 = 0x435,
     NA_SE_436 = 0x436,
     NA_SE_437 = 0x437,
+    NA_SE_438 = 0x438,
 
     NA_SE_KARABURI = 0x43A,
 

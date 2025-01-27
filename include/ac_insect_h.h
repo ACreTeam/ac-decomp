@@ -186,6 +186,16 @@ typedef struct {
     aINS_overlay_entry_c entries[3];
 } aINS_overlay_c;
 
+enum {
+    aINS_PL_ACT_NONE,
+    aINS_PL_ACT_REFLECT_AXE,
+    aINS_PL_ACT_REFLECT_SCOOP,
+    aINS_PL_ACT_DIG_SCOOP,
+    aINS_PL_ACT_SHAKE_TREE,
+
+    aINS_PL_ACT_NUM
+};
+
 typedef ACTOR* (*aINS_make_insect_proc)(aINS_Init_c*, int);
 typedef void (*aINS_make_ant_proc)(aINS_Init_c*, s8, s8);
 typedef void (*aINS_dt_proc)(ACTOR*, GAME*);

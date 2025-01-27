@@ -1000,7 +1000,7 @@ config.libs = [
             Object(Matching, "actor/ac_ins_ka.c"),
             Object(Matching, "actor/ac_ins_kabuto.c"),
             Object(NonMatching, "actor/ac_ins_kera.c"),
-            Object(NonMatching, "actor/ac_ins_mino.c"),
+            Object(Matching, "actor/ac_ins_mino.c"),
             Object(Matching, "actor/ac_ins_semi.c"),
             Object(NonMatching, "actor/ac_ins_tentou.c"),
             Object(Matching, "actor/ac_ins_tonbo.c"),
