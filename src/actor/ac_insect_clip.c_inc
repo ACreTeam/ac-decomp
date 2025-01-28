@@ -3,10 +3,10 @@ static ACTOR* aINS_make_actor(GAME* game, int type, xyz_t* pos) {
 
     xyz_t_move(&init_data.position, pos);
     init_data.insect_type = type;
-    init_data.extra_data = 1;
+    init_data.extra_data = aINS_INIT_RELEASE;
     init_data.game = game;
 
-    return aINS_CLIP->make_insect_proc(&init_data, 1);
+    return aINS_CLIP->make_insect_proc(&init_data, aINS_MAKE_EXIST);
 }
 
 static int aINS_get_free_idx_set_block_table(mEv_gst_hitodama_block_c* block_table) {

@@ -70,6 +70,13 @@ enum {
 };
 
 enum {
+    aINS_INIT_NORMAL,
+    aINS_INIT_RELEASE,
+
+    aINS_INIT_NUM
+};
+
+enum {
     aINS_PROGRAM_CHOU,
     aINS_PROGRAM_BATTA,
     aINS_PROGRAM_TONBO,
