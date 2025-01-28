@@ -500,7 +500,7 @@ static void aITT_actor_move(ACTOR* actorx, GAME* game) {
         switch (insect->type) {
             case aINS_INSECT_TYPE_SNAIL:
                 actorx->world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(actorx->world.position, 0.0f);
-                insect->home.position.y = actorx->world.position.y;
+                actorx->home.position.y = actorx->world.position.y;
                 action = aITT_ACT_LET_ESCAPE_MAIMAI;
                 break;
             default:
