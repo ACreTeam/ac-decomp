@@ -65,6 +65,9 @@ typedef enum audio_sound_effects {
     NA_SE_DRAWER_SHUT = 0x3A,
 
     NA_SE_ITEM_GET = 0x40,
+    NA_SE_MOLE_CRICKET_HIDE = 0x44,
+    NA_SE_MOLE_CRICKET_OUT = 0x45, // TODO: do ongen sounds have their own enum?
+
     NA_SE_NOTE_G_LOW = MONO(0x42),
     NA_SE_NOTE_A_LOW = MONO(0x43),
     NA_SE_NOTE_B_LOW = MONO(0x44),
