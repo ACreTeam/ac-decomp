@@ -51,6 +51,7 @@ typedef enum audio_sound_effects {
     NA_SE_LIGHT_ON,
     NA_SE_LIGHT_OFF,
 
+    NA_SE_24 = 0x24,
     NA_SE_25 = 0x25,
     NA_SE_26 = 0x26,
     NA_SE_27 = 0x27,
@@ -153,6 +154,7 @@ typedef enum audio_sound_effects {
     NA_SE_114 = 0x114,
     NA_SE_SEMI_ESCAPE = 0x115,
 
+    NA_SE_11A = 0x11A,
     NA_SE_11B = 0x11B,
     NA_SE_WEAR = 0x11C,
 

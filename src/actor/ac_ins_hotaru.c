@@ -441,7 +441,7 @@ static void aIHT_setupAction(aINS_INSECT_ACTOR* insect, int action, GAME* game) 
 
     static aINS_ACTION_PROC act_proc[] = {
         aIHT_avoid,
-        (aINS_ACTION_PROC)none_proc1,
+        aIHT_avoid,
         aIHT_fly,
     };
 

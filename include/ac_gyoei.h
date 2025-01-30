@@ -90,6 +90,8 @@ enum fish_type {
 
 #define aGYO_TYPE_INVALID -1
 
+#define aGYO_IS_FISH_TRASH(type) ((type) >= aGYO_TYPE_EMPTY_CAN && (type) <= aGYO_TYPE_OLD_TIRE)
+
 enum {
     aGYO_SIZE_XXS,
     aGYO_SIZE_XS,
