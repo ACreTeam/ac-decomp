@@ -1276,7 +1276,7 @@ def generate_build_ninja(
     n.comment("Default rule")
     if build_config:
         if config.non_matching:
-            n.default(link_outputs)
+            n.default(link_outputs + [foresta_szs_path])
         elif config.progress:
             n.default([progress_path, foresta_szs_path])
         else:
