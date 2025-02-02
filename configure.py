@@ -2580,6 +2580,9 @@ config.libs = [
             Object(Matching, "data/item/cloth_list.c"),
             Object(Matching, "data/item/carpet_list.c"),
             Object(Matching, "data/item/wall_list.c"),
+
+            Object(Matching, "data/model/structure/palette/structure_pal_data.c"),
+            Object(Matching, "data/model/structure/structure_pal.c"),
         ],
     ),
 ]
