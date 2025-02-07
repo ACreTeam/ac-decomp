@@ -172,7 +172,8 @@ config.asflags = [
     "-I include/libc",
     "-I src/static/dolphin",
     f"-I build/{config.version}/include",
-    f"-I build/{config.version}/bin/assets",  # needed for JUTResFONT_Ascfont_fix12
+    # needed for JUTResFONT_Ascfont_fix12
+    f"-I build/{config.version}/bin/assets",
     f"--defsym version={version_num}",
 ]
 config.ldflags = [
@@ -2720,7 +2721,8 @@ for url in N64_SDK_urls:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
         print(f"Fetching {file_path} from {url}")
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        req = urllib.request.Request(
+            url, headers={"User-Agent": "Mozilla/5.0"})
         with urllib.request.urlopen(req) as response:
             if response.getcode() == 200:
                 content = response.read()
@@ -2744,7 +2746,8 @@ config.progress_categories = [
     ProgressCategory("game", "Game Code"),
     ProgressCategory("sdk", "SDK Code"),
     ProgressCategory("jsystem", "JSystem Code"),
-    ProgressCategory("library", "Library Code"),  # catch-all for the rest of static
+    # catch-all for the rest of static
+    ProgressCategory("library", "Library Code"),
 ]
 config.progress_each_module = args.verbose
 

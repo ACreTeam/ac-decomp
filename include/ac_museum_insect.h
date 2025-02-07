@@ -1,7 +1,6 @@
 #ifndef AC_MUSEUM_INSECT_H
 #define AC_MUSEUM_INSECT_H
 
-#include "types.h"
 #include "m_actor.h"
 
 #ifdef __cplusplus
@@ -15,4 +14,3 @@ extern ACTOR_PROFILE Museum_Insect_Profile;
 #endif
 
 #endif
-
