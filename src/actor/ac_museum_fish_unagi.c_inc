@@ -1,3 +1,54 @@
+#include "ac_museum_fish_priv.h"
+
+xyz_t unagi_rail_pos[25] = { { 228.0f, 57.0f, 192.0f }, { 231.0f, 57.0f, 203.0f }, { 237.0f, 57.0f, 215.0f },
+                             { 245.0f, 58.0f, 225.0f }, { 252.0f, 59.0f, 233.0f }, { 254.0f, 60.0f, 245.0f },
+                             { 248.0f, 60.0f, 255.0f }, { 238.0f, 60.0f, 256.0f }, { 231.0f, 60.0f, 247.0f },
+                             { 222.0f, 60.0f, 240.0f }, { 212.0f, 60.0f, 243.0f }, { 203.0f, 60.0f, 249.0f },
+                             { 196.0f, 60.0f, 248.0f }, { 191.0f, 60.0f, 241.0f }, { 191.0f, 60.0f, 234.0f },
+                             { 187.0f, 60.0f, 223.0f }, { 183.0f, 60.0f, 212.0f }, { 181.0f, 60.0f, 203.0f },
+                             { 182.0f, 57.0f, 191.0f }, { 187.0f, 56.0f, 183.0f }, { 193.0f, 56.0f, 176.0f },
+                             { 201.0f, 56.0f, 172.0f }, { 209.0f, 56.0f, 173.0f }, { 216.0f, 56.0f, 176.0f },
+                             { 221.0f, 56.0f, 182.0f } };
+
+xyz_t unagi_rail_pos2[20] = { { 228.0f, 57.0f, 192.0f }, { 236.0f, 57.0f, 201.0f }, { 244.0f, 57.0f, 204.0f },
+                              { 250.0f, 58.0f, 213.0f }, { 254.0f, 59.0f, 225.0f }, { 250.0f, 60.0f, 238.0f },
+                              { 243.0f, 60.0f, 242.0f }, { 235.0f, 60.0f, 238.0f }, { 226.0f, 60.0f, 233.0f },
+                              { 215.0f, 60.0f, 229.0f }, { 205.0f, 60.0f, 228.0f }, { 198.0f, 60.0f, 229.0f },
+                              { 191.0f, 60.0f, 227.0f }, { 186.0f, 60.0f, 222.0f }, { 181.0f, 60.0f, 216.0f },
+                              { 181.0f, 60.0f, 207.0f }, { 184.0f, 60.0f, 196.0f }, { 191.0f, 60.0f, 186.0f },
+                              { 201.0f, 57.0f, 177.0f }, { 213.0f, 56.0f, 178.0f } };
+
+xyz_t unagi_rail_pos3[25] = { { 228.0f, 57.0f, 192.0f }, { 231.0f, 57.0f, 203.0f }, { 229.0f, 57.0f, 213.0f },
+                              { 222.0f, 58.0f, 225.0f }, { 212.0f, 59.0f, 226.0f }, { 204.0f, 60.0f, 227.0f },
+                              { 197.0f, 60.0f, 230.0f }, { 193.0f, 60.0f, 236.0f }, { 195.0f, 60.0f, 246.0f },
+                              { 201.0f, 60.0f, 253.0f }, { 212.0f, 60.0f, 256.0f }, { 222.0f, 60.0f, 255.0f },
+                              { 237.0f, 60.0f, 254.0f }, { 243.0f, 60.0f, 246.0f }, { 240.0f, 60.0f, 232.0f },
+                              { 232.0f, 60.0f, 227.0f }, { 223.0f, 60.0f, 225.0f }, { 209.0f, 60.0f, 225.0f },
+                              { 198.0f, 60.0f, 220.0f }, { 190.0f, 60.0f, 209.0f }, { 187.0f, 60.0f, 196.0f },
+                              { 191.0f, 60.0f, 184.0f }, { 197.0f, 60.0f, 178.0f }, { 207.0f, 59.0f, 173.0f },
+                              { 221.0f, 57.0f, 180.0f } };
+
+xyz_t unagi_normal_to_reverse_rail_pos[12] = {
+    { 228.0f, 57.0f, 192.0f }, { 236.0f, 57.0f, 201.0f }, { 244.0f, 57.0f, 204.0f }, { 250.0f, 58.0f, 213.0f },
+    { 254.0f, 59.0f, 225.0f }, { 250.0f, 60.0f, 238.0f }, { 243.0f, 60.0f, 242.0f }, { 235.0f, 60.0f, 236.0f },
+    { 226.0f, 60.0f, 228.0f }, { 225.0f, 60.0f, 219.0f }, { 228.0f, 58.0f, 208.0f }, { 228.0f, 57.0f, 192.0f }
+};
+
+xyz_t unagi_reverse_to_normal_rail_pos[19] = {
+    { 228.0f, 57.0f, 192.0f }, { 218.0f, 56.0f, 178.0f }, { 204.0f, 57.0f, 176.0f }, { 191.0f, 58.0f, 186.0f },
+    { 184.0f, 59.0f, 196.0f }, { 189.0f, 60.0f, 208.0f }, { 198.0f, 60.0f, 215.0f }, { 205.0f, 60.0f, 224.0f },
+    { 204.0f, 60.0f, 235.0f }, { 196.0f, 60.0f, 242.0f }, { 188.0f, 60.0f, 241.0f }, { 183.0f, 60.0f, 233.0f },
+    { 180.0f, 60.0f, 219.0f }, { 181.0f, 60.0f, 207.0f }, { 184.0f, 60.0f, 196.0f }, { 191.0f, 59.0f, 186.0f },
+    { 204.0f, 57.0f, 176.0f }, { 218.0f, 56.0f, 178.0f }, { 228.0f, 57.0f, 192.0f }
+};
+
+xyz_t* unagi_rail_tbl[3] = { unagi_rail_pos, unagi_rail_pos2, unagi_rail_pos3 };
+
+int unagi_rail_num_tbl[3] = {
+    ARRAY_LEN(unagi_rail_pos),
+    ARRAY_LEN(unagi_rail_pos2),
+    ARRAY_LEN(unagi_rail_pos3),
+};
 
 void mfish_unagi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     mfish_onefish_ct(actor, gamex);
@@ -247,7 +298,6 @@ void mfish_unagi_reverse_to_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex)
 }
 
 void mfish_unagi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    //! NOTE: wrong floats in this file, based on objdiff
     xyz_t p1, p2, p3;
     p1 = ZeroVec;
     p2 = ZeroVec;
@@ -303,35 +353,35 @@ void mfish_unagi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Museum_Fish_objchk_pos_set(actor, gamex);
 }
 
-BOOL mfish_unagi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
-                             void* arg, s_xyz* joint1, xyz_t* trans) {
+BOOL mfish_unagi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                             u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
 
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
-    if (joint_num == 1) {
+    if (joint_idx == 1) {
         int i = (s16)(actor->_632 * 0.5f * sin_s(actor->_636));
-        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
-        trans->z += actor->_5F4 * sin_s(actor->_636 + DEG2SHORT_ANGLE(90));
-    } else if (joint_num == 2) {
+        joint_rot->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
+        joint_pos->z += actor->_5F4 * sin_s(actor->_636 + DEG2SHORT_ANGLE(90));
+    } else if (joint_idx == 2) {
         int i;
 
         i = DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3c)) - (int)(actor->_618.z * (1.0f + 0.01f * GETREG(TAKREG, 0x38)));
         i += (s16)(actor->_632 * 0.75f * sin_s(actor->_636 + DEG2SHORT_ANGLE2(90)));
-        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE2(-90), DEG2SHORT_ANGLE2(90));
-    } else if (joint_num == 3) {
+        joint_rot->y = MY_CLAMP(i, DEG2SHORT_ANGLE2(-90), DEG2SHORT_ANGLE2(90));
+    } else if (joint_idx == 3) {
         int i;
         i = DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3d)) - (int)(actor->_38._538.x * (1.1f + 0.01f * GETREG(TAKREG, 0x39)));
         i += (s16)(actor->_632 * sin_s(actor->_636 + DEG2SHORT_ANGLE(180)));
-        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
-    } else if (joint_num == 4) {
+        joint_rot->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
+    } else if (joint_idx == 4) {
         int i;
         i = DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3e)) - (int)(actor->_38._538.y * (1.2f + 0.01f * GETREG(TAKREG, 0x3a)));
         i += (s16)(actor->_632 * 0.75f * sin_s(actor->_636 + DEG2SHORT_ANGLE(270)));
-        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
-    } else if (joint_num == 5) {
+        joint_rot->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
+    } else if (joint_idx == 5) {
         int i;
         i = DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x3f)) - (int)(actor->_38._538.z * (1.3f + 0.01f * GETREG(TAKREG, 0x3b)));
         i += (s16)(actor->_632 * 0.5f * sin_s(actor->_636 + DEG2SHORT_ANGLE(0)));
-        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
+        joint_rot->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
     }
     return TRUE;
 }

@@ -1,3 +1,4 @@
+#include "ac_museum_fish_priv.h"
 
 void mfish_dojou_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     s16 s = qrand();
@@ -165,24 +166,24 @@ void mfish_dojou_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->_612.x = MAX((s16)-actor->init_data._30, MIN(actor->init_data._30, actor->_612.x));
 }
 
-BOOL mfish_dojou_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
-                             void* arg, s_xyz* joint1, xyz_t* trans) {
+BOOL mfish_dojou_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                             u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
-    if (joint_num == 1) {
-        int i = joint1->x + actor->_618.z;
-        joint1->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-45), DEG2SHORT_ANGLE(40));
-        i = joint1->y + actor->_618.z;
-        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-40), DEG2SHORT_ANGLE(40));
-    } else if (joint_num == 2) {
-        int i = (s16)(joint1->z - actor->_618.x);
+    if (joint_idx == 1) {
+        int i = joint_rot->x + actor->_618.z;
+        joint_rot->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-45), DEG2SHORT_ANGLE(40));
+        i = joint_rot->y + actor->_618.z;
+        joint_rot->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-40), DEG2SHORT_ANGLE(40));
+    } else if (joint_idx == 2) {
+        int i = (s16)(joint_rot->z - actor->_618.x);
         f32 z;
         f32 t;
-        joint1->z = MY_CLAMP(i, DEG2SHORT_ANGLE(-40), DEG2SHORT_ANGLE(40));
+        joint_rot->z = MY_CLAMP(i, DEG2SHORT_ANGLE(-40), DEG2SHORT_ANGLE(40));
         z = actor->_618.z;
-        t = joint1->y * ((GETREG(TAKREG, 0x19) * 0.1f + 0.8f) * actor->_5AC.x + 1.0f);
+        t = joint_rot->y * ((GETREG(TAKREG, 0x19) * 0.1f + 0.8f) * actor->_5AC.x + 1.0f);
         i = (int)t - (int)z;
 
-        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-80), DEG2SHORT_ANGLE(80));
+        joint_rot->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-80), DEG2SHORT_ANGLE(80));
     }
     return TRUE;
 }

@@ -1,3 +1,4 @@
+#include "ac_museum_fish_priv.h"
 
 void mfish_seafish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     s16 s = qrand();
@@ -67,11 +68,9 @@ void mfish_seafish_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         }
 
         if (actor->_598->position.z < actor->position.z) {
-            // swap here
             o_5a0_z += sum_i_8;
             add_calc2(&actor->position.z, o_5a0_z, 0.1f, abs_diff_sum * 0.1f);
         } else {
-            // swap here
             o_5a0_z -= sum_i_8;
             add_calc2(&actor->position.z, o_5a0_z, 0.1f, abs_diff_sum * 0.1f);
         }
@@ -123,7 +122,6 @@ void mfish_seafish_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
                                   DEG2SHORT_ANGLE(0));
         }
     } else if (actor->activityFrameCount < 0) {
-        // r in wrong register here
         r = RANDOM_F(1.0f);
         actor->_612.y = actor->_60C.y;
         if ((actor->_608 - actor->_604) * cos_s(actor->_60C.y) < 0.0f) {
@@ -179,7 +177,6 @@ void mfish_seafish_turn(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mfish_seafish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    //! NOTE: wrong floats in this file, based on objdiff
     xyz_t p;
     actor->currentProcess(actor, gamex);
     actor->_618.x += DEG2SHORT_ANGLE(actor->_5E8 * RANDOM_F(3.0f));
@@ -216,17 +213,17 @@ void mfish_seafish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->activityFrameCount--;
 }
 
-BOOL mfish_seafish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
-                               void* arg, s_xyz* joint1, xyz_t* trans) {
+BOOL mfish_seafish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                               u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
-    if (joint_num == 1) {
-        int s = joint1->x + (int)(actor->_618.z * (GETREG(TAKREG, 0x37) * 0.01f + 0.5f));
-        joint1->x = MIN(MAX(s, DEG2SHORT_ANGLE(-15)), DEG2SHORT_ANGLE(15));
+    if (joint_idx == 1) {
+        int s = joint_rot->x + (int)(actor->_618.z * (GETREG(TAKREG, 0x37) * 0.01f + 0.5f));
+        joint_rot->x = MIN(MAX(s, DEG2SHORT_ANGLE(-15)), DEG2SHORT_ANGLE(15));
         Matrix_scale(1.0f, (GETREG(TAKREG, 0x36) * 0.001f + 0.035f) * sin_s(actor->_63A + actor->_63C) + 1.0f,
                      (GETREG(TAKREG, 0x36) * 0.001f + 0.035f) * sin_s(actor->_63A) + 1.0f, 1);
-    } else if (joint_num == 2) {
-        int v = joint1->y - (actor->_618.z << 1);
-        joint1->y = MIN(MAX(v, DEG2SHORT_ANGLE(-80)), DEG2SHORT_ANGLE(80));
+    } else if (joint_idx == 2) {
+        int v = joint_rot->y - (actor->_618.z << 1);
+        joint_rot->y = MIN(MAX(v, DEG2SHORT_ANGLE(-80)), DEG2SHORT_ANGLE(80));
         Matrix_scale(1.0f, sin_s(actor->_63A + DEG2SHORT_ANGLE(270)) * 0.07f + 1.0f,
                      sin_s(actor->_63A + DEG2SHORT_ANGLE(90)) * 0.07f + 1.0f, 1);
     }

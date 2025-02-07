@@ -1,3 +1,4 @@
+#include "ac_museum_fish_priv.h"
 
 void mfish_gupi_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     s16 s = qrand();
@@ -167,24 +168,24 @@ void mfish_gupi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->_612.x = MAX((s16)-actor->init_data._30, MIN(actor->init_data._30, actor->_612.x));
 }
 
-BOOL mfish_gupi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
-                            void* arg, s_xyz* joint1, xyz_t* trans) {
+BOOL mfish_gupi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                            u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
-    if (joint_num == 1) {
-        int s = joint1->x + actor->_618.z;
-        joint1->x = MY_CLAMP(s, -DEG2SHORT_ANGLE(30), DEG2SHORT_ANGLE(30));
-        s = joint1->y + actor->_618.z;
-        joint1->y = MY_CLAMP(s, -DEG2SHORT_ANGLE(30), DEG2SHORT_ANGLE(30));
-    } else if (joint_num == 2) {
+    if (joint_idx == 1) {
+        int s = joint_rot->x + actor->_618.z;
+        joint_rot->x = MY_CLAMP(s, -DEG2SHORT_ANGLE(30), DEG2SHORT_ANGLE(30));
+        s = joint_rot->y + actor->_618.z;
+        joint_rot->y = MY_CLAMP(s, -DEG2SHORT_ANGLE(30), DEG2SHORT_ANGLE(30));
+    } else if (joint_idx == 2) {
         int s;
         if (actor->_5F0 - 0.001f > actor->_5E8) {
-            joint1->y += (int)(2.0f * (actor->_5F0 - actor->_5E8) * joint1->y);
+            joint_rot->y += (int)(joint_rot->y * (2.0f * (actor->_5F0 - actor->_5E8)));
         }
-        s = joint1->y - actor->_618.z * 3;
-        joint1->y = MY_CLAMP(s, -DEG2SHORT_ANGLE(60), DEG2SHORT_ANGLE(60));
-        s = joint1->x - (actor->_618.z >> 1);
-        joint1->x = MY_CLAMP(s, -DEG2SHORT_ANGLE(30), DEG2SHORT_ANGLE(30));
-        joint1->z += (s16)(actor->_618.x * (-1.3f + GETREG(TAKREG, 0x4e) * 0.1f));
+        s = joint_rot->y - actor->_618.z * 3;
+        joint_rot->y = MY_CLAMP(s, -DEG2SHORT_ANGLE(60), DEG2SHORT_ANGLE(60));
+        s = joint_rot->x - (actor->_618.z >> 1);
+        joint_rot->x = MY_CLAMP(s, -DEG2SHORT_ANGLE(30), DEG2SHORT_ANGLE(30));
+        joint_rot->z += (s16)(actor->_618.x * (-1.3f + GETREG(TAKREG, 0x4e) * 0.1f));
         Matrix_scale((GETREG(TAKREG, 0x4b) * 0.01f) * cos_s(actor->_63A) + 0.05f + 1.0f,
                      (GETREG(TAKREG, 0x4c) * 0.01f) * sin_s(actor->_63A) + 0.1f + 1.0f, 1.0f, 1);
     }

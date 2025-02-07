@@ -1,3 +1,5 @@
+#include "ac_museum_fish_priv.h"
+
 f32 Rnd_EX_f(f32 v) {
     f32 rand1 = RANDOM2_F(2);
     f32 rand2 = RANDOM_F(1);
@@ -121,7 +123,6 @@ void mfish_dummy_process_init(MUSEUM_FISH_PRIVATE_DATA* prv) {
 }
 
 void mfish_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
-    // no clue what's going on here
     add_calc_short_angle2(&actor->_612.y, actor->_634, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(3.75f),
                           DEG2SHORT_ANGLE(0.25f));
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.5f), DEG2SHORT_ANGLE(5.0f),
@@ -526,10 +527,10 @@ void mfish_onefish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     cKF_SkeletonInfo_R_play(&actor->_38._00);
 }
 
-int mfish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f, void* arg,
-                      s_xyz* joint1, xyz_t* trans) {
+int mfish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape, u8* joint_flags,
+                      void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
-    if (joint_num == 2) {
+    if (joint_idx == 2) {
         int v, t;
 
         if (actor->group != 4) {
@@ -542,10 +543,10 @@ int mfish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num,
             v = 3;
         }
 
-        t = joint1->y - (actor->_618.z * v);
-        joint1->y = MY_CLAMP(t, DEG2SHORT_ANGLE(-60), DEG2SHORT_ANGLE(60));
-        t = joint1->x - (actor->_618.z >> 1);
-        joint1->x = MY_CLAMP(t, DEG2SHORT_ANGLE(-25), DEG2SHORT_ANGLE(25));
+        t = joint_rot->y - (actor->_618.z * v);
+        joint_rot->y = MY_CLAMP(t, DEG2SHORT_ANGLE(-60), DEG2SHORT_ANGLE(60));
+        t = joint_rot->x - (actor->_618.z >> 1);
+        joint_rot->x = MY_CLAMP(t, DEG2SHORT_ANGLE(-25), DEG2SHORT_ANGLE(25));
     }
     return 1;
 }
@@ -643,6 +644,7 @@ void mfish_ani_base_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 #include "../src/actor/ac_museum_fish_zarigani.c_inc"
 #include "../src/actor/ac_museum_fish_kurage.c_inc"
 #include "../src/actor/ac_museum_fish_hasu.c_inc"
+
 void Museum_Fish_BigFishObjCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     int i;
     MUSEUM_FISH_PRIVATE_DATA* fish[2];
@@ -802,7 +804,7 @@ void Museum_Fish_DonkoBGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->_62E_flags &= ~0x1e;
     actor->_62C = 0;
     Museum_Fish_objchk_pos_set(actor, gamex);
-    // asm 17C
+
     a = (+00.0f + p.x);
     b = (+45.0f + p.x);
     d = (-17.5f + p.z);
@@ -816,19 +818,11 @@ void Museum_Fish_DonkoBGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     c -= (actor->position.z + actor->init_data._28 * v2);
     d -= (actor->position.z - actor->init_data._28 * v2);
 
-    /*
-        f31 = a
-        f30 = b
-        f28 = c
-        f29 = d
-    */
-
     actor->_5FC = -a;
     actor->_600 = b;
     actor->_604 = -c;
     actor->_608 = d;
 
-    // asm 2E8
     f27 -= actor->position.y;
     f26 -= actor->position.y;
     if (a > 0.0f) {
@@ -878,7 +872,6 @@ void Museum_Fish_DonkoBGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
     f25 = MIN(MIN(actor->_608 - cos_s(actor->_60C.y), actor->_604 + cos_s(actor->_60C.y)),
               MIN(actor->_600 - sin_s(actor->_60C.y), actor->_5FC + sin_s(actor->_60C.y)));
-    // asm 5D8
     if (f25 < 5.0f) {
         f26 -= 0.5f * (5.0f - f25);
     }
@@ -896,7 +889,7 @@ void Museum_Fish_objchk_pos_set(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     actor->_5B8.z += (actor->init_data._24 * cos_s(actor->_60C.y));
 }
 
-void Museum_Fish_old_chk_pos_set() {
+void Museum_Fish_old_chk_pos_set(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     // UNUSED/STRIPPED
 }
 
@@ -961,7 +954,6 @@ void Museum_Fish_BGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
         actor->_62E_flags |= 0x8;
     }
 
-    // asm 468
     Museum_Fish_objchk_pos_set(actor, game);
     actor->_5FC = actor->_5B8.x - (p.x - f29);
     actor->_600 = (p.x + f30) - actor->_5B8.x;
@@ -1068,9 +1060,7 @@ void Museum_Fish_Kusa_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
                         actor->prvKusa[j]._538.y = DEG2SHORT_ANGLE(3.5f);
                     }
                 }
-                // asm 3fc-410
             }
-            // asm 414
             if (f28 > 0.0f) {
                 f->_62E_flags |= 0x100;
                 f->position.x += (f30 / f28);
@@ -1079,15 +1069,14 @@ void Museum_Fish_Kusa_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
             f28 = 0.0f;
             f29 = 0.0f;
             f30 = 0.0f;
-            // asm 460
         }
     }
 }
 
 void Museum_Fish_Object_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
     int i;
-    MUSEUM_FISH_PRIVATE_DATA* fj; // r31
-    MUSEUM_FISH_PRIVATE_DATA* f;  // r29
+    MUSEUM_FISH_PRIVATE_DATA* fj;
+    MUSEUM_FISH_PRIVATE_DATA* f;
     int j;
     f32 f31;
     f32 f30;
@@ -1111,15 +1100,14 @@ void Museum_Fish_Object_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
 
     f = actor->prvFish;
     for (i = 0; i < aGYO_TYPE_NUM; i++, f++) {
-        // asm b8
         if (i != 0x21 && i != 0x20 && i != 0x1a && i != 0x27 && i != 0xa && f->_62E_flags & 1) {
             for (j = 0; j < aGYO_TYPE_NUM; j++, fj++) {
                 if (f->group == fj->group && i != j && j != 0x21 && j != 0x1a && j != 0x27 && j != 10 &&
                     fj->_62E_flags & 1 != 0) {
 
-                    test.x = f->_5B8.x - fj->_5B8.x; // f31
-                    test.y = f->_5B8.y - fj->_5B8.y; // f29
-                    test.z = f->_5B8.z - fj->_5B8.z; // f30
+                    test.x = f->_5B8.x - fj->_5B8.x;
+                    test.y = f->_5B8.y - fj->_5B8.y;
+                    test.z = f->_5B8.z - fj->_5B8.z;
                     sq_xz = SQ(test.x) + SQ(test.z);
                     sq_xzy = sq_xz + SQ(test.y);
                     if (sqrtf(sq_xzy) < f23) {
@@ -1133,7 +1121,7 @@ void Museum_Fish_Object_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
                         if (sq_xz < SQ(additive)) {
                             f22 = additive - sqrtf(SQ(test.x) + SQ(test.z));
 
-                            // bug?
+                            //! BUG: multiplying by zero?
                             if (test.y > atans_table(sqrtf(SQ(test.x) + SQ(test.z)), test.y) * 0.0f) {
                                 test.y = -test.y + (f->init_data._04 + fj->init_data._04);
                             } else {
@@ -1174,8 +1162,6 @@ void Museum_Fish_Object_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
                         }
                     }
                 }
-
-                // asm 5ec - 5f8
             }
 
             if (f25 > 0.0f) {
@@ -1208,7 +1194,6 @@ void Museum_Fish_Object_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
         if (f->group == 3 && f->_624 != 7) {
             Museum_Fish_BigFishObjCheck(f, game);
         }
-        // asm 728
     }
 }
 

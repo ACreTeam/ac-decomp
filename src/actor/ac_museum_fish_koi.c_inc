@@ -1,3 +1,5 @@
+#include "ac_museum_fish_priv.h"
+
 void mfish_koi_tail_anim_set(MUSEUM_FISH_PRIVATE_DATA* actor, s32 r4) {
     f32 temp;
     f32 temp2;
@@ -162,7 +164,6 @@ void mfish_koi_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
 
 void mfish_koi_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     s16 temp;
-    //! NOTE: wrong float somewhere in this file, just based on objdiffs colors changing
     if (ABS(actor->_632) > DEG2SHORT_ANGLE(20) || actor->_640 > 0) {
         add_calc2(&actor->_5EC, ((actor->_632 - DEG2SHORT_ANGLE(20)) / DEG2SHORT_ANGLE(2)) * 0.0035f + 0.03f, 0.35f,
                   0.05f);
@@ -319,8 +320,6 @@ void mfish_koi_peck_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     s16 atany;
     f32 dist;
 
-    // mfish_get_player_angle(actor, gamex, &atanx, &atany, &dist);
-
     if (ABS(actor->_632) > DEG2SHORT_ANGLE(20) || actor->_640 > 0) {
         add_calc2(&actor->_5EC, ((actor->_632 - DEG2SHORT_ANGLE(20)) / DEG2SHORT_ANGLE(2)) * 0.0035f + 0.04f, 0.4f,
                   0.1f);
@@ -343,10 +342,8 @@ void mfish_koi_peck_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
             actor->_5F0 = 0.05f;
             actor->activityFrameCount =
                 actor->init_data.activeFramesMin + (s16)RANDOM_F(actor->init_data.activeFramesRange);
-            // actor->_626 >>= 3;
         }
         actor->savedActivityFrameCount = actor->activityFrameCount;
-        // actor->_5F0 = 0.0f;
     }
 }
 
@@ -389,7 +386,6 @@ void mfish_koi_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mfish_koi_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    //! NOTE: wrong floats in this file, based on objdiff
     if (actor->_5F8 > actor->init_data._08 * 20.f) {
         actor->_5F8 = 0.0f;
         actor->activityFrameCount = 0;
@@ -423,7 +419,6 @@ void mfish_koi_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         }
     }
 
-    // actor->_5AC.y = 0.0f;
     actor->_638 += DEG2SHORT_ANGLE(10);
     actor->currentProcess(actor, gamex);
     if (ABS(actor->_618.z) < ABS(actor->_622) && ABS(actor->_622) > DEG2SHORT_ANGLE(2)) {
@@ -472,23 +467,23 @@ void mfish_koi_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     }
 }
 
-BOOL mfish_koi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
-                           void* arg, s_xyz* joint1, xyz_t* trans) {
+BOOL mfish_koi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                           u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
-    if (joint_num == 0) {
-        trans->x *= actor->_5AC.z;
-        trans->y *= actor->_5AC.z;
-        trans->z = (trans->z - 1400.0f) * actor->_5AC.z + 1400.0f;
-    } else if (joint_num == 1) {
-        joint1->y = joint1->y * actor->_5AC.z;
-    } else if (joint_num == 2) {
+    if (joint_idx == 0) {
+        joint_pos->x *= actor->_5AC.z;
+        joint_pos->y *= actor->_5AC.z;
+        joint_pos->z = (joint_pos->z - 1400.0f) * actor->_5AC.z + 1400.0f;
+    } else if (joint_idx == 1) {
+        joint_rot->y *= actor->_5AC.z;
+    } else if (joint_idx == 2) {
         int i;
 
-        i = joint1->y - (int)(actor->_618.z * (GETREG(TAKREG, 0x47) * 0.1f + 2.0f));
-        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-80), DEG2SHORT_ANGLE(80));
+        i = joint_rot->y - (int)(actor->_618.z * (GETREG(TAKREG, 0x47) * 0.1f + 2.0f));
+        joint_rot->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-80), DEG2SHORT_ANGLE(80));
 
-        i = joint1->x - (actor->_618.z >> 3);
-        joint1->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-25), DEG2SHORT_ANGLE(25));
+        i = joint_rot->x - (actor->_618.z >> 3);
+        joint_rot->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-25), DEG2SHORT_ANGLE(25));
     }
 
     return TRUE;

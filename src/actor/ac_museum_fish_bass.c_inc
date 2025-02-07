@@ -1,3 +1,4 @@
+#include "ac_museum_fish_priv.h"
 
 void mfish_bass_tail_anim_set(MUSEUM_FISH_PRIVATE_DATA* actor, s32 r4) {
     if (r4 == 0) {
@@ -53,7 +54,6 @@ void mfish_bass_dummy_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
 }
 
 void mfish_bass_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
-    // no clue what's going on here
     add_calc_short_angle2(&actor->_612.y, actor->_634, CALC_EASE2(0.1f), DEG2SHORT_ANGLE(2.5f), DEG2SHORT_ANGLE(0.25f));
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.25f), DEG2SHORT_ANGLE(1.25f),
                                         DEG2SHORT_ANGLE(0.25f));
@@ -62,7 +62,6 @@ void mfish_bass_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mfish_bass_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* fishActor) {
-    //! NOTE: wrong floats in this file, based on objdiff
     f32 ra;
     f32 t;
     f32 temp;
@@ -133,7 +132,6 @@ void mfish_bass_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* fishActor) {
 }
 
 void mfish_bass_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
-    //! NOTE: wrong floats in this file, based on objdiff
     if (((actor->_62E_flags & 0x200) != 0 && actor->_632 > DEG2SHORT_ANGLE(20)) || actor->_640 > 0) {
         f32 v = (actor->_5AC.y * 0.03f + 0.02f);
         add_calc2(&actor->_5EC,
@@ -283,7 +281,6 @@ void mfish_bass_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_bass_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    //! NOTE: wrong floats in this file, based on objdiff
     mfish_onefish_mv(actor, gamex);
 
     if (actor->_5F8 > actor->init_data._08 * 20.0f) {
