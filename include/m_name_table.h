@@ -169,6 +169,7 @@ typedef struct offset_table_s {
 #define INSECT_NUM INSECT_ONLY_NUM + 5 // 5 spirits
 #define HUKUBUKURO_NUM 2
 #define KABU_NUM 4
+#define SPIRIT_NUM 5
 
 // #define WALL_MY_ORIG_START   (72)
 // #define WALL_MY_ORIG_NUM     (8)
@@ -3401,6 +3402,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define RSV_TREE 0xFE1A
 #define RSV_DOOR 0xFE1B
 #define RSV_FE1C 0xFE1C
+#define RSV_BRIDGE0 0xFE1D
+#define RSV_BRIDGE1 0xFE1E
 #define RSV_FE1F 0xFE1F
 #define RSV_CLOTH 0xFE20
 #define RSV_CLOTH1 0xFE21

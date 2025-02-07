@@ -1760,7 +1760,7 @@ static void mNpc_SendEventPresentMailSex(int* selected, u8* type, Animal_c* anim
 
 /* this used to be mNpc_SendEventPresentMail_common in DnM and DnM+ (handled both valentine's day & white day) */
 
-extern int mNpc_SendVtdayMail(int type) {
+extern int mNpc_SendVtdayMail() {
     u8 types[ANIMAL_NUM_MAX];
     int other_sex_best_friends[ANIMAL_NUM_MAX];
     Animal_c* animal_p;

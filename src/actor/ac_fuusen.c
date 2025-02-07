@@ -480,10 +480,10 @@ static void aFSN_actor_move(ACTOR* actorx, GAME* game) {
       player->actor_class.world.position.x + sin_s(actorx->player_angle_y - (s16)-0x8000) * 30.0f,
       player->actor_class.world.position.y + 60.0f,
       player->actor_class.world.position.z + cos_s(actorx->player_angle_y - (s16)-0x8000) * 30.0f,
-      1.0f, 1.0f, 1.0f,
       0, rot_y, 0,
+      1.0f, 1.0f, 1.0f,
       250, 100, 120, 128,
-      4,
+      Debug_Display_SHAPE_ARROW_MODEL,
       game->graph
     );
   }

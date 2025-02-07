@@ -41,6 +41,7 @@ extern "C" {
 #define mFI_BK_WORLDSIZE_HALF_Z_F (mFI_BK_WORLDSIZE_Z_F / 2.0f)
 
 #define mFI_POS2UT(pos) ((int)((pos) / mFI_UNIT_BASE_SIZE_F))
+#define mFI_BK_UT_2_POS(bk, ut) (((bk) * UT_BASE_NUM + (ut)) * mFI_UNIT_BASE_SIZE_F)
 
 #define mFI_ROW_TO_CHARSTR(row) ((row) + 'A')
 #define mFI_COL_TO_CHARSTR(col) ((col) + '0')

@@ -31,7 +31,7 @@ typedef union ymdh {
 static int update_save_area(void);
 
 extern void mEv_ClearSpecialEvent(mEv_special_c* special_event) {
-    special_event->type = -1;
+    special_event->kind = -1;
     bzero(&special_event->event, sizeof(mEv_special_u));
     bzero(Common_GetPointer(special_event_common), sizeof(mEv_event_common_u));
 }
@@ -2448,13 +2448,13 @@ extern int mEv_clear_common_place(int type, u8 id) {
     return 0;
 }
 
-extern int mEv_use_block_by_other_event(int type, BlockOrUnit_c* block) {
+extern int mEv_use_block_by_other_event(int type, BlockOrUnit_c block) {
     mEv_common_data_c* ev_common = Common_GetPointer(event_common);
     int i;
 
     for (i = 0; i < mEv_PLACE_NUM; i++) {
         if (((1 << i) & ev_common->place_use_bitfield) != 0) {
-            if (ev_common->place[i].data.block.x == block->x && ev_common->place[i].data.block.z == block->z &&
+            if (ev_common->place[i].data.block.x == block.x && ev_common->place[i].data.block.z == block.z &&
                 ev_common->place[i].info.type != type) {
                 return TRUE;
             }
@@ -2682,8 +2682,8 @@ extern int mEv_get_special_event_state() {
     mEv_ymdh_u today_date_start;
     int event_type;
 
-    if (Save_Get(event_save_data).special.type <= mEv_SPNPC_END) {
-        event_type = special_events[Save_Get(event_save_data).special.type];
+    if (Save_Get(event_save_data).special.kind <= mEv_SPNPC_END) {
+        event_type = special_events[Save_Get(event_save_data).special.kind];
     } else {
         return FALSE;
     }
@@ -2716,7 +2716,7 @@ extern int mEv_get_special_event_state() {
         res = mEv_SPECIAL_STATE_ACTIVE;
     } else if (check_ymdh_range(today_date.raw, event_date_start.raw, event_date.raw)) {
         res = mEv_SPECIAL_STATE_SCHEDULED_TODAY;
-    } else if (Save_Get(event_save_data).special.type != 0xFFFFFFFF && event_date_start.raw > today_date_start.raw) {
+    } else if (Save_Get(event_save_data).special.kind != 0xFFFFFFFF && event_date_start.raw > today_date_start.raw) {
         res = mEv_SPECIAL_STATE_SCHEDULED_LATER;
     }
 

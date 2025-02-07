@@ -401,6 +401,9 @@ typedef struct ghost_spirit_block_data_s {
 
 #define mEv_GHOST_FLAG_ACTIVE 0x4000 // TODO: do these live in the ghost actor itself?
 #define mEv_GHOST_FLAG_RETURNED_SPIRITS 0x8000
+
+#define mEv_GHOST_COMMON_SPAWNED_SPIRITS 0x8000
+
 typedef struct ghost_common_s {
     mEv_gst_hitodama_block_c hitodama_block_data;
     u16 flags;
@@ -448,12 +451,14 @@ typedef struct designer_event_s {
     mActor_name_t gifted_cloths[mEv_DESGINER_NUM];
 } mEv_designer_c;
 
+#define mEv_BROKER_ITEM_NUM 3
+
 typedef struct broker_event_s {
-    PersonalID_c pid[2];
+    PersonalID_c pid[mEv_BROKER_ITEM_NUM - 1];
     lbRTC_time_c end_time;
     int used;
-    mActor_name_t sold_items[2];
-    mActor_name_t items[3];
+    mActor_name_t sold_items[mEv_BROKER_ITEM_NUM - 1];
+    mActor_name_t items[mEv_BROKER_ITEM_NUM];
 } mEv_broker_c;
 
 typedef struct artist_event_s {
@@ -486,7 +491,7 @@ typedef union {
 
 typedef struct special_event_s {
     lbRTC_time_c scheduled;
-    u32 type;
+    u32 kind;
     mEv_special_u event;
 } mEv_special_c;
 
@@ -660,7 +665,7 @@ extern int mEv_clear_common_area(int type, u8 id);
 extern mEv_place_data_c* mEv_reserve_common_place(int type, u8 id);
 extern mEv_place_data_c* mEv_get_common_place(int type, u8 id);
 extern int mEv_clear_common_place(int type, u8 id);
-extern int mEv_use_block_by_other_event(int type, BlockOrUnit_c* block);
+extern int mEv_use_block_by_other_event(int type, BlockOrUnit_c block);
 extern void mEv_erase_FG_all_in_common_place();
 extern void mEv_clear_rumor();
 extern int mEv_spread_rumor(int type);

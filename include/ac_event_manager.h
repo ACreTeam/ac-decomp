@@ -16,7 +16,7 @@ enum {
   aEvMgr_EVENT_PLACE_SHRINE = 4,
 };
 
-typedef int (*aEvMgr_TITLE_FADE_PROC)(EVENT_MANAGER_ACTOR*, int, u8, int);
+typedef int (*aEvMgr_TITLE_FADE_PROC)(EVENT_MANAGER_ACTOR*, int, int, u32);
 
 typedef struct event_manager_clip_s {
   EVENT_MANAGER_ACTOR* event_manager_actor;
@@ -29,15 +29,22 @@ typedef struct event_manager_field_info_s {
   int reserve_num;
 } aEvMgr_field_info_c;
 
+typedef struct event_manager_player_pos_s {
+    int bx;
+    int bz;
+    int last_bx;
+    int last_bz;
+} aEvMgr_player_pos_c;
+
 struct event_manager_actor_s {
   ACTOR actor_class;
-  int player_bx;
-  int player_bz;
-  int player_last_bx;
-  int player_last_bz;
+  aEvMgr_player_pos_c player_pos;
   u8 _184[0x1E8 - 0x184];
   aEvMgr_field_info_c field_info;
-  u8 _1F8[0x208 - 0x1F8];
+  int _1F8;
+  int _1FC;
+  int month_day;
+  int day_hour;
   int change;
   BlockOrUnit_c next_block;
   BlockOrUnit_c pool_block;
@@ -50,7 +57,7 @@ struct event_manager_actor_s {
   int player_home_exists;
   BlockOrUnit_c dock_block;
   int dock_block_exists;
-  int _250;
+  int skip_event_at_wade;
   int _254;
   aEvMgr_Clip_c clip;
 };
@@ -62,4 +69,3 @@ extern ACTOR_PROFILE Event_Manager_Profile;
 #endif
 
 #endif
-

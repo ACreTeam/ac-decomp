@@ -62,6 +62,10 @@ struct groundhog_control_actor_s {
   int attention_mode;
 };
 
+typedef struct groundhog_save_s {
+    int _00;
+} aGHC_save_c;
+
 extern ACTOR_PROFILE Groundhog_Control_Profile;
 
 #ifdef __cplusplus
@@ -69,4 +73,3 @@ extern ACTOR_PROFILE Groundhog_Control_Profile;
 #endif
 
 #endif
-

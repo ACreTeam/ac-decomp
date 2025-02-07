@@ -362,7 +362,7 @@ extern int mNpc_SendMailtoNpc(Mail_c* mail);
 extern void mNpc_ClearRemail(Anmremail_c* remail);
 extern void mNpc_Remail();
 extern u8 mNpc_GetPaperType();
-extern int mNpc_SendVtdayMail(int type);
+extern int mNpc_SendVtdayMail();
 extern int mNpc_CheckFriendship(PersonalID_c* pid, Animal_c* animal);
 extern int mNpc_SendEventBirthdayCard(PersonalID_c* pid);
 extern int mNpc_SendEventBirthdayCard2(PersonalID_c* pid, int player_no);

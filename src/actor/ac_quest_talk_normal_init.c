@@ -1456,7 +1456,7 @@ static int aQMgr_decide_msg_special_ev(QUEST_MANAGER_ACTOR* manager, int looks) 
     lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
     int i;
 
-    ev_kind = Save_Get(event_save_data).special.type;
+    ev_kind = Save_Get(event_save_data).special.kind;
 
     if (ev_kind != -1) {
         // clang-format off

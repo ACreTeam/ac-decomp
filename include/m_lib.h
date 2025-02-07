@@ -18,6 +18,7 @@ extern "C" {
 #define CLAMP_MIN(x, min) ((x) < (min) ? (min) : (x))
 #define CLAMP_MAX(x, max) ((max) < (x) ? (max) : (x))
 #define CLAMP(x, min, max) ((x) < (min) ? (min) : (((x) > (max) ? (max) : (x))))
+#define CLAMP2(x, min, max) ((min) < (x) ? (((x) < (max) ? (x) : (max))) : (min))
 
 /* Float modulo operator */
 #define MOD_F(a, m) (a - (int)((a) * (1.0f / (m))) * (m))
