@@ -19,6 +19,16 @@ extern "C" {
 #define mSC_TROPHY_GOLDEN_ROD 31
 
 enum {
+    mSC_LIGHTHOUSE_EVENT_NONE,
+    mSC_LIGHTHOUSE_EVENT_JAN_CONTRIBUTED,
+    mSC_LIGHTHOUSE_EVENT_JAN_STARTED,
+    mSC_LIGHTHOUSE_EVENT_FEB_CONTRIBUTED,
+    mSC_LIGHTHOUSE_EVENT_FEB_STARTED,
+
+    mSC_LIGHTHOUSE_EVENT_NUM
+};
+
+enum {
   mSC_EVENT_NEW_YEARS_DAY,
   mSC_EVENT_FOUNDERS_DAY,
   mSC_EVENT_GRADUATION_DAY,
@@ -125,7 +135,7 @@ extern int mSC_LightHouse_get_period(lbRTC_time_c* time);
 extern int mSC_LightHouse_day(const lbRTC_time_c* time);
 extern int mSC_LightHouse_Event_Check(int player_no);
 extern void mSC_LightHouse_Event_Clear(int player_no);
-extern mActor_name_t mSC_LightHouse_Event_Present_Item();
+extern mActor_name_t mSC_LightHouse_Event_Present_Item(u32 player_no);
 extern int mSC_LightHouse_Event_Start();
 extern int mSC_LightHouse_Talk_After_Check();
 extern void mSC_LightHouse_Quest_Start();

@@ -1033,7 +1033,7 @@ config.libs = [
             Object(Matching, "actor/ac_needlework_shop.c"),
             Object(Matching, "actor/ac_police_box.c"),
             Object(Matching, "actor/ac_post_office.c"),
-            Object(NonMatching, "actor/ac_present_demo.c"),
+            Object(Matching, "actor/ac_present_demo.c"),
             Object(Matching, "actor/ac_psnowman.c"),
             Object(NonMatching, "actor/ac_pterminal.c"),
             Object(Matching, "actor/ac_quest_manager.c"),

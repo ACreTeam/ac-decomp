@@ -1,0 +1,174 @@
+static void aPRD_setup_present(PRESENT_DEMO_ACTOR* present_demo) {
+    int type = aPRD_TYPE_GOLDEN_ROD;
+    mActor_name_t present = ITM_GOLDEN_ROD;
+
+    if (Common_Get(time.rtc_time.month) == Now_Private->birthday.month && Common_Get(time.rtc_time.day) == Now_Private->birthday.day && Now_Private->birthday_present_npc != EMPTY_NO) {
+        type = aPRD_TYPE_BIRTHDAY;
+        present = FTR_FAMICOM_DONKEY_KONG;
+    } else if (mSC_LightHouse_Event_Check(Common_Get(player_no)) != mSC_LIGHTHOUSE_EVENT_NONE) {
+        switch (mSC_LightHouse_Event_Check(Common_Get(player_no))) {
+            case mSC_LIGHTHOUSE_EVENT_JAN_CONTRIBUTED:
+                type = aPRD_TYPE_SONCHO_VACATION0_CONTRIBUTED;
+                present = mSC_LightHouse_Event_Present_Item(Common_Get(player_no));
+                break;
+            case mSC_LIGHTHOUSE_EVENT_FEB_CONTRIBUTED:
+                type = aPRD_TYPE_SONCHO_VACATION1_CONTRIBUTED;
+                present = mSC_LightHouse_Event_Present_Item(Common_Get(player_no));
+                break;
+            case mSC_LIGHTHOUSE_EVENT_JAN_STARTED:
+                type = aPRD_TYPE_SONCHO_VACATION0_STARTED;
+                present = EMPTY_NO;
+                break;
+            case mSC_LIGHTHOUSE_EVENT_FEB_STARTED:
+                type = aPRD_TYPE_SONCHO_VACATION1_STARTED;
+                present = EMPTY_NO;
+                break;
+        }
+    } else {
+        if (mSM_CHECK_ALL_FISH_GET() && mSC_trophy_get(mSC_TROPHY_GOLDEN_ROD) == FALSE) {
+            type = aPRD_TYPE_GOLDEN_ROD;
+            present = ITM_GOLDEN_ROD;
+        } else if (mSM_CHECK_ALL_INSECT_GET() && mSC_trophy_get(mSC_TROPHY_GOLDEN_NET) == FALSE) {
+            type = aPRD_TYPE_GOLDEN_NET;
+            present = ITM_GOLDEN_NET;
+        } else {
+            type = aPRD_TYPE_SONCHO_VACATION1_STARTED;
+            present = EMPTY_NO;
+        }
+    }
+
+    present_demo->type = type;
+    present_demo->present = present;
+}
+
+static int aPRD_setup_present_normal_npc_info(void) {
+    int ret = TRUE;
+    mNpc_MaskNpc_c* mask_npc = mNpc_GetSameMaskNpc(SP_NPC_PRESENT_NPC);
+
+    if (mask_npc == NULL) {
+        if (ITEM_NAME_GET_TYPE(Now_Private->birthday_present_npc) != NAME_TYPE_NPC) {
+            ret = FALSE;
+        } else {
+            ret = mNpc_RegistMaskNpc(SP_NPC_PRESENT_NPC, Now_Private->birthday_present_npc, EMPTY_NO);
+        }
+    }
+
+    return ret;
+}
+
+static int aPRD_setup_present_soncho_info(void) {
+    return mNpc_RegistMaskNpc(SP_NPC_PRESENT_NPC, SP_NPC_EV_SONCHO, EMPTY_NO);
+}
+
+static int aPRD_setup_present_npc_info(PRESENT_DEMO_ACTOR* present_demo) {
+    if (present_demo->type == aPRD_TYPE_BIRTHDAY) {
+        return aPRD_setup_present_normal_npc_info();
+    } else {
+        return aPRD_setup_present_soncho_info();
+    }
+}
+
+static void aPRD_first_set(PRESENT_DEMO_ACTOR* present_demo, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    if (aPRD_setup_present_npc_info(present_demo) == FALSE) {
+        Actor_delete((ACTOR*)present_demo);
+        return;
+    }
+
+    if (CLIP(npc_clip) != NULL && CLIP(npc_clip)->setupActor_proc != NULL) {
+        int res = CLIP(npc_clip)->setupActor_proc(play, SP_NPC_PRESENT_NPC, -1, -1, -1, play->block_table.block_x, play->block_table.block_z, 6, 6);
+
+        if (res == TRUE) {
+            present_demo->world_actor = Actor_info_fgName_search(&play->actor_info, SP_NPC_PRESENT_NPC, ACTOR_PART_NPC);
+            aPRD_setupAction(present_demo, game, aPRD_ACTION_PL_COME_OUT_WAIT);
+        }
+    }
+}
+
+static void aPRD_pl_come_out_wait(PRESENT_DEMO_ACTOR* present_demo, GAME* game) {
+    if (mPlib_check_player_actor_main_index_OutDoorMove2(game) == FALSE) {
+        aPRD_setupAction(present_demo, game, aPRD_ACTION_PRESENT_WAIT);
+    }
+}
+
+static void aPRD_present_wait(PRESENT_DEMO_ACTOR* present_demo, GAME* game) {
+    if (present_demo->_180 == TRUE) {
+        aPRD_setupAction(present_demo, game, aPRD_ACTION_RETIRE_NPC_WAIT);
+    }
+}
+
+static void aPRD_retire_npc_wait(PRESENT_DEMO_ACTOR* present_demo, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    if (present_demo->world_actor != NULL) {
+        return;
+    }
+
+    play->submenu.start_refuse = FALSE;
+    switch (present_demo->type) {
+        case aPRD_TYPE_BIRTHDAY:
+            Now_Private->birthday_present_npc = EMPTY_NO;
+            mPlib_request_main_wait_type3(game);
+            break;
+        case aPRD_TYPE_GOLDEN_ROD:
+            mSC_trophy_set(mSC_TROPHY_GOLDEN_ROD);
+            mPlib_request_main_demo_get_golden_item2_type1(game, mPlayer_GOLDEN_ITEM_TYPE_ROD);
+            break;
+        case aPRD_TYPE_GOLDEN_NET:
+            mSC_trophy_set(mSC_TROPHY_GOLDEN_NET);
+            mPlib_request_main_demo_get_golden_item2_type1(game, mPlayer_GOLDEN_ITEM_TYPE_NET);
+            break;
+        default:
+            mPlib_request_main_wait_type3(game);
+            break;
+    }
+
+    Actor_delete((ACTOR*)present_demo);
+}
+
+static void aPRD_first_set_init(PRESENT_DEMO_ACTOR* present_demo, GAME* game) {
+    aPRD_setup_present(present_demo);
+}
+
+static void aPRD_pl_come_out_wait_init(PRESENT_DEMO_ACTOR* present_demo, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    play->submenu.start_refuse = TRUE;
+}
+
+static void aPRD_present_wait_init(PRESENT_DEMO_ACTOR* present_demo, GAME* game) {
+    mPlib_request_main_demo_wait_type1(game, FALSE, NULL);
+}
+
+typedef void (*aPRD_INIT_PROC)(PRESENT_DEMO_ACTOR* present_demo, GAME* game);
+
+static void aPRD_init_proc(PRESENT_DEMO_ACTOR* present_demo, GAME* game, int action) {
+    static aPRD_INIT_PROC init_proc[] = {
+        aPRD_first_set_init,
+        aPRD_pl_come_out_wait_init,
+        aPRD_present_wait_init,
+        aPRD_present_wait_init,
+    };
+
+    init_proc[action](present_demo, game);
+}
+
+static void aPRD_setupAction(PRESENT_DEMO_ACTOR* present_demo, GAME* game, int action) {
+    static aPRD_ACTION_PROC process[] = {
+        aPRD_first_set,
+        aPRD_pl_come_out_wait,
+        aPRD_present_wait,
+        aPRD_retire_npc_wait,
+    };
+
+    present_demo->action_proc = process[action];
+    present_demo->action = action;
+    aPRD_init_proc(present_demo, game, action);
+}
+
+static void aPRD_actor_move(ACTOR* actorx, GAME* game) {
+    PRESENT_DEMO_ACTOR* present_demo = (PRESENT_DEMO_ACTOR*)actorx;
+
+    present_demo->action_proc(present_demo, game);
+}

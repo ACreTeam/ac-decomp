@@ -911,34 +911,34 @@ extern int mSC_LightHouse_Event_Check(int player_no) {
     }
 
     if (player_no >= mPr_FOREIGNER) {
-        return 0;
+        return mSC_LIGHTHOUSE_EVENT_NONE;
     }
 
     if (mSC_LightHouse_get_period(Common_GetPointer(time.rtc_time)) != mSC_LIGHTHOUSE_PERIOD_2) {
-        return 0;
+        return mSC_LIGHTHOUSE_EVENT_NONE;
     }
 
     if ((lh->players_completed & (1 << player_no)) != 0) {
-        return 0;
+        return mSC_LIGHTHOUSE_EVENT_NONE;
     }
 
     if ((lh->days_switched_on & 0x7F) == 0x7F) {
         if ((lh->players_quest_started & (u8)(1 << (player_no + 4))) != 0) {
             if (lh->renew_time.month == lbRTC_JANUARY) {
-                return 1;
+                return mSC_LIGHTHOUSE_EVENT_JAN_CONTRIBUTED;
             } else {
-                return 3;
+                return mSC_LIGHTHOUSE_EVENT_FEB_CONTRIBUTED;
             }
         }
     } else if ((lh->players_quest_started & (u8)(1 << Common_Get(player_no))) != 0) {
         if (lh->renew_time.month == lbRTC_JANUARY) {
-            return 2;
+            return mSC_LIGHTHOUSE_EVENT_JAN_STARTED;
         } else {
-            return 4;
+            return mSC_LIGHTHOUSE_EVENT_FEB_STARTED;
         }
     }
 
-    return 0;
+    return mSC_LIGHTHOUSE_EVENT_NONE;
 }
 
 extern void mSC_LightHouse_Event_Clear(int player_no) {
@@ -960,7 +960,7 @@ extern void mSC_LightHouse_Event_Clear(int player_no) {
     }
 }
 
-extern mActor_name_t mSC_LightHouse_Event_Present_Item() {
+extern mActor_name_t mSC_LightHouse_Event_Present_Item(u32 player_no) {
     if (Save_Get(LightHouse).renew_time.month == lbRTC_JANUARY) {
         return FTR_LIGHTHOUSE_MODEL;
     }
