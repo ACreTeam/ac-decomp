@@ -1,0 +1,188 @@
+static void aEDZ_to_ageru(DOZAEMON_ACTOR* dozaemon) {
+    mEv_dozaemon_c* dozaemon_ev = (mEv_dozaemon_c*)mEv_get_save_area(mEv_EVENT_DOZAEMON, 13);
+
+    if (mPr_GetPossessionItemSumWithCond(Now_Private, EMPTY_NO, mPr_ITEM_COND_NORMAL) == 0) {
+        mMsg_SET_CONTINUE_MSG_NUM(0x2408);
+        aEDZ_change_talk_proc(dozaemon, aEDZ_TALK_END_WAIT);
+    } else {
+        mMsg_SET_CONTINUE_MSG_NUM(0x2404);
+        aEDZ_change_talk_proc(dozaemon, aEDZ_TALK_GIVE);
+        dozaemon->give_flag = TRUE;
+        dozaemon_ev->flags |= aEDZ_SAVE_FLAG_GAVE_FIRST;
+    }
+}
+
+static void aEDZ_to_ageru2(DOZAEMON_ACTOR* dozaemon) {
+    mEv_dozaemon_c* dozaemon_ev = (mEv_dozaemon_c*)mEv_get_save_area(mEv_EVENT_DOZAEMON, 13);
+
+    if (mPr_GetPossessionItemSumWithCond(Now_Private, EMPTY_NO, mPr_ITEM_COND_NORMAL) == 0) {
+        mDemo_Set_msg_num(0x2409);
+        aEDZ_change_talk_proc(dozaemon, aEDZ_TALK_END_WAIT);
+    } else {
+        mDemo_Set_msg_num(0x2405);
+        aEDZ_change_talk_proc(dozaemon, aEDZ_TALK_GIVE);
+        dozaemon->give_flag = TRUE;
+        dozaemon_ev->flags &= ~aEDZ_SAVE_FLAG_GAVE_FIRST;
+    }
+}
+
+static void aEDZ_ageru(void) {
+    mActor_name_t item;
+
+    mSP_SelectRandomItem_New(NULL, &item, 1, NULL, 0, mSP_KIND_FURNITURE, mSP_LISTTYPE_JONASON, FALSE);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 2);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, item);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, aHOI_REQUEST_PUTAWAY);
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, FALSE);
+    mPr_SetFreePossessionItem(Now_Private, item, mPr_ITEM_COND_NORMAL);
+}
+
+static void aEDZ_talk_stop_player(DOZAEMON_ACTOR* dozaemon, GAME_PLAY* play) {
+    if (!mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)dozaemon) && !mDemo_Check(mDemo_TYPE_SPEAK, (ACTOR*)dozaemon)) {
+        if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_DEMO_WAIT) {
+            mPlib_request_main_demo_wait_type1((GAME*)play, FALSE, NULL);
+        } else {
+            aEDZ_change_talk_proc(dozaemon, aEDZ_TALK_END_WAIT);
+        }
+    }
+}
+
+static void aEDZ_talk_okiagaru(DOZAEMON_ACTOR* dozaemon, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE()) {
+        aEDZ_to_ageru(dozaemon);
+    }
+}
+
+static void aEDZ_talk_give(DOZAEMON_ACTOR* dozaemon, GAME_PLAY* play) {
+    mEv_dozaemon_c* dozaemon_ev = (mEv_dozaemon_c*)mEv_get_save_area(mEv_EVENT_DOZAEMON, 13);
+    
+    if (dozaemon->give_flag) {
+        if (mMsg_CHECK_MAINNORMALCONTINUE() == FALSE) {
+            dozaemon->give_flag = FALSE;
+        }
+    } else if (mMsg_CHECK_MAINNORMALCONTINUE()) {
+        aEDZ_ageru();
+        dozaemon_ev->flags |= aEDZ_SAVE_FLAG_GIVE;
+        Save_Get(event_save_common).dozaemon_completed = TRUE;
+        if ((dozaemon_ev->flags & aEDZ_SAVE_FLAG_GAVE_FIRST) != 0) {
+            mMsg_SET_CONTINUE_MSG_NUM(0x2406);
+        } else {
+            mMsg_SET_CONTINUE_MSG_NUM(0x2407);
+        }
+
+        aEDZ_change_talk_proc(dozaemon, aEDZ_TALK_END_WAIT);
+    }
+}
+
+static int aEDZ_change_talk_proc(DOZAEMON_ACTOR* dozaemon, int talk_act) {
+    static aEDZ_TALK_PROC proc[] = {
+        (aEDZ_TALK_PROC)none_proc1,
+        aEDZ_talk_stop_player,
+        aEDZ_talk_okiagaru,
+        aEDZ_talk_give,
+    };
+
+    dozaemon->talk_proc = proc[talk_act];
+    return TRUE;
+}
+
+static void aEDZ_set_force_talk_info(ACTOR* actorx) {
+    DOZAEMON_ACTOR* dozaemon = (DOZAEMON_ACTOR*)actorx;
+    mEv_dozaemon_c* dozaemon_ev = (mEv_dozaemon_c*)mEv_get_save_area(mEv_EVENT_DOZAEMON, 13);
+
+    mDemo_Set_msg_num(0x23FE + RANDOM(6));
+    mDemo_Set_talk_turn(TRUE);
+    mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+    dozaemon->talk_proc = aEDZ_talk_okiagaru;
+    dozaemon_ev->flags |= aEDZ_SAVE_FLAG_WAKEUP;
+    if (dozaemon->npc_class.talk_info.melody_inst != 0) {
+        dozaemon->melody_backup = dozaemon->npc_class.talk_info.melody_inst;
+    }
+
+    dozaemon->npc_class.talk_info.melody_inst = 0;
+}
+
+static void aEDZ_force_talk_request(ACTOR* actorx, GAME* game) {
+    DOZAEMON_ACTOR* dozaemon = (DOZAEMON_ACTOR*)actorx;
+    
+    if (dozaemon->change_think == FALSE) {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, aEDZ_set_force_talk_info);
+    } else {
+        dozaemon->change_think = FALSE;
+    }
+}
+
+static void aEDZ_set_norm_talk_info(ACTOR* actorx) {
+    DOZAEMON_ACTOR* dozaemon = (DOZAEMON_ACTOR*)actorx;
+
+    mDemo_Set_talk_turn(TRUE);
+    mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+    
+    if (RANDOM_F(1.0f) < 0.35f) {
+        mDemo_Set_msg_num(0x23F8);
+        dozaemon->talk_proc = aEDZ_talk_stop_player;
+        dozaemon->next_think_idx = aEDZ_THINK_OKIAGARU;
+        mDemo_Set_talk_return_demo_wait(TRUE);
+        mPlib_Set_able_force_speak_label(actorx);
+    } else {
+        mDemo_Set_msg_num(0x23F9 + RANDOM(5));
+        dozaemon->talk_proc = (aEDZ_TALK_PROC)none_proc1;
+    }
+}
+
+static void aEDZ_norm_talk_request(ACTOR* actorx, GAME* game) {
+    DOZAEMON_ACTOR* dozaemon = (DOZAEMON_ACTOR*)actorx;
+    
+    if (dozaemon->change_think == FALSE) {
+        mDemo_Request(mDemo_TYPE_TALK, actorx, aEDZ_set_norm_talk_info);
+    } else {
+        dozaemon->change_think = FALSE;
+    }
+}
+
+static void aEDZ_set_wander_talk_info(ACTOR* actorx) {
+    DOZAEMON_ACTOR* dozaemon = (DOZAEMON_ACTOR*)actorx;
+    mEv_dozaemon_c* dozaemon_ev = (mEv_dozaemon_c*)mEv_get_save_area(mEv_EVENT_DOZAEMON, 13);
+
+    mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+    mDemo_Set_talk_turn(TRUE);
+    
+    if ((dozaemon_ev->flags & aEDZ_SAVE_FLAG_GIVE) == 0) {
+        aEDZ_to_ageru2(dozaemon);
+    } else {
+        mDemo_Set_msg_num(0x240A + RANDOM(6));
+        dozaemon->talk_proc = (aEDZ_TALK_PROC)none_proc1;
+    }
+}
+
+static void aEDZ_wander_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aEDZ_set_wander_talk_info);
+}
+
+static int aEDZ_talk_init(ACTOR* actorx, GAME* game) {
+    DOZAEMON_ACTOR* dozaemon = (DOZAEMON_ACTOR*)actorx;
+    
+    dozaemon->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    return TRUE;
+}
+
+static int aEDZ_talk_end_chk(ACTOR* actorx, GAME* game) {
+    DOZAEMON_ACTOR* dozaemon = (DOZAEMON_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    (*dozaemon->talk_proc)(dozaemon, play);
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        aEDZ_setup_think_proc(dozaemon, play, dozaemon->next_think_idx);
+        if (dozaemon->melody_backup != 0) {
+            dozaemon->npc_class.talk_info.melody_inst = dozaemon->melody_backup;
+            dozaemon->melody_backup = 0;
+        }
+
+        ret = TRUE;
+    }
+
+    return ret;
+}
