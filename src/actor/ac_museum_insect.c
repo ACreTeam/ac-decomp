@@ -14,8 +14,6 @@ ACTOR_PROFILE Museum_Insect_Profile = {
     NULL,
 };
 
-MUSEUM_INSECT_ACTOR* MI_Control_Actor;
-
 int Museum_Insect_GetMsgNo(ACTOR* actorx) {
     static u8 item_name[mIN_ITEM_NAME_LEN];
     MUSEUM_INSECT_ACTOR* actor = (MUSEUM_INSECT_ACTOR*)actorx;
@@ -47,6 +45,8 @@ int Museum_Insect_GetMsgNo(ACTOR* actorx) {
 
     return msgNo;
 }
+
+MUSEUM_INSECT_ACTOR* MI_Control_Actor = NULL;
 
 int Museum_Insect_Check_Talk_Distance(GAME* game, int i) {
     static xyz_t kanban_pos[6] = { { 140.f, 40.f, 60.f },  { 420.f, 40.f, 60.f },  { 220.f, 40.f, 300.f },

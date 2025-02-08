@@ -15,3 +15,105 @@
 #include "../src/actor/ac_museum_insect_dango.c_inc"
 #include "../src/actor/ac_museum_insect_okera.c_inc"
 #include "../src/actor/ac_museum_insect_ka.c_inc"
+
+void mID_insect_moveF(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+}
+void minsect_amenbo_ct(void) {
+}
+void minsect_amenbo_mv(void) {
+}
+void minsect_amenbo_dw(void) {
+}
+void ari_alone_ct(void) {
+}
+void ari_alone_make(void) {
+}
+void ari_alone_dt(void) {
+}
+void ari_alone_move(void) {
+}
+void ari_alone_draw(void) {
+}
+void minsect_ari_ct(void) {
+}
+void minsect_ari_mv(void) {
+}
+void minsect_ari_dw(void) {
+}
+void minsect_draw_shadow(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+}
+void minsect_fly_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, f32 f1, f32 f2) {
+}
+void minsect_garden_BGCheck(void) {
+}
+void minsect_flower_BGCheck(void) {
+}
+void minsect_goki_BGCheck(void) {
+}
+void minsect_kanban_BGCheck(void) {
+}
+void minsect_tree_ObjCheck(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+}
+void minsect_rock_ObjCheck(void) {
+}
+
+void minsect_batta_ObjCheck(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+}
+
+BOOL get_now_mind_flag(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    int now_sec = Common_Get(time.now_sec);
+    BOOL b;
+
+    if (actor->_50 == 0 && actor->_54 == 0) {
+        return TRUE;
+    }
+
+    if (actor->_54 > actor->_50) {
+        if (now_sec < actor->_50) {
+            b = FALSE;
+        } else if (now_sec < actor->_54) {
+            b = TRUE;
+        } else {
+            b = FALSE;
+        }
+    } else {
+        if (now_sec < actor->_54) {
+            b = TRUE;
+        } else if (now_sec < actor->_50) {
+            b = FALSE;
+        } else {
+            b = TRUE;
+        }
+    }
+    return b;
+}
+
+void set_relax_active_time(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_00 == 6) {
+        int now_sec = Common_Get(time.now_sec);
+        if (now_sec < (14280)) {
+            actor->_50 = 14400;
+            actor->_54 = 28800;
+        } else if (now_sec < (28680)) {
+            actor->_50 = 57600;
+            actor->_54 = 28800;
+        } else if (now_sec < (57480)) {
+            actor->_50 = 57600;
+            actor->_54 = 68400;
+        } else if (now_sec < (68280)) {
+            actor->_50 = 14400;
+            actor->_54 = 68400;
+        } else {
+            actor->_50 = 14400;
+            actor->_54 = 28800;
+        }
+    } else {
+        actor->_54 = relax_time_tbl[actor->_00];
+        actor->_50 = active_time_tbl[actor->_00];
+    }
+    if (actor->_54 && actor->_50) {
+        actor->_54 += (int)RANDOM2_F(240.f);
+        actor->_50 += (int)RANDOM2_F(240.f);
+    }
+    actor->_8E = get_now_mind_flag(actor, game);
+}
