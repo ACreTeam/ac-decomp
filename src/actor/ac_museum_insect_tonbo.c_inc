@@ -1,1 +1,607 @@
 #include "ac_museum_insect_priv.h"
+
+void minsect_tonbo_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_34 = ZeroVec;
+    actor->_68 = ZeroSVec;
+    actor->_68.y = qrand();
+    actor->_70 = qrand();
+    actor->_72 = 0;
+    if (actor->_8E == 1) {
+        static const xyz_t init_center_pos = { 280.f, 100.f, 440.f };
+        actor->_1C = init_center_pos;
+        actor->_1C.x += RANDOM2_F(460.f);
+        actor->_1C.y = RANDOM_F(30.f) + 100.f;
+        actor->_1C.z += RANDOM2_F(280.f);
+        actor->_44 = actor->_1C;
+        actor->_10 = 0.5f;
+        actor->_0C = 1.0f;
+        actor->_74 = 0;
+        actor->_76 = qrand();
+        minsect_tonbo_normal_process_init(actor, game);
+    } else {
+        static xyz_t tonbo_rock_pos[1];
+        actor->_74 = actor->_00 - 9;
+        MI_Control_Actor->_2F9C[2] |= (1 << actor->_74);
+        actor->_44 = actor->_1C = tonbo_rock_pos[actor->_74];
+        minsect_tonbo_rock_wait_process_init(actor, game);
+    }
+}
+
+void mi_tonbo_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    f32 dist = search_position_distance(&actor->_1C, &player->actor_class.world.position);
+    if (dist < 80.f) {
+        if (player->actor_class.speed > 1.4f) {
+            actor->_82 += (s16)((dist / 80.f) * 8.0f);
+        } else if (player->actor_class.speed > 5.0f) {
+            actor->_82 += (s16)((dist / 80.f) * 20.0f);
+        }
+    }
+}
+
+BOOL minsect_tonbo_bg_check(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_8C & 0x9e) {
+        if (actor->_72 & 0x80) {
+            if (RANDOM_F(1.0f) >= 0.5f) {
+                actor->_70 += (s16)(DEG2SHORT_ANGLE2(RANDOM_F(90)) + DEG2SHORT_ANGLE(90));
+            } else {
+                actor->_70 -= (s16)(DEG2SHORT_ANGLE(RANDOM_F(90)) + DEG2SHORT_ANGLE(90));
+            }
+            actor->_72 = 0;
+            actor->_40 = 0.0f;
+            return TRUE;
+        }
+        if ((actor->_8C & 8) == 0 || (actor->_8C & 6)) {
+            if (actor->_72 & 2) {
+                actor->_70 = DEG2SHORT_ANGLE(90);
+                actor->_70 += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(90));
+            } else if (actor->_72 & 4) {
+                actor->_70 = DEG2SHORT_ANGLE(-90);
+                actor->_70 += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(90));
+            } else if (actor->_72 & 0x10) {
+                actor->_70 = DEG2SHORT_ANGLE(-180);
+                actor->_70 += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(90));
+            } else if (actor->_72 & 8) {
+                actor->_70 = (s16)DEG2SHORT_ANGLE2(RANDOM2_F(90));
+            } else {
+                actor->_70 += DEG2SHORT_ANGLE2(RANDOM2_F(90));
+            }
+            actor->_72 = 0;
+            actor->_40 = 0.0f;
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+void minsect_tonbo_near_target_set(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    int i;
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    for (i = 0; i <= 6; i++) {
+        f32 dist;
+        if (i >= 6) {
+            dist = search_position_distance(&actor->_1C, &player->actor_class.world.position);
+        } else {
+            dist = search_position_distance(&actor->_1C, &tonbo_rock_pos[i]);
+        }
+        if (dist < 80.f && (MI_Control_Actor->_2F9C[2] & (1 << actor->_74)) == 0) {
+            minsect_tonbo_aim_rock_process_init(actor, game);
+        }
+    }
+}
+
+void minsect_tonbo_rock_target_set(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game, xyz_t* p) {
+    xyz_t arr[2] = { { 0.f, 22.f, 0.f }, { 0.f, 27.f, 0.f } };
+    float g_f[2] = { 1.f, -12.f };
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    if (actor->_74 >= 6) {
+        int gender = Common_Get(now_private)->gender;
+        search_position_distance(&actor->_1C, &actor->_44);
+        *p = player->head_pos;
+        if (GETREG(NMREG, 0x11)) {
+            arr[gender].y = GETREG(NMREG, 0x11) * 0.01f;
+        }
+
+        arr[gender].x += sin_s(player->actor_class.shape_info.rotation.y) * g_f[gender];
+        arr[gender].z += cos_s(player->actor_class.shape_info.rotation.y) * g_f[gender];
+
+        p->x += arr[gender].x;
+        p->y += arr[gender].y;
+        p->z += arr[gender].z;
+        if (actor->_04 == minsect_tonbo_rock_wait_process && actor->_74 >= 6) {
+            xyz_t pp;
+            xyz_t_sub(&player->feel_pos, &player->head_pos, &pp);
+            actor->_7E = atans_table(pp.y, pp.z);
+            actor->_80 = atans_table(pp.y, -pp.x);
+        } else if (actor->_04 != minsect_tonbo_rock_process || actor->_74 < 6) {
+            actor->_7E = 0;
+            actor->_80 = 0;
+        }
+    } else {
+        *p = tonbo_rock_pos[(int)actor->_74];
+    }
+}
+
+BOOL minsect_tonbo_suprised_rest_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_74 >= 6) {
+        actor->_7A = 1;
+        minsect_tonbo_fly_process_init(actor, game);
+        return TRUE;
+    }
+    return FALSE;
+}
+
+f32 minsect_tonbo_acc_change(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+    f32 v;
+    if (GETREG(NMREG, 5)) {
+        return GETREG(NMREG, 5);
+    }
+
+    if (GETREG(NMREG, 4)) {
+        v = GETREG(NMREG, 4);
+    } else {
+        v = 55.f;
+    }
+    if (actor->_00 != 10) {
+        if (actor->_00 == 9) {
+            v *= 0.9f;
+        } else if (actor->_00 == 11) {
+            v *= 1.5f;
+        } else if (actor->_00 == 12) {
+            v *= 1.7f;
+        }
+    }
+    return v;
+}
+
+void minsect_tonbo_max_speed_set(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+    if (actor->_00 == 10) {
+        actor->_5C = RANDOM_F(1.0f) + 1.75f;
+        actor->_6E = 0;
+    } else if (actor->_00 == 9) {
+        actor->_5C = (RANDOM_F(1.0f) + 1.75f) * 0.9f;
+        actor->_6E = 0;
+    } else if (actor->_00 == 11) {
+        actor->_5C = (RANDOM_F(1.0f) + 1.75f) * 1.5f;
+        actor->_6E = 0;
+    } else if (actor->_00 == 12) {
+        actor->_5C = (RANDOM_F(1.0f) + 1.75f) * 1.7f;
+        actor->_6E = 0;
+    }
+}
+
+f32 minsect_tonbo_aim_distance_set(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+    f32 v;
+    if (GETREG(NMREG, 2)) {
+        v = (GETREG(NMREG, 2) + RANDOM_F(GETREG(NMREG, 3))) * 4.0f;
+    } else if (actor->_00 == 12) {
+        v = (RANDOM_F(5.0f) + 41.25f) * 4.0f;
+    } else {
+        v = (RANDOM_F(5.0f) + 27.5f) * 4.0f;
+    }
+    if (actor->_00 != 10) {
+        if (actor->_00 == 9) {
+            v *= 0.9f;
+        } else if (actor->_00 == 11) {
+            v *= 1.1f;
+        } else if (actor->_00 == 12) {
+            v *= 1.7f;
+        }
+    }
+    return v;
+}
+
+void minsect_tonbo_aim_angle_check(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+    f32 v;
+    xyz_t b;
+    if (GETREG(NMREG, 1)) {
+        v = GETREG(NMREG, 1);
+    } else {
+        v = 30.f;
+    }
+    b = actor->_1C;
+    b.x += sin_s(actor->_70) * v;
+    b.z += cos_s(actor->_70) * v;
+    if (b.x < 80.f) {
+        actor->_70 = DEG2SHORT_ANGLE(90);
+    } else if (b.x > 480.f) {
+        actor->_70 = DEG2SHORT_ANGLE(-90);
+        actor->_70 += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(90));
+    } else if (b.z > 560.f) {
+        actor->_70 = DEG2SHORT_ANGLE(-180);
+        actor->_70 += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(90));
+    } else if (b.z < 80.f) {
+        actor->_70 = (s16)DEG2SHORT_ANGLE2(RANDOM2_F(90));
+    }
+}
+
+void minsect_tonbo_normal_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    minsect_tonbo_max_speed_set(actor);
+    actor->_40 = 0.0f;
+    if (actor->_7A) {
+        actor->_5C *= 1.5f;
+        actor->_40 = actor->_5C / 3.0f;
+    }
+    actor->_7A = 0;
+    actor->_78 = 0;
+    actor->_04 = minsect_tonbo_normal_process;
+}
+
+void minsect_tonbo_normal_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_78 != 2 && minsect_tonbo_bg_check(actor, game)) {
+        if (RANDOM_F(1.0f) > 0.9f) {
+            minsect_tonbo_aim_rock_process_init(actor, game);
+            return;
+        }
+        actor->_78 = 2;
+        if (RANDOM_F(1.0f) > 0.9f) {
+            minsect_tonbo_near_target_set(actor, game);
+            return;
+        }
+        actor->_6E = 0;
+    }
+
+    switch (actor->_78) {
+        case 0: {
+            f32 acc;
+            add_calc(&actor->_40, actor->_5C, CALC_EASE(0.5f), 0.3f, 0.05f);
+            acc = minsect_tonbo_acc_change(actor);
+            if (ABS(actor->_1C.x - actor->_44.x) <= acc && ABS(actor->_1C.z - actor->_44.z) <= acc) {
+                actor->_78 = 1;
+            }
+        } break;
+        case 1: {
+            if (!add_calc(&actor->_40, 0.0f, CALC_EASE(0.1f), 0.25f, 0.05f)) {
+                actor->_78 = 2;
+                if (actor->_8C & 8) {
+                    actor->_70 = DEG2SHORT_ANGLE(RANDOM2_F(90.f));
+                } else {
+                    actor->_70 += DEG2SHORT_ANGLE(RANDOM2_F(90.f));
+                }
+                minsect_tonbo_aim_angle_check(actor);
+                if (actor->_7C) {
+                    if (RANDOM_F(1.0f) > 0.9f) {
+                        minsect_tonbo_aim_rock_process_init(actor, game);
+                    } else if (RANDOM_F(1.0f) > 0.9f) {
+                        minsect_tonbo_near_target_set(actor, game);
+                    }
+                }
+                actor->_72 = 0;
+            }
+        } break;
+        case 2: {
+            if (!add_calc_short_angle2(&actor->_68.y, actor->_70, CALC_EASE2(0.6f), DEG2SHORT_ANGLE(15),
+                                       DEG2SHORT_ANGLE(0.25f))) {
+                actor->_6E--;
+                if (actor->_6E < 0) {
+                    f32 v;
+                    minsect_tonbo_max_speed_set(actor);
+                    v = minsect_tonbo_aim_distance_set(actor);
+                    actor->_44 = actor->_1C;
+                    actor->_44.y += RANDOM2_F(30.f) + 5.0f;
+                    actor->_44.y = MAX(100.f, MIN(125.f, actor->_44.y));
+                    actor->_44.x += v * sin_s(actor->_68.y);
+                    actor->_44.z += v * cos_s(actor->_68.y);
+                    actor->_7C = 1;
+                    actor->_78 = 0;
+                }
+            }
+        } break;
+    } // end switch
+
+    minsect_tonbo_MoveF(actor);
+}
+
+void minsect_tonbo_aim_rock_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_74 = RANDOM_F(16.0f);
+    if (actor->_74 >= 6) {
+        actor->_74 = 6;
+    }
+    while (MI_Control_Actor->_2F9C[2] & (1 << actor->_74)) {
+        if (actor->_74 < 6) {
+            actor->_74++;
+        } else {
+            actor->_74 = 0;
+        }
+    }
+    MI_Control_Actor->_2F9C[2] |= (1 << actor->_74);
+    if (actor->_00 == 12) {
+        actor->_5C = (RANDOM_F(1.f) + 1.75f) * 1.7f;
+        actor->_6E = 0;
+    } else {
+        actor->_5C = (RANDOM_F(1.f) + 1.75f);
+        actor->_6E = 0;
+    }
+    actor->_40 = 0.0f;
+    actor->_78 = 0;
+    actor->_04 = minsect_tonbo_aim_rock_process;
+}
+
+void minsect_tonbo_aim_rock_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    xyz_t p;
+    minsect_tonbo_rock_target_set(actor, game, &p);
+    if (actor->_78 != 2 && minsect_tonbo_bg_check(actor, game)) {
+        actor->_78 = 2;
+        actor->_6E = 0;
+    }
+    switch (actor->_78) {
+        case 0: {
+            f32 acc;
+            add_calc(&actor->_40, actor->_5C, CALC_EASE(0.5f), 0.3f, 0.05f);
+            acc = minsect_tonbo_acc_change(actor);
+            if (ABS(actor->_1C.x - actor->_44.x) <= acc && ABS(actor->_1C.z - actor->_44.z) <= acc) {
+                actor->_78 = 1;
+            }
+        } break;
+        case 1: {
+            if (!add_calc(&actor->_40, 0.0f, CALC_EASE(0.1f), 0.25f, 0.05f)) {
+                actor->_78 = 2;
+                if (actor->_8C & 8) {
+                    actor->_70 = DEG2SHORT_ANGLE(RANDOM2_F(90.f));
+                    minsect_tonbo_aim_angle_check(actor);
+                } else if (RANDOM_F(1.0f) > 0.8f) {
+                    MI_Control_Actor->_2F9C[2] &= ~(1 << actor->_74);
+                    minsect_tonbo_normal_process_init(actor, game);
+                    return;
+                } else {
+                    actor->_70 = search_position_angleY(&actor->_1C, &p);
+                    actor->_70 += DEG2SHORT_ANGLE2(RANDOM2_F(45.f));
+                }
+                actor->_72 = 0;
+            }
+        } break;
+        case 2: {
+            if (!add_calc_short_angle2(&actor->_68.y, actor->_70, CALC_EASE2(0.6f), DEG2SHORT_ANGLE(15),
+                                       DEG2SHORT_ANGLE(0.025f))) {
+                actor->_6E--;
+                if (actor->_6E < 0) {
+                    f32 v, s;
+                    v = search_position_distanceXZ(&actor->_1C, &p);
+                    s = (actor->_1C.y - p.y) * sin_s(DEG2SHORT_ANGLE(30));
+                    if (v < 50.f && v > s) {
+                        minsect_tonbo_rock_process_init(actor, game);
+                    } else {
+                        minsect_tonbo_max_speed_set(actor);
+                        v = minsect_tonbo_aim_distance_set(actor);
+                        actor->_44 = actor->_1C;
+                        actor->_44.y += RANDOM2_F(30.f) + 5.0f;
+                        actor->_44.y = MAX(100.f, MIN(125.f, actor->_44.y));
+                        actor->_44.x += v * sin_s(actor->_68.y);
+                        actor->_44.z += v * cos_s(actor->_68.y);
+                        actor->_78 = 0;
+                    }
+                }
+            }
+        } break;
+    } // end switch
+
+    minsect_tonbo_MoveF(actor);
+}
+
+void minsect_tonbo_rock_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    xyz_t p;
+    minsect_tonbo_rock_target_set(actor, game, &p);
+    actor->_44 = p;
+    actor->_70 = search_position_angleY(&actor->_1C, &p);
+    actor->_40 = 2.0f;
+    actor->_04 = minsect_tonbo_rock_process;
+}
+
+void minsect_tonbo_rock_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    xyz_t p;
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    minsect_tonbo_rock_target_set(actor, game, &p);
+    actor->_44 = p;
+    if ((!player->actor_class.speed || (!minsect_tonbo_suprised_rest_player(actor, game))) &&
+        !(player->actor_class.world.position.x > 500.f && actor->_74 >= 6 &&
+          minsect_tonbo_suprised_rest_player(actor, game)) &&
+        !add_calc_short_angle2(&actor->_68.y, actor->_70, CALC_EASE2(0.6f), DEG2SHORT_ANGLE(15),
+                               DEG2SHORT_ANGLE(0.025f))) {
+        chase_xyz_t(&actor->_1C, &actor->_44, actor->_40);
+        add_calc(&actor->_40, 0.25f, CALC_EASE(0.1f), 0.25f, 0.05f);
+        add_calc_short_angle2(&actor->_76, DEG2SHORT_ANGLE(0), CALC_EASE2(0.3f), DEG2SHORT_ANGLE(15),
+                              DEG2SHORT_ANGLE(0.025f));
+        if (actor->_74 >= 6) {
+            f32 v = 6.0f;
+            f32 dist = search_position_distance(&actor->_1C, &actor->_44);
+            if (GETREG(NMREG, 0x10)) {
+                v = GETREG(NMREG, 0x10) * 0.01f;
+            }
+            if (dist < v) {
+                s16 s;
+                xyz_t p2;
+                v = 0.6f;
+                xyz_t_sub(&player->feel_pos, &player->head_pos, &p2);
+                if (GETREG(NMREG, 0x12)) {
+                    v = GETREG(NMREG, 0x12) * 0.01f;
+                }
+                if (chase_s(&actor->_7E, atans_table(p2.y, p2.z), (s16)DEG2SHORT_ANGLE2(v)) &&
+                    chase_s(&actor->_80, atans_table(p2.y, -p2.x), (s16)DEG2SHORT_ANGLE2(v)) &&
+                    (f32)__fabs(actor->_1C.x - p.x) < 0.008f && (f32)__fabs(actor->_1C.y - p.y) < 0.008f &&
+                    (f32)__fabs(actor->_1C.z - p.z) < 0.008f) {
+                    minsect_tonbo_rock_wait_process_init(actor, game);
+                }
+            }
+        } else if ((f32)__fabs(actor->_1C.x - p.x) < 0.008f && (f32)__fabs(actor->_1C.y - p.y) < 0.008f &&
+                   (f32)__fabs(actor->_1C.z - p.z) < 0.008f) {
+            minsect_tonbo_rock_wait_process_init(actor, game);
+        }
+    }
+}
+
+void minsect_tonbo_rock_wait_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_04 = minsect_tonbo_rock_wait_process;
+    actor->_10 = 0.0f;
+    actor->_6E = (s16)RANDOM_F(540.f) + 60;
+}
+
+void minsect_tonbo_rock_wait_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    xyz_t p;
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    minsect_tonbo_rock_target_set(actor, game, &p);
+    actor->_6E--;
+    if (actor->_10 > 0.0f) {
+        if ((int)actor->_0C == 1 && actor->_6E < 0) {
+            actor->_10 = 0.0f;
+            actor->_6E = (s16)RANDOM_F(540.f) + 60;
+            if (actor->_8E == 0) {
+                actor->_6E *= 5;
+            }
+        }
+    } else if (actor->_6E < 0) {
+        if (actor->_8E == 1 && RANDOM_F(1.0f) > 0.75f) {
+            minsect_tonbo_fly_process_init(actor, game);
+        } else {
+            actor->_10 = 0.5f;
+            actor->_6E = 0x10;
+        }
+    }
+
+    mi_tonbo_check_player(actor, game);
+    actor->_82--;
+    if (actor->_82 < 0) {
+        actor->_82 = 0;
+    }
+    if (actor->_82 > 1600) {
+        actor->_82 = 1600;
+    }
+    if (actor->_8E) {
+        if (actor->_82 > 150) {
+            minsect_tonbo_fly_process_init(actor, game);
+            actor->_82 = 0;
+        }
+    } else {
+        if (actor->_82 > 1500) {
+            minsect_tonbo_fly_process_init(actor, game);
+            actor->_82 = 0;
+        }
+    }
+    if (!(player->actor_class.speed > 1.9f && minsect_tonbo_suprised_rest_player(actor, game)) &&
+        !(player->actor_class.world.position.x > 500.f && minsect_tonbo_suprised_rest_player(actor, game))) {
+        if (actor->_74 >= 6) {
+            actor->_68.y += player->actor_class.shape_info.rotation.y - (player->old_shape_angle.y);
+        }
+        actor->_1C = p;
+    }
+}
+
+void minsect_tonbo_fly_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    f32 v;
+    MI_Control_Actor->_2F9C[2] &= ~(1 << actor->_74);
+    actor->_5C = RANDOM_F(1.0f) + 1.75f;
+    v = minsect_tonbo_aim_distance_set(actor);
+    v *= 0.3f;
+    minsect_tonbo_max_speed_set(actor);
+    actor->_5C *= 0.7f;
+    actor->_44 = actor->_1C;
+    actor->_44.y += RANDOM_F(10.f) + 10.f;
+    actor->_44.y = MAX(100.f, MIN(125.f, actor->_44.y));
+    actor->_44.x += v * sin_s(actor->_68.y);
+    actor->_44.z += v * cos_s(actor->_68.y);
+    actor->_04 = minsect_tonbo_fly_process;
+    actor->_6E = 0;
+    actor->_40 = 0.0f;
+    actor->_10 = 0.5f;
+    actor->_7A = 0;
+    actor->_7C = 0;
+}
+
+void minsect_tonbo_fly_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (minsect_tonbo_bg_check(actor, game)) {
+        actor->_44.y = MAX(100.f, MIN(125.f, actor->_44.y));
+        minsect_tonbo_normal_process_init(actor, game);
+    } else {
+        f32 v;
+        minsect_tonbo_MoveF(actor);
+        add_calc(&actor->_40, actor->_5C, CALC_EASE(0.7f), 0.5f, 0.5f);
+        v = minsect_tonbo_acc_change(actor);
+        if (ABS(actor->_1C.y - actor->_44.y) <= 10.f && ABS(actor->_1C.x - actor->_44.x) <= v &&
+            ABS(actor->_1C.z - actor->_44.z) <= v) {
+            minsect_tonbo_normal_process_init(actor, game);
+            actor->_78 = 1;
+        }
+    }
+}
+
+void minsect_tonbo_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_8E = get_now_mind_flag(actor, game);
+    actor->_04(actor, game);
+    if (actor->_04 != minsect_tonbo_rock_process && actor->_04 != minsect_tonbo_rock_wait_process &&
+        actor->_04 != minsect_tonbo_fly_process) {
+        actor->_76 += 910;
+        actor->_58 = 4.0f * sin_s(actor->_76);
+    } else {
+        add_calc0(&actor->_58, 0.1f, 0.1f);
+        actor->_76 = 0;
+    }
+    minsect_tree_ObjCheck(actor);
+    minsect_fly_BGCheck(actor, 600.0f, 280.0f);
+    if (actor->_8C & 0x10) {
+        actor->_1C.z = 600.f;
+    }
+    if (actor->_8C & 0x9e) {
+        actor->_72 = actor->_8C;
+    }
+    actor->_0C += actor->_10;
+    if (!minsect_mdl[actor->_00][(int)actor->_0C]) {
+        actor->_0C = 1.0f;
+    }
+}
+
+void minsect_tonbo_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    xyz_t arr[2] = { { 0.f, 22.f, 0.f }, { 0.f, 27.f, 0.f } };
+    float g_f[2] = { 1.f, -12.f };
+    search_position_distance(&actor->_1C, &actor->_44);
+    _texture_z_light_fog_prim_xlu(game->graph);
+    _texture_z_light_fog_prim(game->graph);
+    if (((actor->_04 == minsect_tonbo_rock_wait_process) && (actor->_74 >= 6)) ||
+        ((actor->_04 == minsect_tonbo_rock_process && (actor->_74 >= 6))) || GETREG(NMREG, 0x13)) {
+        int gender = Common_Get(now_private)->gender;
+        PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+        if (GETREG(NMREG, 0x11)) {
+            arr[gender].y = GETREG(NMREG, 0x11) * 0.01f;
+        }
+        arr[gender].x += g_f[gender] * sin_s(player->actor_class.shape_info.rotation.y);
+        arr[gender].z += g_f[gender] * cos_s(player->actor_class.shape_info.rotation.y);
+        Matrix_translate(actor->_1C.x - arr[gender].x, actor->_58 + (actor->_1C.y - arr[gender].y),
+                         actor->_1C.z - arr[gender].z, FALSE);
+        Matrix_rotateXYZ(actor->_7E, 0, actor->_80, TRUE);
+        Matrix_translate(arr[gender].x, arr[gender].y, arr[gender].z, TRUE);
+    } else {
+        Matrix_translate(actor->_1C.x, actor->_1C.y + actor->_58, actor->_1C.z, FALSE);
+    }
+    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, TRUE);
+
+    OPEN_POLY_XLU_DISP(game->graph);
+    gSPMatrix(POLY_XLU_DISP++, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(POLY_XLU_DISP++, minsect_mdl[actor->_00][(int)actor->_0C]);
+    CLOSE_POLY_XLU_DISP(game->graph);
+
+    OPEN_DISP(game->graph);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
+    CLOSE_DISP(game->graph);
+    minsect_draw_shadow(actor, game);
+}
+
+void minsect_tonbo_MoveF(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+    xyz_t p = actor->_44;
+    f32 v = search_position_distance(&actor->_1C, &actor->_44);
+    if (actor->_00 == 12) {
+        if (actor->_8C & 0x1e && !(actor->_8C & 8)) {
+            v = 0.0f;
+        } else {
+            v = -v * 0.01f;
+        }
+        p.y += v;
+    } else {
+        if (actor->_8C & 0x1e && !(actor->_8C & 8)) {
+            v = 0.0f;
+        } else {
+            v = -v * 0.15f;
+        }
+        p.y += v;
+    }
+    chase_xyz_t(&actor->_1C, &p, actor->_40);
+}

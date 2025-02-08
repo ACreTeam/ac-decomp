@@ -39,14 +39,21 @@ typedef struct _MUSEUM_INSECT_PRIVATE_DATA {
     int _50;
     int _54;
     f32 _58;
-    artificial_padding(0x58, 0x68, int);
+    f32 _5C;
+    artificial_padding(0x5C, 0x68, int);
     s_xyz _68;
     s16 _6E;
     s16 _70;
     s16 _72;
     s16 _74;
     s16 _76;
-    artificial_padding(0x76, 0x8c, s16);
+    s16 _78;
+    s16 _7A;
+    s16 _7C;
+    s16 _7E;
+    s16 _80;
+    s16 _82;
+    artificial_padding(0x82, 0x8C, s16);
     s16 _8C;
     s16 _8E;
     s16 _90;
@@ -68,6 +75,7 @@ typedef struct _MUSEUM_INSECT_ACTOR {
     s16 _2F9C[5];                     // offset: 0x2F9C
 } MUSEUM_INSECT_ACTOR;
 
+extern MUSEUM_INSECT_ACTOR* MI_Control_Actor;
 extern PRIV_INSECT_PROCESS minsect_ct[aINS_INSECT_TYPE_NUM];
 extern PRIV_INSECT_PROCESS minsect_mv[aINS_INSECT_TYPE_NUM];
 extern PRIV_INSECT_PROCESS minsect_dw[aINS_INSECT_TYPE_NUM];
@@ -81,6 +89,7 @@ extern xyz_t flower_pos[4];
 extern xyz_t ohmurasaki_tree_pos;
 extern s16 aim_angle_tbl[6];
 extern Gfx** minsect_mdl[40];
+extern xyz_t tonbo_rock_pos[1];
 
 // ac_museum_insect.c
 int Museum_Insect_GetMsgNo(ACTOR* actorx);
@@ -132,36 +141,36 @@ void minsect_chou_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_chou_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_semi.c_inc
-void minsect_semi_ct(void);
-void mi_semi_hane_anime(void);
-void mi_semi_check_player(void);
-void minsect_semi_mv(void);
-void minsect_semi_dw(void);
+void minsect_semi_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_semi_hane_anime(MUSEUM_INSECT_PRIVATE_DATA* actor);
+void mi_semi_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_semi_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_semi_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_tonbo.c_inc
-void minsect_tonbo_ct(void);
-void mi_tonbo_check_player(void);
-void minsect_tonbo_bg_check(void);
-void minsect_tonbo_near_target_set(void);
-void minsect_tonbo_rock_target_set(void);
-void minsect_tonbo_suprised_rest_player(void);
-void minsect_tonbo_acc_change(void);
-void minsect_tonbo_max_speed_set(void);
-void minsect_tonbo_aim_distance_set(void);
-void minsect_tonbo_aim_angle_check(void);
-void minsect_tonbo_normal_process_init(void);
-void minsect_tonbo_normal_process(void);
-void minsect_tonbo_aim_rock_process_init(void);
-void minsect_tonbo_aim_rock_process(void);
-void minsect_tonbo_rock_process_init(void);
-void minsect_tonbo_rock_process(void);
-void minsect_tonbo_rock_wait_process_init(void);
-void minsect_tonbo_rock_wait_process(void);
-void minsect_tonbo_fly_process_init(void);
-void minsect_tonbo_fly_process(void);
-void minsect_tonbo_mv(void);
-void minsect_tonbo_dw(void);
-void minsect_tonbo_MoveF(void);
+void minsect_tonbo_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_tonbo_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+BOOL minsect_tonbo_bg_check(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_near_target_set(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_rock_target_set(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game, xyz_t* p);
+BOOL minsect_tonbo_suprised_rest_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+f32 minsect_tonbo_acc_change(MUSEUM_INSECT_PRIVATE_DATA* actor);
+void minsect_tonbo_max_speed_set(MUSEUM_INSECT_PRIVATE_DATA* actor);
+f32 minsect_tonbo_aim_distance_set(MUSEUM_INSECT_PRIVATE_DATA* actor);
+void minsect_tonbo_aim_angle_check(MUSEUM_INSECT_PRIVATE_DATA* actor);
+void minsect_tonbo_normal_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_normal_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_aim_rock_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_aim_rock_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_rock_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_rock_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_rock_wait_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_rock_wait_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_fly_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_fly_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tonbo_MoveF(MUSEUM_INSECT_PRIVATE_DATA* actor);
 
 // ac_museum_insect_batta.c_inc
 void mi_batta_check_player(void);
