@@ -40,7 +40,8 @@ typedef struct _MUSEUM_INSECT_PRIVATE_DATA {
     int _54;
     f32 _58;
     f32 _5C;
-    artificial_padding(0x5C, 0x68, int);
+    f32 _60;
+    artificial_padding(0x60, 0x68, int);
     s_xyz _68;
     s16 _6E;
     s16 _70;
@@ -90,6 +91,7 @@ extern xyz_t ohmurasaki_tree_pos;
 extern s16 aim_angle_tbl[6];
 extern Gfx** minsect_mdl[40];
 extern xyz_t tonbo_rock_pos[1];
+extern xyz_t tentou_flower_pos[1];
 
 // ac_museum_insect.c
 int Museum_Insect_GetMsgNo(ACTOR* actorx);
@@ -118,7 +120,7 @@ void minsect_ari_dw(void);
 void minsect_draw_shadow(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_fly_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, f32 f1, f32 f2);
 void minsect_garden_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, f32 f1, f32 f2);
-void minsect_flower_BGCheck(void);
+void minsect_flower_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, const xyz_t* p);
 void minsect_goki_BGCheck(void);
 void minsect_kanban_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor);
 void minsect_tree_ObjCheck(MUSEUM_INSECT_PRIVATE_DATA* actor);
@@ -189,18 +191,18 @@ void minsect_batta_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_batta_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_tentou.c_inc
-void mi_tentou_check_player(void);
-void mi_tentou_kama_anime(void);
-void mi_tentou_wait_init(void);
-void mi_tentou_wait(void);
-void mi_tentou_move_init(void);
-void mi_tentou_move(void);
-void mi_tentou_menace_init(void);
-void mi_tentou_menace(void);
-void mi_tentou_setupAction(void);
-void minsect_tentou_ct(void);
-void minsect_tentou_mv(void);
-void minsect_tentou_dw(void);
+void mi_tentou_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_tentou_kama_anime(MUSEUM_INSECT_PRIVATE_DATA* actor);
+void mi_tentou_wait_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_tentou_wait(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_tentou_move_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_tentou_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_tentou_menace_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_tentou_menace(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_tentou_setupAction(MUSEUM_INSECT_PRIVATE_DATA* actor, int r4, GAME* game);
+void minsect_tentou_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tentou_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_tentou_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_hachi.c_inc
 void mi_hachi_hane_anime(void);
