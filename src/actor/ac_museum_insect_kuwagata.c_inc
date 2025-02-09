@@ -1,1 +1,90 @@
 #include "ac_museum_insect_priv.h"
+
+void mi_kuwagata_rensa_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_7A = 0;
+}
+void mi_kuwagata_rensa(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    add_calc_short_angle2(&actor->_78, actor->_7A, CALC_EASE2(0.4f), DEG2SHORT_ANGLE(0.75f), DEG2SHORT_ANGLE(0.25f));
+}
+
+void mi_kuwagata_wait_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E = (s16)RANDOM_F(200.f) + 40;
+    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&actor->_08->_00, actor->_08->_2AC, NULL, 0.5f, 0.0f);
+}
+
+void mi_kuwagata_wait(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E--;
+    if (actor->_6E < 0) {
+        actor->_7A = DEG2SHORT_ANGLE(-7);
+        actor->_6E = (s16)RANDOM_F(200.F) + 40;
+        if (RANDOM_F(1.0f) > 0.7f || GETREG(NMREG, 1)) {
+            mi_kuwagata_setupAction(actor, 3, game);
+            return;
+        } else if (RANDOM_F(1.0f) > 0.7f || GETREG(NMREG, 0)) {
+            mi_kuwagata_setupAction(actor, 2, game);
+            return;
+        }
+    }
+
+    if (actor->_78 == actor->_7A) {
+        actor->_7A = 0;
+    }
+    actor->_76--;
+    if (actor->_76 < 0) {
+        cKF_SkeletonInfo_R_play(&actor->_08->_00);
+        if ((int)actor->_08->_00.frame_control.current_frame == 14) {
+            actor->_76 = (s16)RANDOM_F(356.F) + 4;
+            if (actor->_8E == 0) {
+                actor->_76 *= 10;
+            }
+        } else if ((int)actor->_08->_00.frame_control.current_frame == 1) {
+            actor->_76 = (s16)RANDOM_F(1760.f) + 40;
+            if (actor->_8E == 0) {
+                actor->_76 *= 10;
+            }
+        }
+    }
+    add_calc_short_angle2(&actor->_78, actor->_7A, CALC_EASE2(0.4f), DEG2SHORT_ANGLE(0.75f), DEG2SHORT_ANGLE(0.25f));
+}
+
+void mi_kuwagata_move_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    return;
+}
+
+void mi_kuwagata_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    return;
+}
+
+void mi_kuwagata_battle_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_8C & 4) {
+        actor->_40 = 0.05f;
+    } else if (actor->_8C & 8) {
+        actor->_40 = -0.05f;
+    }
+    actor->_6E = (s16)RANDOM_F(120.f) + 60;
+    actor->_7C = 0x10;
+}
+
+void mi_kuwagata_battle(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+}
+void mi_kuwagata_menace_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+}
+void mi_kuwagata_menace(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+}
+
+void mi_kuwagata_attack_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    return;
+}
+
+void mi_kuwagata_attack(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    return;
+}
+
+void mi_kuwagata_setupAction(MUSEUM_INSECT_PRIVATE_DATA* actor, int r4, GAME* game) {
+}
+void minsect_kuwagata_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+}
+void minsect_kuwagata_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+}
+void minsect_kuwagata_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+}

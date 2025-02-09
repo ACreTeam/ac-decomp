@@ -19,7 +19,6 @@ void minsect_tonbo_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
         actor->_76 = qrand();
         minsect_tonbo_normal_process_init(actor, game);
     } else {
-        static xyz_t tonbo_rock_pos[1];
         actor->_74 = actor->_00 - 9;
         MI_Control_Actor->_2F9C[2] |= (1 << actor->_74);
         actor->_44 = actor->_1C = tonbo_rock_pos[actor->_74];

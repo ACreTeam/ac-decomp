@@ -13,7 +13,7 @@ void mi_batta_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mi_batta_suzumushi_hane_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
-    static f32 scaleX_table[7];
+    static f32 scaleX_table[7] = { 1.15f, 0.9f, 1.15f, 0.9f, 1.15f, 0.9f, 1.15f };
     if (actor->_82 < 7) {
         if (chase_f(&actor->_58, (GETREG(NMREG, 1) * 0.01f + 1.0f) * scaleX_table[actor->_82], 0.23f) == 1) {
             actor->_82--;
@@ -27,7 +27,7 @@ void mi_batta_suzumushi_hane_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
 }
 
 void mi_batta_hane_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
-    static f32 scaleX_table[7];
+    static f32 scaleX_table[7] = { 1.15f, 0.5f, 1.15f, 0.5f, 1.15f, 0.5f, 1.15f };
     if (actor->_7C < 7) {
         if (chase_f(&actor->_58, (GETREG(NMREG, 1) * 0.01f + 1.0f) * scaleX_table[actor->_7C], 0.23f) == 1) {
             actor->_7C--;

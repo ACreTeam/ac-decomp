@@ -1,7 +1,9 @@
 #include "ac_museum_insect_priv.h"
 
 void minsect_semi_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
-    const static xyz_t init_pos[1] = { 0, 0, 0 };
+    const static xyz_t init_pos[4] = {
+        { 97.f, 85.f, -18.5f }, { 396.f, 85.5f, -20.f }, { 471.5f, 65.5f, 4.5f }, { 248.f, 88.f, -21.f }
+    };
     int s;
     actor->_58 = 1.0f;
     actor->_70 = 0;
@@ -18,7 +20,7 @@ void minsect_semi_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mi_semi_hane_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
-    static float scaleX_table[1];
+    static float scaleX_table[7] = { 1.15f, 1.f, 1.15f, 1.f, 1.15f, 1.f, 1.15f };
     if (actor->_70 < 7) {
         if (chase_f(&actor->_58, (GETREG(NMREG, 1) * 0.01f + 1.0f) * scaleX_table[actor->_70], 0.23f) == TRUE) {
             actor->_70--;

@@ -18,13 +18,13 @@
 
 void mID_insect_moveF(MUSEUM_INSECT_PRIVATE_DATA* actor) {
 }
-void minsect_amenbo_ct(void) {
+void minsect_amenbo_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
-void minsect_amenbo_mv(void) {
+void minsect_amenbo_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
-void minsect_amenbo_dw(void) {
+void minsect_amenbo_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
-void ari_alone_ct(void) {
+void ari_alone_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
 void ari_alone_make(void) {
 }
@@ -34,11 +34,11 @@ void ari_alone_move(void) {
 }
 void ari_alone_draw(void) {
 }
-void minsect_ari_ct(void) {
+void minsect_ari_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
-void minsect_ari_mv(void) {
+void minsect_ari_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
-void minsect_ari_dw(void) {
+void minsect_ari_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
 void minsect_draw_shadow(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }

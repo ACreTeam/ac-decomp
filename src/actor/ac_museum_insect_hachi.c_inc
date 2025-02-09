@@ -1,7 +1,7 @@
 #include "ac_museum_insect_priv.h"
 
 void mi_hachi_hane_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
-    static f32 scaleX_table[7];
+    static f32 scaleX_table[7] = { 1.f, 0.85f, 1.15f, 0.85f, 1.15f, 0.85f, 1.15f };
     if (actor->_78 < 7) {
         if (chase_f(&actor->_5C, (GETREG(NMREG, 1) * 0.01f + 1.0f) * scaleX_table[actor->_78], 0.115f) == 1) {
             actor->_78--;
@@ -139,8 +139,8 @@ void mi_hachi_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mi_hachi_setupAction(MUSEUM_INSECT_PRIVATE_DATA* actor, int r4, GAME* game) {
-    static PRIV_INSECT_PROCESS init_proc[1];
-    static PRIV_INSECT_PROCESS move_proc[1];
+    static PRIV_INSECT_PROCESS init_proc[3] = { mi_hachi_wait_init, mi_hachi_move_init, mi_hachi_mitu_init };
+    static PRIV_INSECT_PROCESS move_proc[3] = { mi_hachi_wait, mi_hachi_move, mi_hachi_mitu };
     actor->_04 = move_proc[r4];
     init_proc[r4](actor, game);
 }

@@ -23,10 +23,16 @@ struct _MUSEUM_INSECT_PRIVATE_DATA;
 
 typedef void (*PRIV_INSECT_PROCESS)(struct _MUSEUM_INSECT_PRIVATE_DATA*, GAME*);
 
+typedef struct _MUSEUM_INSECT_SKELETON {
+    cKF_SkeletonInfo_R_c _00;
+    artificial_padding(0, 0x2ac, cKF_SkeletonInfo_R_c);
+    cKF_Animation_R_c* _2AC;
+} MUSEUM_INSECT_SKELETON;
+
 typedef struct _MUSEUM_INSECT_PRIVATE_DATA {
     int _00;
     PRIV_INSECT_PROCESS _04;
-    artificial_padding(4, 0xc, PRIV_INSECT_PROCESS);
+    MUSEUM_INSECT_SKELETON* _08;
     f32 _0C;
     f32 _10;
     f32 _14; // scale
@@ -76,24 +82,54 @@ typedef struct _MUSEUM_INSECT_ACTOR {
     s16 _2F9C[5];                     // offset: 0x2F9C
 } MUSEUM_INSECT_ACTOR;
 
+// bss
 extern MUSEUM_INSECT_ACTOR* MI_Control_Actor;
+
+// data
+extern rgba_t window_color;
+extern Gfx *m_monshiro_disp_tbl[], *m_monki_disp_tbl[], *m_ageha_disp_tbl[], *m_ohmurasaki_disp_tbl[],
+    *m_minmin_disp_tbl[], *m_tukutuku_disp_tbl[], *m_higurashi_disp_tbl[], *m_abura_disp_tbl[], *m_shiokara_disp_tbl[],
+    *m_akiakane_disp_tbl[], *m_ginyanma_disp_tbl[], *m_oniyanma_disp_tbl[], *m_syouryou_disp_tbl[],
+    *m_tonosama_disp_tbl[], *m_koorogi_disp_tbl[], *m_kirigirisu_disp_tbl[], *m_suzumushi_disp_tbl[],
+    *m_matumushi_disp_tbl[], *m_tentou_disp_tbl[], *m_nanahoshi_disp_tbl[], *m_kamakiri_disp_tbl[],
+    *m_maimai_disp_tbl[], *m_hachi_disp_tbl[], *m_kanabun_disp_tbl[], *m_kabuto_disp_tbl[], *m_hirata_disp_tbl[],
+    *m_tamamushi_disp_tbl[], *m_gomadara_disp_tbl[], *m_nokogiri_disp_tbl[], *m_miyama_disp_tbl[], *m_okuwa_disp_tbl[],
+    *m_amenbo_disp_tbl[], *m_mino_disp_tbl[], *m_kumo_disp_tbl[], *m_goki_disp_tbl[], *m_genji_disp_tbl[],
+    *m_dango_disp_tbl[], *m_ari_disp_tbl[], *m_okera_disp_tbl[], *m_ka_disp_tbl[];
+extern Gfx** minsect_mdl[aINS_INSECT_TYPE_NUM];
 extern PRIV_INSECT_PROCESS minsect_ct[aINS_INSECT_TYPE_NUM];
 extern PRIV_INSECT_PROCESS minsect_mv[aINS_INSECT_TYPE_NUM];
 extern PRIV_INSECT_PROCESS minsect_dw[aINS_INSECT_TYPE_NUM];
-extern f32 minsect_scale_tbl[aINS_INSECT_TYPE_NUM];
-extern f32 minsect_scale_tbl[aINS_INSECT_TYPE_NUM];
-extern int active_time_tbl[40];
-extern int relax_time_tbl[40];
-extern rgba_t window_color;
-extern f32 base_high_tbl[4];
-extern xyz_t flower_pos[4];
-extern xyz_t ohmurasaki_tree_pos;
-extern s16 aim_angle_tbl[6];
-extern Gfx** minsect_mdl[40];
-extern xyz_t tonbo_rock_pos[1];
-extern xyz_t tentou_flower_pos[1];
+extern f32 minsect_shadow_scale_tbl[aINS_INSECT_TYPE_NUM];
+extern int active_time_tbl[aINS_INSECT_TYPE_NUM];
+extern int relax_time_tbl[aINS_INSECT_TYPE_NUM];
+extern xyz_t flower_pos[8];
+extern xyz_t tree_pos[8];
+extern xyz_t rock_pos[2];
+extern xyz_t tonbo_rock_pos[6];
+extern xyz_t tentou_flower_pos[4];
 extern xyz_t hachi_base_pos;
-extern xyz_t kabuto_base_pos[1];
+extern xyz_t kabuto_base_pos[9];
+extern cKF_Skeleton_R_c* kuwagata_model_tbl[4];
+extern cKF_Animation_R_c* kuwagata_anim_tbl[4];
+extern xyz_t kuwagata_base_pos[4];
+extern xyz_t amenbo_center_pos;
+extern xyz_t rail_pos[6];
+extern xyz_t ari_rail_pos[3];
+extern f32 minsect_scale_tbl[aINS_INSECT_TYPE_NUM];
+
+// rodata
+extern const f32 base_high_tbl[4];
+extern const s16 aim_angle_tbl[6];
+extern const xyz_t mino_base_pos;
+extern const xyz_t mino_top_pos;
+extern const xyz_t mino_bottom_pos;
+extern const xyz_t kumo_base_pos;
+extern const xyz_t kumo_top_pos;
+extern const xyz_t kumo_bottom_pos;
+extern const xyz_t base_genji_pos;
+extern const xyz_t genji_mizu_pos;
+extern const xyz_t okera_base_pos;
 
 // ac_museum_insect.c
 int Museum_Insect_GetMsgNo(ACTOR* actorx);
@@ -108,17 +144,17 @@ void Museum_Insect_Actor_draw(ACTOR* actor, GAME* game);
 
 // ac_museum_insect_base.c_inc
 void mID_insect_moveF(MUSEUM_INSECT_PRIVATE_DATA* actor);
-void minsect_amenbo_ct(void);
-void minsect_amenbo_mv(void);
-void minsect_amenbo_dw(void);
-void ari_alone_ct(void);
+void minsect_amenbo_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_amenbo_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_amenbo_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void ari_alone_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void ari_alone_make(void);
 void ari_alone_dt(void);
 void ari_alone_move(void);
 void ari_alone_draw(void);
-void minsect_ari_ct(void);
-void minsect_ari_mv(void);
-void minsect_ari_dw(void);
+void minsect_ari_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_ari_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_ari_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_draw_shadow(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_fly_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, f32 f1, f32 f2);
 void minsect_garden_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, f32 f1, f32 f2);
@@ -225,22 +261,22 @@ void minsect_kabuto_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_kabuto_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_kuwagata.c_inc
-void mi_kuwagata_rensa_init(void);
-void mi_kuwagata_rensa(void);
-void mi_kuwagata_wait_init(void);
-void mi_kuwagata_wait(void);
-void mi_kuwagata_move_init(void);
-void mi_kuwagata_move(void);
-void mi_kuwagata_battle_init(void);
-void mi_kuwagata_battle(void);
-void mi_kuwagata_menace_init(void);
-void mi_kuwagata_menace(void);
-void mi_kuwagata_attack_init(void);
-void mi_kuwagata_attack(void);
-void mi_kuwagata_setupAction(void);
-void minsect_kuwagata_ct(void);
-void minsect_kuwagata_mv(void);
-void minsect_kuwagata_dw(void);
+void mi_kuwagata_rensa_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_rensa(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_wait_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_wait(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_move_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_battle_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_battle(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_menace_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_menace(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_attack_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_attack(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_kuwagata_setupAction(MUSEUM_INSECT_PRIVATE_DATA* actor, int r4, GAME* game);
+void minsect_kuwagata_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_kuwagata_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_kuwagata_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_mino.c_inc
 void minsect_mino_up_init(void);
@@ -255,9 +291,9 @@ void minsect_mino_wait_init(void);
 void minsect_mino_wait(void);
 void minsect_mino_hineri(void);
 void minsect_mino_setupAction(void);
-void minsect_mino_ct(void);
-void minsect_mino_mv(void);
-void minsect_mino_dw(void);
+void minsect_mino_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_mino_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_mino_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_kumo.c_inc
 void minsect_kumo_hide_init(void);
@@ -274,31 +310,31 @@ void minsect_kumo_wait_init(void);
 void minsect_kumo_wait(void);
 void minsect_kumo_hineri(void);
 void minsect_kumo_setupAction(void);
-void minsect_kumo_ct(void);
-void minsect_kumo_mv(void);
-void minsect_kumo_dw(void);
+void minsect_kumo_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_kumo_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_kumo_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_goki.c_inc
-void minsect_goki_ct(void);
+void minsect_goki_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void goki_player_check(void);
 void goki_wall_hit_angle_corect_sub(void);
 void goki_wall_hit_angle_corect(void);
 void goki_set_talk_info_init(void);
 void goki_talk_process(void);
 void goki_talk_process_init(void);
-void minsect_goki_mv(void);
-void minsect_goki_dw(void);
+void minsect_goki_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_goki_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_genji.c_inc
 void mi_genji_check_player(void);
-void genji_light_ct(void);
+void genji_light_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void genji_light_make(void);
 void genji_light_anime(void);
 void genji_light_move(void);
 void genji_light_draw(void);
-void minsect_genji_ct(void);
-void minsect_genji_mv(void);
-void minsect_genji_dw(void);
+void minsect_genji_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_genji_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_genji_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_dango.c_inc
 void mi_dango_defence_anime(void);
@@ -308,13 +344,13 @@ void mi_dango_move(void);
 void mi_dango_defence_init(void);
 void mi_dango_defence(void);
 void mi_dango_setupAction(void);
-void minsect_dango_ct(void);
-void minsect_dango_mv(void);
-void minsect_dango_dw(void);
+void minsect_dango_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_dango_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_dango_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_okera.c_inc
 void mi_okera_check_player(void);
-void minsect_okera_ct(void);
+void minsect_okera_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void okera_dig_up_process_init(void);
 void okera_dig_up_process(void);
 void okera_normal_process_init(void);
@@ -323,13 +359,13 @@ void okera_dig_down_process_init(void);
 void okera_dig_down_process(void);
 void okera_dig_wait_process_init(void);
 void okera_dig_wait_process(void);
-void minsect_okera_mv(void);
-void minsect_okera_dw(void);
+void minsect_okera_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_okera_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_ka.c_inc
-void minsect_ka_ct(void);
-void minsect_ka_mv(void);
-void minsect_ka_dw(void);
+void minsect_ka_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_ka_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_ka_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 #ifdef __cplusplus
 }
