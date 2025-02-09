@@ -1,1 +1,254 @@
 #include "ac_museum_insect_priv.h"
+
+void mi_batta_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    f32 v = search_position_distance(&actor->_1C, &player->actor_class.world.position);
+    if (v < 60.f) {
+        if (player->actor_class.speed > 1.4f) {
+            actor->_7E += (s16)((v / 60.f) * 8.f);
+        } else if (player->actor_class.speed > 5.0f) {
+            actor->_7E += (s16)((v / 60.f) * 20.f);
+        }
+    }
+}
+
+void mi_batta_suzumushi_hane_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+    static f32 scaleX_table[7];
+    if (actor->_82 < 7) {
+        if (chase_f(&actor->_58, (GETREG(NMREG, 1) * 0.01f + 1.0f) * scaleX_table[actor->_82], 0.23f) == 1) {
+            actor->_82--;
+            if (actor->_82 < 0) {
+                actor->_82 = 0;
+            }
+        }
+    } else {
+        actor->_82--;
+    }
+}
+
+void mi_batta_hane_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+    static f32 scaleX_table[7];
+    if (actor->_7C < 7) {
+        if (chase_f(&actor->_58, (GETREG(NMREG, 1) * 0.01f + 1.0f) * scaleX_table[actor->_7C], 0.23f) == 1) {
+            actor->_7C--;
+            if (actor->_7C < 0) {
+                actor->_7C = 0;
+            }
+        }
+    } else {
+        actor->_7C--;
+    }
+}
+
+void minsect_batta_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    static const xyz_t batta_init_pos = { 280.f, 45.f, 440.f };
+    actor->_1C = batta_init_pos;
+    actor->_1C.x += RANDOM2_F(300.f);
+    actor->_1C.z += RANDOM2_F(140.f);
+    actor->_68 = ZeroSVec;
+    actor->_34 = ZeroVec;
+    actor->_44 = ZeroVec;
+    actor->_44.y = -0.05f;
+    actor->_68.y = qrand();
+    actor->_70 = qrand();
+    actor->_72 = 0;
+    actor->_74 = 0;
+    actor->_7A = 0;
+    actor->_58 = 1.0f;
+    actor->_7C = 0;
+    actor->_82 = 0;
+    minsect_batta_normal_process_init(actor, game);
+}
+
+void minsect_batta_normal_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    s16 s = qrand();
+    xyz_t p = actor->_1C;
+    p.x += 30.f * sin_s(s);
+    p.z += 30.f * cos_s(s);
+    actor->_04 = minsect_batta_normal_process;
+    if (p.x < 130.f) {
+        actor->_70 = DEG2SHORT_ANGLE(90);
+    } else if (p.x > 430.f) {
+        actor->_70 = DEG2SHORT_ANGLE(-90);
+        actor->_70 += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(90));
+    } else if (p.z > 510.f) {
+        actor->_70 = DEG2SHORT_ANGLE(-180);
+        actor->_70 += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(90));
+    } else if (p.z < 370.f) {
+        actor->_70 = DEG2SHORT_ANGLE(RANDOM2_F(90));
+    } else {
+        actor->_70 = s;
+    }
+    actor->_78 = DEG2SHORT_ANGLE(-7);
+    actor->_7A = 0;
+}
+
+void minsect_batta_normal_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_76 == DEG2SHORT_ANGLE(-7) && actor->_78) {
+        actor->_78 = 0;
+    }
+    if (!add_calc_short_angle2(&actor->_68.y, actor->_70, CALC_EASE2(0.5), DEG2SHORT_ANGLE(15),
+                               DEG2SHORT_ANGLE(0.25f))) {
+        if (actor->_74 == 0 && RANDOM_F(1.0f) > 0.3f) {
+            actor->_74 = 1;
+            if (RANDOM_F(1.0f) >= 0.5f) {
+                actor->_70 += (s16)(DEG2SHORT_ANGLE(RANDOM_F(30)) + DEG2SHORT_ANGLE(20));
+            } else {
+                actor->_70 -= (s16)(DEG2SHORT_ANGLE(RANDOM_F(30)) + DEG2SHORT_ANGLE(20));
+            }
+            actor->_78 = DEG2SHORT_ANGLE(-7);
+        } else {
+            if (RANDOM_F(1.0f) > 0.8f || GETREG(NMREG, 2)) {
+                minsect_batta_silent_process_init(actor, game);
+            } else {
+                minsect_batta_jump_wait_process_init(actor, game);
+            }
+        }
+    }
+}
+
+void minsect_batta_silent_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E = (s16)((s16)RANDOM_F(360) + 120) * 5;
+    if (actor->_8E == 0) {
+        actor->_6E = (s16)((s16)RANDOM_F(360.f) + 120) * 2;
+    }
+    actor->_04 = minsect_batta_silent_process;
+    return;
+}
+
+void minsect_batta_silent_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_6E-- < 0) {
+        if (RANDOM_F(1.0f) > 0.6f) {
+            minsect_batta_jump_process_init(actor, game);
+        } else {
+            minsect_batta_normal_process_init(actor, game);
+        }
+    }
+}
+
+void minsect_batta_jump_wait_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_74 = 0;
+    actor->_6E = (s16)RANDOM_F(360.f) + 120;
+    if (actor->_8E == 0) {
+        actor->_6E *= 5;
+    }
+    actor->_04 = minsect_batta_jump_wait_process;
+    actor->_78 = 0;
+}
+
+void minsect_batta_jump_wait_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_6E-- < 0) {
+        minsect_batta_jump_process_init(actor, game);
+    }
+}
+
+void minsect_batta_jump_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_40 = RANDOM_F(1.0f) + 1.0f;
+    actor->_34.y = 0.75f;
+    actor->_04 = minsect_batta_jump_process;
+    if (RANDOM_F(1.0f) > 0.6f || GETREG(NMREG, 2)) {
+        actor->_7A = 1;
+        actor->_7C = 7;
+    }
+}
+
+void minsect_batta_jump_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_68.x = -atans_table(actor->_40, actor->_34.y);
+    if (actor->_34.y < 0.0f && actor->_8C & 0x20) {
+        actor->_40 = 0.f;
+        actor->_68.x = 0;
+        minsect_batta_normal_process_init(actor, game);
+    }
+    mi_batta_hane_anime(actor);
+    if (actor->_7C <= 0) {
+        actor->_7C = 7;
+    }
+}
+
+void minsect_batta_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    static u8 batta_sound_data[4] = { 0x9f, 0x9e, 0xa0, 0x9d };
+    actor->_8E = get_now_mind_flag(actor, game);
+    mi_batta_check_player(actor, game);
+    actor->_7E--;
+    if (actor->_7E < 0) {
+        actor->_7E = 0;
+    }
+    if (actor->_7E > 1600) {
+        actor->_7E = 1600;
+    }
+
+    if (actor->_8E) {
+        if (actor->_7E > 150 && actor->_04 != minsect_batta_jump_process) {
+            minsect_batta_jump_process_init(actor, game);
+            actor->_7E = 0;
+        }
+    } else {
+        if (actor->_7E > 1000 && actor->_04 != minsect_batta_jump_process) {
+            minsect_batta_jump_process_init(actor, game);
+            actor->_7E = 0;
+        }
+    }
+
+    if (actor->_00 >= 15 && actor->_04 != minsect_batta_jump_process) {
+        int id = actor->_00 - 15;
+        PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+        xyz_t p = player->actor_class.world.position;
+        f32 dist = search_position_distanceXZ(&actor->_1C, &p);
+        if (actor->_04 != minsect_batta_silent_process && actor->_8E) {
+            if (actor->_00 == 17) {
+                mi_batta_suzumushi_hane_anime(actor);
+                if (actor->_82 <= 0) {
+                    actor->_82 = 7;
+                }
+            }
+            if (dist < 200.f) {
+                sAdo_OngenPos((u32)actor, batta_sound_data[id], &actor->_1C);
+            }
+        } else if (actor->_04 == minsect_batta_silent_process && actor->_8E == 0) {
+            if (actor->_00 == 17) {
+                mi_batta_suzumushi_hane_anime(actor);
+                if (actor->_82 <= 0) {
+                    actor->_82 = 7;
+                }
+            }
+            if (dist < 200.f) {
+                sAdo_OngenPos((u32)actor, batta_sound_data[id], &actor->_1C);
+            }
+        }
+    }
+
+    actor->_04(actor, game);
+    mID_insect_moveF(actor);
+    actor->_34.y += actor->_44.y;
+    minsect_batta_ObjCheck(actor);
+    minsect_tree_ObjCheck(actor);
+    minsect_rock_ObjCheck(actor);
+    minsect_kanban_BGCheck(actor);
+    minsect_garden_BGCheck(actor, 510.0, 370.0);
+    add_calc_short_angle2(&actor->_76, actor->_78, CALC_EASE2(0.4f), DEG2SHORT_ANGLE(0.75f), DEG2SHORT_ANGLE(0.25f));
+}
+
+void minsect_batta_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    _texture_z_light_fog_prim(game->graph);
+
+    OPEN_DISP(game->graph);
+    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z, FALSE);
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, TRUE);
+    Matrix_rotateXYZ(actor->_76, 0, 0, TRUE);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
+    CLOSE_DISP(game->graph);
+
+    if (actor->_7A || actor->_00 == 17) {
+        _texture_z_light_fog_prim_xlu(game->graph);
+        OPEN_POLY_XLU_DISP(game->graph);
+        gDPSetEnvColor(POLY_XLU_DISP++, 0xff, 0xff, 0xff, 0xff);
+        Matrix_scale(actor->_58, 1.0f, 1.0f, TRUE);
+        gSPMatrix(POLY_XLU_DISP++, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPDisplayList(POLY_XLU_DISP++, minsect_mdl[actor->_00][1]);
+        CLOSE_POLY_XLU_DISP(game->graph);
+    }
+
+    minsect_draw_shadow(actor, game);
+}

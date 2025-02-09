@@ -44,17 +44,17 @@ void minsect_draw_shadow(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 }
 void minsect_fly_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, f32 f1, f32 f2) {
 }
-void minsect_garden_BGCheck(void) {
+void minsect_garden_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, f32 f1, f32 f2) {
 }
 void minsect_flower_BGCheck(void) {
 }
 void minsect_goki_BGCheck(void) {
 }
-void minsect_kanban_BGCheck(void) {
+void minsect_kanban_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor) {
 }
 void minsect_tree_ObjCheck(MUSEUM_INSECT_PRIVATE_DATA* actor) {
 }
-void minsect_rock_ObjCheck(void) {
+void minsect_rock_ObjCheck(MUSEUM_INSECT_PRIVATE_DATA* actor) {
 }
 
 void minsect_batta_ObjCheck(MUSEUM_INSECT_PRIVATE_DATA* actor) {
