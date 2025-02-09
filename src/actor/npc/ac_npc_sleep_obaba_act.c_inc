@@ -1,0 +1,113 @@
+static void aNSO_set_request_act(NPC_SLEEP_OBABA_ACTOR* actor) {
+    actor->npc_class.request.act_priority = 4;
+    actor->npc_class.request.act_idx = aNPC_ACT_CLAP;
+    actor->npc_class.request.act_type = aNPC_ACT_TYPE_SEARCH;
+}
+
+static void aNSO_sleep(NPC_SLEEP_OBABA_ACTOR* actor) {
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_CONTINUE) {
+        if (actor->npc_class.draw.loop_flag == 0) {
+            actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+        } else {
+            actor->npc_class.draw.loop_flag--;
+        }
+    }
+}
+
+static void aNSO_cramp(NPC_SLEEP_OBABA_ACTOR* actor) {
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+    }
+}
+
+static void aNSO_setupAction(NPC_SLEEP_OBABA_ACTOR* actor, int action) {
+    static aNSO_ACT_PROC process[] = {
+        aNSO_sleep,
+        aNSO_cramp,
+    };
+
+    actor->npc_class.action.step = 0;
+    actor->action = action;
+    actor->act_proc = process[action];
+    actor->npc_class.draw.loop_flag = 2 + RANDOM(3);
+    aNSO_set_animation(actor, action);
+}
+
+static void aNSO_act_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aNSO_act_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_SLEEP_OBABA_ACTOR* actor = (NPC_SLEEP_OBABA_ACTOR*)nactorx;
+
+    aNSO_setupAction(actor, aNSO_ACT_SLEEP);
+}
+
+static void aNSO_act_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_SLEEP_OBABA_ACTOR* actor = (NPC_SLEEP_OBABA_ACTOR*)nactorx;
+
+    (*actor->act_proc)(actor);
+}
+
+static void aNSO_act_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC act_proc[] = {
+        aNSO_act_init_proc,
+        aNSO_act_chg_data_proc,
+        aNSO_act_main_proc,
+    };
+
+    (*act_proc[proc_type])(nactorx, play);
+}
+
+static void aNSO_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static int action[] = { aNSO_ACT_SLEEP, aNSO_ACT_CRAMP };
+    NPC_SLEEP_OBABA_ACTOR* actor = (NPC_SLEEP_OBABA_ACTOR*)nactorx;
+
+    if (actor->npc_class.action.step == aNPC_ACTION_END_STEP) {
+        if (actor->npc_class.action.idx == aNPC_ACT_CLAP) {
+            int idx = RANDOM(ARRAY_COUNT(action));
+
+            aNSO_setupAction(actor, action[idx]);
+        }
+
+        aNSO_set_request_act(actor);
+    }
+}
+
+static void aNSO_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_SLEEP_OBABA_ACTOR* actor = (NPC_SLEEP_OBABA_ACTOR*)nactorx;
+
+    nactorx->think.interrupt_flags = 0;
+    nactorx->action.act_proc = aNSO_act_proc;
+    aNSO_set_request_act(actor);
+}
+
+static void aNSO_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC think_proc[] = {
+        aNSO_think_init_proc,
+        aNSO_think_main_proc,
+    };
+
+    (*think_proc[proc_type])(nactorx, play);
+}
+
+static void aNSO_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = aNSO_think_proc;
+    nactorx->condition_info.hide_request = FALSE;
+    CLIP(npc_clip)->think_proc(nactorx, play, aNPC_THINK_IN_BLOCK, aNPC_THINK_TYPE_INIT);
+}
+
+static void aNSO_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (CLIP(npc_clip)->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == 0) {
+        CLIP(npc_clip)->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aNSO_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type) {
+    static aNPC_SUB_PROC sche_proc[] = {
+        aNSO_schedule_init_proc,
+        aNSO_schedule_main_proc,
+    };
+
+    (*sche_proc[proc_type])(nactorx, play);
+}

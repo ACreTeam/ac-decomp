@@ -1,0 +1,5 @@
+static void aNSO_set_animation(NPC_SLEEP_OBABA_ACTOR* actor, int action) {
+    static int animeSeqNo[] = { aNPC_ANIM_KOKKURI_D1, aNPC_ANIM_KOKKURI_D2 };
+
+    CLIP(npc_clip)->animation_init_proc((ACTOR*)actor, animeSeqNo[action], FALSE);
+}
