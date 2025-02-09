@@ -93,6 +93,7 @@ extern Gfx** minsect_mdl[40];
 extern xyz_t tonbo_rock_pos[1];
 extern xyz_t tentou_flower_pos[1];
 extern xyz_t hachi_base_pos;
+extern xyz_t kabuto_base_pos[1];
 
 // ac_museum_insect.c
 int Museum_Insect_GetMsgNo(ACTOR* actorx);
@@ -219,9 +220,9 @@ void minsect_hachi_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_hachi_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_kabuto.c_inc
-void minsect_kabuto_ct(void);
-void minsect_kabuto_mv(void);
-void minsect_kabuto_dw(void);
+void minsect_kabuto_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_kabuto_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_kabuto_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_kuwagata.c_inc
 void mi_kuwagata_rensa_init(void);

@@ -1,1 +1,135 @@
 #include "ac_museum_insect_priv.h"
+
+void minsect_kabuto_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    switch (actor->_00) {
+        case 8:
+            actor->_70 = 0;
+            break;
+        case 0x13:
+        case 0x14:
+        case 0x15:
+        case 0x16:
+        case 0x17:
+            actor->_70 = actor->_00 - 0x12;
+            break;
+        case 0x1e:
+        case 0x1f:
+        default:
+            actor->_70 = actor->_00 - 0x17;
+            break;
+    }
+    actor->_1C = kabuto_base_pos[actor->_70];
+    actor->_44 = actor->_1C;
+    actor->_34 = ZeroVec;
+    actor->_40 = 0.05f;
+    actor->_68 = ZeroSVec;
+    actor->_72 = qrand();
+    actor->_6E = (s16)RANDOM_F(120) + 60;
+    actor->_78 = (s16)RANDOM_F(60) + 60;
+    actor->_7A = 0;
+}
+
+void minsect_kabuto_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_8E = get_now_mind_flag(actor, game);
+    actor->_6E--;
+    if (actor->_8C & 2) {
+        actor->_1C.y += actor->_40 * (cos_s(actor->_72) * 0.5f + 0.5f);
+        actor->_72 += ((s16)DEG2SHORT_ANGLE(GETREG(TAKREG, 0x14) + 30.0f) >> 1);
+        actor->_68.z = DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x15) * 0.1f + 2.0f) * sin_s(actor->_72);
+        if (sin_s(actor->_72) <= 0.1 && sin_s(actor->_72) >= -0.1) {
+            if (actor->_76) {
+                actor->_76 = 0;
+            } else {
+                actor->_76 = DEG2SHORT_ANGLE(-7);
+            }
+        }
+        if (actor->_6E < 0) {
+            actor->_40 = 0.0f;
+            actor->_8C &= ~2;
+            actor->_76 = DEG2SHORT_ANGLE(-7);
+            actor->_6E = (s16)RANDOM_F(300.f) + 60;
+            if (actor->_8E == 0) {
+                actor->_6E *= 10;
+            }
+        }
+
+        if (actor->_1C.y > actor->_44.y + 2.0f) {
+            actor->_1C.y = actor->_44.y + 2.0f;
+            actor->_8C &= ~2;
+            actor->_8C |= 8;
+            actor->_76 = DEG2SHORT_ANGLE(-7);
+            actor->_6E = (s16)RANDOM_F(300.f) + 60;
+            if (actor->_8E == 0) {
+                actor->_6E *= 10;
+            }
+        } else if (actor->_1C.y < actor->_44.y - 2.0f) {
+            actor->_1C.y = actor->_44.y - 2.0f;
+            actor->_8C &= ~2;
+            actor->_8C |= 4;
+            actor->_76 = DEG2SHORT_ANGLE(-7);
+            actor->_6E = (s16)RANDOM_F(300.f) + 60;
+            if (actor->_8E == 0) {
+                actor->_6E *= 10;
+            }
+        }
+    } else {
+        if (actor->_6E < 0) {
+            if (actor->_8C & 4) {
+                actor->_40 = 0.05f;
+            } else if (actor->_8C & 8 || RANDOM_F(1.0f) > 0.5f) {
+                actor->_40 = -0.05f;
+            } else {
+                actor->_40 = 0.05f;
+            }
+            actor->_8C &= ~0xc;
+            actor->_76 = DEG2SHORT_ANGLE(-7);
+            actor->_6E = (s16)RANDOM_F(120.f) + 60;
+            actor->_8C |= 2;
+        }
+        actor->_78--;
+        if (actor->_78 < 0) {
+            actor->_7A++;
+            actor->_76 = DEG2SHORT_ANGLE(-7);
+            actor->_78 = (s16)RANDOM_F(60.f) + 60;
+            actor->_7C = DEG2SHORT_ANGLE(RANDOM2_F(30.f));
+            if (actor->_7A > (s16)(1.0f + RANDOM_F(3.0f))) {
+                actor->_7A = 0;
+                actor->_78 = (s16)((s16)RANDOM_F(60.0f) + 60) * 5;
+                if (actor->_8E == 0) {
+                    actor->_78 *= 2;
+                }
+                actor->_7C = 0;
+            }
+        }
+        if (actor->_74 == actor->_76) {
+            actor->_76 = 0;
+        }
+        add_calc_short_angle2(&actor->_68.z, actor->_7C, CALC_EASE2(0.4f),
+                              (s16)(DEG2SHORT_ANGLE(GETREG(NMREG, 3) * 0.01f + 5.0f) >> 1) >> 1,
+                              DEG2SHORT_ANGLE(0.25f));
+    }
+    add_calc_short_angle2(&actor->_74, actor->_76, CALC_EASE2(0.4f), DEG2SHORT_ANGLE(0.75f), DEG2SHORT_ANGLE(0.25f));
+}
+
+void minsect_kabuto_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    _texture_z_light_fog_prim(game->graph);
+
+    OPEN_DISP(game->graph);
+    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z, FALSE);
+    Matrix_rotateXYZ(0, 0, actor->_68.z, TRUE);
+    Matrix_rotateXYZ(actor->_74, 0, 0, TRUE);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    Matrix_rotateXYZ(DEG2SHORT_ANGLE(90), 0, DEG2SHORT_ANGLE2(180), TRUE);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gDPSetEnvColor(NEXT_POLY_OPA_DISP, 0, 0xff, 0x9b, 0xff);
+    gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
+    CLOSE_DISP(game->graph);
+
+    if (actor->_00 == 8) {
+        OPEN_POLY_XLU_DISP(game->graph);
+        gDPSetEnvColor(POLY_XLU_DISP++, 0xff, 0xff, 0xff, 0xff);
+        gSPMatrix(POLY_XLU_DISP++, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPDisplayList(POLY_XLU_DISP++, minsect_mdl[actor->_00][1]);
+        CLOSE_POLY_XLU_DISP(game->graph);
+    }
+}
