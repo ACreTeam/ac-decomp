@@ -92,6 +92,7 @@ extern s16 aim_angle_tbl[6];
 extern Gfx** minsect_mdl[40];
 extern xyz_t tonbo_rock_pos[1];
 extern xyz_t tentou_flower_pos[1];
+extern xyz_t hachi_base_pos;
 
 // ac_museum_insect.c
 int Museum_Insect_GetMsgNo(ACTOR* actorx);
@@ -205,17 +206,17 @@ void minsect_tentou_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_tentou_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_hachi.c_inc
-void mi_hachi_hane_anime(void);
-void mi_hachi_mitu_init(void);
-void mi_hachi_mitu(void);
-void mi_hachi_wait_init(void);
-void mi_hachi_wait(void);
-void mi_hachi_move_init(void);
-void mi_hachi_move(void);
-void mi_hachi_setupAction(void);
-void minsect_hachi_ct(void);
-void minsect_hachi_mv(void);
-void minsect_hachi_dw(void);
+void mi_hachi_hane_anime(MUSEUM_INSECT_PRIVATE_DATA* actor);
+void mi_hachi_mitu_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_hachi_mitu(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_hachi_wait_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_hachi_wait(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_hachi_move_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_hachi_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_hachi_setupAction(MUSEUM_INSECT_PRIVATE_DATA* actor, int r4, GAME* game);
+void minsect_hachi_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_hachi_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void minsect_hachi_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_kabuto.c_inc
 void minsect_kabuto_ct(void);

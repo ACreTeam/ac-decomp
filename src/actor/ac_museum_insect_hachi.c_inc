@@ -1,1 +1,198 @@
 #include "ac_museum_insect_priv.h"
+
+void mi_hachi_hane_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+    static f32 scaleX_table[7];
+    if (actor->_78 < 7) {
+        if (chase_f(&actor->_5C, (GETREG(NMREG, 1) * 0.01f + 1.0f) * scaleX_table[actor->_78], 0.115f) == 1) {
+            actor->_78--;
+            if (actor->_78 < 0) {
+                actor->_78 = (s16)(RANDOM_F(3.0f) * 60.f) + 187;
+            }
+        }
+    } else {
+        actor->_78--;
+    }
+}
+
+void mi_hachi_mitu_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E = 0;
+    actor->_7A = 0;
+}
+
+void mi_hachi_mitu(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E--;
+    if (actor->_6E < 0) {
+        if (actor->_7A > (s16)(((s16)RANDOM_F(10.f) << 1) + 0x10)) {
+            mi_hachi_setupAction(actor, 0, game);
+            return;
+        }
+        actor->_72 = -1820;
+        actor->_58 = GETREG(NMREG, 8) * 0.01f;
+        actor->_6E = 10;
+        actor->_7A++;
+    }
+    if (actor->_70 == actor->_72) {
+        actor->_72 = 0;
+        actor->_58 = 0.0f;
+    }
+    if (GETREG(NMREG, 4)) {
+        actor->_74 = DEG2SHORT_ANGLE(GETREG(NMREG, 4) * 0.01f);
+    }
+    if (GETREG(NMREG, 5)) {
+        actor->_76 = DEG2SHORT_ANGLE(GETREG(NMREG, 5) * 0.01f);
+    }
+    if (GETREG(NMREG, 6)) {
+        actor->_44.y = GETREG(NMREG, 6) * 0.01f;
+    }
+}
+
+void mi_hachi_wait_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E = (s16)RANDOM_F(120.f) + 40;
+    if (actor->_8E == 0) {
+        actor->_6E *= 10;
+    }
+}
+
+void mi_hachi_wait(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E--;
+    if (actor->_6E < 0) {
+        if (RANDOM_F(1.0f) > 0.9f || GETREG(NMREG, 0)) {
+            if (RANDOM_F(1.0f) > 0.5f) {
+                mi_hachi_setupAction(actor, 1, game);
+            } else {
+                mi_hachi_setupAction(actor, 2, game);
+            }
+            return;
+        }
+        actor->_72 = -1820;
+        actor->_74 += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(30.f));
+        actor->_58 = GETREG(NMREG, 8) * 0.01f;
+        actor->_6E = (s16)RANDOM_F(120.f) + 40;
+        if (actor->_8E == 0) {
+            actor->_6E *= 10;
+        }
+    }
+    if (actor->_70 == actor->_72) {
+        actor->_72 = 0;
+        actor->_58 = 0.0f;
+    }
+    if (GETREG(NMREG, 4)) {
+        actor->_74 = DEG2SHORT_ANGLE(GETREG(NMREG, 4) * 0.01f);
+    }
+    if (GETREG(NMREG, 5)) {
+        actor->_76 = DEG2SHORT_ANGLE(GETREG(NMREG, 5) * 0.01f);
+    }
+    if (GETREG(NMREG, 6)) {
+        actor->_44.y = GETREG(NMREG, 6) * 0.01f;
+    }
+}
+
+void mi_hachi_move_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E = (s16)RANDOM_F(720.f) + 360;
+}
+
+void mi_hachi_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E--;
+    if (actor->_6E < 0) {
+        if (RANDOM_F(1.0f) > 0.2f || GETREG(NMREG, 1)) {
+            if (RANDOM_F(1.0f) > 0.5f) {
+                mi_hachi_setupAction(actor, 0, game);
+                return;
+            } else {
+                mi_hachi_setupAction(actor, 2, game);
+                return;
+            }
+        }
+        actor->_6E = (s16)RANDOM_F(720.f) + 360;
+    }
+
+    if (!actor->_70) {
+        f32 v;
+        actor->_72 = -1820;
+        if (RANDOM_F(1.0f) > 0.5f) {
+            actor->_74 += (s16)DEG2SHORT_ANGLE2(RANDOM_F(30.f) + 10.f);
+        } else {
+            actor->_74 -= (s16)DEG2SHORT_ANGLE2(RANDOM_F(30.f) + 10.f);
+        }
+        actor->_58 = GETREG(NMREG, 8) * 0.01f + 1.0f;
+        v = -0.5f * sin_s(actor->_74);
+        actor->_76 += RAD2SHORT_ANGLE(v / 15.f);
+        actor->_44.y += cos_s(actor->_74) * 0.5f;
+        if (actor->_44.y > 10.f) {
+            actor->_74 = DEG2SHORT_ANGLE(RANDOM2_F(60.f)) + DEG2SHORT_ANGLE(180);
+            actor->_44.y = 10.f;
+        } else if (actor->_44.y < -10.f) {
+            actor->_74 = DEG2SHORT_ANGLE(RANDOM2_F(60.f));
+            actor->_44.y = -10.f;
+        }
+        if (actor->_76 > DEG2SHORT_ANGLE(30)) {
+            actor->_74 = DEG2SHORT_ANGLE(RANDOM2_F(60.f)) + DEG2SHORT_ANGLE(90);
+            actor->_76 = DEG2SHORT_ANGLE(30);
+        } else if (actor->_76 < DEG2SHORT_ANGLE(-30)) {
+            actor->_74 = DEG2SHORT_ANGLE(RANDOM2_F(60.f)) - DEG2SHORT_ANGLE(90);
+            actor->_76 = DEG2SHORT_ANGLE(-30);
+        }
+    } else if (actor->_70 == actor->_72) {
+        actor->_72 = 0;
+        actor->_58 = 0.0f;
+    }
+}
+
+void mi_hachi_setupAction(MUSEUM_INSECT_PRIVATE_DATA* actor, int r4, GAME* game) {
+    static PRIV_INSECT_PROCESS init_proc[1];
+    static PRIV_INSECT_PROCESS move_proc[1];
+    actor->_04 = move_proc[r4];
+    init_proc[r4](actor, game);
+}
+
+void minsect_hachi_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_1C = ZeroVec;
+    actor->_68 = ZeroSVec;
+    actor->_44 = actor->_1C;
+    actor->_76 = 0;
+    actor->_5C = 1.0f;
+    actor->_78 = (s16)(RANDOM_F(5.0f) * 60.f) + 307;
+    mi_hachi_setupAction(actor, 0, game);
+}
+
+void minsect_hachi_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_8E = get_now_mind_flag(actor, game);
+    mi_hachi_hane_anime(actor);
+    actor->_04(actor, game);
+    add_calc_short_angle2(&actor->_70, actor->_72, CALC_EASE2(GETREG(NMREG, 0x5e) * 0.01f + 0.8f),
+                          (s16)(DEG2SHORT_ANGLE(GETREG(NMREG, 0x5F) * 0.01f + 4.0f) >> 1) >> 1, DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_68.z, actor->_74, CALC_EASE2(0.4f),
+                          (s16)(DEG2SHORT_ANGLE(GETREG(NMREG, 3) * 0.01f + 5.0f) >> 1) >> 1, DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_68.y, actor->_76, CALC_EASE2(0.4f), DEG2SHORT_ANGLE(0.75f), DEG2SHORT_ANGLE(0.25f));
+    add_calc(&actor->_40, actor->_58, CALC_EASE(0.1f), 0.25f, 0.05f);
+    chase_xyz_t(&actor->_1C, &actor->_44, actor->_40);
+}
+
+void minsect_hachi_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    _texture_z_light_fog_prim(game->graph);
+    OPEN_DISP(game->graph);
+    Matrix_translate(hachi_base_pos.x, hachi_base_pos.y, hachi_base_pos.z, FALSE);
+    Matrix_rotateXYZ(DEG2SHORT_ANGLE(-20), 0, 0, TRUE);
+    Matrix_translate(0.0f, actor->_1C.y, 0.0f, TRUE);
+    Matrix_translate(-GETREG(NMREG, 0x10) * 0.01f, -GETREG(NMREG, 0x11) * 0.01f, -15.f - GETREG(NMREG, 0xe) * 0.01f,
+                     TRUE);
+    Matrix_rotateXYZ(0, actor->_68.y, 0, TRUE);
+    Matrix_translate(GETREG(NMREG, 0x10) * 0.01f, GETREG(NMREG, 0x11) * 0.01f, 15.f + GETREG(NMREG, 0xe) * 0.01f, TRUE);
+    Matrix_rotateXYZ(0, 0, actor->_68.z, TRUE);
+    Matrix_rotateXYZ(actor->_70, 0, 0, TRUE);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    Matrix_rotateXYZ(DEG2SHORT_ANGLE(90), 0, DEG2SHORT_ANGLE(-180), TRUE);
+
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gDPSetEnvColor(NEXT_POLY_OPA_DISP, 0, 0xff, 0x9b, 0xff);
+    gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
+    CLOSE_DISP(game->graph);
+
+    _texture_z_light_fog_prim_xlu(game->graph);
+    OPEN_POLY_XLU_DISP(game->graph);
+    gDPSetEnvColor(POLY_XLU_DISP++, 0xff, 0xff, 0xff, 0xff);
+    Matrix_scale(actor->_5C, 1.0f, 1.0f, TRUE);
+    gSPMatrix(POLY_XLU_DISP++, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(POLY_XLU_DISP++, minsect_mdl[actor->_00][1]);
+    CLOSE_POLY_XLU_DISP(game->graph);
+}
