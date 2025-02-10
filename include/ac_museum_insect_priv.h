@@ -25,7 +25,15 @@ typedef void (*PRIV_INSECT_PROCESS)(struct _MUSEUM_INSECT_PRIVATE_DATA*, GAME*);
 
 typedef struct _MUSEUM_INSECT_SKELETON {
     cKF_SkeletonInfo_R_c _00;
-    artificial_padding(0, 0x2ac, cKF_SkeletonInfo_R_c);
+    Mtx _70;
+    artificial_padding(0x70, 0x170, Mtx);
+    Mtx _170;
+    artificial_padding(0x170, 0x270, Mtx);
+    s_xyz _270;
+    artificial_padding(0x270, 0x288, s_xyz);
+    s_xyz _288;
+    artificial_padding(0x288, 0x2A8, s_xyz);
+    cKF_Skeleton_R_c* _2A8;
     cKF_Animation_R_c* _2AC;
 } MUSEUM_INSECT_SKELETON;
 
@@ -73,9 +81,10 @@ typedef struct _INSECT_DISPLAY_MSG_INFO {
 } INSECT_DISPLAY_MSG_INFO;
 
 typedef struct _MUSEUM_INSECT_ACTOR {
-    ACTOR actor; // offset: 0x0
-    MUSEUM_INSECT_PRIVATE_DATA privInsects[aINS_INSECT_TYPE_NUM];
-    artificial_padding(0x174, 0x2F78, MUSEUM_INSECT_PRIVATE_DATA[aINS_INSECT_TYPE_NUM]);
+    ACTOR actor;                                                  // offset: 0x0
+    MUSEUM_INSECT_PRIVATE_DATA privInsects[aINS_INSECT_TYPE_NUM]; // offset 0x174
+    artificial_padding(0x174, 0x24b8, MUSEUM_INSECT_PRIVATE_DATA[aINS_INSECT_TYPE_NUM]);
+    MUSEUM_INSECT_SKELETON _24B8[4];
     int _2F78;                        // offset: 0x2F78
     int _2F7C;                        // offset: 0x2F7C
     INSECT_DISPLAY_MSG_INFO _2F80[7]; // offset: 0x2F82
