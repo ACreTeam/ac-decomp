@@ -26,7 +26,7 @@ void aES2_talk_before_give(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     if (mMsg_Check_MainNormalContinue(msg_p)) {
         if (mPr_GetPossessionItemSumWithCond(Now_Private, EMPTY_NO, mPr_ITEM_COND_NORMAL) == 0) {
             mMsg_Set_continue_msg_num(msg_p, aES2_kinenhin_msg((ACTOR*)soncho, 2));
-            aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_0);
+            aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_5);
         } else {
             mMsg_Set_continue_msg_num(msg_p, aES2_kinenhin_msg((ACTOR*)soncho, 0x3));
             aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_1);
