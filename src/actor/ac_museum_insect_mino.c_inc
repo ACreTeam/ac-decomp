@@ -1,1 +1,311 @@
 #include "ac_museum_insect_priv.h"
+
+void minsect_mino_up_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_40 = 0.165f;
+    actor->_6E = (s16)RANDOM_F(20.f) + 50;
+    actor->_44.x = 30.f;
+    actor->_7E = actor->_78;
+}
+
+void minsect_mino_up(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E--;
+    actor->_1C.y += actor->_40;
+    if (actor->_1C.y > mino_top_pos.y - 10.f) {
+        actor->_1C.y = mino_top_pos.y - 10.f;
+        if (RANDOM_F(1.f) > 0.5f) {
+            minsect_mino_setupAction(actor, 0, game);
+
+        } else {
+            minsect_mino_setupAction(actor, 3, game);
+        }
+    } else if (actor->_6E < 0) {
+        if (actor->_40) {
+            actor->_6E = 10;
+            actor->_40 = 0.f;
+        } else {
+            actor->_40 = 0.165f;
+            actor->_6E = (s16)RANDOM_F(20.f) + 50;
+        }
+        actor->_44.x = 30.f;
+        actor->_7E = actor->_78;
+    }
+}
+
+void minsect_mino_down_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_7E = actor->_78;
+    if (GETREG(NMREG, 0x14)) {
+        actor->_60 = GETREG(NMREG, 0x14) * 0.01f;
+    } else {
+        actor->_60 = 1.8f;
+    }
+    actor->_40 = GETREG(NMREG, 0x13) * 0.01f + 4.0f;
+    actor->_82 = 0;
+}
+
+void minsect_mino_down(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (add_calc(&actor->_40, 0.0f, CALC_EASE(GETREG(NMREG, 0x15) * 0.01f + 0.25f),
+                 (GETREG(NMREG, 0x16) * 0.01f + 3.0f) * 0.5f, 0.05f) < GETREG(NMREG, 0x1a) * 0.01f + 0.1f) {
+        if (!add_calc(&actor->_60, 0.0f, CALC_EASE(GETREG(NMREG, 0x17) * 0.01f + 0.5f),
+                      (GETREG(NMREG, 0x18) * 0.01f + 0.08f) * 0.5f, 0.005f)) {
+            actor->_44.x = 30.f;
+            minsect_mino_setupAction(actor, 0, game);
+            return;
+        }
+        actor->_44.x = 0.0f;
+        actor->_5C = 0.0f;
+        actor->_1C.y -= actor->_40;
+        actor->_82 += (s16)DEG2SHORT_ANGLE2(GETREG(NMREG, 0x1b) * 0.01f + 25.f);
+    }
+    actor->_1C.y += actor->_60 * sin_s(actor->_82);
+    if (actor->_1C.y < mino_bottom_pos.y) {
+        actor->_1C.y = mino_bottom_pos.y;
+    } else if (actor->_1C.y > mino_top_pos.y - 10.f) {
+        actor->_1C.y = mino_top_pos.y - 10.f;
+    }
+}
+
+void minsect_mino_move_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    return;
+}
+
+void minsect_mino_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E--;
+    if (actor->_8C & 2) {
+        if (actor->_40 < 0.f) {
+            actor->_1C.y += actor->_40;
+            if (actor->_1C.y < mino_bottom_pos.y + 10.f) {
+                actor->_8C |= 8;
+                actor->_8C &= ~2;
+                actor->_6E = (s16)RANDOM_F(360.f) + 40;
+            }
+        } else if (actor->_8C & 0x10) {
+            actor->_1C.y += actor->_40;
+            if (actor->_1C.y > mino_top_pos.y - 10.f) {
+                actor->_1C.y = mino_top_pos.y - 10.f;
+                actor->_8C |= 4;
+                actor->_8C &= ~2;
+                actor->_6E = (s16)RANDOM_F(360.F) + 40;
+            }
+            if (actor->_6E % 12 == 0) {
+                actor->_8C &= ~0x10;
+            }
+        } else if (actor->_6E % 12 == 0) {
+            actor->_8C |= 0x10;
+        }
+        if (actor->_6E < 0) {
+            actor->_8C &= ~2;
+            actor->_6E = (s16)RANDOM_F(360.f) + 40;
+        }
+    } else if (actor->_6E < 0) {
+        if (actor->_8C & 4) {
+            if (RANDOM_F(1.f) > 0.5f) {
+                minsect_mino_setupAction(actor, 3, game);
+                return;
+            }
+            actor->_6E = (s16)RANDOM_F(20.f) + 40;
+            actor->_40 = -0.45f;
+        } else if (actor->_8C & 8 || RANDOM_F(1.f) > 0.5f) {
+            if (RANDOM_F(1.f) > 0.6f) {
+                minsect_mino_setupAction(actor, 2, game);
+                return;
+            }
+            actor->_6E = (s16)RANDOM_F(20.f) + 50;
+            actor->_40 = 0.165f;
+            actor->_8C |= 0x10;
+            actor->_44.x += 40.f;
+            actor->_7E = actor->_78;
+        } else if (RANDOM_F(1.f) > 0.7f) {
+            minsect_mino_setupAction(actor, 0, game);
+        } else {
+            actor->_6E = (s16)RANDOM_F(20.f) + 40;
+            actor->_40 = -0.45f;
+        }
+
+        actor->_8C &= ~0xc;
+        actor->_8C |= 2;
+    }
+}
+
+void minsect_mino_check_dush_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    if (search_position_distance(&actor->_1C, &player->actor_class.world.position) < 75.f &&
+        player->actor_class.speed > 6.0f) {
+        if (RANDOM_F(1.f) > 0.2f && actor->_6E < 0x1e) {
+            minsect_mino_setupAction(actor, 2, game);
+        } else {
+            minsect_mino_setupAction(actor, 0, game);
+        }
+    }
+}
+
+void minsect_mino_furiko(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    f32 v, v2, v3;
+    if (actor->_44.x) {
+        add_calc(&actor->_5C, actor->_44.x, CALC_EASE(0.7f), 0.75f, 0.05f);
+    } else {
+        add_calc(&actor->_5C, actor->_44.x, CALC_EASE(0.3f), 0.25f, 0.05f);
+    }
+
+    if (actor->_5C == actor->_44.x) {
+        actor->_44.x = 0.0f;
+    }
+
+    add_calc_short_angle2(&actor->_7C, actor->_7E, CALC_EASE2(0.4f), DEG2SHORT_ANGLE(1.25), DEG2SHORT_ANGLE(0.25f));
+
+    if (GETREG(NMREG, 0x10)) {
+        v = GETREG(NMREG, 0x10) * 0.01f;
+    } else {
+        v = 0.2f;
+    }
+
+    if (GETREG(NMREG, 0x11)) {
+        v2 = GETREG(NMREG, 0x11) * 0.01f;
+    } else {
+        v2 = 1.f;
+    }
+
+    actor->_58 = MAX(1.f, mino_top_pos.y - actor->_1C.y);
+    actor->_70 += (s16)DEG2SHORT_ANGLE2(((v2 * actor->_5C + 35.f) / actor->_58) * 1.8f * 0.5f);
+    actor->_68.x = DEG2SHORT_ANGLE2(v * actor->_5C) * sin_s(actor->_70);
+}
+
+void minsect_mino_wait_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E = (s16)RANDOM_F(360.f) + 40;
+}
+
+void minsect_mino_wait(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E--;
+    if (actor->_6E < 0) {
+        if (actor->_1C.y >= mino_top_pos.y - 2.f && (RANDOM_F(1.f) > 0.2f || GETREG(NMREG, 0x14))) {
+            minsect_mino_setupAction(actor, 3, game);
+        } else if (RANDOM_F(1.f) > 0.5f) {
+            minsect_mino_setupAction(actor, 1, game);
+        } else {
+            actor->_6E = (s16)RANDOM_F(360.f) + 40;
+        }
+    }
+}
+
+void minsect_mino_hineri(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_58 = MAX(1.f, mino_top_pos.y - actor->_1C.y);
+    actor->_72 += (s16)DEG2SHORT_ANGLE2((35.f / actor->_58) * 1.2f * 0.5f);
+    actor->_78 = 5461.f * sin_s(actor->_72);
+    actor->_7A--;
+    if (actor->_7A < 0) {
+        actor->_7A = (s16)RANDOM_F(360.f) + 40;
+    } else if (actor->_76 < 7) {
+        static float scaleX_table[] = { 0.01f, 0.00875f, 0.01125f, 0.00875f, 0.01125f, 0.00875f, 0.01125f };
+        static float scaleY_table[] = { 0.01f, 0.01125f, 0.00875f, 0.01125f, 0.00875f, 0.01125f, 0.00875f };
+        int index = actor->_76;
+        f32 temp = 2.f;
+        BOOL a = chase_f(&actor->_34.x, (temp / 2.f) * scaleX_table[index], 0.001125f);
+        BOOL b = chase_f(&actor->_34.y, (temp / 2.f) * scaleY_table[index], 0.001125f);
+        if ((a & b) == TRUE) {
+            if (actor->_76 == 3) {
+                if (actor->_80 == 0 && RANDOM_F(1.f) > 0.4f) {
+                    actor->_80 = 1;
+                } else if (actor->_80 != 0 && RANDOM_F(1.f) > 0.2f) {
+                    actor->_80 = 0;
+                }
+            }
+            actor->_76--;
+            if (actor->_76 < 0) {
+                actor->_44.x += 25.f;
+                actor->_7E = actor->_78;
+                actor->_76 = (s16)(RANDOM_F(5.f) * 60.f) + 307;
+            }
+        }
+    } else {
+        actor->_76--;
+    }
+}
+
+void minsect_mino_setupAction(MUSEUM_INSECT_PRIVATE_DATA* actor, int r4, GAME* game) {
+    static PRIV_INSECT_PROCESS init_proc[] = { minsect_mino_wait_init, minsect_mino_move_init, minsect_mino_up_init,
+                                               minsect_mino_down_init };
+    static PRIV_INSECT_PROCESS move_proc[] = { minsect_mino_wait, minsect_mino_move, minsect_mino_up,
+                                               minsect_mino_down };
+    actor->_04 = move_proc[r4];
+    init_proc[r4](actor, game);
+}
+
+void minsect_mino_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_1C = mino_base_pos;
+    actor->_34.x = 0.01f;
+    actor->_34.y = 0.01f;
+    actor->_34.z = 0.01f;
+    actor->_5C = 0.0f;
+    actor->_44.x = 0.0f;
+    actor->_68 = ZeroSVec;
+    actor->_6E = (s16)RANDOM_F(360.f) + 40;
+    actor->_72 = qrand();
+    actor->_76 = (s16)(RANDOM_F(5.f) * 60.f) + 307;
+    actor->_7A = (s16)RANDOM_F(360.f) + 40;
+    minsect_mino_setupAction(actor, 0, game);
+}
+
+void minsect_mino_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (actor->_04 != minsect_mino_down && actor->_04 != minsect_mino_up) {
+        minsect_mino_check_dush_player(actor, game);
+    }
+    minsect_mino_furiko(actor, game);
+    minsect_mino_hineri(actor, game);
+    if (GETREG(NMREG, 1) && (play->game_frame & 7) == 0) {
+        xyz_t p = actor->_1C;
+        p = actor->_1C;
+        p.y += GETREG(NMREG, 5) * 0.01f;
+        Common_Get(clip.effect_clip)->effect_make_proc(101, p, 1, 0, game, 0x5843, 2, 0);
+        Common_Get(clip.effect_clip)->effect_make_proc(101, actor->_1C, 1, 0, game, 0x5843, 1, 0);
+        Common_Get(clip.effect_clip)->effect_make_proc(101, mino_base_pos, 1, 0, game, 0x5843, 3, 0);
+        Common_Get(clip.effect_clip)->effect_make_proc(101, mino_top_pos, 1, 0, game, 0x5843, 1, 0);
+    }
+    actor->_04(actor, game);
+}
+
+void minsect_mino_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    _texture_z_light_fog_prim(game->graph);
+    OPEN_DISP(game->graph);
+    Matrix_translate(actor->_1C.x, actor->_1C.y + actor->_58, actor->_1C.z, FALSE);
+    Matrix_rotateXYZ(0, actor->_7C, 0, TRUE);
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, TRUE);
+    Matrix_rotateXYZ(0, -actor->_7C, 0, TRUE);
+    Matrix_translate(0.f, -actor->_58, 0.f, TRUE);
+    Matrix_rotateXYZ(0, actor->_78, 0, TRUE);
+    Matrix_translate(0.f, 0.f, -2.5f, TRUE);
+    Matrix_rotateXYZ(DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE2(180), 0, TRUE);
+    Matrix_scale(actor->_34.x, actor->_34.y, actor->_34.z, TRUE);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gDPSetEnvColor(NEXT_POLY_OPA_DISP, 0, 0xff, 0x9b, 0xff);
+    if (actor->_80) {
+        gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][1]);
+    } else {
+        gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
+    }
+    Matrix_translate(actor->_1C.x, actor->_1C.y + actor->_58, actor->_1C.z, FALSE);
+    Matrix_rotateXYZ(0, actor->_7C, 0, TRUE);
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, TRUE);
+    Matrix_rotateXYZ(0, -actor->_7C, 0, TRUE);
+    Matrix_translate(0.0f, -actor->_58, 0.0f, TRUE);
+    Matrix_rotateXYZ(0, actor->_78, 0, TRUE);
+    if (GETREG(NMREG, 5)) {
+        Matrix_translate(GETREG(NMREG, 4) * 0.001f, GETREG(NMREG, 5) * 0.01f, GETREG(NMREG, 6) * 0.01f, TRUE);
+    } else if (actor->_80) {
+        Matrix_translate(0.0f, 7.5f, 0.f, TRUE);
+    } else {
+        Matrix_translate(0.0f, 5.f, 0.f, TRUE);
+    }
+    if (GETREG(NMREG, 7)) {
+        Matrix_scale(1.5f, actor->_58 / ((mino_top_pos.y - mino_base_pos.y) - (GETREG(NMREG, 7) * 0.01f)), 1.f, TRUE);
+    } else {
+        Matrix_scale(1.5f, actor->_58 / ((mino_top_pos.y - mino_base_pos.y) - 10.f), 1.f, TRUE);
+    }
+    Matrix_translate(0.31f, -8.7f, -2.5f, TRUE);
+    Matrix_rotateXYZ(DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE2(180), 0, TRUE);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gDPSetEnvColor(NEXT_POLY_OPA_DISP, 0, 0xff, 0x9b, 0xff);
+    gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][2]);
+    CLOSE_DISP(game->graph);
+    minsect_draw_shadow(actor, game);
+}
