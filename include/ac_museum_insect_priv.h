@@ -168,7 +168,7 @@ void minsect_draw_shadow(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_fly_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, f32 f1, f32 f2);
 void minsect_garden_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, f32 f1, f32 f2);
 void minsect_flower_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, const xyz_t* p);
-void minsect_goki_BGCheck(void);
+void minsect_goki_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor);
 void minsect_kanban_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor);
 void minsect_tree_ObjCheck(MUSEUM_INSECT_PRIVATE_DATA* actor);
 void minsect_rock_ObjCheck(MUSEUM_INSECT_PRIVATE_DATA* actor);
@@ -325,12 +325,12 @@ void minsect_kumo_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_goki.c_inc
 void minsect_goki_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
-void goki_player_check(void);
-void goki_wall_hit_angle_corect_sub(void);
-void goki_wall_hit_angle_corect(void);
-void goki_set_talk_info_init(void);
-void goki_talk_process(void);
-void goki_talk_process_init(void);
+BOOL goki_player_check(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void goki_wall_hit_angle_corect_sub(MUSEUM_INSECT_PRIVATE_DATA* actor, int angle);
+void goki_wall_hit_angle_corect(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void goki_set_talk_info_init(ACTOR* actor);
+void goki_talk_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void goki_talk_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_goki_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_goki_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 

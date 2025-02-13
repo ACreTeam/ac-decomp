@@ -48,7 +48,7 @@ void minsect_garden_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, f32 f1, f32 f2) {
 }
 void minsect_flower_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, const xyz_t* p) {
 }
-void minsect_goki_BGCheck(void) {
+void minsect_goki_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor) {
 }
 void minsect_kanban_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor) {
 }

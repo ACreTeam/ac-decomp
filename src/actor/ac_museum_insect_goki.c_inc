@@ -1,1 +1,213 @@
 #include "ac_museum_insect_priv.h"
+
+void minsect_goki_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_1C.x = 280.f;
+    actor->_1C.y = 40.f;
+    actor->_1C.z = 320.f;
+    actor->_34 = ZeroVec;
+    actor->_40 = 0.f;
+    actor->_44 = ZeroVec;
+    actor->_68 = ZeroSVec;
+    actor->_68.y = (int)RANDOM_F(16.f) * (0x10000 / 16);
+    actor->_6E = (s16)RANDOM_F(420.f) + 180;
+    actor->_44.y = -0.225;
+    actor->_58 = 1.f;
+    actor->_74 = 0;
+    actor->_72 = 0;
+    actor->_78 = 0;
+}
+
+BOOL goki_player_check(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    BOOL ret;
+    if (player->actor_class.speed > 0 &&
+        search_position_distanceXZ(&player->actor_class.world.position, &actor->_1C) < 40.f) {
+        actor->_68.y = search_position_angleY(&player->actor_class.world.position, &actor->_1C);
+        actor->_68.y += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(180.f));
+        //! NOTE: huh?
+        actor->_68.y &= 0xf000;
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
+void goki_wall_hit_angle_corect_sub(MUSEUM_INSECT_PRIVATE_DATA* actor, int _angle) {
+    f32 r = RANDOM_F(1.f);
+    s16 angle = _angle;
+    if (actor->_68.y == (s16)(angle + DEG2SHORT_ANGLE2(180))) {
+        if (r < 0.5f) {
+            if (r < 0.25f) {
+                actor->_68.y = angle - DEG2SHORT_ANGLE(90);
+            } else {
+                actor->_68.y = angle + DEG2SHORT_ANGLE(90);
+            }
+        } else {
+            actor->_68.y = _angle;
+            actor->_68.y += (s16)((int)RANDOM2_F(8.f) * 4096);
+        }
+    } else if (actor->_68.y - angle > 0) {
+        if (r < 0.5f) {
+            actor->_68.y = angle + DEG2SHORT_ANGLE(90);
+        } else {
+            actor->_68.y = angle - DEG2SHORT_ANGLE(90);
+            actor->_68.y += (s16)((int)RANDOM_F(8.f) * 4096);
+        }
+    } else {
+        if (r < 0.5f) {
+            actor->_68.y = angle - DEG2SHORT_ANGLE(90);
+        } else {
+            actor->_68.y = angle + DEG2SHORT_ANGLE(90);
+            actor->_68.y += (s16)((int)-RANDOM_F(8.f) * 4096);
+        }
+    }
+}
+
+void goki_wall_hit_angle_corect(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_8C & 2) {
+        goki_wall_hit_angle_corect_sub(actor, DEG2SHORT_ANGLE(90));
+    } else if (actor->_8C & 4) {
+        goki_wall_hit_angle_corect_sub(actor, DEG2SHORT_ANGLE(-90));
+    } else if (actor->_8C & 8) {
+        goki_wall_hit_angle_corect_sub(actor, DEG2SHORT_ANGLE(0));
+    } else if (actor->_8C & 0x10) {
+        goki_wall_hit_angle_corect_sub(actor, (s16)DEG2SHORT_ANGLE2(180));
+    }
+}
+
+void goki_set_talk_info_init(ACTOR* actor) {
+    int info = mMmd_InsectInfo(0x1c);
+    int i;
+    if (info < 1 || info > 4) {
+        i = 0x2fa5;
+    } else {
+        if (info >= 1 && info <= 4) {
+            mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0,
+                              common_data.save.save.private_data[info - 1].player_ID.player_name, 8);
+        }
+        i = 0x2fa4;
+    }
+    mDemo_Set_talk_window_color(&window_color);
+    mDemo_Set_talk_display_name(0);
+    mDemo_Set_msg_num(i);
+    mDemo_Set_use_zoom_sound(TRUE);
+    mDemo_Set_talk_turn(0);
+}
+
+void goki_talk_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (mDemo_Check(8, &MI_Control_Actor->actor) == TRUE) {
+        if (mDemo_Check_ListenAble() == FALSE) {
+            mDemo_Set_ListenAble();
+            mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+            mPlib_Set_able_hand_all_item_in_demo(FALSE);
+        }
+    } else {
+        actor->_04 = NULL;
+    }
+}
+
+void goki_talk_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    mDemo_Request(8, &MI_Control_Actor->actor, goki_set_talk_info_init);
+    actor->_04 = goki_talk_process;
+}
+
+void minsect_goki_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    xyz_t* target = &player->actor_class.world.position;
+    if (actor->_04) {
+        actor->_04(actor, game);
+    }
+
+    if (actor->_72 == 0) {
+        if (search_position_distanceXZ(&actor->_1C, target) < 20.f && player->actor_class.speed > 7.f &&
+            RANDOM_F(1.f) > 0.4f) {
+            actor->_72 = 1;
+            actor->_40 = RANDOM_F(1.f) + 2.f + GETREG(NMREG, 3) * 0.01f;
+            actor->_34.y = GETREG(NMREG, 2) * 0.01f + 3.25f;
+            actor->_74 = 1;
+            sAdo_OngenTrgStart(0x132, &actor->_1C);
+            return;
+        }
+
+        if (search_position_distanceXZ(&actor->_1C, target) < 15.f && player->actor_class.speed > 1.f) {
+            if (RANDOM_F(1.f) > 0.9f) {
+                actor->_72 = 1;
+                actor->_40 = RANDOM_F(1.f) + 2.f + GETREG(NMREG, 3) * 0.01f;
+                actor->_34.y = GETREG(NMREG, 2) * 0.01f + 3.25f;
+                actor->_74 = 1;
+                sAdo_OngenTrgStart(0x132, &actor->_1C);
+                return;
+            }
+
+            if (player->actor_class.speed > 0.f && actor->_78 != 1) {
+                goki_talk_process_init(actor, game);
+                actor->_78 = 1;
+            }
+        }
+
+        if (actor->_40 > 0.f) {
+            goki_wall_hit_angle_corect(actor, game);
+            mID_insect_moveF(actor);
+            sAdo_OngenPos((u32)actor, 0xa8, &actor->_1C);
+            if (actor->_6E-- < 0) {
+                if (RANDOM_F(1.f) > 0.2f) {
+                    actor->_6E = (s16)RANDOM_F(420.f) + 180;
+                    actor->_40 = 0.f;
+                } else if (goki_player_check(actor, game)) {
+                    actor->_6E = (s16)RANDOM_F(120.f) + 40;
+                } else {
+                    actor->_6E = (s16)RANDOM_F(120.f) + 40;
+                    actor->_68.y = qrand() & 0xf000;
+                }
+            }
+        } else {
+            if (actor->_6E-- < 0) {
+                actor->_6E = (s16)RANDOM_F(120.f) + 40;
+                actor->_40 = 3.5f;
+                actor->_68.y = qrand() & 0xf000;
+            } else if (goki_player_check(actor, game)) {
+                actor->_6E = (s16)RANDOM_F(120.f) + 40;
+                actor->_40 = 3.5f;
+            }
+        }
+    } else {
+        actor->_68.x = -atans_table(actor->_40, actor->_34.y);
+        if (actor->_34.y < 0.f && actor->_8C & 0x20) {
+            actor->_68.x = 0;
+            actor->_72 = 0;
+            actor->_6E = (s16)RANDOM_F(120.f) + 40;
+            actor->_40 = 3.5f;
+            actor->_74 = 0;
+            return;
+        }
+
+        mID_insect_moveF(actor);
+        actor->_34.y += actor->_44.y;
+        mi_batta_hane_anime(actor);
+
+        if (actor->_76 <= 0) {
+            actor->_76 = 7;
+        }
+    }
+    minsect_goki_BGCheck(actor);
+}
+
+void minsect_goki_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    _texture_z_light_fog_prim(game->graph);
+    OPEN_DISP(game->graph);
+    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z, FALSE);
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, TRUE);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
+    CLOSE_DISP(game->graph);
+    if (actor->_74) {
+        _texture_z_light_fog_prim_xlu(game->graph);
+        OPEN_POLY_XLU_DISP(game->graph);
+        Matrix_scale(actor->_58, 1.0f, 1.0f, TRUE);
+        gSPMatrix(POLY_XLU_DISP++, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPDisplayList(POLY_XLU_DISP++, minsect_mdl[actor->_00][1]);
+        CLOSE_POLY_XLU_DISP(game->graph);
+    }
+    minsect_draw_shadow(actor, game);
+}
