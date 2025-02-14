@@ -1,1 +1,110 @@
 #include "ac_museum_insect_priv.h"
+
+void minsect_ka_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    static xyz_t init_pos = { 280.f, 40.f, 320.f };
+    actor->_72 = qrand();
+    actor->_58 = 80.f;
+    actor->_1C = init_pos;
+    actor->_1C.x += RANDOM2_F(280.f);
+    actor->_1C.y = actor->_58 + sin_s(actor->_72) * 10.f;
+    actor->_1C.z += RANDOM2_F(240.f);
+    actor->_34 = ZeroVec;
+    actor->_40 = 0.7f;
+    actor->_0C = 1.f;
+    actor->_10 = 0.5f;
+    actor->_70 = qrand();
+    actor->_68.y = qrand();
+    actor->_44 = ZeroVec;
+    actor->_74 = 0;
+    actor->_6E = (s16)RANDOM_F(1200.f) + 600;
+}
+
+void minsect_ka_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    xyz_t p = player->actor_class.world.position;
+    MUSEUM_INSECT_ACTOR* priv;
+    f32 dist = search_position_distanceXZ(&actor->_1C, &p);
+    actor->_6E--;
+    add_calc_short_angle2(&actor->_68.y, actor->_70, CALC_EASE2(0.2f), DEG2SHORT_ANGLE(0.5f), DEG2SHORT_ANGLE(0.25f));
+    if (actor->_1C.z > 540.f) {
+        actor->_70 = search_position_angleY(&actor->_1C, &p);
+    } else if (actor->_1C.z < 60.f) {
+        actor->_70 = search_position_angleY(&actor->_1C, &p);
+    } else if (actor->_1C.x > 340.f) {
+        actor->_70 = search_position_angleY(&actor->_1C, &p);
+    } else if (actor->_1C.x < 60.f) {
+        actor->_70 = search_position_angleY(&actor->_1C, &p);
+    }
+
+    if (actor->_74 == 0) {
+        if (actor->_6E < 0) {
+            if (dist < 60.f) {
+                actor->_70 = search_position_angleY(&actor->_1C, &p);
+                actor->_6E = (s16)RANDOM_F(1200.f) + 600;
+                actor->_74 = 1;
+            } else {
+                actor->_70 = qrand();
+                actor->_6E = (s16)RANDOM_F(1200.f) + 600;
+            }
+        }
+    } else if (actor->_74 == 1) {
+        priv = MI_Control_Actor;
+        actor->_70 = search_position_angleY(&actor->_1C, &p);
+        if (dist < 20.f) {
+            if (mPlib_Check_stung_mosquito(MI_Control_Actor)) {
+                actor->_74 = 2;
+            } else if (mDemo_Check(8, &priv->actor) == 0) {
+                sAdo_OngenTrgStart(0x6a, &actor->_1C);
+                mPlib_request_main_stung_mosquito_type1(MI_Control_Actor);
+            }
+        } else if (actor->_6E < 0) {
+            if (dist > 60.f) {
+                actor->_6E = (s16)RANDOM_F(1200.f) + 600;
+            } else {
+                actor->_70 = qrand();
+                actor->_74 = 0;
+            }
+        }
+        if (actor->_6E < 0) {
+            actor->_6E = (s16)RANDOM_F(1200.f) + 600;
+        }
+    } else if (actor->_74 == 2 && actor->_6E < 0) {
+        actor->_70 = qrand();
+        actor->_6E = (s16)RANDOM_F(1200.f) + 600;
+    }
+    if (dist < 300.f) {
+        sAdo_OngenPos((u32)actor, 0xcf, &actor->_1C);
+    }
+    mID_insect_moveF(actor);
+    actor->_0C += actor->_10;
+    if (minsect_mdl[actor->_00][(int)actor->_0C] == 0) {
+        actor->_0C = 1.f;
+    }
+    actor->_72 += DEG2SHORT_ANGLE(2.5f);
+    actor->_1C.y = actor->_58 + sin_s(actor->_72) * 10.f;
+    minsect_tree_ObjCheck(actor);
+    minsect_fly_BGCheck(actor, 600.0, 40.0);
+    if (actor->_8C & 0x10) {
+        actor->_1C.z = 600.f;
+    } else if (actor->_8C & 8) {
+        actor->_70 = DEG2SHORT_ANGLE(RANDOM2_F(90.f));
+    }
+}
+
+void minsect_ka_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    _texture_z_light_fog_prim(game->graph);
+    OPEN_DISP(game->graph);
+    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z, FALSE);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, TRUE);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
+    CLOSE_DISP(game->graph);
+
+    _texture_z_light_fog_prim_xlu(game->graph);
+    OPEN_POLY_XLU_DISP(game->graph);
+    gSPMatrix(POLY_XLU_DISP++, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(POLY_XLU_DISP++, minsect_mdl[actor->_00][(int)actor->_0C]);
+    CLOSE_POLY_XLU_DISP(game->graph);
+    minsect_draw_shadow(actor, game);
+}
