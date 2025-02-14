@@ -352,13 +352,13 @@ void minsect_genji_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_genji_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_dango.c_inc
-void mi_dango_defence_anime(void);
-void mi_dango_check_player(void);
-void mi_dango_move_init(void);
-void mi_dango_move(void);
-void mi_dango_defence_init(void);
-void mi_dango_defence(void);
-void mi_dango_setupAction(void);
+void mi_dango_defence_anime(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_dango_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_dango_move_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_dango_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_dango_defence_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_dango_defence(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void mi_dango_setupAction(MUSEUM_INSECT_PRIVATE_DATA* actor, int r4, GAME* game);
 void minsect_dango_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_dango_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_dango_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);

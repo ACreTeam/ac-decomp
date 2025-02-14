@@ -1,1 +1,202 @@
 #include "ac_museum_insect_priv.h"
+
+void mi_dango_defence_anime(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    static f32 scale_table[] = { 1.f, 0.85f, 1.15f, 0.75f, 1.05f, 0.65f, 0.95f };
+    if (actor->_7E < 7 && actor->_7E >= 0) {
+        if (chase_f(&actor->_58, scale_table[actor->_7E], 0.115f) == TRUE) {
+            actor->_7E--;
+        }
+    } else {
+        actor->_7E--;
+    }
+    if (actor->_7E < 0) {
+        actor->_7E = -1;
+    }
+}
+
+void mi_dango_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    f32 dist = search_position_distance(&actor->_1C, &player->actor_class.world.position);
+    if (dist < 80.f) {
+        if (player->actor_class.speed > 1.4f) {
+            actor->_7A += (s16)((dist / 80.f) * 8.f);
+        } else if (player->actor_class.speed > 5.f) {
+            actor->_7A += (s16)((dist / 80.f) * 20.f);
+        }
+    }
+}
+
+void mi_dango_move_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E = (s16)RANDOM_F(560.f) + 40;
+}
+
+void mi_dango_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_7C = 0;
+    actor->_6E--;
+    if ((f32)__fabs(actor->_40) < 0.008f) {
+        if (actor->_6E < 0) {
+            actor->_40 = RANDOM_F(0.1f) + 0.065f;
+            actor->_6E = (s16)RANDOM_F(560.f) + 40;
+        }
+    } else {
+        if (actor->_6E < 0) {
+            actor->_6E = (s16)RANDOM_F(260.f) + 40;
+            actor->_40 = 0.f;
+        }
+        chase_angle2(&actor->_68.y, actor->_74, actor->_78);
+        if (actor->_8C & 2) {
+            xyz_t p;
+            xyz_t_sub(&rail_pos[actor->_72], &actor->_1C, &p);
+            actor->_74 = atans_table(p.z, p.x);
+            if (ABS((s16)(actor->_68.y - actor->_74)) < DEG2SHORT_ANGLE(1)) {
+                actor->_8C &= ~2;
+            } else {
+                mID_insect_moveF(actor);
+            }
+        } else {
+            xyz_t p;
+            xyz_t_sub(&rail_pos[actor->_72], &actor->_1C, &p);
+            actor->_74 = atans_table(p.z, p.x);
+            if (!chase_xyz_t(&actor->_1C, &rail_pos[actor->_72], actor->_40)) {
+                if (actor->_8C & 4) {
+                    actor->_72 += actor->_76;
+                    actor->_70 += actor->_76;
+                    actor->_8C &= ~4;
+                } else if (((actor->_76 < 0 && RANDOM_F(1.f) > 0.85f) || (actor->_76 > 0 && RANDOM_F(1.f) > 0.15f)) &&
+                               (actor->_72 < 5) ||
+                           actor->_72 == 0) {
+                    xyz_t p2;
+                    if (actor->_76 < 0) {
+                        actor->_8C |= 2;
+                        actor->_8C |= 4;
+                    }
+                    actor->_76 = 1;
+                    actor->_78 = DEG2SHORT_ANGLE(2.5f);
+                    actor->_72 += actor->_76;
+                    actor->_70 += actor->_76;
+                    xyz_t_sub(&rail_pos[actor->_72], &actor->_1C, &p2);
+                    actor->_74 = atans_table(p2.z, p2.x);
+                } else {
+                    xyz_t p;
+                    if (actor->_76 > 0) {
+                        actor->_8C |= 2;
+                        actor->_8C |= 4;
+                    }
+                    actor->_76 = -1;
+                    actor->_78 = DEG2SHORT_ANGLE(-2.5f);
+                    actor->_72 += actor->_76;
+                    actor->_70 += actor->_76;
+                    xyz_t_sub(&rail_pos[actor->_72], &actor->_1C, &p);
+                    actor->_74 = atans_table(p.z, p.x);
+                }
+            }
+        }
+    }
+}
+
+void mi_dango_defence_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_7E < 0) {
+        actor->_7E = 10;
+        actor->_80 = 1;
+    }
+    actor->_6E = (s16)RANDOM_F(260.f) + 500;
+}
+
+void mi_dango_defence(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_6E--;
+    if (actor->_6E > 0 && actor->_7E < 0) {
+        actor->_7C = 1;
+        actor->_80 = 0;
+    }
+    if (actor->_6E < 0 && actor->_7C == 1 && actor->_7E < 0) {
+        if (actor->_80 == 0) {
+            actor->_80 = 1;
+            actor->_7E = 10;
+        } else {
+            actor->_80 = 0;
+            actor->_7C = 0;
+            actor->_7A = 0;
+            mi_dango_setupAction(actor, 0, game);
+        }
+    }
+}
+
+void mi_dango_setupAction(MUSEUM_INSECT_PRIVATE_DATA* actor, int r4, GAME* game) {
+    static PRIV_INSECT_PROCESS init_proc[] = { mi_dango_move_init, mi_dango_defence_init };
+    static PRIV_INSECT_PROCESS move_proc[] = { mi_dango_move, mi_dango_defence };
+    actor->_04 = move_proc[r4];
+    init_proc[r4](actor, game);
+}
+
+void minsect_dango_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    xyz_t p;
+    actor->_70 = RANDOM_F(5.f);
+    if (RANDOM2_F(1.f) > 0.f && actor->_70 < 5 || actor->_70 == 0) {
+        actor->_76 = 1;
+        actor->_78 = DEG2SHORT_ANGLE(2.5f);
+    } else {
+        actor->_76 = -1;
+        actor->_78 = DEG2SHORT_ANGLE(-2.5f);
+    }
+    actor->_72 = actor->_70 + actor->_76;
+    actor->_1C = rail_pos[actor->_70];
+    xyz_t_sub(&rail_pos[actor->_72], &actor->_1C, &p);
+    actor->_68.y = actor->_74 = atans_table(p.z, p.x);
+    actor->_40 = RANDOM_F(0.1f) + 0.065f;
+    actor->_6E = RANDOM_F(280.f) + 20.f;
+    actor->_44 = ZeroVec;
+    actor->_34 = ZeroVec;
+    actor->_58 = 1.0f;
+    actor->_7C = 0;
+    mi_dango_setupAction(actor, 0, game);
+    actor->_7E = -1;
+}
+
+void minsect_dango_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    mi_dango_defence_anime(actor, game);
+    mi_dango_check_player(actor, game);
+    actor->_7A--;
+    if (actor->_7A < 0) {
+        actor->_7A = 0;
+    }
+    if (actor->_7A > 900) {
+        actor->_7A = 900;
+    }
+    if (actor->_7A > 200) {
+        if (actor->_7C == 0 && actor->_80 == 0) {
+            mi_dango_setupAction(actor, 1, game);
+        } else if (actor->_6E < 10) {
+            actor->_6E++;
+        }
+    }
+    if (GETREG(NMREG, 1)) {
+        mi_dango_setupAction(actor, 1, game);
+    }
+    actor->_04(actor, game);
+}
+
+void minsect_dango_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    _texture_z_light_fog_prim(game->graph);
+    OPEN_DISP(game->graph);
+    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z, FALSE);
+    if (actor->_7C) {
+        Matrix_rotateXYZ(DEG2SHORT_ANGLE2(GETREG(NMREG, 5) + 20.f), DEG2SHORT_ANGLE2(GETREG(NMREG, 6)),
+                         DEG2SHORT_ANGLE2(GETREG(NMREG, 7)), TRUE);
+    }
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, TRUE);
+    if (actor->_7C) {
+        Matrix_scale(GETREG(NMREG, 2) * 0.01f + 1.2f, GETREG(NMREG, 3) * 0.01f + 1.2f, GETREG(NMREG, 4) * 0.01f + 1.2f,
+                     TRUE);
+    }
+    Matrix_scale(1.f, 1.f, actor->_58, TRUE);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    if (actor->_7C) {
+        gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][1]);
+
+    } else {
+        gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
+    }
+    minsect_draw_shadow(actor, game);
+    CLOSE_DISP(game->graph);
+}
