@@ -364,16 +364,16 @@ void minsect_dango_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_dango_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_okera.c_inc
-void mi_okera_check_player(void);
+void mi_okera_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_okera_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
-void okera_dig_up_process_init(void);
-void okera_dig_up_process(void);
-void okera_normal_process_init(void);
-void okera_normal_process(void);
-void okera_dig_down_process_init(void);
-void okera_dig_down_process(void);
-void okera_dig_wait_process_init(void);
-void okera_dig_wait_process(void);
+void okera_dig_up_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void okera_dig_up_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void okera_normal_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void okera_normal_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void okera_dig_down_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void okera_dig_down_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void okera_dig_wait_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void okera_dig_wait_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_okera_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_okera_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
