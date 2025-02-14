@@ -53,7 +53,13 @@ typedef struct _MUSEUM_INSECT_PRIVATE_DATA {
     int _50;
     int _54;
     f32 _58;
-    f32 _5C;
+    union {
+        f32 _5C;
+        struct {
+            s16 _5C_s16;
+            s16 _5E_s16;
+        };
+    };
     f32 _60;
     artificial_padding(0x60, 0x68, int);
     s_xyz _68;
@@ -71,8 +77,7 @@ typedef struct _MUSEUM_INSECT_PRIVATE_DATA {
     artificial_padding(0x82, 0x8C, s16);
     s16 _8C;
     s16 _8E;
-    s16 _90;
-    s16 _92;
+    int _90;
 } MUSEUM_INSECT_PRIVATE_DATA;
 
 typedef struct _INSECT_DISPLAY_MSG_INFO {
@@ -83,7 +88,8 @@ typedef struct _INSECT_DISPLAY_MSG_INFO {
 typedef struct _MUSEUM_INSECT_ACTOR {
     ACTOR actor;                                                  // offset: 0x0
     MUSEUM_INSECT_PRIVATE_DATA privInsects[aINS_INSECT_TYPE_NUM]; // offset 0x174
-    artificial_padding(0x174, 0x24b8, MUSEUM_INSECT_PRIVATE_DATA[aINS_INSECT_TYPE_NUM]);
+    MUSEUM_INSECT_PRIVATE_DATA _1894[7];                          // offset 0x1894
+    artificial_padding(0x1894, 0x24b8, MUSEUM_INSECT_PRIVATE_DATA[7]);
     MUSEUM_INSECT_SKELETON _24B8[4];
     int _2F78;                        // offset: 0x2F78
     int _2F7C;                        // offset: 0x2F7C
@@ -335,12 +341,12 @@ void minsect_goki_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_goki_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_insect_genji.c_inc
-void mi_genji_check_player(void);
-void genji_light_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
-void genji_light_make(void);
-void genji_light_anime(void);
-void genji_light_move(void);
-void genji_light_draw(void);
+void mi_genji_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void genji_light_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game, s16 r5);
+void genji_light_make(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game, s16 i);
+void genji_light_anime(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void genji_light_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
+void genji_light_draw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_genji_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_genji_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
 void minsect_genji_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game);
