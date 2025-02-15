@@ -854,7 +854,23 @@ actor/ac_museum_indoor.c:
 	.data       start:0x00038F08 end:0x00038F48
 
 actor/ac_museum_insect.c:
-	.text       start:0x000EA278 end:0x000FEB90
+	.text       start:0x000EA278 end:0x000EAA24
+	.text       start:0x000EAA24 end:0x000EC6CC
+	.text       start:0x000EC6CC end:0x000EDE80
+	.text       start:0x000EDE80 end:0x000EE5C4
+	.text       start:0x000EE5C4 end:0x000F11E4
+	.text       start:0x000F11E4 end:0x000F21F8
+	.text       start:0x000F21F8 end:0x000F3E48
+	.text       start:0x000F3E48 end:0x000F5244
+	.text       start:0x000F5244 end:0x000F5C90
+	.text       start:0x000F5C90 end:0x000F7220
+	.text       start:0x000F7220 end:0x000F8CF4
+	.text       start:0x000F8CF4 end:0x000FA5FC
+	.text       start:0x000FA5FC end:0x000FB188
+	.text       start:0x000FB188 end:0x000FC81C
+	.text       start:0x000FC81C end:0x000FD418
+	.text       start:0x000FD418 end:0x000FE3D4
+	.text       start:0x000FE3D4 end:0x000FEB90
 	.rodata     start:0x00003420 end:0x00003828
 	.data       start:0x00038F48 end:0x00039BF0
 	.bss        start:0x000A16D8 end:0x000A16F0
