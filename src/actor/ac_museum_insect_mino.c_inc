@@ -1,4 +1,5 @@
 #include "ac_museum_insect_priv.h"
+xyz_t amenbo_center_pos = { 289.f, 25.f, 218.f };
 
 void minsect_mino_up_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     actor->_40 = 0.165f;

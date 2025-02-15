@@ -1,5 +1,8 @@
 #include "ac_museum_insect_priv.h"
 
+xyz_t tonbo_rock_pos[6] = { { 215.f, 68.f, 403.f }, { 232.f, 60.f, 381.f }, { 372.f, 65.f, 482.f },
+                            { 390.f, 68.f, 469.f }, { 328.f, 72.f, 501.f }, { 351.f, 72.f, 501.f } };
+
 void minsect_tonbo_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     actor->_34 = ZeroVec;
     actor->_68 = ZeroSVec;

@@ -1,5 +1,8 @@
 #include "ac_museum_insect_priv.h"
 
+xyz_t rail_pos[6] = { { 368.f, 45.f, 467.f }, { 363.f, 45.f, 482.f }, { 374.f, 45.f, 499.f },
+                      { 393.f, 45.f, 502.f }, { 407.f, 45.f, 488.f }, { 407.f, 45.f, 469.f } };
+
 void mi_dango_defence_anime(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     static f32 scale_table[] = { 1.f, 0.85f, 1.15f, 0.75f, 1.05f, 0.65f, 0.95f };
     if (actor->_7E < 7 && actor->_7E >= 0) {

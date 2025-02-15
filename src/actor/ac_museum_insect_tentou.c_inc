@@ -12,6 +12,13 @@ void mi_tentou_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     }
 }
 
+xyz_t tentou_flower_pos[4] = {
+    { 410.0f, 65.f, 240.0f },
+    { 213.5f, 65.f, 155.0f },
+    { 233.0f, 65.f, 233.5f },
+    { 294.0f, 65.f, 170.5f },
+};
+
 void mi_tentou_kama_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
     static f32 scaleX_table[7] = { 1.f, 0.95f, 1.15f, 0.95f, 1.15f, 0.95f, 1.15f };
     if (actor->_7E < 7) {

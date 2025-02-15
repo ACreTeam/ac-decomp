@@ -1,5 +1,7 @@
 #include "ac_museum_insect_priv.h"
 
+xyz_t ari_rail_pos[3] = { { 177.f, 45.f, -14.f }, { 242.f, 45.f, 10.f }, { 307.f, 45.f, -14.f } };
+
 void minsect_ka_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     static xyz_t init_pos = { 280.f, 40.f, 320.f };
     actor->_72 = qrand();

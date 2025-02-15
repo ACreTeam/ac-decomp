@@ -1,4 +1,5 @@
 #include "ac_museum_insect_priv.h"
+xyz_t hachi_base_pos = { 165.5f, 78.5f, 482.5f };
 
 void mi_hachi_hane_anime(MUSEUM_INSECT_PRIVATE_DATA* actor) {
     static f32 scaleX_table[7] = { 1.f, 0.85f, 1.15f, 0.85f, 1.15f, 0.85f, 1.15f };

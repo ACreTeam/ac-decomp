@@ -1,5 +1,21 @@
 #include "ac_museum_insect_priv.h"
 
+extern cKF_Skeleton_R_c cKF_bs_r_act_m_hirata_b, cKF_bs_r_act_m_nokogiri_b, cKF_bs_r_act_m_miyama_b,
+    cKF_bs_r_act_m_okuwa_b;
+
+cKF_Skeleton_R_c* kuwagata_model_tbl[] = { &cKF_bs_r_act_m_hirata_b, &cKF_bs_r_act_m_nokogiri_b,
+                                           &cKF_bs_r_act_m_miyama_b, &cKF_bs_r_act_m_okuwa_b };
+
+extern cKF_Animation_R_c cKF_ba_r_act_m_hirata_b, cKF_ba_r_act_m_nokogiri_b, cKF_ba_r_act_m_miyama_b,
+    cKF_ba_r_act_m_okuwa_b;
+
+cKF_Animation_R_c* kuwagata_anim_tbl[] = { &cKF_ba_r_act_m_hirata_b, &cKF_ba_r_act_m_nokogiri_b,
+                                           &cKF_ba_r_act_m_miyama_b, &cKF_ba_r_act_m_okuwa_b };
+
+xyz_t kuwagata_base_pos[4] = {
+    { 166.f, 80.5f, 0.5f }, { 169.f, 66.5f, 5.0f }, { 318.f, 80.0f, 1.0f }, { 315.f, 65.0f, 5.5f }
+};
+
 void mi_kuwagata_rensa_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     actor->_7A = 0;
 }
