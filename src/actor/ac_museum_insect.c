@@ -687,6 +687,9 @@ const f32 base_high_tbl[4] = {
 };
 
 // clang-format on
+MUSEUM_INSECT_ACTOR* MI_Control_Actor = NULL;
+
+#include "../src/actor/ac_museum_insect_base.c_inc"
 
 int Museum_Insect_GetMsgNo(ACTOR* actorx) {
     static u8 item_name[mIN_ITEM_NAME_LEN];
@@ -720,9 +723,6 @@ int Museum_Insect_GetMsgNo(ACTOR* actorx) {
     return msgNo;
 }
 
-MUSEUM_INSECT_ACTOR* MI_Control_Actor = NULL;
-
-#include "../src/actor/ac_museum_insect_base.c_inc"
 f32 minsect_scale_tbl[40] = { 0.01f, 0.01f, 0.01f,  0.01f,  0.008f, 0.008f, 0.008f, 0.008f, 0.01f, 0.01f,
                               0.01f, 0.01f, 0.01f,  0.01f,  0.01f,  0.01f,  0.01f,  0.01f,  0.01f, 0.01f,
                               0.01f, 0.01f, 0.009f, 0.009f, 0.009f, 0.009f, 0.01f,  0.01f,  0.01f, 0.01f,
