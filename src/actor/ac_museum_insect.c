@@ -756,48 +756,6 @@ xyz_t ari_rail_pos[3] = {
     { 307.f, 45.f, -14.f }
 };
 
-f32 minsect_scale_tbl[40] = {
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.008f,
-    0.008f,
-    0.008f,
-    0.008f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.009f,
-    0.009f,
-    0.009f,
-    0.009f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.007f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f,
-    0.01f
-};
 
 // rodata
 const s16 aim_angle_tbl[6] = {
@@ -884,6 +842,12 @@ int Museum_Insect_GetMsgNo(ACTOR* actorx) {
 }
 
 MUSEUM_INSECT_ACTOR* MI_Control_Actor = NULL;
+
+#include "../src/actor/ac_museum_insect_base.c_inc"
+f32 minsect_scale_tbl[40] = { 0.01f, 0.01f, 0.01f,  0.01f,  0.008f, 0.008f, 0.008f, 0.008f, 0.01f, 0.01f,
+                              0.01f, 0.01f, 0.01f,  0.01f,  0.01f,  0.01f,  0.01f,  0.01f,  0.01f, 0.01f,
+                              0.01f, 0.01f, 0.009f, 0.009f, 0.009f, 0.009f, 0.01f,  0.01f,  0.01f, 0.01f,
+                              0.01f, 0.01f, 0.01f,  0.01f,  0.007f, 0.01f,  0.01f,  0.01f,  0.01f, 0.01f };
 
 int Museum_Insect_Check_Talk_Distance(GAME* game, int i) {
     static xyz_t kanban_pos[6] = { { 140.f, 40.f, 60.f },  { 420.f, 40.f, 60.f },  { 220.f, 40.f, 300.f },
@@ -1036,5 +1000,3 @@ void Museum_Insect_Actor_draw(ACTOR* actorx, GAME* game) {
         }
     }
 }
-
-#include "../src/actor/ac_museum_insect_base.c_inc"

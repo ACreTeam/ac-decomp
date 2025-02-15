@@ -226,7 +226,7 @@ void minsect_genji_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     add_calc_short_angle2(&actor->_68.z, actor->_5E_s16, CALC_EASE2(0.4f),
                           (s16)(DEG2SHORT_ANGLE(GETREG(NMREG, 3) * 0.01f + 5.f) >> 1) >> 1, DEG2SHORT_ANGLE(0.25f));
     add_calc_short_angle2(&actor->_7E, actor->_80, CALC_EASE2(0.4f), DEG2SHORT_ANGLE(0.75f), DEG2SHORT_ANGLE(0.25f));
-    for (i = 1; i < 7; i++, priv++) {
+    for (i = 0 + 1; i < 6 + 1; i++, priv++) {
         if (priv->_8C & 1) {
             if ((GETREG(NMREG, 0xF) || (RANDOM_F(1.f) > 0.9f && actor->_6E < 0)) && (priv->_8C & 0x100) == 0) {
 
