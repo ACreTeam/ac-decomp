@@ -314,7 +314,15 @@ void minsect_flower_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor, xyz_t* p) {
 }
 
 void minsect_goki_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor) {
-    f32 v1, v2;
+    f32 v1;
+    f32 v2;
+    f32 a1;
+    f32 a2;
+    f32 m1;
+    f32 m2;
+    f32 am1;
+    f32 am2;
+
     v1 = actor->_1C.x - 115.f;
     v2 = 445.f - actor->_1C.x;
     actor->_8C &= ~0x1e;
@@ -345,24 +353,32 @@ void minsect_goki_BGCheck(MUSEUM_INSECT_PRIVATE_DATA* actor) {
         for (i = 0; i < 2; i++) {
             static const float BG_ZB_tbl[2] = { 115.f, 355.f };
             static const float BG_ZF_tbl[2] = { 285.f, 525.f };
-            f32 a1 = actor->_1C.z - BG_ZB_tbl[i];
-            f32 a2 = BG_ZF_tbl[i] - actor->_1C.z;
+            a1 = actor->_1C.z - BG_ZB_tbl[i];
+            a2 = BG_ZF_tbl[i] - actor->_1C.z;
             if (a1 > 0.f && a2 > 0.f) {
-                // f32 v3 = -v1;
-                f32 m1 = v1 > v2 ? v2 : -v1;
-                f32 m2 = a1 > a2 ? a2 : -a1;
-                f32 bb = ABS(m2);
-                f32 cc = ABS(m1);
-                if (cc > bb) {
-                    actor->_1C.x += m2;
-                    if (m2 > 0.f) {
+                // float regswaps here
+                if (v1 > v2) {
+                    m1 = v2;
+                } else {
+                    m1 = -v1;
+                }
+                if (a1 > a2) {
+                    m2 = a2;
+                } else {
+                    m2 = -a1;
+                }
+                am1 = ABS(m1);
+                am2 = ABS(m2);
+                if (am2 > am1) {
+                    actor->_1C.x += m1;
+                    if (m1 > 0.f) {
                         actor->_8C |= 4;
                     } else {
                         actor->_8C |= 2;
                     }
                 } else {
-                    actor->_1C.z += m1;
-                    if (m1 > 0.f) {
+                    actor->_1C.z += m2;
+                    if (m2 > 0.f) {
                         actor->_8C |= 0x10;
                     } else {
                         actor->_8C |= 8;
