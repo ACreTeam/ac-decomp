@@ -686,42 +686,6 @@ const f32 base_high_tbl[4] = {
     85.f, 95.f, 90.f, 90.f
 };
 
-const xyz_t mino_base_pos = {
-    135.f, 64.f, 474.f
-};
-
-const xyz_t mino_top_pos = {
-    135.f, 90.f, 474.f
-};
-
-const xyz_t mino_bottom_pos = {
-    135.f, 54.f, 474.f
-};
-
-const xyz_t kumo_base_pos = {
-    330.f, 64.5f, 229.f 
-};
-
-const xyz_t kumo_top_pos = {
-    330.f, 90.f, 229.f
-};
-
-const xyz_t kumo_bottom_pos = {
-    330.f, 54.f, 229.f
-};
-
-const xyz_t base_genji_pos = {
-    258.f, 62.f, 258.5f
-};
-
-const xyz_t genji_mizu_pos = {
-    289.f, 25.f, 218.f
-};
-
-const xyz_t okera_base_pos = {
-    235.f, 45.f, 445.f
-};
-
 // clang-format on
 
 int Museum_Insect_GetMsgNo(ACTOR* actorx) {

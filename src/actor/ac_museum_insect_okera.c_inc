@@ -1,5 +1,7 @@
 #include "ac_museum_insect_priv.h"
 
+const xyz_t okera_base_pos = { 235.f, 45.f, 445.f };
+
 void mi_okera_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
     f32 dist = search_position_distance(&actor->_1C, &player->actor_class.world.position);

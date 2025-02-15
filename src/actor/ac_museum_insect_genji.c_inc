@@ -1,5 +1,9 @@
 #include "ac_museum_insect_priv.h"
 
+const xyz_t base_genji_pos = { 258.f, 62.f, 258.5f };
+
+const xyz_t genji_mizu_pos = { 289.f, 25.f, 218.f };
+
 void mi_genji_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
     f32 dist = search_position_distance(&actor->_1C, &player->actor_class.world.position);
