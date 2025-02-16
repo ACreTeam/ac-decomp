@@ -1,3 +1,4 @@
+#include "ac_museum_fish_priv.h"
 
 void mfish_aroana_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     mfish_onefish_ct(actor, gamex);
@@ -20,8 +21,6 @@ void mfish_aroana_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     add_calc2(&actor->_5E8, actor->_5F0, 0.1f, actor->_5EC);
     add_calc0(&actor->_5F0, 0.01f, 0.001f);
 }
-
-// close copy of mfish_afish_normal_process_init
 
 void mfish_aroana_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
     f32 v = RANDOM_F(actor->init_data._14) + actor->init_data._10;
@@ -151,10 +150,8 @@ void mfish_aroana_turn_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     if (ABS((s16)(actor->_60C.y - actor->_612.y)) < DEG2SHORT_ANGLE(2) && actor->_5E8 < 0.1f) {
         if (actor->_63E > 0) {
             if (mfish_WallCheck(actor)) {
-                // actor->_640 = 10;
                 mfish_aroana_turn_process_init(actor);
             } else {
-                // actor->_640 = 10;
                 mfish_aroana_normal_process_init(actor);
             }
             actor->_63E--;
@@ -253,18 +250,18 @@ void mfish_aroana_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->_38._00.frame_control.speed = (actor->_5E8 * 2.0f) / (actor->init_data._10 + actor->init_data._14) + 0.5f;
 }
 
-BOOL mfish_aroana_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
-                              void* arg, s_xyz* joint1, xyz_t* trans) {
+BOOL mfish_aroana_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                              u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
     int v;
-    if (joint_num == 1) {
+    if (joint_idx == 1) {
         Matrix_scale(1.0, sin_s(actor->_63A + actor->_63C) * 0.025f + 1.0f, sin_s(actor->_63A) * 0.025f + 1.0f, 1);
-    } else if (joint_num == 2) {
-        v = joint1->y - (actor->_618.z << 1);
-        joint1->y = MIN(MAX(v, DEG2SHORT_ANGLE(-40)), DEG2SHORT_ANGLE(40));
+    } else if (joint_idx == 2) {
+        v = joint_rot->y - (actor->_618.z << 1);
+        joint_rot->y = MIN(MAX(v, DEG2SHORT_ANGLE(-40)), DEG2SHORT_ANGLE(40));
 
-        v = joint1->x - (actor->_618.z >> 2);
-        joint1->x = MIN(MAX(v, DEG2SHORT_ANGLE(-20)), DEG2SHORT_ANGLE(20));
+        v = joint_rot->x - (actor->_618.z >> 2);
+        joint_rot->x = MIN(MAX(v, DEG2SHORT_ANGLE(-20)), DEG2SHORT_ANGLE(20));
 
         Matrix_scale(1.0f, sin_s(actor->_63A + DEG2SHORT_ANGLE(270)) * 0.05f + 1.0f,
                      sin_s(actor->_63A + DEG2SHORT_ANGLE(90)) * 0.05f + 1.0f, 1);

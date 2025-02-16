@@ -1,3 +1,4 @@
+#include "ac_museum_fish_priv.h"
 
 void mfish_zarigani_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     YET_SKELETON* skele = &actor->_38;
@@ -181,28 +182,28 @@ void mfish_zarigani_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     }
 }
 
-BOOL mfish_zarigani_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
-                                void* arg, s_xyz* joint1, xyz_t* trans) {
+BOOL mfish_zarigani_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
-    if (joint_num == 2) {
-        joint1->x += (s16)(actor->_60C.x >> 3);
-    } else if (joint_num == 3) {
-        joint1->z += (s16)((joint1->z + DEG2SHORT_ANGLE2(-90.65f) + GETREG(TAKREG, 0x2a)) *
-                           (1.5f + GETREG(TAKREG, 0x29) * 0.1f));
-    } else if (joint_num == 5) {
-        joint1->x += (s16)DEG2SHORT_ANGLE2(3.0f * sin_s(actor->_638));
-        joint1->z -= (s16)DEG2SHORT_ANGLE2(5.0f * cos_s(actor->_638));
-        joint1->z += (s16)(actor->_618.z * (0.4f + cos_s(actor->_638) * 0.4f));
-    } else if (joint_num == 7) {
-        joint1->x += (s16)DEG2SHORT_ANGLE2(3.0f * sin_s(actor->_638));
-        joint1->z -= (s16)DEG2SHORT_ANGLE2(5.0f * cos_s(actor->_638));
-        joint1->z += (s16)(actor->_618.z * (0.4f + cos_s(actor->_638) * 0.4f));
-    } else if (joint_num == 8) {
-        joint1->z >>= 2;
+    if (joint_idx == 2) {
+        joint_rot->x += (s16)(actor->_60C.x >> 3);
+    } else if (joint_idx == 3) {
+        joint_rot->z += (s16)((joint_rot->z + DEG2SHORT_ANGLE2(-90.65f) + GETREG(TAKREG, 0x2a)) *
+                              (1.5f + GETREG(TAKREG, 0x29) * 0.1f));
+    } else if (joint_idx == 5) {
+        joint_rot->x += (s16)DEG2SHORT_ANGLE2(3.0f * sin_s(actor->_638));
+        joint_rot->z -= (s16)DEG2SHORT_ANGLE2(5.0f * cos_s(actor->_638));
+        joint_rot->z += (s16)(actor->_618.z * (0.4f + cos_s(actor->_638) * 0.4f));
+    } else if (joint_idx == 7) {
+        joint_rot->x += (s16)DEG2SHORT_ANGLE2(3.0f * sin_s(actor->_638));
+        joint_rot->z -= (s16)DEG2SHORT_ANGLE2(5.0f * cos_s(actor->_638));
+        joint_rot->z += (s16)(actor->_618.z * (0.4f + cos_s(actor->_638) * 0.4f));
+    } else if (joint_idx == 8) {
+        joint_rot->z >>= 2;
         if (actor->_60C.x < 0) {
-            joint1->z += actor->_60C.x;
+            joint_rot->z += actor->_60C.x;
         } else {
-            joint1->z += (s16)(actor->_60C.x * (GETREG(TAKREG, 0x20) * 0.1f + 3.0f));
+            joint_rot->z += (s16)(actor->_60C.x * (GETREG(TAKREG, 0x20) * 0.1f + 3.0f));
         }
     }
     return TRUE;

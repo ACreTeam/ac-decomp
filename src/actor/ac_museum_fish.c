@@ -1,24 +1,4 @@
-#include "ac_museum_fish.h"
-#include "m_msg.h"
-#include "m_common_data.h"
-#include "sys_matrix.h"
-#include "m_player_lib.h"
-#include "m_debug_mode.h"
-#include "m_rcp.h"
-#include "ac_gyoei.h"
-
-// found useful macros
-#define MY_MAX(a, b) (((a) >= (b)) ? (a) : (b))
-#define MY_CLAMP(v, l, h) MIN(MY_MAX((l), (v)), (h))
-#define ARRAY_LEN(a) (sizeof(a) / sizeof(*a))
-
-#define CALC_EASE(x) (1.0f - sqrtf(1.0f - (x)))
-#define CALC_EASE2(x) CALC_EASE(CALC_EASE(x))
-#define SHORT2DEG_ANGLE2(x) ((x) * (360.0f / 65536.0f))
-#define RANDOMF_RANGE(min, max) ((f32)(min) + (f32)RANDOM_F((f32)(max) - (f32)(min)))
-#define RANDOM2F_RANGE(min, max) ((f32)(min) + (f32)RANDOM2_F((f32)(max) - (f32)(min)))
-#define RANDOM_RANGE(min, max) ((int)(min) + (int)RANDOM((int)(max) - (int)(min)))
-#define RANDOM2_RANGE(min, max) ((int)(min) + (int)RANDOM2((int)(max) - (int)(min)))
+#include "ac_museum_fish_priv.h"
 
 // extern data
 // clang-format off
@@ -115,7 +95,6 @@ extern cKF_Animation_R_c
     cKF_ba_r_obj_museum5_kusa3;
 
 // data
-
 MUSEUM_FISH_ACTOR* MF_Control_Actor;
 
 /*  Init stuff  */
@@ -494,134 +473,6 @@ PRIV_FISH_DRAW mfish_dw[40] = {
 /* ARAPAIMA         */ mfish_big_fish_dw
 };
 
-xyz_t unagi_rail_pos[25] = {
-    { 228.0f, 57.0f, 192.0f },
-    { 231.0f, 57.0f, 203.0f },
-    { 237.0f, 57.0f, 215.0f },
-    { 245.0f, 58.0f, 225.0f },
-    { 252.0f, 59.0f, 233.0f },
-    { 254.0f, 60.0f, 245.0f },
-    { 248.0f, 60.0f, 255.0f },
-    { 238.0f, 60.0f, 256.0f },
-    { 231.0f, 60.0f, 247.0f },
-    { 222.0f, 60.0f, 240.0f },
-    { 212.0f, 60.0f, 243.0f },
-    { 203.0f, 60.0f, 249.0f },
-    { 196.0f, 60.0f, 248.0f },
-    { 191.0f, 60.0f, 241.0f },
-    { 191.0f, 60.0f, 234.0f },
-    { 187.0f, 60.0f, 223.0f },
-    { 183.0f, 60.0f, 212.0f },
-    { 181.0f, 60.0f, 203.0f },
-    { 182.0f, 57.0f, 191.0f },
-    { 187.0f, 56.0f, 183.0f },
-    { 193.0f, 56.0f, 176.0f },
-    { 201.0f, 56.0f, 172.0f },
-    { 209.0f, 56.0f, 173.0f },
-    { 216.0f, 56.0f, 176.0f },
-    { 221.0f, 56.0f, 182.0f }
-};
-
-xyz_t unagi_rail_pos2[20] = {
-    { 228.0f, 57.0f, 192.0f },
-    { 236.0f, 57.0f, 201.0f },
-    { 244.0f, 57.0f, 204.0f },
-    { 250.0f, 58.0f, 213.0f },
-    { 254.0f, 59.0f, 225.0f },
-    { 250.0f, 60.0f, 238.0f },
-    { 243.0f, 60.0f, 242.0f },
-    { 235.0f, 60.0f, 238.0f },
-    { 226.0f, 60.0f, 233.0f },
-    { 215.0f, 60.0f, 229.0f },
-    { 205.0f, 60.0f, 228.0f },
-    { 198.0f, 60.0f, 229.0f },
-    { 191.0f, 60.0f, 227.0f },
-    { 186.0f, 60.0f, 222.0f },
-    { 181.0f, 60.0f, 216.0f },
-    { 181.0f, 60.0f, 207.0f },
-    { 184.0f, 60.0f, 196.0f },
-    { 191.0f, 60.0f, 186.0f },
-    { 201.0f, 57.0f, 177.0f },
-    { 213.0f, 56.0f, 178.0f }
-};
-
-xyz_t unagi_rail_pos3[25] = {
-    { 228.0f, 57.0f, 192.0f },
-    { 231.0f, 57.0f, 203.0f },
-    { 229.0f, 57.0f, 213.0f },
-    { 222.0f, 58.0f, 225.0f },
-    { 212.0f, 59.0f, 226.0f },
-    { 204.0f, 60.0f, 227.0f },
-    { 197.0f, 60.0f, 230.0f },
-    { 193.0f, 60.0f, 236.0f },
-    { 195.0f, 60.0f, 246.0f },
-    { 201.0f, 60.0f, 253.0f },
-    { 212.0f, 60.0f, 256.0f },
-    { 222.0f, 60.0f, 255.0f },
-    { 237.0f, 60.0f, 254.0f },
-    { 243.0f, 60.0f, 246.0f },
-    { 240.0f, 60.0f, 232.0f },
-    { 232.0f, 60.0f, 227.0f },
-    { 223.0f, 60.0f, 225.0f },
-    { 209.0f, 60.0f, 225.0f },
-    { 198.0f, 60.0f, 220.0f },
-    { 190.0f, 60.0f, 209.0f },
-    { 187.0f, 60.0f, 196.0f },
-    { 191.0f, 60.0f, 184.0f },
-    { 197.0f, 60.0f, 178.0f },
-    { 207.0f, 59.0f, 173.0f },
-    { 221.0f, 57.0f, 180.0f }
-};
-
-xyz_t unagi_normal_to_reverse_rail_pos[12] = {
-    { 228.0f, 57.0f, 192.0f },
-    { 236.0f, 57.0f, 201.0f },
-    { 244.0f, 57.0f, 204.0f },
-    { 250.0f, 58.0f, 213.0f },
-    { 254.0f, 59.0f, 225.0f },
-    { 250.0f, 60.0f, 238.0f },
-    { 243.0f, 60.0f, 242.0f },
-    { 235.0f, 60.0f, 236.0f },
-    { 226.0f, 60.0f, 228.0f },
-    { 225.0f, 60.0f, 219.0f },
-    { 228.0f, 58.0f, 208.0f },
-    { 228.0f, 57.0f, 192.0f }
-};
-
-xyz_t unagi_reverse_to_normal_rail_pos[19] = {
-    { 228.0f, 57.0f, 192.0f },
-    { 218.0f, 56.0f, 178.0f },
-    { 204.0f, 57.0f, 176.0f },
-    { 191.0f, 58.0f, 186.0f },
-    { 184.0f, 59.0f, 196.0f },
-    { 189.0f, 60.0f, 208.0f },
-    { 198.0f, 60.0f, 215.0f },
-    { 205.0f, 60.0f, 224.0f },
-    { 204.0f, 60.0f, 235.0f },
-    { 196.0f, 60.0f, 242.0f },
-    { 188.0f, 60.0f, 241.0f },
-    { 183.0f, 60.0f, 233.0f },
-    { 180.0f, 60.0f, 219.0f },
-    { 181.0f, 60.0f, 207.0f },
-    { 184.0f, 60.0f, 196.0f },
-    { 191.0f, 59.0f, 186.0f },
-    { 204.0f, 57.0f, 176.0f },
-    { 218.0f, 56.0f, 178.0f },
-    { 228.0f, 57.0f, 192.0f }
-};
-
-xyz_t *unagi_rail_tbl[3] = {
-    unagi_rail_pos,
-    unagi_rail_pos2,
-    unagi_rail_pos3
-};
-
-int unagi_rail_num_tbl[3] = {
-    ARRAY_LEN(unagi_rail_pos),
-    ARRAY_LEN(unagi_rail_pos2),
-    ARRAY_LEN(unagi_rail_pos3),
-};
-
 #include "../src/actor/ac_museum_fish_base.c_inc"
 
 // clang-format on
@@ -695,10 +546,6 @@ void Museum_Fish_Actor_ct(ACTOR* actorx, GAME* gamex) {
     mfish_point_light_ct(actorx, gamex);
 
     for (i = 0; i < 14; i++) {
-        // 0x0060 : kusa_group_tbl
-        // 0x1300 : kusa_model
-        // 0x1338 : kusa_anime
-        // 0x1370 : kusa_start_frame
         actor->prvKusa[i]._54C = kusa_model[i];
         cKF_SkeletonInfo_R_ct(&actor->prvKusa[i]._00, kusa_model[i], kusa_anime[i], &actor->prvKusa[i]._4F0,
                               &actor->prvKusa[i]._514);
@@ -707,7 +554,6 @@ void Museum_Fish_Actor_ct(ACTOR* actorx, GAME* gamex) {
         actor->prvKusa[i]._00.frame_control.current_frame = kusa_start_frame[i];
         actor->prvKusa[i]._538.x = qrand();
         actor->prvKusa[i]._538.z = qrand();
-        // actor->_101f0[i * 2 + 2] = qrand();
     }
 
     if (mMmd_FishInfo(aGYO_TYPE_FROG)) {
@@ -886,7 +732,7 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
     f32 v;
     GAME_PLAY* play = (GAME_PLAY*)game;
     MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
-
+    MUSEUM_FISH_PRIVATE_DATA* prv2;
     mfish_point_light_mv(actor, &play->game);
     old_14db4 = actor->_14db4;
     mfish_get_player_area(actor, &play->game);
@@ -951,14 +797,10 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
     }
 
     Museum_Fish_Talk_process(actorx, game);
-
-    {
-        // needs a new variable
-        MUSEUM_FISH_PRIVATE_DATA* prv = actor->prvFish;
-        for (i = 0; i < aGYO_TYPE_NUM; i++, prv++) {
-            if (prv->_62E_flags & 1) {
-                mfish_mv[i](prv, game);
-            }
+    prv2 = actor->prvFish;
+    for (i = 0; i < aGYO_TYPE_NUM; i++, prv2++) {
+        if (prv2->_62E_flags & 1) {
+            mfish_mv[i](prv2, game);
         }
     }
 
@@ -1031,17 +873,17 @@ void Museum_Fish_Suisou_draw(ACTOR* actorx, GAME* game, int r5) {
     }
 }
 
-BOOL kusa_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** mjoint_m, u8* joint_f, void* arg,
-                      s_xyz* joint1, xyz_t* trans) {
+BOOL kusa_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape, u8* joint_flags,
+                      void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_KUSA_DATA* actor = (MUSEUM_FISH_KUSA_DATA*)arg;
-    if (joint_num > 0) {
+    if (joint_idx > 0) {
         f32 v = (actor->_54C == &cKF_bs_r_obj_museum5_kusa3) ? 35.0f : 20.f;
 
-        joint1->y += (s16)(sin_s(actor->_538.x + (joint_num * DEG2SHORT_ANGLE(90))) * 1274.0f);
-        joint1->x += (s16)(sin_s(actor->_538.z + (joint_num * DEG2SHORT_ANGLE(90))) * 4369.0f);
+        joint_rot->y += (s16)(sin_s(actor->_538.x + (joint_idx * DEG2SHORT_ANGLE(90))) * 1274.0f);
+        joint_rot->x += (s16)(sin_s(actor->_538.z + (joint_idx * DEG2SHORT_ANGLE(90))) * 4369.0f);
 
-        trans->y -= actor->_540.x * (v * joint_num);
-        trans->z += actor->_540.z * (v * joint_num);
+        joint_pos->y -= actor->_540.x * (v * joint_idx);
+        joint_pos->z += actor->_540.z * (v * joint_idx);
     }
     return TRUE;
 }

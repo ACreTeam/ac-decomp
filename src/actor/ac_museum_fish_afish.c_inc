@@ -1,3 +1,4 @@
+#include "ac_museum_fish_priv.h"
 
 void mfish_afish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     mfish_onefish_ct(actor, gamex);

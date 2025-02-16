@@ -1,3 +1,4 @@
+#include "ac_museum_fish_priv.h"
 
 void mfish_tai_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     s16 s = qrand();
@@ -245,15 +246,15 @@ void mfish_tai_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->activityFrameCount--;
 }
 
-BOOL mfish_tai_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
-                           void* arg, s_xyz* joint1, xyz_t* trans) {
+BOOL mfish_tai_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                           u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
-    if (joint_num == 1) {
-        int s = (joint1->x + actor->_618.z) >> 3;
-        joint1->x = MY_CLAMP(s, DEG2SHORT_ANGLE(-15), DEG2SHORT_ANGLE(15));
-    } else if (joint_num == 2) {
-        int s = joint1->y - (int)(actor->_618.z * (0.01f * GETREG(TAKREG, 0x4b) + 1.5f));
-        joint1->y = MY_CLAMP(s, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
+    if (joint_idx == 1) {
+        int s = (joint_rot->x + actor->_618.z) >> 3;
+        joint_rot->x = MY_CLAMP(s, DEG2SHORT_ANGLE(-15), DEG2SHORT_ANGLE(15));
+    } else if (joint_idx == 2) {
+        int s = joint_rot->y - (int)(actor->_618.z * (0.01f * GETREG(TAKREG, 0x4b) + 1.5f));
+        joint_rot->y = MY_CLAMP(s, DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(90));
     }
     return TRUE;
 }

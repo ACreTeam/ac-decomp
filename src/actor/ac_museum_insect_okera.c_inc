@@ -1,0 +1,217 @@
+#include "ac_museum_insect_priv.h"
+
+const xyz_t okera_base_pos = { 235.f, 45.f, 445.f };
+
+void mi_okera_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    f32 dist = search_position_distance(&actor->_1C, &player->actor_class.world.position);
+    if (dist < 60.f) {
+        if (player->actor_class.speed > 1.4f) {
+            actor->_7C += (s16)((dist / 60.f) * 8.f);
+        } else if (player->actor_class.speed > 5.f) {
+            actor->_7C += (s16)((dist / 60.f) * 20.f);
+        }
+    }
+}
+
+void minsect_okera_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    okera_dig_wait_process_init(actor, game);
+}
+
+void okera_dig_up_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    s16 s = qrand();
+    f32 v = RANDOM_F(25.f);
+    actor->_1C = okera_base_pos;
+    actor->_1C.x += sin_s(s) * v;
+    actor->_1C.y -= 2.f;
+    actor->_1C.z += sin_s(s) * v;
+    actor->_34 = ZeroVec;
+    actor->_44 = ZeroVec;
+    actor->_34.y = 0.75f;
+    actor->_44.y = -0.05f;
+    actor->_40 = 0.625;
+    actor->_68 = ZeroSVec;
+    if (actor->_1C.z >= okera_base_pos.z) {
+        actor->_68.y = qrand();
+    } else {
+        actor->_68.y = DEG2SHORT_ANGLE(RANDOM2_F(180));
+    }
+    actor->_70 = actor->_68.y;
+    actor->_76 = 0;
+    actor->_04 = okera_dig_up_process;
+}
+
+void okera_dig_up_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_8C & 0x20 && actor->_34.y < 0.f) {
+        actor->_68.x = 0;
+        okera_normal_process_init(actor, game);
+    } else {
+        mID_insect_moveF(actor);
+        actor->_34.y += actor->_44.y;
+        actor->_68.x = -atans_table(actor->_40, actor->_34.y);
+    }
+}
+
+void okera_normal_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_40 = 0.65f;
+    actor->_6E = (s16)RANDOM_F(68.f) + 24;
+    actor->_74 = (s16)(RANDOM_F(1500.f) + 300.f);
+    actor->_04 = okera_normal_process;
+}
+
+void okera_normal_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    mi_okera_check_player(actor, game);
+    actor->_7C--;
+    if (actor->_7C < 0) {
+        actor->_7C = 0;
+    }
+    if (actor->_7C > 900) {
+        actor->_7C = 900;
+    }
+    if (actor->_7C > 150 && actor->_40 == 0.f) {
+        PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+        s16 s = player->actor_class.shape_info.rotation.y;
+        actor->_7C = 0;
+        actor->_6E = (s16)RANDOM_F(68.f) + 24;
+        actor->_40 = 1.615f;
+        actor->_70 = s + DEG2SHORT_ANGLE(RANDOM2_F(30.f));
+    } else {
+        actor->_6E--;
+        if (actor->_74 > 0) {
+            actor->_74--;
+        }
+        if (actor->_40 > 0.f) {
+            if (actor->_78 == actor->_7A) {
+                if (actor->_7A) {
+                    actor->_7A = 0;
+                } else {
+                    actor->_7A = DEG2SHORT_ANGLE(-10);
+                }
+            }
+            if (!add_calc_short_angle2(&actor->_68.y, actor->_70, CALC_EASE2(0.5f), DEG2SHORT_ANGLE(5),
+                                       DEG2SHORT_ANGLE(0.25f))) {
+                actor->_76 += DEG2SHORT_ANGLE(15);
+                mID_insect_moveF(actor);
+                actor->_34.y += actor->_44.y;
+                if (actor->_6E < 0) {
+                    actor->_40 = 0.f;
+                    actor->_6E = (s16)RANDOM_F(76.f) + 4;
+                } else if (actor->_8C & 0x5e) {
+                    actor->_40 = 0.f;
+                    actor->_72 = actor->_8C;
+                }
+                //! BUG: unused
+                sin_s(actor->_76) <= 0.1 ? sin_s(actor->_76) : 0.1;
+            }
+        } else if (actor->_6E < 0) {
+            actor->_40 = 0.95f;
+            actor->_6E = (s16)RANDOM_F(68.f) + 24;
+            if (GETREG(NMREG, 4)) {
+                okera_dig_down_process_init(actor, game);
+            }
+            if (actor->_72 & 0x5e) {
+                if (actor->_72 & 0x40) {
+                    actor->_70 = qrand();
+                } else if (actor->_72 & 6) {
+                    actor->_70 = -actor->_70;
+                } else {
+                    actor->_70 = DEG2SHORT_ANGLE2(180) - actor->_70;
+                }
+                actor->_72 &= ~0x5e;
+            } else {
+                if (actor->_74 == 0 && search_position_distanceXZ(&okera_base_pos, &actor->_1C) < 35.f) {
+                    okera_dig_down_process_init(actor, game);
+                } else {
+                    actor->_70 += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(120.f));
+                }
+            }
+        }
+        add_calc_short_angle2(&actor->_78, actor->_7A, CALC_EASE2(0.7f), DEG2SHORT_ANGLE(1.25f),
+                              DEG2SHORT_ANGLE(0.25f));
+    }
+}
+
+void okera_dig_down_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_7A = 0;
+    actor->_04 = okera_dig_down_process;
+    actor->_6E = 10;
+}
+
+void okera_dig_down_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_6E-- < 0) {
+        xyz_t p = actor->_1C;
+        int v = (int)(RANDOM_F(3.f) + 3.f) | 0x4000;
+        p.y = 45.f;
+        Common_Get(clip.effect_clip)->effect_make_proc(84, p, 2, actor->_68.y, game, -1, 0, v);
+        actor->_6E = 6;
+    }
+    if (!add_calc_short_angle2(&actor->_68.x, DEG2SHORT_ANGLE(90), CALC_EASE2(0.5f), DEG2SHORT_ANGLE(5),
+                               DEG2SHORT_ANGLE(1.25f))) {
+        actor->_1C.y -= 0.2f;
+        actor->_76 += DEG2SHORT_ANGLE(12.5f);
+        if (actor->_1C.y < 40.f) {
+            okera_dig_wait_process_init(actor, game);
+        }
+    }
+}
+
+void okera_dig_wait_process_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    actor->_1C = okera_base_pos;
+    actor->_6E = (s16)RANDOM_F(600.f) + 300;
+    actor->_04 = okera_dig_wait_process;
+}
+
+void okera_dig_wait_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (GETREG(NMREG, 5)) {
+        okera_dig_up_process_init(actor, game);
+    }
+    if (actor->_6E-- < 0) {
+        int i;
+        okera_dig_up_process_init(actor, game);
+        for (i = 3; i < 6; i++) {
+            Common_Get(clip.effect_clip)->effect_make_proc(84, actor->_1C, 2, actor->_68.y, game, -1, 0, i | 0x4000);
+        }
+    }
+}
+
+void minsect_okera_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    f32 dist = search_position_distance(&actor->_1C, &player->actor_class.world.position);
+    actor->_04(actor, game);
+    if (actor->_04 == okera_dig_wait_process && dist < 200.f) {
+        sAdo_OngenPos((u32)actor, 68, &actor->_1C);
+    }
+    if (actor->_04 == okera_dig_up_process && dist < 200.f) {
+        sAdo_OngenPos((u32)actor, 69, &actor->_1C);
+    }
+
+    //! NOTE: has to be written this way to match
+    if (actor->_04 == okera_dig_wait_process || actor->_04 == okera_dig_down_process) {
+        return;
+    }
+    minsect_tree_ObjCheck(actor);
+    minsect_rock_ObjCheck(actor);
+    minsect_kanban_BGCheck(actor);
+    minsect_batta_ObjCheck(actor);
+    minsect_garden_BGCheck(actor, 510.f, 370.f);
+}
+
+void minsect_okera_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_04 == okera_dig_wait_process) {
+        return;
+    }
+    _texture_z_light_fog_prim(game->graph);
+    OPEN_DISP(game->graph);
+    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z, FALSE);
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y + (s16)(DEG2SHORT_ANGLE2(GETREG(TAKREG, 4) + 5.f) * sin_s(actor->_76)),
+                     actor->_68.z, TRUE);
+    Matrix_rotateXYZ(actor->_78, 0, 0, TRUE);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gDPSetEnvColor(NEXT_POLY_OPA_DISP, 0, 0xff, 0x9b, 0xff);
+    gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
+    CLOSE_DISP(game->graph);
+    if (actor->_04 != okera_dig_down_process) {
+        minsect_draw_shadow(actor, game);
+    }
+}

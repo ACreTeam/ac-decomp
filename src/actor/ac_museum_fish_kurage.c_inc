@@ -1,3 +1,4 @@
+#include "ac_museum_fish_priv.h"
 
 void mfish_kurage_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     s16 s = qrand();
@@ -102,7 +103,6 @@ void mfish_kurage_turn(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_kurage_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    //! NOTE: wrong floats in this file, based on objdiff
     f32 v;
     xyz_t p;
     f32 t;

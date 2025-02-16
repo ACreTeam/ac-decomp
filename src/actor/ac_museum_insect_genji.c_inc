@@ -1,0 +1,294 @@
+#include "ac_museum_insect_priv.h"
+
+const xyz_t base_genji_pos = { 258.f, 62.f, 258.5f };
+
+const xyz_t genji_mizu_pos = { 289.f, 25.f, 218.f };
+
+void mi_genji_check_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)game);
+    f32 dist = search_position_distance(&actor->_1C, &player->actor_class.world.position);
+    if (dist > 160.f && actor->_90 != -1 && actor->_7A == 0) {
+        actor->_7C = 0;
+        mEnv_CancelReservedPointLight(actor->_90, (GAME_PLAY*)game);
+        actor->_90 = -1;
+    } else if (dist > 160.f && actor->_90 != -1 && actor->_7C != 0) {
+        actor->_7C = 0;
+    } else if (dist <= 160.f) {
+        actor->_7C = 150;
+        if (actor->_90 == -1) {
+            xyz_t p = actor->_1C;
+            p.z += 10.f;
+            actor->_90 = mEnv_ReservePointLight((GAME_PLAY*)game, &p, 0x78, 0xff, 0xb4, actor->_7A);
+        }
+    }
+}
+
+void genji_light_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game, s16 r5) {
+    actor->_8C |= 1;
+    actor->_1C = genji_mizu_pos;
+    actor->_58 = actor->_1C.y;
+    actor->_10 = RANDOM_F(50.f) + 100.f;
+    actor->_0C = 1.f;
+    actor->_70 = (s16)RANDOM_F(180.f);
+    actor->_5C_s16 = qrand();
+    actor->_68.y = qrand();
+    if (r5) {
+        actor->_5E_s16 = qrand();
+    } else {
+        actor->_5E_s16 = DEG2SHORT_ANGLE(20);
+    }
+
+    actor->_34 = ZeroVec;
+    actor->_44 = ZeroVec;
+    actor->_40 = 0.75f;
+    actor->_6E = (s16)RANDOM_F(120.f) + 60;
+    actor->_78 = r5;
+}
+
+void genji_light_make(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game, s16 i) {
+    actor->_8C |= 1;
+    actor->_1C = genji_mizu_pos;
+    actor->_1C.x += RANDOM2_F(50.f);
+    actor->_1C.z += RANDOM2_F(36.f);
+    actor->_1C.y += 5.f;
+    actor->_58 = actor->_1C.y;
+    actor->_10 = RANDOM_F(50.f) + 100.f;
+    actor->_0C = 0.f;
+    actor->_70 = RANDOM_F(180.f);
+    actor->_5C_s16 = qrand();
+    actor->_68.y = qrand();
+    actor->_5E_s16 = qrand();
+    actor->_34 = ZeroVec;
+    actor->_44 = ZeroVec;
+    actor->_40 = 0.75f;
+    actor->_6E = (s16)RANDOM_F(120.f) + 60;
+    actor->_78 = i;
+}
+
+void genji_light_anime(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    if (actor->_70 < 30) {
+        actor->_72 = 0;
+        actor->_74 = 1;
+        actor->_76 = 255.f - 255 * (actor->_70 / 30.f);
+    } else if (actor->_70 < 60) {
+        actor->_72 = 1;
+        actor->_74 = 2;
+        actor->_76 = 255.f - 255 * ((actor->_70 - 30.f) / 30.f);
+    } else if (actor->_70 < 90) {
+        actor->_72 = 2;
+        actor->_74 = 3;
+        actor->_76 = 255.f - 255 * ((actor->_70 - 60.f) / 30.f);
+    } else if (actor->_70 < 120) {
+        actor->_72 = 2;
+        actor->_74 = 3;
+        actor->_76 = 255 * ((actor->_70 - 90.f) / 30.f);
+    } else if (actor->_70 < 150) {
+        actor->_72 = 1;
+        actor->_74 = 2;
+        actor->_76 = 255 * ((actor->_70 - 120.f) / 30.f);
+    } else if (actor->_70 < 180) {
+        actor->_72 = 0;
+        actor->_74 = 1;
+        actor->_76 = 255 * ((actor->_70 - 150.f) / 30.f);
+    } else {
+        actor->_70 = 0;
+    }
+    actor->_70++;
+    if (actor->_7C) {
+        actor->_7A += 3;
+        if (actor->_7A > actor->_7C) {
+            actor->_7A = actor->_7C;
+        }
+    } else {
+        actor->_7A -= 3;
+        if (actor->_7A < 0) {
+            actor->_7A = 0;
+        }
+    }
+    mEnv_OperateReservedPointLight_Power(actor->_90, actor->_7A);
+}
+
+void genji_light_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    s16 ang;
+    f32 v;
+    mEnv_OperateReservedPointLight_Position(actor->_90, &actor->_1C);
+    actor->_6E--;
+    if (actor->_8C & 0x100) {
+        actor->_0C -= 0.0125f;
+        if (actor->_0C < 0.0125f) {
+            actor->_8C = 0;
+            return;
+        }
+    } else {
+        actor->_0C += 0.0125f;
+        if (actor->_0C > 1.f) {
+            actor->_0C = 1.f;
+        }
+    }
+    mID_insect_moveF(actor);
+    ang = add_calc_short_angle2(&actor->_68.y, actor->_5E_s16, CALC_EASE2(0.1f), DEG2SHORT_ANGLE(0.5f),
+                                DEG2SHORT_ANGLE(0.25f));
+    if (actor->_6E < 0) {
+        actor->_5E_s16 = qrand();
+        actor->_6E = (s16)RANDOM_F(120.f) + 60;
+    } else if (actor->_8C & 8) {
+        actor->_5E_s16 = DEG2SHORT_ANGLE2(RANDOM2_F(60.f));
+        actor->_6E = (s16)RANDOM_F(120.f) + 60;
+    } else if (actor->_8C & 0x10) {
+        actor->_6E = (s16)RANDOM_F(120.f) + 60;
+        actor->_5E_s16 = DEG2SHORT_ANGLE2(-180.f + RANDOM2_F(60.f));
+    } else if (actor->_8C & 2) {
+        actor->_6E = (s16)RANDOM_F(120.f) + 60;
+        actor->_5E_s16 = DEG2SHORT_ANGLE2(90.f + RANDOM2_F(90.f));
+    } else if (actor->_8C & 4) {
+        actor->_6E = (s16)RANDOM_F(120.f) + 60;
+        actor->_5E_s16 = DEG2SHORT_ANGLE2(-90.f + RANDOM2_F(90.f));
+    }
+    actor->_5C_s16 += (s16)DEG2SHORT_ANGLE2(RANDOM_F(5.f) + 1.5f);
+    add_calc(&actor->_58, actor->_10, CALC_EASE(0.3f), 0.75f, 0.25f);
+    actor->_1C.y = actor->_58 + 10.f * sin_s(actor->_5C_s16);
+    minsect_tree_ObjCheck(actor);
+    minsect_fly_BGCheck(actor, 360.0, 40.0);
+    genji_light_anime(actor, game);
+}
+
+void genji_light_draw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    xyz_t p = actor->_1C;
+    u8 a, b;
+    if ((f32)__fabs(actor->_0C) < 0.008f) {
+        return;
+    }
+
+    if (actor->_78 == 0) {
+        p.x += -3.f * sin_s(-actor->_68.z);
+        p.y += -3.f * cos_s(-actor->_68.z);
+        p.z += 6.f + cos_s(actor->_7E);
+    }
+    a = actor->_76;
+    b = (255 - actor->_76);
+    a -= (u8)(a * (1.f - actor->_0C));
+    b -= (u8)(b * (1.f - actor->_0C));
+    _texture_z_light_fog_prim_xlu(game->graph);
+    OPEN_POLY_XLU_DISP(game->graph);
+    Matrix_translate(p.x, p.y, p.z, FALSE);
+    Matrix_mult(&((GAME_PLAY*)game)->billboard_matrix, TRUE);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    gSPMatrix(POLY_XLU_DISP++, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gDPSetEnvColor(POLY_XLU_DISP++, 0, 0xff, 0x9b, a);
+    gSPDisplayList(POLY_XLU_DISP++, m_genji_disp_tbl[actor->_72]);
+    gDPSetEnvColor(POLY_XLU_DISP++, 0, 0xff, 0x9b, b);
+    gSPDisplayList(POLY_XLU_DISP++, m_genji_disp_tbl[actor->_74]);
+    CLOSE_POLY_XLU_DISP(game->graph);
+    minsect_draw_shadow(actor, game);
+}
+
+void minsect_genji_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    genji_light_ct(actor, game, 0);
+    actor->_1C = base_genji_pos;
+    actor->_68.z = DEG2SHORT_ANGLE(-25);
+    actor->_82 = (s16)RANDOM_F(60.f) + 600;
+}
+
+void minsect_genji_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    MUSEUM_INSECT_PRIVATE_DATA* priv;
+    BOOL found;
+    s16 i;
+    found = FALSE;
+    priv = &MI_Control_Actor->_1894[0];
+    mi_genji_check_player(actor, game);
+    mEnv_OperateReservedPointLight_Position(actor->_90, &actor->_1C);
+    actor->_8E = get_now_mind_flag(actor, game);
+    genji_light_anime(actor, game);
+    if (actor->_8E == 0) {
+        actor->_0C -= 0.04f;
+        if (actor->_0C < 0.04f) {
+            actor->_0C = 0.f;
+            if (actor->_90 != -1) {
+                mEnv_CancelReservedPointLight(actor->_90, (GAME_PLAY*)game);
+                actor->_90 = -1;
+            }
+        }
+    } else {
+        actor->_0C += 0.04f;
+        if (actor->_0C > 1.0f) {
+            actor->_0C = 1.0f;
+        }
+    }
+    actor->_82--;
+    if (actor->_82 < 0) {
+        actor->_80 = DEG2SHORT_ANGLE(-7);
+        actor->_82 = (int)RANDOM_F(60.f) + 600;
+        if (RANDOM_F(1.f) > 0.5f) {
+            actor->_5E_s16 = DEG2SHORT_ANGLE(RANDOM2_F(40.f));
+        } else {
+            actor->_5E_s16 = DEG2SHORT_ANGLE(20);
+        }
+    }
+    if (actor->_7E == actor->_80) {
+        actor->_80 = 0;
+    }
+    add_calc_short_angle2(&actor->_68.z, actor->_5E_s16, CALC_EASE2(0.4f),
+                          (s16)(DEG2SHORT_ANGLE(GETREG(NMREG, 3) * 0.01f + 5.f) >> 1) >> 1, DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_7E, actor->_80, CALC_EASE2(0.4f), DEG2SHORT_ANGLE(0.75f), DEG2SHORT_ANGLE(0.25f));
+    for (i = 0 + 1; i < 6 + 1; i++, priv++) {
+        if (priv->_8C & 1) {
+            if ((GETREG(NMREG, 0xF) || (RANDOM_F(1.f) > 0.9f && actor->_6E < 0)) && (priv->_8C & 0x100) == 0) {
+
+                if (priv->_90 != -1) {
+                    mEnv_CancelReservedPointLight(priv->_90, (GAME_PLAY*)game);
+                    priv->_90 = -1;
+                }
+                priv->_8C |= 0x100;
+                actor->_6E = RANDOM_F(1500.f);
+                found = TRUE;
+            } else if (actor->_8E == 0) {
+                if (actor->_6E < 0 && (priv->_8C & 0x100) == 0) {
+                    if (priv->_90 != -1) {
+                        mEnv_CancelReservedPointLight(priv->_90, (GAME_PLAY*)game);
+                        priv->_90 = -1;
+                    }
+                    priv->_8C |= 0x100;
+                    actor->_6E = RANDOM_F(1500.f);
+                }
+                found = TRUE;
+            }
+            mi_genji_check_player(priv, game);
+            genji_light_move(priv, game);
+            priv->_14 = actor->_14;
+        } else if (actor->_8E == 1) {
+            if (actor->_6E < 0) {
+                genji_light_make(priv, game, i);
+                actor->_6E = RANDOM_F(300.f);
+            }
+            found = TRUE;
+        }
+    }
+
+    if (found == TRUE) {
+        actor->_6E--;
+    }
+}
+
+extern Gfx act_m_mu_genji_modelT;
+
+void minsect_genji_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
+    MUSEUM_INSECT_PRIVATE_DATA* priv = &MI_Control_Actor->_1894[0];
+    int i;
+    for (i = 0; i < 6; i++, priv++) {
+        if (priv->_8C & 1) {
+            genji_light_draw(priv, game);
+        }
+    }
+    _texture_z_light_fog_prim(game->graph);
+    OPEN_DISP(game->graph);
+    Matrix_translate(actor->_1C.x + GETREG(NMREG, 0x10) * 0.01f, actor->_1C.y + GETREG(NMREG, 0x11) * 0.01f,
+                     actor->_1C.z + GETREG(NMREG, 0x12) * 0.01f, FALSE);
+    Matrix_rotateXYZ(0, 0, actor->_68.z, TRUE);
+    Matrix_rotateXYZ(actor->_7E, 0, 0, TRUE);
+    Matrix_rotateXYZ(DEG2SHORT_ANGLE(110), 0, DEG2SHORT_ANGLE2(180), TRUE);
+    Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+    gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(NEXT_POLY_OPA_DISP, &act_m_mu_genji_modelT);
+    CLOSE_DISP(game->graph);
+    genji_light_draw(actor, game);
+}

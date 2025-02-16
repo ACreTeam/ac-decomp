@@ -1,3 +1,4 @@
+#include "ac_museum_fish_priv.h"
 
 void mfish_donko_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     //! BUG: ?
@@ -94,17 +95,17 @@ void mfish_donko_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Museum_Fish_DonkoBGCheck(actor, gamex);
 }
 
-BOOL mfish_donko_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f,
-                             void* arg, s_xyz* joint1, xyz_t* trans) {
+BOOL mfish_donko_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                             u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
-    if (joint_num == 1) {
-        int i = joint1->x + (actor->_618.z >> 1);
-        joint1->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20));
-    } else if (joint_num == 2) {
-        int i = joint1->y - (actor->_618.z << 1);
-        joint1->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-60), DEG2SHORT_ANGLE(60));
-        i = joint1->x - (actor->_618.z >> 1);
-        joint1->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20));
+    if (joint_idx == 1) {
+        int i = joint_rot->x + (actor->_618.z >> 1);
+        joint_rot->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20));
+    } else if (joint_idx == 2) {
+        int i = joint_rot->y - (actor->_618.z << 1);
+        joint_rot->y = MY_CLAMP(i, DEG2SHORT_ANGLE(-60), DEG2SHORT_ANGLE(60));
+        i = joint_rot->x - (actor->_618.z >> 1);
+        joint_rot->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20));
     }
 
     return TRUE;

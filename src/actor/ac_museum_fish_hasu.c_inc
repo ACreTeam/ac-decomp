@@ -1,4 +1,4 @@
-// Pretty sure all the floats in this file are correct
+#include "ac_museum_fish_priv.h"
 
 extern cKF_Skeleton_R_c cKF_bs_r_obj_museum5_hasu;
 extern cKF_Animation_R_c cKF_ba_r_obj_museum5_hasu;
@@ -159,25 +159,25 @@ void mfish_kaeru_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     }
 }
 
-BOOL hasu_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f, void* arg,
-                      s_xyz* joint1, xyz_t* trans) {
+BOOL hasu_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape, u8* joint_flags,
+                      void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
     YET_SKELETON_2* v2 = actor->_590;
-    if (joint_num == 7) {
-        trans->z += v2->_55C * sin_s(v2->_568);
-    } else if (joint_num == 4) {
-        trans->z += v2->_560 * sin_s(v2->_56A);
-    } else if (joint_num == 9) {
-        trans->z += v2->_564 * sin_s(v2->_56C);
+    if (joint_idx == 7) {
+        joint_pos->z += v2->_55C * sin_s(v2->_568);
+    } else if (joint_idx == 4) {
+        joint_pos->z += v2->_560 * sin_s(v2->_56A);
+    } else if (joint_idx == 9) {
+        joint_pos->z += v2->_564 * sin_s(v2->_56C);
     }
     return TRUE;
 }
 
-BOOL hasu_after_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_num, Gfx** joint_m, u8* joint_f, void* arg,
-                     s_xyz* joint1, xyz_t* trans) {
+BOOL hasu_after_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape, u8* joint_flags,
+                     void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     MUSEUM_FISH_PRIVATE_DATA* actor = (MUSEUM_FISH_PRIVATE_DATA*)arg;
     YET_SKELETON_2* skele = actor->_590;
-    if (joint_num == 9) {
+    if (joint_idx == 9) {
         Matrix_Position_Zero(&actor->position);
         actor->position.y = skele->_564 * actor->init_data.renderScale * sin_s(skele->_56C) + 116.0f;
     }
