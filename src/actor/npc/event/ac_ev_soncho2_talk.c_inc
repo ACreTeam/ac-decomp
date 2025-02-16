@@ -1,0 +1,152 @@
+int aES2_kinenhin_msg(ACTOR* actorx, int msg_no) {
+    NPC_SONCHO2* soncho = (NPC_SONCHO2*)actorx;
+    if (soncho->event == mSC_EVENT_HARVEST_FESTIVAL) {
+        return msg_no + MSG_HARVEST_FESTIVAL;
+    } else {
+        return soncho->event * MSG_SONCHO_EVENTS_COUNT + MSG_SONCHO_EVENTS + msg_no;
+    }
+}
+
+void aES2_LightHouse_set_free_str() {
+    lbRTC_time_c time_1;
+    lbRTC_time_c time_2;
+    u8 day_str[4];
+    lbRTC_TimeCopy(&time_1, &Common_Get(time).rtc_time);
+    lbRTC_Add_DD(&time_1, 0x7);
+    lbRTC_TimeCopy(&time_2, &Common_Get(time).rtc_time);
+    lbRTC_Add_DD(&time_2, 0x8);
+    mString_Load_DayStringFromRom(day_str, time_1.day);
+    mMsg_Set_free_str(mMsg_Get_base_window_p(), FALSE, day_str, 4);
+    mString_Load_DayStringFromRom(day_str, time_2.day);
+    mMsg_Set_free_str(mMsg_Get_base_window_p(), TRUE, day_str, 4);
+}
+
+void aES2_talk_before_give(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    if (mMsg_Check_MainNormalContinue(msg_p)) {
+        if (mPr_GetPossessionItemSumWithCond(Now_Private, EMPTY_NO, mPr_ITEM_COND_NORMAL) == 0) {
+            mMsg_Set_continue_msg_num(msg_p, aES2_kinenhin_msg((ACTOR*)soncho, 2));
+            aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_5);
+        } else {
+            mMsg_Set_continue_msg_num(msg_p, aES2_kinenhin_msg((ACTOR*)soncho, 0x3));
+            aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_1);
+        }
+    }
+}
+
+void aES2_talk_give(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+    if ((int)mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x1) == 0x2) {
+        mSC_item_string_set(soncho->item, EMPTY_NO);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x0, soncho->item);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x1, 0x7);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x2, 0x0);
+        mPr_SetFreePossessionItem(Now_Private, soncho->item, mPr_ITEM_COND_NORMAL);
+        aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_5);
+        mSC_trophy_set(soncho->event);
+    }
+}
+
+int aES2_change_talk_proc(ACTOR* actorx, u8 talk_proc) {
+    NPC_SONCHO2* soncho = (NPC_SONCHO2*)actorx;
+    soncho->talk = talk_proc;
+    return TRUE;
+}
+
+void aES2_set_norm_talk_info(ACTOR* actorx) {
+    NPC_SONCHO2* soncho = (NPC_SONCHO2*)actorx;
+    mDemo_Set_talk_turn(TRUE);
+    mDemo_Set_camera(3);
+    aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_5);
+
+    switch (soncho->event) {
+        case 0x65:
+            if (mSC_LightHouse_Talk_After_Check()) {
+                mDemo_Set_msg_num(MSG_SONCHO_LIGHTHOUSE_1 + 6 + (int)RANDOM_F(3));
+            } else {
+                mDemo_Set_msg_num(MSG_SONCHO_LIGHTHOUSE_1);
+                aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_LIGHTHOUSE_QUEST_START_1);
+            }
+            break;
+        case 0x66:
+            if (mSC_LightHouse_Talk_After_Check()) {
+                mDemo_Set_msg_num(MSG_SONCHO_LIGHTHOUSE_2 + 6 + (int)RANDOM_F(3));
+            } else {
+                mDemo_Set_msg_num(MSG_SONCHO_LIGHTHOUSE_2);
+                aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_LIGHTHOUSE_QUEST_START_1);
+            }
+            break;
+        default:
+            aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_5);
+            if (Common_Get(player_no) == 4) {
+                mDemo_Set_msg_num(aES2_kinenhin_msg((ACTOR*)soncho, 0x9));
+                aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_2);
+            } else if (mSC_trophy_get(soncho->event) != 0) {
+                if (mCD_calendar_event_check(soncho->year, soncho->month, soncho->day, -1, soncho->event)) {
+                    mDemo_Set_msg_num(aES2_kinenhin_msg((ACTOR*)soncho, 6 + (int)RANDOM_F(3)));
+                } else {
+                    mDemo_Set_msg_num(aES2_kinenhin_msg((ACTOR*)soncho, 0x5));
+                }
+                aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_LIGHTHOUSE_QUEST_START_2);
+            } else {
+                aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_0);
+                if (mCD_calendar_event_check(soncho->year, soncho->month, soncho->day, -1, soncho->event)) {
+                    mDemo_Set_msg_num(aES2_kinenhin_msg((ACTOR*)soncho, 0x1));
+                } else {
+                    mDemo_Set_msg_num(aES2_kinenhin_msg((ACTOR*)soncho, 0x0));
+                }
+            }
+            break;
+    }
+}
+
+void aES2_norm_talk_request(ACTOR* actorx, GAME* game) {
+    NPC_SONCHO2* soncho = (NPC_SONCHO2*)actorx;
+    if (soncho->_9ac == FALSE) {
+        mDemo_Request(mDemo_ORDER_7, actorx, aES2_set_norm_talk_info);
+    } else {
+        soncho->_9ac = FALSE;
+    }
+}
+
+int aES2_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_SONCHO2* soncho = (NPC_SONCHO2*)actorx;
+    soncho->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    if (soncho->talk == aES2_TALK_LIGHTHOUSE_QUEST_START_1) {
+        mSC_LightHouse_Quest_Start();
+        aES2_LightHouse_set_free_str();
+    }
+    if (soncho->talk == aES2_TALK_LIGHTHOUSE_QUEST_START_2) {
+        mSC_item_string_set(soncho->item, EMPTY_NO);
+    }
+    if (soncho->talk == aES2_TALK_2) {
+        mSC_item_string_set(soncho->item, EMPTY_NO);
+        mSC_event_name_set(soncho->event);
+    }
+    mCD_calendar_event_on(soncho->year, soncho->month, soncho->day, soncho->event);
+    return TRUE;
+}
+
+int aES2_talk_end_chk(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+    static aEV_SONCHO2_PROC proc[6] = { aES2_talk_before_give,
+                                        aES2_talk_give,
+                                        (aEV_SONCHO2_PROC)mActor_NONE_PROC1,
+                                        (aEV_SONCHO2_PROC)mActor_NONE_PROC1,
+                                        (aEV_SONCHO2_PROC)mActor_NONE_PROC1,
+                                        (aEV_SONCHO2_PROC)mActor_NONE_PROC1 };
+
+    ACTOR* actorx = (ACTOR*)soncho;
+    GAME* game = (GAME*)play;
+    int res = FALSE;
+    proc[soncho->talk](soncho, play);
+    if (mDemo_Check(0x8, actorx) == FALSE && mDemo_Check(0x7, actorx) == FALSE) {
+        aES2_setup_think_proc(actorx, game, soncho->think);
+        if (soncho->melody_inst) {
+            soncho->npc_class.talk_info.melody_inst = soncho->melody_inst;
+            soncho->melody_inst = 0;
+        }
+        res = TRUE;
+    }
+    return res;
+}
