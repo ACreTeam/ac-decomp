@@ -1,5 +1,9 @@
 #include "ac_museum_insect_priv.h"
 
+// UNUSED
+void mi_goki_hane_anime() {
+}
+
 void minsect_goki_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     actor->_1C.x = 280.f;
     actor->_1C.y = 40.f;

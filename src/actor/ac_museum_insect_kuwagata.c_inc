@@ -286,6 +286,14 @@ void minsect_kuwagata_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     mi_kuwagata_setupAction(actor, 0, game);
 }
 
+// UNUSED
+void minsect_kuwagata_normal_process() {
+}
+
+// UNUSED
+void minsect_kuwagata_battle_process() {
+}
+
 void minsect_kuwagata_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     actor->_04(actor, game);
 }

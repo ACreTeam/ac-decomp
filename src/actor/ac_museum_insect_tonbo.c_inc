@@ -124,6 +124,14 @@ void minsect_tonbo_rock_target_set(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game
     }
 }
 
+// UNUSED
+void minsect_tonbo_suprised_near_player() {
+    extern _strip(f32);
+    _strip(75.f);
+    _strip(6.f);
+    _strip(55.f);
+}
+
 BOOL minsect_tonbo_suprised_rest_player(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     if (actor->_74 >= 6) {
         actor->_7A = 1;

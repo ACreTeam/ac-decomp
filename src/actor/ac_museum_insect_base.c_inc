@@ -1,5 +1,11 @@
 #include "ac_museum_insect_priv.h"
 
+void mID_insect_moveF(MUSEUM_INSECT_PRIVATE_DATA* actor) {
+    actor->_34.x = actor->_40 * sin_s(actor->_68.y);
+    actor->_34.z = actor->_40 * cos_s(actor->_68.y);
+    xyz_t_add(&actor->_1C, &actor->_34, &actor->_1C);
+}
+
 #include "../src/actor/ac_museum_insect_chou.c_inc"
 #include "../src/actor/ac_museum_insect_semi.c_inc"
 #include "../src/actor/ac_museum_insect_tonbo.c_inc"
@@ -8,19 +14,6 @@
 #include "../src/actor/ac_museum_insect_hachi.c_inc"
 #include "../src/actor/ac_museum_insect_kabuto.c_inc"
 #include "../src/actor/ac_museum_insect_kuwagata.c_inc"
-#include "../src/actor/ac_museum_insect_mino.c_inc"
-#include "../src/actor/ac_museum_insect_kumo.c_inc"
-#include "../src/actor/ac_museum_insect_goki.c_inc"
-#include "../src/actor/ac_museum_insect_genji.c_inc"
-#include "../src/actor/ac_museum_insect_dango.c_inc"
-#include "../src/actor/ac_museum_insect_okera.c_inc"
-#include "../src/actor/ac_museum_insect_ka.c_inc"
-
-void mID_insect_moveF(MUSEUM_INSECT_PRIVATE_DATA* actor) {
-    actor->_34.x = actor->_40 * sin_s(actor->_68.y);
-    actor->_34.z = actor->_40 * cos_s(actor->_68.y);
-    xyz_t_add(&actor->_1C, &actor->_34, &actor->_1C);
-}
 
 void minsect_amenbo_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     actor->_1C = amenbo_center_pos;
@@ -94,6 +87,12 @@ void minsect_amenbo_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     CLOSE_DISP(game->graph);
 }
 
+#include "../src/actor/ac_museum_insect_mino.c_inc"
+#include "../src/actor/ac_museum_insect_kumo.c_inc"
+#include "../src/actor/ac_museum_insect_goki.c_inc"
+#include "../src/actor/ac_museum_insect_genji.c_inc"
+#include "../src/actor/ac_museum_insect_dango.c_inc"
+
 void ari_alone_ct(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     actor->_8C |= 1;
     if (RANDOM_F(1.f) < (2.f / 3.f)) {
@@ -162,6 +161,9 @@ void ari_alone_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
         actor->_6E = (s16)RANDOM_F(1160.f) + 40;
     }
 }
+
+#include "../src/actor/ac_museum_insect_okera.c_inc"
+#include "../src/actor/ac_museum_insect_ka.c_inc"
 
 extern Gfx act_m_mu_ariT_model;
 void ari_alone_draw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
