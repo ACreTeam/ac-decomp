@@ -1,29 +1,31 @@
-void aES2_set_move_pos(NPC_SONCHO2* soncho) {
+static void aES2_set_move_pos(NPC_SONCHO2* soncho) {
     switch (soncho->think_idx) {
         case aES2_THINK_LIGHTHOUSE_QUEST_START:
-            soncho->goal_x = soncho->center_x + 0xa0;
-            soncho->goal_z = soncho->center_z - 0x78;
+            soncho->goal_x = soncho->center_x + 4 * mFI_UT_WORLDSIZE_X;
+            soncho->goal_z = soncho->center_z - 3 * mFI_UT_WORLDSIZE_X;
             break;
         case 0x8:
-            soncho->goal_x = soncho->center_x + 0xc8;
-            soncho->goal_z = soncho->center_z + 0x28;
+            soncho->goal_x = soncho->center_x + 5 * mFI_UT_WORLDSIZE_X;
+            soncho->goal_z = soncho->center_z + mFI_UT_WORLDSIZE_Z;
             break;
         case 0xa:
-            soncho->goal_x = soncho->center_x - 0x78;
-            soncho->goal_z = soncho->center_z - 0x78;
+            soncho->goal_x = soncho->center_x - 3 * mFI_UT_WORLDSIZE_X;
+            soncho->goal_z = soncho->center_z - 3 * mFI_UT_WORLDSIZE_Z;
             break;
         default:
-            soncho->goal_x = soncho->center_x - 0xa0;
-            soncho->goal_z = soncho->center_z + 0x28;
+            soncho->goal_x = soncho->center_x - 4 * mFI_UT_WORLDSIZE_X;
+            soncho->goal_z = soncho->center_z + mFI_UT_WORLDSIZE_Z;
             break;
     }
 }
 
-void aES2_wait(NPC_SONCHO2* soncho, GAME_PLAY* play) {
-    static u8 field_table[4] = { aES2_THINK_FOOT_RACE, aES2_THINK_BALL_TOSS, aES2_THINK_TUG_O_WAR,
-                                 aES2_THINK_AEROBICS };
-    ACTOR* actorx = (ACTOR*)soncho;
-    GAME* game = (GAME*)play;
+static void aES2_wait(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+    static u8 field_table[4] = {
+        aES2_THINK_FOOT_RACE,
+        aES2_THINK_BALL_TOSS,
+        aES2_THINK_TUG_O_WAR,
+        aES2_THINK_AEROBICS,
+    };
     u8 event = mSC_get_soncho_event();
     if (event != 0xff) {
         soncho->npc_class.think.interrupt_flags = FALSE;
@@ -31,20 +33,21 @@ void aES2_wait(NPC_SONCHO2* soncho, GAME_PLAY* play) {
         switch (event) {
             case mSC_EVENT_SPRING_SPORTS_FAIR:
             case mSC_EVENT_FALL_SPORTS_FAIR: {
-                u8 think_proc = field_table[(u8)mSC_get_soncho_field_event()];
-                aES2_setup_think_proc(actorx, game, think_proc);
+                u8 idx = mSC_get_soncho_field_event();
+
+                aES2_setup_think_proc(soncho, play, (u8)field_table[idx]);
                 break;
             }
             case mSC_SPECIAL_EVENT_JAN_VACATION:
             case mSC_SPECIAL_EVENT_FEB_VACATION:
                 if (Common_Get(player_no) == mPr_FOREIGNER || mSC_LightHouse_Talk_After_Check()) {
-                    Actor_delete(actorx);
+                    Actor_delete((ACTOR*)soncho);
                 } else {
-                    aES2_setup_think_proc(actorx, game, aES2_THINK_3);
+                    aES2_setup_think_proc(soncho, play, aES2_THINK_3);
                 }
                 break;
             default:
-                aES2_setup_think_proc(actorx, game, aES2_THINK_4);
+                aES2_setup_think_proc(soncho, play, aES2_THINK_4);
                 break;
         }
         if (event == mSC_EVENT_NEW_YEARS_EVE_COUNTDOWN && soncho->day != 31) {
@@ -57,113 +60,113 @@ void aES2_wait(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     }
 }
 
-void aES2_look_runner(NPC_SONCHO2* soncho, GAME_PLAY* play) {
-    s16* save_area = (s16*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 0x8);
-    if (save_area != NULL) {
-        int flags = ((u16*)save_area)[1];
-        if ((flags & 0x400) != 0) {
-            aES2_set_request_act(soncho, 0x4, aNPC_ACT_TURN2, aNPC_ACT_TYPE_TO_POINT, 0x0, save_area[5], save_area[6]);
+static void aES2_look_runner(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 0x8);
+    if (tokyoso != NULL) {
+        if ((tokyoso->flags & aTKC_FLAG_RACE_ACTIVE) != 0) {
+            aES2_set_request_act(soncho, 0x4, aNPC_ACT_TURN2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT,
+                                 tokyoso->pos_0A[0][0], tokyoso->pos_0A[0][1]);
         }
     }
 }
 
-void aES2_bskt_birth(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_bskt_birth(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     s16 oyasiro_p[3];
     if (mFI_SetOyasiroPos(oyasiro_p)) {
         soncho->center_x = oyasiro_p[0];
         soncho->center_z = oyasiro_p[1];
-        aES2_setup_think_proc((ACTOR*)soncho, (GAME*)play, aES2_THINK_LIGHTHOUSE_QUEST_START);
+        aES2_setup_think_proc(soncho, play, aES2_THINK_LIGHTHOUSE_QUEST_START);
     }
 }
 
-void aES2_bskt_turn_next(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_bskt_turn_next(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     if (soncho->npc_class.action.idx == aNPC_ACT_TURN && soncho->npc_class.action.step == 0xff) {
-        aES2_setup_think_proc((ACTOR*)soncho, (GAME*)play, ++soncho->think_idx);
+        aES2_setup_think_proc(soncho, play, ++soncho->think_idx);
     }
 }
 
-void aES2_bskt_move_next(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_bskt_move_next(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     if (soncho->npc_class.action.idx == aNPC_ACT_WALK && soncho->npc_class.action.step == 0xff) {
-        aES2_setup_think_proc((ACTOR*)soncho, (GAME*)play, ++soncho->think_idx);
+        aES2_setup_think_proc(soncho, play, ++soncho->think_idx);
     } else {
         if ((s16)soncho->npc_class.movement.dst_pos_x != soncho->goal_x ||
             (s16)soncho->npc_class.movement.dst_pos_z != soncho->goal_z) {
-            aES2_setup_think_proc((ACTOR*)soncho, (GAME*)play, --soncho->think_idx);
+            aES2_setup_think_proc(soncho, play, --soncho->think_idx);
         }
     }
 }
 
-void aES2_bskt_timer_next(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_bskt_timer_next(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     if (soncho->timer > 0) {
         soncho->timer--;
     } else {
         u8 think_proc = soncho->think_idx;
         if (think_proc >= aES2_THINK_d) {
-            aES2_setup_think_proc((ACTOR*)soncho, (GAME*)play, aES2_THINK_LIGHTHOUSE_QUEST_START);
+            aES2_setup_think_proc(soncho, play, aES2_THINK_LIGHTHOUSE_QUEST_START);
         } else {
             soncho->think_idx = ++think_proc;
-            aES2_setup_think_proc((ACTOR*)soncho, (GAME*)play, think_proc);
+            aES2_setup_think_proc(soncho, play, think_proc);
         }
     }
 }
 
-void aES2_tug_of_war(NPC_SONCHO2* soncho, GAME_PLAY* play) {
-    ACTOR* actorx = (ACTOR*)soncho;
+static void aES2_tug_of_war(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     if (soncho->timer > 0) {
         soncho->timer--;
     } else {
-        aES2_setup_think_proc(actorx, (GAME*)play, soncho->think_idx);
+        aES2_setup_think_proc(soncho, play, soncho->think_idx);
     }
     if (soncho->npc_class.draw.animation_id == aNPC_ANIM_CLAP1) {
-        sAdo_OngenPos((u32)actorx, 0x2f, &actorx->world.position);
+        sAdo_OngenPos((u32)soncho, NA_SE_2F, &soncho->npc_class.actor_class.world.position);
     }
 }
 
-void aES2_think_main_proc(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_think_main_proc(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     soncho->npc_class.condition_info.demo_flg |= aNPC_COND_DEMO_SKIP_FOOTSTEPS;
     soncho->_994(soncho, play);
 }
 
-void aES2_think_init_proc(NPC_SONCHO2* soncho, GAME_PLAY* play) {
-    ACTOR* actorx = (ACTOR*)soncho;
-    actorx->status_data.weight = 0xfe;
+static void aES2_think_init_proc(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+    soncho->npc_class.actor_class.status_data.weight = MASSTYPE_HEAVY;
     soncho->npc_class.condition_info.hide_request = FALSE;
-    aES2_setup_think_proc((ACTOR*)actorx, (GAME*)play, aES2_THINK_0);
+    aES2_setup_think_proc(soncho, play, aES2_THINK_0);
 }
 
-void aES2_normal_wait_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
-    aES2_set_request_act(soncho, 0x4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, 0x0, 0x0, 0x0);
+static void aES2_normal_wait_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+    aES2_set_request_act(soncho, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_ACT_OBJ_DEFAULT, 0x0, 0x0);
 }
 
-void aES2_wander_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_wander_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     ACTOR* actorx = (ACTOR*)soncho;
     CLIP(npc_clip)->chg_schedule_proc((NPC_ACTOR*)soncho, play, aNPC_SCHEDULE_TYPE_WALK_WANDER);
     actorx->status_data.weight = 0x50;
 }
 
-void aES2_bskt_turn_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_bskt_turn_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     aES2_set_move_pos(soncho);
-    aES2_set_request_act(soncho, 0x4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, 0x0, soncho->goal_x, soncho->goal_z);
+    aES2_set_request_act(soncho, 0x4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, soncho->goal_x,
+                         soncho->goal_z);
 }
 
-void aES2_bskt_move_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_bskt_move_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     soncho->timer = 0x12c;
-    aES2_set_request_act(soncho, 0x4, aNPC_ACT_WALK, aNPC_ACT_TYPE_TO_POINT, 0x0, soncho->goal_x, soncho->goal_z);
+    aES2_set_request_act(soncho, 0x4, aNPC_ACT_WALK, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, soncho->goal_x,
+                         soncho->goal_z);
 }
 
-void aES2_force_wait_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_force_wait_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     soncho->npc_class.action.idx = aNPC_ACT_RUN;
     aES2_normal_wait_init(soncho, play);
 }
 
-void aES2_tug_of_war_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_tug_of_war_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     ACTOR* actorx = (ACTOR*)soncho;
     soncho->npc_class.action.idx = aNPC_ACT_WAIT;
     aES2_normal_wait_init(soncho, play);
     soncho->timer = 0x12c;
     CLIP(npc_clip)->set_dst_pos_proc((NPC_ACTOR*)soncho, actorx->world.position.x - 20.0f,
                                      actorx->world.position.z + 50.0f);
-    soncho->npc_class.draw.main_animation.keyframe.frame_control.mode = 1;
+    soncho->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_REPEAT;
     if (RANDOM_F(1) < 0.5f) {
         CLIP(npc_clip)->animation_init_proc(actorx, aNPC_ANIM_CLAP1, FALSE);
     } else {
@@ -171,29 +174,34 @@ void aES2_tug_of_war_init(NPC_SONCHO2* soncho, GAME_PLAY* play) {
     }
 }
 
-static u8 dt_tbl[15][5] = { { 1, 1, 0, aES2_TALK_0, aES2_THINK_0 },
-                            { 0, 1, 0, aES2_TALK_0, aES2_THINK_AEROBICS },
-                            { 3, 1, 0, aES2_TALK_0, aES2_THINK_BALL_TOSS },
-                            { 0, 3, 1, aES2_TALK_0, aES2_THINK_3 },
-                            { 0, 3, 1, aES2_TALK_1, aES2_THINK_4 },
-                            { 2, 2, 1, aES2_TALK_2, aES2_THINK_FOOT_RACE },
-                            { 4, 4, 1, aES2_TALK_LIGHTHOUSE_QUEST_START_1, aES2_THINK_LIGHTHOUSE_QUEST_START },
-                            { 5, 5, 1, aES2_TALK_LIGHTHOUSE_QUEST_START_2, aES2_THINK_LIGHTHOUSE_QUEST_START },
-                            { 4, 4, 1, aES2_TALK_5, aES2_THINK_8 },
-                            { 6, 2, 1, aES2_TALK_6, aES2_THINK_8 },
-                            { 4, 4, 1, aES2_TALK_7, aES2_THINK_a },
-                            { 5, 5, 1, aES2_TALK_8, aES2_THINK_a },
-                            { 4, 4, 1, aES2_TALK_9, aES2_THINK_c },
-                            { 6, 2, 1, aES2_TALK_a, aES2_THINK_c },
-                            { 7, 6, 1, aES2_TALK_TUG_O_WAR, aES2_THINK_TUG_O_WAR } };
-static aEV_SONCHO2_PROC proc_table[8] = { (aEV_SONCHO2_PROC)mActor_NONE_PROC1,
-                                          aES2_wait,
-                                          aES2_look_runner,
-                                          aES2_bskt_birth,
-                                          aES2_bskt_turn_next,
-                                          aES2_bskt_move_next,
-                                          aES2_bskt_timer_next,
-                                          aES2_tug_of_war };
+// TODO: this is a struct, not a 2D array of u8s.
+static u8 dt_tbl[15][5] = {
+    { 1, 1, 0, aES2_TALK_0, aES2_THINK_0 },
+    { 0, 1, 0, aES2_TALK_0, aES2_THINK_AEROBICS },
+    { 3, 1, 0, aES2_TALK_0, aES2_THINK_BALL_TOSS },
+    { 0, 3, 1, aES2_TALK_0, aES2_THINK_3 },
+    { 0, 3, 1, aES2_TALK_1, aES2_THINK_4 },
+    { 2, 2, 1, aES2_TALK_2, aES2_THINK_FOOT_RACE },
+    { 4, 4, 1, aES2_TALK_LIGHTHOUSE_QUEST_START_1, aES2_THINK_LIGHTHOUSE_QUEST_START },
+    { 5, 5, 1, aES2_TALK_LIGHTHOUSE_QUEST_START_2, aES2_THINK_LIGHTHOUSE_QUEST_START },
+    { 4, 4, 1, aES2_TALK_5, aES2_THINK_8 },
+    { 6, 2, 1, aES2_TALK_6, aES2_THINK_8 },
+    { 4, 4, 1, aES2_TALK_7, aES2_THINK_a },
+    { 5, 5, 1, aES2_TALK_8, aES2_THINK_a },
+    { 4, 4, 1, aES2_TALK_9, aES2_THINK_c },
+    { 6, 2, 1, aES2_TALK_a, aES2_THINK_c },
+    { 7, 6, 1, aES2_TALK_TUG_O_WAR, aES2_THINK_TUG_O_WAR },
+};
+static aEV_SONCHO2_PROC proc_table[8] = {
+    (aEV_SONCHO2_PROC)mActor_NONE_PROC1,
+    aES2_wait,
+    aES2_look_runner,
+    aES2_bskt_birth,
+    aES2_bskt_turn_next,
+    aES2_bskt_move_next,
+    aES2_bskt_timer_next,
+    aES2_tug_of_war,
+};
 static aEV_SONCHO2_PROC init_table[7] = {
     (aEV_SONCHO2_PROC)mActor_NONE_PROC1,
     aES2_normal_wait_init,
@@ -204,13 +212,12 @@ static aEV_SONCHO2_PROC init_table[7] = {
     aES2_tug_of_war_init,
 };
 
-void aES2_setup_think_proc(ACTOR* actorx, GAME* game, u8 think_idx) {
+static void aES2_setup_think_proc(NPC_SONCHO2* soncho, GAME_PLAY* play, u8 think_idx) {
     static aNPC_TALK_REQUEST_PROC talk_request_table[3] = {
         (aNPC_TALK_REQUEST_PROC)mActor_NONE_PROC1,
         aES2_norm_talk_request,
         (aNPC_TALK_REQUEST_PROC)mActor_NONE_PROC1,
     };
-    NPC_SONCHO2* soncho = (NPC_SONCHO2*)actorx;
     u8* data = dt_tbl[think_idx];
 
     soncho->think_idx = think_idx;
@@ -220,40 +227,40 @@ void aES2_setup_think_proc(ACTOR* actorx, GAME* game, u8 think_idx) {
     soncho->talk = data[3];
     soncho->think = data[4];
 
-    init_table[data[1]](soncho, (GAME_PLAY*)game);
+    init_table[data[1]](soncho, play);
 
     soncho->_9ac = TRUE;
 }
 
-void aES2_think_proc(NPC_ACTOR* npc, GAME_PLAY* play, int type) {
+static void aES2_think_proc(NPC_ACTOR* npc, GAME_PLAY* play, int type) {
     switch (type) {
-        case 0x0:
+        case aNPC_THINK_PROC_INIT:
             aES2_think_init_proc((NPC_SONCHO2*)npc, play);
             break;
-        case 0x1:
+        case aNPC_THINK_PROC_MAIN:
             aES2_think_main_proc((NPC_SONCHO2*)npc, play);
             break;
     }
 }
 
-void aES2_schedule_init_proc(NPC_ACTOR* npc, GAME_PLAY* play) {
+static void aES2_schedule_init_proc(NPC_ACTOR* npc, GAME_PLAY* play) {
     NPC_SONCHO2* soncho = (NPC_SONCHO2*)npc;
     soncho->npc_class.think.think_proc = aES2_think_proc;
-    CLIP(npc_clip)->think_proc(npc, play, aNPC_THINK_SPECIAL, 0);
+    CLIP(npc_clip)->think_proc(npc, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
 }
 
-void aES2_schedule_main_proc(NPC_ACTOR* npc, GAME_PLAY* play) {
-    if (CLIP(npc_clip)->think_proc(npc, play, -1, 1) == FALSE) {
-        CLIP(npc_clip)->think_proc(npc, play, -1, 2);
+static void aES2_schedule_main_proc(NPC_ACTOR* npc, GAME_PLAY* play) {
+    if (CLIP(npc_clip)->think_proc(npc, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == FALSE) {
+        CLIP(npc_clip)->think_proc(npc, play, -1, aNPC_THINK_TYPE_MAIN);
     }
 }
 
-void aES2_schedule_proc(NPC_ACTOR* npc, GAME_PLAY* play, int type) {
+static void aES2_schedule_proc(NPC_ACTOR* npc, GAME_PLAY* play, int type) {
     switch (type) {
-        case 0x0:
+        case aNPC_SCHEDULE_PROC_INIT:
             aES2_schedule_init_proc(npc, play);
             break;
-        case 0x1:
+        case aNPC_SCHEDULE_PROC_MAIN:
             aES2_schedule_main_proc(npc, play);
             break;
     }

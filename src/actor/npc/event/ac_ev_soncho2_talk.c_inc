@@ -1,4 +1,4 @@
-int aES2_kinenhin_msg(ACTOR* actorx, int msg_no) {
+static int aES2_kinenhin_msg(ACTOR* actorx, int msg_no) {
     NPC_SONCHO2* soncho = (NPC_SONCHO2*)actorx;
     if (soncho->event == mSC_EVENT_HARVEST_FESTIVAL) {
         return msg_no + MSG_HARVEST_FESTIVAL;
@@ -7,52 +7,52 @@ int aES2_kinenhin_msg(ACTOR* actorx, int msg_no) {
     }
 }
 
-void aES2_LightHouse_set_free_str() {
+static void aES2_LightHouse_set_free_str() {
     lbRTC_time_c time_1;
     lbRTC_time_c time_2;
     u8 day_str[4];
     lbRTC_TimeCopy(&time_1, &Common_Get(time).rtc_time);
-    lbRTC_Add_DD(&time_1, 0x7);
+    lbRTC_Add_DD(&time_1, 7);
     lbRTC_TimeCopy(&time_2, &Common_Get(time).rtc_time);
-    lbRTC_Add_DD(&time_2, 0x8);
+    lbRTC_Add_DD(&time_2, 8);
     mString_Load_DayStringFromRom(day_str, time_1.day);
-    mMsg_Set_free_str(mMsg_Get_base_window_p(), FALSE, day_str, 4);
+    mMsg_Set_free_str(mMsg_Get_base_window_p(), FALSE, day_str, sizeof(day_str));
     mString_Load_DayStringFromRom(day_str, time_2.day);
-    mMsg_Set_free_str(mMsg_Get_base_window_p(), TRUE, day_str, 4);
+    mMsg_Set_free_str(mMsg_Get_base_window_p(), TRUE, day_str, sizeof(day_str));
 }
 
-void aES2_talk_before_give(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_talk_before_give(NPC_SONCHO2* soncho, GAME* game) {
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     if (mMsg_Check_MainNormalContinue(msg_p)) {
         if (mPr_GetPossessionItemSumWithCond(Now_Private, EMPTY_NO, mPr_ITEM_COND_NORMAL) == 0) {
             mMsg_Set_continue_msg_num(msg_p, aES2_kinenhin_msg((ACTOR*)soncho, 2));
             aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_5);
         } else {
-            mMsg_Set_continue_msg_num(msg_p, aES2_kinenhin_msg((ACTOR*)soncho, 0x3));
+            mMsg_Set_continue_msg_num(msg_p, aES2_kinenhin_msg((ACTOR*)soncho, 3));
             aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_1);
         }
     }
 }
 
-void aES2_talk_give(NPC_SONCHO2* soncho, GAME_PLAY* play) {
+static void aES2_talk_give(NPC_SONCHO2* soncho, GAME* game) {
     if ((int)mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 0x1) == 0x2) {
         mSC_item_string_set(soncho->item, EMPTY_NO);
         mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x0, soncho->item);
-        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x1, 0x7);
-        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x2, 0x0);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x1, aHOI_REQUEST_PUTAWAY);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0x2, FALSE);
         mPr_SetFreePossessionItem(Now_Private, soncho->item, mPr_ITEM_COND_NORMAL);
         aES2_change_talk_proc((ACTOR*)soncho, aES2_TALK_5);
         mSC_trophy_set(soncho->event);
     }
 }
 
-int aES2_change_talk_proc(ACTOR* actorx, u8 talk_proc) {
+static int aES2_change_talk_proc(ACTOR* actorx, u8 talk_proc) {
     NPC_SONCHO2* soncho = (NPC_SONCHO2*)actorx;
     soncho->talk = talk_proc;
     return TRUE;
 }
 
-void aES2_set_norm_talk_info(ACTOR* actorx) {
+static void aES2_set_norm_talk_info(ACTOR* actorx) {
     NPC_SONCHO2* soncho = (NPC_SONCHO2*)actorx;
     mDemo_Set_talk_turn(TRUE);
     mDemo_Set_camera(3);
@@ -99,7 +99,7 @@ void aES2_set_norm_talk_info(ACTOR* actorx) {
     }
 }
 
-void aES2_norm_talk_request(ACTOR* actorx, GAME* game) {
+static void aES2_norm_talk_request(ACTOR* actorx, GAME* game) {
     NPC_SONCHO2* soncho = (NPC_SONCHO2*)actorx;
     if (soncho->_9ac == FALSE) {
         mDemo_Request(mDemo_ORDER_7, actorx, aES2_set_norm_talk_info);
@@ -108,7 +108,7 @@ void aES2_norm_talk_request(ACTOR* actorx, GAME* game) {
     }
 }
 
-int aES2_talk_init(ACTOR* actorx, GAME* game) {
+static int aES2_talk_init(ACTOR* actorx, GAME* game) {
     NPC_SONCHO2* soncho = (NPC_SONCHO2*)actorx;
     soncho->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
     mDemo_Set_ListenAble();
@@ -128,22 +128,24 @@ int aES2_talk_init(ACTOR* actorx, GAME* game) {
     return TRUE;
 }
 
-int aES2_talk_end_chk(NPC_SONCHO2* soncho, GAME_PLAY* play) {
-    static aEV_SONCHO2_PROC proc[6] = { aES2_talk_before_give,
-                                        aES2_talk_give,
-                                        (aEV_SONCHO2_PROC)mActor_NONE_PROC1,
-                                        (aEV_SONCHO2_PROC)mActor_NONE_PROC1,
-                                        (aEV_SONCHO2_PROC)mActor_NONE_PROC1,
-                                        (aEV_SONCHO2_PROC)mActor_NONE_PROC1 };
+static int aES2_talk_end_chk(NPC_ACTOR* nactorx, GAME* game) {
+    static aEV_SONCHO2_TALK_PROC proc[6] = {
+        aES2_talk_before_give,
+        aES2_talk_give,
+        (aEV_SONCHO2_TALK_PROC)mActor_NONE_PROC1,
+        (aEV_SONCHO2_TALK_PROC)mActor_NONE_PROC1,
+        (aEV_SONCHO2_TALK_PROC)mActor_NONE_PROC1,
+        (aEV_SONCHO2_TALK_PROC)mActor_NONE_PROC1,
+    };
 
-    ACTOR* actorx = (ACTOR*)soncho;
-    GAME* game = (GAME*)play;
+    NPC_SONCHO2* soncho = (NPC_SONCHO2*)nactorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
     int res = FALSE;
-    proc[soncho->talk](soncho, play);
-    if (mDemo_Check(0x8, actorx) == FALSE && mDemo_Check(0x7, actorx) == FALSE) {
-        aES2_setup_think_proc(actorx, game, soncho->think);
+    proc[soncho->talk](soncho, game);
+    if (mDemo_CAN_ACTOR_TALK((ACTOR*)soncho)) {
+        aES2_setup_think_proc(soncho, play, soncho->think);
         if (soncho->melody_inst) {
-            soncho->npc_class.talk_info.melody_inst = soncho->melody_inst;
+            nactorx->talk_info.melody_inst = soncho->melody_inst;
             soncho->melody_inst = 0;
         }
         res = TRUE;

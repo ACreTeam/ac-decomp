@@ -72,7 +72,7 @@ extern u8 mSC_get_soncho_event() {
     return 0xFF;
 }
 
-extern int mSC_get_soncho_field_event() {
+extern u8 mSC_get_soncho_field_event() {
     if (mEv_check_status(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, mEv_STATUS_RUN)) {
         return mSC_FIELD_EVENT_FOOT_RACE;
     }

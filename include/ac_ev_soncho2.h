@@ -14,6 +14,7 @@ extern ACTOR_PROFILE Ev_Soncho2_Profile;
 typedef struct ac_npc_soncho2 NPC_SONCHO2;
 
 typedef void (*aEV_SONCHO2_PROC)(NPC_SONCHO2* soncho, GAME_PLAY* play);
+typedef void (*aEV_SONCHO2_TALK_PROC)(NPC_SONCHO2* soncho, GAME* game);
 
 struct ac_npc_soncho2 {
     NPC_ACTOR npc_class;

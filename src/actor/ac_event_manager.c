@@ -4514,7 +4514,11 @@ static int mail_event_check(void) {
         target_date.day = 14;
         target_date.hour = 0;
         target_date.year = (last_time.month > date.month && last_time.month <= target_date.month) ? last_time.year : date.year;
+
+        // check Valentine's day is between the last event mail save date and the current date
+        // also check that the current date is within a week of Valentine's day
         if (check_past_day(last_time.raw, target_date.raw, date.raw) != FALSE && date.year == last_time.year && date.day <= (target_date.day + lbRTC_WEEK)) {
+            // schedule Valentine's day mail for 10 am on February 14th
             target_date.hour = 10; // 10am on Valentine's day
             Save_Get(event_save_common).valentines_day_date = target_date.raw;
             n++;

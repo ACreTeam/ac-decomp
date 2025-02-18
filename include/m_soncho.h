@@ -120,7 +120,7 @@ enum {
 };
 
 extern u8 mSC_get_soncho_event();
-extern int mSC_get_soncho_field_event();
+extern u8 mSC_get_soncho_field_event();
 extern void mSC_delete_soncho(ACTOR* actor, GAME_PLAY* play);
 extern int mSC_trophy_get(u8 num);
 extern void mSC_trophy_set(u8 num);
