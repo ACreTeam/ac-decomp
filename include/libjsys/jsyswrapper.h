@@ -136,6 +136,10 @@ extern u32 JC_JKRHeap_getFreeSize(void* heap);
 extern void* JC_JKRHeap_alloc(void* heap, u32 size, int align);
 extern void JC_JKRHeap_free(void* heap, void* mem);
 
+extern void* JC__JKRAllocFromAram(size_t size);
+extern u8* JC__JKRAramToMainRam_block(void* aramBlock, u8* ramDst, size_t size);
+extern void* JC__JKRMainRamToAram_block(u8* ramAddr, void* aramBlock, size_t size);
+
 extern void* JW_Alloc(size_t size, int align);
 extern void JW_Free(void* ptr);
 extern s32 JW_Resize(void* ptr, size_t new_size);

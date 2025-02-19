@@ -185,11 +185,11 @@ typedef struct {
     int loaded_file_type;
     u32 workArea_size;
     void* workArea;
-    int _0010;
+    u8 _0010;
     int load_proc;
     u8 _0018[0x0054 - 0x0018];
     mCD_memMgr_card_info_c cards[CARD_NUM_CHANS];
-    int _017C;
+    u32 _017C;
     int land_saved;
     int copy_protect;
     int _0188;
@@ -207,6 +207,12 @@ typedef struct {
 /* Bonus letter */
 #define mCD_PRESENT_MAX 9
 
+typedef struct memcard_header_s {
+    char comment[CARD_COMMENT_SIZE];
+    u8 banner[0xE00];
+    u8 icon[0x600];
+} MemcardHeader_c;
+
 typedef struct present_save_s {
     u16 checksum;
     u16 present_count;
@@ -215,9 +221,7 @@ typedef struct present_save_s {
 
 typedef union {
     struct {
-        char comment[CARD_COMMENT_SIZE];
-        u8 banner[0xE00];
-        u8 icon[0x600];
+        MemcardHeader_c header;
         PresentSave_c save;
     };
     u8 __align_sector[mCD_MEMCARD_SECTORSIZE];
@@ -255,8 +259,11 @@ extern int mCD_EraseBrokenLand_bg(void*);
 extern int mCD_EraseLand_bg(int* slot);
 extern int mCD_ErasePassportFile_bg(int slot);
 extern int mCD_SaveErasePlayer_bg(int* slot);
-extern int mCD_card_format_bg(u8);
+extern int mCD_card_format_bg(s32 chan);
 extern void mCD_ReCheckLoadLand(GAME_PLAY* play);
+
+extern int mCD_save_data_aram_to_main(void* dst, u32 size, u32 idx);
+extern int mCD_save_data_main_to_aram(void* src, u32 size, u32 idx);
 
 #ifdef __cplusplus
 }
