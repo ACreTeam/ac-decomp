@@ -345,7 +345,7 @@ config.libs = [
         "progress_category": "library",
         "src_dir": "src/static",
         "objects": [
-            Object(NonMatching, "libforest/emu64/emu64.cc"),
+            Object(NonMatching, "libforest/emu64/emu64.cc", extra_cflags=["-lang=c++", "-O4,p", "-inline auto"]),
             Object(Matching, "libforest/osreport.c"),
             Object(Matching, "libforest/fault.c"),
             Object(Matching, "libforest/ReconfigBATs.c"),
