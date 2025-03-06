@@ -117,6 +117,14 @@ Select an object from the left sidebar to begin diffing. Changes to the project 
 
 ![](assets/objdiff.png)
 
+License
+=======
+This project's source code and most of its tools are made available under the [Creative Commons Zero 1.0](https://github.com/ACreTeam/ac-decomp/blob/master/LICENSE) license. However, some included tools use different licenses:
+
+pyjkernel is made available under the [GPLv3](https://github.com/ACreTeam/ac-decomp/blob/master/tools/pyjkernel/LICENSE) license.
+
+ninja_syntax is made available under the [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) license.
+
 Credits
 =======
 
