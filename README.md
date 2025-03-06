@@ -119,7 +119,7 @@ Select an object from the left sidebar to begin diffing. Changes to the project 
 
 License
 =======
-This project's source code and most of its tools are made available under the [Creative Commons Zero 1.0](https://github.com/ACreTeam/ac-decomp/blob/master/LICENSE) license. However, some included tools use different licenses:
+This project's source code and most of its tools are made available under the [Creative Commons Zero 1.0](https://github.com/ACreTeam/ac-decomp/blob/master/LICENSE) license. However, the following included tools use different licenses:
 
 pyjkernel is made available under the [GPLv3](https://github.com/ACreTeam/ac-decomp/blob/master/tools/pyjkernel/LICENSE) license.
 
