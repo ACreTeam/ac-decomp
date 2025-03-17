@@ -25,13 +25,13 @@ u32 __PitchTo32_HVC_E(u16);
 void __Sound_Write_E(u16, u8);
 void StartE();
 void __ProcessSoundE();
-u8 __GetWave_Triangle(s32);
+s8 __GetWave_Triangle(s32);
 u32 __PitchTo32_HVC_C(u16);
 void __Sound_Write_C(u16, u8);
-void __ProcessSoundC();
+int __ProcessSoundC();
 void __CreateDiskSubWave();
 void __CreateDiskSubWave();
-void __PitchTo32_DISKFM(u16);
+u32 __PitchTo32_DISKFM(u16);
 void __Sound_Write_Disk(u16, u8);
 
 void HS_Event_Reset();
