@@ -1,4 +1,7 @@
 #include "jaudio_NES/emusound.hpp"
+#include "dolphin/os.h"
+#include "jaudio_NES/aictrl.h"
+#include "jaudio_NES/sample.h"
 
 #define NES_CLOCK_SPEED 1789773
 
@@ -32,7 +35,11 @@ typedef struct _NESSoundStruct2 {
 
 typedef struct _NESSoundStruct3 {
     u8 _00;
-    artificial_padding(0, 0x18, u8);
+    u32 _04;
+    artificial_padding(0x4, 0xd, u32);
+    u8 _0D;
+    u16 _0E;
+    artificial_padding(0xe, 0x18, u16);
 } NESSoundStruct3;
 
 typedef struct _NESSoundStruct {
@@ -47,7 +54,7 @@ typedef struct _NESSoundStruct {
     };
     u32 _08;
     u16 _0C;
-    // pad badding
+    u16 _0E;
     u32 _10;
     u32 _14;
     u32 _18;
@@ -73,21 +80,72 @@ typedef struct _NESSoundStruct {
     u16 _40;
     u16 _42;
     u8 _44;
-    artificial_padding(0x44, 0x48, u8);
+    artificial_padding(0x44, 0x47, u8);
+    u8 _47;
     u16 _48;
     u8 _4A;
     // bad padding
 } NESSoundStruct; // size 0x48
+
+typedef struct _NESSoundStructF {
+    u8 _00;
+    // bad padding
+    union {
+        u32 _04;
+        struct {
+            u16 _04_hi;
+            u16 _04_lo;
+        } _04p;
+    };
+    u32 _08;
+    u16 _0C;
+    u16 _0E;
+    u32 _10;
+    u32 _14;
+    u32 _18;
+    u8 _1C;
+    u8 _1D;
+    // bad padding
+    u32 _20;
+    u32 _24;
+    u8 _28;
+    // bad padding
+    u16 _2A;
+    u8 _2C;
+    u8 _2D;
+    u8 _2E;
+    u8 _2F;
+    // bad padding
+    u8 _30[9];
+    u8 _39;
+    u8 _3A;
+    u8 _3B;
+    u16 _3C;
+    // bad padding
+    u16 _3E;
+    u16 _40;
+    u16 _42;
+    u8 _44;
+    artificial_padding(0x44, 0x47, u8);
+    u8 _47;
+    u16 _48;
+    u8 _4A;
+    // bad padding
+} NESSoundStructF; // size 0x48
 
 // bss
 u8 PCMH2[16];
 NESSoundStruct SoundA, SoundB, SoundC, SoundD;
 NESSoundStruct2 SoundE;
 NESSoundStruct SoundX, SoundY, SoundZ;
-NESSoundStruct SoundM, SoundN, SoundF;
+NESSoundStruct SoundM, SoundN;
+NESSoundStructF SoundF;
 NESSoundStruct3 SoundP;
+u32 FRAME_SYNC_FLAG;
+u32 FRAME_SYNC_COUNTER;
 u32 PHASE_SYNC_FLAG;
-
+u32 PHASE_SYNC_COUNTER;
+u8 DUMMY_ACTIVE[9];
 // sdata
 u32 NOISE_MASTER = 1;
 u32 NOISE_SHIFT = 0x800;
@@ -265,6 +323,7 @@ u8 VOLTABLE_DISKFM_SUB[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x0
 
 // UNUSED
 u32 DISKFM_GAINTABLE[] = { 30, 20, 15, 12 };
+u8 DISKFM_TABLE[0x40];
 
 // UNUSED
 u32 DEB1[4] = { 0, 0, 0, 0 };
@@ -577,7 +636,7 @@ void __Sound_Write_A(u16 a, u8 b) {
     }
 }
 
-s16 __ProcessSoundA() {
+int __ProcessSoundA() {
     if (SoundA._3A) {
         if (PHASE_SYNC_FLAG) {
             SoundA._30++;
@@ -781,7 +840,7 @@ void __Sound_Write_B(u16 a, u8 b) {
     }
 }
 
-s16 __ProcessSoundB() {
+int __ProcessSoundB() {
     if (SoundB._3A) {
         if (PHASE_SYNC_FLAG) {
             SoundB._30++;
@@ -1012,7 +1071,7 @@ s8 __GetNoise(u32 a) {
     }
 }
 
-s16 __ProcessSoundD() {
+int __ProcessSoundD() {
     s16 ret;
     if (!SoundD._00) {
         if (!SoundD._3E) {
@@ -1139,7 +1198,7 @@ void StartE() {
 u8* ROM_TOP_C000 = (u8*)&DEB1;
 u8* ROM_TOP_E000 = (u8*)&DEB1;
 
-void __ProcessSoundE() {
+int __ProcessSoundE() {
     if (SoundE._00) {
         for (int i = 0; i < 2u; i++) {
             SoundE._04 += SoundE._08;
@@ -1177,7 +1236,7 @@ void __ProcessSoundE() {
         }
     }
     MoveBias();
-    MoveVoltage();
+    return MoveVoltage();
 }
 
 s8 __GetWave_Triangle(s32 a) {
@@ -1259,6 +1318,7 @@ void __Sound_Write_C(u16 a, u8 b) {
         } break;
     }
 }
+u32 exitflag;
 
 int __ProcessSoundC() {
     static s16 timer = 0;
@@ -1308,7 +1368,10 @@ int __ProcessSoundC() {
 u8 DISKSUB_TABLE[32];
 s16 disksubwave[32][2];
 s8 DISK_SUB_GAIN[] = { 0, 1, 2, 4, 0, -4, -2, -1 };
+u8* NOISE_DTABLE;
 
+MixCallback old_mixcall;
+u8 old_mixmode;
 void __CreateDiskSubWave() {
     for (int i = 0; i < 32; i++) {
         disksubwave[i][0] = DISK_SUB_GAIN[DISKSUB_TABLE[i]];
@@ -1320,43 +1383,523 @@ u32 __PitchTo32_DISKFM(u16 v) {
     return (0.85343015f * (int)v) / 500.4375f * 32768.f;
 }
 
-void __Sound_Write_Disk(u16, u8) {
+void __Sound_Write_Disk(u16 a, u8 b) {
+    static int shiftr = 0;
+    ((u8*)&sbuffer)[a] = b;
+    if (a == 0x23) {
+        if (!(b & 2)) {
+            SoundF._2D = 0;
+            SoundF._2C = 0;
+        }
+    } else if (a >= 0x40 && a <= 0x7f) {
+        DISKFM_TABLE[a - 0x40] = SBUFFER[a] & 0x3f;
+    } else {
+        switch (a) {
+            case 0x80: {
+                s8 c = -((char)SBUFFER[128] >> 7);
+                SoundF._2E = SBUFFER[128] >> 6 & 1;
+                if (c == 1) {
+                    SoundF._2E = SBUFFER[128] & 0x3F;
+                }
+            } break;
+            case 0x82: {
+                s8 c = -((char)SBUFFER[128] >> 7);
+                SoundF._2E = SBUFFER[128] >> 6 & 1;
+                if (c == 1) {
+                    SoundF._2E = SBUFFER[128] & 0x3F;
+                }
+            } break;
+            case 0x83: {
+                s8 c = -((char)SBUFFER[128] >> 7);
+                SoundF._2E = SBUFFER[128] >> 6 & 1;
+                if (c == 1) {
+                    SoundF._2E = SBUFFER[128] & 0x3F;
+                }
+            } break;
+            case 0x84: {
+                s8 c = -((char)SBUFFER[128] >> 7);
+                SoundF._2E = SBUFFER[128] >> 6 & 1;
+                if (c == 1) {
+                    SoundF._2E = SBUFFER[128] & 0x3F;
+                }
+            } break;
+            case 0x85: {
+                s8 c = -((char)SBUFFER[128] >> 7);
+                SoundF._2E = SBUFFER[128] >> 6 & 1;
+                if (c == 1) {
+                    SoundF._2E = SBUFFER[128] & 0x3F;
+                }
+            } break;
+            case 0x86: {
+                s8 c = -((char)SBUFFER[128] >> 7);
+                SoundF._2E = SBUFFER[128] >> 6 & 1;
+                if (c == 1) {
+                    SoundF._2E = SBUFFER[128] & 0x3F;
+                }
+            } break;
+            case 0x87: {
+                s8 c = -((char)SBUFFER[128] >> 7);
+                SoundF._2E = SBUFFER[128] >> 6 & 1;
+                if (c == 1) {
+                    SoundF._2E = SBUFFER[128] & 0x3F;
+                }
+            } break;
+            case 0x88: {
+                s8 c = -((char)SBUFFER[128] >> 7);
+                SoundF._2E = SBUFFER[128] >> 6 & 1;
+                if (c == 1) {
+                    SoundF._2E = SBUFFER[128] & 0x3F;
+                }
+            } break;
+            case 0x89: {
+                s8 c = -((char)SBUFFER[128] >> 7);
+                SoundF._2E = SBUFFER[128] >> 6 & 1;
+                if (c == 1) {
+                    SoundF._2E = SBUFFER[128] & 0x3F;
+                }
+            } break;
+            case 0x8a: {
+                s8 c = -((char)SBUFFER[128] >> 7);
+                SoundF._2E = SBUFFER[128] >> 6 & 1;
+                if (c == 1) {
+                    SoundF._2E = SBUFFER[128] & 0x3F;
+                }
+            } break;
+        }
+    }
 }
+OSMessageQueue SoundQ;
+OSMessage SoundQbuf[0x1000];
+
 void HS_Event_Reset() {
+    OSInitMessageQueue(&SoundQ, SoundQbuf, ARRAY_COUNT(SoundQbuf));
 }
+
 void HS_Event_Update() {
+    //! TODO: this has to be wrong
+    typedef struct {
+        u8 a, b;
+    } tempBuf;
+    tempBuf message;
+
+    while (1) {
+        // this should take a void** for message, and it fills out the OSMessage(which is a void*)
+        if (!OSReceiveMessage(&SoundQ, (OSMessage*)&message, 0)) {
+            break;
+        }
+        __Sound_Write_HVC(message.a, message.b);
+    }
 }
-void HS_Event_Write(u16, u8) {
+
+void HS_Event_Write(u16 a, u8 b) {
+    if (a >= 0x5000 && a <= 0x5015) {
+        a = (a - 0xf40);
+    }
+
+    OSSendMessage(&SoundQ, (OSMessage)((a - 0x4000) << 0x18 | b << 0x10), 0);
+    switch (a & 0xff) {
+        case 3: {
+            DUMMY_ACTIVE[0] = 2;
+        } break;
+        case 7: {
+            DUMMY_ACTIVE[1] = 2;
+        } break;
+        case 0xb: {
+            DUMMY_ACTIVE[2] = 2;
+        } break;
+        case 0xf: {
+            DUMMY_ACTIVE[3] = 2;
+        } break;
+        case 0x15: {
+            if (!(b & 1)) {
+                DUMMY_ACTIVE[0] = 1;
+            }
+            if (!(b & 2)) {
+                DUMMY_ACTIVE[1] = 1;
+            }
+            if (!(b & 4)) {
+                DUMMY_ACTIVE[2] = 1;
+            }
+            if (!(b & 8)) {
+                DUMMY_ACTIVE[3] = 1;
+            }
+            if (!(b & 0x10)) {
+                DUMMY_ACTIVE[4] = 1;
+            }
+            if (b & 0x10) {
+                DUMMY_ACTIVE[4] = 2;
+            }
+        } break;
+        case 0xc3: {
+            DUMMY_ACTIVE[6] = 2;
+        } break;
+        case 0xc7: {
+            DUMMY_ACTIVE[7] = 2;
+        } break;
+        case 0xcb: {
+            DUMMY_ACTIVE[8] = 2;
+        } break;
+        case 0xd5: {
+            if (!(b & 1)) {
+                DUMMY_ACTIVE[6] = 1;
+            }
+            if (!(b & 2)) {
+                DUMMY_ACTIVE[7] = 1;
+            }
+            if (!(b & 4)) {
+                DUMMY_ACTIVE[8] = 1;
+            }
+        } break;
+    }
 }
+
 void ProcessPhaseCounter() {
+    if (PHASE_SYNC_COUNTER != 0) {
+        PHASE_SYNC_COUNTER--;
+    }
+    if (PHASE_SYNC_COUNTER == 0) {
+        PHASE_SYNC_FLAG = 1;
+        PHASE_SYNC_COUNTER = PHASE_SAMPLE;
+    }
+
+    if (PHASE_SYNC_FLAG) {
+        if (FRAME_SYNC_COUNTER != 0) {
+            FRAME_SYNC_COUNTER--;
+        }
+        if (FRAME_SYNC_COUNTER == 0) {
+            FRAME_SYNC_FLAG = 1;
+            FRAME_SYNC_COUNTER = 4;
+        }
+    }
 }
+
 void ForceProcessPhaseCounter() {
+    PHASE_SYNC_COUNTER = 0;
+    ProcessPhaseCounter();
 }
-void Sound_Make_HVC(s32, s16*) {
+
+void Sound_Make_HVC(s32 count, s16* v) {
+    static int lastsample;
+    int j;
+    int a, b, c, d, e;
+    int i;
+    HS_Event_Update();
+    for (i = 0; i < count; i++) {
+        ProcessPhaseCounter();
+        a = __ProcessSoundA();
+        b = __ProcessSoundB();
+        c = __ProcessSoundC();
+        d = __ProcessSoundD();
+        e = __ProcessSoundE();
+        j = (s16)a + (s16)b - (s16)c - (s16)d + (s16)e;
+        if (j >= 0x7fff) {
+            j = 0x7fff;
+        } else if (j <= -0x7fff) {
+            j = -0x7fff;
+        }
+        lastsample += (j - lastsample) / 2;
+        v[i] = lastsample;
+        PHASE_SYNC_FLAG = 0;
+        FRAME_SYNC_FLAG = 0;
+    }
+    DUMMY_ACTIVE[0] = 0;
+    DUMMY_ACTIVE[1] = 0;
+    DUMMY_ACTIVE[2] = 0;
+    DUMMY_ACTIVE[3] = 0;
+    DUMMY_ACTIVE[4] = 0;
+    DUMMY_ACTIVE[5] = 0;
+    DUMMY_ACTIVE[6] = 0;
+    DUMMY_ACTIVE[7] = 0;
+    DUMMY_ACTIVE[8] = 0;
 }
+
+s16 sound_loop_buffer[0x2000];
+
+int read_pointer;
+int write_pointer = 0x690;
+int buffer_remain = 0x690;
+
 void Buffer_Reset() {
+    for (int i = 0; i < ARRAY_COUNT(sound_loop_buffer); i++) {
+        sound_loop_buffer[i] = 0;
+    }
+    read_pointer = 0;
+    write_pointer = 0x690;
+    buffer_remain = 0x690;
 }
-void Sample_Copy(u16, s16*) {
+
+void Sample_Copy(u16 count, s16* v) {
+    u32 i;
+    for (i = 0; i < count; i++, buffer_remain--) {
+        if (buffer_remain == 0) {
+            Buffer_Reset();
+            break;
+        }
+        v[i] = sound_loop_buffer[read_pointer];
+        sound_loop_buffer[read_pointer] = 0;
+        if (++read_pointer == 0x2000) {
+            read_pointer = 0;
+        }
+    }
+
+    for (i; i < count; i++) {
+        v[i] = 0;
+    }
 }
+
 void Sound_Write(u16 event, u8 value, u16 maybe_frames) {
+    if (event == 0) {
+        static f32 create_counter = 0;
+        static f32 create_speed;
+        int interrupts = OSDisableInterrupts();
+        if (buffer_remain < 0x460) {
+            create_speed = 2.038168f * ((5.f * (0x460 - buffer_remain) + 1680.f) / 1680.f);
+            if (create_speed > 2.5) {
+                create_speed = 2.5f;
+            }
+        } else if (buffer_remain > 1680) {
+            create_speed = 2.038168f * (1680.f / ((-0x690 + buffer_remain) * 5 + 0x690));
+        } else {
+            create_speed = 2.038168f;
+        }
+        create_counter += create_speed;
+        int c = (int)create_counter;
+        create_counter -= c;
+        static s16 buf[0x10];
+        Sound_Make_HVC(c, buf);
+        if (c != 0) {
+            for (u32 i = 0; i < c; i++) {
+                if (buffer_remain == 0x2000) {
+                    break;
+                }
+                sound_loop_buffer[write_pointer] = buf[i];
+                if (++write_pointer == 0x2000) {
+                    write_pointer = 0;
+                }
+                buffer_remain++;
+            }
+        }
+        OSRestoreInterrupts(interrupts);
+    } else {
+        HS_Event_Write(event, value);
+    }
 }
+
 void Sound_Reset() {
+    HS_Event_Reset();
+    Jac_bzero(&SoundA, sizeof(SoundA));
+    Jac_bzero(&SoundB, sizeof(SoundB));
+    Jac_bzero(&SoundC, sizeof(SoundC));
+    Jac_bzero(&SoundD, sizeof(SoundD));
+    Jac_bzero(&SoundX, sizeof(SoundX));
+    Jac_bzero(&SoundY, sizeof(SoundY));
+    Jac_bzero(&SoundZ, sizeof(SoundZ));
+    Jac_bzero(&SoundM, sizeof(SoundM));
+    Jac_bzero(&SoundN, sizeof(SoundN));
+    Jac_bzero(&SoundE, sizeof(SoundE));
+    Jac_bzero(&SoundF, sizeof(SoundF));
+    Jac_bzero(&SoundP, sizeof(SoundP));
+    SoundA._3E = 0;
+    SoundB._3E = 0;
+    SoundC._3E = 0;
+    SoundD._3E = 0;
+    SoundF._3C = 0;
+    SoundP._0E = 0;
+
+    SoundX._3E = 0;
+    SoundY._3E = 0;
+    SoundZ._3E = 0;
+
+    SoundA._04 = 0;
+    SoundB._04 = 0;
+    SoundC._04 = 0;
+    SoundD._04 = 0;
+    SoundE._04 = 0;
+    SoundF._04 = 0;
+    SoundP._04 = 0;
+
+    SoundA._48 = 0;
+    SoundB._48 = 0;
+    SoundC._48 = 0;
+    SoundX._04 = 0;
+    SoundY._04 = 0;
+    SoundZ._04 = 0;
+    SoundP._0D = 0;
+    WriteBias(0);
+    Buffer_Reset();
 }
-void __FrameCallback(s32) {
+
+u8 move_to_50;
+
+s16* __FrameCallback(s32 a) {
+    static s16 buf[0x320];
+    if (move_to_50) {
+        move_to_50--;
+        if (move_to_50 == 0) {
+            FRAME_SAMPLE = 0x280;
+            PHASE_SAMPLE = 0xa0;
+        }
+    }
+    Sample_Copy(a, buf);
+    if (exitflag) {
+        f32 f2 = 1.f;
+        f32 f = 1.f / a;
+        Jac_RegisterMixcallback(old_mixcall, old_mixmode);
+        exitflag = FALSE;
+        for (int i = 0; i < a; i++) {
+            f32 f3 = f2 * buf[i];
+            f2 -= f;
+            buf[i] = f3;
+        }
+    }
+    return buf;
 }
+
 void EmuSound_Start(u8* noise_data) {
+    NOISE_DTABLE = noise_data;
+    Sound_Reset();
+    exitflag = 0;
+    old_mixcall = Jac_GetMixcallback(&old_mixmode);
+    Jac_RegisterMixcallback(__FrameCallback, 0);
 }
+
 void EmuSound_Exit() {
+    exitflag = TRUE;
 }
-void Sound_Read() {
+
+u8 Sound_Read(u16 param_1, u32 param_2, u32 param_3, u32 param_4, u32 param_5) {
+    u8 a, b, c, d, e;
+    if (param_1 == 0x5015) {
+        if (!DUMMY_ACTIVE[6]) {
+            param_3 = SoundX._00;
+        }
+        if (!DUMMY_ACTIVE[7]) {
+            param_4 = SoundY._00;
+        }
+        if (!DUMMY_ACTIVE[8]) {
+            param_5 = SoundZ._00;
+        }
+        return (u8)param_5 << 2 | (u8)param_4 << 1 | (param_3);
+    } else if (param_1 == 0x4015) {
+        a = SoundA._00;
+        if (DUMMY_ACTIVE[0]) {
+            a = DUMMY_ACTIVE[0] - 1;
+        }
+        b = SoundB._00;
+        if (DUMMY_ACTIVE[1]) {
+            b = DUMMY_ACTIVE[1] - 1;
+        }
+        c = SoundC._00;
+        if (DUMMY_ACTIVE[2]) {
+            c = DUMMY_ACTIVE[2] - 1;
+        }
+        d = SoundD._00;
+        if (DUMMY_ACTIVE[3]) {
+            d = DUMMY_ACTIVE[3] - 1;
+        }
+        e = SoundE._00;
+        if (DUMMY_ACTIVE[4]) {
+            e = DUMMY_ACTIVE[4] - 1;
+        }
+        return SoundE._20 << 7 | e << 4 | d << 3 | c << 2 | b << 1 | a;
+    } else {
+        switch (param_1 & 0xff) {
+            case 0x90:
+                return SoundF._2D;
+            case 0x92:
+                return SoundF._39;
+            default:
+                return 0;
+        }
+    }
 }
-void Sound_SetC000() {
+
+void Sound_SetC000(u8* romTop) {
+    ROM_TOP_C000 = romTop;
 }
-void Sound_SetE000() {
+void Sound_SetE000(u8* romTop) {
+    ROM_TOP_E000 = romTop;
 }
-void Sound_SetMMC() {
+
+u8 MMC_MODE;
+u8 beforemode;
+
+void Sound_SetMMC(u8 mmcMode) {
+    FRAME_SAMPLE = 0x280;
+    PHASE_SAMPLE = 0xa0;
+    beforemode = 0;
+    MMC_MODE = mmcMode;
+    Sound_Reset();
 }
-void Sound_PlayMENUPCM() {
+
+void Sound_PlayMENUPCM(u8 v) {
+    SoundP._0D = v;
 }
-void __Sound_Write_HVC(u16, u8) {
+
+void __Sound_Write_HVC(u16 index, u8 v) {
+    ((u8*)&sbuffer)[index] = v;
+    if (index >= 0xc0) {
+        switch (MMC_MODE) {
+            case 1: {
+                __Sound_Write_VRC(index, v);
+            } break;
+            case 0: {
+                __Sound_Write_MMC5(index, v);
+            } break;
+        }
+    } else if (index > 0x17) {
+        __Sound_Write_Disk(index, v);
+    } else {
+        switch (index >> 2) {
+            case 0: {
+                __Sound_Write_A(index, v);
+            } break;
+            case 1: {
+                __Sound_Write_B(index, v);
+            } break;
+            case 2: {
+                __Sound_Write_C(index, v);
+            } break;
+            case 3: {
+                __Sound_Write_D(index, v);
+            } break;
+            case 4: {
+                __Sound_Write_E(index, v);
+            } break;
+
+            case 5: {
+                if (index == 0x17) {
+                    if (v & 0x80) {
+                        FRAME_SAMPLE = 0x280;
+                        PHASE_SAMPLE = 0xa0;
+                        beforemode = 0;
+                    } else {
+                        FRAME_SAMPLE = 0x215;
+                        PHASE_SAMPLE = 0x85;
+                        beforemode = 1;
+                    }
+                    ForceProcessPhaseCounter();
+                } else {
+                    if (!(v & 1)) {
+                        SoundA._00 = 0;
+                    }
+                    if (!(v & 2)) {
+                        SoundB._00 = 0;
+                    }
+                    if (!(v & 4)) {
+                        SoundC._00 = 0;
+                    }
+                    if (!(v & 8)) {
+                        SoundD._00 = 0;
+                    }
+                    if (!(v & 0x10)) {
+                        SoundE._00 = 0;
+                    }
+                    if ((v & 0x10) && !SoundE._00) {
+                        StartE();
+                    }
+                }
+            } break;
+        }
+    }
 }
