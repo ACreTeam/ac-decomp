@@ -98,25 +98,24 @@ typedef struct _NESSoundStructF {
         } _04p;
     };
     u32 _08;
-    u16 _0C;
-    u16 _0E;
+    u32 _0C;
     u32 _10;
-    u32 _14;
+    u16 _14;
+    u16 _16;
     u32 _18;
-    u8 _1C;
-    u8 _1D;
+    u16 _1C;
     // bad padding
     u32 _20;
     u32 _24;
-    u8 _28;
-    // bad padding
-    u16 _2A;
+    u32 _28;
     u8 _2C;
     u8 _2D;
     u8 _2E;
     u8 _2F;
     // bad padding
-    u8 _30[9];
+    u32 _30;
+    u32 _34;
+    u8 _38;
     u8 _39;
     u8 _3A;
     u8 _3B;
@@ -124,11 +123,14 @@ typedef struct _NESSoundStructF {
     // bad padding
     u16 _3E;
     u16 _40;
-    u16 _42;
-    u8 _44;
-    artificial_padding(0x44, 0x47, u8);
+    u8 _42;
+    u8 _43;
+    s8 _44;
+    u8 _45;
+    u8 _46;
     u8 _47;
-    u16 _48;
+    u8 _48;
+    u8 _49;
     u8 _4A;
     // bad padding
 } NESSoundStructF; // size 0x48
@@ -141,26 +143,25 @@ NESSoundStruct SoundX, SoundY, SoundZ;
 NESSoundStruct SoundM, SoundN;
 NESSoundStructF SoundF;
 NESSoundStruct3 SoundP;
-u32 FRAME_SYNC_FLAG;
-u32 FRAME_SYNC_COUNTER;
-u32 PHASE_SYNC_FLAG;
-u32 PHASE_SYNC_COUNTER;
+
 u8 DUMMY_ACTIVE[9];
 // sdata
 u32 NOISE_MASTER = 1;
 u32 NOISE_SHIFT = 0x800;
 u32 PHASE_SAMPLE = 0x85;
 u32 FRAME_SAMPLE = 0x215;
-const u64 _STOP = 0;
+u32 _STOP[2] = { 0 };
 
 // sbss
+u8 beforemode;
+u8 move_to_50;
+u8 MMC_MODE;
+u8* NOISE_DTABLE;
+u32 PHASE_SYNC_FLAG;
+u32 FRAME_SYNC_FLAG;
+u32 PHASE_SYNC_COUNTER;
+u32 FRAME_SYNC_COUNTER;
 s8 NOISE_PULSE;
-u32 delta_counter;
-s8 delta_sign;
-s32 bias;
-s32 bias_move;
-f32 voltage;
-f32 voltage_out;
 
 // data
 
@@ -237,6 +238,22 @@ typedef struct _DMCChannel {
     u8 SampleLength : 8;
 } DMCChannel;
 
+typedef struct _WaveTableEntry {
+    u8 Read : 2;
+    u8 Sample : 6;
+} WaveTableEntry;
+
+typedef struct _unknown_C0 {
+    u8 _0_7 : 1; // 10000000
+    u8 _0_6 : 3; // 01000000
+    u8 _0_3 : 4; // 00001111
+    u8 _1;
+    u8 _2;
+    u8 _3_7 : 1; // 10000000
+    u8 _3_6 : 3; // 01000000
+    u8 _3_3 : 4; // 00001111
+} Unknown_VRC;
+
 typedef struct _APURegisters {
     // $4000
     PulseChannel Pulse1;
@@ -266,15 +283,66 @@ typedef struct _APURegisters {
     u8 FrameCounter_DisableFrameInterrupt : 1;
     u8 _unused_4017_low : 6;
 
+    artificial_padding(0x17, 0x40, u8);
+    // $4040 - $4079 https://www.nesdev.org/wiki/FDS_audio#Wavetable_RAM_($4040-$407F)
+    WaveTableEntry WaveTable[0x40];
+    // $4080 https://www.nesdev.org/wiki/FDS_audio#Volume_envelope_($4080)
+    u8 VolumeEnvelopeEnabled : 1;
+    u8 VolumeEnvelopeIncreasing : 1;
+    u8 VolumeEnvelopeGainAndSpeed : 6;
+    // $4081
+    u8 _unused_4081;
+    // $4082 https://www.nesdev.org/wiki/FDS_audio#Frequency_low_($4082)
+    u8 FrequencyLow;
+    // $4083 https://www.nesdev.org/wiki/FDS_audio#Frequency_high_($4083)
+    u8 HighSpeedFrequency : 1;
+    u8 DisableSweepAndEnvelope : 1;
+    u8 _unused_4083_midbits : 2;
+    u8 FrequencyHigh : 4;
+    // $4084 https://www.nesdev.org/wiki/FDS_audio#Mod_envelope_($4084)
+    u8 ModEnvelopeEnabled : 1;
+    u8 ModEnvelopeIncreasing : 1;
+    u8 ModEnvelopeGainAndSpeed : 6;
+    // $4085 https://www.nesdev.org/wiki/FDS_audio#Mod_counter_($4085)
+    u8 _unused_4085_high : 1;
+    u8 ModCounter : 7;
+    // $4086 https://www.nesdev.org/wiki/FDS_audio#Mod_frequency_low_($4086)
+    u8 ModFrequencyLow;
+    // $4087 https://www.nesdev.org/wiki/FDS_audio#Mod_frequency_high_($4087)
+    u8 HaltModTableCounter : 1;
+    u8 ForceAccumulatorStepOut : 1;
+    u8 _unused_4087_mid : 2;
+    u8 ModFrequencyHigh : 4;
+    // $4088 https://www.nesdev.org/wiki/FDS_audio#Mod_table_write_($4088)
+    // unused in the following code
+    u8 _unused_4088_high : 5;
+    u8 ModulationTableWrite : 3;
+    // $4089 https://www.nesdev.org/wiki/FDS_audio#Wave_write_/_master_volume_($4089)
+    u8 WaveTableWriteEnable : 1;
+    u8 _unused_4089_midbits : 5;
+    u8 WaveTableMasterVolume : 2;
+    // $408A https://www.nesdev.org/wiki/FDS_audio#Envelope_speed_($408A)
+    u8 EnvelopeSpeed;
+
+    artificial_padding(0x8a, 0xc0, u8);
+
+    Unknown_VRC _C0;
+    Unknown_VRC _C4;
+    Unknown_VRC _C8;
+    artificial_padding(0xc8, 0xd5, Unknown_VRC);
+    u8 _unused_D5_high : 5;
+    u8 _D5_2 : 1;
+    u8 _D5_1 : 1;
+    u8 _D5_0 : 1;
+
 } APURegisters;
 
-typedef struct _sbufferStruct {
+typedef union _sbufferStruct {
     APURegisters apu;
-    u8 buff[0x4100 - (0x4000 + sizeof(APURegisters))];
+    u8 buff[0x4100 - 0x4000];
 } sbufferStruct;
 
 sbufferStruct sbuffer = { 0 };
-#define SBUFFER ((u8*)&sbuffer)
 
 u8 LEN_TABLE_HVC[] = { 0x05, 0x7e, 0x0a, 0x01, 0x13, 0x02, 0x28, 0x03, 0x50, 0x04, 0x1e, 0x05, 0x07, 0x06, 0x0d, 0x07,
                        0x06, 0x08, 0x0c, 0x09, 0x18, 0x0a, 0x30, 0x0b, 0x60, 0x0c, 0x24, 0x0d, 0x08, 0x0e, 0x10, 0x0f };
@@ -335,12 +403,6 @@ f32 VOLTABLE_HVCPULSE[] = { 0.0f,      0.080128,  0.157051f, 0.224359f, 0.294872
 u8 VOLTABLE_VRCPULSE[] = { 0x00, 0x02, 0x04, 0x06, 0x08, 0x0a, 0x0c, 0x0e, 0x10, 0x12, 0x14,
                            0x16, 0x18, 0x1a, 0x1c, 0x1e, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25,
                            0x26, 0x27, 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f };
-
-// UNUSED
-void* PCM[9] = { (void*)&_STOP, (void*)&_STOP, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
-
-// UNUSED
-u32 PCMSIZE[9] = { sizeof(_STOP), sizeof(_STOP), 0, 0, 0, 0, 0, 0, 0 };
 
 s32 __GetWave_Pulse(s32 a, s32 b) {
     switch (a) {
@@ -409,7 +471,7 @@ u32 __PitchTo32_HVC(u16 pitch) {
 
 void __Sound_Write_VRC(u16 a, u8 b) {
     NESSoundStruct* pSound;
-    u8* pBuffer;
+    Unknown_VRC* pBuffer;
     int v;
     int xyzIndex;
 
@@ -417,15 +479,15 @@ void __Sound_Write_VRC(u16 a, u8 b) {
     if (index <= 3) {
         pSound = &SoundX;
         xyzIndex = 0;
-        pBuffer = &SBUFFER[192];
+        pBuffer = &sbuffer.apu._C0;
     } else if (index <= 7) {
         pSound = &SoundY;
         xyzIndex = 1;
-        pBuffer = &SBUFFER[196];
+        pBuffer = &sbuffer.apu._C4;
     } else {
         pSound = &SoundZ;
         xyzIndex = 2;
-        pBuffer = &SBUFFER[200];
+        pBuffer = &sbuffer.apu._C8;
     }
 
     if (index == 21) {
@@ -443,10 +505,10 @@ void __Sound_Write_VRC(u16 a, u8 b) {
 
     switch (index & 3) {
         case 0: {
-            pSound->_3C = pBuffer[0] >> 4 & 7;
-            pSound->_28 = pBuffer[0] >> 7 & 1;
-            pSound->_1C = VOLTABLE_VRCPULSE[pBuffer[0] & 0xf];
-            pSound->_1D = pBuffer[0] & 0xf;
+            pSound->_3C = pBuffer->_0_6;
+            pSound->_28 = pBuffer->_0_7;
+            pSound->_1C = VOLTABLE_VRCPULSE[pBuffer->_0_3];
+            pSound->_1D = pBuffer->_0_3;
             pSound->_2A = pSound->_1D;
             if (xyzIndex == 2) {
                 pSound->_24 = ((pSound->_3C & 3) << 4) | pSound->_2A;
@@ -457,7 +519,7 @@ void __Sound_Write_VRC(u16 a, u8 b) {
             }
         } break;
         case 2: {
-            pSound->_0C = ((pBuffer[3] & 0xf) << 8) | pBuffer[2];
+            pSound->_0C = (pBuffer->_3_3 << 8) | pBuffer->_2;
             if (xyzIndex == 2) {
                 pSound->_08 = __PitchTo32_VRC_C(pSound->_0C);
             } else {
@@ -465,7 +527,7 @@ void __Sound_Write_VRC(u16 a, u8 b) {
             }
         } break;
         case 3: {
-            pSound->_0C = ((pBuffer[3] & 0xf) << 8) | pBuffer[2];
+            pSound->_0C = (pBuffer->_3_3 << 8) | pBuffer->_2;
             if (xyzIndex == 2) {
                 pSound->_08 = __PitchTo32_VRC_C(pSound->_0C);
             } else {
@@ -477,16 +539,16 @@ void __Sound_Write_VRC(u16 a, u8 b) {
             }
 
             if (xyzIndex == 0) {
-                v = SBUFFER[213] & 1;
+                v = sbuffer.apu._D5_0;
             }
             if (xyzIndex == 1) {
-                v = SBUFFER[213] >> 1 & 1;
+                v = sbuffer.apu._D5_1;
             }
             if (xyzIndex == 2) {
-                v = SBUFFER[213] >> 2 & 1;
+                v = sbuffer.apu._D5_2;
             }
 
-            if ((u8)v == 1 && (pBuffer[3] >> 7) & 1) {
+            if ((u8)v == 1 && pBuffer->_3_7) {
                 pSound->_00 = 1;
             } else {
                 pSound->_00 = 0;
@@ -500,7 +562,7 @@ void __Sound_Write_VRC(u16 a, u8 b) {
 
 void __Sound_Write_MMC5(u16 a, u8 b) {
     NESSoundStruct* pSound;
-    u8* pBuffer;
+    PulseChannel* pBuffer;
     u32 v;
     int xyzIndex;
 
@@ -509,15 +571,15 @@ void __Sound_Write_MMC5(u16 a, u8 b) {
     if (index <= 3) {
         pSound = &SoundX;
         xyzIndex = 0;
-        pBuffer = &SBUFFER[192];
+        pBuffer = (PulseChannel*)&sbuffer.apu._C0;
     } else if (index <= 7) {
         pSound = &SoundY;
         xyzIndex = 1;
-        pBuffer = &SBUFFER[196];
+        pBuffer = (PulseChannel*)&sbuffer.apu._C4;
     }
 
     if (index == 17) {
-        SoundZ._3E = (b << 6) & 0x3fc0;
+        SoundZ._3E = (b & 0xff) << 6;
     } else if (index == 21) {
         if (!(b & 1)) {
             SoundX._00 = 0;
@@ -528,15 +590,15 @@ void __Sound_Write_MMC5(u16 a, u8 b) {
     } else if (pBuffer) {
         switch (index & 3) {
             case 0: {
-                pSound->_3C = (pBuffer[0] >> 6) & 0x3;
+                pSound->_3C = pBuffer->Duty;
                 v = pSound->_28;
-                pSound->_28 = (pBuffer[0] >> 4 & 1) ^ 1;
-                pSound->_14 = (pBuffer[0] >> 5 & 1);
-                pSound->_1D = VOLTABLE_HVCPULSE[pBuffer[0] & 0xf];
+                pSound->_28 = pBuffer->ConstantVolume ^ 1;
+                pSound->_14 = pBuffer->EnvelopeLoopCounter;
+                pSound->_1D = VOLTABLE_HVCPULSE[pBuffer->EnvelopePeriod_Volume];
                 if (pSound->_28 == 0 && pSound->_00 == 1) {
-                    pSound->_1C = VOLTABLE_HVCPULSE[pBuffer[0] & 0xf];
+                    pSound->_1C = VOLTABLE_HVCPULSE[pBuffer->EnvelopePeriod_Volume];
                 } else {
-                    pSound->_24 = PHASE_SAMPLE * ((pBuffer[0] & 0xf) + 1);
+                    pSound->_24 = PHASE_SAMPLE * (pBuffer->EnvelopePeriod_Volume + 1);
                     if (v == 0) {
                         pSound->_2A = 0xf;
                         pSound->_20 = 0;
@@ -544,30 +606,30 @@ void __Sound_Write_MMC5(u16 a, u8 b) {
                 }
             } break;
             case 2: {
-                pSound->_0C = ((pBuffer[3] & 0x7) << 8) | pBuffer[2];
+                pSound->_0C = pBuffer->TimerHigh << 8 | pBuffer->TimerLow;
                 pSound->_08 = __PitchTo32_HVC_C(pSound->_0C);
             } break;
             case 3: {
-                pSound->_0C = ((pBuffer[3] & 0x7) << 8) | pBuffer[2];
+                pSound->_0C = pBuffer->TimerHigh << 8 | pBuffer->TimerLow;
                 pSound->_08 = __PitchTo32_HVC_C(pSound->_0C);
-                pSound->_18 = LEN_TABLE_HVC[(pBuffer[3] >> 3) & 0x1f];
+                pSound->_18 = LEN_TABLE_HVC[pBuffer->LengthCounterLow];
                 pSound->_10 = FRAME_SAMPLE * pSound->_18;
                 if (!pSound->_00 && !pSound->_3E) {
                     pSound->_04 = 0;
                 }
 
                 if (xyzIndex == 0) {
-                    v = SBUFFER[213] & 1;
+                    v = sbuffer.apu._D5_0;
                 }
                 if (xyzIndex == 1) {
-                    v = SBUFFER[213] >> 1 & 1;
+                    v = sbuffer.apu._D5_1;
                 }
 
                 if ((v & 0xff) != 0) {
                     pSound->_00 = 1;
                 }
 
-                if ((pBuffer[0] >> 4 & 1) == 0) {
+                if (pBuffer->ConstantVolume == 0) {
                     pSound->_1C = VOLTABLE_HVCPULSE[15];
                 } else {
                     pSound->_1C = pSound->_1D;
@@ -1071,6 +1133,13 @@ s8 __GetNoise(u32 a) {
     }
 }
 
+u32 delta_counter;
+s8 delta_sign;
+s32 bias_move;
+s32 bias;
+f32 voltage;
+f32 voltage_out;
+
 int __ProcessSoundD() {
     s16 ret;
     if (!SoundD._00) {
@@ -1318,7 +1387,6 @@ void __Sound_Write_C(u16 a, u8 b) {
         } break;
     }
 }
-u32 exitflag;
 
 int __ProcessSoundC() {
     static s16 timer = 0;
@@ -1368,10 +1436,7 @@ int __ProcessSoundC() {
 u8 DISKSUB_TABLE[32];
 s16 disksubwave[32][2];
 s8 DISK_SUB_GAIN[] = { 0, 1, 2, 4, 0, -4, -2, -1 };
-u8* NOISE_DTABLE;
 
-MixCallback old_mixcall;
-u8 old_mixmode;
 void __CreateDiskSubWave() {
     for (int i = 0; i < 32; i++) {
         disksubwave[i][0] = DISK_SUB_GAIN[DISKSUB_TABLE[i]];
@@ -1383,6 +1448,8 @@ u32 __PitchTo32_DISKFM(u16 v) {
     return (0.85343015f * (int)v) / 500.4375f * 32768.f;
 }
 
+u32 DISK_FRAME_SAMPLE = 0x215;
+
 void __Sound_Write_Disk(u16 a, u8 b) {
     static int shiftr = 0;
     ((u8*)&sbuffer)[a] = b;
@@ -1392,78 +1459,86 @@ void __Sound_Write_Disk(u16 a, u8 b) {
             SoundF._2C = 0;
         }
     } else if (a >= 0x40 && a <= 0x7f) {
-        DISKFM_TABLE[a - 0x40] = SBUFFER[a] & 0x3f;
+        DISKFM_TABLE[a - 0x40] = ((WaveTableEntry*)&sbuffer.buff[a])->Sample;
     } else {
         switch (a) {
             case 0x80: {
-                s8 c = -((char)SBUFFER[128] >> 7);
-                SoundF._2E = SBUFFER[128] >> 6 & 1;
-                if (c == 1) {
-                    SoundF._2E = SBUFFER[128] & 0x3F;
+                u32 old_2c = SoundF._2C;
+                SoundF._2C = sbuffer.apu.VolumeEnvelopeEnabled;
+                SoundF._2E = sbuffer.apu.VolumeEnvelopeIncreasing;
+                if (SoundF._2C == 1) {
+                    SoundF._2D = sbuffer.apu.VolumeEnvelopeGainAndSpeed;
+                } else {
+                    SoundF._28 = (DISK_FRAME_SAMPLE * (sbuffer.apu.VolumeEnvelopeGainAndSpeed + 1)) >> 4;
+                }
+                if (SoundF._2C != old_2c) {
+                    SoundF._24 = 0;
                 }
             } break;
             case 0x82: {
-                s8 c = -((char)SBUFFER[128] >> 7);
-                SoundF._2E = SBUFFER[128] >> 6 & 1;
-                if (c == 1) {
-                    SoundF._2E = SBUFFER[128] & 0x3F;
-                }
+                SoundF._14 = sbuffer.apu.FrequencyHigh << 8 | sbuffer.apu.FrequencyLow;
+                SoundF._10 = __PitchTo32_DISKFM(SoundF._14);
             } break;
             case 0x83: {
-                s8 c = -((char)SBUFFER[128] >> 7);
-                SoundF._2E = SBUFFER[128] >> 6 & 1;
-                if (c == 1) {
-                    SoundF._2E = SBUFFER[128] & 0x3F;
+                SoundF._14 = sbuffer.apu.FrequencyHigh << 8 | sbuffer.apu.FrequencyLow;
+                SoundF._10 = __PitchTo32_DISKFM(SoundF._14);
+                if (sbuffer.apu.HighSpeedFrequency) {
+                    SoundF._04 = 0;
                 }
             } break;
             case 0x84: {
-                s8 c = -((char)SBUFFER[128] >> 7);
-                SoundF._2E = SBUFFER[128] >> 6 & 1;
-                if (c == 1) {
-                    SoundF._2E = SBUFFER[128] & 0x3F;
+                u32 c = SoundF._38;
+                SoundF._38 = sbuffer.apu.ModEnvelopeEnabled;
+                SoundF._3A = sbuffer.apu.ModEnvelopeIncreasing;
+                if (SoundF._38 == 1) {
+                    SoundF._39 = sbuffer.apu.ModEnvelopeGainAndSpeed;
+                } else {
+                    SoundF._34 = (DISK_FRAME_SAMPLE * (sbuffer.apu.ModEnvelopeGainAndSpeed + 1)) >> 4;
+                }
+                if (SoundF._38 != c) {
+                    SoundF._30 = 0;
                 }
             } break;
             case 0x85: {
-                s8 c = -((char)SBUFFER[128] >> 7);
-                SoundF._2E = SBUFFER[128] >> 6 & 1;
-                if (c == 1) {
-                    SoundF._2E = SBUFFER[128] & 0x3F;
+                SoundF._44 = sbuffer.apu.ModCounter;
+                if (SoundF._44 & 0x40) {
+                    SoundF._44 |= 0x80;
                 }
             } break;
             case 0x86: {
-                s8 c = -((char)SBUFFER[128] >> 7);
-                SoundF._2E = SBUFFER[128] >> 6 & 1;
-                if (c == 1) {
-                    SoundF._2E = SBUFFER[128] & 0x3F;
-                }
+                SoundF._1C = sbuffer.apu.ModFrequencyHigh << 8 | sbuffer.apu.ModFrequencyLow;
+                SoundF._18 = __PitchTo32_DISKFM(SoundF._1C);
             } break;
             case 0x87: {
-                s8 c = -((char)SBUFFER[128] >> 7);
-                SoundF._2E = SBUFFER[128] >> 6 & 1;
-                if (c == 1) {
-                    SoundF._2E = SBUFFER[128] & 0x3F;
+                u32 c = sbuffer.apu.HaltModTableCounter;
+                SoundF._1C = sbuffer.apu.ModFrequencyHigh << 8 | sbuffer.apu.ModFrequencyLow;
+                SoundF._18 = __PitchTo32_DISKFM(SoundF._1C);
+                SoundF._46 = sbuffer.apu.HaltModTableCounter;
+                if (!SoundF._46 && c == 1) {
+                    __CreateDiskSubWave();
                 }
+                if (SoundF._46) {
+                    shiftr = 0;
+                }
+                SoundF._0C = -1;
+                SoundF._08 = 0;
+                SoundF._47 = 0;
+
             } break;
             case 0x88: {
-                s8 c = -((char)SBUFFER[128] >> 7);
-                SoundF._2E = SBUFFER[128] >> 6 & 1;
-                if (c == 1) {
-                    SoundF._2E = SBUFFER[128] & 0x3F;
+                if (shiftr < 0x20) {
+                    DISKSUB_TABLE[shiftr & 0x1f] = b & 7;
+                    if (++shiftr == 0x20) {
+                        __CreateDiskSubWave();
+                    }
                 }
             } break;
             case 0x89: {
-                s8 c = -((char)SBUFFER[128] >> 7);
-                SoundF._2E = SBUFFER[128] >> 6 & 1;
-                if (c == 1) {
-                    SoundF._2E = SBUFFER[128] & 0x3F;
-                }
+                SoundF._43 = DISKFM_GAINTABLE[sbuffer.apu.WaveTableMasterVolume];
+                SoundF._45 = sbuffer.apu.WaveTableWriteEnable;
             } break;
             case 0x8a: {
-                s8 c = -((char)SBUFFER[128] >> 7);
-                SoundF._2E = SBUFFER[128] >> 6 & 1;
-                if (c == 1) {
-                    SoundF._2E = SBUFFER[128] & 0x3F;
-                }
+                SoundF._48 = sbuffer.apu.EnvelopeSpeed;
             } break;
         }
     }
@@ -1580,18 +1655,15 @@ void ForceProcessPhaseCounter() {
 
 void Sound_Make_HVC(s32 count, s16* v) {
     static int lastsample;
-    int j;
-    int a, b, c, d, e;
-    int i;
     HS_Event_Update();
-    for (i = 0; i < count; i++) {
+    for (int i = 0; i < count; i++) {
         ProcessPhaseCounter();
-        a = __ProcessSoundA();
-        b = __ProcessSoundB();
-        c = __ProcessSoundC();
-        d = __ProcessSoundD();
-        e = __ProcessSoundE();
-        j = (s16)a + (s16)b - (s16)c - (s16)d + (s16)e;
+        int a = __ProcessSoundA();
+        int b = __ProcessSoundB();
+        int c = __ProcessSoundC();
+        int d = __ProcessSoundD();
+        int e = __ProcessSoundE();
+        int j = (s16)a + (s16)b - (s16)c - (s16)d + (s16)e;
         if (j >= 0x7fff) {
             j = 0x7fff;
         } else if (j <= -0x7fff) {
@@ -1729,7 +1801,9 @@ void Sound_Reset() {
     Buffer_Reset();
 }
 
-u8 move_to_50;
+u32 exitflag;
+MixCallback old_mixcall;
+u8 old_mixmode;
 
 s16* __FrameCallback(s32 a) {
     static s16 buf[0x320];
@@ -1821,9 +1895,6 @@ void Sound_SetE000(u8* romTop) {
     ROM_TOP_E000 = romTop;
 }
 
-u8 MMC_MODE;
-u8 beforemode;
-
 void Sound_SetMMC(u8 mmcMode) {
     FRAME_SAMPLE = 0x280;
     PHASE_SAMPLE = 0xa0;
@@ -1903,3 +1974,9 @@ void __Sound_Write_HVC(u16 index, u8 v) {
         }
     }
 }
+
+// UNUSED
+void* PCM[9] = { (void*)&_STOP, (void*)&_STOP, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+
+// UNUSED
+u32 PCMSIZE[9] = { sizeof(_STOP), sizeof(_STOP), 0, 0, 0, 0, 0, 0, 0 };
