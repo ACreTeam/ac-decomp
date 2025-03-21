@@ -11,6 +11,31 @@
 extern "C" {
 #endif
 
+typedef struct CResTIMG {
+	u8 mTextureFormat;              // _00
+	u8 mTransparency; // _01
+	u16 mSizeX;                     // _02
+	u16 mSizeY;                     // _04
+	u8 mWrapS;                      // _06
+	u8 mWrapT;                      // _07
+	u8 mPaletteFormat;              // _08
+	u8 mColorFormat;                // _09
+	u16 mPaletteEntryCount;         // _0A
+	u32 mPaletteOffset;             // _0C
+	GXBool mIsMIPmapEnabled;        // _10
+	GXBool mDoEdgeLOD;              // _11
+	GXBool mIsBiasClamp;            // _12
+	GXBool mIsMaxAnisotropy;        // _13
+	u8 mMinFilterType;              // _14
+	u8 mMagFilterType;              // _15
+	s8 mMinLOD;                     // _16
+	s8 mMaxLOD;                     // _17
+	u8 mTotalImageCount;            // _18
+	u8 _19;                         // _19, unknown
+	s16 mLODBias;                   // _1A
+	u32 mImageDataOffset;           // _1C
+} CResTIMG;
+
 enum resource_index {
     RESOURCE_FGDATA,
     RESOURCE_MAIL,

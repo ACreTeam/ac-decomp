@@ -127,6 +127,12 @@ enum {
 #define mCD_MEMCARD_SECTORSIZE 0x2000
 #define mCD_ALIGN_SECTORSIZE(s) ALIGN_NEXT(s, mCD_MEMCARD_SECTORSIZE)
 
+typedef struct memcard_header_s {
+    char comment[CARD_COMMENT_SIZE];
+    u8 banner[0xE00];
+    u8 icon[0x600];
+} MemcardHeader_c;
+
 typedef struct {
     mLd_land_info_c land;
     PersonalID_c pid[PLAYER_NUM];
@@ -136,7 +142,8 @@ typedef struct {
 #define mCD_KEEP_ORIGINAL_COUNT 12
 
 typedef struct {
-    int count;
+    u16 checksum;
+    u16 landid;
     u8 _0004[mCD_KEEP_ORIGINAL_PAGE_COUNT][12];
     mNW_original_design_c original[mCD_KEEP_ORIGINAL_PAGE_COUNT][mCD_KEEP_ORIGINAL_COUNT];
     int _CC80; // force size to 0xCCA0
@@ -146,7 +153,8 @@ typedef struct {
 #define mCD_KEEP_MAIL_COUNT 20
 
 typedef struct {
-    int count;
+    u16 checksum;
+    u16 landid;
     u8 _0004[mCD_KEEP_MAIL_PAGE_COUNT][12];
     Mail_c mail[mCD_KEEP_MAIL_PAGE_COUNT][mCD_KEEP_MAIL_COUNT];
 } mCD_keep_mail_c ATTRIBUTE_ALIGN(32);
@@ -158,6 +166,14 @@ typedef struct {
     u16 checksum;
     mDi_entry_c entries[mCD_KEEP_DIARY_COUNT][mCD_KEEP_DIARY_ENTRY_COUNT];
 } mCD_keep_diary_c ATTRIBUTE_ALIGN(32);
+
+typedef struct {
+    MemcardHeader_c header;
+    u8 pad[32];
+    mCD_keep_original_c original ATTRIBUTE_ALIGN(32);
+    mCD_keep_mail_c mail ATTRIBUTE_ALIGN(32);
+    mCD_keep_diary_c diary ATTRIBUTE_ALIGN(32);
+} mCD_others_c;
 
 typedef struct {
     CARDStat stat;
@@ -180,14 +196,29 @@ typedef struct {
     int _1C;
 } mCD_memMgr_fileInfo_c;
 
+typedef struct private_item_keep_s {
+    mActor_name_t items[mPr_POCKETS_SLOT_COUNT];
+    u8 ticket_expiry_month;
+    u8 ticket_storage;
+    u32 item_cond;
+    u32 wallet;
+    mQst_delivery_c delivery[mPr_DELIVERY_QUEST_NUM];
+    mQst_errand_c errand[mPr_ERRAND_QUEST_NUM];
+    Mail_c mail[mPr_INVENTORY_MAIL_COUNT];
+    mPr_catalog_order_c catalog_order[mPr_CATALOG_ORDER_NUM];
+    u8 _0FF0;
+    Anmremail_c remail;
+    mPr_animal_memory_c animal_memory;
+} mCD_PrivateItem_c;
+
 typedef struct {
-    s32 chan;
+    int chan;
     int loaded_file_type;
     u32 workArea_size;
     void* workArea;
     u8 _0010;
-    int load_proc;
-    u8 _0018[0x0054 - 0x0018];
+    mCD_memMgr_fileInfo_c save_home_info;
+    mCD_memMgr_fileInfo_c init_game_start_info;
     mCD_memMgr_card_info_c cards[CARD_NUM_CHANS];
     u32 _017C;
     int land_saved;
@@ -200,18 +231,12 @@ typedef struct {
     int _019C;
     int _01A0;
     int broken_file_idx;
-    u8 _01A8[0x11BC - 0x01A8];
+    mCD_PrivateItem_c private_item;
     char filename[32];
 } mCD_memMgr_c;
 
 /* Bonus letter */
 #define mCD_PRESENT_MAX 9
-
-typedef struct memcard_header_s {
-    char comment[CARD_COMMENT_SIZE];
-    u8 banner[0xE00];
-    u8 icon[0x600];
-} MemcardHeader_c;
 
 typedef struct present_save_s {
     u16 checksum;
@@ -234,9 +259,11 @@ enum {
     mCD_PRESENT_TYPE_NUM
 };
 
+#define OTHERS_SIZE ALIGN_NEXT(sizeof(mCD_others_c), mCD_MEMCARD_SECTORSIZE)
+
 extern s32 mCD_GetThisLandSlotNo_code(int* player_no, s32* slot_card_results);
 extern int mCD_GetThisLandSlotNo(void);
-extern void mCD_save_data_aram_malloc();
+extern void mCD_save_data_aram_malloc(void);
 extern void mCD_set_aram_save_data();
 extern void mCD_init_card();
 extern s32 mCD_InitGameStart_bg(int player_no, int card_private_idx, int start_cond, s32* mounted_chan);
@@ -252,15 +279,16 @@ extern int mCD_SaveStation_Passport_bg(s32* chan);
 
 extern void mCD_PrintErrInfo(gfxprint_t* gfxprint);
 extern void mCD_InitAll();
-extern void mCD_LoadLand();
+extern void mCD_LoadLand(void);
 extern void mCD_toNextLand();
 
-extern int mCD_EraseBrokenLand_bg(void*);
+extern int mCD_EraseBrokenLand_bg(int* slot);
 extern int mCD_EraseLand_bg(int* slot);
 extern int mCD_ErasePassportFile_bg(int slot);
 extern int mCD_SaveErasePlayer_bg(int* slot);
 extern int mCD_card_format_bg(s32 chan);
 extern void mCD_ReCheckLoadLand(GAME_PLAY* play);
+extern int mCD_SaveHome_bg(int param_1, int* chan);
 
 extern int mCD_save_data_aram_to_main(void* dst, u32 size, u32 idx);
 extern int mCD_save_data_main_to_aram(void* src, u32 size, u32 idx);

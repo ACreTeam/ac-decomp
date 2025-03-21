@@ -11,6 +11,7 @@
 #include "jsyswrap.h"
 #include "dolphin/PPCArch.h"
 
+#pragma inline_depth(smart)
 #pragma inline_max_size(1000)
 
 #include "../src/static/libforest/emu64/emu64_utility.cc"
@@ -5292,7 +5293,7 @@ u32 emu64::emu64_taskstart_r(Gfx* dl_p) {
         EMU64_PRINT_LEVEL4_FLAG
 
 void emu64::emu64_taskstart(Gfx* dl_p) {
-    static u8 flag = 0;
+    static int flag = 0;
 
     PPCSync();
     if ((int)aflags[AFLAGS_RUN_MODE] != EMU64_RUN_MODE_SKIP) {
@@ -5415,9 +5416,12 @@ extern void emu64_cleanup(void) {
     emu64_class.emu64_cleanup();
 }
 
+// hack - inlines in emu64_taskstart C wrapper otherwise
+#pragma dont_inline on
 extern void emu64_taskstart(Gfx* gfx) {
     emu64_class.emu64_taskstart(gfx);
 }
+#pragma dont_inline reset
 
 extern void emu64_set_ucode_info(int len, ucode_info* info) {
     emu64_class.emu64_set_ucode_info(len, info);

@@ -1,0 +1,38 @@
+static u8* mCD_set_bti_data(u8* data, int res_fileNo, int tlut_size, int count, int pal_size) {
+    u32 addr = JW_GetAramAddress(res_fileNo);
+    u32 size = ALIGN_NEXT(JW_GetResSizeFileNo(res_fileNo), 32);
+    CResTIMG* buf = (CResTIMG*)mCD_malloc_32(size);
+    int idx;
+
+    if (buf != NULL) {
+        u8* tex_p;
+        u16* pal_p;
+        
+        _JW_GetResourceAram(addr, (u8*)buf, size);
+        DCStoreRangeNoSync(buf, size);
+        tex_p = (u8*)(buf) + buf->mImageDataOffset;
+        idx = count > 1 ? RANDOM(count) : count;
+        
+        while (TRUE) {
+            u8* dst = tex_p;
+
+            count--;
+            if (count == idx) {
+                dst = tex_p + tlut_size;
+            }
+
+            bcopy(dst, data, tlut_size);
+            data += tlut_size;
+            if (count == 0) {
+                break;
+            }
+        }
+
+        pal_p = (u16*)((u8*)(buf) + buf->mPaletteOffset);
+        bcopy(pal_p, data, pal_size);
+        data += pal_size;
+        zelda_free(buf);
+    }
+
+    return data;
+}
