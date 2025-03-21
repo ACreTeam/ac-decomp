@@ -1,0 +1,36 @@
+static int aEDSN_set_request_act(EV_DESIGNER_ACTOR* designer, u8 prio, u8 idx, u8 type, u16 obj, s16 move_x, s16 move_z) {
+    int ret = FALSE;
+
+    if (prio >= designer->npc_class.request.act_priority) {
+        u16 arg_data[aNPC_REQUEST_ARG_NUM];
+
+        bzero(arg_data, sizeof(arg_data));
+        arg_data[0] = obj;
+        arg_data[2] = (u16)move_x;
+        arg_data[3] = (u16)move_z;
+        designer->npc_class.request.act_priority = prio;
+        designer->npc_class.request.act_idx = idx;
+        designer->npc_class.request.act_type = type;
+        mem_copy((u8*)designer->npc_class.request.act_args, (u8*)arg_data, sizeof(arg_data));
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aEDSN_check_s_car(ACTOR* actorx, GAME* game) {
+    EV_DESIGNER_ACTOR* designer = (EV_DESIGNER_ACTOR*)actorx;
+    ACTOR* s_car_p = designer->s_car_p;
+
+    if (s_car_p == NULL) {
+        s_car_p = Actor_info_name_search(&((GAME_PLAY*)game)->actor_info, mAc_PROFILE_S_CAR, ACTOR_PART_ITEM);
+        designer->s_car_p = s_car_p;
+    } else if (s_car_p->id != mAc_PROFILE_S_CAR || (s_car_p->mv_proc == NULL && s_car_p->dw_proc == NULL)) {
+        Actor_delete(actorx);
+    }
+}
+
+static void aEDSN_actor_move(ACTOR* actorx, GAME* game) {
+    CLIP(npc_clip)->move_proc(actorx, game);
+    aEDSN_check_s_car(actorx, game);
+}

@@ -1,0 +1,212 @@
+static void aEDSN_talk_start_wait(EV_DESIGNER_ACTOR* designer, GAME_PLAY* play) {
+    if (designer->npc_class.action.step == aNPC_ACTION_END_STEP) {
+        switch (designer->npc_class.action.idx) {
+            case aNPC_ACT_GREETING:
+            case aNPC_ACT_TALK:
+                aEDSN_set_request_act(designer, 1, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT,
+                                      designer->npc_class.actor_class.world.position.x,
+                                      designer->npc_class.actor_class.world.position.z + mFI_UT_WORLDSIZE_Z_F);
+                break;
+            case aNPC_ACT_TURN:
+                aEDSN_set_request_act(designer, 1, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_ACT_OBJ_DEFAULT, 0, 0);
+                break;
+        }
+    }
+}
+
+static void aEDSN_game_start_call_wait(EV_DESIGNER_ACTOR* designer, GAME_PLAY* play) {
+    if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_WASH_CAR) {
+        ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+        ACTOR* s_car_p = Actor_info_fgName_search(&play->actor_info, DESIGNER_CAR, ACTOR_PART_ITEM);
+
+        if (s_car_p != NULL) {
+            mPlib_request_main_wash_car_type1((GAME*)play, &s_car_p->world.position, &playerx->world.position,
+                                              playerx->shape_info.rotation.y, (ACTOR*)designer);
+        }
+    } else {
+        aEDSN_setup_think_proc(designer, play, aEDSN_THINK_GAME_START_CALL);
+    }
+}
+
+static void aEDSN_game_end_wait(EV_DESIGNER_ACTOR* designer, GAME_PLAY* play) {
+    f32 speed = designer->clean_speed;
+    aEv_designer_c* tmp_data_p = designer->tmp_save_p;
+
+    if (chkTrigger(BUTTON_A)) {
+        tmp_data_p->button_count++;
+
+        speed += 0.61f;
+        if (speed > 2.25f) {
+            speed = 2.25f;
+        }
+    } else {
+        speed -= 0.07f;
+        if (speed < 0.0f) {
+            speed = 0.0f;
+        }
+    }
+
+    designer->clean_speed = speed;
+
+    mPlib_Set_AnimeSpeedWashCar(speed);
+    designer->wash_time--;
+    if (designer->wash_time <= 0) {
+        tmp_data_p->result = 2;
+        aEDSN_setup_think_proc(designer, play, aEDSN_THINK_GAME_END_CALL);
+    } else if (tmp_data_p->button_count >= 100) {
+        tmp_data_p->result = designer->wash_time <= 360 ? 1 : 0;
+        aEDSN_setup_think_proc(designer, play, aEDSN_THINK_GAME_END_CALL);
+    }
+
+    if (designer->npc_class.action.step == aNPC_ACTION_END_STEP && designer->npc_class.action.idx == aNPC_ACT_TURN) {
+        aEDSN_set_request_act(designer, 1, aNPC_ACT_WAIT, aNPC_ACT_TYPE_SEARCH, aNPC_ACT_OBJ_PLAYER, 0, 0);
+    }
+}
+
+static void aEDSN_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    EV_DESIGNER_ACTOR* designer = (EV_DESIGNER_ACTOR*)nactorx;
+
+    (*designer->think_proc)(designer, play);
+}
+
+static void aEDSN_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    EV_DESIGNER_ACTOR* designer = (EV_DESIGNER_ACTOR*)nactorx;
+
+    designer->npc_class.actor_class.status_data.weight = MASSTYPE_HEAVY;
+    designer->npc_class.condition_info.hide_request = FALSE;
+
+    {
+        ACTOR* s_car_p = Actor_info_fgName_search(&play->actor_info, DESIGNER_CAR, ACTOR_PART_ITEM);
+
+        if (s_car_p != NULL) {
+            designer->npc_class.actor_class.world.position.x = s_car_p->world.position.x + mFI_UT_WORLDSIZE_X_F;
+            designer->npc_class.actor_class.world.position.z = s_car_p->world.position.z + 2 * mFI_UT_WORLDSIZE_X_F;
+        }
+    }
+
+    aEDSN_setup_think_proc(designer, play, aEDSN_THINK_TALK_START_WAIT);
+}
+
+static void aEDSN_talk_start_wait_init(EV_DESIGNER_ACTOR* designer, GAME_PLAY* play) {
+    designer->npc_class.talk_info.melody_inst = designer->melody_save;
+    designer->npc_class.palActorIgnoreTimer = 0;
+    aEDSN_set_pl_talk_lock(designer, FALSE);
+}
+
+static void aEDSN_game_start_call_wait_init(EV_DESIGNER_ACTOR* designer, GAME_PLAY* play) {
+    designer->npc_class.talk_info.melody_inst = 0;
+    aEDSN_set_request_act(designer, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_SEARCH, aNPC_ACT_OBJ_PLAYER, 0, 0);
+}
+
+static void aEDSN_game_end_wait_init(EV_DESIGNER_ACTOR* designer, GAME_PLAY* play) {
+    aEv_designer_c* tmp_data_p = designer->tmp_save_p;
+
+    designer->npc_class.talk_info.melody_inst = 0;
+    designer->wash_time = 1080;
+    designer->clean_speed = 0.0f;
+    tmp_data_p->button_count = 0;
+}
+
+static void aEDSN_game_end_call_init(EV_DESIGNER_ACTOR* designer, GAME_PLAY* play) {
+    aEDSN_game_start_call_wait_init(designer, play);
+    Camera2_change_priority(play, 0);
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+    designer->camera_flag = FALSE;
+    mPlib_Set_EndWashCar();
+    designer->complete_flag = TRUE;
+}
+
+typedef void (*aEDSN_THINK_INIT_PROC)(EV_DESIGNER_ACTOR* designer, GAME_PLAY* play);
+
+typedef struct {
+    aEDSN_THINK_PROC think_proc;
+    aEDSN_THINK_INIT_PROC think_init_proc;
+    aNPC_TALK_REQUEST_PROC talk_request_proc;
+    u8 talk_idx;
+    u8 after_think_idx;
+} aEDSN_setup_data_c;
+
+static void aEDSN_setup_think_proc(EV_DESIGNER_ACTOR* designer, GAME_PLAY* play, u8 think_idx) {
+    static aEDSN_setup_data_c dt_tbl[] = {
+        {
+            aEDSN_talk_start_wait,
+            aEDSN_talk_start_wait_init,
+            aEDSN_norm_talk_request,
+            0,
+            aEDSN_THINK_GAME_START_CALL_WAIT,
+        },
+        {
+            aEDSN_game_start_call_wait,
+            aEDSN_game_start_call_wait_init,
+            (aNPC_TALK_REQUEST_PROC)none_proc1,
+            0,
+            aEDSN_THINK_GAME_START_CALL,
+        },
+        {
+            (aEDSN_THINK_PROC)none_proc1,
+            (aEDSN_THINK_INIT_PROC)none_proc1,
+            aEDSN_force_talk_request,
+            0,
+            aEDSN_THINK_GAME_END_WAIT,
+        },
+        {
+            aEDSN_game_end_wait,
+            aEDSN_game_end_wait_init,
+            (aNPC_TALK_REQUEST_PROC)none_proc1,
+            0,
+            aEDSN_THINK_GAME_END_CALL,
+        },
+        {
+            (aEDSN_THINK_PROC)none_proc1,
+            aEDSN_game_end_call_init,
+            aEDSN_force_talk_request,
+            1,
+            aEDSN_THINK_TALK_START_WAIT,
+        },
+    };
+
+    aEDSN_setup_data_c* data_p = &dt_tbl[think_idx];
+
+    designer->think_idx = think_idx;
+    designer->think_proc = data_p->think_proc;
+    designer->npc_class.talk_info.talk_request_proc = data_p->talk_request_proc;
+    designer->talk_idx = data_p->talk_idx;
+    designer->next_think_idx = data_p->after_think_idx;
+    (*data_p->think_init_proc)(designer, play);
+}
+
+static void aEDSN_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aEDSN_think_init_proc, aEDSN_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aEDSN_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    EV_DESIGNER_ACTOR* designer = (EV_DESIGNER_ACTOR*)nactorx;
+
+    nactorx->think.think_proc = aEDSN_think_proc;
+    CLIP(npc_clip)->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+
+    {
+        aEv_designer_c* tmp_data_p = (aEv_designer_c*)mEv_get_common_area(mEv_EVENT_DESIGNER, 0);
+
+        if (tmp_data_p == NULL) {
+            tmp_data_p = (aEv_designer_c*)mEv_reserve_common_area(mEv_EVENT_DESIGNER, 0);
+            tmp_data_p->result = 2;
+        }
+
+        designer->tmp_save_p = tmp_data_p;
+    }
+}
+
+static void aEDSN_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (CLIP(npc_clip)->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == FALSE) {
+        CLIP(npc_clip)->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aEDSN_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { aEDSN_schedule_init_proc, aEDSN_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}

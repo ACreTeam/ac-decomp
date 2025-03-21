@@ -986,6 +986,11 @@ typedef struct {
     int anim_idx;
 } aNPC_anim_info_c;
 
+#define aNPC_DEMO_GIVE_ITEM(item, mode, present) \
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, (item)); \
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, (mode)); \
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, (present))
+
 extern ACTOR_PROFILE Npc_Profile;
 
 #ifdef __cplusplus

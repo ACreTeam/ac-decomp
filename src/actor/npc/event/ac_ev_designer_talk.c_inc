@@ -1,0 +1,296 @@
+enum {
+    aEDSN_TALK_INVENTORY_CHECK,
+    aEDSN_TALK_CLOSE_UMB_END_WAIT,
+    aEDSN_TALK_CHECK_RESULT,
+    aEDSN_TALK_DEMO_START_WAIT,
+    aEDSN_TALK_DEMO_END_WAIT,
+    aEDSN_TALK_END_WAIT,
+
+    aEDSN_TALK_NUM
+};
+
+static void aEDSN_set_pl_talk_lock(EV_DESIGNER_ACTOR* designer, u8 flag) {
+    if (designer->pl_talk_lock != flag) {
+        if (flag == TRUE) {
+            mPlib_Set_able_force_speak_label((ACTOR*)designer);
+        } else {
+            mPlib_Reset_able_force_speak_label();
+        }
+
+        designer->pl_talk_lock = flag;
+    }
+}
+
+static int aEDSN_check_present(void) {
+    mEv_designer_c* ev_save_p = &Save_Get(event_save_data).special.event.designer;
+    PersonalID_c* pid = ev_save_p->pids;
+    int i;
+
+    for (i = 0; i < mEv_DESGINER_NUM; i++) {
+        if (mPr_CheckCmpPersonalID(pid, &Now_Private->player_ID) == TRUE) {
+            return i;
+        }
+
+        pid++;
+    }
+
+    return -1;
+}
+
+static int aEDSN_get_msg_no(EV_DESIGNER_ACTOR* designer, int idx) {
+    static int msg_no_0[27] = {
+        0x0721, 0x0722, 0x0723, 0x0724, 0x0725, 0x0726, 0x0727, 0x0728,
+        0x0729, 0x072A, 0x072B, 0x072C, 0x072D, 0x072E, 0x072F, 0x0730,
+        0x0731, 0x0732, 0x0733, 0x0747, 0x0748, 0x0749, 0x074A, 0x074B,
+        0x072B, 0x072C, 0x074C,
+    };
+        
+    static int msg_no_1[27] = {
+        0x0734, 0x0735, 0x0736, 0x0745, 0x0737, 0x0738, 0x0739, 0x0746,
+        0x073A, 0x073B, 0x073C, 0x073D, 0x073E, 0x073F, 0x0740, 0x0741,
+        0x0742, 0x0743, 0x0744, 0x0747, 0x0748, 0x0749, 0x074A, 0x074B,
+        0x073C, 0x073D, 0x074C,
+    };
+        
+    static int* msg_no[2] = {msg_no_0, msg_no_1};
+
+    return msg_no[designer->wear_flag][idx];
+}
+
+static void aEDSN_inventory_check_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* game) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (mMsg_Check_MainNormalContinue(msg_p) == TRUE && order != 0) {
+        int talk_idx = aEDSN_TALK_END_WAIT;
+
+        if (mPr_GetPossessionItemIdx(Now_Private, EMPTY_NO) != -1) {
+            int msg_idx = 19;
+
+            if (mPlib_Check_now_handin_item() && mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_TALK) {
+                msg_idx = 26;
+                talk_idx = aEDSN_TALK_CLOSE_UMB_END_WAIT;
+            } else {
+                mDemo_Set_talk_change_player(FALSE);
+            }
+
+            mDemo_Set_talk_return_demo_wait(TRUE);
+            mMsg_Set_continue_msg_num(msg_p, aEDSN_get_msg_no(designer, msg_idx));
+            mDemo_KeepCamera(CAMERA2_PROCESS_SIMPLE);
+        } else {
+            designer->next_think_idx = aEDSN_THINK_TALK_START_WAIT;
+        }
+
+        aEDSN_change_talk_proc(designer, talk_idx);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aEDSN_close_umb_end_wait_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* game) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mMsg_Set_LockContinue(msg_p);
+        if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_TALK) {
+            if (mPlib_Check_now_handin_item()) {
+                mPlib_request_main_talk_type1(game, mDemo_Get_talk_actor(), mDemo_Get_talk_turn(), TRUE);
+            } else {
+                mMsg_Unset_LockContinue(msg_p);
+                mDemo_Set_talk_change_player(FALSE);
+                aEDSN_change_talk_proc(designer, aEDSN_TALK_END_WAIT);
+            }
+        }
+    }
+}
+
+static void aEDSN_check_result_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* game) {
+    static int msg_idx[] = { 12, 14, 16 };
+    static int next_talk_proc_idx[] = { aEDSN_TALK_DEMO_START_WAIT, aEDSN_TALK_DEMO_START_WAIT, aEDSN_TALK_END_WAIT };
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    chase_angle(&designer->npc_class.actor_class.shape_info.rotation.y, designer->npc_class.actor_class.player_angle_y, 0x800);
+    if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mEv_designer_c* ev_save_p = &Save_Get(event_save_data).special.event.designer;
+        aEv_designer_c* tmp_save_p = designer->tmp_save_p;
+        mActor_name_t present = EMPTY_NO;
+        int result = tmp_save_p->result;
+
+        switch (result) {
+            case 0:
+                mSP_SelectRandomItem_New(NULL, &present, 1, ev_save_p->gifted_cloths, ev_save_p->used, mSP_KIND_CLOTH, mSP_LISTTYPE_EVENT, FALSE);
+                break;
+            case 1:
+                mSP_SelectRandomItem_New(NULL, &present, 1, ev_save_p->gifted_cloths, ev_save_p->used, mSP_KIND_CLOTH, mSP_LISTTYPE_COMMON, FALSE);
+                break;
+            case 2:
+                mEv_set_status(mEv_EVENT_DESIGNER, mEv_STATUS_TALK);
+                mDemo_Set_talk_change_player(TRUE);
+                break;
+        }
+
+        designer->present = present;
+        mEv_EventON(mEv_SPECL_DESIGNER_COMPLETE);
+        designer->npc_class.movement.mv_angl = designer->npc_class.actor_class.player_angle_y;
+        mMsg_Set_continue_msg_num(msg_p, aEDSN_get_msg_no(designer, msg_idx[result]));
+        aEDSN_change_talk_proc(designer, next_talk_proc_idx[result]);
+    }
+}
+
+static void aEDSN_demo_start_wait_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* game) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+
+    if (order == 2) {
+        aNPC_DEMO_GIVE_ITEM(designer->present, aHOI_REQUEST_PUTAWAY, TRUE);
+        mPr_SetFreePossessionItem(Now_Private, designer->present, mPr_ITEM_COND_NORMAL);
+        mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1();
+        aEDSN_change_talk_proc(designer, aEDSN_TALK_DEMO_END_WAIT);
+    }
+}
+
+static void aEDSN_demo_end_wait_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* game) {
+    chase_angle(&designer->npc_class.actor_class.shape_info.rotation.y, designer->npc_class.actor_class.player_angle_y, 0x800);
+    if (aEDSN_check_present() == -1) {
+        mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+        if (mMsg_Check_main_wait(msg_p) == TRUE && CLIP(handOverItem_clip)->master_actor == NULL) {
+            mEv_designer_c* ev_save_p = &Save_Get(event_save_data).special.event.designer;
+            int idx = ev_save_p->used;
+
+            mPr_CopyPersonalID(&ev_save_p->pids[idx], &Now_Private->player_ID);
+            ev_save_p->gifted_cloths[idx] = designer->present;
+            ev_save_p->used++;
+            mMsg_REQUEST_MAIN_APPEAR_WAIT_TYPE1();
+            mDemo_Set_talk_change_player(TRUE);
+            aEDSN_change_talk_proc(designer, aEDSN_TALK_END_WAIT);
+        }
+    }
+}
+
+static void aEDSN_talk_end_wait_talk_proc(EV_DESIGNER_ACTOR* designer, GAME* game) {
+    chase_angle(&designer->npc_class.actor_class.shape_info.rotation.y, designer->npc_class.actor_class.player_angle_y, 0x800);
+}
+
+static void aEDSN_change_talk_proc(EV_DESIGNER_ACTOR* designer, int talk_proc_idx) {
+    static aEDSN_TALK_PROC talk_proc[] = {
+        // clang-format off
+        aEDSN_inventory_check_talk_proc,
+        aEDSN_close_umb_end_wait_talk_proc,
+        aEDSN_check_result_talk_proc,
+        aEDSN_demo_start_wait_talk_proc,
+        aEDSN_demo_end_wait_talk_proc,
+        aEDSN_talk_end_wait_talk_proc,
+        // clang-format on
+    };
+
+    designer->talk_proc = talk_proc[talk_proc_idx];
+}
+
+typedef struct designer_talk_req_info_s {
+    int msg_idx;
+    int cam_type;
+    aEDSN_TALK_PROC talk_proc;
+} aEDSN_talk_request_info_c;
+
+static void aEDSN_set_force_talk_info(ACTOR* actorx) {
+    static aEDSN_talk_request_info_c dt_tbl[] = {
+        // clang-format off
+        {
+            10,
+            CAMERA2_PROCESS_SIMPLE,
+            aEDSN_talk_end_wait_talk_proc,
+        },
+        {
+            25,
+            CAMERA2_PROCESS_TALK,
+            aEDSN_check_result_talk_proc,
+        },
+        // clang-format on
+    };
+
+    EV_DESIGNER_ACTOR* designer = (EV_DESIGNER_ACTOR*)actorx;
+    int talk_idx = designer->talk_idx;
+    aEDSN_talk_request_info_c* data_p = &dt_tbl[talk_idx];
+
+    mDemo_Set_talk_change_player(FALSE);
+    mDemo_Set_msg_num(aEDSN_get_msg_no(designer, data_p->msg_idx));
+    mDemo_Set_talk_turn(TRUE);
+    mDemo_Set_camera(data_p->cam_type);
+
+    if (talk_idx == 0) {
+        mDemo_Set_talk_return_demo_wait(TRUE);
+        designer->camera_flag = TRUE;
+    }
+
+    designer->talk_proc = data_p->talk_proc;
+}
+
+static void aEDSN_force_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, aEDSN_set_force_talk_info);
+}
+
+static void aEDSN_set_norm_talk_info(ACTOR* actorx) {
+    static int msg_start_idx[] = { 0, 4 };
+    EV_DESIGNER_ACTOR* designer = (EV_DESIGNER_ACTOR*)actorx;
+    mEv_designer_c* ev_save_p = &Save_Get(event_save_data).special.event.designer;
+    int idx = aEDSN_check_present();
+    int msg_idx;
+    int talk_proc_idx = aEDSN_TALK_END_WAIT;
+
+    if (mSP_SearchItemCategoryPriority(Now_Private->cloth.item, mSP_KIND_CLOTH, mSP_LISTTYPE_EVENT, NULL) == TRUE) {
+        designer->wear_flag = TRUE;
+    } else {
+        designer->wear_flag = FALSE;
+    }
+
+    if (designer->complete_flag == TRUE) {
+        msg_idx = 21 + RANDOM(3);
+        designer->next_think_idx = aEDSN_THINK_TALK_START_WAIT;
+    } else if (idx != -1) {
+        if (mSP_SearchItemCategoryPriority(ev_save_p->gifted_cloths[idx], mSP_KIND_CLOTH, mSP_LISTTYPE_EVENT, NULL) == TRUE) {
+            msg_idx = 17;
+        } else {
+            msg_idx = 18;
+        }
+
+        designer->next_think_idx = aEDSN_THINK_TALK_START_WAIT;
+    } else {
+        if (mEv_CheckEvent(mEv_SPECL_DESIGNER_COMPLETE) == TRUE) {
+            msg_idx = 8;
+        } else {
+            msg_idx = msg_start_idx[Now_Private->gender == mPr_SEX_FEMALE] + RANDOM(4);
+        }
+
+        designer->npc_class.palActorIgnoreTimer = -1;
+        talk_proc_idx = aEDSN_TALK_INVENTORY_CHECK;
+        aEDSN_set_pl_talk_lock(designer, TRUE);
+    }
+
+    mDemo_Set_msg_num(aEDSN_get_msg_no(designer, msg_idx));
+    aEDSN_change_talk_proc(designer, talk_proc_idx);
+}
+
+static void aEDSN_norm_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aEDSN_set_norm_talk_info);
+}
+
+static int aEDSN_talk_init(ACTOR* actorx, GAME* game) {
+    EV_DESIGNER_ACTOR* designer = (EV_DESIGNER_ACTOR*)actorx;
+
+    designer->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aEDSN_talk_end_chk(ACTOR* actorx, GAME* game) {
+    EV_DESIGNER_ACTOR* designer = (EV_DESIGNER_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    designer->talk_proc(designer, game);
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        aEDSN_setup_think_proc(designer, play, designer->next_think_idx);
+        ret = TRUE;
+    }
+
+    return ret;
+}
