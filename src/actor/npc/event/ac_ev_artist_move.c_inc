@@ -1,0 +1,258 @@
+static int aEART_check_present(void) {
+    mEv_artist_c* ev_save_p = &Save_Get(event_save_data).special.event.artist;
+    int ret = FALSE;
+
+    if (ev_save_p->used > mEv_ARTIST_ENTRY_SAVE_NUM) {
+        ret = TRUE;
+    } else {
+        PersonalID_c* pid = ev_save_p->pids;
+        int n = ev_save_p->used;
+
+        for (n; n != 0; n--) {
+            if (mPr_CheckCmpPersonalID(pid, &Now_Private->player_ID) == TRUE) {
+                return TRUE;
+            }
+
+            pid++;
+        }
+    }
+
+    return ret;
+}
+
+static int aEART_item_check(mActor_name_t item) {
+    int ret = aEART_ITEM_TYPE_OTHER;
+
+    if (ITEM_NAME_GET_TYPE(item) == NAME_TYPE_ITEM1) {
+        // @cleanup - no need to subtract ITEM1_NO_START, we're already masking out 4 bits for the category
+        switch (ITEM_NAME_GET_CAT(item - ITEM1_NO_START)) {
+            case ITEM1_CAT_FISH:
+                ret = aEART_ITEM_TYPE_FISH;
+                break;
+            case ITEM1_CAT_FRUIT:
+                ret = aEART_ITEM_TYPE_FOOD;
+                break;
+            case ITEM1_CAT_TOOL:
+                ret = aEART_ITEM_TYPE_TOOL;
+                break;
+        }
+    }
+
+    return ret;
+}
+
+static void aEART_say_hungry(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                (*artist->setupAction_proc)(artist, play, aEART_ACTION_MENU_OPEN_WAIT);
+                break;
+            case mChoice_CHOICE1:
+                mMsg_Set_continue_msg_num(msg_p, 0x02F6);
+                (*artist->setupAction_proc)(artist, play, aEART_ACTION_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aEART_menu_open_wait(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
+        (*artist->setupAction_proc)(artist, play, aEART_ACTION_MENU_CLOSE_WAIT);
+    }
+}
+
+static void aEART_menu_close_wait(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+
+    if (!submenu->open_flag) {
+        (*artist->setupAction_proc)(artist, play, aEART_ACTION_MSG_WIN_OPEN_WAIT);
+    }
+}
+
+static void aEART_msg_win_open_wait(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
+    static int msg_no[] = { 0x02F6, 0x02F9, 0x02F8, 0x02FC, 0x02F7 };
+    static int next_act_idx[] = { aEART_ACTION_TALK_END_WAIT, aEART_ACTION_DEMO_START_WAIT, aEART_ACTION_TALK_END_WAIT, aEART_ACTION_REFUSE_DEMO_START_WAIT, aEART_ACTION_TALK_END_WAIT };
+    
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_not_series_main_wait(msg_p) == TRUE) {
+        Submenu* submenu = &play->submenu;
+        mActor_name_t item = submenu->item_p->item;
+        int idx = 0;
+
+        if (item != EMPTY_NO) {
+            mPr_SetPossessionItem(Now_Private, submenu->item_p->slot_no, EMPTY_NO, mPr_ITEM_COND_NORMAL);
+
+            switch (aEART_item_check(item)) {
+                case aEART_ITEM_TYPE_FISH:
+                    idx = 1;
+                    break;
+                case aEART_ITEM_TYPE_FOOD:
+                    idx = 2;
+                    break;
+                case aEART_ITEM_TYPE_TOOL:
+                    idx = 3;
+                    break;
+                case aEART_ITEM_TYPE_OTHER:
+                    idx = 4;
+                    break;
+            }
+        }
+
+        artist->received_item = item;
+        mMsg_Set_continue_msg_num(msg_p, msg_no[idx]);
+        (*artist->setupAction_proc)(artist, play, next_act_idx[idx]);
+    }
+}
+
+static void aEART_demo_start_wait(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+
+    if (order == 2) {
+        aNPC_DEMO_GIVE_ITEM(artist->present, aHOI_REQUEST_PUTAWAY, TRUE);
+        mMsg_SET_CONTINUE_MSG_NUM(0x02FA);
+        (*artist->setupAction_proc)(artist, play, aEART_ACTION_TALK_END_WAIT);
+    }
+}
+
+static void aEART_refuse_demo_start_wait(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+
+    if (order == 2) {
+        aNPC_DEMO_GIVE_ITEM(artist->received_item, aHOI_REQUEST_PUTAWAY, FALSE);
+        mPr_SetFreePossessionItem(Now_Private, artist->received_item, mPr_ITEM_COND_NORMAL);
+        (*artist->setupAction_proc)(artist, play, aEART_ACTION_REFUSE_DEMO_END_WAIT);
+    }
+}
+
+static void aEART_refuse_demo_end_wait(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
+    if (CLIP(handOverItem_clip)->master_actor == NULL) {
+        (*artist->setupAction_proc)(artist, play, aEART_ACTION_TALK_END_WAIT);
+    }
+}
+
+static void aEART_menu_open_wait_init(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
+    mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1();
+}
+
+static void aEART_menu_close_wait_init(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+
+    mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_GIVE, 0);
+}
+
+static void aEART_msg_win_open_wait_init(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    mMsg_request_main_appear_wait_type1(msg_p);
+    mMsg_Unset_LockContinue(msg_p);
+}
+
+static void aEART_demo_start_wait_init(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+    Submenu_Item_c* item_p = submenu->item_p;
+    mEv_artist_c* ev_save_p = &Save_Get(event_save_data).special.event.artist;
+    mActor_name_t present;
+
+    mSP_SelectRandomItem_New(NULL, &present, 1, ev_save_p->walls, ev_save_p->used, mSP_KIND_WALLPAPER, mSP_LISTTYPE_EVENT, FALSE);
+    artist->present = present;
+    mPr_SetPossessionItem(Now_Private, item_p->slot_no, present, mPr_ITEM_COND_NORMAL);
+    
+    if (ev_save_p->used == mEv_ARTIST_ENTRY_SAVE_NUM) {
+        ev_save_p->used++;
+    } else {
+        mPr_CopyPersonalID(&ev_save_p->pids[ev_save_p->used], &Now_Private->player_ID);
+        ev_save_p->walls[ev_save_p->used] = present;
+        ev_save_p->used++;
+    }
+}
+
+typedef void (*aEART_INIT_PROC)(EV_ARTIST_ACTOR* artist, GAME_PLAY* play);
+
+static void aEART_init_proc(EV_ARTIST_ACTOR* artist, GAME_PLAY* play, int action) {
+    static aEART_INIT_PROC init_proc[] = {
+        // clang-format off
+        (aEART_INIT_PROC)none_proc1,
+        (aEART_INIT_PROC)none_proc1,
+        aEART_menu_open_wait_init,
+        aEART_menu_close_wait_init,
+        aEART_msg_win_open_wait_init,
+        aEART_demo_start_wait_init,
+        (aEART_INIT_PROC)none_proc1,
+        (aEART_INIT_PROC)none_proc1,
+        // clang-format on
+    };
+
+    (*init_proc[action])(artist, play);
+}
+
+static void aEART_setupAction(EV_ARTIST_ACTOR* artist, GAME_PLAY* play, int action) {
+    static aEART_TALK_PROC process[] = {
+        // clang-format off
+        aEART_say_hungry,
+        (aEART_TALK_PROC)none_proc1,
+        aEART_menu_open_wait,
+        aEART_menu_close_wait,
+        aEART_msg_win_open_wait,
+        aEART_demo_start_wait,
+        aEART_refuse_demo_start_wait,
+        aEART_refuse_demo_end_wait,
+        // clang-format on
+    };
+
+    artist->talk_proc = process[action];
+    aEART_init_proc(artist, play, action);
+}
+
+static void aEART_set_talk_info_talk_request(ACTOR* actorx) {
+    int msg_no;
+
+    if (aEART_check_present() == TRUE) {
+        msg_no = 0x02FB;
+    } else {
+        msg_no = 0x02F5;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aEART_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aEART_set_talk_info_talk_request);
+}
+
+static int aEART_talk_init(ACTOR* actorx, GAME* game) {
+    EV_ARTIST_ACTOR* artist = (EV_ARTIST_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int action;
+
+    if (aEART_check_present() == TRUE) {
+        action = aEART_ACTION_TALK_END_WAIT;
+    } else {
+        action = aEART_ACTION_SAY_HUNGRY;
+    }
+
+    (*artist->setupAction_proc)(artist, play, action);
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aEART_talk_end_chk(ACTOR* actorx, GAME* game) {
+    EV_ARTIST_ACTOR* artist = (EV_ARTIST_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    (*artist->talk_proc)(artist, play);
+
+    if (mDemo_Get_talk_actor() != actorx) {
+        mEv_set_status(mEv_EVENT_ARTIST, mEv_STATUS_TALK);
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aEART_actor_move(ACTOR* actorx, GAME* game) {
+    CLIP(npc_clip)->move_proc(actorx, game);
+}

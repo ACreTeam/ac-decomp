@@ -461,10 +461,12 @@ typedef struct broker_event_s {
     mActor_name_t items[mEv_BROKER_ITEM_NUM];
 } mEv_broker_c;
 
+#define mEv_ARTIST_ENTRY_SAVE_NUM 2
+
 typedef struct artist_event_s {
-    PersonalID_c pids[2];
+    PersonalID_c pids[mEv_ARTIST_ENTRY_SAVE_NUM];
     int used;
-    mActor_name_t walls[2];
+    mActor_name_t walls[mEv_ARTIST_ENTRY_SAVE_NUM];
 } mEv_artist_c;
 
 typedef struct arabian_event_s {
