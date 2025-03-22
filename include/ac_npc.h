@@ -26,6 +26,9 @@ extern "C" {
 #define aNPC_SPNPC_BIT_SET(field, bit) ((field) |= (1 << (bit)))
 #define aNPC_SPNPC_BIT_CLR(field, bit) ((field) &= ~(1 << (bit)))
 
+// To use this enum, make sure that m_common_data.h is included!
+#define NPC_CLIP CLIP(npc_clip)
+
 enum {
     aNPC_JOINT_BASE_ROOT,
     aNPC_JOINT_BASE,
