@@ -145,12 +145,6 @@ NESSoundStructF SoundF;
 NESSoundStruct3 SoundP;
 
 u8 DUMMY_ACTIVE[9];
-// sdata
-u32 NOISE_MASTER = 1;
-u32 NOISE_SHIFT = 0x800;
-u32 PHASE_SAMPLE = 0x85;
-u32 FRAME_SAMPLE = 0x215;
-u32 _STOP[2] = { 0 };
 
 // sbss
 u8 beforemode;
@@ -245,12 +239,12 @@ typedef struct _WaveTableEntry {
 
 typedef struct _unknown_C0 {
     u8 _0_7 : 1; // 10000000
-    u8 _0_6 : 3; // 01000000
+    u8 _0_6 : 3; // 01100000
     u8 _0_3 : 4; // 00001111
     u8 _1;
     u8 _2;
     u8 _3_7 : 1; // 10000000
-    u8 _3_6 : 3; // 01000000
+    u8 _3_6 : 3; // 01110000
     u8 _3_3 : 4; // 00001111
 } Unknown_VRC;
 
@@ -352,8 +346,9 @@ s8 TRIANGLE_TABLE[] = {
     0x0f, 0x00, 0xef, 0xde, 0xcd, 0xbb, 0xaa, 0x99, 0x88, 0x88, 0x99, 0xaa, 0xbb, 0xcd, 0xde, 0xef
 };
 
-int NOISE_TABLE[] = { 0x000df86a, 0x0006fc35, 0x00037e1a, 0x0001bf0d, 0x0000df86, 0x00009504, 0x00006fc3, 0x00005969,
-                      0x000046d1, 0x00003852, 0x000025a5, 0x00001c29, 0x000012c6, 0x00000e14, 0x00000708, 0x000006fd };
+static int NOISE_TABLE[] = { 0x000df86a, 0x0006fc35, 0x00037e1a, 0x0001bf0d, 0x0000df86, 0x00009504,
+                             0x00006fc3, 0x00005969, 0x000046d1, 0x00003852, 0x000025a5, 0x00001c29,
+                             0x000012c6, 0x00000e14, 0x00000708, 0x000006fd };
 
 u8 NOISE_PULSE_TABLE[] = { 0x30, 0x32, 0x34, 0x38, 0x3c, 0x3d, 0x3e, 0x3f,
                            0x40, 0x42, 0x44, 0x46, 0x48, 0x50, 0x60, 0x60 };
@@ -394,7 +389,20 @@ u32 DISKFM_GAINTABLE[] = { 30, 20, 15, 12 };
 u8 DISKFM_TABLE[0x40];
 
 // UNUSED
-u32 DEB1[4] = { 0, 0, 0, 0 };
+
+u8 DEB1[16] = { 0 };
+// sdata
+s8 DISK_SUB_GAIN[] = { 0, 1, 2, 4, 0, -4, -2, -1 };
+u8* ROM_TOP_C000 = DEB1;
+u8* ROM_TOP_E000 = DEB1;
+u32 DISK_FRAME_SAMPLE = 0x215;
+u32 FRAME_SAMPLE = 0x215;
+u32 PHASE_SAMPLE = 0x85;
+u32 NOISE_MASTER = 1;
+u32 NOISE_SHIFT = 0x800;
+int write_pointer = 0x690;
+int buffer_remain = 0x690;
+u32 _STOP[2] = { 0 };
 
 f32 VOLTABLE_HVCPULSE[] = { 0.0f,      0.080128,  0.157051f, 0.224359f, 0.294872f, 0.365385f,
                             0.435897f, 0.50641f,  0.592949f, 0.657051f, 0.730769f, 0.801282f,
@@ -1264,9 +1272,6 @@ void StartE() {
     bias_move = 0;
 }
 
-u8* ROM_TOP_C000 = (u8*)&DEB1;
-u8* ROM_TOP_E000 = (u8*)&DEB1;
-
 int __ProcessSoundE() {
     if (SoundE._00) {
         for (int i = 0; i < 2u; i++) {
@@ -1435,7 +1440,6 @@ int __ProcessSoundC() {
 
 u8 DISKSUB_TABLE[32];
 s16 disksubwave[32][2];
-s8 DISK_SUB_GAIN[] = { 0, 1, 2, 4, 0, -4, -2, -1 };
 
 void __CreateDiskSubWave() {
     for (int i = 0; i < 32; i++) {
@@ -1448,11 +1452,9 @@ u32 __PitchTo32_DISKFM(u16 v) {
     return (0.85343015f * (int)v) / 500.4375f * 32768.f;
 }
 
-u32 DISK_FRAME_SAMPLE = 0x215;
-
 void __Sound_Write_Disk(u16 a, u8 b) {
     static int shiftr = 0;
-    ((u8*)&sbuffer)[a] = b;
+    sbuffer.buff[a] = b;
     if (a == 0x23) {
         if (!(b & 2)) {
             SoundF._2D = 0;
@@ -1653,7 +1655,7 @@ void ForceProcessPhaseCounter() {
     ProcessPhaseCounter();
 }
 
-void Sound_Make_HVC(s32 count, s16* v) {
+int Sound_Make_HVC(s32 count, s16* v) {
     static int lastsample;
     HS_Event_Update();
     for (int i = 0; i < count; i++) {
@@ -1688,8 +1690,6 @@ void Sound_Make_HVC(s32 count, s16* v) {
 s16 sound_loop_buffer[0x2000];
 
 int read_pointer;
-int write_pointer = 0x690;
-int buffer_remain = 0x690;
 
 void Buffer_Reset() {
     for (int i = 0; i < ARRAY_COUNT(sound_loop_buffer); i++) {
@@ -1821,9 +1821,8 @@ s16* __FrameCallback(s32 a) {
         Jac_RegisterMixcallback(old_mixcall, old_mixmode);
         exitflag = FALSE;
         for (int i = 0; i < a; i++) {
-            f32 f3 = f2 * buf[i];
+            buf[i] = f2 * buf[i];
             f2 -= f;
-            buf[i] = f3;
         }
     }
     return buf;
@@ -1859,18 +1858,25 @@ u8 Sound_Read(u16 param_1, u32 param_2, u32 param_3, u32 param_4, u32 param_5) {
         if (DUMMY_ACTIVE[0]) {
             a = DUMMY_ACTIVE[0] - 1;
         }
-        b = SoundB._00;
+
         if (DUMMY_ACTIVE[1]) {
             b = DUMMY_ACTIVE[1] - 1;
+        } else {
+            b = SoundB._00;
         }
-        c = SoundC._00;
+
         if (DUMMY_ACTIVE[2]) {
             c = DUMMY_ACTIVE[2] - 1;
+        } else {
+            c = SoundC._00;
         }
-        d = SoundD._00;
+
         if (DUMMY_ACTIVE[3]) {
             d = DUMMY_ACTIVE[3] - 1;
+        } else {
+            d = SoundD._00;
         }
+
         e = SoundE._00;
         if (DUMMY_ACTIVE[4]) {
             e = DUMMY_ACTIVE[4] - 1;
@@ -1908,7 +1914,7 @@ void Sound_PlayMENUPCM(u8 v) {
 }
 
 void __Sound_Write_HVC(u16 index, u8 v) {
-    ((u8*)&sbuffer)[index] = v;
+    sbuffer.buff[index] = v;
     if (index >= 0xc0) {
         switch (MMC_MODE) {
             case 1: {

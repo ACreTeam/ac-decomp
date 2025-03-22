@@ -39,7 +39,7 @@ void HS_Event_Update();
 void HS_Event_Write(u16, u8);
 void ProcessPhaseCounter();
 void ForceProcessPhaseCounter();
-void Sound_Make_HVC(s32, s16*);
+int Sound_Make_HVC(s32, s16*);
 void Buffer_Reset();
 void Sample_Copy(u16, s16*);
 s16* __FrameCallback(s32);
