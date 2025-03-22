@@ -615,11 +615,11 @@ void __Sound_Write_MMC5(u16 a, u8 b) {
             } break;
             case 2: {
                 pSound->_0C = pBuffer->TimerHigh << 8 | pBuffer->TimerLow;
-                pSound->_08 = __PitchTo32_HVC_C(pSound->_0C);
+                pSound->_08 = __PitchTo32_HVC(pSound->_0C);
             } break;
             case 3: {
                 pSound->_0C = pBuffer->TimerHigh << 8 | pBuffer->TimerLow;
-                pSound->_08 = __PitchTo32_HVC_C(pSound->_0C);
+                pSound->_08 = __PitchTo32_HVC(pSound->_0C);
                 pSound->_18 = LEN_TABLE_HVC[pBuffer->LengthCounterLow];
                 pSound->_10 = FRAME_SAMPLE * pSound->_18;
                 if (!pSound->_00 && !pSound->_3E) {
@@ -1909,9 +1909,11 @@ void Sound_SetMMC(u8 mmcMode) {
     Sound_Reset();
 }
 
+#pragma force_active on
 void Sound_PlayMENUPCM(u8 v) {
     SoundP._0D = v;
 }
+#pragma force_active reset
 
 void __Sound_Write_HVC(u16 index, u8 v) {
     sbuffer.buff[index] = v;
