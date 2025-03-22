@@ -170,6 +170,7 @@ f32 NOISE_FREQ_TABLE[] = { 4.f,  2.f,   1.f,   0.5f,  0.25f, 0.2f,  0.15f, 0.12f
 // https://www.nesdev.org/wiki/APU_registers
 
 typedef struct _PulseChannel {
+    // https://www.nesdev.org/wiki/APU_Pulse
     // $4000/$4004
     u8 Duty : 2;
     u8 EnvelopeLoopCounter : 1;
@@ -188,6 +189,7 @@ typedef struct _PulseChannel {
 } PulseChannel;
 
 typedef struct _TriangleChannel {
+    // https://www.nesdev.org/wiki/APU_Triangle
     // $4008
     u8 LengthCounter : 1;
     u8 LinearCounterReloadVaue : 7;
@@ -201,6 +203,7 @@ typedef struct _TriangleChannel {
 } TriangleChannel;
 
 typedef struct _NoiseChannel {
+    // https://www.nesdev.org/wiki/APU_Noise
     // $400C
     u8 _unused_400C_high2 : 2;
     u8 LoopEnvelope : 1;
@@ -218,6 +221,7 @@ typedef struct _NoiseChannel {
 } NoiseChannel;
 
 typedef struct _DMCChannel {
+    // https://www.nesdev.org/wiki/APU_DMC
     // $4010
     u8 IRQEnable : 1;
     u8 LoopSample : 1;
@@ -261,6 +265,7 @@ typedef struct _APURegisters {
     DMCChannel DMC;
     // $4014
     u8 _unused_4014;
+    // https://www.nesdev.org/wiki/APU#Status_($4015)
     // $4015
     u8 DMCInterrupt : 1;
     u8 FrameInterrupt : 1;
@@ -272,6 +277,7 @@ typedef struct _APURegisters {
     u8 Pulse1Status : 1;
     // $4016
     u8 _unused_4016;
+    // https://www.nesdev.org/wiki/APU#Frame_Counter_($4017)
     // $4017
     u8 FrameCounter_5FrameSequence : 1;
     u8 FrameCounter_DisableFrameInterrupt : 1;
