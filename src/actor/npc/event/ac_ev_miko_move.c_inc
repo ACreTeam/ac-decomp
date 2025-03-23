@@ -1,0 +1,202 @@
+static int aEMK_set_request_act(EV_MIKO_ACTOR* miko, u8 prio, u8 idx, u8 type, u16 obj, s16 move_x, s16 move_z) {
+    int ret = FALSE;
+
+    if (prio >= miko->npc_class.request.act_priority) {
+        u16 arg_data[aNPC_REQUEST_ARG_NUM];
+
+        bzero(arg_data, sizeof(arg_data));
+        arg_data[0] = obj;
+        arg_data[2] = move_x;
+        arg_data[3] = move_z;
+        miko->npc_class.request.act_priority = prio;
+        miko->npc_class.request.act_idx = idx;
+        miko->npc_class.request.act_type = type;
+        mem_copy((u8*)miko->npc_class.request.act_args, (u8*)arg_data, sizeof(arg_data));
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aEMK_mail_free_space(void) {
+    if (Now_Private != NULL && mMl_chk_mail_free_space(Now_Private->mail, mPr_INVENTORY_MAIL_COUNT) != -1) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void aEMK_get_omikuji(Mail_c* mail, int idx) {
+    static u8 pf_string[mMsg_FREE_STRING_LEN];
+    int header_back_start;
+    int load_idx;
+    static int table[] = { 0x2B1, 0x2A1, 0x2DA, 0x2CA };
+    static int kekka_table[] = { 2, 3, 1, 0 };
+    int i;
+
+    for (i = 0; i < 4; i++) {
+        load_idx = table[i] + RANDOM(16);
+        mString_Load_StringFromRom(pf_string, sizeof(pf_string), load_idx);
+        mHandbill_Set_free_str(i, pf_string, sizeof(pf_string));
+    }
+
+    mString_Load_StringFromRom(pf_string, sizeof(pf_string), 0x2C1 + kekka_table[idx]);
+    mHandbill_Set_free_str(mHandbill_FREE_STR4, pf_string, sizeof(pf_string));
+    load_idx = 0x072 + RANDOM(3);
+    mHandbill_Load_HandbillFromRom(mail->content.header, &header_back_start, mail->content.footer, mail->content.body, load_idx);
+    mail->content.font = mMl_FONT_RECV;
+    mail->content.header_back_start = header_back_start;
+    mail->content.mail_type = mMl_TYPE_OMIKUJI;
+    mMl_set_to_plname(mail, &Now_Private->player_ID);
+}
+
+static void aEMK_talk_select(EV_MIKO_ACTOR* miko, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE()) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                if (!aEMK_mail_free_space()) {
+                    mMsg_SET_CONTINUE_MSG_NUM(0x190F);
+                    aEMK_setupAction(miko, play, aEMK_TALK_END_WAIT);
+                } else if (mSP_money_check(50)) {
+                    aEMK_setupAction(miko, play, aEMK_TALK_OMIKUJI);
+                } else {
+                    mMsg_SET_CONTINUE_MSG_NUM(0x190E);
+                    aEMK_setupAction(miko, play, aEMK_TALK_END_WAIT);
+                }
+                
+                break;
+            case mChoice_CHOICE1:
+                aEMK_setupAction(miko, play, aEMK_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aEMK_talk_omikuji(EV_MIKO_ACTOR* miko, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    static u8 destiny[] = { mPr_DESTINY_NORMAL, mPr_DESTINY_BAD_LUCK, mPr_DESTINY_MONEY_LUCK, mPr_DESTINY_GOODS_LUCK };
+
+    if (mMsg_CHECK_MAINNORMALCONTINUE() && order == 1) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        mMsg_SET_CONTINUE_MSG_NUM(0x1911 + miko->omikuji);
+        aEMK_setupAction(miko, play, aEMK_TALK_GIVE);
+        Now_Private->destiny.type = destiny[miko->omikuji];
+        mSP_get_sell_price(50);
+    }
+}
+
+static void aEMK_talk_give(EV_MIKO_ACTOR* miko, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    Mail_c mail;
+    int idx;
+
+    if (order == 1) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 2);
+        aNPC_DEMO_GIVE_ITEM(ITM_FORTUNE_SLIP, aHOI_REQUEST_PUTAWAY, FALSE);
+        aEMK_setupAction(miko, play, aEMK_TALK_END_WAIT);
+        mMl_clear_mail(&mail);
+        aEMK_get_omikuji(&mail, miko->omikuji);
+
+        if (Now_Private != NULL) {
+            idx = mMl_chk_mail_free_space(Now_Private->mail, mPr_INVENTORY_MAIL_COUNT);
+            
+            if (idx != -1) {
+                mail.content.paper_type = (u8)ITM_PAPER25;
+                mMl_copy_mail(&Now_Private->mail[idx], &mail);
+            }
+        }
+    }
+}
+
+static void aEMK_talk_omikuji_init(EV_MIKO_ACTOR* miko, GAME_PLAY* play) {
+    miko->omikuji = RANDOM(aEMK_OMIKUJI_NUM);
+}
+
+typedef void (*aEMK_INIT_PROC)(EV_MIKO_ACTOR* miko, GAME_PLAY* play);
+
+static void aEMK_init_proc(EV_MIKO_ACTOR* miko, GAME_PLAY* play, int action) {
+    static aEMK_INIT_PROC init_proc[] = {
+        // clang-format off
+        (aEMK_INIT_PROC)none_proc1,
+        (aEMK_INIT_PROC)none_proc1,
+        aEMK_talk_omikuji_init,
+        (aEMK_INIT_PROC)none_proc1,
+        // clang-format on
+    };
+
+    (*init_proc[action])(miko, play);
+}
+
+static void aEMK_setupAction(EV_MIKO_ACTOR* miko, GAME_PLAY* play, int action) {
+    static aEMK_TALK_PROC process[] = {
+        // clang-format off
+        (aEMK_TALK_PROC)none_proc1,
+        aEMK_talk_select,
+        aEMK_talk_omikuji,
+        aEMK_talk_give,
+        // clang-format on
+    };
+
+    miko->talk_action = action;
+    miko->talk_proc = process[action];
+    aEMK_init_proc(miko, play, action);
+}
+
+static void aEMK_set_talk_info(ACTOR* actorx) {
+    int msg_no;
+    EV_MIKO_ACTOR* miko = (EV_MIKO_ACTOR*)actorx;
+
+    if (miko->in_front == TRUE) {
+        msg_no = 0x190C;
+    } else {
+        msg_no = 0x1916;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aEMK_talk_request(ACTOR* actorx, GAME* game) {
+    EV_MIKO_ACTOR* miko = (EV_MIKO_ACTOR*)actorx;
+
+    if (miko->npc_class.action.idx == aNPC_ACT_WAIT) {
+        mDemo_Request(mDemo_TYPE_TALK, actorx, aEMK_set_talk_info);
+    }
+}
+
+static int aEMK_talk_init(ACTOR* actorx, GAME* game) {
+    EV_MIKO_ACTOR* miko = (EV_MIKO_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    aEMK_setupAction(miko, play, aEMK_TALK_SELECT);
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aEMK_talk_end_chk(ACTOR* actorx, GAME* game) {
+    EV_MIKO_ACTOR* miko = (EV_MIKO_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    (*miko->talk_proc)(miko, play);
+
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        ret = TRUE;
+        NPC_CLIP->set_dst_pos_proc((NPC_ACTOR*)miko, actorx->world.position.x + 10.0f, actorx->world.position.z + 10.0f);
+        aEMK_set_request_act(miko, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actorx->world.position.x + 10.0f, actorx->world.position.z + 10.0f);
+    }
+
+    return ret;
+}
+
+static void aEMK_actor_move(ACTOR* actorx, GAME* game) {
+    EV_MIKO_ACTOR* miko = (EV_MIKO_ACTOR*)actorx;
+
+    if (ABS((s16)(actorx->player_angle_y - actorx->shape_info.rotation.y)) < DEG2SHORT_ANGLE2(33.75f)) {
+        miko->in_front = TRUE;
+    } else {
+        miko->in_front = FALSE;
+    }
+
+    NPC_CLIP->move_proc(actorx, game);
+}
