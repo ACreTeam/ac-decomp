@@ -1,0 +1,339 @@
+static aEv_yomise_save_c* get_yomise_save_area(void) {
+    aEv_yomise_save_c* save_p = (aEv_yomise_save_c*)mEv_get_save_area(mEv_EVENT_FIREWORKS_SHOW, 0);
+
+    return save_p;
+}
+
+static int aYMS_check_goods_cnt(int start_idx) {
+    int i;
+    int cnt;
+    aEv_yomise_save_c* save_p;
+
+    save_p = get_yomise_save_area();
+    cnt = 0;
+
+    for (i = start_idx; i < aEYMS_GOODS_COUNT; i++) {
+        if (save_p->goods[i] != EMPTY_NO) {
+            cnt++;
+        }
+    }
+
+    return cnt;
+}
+
+static void setUp_yomise_goods(void) {
+    aEv_yomise_save_c* save_p;
+    int i;
+    int j;
+    static mActor_name_t sell_table[] = { ITM_BLUEBELL_FAN, ITM_YELLOW_PINWHEEL, ITM_RED_BALLOON };
+
+    save_p = get_yomise_save_area();
+
+    for (i = 0; i < aEYMS_GOODS_COUNT; i++) {
+        save_p->goods[i] = EMPTY_NO;
+    }
+
+    save_p->cnt = aEYMS_GOODS_COUNT;
+    save_p->kind = RANDOM(ARRAY_COUNT(sell_table));
+
+    for (j = 0; j < aEYMS_GOODS_COUNT; j++) {
+        save_p->goods[j] = sell_table[save_p->kind] + j;
+    }
+}
+
+static void yomise_save_area_ct(void) {
+    aEv_yomise_save_c* save_p;
+
+    save_p = get_yomise_save_area();
+    if (save_p == NULL) {
+        mEv_reserve_save_area(mEv_EVENT_FIREWORKS_SHOW, 0);
+        get_yomise_save_area(); // @cleanup - unused
+        setUp_yomise_goods();
+    }
+}
+
+static int aEYMS_set_choise_data(int start_idx, int max) {
+    aEv_yomise_save_c* save_p = get_yomise_save_area();
+    mChoice_c* choice_p = mChoice_Get_base_window_p();
+    u8 buf[mChoice_CHOICE_STRING_LEN * mChoice_CHOICE_NUM];
+    u8* str_p[mChoice_CHOICE_NUM];
+    int i;
+    int j;
+    static u8 new_player_str[mChoice_CHOICE_STRING_LEN] = "I'm not buying! ";
+    static u8 new_player_str2[mChoice_CHOICE_STRING_LEN] = "I don't want it!";
+
+    mem_clear(buf, sizeof(buf), CHAR_SPACE);
+    for (i = 0; i < mChoice_CHOICE_NUM; i++) {
+        str_p[i] = NULL;
+    }
+
+    i = 0;
+    for (j = start_idx; i < max && j < aEYMS_GOODS_COUNT; j++) {
+        if (save_p->goods[j] != EMPTY_NO) {
+            str_p[i] = &buf[i * mChoice_CHOICE_STRING_LEN];
+            mIN_copy_name_str(str_p[i], save_p->goods[j]);
+            i++;
+        }
+    }
+
+    if (max == 3) {
+        for (i = 0; i < mChoice_CHOICE_NUM; i++) {
+            if (str_p[i] == NULL) {
+                if (j == aEYMS_GOODS_COUNT) {
+                    mem_copy(&buf[i * mChoice_CHOICE_STRING_LEN], new_player_str, mChoice_CHOICE_STRING_LEN);
+                } else {
+                    mem_copy(&buf[i * mChoice_CHOICE_STRING_LEN], new_player_str2, mChoice_CHOICE_STRING_LEN);
+                }
+
+                str_p[i] = &buf[i * mChoice_CHOICE_STRING_LEN];
+                i = mChoice_CHOICE_NUM;
+            }
+        }
+    }
+
+    mChoice_Set_choice_data(choice_p,
+        str_p[0], mChoice_CHOICE_STRING_LEN,
+        str_p[1], mChoice_CHOICE_STRING_LEN,
+        str_p[2], mChoice_CHOICE_STRING_LEN,
+        str_p[3], mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN,
+        NULL, mChoice_CHOICE_STRING_LEN
+    );
+
+    return j;
+}
+
+static void aNSM_set_item_value_str(u32 price, int str_no) {
+    u8 str[6];
+
+    mFont_UnintToString(str, 6, price, 5, TRUE, FALSE, TRUE);
+    mMsg_SET_FREE_STR(str_no, str, sizeof(str));
+}
+
+static void aYMS_make_utiwa(ACTOR* actorx, GAME* game) {
+    EV_YOMISE_ACTOR* yomise = (EV_YOMISE_ACTOR*)actorx;
+
+    if (yomise->npc_class.right_hand.item_actor_p == NULL) {
+        ACTOR* utiwa_p = CLIP(tools_clip)->aTOL_birth_proc(TOOL_UTIWA, aTOL_ACTION_S_TAKEOUT, actorx, game, -1, NULL);
+
+        if (utiwa_p != NULL) {
+            yomise->npc_class.right_hand.item_actor_p = utiwa_p;
+        }
+    }
+}
+
+static void aEYMS_to_talk_buy(EV_YOMISE_ACTOR* yomise) {
+    int cnt = aYMS_check_goods_cnt(yomise->cur_choice_start);
+
+    yomise->next_choice_start = aEYMS_set_choise_data(yomise->cur_choice_start, 3);
+
+    if (cnt < 4) {
+        mMsg_SET_CONTINUE_MSG_NUM(0x1761);
+    } else {
+        mMsg_SET_CONTINUE_MSG_NUM(0x1762);
+    }
+}
+
+static int get_now_select_goods_idx(EV_YOMISE_ACTOR* yomise, int buy_idx) {
+    aEv_yomise_save_c* save_p = get_yomise_save_area();
+    int i;
+
+    if (buy_idx == 3) {
+        return -1;
+    }
+
+    for (i = yomise->cur_choice_start; i < aEYMS_GOODS_COUNT; i++) {
+        if (save_p->goods[i] != EMPTY_NO) {
+            if (buy_idx == 0) {
+                return i;
+            }
+
+            buy_idx--;
+        }
+    }
+
+    return -1;
+}
+
+static void aEYMS_talk_give(EV_YOMISE_ACTOR* yomise, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+
+    if (order == 2) {
+        aNPC_DEMO_GIVE_ITEM(yomise->item, aHOI_REQUEST_PUTAWAY, FALSE);
+        aEYMS_setupAction(yomise, yomise->next_talk_action);
+
+        switch (yomise->next_talk_action) {
+            case aEYMS_TALK_END:
+                mMsg_SET_CONTINUE_MSG_NUM(0x1765);
+                break;
+            case aEYMS_TALK_ADD_ACTION:
+                mMsg_SET_CONTINUE_MSG_NUM(0x1766);
+                break;
+        }
+    }
+}
+
+static void aEYMS_talk_add_action(EV_YOMISE_ACTOR* yomise, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE()) {
+        aEYMS_setupAction(yomise, yomise->talk_action + 1);
+    }
+}
+
+static void aEYMS_talk_fruit(EV_YOMISE_ACTOR* yomise, GAME_PLAY* play) {
+    int buy_idx;
+    int idx;
+    mActor_name_t item;
+    int price;
+    aEv_yomise_save_c* save_p = get_yomise_save_area();
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 1) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        buy_idx = mChoice_GET_CHOSENUM();
+        aEYMS_setupAction(yomise, aEYMS_TALK_END);
+        idx = get_now_select_goods_idx(yomise, buy_idx);
+        if (idx == -1) {
+            if (aYMS_check_goods_cnt(yomise->cur_choice_start) < 4) {
+                mMsg_SET_CONTINUE_MSG_NUM(0x1763);
+                aEYMS_setupAction(yomise, aEYMS_TALK_END);
+            } else {
+                mMsg_SET_CONTINUE_MSG_NUM(0x1767);
+                yomise->cur_choice_start = yomise->next_choice_start;
+                aEYMS_setupAction(yomise, aEYMS_TALK_SELECT);
+            }
+        } else {
+            item = save_p->goods[idx];
+            price = yomise->price;
+
+            if (mPr_GetPossessionItemSum(Now_Private, EMPTY_NO) == 0) {
+                mMsg_SET_CONTINUE_MSG_NUM(0x175D);
+            } else if (mSP_money_check(price) == FALSE) {
+                mMsg_SET_CONTINUE_MSG_NUM(0x175E);
+            } else {
+                mPr_SetFreePossessionItem(Now_Private, item, mPr_ITEM_COND_NORMAL);
+                yomise->item = item;
+                mSP_get_sell_price(price);
+                aEYMS_setupAction(yomise, aEYMS_TALK_GIVE);
+                save_p->goods[idx] = EMPTY_NO;
+                yomise->cur_choice_start = 0;
+                if (aYMS_check_goods_cnt(0) == 0) {
+                    yomise->next_talk_action = aEYMS_TALK_END;
+                } else {
+                    yomise->next_talk_action = aEYMS_TALK_ADD_ACTION;
+                }
+
+                mMsg_SET_CONTINUE_MSG_NUM(0x1764);
+            }
+        }
+    }
+}
+
+static void aEYMS_talk_select2(EV_YOMISE_ACTOR* yomise, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 1) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                mMsg_SET_CONTINUE_MSG_NUM(0x175C);
+                aEYMS_setupAction(yomise, aEYMS_TALK_FRUIT);
+                aEYMS_set_choise_data(0, 4);
+                break;
+            case mChoice_CHOICE1:
+                aEYMS_setupAction(yomise, aEYMS_TALK_END);
+                break;
+        }
+    }
+}
+
+static void aEYMS_talk_select(EV_YOMISE_ACTOR* yomise, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 1) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNSM_set_item_value_str(yomise->price, mMsg_FREE_STR0);
+                aEYMS_to_talk_buy(yomise);
+                aEYMS_setupAction(yomise, aEYMS_TALK_FRUIT);
+                break;
+            case mChoice_CHOICE1:
+                aEYMS_setupAction(yomise, aEYMS_TALK_END);
+                break;
+        }
+    }
+}
+
+static void aEYMS_set_talk_info(ACTOR* actorx) {
+    int sel_msg_no;
+    static s16 msg_no[] = { 0x1758, 0x1759, 0x175A };
+    aEv_yomise_save_c* save_p = get_yomise_save_area();
+    EV_YOMISE_ACTOR* yomise = (EV_YOMISE_ACTOR*)actorx;
+    static u16 price[] = { 780, 680, 480 };
+
+    if (aYMS_check_goods_cnt(0) == 0) {
+        sel_msg_no = 0x1757;
+        yomise->next_talk_action = aEYMS_TALK_END;
+    } else {
+        sel_msg_no = msg_no[save_p->kind];
+        yomise->next_talk_action = aEYMS_TALK_SELECT;
+        yomise->price = price[save_p->kind];
+        yomise->cur_choice_start = 0;
+    }
+
+    mDemo_Set_msg_num(sel_msg_no);
+    mDemo_Set_camera(CAMERA2_PROCESS_CUST_TALK);
+}
+
+static void aEYMS_talk_request(ACTOR* actorx, GAME* game) {
+    if (Actor_player_look_direction_check(actorx, DEG2SHORT_ANGLE2(45.0f), (GAME_PLAY*)game)) {
+        if (ABS((s16)(actorx->player_angle_y - actorx->shape_info.rotation.y)) < DEG2SHORT_ANGLE2(45.0f)) {
+            mDemo_Request(mDemo_TYPE_TALK, actorx, aEYMS_set_talk_info);
+        }
+    }
+}
+
+static int aEYMS_talk_init(ACTOR* actorx, GAME* game) {
+    EV_YOMISE_ACTOR* yomise = (EV_YOMISE_ACTOR*)actorx;
+
+    aEYMS_setupAction(yomise, yomise->next_talk_action);
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aEYMS_talk_end_chk(ACTOR* actorx, GAME* game) {
+    EV_YOMISE_ACTOR* yomise = (EV_YOMISE_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    (*yomise->talk_proc)(yomise, play);
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        ret = TRUE;
+        NPC_CLIP->set_dst_pos_proc((NPC_ACTOR*)actorx, yomise->dst_pos[0], yomise->dst_pos[1]);
+    }
+
+    return ret;
+}
+
+static void aEYMS_actor_move(ACTOR* actorx, GAME* game) {
+    aYMS_make_utiwa(actorx, game);
+    NPC_CLIP->move_proc(actorx, game);
+}
+
+static void aEYMS_setupAction(EV_YOMISE_ACTOR* yomise, int action) {
+    static aEYMS_TALK_PROC process[] = {
+        // clang-format off
+        aEYMS_talk_add_action,
+        aEYMS_talk_select,
+        aEYMS_talk_select2,
+        aEYMS_talk_fruit,
+        (aEYMS_TALK_PROC)none_proc1,
+        aEYMS_talk_give,
+        // clang-format on
+    };
+
+    yomise->talk_action = action;
+    yomise->talk_proc = process[action];
+}
