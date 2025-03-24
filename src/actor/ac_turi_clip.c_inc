@@ -17,9 +17,9 @@ static aEANG_event_data_c* get_fish_save_area(void) {
     aEANG_event_data_c* fish_p;
 
     if (now_time.month == lbRTC_JUNE) {
-        fish_p = (aEANG_event_data_c*)mEv_get_save_area(0x1D, 0);
+        fish_p = (aEANG_event_data_c*)mEv_get_save_area(mEv_EVENT_FISHING_TOURNEY_1, 0);
     } else {
-        fish_p = (aEANG_event_data_c*)mEv_get_save_area(0x36, 0);
+        fish_p = (aEANG_event_data_c*)mEv_get_save_area(mEv_EVENT_FISHING_TOURNEY_2, 0);
     }
 
     return fish_p;

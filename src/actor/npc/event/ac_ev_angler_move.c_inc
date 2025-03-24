@@ -1,0 +1,515 @@
+static int time_over_check(void) {
+    lbRTC_time_c rtc_time = Common_Get(time.rtc_time);
+    lbRTC_hour_t hour = rtc_time.hour;
+
+    if (hour < 6 || hour >= 18) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static aEANG_event_data_c* get_fish_save_area(void) {
+    lbRTC_time_c rtc_time = Common_Get(time.rtc_time);
+    aEANG_event_data_c* save_p;
+
+    if (rtc_time.month == lbRTC_JUNE) {
+        save_p = (aEANG_event_data_c*)mEv_get_save_area(mEv_EVENT_FISHING_TOURNEY_1, 0);
+    } else {
+        save_p = (aEANG_event_data_c*)mEv_get_save_area(mEv_EVENT_FISHING_TOURNEY_2, 0);
+    }
+
+    return save_p;
+}
+
+static aEANG_event_common_c* get_fish_common_area(void) {
+    lbRTC_time_c rtc_time = Common_Get(time.rtc_time);
+    aEANG_event_common_c* common_p;
+
+    if (rtc_time.month == lbRTC_JUNE) {
+        common_p = (aEANG_event_common_c*)mEv_get_common_area(mEv_EVENT_FISHING_TOURNEY_1, 13);
+    } else {
+        common_p = (aEANG_event_common_c*)mEv_get_common_area(mEv_EVENT_FISHING_TOURNEY_2, 13);
+    }
+
+    return common_p;
+}
+
+static void fish_save_area_ct(ACTOR* actorx) {
+    aEANG_event_data_c* save_p = get_fish_save_area();
+    aEANG_event_common_c* common_p = get_fish_common_area();
+
+    if (common_p == NULL) {
+        lbRTC_time_c rtc_time = Common_Get(time.rtc_time);
+
+        if (rtc_time.month == lbRTC_JUNE) {
+            common_p = (aEANG_event_common_c*)mEv_reserve_common_area(mEv_EVENT_FISHING_TOURNEY_1, 13);
+        } else {
+            common_p = (aEANG_event_common_c*)mEv_reserve_common_area(mEv_EVENT_FISHING_TOURNEY_2, 13);
+        }
+
+        common_p->foreigner = FALSE;
+    }
+
+    if (save_p != NULL) {
+        actorx->world.position.x = save_p->pos[0];
+        actorx->world.position.z = save_p->pos[1];
+    } else {
+        lbRTC_time_c rtc_time = Common_Get(time.rtc_time);
+
+        if (rtc_time.month == lbRTC_JUNE) {
+            save_p = (aEANG_event_data_c*)mEv_reserve_save_area(mEv_EVENT_FISHING_TOURNEY_1, 0);
+        } else {
+            save_p = (aEANG_event_data_c*)mEv_reserve_save_area(mEv_EVENT_FISHING_TOURNEY_2, 0);
+        }
+
+        save_p->size = 0;
+    }
+
+    aTRC_clip_random_topsize();
+}
+
+static void fish_save_area_dt(ACTOR* actorx) {
+    lbRTC_time_c rtc_time = Common_Get(time.rtc_time);
+    aEANG_event_data_c* save_p = get_fish_save_area();
+
+    if (rtc_time.month == lbRTC_JUNE) {
+        mEv_actor_dying_message(mEv_EVENT_FISHING_TOURNEY_1, actorx);
+    } else {
+        mEv_actor_dying_message(mEv_EVENT_FISHING_TOURNEY_2, actorx);
+    }
+
+    save_p->pos[0] = (int)actorx->world.position.x;
+    save_p->pos[1] = (int)actorx->world.position.z;
+}
+
+static int entry_check(void) {
+    aEANG_event_data_c* save_p = get_fish_save_area();
+    aEANG_event_common_c* common_p = get_fish_common_area();
+    u8 player_no = Common_Get(player_no);
+    u8 b = 1 << player_no;
+
+    if (player_no == mPr_FOREIGNER) {
+        return common_p->foreigner;
+    } else {
+        return b & save_p->talk_flag;
+    }
+}
+
+static void entry_on(void) {
+    aEANG_event_data_c* save_p = get_fish_save_area();
+    aEANG_event_common_c* common_p = get_fish_common_area();
+    u8 player_no = Common_Get(player_no);
+    u8 b = 1 << player_no;
+
+    if (player_no == mPr_FOREIGNER) {
+        common_p->foreigner = TRUE;
+    } else {
+        save_p->talk_flag |= b;
+    }
+}
+
+static PersonalID_c* getP_top_of_angler_pID(void) {
+    aEANG_event_data_c* save_p = get_fish_save_area();
+
+    return &save_p->pID;
+}
+
+static void set_top_of_angler_pID(PersonalID_c pID) {
+    aEANG_event_data_c* save_p = get_fish_save_area();
+
+    mPr_CopyPersonalID(&save_p->pID, &pID);
+}
+
+static int get_top_of_angler_size(void) {
+    aEANG_event_data_c* save_p = get_fish_save_area();
+
+    return save_p->size;
+}
+
+static int set_top_of_angler_size(int size) {
+    aEANG_event_data_c* save_p = get_fish_save_area();
+
+    save_p->size = size;
+}
+
+static int now_top_check(void) {
+    return mPr_CheckCmpPersonalID(&Now_Private->player_ID, getP_top_of_angler_pID());
+}
+
+static int aEANG_item_check(mActor_name_t item) {
+    if (ITEM_NAME_GET_CAT(item) == ITEM1_CAT_FISH) {
+        switch (item) {
+            case ITM_FISH05:
+            case ITM_FISH06:
+            case ITM_FISH07:
+                return aEANG_TYPE_BASS;
+            default:
+                return aEANG_TYPE_FISH;
+        }
+    } else if (ITEM_NAME_GET_CAT(item) == ITEM1_CAT_TOOL) {
+        return aEANG_TYPE_TOOL;
+    } else {
+        return aEANG_TYPE_OTHER;
+    }
+}
+
+static mActor_name_t aEANG_SelectRandomItem(void) {
+    mActor_name_t item;
+
+    if (RANDOM_F(1.0f) > 0.5f) {
+        mSP_SelectRandomItem_New(NULL, &item, 1, NULL, 0, mSP_KIND_CLOTH, mSP_LISTTYPE_ABC, FALSE);
+    } else {
+        mSP_SelectRandomItem_New(NULL, &item, 1, NULL, 0, mSP_KIND_FURNITURE, mSP_LISTTYPE_ABC, FALSE);
+    }
+
+    return item;
+}
+
+static int get_message_number_fish_zannen(mActor_name_t item) {
+    if (now_top_check()) {
+        switch (item) {
+            case ITM_FISH05:
+                return 0x111F;
+            case ITM_FISH06:
+                return 0x1120;
+            case ITM_FISH07:
+                return 0x1121;
+        }
+    }
+
+    return aTRC_clip_get_msgno(item) + 1;
+}
+
+static int get_message_number_fish_omedeto(mActor_name_t item) {
+    if (now_top_check()) {
+        return 0x1122;
+    }
+
+    return aTRC_clip_get_msgno(item) + 2;
+}
+
+static void aEANG_demo_measure(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    u8 str[mIN_ITEM_NAME_LEN];
+
+    if (order == 4) {
+        mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        aTRC_clip_set_topname();
+
+        if (get_top_of_angler_size() < angler->size) {
+            mMsg_Set_continue_msg_num(msg_p, get_message_number_fish_omedeto(angler->item));
+            set_top_of_angler_size(angler->size);
+            set_top_of_angler_pID(Now_Private->player_ID);
+            mEv_fishRecord_set(&Now_Private->player_ID, angler->size);
+            (*angler->setup_talk_proc)(angler, play, aEANG_TALK_DEMO_HOUBI);
+            angler->item = aEANG_SelectRandomItem();
+            mPr_SetFreePossessionItem(Now_Private, angler->item, mPr_ITEM_COND_NORMAL);
+            mIN_copy_name_str(str, angler->item);
+            mMsg_Set_item_str_art(msg_p, mMsg_ITEM_STR0, str, mIN_ITEM_NAME_LEN, mIN_get_item_article(angler->item));
+        } else {
+            mMsg_Set_continue_msg_num(msg_p, get_message_number_fish_zannen(angler->item));
+            (*angler->setup_talk_proc)(angler, play, aEANG_TALK_END_WAIT);
+        }
+    }
+}
+
+static void aEANG_demo_houbi(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+
+    if (order == 2) {
+        aNPC_DEMO_GIVE_ITEM(angler->item, aHOI_REQUEST_PUTAWAY, FALSE);
+        (*angler->setup_talk_proc)(angler, play, aEANG_TALK_END_WAIT);
+    }
+}
+
+static void aEANG_demo_henkyaku(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int msg_no = mMsg_Get_msg_num(msg_p);
+
+    switch (msg_no) {
+        case 0x10F4:
+        case 0x1110:
+            if (CLIP(handOverItem_clip)->master_actor == NULL) {
+                mMsg_UNSET_LOCKCONTINUE();
+                (*angler->setup_talk_proc)(angler, play, aEANG_TALK_END_WAIT);
+            } else {
+                mMsg_Set_LockContinue(msg_p);
+            }
+            break;
+    }
+}
+
+static void aEANG_demo_give_me(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 3) {
+        int next_action = aEANG_TALK_END_WAIT;
+
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                mPr_SetPossessionItem(Now_Private, angler->item_idx, angler->item, mPr_ITEM_COND_NORMAL);
+                next_action = aEANG_TALK_DEMO_HENKYAKU;
+                break;
+        }
+
+        (*angler->setup_talk_proc)(angler, play, next_action);
+    }
+}
+
+static void aEANG_say_tureta(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 1) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE1: {
+                mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+                int msg_no;
+
+                (*angler->setup_talk_proc)(angler, play, aEANG_TALK_END_WAIT);
+                aTRC_clip_set_topname();
+                if (now_top_check()) {
+                    msg_no = 0x111E;
+                } else {
+                    msg_no = 0x10F0;
+                }
+
+                mMsg_Set_continue_msg_num(msg_p, msg_no);
+                break;
+            }
+        case mChoice_CHOICE0:
+            (*angler->setup_talk_proc)(angler, play, aEANG_TALK_MSG_TO_MENU);
+            break;
+        }
+    }
+}
+
+static void aEANG_menu_open_wait(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
+        (*angler->setup_talk_proc)(angler, play, aEANG_TALK_MENU_CLOSE_WAIT);
+    }
+}
+
+static void aEANG_menu_close_wait(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+
+    if (submenu->open_flag == FALSE) {
+        (*angler->setup_talk_proc)(angler, play, aEANG_TALK_MSG_WIN_OPEN_WAIT);
+    }
+}
+
+static void aEANG_msg_win_open_wait(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_not_series_main_wait(msg_p) == TRUE) {
+        Submenu* submenu = &play->submenu;
+        Submenu_Item_c* item_p = submenu->item_p;
+        mActor_name_t item = item_p->item;
+        int msg_no;
+        int next_action;
+
+        angler->item = item;
+        angler->item_idx = item_p->slot_no;
+        mMsg_Set_ForceNext(msg_p);
+
+        if (item != EMPTY_NO) {
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 3);
+            switch (aEANG_item_check(item)) {
+                case aEANG_TYPE_BASS:
+                    msg_no = aTRC_clip_get_msgno(item);
+                    next_action = aEANG_TALK_DEMO_MEASURE;
+                    break;
+                case aEANG_TYPE_FISH:
+                    msg_no = aTRC_clip_get_msgno(item);
+                    next_action = aEANG_TALK_DEMO_GIVE_ME;
+                    break;
+                case aEANG_TYPE_TOOL:
+                    msg_no = 0x17E5;
+                    next_action = aEANG_TALK_DEMO_HENKYAKU;
+                    mPr_SetPossessionItem(Now_Private, angler->item_idx, angler->item, mPr_ITEM_COND_NORMAL);
+                    break;
+                default:
+                    msg_no = 0x10F2;
+                    next_action = aEANG_TALK_DEMO_GIVE_ME;
+                    break;
+            }
+        } else {
+            if (now_top_check()) {
+                msg_no = 0x111E;
+            } else {
+                msg_no = 0x10F0;
+            }
+
+            next_action = aEANG_TALK_END_WAIT;
+            aTRC_clip_set_topname();
+        }
+
+        mMsg_Set_continue_msg_num(msg_p, msg_no);
+        (*angler->setup_talk_proc)(angler, play, next_action);
+    }
+}
+
+static void aEANG_msg_to_menu(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order == 2) {
+        (*angler->setup_talk_proc)(angler, play, aEANG_TALK_MENU_OPEN_WAIT);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aEANG_menu_open_wait_init(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1();
+}
+
+static void aEANG_menu_close_wait_init(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+
+    mSM_open_submenu_new2(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_TAKE, 0, NULL, 2); // 2 = m_tag_ovl -> aHOI_REQUEST_GET_PULL_WAIT
+}
+
+static void aEANG_msg_win_open_wait_init(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    mMsg_request_main_appear_wait_type1(msg_p);
+    mMsg_Unset_LockContinue(msg_p);
+}
+
+static void aEANG_demo_measure_init(EV_ANGLER_ACTOR* angler, GAME_PLAY* play) {
+    int size;
+    u8 str[mMsg_FREE_STRING_LEN];
+    int len;
+
+    switch (angler->item) {
+        case ITM_FISH07:
+            size = aTRC_clip_fish_rndsize(mFR_SIZE_LARGE);
+            break;
+        case ITM_FISH06:
+            size = aTRC_clip_fish_rndsize(mFR_SIZE_MEDIUM);
+            break;
+        default:
+            size = aTRC_clip_fish_rndsize(mFR_SIZE_SMALL);
+            break;
+    }
+
+    len = mString_Load_NumberStringAddUnitFromRom(str, size, 0x29E);
+    mMsg_SET_FREE_STR(mMsg_FREE_STR2, str, len);
+    angler->size = size;
+}
+
+typedef void (*aEANG_INIT_PROC)(EV_ANGLER_ACTOR* angler, GAME_PLAY* play);
+
+static void aEANG_init_proc(EV_ANGLER_ACTOR* angler, GAME_PLAY* play, int action) {
+    static aEANG_INIT_PROC init_proc[] = {
+        // clang-format off
+        (aEANG_INIT_PROC)none_proc1,
+        aEANG_menu_open_wait_init,
+        aEANG_menu_close_wait_init,
+        aEANG_msg_win_open_wait_init,
+        (aEANG_INIT_PROC)none_proc1,
+        (aEANG_INIT_PROC)none_proc1,
+        (aEANG_INIT_PROC)none_proc1,
+        (aEANG_INIT_PROC)none_proc1,
+        (aEANG_INIT_PROC)none_proc1,
+        aEANG_demo_measure_init,  
+        // clang-format on
+    };
+
+    (*init_proc[action])(angler, play);
+}
+
+static void aEANG_setupAction(EV_ANGLER_ACTOR* angler, GAME_PLAY* play, int action) {
+    static aEANG_TALK_PROC process[] = {
+        // clang-format off
+        (aEANG_TALK_PROC)none_proc1,
+        aEANG_menu_open_wait,
+        aEANG_menu_close_wait,
+        aEANG_msg_win_open_wait,
+        aEANG_say_tureta,
+        aEANG_demo_give_me,
+        aEANG_demo_henkyaku,
+        aEANG_demo_houbi,
+        aEANG_msg_to_menu,
+        aEANG_demo_measure,  
+        // clang-format on
+    };
+
+    angler->talk_proc = process[action];
+    aEANG_init_proc(angler, play, action);
+}
+
+static void aEANG_set_talk_info(ACTOR* actorx) {
+    int msg_no;
+
+    if (time_over_check()) {
+        msg_no = 0x10EE;
+    } else if (entry_check()) {
+        msg_no = 0x10EF;
+    } else {
+        msg_no = 0x10E8;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aEANG_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aEANG_set_talk_info);
+}
+
+static int aEANG_talk_init(ACTOR* actorx, GAME* game) {
+    EV_ANGLER_ACTOR* angler = (EV_ANGLER_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int action;
+
+    if (time_over_check()) {
+        action = aEANG_TALK_END_WAIT;
+    } else if (entry_check()) {
+        action = aEANG_TALK_SAY_TURETA;
+    } else {
+        action = aEANG_TALK_END_WAIT;
+        entry_on();
+    }
+
+    (*angler->setup_talk_proc)(angler, play, action);
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aEANG_talk_end_chk(ACTOR* actorx, GAME* game) {
+    EV_ANGLER_ACTOR* angler = (EV_ANGLER_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    (*angler->talk_proc)(angler, play);
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        ret = TRUE;
+        NPC_CLIP->set_dst_pos_proc((NPC_ACTOR*)actorx, actorx->world.position.x, actorx->world.position.z + 10.0f);
+    } else {
+        mActor_name_t hand_item = angler->npc_class.left_hand.item;
+        s16 default_anim = aNPC_ANIM_WAIT1;
+
+        if (hand_item != EMPTY_NO && CLIP(handOverItem_clip)->master_actor == actorx) {
+            if (ITEM_NAME_GET_TYPE(hand_item) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_CAT(hand_item) == ITEM1_CAT_FISH) {
+                if (angler->npc_class.draw.animation_id != aNPC_ANIM_GET_EAT1) {
+                    default_anim = aNPC_ANIM_GET_PULL_WAIT_F1;
+                }
+            } else {
+                default_anim = aNPC_ANIM_GET_PULL_WAIT1;
+            }
+        }
+
+        angler->npc_class.talk_info.default_animation = default_anim;
+    }
+
+    return ret;
+}
+
+static void aEANG_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_CLIP->move_proc(actorx, game);
+}
