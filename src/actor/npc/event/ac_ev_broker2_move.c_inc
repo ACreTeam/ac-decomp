@@ -1,0 +1,591 @@
+static void aEBR2_BGcheck(ACTOR* actorx) {
+    mCoBG_BgCheckControll(NULL, actorx, 8.0f, 0.0f, TRUE, mCoBG_REVERSE_TYPE_REVERSE, mCoBG_CHECK_TYPE_NORMAL);
+}
+
+static void aEBR2_set_animation(EV_BROKER2_ACTOR* broker2, int action) {
+    static int animeSeqNo[] = {
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_WALK1,
+        aNPC_ANIM_WALK1,
+        aNPC_ANIM_RUN1,
+        aNPC_ANIM_RUN1,
+        aNPC_ANIM_WALK1,
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_WAIT1,
+    };
+
+    NPC_CLIP->animation_init_proc(&broker2->npc_class.actor_class, animeSeqNo[action], FALSE);
+}
+
+static void aEBR2_Set_ListenAble(EV_BROKER2_ACTOR* broker2) {
+    mMld_ActorMakeMelody((ACTOR*)broker2);
+    mDemo_Set_ListenAble();
+}
+
+static void aEBR2_talk_demo_proc(ACTOR* actorx) {
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE || mDemo_Check(mDemo_TYPE_TALK, actorx) == TRUE) {
+        NPC_CLIP->talk_demo_proc(actorx);
+    }
+}
+
+static void aEBR2_set_msg_data_price(mActor_name_t item) {
+    u32 price = mSP_ItemNo2ItemPrice(item) * aEBR2_PRICE_MULT;
+    u8 str[7];
+
+    mFont_UnintToString(str, sizeof(str), price, sizeof(str) - 1, TRUE, FALSE, TRUE);
+    mMsg_SET_FREE_STR(mMsg_FREE_STR0, str, sizeof(str));
+}
+
+static void aEBR2_set_msg_data_item_name(mActor_name_t item, int str_no) {
+    u8 str[mIN_ITEM_NAME_LEN];
+
+    mIN_copy_name_str(str, item);
+    mMsg_SET_ITEM_STR_ART(str_no, str, sizeof(str), item);
+}
+
+static void aEBR2_set_msg_data_sub(mEv_broker_c* save_p, PersonalID_c* pID, int idx) {
+    aEBR2_set_msg_data_item_name(save_p->sold_items[idx], mMsg_ITEM_STR1);
+    mMsg_SET_FREE_STR(mMsg_FREE_STR1, pID->player_name, sizeof(pID->player_name));
+}
+
+static void aEBR2_set_msg_data(EV_BROKER2_ACTOR* broker2) {
+    mEv_broker_c* save_p = &Save_Get(event_save_data).special.event.broker;
+    PersonalID_c* pID = save_p->pid;
+    int state = aEBR2_STATE_UNSOLD;
+    int i;
+
+    for (i = 0; i < mEv_BROKER_ITEM_NUM - 1; i++) {
+        if (mPr_NullCheckPersonalID(pID) == FALSE) {
+            if (mPr_CheckCmpPersonalID(pID, &Now_Private->player_ID) == TRUE) {
+                state |= aEBR2_STATE_SOLD_CURRENT;
+                aEBR2_set_msg_data_item_name(save_p->sold_items[i], mMsg_ITEM_STR2);
+            } else {
+                state |= aEBR2_STATE_SOLD_OTHER;
+                aEBR2_set_msg_data_sub(save_p, pID, i);
+            }
+        }
+
+        pID++;
+    }
+
+    broker2->state = state;
+}
+
+static int aEBR2_get_item_idx(mActor_name_t item) {
+    mEv_broker_c* save_p = &Save_Get(event_save_data).special.event.broker;
+    mActor_name_t* item_p = save_p->items;
+    int i;
+
+    for (i = 0; i < mEv_BROKER_ITEM_NUM; i++) {
+        if (*item_p == item) {
+            return i;
+        }
+
+        item_p++;
+    }
+
+    return 0;
+}
+
+static void aEBR2_set_stop_spd(EV_BROKER2_ACTOR* broker2) {
+    broker2->npc_class.actor_class.speed = 0.0f;
+    broker2->npc_class.movement.speed.max_speed = 0.0f;
+    broker2->npc_class.movement.speed.acceleration = 0.0f;
+    broker2->npc_class.movement.speed.deceleration = 0.0f;
+}
+
+static void aEBR2_set_walk_spd(EV_BROKER2_ACTOR* broker2) {
+    broker2->npc_class.movement.speed.max_speed = 1.0f;
+    broker2->npc_class.movement.speed.acceleration = 0.1f;
+    broker2->npc_class.movement.speed.deceleration = 0.2f;
+}
+
+static void aEBR2_set_run_spd(EV_BROKER2_ACTOR* broker2) {
+    broker2->npc_class.movement.speed.max_speed = 4.0f;
+    broker2->npc_class.movement.speed.acceleration = 0.4f;
+    broker2->npc_class.movement.speed.deceleration = 0.8f;
+}
+
+static u8 aEBR2_get_zone(xyz_t pos) {
+    return aEBR2_ZONE0;
+}
+
+static u8 aEBR2_get_next_zone(u8 target, u8 start) {
+    return aEBR2_ZONE0;
+}
+
+static int aEBR2_decide_next_move_act(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    if (ClObj_DID_COLLIDE(broker2->npc_class.collision.pipe.collision_obj)) {
+        return aEBR2_ACTION_WAIT;
+    } else {
+        ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+        if (playerx == NULL) {
+            return broker2->action;
+        } else {
+            f32 dist = broker2->npc_class.actor_class.player_distance_xz;
+
+            if (dist < 60.0f) {
+                return aEBR2_ACTION_WAIT;
+            }
+
+            if (broker2->player_zone != broker2->cur_zone) {
+                if (broker2->action != aEBR2_ACTION_WALK_PL_OTHER_ZONE && broker2->action != aEBR2_ACTION_RUN_PL_OTHER_ZONE) {
+                    broker2->next_zone = aEBR2_get_next_zone(broker2->player_zone, broker2->cur_zone);
+                }
+
+                if (dist < 90.0f) {
+                    return aEBR2_ACTION_WALK_PL_OTHER_ZONE;
+                } else {
+                    return aEBR2_ACTION_RUN_PL_OTHER_ZONE;
+                }
+            } else {
+                broker2->next_zone = broker2->cur_zone;
+
+                if (dist < 90.0f) {
+                    return aEBR2_ACTION_WALK_PL_SAME_ZONE;
+                } else {
+                    return aEBR2_ACTION_RUN_PL_SAME_ZONE;
+                }
+            }
+        }
+    }
+}
+
+static void aEBR2_search_player(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (playerx != NULL) {
+        s16 angle = broker2->npc_class.actor_class.shape_info.rotation.y - broker2->player_angle;
+
+        if (ABS(angle) > DEG2SHORT_ANGLE2(90.0f)) {
+            aEBR2_setupAction(broker2, aEBR2_ACTION_TURN);
+        } else {
+            chase_angle(&broker2->npc_class.actor_class.shape_info.rotation.y, broker2->player_angle, DEG2SHORT_ANGLE2(11.25f));
+            broker2->npc_class.actor_class.world.angle.y = broker2->npc_class.actor_class.shape_info.rotation.y;
+        }
+    }
+}
+
+static void aEBR2_search_player2(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    static f32 posX[] = { 60.0f };
+    static f32 posZ[] = {  100.0f };
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (playerx != NULL) {
+        int next_zone = broker2->next_zone;
+        f32 dx = posX[aEBR2_ZONE0] - broker2->npc_class.actor_class.world.position.x;
+        f32 dz = posZ[next_zone] - broker2->npc_class.actor_class.world.position.z;
+        f32 dist;
+        s16 angle = atans_table(dz, dx);
+
+        chase_angle(&broker2->npc_class.actor_class.shape_info.rotation.y, angle, DEG2SHORT_ANGLE2(11.25f));
+        broker2->npc_class.actor_class.world.angle.y = broker2->npc_class.actor_class.shape_info.rotation.y;
+
+        dist = SQ(dx) + SQ(dz);
+        if (dist < 200.0f) {
+            broker2->next_zone = aEBR2_get_next_zone(broker2->player_zone, broker2->cur_zone);
+        }
+    }
+}
+
+static void aEBR2_set_zone_data(EV_BROKER2_ACTOR* broker2, ACTOR* playerx) {
+    broker2->cur_zone = aEBR2_get_zone(broker2->npc_class.actor_class.world.position);
+    if (playerx != NULL) {
+        broker2->player_zone = aEBR2_get_zone(playerx->world.position);
+    }
+}
+
+static void aEBR2_set_player_angl(EV_BROKER2_ACTOR* broker2) {
+    broker2->player_angle = broker2->npc_class.actor_class.player_angle_y;
+}
+
+static void aEBR2_set_talk_info_sell_item(ACTOR* actorx) {
+    EV_BROKER2_ACTOR* broker2 = (EV_BROKER2_ACTOR*)actorx;
+    int idx = broker2->item_idx;
+    mActor_name_t item = Save_Get(event_save_data).special.event.broker.items[idx];
+
+    aEBR2_set_msg_data_item_name(item, mMsg_ITEM_STR0);
+    aEBR2_set_msg_data_price(item);
+
+    {
+        int b = 1 << idx;
+        int msg_no;
+
+        if (broker2->explain_flag & b) {
+            msg_no = 0x07A1;
+        } else {
+            msg_no = 0x793 + RANDOM(5);
+            broker2->explain_flag |= b;
+        }
+
+        mDemo_Set_msg_num(msg_no);
+    }
+}
+
+static void aEBR2_set_talk_info_message_ctrl(ACTOR* actorx) {
+    EV_BROKER2_ACTOR* broker2 = (EV_BROKER2_ACTOR*)actorx;
+    mEv_broker_c* save_p = &Save_Get(event_save_data).special.event.broker;
+    int rnd = RANDOM(2);
+    int msg_no;
+
+    if (save_p->used == mEv_BROKER_ITEM_NUM) {
+        msg_no = 0x07A2;
+    } else if ((broker2->state & aEBR2_STATE_SOLD_CURRENT) && rnd == 0) {
+        msg_no = 0x078C;
+    } else if ((broker2->state & aEBR2_STATE_SOLD_OTHER) && rnd == 0) {
+        msg_no = 0x0790;
+    } else {
+        msg_no = 0x78D + RANDOM(3);
+    }
+
+    mDemo_Set_msg_num(msg_no);
+}
+
+static int aEBR2_message_ctrl(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+    int ret = FALSE;
+
+    if (playerx != NULL) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)playerx;
+
+        if (player->item_in_front == EXIT_DOOR1) {
+            aEBR2_setupAction(broker2, aEBR2_ACTION_GOODBYE_WAIT);
+            ret = TRUE;
+        } else {
+            ACTOR* actorx = (ACTOR*)broker2;
+
+            if (player->a_btn_pressed == TRUE) {
+                mActor_name_t item;
+                int ux;
+                int uz;
+
+                mFI_Wpos2UtNum(&ux, &uz, player->forward_ut_pos);
+                item = CLIP(broker_design_clip)->get_no_proc(ux, uz);
+                if (item != EMPTY_NO && item != RSV_NO) {
+                    int idx = aEBR2_get_item_idx(item);
+
+                    mDemo_Request(mDemo_TYPE_SPEAK, actorx, aEBR2_set_talk_info_sell_item);
+                    broker2->item_idx = idx;
+                }
+            }
+
+            if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+                if (mDemo_Check_ListenAble() == FALSE) {
+                    if (chase_angle(&actorx->shape_info.rotation.y, broker2->player_angle, DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
+                        aEBR2_setupAction(broker2, aEBR2_ACTION_SELL_CHECK);
+                        aEBR2_Set_ListenAble(broker2);
+                        ret = TRUE;
+                    }
+
+                    actorx->world.angle.y = actorx->shape_info.rotation.y;
+                }
+            } else if (mDemo_Check(mDemo_TYPE_TALK, actorx) == TRUE) {
+                if (mDemo_Check_ListenAble() == FALSE) {
+                    if (chase_angle(&actorx->shape_info.rotation.y, broker2->player_angle, DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
+                        aEBR2_setupAction(broker2, aEBR2_ACTION_TALK_END_WAIT);
+                        aEBR2_Set_ListenAble(broker2);
+                        ret = TRUE;
+                    }
+
+                    actorx->world.angle.y = actorx->shape_info.rotation.y;
+                }
+            } else {
+                mDemo_Request(mDemo_TYPE_TALK, actorx, aEBR2_set_talk_info_message_ctrl);
+            }
+        }
+    }
+
+    return ret;
+}
+
+static void aEBR2_wait(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    if (aEBR2_message_ctrl(broker2, play) != TRUE) {
+        int action = aEBR2_decide_next_move_act(broker2, play);
+
+        if (action != broker2->action) {
+            aEBR2_setupAction(broker2, action);
+        } else {
+            aEBR2_search_player(broker2, play);
+        }
+    }
+}
+
+static void aEBR2_walk_pl_same_zone(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    if (aEBR2_message_ctrl(broker2, play) != TRUE) {
+        int action = aEBR2_decide_next_move_act(broker2, play);
+
+        if (action != broker2->action) {
+            aEBR2_setupAction(broker2, action);
+        } else {
+            aEBR2_search_player(broker2, play);
+        }
+    }
+}
+
+static void aEBR2_walk_pl_other_zone(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    if (aEBR2_message_ctrl(broker2, play) != TRUE) {
+        int action = aEBR2_decide_next_move_act(broker2, play);
+
+        if (action != broker2->action) {
+            aEBR2_setupAction(broker2, action);
+        } else {
+            aEBR2_search_player2(broker2, play);
+        }
+    }
+}
+
+static void aEBR2_run_pl_same_zone(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    if (aEBR2_message_ctrl(broker2, play) != TRUE) {
+        int action = aEBR2_decide_next_move_act(broker2, play);
+
+        if (action != broker2->action) {
+            aEBR2_setupAction(broker2, action);
+        } else {
+            aEBR2_search_player(broker2, play);
+        }
+    }
+}
+
+static void aEBR2_run_pl_other_zone(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    if (aEBR2_message_ctrl(broker2, play) != TRUE) {
+        int action = aEBR2_decide_next_move_act(broker2, play);
+
+        if (action != broker2->action) {
+            aEBR2_setupAction(broker2, action);
+        } else {
+            aEBR2_search_player2(broker2, play);
+        }
+    }
+}
+
+static void aEBR2_turn(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    if (aEBR2_message_ctrl(broker2, play) != TRUE) {
+        ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+        if (playerx != NULL) {
+            s16 player_angle = broker2->player_angle;
+
+            chase_angle(&broker2->npc_class.actor_class.shape_info.rotation.y, player_angle, DEG2SHORT_ANGLE2(11.25f));
+            broker2->npc_class.actor_class.world.angle.y = broker2->npc_class.actor_class.shape_info.rotation.y;
+
+            if (ABS(player_angle - broker2->npc_class.actor_class.shape_info.rotation.y) <= DEG2SHORT_ANGLE2(90.0f)) {
+                aEBR2_setupAction(broker2, aEBR2_ACTION_WAIT);
+            }
+        }
+
+    }
+}
+
+static void aEBR2_talk_end_wait(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)broker2;
+
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        aEBR2_setupAction(broker2, aEBR2_ACTION_WAIT);
+    }
+}
+
+static void aEBR2_set_talk_info_say_hello(ACTOR* actorx) {
+    mDemo_Set_msg_num(0x078B);
+}
+
+static void aEBR2_say_hello(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)broker2;
+
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        if (mDemo_Check_ListenAble() == FALSE) {
+            aEBR2_Set_ListenAble(broker2);
+            broker2->npc_class.talk_info.melody_inst = 0;
+            aEBR2_setupAction(broker2, aEBR2_ACTION_TALK_END_WAIT);
+        }
+    } else {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, aEBR2_set_talk_info_say_hello);
+    }
+}
+
+static void aEBR2_sell_check(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                mMsg_Set_continue_msg_num(msg_p, 0x0798 + RANDOM(5));
+                aEBR2_setupAction(broker2, aEBR2_ACTION_SELL_AFTER);
+                break;
+            case mChoice_CHOICE1:
+                mMsg_Set_continue_msg_num(msg_p, 0x079D);
+                aEBR2_setupAction(broker2, aEBR2_ACTION_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aEBR2_sell_after(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    static int item_ux[] = {2, 4, 2};
+    static int item_uz[] = {2, 2, 4};
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    
+    if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mEv_broker_c* save_p = &Save_Get(event_save_data).special.event.broker;
+        int item_idx = broker2->item_idx;
+        mActor_name_t item = save_p->items[item_idx];
+        u32 sell_price = mSP_ItemNo2ItemPrice(item) * aEBR2_PRICE_MULT;
+        int idx;
+
+        if (!mSP_money_check(sell_price)) {
+            mMsg_Set_continue_msg_num(msg_p, 0x07A0);
+        } else {
+            idx = mPr_GetPossessionItemIdx(Now_Private, EMPTY_NO);
+
+            if (idx == -1) {
+                mMsg_Set_continue_msg_num(msg_p, 0x079F);
+            } else {
+                mPr_SetPossessionItem(Now_Private, idx, item, mPr_ITEM_COND_NORMAL);
+                mSP_get_sell_price(sell_price);
+                CLIP(broker_design_clip)->report_sales_proc(item_ux[item_idx], item_uz[item_idx]);
+
+                if (save_p->used < mEv_BROKER_ITEM_NUM - 1) {
+                    save_p->sold_items[save_p->used] = item;
+                    mPr_CopyPersonalID(&save_p->pid[save_p->used], &Now_Private->player_ID);
+                    save_p->used++;
+                } else {
+                    lbRTC_TimeCopy(&save_p->end_time, Common_GetPointer(time.rtc_time));
+                    save_p->used = mEv_BROKER_ITEM_NUM;
+                }
+
+                mMsg_Set_continue_msg_num(msg_p, 0x079E);
+                broker2->sell_flag = TRUE;
+            }
+        }
+
+        aEBR2_setupAction(broker2, aEBR2_ACTION_TALK_END_WAIT);
+    }
+}
+
+static void aEBR2_set_talk_info_goodbye_wait(ACTOR* actorx) {
+    EV_BROKER2_ACTOR* broker2 = (EV_BROKER2_ACTOR*)actorx;
+    int msg_no;
+
+    if (broker2->sell_flag == TRUE) {
+        msg_no = 0x0792;
+    } else {
+        msg_no = 0x0791;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+}
+
+static void aEBR2_goodbye_wait(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)broker2;
+
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        if (mDemo_Check_ListenAble() == FALSE) {
+            aEBR2_Set_ListenAble(broker2);
+            aEBR2_setupAction(broker2, aEBR2_ACTION_SAY_GOODBYE);
+        }
+    } else {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, aEBR2_set_talk_info_goodbye_wait);
+    }
+}
+
+static void aEBR2_say_goodbye(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_idling_now(msg_p) == TRUE) {
+        mMsg_request_main_disappear_wait_type1(msg_p);
+        aEBR2_setupAction(broker2, aEBR2_ACTION_EXIT_WAIT);
+    }
+}
+
+static void aEBR2_exit_wait(EV_BROKER2_ACTOR* broker2, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
+        goto_other_scene(play, Common_GetPointer(structure_exit_door_data), TRUE);
+        if (play->fb_wipe_mode == 0) {
+            mBGMPsComp_scene_mode(14);
+            mBGMPsComp_make_ps_wipe(0x195);
+            mBGMPsComp_volume_talk_end();
+        }
+    }
+}
+
+static void aEBR2_say_hello_init(EV_BROKER2_ACTOR* broker2) {
+    mEv_broker_common_c* common_p = &Common_Get(special_event_common).broker;
+
+    mPr_CopyPersonalID(&common_p->entered_pid, &Now_Private->player_ID);
+    aEBR2_set_msg_data(broker2);
+    aEBR2_set_stop_spd(broker2);
+}
+
+static void aEBR2_say_goodbye_init(EV_BROKER2_ACTOR* broker2) {
+    mMsg_SET_IDLING_REQ();
+    aEBR2_set_stop_spd(broker2);
+}
+
+typedef void (*aEBR2_INIT_PROC)(EV_BROKER2_ACTOR* broker2);
+
+static void aEBR2_init_proc(EV_BROKER2_ACTOR* broker2, int action) {
+    static aEBR2_INIT_PROC init_proc[] = {
+        // clang-format off
+        aEBR2_set_stop_spd,
+        aEBR2_set_walk_spd,
+        aEBR2_set_walk_spd,
+        aEBR2_set_run_spd,
+        aEBR2_set_run_spd,
+        aEBR2_set_stop_spd,
+        aEBR2_set_stop_spd,
+        aEBR2_say_hello_init,
+        aEBR2_set_stop_spd,
+        aEBR2_set_stop_spd,
+        aEBR2_set_stop_spd,
+        aEBR2_say_goodbye_init,
+        aEBR2_set_stop_spd,  
+        // clang-format on
+    };
+
+    (*init_proc[action])(broker2);
+}
+
+static void aEBR2_setupAction(EV_BROKER2_ACTOR* broker2, int action) {
+    static aEBR2_PROC process[] = {
+        // clang-format off
+        aEBR2_wait,
+        aEBR2_walk_pl_same_zone,
+        aEBR2_walk_pl_other_zone,
+        aEBR2_run_pl_same_zone,
+        aEBR2_run_pl_other_zone,
+        aEBR2_turn,
+        aEBR2_talk_end_wait,
+        aEBR2_say_hello,
+        aEBR2_sell_check,
+        aEBR2_sell_after,
+        aEBR2_goodbye_wait,
+        aEBR2_say_goodbye,
+        aEBR2_exit_wait,
+        // clang-format on
+    };
+    
+    broker2->action = action;
+    broker2->action_proc = process[action];
+    aEBR2_init_proc(broker2, action);
+    aEBR2_set_animation(broker2, action);
+}
+
+static void aEBR2_actor_move(ACTOR* actorx, GAME* game) {
+    EV_BROKER2_ACTOR* broker2 = (EV_BROKER2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    NPC_CLIP->move_before_proc(actorx, game);
+    aEBR2_BGcheck(actorx);
+    aEBR2_set_zone_data(broker2, playerx);
+    aEBR2_set_player_angl(broker2);
+    aEBR2_talk_demo_proc(actorx);
+    (*broker2->action_proc)(broker2, play);
+    NPC_CLIP->move_after_proc(actorx, game);
+}
