@@ -34,6 +34,11 @@ enum {
   aHOI_PRESENT_TYPE_NUM
 };
 
+// You must include m_common_data.h to use these macros
+#define aHOI_CLIP CLIP(handOverItem_clip)
+#define aHOI_TRANSFER_DONE() (aHOI_CLIP->master_actor == NULL)
+#define aHOI_TRANSFER_IN_PROGRESS() (aHOI_CLIP->master_actor != NULL)
+
 typedef struct hand_over_item_actor_s HANDOVERITEM_ACTOR;
 
 typedef ACTOR* (*aHOI_BIRTH_PROC)(mActor_name_t, int, int, ACTOR*);
@@ -78,4 +83,3 @@ extern ACTOR_PROFILE HandOverItem_Profile;
 #endif
 
 #endif
-
