@@ -954,11 +954,6 @@ struct npc_actor_s {
     int _990;
 };
 
-typedef struct npc_destruct_table_proc {
-    aNPC_SUB_PROC unk0;
-    aNPC_SUB_PROC unk4;
-} NPC_DT_PROCS;
-
 typedef struct {
     aNPC_se_data_c* lfoot_data;
     aNPC_se_data_c* rfoot_data;

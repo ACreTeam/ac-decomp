@@ -1,73 +1,100 @@
 #include "ac_ev_majin.h"
+
 #include "m_common_data.h"
 #include "m_name_table.h"
 #include "m_demo.h"
+#include "ac_groundhog_control.h"
 
-extern void aEMJ_actor_ct(ACTOR*, GAME*);
-extern void aEMJ_actor_dt(ACTOR*, GAME*);
-extern void aEMJ_actor_init(ACTOR*, GAME*);
-extern void aEMJ_actor_save(ACTOR*, GAME*);
+enum {
+    aEMJ_ACT_APPEAR,
+    aEMJ_ACT_WAIT,
+    aEMJ_ACT_RETIRE,
 
-ACTOR_PROFILE Ev_Majin_Profile = {
-    mAc_PROFILE_EV_MAJIN, ACTOR_PART_NPC,      ACTOR_STATE_NO_DRAW_WHILE_CULLED | ACTOR_STATE_NO_MOVE_WHILE_CULLED,
-    SP_NPC_EV_MAJIN,      ACTOR_OBJ_BANK_KEEP, sizeof(EV_NPCMAJIN_ACTOR),
-    aEMJ_actor_ct,        aEMJ_actor_dt,       aEMJ_actor_init,
-    NONE_ACTOR_PROC,      aEMJ_actor_save,
+    aEMJ_ACT_NUM
 };
 
-extern void aEMJ_actor_move(ACTOR*, GAME*);
-extern void aEMJ_actor_draw(ACTOR*, GAME*);
+static void aEMJ_actor_ct(ACTOR*, GAME*);
+static void aEMJ_actor_dt(ACTOR*, GAME*);
+static void aEMJ_actor_init(ACTOR*, GAME*);
+static void aEMJ_actor_save(ACTOR*, GAME*);
+
+ACTOR_PROFILE Ev_Majin_Profile = {
+    // clang-format off
+    mAc_PROFILE_EV_MAJIN,
+    ACTOR_PART_NPC,
+    ACTOR_STATE_NO_DRAW_WHILE_CULLED | ACTOR_STATE_NO_MOVE_WHILE_CULLED,
+    SP_NPC_EV_MAJIN,
+    ACTOR_OBJ_BANK_KEEP,
+    sizeof(EV_MAJIN_ACTOR),
+    aEMJ_actor_ct,
+    aEMJ_actor_dt,
+    aEMJ_actor_init,
+    mActor_NONE_PROC1,
+    aEMJ_actor_save,
+    // clang-format on
+};
+
+static void aEMJ_actor_move(ACTOR*, GAME*);
+static void aEMJ_actor_draw(ACTOR*, GAME*);
 
 static int aEMJ_talk_init(ACTOR*, GAME*);
 static int aEMJ_talk_end_chk(ACTOR*, GAME*);
 static void aEMJ_schedule_proc(NPC_ACTOR*, GAME_PLAY*, int);
 
-void aEMJ_actor_ct(ACTOR* actor, GAME* game) {
+static void aEMJ_actor_ct(ACTOR* actor, GAME* game) {
     static aNPC_ct_data_c ct_data = {
-        &aEMJ_actor_move, &aEMJ_actor_draw, 5, mActor_NONE_PROC1, &aEMJ_talk_init, &aEMJ_talk_end_chk, 0,
+        // clang-format off
+        aEMJ_actor_move,
+        aEMJ_actor_draw,
+        aNPC_CT_SCHED_TYPE_SPECIAL,
+        (aNPC_TALK_REQUEST_PROC)none_proc1,
+        aEMJ_talk_init,
+        aEMJ_talk_end_chk,
+        0,
+        // clang-format on
     };
-    EV_NPCMAJIN_ACTOR* majin = (EV_NPCMAJIN_ACTOR*)actor;
+    EV_MAJIN_ACTOR* majin = (EV_MAJIN_ACTOR*)actor;
 
-    if (Common_Get(clip.npc_clip)->birth_check_proc(actor, game) == TRUE) {
+    if (NPC_CLIP->birth_check_proc(actor, game) == TRUE) {
         majin->npc_class.schedule.schedule_proc = aEMJ_schedule_proc;
-        Common_Get(clip.npc_clip)->ct_proc(actor, game, &ct_data);
-        majin->npc_class.head.lock_flag = 1;
+        NPC_CLIP->ct_proc(actor, game, &ct_data);
+        majin->npc_class.head.lock_flag = TRUE;
         majin->npc_class.talk_info.default_turn_animation = aNPC_ANIM_WAIT_R1;
         majin->npc_class.talk_info.default_animation = aNPC_ANIM_WAIT_R1;
-        majin->npc_class.talk_info.turn = 2;
+        majin->npc_class.talk_info.turn = aNPC_TALK_TURN_NONE;
     }
 }
 
-void aEMJ_actor_save(ACTOR* actor, GAME* game) {
-    Common_Get(clip.npc_clip)->save_proc(actor, game);
+static void aEMJ_actor_save(ACTOR* actor, GAME* game) {
+    NPC_CLIP->save_proc(actor, game);
 }
 
-void aEMJ_actor_dt(ACTOR* actor, GAME* game) {
-
-    if (Common_Get(clip.groundhog_control_clip) != NULL) {
-        Common_Get(clip.groundhog_control_clip)->groundhog_npc_actor = NULL;
+static void aEMJ_actor_dt(ACTOR* actor, GAME* game) {
+    if (CLIP(groundhog_control_clip) != NULL) {
+        CLIP(groundhog_control_clip)->groundhog_npc_actor = NULL;
     }
-    Common_Get(clip.npc_clip)->dt_proc(actor, game);
-    Common_Get(clip.effect_clip)->effect_kill_proc(eEC_EFFECT_RESET_HOLE, RSV_NO);
+
+    NPC_CLIP->dt_proc(actor, game);
+    eEC_CLIP->effect_kill_proc(eEC_EFFECT_RESET_HOLE, RSV_NO);
 }
 
-void aEMJ_actor_init(ACTOR* actor, GAME* game) {
-    Common_Get(clip.npc_clip)->init_proc(actor, game);
+static void aEMJ_actor_init(ACTOR* actor, GAME* game) {
+    NPC_CLIP->init_proc(actor, game);
 }
 
-void aEMJ_set_animation(ACTOR* actor, int idx) {
+static void aEMJ_set_animation(EV_MAJIN_ACTOR* majin, int idx) {
     static s16 animeSeqNo[] = { aNPC_ANIM_APPEAR1, aNPC_ANIM_WAIT_R1, aNPC_ANIM_GO_UG1 };
 
-    Common_Get(clip.npc_clip)->animation_init_proc(actor, animeSeqNo[idx], 0);
+    NPC_CLIP->animation_init_proc((ACTOR*)majin, animeSeqNo[idx], FALSE);
 }
 
-void aEMJ_actor_move(ACTOR* actor, GAME* game) {
-    Common_Get(clip.npc_clip)->move_proc(actor, game);
-    actor->shape_info.draw_shadow = 0;
+static void aEMJ_actor_move(ACTOR* actor, GAME* game) {
+    NPC_CLIP->move_proc(actor, game);
+    actor->shape_info.draw_shadow = FALSE;
 }
 
-void aEMJ_actor_draw(ACTOR* actor, GAME* game) {
-    Common_Get(clip.npc_clip)->draw_proc(actor, game);
+static void aEMJ_actor_draw(ACTOR* actor, GAME* game) {
+    NPC_CLIP->draw_proc(actor, game);
 }
 
 #include "../src/actor/npc/event/ac_ev_majin_move.c_inc"
