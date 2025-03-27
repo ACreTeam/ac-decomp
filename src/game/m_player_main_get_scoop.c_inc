@@ -161,7 +161,7 @@ static void Player_actor_Get_scoop_demo_ct(ACTOR* actor) {
     mMsg_Window_c* win = mMsg_Get_base_window_p();
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     mPlayer_main_get_scoop_c* main_scoop = &player->main_data.get_scoop;
-    u8 str[16];
+    u8 str[mIN_ITEM_NAME_LEN];
     mActor_name_t item = main_scoop->item;
 
     mIN_copy_name_str(str, item);

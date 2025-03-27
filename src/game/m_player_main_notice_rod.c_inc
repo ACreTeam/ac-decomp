@@ -161,7 +161,7 @@ static void Player_actor_Notice_rod_demo_ct(ACTOR* actor) {
             if (type < aGYO_TYPE_NUM + 1) {
                 if (player->now_main_index == mPlayer_INDEX_NOTICE_ROD) {
                     mPlayer_main_notice_rod_c* main_notice = &player->main_data.notice_rod;
-                    u8 str[16];
+                    u8 str[mIN_ITEM_NAME_LEN];
 
                     if (main_notice->already_collected) {
                         mIN_copy_name_str(str, uki->get_fish_type_proc(&uki->actor_class));

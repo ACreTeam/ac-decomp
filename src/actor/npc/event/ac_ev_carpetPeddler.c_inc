@@ -181,7 +181,7 @@ void aECPD_msg_win_open_wait_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* pl
 
 void aECPD_1st_check_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
     mActor_name_t item;
-    u8 item_str[8];
+    u8 item_str[mIN_ITEM_NAME_LEN];
     u8 price_str[6];
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     int price = eECPD_PRICE_START;

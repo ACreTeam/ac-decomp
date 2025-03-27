@@ -126,7 +126,7 @@ static void Player_actor_Pull_net_demo_ct(ACTOR* actor) {
                 msg_no = Common_Get(now_private)->inventory.pockets[item_idx] + 0x1DC;
             }
         } else if (main_index == mPlayer_INDEX_PULL_NET) {
-            u8 str[16];
+            u8 str[mIN_ITEM_NAME_LEN];
             mActor_name_t item;
             mPlayer_main_pull_net_c* main_pull = &player->main_data.pull_net;
 

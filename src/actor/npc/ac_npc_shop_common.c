@@ -508,18 +508,18 @@ static void aNSC_set_pw_name_str(NPC_SHOP_COMMON_ACTOR* shop_common) {
 static void aNSC_set_value_str(int p1, int p2) {
     u8 value_str[16];
 
-    mFont_UnintToString(value_str, sizeof(value_str), p1, 0x10, TRUE, FALSE, TRUE);
-    mMsg_Set_free_str(mMsg_Get_base_window_p(), p2, value_str, 0x10);
+    mFont_UnintToString(value_str, sizeof(value_str), p1, sizeof(value_str), TRUE, FALSE, TRUE);
+    mMsg_Set_free_str(mMsg_Get_base_window_p(), p2, value_str, sizeof(value_str));
 }
 
 static void aNSC_set_item_name_str(mActor_name_t itm, u32 p2) {
-    u8 buff[16];
+    u8 buff[mIN_ITEM_NAME_LEN];
     u32 art;
     mMsg_Window_c* msg_win;
 
     mIN_copy_name_str(buff, itm);
     art = mIN_get_item_article(itm);
-    mMsg_Set_item_str_art(mMsg_Get_base_window_p(), p2, buff, 0x10, art);
+    mMsg_Set_item_str_art(mMsg_Get_base_window_p(), p2, buff, mIN_ITEM_NAME_LEN, art);
 }
 
 static void aNSC_set_item_str(ACTOR* actorx) {
