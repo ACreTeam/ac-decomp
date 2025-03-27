@@ -15,7 +15,7 @@ ACTOR_PROFILE Reserve_Profile = {
     mAc_PROFILE_RESERVE,
     ACTOR_PART_ITEM,
     ACTOR_STATE_TA_SET,
-    0x5810, // include name later
+    SIGN00,
     ACTOR_OBJ_BANK_KEEP,
     sizeof(RESERVE_ACTOR),
     aRSV_actor_ct,
