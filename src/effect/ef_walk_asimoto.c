@@ -34,7 +34,7 @@ static void eWalkAsimoto_RainDay(xyz_t pos, int prio, s16 angle_y, GAME* game, u
     int count;
 
     switch (arg0) {
-        case 9:
+        case mCoBG_ATTRIBUTE_BUSH:
             count = 1;
             do {
                 eEC_CLIP->effect_make_proc(eEC_EFFECT_BUSH_HAPPA, make_pos, prio, angle_y, game, name, arg0, arg1);
@@ -52,7 +52,7 @@ static void eWalkAsimoto_FineDay(xyz_t pos, int prio, s16 angle_y, GAME* game, u
     switch (season) {
         case mTM_SEASON_WINTER:
             switch (arg0) {
-                case 9:
+                case mCoBG_ATTRIBUTE_BUSH:
                     happa_count = 1;
                     do {
                         eEC_CLIP->effect_make_proc(eEC_EFFECT_BUSH_HAPPA, make_pos, prio, angle_y, game, name, arg0, arg1);
@@ -63,8 +63,8 @@ static void eWalkAsimoto_FineDay(xyz_t pos, int prio, s16 angle_y, GAME* game, u
                         eEC_CLIP->effect_make_proc(eEC_EFFECT_BUSH_YUKI, make_pos, prio, angle_y, game, name, arg0, 0);
                     } while (yuki_count-- != 0);
                     break;
-                case 1:
-                case 2:
+                case mCoBG_ATTRIBUTE_GRASS1:
+                case mCoBG_ATTRIBUTE_GRASS2:
                     break;
             }
             break;
@@ -72,7 +72,7 @@ static void eWalkAsimoto_FineDay(xyz_t pos, int prio, s16 angle_y, GAME* game, u
         case mTM_SEASON_SUMMER:
         case mTM_SEASON_AUTUMN:
             switch (arg0) {
-                case 9:
+                case mCoBG_ATTRIBUTE_BUSH:
                     happa_count = 1;
                     do {
                         eEC_CLIP->effect_make_proc(eEC_EFFECT_BUSH_HAPPA, make_pos, prio, angle_y, game, name, arg0, arg1);
