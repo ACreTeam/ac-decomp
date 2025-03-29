@@ -1351,7 +1351,7 @@ config.libs = [
             Object(NonMatching, "effect/ef_turn_footprint.c"),
             Object(NonMatching, "effect/ef_uranai.c"),
             Object(NonMatching, "effect/ef_wait_asimoto.c"),
-            Object(NonMatching, "effect/ef_walk_asimoto.c"),
+            Object(Matching, "effect/ef_walk_asimoto.c"),
             Object(NonMatching, "effect/ef_warau.c"),
             Object(NonMatching, "effect/ef_yajirushi.c"),
             Object(Matching, "effect/ef_young_tree.c"),
