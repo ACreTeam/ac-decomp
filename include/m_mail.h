@@ -10,7 +10,8 @@
 extern "C" {
 #endif
 
-#define MAIL_HEADER_LEN (32 - PLAYER_NAME_LEN)
+#define MAIL_HEADER_BASE_LEN 32
+#define MAIL_HEADER_LEN (MAIL_HEADER_BASE_LEN - PLAYER_NAME_LEN)
 #define MAIL_FOOTER_LEN 32
 #define MAIL_BODY_LEN 192
 
@@ -108,7 +109,7 @@ extern void mMl_clear_mail_header(Mail_hdr_c* header);
 extern void mMl_clear_mail(Mail_c* mail);
 extern void mMl_clear_mail_box(Mail_c* mail, int num);
 extern int mMl_check_not_used_mail(Mail_c* mail);
-extern void mMl_copy_header_name(Mail_c* dst, Mail_c* src);
+extern void mMl_copy_header_name(Mail_nm_c* dst, Mail_nm_c* src);
 extern void mMl_set_to_plname(Mail_c* mail, PersonalID_c* pid);
 extern void mMl_set_playername(Mail_c* mail, PersonalID_c* pid);
 extern void mMl_init_mail(Mail_c* mail, PersonalID_c* pid);

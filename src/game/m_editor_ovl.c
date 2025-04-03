@@ -1843,11 +1843,11 @@ static void mED_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     editor_ovl->_0F = 26;
     editor_ovl->_0E = 0;
 
-    if (submenu->overlay->address_ovl->_07 != 0) {
+    if (submenu->overlay->address_ovl->editor_move_down) {
       board_ovl = submenu->overlay->board_ovl;
 
       if (board_ovl != NULL) {
-        submenu->overlay->address_ovl->_07 = FALSE;
+        submenu->overlay->address_ovl->editor_move_down = FALSE;
         editor_ovl->command = mED_COMMAND_CURSOL_LOWER;
         mED_move_letter_table(editor_ovl, board_ovl, submenu);
         editor_ovl->exchange_code = mED_get_exchange_code(editor_ovl);

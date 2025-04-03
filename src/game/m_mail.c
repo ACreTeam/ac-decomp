@@ -86,9 +86,9 @@ extern int mMl_check_not_used_mail(Mail_c* mail) {
     return res;
 }
 
-extern void mMl_copy_header_name(Mail_c* dst, Mail_c* src) {
-    dst->header.recipient.type = src->header.recipient.type;
-    mPr_CopyPersonalID(&dst->header.recipient.personalID, &src->header.recipient.personalID);
+extern void mMl_copy_header_name(Mail_nm_c* dst, Mail_nm_c* src) {
+    dst->type = src->type;
+    mPr_CopyPersonalID(&dst->personalID, &src->personalID);
 }
 
 extern void mMl_set_to_plname(Mail_c* mail, PersonalID_c* pid) {

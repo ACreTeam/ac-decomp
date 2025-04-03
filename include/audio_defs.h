@@ -64,6 +64,8 @@ typedef enum audio_sound_effects {
     NA_SE_31 = 0x31,
     NA_SE_32 = 0x32,
     NA_SE_33 = 0x33,
+    NA_SE_34 = 0x34,
+    NA_SE_35 = 0x35,
 
     NA_SE_DRAWER_SHUT = 0x3A,
 

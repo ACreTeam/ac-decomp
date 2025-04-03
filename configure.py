@@ -1366,7 +1366,7 @@ config.libs = [
             Object(Matching, "game/m_actor.c"),
             Object(Matching, "game/m_actor_dlftbls.c"),
             Object(Matching, "game/m_actor_shadow.c"),
-            Object(NonMatching, "game/m_address_ovl.c"),
+            Object(Matching, "game/m_address_ovl.c"),
             Object(Matching, "game/m_all_grow.c"),
             Object(Matching, "game/m_all_grow_ovl.c"),
             Object(Matching, "game/m_bank_ovl.c"),
