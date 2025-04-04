@@ -4228,8 +4228,10 @@ data/scene/fg_tool_in.c:
 data/scene/field_tool_field.c:
 	.data       start:0x00202440 end:0x002024B0
 
-data/dataobject/dataobject_2024B0:
+data/field/field_data.c:
 	.data       start:0x002024B0 end:0x00204600
+
+data/dataobject/dataobject_204600:
 	.data       start:0x00204600 end:0x00204680
 	.data       start:0x00204680 end:0x00204700
 	.data       start:0x00204700 end:0x0020A700
@@ -5884,38 +5886,100 @@ data/npc/model/tex/wol_5.c:
 data/npc/model/tex/wol_6.c:
 	.data       start:0x00607E00 end:0x00608A20
 
-data/dataobject/dataobject_608A20:
+data/field/mvactor/broker_shop.c:
 	.data       start:0x00608A20 end:0x00608A68
+
+data/field/mvactor/buggy.c:
 	.data       start:0x00608A68 end:0x00608A98
+
+data/field/mvactor/event_notification.c:
 	.data       start:0x00608A98 end:0x00608AB0
+
+data/field/mvactor/fd0.c:
 	.data       start:0x00608AB0 end:0x00608B28
+
+data/field/mvactor/fd1.c:
 	.data       start:0x00608B28 end:0x00608C30
+
+data/field/mvactor/fd2.c:
 	.data       start:0x00608C30 end:0x00608CF0
+
+data/field/mvactor/fd4.c:
 	.data       start:0x00608CF0 end:0x00608D50
+
+data/field/mvactor/fd_npc_land.c:
 	.data       start:0x00608D50 end:0x00608DB0
+
+data/field/mvactor/fgout.c:
 	.data       start:0x00608DB0 end:0x00608DC8
+
+data/field/mvactor/kamakura.c:
 	.data       start:0x00608DC8 end:0x00608DF8
+
+data/field/mvactor/npcRoom001.c:
 	.data       start:0x00608DF8 end:0x00608E10
+
+data/field/mvactor/playerRM.c:
 	.data       start:0x00608E10 end:0x00608E40
+
+data/field/mvactor/playerRMM.c:
 	.data       start:0x00608E40 end:0x00608E70
+
+data/field/mvactor/playerRMS.c:
 	.data       start:0x00608E70 end:0x00608EA0
+
+data/field/mvactor/player_select.c:
 	.data       start:0x00608EA0 end:0x00608ED0
+
+data/field/mvactor/player_select2.c:
 	.data       start:0x00608ED0 end:0x00608F00
+
+data/field/mvactor/player_select3.c:
 	.data       start:0x00608F00 end:0x00608F30
+
+data/field/mvactor/player_select4.c:
 	.data       start:0x00608F30 end:0x00608F60
+
+data/field/mvactor/police_box.c:
 	.data       start:0x00608F60 end:0x00608F90
+
+data/field/mvactor/post_office.c:
 	.data       start:0x00608F90 end:0x00608FC0
+
+data/field/mvactor/shop01.c:
 	.data       start:0x00608FC0 end:0x00609008
+
+data/field/mvactor/shop02.c:
 	.data       start:0x00609008 end:0x00609050
+
+data/field/mvactor/shop03.c:
 	.data       start:0x00609050 end:0x00609098
+
+data/field/mvactor/shop04_1.c:
 	.data       start:0x00609098 end:0x006090E0
+
+data/field/mvactor/shop04_2.c:
 	.data       start:0x006090E0 end:0x00609140
+
+data/field/mvactor/start_demo1.c:
 	.data       start:0x00609140 end:0x006091A0
+
+data/field/mvactor/start_demo2.c:
 	.data       start:0x006091A0 end:0x00609200
+
+data/field/mvactor/start_demo3.c:
 	.data       start:0x00609200 end:0x00609260
+
+data/field/mvactor/tent.c:
 	.data       start:0x00609260 end:0x00609290
+
+data/field/mvactor/title_demo.c:
 	.data       start:0x00609290 end:0x00609410
+
+data/field/mvactor/water_test.c:
 	.data       start:0x00609410 end:0x00609440
+
+data/dataobject/dataobject_609440:
 	.data       start:0x00609440 end:0x00609FA0
 	.data       start:0x00609FA0 end:0x0060AA40
 	.data       start:0x0060AA40 end:0x0060B560
