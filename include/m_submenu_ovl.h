@@ -38,6 +38,7 @@
 #include "m_cpedit_ovl_h.h"
 #include "m_cpwarning_ovl_h.h"
 #include "m_mscore_ovl_h.h"
+#include "m_calendar_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -203,7 +204,7 @@ struct submenu_overlay_s {
     /* 0x9E0 */ void* _9E0;
     /* 0x9E4 */ mGB_Ovl_c* gba_ovl;
     /* 0x9E8 */ mDI_Ovl_c* diary_ovl;
-    /* 0x9EC */ void* _9EC;
+    /* 0x9EC */ mCD_Ovl_c* calendar_ovl;
     /* 0x9F0 */ mPM_Ovl_c* passwordMake_ovl;
     /* 0x9F4 */ mPC_Ovl_c* passwordChk_ovl;
     /* 0x9F8 */ u8 hboard_exists;

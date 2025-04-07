@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+typedef struct calendar_ovl_s mCD_Ovl_c;
+
 #ifdef __cplusplus
 }
 #endif

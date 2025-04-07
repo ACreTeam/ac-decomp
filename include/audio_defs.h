@@ -196,6 +196,9 @@ typedef enum audio_sound_effects {
     NA_SE_UCHIWA = 0x167,
     NA_SE_LAWNMOWER = 0x177,
 
+    NA_SE_17C = 0x17C,
+    NA_SE_17D = 0x17D,
+
     NA_SE_207 = 0x207,
 
     NA_SE_SCOOP_SHIGEMI = 0x401,
