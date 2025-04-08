@@ -10,6 +10,9 @@
 extern "C" {
 #endif
 
+#define mMU_COL_NUM 11
+#define mMU_ROW_NUM 5
+
 struct music_ovl_s {
     u8 title[mIN_ITEM_NAME_LEN];
     s16 title_width;
