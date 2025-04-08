@@ -1421,7 +1421,7 @@ config.libs = [
             Object(Matching, "game/m_gba_ovl.c"),
             Object(Matching, "game/m_hand_ovl.c"),
             Object(Matching, "game/m_handbill.c"),
-            Object(NonMatching, "game/m_haniwa_ovl.c"),
+            Object(Matching, "game/m_haniwa_ovl.c"),
             Object(Matching, "game/m_haniwaPortrait_ovl.c"),
             Object(Matching, "game/m_hboard_ovl.c"),
             Object(Matching, "game/m_home.c"),

@@ -3123,7 +3123,7 @@ static void mTG_set_trade_cond(Submenu* submenu, mSM_MenuInfo_c* menu_info, s16 
     Save_Get(homes[menu_info->data1]).haniwa.items[tag->tag_col].extra_data = arg;
     mTG_return_tag_init(submenu, mTG_TYPE_NONE, mTG_RETURN_CLOSE);
     sAdo_SysTrgStart(NA_SE_33);
-    submenu->overlay->haniwa_ovl->set_interrupt_message_proc(submenu, tag, 4);
+    submenu->overlay->haniwa_ovl->set_interrupt_message_proc(submenu, tag, mHW_MSG_KASIKO);
 }
 
 static void mTG_present_open_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
@@ -3274,7 +3274,7 @@ static void mTG_get_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
 
         changed_money -= haniwa_item_p->extra_data;
         if (changed_money < 0) {
-            submenu->overlay->haniwa_ovl->set_interrupt_message_proc(submenu, tag, 7);
+            submenu->overlay->haniwa_ovl->set_interrupt_message_proc(submenu, tag, mHW_MSG_OKANE);
             mTG_return_tag_init(submenu, mTG_TYPE_NONE, mTG_RETURN_CLOSE);
             sAdo_SysTrgStart(MONO(NA_SE_3));
         } else {
@@ -3300,7 +3300,7 @@ static void mTG_get_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
 
             Now_Private->inventory.wallet = keep_money;
             mPr_SetPossessionItem(Now_Private, idx, haniwa_item_p->item, mPr_ITEM_COND_NORMAL);
-            submenu->overlay->haniwa_ovl->set_interrupt_message_proc(submenu, tag, 8);
+            submenu->overlay->haniwa_ovl->set_interrupt_message_proc(submenu, tag, mHW_MSG_MAIDO);
             mTG_return_tag_init(submenu, mTG_TYPE_NONE, mTG_RETURN_CLOSE);
             Save_Get(homes[menu_info->data1]).haniwa.bells += haniwa_item_p->extra_data;
             haniwa_item_p->item = EMPTY_NO;

@@ -11,6 +11,24 @@ extern "C" {
 
 #define mHW_OVL_MSG_SIZE 22
 
+enum {
+    mHW_MSG_IKAGA,
+    mHW_MSG_DONO,
+    mHW_MSG_DONO2,
+    mHW_MSG_OIKURA,
+    mHW_MSG_KASIKO,
+    mHW_MSG_DOREWO,
+    mHW_MSG_MOU, // @unused - not actually set anywhere
+    mHW_MSG_OKANE,
+    mHW_MSG_MAIDO,
+    mHW_MSG_TADA,
+    mHW_MSG_TADA2,
+    mHW_MSG_MISE,
+    mHW_MSG_BERU2,
+
+    mHW_MSG_NUM
+};
+
 typedef void (*mHW_SET_INTERRUPT_MESSAGE_PROC)(Submenu*, mTG_tag_c*, int);
 
 struct haniwa_ovl_s {
