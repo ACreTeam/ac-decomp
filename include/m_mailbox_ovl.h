@@ -3,6 +3,7 @@
 
 #include "types.h"
 #include "m_mailbox_ovl_h.h"
+#include "m_submenu_ovl.h"
 
 #ifdef __cplusplus
 extern "C" {

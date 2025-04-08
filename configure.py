@@ -1441,7 +1441,7 @@ config.libs = [
             Object(Matching, "game/m_mail_check.c"),
             Object(Matching, "game/m_mail_check_ovl.c"),
             Object(Matching, "game/m_mail_password_check.c"),
-            Object(NonMatching, "game/m_mailbox_ovl.c"),
+            Object(Matching, "game/m_mailbox_ovl.c"),
             Object(Matching, "game/m_malloc.c"),
             Object(Matching, "game/m_map_ovl.c"),
             Object(Matching, "game/m_mark_room.c"),
