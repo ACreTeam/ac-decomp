@@ -250,7 +250,7 @@ typedef union GXTexFmts {
     u32 raw;
 } GXTexFmts;
 
-static inline void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigned int* blk_ht) {
+inline void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigned int* blk_ht) {
     static u8 blk_tbl[4][2] = {
         { 8, 8 }, // G_IM_SIZ_4b
         { 8, 4 }, // G_IM_SIZ_8b
@@ -264,7 +264,7 @@ static inline void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigne
 
 extern void get_dol_wd_ht(unsigned int siz, unsigned int in_wd, unsigned int in_ht, unsigned int* wd, unsigned int* ht);
 
-static inline unsigned int rgba5551_to_rgb5a3(unsigned int rgba5551) {
+inline unsigned int rgba5551_to_rgb5a3(unsigned int rgba5551) {
     unsigned int rgb5a3;
 
     switch (rgba5551 & 1) {
@@ -279,7 +279,7 @@ static inline unsigned int rgba5551_to_rgb5a3(unsigned int rgba5551) {
     return rgb5a3;
 }
 
-static inline unsigned int get_dol_tex_siz(unsigned int siz, unsigned int in_wd, unsigned int in_ht) {
+inline unsigned int get_dol_tex_siz(unsigned int siz, unsigned int in_wd, unsigned int in_ht) {
     unsigned int wd;
     unsigned int ht;
 
@@ -287,7 +287,7 @@ static inline unsigned int get_dol_tex_siz(unsigned int siz, unsigned int in_wd,
     return ((wd * ht) << siz) / 2;
 }
 
-static inline unsigned int get_dol_tlut_siz(unsigned int count) {
+inline unsigned int get_dol_tlut_siz(unsigned int count) {
     unsigned int siz = count * sizeof(u16);
     return ALIGN_NEXT(siz, 32);
 }
@@ -489,7 +489,7 @@ class emu64_print {
 };
 
 #define EMU64_ASSERTLINE(cond, line)        \
-    if (!cond) {                            \
+    if (!(cond)) {                            \
         this->panic(#cond, __FILE__, line); \
     }
 
@@ -579,7 +579,7 @@ class emu64 : public emu64_print {
                       unsigned int start_wd, unsigned int start_ht, unsigned int end_wd, unsigned int end_ht,
                       unsigned int line_siz);
     unsigned int tmem_swap(unsigned int ofs, unsigned int blk_siz) {
-        return ofs ^ ((ofs / blk_siz) & 4);
+        return ofs ^ (((ofs / blk_siz) >> 1) & 4);
     }
     void tlutconv_rgba5551(u16* rgba5551_p, u16* rgb5a3_p, unsigned int count);
     void tlutconv_ia16(u16* src_ia16_p, u16* dst_ia16_p, unsigned int count);

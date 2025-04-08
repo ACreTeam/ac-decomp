@@ -440,7 +440,7 @@ GBA2/JoyBoot.c:
 	.data       start:0x800DAA08 end:0x800DAAA0
 	.bss        start:0x801F7180 end:0x801F71C0
 
-libforest/emu64/emu64.cc:
+libforest/emu64/emu64.c:
 	.text       start:0x8004AE00 end:0x800595CC
 	.text       start:0x800595CC end:0x800595CC
 	.text       start:0x800595CC end:0x8005A654

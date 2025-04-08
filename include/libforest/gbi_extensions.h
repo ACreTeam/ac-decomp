@@ -263,6 +263,15 @@ typedef struct {
 } Gsetcombine_tev;
 
 typedef struct {
+    int cmd:8;
+    unsigned int upper0:8;
+    unsigned int lower0:16;
+
+    unsigned int upper1:16;
+    unsigned int lower1:16;
+} Gsetcombine_raw;
+
+typedef struct {
     unsigned int cmd:8;
     unsigned int xl:12;	/* Top-left x coord */
     unsigned int yl:12;	/* Top-left y coord */

@@ -14,7 +14,7 @@
 #pragma inline_depth(smart)
 #pragma inline_max_size(1000)
 
-#include "../src/static/libforest/emu64/emu64_utility.cc"
+#include "../src/static/libforest/emu64/emu64_utility.c"
 
 extern void OSInitFastCast(void);
 
@@ -31,6 +31,11 @@ static texture_cache_entry_t texture_cache_list[TEXTURE_CACHE_LIST_SIZE];
 /* These are set externally during emu64 initialization */
 static texture_cache_data_entry_t texture_cache_data_entry_tbl[NUM_TEXTURE_CACHE_DATA];
 static int texture_cache_data_entry_num = 0;
+
+static void* texture_cache_alloc(texture_cache_t* cache, u32 size);
+static void* texture_cache_data_search(void* addr);
+static int texture_cache_data_entry(void* original, void* converted);
+static texture_cache_t* texture_cache_select(void* address);
 
 static texture_cache_funcs texture_cache_data_func = {
     &texture_cache_data_search,
@@ -50,8 +55,8 @@ static texture_cache_t texture_cache_data = {
 };
 
 /* .bss cache functions */
-void* texture_cache_bss_search(void* addr);
-int texture_cache_bss_entry(void* original, void* converted);
+static void* texture_cache_bss_search(void* addr);
+static int texture_cache_bss_entry(void* original, void* converted);
 
 static texture_cache_funcs texture_cache_bss_func = {
     &texture_cache_bss_search,
@@ -71,14 +76,12 @@ static texture_cache_t texture_cache_bss = {
 };
 
 extern void emu64_texture_cache_data_entry_set(void* begin, void* end) {
-    texture_cache_data_entry_t* entry = &texture_cache_data_entry_tbl[texture_cache_data_entry_num];
-
-    entry->start = begin;
-    entry->end = end;
+    texture_cache_data_entry_tbl[texture_cache_data_entry_num].start = begin;
+    texture_cache_data_entry_tbl[texture_cache_data_entry_num].end = end;
     texture_cache_data_entry_num++;
 }
 
-extern texture_cache_t* texture_cache_select(void* addr) {
+static texture_cache_t* texture_cache_select(void* addr) {
     int i;
 
     if (aflags[AFLAGS_SKIP_TEXTURE_CONV] >= 1 || (addr >= _f_rodata && addr <= _e_data)) {
@@ -123,18 +126,15 @@ MATCH_FORCESTRIP static u32 texture_cache_get_heap_size(texture_cache_t* cache) 
     return cache->buffer_end - cache->buffer_start;
 }
 
-extern void* texture_cache_alloc(texture_cache_t* cache, size_t size) {
-    u32 new_pos;
-
+static void* texture_cache_alloc(texture_cache_t* cache, u32 size) {
     cache->last_alloc_start = cache->buffer_current;
     cache->last_alloc_end = (u8*)ALIGN_NEXT((u32)cache->buffer_current + size, 32);
 
-    new_pos = cache->last_alloc_end - cache->buffer_start;
-    if (cache->buffer_pos < new_pos) {
-        cache->buffer_pos = new_pos;
+    if (cache->buffer_pos < cache->last_alloc_end - cache->buffer_start) {
+        cache->buffer_pos = cache->last_alloc_end - cache->buffer_start;
     }
 
-    if (cache->buffer_end < cache->last_alloc_end) {
+    if (cache->last_alloc_end > cache->buffer_end) {
         cache->is_overflow = true;
         return nullptr;
     }
@@ -143,7 +143,7 @@ extern void* texture_cache_alloc(texture_cache_t* cache, size_t size) {
     return cache->last_alloc_start;
 }
 
-extern void* texture_cache_data_search(void* original_addr) {
+static void* texture_cache_data_search(void* original_addr) {
     int i;
 
     for (i = 0; i < texture_cache_num; i++) {
@@ -155,12 +155,11 @@ extern void* texture_cache_data_search(void* original_addr) {
     return nullptr;
 }
 
-extern int texture_cache_data_entry(void* original_addr, void* converted_addr) {
+static int texture_cache_data_entry(void* original_addr, void* converted_addr) {
     if (texture_cache_num < TEXTURE_CACHE_LIST_SIZE && original_addr != nullptr && converted_addr != nullptr) {
-        texture_cache_entry_t* entry = &texture_cache_list[texture_cache_num++];
-
-        entry->original = original_addr;
-        entry->converted = converted_addr;
+        texture_cache_list[texture_cache_num].original = original_addr;
+        texture_cache_list[texture_cache_num].converted = converted_addr;
+        texture_cache_num++;
         return 0;
     }
 
@@ -168,11 +167,11 @@ extern int texture_cache_data_entry(void* original_addr, void* converted_addr) {
     return -1;
 }
 
-extern void* texture_cache_bss_search(void* original_addr) {
+static void* texture_cache_bss_search(void* original_addr) {
     return nullptr;
 }
 
-extern int texture_cache_bss_entry(void* original_addr, void* converted_addr) {
+static int texture_cache_bss_entry(void* original_addr, void* converted_addr) {
     return -1;
 }
 
@@ -247,8 +246,9 @@ static GXColor white_color = { 255, 255, 255, 255 };
 
 static void emu64_init2(GXRenderModeObj* render_mode) {
     GC_Mtx m;
+    int i;
 
-    __GXSetIndirectMask(0);
+    // __GXSetIndirectMask(0);
 
     GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
     GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX1, GX_IDENTITY);
@@ -314,6 +314,44 @@ static void emu64_init2(GXRenderModeObj* render_mode) {
     GXSetTevOrder(GX_TEVSTAGE13, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
     GXSetTevOrder(GX_TEVSTAGE14, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
     GXSetTevOrder(GX_TEVSTAGE15, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+
+    GXSetNumTevStages(1);
+    GXSetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+    GXSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
+    GXSetZTexture(GX_ZT_DISABLE, GX_TF_Z8, 0);
+
+    for (i = 0; i < GX_MAX_TEVSTAGE; i++) {
+        GXSetTevKColorSel((GXTevStageID)i, GX_TEV_KCSEL_1_4);
+        GXSetTevKAlphaSel((GXTevStageID)i, GX_TEV_KASEL_1);
+        GXSetTevSwapMode((GXTevStageID)i, GX_TEV_SWAP0, GX_TEV_SWAP0);
+    }
+
+    GXSetTevSwapModeTable(GX_TEV_SWAP0, GX_CH_RED, GX_CH_GREEN, GX_CH_BLUE, GX_CH_ALPHA);
+    GXSetTevSwapModeTable(GX_TEV_SWAP1, GX_CH_RED, GX_CH_RED, GX_CH_RED, GX_CH_ALPHA);
+    GXSetTevSwapModeTable(GX_TEV_SWAP2, GX_CH_GREEN, GX_CH_GREEN, GX_CH_GREEN, GX_CH_ALPHA);
+    GXSetTevSwapModeTable(GX_TEV_SWAP3, GX_CH_BLUE, GX_CH_BLUE, GX_CH_BLUE, GX_CH_ALPHA);
+
+    for (i = 0; i < GX_MAX_TEVSTAGE; i++) {
+        GXSetTevDirect((GXTevStageID)i);
+    }
+
+    GXSetNumIndStages(0);
+    GXSetIndTexCoordScale(GX_INDTEXSTAGE0, GX_ITS_1, GX_ITS_1);
+    GXSetIndTexCoordScale(GX_INDTEXSTAGE1, GX_ITS_1, GX_ITS_1);
+    GXSetIndTexCoordScale(GX_INDTEXSTAGE2, GX_ITS_1, GX_ITS_1);
+    GXSetIndTexCoordScale(GX_INDTEXSTAGE3, GX_ITS_1, GX_ITS_1);
+
+    GXSetFog(GX_FOG_NONE, 0.0f, 1.0f, 0.1f, 1.0f, black_color);
+    GXSetFogRangeAdj(GX_FALSE, 0, 0);
+    GXSetBlendMode(GX_BM_NONE, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
+    GXSetColorUpdate(GX_TRUE);
+    GXSetAlphaUpdate(GX_TRUE);
+    GXSetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
+    GXSetZCompLoc(GX_TRUE);
+    GXSetDither(GX_FALSE);
+    GXSetDstAlpha(GX_FALSE, 0);
+    GXSetFieldMask(GX_TRUE, GX_TRUE);
+    GXSetFieldMode(render_mode->field_rendering, (render_mode->xfbHeight * 2 - render_mode->viHeight) == 0 ? GX_TRUE : GX_FALSE);
 }
 
 void emu64::emu64_init() {
@@ -333,6 +371,7 @@ void emu64::emu64_init() {
     PSMTXIdentity(this->perspective_mtx);
     PSMTXIdentity(this->projection_mtx);
     PSMTXIdentity(this->original_projection_mtx);
+    PSMTXIdentity(this->position_mtx);
     PSMTXIdentity(this->model_view_mtx_stack[0]);
     PSMTXIdentity(this->position_mtx_stack[0]);
     GXSetProjection(this->ortho_mtx, GX_ORTHOGRAPHIC);
@@ -374,7 +413,7 @@ void emu64::emu64_init() {
                                   0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                   0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88 };
 
-    for (int i = GX_TEXMAP0; i < GX_MAX_TEXMAP; i++) {
+    for (u32 i = GX_TEXMAP0; i < GX_MAX_TEXMAP; i++) {
         GXInitTexObj(&this->tex_objs[i], black_texture, 8, 4, GX_TF_I8, GX_CLAMP, GX_CLAMP, GX_FALSE);
         GXLoadTexObj(&this->tex_objs[i], (GXTexMapID)i);
     }
@@ -382,7 +421,8 @@ void emu64::emu64_init() {
     texture_cache_bss.is_overflow = false;
     texture_cache_bss.buffer_current = texture_cache_bss.buffer_start;
 
-    if (texture_cache_data.is_overflow) {
+    int overflow = texture_cache_data.is_overflow;
+    if (overflow) {
         texture_cache_data.is_overflow = false;
         texture_cache_data.buffer_current = texture_cache_data.buffer_start;
         texture_cache_num = 0;
@@ -444,8 +484,15 @@ void emu64::printInfo() {
 }
 
 void emu64::panic(char* msg, char* file, int line) {
-    this->Printf0(VT_COL(RED, WHITE) "emu64 PANIC!! in %s line %d" VT_RST "\n", file, line);
-    this->Printf0("%s", msg);
+    if (file) {
+        this->Printf0(VT_COL(RED, WHITE) "emu64 PANIC!! in %s line %d" VT_RST "\n", file, line);
+    } else {
+        this->Printf0(VT_COL(RED, WHITE) "emu64 PANIC!!" VT_RST "\n", file, line);
+    }
+
+    if (msg) {
+        this->Printf0("%s", msg);
+    }
     this->printInfo();
 }
 
@@ -481,47 +528,53 @@ extern void get_dol_wd_ht(unsigned int siz, unsigned int in_wd, unsigned int in_
 }
 
 void emu64::texconv_tile(u8* addr, u8* converted_addr, unsigned int wd, unsigned int fmt, unsigned int siz,
-                         unsigned int start_wd, unsigned int start_ht, unsigned int end_wd, unsigned int end_ht,
-                         unsigned int line_siz) {
-    unsigned int blk_wd;
+    unsigned int start_wd, unsigned int start_ht, unsigned int end_wd, unsigned int end_ht,
+    unsigned int line_siz) {
     unsigned int blk_ht;
+    unsigned int blk_wd;
+    unsigned int blk_y;
+    unsigned int blk_x;
+    unsigned int y;
+    unsigned int y_ofs;
 
     get_blk_wd_ht(siz, &blk_wd, &blk_ht);
 
-    for (unsigned int blk_y = start_ht; blk_y < end_ht; blk_y += blk_ht) {
-        for (unsigned int blk_x = start_wd; blk_x < end_wd; blk_x += blk_wd) {
-            for (unsigned int y = 0; y < blk_ht; y++) {
-                unsigned int y_ofs = start_ht + y;
+    for (blk_y = start_ht; blk_y < end_ht; blk_y += blk_ht) {
+        for (blk_x = start_wd; blk_x < end_wd; blk_x += blk_wd) {
+            for (y = 0; y < blk_ht; y++) {
+                y_ofs = blk_y + y;
 
                 if (siz == G_IM_SIZ_16b) {
                     if (fmt == G_IM_FMT_RGBA) {
                         unsigned int x_ofs = (blk_x + y_ofs * wd) * sizeof(u16);
                         unsigned int ofs = this->tmem_swap(x_ofs, line_siz);
+                        u16* src = (u16*)(addr + ofs);
 
-                        *(u16*)(converted_addr + 0) = rgba5551_to_rgb5a3(*(u16*)(addr + ofs + 0));
-                        *(u16*)(converted_addr + 2) = rgba5551_to_rgb5a3(*(u16*)(addr + ofs + 2));
+                        *(u16*)(converted_addr + 0) = rgba5551_to_rgb5a3(src[0]);
+                        *(u16*)(converted_addr + 2) = rgba5551_to_rgb5a3(src[1]);
 
                         ofs = this->tmem_swap(x_ofs + 4, line_siz);
-
-                        *(u16*)(converted_addr + 4) = rgba5551_to_rgb5a3(*(u16*)(addr + ofs + 0));
-                        *(u16*)(converted_addr + 6) = rgba5551_to_rgb5a3(*(u16*)(addr + ofs + 2));
+                        src = (u16*)(addr + ofs);
+                        *(u16*)(converted_addr + 4) = rgba5551_to_rgb5a3(src[0]);
+                        *(u16*)(converted_addr + 6) = rgba5551_to_rgb5a3(src[1]);
                     } else if (fmt == G_IM_FMT_IA) {
                         unsigned int x_ofs = (blk_x + y_ofs * wd) * sizeof(u16);
                         unsigned int ofs = this->tmem_swap(x_ofs, line_siz);
                         u8* src = addr + ofs;
 
-                        *(converted_addr + 0) = *(src + 1);
-                        *(converted_addr + 1) = *(src + 0);
-                        *(converted_addr + 2) = *(src + 3);
-                        *(converted_addr + 3) = *(src + 2);
+                        converted_addr[0] = src[1];
+                        converted_addr[1] = src[0];
+                        converted_addr[2] = src[3];
+                        converted_addr[3] = src[2];
 
-                        ofs = this->tmem_swap(x_ofs + 4, line_siz);
+                        x_ofs += 4;
+                        ofs = this->tmem_swap(x_ofs, line_siz);
                         src = addr + ofs;
 
-                        *(converted_addr + 4) = *(src + 1);
-                        *(converted_addr + 5) = *(src + 0);
-                        *(converted_addr + 6) = *(src + 3);
-                        *(converted_addr + 7) = *(src + 2);
+                        converted_addr[4] = src[1];
+                        converted_addr[5] = src[0];
+                        converted_addr[6] = src[3];
+                        converted_addr[7] = src[2];
                     }
 
                     converted_addr += 8;
@@ -529,12 +582,18 @@ void emu64::texconv_tile(u8* addr, u8* converted_addr, unsigned int wd, unsigned
                     if (fmt == G_IM_FMT_IA) {
                         unsigned int x_ofs = blk_x + y_ofs * wd;
                         unsigned int ofs = this->tmem_swap(x_ofs, line_siz);
+                        u32* dst = (u32*)converted_addr;
+                        u32* src = (u32*)(addr + ofs);
+                        u32 part0 = (src[0] << 4) & 0xF0F0F0F0;
+                        u32 part1 = (src[0] >> 4) & 0x0F0F0F0F;
 
-                        *(u32*)(converted_addr + 0) =
-                            (((*(u32*)(addr + ofs)) & 0x0F0F0F0F) << 4) | (((*(u32*)(addr + ofs)) & 0xF0F0F0F0) >> 4);
+                        dst[0] = part0 + part1;
+
                         ofs = this->tmem_swap(x_ofs + 4, line_siz);
-                        *(u32*)(converted_addr + 4) =
-                            (((*(u32*)(addr + ofs)) & 0x0F0F0F0F) << 4) | (((*(u32*)(addr + ofs)) & 0xF0F0F0F0) >> 4);
+                        src = (u32*)(addr + ofs);
+                        u32 part02 = (src[0] << 4) & 0xF0F0F0F0;
+                        u32 part12 = (src[0] >> 4) & 0x0F0F0F0F;
+                        dst[1] = part02 + part12;
                     } else {
                         unsigned int x_ofs = blk_x + y_ofs * wd;
                         unsigned int ofs = this->tmem_swap(x_ofs, line_siz);
@@ -986,9 +1045,11 @@ int emu64::combine_auto() {
 }
 
 int emu64::combine_tev() {
-    Gsetcombine_tev combine_tev = *((Gsetcombine_tev*)&this->combine_gfx);
+    
+    if ((u8)this->combine_gfx.setcombine.cmd == G_SETCOMBINE_TEV) {
+        int two_cycle = (this->othermode_high & G_CYC_2CYCLE) >> G_MDSFT_CYCLETYPE;
+        Gsetcombine_tev combine_tev = *((Gsetcombine_tev*)&this->combine_gfx);
 
-    if (((this->combine_gfx.words.w0 >> 24) & 0xFF) == G_SETCOMBINE_TEV) {
         if (aflags[AFLAGS_FORCE_TEV_COMBINE_MODE] != 0) {
             if (aflags[AFLAGS_FORCE_TEV_COMBINE_MODE] == 1) {
                 static u32 c = TEV_SHADE;
@@ -1076,23 +1137,7 @@ int emu64::combine_tev() {
         GXSetTevAlphaIn(GX_TEVSTAGE0, (GXTevAlphaArg)combine_tev.Aa0, (GXTevAlphaArg)combine_tev.Ab0,
                         (GXTevAlphaArg)combine_tev.Ac0, (GXTevAlphaArg)combine_tev.Ad0);
 
-        if ((this->othermode_high & G_CYC_2CYCLE) == 0 ||
-            ((this->combine_gfx.words.w1 & 0xFFFF) == 0xFFF0 && ((this->combine_gfx.words.w0 & 0xFFF) == 0xFF8))) {
-            GXSetNumTexGens(1);
-            GXSetNumTevStages(1);
-
-            GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
-            GXSetTevColorOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-            GXSetTevAlphaOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-            GXSetTevColorIn(GX_TEVSTAGE1, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ONE);
-            GXSetTevAlphaIn(GX_TEVSTAGE1, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
-
-            GXSetTevOrder(GX_TEVSTAGE2, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
-            GXSetTevColorOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-            GXSetTevAlphaOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-            GXSetTevColorIn(GX_TEVSTAGE2, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ONE);
-            GXSetTevAlphaIn(GX_TEVSTAGE2, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
-        } else {
+        if (two_cycle && ((((Gsetcombine_raw*)&combine_tev)->lower1) != 0xFFF0 || ((((Gsetcombine_raw*)&combine_tev)->lower0) & 0xFFF) != 0x0FF8)) {
             GXSetNumTexGens(2);
             GXSetNumTevStages(2);
 
@@ -1103,6 +1148,21 @@ int emu64::combine_tev() {
                             (GXTevColorArg)combine_tev.c1, (GXTevColorArg)combine_tev.d1);
             GXSetTevAlphaIn(GX_TEVSTAGE1, (GXTevAlphaArg)combine_tev.Aa1, (GXTevAlphaArg)combine_tev.Ab1,
                             (GXTevAlphaArg)combine_tev.Ac1, (GXTevAlphaArg)combine_tev.Ad1);
+
+            GXSetTevOrder(GX_TEVSTAGE2, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+            GXSetTevColorOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+            GXSetTevAlphaOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+            GXSetTevColorIn(GX_TEVSTAGE2, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ONE);
+            GXSetTevAlphaIn(GX_TEVSTAGE2, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
+        } else {
+            GXSetNumTexGens(1);
+            GXSetNumTevStages(1);
+
+            GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+            GXSetTevColorOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+            GXSetTevAlphaOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+            GXSetTevColorIn(GX_TEVSTAGE1, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ONE);
+            GXSetTevAlphaIn(GX_TEVSTAGE1, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_KONST);
 
             GXSetTevOrder(GX_TEVSTAGE2, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
             GXSetTevColorOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);

@@ -17,7 +17,7 @@ extern void emu64_init();
 extern void emu64_refresh();
 extern void emu64_cleanup();
 
-extern void emu64_texture_cache_data_entry_set(u8* cache_start, u8* cache_end);
+extern void emu64_texture_cache_data_entry_set(void* begin, void* end);
 
 #ifdef __cplusplus
 }
