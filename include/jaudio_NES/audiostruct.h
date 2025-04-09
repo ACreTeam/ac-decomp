@@ -931,6 +931,23 @@ typedef struct PLAYER_CALL_ {
     u32 DSP_mode;
 } PLAYER_CALL;
 
+typedef struct Bank_ {
+    u32 magic; // 'BANK'
+    u8* part0[128];
+    u8* part1[100];
+    u8* part2[12];
+    // more?
+} Bank;
+
+typedef struct InstBank_ {
+    u32 magic; // 'IBNK'
+    u32 _04;
+    u32 vid;
+    u8 pad[32 - 3 * sizeof(u32)];
+    Bank bank;
+    // more
+} InstBank;
+
 #ifdef __cplusplus
 }
 #endif

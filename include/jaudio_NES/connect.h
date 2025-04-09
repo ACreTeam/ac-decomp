@@ -4,5 +4,6 @@
 #include "types.h"
 
 void Jac_ConnectTableInit(void);
+void Jac_BnkConnectTableSet(u32 vid, u32 pid);
 
 #endif
