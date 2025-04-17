@@ -1710,6 +1710,7 @@ static void __WaveTouch(wtstr* wavetouch_str, u32 ram_addr, WaveMedia* wave_medi
     }
 }
 
+// @non-matching - regswaps caused by AG not being loaded into r28
 s32 Nas_BankOfsToAddr(s32 bank_id, u8* ctrl_p, WaveMedia* wave_media, s32 async) {
     Bgloadreq* preload;
     Bgloadreq* top_preload;
