@@ -10,6 +10,9 @@ extern "C" {
 #define S16_MIN (-0x8000)
 #define S16_MAX (0x7FFF)
 
+#define AUDIO_PRELOAD_SEQ (1 << 0)
+#define AUDIO_PRELOAD_BANK (1 << 1)
+
 #define AUDIO_ARAM_SIZE 0x400000 /* 4MB */
 #define AUDIO_ARAM_HEAP_SIZE 0xC000
 
@@ -38,7 +41,7 @@ typedef enum DSPBUF_EVENTS {
 
 typedef enum SampleMedium {
     /* 0 */ MEDIUM_RAM,
-    /* 1 */ MEDIUM_UNK,
+    /* 1 */ MEDIUM_DISK,
     /* 2 */ MEDIUM_CART,
     /* 3 */ MEDIUM_DISK_DRIVE,
     /* 5 */ MEDIUM_RAM_UNLOADED = 5
@@ -97,6 +100,36 @@ typedef enum SampleBankTableType {
     /* 1 */ BANK_TABLE,
     /* 2 */ WAVE_TABLE
 } SampleBankTableType;
+
+typedef enum ExtDataType {
+    EXT_TYPE_DATA,
+    EXT_TYPE_SIZE,
+
+    EXT_TYPE_NUM
+} ExtDataType;
+
+typedef enum SoundOutputMode {
+    /* 0 */ SOUND_OUTPUT_STEREO,
+    /* 1 */ SOUND_OUTPUT_HEADSET,
+    /* 2 */ SOUND_OUTPUT_SURROUND,
+    /* 3 */ SOUND_OUTPUT_MONO
+} SoundOutputMode;
+
+typedef enum SampleCodec {
+    /* 0 */ CODEC_ADPCM,  // 16 2-byte samples (32 bytes) compressed into 4-bit samples (8 bytes) + 1 header byte
+    /* 1 */ CODEC_S8, // 16 2-byte samples (32 bytes) compressed into 8-bit samples (16 bytes)
+    /* 2 */ CODEC_S16_INMEMORY,
+    /* 3 */ CODEC_SMALL_ADPCM,  // 16 2-byte samples (32 bytes) compressed into 2-bit samples (4 bytes) + 1 header byte
+    /* 4 */ CODEC_REVERB,
+    /* 5 */ CODEC_S16
+} SampleCodec;
+
+typedef enum LpsCacheState {
+    /* 0 */ LPS_CACHE_STATE_WAITING,
+    /* 1 */ LPS_CACHE_STATE_START,
+    /* 2 */ LPS_CACHE_STATE_LOADING,
+    /* 3 */ LPS_CACHE_STATE_DONE
+} LpsCacheState;
 
 #define VOICE_TYPE_PERCUSSION 0
 #define VOICE_TYPE_SOUND_EFF 1

@@ -776,7 +776,7 @@ config.libs = [
             Object(NonMatching, "jaudio_NES/internal/rate.c"),
             Object(NonMatching, "jaudio_NES/internal/rspsim.c"),
             Object(NonMatching, "jaudio_NES/internal/seqsetup.c"),
-            Object(NonMatching, "jaudio_NES/internal/system.c"),
+            Object(Equivalent, "jaudio_NES/internal/system.c"),
             Object(NonMatching, "jaudio_NES/internal/tables.c"),
             Object(NonMatching, "jaudio_NES/internal/waveread.c"),
         ],

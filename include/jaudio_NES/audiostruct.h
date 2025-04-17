@@ -65,14 +65,14 @@ typedef struct ALHeap {
     /* 0x00 */ u8* base;
     /* 0x04 */ u8* current;
     /* 0x08 */ int length;
-    /* 0x0C */ u32 count;
+    /* 0x0C */ s32 count;
     /* 0x10 */ u8* last;
 } ALHeap;
 
 /* sizeof(ArcEntry) == 0x10 */
 typedef struct ArcEntry_ {
     /* 0x00 */ u32 addr;
-    /* 0x04 */ size_t size;
+    /* 0x04 */ s32 size;
     /* 0x08 */ s8 medium;
     /* 0x09 */ s8 cacheType;
     /* 0x0A */ s16 param0;
@@ -83,7 +83,7 @@ typedef struct ArcEntry_ {
 /* sizeof(ArcHeader) == [0x10, 0x10+entries*0x10] */
 typedef struct ArcHeader_ {
     /* 0x00 */ s16 numEntries;
-    /* 0x02 */ s16 _02;
+    /* 0x02 */ s16 medium;
     /* 0x04 */ u8* pData;
     /* 0x08 */ u8 copy;
     /* 0x09 */ u8 pad[7];
@@ -660,7 +660,7 @@ typedef struct lpscache_ {
     /* 0x0C */ u8* current_ram_addr;
     /* 0x10 */ u8* ram_addr;
     /* 0x14 */ s32 status;
-    /* 0x18 */ size_t bytes_remaining;
+    /* 0x18 */ s32 bytes_remaining;
     /* 0x1C */ s8* is_done;
     /* 0x20 */ smzwavetable sample;
     /* 0x30 */ OSMesgQueue mq;
@@ -678,6 +678,16 @@ typedef struct WaveLoad_ {
     /* 0x0D */ u8 reuse_idx;
     /* 0x0E */ u8 time_to_live;
 } WaveLoad;
+
+/* sizeof(WaveMedia) == 0x18 */
+typedef struct WaveMedia_ {
+    /* 0x00 */ u32 wave0_bank_id;
+    /* 0x04 */ u32 wave1_bank_id;
+    /* 0x08 */ void* wave0_p;
+    /* 0x0C */ void* wave1_p;
+    /* 0x10 */ u32 wave0_media;
+    /* 0x14 */ u32 wave1_media;
+} WaveMedia;
 
 /* sizeof(audioparams) == 0x28 */
 typedef struct audioparams_ {
@@ -883,8 +893,8 @@ typedef struct AudioGlobals {
     /* 0x3771 */ u8 spec_id;
     /* 0x3774 */ s32 audio_reset_fadeout_frames_left;
     /* 0x3778 */ f32* adsr_decay_table;
-    /* 0x377C */ u8* audio_heap_p;
-    /* 0x3780 */ size_t audio_heap_size;
+    /* 0x377C */ u64* audio_heap_p;
+    /* 0x3780 */ s32 audio_heap_size;
     /* 0x3784 */ channel* channels;
     /* 0x3788 */ struct group_ groups[AUDIO_GROUP_MAX];
     /* 0x3E68 */ note notes[AUDIO_NOTE_MAX];

@@ -4,6 +4,9 @@
 #include "types.h"
 #include "libultra/libultra.h"
 
+#define REFRESH_RATE_DEVIATION_NTSC 1.00278f
+#define REFRESH_RATE_NTSC 60
+
 typedef enum SET_EXT_POINTER_TYPE {
     EXT_POINTER_TYPE_ADDR,
     EXT_POINTER_TYPE_SIZE,
@@ -11,10 +14,14 @@ typedef enum SET_EXT_POINTER_TYPE {
     EXT_POINTER_TYPE_NUM
 } SET_EXT_POINTER_TYPE;
 
+typedef s32 (*Na_DmaProc)(OSPiHandle* handle, OSIoMesg* mb, s32 direction);
+typedef s32 (*Na_SyncProc)(u8* param0, s32 param1);
+
 extern void Nas_InitAudio(u64* acmdBuf, s32 acmdBufSize);
-extern void Nas_FastCopy(u8* SrcAddr, u8* DestAdd, size_t size, s32 medium);
-extern void Nas_StartMySeq(s32 group, s32 seq, s32 arg);
-extern void Nas_StartSeq_Skip(s32 group, s32 seq, s32 skip_ticks);
+extern void Nas_FastCopy(u8* SrcAddr, u8* DestAdd, size_t Length, s32 medium);
+extern void Nas_FastDiskCopy(u8* SrcAddr, u8* DestAdd, size_t Length, s32 medium);
+extern s32 Nas_StartMySeq(s32 group, s32 seq, s32 arg);
+extern s32 Nas_StartSeq_Skip(s32 group, s32 seq, s32 skip_ticks);
 
 extern s32 Nas_LoadVoice(s32 progId, s32 instId, s32 percId);
 
@@ -42,6 +49,16 @@ extern s32 VoiceLoad(s32 bank_id, u32 inst_id, s8* done_p);
 extern s32 SeqLoad(s32 seq_id, u8* ram_addr, s8* done_p);
 extern void MK_load(s32 type, s32 id, u8* done_p);
 
+extern void LpsInit(void);
+extern void LpsDma(s32 reset_status);
+
+extern s32 Nas_CheckBgWave(s32 reset_status);
+extern void Nas_BgCopyMain(s32 reset_status);
+
 extern BOOL AUDIO_SYSTEM_READY;
+extern Na_DmaProc NA_DMA_PROC;
+extern OSMesgQueue MK_QUEUE;
+extern OSMesg MK_QBUF[];
+extern u8* MK_RMES[];
 
 #endif
