@@ -1700,7 +1700,7 @@ void Sou_DVD_Error(char*, u8*) {
 }
 
 void Na_InitAudio(void (*fatal_callback)(), u8* load_addr, size_t load_size, u8* bootsound, size_t bootsound_size,
-                  u8 cut_flag) {
+                  BOOL cut_flag) {
     u32 v = 0x810000;
     fatalErrorCallback = fatal_callback;
     u32 unused = SetPreCopy_NeosRom(load_addr, load_size, cut_flag);
