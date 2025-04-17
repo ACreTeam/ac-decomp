@@ -15,7 +15,7 @@ extern s16 Na_MelodyGetSubTrackNum(s16 inst);
 extern void Na_FurnitureInst(u32 id, u8 inst, u8* melody, u16 angle, f32 dist);
 extern void Na_MelodyVoice(s16 voice);
 
-extern u32 na_melody_id_hist[];
+extern u32 na_melody_id_hist[2];
 
 #ifdef __cplusplus
 }

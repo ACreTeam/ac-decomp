@@ -25,7 +25,7 @@
 #define AUDIOPROC_MESSAGE_NEOS_SYNC ((OSMessage)2)
 #define AUDIOPROC_MESSAGE_3 ((OSMessage)3)
 
-OSThread jac_audioThread[3];
+OSThread jac_audioThread;
 OSThread jac_neosThread;
 OSThread jac_dvdThread;
 
@@ -190,8 +190,8 @@ extern void StartAudioThread(void* pHeap, s32 heapSize, u32 aramSize, u32 flags)
     if ((flags & AUDIO_THREAD_FLAG_AUDIO)) {
         // point to top of audioStack
         u8* stack_p = audioStack;
-        OSCreateThread(&jac_audioThread[0], &audioproc, NULL, &stack_p[AUDIO_STACK_SIZE], AUDIO_STACK_SIZE, pri, 0);
-        OSResumeThread(&jac_audioThread[0]);
+        OSCreateThread(&jac_audioThread, &audioproc, NULL, &stack_p[AUDIO_STACK_SIZE], AUDIO_STACK_SIZE, pri, 0);
+        OSResumeThread(&jac_audioThread);
     }
 
     if ((flags & AUDIO_THREAD_FLAG_DVD)) {

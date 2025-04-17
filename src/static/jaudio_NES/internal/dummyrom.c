@@ -5,6 +5,7 @@
 #include "jaudio_NES/os.h"
 #include "jaudio_NES/memory.h"
 
+ALHeap aram_hp;
 u8* JAC_ARAM_DMA_BUFFER_TOP = nullptr;
 static u32 AUDIO_ARAM_TOP = 0;
 static u32 CARD_SECURITY_BUFFER = 0;
@@ -30,7 +31,7 @@ extern u32 GetNeosRom_PreLoaded(void) {
     return init_load_size;
 }
 
-extern void SetPreCopy_NeosRom(u8* load_addr, u32 load_size, BOOL cut_flag) {
+extern u32 SetPreCopy_NeosRom(u8* load_addr, u32 load_size, BOOL cut_flag) {
     init_load_size = load_size;
     init_load_addr = load_addr;
     init_cut_flag = cut_flag;

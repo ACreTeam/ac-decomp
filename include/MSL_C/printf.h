@@ -3,6 +3,7 @@
 
 #include "types.h"
 // #include "va_args.h"
+#include "libc/stdarg.h"
 
 #ifdef __cplusplus
 extern "C" {

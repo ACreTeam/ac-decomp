@@ -65,7 +65,7 @@ extern void sAdo_PlyWalkSeRoom(u8 walk, const xyz_t* pos);
 extern void sAdo_NpcWalkSe(u16 se_no, const xyz_t* pos);
 extern void sAdo_NpcWalkSeRoom(u8 se_no, const xyz_t* pos);
 
-extern void sAdo_PlayerStatusLevel(f32 speed, int p);
+extern void sAdo_PlayerStatusLevel(u8 dash, f32 speed);
 
 /* Not sure about the last param name */
 extern void sAdo_VoiceSe(u8 num, u8 num2, u8 num3, s16 character_idx, u8 scale, u8 mode);
@@ -103,7 +103,7 @@ extern s8 sAdo_InstCountGet();
 extern void sAdo_RhythmPos(u32 id, u8 haniwa_id, const xyz_t* pos);
 
 extern void sAdo_SpecChange(int spec);
-extern void sAdo_MDPlayerPos(const xyz_t* pos, u16 s1, u16 s2, int p);
+extern void sAdo_MDPlayerPos(const xyz_t* pos, u16 s1, u16 s2, u32 p);
 
 extern void sAdo_BGMVolume(f32 f, u16 volume);
 extern void sAdo_BgmCrossfadeStart(u8 b);
@@ -141,7 +141,7 @@ extern u16 sAdo_Get_WalkLabel(int type);
 extern u16 sAdo_Get_KokeruLabel(int type);
 
 extern void sAdo_SceneMode(u8 mode);
-extern u8 sAdo_RoomIncectPos(u32 f, u16 u, const xyz_t* pos);
+extern u8 sAdo_RoomIncectPos(u32 f, u8 u, const xyz_t* pos);
 
 extern void sAdo_FurnitureInstPos(u32 id, const xyz_t* pos);
 extern void sAdo_Set_ongenpos_refuse_fg(int state);

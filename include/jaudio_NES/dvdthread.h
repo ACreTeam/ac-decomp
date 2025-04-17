@@ -20,7 +20,7 @@ extern s32 DVDT_DRAMtoARAM_Main(void* arg);
 extern s32 DVDT_ARAMtoDRAM(u32 owner, u32 dst, u32 src, u32 length, u32* status, Jac_DVDCallback callback);
 extern s32 DVDT_DRAMtoARAM(u32 owner, u32 dst, u32 src, u32 length, u32* status, Jac_DVDCallback callback);
 extern s32 DVDT_CheckFile(char* file);
-extern void DVDT_CheckPass(u32 owner, u32* status, Jac_DVDCallback callback);
+extern s32 DVDT_CheckPass(u32 owner, u32* status, Jac_DVDCallback callback);
 extern s32 Jac_CheckFile(char* file);
 extern void Jac_RegisterDVDErrorCallback(ErrorCallback callback);
 extern s32 Jac_RegisterFastOpen(char* file);

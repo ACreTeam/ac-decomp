@@ -9,12 +9,12 @@
 #define DUMMYROM_ARAM_TO_DRAM 1
 
 extern u8* JAC_ARAM_DMA_BUFFER_TOP;
-ALHeap aram_hp; /* placed in common bss */
+extern ALHeap aram_hp; /* placed in common bss */
 
 extern u32 GetNeos_FileTop(void);
 extern u32 GetNeosRomTop(void);
 extern u32 GetNeosRom_PreLoaded(void);
-extern void SetPreCopy_NeosRom(u8* load_addr, u32 load_size, BOOL cut_flag);
+extern u32 SetPreCopy_NeosRom(u8* load_addr, u32 load_size, BOOL cut_flag);
 extern BOOL ARAMStartDMAmesg(u32 dir, u32 dramAddr, u32 aramAddr, u32 size, s32 unused, OSMesgQueue* mq);
 extern void Jac_SetAudioARAMSize(u32 size);
 extern void ARAllocFull(u32* outSize);

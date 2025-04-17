@@ -7,13 +7,13 @@ typedef enum player_status_level_s {
 
 static void Player_actor_sound_SetStatus(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
-    int status;
+    int main_index = player->now_main_index;
+    u8 status;
     f32 speed;
 
-    status = player->now_main_index;
     speed = player->keyframe0.frame_control.speed / 0.59999996f;
 
-    switch (status) {
+    switch (main_index) {
         case mPlayer_INDEX_READY_WALK_NET:
         case mPlayer_INDEX_DEMO_WALK:
         case mPlayer_INDEX_WALK:
@@ -34,7 +34,7 @@ static void Player_actor_sound_SetStatus(ACTOR* actor) {
     } else if (speed < 0.0f) {
         speed = 0.0f;
     }
-    sAdo_PlayerStatusLevel(speed, status);
+    sAdo_PlayerStatusLevel(status, speed);
 }
 
 static void Player_actor_set_sound_common1(xyz_t* pos, u16 id) {

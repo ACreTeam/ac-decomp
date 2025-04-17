@@ -702,7 +702,7 @@ config.libs = [
             Object(Matching, "jaudio_NES/game/audioheaders.c"),
             Object(Matching, "jaudio_NES/game/dummyprobe.c"),
             Object(Matching, "jaudio_NES/game/emusound.c", extra_cflags=["-O4,s", "-fp_contract on", "-func_align 32", "-vector on"]),
-            Object(NonMatching, "jaudio_NES/game/game64.c"),
+            Object(Matching, "jaudio_NES/game/game64.c"),
             Object(Matching, "jaudio_NES/game/kappa.c"),
             Object(Matching, "jaudio_NES/game/melody.c"),
             Object(Matching, "jaudio_NES/game/radio.c"),

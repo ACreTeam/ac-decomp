@@ -393,7 +393,7 @@ extern s32 DVDT_CheckFile(char* file) {
     return len;
 }
 
-extern void DVDT_CheckPass(u32 owner, u32* status, Jac_DVDCallback callback) {
+extern s32 DVDT_CheckPass(u32 owner, u32* status, Jac_DVDCallback callback) {
     DVDCall call;
     void* cb = (void*)&call;
 
@@ -401,7 +401,7 @@ extern void DVDT_CheckPass(u32 owner, u32* status, Jac_DVDCallback callback) {
     call.callbackStatus = status;
     call.callback = callback;
 
-    DVDT_AddTask((TaskCallback)__DVDT_CheckBack, cb, 0x58);
+    return DVDT_AddTask((TaskCallback)__DVDT_CheckBack, cb, 0x58);
 }
 
 extern s32 Jac_CheckFile(char* file) {
