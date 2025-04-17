@@ -390,27 +390,106 @@ f32 OCTAVETABLE[] = {
 };
 
 u16 BGM_MUTE_TABLE_FINE[] = { 
-    0x01e0, 0x0d80, 0x3800, 0x0500, 0x00e0, 0x01c0, 0x05e0, 0x3dc0,
-    0x0d80, 0x0d80, 0x1800, 0x1d00, 0x1d80, 0x1d80, 0x01f0, 0x00f8,
-    0x0d80, 0x7c00, 0xf200, 0x1d00, 0x1d00, 0x05e0, 0x0d80, 0x0dfc 
+    // clang-format off
+    // bitmask for each subtrack to enable, 0 = disabled, 1 = enabled
+    0b0000000111100000, // 0x01e0, hour 0
+    0b0000110110000000, // 0x0d80, hour 1
+    0b0011100000000000, // 0x3800, hour 2
+    0b0000010100000000, // 0x0500, hour 3
+    0b0000000011100000, // 0x00e0, hour 4
+    0b0000000111000000, // 0x01c0, hour 5
+    0b0000010111100000, // 0x05e0, hour 6
+    0b0011110111000000, // 0x3dc0, hour 7
+    0b0000110110000000, // 0x0d80, hour 8
+    0b0000110110000000, // 0x0d80, hour 9
+    0b0001100000000000, // 0x1800, hour 10
+    0b0001110100000000, // 0x1d00, hour 11
+    0b0001110110000000, // 0x1d80, hour 12
+    0b0001110110000000, // 0x1d80, hour 13
+    0b0000000111110000, // 0x01f0, hour 14
+    0b0000000011111000, // 0x00f8, hour 15
+    0b0000110110000000, // 0x0d80, hour 16
+    0b0111110000000000, // 0x7c00, hour 17
+    0b1111001000000000, // 0xf200, hour 18
+    0b0001110100000000, // 0x1d00, hour 19
+    0b0001110100000000, // 0x1d00, hour 20
+    0b0000010111100000, // 0x05e0, hour 21
+    0b0000110110000000, // 0x0d80, hour 22
+    0b0000110111111100, // 0x0dfc, hour 23
+    // clang-format on
 };
 
 u16 BGM_MUTE_TABLE_SNOW[] = { 
-    0x0302, 0x0c23, 0x216e, 0x040c, 0x0006, 0x0006, 0x0406, 0x381b,
-    0x0803, 0x0c64, 0x1020, 0x1083, 0x1c02, 0x104f, 0x070e, 0x06c0,
-    0x081d, 0x001b, 0x2023, 0x1017, 0x1803, 0x0006, 0x0c16, 0x0d82 
+    // clang-format off
+    // bitmask for each subtrack to enable, 0 = disabled, 1 = enabled
+    0b0000001100000010, // 0x0302, hour 0
+    0b0000110000100011, // 0x0c23, hour 1
+    0b0010000101101110, // 0x216e, hour 2
+    0b0000010000001100, // 0x040c, hour 3
+    0b0000000000000110, // 0x0006, hour 4
+    0b0000000000000110, // 0x0006, hour 5
+    0b0000010000000110, // 0x0406, hour 6
+    0b0011100000011011, // 0x381b, hour 7
+    0b0000100000000011, // 0x0803, hour 8
+    0b0000110001100100, // 0x0c64, hour 9
+    0b0001000000100000, // 0x1020, hour 10
+    0b0001000010000011, // 0x1083, hour 11
+    0b0001110000000010, // 0x1c02, hour 12
+    0b0001000001001111, // 0x104f, hour 13
+    0b0000011100001110, // 0x070e, hour 14
+    0b0000011011000000, // 0x06c0, hour 15
+    0b0000100000011101, // 0x081d, hour 16
+    0b0000000000011011, // 0x001b, hour 17
+    0b0010000000100011, // 0x2023, hour 18
+    0b0001000000010111, // 0x1017, hour 19
+    0b0001100000000011, // 0x1803, hour 20
+    0b0000000000000110, // 0x0006, hour 21
+    0b0000110000010110, // 0x0c16, hour 22
+    0b0000110110000010, // 0x0d82, hour 23
+    // clang-format on
 };
 
 
-u16 BGM_MUTE_TABLE_SAKURA[] = { 
-    0x00e2, 0x00a7, 0x116e, 0x001c, 0x0006, 0x0106, 0x018e, 0x01db,
-    0x0107, 0x00ff, 0x0024, 0x0087, 0x0007, 0x0c4f, 0x00be, 0x0418,
-    0x045f, 0x001b, 0xca07, 0x0517, 0x0107, 0x0106, 0x019f, 0x007b 
+u16 BGM_MUTE_TABLE_SAKURA[] = {
+    // clang-format off
+    // bitmask for each subtrack to enable, 0 = disabled, 1 = enabled
+    0b0000000011100010, // 0x00e2, hour 0
+    0b0000000010100111, // 0x00a7, hour 1
+    0b0001000101101110, // 0x116e, hour 2
+    0b0000000000011100, // 0x001c, hour 3
+    0b0000000000000110, // 0x0006, hour 4
+    0b0000000100000110, // 0x0106, hour 5
+    0b0000000110001110, // 0x018e, hour 6
+    0b0000000111011011, // 0x01db, hour 7
+    0b0000000100000111, // 0x0107, hour 8
+    0b0000000011111111, // 0x00ff, hour 9
+    0b0000000000100100, // 0x0024, hour 10
+    0b0000000010000111, // 0x0087, hour 11
+    0b0000000000000111, // 0x0007, hour 12
+    0b0000110001001111, // 0x0c4f, hour 13
+    0b0000000010111110, // 0x00be, hour 14
+    0b0000010000011000, // 0x0418, hour 15
+    0b0000010001011111, // 0x045f, hour 16
+    0b0000000000011011, // 0x001b, hour 17
+    0b1100101000000111, // 0xca07, hour 18
+    0b0000010100010111, // 0x0517, hour 19
+    0b0000000100000111, // 0x0107, hour 20
+    0b0000000100000110, // 0x0106, hour 21
+    0b0000000110011111, // 0x019f, hour 22
+    0b0000000001111011, // 0x007b, hour 23
+    // clang-format on
 };
 
-u16 BGM_MUTE_TABLE_MUSEUM[] = { 
-    0x0000, 0xffe8, 0x9ff6, 0xff1a, 
-    0xfdff, 0x62fc
+u16 BGM_MUTE_TABLE_MUSEUM[] = {
+    // clang-format off
+    // bitmask for each subtrack to enable, 0 = disabled, 1 = enabled
+    0b0000000000000000, // 0x0000 (not in museum)
+    0b1111111111101000, // 0xFFE8 (in museum lobby)
+    0b1001111111110110, // 0x9ff6 (in museum painting room)
+    0b1111111100011010, // 0xff1a (in museum fish room)
+    0b1111110111111111, // 0xfdff (in museum insect room)
+    0b0110001011111100, // 0x62fc (in museum fossil room)
+    // clang-format on
 };
 #include "../src/static/jaudio_NES/game/game64_dummy.c_inc"
 // clang-format on
@@ -566,19 +645,19 @@ u8 Sou_BgmTenkiConv(u8 v) {
     if (v >= 1 && v <= 24) {
         switch (sou_tenki) {
             case 0: {
-                Nap_SetU16(NA_MAKE_COMMAND(0x90, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_FINE[v - 1]);
-                Nap_SetS8(NA_MAKE_COMMAND(8, sou_now_bgm_handle, 0xff, 0), 1);
+                Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_FINE[v - 1]);
+                Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 0xff, 0), 1);
             } break;
             case 1: {
                 v = 0x45;
             } break;
             case 2: {
-                Nap_SetU16(NA_MAKE_COMMAND(0x90, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_SNOW[v - 1]);
-                Nap_SetS8(NA_MAKE_COMMAND(8, sou_now_bgm_handle, 0xff, 0), 1);
+                Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_SNOW[v - 1]);
+                Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 0xff, 0), 1);
             } break;
             case 3: {
-                Nap_SetU16(NA_MAKE_COMMAND(0x90, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_SAKURA[v - 1]);
-                Nap_SetS8(NA_MAKE_COMMAND(8, sou_now_bgm_handle, 0xff, 0), 1);
+                Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_SAKURA[v - 1]);
+                Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 0xff, 0), 1);
             } break;
             case 4:
             default:
@@ -593,7 +672,7 @@ void Sou_GroupControl(u8 a, u8 b, f32 c) {
     if (c > 1.f) {
         c = 1.f;
     }
-    Nap_SetF32(NA_MAKE_COMMAND(0x41, a, 0, 0), c);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, a, 0, 0), c);
     if (a == 1) {
         sou_bgm1_vol_now = c;
     }
@@ -601,7 +680,7 @@ void Sou_GroupControl(u8 a, u8 b, f32 c) {
         sou_bgm2_vol_now = c;
     }
     for (i = 0; i < 16; i++) {
-        Nap_SetS8(NA_MAKE_COMMAND(0x3, a, i, 0), b);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, a, i, 0), b);
     }
 }
 
@@ -610,7 +689,7 @@ void Sou_GroupControl_MD(u8 a, u8 b, f32 c) {
     if (c > 2.25f) {
         c = 2.25f;
     }
-    Nap_SetF32(NA_MAKE_COMMAND(0x41, a, 0, 0), c);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, a, 0, 0), c);
     if (a == 1) {
         sou_bgm1_vol_now = c;
     }
@@ -618,7 +697,7 @@ void Sou_GroupControl_MD(u8 a, u8 b, f32 c) {
         sou_bgm2_vol_now = c;
     }
     for (i = 0; i < 16; i++) {
-        Nap_SetS8(NA_MAKE_COMMAND(0x3, a, i, 0), b);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, a, i, 0), b);
     }
 }
 
@@ -709,7 +788,7 @@ f32 distance2vol4MD(f32 v) {
 }
 
 void Sou_VoiceStart(u8 a, u8 b) {
-    Nap_SetS8(NA_MAKE_COMMAND(6, 4, a, 0), b);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 4, a, 0), b);
 }
 
 void Sou_TrgStart(u16 r29, f32 f29, f32 f30, f32 f31, u8 r17, u8 r28, f32 stack_8) {
@@ -767,11 +846,11 @@ void Sou_TrgStart(u16 r29, f32 f29, f32 f30, f32 f31, u8 r17, u8 r28, f32 stack_
     r20 = r24 & 8;
 
     if (r21) {
-        Nap_SetF32(NA_MAKE_COMMAND(4, 0, 0xe, 0), f31);
-        Nap_SetS8(NA_MAKE_COMMAND(3, 0, 0xe, 0), r17);
-        Nap_SetS8(NA_MAKE_COMMAND(5, 0, 0xe, 0), r28);
-        Nap_SetS8(NA_MAKE_COMMAND(6, 0, 0xe, 0), r26);
-        Nap_SetS8(NA_MAKE_COMMAND(6, 0, 0xe, 1), r23);
+        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FREQ_SCALE, 0, 0xe, 0), f31);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 0, 0xe, 0), r17);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 0, 0xe, 0), r28);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, 0xe, 0), r26);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, 0xe, 1), r23);
         return;
     }
 
@@ -816,8 +895,8 @@ void Sou_TrgStart(u16 r29, f32 f29, f32 f30, f32 f31, u8 r17, u8 r28, f32 stack_
             }
             sou_trg_se[r31]._19 = r28;
         }
-        Nap_SetS8(NA_MAKE_COMMAND(6, 0, r31, 0), r26);
-        Nap_SetS8(NA_MAKE_COMMAND(6, 0, r31, 1), r23);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 0), r26);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 1), r23);
         return;
     }
     r27 = 0;
@@ -835,8 +914,8 @@ void Sou_TrgStart(u16 r29, f32 f29, f32 f30, f32 f31, u8 r17, u8 r28, f32 stack_
         sou_trg_se[r31]._0C = f30;
         sou_trg_se[r31]._14 = f31;
         sou_trg_se[r31]._18 = r17;
-        Nap_SetS8(NA_MAKE_COMMAND(6, 0, r31, 0), r26);
-        Nap_SetS8(NA_MAKE_COMMAND(6, 0, r31, 1), r23);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 0), r26);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 1), r23);
     }
 }
 
@@ -959,7 +1038,7 @@ void Sou_LevStop(u8 a, u8 b) {
         sou_lev_se[a]._05 = sou_lev_se[a]._06;
         sou_lev_se[a]._06 = sou_lev_se[a]._07;
         sou_lev_se[a]._07 = 0;
-        Nap_SetS8(NA_MAKE_COMMAND(6, 0, a + 8, 5), -1);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, a + 8, 5), -1);
         if (sou_lev_se[a]._00) {
             v = sou_lev_se[a]._00;
             sou_lev_se[a]._00 = 0;
@@ -1032,26 +1111,26 @@ void Sou_TrgMake(u8 a) {
     if (sou_se_fadeout_flag) {
         v *= sou_se_fade[a]._8;
     }
-    Nap_SetF32(NA_MAKE_COMMAND(1, 0, a, 0), v);
-    Nap_SetF32(NA_MAKE_COMMAND(4, 0, a, 0), sou_trg_se[a]._14);
-    Nap_SetS8(NA_MAKE_COMMAND(3, 0, a, 0), sou_trg_se[a]._18);
-    Nap_SetS8(NA_MAKE_COMMAND(5, 0, a, 0), sou_trg_se[a]._19);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 0, a, 0), v);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FREQ_SCALE, 0, a, 0), sou_trg_se[a]._14);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 0, a, 0), sou_trg_se[a]._18);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 0, a, 0), sou_trg_se[a]._19);
 }
 
 void Sou_VoiceMake(u8 a) {
     sou_voice_se[a]._10 = sou_voice_se[a]._08 * sou_voice_se[a]._0C;
     sou_voice_se[a]._1C = sou_voice_se[a]._14 * sou_voice_se[a]._18;
-    Nap_SetF32(NA_MAKE_COMMAND(1, 4, a, 0), sou_voice_se[a]._10);
-    Nap_SetF32(NA_MAKE_COMMAND(4, 4, a, 0), sou_voice_se[a]._1C);
-    Nap_SetS8(NA_MAKE_COMMAND(3, 4, a, 0), sou_voice_se[a]._20);
-    Nap_SetS8(NA_MAKE_COMMAND(5, 4, a, 0), sou_voice_se[a]._21);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 4, a, 0), sou_voice_se[a]._10);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FREQ_SCALE, 4, a, 0), sou_voice_se[a]._1C);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 4, a, 0), sou_voice_se[a]._20);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 4, a, 0), sou_voice_se[a]._21);
 }
 
 void Sou_LevMake(u8 a) {
     u8 unused = 0;
     f32 v = 0.f;
     if (sou_pause_flag == 1) {
-        Nap_SetF32(NA_MAKE_COMMAND(1, 0, a + 8, 0), 0.5f * sou_lev_se[a]._08);
+        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 0, a + 8, 0), 0.5f * sou_lev_se[a]._08);
         return;
     }
     v = sou_lev_se[a]._08;
@@ -1061,8 +1140,8 @@ void Sou_LevMake(u8 a) {
     if (sou_lev_se[a]._00 == 77) {
         v *= sou_kazaguruma_speed;
     }
-    Nap_SetF32(NA_MAKE_COMMAND(1, 0, a + 8, 0), v);
-    Nap_SetS8(NA_MAKE_COMMAND(3, 0, a + 8, 0), sou_lev_se[a]._10);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 0, a + 8, 0), v);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 0, a + 8, 0), sou_lev_se[a]._10);
     if (sou_lev_se[a]._13 && sou_lev_se[a]._12) {
         if (sou_scene_mode == 0xf) {
             sou_lev_se[a]._11 = 0;
@@ -1072,14 +1151,14 @@ void Sou_LevMake(u8 a) {
     } else {
         sou_lev_se[a]._11 = 0;
     }
-    Nap_SetS8(NA_MAKE_COMMAND(5, 0, a + 8, 0), sou_lev_se[a]._11);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 0, a + 8, 0), sou_lev_se[a]._11);
 }
 
 void Sou_ChimeMake() {
     if (sou_se_fade[7]._0 || sou_se_fade[7]._4) {
         sou_chime_volume *= sou_se_fade[7]._8;
     }
-    Nap_SetF32(NA_MAKE_COMMAND(1, 0, 7, 0), sou_chime_volume);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 0, 7, 0), sou_chime_volume);
 }
 
 void Sou_LevSet(u8 a) {
@@ -1136,7 +1215,7 @@ void Sou_LevSet(u8 a) {
     v2 = v1 & 0x80;
     sou_lev_se[a]._12 = v2;
     v1 &= 0x7f;
-    Nap_SetS8(NA_MAKE_COMMAND(6, 0, a + 8, 0), v1);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, a + 8, 0), v1);
     sou_ls_stack[a]._0 = sou_ls_stack[a]._1;
     sou_ls_stack[a]._1 = sou_ls_stack[a]._2;
     sou_ls_stack[a]._2 = sou_ls_stack[a]._3;
@@ -1347,24 +1426,24 @@ void Sou_Ongen_Lev_Prog(u8 param_1) {
 void Sou_BgmStart(u8 a, u16 b) {
     sou_now_bgm_num = a;
     if (a == 0) {
-        Nap_SetS32(NA_MAKE_COMMAND(0x83, 1, 0, 0), 0);
-        Nap_SetS32(NA_MAKE_COMMAND(0x83, 3, 0, 0), 0);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 1, 0, 0), 0);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 3, 0, 0), 0);
         return;
     }
     u16 oldBGMHandle = sou_now_bgm_handle;
     sou_now_bgm_handle = (sou_now_bgm_handle == 1) ? 3 : 1;
     if (a >= 0x70 && a <= 0x79) {
-        Nap_SetS8(NA_MAKE_COMMAND(0x46, oldBGMHandle, 0, 0), sou_now_bgm_handle);
-        Nap_SetS8(NA_MAKE_COMMAND(0x46, oldBGMHandle, 0, 1), SEQ_TABLE[a]);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_SET_PORT, oldBGMHandle, 0, 0), sou_now_bgm_handle);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_SET_PORT, oldBGMHandle, 0, 1), SEQ_TABLE[a]);
         Na_BgmMuteClear();
     } else if (a >= 0x53 && a <= 0x57) {
         int bb = (u8)(a - 0x53);
         Na_SysTrgStart(bb + 0x16f);
     } else {
-        Nap_SetS32(NA_MAKE_COMMAND(0x83, oldBGMHandle, 0, 0), b);
-        Nap_SetS32(NA_MAKE_COMMAND(0x83, sou_now_bgm_handle, 0, 0), 0);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, oldBGMHandle, 0, 0), b);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, sou_now_bgm_handle, 0, 0), 0);
         a = Sou_BgmTenkiConv(a);
-        Nap_SetS32(NA_MAKE_COMMAND(0x82, sou_now_bgm_handle, SEQ_TABLE[a], 0), b);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, sou_now_bgm_handle, SEQ_TABLE[a], 0), b);
         Na_StaffRollStart(SEQ_TABLE[a]);
         Na_SetKappaSeqHandle(sou_now_bgm_handle);
     }
@@ -1402,7 +1481,7 @@ void Sou_BGMVolMove() {
                     v = 0.f;
                 }
                 sou_bgm1_vol_now = v;
-                Nap_SetF32(NA_MAKE_COMMAND(0x41, 1, 0, 0), v);
+                Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 1, 0, 0), v);
             } break;
             case 3: {
                 if (sou_bgm_vol_move_counter == 0) {
@@ -1431,7 +1510,7 @@ void Sou_BGMVolMove() {
                     v = 0.f;
                 }
                 sou_bgm2_vol_now = v;
-                Nap_SetF32(NA_MAKE_COMMAND(0x41, 3, 0, 0), v);
+                Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 3, 0, 0), v);
             } break;
         }
     }
@@ -1450,9 +1529,9 @@ void Sou_Na_BgmStop(u16 a) {
     sou_now_bgm_fadeout = 1;
     a &= 0xfff;
     if (sou_now_bgm_handle == 1) {
-        Nap_SetS32(NA_MAKE_COMMAND(0x83, 1, 0, 0), a);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 1, 0, 0), a);
     } else {
-        Nap_SetS32(NA_MAKE_COMMAND(0x83, 3, 0, 0), a);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 3, 0, 0), a);
     }
 }
 
@@ -1465,14 +1544,14 @@ void Sou_SpecialRoutine06() {
         case 2: {
             if (sou_now_bgm_handle == 1) {
                 sou_now_bgm_handle = 3;
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 1, 0, 0), 700);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 1, 0, 0), 700);
                 v = Sou_BgmTenkiConv(sou_bgm_call_buffer_u8);
-                Nap_SetS32(NA_MAKE_COMMAND(0x82, 3, SEQ_TABLE[v], 0), 700);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 3, SEQ_TABLE[v], 0), 700);
             } else {
                 sou_now_bgm_handle = 1;
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 3, 0, 0), 700);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 3, 0, 0), 700);
                 v = Sou_BgmTenkiConv(sou_bgm_call_buffer_u8);
-                Nap_SetS32(NA_MAKE_COMMAND(0x82, 1, SEQ_TABLE[v], 0), 700);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 1, SEQ_TABLE[v], 0), 700);
             }
         } break;
         case 3: {
@@ -1681,13 +1760,13 @@ void Sou_InitAudio() {
     for (i = 0; i < ARRAY_COUNT(sou_se_fade); i++) {
         sou_se_fade[i] = sou_se_fade_init;
     }
-    Nap_SetS32(NA_MAKE_COMMAND(0x82, 0, 0xf2, 0), 0);
-    Nap_SetF32(NA_MAKE_COMMAND(0x41, 0, 0, 0), 1.15f);
-    Nap_SetF32(NA_MAKE_COMMAND(0x41, 1, 0, 0), 1.f);
+    Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 0, 0xf2, 0), 0);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 0, 0, 0), 1.15f);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 1, 0, 0), 1.f);
     sou_bgm1_vol_now = 1.f;
-    Nap_SetF32(NA_MAKE_COMMAND(0x41, 3, 0, 0), 1.f);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 3, 0, 0), 1.f);
     sou_bgm2_vol_now = 1.f;
-    Nap_SetF32(NA_MAKE_COMMAND(0x41, 2, 0, 0), 1.f);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 2, 0, 0), 1.f);
     Na_Pause(0);
     Na_BGMVolume(1.f, 2);
     Na_RhythmInit();
@@ -1796,12 +1875,12 @@ void Na_SoftReset() {
         sou_lev_se[i]._07 = 0;
     }
     Na_Pause(0);
-    Nap_SetS32(NA_MAKE_COMMAND(0x83, 0, 0, 0), 180);
+    Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 0, 0, 0), 180);
     Na_BgmStop(180);
-    Nap_SetS32(NA_MAKE_COMMAND(0x83, 2, 0, 0), 180);
-    Nap_SetS32(NA_MAKE_COMMAND(0x83, 4, 0, 0), 180);
+    Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 2, 0, 0), 180);
+    Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 4, 0, 0), 180);
     Na_BGMVolume(1.f, 2);
-    Nap_SetS32(NA_MAKE_COMMAND(0x82, 0, 0xf2, 0), 0);
+    Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 0, 0xf2, 0), 0);
     int unused = Nap_SendStart();
 }
 
@@ -3168,13 +3247,13 @@ extern void Na_SetOutMode(u8 a) {
     sou_out_mode = a;
     switch (a) {
         case 0: {
-            Nap_SetS32(NA_MAKE_COMMAND(0xf0, 0, 0, 0), 0);
+            Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_SET_SOUND_MODE, 0, 0, 0), 0);
         } break;
         case 2: {
-            Nap_SetS32(NA_MAKE_COMMAND(0xf0, 0, 0, 0), 1);
+            Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_SET_SOUND_MODE, 0, 0, 0), 1);
         } break;
         case 1: {
-            Nap_SetS32(NA_MAKE_COMMAND(0xf0, 0, 0, 0), 3);
+            Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_SET_SOUND_MODE, 0, 0, 0), 3);
         } break;
     }
 }
@@ -3262,7 +3341,7 @@ extern void Na_Pause(u8 a) {
             switch (sou_scene_mode) {
                 case 2: {
                     sou_chime_volume = 0.45f;
-                    Nap_SetF32(NA_MAKE_COMMAND(0x41, 2, 0, 0), 1.f);
+                    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 2, 0, 0), 1.f);
                 } break;
                 default: {
                     sou_chime_volume = 1.f;
@@ -3272,7 +3351,7 @@ extern void Na_Pause(u8 a) {
         case 1: {
             switch (sou_scene_mode) {
                 case 2: {
-                    Nap_SetF32(NA_MAKE_COMMAND(0x41, 2, 0, 0), 0.f);
+                    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 2, 0, 0), 0.f);
                     sou_chime_volume = 0.35f;
                 } break;
                 default: {
@@ -3295,33 +3374,33 @@ extern void Na_RhythmPos(u32 a, u8 b, u16 c, f32 d) {
         r30 = angle2pan(c, d);
         f30 = distance2vol(d);
         r31 = Na_GetRhythmSubTrack(a);
-        Nap_SetF32(NA_MAKE_COMMAND(1, 2, r31, 0), f30);
-        Nap_SetS8(NA_MAKE_COMMAND(3, 2, r31, 0), r30);
+        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 2, r31, 0), f30);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 2, r31, 0), r30);
     }
 }
 
 extern void Na_SpecChange(int a) {
     if (a != sou_now_spec) {
-        Nap_SetS32(NA_MAKE_COMMAND(0x83, 4, 0, 0), 0);
-        Nap_SetS32(NA_MAKE_COMMAND(0xe3, 0, 0, 0), 0);
-        Nap_SetS32(NA_MAKE_COMMAND(0xe3, 0, 0, 0), 1);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 4, 0, 0), 0);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_CLEAR_STAY_CACHE, 0, 0, 0), 0);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_CLEAR_STAY_CACHE, 0, 0, 0), 1);
         switch (a) {
             case 2:
             case 5:
             case 7:
             case 9: {
                 sou_now_voice_seq = 1;
-                Nap_SetS32(NA_MAKE_COMMAND(0x82, 4, 0xf3, 0), 0);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 4, 0xf3, 0), 0);
             } break;
             case 3: {
                 sou_now_voice_seq = 2;
-                Nap_SetS32(NA_MAKE_COMMAND(0x82, 4, 0xf4, 0), 0);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 4, 0xf4, 0), 0);
             } break;
             case 4:
             case 6:
             case 8: {
                 sou_now_voice_seq = 3;
-                Nap_SetS32(NA_MAKE_COMMAND(0x82, 4, 0xf5, 0), 0);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 4, 0xf5, 0), 0);
             } break;
         }
         sou_now_spec = a;
@@ -3384,8 +3463,8 @@ extern void Na_BGMVolume(f32 a, u16 b) {
         b = 0x7fff;
     }
     if (b == 0) {
-        Nap_SetF32(NA_MAKE_COMMAND(0x41, 1, 0, 0), a);
-        Nap_SetF32(NA_MAKE_COMMAND(0x41, 3, 0, 0), a);
+        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 1, 0, 0), a);
+        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 3, 0, 0), a);
         sou_bgm1_vol_now = a;
         sou_bgm2_vol_now = a;
         sou_bgm_vol_move_time = 0;
@@ -3490,13 +3569,13 @@ extern void Na_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 distan
 extern void Na_TTKK_ARM(u8 a) {
     if (sou_now_bgm_num == 0x2b) {
         if (a == 0) {
-            Nap_SetS8(NA_MAKE_COMMAND(0x8, sou_now_bgm_handle, 0, 0), 0);
-            Nap_SetS8(NA_MAKE_COMMAND(0x8, sou_now_bgm_handle, 1, 0), 0);
-            Nap_SetS8(NA_MAKE_COMMAND(0x8, sou_now_bgm_handle, 2, 0), 0);
+            Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 0, 0), 0);
+            Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 1, 0), 0);
+            Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 2, 0), 0);
         } else {
-            Nap_SetS8(NA_MAKE_COMMAND(0x8, sou_now_bgm_handle, 0, 0), 1);
-            Nap_SetS8(NA_MAKE_COMMAND(0x8, sou_now_bgm_handle, 1, 0), 1);
-            Nap_SetS8(NA_MAKE_COMMAND(0x8, sou_now_bgm_handle, 2, 0), 1);
+            Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 0, 0), 1);
+            Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 1, 0), 1);
+            Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 2, 0), 1);
         }
     }
 }
@@ -3504,11 +3583,11 @@ extern void Na_TTKK_ARM(u8 a) {
 extern void Na_BgmMuteClear() {
     u8 unused = 0;
     if (sou_now_bgm_handle == 1) {
-        Nap_SetU16(NA_MAKE_COMMAND(0x90, 1, 0, 0), -1);
-        Nap_SetS8(NA_MAKE_COMMAND(0x8, 1, 0xff, 0), 0);
+        Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, 1, 0, 0), -1);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, 1, 0xff, 0), 0);
     } else {
-        Nap_SetU16(NA_MAKE_COMMAND(0x90, 3, 0, 0), -1);
-        Nap_SetS8(NA_MAKE_COMMAND(0x8, 3, 0xff, 0), 0);
+        Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, 3, 0, 0), -1);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, 3, 0xff, 0), 0);
     }
 }
 
@@ -3540,11 +3619,11 @@ extern u8 Na_SeFadeoutCheck() {
 }
 
 __declspec (export) extern void Na_BgmTrOn(u8 a) {
-    Nap_SetS8(NA_MAKE_COMMAND(0x8, sou_now_bgm_handle, a, 0), 0);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, a, 0), 0);
 }
 
 __declspec (export) extern void Na_BgmTrOff(u8 a) {
-    Nap_SetS8(NA_MAKE_COMMAND(0x8, sou_now_bgm_handle, a, 0), 1);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, a, 0), 1);
 }
 
 extern void Na_SubGameStart() {
@@ -3572,7 +3651,7 @@ extern void Na_SceneMode(u8 a) {
                     case 3:
                         break;
                     case 0xb: {
-                        Nap_SetS32(NA_MAKE_COMMAND(0x82, 0, 0xf2, 0), 0);
+                        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 0, 0xf2, 0), 0);
                     } break;
                 }
             } break;
@@ -3582,7 +3661,7 @@ extern void Na_SceneMode(u8 a) {
                 na_melody_id_hist[0] = -1;
                 na_melody_id_hist[1] = -1;
                 Na_BGMVolume(1.f, 0);
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 2, 0, 0), 0);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 2, 0, 0), 0);
                 sou_chime_volume = 1.f;
                 sou_chime_status = 1;
                 switch (sou_scene_mode) {
@@ -3601,13 +3680,13 @@ extern void Na_SceneMode(u8 a) {
                     case 0: {
                         Sou_lev_ongen_data_struct_clear();
                         Sou_SeVolumeReset();
-                        Nap_SetS32(NA_MAKE_COMMAND(0x82, 0, 0xf2, 0), 0);
+                        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 0, 0xf2, 0), 0);
                     } break;
                     case 6:
                     case 5: {
                         Sou_lev_ongen_data_struct_clear();
                         Sou_SeVolumeReset();
-                        Nap_SetS32(NA_MAKE_COMMAND(0x82, 0, 0xf2, 0), 0);
+                        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 0, 0xf2, 0), 0);
                         int unused = Nap_SendStart();
                     } break;
                 }
@@ -3625,8 +3704,8 @@ extern void Na_SceneMode(u8 a) {
             case 0xa: {
                 switch (sou_scene_mode) {
                     case 0x11: {
-                        Nap_SetS32(NA_MAKE_COMMAND(0x82, 0, 0xf2, 0), 0);
-                        Nap_SetS32(NA_MAKE_COMMAND(0x82, 2, 0xf6, 0), 0);
+                        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 0, 0xf2, 0), 0);
+                        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 2, 0xf6, 0), 0);
                         Sou_lev_ongen_data_struct_clear();
                         Sou_SeVolumeReset();
                         sou_sub_game_flag = 0;
@@ -3636,30 +3715,30 @@ extern void Na_SceneMode(u8 a) {
                         sou_chime_status = 1;
                         Sou_lev_ongen_data_struct_clear();
                         Sou_SeVolumeReset();
-                        Nap_SetS32(NA_MAKE_COMMAND(0x82, 2, 0xf6, 0), 0);
-                        Nap_SetF32(NA_MAKE_COMMAND(0x41, 2, 0, 0), 1.f);
+                        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 2, 0xf6, 0), 0);
+                        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 2, 0, 0), 1.f);
                     } break;
                 }
             } break;
             case 3: {
                 Sou_lev_ongen_data_struct_clear();
                 Sou_SeVolumeReset();
-                Nap_SetS32(NA_MAKE_COMMAND(0x82, 0, 0xf2, 0), 0);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 0, 0xf2, 0), 0);
                 sou_chime_status = 0;
                 sou_chime_volume = 0.f;
             } break;
             case 4: {
-                Nap_SetS32(NA_MAKE_COMMAND(0x82, 0, 0xf2, 0), 0);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 0, 0xf2, 0), 0);
                 sou_chime_status = 0;
                 sou_chime_volume = 0.f;
             } break;
             case 5: {
                 sou_chime_status = 0;
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 0, 0, 0), 0xb4);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 0, 0, 0), 0xb4);
             } break;
             case 6: {
                 sou_chime_status = 0;
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 0, 0, 0), 0);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 0, 0, 0), 0);
             } break;
             case 7: {
                 sou_chime_status = 0;
@@ -3669,16 +3748,16 @@ extern void Na_SceneMode(u8 a) {
             case 9: {
                 sou_chime_status = 0;
                 sou_chime_volume = 0.f;
-                Nap_SetS32(NA_MAKE_COMMAND(0x82, 0, 0xf2, 0), 0);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, 0, 0xf2, 0), 0);
                 Sou_lev_ongen_data_struct_clear();
                 Sou_SeVolumeReset();
                 Na_BGMVolume(1.f, 0);
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 2, 0, 0), 0);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 2, 0, 0), 0);
             } break;
             case 0xb:
             case 0x12: {
                 sou_chime_status = 0;
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 0, 0, 0), 0x168);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 0, 0, 0), 0x168);
             } break;
             case 0xc: {
                 sou_ongenpos_kill_countdown = 0x46;
@@ -3696,15 +3775,15 @@ extern void Na_SceneMode(u8 a) {
             case 0xe: {
                 sou_ongenpos_kill_countdown = 0x1e;
                 sou_chime_status = 1;
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 2, 0, 0), 0xd8);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 2, 0, 0), 0xd8);
                 Sou_SeFadeout(0x23);
                 Na_BgmStop(0xd8);
             } break;
             case 0x11: {
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 1, 0, 0), 0x168);
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 3, 0, 0), 0x168);
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 0, 0, 0), 0xb4);
-                Nap_SetS32(NA_MAKE_COMMAND(0x83, 2, 0, 0), 0xb4);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 1, 0, 0), 0x168);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 3, 0, 0), 0x168);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 0, 0, 0), 0xb4);
+                Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 2, 0, 0), 0xb4);
             } break;
         }
         sou_scene_mode = a;
@@ -3832,8 +3911,8 @@ extern void Na_FurnitureInstPos(int a, u16 b, f32 c) {
                 r30 = r31 + 0xe;
                 r29 = angle2pan(b, c);
                 f31 = distance2vol(c);
-                Nap_SetF32(NA_MAKE_COMMAND(1, 2, r30, 0), f31);
-                Nap_SetS8(NA_MAKE_COMMAND(3, 2, r30, 0), r29);
+                Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 2, r30, 0), f31);
+                Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 2, r30, 0), r29);
                 return;
             }
         }
@@ -3877,11 +3956,11 @@ extern void Na_BGMFilter(u8 a) {
         r31 = a;
         r30 = SOU_FIR_STATE;
         if (sou_now_bgm_handle == 1) {
-            Nap_SetU16(NA_MAKE_COMMAND(0x90, 1, 0, 0), -1);
-            Nap_SetS32(NA_MAKE_COMMAND(0x13, 1, 0xff, r31), (s32)r30);
+            Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, 1, 0, 0), -1);
+            Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FILTER, 1, 0xff, r31), (s32)r30);
         } else {
-            Nap_SetU16(NA_MAKE_COMMAND(0x90, 3, 0, 0), -1);
-            Nap_SetS32(NA_MAKE_COMMAND(0x13, 3, 0xff, r31), (s32)r30);
+            Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, 3, 0, 0), -1);
+            Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FILTER, 3, 0xff, r31), (s32)r30);
         }
     }
 }
@@ -3916,8 +3995,8 @@ extern u8 Na_CheckNeosBoot() {
 extern void Na_Museum(u8 a) {
     if (sou_museum_type != a) {
         Na_BgmMuteClear();
-        Nap_SetU16(NA_MAKE_COMMAND(0x90, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_MUSEUM[a]);
-        Nap_SetS8(NA_MAKE_COMMAND(8, sou_now_bgm_handle, 0xff, 0), 1);
+        Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_MUSEUM[a]);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 0xff, 0), 1);
         sou_museum_type = a;
     }
 }

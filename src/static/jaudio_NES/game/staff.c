@@ -15,9 +15,9 @@ extern void Na_StaffRollInit(void) {
 }
 
 extern void Na_StaffRollStart(s16 seq_no) {
-    Nap_SetS8(NA_MAKE_COMMAND(0x46, sou_now_bgm_handle, 0, 0), 0);
-    Nap_SetS8(NA_MAKE_COMMAND(0x46, sou_now_bgm_handle, 0, 1), 0);
-    Nap_SetS8(NA_MAKE_COMMAND(0x46, sou_now_bgm_handle, 0, 2), -1);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_SET_PORT, sou_now_bgm_handle, 0, 0), 0);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_SET_PORT, sou_now_bgm_handle, 0, 1), 0);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_SET_PORT, sou_now_bgm_handle, 0, 2), -1);
 
     seq_num = seq_no;
     start_flag = TRUE;
