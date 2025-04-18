@@ -116,10 +116,10 @@ typedef enum SoundOutputMode {
 } SoundOutputMode;
 
 typedef enum SampleCodec {
-    /* 0 */ CODEC_ADPCM,  // 16 2-byte samples (32 bytes) compressed into 4-bit samples (8 bytes) + 1 header byte
-    /* 1 */ CODEC_S8, // 16 2-byte samples (32 bytes) compressed into 8-bit samples (16 bytes)
+    /* 0 */ CODEC_ADPCM, // 16 2-byte samples (32 bytes) compressed into 4-bit samples (8 bytes) + 1 header byte
+    /* 1 */ CODEC_S8,    // 16 2-byte samples (32 bytes) compressed into 8-bit samples (16 bytes)
     /* 2 */ CODEC_S16_INMEMORY,
-    /* 3 */ CODEC_SMALL_ADPCM,  // 16 2-byte samples (32 bytes) compressed into 2-bit samples (4 bytes) + 1 header byte
+    /* 3 */ CODEC_SMALL_ADPCM, // 16 2-byte samples (32 bytes) compressed into 2-bit samples (4 bytes) + 1 header byte
     /* 4 */ CODEC_REVERB,
     /* 5 */ CODEC_S16
 } SampleCodec;
@@ -246,6 +246,46 @@ typedef enum AUDIO_CALLBACKS {
     /* 0xFE */ AUDIO_CALLBACK_DACOUT = 0xFE,
     /* 0xFF */ AUDIO_CALLBACK_SOUND
 } AUDIO_CALLBACKS;
+
+#define NA_COMMAND_AUDIO_START_SEQ(groupID, seqID, fadeinTime) \
+    Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, groupID, seqID, 0), fadeinTime)
+
+#define NA_COMMAND_AUDIO_STOP_SEQ(groupID, fadeoutTime) \
+    Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, groupID, 0, 0), fadeoutTime)
+
+#define NA_COMMAND_AUDIO_GRP_FADE_VOLUME_SCALE(groupID, volumeScale) \
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, groupID, 0, 0), volumeScale)
+
+#define NA_COMMAND_AUDIO_SET_SOUND_MODE(mode) Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_SET_SOUND_MODE, 0, 0, 0), mode)
+
+#define NA_COMMAND_AUDIO_CLEAR_STAY_CACHE(type) Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_CLEAR_STAY_CACHE, 0, 0, 0), type)
+
+#define NA_COMMAND_AUDIO_SUBTRACK_SET_MUTE(groupMask, subtrack, muted) \
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, groupMask, subtrack, 0), muted)
+
+#define NA_COMMAND_AUDIO_SUBTRACK_SET_VOL_SCALE(group, subtrack, volume) \
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, group, subtrack, 0), volume)
+
+#define NA_COMMAND_AUDIO_SUBTRACK_SET_FREQ_SCALE(group, subtrack, freqScale) \
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FREQ_SCALE, group, subtrack, 0), freqScale)
+
+#define NA_COMMAND_AUDIO_SUBTRACK_SET_PAN(group, subtrack, pan) \
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, group, subtrack, 0), pan)
+
+#define NA_COMMAND_AUDIO_SUBTRACK_SET_PORT(group, subtrack, port, value) \
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, group, subtrack, port), value)
+
+#define NA_COMMAND_AUDIO_SUBTRACK_REVERB_VOLUME(group, subtrack, reverb) \
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, group, subtrack, 0), reverb)
+
+#define NA_COMMAND_AUDIO_GROUP_SET_PORT(group, port, value) \
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_SET_PORT, group, 0, port), value)
+
+#define NA_COMMAND_AUDIO_GROUP_SET_MASK(group, mask) \
+    Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, group, 0, 0), mask)
+
+#define NA_COMMAND_AUDIO_SUBTRACK_SET_FILTER(group, subtrack, filterCutoff, pFilter) \
+    Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FILTER, group, subtrack, filterCutoff), (s32)pFilter)
 
 #ifdef __cplusplus
 }
