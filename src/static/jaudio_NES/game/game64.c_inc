@@ -644,7 +644,7 @@ u8 Sou_BgmTenkiConv(u8 id) {
     if (id >= 1 && id <= 24) {
         switch (sou_tenki) {
             case 0: {
-                NA_COMMAND_AUDIO_GROUP_SET_MASK(sou_now_bgm_handle, BGM_MUTE_TABLE_FINE[id - 1]);
+                NA_COMMAND_AUDIO_GROUP_SET_APPLY_SUBTRACK_MASK(sou_now_bgm_handle, BGM_MUTE_TABLE_FINE[id - 1]);
 
                 NA_COMMAND_AUDIO_SUBTRACK_SET_MUTE(sou_now_bgm_handle, AUDIOCMD_ALL_SUBTRACKS, TRUE);
             } break;
@@ -652,11 +652,11 @@ u8 Sou_BgmTenkiConv(u8 id) {
                 id = 0x45;
             } break;
             case 2: {
-                NA_COMMAND_AUDIO_GROUP_SET_MASK(sou_now_bgm_handle, BGM_MUTE_TABLE_SNOW[id - 1]);
+                NA_COMMAND_AUDIO_GROUP_SET_APPLY_SUBTRACK_MASK(sou_now_bgm_handle, BGM_MUTE_TABLE_SNOW[id - 1]);
                 NA_COMMAND_AUDIO_SUBTRACK_SET_MUTE(sou_now_bgm_handle, AUDIOCMD_ALL_SUBTRACKS, TRUE);
             } break;
             case 3: {
-                NA_COMMAND_AUDIO_GROUP_SET_MASK(sou_now_bgm_handle, BGM_MUTE_TABLE_SAKURA[id - 1]);
+                NA_COMMAND_AUDIO_GROUP_SET_APPLY_SUBTRACK_MASK(sou_now_bgm_handle, BGM_MUTE_TABLE_SAKURA[id - 1]);
                 NA_COMMAND_AUDIO_SUBTRACK_SET_MUTE(sou_now_bgm_handle, AUDIOCMD_ALL_SUBTRACKS, TRUE);
             } break;
             case 4:
@@ -3578,11 +3578,11 @@ extern void Na_TTKK_ARM(u8 a) {
 extern void Na_BgmMuteClear() {
     u8 unused = 0;
     if (sou_now_bgm_handle == 1) {
-        NA_COMMAND_AUDIO_GROUP_SET_MASK(1, AUDIO_GROUP_ALL_SUBTRACKS);
+        NA_COMMAND_AUDIO_GROUP_SET_APPLY_SUBTRACK_MASK(1, AUDIO_GROUP_ALL_SUBTRACKS);
         NA_COMMAND_AUDIO_SUBTRACK_SET_MUTE(1, AUDIOCMD_ALL_SUBTRACKS, FALSE);
 
     } else {
-        NA_COMMAND_AUDIO_GROUP_SET_MASK(3, AUDIO_GROUP_ALL_SUBTRACKS);
+        NA_COMMAND_AUDIO_GROUP_SET_APPLY_SUBTRACK_MASK(3, AUDIO_GROUP_ALL_SUBTRACKS);
         NA_COMMAND_AUDIO_SUBTRACK_SET_MUTE(3, AUDIOCMD_ALL_SUBTRACKS, FALSE);
     }
 }
@@ -3953,10 +3953,10 @@ extern void Na_BGMFilter(u8 filterStatus) {
         status = filterStatus;
         firStatus = SOU_FIR_STATE;
         if (sou_now_bgm_handle == 1) {
-            NA_COMMAND_AUDIO_GROUP_SET_MASK(1, AUDIO_GROUP_ALL_SUBTRACKS);
+            NA_COMMAND_AUDIO_GROUP_SET_APPLY_SUBTRACK_MASK(1, AUDIO_GROUP_ALL_SUBTRACKS);
             NA_COMMAND_AUDIO_SUBTRACK_SET_FILTER(1, AUDIO_GROUP_ALL_SUBTRACKS, status, firStatus);
         } else {
-            NA_COMMAND_AUDIO_GROUP_SET_MASK(3, AUDIO_GROUP_ALL_SUBTRACKS);
+            NA_COMMAND_AUDIO_GROUP_SET_APPLY_SUBTRACK_MASK(3, AUDIO_GROUP_ALL_SUBTRACKS);
             NA_COMMAND_AUDIO_SUBTRACK_SET_FILTER(3, AUDIO_GROUP_ALL_SUBTRACKS, status, firStatus);
         }
     }
@@ -3992,7 +3992,7 @@ extern u8 Na_CheckNeosBoot() {
 extern void Na_Museum(u8 museumType) {
     if (sou_museum_type != museumType) {
         Na_BgmMuteClear();
-        NA_COMMAND_AUDIO_GROUP_SET_MASK(sou_now_bgm_handle, BGM_MUTE_TABLE_MUSEUM[museumType]);
+        NA_COMMAND_AUDIO_GROUP_SET_APPLY_SUBTRACK_MASK(sou_now_bgm_handle, BGM_MUTE_TABLE_MUSEUM[museumType]);
         NA_COMMAND_AUDIO_SUBTRACK_SET_MUTE(sou_now_bgm_handle, AUDIOCMD_ALL_SUBTRACKS, TRUE);
         sou_museum_type = museumType;
     }

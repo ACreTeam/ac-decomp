@@ -281,7 +281,7 @@ typedef enum AUDIO_CALLBACKS {
 #define NA_COMMAND_AUDIO_GROUP_SET_PORT(group, port, value) \
     Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_SET_PORT, group, 0, port), value)
 
-#define NA_COMMAND_AUDIO_GROUP_SET_MASK(group, mask) \
+#define NA_COMMAND_AUDIO_GROUP_SET_APPLY_SUBTRACK_MASK(group, mask) \
     Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, group, 0, 0), mask)
 
 #define NA_COMMAND_AUDIO_SUBTRACK_SET_FILTER(group, subtrack, filterCutoff, pFilter) \
