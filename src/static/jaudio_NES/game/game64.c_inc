@@ -23,8 +23,8 @@ typedef struct SOU_LEV_ONGEN_DATA {
     u32 _04;
     u8 _08;
     u8 _09;
-    f32 _0C;
-    f32 _10;
+    f32 distance;
+    f32 distance2;
 } SOU_LEV_ONGEN_DATA;
 
 typedef struct SOU_LS_STACK {
@@ -47,36 +47,36 @@ typedef struct SOU_LEV_SE {
     u8 _05;
     u8 _06;
     u8 _07;
-    f32 _08;
+    f32 volumeScale;
     f32 _0C;
-    u8 _10;
-    u8 _11;
+    u8 pan;
+    u8 reverbVolume;
     u8 _12;
-    u8 _13;
+    u8 echo;
 } SOU_LEV_SE;
 
 typedef struct SOU_ONGEN_ENTRY {
     u32 _00;
     u8 _04;
     u16 _06;
-    u8 _08;
+    u8 pan;
     u8 _09;
     u8 _0A;
-    f32 _0C;
+    f32 distance;
 } SOU_ONGEN_ENTRY;
 
 typedef struct SOU_TRG_SE {
     u16 _00;
     u32 _04;
-    f32 _08;
-    f32 _0C;
-    f32 _10;
-    f32 _14;
-    u8 _18;
-    u8 _19;
+    f32 volume;
+    f32 optVolume;
+    f32 calcedVolume;
+    f32 freqScale;
+    u8 pan;
+    u8 reverbVolume;
     u8 _1A;
-    u8 _1B;
-    u8 _1C;
+    u8 echo;
+    u8 priority;
     u8 _1D;
 } SOU_TRG_SE;
 
@@ -85,7 +85,7 @@ typedef struct SOU_SE_FADE {
     u16 _2;
     u16 _4;
     u16 _6;
-    f32 _8;
+    f32 volumeScale;
 } SOU_SE_FADE;
 
 typedef struct SOU_VOICE_SE {
@@ -93,12 +93,12 @@ typedef struct SOU_VOICE_SE {
     u32 _04;
     f32 _08;
     f32 _0C;
-    f32 _10;
+    f32 volumeScale;
     f32 _14;
     f32 _18;
-    f32 _1C;
-    u8 _20;
-    u8 _21;
+    f32 frequencyScale;
+    u8 pan;
+    u8 reverbVolume;
 } SOU_VOICE_SE;
 
 typedef struct SOU_ROOM_INS {
@@ -419,7 +419,7 @@ u16 BGM_MUTE_TABLE_FINE[] = {
     // clang-format on
 };
 
-u16 BGM_MUTE_TABLE_SNOW[] = { 
+u16 BGM_MUTE_TABLE_SNOW[] = {
     // clang-format off
     // bitmask for each subtrack to enable, 0 = disabled, 1 = enabled
     0b0000001100000010, // 0x0302, hour 0
@@ -448,7 +448,6 @@ u16 BGM_MUTE_TABLE_SNOW[] = {
     0b0000110110000010, // 0x0d82, hour 23
     // clang-format on
 };
-
 
 u16 BGM_MUTE_TABLE_SAKURA[] = {
     // clang-format off
@@ -593,8 +592,8 @@ void Sou_lev_ongen_data_struct_clear() {
         sou_lev_ongen_data[i]._04 = 0;
         sou_lev_ongen_data[i]._08 = 0;
         sou_lev_ongen_data[i]._09 = 0;
-        sou_lev_ongen_data[i]._0C = 9999.f;
-        sou_lev_ongen_data[i]._10 = 9999.f;
+        sou_lev_ongen_data[i].distance = 9999.f;
+        sou_lev_ongen_data[i].distance2 = 9999.f;
     }
     for (i = 0; i < ARRAY_COUNT(sou_ls_stack); i++) {
         sou_ls_stack[i]._0 = 0;
@@ -615,21 +614,21 @@ void Sou_lev_ongen_data_struct_clear() {
         sou_lev_se[i]._05 = 0;
         sou_lev_se[i]._06 = 0;
         sou_lev_se[i]._07 = 0;
-        sou_lev_se[i]._08 = 0.f;
+        sou_lev_se[i].volumeScale = 0.f;
         sou_lev_se[i]._0C = 1.f;
-        sou_lev_se[i]._10 = 0x3f;
-        sou_lev_se[i]._11 = 0;
+        sou_lev_se[i].pan = 0x3f;
+        sou_lev_se[i].reverbVolume = 0;
         sou_lev_se[i]._12 = 0;
-        sou_lev_se[i]._13 = 0;
+        sou_lev_se[i].echo = 0;
     }
     for (i = 0; i < ARRAY_COUNT(sou_ongen_entry); i++) {
         sou_ongen_entry[i]._00 = 0;
         sou_ongen_entry[i]._04 = 0;
         sou_ongen_entry[i]._06 = 0;
-        sou_ongen_entry[i]._08 = 63;
+        sou_ongen_entry[i].pan = 0x3f;
         sou_ongen_entry[i]._09 = 0;
         sou_ongen_entry[i]._0A = 0;
-        sou_ongen_entry[i]._0C = 9999.0f;
+        sou_ongen_entry[i].distance = 9999.0f;
     }
 }
 
@@ -640,23 +639,26 @@ void Sou_BgmFadeoutEndCheck() {
     }
 }
 
-u8 Sou_BgmTenkiConv(u8 v) {
+u8 Sou_BgmTenkiConv(u8 id) {
     Na_BgmMuteClear();
-    if (v >= 1 && v <= 24) {
+    if (id >= 1 && id <= 24) {
         switch (sou_tenki) {
             case 0: {
-                Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_FINE[v - 1]);
+                Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0),
+                           BGM_MUTE_TABLE_FINE[id - 1]);
                 Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 0xff, 0), 1);
             } break;
             case 1: {
-                v = 0x45;
+                id = 0x45;
             } break;
             case 2: {
-                Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_SNOW[v - 1]);
+                Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0),
+                           BGM_MUTE_TABLE_SNOW[id - 1]);
                 Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 0xff, 0), 1);
             } break;
             case 3: {
-                Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_SAKURA[v - 1]);
+                Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0),
+                           BGM_MUTE_TABLE_SAKURA[id - 1]);
                 Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 0xff, 0), 1);
             } break;
             case 4:
@@ -664,40 +666,40 @@ u8 Sou_BgmTenkiConv(u8 v) {
                 break;
         }
     }
-    return v;
+    return id;
 }
 
-void Sou_GroupControl(u8 a, u8 b, f32 c) {
+void Sou_GroupControl(u8 a, u8 pan, f32 volume) {
     u8 i = 0;
-    if (c > 1.f) {
-        c = 1.f;
+    if (volume > 1.f) {
+        volume = 1.f;
     }
-    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, a, 0, 0), c);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, a, 0, 0), volume);
     if (a == 1) {
-        sou_bgm1_vol_now = c;
+        sou_bgm1_vol_now = volume;
     }
     if (a == 3) {
-        sou_bgm2_vol_now = c;
+        sou_bgm2_vol_now = volume;
     }
     for (i = 0; i < 16; i++) {
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, a, i, 0), b);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, a, i, 0), pan);
     }
 }
 
-void Sou_GroupControl_MD(u8 a, u8 b, f32 c) {
+void Sou_GroupControl_MD(u8 a, u8 pan, f32 volume) {
     u8 i = 0;
-    if (c > 2.25f) {
-        c = 2.25f;
+    if (volume > 2.25f) {
+        volume = 2.25f;
     }
-    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, a, 0, 0), c);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, a, 0, 0), volume);
     if (a == 1) {
-        sou_bgm1_vol_now = c;
+        sou_bgm1_vol_now = volume;
     }
     if (a == 3) {
-        sou_bgm2_vol_now = c;
+        sou_bgm2_vol_now = volume;
     }
     for (i = 0; i < 16; i++) {
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, a, i, 0), b);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, a, i, 0), pan);
     }
 }
 
@@ -758,25 +760,25 @@ f32 distance2vol(f32 distance) {
     return ret;
 }
 
-f32 distance2vol4KITEKI(f32 v) {
+f32 distance2vol4KITEKI(f32 distance) {
     f32 v2 = 0.f;
-    if (v > 320.f) {
+    if (distance > 320.f) {
         v2 = 1.15f;
     }
-    if (v < 0.f) {
+    if (distance < 0.f) {
         v2 = 0.f;
     }
     // idk about this constant
-    v2 = 1.15f - (1.f / (5287.f - 0.0435f)) * (v - 320.f);
+    v2 = 1.15f - (1.f / (5287.f - 0.0435f)) * (distance - 320.f);
     return v2;
 }
 
-f32 distance2vol4MD(f32 v) {
+f32 distance2vol4MD(f32 distance) {
     f32 v2 = 0.f;
-    if (v > SOU_ONGEN_AREA2) {
+    if (distance > SOU_ONGEN_AREA2) {
         v2 = 0.f;
     } else {
-        v2 = 1.15f - (1.15f / SQ(SOU_ONGEN_AREA2)) * SQ(v);
+        v2 = 1.15f - (1.15f / SQ(SOU_ONGEN_AREA2)) * SQ(distance);
     }
     if (v2 > 0.8f) {
         v2 = 0.8f;
@@ -791,28 +793,28 @@ void Sou_VoiceStart(u8 a, u8 b) {
     Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 4, a, 0), b);
 }
 
-void Sou_TrgStart(u16 r29, f32 f29, f32 f30, f32 f31, u8 r17, u8 r28, f32 stack_8) {
+void Sou_TrgStart(u16 id, f32 volume, f32 optVolume, f32 freqScale, u8 pan, u8 reverb, f32 distance) {
     u8 r31 = 0;
     u8 r22 = 0;
-    u8 r30 = 0;
-    u32 r27 = 0;
-    u8 r26 = 0;
-    u8 r23 = 0;
+    u8 i = 0;
+    u32 rand = 0;
+    u8 port0 = 0;
+    u8 port1 = 0;
     u8 r24 = 0;
     u16 r25 = 0;
     u8 r21 = 0;
     u8 r20 = 0;
     u8 r19 = 0;
     u8 r18 = 0;
-    switch (r29) {
+    switch (id) {
         case 0x61:
         case 0x63:
         case 0x65:
         case 0x67:
         case 0x11e:
         case 0x4028: {
-            r27 = Nap_GetRandom();
-            r29 = r29 + (r27 & 1);
+            rand = Nap_GetRandom();
+            id = id + (rand & 1);
         } break;
         case 0x3b:
         case 0x13f:
@@ -831,91 +833,91 @@ void Sou_TrgStart(u16 r29, f32 f29, f32 f30, f32 f31, u8 r17, u8 r28, f32 stack_
         case 0x531:
         case 0x539:
         case 0x53d: {
-            r27 = Nap_GetRandom();
-            r29 = r29 + (r27 & 3);
+            rand = Nap_GetRandom();
+            id = id + (rand & 3);
         } break;
     }
-    r26 = r29;
-    r25 = r29 & 0xf000;
+    port0 = id;
+    r25 = id & 0xf000;
     r24 = r25 >> 12;
-    r25 = r29 & 0xf00;
-    r23 = r25 >> 8;
+    r25 = id & 0xf00;
+    port1 = r25 >> 8;
     r21 = r24 & 1;
     r19 = r24 & 2;
     r18 = r24 & 4;
     r20 = r24 & 8;
 
     if (r21) {
-        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FREQ_SCALE, 0, 0xe, 0), f31);
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 0, 0xe, 0), r17);
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 0, 0xe, 0), r28);
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, 0xe, 0), r26);
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, 0xe, 1), r23);
+        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FREQ_SCALE, 0, 0xe, 0), freqScale);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 0, 0xe, 0), pan);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 0, 0xe, 0), reverb);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, 0xe, 0), port0);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, 0xe, 1), port1);
         return;
     }
 
     if (r20) {
-        for (r30 = 0; r30 < 6; r30++) {
-            if (r29 == sou_trg_se[r30]._00) {
+        for (i = 0; i < 6; i++) {
+            if (id == sou_trg_se[i]._00) {
                 return;
             }
         }
     }
 
-    for (r30 = 0; r30 < 6; r30++) {
-        if (!sou_trg_se[r30]._00) {
-            r31 = r30;
-            r30 = 6;
+    for (i = 0; i < 6; i++) {
+        if (!sou_trg_se[i]._00) {
+            r31 = i;
+            i = 6;
             r22 = 1;
         }
     }
 
     if (r22 == 1) {
-        sou_trg_se[r31]._00 = r29;
-        sou_trg_se[r31]._1C = TRGPRIO[r26];
+        sou_trg_se[r31]._00 = id;
+        sou_trg_se[r31].priority = TRGPRIO[port0];
         sou_trg_se[r31]._04 = 1;
-        sou_trg_se[r31]._08 = f29;
-        sou_trg_se[r31]._0C = f30;
-        sou_trg_se[r31]._14 = f31;
-        sou_trg_se[r31]._18 = r17;
-        if (r28) {
-            sou_trg_se[r31]._19 = r28;
+        sou_trg_se[r31].volume = volume;
+        sou_trg_se[r31].optVolume = optVolume;
+        sou_trg_se[r31].freqScale = freqScale;
+        sou_trg_se[r31].pan = pan;
+        if (reverb) {
+            sou_trg_se[r31].reverbVolume = reverb;
         } else {
             if (r19) {
-                r25 = (u16)(stack_8);
-                r28 = r25 >> 3;
-                if (r28 > 0x32) {
-                    r28 = 0x32;
+                r25 = (u16)(distance);
+                reverb = r25 >> 3;
+                if (reverb > 0x32) {
+                    reverb = 0x32;
                 }
             }
-            if (r18 && sou_trg_se[r31]._1B) {
-                r28 = 0x28;
+            if (r18 && sou_trg_se[r31].echo) {
+                reverb = 0x28;
             } else {
-                r28 = 0;
+                reverb = 0;
             }
-            sou_trg_se[r31]._19 = r28;
+            sou_trg_se[r31].reverbVolume = reverb;
         }
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 0), r26);
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 1), r23);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 0), port0);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 1), port1);
         return;
     }
-    r27 = 0;
-    for (r30 = 0; r30 < 6; r30++) {
-        if (sou_trg_se[r30]._04 > r27) {
-            r27 = sou_trg_se[r30]._04;
-            r31 = r30;
+    rand = 0;
+    for (i = 0; i < 6; i++) {
+        if (sou_trg_se[i]._04 > rand) {
+            rand = sou_trg_se[i]._04;
+            r31 = i;
         }
     }
-    if (TRGPRIO[r26] >= sou_trg_se[r31]._1C) {
-        sou_trg_se[r31]._00 = r29;
-        sou_trg_se[r31]._1C = TRGPRIO[r26];
+    if (TRGPRIO[port0] >= sou_trg_se[r31].priority) {
+        sou_trg_se[r31]._00 = id;
+        sou_trg_se[r31].priority = TRGPRIO[port0];
         sou_trg_se[r31]._04 = 1;
-        sou_trg_se[r31]._08 = f29;
-        sou_trg_se[r31]._0C = f30;
-        sou_trg_se[r31]._14 = f31;
-        sou_trg_se[r31]._18 = r17;
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 0), r26);
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 1), r23);
+        sou_trg_se[r31].volume = volume;
+        sou_trg_se[r31].optVolume = optVolume;
+        sou_trg_se[r31].freqScale = freqScale;
+        sou_trg_se[r31].pan = pan;
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 0), port0);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, r31, 1), port1);
     }
 }
 
@@ -958,8 +960,7 @@ void Sou_SpecialRoutine03() {
 
 void Sou_TrgEndCheck() {
     u8 i = 0;
-    // unused
-    u8 j = 0;
+    u8 unused = 0;
     for (i = 0; i < 6; i++) {
         if (sou_trg_se[i]._00) {
             sou_trg_se[i]._04++;
@@ -972,254 +973,256 @@ void Sou_TrgEndCheck() {
     }
 }
 
-void Sou_LevStart(u8 a, u8 b) {
-    if (b == sou_lev_se[a]._00 || b == sou_lev_se[a]._01 || b == sou_lev_se[a]._02 || b == sou_lev_se[a]._03 ||
-        b == sou_lev_se[a]._04 || b == sou_lev_se[a]._05 || b == sou_lev_se[a]._06 || b == sou_lev_se[a]._07) {
+void Sou_LevStart(u8 index, u8 b) {
+    if (b == sou_lev_se[index]._00 || b == sou_lev_se[index]._01 || b == sou_lev_se[index]._02 ||
+        b == sou_lev_se[index]._03 || b == sou_lev_se[index]._04 || b == sou_lev_se[index]._05 ||
+        b == sou_lev_se[index]._06 || b == sou_lev_se[index]._07) {
         return;
     }
 
-    if (sou_ls_stack[a]._0) {
-        if (sou_ls_stack[a]._1) {
-            if (sou_ls_stack[a]._2) {
-                if (sou_ls_stack[a]._3) {
+    if (sou_ls_stack[index]._0) {
+        if (sou_ls_stack[index]._1) {
+            if (sou_ls_stack[index]._2) {
+                if (sou_ls_stack[index]._3) {
                 } else {
-                    sou_ls_stack[a]._3 = b;
+                    sou_ls_stack[index]._3 = b;
                 }
             } else {
-                sou_ls_stack[a]._2 = b;
+                sou_ls_stack[index]._2 = b;
             }
         } else {
-            sou_ls_stack[a]._1 = b;
+            sou_ls_stack[index]._1 = b;
         }
     } else {
-        sou_ls_stack[a]._0 = b;
+        sou_ls_stack[index]._0 = b;
     }
 }
 
-void Sou_LevStop(u8 a, u8 b) {
+void Sou_LevStop(u8 index, u8 b) {
     u8 v = 0;
-    if (b == sou_ls_stack[a]._0) {
-        sou_ls_stack[a]._0 = 0;
-        if (sou_ls_stack[a]._1) {
-            sou_ls_stack[a]._0 = sou_ls_stack[a]._1;
-            sou_ls_stack[a]._1 = sou_ls_stack[a]._2;
-            sou_ls_stack[a]._2 = sou_ls_stack[a]._3;
-            sou_ls_stack[a]._3 = 0;
+    if (b == sou_ls_stack[index]._0) {
+        sou_ls_stack[index]._0 = 0;
+        if (sou_ls_stack[index]._1) {
+            sou_ls_stack[index]._0 = sou_ls_stack[index]._1;
+            sou_ls_stack[index]._1 = sou_ls_stack[index]._2;
+            sou_ls_stack[index]._2 = sou_ls_stack[index]._3;
+            sou_ls_stack[index]._3 = 0;
         }
     }
 
-    if (b == sou_ls_stack[a]._1) {
-        sou_ls_stack[a]._1 = 0;
-        if (sou_ls_stack[a]._2) {
-            sou_ls_stack[a]._1 = sou_ls_stack[a]._2;
-            sou_ls_stack[a]._2 = sou_ls_stack[a]._3;
-            sou_ls_stack[a]._3 = 0;
+    if (b == sou_ls_stack[index]._1) {
+        sou_ls_stack[index]._1 = 0;
+        if (sou_ls_stack[index]._2) {
+            sou_ls_stack[index]._1 = sou_ls_stack[index]._2;
+            sou_ls_stack[index]._2 = sou_ls_stack[index]._3;
+            sou_ls_stack[index]._3 = 0;
         }
     }
 
-    if (b == sou_ls_stack[a]._2) {
-        sou_ls_stack[a]._2 = 0;
-        if (sou_ls_stack[a]._3) {
-            sou_ls_stack[a]._2 = sou_ls_stack[a]._3;
-            sou_ls_stack[a]._3 = 0;
+    if (b == sou_ls_stack[index]._2) {
+        sou_ls_stack[index]._2 = 0;
+        if (sou_ls_stack[index]._3) {
+            sou_ls_stack[index]._2 = sou_ls_stack[index]._3;
+            sou_ls_stack[index]._3 = 0;
         }
     }
 
-    if (b == sou_ls_stack[a]._3) {
-        sou_ls_stack[a]._3 = 0;
+    if (b == sou_ls_stack[index]._3) {
+        sou_ls_stack[index]._3 = 0;
     }
 
-    if (b == sou_lev_se[a]._00) {
-        sou_lev_se[a]._00 = sou_lev_se[a]._01;
-        sou_lev_se[a]._01 = sou_lev_se[a]._02;
-        sou_lev_se[a]._02 = sou_lev_se[a]._03;
-        sou_lev_se[a]._03 = sou_lev_se[a]._04;
-        sou_lev_se[a]._04 = sou_lev_se[a]._05;
-        sou_lev_se[a]._05 = sou_lev_se[a]._06;
-        sou_lev_se[a]._06 = sou_lev_se[a]._07;
-        sou_lev_se[a]._07 = 0;
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, a + 8, 5), -1);
-        if (sou_lev_se[a]._00) {
-            v = sou_lev_se[a]._00;
-            sou_lev_se[a]._00 = 0;
-            Sou_LevStart(a, v);
+    if (b == sou_lev_se[index]._00) {
+        sou_lev_se[index]._00 = sou_lev_se[index]._01;
+        sou_lev_se[index]._01 = sou_lev_se[index]._02;
+        sou_lev_se[index]._02 = sou_lev_se[index]._03;
+        sou_lev_se[index]._03 = sou_lev_se[index]._04;
+        sou_lev_se[index]._04 = sou_lev_se[index]._05;
+        sou_lev_se[index]._05 = sou_lev_se[index]._06;
+        sou_lev_se[index]._06 = sou_lev_se[index]._07;
+        sou_lev_se[index]._07 = 0;
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, index + 8, 5), -1);
+        if (sou_lev_se[index]._00) {
+            v = sou_lev_se[index]._00;
+            sou_lev_se[index]._00 = 0;
+            Sou_LevStart(index, v);
         }
         return;
     }
 
-    if (b == sou_lev_se[a]._01) {
-        sou_lev_se[a]._01 = sou_lev_se[a]._02;
-        sou_lev_se[a]._02 = sou_lev_se[a]._03;
-        sou_lev_se[a]._03 = sou_lev_se[a]._04;
-        sou_lev_se[a]._04 = sou_lev_se[a]._05;
-        sou_lev_se[a]._05 = sou_lev_se[a]._06;
-        sou_lev_se[a]._06 = sou_lev_se[a]._07;
-        sou_lev_se[a]._07 = 0;
+    if (b == sou_lev_se[index]._01) {
+        sou_lev_se[index]._01 = sou_lev_se[index]._02;
+        sou_lev_se[index]._02 = sou_lev_se[index]._03;
+        sou_lev_se[index]._03 = sou_lev_se[index]._04;
+        sou_lev_se[index]._04 = sou_lev_se[index]._05;
+        sou_lev_se[index]._05 = sou_lev_se[index]._06;
+        sou_lev_se[index]._06 = sou_lev_se[index]._07;
+        sou_lev_se[index]._07 = 0;
         return;
     }
 
-    if (b == sou_lev_se[a]._02) {
-        sou_lev_se[a]._02 = sou_lev_se[a]._03;
-        sou_lev_se[a]._03 = sou_lev_se[a]._04;
-        sou_lev_se[a]._04 = sou_lev_se[a]._05;
-        sou_lev_se[a]._05 = sou_lev_se[a]._06;
-        sou_lev_se[a]._06 = sou_lev_se[a]._07;
-        sou_lev_se[a]._07 = 0;
+    if (b == sou_lev_se[index]._02) {
+        sou_lev_se[index]._02 = sou_lev_se[index]._03;
+        sou_lev_se[index]._03 = sou_lev_se[index]._04;
+        sou_lev_se[index]._04 = sou_lev_se[index]._05;
+        sou_lev_se[index]._05 = sou_lev_se[index]._06;
+        sou_lev_se[index]._06 = sou_lev_se[index]._07;
+        sou_lev_se[index]._07 = 0;
         return;
     }
 
-    if (b == sou_lev_se[a]._03) {
-        sou_lev_se[a]._03 = sou_lev_se[a]._04;
-        sou_lev_se[a]._04 = sou_lev_se[a]._05;
-        sou_lev_se[a]._05 = sou_lev_se[a]._06;
-        sou_lev_se[a]._06 = sou_lev_se[a]._07;
-        sou_lev_se[a]._07 = 0;
+    if (b == sou_lev_se[index]._03) {
+        sou_lev_se[index]._03 = sou_lev_se[index]._04;
+        sou_lev_se[index]._04 = sou_lev_se[index]._05;
+        sou_lev_se[index]._05 = sou_lev_se[index]._06;
+        sou_lev_se[index]._06 = sou_lev_se[index]._07;
+        sou_lev_se[index]._07 = 0;
         return;
     }
 
-    if (b == sou_lev_se[a]._04) {
-        sou_lev_se[a]._04 = sou_lev_se[a]._05;
-        sou_lev_se[a]._05 = sou_lev_se[a]._06;
-        sou_lev_se[a]._06 = sou_lev_se[a]._07;
-        sou_lev_se[a]._07 = 0;
+    if (b == sou_lev_se[index]._04) {
+        sou_lev_se[index]._04 = sou_lev_se[index]._05;
+        sou_lev_se[index]._05 = sou_lev_se[index]._06;
+        sou_lev_se[index]._06 = sou_lev_se[index]._07;
+        sou_lev_se[index]._07 = 0;
         return;
     }
 
-    if (b == sou_lev_se[a]._05) {
-        sou_lev_se[a]._05 = sou_lev_se[a]._06;
-        sou_lev_se[a]._06 = sou_lev_se[a]._07;
-        sou_lev_se[a]._07 = 0;
+    if (b == sou_lev_se[index]._05) {
+        sou_lev_se[index]._05 = sou_lev_se[index]._06;
+        sou_lev_se[index]._06 = sou_lev_se[index]._07;
+        sou_lev_se[index]._07 = 0;
         return;
     }
 
-    if (b == sou_lev_se[a]._06) {
-        sou_lev_se[a]._06 = sou_lev_se[a]._07;
-        sou_lev_se[a]._07 = 0;
+    if (b == sou_lev_se[index]._06) {
+        sou_lev_se[index]._06 = sou_lev_se[index]._07;
+        sou_lev_se[index]._07 = 0;
         return;
     }
 
-    if (b == sou_lev_se[a]._07) {
-        sou_lev_se[a]._07 = 0;
+    if (b == sou_lev_se[index]._07) {
+        sou_lev_se[index]._07 = 0;
         return;
     }
 }
 
-void Sou_TrgMake(u8 a) {
-    f32 v = 0.f;
-    sou_trg_se[a]._10 = sou_trg_se[a]._08 * sou_trg_se[a]._0C;
-    v = sou_trg_se[a]._10;
+void Sou_TrgMake(u8 index) {
+    f32 volume = 0.f;
+    sou_trg_se[index].calcedVolume = sou_trg_se[index].volume * sou_trg_se[index].optVolume;
+    volume = sou_trg_se[index].calcedVolume;
     if (sou_se_fadeout_flag) {
-        v *= sou_se_fade[a]._8;
+        volume *= sou_se_fade[index].volumeScale;
     }
-    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 0, a, 0), v);
-    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FREQ_SCALE, 0, a, 0), sou_trg_se[a]._14);
-    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 0, a, 0), sou_trg_se[a]._18);
-    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 0, a, 0), sou_trg_se[a]._19);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 0, index, 0), volume);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FREQ_SCALE, 0, index, 0), sou_trg_se[index].freqScale);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 0, index, 0), sou_trg_se[index].pan);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 0, index, 0), sou_trg_se[index].reverbVolume);
 }
 
-void Sou_VoiceMake(u8 a) {
-    sou_voice_se[a]._10 = sou_voice_se[a]._08 * sou_voice_se[a]._0C;
-    sou_voice_se[a]._1C = sou_voice_se[a]._14 * sou_voice_se[a]._18;
-    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 4, a, 0), sou_voice_se[a]._10);
-    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FREQ_SCALE, 4, a, 0), sou_voice_se[a]._1C);
-    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 4, a, 0), sou_voice_se[a]._20);
-    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 4, a, 0), sou_voice_se[a]._21);
+void Sou_VoiceMake(u8 index) {
+    sou_voice_se[index].volumeScale = sou_voice_se[index]._08 * sou_voice_se[index]._0C;
+    sou_voice_se[index].frequencyScale = sou_voice_se[index]._14 * sou_voice_se[index]._18;
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 4, index, 0), sou_voice_se[index].volumeScale);
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FREQ_SCALE, 4, index, 0), sou_voice_se[index].frequencyScale);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 4, index, 0), sou_voice_se[index].pan);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 4, index, 0), sou_voice_se[index].reverbVolume);
 }
 
-void Sou_LevMake(u8 a) {
+void Sou_LevMake(u8 index) {
     u8 unused = 0;
-    f32 v = 0.f;
+    f32 volume = 0.f;
     if (sou_pause_flag == 1) {
-        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 0, a + 8, 0), 0.5f * sou_lev_se[a]._08);
+        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 0, index + 8, 0),
+                   0.5f * sou_lev_se[index].volumeScale);
         return;
     }
-    v = sou_lev_se[a]._08;
+    volume = sou_lev_se[index].volumeScale;
     if (sou_se_fadeout_flag) {
-        v *= sou_se_fade[a + 8]._8;
+        volume *= sou_se_fade[index + 8].volumeScale;
     }
-    if (sou_lev_se[a]._00 == 77) {
-        v *= sou_kazaguruma_speed;
+    if (sou_lev_se[index]._00 == 77) {
+        volume *= sou_kazaguruma_speed;
     }
-    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 0, a + 8, 0), v);
-    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 0, a + 8, 0), sou_lev_se[a]._10);
-    if (sou_lev_se[a]._13 && sou_lev_se[a]._12) {
+    Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 0, index + 8, 0), volume);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 0, index + 8, 0), sou_lev_se[index].pan);
+    if (sou_lev_se[index].echo && sou_lev_se[index]._12) {
         if (sou_scene_mode == 0xf) {
-            sou_lev_se[a]._11 = 0;
+            sou_lev_se[index].reverbVolume = 0;
         } else {
-            sou_lev_se[a]._11 = 0x28;
+            sou_lev_se[index].reverbVolume = 0x28;
         }
     } else {
-        sou_lev_se[a]._11 = 0;
+        sou_lev_se[index].reverbVolume = 0;
     }
-    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 0, a + 8, 0), sou_lev_se[a]._11);
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_REVERB_VOLUME, 0, index + 8, 0), sou_lev_se[index].reverbVolume);
 }
 
 void Sou_ChimeMake() {
     if (sou_se_fade[7]._0 || sou_se_fade[7]._4) {
-        sou_chime_volume *= sou_se_fade[7]._8;
+        sou_chime_volume *= sou_se_fade[7].volumeScale;
     }
     Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 0, 7, 0), sou_chime_volume);
 }
 
-void Sou_LevSet(u8 a) {
+void Sou_LevSet(u8 index) {
     u8 v1 = 0, v2 = 0;
-    if (!sou_ls_stack[a]._0) {
+    if (!sou_ls_stack[index]._0) {
         return;
     }
-    v1 = sou_ls_stack[a]._0;
-    if (!sou_lev_se[a]._00) {
-        sou_lev_se[a]._00 = v1;
-    } else if (!sou_lev_se[a]._01) {
-        sou_lev_se[a]._01 = sou_lev_se[a]._00;
-        sou_lev_se[a]._00 = v1;
-    } else if (!sou_lev_se[a]._02) {
-        sou_lev_se[a]._02 = sou_lev_se[a]._01;
-        sou_lev_se[a]._01 = sou_lev_se[a]._00;
-        sou_lev_se[a]._00 = v1;
-    } else if (!sou_lev_se[a]._03) {
-        sou_lev_se[a]._03 = sou_lev_se[a]._02;
-        sou_lev_se[a]._02 = sou_lev_se[a]._01;
-        sou_lev_se[a]._01 = sou_lev_se[a]._00;
-        sou_lev_se[a]._00 = v1;
-    } else if (!sou_lev_se[a]._04) {
-        sou_lev_se[a]._04 = sou_lev_se[a]._03;
-        sou_lev_se[a]._03 = sou_lev_se[a]._02;
-        sou_lev_se[a]._02 = sou_lev_se[a]._01;
-        sou_lev_se[a]._01 = sou_lev_se[a]._00;
-        sou_lev_se[a]._00 = v1;
-    } else if (!sou_lev_se[a]._05) {
-        sou_lev_se[a]._05 = sou_lev_se[a]._04;
-        sou_lev_se[a]._04 = sou_lev_se[a]._03;
-        sou_lev_se[a]._03 = sou_lev_se[a]._02;
-        sou_lev_se[a]._02 = sou_lev_se[a]._01;
-        sou_lev_se[a]._01 = sou_lev_se[a]._00;
-        sou_lev_se[a]._00 = v1;
-    } else if (!sou_lev_se[a]._06) {
-        sou_lev_se[a]._06 = sou_lev_se[a]._05;
-        sou_lev_se[a]._05 = sou_lev_se[a]._04;
-        sou_lev_se[a]._04 = sou_lev_se[a]._03;
-        sou_lev_se[a]._03 = sou_lev_se[a]._02;
-        sou_lev_se[a]._02 = sou_lev_se[a]._01;
-        sou_lev_se[a]._01 = sou_lev_se[a]._00;
-        sou_lev_se[a]._00 = v1;
-    } else if (!sou_lev_se[a]._07) {
-        sou_lev_se[a]._07 = sou_lev_se[a]._06;
-        sou_lev_se[a]._06 = sou_lev_se[a]._05;
-        sou_lev_se[a]._05 = sou_lev_se[a]._04;
-        sou_lev_se[a]._04 = sou_lev_se[a]._03;
-        sou_lev_se[a]._03 = sou_lev_se[a]._02;
-        sou_lev_se[a]._02 = sou_lev_se[a]._01;
-        sou_lev_se[a]._01 = sou_lev_se[a]._00;
-        sou_lev_se[a]._00 = v1;
+    v1 = sou_ls_stack[index]._0;
+    if (!sou_lev_se[index]._00) {
+        sou_lev_se[index]._00 = v1;
+    } else if (!sou_lev_se[index]._01) {
+        sou_lev_se[index]._01 = sou_lev_se[index]._00;
+        sou_lev_se[index]._00 = v1;
+    } else if (!sou_lev_se[index]._02) {
+        sou_lev_se[index]._02 = sou_lev_se[index]._01;
+        sou_lev_se[index]._01 = sou_lev_se[index]._00;
+        sou_lev_se[index]._00 = v1;
+    } else if (!sou_lev_se[index]._03) {
+        sou_lev_se[index]._03 = sou_lev_se[index]._02;
+        sou_lev_se[index]._02 = sou_lev_se[index]._01;
+        sou_lev_se[index]._01 = sou_lev_se[index]._00;
+        sou_lev_se[index]._00 = v1;
+    } else if (!sou_lev_se[index]._04) {
+        sou_lev_se[index]._04 = sou_lev_se[index]._03;
+        sou_lev_se[index]._03 = sou_lev_se[index]._02;
+        sou_lev_se[index]._02 = sou_lev_se[index]._01;
+        sou_lev_se[index]._01 = sou_lev_se[index]._00;
+        sou_lev_se[index]._00 = v1;
+    } else if (!sou_lev_se[index]._05) {
+        sou_lev_se[index]._05 = sou_lev_se[index]._04;
+        sou_lev_se[index]._04 = sou_lev_se[index]._03;
+        sou_lev_se[index]._03 = sou_lev_se[index]._02;
+        sou_lev_se[index]._02 = sou_lev_se[index]._01;
+        sou_lev_se[index]._01 = sou_lev_se[index]._00;
+        sou_lev_se[index]._00 = v1;
+    } else if (!sou_lev_se[index]._06) {
+        sou_lev_se[index]._06 = sou_lev_se[index]._05;
+        sou_lev_se[index]._05 = sou_lev_se[index]._04;
+        sou_lev_se[index]._04 = sou_lev_se[index]._03;
+        sou_lev_se[index]._03 = sou_lev_se[index]._02;
+        sou_lev_se[index]._02 = sou_lev_se[index]._01;
+        sou_lev_se[index]._01 = sou_lev_se[index]._00;
+        sou_lev_se[index]._00 = v1;
+    } else if (!sou_lev_se[index]._07) {
+        sou_lev_se[index]._07 = sou_lev_se[index]._06;
+        sou_lev_se[index]._06 = sou_lev_se[index]._05;
+        sou_lev_se[index]._05 = sou_lev_se[index]._04;
+        sou_lev_se[index]._04 = sou_lev_se[index]._03;
+        sou_lev_se[index]._03 = sou_lev_se[index]._02;
+        sou_lev_se[index]._02 = sou_lev_se[index]._01;
+        sou_lev_se[index]._01 = sou_lev_se[index]._00;
+        sou_lev_se[index]._00 = v1;
     }
     v2 = v1 & 0x80;
-    sou_lev_se[a]._12 = v2;
+    sou_lev_se[index]._12 = v2;
     v1 &= 0x7f;
-    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, a + 8, 0), v1);
-    sou_ls_stack[a]._0 = sou_ls_stack[a]._1;
-    sou_ls_stack[a]._1 = sou_ls_stack[a]._2;
-    sou_ls_stack[a]._2 = sou_ls_stack[a]._3;
-    sou_ls_stack[a]._3 = 0;
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PORT, 0, index + 8, 0), v1);
+    sou_ls_stack[index]._0 = sou_ls_stack[index]._1;
+    sou_ls_stack[index]._1 = sou_ls_stack[index]._2;
+    sou_ls_stack[index]._2 = sou_ls_stack[index]._3;
+    sou_ls_stack[index]._3 = 0;
 }
 
 void Sou_Insect_Lev_Cont() {
@@ -1260,12 +1263,12 @@ void Sou_Ongen_Lev_Cont() {
                         sou_lev_ongen_data[j]._09 = sou_ongen_entry[i]._04;
                         sou_lev_ongen_data[j]._04 = sou_ongen_entry[i]._00;
                         sou_lev_ongen_data[j]._08 = sou_ongen_entry[i]._06;
-                        sou_lev_ongen_data[j]._0C = sou_ongen_entry[i]._0C;
-                        sou_lev_se[j]._10 = sou_ongen_entry[i]._08;
+                        sou_lev_ongen_data[j].distance = sou_ongen_entry[i].distance;
+                        sou_lev_se[j].pan = sou_ongen_entry[i].pan;
 
                         sou_lev_ongen_data[j]._00 = 1;
                         sou_lev_ongen_data[j]._01 = 0;
-                        sou_lev_ongen_data[j]._10 = 9999.f;
+                        sou_lev_ongen_data[j].distance2 = 9999.f;
                         sou_lev_ongen_data[j]._03 = 0;
                         sou_lev_ongen_data[j]._02 = 0;
 
@@ -1283,12 +1286,6 @@ void Sou_Ongen_Lev_Cont() {
                 for (j = 0; j < ARRAY_COUNT(sou_lev_ongen_data); j++) {
                     if (sou_lev_ongen_data[j]._04 == sou_ongen_entry[i]._00) {
 
-                        // extern void Sou_LevStop(u8, u8);
-
-                        // matches the asm here, but messes up the rest of the file
-                        // Sou_LevStop((u8)j, sou_lev_ongen_data[j]._08);
-
-                        // matches the rest of the file before this point
                         Sou_LevStop((int)j, sou_lev_ongen_data[j]._08);
 
                         old09 = sou_lev_ongen_data[j]._09;
@@ -1299,8 +1296,8 @@ void Sou_Ongen_Lev_Cont() {
                         sou_lev_ongen_data[j]._03 = 0;
                         sou_lev_ongen_data[j]._04 = 0;
                         sou_lev_ongen_data[j]._08 = 0;
-                        sou_lev_ongen_data[j]._0C = 9999.f;
-                        sou_lev_ongen_data[j]._10 = 9999.f;
+                        sou_lev_ongen_data[j].distance = 9999.f;
+                        sou_lev_ongen_data[j].distance2 = 9999.f;
                         for (k = 0; k < ARRAY_COUNT(sou_lev_ongen_data); k++) {
                             if (sou_lev_ongen_data[k]._09 > old09) {
                                 sou_lev_ongen_data[k]._09--;
@@ -1315,10 +1312,10 @@ void Sou_Ongen_Lev_Cont() {
                 sou_ongen_entry[i]._04 = 0;
                 sou_ongen_entry[i]._00 = 0;
                 sou_ongen_entry[i]._06 = 0;
-                sou_ongen_entry[i]._08 = 0;
+                sou_ongen_entry[i].pan = 0;
                 sou_ongen_entry[i]._09 = 0;
                 sou_ongen_entry[i]._0A = 0;
-                sou_ongen_entry[i]._0C = 9999.f;
+                sou_ongen_entry[i].distance = 9999.f;
 
                 for (j = 0; j < ARRAY_COUNT(sou_ongen_entry); j++) {
                     if (sou_ongen_entry[j]._04 > old04) {
@@ -1337,8 +1334,8 @@ void Sou_Ongen_Lev_Cont() {
                         j = ARRAY_COUNT(sou_lev_ongen_data);
                     }
                 }
-                sou_lev_ongen_data[foundIndex]._0C = sou_ongen_entry[i]._0C;
-                sou_lev_se[foundIndex]._10 = sou_ongen_entry[i]._08;
+                sou_lev_ongen_data[foundIndex].distance = sou_ongen_entry[i].distance;
+                sou_lev_se[foundIndex].pan = sou_ongen_entry[i].pan;
                 sou_lev_ongen_data[foundIndex]._00++;
             }
 
@@ -1347,61 +1344,60 @@ void Sou_Ongen_Lev_Cont() {
     }
 }
 
-void Sou_Ongen_Lev_Prog(u8 param_1) {
+void Sou_Ongen_Lev_Prog(u8 index) {
     u8 unused = 0;
     u8 i = 0;
     u8 t = 0;
     if (sou_pause_flag != 1) {
-        if (sou_lev_ongen_data[param_1]._04 == 0) {
-            sou_lev_ongen_data[param_1]._02 = 0xff;
+        if (sou_lev_ongen_data[index]._04 == 0) {
+            sou_lev_ongen_data[index]._02 = 0xff;
         }
-        if (sou_lev_ongen_data[param_1]._00 == sou_lev_ongen_data[param_1]._01) {
-            if (sou_lev_ongen_data[param_1]._02 == 2) {
-                sou_lev_ongen_data[param_1]._02 = 3;
+        if (sou_lev_ongen_data[index]._00 == sou_lev_ongen_data[index]._01) {
+            if (sou_lev_ongen_data[index]._02 == 2) {
+                sou_lev_ongen_data[index]._02 = 3;
             }
         } else {
-            if (sou_lev_ongen_data[param_1]._02 == 0) {
-                sou_lev_ongen_data[param_1]._02 = 1;
+            if (sou_lev_ongen_data[index]._02 == 0) {
+                sou_lev_ongen_data[index]._02 = 1;
             }
-            if (sou_lev_ongen_data[param_1]._02 >= 3 && (sou_lev_ongen_data[param_1]._02 <= 6)) {
-                sou_lev_ongen_data[param_1]._02 = 2;
-            }
-        }
-
-        sou_lev_ongen_data[param_1]._01 = sou_lev_ongen_data[param_1]._00;
-        if ((sou_lev_ongen_data[param_1]._10 <= SOU_ONGEN_AREA1) &&
-            (sou_lev_ongen_data[param_1]._0C > SOU_ONGEN_AREA1)) {
-            sou_lev_ongen_data[param_1]._03 = 0;
-        }
-
-        if (sou_lev_ongen_data[param_1]._10 > SOU_ONGEN_AREA1) {
-            if (sou_lev_ongen_data[param_1]._0C <= SOU_ONGEN_AREA1) {
-                sou_lev_ongen_data[param_1]._03 = 1;
+            if (sou_lev_ongen_data[index]._02 >= 3 && (sou_lev_ongen_data[index]._02 <= 6)) {
+                sou_lev_ongen_data[index]._02 = 2;
             }
         }
 
-        sou_lev_ongen_data[param_1]._10 = sou_lev_ongen_data[param_1]._0C;
-        if ((sou_lev_ongen_data[param_1]._02 >= 3) && (sou_lev_ongen_data[param_1]._02 <= 6)) {
-            sou_lev_ongen_data[param_1]._02++;
+        sou_lev_ongen_data[index]._01 = sou_lev_ongen_data[index]._00;
+        if ((sou_lev_ongen_data[index].distance2 <= SOU_ONGEN_AREA1) &&
+            (sou_lev_ongen_data[index].distance > SOU_ONGEN_AREA1)) {
+            sou_lev_ongen_data[index]._03 = 0;
         }
 
-        if ((sou_lev_ongen_data[param_1]._02 == 1) && (sou_lev_ongen_data[param_1]._03 == 1)) {
-            Sou_LevStart((int)param_1, sou_lev_ongen_data[param_1]._08);
-            sou_lev_ongen_data[param_1]._02 = 2;
+        if ((sou_lev_ongen_data[index].distance2 > SOU_ONGEN_AREA1) &&
+            (sou_lev_ongen_data[index].distance <= SOU_ONGEN_AREA1)) {
+            sou_lev_ongen_data[index]._03 = 1;
         }
 
-        if (sou_lev_ongen_data[param_1]._02 == 7 || sou_lev_ongen_data[param_1]._02 == 0xff) {
-            Sou_LevStop((int)param_1, sou_lev_ongen_data[param_1]._08);
-            t = sou_lev_ongen_data[param_1]._09;
-            sou_lev_ongen_data[param_1]._09 = 0;
-            sou_lev_ongen_data[param_1]._00 = 0;
-            sou_lev_ongen_data[param_1]._01 = 0;
-            sou_lev_ongen_data[param_1]._02 = 0;
-            sou_lev_ongen_data[param_1]._03 = 0;
-            sou_lev_ongen_data[param_1]._04 = 0;
-            sou_lev_ongen_data[param_1]._08 = 0;
-            sou_lev_ongen_data[param_1]._0C = 9999.f;
-            sou_lev_ongen_data[param_1]._10 = 9999.f;
+        sou_lev_ongen_data[index].distance2 = sou_lev_ongen_data[index].distance;
+        if ((sou_lev_ongen_data[index]._02 >= 3) && (sou_lev_ongen_data[index]._02 <= 6)) {
+            sou_lev_ongen_data[index]._02++;
+        }
+
+        if ((sou_lev_ongen_data[index]._02 == 1) && (sou_lev_ongen_data[index]._03 == 1)) {
+            Sou_LevStart((int)index, sou_lev_ongen_data[index]._08);
+            sou_lev_ongen_data[index]._02 = 2;
+        }
+
+        if (sou_lev_ongen_data[index]._02 == 7 || sou_lev_ongen_data[index]._02 == 0xff) {
+            Sou_LevStop((int)index, sou_lev_ongen_data[index]._08);
+            t = sou_lev_ongen_data[index]._09;
+            sou_lev_ongen_data[index]._09 = 0;
+            sou_lev_ongen_data[index]._00 = 0;
+            sou_lev_ongen_data[index]._01 = 0;
+            sou_lev_ongen_data[index]._02 = 0;
+            sou_lev_ongen_data[index]._03 = 0;
+            sou_lev_ongen_data[index]._04 = 0;
+            sou_lev_ongen_data[index]._08 = 0;
+            sou_lev_ongen_data[index].distance = 9999.f;
+            sou_lev_ongen_data[index].distance2 = 9999.f;
             for (i = 0; i < 4; i++) {
                 if (sou_lev_ongen_data[i]._09 > t) {
                     sou_lev_ongen_data[i]._09--;
@@ -1409,13 +1405,13 @@ void Sou_Ongen_Lev_Prog(u8 param_1) {
             }
         }
 
-        if (sou_lev_ongen_data[param_1]._02 != 0) {
-            switch (sou_lev_ongen_data[param_1]._08) {
+        if (sou_lev_ongen_data[index]._02 != 0) {
+            switch (sou_lev_ongen_data[index]._08) {
                 default:
-                    sou_lev_se[param_1]._08 = distance2vol(sou_lev_ongen_data[param_1]._0C);
+                    sou_lev_se[index].volumeScale = distance2vol(sou_lev_ongen_data[index].distance);
                     break;
                 case 78:
-                    sou_lev_se[param_1]._08 = distance2vol4MD(sou_lev_ongen_data[param_1]._0C);
+                    sou_lev_se[index].volumeScale = distance2vol4MD(sou_lev_ongen_data[index].distance);
                     break;
             }
         }
@@ -1423,44 +1419,44 @@ void Sou_Ongen_Lev_Prog(u8 param_1) {
     return;
 }
 
-void Sou_BgmStart(u8 a, u16 b) {
-    sou_now_bgm_num = a;
-    if (a == 0) {
+void Sou_BgmStart(u8 id, u16 parameter) {
+    sou_now_bgm_num = id;
+    if (id == 0) {
         Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 1, 0, 0), 0);
         Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 3, 0, 0), 0);
         return;
     }
     u16 oldBGMHandle = sou_now_bgm_handle;
     sou_now_bgm_handle = (sou_now_bgm_handle == 1) ? 3 : 1;
-    if (a >= 0x70 && a <= 0x79) {
+    if (id >= 0x70 && id <= 0x79) {
         Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_SET_PORT, oldBGMHandle, 0, 0), sou_now_bgm_handle);
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_SET_PORT, oldBGMHandle, 0, 1), SEQ_TABLE[a]);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_SET_PORT, oldBGMHandle, 0, 1), SEQ_TABLE[id]);
         Na_BgmMuteClear();
-    } else if (a >= 0x53 && a <= 0x57) {
-        int bb = (u8)(a - 0x53);
+    } else if (id >= 0x53 && id <= 0x57) {
+        int bb = (u8)(id - 0x53);
         Na_SysTrgStart(bb + 0x16f);
     } else {
-        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, oldBGMHandle, 0, 0), b);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, oldBGMHandle, 0, 0), parameter);
         Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, sou_now_bgm_handle, 0, 0), 0);
-        a = Sou_BgmTenkiConv(a);
-        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, sou_now_bgm_handle, SEQ_TABLE[a], 0), b);
-        Na_StaffRollStart(SEQ_TABLE[a]);
+        id = Sou_BgmTenkiConv(id);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, sou_now_bgm_handle, SEQ_TABLE[id], 0), parameter);
+        Na_StaffRollStart(SEQ_TABLE[id]);
         Na_SetKappaSeqHandle(sou_now_bgm_handle);
     }
 }
 
 void Sou_BGMVolMove() {
-    f32 v = 0.f;
+    f32 volume = 0.f;
     f32 unused = 0.f;
     if (sou_bgm_vol_move_time) {
         switch (sou_now_bgm_handle) {
             case 1: {
                 if (sou_bgm_vol_move_counter == 0) {
                     sou_bgm_vol_move_time = 0;
-                    v = sou_bgm_vol_move_target;
+                    volume = sou_bgm_vol_move_target;
                 } else {
                     if (sou_bgm_vol_move_counter == sou_bgm_vol_move_time && sou_bgm_vol_move_time) {
-                        if (sou_bgm_vol_move_target - sou_bgm1_vol_now == 0) {
+                        if (sou_bgm_vol_move_target - sou_bgm1_vol_now == 0.f) {
                             sou_bgm_vol_move_delta = 0.f;
                             sou_bgm_vol_move_counter = 1;
                         } else {
@@ -1468,25 +1464,25 @@ void Sou_BGMVolMove() {
                                 (sou_bgm_vol_move_target - sou_bgm1_vol_now) / (int)sou_bgm_vol_move_time;
                         }
                     }
-                    v = sou_bgm_vol_move_target + (-(sou_bgm_vol_move_delta * (int)sou_bgm_vol_move_counter));
+                    volume = sou_bgm_vol_move_target + (-(sou_bgm_vol_move_delta * (int)sou_bgm_vol_move_counter));
                     sou_bgm_vol_move_counter--;
-                    if (v > 1.f) {
-                        v = 1.f;
+                    if (volume > 1.f) {
+                        volume = 1.f;
                     }
                 }
-                if (v > 1.f) {
-                    v = 1.f;
+                if (volume > 1.f) {
+                    volume = 1.f;
                 }
-                if (v < 0.f) {
-                    v = 0.f;
+                if (volume < 0.f) {
+                    volume = 0.f;
                 }
-                sou_bgm1_vol_now = v;
-                Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 1, 0, 0), v);
+                sou_bgm1_vol_now = volume;
+                Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 1, 0, 0), volume);
             } break;
             case 3: {
                 if (sou_bgm_vol_move_counter == 0) {
                     sou_bgm_vol_move_time = 0;
-                    v = sou_bgm_vol_move_target;
+                    volume = sou_bgm_vol_move_target;
                 } else {
                     if (sou_bgm_vol_move_counter == sou_bgm_vol_move_time && sou_bgm_vol_move_time) {
                         if (sou_bgm_vol_move_target - sou_bgm2_vol_now == 0) {
@@ -1497,41 +1493,41 @@ void Sou_BGMVolMove() {
                                 (sou_bgm_vol_move_target - sou_bgm2_vol_now) / (int)sou_bgm_vol_move_time;
                         }
                     }
-                    v = sou_bgm_vol_move_target + (-(sou_bgm_vol_move_delta * (int)sou_bgm_vol_move_counter));
+                    volume = sou_bgm_vol_move_target + (-(sou_bgm_vol_move_delta * (int)sou_bgm_vol_move_counter));
                     sou_bgm_vol_move_counter--;
-                    if (v > 1.f) {
-                        v = 1.f;
+                    if (volume > 1.f) {
+                        volume = 1.f;
                     }
                 }
-                if (v > 1.f) {
-                    v = 1.f;
+                if (volume > 1.f) {
+                    volume = 1.f;
                 }
-                if (v < 0.f) {
-                    v = 0.f;
+                if (volume < 0.f) {
+                    volume = 0.f;
                 }
-                sou_bgm2_vol_now = v;
-                Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 3, 0, 0), v);
+                sou_bgm2_vol_now = volume;
+                Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 3, 0, 0), volume);
             } break;
         }
     }
 }
 
-void Sou_Na_BgmStart(u8 a) {
-    u16 v = 0;
-    Sou_BgmStart(a, v);
-    if (a >= 0x80 && a <= 0xb6) {
+void Sou_Na_BgmStart(u8 id) {
+    u16 param = 0;
+    Sou_BgmStart(id, param);
+    if (id >= 0x80 && id <= 0xb6) {
         Sou_GroupControl(1, 0x3f, 0.f);
         Sou_GroupControl(3, 0x3f, 0.f);
     }
 }
 
-void Sou_Na_BgmStop(u16 a) {
+void Sou_Na_BgmStop(u16 id) {
     sou_now_bgm_fadeout = 1;
-    a &= 0xfff;
+    id &= 0xfff;
     if (sou_now_bgm_handle == 1) {
-        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 1, 0, 0), a);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 1, 0, 0), id);
     } else {
-        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 3, 0, 0), a);
+        Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_STOP_SEQ, 3, 0, 0), id);
     }
 }
 
@@ -1572,19 +1568,19 @@ void Sou_SeFadeoutRoutine() {
     f32 v2 = 0.f;
     for (i = 0; i < ARRAY_COUNT(sou_se_fade); i++) {
         if (sou_se_fade[i]._0 == 0xffff) {
-            sou_se_fade[i]._8 = 0.f;
+            sou_se_fade[i].volumeScale = 0.f;
             sou_se_fade[i]._0 = 0;
             if (i >= 8 && i <= 14) {
-                sou_lev_se[i]._08 = 0.f;
+                sou_lev_se[i].volumeScale = 0.f;
             }
         } else if (sou_se_fade[i]._0 != 0) {
             if (sou_se_fade[i]._0 == sou_se_fade[i]._2) {
-                sou_se_fade[i]._8 = 0.f;
+                sou_se_fade[i].volumeScale = 0.f;
                 sou_se_fade[i]._0 = 0xffff;
             } else {
                 v1 = sou_se_fade[i]._2 - sou_se_fade[i]._0;
                 v2 = sou_se_fade[i]._2;
-                sou_se_fade[i]._8 = v1 / v2;
+                sou_se_fade[i].volumeScale = v1 / v2;
                 sou_se_fade[i]._0++;
             }
         }
@@ -1597,19 +1593,19 @@ void Sou_SeFadeinRoutine() {
     f32 v2 = 0.f;
     for (i = 0; i < ARRAY_COUNT(sou_se_fade); i++) {
         if (sou_se_fade[i]._4 == 0xffff) {
-            sou_se_fade[i]._8 = 1.f;
+            sou_se_fade[i].volumeScale = 1.f;
             sou_se_fade[i]._4 = 0;
             if (i >= 8 && i <= 14) {
-                sou_lev_se[i]._08 = 1.f;
+                sou_lev_se[i].volumeScale = 1.f;
             }
         } else if (sou_se_fade[i]._4 != 0) {
             if (sou_se_fade[i]._4 == sou_se_fade[i]._6) {
-                sou_se_fade[i]._8 = 1.f;
+                sou_se_fade[i].volumeScale = 1.f;
                 sou_se_fade[i]._4 = 0xffff;
             } else {
                 v1 = sou_se_fade[i]._6 - sou_se_fade[i]._4;
                 v2 = sou_se_fade[i]._6;
-                sou_se_fade[i]._8 = v1 / v2;
+                sou_se_fade[i].volumeScale = v1 / v2;
                 sou_se_fade[i]._4++;
             }
         }
@@ -1621,14 +1617,14 @@ void Sou_SeVolumeReset() {
     for (i = 0; i < ARRAY_COUNT(sou_lev_se); i++) {
         sou_se_fade[i + 8]._0 = 0;
         sou_se_fade[i + 8]._4 = 0;
-        sou_lev_se[i]._08 = 0.f;
+        sou_lev_se[i].volumeScale = 0.f;
         sou_lev_se[i]._0C = 1.f;
     }
 }
 
-void Sou_SeTrFadeout(u8 a, u16 b) {
-    sou_se_fade[a]._0 = 1;
-    sou_se_fade[a]._2 = b;
+void Sou_SeTrFadeout(u8 index, u16 b) {
+    sou_se_fade[index]._0 = 1;
+    sou_se_fade[index]._2 = b;
 }
 
 void Sou_SeFadeout(u16 a) {
@@ -1907,16 +1903,16 @@ void Na_BgmStop(u16 a) {
     sou_bgm_call_buffer = 3;
 }
 
-void Na_SysTrgStart(u16 a) {
+void Na_SysTrgStart(u16 id) {
     u8 v = FALSE;
-    u8 j = 0x3f;
-    u8 k = 0;
+    u8 pan = 0x3f;
+    u8 reverb = 0;
     u8 unused = 0;
-    f32 f31 = 1.f;
-    f32 f30 = 1.f;
-    f32 f29 = 1.f;
-    f32 f28 = 0.f;
-    if (a == 0x54 && sou_last_sys_trg_num == 0x54) {
+    f32 volume = 1.f;
+    f32 optVolume = 1.f;
+    f32 freqScale = 1.f;
+    f32 distance = 0.f;
+    if (id == 0x54 && sou_last_sys_trg_num == 0x54) {
         if (sou_kokoro_toguru == 0) {
             sou_kokoro_toguru = 1;
             if (sou_game_frame_counter - sou_last_kokoro_counter == 1) {
@@ -1929,11 +1925,11 @@ void Na_SysTrgStart(u16 a) {
 
     sou_last_kokoro_counter = sou_game_frame_counter;
     sou_kokoro_toguru = 0;
-    sou_last_sys_trg_num = a;
-    switch (a) {
+    sou_last_sys_trg_num = id;
+    switch (id) {
         case 0x424: {
             if (sou_scene_mode != 1) {
-                a = 0x16e;
+                id = 0x16e;
             }
         } break;
         case 0xd: {
@@ -1947,140 +1943,140 @@ void Na_SysTrgStart(u16 a) {
     }
 
     if (!v) {
-        Sou_TrgStart(a, f31, f30, f29, j, k, f28);
+        Sou_TrgStart(id, volume, optVolume, freqScale, pan, reverb, distance);
     }
 }
 
-void Sou_WalkSe(u16 a, u16 b, f32 c, u8 d, f32 e) {
-    u8 r29 = 0x3f;
+void Sou_WalkSe(u16 id, u16 angle, f32 distance, u8 reverb, f32 optVolume) {
+    u8 pan = 0x3f;
     u8 unused = 0;
     u16 v = 0;
-    f32 f29 = 1.f;
-    f32 f30 = 1.;
+    f32 freqScale = 1.f;
+    f32 volume = 1.;
 
-    if (a == 0 || c > SOU_ONGEN_AREA1) {
+    if (id == 0 || distance > SOU_ONGEN_AREA1) {
         // needed to match, probably stripped assert;
         (void)0;
         return;
     }
 
-    r29 = angle2pan(b, c);
-    f30 = distance2vol(c);
+    pan = angle2pan(angle, distance);
+    volume = distance2vol(distance);
     v = Nap_GetRandom();
     v >>= 0xe;
     if (sou_player_dash == 3) {
-        a = a + 40;
+        id = id + 40;
     }
     if ((sou_walk_flag & 1) == 1) {
         if (v == 3 && sou_last_walk_l == 0 && sou_last_walk_r == 0) {
-            a = a + 0x1e;
+            id = id + 0x1e;
             sou_last_walk_l = 1;
         } else {
-            a = a + 0xa;
+            id = id + 0xa;
             sou_last_walk_l = 0;
         }
     } else if (v == 3 && sou_last_walk_l == 0 && sou_last_walk_r == 0) {
-        a = a + 0x14;
+        id = id + 0x14;
         sou_last_walk_r = 1;
     } else {
         sou_last_walk_r = 0;
     }
     sou_walk_flag++;
-    Sou_TrgStart(a, f30, e, f29, r29, d, c);
+    Sou_TrgStart(id, volume, optVolume, freqScale, pan, reverb, distance);
 }
 
-void Na_PlyWalkSe(u16 a, u16 b, f32 c) {
-    u8 j = 0;
-    f32 v = 1.f;
+void Na_PlyWalkSe(u16 id, u16 angle, f32 distance) {
+    u8 reverb = 0;
+    f32 optVolume = 1.f;
     if (sou_scene_mode) {
         switch (sou_player_dash) {
             case 1: {
-                v = 0.6f;
+                optVolume = 0.6f;
             } break;
             case 2: {
-                v = 0.8f;
+                optVolume = 0.8f;
             } break;
             case 3: {
-                v = 1.0f;
+                optVolume = 1.0f;
             } break;
         }
 
-        Sou_WalkSe(a, b, c, j, v);
+        Sou_WalkSe(id, angle, distance, reverb, optVolume);
     }
 }
 
-void Na_PlyWalkSeRoom(u8 a, u16 b, f32 c) {
-    u16 r30 = 0;
-    u8 r31 = 0;
-    f32 f31 = 1.f;
+void Na_PlyWalkSeRoom(u8 a, u16 angle, f32 distance) {
+    u16 id = 0;
+    u8 reverb = 0;
+    f32 optVolume = 1.f;
     if (sou_scene_mode) {
         switch (sou_scene_mode) {
             case 0xf: {
-                r31 = 0x32;
+                reverb = 0x32;
             } break;
             case 0x10: {
-                r31 = 0x32;
+                reverb = 0x32;
             } break;
             default: {
-                r31 = 5;
+                reverb = 5;
             } break;
         }
         if (a == 0xff) {
-            r30 = 0x4204;
+            id = 0x4204;
         } else {
-            r30 = SE_FLOOR_DATA[a] + 0x42e6;
+            id = SE_FLOOR_DATA[a] + 0x42e6;
         }
         switch (sou_player_dash) {
             case 1: {
-                f31 = 0.54f;
+                optVolume = 0.54f;
             } break;
             case 2: {
-                f31 = 0.71999997f;
+                optVolume = 0.71999997f;
             } break;
             case 3: {
-                f31 = 0.9f;
+                optVolume = 0.9f;
             } break;
         }
-        Sou_WalkSe(r30, b, c, r31, f31);
+        Sou_WalkSe(id, angle, distance, reverb, optVolume);
     }
 }
 
-void Na_NpcWalkSe(u16 a, u16 b, f32 c) {
-    u8 r31 = 0;
-    f32 f31 = 0.68f;
+void Na_NpcWalkSe(u16 id, u16 angle, f32 distance) {
+    u8 reverb = 0;
+    f32 optVolume = 0.68f;
     if (sou_scene_mode == 0 || sou_scene_mode == 0xc) {
         (void)0;
         return;
     }
-    Sou_WalkSe(a, b, c, r31, f31);
+    Sou_WalkSe(id, angle, distance, reverb, optVolume);
 }
 
-void Na_NpcWalkSeRoom(u8 a, u16 b, f32 c) {
-    u16 r30 = 0;
-    u8 r31 = 0;
-    f32 f31 = 0.612f;
+void Na_NpcWalkSeRoom(u8 index, u16 angle, f32 distance) {
+    u16 id = 0;
+    u8 reverb = 0;
+    f32 optVolume = 0.612f;
     if (sou_scene_mode == 0 || sou_scene_mode == 0xe) {
         (void)0;
         return;
     }
     switch (sou_scene_mode) {
         case 0xf: {
-            r31 = 0x32;
+            reverb = 0x32;
         } break;
         case 0x10: {
-            r31 = 0x32;
+            reverb = 0x32;
         } break;
         default: {
-            r31 = 5;
+            reverb = 5;
         } break;
     }
-    r30 = SE_FLOOR_DATA[a] + 0x42e6;
-    Sou_WalkSe(r30, b, c, r31, f31);
+    id = SE_FLOOR_DATA[index] + 0x42e6;
+    Sou_WalkSe(id, angle, distance, reverb, optVolume);
 }
 
-extern "C" void Na_PlayerStatusLevel(u8 a, f32 b) {
-    sou_player_dash = a;
-    sou_player_speed = b;
+extern void Na_PlayerStatusLevel(u8 playerDash, f32 playerSpeed) {
+    sou_player_dash = playerDash;
+    sou_player_speed = playerSpeed;
 }
 
 u8 Sou_TanboinHenkan(u8 a, u8 b) {
@@ -2535,7 +2531,7 @@ u8 Sou_BoinShiinCheck(u8 a) {
     return 2;
 }
 
-void Na_VoiceSe(u8 a, u8 b, u8 c, s16 d, u8 e, u8 f) {
+void Na_VoiceSe(u8 a, u8 b, u8 c, s16 voice, u8 scale, u8 f) {
     sou_Na_VoiceSeFlag = 1;
     u8 i = 0;
     u8 r28;
@@ -2602,8 +2598,8 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 d, u8 e, u8 f) {
                         a = Sou_TanboinHenkan(a, b);
                     }
                     sou_num2_request = b;
-                    sou_num2_animal_id = d;
-                    sou_num2_scale = e;
+                    sou_num2_animal_id = voice;
+                    sou_num2_scale = scale;
                 } break;
                 case 3: {
                     if (a > 0x77) {
@@ -2663,7 +2659,7 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 d, u8 e, u8 f) {
     f32 f31 = 0.f;
     f32 f30 = 0.f;
     u8 r23;
-    if (d > 0x12b) {
+    if (voice > 0x12b) {
         return;
     }
     if ((sou_voice_mode == 0 && Nap_ReadSubPort(4, 0, 1) != sou_now_voice_seq)) {
@@ -2673,12 +2669,12 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 d, u8 e, u8 f) {
         return;
     }
     if (a == 0x80) {
-        if (d == 0xfa) {
+        if (voice == 0xfa) {
             return;
         }
         switch (sou_voice_mode) {
             case 0:
-                Na_MelodyVoice(d);
+                Na_MelodyVoice(voice);
                 break;
             case 1:
                 Na_SysTrgStart(0x106d);
@@ -2931,18 +2927,18 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 d, u8 e, u8 f) {
             }
 
             if (r29 != 0x85 && r29 != 0x81 && r29 != 0x84) {
-                if (e != 0x20) {
-                    if (e > 0x20) {
-                        e = e - 0x20;
-                        f31 = e;
+                if (scale != 0x20) {
+                    if (scale > 0x20) {
+                        scale = scale - 0x20;
+                        f31 = scale;
                         f31 = f31 * 0.15f;
                         f30 = sou_voice_se[0]._08 + f31;
                         f30 = 4.f;
                         sou_voice_se[0]._08 = f30;
                         sou_voice_se[1]._08 = f30;
                     } else {
-                        e = 0x1f - e;
-                        f31 = e;
+                        scale = 0x1f - scale;
+                        f31 = scale;
                         f31 = f31 * 0.02f;
                         f30 = sou_voice_se[0]._08 - f31;
                         f30 = 0.4f;
@@ -2965,36 +2961,36 @@ void Na_VoiceSe(u8 a, u8 b, u8 c, s16 d, u8 e, u8 f) {
     }
 }
 
-void Na_MessageStatus(u8 a) {
-    sou_message_status = a;
+void Na_MessageStatus(u8 messageStatus) {
+    sou_message_status = messageStatus;
     sou_voice_effect = 0;
     sou_voice_effect_counter = 0;
 }
 
-void Na_MessageSpeed(u8 v) {
-    sou_message_speed = v;
+void Na_MessageSpeed(u8 messageSpeed) {
+    sou_message_speed = messageSpeed;
 }
 
 u8 Na_MessageSpeedGet() {
     return sou_message_speed;
 }
 
-void Na_OngenPos(u32 a, u8 b, u16 c, f32 d) {
-    u8 r25 = 0;
-    u8 r31 = 0;
-    u8 r29 = 0;
-    u8 r24 = 0;
-    u8 r27 = 0;
-    u8 r28 = 0;
+void Na_OngenPos(u32 id, u8 index, u16 angle, f32 distance) {
+    u8 pan = 0;
+    u8 i = 0;
+    u8 j = 0;
+    u8 found = 0;
+    u8 foundIndex = 0;
+    u8 found2 = 0;
 
-    if (b == 0x44) {
-        u8 unused = Na_RoomIncectPos(a, b, c, d);
+    if (index == 0x44) {
+        u8 unused = Na_RoomIncectPos(id, index, angle, distance);
         return;
     }
 
     if (sou_sub_game_flag != 1 && sou_scene_mode != 0) {
 
-        if ((sou_scene_mode == 8 || sou_scene_mode == 9) && (b == 0xb || b == 0x16)) {
+        if ((sou_scene_mode == 8 || sou_scene_mode == 9) && (index == 0xb || index == 0x16)) {
             return;
         }
         if (sou_ongenpos_kill_countdown == 1) {
@@ -3002,11 +2998,11 @@ void Na_OngenPos(u32 a, u8 b, u16 c, f32 d) {
         }
 
         //! @BUG: should be ARRAY_COUNT(sou_lev_ongen_data), reading unknown data
-        if (b == 0xb) {
-            for (r31 = 0; r31 < ARRAY_COUNT(sou_ongen_entry); r31++) {
-                if (sou_lev_ongen_data[r31]._08 == 0xc) {
-                    for (r29 = 0; r29 < ARRAY_COUNT(sou_ongen_entry); r29++) {
-                        if (sou_lev_ongen_data[r29]._08 == 0xb && sou_lev_ongen_data[r29]._0C < d) {
+        if (index == 0xb) {
+            for (i = 0; i < ARRAY_COUNT(sou_ongen_entry); i++) {
+                if (sou_lev_ongen_data[i]._08 == 0xc) {
+                    for (j = 0; j < ARRAY_COUNT(sou_ongen_entry); j++) {
+                        if (sou_lev_ongen_data[j]._08 == 0xb && sou_lev_ongen_data[j].distance < distance) {
                             return;
                         }
                     }
@@ -3014,144 +3010,142 @@ void Na_OngenPos(u32 a, u8 b, u16 c, f32 d) {
             }
         }
 
-        if (b == 0 || d > SOU_ONGEN_AREA1) {
+        if (index == 0 || distance > SOU_ONGEN_AREA1) {
             (void)0;
             return;
         }
-        r25 = angle2pan(c, d);
-        for (r31 = 0; r31 < ARRAY_COUNT(sou_ongen_entry); r31++) {
-            if (a == sou_ongen_entry[r31]._00) {
-                r29 = r31;
-                r31 = ARRAY_COUNT(sou_ongen_entry);
-                r24 = 1;
+        pan = angle2pan(angle, distance);
+        for (i = 0; i < ARRAY_COUNT(sou_ongen_entry); i++) {
+            if (id == sou_ongen_entry[i]._00) {
+                j = i;
+                i = ARRAY_COUNT(sou_ongen_entry);
+                found = 1;
             }
         }
-        if (r24 == 0) {
-            for (r31 = 0; r31 < ARRAY_COUNT(sou_ongen_entry); r31++) {
-                if (sou_ongen_entry[r31]._00 == 0) {
-                    sou_ongen_entry[r31]._00 = a;
-                    sou_ongen_entry[r31]._06 = b;
-                    sou_ongen_entry[r31]._08 = r25;
-                    sou_ongen_entry[r31]._0C = d;
-                    sou_ongen_entry[r31]._09 = 1;
-                    sou_ongen_entry[r31]._0A = 0;
-                    r27 = r31;
-                    r31 = ARRAY_COUNT(sou_ongen_entry);
+        if (found == 0) {
+            for (i = 0; i < ARRAY_COUNT(sou_ongen_entry); i++) {
+                if (sou_ongen_entry[i]._00 == 0) {
+                    sou_ongen_entry[i]._00 = id;
+                    sou_ongen_entry[i]._06 = index;
+                    sou_ongen_entry[i].pan = pan;
+                    sou_ongen_entry[i].distance = distance;
+                    sou_ongen_entry[i]._09 = 1;
+                    sou_ongen_entry[i]._0A = 0;
+                    foundIndex = i;
+                    i = ARRAY_COUNT(sou_ongen_entry);
                 }
             }
-            for (r31 = 0; r31 < ARRAY_COUNT(sou_ongen_entry); r31++) {
-                if (sou_ongen_entry[r31]._00 != 0) {
-                    sou_ongen_entry[r31]._04++;
+            for (i = 0; i < ARRAY_COUNT(sou_ongen_entry); i++) {
+                if (sou_ongen_entry[i]._00 != 0) {
+                    sou_ongen_entry[i]._04++;
                 }
             }
-            for (r31 = 0; r31 < ARRAY_COUNT(sou_lev_ongen_data); r31++) {
-                if (sou_lev_ongen_data[r31]._08 == 0) {
-                    r28 = 1;
-                    r29 = r31;
-                    r31 = 4;
+            for (i = 0; i < ARRAY_COUNT(sou_lev_ongen_data); i++) {
+                if (sou_lev_ongen_data[i]._08 == 0) {
+                    found2 = 1;
+                    j = i;
+                    i = 4;
                 }
             }
-            if (r28 == 1) {
-                for (r31 = 0; r31 < ARRAY_COUNT(sou_lev_ongen_data); r31++) {
-                    if (sou_lev_ongen_data[r31]._08 != 0) {
-                        sou_lev_ongen_data[r31]._09++;
-                        // r28 = 1;
-                        // r29 = r31;
-                        // r31 = ARRAY_COUNT(sou_lev_ongen_data);
+            if (found2 == 1) {
+                for (i = 0; i < ARRAY_COUNT(sou_lev_ongen_data); i++) {
+                    if (sou_lev_ongen_data[i]._08 != 0) {
+                        sou_lev_ongen_data[i]._09++;
                     }
                 }
-                sou_lev_ongen_data[r29]._09 = 1;
-                sou_lev_ongen_data[r29]._04 = sou_ongen_entry[r27]._00;
-                sou_lev_ongen_data[r29]._08 = sou_ongen_entry[r27]._06;
-                sou_lev_ongen_data[r29]._0C = sou_ongen_entry[r27]._0C;
-                sou_lev_se[r29]._10 = sou_ongen_entry[r27]._08;
-                sou_lev_ongen_data[r29]._00 = 1;
-                sou_lev_ongen_data[r29]._01 = 0;
+                sou_lev_ongen_data[j]._09 = 1;
+                sou_lev_ongen_data[j]._04 = sou_ongen_entry[foundIndex]._00;
+                sou_lev_ongen_data[j]._08 = sou_ongen_entry[foundIndex]._06;
+                sou_lev_ongen_data[j].distance = sou_ongen_entry[foundIndex].distance;
+                sou_lev_se[j].pan = sou_ongen_entry[foundIndex].pan;
+                sou_lev_ongen_data[j]._00 = 1;
+                sou_lev_ongen_data[j]._01 = 0;
                 return;
             } else {
-                r29 = 0;
-                for (r31 = 0; r31 < ARRAY_COUNT(sou_lev_ongen_data); r31++) {
-                    if (sou_lev_ongen_data[r31]._09 > r29) {
-                        r29 = sou_lev_ongen_data[r31]._09;
-                        r28 = r31;
+                j = 0;
+                for (i = 0; i < ARRAY_COUNT(sou_lev_ongen_data); i++) {
+                    if (sou_lev_ongen_data[i]._09 > j) {
+                        j = sou_lev_ongen_data[i]._09;
+                        found2 = i;
                     }
                 }
-                Sou_LevStop((u8)r28, sou_lev_ongen_data[r28]._08);
-                for (r31 = 0; r31 < ARRAY_COUNT(sou_lev_ongen_data); r31++) {
-                    if (sou_lev_ongen_data[r31]._09 != 0) {
-                        sou_lev_ongen_data[r31]._09++;
+                Sou_LevStop((u8)found2, sou_lev_ongen_data[found2]._08);
+                for (i = 0; i < ARRAY_COUNT(sou_lev_ongen_data); i++) {
+                    if (sou_lev_ongen_data[i]._09 != 0) {
+                        sou_lev_ongen_data[i]._09++;
                     }
                 }
-                sou_lev_ongen_data[r28]._09 = 1;
-                sou_lev_ongen_data[r28]._04 = sou_ongen_entry[r27]._00;
-                sou_lev_ongen_data[r28]._08 = sou_ongen_entry[r27]._06;
-                sou_lev_ongen_data[r28]._0C = sou_ongen_entry[r27]._0C;
-                sou_lev_se[r28]._10 = sou_ongen_entry[r27]._08;
-                sou_lev_ongen_data[r28]._00 = 1;
-                sou_lev_ongen_data[r28]._01 = 0;
-                sou_lev_ongen_data[r28]._10 = 9999.f;
-                sou_lev_ongen_data[r28]._03 = 0;
-                sou_lev_ongen_data[r28]._02 = 1;
+                sou_lev_ongen_data[found2]._09 = 1;
+                sou_lev_ongen_data[found2]._04 = sou_ongen_entry[foundIndex]._00;
+                sou_lev_ongen_data[found2]._08 = sou_ongen_entry[foundIndex]._06;
+                sou_lev_ongen_data[found2].distance = sou_ongen_entry[foundIndex].distance;
+                sou_lev_se[found2].pan = sou_ongen_entry[foundIndex].pan;
+                sou_lev_ongen_data[found2]._00 = 1;
+                sou_lev_ongen_data[found2]._01 = 0;
+                sou_lev_ongen_data[found2].distance2 = 9999.f;
+                sou_lev_ongen_data[found2]._03 = 0;
+                sou_lev_ongen_data[found2]._02 = 1;
             }
         } else {
-            sou_ongen_entry[r29]._06 = b;
-            sou_ongen_entry[r29]._08 = r25;
-            sou_ongen_entry[r29]._0C = d;
-            sou_ongen_entry[r29]._09++;
+            sou_ongen_entry[j]._06 = index;
+            sou_ongen_entry[j].pan = pan;
+            sou_ongen_entry[j].distance = distance;
+            sou_ongen_entry[j]._09++;
         }
     }
 }
 
-void Sou_PosTrgStart(u16 a, u16 b, f32 c, u8 d, f32 e) {
+// the name `num` comes from Na_OngenTrgStartSpeed
+void Sou_PosTrgStart(u16 num, u16 angle, f32 distance, u8 reverb, f32 optVolume) {
     u8 unused = 0;
-    u8 r27 = 0x3f;
+    u8 pan = 0x3f;
     u8 r26 = 0;
-    u16 r28 = 0;
+    u16 rand = 0;
     u16 r29 = 0;
     u16 r30 = 0;
-    f32 f30 = 1.f;
-    f32 f29 = 1.f;
-    switch (a) {
+    f32 volume = 1.f;
+    f32 freqScale = 1.f;
+    switch (num) {
         case 0x6e:
         case 0x6f:
         case 0x70:
         case 0x71: {
-            if (a == 0 || c > 6400.f) {
+            if (num == 0 || distance > 6400.f) {
                 return;
             }
-            f30 = distance2vol4KITEKI(c);
+            volume = distance2vol4KITEKI(distance);
         } break;
         default: {
-            if (a == 0 || c > SOU_ONGEN_AREA1) {
+            if (num == 0 || distance > SOU_ONGEN_AREA1) {
                 return;
             }
-            f30 = distance2vol(c);
+            volume = distance2vol(distance);
         } break;
     }
-    r27 = angle2pan(b, c);
-    if (a == 0x19) {
+    pan = angle2pan(angle, distance);
+    if (num == 0x19) {
         r26 = sou_metranome_counter & 3;
         if (r26 == 0) {
-            a++;
+            num++;
         }
         sou_metranome_counter++;
     }
-    if (a == 0x167) {
-        r28 = Nap_GetRandom();
-        r30 = r28 & 1;
-        if (a == sou_last_uchiwa) {
-            a = a + r30 + 1;
-            if (a == 0x16a) {
-                a = 0x167;
+    if (num == 0x167) {
+        rand = Nap_GetRandom();
+        r30 = rand & 1;
+        if (num == sou_last_uchiwa) {
+            num = num + r30 + 1;
+            if (num == 0x16a) {
+                num = 0x167;
             }
         } else {
-            a = a + r30;
+            num = num + r30;
         }
-        sou_last_uchiwa = a;
+        sou_last_uchiwa = num;
     }
-    if (a == 0x122) {
-        r28 = Nap_GetRandom();
-        r30 = r28 & 3;
+    if (num == 0x122) {
+        rand = Nap_GetRandom();
+        r30 = rand & 3;
         switch (sou_last_perio) {
             case 0x122: {
                 r29 = r30 + 1;
@@ -3169,14 +3163,14 @@ void Sou_PosTrgStart(u16 a, u16 b, f32 c, u8 d, f32 e) {
                 r29 = r30;
             } break;
         }
-        a = a + r29;
-        sou_last_perio = a;
+        num = num + r29;
+        sou_last_perio = num;
     }
-    Sou_TrgStart(a, f30, e, f29, r27, d, c);
+    Sou_TrgStart(num, volume, optVolume, freqScale, pan, reverb, distance);
 }
 
 extern void Na_OngenTrgStartSpeed(u16 num, u16 angle, f32 distance, f32 speed) {
-    u8 r30 = 0;
+    u8 reverb = 0;
     u8 r29 = 0;
     f32 opt_volume = 1.f;
     OSAttention("BANDO_DEBUG:\n");
@@ -3189,12 +3183,12 @@ extern void Na_OngenTrgStartSpeed(u16 num, u16 angle, f32 distance, f32 speed) {
         }
         OSAttention("BANDO_DEBUG: opt_volume=%f\n", opt_volume);
         if (r29 == 0) {
-            Sou_PosTrgStart(num, angle, distance, r30, opt_volume);
+            Sou_PosTrgStart(num, angle, distance, reverb, opt_volume);
         }
     }
 }
 
-extern void Na_OngenTrgStart(u16 a, u16 b, f32 c) {
+extern void Na_OngenTrgStart(u16 a, u16 angle, f32 distance) {
     u8 r29 = 0;
     u8 r31 = 0;
     f32 f31 = 1.f;
@@ -3214,7 +3208,7 @@ extern void Na_OngenTrgStart(u16 a, u16 b, f32 c) {
             }
         } break;
         case 0x43b: {
-            if (c > 375.f) {
+            if (distance > 375.f) {
                 r31 = 1;
             }
             if (sou_now_bgm_num == 0x42 || sou_now_bgm_num == 0x4e || sou_scene_mode == 0xc) {
@@ -3239,13 +3233,13 @@ extern void Na_OngenTrgStart(u16 a, u16 b, f32 c) {
     }
 
     if (r31 == 0) {
-        Sou_PosTrgStart(a, b, c, r29, f31);
+        Sou_PosTrgStart(a, angle, distance, r29, f31);
     }
 }
 
-extern void Na_SetOutMode(u8 a) {
-    sou_out_mode = a;
-    switch (a) {
+extern void Na_SetOutMode(u8 outMode) {
+    sou_out_mode = outMode;
+    switch (outMode) {
         case 0: {
             Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_SET_SOUND_MODE, 0, 0, 0), 0);
         } break;
@@ -3262,45 +3256,47 @@ extern void Na_SetVoiceMode(u8 a) {
     sou_voice_mode = a;
 }
 
-extern void Na_FloorTrgStart(u8 a, u16 b, f32 c) {
+extern void Na_FloorTrgStart(u8 index, u16 angle, f32 distance) {
     u16 r31 = 0;
     u8 r30 = 0;
     f32 f31 = 1.f;
     if (sou_scene_mode != 0) {
-        r31 = SE_FLOOR_DATA[a];
-        Sou_PosTrgStart(r31, b, c, r30, f31);
+        r31 = SE_FLOOR_DATA[index];
+        Sou_PosTrgStart(r31, angle, distance, r30, f31);
     }
 }
 
 extern void Na_SysLevStart(u8 a) {
-    u8 r30 = 0;
-    u8 r31 = 0;
-    u8 r28 = 0;
-    u8 r29 = 0;
-    for (r30 = 0; r30 < ARRAY_COUNT(sou_sys_lev); r30++) {
-        if (sou_sys_lev[r30]._0 == 0) {
-            for (r31 = 0; r31 < ARRAY_COUNT(sou_sys_lev); r31++) {
-                sou_sys_lev[r30]._1++;
+    u8 i = 0;
+    u8 j = 0;
+    u8 maxVal = 0;
+    u8 foundIndex = 0;
+    for (i = 0; i < ARRAY_COUNT(sou_sys_lev); i++) {
+        if (sou_sys_lev[i]._0 == 0) {
+            for (j = 0; j < ARRAY_COUNT(sou_sys_lev); j++) {
+                sou_sys_lev[i]._1++;
             }
-            r29 = r30;
+            foundIndex = i;
             goto offset_jmp;
         }
     }
-    r28 = 0;
-    for (r31 = 0; r31 < ARRAY_COUNT(sou_sys_lev); r31++) {
-        if (sou_sys_lev[r31]._1 > r28) {
-            r28 = sou_sys_lev[r31]._1;
-            r29 = r31;
+    maxVal = 0;
+    for (j = 0; j < ARRAY_COUNT(sou_sys_lev); j++) {
+        if (sou_sys_lev[j]._1 > maxVal) {
+            maxVal = sou_sys_lev[j]._1;
+            foundIndex = j;
         }
     }
-    for (r31 = 0; r31 < ARRAY_COUNT(sou_sys_lev); r31++) {
-        sou_sys_lev[r30]._1++;
+    for (j = 0; j < ARRAY_COUNT(sou_sys_lev); j++) {
+        //! BUG: `i` will be ARRAY_COUNT(sou_sys_lev) if we get to this point,
+        // and we will be incrementing out of bounds
+        sou_sys_lev[i]._1++;
     }
 
 offset_jmp:
-    sou_sys_lev[r29]._0 = a;
-    sou_lev_se[r29 + 4]._08 = 1.f;
-    sou_lev_se[r29 + 4]._0C = 1.f;
+    sou_sys_lev[foundIndex]._0 = a;
+    sou_lev_se[foundIndex + 4].volumeScale = 1.f;
+    sou_lev_se[foundIndex + 4]._0C = 1.f;
     if (a == 0x8d && sou_kiteki_counter == 0) {
         sou_kiteki_counter = 1;
     }
@@ -3309,34 +3305,36 @@ offset_jmp:
             case 7:
             case 8:
             case 9: {
-                sou_lev_se[r29 + 4]._08 = 0.4f;
+                sou_lev_se[foundIndex + 4].volumeScale = 0.4f;
             } break;
         }
     }
-    Sou_LevStart(r29 + 4, a);
+    Sou_LevStart(foundIndex + 4, a);
 }
 
 extern void Na_SysLevStop(u8 a) {
-    u8 r31 = 0;
-    u8 r30 = 0;
+    u8 i = 0;
+    u8 index = 0;
     if (a == 0x8d) {
         sou_kiteki_counter = 0;
     }
-    for (r31 = 0; r31 < ARRAY_COUNT(sou_sys_lev); r31++) {
-        if (a == sou_sys_lev[r31]._0) {
-            sou_sys_lev[r31]._0 = 0;
-            sou_sys_lev[r31]._1 = 0;
-            r30 = r31;
-            r31 = ARRAY_COUNT(sou_sys_lev);
+    for (i = 0; i < ARRAY_COUNT(sou_sys_lev); i++) {
+        if (a == sou_sys_lev[i]._0) {
+            sou_sys_lev[i]._0 = 0;
+            sou_sys_lev[i]._1 = 0;
+            index = i;
+            i = ARRAY_COUNT(sou_sys_lev);
         }
     }
-    Sou_LevStop(r30 + 4, a);
+    Sou_LevStop(index + 4, a);
 }
 
-extern void Na_Pause(u8 a) {
-    if (a == sou_pause_flag)
+extern void Na_Pause(u8 pauseFlag) {
+    if (pauseFlag == sou_pause_flag) {
         return;
-    switch (a) {
+    }
+
+    switch (pauseFlag) {
         case 0: {
             switch (sou_scene_mode) {
                 case 2: {
@@ -3360,22 +3358,22 @@ extern void Na_Pause(u8 a) {
             }
         } break;
     }
-    sou_pause_flag = a;
+    sou_pause_flag = pauseFlag;
 }
 
-extern void Na_RhythmPos(u32 a, u8 b, u16 c, f32 d) {
-    u8 r30 = 0;
-    u8 r31 = 0;
-    f32 f30 = 0.f;
+extern void Na_RhythmPos(u32 index, u8 unused, u16 angle, f32 distance) {
+    u8 pan = 0;
+    u8 subtrack = 0;
+    f32 volume = 0.f;
     if (sou_sub_game_flag != 1) {
-        if (d > SOU_ONGEN_AREA1) {
-            d = SOU_ONGEN_AREA1;
+        if (distance > SOU_ONGEN_AREA1) {
+            distance = SOU_ONGEN_AREA1;
         }
-        r30 = angle2pan(c, d);
-        f30 = distance2vol(d);
-        r31 = Na_GetRhythmSubTrack(a);
-        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 2, r31, 0), f30);
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 2, r31, 0), r30);
+        pan = angle2pan(angle, distance);
+        volume = distance2vol(distance);
+        subtrack = Na_GetRhythmSubTrack(index);
+        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 2, subtrack, 0), volume);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 2, subtrack, 0), pan);
     }
 }
 
@@ -3407,10 +3405,10 @@ extern void Na_SpecChange(int a) {
     }
 }
 
-extern void Na_MDPlayerPos(u16 a, f32 e, u16 b, u16 c, u32 d) {
-    u8 r30 = 0;
-    f32 f31 = 0.f;
-    u8 r31 = 0;
+extern void Na_MDPlayerPos(u16 angle, f32 distance, u16 b, u16 c, u32 id) {
+    u8 pan = 0;
+    f32 volume = 0.f;
+    u8 filterStatus = 0;
     if (sou_sub_game_flag != 1) {
         switch (c) {
             case 1:
@@ -3418,14 +3416,14 @@ extern void Na_MDPlayerPos(u16 a, f32 e, u16 b, u16 c, u32 d) {
             case 3:
             case 4:
             case 5: {
-                r31 = 0x30;
+                filterStatus = 0x30;
                 sou_md_bgm_boost_pasent = 1.08f;
-                Na_OngenPos(d, 0x4e, a, e);
+                Na_OngenPos(id, 0x4e, angle, distance);
             } break;
             case 6:
             case 7:
             case 8: {
-                r31 = 0xe3;
+                filterStatus = 0xe3;
                 sou_md_bgm_boost_pasent = 1.4f;
             } break;
             case 9:
@@ -3437,42 +3435,42 @@ extern void Na_MDPlayerPos(u16 a, f32 e, u16 b, u16 c, u32 d) {
             case 0xf:
             case 0x10: {
                 sou_md_bgm_boost_pasent = 1.f;
-                r31 = 0;
+                filterStatus = 0;
             } break;
         }
-        Na_BGMFilter(r31);
-        r30 = angle2pan(a, e);
-        f31 = distance2vol4MD(e);
+        Na_BGMFilter(filterStatus);
+        pan = angle2pan(angle, distance);
+        volume = distance2vol4MD(distance);
         if (sou_pause_flag == 1) {
-            f31 = f31 * 0.5f;
+            volume = volume * 0.5f;
         }
-        f31 *= sou_md_bgm_boost_pasent;
-        Sou_GroupControl_MD(1, r30, f31);
-        Sou_GroupControl_MD(3, r30, f31);
+        volume *= sou_md_bgm_boost_pasent;
+        Sou_GroupControl_MD(1, pan, volume);
+        Sou_GroupControl_MD(3, pan, volume);
     }
 }
 
-extern void Na_BGMVolume(f32 a, u16 b) {
-    if (a > 1.f) {
-        a = 1.f;
+extern void Na_BGMVolume(f32 volumeScale, u16 timer) {
+    if (volumeScale > 1.f) {
+        volumeScale = 1.f;
     }
-    if (a < 0.f) {
-        a = 0.f;
+    if (volumeScale < 0.f) {
+        volumeScale = 0.f;
     }
-    if (b > 0x7fff) {
-        b = 0x7fff;
+    if (timer > 0x7fff) {
+        timer = 0x7fff;
     }
-    if (b == 0) {
-        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 1, 0, 0), a);
-        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 3, 0, 0), a);
-        sou_bgm1_vol_now = a;
-        sou_bgm2_vol_now = a;
+    if (timer == 0) {
+        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 1, 0, 0), volumeScale);
+        Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_GRP_FADE_VOLUME_SCALE, 3, 0, 0), volumeScale);
+        sou_bgm1_vol_now = volumeScale;
+        sou_bgm2_vol_now = volumeScale;
         sou_bgm_vol_move_time = 0;
         sou_bgm_vol_move_counter = 0;
     } else {
-        sou_bgm_vol_move_target = a;
-        sou_bgm_vol_move_time = b;
-        sou_bgm_vol_move_counter = b;
+        sou_bgm_vol_move_target = volumeScale;
+        sou_bgm_vol_move_time = timer;
+        sou_bgm_vol_move_counter = timer;
     }
 }
 
@@ -3602,13 +3600,13 @@ extern u8 Na_BgmFadeoutCheck() {
 }
 
 extern u8 Na_SeFadeoutCheck() {
-    u8 r31 = 0;
+    u8 i = 0;
     u8 ret = 1;
     if (sou_se_fadeout_flag == 0) {
         return 1;
     }
-    for (r31 = 0; r31 < ARRAY_COUNT(sou_se_fade); r31++) {
-        if (sou_se_fade[r31]._0) {
+    for (i = 0; i < ARRAY_COUNT(sou_se_fade); i++) {
+        if (sou_se_fade[i]._0) {
             ret = 0;
         }
     }
@@ -3618,12 +3616,12 @@ extern u8 Na_SeFadeoutCheck() {
     return ret;
 }
 
-__declspec (export) extern void Na_BgmTrOn(u8 a) {
-    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, a, 0), 0);
+__declspec(export) extern void Na_BgmTrOn(u8 subTrack) {
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, subTrack, 0), 0);
 }
 
-__declspec (export) extern void Na_BgmTrOff(u8 a) {
-    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, a, 0), 1);
+__declspec(export) extern void Na_BgmTrOff(u8 subTrack) {
+    Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, subTrack, 0), 1);
 }
 
 extern void Na_SubGameStart() {
@@ -3790,78 +3788,79 @@ extern void Na_SceneMode(u8 a) {
     }
 }
 
-extern u8 Na_RoomIncectPos(int a, u8 b, u16 c, f32 d) /*r18:a, r24:b, r19:c, f31:d*/ {
-    u8 r30 = 0;
-    u8 r28 = 0;
-    u8 r31 = 0;
+extern u8 Na_RoomIncectPos(int insectID, u8 index, u16 angle, f32 distance) {
+    u8 i = 0;
+    u8 foundIndex = 0;
+    u8 j = 0;
     u8 r25 = 0;
-    u8 r21 = 0;
+    u8 found = 0;
     u8 r27 = 0;
-    u16 r23 = 0;
+    u16 rand = 0;
     u8 r29 = 0;
     u8 r20 = 0;
-    u8 r22 = 0;
+    u8 ret = FALSE;
     u8 r26 = 0;
     if (sou_sub_game_flag == 1) {
-        return r22;
+        return ret;
     }
-    b = b - 0x36;
+    index = index - 0x36;
     if (sou_scene_mode == 2) {
         r27 = Nap_ReadGrpPort(2, 2);
     } else {
-        r27 = (sou_game_frame_counter & 0x78) >> 3;
+        r27 = (sou_game_frame_counter & (0xf << 3)) >> 3;
     }
+
     if (r27 > 0xf) {
         r27 = 0;
     }
 
-    for (r30 = 0; r30 < ARRAY_COUNT(sou_room_ins); r30++) {
-        if (a == sou_room_ins[r30]._00) {
-            r28 = r30;
-            r30 = ARRAY_COUNT(sou_room_ins);
-            r21 = 1;
+    for (i = 0; i < ARRAY_COUNT(sou_room_ins); i++) {
+        if (insectID == sou_room_ins[i]._00) {
+            foundIndex = i;
+            i = ARRAY_COUNT(sou_room_ins);
+            found = TRUE;
         }
     }
 
-    if (r21 == 0) {
-        for (r30 = 0; r30 < ARRAY_COUNT(sou_room_ins); r30++) {
-            if (sou_room_ins[r30]._00 == 0) {
-                r23 = Nap_GetRandom();
-                r29 = r23 & 0xf;
-                r29 = r29 + SE_ROOM_INS_RANDOM_OFFSET[b];
+    if (found == FALSE) {
+        for (i = 0; i < ARRAY_COUNT(sou_room_ins); i++) {
+            if (sou_room_ins[i]._00 == 0) {
+                rand = Nap_GetRandom();
+                r29 = rand & 0xf;
+                r29 = r29 + SE_ROOM_INS_RANDOM_OFFSET[index];
 
-                for (r31 = 0; r31 < ARRAY_COUNT(sou_room_ins); r31++) {
-                    if (r29 == sou_room_ins[r31]._07) {
+                for (j = 0; j < ARRAY_COUNT(sou_room_ins); j++) {
+                    if (r29 == sou_room_ins[j]._07) {
                         r29 = r29 + 1;
-                        r31 = 0;
+                        j = 0;
                         r26++;
                         if (r26 > ARRAY_COUNT(sou_room_ins)) {
                             r26 = 0;
-                            r31 = ARRAY_COUNT(sou_room_ins);
+                            j = ARRAY_COUNT(sou_room_ins);
                         }
                     }
                 }
-                sou_room_ins[r30]._07 = r29;
-                sou_room_ins[r30]._00 = a;
-                sou_room_ins[r30]._04 = 1;
-                sou_room_ins[r30]._05 = 0;
-                sou_room_ins[r30]._06 = r27;
-                r30 = ARRAY_COUNT(sou_room_ins);
-                for (r31 = 0; r31 < ARRAY_COUNT(sou_trg_se); r31++) {
+                sou_room_ins[i]._07 = r29;
+                sou_room_ins[i]._00 = insectID;
+                sou_room_ins[i]._04 = 1;
+                sou_room_ins[i]._05 = 0;
+                sou_room_ins[i]._06 = r27;
+                i = ARRAY_COUNT(sou_room_ins);
+                for (j = 0; j < ARRAY_COUNT(sou_trg_se); j++) {
                     for (r25 = 0; r25 < ARRAY_COUNT(SE_ROOM_INS_DATA); r25++) {
-                        if (sou_trg_se[r31]._00 == SE_ROOM_INS_DATA[r25]) {
+                        if (sou_trg_se[j]._00 == SE_ROOM_INS_DATA[r25]) {
                             r20 = 1;
                         }
                     }
                 }
                 if (r20 == 0) {
-                    Na_OngenTrgStart(SE_ROOM_INS_DATA[b], c, d);
-                    r22 = 1;
+                    Na_OngenTrgStart(SE_ROOM_INS_DATA[index], angle, distance);
+                    ret = TRUE;
                 }
             }
         }
     } else {
-        if (sou_room_ins[r28]._06 != r27 && sou_room_ins[r28]._07 != 0) {
+        if (sou_room_ins[foundIndex]._06 != r27 && sou_room_ins[foundIndex]._07 != 0) {
             switch (r27) {
                 case 0:
                 case 2:
@@ -3871,103 +3870,103 @@ extern u8 Na_RoomIncectPos(int a, u8 b, u16 c, f32 d) /*r18:a, r24:b, r19:c, f31
                 case 10:
                 case 12:
                 case 14: {
-                    if (sou_room_ins[r28]._07 == 1) {
-                        Na_OngenTrgStart(SE_ROOM_INS_DATA[b], c, d);
-                        r22 = 1;
-                        r23 = Nap_GetRandom();
-                        r29 = r23 & 0xf;
-                        r29 = r29 + SE_ROOM_INS_RANDOM_OFFSET[b];
-                        for (r31 = 0; r31 < ARRAY_COUNT(sou_room_ins); r31++) {
-                            if (r29 == sou_room_ins[r31]._07) {
+                    if (sou_room_ins[foundIndex]._07 == 1) {
+                        Na_OngenTrgStart(SE_ROOM_INS_DATA[index], angle, distance);
+                        ret = TRUE;
+                        rand = Nap_GetRandom();
+                        r29 = rand & 0xf;
+                        r29 = r29 + SE_ROOM_INS_RANDOM_OFFSET[index];
+                        for (j = 0; j < ARRAY_COUNT(sou_room_ins); j++) {
+                            if (r29 == sou_room_ins[j]._07) {
                                 r29 = r29 + 1;
-                                r31 = 0;
+                                j = 0;
                                 r26++;
                                 if (r26 > ARRAY_COUNT(sou_room_ins)) {
                                     r26 = 0;
-                                    r31 = ARRAY_COUNT(sou_room_ins);
+                                    j = ARRAY_COUNT(sou_room_ins);
                                 }
                             }
                         }
-                        sou_room_ins[r28]._07 = r29;
+                        sou_room_ins[foundIndex]._07 = r29;
                     }
-                    sou_room_ins[r28]._07--;
+                    sou_room_ins[foundIndex]._07--;
                 } break;
             }
         }
-        sou_room_ins[r28]._04++;
-        sou_room_ins[r28]._06 = r27;
+        sou_room_ins[foundIndex]._04++;
+        sou_room_ins[foundIndex]._06 = r27;
     }
-    return r22;
+    return ret;
 }
 
-extern void Na_FurnitureInstPos(int a, u16 b, f32 c) {
-    u8 r31 = 0;
-    u8 r29 = 0;
-    f32 f31 = 0.f;
-    u8 r30 = 0;
+extern void Na_FurnitureInstPos(int id, u16 angle, f32 distance) {
+    u8 i = 0;
+    u8 pan = 0;
+    f32 volume = 0.f;
+    u8 convertedID = 0;
     if (sou_sub_game_flag != 1) {
-        for (r31 = 0; r31 < ARRAY_COUNT(na_melody_id_hist); r31++) {
-            if (a == na_melody_id_hist[r31]) {
-                r30 = r31 + 0xe;
-                r29 = angle2pan(b, c);
-                f31 = distance2vol(c);
-                Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 2, r30, 0), f31);
-                Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 2, r30, 0), r29);
+        for (i = 0; i < ARRAY_COUNT(na_melody_id_hist); i++) {
+            if (id == na_melody_id_hist[i]) {
+                convertedID = 0xe + i;
+                pan = angle2pan(angle, distance);
+                volume = distance2vol(distance);
+                Nap_SetF32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_VOL_SCALE, 2, convertedID, 0), volume);
+                Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_PAN, 2, convertedID, 0), pan);
                 return;
             }
         }
     }
 }
 
-extern void Na_TrgSeEcho(u8 a) {
+extern void Na_TrgSeEcho(u8 echo) {
     u8 i = 0;
     u8 unused = 0;
     for (i = 0; i < ARRAY_COUNT(sou_trg_se); i++) {
-        sou_trg_se[i]._1B = a;
+        sou_trg_se[i].echo = echo;
     }
 }
 
-extern void Na_LevSeEcho(u8 a) {
+extern void Na_LevSeEcho(u8 echo) {
     u8 i = 0;
     for (i = 0; i < ARRAY_COUNT(sou_lev_se); i++) {
-        sou_lev_se[i]._13 = a;
+        sou_lev_se[i].echo = echo;
     }
 }
 
-extern void Na_BGMFilter(u8 a) {
+extern void Na_BGMFilter(u8 filterStatus) {
     u8 unused = 0;
-    int r31 = 0;
-    void* r30 = 0;
-    static int init = 1;
+    int status = 0;
+    void* firStatus = 0;
+    static BOOL init = TRUE;
     u8 unused1 = 0;
     f32 unused2 = 0.f;
     u8 unused3 = 0;
     f32 unused4 = 0.f;
-    sou_internal_filter_status = a;
-    if (sou_filter_status != a) {
-        if (init != 0) {
-            if ((((u32)&SOU_FIR_STATE_COPY) & 0xf) != 0) {
+    sou_internal_filter_status = filterStatus;
+    if (sou_filter_status != filterStatus) {
+        if (init) {
+            if ((((uintptr_t)&SOU_FIR_STATE_COPY) & 0xf) != 0) {
                 SOU_FIR_STATE = &SOU_FIR_STATE_COPY[2];
             } else {
                 SOU_FIR_STATE = &SOU_FIR_STATE_COPY[0];
             }
-            init = 0;
+            init = FALSE;
         }
-        r31 = a;
-        r30 = SOU_FIR_STATE;
+        status = filterStatus;
+        firStatus = SOU_FIR_STATE;
         if (sou_now_bgm_handle == 1) {
             Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, 1, 0, 0), -1);
-            Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FILTER, 1, 0xff, r31), (s32)r30);
+            Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FILTER, 1, -1, status), (s32)firStatus);
         } else {
             Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, 3, 0, 0), -1);
-            Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FILTER, 3, 0xff, r31), (s32)r30);
+            Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_FILTER, 3, -1, status), (s32)firStatus);
         }
     }
 }
 
-extern void Na_RoomType(u8 a) {
-    if (sou_room_type != a) {
-        switch (a) {
+extern void Na_RoomType(u8 roomType) {
+    if (sou_room_type != roomType) {
+        switch (roomType) {
             case 0: {
                 SOU_ONGEN_AREA1 = 540.f;
             } break;
@@ -3984,20 +3983,21 @@ extern void Na_RoomType(u8 a) {
                 SOU_ONGEN_AREA2 = 545.f;
             } break;
         }
-        sou_room_type = a;
+        sou_room_type = roomType;
     }
 }
 
 extern u8 Na_CheckNeosBoot() {
-    return sou_NeosBootCheck_ok == 3 ? 1 : 0;
+    return sou_NeosBootCheck_ok == 3 ? TRUE : FALSE;
 }
 
-extern void Na_Museum(u8 a) {
-    if (sou_museum_type != a) {
+extern void Na_Museum(u8 museumType) {
+    if (sou_museum_type != museumType) {
         Na_BgmMuteClear();
-        Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0), BGM_MUTE_TABLE_MUSEUM[a]);
-        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, 0xff, 0), 1);
-        sou_museum_type = a;
+        Nap_SetU16(NA_MAKE_COMMAND(AUDIOCMD_SET_GROUP_MASK, sou_now_bgm_handle, 0, 0),
+                   BGM_MUTE_TABLE_MUSEUM[museumType]);
+        Nap_SetS8(NA_MAKE_COMMAND(AUDIOCMD_OP_SUB_SET_MUTE, sou_now_bgm_handle, -1, 0), 1);
+        sou_museum_type = museumType;
     }
 }
 
@@ -4005,6 +4005,6 @@ extern int Na_GetSoundFrameCounter() {
     return AG.frame_audio_task_count;
 }
 
-extern void Na_kazagurumaLevel(f32 v) {
-    sou_kazaguruma_speed = v;
+extern void Na_kazagurumaLevel(f32 kazagurumaSpeed) {
+    sou_kazaguruma_speed = kazagurumaSpeed;
 }
