@@ -3,7 +3,7 @@ extern Gfx int_hos_mario_kinoko_all_model[];
 static void fIMK_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     if (aFTR_CAN_PLAY_SE(ftr_actor)) {
         if (ftr_actor->switch_changed_flag == TRUE) {
-            sAdo_OngenTrgStart(SE_FLAG_15(0x179), &ftr_actor->position);
+            sAdo_OngenTrgStart(SE_SINGLETON(0x179), &ftr_actor->position);
         }
     }
 }

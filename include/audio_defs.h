@@ -13,8 +13,9 @@ extern "C" {
 
 /* audio is monophonic */
 #define MONO(id) ((id) | 0x1000)
-#define HANABI(id) ((id) | 0x2000) /* TODO: better name, this probably is some echo effect modifier */
-#define SE_FLAG_15(id) ((id) | 0x8000)
+#define SE_DIST_REVERB(id) ((id) | 0x2000)
+#define SE_ECHO(id) ((id) | 0x4000)
+#define SE_SINGLETON(id) ((id) | 0x8000)
 
 // TODO: Make the rest of Sound Effects with parameters
 #define SE_REGISTER MONO(NA_SE_REGISTER)
@@ -51,6 +52,8 @@ typedef enum audio_sound_effects {
     NA_SE_LIGHT_ON,
     NA_SE_LIGHT_OFF,
 
+    NA_SE_19 = 0x19,
+
     NA_SE_24 = 0x24,
     NA_SE_25 = 0x25,
     NA_SE_26 = 0x26,
@@ -68,6 +71,7 @@ typedef enum audio_sound_effects {
     NA_SE_35 = 0x35,
 
     NA_SE_DRAWER_SHUT = 0x3A,
+    NA_SE_3B = 0x3B,
 
     NA_SE_ITEM_GET = 0x40,
     NA_SE_MOLE_CRICKET_HIDE = 0x44,
@@ -95,7 +99,7 @@ typedef enum audio_sound_effects {
     NA_SE_51 = 0x51,
     NA_SE_52 = 0x52,
     NA_SE_53 = 0x53,
-    NA_SE_54 = 0x54,
+    NA_SE_KOKORO_TOGURU = 0x54,
 
     NA_SE_ITEM_HORIDASHI = 0x57,
     NA_SE_CLEAN_UP_FTR = 0x58,
@@ -118,6 +122,11 @@ typedef enum audio_sound_effects {
 
     NA_SE_GASAGOSO = 0x69,
     NA_SE_6A = 0x6A,
+
+    NA_SE_6E = 0x6E,
+    NA_SE_6F = 0x6F,
+    NA_SE_70 = 0x70,
+    NA_SE_71 = 0x71,
 
     NA_SE_TOILE_CHAIR_STANDUP = 0x72,
 
@@ -150,10 +159,10 @@ typedef enum audio_sound_effects {
     NA_SE_10B,
     NA_SE_10C,
 
-    NA_SE_HANABI0 = HANABI(0x10F),
-    NA_SE_HANABI1 = HANABI(0x110),
-    NA_SE_HANABI2 = HANABI(0x111),
-    NA_SE_HANABI3 = HANABI(0x112),
+    NA_SE_HANABI0 = SE_DIST_REVERB(0x10F),
+    NA_SE_HANABI1 = SE_DIST_REVERB(0x110),
+    NA_SE_HANABI2 = SE_DIST_REVERB(0x111),
+    NA_SE_HANABI3 = SE_DIST_REVERB(0x112),
     NA_SE_EAT = 0x113,
     NA_SE_114 = 0x114,
     NA_SE_SEMI_ESCAPE = 0x115,
@@ -166,6 +175,12 @@ typedef enum audio_sound_effects {
 
     NA_SE_SCOOP_UMERU = 0x120,
     NA_SE_SCOOP_HIT,
+
+    NA_SE_122 = 0x122,
+    NA_SE_123 = 0x123,
+    NA_SE_124 = 0x124,
+    NA_SE_125 = 0x125,
+    NA_SE_126 = 0x126,
 
     NA_SE_12D = 0x12D,
 
@@ -189,11 +204,19 @@ typedef enum audio_sound_effects {
     NA_SE_ARAIIKI_BOY = 0x158,
     NA_SE_ARAIIKI_GIRL = 0x15A,
 
+    NA_SE_AMI_HIT_WATER = 0x15C,
+
     NA_SE_ZASSOU_NUKU = 0x15F,
     NA_SE_HACHI_SASARERU,
 
     NA_SE_166 = 0x166,
     NA_SE_UCHIWA = 0x167,
+
+    NA_SE_16A = 0x16A,
+
+    NA_SE_16E = 0x16E,
+    NA_SE_16F = 0x16F,
+
     NA_SE_LAWNMOWER = 0x177,
 
     NA_SE_17C = 0x17C,
@@ -227,7 +250,7 @@ typedef enum audio_sound_effects {
     NA_SE_BUBU_CHAIR_SIT,
     NA_SE_SOFT_CHAIR_STANDUP,
     NA_SE_HARD_CHAIR_STANDUP,
-
+    NA_SE_424 = 0x424,
     NA_SE_426 = 0x426,
 
     NA_SE_BUBU_CHAIR_STANDUP = 0x429,
@@ -247,8 +270,11 @@ typedef enum audio_sound_effects {
     NA_SE_438 = 0x438,
 
     NA_SE_KARABURI = 0x43A,
+    NA_SE_43B = 0x43B,
 
     NA_SE_43D = 0x43D,
+
+    NA_SE_43F = 0x43F,
 
     NA_SE_ROD_STROKE_SMALL = 0x445,
     NA_SE_446 = 0x446,
@@ -267,8 +293,27 @@ typedef enum audio_sound_effects {
 
     NA_SE_COIN_GASAGOSO = 0x465,
 
+    NA_SE_501 = 0x501,
+    NA_SE_505 = 0x505,
+    NA_SE_509 = 0x509,
+    NA_SE_50D = 0x50D,
+    NA_SE_511 = 0x511,
+    NA_SE_515 = 0x515,
+    NA_SE_519 = 0x519,
+    NA_SE_51D = 0x51D,
+    NA_SE_521 = 0x521,
+    NA_SE_525 = 0x525,
+    NA_SE_529 = 0x529,
+    NA_SE_531 = 0x531,
+    NA_SE_539 = 0x539,
+    NA_SE_53D = 0x53D,
+
+    NA_SE_BEBE = MONO(0x6D),
+
+    NA_SE_4028 = SE_ECHO(0x28),
+
     // Footsteps
-    NA_SE_FOOTSTEP_BEGIN = 0x4200,
+    NA_SE_FOOTSTEP_BEGIN = SE_ECHO(0x200),
     NA_SE_FOOTSTEP_GRASS,
     NA_SE_FOOTSTEP_SOIL,
     NA_SE_FOOTSTEP_STONE,
@@ -280,6 +325,8 @@ typedef enum audio_sound_effects {
     NA_SE_FOOTSTEP_WAVE,
     NA_SE_FOOTSTEP_PLUSSBRIDGE,
 
+
+    NA_SE_FLOOR_SE_START = SE_ECHO(0x2E6),
 } AudioSE;
 
 typedef enum bgm_e {
@@ -391,8 +438,84 @@ typedef enum bgm_e {
     BGM_KAPPA_SONG13,
     BGM_KAPPA_SONG14,
     BGM_KAPPA_SONG15,
+
+    BGM_108,
+    BGM_109,
+    BGM_110,
+    BGM_111,
+    BGM_112,
+    BGM_113,
+    BGM_114,
+    BGM_115,
+    BGM_116,
+    BGM_117,
+    BGM_118,
+    BGM_119,
+    BGM_120,
+    BGM_121,
+    BGM_122,
+    BGM_123,
+    BGM_124,
+    BGM_125,
+    BGM_126,
+    BGM_127,
+
     // TODO: others
-    BGM_MD0 = 128,
+    BGM_MD0, // 128
+    BGM_MD1,
+    BGM_MD2,
+    BGM_MD3,
+    BGM_MD4,
+    BGM_MD5,
+    BGM_MD6,
+    BGM_MD7,
+    BGM_MD8,
+    BGM_MD9,
+    BGM_MD10,
+    BGM_MD11,
+    BGM_MD12,
+    BGM_MD13,
+    BGM_MD14,
+    BGM_MD15,
+    BGM_MD16,
+    BGM_MD17,
+    BGM_MD18,
+    BGM_MD19,
+    BGM_MD20,
+    BGM_MD21,
+    BGM_MD22,
+    BGM_MD23,
+    BGM_MD24,
+    BGM_MD25,
+    BGM_MD26,
+    BGM_MD27,
+    BGM_MD28,
+    BGM_MD29,
+    BGM_MD30,
+    BGM_MD31,
+    BGM_MD32,
+    BGM_MD33,
+    BGM_MD34,
+    BGM_MD35,
+    BGM_MD36,
+    BGM_MD37,
+    BGM_MD38,
+    BGM_MD39,
+    BGM_MD40,
+    BGM_MD41,
+    BGM_MD42,
+    BGM_MD43,
+    BGM_MD44,
+    BGM_MD45,
+    BGM_MD46,
+    BGM_MD47,
+    BGM_MD48,
+    BGM_MD49,
+    BGM_MD50,
+    BGM_MD51,
+    BGM_MD52,
+    BGM_MD53,
+    BGM_MD54,
 
     BGM_TOTAKEKE_LIVE0 = 192,
 } BGM_e;

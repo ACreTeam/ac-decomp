@@ -164,13 +164,13 @@ static void mMsg_sound_ZOOMUP() {
 
 static void mMsg_sound_ZOOMDOWN_SHORT(mMsg_Window_c* msg_p) {
   if ((msg_p->status_flags & mMsg_STATUS_FLAG_NO_ZOOMDOWN) == 0) {
-    sAdo_SysTrgStart(0x8005);
+    sAdo_SysTrgStart(SE_SINGLETON(NA_SE_ZOOMDOWN_SHORT));
   }
 }
 
 static void mMsg_sound_ZOOMDOWN_LONG(mMsg_Window_c* msg_p) {
   if ((msg_p->status_flags & mMsg_STATUS_FLAG_NO_ZOOMDOWN) == 0) {
-    sAdo_SysTrgStart(0x8015);
+    sAdo_SysTrgStart(SE_SINGLETON(NA_SE_ZOOMDOWN_LONG));
   }
 }
 

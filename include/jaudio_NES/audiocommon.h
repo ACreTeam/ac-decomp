@@ -247,6 +247,48 @@ typedef enum AUDIO_CALLBACKS {
     /* 0xFF */ AUDIO_CALLBACK_SOUND
 } AUDIO_CALLBACKS;
 
+typedef enum NAGroup {
+    NA_GROUP0,
+    NA_GROUP1,
+    NA_GROUP2,
+    NA_GROUP3,
+    NA_GROUP4,
+    NA_GROUP5,
+    NA_GROUP6,
+    NA_GROUP7,
+    NA_GROUP8,
+    NA_GROUP9,
+    NA_GROUP10,
+    NA_GROUP11,
+    NA_GROUP12,
+    NA_GROUP13,
+    NA_GROUP14,
+    NA_GROUP15,
+
+    NA_GROUP_NUM
+} NAGroup;
+
+typedef enum NASubtrack {
+    NA_SUBTRACK0,
+    NA_SUBTRACK1,
+    NA_SUBTRACK2,
+    NA_SUBTRACK3,
+    NA_SUBTRACK4,
+    NA_SUBTRACK5,
+    NA_SUBTRACK6,
+    NA_SUBTRACK7,
+    NA_SUBTRACK8,
+    NA_SUBTRACK9,
+    NA_SUBTRACK10,
+    NA_SUBTRACK11,
+    NA_SUBTRACK12,
+    NA_SUBTRACK13,
+    NA_SUBTRACK14,
+    NA_SUBTRACK15,
+
+    NA_SUBTRACK_NUM
+} NASubtrack;
+
 #define NA_COMMAND_AUDIO_START_SEQ(groupID, seqID, fadeinTime) \
     Nap_SetS32(NA_MAKE_COMMAND(AUDIOCMD_START_SEQ, groupID, seqID, 0), fadeinTime)
 

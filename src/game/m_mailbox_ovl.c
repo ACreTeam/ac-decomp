@@ -47,7 +47,7 @@ static void mMB_move_Wait(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
             mailbox_ovl->open_flag = FALSE;
         } else {
             submenu->overlay->move_chg_base_proc(menu_info, mSM_MOVE_OUT_LEFT);
-            sAdo_SysTrgStart(SE_FLAG_15(NA_SE_ZOOMDOWN_SHORT));
+            sAdo_SysTrgStart(SE_SINGLETON(NA_SE_ZOOMDOWN_SHORT));
         }
     }
 }

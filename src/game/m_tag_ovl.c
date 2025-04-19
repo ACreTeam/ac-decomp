@@ -7471,7 +7471,7 @@ static void mTG_move_cancel(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag
                 break;
             case mSM_OVL_MAILBOX:
                 move_dir = mSM_MOVE_OUT_LEFT;
-                sfx = SE_FLAG_15(NA_SE_ZOOMDOWN_SHORT);
+                sfx = SE_SINGLETON(NA_SE_ZOOMDOWN_SHORT);
                 break;
             default:
                 move_dir = mSM_MOVE_OUT_LEFT;

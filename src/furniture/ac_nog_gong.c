@@ -22,7 +22,7 @@ static void aNogG_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8*
 
             /* If the wall is ringside seating, play camera flashing effect */
             if (mRmTp_GetWallIdx() == WALL_NPC065) {
-                sAdo_SysTrgStart(SE_FLAG_15(0x17E));
+                sAdo_SysTrgStart(SE_SINGLETON(0x17E));
                 (*Common_Get(clip).effect_clip->effect_make_proc)(eEC_EFFECT_FLASHC, ftr_actor->position, 2, 0, game,
                                                                   RSV_NO, 0, 0);
             }

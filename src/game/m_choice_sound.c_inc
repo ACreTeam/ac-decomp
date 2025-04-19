@@ -11,9 +11,9 @@ static void mChoice_sound_CURSOL() {
 }
 
 static void mChoice_sound_ZOOMDOWN_SHORT() {
-  sAdo_SysTrgStart(SE_FLAG_15(NA_SE_ZOOMDOWN_SHORT));
+  sAdo_SysTrgStart(SE_SINGLETON(NA_SE_ZOOMDOWN_SHORT));
 }
 
 static void mChoice_sound_ZOOMDOWN_LONG() {
-  sAdo_SysTrgStart(SE_FLAG_15(NA_SE_ZOOMDOWN_LONG));
+  sAdo_SysTrgStart(SE_SINGLETON(NA_SE_ZOOMDOWN_LONG));
 }

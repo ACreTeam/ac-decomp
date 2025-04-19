@@ -2085,7 +2085,7 @@ static void mIV_inventory_ovl_init(Submenu* submenu, mSM_MenuInfo_c* menu_info, 
     inv_ovl->wc_flag = FALSE;
 
     if (menu_info->data0 == mSM_IV_OPEN_MAILBOX) {
-        sAdo_SysTrgStart(SE_FLAG_15(NA_SE_ZOOMUP));
+        sAdo_SysTrgStart(SE_SINGLETON(NA_SE_ZOOMUP));
     } else {
         sAdo_SysTrgStart(NA_SE_MENU_PAUSE);
     }
