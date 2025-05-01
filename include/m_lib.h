@@ -55,6 +55,10 @@ typedef struct rgb_t {
     uint r, g, b;
 } rgb_t;
 
+typedef struct rgb8_t {
+    u8 r, g, b;
+} rgb8_t;
+
 typedef struct {
     xyz_t position;
     s_xyz angle;

@@ -1273,7 +1273,7 @@ static void Nas_SubSeq(sub* subtrack) {
                                 Nas_DeAllocAllVoices(&subtrack->channel_node);
                                 break;
                             case 0xC2: // set dynamic table
-                                subtrack->dyn_tbl = (unsigned char(*)[][2]) & grp->seq_data[(u16)cmdArgs[0]];
+                                subtrack->dyn_tbl = (unsigned char(*)[][2])&grp->seq_data[(u16)cmdArgs[0]];
                                 break;
                             case 0xC5: // jump to entry in dynamic table
                                 if (m->value != -1) {
@@ -1392,9 +1392,9 @@ static void Nas_SubSeq(sub* subtrack) {
                             case 0xC6: // set bank
                                 cmdArgU8 = cmdArgs[0];
                                 if (grp->bank_id != 0xFF) {
-                                    cmdArgU16 = AG.map_header[grp->seq_id];
-                                    lo_bits = ((u8*)AG.map_header)[cmdArgU16];
-                                    cmdArgU8 = ((u8*)AG.map_header)[cmdArgU16 + lo_bits - cmdArgU8];
+                                    cmdArgU16 = AG.map_header[grp->seq_id]; // get offset for bank info for seq
+                                    lo_bits = ((u8*)AG.map_header)[cmdArgU16]; // read number of banks
+                                    cmdArgU8 = ((u8*)AG.map_header)[cmdArgU16 + lo_bits - cmdArgU8]; // get bank id from inverse?
                                 }
 
                                 if (Nas_SzCacheCheck(BANK_TABLE, CACHE_EITHER, cmdArgU8)) {

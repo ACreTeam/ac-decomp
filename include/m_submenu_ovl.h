@@ -39,6 +39,7 @@
 #include "m_cpwarning_ovl_h.h"
 #include "m_mscore_ovl_h.h"
 #include "m_calendar_ovl_h.h"
+#include "m_design_ovl_h.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -201,7 +202,7 @@ struct submenu_overlay_s {
     /* 0x9D4 */ mBN_Ovl_c* bank_ovl;
     /* 0x9D8 */ mNW_Ovl_c* needlework_ovl;
     /* 0x9DC */ mCO_Ovl_c* cporiginal_ovl;
-    /* 0x9E0 */ void* _9E0;
+    /* 0x9E0 */ mDE_Ovl_c* design_ovl;
     /* 0x9E4 */ mGB_Ovl_c* gba_ovl;
     /* 0x9E8 */ mDI_Ovl_c* diary_ovl;
     /* 0x9EC */ mCD_Ovl_c* calendar_ovl;
