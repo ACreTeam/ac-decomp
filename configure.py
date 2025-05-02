@@ -1024,7 +1024,7 @@ config.libs = [
             Object(Matching, "actor/ac_museum.c"),
             Object(Matching, "actor/ac_museum_fish.c"),
             Object(Matching, "actor/ac_museum_fossil.c"),
-            Object(NonMatching, "actor/ac_museum_indoor.c"),
+            Object(Matching, "actor/ac_museum_indoor.c"),
             Object(Matching, "actor/ac_museum_insect.c"),
             Object(Matching, "actor/ac_museum_picture.c"),
             Object(Matching, "actor/ac_my_house.c"),
