@@ -29,16 +29,16 @@ void mfish_donko_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     mfish_body_wind_anime_play(actor, gamex);
 
     if (actor->activityFrameCount > actor->savedActivityFrameCount - 10) {
-        actor->_38._00.frame_control.speed = (actor->_5E8 * 3.0f + 1.0f) * 0.5f;
+        actor->kf.keyframe.frame_control.speed = (actor->_5E8 * 3.0f + 1.0f) * 0.5f;
     } else {
-        add_calc2(&actor->_38._00.frame_control.speed, actor->_5E8 * 2.0f + 0.125f, 0.2f, 0.1f);
+        add_calc2(&actor->kf.keyframe.frame_control.speed, actor->_5E8 * 2.0f + 0.125f, 0.2f, 0.1f);
     }
 
     actor->_5AC.y = 0.0f;
     actor->_5D0.x = actor->_5E8 * sin_s(actor->_60C.y);
     actor->_5D0.z = actor->_5E8 * cos_s(actor->_60C.y);
-    x = (actor->position.x - (suisou_pos[actor->group].x + 22.5f));
-    z = (actor->position.z - (suisou_pos[actor->group].z - 31.25f));
+    x = (actor->position.x - (suisou_pos[actor->tank].x + 22.5f));
+    z = (actor->position.z - (suisou_pos[actor->tank].z - 31.25f));
     actor->_5D0.x -= x * 0.002f;
     actor->_5D0.z -= z * 0.002f;
 
@@ -112,21 +112,21 @@ BOOL mfish_donko_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joi
 }
 
 void mfish_donko_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele = &actor->_38;
+    mfish_keyframe_c* skele = &actor->kf;
     Mtx* mtxp;
     if (gamex->frame_counter & 1) {
-        mtxp = &skele->_70;
+        mtxp = skele->mtx[0];
     } else {
-        mtxp = &skele->_2b0;
+        mtxp = skele->mtx[1];
     }
     OPEN_DISP(gamex->graph);
     Matrix_translate(actor->position.x, actor->position.y, actor->position.z, 0);
     Matrix_RotateY(actor->_60C.y, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data._24 * 1.5f, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z * 1.5f, 1);
     Matrix_RotateX(actor->_60C.x, 1);
-    Matrix_translate(0.0f, 0.0f, -actor->init_data._24 * 0.5f, 1);
+    Matrix_translate(0.0f, 0.0f, -actor->init_data.ofs_z * 0.5f, 1);
     Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_donko_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_donko_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }

@@ -49,15 +49,15 @@ void mfish_tai_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         f32 o_z = actor->_598->position.z;
         f32 v = MAX(d - ABS(actor->_598->position.z - actor->position.z), 0.0f);
         v = v / d;
-        if (actor->_598->fishIDEnum != aGYO_TYPE_JELLYFISH) {
+        if (actor->_598->fish_idx != aGYO_TYPE_JELLYFISH) {
             if (actor->_598->position.y < actor->position.y) {
-                if (actor->position.y < (o_y + (actor->_598->init_data._04 + actor->init_data._04))) {
-                    add_calc2(&actor->position.y, (o_y + (actor->_598->init_data._04 + actor->init_data._04)) + 2.0f,
+                if (actor->position.y < (o_y + (actor->_598->init_data.ofs_y + actor->init_data.ofs_y))) {
+                    add_calc2(&actor->position.y, (o_y + (actor->_598->init_data.ofs_y + actor->init_data.ofs_y)) + 2.0f,
                               0.2f, v * 0.1f);
                 }
             } else {
-                if (actor->position.y > o_y - (actor->_598->init_data._04 + actor->init_data._04)) {
-                    add_calc2(&actor->position.y, (o_y - (actor->_598->init_data._04 + actor->init_data._04)) - 2.0f,
+                if (actor->position.y > o_y - (actor->_598->init_data.ofs_y + actor->init_data.ofs_y)) {
+                    add_calc2(&actor->position.y, (o_y - (actor->_598->init_data.ofs_y + actor->init_data.ofs_y)) - 2.0f,
                               0.2f, v * 0.1f);
                 }
             }
@@ -232,15 +232,15 @@ void mfish_tai_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->position.z += actor->_5D0.z + p.z;
 
     mfish_onefish_mv(actor, gamex);
-    actor->_38._00.frame_control.speed =
+    actor->kf.keyframe.frame_control.speed =
         (0.1f + 0.01f * GETREG(TAKREG, 0x14)) * 0.5f + (1.5f + 0.01f * GETREG(TAKREG, 0x15)) * actor->_5E8;
     add_calc0(&actor->_5F8, 0.25f, 0.05f);
     actor->_5F8 = MIN(1.0f, actor->_5F8);
     mfish_body_wind_anime_play(actor, gamex);
     Museum_Fish_BGCheck(actor, gamex);
 
-    if (actor->position.y < (GETREG(TAKREG, 0x47) + 55.0f) - actor->init_data._04) {
-        actor->position.y = (GETREG(TAKREG, 0x47) + 55.0f) - actor->init_data._04;
+    if (actor->position.y < (GETREG(TAKREG, 0x47) + 55.0f) - actor->init_data.ofs_y) {
+        actor->position.y = (GETREG(TAKREG, 0x47) + 55.0f) - actor->init_data.ofs_y;
     }
 
     actor->activityFrameCount--;
@@ -260,19 +260,19 @@ BOOL mfish_tai_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint
 }
 
 void mfish_tai_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele = &actor->_38;
+    mfish_keyframe_c* skele = &actor->kf;
     Mtx* mtxp;
     if (gamex->frame_counter & 1) {
-        mtxp = &skele->_70;
+        mtxp = skele->mtx[0];
     } else {
-        mtxp = &skele->_2b0;
+        mtxp = skele->mtx[1];
     }
     OPEN_DISP(gamex->graph);
     Matrix_translate(actor->position.x, actor->position.y, actor->position.z, 0);
     Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data._24, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z, 1);
     Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_tai_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_tai_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }

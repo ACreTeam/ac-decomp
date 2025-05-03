@@ -52,15 +52,15 @@ void mfish_seafish_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
         abs_diff_sum /= sum_i_8;
 
-        if (actor->_598->fishIDEnum != aGYO_TYPE_JELLYFISH) {
+        if (actor->_598->fish_idx != aGYO_TYPE_JELLYFISH) {
             f32 this_5a0_y = actor->position.y;
             if (o_5a0_y < actor->position.y) {
-                t = o_5a0_y + (actor->_598->init_data._04 + actor->init_data._04);
+                t = o_5a0_y + (actor->_598->init_data.ofs_y + actor->init_data.ofs_y);
                 if (this_5a0_y < t) {
                     add_calc2(&actor->position.y, t + 2.0f, 0.2f, abs_diff_sum * 0.1f);
                 }
             } else {
-                t = o_5a0_y - (actor->_598->init_data._04 + actor->init_data._04);
+                t = o_5a0_y - (actor->_598->init_data.ofs_y + actor->init_data.ofs_y);
                 if (this_5a0_y > t) {
                     add_calc2(&actor->position.y, t - 2.0f, 0.2f, abs_diff_sum * 0.1f);
                 }
@@ -197,7 +197,7 @@ void mfish_seafish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     } else {
         add_calc2(&actor->_5E8, actor->_5F0, 0.2f, 0.02f);
     }
-    actor->_38._00.frame_control.speed =
+    actor->kf.keyframe.frame_control.speed =
         (GETREG(TAKREG, 0x14) * 0.01f + 0.5f) * 0.5f + (GETREG(TAKREG, 0x15) * 0.01f + 1.2f) * actor->_5E8;
     actor->_5D0.x = actor->_5E8 * sin_s(actor->_60C.y);
     actor->_5D0.z = actor->_5E8 * cos_s(actor->_60C.y);
@@ -207,8 +207,8 @@ void mfish_seafish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     mfish_onefish_mv(actor, gamex);
     mfish_body_wind_anime_play(actor, gamex);
     Museum_Fish_BGCheck(actor, gamex);
-    if (actor->position.y < GETREG(TAKREG, 0x47) + 55.0f - actor->init_data._04) {
-        actor->position.y = GETREG(TAKREG, 0x47) + 55.0f - actor->init_data._04;
+    if (actor->position.y < GETREG(TAKREG, 0x47) + 55.0f - actor->init_data.ofs_y) {
+        actor->position.y = GETREG(TAKREG, 0x47) + 55.0f - actor->init_data.ofs_y;
     }
     actor->activityFrameCount--;
 }
@@ -231,19 +231,19 @@ BOOL mfish_seafish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int j
 }
 
 void mfish_seafish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele = &actor->_38;
+    mfish_keyframe_c* skele = &actor->kf;
     Mtx* mtxp;
     if (gamex->frame_counter & 1) {
-        mtxp = &skele->_70;
+        mtxp = skele->mtx[0];
     } else {
-        mtxp = &skele->_2b0;
+        mtxp = skele->mtx[1];
     }
     OPEN_DISP(gamex->graph);
     Matrix_translate(actor->position.x, actor->position.y, actor->position.z, 0);
     Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data._24, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z, 1);
     Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_seafish_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_seafish_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }

@@ -120,7 +120,22 @@ static xyz_t suisou_pos[5] = {
     { 320.0f, 40.0f,  20.0f } 
 };
 
-int kusa_group_tbl[14] = { 0, 2, 1, 3, 3, 4, 4, 4, 4, 4, 0, 2, 1, 3 };
+int kusa_group_tbl[14] = {
+    mfish_TANK_0,
+    mfish_TANK_2,
+    mfish_TANK_1,
+    mfish_TANK_3,
+    mfish_TANK_3,
+    mfish_TANK_4,
+    mfish_TANK_4,
+    mfish_TANK_4,
+    mfish_TANK_4,
+    mfish_TANK_4,
+    mfish_TANK_0,
+    mfish_TANK_2,
+    mfish_TANK_1,
+    mfish_TANK_3,
+};
 
 xyz_t kusa_pos[14] = {
     { 179.0f, 40.0f, 170.0f },
@@ -165,13 +180,29 @@ xyz_t suisou_awa_pos[20] = {
 };
 
 s16 suisou_awa_group[20] = { 
-    4, 4, 4, 4, 4, 
-    4, 4, 4, 0, 0, 
-    0, 1, 1, 1, 2, 
-    2, 2, 3, 3, 3 
+    mfish_TANK_4,
+    mfish_TANK_4,
+    mfish_TANK_4,
+    mfish_TANK_4,
+    mfish_TANK_4,
+    mfish_TANK_4,
+    mfish_TANK_4,
+    mfish_TANK_4,
+    mfish_TANK_0,
+    mfish_TANK_0,
+    mfish_TANK_0,
+    mfish_TANK_1,
+    mfish_TANK_1,
+    mfish_TANK_1,
+    mfish_TANK_2,
+    mfish_TANK_2,
+    mfish_TANK_2,
+    mfish_TANK_3,
+    mfish_TANK_3,
+    mfish_TANK_3,
 };
 
-cKF_Skeleton_R_c* mfish_model_tbl[40] = {
+cKF_Skeleton_R_c* mfish_model_tbl[aGYO_TYPE_NUM] = {
 /* CRUCIAN_CARP     */ &cKF_bs_r_act_mus_funa_a1,
 /* BROOK_TROUT      */ &cKF_bs_r_act_mus_hera_a1,
 /* CARP             */ &cKF_bs_r_act_mus_koi_a1,
@@ -214,7 +245,7 @@ cKF_Skeleton_R_c* mfish_model_tbl[40] = {
 /* ARAPAIMA         */ &cKF_bs_r_act_mus_pira_a1
 };
 
-cKF_Animation_R_c* mfish_anime_init_tbl[40] = {
+cKF_Animation_R_c* mfish_anime_init_tbl[aGYO_TYPE_NUM] = {
 /* CRUCIAN_CARP     */ &cKF_ba_r_act_mus_funa_a1,
 /* BROOK_TROUT      */ &cKF_ba_r_act_mus_hera_a1,
 /* CARP             */ &cKF_ba_r_act_mus_koi_a1,
@@ -257,7 +288,7 @@ cKF_Animation_R_c* mfish_anime_init_tbl[40] = {
 /* ARAPAIMA         */ &cKF_ba_r_act_mus_pira_a1
 };
 
-MUSEUM_FISH_INIT_DATA mfish_init_data[40] = {
+MUSEUM_FISH_INIT_DATA mfish_init_data[aGYO_TYPE_NUM] = {
 /* CRUCIAN_CARP     */ { 0.0100f, 3.8f,  7.5f,  74.0f,  0.400f, 0.450f, 0.98995f,    0.2f, 0.40f,  -3.5f,  -6.0f, 120,  120, DEG2SHORT_ANGLE(70) },
 /* BROOK_TROUT      */ { 0.0100f, 4.6f,  7.0f,  78.0f,  0.400f, 0.600f, 0.98995f,    0.2f, 0.40f,  -3.5f,  -6.0f, 100,  160, DEG2SHORT_ANGLE(70) },
 /* CARP             */ { 0.0100f, 6.0f, 10.6f,  80.0f,  0.350f, 0.300f, 0.98995f,    0.2f, 0.60f,  -5.0f,  -9.0f, 100,  150, DEG2SHORT_ANGLE(90) },
@@ -300,50 +331,50 @@ MUSEUM_FISH_INIT_DATA mfish_init_data[40] = {
 /* ARAPAIMA         */ { 0.0120f, 9.3f, 31.5f,  75.0f,  0.050f, 0.100f, 0.97468f,    0.2f, 0.90f, -14.0f, -31.0f, 240,  480, DEG2SHORT_ANGLE(90) }
 };
 
-s16 mfish_group_tbl[40] = {
-/* CRUCIAN_CARP     */ 0, 
-/* BROOK_TROUT      */ 0, 
-/* CARP             */ 0, 
-/* KOI              */ 0, 
-/* CATFISH          */ 1, 
-/* SMALL_BASS       */ 1, 
-/* BASS             */ 1, 
-/* LARGE_BASS       */ 1, 
-/* BLUEGILL         */ 1, 
-/* GIANT_CATFISH    */ 1, 
-/* GIANT_SNAKEHEAD  */ 3, 
-/* BARBEL_STEED     */ 0, 
-/* DACE             */ 2, 
-/* PALE_CHUB        */ 2, 
-/* BITTERLING       */ 0, 
-/* LOACH            */ 1, 
-/* POND_SMELT       */ 2, 
-/* SWEETFISH        */ 2, 
-/* CHERRY_SALMON    */ 2, 
-/* LARGE_CHAR       */ 2,
-/* RAINBOW_TROUT    */ 2, 
-/* STRINGFISH       */ 2, 
-/* SALMON           */ 4, 
-/* GOLDFISH         */ 0, 
-/* PIRANHA          */ 3, 
-/* AROWANA          */ 3, 
-/* EEL              */ 0, 
-/* FRESHWATER_GOBY  */ 1, 
-/* ANGELFISH        */ 3, 
-/* GUPPY            */ 3, 
-/* POPEYED_GOLDFISH */ 0, 
-/* COELACANTH       */ 4, 
-/* CRAWFISH         */ 2, 
-/* FROG             */ 1, 
-/* KILLIFISH        */ 0, 
-/* JELLYFISH        */ 4, 
-/* SEA_BASS         */ 4, 
-/* RED_SNAPPER      */ 4, 
-/* BARRED_KNIFEJAW  */ 4, 
-/* ARAPAIMA         */ 3
+s16 mfish_group_tbl[aGYO_TYPE_NUM] = {
+/* CRUCIAN_CARP     */ mfish_TANK_0, 
+/* BROOK_TROUT      */ mfish_TANK_0, 
+/* CARP             */ mfish_TANK_0, 
+/* KOI              */ mfish_TANK_0, 
+/* CATFISH          */ mfish_TANK_1, 
+/* SMALL_BASS       */ mfish_TANK_1, 
+/* BASS             */ mfish_TANK_1, 
+/* LARGE_BASS       */ mfish_TANK_1, 
+/* BLUEGILL         */ mfish_TANK_1, 
+/* GIANT_CATFISH    */ mfish_TANK_1, 
+/* GIANT_SNAKEHEAD  */ mfish_TANK_3, 
+/* BARBEL_STEED     */ mfish_TANK_0, 
+/* DACE             */ mfish_TANK_2, 
+/* PALE_CHUB        */ mfish_TANK_2, 
+/* BITTERLING       */ mfish_TANK_0, 
+/* LOACH            */ mfish_TANK_1, 
+/* POND_SMELT       */ mfish_TANK_2, 
+/* SWEETFISH        */ mfish_TANK_2, 
+/* CHERRY_SALMON    */ mfish_TANK_2, 
+/* LARGE_CHAR       */ mfish_TANK_2,
+/* RAINBOW_TROUT    */ mfish_TANK_2, 
+/* STRINGFISH       */ mfish_TANK_2, 
+/* SALMON           */ mfish_TANK_4, 
+/* GOLDFISH         */ mfish_TANK_0, 
+/* PIRANHA          */ mfish_TANK_3, 
+/* AROWANA          */ mfish_TANK_3, 
+/* EEL              */ mfish_TANK_0, 
+/* FRESHWATER_GOBY  */ mfish_TANK_1, 
+/* ANGELFISH        */ mfish_TANK_3, 
+/* GUPPY            */ mfish_TANK_3, 
+/* POPEYED_GOLDFISH */ mfish_TANK_0, 
+/* COELACANTH       */ mfish_TANK_4, 
+/* CRAWFISH         */ mfish_TANK_2, 
+/* FROG             */ mfish_TANK_1, 
+/* KILLIFISH        */ mfish_TANK_0, 
+/* JELLYFISH        */ mfish_TANK_4, 
+/* SEA_BASS         */ mfish_TANK_4, 
+/* RED_SNAPPER      */ mfish_TANK_4, 
+/* BARRED_KNIFEJAW  */ mfish_TANK_4, 
+/* ARAPAIMA         */ mfish_TANK_3,
 };
 
-PRIV_FISH_CONSTRUCTOR mfish_ct[40] = {
+PRIV_FISH_CONSTRUCTOR mfish_ct[aGYO_TYPE_NUM] = {
 /* CRUCIAN_CARP     */ mfish_afish_ct,
 /* BROOK_TROUT      */ mfish_afish_ct,
 /* CARP             */ mfish_koi_ct,
@@ -386,7 +417,7 @@ PRIV_FISH_CONSTRUCTOR mfish_ct[40] = {
 /* ARAPAIMA         */ mfish_big_fish_ct
 };
 
-PRIV_FISH_MOVE mfish_mv[40] = {
+PRIV_FISH_MOVE mfish_mv[aGYO_TYPE_NUM] = {
 /* CRUCIAN_CARP     */ mfish_afish_mv,
 /* BROOK_TROUT      */ mfish_afish_mv,
 /* CARP             */ mfish_koi_mv,
@@ -430,7 +461,7 @@ PRIV_FISH_MOVE mfish_mv[40] = {
 };
 
 
-PRIV_FISH_DRAW mfish_dw[40] = {
+PRIV_FISH_DRAW mfish_dw[aGYO_TYPE_NUM] = {
 /* CRUCIAN_CARP     */ mfish_afish_dw,
 /* BROOK_TROUT      */ mfish_afish_dw,
 /* CARP             */ mfish_koi_dw,
@@ -478,12 +509,12 @@ PRIV_FISH_DRAW mfish_dw[40] = {
 // clang-format on
 
 void Museum_Fish_Prv_data_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game, int fishNum, int r6) {
-    actor->fishIDEnum = fishNum;
+    actor->fish_idx = fishNum;
     actor->init_data = mfish_init_data[fishNum];
-    actor->group = mfish_group_tbl[fishNum];
+    actor->tank = mfish_group_tbl[fishNum];
 
-    if (actor->group >= 0) {
-        actor->position = suisou_pos[actor->group];
+    if (actor->tank >= 0) {
+        actor->position = suisou_pos[actor->tank];
     } else {
         actor->position = ZeroVec;
     }
@@ -541,23 +572,23 @@ void Museum_Fish_Actor_ct(ACTOR* actorx, GAME* gamex) {
     int i;
     MUSEUM_FISH_PRIVATE_DATA* prv;
     MF_Control_Actor = actor;
-    actor->_14db6 = 0x1e;
+    actor->player_area_update_timer = 0x1e;
 
     mfish_point_light_ct(actorx, gamex);
 
     for (i = 0; i < 14; i++) {
         actor->prvKusa[i]._54C = kusa_model[i];
-        cKF_SkeletonInfo_R_ct(&actor->prvKusa[i]._00, kusa_model[i], kusa_anime[i], &actor->prvKusa[i]._4F0,
-                              &actor->prvKusa[i]._514);
-        cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&actor->prvKusa[i]._00, kusa_anime[i], NULL,
-                                                                 kusa_group_tbl[i] == 2 ? 1.5f : 0.5f, 0.0f);
-        actor->prvKusa[i]._00.frame_control.current_frame = kusa_start_frame[i];
+        cKF_SkeletonInfo_R_ct(&actor->prvKusa[i].keyframe, kusa_model[i], kusa_anime[i], actor->prvKusa[i].work,
+                              actor->prvKusa[i].morph);
+        cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&actor->prvKusa[i].keyframe, kusa_anime[i], NULL,
+                                                                 kusa_group_tbl[i] == mfish_TANK_2 ? 1.5f : 0.5f, 0.0f);
+        actor->prvKusa[i].keyframe.frame_control.current_frame = kusa_start_frame[i];
         actor->prvKusa[i]._538.x = qrand();
         actor->prvKusa[i]._538.z = qrand();
     }
 
     if (mMmd_FishInfo(aGYO_TYPE_FROG)) {
-        actor->prvFish[aGYO_TYPE_FROG]._590 = &actor->_14788;
+        actor->prvFish[aGYO_TYPE_FROG].hasu_p = &actor->_14788;
     } else {
         mfish_hasu_ct(&actor->_14788, gamex);
     }
@@ -566,8 +597,8 @@ void Museum_Fish_Actor_ct(ACTOR* actorx, GAME* gamex) {
     for (i = 0; i < aGYO_TYPE_NUM; i++, prv++) {
         prv->_62E_flags &= ~1;
         if (mMmd_FishInfo(i)) {
-            prv->_38._54C = mfish_model_tbl[i];
-            prv->_38._550[0] = mfish_anime_init_tbl[i];
+            prv->kf._54C = mfish_model_tbl[i];
+            prv->kf._550[0] = mfish_anime_init_tbl[i];
             prv->_62E_flags |= 1;
             Museum_Fish_Prv_data_init(prv, gamex, i, 1);
         }
@@ -583,8 +614,8 @@ void Museum_Fish_Actor_dt(ACTOR* actor, GAME* game) {
     mfish_point_light_dt(actor, game);
 }
 
-int Museum_Fish_GetMsgNo(ACTOR* actorx) {
-    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+int Museum_Fish_GetMsgNo(MUSEUM_FISH_ACTOR* actor) {
+    // MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
 
     static u8 item_name[mIN_ITEM_NAME_LEN];
     int itemArticle;
@@ -616,10 +647,9 @@ int Museum_Fish_GetMsgNo(ACTOR* actorx) {
 }
 
 BOOL Museum_Fish_Check_Talk_Distance(GAME* gamex, int index) {
-    GAME_PLAY* game = (GAME_PLAY*)gamex;
     s16 subAngle;
     xyz_t pos;
-    PLAYER_ACTOR* actor;
+    ACTOR* playerx;
 
     // fish tank locations?
     static xyz_t kanban_pos[5] = { { 260.0f, 40.0f, 300.0f },
@@ -628,9 +658,9 @@ BOOL Museum_Fish_Check_Talk_Distance(GAME* gamex, int index) {
                                    { 460.0f, 40.0f, 540.0f },
                                    { 500.0f, 40.0f, 60.0f } };
 
-    actor = get_player_actor_withoutCheck(game);
-    subAngle = DEG2SHORT_ANGLE(-180) + actor->actor_class.world.angle.y;
-    xyz_t_sub(&actor->actor_class.world.position, &kanban_pos[index], &pos);
+    playerx = GET_PLAYER_ACTOR_GAME_ACTOR(gamex);
+    subAngle = DEG2SHORT_ANGLE(-180) + playerx->world.angle.y;
+    xyz_t_sub(&playerx->world.position, &kanban_pos[index], &pos);
 
     if (ABS(pos.x) < 20.0f && ABS(pos.z) < 20.0f && ABS(subAngle) < 0x3000) {
         return TRUE;
@@ -638,8 +668,8 @@ BOOL Museum_Fish_Check_Talk_Distance(GAME* gamex, int index) {
     return FALSE;
 }
 
-void Museum_Fish_Set_MsgFishInfo(ACTOR* actorx, int param2) {
-    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+void Museum_Fish_Set_MsgFishInfo(MUSEUM_FISH_ACTOR* actor, int param2) {
+    // MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
     int i;
     // defines how many fish are in each grouping of fish names
     static int group_max_num[5] = { 10, 9, 9, 6, 6 };
@@ -673,7 +703,7 @@ void Museum_Fish_set_talk_info(ACTOR* actorx) {
     static rgba_t window_color = { 255, 255, 0xcd, 255 };
     int r3;
     if (actor->numFishDisplayed > 0) { // maybe related to if there are fish in the tank
-        r3 = Museum_Fish_GetMsgNo(actorx);
+        r3 = Museum_Fish_GetMsgNo(actor);
         actor->fishDisplayMsgIter++; // maybe iterating through the fish donation record, given which fish are donated?
     } else {
         r3 = 0x2fa1;
@@ -687,23 +717,19 @@ void Museum_Fish_set_talk_info(ACTOR* actorx) {
     mDemo_Set_use_zoom_sound(TRUE);
 }
 
-void Museum_Fish_Talk_process(ACTOR* actorx, GAME* game) {
-    MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
+void Museum_Fish_Talk_process(MUSEUM_FISH_ACTOR* actor, GAME* game) {
+    // MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
 
-    if (mDemo_Check(8, actorx) != 0) {
-        GAME_PLAY* _gamePT;
-        PLAYER_ACTOR* playerActor = get_player_actor_withoutCheck((GAME_PLAY*)game);
-        s_xyz rotation = playerActor->actor_class.shape_info.rotation;
+    if (mDemo_Check(mDemo_TYPE_SPEAK, (ACTOR*)actor) != 0) {
+        s_xyz rotation = GET_PLAYER_ACTOR_GAME_ACTOR(game)->shape_info.rotation;
         add_calc_short_angle2(&rotation.y, DEG2SHORT_ANGLE(-180), 0.3f, DEG2SHORT_ANGLE(22.5f), 0);
-
-        _gamePT = (GAME_PLAY*)gamePT;
-        get_player_actor_withoutCheck(_gamePT)->Set_force_position_angle_proc(&_gamePT->game, NULL, &rotation, 32);
+        GET_PLAYER_ACTOR_NOW()->Set_force_position_angle_proc(gamePT, NULL, &rotation, 32);
         if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) != 0) {
             int choseNum = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
             if (choseNum != -1) {
                 if (choseNum == 0) {
                     mMsg_Window_c* windowC;
-                    int msgNum = Museum_Fish_GetMsgNo(actorx);
+                    int msgNum = Museum_Fish_GetMsgNo(actor);
                     actor->fishDisplayMsgIter += 1;
                     mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msgNum);
                     mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
@@ -717,8 +743,8 @@ void Museum_Fish_Talk_process(ACTOR* actorx, GAME* game) {
         int i;
         for (i = 0; i < 5; i++) {
             if (Museum_Fish_Check_Talk_Distance(game, i)) {
-                Museum_Fish_Set_MsgFishInfo(actorx, i);
-                mDemo_Request(8, actorx, &Museum_Fish_set_talk_info);
+                Museum_Fish_Set_MsgFishInfo(actor, i);
+                mDemo_Request(mDemo_TYPE_SPEAK, (ACTOR*)actor, &Museum_Fish_set_talk_info);
             }
         }
     }
@@ -728,42 +754,39 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
     int i;
     int j;
     MUSEUM_FISH_PRIVATE_DATA* prv;
-    s16 old_14db4;
+    s16 oldplayer_area;
     f32 v;
-    GAME_PLAY* play = (GAME_PLAY*)game;
     MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
     MUSEUM_FISH_PRIVATE_DATA* prv2;
-    mfish_point_light_mv(actor, &play->game);
-    old_14db4 = actor->_14db4;
-    mfish_get_player_area(actor, &play->game);
+    mfish_point_light_mv((MUSEUM_FISH_ACTOR*)actorx, game);
+    oldplayer_area = actor->player_area;
+    mfish_get_player_area((MUSEUM_FISH_ACTOR*)actorx, game);
 
-    if (actor->_14db4 != old_14db4) {
-        PLAYER_ACTOR* player;
+    if (actor->player_area != oldplayer_area) {
         xyz_t p;
         prv = actor->prvFish;
-        player = get_player_actor_withoutCheck(play);
-        p = player->actor_class.world.position;
+        p = GET_PLAYER_ACTOR_GAME_ACTOR(game)->world.position;
 
-        if (actor->_14db4 == 3) {
+        if (actor->player_area == mfish_TANK_3) {
             actor->prvFish[aGYO_TYPE_GOLDFISH].activityFrameCount = 0;
             actor->prvFish[aGYO_TYPE_POPEYED_GOLDFISH].activityFrameCount = 0;
             actor->prvFish[aGYO_TYPE_PIRANHA].activityFrameCount = 0;
-        } else if (actor->_14db4 == 0) {
+        } else if (actor->player_area == mfish_TANK_0) {
             actor->prvFish[aGYO_TYPE_CARP].activityFrameCount = 20;
             actor->prvFish[aGYO_TYPE_KOI].activityFrameCount = 20;
         }
 
         for (i = 0; i < aGYO_TYPE_NUM; i++, prv++) {
             f32 v = search_position_distanceXZ(&p, &prv->position);
-            if (actor->_14db4 == prv->group && v < 60.0f) {
+            if (actor->player_area == prv->tank && v < 60.0f) {
                 prv->activityFrameCount = RANDOM_F(60);
             }
         }
     }
 
     for (j = 0; j < 14; j++) {
-        cKF_SkeletonInfo_R_play(&actor->prvKusa[j]._00);
-        if (kusa_group_tbl[j] == 2) {
+        cKF_SkeletonInfo_R_play(&actor->prvKusa[j].keyframe);
+        if (kusa_group_tbl[j] == mfish_TANK_2) {
             add_calc2(&actor->prvKusa[j]._540.x, -4.0f, 0.5f, 0.5f);
             add_calc_short_angle2(&actor->prvKusa[j]._538.y, DEG2SHORT_ANGLE(3.5f), CALC_EASE2(0.1f), 22, 4);
         } else {
@@ -778,13 +801,13 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
         add_calc_short_angle2(&actor->prvKusa[j]._538.y, DEG2SHORT_ANGLE(0), CALC_EASE2(0.1f), 22, 4);
     }
 
-    Museum_Fish_Kusa_Check(actor, &play->game);
-    Museum_Fish_Object_Check(actor, &play->game);
+    Museum_Fish_Kusa_Check((MUSEUM_FISH_ACTOR*)actorx, game);
+    Museum_Fish_Object_Check((MUSEUM_FISH_ACTOR*)actorx, game);
 
     for (i = 0; i < 20; i++) {
         actor->_14d50[i]--;
         if (actor->_14d50[i] < 0) {
-            common_data.clip.effect_clip->effect_make_proc(0x6e, suisou_awa_pos[i], 2, 0, &play->game, -1,
+            eEC_CLIP->effect_make_proc(eEC_EFFECT_SUISOU_AWA, suisou_awa_pos[i], 2, 0, game, RSV_NO,
                                                            suisou_awa_group[i], 0);
             if (actor->_14d78[i] > 0) {
                 actor->_14d78[i]--;
@@ -796,7 +819,7 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
         }
     }
 
-    Museum_Fish_Talk_process(actorx, game);
+    Museum_Fish_Talk_process((MUSEUM_FISH_ACTOR*)actorx, game);
     prv2 = actor->prvFish;
     for (i = 0; i < aGYO_TYPE_NUM; i++, prv2++) {
         if (prv2->_62E_flags & 1) {
@@ -894,16 +917,16 @@ void Museum_Fish_Kusa_Draw(ACTOR* actorx, GAME* game, int r5) {
     if (mfish_cull_check(game, &kusa_pos[r5], 0.0f, 0.0f, 120.0f)) {
         Mtx* mtx;
         if (play->game.frame_counter % 2 != 0) {
-            mtx = &actor->prvKusa[r5]._70;
+            mtx = actor->prvKusa[r5].mtx[0];
         } else {
-            mtx = &actor->prvKusa[r5]._2b0;
+            mtx = actor->prvKusa[r5].mtx[1];
         }
         OPEN_DISP(game->graph);
         Matrix_translate(kusa_pos[r5].x, 0, kusa_pos[r5].z, 0);
         Matrix_scale(0.01f, 0.01f, 0.01f, 1);
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         CLOSE_DISP(game->graph);
-        cKF_Si3_draw_R_SV(game, &actor->prvKusa[r5]._00, mtx, kusa_before_disp, NULL, &actor->prvKusa[r5]);
+        cKF_Si3_draw_R_SV(game, &actor->prvKusa[r5].keyframe, mtx, kusa_before_disp, NULL, &actor->prvKusa[r5]);
     }
 }
 
@@ -934,8 +957,8 @@ void Museum_Fish_Actor_draw(ACTOR* actorx, GAME* game) {
 
         prv = actor->prvFish;
         for (i = 0; i < aGYO_TYPE_NUM; i++, prv++) {
-            if (prv->_62E_flags & 1 && prv->fishIDEnum != aGYO_TYPE_JELLYFISH && prv->fishIDEnum != aGYO_TYPE_FROG &&
-                mfish_cull_check(game, &prv->_5B8, prv->init_data._08 + 50.0f, prv->init_data._08 + 10.0f,
+            if (prv->_62E_flags & 1 && prv->fish_idx != aGYO_TYPE_JELLYFISH && prv->fish_idx != aGYO_TYPE_FROG &&
+                mfish_cull_check(game, &prv->objchk_pos, prv->init_data._08 + 50.0f, prv->init_data._08 + 10.0f,
                                  prv->init_data._08 + 10.0f)) {
                 mfish_dw[i](prv, game);
             }
@@ -944,8 +967,8 @@ void Museum_Fish_Actor_draw(ACTOR* actorx, GAME* game) {
         if (actor->prvFish[aGYO_TYPE_JELLYFISH]._62E_flags & 1 &&
             mfish_cull_check(game, &actor->prvFish[aGYO_TYPE_JELLYFISH].position,
                              actor->prvFish[aGYO_TYPE_JELLYFISH].init_data._08 + 10.0f,
-                             actor->prvFish[aGYO_TYPE_JELLYFISH].init_data._04,
-                             actor->prvFish[aGYO_TYPE_JELLYFISH].init_data._04)) {
+                             actor->prvFish[aGYO_TYPE_JELLYFISH].init_data.ofs_y,
+                             actor->prvFish[aGYO_TYPE_JELLYFISH].init_data.ofs_y)) {
             mfish_dw[0x23](&actor->prvFish[aGYO_TYPE_JELLYFISH], game);
         }
 

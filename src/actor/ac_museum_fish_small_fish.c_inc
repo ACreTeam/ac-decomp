@@ -20,7 +20,7 @@ void mfish_small_fish_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 }
 
 void mfish_sfish_normal_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    if (actor->group == 2) {
+    if (actor->tank == mfish_TANK_2) {
         if (actor->activityFrameCount < 0) {
             actor->_5F0 = actor->init_data._10 + Rnd_EX_f(actor->init_data._14);
         }
@@ -48,7 +48,7 @@ void mfish_sfish_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
             actor->init_data.activeFramesMin + (s16)RANDOM_F(actor->init_data.activeFramesRange);
         actor->savedActivityFrameCount = actor->activityFrameCount;
         actor->_5F0 = actor->init_data._10 + Rnd_EX_f(actor->init_data._14);
-        if (actor->group == 2 && actor->_5F0 < actor->init_data._10 + actor->init_data._14 * 0.5f) {
+        if (actor->tank == mfish_TANK_2 && actor->_5F0 < actor->init_data._10 + actor->init_data._14 * 0.5f) {
             actor->_612.y = atans_table(-actor->_5DC.z, -actor->_5DC.x);
             actor->activityFrameCount *= 5;
         }
@@ -66,7 +66,7 @@ void mfish_sfish_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         s16 s;
         //! BUG: unused?
         RANDOM_F(1.0f);
-        s = search_position_angleY(&suisou_pos[actor->group], &actor->position);
+        s = search_position_angleY(&suisou_pos[actor->tank], &actor->position);
         actor->_5F8 = 0.0f;
         actor->_612.y = s + DEG2SHORT_ANGLE(RANDOM2_F(90.0));
         actor->activityFrameCount =
@@ -84,7 +84,7 @@ void mfish_sfish_turn_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         actor->_612.y = actor->_62C - DEG2SHORT_ANGLE(115);
     }
 
-    if (actor->group == 2) {
+    if (actor->tank == mfish_TANK_2) {
         if (actor->_5F0 < 0.0f) {
             actor->_5F0 = actor->init_data._10 + MAX(-actor->init_data._10, RANDOM_F(actor->init_data._14));
         }
@@ -138,13 +138,13 @@ void mfish_small_fish_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->position.y += actor->_5D0.y + p.y;
     actor->position.z += actor->_5D0.z + p.z;
     mfish_onefish_mv(actor, gamex);
-    if (actor->group == 2) {
-        actor->_38._00.frame_control.speed = actor->_5E8 * 2.0f + 1.0f;
+    if (actor->tank == mfish_TANK_2) {
+        actor->kf.keyframe.frame_control.speed = actor->_5E8 * 2.0f + 1.0f;
     } else {
-        add_calc2(&actor->_38._00.frame_control.speed, actor->_5E8 * 2.0f + 0.5f, 0.2f, 0.1f);
+        add_calc2(&actor->kf.keyframe.frame_control.speed, actor->_5E8 * 2.0f + 0.5f, 0.2f, 0.1f);
     }
 
-    actor->_5B8 = actor->position;
+    actor->objchk_pos = actor->position;
     Museum_Fish_BGCheck(actor, gamex);
 
     if (actor->position.y < 55.0f + actor->init_data._08) {
@@ -181,23 +181,23 @@ BOOL mfish_sfish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joi
 }
 
 void mfish_small_fish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele = &actor->_38;
+    mfish_keyframe_c* skele = &actor->kf;
     Mtx* mtxp;
     s16 v;
     if (gamex->frame_counter & 1) {
-        mtxp = &skele->_70;
+        mtxp = skele->mtx[0];
     } else {
-        mtxp = &skele->_2b0;
+        mtxp = skele->mtx[1];
     }
     v = actor->_60C.x * 0.7f;
     OPEN_DISP(gamex->graph);
     Matrix_translate(actor->position.x, actor->position.y, actor->position.z, 0);
     Matrix_RotateY(actor->_60C.y, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data._24 * 1.5f, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z * 1.5f, 1);
     Matrix_RotateX(v, 1);
-    Matrix_translate(0.0f, 0.0f, -actor->init_data._24 * 0.5f, 1);
+    Matrix_translate(0.0f, 0.0f, -actor->init_data.ofs_z * 0.5f, 1);
     Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_sfish_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_sfish_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }

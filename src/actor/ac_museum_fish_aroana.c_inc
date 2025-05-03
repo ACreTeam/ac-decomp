@@ -112,7 +112,7 @@ void mfish_aroana_turn_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
         } else {
             s3 = -ABS(s3);
         }
-    } else if (actor->_62E_flags & 0x20 && (actor->_62A - actor->_60C.y) < 0) {
+    } else if (actor->_62E_flags & 0x20 && (actor->escape_angle - actor->_60C.y) < 0) {
         s3 = -s3;
     }
 
@@ -224,7 +224,7 @@ void mfish_aroana_base_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     } else if (actor->currentProcess == mfish_aroana_normal_process) {
         if ((actor->_62E_flags & 0x1e && ABS((s16)(actor->_62C - actor->_60C.y)) < DEG2SHORT_ANGLE(30)) ||
             (actor->_62E_flags & 0x20 &&
-             ABS((s16)(DEG2SHORT_ANGLE(180) + actor->_62A - actor->_60C.y)) < DEG2SHORT_ANGLE(30))) {
+             ABS((s16)(DEG2SHORT_ANGLE(180) + actor->escape_angle - actor->_60C.y)) < DEG2SHORT_ANGLE(30))) {
             actor->activityFrameCount =
                 actor->init_data.activeFramesMin + (s16)RANDOM_F(actor->init_data.activeFramesRange);
             actor->savedActivityFrameCount = actor->activityFrameCount;
@@ -247,7 +247,7 @@ void mfish_aroana_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     mfish_onefish_mv(actor, gamex);
     mfish_aroana_base_mv(actor, gamex);
     Museum_Fish_BGCheck(actor, gamex);
-    actor->_38._00.frame_control.speed = (actor->_5E8 * 2.0f) / (actor->init_data._10 + actor->init_data._14) + 0.5f;
+    actor->kf.keyframe.frame_control.speed = (actor->_5E8 * 2.0f) / (actor->init_data._10 + actor->init_data._14) + 0.5f;
 }
 
 BOOL mfish_aroana_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
@@ -270,19 +270,19 @@ BOOL mfish_aroana_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
 }
 
 void mfish_aroana_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele = &actor->_38;
+    mfish_keyframe_c* skele = &actor->kf;
     Mtx* mtxp;
     if (gamex->frame_counter & 1) {
-        mtxp = &skele->_70;
+        mtxp = skele->mtx[0];
     } else {
-        mtxp = &skele->_2b0;
+        mtxp = skele->mtx[1];
     }
     OPEN_DISP(gamex->graph);
     Matrix_translate(actor->position.x, actor->position.y + actor->_5AC.y, actor->position.z, 0);
     Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data._24, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z, 1);
     Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_aroana_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_aroana_before_disp, NULL, actor);
     CLOSE_DISP(play->game.graph);
 }

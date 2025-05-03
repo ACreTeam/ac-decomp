@@ -57,7 +57,7 @@ void mfish_kingyo_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         }
     } else if (actor->_5F8 > actor->init_data._08 * 30.f) {
         f32 v = RANDOM_F(1.0f);
-        s16 s = search_position_angleY(&suisou_pos[actor->group], &actor->position);
+        s16 s = search_position_angleY(&suisou_pos[actor->tank], &actor->position);
         actor->_5F8 = 0.0f;
         actor->_612.y = s + DEG2SHORT_ANGLE(RANDOM2_F(90));
         actor->activityFrameCount =
@@ -126,7 +126,7 @@ void mfish_kingyo_peck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         }
 
         if (actor->_62E_flags & 0x20 && dist > 40.f) {
-            if ((s16)(actor->_612.y - actor->_62A) > 0) {
+            if ((s16)(actor->_612.y - actor->escape_angle) > 0) {
                 actor->_612.y += DEG2SHORT_ANGLE(90);
             } else {
                 actor->_612.y -= DEG2SHORT_ANGLE(90);
@@ -147,7 +147,7 @@ void mfish_kingyo_peck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
             actor->savedActivityFrameCount = actor->activityFrameCount;
             actor->_640 = RANDOM_F(130.f);
         }
-    } else if (MF_Control_Actor->_14db4 != actor->group) {
+    } else if (MF_Control_Actor->player_area != actor->tank) {
         mfish_kingyo_turn_init(actor, gamex);
     } else if (mfish_peck_wall_check(actor, gamex)) {
         actor->_5F0 = 0.0f;
@@ -190,15 +190,15 @@ void mfish_kingyo_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     if ((((actor->_5F0 - 0.01f) > actor->_5E8) ||
          (actor->activityFrameCount > (s16)(actor->savedActivityFrameCount - actor->_640))) &&
         actor->_5F0 > 0.1f) {
-        actor->_38._00.frame_control.speed =
+        actor->kf.keyframe.frame_control.speed =
             (5.0f + GETREG(TAKREG, 0x28) * 0.1f) * 0.5f + (4.0f + GETREG(TAKREG, 0x29) * 0.1f) * actor->_5E8;
     } else {
         add_calc2(&actor->_5F0, GETREG(TAKREG, 0x31) * 0.001f + 0.05f, GETREG(TAKREG, 0x32) * 0.001f + 0.01f,
                   GETREG(TAKREG, 0x33) * 0.001f + 0.002f);
-        add_calc2(&actor->_38._00.frame_control.speed, actor->_5E8 * 2.0f + 0.5f, 0.2f, 0.1f);
+        add_calc2(&actor->kf.keyframe.frame_control.speed, actor->_5E8 * 2.0f + 0.5f, 0.2f, 0.1f);
     }
     actor->_63A += (s16)DEG2SHORT_ANGLE2(GETREG(TAKREG, 0x47) + 3.0f);
-    actor->_5B8 = actor->position;
+    actor->objchk_pos = actor->position;
     Museum_Fish_BGCheck(actor, gamex);
     if (actor->position.y < 60.f + actor->init_data._08) {
         actor->position.y = 60.f + actor->init_data._08;
@@ -242,23 +242,23 @@ BOOL mfish_kingyo_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
 }
 
 void mfish_kingyo_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele = &actor->_38;
+    mfish_keyframe_c* skele = &actor->kf;
     Mtx* mtxp;
     s16 s;
     if (gamex->frame_counter & 1) {
-        mtxp = &skele->_70;
+        mtxp = skele->mtx[0];
     } else {
-        mtxp = &skele->_2b0;
+        mtxp = skele->mtx[1];
     }
     s = actor->_60C.x * (GETREG(TAKREG, 0x41) * 0.01f + 0.75f);
     OPEN_DISP(gamex->graph);
     Matrix_translate(actor->position.x, actor->position.y, actor->position.z, 0);
     Matrix_RotateY(actor->_60C.y, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data._24 * 1.5f, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z * 1.5f, 1);
     Matrix_RotateX(s, 1);
-    Matrix_translate(0.0f, 0.0f, -actor->init_data._24 * 0.5f, 1);
+    Matrix_translate(0.0f, 0.0f, -actor->init_data.ofs_z * 0.5f, 1);
     Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_kingyo_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_kingyo_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }

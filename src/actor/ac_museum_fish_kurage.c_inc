@@ -171,7 +171,7 @@ void mfish_kurage_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->position.y += actor->_5D0.y + actor->_5DC.y;
     actor->position.z += actor->_5D0.z + actor->_5DC.z;
 
-    actor->_5B8 = actor->position;
+    actor->objchk_pos = actor->position;
 
     Museum_Fish_BGCheck(actor, gamex);
     if (actor->position.y < 55.0f + actor->init_data._08) {

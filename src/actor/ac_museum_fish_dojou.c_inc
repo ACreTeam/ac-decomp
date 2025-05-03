@@ -114,15 +114,15 @@ void mfish_dojou_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->position.z += actor->_5D0.z + p.z;
     mfish_onefish_mv(actor, gamex);
     if (ABS(actor->_612.x) > DEG2SHORT_ANGLE(15)) {
-        add_calc2(&actor->_38._00.frame_control.speed,
+        add_calc2(&actor->kf.keyframe.frame_control.speed,
                   (GETREG(TAKREG, 0x1a) * 0.1f + 3.0f) * 0.5f + (GETREG(TAKREG, 0x1b) * 0.1f + 3.0f) * actor->_5E8,
                   0.2f, 0.1f);
         add_calc2(&actor->_5AC.x, 1.0f, 0.1f, 0.02f);
     } else {
-        add_calc2(&actor->_38._00.frame_control.speed, actor->_5E8 * 1.5f + 0.5f, 0.2f, 0.1f);
+        add_calc2(&actor->kf.keyframe.frame_control.speed, actor->_5E8 * 1.5f + 0.5f, 0.2f, 0.1f);
         add_calc0(&actor->_5AC.x, 0.1f, 0.02f);
     }
-    actor->_5B8 = actor->position;
+    actor->objchk_pos = actor->position;
     Museum_Fish_BGCheck(actor, gamex);
     if (actor->position.y < actor->init_data._08 + 50.f) {
         actor->position.y = actor->init_data._08 + 50.f;
@@ -189,23 +189,23 @@ BOOL mfish_dojou_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joi
 }
 
 void mfish_dojou_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele = &actor->_38;
+    mfish_keyframe_c* skele = &actor->kf;
     Mtx* mtxp;
     s16 s;
     if (gamex->frame_counter & 1) {
-        mtxp = &skele->_70;
+        mtxp = skele->mtx[0];
     } else {
-        mtxp = &skele->_2b0;
+        mtxp = skele->mtx[1];
     }
     s = actor->_60C.x;
     OPEN_DISP(gamex->graph);
     Matrix_translate(actor->position.x, actor->position.y, actor->position.z, 0);
     Matrix_RotateY(actor->_60C.y, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data._24 * (0.5f * cos_s(s) + ABS(cos_s(s))), 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z * (0.5f * cos_s(s) + ABS(cos_s(s))), 1);
     Matrix_RotateX(s, 1);
-    Matrix_translate(0.0f, 0.0f, -actor->init_data._24 * 0.5f * cos_s(s), 1);
+    Matrix_translate(0.0f, 0.0f, -actor->init_data.ofs_z * 0.5f * cos_s(s), 1);
     Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_dojou_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_dojou_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }

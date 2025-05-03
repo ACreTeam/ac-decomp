@@ -14,7 +14,7 @@ void mfish_kaseki_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->_5AC = ZeroVec;
     actor->_638 = qrand();
     actor->_622 = 0;
-    actor->_634 = 0;
+    actor->hide_camera_angle = 0;
     actor->activityFrameCount = actor->init_data.activeFramesMin + (s16)RANDOM_F(actor->init_data.activeFramesRange);
     actor->_624 = 1;
     actor->_594 = NULL;
@@ -31,7 +31,7 @@ void mfish_kaseki_normal_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
 void mfish_kaseki_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     s16 s = ABS(actor->_622) * (actor->init_data._30 * (GETREG(TAKREG, 0x1d) * 0.001f + 0.5f) / 32749.0f);
-    s = MIN(actor->_634, MAX(s, DEG2SHORT_ANGLE2(5)));
+    s = MIN(actor->hide_camera_angle, MAX(s, DEG2SHORT_ANGLE2(5)));
     add_calc_short_angle2(&actor->_632, 0, CALC_EASE(0.5), DEG2SHORT_ANGLE(5), DEG2SHORT_ANGLE(0.5f));
     actor->_636 += 455;
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y + (s16)(actor->_632 * sin_s(actor->_636)),
@@ -110,10 +110,10 @@ void mfish_kaseki_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     actor->currentProcess(actor, game);
     add_calc2(&actor->position.y, actor->init_data._0C, 0.5f, 0.1f);
     if (ABS(actor->_622) > DEG2SHORT_ANGLE(10)) {
-        add_calc_short_angle2(&actor->_634, DEG2SHORT_ANGLE(20), CALC_EASE(0.25f), DEG2SHORT_ANGLE(0.25f),
+        add_calc_short_angle2(&actor->hide_camera_angle, DEG2SHORT_ANGLE(20), CALC_EASE(0.25f), DEG2SHORT_ANGLE(0.25f),
                               DEG2SHORT_ANGLE(0));
     } else {
-        add_calc_short_angle2(&actor->_634, DEG2SHORT_ANGLE(1), CALC_EASE(0.25f), DEG2SHORT_ANGLE(1.25f),
+        add_calc_short_angle2(&actor->hide_camera_angle, DEG2SHORT_ANGLE(1), CALC_EASE(0.25f), DEG2SHORT_ANGLE(1.25f),
                               DEG2SHORT_ANGLE(0));
     }
 
@@ -139,11 +139,11 @@ void mfish_kaseki_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     actor->position.x += actor->_5D0.x;
     actor->position.z += actor->_5D0.z;
     mfish_onefish_mv(actor, game);
-    actor->_38._00.frame_control.speed = actor->_5E8 * 0.75f + 0.25f;
+    actor->kf.keyframe.frame_control.speed = actor->_5E8 * 0.75f + 0.25f;
     mfish_body_wind_anime_play(actor, game);
     Museum_Fish_BGCheck(actor, game);
-    if (actor->position.y < 55.0f - actor->init_data._04) {
-        actor->position.y = 55.0f - actor->init_data._04;
+    if (actor->position.y < 55.0f - actor->init_data.ofs_y) {
+        actor->position.y = 55.0f - actor->init_data.ofs_y;
     }
     actor->activityFrameCount--;
 }
@@ -174,19 +174,19 @@ BOOL mfish_kaseki_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
 }
 
 void mfish_kaseki_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele = &actor->_38;
+    mfish_keyframe_c* skele = &actor->kf;
     Mtx* mtxp;
     if (gamex->frame_counter & 1) {
-        mtxp = &skele->_70;
+        mtxp = skele->mtx[0];
     } else {
-        mtxp = &skele->_2b0;
+        mtxp = skele->mtx[1];
     }
     OPEN_DISP(gamex->graph);
     Matrix_translate(actor->position.x, actor->position.y, actor->position.z, 0);
     Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data._24, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z, 1);
     Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_kaseki_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_kaseki_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }

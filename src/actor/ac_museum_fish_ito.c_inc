@@ -17,7 +17,7 @@ void mfish_ito_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->_63A = qrand();
     actor->_63C = qrand();
     actor->_640 = 0;
-    actor->_634 = 0;
+    actor->hide_camera_angle = 0;
     actor->_632 = 0;
     actor->_644 = 0;
     actor->_5AC.x = 0.0f;
@@ -29,7 +29,7 @@ void mfish_ito_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     xyz_t p;
     mfish_onefish_mv(actor, gamex);
     mfish_body_wind_anime_play(actor, gamex);
-    actor->_38._00.frame_control.speed = (sin_s(actor->_63A) * 0.6f + 3.0f) * 0.5f;
+    actor->kf.keyframe.frame_control.speed = (sin_s(actor->_63A) * 0.6f + 3.0f) * 0.5f;
     actor->_5AC.y = sin_s(actor->_63A) * 0.2f;
     add_calc2(&actor->_5E8, actor->_5F0, 0.1f, 0.02f);
     actor->_5D0.x = actor->_5E8 * sin_s(actor->_60C.y);
@@ -50,10 +50,10 @@ void mfish_ito_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
                           DEG2SHORT_ANGLE(0.025f));
     add_calc(&actor->position.y, actor->init_data._0C + actor->_5F4, CALC_EASE(0.05f), 0.15f, 0.05f);
     actor->_646 += DEG2SHORT_ANGLE(10);
-    add_calc_short_angle2(&actor->_634, actor->_640, CALC_EASE2(0.1f),
+    add_calc_short_angle2(&actor->hide_camera_angle, actor->_640, CALC_EASE2(0.1f),
                           (s16)(DEG2SHORT_ANGLE(GETREG(TAKREG, 0x3d) * 0.1f + 0.8f) >> 1) >> 1,
                           DEG2SHORT_ANGLE(0.025f));
-    add_calc_short_angle2(&actor->_644, actor->_634, CALC_EASE2(0.1f), DEG2SHORT_ANGLE(0.625f),
+    add_calc_short_angle2(&actor->_644, actor->hide_camera_angle, CALC_EASE2(0.1f), DEG2SHORT_ANGLE(0.625f),
                           DEG2SHORT_ANGLE(0.025f));
     add_calc2(&actor->_5AC.x, actor->_5AC.z, 0.25f, 0.001f);
     if (actor->activityFrameCount-- < 0) {
@@ -65,14 +65,14 @@ void mfish_ito_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
             }
             actor->_5F0 = actor->init_data._10 + MAX(-actor->init_data._10, RANDOM_F(actor->init_data._14));
             actor->_642 = DEG2SHORT_ANGLE(RANDOM2_F(2.0f) + 3.0f);
-            actor->_634 = DEG2SHORT_ANGLE(RANDOM_F(10.0f) + 20.0f);
+            actor->hide_camera_angle = DEG2SHORT_ANGLE(RANDOM_F(10.0f) + 20.0f);
             actor->_640 = DEG2SHORT_ANGLE(RANDOM_F(10.0f));
             actor->_5AC.z = Rnd_EX_f(0.06f);
         } else {
             actor->_5F0 = -0.1f;
             actor->_5F4 = RANDOM2_F(5.0f);
             actor->_642 = 0;
-            actor->_634 = 0;
+            actor->hide_camera_angle = 0;
             actor->_640 = 0;
             actor->_5AC.z = 0.0f;
         }
@@ -110,19 +110,19 @@ BOOL mfish_ito_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint
 
 void mfish_ito_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
-    YET_SKELETON* skele = &actor->_38;
+    mfish_keyframe_c* skele = &actor->kf;
     Mtx* mtxp;
     if (gamex->frame_counter & 1) {
-        mtxp = &skele->_70;
+        mtxp = skele->mtx[0];
     } else {
-        mtxp = &skele->_2b0;
+        mtxp = skele->mtx[1];
     }
     OPEN_DISP(gamex->graph);
     Matrix_translate(actor->position.x, actor->position.y + actor->_5AC.y, actor->position.z, 0);
     Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data._24, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z, 1);
     Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_ito_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_ito_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }

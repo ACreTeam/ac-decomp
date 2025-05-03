@@ -14,6 +14,16 @@
 extern "C" {
 #endif
 
+enum {
+    mfish_TANK_0,
+    mfish_TANK_1,
+    mfish_TANK_2,
+    mfish_TANK_3,
+    mfish_TANK_4,
+
+    mfish_TANK_NUM
+};
+
 // found useful macros
 #define MY_MAX(a, b) (((a) >= (b)) ? (a) : (b))
 #define MY_CLAMP(v, l, h) MIN(MY_MAX((l), (v)), (h))
@@ -40,7 +50,7 @@ typedef void (*PRIV_FISH_PROCESS)(struct _FISH_PRIVATE_DATA*, GAME*);
 // struct decls
 typedef struct _MUSEUM_FISH_INIT_DATA {
     f32 renderScale;
-    f32 _04;
+    f32 ofs_y;
     f32 _08;
     f32 _0C;
     f32 _10;
@@ -48,65 +58,55 @@ typedef struct _MUSEUM_FISH_INIT_DATA {
     f32 _18;
     f32 _1C;
     f32 _20;
-    f32 _24;
+    f32 ofs_z;
     f32 _28;
     s16 activeFramesMin;
     s16 activeFramesRange;
     s16 _30;
 } MUSEUM_FISH_INIT_DATA; // size: 0x34
 
-typedef struct _YET_SKELETON {
-    cKF_SkeletonInfo_R_c _00; // offset 0, size 0x70
-    Mtx _70;                  // offset 70, size
-    artificial_padding(0x70, 0x2b0, Mtx);
-    Mtx _2b0;
-    artificial_padding(0x2b0, 0x46C, Mtx);
-
-    void* _46C;
-
-    artificial_padding(0x46C, 0x4F0, void*);
-
-    s_xyz _4F0;
-
-    artificial_padding(0x4F0, 0x514, s_xyz);
-
-    s_xyz _514;
-    artificial_padding(0x514, 0x526, s_xyz);
-    s_xyz _526;
-    artificial_padding(0x526, 0x538, s_xyz);
+typedef struct fish_keyframe_s {
+    cKF_SkeletonInfo_R_c keyframe; // offset 0, size 0x70
+    Mtx mtx[2][9];
+    s_xyz work[6];
+    s_xyz morph[6];
     s_xyz _538;
     // unused 2 byte padding here
     xyz_t _540;
     cKF_Skeleton_R_c* _54C;
     cKF_Animation_R_c* _550[2];
-} YET_SKELETON; // size 558
+} mfish_keyframe_c; // size 558
 
-typedef struct _YET_SKELETON_2 {
-    YET_SKELETON _00;
-    f32 _558;
-    f32 _55C;
-    f32 _560;
-    f32 _564;
-    s16 _568;
-    s16 _56A;
-    s16 _56C;
-} YET_SKELETON_2;
+typedef struct hasu_s {
+    /* 0x000 */ cKF_SkeletonInfo_R_c keyframe; // offset 0, size 0x70
+    /* 0x070 */ Mtx mtx[2][9];
+    /* 0x4F0 */ s_xyz work[9];
+    /* 0x526 */ s_xyz morph[9];
+    /* 0x55C */ f32 _55C;
+    /* 0x560 */ f32 _560;
+    /* 0x564 */ f32 _564;
+    /* 0x568 */ s16 _568;
+    /* 0x56A */ s16 _56A;
+    /* 0x56C */ s16 _56C;
+    // 2 bytes pad
+} mfish_hasu_c;
 
 typedef enum fish_type MUSEUM_FISH_TYPE;
+typedef struct _FISH_PRIVATE_DATA MUSEUM_FISH_PRIVATE_DATA;
 
-typedef struct _FISH_PRIVATE_DATA {
+struct _FISH_PRIVATE_DATA {
     MUSEUM_FISH_INIT_DATA init_data;
     PRIV_FISH_PROCESS currentProcess; // size:4
-    YET_SKELETON _38;
+    mfish_keyframe_c kf;
 
-    YET_SKELETON_2* _590;
-    struct _FISH_PRIVATE_DATA* _594;
-    struct _FISH_PRIVATE_DATA* _598;
+    mfish_hasu_c* hasu_p; // lilypad
+    MUSEUM_FISH_PRIVATE_DATA* _594;
+    MUSEUM_FISH_PRIVATE_DATA* _598;
 
-    MUSEUM_FISH_TYPE fishIDEnum;
+    MUSEUM_FISH_TYPE fish_idx;
     xyz_t position;
     xyz_t _5AC;
-    xyz_t _5B8;
+    xyz_t objchk_pos;
     artificial_padding(0x5B8, 0x5D0, xyz_t);
     xyz_t _5D0;
     xyz_t _5DC;
@@ -128,12 +128,12 @@ typedef struct _FISH_PRIVATE_DATA {
     s16 _624;
     s16 activityFrameCount;
     s16 savedActivityFrameCount;
-    s16 _62A;
+    s16 escape_angle;
     s16 _62C;
     s16 _62E_flags;
-    s16 group;
+    s16 tank;
     s16 _632;
-    s16 _634;
+    s16 hide_camera_angle;
     s16 _636;
     s16 _638;
     s16 _63A;
@@ -143,10 +143,10 @@ typedef struct _FISH_PRIVATE_DATA {
     s16 _642;
     s16 _644;
     s16 _646;
-} MUSEUM_FISH_PRIVATE_DATA; // size 648
+}; // size 648
 
 // Holds data for the underwater grass
-typedef YET_SKELETON MUSEUM_FISH_KUSA_DATA;
+typedef mfish_keyframe_c MUSEUM_FISH_KUSA_DATA;
 
 typedef struct _FISH_DISPLAY_MSG_INFO {
     s16 fishName;
@@ -158,7 +158,7 @@ typedef struct _MUSEUM_FISH_ACTOR {
     int _174;
     MUSEUM_FISH_PRIVATE_DATA prvFish[aGYO_TYPE_NUM]; // offset: 0x178 size: 0xFB48
     MUSEUM_FISH_KUSA_DATA prvKusa[14];               // offset: 0xFCB8 size: 0x4AD0
-    YET_SKELETON_2 _14788;                           // offset: 0x14788 size: 0x570
+    mfish_hasu_c _14788;                           // offset: 0x14788 size: 0x570
 
     u8 _14cf8[16]; // temp
 
@@ -172,8 +172,8 @@ typedef struct _MUSEUM_FISH_ACTOR {
     artificial_padding(0x14d78, 0x14daa, s16[20]);
 
     s16 _14daa[5];
-    s16 _14db4;
-    s16 _14db6;        // offset: 0x14db6, size: 2
+    s16 player_area;
+    s16 player_area_update_timer;        // offset: 0x14db6, size: 2
     s16 lightID1;      // offset: 0x14db8, size: 2
     s16 lightID2;      // offset: 0x14dba, size: 2
     s16 lightPower[2]; // offset: 0x14dbc, size: 4
@@ -192,13 +192,13 @@ extern xyz_t kusa_pos[14];
 extern xyz_t hasu_pos;
 extern xyz_t suisou_awa_pos[20];
 extern s16 suisou_awa_group[20];
-extern cKF_Skeleton_R_c* mfish_model_tbl[40];
-extern cKF_Animation_R_c* mfish_anime_init_tbl[40];
-extern MUSEUM_FISH_INIT_DATA mfish_init_data[40];
-extern s16 mfish_group_tbl[40];
-extern PRIV_FISH_CONSTRUCTOR mfish_ct[40];
-extern PRIV_FISH_MOVE mfish_mv[40];
-extern PRIV_FISH_DRAW mfish_dw[40];
+extern cKF_Skeleton_R_c* mfish_model_tbl[aGYO_TYPE_NUM];
+extern cKF_Animation_R_c* mfish_anime_init_tbl[aGYO_TYPE_NUM];
+extern MUSEUM_FISH_INIT_DATA mfish_init_data[aGYO_TYPE_NUM];
+extern s16 mfish_group_tbl[aGYO_TYPE_NUM];
+extern PRIV_FISH_CONSTRUCTOR mfish_ct[aGYO_TYPE_NUM];
+extern PRIV_FISH_MOVE mfish_mv[aGYO_TYPE_NUM];
+extern PRIV_FISH_DRAW mfish_dw[aGYO_TYPE_NUM];
 extern float kusa_start_frame[14];
 
 // functions
@@ -207,11 +207,11 @@ extern float kusa_start_frame[14];
 void Museum_Fish_Prv_data_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game, int fishNum, int r6);
 void Museum_Fish_Actor_ct(ACTOR* actor, GAME* game);
 void Museum_Fish_Actor_dt(ACTOR* actor, GAME* game);
-int Museum_Fish_GetMsgNo(ACTOR* actor);
+// int Museum_Fish_GetMsgNo(ACTOR* actor);
 BOOL Museum_Fish_Check_Talk_Distance(GAME* gamex, int index);
-void Museum_Fish_Set_MsgFishInfo(ACTOR* actor, int param2);
+// void Museum_Fish_Set_MsgFishInfo(ACTOR* actor, int param2);
 void Museum_Fish_set_talk_info(ACTOR* actor);
-void Museum_Fish_Talk_process(ACTOR* actor, GAME* game);
+// void Museum_Fish_Talk_process(ACTOR* actor, GAME* game);
 void Museum_Fish_Actor_move(ACTOR* actor, GAME* game);
 void Museum_Fish_Suisou_draw(ACTOR* actor, GAME* game, int r5);
 BOOL kusa_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape, u8* joint_flags,
@@ -503,9 +503,9 @@ void mfish_kurage_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 void mfish_kurage_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game);
 
 // ac_museum_fish_hasu.c_inc
-void mfish_hasu_ct(YET_SKELETON_2* actor, GAME* game);
-void mfish_hasu_mv(YET_SKELETON_2* actor, GAME* game);
-void mfish_hasu_dw(YET_SKELETON_2* actor, GAME* game);
+void mfish_hasu_ct(mfish_hasu_c* actor, GAME* game);
+void mfish_hasu_mv(mfish_hasu_c* actor, GAME* game);
+void mfish_hasu_dw(mfish_hasu_c* actor, GAME* game);
 void mfish_kaeru_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex);
 void mfish_kaeru_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex);
 BOOL hasu_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape, u8* joint_flags,

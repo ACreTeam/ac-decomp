@@ -33,17 +33,17 @@ void mfish_bass_base_FishMove(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
 }
 
 void mfish_bass_dummy_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
-    actor->_634 = mfish_get_hide_camera_angle(actor);
+    actor->hide_camera_angle = mfish_get_hide_camera_angle(actor);
 
     if ((actor->_62E_flags & 0x1E) != 0) {
         // works with temp instead of cast
         if ((s16)(actor->_612.y - actor->_62C) > 0) {
-            actor->_634 = actor->_62C + DEG2SHORT_ANGLE(90);
+            actor->hide_camera_angle = actor->_62C + DEG2SHORT_ANGLE(90);
         } else {
-            actor->_634 = actor->_62C - DEG2SHORT_ANGLE(90);
+            actor->hide_camera_angle = actor->_62C - DEG2SHORT_ANGLE(90);
         }
     } else {
-        add_calc_short_angle2(&actor->_634, actor->_612.y, CALC_EASE(0.5f), DEG2SHORT_ANGLE(22.5),
+        add_calc_short_angle2(&actor->hide_camera_angle, actor->_612.y, CALC_EASE(0.5f), DEG2SHORT_ANGLE(22.5),
                               DEG2SHORT_ANGLE(0.5f));
     }
 
@@ -54,7 +54,7 @@ void mfish_bass_dummy_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
 }
 
 void mfish_bass_dummy_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
-    add_calc_short_angle2(&actor->_612.y, actor->_634, CALC_EASE2(0.1f), DEG2SHORT_ANGLE(2.5f), DEG2SHORT_ANGLE(0.25f));
+    add_calc_short_angle2(&actor->_612.y, actor->hide_camera_angle, CALC_EASE2(0.1f), DEG2SHORT_ANGLE(2.5f), DEG2SHORT_ANGLE(0.25f));
     actor->_622 = add_calc_short_angle2(&actor->_60C.y, actor->_612.y, CALC_EASE2(0.25f), DEG2SHORT_ANGLE(1.25f),
                                         DEG2SHORT_ANGLE(0.25f));
     add_calc_short_angle2(&actor->_618.z, actor->_622, CALC_EASE2(0.25f), DEG2SHORT_ANGLE(1.25f),
@@ -184,7 +184,7 @@ void mfish_bass_turn_process_init(MUSEUM_FISH_PRIVATE_DATA* actor) {
             b = -ABS(a);
         }
     } else if (actor->_62E_flags & 0x20) {
-        if ((s16)(actor->_62A - actor->_60C.y) < 0) {
+        if ((s16)(actor->escape_angle - actor->_60C.y) < 0) {
             b = -a;
         }
     }
@@ -267,9 +267,9 @@ void mfish_bass_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
     actor->currentProcess = mfish_bass_normal_process;
 
-    if (actor->fishIDEnum == aGYO_TYPE_LARGE_BASS) {
+    if (actor->fish_idx == aGYO_TYPE_LARGE_BASS) {
         actor->_5AC.y = 0;
-    } else if (actor->fishIDEnum == aGYO_TYPE_BASS) {
+    } else if (actor->fish_idx == aGYO_TYPE_BASS) {
         actor->_5AC.y = 0.5f;
     } else {
         actor->_5AC.y = 1;
@@ -303,7 +303,7 @@ void mfish_bass_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     } else if (actor->currentProcess == &mfish_bass_normal_process) {
         if (((actor->_62E_flags & 0x1e) && ABS((s16)(actor->_62C - actor->_60C.y)) < DEG2SHORT_ANGLE(30)) ||
             ((actor->_62E_flags & 0x20) &&
-             ABS((s16)((actor->_62A - DEG2SHORT_ANGLE(-180)) - actor->_60C.y)) < DEG2SHORT_ANGLE(30))) {
+             ABS((s16)((actor->escape_angle - DEG2SHORT_ANGLE(-180)) - actor->_60C.y)) < DEG2SHORT_ANGLE(30))) {
             actor->activityFrameCount =
                 actor->init_data.activeFramesMin + (s16)RANDOM_F(actor->init_data.activeFramesRange);
             actor->savedActivityFrameCount = actor->activityFrameCount;
@@ -330,30 +330,30 @@ void mfish_bass_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         // needed tmp before the decrement for some reason
         tmp = (0.4f + (0.7f * actor->_5AC.y));
         actor->_640--;
-        add_calc2(&actor->_38._00.frame_control.speed,
+        add_calc2(&actor->kf.keyframe.frame_control.speed,
                   tmp * (1.75f +
                          actor->_5AC.z * (actor->_5F0 - actor->_5E8) / ((actor->init_data._14) + actor->init_data._10)),
                   0.5f, 0.5f);
     } else {
-        add_calc2(&actor->_38._00.frame_control.speed, (actor->_5E8 * 2.0f + 0.5f) * (actor->_5AC.y * 0.8f + 0.6f),
+        add_calc2(&actor->kf.keyframe.frame_control.speed, (actor->_5E8 * 2.0f + 0.5f) * (actor->_5AC.y * 0.8f + 0.6f),
                   0.2f, 0.1f);
     }
 }
 
 void mfish_bass_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele;
+    mfish_keyframe_c* skele;
     Mtx* mtx;
     GRAPH* graph;
     GAME_PLAY* play;
 
     play = (GAME_PLAY*)gamex;
 
-    skele = &actor->_38;
+    skele = &actor->kf;
 
     if (play->game.frame_counter % 2 != 0) {
-        mtx = &skele->_70;
+        mtx = skele->mtx[0];
     } else {
-        mtx = &skele->_2b0;
+        mtx = skele->mtx[1];
     }
 
     graph = play->game.graph;
@@ -361,16 +361,16 @@ void mfish_bass_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     Matrix_translate(actor->position.x, actor->position.y, actor->position.z, 0);
     Matrix_RotateY(actor->_60C.y, 1);
 
-    Matrix_translate(0, 0.25f * actor->init_data._04, 1.5f * actor->init_data._24, 1);
+    Matrix_translate(0, 0.25f * actor->init_data.ofs_y, 1.5f * actor->init_data.ofs_z, 1);
     Matrix_RotateX(actor->_60C.x, 1);
     Matrix_RotateZ(MY_CLAMP(-(actor->_618.z >> 1), DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20)), 1);
-    Matrix_translate(0, 0.25f * -actor->init_data._04, 0.5f * -actor->init_data._24, 1);
+    Matrix_translate(0, 0.25f * -actor->init_data.ofs_y, 0.5f * -actor->init_data.ofs_z, 1);
     Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
 
     OPEN_DISP(graph);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(play->game.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     CLOSE_DISP(graph);
 
-    cKF_Si3_draw_R_SV(&play->game, &skele->_00, mtx, &mfish_before_disp, 0, actor);
+    cKF_Si3_draw_R_SV(&play->game, &skele->keyframe, mtx, &mfish_before_disp, 0, actor);
     return;
 }

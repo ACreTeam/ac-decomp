@@ -1,10 +1,10 @@
 #include "ac_museum_fish_priv.h"
 
 void mfish_zarigani_ct(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele = &actor->_38;
-    cKF_SkeletonInfo_R_ct(&skele->_00, skele->_54C, skele->_550[0], &skele->_4F0, &skele->_514);
-    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&skele->_00, skele->_550[0], NULL, 0.5f, 0.0f);
-    actor->position = suisou_pos[actor->group];
+    mfish_keyframe_c* skele = &actor->kf;
+    cKF_SkeletonInfo_R_ct(&skele->keyframe, skele->_54C, skele->_550[0], skele->work, skele->morph);
+    cKF_SkeletonInfo_R_init_standard_repeat_speedsetandmorph(&skele->keyframe, skele->_550[0], NULL, 0.5f, 0.0f);
+    actor->position = suisou_pos[actor->tank];
     actor->position.y = 53.0f;
     actor->_60C.y = qrand();
     actor->_612.y = actor->_60C.y;
@@ -22,7 +22,7 @@ void mfish_zarigani_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* g
 
 void mfish_zarigani_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     actor->activityFrameCount--;
-    cKF_SkeletonInfo_R_play(&actor->_38._00);
+    cKF_SkeletonInfo_R_play(&actor->kf.keyframe);
     if (actor->_5F0 > 0.0f) {
         add_calc_short_angle2(&actor->_644, (s16)DEG2SHORT_ANGLE2(actor->_5F0 * 30.0f + 1.0f), CALC_EASE(0.25f),
                               DEG2SHORT_ANGLE(0.125f), DEG2SHORT_ANGLE(0.5f));
@@ -107,7 +107,7 @@ void mfish_zarigani_stand_process_init(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* ga
 void mfish_zarigani_stand_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     f32 v;
 
-    cKF_SkeletonInfo_R_play(&actor->_38._00);
+    cKF_SkeletonInfo_R_play(&actor->kf.keyframe);
     if (actor->activityFrameCount > 0) {
         actor->activityFrameCount--;
         if (add_calc_short_angle2(&actor->_60C.x, (s16)DEG2SHORT_ANGLE2(-45.0f + GETREG(TAKREG, 0x1a)), CALC_EASE(0.1),
@@ -167,7 +167,7 @@ void mfish_zarigani_jump_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
 void mfish_zarigani_mv(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     f32 v;
-    xyz_t p = suisou_pos[actor->group];
+    xyz_t p = suisou_pos[actor->tank];
     add_calc(&actor->_5E8, actor->_5F0, 0.1f, 0.2f, 0.01f);
     actor->currentProcess(actor, gamex);
     actor->_638 += actor->_644;
@@ -210,21 +210,21 @@ BOOL mfish_zarigani_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int 
 }
 
 void mfish_zarigani_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
-    YET_SKELETON* skele = &actor->_38;
+    mfish_keyframe_c* skele = &actor->kf;
     Mtx* mtxp;
     if (gamex->frame_counter & 1) {
-        mtxp = &skele->_70;
+        mtxp = skele->mtx[0];
     } else {
-        mtxp = &skele->_2b0;
+        mtxp = skele->mtx[1];
     }
     OPEN_DISP(gamex->graph);
     Matrix_translate(actor->position.x + actor->_5AC.x, actor->position.y + actor->_5AC.y,
                      actor->position.z + actor->_5AC.z, 0);
     Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data._24, 1);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z, 1);
     Matrix_rotateXYZ(DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(-180), DEG2SHORT_ANGLE(0), 1);
     Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    cKF_Si3_draw_R_SV(gamex, &skele->_00, mtxp, mfish_zarigani_before_disp, NULL, actor);
+    cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_zarigani_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);
 }
