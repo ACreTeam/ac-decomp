@@ -673,14 +673,64 @@ void Museum_Fish_Set_MsgFishInfo(MUSEUM_FISH_ACTOR* actor, int param2) {
     int i;
     // defines how many fish are in each grouping of fish names
     static int group_max_num[5] = { 10, 9, 9, 6, 6 };
-    static int group_A_fish_name[10] = { 0, 1, 2, 3, 11, 14, 26, 23, 30, 34 };
-    static int group_B_fish_name[9] = { 4, 9, 15, 8, 5, 6, 7, 27, 33 };
-    static int group_C_fish_name[9] = { 12, 13, 16, 17, 18, 20, 19, 21, 32 };
-    static int group_D_fish_name[6] = { 10, 29, 28, 24, 25, 39 };
-    static int group_E_fish_name[6] = { 22, 31, 35, 36, 37, 38 };
+    static int group_A_fish_name[10] = {
+        aGYO_TYPE_CRUCIAN_CARP,
+        aGYO_TYPE_BROOK_TROUT,
+        aGYO_TYPE_CARP,
+        aGYO_TYPE_KOI,
+        aGYO_TYPE_BARBEL_STEED,
+        aGYO_TYPE_BITTERLING,
+        aGYO_TYPE_EEL,
+        aGYO_TYPE_GOLDFISH,
+        aGYO_TYPE_POPEYED_GOLDFISH,
+        aGYO_TYPE_KILLIFISH,
+    };
+    static int group_B_fish_name[9] = {
+        aGYO_TYPE_CATFISH,
+        aGYO_TYPE_GIANT_CATFISH,
+        aGYO_TYPE_LOACH,
+        aGYO_TYPE_BLUEGILL,
+        aGYO_TYPE_SMALL_BASS,
+        aGYO_TYPE_BASS,
+        aGYO_TYPE_LARGE_BASS,
+        aGYO_TYPE_FRESHWATER_GOBY,
+        aGYO_TYPE_FROG,
+    };
+    static int group_C_fish_name[9] = {
+        aGYO_TYPE_DACE,
+        aGYO_TYPE_PALE_CHUB,
+        aGYO_TYPE_POND_SMELT,
+        aGYO_TYPE_SWEETFISH,
+        aGYO_TYPE_CHERRY_SALMON,
+        aGYO_TYPE_RAINBOW_TROUT,
+        aGYO_TYPE_LARGE_CHAR,
+        aGYO_TYPE_STRINGFISH,
+        aGYO_TYPE_CRAWFISH,
+    };
+    static int group_D_fish_name[6] = {
+        aGYO_TYPE_GIANT_SNAKEHEAD,
+        aGYO_TYPE_GUPPY,
+        aGYO_TYPE_ANGELFISH,
+        aGYO_TYPE_PIRANHA,
+        aGYO_TYPE_AROWANA,
+        aGYO_TYPE_ARAPAIMA,
+    };
+    static int group_E_fish_name[6] = {
+        aGYO_TYPE_SALMON,
+        aGYO_TYPE_COELACANTH,
+        aGYO_TYPE_JELLYFISH,
+        aGYO_TYPE_SEA_BASS,
+        aGYO_TYPE_RED_SNAPPER,
+        aGYO_TYPE_BARRED_KNIFEJAW,
+    };
 
-    static int* group_fish_name[5] = { group_A_fish_name, group_B_fish_name, group_C_fish_name, group_D_fish_name,
-                                       group_E_fish_name };
+    static int* group_fish_name[5] = {
+        group_A_fish_name,
+        group_B_fish_name,
+        group_C_fish_name,
+        group_D_fish_name,
+        group_E_fish_name,
+    };
 
     actor->numFishDisplayed = 0;
     actor->fishDisplayMsgIter = 0;
@@ -700,7 +750,7 @@ void Museum_Fish_Set_MsgFishInfo(MUSEUM_FISH_ACTOR* actor, int param2) {
 void Museum_Fish_set_talk_info(ACTOR* actorx) {
     MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
 
-    static rgba_t window_color = { 255, 255, 0xcd, 255 };
+    static rgba_t window_color = { 255, 255, 205, 255 };
     int r3;
     if (actor->numFishDisplayed > 0) { // maybe related to if there are fish in the tank
         r3 = Museum_Fish_GetMsgNo(actor);
