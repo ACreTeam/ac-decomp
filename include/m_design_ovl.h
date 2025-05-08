@@ -14,7 +14,7 @@ typedef void (*mDE_OVL_PROC)(mDE_Ovl_c* design_ovl);
 
 struct design_ovl_s {
     u16* palette_p;
-    //u8 pad[32-4]; // 32-byte align pad
+    // u8 pad[32-4]; // 32-byte align pad
     mNW_original_tex_c texture;
     mNW_original_tex_c work_texture;
     mNW_original_tex_c undo_texture;
@@ -54,7 +54,7 @@ struct design_ovl_s {
     u8 _6A6;
     u8 _6A7;
     u8 main_mode_act;
-    //u8 pad[3];
+    // u8 pad[3];
     mDE_OVL_PROC act_proc;
     mDE_OVL_PROC main_mode_proc;
     u8 _6B4;
@@ -76,7 +76,7 @@ struct design_ovl_s {
     u8 _6D9;
     u8 _6DA;
     u8 _6DB;
-    int _6DC;
+    u8 _6DC;
 };
 
 extern void mDE_maskcat_init(MaskCat_c* mask_cat);
