@@ -3389,6 +3389,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define DUMMY_TUKIMI 0xF10A
 #define DUMMY_MIKUJI 0xF10D
 #define DUMMY_COUNT 0xF10E
+#define DUMMY_COUNT02 0xF10F
 #define DUMMY_TAMA 0xF110
 #define DUMMY_TURI 0xF111
 #define DUMMY_KOINOBORI 0xF114

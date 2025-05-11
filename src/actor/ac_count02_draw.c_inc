@@ -1,0 +1,89 @@
+static int aCOU_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    STRUCTURE_ACTOR* actor = (STRUCTURE_ACTOR*)arg;
+
+    if (joint_idx == 2 && (int)actor->arg0_f != 0) {
+        Matrix_RotateZ((s16)actor->arg1_f << 12, TRUE);
+    }
+
+    return TRUE;
+}
+
+extern u8 obj_e_count02_0_tex[];
+extern u8 obj_e_count02_1_tex[];
+extern u8 obj_e_count02_2_tex[];
+extern u8 obj_e_count02_3_tex[];
+extern u8 obj_e_count02_4_tex[];
+extern u8 obj_e_count02_5_tex[];
+extern u8 obj_e_count02_6_tex[];
+extern u8 obj_e_count02_7_tex[];
+extern u8 obj_e_count02_8_tex[];
+extern u8 obj_e_count02_9_tex[];
+
+static void aCOU_actor_draw(ACTOR* actorx, GAME* game) {
+    static u8* textbl[10] = {
+        // clang-format off
+        obj_e_count02_0_tex,
+        obj_e_count02_1_tex,
+        obj_e_count02_2_tex,
+        obj_e_count02_3_tex,
+        obj_e_count02_4_tex,
+        obj_e_count02_5_tex,
+        obj_e_count02_6_tex,
+        obj_e_count02_7_tex,
+        obj_e_count02_8_tex,
+        obj_e_count02_9_tex,
+        // clang-format on
+    };
+
+    static float xpos_tbl[4] = { -33.0f, -13.0f, 10.0f, 30.0f };
+
+    GRAPH* graph = game->graph;
+    STRUCTURE_ACTOR* actor = (STRUCTURE_ACTOR*)actorx;
+    cKF_SkeletonInfo_R_c* keyframe = &actor->keyframe;
+    int disp_joint_num = keyframe->skeleton->num_shown_joints;
+    u16* palette = CLIP(structure_clip)->get_pal_segment_proc(aSTR_PAL_COUNT02);
+    Mtx* mtx;
+    int digit0;
+    int digit1;
+    int i;
+    int draw_display_bitfield = 0b1000; // currently drawn digit display
+
+    _texture_z_light_fog_prim_npc(graph);
+    for (i = 0; i < 4; i++) {
+        mtx = GRAPH_ALLOC_TYPE(graph, Mtx, disp_joint_num);
+        if (mtx == NULL) {
+            break;
+        }
+
+        digit0 = aCOU_getTime(actor->arg1, 3 - i);
+        digit1 = aCOU_getTime(actor->arg0, 3 - i);
+
+        Matrix_push();
+        
+        OPEN_POLY_OPA_DISP(graph);
+
+        gSPSegment(POLY_OPA_DISP++, ANIME_3_TXT_SEG, palette);
+        gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, textbl[digit0]);
+        gSPSegment(POLY_OPA_DISP++, ANIME_2_TXT_SEG, textbl[digit1]);
+
+        Matrix_translate(100.0f * xpos_tbl[i], 0.0f, 0.0f, 1);
+
+        CLOSE_POLY_OPA_DISP(graph);
+
+        actor->arg0_f = (int)(actor->arg2 & draw_display_bitfield);
+        cKF_Si3_draw_R_SV(game, keyframe, mtx, aCOU_actor_draw_before, NULL, actorx);
+        Matrix_pull();
+        draw_display_bitfield >>= 1;
+    }
+
+    if (actor->arg0 != actor->arg1) {
+        if (actor->arg1_f < 8.0f) {
+            actor->arg1_f = actor->arg1_f + 1.0f;
+        } else {
+            actor->arg1 = actor->arg0;
+            actor->arg2 = 0;
+            actor->arg1_f = 0.0f;
+        }
+    }
+}

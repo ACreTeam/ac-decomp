@@ -1,0 +1,122 @@
+static int aCOU_setNowTime(STRUCTURE_ACTOR* actor) {
+    lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
+    int now_sec = Common_Get(time.now_sec);
+
+    if (rtc_time->month == lbRTC_DECEMBER && now_sec >= mTM_TIME2SEC(23, 0, 0)) {
+        actor->arg0 = mTM_TIME2SEC(24, 0, 0) - now_sec;
+    } else if (rtc_time->month != lbRTC_DECEMBER) {
+        actor->arg0 = 0;
+    } else {
+        actor->arg0 = mTM_TIME2SEC(1, 0, 0) - 1;
+    }
+
+    return actor->arg0;
+}
+
+static int aCOU_getTime(int nowsec, int digit) {
+    int ret = 0;
+    int min = (nowsec / mTM_SECONDS_IN_MINUTE) % mTM_MINUTES_IN_HOUR;
+    int sec = nowsec % mTM_SECONDS_IN_MINUTE;
+
+    switch (digit) {
+        case 0:
+            ret = sec % 10;
+            break;
+        case 1:
+            ret = sec / 10;
+            break;
+        case 2:
+            ret = min % 10;
+            break;
+        case 3:
+            ret = min / 10;
+            break;
+    }
+
+    return ret;
+}
+
+static void aCOU_init(STRUCTURE_ACTOR* actor, GAME_PLAY* play) {
+    actor->arg1 = aCOU_setNowTime(actor);
+    actor->arg1_f = 0.0f;
+    actor->arg2 = 0;
+    aCOU_setup_action(actor, aCOU_ACT_WAIT);
+}
+
+static void aCOU_wait(STRUCTURE_ACTOR* actor, GAME_PLAY* play) {
+    int digit_bits = 0b1111; // bitfield for each digit in the display
+    int i;
+
+    if ((int)actor->arg1_f == 0) {
+        aCOU_setNowTime(actor);
+    } else {
+        return;
+    }
+
+    if (CLIP(countdown_clip) != NULL && CLIP(countdown_clip)->anime_play_flag == FALSE && actor->arg0 <= 2) {
+        CLIP(countdown_clip)->anime_play_proc();
+    }
+
+    if (actor->arg1 != actor->arg0) {
+        if ((int)actor->arg2_f == 0 && mEv_check_status(mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN, mEv_STATUS_PLAYSOUND)) {
+            actor->arg2_f = 1.0f;
+        }
+
+        for (i = 0; i < 4; i++) {
+            if (aCOU_getTime(actor->arg0, 3 - i) != aCOU_getTime(actor->arg1, 3 - i)) {
+                break;
+            }
+
+            digit_bits >>= 1;
+        }
+
+        actor->arg2 = digit_bits;
+    }
+}
+
+static void aCOU_setup_action(STRUCTURE_ACTOR* actor, int action) {
+    static aSTR_MOVE_PROC process[] = {
+        // clang-format off
+        aCOU_init,
+        aCOU_wait,
+        // why are these here?
+        NULL,
+        NULL,
+        // clang-format on
+    };
+
+    if (action == aCOU_ACT_INIT) {
+        cKF_SkeletonInfo_R_init(&actor->keyframe, actor->keyframe.skeleton, &cKF_ba_r_obj_e_count02_cl, 1.0f, 10.0f,
+                                1.0f, 0.5f, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+    }
+
+    actor->action_proc = process[action];
+    actor->action = action;
+}
+
+static void aCOU_actor_move(ACTOR* actorx, GAME* game) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    STRUCTURE_ACTOR* actor = (STRUCTURE_ACTOR*)actorx;
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+    int count_bx;
+    int count_bz;
+    int player_bx;
+    int player_bz;
+
+    mFI_Wpos2BlockNum(&count_bx, &count_bz, actorx->world.position);
+    mFI_Wpos2BlockNum(&player_bx, &player_bz, playerx->world.position);
+
+    if (!mDemo_Check(mDemo_TYPE_SCROLL, playerx) && !mDemo_Check(mDemo_TYPE_SCROLL2, playerx) &&
+        !mDemo_Check(mDemo_TYPE_SCROLL3, playerx) && (count_bx != player_bx || count_bz != player_bz)) {
+        Actor_delete(actorx);
+        return;
+    }
+
+    (*actor->action_proc)(actor, play);
+}
+
+static void aCOU_actor_init(ACTOR* actorx, GAME* game) {
+    mFI_SetFG_common(DUMMY_COUNT02, actorx->home.position, FALSE);
+    aCOU_actor_move(actorx, game);
+    actorx->mv_proc = aCOU_actor_move;
+}
