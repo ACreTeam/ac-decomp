@@ -1,0 +1,106 @@
+static int aCOU_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    static rgba_t prmcolor[10] = {
+        // clang-format off
+        {0xFF, 0xFF, 0xFF, 0xFF},
+        {0x64, 0x46, 0xC8, 0xFF},
+        {0x50, 0xC8, 0x00, 0xFF},
+        {0xFF, 0xFF, 0x00, 0xFF},
+        {0x00, 0x00, 0x00, 0xFF},
+        {0xFF, 0xFF, 0xFF, 0xFF},
+        {0x00, 0x00, 0x46, 0xFF},
+        {0x00, 0x28, 0x00, 0xFF},
+        {0x32, 0x0A, 0x00, 0xFF},
+        {0x00, 0x00, 0x00, 0xFF},
+        // clang-format on
+    };
+
+    static rgba_t envcolor[5] = {
+        // clang-format off
+        {0x00, 0x00, 0x00, 0x00},
+        {0x0A, 0x0A, 0x50, 0xFF},
+        {0x00, 0x50, 0x00, 0xFF},
+        {0xB4, 0x00, 0x00, 0xFF},
+        {0x00, 0x00, 0x00, 0x00},
+        // clang-format on
+    };
+    COUNT_ACTOR* actor = (COUNT_ACTOR*)arg;
+    int prim_l = 0;
+    int col_idx;
+    rgba_t* color;
+
+    OPEN_POLY_OPA_DISP(game->graph);
+
+    if (actor->structure_class.arg0 == aCOU_ACT_HAPPY_NEW_YEAR) {
+        col_idx = actor->structure_class.action / 20;
+        col_idx += 1;
+
+        if (joint_idx != 4) {
+            col_idx += 5;
+        }
+    } else {
+        col_idx = joint_idx == 4 ? 1 : 4;
+    }
+
+    switch (joint_idx) {
+        case 4:
+            prim_l = 128;
+            break;
+        case 5:
+            prim_l = 40;
+            break;
+        case 6:
+            prim_l = 20;
+            break;
+    }
+
+    if (prim_l != 0) {
+        gDPPipeSync(POLY_OPA_DISP++);
+
+        if (joint_idx == 4) {
+            gDPSetEnvColor(POLY_OPA_DISP++, envcolor[col_idx].r, envcolor[col_idx].g, envcolor[col_idx].b, envcolor[col_idx].a);
+        } else {
+            gDPSetEnvColor(POLY_OPA_DISP++, 0, 0, 60, 255);
+        }
+
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, prim_l, prmcolor[col_idx].r, prmcolor[col_idx].g, prmcolor[col_idx].b, prmcolor[col_idx].a);
+    }
+
+    CLOSE_POLY_OPA_DISP(game->graph);
+
+    return TRUE;
+}
+
+static void aCOU_actor_draw(ACTOR* actorx, GAME* game) {
+    GRAPH* graph = game->graph;
+    cKF_SkeletonInfo_R_c* keyframe;
+    Mtx* mtx;
+    COUNT_ACTOR* actor = (COUNT_ACTOR*)actorx;
+
+    keyframe = &actor->structure_class.keyframe;
+    mtx = GRAPH_ALLOC_TYPE(graph, Mtx, keyframe->skeleton->num_shown_joints);
+    if (mtx != NULL) {
+        Gfx* scroll = two_tex_scroll(graph, 0, 16, 0, 16, 16, 1, 72, actor->structure_class.arg1, 16, 16);
+        
+        if (scroll != NULL) {
+            u16* palette = CLIP(structure_clip)->get_pal_segment_proc(aSTR_PAL_COUNT);
+            
+            
+            _texture_z_light_fog_prim(graph);
+
+            OPEN_POLY_OPA_DISP(graph);
+            gSPSegment(POLY_OPA_DISP++, ANIME_2_TXT_SEG, palette);
+            CLOSE_POLY_OPA_DISP(graph);
+
+
+            _texture_z_light_fog_prim_xlu(graph);
+
+            OPEN_POLY_XLU_DISP(graph);
+            gSPSegment(POLY_XLU_DISP++, ANIME_1_TXT_SEG, scroll);
+            CLOSE_POLY_XLU_DISP(graph);
+            
+            cKF_Si3_draw_R_SV(game, keyframe, mtx, aCOU_actor_draw_before, NULL, actorx);
+            CLIP(bg_item_clip)->draw_shadow_proc(game, &aCOU_shadow_data, FALSE);
+        }
+    }
+}

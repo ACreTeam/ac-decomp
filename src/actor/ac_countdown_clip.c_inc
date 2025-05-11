@@ -1,0 +1,17 @@
+static void aCOU_anime_play(void) {
+    CLIP(countdown_clip)->anime_play_flag = TRUE;
+}
+
+static void aCOU_init_clip_area(void) {
+    if (CLIP(countdown_clip) == NULL) {
+        CLIP(countdown_clip) = &aCOU_clip;
+        CLIP(countdown_clip)->anime_play_proc = aCOU_anime_play;
+        CLIP(countdown_clip)->anime_play_flag = FALSE;
+    }
+}
+
+static void aCOU_free_clip_area(void) {
+    if (CLIP(countdown_clip) != NULL) {
+        CLIP(countdown_clip) = NULL;
+    }
+}

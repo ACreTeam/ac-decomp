@@ -1,0 +1,119 @@
+static void aCOU_set_bgOffset(ACTOR* actorx, int idx) {
+    // @ 8056df44
+    static mCoBG_OffsetTable_c height_table_ct[6] = {
+        // clang-format off
+        {mCoBG_ATTRIBUTE_NONE, 9, 0, 9, 9, 9,  TRUE},
+        {mCoBG_ATTRIBUTE_NONE, 9, 9, 9, 9, 9, FALSE},
+        {mCoBG_ATTRIBUTE_NONE, 9, 9, 9, 9, 0,  TRUE},
+        {mCoBG_ATTRIBUTE_NONE, 9, 9, 9, 9, 9, FALSE},
+        {mCoBG_ATTRIBUTE_NONE, 9, 9, 9, 9, 9, FALSE},
+        {mCoBG_ATTRIBUTE_NONE, 9, 9, 9, 9, 9, FALSE},
+        // clang-format on
+    };
+
+    static mCoBG_OffsetTable_c* height_table[2] = { height_table_ct, height_table_ct };
+
+    static float addX[3] = { -40.0f, 0.0f, 40.0f };
+    static float addZ[2] = { -40.0f, 0.0f };
+
+    mCoBG_OffsetTable_c* table_p = height_table[idx];
+    xyz_t pos;
+    int i;
+
+    for (i = 0; i < 2; i++) {
+        pos.z = actorx->home.position.z + addZ[i];
+
+        pos.x = actorx->home.position.x + addX[0];
+        mCoBG_SetPluss5PointOffset_file(pos, *table_p, __FILE__, 113);
+        table_p++;
+
+        pos.x = actorx->home.position.x + addX[1];
+        mCoBG_SetPluss5PointOffset_file(pos, *table_p, __FILE__, 117);
+        table_p++;
+
+        pos.x = actorx->home.position.x + addX[2];
+        mCoBG_SetPluss5PointOffset_file(pos, *table_p, __FILE__, 121);
+        table_p++;
+    }
+}
+
+static void aCOU_wait(COUNT_ACTOR* actor) {
+    int action = aCOU_ACT_HAPPY_NEW_YEAR;
+
+    if (CLIP(countdown_clip)->anime_play_flag) {
+        lbRTC_time_c* time = Common_GetPointer(time.rtc_time);
+
+        if (time->month == lbRTC_DECEMBER && time->day == 31 && time->hour == 23 && time->min == 59) {
+            action = aCOU_ACT_MOVE;
+        }
+
+        aCOU_setup_action(actor, action);
+    }
+}
+
+static void aCOU_move(COUNT_ACTOR* actor) {
+    if (actor->structure_class.keyframe_saved_keyframe == 61) {
+        aCOU_setup_action(actor, aCOU_ACT_HAPPY_NEW_YEAR);
+    }
+}
+
+static void aCOU_happy_new_year(COUNT_ACTOR* actor) {
+    int action = actor->structure_class.action;
+
+    actor->structure_class.action = action >= 59 ? 0 : action + 1;
+}
+
+static void aCOU_setup_action(COUNT_ACTOR* actor, int action) {
+    static aSTR_MOVE_PROC process[] = {
+        // clang-format off
+        (aSTR_MOVE_PROC)aCOU_wait,
+        (aSTR_MOVE_PROC)aCOU_move,
+        (aSTR_MOVE_PROC)aCOU_happy_new_year,
+        // clang-format on
+    };
+
+    static float anime_start[] = { 1.0f, 1.0f, 61.0f };
+    static float anime_spd[] = { 0.0f, 0.5f, 0.0f };
+
+    cKF_SkeletonInfo_R_init(&actor->structure_class.keyframe, actor->structure_class.keyframe.skeleton,
+                            &cKF_ba_r_obj_e_count01, anime_start[action], 61.0f, anime_start[action], anime_spd[action],
+                            0.0f, cKF_FRAMECONTROL_STOP, NULL);
+    actor->structure_class.action_proc = process[action];
+    actor->structure_class.arg0 = action;
+    actor->structure_class.action = 0;
+}
+
+static void aCOU_actor_move(ACTOR* actorx, GAME* game) {
+    COUNT_ACTOR* actor = (COUNT_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+    int count_bx;
+    int count_bz;
+    int player_bx;
+    int player_bz;
+
+    mFI_Wpos2BlockNum(&count_bx, &count_bz, actorx->world.position);
+    mFI_Wpos2BlockNum(&player_bx, &player_bz, playerx->world.position);
+
+    if (!mDemo_Check(mDemo_TYPE_SCROLL, playerx) && !mDemo_Check(mDemo_TYPE_SCROLL2, playerx) &&
+        !mDemo_Check(mDemo_TYPE_SCROLL3, playerx) && (count_bx != player_bx || count_bz != player_bz)) {
+        Actor_delete(actorx);
+        return;
+    }
+
+    actor->structure_class.keyframe_state = cKF_SkeletonInfo_R_play(&actor->structure_class.keyframe);
+    actor->structure_class.keyframe_saved_keyframe = actor->structure_class.keyframe.frame_control.current_frame;
+    actor->structure_class.action_proc((STRUCTURE_ACTOR*)actor, play);
+
+    if ((++actor->structure_class.arg2) & 1) {
+        actor->structure_class.arg1--;
+    }
+}
+
+static void aCOU_actor_init(ACTOR* actorx, GAME* game) {
+    COUNT_ACTOR* actor = (COUNT_ACTOR*)actorx;
+    
+    mFI_SetFG_common(DUMMY_COUNT, actorx->home.position, FALSE);
+    aCOU_actor_move(actorx, game);
+    actorx->mv_proc = aCOU_actor_move;
+}
