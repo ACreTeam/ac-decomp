@@ -13,8 +13,9 @@ extern "C" {
 #define mNW_ORIGINAL_DESIGN_HEIGHT 32 /* height */
 #define mNW_DEFAULT_ORIGINAL_TEX_NUM 4 /* number of 'default' player textures which are not blank */
 
-#define mNW_CLOTH_DESIGN_NUM 4 /* number of clothing designs in Able Sisters' */
-#define mNW_UMBRELLA_DESIGN_NUM 4 /* number of umbrella designs in Able Sisters' */
+#define mNW_DESIGN_NUM 4 // default number of designs
+#define mNW_CLOTH_DESIGN_NUM mNW_DESIGN_NUM /* number of clothing designs in Able Sisters' */
+#define mNW_UMBRELLA_DESIGN_NUM mNW_DESIGN_NUM /* number of umbrella designs in Able Sisters' */
 #define mNW_TOTAL_DESIGN_NUM (mNW_CLOTH_DESIGN_NUM + mNW_UMBRELLA_DESIGN_NUM) /* total designs in Able Sisters' */
 
 #define mNW_DESIGN_TEX_SIZE (mNW_ORIGINAL_DESIGN_HEIGHT * (mNW_ORIGINAL_DESIGN_WIDTH / 2)) /* total texture data size */

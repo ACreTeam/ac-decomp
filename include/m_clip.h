@@ -35,6 +35,7 @@
 #include "ac_hatumode_control.h"
 #include "ac_station_clip.h"
 #include "ac_mikanbox_clip.h"
+#include "ac_needlework_indoor_clip.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,7 +47,7 @@ typedef void (*CLIP_NONE_PROC)();
 typedef struct clip_s {
     /* 0x000 */ BoxTrick01_data_c box_trick_data[4];
     /* 0x020 */ int arrange_ftr_num;
-    /* 0x024 */ void* _024;
+    /* 0x024 */ aNI_Clip_c* needlework_indoor_clip;
     /* 0x028 */ void* misin_clip;
     /* 0x02C */ aHTBL_Clip_c* htbl_clip;
     /* 0x030 */ void* _030;

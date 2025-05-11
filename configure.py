@@ -1031,7 +1031,7 @@ config.libs = [
             Object(Matching, "actor/ac_my_indoor.c"),
             Object(Matching, "actor/ac_my_room.c"),
             Object(Matching, "actor/ac_nameplate.c"),
-            Object(NonMatching, "actor/ac_needlework_indoor.c"),
+            Object(Matching, "actor/ac_needlework_indoor.c"),
             Object(Matching, "actor/ac_needlework_shop.c"),
             Object(Matching, "actor/ac_police_box.c"),
             Object(Matching, "actor/ac_post_office.c"),
