@@ -6,6 +6,8 @@
 #include "libultra/libultra.h"
 #include "audio.h"
 #include "m_common_data.h"
+#include "sys_matrix.h"
+#include "m_needlework_ovl.h"
 
 #define mDE_POS_MIN 0
 #define mDE_POS_MAX 31
@@ -115,6 +117,64 @@ u8 mDE_kao5[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x
                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+// clang-format off
+u8 mDE_paint_mizutama[0x100] = { 
+    0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0, 
+    0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0, 
+    0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0, 
+    0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0, 
+    1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
+    1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1, 
+    1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1, 
+    1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1, 
+    1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1, 
+    1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1, 
+    1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1, 
+    1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
+    0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0, 
+    0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0, 
+    0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0, 
+    0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0 
+};
+
+u8 mDE_paint_mask_cat_mask[0x400] = {  
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+    1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1, 
+    1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1, 
+    1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1, 
+    1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1, 
+    1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1, 
+    1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1, 
+    1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1, 
+    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1, 
+    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1, 
+    1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
+    1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
+    1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
+    1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
+    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1, 
+    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1, 
+    1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1, 
+    1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1, 
+    1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1, 
+    1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1, 
+    1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1, 
+    1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1, 
+    1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1, 
+    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 
+};
+// clang-format on
+
+mDE_Ovl_c de_ovl_data;
 
 #define MDE_SIN(x) (mDE_SinCosTBL[(x)])
 #define MDE_COS(x) (mDE_SinCosTBL[(x) + 0x40])
@@ -763,43 +823,6 @@ void mDE_set_texture_template(mDE_Ovl_c* design_ovl, u8* param_2, int offsetX, i
     }
 }
 
-// clang-format off
-u8 mDE_paint_mask_cat_mask[0x400] = {  
-    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-    1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1, 
-    1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1, 
-    1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1, 
-    1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1, 
-    1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1, 
-    1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1, 
-    1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1, 
-    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1, 
-    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1, 
-    1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
-    1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
-    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
-    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
-    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
-    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
-    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
-    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
-    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
-    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1, 
-    1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
-    1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
-    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1, 
-    1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1, 
-    1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1, 
-    1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1, 
-    1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1, 
-    1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1, 
-    1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1, 
-    1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1, 
-    1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1, 
-    1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1 
-};
-// clang-format on
-
 void mDE_mask_cat_mask(mDE_Ovl_c* design_ovl) {
     int i;
     for (i = 0; i < ARRAY_COUNT(mDE_paint_mask_cat_mask); i++) {
@@ -810,27 +833,6 @@ void mDE_mask_cat_mask(mDE_Ovl_c* design_ovl) {
         }
     }
 }
-
-// clang-format off
-u8 mDE_paint_mizutama[0x100] = { 
-    0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0, 
-    0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0, 
-    0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0, 
-    0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0, 
-    1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
-    1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1, 
-    1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1, 
-    1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1, 
-    1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1, 
-    1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1, 
-    1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,1, 
-    1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1, 
-    0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0, 
-    0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0, 
-    0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0, 
-    0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0 
-};
-// clang-format on
 
 void mDE_paint(mDE_Ovl_c* design_ovl, int pal) {
     int i;
@@ -1937,7 +1939,8 @@ void mDE_mode_tool_move(mDE_Ovl_c* design_ovl) {
 }
 
 void mDE_setup_action(mDE_Ovl_c* design_ovl, int param_2) {
-    static mDE_OVL_PROC process[] = { mDE_mode_main_move, mDE_mode_pallet_move, mDE_mode_grid_move };
+    static mDE_OVL_PROC process[] = { mDE_mode_main_move, mDE_mode_pallet_move, mDE_mode_grid_move,
+                                      mDE_mode_tool_move };
     if (param_2 >= 4) {
         param_2 = 0;
     }
@@ -1952,52 +1955,641 @@ void mDE_setup_action(mDE_Ovl_c* design_ovl, int param_2) {
     design_ovl->_688 = 0;
     design_ovl->_68C = 0;
     design_ovl->_6A7 = param_2;
-    //! @BUG: param_2 can be 3, which is an illegal index into `process`
     design_ovl->act_proc = process[param_2];
 }
-void mDE_move_Move() {
+
+void mDE_move_Move(Submenu* submenu, mSM_MenuInfo_c* info) {
+    submenu->overlay->move_Move_proc(submenu, info);
 }
-void mDE_move_tool_decide() {
+
+void mDE_move_tool_decide(mDE_Ovl_c* design_ovl) {
+    switch (design_ovl->_69F) {
+        case 0: {
+            design_ovl->_6A0 = design_ovl->_69E;
+            mDE_main_mode_setup_action(design_ovl, 0);
+        } break;
+        case 1: {
+            design_ovl->_6A1 = design_ovl->_69E;
+            mDE_main_mode_setup_action(design_ovl, 1);
+        } break;
+        case 2: {
+            design_ovl->_6A2 = design_ovl->_69E;
+            mDE_main_mode_setup_action(design_ovl, 2);
+        } break;
+        case 3: {
+            design_ovl->_6A3 = design_ovl->_69E;
+            mDE_main_mode_setup_action(design_ovl, 3);
+        } break;
+        case 4: {
+            mDE_main_mode_setup_action(design_ovl, 4);
+        } break;
+    }
 }
-void mDE_move_Play() {
+
+void mDE_move_Play(Submenu* submenu, mSM_MenuInfo_c* info) {
+    mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
+    if (submenu->current_menu_type == mSM_OVL_DESIGN) {
+        if (submenu->overlay->menu_control.trigger & BUTTON_START) {
+            design_ovl->_698 = 0;
+            design_ovl->_680 = 0;
+            design_ovl->_684 = 0;
+            design_ovl->_688 = 0;
+            design_ovl->_68C = 0;
+            design_ovl->_6CC = 0;
+            design_ovl->_6CD = 0;
+            mSM_open_submenu(submenu, 0xf, 4, 0);
+            info->proc_status = mSM_OVL_PROC_WAIT;
+            sAdo_SysTrgStart(2);
+        } else if (chkTrigger(BUTTON_R)) {
+            if (design_ovl->_6A5) {
+                design_ovl->_6A4 = design_ovl->_6A5;
+            }
+            sAdo_SysTrgStart(0x37);
+            mDE_move_tool_decide(design_ovl);
+            mDE_setup_action(design_ovl, design_ovl->_6A7 + 1);
+        } else if (chkTrigger(BUTTON_L)) {
+            if (design_ovl->_6A5) {
+                design_ovl->_6A4 = design_ovl->_6A5;
+            }
+            sAdo_SysTrgStart(0x37);
+            mDE_move_tool_decide(design_ovl);
+            mDE_setup_action(design_ovl, design_ovl->_6A7 - 1);
+        } else {
+            design_ovl->act_proc(design_ovl);
+            if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
+                mDE_mask_cat_mask(design_ovl);
+            }
+            bcopy(&design_ovl->work_texture, &design_ovl->texture, sizeof(design_ovl->work_texture));
+            osWritebackDCache(&design_ovl->texture, sizeof(design_ovl->work_texture));
+        }
+    }
 }
-void mDE_move_Wait() {
+
+void mDE_move_Wait(Submenu* submenu, mSM_MenuInfo_c* info) {
+    Submenu_Overlay_c* overlay = submenu->overlay;
+    mDE_Ovl_c* design_ovl = overlay->design_ovl;
+    if (overlay->menu_info[mSM_OVL_EDITENDCHK].proc_status == mSM_OVL_PROC_MOVE &&
+        overlay->menu_info[mSM_OVL_EDITENDCHK].next_proc_status == mSM_OVL_PROC_END) {
+        switch (overlay->menu_info[mSM_OVL_EDITENDCHK].data1) {
+            case 0: {
+                overlay->move_chg_base_proc(info, 6);
+                if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
+                    mDE_save_maskcat_texture(design_ovl);
+                    if (GETREG(NMREG, 0x5f)) {
+                        mDE_print_texture(design_ovl);
+                    }
+                    Save_Get(mask_cat.palette_no) = design_ovl->palette_no;
+                    bcopy(&design_ovl->work_texture, Save_GetPointer(mask_cat.design.design),
+                          sizeof(design_ovl->work_texture));
+                    osWritebackDCache(Save_GetPointer(mask_cat.design.design),
+                                      sizeof(Save_Get(mask_cat.design.design)));
+                } else {
+                    mNW_original_design_c* my_design = &Now_Private->my_org[design_ovl->image_no & 7];
+                    my_design->palette = design_ovl->palette_no;
+                    mNW_OverWriteOriginalTexture(my_design, design_ovl->texture.data);
+                }
+                submenu->item_p->slot_no = 1;
+            } break;
+            case 1: {
+                info->proc_status = mSM_OVL_PROC_PLAY;
+            } break;
+            default: {
+                overlay->move_chg_base_proc(info, 6);
+            } break;
+        }
+    }
 }
-void mDE_move_End() {
+
+void mDE_move_End(Submenu* submenu, mSM_MenuInfo_c* info) {
+    submenu->overlay->move_End_proc(submenu, info);
 }
-void mDE_design_ovl_move() {
+
+void mDE_design_ovl_move(Submenu* submenu) {
+    static mSM_MOVE_PROC ovl_move_proc[] = { &mDE_move_Move, &mDE_move_Play, &mDE_move_Wait, (mSM_MOVE_PROC)&none_proc1,
+                                             &mDE_move_End };
+    mSM_MenuInfo_c* overlay = &submenu->overlay->menu_info[mSM_OVL_DESIGN];
+    overlay->pre_move_func(submenu);
+    ovl_move_proc[overlay->proc_status](submenu, overlay);
 }
-void mDE_set_frame_tool_dl() {
+
+extern Gfx des_sen_waku_model[], des_win_before[], des_win_before_model[], des_win_before_model_2[],
+    des_win_waku_model[], des_win_waku2_model[], des_win_color_model[], des_win_toubai_model[], des_win_main_model[],
+    des_win_color_before_model[], des_win_grid_model[], des_win_grid2_model[], des_cursor_waku2T_model[],
+    des_tool_pen_all_model[], des_tool_nuri_all_model[], des_tool_waku_all_model[], des_tool_kao_all_model[],
+    des_tool_mark_all_model[], des_tool_pen1T_model[], des_tool_nuriT_model[], des_tool_waku1T_model[],
+    des_tool_mark1T_model[], des_tool_undoT_model[], des_tool_pen1_tex_rgb_ia8[], des_tool_pen2_tex_rgb_ia8[],
+    des_tool_pen3_tex_rgb_ia8[], des_tool_nuri1_tex_rgb_ia8[], des_tool_nuri2_tex_rgb_ia8[],
+    des_tool_nuri3_tex_rgb_ia8[], des_tool_nuri4_tex_rgb_ia8[], des_tool_nuri5_tex_rgb_ia8[],
+    des_tool_nuri6_tex_rgb_ia8[], des_tool_waku1_tex_rgb_ia8[], des_tool_waku2_tex_rgb_ia8[],
+    des_tool_waku3_tex_rgb_ia8[], des_tool_waku4_tex_rgb_ia8[], des_tool_waku5_tex_rgb_ia8[],
+    des_tool_mark1_tex_rgb_ia8[], des_tool_mark2_tex_rgb_ia8[], des_tool_mark3_tex_rgb_ia8[],
+    des_tool_mark4_tex_rgb_ia8[], des_tool_kao1_tex[], des_tool_kao2_tex[], des_tool_kao3_tex[], des_tool_kao4_tex[],
+    des_tool_kao5_tex[], des_win_suuji0_tex_rgb_i4[], des_win_suuji1_tex_rgb_i4[], des_win_suuji2_tex_rgb_i4[],
+    des_win_suuji3_tex_rgb_i4[], des_win_suuji4_tex_rgb_i4[], des_win_suuji5_tex_rgb_i4[], des_win_suuji6_tex_rgb_i4[],
+    des_win_suuji7_tex_rgb_i4[], des_win_suuji8_tex_rgb_i4[], des_win_suuji9_tex_rgb_i4[], des_cursor_penT_model[],
+    des_cursor_nuriT_model[], des_cursor_waku1T_model[], des_cursor_mark1_model[], des_cursor_mark2_model[],
+    des_cursor_mark3_model[], des_cursor_mark4_model[], des_cursor_undo_model[], des_cursor_spT_model[],
+    des_cursor_wakuT_model[], des_cursor_kao1T_model[], des_cursor_kao2T_model[], des_cursor_kao3T_model[],
+    des_cursor_kao4_model[], des_cursor_kao5_model[], des_win_area1_model[], des_win_area2_model[],
+    des_win_area4_model[], des_win_area3_model[], des_win_shikiri_model[], des_win_suuji_before[],
+    des_win_suuji3_model[], des_win_suuji4_model[], des_win_suuji2_model[], des_win_suuji1_model[],
+    des_win_marking_model[], des_win_marking2T_model[];
+
+void mDE_set_frame_tool_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
+
+    static Gfx* tool_pen_table[] = { des_tool_pen1_tex_rgb_ia8, des_tool_pen2_tex_rgb_ia8, des_tool_pen3_tex_rgb_ia8 };
+    static Gfx* tool_nuri_table[] = { des_tool_nuri1_tex_rgb_ia8, des_tool_nuri2_tex_rgb_ia8,
+                                      des_tool_nuri3_tex_rgb_ia8, des_tool_nuri4_tex_rgb_ia8,
+                                      des_tool_nuri5_tex_rgb_ia8, des_tool_nuri6_tex_rgb_ia8 };
+    static Gfx* tool_waku_table[] = { des_tool_waku1_tex_rgb_ia8, des_tool_waku2_tex_rgb_ia8,
+                                      des_tool_waku3_tex_rgb_ia8, des_tool_waku4_tex_rgb_ia8,
+                                      des_tool_waku5_tex_rgb_ia8 };
+    static Gfx* tool_mark_table[] = { des_tool_mark1_tex_rgb_ia8, des_tool_mark2_tex_rgb_ia8,
+                                      des_tool_mark3_tex_rgb_ia8, des_tool_mark4_tex_rgb_ia8 };
+    static Gfx* tool_kao_table[] = { des_tool_kao1_tex, des_tool_kao2_tex, des_tool_kao3_tex, des_tool_kao4_tex,
+                                     des_tool_kao5_tex };
+    GRAPH* graph = game->graph;
+    mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
+    Matrix_scale(16.f, 16.f, 1.f, FALSE);
+    Matrix_translate(menu->position[0], menu->position[1], 140.f, TRUE);
+    OPEN_POLY_OPA_DISP(graph);
+
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(POLY_OPA_DISP++, des_win_before);
+    if (design_ovl->_6A7 == 3) {
+        gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, tool_pen_table[0]);
+        gSPSegment(POLY_OPA_DISP++, ANIME_2_TXT_SEG, tool_nuri_table[0]);
+        gSPSegment(POLY_OPA_DISP++, ANIME_3_TXT_SEG, tool_waku_table[0]);
+        if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
+            gSPSegment(POLY_OPA_DISP++, ANIME_4_TXT_SEG, tool_kao_table[0]);
+        } else {
+            gSPSegment(POLY_OPA_DISP++, ANIME_4_TXT_SEG, tool_mark_table[0]);
+        }
+        gSPDisplayList(POLY_OPA_DISP++, des_tool_pen_all_model);
+        gSPDisplayList(POLY_OPA_DISP++, des_tool_nuri_all_model);
+        gSPDisplayList(POLY_OPA_DISP++, des_tool_waku_all_model);
+        if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
+            gSPDisplayList(POLY_OPA_DISP++, des_tool_kao_all_model);
+        } else {
+            gSPDisplayList(POLY_OPA_DISP++, des_tool_mark_all_model);
+        }
+    } else {
+        gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, tool_pen_table[design_ovl->_6A0]);
+        gSPSegment(POLY_OPA_DISP++, ANIME_2_TXT_SEG, tool_nuri_table[design_ovl->_6A1]);
+        gSPSegment(POLY_OPA_DISP++, ANIME_3_TXT_SEG, tool_waku_table[design_ovl->_6A2]);
+        if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
+            gSPSegment(POLY_OPA_DISP++, ANIME_4_TXT_SEG, tool_kao_table[design_ovl->_6A3]);
+        } else {
+            gSPSegment(POLY_OPA_DISP++, ANIME_4_TXT_SEG, tool_mark_table[design_ovl->_6A3]);
+        }
+        gSPDisplayList(POLY_OPA_DISP++, des_tool_pen1T_model);
+        gSPDisplayList(POLY_OPA_DISP++, des_tool_nuriT_model);
+        gSPDisplayList(POLY_OPA_DISP++, des_tool_waku1T_model);
+        gSPDisplayList(POLY_OPA_DISP++, des_tool_mark1T_model);
+    }
+    gSPDisplayList(POLY_OPA_DISP++, des_tool_undoT_model);
+
+    CLOSE_POLY_OPA_DISP(graph);
 }
-void mDE_set_frame_suuji_dl() {
+
+void mDE_set_frame_suuji_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
+
+    static Gfx* suuji_table[] = { des_win_suuji0_tex_rgb_i4, des_win_suuji1_tex_rgb_i4, des_win_suuji2_tex_rgb_i4,
+                                  des_win_suuji3_tex_rgb_i4, des_win_suuji4_tex_rgb_i4, des_win_suuji5_tex_rgb_i4,
+                                  des_win_suuji6_tex_rgb_i4, des_win_suuji7_tex_rgb_i4, des_win_suuji8_tex_rgb_i4,
+                                  des_win_suuji9_tex_rgb_i4 };
+
+    mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
+    GRAPH* graph = game->graph;
+    int pal = design_ovl->palette_no + 1;
+    Matrix_scale(16.f, 16.f, 1.f, FALSE);
+    Matrix_translate(menu->position[0], menu->position[1], 140.f, TRUE);
+    OPEN_POLY_OPA_DISP(graph);
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    if (design_ovl->_6A7 == 1) {
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, 215, 30, 30, 255);
+    } else {
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 255, 245, 215, 180);
+    }
+    gSPDisplayList(POLY_OPA_DISP++, des_win_shikiri_model);
+    gSPDisplayList(POLY_OPA_DISP++, des_win_suuji_before);
+    gSPDisplayList(POLY_OPA_DISP++, des_win_suuji3_model);
+    gSPDisplayList(POLY_OPA_DISP++, des_win_suuji4_model);
+    if (pal >= ARRAY_COUNT(suuji_table)) {
+        gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, suuji_table[1]);
+        gSPDisplayList(POLY_OPA_DISP++, des_win_suuji1_model);
+        gSPSegment(POLY_OPA_DISP++, ANIME_2_TXT_SEG, suuji_table[pal % ARRAY_COUNT(suuji_table)]);
+        gSPDisplayList(POLY_OPA_DISP++, des_win_suuji2_model);
+    } else {
+        Matrix_push();
+        Matrix_translate(-2.f, 0.f, 0.f, TRUE);
+        gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gSPSegment(POLY_OPA_DISP++, ANIME_2_TXT_SEG, suuji_table[pal]);
+        gSPDisplayList(POLY_OPA_DISP++, des_win_suuji2_model);
+        Matrix_pull();
+    }
+
+    CLOSE_POLY_OPA_DISP(graph);
 }
-void mDE_set_frame_mark_dl() {
+
+void mDE_set_frame_mark_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
+    GRAPH* graph = game->graph;
+    mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
+    Matrix_scale(16.f, 16.f, 1.f, FALSE);
+    Matrix_translate(menu->position[0], menu->position[1], 140.f, TRUE);
+
+    OPEN_POLY_OPA_DISP(graph);
+    gSPDisplayList(POLY_OPA_DISP++, des_win_before);
+    Matrix_push();
+    if (design_ovl->_6A7 == 3) {
+        Matrix_translate(-112.f + design_ovl->_69E * 0x18, 16.f - design_ovl->_69F * 0x18, 0.f, TRUE);
+        gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 185, 50, 50, 255);
+    } else {
+        Matrix_translate(-112.f, 16.f - design_ovl->_69F * 0x18, 0.f, TRUE);
+        gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 215, 195, 195, 255);
+    }
+    gSPDisplayList(POLY_OPA_DISP++, des_win_marking_model);
+    Matrix_pull();
+    Matrix_push();
+    Matrix_translate(110.f, 0x3f - design_ovl->_6A4 * 10, 0.f, TRUE);
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    if (design_ovl->_6A7 != 1) {
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 0xcd, 0xb9, 0xb9, 255);
+        gDPSetEnvColor(POLY_OPA_DISP++, 105, 85, 115, 255);
+    } else {
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 235, 235, 235, 255);
+        gDPSetEnvColor(POLY_OPA_DISP++, 105, 85, 115, 255);
+    }
+    gSPDisplayList(POLY_OPA_DISP++, des_win_marking2T_model);
+    Matrix_pull();
+    if (design_ovl->_6A7 == 1) {
+        Matrix_push();
+        if (design_ovl->_6A5 == 0) {
+            Matrix_translate(110.f, 71.f, 0.f, TRUE);
+            gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 185, 50, 50, 255);
+            gSPDisplayList(POLY_OPA_DISP++, des_win_marking_model);
+        } else {
+            Matrix_translate(110.f, 0x3f - design_ovl->_6A5 * 10, 0.f, TRUE);
+            gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 255, 80, 80, 255);
+            gDPSetEnvColor(POLY_OPA_DISP++, 30, 30, 30, 255);
+            gSPDisplayList(POLY_OPA_DISP++, des_win_marking2T_model);
+        }
+        Matrix_pull();
+    }
+    CLOSE_POLY_OPA_DISP(graph);
 }
-void mDE_waku_right_top() {
+
+void mDE_waku_right_top(f32 param_1, f32* param_2, f32* param_3, s16* param_4) {
+    *param_3 = param_1;
+    *param_4 = DEG2SHORT_ANGLE2(90);
 }
-void mDE_waku_right_bottom() {
+
+void mDE_waku_right_bottom(f32 param_1, f32* param_2, f32* param_3, s16* param_4) {
+    // nothing;
 }
-void mDE_waku_left_top() {
+
+void mDE_waku_left_top(f32 param_1, f32* param_2, f32* param_3, s16* param_4) {
+    *param_3 = param_1;
+    *param_2 = -1.f * param_1;
+    *param_4 = DEG2SHORT_ANGLE2(180);
 }
-void mDE_waku_left_bottom() {
+
+void mDE_waku_left_bottom(f32 param_1, f32* param_2, f32* param_3, s16* param_4) {
+    *param_2 = -1.f * param_1;
+    *param_4 = DEG2SHORT_ANGLE2(270);
 }
-void mDE_set_cursor_waku_rotate() {
+
+void mDE_set_cursor_waku_rotate(mDE_Ovl_c* design_ovl, u32 param_2, f32* param_3, f32* param_4, s16* param_5) {
+    f32 v = 1.f;
+    if (param_2) {
+        v = -1.f;
+    }
+    switch (design_ovl->_6D8) {
+        case 0: {
+            mDE_waku_right_bottom(v, param_3, param_4, param_5);
+        } break;
+        case 1: {
+            mDE_waku_right_top(v, param_3, param_4, param_5);
+        } break;
+        case 2: {
+            mDE_waku_left_bottom(v, param_3, param_4, param_5);
+        } break;
+        case 3: {
+            mDE_waku_left_bottom(v, param_3, param_4, param_5);
+        } break;
+    }
 }
-void mDE_set_frame_cursor_dl() {
+
+void mDE_set_frame_cursor_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
+    static Gfx* cursor_table[] = { des_cursor_penT_model,  des_cursor_nuriT_model, des_cursor_waku1T_model,
+                                   des_cursor_mark1_model, des_cursor_mark2_model, des_cursor_mark3_model,
+                                   des_cursor_mark4_model, des_cursor_undo_model,  des_cursor_spT_model,
+                                   des_cursor_wakuT_model, des_cursor_kao1T_model, des_cursor_kao2T_model,
+                                   des_cursor_kao3T_model, des_cursor_kao4_model,  des_cursor_kao5_model };
+    GRAPH* graph = game->graph;
+    mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
+    if (design_ovl->_6A7 == 0) {
+        if (design_ovl->_698 != 0) {
+            if (design_ovl->_699 != 9) {
+                int a, b;
+                design_ovl->_680 -= 0x52;
+                design_ovl->_684 += 0x4f;
+                design_ovl->_690 = design_ovl->_680 + design_ovl->_688 * 5;
+                design_ovl->_694 = design_ovl->_684 + design_ovl->_68C * 5;
+                a = ABS(design_ovl->_680 - design_ovl->_690);
+                b = ABS(design_ovl->_684 - design_ovl->_694);
+                design_ovl->_684 -= b;
+                design_ovl->_694 -= b;
+
+                Matrix_push();
+                Matrix_scale(16.f, 16.f, 1.f, FALSE);
+                Matrix_translate(design_ovl->_680, design_ovl->_684, 0.f, TRUE);
+                Matrix_scale(a, 2.f, 1.f, TRUE);
+                OPEN_POLY_OPA_DISP(graph);
+                gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+                if (GETREG(NMREG, 2)) {
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, design_ovl->rgb8_pal[design_ovl->_6A4].r,
+                                    design_ovl->rgb8_pal[design_ovl->_6A4].g, design_ovl->rgb8_pal[design_ovl->_6A4].b,
+                                    255);
+                } else {
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, 90, 90, 90, 0xff);
+                }
+                gSPDisplayList(POLY_OPA_DISP++, des_sen_waku_model);
+                CLOSE_POLY_OPA_DISP(graph);
+                Matrix_pull();
+
+                Matrix_push();
+                Matrix_scale(16.f, 16.f, 1.f, FALSE);
+                Matrix_translate(design_ovl->_680, design_ovl->_694, 0.f, TRUE);
+                if (a) {
+                    a += 2.f;
+                }
+                Matrix_scale(a, 2.f, 1.f, TRUE);
+                OPEN_POLY_OPA_DISP(graph);
+                gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+                if (GETREG(NMREG, 2)) {
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, design_ovl->rgb8_pal[design_ovl->_6A4].r,
+                                    design_ovl->rgb8_pal[design_ovl->_6A4].g, design_ovl->rgb8_pal[design_ovl->_6A4].b,
+                                    255);
+                } else {
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, 90, 90, 90, 0xff);
+                }
+                gSPDisplayList(POLY_OPA_DISP++, des_sen_waku_model);
+                CLOSE_POLY_OPA_DISP(graph);
+                Matrix_pull();
+
+                Matrix_push();
+                Matrix_scale(16.f, 16.f, 1.f, FALSE);
+                Matrix_translate(design_ovl->_680, design_ovl->_684, 0.f, TRUE);
+                Matrix_scale(2.f, b, 1.f, TRUE);
+                OPEN_POLY_OPA_DISP(graph);
+                gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+                if (GETREG(NMREG, 2)) {
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, design_ovl->rgb8_pal[design_ovl->_6A4].r,
+                                    design_ovl->rgb8_pal[design_ovl->_6A4].g, design_ovl->rgb8_pal[design_ovl->_6A4].b,
+                                    255);
+                } else {
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, 90, 90, 90, 0xff);
+                }
+                gSPDisplayList(POLY_OPA_DISP++, des_sen_waku_model);
+                CLOSE_POLY_OPA_DISP(graph);
+                Matrix_pull();
+
+                Matrix_push();
+                Matrix_scale(16.f, 16.f, 1.f, FALSE);
+                Matrix_translate(design_ovl->_690, design_ovl->_684, 0.f, TRUE);
+                Matrix_scale(2.f, b, 1.f, TRUE);
+                OPEN_POLY_OPA_DISP(graph);
+                gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+                if (GETREG(NMREG, 2)) {
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, design_ovl->rgb8_pal[design_ovl->_6A4].r,
+                                    design_ovl->rgb8_pal[design_ovl->_6A4].g, design_ovl->rgb8_pal[design_ovl->_6A4].b,
+                                    255);
+                } else {
+                    gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, 90, 90, 90, 0xff);
+                }
+                gSPDisplayList(POLY_OPA_DISP++, des_sen_waku_model);
+                CLOSE_POLY_OPA_DISP(graph);
+                Matrix_pull();
+            }
+        }
+        Matrix_scale(16.f, 16.f, 1.f, FALSE);
+        Matrix_translate(menu->position[0], menu->position[1], 140.f, TRUE);
+        OPEN_POLY_OPA_DISP(graph);
+        gSPDisplayList(POLY_OPA_DISP++, des_win_before);
+        if (design_ovl->_69A && design_ovl->_699 != 9) {
+            float f1, f2;
+            s16 s1;
+            s1 = 0;
+            f1 = 0.f;
+            f2 = 0.f;
+            mDE_set_cursor_waku_rotate(design_ovl, 1, &f1, &f2, &s1);
+            Matrix_push();
+            Matrix_translate(design_ovl->_658 - 3.f - 75.f - f1, design_ovl->_65C + 2.f - (-75.f) - f2, 0.f, TRUE);
+            Matrix_RotateZ(s1, TRUE);
+            gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPDisplayList(POLY_OPA_DISP++, des_cursor_waku1T_model);
+            Matrix_pull();
+        } else if (design_ovl->_69A && design_ovl->_699 == 9) {
+            Matrix_push();
+            Matrix_translate(design_ovl->_658 - 3.f - 75.f, (design_ovl->_65C + 10.f) - (-75.f), 0.f, TRUE);
+            gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+            gSPDisplayList(POLY_OPA_DISP++, des_cursor_wakuT_model);
+            Matrix_pull();
+        }
+        if (design_ovl->_699 == 1) {
+            Matrix_translate(design_ovl->_650 + 1.f - 75.f, design_ovl->_654 + 11.f - (-75.f), 0.f, TRUE);
+        } else if (design_ovl->_699 == 2) {
+            if (design_ovl->_69A) {
+                float f1, f2;
+                s16 s1;
+                s1 = 0;
+                f1 = 0.f;
+                f2 = 0.f;
+                mDE_set_cursor_waku_rotate(design_ovl, 0, &f1, &f2, &s1);
+                Matrix_translate(design_ovl->_650 - 4.f - 75.f - f1, design_ovl->_654 + 3.f - (-75.f) - f2, 0.f, TRUE);
+                Matrix_RotateZ(s1, TRUE);
+            } else {
+                Matrix_translate(design_ovl->_650 - 3.f - 75.f, design_ovl->_654 + 2.f - (-75.f), 0.f, TRUE);
+            }
+        } else if (design_ovl->_699 == 3) {
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, TRUE);
+        } else if (design_ovl->_699 == 4) {
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, TRUE);
+        } else if (design_ovl->_699 == 5) {
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, TRUE);
+        } else if (design_ovl->_699 == 6) {
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, TRUE);
+        } else if (design_ovl->_699 == 7) {
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, TRUE);
+        } else if (design_ovl->_699 == 9) {
+            Matrix_translate(design_ovl->_650 - 3.f - 75.f, design_ovl->_654 + 10.f - (-75.f), 0.f, TRUE);
+        } else if (design_ovl->_699 == 10) {
+            Matrix_translate(design_ovl->_650 - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, TRUE);
+        } else if (design_ovl->_699 == 11) {
+            Matrix_translate(design_ovl->_650 - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, TRUE);
+        } else if (design_ovl->_699 == 12) {
+            Matrix_translate(design_ovl->_650 + 2.f - 75.f, design_ovl->_654 + 7.f - (-75.f), 0.f, TRUE);
+        } else if (design_ovl->_699 == 13) {
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, TRUE);
+        } else if (design_ovl->_699 == 14) {
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, TRUE);
+        } else {
+            Matrix_translate(design_ovl->_650 + 8.f - 75.f, design_ovl->_654 + 13.f - (-75.f), 0.f, TRUE);
+        }
+        gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        if (design_ovl->_69A && design_ovl->_699 == 2) {
+            gSPDisplayList(POLY_OPA_DISP++, des_cursor_waku2T_model);
+        } else {
+            gSPDisplayList(POLY_OPA_DISP++, cursor_table[design_ovl->_699]);
+        }
+        CLOSE_POLY_OPA_DISP(graph);
+    }
 }
-void mDE_set_frame_main_dl() {
+
+void mDE_set_frame_main_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
+    int i;
+    static Gfx* area_table[] = { des_win_area1_model, des_win_area2_model, des_win_area4_model, des_win_area3_model };
+
+    GRAPH* graph = game->graph;
+    mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
+    Matrix_scale(16.f, 16.f, 1.f, FALSE);
+    Matrix_translate(menu->position[0], menu->position[1], 140.f, TRUE);
+    OPEN_POLY_OPA_DISP(graph);
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(POLY_OPA_DISP++, des_win_before_model);
+    for (i = 0; i < ARRAY_COUNT(area_table); i++) {
+        if (i == design_ovl->_6A7) {
+            gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 0x28, 0xeb, 0xa0, 0xb4);
+        } else {
+            gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 0x5a, 0x46, 0x28, 0xb4);
+        }
+        gSPDisplayList(POLY_OPA_DISP++, area_table[i]);
+    }
+    gSPDisplayList(POLY_OPA_DISP++, des_win_before_model_2);
+    gSPDisplayList(POLY_OPA_DISP++, des_win_waku_model);
+    gDPSetTextureFilter(POLY_OPA_DISP++, G_TF_POINT);
+    gDPLoadTLUT_Dolphin(POLY_OPA_DISP++, 15, 16, 1, design_ovl->palette_p);
+    gDPLoadTextureBlock_4b_Dolphin(POLY_OPA_DISP++, design_ovl->texture.data, G_IM_FMT_CI, 32, 32, 15, GX_MIRROR,
+                                   GX_MIRROR, 0, 0);
+    gSPDisplayList(POLY_OPA_DISP++, des_win_toubai_model);
+    gSPDisplayList(POLY_OPA_DISP++, des_win_main_model);
+    gDPSetTextureFilter(POLY_OPA_DISP++, G_TF_BILERP);
+    gSPDisplayList(POLY_OPA_DISP++, des_win_color_before_model);
+    Matrix_push();
+    for (i = 0; i < ARRAY_COUNT(design_ovl->rgb8_pal) - 1; i++) {
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, design_ovl->rgb8_pal[i + 1].r, design_ovl->rgb8_pal[i + 1].g,
+                        design_ovl->rgb8_pal[i + 1].b, 255);
+        gSPDisplayList(POLY_OPA_DISP++, des_win_color_model);
+        Matrix_translate(0.f, -10.f, 0.f, TRUE);
+        gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    }
+    Matrix_pull();
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(POLY_OPA_DISP++, des_win_waku2_model);
+    if (design_ovl->_69D) {
+        gSPDisplayList(POLY_OPA_DISP++, des_win_grid_model);
+        gSPDisplayList(POLY_OPA_DISP++, des_win_grid2_model);
+    }
+    CLOSE_POLY_OPA_DISP(graph);
 }
-void mDE_set_frame_dl() {
+
+void mDE_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
+    mDE_set_frame_main_dl(submenu, game, menu);
+    mDE_set_frame_tool_dl(submenu, game, menu);
+    mDE_set_frame_suuji_dl(submenu, game, menu);
+    mDE_set_frame_mark_dl(submenu, game, menu);
+    mDE_set_frame_cursor_dl(submenu, game, menu);
 }
-void mDE_design_ovl_draw() {
+void mDE_design_ovl_draw(Submenu* submenu, GAME* game) {
+    mSM_MenuInfo_c* menu = &submenu->overlay->menu_info[mSM_OVL_DESIGN];
+    menu->pre_draw_func(submenu, game);
+    mDE_set_frame_dl(submenu, game, menu);
 }
-void mDE_design_ovl_set_proc() {
+
+void mDE_design_ovl_set_proc(Submenu* submenu) {
+    Submenu_Overlay_c* ovl = submenu->overlay;
+
+    ovl->menu_control.menu_move_func = mDE_design_ovl_move;
+    ovl->menu_control.menu_draw_func = mDE_design_ovl_draw;
 }
-void mDE_design_ovl_init() {
+
+void mDE_design_ovl_init(Submenu* submenu) {
+    Submenu_Overlay_c* ovl = submenu->overlay;
+    mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
+    ovl->menu_control.animation_flag = 0;
+    ovl->menu_info[mSM_OVL_DESIGN].proc_status = 0;
+    ovl->menu_info[mSM_OVL_DESIGN].next_proc_status = 1;
+    ovl->menu_info[mSM_OVL_DESIGN].move_drt = 5;
+    if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
+        MaskCat_c* cat = Save_GetPointer(mask_cat);
+        design_ovl->palette_no = 15;
+        mDE_maskcat_init(cat);
+        bcopy(&cat->design.design, &design_ovl->texture, sizeof(design_ovl->texture));
+    } else {
+        mNW_original_design_c* p;
+        design_ovl->image_no = mNW_get_image_no(submenu, submenu->param0);
+        p = &Now_Private->my_org[design_ovl->image_no & 7];
+        design_ovl->palette_no = p->palette;
+        mNW_CopyOriginalTexture(&design_ovl->texture, p);
+    }
+    osWritebackDCache(&design_ovl->texture, sizeof(design_ovl->texture));
+    design_ovl->palette_p = mNW_PaletteIdx2Palette(design_ovl->palette_no);
+    mDE_pallet_RGB5A3_to_RGB24(design_ovl);
+    design_ovl->_69D = 1;
+    design_ovl->_6A7 = 0;
+    design_ovl->_6A4 = 1;
+    design_ovl->_6A5 = 1;
+    design_ovl->_6CC = 0;
+    design_ovl->_6CD = 0;
+    design_ovl->_6B4 = 0;
+    design_ovl->_6B8 = 0;
+    design_ovl->_6C0 = 0;
+    design_ovl->_6D8 = 0;
+    design_ovl->_6D9 = 0;
+    design_ovl->_6DA = 0;
+    mDE_setup_action(design_ovl, 0);
+    mDE_main_mode_setup_action(design_ovl, 0);
+    design_ovl->_650 = 75;
+    design_ovl->_654 = -75;
+    design_ovl->_660 = 77.5f;
+    design_ovl->_664 = -77.5f;
+    design_ovl->cursor_x = 15;
+    design_ovl->cursor_y = 15;
+    bcopy(&design_ovl->texture, &design_ovl->work_texture, sizeof(design_ovl->work_texture));
+    osWritebackDCache(&design_ovl->work_texture, sizeof(design_ovl->work_texture));
+    if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
+        mDE_mask_cat_mask(design_ovl);
+        osWritebackDCache(&design_ovl->work_texture, sizeof(design_ovl->work_texture));
+        bcopy(&design_ovl->work_texture, &design_ovl->texture, sizeof(design_ovl->texture));
+        osWritebackDCache(&design_ovl->texture, sizeof(design_ovl->texture));
+    }
+    bcopy(&design_ovl->texture, &design_ovl->undo_texture, sizeof(design_ovl->undo_texture));
+    osWritebackDCache(&design_ovl->undo_texture, sizeof(design_ovl->undo_texture));
 }
-void mDE_maskcat_init() {
+
+void mDE_maskcat_init(MaskCat_c* mask_cat) {
+    int i;
+    mask_cat->palette_no = 15;
+    for (i = 0; i < ARRAY_COUNT(mask_cat->design.design.data); i++) {
+        mask_cat->design.design.data[i] = 0xff;
+    }
 }
-void mDE_design_ovl_construct() {
+
+void mDE_design_ovl_construct(Submenu* submenu) {
+    mDE_Ovl_c** ovl = &submenu->overlay->design_ovl;
+    if (*ovl == NULL) {
+        mem_clear((u8*)&de_ovl_data, sizeof(de_ovl_data), 0);
+        *ovl = &de_ovl_data;
+    }
+    mDE_design_ovl_init(submenu);
+    mDE_design_ovl_set_proc(submenu);
 }
-void mDE_design_ovl_destruct() {
+
+void mDE_design_ovl_destruct(Submenu* submenu) {
+    submenu->overlay->design_ovl = NULL;
 }
