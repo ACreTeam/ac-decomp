@@ -34,8 +34,8 @@ static void aNMC_actor_dt(ACTOR* actorx, GAME* game);
 static void aNMC_actor_init(ACTOR* actorx, GAME* game);
 static void aNMC_actor_save(ACTOR* actorx, GAME* game);
 
+// clang-format off
 ACTOR_PROFILE Npc_Mask_Cat_Profile = {
-    // clang-format off
     mAc_PROFILE_NPC_MASK_CAT,
     ACTOR_PART_NPC,
     ACTOR_STATE_NONE,
@@ -47,46 +47,49 @@ ACTOR_PROFILE Npc_Mask_Cat_Profile = {
     aNMC_actor_init,
     mActor_NONE_PROC1,
     aNMC_actor_save,
-    // clang-format on
 };
+// clang-format on
 
 static void aNMC_actor_ct(ACTOR* actorx, GAME* game) {
-  static aNPC_ct_data_c ct_data = {
-      &aNMC_actor_move, 
-      &aNMC_actor_draw,   
-      3, 
-      &aNMC_talk_request,
-      &aNMC_talk_init,  
-      &aNMC_talk_end_chk, 
-      0,
-  };
-  if (CLIP(npc_clip)->birth_check_proc(actorx, game) == TRUE) {
-    if (Common_Get(spnpc_first_talk_flags) & (1 << aNPC_SPNPC_BIT_MASK_CAT)) {
-      Actor_delete(actorx);
-      actorx->sv_proc = NULL;
-      actorx->dt_proc = NULL;
-      mNpc_RenewalSetNpc(actorx);
-    } else {
-      CLIP(npc_clip)->ct_proc(actorx, game, &ct_data);
+    // clang-format off
+    static aNPC_ct_data_c ct_data = {
+        &aNMC_actor_move, 
+        &aNMC_actor_draw,   
+        aNPC_CT_SCHED_TYPE_WANDER, 
+        &aNMC_talk_request,
+        &aNMC_talk_init,  
+        &aNMC_talk_end_chk, 
+        0,
+    };
+    // clang-format on
+    
+    if (NPC_CLIP->birth_check_proc(actorx, game) == TRUE) {
+        if (Common_Get(spnpc_first_talk_flags) & (1 << aNPC_SPNPC_BIT_MASK_CAT)) {
+            Actor_delete(actorx);
+            actorx->sv_proc = NULL;
+            actorx->dt_proc = NULL;
+            mNpc_RenewalSetNpc(actorx);
+        } else {
+            NPC_CLIP->ct_proc(actorx, game, &ct_data);
+        }
     }
-  }
 }
 
 static void aNMC_actor_save(ACTOR* actorx, GAME* game) {
-  CLIP(npc_clip)->save_proc(actorx, game);
+    NPC_CLIP->save_proc(actorx, game);
 }
 
 static void aNMC_actor_dt(ACTOR* actorx, GAME* game) {
-  CLIP(npc_clip)->dt_proc(actorx, game);
-  mEv_actor_dying_message(0x73, actorx);
+    NPC_CLIP->dt_proc(actorx, game);
+    mEv_actor_dying_message(mEv_EVENT_MASK_NPC, actorx);
 }
 
 static void aNMC_actor_init(ACTOR* actorx, GAME* game) {
-  CLIP(npc_clip)->init_proc(actorx, game);
+    NPC_CLIP->init_proc(actorx, game);
 }
 
 static void aNMC_actor_draw(ACTOR* actorx, GAME* game) {
-  CLIP(npc_clip)->draw_proc(actorx, game);
+    NPC_CLIP->draw_proc(actorx, game);
 }
-#include "../src/actor/npc/ac_npc_mask_cat_move.c_inc"
 
+#include "../src/actor/npc/ac_npc_mask_cat_move.c_inc"
