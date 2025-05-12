@@ -140,24 +140,28 @@ typedef struct {
 
 #define mCD_KEEP_ORIGINAL_PAGE_COUNT 8
 #define mCD_KEEP_ORIGINAL_COUNT 12
+#define mCD_KEEP_ORIGINAL_FOLDER_NAME_LEN 12
 
 typedef struct {
     u16 checksum;
     u16 landid;
-    u8 _0004[mCD_KEEP_ORIGINAL_PAGE_COUNT][12];
+    u8 folder_names[mCD_KEEP_ORIGINAL_PAGE_COUNT][mCD_KEEP_ORIGINAL_FOLDER_NAME_LEN];
     mNW_original_design_c original[mCD_KEEP_ORIGINAL_PAGE_COUNT][mCD_KEEP_ORIGINAL_COUNT];
     int _CC80; // force size to 0xCCA0
 } mCD_keep_original_c ATTRIBUTE_ALIGN(32);
 
 #define mCD_KEEP_MAIL_PAGE_COUNT 8
 #define mCD_KEEP_MAIL_COUNT 20
+#define mCD_KEEP_MAIL_FOLDER_NAME_LEN 12
 
 typedef struct {
     u16 checksum;
     u16 landid;
-    u8 _0004[mCD_KEEP_MAIL_PAGE_COUNT][12];
+    u8 folder_names[mCD_KEEP_MAIL_PAGE_COUNT][mCD_KEEP_MAIL_FOLDER_NAME_LEN];
     Mail_c mail[mCD_KEEP_MAIL_PAGE_COUNT][mCD_KEEP_MAIL_COUNT];
 } mCD_keep_mail_c ATTRIBUTE_ALIGN(32);
+
+#define mCD_KEEP_MAIL_SIZE ALIGN_NEXT(sizeof(mCD_keep_mail_c), 32)
 
 #define mCD_KEEP_DIARY_COUNT PLAYER_NUM
 #define mCD_KEEP_DIARY_ENTRY_COUNT lbRTC_MONTHS_MAX

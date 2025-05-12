@@ -2040,8 +2040,8 @@ static void mTG_init_tag_data_cpmail_wc_win(Submenu* submenu, int folder_idx) {
     mTG_tag_c* tag = &submenu->overlay->tag_ovl->tags[0];
     int len;
 
-    mem_copy(tag->str0, cpmail_ovl->card_mail->folder_names[folder_idx], mCM_FOLDER_NAME_LEN);
-    len = mMl_strlen(tag->str0, mCM_FOLDER_NAME_LEN, CHAR_SPACE);
+    mem_copy(tag->str0, cpmail_ovl->card_mail->folder_names[folder_idx], mCD_KEEP_MAIL_FOLDER_NAME_LEN);
+    len = mMl_strlen(tag->str0, mCD_KEEP_MAIL_FOLDER_NAME_LEN, CHAR_SPACE);
 
     if (len <= 0 || cpmail_ovl->page_order[0] == tag->tag_row) {
         tag->arrow_dir = 0;
@@ -3356,7 +3356,7 @@ static void mTG_dump_mail_mark_exe_proc(Submenu* submenu, mSM_MenuInfo_c* menu_i
     } else if (menu_info->menu_type == mSM_OVL_CPMAIL) {
         int page = cpmail_ovl->page_order[0];
 
-        for (i = 0; i < mCM_MAIL_COUNT; i++) {
+        for (i = 0; i < mCD_KEEP_MAIL_COUNT; i++) {
             Mail_c* mail = &cpmail_ovl->card_mail->mail[page][i];
 
             // clear selected mail if it has a present or is from the player (sending)
@@ -3447,7 +3447,7 @@ static void mTG_cpmail_change_mail_proc(Submenu* submenu, mSM_MenuInfo_c* menu_i
     }
 
     cpmail_mark_cnt = 0;
-    for (i = 0; i < mCM_MAIL_COUNT; i++) {
+    for (i = 0; i < mCD_KEEP_MAIL_COUNT; i++) {
         if ((cpmail_ovl->mark_bitfield & (1 << i)) != 0) {
             cpmail_mark_cnt++;
         }
@@ -3462,7 +3462,7 @@ static void mTG_cpmail_change_mail_proc(Submenu* submenu, mSM_MenuInfo_c* menu_i
 
     cpmail_free_cnt = 0;
     page = cpmail_ovl->page_order[0];
-    for (i = 0; i < mCM_MAIL_COUNT; i++) {
+    for (i = 0; i < mCD_KEEP_MAIL_COUNT; i++) {
         if (mMl_check_not_used_mail(&cpmail_ovl->card_mail->mail[page][i]) == TRUE) {
             cpmail_free_cnt++;
         }
@@ -3493,7 +3493,7 @@ static void mTG_cpmail_change_mail_proc(Submenu* submenu, mSM_MenuInfo_c* menu_i
         }
 
         if (cpmail_cnt > 0) {
-            for (cnt = 0, i = 0; cnt < cpmail_cnt && i < mCM_MAIL_COUNT; i++) {
+            for (cnt = 0, i = 0; cnt < cpmail_cnt && i < mCD_KEEP_MAIL_COUNT; i++) {
                 if ((cpmail_ovl->mark_bitfield & (1 << i)) != 0) {
                     cpmail_ovl->mark_bitfield &= ~(1 << i);
                     cnt++;
@@ -4462,7 +4462,7 @@ static int mTG_mark_main_sub(Submenu* submenu, int menu_type, int param, int tab
 
                 *(u32**)mark_bitfield_p = &cpmail_ovl->mark_bitfield;
                 updated_mark_bitfield->field32 = 1 << table_idx;
-                *max_mark_count = mCM_MAIL_COUNT;
+                *max_mark_count = mCD_KEEP_MAIL_COUNT;
             } else {
                 return FALSE;
             }
@@ -5541,7 +5541,7 @@ static void mTG_cpack_change_mail_mark_decide(Submenu* submenu, mIV_Ovl_c* inv_o
     cpmail_free_idx = -1;
     cpmail_move_mail = NULL;
     cpmail_free_mail = NULL;
-    for (i = 0; i < mCM_MAIL_COUNT; i++, cpmail_mail++) {
+    for (i = 0; i < mCD_KEEP_MAIL_COUNT; i++, cpmail_mail++) {
         if (cpmail_move_idx < 0 && (cpmail_ovl->mark_bitfield & (1 << i)) != 0) {
             cpmail_move_mail = cpmail_mail;
             cpmail_move_idx = i;
@@ -6993,7 +6993,7 @@ static int mTG_select_tag_decide_cpmail_wchange(Submenu* submenu, mSM_MenuInfo_c
 static int mTG_select_tag_decide_cpmail_title(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag) {
     mCM_Ovl_c* cpmail_ovl = submenu->overlay->cpmail_ovl;
 
-    mSM_open_submenu_new2(submenu, mSM_OVL_EDITOR, mED_TYPE_CP_TITLE, mCM_FOLDER_NAME_LEN,
+    mSM_open_submenu_new2(submenu, mSM_OVL_EDITOR, mED_TYPE_CP_TITLE, mCD_KEEP_MAIL_FOLDER_NAME_LEN,
                           &cpmail_ovl->card_mail->folder_names[cpmail_ovl->page_order[0]], mCM_FOLDER_NAME_MAX_WIDTH);
     menu_info->proc_status = mSM_OVL_PROC_WAIT;
     submenu->overlay->hand_ovl->nop_hand_func(submenu);
@@ -7613,7 +7613,7 @@ static void mTG_move_change(Submenu* submenu, mSM_MenuInfo_c* menu_info, mTG_tag
         mTG_init_tag_data(submenu, mTG_TABLE_CATALOG, mTG_TYPE_NONE, 0.0f, 0.0f, 0, 0);
     } else if (menu_info->menu_type == mSM_OVL_CPMAIL) {
         row = tag->tag_row;
-        tag->tag_row = (submenu->overlay->cpmail_ovl->page_order[0] + 1) % mCM_PAGE_COUNT;
+        tag->tag_row = (submenu->overlay->cpmail_ovl->page_order[0] + 1) % mCD_KEEP_MAIL_PAGE_COUNT;
         mTG_select_tag_decide_cpmail_wchange(submenu, menu_info, tag);
         tag->tag_row = row;
     } else if (menu_info->menu_type == mSM_OVL_CPORIGINAL) {
@@ -7879,7 +7879,7 @@ static void mTG_move_delete(Submenu* submenu, mTG_tag_c* tag) {
                         int i;
                         int page = cpmail_ovl->page_order[0];
 
-                        for (i = 0; i < mCM_MAIL_COUNT; i++) {
+                        for (i = 0; i < mCD_KEEP_MAIL_COUNT; i++) {
                             if ((cpmail_ovl->mark_bitfield & (1 << i)) != 0) {
                                 mMl_clear_mail(&cpmail_ovl->card_mail->mail[page][i]);
                             }

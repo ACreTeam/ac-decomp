@@ -1605,7 +1605,7 @@ static void mCD_set_init_mail_data(u8* buf) {
     int j;
 
     for (i = 0; i < mCD_KEEP_MAIL_PAGE_COUNT; i++) {
-        mem_clear(keep_mail->_0004[i], sizeof(keep_mail->_0004[i]), CHAR_SPACE);
+        mem_clear(keep_mail->folder_names[i], sizeof(keep_mail->folder_names[i]), CHAR_SPACE);
         for (j = 0; j < mCD_KEEP_MAIL_COUNT; j++) {
             mMl_clear_mail(mail);
             mail++;
@@ -1619,7 +1619,7 @@ static void mCD_set_init_original_data(u8* buf) {
     int j;
 
     for (i = 0; i < mCD_KEEP_ORIGINAL_PAGE_COUNT; i++) {
-        mem_clear(keep_original->_0004[i], sizeof(keep_original->_0004[i]), CHAR_SPACE);
+        mem_clear(keep_original->folder_names[i], sizeof(keep_original->folder_names[i]), CHAR_SPACE);
         for (j = 0; j < mCD_KEEP_ORIGINAL_COUNT; j++) {
             mNW_InitOriginalData(&keep_original->original[i][j]);
         }
