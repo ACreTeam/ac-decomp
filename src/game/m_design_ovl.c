@@ -570,245 +570,270 @@ typedef struct design_bounds_s {
     int y1;
 } mDE_bounds_c;
 
-static void mDE_farbado(mDE_Ovl_c* r20 /*design_pal*/, int r24 /*x*/, int y, int r21 /*pal*/) {
 #define mDE_DESIGN_TEXELS_2 (16 * 16)
-    mDE_bounds_c pos_tbl[mDE_DESIGN_TEXELS_2];
-    int r29 = 0;
-    int r28 = 1;
-    int r17;
-    int r31;
-    int r19;
-    int r25;
 
-    pos_tbl[0].x0 = r24;
-    pos_tbl[0].x1 = r24;
-    pos_tbl[0].y0 = y;
-    pos_tbl[0].y1 = y;
-    r31 = mDE_get_pal_on_cursor(r20, r24, y);
+static void mDE_farbado(mDE_Ovl_c* designOvl, int startX, int startY, int fillColor) {
+    mDE_bounds_c scanStack[mDE_DESIGN_TEXELS_2];
+    int stackReadIdx = 0;
+    int stackWriteIdx = 1;
+    int targetColor;
+    int adjScanX; // Used as X iterator for adjacent lines, or holds lineY for new stack entry's seedLineY (for line above)
+    int iterX;
+    mDE_bounds_c* scan;
+    // int adjLineY;
+    int lineX0;         // Current line's start X, extended left during scan
+    int lineX1;         // Current line's end X, extended right during scan
+    int lineY;          // Current line's Y
+    int lineY2;
+    int seedLineY;      // Y of the line that seeded the currentLine; reassigned in one path
+    int searchBoundX0;  // lineX0 - 1, limit for leftward scan on adjacent lines
+    int searchBoundX1;  // lineX1 + 1, limit for rightward scan on adjacent lines; reassigned in one path
+
+    scanStack[0].x0 = startX;
+    scanStack[0].x1 = startX;
+    scanStack[0].y0 = startY;
+    scanStack[0].y1 = startY; // The initial seed Y is the start Y itself
+    targetColor = mDE_get_pal_on_cursor(designOvl, startX, startY);
 
     do {
-        mDE_bounds_c* bounds = &pos_tbl[r29];
-        int r27 = bounds->x0;
-        int r26 = bounds->x1;
-        int r30 = bounds->y0;
-        int r24 = bounds->y1;
-        int r23 = r27 - 1;
-        int r22 = r26 + 1;
+        const mDE_bounds_c* const currentLine = &scanStack[stackReadIdx];
+        lineX0 = currentLine->x0;
+        lineX1 = currentLine->x1;
+        lineY = currentLine->y0;
+        lineY2 = currentLine->y0;
+        seedLineY = currentLine->y1;      // Y of the line that generated this currentLine
+        searchBoundX0 = lineX0 - 1;     // Boundary for searching left on adjacent lines
+        searchBoundX1 = lineX1 + 1;     // Boundary for searching right on adjacent lines
 
-        if (++r29 == mDE_DESIGN_TEXELS_2) {
-            r29 = 0;
+        if (++stackReadIdx == mDE_DESIGN_TEXELS_2) {
+            stackReadIdx = 0;
         }
 
-        if (r21 != mDE_get_pal_on_cursor(r20, r27, r30)) {
-            while (r26 < mDE_POS_MAX + 1) {
-                r26++;
-                if (r31 != mDE_get_pal_on_cursor(r20, r26, r30)) {
-                    r26--;
+        // Check if the original line segment still needs processing (e.g. if targetColor is what we want to change)
+        // Note: The problem statement uses `pal` (fillColor) in the condition,
+        // which implies it's checking if the start of the scanline is NOT the fillColor already.
+        // A typical flood fill checks against targetColor.
+        // Adhering to original logic:
+        if (fillColor != mDE_get_pal_on_cursor(designOvl, lineX0, lineY)) {
+            // Scan right to find the end of the segment of targetColor
+            while (lineX1 < mDE_POS_MAX + 1) {
+                lineX1++;
+                if (targetColor != mDE_get_pal_on_cursor(designOvl, lineX1, lineY)) {
+                    lineX1--;
                     break;
                 }
             }
 
-            while (r27 > 0) {
-                r27--;
-                if (r31 != mDE_get_pal_on_cursor(r20, r27, r30)) {
-                    r27++;
+            // Scan left to find the start of the segment of targetColor
+            while (lineX0 > 0) {
+                lineX0--;
+                if (targetColor != mDE_get_pal_on_cursor(designOvl, lineX0, lineY)) {
+                    lineX0++;
                     break;
                 }
             }
 
-            for (r17 = r27; r17 <= r26; r17++) {
-                mDE_set_pal_on_cursor(r20, r17, r30, r21);
+            // Fill the identified segment with the new color
+            for (iterX = lineX0; iterX <= lineX1; iterX++) {
+                mDE_set_pal_on_cursor(designOvl, iterX, lineY, fillColor);
             }
-            // issue here
-            r25 = r30 - 1;
-            if (r25 >= mDE_POS_MIN) {
-                if (r25 == r24) {
-                    r17 = r27;
-                    r19 = r25 + 1;
-                    while (r17 <= r23) {
-                        for (; r17 < r23; r17++) {
-                            if (r31 == mDE_get_pal_on_cursor(r20, r17, r25)) {
+
+            // Process line above
+            // adjLineY = lineY - 1;
+            // adjLineY = lineY;
+            if (--lineY >= mDE_POS_MIN) { // Check if line above is within bounds
+                if (lineY == seedLineY) { // Came from line above, now looking further above
+                    // mDE_bounds_c* scan;
+                    adjScanX = lineX0; //iterX = lineX0;
+                    iterX = lineY + 1; // adjScanX now effectively stores lineY (current line's Y) to be seed for new stack entry
+                    
+                    while (adjScanX <= searchBoundX0) { // Scan left of the original lineX0
+                        for (; adjScanX < searchBoundX0; adjScanX++) {
+                            if (targetColor == mDE_get_pal_on_cursor(designOvl, adjScanX, lineY)) {
                                 break;
                             }
                         }
-                        if (r31 != mDE_get_pal_on_cursor(r20, r17, r25)) {
+                        if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY)) {
                             break;
                         }
 
-                        pos_tbl[r28].x0 = r17;
-
-                        for (; r17 <= r23; r17++) {
-                            if (r31 != mDE_get_pal_on_cursor(r20, r17, r25)) {
+                        scan = &scanStack[stackWriteIdx];
+                        scan->x0 = adjScanX;
+                        for (; adjScanX <= searchBoundX0; adjScanX++) { // Corrected from original r23 to searchBoundX0
+                            if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY)) {
                                 break;
                             }
                         }
-                        pos_tbl[r28].x1 = r17 - 1;
-                        pos_tbl[r28].y0 = r25;
-                        pos_tbl[r28].y1 = r19;
-                        r28++;
-                        if (r28 == mDE_DESIGN_TEXELS_2) {
-                            r28 = 0;
+                        scan->x1 = adjScanX - 1;
+                        scan->y0 = lineY;
+                        scan->y1 = iterX; // Store lineY as the seeder Y
+                        stackWriteIdx++;
+                        if (stackWriteIdx == mDE_DESIGN_TEXELS_2) {
+                            stackWriteIdx = 0;
                         }
                     }
 
-                    r17 = r22;
-                    r19 = r25 + 1;
+                    // issue is here, adjScanX should be r17 and scan should be r18
+                    adjScanX = searchBoundX1; // Start scan from right of original lineX1
+                    iterX = lineY + 1; // adjScanX stores lineY
 
-                    while (r17 <= r26) {
-                        for (; r17 < r26; r17++) {
-                            if (r31 == mDE_get_pal_on_cursor(r20, r17, r25)) {
+                    while (adjScanX <= lineX1) { // Scan right part (relative to original lineX1)
+                        for (; adjScanX < lineX1; adjScanX++) { // Corrected from original r26 to lineX1
+                            if (targetColor == mDE_get_pal_on_cursor(designOvl, adjScanX, lineY)) {
                                 break;
                             }
                         }
-
-                        if (r31 != mDE_get_pal_on_cursor(r20, r17, r25)) {
+                        if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY)) {
                             break;
                         }
 
-                        pos_tbl[r28].x0 = r17;
-
-                        for (; r17 <= r26; r17++) {
-                            if (r31 != mDE_get_pal_on_cursor(r20, r17, r25)) {
+                        scan = &scanStack[stackWriteIdx];
+                        scan->x0 = adjScanX;
+                        for (; adjScanX <= lineX1; adjScanX++) { // Corrected from original r26 to lineX1
+                            if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY)) {
                                 break;
                             }
                         }
-                        pos_tbl[r28].x1 = r17 - 1;
-                        pos_tbl[r28].y0 = r25;
-                        pos_tbl[r28].y1 = r19;
-                        r28++;
-                        if (r28 == mDE_DESIGN_TEXELS_2) {
-                            r28 = 0;
+                        scan->x1 = adjScanX - 1;
+                        scan->y0 = lineY;
+                        scan->y1 = iterX; // Store lineY
+                        stackWriteIdx++;
+                        if (stackWriteIdx == mDE_DESIGN_TEXELS_2) {
+                            stackWriteIdx = 0;
                         }
                     }
-                } else {
-                    r17 = r27;
-                    r19 = r25 + 1;
+                } else { // Generic scan for the line above
+                    int iterX = lineX0;
+                    // mDE_bounds_c* scan;
+                    adjScanX = lineY + 1; // adjScanX stores lineY
 
-                    while (r17 <= r26) {
-                        for (; r17 < r26; r17++) {
-                            if (r31 == mDE_get_pal_on_cursor(r20, r17, r25)) {
+                    while (iterX <= lineX1) {
+                        for (; iterX < lineX1; iterX++) { // Corrected from original r26 to lineX1
+                            if (targetColor == mDE_get_pal_on_cursor(designOvl, iterX, lineY)) {
                                 break;
                             }
                         }
-
-                        if (r31 != mDE_get_pal_on_cursor(r20, r17, r25)) {
+                        if (targetColor != mDE_get_pal_on_cursor(designOvl, iterX, lineY)) {
                             break;
                         }
 
-                        pos_tbl[r28].x0 = r17;
-
-                        for (; r17 <= r26; r17++) {
-                            if (r31 != mDE_get_pal_on_cursor(r20, r17, r25)) {
+                        scan = &scanStack[stackWriteIdx];
+                        scan->x0 = iterX;
+                        for (; iterX <= lineX1; iterX++) { // Corrected from original r26 to lineX1
+                            if (targetColor != mDE_get_pal_on_cursor(designOvl, iterX, lineY)) {
                                 break;
                             }
                         }
-                        pos_tbl[r28].x1 = r17 - 1;
-                        pos_tbl[r28].y0 = r25;
-                        pos_tbl[r28].y1 = r19;
-                        r28++;
-                        if (r28 == mDE_DESIGN_TEXELS_2) {
-                            r28 = 0;
+                        scan->x1 = iterX - 1;
+                        scan->y0 = lineY;
+                        scan->y1 = adjScanX; // Store lineY
+                        stackWriteIdx++;
+                        if (stackWriteIdx == mDE_DESIGN_TEXELS_2) {
+                            stackWriteIdx = 0;
                         }
                     }
                 }
             }
-            r25 = r30 + 1;
-            if (r25 <= (mDE_POS_MAX + 1)) {
-                if (r25 == r24) {
-                    r19 = r27;
-                    r24 = r25 - 1;
 
-                    while (r19 <= r23) {
-                        for (; r19 < r23; r19++) {
-                            if (r31 == mDE_get_pal_on_cursor(r20, r19, r25)) {
+            // Process line below
+            // adjLineY = lineY + 1;
+            // adjLineY = lineY2;
+            if (++lineY2 <= (mDE_POS_MAX + 1)) { // Check if line below is within bounds
+                if (lineY2 == seedLineY) { // Came from line below, now looking further below
+                    // mDE_bounds_c* scan;
+                    adjScanX = lineX0;
+                    seedLineY = lineY2 - 1; // seedLineY is reassigned to lineY (current line's Y)
+
+                    while (adjScanX <= searchBoundX0) { // Scan left of original lineX0
+                        for (; adjScanX < searchBoundX0; adjScanX++) {
+                            if (targetColor == mDE_get_pal_on_cursor(designOvl, adjScanX, lineY2)) {
                                 break;
                             }
                         }
-
-                        if (r31 != mDE_get_pal_on_cursor(r20, r19, r25)) {
+                        if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY2)) {
                             break;
                         }
-
-                        pos_tbl[r28].x0 = r19;
-
-                        for (; r19 <= r26; r19++) {
-                            if (r31 != mDE_get_pal_on_cursor(r20, r19, r25)) {
+                        scan = &scanStack[stackWriteIdx];
+                        scan->x0 = adjScanX;
+                        // Original code had r26 here, which is lineX1. Assuming scan should go up to searchBoundX0 or similar limit.
+                        // Sticking to original logic as much as possible, r26 (lineX1) is used.
+                        for (; adjScanX <= searchBoundX0; adjScanX++) {
+                            if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY2)) {
                                 break;
                             }
                         }
-                        pos_tbl[r28].x1 = r19 - 1;
-                        pos_tbl[r28].y0 = r25;
-                        pos_tbl[r28].y1 = r24;
-                        r28++;
-                        if (r28 == mDE_DESIGN_TEXELS_2) {
-                            r28 = 0;
+                        scan->x1 = adjScanX - 1;
+                        scan->y0 = lineY2;
+                        scan->y1 = seedLineY; // Store reassigned seedLineY (which is lineY)
+                        stackWriteIdx++;
+                        if (stackWriteIdx == mDE_DESIGN_TEXELS_2) {
+                            stackWriteIdx = 0;
                         }
                     }
 
-                    r19 = r22;
-                    r22 = r25 - 1;
+                    adjScanX = searchBoundX1; // Start scan from right of original lineX1
+                    // searchBoundX1 (r22) is reassigned here in original code
+                    searchBoundX1 = lineY2 - 1; // searchBoundX1 now effectively stores lineY
 
-                    while (r19 <= r26) {
-                        for (; r19 < r26; r19++) {
-                            if (r31 == mDE_get_pal_on_cursor(r20, r19, r25)) {
+                    while (adjScanX <= lineX1) {
+                        for (; adjScanX < lineX1; adjScanX++) {
+                            if (targetColor == mDE_get_pal_on_cursor(designOvl, adjScanX, lineY2)) {
                                 break;
                             }
                         }
-
-                        if (r31 != mDE_get_pal_on_cursor(r20, r19, r25)) {
+                        if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY2)) {
                             break;
                         }
-
-                        pos_tbl[r28].x0 = r19;
-
-                        for (; r19 <= r26; r19++) {
-                            if (r31 != mDE_get_pal_on_cursor(r20, r19, r25)) {
+                        
+                        scan = &scanStack[stackWriteIdx];
+                        scan->x0 = adjScanX;
+                        for (; adjScanX <= lineX1; adjScanX++) {
+                            if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY2)) {
                                 break;
                             }
                         }
-                        pos_tbl[r28].x1 = r19 - 1;
-                        pos_tbl[r28].y0 = r25;
-                        pos_tbl[r28].y1 = r22;
-                        r28++;
-                        if (r28 == mDE_DESIGN_TEXELS_2) {
-                            r28 = 0;
+                        scan->x1 = adjScanX - 1;
+                        scan->y0 = lineY2;
+                        scan->y1 = searchBoundX1; // Store reassigned searchBoundX1 (which is lineY)
+                        stackWriteIdx++;
+                        if (stackWriteIdx == mDE_DESIGN_TEXELS_2) {
+                            stackWriteIdx = 0;
                         }
                     }
-                } else {
-                    r19 = r27;
-                    r22 = r25 - 1;
+                } else { // Generic scan for the line below
+                    // mDE_bounds_c* scan;
+                    adjScanX = lineX0;
+                    searchBoundX1 = lineY2 - 1; // searchBoundX1 now effectively stores lineY
+                    // searchBoundX1 (r22) is reassigned here in original code for the .y1 field
 
-                    while (r19 <= r26) {
-                        for (; r19 < r26; r19++) {
-                            if (r31 == mDE_get_pal_on_cursor(r20, r19, r25)) {
+                    while (adjScanX <= lineX1) {
+                        for (; adjScanX < lineX1; adjScanX++) {
+                            if (targetColor == mDE_get_pal_on_cursor(designOvl, adjScanX, lineY2)) {
                                 break;
                             }
                         }
-
-                        if (r31 != mDE_get_pal_on_cursor(r20, r19, r25)) {
+                        if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY2)) {
                             break;
                         }
-
-                        pos_tbl[r28].x0 = r19;
-
-                        for (; r19 <= r26; r19++) {
-                            if (r31 != mDE_get_pal_on_cursor(r20, r19, r25)) {
+                        scan = &scanStack[stackWriteIdx];
+                        scan->x0 = adjScanX;
+                        for (; adjScanX <= lineX1; adjScanX++) {
+                            if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY2)) {
                                 break;
                             }
                         }
-                        pos_tbl[r28].x1 = r19 - 1;
-                        pos_tbl[r28].y0 = r25;
-                        pos_tbl[r28].y1 = r22;
-                        r28++;
-                        if (r28 == mDE_DESIGN_TEXELS_2) {
-                            r28 = 0;
+                        scan->x1 = adjScanX - 1;
+                        scan->y0 = lineY2;
+                        scan->y1 = searchBoundX1; // Store reassigned searchBoundX1 (which is lineY)
+                        stackWriteIdx++;
+                        if (stackWriteIdx == mDE_DESIGN_TEXELS_2) {
+                            stackWriteIdx = 0;
                         }
                     }
                 }
             }
         }
-
-    } while (r29 != r28);
+    } while (stackReadIdx != stackWriteIdx);
 }
 
 void mDE_set_texture_template(mDE_Ovl_c* design_ovl, u8* param_2, int offsetX, int offsetY, int param_5, int param_6,
@@ -1987,9 +2012,10 @@ void mDE_move_tool_decide(mDE_Ovl_c* design_ovl) {
 }
 
 void mDE_move_Play(Submenu* submenu, mSM_MenuInfo_c* info) {
+    u32 trigger = submenu->overlay->menu_control.trigger;
     mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
     if (submenu->current_menu_type == mSM_OVL_DESIGN) {
-        if (submenu->overlay->menu_control.trigger & BUTTON_START) {
+        if (trigger & BUTTON_START) {
             design_ovl->_698 = 0;
             design_ovl->_680 = 0;
             design_ovl->_684 = 0;
@@ -2521,10 +2547,12 @@ void mDE_design_ovl_set_proc(Submenu* submenu) {
 void mDE_design_ovl_init(Submenu* submenu) {
     Submenu_Overlay_c* ovl = submenu->overlay;
     mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
-    ovl->menu_control.animation_flag = 0;
-    ovl->menu_info[mSM_OVL_DESIGN].proc_status = 0;
-    ovl->menu_info[mSM_OVL_DESIGN].next_proc_status = 1;
-    ovl->menu_info[mSM_OVL_DESIGN].move_drt = 5;
+    mSM_MenuInfo_c* menu_info = &ovl->menu_info[mSM_OVL_DESIGN];
+
+    ovl->menu_control.animation_flag = FALSE;
+    menu_info->proc_status = mSM_OVL_PROC_MOVE;
+    menu_info->next_proc_status = mSM_OVL_PROC_PLAY;
+    menu_info->move_drt = mSM_MOVE_IN_TOP;
     if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
         MaskCat_c* cat = Save_GetPointer(mask_cat);
         design_ovl->palette_no = 15;
@@ -2532,8 +2560,10 @@ void mDE_design_ovl_init(Submenu* submenu) {
         bcopy(&cat->design.design, &design_ovl->texture, sizeof(design_ovl->texture));
     } else {
         mNW_original_design_c* p;
-        design_ovl->image_no = mNW_get_image_no(submenu, submenu->param0);
+
+        design_ovl->image_no = (u8)mNW_get_image_no(submenu, submenu->param0);
         p = &Now_Private->my_org[design_ovl->image_no & 7];
+
         design_ovl->palette_no = p->palette;
         mNW_CopyOriginalTexture(&design_ovl->texture, p);
     }
@@ -2581,10 +2611,11 @@ void mDE_maskcat_init(MaskCat_c* mask_cat) {
 }
 
 void mDE_design_ovl_construct(Submenu* submenu) {
-    mDE_Ovl_c** ovl = &submenu->overlay->design_ovl;
-    if (*ovl == NULL) {
+    Submenu_Overlay_c* ovl = submenu->overlay;
+
+    if (ovl->design_ovl == NULL) {
         mem_clear((u8*)&de_ovl_data, sizeof(de_ovl_data), 0);
-        *ovl = &de_ovl_data;
+        ovl->design_ovl = &de_ovl_data;
     }
     mDE_design_ovl_init(submenu);
     mDE_design_ovl_set_proc(submenu);

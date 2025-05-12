@@ -68,7 +68,7 @@ static void Player_actor_sound_FootStep2(ACTOR* actor) {
     if (floorId >= 0) {
         if (mRmTp_SoundStepWalkSE(&actor->world.position) != 0) {
             sAdo_PlyWalkSeRoom(0xFF, &actor->world.position);
-        } else if (floorId < 0x56) {
+        } else if (floorId < FLOOR_ETC_END) {
             sAdo_PlyWalkSeRoom(floorId, &actor->world.position);
         }
     } else {
