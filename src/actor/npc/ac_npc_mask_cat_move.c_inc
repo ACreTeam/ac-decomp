@@ -1,0 +1,44 @@
+static void aNMC_set_painter_name_str() {
+  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+  mMsg_Set_free_str(msg_p, 0, Save_Get(mask_cat).design.creator_pid.player_name, 8);
+}
+
+static void aNMC_set_talk_info() {
+  u32 msg_num;
+  s32 mask_cat_talk_idx = Save_Get(mask_cat).talk_idx;
+  if ((Common_Get(spnpc_first_talk_flags) & (1 << aNPC_SPNPC_BIT_MASK_CAT))) {
+    if (mask_cat_talk_idx <= 0) {
+      mask_cat_talk_idx = 1;
+    }
+    msg_num = 0x31E5 + 4 * (mask_cat_talk_idx - 1) + RANDOM(3);
+  } else {
+    ++Save_Get(mask_cat).talk_idx;
+    msg_num = mask_cat_talk_idx * 4 + 0x31E4;
+  }
+  mDemo_Set_msg_num(msg_num);
+  aNMC_set_painter_name_str();
+}
+
+static void aNMC_talk_request(ACTOR* actorx, GAME* game) {
+  mDemo_Request(mDemo_TYPE_TALK, actorx, aNMC_set_talk_info);
+}
+
+static int aNMC_talk_init(ACTOR* actorx, GAME* game) {
+  Common_Get(spnpc_first_talk_flags) |= (1 << aNPC_SPNPC_BIT_MASK_CAT);
+  mDemo_Set_ListenAble();
+  return 1;
+}
+
+static int aNMC_talk_end_chk(ACTOR* actorx, GAME* game) {
+  s32 retValue = 0;
+
+  if (mDemo_Check(mDemo_TYPE_TALK, actorx) == 0)
+  {
+    retValue = 1;
+  }
+  return retValue;
+}
+
+static void aNMC_actor_move(ACTOR* actorx, GAME* game) {
+  CLIP(npc_clip)->move_proc(actorx, game);
+}
