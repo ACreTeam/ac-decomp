@@ -10,6 +10,25 @@
 extern "C" {
 #endif
 
+enum {
+    mDE_MODE_MAIN,
+    mDE_MODE_PALLET,
+    mDE_MODE_GRID,
+    mDE_MODE_TOOL,
+
+    mDE_MODE_NUM
+};
+
+enum {
+    mDE_MAIN_MODE_PEN,
+    mDE_MAIN_MODE_NURI,
+    mDE_MAIN_MODE_WAKU,
+    mDE_MAIN_MODE_MARK,
+    mDE_MAIN_MODE_UNDO,
+
+    mDE_MAIN_MODE_NUM
+};
+
 typedef void (*mDE_OVL_PROC)(mDE_Ovl_c* design_ovl);
 
 struct design_ovl_s {
@@ -52,7 +71,7 @@ struct design_ovl_s {
     u8 _6A4;
     u8 _6A5;
     u8 _6A6;
-    u8 _6A7;
+    u8 mode;
     u8 main_mode_act;
     // u8 pad[3];
     mDE_OVL_PROC act_proc;

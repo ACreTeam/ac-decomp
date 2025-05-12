@@ -8,6 +8,7 @@
 #include "m_common_data.h"
 #include "sys_matrix.h"
 #include "m_needlework_ovl.h"
+#include "m_editEndChk_ovl.h"
 
 #define mDE_POS_MIN 0
 #define mDE_POS_MAX 31
@@ -34,91 +35,154 @@ u16 mDE_SinCosTBL[] = {
     167,  171,  176,  181,  185,  189,  193,  197,  201,  205,  209,  212,  216,  219,  222,  225,  228,  231,  234,
     236,  238,  241,  243,  244,  246,  248,  249,  251,  252,  253,  254,  254,  255,  255,  255
 };
-u8 mDE_pen_2[] = { 1, 1, 1, 1 };
-u8 mDE_pen_3[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-u8 mDE_heart[] = { 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x01, 0x01, 0x01, 0x01,
-                   0x01, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-                   0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-                   0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x01, 0x01, 0x01,
-                   0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-                   0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00,
-                   0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                   0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00,
-                   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-u8 mDE_star[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00,
-                  0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x01, 0x01, 0x01,
-                  0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-                  0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01,
-                  0x01, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00,
-                  0x01, 0x01, 0x01, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00 };
-u8 mDE_circle[] = { 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01,
-                    0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
-                    0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-                    0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00,
-                    0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00 };
-u8 mDE_square[] = { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-                    0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-                    0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 };
-u8 mDE_kao1[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
-                  0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00,
-                  0x00, 0x00, 0x01, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
-                  0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x01, 0x01, 0x01,
-                  0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00,
-                  0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-                  0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-u8 mDE_kao2[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x01, 0x01, 0x01,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x01, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01,
-                  0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-u8 mDE_kao3[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
-                  0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x01, 0x01, 0x00, 0x01, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x01, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-                  0x00, 0x01, 0x01, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x01, 0x01,
-                  0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x01, 0x01, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-                  0x00, 0x00, 0x01, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-u8 mDE_kao4[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-u8 mDE_kao5[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
-                  0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
 // clang-format off
+u8 mDE_pen_2[] = {
+    1,1,
+    1,1,
+};
+
+u8 mDE_pen_3[] = {
+    1,1,1,
+    1,1,1,
+    1,1,1,
+};
+
+u8 mDE_heart[] = {
+    0,1,1,1,0,0,0,0,1,1,1,0,
+    1,1,1,1,1,0,0,1,1,1,1,1,
+    1,1,1,1,1,1,1,1,1,1,1,1,
+    1,1,1,1,1,1,1,1,1,1,1,1,
+    1,1,1,1,1,1,1,1,1,1,1,1,
+    0,1,1,1,1,1,1,1,1,1,1,0,
+    0,1,1,1,1,1,1,1,1,1,1,0,
+    0,0,1,1,1,1,1,1,1,1,0,0,
+    0,0,0,1,1,1,1,1,1,0,0,0,
+    0,0,0,0,1,1,1,1,0,0,0,0,
+    0,0,0,0,0,1,1,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+};
+
+u8 mDE_star[] = {
+    0,0,0,0,0,1,1,0,0,0,0,0,
+    0,0,0,0,0,1,1,0,0,0,0,0,
+    0,0,0,0,1,1,1,1,0,0,0,0,
+    0,0,0,0,1,1,1,1,0,0,0,0,
+    1,1,1,1,1,1,1,1,1,1,1,1,
+    0,1,1,1,1,1,1,1,1,1,1,0,
+    0,0,1,1,1,1,1,1,1,1,0,0,
+    0,0,0,1,1,1,1,1,1,0,0,0,
+    0,0,1,1,1,1,1,1,1,1,0,0,
+    0,0,1,1,1,0,0,1,1,1,0,0,
+    0,1,1,1,0,0,0,0,1,1,1,0,
+    0,1,1,0,0,0,0,0,0,1,1,0,
+};
+
+u8 mDE_circle[] = {
+    0,0,0,0,1,1,1,1,0,0,0,0,
+    0,0,1,1,0,0,0,0,1,1,0,0,
+    0,1,0,0,0,0,0,0,0,0,1,0,
+    0,1,0,0,0,0,0,0,0,0,1,0,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    0,1,0,0,0,0,0,0,0,0,1,0,
+    0,1,0,0,0,0,0,0,0,0,1,0,
+    0,0,1,1,0,0,0,0,1,1,0,0,
+    0,0,0,0,1,1,1,1,0,0,0,0,
+};
+
+u8 mDE_square[] = {
+    1,1,1,1,1,1,1,1,1,1,1,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,0,0,0,0,0,0,0,0,0,0,1,
+    1,1,1,1,1,1,1,1,1,1,1,1,
+};
+
+u8 mDE_kao1[] = {
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,1,1,1,1,0,0,0,0,
+    0,0,0,1,0,0,0,0,1,0,0,0,
+    0,0,1,0,0,0,1,1,1,1,0,0,
+    0,0,1,0,0,1,1,1,1,1,0,0,
+    0,0,1,0,0,1,1,1,1,1,0,0,
+    0,0,1,0,0,1,1,1,1,1,0,0,
+    0,0,1,0,0,1,1,1,1,1,0,0,
+    0,0,1,0,0,0,1,1,1,1,0,0,
+    0,0,0,1,0,0,0,0,1,0,0,0,
+    0,0,0,0,1,1,1,1,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+};
+
+u8 mDE_kao2[] = {
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,1,0,0,0,0,0,0,0,0,0,
+    0,0,1,0,0,1,1,1,0,0,0,0,
+    0,0,0,1,1,1,1,1,1,0,0,0,
+    0,0,0,0,1,0,0,1,1,0,0,0,
+    0,0,0,0,1,0,0,1,1,0,0,0,
+    0,0,0,0,1,1,1,1,1,0,0,0,
+    0,0,0,0,1,1,1,0,1,0,0,0,
+    0,0,0,0,1,1,1,0,1,0,0,0,
+    0,0,0,0,1,1,1,1,1,0,0,0,
+    0,0,0,0,0,1,1,1,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+};
+
+u8 mDE_kao3[] = {
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,1,1,1,0,0,0,0,
+    0,0,0,0,1,0,0,0,1,0,0,0,
+    0,0,0,1,0,1,1,1,0,1,0,0,
+    0,0,0,1,0,1,1,1,0,1,0,0,
+    0,0,0,1,0,1,1,1,0,1,0,0,
+    0,0,0,1,0,1,1,1,0,1,0,0,
+    0,0,0,0,1,0,0,0,1,0,0,0,
+    0,0,0,1,0,1,1,1,0,1,0,0,
+    0,0,0,1,0,0,1,0,0,1,0,0,
+    0,0,0,0,0,0,1,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+};
+
+u8 mDE_kao4[] = {
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,1,1,0,0,0,0,0,
+    0,0,0,0,0,1,1,0,0,0,0,0,
+    0,0,0,0,1,1,1,1,0,0,0,0,
+    0,0,0,0,1,1,1,1,0,0,0,0,
+    0,0,0,1,1,1,1,1,1,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+};
+
+u8 mDE_kao5[] = {
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,1,0,0,0,0,0,0,1,0,0,
+    0,0,0,1,0,0,0,0,1,0,0,0,
+    0,0,0,0,1,1,1,1,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,
+};
+
 u8 mDE_paint_mizutama[0x100] = { 
     0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0, 
     0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0, 
@@ -188,13 +252,6 @@ enum {
     mDE_MOVE_DIR_NUM
 };
 
-enum {
-    mDE_MAIN_MODE_0,
-    mDE_MAIN_MODE_1,
-    mDE_MAIN_MODE_2,
-    mDE_MAIN_MODE_3,
-    mDE_MAIN_MODE_4,
-};
 void mDE_setup_action(mDE_Ovl_c* design_ovl, int param_2);
 
 static void mDE_pallet_RGB5A3_to_RGB24(mDE_Ovl_c* design_ovl) {
@@ -266,7 +323,7 @@ static int mDE_judge_stick_nuetral(mDE_Ovl_c* design_ovl) {
 static int mDE_cursor_move_check(mDE_Ovl_c* design_ovl, int move_dir) {
     int min = 0;
 
-    if (design_ovl->main_mode_act == mDE_MAIN_MODE_0) {
+    if (design_ovl->main_mode_act == mDE_MAIN_MODE_PEN) {
         switch (design_ovl->_6A0) {
             case 1:
                 min = 1;
@@ -351,7 +408,7 @@ static void mDE_cursor_analog_move(mDE_Ovl_c* design_ovl) {
     int x;
     int y;
 
-    if (design_ovl->main_mode_act == mDE_MAIN_MODE_0) {
+    if (design_ovl->main_mode_act == mDE_MAIN_MODE_PEN) {
         switch (design_ovl->_6A0) {
             case 1:
                 bounds = 1;
@@ -577,17 +634,18 @@ static void mDE_farbado(mDE_Ovl_c* designOvl, int startX, int startY, int fillCo
     int stackReadIdx = 0;
     int stackWriteIdx = 1;
     int targetColor;
-    int adjScanX; // Used as X iterator for adjacent lines, or holds lineY for new stack entry's seedLineY (for line above)
+    int adjScanX; // Used as X iterator for adjacent lines, or holds lineY for new stack entry's seedLineY (for line
+                  // above)
     int iterX;
     mDE_bounds_c* scan;
     // int adjLineY;
-    int lineX0;         // Current line's start X, extended left during scan
-    int lineX1;         // Current line's end X, extended right during scan
-    int lineY;          // Current line's Y
+    int lineX0; // Current line's start X, extended left during scan
+    int lineX1; // Current line's end X, extended right during scan
+    int lineY;  // Current line's Y
     int lineY2;
-    int seedLineY;      // Y of the line that seeded the currentLine; reassigned in one path
-    int searchBoundX0;  // lineX0 - 1, limit for leftward scan on adjacent lines
-    int searchBoundX1;  // lineX1 + 1, limit for rightward scan on adjacent lines; reassigned in one path
+    int seedLineY;     // Y of the line that seeded the currentLine; reassigned in one path
+    int searchBoundX0; // lineX0 - 1, limit for leftward scan on adjacent lines
+    int searchBoundX1; // lineX1 + 1, limit for rightward scan on adjacent lines; reassigned in one path
 
     scanStack[0].x0 = startX;
     scanStack[0].x1 = startX;
@@ -601,9 +659,9 @@ static void mDE_farbado(mDE_Ovl_c* designOvl, int startX, int startY, int fillCo
         lineX1 = currentLine->x1;
         lineY = currentLine->y0;
         lineY2 = currentLine->y0;
-        seedLineY = currentLine->y1;      // Y of the line that generated this currentLine
-        searchBoundX0 = lineX0 - 1;     // Boundary for searching left on adjacent lines
-        searchBoundX1 = lineX1 + 1;     // Boundary for searching right on adjacent lines
+        seedLineY = currentLine->y1; // Y of the line that generated this currentLine
+        searchBoundX0 = lineX0 - 1;  // Boundary for searching left on adjacent lines
+        searchBoundX1 = lineX1 + 1;  // Boundary for searching right on adjacent lines
 
         if (++stackReadIdx == mDE_DESIGN_TEXELS_2) {
             stackReadIdx = 0;
@@ -644,9 +702,11 @@ static void mDE_farbado(mDE_Ovl_c* designOvl, int startX, int startY, int fillCo
             if (--lineY >= mDE_POS_MIN) { // Check if line above is within bounds
                 if (lineY == seedLineY) { // Came from line above, now looking further above
                     // mDE_bounds_c* scan;
-                    adjScanX = lineX0; //iterX = lineX0;
-                    iterX = lineY + 1; // adjScanX now effectively stores lineY (current line's Y) to be seed for new stack entry
-                    
+                    adjScanX = lineX0; // iterX = lineX0;
+                    iterX =
+                        lineY +
+                        1; // adjScanX now effectively stores lineY (current line's Y) to be seed for new stack entry
+
                     while (adjScanX <= searchBoundX0) { // Scan left of the original lineX0
                         for (; adjScanX < searchBoundX0; adjScanX++) {
                             if (targetColor == mDE_get_pal_on_cursor(designOvl, adjScanX, lineY)) {
@@ -675,9 +735,9 @@ static void mDE_farbado(mDE_Ovl_c* designOvl, int startX, int startY, int fillCo
 
                     // issue is here, adjScanX should be r17 and scan should be r18
                     adjScanX = searchBoundX1; // Start scan from right of original lineX1
-                    iterX = lineY + 1; // adjScanX stores lineY
+                    iterX = lineY + 1;        // adjScanX stores lineY
 
-                    while (adjScanX <= lineX1) { // Scan right part (relative to original lineX1)
+                    while (adjScanX <= lineX1) {                // Scan right part (relative to original lineX1)
                         for (; adjScanX < lineX1; adjScanX++) { // Corrected from original r26 to lineX1
                             if (targetColor == mDE_get_pal_on_cursor(designOvl, adjScanX, lineY)) {
                                 break;
@@ -739,7 +799,7 @@ static void mDE_farbado(mDE_Ovl_c* designOvl, int startX, int startY, int fillCo
             // adjLineY = lineY + 1;
             // adjLineY = lineY2;
             if (++lineY2 <= (mDE_POS_MAX + 1)) { // Check if line below is within bounds
-                if (lineY2 == seedLineY) { // Came from line below, now looking further below
+                if (lineY2 == seedLineY) {       // Came from line below, now looking further below
                     // mDE_bounds_c* scan;
                     adjScanX = lineX0;
                     seedLineY = lineY2 - 1; // seedLineY is reassigned to lineY (current line's Y)
@@ -755,8 +815,8 @@ static void mDE_farbado(mDE_Ovl_c* designOvl, int startX, int startY, int fillCo
                         }
                         scan = &scanStack[stackWriteIdx];
                         scan->x0 = adjScanX;
-                        // Original code had r26 here, which is lineX1. Assuming scan should go up to searchBoundX0 or similar limit.
-                        // Sticking to original logic as much as possible, r26 (lineX1) is used.
+                        // Original code had r26 here, which is lineX1. Assuming scan should go up to searchBoundX0 or
+                        // similar limit. Sticking to original logic as much as possible, r26 (lineX1) is used.
                         for (; adjScanX <= searchBoundX0; adjScanX++) {
                             if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY2)) {
                                 break;
@@ -784,7 +844,7 @@ static void mDE_farbado(mDE_Ovl_c* designOvl, int startX, int startY, int fillCo
                         if (targetColor != mDE_get_pal_on_cursor(designOvl, adjScanX, lineY2)) {
                             break;
                         }
-                        
+
                         scan = &scanStack[stackWriteIdx];
                         scan->x0 = adjScanX;
                         for (; adjScanX <= lineX1; adjScanX++) {
@@ -1406,7 +1466,7 @@ BOOL mDE_mode_tool_check(mDE_Ovl_c* design_ovl, int param_2, int param_3, int pa
     }
     x_values[4] = 0;
     y_values[4] = 1;
-    if (design_ovl->_6A7 == 3) {
+    if (design_ovl->mode == 3) {
         if (gamePT->pads[PAD0].now.stick_x < 0 && design_ovl->_69E > param_2) {
             moved = TRUE;
             design_ovl->_69E--;
@@ -1438,7 +1498,7 @@ BOOL mDE_mode_tool_check(mDE_Ovl_c* design_ovl, int param_2, int param_3, int pa
                 design_ovl->_69F = 0;
             }
         }
-    } else if (design_ovl->_6A7 == 0) {
+    } else if (design_ovl->mode == 0) {
         if (chkTrigger(BUTTON_DLEFT)) {
             if (design_ovl->_69E > param_2) {
                 moved = TRUE;
@@ -1483,10 +1543,16 @@ BOOL mDE_mode_tool_check(mDE_Ovl_c* design_ovl, int param_2, int param_3, int pa
     return moved;
 }
 
-void mDE_main_mode_setup_action(mDE_Ovl_c* design_ovl, int param_2) {
-    static mDE_OVL_PROC process[] = { mDE_main_pen_move, mDE_main_nuri_move, mDE_main_waku_move, mDE_main_mark_move,
-                                      mDE_main_undo_move };
-    if (param_2 != 2) {
+void mDE_main_mode_setup_action(mDE_Ovl_c* design_ovl, int mode) {
+    static mDE_OVL_PROC process[] = {
+        mDE_main_pen_move,
+        mDE_main_nuri_move,
+        mDE_main_waku_move,
+        mDE_main_mark_move,
+        mDE_main_undo_move,
+    };
+
+    if (mode != mDE_MAIN_MODE_WAKU) {
         design_ovl->_69A = 0;
         design_ovl->_698 = 0;
         design_ovl->_680 = 0;
@@ -1495,12 +1561,12 @@ void mDE_main_mode_setup_action(mDE_Ovl_c* design_ovl, int param_2) {
         design_ovl->_68C = 0;
     }
     design_ovl->_6DA = 0;
-    design_ovl->main_mode_act = param_2;
-    design_ovl->main_mode_proc = process[param_2];
+    design_ovl->main_mode_act = mode;
+    design_ovl->main_mode_proc = process[mode];
 }
 
 void mde_main_move_sound(mDE_Ovl_c* design_ovl) {
-    if (chkButton(BUTTON_A) && design_ovl->main_mode_act == mDE_MAIN_MODE_0) {
+    if (chkButton(BUTTON_A) && design_ovl->main_mode_act == mDE_MAIN_MODE_PEN) {
         switch (design_ovl->_6A0) {
             case 1: {
                 sAdo_SysTrgStart(0x451);
@@ -1636,7 +1702,7 @@ void mDE_mode_stick_control_analog(mDE_Ovl_c* design_ovl) {
 void mDE_mode_main_move(mDE_Ovl_c* design_ovl) {
     design_ovl->move_pR = gamePT->mcon.move_pR;
     design_ovl->_6C4 = 1;
-    if (design_ovl->main_mode_act == mDE_MAIN_MODE_0 && chkButton(BUTTON_A)) {
+    if (design_ovl->main_mode_act == mDE_MAIN_MODE_PEN && chkButton(BUTTON_A)) {
         design_ovl->_6C4 = 3;
         if (GETREG(NMREG, 0x13)) {
             if (GETREG(NMREG, 0x12)) {
@@ -1673,7 +1739,7 @@ void mDE_mode_main_move(mDE_Ovl_c* design_ovl) {
         if (design_ovl->_69A && design_ovl->_699 != 9) {
             mDE_mode_stick_control(design_ovl);
             design_ovl->_6D9 = design_ovl->_6D8;
-        } else if (design_ovl->main_mode_act == mDE_MAIN_MODE_0 && chkButton(BUTTON_A)) {
+        } else if (design_ovl->main_mode_act == mDE_MAIN_MODE_PEN && chkButton(BUTTON_A)) {
             if (design_ovl->_6DC) {
                 mDE_mode_stick_control_analog(design_ovl);
             } else {
@@ -1744,7 +1810,7 @@ void mDE_mode_main_move(mDE_Ovl_c* design_ovl) {
 
     if (design_ovl->_69F == 0) {
         if (mDE_mode_tool_check(design_ovl, 0, 3, 0, 6)) {
-            sAdo_SysTrgStart(0x32);
+            sAdo_SysTrgStart(NA_SE_32);
         }
         if (chkTrigger(BUTTON_DLEFT) || chkTrigger(BUTTON_DRIGHT)) {
             design_ovl->_6A0 = design_ovl->_69E;
@@ -1752,7 +1818,7 @@ void mDE_mode_main_move(mDE_Ovl_c* design_ovl) {
         mDE_mode_main_shortcut_tool(design_ovl, 0);
     } else if (design_ovl->_69F == 1) {
         if (mDE_mode_tool_check(design_ovl, 0, 6, 3, 5)) {
-            sAdo_SysTrgStart(0x32);
+            sAdo_SysTrgStart(NA_SE_32);
         }
         if (chkTrigger(BUTTON_DLEFT) || chkTrigger(BUTTON_DRIGHT)) {
             design_ovl->_6A1 = design_ovl->_69E;
@@ -1761,11 +1827,11 @@ void mDE_mode_main_move(mDE_Ovl_c* design_ovl) {
     } else if (design_ovl->_69F == 2) {
         if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
             if (mDE_mode_tool_check(design_ovl, 0, 5, 6, 5)) {
-                sAdo_SysTrgStart(0x32);
+                sAdo_SysTrgStart(NA_SE_32);
             }
         } else {
             if (mDE_mode_tool_check(design_ovl, 0, 5, 6, 4)) {
-                sAdo_SysTrgStart(0x32);
+                sAdo_SysTrgStart(NA_SE_32);
             }
         }
         if (chkTrigger(BUTTON_DLEFT) || chkTrigger(BUTTON_DRIGHT)) {
@@ -1775,11 +1841,11 @@ void mDE_mode_main_move(mDE_Ovl_c* design_ovl) {
     } else if (design_ovl->_69F == 3) {
         if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
             if (mDE_mode_tool_check(design_ovl, 0, 5, 5, 1)) {
-                sAdo_SysTrgStart(0x32);
+                sAdo_SysTrgStart(NA_SE_32);
             }
         } else {
             if (mDE_mode_tool_check(design_ovl, 0, 4, 5, 1)) {
-                sAdo_SysTrgStart(0x32);
+                sAdo_SysTrgStart(NA_SE_32);
             }
         }
         if (chkTrigger(BUTTON_DLEFT) || chkTrigger(BUTTON_DRIGHT)) {
@@ -1789,7 +1855,7 @@ void mDE_mode_main_move(mDE_Ovl_c* design_ovl) {
     } else if (design_ovl->_69F == 4) {
         if (mDE_mode_tool_check(design_ovl, 0, 1, 5, 1) &&
             (chkTrigger(BUTTON_DLEFT) == 0 && chkTrigger(BUTTON_DRIGHT) == 0)) {
-            sAdo_SysTrgStart(0x32);
+            sAdo_SysTrgStart(NA_SE_32);
         }
         mDE_mode_main_shortcut_tool(design_ovl, 4);
     }
@@ -1899,78 +1965,84 @@ void mDE_mode_tool_move(mDE_Ovl_c* design_ovl) {
     if (mDE_judge_stick(design_ovl)) {
         if (design_ovl->_69F == 0) {
             if (mDE_mode_tool_check(design_ovl, 0, 3, 0, 6)) {
-                sAdo_SysTrgStart(0x32);
+                sAdo_SysTrgStart(NA_SE_32);
             }
         } else if (design_ovl->_69F == 1) {
             if (mDE_mode_tool_check(design_ovl, 0, 6, 3, 5)) {
-                sAdo_SysTrgStart(0x32);
+                sAdo_SysTrgStart(NA_SE_32);
             }
         } else if (design_ovl->_69F == 2) {
             if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
                 if (mDE_mode_tool_check(design_ovl, 0, 5, 6, 5)) {
-                    sAdo_SysTrgStart(0x32);
+                    sAdo_SysTrgStart(NA_SE_32);
                 }
             } else {
                 if (mDE_mode_tool_check(design_ovl, 0, 5, 6, 4)) {
-                    sAdo_SysTrgStart(0x32);
+                    sAdo_SysTrgStart(NA_SE_32);
                 }
             }
         } else if (design_ovl->_69F == 3) {
             if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
                 if (mDE_mode_tool_check(design_ovl, 0, 5, 5, 1)) {
-                    sAdo_SysTrgStart(0x32);
+                    sAdo_SysTrgStart(NA_SE_32);
                 }
             } else {
                 if (mDE_mode_tool_check(design_ovl, 0, 4, 5, 1)) {
-                    sAdo_SysTrgStart(0x32);
+                    sAdo_SysTrgStart(NA_SE_32);
                 }
             }
         } else if (design_ovl->_69F == 4) {
             if (mDE_mode_tool_check(design_ovl, 0, 1, 5, 1)) {
-                sAdo_SysTrgStart(0x32);
+                sAdo_SysTrgStart(NA_SE_32);
             }
         }
     }
 
     if (chkTrigger(BUTTON_A)) {
-        sAdo_SysTrgStart(0x33);
+        sAdo_SysTrgStart(NA_SE_33);
         switch (design_ovl->_69F) {
             case 0: {
                 design_ovl->_6A0 = design_ovl->_69E;
-                mDE_main_mode_setup_action(design_ovl, 0);
-                mDE_setup_action(design_ovl, 0);
+                mDE_main_mode_setup_action(design_ovl, mDE_MAIN_MODE_PEN);
+                mDE_setup_action(design_ovl, mDE_MODE_MAIN);
             } break;
             case 1: {
                 design_ovl->_6A1 = design_ovl->_69E;
-                mDE_main_mode_setup_action(design_ovl, 1);
-                mDE_setup_action(design_ovl, 0);
+                mDE_main_mode_setup_action(design_ovl, mDE_MAIN_MODE_NURI);
+                mDE_setup_action(design_ovl, mDE_MODE_MAIN);
             } break;
             case 2: {
                 design_ovl->_6A2 = design_ovl->_69E;
-                mDE_main_mode_setup_action(design_ovl, 2);
-                mDE_setup_action(design_ovl, 0);
+                mDE_main_mode_setup_action(design_ovl, mDE_MAIN_MODE_WAKU);
+                mDE_setup_action(design_ovl, mDE_MODE_MAIN);
             } break;
             case 3: {
                 design_ovl->_6A3 = design_ovl->_69E;
-                mDE_main_mode_setup_action(design_ovl, 3);
-                mDE_setup_action(design_ovl, 0);
+                mDE_main_mode_setup_action(design_ovl, mDE_MAIN_MODE_MARK);
+                mDE_setup_action(design_ovl, mDE_MODE_MAIN);
             } break;
             case 4: {
-                mDE_main_mode_setup_action(design_ovl, 4);
-                mDE_setup_action(design_ovl, 0);
+                mDE_main_mode_setup_action(design_ovl, mDE_MAIN_MODE_UNDO);
+                mDE_setup_action(design_ovl, mDE_MODE_MAIN);
             } break;
         }
     }
 }
 
-void mDE_setup_action(mDE_Ovl_c* design_ovl, int param_2) {
-    static mDE_OVL_PROC process[] = { mDE_mode_main_move, mDE_mode_pallet_move, mDE_mode_grid_move,
-                                      mDE_mode_tool_move };
-    if (param_2 >= 4) {
-        param_2 = 0;
+void mDE_setup_action(mDE_Ovl_c* design_ovl, int mode) {
+    static mDE_OVL_PROC process[] = {
+        mDE_mode_main_move,
+        mDE_mode_pallet_move,
+        mDE_mode_grid_move,
+        mDE_mode_tool_move,
+    };
+
+    if (mode >= mDE_MODE_NUM) {
+        mode = mDE_MODE_MAIN;
     }
-    if (param_2 < 0) {
-        param_2 = 3;
+
+    if (mode < mDE_MODE_MAIN) {
+        mode = mDE_MODE_TOOL;
     }
     design_ovl->_6CC = 0;
     design_ovl->_6CD = 0;
@@ -1979,8 +2051,8 @@ void mDE_setup_action(mDE_Ovl_c* design_ovl, int param_2) {
     design_ovl->_684 = 0;
     design_ovl->_688 = 0;
     design_ovl->_68C = 0;
-    design_ovl->_6A7 = param_2;
-    design_ovl->act_proc = process[param_2];
+    design_ovl->mode = mode;
+    design_ovl->act_proc = process[mode];
 }
 
 void mDE_move_Move(Submenu* submenu, mSM_MenuInfo_c* info) {
@@ -1991,22 +2063,22 @@ void mDE_move_tool_decide(mDE_Ovl_c* design_ovl) {
     switch (design_ovl->_69F) {
         case 0: {
             design_ovl->_6A0 = design_ovl->_69E;
-            mDE_main_mode_setup_action(design_ovl, 0);
+            mDE_main_mode_setup_action(design_ovl, mDE_MAIN_MODE_PEN);
         } break;
         case 1: {
             design_ovl->_6A1 = design_ovl->_69E;
-            mDE_main_mode_setup_action(design_ovl, 1);
+            mDE_main_mode_setup_action(design_ovl, mDE_MAIN_MODE_NURI);
         } break;
         case 2: {
             design_ovl->_6A2 = design_ovl->_69E;
-            mDE_main_mode_setup_action(design_ovl, 2);
+            mDE_main_mode_setup_action(design_ovl, mDE_MAIN_MODE_WAKU);
         } break;
         case 3: {
             design_ovl->_6A3 = design_ovl->_69E;
-            mDE_main_mode_setup_action(design_ovl, 3);
+            mDE_main_mode_setup_action(design_ovl, mDE_MAIN_MODE_MARK);
         } break;
         case 4: {
-            mDE_main_mode_setup_action(design_ovl, 4);
+            mDE_main_mode_setup_action(design_ovl, mDE_MAIN_MODE_UNDO);
         } break;
     }
 }
@@ -2023,23 +2095,23 @@ void mDE_move_Play(Submenu* submenu, mSM_MenuInfo_c* info) {
             design_ovl->_68C = 0;
             design_ovl->_6CC = 0;
             design_ovl->_6CD = 0;
-            mSM_open_submenu(submenu, 0xf, 4, 0);
+            mSM_open_submenu(submenu, mSM_OVL_EDITENDCHK, mEE_TYPE_ORIGINAL_DESIGN, 0);
             info->proc_status = mSM_OVL_PROC_WAIT;
-            sAdo_SysTrgStart(2);
+            sAdo_SysTrgStart(NA_SE_MENU_EXIT);
         } else if (chkTrigger(BUTTON_R)) {
             if (design_ovl->_6A5) {
                 design_ovl->_6A4 = design_ovl->_6A5;
             }
-            sAdo_SysTrgStart(0x37);
+            sAdo_SysTrgStart(NA_SE_37);
             mDE_move_tool_decide(design_ovl);
-            mDE_setup_action(design_ovl, design_ovl->_6A7 + 1);
+            mDE_setup_action(design_ovl, design_ovl->mode + 1);
         } else if (chkTrigger(BUTTON_L)) {
             if (design_ovl->_6A5) {
                 design_ovl->_6A4 = design_ovl->_6A5;
             }
-            sAdo_SysTrgStart(0x37);
+            sAdo_SysTrgStart(NA_SE_37);
             mDE_move_tool_decide(design_ovl);
-            mDE_setup_action(design_ovl, design_ovl->_6A7 - 1);
+            mDE_setup_action(design_ovl, design_ovl->mode - 1);
         } else {
             design_ovl->act_proc(design_ovl);
             if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
@@ -2058,7 +2130,7 @@ void mDE_move_Wait(Submenu* submenu, mSM_MenuInfo_c* info) {
         overlay->menu_info[mSM_OVL_EDITENDCHK].next_proc_status == mSM_OVL_PROC_END) {
         switch (overlay->menu_info[mSM_OVL_EDITENDCHK].data1) {
             case 0: {
-                overlay->move_chg_base_proc(info, 6);
+                overlay->move_chg_base_proc(info, mSM_MOVE_OUT_BOTTOM);
                 if (Save_Get(scene_no) == SCENE_START_DEMO3 || GETREG(NMREG, 0x5f)) {
                     mDE_save_maskcat_texture(design_ovl);
                     if (GETREG(NMREG, 0x5f)) {
@@ -2080,7 +2152,7 @@ void mDE_move_Wait(Submenu* submenu, mSM_MenuInfo_c* info) {
                 info->proc_status = mSM_OVL_PROC_PLAY;
             } break;
             default: {
-                overlay->move_chg_base_proc(info, 6);
+                overlay->move_chg_base_proc(info, mSM_MOVE_OUT_BOTTOM);
             } break;
         }
     }
@@ -2091,8 +2163,14 @@ void mDE_move_End(Submenu* submenu, mSM_MenuInfo_c* info) {
 }
 
 void mDE_design_ovl_move(Submenu* submenu) {
-    static mSM_MOVE_PROC ovl_move_proc[] = { &mDE_move_Move, &mDE_move_Play, &mDE_move_Wait, (mSM_MOVE_PROC)&none_proc1,
-                                             &mDE_move_End };
+    static mSM_MOVE_PROC ovl_move_proc[] = {
+        &mDE_move_Move,
+        &mDE_move_Play,
+        &mDE_move_Wait,
+        (mSM_MOVE_PROC)&none_proc1,
+        &mDE_move_End,
+    };
+
     mSM_MenuInfo_c* overlay = &submenu->overlay->menu_info[mSM_OVL_DESIGN];
     overlay->pre_move_func(submenu);
     ovl_move_proc[overlay->proc_status](submenu, overlay);
@@ -2142,7 +2220,7 @@ void mDE_set_frame_tool_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, des_win_before);
-    if (design_ovl->_6A7 == 3) {
+    if (design_ovl->mode == mDE_MODE_TOOL) {
         gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, tool_pen_table[0]);
         gSPSegment(POLY_OPA_DISP++, ANIME_2_TXT_SEG, tool_nuri_table[0]);
         gSPSegment(POLY_OPA_DISP++, ANIME_3_TXT_SEG, tool_waku_table[0]);
@@ -2192,7 +2270,7 @@ void mDE_set_frame_suuji_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) 
     Matrix_translate(menu->position[0], menu->position[1], 140.f, TRUE);
     OPEN_POLY_OPA_DISP(graph);
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    if (design_ovl->_6A7 == 1) {
+    if (design_ovl->mode == mDE_MODE_PALLET) {
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, 215, 30, 30, 255);
     } else {
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 255, 245, 215, 180);
@@ -2227,7 +2305,7 @@ void mDE_set_frame_mark_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
     OPEN_POLY_OPA_DISP(graph);
     gSPDisplayList(POLY_OPA_DISP++, des_win_before);
     Matrix_push();
-    if (design_ovl->_6A7 == 3) {
+    if (design_ovl->mode == mDE_MODE_TOOL) {
         Matrix_translate(-112.f + design_ovl->_69E * 0x18, 16.f - design_ovl->_69F * 0x18, 0.f, TRUE);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 185, 50, 50, 255);
@@ -2241,7 +2319,7 @@ void mDE_set_frame_mark_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
     Matrix_push();
     Matrix_translate(110.f, 0x3f - design_ovl->_6A4 * 10, 0.f, TRUE);
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    if (design_ovl->_6A7 != 1) {
+    if (design_ovl->mode != mDE_MODE_PALLET) {
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 0xcd, 0xb9, 0xb9, 255);
         gDPSetEnvColor(POLY_OPA_DISP++, 105, 85, 115, 255);
     } else {
@@ -2250,7 +2328,7 @@ void mDE_set_frame_mark_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
     }
     gSPDisplayList(POLY_OPA_DISP++, des_win_marking2T_model);
     Matrix_pull();
-    if (design_ovl->_6A7 == 1) {
+    if (design_ovl->mode == mDE_MODE_PALLET) {
         Matrix_push();
         if (design_ovl->_6A5 == 0) {
             Matrix_translate(110.f, 71.f, 0.f, TRUE);
@@ -2318,7 +2396,7 @@ void mDE_set_frame_cursor_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu)
                                    des_cursor_kao3T_model, des_cursor_kao4_model,  des_cursor_kao5_model };
     GRAPH* graph = game->graph;
     mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
-    if (design_ovl->_6A7 == 0) {
+    if (design_ovl->mode == 0) {
         if (design_ovl->_698 != 0) {
             if (design_ovl->_699 != 9) {
                 int a, b;
@@ -2489,7 +2567,7 @@ void mDE_set_frame_main_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, des_win_before_model);
     for (i = 0; i < ARRAY_COUNT(area_table); i++) {
-        if (i == design_ovl->_6A7) {
+        if (i == design_ovl->mode) {
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 0x28, 0xeb, 0xa0, 0xb4);
         } else {
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 0x5a, 0x46, 0x28, 0xb4);
@@ -2571,7 +2649,7 @@ void mDE_design_ovl_init(Submenu* submenu) {
     design_ovl->palette_p = mNW_PaletteIdx2Palette(design_ovl->palette_no);
     mDE_pallet_RGB5A3_to_RGB24(design_ovl);
     design_ovl->_69D = 1;
-    design_ovl->_6A7 = 0;
+    design_ovl->mode = 0;
     design_ovl->_6A4 = 1;
     design_ovl->_6A5 = 1;
     design_ovl->_6CC = 0;
@@ -2582,8 +2660,8 @@ void mDE_design_ovl_init(Submenu* submenu) {
     design_ovl->_6D8 = 0;
     design_ovl->_6D9 = 0;
     design_ovl->_6DA = 0;
-    mDE_setup_action(design_ovl, 0);
-    mDE_main_mode_setup_action(design_ovl, 0);
+    mDE_setup_action(design_ovl, mDE_MODE_MAIN);
+    mDE_main_mode_setup_action(design_ovl, mDE_MAIN_MODE_PEN);
     design_ovl->_650 = 75;
     design_ovl->_654 = -75;
     design_ovl->_660 = 77.5f;
