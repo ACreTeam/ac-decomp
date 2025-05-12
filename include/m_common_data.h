@@ -164,7 +164,7 @@ typedef struct Save_s {
     /* 0x024186 */ lbRTC_day_t rainbow_day;
     /* 0x024187 */ u8 rainbow_reserved;
     /* 0x024188 */ u8 _24188;
-    /* 0x024189 */ u8 _24189;
+    /* 0x024189 */ u8 first_present;
     /* 0x02418A */ u8 town_day;
     /* 0x02418B */ u8 _2418B[0x24198 - 0x2418B];
     /* 0x024198 */ OSTime travel_hard_time;

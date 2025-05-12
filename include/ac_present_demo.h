@@ -20,18 +20,27 @@ enum {
     aPRD_TYPE_NUM
 };
 
+enum {
+    aPRD_ACTION_FIRST_SET,
+    aPRD_ACTION_PL_COME_OUT_WAIT,
+    aPRD_ACTION_PRESENT_WAIT,
+    aPRD_ACTION_RETIRE_NPC_WAIT,
+
+    aPRD_ACTION_NUM
+};
+
 typedef struct present_demo_actor_s PRESENT_DEMO_ACTOR;
 
 typedef void (*aPRD_ACTION_PROC)(PRESENT_DEMO_ACTOR* present_demo, GAME* game);
 
 struct present_demo_actor_s {
-    ACTOR actor_class;
-    int action;
-    aPRD_ACTION_PROC action_proc;
-    ACTOR* world_actor;
-    int _180;
-    int type;
-    mActor_name_t present;
+    /* 0x000 */ ACTOR actor_class;
+    /* 0x174 */ int action;
+    /* 0x178 */ aPRD_ACTION_PROC action_proc;
+    /* 0x17C */ ACTOR* world_actor;
+    /* 0x180 */ int _180;
+    /* 0x184 */ int type;
+    /* 0x188 */ mActor_name_t present;
 };
 
 extern ACTOR_PROFILE Present_Demo_Profile;

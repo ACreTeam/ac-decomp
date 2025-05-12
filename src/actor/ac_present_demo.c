@@ -5,15 +5,6 @@
 #include "m_soncho.h"
 #include "m_player_lib.h"
 
-enum {
-    aPRD_ACTION_FIRST_SET,
-    aPRD_ACTION_PL_COME_OUT_WAIT,
-    aPRD_ACTION_PRESENT_WAIT,
-    aPRD_ACTION_RETIRE_NPC_WAIT,
-
-    aPRD_ACTION_NUM
-};
-
 static void aPRD_actor_ct(ACTOR* actorx, GAME* game);
 static void aPRD_actor_dt(ACTOR* actorx, GAME* game);
 static void aPRD_actor_move(ACTOR* actorx, GAME* game);
