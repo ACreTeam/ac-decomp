@@ -2,8 +2,10 @@
 #define M_DIARY_OVL_H
 
 #include "types.h"
+#include "m_submenu.h"
 #include "m_diary_ovl_h.h"
 #include "m_diary.h"
+#include "m_card.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -16,13 +18,15 @@ enum {
 };
 
 struct diary_ovl_s {
-    mDi_data_c* data;
+    mCD_keep_diary_c* data;
     u8 field;
     u8 _05;
     s16 entry_len[mDI_FIELD_NUM];
     mDi_entry_c* current_entry;
-    int _0C;
-    int _10;
+    u32 _0C;
+    u8 _10;
+    u8 _11;
+    u8 _12;
     int _14;
     int _18;
     s16 move_proc;
@@ -38,8 +42,8 @@ struct diary_ovl_s {
     u32 trigger;
     u32 button;
     u32 last_button;
-    s16 _40;
-    s16 _42;
+    u16 _40;
+    u16 _42;
     s16 cursor_idx;
     s16 _46;
     s16 _48;

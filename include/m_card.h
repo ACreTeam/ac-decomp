@@ -171,6 +171,8 @@ typedef struct {
     mDi_entry_c entries[mCD_KEEP_DIARY_COUNT][mCD_KEEP_DIARY_ENTRY_COUNT];
 } mCD_keep_diary_c ATTRIBUTE_ALIGN(32);
 
+#define mCD_KEEP_DIARY_SIZE ALIGN_NEXT(sizeof(mCD_keep_diary_c), 32)
+
 typedef struct {
     MemcardHeader_c header;
     u8 pad[32];
