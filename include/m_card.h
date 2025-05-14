@@ -150,6 +150,8 @@ typedef struct {
     int _CC80; // force size to 0xCCA0
 } mCD_keep_original_c ATTRIBUTE_ALIGN(32);
 
+#define mCD_KEEP_ORIGINAL_SIZE ALIGN_NEXT(sizeof(mCD_keep_original_c), 32)
+
 #define mCD_KEEP_MAIL_PAGE_COUNT 8
 #define mCD_KEEP_MAIL_COUNT 20
 #define mCD_KEEP_MAIL_FOLDER_NAME_LEN 12
