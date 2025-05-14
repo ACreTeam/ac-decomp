@@ -24,14 +24,13 @@ static void eIkigire_init(xyz_t pos, int prio, s16 angle, GAME* game, u16 item_n
     s16 _angle = angle;
 
     if (eEC_CLIP) {
-        _angle += (s16)(int)(RANDOM2_F(90.0f) * 182.04445f);
+        _angle += (s16)DEG2SHORT_ANGLE2(RANDOM2_F(90.0f));
 
         pos.x += sin_s(_angle) * 5.0f;
         pos.z += cos_s(_angle) * 5.0f;
 
-        eEC_CLIP->effect_make_proc(1, pos, prio, _angle, game, item_name, 0, 0);
+        eEC_CLIP->effect_make_proc(eEC_EFFECT_DUST, pos, prio, _angle, game, item_name, 0, 0);
     }
-    
 
     eEC_CLIP->make_effect_proc(eEC_EFFECT_IKIGIRE, pos, NULL, game, NULL, item_name, prio, arg0, arg1);
 }
