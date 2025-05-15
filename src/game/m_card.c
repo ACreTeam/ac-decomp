@@ -10,6 +10,7 @@
 #include "zurumode.h"
 #include "m_house.h"
 #include "m_cockroach.h"
+#include "m_start_data_init.h"
 
 typedef struct card_bg_info {
     CARDFileInfo fileInfo;
@@ -4713,5 +4714,321 @@ static int mCD_LoadPrivate_idx(mCD_memMgr_c* mgr, Private_c* priv, Animal_c* ani
         }
     }
     
+    return ret;
+}
+
+static int mCD_InitGameStart_bg_make_data(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
+    GAME* game = gamePT;
+    int player_no = fileInfo->_04;
+    int private_idx = fileInfo->fileNo;
+    int start_cond = fileInfo->chan;
+    Private_c* priv;
+    Animal_c* in_animal = mNpc_GetInAnimalP();
+    mCD_cardPrivate_c* card_priv;
+    u16 copy_protect;
+    int res = TRUE;
+    int ret;
+
+
+    if (start_cond >= 5) {
+        start_cond = 0;
+        fileInfo->chan = 0;
+    }
+
+    switch (start_cond) {
+        case 3:
+            priv = mPr_GetForeignerP();
+            res = mCD_LoadPrivate_idx(mgr, priv, in_animal, private_idx);
+            if (res == TRUE) {
+                mPr_LoadPak_and_SetPrivateInfo2(priv, player_no);
+                card_priv = &l_mcd_card_private_table[private_idx];
+                mCD_SetCardPrivateTable(&l_mcd_card_private, &card_priv->pid, card_priv->filename);
+            } 
+            break;
+        case 4:
+            priv = mPr_GetForeignerP();
+            mPr_CopyPrivateInfo(priv, &l_mcd_foreigner_file.file.priv);
+            if (in_animal != NULL) {
+                bcopy(&l_mcd_foreigner_file.file.remove_animal, in_animal, sizeof(Animal_c));
+            }
+            mPr_LoadPak_and_SetPrivateInfo2(priv, player_no);
+            break;
+    }
+
+    if (res == TRUE) {
+        static int init_mode_table[] = { 0, 2, 1, 3, 3 };
+
+        ret = mSDI_StartDataInit(game, player_no, init_mode_table[start_cond]);
+        l_mcd_keep_startCond = start_cond;
+        mgr->copy_protect = Common_Get(copy_protect);
+
+        switch (start_cond) {
+            case 0:
+            case 2:
+                fileInfo->proc = 10;
+                mgr->chan = mCD_SLOT_A;
+                mgr->cards[mCD_SLOT_A].game_result = mCD_TRANS_ERR_NONE;
+                Common_Set(copy_protect, Save_Get(copy_protect));
+                ret = mCD_RESULT_SUCCESS;
+                break;
+            case 1:
+                priv = Save_GetPointer(private_data[player_no]);
+                if (!mPr_NullCheckPersonalID(&priv->player_ID)) {
+                    mCD_SetResetInfo(priv);
+                    mCD_SetResetCode(priv);
+
+                    if (Common_Get(player_decoy_flag) == TRUE) {
+                        priv->exists = FALSE;
+                    }
+                    
+                    fileInfo->proc++;
+                    ret = mCD_RESULT_SUCCESS;
+                }
+
+                fileInfo->_14 = 0;
+                Save_Set(travel_hard_time, lbRTC_HardTime());
+                copy_protect = mCD_get_land_copyProtect();
+                Common_Set(copy_protect, copy_protect);
+                Save_Set(copy_protect, copy_protect);
+                break;
+            case 3:
+            case 4:
+                if (mLd_PlayerManKindCheckNo(player_no) == FALSE) {
+                    priv = Now_Private;
+                    if (priv != NULL) {
+                        mCD_SetResetInfo(priv);
+                        mCD_SetResetCode(priv);
+                        mRmTp_SetDefaultLightSwitchData(3);
+                    }
+
+                    if (start_cond == 3) {
+                        fileInfo->_14 = 1;
+                    } else {
+                        fileInfo->_14 = 0;
+                    }
+                } else {
+                    priv = mCD_GetSaveFilePrivateP();
+                    if (priv != NULL) {
+                        mCD_SetResetInfo(priv);
+                        mCD_SetResetCode(priv);
+                    }
+
+                    priv = Now_Private;
+                    if (priv != NULL) {
+                        mCD_SetResetInfo(priv);
+                        mCD_SetResetCode(priv);
+                    }
+
+                    mCD_SetCopyProtect(&l_mcd_foreigner_file.file);
+                    if (start_cond == 3) {
+                        fileInfo->_14 = 2;
+                    } else {
+                        fileInfo->_14 = 0;
+                    }
+                }
+
+                Save_Set(travel_hard_time, lbRTC_HardTime());
+                copy_protect = mCD_get_land_copyProtect();
+                Common_Set(copy_protect, copy_protect);
+                Save_Set(copy_protect, copy_protect);
+                fileInfo->proc++;
+                ret = mCD_RESULT_SUCCESS;
+                break;
+            default:
+                ret = mCD_RESULT_ERROR;
+                break;
+        }
+    } else {
+        ret = mCD_RESULT_ERROR;
+    }
+
+    return ret;
+}
+
+static int mCD_InitGameStart_bg_set_data(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
+    Save_t* save = (Save_t*)mgr->workArea;
+
+    if (save != NULL) {
+        mgr->loaded_file_type = mCD_FILE_SAVE_MAIN;
+        mgr->workArea_size = mCD_get_size(mgr->loaded_file_type);
+        bzero(save, mgr->workArea_size);
+        bcopy(Common_GetPointer(save), save, sizeof(Save_t));
+        save->save_check.version = 6;
+        mFRm_SetSaveCheckData(&save->save_check);
+        save->save_check.checksum = mFRm_GetFlatCheckSum((u16*)save, sizeof(Save), save->save_check.checksum);
+        bcopy(save, &l_keepSave, sizeof(Save));
+        fileInfo->proc++;
+        return mCD_RESULT_SUCCESS;
+    }
+
+    return mCD_RESULT_ERROR;
+}
+
+static void mCD_set_passport_icon(void* data, int sex, int face) {
+    // clang-format off
+    static int icon_fileNo[][mPr_FACE_TYPE_NUM] = {
+        {RESOURCE_BOY1, RESOURCE_BOY2, RESOURCE_BOY3, RESOURCE_BOY4, RESOURCE_BOY5, RESOURCE_BOY6, RESOURCE_BOY7, RESOURCE_BOY8},
+        {RESOURCE_GIRL1, RESOURCE_GIRL2, RESOURCE_GIRL3, RESOURCE_GIRL4, RESOURCE_GIRL5, RESOURCE_GIRL6, RESOURCE_GIRL7, RESOURCE_GIRL8},
+    };
+    // clang-format on
+
+    if (data != NULL) {
+        ForeignerFile_c* passport = (ForeignerFile_c*)data;
+
+        bcopy(l_comment_player_0_str, passport->comment, sizeof(l_comment_0_str));
+        mCD_get_passport_comment1(&passport->comment[sizeof(l_comment_0_str)], Now_Private->player_ID.player_name);
+        mCD_set_bti_data(passport->banner, RESOURCE_ODEKAKE, 0xC00, 1, 0x200);
+
+        if (sex != mPr_SEX_MALE && sex != mPr_SEX_FEMALE) {
+            sex = mPr_SEX_MALE;
+        }
+
+        if (!(face >= 0 && face < mPr_FACE_TYPE_NUM)) {
+            face = mPr_FACE_TYPE0;
+        }
+
+        mCD_set_bti_data(passport->icon, icon_fileNo[sex][face], 0x400, 8, 0x200);
+    }
+}
+
+static int mCD_InitGameStart_bg_write_main(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
+    ForeignerFile_c* passport;
+    int ret = mCD_write_common(mgr);
+
+    if (ret == mCD_RESULT_SUCCESS) {
+        switch (fileInfo->_14) {
+            case 1:
+                mgr->loaded_file_type = mCD_FILE_PLAYER;
+                mgr->workArea_size = mCD_get_size(mgr->loaded_file_type);
+                mgr->chan = ~mgr->chan & 1;
+                fileInfo->proc++;
+                break;
+            case 2:
+                bzero(mgr->workArea, mgr->workArea_size);
+                passport = (ForeignerFile_c*)mgr->workArea;
+                bcopy(&l_mcd_foreigner_file, &passport->file, sizeof(mCD_foreigner_c));
+                mCD_set_passport_icon(mgr->workArea, passport->file.priv.gender, passport->file.priv.face);
+                mgr->loaded_file_type = mCD_FILE_PLAYER;
+                mgr->workArea_size = mCD_get_size(mgr->loaded_file_type);
+                mgr->chan = ~mgr->chan & 1;
+                fileInfo->proc = 8;
+                break;
+            default:
+                mgr->loaded_file_type = mCD_FILE_SAVE_MAIN_BAK;
+                mgr->workArea_size = mCD_get_size(mgr->loaded_file_type);
+                fileInfo->proc = 9;
+                break;
+        }
+    }
+
+    return ret;
+}
+
+static int mCD_InitGameStart_erase_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
+    mCD_memMgr_card_info_c* card;
+    Save_t* save;
+    int chan = mgr->chan;
+    s32 result;
+    int ret;
+
+    if (chan != -1) {
+        card = &mgr->cards[chan];
+        ret = mCD_erase_file_bg(l_mcd_card_private.filename, chan, &card->result);
+        if (ret == mCD_RESULT_SUCCESS) {
+            mgr->loaded_file_type = mCD_FILE_SAVE_MAIN_BAK;
+            mgr->workArea_size = mCD_get_size(mgr->loaded_file_type);
+            bzero(mgr->workArea, mgr->workArea_size);
+            bcopy(&l_keepSave, mgr->workArea, sizeof(Save));
+            card->game_result = mCD_TransErrorCode(card->result);
+            mgr->chan = ~mgr->chan & 1;
+            fileInfo->proc = 9;
+            mgr->_01A0 = 1;
+        } else if (ret != mCD_RESULT_BUSY) {
+            result = card->result;
+            card->game_result = mCD_TransErrorCode(result);
+            mgr->loaded_file_type = mCD_FILE_SAVE_MAIN_BAK;
+            mgr->workArea_size = mCD_get_size(mgr->loaded_file_type);
+            bzero(mgr->workArea, mgr->workArea_size);
+            mgr->chan = ~mgr->chan & 1;
+            chan = mgr->chan;
+            card = &mgr->cards[chan];
+
+            if (mCD_load_file(mgr->workArea, mgr->loaded_file_type, chan, &card->result) == mCD_RESULT_SUCCESS) {
+                int checksum = mFRm_ReturnCheckSum((u16*)mgr->workArea, mgr->workArea_size);
+                
+                save = (Save_t*)mgr->workArea;
+                
+                if (checksum == 0 && mLd_CheckId(save->land_info.id) == TRUE && mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
+                    mgr->loaded_file_type = mCD_FILE_SAVE_MAIN;
+                    fileInfo->proc = 9;
+                    ret = mCD_RESULT_SUCCESS;
+                } else {
+                    mgr->chan = ~mgr->chan & 1;
+                }
+            } else {
+                mgr->chan = ~mgr->chan & 1;
+            }
+
+            card->game_result = mCD_TransErrorCode(result);
+            fileInfo->game_result = card->game_result;
+        }
+    } else {
+        ret = mCD_RESULT_ERROR;
+    }
+
+    return ret;
+}
+
+static int mCD_InitGameStart_write_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
+    int chan = mgr->chan;
+    mCD_file_entry_c* entry;
+    mCD_memMgr_card_info_c* card;
+    Save_t* save;
+    int ret;
+    s32 result;
+
+    card = &mgr->cards[chan];
+    entry = &l_mcd_file_table[mgr->loaded_file_type];
+    ret = mCD_write_comp_bg(mgr->workArea, l_mcd_card_private.filename, mgr->workArea_size, entry->filesize, mCD_get_offset(mgr->loaded_file_type), chan, &card->result);
+    
+    if (ret == mCD_RESULT_SUCCESS) {
+        fileInfo->proc++;
+        mgr->loaded_file_type = mCD_FILE_SAVE_MAIN_BAK;
+        mgr->workArea_size = mCD_get_size(mgr->loaded_file_type);
+        bzero(mgr->workArea, mgr->workArea_size);
+        bcopy(&l_keepSave, mgr->workArea, sizeof(Save));
+        card->game_result = mCD_TransErrorCode(card->result);
+        mgr->chan = ~mgr->chan & 1;
+        mgr->_01A0 = 1;
+    } else if (ret != mCD_RESULT_BUSY) {
+        result = card->result;
+        card->game_result = mCD_TransErrorCode(result);
+        mgr->loaded_file_type = mCD_FILE_SAVE_MAIN_BAK;
+        mgr->workArea_size = mCD_get_size(mgr->loaded_file_type);
+        bzero(mgr->workArea, mgr->workArea_size);
+        mgr->chan = ~mgr->chan & 1;
+        chan = mgr->chan;
+        card = &mgr->cards[chan];
+
+        if (mCD_load_file(mgr->workArea, mgr->loaded_file_type, chan, &card->result) == mCD_RESULT_SUCCESS) {
+            int checksum = mFRm_ReturnCheckSum((u16*)mgr->workArea, mgr->workArea_size);
+            
+            save = (Save_t*)mgr->workArea;
+            
+            if (checksum == 0 && mLd_CheckId(save->land_info.id) == TRUE && mLd_CheckThisLand(save->land_info.name, save->land_info.id) == TRUE) {
+                mgr->loaded_file_type = mCD_FILE_SAVE_MAIN;
+                fileInfo->proc++;
+                ret = mCD_RESULT_SUCCESS;
+            } else {
+                mgr->chan = ~mgr->chan & 1;
+            }
+        } else {
+            mgr->chan = ~mgr->chan & 1;
+        }
+
+        card->game_result = mCD_TransErrorCode(result);
+        fileInfo->game_result = card->game_result;
+    }
+
     return ret;
 }
