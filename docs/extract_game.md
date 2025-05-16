@@ -2,7 +2,7 @@
 As this repository does **not** contains any game assets you will first need to extract files from an existing copy of the game.
 
 This repository support the US version of Animal Crossing:
-- `GAFE01`: Rev 0 (USA) `sha1: 2d2b1fa3883f49af779ce9ca133db3be17be8f32`
+- `GAFE01`: Rev 0 (USA) `ISO sha1: 2d2b1fa3883f49af779ce9ca133db3be17be8f32`
 
 ## Dolphin Emulator
 Files can be extracted from a copy of the game using [Dolphin Emulator](https://dolphin-emu.org/). Use the following steps to extract the necessary files:
@@ -32,13 +32,11 @@ wit EXTRACT <PATH_TO_GAME_COPY> <PATH_TO_OUPUT_FOLDER>
 ~~~~
 
 ## Extracted Files
-Once files have been extracted you will need to copy the following files into the `dump/` folder at the root of the repository:
+Once files have been extracted you will need to copy the following files into the `orig/GAFE01_00` folder at the root of the repository:
 - `main.dol`
 - `forest_1st.arc`
 - `forest_2nd.arc`
 - `foresta.rel.szs`
-
-Make sure to rename `main.dol` to `static.dol`.
 
 It is recommended that you also copy the following symbol maps for reference:
 - `foresta.map`
