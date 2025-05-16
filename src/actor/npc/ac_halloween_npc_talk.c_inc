@@ -1,0 +1,301 @@
+static int aHWN_get_trick_type(void) {
+    int count = 0;
+    int idx[mPr_POCKETS_SLOT_COUNT];
+    mActor_name_t* pockets_p = Now_Private->inventory.pockets;
+    int i;
+    int ret = 0; // trick type enum/define
+
+    for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++) {
+        switch (ITEM_NAME_GET_TYPE(*pockets_p)) {
+            case NAME_TYPE_FTR0:
+            case NAME_TYPE_FTR1:
+                if ((NowPrivate_GetItemCond(i) & mPr_ITEM_COND_QUEST) == 0) {
+                    int ftr_idx = mRmTp_FtrItemNo2FtrIdx(*pockets_p);
+
+                    // check furniture is not jack-o'-lantern nor jack-in-the-box
+                    if (ftr_idx != 0x127 && ftr_idx != 0x131) {
+                        idx[count++] = i;
+                    }
+                }
+                break;
+            case NAME_TYPE_ITEM1:
+                if (ITEM_NAME_GET_CAT(*pockets_p) != ITEM1_CAT_TOOL &&
+                    (NowPrivate_GetItemCond(i) & mPr_ITEM_COND_QUEST) == 0) {
+                    idx[count++] = i;
+                }
+                break;
+        }
+
+        pockets_p++;
+    }
+
+    if (count > 0 && RANDOM_F(1.0f) < 0.5f) {
+        mActor_name_t new_item;
+
+        mSP_SelectRandomItem_New(NULL, &new_item, 1, NULL, 0, mSP_KIND_FURNITURE, mSP_LISTTYPE_HALLOWEEN2, FALSE);
+        mPr_SetPossessionItem(Now_Private, idx[RANDOM(count)], new_item, mPr_ITEM_COND_NORMAL);
+        mDemo_Set_OrderValue(mDemo_ORDER_PLAYER, 0, 0xFD); // play trick animation
+        ret = 1;
+    }
+
+    return ret;
+}
+
+static void aHWN_restart_msg_win(NPC_HALLOWEEN_ACTOR* actorx, int msg_idx) {
+    int msg_data;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int look = mNpc_GetLooks(actorx->npc_class.npc_info.event->npc_id);
+    mMsg_request_main_appear_wait_type1(msg_p);
+    mMsg_ChangeMsgData(msg_p, ((look & 0xFF) * 6 + msg_idx));
+    mMsg_Set_ForceNext(msg_p);
+    mMsg_Unset_LockContinue(msg_p);
+}
+
+static void aHWN_first_call_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    int look = mNpc_GetLooks(actorx->npc_class.npc_info.event->npc_id);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    mMsg_Set_continue_msg_num(msg_p, ((look & 0xFF) * 6) + 0x98b);
+    aHWN_change_talk_proc(actorx, aHWN_TALK_TRICK_OR_TREAT_TALK_PROC);
+}
+
+static void aHWN_trick_or_treat_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    int talk_proc_idx;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int order_value = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    if (order_value && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        if (mChoice_GET_CHOSENUM() == 0) {
+            mMsg_request_main_disappear_wait_type1(msg_p);
+            talk_proc_idx = aHWN_TALK_MENU_OPEN_WAIT_TALK_PROC;
+        } else {
+            talk_proc_idx = aHWN_TALK_TRICK_TIMING_WAIT_TALK_PROC;
+        }
+        aHWN_change_talk_proc(actorx, talk_proc_idx);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aHWN_menu_open_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    if (mMsg_Check_main_wait(msg_p) == TRUE) {
+        mSM_open_submenu(&play->submenu, mSM_OVL_INVENTORY, 6, 0);
+        mMsg_Set_LockContinue(msg_p);
+        aHWN_change_talk_proc(actorx, aHWN_TALK_MENU_CLOSE_WAIT_TALK_PROC);
+    }
+}
+
+static void aHWN_menu_close_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actor, GAME_PLAY* play) {
+    Submenu_Item_c* item_p;
+    int talk_proc_idx;
+    BOOL shouldSetPosessionItem;
+    mActor_name_t item;
+
+    if (play->submenu.open_flag == FALSE) {
+        item_p = play->submenu.item_p;
+        shouldSetPosessionItem = TRUE;
+        item = item_p->item;
+        actor->item = item;
+        if (item == EMPTY_NO) {
+            talk_proc_idx = aHWN_TALK_TRICK_TIMING_WAIT_TALK_PROC;
+            aHWN_restart_msg_win(actor, 0x98c);
+            shouldSetPosessionItem = FALSE;
+        } else if (item != ITM_FOOD_CANDY) {
+            if ((item >= ITM_NET && item <= ITM_ROD) || (item >= ITM_GOLDEN_NET && item <= ITM_GOLDEN_ROD)) {
+                shouldSetPosessionItem = FALSE;
+            }
+            talk_proc_idx = aHWN_TALK_GET_OTHER_ITEM_WAIT_TALK_PROC;
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 3);
+        } else {
+            talk_proc_idx = aHWN_TALK_GET_AME_WAIT_TALK_PROC;
+            aHWN_restart_msg_win(actor, 0x98f);
+        }
+        if (shouldSetPosessionItem == TRUE) {
+            mPr_SetPossessionItem(Now_Private, item_p->slot_no, 0, 0);
+        }
+        aHWN_change_talk_proc(actor, talk_proc_idx);
+    }
+}
+
+static void aHWN_get_other_item_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    mActor_name_t item;
+    int talk_proc_idx;
+    int msg_idx;
+    if (CLIP(handOverItem_clip)->master_actor == 0) {
+        item = actorx->item;
+        talk_proc_idx = aHWN_TALK_TRICK_TIMING_WAIT_TALK_PROC;
+        msg_idx = 0x98e;
+        if ((item >= ITM_NET && item <= ITM_ROD) || (item >= ITM_GOLDEN_NET && item <= ITM_GOLDEN_ROD)) {
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 0);
+            msg_idx = 0x990;
+            talk_proc_idx = aHWN_TALK_RECEIVE_TOOL_ITEM_START_WAIT_TALK_PROC;
+        }
+        aHWN_restart_msg_win(actorx, msg_idx);
+        aHWN_change_talk_proc(actorx, talk_proc_idx);
+    }
+}
+
+static void aHWN_receive_tool_item_start_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    int OrderValue = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+    if (OrderValue == 2) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, actorx->item);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, 7);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, 0);
+        mMsg_SET_LOCKCONTINUE();
+        aHWN_change_talk_proc(actorx, aHWN_TALK_RECEIVE_TOOL_ITEM_END_WAIT_TALK_PROC);
+    }
+}
+
+static void aHWN_receive_tool_item_end_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    int OrderValue = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+    if ((OrderValue == 0) && (CLIP(handOverItem_clip)->master_actor == 0)) {
+        mMsg_UNSET_LOCKCONTINUE();
+        aHWN_change_talk_proc(actorx, aHWN_TALK_TRICK_TIMING_WAIT_TALK_PROC);
+    }
+}
+
+static void aHWN_trick_timing_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    int trick_type;
+    int talk_proc_idx;
+    int OrderValue = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p;
+    if (OrderValue != 0) {
+        msg_p = mMsg_Get_base_window_p();
+        trick_type = aHWN_get_trick_type();
+        talk_proc_idx = aHWN_TALK_PL_DEMO_CODE_END_WAIT_TALK_PROC;
+        if (trick_type == 0) {
+            talk_proc_idx = aHWN_TALK_TRICK_CHG_CLOTH_TALK_PROC;
+        }
+        mMsg_Set_LockContinue(msg_p);
+        aHWN_change_talk_proc(actorx, talk_proc_idx);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aHWN_trick_chg_cloth_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    int player_actor_main_index = mPlib_get_player_actor_main_index(&play->game);
+    if (player_actor_main_index == mPlayer_INDEX_CHANGE_CLOTH) {
+        aHWN_change_talk_proc(actorx, aHWN_TALK_TRICK_CHG_CLOTH_END_WAIT_TALK_PROC);
+    } else {
+        mPlib_request_main_change_cloth_forNPC_type1(&play->game, ITM_CLOTH017, 0x11, 0);
+    }
+}
+
+static void aHWN_trick_chg_cloth_end_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p;
+    int looks;
+    int player_actor_main_index = mPlib_get_player_actor_main_index(&play->game);
+    if (player_actor_main_index != mPlayer_INDEX_CHANGE_CLOTH) {
+        msg_p = mMsg_Get_base_window_p();
+        looks = mNpc_GetLooks(actorx->npc_class.npc_info.event->npc_id);
+        mMsg_Unset_LockContinue(msg_p);
+        mMsg_Set_ForceNext(msg_p);
+        mMsg_ChangeMsgData(msg_p, (looks * 6 + 0x98d));
+        aHWN_change_talk_proc(actorx, aHWN_TALK_NONE_PROC1);
+    }
+}
+
+static void aHWN_get_ame_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    int OrderValue = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+    if ((OrderValue == 3) && (CLIP(handOverItem_clip)->master_actor != 0)) {
+        mMsg_SET_LOCKCONTINUE();
+        aHWN_change_talk_proc(actorx, aHWN_TALK_GET_AME_TALK_PROC);
+    }
+}
+
+static void aHWN_get_ame_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    if (CLIP(handOverItem_clip)->master_actor == 0) {
+        mMsg_UNSET_LOCKCONTINUE();
+        aHWN_change_talk_proc(actorx, aHWN_TALK_NONE_PROC1);
+    }
+}
+
+static void aHWN_pl_demo_code_end_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p;
+    int look;
+    int OrderValue = mDemo_Get_OrderValue(mDemo_ORDER_PLAYER, 0);
+    if (OrderValue == 0) {
+        msg_p = mMsg_Get_base_window_p();
+        look = mNpc_GetLooks(actorx->npc_class.npc_info.event->npc_id);
+        mMsg_Unset_LockContinue(msg_p);
+        mMsg_Set_ForceNext(msg_p);
+        mMsg_ChangeMsgData(msg_p, ((look & 0xFF) * 6 + 0x98d));
+        aHWN_change_talk_proc(actorx, aHWN_TALK_NONE_PROC1);
+    }
+}
+
+static void aHWN_change_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, int talk_proc_idx) {
+    // clang-format off
+    static aHWN_TALK_PROC talk_proc[] = {
+        &aHWN_first_call_talk_proc,
+        &aHWN_trick_or_treat_talk_proc,
+        &aHWN_menu_open_wait_talk_proc,
+        &aHWN_menu_close_wait_talk_proc,
+        &aHWN_get_other_item_wait_talk_proc,
+        &aHWN_receive_tool_item_start_wait_talk_proc,
+        &aHWN_receive_tool_item_end_wait_talk_proc,
+        &aHWN_trick_timing_wait_talk_proc,
+        &aHWN_trick_chg_cloth_talk_proc,
+        &aHWN_trick_chg_cloth_end_wait_talk_proc,
+        &aHWN_get_ame_wait_talk_proc,
+        &aHWN_get_ame_talk_proc,
+        &aHWN_pl_demo_code_end_wait_talk_proc,
+        (aHWN_TALK_PROC)&none_proc1,
+    };
+    // clang-format on
+    actorx->talk_proc = talk_proc[talk_proc_idx];
+}
+
+static void aHWN_set_force_talk_info(ACTOR* actorx) {
+    mDemo_Set_msg_num(0x98a);
+    mDemo_Set_talk_turn(1);
+    aHWN_change_talk_proc((NPC_HALLOWEEN_ACTOR*)actorx, aHWN_TALK_FIRST_CALL_TALK_PROC);
+}
+
+static void aHWN_force_talk_request(ACTOR* actorx, GAME* game) {
+    int bx;
+    int bz;
+    ACTOR* player_actorx = GET_PLAYER_ACTOR_ACTOR((GAME_PLAY*)game);
+    if (player_actorx != NULL) {
+        if (!mFI_Wpos2BlockNum(&bx, &bz, player_actorx->world.position)) {
+            bx = 0;
+            bz = 0;
+        }
+    } else {
+        bx = 0;
+        bz = 0;
+    }
+    if (actorx->player_distance_xz < 70.0f) {
+        if ((ABS(actorx->player_distance_y) < 20.0f) && (actorx->block_x == bx) && (actorx->block_z == bz)) {
+            mDemo_Request(mDemo_TYPE_SPEAK, actorx, aHWN_set_force_talk_info);
+        }
+    }
+}
+
+static void aHWN_set_norm_talk_info(NPC_HALLOWEEN_ACTOR* actorx) {
+    int looks = mNpc_GetLooks(actorx->npc_class.npc_info.event->npc_id);
+    mDemo_Set_msg_num((looks & 0xFF) + 0x9af);
+    aHWN_change_talk_proc(actorx, aHWN_TALK_NONE_PROC1);
+}
+
+static void aHWN_norm_talk_request(NPC_HALLOWEEN_ACTOR* actorx) {
+    mDemo_Request(mDemo_TYPE_TALK, &actorx->npc_class.actor_class, (mDemo_REQUEST_PROC)aHWN_set_norm_talk_info);
+}
+
+static int aHWN_talk_init() {
+    mDemo_Set_ListenAble();
+    return 1;
+}
+
+static BOOL aHWN_talk_end_chk(ACTOR* actorx, GAME* game) {
+    BOOL res = FALSE;
+    NPC_HALLOWEEN_ACTOR* hwn_actor = (NPC_HALLOWEEN_ACTOR*)actorx;
+    hwn_actor->talk_proc((NPC_HALLOWEEN_ACTOR*)actorx, (GAME_PLAY*)game);
+    if ((mDemo_Check(mDemo_TYPE_SPEAK, &hwn_actor->npc_class.actor_class) == FALSE) &&
+        (mDemo_Check(mDemo_TYPE_TALK, &hwn_actor->npc_class.actor_class) == FALSE)) {
+        if (hwn_actor->npc_class.schedule.step == 1) {
+            hwn_actor->npc_class.think.end_flag = TRUE;
+        }
+        res = TRUE;
+        hwn_actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)aHWN_norm_talk_request;
+    }
+    return res;
+}
