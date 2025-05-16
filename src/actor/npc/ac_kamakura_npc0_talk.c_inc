@@ -1,0 +1,15 @@
+static void aKM0_talk_request(ACTOR* actorx, GAME* game) {
+    CLIP(quest_manager_clip)->talk_request_proc(actorx);
+}
+
+static int aKM0_talk_init(ACTOR* actorx, GAME* game) {
+    return CLIP(quest_manager_clip)->talk_start_proc(actorx);
+}
+
+static int aKM0_talk_end_chk(ACTOR* actorx, GAME* game) {
+    BOOL res = FALSE;
+    if (CLIP(quest_manager_clip)->talk_check_proc(actorx) == TRUE) {
+        res = TRUE;
+    }
+    return res;
+}
