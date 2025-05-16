@@ -16,6 +16,7 @@
 #include "m_demo.h"
 #include "m_lib.h"
 #include "m_msg.h"
+#include "m_name_table.h"
 #include "m_npc.h"
 #include "m_play.h"
 #include "m_play_h.h"
@@ -41,7 +42,7 @@ ACTOR_PROFILE Kamakura_Npc0_Profile = {
     mAc_PROFILE_KAMAKURA_NPC0,
     ACTOR_PART_NPC,
     ACTOR_STATE_NONE,
-    0,
+    EMPTY_NO,
     ACTOR_OBJ_BANK_KEEP,
     sizeof(NPC_KAMUKURA_NPC0_ACTOR),
     aKM0_actor_ct,
