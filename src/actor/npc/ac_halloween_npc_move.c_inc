@@ -1,0 +1,22 @@
+static BOOL aHWN_set_request_act(NPC_HALLOWEEN_ACTOR* actorx, u8 prio, u8 idx, u8 type, u16 obj, s16 move_x,
+                                 s16 move_z) {
+    BOOL res = FALSE;
+    if (prio >= actorx->npc_class.request.act_priority) {
+        u16 args[aNPC_REQUEST_ARG_NUM];
+        bzero(args, sizeof(args));
+        args[0] = obj;
+        args[2] = move_x;
+        args[3] = move_z;
+        args[5] = 70;
+        actorx->npc_class.request.act_priority = prio;
+        actorx->npc_class.request.act_idx = idx;
+        actorx->npc_class.request.act_type = type;
+        mem_copy((u8*)actorx->npc_class.request.act_args, (u8*)args, sizeof(args));
+        res = TRUE;
+    }
+    return res;
+}
+
+static void aHWN_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_CLIP->move_proc(actorx, game);
+}
