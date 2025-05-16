@@ -1,5 +1,5 @@
 # M2C Basics
-m2c is another decompilation tool that can be used to reverse engineer functions. It is avaialbe as both a [web tool](https://simonsoftware.se/other/m2c.html) and also as a [standalone tool](https://github.com/matt-kempster/m2c).
+m2c is another decompilation tool that can be used to reverse engineer functions. It is available as both a [web tool](https://simonsoftware.se/other/m2c.html) and also as a [standalone tool](https://github.com/matt-kempster/m2c).
 
 ## Using M2C (Web)
 In order to use m2c you will need to [generate, and then copy the assembly](./decomp_basics.md) for the function you'd like to reverse engineer and also [generate and copy the context](./generating_decomp_context.md) for the function. When generating context, make sure that the `--m2c` flag is used as m2c does not support preprocessor statements and requires additional cleanup for certain formatting issues. Make sure to delete any unneccesary data or functions if generating context from an in-progress C file.
