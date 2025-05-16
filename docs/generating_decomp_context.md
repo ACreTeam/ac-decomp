@@ -11,7 +11,7 @@ In order to generate the context for a given file run the following command:
 
 This will generate a `ctx.h` file at the root of the project. You can then copy the content of this file to the tool of your choice.
 
-The script attempts to use the `N64_SDK` environment path variable for the necessary [ultralib](https://github.com/decompals/ultralib) header files. If this environment variable has not been set, or if you'd like to use an alternative SDK path, a path can be provided by using the `--n64-sdK` flag (see below).
+The script attempts to use the `N64_SDK` environment path variable for the necessary [ultralib](https://github.com/decompals/ultralib) header files. If this environment variable has not been set, or if you'd like to use an alternative SDK path, a path can be provided by using the `--n64-sdk` flag (see below).
 
 If generating context for Ghidra or m2c, use the `--ghidra` or `--m2c` respectively as those tools require specific changes to be made to the generated context.
 
