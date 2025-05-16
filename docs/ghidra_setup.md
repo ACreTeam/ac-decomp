@@ -29,7 +29,7 @@ With both Ghidra and the GameCube Loader plugin installed you can now import the
 
 ![Ghidra Import File Dropdown](./doc_assets/ghidra_import_file.png)
 
-3. Select one of the binary files you extracted: `foresta.rel.szs` or `static.dol`.
+3. Select one of the binary files you extracted: `foresta.rel.szs` or `main.dol`.
 4. In the Import dialog, make sure that `Nintendo GameCube/Wii Binary` is selected for the format. Click OK.
 
 ![Ghidra Import Dialog](./doc_assets/ghidra_import_dialog.png)
