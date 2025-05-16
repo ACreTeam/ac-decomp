@@ -30,40 +30,40 @@ static void aHWN_actor_save(ACTOR* actorx, GAME* game);
 static void aHWN_actor_init(ACTOR* actorx, GAME* game);
 static void aHWN_actor_draw(ACTOR* actorx, GAME* game);
 
-static BOOL aHWN_set_request_act(NPC_HALLOWEEN_ACTOR* actorx, u8 prio, u8 idx, u8 type, u16 obj, s16 move_x,
+static BOOL aHWN_set_request_act(HALLOWEEN_NPC_ACTOR* actorx, u8 prio, u8 idx, u8 type, u16 obj, s16 move_x,
                                  s16 move_z);
 static void aHWN_actor_move(ACTOR* actorx, GAME* game);
 
 static int aHWN_get_trick_type();
-static void aHWN_restart_msg_win(NPC_HALLOWEEN_ACTOR* actorx, int msg_idx);
-static void aHWN_first_call_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_trick_or_treat_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_menu_open_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_menu_close_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_get_other_item_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_receive_tool_item_start_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_receive_tool_item_end_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_trick_timing_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_trick_chg_cloth_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_trick_chg_cloth_end_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_get_ame_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_get_ame_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_pl_demo_code_end_wait_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_change_talk_proc(NPC_HALLOWEEN_ACTOR* actorx, int talk_proc_idx);
+static void aHWN_restart_msg_win(HALLOWEEN_NPC_ACTOR* actorx, int msg_idx);
+static void aHWN_first_call_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_trick_or_treat_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_menu_open_wait_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_menu_close_wait_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_get_other_item_wait_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_receive_tool_item_start_wait_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_receive_tool_item_end_wait_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_trick_timing_wait_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_trick_chg_cloth_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_trick_chg_cloth_end_wait_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_get_ame_wait_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_get_ame_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_pl_demo_code_end_wait_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, GAME_PLAY* play);
+static void aHWN_change_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, int talk_proc_idx);
 static void aHWN_set_force_talk_info(ACTOR* actorx);
 static void aHWN_force_talk_request(ACTOR* actorx, GAME* game);
-static void aHWN_set_norm_talk_info(NPC_HALLOWEEN_ACTOR* actorx);
-static void aHWN_norm_talk_request(NPC_HALLOWEEN_ACTOR* actorx);
+static void aHWN_set_norm_talk_info(HALLOWEEN_NPC_ACTOR* actorx);
+static void aHWN_norm_talk_request(ACTOR* actorx, GAME* game);
 static int aHWN_talk_init();
 static BOOL aHWN_talk_end_chk(ACTOR* actorx, GAME* game);
 
-static void aHWN_approach(NPC_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_approach_wait(NPC_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_think_main_proc(NPC_ACTOR* actorx, GAME_PLAY* playe);
+static void aHWN_approach(HALLOWEEN_NPC_ACTOR* hwn_actor, GAME_PLAY* play);
+static void aHWN_approach_wait(HALLOWEEN_NPC_ACTOR* hwn_actor, GAME_PLAY* play);
+static void aHWN_think_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play);
 static void aHWN_think_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_approach_init(NPC_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_approach_wait_init(NPC_ACTOR* actorx, GAME_PLAY* play);
-static void aHWN_setup_think_proc(ACTOR* actorx, GAME* game, int dt_tbl_idx);
+static void aHWN_approach_init(HALLOWEEN_NPC_ACTOR* hwn_actor, GAME_PLAY* play);
+static void aHWN_approach_wait_init(HALLOWEEN_NPC_ACTOR* hwn_actor, GAME_PLAY* play);
+static void aHWN_setup_think_proc(HALLOWEEN_NPC_ACTOR* hwn_actor, GAME_PLAY* play, int dt_tbl_idx);
 static void aHWN_think_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int think_proc_idx);
 static void aHWN_schedule_think_init(NPC_ACTOR* actorx, GAME_PLAY* play);
 static void aHWN_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play);
@@ -75,9 +75,9 @@ ACTOR_PROFILE Halloween_Npc_Profile = {
     mAc_PROFILE_HALLOWEEN_NPC,
     ACTOR_PART_NPC,
     ACTOR_STATE_NONE,
-    0,
+    EMPTY_NO,
     ACTOR_OBJ_BANK_KEEP,
-    sizeof(NPC_HALLOWEEN_ACTOR),
+    sizeof(HALLOWEEN_NPC_ACTOR),
     aHWN_actor_ct,
     aHWN_actor_dt,
     aHWN_actor_init,
@@ -98,7 +98,7 @@ static void aHWN_actor_ct(ACTOR* actorx, GAME* game) {
         0,
     };
     // clang-format on
-    NPC_HALLOWEEN_ACTOR* hwn_actor = (NPC_HALLOWEEN_ACTOR*)actorx;
+    HALLOWEEN_NPC_ACTOR* hwn_actor = (HALLOWEEN_NPC_ACTOR*)actorx;
     if (NPC_CLIP->birth_check_proc(actorx, game) == TRUE) {
         hwn_actor->npc_class.schedule.schedule_proc = &aHWN_schedule_proc;
         NPC_CLIP->ct_proc(actorx, game, &ct_data);
