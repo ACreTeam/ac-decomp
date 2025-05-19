@@ -1,0 +1,47 @@
+static void aNMJ5_think_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    return;
+}
+
+static void aNMJ5_think_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    NPC_MAJIN5_ACTOR* majin = (NPC_MAJIN5_ACTOR*)actorx;
+
+    majin->npc_class.actor_class.status_data.weight = MASSTYPE_HEAVY;
+    actorx->condition_info.hide_request = FALSE;
+    actorx->action.idx = aNPC_ACT_WAIT;
+    aNMJ5_set_request_act(majin, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_ACT_OBJ_DEFAULT, 0, 0);
+    NPC_CLIP->animation_init_proc((ACTOR*)majin, aNPC_ANIM_WAIT_R1, FALSE);
+    actorx->draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_REPEAT;
+}
+
+static void aNMJ5_think_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int think_proc_idx) {
+    switch (think_proc_idx) {
+        case ANMJ5_THINK_INIT:
+            aNMJ5_think_init_proc(actorx, play);
+            break;
+        case ANMJ5_THINK_MAIN:
+            aNMJ5_think_main_proc(actorx, play);
+            break;
+    }
+}
+
+static void aNMJ5_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    actorx->think.think_proc = aNMJ5_think_proc;
+    NPC_CLIP->think_proc(actorx, play, 9, aNPC_THINK_TYPE_INIT);
+}
+
+static void aNMJ5_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    if (NPC_CLIP->think_proc(actorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == FALSE) {
+        NPC_CLIP->think_proc(actorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aNMJ5_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int sched_idx) {
+    switch (sched_idx) {
+        case ANMJ5_SCHEDULE_INIT:
+            aNMJ5_schedule_init_proc(actorx, play);
+            break;
+        case ANMJ5_SCHEDULE_MAIN:
+            aNMJ5_schedule_main_proc(actorx, play);
+            break;
+    }
+}
