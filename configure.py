@@ -2741,41 +2741,67 @@ if config_path.exists():
         for asset in module.get("extract", []):
             emit_build_rule(asset)
 
-N64_SDK_urls = [
-    "https://raw.githubusercontent.com/decompals/ultralib/main/include/PR/abi.h",
-    "https://raw.githubusercontent.com/decompals/ultralib/main/include/PR/gbi.h",
-    "https://raw.githubusercontent.com/decompals/ultralib/main/include/PR/gs2dex.h",
-    "https://raw.githubusercontent.com/decompals/ultralib/main/include/PR/mbi.h",
-    "https://raw.githubusercontent.com/decompals/ultralib/main/include/PR/ultratypes.h",
-    "https://raw.githubusercontent.com/decompals/ultralib/main/include/compiler/gcc/stdlib.h",
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+USE_API = GITHUB_TOKEN is not None  # Use authenticated API if token is set
+
+N64_SDK_files = [
+    "include/PR/abi.h",
+    "include/PR/gbi.h",
+    "include/PR/gs2dex.h",
+    "include/PR/mbi.h",
+    "include/PR/ultratypes.h",
+    "include/compiler/gcc/stdlib.h",
 ]
 
-# If we don't have these downloaded, we need to grab em
-for url in N64_SDK_urls:
-    file_path = os.path.join("include", url.split("include/")[-1])
+OWNER = "decompals"
+REPO = "ultralib"
+BRANCH = "main"
 
-    if not os.path.exists(file_path):
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-        print(f"Fetching {file_path} from {url}")
-        req = urllib.request.Request(
-            url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req) as response:
-            if response.getcode() == 200:
-                content = response.read()
+def fetch_file_api(path):
+    url = f"https://api.github.com/repos/{OWNER}/{REPO}/contents/{path}?ref={BRANCH}"
+    req = urllib.request.Request(url)
+    req.add_header("User-Agent", "PythonScript")
+    req.add_header("Accept", "application/vnd.github.v3.raw")
+    req.add_header("Authorization", f"token {GITHUB_TOKEN}")
+    return urllib.request.urlopen(req)
 
-                # We need to modify gbi.h for AC
-                if os.path.normpath(file_path) == os.path.normpath("include/PR/gbi.h"):
-                    content = re.sub(
-                        rb"unsigned char\s+param:8;", b"unsigned int\tparam:8;", content
-                    )
 
-                with open(file_path, "wb") as file:
-                    file.write(content)
+def fetch_file_raw(path):
+    url = f"https://raw.githubusercontent.com/{OWNER}/{REPO}/{BRANCH}/{path}"
+    req = urllib.request.Request(url)
+    req.add_header("User-Agent", "Mozilla/5.0")
+    return urllib.request.urlopen(req)
+
+
+for file_path in N64_SDK_files:
+    local_path = os.path.join("include", file_path.split("include/")[-1])
+    os.makedirs(os.path.dirname(local_path), exist_ok=True)
+
+    if not os.path.exists(local_path):
+        print(f"Fetching {file_path}...")
+
+        try:
+            if USE_API:
+                response = fetch_file_api(file_path)
             else:
-                print(
-                    f"Failed to download {file_path}. Status code: {response.getcode()}"
+                response = fetch_file_raw(file_path)
+
+            content = response.read()
+
+            # Special case: patch gbi.h
+            if os.path.normpath(local_path) == os.path.normpath("include/PR/gbi.h"):
+                content = re.sub(
+                    rb"unsigned char\s+param:8;", b"unsigned int\tparam:8;", content
                 )
+
+            with open(local_path, "wb") as f:
+                f.write(content)
+
+        except urllib.error.HTTPError as e:
+            print(f"Failed to fetch {file_path}: HTTP {e.code} {e.reason}")
+        except Exception as e:
+            print(f"Error fetching {file_path}: {e}")
 
 # Optional extra categories for progress tracking
 # Adjust as desired for your project
