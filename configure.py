@@ -1078,7 +1078,7 @@ config.libs = [
             Object(Matching, "actor/ac_train_door.c"),
             Object(Matching, "actor/ac_train_window.c"),
             Object(Matching, "actor/ac_tukimi.c"),
-            Object(NonMatching, "actor/ac_tunahiki_control.c"),
+            Object(Matching, "actor/ac_tunahiki_control.c"),
             Object(Matching, "actor/ac_turi.c"),
             Object(Matching, "actor/ac_uki.c"),
             Object(Matching, "actor/ac_weather.c"),

@@ -825,7 +825,7 @@ static void mSCR_talk_next(TAISOU_NPC0_ACTOR* taisou_actor, GAME_PLAY* play) {
 
 typedef void (*mSCR_TALK_PROC)(TAISOU_NPC0_ACTOR*, GAME_PLAY*);
 
-extern mSC_Radio_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor, GAME_PLAY* play) {
+extern void mSC_Radio_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor, GAME_PLAY* play) {
     static mSCR_TALK_PROC proc[mSCR_TALK_NUM] = { &mSCR_talk_pickup_all,
                                                   &mSCR_talk_inspection,
                                                   &mSCR_talk_next,

@@ -130,7 +130,7 @@ extern void mSC_get_event_name_str(u8* buf, int buf_len, int soncho_event);
 extern void mSC_event_name_set(u8 soncho_event);
 extern void mSC_set_free_str_number(int free_str_no, u32 num);
 extern int mSC_Radio_Set_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor);
-extern mSC_Radio_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor, GAME_PLAY* play);
+extern void mSC_Radio_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor, GAME_PLAY* play);
 extern int mSC_LightHouse_get_period(lbRTC_time_c* time);
 extern int mSC_LightHouse_day(const lbRTC_time_c* time);
 extern int mSC_LightHouse_Event_Check(int player_no);
