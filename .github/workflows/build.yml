@@ -44,6 +44,7 @@ jobs:
       env:
         PROGRESS_SLUG: animalcrossing
         PROGRESS_API_KEY: ${{ secrets.PROGRESS_API_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }} # for accessing github endpoints
       run: |
         python tools/upload_progress.py -b https://progress.decomp.club/ \
           -p $PROGRESS_SLUG -v ${{ matrix.version }} \
