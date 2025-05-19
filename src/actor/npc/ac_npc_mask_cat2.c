@@ -64,7 +64,7 @@ static void aNM2_enter(ACTOR* actorx, GAME* game);
 static void aNM2_approach(ACTOR* actorx, GAME* game);
 static void aNM2_set_talk_info_talk_start_wait(ACTOR* actorx);
 static void aNM2_talk_start_wait(ACTOR* actorx, GAME* game);
-static void aNM2_set_talk_info_talk_start_wait2(NPC_MASK_CAT2_ACTOR* actorx);
+static void aNM2_set_talk_info_talk_start_wait2(ACTOR* actorx);
 static void aNM2_talk_start_wait2(ACTOR* actorx, GAME* game);
 static void aNM2_sitdown_start_wait(ACTOR* actorx, GAME* game);
 static void aNM2_sitdown(ACTOR* actorx, GAME* game);

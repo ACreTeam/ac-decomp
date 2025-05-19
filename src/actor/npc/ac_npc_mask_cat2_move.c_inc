@@ -539,13 +539,15 @@ static void aNM2_talk_start_wait(ACTOR* actorx, GAME* game) {
     }
 }
 
-static void aNM2_set_talk_info_talk_start_wait2(NPC_MASK_CAT2_ACTOR* actorx) {
+static void aNM2_set_talk_info_talk_start_wait2(ACTOR* actorx) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+
     aNM2_set_free_str();
     mDemo_Set_msg_num(aNM2_get_msg_no_mishiranuneko_talk_start());
     mDemo_Set_camera(0xD); // Does not exist just yet.
     mDemo_Set_talk_change_player(FALSE);
     mDemo_Set_use_zoom_sound(TRUE);
-    actorx->obj_look_type = 1;
+    mask_cat2_actor->obj_look_type = 1;
 }
 
 static void aNM2_talk_start_wait2(ACTOR* actorx, GAME* game) {
@@ -558,7 +560,7 @@ static void aNM2_talk_start_wait2(ACTOR* actorx, GAME* game) {
             mDemo_Set_ListenAble();
         }
     } else {
-        mDemo_Request(mDemo_TYPE_SPEAK, actorx, aNM2_set_talk_info_talk_start_wait);
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, aNM2_set_talk_info_talk_start_wait2);
     }
 }
 
