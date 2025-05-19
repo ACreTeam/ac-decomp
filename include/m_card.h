@@ -269,12 +269,12 @@ enum {
 
 #define OTHERS_SIZE ALIGN_NEXT(sizeof(mCD_others_c), mCD_MEMCARD_SECTORSIZE)
 
-extern s32 mCD_GetThisLandSlotNo_code(int* player_no, s32* slot_card_results);
+extern int mCD_GetThisLandSlotNo_code(int* player_no, s32* slot_card_results);
 extern int mCD_GetThisLandSlotNo(void);
 extern void mCD_save_data_aram_malloc(void);
 extern void mCD_set_aram_save_data();
 extern void mCD_init_card();
-extern s32 mCD_InitGameStart_bg(int player_no, int card_private_idx, int start_cond, s32* mounted_chan);
+extern int mCD_InitGameStart_bg(int player_no, int card_private_idx, int start_cond, s32* mounted_chan);
 extern int mCD_GetCardPrivateNameCopy(u8* name, int idx);
 extern int mCD_CheckCardPlayerNative(int idx);
 extern int mCD_CheckPassportFile(void);

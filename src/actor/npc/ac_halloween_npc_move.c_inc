@@ -1,4 +1,4 @@
-static BOOL aHWN_set_request_act(NPC_HALLOWEEN_ACTOR* actorx, u8 prio, u8 idx, u8 type, u16 obj, s16 move_x,
+static BOOL aHWN_set_request_act(HALLOWEEN_NPC_ACTOR* actorx, u8 prio, u8 idx, u8 type, u16 obj, s16 move_x,
                                  s16 move_z) {
     BOOL res = FALSE;
     if (prio >= actorx->npc_class.request.act_priority) {
