@@ -1,0 +1,828 @@
+typedef struct npc_mask_cat2_animation_s {
+    int anim_id;
+    int talk_flag;
+} aNM2_anime_c;
+
+static void aNM2_set_animation(ACTOR* actorx, int anime_idx) {
+    // clang-format off
+    static aNM2_anime_c anime[] = {
+        {aNPC_ANIM_WAIT1, FALSE},
+        {aNPC_ANIM_WAIT1, FALSE},
+        {aNPC_ANIM_WAIT1, FALSE},
+        {aNPC_ANIM_WAIT1, FALSE},
+        {aNPC_ANIM_KEITAI_TALK2, FALSE},
+        {aNPC_ANIM_KEITAI_TALK2, FALSE},
+        {aNPC_ANIM_KEITAI_TALK2, FALSE},
+        {aNPC_ANIM_KEITAI_TALK2, FALSE},
+        {aNPC_ANIM_WALK1, FALSE},
+        {aNPC_ANIM_WALK1, FALSE},
+        {aNPC_ANIM_KEITAI_TALK2, FALSE},
+        {aNPC_ANIM_KEITAI_OFF1, FALSE},
+        {aNPC_ANIM_OPEN_D1, FALSE},
+        {aNPC_ANIM_OPEN_D2, FALSE},
+        {aNPC_ANIM_WALK1, FALSE},
+        {aNPC_ANIM_WAIT1, TRUE},
+        {aNPC_ANIM_WAIT1, TRUE},
+        {aNPC_ANIM_WAIT1, TRUE},
+        {aNPC_ANIM_SITDOWN_D1, TRUE},
+        {aNPC_ANIM_SITDOWN_WAIT_D1, TRUE},
+        {aNPC_ANIM_SITDOWN_WAIT_D1, TRUE},
+        {aNPC_ANIM_SITDOWN_WAIT_D1, TRUE},
+        {aNPC_ANIM_SITDOWN_WAIT_D1, TRUE},
+        {aNPC_ANIM_SITDOWN_WAIT_D1, TRUE},
+        {aNPC_ANIM_SITDOWN_WAIT_D1, FALSE},
+    };
+    // clang-format on
+    aNM2_anime_c* anime_data = &anime[anime_idx];
+    NPC_CLIP->animation_init_proc(actorx, anime_data->anim_id, anime_data->talk_flag);
+}
+
+static void aNM2_set_camera(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    static s8 mov_def_cnt[] = { 3, 0 };
+    static f32 obj_look_y_max[] = { 30.0f, 20.0f };
+    static f32 obj_look_y_spd[] = { 0.5f, 2.5f };
+
+    xyz_t eye;
+    xyz_t pos;
+    xyz_t ground;
+    s16 move;
+    f32 moveX;
+    f32 moveY;
+    int obj_look_type = actorx->obj_look_type;
+    s16 cur_angle;
+    f32 inter;
+    f32 sin;
+    f32 ground_y;
+    s16 angle;
+
+    move = actorx->camera_move;
+    actorx->camera_move += 0xE20;
+    angle = move;
+    angle += 0xE20;
+    moveX = cos_s(angle) * 0.1f;
+    angle = move;
+    angle += 0xE20;
+    sin = sin_s(angle);
+    moveY = actorx->camera_move_range * sin;
+
+    if (actorx->camera_move_y <= 0.0f && moveY >= 0.0f) {
+        s8 cnt = actorx->camera_move_cnt;
+
+        cnt--;
+        if (cnt < 0) {
+            s8 set_cnt = actorx->camera_move_set_counter;
+
+            set_cnt--;
+            if (set_cnt < 0) {
+                set_cnt = ARRAY_COUNT(mov_def_cnt) - 1;
+            }
+
+            actorx->camera_move_set_counter = set_cnt;
+            cnt = mov_def_cnt[set_cnt];
+            actorx->camera_move_range = 0.3f;
+        } else {
+            actorx->camera_move_range *= 0.35f;
+        }
+
+        actorx->camera_move_cnt = cnt;
+    }
+
+    actorx->camera_move_y = moveY;
+
+    /* Set camera eye pos */
+    eye.x = moveX + 100.0f;
+    eye.y = moveY + 80.0f;
+    eye.z = 400.0f;
+
+    /* Move NPC head to current target */
+    chase_f(&actorx->npc_class.eye_y, obj_look_y_max[obj_look_type], obj_look_y_spd[obj_look_type] * 0.5f);
+
+    /* Set ground pos */
+    ground.x = actorx->npc_class.draw.shadow_pos.x;
+    ground.z = actorx->npc_class.draw.shadow_pos.z;
+    if (obj_look_type == 1) {
+        /* Use the actorx's NPC shadow position for Y */
+        ground_y = actorx->npc_class.draw.shadow_pos.y;
+    } else {
+        /* Get the ground position for Y */
+        ground_y = mCoBG_GetBgY_OnlyCenter_FromWpos2(ground, 0.0f);
+    }
+
+    chase_f(&actorx->obj_dist_ground, ground_y, 0.5f);
+    ground.y = actorx->obj_dist_ground;
+
+    /* Set camera center pos */
+    if (actorx->lock_camera_flag == TRUE) {
+        pos.x = ground.x;
+        pos.y = ground.y + actorx->npc_class.eye_y;
+        pos.z = ground.z;
+    } else if (actorx->action >= aNM2_MOVE_APPROACH &&
+               mDemo_Check(mDemo_TYPE_SPEAK, &actorx->npc_class.actor_class) == TRUE) {
+        int morph_counter = actorx->camera_morph_counter;
+        f32 r;
+
+        actorx->camera_morph_counter = morph_counter - 1;
+        if ((morph_counter - 1) == 0) {
+            actorx->lock_camera_flag = TRUE;
+        }
+
+        r = (40.0f - (f32)(morph_counter - 1)) / 40.0f;
+        inter = cKF_HermitCalc(r, 1.0f, 0.0f, 1.0f, 3.2f, 0.0f);
+
+        pos.x = (ground.x - 90.0f) * inter + 90.0f;
+        pos.y = ((ground.y + actorx->npc_class.eye_y) - 80.0f) * inter + 80.0f;
+        pos.z = (ground.z - 280.0f) * inter + 280.0f;
+    } else {
+        /* Default position */
+        pos.x = 90.0f;
+        pos.y = 80.0f;
+        pos.z = 280.0f;
+    }
+
+    pos.x += moveX;
+    pos.y += moveY;
+
+    Camera2_change_priority(play, 0);
+    Camera2_request_main_lock(play, &pos, &eye, 40.0f, 0, 60.0f, 800.0f, 5);
+}
+
+static void aNM2_set_camera_eyes(NPC_MASK_CAT2_ACTOR* actorx) {
+    if (actorx->camera_eyes_flag != TRUE) {
+        return;
+    }
+    actorx->npc_class.request.head_pos.x = 100.0f;
+    actorx->npc_class.request.head_pos.y = actorx->npc_class.actor_class.eye.position.y;
+    actorx->npc_class.request.head_pos.z = 400.0f;
+    actorx->npc_class.request.head_priority = 3;
+    actorx->npc_class.request.head_type = 2;
+}
+
+static void aNM2_set_walk_spd(NPC_MASK_CAT2_ACTOR* actorx) {
+    actorx->npc_class.movement.speed.max_speed = 1.0f;
+    actorx->npc_class.movement.speed.acceleration = 0.1f;
+    actorx->npc_class.movement.speed.deceleration = 0.2f;
+}
+
+static void aNM2_set_stop_spd(NPC_MASK_CAT2_ACTOR* actorx) {
+    actorx->npc_class.actor_class.speed = 0.0f;
+    actorx->npc_class.movement.speed.max_speed = 0.0f;
+    actorx->npc_class.movement.speed.acceleration = 0.0f;
+    actorx->npc_class.movement.speed.deceleration = 0.0f;
+}
+
+static void aNM2_talk_demo_proc(ACTOR* actorx) {
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        NPC_CLIP->talk_demo_proc(actorx);
+    }
+}
+
+static int aNM2_count_player_num_nextland(u8* player_name_array) {
+    Private_c* private_data_ptr = Save_Get(private_data);
+    int i;
+    int null_personal_id_cnt;
+
+    for (null_personal_id_cnt = 0, i = 0; i < PLAYER_NUM; i++, private_data_ptr++) {
+        if (mPr_NullCheckPersonalID(&private_data_ptr->player_ID) == FALSE) {
+            bcopy(private_data_ptr->player_ID.player_name, player_name_array, PLAYER_NAME_LEN);
+            player_name_array += PLAYER_NAME_LEN;
+            null_personal_id_cnt++;
+        }
+    }
+    return null_personal_id_cnt;
+}
+
+static int aNM2_count_player_num_beforeland(u8* player_name_array) {
+    PersonalID_c* persistent_data_pid = Common_Get(travel_persistent_data).pid;
+    int i;
+    int null_personal_id_cnt;
+
+    for (null_personal_id_cnt = 0, i = 0; i < PLAYER_NUM; i++, persistent_data_pid++) {
+        if (mPr_NullCheckPersonalID(persistent_data_pid) == FALSE) {
+            bcopy(persistent_data_pid->player_name, player_name_array, PLAYER_NAME_LEN);
+            player_name_array += PLAYER_NAME_LEN;
+            null_personal_id_cnt++;
+        }
+    }
+    return null_personal_id_cnt;
+}
+
+static void aNM2_set_free_str(void) {
+    u8 player_name_array[PLAYER_NUM][PLAYER_NAME_LEN];
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int idx;
+    u8* str_p;
+
+    idx = RANDOM(aNM2_count_player_num_nextland((u8*)player_name_array));
+    str_p = player_name_array[idx];
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR0, str_p, PLAYER_NAME_LEN);
+    str_p = Save_Get(land_info).name;
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR1, str_p, LAND_NAME_SIZE);
+    str_p = Common_Get(travel_persistent_data).land.name;
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR2, str_p, LAND_NAME_SIZE);
+    str_p = Now_Private->player_ID.land_name;
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR3, str_p, LAND_NAME_SIZE);
+
+    idx = RANDOM(aNM2_count_player_num_beforeland((u8*)player_name_array));
+    str_p = player_name_array[idx];
+    mMsg_Set_free_str(msg_p, mMsg_FREE_STR4, str_p, PLAYER_NAME_LEN);
+}
+
+static int aNM2_GetBeforePrivateIdx(Private_c* now_priv) {
+    int res = -1;
+    PersonalID_c* pid;
+    int player_idx;
+    if (mPr_NullCheckPersonalID(&now_priv->player_ID) == FALSE) {
+        for (player_idx = 0, pid = Common_Get(travel_persistent_data).pid; player_idx < 4; pid++, player_idx++) {
+            if (mPr_CheckCmpPersonalID(&now_priv->player_ID, pid) == TRUE) {
+                res = player_idx;
+                break;
+            }
+        }
+    }
+    return res;
+}
+
+static int aNM2_get_msg_no_mishiranuneko_talk_start() {
+    int res;
+    int before_idx = aNM2_GetBeforePrivateIdx(Now_Private);
+    int private_idx = mPr_GetPrivateIdx(&Now_Private->player_ID);
+    if (before_idx != -1) {
+        res = 0x3274;
+    } else if (private_idx != -1) {
+        res = 0x3275;
+    } else {
+        res = 0x3276;
+    }
+    return res;
+}
+
+static BOOL aNM2_chg_cond_keitai(NPC_MASK_CAT2_ACTOR* actorx, int mode) {
+    BOOL res = FALSE;
+    if ((actorx->npc_class.right_hand.item_actor_p != NULL) && (CLIP(tools_clip) != NULL) &&
+        (CLIP(tools_clip)
+             ->aTOL_chg_request_mode_proc(&actorx->npc_class.actor_class, actorx->npc_class.right_hand.item_actor_p,
+                                          mode) == TRUE)) {
+        res = TRUE;
+    }
+    return res;
+}
+
+static void aNM2_make_shasho(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    ACTOR* sasho_actor;
+    if ((actorx->sasho_actor == NULL) && (actorx->action > aNM2_MOVE_SITDOWN)) {
+        if (actorx->unkRotation <= 0) {
+            if ((NPC_CLIP != NULL) && (NPC_CLIP->setupActor_proc != NULL)) {
+                if ((NPC_CLIP->setupActor_proc(play, SP_NPC_SASHO, -1, -1, actorx->arg, -1, -1, 0, 0) == TRUE) &&
+                    (sasho_actor = Actor_info_fgName_search(&play->actor_info, SP_NPC_SASHO, ACTOR_PART_NPC),
+                     sasho_actor != NULL)) {
+                    sasho_actor->parent_actor = &actorx->npc_class.actor_class;
+                    sasho_actor->world.position.y = actorx->npc_class.actor_class.world.position.y;
+                    actorx->sasho_actor = sasho_actor;
+                    actorx->arg ^= 0x1;
+                    actorx->unkRotation = 0x2a30;
+                }
+            }
+        } else {
+            actorx->unkRotation--;
+        }
+    }
+}
+
+static BOOL aNM2_chk_mask_texture() {
+    int i;
+    u8* design_data;
+    BOOL res = FALSE;
+    for (i = mNW_DESIGN_TEX_SIZE, design_data = Save_Get(mask_cat.design.design.data); i > 0; i--, design_data++) {
+        if (*design_data != 0xFF) {
+            res = TRUE;
+            break;
+        }
+    }
+    return res;
+}
+
+static void aNM2_set_next_village_map() {
+    if (mLd_PlayerManKindCheck() == FALSE) {
+        if (mEv_CheckFirstJob() == TRUE) {
+            switch (mQst_GetFirstJobData()->base.quest_kind) {
+                case mQst_ERRAND_FIRSTJOB_CHANGE_CLOTH:
+                case mQst_ERRAND_FIRSTJOB_PLANT_FLOWER:
+                case mQst_ERRAND_FIRSTJOB_DELIVER_FTR:
+                case mQst_ERRAND_FIRSTJOB_INTRODUCTIONS:
+                case mQst_ERRAND_FIRSTJOB_START:
+                    Common_Set(map_flag, FALSE);
+                    return;
+                case mQst_ERRAND_FIRSTJOB_SEND_LETTER:
+                case mQst_ERRAND_FIRSTJOB_DELIVER_CARPET:
+                case mQst_ERRAND_FIRSTJOB_DELIVER_AXE:
+                case mQst_ERRAND_FIRSTJOB_POST_NOTICE:
+                case mQst_ERRAND_FIRSTJOB_SEND_LETTER2:
+                case mQst_ERRAND_FIRSTJOB_DELIVER_AXE2:
+                case mQst_ERRAND_FIRSTJOB_OPEN:
+                default:
+                    Common_Set(map_flag, TRUE);
+                    return;
+            }
+        }
+        Common_Set(map_flag, TRUE);
+    } else {
+        if (mPr_GetThisLandMapIdx(Now_Private->maps, mPr_FOREIGN_MAP_COUNT) != -1) {
+            Common_Set(map_flag, TRUE);
+        } else {
+            Common_Set(map_flag, FALSE);
+        }
+    }
+}
+
+static void aNM2_set_talk_info_announce_start_wait(ACTOR* actorx) {
+    rgba_t color;
+
+    mMsg_SET_FREE_STR(mMsg_FREE_STR1, Save_Get(land_info.name), LAND_NAME_SIZE);
+    mDemo_Set_msg_num(0x35af);
+    mDemo_Set_talk_display_name(FALSE);
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+    mDemo_Set_talk_change_player(FALSE);
+
+    color.r = 175;
+    color.g = 255;
+    color.b = 175;
+    color.a = 255;
+    mDemo_Set_talk_window_color(&color);
+    actorx->npc_id = SP_NPC_STATION_MASTER;
+}
+
+static void aNM2_announce_start_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        if (mDemo_Check_ListenAble() == FALSE) {
+            aNM2_setupAction(&mask_cat2_actor->npc_class.actor_class, game, mask_cat2_actor->action + 1);
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+            mDemo_Set_ListenAble();
+        }
+    } else if (mask_cat2_actor->wait_timer <= 0.0f) {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, aNM2_set_talk_info_announce_start_wait);
+    } else {
+        mask_cat2_actor->wait_timer -= 0.5f;
+    }
+}
+
+static void aNM2_save_start_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    if ((mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9)) && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        mMsg_Set_LockContinue(msg_p);
+        aNM2_setupAction(actorx, game, mask_cat2_actor->action + 1);
+    }
+}
+
+static void aNM2_save_end_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    static s32 next_act_idx[] = { 3, 1, 1, 1 };
+    static s32 msg_no[] = { 0x35B4, 0x35B0, 0x35B1, 0x35B5 };
+
+    mMsg_Window_c* msg_p;
+    int msg_no_idx = -1;
+    s32 chan;
+    switch (mCD_InitGameStart_bg(Common_Get(player_no), 0, 4, &chan)) {
+        case 0:
+            msg_no_idx = 0;
+            aNM2_set_next_village_map();
+            break;
+        case 22:
+            msg_no_idx = 1;
+            break;
+        case 2:
+            msg_no_idx = 2;
+            break;
+        case 7:
+            msg_no_idx = 3;
+            break;
+    }
+    if (msg_no_idx != -1) {
+        msg_p = mMsg_Get_base_window_p();
+        mMsg_Unset_LockContinue(msg_p);
+        mMsg_Set_continue_msg_num(msg_p, msg_no[msg_no_idx]);
+        aNM2_setupAction(actorx, game, mask_cat2_actor->action + next_act_idx[msg_no_idx] - 2);
+    }
+}
+
+static void aNM2_announce_end_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int action_idx;
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE) {
+        aNM2_setupAction(actorx, game,
+                         (mask_cat2_actor->action == aNM2_MOVE_ANNOUNCE_END_WAIT) ? aNM2_MOVE_WALK_DECK
+                                                                                  : aNM2_MOVE_KEITAI_OFF_START_WAIT);
+    }
+}
+
+static void aNM2_walk_deck(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (mask_cat2_actor->npc_class.actor_class.world.position.x > 140.0f) {
+        aNM2_setupAction(actorx, game, aNM2_MOVE_TURN_DECK);
+    }
+}
+
+static void aNM2_turn_deck(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (chase_angle(&actorx->shape_info.rotation.y, 0, 0x600) == TRUE) {
+        aNM2_setupAction(actorx, game, aNM2_MOVE_ENTER);
+        mask_cat2_actor->npc_class.draw.main_animation.keyframe.morph_counter = 0.0f;
+    }
+    mask_cat2_actor->npc_class.actor_class.world.angle.y = mask_cat2_actor->npc_class.actor_class.shape_info.rotation.y;
+}
+
+static void aNM2_keitai_off_start_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    mask_cat2_actor->wait_timer -= 0.5f;
+    if (mask_cat2_actor->wait_timer <= 0.0f) {
+        aNM2_setupAction(actorx, game, aNM2_MOVE_KEITAI_OFF_END_WAIT);
+    }
+}
+
+static void aNM2_keitai_off_end_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (mask_cat2_actor->npc_class.draw.main_animation_state == TRUE) {
+        aNM2_setupAction(actorx, game, aNM2_MOVE_ENTER_DUPE_1);
+    }
+}
+
+static void aNM2_enter(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    TRAINDOOR_ACTOR* train_door;
+    float current;
+    if (mask_cat2_actor->npc_class.actor_class.world.position.z < 130.0f) {
+        if (mask_cat2_actor->action != aNM2_MOVE_ENTER) {
+            mask_cat2_actor->npc_class.actor_class.shape_info.rotation.y = -0x8000;
+        }
+        mask_cat2_actor->npc_class.actor_class.world.angle.y = 0;
+        mask_cat2_actor->npc_class.actor_class.world.position.x = 140.0f;
+        mask_cat2_actor->npc_class.actor_class.world.position.z = 130.0f;
+    }
+    if (mask_cat2_actor->npc_class.draw.main_animation_state == TRUE) {
+        if (mask_cat2_actor->action == aNM2_MOVE_ENTER) {
+            mask_cat2_actor->camera_eyes_flag = TRUE;
+        }
+        aNM2_setupAction(actorx, game, aNM2_MOVE_APPROACH);
+    } else {
+        if (mask_cat2_actor->action == aNM2_MOVE_ENTER) {
+            current = 20.0f;
+        } else {
+            current = 22.0f;
+        }
+        if (cKF_FrameControl_passCheck_now(&mask_cat2_actor->npc_class.draw.main_animation.keyframe.frame_control,
+                                           current) == TRUE) {
+            train_door = (TRAINDOOR_ACTOR*)mask_cat2_actor->train_door_actor;
+            train_door->open_flag = TRUE;
+        }
+    }
+}
+
+static void aNM2_approach(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    mNpc_MaskNpc_c* npc_info_mask;
+    int action_idx;
+    actorx->world.angle.y = 0;
+    actorx->shape_info.rotation.y = 0;
+    if (actorx->world.position.z >= 210.0f) {
+        mask_cat2_actor->camera_eyes_flag = TRUE;
+    }
+    if (actorx->world.position.z >= 290.0f) {
+        npc_info_mask = mask_cat2_actor->npc_class.npc_info.mask;
+        action_idx = aNM2_MOVE_TALK_START_WAIT;
+        if (npc_info_mask == NULL || npc_info_mask->npc_id == SP_NPC_GUIDE) {
+            action_idx = aNM2_MOVE_TALK_START_WAIT2;
+        }
+        aNM2_setupAction(actorx, game, action_idx);
+    }
+}
+
+static void aNM2_set_talk_info_talk_start_wait(ACTOR* actorx) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    int msg_no;
+    mMsg_SET_FREE_STR(mMsg_FREE_STR1, Save_Get(land_info).name, LAND_NAME_SIZE);
+    if ((Now_Private->state_flags & mPr_FLAG_1)) {
+        msg_no = 0x33f3;
+    } else {
+        msg_no = 0x33f2;
+        Now_Private->state_flags |= mPr_FLAG_1;
+    }
+    mDemo_Set_msg_num(msg_no);
+    mDemo_Set_camera(0xD); // Does not exist just yet.
+    mDemo_Set_talk_change_player(FALSE);
+    mDemo_Set_use_zoom_sound(TRUE);
+    mask_cat2_actor->obj_look_type = 1;
+}
+
+static void aNM2_talk_start_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        if ((mDemo_Check_ListenAble() == FALSE) &&
+            (chase_angle(&actorx->shape_info.rotation.y, actorx->player_angle_y, 0x400) == TRUE)) {
+            aNM2_setupAction(&mask_cat2_actor->npc_class.actor_class, game, aNM2_MOVE_SITDOWN_START_WAIT);
+            mDemo_Set_ListenAble();
+        }
+    } else {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, aNM2_set_talk_info_talk_start_wait);
+    }
+}
+
+static void aNM2_set_talk_info_talk_start_wait2(NPC_MASK_CAT2_ACTOR* actorx) {
+    aNM2_set_free_str();
+    mDemo_Set_msg_num(aNM2_get_msg_no_mishiranuneko_talk_start());
+    mDemo_Set_camera(0xD); // Does not exist just yet.
+    mDemo_Set_talk_change_player(FALSE);
+    mDemo_Set_use_zoom_sound(TRUE);
+    actorx->obj_look_type = 1;
+}
+
+static void aNM2_talk_start_wait2(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        if ((mDemo_Check_ListenAble() == FALSE) &&
+            (chase_angle(&actorx->shape_info.rotation.y, actorx->player_angle_y, 0x400) == TRUE)) {
+            aNM2_setupAction(&mask_cat2_actor->npc_class.actor_class, game, 17);
+            mDemo_Set_ListenAble();
+        }
+    } else {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, aNM2_set_talk_info_talk_start_wait);
+    }
+}
+
+static void aNM2_sitdown_start_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p()) == TRUE) {
+        aNM2_setupAction(actorx, game, aNM2_MOVE_SITDOWN);
+    }
+}
+
+static void aNM2_sitdown(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int action_idx;
+    mNpc_MaskNpc_c* npc_info_mask;
+    actorx->world.position.x = 100.0f;
+    actorx->world.position.z = 280.0f;
+    actorx->shape_info.rotation.y = 0;
+    if (mask_cat2_actor->npc_class.draw.main_animation_state == TRUE) {
+        npc_info_mask = mask_cat2_actor->npc_class.npc_info.mask;
+        action_idx = aNM2_MOVE_SDON_AND_PB_WAIT;
+        if (npc_info_mask == NULL || npc_info_mask->npc_id == SP_NPC_GUIDE) {
+            action_idx = aNM2_MOVE_TALK_END_WAIT;
+        }
+        mMsg_UNSET_LOCKCONTINUE();
+        aNM2_setupAction(actorx, game, action_idx);
+    }
+}
+
+static void aNM2_sdon_and_pb_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9)) {
+        if (mMsg_CHECK_MAINNORMALCONTINUE()) {
+            aNM2_setupAction(actorx, game, aNM2_MOVE_DRAW_MENU_OPEN_WAIT);
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        }
+    }
+}
+
+static void aNM2_draw_menu_open_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
+        aNM2_setupAction(actorx, game, aNM2_MOVE_DRAW_MENU_CLOSE_WAIT);
+    }
+}
+
+static void aNM2_draw_menu_close_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (play->submenu.open_flag == FALSE) {
+        aNM2_setupAction(actorx, game, aNM2_MOVE_MSG_WIN_OPEN_WAIT);
+    }
+}
+
+static void aNM2_msg_win_open_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int msg_num;
+    int action_idx;
+    if (mMsg_Check_not_series_main_wait(msg_p) == TRUE) {
+        msg_num = 0x321a;
+        action_idx = aNM2_MOVE_SDON_AND_PB_WAIT;
+        if (aNM2_chk_mask_texture() == TRUE) {
+            msg_num = RANDOM(3) + 0x31e1;
+            action_idx = aNM2_MOVE_TALK_END_WAIT;
+        }
+        mMsg_Unset_LockContinue(msg_p);
+        mMsg_Set_continue_msg_num(msg_p, msg_num);
+        mMsg_Set_ForceNext(msg_p);
+        aNM2_setupAction(actorx, game, action_idx);
+    }
+}
+
+static void aNM2_talk_end_wait(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE) {
+        aNM2_setupAction(actorx, game, aNM2_MOVE_NONE);
+    }
+}
+
+static void aNM2_announce_start_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    actorx->wait_timer = 70.0f;
+    actorx->npc_class.talk_info.melody_inst = 0xe6;
+    actorx->npc_class.talk_info.npc_voice_id = 0xe6;
+}
+
+static void aNM2_announce_start_wait2_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    ACTOR* keitai_actor;
+    aNM2_announce_start_wait_init(actorx, play);
+    if ((CLIP(tools_clip) != NULL) &&
+        (keitai_actor = CLIP(tools_clip)
+                            ->aTOL_birth_proc(TOOL_KEITAI, aTOL_ACTION_S_TAKEOUT, &actorx->npc_class.actor_class,
+                                              &play->game, -1, NULL),
+         keitai_actor != NULL)) {
+        actorx->npc_class.right_hand.item_actor_p = keitai_actor;
+    }
+}
+
+static void aNM2_walk_deck_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    actorx->npc_class.condition_info.hide_flg = FALSE;
+    actorx->npc_class.actor_class.npc_id = SP_NPC_MASK_CAT2;
+    aNM2_set_walk_spd(actorx);
+}
+
+static void aNM2_turn_deck_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    aNM2_set_stop_spd(actorx);
+    actorx->npc_class.actor_class.world.position.x = 140.0f;
+}
+
+static void aNM2_keitai_off_start_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    actorx->npc_class.actor_class.npc_id = SP_NPC_GUIDE;
+    actorx->wait_timer = 40.0f;
+}
+
+static void aNM2_keitai_off_end_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    aNM2_chg_cond_keitai(actorx, 2);
+}
+
+static void aNM2_approach_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    aNM2_set_walk_spd(actorx);
+    actorx->npc_class.draw.main_animation.keyframe.morph_counter = 0.0f;
+}
+
+static void aNM2_talk_start_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    aNM2_set_stop_spd(actorx);
+    actorx->npc_class.actor_class.world.position.z = 290.0f;
+    actorx->npc_class.talk_info.melody_inst = 0;
+    actorx->npc_class.talk_info.npc_voice_id = 0x11c;
+}
+
+static void aNM2_talk_start_wait2_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    aNM2_set_stop_spd(actorx);
+    actorx->npc_class.actor_class.world.position.z = 290.0f;
+    actorx->npc_class.talk_info.melody_inst = 0;
+    actorx->npc_class.talk_info.npc_voice_id = 0;
+}
+
+static void aNM2_sitdown_start_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    actorx->camera_eyes_flag = FALSE;
+}
+
+static void aNM2_sitdown_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    actorx->npc_class.head.angle_x = 0;
+    actorx->npc_class.head.angle_add_x = 0;
+    mMsg_SET_LOCKCONTINUE();
+    actorx->unkRotation = 0xe10;
+}
+
+static void aNM2_draw_menu_open_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    mMsg_Set_LockContinue(msg_p);
+    mMsg_request_main_disappear_wait_type1(msg_p);
+}
+
+static void aNM2_draw_menu_close_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    mSM_open_submenu(&play->submenu, mSM_OVL_DESIGN, 0, 0);
+}
+
+static void aNM2_msg_win_open_wait_init() {
+    mPr_CopyPersonalID(&Save_Get(mask_cat.design.creator_pid), &Now_Private->player_ID);
+    mMsg_REQUEST_MAIN_APPEAR_WAIT_TYPE1();
+}
+
+static void aNM2_talk_end_wait_init() {
+    Common_Set(sunlight_flag, TRUE);
+    sAdo_TrgSeEcho(FALSE);
+    sAdo_LevSeEcho(FALSE);
+}
+
+static void aNM2_scene_change_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
+    goto_next_scene(play, 0, TRUE);
+    play->fb_wipe_type = 3;
+    Common_Set(transition.wipe_type, 4);
+    Common_Set(submenu_disabled, TRUE);
+    mBGMPsComp_make_ps_wipe(0x41c2);
+    mBGMPsComp_scene_mode(18);
+    Common_Set(demo_profiles[0], mAc_PROFILE_RIDE_OFF_DEMO);
+}
+
+static void aNM2_init_proc(ACTOR* actorx, GAME* game, int init_proc_idx) {
+    // clang-format off
+    static aNM2_INIT_PROC init_proc[] = {
+        &aNM2_announce_start_wait_init,
+        (aNM2_INIT_PROC)&none_proc1,
+        (aNM2_INIT_PROC)&none_proc1,
+        (aNM2_INIT_PROC)&none_proc1,
+        &aNM2_announce_start_wait2_init,
+        (aNM2_INIT_PROC)&none_proc1,
+        (aNM2_INIT_PROC)&none_proc1,
+        (aNM2_INIT_PROC)&none_proc1,
+        &aNM2_walk_deck_init,
+        &aNM2_turn_deck_init,
+        &aNM2_keitai_off_start_wait_init,
+        &aNM2_keitai_off_end_wait_init,
+        (aNM2_INIT_PROC)&none_proc1,
+        (aNM2_INIT_PROC)&none_proc1,
+        &aNM2_approach_init,
+        &aNM2_talk_start_wait_init,
+        &aNM2_talk_start_wait2_init,
+        &aNM2_sitdown_start_wait_init,
+        &aNM2_sitdown_init,
+        (aNM2_INIT_PROC)&none_proc1,
+        &aNM2_draw_menu_open_wait_init,
+        &aNM2_draw_menu_close_wait_init,
+        &aNM2_msg_win_open_wait_init,
+        &aNM2_talk_end_wait_init,
+        &aNM2_scene_change_wait_init,
+    };
+    // clang-format on
+    init_proc[init_proc_idx]((NPC_MASK_CAT2_ACTOR*)actorx, (GAME_PLAY*)game);
+}
+
+static void aNM2_setupAction(ACTOR* actorx, GAME* game, int process_idx) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    // clang-format off
+    static aNM2_MOVE_PROC process[] = {
+        &aNM2_announce_start_wait,
+        &aNM2_save_start_wait,
+        &aNM2_save_end_wait,
+        &aNM2_announce_end_wait,
+        &aNM2_announce_start_wait,
+        &aNM2_save_start_wait,
+        &aNM2_save_end_wait,
+        &aNM2_announce_end_wait,
+        &aNM2_walk_deck,
+        &aNM2_turn_deck,
+        &aNM2_keitai_off_start_wait,
+        &aNM2_keitai_off_end_wait,
+        &aNM2_enter,
+        &aNM2_enter,
+        &aNM2_approach,
+        &aNM2_talk_start_wait,
+        &aNM2_talk_start_wait2,
+        &aNM2_sitdown_start_wait,
+        &aNM2_sitdown,
+        &aNM2_sdon_and_pb_wait,
+        &aNM2_draw_menu_open_wait,
+        &aNM2_draw_menu_close_wait,
+        &aNM2_msg_win_open_wait,
+        &aNM2_talk_end_wait,
+        (aNM2_MOVE_PROC)&none_proc1,
+    };
+    // clang-format on
+    mask_cat2_actor->action = process_idx;
+    mask_cat2_actor->move_proc = process[process_idx];
+    aNM2_set_animation(actorx, process_idx);
+    aNM2_init_proc(actorx, game, process_idx);
+}
+
+static void aNM2_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_MASK_CAT2_ACTOR* mask_cat2_actor = (NPC_MASK_CAT2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    NPC_CLIP->move_before_proc(actorx, game);
+    aNM2_talk_demo_proc(actorx);
+    mask_cat2_actor->move_proc(actorx, game);
+    NPC_CLIP->move_after_proc(actorx, game);
+    aNM2_set_camera(mask_cat2_actor, play);
+    aNM2_set_camera_eyes(mask_cat2_actor);
+    aNM2_make_shasho(mask_cat2_actor, play);
+    mSC_change_player_freeze(play);
+}
