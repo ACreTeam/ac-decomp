@@ -187,7 +187,7 @@ extern u8 ics_bad;
 
 extern FamicomCommon famicomCommon;
 
-typedef s32 (*FAMICOM_GETSAVECHAN_PROC)(int* player_no, s32* slot_card_result);
+typedef int (*FAMICOM_GETSAVECHAN_PROC)(int* player_no, s32* slot_card_result);
 
 extern int famicom_getErrorChan();
 extern void famicom_setCallback_getSaveChan(FAMICOM_GETSAVECHAN_PROC proc);

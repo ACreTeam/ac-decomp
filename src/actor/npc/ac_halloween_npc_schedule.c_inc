@@ -1,57 +1,56 @@
-static void aHWN_approach(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    NPC_HALLOWEEN_ACTOR* hwn_actor = (NPC_HALLOWEEN_ACTOR*)actorx;
+static void aHWN_approach(HALLOWEEN_NPC_ACTOR* hwn_actor, GAME_PLAY* play) {
     ACTOR* talk_actor = mDemo_Get_talk_actor();
-    if ((talk_actor != NULL && talk_actor != &actorx->actor_class) ||
+
+    if ((talk_actor != NULL && talk_actor != (ACTOR*)hwn_actor) ||
         (hwn_actor->npc_class.actor_class.block_x != play->block_table.block_x ||
          hwn_actor->npc_class.actor_class.block_z != play->block_table.block_z)) {
-        aHWN_setup_think_proc(&actorx->actor_class, &play->game, 1);
+        aHWN_setup_think_proc(hwn_actor, play, aHWN_THINK_APPROACH_WAIT);
     } else if (hwn_actor->npc_class.action.step == aNPC_ACTION_END_STEP) {
-        aHWN_setup_think_proc(&actorx->actor_class, &play->game, 0);
+        aHWN_setup_think_proc(hwn_actor, play, aHWN_THINK_APPROACH);
     }
 }
 
-static void aHWN_approach_wait(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    NPC_HALLOWEEN_ACTOR* hwn_actor = (NPC_HALLOWEEN_ACTOR*)actorx;
-    if (((mDemo_Get_talk_actor() == 0) && (hwn_actor->npc_class.actor_class.block_x == (play->block_table).block_x)) &&
+static void aHWN_approach_wait(HALLOWEEN_NPC_ACTOR* hwn_actor, GAME_PLAY* play) {
+    if (((mDemo_Get_talk_actor() == NULL) &&
+         (hwn_actor->npc_class.actor_class.block_x == (play->block_table).block_x)) &&
         (hwn_actor->npc_class.actor_class.block_z == (play->block_table).block_z)) {
-        aHWN_setup_think_proc(&actorx->actor_class, &play->game, 0);
+        aHWN_setup_think_proc(hwn_actor, play, aHWN_THINK_APPROACH);
     } else if (hwn_actor->npc_class.action.step == aNPC_ACTION_END_STEP) {
-        aHWN_setup_think_proc(&actorx->actor_class, &play->game, 1);
+        aHWN_setup_think_proc(hwn_actor, play, aHWN_THINK_APPROACH_WAIT);
     }
 }
 
 static void aHWN_think_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    NPC_HALLOWEEN_ACTOR* hwn_actor = (NPC_HALLOWEEN_ACTOR*)actorx;
-    hwn_actor->think_proc(actorx, play);
+    HALLOWEEN_NPC_ACTOR* hwn_actor = (HALLOWEEN_NPC_ACTOR*)actorx;
+
+    hwn_actor->think_proc(hwn_actor, play);
 }
 
-static void aHWN_think_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    NPC_HALLOWEEN_ACTOR* hwn_actor = (NPC_HALLOWEEN_ACTOR*)actorx;
-    aHWN_setup_think_proc(&actorx->actor_class, &play->game, 0);
+static void aHWN_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HALLOWEEN_NPC_ACTOR* hwn_actor = (HALLOWEEN_NPC_ACTOR*)nactorx;
+
+    aHWN_setup_think_proc(hwn_actor, play, aHWN_THINK_APPROACH);
     hwn_actor->npc_class.condition_info.hide_request = 0;
     hwn_actor->npc_class.think.interrupt_flags = aNPC_THINK_INTERRUPT_ENTRANCE | aNPC_THINK_INTERRUPT_OBSTACLE;
     hwn_actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV;
 }
 
-static void aHWN_approach_init(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    aHWN_set_request_act((NPC_HALLOWEEN_ACTOR*)actorx, 4, aNPC_ACT_RUN, aNPC_ACT_TYPE_SEARCH, aNPC_ACT_OBJ_PLAYER, 0,
-                         0);
+static void aHWN_approach_init(HALLOWEEN_NPC_ACTOR* hwn_actor, GAME_PLAY* play) {
+    aHWN_set_request_act(hwn_actor, 4, aNPC_ACT_RUN, aNPC_ACT_TYPE_SEARCH, aNPC_ACT_OBJ_PLAYER, 0, 0);
 }
 
-static void aHWN_approach_wait_init(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    aHWN_set_request_act((NPC_HALLOWEEN_ACTOR*)actorx, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_SEARCH, aNPC_ACT_OBJ_PLAYER, 0,
-                         0);
+static void aHWN_approach_wait_init(HALLOWEEN_NPC_ACTOR* hwn_actor, GAME_PLAY* play) {
+    aHWN_set_request_act(hwn_actor, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_SEARCH, aNPC_ACT_OBJ_PLAYER, 0, 0);
 }
 
 typedef struct {
-    aHWN_THINK_PROC_P approach_proc;
-    aHWN_THINK_PROC_P approach_init_proc;
+    aHWN_THINK_PROC approach_proc;
+    aHWN_THINK_PROC approach_init_proc;
     aNPC_TALK_REQUEST_PROC talk_request_proc;
     u8 unk;
 } aHWN_talk_data_c;
 
-static void aHWN_setup_think_proc(ACTOR* actorx, GAME* game, int dt_tbl_idx) {
-    NPC_HALLOWEEN_ACTOR* hwn_actor = (NPC_HALLOWEEN_ACTOR*)actorx;
+static void aHWN_setup_think_proc(HALLOWEEN_NPC_ACTOR* hwn_actor, GAME_PLAY* play, int dt_tbl_idx) {
     aHWN_talk_data_c* data;
     // clang-format off
     static aHWN_talk_data_c dt_tbl[] = {
@@ -65,21 +64,23 @@ static void aHWN_setup_think_proc(ACTOR* actorx, GAME* game, int dt_tbl_idx) {
     hwn_actor->think_proc = data->approach_proc;
     hwn_actor->npc_class.talk_info.talk_request_proc = data->talk_request_proc;
     hwn_actor->_99C = data->unk;
-    data->approach_init_proc((NPC_ACTOR*)actorx, (GAME_PLAY*)game);
+    data->approach_init_proc(hwn_actor, play);
 }
 
 static void aHWN_think_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int think_proc_idx) {
-    static aHWN_THINK_PROC_P think_proc[] = { aHWN_think_init_proc, aHWN_think_main_proc };
+    static aNPC_SUB_PROC think_proc[] = { aHWN_think_init_proc, aHWN_think_main_proc };
     think_proc[think_proc_idx](actorx, play);
 }
 
 static void aHWN_schedule_think_init(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    static int think_idx[] = { 5, 9, 1 };
-    NPC_CLIP->think_proc(actorx, play, think_idx[actorx->schedule.step], 0);
+    static int think_idx[] = { aNPC_THINK_LEAVE_HOUSE, aNPC_THINK_SPECIAL, aNPC_THINK_WANDER };
+
+    NPC_CLIP->think_proc(actorx, play, think_idx[actorx->schedule.step], aNPC_THINK_TYPE_INIT);
 }
 
 static void aHWN_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     int step = 1;
+
     actorx->think.think_proc = aHWN_think_proc;
     if (actorx->npc_info.animal->is_home == TRUE) {
         step = 0;
@@ -89,32 +90,33 @@ static void aHWN_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
 }
 
 static void aHWN_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    NPC_HALLOWEEN_ACTOR* hwn_actor = (NPC_HALLOWEEN_ACTOR*)actorx;
+    HALLOWEEN_NPC_ACTOR* hwn_actor = (HALLOWEEN_NPC_ACTOR*)actorx;
     if (actorx->think.end_flag == TRUE) {
         if (actorx->schedule.step != 2) {
             actorx->schedule.step += 1;
         }
         aHWN_schedule_think_init(actorx, play);
-    } else if (hwn_actor->_9A0 == TRUE) {
-        if (NPC_CLIP->think_proc(actorx, play, -1, 1) == 0) {
+    } else if (hwn_actor->wait_think_done == TRUE) {
+        if (NPC_CLIP->think_proc(actorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == FALSE) {
             if (actorx->action.step == aNPC_ACTION_END_STEP) {
-                hwn_actor->_9A0 = FALSE;
+                hwn_actor->wait_think_done = FALSE;
                 aHWN_schedule_think_init(actorx, play);
             }
         } else {
             actorx->request.act_priority = 4;
         }
     } else {
-        if (NPC_CLIP->think_proc(actorx, play, -1, 1) == 0) {
-            NPC_CLIP->think_proc(actorx, play, -1, 2);
+        if (NPC_CLIP->think_proc(actorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == FALSE) {
+            NPC_CLIP->think_proc(actorx, play, -1, aNPC_THINK_TYPE_MAIN);
         } else {
             actorx->request.act_priority = 4;
-            hwn_actor->_9A0 = TRUE;
+            hwn_actor->wait_think_done = TRUE;
         }
     }
 }
 
 static void aHWN_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int sche_proc_idx) {
     static aNPC_SUB_PROC sche_proc[] = { aHWN_schedule_init_proc, aHWN_schedule_main_proc };
+
     sche_proc[sche_proc_idx](actorx, play);
 }
