@@ -1,0 +1,100 @@
+static void aNS_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_SONCHO_ACTOR* actor = (NPC_SONCHO_ACTOR*)nactorx;
+    
+    (*actor->think_proc)(actor);
+}
+
+static void aNS_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_SONCHO_ACTOR* actor = (NPC_SONCHO_ACTOR*)nactorx;
+    
+    nactorx->actor_class.status_data.weight = MASSTYPE_IMMOVABLE;
+    nactorx->condition_info.hide_request = FALSE;
+    aNS_setup_think_proc(actor, play, aNS_THINK_WAIT);
+}
+
+static void aNS_normal_wait_init(NPC_SONCHO_ACTOR* actor, GAME_PLAY* play) {
+    aNS_set_request_act(actor, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_ACT_OBJ_DEFAULT, 0, 0);
+}
+
+static void aNS_wander_init(NPC_SONCHO_ACTOR* actor, GAME_PLAY* play) {
+    NPC_CLIP->chg_schedule_proc((NPC_ACTOR*)actor, play, aNPC_SCHEDULE_TYPE_WALK_WANDER);
+    actor->npc_class.actor_class.status_data.weight = 80;
+}
+
+typedef struct {
+    u8 think_proc_idx;
+    u8 think_init_proc_idx;
+    u8 talk_request_type;
+    u8 talk_idx;
+    u8 think_after_talk_idx;
+} aNS_think_data_c;
+
+// clnag-format off
+    static aNS_think_data_c dt_tbl[] = {
+        { 0, aNS_THINK_WANDER, 1, 0, aNS_THINK_WAIT },
+    };
+    // clang-format on
+
+static aNS_PROC proc_table[] = { (aNS_PROC)none_proc1 };
+
+typedef void (*aNS_INIT_PROC)(NPC_SONCHO_ACTOR* actor, GAME_PLAY* play);
+
+// clang-format off
+static aNS_INIT_PROC init_table[] = {
+    (aNS_INIT_PROC)none_proc1,
+    aNS_normal_wait_init,
+    aNS_wander_init,
+};
+// clang-format on
+
+static void aNS_setup_think_proc(NPC_SONCHO_ACTOR* actor, GAME_PLAY* play, u8 think_idx) {
+    // clang-format off
+    static aNPC_TALK_REQUEST_PROC talk_request_table[] = {
+        (aNPC_TALK_REQUEST_PROC)none_proc1,
+        aNS_norm_talk_request,
+        (aNPC_TALK_REQUEST_PROC)none_proc1,
+    };
+    // clang-format on
+    aNS_think_data_c* data_p = &dt_tbl[think_idx];
+
+    actor->think_idx = think_idx;
+    actor->think_proc = proc_table[data_p->think_proc_idx];
+    actor->npc_class.talk_info.talk_request_proc = talk_request_table[data_p->talk_request_type];
+    actor->talk_idx = data_p->talk_idx;
+    actor->think_after_talk_idx = data_p->think_after_talk_idx;
+    (*init_table[data_p->think_init_proc_idx])(actor, play);
+    actor->think_chg_flag = TRUE;
+}
+
+static void aNS_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_THINK_PROC_INIT:
+            aNS_think_init_proc(nactorx, play);
+            break;
+        case aNPC_THINK_PROC_MAIN:
+            aNS_think_main_proc(nactorx, play);
+            break;
+    }
+}
+
+static void aNS_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = aNS_think_proc;
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aNS_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == FALSE) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aNS_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_SCHEDULE_PROC_INIT:
+            aNS_schedule_init_proc(nactorx, play);
+            break;
+        case aNPC_SCHEDULE_PROC_MAIN:
+            aNS_schedule_main_proc(nactorx, play);
+            break;
+    }
+}

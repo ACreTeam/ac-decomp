@@ -1,0 +1,58 @@
+static int aNS_change_talk_proc(NPC_SONCHO_ACTOR* actor, u8 talk_idx) {
+    actor->talk_idx = talk_idx;
+    return TRUE;
+}
+
+static void aNS_set_norm_talk_info(ACTOR* actorx) {
+    NPC_SONCHO_ACTOR* actor = (NPC_SONCHO_ACTOR*)actorx;
+
+    mDemo_Set_talk_turn(TRUE);
+    mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+    aNS_change_talk_proc(actor, aNS_TALK_END_WAIT);
+
+    if (mSC_check_ArbeitPlayer()) {
+        mDemo_Set_msg_num(0x3AFF + RANDOM(3));
+    } else if (mSC_LightHouse_travel_check()) {
+        mDemo_Set_msg_num(0x3B02);
+    } else {
+        mDemo_Set_msg_num(0x3AFC);
+    }
+}
+
+static void aNS_norm_talk_request(ACTOR* actorx, GAME* game) {
+    NPC_SONCHO_ACTOR* actor = (NPC_SONCHO_ACTOR*)actorx;
+
+    if (!actor->think_chg_flag) {
+        mDemo_Request(mDemo_TYPE_TALK, actorx, aNS_set_norm_talk_info);
+    } else {
+        actor->think_chg_flag = FALSE;
+    }
+}
+
+static int aNS_talk_init(ACTOR* actorx, GAME* game) {
+    static aNS_PROC proc[] = { (aNS_PROC)none_proc1 }; // ?? unused somewhere here or above (inside a function)
+    NPC_SONCHO_ACTOR* actor = (NPC_SONCHO_ACTOR*)actorx;
+
+    actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    mSC_trophy_set(mSC_SPECIAL_EVENT_ARBEIT);
+    return TRUE;
+}
+
+static int aNS_talk_end_chk(ACTOR* actorx, GAME* game) {
+    static aNS_PROC proc[] = { (aNS_PROC)none_proc1 };
+
+    NPC_SONCHO_ACTOR* actor = (NPC_SONCHO_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    (*proc[actor->talk_idx])(actor);
+
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        aNS_setup_think_proc(actor, play, actor->think_after_talk_idx);
+        ret = TRUE;
+    }
+
+    return ret;
+}
