@@ -1,0 +1,8 @@
+static void aTR0_set_animation(TURI_NPC0_ACTOR* actor, int action) {
+    static int animeSeqNo[] = { aNPC_ANIM_TURI_WAIT1 };
+    static f32 frame_spd[] = { 0.5f, 0.525f, 0.5f, 0.55f, 0.6f, 0.45f };
+
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, animeSeqNo[action], FALSE);
+    actor->npc_class.draw.anim_speed_type = aNPC_ANIM_SPEED_TYPE_FREE;
+    actor->npc_class.draw.frame_speed = frame_spd[mNpc_GetNpcLooks((ACTOR*)actor)];
+}

@@ -1,0 +1,201 @@
+#include "ac_npc.h"
+#include "ac_npc_anim_def.h"
+#include "ac_tools.h"
+#include "ac_turi_npc0.h"
+#include "c_keyframe.h"
+#include "m_collision_obj.h"
+#include "m_common_data.h"
+#include "m_demo.h"
+#include "m_field_info.h"
+#include "m_msg.h"
+#include "m_name_table.h"
+#include "m_npc.h"
+static void aTR0_set_request_act(TURI_NPC0_ACTOR* actor) {
+    actor->npc_class.request.act_priority = 4;
+    actor->npc_class.request.act_idx = aNPC_ACT_SPECIAL;
+    actor->npc_class.request.act_type = aNPC_ACT_TYPE_SEARCH;
+}
+
+static void aTR0_make_npc_sao(ACTOR* actorx, GAME* game) {
+    TURI_NPC0_ACTOR* actor = (TURI_NPC0_ACTOR*)actorx;
+
+    if (actor->npc_class.right_hand.item_actor_p == NULL) {
+        ACTOR* sao_actor = CLIP(tools_clip)->aTOL_birth_proc(TOOL_NPC_SAO, aTOL_ACTION_S_TAKEOUT, actorx, game, -1, NULL);
+
+        if (sao_actor != NULL) {
+            actor->npc_class.right_hand.item_actor_p = sao_actor;
+        }
+    }
+}
+
+static void aTR0_wait(TURI_NPC0_ACTOR* actor) {
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_CONTINUE) {
+        if (actor->npc_class.draw.loop_flag == 0) {
+            actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+        } else {
+            actor->npc_class.draw.loop_flag--;
+        }
+    }
+}
+
+static void aTR0_setupAction(TURI_NPC0_ACTOR* actor, int action) {
+    static aTR0_PROC process[] = { aTR0_wait };
+    static int anm_loop_base[] = { 1 };
+    static f32 anm_loop_rnd[] = { 2.0f };
+
+    actor->npc_class.action.step = 0;
+    actor->action = action;
+    actor->act_proc = process[action];
+    actor->npc_class.draw.loop_flag = anm_loop_base[action] + RANDOM(anm_loop_rnd[action]);
+    aTR0_set_animation(actor, action);
+}
+
+static void aTR0_act_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aTR0_act_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TURI_NPC0_ACTOR* actor = (TURI_NPC0_ACTOR*)nactorx;
+
+    aTR0_setupAction(actor, aTR0_ACT_WAIT);
+}
+
+static void aTR0_act_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TURI_NPC0_ACTOR* actor = (TURI_NPC0_ACTOR*)nactorx;
+
+    actor->act_proc(actor);
+}
+
+static void aTR0_act_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = { aTR0_act_init_proc, aTR0_act_chg_data_proc, aTR0_act_main_proc };
+
+    (*act_proc[type])(nactorx, play);
+}
+
+static void aTR0_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TURI_NPC0_ACTOR* actor = (TURI_NPC0_ACTOR*)nactorx;
+
+    if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        if (nactorx->action.idx == aNPC_ACT_SPECIAL) {
+            aTR0_setupAction(actor, aTR0_ACT_WAIT);
+        }
+
+        nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK |
+                                            aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV |
+                                            aNPC_COND_DEMO_SKIP_MOVE_Y |
+                                            aNPC_COND_DEMO_SKIP_BGCHECK |
+                                            aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+                                            aNPC_COND_DEMO_SKIP_HEAD_LOOKAT;
+        aTR0_set_request_act(actor);
+    }
+}
+
+static void aTR0_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TURI_NPC0_ACTOR* actor = (TURI_NPC0_ACTOR*)nactorx;
+
+    nactorx->think.interrupt_flags = 0;
+    nactorx->action.act_proc = aTR0_act_proc;
+    aTR0_set_request_act(actor);
+}
+
+static void aTR0_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aTR0_think_init_proc, aTR0_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aTR0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    // clang-format off
+    static s16 def_angle[aTR0_NPC_MAX][7] = {
+        { DEG2SHORT_ANGLE(225.0f), DEG2SHORT_ANGLE( 45.0f), DEG2SHORT_ANGLE(135.0f), DEG2SHORT_ANGLE(315.0f), DEG2SHORT_ANGLE(315.0f), DEG2SHORT_ANGLE( 45.0f), DEG2SHORT_ANGLE(225.0f) },
+        { DEG2SHORT_ANGLE( 45.0f), DEG2SHORT_ANGLE(225.0f), DEG2SHORT_ANGLE( 45.0f), DEG2SHORT_ANGLE( 45.0f), DEG2SHORT_ANGLE(315.0f), DEG2SHORT_ANGLE(315.0f), DEG2SHORT_ANGLE(270.0f) },
+        { DEG2SHORT_ANGLE( 45.0f), DEG2SHORT_ANGLE(225.0f), DEG2SHORT_ANGLE( 45.0f), DEG2SHORT_ANGLE( 45.0f), DEG2SHORT_ANGLE(315.0f), DEG2SHORT_ANGLE(315.0f), DEG2SHORT_ANGLE(270.0f) },
+        { DEG2SHORT_ANGLE(315.0f), DEG2SHORT_ANGLE(315.0f), DEG2SHORT_ANGLE(180.0f), DEG2SHORT_ANGLE(  0.0f), DEG2SHORT_ANGLE( 45.0f), DEG2SHORT_ANGLE( 90.0f), DEG2SHORT_ANGLE(315.0f) },
+        { DEG2SHORT_ANGLE( 90.0f), DEG2SHORT_ANGLE(  0.0f), DEG2SHORT_ANGLE(  0.0f), DEG2SHORT_ANGLE(225.0f), DEG2SHORT_ANGLE(225.0f), DEG2SHORT_ANGLE(135.0f), DEG2SHORT_ANGLE(135.0f) },
+    };
+    // clang-format on
+
+    TURI_NPC0_ACTOR* actor = (TURI_NPC0_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)nactorx;
+
+    nactorx->think.think_proc = aTR0_think_proc;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK |
+                                            aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV |
+                                            aNPC_COND_DEMO_SKIP_MOVE_Y |
+                                            aNPC_COND_DEMO_SKIP_BGCHECK |
+                                            aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+                                            aNPC_COND_DEMO_SKIP_HEAD_LOOKAT;
+    nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
+    nactorx->condition_info.hide_request = FALSE;
+    nactorx->palActorIgnoreTimer = -1;
+    nactorx->talk_info.turn = aNPC_TALK_TURN_HEAD;
+    nactorx->talk_info.default_animation = aNPC_ANIM_TURI_WAIT1;
+    actorx->status_data.weight = MASSTYPE_HEAVY;
+    if (actorx->npc_id == SP_NPC_EV_TURI_0) {
+        actorx->world.position.x += 20.0f;
+        actorx->world.position.z += 20.0f;
+    }
+
+    {
+        int pool_idx = mFI_GetPuleIdx();
+        int idx = actorx->npc_id - SP_NPC_EV_TURI_0;
+        s16 angle = def_angle[idx][pool_idx];
+
+        actorx->shape_info.rotation.y = angle;
+        actorx->world.angle.y = angle;
+        nactorx->movement.mv_angl = angle;
+    }
+
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aTR0_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == FALSE) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+
+    aTR0_make_npc_sao((ACTOR*)nactorx, (GAME*)play);
+}
+
+static void aTR0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { aTR0_schedule_init_proc, aTR0_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}
+
+static void aTR0_set_talk_info(ACTOR* actorx) {
+    static int msg_base[mNpc_LOOKS_NUM] = { 0x1F0A, 0x1F19, 0x1EFB, 0x1F28, 0x1F37, 0x1F46 };
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    u8 str[ANIMAL_NAME_LEN];
+    int looks = mNpc_GetNpcLooks(actorx);
+    int idx = actorx->npc_id - SP_NPC_EV_TURI_0;
+    int i;
+
+    for (i = 0; i < aTR0_NPC_MAX; i++) {
+        if (turiActorx[i] != NULL) {
+            mNpc_GetNpcWorldName(str, turiActorx[i]);
+            mMsg_Set_free_str(msg_p, mMsg_FREE_STR1 + i, str, sizeof(str));
+        }
+    }
+
+    mDemo_Set_msg_num(msg_base[looks] + RANDOM(3) + idx * 3);
+}
+
+static void aTR0_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aTR0_set_talk_info);
+}
+
+static int aTR0_talk_init(ACTOR* actorx, GAME* game) {
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aTR0_talk_end_chk(ACTOR* actorx, GAME* game) {
+    int ret = FALSE;
+
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
