@@ -1,0 +1,348 @@
+static int aTKN1_set_request_act(TOKYOSO_NPC1_ACTOR* actor, u8 prio, u8 idx, u8 type, u16 obj, s16 move_x, s16 move_z) {
+    int ret = FALSE;
+
+    if (prio >= actor->npc_class.request.act_priority) {
+        u16 arg_data[aNPC_REQUEST_ARG_NUM];
+
+        bzero(arg_data, sizeof(arg_data));
+        arg_data[0] = obj;
+        arg_data[2] = move_x;
+        arg_data[3] = move_z;
+
+        actor->npc_class.request.act_priority = prio;
+        actor->npc_class.request.act_idx = idx;
+        actor->npc_class.request.act_type = type;
+        mem_copy((u8*)actor->npc_class.request.act_args, (u8*)arg_data, sizeof(arg_data));
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aTKN1_normal_wait_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTKN1_set_request_act(actor, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_ACT_OBJ_DEFAULT, 0, 0);
+}
+
+static void aTKN1_wait_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    actor->npc_class.action.idx = aNPC_ACT_WAIT;
+    aTKN1_normal_wait_init(actor, play);
+}
+
+static void aTKN1_run_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTKN1_set_request_act(actor, 4, aNPC_ACT_RUN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actor->start_pos[0], actor->start_pos[1]);
+    actor->npc_class.actor_class.status_data.weight = MASSTYPE_HEAVY-4;
+    actor->npc_class.talk_info.default_animation = aNPC_ANIM_ASIHUMI1;
+    actor->npc_class.talk_info.turn = aNPC_TALK_TURN_NORMAL;
+}
+
+static void aTKN1_turn_d_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    aTKN1_set_request_act(actor, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actorx->world.position.x, actorx->world.position.z - 10.0f);
+}
+
+static void aTKN1_turn_f_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    aTKN1_set_request_act(actor, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actorx->world.position.x, actorx->world.position.z + 10.0f);
+}
+
+static void aTKN1_turn_l_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    aTKN1_set_request_act(actor, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actorx->world.position.x - 10.0f, actorx->world.position.z);
+}
+
+static void aTKN1_turn_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTKN1_set_request_act(actor, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actor->start_pos[0], actor->start_pos[1]);
+    actor->npc_class.condition_info.demo_flg &= ~(aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_BGCHECK);
+}
+
+static void aTKN1_run_turn_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTKC_clip_next_run((ACTOR*)actor);
+    aTKN1_turn_init(actor, play);
+    actor->npc_class.talk_info.default_animation = aNPC_ANIM_ASIHUMI1;
+    actor->npc_class.talk_info.turn = aNPC_TALK_TURN_NORMAL;
+}
+
+static void aTKN1_warmup_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_WARMUP1, FALSE);
+    tokyoso->flags &= ~(aTKC_FLAG_5 << ((actor->npc_class.actor_class.npc_id - SP_NPC_EV_TOKYOSO_0) & 1));
+    actor->_9A0 = 240;
+}
+
+static void aTKN1_ready_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTKN1_wait_init(actor, play);
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_READY1, FALSE);
+    actor->npc_class.talk_info.default_animation = aNPC_ANIM_READY1;
+    actor->npc_class.talk_info.turn = aNPC_TALK_TURN_NONE;
+}
+
+static void aTKN1_kokeru_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_KOKERU1, FALSE);
+    actor->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_STOP;
+    actor->npc_class.movement.speed.max_speed = 0.0f;
+    actor->npc_class.movement.speed.deceleration = 0.2f;
+    actor->npc_class.movement.mv_add_angl = 0;
+    actor->npc_class.talk_info.default_animation = aNPC_ANIM_KOKERU1;
+    actor->npc_class.talk_info.turn = aNPC_TALK_TURN_NONE;
+}
+
+static void aTKN1_getup_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_KOKERU_GETUP1, FALSE);
+    actor->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_STOP;
+    actor->npc_class.movement.speed.deceleration = 0.6f;
+    actor->npc_class.talk_info.default_animation = aNPC_ANIM_KOKERU_GETUP1;
+    actor->npc_class.talk_info.turn = aNPC_TALK_TURN_NONE;
+}
+
+static void aTKN1_goal_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    actor->npc_class.actor_class.status_data.weight = MASSTYPE_HEAVY;
+    aTKN1_turn_f_init(actor, play);
+    actor->npc_class.talk_info.default_animation = aNPC_ANIM_WAIT1;
+    actor->npc_class.talk_info.turn = aNPC_TALK_TURN_NORMAL;
+    tokyoso->_01 |= (u8)(1 << ((2 + actorx->npc_id - SP_NPC_EV_TOKYOSO_0) & 3));
+}
+
+static void aTKN1_goal1_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTKN1_wait_init(actor, play);
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_BANZAI1, FALSE);
+    actor->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_REPEAT;
+}
+
+static void aTKN1_goal2_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTKN1_wait_init(actor, play);
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_TIRED1, FALSE);
+    actor->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_REPEAT;
+}
+
+static void aTKN1_kansen_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTKN1_normal_wait_init(actor, play);
+    actor->npc_class.condition_info.demo_flg |= (aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y);
+}
+
+static void aTKN1_omedeto_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTKN1_wait_init(actor, play);
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_CLAP1, FALSE);
+    actor->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_REPEAT;
+    actor->npc_class.condition_info.demo_flg |= (aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y);
+}
+
+static void aTKN1_omedeto_af_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    actor->npc_class.action.idx = aNPC_ACT_RUN;
+    aTKN1_normal_wait_init(actor, play);
+    actor->npc_class.condition_info.demo_flg |= (aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y);
+}
+
+static void aTKN1_move_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTKN1_set_request_act(actor, 4, aNPC_ACT_WALK, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actor->start_pos[0], actor->start_pos[1]);
+}
+
+static void aTKN1_lookl_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    aTKN1_turn_l_init(actor, play);
+    tokyoso->flags &= ~(aTKC_FLAG_11 << ((actorx->npc_id - SP_NPC_EV_TOKYOSO_0) & 1));
+}
+
+typedef void (*aTKN1_THINK_INIT_PROC)(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play);
+// clang-format off
+static aTKN1_THINK_INIT_PROC init_table[] = {
+    (aTKN1_THINK_INIT_PROC)none_proc1,
+    aTKN1_normal_wait_init,
+    aTKN1_wait_init,
+    aTKN1_run_init,
+    aTKN1_turn_d_init,
+    aTKN1_turn_l_init,
+    aTKN1_turn_f_init,
+    aTKN1_turn_init,
+    aTKN1_warmup_init,
+    aTKN1_ready_init,
+    aTKN1_kokeru_init,
+    aTKN1_getup_init,
+    aTKN1_goal_init,
+    aTKN1_goal1_init,
+    aTKN1_goal2_init,
+    aTKN1_omedeto_init,
+    aTKN1_move_init,
+    aTKN1_lookl_init,
+    aTKN1_run_turn_init,
+    aTKN1_kansen_init,
+    aTKN1_omedeto_af_init,
+};
+// clang-fomrat on
+
+static void aTKC_clip_npc1_think_init(ACTOR* actorx, GAME_PLAY* play, u8 think_init) {
+    (*init_table[think_init])((TOKYOSO_NPC1_ACTOR*)actorx, play);
+}
+
+static void aTKC_clip_next_run(ACTOR* actorx) {
+    TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)actorx;
+    s16 angle = aTKC_clip_get_angle(actorx);
+    f32 f;
+    int idx = (actorx->npc_id - SP_NPC_EV_TOKYOSO_0) & 1;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    angle += (s16)(aTKC_ANGLE_FOR_LAP_COMPLETION + RANDOM_F(aTKC_ANGLE_FOR_LAP_COMPLETION));
+    f = (160.0f + RANDOM_F(20.0f)) - idx * 35.0f;
+
+    actor->speed = (4.0f + f * (1.0f / 90.0f)) - idx * 0.5f;
+    if (aTKC_clip_top_check(actorx)) {
+        actor->speed -= 1.0f;
+    }
+
+    actor->start_pos[0] = tokyoso->yasiro_pos[0] + f * cos_s(angle);
+    actor->start_pos[1] = tokyoso->yasiro_pos[1] - f * sin_s(angle);
+    tokyoso->next_angle[idx] = angle;
+    actor->npc_class.movement.speed.deceleration = 0.6f;
+
+    if (tokyoso->lap[idx] == aTKC_SUBLAP_NUM && tokyoso->next_angle[idx] > 0) {
+        actor->start_pos[0] = (tokyoso->yasiro_pos[0] + 220.0f) - idx * 60.0f + (RANDOM_F(10.0f) - 5.0f);
+        actor->start_pos[1] = (tokyoso->yasiro_pos[1] - 130.0f) + idx * 60.0f + (RANDOM_F(10.0f) - 5.0f);
+    }
+
+    actor->timer = 300;
+}
+
+static s16 aTKC_clip_get_angle(ACTOR* actorx) {
+    f32 dx;
+    f32 dz;
+    s16 angle;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    dx = (tokyoso->yasiro_pos[0] + 20) - actorx->world.position.x;
+    dz = tokyoso->yasiro_pos[1] - actorx->world.position.z;
+    angle = atans_table(dz, dx);
+    return DEG2SHORT_ANGLE(90.0f) + angle;
+}
+
+static void aTKC_clip_run_proc(ACTOR* actorx) {
+    int idx = (actorx->npc_id - SP_NPC_EV_TOKYOSO_0) & 1;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    tokyoso->pos_0A[idx][0] = actorx->world.position.x;
+    tokyoso->pos_0A[idx][1] = actorx->world.position.z;
+    tokyoso->angle[idx] = aTKC_clip_get_angle(actorx);
+}
+
+static s16 aTKC_clip_run_check(ACTOR* actorx) {
+    int idx = (actorx->npc_id - SP_NPC_EV_TOKYOSO_0) & 1;
+    s16 angle;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+    TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)actorx;
+
+    if (actor->timer > 0) {
+        actor->timer--;
+        if (actor->timer == 0) {
+            return TRUE;
+        }
+    }
+
+    if (tokyoso->lap[idx] == aTKC_SUBLAP_NUM && tokyoso->next_angle[idx] > 0) {
+        return FALSE;
+    }
+
+    angle = tokyoso->angle[idx] - tokyoso->next_angle[idx];
+    
+#ifdef BUGFIXES
+    if (angle > DEG2SHORT_ANGLE2(-22.5f) && angle < DEG2SHORT_ANGLE2(22.5f)) {
+#else
+    // @BUG - did the devs miss a hex specifier here? Shouldn't this be angle >= -[0x]1000?
+    if (angle > -1000 && angle < DEG2SHORT_ANGLE2(22.5f)) {
+#endif
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static s16 aTKC_clip_top_check(ACTOR* actorx) {
+    int idx0 = (actorx->npc_id - SP_NPC_EV_TOKYOSO_0) & 1;
+    int idx1 = (idx0 + 1) & 1;
+    s16 angle;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    if ((tokyoso->flags & aTKC_FLAG_RACE_ACTIVE) == 0) {
+        return FALSE;
+    }
+
+    angle = tokyoso->angle[idx0] - tokyoso->angle[idx1];
+    if (tokyoso->lap[idx0] > tokyoso->lap[idx1] || (tokyoso->lap[idx0] == tokyoso->lap[idx1] && angle > 0)) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static s16 aTKC_clip_goal_check(ACTOR* actorx) {
+    int idx = (actorx->npc_id - SP_NPC_EV_TOKYOSO_0) & 1;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    if ((tokyoso->flags & aTKC_FLAG_RACE_ACTIVE) == 0) {
+        return FALSE;
+    }
+
+    if (tokyoso->goal[idx] == aTKC_GOAL_NONE) {
+        return FALSE;
+    }
+
+    return tokyoso->goal[idx];
+}
+
+static void aTKC_clip_next_pos(ACTOR* actorx, int idx) {
+    static s16 tableX[] = { 200, 160, 280, 280 };
+    static s16 tableZ[] = { 0, 0, 40, 0 };
+    TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)actorx;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    actor->start_pos[0] = tokyoso->yasiro_pos[0] + tableX[idx];
+    actor->start_pos[1] = tokyoso->yasiro_pos[1] + tableZ[idx];
+}
+
+static void aTKC_clip_next_warmup(ACTOR* actorx) {
+    static s16 tableX[] = { 200, 160 };
+    static f32 tableXR[] = { 40.0f, -40.0f };
+    int idx = (actorx->npc_id - SP_NPC_EV_TOKYOSO_0) & 1;
+    TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)actorx;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    actor->start_pos[0] = tokyoso->yasiro_pos[0] + tableX[idx] + (s16)RANDOM_F(tableXR[idx]);
+    actor->start_pos[1] = tokyoso->yasiro_pos[1] + RANDOM_F(80.0f) - 40.0f;
+}
+
+typedef struct {
+    int msg_no;
+    u8 turn_flag;
+    u8 camera_type;
+} aTCK_npc1_talk_data_c;
+
+static void aTKC_clip_set_talk_request(ACTOR* actorx) {
+    static aTCK_npc1_talk_data_c dt_tbl[] = {
+        {14, FALSE, CAMERA2_PROCESS_TALK},
+        { 2, FALSE, CAMERA2_PROCESS_TALK},
+        {14, FALSE, CAMERA2_PROCESS_TALK},
+        { 4, FALSE, CAMERA2_PROCESS_TALK},
+        { 6, TRUE, CAMERA2_PROCESS_TALK},
+        { 8, TRUE, CAMERA2_PROCESS_TALK},
+        { 8, TRUE, CAMERA2_PROCESS_TALK},
+        {10, FALSE, CAMERA2_PROCESS_TALK},
+        {10, FALSE, CAMERA2_PROCESS_TALK},
+        {12, TRUE, CAMERA2_PROCESS_TALK},
+        {12, TRUE, CAMERA2_PROCESS_TALK},
+        {12, TRUE, CAMERA2_PROCESS_TALK},
+        {12, TRUE, CAMERA2_PROCESS_TALK},
+    };
+
+    TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)actorx;
+    aTCK_npc1_talk_data_c* data_p = &dt_tbl[actor->talk_idx];
+
+    mDemo_Set_msg_num(actor->msg_start_no + data_p->msg_no + RANDOM(2));
+    mDemo_Set_talk_turn(data_p->turn_flag);
+    mDemo_Set_camera(data_p->camera_type);
+}

@@ -37,6 +37,7 @@
 #include "ac_mikanbox_clip.h"
 #include "ac_needlework_indoor_clip.h"
 #include "ac_countdown_clip.h"
+#include "ac_tokyoso_control.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -90,7 +91,7 @@ typedef struct clip_s {
     /* 0x0C0 */ aGRGR_clip_c* garagara_clip;
     /* 0x0C4 */ aHTMD_clip_c* hatumode_clip;
     /* 0x0C8 */ void* shrine_clip;
-    /* 0x0CC */ void* _0CC;
+    /* 0x0CC */ aTKC_clip_c* tokyoso_clip;
     /* 0x0D0 */ aCOU_Clip_c* countdown_clip;
     /* 0x0D4 */ CLIP_NONE_PROC ball_redma_proc; /* removed in DnM+ */
     /* 0x0D8 */ aMKBC_Clip_c* mikanbox_clip;
