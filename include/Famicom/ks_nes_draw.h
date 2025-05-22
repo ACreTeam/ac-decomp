@@ -8,4 +8,6 @@ extern void ksNesDrawInit(ksNesCommonWorkObj* wp);
 extern void ksNesDraw(ksNesCommonWorkObj* wp, ksNesStateObj* sp);
 extern void ksNesDrawEnd();
 
+extern u8 ksNesPaletteNormal[];
+
 #endif
