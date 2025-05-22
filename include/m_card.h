@@ -1,6 +1,7 @@
 #ifndef M_CARD_H
 #define M_CARD_H
 
+#include "dolphin/types.h"
 #include "types.h"
 #include "libu64/gfxprint.h"
 #include "m_personal_id.h"
@@ -186,11 +187,14 @@ typedef struct {
 typedef struct {
     CARDStat stat;
     s32 fileNo;
-    s32 freeBlocks;
+    s32 freeBytes;
     s32 result;
     s32 game_result;
     void* workArea;
-    u8 _80[0x94 - 0x80];
+
+    u8 _80[0x8C - 0x80];
+    int _8C;
+    int _90;
 } mCD_memMgr_card_info_c;
 
 typedef struct {
@@ -259,6 +263,19 @@ typedef union {
     };
     u8 __align_sector[mCD_MEMCARD_SECTORSIZE];
 } PresentSaveFile_c ATTRIBUTE_ALIGN(32);
+
+typedef struct {
+    MemcardHeader_c header;
+    u16 checksum; // presumed
+    mCD_keep_mail_c keep_mail ATTRIBUTE_ALIGN(32);
+    mCD_keep_original_c keep_original ATTRIBUTE_ALIGN(32);
+    mCD_keep_diary_c keep_diary ATTRIBUTE_ALIGN(32);
+} OthersSave_c;
+
+typedef union {
+    OthersSave_c save;
+    u8 __align[ALIGN_NEXT(sizeof(OthersSave_c), mCD_MEMCARD_SECTORSIZE)];
+} OthersSave_u;
 
 enum {
     mCD_PRESENT_TYPE_BONUS,

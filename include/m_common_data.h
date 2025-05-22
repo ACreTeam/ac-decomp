@@ -1,6 +1,7 @@
 #ifndef M_COMMON_DATA_H
 #define M_COMMON_DATA_H
 
+#include "m_mail.h"
 #include "types.h"
 #include "m_actor_type.h"
 #include "m_land_h.h"
@@ -214,7 +215,10 @@ typedef struct common_data_s {
     /* 0x026521 */ u8 submenu_disabled; /* when set, submenus cannot be accessed from start button */
     /* 0x026522 */ u8 sunlight_flag;
     /* 0x026523 */ u8 train_flag;
-    /* 0x026522 */ u8 _26524[0x26668 - 0x26524];
+    /* 0x026522 */ Mail_c unused_mail_26522; //u8 _26524[0x26668 - 0x26524];
+    /* 0x02664E */ mActor_name_t _2664E;
+    /* 0x026650 */ mActor_name_t _26650;
+    /* 0x026652 */ Mail_nm_c unused_mail_name_26652;
     /* 0x026668 */ mActor_name_t npc_chg_cloth;
     /* 0x02666A */ u16 _pad_2666A; // weather data is probably a struct aligned to 4 bytes
     /* 0x02666C */ s16 weather;
