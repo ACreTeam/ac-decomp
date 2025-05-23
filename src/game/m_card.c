@@ -184,7 +184,7 @@ static int mCD_check_card(s32* result, s32 req_sector_size, s32 chan) {
     return res;
 }
 
-static int mCD_check_sector_size(u32 req_sector_size, int chan) {
+static int mCD_check_sector_size(u32 req_sector_size, s32 chan) {
     s32 mem_size = 0;
     s32 sector_size = 0;
     int ms = 0;
@@ -1547,7 +1547,7 @@ static mCD_file_entry_c l_mcd_file_table[] = {
     { l_mCD_player_file_name, mCD_PLAYER_SAVE_SIZE, mCD_PLAYER_SAVE_SIZE },
 };
 
-static int l_keepSave_set;
+static int l_keepSave_set = FALSE;
 static int l_mcd_keep_startCond = 0;
 static int l_aram_access_bit = 0;
 
@@ -1871,6 +1871,8 @@ static void mCD_ClearForeignerFile(mCD_foreigner_c* foreigner) {
     mNpc_ClearAnimalInfo(&foreigner->remove_animal);
     foreigner->copy_protect = 0xFFFF;
 }
+
+#include "../src/game/m_card_bti.c_inc"
 
 typedef struct {
     u16 code[4];
@@ -2590,7 +2592,7 @@ static int mCD_get_this_land_slot_no_nes(mCD_memMgr_c* mgr) {
                 card_info->game_result = mCD_TRANS_ERR_NOT_MEMCARD;
                 mgr->chan = i;
             } else if (card_info->game_result == mCD_TRANS_ERR_NOCARD || t_res == mCD_RESULT_ERROR) {
-                card_info->game_result = mCD_TransErrorCode(card_info->result);
+                card_info->game_result = mCD_TransErrorCode_nes(card_info->result);
             }
 
             card_info++;
@@ -2849,8 +2851,6 @@ static int mCD_CheckPresentFile(char* filename, s32* fileNo, s32 chan, s32* resu
 
     return res;
 }
-
-#include "../src/game/m_card_bti.c_inc"
 
 static int mCD_SaveHome_bg_read_send_present(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     static int icon_fileNo[mCD_PRESENT_TYPE_NUM] = { RESOURCE_TEGAMI, RESOURCE_TEGAMI2 };
@@ -3624,6 +3624,7 @@ extern int mCD_SaveHome_bg(int param_1, int* chan) {
     // clang-format off
     static mCD_SAVEHOME_PROC save_proc[] = {
         mCD_SaveHome_bg_get_area,
+        mCD_SaveHome_bg_erase_dummy,
         mCD_SaveHome_bg_check_slot,
         mCD_SaveHome_bg_read_send_present,
         mCD_SaveHome_bg_write_present,
@@ -4689,7 +4690,7 @@ static int mCD_InitGameStart_bg_get_slot(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_
 
 static int mCD_InitGameStart_bg_check_repair_land(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     if (mCD_check_broken_land(mgr) == TRUE) {
-        if (mCD_repair_land(mgr) == TRUE) {
+        if (mCD_repair_load_land(mgr) == TRUE) {
             fileInfo->proc++;
         } else {
             fileInfo->proc = 4;
@@ -5445,17 +5446,16 @@ extern int mCD_GetSaveHomeSlotNo(void) {
     return ret;
 }
 
-// @nonmatching - equivalent (regswaps)
 static int mCD_GetLandSlotNo_code_com(mLd_land_info_c* land_info, u16 land_id, PersonalID_c* pid, int* player_no, s32* slot_results) {
+    int ret = mCD_RESULT_ERROR;
     mCD_memMgr_c* mgr = &l_memMgr;
     mCD_memMgr_fileInfo_c* fileInfo = &l_memMgr.save_home_info;
     int res;
     s32 result;
-    int ret = mCD_RESULT_ERROR;
     Private_c* priv;
-    mLd_land_info_c* save_land_info;
     Save_t* save;
-    int i;
+    mLd_land_info_c* save_land_info;
+    s32 i;
     int j;
     int k;
 
@@ -5721,6 +5721,12 @@ static int mCD_CheckStation_check_foreigner(mCD_memMgr_c* mgr, mCD_memMgr_fileIn
     return ret;
 }
 
+#ifdef MUST_MATCH
+static inline int mCD_check_card_inline_hack(s32* result_p, s32 req_sector_size, int chan) {
+    return mCD_check_card(result_p, req_sector_size, chan);
+}
+#endif
+
 // @non-matching - equivalent (missing mr instruction)
 static int mCD_CheckStation_check_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     Private_c* priv;
@@ -5739,7 +5745,11 @@ static int mCD_CheckStation_check_passport(mCD_memMgr_c* mgr, mCD_memMgr_fileInf
         priv = Now_Private;
         card = &mgr->cards[chan];
         // issue - changing mCD_check_card's `chan` parameter to be s32 fixes this func but breaks several others
+#ifdef MUST_MATCH
+        if (card->workArea != NULL && mCD_check_card_inline_hack(&card->result, mCD_MEMCARD_SECTORSIZE, chan) == mCD_RESULT_SUCCESS) {
+#else
         if (card->workArea != NULL && mCD_check_card(&card->result, mCD_MEMCARD_SECTORSIZE, chan) == mCD_RESULT_SUCCESS) {
+#endif
             card->result = CARDMount(chan, card->workArea, NULL);
             if (card->result == CARD_RESULT_READY || card->result == CARD_RESULT_BROKEN) {
                 card->result = CARDCheck(chan);
@@ -6029,9 +6039,20 @@ static int mCD_SaveStation_NextLand_get_next_land_data(mCD_memMgr_c* mgr, mCD_me
     return ret;
 }
 
-static mCD_keep_mail_c l_keepMail ATTRIBUTE_ALIGN(32);
-static mCD_keep_original_c l_keepOriginal ATTRIBUTE_ALIGN(32);
-static mCD_keep_diary_c l_keepDiary ATTRIBUTE_ALIGN(32);
+static union {
+    mCD_keep_mail_c mail ATTRIBUTE_ALIGN(32);
+    u8 buf[mCD_ALIGN_SECTORSIZE(sizeof(mCD_keep_mail_c))];
+} l_keepMail ATTRIBUTE_ALIGN(32);
+
+static union {
+    mCD_keep_original_c l_keepOriginal ATTRIBUTE_ALIGN(32);
+    u8 buf[mCD_ALIGN_SECTORSIZE(sizeof(mCD_keep_original_c))];
+} l_keepOriginal ATTRIBUTE_ALIGN(32);
+
+static union {
+    mCD_keep_diary_c l_keepDiary ATTRIBUTE_ALIGN(32);
+    u8 buf[mCD_ALIGN_SECTORSIZE(sizeof(mCD_keep_diary_c))];
+} l_keepDiary ATTRIBUTE_ALIGN(32);
 
 static int mCD_SaveStation_NextLand_load_others(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo) {
     u8* buf = (u8*)mgr->workArea;
@@ -6057,7 +6078,12 @@ static int mCD_SaveStation_NextLand_load_others(mCD_memMgr_c* mgr, mCD_memMgr_fi
             buf += l_aram_real_size_32_table[mCD_ARAM_DATA_MAIL];
 
             if (mFRm_ReturnCheckSum((u16*)buf, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL]) == 0) {
+                // @BUG - this should be &l_keepOriginal
+#ifndef BUGFIXES
+                bcopy(buf, &l_keepDiary, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL]);
+#else
                 bcopy(buf, &l_keepOriginal, l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL]);
+#endif
             }
             buf += l_aram_real_size_32_table[mCD_ARAM_DATA_ORIGINAL];
 
@@ -6982,6 +7008,8 @@ static int mCD_SaveStation_Passport_write_bk(mCD_memMgr_c* mgr, mCD_memMgr_fileI
 
     return ret;
 }
+
+static Private_c l_mcd_keep_private; // @unused
 
 typedef int (*mCD_SAVESTATION_PASSPORT_PROC)(mCD_memMgr_c* mgr, mCD_memMgr_fileInfo_c* fileInfo);
 
