@@ -1014,7 +1014,7 @@ config.libs = [
             Object(Matching, "actor/ac_koinobori.c"),
             Object(NonMatching, "actor/ac_lighthouse_switch.c"),
             Object(Matching, "actor/ac_lotus.c"),
-            Object(NonMatching, "actor/ac_mailbox.c"),
+            Object(Matching, "actor/ac_mailbox.c"),
             Object(Matching, "actor/ac_mbg.c"),
             Object(Matching, "actor/ac_mikanbox.c"),
             Object(Matching, "actor/ac_mikuji.c"),

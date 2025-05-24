@@ -1,0 +1,206 @@
+static void aMBX_anime_proc(ACTOR* actorx, GAME_PLAY* play) {
+    static s8 part_tbl[] = { 0, 0, 0, 1, 1, 0, 0 };
+    MAILBOX_ACTOR* actor = (MAILBOX_ACTOR*)actorx;
+
+    actor->kf0_state = cKF_SkeletonInfo_R_combine_play(&actor->kf0, &actor->kf1, part_tbl);
+}
+
+static void aMBX_setup_flag_anime(MAILBOX_ACTOR* actor, int anime_idx) {
+    aMBX_anime_info_c* info_p = &aMBX_animeTable[anime_idx];
+    cKF_SkeletonInfo_R_c* kf1 = &actor->kf1;
+    int mode = cKF_FRAMECONTROL_STOP;
+
+    if (anime_idx == aMBX_ANIME_FLAG_UP_WAIT) {
+        mode = cKF_FRAMECONTROL_REPEAT;
+    }
+
+    cKF_SkeletonInfo_R_init(kf1, kf1->skeleton, info_p->anim, info_p->start, info_p->end, info_p->start, 0.5f, 0.0f, mode, NULL);
+    actor->anim_idx1 = anime_idx;
+}
+
+static void aMBX_check_take_mail(MAILBOX_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (playerx != NULL) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)playerx;
+        int arrange_idx = actor->arrange_idx;
+        int pl_no = mHS_get_pl_no(arrange_idx);
+        ACTOR* actorx = (ACTOR*)actor;
+        int mbox_angle = actorx->shape_info.rotation.y + DEG2SHORT_ANGLE2(-45.0f);
+        int mbox_pl_angle = actorx->player_angle_y;
+        int dAngle = (s16)(mbox_pl_angle - mbox_angle);
+        int abs_dAngle = ABS(dAngle);
+
+        if (abs_dAngle < aMBX_PLAYER_OPEN_ANGLE && player->a_btn_pressed == TRUE && pl_no == Common_Get(player_no) && player->item_in_front == (DUMMY_MAILBOX0 + arrange_idx)) {
+            if (Common_Get(reset_flag) == TRUE && Now_Private->reset_count < 3) {
+                Common_Set(reset_type, 5);
+            } else if (!mPr_NullCheckPersonalID(&Save_Get(homes[arrange_idx]).ownerID)) {
+                Submenu* submenu = &play->submenu;
+
+                if (submenu->start_refuse == FALSE && submenu->start_refuse_timer == 0 && mPlib_able_submenu_type1((GAME*)play) && actor->req == 0) {
+                    player->a_btn_triggers_submenu = TRUE;
+                    actor->req = aMBX_REQUEST_OPEN;
+                }
+            }
+        }
+    }
+}
+
+static void aMBX_check_flag(MAILBOX_ACTOR* actor) {
+    int anime_idx = aMBX_ANIME_FLAG_DOWN;
+    int mail_count = mMl_count_use_mail_space(Save_Get(homes[actor->arrange_idx]).mailbox, HOME_MAILBOX_SIZE);
+
+    if (mail_count != 0) {
+        if (actor->anim_idx1 == aMBX_ANIME_FLAG_UP_WAIT || actor->anim_idx1 == aMBX_ANIME_NUM) {
+            anime_idx = aMBX_ANIME_FLAG_UP_WAIT;
+        } else {
+            anime_idx = aMBX_ANIME_FLAG_UP;
+        }
+    }
+
+    if (actor->anim_idx1 != anime_idx) {
+        aMBX_setup_flag_anime(actor, anime_idx);
+    }
+}
+
+static void aMBX_setup_flag_se_sub(u16 se_no, MAILBOX_ACTOR* actor, f32 frame) {
+    if (cKF_FrameControl_passCheck_now(&actor->kf1.frame_control, frame) == TRUE) {
+        sAdo_OngenTrgStart(se_no, &actor->actor_class.world.position);
+    }
+}
+
+static void aMBX_setup_flag_se(MAILBOX_ACTOR* actor) {
+    switch (actor->anim_idx1) {
+        case aMBX_ANIME_FLAG_UP:
+            aMBX_setup_flag_se_sub(0x433, actor, 15.0f);
+            break;
+        case aMBX_ANIME_FLAG_DOWN:
+            aMBX_setup_flag_se_sub(0x434, actor, 15.0f);
+            break;
+    }
+}
+
+static void aMBX_wait(MAILBOX_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->kf0_state == cKF_STATE_STOPPED) {
+        aMBX_check_take_mail(actor, play);
+        switch (actor->req) {
+            case aMBX_REQUEST_DELIVERY:
+                aMBX_setupAction(actor, aMBX_ACT_OPEN_AND_CLOSE);
+                break;
+            case aMBX_REQUEST_OPEN:
+                aMBX_setupAction(actor, aMBX_ACT_PL_WAIT);
+                break;
+        }
+    }
+
+    aMBX_check_flag(actor);
+    if (actor->anim_idx1 == aMBX_ANIME_FLAG_UP && actor->kf1.frame_control.current_frame == actor->kf1.frame_control.end_frame) {
+        aMBX_setup_flag_anime(actor, aMBX_ANIME_FLAG_UP_WAIT);
+    }
+}
+
+static void aMBX_pl_wait(MAILBOX_ACTOR* actor, GAME_PLAY* play) {
+    static s16 angle[] = { DEG2SHORT_ANGLE2(-135.0f), DEG2SHORT_ANGLE2(135.0f) };
+    static f32 posX[] = { 24.0f, -24.0f };
+
+    if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_MAIL_JUMP) {
+        aMBX_setupAction(actor, aMBX_ACT_PL_OPEN);
+    } else {
+        xyz_t pos;
+        int idx = actor->arrange_idx & 1;
+
+        pos.x = actor->actor_class.world.position.x + posX[idx];
+        pos.z = actor->actor_class.world.position.z + 24.0f;
+        mPlib_request_main_mail_jump_type1((GAME*)play, &pos, angle[idx]);
+    }
+}
+
+static void aMBX_open_and_close(MAILBOX_ACTOR* actor, GAME_PLAY* play) {
+    cKF_FrameControl_c* fc0 = &actor->kf0.frame_control;
+    
+    if (cKF_FrameControl_passCheck_now(fc0, 88.0f) == TRUE) {
+        aMBX_check_flag(actor);
+    } else if (cKF_FrameControl_passCheck_now(fc0, 14.0f) == TRUE) {
+        sAdo_OngenTrgStart(0x146, &actor->actor_class.world.position);
+    } else if (cKF_FrameControl_passCheck_now(fc0, 80.0f) == TRUE) {
+        sAdo_OngenTrgStart(0x147, &actor->actor_class.world.position);
+    }
+
+    if (actor->kf0_state == cKF_STATE_STOPPED) {
+        actor->req = aMBX_REQUEST_NONE;
+        aMBX_setupAction(actor, aMBX_ACT_WAIT);
+    }
+}
+
+static void aMBX_pl_open(MAILBOX_ACTOR* actor, GAME_PLAY* play) {
+    cKF_FrameControl_c* fc0 = &actor->kf0.frame_control;
+    
+    if (cKF_FrameControl_passCheck_now(fc0, 18.0f) == TRUE) {
+        sAdo_OngenTrgStart(0x146, &actor->actor_class.world.position);
+    }
+
+    if (actor->kf0_state == cKF_STATE_STOPPED) {
+        Submenu* submenu = &play->submenu;
+
+        mSM_open_submenu(submenu, mSM_OVL_INVENTORY, mSM_IV_OPEN_MAILBOX, 0);
+        aMBX_setupAction(actor, aMBX_ACT_PL_CLOSE);
+    }
+}
+
+static void aMBX_pl_close(MAILBOX_ACTOR* actor, GAME_PLAY* play) {
+    cKF_FrameControl_c* fc0 = &actor->kf0.frame_control;
+    
+    if (cKF_FrameControl_passCheck_now(fc0, 4.0f) == TRUE) {
+        sAdo_OngenTrgStart(0x147, &actor->actor_class.world.position);
+    }
+
+    if (actor->kf0_state == cKF_STATE_STOPPED) {
+        aMBX_check_flag(actor);
+        actor->req = aMBX_REQUEST_NONE;
+        aMBX_setupAction(actor, aMBX_ACT_WAIT);
+    }
+}
+
+static void aMBX_setupAction(MAILBOX_ACTOR* actor, int action) {
+    // clang-format off
+    static aMBX_ACT_PROC process[] = {
+        aMBX_wait,
+        aMBX_pl_wait,
+        aMBX_open_and_close,
+        aMBX_pl_open,
+        aMBX_pl_close,
+    };
+    // clang-format on
+
+    int anim_idx = aMBX_animeSeqNoTable[action];
+    aMBX_anime_info_c* info;
+    cKF_SkeletonInfo_R_c* kf = &actor->kf0;
+    
+    actor->action = action;
+    actor->act_proc = process[action];
+    
+    info = &aMBX_animeTable[anim_idx];
+    cKF_SkeletonInfo_R_init(kf, kf->skeleton, info->anim, info->start, info->end, info->start, 0.5f, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+    actor->anim_idx0 = anim_idx;
+}
+
+static void aMBX_actor_move(ACTOR* actorx, GAME* game) {
+    MAILBOX_ACTOR* actor = (MAILBOX_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    aMBX_anime_proc(actorx, play);
+    actor->act_proc(actor, play);
+    aMBX_setup_flag_se(actor);
+}
+
+static void aMBX_actor_init(ACTOR* actorx, GAME* game) {
+    MAILBOX_ACTOR* actor = (MAILBOX_ACTOR*)actorx;
+
+    actorx->mv_proc = aMBX_actor_move;
+    actorx->dw_proc = aMBX_actor_draw;
+    mFI_SetFG_common(DUMMY_MAILBOX0 + actor->arrange_idx, actorx->world.position, FALSE);
+    aMBX_setupAction(actor, aMBX_ACT_WAIT);
+    aMBX_check_flag(actor);
+    actor->kf1.frame_control.current_frame = actor->kf1.frame_control.end_frame;
+    aMBX_actor_move(actorx, game);
+}
