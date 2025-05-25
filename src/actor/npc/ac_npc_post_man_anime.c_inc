@@ -1,0 +1,29 @@
+typedef struct {
+    int anim_idx;
+    int talk_flag;
+} aPMAN_anime_info_c;
+
+static void aPMAN_set_animation(NPC_POST_MAN* actor, u8 action) {
+    // clang-format off
+    static aPMAN_anime_info_c anime[] = {
+        {     aNPC_ANIM_FLY1, FALSE}, // aPMAN_ACT_ENTER
+        { aNPC_ANIM_LANDING1, FALSE}, // aPMAN_ACT_BREAK
+        { aNPC_ANIM_LANDING2, FALSE}, // aPMAN_ACT_HOVER
+        { aNPC_ANIM_LANDING3, FALSE}, // aPMAN_ACT_LANDING
+        {   aNPC_ANIM_KYORO1, FALSE}, // aPMAN_ACT_KYORO
+        {    aNPC_ANIM_WALK1, FALSE}, // aPMAN_ACT_TURN
+        {    aNPC_ANIM_WALK1, FALSE}, // aPMAN_ACT_WALK
+        {    aNPC_ANIM_WALK1, FALSE}, // aPMAN_ACT_DELIVERY_TURN
+        {aNPC_ANIM_DELIVERY1, FALSE}, // aPMAN_ACT_DELIVERY
+        {    aNPC_ANIM_WALK1, FALSE}, // aPMAN_ACT_TALK_TURN
+        {    aNPC_ANIM_WAIT1,  TRUE}, // aPMAN_ACT_TALK_END_WAIT
+        { aNPC_ANIM_FLYAWAY1, FALSE}, // aPMAN_ACT_FLY_UP
+        {     aNPC_ANIM_FLY1, FALSE}, // aPMAN_ACT_EXIT
+        {     aNPC_ANIM_FLY1, FALSE}, // aPMAN_ACT_EXIT2
+    };
+    // clang-format on
+
+    aPMAN_anime_info_c* anime_p = &anime[action];
+
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, anime_p->anim_idx, anime_p->talk_flag);
+}

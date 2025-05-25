@@ -1,0 +1,534 @@
+// clang-format off
+static xyz_t aPMAN_move_pos[7] = {
+    {2172.0f, 0.0f, 1452.0f},
+    {2308.0f, 0.0f, 1452.0f},
+    {2172.0f, 0.0f, 1732.0f},
+    {2308.0f, 0.0f, 1732.0f},
+    {2180.0f, 0.0f, 1620.0f},
+    {2300.0f, 0.0f, 1620.0f},
+    {2240.0f, 0.0f, 1620.0f},
+};
+// clang-format on
+
+// clang-format off
+static xyz_t aPMAN_mailbox_pos[4] = {
+    {2140.0f, 0.0f, 1420.0f},
+    {2340.0f, 0.0f, 1420.0f},
+    {2140.0f, 0.0f, 1700.0f},
+    {2340.0f, 0.0f, 1700.0f},
+};
+// clang-format on
+
+static void aPMAN_BGcheck(ACTOR* actorx) {
+    NPC_POST_MAN* actor = (NPC_POST_MAN*)actorx;
+
+    mCoBG_BgCheckControll(NULL, actorx, 8.0f, 0.0f, TRUE, mCoBG_REVERSE_TYPE_REVERSE, mCoBG_CHECK_TYPE_NORMAL);
+    actor->ground_y = mCoBG_GetBgY_AngleS_FromWpos(NULL, actorx->world.position, 0.0f);
+}
+
+static void aPMAN_check_culling(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    if (actor->cull_flag == TRUE) {
+        if ((actor->npc_class.actor_class.state_bitfield & ACTOR_STATE_NO_CULL) == 0) {
+            Actor_delete((ACTOR*)actor);
+        }
+    } else {
+        if (actor->action != aPMAN_ACT_ENTER) {
+            ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+            int bx;
+            int bz;
+
+            if (playerx != NULL && mFI_Wpos2BlockNum(&bx, &bz, playerx->world.position)) {
+                if (ABS(bx - actor->npc_class.actor_class.block_x) > 1 || ABS(bz - actor->npc_class.actor_class.block_z) > 1) {
+                    Actor_delete((ACTOR*)actor);
+                }
+            }
+        }
+    }
+}
+
+static void aPMAN_talk_check(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    if (actor->talk_permit == TRUE && mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)actor) == TRUE && !mDemo_Check_ListenAble()) {
+        aPMAN_setupAction(actor, play, aPMAN_ACT_TALK_TURN);
+    }
+}
+
+static void aPMAN_set_talk_info_talk_check(ACTOR* actorx) {
+    static f32 rnd_base[] = { 12.0f, 4.0f };
+    static int msg_no_base[] = { 0x08BF, 0x08CB };
+    NPC_POST_MAN* actor = (NPC_POST_MAN*)actorx;
+    int type;
+    int msg_no;
+
+    if (CLIP(aprilfool_control_clip) != NULL && !CLIP(aprilfool_control_clip)->talk_chk_proc(SP_NPC_POST_MAN)) {
+        msg_no = CLIP(aprilfool_control_clip)->get_msg_num_proc(SP_NPC_POST_MAN, TRUE);
+    } else {
+        type = actor->talk_type;
+        msg_no = msg_no_base[type] + RANDOM(rnd_base[type]);
+    }
+
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aPMAN_talk_request(NPC_POST_MAN* actor) {
+    if (actor->talk_permit == TRUE) {
+        ACTOR* actorx = (ACTOR*)actor;
+
+        if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+            mDemo_Request(mDemo_TYPE_TALK, actorx, aPMAN_set_talk_info_talk_check);
+        }
+    }
+}
+
+static int aPMAN_check_delivery(int arrange_idx) {
+    int delivery_flags = Save_Get(post_office).mail_recipient_flags;
+    int leaflet_flags = Save_Get(post_office).leaflet_recipient_flags.leaflet_flags;
+    int event_flags = Save_Get(post_office).leaflet_recipient_flags.event_flags;
+    int pl_no = mHS_get_pl_no(arrange_idx);
+    int ret = FALSE;
+
+    if (pl_no < PLAYER_NUM) {
+        if (!mEv_ArbeitPlayer(pl_no)) {
+            if (
+                // normal mail flags are set when mail is to be delivered, leaflet & event flags are set when mail IS delivered.
+                ((delivery_flags >> arrange_idx) & 1) != 0 || // regular mail
+                ((leaflet_flags >> arrange_idx) & 1) == 0 || // leaflet mail
+                ((event_flags >> arrange_idx) & 1) == 0 // event mail
+            ) {
+                ret = TRUE;
+            }
+        } else if ((delivery_flags >> arrange_idx) & 1) { // only regular mail during part-time job
+            ret = TRUE;
+        }
+    }
+
+    return ret;
+}
+
+static s8 aPMAN_set_delivery_idx(NPC_POST_MAN* actor) {
+    int idx = actor->delivery_idx;
+
+    if (idx != -1) {
+        mHm_hs_c* home = Save_GetPointer(homes[idx]);
+        int i;
+
+        for (i = idx; i < mHS_HOUSE_NUM; i++) {
+            if (!mPr_NullCheckPersonalID(&home->ownerID) && aPMAN_check_delivery(i) == TRUE) {
+                return i;
+            }
+
+            home++;
+        }
+    }
+
+    return -1;
+}
+
+static s8 aPMAN_set_move_idx(NPC_POST_MAN* actor) {
+    // clang-format off
+    static s8 move_idx[mHS_HOUSE_NUM][7] = {
+        {0, 0, 4, 4, 0, 1, 4},
+        {1, 1, 5, 5, 1, 1, 5},
+        {4, 5, 2, 2, 2, 2, 2},
+        {4, 5, 3, 3, 3, 3, 3},
+    };
+    // clang-format on
+
+    return move_idx[actor->delivery_idx][actor->now_idx];
+}
+
+static int aPMAN_search_angle(NPC_POST_MAN* actor) {
+    int idx = actor->move_idx;
+    s16 target_angle = search_position_angleY(&actor->npc_class.actor_class.world.position, &aPMAN_move_pos[idx]);
+    s16* angle_p = &actor->npc_class.actor_class.shape_info.rotation.y;
+    int ret = chase_angle(angle_p, target_angle, DEG2SHORT_ANGLE2(5.625f));
+
+    actor->npc_class.actor_class.world.angle.y = *angle_p;
+    return ret;
+}
+
+static void aPMAN_order_open_mailbox(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    int idx = actor->delivery_idx;
+    ACTOR* mailbox = Actor_info_fgName_search(&play->actor_info, ACTOR_PROP_MAILBOX0 + idx, ACTOR_PART_ITEM);
+
+    if (mailbox != NULL) {
+        ((MAILBOX_ACTOR*)mailbox)->req = aMBX_REQUEST_DELIVERY;
+    }
+}
+
+static void aPMAN_eff_wings(ACTOR* actorx) {
+    Kankyo* kankyo = &((GAME_PLAY*)gamePT)->kankyo;
+    ACTOR* wing_actor = (ACTOR*)kankyo->nature.arg;
+
+    if (actorx != wing_actor && actorx->unknown_b4 == TRUE) {
+        f32 dist = search_position_distanceXZ(&wing_actor->world.position, &actorx->world.position);
+
+        if (dist < 60.0f) {
+            s16 angle = search_position_angleY(&wing_actor->world.position, &actorx->world.position);
+
+            dist = (60.0f - dist) / 60.0f;
+            dist *= dist;
+            dist *= 20.0f;
+            actorx->position_speed.x += dist * sin_s(angle);
+            actorx->position_speed.z += dist * cos_s(angle);
+        }
+    }
+}
+
+static void aPMAN_enter(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    static xyz_t landing_pos = { 2240.0f, 0.0f, 1620.0f };
+    xyz_t* pos_p = &actor->npc_class.actor_class.world.position;
+
+    {
+        s16 angle = search_position_angleY(pos_p, &landing_pos);
+        chase_angle(&actor->npc_class.actor_class.world.angle.y, angle, DEG2SHORT_ANGLE2(5.625f));
+        actor->npc_class.actor_class.shape_info.rotation.y = actor->npc_class.actor_class.world.angle.y;
+    }
+
+    {
+        f32 dist = search_position_distanceXZ(pos_p, &landing_pos);
+        if (dist < 40.0f) {
+            aPMAN_setupAction(actor, play, aPMAN_ACT_BREAK);
+        }
+    }
+
+    {
+        ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+        if (playerx != NULL) {
+            NPC_CLIP->set_head_request_act_proc((NPC_ACTOR*)actor, 3, aNPC_HEAD_TARGET_ACTOR, playerx, NULL);
+        }
+    }
+}
+
+static void aPMAN_break(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    if (actor->npc_class.actor_class.world.position.y - actor->ground_y < 100.0f) {
+        aPMAN_setupAction(actor, play, aPMAN_ACT_HOVER);
+    }
+}
+
+static void aPMAN_hover(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    if (actor->npc_class.actor_class.world.position.y - actor->ground_y < 40.0f) {
+        aPMAN_setupAction(actor, play, aPMAN_ACT_LANDING);
+    }
+}
+
+static void aPMAN_landing(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    if (actor->npc_class.actor_class.bg_collision_check.result.on_ground) {
+        actor->npc_class.actor_class.speed = 0.0f;
+        actor->npc_class.movement.speed.acceleration = 0.0f;
+        actor->npc_class.movement.speed.deceleration = 0.0f;
+    }
+
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        u8 act = aPMAN_ACT_FLY_UP;
+
+        if (actor->delivery_idx != -1) {
+            act = aPMAN_ACT_TURN;
+        }
+
+        actor->next_action = act;
+        aPMAN_setupAction(actor, play, aPMAN_ACT_KYORO);
+        mEnv_unregist_nature(&play->kankyo, aPMAN_eff_wings);
+    }
+}
+
+static void aPMAN_kyoro(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        aPMAN_setupAction(actor, play, actor->next_action);
+    }
+}
+
+static void aPMAN_turn(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    if (aPMAN_search_angle(actor) == TRUE) {
+        actor->next_action = aPMAN_ACT_WALK;
+        aPMAN_setupAction(actor, play, aPMAN_ACT_KYORO);
+    }
+}
+
+static void aPMAN_walk(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    int idx = actor->move_idx;
+    f32 dist;
+
+    aPMAN_search_angle(actor);
+    dist = search_position_distanceXZ(&actor->npc_class.actor_class.world.position, &aPMAN_move_pos[idx]);
+
+    if (ABS(dist) < 1.0f) {
+        actor->now_idx = actor->move_idx;
+        if (actor->delivery_idx != actor->now_idx) {
+            actor->move_idx = aPMAN_set_move_idx(actor);
+        } else {
+            aPMAN_setupAction(actor, play, aPMAN_ACT_DELIVERY_TURN);
+        }
+    }
+}
+
+static void aPMAN_delivery_turn(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    int idx = actor->delivery_idx;
+    s16 target_angle = search_position_angleY(&actor->npc_class.actor_class.world.position, &aPMAN_mailbox_pos[idx]);
+    s16* angle_p = &actor->npc_class.actor_class.shape_info.rotation.y;
+
+    if (chase_angle(angle_p, target_angle, DEG2SHORT_ANGLE2(5.625f)) == TRUE) {
+        aPMAN_setupAction(actor, play, aPMAN_ACT_DELIVERY);
+    }
+
+    actor->npc_class.actor_class.world.angle.y = *angle_p;
+}
+
+static void aPMAN_delivery(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        u8 act = aPMAN_ACT_FLY_UP;
+
+        if (actor->delivery_idx != -1) {
+            actor->move_idx = aPMAN_set_move_idx(actor);
+            actor->next_action = aPMAN_ACT_TURN;
+            act = aPMAN_ACT_KYORO;
+        }
+
+        aPMAN_setupAction(actor, play, act);
+    }
+}
+
+static void aPMAN_talk_turn(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    s16* angle_p = &actor->npc_class.actor_class.shape_info.rotation.y;
+
+    if (chase_angle(angle_p, actor->npc_class.actor_class.player_angle_y, DEG2SHORT_ANGLE2(5.625f)) == TRUE) {
+        aPMAN_setupAction(actor, play, aPMAN_ACT_TALK_END_WAIT);
+    }
+
+    actor->npc_class.actor_class.world.angle.y = *angle_p;
+}
+
+static void aPMAN_talk_end_wait(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)actor) == FALSE) {
+        u8 act = aPMAN_ACT_TURN;
+
+        if (actor->delivery_idx == -1) {
+            act = aPMAN_ACT_KYORO;
+        }
+
+        aPMAN_setupAction(actor, play, act);
+    }
+}
+
+static void aPMAN_fly_up(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    static u8 next_act_idx[] = { aPMAN_ACT_EXIT, aPMAN_ACT_EXIT2 };
+    cKF_FrameControl_c* fc = &actor->npc_class.draw.main_animation.keyframe.frame_control;
+    
+    if (fc->current_frame >= 8.0f) {
+        if (cKF_FrameControl_passCheck_now(fc, 8.0f) == TRUE) {
+            actor->npc_class.actor_class.position_speed.y = 4.0f;
+            actor->npc_class.actor_class.max_velocity_y = -4.0f;
+            actor->npc_class.actor_class.gravity = 0.23f;
+        } else if (actor->npc_class.actor_class.position_speed.y < 0.0f) {
+            actor->npc_class.actor_class.max_velocity_y = 1.0f;
+            actor->npc_class.actor_class.gravity = 0.1f;
+        }
+    }
+
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        aPMAN_setupAction(actor, play, next_act_idx[actor->npc_class.actor_class.actor_specific]);
+    }
+}
+
+static void aPMAN_exit(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    // clang-format off
+    static xyz_t exit_pos[] = {
+        { 1280.0f, 0.0f, 1620.0f },
+        { 3200.0f, 0.0f, 1620.0f },
+    };
+    // clang-format on
+
+    int idx = actor->post_office_direct;
+    int bx;
+    int bz;
+
+    {
+        xyz_t* pos_p = &actor->npc_class.actor_class.world.position;
+        s16 angle = search_position_angleY(pos_p, &exit_pos[idx]);
+        chase_angle(&actor->npc_class.actor_class.world.angle.y, angle, DEG2SHORT_ANGLE2(5.625f));
+        actor->npc_class.actor_class.shape_info.rotation.y = actor->npc_class.actor_class.world.angle.y;
+    }
+
+    {
+        f32 height;
+
+        mFI_Wpos2BlockNum(&bx, &bz, actor->npc_class.actor_class.world.position);
+        if (actor->npc_class.actor_class.block_x != bx || actor->npc_class.actor_class.block_z != bz) {
+            actor->npc_class.actor_class.max_velocity_y = 1.0f;
+        } else {
+            height = actor->npc_class.actor_class.world.position.y - actor->ground_y;
+
+            if (height > 155.0f) {
+                actor->npc_class.actor_class.max_velocity_y = 0.0f;
+            }
+
+            if (height > 140.0f) {
+                actor->npc_class.movement.speed.max_speed = 2.0f;
+                actor->npc_class.movement.speed.acceleration = 0.2f;
+                actor->npc_class.movement.speed.deceleration = 0.2f;
+            }
+        }
+    }
+}
+
+static void aPMAN_clear_xz_spd(NPC_POST_MAN* actor) {
+    actor->npc_class.actor_class.speed = 0.0f;
+    actor->npc_class.movement.speed.max_speed = 0.0f;
+    actor->npc_class.movement.speed.acceleration = 0.0f;
+    actor->npc_class.movement.speed.deceleration = 0.0f;
+}
+
+static void aPMAN_enter_init(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    actor->npc_class.actor_class.speed = 2.0f;
+    actor->npc_class.movement.speed.max_speed = 2.0f;
+    actor->npc_class.movement.speed.acceleration = 0.2f;
+    actor->npc_class.movement.speed.deceleration = 0.2f;
+    actor->npc_class.actor_class.max_velocity_y = 0.0f;
+    actor->npc_class.actor_class.gravity = 0.0f;
+}
+
+static void aPMAN_break_init(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    actor->npc_class.movement.speed.max_speed = 0.05f;
+    actor->npc_class.movement.speed.acceleration = 0.05f;
+    actor->npc_class.movement.speed.deceleration = 0.05f;
+    actor->npc_class.actor_class.max_velocity_y = -8.0f;
+    actor->npc_class.actor_class.gravity = 0.8f;
+    sAdo_OngenTrgStart(0x12B, &actor->npc_class.actor_class.world.position);
+}
+
+static void aPMAN_hover_init(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    actor->npc_class.actor_class.max_velocity_y = 0.0f;
+    actor->npc_class.actor_class.gravity = 0.5f;
+    mEnv_regist_nature(&play->kankyo, aPMAN_eff_wings, actor);
+}
+
+static void aPMAN_landing_init(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    actor->npc_class.actor_class.max_velocity_y = -14.0f;
+    actor->npc_class.actor_class.gravity = 1.4f;
+}
+
+static void aPMAN_kyoro_init(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    actor->npc_class.actor_class.max_velocity_y = -8.0f;
+    actor->npc_class.actor_class.gravity = 0.8f;
+}
+
+static void aPMAN_walk_init(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    actor->npc_class.movement.speed.max_speed = 1.0f;
+    actor->npc_class.movement.speed.acceleration = 0.1f;
+    actor->npc_class.movement.speed.deceleration = 0.1f;
+}
+
+static void aPMAN_delivery_init(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    aPMAN_clear_xz_spd(actor);
+    mPO_delivery_one_address(actor->delivery_idx);
+    aPMAN_order_open_mailbox(actor, play);
+    if (actor->delivery_idx < 3) {
+        actor->delivery_idx++;
+        actor->delivery_idx = aPMAN_set_delivery_idx(actor);
+    } else {
+        actor->delivery_idx = -1;
+    }
+}
+
+static void aPMAN_talk_end_wait_init(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    actor->talk_type = 1;
+    mMld_ActorMakeMelody((ACTOR*)actor);
+    mDemo_Set_ListenAble();
+}
+
+static void aPMAN_fly_up_init(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    mEnv_regist_nature(&play->kankyo, aPMAN_eff_wings, actor);
+    aPMAN_clear_xz_spd(actor);
+}
+
+static void aPMAN_exit_init(NPC_POST_MAN* actor, GAME_PLAY* play) {
+    actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    mEnv_unregist_nature(&play->kankyo, aPMAN_eff_wings);
+    actor->cull_flag = TRUE;
+}
+
+static void aPMAN_init_proc(NPC_POST_MAN* actor, GAME_PLAY* play, u8 action) {
+    // clang-format off
+    static aPMAN_PROC init_proc[] = {
+        aPMAN_enter_init,
+        aPMAN_break_init,
+        aPMAN_hover_init,
+        aPMAN_landing_init,
+        aPMAN_kyoro_init,
+        (aPMAN_PROC)aPMAN_clear_xz_spd,
+        aPMAN_walk_init,
+        (aPMAN_PROC)aPMAN_clear_xz_spd,
+        aPMAN_delivery_init,
+        (aPMAN_PROC)aPMAN_clear_xz_spd,
+        aPMAN_talk_end_wait_init,
+        aPMAN_fly_up_init,
+        aPMAN_exit_init,
+        aPMAN_exit_init,
+    };
+    // clang-format on
+
+    (*init_proc[action])(actor, play);
+}
+
+static void aPMAN_set_talk_permit(NPC_POST_MAN* actor, u8 action) {
+    // clang-format off
+    static u8 talk_permit[] = {
+        FALSE, // aPMAN_ACT_ENTER
+        FALSE, // aPMAN_ACT_BREAK
+        FALSE, // aPMAN_ACT_HOVER
+        FALSE, // aPMAN_ACT_LANDING
+        TRUE, // aPMAN_ACT_KYORO
+        TRUE, // aPMAN_ACT_TURN
+        TRUE, // aPMAN_ACT_WALK
+        FALSE, // aPMAN_ACT_DELIVERY_TURN
+        FALSE, // aPMAN_ACT_DELIVERY
+        FALSE, // aPMAN_ACT_TALK_TURN
+        FALSE, // aPMAN_ACT_TALK_END_WAIT
+        FALSE, // aPMAN_ACT_FLY_UP
+        FALSE, // aPMAN_ACT_EXIT
+        FALSE, // aPMAN_ACT_EXIT2
+    };
+    // clang-format on
+
+    actor->talk_permit = talk_permit[action];
+}
+
+static void aPMAN_setupAction(NPC_POST_MAN* actor, GAME_PLAY* play, u8 action) {
+    // clang-format off
+    static aPMAN_PROC process[] = {
+        aPMAN_enter,
+        aPMAN_break,
+        aPMAN_hover,
+        aPMAN_landing,
+        aPMAN_kyoro,
+        aPMAN_turn,
+        aPMAN_walk,
+        aPMAN_delivery_turn,
+        aPMAN_delivery,
+        aPMAN_talk_turn,
+        aPMAN_talk_end_wait,
+        aPMAN_fly_up,
+        aPMAN_exit,
+        (aPMAN_PROC)none_proc1,
+    };
+    // clang-format on
+    
+    actor->action = action;
+    actor->act_proc = process[action];
+    aPMAN_set_animation(actor, action);
+    aPMAN_init_proc(actor, play, action);
+    aPMAN_set_talk_permit(actor, action);
+}
+
+static void aPMAN_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_POST_MAN* actor = (NPC_POST_MAN*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    NPC_CLIP->move_before_proc(actorx, game);
+    aPMAN_BGcheck(actorx);
+    aPMAN_talk_check(actor, play);
+    actor->act_proc(actor, play);
+    NPC_CLIP->move_after_proc(actorx, game);
+    aPMAN_talk_request(actor);
+    aPMAN_check_culling(actor, play);
+}
