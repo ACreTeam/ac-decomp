@@ -1,23 +1,24 @@
-#include "TRK/trk.h"
+#include "PowerPC_EABI_Support/MetroTRK/trk.h"
 
-extern void OSReport(const char*);
+BOOL usr_puts_serial(const char* msg)
+{
+	BOOL connect_ = FALSE;
+	char c;
+	char buf[2];
 
-BOOL usr_puts_serial(const char* putString) {
-    BOOL res = FALSE;
-    char tstring;
-    char buff[2];
-    int con;
-    while ((res == FALSE) && (tstring = *putString++) != 0) {
-        con = GetTRKConnected();
-        buff[0] = tstring;
-        buff[1] = '\0';
-        SetTRKConnected(0);
-        OSReport(buff);
-        SetTRKConnected(con);
-        res = FALSE;
-    }
-    return res;
+	while (!connect_ && (c = *msg++) != '\0') {
+		BOOL connect = GetTRKConnected();
+
+		buf[0] = c;
+		buf[1] = '\0';
+
+		SetTRKConnected(FALSE);
+		OSReport(buf);
+
+		SetTRKConnected(connect);
+		connect_ = FALSE;
+	}
+	return connect_;
 }
 
-void usr_put_initialize() {
-}
+void usr_put_initialize(void) { }

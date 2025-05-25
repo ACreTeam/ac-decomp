@@ -2,8 +2,8 @@
 #define _METROTRK_TRKTYPES_H
 
 #include "types.h"
-#include <dolphin/os/OSInterrupt.h>
-#include "TRK/trkenum.h"
+#include "Dolphin/OS/OSInterrupt.h"
+#include "PowerPC_EABI_Support/MetroTRK/trkenum.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,12 +12,12 @@ extern "C" {
 /////// TRK STRUCTS AND TYPES //////
 // Function types for DB communications.
 typedef int (*DBCommFunc)();
-typedef int (*DBCommInitFunc)(void*, __OSInterruptHandler);
-typedef int (*DBCommReadFunc)(u8*, int);
-typedef int (*DBCommWriteFunc)(const u8*, int);
+typedef void (*DBCommInitFunc)(volatile u8**, __OSInterruptHandler);
+typedef int (*DBCommReadFunc)(void*, u32);
+typedef int (*DBCommWriteFunc)(const void*, u32);
 
 // Message buffer ID type.
-typedef int MessageBufferID;
+typedef int TRKBufferID;
 
 // Nub event ID type.
 typedef u32 NubEventID;
@@ -29,26 +29,23 @@ typedef int UARTError;
 #define TRKMSGBUF_SIZE (0x800 + 0x80)
 
 // Struct for sending and receiving messages (size 0x88C).
-typedef struct MessageBuffer {
-	u32 _00;                 // _00, unknown
+typedef struct TRKBuffer {
+	u32 mutex;               // _00
 	BOOL isInUse;            // _04
 	u32 length;              // _08
 	u32 position;            // _0C
 	u8 data[TRKMSGBUF_SIZE]; // _10
-} MessageBuffer;
+} TRKBuffer;
 
-// Struct for storing DB communication functions (size 0x28).
+// Struct for storing DB communication functions (size 0x1C).
 typedef struct DBCommTable {
 	DBCommInitFunc initialize_func;  // _00
 	DBCommFunc init_interrupts_func; // _04
-	DBCommFunc shutdown_func;        // _08
-	DBCommFunc peek_func;            // _0C
-	DBCommReadFunc read_func;        // _10
-	DBCommWriteFunc write_func;      // _14
-	DBCommFunc open_func;            // _18
-	DBCommFunc close_func;           // _1C
-	DBCommFunc pre_continue_func;    // _20
-	DBCommFunc post_stop_func;       // _24
+	DBCommFunc peek_func;            // _08
+	DBCommReadFunc read_func;        // _0C
+	DBCommWriteFunc write_func;      // _10
+	DBCommFunc open_func;            // _14
+	DBCommFunc close_func;           // _18
 } DBCommTable;
 
 // Struct for information on DS versions (kernel and protocol) (size 0x4)
@@ -67,11 +64,11 @@ typedef struct TRKPacketSeq {
 
 // Struct for receiving packets from serial poll (size 0x14).
 typedef struct TRKFramingState {
-	MessageBufferID msgBufID;   // _00
-	MessageBuffer* buffer;      // _04
-	ReceiverState receiveState; // _08
-	BOOL isEscape;              // _0C
-	u8 fcsType;                 // _10
+	TRKBufferID msgBufID; // _00
+	TRKBuffer* buffer;    // _04
+	u8 receiveState;      // _08
+	BOOL isEscape;        // _0C
+	u8 fcsType;           // _10
 } TRKFramingState;
 
 // Command reply information (size 0x40).
@@ -91,9 +88,9 @@ typedef struct CommandReply {
 
 // Nub event information (size 0xC).
 typedef struct TRKEvent {
-	u8 eventType;   // _00
-	NubEventID eventID;       // _04
-	MessageBufferID msgBufID; // _08
+	u8 eventType;         // _00
+	NubEventID eventID;   // _04
+	TRKBufferID msgBufID; // _08
 } TRKEvent;
 
 // Event queue (size 0x28).

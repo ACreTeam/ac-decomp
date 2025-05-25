@@ -8,6 +8,7 @@ common_start: 0x8020D78C
 mw_comment_version: 10
 symbols_known: true
 fill_gaps: false
+ldscript_template: config/GAFE01_00/ldscript.tpl
 
 block_relocations:
 # emu64

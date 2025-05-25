@@ -155,7 +155,7 @@ if not config.non_matching:
 # Tool versions
 config.binutils_tag = "2.42-1"
 config.compilers_tag = "20240706"
-config.dtk_tag = "v1.2.0"
+config.dtk_tag = "v1.5.1"
 config.objdiff_tag = "v2.3.4"
 config.sjiswrap_tag = "v1.2.0"
 config.wibo_tag = "0.6.11"
@@ -884,27 +884,27 @@ config.libs = [
         "objects": [
             Object(Matching, "TRK_MINNOW_DOLPHIN/__exception.s"),
             Object(Matching, "TRK_MINNOW_DOLPHIN/dispatch.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/dolphin_trk.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/dolphin_trk_glue.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/flush_cache.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/main_TRK.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/dolphin_trk.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/dolphin_trk_glue.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/flush_cache.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/main_TRK.c"),
             Object(Matching, "TRK_MINNOW_DOLPHIN/mainloop.c"),
             Object(Matching, "TRK_MINNOW_DOLPHIN/mem_TRK.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/mpc_7xx_603e.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/msg.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/mpc_7xx_603e.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/msg.c"),
             Object(Matching, "TRK_MINNOW_DOLPHIN/msgbuf.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/msghndlr.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/mslsupp.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/mutex_TRK.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/notify.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/msghndlr.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/mslsupp.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/mutex_TRK.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/notify.c"),
             Object(Matching, "TRK_MINNOW_DOLPHIN/nubevent.c"),
             Object(Matching, "TRK_MINNOW_DOLPHIN/nubinit.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/serpoll.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/support.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/targcont.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/target_options.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/targimpl.c"),
-            Object(NonMatching, "TRK_MINNOW_DOLPHIN/targsupp.s"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/serpoll.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/support.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/targcont.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/target_options.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/targimpl.c"),
+            Object(Matching, "TRK_MINNOW_DOLPHIN/targsupp.s"),
             Object(Matching, "TRK_MINNOW_DOLPHIN/usr_put.c"),
         ],
     },

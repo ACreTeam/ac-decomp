@@ -2,15 +2,14 @@
 #define TRK_CC_GDEV_H
 
 #include "types.h"
-#include <dolphin/os/OSInterrupt.h>
-// #include "NdevExi2A/DebuggerDriver.h"
+#include "NdevExi2A/DebuggerDriver.h"
 
 // TODO: figure out what these values represent
 typedef enum { GDEV_RESULT_10009 = -10009, GDEV_RESULT_10005 = -10005, GDEV_RESULT_10001 = -10001 } UnkGdevEnum;
 
 void OutputData();
 BOOL IsInitialized();
-int gdev_cc_initialize(u8** flagOut, __OSInterruptHandler handler);
+int gdev_cc_initialize(u8** flagOut, OSInterruptHandler handler);
 int gdev_cc_shutdown();
 int gdev_cc_open();
 int gdev_cc_close();

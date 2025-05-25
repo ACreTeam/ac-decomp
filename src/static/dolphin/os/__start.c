@@ -1,6 +1,6 @@
 #include "dolphin/os.h"
 #include "dolphin/db.h"
-#include "TRK/trk.h"
+#include "PowerPC_EABI_Support/MetroTRK/trk.h"
 #include "dolphin/os/__ppc_eabi_init.h"
 #include <libc/stdlib.h>
 

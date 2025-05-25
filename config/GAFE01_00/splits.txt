@@ -12,9 +12,6 @@ Sections:
 	.sbss       type:bss align:16
 	.sdata2     type:rodata align:4
 
-dolphin/os/__start.c:
-	.init       start:0x80003100 end:0x80003354
-
 boot.c:
 	.text       start:0x800056C0 end:0x8000663C
 	.rodata     start:0x800A97E0 end:0x800A97E8
@@ -1039,6 +1036,9 @@ dolphin/os/OSThread.c:
 dolphin/os/OSTime.c:
 	.text       start:0x8007F6F8 end:0x8007FDFC
 	.data       start:0x800E09C8 end:0x800E0A28
+
+dolphin/os/__start.c:
+	.init       start:0x80003100 end:0x80003354
 
 dolphin/os/__ppc_eabi_init.cpp:
 	.init       start:0x80003354 end:0x800033A8

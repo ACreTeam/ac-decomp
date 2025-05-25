@@ -1,9 +1,22 @@
-#include "TRK/trk.h"
+#include "PowerPC_EABI_Support/MetroTRK/trk.h"
 
-MessageBuffer gTRKMsgBufs[3];
+TRKBuffer gTRKMsgBufs[3];
 
-void TRKSetBufferUsed(MessageBuffer* msg, BOOL state) { msg->isInUse = state; }
+/*
+ * --INFO--
+ * Address:	8021C4CC
+ * Size:	000008
+ */
+static void TRKSetBufferUsed(TRKBuffer* msg, BOOL state)
+{
+	msg->isInUse = state;
+}
 
+/*
+ * --INFO--
+ * Address:	8021C4D4
+ * Size:	000078
+ */
 DSError TRKInitializeMessageBuffers(void)
 {
 	int i;
@@ -17,20 +30,23 @@ DSError TRKInitializeMessageBuffers(void)
 	return DS_NoError;
 }
 
-DSError TRKGetFreeBuffer(int* msgID, MessageBuffer** outMsg)
+/*
+ * --INFO--
+ * Address:	8021C54C
+ * Size:	00009C
+ */
+DSError TRKGetFreeBuffer(int* msgID, TRKBuffer** outMsg)
 {
-	MessageBuffer* buf;
 	DSError error = DS_NoMessageBufferAvailable;
 	int i;
-
-	*outMsg = nullptr;
+	*outMsg = NULL;
 
 	for (i = 0; i < 3; i++) {
-		buf = TRKGetBuffer(i);
+		TRKBuffer* buf = TRKGetBuffer(i);
 
 		TRKAcquireMutex(buf);
 		if (!buf->isInUse) {
-			TRKResetBuffer(buf, TRUE);
+			TRKResetBuffer(buf, 1);
 			TRKSetBufferUsed(buf, TRUE);
 			error   = DS_NoError;
 			*outMsg = buf;
@@ -40,16 +56,21 @@ DSError TRKGetFreeBuffer(int* msgID, MessageBuffer** outMsg)
 		TRKReleaseMutex(buf);
 	}
 
-	if (error == DS_NoMessageBufferAvailable) {
-		usr_puts_serial("ERROR : No buffer available\n");
-	}
+    if (error == DS_NoMessageBufferAvailable) {
+        usr_puts_serial("ERROR : No buffer available\n");
+    }
 
 	return error;
 }
 
+/*
+ * --INFO--
+ * Address:	8021C5E8
+ * Size:	00002C
+ */
 void* TRKGetBuffer(int idx)
 {
-	MessageBuffer* buf = nullptr;
+	TRKBuffer* buf = NULL;
 	if (idx >= 0 && idx < 3) {
 		buf = &gTRKMsgBufs[idx];
 	}
@@ -57,9 +78,14 @@ void* TRKGetBuffer(int idx)
 	return buf;
 }
 
+/*
+ * --INFO--
+ * Address:	8021C614
+ * Size:	000068
+ */
 void TRKReleaseBuffer(int idx)
 {
-	MessageBuffer* msg;
+	TRKBuffer* msg;
 	if (idx != -1 && idx >= 0 && idx < 3) {
 		msg = &gTRKMsgBufs[idx];
 		TRKAcquireMutex(msg);
@@ -68,17 +94,27 @@ void TRKReleaseBuffer(int idx)
 	}
 }
 
-void TRKResetBuffer(MessageBuffer* msg, u8 keepData)
+/*
+ * --INFO--
+ * Address:	8021C67C
+ * Size:	000040
+ */
+void TRKResetBuffer(TRKBuffer* msg, u8 keepData)
 {
 	msg->length   = 0;
 	msg->position = 0;
 
 	if (!keepData) {
-		TRK_memset(msg->data, 0, 0x880);
+		TRK_memset(msg->data, 0, TRKMSGBUF_SIZE);
 	}
 }
 
-DSError TRKSetBufferPosition(MessageBuffer* msg, u32 pos)
+/*
+ * --INFO--
+ * Address:	8021C6BC
+ * Size:	000030
+ */
+DSError TRKSetBufferPosition(TRKBuffer* msg, u32 pos)
 {
 	DSError error = DS_NoError;
 
@@ -96,8 +132,13 @@ DSError TRKSetBufferPosition(MessageBuffer* msg, u32 pos)
 	return error;
 }
 
+/*
+ * --INFO--
+ * Address:	8021C6EC
+ * Size:	0000A4
+ */
 #pragma dont_inline on
-DSError TRKAppendBuffer(MessageBuffer* msg, const void* data, size_t length)
+DSError TRKAppendBuffer(TRKBuffer* msg, const void* data, size_t length)
 {
 	DSError error = DS_NoError; // r31
 	u32 bytesLeft;
@@ -132,10 +173,15 @@ DSError TRKAppendBuffer(MessageBuffer* msg, const void* data, size_t length)
 }
 #pragma dont_inline reset
 
-DSError TRKReadBuffer(MessageBuffer* msg, void* data, size_t length)
+/*
+ * --INFO--
+ * Address:	8021C790
+ * Size:	00008C
+ */
+DSError TRKReadBuffer(TRKBuffer* msg, void* data, size_t length)
 {
 	DSError error = DS_NoError;
-	uint bytesLeft; // this has to be uint not u32 to match lmfao.
+	unsigned int bytesLeft; // this has to be unsigned int not u32 to match lmfao.
 
 	// Return if no bytes to read
 	if (length == 0) {
@@ -156,7 +202,12 @@ DSError TRKReadBuffer(MessageBuffer* msg, void* data, size_t length)
 	return error;
 }
 
-DSError TRKAppendBuffer1_ui16(MessageBuffer* buffer, const u16 data)
+/*
+ * --INFO--
+ * Address:	8021C81C
+ * Size:	000054
+ */
+DSError TRKAppendBuffer1_ui16(TRKBuffer* buffer, const u16 data)
 {
 	u8* bigEndianData;
 	u8* byteData;
@@ -175,7 +226,12 @@ DSError TRKAppendBuffer1_ui16(MessageBuffer* buffer, const u16 data)
 	return TRKAppendBuffer(buffer, (const void*)bigEndianData, sizeof(data));
 }
 
-DSError TRKAppendBuffer1_ui32(MessageBuffer* buffer, const u32 data)
+/*
+ * --INFO--
+ * Address:	8021C870
+ * Size:	000064
+ */
+DSError TRKAppendBuffer1_ui32(TRKBuffer* buffer, const u32 data)
 {
 	u8* bigEndianData;
 	u8* byteData;
@@ -195,8 +251,12 @@ DSError TRKAppendBuffer1_ui32(MessageBuffer* buffer, const u32 data)
 
 	return TRKAppendBuffer(buffer, (const void*)bigEndianData, sizeof(data));
 }
-
-DSError TRKAppendBuffer1_ui64(MessageBuffer* buffer, const u64 data)
+/*
+ * --INFO--
+ * Address:	8021C8D4
+ * Size:	000088
+ */
+DSError TRKAppendBuffer1_ui64(TRKBuffer* buffer, const u64 data)
 {
 	u8* bigEndianData;
 	u8* byteData;
@@ -220,12 +280,22 @@ DSError TRKAppendBuffer1_ui64(MessageBuffer* buffer, const u64 data)
 	return TRKAppendBuffer(buffer, (const void*)bigEndianData, sizeof(data));
 }
 
+/*
+ * --INFO--
+ * Address:	........
+ * Size:	0000C4
+ */
 void TRKAppendBuffer1_ui128(void)
 {
 	// UNUSED FUNCTION
 }
 
-DSError TRKAppendBuffer_ui8(MessageBuffer* buffer, const u8* data, int count)
+/*
+ * --INFO--
+ * Address:	8021C95C
+ * Size:	000068
+ */
+DSError TRKAppendBuffer_ui8(TRKBuffer* buffer, const u8* data, int count)
 {
 	DSError err;
 	int i;
@@ -237,19 +307,22 @@ DSError TRKAppendBuffer_ui8(MessageBuffer* buffer, const u8* data, int count)
 	return err;
 }
 
-DSError TRKAppendBuffer_ui16(MessageBuffer* buffer, const u16* data, int count)
+/*
+ * --INFO--
+ * Address:	........
+ * Size:	00007C
+ */
+void TRKAppendBuffer_ui16(void)
 {
-	DSError err;
-	int i;
-
-	for (i = 0, err = DS_NoError; err == DS_NoError && i < count; i++) {
-		err = TRKAppendBuffer1_ui16(buffer, data[i]);
-	}
-
-	return err;
+	// UNUSED FUNCTION
 }
 
-DSError TRKAppendBuffer_ui32(MessageBuffer* buffer, const u32* data, int count)
+/*
+ * --INFO--
+ * Address:	8021C9C4
+ * Size:	00007C
+ */
+DSError TRKAppendBuffer_ui32(TRKBuffer* buffer, const u32* data, int count)
 {
 	DSError err;
 	int i;
@@ -261,19 +334,42 @@ DSError TRKAppendBuffer_ui32(MessageBuffer* buffer, const u32* data, int count)
 	return err;
 }
 
+/*
+ * --INFO--
+ * Address:	........
+ * Size:	000080
+ */
 void TRKAppendBuffer_ui64(void)
 {
 	// UNUSED FUNCTION
 }
 
+/*
+ * --INFO--
+ * Address:	........
+ * Size:	00007C
+ */
 void TRKAppendBuffer_ui128(void)
 {
 	// UNUSED FUNCTION
 }
 
-DSError TRKReadBuffer1_ui8(MessageBuffer* buffer, u8* data) { return TRKReadBuffer(buffer, (void*)data, 1); }
+/*
+ * --INFO--
+ * Address:	8021CA40
+ * Size:	000024
+ */
+DSError TRKReadBuffer1_ui8(TRKBuffer* buffer, u8* data)
+{
+	return TRKReadBuffer(buffer, (void*)data, 1);
+}
 
-DSError TRKReadBuffer1_ui16(MessageBuffer* buffer, u16* data)
+/*
+ * --INFO--
+ * Address:	8021CA64
+ * Size:	000080
+ */
+DSError TRKReadBuffer1_ui16(TRKBuffer* buffer, u16* data)
 {
 	DSError err;
 
@@ -297,10 +393,14 @@ DSError TRKReadBuffer1_ui16(MessageBuffer* buffer, u16* data)
 	}
 
 	return err;
-	// UNUSED FUNCTION
 }
 
-DSError TRKReadBuffer1_ui32(MessageBuffer* buffer, u32* data)
+/*
+ * --INFO--
+ * Address:	8021CAE4
+ * Size:	000090
+ */
+DSError TRKReadBuffer1_ui32(TRKBuffer* buffer, u32* data)
 {
 	DSError err;
 
@@ -326,10 +426,14 @@ DSError TRKReadBuffer1_ui32(MessageBuffer* buffer, u32* data)
 	}
 
 	return err;
-	// UNUSED FUNCTION
 }
 
-DSError TRKReadBuffer1_ui64(MessageBuffer* buffer, u64* data)
+/*
+ * --INFO--
+ * Address:	8021CB74
+ * Size:	0000B0
+ */
+DSError TRKReadBuffer1_ui64(TRKBuffer* buffer, u64* data)
 {
 	DSError err;
 
@@ -361,12 +465,22 @@ DSError TRKReadBuffer1_ui64(MessageBuffer* buffer, u64* data)
 	return err;
 }
 
-void TRKReadBuffer1_ui128(MessageBuffer* buffer, u8* p2, int p3)
+/*
+ * --INFO--
+ * Address:	........
+ * Size:	0000F0
+ */
+void TRKReadBuffer1_ui128(void)
 {
 	// UNUSED FUNCTION
 }
 
-DSError TRKReadBuffer_ui8(MessageBuffer* buffer, u8* data, int count)
+/*
+ * --INFO--
+ * Address:	8021CC24
+ * Size:	000074
+ */
+DSError TRKReadBuffer_ui8(TRKBuffer* buffer, u8* data, int count)
 {
 	DSError err;
 	int i;
@@ -378,12 +492,22 @@ DSError TRKReadBuffer_ui8(MessageBuffer* buffer, u8* data, int count)
 	return err;
 }
 
-void TRKReadBuffer_ui16(MessageBuffer* buffer, u8* p2, int p3)
+/*
+ * --INFO--
+ * Address:	........
+ * Size:	00007C
+ */
+void TRKReadBuffer_ui16(void)
 {
 	// UNUSED FUNCTION
 }
 
-DSError TRKReadBuffer_ui32(MessageBuffer* buffer, u32* data, int count)
+/*
+ * --INFO--
+ * Address:	8021CC98
+ * Size:	00007C
+ */
+DSError TRKReadBuffer_ui32(TRKBuffer* buffer, u32* data, int count)
 {
 	DSError err;
 	s32 i;
@@ -395,12 +519,22 @@ DSError TRKReadBuffer_ui32(MessageBuffer* buffer, u32* data, int count)
 	return err;
 }
 
-void TRKReadBuffer_ui64(MessageBuffer* buffer, u8* p2, int p3)
+/*
+ * --INFO--
+ * Address:	........
+ * Size:	00007C
+ */
+void TRKReadBuffer_ui64(void)
 {
 	// UNUSED FUNCTION
 }
 
-void TRKReadBuffer_ui128(MessageBuffer* buffer, u8* p2, int p3)
+/*
+ * --INFO--
+ * Address:	........
+ * Size:	00007C
+ */
+void TRKReadBuffer_ui128(void)
 {
 	// UNUSED FUNCTION
 }

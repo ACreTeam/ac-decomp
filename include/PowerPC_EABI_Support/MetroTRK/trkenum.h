@@ -40,6 +40,17 @@ typedef enum {
 	DS_Error800 = 0x800,
 } DSError;
 
+typedef struct DSCPUType {
+	u8 cpuMajor;
+	u8 cpuMinor;
+	u8 bigEndian;
+	u8 defaultTypeSize;
+	u8 fpTypeSize;
+	u8 extended1TypeSize;
+	u8 extended2TypeSize;
+} DSCPUType;
+DSError TRKTargetCPUType(DSCPUType* cpuType);
+
 // Where to read/write.
 typedef enum {
 	DS_Stdin  = 0,

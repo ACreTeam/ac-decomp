@@ -1,89 +1,90 @@
-#include "TRK/trk.h"
+#include "PowerPC_EABI_Support/MetroTRK/trk.h"
 
-void TRK_fill_mem(void *dst, int val, u32 length);
+static void TRK_fill_mem(void* dest, int val, size_t count);
 
-__declspec(section ".init") void *TRK_memcpy(void *dst, const void *src, size_t n)
+__declspec(section ".init") void* TRK_memcpy(void* dest, const void* src, size_t count)
 {
-    const unsigned char *s = (const unsigned char *)src - 1;
-    unsigned char *d = (unsigned char *)dst - 1;
+	u8* s = (u8*)src - 1;
+	u8* d = (u8*)dest - 1;
 
-    n++;
-    while (--n != 0)
-        *++d = *++s;
-    return dst;
+	count++;
+
+	while (--count) {
+		*++d = *++s;
+	}
 }
 
-__declspec(section ".init") void* TRK_memset(void* dst, int val, size_t size){
-    TRK_fill_mem(dst, val, size);
-    
-    return dst;
+__declspec(section ".init") void* TRK_memset(void* dest, int val, size_t count)
+{
+	TRK_fill_mem(dest, val, count);
+	return dest;
 }
 
-void TRK_fill_mem(void *dst, int val, u32 length) {
-    u32    v = (u8)val;
-    u32    i;
+/*
+ * --INFO--
+ * Address:	8021E7C0
+ * Size:	0000C4
+ */
+static void TRK_fill_mem(void* dest, int value, size_t length)
+{
+#define cDest ((u8*)dest)
+#define lDest ((u32*)dest)
+	u32 val = (u8)value;
+	u32 i;
+	lDest = (u32*)dest;
+	cDest = (u8*)dest;
 
-    union
-    {
-        u8 *cpd;
-        u32 *lpd;
-    } dstu;
+	cDest--;
 
-    dstu.cpd = (((u8 *)dst) - 1);
+	if (length >= 32) {
+		i = ~(u32)dest & 3;
 
-    if (length >= 32)
-    {
-        i = ((~ (u32)dstu.cpd) & 3);
+		if (i) {
+			length -= i;
+			do {
+				*++cDest = val;
+			} while (--i);
+		}
 
-        if (i)
-        {
-            length -= i;
+		if (val) {
+			val |= val << 24 | val << 16 | val << 8;
+		}
 
-            do
-                *++(dstu.cpd) = (u8)v;
-            while (--i);
-        }
+		lDest = (u32*)(cDest + 1) - 1;
 
-        if (v)
-            v |= ((v << 24) | (v << 16) | (v <<  8));
+		i = length >> 5;
+		if (i) {
+			do {
+				*++lDest = val;
+				*++lDest = val;
+				*++lDest = val;
+				*++lDest = val;
+				*++lDest = val;
+				*++lDest = val;
+				*++lDest = val;
+				*++lDest = val;
+			} while (--i);
+		}
 
-        dstu.lpd = (((u32 *)(dstu.cpd + 1)) - 1);
+		i = (length & 31) >> 2;
 
-        i = (length >> 5);
+		if (i) {
+			do {
+				*++lDest = val;
+			} while (--i);
+		}
 
-        if (i)
-        {
-            do
-            {
-                *++(dstu.lpd) = v;
-                *++(dstu.lpd) = v;
-                *++(dstu.lpd) = v;
-                *++(dstu.lpd) = v;
-                *++(dstu.lpd) = v;
-                *++(dstu.lpd) = v;
-                *++(dstu.lpd) = v;
-                *++(dstu.lpd) = v;
-            } while (--i);
-        }
+		cDest = (u8*)(lDest + 1) - 1;
 
-        i = ((length & 31) >> 2);
+		length &= 3;
+	}
 
-        if (i)
-        {
-            do
-                *++(dstu.lpd) = v;
-            while (--i);
-        }
+	if (length) {
+		do {
+			*++cDest = val;
+		} while (--length);
+	}
 
-        dstu.cpd = (((u8 *)(dstu.lpd + 1)) - 1);
-
-        length &= 3;
-    }
-
-    if (length)
-    {
-        do
-            *++(dstu.cpd) = (u8)v;
-        while (--length);
-    }
+#undef cDest
+#undef lDest
 }

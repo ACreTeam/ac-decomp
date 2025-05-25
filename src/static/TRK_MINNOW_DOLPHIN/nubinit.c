@@ -1,4 +1,4 @@
-#include "TRK/trk.h"
+#include "PowerPC_EABI_Support/MetroTRK/trk.h"
 
 BOOL gTRKBigEndian;
 
@@ -46,7 +46,7 @@ DSError TRKInitializeNub (void){
     }
     
     if(res == DS_NoError){
-        DSError ures = TRKInitializeIntDrivenUART(0xE100, 1, 0, &gTRKInputPendingPtr);
+        DSError ures = TRKInitializeIntDrivenUART(0xE100, 1, 0, (volatile u8**)&gTRKInputPendingPtr);
         TRKTargetSetInputPendingPtr(gTRKInputPendingPtr);
         if(ures != DS_NoError){
             res = ures;
