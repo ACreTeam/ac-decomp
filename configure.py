@@ -419,7 +419,7 @@ config.libs = [
             Object(Matching, "libultra/ultra.c"),
             Object(Matching, "libultra/xldtob.c"),
             Object(Matching, "libultra/xlitob.c"),
-            Object(Equivalent, "libultra/xprintf.c"),
+            Object(Matching, "libultra/xprintf.c"),
         ],
     },
     {

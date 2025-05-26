@@ -2,38 +2,34 @@
 
 #include "libultra/xprintf.h"
 
-#define ATOI(i, a)                           \
-    for (i = 0; *a >= '0' && *a <= '9'; a++) \
-        if (i < 999)                         \
-            i = *a + i * 10 - '0';
+#define isdigit(x) ((x >= '0' && x <= '9'))
+#define LDSIGN(x) (((unsigned short *)&(x))[0] & 0x8000)
 
-#define _PROUT(fmt, _size)          \
-    if (_size > 0) {                \
-        arg = pfn(arg, fmt, _size); \
-        if (arg != NULL)            \
-            x.nchar += _size;       \
-        else                        \
-            return x.nchar;         \
+#define ATOI(dst, src)                   \
+    for (dst = 0; isdigit(*src); ++src)  \
+    {                                    \
+        if (dst < 999)                   \
+            dst = dst * 10 + *src - '0'; \
     }
-#define _PROUT2(fmt, _size)                \
-    if ((u32)(_size) != 0) {               \
-        arg = pfn(arg, fmt, (u32)(_size)); \
-        if (arg != NULL)                   \
-            x.nchar += _size;              \
-        else                               \
-            return x.nchar;                \
+
+#define MAX_PAD ((33 - 1))
+#define PAD(s, n)                                             \
+    if (0 < (n))                                              \
+    {                                                         \
+        int i, j = (n);                                       \
+        for (; 0 < j; j -= i)                                 \
+        {                                                     \
+            i = MAX_PAD < j ? (int)MAX_PAD : j; \
+            PUT(s, i);                                        \
+        }                                                     \
     }
-#define _PAD(m, src, extracond)      \
-    if (extracond && m > 0) {        \
-        s32 i;                       \
-        s32 j;                       \
-        for (j = m; j > 0; j -= i) { \
-            if (j > 32)              \
-                i = 32;              \
-            else                     \
-                i = j;               \
-            _PROUT(src, i);          \
-        }                            \
+#define PUT(s, n)                                \
+    if (0 < (n))                                 \
+    {                                            \
+        if ((arg = (*pfn)(arg, s, n)) != NULL) \
+            x.nchar += (n);                      \
+        else                                     \
+            return x.nchar;                      \
     }
 
 static char spaces[] = "                                ";
@@ -41,78 +37,98 @@ static char zeroes[] = "00000000000000000000000000000000";
 
 void _Putfld(_Pft*, va_list, u8, u8*);
 
-int _Printf(void* (*pfn)(void*, const char*, int), void* arg, const char* fmt, va_list ap) {
-    static const char fchar[] = " +-#0";
-    static const u32 fbit[6] = { FLAGS_SPACE, FLAGS_PLUS, FLAGS_MINUS, FLAGS_HASH, FLAGS_ZERO, 0 };
-
+int _Printf(void* (*pfn)(void*, const char*, int), void* arg, const char* fmt, va_list args) {
     _Pft x;
+    
     x.nchar = 0;
 
     while (TRUE) {
-        u8 qual;
-        const u8* s = (u8*)fmt;
-        u8 c;
-        const char* t;
-        u8 ac[0x20];
-        u8* temp;
+        const char *s;
+        char c;
+        const char *t;
+        static const char fchar[] = {' ', '+', '-', '#', '0', '\0'};
+        static const int fbit[] = {FLAGS_SPACE, FLAGS_PLUS, FLAGS_MINUS, FLAGS_HASH, FLAGS_ZERO, 0};
+        char ac[32];
+        s = fmt;
 
         for (c = *s; c != 0 && c != '%';) {
             c = *++s;
         }
-        temp = (u8*)fmt;
-        _PROUT2(fmt, s - temp);
+        
+        PUT(fmt, (u32)(s - fmt));
+        
         if (c == 0) {
             return x.nchar;
         }
-        fmt = (char*)++s;
-        x.flags = 0;
-        for (; (t = strchr(fchar, *s)) != NULL; s++) {
+        
+        fmt = ++s;
+        
+        for (x.flags = 0; (t = strchr(fchar, *s)) != NULL; s++) {
             x.flags |= fbit[t - fchar];
         }
+
         if (*s == '*') {
-            x.width = va_arg(ap, s32);
+            x.width = va_arg(args, int);
+
             if (x.width < 0) {
                 x.width = -x.width;
                 x.flags |= FLAGS_MINUS;
             }
             s++;
-        } else {
+        } else 
             ATOI(x.width, s);
-        }
+
+
         if (*s != '.') {
             x.prec = -1;
-        } else {
-            s++;
-            if (*s == '*') {
-                x.prec = va_arg(ap, s32);
-                s++;
-            } else {
-                ATOI(x.prec, s);
+        } else if (*++s == '*') {
+            x.prec = va_arg(args, int);
+            ++s;
+        } else
+            ATOI(x.prec, s);
+
+
+        x.qual = strchr("hlL", *s) ? *s++ : '\0';
+        
+        if (x.qual == 'l' && *s == 'l') {
+            x.qual = 'L';
+            ++s;
+        }
+
+        _Putfld(&x, args, *s, (u8*)ac);
+        x.width -= x.n0 + x.nz0 + x.n1 + x.nz1 + x.n2 + x.nz2;
+
+       {
+
+            if (!(x.flags & FLAGS_MINUS)) {
+                int i, j;
+                if (0 < (x.width))
+                {
+                    i, j = x.width;
+                    for (; 0 < j; j -= i)
+                    {
+                        i = MAX_PAD < j ? (int)MAX_PAD : j;
+                        PUT(spaces, i);
+                    }
+                }
+            }
+
+            PUT(ac, x.n0);
+            PAD(zeroes, x.nz0)
+
+            PUT(x.s, x.n1);
+            PAD(zeroes, x.nz1);
+
+            PUT(x.s + x.n1, x.n2);
+            PAD(zeroes, x.nz2);
+
+            if (x.flags & FLAGS_MINUS) {
+                PAD(spaces, x.width);
             }
         }
-        if (strchr("hlL", *s) != NULL) {
-            qual = *s++;
-        } else {
-            qual = 0;
-        }
-        x.qual = qual;
-
-        if (qual == 'l' && *s == 'l') {
-            x.qual = 'L';
-            s++;
-        }
-        _Putfld(&x, ap, *s, ac);
-        x.width -= x.n0 + x.nz0 + x.n1 + x.nz1 + x.n2 + x.nz2;
-        _PAD(x.width, spaces, !(x.flags & FLAGS_MINUS));
-        _PROUT((char*)ac, x.n0);
-        _PAD(x.nz0, zeroes, 1);
-        _PROUT(x.s, x.n1);
-        _PAD(x.nz1, zeroes, 1);
-        _PROUT((char*)(&x.s[x.n1]), x.n2)
-        _PAD(x.nz2, zeroes, 1);
-        _PAD(x.width, spaces, x.flags & FLAGS_MINUS);
-        fmt = (char*)s + 1;
+        fmt = s + 1;
     }
+    return 0;
 }
 
 void _Putfld(_Pft* px, va_list ap, u8 code, u8* ac) {
@@ -217,7 +233,7 @@ void _Putfld(_Pft* px, va_list ap, u8 code, u8* ac) {
         case 's':
             px->s = va_arg(ap, char*);
             px->n1 = strlen(px->s);
-            if (px->prec >= 0 && px->n1 > px->prec) {
+            if (px->prec >= 0 && px->prec < px->n1) {
                 px->n1 = px->prec;
             }
             break;
