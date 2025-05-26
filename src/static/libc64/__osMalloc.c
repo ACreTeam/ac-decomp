@@ -4,7 +4,13 @@
 #include "libultra/libultra.h"
 #include "terminal.h"
 
-#define OS_MALLOC_MAGIC (s16)'ss'
+#define OS_MALLOC_MAGIC (s16)'ss' // magic number for an OSMemBlock
+#define OS_MALLOC_BLOCK_OK(block) ((block) != NULL && (block)->magic == OS_MALLOC_MAGIC) // check if OSMemBlock structure is OK
+#define OS_MALLOC_DATA2BLOCK(data) ((OSMemBlock*)((u32)(data) - sizeof(OSMemBlock))) // get memblock data pointer from OSMemBlock
+#define OS_MALLOC_BLOCK2DATA(block) ((u8*)(block) + sizeof(OSMemBlock)) // get OSMemBlock pointer from data
+
+// Gets the pointer to the next OSMemBlock immediately following this block in RAM, may or may not be a valid OSMemBlock
+#define OS_MALLOC_NEXTMEMBLOCK(block) ((OSMemBlock*)((u32)(block) + sizeof(OSMemBlock) + (block)->size))
 
 int __osMalloc_FreeBlockTest_Enable = FALSE;
 
@@ -31,8 +37,8 @@ static void arena_unlock(OSArena* arena) {
 }
 
 static OSMemBlock* get_block_next(OSMemBlock* block) {
-    // @BUG - this shouldn't check for block->next != NULL
-    if (block->next != NULL && (block->next == NULL || block->next->magic != OS_MALLOC_MAGIC)) {
+    if (block->next != NULL && !OS_MALLOC_BLOCK_OK(block->next)) {
+        // Emergency! Memory leak discovered!
         OSReport(VT_COL(RED, WHITE) "緊急事態！メモリリーク発見！ (block=%08x)\n" VT_RST, block->next);
         OSPanic(__FILE__, 133, "");
         block->next = NULL; // @BUG - OSPanic halts CPU execution, this is pointless
@@ -43,7 +49,8 @@ static OSMemBlock* get_block_next(OSMemBlock* block) {
 
 static OSMemBlock* get_block_prev(OSMemBlock* block) {
     // @BUG - this shouldn't check for block->prev != NULL
-    if (block->prev != NULL && (block->prev == NULL || block->prev->magic != OS_MALLOC_MAGIC)) {
+    if (block->prev != NULL && !OS_MALLOC_BLOCK_OK(block->prev)) {
+        // Emergency! Memory leak discovered!
         OSReport(VT_COL(RED, WHITE) "緊急事態！メモリリーク発見！ (block=%08x)\n" VT_RST, block->prev);
         OSPanic(__FILE__, 144, "");
         block->prev = NULL; // @BUG - OSPanic halts CPU execution, this is pointless
@@ -58,7 +65,7 @@ static OSMemBlock* search_last_block(OSArena* arena) {
     if (arena != NULL) {
         OSMemBlock* current = arena->head;
 
-        if (current != NULL && current->magic == OS_MALLOC_MAGIC) {
+        if (OS_MALLOC_BLOCK_OK(current)) {
             while (current != NULL) {
                 block = current;
                 current = get_block_next(current);
@@ -132,14 +139,15 @@ extern BOOL __osMallocIsInitalized(OSArena* arena) {
 
 static void __osMalloc_FreeBlockTest(OSArena* arena, OSMemBlock* block) {
     if (__osMalloc_FreeBlockTest_Enable) {
-        u32* s = (u32*)((u8*)block + sizeof(OSMemBlock));
-        u32* e = (u32*)((u8*)block + sizeof(OSMemBlock) + block->size);
+        u32* s = (u32*)(OS_MALLOC_BLOCK2DATA(block));
+        u32* e = (u32*)(OS_MALLOC_BLOCK2DATA(block) + block->size);
         u32* p;
 
         for (p = s; p < e; p++) {
             u32 v = *p;
 
-            if (v != (u32)'\xAB\xAB\xAB\xAB' && v != (u32)'\xEF\xEF\xEF\xEF') {
+            if (v != 0xABABABAB && v != 0xEFEFEFEF) {
+                // Emergency! Memory leak detected!
                 OSReport(VT_COL(RED, WHITE) "緊急事態！メモリリーク検出！ (block=%08x s=%08x e=%08x p=%08x)\n" VT_RST, block, s, e, p);
                 __osDisplayArena(arena);
                 OSPanic(__FILE__, 300, "");
@@ -226,7 +234,7 @@ static void* __osMallocAlign_NoLock(OSArena* arena, u32 size, u32 align) {
 
                 block->free = FALSE;
                 setDebugInfo(block, NULL, 0, arena);
-                data_p = (u8*)block + sizeof(OSMemBlock);
+                data_p = OS_MALLOC_BLOCK2DATA(block);
                 if (arena->flags & OSArena_FLAG_CLEAR_MEM_ON_ALLOC) {
                     memset(data_p, 0xCD, size);
                 }
@@ -292,7 +300,7 @@ extern void* __osMallocR(OSArena* arena, u32 size) {
 
             block->free = FALSE;
             setDebugInfo(block, NULL, 0, arena);
-            ret = (u8*)block + sizeof(OSMemBlock);
+            ret = OS_MALLOC_BLOCK2DATA(block);
             if (arena->flags & OSArena_FLAG_CLEAR_MEM_ON_ALLOC) {
                 memset(ret, 0xCD, size);
             }
@@ -308,13 +316,13 @@ extern void* __osMallocR(OSArena* arena, u32 size) {
 }
 
 static void __osFree_NoLock(OSArena* arena, void* ptr) {
-    OSMemBlock* block = (OSMemBlock*)((u32)ptr - sizeof(OSMemBlock));
+    OSMemBlock* block = OS_MALLOC_DATA2BLOCK(ptr);
     OSMemBlock* next;
     OSMemBlock* prev;
     OSMemBlock* temp;
 
     if (ptr != NULL) {
-        if (block == NULL || block->magic != OS_MALLOC_MAGIC) {
+        if (!OS_MALLOC_BLOCK_OK(block)) {
             OSReport(VT_COL(RED, WHITE) "__osFree:不正解放(%08x)\n" VT_RST, ptr); // __osFree: irregular deallocation
             OSPanic(__FILE__, 738, "");
             return;
@@ -337,10 +345,10 @@ static void __osFree_NoLock(OSArena* arena, void* ptr) {
         block->free = TRUE;
         setDebugInfo(block, NULL, 0, arena);
         if (arena->flags & OSArena_FLAG_CLEAR_MEM_ON_FREE) {
-            memset((u8*)block + sizeof(OSMemBlock), 0xEF, block->size);
+            memset(OS_MALLOC_BLOCK2DATA(block), 0xEF, block->size);
         }
 
-        if (next == (OSMemBlock*)((u32)block + sizeof(OSMemBlock) + block->size)) {
+        if (next == OS_MALLOC_NEXTMEMBLOCK(block)) {
             if (next->free) {
                 temp = get_block_next(next);
                 if (temp != NULL) {
@@ -356,7 +364,7 @@ static void __osFree_NoLock(OSArena* arena, void* ptr) {
             }
         }
 
-        if (prev != NULL && prev->free && block == (OSMemBlock*)((u32)prev + sizeof(OSMemBlock) + prev->size)) {
+        if (prev != NULL && prev->free && block == OS_MALLOC_NEXTMEMBLOCK(prev)) {
             if (next != NULL) {
                 next->prev = prev;
             }
@@ -378,7 +386,10 @@ extern void __osFree(OSArena* arena, void* ptr) {
 
 // @fabricated, most likely suspect from DnM+'s symbol map
 static void* __osFree_NoLock_DEBUG(OSArena* arena, void* ptr) {
+    // __osFree: irregular deallocation
     OSReport(VT_COL(RED, WHITE) "__osFree:不正解放(%08x) [%s:%d ]\n" VT_RST);
+
+    // __osFree: double deallocation
     OSReport(VT_COL(RED, WHITE) "__osFree:二重解放(%08x) [%s:%d ]\n" VT_RST);
 }
 
@@ -392,7 +403,7 @@ extern void* __osRealloc(OSArena* arena, void* ptr, u32 size) {
     u32 full_size;
     u32 need_size;
 
-    orig_block = (OSMemBlock*)((u32)ptr - sizeof(OSMemBlock));
+    orig_block = OS_MALLOC_DATA2BLOCK(ptr);
     size = ALIGN_NEXT(size, 32);
     full_size = ALIGN_NEXT(size, 32) + sizeof(OSMemBlock);
 
@@ -407,7 +418,7 @@ extern void* __osRealloc(OSArena* arena, void* ptr, u32 size) {
         if (size > orig_block->size) {
             next = get_block_next(orig_block);
             need_size = size - orig_block->size;
-            if (next == (OSMemBlock*)((u32)orig_block + sizeof(OSMemBlock) + orig_block->size) && next->free && next->size >= need_size) {
+            if (next == OS_MALLOC_NEXTMEMBLOCK(orig_block) && next->free && next->size >= need_size) {
                 OSMemBlock* new_next = (OSMemBlock*)((u32)next + need_size);
                 next->size -= need_size;
                 temp = get_block_next(next);
@@ -539,8 +550,8 @@ extern s32 __osGetMemBlockSize(OSArena* arena, void* ptr) {
         return -1;
     }
 
-    block = (OSMemBlock*)((u32)ptr - sizeof(OSMemBlock));
-    if (block != NULL && block->magic == OS_MALLOC_MAGIC) {
+    block = OS_MALLOC_DATA2BLOCK(ptr);
+    if (OS_MALLOC_BLOCK_OK(block)) {
         return block->size;
     }
 
@@ -560,15 +571,18 @@ extern void __osDisplayArena(OSArena* arena) {
         total_free = 0;
         total_used = 0;
 
+        // Arena Contents
         OSReport("アリーナの内容 (0x%08x)\n", arena);
+        // Memory block span | status | size | [time  s ms us ns: TID:src:line]
         OSReport("メモリブロック範囲 status サイズ  [時刻  s ms us ns: TID:src:行]\n");
 
         block = arena->head;
         while (block != NULL) {
-            if (block != NULL && block->magic == OS_MALLOC_MAGIC) {
+            if (OS_MALLOC_BLOCK_OK(block)) {
                 next = block->next;
                 OSReport("%08x-%08x%c %s %08x", (u32)block, (u32)block + sizeof(OSMemBlock) + block->size, next == NULL ? '$' : (next->prev != block ? '!' : ' '), block->free ? "空き" : "確保", block->size);
                 if (!block->free) {
+                    // 空き = free, 確保 = used
                     OSReport(" [%016llu:%2d:%s:%d]", OSTicksToMicroseconds((u64)block->time * 1000), block->threadId, block->file != NULL ? block->file : "**NULL**", block->line);
                 }
                 OSReport("\n");
@@ -588,8 +602,11 @@ extern void __osDisplayArena(OSArena* arena) {
             block = next;
         }
 
+        // Total used memblock size: 0x%08x bytes
         OSReport("確保ブロックサイズの合計 0x%08x バイト\n", total_used);
+        // Total free memblock size: 0x%08x bytes
         OSReport("空きブロックサイズの合計 0x%08x バイト\n", total_free);
+        // Largest free block size: %08x bytes
         OSReport("最大空きブロックサイズ   0x%08x バイト\n", max_free);
         arena_unlock(arena);
     }
@@ -603,7 +620,8 @@ extern int __osCheckArena(OSArena* arena) {
     arena_lock(arena);
     block = arena->head;
     while (block != NULL) {
-        if (block == NULL || block->magic != OS_MALLOC_MAGIC) {
+        if (!OS_MALLOC_BLOCK_OK(block)) {
+            // Oops!!
             OSReport(VT_COL(RED, WHITE) "おおっと！！ (%08x %08x)\n" VT_RST, block, block->magic);
             OSPanic(__FILE__, 1307, "");
             ret = TRUE;
