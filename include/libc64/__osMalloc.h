@@ -11,6 +11,10 @@
 extern "C" {
 #endif // !__cplusplus
 
+#define OSArena_FLAG_CLEAR_MEM_ON_ALLOC (1 << 0)
+#define OSArena_FLAG_CLEAR_MEM_ON_FREE (1 << 1)
+#define OSArena_FLAG_FREE_BLOCK_TEST (1 << 2)
+
 typedef struct OSMemBlock_ {
     /* 0x00 */ s16 magic;
     /* 0x02 */ s16 free;

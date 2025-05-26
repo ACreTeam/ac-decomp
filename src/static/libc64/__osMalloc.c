@@ -188,7 +188,7 @@ static void* __osMallocAlign_NoLock(OSArena* arena, u32 size, u32 align) {
             aligned_block = (OSMemBlock*)((u32)block + alignment_bytes);
 
             if (block->size - alignment_bytes >= size) {
-                if (arena->flags & 0x4) {
+                if (arena->flags & OSArena_FLAG_FREE_BLOCK_TEST) {
                     __osMalloc_FreeBlockTest(arena, block);
                 }
 
@@ -227,7 +227,7 @@ static void* __osMallocAlign_NoLock(OSArena* arena, u32 size, u32 align) {
                 block->free = FALSE;
                 setDebugInfo(block, NULL, 0, arena);
                 data_p = (u8*)block + sizeof(OSMemBlock);
-                if (arena->flags & 0x1) {
+                if (arena->flags & OSArena_FLAG_CLEAR_MEM_ON_ALLOC) {
                     memset(data_p, 0xCD, size);
                 }
 
@@ -271,7 +271,7 @@ extern void* __osMallocR(OSArena* arena, u32 size) {
     block = search_last_block(arena);
     while (block != NULL) {
         if (block->free && block->size >= size) {
-            if (arena->flags & 0x4) {
+            if (arena->flags & OSArena_FLAG_FREE_BLOCK_TEST) {
                 __osMalloc_FreeBlockTest(arena, block);
             }
 
@@ -293,7 +293,7 @@ extern void* __osMallocR(OSArena* arena, u32 size) {
             block->free = FALSE;
             setDebugInfo(block, NULL, 0, arena);
             ret = (u8*)block + sizeof(OSMemBlock);
-            if (arena->flags & 0x1) {
+            if (arena->flags & OSArena_FLAG_CLEAR_MEM_ON_ALLOC) {
                 memset(ret, 0xCD, size);
             }
 
@@ -336,7 +336,7 @@ static void __osFree_NoLock(OSArena* arena, void* ptr) {
         prev = get_block_prev(block);
         block->free = TRUE;
         setDebugInfo(block, NULL, 0, arena);
-        if (arena->flags & 0x2) {
+        if (arena->flags & OSArena_FLAG_CLEAR_MEM_ON_FREE) {
             memset((u8*)block + sizeof(OSMemBlock), 0xEF, block->size);
         }
 
@@ -348,7 +348,7 @@ static void __osFree_NoLock(OSArena* arena, void* ptr) {
                 }
 
                 block->size += next->size + sizeof(OSMemBlock);
-                if (arena->flags & 0x2) {
+                if (arena->flags & OSArena_FLAG_CLEAR_MEM_ON_FREE) {
                     memset(next, 0xEF, sizeof(OSMemBlock));
                 }
                 block->next = temp;
@@ -363,7 +363,7 @@ static void __osFree_NoLock(OSArena* arena, void* ptr) {
 
             prev->next = next;
             prev->size += block->size + sizeof(OSMemBlock);
-            if (arena->flags & 0x2) {
+            if (arena->flags & OSArena_FLAG_CLEAR_MEM_ON_FREE) {
                 memset(block, 0xEF, sizeof(OSMemBlock));
             }
         }
