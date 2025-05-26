@@ -1,6 +1,6 @@
 #include "m_malloc.h"
 
-Arena zelda_arena;
+OSArena zelda_arena;
 
 extern void* zelda_malloc_align(size_t size, u32 align) {
   return __osMallocAlign(&zelda_arena, size, align);

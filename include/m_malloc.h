@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-extern Arena zelda_arena; 
+extern OSArena zelda_arena; 
 
 extern void* zelda_malloc_align(size_t,u32);
 extern void* zelda_malloc(size_t);

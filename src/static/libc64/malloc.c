@@ -1,7 +1,7 @@
 #include "libc64/__osMalloc.h"
 #include "libc64/malloc.h"
 
-Arena malloc_arena;
+OSArena malloc_arena;
 
 extern void* malloc(size_t size) {
     return __osMalloc(&malloc_arena, size);

@@ -7,62 +7,53 @@
 #include "libultra/osMesg.h"
 #include "libultra/ultratypes.h"
 
-struct ArenaNode;
+#ifdef __cplusplus
+extern "C" {
+#endif // !__cplusplus
 
-typedef struct Arena {
-    /* 0x00 */ struct ArenaNode* head;
-    /* 0x04 */ void* start;
-    /* 0x08 */ OSMesgQueue lockQueue;
-    /* 0x20 */ u8 unk_20;
-    /* 0x21 */ u8 isInit;
-    /* 0x22 */ u8 flag;
-    /* 0x24 */ u8 pad[0x2C - 0x24];
-} Arena; // size = 0x2C
-
-typedef struct ArenaNode {
+typedef struct OSMemBlock_ {
     /* 0x00 */ s16 magic;
-    /* 0x02 */ s16 isFree;
-    /* 0x04 */ u32 size;
-    /* 0x08 */ struct ArenaNode* next;
-    /* 0x0C */ struct ArenaNode* prev;
-    /* 0x10 */ const char* filename;
+    /* 0x02 */ s16 free;
+    /* 0x04 */ s32 size;
+    /* 0x08 */ struct OSMemBlock_* next;
+    /* 0x0C */ struct OSMemBlock_* prev;
+    /* 0x10 */ const char* file;
     /* 0x14 */ s32 line;
     /* 0x18 */ OSId threadId;
-    /* 0x1C */ Arena* arena;
+    /* 0x1C */ struct OSArena_* arena;
     /* 0x20 */ OSTime time;
-    /* 0x28 */ u8 unk_28[0x30 - 0x28]; // probably padding
-} ArenaNode;                           // size = 0x30
+    /* 0x28 */ u8 pad[0x30 - 0x28];
+} OSMemBlock;                           // size = 0x30
 
-void setDebugInfo(ArenaNode*, const char*, s32, Arena*);
-void arena_lock_init(Arena*);
-void arena_lock(Arena*);
-void arena_unlock(Arena*);
-ArenaNode* get_block_next(ArenaNode*);
-ArenaNode* get_block_prev(ArenaNode*);
-ArenaNode* search_last_block(Arena*);
-void __osMallocInit(Arena*, void*, u32);
-void __osMallocAddBlock(Arena*, void*, s32);
-void destroy_all_block(Arena*);
-void __osMallocCleanup(Arena*);
-BOOL __osMallocIsInitialized(Arena*);
-void __osMalloc_FreeBlockTest(Arena*, ArenaNode*);
-void* __osMallocALign_NoLock(Arena*, u32, u32);
-void* __osMalloc_NoLock(Arena*, u32);
-void* __osMallocAlign(Arena*, u32, u32);
-void* __osMalloc(Arena*, u32);
-void* __osMallocR(Arena*, u32);
-void __osFree_NoLock(Arena*, void*);
-void __osFree(Arena*, void*);
-void* __osRealloc(Arena*, void*, u32);
-int __osAnalayzeArena(Arena*, u32*);
-void __osGetFreeArena(Arena*, u32*, u32*, u32*);
-u32 __osGetTotalFreeSize(Arena*);
-u32 __osGetFreeSize(Arena*);
-u32 __osGetMemBlockSize(Arena*, void*);
-void __osDisplayArena(Arena*);
-int __osCheckArena(Arena*);
-extern int __osMallocIsInitalized(Arena*);
+typedef struct OSArena_ {
+    /* 0x00 */ OSMemBlock* head;
+    /* 0x04 */ u8* base;
+    /* 0x08 */ OSMessageQueue lockQueue;
+    /* 0x20 */ u8 _28;
+    /* 0x21 */ u8 initialized;
+    /* 0x22 */ u8 flags;
+} OSArena; // size = 0x2C
+
+extern void __osMallocInit(OSArena* arena, u8* base, s32 size);
+extern void __osMallocAddBlock(OSArena* arena, u8* base, s32 size);
+extern void __osMallocCleanup(OSArena* arena);
+extern BOOL __osMallocIsInitalized(OSArena* arena);
+extern void* __osMallocAlign(OSArena* arena, u32 size, u32 align);
+extern void* __osMalloc(OSArena* arena, u32 size);
+extern void* __osMallocR(OSArena* arena, u32 size);
+extern void __osFree(OSArena* arena, void* ptr);
+extern void* __osRealloc(OSArena* arena, void* ptr, u32 size);
+extern void __osGetFreeArena(OSArena* arena, u32* max_free_block_size, u32* free_blocks_size, u32* used_blocks_size);
+extern u32 __osGetTotalFreeSize(OSArena* arena);
+extern u32 __osGetFreeSize(OSArena* arena);
+extern s32 __osGetMemBlockSize(OSArena* arena, void* ptr);
+extern void __osDisplayArena(OSArena* arena);
+extern int __osCheckArena(OSArena* arena);
 
 extern int __osMalloc_FreeBlockTest_Enable;
+
+#ifdef __cplusplus
+}
+#endif // !__cplusplus
 
 #endif
