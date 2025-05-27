@@ -1290,7 +1290,7 @@ config.libs = [
             Object(Matching, "effect/ef_kyousou_onpu.c"),
             Object(Matching, "effect/ef_lamp_light.c"),
             Object(Matching, "effect/ef_lovelove.c"),
-            Object(NonMatching, "effect/ef_lovelove2.c"),
+            Object(Matching, "effect/ef_lovelove2.c"),
             Object(NonMatching, "effect/ef_lovelove_heart.c"),
             Object(Matching, "effect/ef_make_hem.c"),
             Object(NonMatching, "effect/ef_mizutama.c"),
