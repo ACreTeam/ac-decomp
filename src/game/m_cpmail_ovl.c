@@ -67,12 +67,10 @@ static mCM_disp_data_c mCM_disp_data[8] = {
     {ctl_win1_tagu8T_model, ctl_win8_color_mode, ctl_win_nuno8_tex_rgb_ci4_pal, ctl_win_nuno8_tex_rgb_ci4, { 0x32, 0x46, 0x0A, 0xFF } },
 };
 
-// lines 224-226 (3 lines)
 static void mCM_move_Move(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     submenu->overlay->move_Move_proc(submenu, menu_info);
 }
 
-// lines 234-286 (53 lines)
 static void mCM_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     mCM_Ovl_c* cpmail_ovl = submenu->overlay->cpmail_ovl;
     
@@ -108,7 +106,6 @@ static void mCM_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     }
 }
 
-// lines 294-345 (52 lines)
 static void mCM_move_Wait(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     mCM_Ovl_c* cpmail_ovl = submenu->overlay->cpmail_ovl;
     mSM_MenuInfo_c* next_menu_info = &submenu->overlay->menu_info[menu_info->next_menu_type];

@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-typedef struct map_overlay_s mMP_Overlay_c;
+typedef struct map_overlay_s mMP_Ovl_c;
 
 #ifdef __cplusplus
 }

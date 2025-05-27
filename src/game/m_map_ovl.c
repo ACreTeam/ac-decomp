@@ -388,7 +388,7 @@ static void mMP_dma_texture(u8** texture_pp, int type) {
     *texture_pp = l_map_texture[type];
 }
 
-static void mMP_set_map_texture_pal(mMP_Overlay_c* map_ovl) {
+static void mMP_set_map_texture_pal(mMP_Ovl_c* map_ovl) {
     int max_no_table[FG_BLOCK_TOTAL_NUM];
     int i;
 
@@ -399,11 +399,11 @@ static void mMP_set_map_texture_pal(mMP_Overlay_c* map_ovl) {
     }
 }
 
-static mActor_name_t mMP_GetFgBlockName(mMP_Overlay_c* map_ovl, int block_x, int block_z) {
+static mActor_name_t mMP_GetFgBlockName(mMP_Ovl_c* map_ovl, int block_x, int block_z) {
     return map_ovl->combination_table[Save_Get(combi_table[block_z][block_x]).combination_type].fg_id;
 }
 
-static void mMP_set_house_data(mMP_Overlay_c* map_ovl, mSM_MenuInfo_c* menu) {
+static void mMP_set_house_data(mMP_Ovl_c* map_ovl, mSM_MenuInfo_c* menu) {
     static u8 akiya_str[PLAYER_NAME_LEN] = { CHAR_f,     CHAR_r,     CHAR_e,     CHAR_e,
                                              CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE };
 
@@ -522,7 +522,7 @@ static void mMP_set_house_data(mMP_Overlay_c* map_ovl, mSM_MenuInfo_c* menu) {
     }
 }
 
-static void mMP_set_field_data(mMP_Overlay_c* map_ovl) {
+static void mMP_set_field_data(mMP_Ovl_c* map_ovl) {
     mMP_LabelInfo_c* label_info = (mMP_LabelInfo_c*)map_ovl->label_info;
     int* block_kind_p = g_block_kind_p + BLOCKXZ_2_BLOCKIDX(1, 1); // start at the first non-border acre
     int bx;
@@ -571,7 +571,7 @@ static void mMP_set_field_data(mMP_Overlay_c* map_ovl) {
     }
 }
 
-static void mMP_set_init_data(mMP_Overlay_c* map_ovl, mSM_MenuInfo_c* menu_info) {
+static void mMP_set_init_data(mMP_Ovl_c* map_ovl, mSM_MenuInfo_c* menu_info) {
     mMP_LabelInfo_c* label_info = (mMP_LabelInfo_c*)map_ovl->label_info;
     PLAYER_ACTOR* player = get_player_actor_withoutCheck((GAME_PLAY*)gamePT);
     int block_x;
@@ -621,7 +621,7 @@ static void mMP_move_Move(Submenu* submenu, mSM_MenuInfo_c* menu) {
 static void mMP_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu) {
     Submenu_Overlay_c* ovl = submenu->overlay;
     int trigger = ovl->menu_control.trigger;
-    mMP_Overlay_c* map_ovl = ovl->map_ovl;
+    mMP_Ovl_c* map_ovl = ovl->map_ovl;
     int cursor_moved = FALSE;
 
     if ((trigger & (BUTTON_A | BUTTON_B | BUTTON_START)) || (menu->data0 == 1 && (trigger & BUTTON_X))) {
@@ -667,7 +667,7 @@ static void mMP_move_Play(Submenu* submenu, mSM_MenuInfo_c* menu) {
 }
 
 static void mMP_move_Wait(Submenu* submenu, mSM_MenuInfo_c* menu) {
-    mMP_Overlay_c* map_ovl = submenu->overlay->map_ovl;
+    mMP_Ovl_c* map_ovl = submenu->overlay->map_ovl;
     f32 x_remain = add_calc(&map_ovl->map_cursor_current_xpos, map_ovl->map_cursor_target_xpos, 0.7f, 19.0f, 1.8f);
     f32 z_remain = add_calc(&map_ovl->map_cursor_current_zpos, map_ovl->map_cursor_target_zpos, 0.7f, 19.0f, 1.8f);
 
@@ -711,7 +711,7 @@ static int mMP_get_label_cnt(mMP_LabelInfo_c* label_info) {
     return 1;
 }
 
-static void mMP_set_house_dl(GRAPH* graph, mMP_Overlay_c* map_ovl, f32 pos_x, f32 pos_y) {
+static void mMP_set_house_dl(GRAPH* graph, mMP_Ovl_c* map_ovl, f32 pos_x, f32 pos_y) {
     static f32 offset_x[3] = { 5.0f, 13.0f, 17.0f };
     static f32 offset_y[3] = { -4.0f, -11.0f, -18.0f };
 
@@ -779,7 +779,7 @@ static void mMP_set_house_dl(GRAPH* graph, mMP_Overlay_c* map_ovl, f32 pos_x, f3
     CLOSE_DISP(graph);
 }
 
-static void mMP_set_map_dl(GRAPH* graph, mMP_Overlay_c* map_ovl) {
+static void mMP_set_map_dl(GRAPH* graph, mMP_Ovl_c* map_ovl) {
     int bz;
     int bx;
     int block = 0;
@@ -818,7 +818,7 @@ static void mMP_set_map_dl(GRAPH* graph, mMP_Overlay_c* map_ovl) {
     CLOSE_DISP(graph);
 }
 
-static void mMP_set_cursol_dl(GRAPH* graph, mMP_Overlay_c* map_ovl, f32 base_x, f32 base_y) {
+static void mMP_set_cursol_dl(GRAPH* graph, mMP_Ovl_c* map_ovl, f32 base_x, f32 base_y) {
     static int col_g[mMP_CURSOR_FRAMES] = { 0, 1, 2, 5, 10, 20, 50, 75, 90, 100, 90, 75, 50, 20, 10, 5, 2, 1 };
 
     static f32 cursol_scale[mMP_CURSOR_FRAMES] = { 1.0f, 1.015f, 1.03f, 1.04f, 1.05f, 1.06f, 1.07f, 1.08f, 1.09f,
@@ -915,7 +915,7 @@ static void mMP_set_base_dl(GRAPH* graph, mSM_MenuInfo_c* menu) {
     CLOSE_DISP(graph);
 }
 
-static void mMP_set_win_dl(GRAPH* graph, mMP_Overlay_c* map_ovl, mMP_LabelInfo_c* label_info) {
+static void mMP_set_win_dl(GRAPH* graph, mMP_Ovl_c* map_ovl, mMP_LabelInfo_c* label_info) {
     int label_count = label_info->label_cnt;
     Gfx* gfx;
 
@@ -998,7 +998,7 @@ static void mMP_set_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
     };
 
     GRAPH* graph = game->graph;
-    mMP_Overlay_c* map_ovl = submenu->overlay->map_ovl;
+    mMP_Ovl_c* map_ovl = submenu->overlay->map_ovl;
     u8* col = land_color[menu->data0];
     mMP_LabelInfo_c* label_info = &map_ovl->label_info[map_ovl->sel_bz][map_ovl->sel_bx];
     u8* land_name;
@@ -1059,8 +1059,8 @@ extern void mMP_map_ovl_construct(Submenu* submenu) {
     Submenu_Overlay_c* overlay = submenu->overlay;
 
     if (overlay->map_ovl == NULL) {
-        overlay->map_ovl = (mMP_Overlay_c*)zelda_malloc(sizeof(mMP_Overlay_c));
-        mem_clear((u8*)overlay->map_ovl, sizeof(mMP_Overlay_c), 0);
+        overlay->map_ovl = (mMP_Ovl_c*)zelda_malloc(sizeof(mMP_Ovl_c));
+        mem_clear((u8*)overlay->map_ovl, sizeof(mMP_Ovl_c), 0);
         overlay->map_ovl->combination_table = data_combi_table;
         mMP_map_draw_init();
     }
@@ -1070,7 +1070,7 @@ extern void mMP_map_ovl_construct(Submenu* submenu) {
 }
 
 extern void mMP_map_ovl_destruct(Submenu* submenu) {
-    mMP_Overlay_c* map_ovl = submenu->overlay->map_ovl;
+    mMP_Ovl_c* map_ovl = submenu->overlay->map_ovl;
 
     if (map_ovl != NULL) {
         zelda_free(map_ovl);
