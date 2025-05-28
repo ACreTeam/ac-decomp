@@ -1,16 +1,19 @@
 Animal Crossing  
-[![Build Status]][actions] ![Progress] ![DOL Progress] ![REL Progress] [![Discord Badge]][discord]
+[![Build Status]][actions] [![DOL Progress]][Progress] [![REL Progress]][Progress] [![Discord Badge]][discord]
 =============
+
+[![Progress Image]][Progress]
 
 [Build Status]: https://github.com/Prakxo/ac-decomp/actions/workflows/build.yml/badge.svg
 [actions]: https://github.com/Prakxo/ac-decomp/actions/workflows/build.yml
 [Progress]: https://decomp.dev/ACreTeam/ac-decomp
+[Progress Image]: https://decomp.dev/ACreTeam/ac-decomp.png?w=512&h=256
 [DOL Progress]: https://decomp.dev/ACReTeam/ac-decomp.svg?mode=shield&measure=code&category=dol&label=DOL
 [REL Progress]: https://decomp.dev/ACReTeam/ac-decomp.svg?mode=shield&measure=code&category=modules&label=REL
 [Discord Badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
 [discord]: https://discord.gg/hKx3FJJgrV
 
-A work-in-progress decompilation of Animal Crossing.
+A work-in-progress decompilation of Animal Crossing for the Nintendo GameCube.
 
 This repository does **not** contain any game assets or assembly whatsoever. An existing copy of the game is required.
 
