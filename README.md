@@ -2,12 +2,11 @@ Animal Crossing
 [![Build Status]][actions] [![DOL Progress]][Progress] [![REL Progress]][Progress] [![Discord Badge]][discord]
 =============
 
-[![Progress Image]][Progress]
+[<img src="https://decomp.dev/ACreTeam/ac-decomp.svg?w=512&h=256" width="512" height="256">][Progress]
 
 [Build Status]: https://github.com/Prakxo/ac-decomp/actions/workflows/build.yml/badge.svg
 [actions]: https://github.com/Prakxo/ac-decomp/actions/workflows/build.yml
 [Progress]: https://decomp.dev/ACreTeam/ac-decomp
-[Progress Image]: https://decomp.dev/ACreTeam/ac-decomp.png?w=512&h=256
 [DOL Progress]: https://decomp.dev/ACReTeam/ac-decomp.svg?mode=shield&measure=code&category=dol&label=DOL
 [REL Progress]: https://decomp.dev/ACReTeam/ac-decomp.svg?mode=shield&measure=code&category=modules&label=REL
 [Discord Badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
