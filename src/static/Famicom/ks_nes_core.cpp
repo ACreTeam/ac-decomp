@@ -6,6 +6,7 @@
 #include "dolphin/base/PPCArch.h"
 #include "jaudio_NES/emusound.h"
 #include "_mem.h"
+#include "dolphin/os.h"
 // TODO: verify function signatures.
 // TODO: replace hard-coded function pointers with function names.
 
@@ -2308,23 +2309,20 @@ void ksNesDrawMakeOBJIndTex(ksNesCommonWorkObj* wp) {
     static const u8 array[] = {
         0x00, 0x02, 0x04, 0x06, 0x07, 0x05, 0x03, 0x01,
     };
-    char cVar1;
-    int iVar2;
     u32 i;
-    uint r8;
-    int j;
+    u32 j;
 
     for (i = 0; i < 16; i++) {
-        int r8 = ((i << 3) & ~0x1f);
-        r8 += ((i & 3) << 3);
+#define TO_IND1(x) ((((x) << 3) & ~0x1f) + (((x) & 3) << 3))
+#define TO_IND2(x) ((((x) & 3) << 1) + (((x) << 3) & ~0x1f))
         for (j = 0; j < 4; j++) {
-            u32 r4 = ((j << 3) & ~0x1f) + ((j & 3) << 1) + r8;
-            (wp->work_priv)._3240[r4 + 0x5c00] = (i >> 3) & 1;
-            (wp->work_priv)._3240[r4 + 0x5c01] = (array[i & 7] & 0x3f) << 2;
+            wp->work_priv._8E40[TO_IND1(i) + TO_IND2(j)] = (i >> 3) & 1;
+            wp->work_priv._8E40[TO_IND1(i) + TO_IND2(j) + 1] = array[i & 7] << 2;
         }
     }
-
-    DCFlushRangeNoSync(&wp->work_priv._3240[0x5c00], 0x80);
+#undef TO_IND1
+#undef TO_IND2
+    DCFlushRangeNoSync(wp->work_priv._8E40, sizeof(wp->work_priv._8E40));
 }
 
 void ksNesDrawMakeOBJIndTexMMC5(ksNesCommonWorkObj* wp) {
@@ -2334,23 +2332,20 @@ void ksNesDrawMakeOBJIndTexMMC5(ksNesCommonWorkObj* wp) {
         0x02,
         0x03,
     };
-    char cVar1;
-    int iVar2;
     u32 i;
-    uint r8;
-    int j;
+    u32 j;
 
+#define TO_IND1(x) ((((x) << 3) & ~0x1f) + (((x) & 7) << 3))
+#define TO_IND2(x) ((((x) & 3) << 1) + (((x) << 3) & ~0x1f))
     for (i = 0; i < 16; i++) {
-        int r8 = ((i << 3) & ~0x1f);
-        r8 += ((i & 3) << 3);
         for (j = 0; j < 4; j++) {
-            u32 r4 = ((j << 3) & ~0x1f) + ((j & 3) << 1) + r8;
-            (wp->work_priv)._3240[r4 + 0x5c00] = (i >> 3) & 1;
-            (wp->work_priv)._3240[r4 + 0x5c01] = (array[i & 7] & 0x3f) << 2;
+            wp->work_priv._8E40[TO_IND1(i) + TO_IND2(j)] = 0;
+            wp->work_priv._8E40[TO_IND1(i) + TO_IND2(j) + 1] = array[i & 3] << 2;
         }
     }
-
-    DCFlushRangeNoSync(&wp->work_priv._3240[0x5c00], 0x80);
+#undef TO_IND1
+#undef TO_IND2
+    DCFlushRangeNoSync(&wp->work_priv._8E40, sizeof(wp->work_priv._8E40));
 }
 
 void ksNesConvertChrToI8(ksNesCommonWorkObj* wp, const u8* data, u32 flags) {
@@ -2361,15 +2356,37 @@ void ksNesConvertChrToI8(ksNesCommonWorkObj* wp, const u8* data, u32 flags) {
     u32 a = flags & 0x40;
     u32 b = flags >> 4 & 0x18;
     u32 c = flags & 0x3f;
-    for (int i = 0; i < 8; i++) {
-        if (i & 1)
-            for (int j = 0; j < 8; j++) {}
+    for (int i = 0; i < 8u; i++) {
+        u16 d;
+        if (i & 1) {
+            d = data[8 + (i >> 1)];
+        } else {
+            d = data[0xf - (i >> 1)];
+        }
+        int iVar2 = i * (bufSize >> 3);
+        u16 uVar3 = 0x8080;
+        for (int j = 0; j < 8; j++) {
+            u16 uVar1 = d & uVar3;
+            uVar3 >>= 1;
+            wp->chr_to_u8_bufp[c + a + b + (flags & 0x3e00) * 8 + iVar2 * 0x1000 + j] =
+                (uVar1 & 0xff00) != 0 ? 3 : uVar1 != 0;
+        }
+        DCStoreRangeNoSync(wp->chr_to_u8_bufp + b + ((flags >> 9) & 0x1f + iVar2) * 0x1000 + a + c, 0x20);
     }
 }
 
 void ksNesConvertChrToI8MMC5(ksNesCommonWorkObj* wp, const unsigned char* foo, unsigned long bar) {
 }
 void ksNesQDSoundSync() {
+    u32 i;
+    u32 j;
+    for (i = 0; i < 0xd; i++) {
+        for (j = 0; j < 0x106; j++) {
+            Sound_Write(0, 0, j * 0x72);
+        }
+        OSTick tick = OSGetTick();
+        while ((OSGetTick() - tick) / (OS_BUS_CLOCK / 4 / 1000) < 0x10) {}
+    }
 }
 void ksNesQDFastLoad(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
 }

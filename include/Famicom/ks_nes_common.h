@@ -33,7 +33,9 @@ typedef struct ksNesCommonWorkPriv {
     /* 0x0800 */ u8 _0800[0x340];
     /* 0x0B40 */ u8* _0B40[0x7c0];
     /* 0x2A40 */ u8 _2A40[0x800];
-    /* 0x3240 */ u8 _3240[0x5cd8];
+    /* 0x3240 */ u8 _3240[0x5c00];
+    /* 0x8E40 */ u8 _8E40[0x80];
+    /* 0x8EC0 */ u8 _8EC0[0x58];
 } ksNesCommonWorkPriv;
 
 typedef struct ksNesCommonWorkObj {
