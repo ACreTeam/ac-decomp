@@ -7,7 +7,9 @@
 #include "jaudio_NES/emusound.h"
 #include "_mem.h"
 #include "dolphin/os.h"
-#include "jaudio_NES/emusound.h"
+
+extern "C" u8 Sound_Read(u16 reg_addr);
+
 // TODO: verify function signatures.
 // TODO: replace hard-coded function pointers with function names.
 
