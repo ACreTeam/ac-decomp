@@ -7,6 +7,7 @@
 #include "jaudio_NES/emusound.h"
 #include "_mem.h"
 #include "dolphin/os.h"
+#include "jaudio_NES/emusound.h"
 // TODO: verify function signatures.
 // TODO: replace hard-coded function pointers with function names.
 
