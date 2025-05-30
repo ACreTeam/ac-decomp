@@ -1846,23 +1846,25 @@ void EmuSound_Exit() {
     exitflag = TRUE;
 }
 
-u8 Sound_Read(u16 param_1, u32 param_2, u32 param_3, u32 param_4, u32 param_5) {
-    u8 a, b, c, d, e;
-    if (param_1 == 0x5015) {
+u8 Sound_Read(u16 reg_addr) {    
+    if (reg_addr == 0x5015) {
+        u8 x, y, z;
         if (!DUMMY_ACTIVE[6]) {
-            param_3 = SoundX._00;
+            x = SoundX._00;
         }
         if (!DUMMY_ACTIVE[7]) {
-            param_4 = SoundY._00;
+            y = SoundY._00;
         }
         if (!DUMMY_ACTIVE[8]) {
-            param_5 = SoundZ._00;
+            z = SoundZ._00;
         }
-        return (u8)param_5 << 2 | (u8)param_4 << 1 | (param_3);
-    } else if (param_1 == 0x4015) {
-        a = SoundA._00;
+        return z << 2 | y << 1 | (x);
+    } else if (reg_addr == 0x4015) {
+        u8 a, b, c, d, e;
         if (DUMMY_ACTIVE[0]) {
             a = DUMMY_ACTIVE[0] - 1;
+        } else {
+            a = SoundA._00;
         }
 
         if (DUMMY_ACTIVE[1]) {
@@ -1883,13 +1885,14 @@ u8 Sound_Read(u16 param_1, u32 param_2, u32 param_3, u32 param_4, u32 param_5) {
             d = SoundD._00;
         }
 
-        e = SoundE._00;
         if (DUMMY_ACTIVE[4]) {
             e = DUMMY_ACTIVE[4] - 1;
+        } else {
+            e = SoundE._00;
         }
         return SoundE._20 << 7 | e << 4 | d << 3 | c << 2 | b << 1 | a;
     } else {
-        switch (param_1 & 0xff) {
+        switch (reg_addr & 0xff) {
             case 0x90:
                 return SoundF._2D;
             case 0x92:
