@@ -72,7 +72,7 @@ static void eGM_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
 static void eGM_mv(eEC_Effect_c* effect, GAME* game) {
     s16 currentFrame = EFFECT_LIFETIME - effect->timer;
     if (currentFrame == 0) {
-        sAdo_OngenTrgStart(0X2F, &effect->position);
+        sAdo_OngenTrgStart(NA_SE_2F, &effect->position);
     }
 }
 
