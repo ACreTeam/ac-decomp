@@ -1259,7 +1259,7 @@ config.libs = [
             Object(Matching, "effect/ef_ha.c"),
             Object(Matching, "effect/ef_halloween.c"),
             Object(Matching, "effect/ef_halloween_smoke.c"),
-            Object(NonMatching, "effect/ef_hanabi_botan1.c"),
+            Object(Matching, "effect/ef_hanabi_botan1.c"),
             Object(NonMatching, "effect/ef_hanabi_botan2.c"),
             Object(Matching, "effect/ef_hanabi_dummy.c"),
             Object(NonMatching, "effect/ef_hanabi_hoshi.c"),

@@ -156,6 +156,7 @@ typedef enum audio_sound_effects {
 
     NA_SE_KA_BUZZ = 0xCF,
 
+    NA_SE_107 = 0x107,
     NA_SE_108 = 0x108,
     NA_SE_ROD_STROKE = 0x109,
     NA_SE_ROD_BACK,
