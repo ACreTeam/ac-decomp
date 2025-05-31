@@ -1256,7 +1256,7 @@ config.libs = [
             Object(Matching, "effect/ef_furo_yuge.c"),
             Object(Matching, "effect/ef_gimonhu.c"),
             Object(Matching, "effect/ef_goki.c"),
-            Object(NonMatching, "effect/ef_ha.c"),
+            Object(Matching, "effect/ef_ha.c"),
             Object(Matching, "effect/ef_halloween.c"),
             Object(Matching, "effect/ef_halloween_smoke.c"),
             Object(NonMatching, "effect/ef_hanabi_botan1.c"),
