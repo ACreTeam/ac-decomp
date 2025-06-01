@@ -10,7 +10,6 @@ static void eHanabiBotan1_mv(eEC_Effect_c* effect, GAME* game);
 static void eHanabiBotan1_dw(eEC_Effect_c* effect, GAME* game);
 
 #define CALC_EASE(x) (1.0f - sqrtf(1.0f - (x)))
-
 #define EFFECT_LIFETIME 110
 
 eEC_PROFILE_c iam_ef_hanabi_botan1 = {

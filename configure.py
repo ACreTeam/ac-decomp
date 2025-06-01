@@ -1272,7 +1272,7 @@ config.libs = [
             Object(Matching, "effect/ef_hirameki_hikari.c"),
             Object(Matching, "effect/ef_ikigire.c"),
             Object(Matching, "effect/ef_impact_star.c"),
-            Object(NonMatching, "effect/ef_kagu_happa.c"),
+            Object(Matching, "effect/ef_kagu_happa.c"),
             Object(NonMatching, "effect/ef_kamifubuki.c"),
             Object(Matching, "effect/ef_kangaeru.c"),
             Object(Matching, "effect/ef_kantanhu.c"),
