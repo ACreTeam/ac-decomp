@@ -1399,7 +1399,7 @@ config.libs = [
             Object(Matching, "game/m_debug_hayakawa.c"),
             Object(Matching, "game/m_debug_mode.c"),
             Object(Matching, "game/m_demo.c"),
-            Object(Equivalent, "game/m_design_ovl.c"),
+            Object(Matching, "game/m_design_ovl.c"),
             Object(Matching, "game/m_diary.c"),
             Object(Matching, "game/m_diary_ovl.c"),
             Object(Matching, "game/m_eappli.c"),
