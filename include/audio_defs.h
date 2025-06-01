@@ -60,6 +60,7 @@ typedef enum audio_sound_effects {
     NA_SE_27 = 0x27,
 
     NA_SE_2A = 0x2A,
+    NA_SE_2C = 0x2C,
 
     NA_SE_2F = 0x2F,
 
@@ -155,6 +156,7 @@ typedef enum audio_sound_effects {
 
     NA_SE_KA_BUZZ = 0xCF,
 
+    NA_SE_107 = 0x107,
     NA_SE_108 = 0x108,
     NA_SE_ROD_STROKE = 0x109,
     NA_SE_ROD_BACK,
@@ -326,7 +328,6 @@ typedef enum audio_sound_effects {
     NA_SE_FOOTSTEP_SAND,
     NA_SE_FOOTSTEP_WAVE,
     NA_SE_FOOTSTEP_PLUSSBRIDGE,
-
 
     NA_SE_FLOOR_SE_START = SE_ECHO(0x2E6),
 } AudioSE;
