@@ -1346,7 +1346,7 @@ config.libs = [
             Object(NonMatching, "effect/ef_turi_hamon.c"),
             Object(NonMatching, "effect/ef_turi_hane0.c"),
             Object(NonMatching, "effect/ef_turi_hane1.c"),
-            Object(NonMatching, "effect/ef_turi_mizu.c"),
+            Object(Matching, "effect/ef_turi_mizu.c"),
             Object(NonMatching, "effect/ef_turi_suiteki.c"),
             Object(NonMatching, "effect/ef_turn_asimoto.c"),
             Object(NonMatching, "effect/ef_turn_footprint.c"),
