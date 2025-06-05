@@ -1343,7 +1343,7 @@ config.libs = [
             Object(NonMatching, "effect/ef_tumble.c"),
             Object(NonMatching, "effect/ef_tumble_bodyprint.c"),
             Object(NonMatching, "effect/ef_tumble_dust.c"),
-            Object(NonMatching, "effect/ef_turi_hamon.c"),
+            Object(Matching, "effect/ef_turi_hamon.c"),
             Object(NonMatching, "effect/ef_turi_hane0.c"),
             Object(NonMatching, "effect/ef_turi_hane1.c"),
             Object(Matching, "effect/ef_turi_mizu.c"),
