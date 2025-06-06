@@ -25,6 +25,10 @@ extern "C" {
 #define M_CLAMP(v, l, h) MAX(MIN((v), (l)), (h))
 #endif
 
+// Easing macros
+#define CALC_EASE(x) (1.0f - sqrtf(1.0f - (x)))
+#define CALC_EASE2(x) CALC_EASE(CALC_EASE(x))
+
 /* Float modulo operator */
 #define MOD_F(a, m) (a - (int)((a) * (1.0f / (m))) * (m))
 

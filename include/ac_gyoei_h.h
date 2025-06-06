@@ -9,6 +9,13 @@
 extern "C" {
 #endif
 
+enum {
+    aGYO_BALLCHECK_TYPE_NORMAL,
+    aGYO_BALLCHECK_TYPE_SNOWMAN,
+
+    aGYO_BALLCHECK_TYPE_NUM
+};
+
 /* sizeof(aGYO_Init_c) == 0x18 */
 typedef struct gyoei_init_s {
   /* 0x00 */ int fish_type;

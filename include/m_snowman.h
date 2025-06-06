@@ -11,6 +11,15 @@ extern "C" {
 
 #define mSN_SAVE_COUNT 3
 
+enum {
+    mSN_RESULT_PERFECT,
+    mSN_RESULT_GOOD,
+    mSN_RESULT_OK,
+    mSN_RESULT_BAD,
+
+    mSN_RESULT_NUM
+};
+
 /* sizeof(mSN_snowman_data_c) == 4 */
 typedef struct snowman_data_s {
   /* 0x00 */ u8 exists; /* when non-zero, snowman 'exists' */
