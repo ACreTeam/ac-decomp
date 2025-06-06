@@ -94,7 +94,7 @@ static void Player_actor_SetOrderNPC_Reflect_axe(ACTOR* actor, mPlayer_main_refl
         if (reflect_actor != NULL) {
             switch (reflect_actor->id) {
                 case mAc_PROFILE_SNOWMAN:
-                    ((SNOWMAN_ACTOR*)reflect_actor)->unk_1F8 |= 2;
+                    ((SNOWMAN_ACTOR*)reflect_actor)->flags |= 2;
                     return;
 
                 case mAc_PROFILE_BALL:

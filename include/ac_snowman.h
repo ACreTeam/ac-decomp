@@ -8,25 +8,34 @@
 extern "C" {
 #endif
 
+#define aSMAN_SCALE_MAX (6400.0f)
+
+typedef void (*aSMAN_PROC)(ACTOR* actorx, GAME* game);
+
 typedef struct snowman_actor_s {
-  ACTOR actor_class;
-  ClObjPipe_c _174;
-  int _190;
-  ACTOR* head_actor_p;
-  xyz_t _198;
-  u8 _1A4[0x1C4 - 0x1A4];
-  xyz_t snowball_scale;
-  f32 normalized_scale; /* normalized ball scale, [0, 1.0f] */
-  f32 _1D4;
-  f32 ball_scale; /* [0, 6400.0f] */
-  f32 _1DC;
-  int scale_result;
-  int msg_info;
-  int snowman_part;
-  s_xyz head_vec;
-  u8 _1F2[0x1F8 - 0x1F2];
-  s16 unk_1F8;
-  u8 _1FA[0x2];
+    /* 0x000 */ ACTOR actor_class;
+    /* 0x174 */ ClObjPipe_c col_pipe;
+    /* 0x190 */ aSMAN_PROC process;
+    /* 0x194 */ ACTOR* col_actor;
+    /* 0x198 */ xyz_t _198;
+    /* 0x1A4 */ xyz_t rev_pos;
+    /* 0x1B0 */ xyz_t fg_pos;
+    /* 0x1BC */ f32 y_ofs;
+    /* 0x1C0 */ f32 _1C0;
+    /* 0x1C4 */ f32 base_speed;
+    /* 0x1C8 */ f32 accel;
+    /* 0x1CC */ f32 roll_speed;
+    /* 0x1D0 */ f32 normalized_scale; /* normalized ball scale, [0, 1.0f] */
+    /* 0x1D4 */ f32 body_scale;
+    /* 0x1D8 */ f32 move_dist; /* [0, 6400.0f] */
+    /* 0x1DC */ f32 _1DC;
+    /* 0x1E0 */ int result;
+    /* 0x1E4 */ int msg_no;
+    /* 0x1E8 */ int snowman_part;
+    /* 0x1EC */ s_xyz head_vec;
+    /* 0x1F2 */ s_xyz ground_angle;
+    /* 0x1F8 */ s16 flags;
+    /* 0x1FA */ s16 timer;
 } SNOWMAN_ACTOR;
 
 extern ACTOR_PROFILE Snowman_Profile;
@@ -36,4 +45,3 @@ extern ACTOR_PROFILE Snowman_Profile;
 #endif
 
 #endif
-

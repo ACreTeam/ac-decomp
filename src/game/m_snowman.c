@@ -94,7 +94,7 @@ extern void mSN_regist_snowman_society(mSN_snowman_info_c* info){
     xyz_t npos;
     xyz_t ypos;
     if(snowId != -1){
-        mem_copy((u8*)Save_GetPointer(snowmen.snowmen_data[snowId]), (u8*)info, 4);
+        mem_copy((u8*)Save_GetPointer(snowmen.snowmen_data[snowId]), (u8*)&info->data, sizeof(info->data));
         if(ac != 0){
             mPB_keep_item(ac);
             npos = info->pos;

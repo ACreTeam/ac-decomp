@@ -104,7 +104,7 @@ static void Player_actor_SetEffectHit_Reflect_scoop(ACTOR* actor, GAME* game) {
         if (reflected) {
             switch (reflected->id) {
                 case mAc_PROFILE_SNOWMAN:
-                    ((SNOWMAN_ACTOR*)reflected)->unk_1F8 |= 2;
+                    ((SNOWMAN_ACTOR*)reflected)->flags |= 2;
                     break;
 
                 case mAc_PROFILE_BALL:

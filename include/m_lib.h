@@ -20,6 +20,11 @@ extern "C" {
 #define CLAMP(x, min, max) ((x) < (min) ? (min) : (((x) > (max) ? (max) : (x))))
 #define CLAMP2(x, min, max) ((min) < (x) ? (((x) < (max) ? (x) : (max))) : (min))
 
+// clamp macro specifically for Animal Crossing
+#ifndef M_CLAMP
+#define M_CLAMP(v, l, h) MAX(MIN((v), (l)), (h))
+#endif
+
 /* Float modulo operator */
 #define MOD_F(a, m) (a - (int)((a) * (1.0f / (m))) * (m))
 
@@ -46,6 +51,9 @@ extern "C" {
 
 /* degrees -> radians */
 #define DEG2RAD(deg) ((F_PI / 180.0f) * (deg))
+
+// short angle difference
+#define DIFF_SHORT_ANGLE(x, y) ((s16)((x) - (y)))
 
 typedef struct rgba_t { // can be put in other place
     u8 r, g, b, a;

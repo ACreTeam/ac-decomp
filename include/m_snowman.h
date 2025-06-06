@@ -26,7 +26,7 @@ typedef struct snowman_save_data_s {
 
 /* sizeof(mSN_snowman_info_c) == 0xC */
 typedef struct snowman_info_s{
-  /* 0x00 */ int scale;
+  /* 0x00 */ mSN_snowman_data_c data;
   /* 0x04 */ xyz_t pos;
 } mSN_snowman_info_c;
 
