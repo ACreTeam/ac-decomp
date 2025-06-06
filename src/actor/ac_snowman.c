@@ -58,13 +58,17 @@ static StatusData_c aSMAN_StatusData = {
 static void aSMAN_process_normal_init(ACTOR* actorx);
 static void aSMAN_process_combine_head_jump_init(ACTOR* actorx, GAME* game);
 static void aSMAN_process_combine_body_init(ACTOR* actorx);
+static void aSMAN_process_player_push_init(ACTOR* actorx, GAME* game);
+static void aSMAN_process_air_init(ACTOR* actorx);
+static void aSMAN_process_hole_init(ACTOR* actorx);
 
-static void aSMAN_process_player_push(ACTOR* actorx, GAME* game);
-static void aSMAN_process_player_push_scroll(ACTOR* actorx, GAME* game);
-static void aSMAN_process_combine_body(ACTOR* actorx, GAME* game);
-static void aSMAN_process_combine_head_jump(ACTOR* actorx, GAME* game);
-static void aSMAN_process_swim(ACTOR* actorx, GAME* game);
-static void aSMAN_process_air(ACTOR* actorx, GAME* game);
+static int aSMAN_process_normal(ACTOR* actorx, GAME* game);
+static int aSMAN_process_player_push(ACTOR* actorx, GAME* game);
+static int aSMAN_process_player_push_scroll(ACTOR* actorx, GAME* game);
+static int aSMAN_process_combine_body(ACTOR* actorx, GAME* game);
+static int aSMAN_process_combine_head_jump(ACTOR* actorx, GAME* game);
+static int aSMAN_process_swim(ACTOR* actorx, GAME* game);
+static int aSMAN_process_air(ACTOR* actorx, GAME* game);
 
 static void aSMAN_actor_ct(ACTOR* actorx, GAME* game) {
     static int part_tbl[] = { aSMAN_PART0, aSMAN_PART1 };
@@ -770,13 +774,13 @@ static void aSMAN_calc_scale(ACTOR* actorx) {
         actor->move_dist -= actorx->speed * 0.75f;
     }
 
-    if (actor->move_dist > aSMAN_SCALE_MAX) {
-        actor->move_dist = aSMAN_SCALE_MAX;
+    if (actor->move_dist > aSMAN_MOVE_DIST_MAX) {
+        actor->move_dist = aSMAN_MOVE_DIST_MAX;
     } else if (actor->move_dist < 0.0f) {
         actor->move_dist = 0.0f;
     }
 
-    actor->normalized_scale = actor->move_dist / aSMAN_SCALE_MAX;
+    actor->normalized_scale = actor->move_dist / aSMAN_MOVE_DIST_MAX;
     scale = actor->normalized_scale * 0.02f + 0.01f;
 
     if (scale > 0.03f) {
@@ -785,6 +789,108 @@ static void aSMAN_calc_scale(ACTOR* actorx) {
 
     actorx->scale.x = actorx->scale.y = actorx->scale.z = scale;
     actorx->shape_info.shadow_size_x = actorx->shape_info.shadow_size_z = actor->normalized_scale * 20.0f + 10.0f;
+}
+
+static void aSMAN_calc_objChkRange(ACTOR* actorx) {
+    SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
+
+    actor->col_pipe.attribute.pipe.height = (actor->normalized_scale * 15.0f + 5.0f) * 2.5f;
+    actor->col_pipe.attribute.pipe.offset = -(actor->normalized_scale * 15.0f + 5.0f);
+
+    if ((actor->flags & 0x8) != 0) {
+        actor->col_pipe.attribute.pipe.radius = 20;
+        actorx->status_data.weight = MASSTYPE_HEAVY;
+    } else if (actor->process == aSMAN_process_combine_body && (actor->flags & 0x20) == 0) {
+        actor->col_pipe.attribute.pipe.radius = 20;
+    } else {
+        actor->col_pipe.attribute.pipe.radius = actor->normalized_scale * 15.0f + 5.0f;
+        actorx->status_data.weight = MIN(actor->normalized_scale * 375.0f, 250.0f);
+    }
+}
+
+static int aSMAN_Player_push_Request(ACTOR* actorx, GAME* game) {
+    SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
+    ACTOR* playerx = GET_PLAYER_ACTOR_GAME_ACTOR(game);
+    f32 dist = actorx->player_distance_xz;
+    f32 y = actorx->world.position.y - playerx->world.position.y - (actor->normalized_scale * 20.0f + 10.0f);
+    f32 move_pR = gamePT->mcon.move_pR;
+    s16 player_angle = search_position_angleY(&playerx->world.position, &actorx->world.position);
+    s16 move_angle = gamePT->mcon.move_angle + DEG2SHORT_ANGLE2(90.0f);
+    s16 diff_angle = DIFF_SHORT_ANGLE(move_angle, player_angle);
+
+    if (mPlib_Check_Label_main_push_snowball(actorx)) {
+        aSMAN_process_player_push_init(actorx, game);
+        return TRUE;
+    }
+
+    if ((actor->flags & 0x8) != 0) {
+        aSMAN_process_hole_init(actorx);
+        return FALSE;
+    }
+
+    if (!actorx->bg_collision_check.result.on_ground) {
+        aSMAN_process_air_init(actorx);
+        return FALSE;
+    }
+
+    if (actor->normalized_scale > 0.2f && dist < (actor->normalized_scale * 20.0f + 10.0f) + 15.0f) {
+        int timer = actor->timer;
+
+        if (timer >= 16) {
+            timer = 16;
+        } else {
+            actor->timer++;
+        }
+
+        if (timer == 16 && y > -10.0f && y < 25.0f && move_pR > 0.0f && actorx->speed < 3.0f) {
+            if (ABS(diff_angle) < DEG2SHORT_ANGLE2(55.0f)) {
+                mPlib_request_main_push_snowball_type1(game, actorx);
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+static void aSMAN_process_normal_init(ACTOR* actorx) {
+    SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
+
+    actor->timer = 0;
+    actor->accel = 0.1f;
+    actor->process = aSMAN_process_normal;
+}
+
+static int aSMAN_process_normal(ACTOR* actorx, GAME* game) {
+    SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
+
+    if (aSMAN_Player_push_Request(actorx, game)) {
+        return FALSE;
+    }
+
+    aSMAN_set_speed_relations_norm(actorx);
+    aSMAN_Make_Effect_Ground(actorx, game);
+    aSMAN_OBJcheck(actor, game);
+    aSMAN_House_Tree_Rev_Check(actorx);
+    mRlib_spdXZ_to_spdF_Angle(&actorx->position_speed, &actorx->speed, &actorx->world.angle.y);
+    aSMAN_calc_scale(actorx);
+    return TRUE;
+}
+
+static void aSMAN_process_player_push_init(ACTOR* actorx, GAME* game) {
+    SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
+    ACTOR* playerx = GET_PLAYER_ACTOR_GAME_ACTOR(game);
+    f32 rate;
+    f32 speed;
+
+    speed = playerx->speed / 7.5f;
+    rate = 3.0f - actor->normalized_scale * 1.5f;
+    if (actor->process != aSMAN_process_player_push_scroll) {
+        actorx->speed = (1.0f - actor->normalized_scale) * (rate * speed) * 1.15f;
+        actor->accel = 0.0f;
+    }
+
+    actor->timer = 0;
+    actor->process = aSMAN_process_player_push;
 }
 
 static void aSMAN_actor_move(ACTOR* actorx, GAME* game);

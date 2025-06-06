@@ -8,9 +8,9 @@
 extern "C" {
 #endif
 
-#define aSMAN_SCALE_MAX (6400.0f)
+#define aSMAN_MOVE_DIST_MAX (6400.0f)
 
-typedef void (*aSMAN_PROC)(ACTOR* actorx, GAME* game);
+typedef int (*aSMAN_PROC)(ACTOR* actorx, GAME* game);
 
 typedef struct snowman_actor_s {
     /* 0x000 */ ACTOR actor_class;
