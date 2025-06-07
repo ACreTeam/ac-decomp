@@ -1,0 +1,293 @@
+static void aHN0_set_request_act(HANABI_NPC0_ACTOR* actor) {
+    actor->npc_class.request.act_priority = 4;
+    actor->npc_class.request.act_idx = aNPC_ACT_SPECIAL;
+    actor->npc_class.request.act_type = aNPC_ACT_TYPE_SEARCH;
+}
+
+static void aHN0_make_utiwa(ACTOR* actorx, GAME* game) {
+    HANABI_NPC0_ACTOR* actor = (HANABI_NPC0_ACTOR*)actorx;
+
+    if (actor->npc_class.right_hand.item_actor_p == NULL) {
+        ACTOR* utiwa_p = CLIP(tools_clip)->aTOL_birth_proc(TOOL_UTIWA, aTOL_ACTION_S_TAKEOUT, actorx, game, -1, NULL);
+
+        if (utiwa_p != NULL) {
+            actor->npc_class.right_hand.item_actor_p = utiwa_p;
+        }
+    }
+}
+
+static int aHN0_check_moveRange(ACTOR* actorx, xyz_t* pos) {
+    f32 max_dist = 100.0f;
+    f32 dx = actorx->home.position.x - pos->x;
+    f32 dz = actorx->home.position.z - pos->z;
+    int ret = FALSE;
+
+    if (SQ(dx) + SQ(dz) > SQ(max_dist)) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aHN0_check_inBlock(ACTOR* actorx, xyz_t* pos, int* bx, int* bz) {
+    int ret = FALSE;
+
+    mFI_Wpos2BlockNum(bx, bz, *pos);
+    if (*bx != actorx->block_x || *bz != actorx->block_z) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aHN0_revise_moveRange(ACTOR* actorx) {
+    static f32 offset[] = { 0.0f, 319.0f };
+    int col_flags = 0;
+
+    if (aHN0_check_moveRange(actorx, &actorx->world.position) == TRUE) {
+        s16 angle = search_position_angleY(&actorx->home.position, &actorx->world.position);
+
+        actorx->world.position.x = actorx->home.position.x + sin_s(angle) * 100.0f;
+        actorx->world.position.z = actorx->home.position.z + cos_s(angle) * 100.0f;
+        col_flags = mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT;
+    } else {
+        int bx;
+        int bz;
+
+        if (aHN0_check_inBlock(actorx, &actorx->world.position, &bx, &bz) == TRUE) {
+            f32 x;
+            f32 z;
+
+            mFI_BkNum2WposXZ(&x, &z, actorx->block_x, actorx->block_z);
+            if (bx != actorx->block_x) {
+                int idx = actorx->block_x < bx;
+
+                actorx->world.position.x = x + offset[idx];
+            }
+
+            if (bz != actorx->block_z) {
+                int idx = actorx->block_z < bz;
+
+                actorx->world.position.z = z + offset[idx];
+            }
+
+            col_flags = mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT;
+        }
+    }
+
+    ((NPC_ACTOR*)actorx)->collision.collision_flag |= col_flags;
+}
+
+static void aHN0_turn(HANABI_NPC0_ACTOR* actor) {
+    if (chase_angle(&actor->npc_class.actor_class.shape_info.rotation.y, actor->npc_class.movement.mv_angl, DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
+        actor->next_action = aHN0_ACT_WALK;
+        actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+    }
+
+    actor->npc_class.actor_class.world.angle.y = actor->npc_class.actor_class.shape_info.rotation.y;
+}
+
+static void aHN0_walk(HANABI_NPC0_ACTOR* actor) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    aHN0_revise_moveRange(actorx);
+    if (actor->npc_class.collision.collision_flag != 0) {
+        actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+    } else if (actor->npc_class.movement.move_timer > 60) {
+        actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+    }
+
+    chase_angle(&actorx->shape_info.rotation.y, actor->npc_class.movement.mv_angl, DEG2SHORT_ANGLE2(5.625f));
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static void aHN0_hurrahs(HANABI_NPC0_ACTOR* actor) {
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_CONTINUE) {
+        if (actor->npc_class.draw.loop_flag == 0) {
+            actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+        } else {
+            actor->npc_class.draw.loop_flag--;
+        }
+    }
+}
+
+static void aHN0_set_spd_info(HANABI_NPC0_ACTOR* actor, int action) {
+    if (action == aHN0_ACT_WALK) {
+        actor->npc_class.movement.speed.max_speed = 1.0f;
+        actor->npc_class.movement.speed.acceleration = 0.1f;
+        actor->npc_class.movement.speed.deceleration = 0.1f;
+    } else {
+        actor->npc_class.actor_class.speed = 0.0f;
+        actor->npc_class.movement.speed.max_speed = 0.0f;
+        actor->npc_class.movement.speed.acceleration = 0.0f;
+        actor->npc_class.movement.speed.deceleration = 0.0f;
+    }
+}
+
+static void aHN0_setupAction(HANABI_NPC0_ACTOR* actor, int action) {
+    // clang-format off
+    static aHN0_ACT_PROC process[] = {
+        aHN0_turn,
+        aHN0_walk,
+        aHN0_hurrahs,
+    };
+    // clang-format on
+
+    actor->npc_class.action.step = 0;
+    actor->action = action;
+    actor->act_proc = process[action];
+    aHN0_set_animation(actor, action);
+    aHN0_set_spd_info(actor, action);
+    
+    if (action == aHN0_ACT_HURRAHS) {
+        actor->npc_class.movement.mv_angl = actor->base_angle;
+        actor->npc_class.movement.mv_add_angl = DEG2SHORT_ANGLE2(11.25f);
+        actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    } else {
+        actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    }
+}
+
+static void aHN0_act_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aHN0_act_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HANABI_NPC0_ACTOR* actor = (HANABI_NPC0_ACTOR*)nactorx;
+
+    aHN0_setupAction(actor, aHN0_ACT_WALK);
+}
+
+static void aHN0_act_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HANABI_NPC0_ACTOR* actor = (HANABI_NPC0_ACTOR*)nactorx;
+
+    actor->act_proc(actor);
+}
+
+static void aHN0_act_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = { aHN0_act_init_proc, aHN0_act_chg_data_proc, aHN0_act_main_proc };
+
+    (*act_proc[type])(nactorx, play);
+}
+
+static void aHN0_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static f32 chk_val[] = { 0.05f, 0.3f };
+    HANABI_NPC0_ACTOR* actor = (HANABI_NPC0_ACTOR*)nactorx;
+
+    if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        if (nactorx->action.idx == aNPC_ACT_SPECIAL) {
+            int next_act;
+            
+            if (actor->next_action != -1) {
+                next_act = actor->next_action;
+            } else {
+                aNPC_attention_c* attention_p = &NPC_CLIP->attention;
+                int idx;
+
+                if (attention_p->type != aNPC_ATT_TYPE_NONE) {
+                    idx = 1;
+                } else {
+                    idx = 0;
+                }
+
+                if (RANDOM_F(1.0f) < chk_val[idx]) {
+                    nactorx->draw.loop_flag = 2;
+                    next_act = aHN0_ACT_HURRAHS;
+                } else {
+                    s16 move_angle = (s16)((RANDOM_F(1.0f) - 0.5f) * 65536.0f);
+                    s16 diff_angle;
+
+                    nactorx->movement.mv_angl = move_angle;
+                    diff_angle = DIFF_SHORT_ANGLE(move_angle, actor->npc_class.actor_class.shape_info.rotation.y);
+                    if (ABS(diff_angle) > DEG2SHORT_ANGLE2(135.0f)) {
+                        next_act = aHN0_ACT_TURN;
+                    } else if ((nactorx->collision.collision_flag & (mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT)) == 0) {
+                        next_act = aHN0_ACT_WALK;
+                    } else {
+                        next_act = aHN0_ACT_TURN;
+                    }
+                }
+            }
+
+            nactorx->movement.move_timer = 0;
+            aHN0_setupAction(actor, next_act);
+        }
+
+        actor->next_action = -1;
+        aHN0_set_request_act(actor);
+    }
+}
+
+static void aHN0_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HANABI_NPC0_ACTOR* actor = (HANABI_NPC0_ACTOR*)nactorx;
+
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    nactorx->think.interrupt_flags = 0;
+    nactorx->action.act_proc = aHN0_act_proc;
+    aHN0_set_request_act(actor);
+}
+
+static void aHN0_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aHN0_think_init_proc, aHN0_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aHN0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HANABI_NPC0_ACTOR* actor = (HANABI_NPC0_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)nactorx;
+    s16 angle;
+
+    nactorx->think.think_proc = aHN0_think_proc;
+    nactorx->palActorIgnoreTimer = -1;
+    actor->next_action = -1;
+    nactorx->condition_info.hide_request = FALSE;
+    actorx->status_data.weight = MASSTYPE_HEAVY;
+    
+    angle = RANDOM_F(65536.0f);
+    actorx->shape_info.rotation.y = angle;
+    actorx->world.angle.y = angle;
+    actor->base_angle = angle;
+
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aHN0_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+
+    aHN0_make_utiwa((ACTOR*)nactorx, (GAME*)play);
+}
+
+static void aHN0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC schedule_proc[] = { aHN0_schedule_init_proc, aHN0_schedule_main_proc };
+
+    (*schedule_proc[type])(nactorx, play);
+}
+
+static void aHN0_set_talk_info(ACTOR* actorx) {
+    static int msg_base[mNpc_LOOKS_NUM] = { 0x164F, 0x165E, 0x1640, 0x166D, 0x167C, 0x168B };
+    int looks = mNpc_GetNpcLooks(actorx);
+
+    mDemo_Set_msg_num(msg_base[looks] + RANDOM(3));
+}
+
+static void aHN0_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aHN0_set_talk_info);
+}
+
+static int aHN0_talk_init(ACTOR* actorx, GAME* game) {
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aHN0_talk_end_chk(ACTOR* actorx, GAME* game) {
+    int ret = FALSE;
+
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
