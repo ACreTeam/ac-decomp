@@ -1,0 +1,20 @@
+typedef struct {
+    int seq_idx;
+    u8 sub_anim_type;
+} aHN1_anime_info_c;
+
+static void aHN1_set_animation(HANABI_NPC1_ACTOR* actor, int action) {
+    // clang-format off
+    static aHN1_anime_info_c anime[] = {
+        {aNPC_ANIM_WALK1, aNPC_SUB_ANIM_UTIWA},
+        {aNPC_ANIM_WAIT1, aNPC_SUB_ANIM_UTIWA},
+        {aNPC_ANIM_CLAP1, aNPC_SUB_ANIM_NONE},
+        {aNPC_ANIM_BANZAI1, aNPC_SUB_ANIM_NONE},
+    };
+    // clang-format on
+
+    aHN1_anime_info_c* info_p = &anime[action];
+
+    actor->npc_class.draw.sub_anim_type = info_p->sub_anim_type;
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, info_p->seq_idx, FALSE);
+}
