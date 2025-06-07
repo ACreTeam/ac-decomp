@@ -8,6 +8,20 @@
 extern "C" {
 #endif
 
+typedef struct pterminal_actor_s PTERMINAL_ACTOR;
+
+typedef void (*aPT_PROC)(PTERMINAL_ACTOR*, GAME* game);
+
+struct pterminal_actor_s {
+    ACTOR actor_class;
+    int msg_no;
+    int next_proc;
+    int proc;
+    int counter;
+    int transSE_active;
+    int transSE;
+};
+
 extern ACTOR_PROFILE Pterminal_Profile;
 
 #ifdef __cplusplus
@@ -15,4 +29,3 @@ extern ACTOR_PROFILE Pterminal_Profile;
 #endif
 
 #endif
-
