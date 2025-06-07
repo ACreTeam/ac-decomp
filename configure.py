@@ -1012,7 +1012,7 @@ config.libs = [
             Object(Matching, "actor/ac_kamakura.c"),
             Object(Matching, "actor/ac_kamakura_indoor.c"),
             Object(Matching, "actor/ac_koinobori.c"),
-            Object(NonMatching, "actor/ac_lighthouse_switch.c"),
+            Object(Matching, "actor/ac_lighthouse_switch.c"),
             Object(Matching, "actor/ac_lotus.c"),
             Object(Matching, "actor/ac_mailbox.c"),
             Object(Matching, "actor/ac_mbg.c"),

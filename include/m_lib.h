@@ -58,6 +58,7 @@ extern "C" {
 
 // short angle difference
 #define DIFF_SHORT_ANGLE(x, y) ((s16)((x) - (y)))
+#define DIFF_USHORT_ANGLE(x, y) ((u16)((x) - (y)))
 
 typedef struct rgba_t { // can be put in other place
     u8 r, g, b, a;

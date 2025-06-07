@@ -137,6 +137,8 @@ typedef enum audio_sound_effects {
     NA_SE_TOOL_BROKEN2,
     NA_SE_TOOL_BROKEN3,
 
+    NA_SE_78 = 0x78,
+
     NA_SE_STONECOIN_ROLL = 0x7D,
     NA_SE_STONECOIN_DRAG = 0x7E,
 
