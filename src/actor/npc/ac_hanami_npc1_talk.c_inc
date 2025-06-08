@@ -1,0 +1,257 @@
+static void aHM1_set_request_act(HANAMI_NPC1_ACTOR* actor) {
+    actor->npc_class.request.act_priority = 4;
+    actor->npc_class.request.act_idx = aNPC_ACT_SPECIAL;
+    actor->npc_class.request.act_type = aNPC_ACT_TYPE_SEARCH;
+}
+
+static int aHM1_check_moveRange(ACTOR* actorx, xyz_t* pos) {
+    f32 max_dist = 100.0f;
+    f32 dx = actorx->home.position.x - pos->x;
+    f32 dz = actorx->home.position.z - pos->z;
+    int ret = FALSE;
+
+    if (SQ(dx) + SQ(dz) > SQ(max_dist)) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aHM1_check_inBlock(ACTOR* actorx, xyz_t* pos, int* bx, int* bz) {
+    int ret = FALSE;
+
+    mFI_Wpos2BlockNum(bx, bz, *pos);
+    if (*bx != actorx->block_x || *bz != actorx->block_z) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aHM1_revise_moveRange(ACTOR* actorx) {
+    static f32 offset[] = { 0.0f, 319.0f };
+    int col_flags = 0;
+
+    if (aHM1_check_moveRange(actorx, &actorx->world.position) == TRUE) {
+        s16 angle = search_position_angleY(&actorx->home.position, &actorx->world.position);
+
+        actorx->world.position.x = actorx->home.position.x + sin_s(angle) * 100.0f;
+        actorx->world.position.z = actorx->home.position.z + cos_s(angle) * 100.0f;
+        col_flags = mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT;
+    } else {
+        int bx;
+        int bz;
+
+        if (aHM1_check_inBlock(actorx, &actorx->world.position, &bx, &bz) == TRUE) {
+            f32 x;
+            f32 z;
+
+            mFI_BkNum2WposXZ(&x, &z, actorx->block_x, actorx->block_z);
+            if (bx != actorx->block_x) {
+                int idx = actorx->block_x < bx;
+
+                actorx->world.position.x = x + offset[idx];
+            }
+
+            if (bz != actorx->block_z) {
+                int idx = actorx->block_z < bz;
+
+                actorx->world.position.z = z + offset[idx];
+            }
+
+            col_flags = mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT;
+        }
+    }
+
+    ((NPC_ACTOR*)actorx)->collision.collision_flag |= col_flags;
+}
+
+static void aHM1_turn(HANAMI_NPC1_ACTOR* actor) {
+    if (chase_angle(&actor->npc_class.actor_class.shape_info.rotation.y, actor->npc_class.movement.mv_angl, DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
+        actor->next_action = aHM1_ACT_WALK;
+        actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+    }
+
+    actor->npc_class.actor_class.world.angle.y = actor->npc_class.actor_class.shape_info.rotation.y;
+}
+
+static void aHM1_walk(HANAMI_NPC1_ACTOR* actor) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    aHM1_revise_moveRange(actorx);
+    if (actor->npc_class.collision.collision_flag != 0) {
+        actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+    } else if (actor->npc_class.movement.move_timer > 60) {
+        actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+    }
+
+    chase_angle(&actorx->shape_info.rotation.y, actor->npc_class.movement.mv_angl, DEG2SHORT_ANGLE2(5.625f));
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static void aHM1_set_spd_info(HANAMI_NPC1_ACTOR* actor, int action) {
+    if (action == aHM1_ACT_WALK) {
+        actor->npc_class.movement.speed.max_speed = 1.0f;
+        actor->npc_class.movement.speed.acceleration = 0.1f;
+        actor->npc_class.movement.speed.deceleration = 0.1f;
+    } else {
+        actor->npc_class.actor_class.speed = 0.0f;
+        actor->npc_class.movement.speed.max_speed = 0.0f;
+        actor->npc_class.movement.speed.acceleration = 0.0f;
+        actor->npc_class.movement.speed.deceleration = 0.0f;
+    }
+}
+
+static void aHM1_setupAction(HANAMI_NPC1_ACTOR* actor, int action) {
+    // clang-format off
+    static aHM1_ACT_PROC process[] = {
+        aHM1_turn,
+        aHM1_walk,
+    };
+    // clang-format on
+
+    actor->npc_class.action.step = 0;
+    actor->action = action;
+    actor->act_proc = process[action];
+    aHM1_set_animation(actor, action);
+    aHM1_set_spd_info(actor, action);
+}
+
+static void aHM1_act_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aHM1_act_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HANAMI_NPC1_ACTOR* actor = (HANAMI_NPC1_ACTOR*)nactorx;
+
+    aHM1_setupAction(actor, aHM1_ACT_WALK);
+}
+
+static void aHM1_act_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HANAMI_NPC1_ACTOR* actor = (HANAMI_NPC1_ACTOR*)nactorx;
+
+    actor->act_proc(actor);
+}
+
+static void aHM1_act_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = { aHM1_act_init_proc, aHM1_act_chg_data_proc, aHM1_act_main_proc };
+
+    (*act_proc[type])(nactorx, play);
+}
+
+static void aHM1_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HANAMI_NPC1_ACTOR* actor = (HANAMI_NPC1_ACTOR*)nactorx;
+
+    if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        if (nactorx->action.idx == aNPC_ACT_SPECIAL) {
+            int next_act;
+            
+            if (actor->next_action != -1) {
+                next_act = actor->next_action;
+            } else {
+                s16 move_angle = (s16)((RANDOM_F(1.0f) - 0.5f) * 65536.0f);
+                s16 diff_angle;
+
+                nactorx->movement.mv_angl = move_angle;
+                diff_angle = DIFF_SHORT_ANGLE(move_angle, actor->npc_class.actor_class.shape_info.rotation.y);
+                if (ABS(diff_angle) > DEG2SHORT_ANGLE2(135.0f)) {
+                    next_act = aHM1_ACT_TURN;
+                } else if ((nactorx->collision.collision_flag & (mCoBG_HIT_WALL | mCoBG_HIT_WALL_FRONT)) == 0) {
+                    next_act = aHM1_ACT_WALK;
+                } else {
+                    next_act = aHM1_ACT_TURN;
+                }
+            }
+
+            nactorx->movement.move_timer = 0;
+            aHM1_setupAction(actor, next_act);
+        }
+
+        actor->next_action = -1;
+        nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+        aHM1_set_request_act(actor);
+    }
+}
+
+static void aHM1_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HANAMI_NPC1_ACTOR* actor = (HANAMI_NPC1_ACTOR*)nactorx;
+
+    nactorx->think.interrupt_flags = 0;
+    nactorx->action.act_proc = aHM1_act_proc;
+    aHM1_set_request_act(actor);
+}
+
+static void aHM1_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aHM1_think_init_proc, aHM1_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aHM1_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    // clang-format off
+    static s16 def_angle[] = {
+        DEG2SHORT_ANGLE2(45.0f),
+        DEG2SHORT_ANGLE2(45.0f),
+        DEG2SHORT_ANGLE2(315.0f),
+        DEG2SHORT_ANGLE2(270.0f),
+        DEG2SHORT_ANGLE2(0.0f),
+        DEG2SHORT_ANGLE2(315.0f),
+        DEG2SHORT_ANGLE2(315.0f),
+    };
+    // clang-format on
+    HANAMI_NPC1_ACTOR* actor = (HANAMI_NPC1_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)nactorx;
+    s16 angle;
+
+    nactorx->think.think_proc = aHM1_think_proc;
+    nactorx->condition_info.hide_request = FALSE;
+    nactorx->palActorIgnoreTimer = -1;
+    actor->next_action = -1;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    actorx->status_data.weight = MASSTYPE_HEAVY;
+    
+    angle = def_angle[mFI_GetPuleIdx()];
+    actorx->shape_info.rotation.y = angle;
+    actorx->world.angle.y = angle;
+    nactorx->movement.mv_angl = angle;
+
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aHM1_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aHM1_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { aHM1_schedule_init_proc, aHM1_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}
+
+static void aHM1_set_talk_info(ACTOR* actorx) {
+    static int msg_base[mNpc_LOOKS_NUM] = { 0x1939, 0x1948, 0x192A, 0x1957, 0x1966, 0x1975 };
+    int looks = mNpc_GetNpcLooks(actorx);
+
+    mDemo_Set_msg_num(msg_base[looks] + RANDOM(3));
+}
+
+static void aHM1_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aHM1_set_talk_info);
+}
+
+static int aHM1_talk_init(ACTOR* actorx, GAME* game) {
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aHM1_talk_end_chk(ACTOR* actorx, GAME* game) {
+    int ret = FALSE;
+
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
