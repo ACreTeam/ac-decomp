@@ -1,0 +1,193 @@
+static void aHM0_set_request_act(HANAMI_NPC0_ACTOR* actor) {
+    actor->npc_class.request.act_priority = 4;
+    actor->npc_class.request.act_idx = aNPC_ACT_SPECIAL;
+    actor->npc_class.request.act_type = aNPC_ACT_TYPE_SEARCH;
+}
+
+static void aHM0_make_tumbler(ACTOR* actorx, GAME* game) {
+    HANAMI_NPC0_ACTOR* actor = (HANAMI_NPC0_ACTOR*)actorx;
+
+    if ((actor->event_idx & 1) == 1 && actor->npc_class.right_hand.item_actor_p == NULL) {
+        ACTOR* utiwa_p = CLIP(tools_clip)->aTOL_birth_proc(TOOL_TUMBLER, aTOL_ACTION_S_TAKEOUT, actorx, game, -1, NULL);
+
+        if (utiwa_p != NULL) {
+            actor->npc_class.right_hand.item_actor_p = utiwa_p;
+        }
+    }
+}
+
+static void aHM0_wait(HANAMI_NPC0_ACTOR* actor) {
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_CONTINUE) {
+        if (actor->npc_class.draw.loop_flag == 0) {
+            actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+        } else {
+            actor->npc_class.draw.loop_flag--;
+        }
+    }
+}
+
+static void aHM0_merry(HANAMI_NPC0_ACTOR* actor) {
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_CONTINUE) {
+        if (actor->npc_class.draw.loop_flag == 0) {
+            actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+        } else {
+            actor->npc_class.draw.loop_flag--;
+        }
+    }
+
+    sAdo_OngenPos((u32)actor, actor->clap_se_no, &actor->npc_class.actor_class.world.position);
+}
+
+static void aHM0_drink(HANAMI_NPC0_ACTOR* actor) {
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+    }
+}
+
+static void aHM0_setupAction(HANAMI_NPC0_ACTOR* actor, int action) {
+    // clang-format off
+    static aHM0_ACT_PROC process[] = {
+        aHM0_wait,
+        aHM0_merry,
+        aHM0_drink,
+    };
+    // clang-format on
+
+    static int anm_loop_base[] = { 1, 2, 1 };
+    static f32 anm_loop_rnd[] = { 2.0f, 3.0f, 1.0f };
+    static u8 clap_se_no[] = { NA_SE_2F, NA_SE_31, NA_SE_32, NA_SE_33 };
+
+    actor->npc_class.action.step = 0;
+    actor->action = action;
+    actor->act_proc = process[action];
+    actor->npc_class.draw.loop_flag = anm_loop_base[action] + RANDOM(anm_loop_rnd[action]);
+    aHM0_set_animation(actor, action);
+    
+    if (action == aHM0_ACT_MERRY) {
+        actor->clap_se_no = clap_se_no[RANDOM(ARRAY_COUNT(clap_se_no))];
+    }
+}
+
+static void aHM0_act_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aHM0_act_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HANAMI_NPC0_ACTOR* actor = (HANAMI_NPC0_ACTOR*)nactorx;
+
+    aHM0_setupAction(actor, aHM0_ACT_WAIT);
+}
+
+static void aHM0_act_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HANAMI_NPC0_ACTOR* actor = (HANAMI_NPC0_ACTOR*)nactorx;
+
+    actor->act_proc(actor);
+}
+
+static void aHM0_act_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = { aHM0_act_init_proc, aHM0_act_chg_data_proc, aHM0_act_main_proc };
+
+    (*act_proc[type])(nactorx, play);
+}
+
+static void aHM0_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static int action[] = { aHM0_ACT_WAIT, aHM0_ACT_MERRY, aHM0_ACT_DRINK };
+    HANAMI_NPC0_ACTOR* actor = (HANAMI_NPC0_ACTOR*)nactorx;
+
+    if (actor->npc_class.action.step == aNPC_ACTION_END_STEP) {
+        if (actor->npc_class.action.idx == aNPC_ACT_SPECIAL) {
+            int idx;
+
+            idx = RANDOM(2);
+            idx <<= (actor->event_idx & 1);
+            aHM0_setupAction(actor, action[idx]);
+
+        }
+
+        nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+        nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
+        aHM0_set_request_act(actor);
+    }
+}
+
+static void aHM0_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    HANAMI_NPC0_ACTOR* actor = (HANAMI_NPC0_ACTOR*)nactorx;
+
+    nactorx->think.interrupt_flags = 0;
+    nactorx->action.act_proc = aHM0_act_proc;
+    aHM0_set_request_act(actor);
+}
+
+static void aHM0_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aHM0_think_init_proc, aHM0_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aHM0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static s16 def_angle[4] = {DEG2SHORT_ANGLE2(45.0f), DEG2SHORT_ANGLE2(-90.0f), DEG2SHORT_ANGLE2(-45.0f), DEG2SHORT_ANGLE2(90.0f)};
+    HANAMI_NPC0_ACTOR* actor = (HANAMI_NPC0_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)nactorx;
+    int event_idx = actorx->npc_id - SP_NPC_EV_HANAMI_0;
+
+    nactorx->think.think_proc = aHM0_think_proc;
+    nactorx->condition_info.hide_request = FALSE;
+    nactorx->palActorIgnoreTimer = -1;
+    nactorx->talk_info.turn = aNPC_TALK_TURN_HEAD;
+    nactorx->talk_info.default_animation = aNPC_ANIM_SITDOWN_WAIT1;
+    actor->event_idx = event_idx;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
+    actorx->status_data.weight = MASSTYPE_HEAVY;
+    
+    {
+        s16 angle = def_angle[event_idx];
+
+        actorx->shape_info.rotation.y = angle;
+        actorx->world.angle.y = angle;
+        nactorx->movement.mv_angl = angle;
+    }
+
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aHM0_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+
+    aHM0_make_tumbler((ACTOR*)nactorx, (GAME*)play);
+}
+
+static void aHM0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC schedule_proc[] = { aHM0_schedule_init_proc, aHM0_schedule_main_proc };
+
+    (*schedule_proc[type])(nactorx, play);
+}
+
+static void aHM0_set_talk_info(ACTOR* actorx) {
+    static int msg_base[mNpc_LOOKS_NUM] = { 0x192D, 0x193C, 0x191E, 0x194B, 0x195A, 0x1969 };
+    HANAMI_NPC0_ACTOR* actor = (HANAMI_NPC0_ACTOR*)actorx;
+    int looks = mNpc_GetNpcLooks(actorx);
+
+    mDemo_Set_msg_num(msg_base[looks] + RANDOM(3) + actor->event_idx * 3);
+}
+
+static void aHM0_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aHM0_set_talk_info);
+}
+
+static int aHM0_talk_init(ACTOR* actorx, GAME* game) {
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aHM0_talk_end_chk(ACTOR* actorx, GAME* game) {
+    int ret = FALSE;
+
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        ret = TRUE;
+    }
+
+    return ret;
+}

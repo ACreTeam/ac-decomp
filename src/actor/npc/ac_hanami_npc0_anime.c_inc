@@ -1,0 +1,11 @@
+static void aHM0_set_animation(HANAMI_NPC0_ACTOR* actor, int action) {
+    // clang-format off
+    static int animeSeqNo[] = {
+        aNPC_ANIM_SITDOWN_WAIT1,
+        aNPC_ANIM_SITDOWN_CLAP1,
+        aNPC_ANIM_SITDOWN_DRINK1,
+    };
+    // clang-format on
+
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, animeSeqNo[action], FALSE);
+}

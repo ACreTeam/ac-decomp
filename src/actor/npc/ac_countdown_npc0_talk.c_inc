@@ -1,0 +1,333 @@
+static void aCD0_set_request_act(COUNTDOWN_NPC0_ACTOR* actor) {
+    actor->npc_class.request.act_priority = 4;
+    actor->npc_class.request.act_idx = aNPC_ACT_SPECIAL;
+    actor->npc_class.request.act_type = aNPC_ACT_TYPE_DEFAULT;
+}
+
+static void aCD0_before_wait(COUNTDOWN_NPC0_ACTOR* actor) {
+    if (actor->term == aCD0_TERM_NEW_YEAR) {
+        aCD0_setupAction(actor, aCD0_ACT_FREEZE_PL_WAIT);
+    }
+}
+
+static void aCD0_freeze_pl_wait(COUNTDOWN_NPC0_ACTOR* actor) {
+    if (actor->term == aCD0_TERM_AFTER_10_SEC) {
+        actor->npc_class.talk_info.default_animation = aNPC_ANIM_WAIT_KI1;
+        aCD0_setupAction(actor, aCD0_ACT_AFTER_WAIT);
+    }
+}
+
+static void aCD0_talk_after_turn(COUNTDOWN_NPC0_ACTOR* actor) {
+    actor->npc_class.movement.mv_angl = 0;
+    actor->npc_class.movement.mv_add_angl = DEG2SHORT_ANGLE2(11.25f);
+
+    if (actor->npc_class.actor_class.shape_info.rotation.y == 0) {
+        int next_act;
+
+        switch (actor->term) {
+            case aCD0_TERM_NEW_YEAR:
+                next_act = aCD0_ACT_FREEZE_PL_WAIT;
+                break;
+            case aCD0_TERM_AFTER_10_SEC:
+                next_act = aCD0_ACT_AFTER_WAIT;
+                break;
+            default:
+                next_act = aCD0_ACT_BEFORE_WAIT;
+                break;
+        }
+
+        actor->npc_class.condition_info.demo_flg = aCD0_demo_flg[next_act];
+        aCD0_setupAction(actor, next_act);
+    }
+}
+
+static void aCD0_setupAction(COUNTDOWN_NPC0_ACTOR* actor, int action) {
+    // clang-format off
+    static aCD0_ACT_PROC process[] = {
+        aCD0_before_wait,
+        aCD0_freeze_pl_wait,
+        (aCD0_ACT_PROC)none_proc1,
+        aCD0_talk_after_turn,
+    };
+    // clang-format on
+
+    actor->npc_class.action.step = 0;
+    actor->action = action;
+    actor->act_proc = process[action];
+    aCD0_set_animation(actor, action);
+}
+
+static void aCD0_act_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aCD0_act_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    COUNTDOWN_NPC0_ACTOR* actor = (COUNTDOWN_NPC0_ACTOR*)nactorx;
+    int next_act;
+
+    if (nactorx->actor_class.shape_info.rotation.y != 0) {
+        next_act = aCD0_ACT_TALK_AFTER_TURN;
+    } else {
+        switch (actor->term) {
+            case aCD0_TERM_NEW_YEAR:
+                next_act = aCD0_ACT_FREEZE_PL_WAIT;
+                break;
+            case aCD0_TERM_AFTER_10_SEC:
+                next_act = aCD0_ACT_AFTER_WAIT;
+                break;
+            default:
+                next_act = aCD0_ACT_BEFORE_WAIT;
+                break;
+        }
+    }
+
+    actor->npc_class.condition_info.demo_flg = aCD0_demo_flg[next_act];
+    aCD0_setupAction(actor, next_act);
+}
+
+static void aCD0_act_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    COUNTDOWN_NPC0_ACTOR* actor = (COUNTDOWN_NPC0_ACTOR*)nactorx;
+
+    actor->act_proc(actor);
+}
+
+static void aCD0_act_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = { aCD0_act_init_proc, aCD0_act_chg_data_proc, aCD0_act_main_proc };
+
+    (*act_proc[type])(nactorx, play);
+}
+
+static int aCD0_get_now_term(void) {
+    int now_sec = Common_Get(time.now_sec);
+    int term;
+
+    if (now_sec > mTM_TIME2SEC(23, 59, 0)) {
+        term = aCD0_TERM_1_MIN; // 1 min before
+    } else if (now_sec > mTM_TIME2SEC(23, 55, 0)) {
+        term = aCD0_TERM_5_MIN; // 5 min before
+    } else if (now_sec > mTM_TIME2SEC(23, 50, 0)) {
+        term = aCD0_TERM_10_MIN; // 10 min before
+    } else if (now_sec > mTM_TIME2SEC(23, 30, 0)) {
+        term = aCD0_TERM_30_MIN; // 30 min before
+    } else if (now_sec > mTM_TIME2SEC(23, 0, 0)) {
+        term = aCD0_TERM_1_HOUR; // 1 hour before
+    } else if (now_sec < mTM_TIME2SEC(0, 0, 10)) {
+        term = aCD0_TERM_NEW_YEAR; // new years
+    } else {
+        term = aCD0_TERM_AFTER_10_SEC; // more 10 seconds after
+    }
+
+    return term;
+}
+
+static void aCD0_set_term(COUNTDOWN_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    int now_term = aCD0_get_now_term();
+
+    if (now_term != actor->term) {
+        aNPC_TALK_REQUEST_PROC talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+        int in_same_block = TRUE;
+        int bx;
+        int bz;
+
+        mFI_BlockKind2BkNum(&bx, &bz, mRF_BLOCKKIND_POOL);
+        if (bx != play->block_table.block_x || bz != play->block_table.block_z) {
+            in_same_block = FALSE;
+        }
+        
+        if (now_term == aCD0_TERM_NEW_YEAR) {
+            eEC_CLIP->effect_make_proc(eEC_EFFECT_HANABI_SWITCH, actor->npc_class.actor_class.world.position, 3, 0, (GAME*)play, RSV_NO, 0, 0);
+
+            if (in_same_block == TRUE) {
+                mPlib_request_main_demo_wait_type1((GAME*)play, FALSE, NULL);
+            }
+        } else if (mDemo_Get_talk_actor() == NULL) {
+            if (in_same_block == TRUE) {
+                talk_request_proc = aCD0_force_talk_request;
+            }
+        } else if (now_term == aCD0_TERM_1_MIN) {
+            mEv_set_status(mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN, mEv_STATUS_PLAYSOUND);
+        } else if (now_term == aCD0_TERM_AFTER_10_SEC) {
+            talk_request_proc = aCD0_norm_talk_request;
+        }
+
+        actor->npc_class.talk_info.talk_request_proc = talk_request_proc;
+        actor->term = now_term;
+    }
+}
+
+static void aCD0_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    COUNTDOWN_NPC0_ACTOR* actor = (COUNTDOWN_NPC0_ACTOR*)nactorx;
+
+    if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        aCD0_set_request_act(actor);
+    } else {
+        aCD0_set_term(actor, play);
+    }
+}
+
+static void aCD0_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    COUNTDOWN_NPC0_ACTOR* actor = (COUNTDOWN_NPC0_ACTOR*)nactorx;
+
+    nactorx->think.interrupt_flags = 0;
+    nactorx->action.act_proc = aCD0_act_proc;
+    aCD0_set_request_act(actor);
+}
+
+static void aCD0_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aCD0_think_init_proc, aCD0_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aCD0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    COUNTDOWN_NPC0_ACTOR* actor = (COUNTDOWN_NPC0_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)nactorx;
+    s16 angle;
+
+    nactorx->think.think_proc = aCD0_think_proc;
+    nactorx->condition_info.hide_request = FALSE;
+    nactorx->palActorIgnoreTimer = -1;
+    actor->term = aCD0_get_now_term();
+    nactorx->talk_info.default_animation = aNPC_ANIM_WAIT1;
+    nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
+    actorx->status_data.weight = MASSTYPE_HEAVY;
+    actorx->shape_info.rotation.y = 0;
+    actorx->world.angle.y = 0;
+    nactorx->movement.mv_angl = 0;
+
+    switch (actor->term) {
+        case aCD0_TERM_NEW_YEAR:
+            eEC_CLIP->effect_make_proc(eEC_EFFECT_HANABI_SWITCH, actor->npc_class.actor_class.world.position, 3, 0, (GAME*)play, RSV_NO, 0, 0);
+            break;
+        case aCD0_TERM_1_MIN:
+            mEv_set_status(mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN, mEv_STATUS_PLAYSOUND);
+            nactorx->talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+            break;
+    }
+
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aCD0_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aCD0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { aCD0_schedule_init_proc, aCD0_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}
+
+static void aCD0_set_free_str_year(u32 year) {
+    u8 year_str[4];
+
+    mFont_UnintToString(year_str, sizeof(year_str), year, sizeof(year_str), TRUE, FALSE, FALSE);
+    mMsg_SET_FREE_STR(mMsg_FREE_STR1, year_str, sizeof(year_str));
+}
+
+static void aCD0_set_free_str_min(u32 min) {
+    u8 min_str[4];
+    int len;
+
+    if (min < 10) {
+        len = 1;
+    } else {
+        len = 2;
+    }
+
+    mFont_UnintToString(min_str, sizeof(min_str), min, len, TRUE, FALSE, FALSE);
+    mMsg_SET_FREE_STR(mMsg_FREE_STR2, min_str, len);
+}
+
+static void aCD0_set_free_str(void) {
+    aCD0_set_free_str_year(Common_Get(time.rtc_time.year) + 1);
+    aCD0_set_free_str_min((mTM_MINUTES_IN_HOUR - 1) - Common_Get(time.rtc_time.min));
+}
+
+static void aCD0_set_force_talk_info(ACTOR* actorx) {
+    static int msg_base[mNpc_LOOKS_NUM] = { 0x1D6B, 0x1D80, 0x1D56, 0x1D95, 0x1DAA, 0x1DBF };
+    COUNTDOWN_NPC0_ACTOR* actor = (COUNTDOWN_NPC0_ACTOR*)actorx;
+    int looks = mNpc_GetNpcLooks(actorx);
+    int msg_no = msg_base[looks];
+
+    switch (actor->term) {
+        case aCD0_TERM_NEW_YEAR:
+        case aCD0_TERM_AFTER_10_SEC:
+            msg_no += 13;
+            break;
+        default:
+            msg_no += (actor->term - 1) * 4;
+            break;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+    mDemo_Set_camera(CAMERA2_PROCESS_STOP);
+    aCD0_set_free_str();
+}
+
+static void aCD0_force_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, aCD0_set_force_talk_info);
+}
+
+static void aCD0_set_norm_talk_info(ACTOR* actorx) {
+    static int msg_base[mNpc_LOOKS_NUM] = { 0x1D68, 0x1D7D, 0x1D53, 0x1D92, 0x1DA7, 0x1DBC };
+    COUNTDOWN_NPC0_ACTOR* actor = (COUNTDOWN_NPC0_ACTOR*)actorx;
+    int looks = mNpc_GetNpcLooks(actorx);
+    int msg_no = msg_base[looks] + RANDOM(3);
+
+    switch (actor->term) {
+        case aCD0_TERM_NEW_YEAR:
+        case aCD0_TERM_AFTER_10_SEC:
+            msg_no += 17;
+            break;
+        default:
+            msg_no += actor->term * 4;
+            break;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+    aCD0_set_free_str();
+}
+
+static void aCD0_norm_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aCD0_set_norm_talk_info);
+}
+
+static int aCD0_talk_init(ACTOR* actorx, GAME* game) {
+    COUNTDOWN_NPC0_ACTOR* actor = (COUNTDOWN_NPC0_ACTOR*)actorx;
+    int ret = FALSE;
+
+    if (mDemo_Check_SpeakerAble() == TRUE) {
+        if (actor->term == aCD0_TERM_1_MIN) {
+            if (actor->npc_class.talk_info.talk_request_proc == aCD0_force_talk_request) {
+                actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+            } else {
+                actor->npc_class.talk_info.talk_request_proc = aCD0_norm_talk_request;
+            }
+        } else {
+            actor->npc_class.talk_info.talk_request_proc = aCD0_norm_talk_request;
+        }
+
+        mDemo_Set_ListenAble();
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aCD0_talk_end_chk(ACTOR* actorx, GAME* game) {
+    int ret = FALSE;
+
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        if (mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 7) != 0) {
+            mEv_set_status(mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN, mEv_STATUS_PLAYSOUND);
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 7, 0);
+        }
+
+        ret = TRUE;
+    }
+
+    return ret;
+}
