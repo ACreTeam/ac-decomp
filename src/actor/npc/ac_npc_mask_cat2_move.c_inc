@@ -154,7 +154,7 @@ static void aNM2_set_camera_eyes(NPC_MASK_CAT2_ACTOR* actorx) {
     actorx->npc_class.request.head_pos.y = actorx->npc_class.actor_class.eye.position.y;
     actorx->npc_class.request.head_pos.z = 400.0f;
     actorx->npc_class.request.head_priority = 3;
-    actorx->npc_class.request.head_type = 2;
+    actorx->npc_class.request.head_type = aNPC_HEAD_TARGET_POS;
 }
 
 static void aNM2_set_walk_spd(NPC_MASK_CAT2_ACTOR* actorx) {

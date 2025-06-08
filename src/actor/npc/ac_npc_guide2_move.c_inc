@@ -115,7 +115,7 @@ static void aNG2_set_camera_eyes(NPC_GUIDE2_ACTOR* guide2) {
         guide2->npc_class.request.head_pos.y = guide2->npc_class.actor_class.eye.position.y;
         guide2->npc_class.request.head_pos.z = 400.0f;
         guide2->npc_class.request.head_priority = 3;
-        guide2->npc_class.request.head_type = 2;
+        guide2->npc_class.request.head_type = aNPC_HEAD_TARGET_POS;
     }
 }
 

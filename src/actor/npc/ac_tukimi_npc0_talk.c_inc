@@ -30,7 +30,9 @@ static void aTM0_think_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
             actorx->action.step = 0;
             aTM0_set_animation(&actorx->actor_class, &play->game);
         }
-        actorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+        actorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+                                          aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y |
+                                          aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
         aTM0_set_request_act(actorx);
     }
 }
@@ -54,18 +56,20 @@ static void aTM0_think_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int think_idx) {
 static void aTM0_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     int puleIdx;
     s16 ang;
-    static s16 def_angle[] = {0xA000, 0x2000, 0x6000, 0xE000, 0xE000, 0x2000, 0xA000, 0};
-    static f32 def_posX[] = {1.0f, 39.0f, 39.0f, 1.0f, 1.0f, 39.0f, 1.0f};
-    static f32 def_posZ[] = {1.0f, 39.0f, 1.0f, 39.0f, 39.0f, 39.0f, 1.0f};
+    static s16 def_angle[] = { 0xA000, 0x2000, 0x6000, 0xE000, 0xE000, 0x2000, 0xA000, 0 };
+    static f32 def_posX[] = { 1.0f, 39.0f, 39.0f, 1.0f, 1.0f, 39.0f, 1.0f };
+    static f32 def_posZ[] = { 1.0f, 39.0f, 1.0f, 39.0f, 39.0f, 39.0f, 1.0f };
     actorx->think.think_proc = &aTM0_think_proc;
-    actorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    actorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+                                      aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y |
+                                      aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
     actorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
     actorx->condition_info.hide_request = FALSE;
     actorx->palActorIgnoreTimer = -1;
     actorx->talk_info.turn = aNPC_TALK_TURN_HEAD;
     actorx->talk_info.default_animation = aNPC_ANIM_SANBASI1;
     actorx->actor_class.status_data.weight = MASSTYPE_HEAVY;
-    
+
     puleIdx = mFI_GetPuleIdx();
     ang = def_angle[puleIdx];
     actorx->actor_class.shape_info.rotation.y = ang;
@@ -74,14 +78,14 @@ static void aTM0_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
 
     actorx->actor_class.world.position.x += def_posX[puleIdx];
     actorx->actor_class.world.position.z += def_posZ[puleIdx];
-    NPC_CLIP->think_proc(actorx, play, 9, FALSE);
+    NPC_CLIP->think_proc(actorx, play, aNPC_THINK_SPECIAL, FALSE);
 }
 
 static void aTM0_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     s16 yRot;
     f32 trigVal;
-    if (NPC_CLIP->think_proc(actorx, play, -1, 1) == FALSE) {
-        NPC_CLIP->think_proc(actorx, play, -1, 2);
+    if (NPC_CLIP->think_proc(actorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == FALSE) {
+        NPC_CLIP->think_proc(actorx, play, -1, aNPC_THINK_TYPE_MAIN);
     }
     if (actorx->action.idx == aNPC_ACT_SPECIAL) {
         yRot = actorx->actor_class.shape_info.rotation.y;
@@ -89,11 +93,11 @@ static void aTM0_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
         actorx->request.head_pos.y = actorx->actor_class.eye.position.y - 30.0f;
         actorx->request.head_pos.z = actorx->actor_class.eye.position.z + cos_s(yRot) * 40.0f;
         actorx->request.head_priority = 3;
-        actorx->request.head_type = 2;
+        actorx->request.head_type = aNPC_HEAD_TARGET_POS;
     }
 }
 
-static void aTM0_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play,  int sche_proc_idx) {
+static void aTM0_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int sche_proc_idx) {
     // clang-format off
     static aNPC_SUB_PROC sche_proc[] = {
         &aTM0_schedule_init_proc,
@@ -104,8 +108,8 @@ static void aTM0_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play,  int sche_pro
 }
 
 static void aTM0_set_talk_info(ACTOR* actorx) {
-    static int msg_base[mNpc_LOOKS_NUM] = {0x1EB0, 0x1EBF, 0x1EA1, 0x1ECE, 0x1EDD, 0x1EEC};
-    static int msg_base2[mNpc_LOOKS_NUM] = {0x3F46, 0x3F55, 0x3F37, 0x3F64, 0x3F73, 0x3F82};
+    static int msg_base[mNpc_LOOKS_NUM] = { 0x1EB0, 0x1EBF, 0x1EA1, 0x1ECE, 0x1EDD, 0x1EEC };
+    static int msg_base2[mNpc_LOOKS_NUM] = { 0x3F46, 0x3F55, 0x3F37, 0x3F64, 0x3F73, 0x3F82 };
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     u8 worldName[LAND_NAME_SIZE];
     mNpc_EventNpc_c* eventNpc;
@@ -115,11 +119,11 @@ static void aTM0_set_talk_info(ACTOR* actorx) {
     int i;
     looks = mNpc_GetNpcLooks(actorx);
     msg = msg_base;
-    
+
     for (i = 0; i < mNpc_EVENT_NPC_NUM; i++) {
         eventNpc = mNpc_GetSameEventNpc(i + SP_NPC_EV_TUKIMI_0);
         if (eventNpc != NULL) {
-            actorRet = Actor_info_fgName_search(&((GAME_PLAY*)gamePT)->actor_info,eventNpc->event_id, ACTOR_PART_NPC);
+            actorRet = Actor_info_fgName_search(&((GAME_PLAY*)gamePT)->actor_info, eventNpc->event_id, ACTOR_PART_NPC);
             mNpc_GetNpcWorldName(worldName, actorRet);
             mMsg_Set_free_str(msg_p, i + mMsg_FREE_STR1, worldName, LAND_NAME_SIZE);
         }
@@ -142,7 +146,7 @@ static int aTM0_talk_init(ACTOR* actorx, GAME* game) {
 static int aTM0_talk_end_chk(ACTOR* actorx, GAME* game) {
     BOOL res = FALSE;
     int demoCheck = mDemo_Check(mDemo_TYPE_TALK, actorx);
-    if (demoCheck == FALSE){
+    if (demoCheck == FALSE) {
         res = TRUE;
     }
     return res;
