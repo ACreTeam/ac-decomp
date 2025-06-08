@@ -1,0 +1,181 @@
+static void aTM1_set_request_act(NPC_ACTOR* actorx) {
+    actorx->request.act_priority = 4;
+    actorx->request.act_idx = aNPC_ACT_SPECIAL;
+    actorx->request.act_type = aNPC_ACT_TYPE_SEARCH;
+}
+
+static void aTM1_act_chg_data_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    actorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aTM1_act_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    int unk = ((TUKIMI_NPC1_ACTOR*)actorx)->npcIdx == 4;
+    actorx->action.step = 0;
+    aTM1_set_animation(&actorx->actor_class, unk);
+}
+
+static void aTM1_act_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int act_idx) {
+    // clang-format off
+    static aNPC_SUB_PROC act_proc[] = {
+        &aTM1_act_init_proc,
+        &aTM1_act_chg_data_proc,
+        (aNPC_SUB_PROC)&none_proc1
+    };
+    // clang-format on
+    act_proc[act_idx](actorx, play);
+}
+
+void aTM1_think_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    int npc_idx;
+    if (actorx->action.step == aNPC_ACTION_END_STEP) {
+        if (actorx->action.idx == aNPC_ACT_SPECIAL) {
+            npc_idx = ((TUKIMI_NPC1_ACTOR*)actorx)->npcIdx==4;
+            actorx->action.step = 0;
+            aTM1_set_animation(&actorx->actor_class, npc_idx);
+        }
+        actorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+        aTM1_set_request_act(actorx);
+    }
+}
+
+static void aTM1_think_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    actorx->think.interrupt_flags = 0;
+    actorx->action.act_proc = &aTM1_act_proc;
+    aTM1_set_request_act(actorx);
+}
+
+static void aTM1_think_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int think_idx) {
+    // clang-format off
+    static aNPC_SUB_PROC think_proc[] = {
+        &aTM1_think_init_proc,
+        &aTM1_think_main_proc,
+    };
+    // clang-format on
+    think_proc[think_idx](actorx, play);
+}
+
+static void aTM1_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    TUKIMI_NPC1_ACTOR* tukimi_actor = (TUKIMI_NPC1_ACTOR*)actorx;
+    int puleIdx;
+    int npcIdx;
+    s16 ang;
+    static s16 def_angle[][7] = {0xC000, 0x4000, 0xA000, 0x8000, 0xE000, 0xC000, 0x2000, 0x2000, 0xA000, 0xE000, 0x2000, 0xE000, 0xE000, 0xC000, 0x2000, 0xA000, 0xE000, 0x2000, 0xE000, 0xE000, 0xC000, 0xE000, 0xE000, 0, 0, 0x2000, 0x6000, 0xE000, 0, 0, 0, 0, 0, 0, 0};
+    actorx->think.think_proc = &aTM1_think_proc;
+    actorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    actorx->collision.check_kind = aNPC_BG_CHECK_TYPE_NONE;
+    actorx->condition_info.hide_request = FALSE;
+    actorx->palActorIgnoreTimer = -1;
+
+    if (actorx->actor_class.npc_id == SP_NPC_EV_TUKIMI_4) {
+        actorx->talk_info.turn = aNPC_TALK_TURN_NONE;
+        actorx->talk_info.default_animation = aNPC_ANIM_KUISINBO1;
+    } else {
+        actorx->talk_info.turn = aNPC_TALK_TURN_HEAD;
+        actorx->talk_info.default_animation = aNPC_ANIM_SITDOWN_WAIT1;
+    }
+
+    actorx->actor_class.status_data.weight = MASSTYPE_HEAVY;
+    
+    puleIdx = mFI_GetPuleIdx();
+    npcIdx = actorx->actor_class.npc_id - SP_NPC_EV_TUKIMI_0;
+    ang = def_angle[npcIdx][puleIdx];
+    actorx->actor_class.shape_info.rotation.y = ang;
+    actorx->actor_class.world.angle.y = ang;
+    actorx->movement.mv_angl = ang;
+    
+    tukimi_actor->npcIdx = npcIdx;
+    NPC_CLIP->think_proc(actorx, play, 9, FALSE);
+}
+
+static void aTM1_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    s16 yRot;
+    if (NPC_CLIP->think_proc(actorx, play, -1, 1) == FALSE) {
+        NPC_CLIP->think_proc(actorx, play, -1, 2);
+    }
+    if ((((TUKIMI_NPC1_ACTOR*)actorx)->npcIdx != 4) && (actorx->action.idx == aNPC_ACT_SPECIAL)) {
+        yRot = actorx->actor_class.shape_info.rotation.y;
+        actorx->request.head_pos.x = actorx->actor_class.eye.position.x + sin_s(yRot) * 40.0f;
+        actorx->request.head_pos.y = actorx->actor_class.eye.position.y + 30.0f;
+        actorx->request.head_pos.z = actorx->actor_class.eye.position.z + cos_s(yRot) * 40.0f;
+        actorx->request.head_priority = 3;
+        actorx->request.head_type = 2;
+    }
+}
+
+static void aTM1_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play,  int sche_proc_idx) {
+    // clang-format off
+    static aNPC_SUB_PROC sche_proc[] = {
+        &aTM1_schedule_init_proc,
+        &aTM1_schedule_main_proc,
+    };
+    // clang-format on
+    sche_proc[sche_proc_idx](actorx, play);
+}
+
+static void aTM1_set_talk_info(ACTOR* actorx) {
+    static int msg_base[mNpc_LOOKS_NUM] = {0x1EB0, 0x1EBF, 0x1EA1, 0x1ECE, 0x1EDD, 0x1EEC};
+    static int msg_base2[mNpc_LOOKS_NUM] = {0x3F46, 0x3F55, 0x3F37, 0x3F64, 0x3F73, 0x3F82};
+    
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    u8 worldName[LAND_NAME_SIZE];
+    mNpc_EventNpc_c* eventNpc;
+    ACTOR* actorRet;
+    int npcIdx;
+    int* msg;
+    int looks;
+    int i;
+    looks = mNpc_GetNpcLooks(actorx);
+    npcIdx = ((TUKIMI_NPC1_ACTOR*)actorx)->npcIdx;
+    msg = msg_base;
+    
+    for (i = 0; i < mNpc_EVENT_NPC_NUM; i++) {
+        eventNpc = mNpc_GetSameEventNpc(i + SP_NPC_EV_TUKIMI_0);
+        if (eventNpc != NULL) {
+            actorRet = Actor_info_fgName_search(&((GAME_PLAY*)gamePT)->actor_info,eventNpc->event_id, ACTOR_PART_NPC);
+            mNpc_GetNpcWorldName(worldName, actorRet);
+            mMsg_Set_free_str(msg_p, i + mMsg_FREE_STR1, worldName, LAND_NAME_SIZE);
+        }
+    }
+    if (mEv_check_status(mEv_EVENT_METEOR_SHOWER, mEv_STATUS_ACTIVE) == TRUE) {
+        msg = msg_base2;
+    }
+    mDemo_Set_msg_num(msg[looks] + RANDOM(3) + npcIdx * 3);
+}
+
+static void aTM1_set_talk_info2(ACTOR* actorx) {
+    static int msg_base[mNpc_LOOKS_NUM] = {0x1EBC, 0x1ECB, 0x1EAD, 0x1EDA, 0x1EE9, 0x1EF8};
+    static int msg_base2[mNpc_LOOKS_NUM] = {0x3F52, 0x3F61, 0x3F43, 0x3F70, 0x3F7F, 0x3F8E};
+    u8 worldName[LAND_NAME_SIZE];
+    mNpc_EventNpc_c* eventNpc;
+    ACTOR* actorRet;
+    int looks;
+    int* msg;
+    int i;
+    looks = mNpc_GetNpcLooks(actorx);
+    msg = msg_base;
+    
+    if (mEv_check_status(mEv_EVENT_METEOR_SHOWER, mEv_STATUS_ACTIVE) == TRUE) {
+        msg = msg_base2;
+    }
+    mDemo_Set_msg_num(msg[looks] + RANDOM(3));
+}
+
+static void aTM1_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_REQUEST_PROC funcPtr = (actorx->npc_id == SP_NPC_EV_TUKIMI_4) ? aTM1_set_talk_info2 : aTM1_set_talk_info;
+
+    mDemo_Request(mDemo_TYPE_TALK, actorx, funcPtr);
+}
+
+static int aTM1_talk_init(ACTOR* actorx, GAME* game) {
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aTM1_talk_end_chk(ACTOR* actorx, GAME* game) {
+    BOOL res = FALSE;
+    int demoCheck = mDemo_Check(mDemo_TYPE_TALK, actorx);
+    if (demoCheck == FALSE){
+        res = TRUE;
+    }
+    return res;
+}
