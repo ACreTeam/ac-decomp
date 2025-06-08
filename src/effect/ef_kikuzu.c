@@ -1,5 +1,9 @@
 #include "ef_effect_control.h"
 
+#include "m_common_data.h"
+#include "sys_matrix.h"
+#include "m_rcp.h"
+
 static void eKikuzu_init(xyz_t pos, int prio, s16 angle, GAME* game, u16 item_name, s16 arg0, s16 arg1);
 static void eKikuzu_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg);
 static void eKikuzu_mv(eEC_Effect_c* effect, GAME* game);
@@ -18,17 +22,76 @@ eEC_PROFILE_c iam_ef_kikuzu = {
 };
 
 static void eKikuzu_init(xyz_t pos, int prio, s16 angle, GAME* game, u16 item_name, s16 arg0, s16 arg1) {
-    // TODO
+    eEC_CLIP->make_effect_proc(eEC_EFFECT_KIKUZU, pos, NULL, game, &angle, item_name, prio, arg0, arg1);
 }
 
 static void eKikuzu_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
-    // TODO
+    f32 z = RANDOM_F(1.75f) + 0.5f;
+    f32 y = RANDOM_F(4.0f) + 1.5f;
+    s16* angle_p = (s16*)ct_arg;
+    s16 angle = *angle_p + DEG2SHORT_ANGLE(180.0f) + RANDOM(DEG2SHORT_ANGLE2(80.0f));
+
+    effect->timer = RANDOM(10) * 2 + 60;
+    effect->scale.x = effect->scale.y = effect->scale.z = RANDOM2_F(0.002f) + 0.004f;
+    effect->position.x += RANDOM2_F(10.0f);
+    effect->position.y += RANDOM2_F(10.0f);
+    effect->position.z += RANDOM2_F(10.0f);
+    effect->offset.x = effect->position.y;
+    effect->offset.y = mCoBG_GetBgY_AngleS_FromWpos(NULL, effect->position, 0.0f);
+    effect->offset.y += 3.0f;
+    effect->velocity.x = sin_s(angle) * z;
+    effect->velocity.z = cos_s(angle) * z;
+    effect->velocity.y = y;
+    effect->acceleration.y = -0.25f;
+    effect->effect_specific[0] = qrand();
+    effect->effect_specific[2] = qrand();
+    effect->effect_specific[1] = qrand() & 0x1FFF;
+    effect->effect_specific[3] = qrand() & 0x1FFF;
 }
 
 static void eKikuzu_mv(eEC_Effect_c* effect, GAME* game) {
-    // TODO
+    effect->offset.x = effect->position.y;
+    effect->offset.z = effect->offset.y;
+    effect->offset.y = mCoBG_GetBgY_AngleS_FromWpos(NULL, effect->position, 0.0f);
+    xyz_t_add(&effect->velocity, &effect->acceleration, &effect->velocity);
+    xyz_t_add(&effect->position, &effect->velocity, &effect->position);
+    effect->effect_specific[0] += effect->effect_specific[1];
+    effect->effect_specific[2] += effect->effect_specific[3];
+
+    if (effect->position.y < effect->offset.y && effect->offset.x >= effect->offset.y && effect->velocity.y < 0.0f) {
+        effect->position.y = effect->offset.y;
+        effect->velocity.x *= 0.6f;
+        effect->velocity.y *= -0.6f;
+        effect->velocity.z *= 0.6f;
+        effect->effect_specific[1] >>= 1;
+        effect->effect_specific[3] >>= 1;
+    }
+
+    if (effect->position.y < effect->offset.y && effect->position.y >= effect->offset.z) {
+        effect->position.x -= effect->velocity.x;
+        effect->position.y -= effect->velocity.y;
+        effect->position.z -= effect->velocity.z;
+        effect->velocity.x *= -0.6f;
+        effect->velocity.z *= -0.6f;
+    }
 }
 
+extern Gfx ef_kikuzu01_00_modelT[];
+
 static void eKikuzu_dw(eEC_Effect_c* effect, GAME* game) {
-    // TODO
+    u8 a = (int)eEC_CLIP->calc_adjust_proc(effect->timer, 0, 16, 0.0f, 255.0f);
+
+    _texture_z_light_fog_prim_xlu(game->graph);
+    OPEN_DISP(game->graph);
+
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
+    Matrix_RotateX(effect->effect_specific[0], 1);
+    Matrix_RotateZ(effect->effect_specific[2], 1);
+    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, 1);
+
+    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 200, a);
+    gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(NEXT_POLY_XLU_DISP, ef_kikuzu01_00_modelT);
+
+    CLOSE_DISP(game->graph);
 }
