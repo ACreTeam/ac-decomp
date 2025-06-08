@@ -1,0 +1,4 @@
+static void aTM1_set_animation(ACTOR* actorx, int anime_idx) {
+    static int animeSeqNo[] = {aNPC_ANIM_WAIT1, aNPC_ANIM_KUISINBO1};
+    NPC_CLIP->animation_init_proc(actorx, animeSeqNo[anime_idx], FALSE);
+}
