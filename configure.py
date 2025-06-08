@@ -1101,7 +1101,7 @@ config.libs = [
             Object(Matching, "actor/npc/ac_halloween_npc.c"),
             Object(Matching, "actor/npc/ac_hanabi_npc0.c"),
             Object(Matching, "actor/npc/ac_hanabi_npc1.c"),
-            Object(NonMatching, "actor/npc/ac_hanami_npc0.c"),
+            Object(Matching, "actor/npc/ac_hanami_npc0.c"),
             Object(NonMatching, "actor/npc/ac_hanami_npc1.c"),
             Object(NonMatching, "actor/npc/ac_harvest_npc0.c"),
             Object(NonMatching, "actor/npc/ac_harvest_npc1.c"),
