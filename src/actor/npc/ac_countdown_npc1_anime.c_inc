@@ -1,0 +1,19 @@
+static void aCD1_set_animation(COUNTDOWN_NPC1_ACTOR* actor, int action) {
+    // clang-format off
+    static int animeSeqNo[] = {
+        aNPC_ANIM_CRACKER_WAIT1,
+        aNPC_ANIM_CRACKER_RUN1,
+        aNPC_ANIM_CRACKER_RUN1,
+        aNPC_ANIM_CRACKER_RUN1,
+        aNPC_ANIM_CRACKER_WAIT1,
+        aNPC_ANIM_CRACKER_COUNT1,
+        aNPC_ANIM_CRACKER_FIRE1,
+        aNPC_ANIM_CLAP1,
+        aNPC_ANIM_WAIT_KI1,
+        aNPC_ANIM_WALK_KI1,
+        aNPC_ANIM_WALK_KI1,
+    };
+    // clang-format on
+
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, animeSeqNo[action], FALSE);
+}

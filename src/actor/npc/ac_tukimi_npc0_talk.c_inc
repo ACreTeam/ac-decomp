@@ -145,9 +145,10 @@ static int aTM0_talk_init(ACTOR* actorx, GAME* game) {
 
 static int aTM0_talk_end_chk(ACTOR* actorx, GAME* game) {
     BOOL res = FALSE;
-    int demoCheck = mDemo_Check(mDemo_TYPE_TALK, actorx);
-    if (demoCheck == FALSE) {
+
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
         res = TRUE;
     }
+    
     return res;
 }
