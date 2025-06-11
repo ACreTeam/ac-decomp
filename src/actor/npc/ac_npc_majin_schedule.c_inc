@@ -1,0 +1,177 @@
+static void aMJN_set_request_act(NPC_MAJIN_ACTOR* actor) {
+    actor->npc_class.request.act_priority = 1;
+    actor->npc_class.request.act_idx = aNPC_ACT_SPECIAL;
+    actor->npc_class.request.act_type = aNPC_ACT_TYPE_SEARCH;
+}
+
+static void aMJN_act_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.step = 0;
+}
+
+static void aMJN_act_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = { aMJN_act_init_proc, (aNPC_SUB_PROC)none_proc1, (aNPC_SUB_PROC)none_proc1 };
+
+    (*act_proc[type])(nactorx, play);
+}
+
+static void aMJN_setup_start_think(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+    int think_idx;
+    s16 arg = 0;
+
+    switch (actorx->npc_id) {
+        case SP_NPC_MAJIN:
+            think_idx = aMJN_THINK_CALL;
+            break;
+        case SP_NPC_MAJIN_D07C:
+            think_idx = aMJN_THINK_CALL_2;
+            break;
+        case SP_NPC_MAJIN_D07D:
+            think_idx = aMJN_THINK_CALL_3;
+            break;
+        case SP_NPC_MAJIN_BROTHER:
+            arg = 1;
+            think_idx = aMJN_THINK_CALL_4;
+            break;
+        case SP_NPC_MAJIN_D080:
+            think_idx = aMJN_THINK_CALL_5;
+            break;
+        default:
+            think_idx = aMJN_THINK_CALL_4;
+            break;
+    }
+
+    eEC_CLIP->effect_make_proc(eEC_EFFECT_RESET_HOLE, actorx->world.position, 3, actorx->shape_info.rotation.y, (GAME*)play, RSV_NO, 0, arg);
+    if (CLIP(demo_clip2) != NULL && CLIP(demo_clip2)->type == mDemo_CLIP_TYPE_RESET_DEMO) {
+        ACTOR* demox = (ACTOR*)CLIP(demo_clip2)->demo_class;
+
+        if (demox != NULL) {
+            RESET_DEMO_ACTOR* reset_demo = (RESET_DEMO_ACTOR*)demox;
+
+            reset_demo->request_light = TRUE;
+        }
+    }
+
+    aMJN_setup_think_proc(actor, play, think_idx);
+}
+
+static void aMJN_start_wait(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play) {
+    if (!mPlib_check_player_actor_main_index_OutDoorMove2((GAME*)play)) {
+        aMJN_setup_start_think(actor, play);
+    }
+}
+
+static void aMJN_start_wait_st(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (playerx != NULL && playerx->world.position.z > 970.0f) {
+        aMJN_setup_start_think(actor, play);
+    }
+}
+
+static void aMJN_exit(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        Actor_delete((ACTOR*)actor);
+    }
+}
+
+static void aMJN_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_MAJIN_ACTOR* actor = (NPC_MAJIN_ACTOR*)nactorx;
+
+    if (nactorx->action.idx == aNPC_ACT_SPECIAL) {
+        actor->think_proc(actor, play);
+    } else if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        aMJN_set_request_act(actor);
+    }
+}
+
+static void aMJN_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static f32 def_posX[] = { 2180.0f, 2300.0f, 2180.0f, 2300.0f, 2220.0f };
+    static f32 def_posZ[] = { 1460.0f, 1460.0f, 1740.0f, 1740.0f, 1020.0f };
+    static s16 def_angl[] = { 0xD41D, 0x2BE3, 0xD41D, 0x2BE3, 0x4000 };
+    static int def_think_idx[] = { aMJN_THINK_START_WAIT, aMJN_THINK_START_WAIT, aMJN_THINK_START_WAIT, aMJN_THINK_START_WAIT, aMJN_THINK_START_WAIT_ST };
+    NPC_MAJIN_ACTOR* actor = (NPC_MAJIN_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)nactorx;
+    int pos_idx;
+    
+    actor->npc_class.action.act_proc = aMJN_act_proc;
+    aMJN_set_request_act(actor);
+    actorx->status_data.weight = MASSTYPE_HEAVY;
+    Common_Set(reset_type, 0);
+    
+    if (play->block_table.block_z == 1) {
+        pos_idx = 4;
+    } else {
+        pos_idx = mHS_get_arrange_idx(Common_Get(player_no));
+    }
+
+    actorx->world.position.x = def_posX[pos_idx];
+    actorx->world.position.z = def_posZ[pos_idx];
+    actorx->shape_info.rotation.y = def_angl[pos_idx];
+    actorx->world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(actorx->world.position, 0.0f);
+    aMJN_setup_think_proc(actor, play, def_think_idx[pos_idx]);
+}
+
+static void aMJN_call_init(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play) {
+    actor->npc_class.condition_info.hide_request = FALSE;
+    actor->npc_class.talk_info.default_turn_animation = aNPC_ANIM_APPEAR1;
+    actor->npc_class.talk_info.default_animation = aNPC_ANIM_APPEAR1;
+}
+
+typedef void (*aMJN_THINK_INIT_PROC)(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play);
+
+typedef struct {
+    aMJN_THINK_PROC think_proc;
+    aMJN_THINK_INIT_PROC think_init_proc;
+    aNPC_TALK_REQUEST_PROC talk_request_proc;
+    u8 talk_idx;
+    u8 think_idx_when_talk_done;
+} aMJN_think_data_c;
+
+static void aMJN_setup_think_proc(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play, int think_idx) {
+    // clang-format off
+    static aMJN_think_data_c dt_tbl[] = {
+        {            aMJN_start_wait, (aMJN_THINK_INIT_PROC)none_proc1, (aNPC_TALK_REQUEST_PROC)none_proc1, 0,    aMJN_THINK_START_WAIT},
+        {         aMJN_start_wait_st, (aMJN_THINK_INIT_PROC)none_proc1, (aNPC_TALK_REQUEST_PROC)none_proc1, 0, aMJN_THINK_START_WAIT_ST},
+        {(aMJN_THINK_PROC)none_proc1,                   aMJN_call_init,            aMJN_force_talk_request, 0,          aMJN_THINK_EXIT},
+        {(aMJN_THINK_PROC)none_proc1,                   aMJN_call_init,            aMJN_force_talk_request, 1,          aMJN_THINK_EXIT},
+        {(aMJN_THINK_PROC)none_proc1,                   aMJN_call_init,            aMJN_force_talk_request, 2,          aMJN_THINK_EXIT},
+        {(aMJN_THINK_PROC)none_proc1,                   aMJN_call_init,            aMJN_force_talk_request, 3,          aMJN_THINK_EXIT},
+        {(aMJN_THINK_PROC)none_proc1,                   aMJN_call_init,            aMJN_force_talk_request, 4,          aMJN_THINK_EXIT},
+        {                  aMJN_exit, (aMJN_THINK_INIT_PROC)none_proc1, (aNPC_TALK_REQUEST_PROC)none_proc1, 0,          aMJN_THINK_EXIT},
+    };
+    // clang-format on
+
+    aMJN_think_data_c* data_p = &dt_tbl[think_idx];
+
+    actor->think_idx = think_idx;
+    actor->think_proc = data_p->think_proc;
+    actor->npc_class.talk_info.talk_request_proc = data_p->talk_request_proc;
+    actor->talk_idx = data_p->talk_idx;
+    actor->next_think_idx = data_p->think_idx_when_talk_done;
+    aMJN_set_animation(actor, think_idx);
+    (*data_p->think_init_proc)(actor, play);
+}
+
+static void aMJN_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aMJN_think_init_proc, aMJN_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aMJN_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = aMJN_think_proc;
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aMJN_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aMJN_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { aMJN_schedule_init_proc, aMJN_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}

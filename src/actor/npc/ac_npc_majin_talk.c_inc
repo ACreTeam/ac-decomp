@@ -1,0 +1,119 @@
+static void aMJN_set_zoomup_camera(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+    xyz_t pos;
+    s_xyz angle;
+
+    pos.x = actorx->world.position.x;
+    pos.y = actorx->world.position.y + actor->npc_class.eye_y - 23.0f;
+    pos.z = actorx->world.position.z;
+
+    angle.x = DEG2SHORT_ANGLE2(-157.5f);
+    angle.y = actorx->player_angle_y + DEG2SHORT_ANGLE(180.0f);
+    angle.z = DEG2SHORT_ANGLE2(0.0f);
+    
+    Camera2_change_priority(play, 0);
+    Camera2_request_main_demo_fromNowPos(play, &pos, &angle, 182.0f, 28.0f, 10.0f, 10.0f, 9);
+}
+
+static void aMJN_set_default_camera(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* playerx;
+    
+    Camera2_change_priority(play, 0);
+    playerx = GET_PLAYER_ACTOR_ACTOR(play);
+    if (playerx != NULL) {
+        Camera2_request_main_talk(play, playerx, (ACTOR*)actor, 9);
+    }
+}
+
+static void aMJN_chk_talk_demo_code(NPC_MAJIN_ACTOR* actor, GAME_PLAY* play) {
+    int demo_order3 = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 3);
+    int demo_order4 = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 4);
+
+    switch (demo_order3) {
+        case 1:
+            if (!actor->set_head_request) {
+                actor->set_head_request = TRUE;
+            }
+            break;
+        case 0xFF:
+            if (actor->set_head_request == TRUE) {
+                actor->set_head_request = FALSE;
+            }
+            break;
+        default:
+            if (actor->set_head_request == TRUE) {
+                xyz_t pos = *Camera2_getEyePos_p();
+
+                pos.y += -150.0f;
+                NPC_CLIP->set_head_request_act_proc((NPC_ACTOR*)actor, 4, aNPC_HEAD_TARGET_POS, NULL, &pos);
+                actor->npc_class.movement.mv_angl = 0;
+                actor->npc_class.movement.mv_add_angl = DEG2SHORT_ANGLE2(11.25f);
+            } else {
+                actor->npc_class.movement.mv_angl = actor->npc_class.actor_class.player_angle_y;
+                actor->npc_class.movement.mv_add_angl = DEG2SHORT_ANGLE2(11.25f);
+            }
+            break;
+    }
+
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 3, 0);
+
+    switch (demo_order4) {
+        case 1:
+            if (!actor->camera_zoomup) {
+                aMJN_set_zoomup_camera(actor, play);
+                actor->camera_zoomup = TRUE;
+            }
+            break;
+        case 0xFF:
+            if (actor->camera_zoomup == TRUE) {
+                aMJN_set_default_camera(actor, play);
+                actor->camera_zoomup = FALSE;
+            }
+            break;
+    }
+
+    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 4, 0);
+}
+
+static void aMJN_set_force_talk_info(ACTOR* actorx) {
+    static int msg_no[] = { 0x1B3B, 0x3A38, 0x3A42, 0x3A4C, 0x3B05 };
+    NPC_MAJIN_ACTOR* actor = (NPC_MAJIN_ACTOR*)actorx;
+
+    mDemo_Set_msg_num(msg_no[actor->talk_idx]);
+    mDemo_Set_talk_turn(TRUE);
+    mPlib_Set_able_hand_all_item_in_demo(TRUE);
+    mBGMPsComp_make_ps_quiet(0);
+}
+
+static void aMJN_force_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, aMJN_set_force_talk_info);
+}
+
+static int aMJN_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_MAJIN_ACTOR* actor = (NPC_MAJIN_ACTOR*)actorx;
+    int ret = FALSE;
+
+    if (actor->npc_class.draw.animation_id == aNPC_ANIM_APPEAR1 && actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        actor->npc_class.talk_info.default_turn_animation = aNPC_ANIM_WAIT_R1;
+        actor->npc_class.talk_info.default_animation = aNPC_ANIM_WAIT_R1;
+        actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+        mDemo_Set_ListenAble();
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aMJN_talk_end_chk(ACTOR* actorx, GAME* game) {
+    NPC_MAJIN_ACTOR* actor = (NPC_MAJIN_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    aMJN_chk_talk_demo_code(actor, play);
+    if (!mDemo_Check(mDemo_TYPE_SPEAK, actorx)) {
+        aMJN_setup_think_proc(actor, play, actor->next_think_idx);
+        ret = TRUE;
+    }
+
+    return ret;
+}
