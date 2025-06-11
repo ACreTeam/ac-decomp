@@ -1,0 +1,202 @@
+static void aMJN2_set_request_act(NPC_MAJIN2_ACTOR* actor) {
+    actor->npc_class.request.act_priority = 1;
+    actor->npc_class.request.act_idx = aNPC_ACT_SPECIAL;
+    actor->npc_class.request.act_type = aNPC_ACT_TYPE_SEARCH;
+}
+
+static void aMJN2_act_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.step = 0;
+}
+
+static void aMJN2_act_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = { aMJN2_act_init_proc, (aNPC_SUB_PROC)none_proc1, (aNPC_SUB_PROC)none_proc1 };
+
+    (*act_proc[type])(nactorx, play);
+}
+
+static int aMJN2_check_submenu(GAME_PLAY* play) {
+    int ret = FALSE;
+
+    if (chkTrigger(BUTTON_START) || mSM_CHECK_OPEN_MAP() == TRUE) {
+        ret = TRUE;
+    } else {
+        ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+        if (playerx != NULL) {
+            PLAYER_ACTOR* player = (PLAYER_ACTOR*)playerx;
+
+            if (player->a_btn_pressed == TRUE &&
+                ABS(DIFF_SHORT_ANGLE(playerx->shape_info.rotation.y, DEG2SHORT_ANGLE(-180.0f))) < DEG2SHORT_ANGLE2(45.0f)) {
+                switch (player->item_in_front) {
+                    case MESSAGE_BOARD0:
+                    case MESSAGE_BOARD1:
+                    case MAP_BOARD0:
+                    case MAP_BOARD1:
+                        ret = TRUE;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    return ret;
+}
+
+static void aMJN2_start_wait(NPC_MAJIN2_ACTOR* actor, GAME_PLAY* play) {
+    if (!mPlib_check_player_actor_main_index_OutDoorMove2((GAME*)play)) {
+        aMJN2_setup_think_proc(actor, play, aMJN2_THINK_CALL);
+    }
+}
+
+static void aMJN2_start_wait_st(NPC_MAJIN2_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (playerx != NULL && playerx->world.position.z > 970.0f) {
+        aMJN2_setup_think_proc(actor, play, aMJN2_THINK_CALL);
+    }
+}
+
+static void aMJN2_wait(NPC_MAJIN2_ACTOR* actor, GAME_PLAY* play) {
+    static int next_act_idx[] = { -1, aMJN2_THINK_FORCE_CALL, aMJN2_THINK_FORCE_CALL, aMJN2_THINK_FORCE_CALL_2, aMJN2_THINK_FORCE_CALL_2, aMJN2_THINK_FORCE_CALL_2 };
+    int reset_type = Common_Get(reset_type);
+
+    if (reset_type == 0) {
+        if (aMJN2_check_submenu(play) == TRUE) {
+            reset_type = 3;
+        } else if (GET_PLAYER_ACTOR_NOW()->excute_cancel_wade) {
+            reset_type = 2;
+        }
+    }
+
+    if (reset_type != 0 && mDemo_CAN_ACTOR_TALK((ACTOR*)actor)) {
+        aMJN2_setup_think_proc(actor, play, next_act_idx[reset_type]);
+    }
+}
+
+static void aMJN2_exit(NPC_MAJIN2_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        Actor_delete((ACTOR*)actor);
+    }
+}
+
+static void aMJN2_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_MAJIN2_ACTOR* actor = (NPC_MAJIN2_ACTOR*)nactorx;
+
+    if (nactorx->action.idx == aNPC_ACT_SPECIAL) {
+        actor->think_proc(actor, play);
+    } else if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        aMJN2_set_request_act(actor);
+    }
+}
+
+static void aMJN2_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static f32 def_posX[] = { 2220.0f, 2260.0f, 2220.0f, 2260.0f, 2220.0f };
+    static f32 def_posZ[] = { 1460.0f, 1460.0f, 1740.0f, 1740.0f, 1020.0f };
+    static s16 def_angl[] = { 0xD9F0, 0x2610, 0xD9F0, 0x2610, 0x4000 };
+    static int def_think_idx[] = { aMJN2_THINK_START_WAIT, aMJN2_THINK_START_WAIT, aMJN2_THINK_START_WAIT, aMJN2_THINK_START_WAIT, aMJN2_THINK_START_WAIT_ST };
+    NPC_MAJIN2_ACTOR* actor = (NPC_MAJIN2_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)nactorx;
+    int pos_idx;
+    
+    actor->npc_class.action.act_proc = aMJN2_act_proc;
+    aMJN2_set_request_act(actor);
+    actorx->status_data.weight = MASSTYPE_HEAVY;
+    Common_Set(reset_type, 0);
+    
+    if (play->block_table.block_z == 1) {
+        pos_idx = 4;
+    } else {
+        pos_idx = mHS_get_arrange_idx(Common_Get(player_no));
+    }
+
+    actorx->world.position.x = def_posX[pos_idx];
+    actorx->world.position.z = def_posZ[pos_idx];
+    actorx->shape_info.rotation.y = def_angl[pos_idx];
+    actorx->world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(actorx->world.position, 0.0f);
+    aMJN2_setup_think_proc(actor, play, def_think_idx[pos_idx]);
+}
+
+static void aMJN2_start_wait_init(NPC_MAJIN2_ACTOR* actor, GAME_PLAY* play) {
+    actor->npc_class.condition_info.hide_request = FALSE;
+    actor->npc_class.talk_info.default_turn_animation = aNPC_ANIM_WAIT_R1;
+    actor->npc_class.talk_info.default_animation = aNPC_ANIM_WAIT_R1;
+
+    eEC_CLIP->effect_make_proc(eEC_EFFECT_RESET_HOLE, ((ACTOR*)actor)->world.position, 3, ((ACTOR*)actor)->shape_info.rotation.y, (GAME*)play, RSV_NO, 1, 0);
+    if (CLIP(demo_clip2) != NULL && CLIP(demo_clip2)->type == mDemo_CLIP_TYPE_RESET_DEMO) {
+        ACTOR* demox = (ACTOR*)CLIP(demo_clip2)->demo_class;
+
+        if (demox != NULL) {
+            RESET_DEMO_ACTOR* reset_demo = (RESET_DEMO_ACTOR*)demox;
+
+            reset_demo->request_light = TRUE;
+        }
+    }
+}
+
+typedef void (*aMJN2_THINK_INIT_PROC)(NPC_MAJIN2_ACTOR* actor, GAME_PLAY* play);
+
+typedef struct {
+    aMJN2_THINK_PROC think_proc;
+    aMJN2_THINK_INIT_PROC think_init_proc;
+    aNPC_TALK_REQUEST_PROC talk_request_proc;
+    s8 norm_talk_idx;
+    s8 force_talk_idx;
+    u8 think_idx_when_talk_done;
+} aMJN2_think_data_c;
+
+static void aMJN2_setup_think_proc(NPC_MAJIN2_ACTOR* actor, GAME_PLAY* play, int think_idx) {
+    // clang-format off
+    static aMJN2_think_data_c dt_tbl[] = {
+        {aMJN2_start_wait, aMJN2_start_wait_init, (aNPC_TALK_REQUEST_PROC)none_proc1, 0, 0, aMJN2_THINK_START_WAIT},
+        {aMJN2_start_wait_st, aMJN2_start_wait_init, (aNPC_TALK_REQUEST_PROC)none_proc1, 0, 0, aMJN2_THINK_START_WAIT_ST},
+        {(aMJN2_THINK_PROC)none_proc1, (aMJN2_THINK_INIT_PROC)none_proc1, aMJN2_force_talk_request, -1, 0, aMJN2_THINK_WAIT},
+        {aMJN2_wait, (aMJN2_THINK_INIT_PROC)none_proc1, aMJN2_norm_talk_request, 0, -1, aMJN2_THINK_EXIT},
+        {(aMJN2_THINK_PROC)none_proc1, (aMJN2_THINK_INIT_PROC)none_proc1, aMJN2_force_talk_request, -1, 1, aMJN2_THINK_WAIT},
+        {(aMJN2_THINK_PROC)none_proc1, (aMJN2_THINK_INIT_PROC)none_proc1, aMJN2_force_talk_request, -1, 2, aMJN2_THINK_WAIT},
+        {aMJN2_exit, (aMJN2_THINK_INIT_PROC)none_proc1, (aNPC_TALK_REQUEST_PROC)none_proc1, 0, 0, aMJN2_THINK_EXIT},
+    };
+    // clang-format on
+
+    aMJN2_think_data_c* data_p = &dt_tbl[think_idx];
+
+    actor->think_idx = think_idx;
+    actor->think_proc = data_p->think_proc;
+    actor->npc_class.talk_info.talk_request_proc = data_p->talk_request_proc;
+    
+    if (data_p->norm_talk_idx >= 0) {
+        actor->norm_talk_idx = data_p->norm_talk_idx;
+    }
+
+    if (data_p->force_talk_idx >= 0) {
+        actor->force_talk_idx = data_p->force_talk_idx;
+    }
+    
+    actor->next_think_idx = data_p->think_idx_when_talk_done;
+    aMJN2_set_animation(actor, think_idx);
+    (*data_p->think_init_proc)(actor, play);
+}
+
+static void aMJN2_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aMJN2_think_init_proc, aMJN2_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aMJN2_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = aMJN2_think_proc;
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aMJN2_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aMJN2_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { aMJN2_schedule_init_proc, aMJN2_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}

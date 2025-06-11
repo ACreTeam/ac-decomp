@@ -226,7 +226,7 @@ static int mSM_check_open_map_new(GAME_PLAY* play) {
     int bx;
     int bz;
 
-    if (chkTrigger(mSM_MAP_BUTTON) && Common_Get(map_flag) == TRUE) {
+    if (mSM_CHECK_OPEN_MAP()) {
         open_map = TRUE;
     }
 

@@ -1,0 +1,94 @@
+static void aMJN2_wait_talk_proc(NPC_MAJIN2_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Get_msg_num(msg_p) == 0x2364 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aMJN2_change_talk_proc(actor, aMJN2_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aMJN2_change_talk_proc(NPC_MAJIN2_ACTOR* actor, int talk_idx) {
+    static aMJN2_TALK_PROC talk_proc[] = { aMJN2_wait_talk_proc, (aMJN2_TALK_PROC)none_proc1 };
+
+    actor->talk_proc = talk_proc[talk_idx];
+}
+
+typedef struct {
+    int msg_no;
+    aMJN2_TALK_PROC talk_proc;
+} aMJN2_talk_data_c;
+
+static void aMJN2_set_force_talk_info(ACTOR* actorx) {
+    static aMJN2_talk_data_c dt_tbl[] = {
+        { 0x235D, (aMJN2_TALK_PROC)none_proc1 },
+        { 0x235E, (aMJN2_TALK_PROC)none_proc1 },
+        { 0x235F, (aMJN2_TALK_PROC)none_proc1 },
+    };
+    NPC_MAJIN2_ACTOR* actor = (NPC_MAJIN2_ACTOR*)actorx;
+    aMJN2_talk_data_c* data_p = &dt_tbl[actor->force_talk_idx];
+
+    mDemo_Set_msg_num(data_p->msg_no);
+    mDemo_Set_talk_turn(TRUE);
+    actor->talk_proc = data_p->talk_proc;
+    if (actorx->player_distance_xz > 140.0f) {
+        mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+    }
+    mPlib_Set_able_hand_all_item_in_demo(TRUE);
+    mBGMPsComp_make_ps_quietField(0);
+    actor->next_think_idx = 3;
+}
+
+static void aMJN2_force_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, aMJN2_set_force_talk_info);
+}
+
+static void aMJN2_set_norm_talk_info(ACTOR* actorx) {
+    static aMJN2_talk_data_c dt_tbl[] = {
+        { 0x2360, aMJN2_wait_talk_proc },
+    };
+    NPC_MAJIN2_ACTOR* actor = (NPC_MAJIN2_ACTOR*)actorx;
+    aMJN2_talk_data_c* data_p = &dt_tbl[actor->norm_talk_idx];
+
+    mDemo_Set_msg_num(data_p->msg_no);
+    mDemo_Set_talk_turn(TRUE);
+    actor->talk_proc = data_p->talk_proc;
+    mPlib_Set_able_hand_all_item_in_demo(TRUE);
+    mBGMPsComp_make_ps_quiet(0);
+    actor->next_think_idx = 6;
+}
+
+static void aMJN2_norm_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aMJN2_set_norm_talk_info);
+}
+
+static int aMJN2_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_MAJIN2_ACTOR* actor = (NPC_MAJIN2_ACTOR*)actorx;
+
+    actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aMJN2_talk_end_chk(ACTOR* actorx, GAME* game) {
+    NPC_MAJIN2_ACTOR* actor = (NPC_MAJIN2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    actor->talk_proc(actor, play);
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        switch (actor->next_think_idx) {
+            case 3:
+                mBGMPsComp_delete_ps_quietField();
+                break;
+        }
+        
+        Common_Set(reset_type, 0);
+        aMJN2_setup_think_proc(actor, play, actor->next_think_idx);
+        ret = TRUE;
+    }
+
+    return ret;
+}

@@ -135,6 +135,8 @@ enum {
     mSM_BD_OPEN_NUM
 };
 
+#define mSM_CHECK_OPEN_MAP() (chkTrigger(mSM_MAP_BUTTON) && Common_Get(map_flag) == TRUE)
+
 typedef struct submenu_item_s {
     mActor_name_t item;
     u8 slot_no;
