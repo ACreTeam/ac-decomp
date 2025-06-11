@@ -410,7 +410,7 @@ extern void DisplayList_initialize(GRAPH* graph, u8 clear_r, u8 clear_g, u8 clea
     mFont_Main_start(graph);
 }
 
-extern void fade_rgba8888_draw(Gfx** gfxp, u32 color) {
+extern void fade_rgba8888_draw(Gfx** gfxp, u32 alpha) {
     static Gfx fade_gfx[6] = {
         gsDPPipeSync(),
         gsDPSetOtherMode(G_AD_DISABLE | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE |
@@ -434,10 +434,10 @@ extern void fade_rgba8888_draw(Gfx** gfxp, u32 color) {
 
     Gfx* gfx;
 
-    if ((color & 0xFF) == 255) {
-        u32 r = ((color >> 16) & 0xF800);
-        u32 g = ((color >> 13) & 0x7FFC0);
-        u32 b = (color >> 10) & 0x7FFFFF;
+    if ((alpha & 0xFF) == 255) {
+        u32 r = ((alpha >> 16) & 0xF800);
+        u32 g = ((alpha >> 13) & 0x7FFC0);
+        u32 b = (alpha >> 10) & 0x7FFFFF;
         u32 c = ((r | g | b | 1));
         u32 f = c | ((c & 0xFFFF) << 16);
 
@@ -445,16 +445,16 @@ extern void fade_rgba8888_draw(Gfx** gfxp, u32 color) {
         gDPSetFillColor(gfx, f);
         gSPDisplayList(gfx + 1, fill_gfx);
         *gfxp = gfx + 2;
-    } else if ((color & 0xFF) != 0) {
+    } else if ((alpha & 0xFF) != 0) {
         gfx = *gfxp;
-        gDPSetColor(gfx, G_SETPRIMCOLOR, color);
+        gDPSetColor(gfx, G_SETPRIMCOLOR, alpha);
         gSPDisplayList(gfx + 1, fade_gfx);
         *gfxp = gfx + 2;
     }
 }
 
-extern void fade_black_draw(Gfx** gfx, u32 color) {
-    fade_rgba8888_draw(gfx, color);
+extern void fade_black_draw(Gfx** gfx, u32 alpha) {
+    fade_rgba8888_draw(gfx, alpha);
 }
 
 extern Gfx* gfx_gDPFillRectangle1(Gfx* gfx, u32 ulx, u32 uly, u32 lrx, u32 lry) {

@@ -282,6 +282,7 @@ typedef enum audio_sound_effects {
 
     NA_SE_43D = 0x43D,
 
+    NA_SE_43E = 0x43E,
     NA_SE_43F = 0x43F,
 
     NA_SE_ROD_STROKE_SMALL = 0x445,
