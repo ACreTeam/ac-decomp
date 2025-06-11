@@ -1,6 +1,9 @@
 static void aNSS_set_animation(ACTOR* actorx, int action) {
-    static int seq_no[] = { 1, 1, 0x36, 1, 0x3B, 0x36, 1, 0x3B, 1, 1 };
-    NPC_CLIP->animation_init_proc(actorx, seq_no[action], 0);
+    static int seq_no[] = {
+        aNPC_ANIM_WALK1,   aNPC_ANIM_WALK1, aNPC_ANIM_OPEN_D1,    aNPC_ANIM_WALK1, aNPC_ANIM_TO_DECK_D1,
+        aNPC_ANIM_OPEN_D1, aNPC_ANIM_WALK1, aNPC_ANIM_TO_DECK_D1, aNPC_ANIM_WALK1, aNPC_ANIM_WALK1,
+    };
+    NPC_CLIP->animation_init_proc(actorx, seq_no[action], FALSE);
 }
 
 static void aNSS_set_walk_spd(NPC_SHASHO_ACTOR* shasho_actor) {
