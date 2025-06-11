@@ -1,0 +1,175 @@
+static int aMJN3_check_good_word(NPC_MAJIN3_ACTOR* actor) {
+    u8 word[mString_DEFAULT_STR_SIZE];
+    int ret = FALSE;
+
+    mString_Load_StringFromRom(word, sizeof(word), mString_RESETTI_GOOD_WORD_START + actor->reply_idx);
+    if (mem_cmp(actor->reply, word, sizeof(word)) == TRUE) {
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static int aMJN3_check_ng_word(NPC_MAJIN3_ACTOR* actor) {
+    static int chg_length[] = { 1, 2, 4, 8, 10, 17, 24, 28, -1 };
+    u8 word[mString_DEFAULT_STR_SIZE];
+    u32 len = 2;
+    u8* reply_p;
+    int* chg_length_p = chg_length;
+    int i;
+    int j;
+    int ng_word_idx = mString_RESETTI_NG_WORD_START;
+
+    // Loop through every "ng" (no good?) word
+    for (i = 0; i < (mString_RESETTI_NG_WORD_END - mString_RESETTI_NG_WORD_START) + 1; i++) {
+        // check if this index crosses the boundary into the next length of ng strings
+        // ng strings are grouped in data by length
+        if (i == *chg_length_p) {
+            len++;
+            chg_length_p++;
+        }
+
+        mString_Load_StringFromRom(word, sizeof(word), ng_word_idx);
+        reply_p = actor->reply;
+        // check the entire reply string for occurrences of the ng string
+        for (j = (mString_DEFAULT_STR_SIZE + 1) - len; j != 0; j--) {
+            if (mem_cmp(reply_p, word, len) == TRUE) {
+                return TRUE;
+            }
+
+            reply_p++;
+        }
+
+        ng_word_idx++;
+    }
+
+    return FALSE;
+}
+
+static int aMJN3_check_word(NPC_MAJIN3_ACTOR* actor) {
+    int ret = aMJN3_WORD_WRONG;
+
+    if (aMJN3_check_good_word(actor) == TRUE) {
+        ret = aMJN3_WORD_GOOD;
+    } else if (aMJN3_check_ng_word(actor) == TRUE) {
+        ret = aMJN3_WORD_NG;
+    }
+
+    return ret;
+}
+
+static void aMJN3_msg_win_close_wait_talk_proc(NPC_MAJIN3_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0) {
+        mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1();
+        aMJN3_change_talk_proc(actor, aMJN3_TALK_MENU_OPEN_WAIT);
+    }
+}
+
+static void aMJN3_menu_open_wait_talk_proc(NPC_MAJIN3_ACTOR* actor, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
+        Submenu* submenu = &play->submenu;
+
+        submenu->start_refuse = FALSE;
+        mSM_open_submenu_new(submenu, mSM_OVL_LEDIT, mLE_TYPE_RESET, 0, actor->reply);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        aMJN3_change_talk_proc(actor, aMJN3_TALK_MENU_CLOSE_WAIT);
+    }
+}
+
+static void aMJN3_menu_close_wait_talk_proc(NPC_MAJIN3_ACTOR* actor, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+
+    if (!submenu->open_flag) {
+        mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+        submenu->start_refuse = TRUE;
+        mMsg_request_main_appear_wait_type1(msg_p);
+        aMJN3_change_talk_proc(actor, aMJN3_TALK_MSG_WIN_OPEN_WAIT);
+    }
+}
+
+static void aMJN3_msg_win_open_wait_talk_proc(NPC_MAJIN3_ACTOR* actor, GAME_PLAY* play) {
+    static int msg_no[] = { 0x23EC, 0x23EF, 0x23EE };
+    static int next_talk_idx[] = { aMJN3_TALK_END_WAIT, aMJN3_TALK_MSG_WIN_CLOSE_WAIT, aMJN3_TALK_MSG_WIN_CLOSE_WAIT };
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_not_series_main_wait(msg_p) == TRUE) {
+        int idx = aMJN3_check_word(actor);
+
+        mMsg_ChangeMsgData(msg_p, msg_no[idx]);
+        aMJN3_change_talk_proc(actor, next_talk_idx[idx]);
+    }
+}
+
+static void aMJN3_change_talk_proc(NPC_MAJIN3_ACTOR* actor, int talk_idx) {
+    // clang-format off
+    static aMJN3_TALK_PROC talk_proc[] = {
+        aMJN3_msg_win_close_wait_talk_proc,
+        aMJN3_menu_open_wait_talk_proc,
+        aMJN3_menu_close_wait_talk_proc,
+        aMJN3_msg_win_open_wait_talk_proc,
+        (aMJN3_TALK_PROC)none_proc1,
+    };
+    // clang-format on
+
+    actor->talk_proc = talk_proc[talk_idx];
+}
+
+typedef struct {
+    int msg_no;
+    aMJN3_TALK_PROC talk_proc;
+} aMJN3_talk_data_c;
+
+static void aMJN3_set_force_talk_info(ACTOR* actorx) {
+    static aMJN3_talk_data_c dt_tbl[] = {
+        { 0x23E6, aMJN3_msg_win_close_wait_talk_proc },
+    };
+    NPC_MAJIN3_ACTOR* actor = (NPC_MAJIN3_ACTOR*)actorx;
+    aMJN3_talk_data_c* data_p = &dt_tbl[actor->talk_idx];
+
+    mDemo_Set_msg_num(data_p->msg_no);
+    mDemo_Set_talk_turn(TRUE);
+    actor->talk_proc = data_p->talk_proc;
+    mPlib_Set_able_hand_all_item_in_demo(TRUE);
+    mBGMPsComp_make_ps_quiet(0);
+}
+
+static void aMJN3_force_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, aMJN3_set_force_talk_info);
+}
+
+static int aMJN3_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_MAJIN3_ACTOR* actor = (NPC_MAJIN3_ACTOR*)actorx;
+    int ret = FALSE;
+
+    if (actor->npc_class.draw.animation_id == aNPC_ANIM_APPEAR1 && actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        u8 str[mString_DEFAULT_STR_SIZE];
+
+        actor->npc_class.talk_info.default_turn_animation = aNPC_ANIM_WAIT_R1;
+        actor->npc_class.talk_info.default_animation = aNPC_ANIM_WAIT_R1;
+        actor->reply_idx = RANDOM((mString_RESETTI_GOOD_WORD_END - mString_RESETTI_GOOD_WORD_START) + 1);
+        mString_Load_StringFromRom(str, sizeof(str), mString_RESETTI_GOOD_WORD_START + actor->reply_idx);
+        mMsg_SET_ITEM_STR(mMsg_FREE_STR0, str, sizeof(str));
+        actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+        mDemo_Set_ListenAble();
+        ret = TRUE;
+    }
+    
+    return ret;
+}
+
+static int aMJN3_talk_end_chk(ACTOR* actorx, GAME* game) {
+    NPC_MAJIN3_ACTOR* actor = (NPC_MAJIN3_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    actor->talk_proc(actor, play);
+    if (!mDemo_Check(mDemo_TYPE_SPEAK, actorx)) {
+        aMJN3_setup_think_proc(actor, play, actor->next_think_idx);
+        ret = TRUE;
+    }
+
+    return ret;
+}

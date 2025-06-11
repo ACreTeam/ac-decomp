@@ -1119,7 +1119,7 @@ config.libs = [
             Object(NonMatching, "actor/npc/ac_npc_hem.c"),
             Object(Matching, "actor/npc/ac_npc_majin.c"),
             Object(Matching, "actor/npc/ac_npc_majin2.c"),
-            Object(NonMatching, "actor/npc/ac_npc_majin3.c"),
+            Object(Matching, "actor/npc/ac_npc_majin3.c"),
             Object(NonMatching, "actor/npc/ac_npc_majin4.c"),
             Object(Matching, "actor/npc/ac_npc_majin5.c"),
             Object(Matching, "actor/npc/ac_npc_mamedanuki.c"),
