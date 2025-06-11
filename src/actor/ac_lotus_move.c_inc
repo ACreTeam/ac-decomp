@@ -13,7 +13,7 @@ static void aLOT_wait(STRUCTURE_ACTOR* actorx, GAME_PLAY* play) {
     lotus = (LOTUS_ACTOR*)actorx;
     comeback_status = mPlib_Check_UKI_COMEBACK_STATUS();
 
-    if (comeback_status == FALSE && (pipeinfo.collision_obj.collision_flags0 & 2) != 0 &&
+    if (comeback_status == FALSE && ClObj_DID_COLLIDE(pipeinfo.collision_obj) &&
         pipeinfo.collision_obj.collided_actor != NULL && pipeinfo.collision_obj.collided_actor->id == mAc_PROFILE_UKI) {
         lotus->structure_class.keyframe.frame_control.speed = 2.0f;
         aLOT_setup_action(lotus, aLOT_ACTION_SHAKE);

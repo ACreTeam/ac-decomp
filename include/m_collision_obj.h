@@ -18,7 +18,31 @@ enum collision_type {
     ClObj_TYPE_NUM
 };
 
-#define ClObj_FLAG_COLLIDED (1 << 1)
+#define CollisionCheck_FLAG_SKIP (1 << 0)
+
+#define ClObj_GROUP_PLAYER (1 << 3) // 0x08
+#define ClObj_GROUP_2 (1 << 4) // 0x10
+#define ClObj_GROUP_3 (1 << 5) // 0x20
+#define ClObj_GROUP_ALL (ClObj_GROUP_PLAYER | ClObj_GROUP_2 | ClObj_GROUP_3) // 0x38
+
+#define ClObj_FLAG_CHECK (1 << 0) // 0x01
+#define ClObj_FLAG_COLLIDED (1 << 1) // 0x02
+#define ClObj_FLAG_DONT_UPDATE_POS (1 << 2) // 0x04
+#define ClObj_FLAG_COLLIDE_PLAYER ClObj_GROUP_PLAYER
+#define ClObj_FLAG_COLLIDE_GROUP_2 ClObj_GROUP_2
+#define ClObj_FLAG_COLLIDE_GROUP_3 ClObj_GROUP_3
+#define ClObj_FLAG_COLLISION_PRIORITY (1 << 6)
+#define ClObj_FLAG_7 (1 << 7)
+
+#define ClObj_FLAG2_PLAYER_WAS_HIT (1 << 0) // 0x01
+#define ClObj_FLAG2_OCC_CHECK (1 << 1) // 0x02
+#define ClObj_FLAG2_TRIS_HIT (1 << 2) // 0x04
+#define ClObj_FLAG2_IS_PLAYER ClObj_GROUP_PLAYER
+#define ClObj_FLAG2_IS_GROUP_2 ClObj_GROUP_2
+#define ClObj_FLAG2_IS_GROUP_3 ClObj_GROUP_3
+
+#define ClObjElem_FLAG_CHECK (1 << 0)
+#define ClObjElem_FLAG_HIT (1 << 1)
 
 #define ClObj_DID_COLLIDE(obj) ((obj).collision_flags0 & ClObj_FLAG_COLLIDED)
 

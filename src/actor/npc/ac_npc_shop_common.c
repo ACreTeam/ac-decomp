@@ -691,7 +691,7 @@ static void aNSC_set_buy_sum_str(mActor_name_t item, u32 p2) {
 static int aNSC_decide_next_move_act(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) {
     int res;
     ACTOR* player;
-    if ((shop_common->npc_class.collision.pipe.collision_obj.collision_flags0 & 0x2) != 0) {
+    if (ClObj_DID_COLLIDE(shop_common->npc_class.collision.pipe.collision_obj)) {
         return aNSC_ACTION_WAIT;
     } else {
         player = GET_PLAYER_ACTOR_ACTOR(play);
@@ -736,11 +736,11 @@ static int aNSC_decide_next_move_act(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PL
 
     if (player == NULL) {
         res = shop_common->action;
-    } else if ((shop_common->npc_class.collision.pipe.collision_obj.collision_flags0 & 0x2) != 0 &&
+    } else if (ClObj_DID_COLLIDE(shop_common->npc_class.collision.pipe.collision_obj) &&
                shop_common->npc_class.collision.pipe.collision_obj.collided_actor == player) {
         res = aNSC_ACTION_WAIT;
     } else if (talk_actor != NULL && talk_actor != (ACTOR*)shop_common && mDemo_Check_ListenAble() == TRUE &&
-               ((shop_common->npc_class.collision.pipe.collision_obj.collision_flags0 & 2) != 0 ||
+               (ClObj_DID_COLLIDE(shop_common->npc_class.collision.pipe.collision_obj) ||
                 shop_common->action == aNSC_ACTION_WAIT)) {
         res = aNSC_ACTION_WAIT;
     } else if (player->world.position.z < 120.0f && (shop_common->zone == 2 || shop_common->zone == 3)) {

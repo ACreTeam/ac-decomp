@@ -567,7 +567,7 @@ static int aNPC_avoid_obstacle(NPC_ACTOR* nactorx, GAME_PLAY* play) {
 
     if ((nactorx->think.interrupt_flags & aNPC_THINK_INTERRUPT_OBSTACLE) != 0) {
         if (ClObj_DID_COLLIDE(nactorx->collision.pipe.collision_obj)) {
-            if ((nactorx->collision.pipe.collision_obj.collision_flags1 & 1)) {
+            if ((nactorx->collision.pipe.collision_obj.collision_flags1 & ClObj_FLAG2_PLAYER_WAS_HIT)) {
                 s16 d_angle = nactorx->actor_class.player_angle_y - nactorx->actor_class.shape_info.rotation.y;
 
                 if (ABS(d_angle) < DEG2SHORT_ANGLE2(45.0f)) {

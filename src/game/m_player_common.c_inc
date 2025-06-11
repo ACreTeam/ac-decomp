@@ -2045,14 +2045,14 @@ static int Player_actor_Check_OBJtoLine_forItem_axe(ACTOR* actorx) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     ClObjTris_c* axe_tris_p = &player->item_axe_tris;
 
-    return axe_tris_p->collision_obj.collision_flags1 & (1 << 2);
+    return axe_tris_p->collision_obj.collision_flags1 & ClObj_FLAG2_TRIS_HIT;
 }
 
 static int Player_actor_Check_OBJtoLine_forItem_net(ACTOR* actorx, ACTOR** hit_actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
     ClObjTris_c* net_tris_p = &player->item_net_tris;
 
-    if ((net_tris_p->collision_obj.collision_flags1 & (1 << 2)) == 0) {
+    if ((net_tris_p->collision_obj.collision_flags1 & ClObj_FLAG2_TRIS_HIT) == 0) {
         *hit_actor = NULL;
         return FALSE;
     } else {
