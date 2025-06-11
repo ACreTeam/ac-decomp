@@ -65,7 +65,7 @@ static void aNSS_enter_back_door(ACTOR* actorx, GAME* game) {
 
     if (shasho_actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
         aNSS_setupAction(actorx, game, shasho_actor->next_action);
-        if (shasho_actor->action == 8)
+        if (shasho_actor->action == aNSS_ACT_EXIT_TURN_BACK_DECK)
             shasho_actor->npc_class.draw.main_animation.keyframe.morph_counter = 0.0;
     } else {
         if (cKF_FrameControl_passCheck_now(&shasho_actor->npc_class.draw.main_animation.keyframe.frame_control,

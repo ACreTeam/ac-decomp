@@ -38,7 +38,7 @@ static void aMJN2_set_force_talk_info(ACTOR* actorx) {
     }
     mPlib_Set_able_hand_all_item_in_demo(TRUE);
     mBGMPsComp_make_ps_quietField(0);
-    actor->next_think_idx = 3;
+    actor->next_think_idx = aMJN2_THINK_WAIT;
 }
 
 static void aMJN2_force_talk_request(ACTOR* actorx, GAME* game) {
@@ -57,7 +57,7 @@ static void aMJN2_set_norm_talk_info(ACTOR* actorx) {
     actor->talk_proc = data_p->talk_proc;
     mPlib_Set_able_hand_all_item_in_demo(TRUE);
     mBGMPsComp_make_ps_quiet(0);
-    actor->next_think_idx = 6;
+    actor->next_think_idx = aMJN2_THINK_EXIT;
 }
 
 static void aMJN2_norm_talk_request(ACTOR* actorx, GAME* game) {
@@ -80,7 +80,7 @@ static int aMJN2_talk_end_chk(ACTOR* actorx, GAME* game) {
     actor->talk_proc(actor, play);
     if (mDemo_CAN_ACTOR_TALK(actorx)) {
         switch (actor->next_think_idx) {
-            case 3:
+            case aMJN2_THINK_WAIT:
                 mBGMPsComp_delete_ps_quietField();
                 break;
         }
