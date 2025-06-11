@@ -9,7 +9,6 @@
 #include "m_actor_type.h"
 #include "m_common_data.h"
 #include "m_lib.h"
-#include "m_play_h.h"
 
 enum {
     aNSS_ACT_ENTER_WALK_BACK_DECK,
@@ -56,12 +55,21 @@ static void aNSS_exit_walk_back_deck_init(NPC_SHASHO_ACTOR* shasho_actor, GAME_P
 static void aNSS_init_proc(ACTOR* actorx, GAME* game, int action);
 static void aNSS_setupAction(ACTOR* actorx, GAME* game, int action);
 
+// clang-format off
 ACTOR_PROFILE Npc_Shasho_Profile = {
-    mAc_PROFILE_NPC_SHASHO, ACTOR_PART_NPC,      ACTOR_STATE_NO_MOVE_WHILE_CULLED | ACTOR_STATE_NO_DRAW_WHILE_CULLED,
-    SP_NPC_SASHO,           ACTOR_OBJ_BANK_KEEP, sizeof(NPC_SHASHO_ACTOR),
-    &aNSS_actor_ct,         &aNSS_actor_dt,      &aNSS_actor_init,
-    mActor_NONE_PROC1,      &aNSS_actor_save
+    mAc_PROFILE_NPC_SHASHO,
+    ACTOR_PART_NPC,
+    ACTOR_STATE_NO_MOVE_WHILE_CULLED | ACTOR_STATE_NO_DRAW_WHILE_CULLED,
+    SP_NPC_SASHO,
+    ACTOR_OBJ_BANK_KEEP,
+    sizeof(NPC_SHASHO_ACTOR),
+    &aNSS_actor_ct,
+    &aNSS_actor_dt,
+    &aNSS_actor_init,
+    mActor_NONE_PROC1,
+    &aNSS_actor_save,
 };
+// clang-format on
 
 static void aNSS_actor_ct(ACTOR* actorx, GAME* game) {
     static aNPC_ct_data_c ct_data = {
@@ -96,7 +104,7 @@ static void aNSS_actor_ct(ACTOR* actorx, GAME* game) {
 }
 
 static void aNSS_actor_save(ACTOR* actorx, GAME* game) {
-    (*Common_Get(clip).npc_clip->save_proc)(actorx, game);
+    NPC_CLIP->save_proc(actorx, game);
 }
 
 static void aNSS_actor_dt(ACTOR* actorx, GAME* game) {
@@ -108,11 +116,11 @@ static void aNSS_actor_dt(ACTOR* actorx, GAME* game) {
         mask_cat2_actor->sasho_actor = NULL;
     }
 
-    (*Common_Get(clip).npc_clip->dt_proc)(actorx, game);
+    NPC_CLIP->dt_proc(actorx, game);
 }
 
 static void aNSS_actor_init(ACTOR* actorx, GAME* game) {
-    (*Common_Get(clip).npc_clip->init_proc)(actorx, game);
+    NPC_CLIP->init_proc(actorx, game);
 }
 
 static void aNSS_actor_draw(ACTOR* actorx, GAME* game) {

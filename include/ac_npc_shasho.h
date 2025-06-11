@@ -19,7 +19,7 @@ typedef void (*aNSS_MOVE_PROC)(NPC_SHASHO_ACTOR*, GAME*);
 struct npc_shasho_s {
     /* 0x000 */ NPC_ACTOR npc_class;
     /* 0x994 */ int action;
-    /* 0x998 */ int unk_move_action;
+    /* 0x998 */ int next_action;
     /* 0x99C */ aNSS_PROC talk_action;
     /* 0x9A0 */ ACTOR* train_door_actor;
 };
