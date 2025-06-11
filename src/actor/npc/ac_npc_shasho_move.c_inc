@@ -1,0 +1,205 @@
+static void aNSS_set_animation(ACTOR* actorx, int action) {
+    static int seq_no[] = { 1, 1, 0x36, 1, 0x3B, 0x36, 1, 0x3B, 1, 1 };
+    NPC_CLIP->animation_init_proc(actorx, seq_no[action], 0);
+}
+
+static void aNSS_set_walk_spd(NPC_SHASHO_ACTOR* shasho_actor) {
+    shasho_actor->npc_class.movement.speed.max_speed = 1.0;
+    shasho_actor->npc_class.movement.speed.acceleration = 0.1;
+    shasho_actor->npc_class.movement.speed.deceleration = 0.2;
+}
+
+static void aNSS_set_stop_spd(NPC_SHASHO_ACTOR* shasho_actor) {
+    shasho_actor->npc_class.actor_class.speed = 0.0;
+    shasho_actor->npc_class.movement.speed.max_speed = 0.0;
+    shasho_actor->npc_class.movement.speed.acceleration = 0.0;
+    shasho_actor->npc_class.movement.speed.deceleration = 0.0;
+}
+
+static void aNSS_set_door_SE(NPC_SHASHO_ACTOR* shasho_actor) {
+    static f32 chk_pat[] = { 2.0f, 27.0f };
+    static u16 se_no[] = { NA_SE_TRAINDOOR0, NA_SE_TRAINDOOR1 };
+    static xyz_t front_door_pos = { 140.0f, 0.0f, 350.0f };
+    int i;
+
+    for (i = 0; i < 2; i++) {
+        if (cKF_FrameControl_passCheck_now(&shasho_actor->npc_class.draw.main_animation.keyframe.frame_control,
+                                           chk_pat[i])) {
+            sAdo_OngenTrgStart(se_no[i], &front_door_pos);
+            break;
+        }
+    }
+}
+
+static void aNSS_enter_walk_back_deck(ACTOR* actorx, GAME* game) {
+    NPC_SHASHO_ACTOR* shasho_actor = (NPC_SHASHO_ACTOR*)actorx;
+
+    if (actorx->world.position.x > 140.0f)
+        aNSS_setupAction(actorx, game, aNSS_ACT_ENTER_TURN_BACK_DECK);
+}
+
+static void aNSS_enter_turn_back_deck(ACTOR* actorx, GAME* game) {
+    NPC_SHASHO_ACTOR* shasho_actor = (NPC_SHASHO_ACTOR*)actorx;
+    if (chase_angle(&actorx->shape_info.rotation.y, 0, 0x600) == TRUE) {
+        aNSS_setupAction(actorx, game, aNSS_ACT_ENTER_BACK_DOOR);
+
+        shasho_actor->npc_class.draw.main_animation.keyframe.morph_counter = 0.0f;
+    }
+
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static void aNSS_enter_back_door(ACTOR* actorx, GAME* game) {
+    TRAINDOOR_ACTOR* train_door_actor;
+    NPC_SHASHO_ACTOR* shasho_actor = (NPC_SHASHO_ACTOR*)actorx;
+
+    if (actorx->world.position.z < 130.0f) {
+        actorx->shape_info.rotation.y = 0;
+        actorx->world.angle.y = 0;
+        actorx->world.position.x = 140.0f;
+        actorx->world.position.z = 130.0f;
+    }
+
+    if (shasho_actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        aNSS_setupAction(actorx, game, shasho_actor->unk_move_action);
+        if (shasho_actor->action == 8)
+            shasho_actor->npc_class.draw.main_animation.keyframe.morph_counter = 0.0;
+    } else {
+        if (cKF_FrameControl_passCheck_now(&shasho_actor->npc_class.draw.main_animation.keyframe.frame_control,
+                                           20.0f) == TRUE) {
+            train_door_actor = (TRAINDOOR_ACTOR*)shasho_actor->train_door_actor;
+            train_door_actor->open_flag = TRUE;
+        }
+    }
+}
+
+static void aNSS_walk_to_front_door(ACTOR* actorx, GAME* game) {
+    if (actorx->world.position.z > 350.0f) {
+        actorx->world.position.z = 350.0f;
+        aNSS_setupAction(actorx, game, aNSS_ACT_EXIT_FRONT_DOOR);
+    }
+}
+
+static void aNSS_exit_front_door(ACTOR* actorx, GAME* game) {
+    NPC_SHASHO_ACTOR* shasho_actor = (NPC_SHASHO_ACTOR*)actorx;
+
+    if (shasho_actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+        if (shasho_actor->unk_move_action == -1) {
+            shasho_actor->action = -1;
+        } else {
+            aNSS_setupAction(actorx, game, shasho_actor->unk_move_action);
+        }
+    } else {
+        aNSS_set_door_SE(shasho_actor);
+    }
+}
+
+static void aNSS_walk_to_back_door(ACTOR* actorx, GAME* game) {
+    NPC_SHASHO_ACTOR* shasho_actor = (NPC_SHASHO_ACTOR*)actorx;
+
+    if (actorx->world.position.z < 130.0f) {
+        actorx->world.position.z = 130.0f;
+        aNSS_setupAction(actorx, game, aNSS_ACT_ENTER_BACK_DOOR2);
+    }
+}
+
+static void aNSS_exit_turn_back_deck(ACTOR* actorx, GAME* game) {
+    NPC_SHASHO_ACTOR* shasho_actor = (NPC_SHASHO_ACTOR*)actorx;
+
+    if (actorx->world.position.z > 70.0f) {
+        actorx->shape_info.rotation.y = 0x6000;
+        actorx->world.angle.y = 0x6000;
+        actorx->world.position.x = 150.0f;
+        actorx->world.position.z = 70.0f;
+    }
+
+    if (chase_angle(&actorx->shape_info.rotation.y, DEG2SHORT_ANGLE(-90.0f), 0x600) == TRUE) {
+        aNSS_setupAction(actorx, game, aNSS_ACT_EXIT_WALK_BACK_DECK);
+    }
+
+    actorx->world.angle.y = actorx->shape_info.rotation.y;
+}
+
+static void aNSS_exit_walk_back_deck(ACTOR* actorx, GAME* game) {
+    NPC_SHASHO_ACTOR* shasho_actor = (NPC_SHASHO_ACTOR*)actorx;
+
+    if (!(actorx->world.position.x < 100.0f))
+        return;
+
+    shasho_actor->action = -1;
+}
+
+static void aNSS_enter_walk_back_deck_init(NPC_SHASHO_ACTOR* shasho_actor, GAME_PLAY* game_play) {
+    aNSS_set_walk_spd(shasho_actor);
+}
+
+static void aNSS_enter_turn_back_deck_init(NPC_SHASHO_ACTOR* shasho_actor, GAME_PLAY* game_play) {
+    aNSS_set_walk_spd(shasho_actor);
+}
+
+static void aNSS_enter_back_door_init(NPC_SHASHO_ACTOR* shasho_actor, GAME_PLAY* game_play) {
+    aNSS_set_stop_spd(shasho_actor);
+    shasho_actor->unk_move_action = 0x3;
+}
+
+static void aNSS_walk_to_front_door_init(NPC_SHASHO_ACTOR* shasho_actor, GAME_PLAY* game_play) {
+    aNSS_set_walk_spd(shasho_actor);
+}
+
+static void aNSS_exit_front_door_init(NPC_SHASHO_ACTOR* shasho_actor, GAME_PLAY* game_play) {
+    aNSS_set_walk_spd(shasho_actor);
+    shasho_actor->unk_move_action = -1;
+}
+
+static void aNSS_enter_front_door_init(NPC_SHASHO_ACTOR* shasho_actor, GAME_PLAY* game_play) {
+    aNSS_set_stop_spd(shasho_actor);
+    shasho_actor->unk_move_action = 0x6;
+}
+
+static void aNSS_exit_back_door_init(NPC_SHASHO_ACTOR* shasho_actor, GAME_PLAY* game_play) {
+    aNSS_set_stop_spd(shasho_actor);
+    shasho_actor->unk_move_action = 0x8;
+}
+
+static void aNSS_exit_walk_back_deck_init(NPC_SHASHO_ACTOR* shasho_actor, GAME_PLAY* game_play) {
+    aNSS_set_walk_spd(shasho_actor);
+}
+
+static void aNSS_init_proc(ACTOR* actorx, GAME* game, int action) {
+    static aNSS_INIT_PROC init_proc[] = { &aNSS_enter_walk_back_deck_init, &aNSS_enter_turn_back_deck_init,
+                                          &aNSS_enter_back_door_init,      &aNSS_walk_to_front_door_init,
+                                          &aNSS_exit_front_door_init,      &aNSS_enter_front_door_init,
+                                          &aNSS_walk_to_front_door_init,   &aNSS_exit_back_door_init,
+                                          (aNSS_INIT_PROC)&none_proc1,     &aNSS_exit_walk_back_deck_init };
+
+    NPC_SHASHO_ACTOR* sasho_actor = (NPC_SHASHO_ACTOR*)actorx;
+    GAME_PLAY* game_play = (GAME_PLAY*)game;
+    init_proc[action](sasho_actor, game_play);
+}
+
+static void aNSS_setupAction(ACTOR* actorx, GAME* game, int action) {
+    static aNSS_PROC process[] = { &aNSS_enter_walk_back_deck, &aNSS_enter_turn_back_deck, &aNSS_enter_back_door,
+                                   &aNSS_walk_to_front_door,   &aNSS_exit_front_door,      &aNSS_exit_front_door,
+                                   &aNSS_walk_to_back_door,    &aNSS_enter_back_door,      &aNSS_exit_turn_back_deck,
+                                   &aNSS_exit_walk_back_deck };
+
+    NPC_SHASHO_ACTOR* sasho_actor = (NPC_SHASHO_ACTOR*)actorx;
+    GAME_PLAY* game_play = (GAME_PLAY*)game;
+
+    sasho_actor->action = action;
+    sasho_actor->talk_action = process[action];
+
+    aNSS_set_animation(actorx, action);
+    aNSS_init_proc(actorx, game, action);
+}
+
+static void aNSS_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_SHASHO_ACTOR* shasho_actor = (NPC_SHASHO_ACTOR*)actorx;
+
+    NPC_CLIP->move_before_proc(actorx, game);
+    shasho_actor->talk_action(&shasho_actor->npc_class.actor_class, game);
+    NPC_CLIP->move_after_proc(actorx, game);
+
+    if (shasho_actor->action == -1)
+        Actor_delete(actorx);
+}
