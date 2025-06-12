@@ -1317,7 +1317,7 @@ config.libs = [
             Object(Matching, "effect/ef_room_sunshine_posthouse.c"),
             Object(NonMatching, "effect/ef_sandsplash.c"),
             Object(NonMatching, "effect/ef_shock.c"),
-            Object(NonMatching, "effect/ef_shooting.c"),
+            Object(Matching, "effect/ef_shooting.c"),
             Object(Matching, "effect/ef_shooting_kira.c"),
             Object(NonMatching, "effect/ef_shooting_set.c"),
             Object(NonMatching, "effect/ef_siawase_hana.c"),
