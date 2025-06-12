@@ -1,0 +1,91 @@
+static void aNRST_think_start(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
+    actor->npc_class.talk_info.talk_request_proc = aNRST_talk_request;
+}
+
+static void aNRST_think_title(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
+    play->fb_wipe_type = 3;
+    play->fb_fade_type = 4;
+    mPlib_request_main_invade_type1((GAME*)play);
+    Actor_info_save_actor(play);
+    actor->think_idx = aNRST_THINK_WAIT;
+}
+
+static void aNRST_think_door(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
+    Door_data_c door_data;
+    static s16 homeX[] = { 2128, 2352, 2128, 2352 };
+    static s16 homeZ[] = { 1488, 1488, 1768, 1768 };
+    static u8 drt[] = { mSc_DIRECT_SOUTH_EAST, mSc_DIRECT_SOUTH_WEST, mSc_DIRECT_SOUTH_EAST, mSc_DIRECT_SOUTH_WEST };
+    int arrange_idx = mHS_get_arrange_idx(Common_Get(player_no));
+    
+    door_data.next_scene_id = SCENE_FG;
+    door_data.exit_position.x = 2240;
+    door_data.exit_position.z = 2240;
+    door_data.exit_type = 1;
+    door_data.extra_data = 1;
+    door_data.exit_position.y = 0;
+    door_data.door_actor_name = EMPTY_NO;
+    door_data.wipe_type = 3;
+
+    // set with real data?
+    // this is strange and I suspect this was toggled on/off for debugging
+    door_data.exit_position.x = homeX[arrange_idx];
+    door_data.exit_position.z = homeZ[arrange_idx];
+    door_data.exit_orientation = drt[arrange_idx];
+    door_data.door_actor_name = HOUSE0 + arrange_idx;
+
+    goto_other_scene(play, &door_data, TRUE);
+    Common_Get(transition).wipe_type = 1;
+    play->fb_fade_type = 9;
+    mBGMPsComp_make_ps_wipe(0x31C2);
+}
+
+typedef void (*aNRST_THINK_PROC)(NPC_RESTART_ACTOR* actor, GAME_PLAY* play);
+
+// clang-format off
+static aNRST_THINK_PROC aNRST_proc_table[] = {
+    aNRST_think_start,
+    aNRST_think_title,
+    aNRST_think_door,
+    (aNRST_THINK_PROC)none_proc1,
+};
+// clang-format on
+
+static void aNRST_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_RESTART_ACTOR* actor = (NPC_RESTART_ACTOR*)nactorx;
+
+    if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        (*aNRST_proc_table[actor->think_idx])(actor, play);
+    }
+}
+
+static void aNRST_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->request.act_priority = 4;
+    nactorx->request.act_idx = aNPC_ACT_WAIT;
+    nactorx->request.act_type = aNPC_ACT_TYPE_DEFAULT;
+}
+
+static void aNRST_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aNRST_think_init_proc, aNRST_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aNRST_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    NPC_RESTART_ACTOR* actor = (NPC_RESTART_ACTOR*)nactorx;
+    
+    nactorx->think.think_proc = aNRST_think_proc;
+    actor->think_idx = aNRST_THINK_START;
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_IN_BLOCK, aNPC_THINK_TYPE_INIT);
+}
+
+static void aNRST_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aNRST_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { aNRST_schedule_init_proc, aNRST_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}

@@ -1,0 +1,315 @@
+static int aNRST_get_message(NPC_RESTART_ACTOR* actor, int idx, int group) {
+    static int msg_table[] = { 0x30CD, 0x30E1, 0x30F5, 0x3109, 0x311D, 0x3131 };
+    static int msg_table2[] = { 0x2B09, 0x2B0F, 0x2B15, 0x2B1B, 0x2B21, 0x2B27 };
+    static int msg_table3[] = { 0x3B14, 0x3B1E, 0x3B28, 0x3B32, 0x3B3C, 0x3B46 };
+    int looks = mNpc_GetNpcLooks((ACTOR*)actor);
+    int msg_no;
+
+    switch (group) {
+        case aNRST_MSG_GROUP1:
+            msg_no = msg_table[looks] + idx;
+            break;
+        case aNRST_MSG_GROUP2:
+            msg_no = msg_table2[looks] + idx;
+            break;
+        case aNRST_MSG_GROUP3:
+            msg_no = msg_table3[looks] + idx;
+            break;
+        default:
+            msg_no = msg_table[looks] + idx;
+            break;
+    }
+
+    return msg_no;
+}
+
+static void aNRST_set_slot_name(int chan) {
+    static u8 str[mString_DEFAULT_STR_SIZE];
+
+    mString_Load_StringFromRom(str, sizeof(str), 0x6CD + chan);
+    mMsg_SET_FREE_STR(mMsg_FREE_STR4, str, sizeof(str));
+}
+
+static void aNRST_set_slot_before_save(void) {
+    int chan = 0;
+    int slot_no = mCD_GetSaveHomeSlotNo();
+
+    if (slot_no == mCD_SLOT_A || slot_no == mCD_SLOT_B) {
+        chan = slot_no;
+    }
+
+    aNRST_set_slot_name(chan);
+}
+
+static void aNRST_select2(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                actor->think_idx = aNRST_THINK_TITLE;
+                aNRST_change_talk_proc(actor, aNRST_TALK_BEFORE_SAVE);
+                aNRST_set_slot_before_save();
+                break;
+            case mChoice_CHOICE1:
+                actor->think_idx = aNRST_THINK_DOOR;
+                aNRST_change_talk_proc(actor, aNRST_TALK_BEFORE_SAVE);
+                Save_Set(cheated_flag, actor->cheated_flag);
+                Save_Set(npc_force_go_home, actor->force_home);
+                aNRST_set_slot_before_save();
+                break;
+            case mChoice_CHOICE2:
+                actor->think_idx = aNRST_THINK_TITLE;
+                aNRST_change_talk_proc(actor, aNRST_TALK_WAIT_END);
+                break;
+            case mChoice_CHOICE3:
+                actor->think_idx = aNRST_THINK_DOOR;
+                Save_Set(cheated_flag, actor->cheated_flag);
+                Save_Set(npc_force_go_home, actor->force_home);
+                break;
+        }
+
+        if (!actor->actor_saved) {
+            Actor_info_save_actor(play);
+            actor->actor_saved = TRUE;
+        }
+    }
+}
+
+static void aNRST_select(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE1:
+                actor->think_idx = aNRST_THINK_DOOR;
+                Save_Set(cheated_flag, actor->cheated_flag);
+                Save_Set(npc_force_go_home, actor->force_home);
+                break;
+            case mChoice_CHOICE0:
+                actor->think_idx = aNRST_THINK_TITLE;
+                break;
+        }
+
+        aNRST_change_talk_proc(actor, aNRST_TALK_BEFORE_SAVE);
+        aNRST_set_slot_before_save();
+        if (!actor->actor_saved) {
+            Actor_info_save_actor(play);
+            actor->actor_saved = TRUE;
+        }
+    }
+}
+
+static void aNRST_select3(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNRST_change_talk_proc(actor, aNRST_TALK_BEFORE_INIT);
+                break;
+            case mChoice_CHOICE1:
+                aNRST_change_talk_proc(actor, aNRST_TALK_SELECT2);
+                break;
+        }
+    }
+}
+
+static void aNRST_before_save(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0) {
+        if (!actor->auto_nwrite_data_set) {
+            mNtc_set_auto_nwrite_data();
+            actor->auto_nwrite_data_set = TRUE;
+        }
+
+        if (actor->think_idx == aNRST_THINK_TITLE) {
+            Save_Set(cheated_flag, FALSE);
+            Save_Set(npc_force_go_home, FALSE);
+        }
+
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        mMsg_SET_LOCKCONTINUE();
+        aNRST_change_talk_proc(actor, aNRST_TALK_SAVE);
+    }
+}
+
+static void aNRST_before_init(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        mMsg_SET_LOCKCONTINUE();
+        aNRST_change_talk_proc(actor, aNRST_TALK_INIT);
+    }
+}
+
+static void aNRST_init(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (mCD_card_format_bg(actor->card_chan)) {
+        case mCD_RESULT_SUCCESS:
+            aNRST_change_talk_proc(actor, aNRST_TALK_SELECT);
+            mMsg_SET_CONTINUE_MSG_NUM(aNRST_get_message(actor, 16, 0));
+            mMsg_Unset_LockContinue(msg_p);
+            break;
+        case mCD_RESULT_BUSY:
+            break;
+        case mCD_RESULT_ERROR:
+            aNRST_change_talk_proc(actor, aNRST_TALK_SELECT2);
+            mMsg_SET_CONTINUE_MSG_NUM(aNRST_get_message(actor, 17, 0));
+            mMsg_Unset_LockContinue(msg_p);
+            break;
+    }
+}
+
+static void aNRST_unset_lock_select2(NPC_RESTART_ACTOR* actor, int msg_idx, int msg_type) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    aNRST_change_talk_proc(actor, aNRST_TALK_SELECT2);
+    mMsg_SET_CONTINUE_MSG_NUM(aNRST_get_message(actor, msg_idx, msg_type));
+    mMsg_Unset_LockContinue(msg_p);
+}
+
+static void aNRST_save(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int param;
+
+    if (actor->think_idx == aNRST_THINK_DOOR) {
+        param = 1;
+    } else {
+        param = 0;
+    }
+
+    switch (mCD_SaveHome_bg(param, &actor->card_chan)) {
+        case mCD_TRANS_ERR_NONE:
+            aNRST_change_talk_proc(actor, aNRST_TALK_WAIT_END);
+            if (actor->think_idx == aNRST_THINK_DOOR) {
+                mMsg_SET_CONTINUE_MSG_NUM(aNRST_get_message(actor, 6, aNRST_MSG_GROUP1));
+            } else {
+                mMsg_SET_CONTINUE_MSG_NUM(aNRST_get_message(actor, 19, aNRST_MSG_GROUP1));
+            }
+            mMsg_Unset_LockContinue(msg_p);
+            break;
+        case mCD_TRANS_ERR_NOCARD:
+            if (!Save_Get(save_exist)) {
+                aNRST_unset_lock_select2(actor, 2, aNRST_MSG_GROUP2);
+            } else {
+                aNRST_unset_lock_select2(actor, 3, aNRST_MSG_GROUP1);
+            }
+            break;
+        case mCD_TRANS_ERR_INVALID_NOLAND_CODE:
+            aNRST_unset_lock_select2(actor, 1, aNRST_MSG_GROUP2);
+            break;
+        case mCD_TRANS_ERR_IOERROR:
+            aNRST_unset_lock_select2(actor, 7, aNRST_MSG_GROUP1);
+            aNRST_set_slot_name(actor->card_chan);
+            break;
+        case mCD_TRANS_ERR_BROKEN_WRONGENCODING:
+        case mCD_TRANS_ERR_REPAIR:
+            aNRST_change_talk_proc(actor, aNRST_TALK_SELECT3);
+            mMsg_SET_CONTINUE_MSG_NUM(aNRST_get_message(actor, 13, aNRST_MSG_GROUP1));
+            mMsg_Unset_LockContinue(msg_p);
+            aNRST_set_slot_name(actor->card_chan);
+            break;
+        case mCD_TRANS_ERR_NO_SPACE:
+            aNRST_unset_lock_select2(actor, 18, aNRST_MSG_GROUP1);
+            aNRST_set_slot_name(actor->card_chan);
+            break;
+        case mCD_TRANS_ERR_WRONG_LAND:
+            aNRST_unset_lock_select2(actor, 5, aNRST_MSG_GROUP2);
+            aNRST_set_slot_name(actor->card_chan);
+            break;
+        case mCD_TRANS_ERR_LAND_EXIST:
+            aNRST_unset_lock_select2(actor, 3, aNRST_MSG_GROUP2);
+            aNRST_set_slot_name(actor->card_chan);
+            break;
+        case mCD_TRANS_ERR_PASSPORT_EXIST:
+            aNRST_unset_lock_select2(actor, 4, aNRST_MSG_GROUP2);
+            aNRST_set_slot_name(actor->card_chan);
+            break;
+        case mCD_TRANS_ERR_NO_FILES:
+            aNRST_unset_lock_select2(actor, 0, aNRST_MSG_GROUP3);
+            aNRST_set_slot_name(actor->card_chan);
+            break;
+        case mCD_TRANS_ERR_DAMAGED:
+            aNRST_unset_lock_select2(actor, 1, aNRST_MSG_GROUP3);
+            aNRST_set_slot_name(actor->card_chan);
+            break;
+        case mCD_TRANS_ERR_NOT_MEMCARD:
+            aNRST_unset_lock_select2(actor, 2, aNRST_MSG_GROUP3);
+            aNRST_set_slot_name(actor->card_chan);
+            break;
+        case mCD_TRANS_ERR_WRONGDEVICE:
+            aNRST_unset_lock_select2(actor, 3, aNRST_MSG_GROUP3);
+            aNRST_set_slot_name(actor->card_chan);
+            break;
+        case mCD_TRANS_ERR_BUSY:
+            break;
+        default:
+            aNRST_change_talk_proc(actor, aNRST_TALK_SELECT2);
+            mMsg_SET_CONTINUE_MSG_NUM(aNRST_get_message(actor, 1, aNRST_MSG_GROUP2));
+            mMsg_Unset_LockContinue(msg_p);
+            break;
+    }
+}
+
+static void aNRST_change_talk_proc(NPC_RESTART_ACTOR* actor, int talk_idx) {
+    // clang-format off
+    static aNRST_TALK_PROC process[] = {
+        aNRST_select,
+        aNRST_before_save,
+        aNRST_save,
+        aNRST_select2,
+        aNRST_select3,
+        aNRST_before_init,
+        aNRST_init,
+        (aNRST_TALK_PROC)none_proc1,
+    };
+    // clang-format on
+
+    actor->talk_idx = talk_idx;
+    actor->talk_proc = process[talk_idx];
+}
+
+static void aNRST_set_talk_info_talk_request(ACTOR* actorx) {
+    NPC_RESTART_ACTOR* actor = (NPC_RESTART_ACTOR*)actorx;
+
+    mDemo_Set_msg_num(aNRST_get_message(actor, 0, aNRST_MSG_GROUP1));
+    mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+}
+
+static void aNRST_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, aNRST_set_talk_info_talk_request);
+}
+
+static int aNRST_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_RESTART_ACTOR* actor = (NPC_RESTART_ACTOR*)actorx;
+
+    mDemo_Set_ListenAble();
+    aNRST_change_talk_proc(actor, aNRST_TALK_SELECT);
+    actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    return TRUE;
+}
+
+static int aNRST_talk_end_chk(ACTOR* actorx, GAME* game) {
+    NPC_RESTART_ACTOR* actor = (NPC_RESTART_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    actor->talk_proc(actor, play);
+    if (!mDemo_Check(mDemo_TYPE_SPEAK, actorx)) {        
+        aNRST_think_init_proc((NPC_ACTOR*)actorx, play);
+        actor->talk_end = TRUE;
+        ret = TRUE;
+    }
+
+    return ret;
+}

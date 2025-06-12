@@ -288,6 +288,7 @@ enum {
 
 extern int mCD_GetThisLandSlotNo_code(int* player_no, s32* slot_card_results);
 extern int mCD_GetThisLandSlotNo(void);
+extern int mCD_GetSaveHomeSlotNo(void);
 extern void mCD_save_data_aram_malloc(void);
 extern void mCD_set_aram_save_data();
 extern void mCD_init_card();
