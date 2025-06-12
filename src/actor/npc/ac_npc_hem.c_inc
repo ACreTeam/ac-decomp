@@ -1,83 +1,84 @@
 
-void aNHM_set_request_act(NPC_ACTOR* actorx) {
-    NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
+static void aNHM_set_request_act(NPC_HEM_ACTOR* hem) {
     hem->actor.request.act_priority = 4;
     hem->actor.request.act_idx = aNPC_ACT_SPECIAL;
     hem->actor.request.act_type = aNPC_ACT_TYPE_DEFAULT;
 }
 
-void aNHM_appear_wait(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
+static void aNHM_appear_wait(NPC_HEM_ACTOR* hem, GAME_PLAY* play) {
     if (Common_Get(hem_visible) == TRUE) {
         hem->actor.condition_info.hide_request = FALSE;
         hem->actor.talk_info.talk_request_proc = aNHM_talk_request;
     }
 }
 
-void aNHM_disappear_wait(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
+static void aNHM_disappear_wait(NPC_HEM_ACTOR* hem, GAME_PLAY* play) {
     if (Common_Get(hem_visible) == FALSE) {
-        hem->_9A0 = TRUE;
+        hem->disappear_flag = TRUE;
     }
 }
 
-void aNHM_setupAction(NPC_HEM_ACTOR* hem, int processInd) {
-    static aNPC_SUB_PROC process[] = { aNHM_appear_wait, aNHM_disappear_wait };
+static void aNHM_setupAction(NPC_HEM_ACTOR* hem, int action) {
+    static aNHM_PROC process[] = { aNHM_appear_wait, aNHM_disappear_wait };
+
     hem->actor.action.step = 0;
-    hem->processIndex = processInd;
-    hem->processFunction = process[processInd];
+    hem->action = action;
+    hem->act_proc = process[action];
     NPC_CLIP->animation_init_proc(&hem->actor.actor_class, aNPC_ANIM_WAIT1, FALSE);
 }
 
-void aNHM_act_chg_data_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+static void aNHM_act_chg_data_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
     hem->actor.action.act_obj = aNPC_ACT_OBJ_PLAYER;
 }
 
-void aNHM_act_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+static void aNHM_act_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
-    int x = 0;
-    if (hem->_9A1 == TRUE) {
-        eEC_CLIP->effect_make_proc(eEC_EFFECT_MAKE_HEM, hem->actor.actor_class.world.position, 2, 0, &play->game, -1, 0,
+    int act = aNHM_ACT_APPEAR_WAIT;
+
+    if (hem->trans_flag == TRUE) {
+        eEC_CLIP->effect_make_proc(eEC_EFFECT_MAKE_HEM, hem->actor.actor_class.world.position, 2, 0, (GAME*)play, RSV_NO, 0,
                                    0);
-        x = 1;
+        act = aNHM_ACT_DISAPPEAR_WAIT;
     }
-    aNHM_setupAction(hem, x);
+
+    aNHM_setupAction(hem, act);
 }
 
-void aNHM_act_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+static void aNHM_act_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
-    hem->processFunction(actorx, play);
+
+    hem->act_proc(hem, play);
 }
 
-void aNHM_act_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int action) {
+static void aNHM_act_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int action) {
     static aNPC_SUB_PROC act_proc[] = { aNHM_act_init_proc, aNHM_act_chg_data_proc, aNHM_act_main_proc };
     act_proc[action](actorx, play);
 }
 
-void aNHM_think_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+static void aNHM_think_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
-    if (hem->actor.action.step == (u8)-1) {
+    if (hem->actor.action.step == aNPC_ACTION_END_STEP) {
         hem->actor.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
                                              aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK |
                                              aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_Y;
         hem->actor.collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
-        aNHM_set_request_act(actorx);
+        aNHM_set_request_act(hem);
     }
 }
 
-void aNHM_think_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+static void aNHM_think_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
     hem->actor.action.act_proc = aNHM_act_proc;
-    aNHM_set_request_act(actorx);
+    aNHM_set_request_act(hem);
 }
 
-void aNHM_think_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int action) {
+static void aNHM_think_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int action) {
     static aNPC_SUB_PROC think_proc[] = { aNHM_think_init_proc, aNHM_think_main_proc };
     think_proc[action](actorx, play);
 }
 
-void aNHM_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+static void aNHM_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
     hem->actor.think.think_proc = aNHM_think_proc;
     hem->actor.palActorIgnoreTimer = -1;
@@ -85,90 +86,94 @@ void aNHM_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
                                          aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK |
                                          aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_Y;
     hem->actor.collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
-    hem->_9A2 = 90;
+    hem->talk_timer = 90;
     hem->actor.actor_class.status_data.weight = MASSTYPE_HEAVY;
     hem->actor.actor_class.world.position.x += 20.f;
     hem->actor.actor_class.world.position.z -= 20.f;
-    NPC_CLIP->think_proc(&hem->actor, play, 9, 0);
+    NPC_CLIP->think_proc(&hem->actor, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
 }
 
-void aNHM_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    if (NPC_CLIP->think_proc(actorx, play, -1, 1) == FALSE) {
-        NPC_CLIP->think_proc(actorx, play, -1, 2);
+static void aNHM_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    if (NPC_CLIP->think_proc(actorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == FALSE) {
+        NPC_CLIP->think_proc(actorx, play, -1, aNPC_THINK_TYPE_MAIN);
     }
 }
 
-void aNHM_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int proc) {
+static void aNHM_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int proc) {
     static aNPC_SUB_PROC sche_proc[] = { aNHM_schedule_init_proc, aNHM_schedule_main_proc };
     sche_proc[proc](actorx, play);
 }
 
-void aNHM_trans_demo_start_wait_talk_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
-    if ((int)mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1) == 2) {
-        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, ITM_GOLDEN_AXE);
-        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, 7);
-        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, 2);
-        hem->_9A1 = 1;
+static void aNHM_trans_demo_start_wait_talk_proc(NPC_HEM_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+
+    if (order == 2) {
+        aNPC_DEMO_GIVE_ITEM(ITM_GOLDEN_AXE, aHOI_REQUEST_PUTAWAY, 2);
+        actor->trans_flag = TRUE;
         mMsg_SET_LOCKCONTINUE();
-        aNHM_change_talk_proc(actorx, 1);
+        aNHM_change_talk_proc(actor, aNHM_TALK_TRANS_DEMO_END_WAIT);
     }
 }
 
-void aNHM_trans_demo_end_wait_talk_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
-    if (Common_Get(clip).handOverItem_clip->master_actor == NULL) {
+static void aNHM_trans_demo_end_wait_talk_proc(NPC_HEM_ACTOR* actor, GAME_PLAY* play) {
+    if (aHOI_TRANSFER_DONE()) {
         mMsg_UNSET_LOCKCONTINUE();
-        aNHM_change_talk_proc(actorx, 2);
+        aNHM_change_talk_proc(actor, aNHM_TALK_END_WAIT);
     }
 }
 
-void aNHM_change_talk_proc(NPC_ACTOR* actorx, int ind) {
-    static aNPC_SUB_PROC process[] = { aNHM_trans_demo_start_wait_talk_proc, aNHM_trans_demo_end_wait_talk_proc,
-                                       (aNPC_SUB_PROC)none_proc1 };
+static void aNHM_change_talk_proc(NPC_HEM_ACTOR* hem, int talk_idx) {
+    static aNHM_PROC process[] = {
+        aNHM_trans_demo_start_wait_talk_proc,
+        aNHM_trans_demo_end_wait_talk_proc,
+        (aNHM_PROC)none_proc1,
+    };
 
-    NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
-    hem->talkProcess = process[ind];
+    hem->talk_proc = process[talk_idx];
 }
 
-void aNHM_set_force_talk_info_talk_request() {
-    mDemo_Set_msg_num(0x2c51);
-    mPr_SetFreePossessionItem(Now_Private, ITM_GOLDEN_AXE, 0);
-    mSC_trophy_set(0x1d);
+static void aNHM_set_force_talk_info_talk_request() {
+    mDemo_Set_msg_num(0x2C51);
+    mPr_SetFreePossessionItem(Now_Private, ITM_GOLDEN_AXE, mPr_ITEM_COND_NORMAL);
+    mSC_trophy_set(mSC_TROPHY_GOLDEN_AXE);
     mFAs_ClearGoodField();
-    mDemo_Set_talk_return_get_golden_axe_demo(1);
+    mDemo_Set_talk_return_get_golden_axe_demo(TRUE);
 }
 
-void aNHM_talk_request(ACTOR* actorx, GAME* game) {
-    mDemo_Request(8, actorx, aNHM_set_force_talk_info_talk_request);
+static void aNHM_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, aNHM_set_force_talk_info_talk_request);
 }
 
-BOOL aNHM_talk_init(ACTOR* actorx, GAME* game) {
+static BOOL aNHM_talk_init(ACTOR* actorx, GAME* game) {
     NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
-    BOOL x = FALSE;
-    hem->_9A2--;
-    if (hem->_9A2 <= 0) {
+    BOOL ret = FALSE;
+
+    hem->talk_timer--;
+    if (hem->talk_timer <= 0) {
         hem->actor.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
-        aNHM_change_talk_proc(&hem->actor, 0);
+        aNHM_change_talk_proc(hem, aNHM_TALK_TRANS_DEMO_START_WAIT);
         mDemo_Set_ListenAble();
-        x = TRUE;
+        ret = TRUE;
     }
-    return x;
+    return ret;
 }
 
-BOOL aNHM_talk_end_chk(ACTOR* actorx, GAME* game) {
+static BOOL aNHM_talk_end_chk(ACTOR* actorx, GAME* game) {
     NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
-    BOOL x = FALSE;
-    hem->talkProcess(&hem->actor, (GAME_PLAY*)game);
-    if (mDemo_Check(8, actorx) == FALSE) {
-        x = TRUE;
+    BOOL ret = FALSE;
+    
+    hem->talk_proc(hem, (GAME_PLAY*)game);
+    if (!mDemo_Check(mDemo_TYPE_SPEAK, actorx)) {
+        ret = TRUE;
     }
-    return x;
+    return ret;
 }
 
-void aNHM_actor_move(ACTOR* actorx, GAME* game) {
+static void aNHM_actor_move(ACTOR* actorx, GAME* game) {
     NPC_HEM_ACTOR* hem = (NPC_HEM_ACTOR*)actorx;
+
     NPC_CLIP->move_proc(actorx, game);
-    if (hem->_9A0 == TRUE) {
+    if (hem->disappear_flag == TRUE) {
         aSHR_GET_CLIP()->hem_flag = FALSE;
         Actor_delete(actorx);
     }
