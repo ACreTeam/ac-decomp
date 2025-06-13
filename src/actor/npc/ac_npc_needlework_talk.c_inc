@@ -1,0 +1,781 @@
+#define aNNW_SISTER_STORY_NOW_NUM 3
+
+static u8 sister_story = 0;
+static u8 sister_now = 0;
+
+// clang-format off
+static u8 aNNW_message_table[24 * aNNW_SISTER_STORY_NOW_NUM] = {
+    0x00, 0xFF, 0xFF,
+    0x01, 0xFF, 0xFF,
+    0x02, 0x20, 0x21,
+    0x03, 0x22, 0x23,
+    0x04, 0xFF, 0xFF,
+    0x05, 0xFF, 0xFF,
+    0x06, 0xFF, 0xFF,
+    0x07, 0x24, 0xFF,
+    0x08, 0xFF, 0xFF,
+    0x09, 0x25, 0x26,
+    0x0A, 0xFF, 0xFF,
+    0x0B, 0xFF, 0xFF,
+    0x0C, 0xFF, 0xFF,
+    0x0D, 0x27, 0x28,
+    0x0E, 0xFF, 0xFF,
+    0x0F, 0x29, 0x2A,
+    0x10, 0xFF, 0xFF,
+    0x11, 0x2B, 0x2C,
+    0x13, 0xFF, 0xFF,
+    0x14, 0xFF, 0xFF,
+    0x15, 0xFF, 0xFF,
+    0x16, 0xFF, 0xFF,
+    0x17, 0xFF, 0xFF,
+    0x18, 0xFF, 0xFF,
+};
+// clang-format on
+
+static u8 aNNW_story_first_table[4] = { 5, 9, 13, 17 };
+static u8 aNNW_story_other_table[4] = { 6, 10, 14, 18 };
+static int aNNW_string_table[4] = { 0x06CC, 0x06CB, 0x06CA, 0x06C9 };
+
+static int aNNW_get_sister_message(void) {
+    int msg_no;
+    
+    if (sister_now >= aNNW_SISTER_STORY_NOW_NUM) {
+        msg_no = -1;
+    } else {
+        msg_no = 0x3012 + aNNW_message_table[sister_story * aNNW_SISTER_STORY_NOW_NUM + sister_now];
+    }
+
+    return msg_no;
+}
+
+static void aNNW_day_day(void) {
+    lbRTC_time_c* time_p = Common_GetPointer(time.rtc_time);
+    mPr_day_day_c* day_day = &Now_Private->nw_visitor;
+
+    if (Common_Get(player_no) != mPr_FOREIGNER && (time_p->year != day_day->last_date.year || time_p->month != day_day->last_date.month || time_p->day != day_day->last_date.day)) {
+        day_day->last_date.year = time_p->year;
+        day_day->last_date.month = time_p->month;
+        day_day->last_date.day = time_p->day;
+
+        if (day_day->days < aNNW_TALK_DAYS_MAX) {
+            day_day->days++;
+        }
+    }
+}
+
+static void aNNW_get_make_sister_message(void) {
+    int days;
+    int add_day;
+    lbRTC_time_c* time_p = Common_GetPointer(time.rtc_time);
+    mPr_day_day_c* day_day = &Now_Private->nw_visitor;
+
+    sister_now = 0;
+    add_day = 0;
+    if (time_p->year != day_day->last_date.year || time_p->month != day_day->last_date.month || time_p->day != day_day->last_date.day) {
+        add_day = 1;
+    }
+
+    days = day_day->days + add_day;
+    if (Common_Get(player_no) == mPr_FOREIGNER) {
+        days = 0;
+    }
+
+    if (days < 4) {
+        sister_story = RANDOM(5);
+    } else if (days >= 8) {
+        sister_story = 21 + RANDOM(3);
+    } else if (add_day == 1) {
+        sister_story = aNNW_story_other_table[days - 4];
+    } else {
+        sister_story = aNNW_story_other_table[days - 4] + RANDOM(3);
+    }
+}
+
+static int aNNW_get_next_sister_message(void) {
+    if (sister_now >= (aNNW_SISTER_STORY_NOW_NUM - 1) || aNNW_message_table[sister_story * aNNW_SISTER_STORY_NOW_NUM + sister_now + 1] == 0xFF) {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static mActor_name_t aNNW_get_sister_name(mActor_name_t name) {
+    if (name == SP_NPC_NEEDLEWORK0) {
+        return SP_NPC_NEEDLEWORK1;
+    } else {
+        return SP_NPC_NEEDLEWORK0;
+    }
+}
+
+static ACTOR* aNNW_search_sister(GAME_PLAY* play, NPC_NEEDLEWORK_ACTOR* actor) {
+    ACTOR* actorx = (ACTOR*)actor;
+    ACTOR* search;
+
+    for (search = play->actor_info.list[ACTOR_PART_NPC].actor; search != NULL; search = search->next_actor) {
+        if (search->id == mAc_PROFILE_NPC_NEEDLEWORK && search != actorx) {
+            break;
+        }
+    }
+
+    return search;
+}
+
+static void aNNW_turn_player(NPC_NEEDLEWORK_ACTOR* actor) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_NOW_ACTOR();
+
+    NPC_CLIP->set_dst_pos_proc((NPC_ACTOR*)actor, playerx->world.position.x, playerx->world.position.z);
+}
+
+static int aNNW_trend_check_cloth(int cloth_idx) {
+    Animal_c* animals;
+    Animal_c* animal;
+    int i;
+    int count;
+
+    for (i = 0, animals = Save_Get(animals), count = 0; i < ANIMAL_NUM_MAX; i++) {
+        animal = &animals[i];
+        if (!mNpc_CheckFreeAnimalPersonalID(&animal->id) && animal->cloth == RSV_CLOTH) {
+            int idx = (animal->cloth_original_id & 3);
+
+            if (idx == cloth_idx) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+static void aNNW_trend_delete_cloth(int cloth_idx) {
+    Animal_c* animals;
+    Animal_c* animal;
+    int i;
+
+    for (i = 0, animals = Save_Get(animals); i < ANIMAL_NUM_MAX; i++) {
+        animal = &animals[i];
+        if (!mNpc_CheckFreeAnimalPersonalID(&animal->id) && animal->cloth == RSV_CLOTH) {
+            int idx = (animal->cloth_original_id & 3);
+
+            if (idx == cloth_idx) {
+                mNpc_SetDefAnimalCloth(animal);
+            }
+        }
+    }
+}
+
+static int aNNW_trend_check_umbrella(int umbrella_idx) {
+    int idx;
+    Animal_c* animals;
+    Animal_c* animal;
+    int i;
+    int count;
+
+    animals = Save_Get(animals);
+    i = 0;
+    count = 0;
+    idx = (umbrella_idx & 3) + UMBRELLA_NUM;
+    umbrella_idx += UMBRELLA_NUM;
+
+    for (i; i < ANIMAL_NUM_MAX; i++) {
+        animal = &animals[i];
+        if (!mNpc_CheckFreeAnimalPersonalID(&animal->id)) {
+            if (animal->umbrella_id == umbrella_idx || animal->umbrella_id == idx) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+static void aNNW_trend_delete_umbrella(int umbrella_idx) {
+    int idx;
+    Animal_c* animals;
+    Animal_c* animal;
+    int i;
+
+    animals = Save_Get(animals);
+    i = 0;
+    idx = (umbrella_idx & 3) + UMBRELLA_NUM;
+    umbrella_idx += UMBRELLA_NUM;
+
+    for (i; i < ANIMAL_NUM_MAX; i++) {
+        animal = &animals[i];
+        if (!mNpc_CheckFreeAnimalPersonalID(&animal->id)) {
+            if (animal->umbrella_id == umbrella_idx || animal->umbrella_id == idx) {
+                mNpc_SetDefAnimalUmbrella(animal);
+            }
+        }
+    }
+}
+
+static int aNNW_first_talk_check(u8 flag) {
+    return Common_Get(needlework_first_talk_flags) & flag;
+}
+
+static void aNNW_first_talk_end(u8 flag) {
+    if (aNNW_first_talk_check(flag) == 0) {
+        Common_Get(needlework_first_talk_flags) |= flag;
+    }
+}
+
+static void aNNW_set_trend_set_string(int trend_idx, int str_no) {
+    u8 str[mString_DEFAULT_STR_SIZE];
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    
+    mString_Load_StringFromRom(str, sizeof(str), aNNW_string_table[trend_idx & 3]);
+    mMsg_Set_item_str(msg_p, mMsg_ITEM_STR2 + str_no, str, sizeof(str));
+    mMsg_Set_item_str(msg_p, str_no, Save_Get(needlework).original_design[trend_idx & 7].name, sizeof(Save_Get(needlework).original_design[trend_idx & 7].name));
+}
+
+static void aNNW_set_trend_cloth_message(void) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int trend_count;
+    int trend;
+    int i;
+
+    trend = RANDOM(mNW_CLOTH_DESIGN_NUM);
+    trend_count = 0;
+    for (i = 0; i < mNW_CLOTH_DESIGN_NUM; i++) {
+        int count = aNNW_trend_check_cloth(i);
+
+        if (count > trend_count) {
+            trend_count = count;
+            trend = i;
+        }
+    }
+
+    aNNW_set_trend_set_string(trend, mMsg_ITEM_STR0);
+    if (trend_count == 0) {
+        mMsg_Set_continue_msg_num(msg_p, 0x2FDC);
+    } else if (trend_count == 1) {
+        mMsg_Set_continue_msg_num(msg_p, 0x2FDB);
+    } else if (trend_count < 5) {
+        mMsg_Set_continue_msg_num(msg_p, 0x2FDA);
+    } else {
+        mMsg_Set_continue_msg_num(msg_p, 0x2FD9);
+    }
+}
+
+static void aNNW_set_trend_umbrella_message(void) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int trend_count;
+    int trend;
+    int i;
+
+    trend = mNW_CLOTH_DESIGN_NUM + RANDOM(mNW_UMBRELLA_DESIGN_NUM);
+    trend_count = 0;
+    for (i = mNW_CLOTH_DESIGN_NUM; i < (mNW_CLOTH_DESIGN_NUM + mNW_UMBRELLA_DESIGN_NUM); i++) {
+        int count = aNNW_trend_check_cloth(i);
+
+        if (count > trend_count) {
+            trend_count = count;
+            trend = i;
+        }
+    }
+
+    aNNW_set_trend_set_string(trend, mMsg_ITEM_STR1);
+    if (trend_count == 0) {
+        mMsg_Set_continue_msg_num(msg_p, 0x2FE0);
+    } else if (trend_count == 1) {
+        mMsg_Set_continue_msg_num(msg_p, 0x2FDF);
+    } else if (trend_count < 5) {
+        mMsg_Set_continue_msg_num(msg_p, 0x2FDE);
+    } else {
+        mMsg_Set_continue_msg_num(msg_p, 0x2FDD);
+    }
+}
+
+static void aNNW_change_camera_priority_demo(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* sister_actor = aNNW_search_sister(play, actor);
+    ACTOR* actorx = (ACTOR*)actor;
+    
+    Camera2_request_main_needlework_talk(play, sister_actor, actorx, 6);
+    if (actorx->npc_id == SP_NPC_NEEDLEWORK0) {
+        NPC_CLIP->set_dst_pos_proc((NPC_ACTOR*)actor, sister_actor->world.position.x, sister_actor->world.position.z);
+    }
+}
+
+static void aNNW_change_camera_return_demo(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    Camera2_request_main_talk(play, GET_PLAYER_ACTOR_ACTOR(play), actorx, 6);
+    if (actorx->npc_id == SP_NPC_NEEDLEWORK0) {
+        aNNW_turn_player(actor);
+    }
+}
+
+static void aNNW_set_6_ways(NPC_NEEDLEWORK_ACTOR* actor, mMsg_Window_c* msg_p, int chose_num) {
+    switch (chose_num) {
+        case mChoice_CHOICE0:
+            aNNW_change_talk_proc(actor, aNNW_TALK_DESIGN_CHECK);
+            break;
+        case mChoice_CHOICE1:
+            if (Common_Get(player_no) != mPr_FOREIGNER) {
+                aNNW_change_talk_proc(actor, aNNW_TALK_CPORIGINAL0);
+            } else {
+                aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+                mMsg_Set_continue_msg_num(msg_p, 0x2FEE);
+            }
+            break;
+        case mChoice_CHOICE2:
+            aNNW_set_trend_cloth_message();
+            aNNW_change_talk_proc(actor, aNNW_TALK_TREND_CLOTH);
+            break;
+        case mChoice_CHOICE3:
+            aNNW_change_talk_proc(actor, aNNW_TALK_CHECK_LISTEN);
+            aNNW_first_talk_end(0x40);
+            break;
+        case mChoice_CHOICE4:
+            aNNW_change_talk_proc(actor, aNNW_TALK_OTHER_HAPPEN);
+            break;
+        case mChoice_CHOICE5:
+            aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+            break;
+    }
+}
+
+static void aNNW_set_5_ways(NPC_NEEDLEWORK_ACTOR* actor, int chose_num) {
+    switch (chose_num) {
+        case mChoice_CHOICE0:
+            aNNW_change_talk_proc(actor, aNNW_TALK_GBA_TOOL_BF);
+            break;
+        case mChoice_CHOICE1:
+            aNNW_change_talk_proc(actor, aNNW_TALK_GBA_LOAD_BF);
+            break;
+        case mChoice_CHOICE2:
+            aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_LOAD_BF_0);
+            break;
+        case mChoice_CHOICE3:
+            aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_LOAD_PRG_BF_0);
+            break;
+        case mChoice_CHOICE4:
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+            break;
+        default:
+            aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+            break;
+    }
+}
+
+static void aNNW_talk_what_happen_first(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        aNNW_set_6_ways(actor, msg_p, mChoice_GET_CHOSENUM());
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNNW_talk_what_happen(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        aNNW_set_6_ways(actor, msg_p, mChoice_GET_CHOSENUM());
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNNW_talk_other_happen(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        aNNW_set_5_ways(actor, mChoice_GET_CHOSENUM());
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNNW_talk_other_happen2(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                if (Common_Get(player_no) != mPr_FOREIGNER) {
+                    aNNW_change_talk_proc(actor, aNNW_TALK_CPORIGINAL0);
+                } else {
+                    aNNW_change_talk_proc(actor, aNNW_TALK_OTHER_HAPPEN);
+                    mMsg_Set_continue_msg_num(msg_p, 0x2FEE);
+                }
+                break;
+            case mChoice_CHOICE1:
+                aNNW_change_talk_proc(actor, aNNW_TALK_GBA_WHICH);
+                break;
+            case mChoice_CHOICE2:
+                aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+                break;
+        }
+
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNNW_talk_check_listen(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNNW_change_talk_proc(actor, aNNW_TALK_LISTEN_SISTER);
+                break;
+            case mChoice_CHOICE1:
+                aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+                break;
+        }
+
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNNW_talk_listen_sister(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        aNNW_change_talk_proc_next(actor);
+        aNNW_change_camera_priority_demo(actor, play);
+    }
+}
+
+static void aNNW_talk_listen_sister2(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        actor->npc_class.actor_class.npc_id = aNNW_get_sister_name(actor->npc_class.actor_class.npc_id);
+        aNNW_change_talk_proc_next(actor);
+    }
+}
+
+static void aNNW_talk_listen_sister3(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        actor->npc_class.actor_class.npc_id = aNNW_get_sister_name(actor->npc_class.actor_class.npc_id);
+        aNNW_change_talk_proc_next(actor);
+    }
+}
+
+static void aNNW_talk_listen_sister4(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+        aNNW_change_camera_return_demo(actor, play);
+    }
+}
+
+static void aNNW_talk_design_check(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE1:
+                aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+                break;
+            case mChoice_CHOICE0:
+                if (mSP_money_check(aNNW_DESIGN_PRICE)) {
+                    aNNW_change_talk_proc(actor, aNNW_TALK_DESIGN_WHICH);
+                } else {
+                    mMsg_Set_continue_msg_num(msg_p, 0x2FE7);
+                    aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+                }
+                break;
+        }
+
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNNW_talk_design_which(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1();
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        aNNW_change_talk_proc(actor, actor->talk_idx + 1);
+    }
+}
+
+static void aNNW_talk_design_open(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
+        Submenu* submenu = &play->submenu;
+        int open_type = mNW_OPEN_DESIGN;
+
+        switch (actor->talk_idx) {
+            case aNNW_TALK_TRADE_OPEN:
+                open_type = mNW_OPEN_INV;
+                break;
+            case aNNW_TALK_TRADE_OPEN3:
+                open_type = mNW_OPEN_CPORIGINAL;
+                break;
+        }
+
+        mSM_open_submenu_new2(submenu, mSM_OVL_NEEDLEWORK, 0, Common_Get(player_no), NULL, open_type);
+        aNNW_change_talk_proc(actor, actor->talk_idx + 1);
+    }
+}
+
+static void aNNW_talk_design_close(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (!submenu->open_flag) {
+        Submenu_Item_c* sm_item_p = submenu->item_p;
+
+        if (sm_item_p->item == RSV_NO) {
+            int slot = sm_item_p->slot_no;
+
+            actor->_9AE = mNW_get_image_no(submenu, slot);
+            mSM_open_submenu(submenu, mSM_OVL_DESIGN, slot, 0);
+            aNNW_change_talk_proc(actor, aNNW_TALK_DESIGN_CLOSE2);
+        } else {
+            mMsg_ChangeMsgData(msg_p, 0x2FE9);
+            mMsg_Set_ForceNext(msg_p);
+            mMsg_request_main_appear_wait_type1(msg_p);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+        }
+    }
+}
+
+static void aNNW_talk_design_close2(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (!submenu->open_flag) {
+        Submenu_Item_c* sm_item_p = submenu->item_p;
+
+        if (sm_item_p->slot_no == 1) {
+            mMsg_ChangeMsgData(msg_p, 0x2FEA);
+            mMsg_Set_ForceNext(msg_p);
+            mMsg_request_main_appear_wait_type1(msg_p);
+            aNNW_change_talk_proc(actor, aNNW_TALK_DESIGN_CLOSE2_END);
+        } else {
+            mMsg_ChangeMsgData(msg_p, 0x2FE9);
+            mMsg_Set_ForceNext(msg_p);
+            mMsg_request_main_appear_wait_type1(msg_p);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+        }
+    }
+}
+
+static void aNNW_talk_design_close2_end(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    if (mMsg_CHECK_NOT_SERIES_MAIN_WAIT() == TRUE) {
+        aNNW_change_talk_proc(actor, actor->talk_idx + 1);
+    }
+}
+
+static void aNNW_talk_design_open3(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
+        Submenu* submenu = &play->submenu;
+
+        mSM_open_submenu_new(submenu, mSM_OVL_LEDIT, mLE_TYPE_MYORIGINAL_NAME, 0, actor->design_name);
+        aNNW_change_talk_proc(actor, aNNW_TALK_DESIGN_CLOSE3);
+    }
+}
+
+static void aNNW_talk_design_close3(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (!submenu->open_flag) {
+        u16 org_cloth_idx;
+
+        mSP_get_sell_price(aNNW_DESIGN_PRICE);
+        mNW_OverWriteOriginalName(&Now_Private->my_org[actor->_9AE & 7], actor->design_name);
+        org_cloth_idx = (CLOTH_NUM + 1) + actor->_9AE;
+        if (org_cloth_idx == Now_Private->cloth.idx) {
+            aNNW_change_talk_proc(actor, aNNW_TALK_CLOTH_CHANGE2);
+        } else {
+            mMsg_ChangeMsgData(msg_p, 0x2FEB);
+            mMsg_Set_ForceNext(msg_p);
+            mMsg_request_main_appear_wait_type1(msg_p);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+        }
+    }
+}
+
+static void aNNW_talk_trade_check(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNNW_change_talk_proc(actor, aNNW_TALK_GIVE_ADMISSION);
+                break;
+            case mChoice_CHOICE1:
+                aNNW_change_talk_proc(actor, aNNW_TALK_GIVE_ADMISSION2);
+                break;
+            case mChoice_CHOICE2:
+                aNNW_change_talk_proc(actor, aNNW_TALK_TRADE_WHICH);
+                break;
+            case mChoice_CHOICE3:
+                aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aNNW_talk_trade_which(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    if (mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1();
+        aNNW_change_talk_proc(actor, actor->talk_idx + 1);
+    }
+}
+
+static void aNNW_talk_trade_close(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    Submenu* submenu = &play->submenu;
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (!submenu->open_flag) {
+        Submenu_Item_c* sm_item_p = submenu->item_p;
+
+        if (sm_item_p->item == RSV_NO) {
+            u16 org_idx;
+            u32 change_idx;
+
+            actor->_9AE = mNW_get_image_no(submenu, sm_item_p->slot_no);
+            org_idx = (CLOTH_NUM + 1) + actor->_9AE;
+            switch (actor->talk_idx) {
+                case aNNW_TALK_TRADE_CLOSE:
+                    mMsg_ChangeMsgData(msg_p, 0x2FFA);
+                    change_idx = actor->buy_ut_idx;
+                    if (change_idx < mNW_CLOTH_DESIGN_NUM) {
+                        CLIP(needlework_indoor_clip)->request_exchange_cloth_data_proc(change_idx, actor->_9AE);
+                        aNNW_trend_delete_cloth(actor->buy_ut_idx);
+                    } else {
+                        change_idx -= mNW_CLOTH_DESIGN_NUM;
+                        CLIP(needlework_indoor_clip)->request_exchange_umb_data_proc(change_idx, actor->_9AE);
+                        aNNW_trend_delete_umbrella(actor->buy_ut_idx - mNW_CLOTH_DESIGN_NUM);
+                    }
+                    break;
+                case aNNW_TALK_TRADE_CLOSE2:
+                    mMsg_ChangeMsgData(msg_p, 0x2FF8);
+                    change_idx = actor->buy_ut_idx;
+                    if (change_idx < mNW_CLOTH_DESIGN_NUM) {
+                        CLIP(needlework_indoor_clip)->request_copy_cloth_data_proc(change_idx & 3, &Now_Private->my_org[actor->_9AE & 7]);
+                        aNNW_trend_delete_cloth(actor->buy_ut_idx);
+                    } else {
+                        change_idx -= mNW_CLOTH_DESIGN_NUM;
+                        CLIP(needlework_indoor_clip)->request_copy_umb_data_proc(change_idx & 3, &Now_Private->my_org[actor->_9AE & 7]);
+                        aNNW_trend_delete_umbrella(actor->buy_ut_idx - mNW_CLOTH_DESIGN_NUM);
+                    }
+                    break;
+                case aNNW_TALK_TRADE_CLOSE3:
+                    mMsg_ChangeMsgData(msg_p, 0x2FF9);
+                    bcopy(&Save_Get(needlework).original_design[actor->buy_ut_idx & 7], &Now_Private->my_org[actor->_9AE & 7], sizeof(mNW_original_design_c));
+                    break;
+            }
+
+            if (actor->talk_idx != aNNW_TALK_TRADE_CLOSE2 && org_idx == Now_Private->cloth.idx) {
+                aNNW_change_talk_proc(actor, aNNW_TALK_CLOTH_CHANGE);
+                return;
+            }
+        } else {
+            mMsg_ChangeMsgData(msg_p, 0x2FF5);
+        }
+        mMsg_Set_ForceNext(msg_p);
+        mMsg_request_main_appear_wait_type1(msg_p);
+        aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+    }
+}
+
+static void aNNW_talk_give_admission(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNNW_change_talk_proc(actor, actor->talk_idx + 1);
+                break;
+            case mChoice_CHOICE1:
+                aNNW_change_talk_proc(actor, aNNW_TALK_TRADE_WHICH);
+                break;
+            case mChoice_CHOICE2:
+                aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aNNW_talk_gba_which(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNNW_change_talk_proc(actor, aNNW_TALK_GBA_TOOL_BF);
+                break;
+            case mChoice_CHOICE1:
+                aNNW_change_talk_proc(actor, aNNW_TALK_GBA_LOAD_BF);
+                break;
+            case mChoice_CHOICE2:
+                aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_LOAD_BF_0_0);
+                break;
+            case mChoice_CHOICE3:
+                aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aNNW_talk_gba_tool_bf(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p(); // @unused
+
+    if (order != 0 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        sAdo_SysLevStart(NA_SE_47);
+        mMsg_SET_LOCKCONTINUE();
+        aNNW_change_talk_proc_next(actor);
+        aNNW_gba_init();
+        aNNW_gba_trance_data_init(&play->submenu);
+    }
+}
+
+static void aNNW_talk_gba_tool(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (aNNW_check_GBA(&actor->gba_ready)) {
+        case aNNW_GBA_STATE_TRANSMITTING:
+            break;
+        case aNNW_GBA_STATE_READY:
+            switch (actor->talk_idx) {
+                case aNNW_TALK_GBA_TOOL:
+                    aNNW_change_talk_proc_next(actor);
+                    break;
+                default:
+                    aNNW_change_talk_proc_next(actor);
+                    break;
+            }
+            break;
+        case aNNW_GBA_STATE_NOT_CONNECTED:
+            if (actor->gba_wait_frames < 5) {
+                actor->gba_wait_frames++;
+            } else {
+                sAdo_SysLevStop(NA_SE_47);
+                mMsg_UNSET_LOCKCONTINUE();
+                mMsg_Set_continue_msg_num(msg_p, 0x3008);
+                aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+                mGcgba_EndComm();
+            }
+            break;
+    }
+}

@@ -1,0 +1,218 @@
+#define aNNW_CLIENT_PRG_SIZE 0xACC0
+#define aNNW_CLIENT_LDR_SIZE 0x8D20
+
+#ifndef __INTELLISENSE__
+static u8 aNNW_client_prg[] = {
+#include "assets/aNNW_client_prg.inc"
+};
+
+static u8 aNNW_client_ldr[] = {
+#include "assets/aNNW_client_ldr.inc"
+};
+#else
+extern u8 aNNW_client_prg[];
+extern u8 aNNW_client_ldr[];
+#endif
+
+static u8 aNNW_trance_data[0x1100] ATTRIBUTE_ALIGN(32);
+
+static void aNNW_gba_init(void) {
+    mGcgba_Init();
+}
+
+static void aNNW_gba_trance_data_init(Submenu* submenu) {
+    mNW_original_design_c* design_p = Now_Private->my_org;
+    u8* my_org_no_table_p = Now_Private->my_org_no_table;
+    mNW_original_design_c* dst_p = (mNW_original_design_c*)aNNW_trance_data;
+    int i;
+
+    for (i = 0; i < mPr_ORIGINAL_DESIGN_COUNT; i++) {
+        int idx = mNW_get_image_no(submenu, i);
+        
+        bcopy(&design_p[idx], &dst_p[i], sizeof(mNW_original_design_c));
+        mNW_GC_to_Agb_texture(design_p[idx].design.data, dst_p[i].design.data);
+    }
+}
+
+static void aNNW_gba_trance_data_clear(void) {
+    mem_clear(aNNW_trance_data, sizeof(aNNW_trance_data), 0);
+}
+
+static void aNNW_gba_open_submenu(Submenu* submenu) {
+    mSM_open_submenu_new(submenu, mSM_OVL_NEEDLEWORK, mNW_OPEN_GBA, 0, aNNW_trance_data);
+}
+
+static void aNNW_gba_trance_data_end(void) {
+    u8 design[mNW_DESIGN_TEX_SIZE];
+    mNW_original_design_c* design_p = (mNW_original_design_c*)aNNW_trance_data;
+    int i;
+
+    for (i = 0; i < mPr_ORIGINAL_DESIGN_COUNT; i++) {
+        mNW_AGB_to_GC_texture(design_p[i].design.data, design);
+        mNW_OverWriteOriginalTexture(&design_p[i], design);
+    }
+}
+
+static int aNNW_check_GBA(u8* gba_connected_p) {
+    int status;
+
+    if (*gba_connected_p == FALSE) {
+        mGcgba_InitVar();
+        *gba_connected_p = TRUE;
+    }
+
+    status = mGcgba_ConnectEnabled();
+    if (status == GBA2_GBA_STATE_SUCCESS) {
+        *gba_connected_p = FALSE;
+        return aNNW_GBA_STATE_READY;
+    } else if (status == GBA2_GBA_STATE_TRANSMITTING) {
+        return aNNW_GBA_STATE_TRANSMITTING;
+    }
+
+    *gba_connected_p = FALSE;
+    return aNNW_GBA_STATE_NOT_CONNECTED;
+}
+
+static int aNNW_mGcgba_boot(u8* gba_connected_p) {
+    int status;
+
+    if (*gba_connected_p == FALSE) {
+        mGcgba_InitVar();
+        *gba_connected_p = TRUE;
+    }
+
+    status = mGcgba_Boot(aNNW_client_ldr, aNNW_CLIENT_LDR_SIZE);
+    if (status != GBA2_GBA_STATE_TRANSMITTING) {
+        *gba_connected_p = FALSE;
+    }
+
+    if (status == GBA2_GBA_STATE_TRANSMITTING) {
+        return aNNW_GBA_STATE_TRANSMITTING;
+    } else if (status == GBA2_GBA_STATE_SUCCESS) {
+        return aNNW_GBA_STATE_READY;
+    } else {
+        return aNNW_GBA_STATE_NOT_CONNECTED;
+    }
+}
+
+static int aNNW_SendPrg(u8* gba_connected_p) {
+    int status;
+
+    if (*gba_connected_p == FALSE) {
+        mGcgba_InitVar();
+        *gba_connected_p = TRUE;
+    }
+
+    status = mGcgba_Send(aNNW_client_prg, aNNW_CLIENT_PRG_SIZE);
+    if (status != GBA2_GBA_STATE_TRANSMITTING) {
+        *gba_connected_p = FALSE;
+    }
+
+    if (status == GBA2_GBA_STATE_SUCCESS) {
+        return aNNW_GBA_STATE_READY;
+    } else if (status == GBA2_GBA_STATE_TRANSMITTING) {
+        return aNNW_GBA_STATE_TRANSMITTING;
+    } else {
+        return aNNW_GBA_STATE_NOT_CONNECTED;
+    }
+}
+
+static int aNNW_SendData(u8* gba_connected_p) {
+    int status;
+
+    if (*gba_connected_p == FALSE) {
+        mGcgba_InitVar();
+        *gba_connected_p = TRUE;
+    }
+
+    status = mGcgba_Send(aNNW_trance_data, sizeof(aNNW_trance_data));
+    if (status != GBA2_GBA_STATE_TRANSMITTING) {
+        *gba_connected_p = FALSE;
+    }
+
+    if (status == GBA2_GBA_STATE_SUCCESS) {
+        return aNNW_GBA_STATE_READY;
+    } else if (status == GBA2_GBA_STATE_TRANSMITTING) {
+        return aNNW_GBA_STATE_TRANSMITTING;
+    } else {
+        return aNNW_GBA_STATE_NOT_CONNECTED;
+    }
+}
+
+static int aNNW_RecvData(u8* gba_connected_p) {
+    int status;
+
+    if (*gba_connected_p == FALSE) {
+        mGcgba_InitVar();
+        *gba_connected_p = TRUE;
+    }
+
+    status = mGcgba_Recv(aNNW_trance_data, sizeof(aNNW_trance_data));
+    if (status != GBA2_GBA_STATE_TRANSMITTING) {
+        *gba_connected_p = FALSE;
+    }
+
+    if (status == GBA2_GBA_STATE_SUCCESS) {
+        return aNNW_GBA_STATE_READY;
+    } else if (status == GBA2_GBA_STATE_TRANSMITTING) {
+        return aNNW_GBA_STATE_TRANSMITTING;
+    } else {
+        return aNNW_GBA_STATE_NOT_CONNECTED;
+    }
+}
+
+static int aNNW_IsEditor(u8* gba_connected_p) {
+    if (*gba_connected_p == FALSE) {
+        mGcgba_InitVar();
+        *gba_connected_p = TRUE;
+    }
+
+    switch (mGcgba_IsEditor()) {
+        case GBA2_GBA_STATE_SUCCESS:
+            *gba_connected_p = FALSE;
+            return aNNW_GBA_STATE_READY;
+        case GBA2_GBA_STATE_ALREADY_EXIST:
+            *gba_connected_p = FALSE;
+            return aNNW_GBA_STATE_EDITOR_READY;
+        case GBA2_GBA_STATE_ERROR:
+            *gba_connected_p = FALSE;
+            return aNNW_GBA_STATE_NOT_CONNECTED;
+    }
+
+    return aNNW_GBA_STATE_TRANSMITTING;
+}
+
+static void aNNW_gba_open_submenu_card_e(Submenu* submenu) {
+    mSM_open_submenu_new(submenu, mSM_OVL_NEEDLEWORK, mNW_OPEN_CARD, 0, aNNW_trance_data);
+}
+
+static void aNNW_Send_card_e(u8* gba_connected_p) {
+    if (*gba_connected_p == FALSE) {
+        mGcgba_InitVar();
+        *gba_connected_p = TRUE;
+    }
+
+    mGcgba_send_eAppri(mEA_dl_carde_program_p(), mEA_dl_carde_program_size());
+}
+
+static int aNNW_RecvData_card_e(u8* gba_connected_p) {
+    int status;
+
+    if (*gba_connected_p == FALSE) {
+        mGcgba_InitVar();
+        *gba_connected_p = TRUE;
+    }
+
+    status = mGcgba_Read(aNNW_trance_data, sizeof(mNW_original_design_c), GBA2_EAPPLI_TYPE_NEEDLEWORK);
+    if (status != GBA2_GBA_STATE_TRANSMITTING) {
+        *gba_connected_p = FALSE;
+    }
+
+    if (status == GBA2_GBA_STATE_SUCCESS) {
+        return aNNW_GBA_STATE_READY;
+    } else if (status == GBA2_GBA_STATE_TRANSMITTING) {
+        return aNNW_GBA_STATE_TRANSMITTING;
+    } else {
+        return aNNW_GBA_STATE_NOT_CONNECTED;
+    }
+}

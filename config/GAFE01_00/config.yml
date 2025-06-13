@@ -417,6 +417,16 @@ modules:
     header: assets/aBTD_island_ldr.inc
     header_type: raw
 
+  - symbol: aNNW_client_prg
+    binary: assets/aNNW_client_prg.bin
+    header: assets/aNNW_client_prg.inc
+    header_type: raw
+
+  - symbol: aNNW_client_ldr
+    binary: assets/aNNW_client_ldr.bin
+    header: assets/aNNW_client_ldr.inc
+    header_type: raw
+
   - symbol: mbg_v
     binary: assets/mbg_v.bin
     header: assets/mbg_v.inc
