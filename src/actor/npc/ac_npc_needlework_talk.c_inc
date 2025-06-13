@@ -730,7 +730,7 @@ static void aNNW_talk_gba_which(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
                 aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_LOAD_BF_0_0);
                 break;
             case mChoice_CHOICE3:
-                aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+                aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
                 break;
         }
     }
@@ -778,4 +778,833 @@ static void aNNW_talk_gba_tool(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
             }
             break;
     }
+}
+
+static void aNNW_talk_gba_tool_0(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (aNNW_IsEditor(&actor->gba_ready)) {
+        case aNNW_GBA_STATE_TRANSMITTING:
+            break;
+        case aNNW_GBA_STATE_READY:
+            aNNW_change_talk_proc(actor, aNNW_TALK_GBA_OVER_SAVE);
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_UNSET_LOCKCONTINUE();
+            mMsg_Set_continue_msg_num(msg_p, 0x2FFD);
+            mGcgba_EndComm();
+            break;
+        case aNNW_GBA_STATE_NOT_CONNECTED:
+        case aNNW_GBA_STATE_EDITOR_READY:
+            aNNW_change_talk_proc_next(actor);
+            break;
+    }
+}
+
+static void aNNW_talk_gba_tool_af(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (aNNW_mGcgba_boot(&actor->gba_ready)) {
+        case aNNW_GBA_STATE_TRANSMITTING:
+            break;
+        case aNNW_GBA_STATE_READY:
+            aNNW_change_talk_proc(actor, aNNW_TALK_GBA_TOOL_AF2);
+            break;
+        case aNNW_GBA_STATE_NOT_CONNECTED:
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_UNSET_LOCKCONTINUE();
+            mMsg_Set_continue_msg_num(msg_p, 0x300A);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+            mGcgba_EndComm();
+            break;
+    }
+}
+
+static void aNNW_talk_gba_tool_af2(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (aNNW_SendPrg(&actor->gba_ready)) {
+        case aNNW_GBA_STATE_TRANSMITTING:
+            break;
+        case aNNW_GBA_STATE_READY:
+            aNNW_change_talk_proc(actor, aNNW_TALK_GBA_TOOL_AF3);
+            break;
+        case aNNW_GBA_STATE_NOT_CONNECTED:
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_UNSET_LOCKCONTINUE();
+            mMsg_Set_continue_msg_num(msg_p, 0x300A);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+            mGcgba_EndComm();
+            break;
+    }
+}
+
+static void aNNW_talk_gba_tool_af3(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (aNNW_SendPrg(&actor->gba_ready)) {
+        case aNNW_GBA_STATE_TRANSMITTING:
+            break;
+        case aNNW_GBA_STATE_READY:
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_UNSET_LOCKCONTINUE();
+            mMsg_SET_CONTINUE_MSG_NUM(0x300B);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+            mGcgba_EndComm();
+            break;
+        case aNNW_GBA_STATE_NOT_CONNECTED:
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_UNSET_LOCKCONTINUE();
+            mMsg_Set_continue_msg_num(msg_p, 0x300A);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+            mGcgba_EndComm();
+            break;
+    }
+}
+
+static void aNNW_talk_gba_load_bf(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p(); // @unused
+
+    if (order != 0 && mMsg_CHECK_MAINNORMALCONTINUE() == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        sAdo_SysLevStart(NA_SE_47);
+        mMsg_SET_LOCKCONTINUE();
+        aNNW_change_talk_proc_next(actor);
+        aNNW_gba_init();
+        aNNW_gba_trance_data_clear();
+    }
+}
+
+static void aNNW_talk_gba_load_check(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (aNNW_IsEditor(&actor->gba_ready)) {
+        case aNNW_GBA_STATE_TRANSMITTING:
+            break;
+        case aNNW_GBA_STATE_READY:
+            aNNW_change_talk_proc(actor, aNNW_TALK_GBA_LOAD_AF);
+            break;
+        case aNNW_GBA_STATE_EDITOR_READY:
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_UNSET_LOCKCONTINUE();
+            mMsg_Set_continue_msg_num(msg_p, 0x300D);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+            mGcgba_EndComm();
+            break;
+        case aNNW_GBA_STATE_NOT_CONNECTED:
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_UNSET_LOCKCONTINUE();
+            mMsg_Set_continue_msg_num(msg_p, 0x300E);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+            mGcgba_EndComm();
+            break;
+    }
+}
+
+static void aNNW_talk_gba_load_af(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (aNNW_RecvData(&actor->gba_ready)) {
+        case aNNW_GBA_STATE_READY:
+            aNNW_gba_trance_data_end(&play->submenu);
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_UNSET_LOCKCONTINUE();
+            mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1();
+            aNNW_change_talk_proc(actor, aNNW_TALK_GBA_MENU0);
+            mGcgba_EndComm();
+            break;
+        case aNNW_GBA_STATE_NOT_CONNECTED:
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_UNSET_LOCKCONTINUE();
+            mMsg_Set_continue_msg_num(msg_p, 0x300E);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+            mGcgba_EndComm();
+            break;
+    }
+}
+
+static void aNNW_talk_trend_cloth(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        aNNW_set_trend_umbrella_message();
+        mMsg_Set_ForceNext(msg_p);
+        aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNNW_talk_byebye(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_idling_now(msg_p) == TRUE) {
+        mMsg_request_main_disappear_wait_type1(msg_p);
+        aNNW_change_talk_proc(actor, aNNW_TALK_EXIT);
+    }
+}
+
+static void aNNW_talk_exit(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_main_wait(msg_p) == TRUE) {
+        goto_other_scene(play, Common_GetPointer(structure_exit_door_data), TRUE);
+        if (play->fb_wipe_mode == 0) {
+            mBGMPsComp_scene_mode(14);
+            mBGMPsComp_volume_talk_end();
+            mBGMPsComp_make_ps_wipe(0x195);
+        }
+    }
+}
+
+static void aNNW_talk_cloth_change(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_CHANGE_CLOTH) {
+        mPlib_request_main_change_cloth_forNPC_type1((GAME*)play, RSV_CLOTH, Now_Private->cloth.idx, TRUE);
+        aNNW_change_talk_proc_next(actor);
+    }
+}
+
+static void aNNW_talk_cloth_wait(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_CHANGE_CLOTH) {
+        mMsg_Set_ForceNext(msg_p);
+        mMsg_request_main_appear_wait_type1(msg_p);
+
+        switch (actor->talk_idx) {
+            case aNNW_TALK_CLOTH_WAIT2:
+                mMsg_ChangeMsgData(msg_p, 0x2FEB);
+                aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+                break;
+            case aNNW_TALK_CLOTH_WAIT3:
+                mMsg_Set_continue_msg_num(msg_p, 0x2FF0);
+                aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+                break;
+            case aNNW_TALK_CLOTH_WAIT4:
+                mMsg_SET_CONTINUE_MSG_NUM(0x300F);
+                aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+                break;
+            default:
+                aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aNNW_talk_card_e_load_prg_bf_0(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p(); // @unused
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        sAdo_SysLevStart(NA_SE_47);
+        mMsg_Set_LockContinue(msg_p);
+        aNNW_change_talk_proc_next(actor);
+        aNNW_gba_init();
+    }
+}
+
+static void aNNW_talk_card_e_load_prg_bf_1(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (aNNW_check_GBA(&actor->gba_ready)) {
+        case aNNW_GBA_STATE_TRANSMITTING:
+            break;
+        case aNNW_GBA_STATE_READY:
+            aNNW_change_talk_proc_next(actor);
+            break;
+        case aNNW_GBA_STATE_NOT_CONNECTED:
+            if (actor->gba_wait_frames < 5) {
+                actor->gba_wait_frames++;
+            } else {
+                sAdo_SysLevStop(NA_SE_47);
+                mMsg_Unset_LockContinue(msg_p);
+                mMsg_Set_continue_msg_num(msg_p, 0x3008);
+                aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+                mGcgba_EndComm();
+            }
+            break;
+    }
+}
+
+static void aNNW_talk_card_e_load_prg_0(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (aNNW_Send_card_e(&actor->gba_ready)) {
+        case GBA2_EAPPLI_SUCCESS:
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_Unset_LockContinue(msg_p);
+            mMsg_Set_continue_msg_num(msg_p, 0x3010);
+            aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_LOAD_PRG_AF);
+            mGcgba_EndComm();
+            break;
+        case GBA2_EAPPLI_FAILURE_XFER_ERROR:
+        case GBA2_EAPPLI_FAILURE_NO_GBA:
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_Unset_LockContinue(msg_p);
+            mMsg_Set_continue_msg_num(msg_p, 0x3003);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+            mGcgba_EndComm();
+            break;
+    }
+}
+
+static void aNNW_talk_card_e_load_prg_af(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_LOAD_BF_0);
+                break;
+            case mChoice_CHOICE1:
+                aNNW_change_talk_proc(actor, aNNW_TALK_OTHER_HAPPEN);
+                break;
+            case mChoice_CHOICE2:
+                aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aNNW_talk_card_e_load_bf_0_0(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_LOAD_BF_0);
+                break;
+            case mChoice_CHOICE1:
+                aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_LOAD_PRG_BF_0);
+                break;
+        }
+    }
+}
+
+static void aNNW_talk_card_e_load_bf_0(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        sAdo_SysLevStart(NA_SE_47);
+        mMsg_Set_LockContinue(msg_p);
+        aNNW_change_talk_proc_next(actor);
+        aNNW_gba_init();
+    }
+}
+
+static void aNNW_talk_card_e_load_bf_1(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (aNNW_check_GBA(&actor->gba_ready)) {
+        case aNNW_GBA_STATE_TRANSMITTING:
+            break;
+        case aNNW_GBA_STATE_READY:
+            aNNW_change_talk_proc_next(actor);
+            break;
+        case aNNW_GBA_STATE_NOT_CONNECTED:
+            if (actor->gba_wait_frames < 5) {
+                actor->gba_wait_frames++;
+            } else {
+                sAdo_SysLevStop(NA_SE_47);
+                mMsg_Unset_LockContinue(msg_p);
+                mMsg_Set_continue_msg_num(msg_p, 0x3008);
+                aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+                mGcgba_EndComm();
+            }
+            break;
+    }
+}
+
+static void aNNW_talk_card_e_load(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    switch (aNNW_RecvData_card_e(&actor->gba_ready)) {
+        case aNNW_GBA_STATE_READY:
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_request_main_disappear_wait_type1(msg_p);
+            aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_MENU0);
+            mGcgba_EndComm();
+            break;
+        case aNNW_GBA_STATE_NOT_CONNECTED:
+            sAdo_SysLevStop(NA_SE_47);
+            mMsg_Unset_LockContinue(msg_p);
+            mMsg_Set_continue_msg_num(msg_p, 0x3002);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+            mGcgba_EndComm();
+            break;
+    }
+}
+
+static void aNNW_talk_cporiginal0(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mMsg_REQUEST_MAIN_DISAPPEAR_WAIT_TYPE1();
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        aNNW_change_talk_proc(actor, actor->talk_idx + 1);
+    }
+}
+
+static void aNNW_talk_cporiginal1(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    Submenu* submenu = &play->submenu;
+
+    if (mMsg_Check_main_wait(msg_p) == TRUE) {
+        mSM_open_submenu(submenu, mSM_OVL_NEEDLEWORK, mNW_OPEN_CPORIGINAL, 0);
+        aNNW_change_talk_proc(actor, actor->talk_idx + 1);
+    }
+}
+
+static void aNNW_talk_cporiginal2(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    Submenu* submenu = &play->submenu;
+
+    if (!submenu->open_flag) {
+        if (mCO_get_change_flg()) {
+            aNNW_change_talk_proc(actor, aNNW_TALK_CLOTH_CHANGE3);
+        } else {
+            mMsg_Set_continue_msg_num(msg_p, 0x2FF0);
+            mMsg_request_main_appear_wait_type1(msg_p);
+            mMsg_Set_ForceNext(msg_p);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+        }
+    }
+}
+
+static void aNNW_talk_gba_menu0(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    Submenu* submenu = &play->submenu;
+
+    if (mMsg_Check_main_wait(msg_p) == TRUE) {
+        aNNW_gba_open_submenu(submenu);
+        aNNW_change_talk_proc(actor, actor->talk_idx + 1);
+    }
+}
+
+static void aNNW_talk_gba_menu1(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    Submenu* submenu = &play->submenu;
+
+    if (!submenu->open_flag) {
+        if (mGB_get_change_flg()) {
+            aNNW_change_talk_proc(actor, aNNW_TALK_CLOTH_CHANGE4);
+        } else {
+            mMsg_SET_CONTINUE_MSG_NUM(0x300F);
+            mMsg_request_main_appear_wait_type1(msg_p);
+            mMsg_Set_ForceNext(msg_p);
+            aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+        }
+    }
+}
+
+static void aNNW_talk_card_e_menu0(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    Submenu* submenu = &play->submenu;
+
+    if (mMsg_Check_main_wait(msg_p) == TRUE) {
+        aNNW_gba_open_submenu_card_e(submenu);
+        aNNW_change_talk_proc_next(actor);
+    }
+}
+static void aNNW_talk_card_e_menu1(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    Submenu* submenu = &play->submenu;
+
+    if (!submenu->open_flag) {
+        mMsg_Set_continue_msg_num(msg_p, 0x3010);
+        mMsg_request_main_appear_wait_type1(msg_p);
+        aNNW_change_talk_proc_next(actor);
+    }
+}
+
+static void aNNW_talk_card_e_menu2(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_not_series_main_wait(msg_p) == TRUE) {
+        mMsg_Unset_LockContinue(msg_p);
+        mMsg_Set_ForceNext(msg_p);
+        aNNW_change_talk_proc(actor, aNNW_TALK_CARD_E_LOAD_PRG_AF);
+    }
+}
+
+static void aNNW_talk_ane_0(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_talk_return_demo_wait(TRUE);
+        mMsg_request_main_disappear_wait_type1(msg_p);
+        aNNW_change_talk_proc(actor, aNNW_TALK_ANE_1);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNNW_talk_ane_1(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_main_wait(msg_p) == TRUE) {
+        NPC_NEEDLEWORK_ACTOR* sister;
+
+        mMsg_request_main_forceoff();
+        aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+        sister = (NPC_NEEDLEWORK_ACTOR*)aNNW_search_sister(play, actor);
+        sister->sister_state++;
+        actor->sister_state++;
+        mDemo_KeepCamera(CAMERA2_PROCESS_TALK);
+        sister_now++;
+        
+        if (actor->npc_class.actor_class.npc_id == SP_NPC_NEEDLEWORK1 && aNNW_get_next_sister_message()) {
+            actor->think_idx_after_talk = aNNW_THINK_AINOTE;
+        }
+    }
+}
+
+static void aNNW_talk_ane_2(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        NPC_NEEDLEWORK_ACTOR* sister;
+
+        sister = (NPC_NEEDLEWORK_ACTOR*)aNNW_search_sister(play, actor);
+        sister->sister_state = 0;
+        actor->sister_state = 0;
+    }
+}
+
+static void aNNW_talk_ane_3(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+
+    if (order != 0) {
+        aNNW_turn_player(actor);
+        aNNW_change_talk_proc(actor, aNNW_TALK_ANE_2);
+        Camera2_request_main_talk((GAME_PLAY*)gamePT, GET_PLAYER_ACTOR_NOW_ACTOR(), (ACTOR*)actor, 6);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    }
+}
+
+static void aNNW_talk_gba_over_save(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (order != 0 && mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0:
+                aNNW_change_talk_proc_next(actor);
+                break;
+            case mChoice_CHOICE1:
+                aNNW_change_talk_proc(actor, aNNW_TALK_WHAT_HAPPEN);
+                break;
+        }
+    }
+}
+
+static int aNNW_change_talk_proc(NPC_NEEDLEWORK_ACTOR* actor, u8 talk_idx) {
+    actor->talk_idx = talk_idx;
+    actor->gba_wait_frames = 0;
+    return TRUE;
+}
+
+static int aNNW_change_talk_proc_next(NPC_NEEDLEWORK_ACTOR* actor) {
+    aNNW_change_talk_proc(actor, actor->talk_idx + 1);
+    return TRUE;
+}
+
+static void aNNW_set_force_talk_info(ACTOR* actorx) {
+    static int force_msg_table[] = { 0x2FD1, 0x2FD2, 0x2FD3, 0x2FF2, 0x2FF3, 0x3034, 0x3035 };
+    NPC_NEEDLEWORK_ACTOR* actor = (NPC_NEEDLEWORK_ACTOR*)actorx;
+    ACTOR* sisterx;
+
+    mDemo_Set_msg_num(force_msg_table[actor->talk_idx]);
+    aNNW_first_talk_end(0x80);
+    sisterx = aNNW_search_sister((GAME_PLAY*)gamePT, actor);
+
+    switch (actor->talk_idx) {
+        case 2:
+            aNNW_change_talk_proc(actor, aNNW_TALK_BYEBYE);
+            mMsg_SET_IDLING_REQ();
+            mDemo_Set_talk_turn(FALSE);
+            mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+            break;
+        case 3:
+        case 4:
+            aNNW_change_talk_proc(actor, aNNW_TALK_TRADE_CHECK);
+            mDemo_Set_talk_turn(TRUE);
+            mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+            break;
+        case 5:
+            if (aNNW_get_next_sister_message()) {
+                aNNW_change_talk_proc(actor, aNNW_TALK_ANE_0);
+            } else {
+                aNNW_change_talk_proc(actor, aNNW_TALK_ANE_2);
+            }
+
+            mDemo_Set_talk_turn(TRUE);
+            mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+            Camera2_request_main_needlework_talk((GAME_PLAY*)gamePT, sisterx, actorx, 6);
+            mDemo_Set_msg_num(aNNW_get_sister_message());
+            actor->npc_class.talk_info.turn = aNPC_TALK_TURN_NONE;
+            break;
+        case 6:
+            mDemo_Set_talk_turn(TRUE);
+            mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+            if (sister_story == 9) {
+                aNNW_change_talk_proc(actor, aNNW_TALK_ANE_3);
+                NPC_CLIP->set_dst_pos_proc((NPC_ACTOR*)actor, sisterx->world.position.x, sisterx->world.position.z);
+            } else {
+                aNNW_change_talk_proc(actor, aNNW_TALK_ANE_2);
+                Camera2_request_main_talk((GAME_PLAY*)gamePT, GET_PLAYER_ACTOR_NOW_ACTOR(), actorx, 6);
+            }
+
+            mDemo_Set_msg_num(aNNW_get_sister_message());
+            actor->npc_class.talk_info.turn = aNPC_TALK_TURN_NONE;
+            break;
+        default:
+            aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
+            mDemo_Set_talk_turn(TRUE);
+            mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+            break;
+    }
+}
+
+static void aNNW_force_talk_request(ACTOR* actorx, GAME* game) {
+    NPC_NEEDLEWORK_ACTOR* actor = (NPC_NEEDLEWORK_ACTOR*)actorx;
+
+    if (!actor->_9B3) {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, aNNW_set_force_talk_info);
+    } else {
+        actor->_9B3 = FALSE;
+    }
+}
+
+static void aNNW_set_ane_msg(ACTOR* actorx) {
+    NPC_NEEDLEWORK_ACTOR* actor = (NPC_NEEDLEWORK_ACTOR*)actorx;
+    int msg_no;
+    u8 talk_idx;
+
+    if (CLIP(aprilfool_control_clip) != NULL && !CLIP(aprilfool_control_clip)->talk_chk_proc(SP_NPC_NEEDLEWORK1)) {
+        msg_no = CLIP(aprilfool_control_clip)->get_msg_num_proc(SP_NPC_NEEDLEWORK1, TRUE);
+        talk_idx = aNNW_TALK_ANE_2;
+    } else {
+        aNNW_get_make_sister_message();
+        msg_no = aNNW_get_sister_message();
+        
+        if (aNNW_get_next_sister_message()) {
+            talk_idx = aNNW_TALK_ANE_0;
+        } else {
+            talk_idx = aNNW_TALK_ANE_2;
+        }
+    }
+
+    aNNW_change_talk_proc(actor, talk_idx);
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aNNW_set_norm_talk_info(ACTOR* actorx) {
+    NPC_NEEDLEWORK_ACTOR* actor = (NPC_NEEDLEWORK_ACTOR*)actorx;
+    int msg_no;
+    u8 talk_idx;
+
+    mDemo_Set_talk_turn(TRUE);
+    mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+    
+    if (actor->talk_idx == 2) {
+        aNNW_set_ane_msg(actorx);
+    } else {
+        if (CLIP(aprilfool_control_clip) != NULL && !CLIP(aprilfool_control_clip)->talk_chk_proc(SP_NPC_NEEDLEWORK0)) {
+            talk_idx = aNNW_TALK_END_WAIT;
+            msg_no = CLIP(aprilfool_control_clip)->get_msg_num_proc(SP_NPC_NEEDLEWORK0, TRUE);
+        } else {
+            if (aNNW_first_talk_check(0x40)) {
+                talk_idx = aNNW_TALK_WHAT_HAPPEN;
+                msg_no = 0x3005;
+            } else {
+                talk_idx = aNNW_TALK_WHAT_HAPPEN_FIRST;
+                msg_no = 0x2FD4;
+            }
+
+            actor->delay_frames = 10;
+        }
+
+        aNNW_change_talk_proc(actor, talk_idx);
+        mDemo_Set_msg_num(msg_no);
+        aNNW_turn_player((NPC_NEEDLEWORK_ACTOR*)actorx); // TODO: probably need to update this declaration
+    }
+
+    actor->npc_class.talk_info.turn = aNPC_TALK_TURN_NONE;
+}
+
+static void aNNW_norm_talk_request(ACTOR* actorx, GAME* game) {
+    NPC_NEEDLEWORK_ACTOR* actor = (NPC_NEEDLEWORK_ACTOR*)actorx;
+
+    if (!actor->_9B3) {
+        mDemo_Request(mDemo_TYPE_TALK, actorx, aNNW_set_norm_talk_info);
+    } else {
+        actor->_9B3 = FALSE;
+    }
+}
+
+static int aNNW_talk_init(ACTOR* actorx, GAME* game) {
+    u8 str[ANIMAL_NAME_LEN];
+    NPC_NEEDLEWORK_ACTOR* actor = (NPC_NEEDLEWORK_ACTOR*)actorx;
+    NPC_NEEDLEWORK_ACTOR* sister;
+
+    actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    mString_Load_StringFromRom(str, sizeof(str), 0x6D5); // load 'Mabel'
+    mMsg_SET_FREE_STR(mMsg_FREE_STR0, str, sizeof(str));
+    mString_Load_StringFromRom(str, sizeof(str), 0x6D6); // load 'Sable'
+    mMsg_SET_FREE_STR(mMsg_FREE_STR1, str, sizeof(str));
+    
+    switch (actorx->npc_id) {
+        case SP_NPC_NEEDLEWORK0:
+            if (actor->talk_idx != aNNW_TALK_ANE_0 && actor->talk_idx != aNNW_TALK_ANE_2) {
+                aNNW_turn_player((NPC_NEEDLEWORK_ACTOR*)actorx);
+            }
+            break;
+        case SP_NPC_NEEDLEWORK1:
+            sister = (NPC_NEEDLEWORK_ACTOR*)aNNW_search_sister((GAME_PLAY*)game, (NPC_NEEDLEWORK_ACTOR*)actorx); // TODO: do we also need to update aNNW_search_sister's declaration to use ACTOR*?
+            switch (sister->sister_state) {
+                case 0:
+                case 2:
+                    sister->sister_state++;
+                    break;
+            }
+
+            aNNW_day_day();
+            if (Now_Private->nw_visitor.days >= 5 && Common_Get(player_no) != mPr_FOREIGNER && actor->talk_idx != aNNW_TALK_ANE_3) {
+                aNNW_turn_player((NPC_NEEDLEWORK_ACTOR*)actorx);
+            }
+
+            if (actor->think_idx == aNNW_THINK_MISIN_WAIT) {
+                if (CLIP(misin_clip) != NULL) {
+                    CLIP(misin_clip)->request_misin_stop_proc();
+                    CLIP(misin_clip)->request_dustcloth_stop_proc();
+                }
+
+                actor->_9BB = TRUE;
+                actor->npc_class.draw.anim_speed_type = aNPC_ANIM_SPEED_TYPE_LOCKED;
+                actor->npc_class.draw.frame_speed = 0.5f;
+            }
+            break;
+    }
+
+    return TRUE;
+}
+
+typedef void (*aNNW_TALK_PROC)(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play);
+
+static int aNNW_talk_end_chk(ACTOR* actorx, GAME* game) {
+    static aNNW_TALK_PROC proc[] = {
+        aNNW_talk_what_happen_first,
+        aNNW_talk_what_happen,
+        aNNW_talk_other_happen,
+        aNNW_talk_other_happen2,
+        aNNW_talk_check_listen,
+        aNNW_talk_listen_sister,
+        aNNW_talk_listen_sister2,
+        aNNW_talk_listen_sister3,
+        aNNW_talk_listen_sister4,
+        aNNW_talk_ane_0,
+        aNNW_talk_ane_1,
+        aNNW_talk_ane_2,
+        aNNW_talk_design_check,
+        aNNW_talk_design_which,
+        aNNW_talk_design_open,
+        aNNW_talk_design_close,
+        aNNW_talk_design_close2,
+        aNNW_talk_design_close2_end,
+        aNNW_talk_design_which,
+        aNNW_talk_design_open3,
+        aNNW_talk_design_close3,
+        aNNW_talk_trade_check,
+        aNNW_talk_trade_which,
+        aNNW_talk_design_open,
+        aNNW_talk_trade_close,
+        aNNW_talk_give_admission,
+        aNNW_talk_trade_which,
+        aNNW_talk_design_open,
+        aNNW_talk_trade_close,
+        aNNW_talk_give_admission,
+        aNNW_talk_trade_which,
+        aNNW_talk_design_open,
+        aNNW_talk_trade_close,
+        aNNW_talk_gba_which,
+        aNNW_talk_gba_tool_bf,
+        aNNW_talk_gba_tool,
+        aNNW_talk_gba_tool_0,
+        aNNW_talk_gba_tool_af,
+        aNNW_talk_gba_tool_af2,
+        aNNW_talk_gba_tool_af3,
+        aNNW_talk_gba_load_bf,
+        aNNW_talk_gba_tool,
+        aNNW_talk_gba_load_check,
+        aNNW_talk_gba_load_af,
+        aNNW_talk_trend_cloth,
+        aNNW_talk_byebye,
+        aNNW_talk_exit,
+        aNNW_talk_cloth_change,
+        aNNW_talk_cloth_wait,
+        aNNW_talk_cloth_change,
+        aNNW_talk_cloth_wait,
+        aNNW_talk_cloth_change,
+        aNNW_talk_cloth_wait,
+        aNNW_talk_cloth_change,
+        aNNW_talk_cloth_wait,
+        aNNW_talk_cporiginal0,
+        aNNW_talk_cporiginal1,
+        aNNW_talk_cporiginal2,
+        aNNW_talk_gba_menu0,
+        aNNW_talk_gba_menu1,
+        aNNW_talk_ane_3,
+        aNNW_talk_gba_over_save,
+        aNNW_talk_gba_tool_bf,
+        aNNW_talk_gba_tool,
+        aNNW_talk_gba_tool_af3,
+        (aNNW_TALK_PROC)none_proc1,
+        aNNW_talk_card_e_load_bf_0_0,
+        aNNW_talk_card_e_load_bf_0,
+        aNNW_talk_card_e_load_bf_1,
+        aNNW_talk_card_e_load,
+        aNNW_talk_card_e_menu0,
+        aNNW_talk_card_e_menu1,
+        aNNW_talk_card_e_menu2,
+        aNNW_talk_card_e_load_prg_bf_0,
+        aNNW_talk_card_e_load_prg_bf_1,
+        aNNW_talk_card_e_load_prg_0,
+        aNNW_talk_card_e_load_prg_af,
+    };
+
+    NPC_NEEDLEWORK_ACTOR* actor = (NPC_NEEDLEWORK_ACTOR*)actorx;
+    NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret;
+
+    ret = FALSE;
+    nactorx->movement.mv_add_angl = DEG2SHORT_ANGLE2(11.25f);
+    (*proc[actor->talk_idx])(actor, play);
+
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        aNNW_setup_think_proc(actor, play, actor->think_idx_after_talk);
+        nactorx->talk_info.turn = aNPC_TALK_TURN_NORMAL;
+        actor->_9B6 = 0;
+        actor->my_proc_idx = 0;
+        ret = TRUE;
+
+        if (actor->think_idx == aNNW_THINK_OMATIKUDASI2 && CLIP(misin_clip) != NULL) {
+            CLIP(misin_clip)->request_misin_move_proc();
+        }
+    }
+
+    return ret;
 }

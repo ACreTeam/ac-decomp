@@ -27,7 +27,7 @@ ACTOR_PROFILE Misin_Profile = {
 
 static void aMSN_SetDustclothSwitch(s16 switch_flag) {
     if (aMSN_GetClip() != NULL) {
-        aMSN_GetClip()->misin_actor_p->dustcloth.switch_flag = switch_flag;
+        ((MISIN_ACTOR*)aMSN_GetClip()->misin_actor_p)->dustcloth.switch_flag = switch_flag;
     }
 }
 
@@ -76,7 +76,7 @@ static void aMSN_DustclothCT(aMSN_DustCloth_c* dustcloth, GAME* game) {
 
 static void aMSN_SetMisinStatus(s16 status) {
     if (aMSN_GetClip() != NULL) {
-        aMSN_GetClip()->misin_actor_p->misin.status = status;
+        ((MISIN_ACTOR*)aMSN_GetClip()->misin_actor_p)->misin.status = status;
     }
 }
 
@@ -111,7 +111,7 @@ static void aMSN_SetClipInfo(ACTOR* actorx, GAME* game) {
     MISIN_ACTOR* misin_actor = (MISIN_ACTOR*)actorx;
     aMSN_Clip_c* clip = &misin_actor->clip;
 
-    clip->misin_actor_p = misin_actor;
+    clip->misin_actor_p = actorx;
     clip->request_misin_stop_proc = &aMSN_RequestMisinStop;
     clip->request_misin_move_proc = &aMSN_ReqeustMisinMove;
     clip->request_dustcloth_stop_proc = &aMSN_RequestDustclothStop;

@@ -43,7 +43,7 @@ struct npc_needlework_actor_s {
     u8 _9B3;
     u8 _9B4;
     u8 buy_ut_idx;
-    u8 _9B5;
+    u8 _9B6;
     u8 my_proc_idx;
     u8 pl_area;
     u8 now_area;

@@ -38,6 +38,7 @@
 #include "ac_needlework_indoor_clip.h"
 #include "ac_countdown_clip.h"
 #include "ac_tokyoso_control.h"
+#include "ac_misin_clip.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,7 +51,7 @@ typedef struct clip_s {
     /* 0x000 */ BoxTrick01_data_c box_trick_data[4];
     /* 0x020 */ int arrange_ftr_num;
     /* 0x024 */ aNI_Clip_c* needlework_indoor_clip;
-    /* 0x028 */ void* misin_clip;
+    /* 0x028 */ aMSN_Clip_c* misin_clip;
     /* 0x02C */ aHTBL_Clip_c* htbl_clip;
     /* 0x030 */ void* _030;
     /* 0x034 */ void* _034;

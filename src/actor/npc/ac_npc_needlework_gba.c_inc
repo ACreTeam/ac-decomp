@@ -42,7 +42,7 @@ static void aNNW_gba_open_submenu(Submenu* submenu) {
     mSM_open_submenu_new(submenu, mSM_OVL_NEEDLEWORK, mNW_OPEN_GBA, 0, aNNW_trance_data);
 }
 
-static void aNNW_gba_trance_data_end(void) {
+static void aNNW_gba_trance_data_end(Submenu* submenu) {
     u8 design[mNW_DESIGN_TEX_SIZE];
     mNW_original_design_c* design_p = (mNW_original_design_c*)aNNW_trance_data;
     int i;
@@ -186,13 +186,13 @@ static void aNNW_gba_open_submenu_card_e(Submenu* submenu) {
     mSM_open_submenu_new(submenu, mSM_OVL_NEEDLEWORK, mNW_OPEN_CARD, 0, aNNW_trance_data);
 }
 
-static void aNNW_Send_card_e(u8* gba_connected_p) {
+static int aNNW_Send_card_e(u8* gba_connected_p) {
     if (*gba_connected_p == FALSE) {
         mGcgba_InitVar();
         *gba_connected_p = TRUE;
     }
 
-    mGcgba_send_eAppri(mEA_dl_carde_program_p(), mEA_dl_carde_program_size());
+    return mGcgba_send_eAppri(mEA_dl_carde_program_p(), mEA_dl_carde_program_size());
 }
 
 static int aNNW_RecvData_card_e(u8* gba_connected_p) {

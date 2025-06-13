@@ -2,6 +2,8 @@
 
 #include "m_needlework.h"
 #include "m_needlework_ovl.h"
+#include "m_cporiginal_ovl.h"
+#include "m_gba_ovl.h"
 #include "libultra/libultra.h"
 #include "m_common_data.h"
 #include "m_msg.h"
@@ -10,6 +12,7 @@
 #include "m_player_lib.h"
 #include "m_string.h"
 #include "m_ledit_ovl.h"
+#include "m_bgm.h"
 #include "GBA2/gba2.h"
 
 enum {
@@ -127,8 +130,9 @@ static BOOL aNNW_talk_init(ACTOR* actorx, GAME* game);
 static BOOL aNNW_talk_end_chk(ACTOR* actorx, GAME* game);
 static void aNNW_schedule_proc(NPC_ACTOR*, GAME_PLAY*, int);
 static void aNNW_talk_request(ACTOR* actorx, GAME* game);
-static void aNNW_change_talk_proc(NPC_NEEDLEWORK_ACTOR*, u8);
-static void aNNW_change_talk_proc_next(NPC_NEEDLEWORK_ACTOR*);
+static int aNNW_change_talk_proc(NPC_NEEDLEWORK_ACTOR*, u8);
+static int aNNW_change_talk_proc_next(NPC_NEEDLEWORK_ACTOR*);
+static void aNNW_setup_think_proc(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play, u8 think_idx);
 
 // clang-format off
 ACTOR_PROFILE Npc_Needlework_Profile = {
