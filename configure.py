@@ -1142,7 +1142,7 @@ config.libs = [
             Object(Matching, "actor/npc/ac_npc_shop_mastersp.c"),
             Object(Matching, "actor/npc/ac_npc_sleep_obaba.c"),
             Object(Matching, "actor/npc/ac_npc_soncho.c"),
-            Object(NonMatching, "actor/npc/ac_npc_station_master.c"),
+            Object(Matching, "actor/npc/ac_npc_station_master.c"),
             Object(Matching, "actor/npc/ac_npc_super_master.c"),
             Object(Matching, "actor/npc/ac_npc_totakeke.c"),
             Object(Matching, "actor/npc/ac_present_npc.c"),

@@ -1,0 +1,24 @@
+static int aSTM_set_request_act(NPC_STATION_MASTER_ACTOR* actor, u8 priority, u8 act_idx, u8 act_type, u16 act_obj, s16 move_x, s16 move_z) {
+    int ret = FALSE;
+
+    if (priority >= actor->npc_class.request.act_priority) {
+        u16 arg_data[aNPC_REQUEST_ARG_NUM];
+
+        bzero(arg_data, sizeof(arg_data));
+        arg_data[0] = act_obj;
+        arg_data[2] = move_x;
+        arg_data[3] = move_z;
+
+        actor->npc_class.request.act_priority = priority;
+        actor->npc_class.request.act_idx = act_idx;
+        actor->npc_class.request.act_type = act_type;
+        mem_copy((u8*)actor->npc_class.request.act_args, (u8*)arg_data, sizeof(arg_data));
+        ret = TRUE;
+    }
+
+    return ret;
+}
+
+static void aSTM_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_CLIP->move_proc(actorx, game);
+}

@@ -46,6 +46,14 @@ enum {
     aSTM_THINK_PROC_NUM
 };
 
+enum {
+    aSTM_TALK_REQUEST_NONE,
+    aSTM_TALK_REQUEST_NORM,
+    aSTM_TALK_REQUEST_FORCE,
+
+    aSTM_TALK_REQUEST_NUM,
+};
+
 typedef struct npc_station_actor_s NPC_STATION_MASTER_ACTOR;
 
 typedef void (*aSTM_TALK_PROC)(NPC_STATION_MASTER_ACTOR*, GAME_PLAY*);

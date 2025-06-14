@@ -1,0 +1,124 @@
+static void aSTM_train_go_ok(void) {
+    Common_Set(train_control_state, 0);
+    Common_Set(train_last_control_state, 0);
+}
+
+typedef struct {
+    int msg_no;
+    u8 talk_idx;
+    u8 cam_type;
+} aSTM_talk_data_c;
+
+static void aSTM_set_force_talk_info(ACTOR* actorx) {
+    // clang-format off
+    static aSTM_talk_data_c dt_tbl[] = {
+        {0x07DD, aSTM_TALK_END_WAIT, CAMERA2_PROCESS_NORMAL},
+        {0x0966, aSTM_TALK_END_WAIT, CAMERA2_PROCESS_NORMAL},
+        {0x0965, aSTM_TALK_SAYONARA,   CAMERA2_PROCESS_TALK},
+    };
+    // clang-format on
+
+    NPC_STATION_MASTER_ACTOR* actor = (NPC_STATION_MASTER_ACTOR*)actorx;
+    aSTM_talk_data_c* data_p = &dt_tbl[actor->talk_idx];
+
+    if (CLIP(station_clip) != NULL) {
+        CLIP(station_clip)->change_talk_proc((ACTOR*)actor, data_p->talk_idx);
+    } else {
+        actor->talk_proc = (aSTM_TALK_PROC)none_proc1;
+    }
+
+    mDemo_Set_msg_num(data_p->msg_no);
+    mDemo_Set_talk_turn(TRUE);
+    mDemo_Set_camera(data_p->cam_type);
+    mDemo_Set_talk_return_demo_wait(TRUE);
+
+    if (actor->talk_idx == 2) {
+        if (actor->npc_class.talk_info.melody_inst != 0) {
+            actor->melody_save = actor->npc_class.talk_info.melody_inst;
+        }
+
+        actor->npc_class.talk_info.melody_inst = 0;
+    }
+}
+
+static void aSTM_force_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_SPEAK, actorx, aSTM_set_force_talk_info);
+}
+
+static void aSTM_set_norm_talk_info(ACTOR* actorx) {
+    // clang-format off
+    static aSTM_talk_data_c dt_tbl[] = {
+        {0x0831,       aSTM_TALK_END_WAIT, CAMERA2_PROCESS_TALK},
+        {0x07ED,       aSTM_TALK_END_WAIT, CAMERA2_PROCESS_TALK},
+        {0x0943, aSTM_TALK_CHK_LEAVE_TALK, CAMERA2_PROCESS_TALK},
+        {0x095C, aSTM_TALK_CHK_LEAVE_TALK, CAMERA2_PROCESS_TALK},
+    };
+    // clang-format on
+
+    NPC_STATION_MASTER_ACTOR* actor = (NPC_STATION_MASTER_ACTOR*)actorx;
+    aSTM_talk_data_c* data_p = &dt_tbl[actor->talk_idx];
+
+    if (CLIP(aprilfool_control_clip) != NULL && !CLIP(aprilfool_control_clip)->talk_chk_proc(SP_NPC_STATION_MASTER)) {
+        mDemo_Set_msg_num(CLIP(aprilfool_control_clip)->get_msg_num_proc(SP_NPC_STATION_MASTER, TRUE));
+        CLIP(station_clip)->change_talk_proc(actorx, aSTM_TALK_END_WAIT);
+    } else {
+        if (actor->talk_idx == 2 && !Save_Get(save_exist)) {
+            mDemo_Set_msg_num(0x0945);
+            actor->talk_proc = (aSTM_TALK_PROC)none_proc1;
+        } else {
+            mDemo_Set_msg_num(data_p->msg_no);
+            if (CLIP(station_clip) != NULL) {
+                CLIP(station_clip)->change_talk_proc(actorx, data_p->talk_idx);
+            } else {
+                actor->talk_proc = (aSTM_TALK_PROC)none_proc1;
+            }
+        }
+    }
+
+    mDemo_Set_talk_turn(TRUE);
+    mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+}
+
+static void aSTM_norm_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aSTM_set_norm_talk_info);
+}
+
+static int aSTM_talk_init(ACTOR* actorx, GAME* game) {
+    NPC_STATION_MASTER_ACTOR* actor = (NPC_STATION_MASTER_ACTOR*)actorx;
+
+    actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    if (actor->talk_proc_idx == 1 && !mEv_CheckFirstJob()) {
+        actor->happening_sound = mBGMPsComp_execute_bgm_num_get();
+    }
+
+    return TRUE;
+}
+
+static int aSTM_talk_end_chk(ACTOR* actorx, GAME* game) {
+    NPC_STATION_MASTER_ACTOR* actor = (NPC_STATION_MASTER_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    actor->talk_proc(actor, play);
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        switch (actor->next_think_idx) {
+            case aSTM_THINK_8:
+            case aSTM_THINK_9:
+                aSTM_train_go_ok();
+                break;
+        }
+
+        aSTM_setup_think_proc(actor, play, actor->next_think_idx);
+
+        if (actor->melody_save != 0) {
+            actor->npc_class.talk_info.melody_inst = actor->melody_save;
+            actor->melody_save = 0;
+        }
+
+        ret = TRUE;
+    }
+
+    return ret;
+}
