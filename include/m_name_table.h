@@ -227,6 +227,8 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define ITEM_IS_RSVCPORG(n) ((n) >= RSV_CPORIGINAL_FLD0_00 && (n) <= RSV_CPORIGINAL_FLD7_11)
 #define ITEM_IS_RSVGBAORG(n) ((n) >= RSV_GBAORIGINAL0 && (n) <= RSV_GBAORIGINAL7)
 
+#define ITEM_IS_RSVPOLICE(n) ((n) >= RSV_POLICE_ITEM_0 && (n) < RSV_POLICE_ITEM_END)
+
 #define ITEM_IS_MYMANNIQUIN(n) ((n) >= FTR_CLOTH_MANNIQUIN_MY_ORIGINAL0 && (n) <= FTR_CLOTH_MYMANNIQUIN_END)
 #define ITEM_IS_MYUMBRELLA(n) ((n) >= FTR_MYUMBRELLA_START && (n) <= FTR_MYUMBRELLA_END)
 

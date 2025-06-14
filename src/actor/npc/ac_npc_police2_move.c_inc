@@ -1,0 +1,542 @@
+static void aPOL2_BGcheck(ACTOR* actorx) {
+    mCoBG_BgCheckControll(NULL, actorx, 8.0f, 0.0f, mCoBG_WALL_TYPE1, mCoBG_REVERSE_TYPE_REVERSE, mCoBG_CHECK_TYPE_NORMAL);
+}
+
+static void aPOL2_set_animation(NPC_POLICE2_ACTOR* actor, int action) {
+    // clang-format off
+    static animeSeqNoTable[] = {
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_WALK1,
+        aNPC_ANIM_WALK1,
+        aNPC_ANIM_RUN1,
+        aNPC_ANIM_RUN1,
+        aNPC_ANIM_WALK1,
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_WAIT1,
+    };
+    // clang-format on
+
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, animeSeqNoTable[action], FALSE);
+}
+
+static void aPOL2_set_stop_spd(NPC_POLICE2_ACTOR* actor) {
+    actor->npc_class.actor_class.speed = 0.0f;
+    actor->npc_class.movement.speed.max_speed = 0.0f;
+    actor->npc_class.movement.speed.acceleration = 0.0f;
+    actor->npc_class.movement.speed.deceleration = 0.0f;
+}
+
+static void aPOL2_set_walk_spd(NPC_POLICE2_ACTOR* actor) {
+    actor->npc_class.movement.speed.max_speed = 1.0f;
+    actor->npc_class.movement.speed.acceleration = 0.1f;
+    actor->npc_class.movement.speed.deceleration = 0.2f;
+}
+
+static void aPOL2_set_run_spd(NPC_POLICE2_ACTOR* actor) {
+    actor->npc_class.movement.speed.max_speed = 4.0f;
+    actor->npc_class.movement.speed.acceleration = 0.4f;
+    actor->npc_class.movement.speed.deceleration = 0.8f;
+}
+
+static u8 aPOL2_get_zone(xyz_t pos) {
+    int ux;
+    int uz;
+    int zone;
+
+    mFI_Wpos2UtNum(&ux, &uz, pos);
+
+    if (uz < 2) {
+        uz = 2;
+    } else if (uz > 6) {
+        uz = 6;
+    }
+
+    zone = (uz - 2) * 4;
+    if (ux > 7) {
+        zone += 3;
+    } else if (ux > 4) {
+        zone += 2;
+    } else if (ux > 1) {
+        zone += 1;
+    }
+
+    return zone;
+}
+
+static u8 aPOL2_get_next_zone_move_z(int dst_zoneX, int dst_zoneZ, int src_zoneX, int src_zoneZ) {
+    u8 ret;
+
+    if (src_zoneX == 0 || src_zoneX == 3) {
+        if (src_zoneZ < dst_zoneZ) {
+            ret = src_zoneX + (src_zoneZ + 1) * 4;
+        } else {
+            ret = src_zoneX + (src_zoneZ - 1) * 4;
+        }
+    } else if (src_zoneX == dst_zoneX) {
+        if (src_zoneX == 1) {
+            src_zoneX += (src_zoneZ * 4);
+            ret = src_zoneX - 1;
+        } else {
+            src_zoneX += (src_zoneZ * 4);
+            ret = src_zoneX + 1;
+        }
+    } else {
+        if (src_zoneX < dst_zoneX) {
+            src_zoneX += (src_zoneZ * 4);
+            ret = src_zoneX + 1;
+        } else {
+            src_zoneX += (src_zoneZ * 4);
+            ret = src_zoneX - 1;
+        }
+    }
+
+    return ret;
+}
+
+static u8 aPOL2_get_next_zone_sub0(u8 dst_zone, u8 src_zone) {
+    u8 ret;
+    int src_zoneX;
+    int src_zoneZ;
+    int dst_zoneX;
+    int dst_zoneZ;
+
+    src_zoneX = src_zone % 4;
+    src_zoneZ = src_zone / 4;
+    dst_zoneX = dst_zone % 4;
+    dst_zoneZ = dst_zone / 4;
+
+    if (src_zoneZ != dst_zoneZ) {
+        ret = aPOL2_get_next_zone_move_z(dst_zoneX, dst_zoneZ, src_zoneX, src_zoneZ);
+    } else if (src_zoneX == dst_zoneX) {
+        ret = dst_zone;
+    } else {
+        ret = src_zoneX + (src_zoneZ + RANDOM(2)) * 4;
+    }
+
+    return ret;
+}
+
+static u8 aPOL2_get_next_zone_sub1(u8 dst_zone, u8 src_zone) {
+    u8 ret;
+    int src_zoneX;
+    int src_zoneZ;
+    int dst_zoneX;
+    int dst_zoneZ;
+
+    src_zoneX = src_zone % 4;
+    src_zoneZ = src_zone / 4;
+    dst_zoneX = dst_zone % 4;
+    dst_zoneZ = dst_zone / 4;
+
+    if (ABS(dst_zoneZ - src_zoneZ) > 1) {
+        ret = aPOL2_get_next_zone_move_z(dst_zoneX, dst_zoneZ, src_zoneX, src_zoneZ);
+    } else if (src_zoneX == dst_zoneX) {
+        ret = dst_zone;
+    } else if (src_zoneX < dst_zoneX) {
+        src_zoneZ = src_zoneX + src_zoneZ * 4;
+        ret = src_zoneZ + 1;
+    } else {
+        src_zoneZ = src_zoneX + src_zoneZ * 4;
+        ret = src_zoneZ - 1;
+    }
+
+    return ret;
+}
+
+static u8 aPOL2_get_next_zone(u8 dst_zone, u8 src_zone) {
+    u8 ret;
+    int src_zoneZ = src_zone / 4;
+
+    if (src_zoneZ == 1 || src_zoneZ == 3) {
+        ret = aPOL2_get_next_zone_sub0(dst_zone, src_zone);
+    } else {
+        ret = aPOL2_get_next_zone_sub1(dst_zone, src_zone);
+    }
+
+    return ret;
+}
+
+static int aPOL2_decide_next_move_act(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    if (ClObj_DID_COLLIDE(actor->npc_class.collision.pipe.collision_obj)) {
+        return aPOL2_ACT_WAIT;
+    } else {
+        ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+        if (playerx == NULL) {
+            return actor->action;
+        } else {
+            f32 dX = playerx->world.position.x - actor->npc_class.actor_class.world.position.x;
+            f32 dZ = playerx->world.position.z - actor->npc_class.actor_class.world.position.z;
+            f32 dist = SQ(dX) + SQ(dZ);
+
+            if (dist < (SQ(50.0f)-50.0f)) {
+                return aPOL2_ACT_WAIT;
+            } else if (actor->pl_zone != actor->now_zone) {
+                if (actor->action != aPOL2_ACT_WALK_PL_OTHER_ZONE && actor->action != aPOL2_ACT_RUN_PL_OTHER_ZONE) {
+                    actor->next_zone = aPOL2_get_next_zone(actor->pl_zone, actor->now_zone);
+                }
+
+                if (dist < (SQ(70.0f)+100.0f)) {
+                    return aPOL2_ACT_WALK_PL_OTHER_ZONE;
+                } else {
+                    return aPOL2_ACT_RUN_PL_OTHER_ZONE;
+                }
+            } else {
+                actor->next_zone = actor->now_zone;
+                if (dist < (SQ(70.0f)+100.0f)) {
+                    return aPOL2_ACT_WALK_PL_SAME_ZONE;
+                } else {
+                    return aPOL2_ACT_RUN_PL_SAME_ZONE;
+                }
+            }
+        }
+    }
+}
+
+static void aPOL2_search_player(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (playerx != NULL) {
+        s16 player_angle = actor->npc_class.actor_class.shape_info.rotation.y;
+        s16 diff_angle = DIFF_SHORT_ANGLE(player_angle, actor->player_angl);
+
+        if (ABS(diff_angle) > DEG2SHORT_ANGLE2(90.0f)) {
+            aPOL2_setupAction(actor, aPOL2_ACT_TURN);
+        } else {
+            chase_angle(&actor->npc_class.actor_class.shape_info.rotation.y, actor->player_angl, DEG2SHORT_ANGLE2(11.25f));
+            actor->npc_class.actor_class.world.angle.y = actor->npc_class.actor_class.shape_info.rotation.y;
+        }
+    }
+}
+
+static void aPOL2_search_player2(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    static f32 posX[] = { 60.0f, 140.0f, 260.0f, 340.0f };
+    static f32 posZ[] = { 100.0f, 140.0f, 180.0f, 220.0f, 300.0f };
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (playerx != NULL) {
+        int next_zone = actor->next_zone;
+        int zoneX = next_zone % 4;
+        int zoneZ = next_zone / 4;
+        f32 dX = posX[zoneX] - actor->npc_class.actor_class.world.position.x;
+        f32 dZ = posZ[zoneZ] - actor->npc_class.actor_class.world.position.z;
+        f32 dist = SQ(dX) + SQ(dZ);
+        s16 angle = atans_table(dZ, dX);
+
+        chase_angle(&actor->npc_class.actor_class.shape_info.rotation.y, angle, DEG2SHORT_ANGLE2(11.25f));
+        actor->npc_class.actor_class.world.angle.y = actor->npc_class.actor_class.shape_info.rotation.y;
+        if (dist < (SQ(14.0f)+4.0f)) {
+            actor->next_zone = aPOL2_get_next_zone(actor->pl_zone, actor->now_zone);
+        }
+    }
+}
+
+static void aPOL2_set_zone_data(NPC_POLICE2_ACTOR* actor, ACTOR* playerx) {
+    actor->now_zone = aPOL2_get_zone(actor->npc_class.actor_class.world.position);
+    
+    if (playerx != NULL) {
+        actor->pl_zone = aPOL2_get_zone(playerx->world.position);
+    }
+}
+
+static void aPOL2_set_player_angl(NPC_POLICE2_ACTOR* actor) {
+    actor->player_angl = actor->npc_class.actor_class.player_angle_y;
+}
+
+static void aPOL2_set_force_talk_info_message_ctrl(ACTOR* actorx) {
+    NPC_POLICE2_ACTOR* actor = (NPC_POLICE2_ACTOR*)actorx;
+    mActor_name_t item = Save_Get(police_box).keep_items[actor->item_idx];
+    u8 str[mIN_ITEM_NAME_LEN];
+
+    mIN_copy_name_str(str, item);
+    mMsg_SET_ITEM_STR_ART(mMsg_ITEM_STR0, str, sizeof(str), item);
+    mDemo_Set_msg_num(0x077E);
+}
+
+static void aPOL2_set_force_talk_info_message_ctrl2(ACTOR* actorx) {
+    NPC_POLICE2_ACTOR* actor = (NPC_POLICE2_ACTOR*)actorx;
+    int msg_no;
+
+    if (mPB_get_keep_item_sum() == 0) {
+        msg_no = 0x0784;
+    } else {
+        msg_no = 0x0785;
+        actor->_99C = TRUE;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aPOL2_set_norm_talk_info_message_ctrl(ACTOR* actorx) {
+    NPC_POLICE2_ACTOR* actor = (NPC_POLICE2_ACTOR*)actorx;
+    int msg_no;
+
+    if (CLIP(aprilfool_control_clip) != NULL && !CLIP(aprilfool_control_clip)->talk_chk_proc(SP_NPC_POLICE2)) {
+        msg_no = CLIP(aprilfool_control_clip)->get_msg_num_proc(SP_NPC_POLICE2, TRUE);
+    } else if (mPB_get_keep_item_sum() == 0) {
+        if (!actor->_99C) {
+            msg_no = 0x0786;
+        } else {
+            msg_no = 0x0787;
+        }
+    } else {
+        msg_no = 0x077D;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aPOL2_message_ctrl(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    if (playerx != NULL) {
+        ACTOR* actorx = (ACTOR*)actor;
+
+        if (actor->action == aPOL2_ACT_GREET) {
+            mDemo_Request(mDemo_TYPE_SPEAK, actorx, aPOL2_set_force_talk_info_message_ctrl2);
+        } else {
+            PLAYER_ACTOR* player = (PLAYER_ACTOR*)playerx;
+            mActor_name_t rsv_item = player->item_in_front;
+
+            if (player->a_btn_pressed == TRUE && ITEM_IS_RSVPOLICE(rsv_item)) {
+                int idx = rsv_item - RSV_POLICE_ITEM_0;
+                mActor_name_t item = Save_Get(police_box).keep_items[idx];
+
+                if (item != EMPTY_NO) {
+                    mDemo_Request(mDemo_TYPE_SPEAK, actorx, aPOL2_set_force_talk_info_message_ctrl);
+                    actor->item_idx = idx;
+                    return;
+                }
+            }
+
+            if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE && !mDemo_Check_ListenAble() && actor->action != aPOL2_ACT_WAIT && mPlib_get_player_actor_main_index((GAME*)play) != mPlayer_INDEX_DEMO_WAIT) {
+                mPlib_request_main_demo_wait_type1((GAME*)play, FALSE, actorx);
+            }
+
+            mDemo_Request(mDemo_TYPE_TALK, actorx, aPOL2_set_norm_talk_info_message_ctrl);
+        }
+    }
+}
+
+static void aPOL2_player_getout_check(GAME_PLAY* play, ACTOR* playerx) {
+    if (playerx != NULL) {
+        PLAYER_ACTOR* player = (PLAYER_ACTOR*)playerx;
+        mActor_name_t item = player->item_in_front;
+
+        if (item == EXIT_DOOR1) {
+            mBGMPsComp_scene_mode(14);
+            mBGMPsComp_make_ps_wipe(0x195);
+            mPB_copy_itemBuf(Save_Get(police_box).keep_items);
+            goto_other_scene(play, Common_GetPointer(structure_exit_door_data), TRUE);
+        }
+    }
+}
+
+static void aPOL2_wait(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    aPOL2_message_ctrl(actor, play);
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
+        if (!mDemo_Check_ListenAble()) {
+            if (chase_angle(&actorx->shape_info.rotation.y, actor->player_angl, DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
+                int action;
+                
+                mMld_ActorMakeMelody(actorx);
+                actor->npc_class.talk_info.melody_inst = 0;
+                mDemo_Set_ListenAble();
+                
+                if (actor->action == aPOL2_ACT_GREET) {
+                    action = aPOL2_ACT_TALK_END_WAIT;
+                } else {
+                    action = aPOL2_ACT_CHECK_ANSWER;
+                }
+
+                aPOL2_setupAction(actor, action);
+            }
+
+            actorx->world.angle.y = actorx->shape_info.rotation.y;
+        }
+    } else if (mDemo_Check(mDemo_TYPE_TALK, actorx) == TRUE) {
+        if (!mDemo_Check_ListenAble()) {
+            if (chase_angle(&actorx->shape_info.rotation.y, actor->player_angl, DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
+                mMld_ActorMakeMelody(actorx);
+                mDemo_Set_ListenAble();
+                aPOL2_setupAction(actor, aPOL2_ACT_TALK_END_WAIT);
+            }
+
+            actorx->world.angle.y = actorx->shape_info.rotation.y;
+        }
+    } else {
+        if (actor->action != aPOL2_ACT_GREET) {
+            int action = aPOL2_decide_next_move_act(actor, play);
+
+            if (action != actor->action) {
+                aPOL2_setupAction(actor, action);
+            } else {
+                aPOL2_search_player(actor, play);
+            }
+        }
+    }
+}
+
+static void aPOL2_walk_pl_same_zone(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    int action = aPOL2_decide_next_move_act(actor, play);
+
+    aPOL2_message_ctrl(actor, play);
+    if (action != actor->action) {
+        aPOL2_setupAction(actor, action);
+    } else {
+        aPOL2_search_player(actor, play);
+    }
+}
+
+static void aPOL2_walk_pl_other_zone(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    int action = aPOL2_decide_next_move_act(actor, play);
+
+    aPOL2_message_ctrl(actor, play);
+    if (action != actor->action) {
+        aPOL2_setupAction(actor, action);
+    } else {
+        aPOL2_search_player2(actor, play);
+    }
+}
+
+static void aPOL2_run_pl_same_zone(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    int action = aPOL2_decide_next_move_act(actor, play);
+
+    aPOL2_message_ctrl(actor, play);
+    if (action != actor->action) {
+        aPOL2_setupAction(actor, action);
+    } else {
+        aPOL2_search_player(actor, play);
+    }
+}
+
+static void aPOL2_run_pl_other_zone(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    int action = aPOL2_decide_next_move_act(actor, play);
+
+    aPOL2_message_ctrl(actor, play);
+    if (action != actor->action) {
+        aPOL2_setupAction(actor, action);
+    } else {
+        aPOL2_search_player2(actor, play);
+    }
+}
+
+static void aPOL2_turn(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    aPOL2_message_ctrl(actor, play);
+    if (playerx != NULL) {
+        s16 angle = actor->player_angl;
+
+        chase_angle(&actor->npc_class.actor_class.shape_info.rotation.y, angle, DEG2SHORT_ANGLE2(11.25f));
+        actor->npc_class.actor_class.world.angle.y = actor->npc_class.actor_class.shape_info.rotation.y;
+        
+        if (ABS(angle - actor->npc_class.actor_class.shape_info.rotation.y) <= DEG2SHORT_ANGLE2(90.0f)) {
+            aPOL2_setupAction(actor, aPOL2_ACT_WAIT);
+        }
+    }
+}
+
+static void aPOL2_check_answer(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+
+    if (mMsg_Check_MainNormalContinue(msg_p) == TRUE) {
+        switch (mChoice_GET_CHOSENUM()) {
+            case mChoice_CHOICE0: {
+                mActor_name_t* item_p = &Save_Get(police_box).keep_items[actor->item_idx];
+                int idx;
+
+                if (ITEM_NAME_GET_TYPE(*item_p) == NAME_TYPE_ITEM1 && ITEM_NAME_GET_CAT(*item_p) == ITEM1_CAT_TICKET) {
+                    idx = mPlib_Get_space_putin_item_forTICKET(item_p);
+                } else {
+                    idx = mPlib_Get_space_putin_item();
+                }
+
+                if (idx == -1) {
+                    mMsg_Set_continue_msg_num(msg_p, 0x0781);
+                } else {
+                    static xyz_t dummy_pos = { 20.0f, 0.0f, 20.0f };
+                    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+                    mFI_SetFG_common(RSV_NO, dummy_pos, TRUE);
+                    mPr_SetPossessionItem(Now_Private, idx, *item_p, mPr_ITEM_COND_NORMAL);
+                    Save_Get(police_box).keep_items[actor->item_idx] = EMPTY_NO;
+                    sAdo_OngenTrgStart(NA_SE_ITEM_GET, &playerx->world.position);
+                }
+            }
+
+        // fallthrough 0 -> 1/default
+            case mChoice_CHOICE1:
+            default:
+                actor->item_idx = -1;
+                aPOL2_setupAction(actor, aPOL2_ACT_TALK_END_WAIT);
+                break;
+        }
+    }
+}
+
+static void aPOL2_talk_end_wait(NPC_POLICE2_ACTOR* actor, GAME_PLAY* play) {
+    if (mDemo_CAN_ACTOR_TALK((ACTOR*)actor)) {
+        aPOL2_setupAction(actor, aPOL2_ACT_WAIT);
+    }
+}
+
+typedef void (*aPOL2_INIT_PROC)(NPC_POLICE2_ACTOR* actor);
+
+static void aPOL2_init_proc(NPC_POLICE2_ACTOR* actor, int action) {
+    // clang-format off
+    static aPOL2_INIT_PROC init_proc[] = {
+        aPOL2_set_stop_spd,
+        aPOL2_set_stop_spd,
+        aPOL2_set_walk_spd,
+        aPOL2_set_walk_spd,
+        aPOL2_set_run_spd,
+        aPOL2_set_run_spd,
+        aPOL2_set_stop_spd,
+        aPOL2_set_stop_spd,
+        aPOL2_set_stop_spd,
+    };
+    // clang-format on
+
+    (*init_proc[action])(actor);
+}
+
+static void aPOL2_setupAction(NPC_POLICE2_ACTOR* actor, int action) {
+    // clang-format off
+    static aPOL2_ACT_PROC process[] = {
+        aPOL2_wait,
+        aPOL2_wait,
+        aPOL2_walk_pl_same_zone,
+        aPOL2_walk_pl_other_zone,
+        aPOL2_run_pl_same_zone,
+        aPOL2_run_pl_other_zone,
+        aPOL2_turn,
+        aPOL2_check_answer,
+        aPOL2_talk_end_wait,
+    };
+    // clang-format on
+
+    actor->action = action;
+    actor->act_proc = process[action];
+    aPOL2_init_proc(actor, action);
+    aPOL2_set_animation(actor, action);
+}
+
+static void aPOL2_actor_move(ACTOR* actorx, GAME* game) {
+    NPC_POLICE2_ACTOR* actor = (NPC_POLICE2_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+    NPC_CLIP->move_before_proc(actorx, game);
+
+    aPOL2_BGcheck(actorx);
+    aPOL2_set_zone_data(actor, playerx);
+    aPOL2_set_player_angl(actor);
+    actor->act_proc(actor, play);
+    aPOL2_player_getout_check(play, playerx);
+
+    NPC_CLIP->move_after_proc(actorx, game);
+}
