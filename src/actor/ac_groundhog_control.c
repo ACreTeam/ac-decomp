@@ -62,22 +62,22 @@ static int aGHC_get_now_term() {
   int res;
 
   if (aGHC_TIME_CHECK(8, 0, 0)) {
-    res = 5;
+    res = aGHC_TERM_EVENT_TIME;
   }
   else if (aGHC_TIME_CHECK(7, 59, 0)) {
-    res = 4;
+    res = aGHC_TERM_1_MIN;
   }
   else if (aGHC_TIME_CHECK(7, 55, 0)) {
-    res =  3;
+    res =  aGHC_TERM_5_MIN;
   }
   else if (aGHC_TIME_CHECK(7, 45, 0)) {
-    res =  2;
+    res =  aGHC_TERM_15_MIN;
   }
   else if (aGHC_TIME_CHECK(7, 30, 0)) {
-    res =  1;
+    res = aGHC_TERM_30_MIN;
   }
   else {
-    res =  0;
+    res =  aGHC_TERM_1_HOUR;
   }
 
   return res;

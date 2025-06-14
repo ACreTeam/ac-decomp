@@ -1,0 +1,21 @@
+static void aGH0_set_animation(GROUNDHOG_NPC0_ACTOR* actor, int action) {
+    // clang-format off
+    static int animeSeqNo[] = {
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_RUN1,
+    };
+    // clang-format on
+
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, animeSeqNo[action], FALSE);
+
+    if (!actor->start_kf_pos_randomized && action == aGH0_ACT_WAIT) {
+        f32 frames = actor->npc_class.draw.main_animation.keyframe.frame_control.max_frames -
+                     actor->npc_class.draw.main_animation.keyframe.frame_control.start_frame;
+
+        if (frames > 0.0f) {
+            actor->npc_class.draw.main_animation.keyframe.frame_control.current_frame =
+                actor->npc_class.draw.main_animation.keyframe.frame_control.start_frame + RANDOM(frames);
+            actor->start_kf_pos_randomized = TRUE;
+        }
+    }
+}

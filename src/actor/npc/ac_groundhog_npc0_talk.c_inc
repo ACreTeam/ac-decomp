@@ -1,0 +1,229 @@
+static void aGH0_set_request_act(GROUNDHOG_NPC0_ACTOR* actor) {
+    actor->npc_class.request.act_priority = 4;
+    actor->npc_class.request.act_idx = aNPC_ACT_SPECIAL;
+    actor->npc_class.request.act_type = aNPC_ACT_TYPE_DEFAULT;
+}
+
+static void aGH0_turn(GROUNDHOG_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->npc_class.actor_class.shape_info.rotation.y == actor->def_angle) {
+        actor->next_action = aGH0_ACT_WAIT;
+        actor->npc_class.action.step = aNPC_ACTION_END_STEP;
+    }
+}
+
+static void aGH0_setupAction(GROUNDHOG_NPC0_ACTOR* actor, int action) {
+    // clang-format off
+    static aGH0_ACT_PROC process[] = {
+        (aGH0_ACT_PROC)none_proc1,
+        aGH0_turn,
+    };
+    // clang-format on
+
+    actor->npc_class.action.step = 0;
+    actor->action = action;
+    actor->act_proc = process[action];
+    aGH0_set_animation(actor, action);
+}
+
+static void aGH0_act_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aGH0_act_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    GROUNDHOG_NPC0_ACTOR* actor = (GROUNDHOG_NPC0_ACTOR*)nactorx;
+    
+    aGH0_setupAction(actor, aGH0_ACT_TURN);
+    switch (actor->now_term) {
+        case aGHC_TERM_EVENT_TIME:
+            actor->npc_class.talk_info.talk_request_proc = aGH0_norm_talk_request;
+            break;
+        case aGHC_TERM_1_MIN:
+            actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+            break;
+        default:
+            actor->npc_class.talk_info.talk_request_proc = aGH0_norm_talk_request;
+            break;
+    }
+}
+
+static void aGH0_act_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    GROUNDHOG_NPC0_ACTOR* actor = (GROUNDHOG_NPC0_ACTOR*)nactorx;
+
+    actor->act_proc(actor, play);
+}
+
+static void aGH0_act_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = { aGH0_act_init_proc, aGH0_act_chg_data_proc, aGH0_act_main_proc };
+
+    (*act_proc[type])(nactorx, play);
+}
+
+static int aGH0_get_now_term(void) {
+    int ret = aGHC_TERM_EVENT_TIME;
+
+    if (CLIP(groundhog_control_clip) != NULL) {
+        ret = CLIP(groundhog_control_clip)->now_term;
+    }
+
+    return ret;
+}
+
+static void aGH0_set_term(GROUNDHOG_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    actor->now_term = aGH0_get_now_term();
+}
+
+static void aGH0_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    GROUNDHOG_NPC0_ACTOR* actor = (GROUNDHOG_NPC0_ACTOR*)nactorx;
+
+    if (actor->npc_class.action.step == aNPC_ACTION_END_STEP) {
+        switch (actor->npc_class.action.idx) {
+            case aNPC_ACT_SPECIAL:
+                if (actor->next_action != -1) {
+                    aGH0_setupAction(actor, actor->next_action);
+                    aGH0_set_request_act(actor);
+                }
+                break;
+            case aNPC_ACT_TALK:
+                actor->npc_class.movement.mv_angl = actor->def_angle;
+                aGH0_set_request_act(actor);
+                break;
+        }
+
+        actor->next_action = -1;
+    } else {
+        aGH0_set_term(actor, play);
+    }
+
+    switch (actor->now_term) {
+        case aGHC_TERM_EVENT_TIME:
+            actor->npc_class.talk_info.talk_request_proc = aGH0_norm_talk_request;
+            break;
+        case aGHC_TERM_1_MIN:
+            actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+            break;
+        default:
+            actor->npc_class.talk_info.talk_request_proc = aGH0_norm_talk_request;
+            break;
+    }
+}
+
+static void aGH0_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    GROUNDHOG_NPC0_ACTOR* actor = (GROUNDHOG_NPC0_ACTOR*)nactorx;
+
+    nactorx->think.interrupt_flags = 0;
+    nactorx->action.act_proc = aGH0_act_proc;
+    aGH0_set_request_act(actor);
+}
+
+static void aGH0_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aGH0_think_init_proc, aGH0_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aGH0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static s16 def_angle[] = { 0x6B00, 0x8000, 0x8000, 0x9500 };
+    static float def_pos[][2] = {
+        {0.0f, -20.0f},
+        {20.0f, 0.0f},
+        {20.0f, 0.0f},
+        {0.0f, -20.0f},
+    };
+    GROUNDHOG_NPC0_ACTOR* actor = (GROUNDHOG_NPC0_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)nactorx;
+    int event_idx;
+
+    nactorx->think.think_proc = aGH0_think_proc;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    nactorx->condition_info.hide_request = FALSE;
+    nactorx->palActorIgnoreTimer = -1;
+    actor->next_action = -1;
+    actor->now_term = aGH0_get_now_term();
+    nactorx->talk_info.default_animation = aNPC_ANIM_WAIT1;
+    nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
+    actorx->status_data.weight = MASSTYPE_HEAVY;
+
+    event_idx = nactorx->actor_class.npc_id - SP_NPC_EV_GROUNDHOG_0;
+    if (event_idx < 0 || event_idx >= 4) {
+        event_idx = 0;
+    }
+    actor->event_idx = event_idx;
+
+    {
+        s16 angle = def_angle[event_idx];
+        actorx->shape_info.rotation.y = angle;
+        actorx->world.angle.y = angle;
+        nactorx->movement.mv_angl = angle;
+        actor->def_angle = angle;
+    }
+
+    nactorx->actor_class.world.position.x += def_pos[event_idx][0];
+    nactorx->actor_class.world.position.z += def_pos[event_idx][1];
+    
+
+    actor->start_kf_pos_randomized = FALSE;
+
+    if (RANDOM(2) == 1.0f) {
+        nactorx->head.angle_add_y = 0x100;
+    }
+
+    if (actor->now_term == aGHC_TERM_1_MIN) {
+        nactorx->talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    }
+
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aGH0_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aGH0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { aGH0_schedule_init_proc, aGH0_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}
+
+static void aGH0_set_norm_talk_info(ACTOR* actorx) {
+    static int msg_base[mNpc_LOOKS_NUM] = { 0x3D52, 0x3D71, 0x3CF5, 0x3D14, 0x3D33, 0x3D90 };
+    GROUNDHOG_NPC0_ACTOR* actor = (GROUNDHOG_NPC0_ACTOR*)actorx;
+    int looks = mNpc_GetNpcLooks(actorx);
+    int now_term = actor->now_term;
+    int msg_no;
+
+    if (now_term >= aGHC_TERM_1_MIN) {
+        now_term--;
+    }
+
+    msg_no = msg_base[looks] + now_term * 3 + RANDOM(3);
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aGH0_norm_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aGH0_set_norm_talk_info);
+}
+
+static int aGH0_talk_init(ACTOR* actorx, GAME* game) {
+    GROUNDHOG_NPC0_ACTOR* actor = (GROUNDHOG_NPC0_ACTOR*)actorx;
+    
+    if (actor->now_term == aGHC_TERM_1_MIN) {
+        actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    } else {
+        actor->npc_class.talk_info.talk_request_proc = aGH0_norm_talk_request;
+    }
+
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static int aGH0_talk_end_chk(ACTOR* actorx, GAME* game) {
+    int ret = FALSE;
+
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        ret = TRUE;
+    }
+
+    return ret;
+}

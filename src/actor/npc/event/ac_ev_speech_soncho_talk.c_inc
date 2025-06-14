@@ -51,7 +51,7 @@ void aESS_think_init_proc(ACTOR* actorx, GAME_PLAY* play) {
     aESS_set_request_act(soncho);
     if (Common_Get(time).now_sec < 0x7080) {
         next = 0;
-        if (CLIP(groundhog_control_clip) != NULL && CLIP(groundhog_control_clip)->now_term == 4) {
+        if (CLIP(groundhog_control_clip) != NULL && CLIP(groundhog_control_clip)->now_term == aGHC_TERM_1_MIN) {
             next = 0x1;
         }
     } else {
@@ -120,7 +120,7 @@ void aESS_schedule_proc(NPC_SPEECH_SONCHO* soncho, GAME_PLAY* play, int sche_idx
 void aESS_set_norm_talk_info(ACTOR* actorx) {
     int msg_no;
     aGHC_Clip_c* clip = CLIP(groundhog_control_clip);
-    if (clip != NULL && clip->now_term != 5) {
+    if (clip != NULL && clip->now_term != aGHC_TERM_EVENT_TIME) {
         msg_no = mString_SPEECH_SONCHO_START + 1 + (int)RANDOM_F(5);
     } else {
         switch (Common_Get(weather)) {
@@ -165,10 +165,10 @@ int aESS_norm_talk_end_chk(NPC_SPEECH_SONCHO* soncho) {
         int think_proc_idk = 4;
         if (CLIP(groundhog_control_clip) != NULL) {
             switch (CLIP(groundhog_control_clip)->now_term) {
-                case 4:
+                case aGHC_TERM_1_MIN:
                     think_proc_idk = 0x1;
                     break;
-                case 5:
+                case aGHC_TERM_EVENT_TIME:
                     break;
                 default:
                     think_proc_idk = 0;
