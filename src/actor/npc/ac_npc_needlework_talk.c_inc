@@ -85,7 +85,7 @@ static void aNNW_get_make_sister_message(void) {
     } else if (days >= 8) {
         sister_story = 21 + RANDOM(3);
     } else if (add_day == 1) {
-        sister_story = aNNW_story_other_table[days - 4];
+        sister_story = aNNW_story_first_table[days - 4];
     } else {
         sister_story = aNNW_story_other_table[days - 4] + RANDOM(3);
     }
@@ -107,8 +107,7 @@ static mActor_name_t aNNW_get_sister_name(mActor_name_t name) {
     }
 }
 
-static ACTOR* aNNW_search_sister(GAME_PLAY* play, NPC_NEEDLEWORK_ACTOR* actor) {
-    ACTOR* actorx = (ACTOR*)actor;
+static ACTOR* aNNW_search_sister(GAME_PLAY* play, ACTOR* actorx) {
     ACTOR* search;
 
     for (search = play->actor_info.list[ACTOR_PART_NPC].actor; search != NULL; search = search->next_actor) {
@@ -120,10 +119,10 @@ static ACTOR* aNNW_search_sister(GAME_PLAY* play, NPC_NEEDLEWORK_ACTOR* actor) {
     return search;
 }
 
-static void aNNW_turn_player(NPC_NEEDLEWORK_ACTOR* actor) {
+static void aNNW_turn_player(ACTOR* actorx) {
     ACTOR* playerx = GET_PLAYER_ACTOR_NOW_ACTOR();
 
-    NPC_CLIP->set_dst_pos_proc((NPC_ACTOR*)actor, playerx->world.position.x, playerx->world.position.z);
+    NPC_CLIP->set_dst_pos_proc((NPC_ACTOR*)actorx, playerx->world.position.x, playerx->world.position.z);
 }
 
 static int aNNW_trend_check_cloth(int cloth_idx) {
@@ -266,7 +265,7 @@ static void aNNW_set_trend_umbrella_message(void) {
     trend = mNW_CLOTH_DESIGN_NUM + RANDOM(mNW_UMBRELLA_DESIGN_NUM);
     trend_count = 0;
     for (i = mNW_CLOTH_DESIGN_NUM; i < (mNW_CLOTH_DESIGN_NUM + mNW_UMBRELLA_DESIGN_NUM); i++) {
-        int count = aNNW_trend_check_cloth(i);
+        int count = aNNW_trend_check_umbrella(i);
 
         if (count > trend_count) {
             trend_count = count;
@@ -287,7 +286,7 @@ static void aNNW_set_trend_umbrella_message(void) {
 }
 
 static void aNNW_change_camera_priority_demo(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
-    ACTOR* sister_actor = aNNW_search_sister(play, actor);
+    ACTOR* sister_actor = aNNW_search_sister(play, (ACTOR*)actor);
     ACTOR* actorx = (ACTOR*)actor;
     
     Camera2_request_main_needlework_talk(play, sister_actor, actorx, 6);
@@ -301,7 +300,7 @@ static void aNNW_change_camera_return_demo(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLA
 
     Camera2_request_main_talk(play, GET_PLAYER_ACTOR_ACTOR(play), actorx, 6);
     if (actorx->npc_id == SP_NPC_NEEDLEWORK0) {
-        aNNW_turn_player(actor);
+        aNNW_turn_player(actorx);
     }
 }
 
@@ -841,7 +840,7 @@ static void aNNW_talk_gba_tool_af2(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play)
 static void aNNW_talk_gba_tool_af3(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
 
-    switch (aNNW_SendPrg(&actor->gba_ready)) {
+    switch (aNNW_SendData(&actor->gba_ready)) {
         case aNNW_GBA_STATE_TRANSMITTING:
             break;
         case aNNW_GBA_STATE_READY:
@@ -1255,14 +1254,14 @@ static void aNNW_talk_ane_1(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
 
         mMsg_request_main_forceoff();
         aNNW_change_talk_proc(actor, aNNW_TALK_END_WAIT);
-        sister = (NPC_NEEDLEWORK_ACTOR*)aNNW_search_sister(play, actor);
+        sister = (NPC_NEEDLEWORK_ACTOR*)aNNW_search_sister(play, (ACTOR*)actor);
         sister->sister_state++;
         actor->sister_state++;
         mDemo_KeepCamera(CAMERA2_PROCESS_TALK);
         sister_now++;
         
         if (actor->npc_class.actor_class.npc_id == SP_NPC_NEEDLEWORK1 && aNNW_get_next_sister_message()) {
-            actor->think_idx_after_talk = aNNW_THINK_AINOTE;
+            actor->think_idx_after_talk = aNNW_THINK_AINOTE3;
         }
     }
 }
@@ -1273,7 +1272,7 @@ static void aNNW_talk_ane_2(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
     if (mDemo_CAN_ACTOR_TALK(actorx)) {
         NPC_NEEDLEWORK_ACTOR* sister;
 
-        sister = (NPC_NEEDLEWORK_ACTOR*)aNNW_search_sister(play, actor);
+        sister = (NPC_NEEDLEWORK_ACTOR*)aNNW_search_sister(play, actorx);
         sister->sister_state = 0;
         actor->sister_state = 0;
     }
@@ -1283,7 +1282,7 @@ static void aNNW_talk_ane_3(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
     int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
 
     if (order != 0) {
-        aNNW_turn_player(actor);
+        aNNW_turn_player((ACTOR*)actor);
         aNNW_change_talk_proc(actor, aNNW_TALK_ANE_2);
         Camera2_request_main_talk((GAME_PLAY*)gamePT, GET_PLAYER_ACTOR_NOW_ACTOR(), (ACTOR*)actor, 6);
         mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
@@ -1326,7 +1325,7 @@ static void aNNW_set_force_talk_info(ACTOR* actorx) {
 
     mDemo_Set_msg_num(force_msg_table[actor->talk_idx]);
     aNNW_first_talk_end(0x80);
-    sisterx = aNNW_search_sister((GAME_PLAY*)gamePT, actor);
+    sisterx = aNNW_search_sister((GAME_PLAY*)gamePT, (ACTOR*)actor);
 
     switch (actor->talk_idx) {
         case 2:
@@ -1437,7 +1436,7 @@ static void aNNW_set_norm_talk_info(ACTOR* actorx) {
 
         aNNW_change_talk_proc(actor, talk_idx);
         mDemo_Set_msg_num(msg_no);
-        aNNW_turn_player((NPC_NEEDLEWORK_ACTOR*)actorx); // TODO: probably need to update this declaration
+        aNNW_turn_player(actorx);
     }
 
     actor->npc_class.talk_info.turn = aNPC_TALK_TURN_NONE;
@@ -1469,11 +1468,11 @@ static int aNNW_talk_init(ACTOR* actorx, GAME* game) {
     switch (actorx->npc_id) {
         case SP_NPC_NEEDLEWORK0:
             if (actor->talk_idx != aNNW_TALK_ANE_0 && actor->talk_idx != aNNW_TALK_ANE_2) {
-                aNNW_turn_player((NPC_NEEDLEWORK_ACTOR*)actorx);
+                aNNW_turn_player(actorx);
             }
             break;
         case SP_NPC_NEEDLEWORK1:
-            sister = (NPC_NEEDLEWORK_ACTOR*)aNNW_search_sister((GAME_PLAY*)game, (NPC_NEEDLEWORK_ACTOR*)actorx); // TODO: do we also need to update aNNW_search_sister's declaration to use ACTOR*?
+            sister = (NPC_NEEDLEWORK_ACTOR*)aNNW_search_sister((GAME_PLAY*)game, actorx);
             switch (sister->sister_state) {
                 case 0:
                 case 2:
@@ -1483,7 +1482,7 @@ static int aNNW_talk_init(ACTOR* actorx, GAME* game) {
 
             aNNW_day_day();
             if (Now_Private->nw_visitor.days >= 5 && Common_Get(player_no) != mPr_FOREIGNER && actor->talk_idx != aNNW_TALK_ANE_3) {
-                aNNW_turn_player((NPC_NEEDLEWORK_ACTOR*)actorx);
+                aNNW_turn_player(actorx);
             }
 
             if (actor->think_idx == aNNW_THINK_MISIN_WAIT) {
@@ -1598,10 +1597,10 @@ static int aNNW_talk_end_chk(ACTOR* actorx, GAME* game) {
         aNNW_setup_think_proc(actor, play, actor->think_idx_after_talk);
         nactorx->talk_info.turn = aNPC_TALK_TURN_NORMAL;
         actor->_9B6 = 0;
-        actor->my_proc_idx = 0;
+        actor->my_proc_idx = aNNW_MY_PROC_WAIT;
         ret = TRUE;
 
-        if (actor->think_idx == aNNW_THINK_OMATIKUDASI2 && CLIP(misin_clip) != NULL) {
+        if (actor->think_idx == aNNW_THINK_TURN && CLIP(misin_clip) != NULL) {
             CLIP(misin_clip)->request_misin_move_proc();
         }
     }

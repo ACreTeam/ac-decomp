@@ -98,15 +98,16 @@ enum {
 };
 
 enum {
-    aNNW_THINK_NORMAL_WAIT,
-    aNNW_THINK_OMATIKUDASI,
-    aNNW_THINK_OMATIKUDASI2,
-    aNNW_THINK_MISIN_WAIT,
-    aNNW_THINK_AINOTE,
-    aNNW_THINK_AINOTE3,
-    aNNW_THINK_TURN,
+    aNNW_THINK_PROC_NONE,
+    aNNW_THINK_PROC_IKAGADESYOU,
+    aNNW_THINK_PROC_OMATIKUDASI,
+    aNNW_THINK_PROC_OMATIKUDASI2,
+    aNNW_THINK_PROC_MISIN_WAIT,
+    aNNW_THINK_PROC_AINOTE,
+    aNNW_THINK_PROC_AINOTE3,
+    aNNW_THINK_PROC_TURN,
 
-    aNNW_THINK_NUM
+    aNNW_THINK_PROC_NUM
 };
 
 enum {
@@ -118,6 +119,44 @@ enum {
     aNNW_THINK_INIT_TURN,
 
     aNNW_THINK_INIT_NUM
+};
+
+enum {
+    aNNW_THINK_NORMAL_WAIT,
+    aNNW_THINK_IKAGADESYOU,
+    aNNW_THINK_TURN,
+    aNNW_THINK_MISIN_WAIT,
+    aNNW_THINK_AINOTE3,
+    aNNW_THINK_OMATIKUDASI,
+    aNNW_THINK_OMATIKUDASI2,
+    aNNW_THINK_AINOTE,
+    aNNW_THINK_8,
+    aNNW_THINK_9,
+    aNNW_THINK_10,
+    aNNW_THINK_11,
+    aNNW_THINK_12,
+    aNNW_THINK_13,
+    aNNW_THINK_14,
+
+    aNNW_THINK_NUM
+};
+
+enum {
+    aNNW_TALK_REQUEST_PROC_NONE,
+    aNNW_TALK_REQUEST_PROC_NORM,
+    aNNW_TALK_REQUEST_PROC_FORCE,
+
+    aNNW_TALK_REQUEST_PROC_NUM
+};
+
+enum {
+    aNNW_MY_PROC_WAIT,
+    aNNW_MY_PROC_PLAYER,
+    aNNW_MY_PROC_TURN_P,
+    aNNW_MY_PROC_RUN,
+    aNNW_MY_PROC_TURN,
+
+    aNNW_MY_PROC_NUM
 };
 
 static void aNNW_actor_ct(ACTOR* actorx, GAME* game);
@@ -133,6 +172,7 @@ static void aNNW_talk_request(ACTOR* actorx, GAME* game);
 static int aNNW_change_talk_proc(NPC_NEEDLEWORK_ACTOR*, u8);
 static int aNNW_change_talk_proc_next(NPC_NEEDLEWORK_ACTOR*);
 static void aNNW_setup_think_proc(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play, u8 think_idx);
+static void aNNW_my_proc_init(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play, u8 my_proc_idx);
 
 // clang-format off
 ACTOR_PROFILE Npc_Needlework_Profile = {
