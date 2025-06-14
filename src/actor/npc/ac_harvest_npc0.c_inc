@@ -1,0 +1,200 @@
+
+static void aHT0_set_request_act(NPC_ACTOR* actorx) {
+    NPC_HARVEST_NPC0_ACTOR* actor = (NPC_HARVEST_NPC0_ACTOR*)actorx;
+    actor->actor.request.act_priority = 4;
+    actor->actor.request.act_idx = aNPC_ACT_SPECIAL;
+    actor->actor.request.act_type = aNPC_ACT_TYPE_SEARCH;
+}
+
+static void aHT0_make_tumbler(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    NPC_HARVEST_NPC0_ACTOR* actor = (NPC_HARVEST_NPC0_ACTOR*)actorx;
+    if ((actor->_9A4 & 1) == 1 && actor->actor.right_hand.item_actor_p == NULL) {
+        ACTOR* pActor = CLIP(tools_clip)
+                            ->aTOL_birth_proc(TOOL_TUMBLER, aTOL_ACTION_S_TAKEOUT, &actor->actor.actor_class,
+                                              &play->game, -1, NULL);
+        if (pActor) {
+            actor->actor.right_hand.item_actor_p = pActor;
+        }
+    }
+}
+
+static void aHT0_wait(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->actor.draw.main_animation_state == cKF_STATE_CONTINUE) {
+        if (actor->actor.draw.loop_flag == FALSE) {
+            actor->actor.action.step = -1;
+        } else {
+            actor->actor.draw.loop_flag--;
+        }
+    }
+}
+
+static void aHT0_merry(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->actor.draw.main_animation_state == cKF_STATE_CONTINUE) {
+        if (actor->actor.draw.loop_flag == FALSE) {
+            actor->actor.action.step = -1;
+        } else {
+            actor->actor.draw.loop_flag--;
+        }
+    }
+    sAdo_OngenPos((u32)actor, actor->_9A8, &actor->actor.actor_class.world.position);
+}
+
+static void aHT0_drink(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->actor.draw.main_animation_state == cKF_STATE_STOPPED) {
+        actor->actor.action.step = -1;
+    }
+}
+
+static void aHT0_to_default(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->actor.actor_class.shape_info.rotation.y == aHT0_GetDefaultAngle(actor)) {
+        actor->_998 = 0;
+        actor->actor.action.step = -1;
+    }
+    actor->actor.actor_class.world.angle.y = actor->actor.actor_class.shape_info.rotation.y;
+}
+
+static void aHT0_setupAction(NPC_ACTOR* actorx, int index) {
+    static aHT0_PROC process[] = { aHT0_wait, aHT0_merry, aHT0_drink, aHT0_to_default };
+    static int anm_loop_base[] = { 1, 2, 1, 1 };
+    static f32 anm_loop_rnd[] = { 0.f, 3.f, 1.f, 0.f };
+    NPC_HARVEST_NPC0_ACTOR* actor = (NPC_HARVEST_NPC0_ACTOR*)actorx;
+    actor->actor.action.step = 0;
+    actor->_994 = index;
+    actor->_9A0 = process[index];
+    actor->actor.draw.loop_flag = anm_loop_base[index] + RANDOM(anm_loop_rnd[index]);
+    aHT0_set_animation(&actorx->actor_class, index);
+    if (index == 1) {
+        static u8 clap_se_no[] = { 0x2f, 0x31, 0x32, 0x33 };
+        actor->_9A8 = clap_se_no[RANDOM(ARRAY_COUNT(clap_se_no))];
+    }
+}
+
+static void aHT0_act_chg_data_proc(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    actor->actor.action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aHT0_act_init_proc(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    aHT0_setupAction(&actor->actor, 3);
+}
+
+static void aHT0_act_main_proc(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    actor->_9A0(actor, play);
+}
+
+static void aHT0_act_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int index) {
+    NPC_HARVEST_NPC0_ACTOR* actor = (NPC_HARVEST_NPC0_ACTOR*)actorx;
+    static aHT0_PROC act_proc[] = { aHT0_act_init_proc, aHT0_act_chg_data_proc, aHT0_act_main_proc };
+    act_proc[index](actor, play);
+}
+
+static void aHT0_think_main_proc(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->actor.action.step == (u8)-1) {
+        switch (actor->actor.action.idx) {
+            case 22: {
+                static int action[] = { 0, 1, 2, 3 };
+                if (actor->_998 != -1) {
+                    aHT0_setupAction(&actor->actor, action[actor->_998]);
+                    actor->_998 = -1;
+                } else {
+                    int temp = RANDOM(2);
+                    temp <<= (actor->_9A4 & 1);
+                    aHT0_setupAction(&actor->actor, action[temp]);
+                }
+                actor->actor.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
+                                                       aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+                                                       aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK |
+                                                       aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_Y;
+                actor->actor.collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
+            } break;
+            case 8: {
+                actor->actor.movement.mv_angl = aHT0_GetDefaultAngle(actor);
+                aHT0_set_request_act(&actor->actor);
+                actor->actor.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
+                                                       aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+                                                       aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK |
+                                                       aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_Y;
+                actor->actor.collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
+            } break;
+        }
+    }
+}
+
+static void aHT0_think_init_proc(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    actor->actor.think.interrupt_flags = 0;
+    actor->actor.action.act_proc = aHT0_act_proc;
+    aHT0_set_request_act(&actor->actor);
+}
+
+static void aHT0_think_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int index) {
+    NPC_HARVEST_NPC0_ACTOR* actor = (NPC_HARVEST_NPC0_ACTOR*)actorx;
+    static aHT0_PROC think_proc[] = { aHT0_think_init_proc, aHT0_think_main_proc };
+    think_proc[index](actor, play);
+}
+
+static void aHT0_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    NPC_HARVEST_NPC0_ACTOR* actor = (NPC_HARVEST_NPC0_ACTOR*)actorx;
+    int id = actor->actor.actor_class.npc_id - SP_NPC_EV_HARVEST_0;
+    actor->actor.think.think_proc = aHT0_think_proc;
+    actor->actor.condition_info.hide_request = 0;
+    actor->actor.palActorIgnoreTimer = -1;
+    actor->actor.talk_info.turn = 1;
+    actor->actor.talk_info.default_animation = 72;
+    actor->_9A4 = id;
+    actor->actor.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+                                           aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK |
+                                           aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_Y;
+    actor->actor.collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
+    actor->actor.actor_class.status_data.weight = MASSTYPE_HEAVY;
+    actor->_998 = -1;
+    actor->actor.movement.mv_angl = actor->actor.actor_class.world.angle.y =
+        actor->actor.actor_class.shape_info.rotation.y = aHT0_GetDefaultAngle(actor);
+    NPC_CLIP->think_proc(actorx, play, 9, 0);
+}
+
+static void aHT0_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
+    if (NPC_CLIP->think_proc(actorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT) == FALSE) {
+        NPC_CLIP->think_proc(actorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+    aHT0_make_tumbler(actorx, play);
+}
+
+static void unused_stripped() {
+    static s16 def_angle[] = {
+        DEG2SHORT_ANGLE2(45),
+        DEG2SHORT_ANGLE2(270),
+        DEG2SHORT_ANGLE2(315),
+        DEG2SHORT_ANGLE2(90),
+    };
+}
+
+static void aHT0_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int proc) {
+    static aNPC_SUB_PROC sche_proc[] = { aHT0_schedule_init_proc, aHT0_schedule_main_proc };
+    sche_proc[proc](actorx, play);
+}
+
+static void aHT0_set_talk_info(ACTOR* actorx) {
+    NPC_HARVEST_NPC0_ACTOR* actor = (NPC_HARVEST_NPC0_ACTOR*)actorx;
+    static int msg_base[] = { 0x3c98, 0x3cb7, 0x3c3b, 0x3c5a, 0x3c79, 0x3cd6 };
+    int looks = mNpc_GetNpcLooks(&actor->actor.actor_class);
+    int msg_no = msg_base[looks] + actor->_9A4 * 3;
+    mDemo_Set_msg_num(msg_no + RANDOM(3));
+}
+
+static void aHT0_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(7, actorx, aHT0_set_talk_info);
+}
+
+static BOOL aHT0_talk_init(ACTOR* actorx, GAME* game) {
+    mDemo_Set_ListenAble();
+    return TRUE;
+}
+
+static BOOL aHT0_talk_end_chk(ACTOR* actorx, GAME* game) {
+    NPC_HARVEST_NPC0_ACTOR* actor = (NPC_HARVEST_NPC0_ACTOR*)actorx;
+    BOOL ret = FALSE;
+    if (mDemo_Check(7, actorx) == FALSE) {
+        actor->_99C = 1;
+        ret = TRUE;
+    }
+    return ret;
+}
