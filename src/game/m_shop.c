@@ -2367,7 +2367,9 @@ static void mSP_SelectRandomItemToAGB_Unit(mActor_name_t* item, xyz_t* wpos, int
     }
 }
 
-/* @nonmatching - minor float load/store issue with xyz_t.z & weird scheduling issue */
+// @fakematch
+// @HACK - we shouldn't have to force propagation off, nor access the Save_t* struct directly
+#pragma opt_propagation off
 extern void mSP_SelectRandomItemToAGB() {
     int i;
     int ut_x;
@@ -2398,7 +2400,6 @@ extern void mSP_SelectRandomItemToAGB() {
             wpos.x = tpos.x;
 
             for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
-                // this matches instructions but out of order and wrong registers
                 mSP_SelectRandomItemToAGB_Unit(item_p, &wpos, ut_x, ut_z);
                 wpos.x += mFI_UT_WORLDSIZE_X_F;
                 item_p++;
@@ -2409,8 +2410,8 @@ extern void mSP_SelectRandomItemToAGB() {
     }
 
     /* add correctly placed signboard actor */
-    save = Common_GetPointer(save.save);
     for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
+        save = Common_GetPointer(save.save);
         start_p = &save->island.fgblock[0][i].items[0][0];
         item_p = &save->island.fgblock[0][i].items[0][0];
 
@@ -2442,7 +2443,9 @@ extern void mSP_SelectRandomItemToAGB() {
             }
         }
     }
+    wpos.z = wpos.z;
 }
+#pragma opt_propagation reset
 
 extern const char* mSP_ShopStatus2String(int status) {
     static char dummy[] = "hahaha";
