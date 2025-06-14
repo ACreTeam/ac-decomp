@@ -1299,7 +1299,7 @@ config.libs = [
             Object(Matching, "effect/ef_naku.c"),
             Object(Matching, "effect/ef_namida.c"),
             Object(Matching, "effect/ef_neboke.c"),
-            Object(NonMatching, "effect/ef_neboke_akubi.c"),
+            Object(Matching, "effect/ef_neboke_akubi.c"),
             Object(NonMatching, "effect/ef_neboke_awa.c"),
             Object(Matching, "effect/ef_night13_moon.c"),
             Object(Matching, "effect/ef_night15_moon.c"),
