@@ -1323,7 +1323,7 @@ config.libs = [
             Object(Matching, "effect/ef_siawase_hana.c"),
             Object(Matching, "effect/ef_siawase_hana_ch.c"),
             Object(Matching, "effect/ef_siawase_hikari.c"),
-            Object(NonMatching, "effect/ef_sibuki.c"),
+            Object(Matching, "effect/ef_sibuki.c"),
             Object(NonMatching, "effect/ef_situren.c"),
             Object(NonMatching, "effect/ef_slip.c"),
             Object(NonMatching, "effect/ef_slip_footprint.c"),
