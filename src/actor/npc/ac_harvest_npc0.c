@@ -21,6 +21,15 @@ typedef struct npc_harvest_npc0_actor_s {
     u8 _9A8;
 } NPC_HARVEST_NPC0_ACTOR;
 
+enum {
+    aHT0_ACT_WAIT,
+    aHT0_ACT_MERRY,
+    aHT0_ACT_DRINK,
+    aHT0_ACT_TO_DEFAULT,
+
+    aHT0_ACT_NUM
+};
+
 static void aHT0_actor_ct(ACTOR* actorx, GAME* game);
 static void aHT0_actor_dt(ACTOR* actorx, GAME* game);
 static void aHT0_actor_init(ACTOR* actorx, GAME* game);
@@ -95,7 +104,7 @@ static void aHT0_actor_init(ACTOR* actorx, GAME* game) {
 }
 
 static void aHT0_set_animation(ACTOR* actorx, int index) {
-    static int animeSeqNo[] = { 72, 74, 73, 1 };
+    static int animeSeqNo[] = { aNPC_ANIM_SITDOWN_WAIT1, aNPC_ANIM_SITDOWN_CLAP1, aNPC_ANIM_SITDOWN_DRINK1, aNPC_ANIM_WALK1 };
     NPC_CLIP->animation_init_proc(actorx, animeSeqNo[index], FALSE);
 }
 

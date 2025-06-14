@@ -64,7 +64,7 @@ static void aHT0_setupAction(NPC_ACTOR* actorx, int index) {
     actor->actor.draw.loop_flag = anm_loop_base[index] + RANDOM(anm_loop_rnd[index]);
     aHT0_set_animation(&actorx->actor_class, index);
     if (index == 1) {
-        static u8 clap_se_no[] = { 0x2f, 0x31, 0x32, 0x33 };
+        static u8 clap_se_no[] = { NA_SE_2F, NA_SE_31, NA_SE_32, NA_SE_33 };
         actor->_9A8 = clap_se_no[RANDOM(ARRAY_COUNT(clap_se_no))];
     }
 }
@@ -74,7 +74,7 @@ static void aHT0_act_chg_data_proc(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* pla
 }
 
 static void aHT0_act_init_proc(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
-    aHT0_setupAction(&actor->actor, 3);
+    aHT0_setupAction(&actor->actor, aHT0_ACT_TO_DEFAULT);
 }
 
 static void aHT0_act_main_proc(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
@@ -88,10 +88,10 @@ static void aHT0_act_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int index) {
 }
 
 static void aHT0_think_main_proc(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play) {
-    if (actor->actor.action.step == (u8)-1) {
+    if (actor->actor.action.step == aNPC_ACTION_END_STEP) {
         switch (actor->actor.action.idx) {
-            case 22: {
-                static int action[] = { 0, 1, 2, 3 };
+            case aNPC_ACT_SPECIAL: {
+                static int action[] = { aHT0_ACT_WAIT, aHT0_ACT_MERRY, aHT0_ACT_DRINK, aHT0_ACT_TO_DEFAULT };
                 if (actor->_998 != -1) {
                     aHT0_setupAction(&actor->actor, action[actor->_998]);
                     actor->_998 = -1;
@@ -106,7 +106,7 @@ static void aHT0_think_main_proc(NPC_HARVEST_NPC0_ACTOR* actor, GAME_PLAY* play)
                                                        aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_Y;
                 actor->actor.collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
             } break;
-            case 8: {
+            case aNPC_ACT_TALK: {
                 actor->actor.movement.mv_angl = aHT0_GetDefaultAngle(actor);
                 aHT0_set_request_act(&actor->actor);
                 actor->actor.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
@@ -135,10 +135,10 @@ static void aHT0_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     NPC_HARVEST_NPC0_ACTOR* actor = (NPC_HARVEST_NPC0_ACTOR*)actorx;
     int id = actor->actor.actor_class.npc_id - SP_NPC_EV_HARVEST_0;
     actor->actor.think.think_proc = aHT0_think_proc;
-    actor->actor.condition_info.hide_request = 0;
+    actor->actor.condition_info.hide_request = FALSE;
     actor->actor.palActorIgnoreTimer = -1;
-    actor->actor.talk_info.turn = 1;
-    actor->actor.talk_info.default_animation = 72;
+    actor->actor.talk_info.turn = aNPC_TALK_TURN_HEAD;
+    actor->actor.talk_info.default_animation = aNPC_ANIM_SITDOWN_WAIT1;
     actor->_9A4 = id;
     actor->actor.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
                                            aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK |
@@ -148,7 +148,7 @@ static void aHT0_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     actor->_998 = -1;
     actor->actor.movement.mv_angl = actor->actor.actor_class.world.angle.y =
         actor->actor.actor_class.shape_info.rotation.y = aHT0_GetDefaultAngle(actor);
-    NPC_CLIP->think_proc(actorx, play, 9, 0);
+    NPC_CLIP->think_proc(actorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
 }
 
 static void aHT0_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
@@ -181,7 +181,7 @@ static void aHT0_set_talk_info(ACTOR* actorx) {
 }
 
 static void aHT0_talk_request(ACTOR* actorx, GAME* game) {
-    mDemo_Request(7, actorx, aHT0_set_talk_info);
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aHT0_set_talk_info);
 }
 
 static BOOL aHT0_talk_init(ACTOR* actorx, GAME* game) {
@@ -192,7 +192,7 @@ static BOOL aHT0_talk_init(ACTOR* actorx, GAME* game) {
 static BOOL aHT0_talk_end_chk(ACTOR* actorx, GAME* game) {
     NPC_HARVEST_NPC0_ACTOR* actor = (NPC_HARVEST_NPC0_ACTOR*)actorx;
     BOOL ret = FALSE;
-    if (mDemo_Check(7, actorx) == FALSE) {
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
         actor->_99C = 1;
         ret = TRUE;
     }

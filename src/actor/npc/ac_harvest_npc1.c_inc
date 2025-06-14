@@ -38,7 +38,7 @@ static void aHT1_act_chg_data_proc(NPC_HARVEST_NPC1_ACTOR* actor, GAME_PLAY* pla
 }
 
 static void aHT1_act_init_proc(NPC_HARVEST_NPC1_ACTOR* actor, GAME_PLAY* play) {
-    aHT1_setupAction(&actor->actor, 1);
+    aHT1_setupAction(&actor->actor, aHT1_ACT_TO_DEFAULT);
 }
 
 static void aHT1_act_main_proc(NPC_HARVEST_NPC1_ACTOR* actor, GAME_PLAY* play) {
@@ -52,9 +52,9 @@ static void aHT1_act_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int index) {
 }
 
 static void aHT1_think_main_proc(NPC_HARVEST_NPC1_ACTOR* actor, GAME_PLAY* play) {
-    if (actor->actor.action.step == (u8)-1) {
+    if (actor->actor.action.step == aNPC_ACTION_END_STEP) {
         switch (actor->actor.action.idx) {
-            case 22: {
+            case aNPC_ACT_SPECIAL: {
                 if (actor->_998 != -1) {
                     aHT1_setupAction(&actor->actor, actor->_998);
                     actor->_998 = -1;
@@ -63,7 +63,7 @@ static void aHT1_think_main_proc(NPC_HARVEST_NPC1_ACTOR* actor, GAME_PLAY* play)
                     aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV;
                 actor->actor.collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
             } break;
-            case 8: {
+            case aNPC_ACT_TALK: {
                 actor->actor.movement.mv_angl = aHT1_GetDefaultAngle(actor);
                 aHT1_set_request_act(&actor->actor);
                 actor->actor.condition_info.demo_flg =
@@ -98,7 +98,7 @@ static void aHT1_schedule_init_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
     actor->actor.actor_class.shape_info.rotation.y = aHT1_GetDefaultAngle();
     actor->actor.actor_class.world.angle.y = aHT1_GetDefaultAngle();
     actor->actor.movement.mv_angl = aHT1_GetDefaultAngle();
-    NPC_CLIP->think_proc(actorx, play, 9, 0);
+    NPC_CLIP->think_proc(actorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
 }
 
 static void aHT1_schedule_main_proc(NPC_ACTOR* actorx, GAME_PLAY* play) {
@@ -120,7 +120,7 @@ static void aHT1_set_talk_info(ACTOR* actorx) {
 }
 
 static void aHT1_talk_request(ACTOR* actorx, GAME* game) {
-    mDemo_Request(7, actorx, aHT1_set_talk_info);
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aHT1_set_talk_info);
 }
 
 static BOOL aHT1_talk_init(ACTOR* actorx, GAME* game) {
@@ -131,7 +131,7 @@ static BOOL aHT1_talk_init(ACTOR* actorx, GAME* game) {
 static BOOL aHT1_talk_end_chk(ACTOR* actorx, GAME* game) {
     NPC_HARVEST_NPC1_ACTOR* actor = (NPC_HARVEST_NPC1_ACTOR*)actorx;
     BOOL ret = FALSE;
-    if (mDemo_Check(7, actorx) == FALSE) {
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
         ret = TRUE;
     }
     return ret;
