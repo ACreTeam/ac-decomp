@@ -1,0 +1,61 @@
+enum {
+    aTMN0_TALK_END_WAIT,
+
+    aTMN0_TALK_NUM
+};
+
+static int aTMN0_change_talk_proc(TAMAIRE_NPC0_ACTOR* actor, int talk_idx) {
+    static aTMN0_TALK_PROC proc[] = { (aTMN0_TALK_PROC)none_proc1 };
+
+    actor->talk_proc = proc[talk_idx];
+    return TRUE;
+}
+
+static void aTMN0_set_nsg(ACTOR* actorx) {
+    static int base_msg_table[] = { 0x1E65, 0x1E71, 0x1E59, 0x1E7D, 0x1E89, 0x1E95 };
+    int msg_no = base_msg_table[mNpc_GetNpcLooks(actorx)] + RANDOM(3);
+    
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aTMN0_set_norm_talk_info(ACTOR* actorx) {
+    TAMAIRE_NPC0_ACTOR* actor = (TAMAIRE_NPC0_ACTOR*)actorx;
+    
+    aTMN0_set_nsg(actorx);
+    mDemo_Set_talk_turn(TRUE);
+    mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+    aTMN0_change_talk_proc(actor, aTMN0_TALK_END_WAIT);
+}
+
+static void aTMN0_norm_talk_request(ACTOR* actorx, GAME* game) {
+    TAMAIRE_NPC0_ACTOR* actor = (TAMAIRE_NPC0_ACTOR*)actorx;
+
+    if (!actor->change_flag) {
+        mDemo_Request(mDemo_TYPE_TALK, actorx, aTMN0_set_norm_talk_info);
+    } else {
+        actor->change_flag = FALSE;
+    }
+}
+
+static int aTMN0_talk_init(ACTOR* actorx, GAME* game) {
+    TAMAIRE_NPC0_ACTOR* actor = (TAMAIRE_NPC0_ACTOR*)actorx;
+
+    actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    return TRUE;
+}
+
+static int aTMN0_talk_end_chk(ACTOR* actorx, GAME* game) {
+    TAMAIRE_NPC0_ACTOR* actor = (TAMAIRE_NPC0_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    actor->talk_proc(actor, play);
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        aTMN0_setup_think_proc(actor, play, actor->next_think_idx);
+        ret = TRUE;
+    }
+
+    return ret;
+}

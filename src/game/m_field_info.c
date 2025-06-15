@@ -3300,7 +3300,7 @@ extern int mFI_SetOyasiroPos(s16* oyasiro_p) {
         int ut_z;
 
         if (mFI_SearchFGInBlock(&ut_x, &ut_z, WISHING_WELL, bx, bz) == FALSE &&
-            mFI_SearchFGInBlock(&ut_x, &ut_z, 0xF103, bx, bz) == FALSE) {
+            mFI_SearchFGInBlock(&ut_x, &ut_z, DUMMY_SHRINE, bx, bz) == FALSE) {
             return FALSE;
         } else {
             xyz_t pos;
