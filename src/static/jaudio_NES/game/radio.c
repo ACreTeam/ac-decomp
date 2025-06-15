@@ -21,18 +21,18 @@ int Na_GetRadioCounter(Radio_c* radio) {
     (void)unused;
 
     if (counter < 744) {
-        radio->unk0 = 0;
+        radio->measure = 0;
     } else {
         counter -= 744;
-        radio->unk0 = (s8)(counter / 768);
-        counter = counter - (radio->unk0 * 768);
-        radio->unk0++;
+        radio->measure = (s8)(counter / 768);
+        counter = counter - (radio->measure * 768);
+        radio->measure++;
     }
-    if (radio->unk0 == 9) {
-        radio->unk4 = counter / 216.0f;
+    if (radio->measure == 9) {
+        radio->measure_progress = counter / 216.0f;
 
     } else {
-        radio->unk4 = counter / 768.0f;
+        radio->measure_progress = counter / 768.0f;
     }
 
     radio->tempo = AG.groups[sou_now_bgm_handle].tempo / 48;

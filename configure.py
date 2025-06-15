@@ -1146,7 +1146,7 @@ config.libs = [
             Object(Matching, "actor/npc/ac_npc_super_master.c"),
             Object(Matching, "actor/npc/ac_npc_totakeke.c"),
             Object(Matching, "actor/npc/ac_present_npc.c"),
-            Object(NonMatching, "actor/npc/ac_taisou_npc0.c"),
+            Object(Matching, "actor/npc/ac_taisou_npc0.c"),
             Object(NonMatching, "actor/npc/ac_tamaire_npc0.c"),
             Object(NonMatching, "actor/npc/ac_tamaire_npc1.c"),
             Object(NonMatching, "actor/npc/ac_tokyoso_npc0.c"),

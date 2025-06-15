@@ -727,7 +727,7 @@ static void mSCR_talk_inspection(TAISOU_NPC0_ACTOR* taisou_actor, GAME_PLAY* pla
                 Common_Get(clip).handOverItem_clip->player_after_mode = 8;
                 mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 3);
                 mMsg_Unset_LockContinue(msg_win);
-                taisou_actor->npc_actor_class.talk_info.default_animation = 30;
+                taisou_actor->npc_class.talk_info.default_animation = aNPC_ANIM_GET_PULL_WAIT1;
             }
             break;
         }
@@ -744,7 +744,7 @@ static void mSCR_talk_inspection(TAISOU_NPC0_ACTOR* taisou_actor, GAME_PLAY* pla
 
         case 4: {
             if (Common_Get(clip).handOverItem_clip->master_actor == NULL) {
-                taisou_actor->npc_actor_class.talk_info.default_animation = -1;
+                taisou_actor->npc_class.talk_info.default_animation = -1;
                 mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
 
                 if (radiocard->days >= mSC_RADIO_DAYS) {

@@ -1,0 +1,38 @@
+static void aTS0_set_current(TAISOU_NPC0_ACTOR* actor) {
+    cKF_FrameControl_c* fc_p = &actor->npc_class.draw.main_animation.keyframe.frame_control;
+    f32 now = actor->current_ratio;
+    int idx = actor->action;
+    f32 start = fc_p->start_frame;
+    f32 end = fc_p->end_frame;
+    f32 cur = fc_p->current_frame;
+
+    fc_p->current_frame = start + ((actor->radio.measure_progress - now) - aTS0_startRatio[idx][actor->anime_dir]) * (end - start) / aTS0_ratioLength[idx][actor->anime_dir & 1];
+}
+
+static void aTS0_set_animation(TAISOU_NPC0_ACTOR* actor, int action) {
+    // clang-format off
+    static int animeSeqNo[] = {
+        aNPC_ANIM_INTRO1_A,
+        aNPC_ANIM_TAISOU1,
+        aNPC_ANIM_TAISOU2,
+        aNPC_ANIM_TAISOU4_A,
+        aNPC_ANIM_TAISOU5_A,
+        aNPC_ANIM_TAISOU6_A,
+        aNPC_ANIM_TAISOU7,
+        aNPC_ANIM_TAISOU3_A,
+        aNPC_ANIM_TAISOU1,
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_KIDUKU1,
+        aNPC_ANIM_WAIT1,
+        aNPC_ANIM_TIRED1,
+    };
+    // clang-format on
+
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, animeSeqNo[action] + (actor->anime_dir & 1), FALSE);
+}
+
+static void aTS0_set_animation2(TAISOU_NPC0_ACTOR* actor, int action) {
+    actor->anime_dir = 0;
+    aTS0_set_animation(actor, action);
+    actor->action = action;
+}

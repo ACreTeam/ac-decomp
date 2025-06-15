@@ -1,0 +1,408 @@
+static void aTS0_set_request_act(TAISOU_NPC0_ACTOR* actor) {
+    actor->npc_class.request.act_priority = 4;
+    actor->npc_class.request.act_idx = aNPC_ACT_SPECIAL;
+    actor->npc_class.request.act_type = aNPC_ACT_TYPE_SEARCH;
+}
+
+static void aTS0_act_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->action.act_obj = aNPC_ACT_OBJ_PLAYER;
+}
+
+static void aTS0_act_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TAISOU_NPC0_ACTOR* actor = (TAISOU_NPC0_ACTOR*)nactorx;
+
+    aTS0_set_animation2(actor, 11);
+    actor->gymnastic_state = 1;
+    nactorx->action.step = 0;
+}
+
+static void aTS0_act_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC act_proc[] = { aTS0_act_init_proc, aTS0_act_chg_data_proc, (aNPC_SUB_PROC)none_proc1 };
+
+    (*act_proc[type])(nactorx, play);
+}
+
+static void aTS0_setup_delay_cnt(TAISOU_NPC0_ACTOR* actor) {
+    if (actor->npc_class.actor_class.npc_id != SP_NPC_EV_TAISOU_0) {
+        actor->delay_cnt = RANDOM(48);
+    }
+}
+
+static int aTS0_check_over_bgm_block_part(TAISOU_NPC0_ACTOR* actor, int seq, int type) {
+    int idx = actor->action;
+    f32 ratio = actor->radio.measure_progress;
+    int ret = TRUE;
+
+    if (type != 0 && actor->delay_cnt != 0) {
+        actor->delay_cnt--;
+        actor->current_ratio = ratio * 0.2f;
+        ratio *= 0.8f;
+    } else {
+        ratio -= actor->current_ratio;
+    }
+
+    if (ratio <= aTS0_startRatio[idx][seq + 1]) {
+        ret = FALSE;
+    }
+
+    return ret;
+}
+
+static void aTS0_setup_morph(TAISOU_NPC0_ACTOR* actor) {
+    actor->anime_dir = 0;
+    aTS0_set_animation(actor, actor->action);
+    actor->anim_initialized = TRUE;
+    actor->current_ratio = 0.0f;
+}
+
+static void aTS0_ctrl_gymnastic_force(TAISOU_NPC0_ACTOR* actor) {
+    int i;
+    int seq = 0;
+    actor->action = actor->radio.measure;
+
+    for (i = 0; i < 5; i++) {
+        if (!aTS0_check_over_bgm_block_part(actor, i, 0)) {
+            seq = i;
+            break;
+        }
+    }
+
+    actor->anime_dir = seq;
+    actor->anim_initialized = FALSE;
+    aTS0_set_animation(actor, actor->action);
+}
+
+static void aTS0_ctrl_gymnastic_sub0(TAISOU_NPC0_ACTOR* actor) {
+    static f32 chk_failure_rate[] = { 0.0f, 0.05f, 0.1f, 0.15f, 0.3f };
+    int type = actor->npc_class.actor_class.npc_id - SP_NPC_EV_TAISOU_0;
+
+    if (type > 4) {
+        type = 0;
+    }
+
+    if (actor->anim_initialized == TRUE) {
+        actor->anim_initialized = FALSE;
+    } else {
+        if (actor->radio.measure_progress >= aTS0_endRatio[(int)actor->radio.measure]) {
+            s8 next_action = (actor->radio.measure + 1) % 10;
+
+            if (aTS0_failure_actor_p == NULL && next_action != 0 && next_action != 9 && RANDOM_F(1.0f) < chk_failure_rate[type]) {
+                s8 failure_action;
+
+                do {
+                    failure_action = 1 + RANDOM(8);
+                } while (failure_action == next_action);
+
+                actor->gymnastic_state = 2;
+                actor->action = failure_action;
+                aTS0_setup_morph(actor);
+                aTS0_failure_actor_p = (ACTOR*)actor;
+            } else if (actor->npc_class.actor_class.npc_id == SP_NPC_SONCHO_D078 && RANDOM_F(1.0f) < 0.2f) {
+                aTS0_set_animation2(actor, 12);
+                actor->gymnastic_state = 4;
+                aTS0_setup_morph(actor);
+            } else {
+                actor->action = next_action;
+                aTS0_setup_morph(actor);
+                aTS0_setup_delay_cnt(actor);
+            }
+        }
+    }
+}
+
+static void aTS0_ctrl_gymnastic_sub1(TAISOU_NPC0_ACTOR* actor) {
+    s8 next_action = (actor->radio.measure + 1) % 10;
+
+    if (next_action != actor->action) {
+        if (actor->radio.measure_progress >= aTS0_endRatio[(int)actor->radio.measure]) {
+            actor->action = next_action;
+            aTS0_setup_morph(actor);
+        }
+    }
+}
+
+static void aTS0_ctrl_gymnastic_restart(TAISOU_NPC0_ACTOR* actor) {
+    if (actor->radio.measure_progress >= aTS0_endRatio[(int)actor->radio.measure]) {
+        actor->action = (actor->radio.measure + 1) % 10;
+        aTS0_setup_morph(actor);
+        actor->gymnastic_state = 0;
+    }
+}
+
+static void aTS0_ctrl_gymnastic_failure_step1(TAISOU_NPC0_ACTOR* actor) {
+    if (actor->radio.measure_progress < 0.5f) {
+        actor->anim_initialized = FALSE;
+        actor->gymnastic_state = 3;
+    }
+}
+
+static void aTS0_ctrl_gymnastic_failure_step2(TAISOU_NPC0_ACTOR* actor) {
+    switch (actor->action) {
+        case 10:
+            if (actor->radio.measure_progress >= aTS0_endRatio[(int)actor->radio.measure]) {
+                actor->action = (actor->radio.measure + 1) % 10;
+                aTS0_setup_morph(actor);
+                aTS0_failure_actor_p = NULL;
+                actor->gymnastic_state = 0;
+            }
+
+            if (actor->npc_class.draw.main_animation_state == cKF_STATE_STOPPED) {
+                actor->anime_dir = 1;
+                aTS0_set_animation(actor, actor->action);
+            }
+
+            if (actor->npc_class.draw.animation_id == aNPC_ANIM_KIDUKU1 && actor->npc_class.draw.main_animation.keyframe.frame_control.current_frame > 10.0f) {
+                actor->npc_class.draw.effect_pattern = 40;
+                actor->npc_class.draw.effect_type = eEC_EFFECT_ASE2;
+            }
+            break;
+
+        default:
+            if (actor->radio.measure_progress >= 0.5f) {
+                aTS0_set_animation2(actor, 10);
+            }
+            break;
+    }
+}
+
+static void aTS0_setup_anm_data(TAISOU_NPC0_ACTOR* actor) {
+    if (actor->action < 10) {
+        f32 morph = 0.0f;
+
+        if (!actor->anim_initialized) {
+            if (aTS0_check_over_bgm_block_part(actor, actor->anime_dir, 1) == TRUE) {
+                actor->anime_dir++;
+
+                if (actor->npc_class.draw.main_animation.keyframe.frame_control.mode == cKF_FRAMECONTROL_STOP) {
+                    aTS0_set_animation(actor, actor->action);
+                }
+            }
+
+            aTS0_set_current(actor);
+        } else {
+            int idx = actor->radio.measure;
+
+            morph = aTS0_morphRatio[idx] / (actor->radio.measure_progress - aTS0_endRatio[idx]);
+            if (morph < 1.0f) {
+                morph = 1.0f;
+            }
+        }
+
+        actor->npc_class.draw.main_animation.keyframe.morph_counter = morph;
+    }
+}
+
+static void aTS0_ctrl_gymnastic(TAISOU_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    if (sAdos_GetRadioCounter(&actor->radio) != -1) {
+        int force = FALSE;
+
+        {
+            u32 frame = play->game.frame_counter;
+            u32 diff = frame - actor->frame;
+
+            if (diff != 0 && diff < INT_MIN) {
+                force = TRUE;
+            }
+
+            actor->frame = frame + 1;
+        }
+
+        switch (actor->gymnastic_state) {
+            case 0:
+                if (force == TRUE) {
+                    aTS0_ctrl_gymnastic_force(actor);
+                }
+
+                if (actor->radio.measure == actor->action) {
+                    aTS0_ctrl_gymnastic_sub0(actor);
+                } else {
+                    aTS0_ctrl_gymnastic_sub1(actor);
+                }
+                break;
+            case 1:
+                aTS0_ctrl_gymnastic_restart(actor);
+                break;
+            case 4:
+                if (actor->radio.measure_progress < 0.5f) {
+                    actor->gymnastic_state = 1;
+                }
+                break;
+            case 2:
+                if (force == TRUE) {
+                    aTS0_ctrl_gymnastic_force(actor);
+                    actor->gymnastic_state = 0;
+                    aTS0_ctrl_gymnastic_sub0(actor);
+                } else {
+                    aTS0_ctrl_gymnastic_failure_step1(actor);
+                }
+                break;
+            case 3:
+                aTS0_ctrl_gymnastic_failure_step2(actor);
+                break;
+        }
+
+        aTS0_setup_anm_data(actor);
+    }
+}
+
+static void aTS0_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TAISOU_NPC0_ACTOR* actor = (TAISOU_NPC0_ACTOR*)nactorx;
+
+    if (nactorx->action.idx == aNPC_ACT_SPECIAL) {
+        aTS0_ctrl_gymnastic(actor, play);
+    } else if (nactorx->action.step == aNPC_ACTION_END_STEP) {
+        nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+        nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
+        aTS0_set_request_act(actor);
+    }
+}
+
+static void aTS0_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TAISOU_NPC0_ACTOR* actor = (TAISOU_NPC0_ACTOR*)nactorx;
+
+    nactorx->think.interrupt_flags = 0;
+    nactorx->action.act_proc = aTS0_act_proc;
+    aTS0_set_request_act(actor);
+}
+
+static void aTS0_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC think_proc[] = { aTS0_think_init_proc, aTS0_think_main_proc };
+
+    (*think_proc[type])(nactorx, play);
+}
+
+static void aTS0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    static s16 def_angle[] = { DEG2SHORT_ANGLE2(180.0f), DEG2SHORT_ANGLE2(0.0f) };
+    TAISOU_NPC0_ACTOR* actor = (TAISOU_NPC0_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)nactorx;
+
+    nactorx->think.think_proc = aTS0_think_proc;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
+    nactorx->condition_info.hide_request = FALSE;
+    nactorx->palActorIgnoreTimer = -1;
+
+    if (actorx->npc_id != SP_NPC_SONCHO_D078) {
+        nactorx->talk_info.turn = aNPC_TALK_TURN_NONE;
+    }
+
+    nactorx->talk_info.default_animation = aNPC_ANIM_WAIT1;
+    actorx->status_data.weight = MASSTYPE_HEAVY;
+
+    actorx->world.position.x += mFI_UT_WORLDSIZE_HALF_X_F;
+    actorx->world.position.z += mFI_UT_WORLDSIZE_HALF_Z_F;
+
+    nactorx->draw.anim_speed_type = aNPC_ANIM_SPEED_TYPE_FREE;
+    nactorx->draw.frame_speed = 0.5f;
+    actor->frame = play->game.frame_counter + 1;
+
+    {
+        int idx = actorx->npc_id != SP_NPC_EV_TAISOU_0;
+        s16 angle = def_angle[idx];
+
+        actorx->shape_info.rotation.y = angle;
+        actorx->world.angle.y = angle;
+        nactorx->movement.mv_angl = angle;
+    }
+
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aTS0_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aTS0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    static aNPC_SUB_PROC sche_proc[] = { aTS0_schedule_init_proc, aTS0_schedule_main_proc };
+
+    (*sche_proc[type])(nactorx, play);
+}
+
+static void aTS0_set_talk_info(ACTOR* actorx) {
+    static int msg_base[][mNpc_LOOKS_NUM] = {
+        {0x1A3C, 0x1A4B, 0x1A2D, 0x1A5A, 0x1A69, 0x1A78},
+        {0x1A96, 0x1AA5, 0x1A87, 0x1AB4, 0x1AC3, 0x1AD2},
+    };
+
+    static int msg_base2[] = { 0x2665, 0x2668 };
+    TAISOU_NPC0_ACTOR* actor = (TAISOU_NPC0_ACTOR*)actorx; // this needs to be moved into r29
+    int looks = mNpc_GetNpcLooks(actorx);
+    int event_type;
+    int type;
+    int msg_no;
+
+    if (mEv_check_status(mEv_EVENT_MORNING_AEROBICS, mEv_STATUS_ACTIVE)) {
+        event_type = 0;
+    } else {
+        event_type = 1;
+    }
+
+    type = actorx->npc_id - SP_NPC_EV_TAISOU_0;
+    
+    if (type > 4) {
+        if (actor->soncho_event == 0xFF) {
+            actor->soncho_event = mSC_get_soncho_event();
+        }
+
+        msg_no = mSC_Radio_Set_Talk_Proc(actor);
+    } else if (type == 0) {
+        // Copper
+        msg_no = msg_base2[event_type] + RANDOM(3);
+    } else if (actor->action == 10) { // villagers
+        msg_no = msg_base[event_type][looks] + 2 + type * 3;
+    } else {
+        msg_no = msg_base[event_type][looks] + RANDOM(2) + type * 3;
+    }
+
+    mDemo_Set_msg_num(msg_no);
+}
+
+static void aTS0_talk_request(ACTOR* actorx, GAME* game) {
+    mDemo_Request(mDemo_TYPE_TALK, actorx, aTS0_set_talk_info);
+}
+
+static int aTS0_talk_init(ACTOR* actorx, GAME* game) {
+    TAISOU_NPC0_ACTOR* actor = (TAISOU_NPC0_ACTOR*)actorx;
+    int ret = FALSE;
+
+    if (aTS0_failure_actor_p == actorx) {
+        aTS0_failure_actor_p = NULL;
+    }
+
+    mDemo_Set_ListenAble();
+    if (actorx->npc_id == SP_NPC_SONCHO_D078) {
+        mCD_calendar_event_on(Common_Get(time.rtc_time.year), Common_Get(time.rtc_time.month), Common_Get(time.rtc_time.day), actor->soncho_event);
+
+        if (actor->talk_proc == 7) {
+            mSC_item_string_set(mSC_trophy_item(actor->soncho_event), mMsg_ITEM_STR0);
+        }
+
+        if (actor->talk_proc == 8) {
+            mSC_item_string_set(mSC_trophy_item(actor->soncho_event), mMsg_ITEM_STR0);
+            mSC_event_name_set(actor->soncho_event);
+        }
+    }
+
+    return TRUE;
+}
+
+static int aTS0_talk_end_chk(ACTOR* actorx, GAME* game) {
+    TAISOU_NPC0_ACTOR* actor = (TAISOU_NPC0_ACTOR*)actorx;
+    int ret = FALSE;
+
+    if (actorx->npc_id == SP_NPC_SONCHO_D078) {
+        mSC_Radio_Talk_Proc(actor, (GAME_PLAY*)game);
+    }
+
+    if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
+        ret = TRUE;
+
+        if (actorx->npc_id == SP_NPC_SONCHO_D078) {
+            actor->npc_class.movement.mv_angl = 0;
+        }
+    }
+
+    return ret;
+}

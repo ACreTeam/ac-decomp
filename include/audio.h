@@ -26,8 +26,8 @@ typedef struct audio_staffroll_info_s {
 } StaffRollInfo_c;
 
 typedef struct radio_s {
-    /* 0x000 */ s8 unk0;
-    /* 0x004 */ f32 unk4;
+    /* 0x000 */ s8 measure;
+    /* 0x004 */ f32 measure_progress;
     /* 0x008 */ u16 tempo;
 } Radio_c;
 
