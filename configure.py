@@ -1309,7 +1309,7 @@ config.libs = [
             Object(Matching, "effect/ef_pun.c"),
             Object(Matching, "effect/ef_pun_sekimen.c"),
             Object(Matching, "effect/ef_pun_yuge.c"),
-            Object(NonMatching, "effect/ef_reset_hole.c"),
+            Object(Matching, "effect/ef_reset_hole.c"),
             Object(Matching, "effect/ef_room_sunshine.c"),
             Object(Matching, "effect/ef_room_sunshine_minsect.c"),
             Object(Matching, "effect/ef_room_sunshine_museum.c"),
