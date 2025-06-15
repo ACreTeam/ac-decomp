@@ -1,0 +1,350 @@
+static int aTMN1_nageru_bitcheck(TAMAIRE_NPC1_ACTOR* actor) {
+    if (((actor->npc_class.actor_class.npc_id - SP_NPC_EV_TAMAIRE_1) & 2) == 0) {
+        return aTMN1_flag & 1;
+    } else {
+        return aTMN1_flag & 2;
+    }
+}
+
+static void aTMN1_nageru_bitset(TAMAIRE_NPC1_ACTOR* actor) {
+    if (((actor->npc_class.actor_class.npc_id - SP_NPC_EV_TAMAIRE_1) & 2) == 0) {
+        aTMN1_flag |= 1;
+    } else {
+        aTMN1_flag |= 2;
+    }
+}
+
+static void aTMN1_nageru_bitclr(TAMAIRE_NPC1_ACTOR* actor) {
+    if (((actor->npc_class.actor_class.npc_id - SP_NPC_EV_TAMAIRE_1) & 2) == 0) {
+        aTMN1_flag &= ~1;
+    } else {
+        aTMN1_flag &= ~2;
+    }
+}
+
+static s16 aTMN1_Tamakago_angle(TAMAIRE_NPC1_ACTOR* actor) {
+    f32 dx;
+    f32 dz;
+    ACTOR* actorx;
+
+    actorx = (ACTOR*)actor;
+    dx = actor->yasiro_pos[0] - actorx->world.position.x;
+    dz = actor->yasiro_pos[1] - actorx->world.position.z;
+    return (s16)atans_table(dz, dx);
+}
+
+static void aTMN1_Next_move(TAMAIRE_NPC1_ACTOR* actor) {
+    s16 angle;
+    f32 r;
+
+    r = RANDOM_F(1500.0f) + 2000.0f;
+    if (RANDOM_F(1.0f) < 0.5f) {
+        r = -r;
+    }
+
+    angle = r - aTMN1_Tamakago_angle(actor);
+    r = RANDOM_F(20.0f) + 70.0f;
+    actor->move_pos[0] = actor->yasiro_pos[0] + sin_s(angle) * r;
+    actor->move_pos[1] = actor->yasiro_pos[1] + cos_s(angle) * r;
+}
+
+static void aTMN1_timer_next(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    if (actor->timer > 0) {
+        actor->timer--;
+    } else {
+        aTMN1_setup_think_proc(actor, play, ++actor->think_idx);
+    }
+}
+
+static void aTMN1_birth(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    s16 yasiro_pos[3];
+
+    if (mFI_SetOyasiroPos(yasiro_pos)) {
+        actor->yasiro_pos[0] = yasiro_pos[0]; // x
+        actor->yasiro_pos[1] = yasiro_pos[1] + 40; // z
+
+        if (((actor->npc_class.actor_class.npc_id - SP_NPC_EV_TAMAIRE_1) & 2) != 0) {
+            actor->yasiro_pos[0] += 200;
+        } else {
+            actor->yasiro_pos[0] -= 160;
+        }
+
+        aTMN1_setup_think_proc(actor, play, aTMN1_THINK_KYORO);
+    }
+}
+
+static void aTMN1_walk(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if ((actor->npc_class.action.idx == aNPC_ACT_RUN && actor->npc_class.action.step == aNPC_ACTION_END_STEP) || (s16)actor->npc_class.movement.dst_pos_x != actor->move_pos[0] || (s16)actor->npc_class.movement.dst_pos_z != actor->move_pos[1]) {
+        aTMN1_setup_think_proc(actor, play, aTMN1_THINK_HIROU_MAE);
+    } else if (actor->npc_class.collision.collision_flag != 0) {
+        if (actor->timer > 0) {
+            actor->timer--;
+        } else {
+            aTMN1_setup_think_proc(actor, play, aTMN1_THINK_HIROU_MAE);
+        }
+    } else {
+        actor->timer = 20;
+    }
+}
+
+static void aTMN1_turn_next(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->npc_class.action.idx == aNPC_ACT_TURN) {
+        aTMN1_setup_think_proc(actor, play, ++actor->think_idx);
+    }
+}
+
+static void aTMN1_hirou(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    static u8 table[] = { 15, 27, 39 };
+
+    if (cKF_FrameControl_passCheck_now(&actor->npc_class.draw.main_animation.keyframe.frame_control, table[actor->left])) {
+        actor->left++;
+
+        if (actor->left == 3) {
+            aTMN1_setup_think_proc(actor, play, aTMN1_THINK_HIROU_END);
+        }
+    }
+}
+
+static void aTMN1_hirou_sp(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->npc_class.action.idx == aNPC_ACT_TURN) {
+        aTMN1_setup_think_proc(actor, play, aTMN1_THINK_NAGERU);
+    }
+}
+
+static void aTMN1_anime_next(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if (cKF_FrameControl_stop_proc(&actor->npc_class.draw.main_animation.keyframe.frame_control) == cKF_STATE_STOPPED) {
+        aTMN1_setup_think_proc(actor, play, ++actor->think_idx);
+    }
+}
+
+static void aTMN1_nageru(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+    
+    if (actor->right == 1 && cKF_FrameControl_passCheck_now(&actor->npc_class.draw.main_animation.keyframe.frame_control, 15.0f)) {
+        actor->right = 0;
+        eEC_CLIP->effect_make_proc(eEC_EFFECT_TAMAIRE, actor->npc_class.right_hand.pos, 1, aTMN1_Tamakago_angle(actor), (GAME*)play, actor->npc_class.actor_class.npc_id, ((mActor_name_t)(actorx->npc_id - SP_NPC_EV_TAMAIRE_1) >> 1) & 1, RANDOM(3000) + DEG2SHORT_ANGLE2(67.5f));
+    } else if (cKF_FrameControl_stop_proc(&actor->npc_class.draw.main_animation.keyframe.frame_control) == cKF_STATE_STOPPED) {
+        if (actor->left != 0) {
+            aTMN1_setup_think_proc(actor, play, aTMN1_THINK_NAGERU);
+        } else {
+            aTMN1_setup_think_proc(actor, play, aTMN1_THINK_NAGERU_END);
+        }
+    }
+}
+
+static void aTMN1_nageru_end(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    xyz_t pos;
+    ACTOR* actorx = (ACTOR*)actor;
+
+    if (actor->timer > 0) {
+        actor->timer--;
+        pos.x = actor->yasiro_pos[0];
+        pos.y = actorx->world.position.y + 80.0f;
+        pos.z = actor->yasiro_pos[1];
+        NPC_CLIP->set_head_request_act_proc((NPC_ACTOR*)actor, 3, aNPC_HEAD_TARGET_POS, NULL, &pos);
+    } else {
+        aTMN1_setup_think_proc(actor, play, aTMN1_THINK_KYORO);
+    }
+}
+
+static void aTMN1_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TAMAIRE_NPC1_ACTOR* actor = (TAMAIRE_NPC1_ACTOR*)nactorx;
+
+    if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)nactorx) == TRUE) {
+        return;
+    }
+
+    if (actor->npc_class.action.step == aNPC_ACTION_END_STEP) {
+        actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    }
+
+    if (actor->think_idx == aTMN1_THINK_WALK) {
+        actor->think_proc(actor, play);
+    } else if (actor->npc_class.action.step == aNPC_ACTION_END_STEP || actor->npc_class.action.idx == aNPC_ACT_WAIT) {
+        actor->think_proc(actor, play);
+    }
+}
+
+static void aTMN1_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TAMAIRE_NPC1_ACTOR* actor = (TAMAIRE_NPC1_ACTOR*)nactorx;
+
+    nactorx->actor_class.status_data.weight = MASSTYPE_HEAVY;
+    nactorx->condition_info.hide_request = FALSE;
+    aTMN1_setup_think_proc(actor, play, aTMN1_THINK_BIRTH);
+    nactorx->think.interrupt_flags = 0;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+}
+
+static void aTMN1_normal_wait_init(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTMN1_set_request_act(actor, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_ACT_OBJ_DEFAULT, 0, 0);
+}
+
+static void aTMN1_hirou_mae_init(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if (!aTMN1_nageru_bitcheck(actor) && RANDOM_F(1.0f) < 0.8f) {
+        aTMN1_normal_wait_init(actor, play);
+        actor->timer = 10;
+        aTMN1_nageru_bitset(actor);
+    } else {
+        aTMN1_setup_think_proc(actor, play, aTMN1_THINK_KYORO_MAE);
+    }
+}
+
+static void aTMN1_move_init(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTMN1_set_request_act(actor, 4, aNPC_ACT_RUN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actor->move_pos[0], actor->move_pos[1]);
+    actor->npc_class.head.lock_flag = FALSE;
+}
+
+static void aTMN1_kyoro_mae_init(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTMN1_normal_wait_init(actor, play);
+    actor->timer = 10;
+}
+
+static void aTMN1_kyoro_init(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_KYORO1, FALSE);
+    actor->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_REPEAT;
+    actor->timer = 124;
+}
+
+static void aTMN1_walk_turn_init(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTMN1_Next_move(actor);
+    aTMN1_set_request_act(actor, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actor->move_pos[0], actor->move_pos[1]);
+    actor->timer = 20;
+}
+
+static void aTMN1_hirou_init(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_TAMAHIROI1, FALSE);
+}
+
+static void aTMN1_hirou_sp_init(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->left == 0) {
+        aTMN1_setup_think_proc(actor, play, aTMN1_THINK_HIROU);
+    } else {
+        aTMN1_set_request_act(actor, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actor->yasiro_pos[0], actor->yasiro_pos[1]);
+    }
+}
+
+static void aTMN1_hirou_end_init(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    actor->npc_class.movement.mv_angl = aTMN1_Tamakago_angle(actor);
+    actor->npc_class.movement.mv_add_angl = DEG2SHORT_ANGLE2(22.5f);
+}
+
+static void aTMN1_nageru_init(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_TAMANAGE1, FALSE);
+    actor->left--;
+    actor->right = 1;
+}
+
+static void aTMN1_nageru_end_init(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_WAIT1, FALSE);
+    actor->timer = 120;
+    aTMN1_nageru_bitclr(actor);
+}
+
+enum {
+    aTMN1_TALK_REQUEST_NONE,
+    aTMN1_TALK_REQUEST_NORM,
+
+    aTMN1_TALK_REQUEST_NUM
+};
+
+typedef struct {
+    u8 think_proc_idx;
+    u8 think_init_idx;
+    u8 talk_request_idx;
+    u8 talk_idx;
+    u8 think_idx_after_talk;
+} aTMN1_think_data_c;
+
+static aTMN1_think_data_c dt_tbl[] = {
+    {aTMN1_THINK_PROC_BIRTH, aTMN1_THINK_INIT_PROC_NORMAL_WAIT, aTMN1_TALK_REQUEST_NONE, 0x00, aTMN1_THINK_BIRTH},
+    {aTMN1_THINK_PROC_TIMER_NEXT, aTMN1_THINK_INIT_PROC_KYORO_MAE, aTMN1_TALK_REQUEST_NORM, 0x00, aTMN1_THINK_KYORO_MAE},
+    {aTMN1_THINK_PROC_TIMER_NEXT, aTMN1_THINK_INIT_PROC_KYORO, aTMN1_TALK_REQUEST_NORM, 0x01, aTMN1_THINK_KYORO},
+    {aTMN1_THINK_PROC_TURN_NEXT, aTMN1_THINK_INIT_PROC_WALK_TURN, aTMN1_TALK_REQUEST_NONE, 0x00, aTMN1_THINK_WALK_TURN},
+    {aTMN1_THINK_PROC_WALK, aTMN1_THINK_INIT_PROC_MOVE, aTMN1_TALK_REQUEST_NORM, 0x02, aTMN1_THINK_WALK_TURN},
+    {aTMN1_THINK_PROC_TIMER_NEXT, aTMN1_THINK_INIT_PROC_HIROU_MAE, aTMN1_TALK_REQUEST_NONE, 0x00, aTMN1_THINK_HIROU_MAE},
+    {aTMN1_THINK_PROC_HIROU, aTMN1_THINK_INIT_PROC_HIROU, aTMN1_TALK_REQUEST_NORM, 0x03, aTMN1_THINK_HIROU_SP},
+    {aTMN1_THINK_PROC_HIROU_SP, aTMN1_THINK_INIT_PROC_HIROU_SP, aTMN1_TALK_REQUEST_NONE, 0x00, aTMN1_THINK_HIROU_SP},
+    {aTMN1_THINK_PROC_ANIME_NEXT, aTMN1_THINK_INIT_PROC_HIROU_END, aTMN1_TALK_REQUEST_NORM, 0x04, aTMN1_THINK_NAGERU},
+    {aTMN1_THINK_PROC_NAGERU, aTMN1_THINK_INIT_PROC_NAGERU, aTMN1_TALK_REQUEST_NONE, 0x00, aTMN1_THINK_NAGERU},
+    {aTMN1_THINK_PROC_NAGERU_END, aTMN1_THINK_INIT_PROC_NAGERU_END, aTMN1_TALK_REQUEST_NORM, 0x05, aTMN1_THINK_KYORO},
+};
+
+static aTMN1_THINK_PROC proc_table[] = {
+    (aTMN1_THINK_PROC)none_proc1,
+    aTMN1_timer_next,
+    aTMN1_birth,
+    aTMN1_turn_next,
+    aTMN1_walk,
+    aTMN1_hirou,
+    aTMN1_hirou_sp,
+    aTMN1_anime_next,
+    aTMN1_nageru,
+    aTMN1_nageru_end,
+};
+
+typedef void (*aTMN1_THINK_INIT_PROC)(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play);
+
+static aTMN1_THINK_INIT_PROC init_table[] = {
+    (aTMN1_THINK_INIT_PROC)none_proc1,
+    aTMN1_normal_wait_init,
+    aTMN1_move_init,
+    aTMN1_kyoro_mae_init,
+    aTMN1_kyoro_init,
+    aTMN1_walk_turn_init,
+    aTMN1_hirou_mae_init,
+    aTMN1_hirou_init,
+    aTMN1_hirou_sp_init,
+    aTMN1_hirou_end_init,
+    aTMN1_nageru_init,
+    aTMN1_nageru_end_init,
+};
+
+static void aTMN1_setup_think_proc(TAMAIRE_NPC1_ACTOR* actor, GAME_PLAY* play, u8 think_idx) {
+    static aNPC_TALK_REQUEST_PROC talk_request_table[] = { (aNPC_TALK_REQUEST_PROC)none_proc1, aTMN1_norm_talk_request  };
+    aTMN1_think_data_c* dt;
+
+    dt = &dt_tbl[think_idx];
+    actor->think_idx = think_idx;
+    actor->think_proc = proc_table[dt->think_proc_idx];
+    actor->npc_class.talk_info.talk_request_proc = talk_request_table[dt->talk_request_idx];
+    actor->talk_idx = dt->talk_idx;
+    actor->next_think_idx = dt->think_idx_after_talk;
+    actor->npc_class.head.lock_flag = TRUE;
+    (*init_table[dt->think_init_idx])(actor, play);
+    actor->change_flag = TRUE;
+}
+
+static void aTMN1_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_THINK_PROC_INIT:
+            aTMN1_think_init_proc(nactorx, play);
+            break;
+        case aNPC_THINK_PROC_MAIN:
+            aTMN1_think_main_proc(nactorx, play);
+            break;
+    }
+}
+
+static void aTMN1_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = aTMN1_think_proc;
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aTMN1_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aTMN1_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_SCHEDULE_PROC_INIT:
+            aTMN1_schedule_init_proc(nactorx, play);
+            break;
+        case aNPC_SCHEDULE_PROC_MAIN:
+            aTMN1_schedule_main_proc(nactorx, play);
+            break;
+    }
+}
