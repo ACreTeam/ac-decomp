@@ -123,7 +123,7 @@ static void eKPun_dw(eEC_Effect_c* effect, GAME* game) {
     env_gb = (int)eEC_CLIP->calc_adjust_proc(counter, 0, 8, 0.0f, 255.0f);
 
     if (counter <= 8) {
-        static f32 scale_y_table[5] = { 0.0085f, 0.01445f, 0.0289f, 0.01445f, 0.0085f };
+        static f32 scale_y_table[5] = { 0.0085f, 0.014450001530f, 0.0289000030f, 0.014450001530f, 0.0085f };
         
         effect->scale.y = scale_y_table[idx];
         effect->scale.x = 0.0085f;
