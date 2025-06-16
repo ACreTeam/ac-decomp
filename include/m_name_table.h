@@ -247,6 +247,7 @@ extern int mNT_check_unknown(mActor_name_t item_no);
 #define GET_NAME_ITEM1_CATEGORY(f) (((f) & 0x0F00) >> 8)
 
 #define IS_ITEM_FLOWER(item) ((item) >= FLOWER_LEAVES_PANSIES0 && (item) <= FLOWER_TULIP2)
+#define IS_ITEM_GROWN_FLOWER(item) ((item) >= FLOWER_PANSIES0 && (item) <= FLOWER_TULIP2)
 #define IS_ITEM_ALIVE_TREE(item) \
   (((item) >= TREE_SAPLING && (item) <= TREE_30000BELLS) || \
    ((item) >= TREE_100BELLS_SAPLING && (item) <= TREE_PALM_FRUIT) || \
