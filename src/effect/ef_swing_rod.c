@@ -40,7 +40,7 @@ static void eSwing_Rod_init(xyz_t pos, int prio, s16 angle, GAME* game, u16 item
                     }
                 }
                 break;
-            }
+        }
     }
 
     eEC_CLIP->make_effect_proc(eEC_EFFECT_SWING_ROD, pos, NULL, game, NULL, item_name, prio, arg0, arg1);
