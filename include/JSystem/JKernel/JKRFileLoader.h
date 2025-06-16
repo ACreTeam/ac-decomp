@@ -56,7 +56,6 @@ protected:
     const char* mVolumeName;                // 0x28
     u32 mVolumeType;                        // 0x2C
     bool mIsMounted;                        // 0x30
-    u8 field_0x31[3];                       // 0x31
     u32 mMountCount;                        // 0x34
 };
 

@@ -657,9 +657,9 @@ config.libs = [
     JSystemLib(
         "JSupport",
         [
-            Object(NonMatching, "JSystem/JSupport/JSUFileStream.cpp"),
+            Object(Matching, "JSystem/JSupport/JSUFileStream.cpp"),
             Object(Matching, "JSystem/JSupport/JSUInputStream.cpp"),
-            Object(NonMatching, "JSystem/JSupport/JSUList.cpp"),
+            Object(Matching, "JSystem/JSupport/JSUList.cpp"),
         ],
     ),
     JSystemLib(

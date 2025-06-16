@@ -23,6 +23,12 @@ protected:
   const void* mObject;
   s32 mPosition;
 };
+
+class JSUFileOutputStream : public JSURandomOutputStream {
+public:
+  JSUFileOutputStream(JKRFile *);
+};
+
 #endif
 
 #endif

@@ -18,9 +18,8 @@ JKRArchive* JKRArchive::check_mount_already(s32 entryNum, JKRHeap* pHeap) {
     heap = JKRGetCurrentHeap();
   }
 
-  JSUList<JKRFileLoader>& volumeList = JKRArchive::sVolumeList;
   JSUListIterator<JKRFileLoader> iterator;
-  for (iterator = volumeList.getFirst(); iterator != volumeList.getEnd();
+  for (iterator = sVolumeList.getFirst(); iterator != sVolumeList.getEnd();
     ++iterator) {
     if (iterator->getVolumeType() == 'RARC') {
       JKRArchive* archive =
@@ -36,9 +35,7 @@ JKRArchive* JKRArchive::check_mount_already(s32 entryNum, JKRHeap* pHeap) {
 }
 
 JKRArchive* JKRArchive::check_mount_already(s32 entryNum) {
-  JSUList<JKRFileLoader>& volumeList = JKRArchive::sVolumeList;
-  JSUListIterator<JKRFileLoader> iterator;
-  for (iterator = volumeList.getFirst(); iterator != volumeList.getEnd();
+  for (JSUListIterator<JKRFileLoader> iterator = sVolumeList.getFirst(); iterator != sVolumeList.getEnd();
     ++iterator) {
     if (iterator->getVolumeType() == 'RARC') {
       JKRArchive* archive =
