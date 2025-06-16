@@ -682,7 +682,7 @@ static void aSIGN_single_all_check(SIGN_ACTOR* sign) {
                 prev_angle = sign->single[i]._24;
                 sign->single[i]._24 = prev_angle + sign->single[i]._26;
                 now_angle = sign->single[i]._24;
-                sign->single[i].scale.y = sign->single[i]._20 * sinf_table((f32)now_angle * 0.0000958738f);
+                sign->single[i].scale.y = sign->single[i]._20 * sinf_table((f32)now_angle * (2 * PI / 65536.0));
                 sign->single[i].scale.x = 0.01f - sign->single[i].scale.y;
                 sign->single[i].scale.y += 0.01f;
                 sign->single[i].scale.z = sign->single[i].scale.x;
