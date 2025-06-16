@@ -1286,7 +1286,7 @@ config.libs = [
             Object(Matching, "effect/ef_killer.c"),
             Object(Matching, "effect/ef_kisha_kemuri.c"),
             Object(Matching, "effect/ef_konpu.c"),
-            Object(NonMatching, "effect/ef_kpun.c"),
+            Object(Matching, "effect/ef_kpun.c"),
             Object(Matching, "effect/ef_kyousou_onpu.c"),
             Object(Matching, "effect/ef_lamp_light.c"),
             Object(Matching, "effect/ef_lovelove.c"),

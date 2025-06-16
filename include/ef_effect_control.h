@@ -305,21 +305,21 @@ enum {
 typedef struct effect_s eEC_Effect_c;
 
 struct effect_s {
-    s16 timer;
-    s16 name;
-    s16 prog_idx;
-    s16 arg0;
-    s16 arg1;
-    s16 _0A;
-    u16 item_name;
-    u8 prio;
-    u8 state;
-    xyz_t position;
-    xyz_t velocity;
-    xyz_t acceleration;
-    xyz_t scale;
-    xyz_t offset;
-    s16 effect_specific[6];
+    /* 0x00 */ s16 timer;
+    /* 0x02 */ s16 name;
+    /* 0x04 */ s16 prog_idx;
+    /* 0x06 */ s16 arg0;
+    /* 0x08 */ s16 arg1;
+    /* 0x0A */ s16 _0A;
+    /* 0x0C */ u16 item_name;
+    /* 0x0E */ u8 prio;
+    /* 0x0F */ u8 state;
+    /* 0x10 */ xyz_t position;
+    /* 0x1C */ xyz_t velocity;
+    /* 0x28 */ xyz_t acceleration;
+    /* 0x34 */ xyz_t scale;
+    /* 0x40 */ xyz_t offset;
+    /* 0x4C */ s16 effect_specific[6];
 };
 
 typedef void (*eEC_EFFECT_INIT_PROC)(xyz_t, int, s16, GAME*, u16, s16, s16);
