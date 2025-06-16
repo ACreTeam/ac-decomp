@@ -1,0 +1,232 @@
+static void aTNN1_make_ase(TUNAHIKI_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    xyz_t pos;
+    ACTOR* actorx = (ACTOR*)actor;
+
+    pos.x = (actorx->world.position.x + actor->npc_class.right_hand.pos.x) * 0.5f;
+    pos.y = actor->npc_class.right_hand.pos.y * 3.0f - actorx->world.position.y * 2.0f;
+    pos.z = actorx->world.position.z;
+    eEC_CLIP->effect_make_proc(eEC_EFFECT_ASE2, pos, 1, 0, (GAME*)play, actorx->npc_id, 0, 0);
+}
+
+static void aTNN1_aiko(TUNAHIKI_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tunahiki_c* tunahiki = (aEv_tunahiki_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_TUG_OF_WAR, 9);
+    ACTOR* actorx = (ACTOR*)actor;
+    f32 rng = fqrand();
+
+    actorx->world.position.x = actorx->home.position.x + tunahiki->rope_base;
+    actorx->world.position.z = actorx->home.position.z;
+
+    if (cKF_FrameControl_passCheck_now(&actor->npc_class.draw.main_animation.keyframe.frame_control, 6.0f)) {
+        tunahiki->flag |= aTNC_FLAG_SHAKE;
+        tunahiki->speed = tunahiki->next_speed;
+
+        if (actor->think_idx == 3) {
+            aTNN1_make_ase(actor, play);
+            actor->timer = 1;
+        }
+    } else if (cKF_FrameControl_passCheck_now(&actor->npc_class.draw.main_animation.keyframe.frame_control, 24.0f)) {
+        tunahiki->flag &= ~aTNC_FLAG_SHAKE;
+        
+        if (actor->think_idx == 3) {
+            eEC_CLIP->effect_kill_proc(eEC_EFFECT_ASE2, actorx->npc_id);
+            actor->timer = 0;
+        }
+
+        if (rng < 0.45f) {
+            tunahiki->next_speed = RANDOM_F(20.0f) + 3.0f;
+        } else if (rng < 0.9f) {
+            tunahiki->next_speed = -(RANDOM_F(20.0f) + 3.0f);
+        } else {
+            tunahiki->next_speed = 0.0f;
+        }
+    } else if (actor->think_idx != 3) {
+        if (tunahiki->speed * actor->dir > 8.0f && (
+            cKF_FrameControl_passCheck_now(&actor->npc_class.draw.main_animation.keyframe.frame_control, 12.0f) ||
+            cKF_FrameControl_passCheck_now(&actor->npc_class.draw.main_animation.keyframe.frame_control, 18.0f))
+        ) {
+            eEC_CLIP->effect_make_proc(eEC_EFFECT_DASH_ASIMOTO, actorx->world.position, 1, actorx->shape_info.rotation.y, (GAME*)play, actorx->npc_id, actorx->bg_collision_check.result.unit_attribute, 0);
+
+            if (aTNC_NPCID2MEMBER(actorx->npc_id) != 0 && cKF_FrameControl_passCheck_now(&actor->npc_class.draw.main_animation.keyframe.frame_control, 12.0f)) {
+                sAdo_OngenTrgStart(NA_SE_106, &actorx->world.position);
+            }
+        }
+    }
+
+    if (cKF_FrameControl_stop_proc(&actor->npc_class.draw.main_animation.keyframe.frame_control) == TRUE) {
+        if (-(tunahiki->rope_base * actor->dir) > 5.0f) {
+            aTNN1_setup_think_proc(actor, play, 2);
+        } else if (-(tunahiki->rope_base * actor->dir) < -5.0f && tunahiki->next_speed * actor->dir >= 0.0f) {
+            aTNN1_setup_think_proc(actor, play, 3);
+        } else {
+            aTNN1_setup_think_proc(actor, play, 1);
+        }
+    }
+}
+
+static void aTNN1_birth(TUNAHIKI_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tunahiki_c* tunahiki = (aEv_tunahiki_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_TUG_OF_WAR, 9);
+
+    if (tunahiki != NULL && tunahiki->npc_state == aTNC_NPC_STATE1) {
+        actor->npc_class.actor_class.state_bitfield |= ACTOR_STATE_NO_MOVE_WHILE_CULLED;
+        aTNN1_setup_think_proc(actor, play, 1);
+        tunahiki->next_speed = 0.0f;
+    }
+}
+
+static void aTNN1_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TUNAHIKI_NPC1_ACTOR* actor = (TUNAHIKI_NPC1_ACTOR*)nactorx;
+
+    if (mDemo_Check(mDemo_TYPE_TALK, (ACTOR*)nactorx) != TRUE) {
+        if (actor->npc_class.action.step == aNPC_ACTION_END_STEP) {
+            actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y;
+        }
+
+        actor->think_proc(actor, play);
+    }
+}
+
+static void aTNN1_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TUNAHIKI_NPC1_ACTOR* actor = (TUNAHIKI_NPC1_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)actor;
+
+    if (((actorx->npc_id - SP_NPC_EV_TUNAHIKI_1) & 2) == 0) {
+        actor->dir = 1;
+        actorx->world.angle.y = DEG2SHORT_ANGLE2(90.0f);
+        actorx->shape_info.rotation.y = DEG2SHORT_ANGLE2(90.0f);
+    } else {
+        actor->dir = -1;
+        actorx->world.angle.y = DEG2SHORT_ANGLE2(-90.0f);
+        actorx->shape_info.rotation.y = DEG2SHORT_ANGLE2(-90.0f);
+    }
+
+    NPC_CLIP->set_dst_pos_proc(nactorx, actorx->world.position.x + (actor->dir * 10.0f), actorx->world.position.z);
+    
+    if (aTNC_NPCID2IDX(actorx->npc_id) == 2 || aTNC_NPCID2IDX(actorx->npc_id) == 3) {
+        actorx->world.position.x += actor->dir * 95.0f;
+    } else {
+        actorx->world.position.x += actor->dir * 85.0f;
+    }
+
+    actorx->world.position.z += actor->dir * 5.0f;
+
+    actorx->home.position.x = actorx->world.position.x;
+    actorx->home.position.z = actorx->world.position.z;
+
+    actorx->status_data.weight = MASSTYPE_HEAVY;
+    ((NPC_ACTOR*)actorx)->condition_info.hide_request = FALSE;
+    aTNN1_setup_think_proc(actor, play, 0);
+    ((NPC_ACTOR*)actorx)->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y;
+}
+
+static void aTNN1_normal_wait_init(TUNAHIKI_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTNN1_set_request_act(actor, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_ACT_OBJ_DEFAULT, 0, 0);
+}
+
+static void aTNN1_common_init(TUNAHIKI_NPC1_ACTOR* actor, GAME_PLAY* play, int anim_idx) {
+    aEv_tunahiki_c* tunahiki = (aEv_tunahiki_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_TUG_OF_WAR, 9);
+
+    actor->npc_class.action.idx = aNPC_ACT_WAIT;
+    aTNN1_normal_wait_init(actor, play);
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, anim_idx, FALSE);
+    actor->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_STOP;
+    actor->npc_class.talk_info.default_animation = anim_idx;
+    actor->npc_class.draw.main_animation.keyframe.frame_control.current_frame = tunahiki->counter * 0.5f;
+}
+
+static void aTNN1_aiko_init(TUNAHIKI_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTNN1_common_init(actor, play, aNPC_ANIM_TUNAHIKI_AIKO1);
+}
+
+static void aTNN1_yuri_init(TUNAHIKI_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTNN1_common_init(actor, play, aNPC_ANIM_TUNAHIKI_YURI1);
+}
+
+static void aTNN1_furi_init(TUNAHIKI_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aTNN1_common_init(actor, play, aNPC_ANIM_TUNAHIKI_FURI1);
+}
+
+enum {
+    aTNN1_TALK_REQUEST_NONE,
+    aTNN1_TALK_REQUEST_NORM,
+
+    aTNN1_TALK_REQUEST_NUM
+};
+
+typedef struct {
+    u8 think_proc_idx;
+    u8 think_init_idx;
+    u8 talk_request_idx;
+    u8 talk_idx;
+    u8 think_idx_after_talk;
+} aTNN1_think_data_c;
+
+// TODO: enums for these
+static aTNN1_think_data_c dt_tbl[] = {
+    {0x01, 0x01, 0x00, 0x00, 0x00},
+    {0x02, 0x02, 0x01, 0x00, 0x01},
+    {0x02, 0x03, 0x01, 0x01, 0x02},
+    {0x02, 0x04, 0x01, 0x02, 0x03},
+};
+
+static aTNN1_THINK_PROC proc_table[] = {
+    (aTNN1_THINK_PROC)none_proc1,
+    aTNN1_birth,
+    aTNN1_aiko,
+};
+
+typedef void (*aTNN1_THINK_INIT_PROC)(TUNAHIKI_NPC1_ACTOR* actor, GAME_PLAY* play);
+
+static aTNN1_THINK_INIT_PROC init_table[] = {
+    (aTNN1_THINK_INIT_PROC)none_proc1,
+    aTNN1_normal_wait_init,
+    aTNN1_aiko_init,
+    aTNN1_yuri_init,
+    aTNN1_furi_init,
+};
+
+static void aTNN1_setup_think_proc(TUNAHIKI_NPC1_ACTOR* actor, GAME_PLAY* play, u8 think_idx) {
+    static aNPC_TALK_REQUEST_PROC talk_request_table[] = { (aNPC_TALK_REQUEST_PROC)none_proc1, aTNN1_norm_talk_request, (aNPC_TALK_REQUEST_PROC)none_proc1  };
+    aTNN1_think_data_c* dt;
+
+    dt = &dt_tbl[think_idx];
+    actor->think_idx = think_idx;
+    actor->think_proc = proc_table[dt->think_proc_idx];
+    actor->npc_class.talk_info.talk_request_proc = talk_request_table[dt->talk_request_idx];
+    actor->talk_idx = dt->talk_idx;
+    actor->next_think_idx = dt->think_idx_after_talk;
+    (*init_table[dt->think_init_idx])(actor, play);
+    actor->change_flag = TRUE;
+}
+
+static void aTNN1_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_THINK_PROC_INIT:
+            aTNN1_think_init_proc(nactorx, play);
+            break;
+        case aNPC_THINK_PROC_MAIN:
+            aTNN1_think_main_proc(nactorx, play);
+            break;
+    }
+}
+
+static void aTNN1_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = aTNN1_think_proc;
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aTNN1_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aTNN1_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_SCHEDULE_PROC_INIT:
+            aTNN1_schedule_init_proc(nactorx, play);
+            break;
+        case aNPC_SCHEDULE_PROC_MAIN:
+            aTNN1_schedule_main_proc(nactorx, play);
+            break;
+    }
+}

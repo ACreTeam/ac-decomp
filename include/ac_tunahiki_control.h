@@ -22,6 +22,13 @@ extern "C" {
 
 #define aTNC_FLAG_SHAKE (1 << 15)
 
+#define aTNC_NPCID2IDX(id) ((id - SP_NPC_EV_TUNAHIKI_0))
+#define aTNC_NPCID2MEMBER(id) (aTNC_NPCID2IDX(id) & 1)
+#define aTNC_NPCID2TEAM(id) (aTNC_NPCID2IDX(id) & 2)
+
+#define aTNC_NPCIDX2DELETEFLG(n) (aTNC_FLAG_NPC_DELETE0 << aTNC_NPCID2IDX(n))
+#define aTNC_NPCIDX2TALKFLG(n) (aTNC_FLAG_NPC_TALK0 << aTNC_NPCID2IDX(n))
+
 enum {
     aTNC_NPC_STATE0,
     aTNC_NPC_STATE1,

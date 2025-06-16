@@ -1154,7 +1154,7 @@ config.libs = [
             Object(Matching, "actor/npc/ac_tukimi_npc0.c"),
             Object(Matching, "actor/npc/ac_tukimi_npc1.c"),
             Object(Matching, "actor/npc/ac_tunahiki_npc0.c"),
-            Object(NonMatching, "actor/npc/ac_tunahiki_npc1.c"),
+            Object(Matching, "actor/npc/ac_tunahiki_npc1.c"),
             Object(Matching, "actor/npc/ac_turi_npc0.c"),
         ],
     ),

@@ -1,0 +1,72 @@
+enum {
+    aTNN1_TALK_END_WAIT,
+
+    aTNN1_TALK_NUM
+};
+
+typedef struct {
+    int msg_no;
+    u8 turn;
+    u8 camera;
+} aTNN1_talk_data_c;
+
+static void aTNN1_set_norm_talk_info(ACTOR* actorx) {
+    static aTNN1_talk_data_c dt_tbl[] = {
+        {0x0003, TRUE, CAMERA2_PROCESS_TALK},
+        {0x0006, TRUE, CAMERA2_PROCESS_TALK},
+        {0x0009, TRUE, CAMERA2_PROCESS_TALK},
+    };
+    TUNAHIKI_NPC1_ACTOR* actor = (TUNAHIKI_NPC1_ACTOR*)actorx;
+    aTNN1_talk_data_c* data_p = &dt_tbl[actor->talk_idx];
+
+    mDemo_Set_msg_num(actor->base_msg + data_p->msg_no + RANDOM(3));
+    mDemo_Set_talk_turn(data_p->turn);
+    mDemo_Set_camera(data_p->camera);
+    actor->talk_proc = (aTNN1_TALK_PROC)none_proc1;
+}
+
+static void aTNN1_norm_talk_request(ACTOR* actorx, GAME* game) {
+    TUNAHIKI_NPC1_ACTOR* actor = (TUNAHIKI_NPC1_ACTOR*)actorx;
+
+    if (!actor->change_flag) {
+        mDemo_Request(mDemo_TYPE_TALK, actorx, aTNN1_set_norm_talk_info);
+    } else {
+        actor->change_flag = FALSE;
+    }
+}
+
+static int aTNN1_talk_init(ACTOR* actorx, GAME* game) {
+    TUNAHIKI_NPC1_ACTOR* actor = (TUNAHIKI_NPC1_ACTOR*)actorx;
+    aEv_tunahiki_c* tunahiki = (aEv_tunahiki_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_TUG_OF_WAR, 9);
+
+    actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    tunahiki->flag |= aTNC_NPCIDX2TALKFLG(actorx->npc_id);
+
+    if (actor->timer != 0) {
+        eEC_CLIP->effect_kill_proc(eEC_EFFECT_ASE2, actorx->npc_id);
+        actor->timer = 0;
+    }
+
+    return TRUE;
+}
+
+static int aTNN1_talk_end_chk(ACTOR* actorx, GAME* game) {
+    TUNAHIKI_NPC1_ACTOR* actor = (TUNAHIKI_NPC1_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+    aEv_tunahiki_c* tunahiki = (aEv_tunahiki_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_TUG_OF_WAR, 9);
+
+    actor->talk_proc(actor, play);
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        aTNN1_setup_think_proc(actor, play, actor->next_think_idx);
+        tunahiki->flag &= ~aTNC_NPCIDX2TALKFLG(actorx->npc_id);
+        ret = TRUE;
+    }
+
+    actor->npc_class.draw.main_animation.keyframe.frame_control.current_frame = tunahiki->counter * 0.5f;
+    actorx->world.position.z = actorx->home.position.z;
+
+    return ret;
+}
