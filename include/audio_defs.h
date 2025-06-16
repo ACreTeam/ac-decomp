@@ -174,6 +174,7 @@ typedef enum audio_sound_effects {
     NA_SE_EAT = 0x113,
     NA_SE_114 = 0x114,
     NA_SE_SEMI_ESCAPE = 0x115,
+    NA_SE_116 = 0x116,
 
     NA_SE_11A = 0x11A,
     NA_SE_11B = 0x11B,
@@ -215,6 +216,8 @@ typedef enum audio_sound_effects {
     NA_SE_ARAIIKI_GIRL = 0x15A,
 
     NA_SE_AMI_HIT_WATER = 0x15C,
+    NA_SE_15D = 0x15D,
+    NA_SE_15E = 0x15E,
 
     NA_SE_ZASSOU_NUKU = 0x15F,
     NA_SE_HACHI_SASARERU,

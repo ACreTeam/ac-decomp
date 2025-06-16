@@ -1,0 +1,235 @@
+static void aTKN0_turn_next(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->npc_class.action.idx == aNPC_ACT_TURN) {
+        aTKN0_setup_think_proc(actor, play, (s16)++actor->think_idx);
+    }
+}
+
+static void aTKN0_birth(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    if (tokyoso != NULL && tokyoso->_00 == 1) {
+        tokyoso->_00 = 2;
+        aTKN0_setup_think_proc(actor, play, 2);
+    }
+}
+
+static void aTKN0_wait(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    if (tokyoso->flags & aTKC_FLAG_READY_SHOOTER) {
+        aTKN0_setup_think_proc(actor, play, (s16)++actor->think_idx);
+    }
+}
+
+static void aTKN0_anime_next(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    if (cKF_FrameControl_stop_proc(&actor->npc_class.draw.main_animation.keyframe.frame_control) == TRUE) {
+        aTKN0_setup_think_proc(actor, play, (s16)++actor->think_idx);
+    }
+}
+
+static void aTKN0_timer_next(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->timer > 0) {
+        actor->timer--;
+    } else {
+        aTKN0_setup_think_proc(actor, play, (s16)++actor->think_idx);
+    }
+}
+
+static void aTKN0_lathe(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    actor->npc_class.condition_info.demo_flg |= aNPC_COND_DEMO_SKIP_FOOTSTEPS;
+    if ((tokyoso->flags & aTKC_GOAL_MASK) != 0 || (tokyoso->flags & aTKC_FLAG_READY_SHOOTER) != 0) {
+        aTKN0_setup_think_proc(actor, play, 2);
+        actor->npc_class.condition_info.demo_flg &= ~aNPC_COND_DEMO_SKIP_FOOTSTEPS;
+    } else {
+        aTKN0_set_request_act(actor, 4, aNPC_ACT_TURN2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, tokyoso->pos_0A[0][0], tokyoso->pos_0A[0][1]);
+    }
+}
+
+static void aTKN0_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TOKYOSO_NPC0_ACTOR* actor = (TOKYOSO_NPC0_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)nactorx;
+
+    if (mDemo_Check(mDemo_TYPE_TALK, actorx) == TRUE) {
+        return;
+    }
+
+    if (actor->npc_class.action.step == aNPC_ACTION_END_STEP) {
+        actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y;
+    }
+
+    if (actor->npc_class.action.step == aNPC_ACTION_END_STEP || actor->npc_class.action.idx == aNPC_ACT_WAIT) {
+        actor->think_proc(actor, play);
+    }
+}
+
+static void aTKN0_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TOKYOSO_NPC0_ACTOR* actor = (TOKYOSO_NPC0_ACTOR*)nactorx;
+
+    nactorx->actor_class.status_data.weight = MASSTYPE_HEAVY;
+    nactorx->condition_info.hide_request = FALSE;
+    aTKN0_setup_think_proc(actor, play, 0);
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y;
+}
+
+static void aTKN0_normal_wait_init(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    aTKN0_set_request_act(actor, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_ACT_OBJ_DEFAULT, 0, 0);
+}
+
+static void aTKN0_turn_f_init(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    aTKN0_set_request_act(actor, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actorx->world.position.x, actorx->world.position.z + 10.0f);
+}
+
+static void aTKN0_ready_init(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    tokyoso->flags &= ~aTKC_FLAG_READY_SHOOTER;
+}
+
+static void aTKN0_set_init(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_TAMAKOME1, FALSE);
+    actor->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_STOP;
+}
+
+static void aTKN0_set_af_init(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    switch (mNpc_GetNpcSoundSpec(actorx)) {
+        case 3:
+            sAdo_OngenTrgStart(NA_SE_15D, &actorx->world.position);
+            break;
+        case 4:
+            sAdo_OngenTrgStart(NA_SE_15E, &actorx->world.position);
+            break;
+        default:
+            sAdo_OngenTrgStart(NA_SE_116, &actorx->world.position);
+            break;
+            
+    }
+
+    actor->timer = 115;
+    NPC_CLIP->animation_init_proc(actorx, aNPC_ANIM_YOUI1, FALSE);
+}
+
+static void aTKN0_start_init(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+    xyz_t pos;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    tokyoso->flags &= ~aTKC_FLAG_READY_SHOOTER;
+    NPC_CLIP->animation_init_proc(actorx, aNPC_ANIM_DON1, FALSE);
+    actor->npc_class.draw.main_animation.keyframe.frame_control.mode = cKF_FRAMECONTROL_STOP;
+
+    pos.x = actor->npc_class.right_hand.pos.x;
+    pos.y = actor->npc_class.right_hand.pos.y + 10.0f;
+    pos.z = actor->npc_class.right_hand.pos.z;
+
+    eEC_CLIP->effect_make_proc(eEC_EFFECT_DUST, pos, 1, actorx->shape_info.rotation.y, (GAME*)play, actorx->npc_id, 0, 3);
+    sAdo_OngenTrgStart(MONO(NA_SE_53), &actorx->world.position);
+}
+
+static void aTKN0_lathe_init(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    actor->npc_class.action.idx = aNPC_ACT_RUN;
+    aTKN0_normal_wait_init(actor, play);
+}
+
+
+enum {
+    aTKN0_TALK_REQUEST_NONE,
+    aTKN0_TALK_REQUEST_NORM,
+
+    aTKN0_TALK_REQUEST_NUM
+};
+
+typedef struct {
+    u8 think_proc_idx;
+    u8 think_init_idx;
+    u8 talk_request_idx;
+    u8 talk_idx;
+    u8 think_idx_after_talk;
+} aTKN0_think_data_c;
+
+// TODO: enums for these
+static aTKN0_think_data_c dt_tbl[] = {
+    {0x02, 0x01, 0x00, 0x00, 0x00},
+    {0x01, 0x02, 0x00, 0x00, 0x01},
+    {0x03, 0x01, 0x01, 0x00, 0x01},
+    {0x03, 0x03, 0x00, 0x00, 0x03},
+    {0x04, 0x04, 0x00, 0x00, 0x04},
+    {0x05, 0x05, 0x00, 0x00, 0x05},
+    {0x04, 0x06, 0x00, 0x00, 0x06},
+    {0x06, 0x07, 0x01, 0x01, 0x07},
+};
+
+static aTKN0_THINK_PROC proc_table[] = {
+    (aTKN0_THINK_PROC)none_proc1,
+    aTKN0_turn_next,
+    aTKN0_birth,
+    aTKN0_wait,
+    aTKN0_anime_next,
+    aTKN0_timer_next,
+    aTKN0_lathe,
+};
+
+typedef void (*aTKN0_THINK_INIT_PROC)(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play);
+
+static aTKN0_THINK_INIT_PROC init_table[] = {
+    (aTKN0_THINK_INIT_PROC)none_proc1,
+    aTKN0_normal_wait_init,
+    aTKN0_turn_f_init,
+    aTKN0_ready_init,
+    aTKN0_set_init,
+    aTKN0_set_af_init,
+    aTKN0_start_init,
+    aTKN0_lathe_init,
+};
+
+static void aTKN0_setup_think_proc(TOKYOSO_NPC0_ACTOR* actor, GAME_PLAY* play, s16 think_idx) {
+    static aNPC_TALK_REQUEST_PROC talk_request_table[] = { (aNPC_TALK_REQUEST_PROC)none_proc1, aTKN0_norm_talk_request, (aNPC_TALK_REQUEST_PROC)none_proc1  };
+    aTKN0_think_data_c* dt;
+
+    dt = &dt_tbl[think_idx];
+    actor->think_idx = think_idx;
+    actor->think_proc = proc_table[dt->think_proc_idx];
+    actor->npc_class.talk_info.talk_request_proc = talk_request_table[dt->talk_request_idx];
+    actor->talk_idx = dt->talk_idx;
+    actor->next_think_idx = dt->think_idx_after_talk;
+    (*init_table[dt->think_init_idx])(actor, play);
+    actor->change_flag = TRUE;
+}
+
+static void aTKN0_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_THINK_PROC_INIT:
+            aTKN0_think_init_proc(nactorx, play);
+            break;
+        case aNPC_THINK_PROC_MAIN:
+            aTKN0_think_main_proc(nactorx, play);
+            break;
+    }
+}
+
+static void aTKN0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = aTKN0_think_proc;
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aTKN0_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aTKN0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_SCHEDULE_PROC_INIT:
+            aTKN0_schedule_init_proc(nactorx, play);
+            break;
+        case aNPC_SCHEDULE_PROC_MAIN:
+            aTKN0_schedule_main_proc(nactorx, play);
+            break;
+    }
+}
