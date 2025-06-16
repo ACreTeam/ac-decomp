@@ -211,6 +211,7 @@ typedef enum audio_sound_effects {
     NA_SE_TUMBLE_WAVE,
 
     NA_SE_ARAIIKI_BOY = 0x158,
+    NA_SE_ARAIIKI_OTHER = 0x159,
     NA_SE_ARAIIKI_GIRL = 0x15A,
 
     NA_SE_AMI_HIT_WATER = 0x15C,

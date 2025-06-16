@@ -69,8 +69,8 @@ static void aTKN1_warmup_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
     aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
 
     NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_WARMUP1, FALSE);
-    tokyoso->flags &= ~(aTKC_FLAG_5 << ((actor->npc_class.actor_class.npc_id - SP_NPC_EV_TOKYOSO_0) & 1));
-    actor->_9A0 = 240;
+    tokyoso->flags &= ~aTKC_NPCIDX2STRETCHFLG(actor->npc_class.actor_class.npc_id);
+    actor->timer = 240;
 }
 
 static void aTKN1_ready_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
@@ -148,7 +148,7 @@ static void aTKN1_lookl_init(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
     aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
 
     aTKN1_turn_l_init(actor, play);
-    tokyoso->flags &= ~(aTKC_FLAG_11 << ((actorx->npc_id - SP_NPC_EV_TOKYOSO_0) & 1));
+    tokyoso->flags &= ~aTKC_NPCIDX2KANSENFLG(actorx->npc_id);
 }
 
 typedef void (*aTKN1_THINK_INIT_PROC)(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play);
@@ -207,7 +207,7 @@ static void aTKC_clip_next_run(ACTOR* actorx) {
         actor->start_pos[1] = (tokyoso->yasiro_pos[1] - 130.0f) + idx * 60.0f + (RANDOM_F(10.0f) - 5.0f);
     }
 
-    actor->timer = 300;
+    actor->run_timer = 300;
 }
 
 static s16 aTKC_clip_get_angle(ACTOR* actorx) {
@@ -237,9 +237,9 @@ static s16 aTKC_clip_run_check(ACTOR* actorx) {
     aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
     TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)actorx;
 
-    if (actor->timer > 0) {
-        actor->timer--;
-        if (actor->timer == 0) {
+    if (actor->run_timer > 0) {
+        actor->run_timer--;
+        if (actor->run_timer == 0) {
             return TRUE;
         }
     }
@@ -342,7 +342,7 @@ static void aTKC_clip_set_talk_request(ACTOR* actorx) {
     TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)actorx;
     aTCK_npc1_talk_data_c* data_p = &dt_tbl[actor->talk_idx];
 
-    mDemo_Set_msg_num(actor->msg_start_no + data_p->msg_no + RANDOM(2));
+    mDemo_Set_msg_num(actor->base_msg + data_p->msg_no + RANDOM(2));
     mDemo_Set_talk_turn(data_p->turn_flag);
     mDemo_Set_camera(data_p->camera_type);
 }

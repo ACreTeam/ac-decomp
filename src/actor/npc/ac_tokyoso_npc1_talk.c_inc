@@ -1,0 +1,75 @@
+enum {
+    aTKN1_TALK_END_WAIT,
+
+    aTKN1_TALK_NUM
+};
+
+typedef struct {
+    u8 msg_idx;
+    u8 turn;
+    u8 camera;
+} aTKN1_talk_data_c;
+
+static void aTKN1_set_norm_talk_info(ACTOR* actorx) {
+    CLIP(tokyoso_clip)->set_talk_request_proc(actorx);
+}
+
+static void aTKN1_norm_talk_request(ACTOR* actorx, GAME* game) {
+    TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)actorx;
+
+    if (!actor->change_flag) {
+        mDemo_Request(mDemo_TYPE_TALK, actorx, aTKN1_set_norm_talk_info);
+    } else {
+        actor->change_flag = FALSE;
+    }
+}
+
+static int aTKN1_talk_init(ACTOR* actorx, GAME* game) {
+    TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)actorx;
+
+    actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    return TRUE;
+}
+
+static int aTKN1_talk_end_chk(ACTOR* actorx, GAME* game) {
+    TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        aTKN1_setup_think_proc(actor, play, actor->next_think_idx);
+        ret = TRUE;
+    }
+
+    if (cKF_FrameControl_stop_proc(&actor->npc_class.draw.main_animation.keyframe.frame_control) == TRUE &&
+        actor->npc_class.draw.animation_id == actor->npc_class.talk_info.default_animation) {
+        int anime_id;
+        int fc_mode = cKF_FRAMECONTROL_STOP;
+
+        switch (actor->npc_class.talk_info.default_animation) {
+            case aNPC_ANIM_KOKERU_GETUP1:
+                anime_id = aNPC_ANIM_ASIHUMI1;
+                fc_mode = cKF_FRAMECONTROL_REPEAT;
+                actor->npc_class.movement.mv_add_angl = DEG2SHORT_ANGLE2(11.25f);
+                actor->npc_class.movement.mv_angl = actorx->player_angle_y;
+                break;
+            case aNPC_ANIM_KOKERU1:
+                anime_id = aNPC_ANIM_KOKERU_GETUP1;
+                fc_mode = cKF_FRAMECONTROL_STOP;
+                break;
+            default:
+                anime_id = aNPC_ANIM_NUM;
+                break;
+        }
+
+        if (anime_id != aNPC_ANIM_NUM) {
+            actor->npc_class.talk_info.default_animation = anime_id;
+            NPC_CLIP->animation_init_proc(actorx, anime_id, TRUE);
+            actor->npc_class.draw.main_animation.keyframe.frame_control.mode = fc_mode;
+        }
+    }
+
+    return ret;
+}

@@ -1,0 +1,391 @@
+static void aTKN1_local_to_goal(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play, s16 goal) {
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    actor->npc_class.actor_class.speed = 0.0f;
+    aTKN1_setup_think_proc(actor, play, 13 + goal);
+    actor->flags &= ~0x1;
+    tokyoso->flags |= aTKC_NPCIDX2GOALFLG(actor->npc_class.actor_class.npc_id);
+}
+
+static int aTKN1_local_redy_check(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+    
+    if (tokyoso->flags & aTKC_NPCIDX2READYLFG(actor->npc_class.actor_class.npc_id)) {
+        actor->move_think_idx = 8;
+        CLIP(tokyoso_clip)->next_pos_proc((ACTOR*)actor, aTKC_NPCID2TEAM(actor->npc_class.actor_class.npc_id));
+        aTKN1_setup_think_proc(actor, play, 1);
+        tokyoso->flags &= ~aTKC_NPCIDX2READYLFG(actor->npc_class.actor_class.npc_id);
+        tokyoso->_01 &= ~(u8)(1 << (aTKC_NPCID2IDX(actor->npc_class.actor_class.npc_id) & 3));
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void aTKN1_birth(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    if (tokyoso != NULL && tokyoso->_00 == 2) {
+        actor->npc_class.actor_class.state_bitfield |= ACTOR_STATE_NO_MOVE_WHILE_CULLED;
+
+        if (aTKC_NPCID2ROLE(actor->npc_class.actor_class.npc_id - 1) == 0) {
+            aTKN1_setup_think_proc(actor, play, 6);
+        } else {
+            aTKN1_setup_think_proc(actor, play, 18);
+        }
+    }
+}
+
+static void aTKN1_warmup(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if (!aTKN1_local_redy_check(actor, play)) {
+        if (actor->timer > 0) {
+            actor->timer--;
+        } else {
+            actor->move_think_idx = 7;
+            actor->timer = (1.0f + RANDOM_F(1.0f)) * 60.0f;
+            CLIP(tokyoso_clip)->next_warmup_proc((ACTOR*)actor);
+            aTKN1_setup_think_proc(actor, play, 3);
+        }
+    }
+}
+
+static void aTKN1_warmup3(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if (!aTKN1_local_redy_check(actor, play)) {
+        if (actor->timer > 0) {
+            actor->timer--;
+        } else {
+            actor->move_think_idx = 5;
+            CLIP(tokyoso_clip)->next_warmup_proc((ACTOR*)actor);
+            aTKN1_setup_think_proc(actor, play, 3);
+        }
+    }
+}
+
+static void aTKN1_turn_next(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->npc_class.action.idx == aNPC_ACT_TURN) {
+        aTKN1_setup_think_proc(actor, play, (u8)++actor->think_idx);
+    }
+}
+
+static void aTKN1_ready(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    if ((tokyoso->flags & aTKC_NPCIDX2READYLFG(actor->npc_class.actor_class.npc_id)) != 0 && (tokyoso->flags & aTKC_FLAG_READY_SHOOTER) == 0) {
+        CLIP(tokyoso_clip)->next_run_proc((ACTOR*)actor);
+        aTKN1_setup_think_proc(actor, play, 11);
+        tokyoso->flags &= ~aTKC_NPCIDX2READYLFG(actor->npc_class.actor_class.npc_id);
+        actor->flags |= 0x1;
+    }
+}
+
+static void aTKN1_run(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    s16 goal;
+    ACTOR* actorx = (ACTOR*)actor;
+
+    if ((actor->npc_class.action.idx == aNPC_ACT_RUN && actor->npc_class.action.step == aNPC_ACTION_END_STEP) || CLIP(tokyoso_clip)->run_check_proc(actorx)) {
+        goal = CLIP(tokyoso_clip)->goal_check_proc(actorx);
+        
+        if (goal == 0) {
+            CLIP(tokyoso_clip)->next_run_proc(actorx);
+            if (CLIP(tokyoso_clip)->top_check_proc(actorx) && RANDOM_F(1.0f) < 0.1f) {
+                aTKN1_setup_think_proc(actor,play, 12);
+            } else {
+                aTKN1_setup_think_proc(actor,play, 11);
+            }
+        } else {
+            aTKN1_local_to_goal(actor, play, goal);
+        }
+    } else if ((s16)actor->npc_class.movement.dst_pos_x != actor->start_pos[0] || (s16)actor->npc_class.movement.dst_pos_z != actor->start_pos[1]) {
+        CLIP(tokyoso_clip)->next_run_proc(actorx);
+        aTKN1_setup_think_proc(actor, play, 11);
+    }
+}
+
+static void aTKN1_kokeru(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+
+    if (cKF_FrameControl_passCheck_now(&actor->npc_class.draw.main_animation.keyframe.frame_control, 8.0f)) {
+        eEC_CLIP->effect_make_proc(eEC_EFFECT_TUMBLE, actorx->world.position, 1, actorx->world.angle.y, (GAME*)play, actorx->npc_id, actorx->bg_collision_check.result.unit_attribute, 1);
+    }
+
+    if (cKF_FrameControl_stop_proc(&actor->npc_class.draw.main_animation.keyframe.frame_control) == TRUE && actorx->speed == 0.0f) {
+        aTKN1_setup_think_proc(actor, play, 13);
+    }
+}
+
+static void aTKN1_getup(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    s16 goal;
+    ACTOR* actorx = (ACTOR*)actor;
+
+    if (cKF_FrameControl_stop_proc(&actor->npc_class.draw.main_animation.keyframe.frame_control) == TRUE) {
+        goal = CLIP(tokyoso_clip)->goal_check_proc(actorx);
+        
+        if (goal == 0) {
+            aTKN1_setup_think_proc(actor,play, 10);
+        } else {
+            aTKN1_local_to_goal(actor, play, goal);
+        }
+    }
+}
+
+static void aTKN1_kansen_bf(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    if ((tokyoso->flags & aTKC_FLAG_RACE_ACTIVE) != 0 || (tokyoso->_01 & (u8)(1 << (aTKC_NPCID2IDX(actor->npc_class.actor_class.npc_id) & 3))) != 0) {
+        aTKN1_setup_think_proc(actor, play, 20);
+    }
+}
+
+static void aTKN1_kansen(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    int idx = aTKC_NPCID2TEAM(actor->npc_class.actor_class.npc_id);
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    actor->npc_class.condition_info.demo_flg |= aNPC_COND_DEMO_SKIP_FOOTSTEPS;
+    if (tokyoso->goal[0] != 0 || tokyoso->goal[1] != 0 || (tokyoso->_01 & (u8)(1 << (aTKC_NPCID2IDX(actor->npc_class.actor_class.npc_id) & 3))) != 0) {
+        aTKN1_setup_think_proc(actor, play, 21);
+        actor->npc_class.condition_info.demo_flg &= ~aNPC_COND_DEMO_SKIP_FOOTSTEPS;
+    } else {
+        aTKN1_set_request_act(actor, 4, aNPC_ACT_TURN2, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, tokyoso->pos_0A[idx][0], tokyoso->pos_0A[idx][1]);
+    }
+}
+
+static void aTKN1_goal1(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->npc_class.action.idx == aNPC_ACT_TURN) {
+        aTKN1_setup_think_proc(actor, play, 17);
+    }
+}
+
+static void aTKN1_omedeto(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    if ((tokyoso->flags & aTKC_NPCIDX2STRETCHFLG(actorx->npc_id)) != 0) {
+        actor->move_think_idx = 5;
+        CLIP(tokyoso_clip)->next_pos_proc(actorx, aTKC_NPCID2TEAM(actorx->npc_id));
+        aTKN1_setup_think_proc(actor, play, 1);
+    } else if ((tokyoso->flags & aTKC_STRETCH_MASK) != 0) {
+        aTKN1_setup_think_proc(actor, play, 22);
+    }
+
+    if (aTKC_NPCID2TEAM(actorx->npc_id) != 0) {
+        sAdo_OngenPos((u32)actorx, 0x2F, &actorx->world.position);
+    } else {
+        sAdo_OngenPos((u32)actorx, 0x31, &actorx->world.position);
+    }
+}
+
+static void aTKN1_omedeto_af(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    if ((tokyoso->flags & aTKC_NPCIDX2STRETCHFLG(actorx->npc_id)) != 0) {
+        actor->move_think_idx = 5;
+        CLIP(tokyoso_clip)->next_pos_proc(actorx, aTKC_NPCID2TEAM(actorx->npc_id));
+        aTKN1_setup_think_proc(actor, play, 1);
+    }
+}
+
+static void aTKN1_move(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if (actor->npc_class.action.idx == aNPC_ACT_WALK) {
+        aTKN1_setup_think_proc(actor, play, actor->move_think_idx);
+    } else if ((s16)actor->npc_class.movement.dst_pos_x != actor->start_pos[0] || (s16)actor->npc_class.movement.dst_pos_z != actor->start_pos[1]) {
+        aTKN1_setup_think_proc(actor, play, 1);
+    }
+}
+
+static void aTKN1_move_wm(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    if (!aTKN1_local_redy_check(actor, play)) {
+        if (actor->npc_class.action.idx == aNPC_ACT_WALK) {
+            aTKN1_setup_think_proc(actor, play, actor->move_think_idx);
+        } else if ((s16)actor->npc_class.movement.dst_pos_x != actor->start_pos[0] || (s16)actor->npc_class.movement.dst_pos_z != actor->start_pos[1]) {
+            aTKN1_setup_think_proc(actor, play, actor->move_think_idx);
+        }
+    }
+}
+
+static void aTKN1_goal_af(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play) {
+    ACTOR* actorx = (ACTOR*)actor;
+    aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
+
+    if ((tokyoso->flags & aTKC_NPCIDX2KANSENFLG(actorx->npc_id)) != 0) {
+        actor->move_think_idx = 18;
+        CLIP(tokyoso_clip)->next_pos_proc(actorx, 2 + aTKC_NPCID2TEAM(actorx->npc_id));
+        aTKN1_setup_think_proc(actor, play, 1);
+    }
+
+    if (actor->think_idx == 16 && cKF_FrameControl_passCheck_now(&actor->npc_class.draw.main_animation.keyframe.frame_control, 9.0f)) {
+        switch (mNpc_GetNpcSoundSpec(actorx)) {
+            case 3:
+                sAdo_OngenTrgStart(NA_SE_ARAIIKI_OTHER, &actorx->world.position);
+                break;
+            case 4:
+                sAdo_OngenTrgStart(NA_SE_ARAIIKI_GIRL, &actorx->world.position);
+                break;
+            default:
+                sAdo_OngenTrgStart(NA_SE_ARAIIKI_BOY, &actorx->world.position);
+                break;
+                
+        }
+    }
+}
+
+static void aTKN1_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)nactorx;
+    ACTOR* actorx = (ACTOR*)nactorx;
+
+    if (mDemo_Check(mDemo_TYPE_TALK, actorx) == TRUE) {
+        return;
+    }
+
+    if (actor->npc_class.action.step == aNPC_ACTION_END_STEP) {
+        actor->npc_class.condition_info.demo_flg |= aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    }
+
+    if (actor->think_idx == 11) {
+        actor->npc_class.movement.speed.max_speed = actor->speed;
+        actor->think_proc(actor, play);
+    } else if (actor->npc_class.action.step == aNPC_ACTION_END_STEP) {
+        actor->think_proc(actor, play);
+    } else if (actor->think_idx == 12 || actor->think_idx == 13) {
+        actor->think_proc(actor, play);
+    }
+
+    if (actor->think_idx == 11) {
+        if (RANDOM_F(1.0f) < 0.1f) {
+            eEC_CLIP->effect_make_proc(eEC_EFFECT_DASH_ASIMOTO, actorx->world.position, 1, actorx->shape_info.rotation.y, (GAME*)play, actorx->npc_id, actorx->bg_collision_check.result.unit_attribute, 0);
+        }
+    }
+
+    if ((actor->flags & 0x1) != 0 && CLIP(tokyoso_clip) != NULL) {
+        CLIP(tokyoso_clip)->run_proc(actorx);
+    }
+}
+
+static void aTKN1_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)nactorx;
+
+    nactorx->actor_class.status_data.weight = MASSTYPE_HEAVY;
+    nactorx->condition_info.hide_request = FALSE;
+    aTKN1_setup_think_proc(actor, play, 0);
+    nactorx->think.interrupt_flags = 0;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    nactorx->movement.mv_add_angl = DEG2SHORT_ANGLE2(11.25f);
+}
+
+enum {
+    aTKN1_TALK_REQUEST_NONE,
+    aTKN1_TALK_REQUEST_NORM,
+
+    aTKN1_TALK_REQUEST_NUM
+};
+
+typedef struct {
+    u8 think_proc_idx;
+    u8 think_init_idx;
+    u8 talk_request_idx;
+    u8 talk_idx;
+    u8 think_idx_after_talk;
+} aTKN1_think_data_c;
+
+// TODO: enums for these
+static aTKN1_think_data_c dt_tbl[] = {
+    {0x01, 0x01, 0x00, 0x00, 0x00},
+    {0x02, 0x07, 0x00, 0x00, 0x01},
+    {0x0D, 0x10, 0x00, 0x00, 0x02},
+    {0x02, 0x07, 0x00, 0x00, 0x03},
+    {0x0F, 0x10, 0x01, 0x00, 0x04},
+    {0x02, 0x06, 0x00, 0x00, 0x05},
+    {0x05, 0x08, 0x01, 0x01, 0x05},
+    {0x06, 0x02, 0x01, 0x02, 0x07},
+    {0x02, 0x04, 0x00, 0x00, 0x08},
+    {0x03, 0x09, 0x01, 0x03, 0x09},
+    {0x02, 0x12, 0x00, 0x00, 0x0A},
+    {0x04, 0x03, 0x01, 0x04, 0x0A},
+    {0x07, 0x0A, 0x01, 0x05, 0x0A},
+    {0x08, 0x0B, 0x01, 0x06, 0x0A},
+    {0x0B, 0x0C, 0x00, 0x00, 0x0E},
+    {0x02, 0x0C, 0x00, 0x00, 0x0F},
+    {0x0E, 0x0E, 0x01, 0x07, 0x10},
+    {0x0E, 0x0D, 0x01, 0x08, 0x11},
+    {0x02, 0x11, 0x00, 0x00, 0x12},
+    {0x09, 0x13, 0x01, 0x09, 0x12},
+    {0x0A, 0x13, 0x01, 0x0A, 0x14},
+    {0x0C, 0x0F, 0x01, 0x0B, 0x15},
+    {0x10, 0x14, 0x01, 0x0C, 0x16},
+};
+
+static aTKN1_THINK_PROC proc_table[] = {
+    (aTKN1_THINK_PROC)none_proc1,
+    aTKN1_birth,
+    aTKN1_turn_next,
+    aTKN1_ready,
+    aTKN1_run,
+    aTKN1_warmup,
+    aTKN1_warmup3,
+    aTKN1_kokeru,
+    aTKN1_getup,
+    aTKN1_kansen_bf,
+    aTKN1_kansen,
+    aTKN1_goal1,
+    aTKN1_omedeto,
+    aTKN1_move,
+    aTKN1_goal_af,
+    aTKN1_move_wm,
+    aTKN1_omedeto_af,
+};
+
+static void aTKN1_setup_think_proc(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play, u8 think_idx) {
+    static aNPC_TALK_REQUEST_PROC talk_request_table[] = { (aNPC_TALK_REQUEST_PROC)none_proc1, aTKN1_norm_talk_request, (aNPC_TALK_REQUEST_PROC)none_proc1  };
+    aTKN1_think_data_c* dt;
+
+    dt = &dt_tbl[think_idx];
+    actor->think_idx = think_idx;
+    actor->think_proc = proc_table[dt->think_proc_idx];
+    actor->npc_class.talk_info.talk_request_proc = talk_request_table[dt->talk_request_idx];
+    actor->talk_idx = dt->talk_idx;
+    actor->next_think_idx = dt->think_idx_after_talk;
+
+    if (CLIP(tokyoso_clip) != NULL) {
+        CLIP(tokyoso_clip)->npc1_think_init_proc((ACTOR*)actor, play, dt->think_init_idx);
+    }
+
+    actor->change_flag = TRUE;
+}
+
+static void aTKN1_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_THINK_PROC_INIT:
+            aTKN1_think_init_proc(nactorx, play);
+            break;
+        case aNPC_THINK_PROC_MAIN:
+            aTKN1_think_main_proc(nactorx, play);
+            break;
+    }
+}
+
+static void aTKN1_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = aTKN1_think_proc;
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aTKN1_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TOKYOSO_NPC1_ACTOR* actor = (TOKYOSO_NPC1_ACTOR*)nactorx;
+
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    } else if (nactorx->collision.turn_flag == TRUE && actor->think_idx == 11) {
+        CLIP(tokyoso_clip)->next_run_proc((ACTOR*)nactorx);
+        aTKN1_setup_think_proc(actor, play, 11);
+    }
+}
+
+static void aTKN1_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_SCHEDULE_PROC_INIT:
+            aTKN1_schedule_init_proc(nactorx, play);
+            break;
+        case aNPC_SCHEDULE_PROC_MAIN:
+            aTKN1_schedule_main_proc(nactorx, play);
+            break;
+    }
+}

@@ -12,20 +12,22 @@ extern "C" {
 
 typedef struct tokyoso_npc1_actor_s TOKYOSO_NPC1_ACTOR;
 
-// TODO: finish this
+typedef void (*aTKN1_THINK_PROC)(TOKYOSO_NPC1_ACTOR* actor, GAME_PLAY* play);
+
 struct tokyoso_npc1_actor_s {
     NPC_ACTOR npc_class;
-    void* think_proc;
-    int msg_start_no;
+    aTKN1_THINK_PROC think_proc;
+    int base_msg;
     f32 speed;
-    s16 _9A0;
-    s16 start_pos[2];
     s16 timer;
-    u8 _9A8;
-    u8 _9A9;
-    u8 _9AA;
+    s16 start_pos[2];
+    s16 run_timer;
+    u8 think_idx;
+    u8 next_think_idx;
+    u8 move_think_idx;
     u8 talk_idx;
-    u8 _9AC;
+    u8 change_flag;
+    u8 flags;
 };
 
 extern ACTOR_PROFILE Tokyoso_Npc1_Profile;

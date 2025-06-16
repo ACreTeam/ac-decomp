@@ -99,7 +99,7 @@ static void aTKC_actor_move(ACTOR* actorx, GAME* game) {
 static void aTKC_irekae_2(TOKYOSO_CONTROL_ACTOR* actor, GAME_PLAY* play) {
     aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
 
-    if ((tokyoso->flags & aTKC_FLAG_11) == 0) {
+    if ((tokyoso->flags & aTKC_FLAG_KANSEN_TEAM0) == 0) {
         aTKC_setupAction(actor, aTKC_ACT_STRECH);
         actor->timer = 600;
     }
@@ -108,25 +108,25 @@ static void aTKC_irekae_2(TOKYOSO_CONTROL_ACTOR* actor, GAME_PLAY* play) {
 static void aTKC_irekae_1(TOKYOSO_CONTROL_ACTOR* actor, GAME_PLAY* play) {
     aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
 
-    if ((tokyoso->flags & aTKC_FLAG_12) == 0) {
+    if ((tokyoso->flags & aTKC_FLAG_KANSEN_TEAM1) == 0) {
         aTKC_setupAction(actor, aTKC_ACT_IREKAE_2);
-        tokyoso->flags |= aTKC_FLAG_5;
-        tokyoso->flags |= aTKC_FLAG_11;
+        tokyoso->flags |= aTKC_FLAG_STRETCH_TEAM0;
+        tokyoso->flags |= aTKC_FLAG_KANSEN_TEAM0;
     }
 }
 
 static void aTKC_goal(TOKYOSO_CONTROL_ACTOR* actor, GAME_PLAY* play) {
     aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
 
-    if ((tokyoso->flags & aTKC_MASK_13_14) == aTKC_MASK_13_14) {
+    if ((tokyoso->flags & aTKC_GOAL_MASK) == aTKC_GOAL_ALL) {
         if (actor->timer > 0) {
             actor->timer--;
         } else {
             aTKC_setupAction(actor, aTKC_ACT_IREKAE_1);
-            tokyoso->flags |= aTKC_FLAG_6;
-            tokyoso->flags |= aTKC_FLAG_12;
+            tokyoso->flags |= aTKC_FLAG_STRETCH_TEAM1;
+            tokyoso->flags |= aTKC_FLAG_KANSEN_TEAM1;
             tokyoso->flags &= ~aTKC_FLAG_RACE_ACTIVE;
-            tokyoso->flags &= ~aTKC_MASK_13_14;
+            tokyoso->flags &= ~aTKC_GOAL_MASK;
         }
     }
 }
@@ -161,7 +161,7 @@ static void aTKC_go(TOKYOSO_CONTROL_ACTOR* actor, GAME_PLAY* play) {
 static void aTKC_set(TOKYOSO_CONTROL_ACTOR* actor, GAME_PLAY* play) {
     aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
 
-    if ((tokyoso->flags & (aTKC_FLAG_7 | aTKC_FLAG_8 | aTKC_FLAG_9)) == 0) {
+    if ((tokyoso->flags & aTKC_READY_ALL) == 0) {
         aTKC_setupAction(actor, aTKC_ACT_GO); // @BUG - this is called twice
         tokyoso->flags |= aTKC_FLAG_RACE_ACTIVE;
         tokyoso->lap[0] = tokyoso->lap[1] = 0;
@@ -173,12 +173,12 @@ static void aTKC_set(TOKYOSO_CONTROL_ACTOR* actor, GAME_PLAY* play) {
 static void aTKC_ready(TOKYOSO_CONTROL_ACTOR* actor, GAME_PLAY* play) {
     aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
 
-    if ((tokyoso->flags & (aTKC_FLAG_7 | aTKC_FLAG_8 | aTKC_FLAG_9)) == 0) {
+    if ((tokyoso->flags & aTKC_READY_ALL) == 0) {
         if (actor->timer > 0) {
             actor->timer--;
         } else {
             aTKC_setupAction(actor, aTKC_ACT_SET);
-            tokyoso->flags |= (aTKC_FLAG_7 | aTKC_FLAG_8 | aTKC_FLAG_9);
+            tokyoso->flags |= aTKC_READY_ALL;
         }
     }
 }
@@ -186,13 +186,13 @@ static void aTKC_ready(TOKYOSO_CONTROL_ACTOR* actor, GAME_PLAY* play) {
 static void aTKC_strech(TOKYOSO_CONTROL_ACTOR* actor, GAME_PLAY* play) {
     aEv_tokyoso_c* tokyoso = (aEv_tokyoso_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_FOOT_RACE, 8);
 
-    if ((tokyoso->flags & (aTKC_FLAG_5 | aTKC_FLAG_6)) == 0) {
+    if ((tokyoso->flags & aTKC_STRETCH_MASK) == 0) {
         if (actor->timer > 0) {
             actor->timer--;
         } else {
             actor->timer = 120;
             aTKC_setupAction(actor, aTKC_ACT_READY);
-            tokyoso->flags |= (aTKC_FLAG_7 | aTKC_FLAG_8 | aTKC_FLAG_9);
+            tokyoso->flags |= aTKC_READY_ALL;
         }
     }
 }
