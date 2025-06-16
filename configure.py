@@ -1342,7 +1342,7 @@ config.libs = [
             Object(Matching, "effect/ef_tent_lamp.c"),
             Object(NonMatching, "effect/ef_tumble.c"),
             Object(NonMatching, "effect/ef_tumble_bodyprint.c"),
-            Object(NonMatching, "effect/ef_tumble_dust.c"),
+            Object(Matching, "effect/ef_tumble_dust.c"),
             Object(Matching, "effect/ef_turi_hamon.c"),
             Object(Matching, "effect/ef_turi_hane0.c"),
             Object(Matching, "effect/ef_turi_hane1.c"),
