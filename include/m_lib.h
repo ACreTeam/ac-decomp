@@ -83,6 +83,7 @@ extern int mem_cmp(u8* p1, u8* p2, size_t size);
 
 extern f32 cos_s(s16 angle);
 extern f32 sin_s(s16 angle);
+#define tan_s(angle) (sin_s(angle) / cos_s(angle))
 
 extern int chase_angle(s16* const pValue, const s16 target, s16 step);
 extern int chase_s(s16* const pValue, const s16 target, s16 step);
