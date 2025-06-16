@@ -619,7 +619,7 @@ config.libs = [
         "JFramework",
         [
             Object(Matching, "JSystem/JFramework/JFWDisplay.cpp"),
-            Object(NonMatching, "JSystem/JFramework/JFWSystem.cpp"),
+            Object(Matching, "JSystem/JFramework/JFWSystem.cpp"),
         ],
     ),
     JSystemLib(
@@ -666,7 +666,7 @@ config.libs = [
         "JUtility",
         [
             Object(NonMatching, "JSystem/JUtility/JUTAssert.cpp"),
-            Object(NonMatching, "JSystem/JUtility/JUTConsole.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTConsole.cpp"),
             Object(NonMatching, "JSystem/JUtility/JUTDbPrint.cpp"),
             Object(NonMatching, "JSystem/JUtility/JUTDirectFile.cpp"),
             Object(NonMatching, "JSystem/JUtility/JUTDirectPrint.cpp"),

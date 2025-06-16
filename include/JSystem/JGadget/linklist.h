@@ -148,7 +148,7 @@ public:
     }
   }
 
-  s32 size() const { return this->size_; }
+  u32 size() const { return this->size_; }
   bool empty() const { return this->size() == 0; }
   void clear() { this->erase(this->begin(), this->end()); }
   iterator erase(iterator itStart, iterator itEnd);
@@ -179,7 +179,7 @@ private:
 
   bool Iterator_isEnd_(const_iterator it) const { return it.p_ == &this->oNode_; }
 
-  s32 size_;
+  u32 size_;
   TLinkListNode oNode_;
 };
 

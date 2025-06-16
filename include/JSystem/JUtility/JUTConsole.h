@@ -13,7 +13,7 @@ inline s32 colorCheck(s32 diff, s32 t)
     return ret + 1;
 }
 
-class JUTConsole : public JKRDisposer
+class JUTConsole : JKRDisposer
 {
 public:
     enum EConsoleType
@@ -101,12 +101,21 @@ public:
         return diff += mMaxLines;
     }
 
+    u8 getLineAttr(int i) const {
+        return mBuf[(_20 + 2) * i];
+    }
+
+    int prevIndex(int n) const {
+        return (--n < 0) ? mMaxLines - 1 : n;
+
+    }
+
     void scrollToLastLine() { scroll(mMaxLines); }
     void scrollToFirstLine() { scroll(-mMaxLines); }
 
     // _00     = VTBL
     // _00-_18 = JKRDisposer
-    JGadget::TLinkListNode mNode; // _18
+    JGadget::TLinkListNode mNode;     // _18
     u32 _20;                          // _20
     u32 mMaxLines;                    // _24, might be int
     u8 *mBuf;                         // _28
@@ -124,11 +133,9 @@ public:
     u32 mOutput;                      // _58
     JUtility::TColor _5C;             // _5C
     JUtility::TColor _60;             // _60
-    int _64;                          // _64
-    bool mIsVisible;                  // _68
-    bool _69;                         // _69
-    bool _6A;                         // _6A
-    bool _6B;                         // _6B
+    bool mIsVisible;                  // _64
+    bool _65;                         // _65
+    bool _66;                         // _66
 }; // Size: 0x6C
 
 class JUTConsoleManager
