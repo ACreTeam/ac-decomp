@@ -31,7 +31,7 @@ eEC_PROFILE_c iam_ef_kpun = {
     // clang-format on
 };
 
-xyz_t random_start_place_offset[10] = {
+static xyz_t random_start_place_offset[10] = {
     {  3.0f, 0.0f,  4.0f },
     { -4.0f, 0.0f, -1.0f },
     {  1.0f, 0.0f,  1.0f },
@@ -72,18 +72,17 @@ static u8 eKPun_prim_f_table[13] = {
     0xFF, 0x7F, 0x00, 0x00, 0x00
 };
 
-// unmatched: 
 static void eKPun_init(xyz_t pos, int prio, s16 angle, GAME* game, u16 item_name, s16 arg0, s16 arg1) {
     int rng = RANDOM(10);
-    xyz_t sp1C = { 0.0f, 0.0f, 5.0f };
+    xyz_t ofs = { 0.0f, 0.0f, 5.0f };
     
     pos.x += random_start_place_offset[rng].x;
     pos.y += 23.0f;
     pos.z += random_start_place_offset[rng].z;
-    sMath_RotateY(&sp1C, SHORT2RAD_ANGLE2(angle));
-    pos.x += sp1C.x;
-    pos.y += sp1C.y;
-    pos.z += sp1C.z;
+    sMath_RotateY(&ofs, SHORT2RAD_ANGLE2(angle));
+    pos.x += ofs.x;
+    pos.y += ofs.y;
+    pos.z += ofs.z;
 
     common_data.clip.effect_clip->make_effect_proc(eEC_EFFECT_KPUN, pos, NULL, game, NULL, item_name, prio, 0, 0);
 }
@@ -96,7 +95,9 @@ static void eKPun_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
 }
 
 static void eKPun_mv(eEC_Effect_c* effect, GAME* game) {
-    if ((s16) (0x1A - effect->timer) < 4) {
+    s16 counter = 26 - effect->timer;
+
+    if (counter < 4) {
         effect->offset.y += 3.0f;
     }
 }
