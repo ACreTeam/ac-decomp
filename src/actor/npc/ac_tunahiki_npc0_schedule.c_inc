@@ -1,0 +1,125 @@
+static void aTNN0_birth(TUNAHIKI_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    aEv_tunahiki_c* tunahiki = (aEv_tunahiki_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_TUG_OF_WAR, 9);
+    ACTOR* actorx = (ACTOR*)actor;
+
+    if (tunahiki != NULL) {
+        ACTOR* rope_p = Actor_info_make_actor(&play->actor_info, (GAME*)play, mAc_PROFILE_ROPE, actorx->world.position.x + 20.0f, actorx->world.position.y, actorx->world.position.z + 45.0f, 0, 0, 0, -1, -1, -1, EMPTY_NO, -1, -1, -1);
+        actor->rope_p = rope_p;
+
+        if (rope_p != NULL) {
+            ((aEv_tunahiki_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_TUG_OF_WAR, 9))->rope = 0.0f; // this smells like a macro
+            tunahiki->rope_base = 0.0f;
+            tunahiki->flag = 0;
+            tunahiki->npc_state = aTNC_NPC_STATE1;
+            aTNN0_setup_think_proc(actor, play, 0);
+            actorx->world.position.x += 20.0f;
+            actorx->world.position.z -= 30.0f;
+            actor->npc_class.collision.pipe.attribute.pipe.radius = 60;
+        }
+    }
+}
+
+static void aTNN0_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TUNAHIKI_NPC0_ACTOR* actor = (TUNAHIKI_NPC0_ACTOR*)nactorx;
+
+    if (actor->npc_class.action.step == aNPC_ACTION_END_STEP) {
+        actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y;
+    }
+
+    actor->think_proc(actor, play);
+}
+
+static void aTNN0_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    TUNAHIKI_NPC0_ACTOR* actor = (TUNAHIKI_NPC0_ACTOR*)nactorx;
+
+    nactorx->actor_class.status_data.weight = MASSTYPE_IMMOVABLE;
+    nactorx->condition_info.hide_request = FALSE;
+    aTNN0_setup_think_proc(actor, play, 1);
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y;
+}
+
+static void aTNN0_wait_init(TUNAHIKI_NPC0_ACTOR* actor, GAME_PLAY* play) {
+    NPC_CLIP->animation_init_proc((ACTOR*)actor, aNPC_ANIM_HATAFURI1, FALSE);
+    actor->npc_class.action.idx = aNPC_ACT_WAIT;
+    aTNN0_set_request_act(actor, 4, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_ACT_OBJ_DEFAULT, 0, 0);
+}
+
+enum {
+    aTNN0_TALK_REQUEST_NONE,
+    aTNN0_TALK_REQUEST_NORM,
+
+    aTNN0_TALK_REQUEST_NUM
+};
+
+typedef struct {
+    u8 think_proc_idx;
+    u8 think_init_idx;
+    u8 talk_request_idx;
+    u8 talk_idx;
+    u8 think_idx_after_talk;
+} aTNN0_think_data_c;
+
+// TODO: enums for these
+static aTNN0_think_data_c dt_tbl[] = {
+    {0x00, 0x01, 0x01, 0x00, 0x00},
+    {0x01, 0x00, 0x00, 0x00, 0x01},
+};
+
+static aTNN0_THINK_PROC proc_table[] = {
+    (aTNN0_THINK_PROC)none_proc1,
+    aTNN0_birth,
+};
+
+typedef void (*aTNN0_THINK_INIT_PROC)(TUNAHIKI_NPC0_ACTOR* actor, GAME_PLAY* play);
+
+static aTNN0_THINK_INIT_PROC init_table[] = {
+    (aTNN0_THINK_INIT_PROC)none_proc1,
+    aTNN0_wait_init,
+};
+
+static void aTNN0_setup_think_proc(TUNAHIKI_NPC0_ACTOR* actor, GAME_PLAY* play, u8 think_idx) {
+    static aNPC_TALK_REQUEST_PROC talk_request_table[] = { (aNPC_TALK_REQUEST_PROC)none_proc1, aTNN0_norm_talk_request, (aNPC_TALK_REQUEST_PROC)none_proc1  };
+    aTNN0_think_data_c* dt;
+
+    dt = &dt_tbl[think_idx];
+    actor->think_idx = think_idx;
+    actor->think_proc = proc_table[dt->think_proc_idx];
+    actor->npc_class.talk_info.talk_request_proc = talk_request_table[dt->talk_request_idx];
+    actor->talk_idx = dt->talk_idx;
+    actor->next_think_idx = dt->think_idx_after_talk;
+    (*init_table[dt->think_init_idx])(actor, play);
+    actor->change_flag = TRUE;
+}
+
+static void aTNN0_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_THINK_PROC_INIT:
+            aTNN0_think_init_proc(nactorx, play);
+            break;
+        case aNPC_THINK_PROC_MAIN:
+            aTNN0_think_main_proc(nactorx, play);
+            break;
+    }
+}
+
+static void aTNN0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    nactorx->think.think_proc = aTNN0_think_proc;
+    NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
+}
+
+static void aTNN0_schedule_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
+    if (!NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_CHK_INTERRUPT)) {
+        NPC_CLIP->think_proc(nactorx, play, -1, aNPC_THINK_TYPE_MAIN);
+    }
+}
+
+static void aTNN0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
+    switch (type) {
+        case aNPC_SCHEDULE_PROC_INIT:
+            aTNN0_schedule_init_proc(nactorx, play);
+            break;
+        case aNPC_SCHEDULE_PROC_MAIN:
+            aTNN0_schedule_main_proc(nactorx, play);
+            break;
+    }
+}

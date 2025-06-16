@@ -1,0 +1,57 @@
+enum {
+    aTNN0_TALK_END_WAIT,
+
+    aTNN0_TALK_NUM
+};
+
+typedef struct {
+    int msg_no;
+    u8 turn;
+    u8 camera;
+} aTNN0_talk_data_c;
+
+static void aTNN0_set_norm_talk_info(ACTOR* actorx) {
+    static aTNN0_talk_data_c dt_tbl[] = {
+        {0x0000, TRUE, CAMERA2_PROCESS_TALK},
+    };
+    TUNAHIKI_NPC0_ACTOR* actor = (TUNAHIKI_NPC0_ACTOR*)actorx;
+    aTNN0_talk_data_c* data_p = &dt_tbl[actor->talk_idx];
+
+    mDemo_Set_msg_num(actor->base_msg + data_p->msg_no + RANDOM(3));
+    mDemo_Set_talk_turn(data_p->turn);
+    mDemo_Set_camera(data_p->camera);
+    actor->talk_proc = (aTNN0_TALK_PROC)none_proc1;
+}
+
+static void aTNN0_norm_talk_request(ACTOR* actorx, GAME* game) {
+    TUNAHIKI_NPC0_ACTOR* actor = (TUNAHIKI_NPC0_ACTOR*)actorx;
+
+    if (!actor->change_flag) {
+        mDemo_Request(mDemo_TYPE_TALK, actorx, aTNN0_set_norm_talk_info);
+    } else {
+        actor->change_flag = FALSE;
+    }
+}
+
+static int aTNN0_talk_init(ACTOR* actorx, GAME* game) {
+    TUNAHIKI_NPC0_ACTOR* actor = (TUNAHIKI_NPC0_ACTOR*)actorx;
+
+    actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    return TRUE;
+}
+
+static int aTNN0_talk_end_chk(ACTOR* actorx, GAME* game) {
+    TUNAHIKI_NPC0_ACTOR* actor = (TUNAHIKI_NPC0_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int ret = FALSE;
+
+    actor->talk_proc(actor, play);
+    if (mDemo_CAN_ACTOR_TALK(actorx)) {
+        aTNN0_setup_think_proc(actor, play, actor->next_think_idx);
+        ret = TRUE;
+    }
+
+    return ret;
+}
