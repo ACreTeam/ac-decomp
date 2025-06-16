@@ -1,6 +1,7 @@
 #ifndef _JSYSTEM_JGEOMETRY_H
 #define _JSYSTEM_JGEOMETRY_H
 
+#include <dolphin/mtx.h>
 #include "types.h"
 
 #ifdef __cplusplus

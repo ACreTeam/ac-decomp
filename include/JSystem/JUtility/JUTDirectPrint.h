@@ -40,7 +40,7 @@ private:
     void *mFramebuffer;          // _00
     u16 mFbWidth;                // _04
     u16 mFbHeight;               // _06
-    u16 mStride;                 // _08, aligned width?
+    u16 mStride;                 // _08
     size_t mFbSize;              // _0C
     u8 _10[0x4];                 // _10 - unknown
     u16 *mFrameMemory;           // _14

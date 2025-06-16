@@ -76,6 +76,8 @@ u32 VIGetRetraceCount();
 u32 VIGetDTVStatus();
 void VIFlush();
 
+void VISetNextFrameBuffer(void *fb);
+
 #ifdef __cplusplus
 };
 #endif
