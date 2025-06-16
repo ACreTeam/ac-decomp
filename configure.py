@@ -1329,7 +1329,7 @@ config.libs = [
             Object(NonMatching, "effect/ef_slip_footprint.c"),
             Object(NonMatching, "effect/ef_soba_yuge.c"),
             Object(NonMatching, "effect/ef_steam.c"),
-            Object(NonMatching, "effect/ef_string.c"),
+            Object(Matching, "effect/ef_string.c"),
             Object(Matching, "effect/ef_suisou_awa.c"),
             Object(Matching, "effect/ef_swing_axe.c"),
             Object(Matching, "effect/ef_swing_net.c"),
