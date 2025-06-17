@@ -26,8 +26,7 @@ typedef void (*OSErrorHandler)(OSError error, OSContext *context, ...);
 #define OS_ERROR_SYSTEM_INTERRUPT   13
 #define OS_ERROR_THERMAL_INTERRUPT  14
 #define OS_ERROR_PROTECTION         15
-#define OS_ERROR_FPE                16
-#define OS_ERROR_MAX                (OS_ERROR_FPE + 1)
+#define OS_ERROR_MAX                (OS_ERROR_PROTECTION + 1)
 
 OSErrorHandler OSSetErrorHandler(OSError error, OSErrorHandler handler);
 
