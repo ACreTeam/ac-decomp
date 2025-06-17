@@ -17,8 +17,16 @@
 // this one is absolutely necessary for a ton of function calls to be inlined
 #pragma inline_max_size(10000)
 
-#include "../src/static/libforest/emu64/emu64_utility.c"
-#include "../src/static/libforest/emu64/emu64_print.cpp"
+static void guMtxXFM1F_dol(MtxP mtx, float x, float y, float z, float* ox, float* oy, float* oz);
+static void guMtxXFM1F_dol7(MtxP mtx, float x, float y, float z, float* ox, float* oy, float* oz);
+static void guMtxXFM1F_dol2(MtxP mtx, GXProjectionType type, float x, float y, float z, float* ox, float* oy, float* oz);
+static void guMtxXFM1F_dol2w(MtxP mtx, GXProjectionType type, float x, float y, float z, float* ox, float* oy, float* oz,
+                      float* ow);
+static float guMtxXFM1F_dol3(MtxP mtx, GXProjectionType type, float z);
+static void guMtxXFM1F_dol6w(MtxP mtx, GXProjectionType type, float x, float y, float z, float w, float* ox, float* oy,
+                      float* oz, float* ow);
+void guMtxXFM1F_dol6w1(MtxP mtx, GXProjectionType type, float x, float y, float z, float w, float* ox, float* oy,
+                       float* oz);
 
 extern void OSInitFastCast(void);
 
@@ -187,18 +195,6 @@ static void texture_cache_list_clear() {
 extern void emu64_refresh() {
     texture_cache_list_clear();
 }
-
-/* Helper function to convert N64 texture format to Dolphin format */
-const u16 emu64::fmtxtbl[8][4] = {
-    { GX_TF_CMPR, -1, GX_TF_RGB5A3, GX_TF_RGBA8 }, /* G_IM_FMT_RGBA */
-    { -1, -1, -1, -1 },                            /* G_IM_FMT_YUV */
-    { GX_TF_C4, GX_TF_C8, 0xA, -1 },               /* G_IM_FMT_CI */
-    { -1, GX_TF_IA4, GX_TF_IA8, -1 },              /* G_IM_FMT_IA */
-    { GX_TF_I4, GX_TF_I8, GX_TF_RGB565, -1 },      /* G_IM_FMT_I */
-    { GX_TF_CMPR, GX_CTF_A8, GX_TF_RGB5A3, -1 },   /* ?? */
-    { -1, GX_TF_Z8, GX_TF_Z16, GX_TF_Z24X8 },      /* ?? */
-    { -1, -1, -1, -1 }                             /* ?? */
-};
 
 static u16 cvtN64ToDol(int n64_fmt, int n64_bpp) {
     u16 dol = emu64::fmtxtbl[n64_fmt][n64_bpp];
@@ -714,6 +710,220 @@ void emu64::tlutconv(u16* src_tlut, u16* dst_tlut, unsigned int count, unsigned 
         this->tlutconv_ia16(src_tlut, dst_tlut, count);
     }
 }
+
+typedef struct {
+    u32 value;
+    char* name;
+    u32 mask;
+} GeometryModeParameterInfo;
+
+#define NUM_GEOMETRYMODE_FLAGS 16
+static const GeometryModeParameterInfo geomtbl[NUM_GEOMETRYMODE_FLAGS] = {
+    { G_ZBUFFER, "G_ZBUFFER", G_ZBUFFER },
+    { G_TEXTURE_ENABLE, "G_TEXTURE_ENABLE", G_TEXTURE_ENABLE },
+    { G_SHADE, "G_SHADE", G_SHADE },
+    { G_SHADING_SMOOTH, "G_SHADING_SMOOTH", G_SHADING_SMOOTH },
+    { G_CULL_FRONT, "G_CULL_FRONT", G_CULL_FRONT },
+    { G_CULL_BACK, "G_CULL_BACK", G_CULL_BACK },
+    { G_FOG, "G_FOG", G_FOG },
+    { G_LIGHTING, "G_LIGHTING", G_LIGHTING },
+    { G_TEXTURE_GEN, "G_TEXTURE_GEN", G_TEXTURE_GEN },
+    { G_TEXTURE_GEN_LINEAR, "G_TEXTURE_GEN_LINEAR", G_TEXTURE_GEN_LINEAR },
+    { G_LOD, "G_LOD", G_LOD },
+    { G_LIGHTING_POSITIONAL, "G_LIGHTING_POSITIONAL", G_LIGHTING_POSITIONAL },
+    { G_DECAL_EQUAL, "G_DECAL_EQUAL", G_DECAL_ALWAYS },
+    { G_DECAL_GEQUAL, "G_DECAL_GEQUAL", G_DECAL_ALWAYS },
+    { G_DECAL_ALWAYS, "G_DECAL_ALWAYS", G_DECAL_ALWAYS },
+    { G_DECAL_SPECIAL, "G_DECAL_SPECIAL", G_DECAL_SPECIAL }
+};
+
+typedef struct {
+    u32 mask;
+    char* enabled;
+    char* disabled;
+} MatrixInfo;
+
+static const MatrixInfo gmtxtbl[] = {
+    { (1 << 2), "G_MTX_PROJECTION", "G_MTX_MODELVIEW" },
+    { (1 << 1), "G_MTX_LOAD", "G_MTX_MUL" },
+    { (1 << 0), "G_MTX_PUSH", "G_MTX_NOPUSH" },
+};
+
+typedef struct {
+    const char* name;
+    int val;
+} OtherModeOpt;
+
+typedef struct {
+    char* name;
+    int shift;
+    int len;
+    OtherModeOpt opts[4];
+} OthermodeParameterInfo;
+
+static const OthermodeParameterInfo h_tbl[] = {
+    {
+        "SetAlphaDither",
+        4,
+        2,
+        {
+            { "G_AD_PATTERN", 0 << 4 },
+            { "G_AD_NOPATTERN", 1 << 4 },
+            { "G_AD_NOISE", 2 << 4 },
+            { "G_AD_DISABLE", 3 << 4 },
+        },
+    },
+    {
+        "SetColorDither",
+        6,
+        2,
+        {
+            { "G_CD_MAGICSQ", 0 << 6 },
+            { "G_CD_BAYER", 1 << 6 },
+            { "G_CD_NOISE", 2 << 6 },
+            { "G_CD_DISABLE", 3 << 6 },
+        },
+    },
+    {
+        "SetCombineKey",
+        8,
+        1,
+        {
+            { "G_CK_NONE", 0 << 8 },
+            { "G_CK_KEY", 1 << 8 },
+            { "-1", -1 },
+            { "-1", -1 },
+        },
+    },
+    {
+        "SetTextureConvert",
+        9,
+        3,
+        {
+            { "G_TC_CONV", 0 << 9 },
+            { "G_TC_FILTCONV", 5 << 9 },
+            { "G_TC_FILT", 6 << 9 },
+            { "-1", -1 },
+        },
+    },
+    {
+        "SetTextureFilter",
+        12,
+        2,
+        {
+            { "G_TF_POINT", 0 << 12 },
+            { "G_TF_AVERAGE", 3 << 12 },
+            { "G_TF_BILERP", 2 << 12 },
+            { "-1", -1 },
+        },
+    },
+    {
+        "SetTextureLUT",
+        14,
+        2,
+        {
+            { "G_TT_NONE", 0 << 14 },
+            { "G_TT_RGBA16", 2 << 14 },
+            { "G_TT_IA16", 3 << 14 },
+            { "-1", -1 },
+        },
+    },
+    {
+        "SetTextureLOD",
+        16,
+        1,
+        {
+            { "G_TL_TILE", 0 << 16 },
+            { "G_TL_LOD", 1 << 16 },
+            { "-1", -1 },
+            { "-1", -1 },
+        },
+    },
+    {
+        "SetTextureDetail",
+        17,
+        2,
+        {
+            { "G_TD_CLAMP", 0 << 17 },
+            { "G_TD_SHARPEN", 1 << 17 },
+            { "G_TD_DETAIL", 2 << 17 },
+            { "-1", -1 },
+        },
+    },
+    {
+        "SetTexturePersp",
+        19,
+        1,
+        {
+            { "G_TP_PERSP", 0 << 19 },
+            { "G_TP_NONE", 1 << 19 },
+            { "-1", -1 },
+            { "-1", -1 },
+        },
+    },
+    {
+        "SetCycleType",
+        20,
+        2,
+        {
+            { "G_CYC_1CYCLE", 0 << 20 },
+            { "G_CYC_2CYCLE", 1 << 20 },
+            { "G_CYC_COPY", 2 << 20 },
+            { "G_CYC_FILL", 3 << 20 },
+        },
+    },
+    {
+        "PipelineMode",
+        23,
+        1,
+        {
+            { "G_PM_1PRIMITIVE", 1 << 23 },
+            { "G_PM_NPRIMITIVE", 0 << 23 },
+            { "-1", -1 },
+            { "-1", -1 },
+        },
+    },
+};
+
+static const OthermodeParameterInfo l_tbl[] = {
+    {
+        "gsDPSetAlphaCompare",
+        0,
+        2,
+        {
+            { "G_AC_NONE", 0 << 0 },
+            { "G_AC_THRESHOLD", 1 << 0 },
+            { "G_AC_DITHER", 3 << 0 },
+            { "-1", -1 },
+        },
+    },
+    {
+        "gsDPSetDepthSource",
+        2,
+        1,
+        {
+            { "G_ZS_PIXEL", 0 << 2 },
+            { "G_ZS_PRIM", 1 << 2 },
+            { "-1", -1 },
+            { "-1", -1 },
+        },
+    },
+};
+
+#include "../src/static/libforest/emu64/emu64_utility.c"
+#include "../src/static/libforest/emu64/emu64_print.cpp"
+
+/* Helper function to convert N64 texture format to Dolphin format */
+const u16 emu64::fmtxtbl[8][4] = {
+    { GX_TF_CMPR, -1, GX_TF_RGB5A3, GX_TF_RGBA8 }, /* G_IM_FMT_RGBA */
+    { -1, -1, -1, -1 },                            /* G_IM_FMT_YUV */
+    { GX_TF_C4, GX_TF_C8, 0xA, -1 },               /* G_IM_FMT_CI */
+    { -1, GX_TF_IA4, GX_TF_IA8, -1 },              /* G_IM_FMT_IA */
+    { GX_TF_I4, GX_TF_I8, GX_TF_RGB565, -1 },      /* G_IM_FMT_I */
+    { GX_TF_CMPR, GX_CTF_A8, GX_TF_RGB5A3, -1 },   /* ?? */
+    { -1, GX_TF_Z8, GX_TF_Z16, GX_TF_Z24X8 },      /* ?? */
+    { -1, -1, -1, -1 }                             /* ?? */
+};
 
 static const u8 tbla[8][2] = {
     { GX_CA_APREV, GX_CA_KONST }, { GX_CA_TEXA, GX_CA_TEXA }, { GX_CA_TEXA, GX_CA_TEXA }, { GX_CA_A1, GX_CA_A1 },
@@ -3526,142 +3736,6 @@ void emu64::dl_G_SETCOMBINE_TEV() {
     }
 }
 
-typedef struct {
-    const char* name;
-    int val;
-} OtherModeOpt;
-
-typedef struct {
-    char* name;
-    int shift;
-    int len;
-    OtherModeOpt opts[4];
-} OthermodeParameterInfo;
-
-static const OthermodeParameterInfo h_tbl[] = {
-    {
-        "SetAlphaDither",
-        4,
-        2,
-        {
-            { "G_AD_PATTERN", 0 << 4 },
-            { "G_AD_NOPATTERN", 1 << 4 },
-            { "G_AD_NOISE", 2 << 4 },
-            { "G_AD_DISABLE", 3 << 4 },
-        },
-    },
-    {
-        "SetColorDither",
-        6,
-        2,
-        {
-            { "G_CD_MAGICSQ", 0 << 6 },
-            { "G_CD_BAYER", 1 << 6 },
-            { "G_CD_NOISE", 2 << 6 },
-            { "G_CD_DISABLE", 3 << 6 },
-        },
-    },
-    {
-        "SetCombineKey",
-        8,
-        1,
-        {
-            { "G_CK_NONE", 0 << 8 },
-            { "G_CK_KEY", 1 << 8 },
-            { "-1", -1 },
-            { "-1", -1 },
-        },
-    },
-    {
-        "SetTextureConvert",
-        9,
-        3,
-        {
-            { "G_TC_CONV", 0 << 9 },
-            { "G_TC_FILTCONV", 5 << 9 },
-            { "G_TC_FILT", 6 << 9 },
-            { "-1", -1 },
-        },
-    },
-    {
-        "SetTextureFilter",
-        12,
-        2,
-        {
-            { "G_TF_POINT", 0 << 12 },
-            { "G_TF_AVERAGE", 3 << 12 },
-            { "G_TF_BILERP", 2 << 12 },
-            { "-1", -1 },
-        },
-    },
-    {
-        "SetTextureLUT",
-        14,
-        2,
-        {
-            { "G_TT_NONE", 0 << 14 },
-            { "G_TT_RGBA16", 2 << 14 },
-            { "G_TT_IA16", 3 << 14 },
-            { "-1", -1 },
-        },
-    },
-    {
-        "SetTextureLOD",
-        16,
-        1,
-        {
-            { "G_TL_TILE", 0 << 16 },
-            { "G_TL_LOD", 1 << 16 },
-            { "-1", -1 },
-            { "-1", -1 },
-        },
-    },
-    {
-        "SetTextureDetail",
-        17,
-        2,
-        {
-            { "G_TD_CLAMP", 0 << 17 },
-            { "G_TD_SHARPEN", 1 << 17 },
-            { "G_TD_DETAIL", 2 << 17 },
-            { "-1", -1 },
-        },
-    },
-    {
-        "SetTexturePersp",
-        19,
-        1,
-        {
-            { "G_TP_PERSP", 0 << 19 },
-            { "G_TP_NONE", 1 << 19 },
-            { "-1", -1 },
-            { "-1", -1 },
-        },
-    },
-    {
-        "SetCycleType",
-        20,
-        2,
-        {
-            { "G_CYC_1CYCLE", 0 << 20 },
-            { "G_CYC_2CYCLE", 1 << 20 },
-            { "G_CYC_COPY", 2 << 20 },
-            { "G_CYC_FILL", 3 << 20 },
-        },
-    },
-    {
-        "PipelineMode",
-        23,
-        1,
-        {
-            { "G_PM_1PRIMITIVE", 1 << 23 },
-            { "G_PM_NPRIMITIVE", 0 << 23 },
-            { "-1", -1 },
-            { "-1", -1 },
-        },
-    },
-};
-
 void emu64::dl_G_SETOTHERMODE_H() {
     Gsetothermode_dolphin* othermodeH = (Gsetothermode_dolphin*)&this->gfx.setothermodeH;
     u32 sft;
@@ -3698,31 +3772,6 @@ exit:
         this->dirty_flags[EMU64_DIRTY_FLAG_OTHERMODE_HIGH] = true;
     }
 }
-
-static const OthermodeParameterInfo l_tbl[] = {
-    {
-        "gsDPSetAlphaCompare",
-        0,
-        2,
-        {
-            { "G_AC_NONE", 0 << 0 },
-            { "G_AC_THRESHOLD", 1 << 0 },
-            { "G_AC_DITHER", 3 << 0 },
-            { "-1", -1 },
-        },
-    },
-    {
-        "gsDPSetDepthSource",
-        2,
-        1,
-        {
-            { "G_ZS_PIXEL", 0 << 2 },
-            { "G_ZS_PRIM", 1 << 2 },
-            { "-1", -1 },
-            { "-1", -1 },
-        },
-    },
-};
 
 void emu64::dl_G_SETOTHERMODE_L() {
     u32 sft;
@@ -4150,18 +4199,6 @@ void emu64::dl_G_NOOP() {
             break;
     }
 }
-
-typedef struct {
-    u32 mask;
-    char* enabled;
-    char* disabled;
-} MatrixInfo;
-
-static const MatrixInfo gmtxtbl[] = {
-    { (1 << 2), "G_MTX_PROJECTION", "G_MTX_MODELVIEW" },
-    { (1 << 1), "G_MTX_LOAD", "G_MTX_MUL" },
-    { (1 << 0), "G_MTX_PUSH", "G_MTX_NOPUSH" },
-};
 
 void emu64::dl_G_MTX() {
     if (this->print_commands & EMU64_PRINTF_ENABLED_FLAG) {

@@ -302,32 +302,6 @@ const char* emu64::combine_tev_alpha_name(u32 alpha_param) {
     return ret;
 }
 
-typedef struct {
-    u32 value;
-    char* name;
-    u32 mask;
-} GeometryModeParameterInfo;
-
-#define NUM_GEOMETRYMODE_FLAGS 16
-static const GeometryModeParameterInfo geomtbl[NUM_GEOMETRYMODE_FLAGS] = {
-    { G_ZBUFFER, "G_ZBUFFER", G_ZBUFFER },
-    { G_TEXTURE_ENABLE, "G_TEXTURE_ENABLE", G_TEXTURE_ENABLE },
-    { G_SHADE, "G_SHADE", G_SHADE },
-    { G_SHADING_SMOOTH, "G_SHADING_SMOOTH", G_SHADING_SMOOTH },
-    { G_CULL_FRONT, "G_CULL_FRONT", G_CULL_FRONT },
-    { G_CULL_BACK, "G_CULL_BACK", G_CULL_BACK },
-    { G_FOG, "G_FOG", G_FOG },
-    { G_LIGHTING, "G_LIGHTING", G_LIGHTING },
-    { G_TEXTURE_GEN, "G_TEXTURE_GEN", G_TEXTURE_GEN },
-    { G_TEXTURE_GEN_LINEAR, "G_TEXTURE_GEN_LINEAR", G_TEXTURE_GEN_LINEAR },
-    { G_LOD, "G_LOD", G_LOD },
-    { G_LIGHTING_POSITIONAL, "G_LIGHTING_POSITIONAL", G_LIGHTING_POSITIONAL },
-    { G_DECAL_EQUAL, "G_DECAL_EQUAL", G_DECAL_ALWAYS },
-    { G_DECAL_GEQUAL, "G_DECAL_GEQUAL", G_DECAL_ALWAYS },
-    { G_DECAL_ALWAYS, "G_DECAL_ALWAYS", G_DECAL_ALWAYS },
-    { G_DECAL_SPECIAL, "G_DECAL_SPECIAL", G_DECAL_SPECIAL }
-};
-
 void emu64::print_geomflags(u32 flags) {
     u32 i;
     int empty = TRUE;
@@ -350,7 +324,7 @@ void emu64::print_geomflags(u32 flags) {
 }
 
 typedef struct {
-    char* name;
+    const char* name;
     u32 value;
     u32 mask;
 } RendermodeInfo;
