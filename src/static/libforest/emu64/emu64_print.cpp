@@ -2,9 +2,9 @@
 
 #include "boot.h"
 
-static const u8 kakko[] = {'/', '\\', '/', '\\', '|', '|', '|', '|', '|', '|', '|', '|', '\\', '/', '\\', '/'};
-
 void emu64::disp_matrix(GC_Mtx mtx) {
+    static const u8 kakko[] = {'/', '\\', '/', '\\', '|', '|', '|', '|', '|', '|', '|', '|', '\\', '/', '\\', '/'};
+
     for (int i = 0; i < 4; i++) {
         if (mtx != nullptr) {
             for (int x = 0; x < 4; x++) {
@@ -16,6 +16,8 @@ void emu64::disp_matrix(GC_Mtx mtx) {
     }
 }
 
+#pragma inline_depth(5)
+#pragma inline_max_size(1100)
 const char* emu64::segchk(u32 segment) {
     static char str[64];
     char buf[30];

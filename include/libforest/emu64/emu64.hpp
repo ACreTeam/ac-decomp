@@ -691,9 +691,9 @@ class emu64 : public emu64_print {
     static char* warningString[EMU64_WARNING_COUNT];
     static u32 warningTime[EMU64_WARNING_COUNT];
     static bool displayWarning;
+    static const u16 fmtxtbl[8][4];
     
 private:
-    static const u16 fmtxtbl[8][4];
     /* 0x0000 */ // u8 emu64_print::print_flags;
     /* 0x0001 */ s8 print_commands;
     /* 0x0002 */ bool disable_polygons;
