@@ -31,9 +31,9 @@ void guMtxXFM1F_dol6w1(MtxP mtx, GXProjectionType type, float x, float y, float 
 extern void OSInitFastCast(void);
 
 static aflags_c aflags;
-
-static u8 texture_buffer_data[TEX_BUFFER_DATA_SIZE];
-static u8 texture_buffer_bss[TEX_BUFFER_BSS_SIZE];
+u8 emu64::nChans = 0;
+static u8 texture_buffer_data[TEX_BUFFER_DATA_SIZE] ATTRIBUTE_ALIGN(32);
+static u8 texture_buffer_bss[TEX_BUFFER_BSS_SIZE] ATTRIBUTE_ALIGN(32);
 
 static tmem_t tmem_map[TMEM_ENTRIES];
 
@@ -55,17 +55,6 @@ static texture_cache_funcs texture_cache_data_func = {
     &texture_cache_alloc,
 };
 
-static texture_cache_t texture_cache_data = {
-    &texture_cache_data_func,
-    &texture_buffer_data[0],
-    &texture_buffer_data[TEX_BUFFER_DATA_SIZE],
-    &texture_buffer_data[0],
-    nullptr,
-    nullptr,
-    FALSE,
-    0,
-};
-
 /* .bss cache functions */
 static void* texture_cache_bss_search(void* addr);
 static int texture_cache_bss_entry(void* original, void* converted);
@@ -76,10 +65,21 @@ static texture_cache_funcs texture_cache_bss_func = {
     &texture_cache_alloc,
 };
 
+static texture_cache_t texture_cache_data = {
+    &texture_cache_data_func,
+    &texture_buffer_data[0],
+    &texture_buffer_data[sizeof(texture_buffer_data)],
+    &texture_buffer_data[0],
+    nullptr,
+    nullptr,
+    FALSE,
+    0,
+};
+
 static texture_cache_t texture_cache_bss = {
     &texture_cache_bss_func,
     &texture_buffer_bss[0],
-    &texture_buffer_bss[TEX_BUFFER_BSS_SIZE],
+    &texture_buffer_bss[sizeof(texture_buffer_bss)],
     &texture_buffer_bss[0],
     nullptr,
     nullptr,

@@ -434,7 +434,7 @@ class emu64_print {
     void Printf(const char* fmt, ...) {
         va_list list;
 
-        if ((this->print_flags & EMU64_PRINTF_FLAG)) {
+        if ((this->print_flags & EMU64_PRINTF_ENABLED_FLAG)) {
             va_start(list, fmt);
             this->Vprintf(fmt, list);
             va_end(list);
@@ -603,7 +603,7 @@ class emu64 : public emu64_print {
     void cullmode();
     void texture_gen(int tile);
     void texture_matrix();
-    void disp_matrix(GC_Mtx mtx);
+    void disp_matrix(MtxP mtx);
     const char* segchk(u32 seg);
     const char* combine_name(u32 param, u32 type);
     const char* combine_alpha(int param, int type);
@@ -689,6 +689,7 @@ class emu64 : public emu64_print {
     void emu64_set_verbose(int verbose);
 
     /* N64 texture format[N64 bit size] -> dol texture format */
+    static u8 nChans;
     static char* warningString[EMU64_WARNING_COUNT];
     static u32 warningTime[EMU64_WARNING_COUNT];
     static bool displayWarning;

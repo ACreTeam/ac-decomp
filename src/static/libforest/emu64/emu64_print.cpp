@@ -6,7 +6,7 @@ static const char* __unused__reorder_char0A(void) {
     return "\n";
 }
 
-void emu64::disp_matrix(GC_Mtx mtx) {
+void emu64::disp_matrix(MtxP mtx) {
     static const u8 kakko[] = {'/', '\\', '/', '\\', '|', '|', '|', '|', '|', '|', '|', '|', '\\', '/', '\\', '/'};
 
     for (int i = 0; i < 4; i++) {
@@ -28,7 +28,7 @@ const char* emu64::segchk(u32 segment) {
     const char str0[] = "anime_4_txt+%4u";
     const char str1[] = "anime_6_model+sizeof(Mtx)*%2u";
 
-    u32 partial_addr = (u32)seg2k0(segment);
+    u32 partial_addr = seg2k0(segment);
     u32 addr = convert_partial_address(partial_addr);
 
     str[0] = '\0';
@@ -36,7 +36,7 @@ const char* emu64::segchk(u32 segment) {
         if (addr == partial_addr) {
             snprintf(str, sizeof(str), "0x%08x", segment);
         } else {
-            snprintf(str, sizeof(str), "0x%08x /* PADDR=0x%08x */", segment, partial_addr);
+            snprintf(str, sizeof(str), "0x%08x /* PADDR=0x%08x */", segment, addr);
         }
     } else {
         const char* s;

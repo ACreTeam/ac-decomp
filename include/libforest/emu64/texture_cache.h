@@ -63,7 +63,7 @@ typedef struct texture_cache_s {
 // static tmem_t tmem_map[TMEM_ENTRIES];
 
 #define TEX_BUFFER_DATA_SIZE 0xC000
-#define TEX_BUFFER_BSS_SIZE 0x1000
+#define TEX_BUFFER_BSS_SIZE 0x400
 
 #ifdef __cplusplus
 }
