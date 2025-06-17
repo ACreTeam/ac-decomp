@@ -93,7 +93,7 @@ public:
     void clearForReset();
     static void init();
     void initList();
-    void read();
+    static void read();
     static bool recalibrate(u32);
     void setButtonRepeat(u32, u32, u32);
     void update();

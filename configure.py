@@ -670,7 +670,7 @@ config.libs = [
             Object(Matching, "JSystem/JUtility/JUTDbPrint.cpp"),
             Object(Matching, "JSystem/JUtility/JUTDirectFile.cpp"),
             Object(Matching, "JSystem/JUtility/JUTDirectPrint.cpp"),
-            Object(NonMatching, "JSystem/JUtility/JUTException.cpp"),
+            Object(Matching, "JSystem/JUtility/JUTException.cpp"),
             Object(Matching, "JSystem/JUtility/JUTFader.cpp"),
             Object(Matching, "JSystem/JUtility/JUTFont.cpp"),
             Object(Matching, "JSystem/JUtility/JUTFontData_Ascfont_fix12.s"),

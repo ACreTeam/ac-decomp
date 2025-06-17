@@ -1,6 +1,8 @@
 #ifndef W_MATH_H
 #define W_MATH_H
 
+#include "MSL_C/MSL_Common/float.h"
+
 #ifndef BUGFIXES
 #define SQRTF_LINKAGE extern
 #else
@@ -47,11 +49,6 @@ inline float fabsf(float x) {
     return (float)fabs((double)x);
 }
 
-int __float_huge[];
-int __float_nan[];
-int __double_huge[];
-int __extended_huge[];
-
 #define INFINITY (*(float*)__float_huge)
 #define NAN (*(float*)__float_nan)
 #define HUGE_VALF (*(float*)__float_huge)
@@ -76,8 +73,8 @@ extern inline double sqrt(double x) {
 extern "C" {
 #endif
 
-double atan2(double, double);
-double acos(float);
+//double atan2(double, double);
+//double acos(float);
 
 #ifdef __cplusplus
 }

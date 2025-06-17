@@ -1,7 +1,9 @@
+#include "MSL_C/MSL_Common/float.h"
+
 #include <dolphin/base/PPCArch.h>
 #include <dolphin/gx.h>
 #include <dolphin/os.h>
-#include "MSL_C/w_math.h"
+
 #include "MSL_C/printf.h"
 #include "libc/string.h"
 
@@ -9,25 +11,19 @@
 #include "JSystem/JUtility/JUTDirectPrint.h"
 #include "JSystem/JUtility/JUTDirectFile.h"
 
-extern long __fpclassifyf(float x);
-long __fpclassifyd(double x);
-#define fpclassify(x) (sizeof(x) == sizeof(float) ? __fpclassifyf((float)(x)) : __fpclassifyd((double)(x)))
-
-#define isinf(x) ((fpclassify(x) == 2))
-#define isnan(x) ((fpclassify(x) == 1))
-#define isfinite(x) ((fpclassify(x) > 2))
 
 struct CallbackObject
 {
     JUTErrorHandler callback;
     u16 error;
-    OSContext *context;
+    OSContext* context;
     u32 dsisr;
     u32 dar;
 };
 
 void search_name_part(u8 *, u8 *, int);
 
+void *JUTException::sMessageBuffer[1] = { nullptr};
 OSMessageQueue JUTException::sMessageQueue = {};
 static OSTime c3bcnt[4] = {0, 0, 0, 0};
 const char *JUTException::sCpuExpName[] = {
@@ -46,8 +42,7 @@ const char *JUTException::sCpuExpName[] = {
     "BREAK POINT",
     "SYSTEM INTERRUPT",
     "THERMAL INTERRUPT",
-    "PROTECTION",
-    "FLOATING POINT"
+    "PROTECTION"
 };
 
 JUTException *JUTException::sErrorManager;
@@ -59,30 +54,9 @@ u32 JUTException::sConsoleBufferSize;
 JUTConsole *JUTException::sConsole;
 u32 JUTException::msr;
 u32 JUTException::fpscr;
-void *JUTException::sMessageBuffer[1] = { nullptr};
+
 
 JSUList<JUTException::JUTExMapFile> JUTException::sMapFileList(false);
-
-JUTException::JUTException(JUTDirectPrint *directPrint) :JKRThread(0x4000, 0x10, 0) {
-    mDirectPrint = directPrint;
-
-    OSSetErrorHandler(OS_ERROR_DSI, (OSErrorHandler)errorHandler);
-    OSSetErrorHandler(OS_ERROR_ISI, (OSErrorHandler)errorHandler);
-    OSSetErrorHandler(OS_ERROR_PROGRAM, (OSErrorHandler)errorHandler);
-    OSSetErrorHandler(OS_ERROR_ALIGNMENT, (OSErrorHandler)errorHandler);
-    OSSetErrorHandler(OS_ERROR_PROTECTION, (OSErrorHandler)errorHandler);
-    setFPException(0);
-
-    sPreUserCallback = nullptr;
-    sPostUserCallback = nullptr;
-    mGamePad = nullptr;
-    mPadPort = JUTGamePad::Port_Invalid;
-    mPrintWaitTime0 = 10;
-    mPrintWaitTime1 = 10;
-    mTraceSuppress = 0xffffffff;
-    _98 = 0;
-    mPrintFlags = EXPRINTFLAG_All;
-}
 
 JUTException *JUTException::create(JUTDirectPrint *directPrint) {
     if(sErrorManager == nullptr) {
@@ -107,11 +81,8 @@ void *JUTException::run()
         u32 dsisr = cb->dsisr;
         u32 dar = cb->dar;
 
-        if (error < OS_ERROR_MAX)
-            mStackPointer = context->gpr[1];
-
-
-        if (mFrameMemory == nullptr)
+        mFrameMemory = (JUTExternalFB*)sErrorManager->mDirectPrint->getFrameBuffer();
+        if (!sErrorManager->mDirectPrint->getFrameBuffer())
             sErrorManager->createFB();
 
         if (callback)
@@ -123,10 +94,30 @@ void *JUTException::run()
     }
 }
 
+JUTException::JUTException(JUTDirectPrint *directPrint) : JKRThread(0x4000, 0x10, 0) {
+    mDirectPrint = directPrint;
+
+    OSSetErrorHandler(OS_ERROR_DSI, (OSErrorHandler)errorHandler);
+    OSSetErrorHandler(OS_ERROR_ISI, (OSErrorHandler)errorHandler);
+    OSSetErrorHandler(OS_ERROR_PROGRAM, (OSErrorHandler)errorHandler);
+    OSSetErrorHandler(OS_ERROR_ALIGNMENT, (OSErrorHandler)errorHandler);
+    OSSetErrorHandler(OS_ERROR_PROTECTION, (OSErrorHandler)errorHandler);
+
+    sPreUserCallback = nullptr;
+    sPostUserCallback = nullptr;
+    mGamePad = nullptr;
+    mPadPort = JUTGamePad::Port_Invalid;
+    mPrintWaitTime0 = 10;
+    mPrintWaitTime1 = 10;
+    mTraceSuppress = 0xffffffff;
+    _98 = 0;
+    mPrintFlags = 0xff;
+}
+
 void JUTException::errorHandler(OSError error, OSContext *context, u32 dsisr, u32 dar)
 {
     msr = PPCMfmsr();
-    fpscr = context->fpscr;
+    fpscr = getFpscr();
     OSFillFPUContext(context);
     OSSetErrorHandler(error, nullptr);
     if (error == OS_ERROR_PROTECTION)
@@ -146,19 +137,6 @@ void JUTException::errorHandler(OSError error, OSContext *context, u32 dsisr, u3
     OSSendMessage(&sMessageQueue, &exCallbackObject, OS_MESSAGE_BLOCK);
     OSEnableScheduler();
     OSYieldThread();
-}
-
-void JUTException::setFPException(u32 fpscr_enable_bits)
-{
-    __OSFpscrEnableBits = fpscr_enable_bits;
-    if (fpscr_enable_bits)
-    {
-        OSSetErrorHandler(OS_ERROR_FPE, (OSErrorHandler)errorHandler);
-    }
-    else
-    {
-        OSSetErrorHandler(OS_ERROR_FPE, nullptr);
-    }
 }
 
 void JUTException::showFloatSub(int index, f32 value)
@@ -280,25 +258,26 @@ void JUTException::showStack(OSContext *context)
     }
 
     u32 i;
-    
+    u32* stackPointer;
     sConsole->print("-------------------------------- TRACE\n");
-    u32 *stackPointer = (u32 *)mStackPointer;
     sConsole->print_f("Address:   BackChain   LR save\n");
 
-    for (i = 0; (stackPointer != nullptr) && (stackPointer != (u32 *)0xFFFFFFFF) && (i++ < 0x10);)
-    {
-        if (i > mTraceSuppress)
-        {
-            sConsole->print("Suppress trace.\n");
-            return;
-        }
+    for (i = 0, stackPointer = (u32*)context->gpr[1];
+	     (stackPointer != nullptr) && (stackPointer != (u32*)0xFFFFFFFF)
+	     && (i++ < 0x10);) {
+		if (i > mTraceSuppress) {
+			sConsole->print("Suppress trace.\n");
+			return;
+		}
 
-        sConsole->print_f("%08X:  %08X    %08X\n", stackPointer, stackPointer[0], stackPointer[1]);
-        showMapInfo_subroutine(stackPointer[1], false);
-        JUTConsoleManager::getManager()->drawDirect(true);
-        waitTime(mPrintWaitTime1);
-        stackPointer = (u32 *)stackPointer[0];
-    }
+		sConsole->print_f("%08X:  %08X    %08X\n", stackPointer,
+		                  stackPointer[0], stackPointer[1]);
+		showMapInfo_subroutine(stackPointer[1], false);
+		JUTConsoleManager* manager = JUTConsoleManager::sManager;
+		manager->drawDirect(true);
+		waitTime(mPrintWaitTime1);
+		stackPointer = (u32*)stackPointer[0];
+	}
 }
 
 void JUTException::showMainInfo(u16 error, OSContext *context, u32 dsisr, u32 dar)
@@ -420,26 +399,6 @@ void JUTException::showGPRMap(OSContext *context)
     }
 }
 
-void JUTException::showSRR0Map(OSContext *context)
-{
-    if (!sConsole)
-    {
-        return;
-    }
-
-    sConsole->print("-------------------------------- SRR0MAP\n");
-    u32 address = context->srr0;
-    if (address >= 0x80000000 && 0x83000000 - 1 >= address)
-    {
-        sConsole->print_f("SRR0: %08XH", address);
-        if (showMapInfo_subroutine(address, true) == false)
-        {
-            sConsole->print("  no information\n");
-        }
-        JUTConsoleManager::getManager()->drawDirect(true);
-    }
-}
-
 void JUTException::printDebugInfo(JUTException::EInfoPage page, OSError error, OSContext *context, u32 param_3, u32 param_4)
 {
     switch (page)
@@ -457,8 +416,6 @@ void JUTException::printDebugInfo(JUTException::EInfoPage page, OSError error, O
         return showStack(context);
     case INFOPAGE_GPRMap:
         return showGPRMap(context);
-    case INFOPAGE_SRR0Map:
-        return showSRR0Map(context);
     }
 }
 
@@ -494,7 +451,7 @@ bool JUTException::readPad(u32 *out_trigger, u32 *out_button)
         JUTGamePad gamePad1(JUTGamePad::Port2);
         JUTGamePad gamePad2(JUTGamePad::Port3);
         JUTGamePad gamePad3(JUTGamePad::Port4);
-        //JUTGamePad::read();
+        JUTGamePad::read();
 
         c3bcnt[0] =
             (gamePad0.isPushing3ButtonReset() ? (c3bcnt[0] != 0 ? c3bcnt[0] : OSGetTime()) : 0);
@@ -538,7 +495,7 @@ bool JUTException::readPad(u32 *out_trigger, u32 *out_button)
         OSTime resetTime = (gamePadTime != 0) ? (OSGetTime() - gamePadTime) : 0;
         gamePad.checkResetCallback(resetTime);
 
-        //JUTGamePad::read();
+        JUTGamePad::read();
         if (out_trigger)
         {
             *out_trigger = gamePad.getTrigger();
@@ -552,7 +509,7 @@ bool JUTException::readPad(u32 *out_trigger, u32 *out_button)
     }
     else if (mGamePad)
     {
-        //JUTGamePad::read();
+        JUTGamePad::read();
         if (out_trigger)
         {
             *out_trigger = mGamePad->getTrigger();
@@ -575,20 +532,14 @@ void JUTException::printContext(OSError error, OSContext *context, u32 dsisr, u3
     {
         return;
     }
-    VISetPreRetraceCallback(nullptr);
-    VISetPostRetraceCallback(nullptr);
-    VISetBlack(FALSE);
-    VIFlush();
 
     if (!sConsole)
     {
         return;
     }
 
-    if(error < OS_ERROR_MAX)
-        sConsole->print_f("******** EXCEPTION OCCURRED! ********\nFrameMemory:%XH\n", getFrameMemory());
-    else
-        sConsole->print_f("******** USER HALT ********\nFrameMemory:%XH\n", getFrameMemory());
+    sConsole->print_f("******** EXCEPTION OCCURRED! ********\nFrameMemory:%XH\n",
+	    getFrameMemory());
 
     int post_callback_executed = false;
     while (true)
@@ -601,12 +552,6 @@ void JUTException::printContext(OSError error, OSContext *context, u32 dsisr, u3
         if ((mPrintFlags & EXPRINTFLAG_GPR) != 0)
         {
             printDebugInfo(INFOPAGE_GPR, error, context, dsisr, dar);
-            JUTConsoleManager::sManager->drawDirect(true);
-            waitTime(mPrintWaitTime0);
-        }
-        if ((mPrintFlags & EXPRINTFLAG_SRR0Map) != 0)
-        {
-            printDebugInfo(INFOPAGE_SRR0Map, error, context, dsisr, dar);
             JUTConsoleManager::sManager->drawDirect(true);
             waitTime(mPrintWaitTime0);
         }
@@ -786,19 +731,20 @@ void JUTException::createFB()
     mFrameMemory = (JUTExternalFB *)object;
 }
 
-u32 JUTException::getFpscr() {
-    // TODO: misses stack frame
-    register u32 ret;
-    asm {
-        mfmsr r5
-        ori r5, r5, 0x2000
-        mtmsr r5
-        isync
-        mffs f1
-        stfd f1, 8(r1)
-        lwz ret, 12(r1)
-    }
-    return ret;
+asm u32 JUTException::getFpscr() { // TODO: figure out if this is possible with asm
+    
+    // clang-format off
+    fralloc
+    mfmsr r5
+    ori r5, r5, 0x2000
+    mtmsr r5
+    isync
+    mffs f1
+    stfd f1, 8(r1)
+    lwz r3, 12(r1)
+    frfree
+    blr
+    // clang-format on
 }
 
 JUTErrorHandler JUTException::setPreUserCallback(JUTErrorHandler callback)

@@ -128,8 +128,9 @@ public:
     };
 
     JKRArchive(s32, EMountMode);
-
-    virtual ~JKRArchive();                                                                                                                  // _08
+private:
+    ~JKRArchive();
+public:                                                                                                                 // _08
     virtual bool becomeCurrent(const char*);                                                                                                // _10
     virtual void* getResource(const char* path);                                                                                            // _14
     virtual void* getResource(u32 type, const char* name);                                                                                  // _18
@@ -161,12 +162,11 @@ public:
     static JKRArchive* mount(void*, JKRHeap*, EMountDirection);
     static JKRArchive* mount(s32, EMountMode, JKRHeap*, EMountDirection);
     static void* getGlbResource(u32 type, const char* name, JKRArchive* archive);
-
-    // Unused/inlined:
-    JKRArchive();
-    JKRArchive(const char* p1, EMountMode mountMode);
     static JKRArchive* check_mount_already(s32);
     static JKRArchive* check_mount_already(s32, JKRHeap*);
+
+    JKRArchive();
+    JKRArchive(const char* p1, EMountMode mountMode);
     SDIDirEntry* findResType(u32) const;
     SDIFileEntry* findTypeResource(u32, u32) const;
 

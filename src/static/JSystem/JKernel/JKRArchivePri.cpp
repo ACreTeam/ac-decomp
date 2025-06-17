@@ -33,11 +33,6 @@ JKRArchive::JKRArchive(s32 entryNum, JKRArchive::EMountMode mountMode)
     }
 }
 
-JKRArchive::JKRArchive(const char* p1, JKRArchive::EMountMode mountMode)
-{
-    // UNUSED FUNCTION
-}
-
 JKRArchive::~JKRArchive() {}
 
 bool JKRArchive::isSameName(JKRArchive::CArcName& archiveName,
