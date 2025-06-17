@@ -595,6 +595,14 @@ typedef struct Gspecial1 {
 } Gspecial1;
 
 typedef struct {
+		int		cmd:8;
+		int		pad0:8;
+		u32		sft:8;
+		u32		len:8;
+		unsigned int	data:32;
+} Gsetothermode_dolphin;
+
+typedef struct {
     unsigned char col[3];
     unsigned char kc;
     unsigned char colc[3];

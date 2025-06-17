@@ -259,6 +259,7 @@ const char* emu64::combine_tev_color_name(u32 color_param) {
             break;
 #endif
     }
+    return ret;
 }
 
 const char* emu64::combine_tev_alpha_name(u32 alpha_param) {

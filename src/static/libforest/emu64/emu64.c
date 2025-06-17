@@ -3663,7 +3663,7 @@ static const OthermodeParameterInfo h_tbl[] = {
 };
 
 void emu64::dl_G_SETOTHERMODE_H() {
-    GsetothermodeH* othermodeH = &this->gfx.setothermodeH;
+    Gsetothermode_dolphin* othermodeH = (Gsetothermode_dolphin*)&this->gfx.setothermodeH;
     u32 sft;
     u32 len;
     u32 data;
@@ -3729,8 +3729,8 @@ void emu64::dl_G_SETOTHERMODE_L() {
     u32 len;
     u32 data;
 
-    len = this->gfx.setothermodeL.len + 1;
-    sft = (32 - this->gfx.setothermodeL.sft) - len;
+    len = ((Gsetothermode_dolphin*)&this->gfx)->len + 1;
+    sft = (32 - ((Gsetothermode_dolphin*)&this->gfx)->sft) - len;
     data = this->gfx.setothermodeL.data;
 
     if ((this->print_commands & EMU64_PRINTF2_FLAG) != 0) {
