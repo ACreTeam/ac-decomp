@@ -19,7 +19,7 @@ enum ExPrintFlags
     EXPRINTFLAG_GPRMap = 0x2,
     EXPRINTFLAG_Float = 0x4,
     EXPRINTFLAG_Stack = 0x8,
-    EXPRINTFLAG_All = 0xF,
+    EXPRINTFLAG_All = 0xFF,
 };
 
 /**

@@ -111,7 +111,7 @@ JUTException::JUTException(JUTDirectPrint *directPrint) : JKRThread(0x4000, 0x10
     mPrintWaitTime1 = 10;
     mTraceSuppress = 0xffffffff;
     _98 = 0;
-    mPrintFlags = 0xff;
+    mPrintFlags = EXPRINTFLAG_All;
 }
 
 void JUTException::errorHandler(OSError error, OSContext *context, u32 dsisr, u32 dar)
