@@ -251,7 +251,7 @@ typedef union GXTexFmts {
 } GXTexFmts;
 
 inline void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigned int* blk_ht) {
-    static u8 blk_tbl[4][2] = {
+    static const u8 blk_tbl[4][2] = {
         { 8, 8 }, // G_IM_SIZ_4b
         { 8, 4 }, // G_IM_SIZ_8b
         { 4, 4 }, // G_IM_SIZ_16b
@@ -679,6 +679,7 @@ class emu64 : public emu64_print {
     void dl_G_GEOMETRYMODE();
     void dl_G_MOVEWORD();
     void dl_G_MOVEMEM();
+    void dl_G_S2DEX();
     void dl_G_SPECIAL_1();
 
     u32 emu64_taskstart_r(Gfx* dl_p);

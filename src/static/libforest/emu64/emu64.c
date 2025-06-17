@@ -243,6 +243,9 @@ MATCH_FORCESTRIP static void* TextureLinearConvert(void* img_p, unsigned int wid
 
 #include "../src/static/libforest/emu64/emu64_utility.c"
 
+static GXColor black_color = { 0, 0, 0, 0 };
+static GXColor white_color = { 255, 255, 255, 255 };
+
 static char* doltexwrapmode[] = { "CLAMP", "REPEAT", "MIRROR", "?" };
 
 static char* dolfmttbl2[4][5] = {
@@ -492,9 +495,6 @@ static const u8 tblc[32][4] = {
     { GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO },     { GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO },
 };
 
-static GXColor black_color = { 0, 0, 0, 0 };
-static GXColor white_color = { 255, 255, 255, 255 };
-
 static void emu64_init2(GXRenderModeObj* render_mode) {
     GC_Mtx m;
     int i;
@@ -660,7 +660,7 @@ void emu64::emu64_init() {
 
     GXSetLineWidth(line_width - 1, tex_offsets);
 
-    static u8 black_texture[] = { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
+    static u8 black_texture[] ATTRIBUTE_ALIGN(32) = { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                   0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88,
                                   0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88 };
 
@@ -1408,8 +1408,6 @@ int emu64::combine_tev() {
 }
 
 #define NUM_COMBINER_HIGHLOW_ERRS 10
-static u32 last_highlow;
-static u64 highlow_errs[NUM_COMBINER_HIGHLOW_ERRS];
 
 /* Combine Manual Macros */
 
@@ -1423,6 +1421,8 @@ static u64 highlow_errs[NUM_COMBINER_HIGHLOW_ERRS];
 #define COMBINE_CONSTEXPR(mode0, mode1) (gsDPSetCombineLERPInline(mode0, mode1))
 
 void emu64::combine_manual() {
+    static u64 highlow_errs[NUM_COMBINER_HIGHLOW_ERRS];
+    static u32 last_highlow;
     u64 combine_mode = *(u64*)&this->combine_gfx;
 
     switch (combine_mode) {
@@ -1860,10 +1860,10 @@ void emu64::combine_manual() {
                         highlow_errs[i] = combine_mode;
                         this->err_count++;
                         /* ### Unsupported combine mode ###\ncase 0x%16llx:// */
-                        this->Printf0(VT_COL(YELLOW, BLACK) "### 未対応のコンバインモードです ###\ncase 0x%16llx:// ",
+                        this->Printf0(VT_COL(YELLOW, BLACK) "### 未対応のコンバインモードです ###\ncase 0x%16llx: // ",
                                       combine_mode);
                         this->print_combine(combine_mode);
-                        this->Printf0("\n" VT_RST);
+                        this->Printf0(VT_RST "\n");
                     }
                 }
 
@@ -2465,8 +2465,8 @@ void emu64::texture_matrix() {
         u16 ult0;
 
         f32 bilerp_adjust; /* bilerp center adjust */
-        float muls;
-        float mult;
+        float uls;
+        float ult;
         float lrs;
         float lrt;
 
@@ -2507,22 +2507,22 @@ void emu64::texture_matrix() {
             uls0 = this->settilesize_dolphin_cmds[0].sl;
             ult0 = this->settilesize_dolphin_cmds[0].tl;
 
-            muls = uls * ((fastcast_float(&uls0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
-            mult = ult * ((fastcast_float(&ult0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
-            lrs = muls + (uls * fastcast_float(&this->texture_info[0].width));
-            lrt = mult + (ult * fastcast_float(&this->texture_info[0].height));
+            uls = uls * ((fastcast_float(&uls0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
+            ult = ult * ((fastcast_float(&ult0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
+            lrs = uls + (uls * fastcast_float(&this->texture_info[0].width));
+            lrt = ult + (ult * fastcast_float(&this->texture_info[0].height));
 
-            if (mult == lrt) {
-                OSReport(VT_COL(RED, WHITE) "mult = %8.3f lrt = %8.3f ult0 = %d y32 = %8.3f texobj[0].ht = %d\n" VT_RST,
-                         mult, lrt, ult0, y32, this->texture_info[0].height);
+            if (ult == lrt) {
+                OSReport(VT_COL(RED, WHITE) "ult = %8.3f lrt = %8.3f ult0 = %d y32 = %8.3f texobj[0].ht = %d\n" VT_RST,
+                         ult, lrt, ult0, y32, this->texture_info[0].height);
             }
 
-            if (muls == lrs) {
-                OSReport(VT_COL(RED, WHITE) "muls = %8.3f lrs = %8.3f uls0 = %d x32 = %8.3f texobj[0].wd = %d\n" VT_RST,
-                         muls, lrs, uls0, x32, this->texture_info[0].width);
+            if (uls == lrs) {
+                OSReport(VT_COL(RED, WHITE) "uls = %8.3f lrs = %8.3f uls0 = %d x32 = %8.3f texobj[0].wd = %d\n" VT_RST,
+                         uls, lrs, uls0, x32, this->texture_info[0].width);
             }
 
-            C_MTXLightOrtho(m, mult, lrt, muls, lrs, scaleS, scaleT, transS, transT);
+            C_MTXLightOrtho(m, ult, lrt, uls, lrs, scaleS, scaleT, transS, transT);
             GXLoadTexMtxImm(m, GX_TEXMTX0, GX_MTX2x4);
             GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_TEXMTX0);
 
@@ -2539,22 +2539,22 @@ void emu64::texture_matrix() {
             uls0 = this->settilesize_dolphin_cmds[1].sl;
             ult0 = this->settilesize_dolphin_cmds[1].tl;
 
-            muls = uls * ((fastcast_float(&uls0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
-            mult = ult * ((fastcast_float(&ult0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
-            lrs = muls + (uls * fastcast_float(&this->texture_info[1].width));
-            lrt = mult + (ult * fastcast_float(&this->texture_info[1].height));
+            uls = uls * ((fastcast_float(&uls0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
+            ult = ult * ((fastcast_float(&ult0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
+            lrs = uls + (uls * fastcast_float(&this->texture_info[1].width));
+            lrt = ult + (ult * fastcast_float(&this->texture_info[1].height));
 
-            if (mult == lrt) {
-                OSReport(VT_COL(RED, WHITE) "mult = %8.3f lrt = %8.3f ult0 = %d y32 = %8.3f texobj[1].ht = %d\n" VT_RST,
-                         mult, lrt, ult0, y32, this->texture_info[1].height);
+            if (ult == lrt) {
+                OSReport(VT_COL(RED, WHITE) "ult = %8.3f lrt = %8.3f ult0 = %d y32 = %8.3f texobj[1].ht = %d\n" VT_RST,
+                         ult, lrt, ult0, y32, this->texture_info[1].height);
             }
 
-            if (muls == lrs) {
-                OSReport(VT_COL(RED, WHITE) "muls = %8.3f lrs = %8.3f uls0 = %d x32 = %8.3f texobj[1].wd = %d\n" VT_RST,
-                         muls, lrs, uls0, x32, this->texture_info[1].width);
+            if (uls == lrs) {
+                OSReport(VT_COL(RED, WHITE) "uls = %8.3f lrs = %8.3f uls0 = %d x32 = %8.3f texobj[1].wd = %d\n" VT_RST,
+                         uls, lrs, uls0, x32, this->texture_info[1].width);
             }
 
-            C_MTXLightOrtho(m, mult, lrt, muls, lrs, scaleS, scaleT, transS, transT);
+            C_MTXLightOrtho(m, ult, lrt, uls, lrs, scaleS, scaleT, transS, transT);
             GXLoadTexMtxImm(m, GX_TEXMTX1, GX_MTX2x4);
             GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX0, GX_TEXMTX1);
 
@@ -5065,7 +5065,7 @@ void emu64::dl_G_MOVEWORD() {
                 emu64::warningTime[3] = EMU64_WARN_TIME;
 
                 this->segment_set = true;
-                OSReport(VT_COL(RED, WHTIE) "%s\n%s\n%s\n" VT_RST, s1, s2, s3);
+                OSReport(VT_COL(RED, WHITE) "%s\n%s\n%s\n" VT_RST, s1, s2, s3);
             }
         } break;
 
@@ -5259,6 +5259,10 @@ void emu64::dl_G_MOVEMEM() {
             break;
         }
     }
+}
+
+void emu64::dl_G_S2DEX() {
+    this->Printf0("未知のディスプレイリストがありました\n");
 }
 
 void emu64::dl_G_SPECIAL_1() {

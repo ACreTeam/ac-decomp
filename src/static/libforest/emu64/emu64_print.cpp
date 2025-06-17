@@ -2,6 +2,10 @@
 
 #include "boot.h"
 
+static const char* __unused__reorder_char0A(void) {
+    return "\n";
+}
+
 void emu64::disp_matrix(GC_Mtx mtx) {
     static const u8 kakko[] = {'/', '\\', '/', '\\', '|', '|', '|', '|', '|', '|', '|', '|', '\\', '/', '\\', '/'};
 
@@ -353,9 +357,9 @@ void emu64::show_render(u32 data) {
 
     static const char* const m[4][4] = {
         { "G_BL_CLR_IN", "G_BL_CLR_MEM", "G_BL_CLR_BL", "G_BL_CLR_FOG" },
-        { "G_BL_A_SHADE", "G_BL_0", "G_BL_A_IN", "G_BL_A_FOG" },
+        { "G_BL_A_IN", "G_BL_A_FOG", "G_BL_A_SHADE", "G_BL_0" },
         { "G_BL_CLR_IN", "G_BL_CLR_MEM", "G_BL_CLR_BL", "G_BL_CLR_FOG" },
-        { "G_BL_A_MEM", "G_BL_0", "G_BL_1MA", "G_BL_1" },
+        { "G_BL_1MA", "G_BL_A_MEM", "G_BL_0", "G_BL_1" },
     };
 
     EMU64_LOG("\ngsDPSetRenderBlender(\n");
