@@ -18,7 +18,7 @@
 
 #ifdef JSYSTEM_DEBUG
 #define JPANICLINE(line) ()
-#define JPANIC(line, msg) () /* TODO: JUTException */
+#define JPANIC(line, msg) ()       /* TODO: JUTException */
 #define JPANICF(line, msg, ...) () /* TODO: JUTException */
 #else
 #define JPANICLINE(line) (OSErrorLine(line, "Abort."))

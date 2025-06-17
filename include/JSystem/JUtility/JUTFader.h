@@ -6,19 +6,13 @@
 #include "JSystem/JUtility/JUTVideo.h"
 #include "types.h"
 
-struct JUTFader
-{
-    enum EStatus
-    {
-        Status_Out = 0,
-        Status_In = 1,
-        Status_FadingIn = 2,
-        Status_FadingOut = 3
-    };
+struct JUTFader {
+    enum EStatus { Status_Out = 0, Status_In = 1, Status_FadingIn = 2, Status_FadingOut = 3 };
 
     JUTFader(int, int, int, int, JUtility::TColor);
 
-    virtual ~JUTFader() {}                   // _08 (weak)
+    virtual ~JUTFader() {
+    }                                        // _08 (weak)
     virtual bool startFadeIn(int duration);  // _0C
     virtual bool startFadeOut(int duration); // _10
     virtual void draw();                     // _14
@@ -29,9 +23,13 @@ struct JUTFader
     void start(int);
     void setStatus(EStatus, int);
 
-    EStatus getStatus() const { return mStatus; }
+    EStatus getStatus() const {
+        return mStatus;
+    }
 
-    void setColor(JUtility::TColor color) { mColor.set(color.r, color.g, color.b, mColor.a); }
+    void setColor(JUtility::TColor color) {
+        mColor.set(color.r, color.g, color.b, mColor.a);
+    }
 
     // _00 VTBL
     EStatus mStatus;            // _04 - current status

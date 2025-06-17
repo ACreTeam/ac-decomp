@@ -11,30 +11,45 @@
 
 typedef u8 (*Pattern)[2];
 
-struct JUTVideo
-{
+struct JUTVideo {
     JUTVideo(const GXRenderModeObj*);
 
     virtual ~JUTVideo(); // _08
 
-    static JUTVideo *createManager(const GXRenderModeObj*);
+    static JUTVideo* createManager(const GXRenderModeObj*);
     static void destroyManager();
     static void preRetraceProc(unsigned long);
     static void postRetraceProc(unsigned long);
     static void drawDoneCallback();
 
-    u32 getEfbHeight() const { return mRenderModeObj->efbHeight; }
-    u32 getXfbHeight() const { return mRenderModeObj->xfbHeight & 0xffff; }
-    u32 getFbWidth() const { return (u16)mRenderModeObj->fbWidth; }
+    u32 getEfbHeight() const {
+        return mRenderModeObj->efbHeight;
+    }
+    u32 getXfbHeight() const {
+        return mRenderModeObj->xfbHeight & 0xffff;
+    }
+    u32 getFbWidth() const {
+        return (u16)mRenderModeObj->fbWidth;
+    }
     void getBounds(u16& width, u16& height) const {
         width = getFbWidth();
         height = getEfbHeight();
     }
-    GXRenderModeObj *getRenderMode() const { return mRenderModeObj; }
-    u32 isAntiAliasing() const { return mRenderModeObj->aa; }
-    Pattern getSamplePattern() const { return mRenderModeObj->sample_pattern; }
-    u8 *getVFilter() const { return mRenderModeObj->vfilter; }
-    OSMessageQueue *getMessageQueue() { return &mMessageQueue; };
+    GXRenderModeObj* getRenderMode() const {
+        return mRenderModeObj;
+    }
+    u32 isAntiAliasing() const {
+        return mRenderModeObj->aa;
+    }
+    Pattern getSamplePattern() const {
+        return mRenderModeObj->sample_pattern;
+    }
+    u8* getVFilter() const {
+        return mRenderModeObj->vfilter;
+    }
+    OSMessageQueue* getMessageQueue() {
+        return &mMessageQueue;
+    };
     static void drawDoneStart();
     static void dummyNoDrawWait();
     void setRenderMode(const GXRenderModeObj*);
@@ -48,12 +63,18 @@ struct JUTVideo
     void getPixelAspect() const;
 
     // Static inline gets
-    static JUTVideo *getManager() { return sManager; }
-    static OSTick getVideoInterval() { return sVideoInterval; }
-    static OSTick getVideoLastTick() { return sVideoLastTick; }
+    static JUTVideo* getManager() {
+        return sManager;
+    }
+    static OSTick getVideoInterval() {
+        return sVideoInterval;
+    }
+    static OSTick getVideoLastTick() {
+        return sVideoLastTick;
+    }
 
     // _00 VTBL
-    GXRenderModeObj *mRenderModeObj;                // _04
+    GXRenderModeObj* mRenderModeObj;                // _04
     u32 _08;                                        // _08
     u32 mRetraceCount;                              // _0C
     int _10;                                        // _10
@@ -68,12 +89,12 @@ struct JUTVideo
     OSMessage mMessage;                             // _34
     OSMessageQueue mMessageQueue;                   // _38
 
-    static JUTVideo *sManager;
+    static JUTVideo* sManager;
     static OSTick sVideoLastTick;
     static OSTick sVideoInterval;
 };
 
-inline JUTVideo *JUTGetVideoManager() {
+inline JUTVideo* JUTGetVideoManager() {
     return JUTVideo::getManager();
 }
 

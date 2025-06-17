@@ -12,11 +12,10 @@ extern "C" {
 #define JKRCOMPRESSION_YAZ0 2
 #define JKRCOMPRESSION_ASR 3
 
-typedef enum JKRExpandSwitch
-{
-  EXPAND_SWITCH_DEFAULT,    /* Do nothing? treated same as 2 */
-  EXPAND_SWITCH_DECOMPRESS, /* Check for compression and decompress */
-  EXPAND_SWITCH_NONE        /* Do nothing */
+typedef enum JKRExpandSwitch {
+    EXPAND_SWITCH_DEFAULT,    /* Do nothing? treated same as 2 */
+    EXPAND_SWITCH_DECOMPRESS, /* Check for compression and decompress */
+    EXPAND_SWITCH_NONE        /* Do nothing */
 } JKRExpandSwitch;
 
 #ifdef __cplusplus

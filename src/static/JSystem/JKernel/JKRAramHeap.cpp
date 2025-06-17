@@ -5,165 +5,154 @@
 JSUList<JKRAramBlock> JKRAramHeap::sAramList;
 
 JKRAramHeap::JKRAramHeap(u32 baseAddress, u32 size) : JKRDisposer() {
-  OSInitMutex(&this->mMutex);
-  this->mHeap = JKRHeap::findFromRoot(this);
-  this->mSize = ALIGN_PREV(size, 0x20);
-  this->mHeadAddress = ALIGN_NEXT(baseAddress, 0x20);
-  this->mTailAddress = this->mHeadAddress + this->mSize;
-  this->mGroupID = 0xFF;
-  JKRAramBlock* block = new (this->mHeap, nullptr)
-    JKRAramBlock(this->mHeadAddress, 0, this->mSize, 0xFF, false);
-  sAramList.append(&block->mLink);
+    OSInitMutex(&this->mMutex);
+    this->mHeap = JKRHeap::findFromRoot(this);
+    this->mSize = ALIGN_PREV(size, 0x20);
+    this->mHeadAddress = ALIGN_NEXT(baseAddress, 0x20);
+    this->mTailAddress = this->mHeadAddress + this->mSize;
+    this->mGroupID = 0xFF;
+    JKRAramBlock* block = new (this->mHeap, nullptr) JKRAramBlock(this->mHeadAddress, 0, this->mSize, 0xFF, false);
+    sAramList.append(&block->mLink);
 }
 
 JKRAramHeap::~JKRAramHeap() {
-  for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst();
-    it != sAramList.getEnd();) {
-    delete (it++).getObject();
-  }
+    for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst(); it != sAramList.getEnd();) {
+        delete (it++).getObject();
+    }
 }
 
 JKRAramBlock* JKRAramHeap::alloc(u32 size, JKRAramHeap::EAllocMode mode) {
-  JKRAramBlock* block;
-  this->lock();
+    JKRAramBlock* block;
+    this->lock();
 
-  if (mode == Head) {
-    block = this->allocFromHead(size);
-  }
-  else {
-    block = this->allocFromTail(size);
-  }
+    if (mode == Head) {
+        block = this->allocFromHead(size);
+    } else {
+        block = this->allocFromTail(size);
+    }
 
-  this->unlock();
-  return block;
+    this->unlock();
+    return block;
 }
 
 /* Code retrieved from Twilight Princess Debug version & matched. Unused in AC.
  */
-void JKRAramHeap::free(JKRAramBlock* block) { delete block; }
+void JKRAramHeap::free(JKRAramBlock* block) {
+    delete block;
+}
 
 JKRAramBlock* JKRAramHeap::allocFromHead(u32 size) {
-  size = ALIGN_NEXT(size, 32);
-  u32 min_size = 0xFFFFFFFFUL;
-  JKRAramBlock* block = nullptr;
+    size = ALIGN_NEXT(size, 32);
+    u32 min_size = 0xFFFFFFFFUL;
+    JKRAramBlock* block = nullptr;
 
-  for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst();
-    it != sAramList.getEnd(); it++) {
-    JKRAramBlock* n_block = it.getObject();
-    if (n_block->mFreeSize >= size && min_size > n_block->mFreeSize) {
-      min_size = n_block->mFreeSize;
-      block = n_block;
-      if (block->mFreeSize == size) {
-        break;
-      }
+    for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst(); it != sAramList.getEnd(); it++) {
+        JKRAramBlock* n_block = it.getObject();
+        if (n_block->mFreeSize >= size && min_size > n_block->mFreeSize) {
+            min_size = n_block->mFreeSize;
+            block = n_block;
+            if (block->mFreeSize == size) {
+                break;
+            }
+        }
     }
-  }
 
-  if (block != nullptr) {
-    return block->allocHead(size, this->mGroupID, this);
-  }
+    if (block != nullptr) {
+        return block->allocHead(size, this->mGroupID, this);
+    }
 
-  return nullptr;
+    return nullptr;
 }
 
 JKRAramBlock* JKRAramHeap::allocFromTail(u32 size) {
-  JKRAramBlock* block = nullptr;
-  size = ALIGN_NEXT(size, 32);
+    JKRAramBlock* block = nullptr;
+    size = ALIGN_NEXT(size, 32);
 
-  for (JSUListIterator<JKRAramBlock> it = sAramList.getLast();
-    it != sAramList.getEnd(); it--) {
-    JKRAramBlock* n_block = it.getObject();
+    for (JSUListIterator<JKRAramBlock> it = sAramList.getLast(); it != sAramList.getEnd(); it--) {
+        JKRAramBlock* n_block = it.getObject();
 
-    if (n_block->mFreeSize >= size) {
-      block = n_block;
-      break;
+        if (n_block->mFreeSize >= size) {
+            block = n_block;
+            break;
+        }
     }
-  }
 
-  if (block != nullptr) {
-    return block->allocTail(size, this->mGroupID, this);
-  }
+    if (block != nullptr) {
+        return block->allocTail(size, this->mGroupID, this);
+    }
 
-  return nullptr;
+    return nullptr;
 }
 
 /* Debug code retrieved from Twilight Princess Debug version */
 void JKRAramHeap::dump() {
-  this->lock();
+    this->lock();
 
-  int total_used = 0;
-  JREPORT("\nJKRAramHeap dump\n");
-  JREPORT(" attr  address:   size    gid\n");
+    int total_used = 0;
+    JREPORT("\nJKRAramHeap dump\n");
+    JREPORT(" attr  address:   size    gid\n");
 
-  for (JSUListIterator<JKRAramBlock> listItr = sAramList.getFirst();
-    listItr != sAramList.getEnd(); listItr++) {
-    if (listItr->mSize != 0) {
-      JREPORTF("%s %08x: %08x  %3d\n",
-        listItr->isTempMemory() ? " temp" : "alloc", listItr->mAddress,
-        listItr->mSize, listItr->mGroupID);
+    for (JSUListIterator<JKRAramBlock> listItr = sAramList.getFirst(); listItr != sAramList.getEnd(); listItr++) {
+        if (listItr->mSize != 0) {
+            JREPORTF("%s %08x: %08x  %3d\n", listItr->isTempMemory() ? " temp" : "alloc", listItr->mAddress,
+                     listItr->mSize, listItr->mGroupID);
+        }
+
+        if (listItr->mFreeSize != 0) {
+            JREPORTF(" free %08x: %08x    0\n", listItr->mAddress + listItr->mSize, listItr->mFreeSize);
+        }
+
+        total_used += listItr->mSize;
     }
 
-    if (listItr->mFreeSize != 0) {
-      JREPORTF(" free %08x: %08x    0\n", listItr->mAddress + listItr->mSize,
-        listItr->mFreeSize);
-    }
+    JREPORTF("%d / %d bytes (%6.2f%%) used\n", total_used, this->mSize, (f32)total_used / (f32)this->mSize);
 
-    total_used += listItr->mSize;
-  }
-
-  JREPORTF("%d / %d bytes (%6.2f%%) used\n", total_used, this->mSize,
-    (f32)total_used / (f32)this->mSize);
-
-  this->unlock();
+    this->unlock();
 }
 
 /* Not present in AC, recreated from TP debug. TODO: Check for matching. */
 u32 JKRAramHeap::getFreeSize() {
-  u32 max_free = 0;
-  this->lock();
+    u32 max_free = 0;
+    this->lock();
 
-  for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst();
-    it != sAramList.getEnd(); it++) {
-    if (it->mFreeSize > max_free) {
-      max_free = it->mFreeSize;
+    for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst(); it != sAramList.getEnd(); it++) {
+        if (it->mFreeSize > max_free) {
+            max_free = it->mFreeSize;
+        }
     }
-  }
 
-  this->unlock();
-  return max_free;
+    this->unlock();
+    return max_free;
 }
 
 /* Not present in AC, recreated from TP debug. TODO: Check for matching. */
 u32 JKRAramHeap::getTotalFreeSize() {
-  u32 total_free = 0;
-  this->lock();
+    u32 total_free = 0;
+    this->lock();
 
-  for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst();
-    it != sAramList.getEnd(); it++) {
-    total_free += it->mFreeSize;
-  }
+    for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst(); it != sAramList.getEnd(); it++) {
+        total_free += it->mFreeSize;
+    }
 
-  this->unlock();
-  return total_free;
+    this->unlock();
+    return total_free;
 }
 
 /* Not present in AC, recreated from TP debug. TODO: Check for matching. */
 u32 JKRAramHeap::getUsedSize(u8 groupID) {
-  u32 total_used = 0;
-  this->lock();
+    u32 total_used = 0;
+    this->lock();
 
-  if (groupID == ARAM_GROUP_ID_ALL) {
-    total_used = this->mSize - this->getTotalFreeSize();
-  }
-  else {
-    for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst();
-      it != sAramList.getEnd(); it++) {
-      if (groupID == it->mGroupID) {
-        total_used += it->mSize;
-      }
+    if (groupID == ARAM_GROUP_ID_ALL) {
+        total_used = this->mSize - this->getTotalFreeSize();
+    } else {
+        for (JSUListIterator<JKRAramBlock> it = sAramList.getFirst(); it != sAramList.getEnd(); it++) {
+            if (groupID == it->mGroupID) {
+                total_used += it->mSize;
+            }
+        }
     }
-  }
 
-  this->unlock();
-  return total_used;
+    this->unlock();
+    return total_used;
 }

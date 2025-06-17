@@ -5,55 +5,46 @@
 JSUList<JKRFileLoader> JKRFileLoader::sVolumeList;
 JKRFileLoader* JKRFileLoader::sCurrentVolume;
 
-JKRFileLoader::JKRFileLoader() : JKRDisposer(), mFileLoaderLink(this)
-{
+JKRFileLoader::JKRFileLoader() : JKRDisposer(), mFileLoaderLink(this) {
     mVolumeName = nullptr;
     mVolumeType = 0;
     mMountCount = 0;
 }
 
-JKRFileLoader::~JKRFileLoader()
-{
+JKRFileLoader::~JKRFileLoader() {
     if (sCurrentVolume == this)
         sCurrentVolume = nullptr;
 }
 
-void JKRFileLoader::unmount()
-{
-    if (mMountCount != 0)
-    {
+void JKRFileLoader::unmount() {
+    if (mMountCount != 0) {
         if (--mMountCount == 0)
             delete this;
     }
 }
 
-void JKRFileLoader::changeDirectory(const char* dir)
-{
+void JKRFileLoader::changeDirectory(const char* dir) {
     JKRFileLoader* vol = findVolume(&dir);
     if (vol)
         vol->becomeCurrent(dir);
 }
 
-void* JKRFileLoader::getGlbResource(const char* path)
-{
+void* JKRFileLoader::getGlbResource(const char* path) {
     const char* components[2];
     components[0] = path;
     JKRFileLoader* loader = findVolume(components);
     return (loader == nullptr) ? nullptr : loader->getResource(components[0]);
 }
 
-void* JKRFileLoader::getGlbResource(const char* name, JKRFileLoader* fileLoader)
-{
+void* JKRFileLoader::getGlbResource(const char* name, JKRFileLoader* fileLoader) {
     void* resource = nullptr;
-    if (fileLoader)
-    {
+    if (fileLoader) {
         return fileLoader->getResource(0, name);
     }
 
     JSUList<JKRFileLoader>& volumeList = getVolumeList();
     JSUListIterator<JKRFileLoader> iterator;
-    for (iterator = volumeList.getFirst(); iterator != volumeList.getEnd(); ++iterator)
-    {
+    for (iterator = volumeList.getFirst(); iterator != volumeList.getEnd(); ++iterator) {
         resource = iterator->getResource(0, name);
         if (resource)
             break;
@@ -61,24 +52,20 @@ void* JKRFileLoader::getGlbResource(const char* name, JKRFileLoader* fileLoader)
     return resource;
 }
 
-size_t JKRFileLoader::readGlbResource(void* resBuf, u32 bufSize, const char* volumeName, JKRExpandSwitch expandSwitch)
-{
+size_t JKRFileLoader::readGlbResource(void* resBuf, u32 bufSize, const char* volumeName, JKRExpandSwitch expandSwitch) {
     JKRFileLoader* vol = findVolume(&volumeName);
 
     return vol == nullptr ? 0 : vol->readResource(resBuf, bufSize, volumeName, expandSwitch);
 }
 
-bool JKRFileLoader::removeResource(void* resourceBuffer, JKRFileLoader* fileLoader)
-{
-    if (fileLoader)
-    {
+bool JKRFileLoader::removeResource(void* resourceBuffer, JKRFileLoader* fileLoader) {
+    if (fileLoader) {
         return fileLoader->removeResource(resourceBuffer);
     }
 
     JSUList<JKRFileLoader>& volumeList = getVolumeList();
     JSUListIterator<JKRFileLoader> iterator;
-    for (iterator = volumeList.getFirst(); iterator != volumeList.getEnd(); ++iterator)
-    {
+    for (iterator = volumeList.getFirst(); iterator != volumeList.getEnd(); ++iterator) {
         if (iterator->removeResource(resourceBuffer))
             return true;
     }
@@ -86,17 +73,14 @@ bool JKRFileLoader::removeResource(void* resourceBuffer, JKRFileLoader* fileLoad
     return false;
 }
 
-bool JKRFileLoader::detachResource(void* resourceBuffer, JKRFileLoader* fileLoader)
-{
-    if (fileLoader)
-    {
+bool JKRFileLoader::detachResource(void* resourceBuffer, JKRFileLoader* fileLoader) {
+    if (fileLoader) {
         return fileLoader->detachResource(resourceBuffer);
     }
 
     JSUList<JKRFileLoader>& volumeList = getVolumeList();
     JSUListIterator<JKRFileLoader> iterator;
-    for (iterator = volumeList.getFirst(); iterator != volumeList.getEnd(); ++iterator)
-    {
+    for (iterator = volumeList.getFirst(); iterator != volumeList.getEnd(); ++iterator) {
         if (iterator->detachResource(resourceBuffer))
             return true;
     }
@@ -104,10 +88,8 @@ bool JKRFileLoader::detachResource(void* resourceBuffer, JKRFileLoader* fileLoad
     return false;
 }
 
-JKRFileLoader* JKRFileLoader::findVolume(const char** volumeName)
-{
-    if (*volumeName[0] != '/')
-    {
+JKRFileLoader* JKRFileLoader::findVolume(const char** volumeName) {
+    if (*volumeName[0] != '/') {
         return sCurrentVolume;
     }
 
@@ -116,16 +98,14 @@ JKRFileLoader* JKRFileLoader::findVolume(const char** volumeName)
 
     JSUList<JKRFileLoader>& volumeList = sVolumeList;
     JSUListIterator<JKRFileLoader> iterator;
-    for (iterator = volumeList.getFirst(); iterator != volumeList.getEnd(); ++iterator)
-    {
+    for (iterator = volumeList.getFirst(); iterator != volumeList.getEnd(); ++iterator) {
         if (strcmp(volumeNameBuffer, iterator->mVolumeName) == 0)
             return iterator.getObject();
     }
     return nullptr;
 }
 
-JKRFileFinder* JKRFileLoader::findFirstFile(const char* volumeName)
-{
+JKRFileFinder* JKRFileLoader::findFirstFile(const char* volumeName) {
     JKRFileFinder* ret = nullptr;
 
     JKRFileLoader* vol = findVolume(&volumeName);
@@ -135,21 +115,15 @@ JKRFileFinder* JKRFileLoader::findFirstFile(const char* volumeName)
     return ret;
 }
 
-const char* JKRFileLoader::fetchVolumeName(char* buffer, long bufferSize, const char* path)
-{
+const char* JKRFileLoader::fetchVolumeName(char* buffer, long bufferSize, const char* path) {
     static char rootPath[] = "/";
-    if (strcmp(path, "/") == 0)
-    {
+    if (strcmp(path, "/") == 0) {
         strcpy(buffer, rootPath);
         return rootPath;
-    }
-    else
-    {
+    } else {
         path++;
-        while (*path != 0 && *path != '/')
-        {
-            if (1 < bufferSize)
-            {
+        while (*path != 0 && *path != '/') {
+            if (1 < bufferSize) {
                 *buffer = _tolower(*path);
                 buffer++;
                 bufferSize--;

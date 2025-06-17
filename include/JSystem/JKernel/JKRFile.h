@@ -10,25 +10,25 @@
 
 #ifdef __cplusplus
 class JKRFile : public JKRDisposer {
-public:
-  inline JKRFile()
-    : JKRDisposer()
-    , mFileOpen(false)
-  {
-  }
+  public:
+    inline JKRFile() : JKRDisposer(), mFileOpen(false) {
+    }
 
-  virtual ~JKRFile() { }
-  virtual bool open(const char* path) = 0;
-  virtual bool close() = 0;
-  virtual int readData(void* data, s32 length, s32 ofs) = 0;
-  virtual int writeData(const void* data, s32 length, s32 ofs) = 0;
-  virtual u32 getFileSize() const = 0;
+    virtual ~JKRFile() {
+    }
+    virtual bool open(const char* path) = 0;
+    virtual bool close() = 0;
+    virtual int readData(void* data, s32 length, s32 ofs) = 0;
+    virtual int writeData(const void* data, s32 length, s32 ofs) = 0;
+    virtual u32 getFileSize() const = 0;
 
-  void read(void* data, s32 length, s32 ofs);
-  bool isAvailable() { return this->mFileOpen; }
+    void read(void* data, s32 length, s32 ofs);
+    bool isAvailable() {
+        return this->mFileOpen;
+    }
 
-protected:
-  bool mFileOpen;
+  protected:
+    bool mFileOpen;
 };
 #endif
 

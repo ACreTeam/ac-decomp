@@ -12,7 +12,7 @@
 // https://github.com/kiwi515/ogws/blob/master/src/egg/core/eggAsyncDisplay.cpp
 // gpHang: https://github.com/valentinaslover/paper-mar/blob/master/source/sdk/DEMOInit.c#L280
 
-GC_Mtx e_mtx = {{1.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f, 0.0f}};
+GC_Mtx e_mtx = { { 1.0f, 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 1.0f, 0.0f } };
 
 JFWDisplay* JFWDisplay::sManager;
 
@@ -35,14 +35,14 @@ void JFWDisplay::ctor_subroutine(const GXRenderModeObj* rmode, bool enableAlpha)
     mClearColor.set(0, 0, 0, 0);
 
     mZClear = 0xFFFFFF;
-    mRMode = (rmode) ? rmode :  JUTVideo::sManager->getRenderMode();
-        
+    mRMode = (rmode) ? rmode : JUTVideo::sManager->getRenderMode();
+
     mGamma = 0;
     mFader = nullptr;
     mFrameRate = 1;
     mTickRate = 0;
     mCombinationRatio = 0.0f;
-    
+
     mFrameTime = 0;
     mStartTick = OSGetTick();
     mVideoFrameTime = 0;
@@ -65,7 +65,8 @@ JFWDisplay::~JFWDisplay() {
     JUTXfb::destroyManager();
 }
 
-JFWDisplay *JFWDisplay::createManager(const GXRenderModeObj* rmode, JKRHeap* heap, JUTXfb::EXfbNumber bufferCount, bool p4) {
+JFWDisplay* JFWDisplay::createManager(const GXRenderModeObj* rmode, JKRHeap* heap, JUTXfb::EXfbNumber bufferCount,
+                                      bool p4) {
     JUT_CONFIRM_MESSAGE(sManager == 0);
 
     if (sManager == nullptr)
@@ -81,8 +82,7 @@ void JFWDisplay::destroyManager() {
 }
 
 void callDirectDraw() {
-    JUTChangeFrameBuffer(JUTXfb::getManager()->getDrawingXfb(),
-                         JUTVideo::getManager()->getEfbHeight(),
+    JUTChangeFrameBuffer(JUTXfb::getManager()->getDrawingXfb(), JUTVideo::getManager()->getEfbHeight(),
                          JUTVideo::getManager()->getFbWidth());
     JUTAssertion::flushMessage();
 }
@@ -92,7 +92,7 @@ void JFWDisplay::prepareCopyDisp() {
     u16 width = (u16)JUTVideo::getManager()->getFbWidth();
     u16 height = (u16)JUTVideo::getManager()->getEfbHeight();
     u16 xfbHeight = (u16)JUTVideo::getManager()->getXfbHeight();
-    
+
     GXSetCopyClear(mClearColor, mZClear);
     GXSetDispCopySrc(0, 0, width, height);
     GXSetDispCopyDst(width, xfbHeight);
@@ -108,7 +108,7 @@ void JFWDisplay::prepareCopyDisp() {
 }
 
 void JFWDisplay::drawendXfb_single() {
-    JUTXfb *manager = JUTXfb::getManager();
+    JUTXfb* manager = JUTXfb::getManager();
     if (manager->getDrawingXfbIndex() >= 0) {
         prepareCopyDisp();
         JFWDrawDoneAlarm();
@@ -118,18 +118,16 @@ void JFWDisplay::drawendXfb_single() {
 }
 
 void JFWDisplay::exchangeXfb_double() {
-    JUTXfb *xfbMng = JUTXfb::getManager();
+    JUTXfb* xfbMng = JUTXfb::getManager();
 
     if (xfbMng->getDrawnXfbIndex() == xfbMng->getDisplayingXfbIndex()) {
-        if (xfbMng->getDrawingXfbIndex() >= 0)
-        {
+        if (xfbMng->getDrawingXfbIndex() >= 0) {
             prepareCopyDisp();
             GXCopyDisp(xfbMng->getDrawingXfb(), GX_TRUE);
             if (mDrawDoneMethod == UNK_METHOD_0) {
                 GXDrawDone();
                 JUTVideo::dummyNoDrawWait();
-            }
-            else {
+            } else {
                 JUTVideo::drawDoneStart();
             }
 
@@ -140,8 +138,7 @@ void JFWDisplay::exchangeXfb_double() {
         int cur_xfb_index = xfbMng->getDrawingXfbIndex();
         xfbMng->setDrawnXfbIndex(cur_xfb_index);
         xfbMng->setDrawingXfbIndex(cur_xfb_index >= 0 ? cur_xfb_index ^ 1 : 0);
-    }
-    else {
+    } else {
         clearEfb(JUtility::TColor(0, 0, 0, 0xff));
         if (xfbMng->getDrawingXfbIndex() < 0) {
             xfbMng->setDrawingXfbIndex(0);
@@ -150,7 +147,7 @@ void JFWDisplay::exchangeXfb_double() {
 }
 
 void JFWDisplay::exchangeXfb_triple() {
-    JUTXfb *xfbMng = JUTXfb::getManager();
+    JUTXfb* xfbMng = JUTXfb::getManager();
 
     if (xfbMng->getDrawingXfbIndex() >= 0) {
         callDirectDraw();
@@ -168,7 +165,7 @@ void JFWDisplay::exchangeXfb_triple() {
 }
 
 void JFWDisplay::copyXfb_triple() {
-    JUTXfb *xfbMng = JUTXfb::getManager();
+    JUTXfb* xfbMng = JUTXfb::getManager();
 
     if (xfbMng->getDrawingXfbIndex() >= 0) {
         prepareCopyDisp();
@@ -181,16 +178,14 @@ void JFWDisplay::preGX() {
     GXInvalidateTexAll();
     GXInvalidateVtxCache();
 
-    if (mRMode->aa)  {
+    if (mRMode->aa) {
         GXSetPixelFmt(GX_PF_RGB565_Z16, GX_ZC_LINEAR);
         GXSetDither(GX_ENABLE);
-    }
-    else {
+    } else {
         if (mEnableAlpha) {
             GXSetPixelFmt(GX_PF_RGBA6_Z24, GX_ZC_LINEAR);
             GXSetDither(GX_ENABLE);
-        }
-        else {
+        } else {
             GXSetPixelFmt(GX_PF_RGB8_Z24, GX_ZC_LINEAR);
             GXSetDither(GX_DISABLE);
         }
@@ -223,8 +218,8 @@ void JFWDisplay::endGX() {
     GXFlush();
 }
 
-void JFWDisplay::beginRender() { 
-    JUTProcBar::getManager()->wholeLoopEnd();    
+void JFWDisplay::beginRender() {
+    JUTProcBar::getManager()->wholeLoopEnd();
     JUTProcBar::getManager()->wholeLoopStart();
     JUTProcBar::getManager()->idleStart();
 
@@ -238,45 +233,43 @@ void JFWDisplay::beginRender() {
 
     JUTProcBar::getManager()->idleEnd();
     JUTProcBar::getManager()->gpStart();
-    
-    JUTXfb * xfbMgr = JUTXfb::getManager();
+
+    JUTXfb* xfbMgr = JUTXfb::getManager();
     switch (xfbMgr->getBufferNum()) {
-    case 1:
-        if (xfbMgr->getSDrawingFlag() != 2) {
-            xfbMgr->setSDrawingFlag(1);
-            clearEfb(JUtility::TColor(0, 0, 0, 0xff));
-        }
-        else {
-            xfbMgr->setSDrawingFlag(1);
-        }
-        xfbMgr->setDrawingXfbIndex(mDrawingXfbNo);
-        break;
-    case 2:
-        exchangeXfb_double();
-        break;
-    case 3:
-        exchangeXfb_triple();
-        break;
-    default:
-        break;
+        case 1:
+            if (xfbMgr->getSDrawingFlag() != 2) {
+                xfbMgr->setSDrawingFlag(1);
+                clearEfb(JUtility::TColor(0, 0, 0, 0xff));
+            } else {
+                xfbMgr->setSDrawingFlag(1);
+            }
+            xfbMgr->setDrawingXfbIndex(mDrawingXfbNo);
+            break;
+        case 2:
+            exchangeXfb_double();
+            break;
+        case 3:
+            exchangeXfb_triple();
+            break;
+        default:
+            break;
     }
-    
+
     preGX();
 }
 
 void JFWDisplay::endRender() {
     endGX();
 
-    switch (JUTXfb::getManager()->getBufferNum())
-    {
-    case 1:
-        drawendXfb_single();
-    case 2:
-        break;
-    case 3:
-        copyXfb_triple();
-    default:
-        break;
+    switch (JUTXfb::getManager()->getBufferNum()) {
+        case 1:
+            drawendXfb_single();
+        case 2:
+            break;
+        case 3:
+            copyXfb_triple();
+        default:
+            break;
     }
 
     JUTProcBar::getManager()->cpuStart();
@@ -286,31 +279,29 @@ void JFWDisplay::endRender() {
 void JFWDisplay::endFrame() {
     JUTProcBar::getManager()->cpuEnd();
     JUTProcBar::getManager()->gpWaitStart();
-    
+
     switch (JUTXfb::getManager()->getBufferNum()) {
-    case 1:
-        break;
-    case 2:
-        JFWDrawDoneAlarm();
-        GXFlush();
-        break;
-    case 3:
-        JFWDrawDoneAlarm();
-        GXFlush();
-        break;
-    default:
-        break;
+        case 1:
+            break;
+        case 2:
+            JFWDrawDoneAlarm();
+            GXFlush();
+            break;
+        case 3:
+            JFWDrawDoneAlarm();
+            GXFlush();
+            break;
+        default:
+            break;
     }
 
     JUTProcBar::getManager()->gpWaitEnd();
     JUTProcBar::getManager()->gpEnd();
 
-
     static u32 prevFrame = VIGetRetraceCount();
     u32 retrace_cnt = VIGetRetraceCount();
     JUTProcBar::getManager()->setCostFrame(retrace_cnt - prevFrame);
     prevFrame = retrace_cnt;
-    
 }
 
 void JFWDisplay::waitBlanking(int p1) {
@@ -328,8 +319,7 @@ void waitForTick(u32 p1, u16 p2) {
             time = OSGetTime();
         }
         nextTick = time + p1;
-    }
-    else {
+    } else {
         static u32 nextCount = VIGetRetraceCount();
         u32 uVar1 = (p2 == 0) ? 1 : p2;
         OSMessage msg;
@@ -343,7 +333,7 @@ void waitForTick(u32 p1, u16 p2) {
 }
 
 void JFWThreadAlarmHandler(OSAlarm* p_alarm, OSContext* p_ctx) {
-    JFWAlarm *alarm = static_cast<JFWAlarm *>(p_alarm);
+    JFWAlarm* alarm = static_cast<JFWAlarm*>(p_alarm);
     OSResumeThread(alarm->getThread());
 }
 
@@ -359,16 +349,12 @@ void JFWDisplay::threadSleep(s64 time) {
 }
 
 static GXTexObj clear_z_tobj;
-static u8 clear_z_TX[] __attribute__((aligned(32))) = {
-    0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff,
-    0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff,
-    0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff,
-    0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff
-};
+static u8 clear_z_TX[]
+    __attribute__((aligned(32))) = { 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00,
+                                     0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff,
+                                     0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+                                     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
 void* JFWDisplay::changeToSingleXfb(int index) {
     JUTXfb* xfb = JUTXfb::getManager();
@@ -384,7 +370,7 @@ void* JFWDisplay::changeToSingleXfb(int index) {
     }
 
     VIWaitForRetrace();
-    
+
     if (xfbNo != xfb->getDisplayingXfbIndex()) {
         u32 xfbSize = xfb->accumeXfbSize();
         DCInvalidateRange(xfb->getDrawingXfb(), xfbSize);
@@ -427,15 +413,14 @@ void* JFWDisplay::changeToDoubleXfb() {
 
 void JFWDisplay::clearEfb_init() {
     GXInitTexObj(&clear_z_tobj, &clear_z_TX, 4, 4, GX_TF_Z24X8, GX_REPEAT, GX_REPEAT, GX_FALSE);
-    GXInitTexObjLOD(&clear_z_tobj, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE,
-                    GX_ANISO_1);
+    GXInitTexObjLOD(&clear_z_tobj, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
 }
 
 void JFWDisplay::clearEfb(GXColor color) {
     Mtx44 mtx;
     u16 height = mRMode->efbHeight;
     u16 width = mRMode->fbWidth;
-    
+
     C_MTXOrtho(mtx, 0.0f, height, 0.0f, width, 0.0f, 1.0f);
     GXSetProjection(mtx, GX_ORTHOGRAPHIC);
     GXSetViewport(0.0f, 0.0f, width, height, 0.0f, 1.0f);
@@ -499,8 +484,7 @@ void JFWDisplay::calcCombinationRatio() {
     s32 unk30 = mFrameTime * 2;
 
     s32 i = vidInterval;
-    for (; i < unk30; i += vidInterval)  {
-    }
+    for (; i < unk30; i += vidInterval) {}
 
     s32 tmp = (i - unk30) - mVideoFrameTime;
     if (tmp < 0) {
@@ -512,34 +496,34 @@ void JFWDisplay::calcCombinationRatio() {
     }
 }
 
-void JFWGXAbortAlarmHandler(OSAlarm *param_0, OSContext *param_1) {
+void JFWGXAbortAlarmHandler(OSAlarm* param_0, OSContext* param_1) {
     diagnoseGpHang();
     GXAbortFrame();
     GXSetDrawDone();
 }
 
 void diagnoseGpHang() {
-	u32 xfTop0, xfBot0, suRdy0, r0Rdy0;
-	u32 xfTop1, xfBot1, suRdy1, r0Rdy1;
-	u32 xfTopD, xfBotD, suRdyD, r0RdyD;
-	GXBool readIdle, cmdIdle, junk;
+    u32 xfTop0, xfBot0, suRdy0, r0Rdy0;
+    u32 xfTop1, xfBot1, suRdy1, r0Rdy1;
+    u32 xfTopD, xfBotD, suRdyD, r0RdyD;
+    GXBool readIdle, cmdIdle, junk;
 
-	GXReadXfRasMetric(&xfBot0, &xfTop0, &r0Rdy0, &suRdy0);
-	GXReadXfRasMetric(&xfBot1, &xfTop1, &r0Rdy1, &suRdy1);
+    GXReadXfRasMetric(&xfBot0, &xfTop0, &r0Rdy0, &suRdy0);
+    GXReadXfRasMetric(&xfBot1, &xfTop1, &r0Rdy1, &suRdy1);
 
-	xfTopD = (xfTop1 - xfTop0) == 0;
-	xfBotD = (xfBot1 - xfBot0) == 0;
-	suRdyD = (suRdy1 - suRdy0) > 0;
-	r0RdyD = (r0Rdy1 - r0Rdy0) > 0;
+    xfTopD = (xfTop1 - xfTop0) == 0;
+    xfBotD = (xfBot1 - xfBot0) == 0;
+    suRdyD = (suRdy1 - suRdy0) > 0;
+    r0RdyD = (r0Rdy1 - r0Rdy0) > 0;
 
-	GXGetGPStatus(&junk, &junk, &readIdle, &cmdIdle, &junk);
+    GXGetGPStatus(&junk, &junk, &readIdle, &cmdIdle, &junk);
     OSReport("GP status %d%d%d%d%d%d --> ", readIdle, cmdIdle, xfTopD, xfBotD, suRdyD, r0RdyD);
 
     if (!xfBotD && suRdyD)
         OSReport("GP hang due to XF stall bug.\n");
     else if (!xfTopD && xfBotD && suRdyD)
         OSReport("GP hang due to unterminated primitive.\n");
-    else if (!cmdIdle && xfTopD && xfBotD && suRdyD) 
+    else if (!cmdIdle && xfTopD && xfBotD && suRdyD)
         OSReport("GP hang due to illegal instruction.\n");
     else if (readIdle && cmdIdle && xfTopD && xfBotD && suRdyD && r0RdyD)
         OSReport("GP appears to be not hung (waiting for input).\n");

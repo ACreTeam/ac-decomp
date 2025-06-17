@@ -4,8 +4,7 @@
 #include "types.h"
 #include <dolphin/gx.h>
 
-struct JUTGraphFifo
-{
+struct JUTGraphFifo {
     JUTGraphFifo(u32);
 
     virtual ~JUTGraphFifo(); // _08
@@ -13,21 +12,21 @@ struct JUTGraphFifo
     void becomeCurrent();
     void setBreakPt();
 
-    void getGpStatus()
-    {
+    void getGpStatus() {
         GXGetGPStatus((GXBool*)&mGpStatus[0], (GXBool*)&mGpStatus[1], (GXBool*)&mGpStatus[2], (GXBool*)&mGpStatus[3],
                       (GXBool*)&mGpStatus[4]);
     }
 
-    bool isGPActive()
-    {
+    bool isGPActive() {
         getGpStatus();
         return mGpStatus[2] == false;
     }
 
-    void save() { GXSaveCPUFifo(this->mFifo); }
+    void save() {
+        GXSaveCPUFifo(this->mFifo);
+    }
 
-    static JUTGraphFifo *sCurrentFifo;
+    static JUTGraphFifo* sCurrentFifo;
     static GXBool mGpStatus[5];
     static bool sInitiated;
 
@@ -38,6 +37,8 @@ struct JUTGraphFifo
     u8 _10[0xC];      // _10
 };
 
-inline void JUTCreateFifo(u32 bufSize) { new JUTGraphFifo(bufSize); }
+inline void JUTCreateFifo(u32 bufSize) {
+    new JUTGraphFifo(bufSize);
+}
 
 #endif

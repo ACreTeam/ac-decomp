@@ -2,24 +2,20 @@
 #include "MSL_C/math.h"
 
 J2DGrafContext::J2DGrafContext(f32 left, f32 top, f32 right, f32 bottom)
-    : mBounds(left, top, left + right, top + bottom)
-    , mScissorBounds(left, top, left + right, top + bottom)
-{
+    : mBounds(left, top, left + right, top + bottom), mScissorBounds(left, top, left + right, top + bottom) {
     JUtility::TColor color(-1);
     setColor(color);
     setLineWidth(6);
 }
 
-void J2DGrafContext::setPort()
-{
+void J2DGrafContext::setPort() {
     setScissor();
     setup2D();
 
     GXSetViewport(mBounds.i.x, mBounds.i.y, mBounds.f.x - mBounds.i.x, mBounds.f.y - mBounds.i.y, 0.0f, 1.0f);
 }
 
-void J2DGrafContext::setup2D()
-{
+void J2DGrafContext::setup2D() {
     GXSetNumIndStages(0);
     for (int i = 0; i < 8; i++) {
         GXSetTevDirect((GXTevStageID)i);
@@ -59,8 +55,7 @@ void J2DGrafContext::setup2D()
     GXSetVtxDesc(GX_VA_TEX0, GX_NONE);
 }
 
-void J2DGrafContext::setScissor()
-{
+void J2DGrafContext::setScissor() {
     JGeometry::TBox2f hardBounds(0, 0, 1024, 1000);
     JGeometry::TBox2f newBounds(mScissorBounds);
 
@@ -75,47 +70,48 @@ void J2DGrafContext::setScissor()
     }
 }
 
-void J2DGrafContext::scissor(const JGeometry::TBox2f& bounds) { mScissorBounds = bounds; }
-
-void J2DGrafContext::place(const JGeometry::TBox2f& bounds)
-{
-    mBounds        = bounds;
+void J2DGrafContext::scissor(const JGeometry::TBox2f& bounds) {
     mScissorBounds = bounds;
 }
 
-void J2DGrafContext::setColor(JUtility::TColor colorTL, JUtility::TColor colorTR, JUtility::TColor colorBR, JUtility::TColor colorBL)
-{
+void J2DGrafContext::place(const JGeometry::TBox2f& bounds) {
+    mBounds = bounds;
+    mScissorBounds = bounds;
+}
+
+void J2DGrafContext::setColor(JUtility::TColor colorTL, JUtility::TColor colorTR, JUtility::TColor colorBR,
+                              JUtility::TColor colorBL) {
     mColorTL = colorTL;
     mColorTR = colorTR;
     mColorBR = colorBR;
     mColorBL = colorBL;
 
-    _B0.mType       = 1;
-    _B0.mSrcFactor  = 4;
+    _B0.mType = 1;
+    _B0.mSrcFactor = 4;
     _B0.mDestFactor = 5;
 
-    mLinePart.mType       = 1;
-    mLinePart.mSrcFactor  = 4;
+    mLinePart.mType = 1;
+    mLinePart.mSrcFactor = 4;
     mLinePart.mDestFactor = 5;
 
-    mBoxPart.mType       = 1;
-    mBoxPart.mSrcFactor  = 4;
+    mBoxPart.mType = 1;
+    mBoxPart.mSrcFactor = 4;
     mBoxPart.mDestFactor = 5;
 
     if ((u8)u32(mColorTL) != 0xFF) {
         return;
     }
 
-    _B0.mType       = 0;
-    _B0.mSrcFactor  = 1;
+    _B0.mType = 0;
+    _B0.mSrcFactor = 1;
     _B0.mDestFactor = 0;
 
     if ((u8)u32(mColorBR) != 0xFF) {
         return;
     }
 
-    mLinePart.mType       = 0;
-    mLinePart.mSrcFactor  = 1;
+    mLinePart.mType = 0;
+    mLinePart.mSrcFactor = 1;
     mLinePart.mDestFactor = 0;
 
     if ((u8)u32(mColorTR) != 0xFF) {
@@ -125,20 +121,19 @@ void J2DGrafContext::setColor(JUtility::TColor colorTL, JUtility::TColor colorTR
         return;
     }
 
-    mBoxPart.mType       = 0;
-    mBoxPart.mSrcFactor  = 1;
+    mBoxPart.mType = 0;
+    mBoxPart.mSrcFactor = 1;
     mBoxPart.mDestFactor = 0;
 }
 
-void J2DGrafContext::setLineWidth(u8 width)
-{
+void J2DGrafContext::setLineWidth(u8 width) {
     mLineWidth = width;
     GXSetLineWidth(mLineWidth, GX_TO_ZERO);
 }
 
-void J2DGrafContext::fillBox(const JGeometry::TBox2f& box)
-{
-    GXSetBlendMode((GXBlendMode)mBoxPart.mType, (GXBlendFactor)mBoxPart.mSrcFactor, (GXBlendFactor)mBoxPart.mDestFactor, GX_LO_SET);
+void J2DGrafContext::fillBox(const JGeometry::TBox2f& box) {
+    GXSetBlendMode((GXBlendMode)mBoxPart.mType, (GXBlendFactor)mBoxPart.mSrcFactor, (GXBlendFactor)mBoxPart.mDestFactor,
+                   GX_LO_SET);
     GXLoadPosMtxImm(mPosMtx, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGBA, GX_F32, 0);
 
@@ -156,9 +151,9 @@ void J2DGrafContext::fillBox(const JGeometry::TBox2f& box)
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGBA, GX_RGBA4, 0);
 }
 
-void J2DGrafContext::drawFrame(const JGeometry::TBox2f& box)
-{
-    GXSetBlendMode((GXBlendMode)mBoxPart.mType, (GXBlendFactor)mBoxPart.mSrcFactor, (GXBlendFactor)mBoxPart.mDestFactor, GX_LO_SET);
+void J2DGrafContext::drawFrame(const JGeometry::TBox2f& box) {
+    GXSetBlendMode((GXBlendMode)mBoxPart.mType, (GXBlendFactor)mBoxPart.mSrcFactor, (GXBlendFactor)mBoxPart.mDestFactor,
+                   GX_LO_SET);
     GXLoadPosMtxImm(mPosMtx, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGBA, GX_F32, 0);
 
@@ -178,9 +173,9 @@ void J2DGrafContext::drawFrame(const JGeometry::TBox2f& box)
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGBA, GX_RGBA4, 0);
 }
 
-void J2DGrafContext::line(JGeometry::TVec2f start, JGeometry::TVec2f end)
-{
-    GXSetBlendMode((GXBlendMode)mLinePart.mType, (GXBlendFactor)mLinePart.mSrcFactor, (GXBlendFactor)mLinePart.mDestFactor, GX_LO_SET);
+void J2DGrafContext::line(JGeometry::TVec2f start, JGeometry::TVec2f end) {
+    GXSetBlendMode((GXBlendMode)mLinePart.mType, (GXBlendFactor)mLinePart.mSrcFactor,
+                   (GXBlendFactor)mLinePart.mDestFactor, GX_LO_SET);
     GXLoadPosMtxImm(mPosMtx, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGBA, GX_F32, 0);
 
@@ -194,8 +189,7 @@ void J2DGrafContext::line(JGeometry::TVec2f start, JGeometry::TVec2f end)
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGBA, GX_RGBA4, 0);
 }
 
-void J2DGrafContext::lineTo(JGeometry::TVec2f pos)
-{
+void J2DGrafContext::lineTo(JGeometry::TVec2f pos) {
     line(mPrevPos, pos);
     mPrevPos = pos;
 }

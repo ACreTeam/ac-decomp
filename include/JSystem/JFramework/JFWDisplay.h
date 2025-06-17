@@ -17,42 +17,50 @@ typedef void (*JFWDisplayUnkFunc)(void);
 extern GC_Mtx e_mtx;
 
 class JFWAlarm : public OSAlarm { // everything here seems to be auto inlined or unused
-public:
+  public:
     // Contructor and Destructor are both present in map but unused, not sure if it belongs here
-    JFWAlarm() {}
-    ~JFWAlarm() {}
-    void createAlarm() { OSCreateAlarm(this); }
-    void cancelAlarm() { OSCancelAlarm(this); }
+    JFWAlarm() {
+    }
+    ~JFWAlarm() {
+    }
+    void createAlarm() {
+        OSCreateAlarm(this);
+    }
+    void cancelAlarm() {
+        OSCancelAlarm(this);
+    }
 
-    OSThread *getThread() const { return mThread; }
-    void setThread(OSThread *thread) { mThread = thread; }
+    OSThread* getThread() const {
+        return mThread;
+    }
+    void setThread(OSThread* thread) {
+        mThread = thread;
+    }
 
-    static JSUList<JFWAlarm> sList;//
+    static JSUList<JFWAlarm> sList; //
 
-public:
-    /* 0x28 */ OSThread *mThread;
+  public:
+    /* 0x28 */ OSThread* mThread;
 };
 
-class JFWDisplay
-{
-public:
-    enum EDrawDone
-    {
+class JFWDisplay {
+  public:
+    enum EDrawDone {
         /* 0x0 */ UNK_METHOD_0 = 0,
         /* 0x1 */ UNK_METHOD_1 = 1
     };
 
-    static JFWDisplay *createManager(const _GXRenderModeObj *, JKRHeap *, JUTXfb::EXfbNumber, bool); // 0x80015bfc
-    void waitBlanking(int);                      // 0x8001684c
-    void threadSleep(s64);                       // 0x800169fc
-    void clearEfb_init();                        // 0x80016ab8
-    void clearEfb();                             // 0x80016b2c
-    void clearEfb(_GXColor);                     // 0x80016b58
-    void clearEfb(int, int, int, int, _GXColor); // 0x80016b9c
-    void calcCombinationRatio();                 // 0x80016f0c
+    static JFWDisplay* createManager(const _GXRenderModeObj*, JKRHeap*, JUTXfb::EXfbNumber, bool); // 0x80015bfc
+    void waitBlanking(int);                                                                        // 0x8001684c
+    void threadSleep(s64);                                                                         // 0x800169fc
+    void clearEfb_init();                                                                          // 0x80016ab8
+    void clearEfb();                                                                               // 0x80016b2c
+    void clearEfb(_GXColor);                                                                       // 0x80016b58
+    void clearEfb(int, int, int, int, _GXColor);                                                   // 0x80016b9c
+    void calcCombinationRatio();                                                                   // 0x80016f0c
 
-    void ctor_subroutine(const GXRenderModeObj *, bool);
-    JFWDisplay(const GXRenderModeObj *, JKRHeap *, JUTXfb::EXfbNumber, bool);
+    void ctor_subroutine(const GXRenderModeObj*, bool);
+    JFWDisplay(const GXRenderModeObj*, JKRHeap*, JUTXfb::EXfbNumber, bool);
 
     static void destroyManager();
     void prepareCopyDisp();
@@ -66,16 +74,16 @@ public:
     void* changeToDoubleXfb();
 
     // UNUSED
-    JFWDisplay(void *, bool);
-    JFWDisplay(void *, void *, bool);
-    JFWDisplay(void *, void *, void *, bool);
-    void createManager(const _GXRenderModeObj *, void *, bool);
-    void createManager(const _GXRenderModeObj *, void *, void *, bool);
-    void createManager(const _GXRenderModeObj *, void *, void *, void *, bool);
+    JFWDisplay(void*, bool);
+    JFWDisplay(void*, void*, bool);
+    JFWDisplay(void*, void*, void*, bool);
+    void createManager(const _GXRenderModeObj*, void*, bool);
+    void createManager(const _GXRenderModeObj*, void*, void*, bool);
+    void createManager(const _GXRenderModeObj*, void*, void*, void*, bool);
     void deleteToSingleXfb(int);
-    void deleteToSingleXfb(void *);
-    void addToDoubleXfb(void *, bool);
-    void addToDoubleXfb(JKRHeap *);
+    void deleteToSingleXfb(void*);
+    void addToDoubleXfb(void*, bool);
+    void addToDoubleXfb(JKRHeap*);
     void clearAllXfb();
     s32 frameToTick(float);
     static void setForOSResetSystem();
@@ -86,7 +94,9 @@ public:
     virtual void endFrame();    // 0x8001669c
     virtual ~JFWDisplay();      // 0x80015b80
 
-    static JFWDisplay *getManager() { return sManager; }
+    static JFWDisplay* getManager() {
+        return sManager;
+    }
 
     int getEfbHeight() const {
         return JUTVideo::getManager()->getEfbHeight();
@@ -96,8 +106,12 @@ public:
         return JUTVideo::getManager()->getFbWidth();
     }
 
-    JUTFader *getFader() const { return mFader; }
-    void setFader(JUTFader * fader) { mFader = fader; }
+    JUTFader* getFader() const {
+        return mFader;
+    }
+    void setFader(JUTFader* fader) {
+        mFader = fader;
+    }
 
     bool startFadeOut(int duration) {
         if (mFader != nullptr) {
@@ -125,8 +139,7 @@ public:
         mClearColor.set(r, g, b, a);
     }
 
-    void setClearColor(JUtility::TColor color)
-    {
+    void setClearColor(JUtility::TColor color) {
         mClearColor = color;
     }
 
@@ -134,19 +147,18 @@ public:
         mEnableAlpha = enable;
     }
 
-    bool getFBAlpha()
-    {
+    bool getFBAlpha() {
         return mEnableAlpha;
     }
 
-    static JFWDisplay *sManager; // 0x80415718
+    static JFWDisplay* sManager; // 0x80415718
 
-private:
-    JUTFader *mFader; // 04
-    const GXRenderModeObj *mRMode; // 08
+  private:
+    JUTFader* mFader;              // 04
+    const GXRenderModeObj* mRMode; // 08
     JUtility::TColor mClearColor;  // 0c
     u32 mZClear;                   // 10
-    JUTXfb *mXfb;                  // 14
+    JUTXfb* mXfb;                  // 14
     u16 mGamma;                    // 18
     EDrawDone mDrawDoneMethod;     // 1c
     u16 mFrameRate;                // 20
@@ -156,7 +168,7 @@ private:
     f32 mCombinationRatio;         // 2c
     u32 mStartTick;                // 30, tick of when the frame starts rendering
     u32 mFrameTime;                // 34, time it took to render a frame/amount of ticks beginRender took
-    u32 mVideoFrameTime;           // 38, time between mStartTick and the last Video Tick 
+    u32 mVideoFrameTime;           // 38, time between mStartTick and the last Video Tick
     s16 mDrawingXfbNo;             // 3c
     bool mIsSingleXfb;             // 3e
 };
