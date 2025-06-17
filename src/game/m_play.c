@@ -134,8 +134,8 @@ static void Game_play_fbdemo_wipe_create_sub(GAME_PLAY* play) {
 
     bzero(&play->fbdemo_wipe, sizeof(fbdemo_wipe));
 
-    if (type >= 7) {
-        type = 1;
+    if (type >= WIPE_TYPE_NUM) {
+        type = WIPE_TYPE_TRIFORCE;
     }
 
     play->fbdemo_wipe.wipe_type = type;
