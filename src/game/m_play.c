@@ -321,7 +321,7 @@ static void Game_play_fbdemo_wipe_proc(GAME_PLAY* play) {
     static PLAY_WIPE_PROC wipe_proc[] = { (PLAY_WIPE_PROC)none_proc1, Game_play_fbdemo_wipe_create,
                                           Game_play_fbdemo_wipe_init, Game_play_fbdemo_wipe_move };
 
-    if ((play->fb_wipe_mode == WIPE_MODE_NONE) && (play->fb_fade_type != 0)) {
+    if ((play->fb_wipe_mode == WIPE_MODE_NONE) && (play->fb_fade_type != FADE_TYPE_NONE)) {
         play->fb_wipe_mode = WIPE_MODE_CREATE;
     }
 
