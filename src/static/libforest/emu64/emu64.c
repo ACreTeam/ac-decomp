@@ -855,8 +855,8 @@ static const OthermodeParameterInfo h_tbl[] = {
         19,
         1,
         {
-            { "G_TP_PERSP", 0 << 19 },
-            { "G_TP_NONE", 1 << 19 },
+            { "G_TP_PERSP", 1 << 19 },
+            { "G_TP_NONE", 0 << 19 },
             { "-1", -1 },
             { "-1", -1 },
         },
