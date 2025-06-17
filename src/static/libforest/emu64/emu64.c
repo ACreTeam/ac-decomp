@@ -11,10 +11,14 @@
 #include "jsyswrap.h"
 #include "dolphin/PPCArch.h"
 
-#pragma inline_depth(smart)
-#pragma inline_max_size(1000)
+// this pragma may be unnecessary
+#pragma inline_depth(1024)
+
+// this one is absolutely necessary for a ton of function calls to be inlined
+#pragma inline_max_size(10000)
 
 #include "../src/static/libforest/emu64/emu64_utility.c"
+#include "../src/static/libforest/emu64/emu64_print.cpp"
 
 extern void OSInitFastCast(void);
 
