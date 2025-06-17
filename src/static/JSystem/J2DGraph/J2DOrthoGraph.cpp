@@ -59,9 +59,9 @@ void J2DDrawLine(f32 x1, f32 y1, f32 x2, f32 y2, JUtility::TColor color, int lin
     oGrph.lineTo(x2, y2);
 }
 
-void J2DFillBox(f32 l, f32 b, f32 x, f32 y, JUtility::TColor color)
+void J2DFillBox(f32 l, f32 t, f32 x, f32 y, JUtility::TColor color)
 {
-    J2DFillBox(JGeometry::TBox2f(l, b, l + x, b + y), color);
+    J2DFillBox(JGeometry::TBox2f(l, t, l + x, t + y), color);
 }
 
 void J2DFillBox(const JGeometry::TBox2f& box, JUtility::TColor color)
@@ -71,9 +71,9 @@ void J2DFillBox(const JGeometry::TBox2f& box, JUtility::TColor color)
     oGrph.fillBox(box);
 }
 
-void J2DFillBox(f32 l, f32 b, f32 x, f32 y, JUtility::TColor c1, JUtility::TColor c2, JUtility::TColor c3, JUtility::TColor c4)
+void J2DFillBox(f32 l, f32 t, f32 x, f32 y, JUtility::TColor c1, JUtility::TColor c2, JUtility::TColor c3, JUtility::TColor c4)
 {
-    J2DFillBox(JGeometry::TBox2f(l, b, l + x, b + y), c1, c2, c3, c4);
+    J2DFillBox(JGeometry::TBox2f(l, t, l + x, t + y), c1, c2, c3, c4);
 }
 
 void J2DFillBox(const JGeometry::TBox2f &box, JUtility::TColor c1, JUtility::TColor c2, JUtility::TColor c3, JUtility::TColor c4)
@@ -83,9 +83,9 @@ void J2DFillBox(const JGeometry::TBox2f &box, JUtility::TColor c1, JUtility::TCo
     oGrph.fillBox(box);
 }
 
-void J2DDrawFrame(f32 l, f32 b, f32 x, f32 y, JUtility::TColor color, u8 line_width)
+void J2DDrawFrame(f32 l, f32 t, f32 x, f32 y, JUtility::TColor color, u8 line_width)
 {
-    J2DDrawFrame(JGeometry::TBox2f(l, b, l + x, b + y), color, line_width);
+    J2DDrawFrame(JGeometry::TBox2f(l, t, l + x, t + y), color, line_width);
 }
 
 void J2DDrawFrame(const JGeometry::TBox2f& box, JUtility::TColor color, u8 line_width)

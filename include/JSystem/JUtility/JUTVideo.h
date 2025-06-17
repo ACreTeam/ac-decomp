@@ -24,8 +24,8 @@ struct JUTVideo
     static void drawDoneCallback();
 
     u32 getEfbHeight() const { return mRenderModeObj->efbHeight; }
-    u32 getXfbHeight() const { return mRenderModeObj->xfbHeight; }
-    u32 getFbWidth() const { return (u16)mRenderModeObj->fbWidth; } // cast required for callDirectDraw 
+    u32 getXfbHeight() const { return mRenderModeObj->xfbHeight & 0xffff; }
+    u32 getFbWidth() const { return (u16)mRenderModeObj->fbWidth; }
     void getBounds(u16& width, u16& height) const {
         width = getFbWidth();
         height = getEfbHeight();

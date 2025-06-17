@@ -3,8 +3,6 @@
 #include "dolphin/os/OSInterrupt.h"
 #include "dolphin/hw_regs.h"
 
-extern OSErrorHandler __OSErrorTable[16];
-
 u32 OSGetConsoleSimulatedMemSize(void){
 	return(SIM_MEM);
 }

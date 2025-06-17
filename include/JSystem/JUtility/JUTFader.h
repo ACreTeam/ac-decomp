@@ -28,7 +28,6 @@ struct JUTFader
     // unused/inlined:
     void start(int);
     void setStatus(EStatus, int);
-    void setResetState(bool reset) { mResetting = reset; }
 
     EStatus getStatus() const { return mStatus; }
 
@@ -38,8 +37,6 @@ struct JUTFader
     EStatus mStatus;            // _04 - current status
     u16 mTicksTarget;           // _08 - ticks (calls to control()) to run a fade in/out for
     u16 mTicksRun;              // _0A - ticks the current fade has run
-    bool mResetting;            // _0C - probably exclusive to mkdd, holds true when starting the fadeout for reset, sets back to false when fading in
-    u8 _0D[3];                  // padding
     JUtility::TColor mColor;    // _10 - color of fade
     JGeometry::TBox2f mViewBox; // _14 - ortho box to render within
     int mEStatus;               // _24 - ???

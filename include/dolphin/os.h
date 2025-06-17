@@ -3,9 +3,13 @@
 
 #include "types.h"
 #include "dolphin/os/OSAlloc.h"
+#include "dolphin/os/OSArena.h"
 #include "dolphin/os/OSCache.h"
 #include "dolphin/os/OSContext.h"
+#include "dolphin/os/OSError.h"
 #include "dolphin/os/OSInterrupt.h"
+#include "dolphin/os/OSModule.h"
+#include "dolphin/os/OSMemory.h"
 #include "dolphin/os/OSMessage.h"
 #include "libforest/osreport.h" /* OSReport funcs */
 #include "dolphin/os/OSReset.h"

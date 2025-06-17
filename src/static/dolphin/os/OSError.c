@@ -6,7 +6,7 @@
 #include "dolphin/hw_regs.h"
 // #include "va_args.h"
 
-OSErrorHandler __OSErrorTable[16];
+OSErrorHandler __OSErrorTable[OS_ERROR_MAX];
 
 extern volatile __OSInterrupt __OSLastInterrupt;
 extern volatile u32 __OSLastInterruptSrr0;
