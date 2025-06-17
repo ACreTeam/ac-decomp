@@ -2,7 +2,7 @@
 
 #include "boot.h"
 
-static const char kakko[] = "/\\/\\||||||||\\/\\/";
+static const u8 kakko[] = {'/', '\\', '/', '\\', '|', '|', '|', '|', '|', '|', '|', '|', '\\', '/', '\\', '/'};
 
 void emu64::disp_matrix(GC_Mtx mtx) {
     for (int i = 0; i < 4; i++) {
