@@ -331,7 +331,7 @@ static void aBC_actor_move(ACTOR* actorx, GAME* game) {
   }
 
   /* Only refresh the list when transitioning between acres or transitioning between scenes */
-  if (mFI_CheckPlayerWade(mFI_WADE_NONE) == TRUE && play->fb_fade_type == 0) {
+  if (mFI_CheckPlayerWade(mFI_WADE_NONE) == TRUE && play->fb_fade_type == FADE_TYPE_NONE) {
     birth_control->move_actor_list_exists_flag = FALSE;
   }
 }

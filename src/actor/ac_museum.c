@@ -153,7 +153,7 @@ static void aMsm_rewrite_out_data(ACTOR* actor, GAME_PLAY* play) {
     xyz_t pos;
 
     door_data = Common_GetPointer(structure_exit_door_data);
-    if (play->fb_wipe_mode != 0) {
+    if (play->fb_wipe_mode != WIPE_MODE_NONE) {
         return;
     }
 
@@ -172,7 +172,7 @@ static void aMsm_rewrite_out_data(ACTOR* actor, GAME_PLAY* play) {
 
     door_data->door_actor_name = MUSEUM;
 
-    door_data->wipe_type = 1;
+    door_data->wipe_type = WIPE_TYPE_TRIFORCE;
 
     mBGMPsComp_make_ps_wipe(0x2168);
 }

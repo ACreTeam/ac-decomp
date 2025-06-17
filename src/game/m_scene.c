@@ -493,11 +493,11 @@ extern int goto_other_scene(GAME_PLAY* play, Door_data_c* door_data, int update_
     int res = 0; // failed
 
     if (player != NULL) {
-        if (play->fb_wipe_mode == 0) {
-            play->fb_fade_type = 2;
+        if (play->fb_wipe_mode == WIPE_MODE_NONE) {
+            play->fb_fade_type = FADE_TYPE_OUT;
 
-            if (door_data->wipe_type == 0) {
-                play->fb_wipe_type = 3;
+            if (door_data->wipe_type == WIPE_TYPE_NORMAL) {
+                play->fb_wipe_type = WIPE_TYPE_FADE_BLACK;
             } else {
                 play->fb_wipe_type = door_data->wipe_type;
             }
@@ -543,8 +543,8 @@ extern int goto_emu_game(GAME* game, s16 famicom_rom_id) {
     if (player != NULL) {
         Door_data_c* door_data;
 
-        play->fb_fade_type = 3;
-        play->fb_wipe_type = 3;
+        play->fb_fade_type = FADE_TYPE_OUT_START_EMU;
+        play->fb_wipe_type = WIPE_TYPE_FADE_BLACK;
         res = TRUE;
 
         door_data = Common_GetPointer(famicom_emu_exit_door_data);

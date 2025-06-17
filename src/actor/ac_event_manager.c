@@ -2110,7 +2110,7 @@ static int title_fade(EVENT_MANAGER_ACTOR* evmgr, int type, int title_type, u32 
     }
 
     door_data.door_actor_name = EMPTY_NO;
-    door_data.wipe_type = 6;
+    door_data.wipe_type = WIPE_TYPE_EVENT;
     exit_drt = Common_Get(door_data).exit_orientation;
     pos_s.x = Common_Get(door_data).exit_position.x;
     pos_s.y = Common_Get(door_data).exit_position.y;
@@ -2133,13 +2133,13 @@ static int title_fade(EVENT_MANAGER_ACTOR* evmgr, int type, int title_type, u32 
         Common_Get(event_door_data).exit_position.y = pos_s.y;
         Common_Get(event_door_data).exit_position.z = pos_s.z;
         Common_Get(event_door_data).door_actor_name = RSV_NO;
-        Common_Get(event_door_data).wipe_type = 6;
+        Common_Get(event_door_data).wipe_type = WIPE_TYPE_EVENT;
         Common_Set(event_id, type);
         Common_Set(event_title_flags, title_type);
         Common_Set(event_title_fade_in_progress, 0);
-        play->fb_wipe_type = 6;
-        play->fb_fade_type = 11;
-        Common_Get(transition).wipe_type = 6;
+        play->fb_wipe_type = WIPE_TYPE_EVENT;
+        play->fb_fade_type = FADE_TYPE_EVENT;
+        Common_Get(transition).wipe_type = WIPE_TYPE_EVENT;
         aMR_SaveWaltzTempo2();
         mPlib_request_player_warp_forEvent();
         mBGMForce_inform_start();
@@ -4329,7 +4329,7 @@ static int event_at_wade(EVENT_MANAGER_ACTOR* evmgr, aEvMgr_event_ctrl_c* ctrl) 
             }
         }
     } else {
-        if (mFI_CheckPlayerWade(mFI_WADE_NONE) == TRUE && ((GAME_PLAY*)gamePT)->fb_fade_type == 0) {
+        if (mFI_CheckPlayerWade(mFI_WADE_NONE) == TRUE && ((GAME_PLAY*)gamePT)->fb_fade_type == FADE_TYPE_NONE) {
             return FALSE;
         }
 
@@ -4674,7 +4674,7 @@ static void schedule_main(ACTOR* actorx) {
             mFI_CheckPlayerWade(mFI_WADE_START) == TRUE ||
             mFI_CheckPlayerWade(mFI_WADE_INPROGRESS) == TRUE ||
             mFI_CheckPlayerWade(mFI_WADE_END) == TRUE ||
-            play->fb_fade_type != 0 ||
+            play->fb_fade_type != FADE_TYPE_NONE ||
             mEv_someone_died() != FALSE
             // clang-format on
         ) {

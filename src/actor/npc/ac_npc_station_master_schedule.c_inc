@@ -29,8 +29,8 @@ static void aNPS2_make_door_data(Door_data_c* door_data) {
     door_data->exit_position.y = 0;
     door_data->exit_position.z = demo2_data.pos_z;
     door_data->door_actor_name = EMPTY_NO;
-    door_data->wipe_type = 5;
-    Common_Get(transition).wipe_type = 3;
+    door_data->wipe_type = WIPE_TYPE_CIRCLE_RIGHT;
+    Common_Get(transition).wipe_type = WIPE_TYPE_FADE_BLACK;
 }
 
 static int aNPS2_setup_game_start(GAME_PLAY* play) {
@@ -358,8 +358,8 @@ static void aSTM_game_end_init(NPC_STATION_MASTER_ACTOR* actor, GAME_PLAY* play)
         aNPS2_setup_game_start(play);
     } else {
         mBGMPsComp_make_ps_wipe(0x328A);
-        play->fb_fade_type = 5;
-        play->fb_wipe_type = 5;
+        play->fb_fade_type = FADE_TYPE_OUT_GAME_END_TRAIN;
+        play->fb_wipe_type = WIPE_TYPE_CIRCLE_RIGHT;
         mPlib_request_main_invade_type1((GAME*)play);
     }
 

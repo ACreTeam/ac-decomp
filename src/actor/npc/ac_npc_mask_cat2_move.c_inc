@@ -737,8 +737,8 @@ static void aNM2_talk_end_wait_init() {
 
 static void aNM2_scene_change_wait_init(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
     goto_next_scene(play, 0, TRUE);
-    play->fb_wipe_type = 3;
-    Common_Set(transition.wipe_type, 4);
+    play->fb_wipe_type = WIPE_TYPE_FADE_BLACK;
+    Common_Set(transition.wipe_type, WIPE_TYPE_CIRCLE_LEFT);
     Common_Set(submenu_disabled, TRUE);
     mBGMPsComp_make_ps_wipe(0x41c2);
     mBGMPsComp_scene_mode(18);

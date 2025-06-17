@@ -51,7 +51,7 @@ static void aPOFF_rewrite_out_data(STRUCTURE_ACTOR* office, GAME_PLAY* play) {
     xyz_t pos;
 
     door_data = Common_GetPointer(structure_exit_door_data);
-    if (play->fb_wipe_mode == 0) {
+    if (play->fb_wipe_mode == WIPE_MODE_NONE) {
         door_data->next_scene_id = Save_Get(scene_no);
         door_data->exit_orientation = mSc_DIRECT_SOUTH_WEST;
         door_data->exit_type = 0;
@@ -67,7 +67,7 @@ static void aPOFF_rewrite_out_data(STRUCTURE_ACTOR* office, GAME_PLAY* play) {
 
         door_data->door_actor_name = POST_OFFICE;
 
-        door_data->wipe_type = 1;
+        door_data->wipe_type = WIPE_TYPE_TRIFORCE;
     }
 }
 

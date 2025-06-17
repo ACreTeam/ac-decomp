@@ -1414,7 +1414,7 @@ extern void mFM_FieldInit(GAME_PLAY* play) {
   Common_Set(floor_idx, mRmTp_GetFloorIdx());
   Common_Set(make_npc2_actor, FALSE);
 
-  if (play->fb_wipe_type == 6) {
+  if (play->fb_wipe_type == WIPE_TYPE_EVENT) {
     if (scene == SCENE_MUSEUM_ENTRANCE) {
       mBGMPsComp_museum_status(1);
     }

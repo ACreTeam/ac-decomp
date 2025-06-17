@@ -75,7 +75,7 @@ static void aSNMgr_actor_ct(ACTOR* actorx, GAME* game) {
 
     bzero(manager->npc_info.timer, sizeof(manager->npc_info.timer));
     
-    if (play->fb_wipe_type == 6) {
+    if (play->fb_wipe_type == WIPE_TYPE_EVENT) {
         aSNMgr_move_event_set(manager);
         aSNMgr_force_go_home_event_start(manager);
     }
@@ -1264,7 +1264,7 @@ static void aSNMgr_actor_move(ACTOR* actorx, GAME* game) {
             aSNMgr_setup_set_proc(manager, aSNMgr_SET_MODE_GUEST);
             break;
         case mFI_WADE_NONE:
-            if (play->fb_fade_type == 0) {
+            if (play->fb_fade_type == FADE_TYPE_NONE) {
                 aSNMgr_clear_make_npc(manager->npc_info.make, aSNMgr_EVENT_NORMAL_NPC_NUM);
                 if (!aSNMgr_chk_arbeit_and_demo_and_halloween()) {
                     aSNMgr_force_go_home(manager);

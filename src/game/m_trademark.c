@@ -141,7 +141,7 @@ static void trademark_goto_demo_scene(GAME_TRADEMARK* trademark) {
         mTM_demotime_set(demo_no);                                              // set demo date, time, and weather
         mPr_RandomSetPlayerData_title_demo();                                   // randomize player data
         set_npc_4_title_demo(trademark);                                        // set animals in the demo
-        Common_Set(transition.wipe_type, 3);
+        Common_Set(transition.wipe_type, WIPE_TYPE_FADE_BLACK);
     }
 
     Save_Set(scene_no, SCENE_TITLE_DEMO);

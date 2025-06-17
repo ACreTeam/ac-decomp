@@ -718,8 +718,8 @@ static void aNG2_last_talk_end_wait_init(NPC_GUIDE2_ACTOR* guide2, GAME_PLAY* pl
 static void aNG2_scene_change_wait_init(NPC_GUIDE2_ACTOR* guide2, GAME_PLAY* play) {
     /* Init next scene transition */
     goto_next_scene(play, 0, 1);
-    play->fb_wipe_type = 3;
-    Common_Get(transition).wipe_type = 4;
+    play->fb_wipe_type = WIPE_TYPE_FADE_BLACK;
+    Common_Get(transition).wipe_type = WIPE_TYPE_CIRCLE_LEFT;
 
     mEv_SetFirstJob();
     mEv_SetFirstIntro();

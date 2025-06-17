@@ -24,7 +24,7 @@ static void aNPC_act_leave_house_wait(NPC_ACTOR* nactorx, GAME_PLAY* play) {
 
     if (ctrl->door_exit_actor == NULL && ctrl->door_exit_timer == 0) {
         if (!aNPC_check_entrance_humanoid(nactorx, play)) {
-            if (play->fb_wipe_mode == 0 && play->fb_fade_type == 0) {
+            if (play->fb_wipe_mode == WIPE_MODE_NONE && play->fb_fade_type == FADE_TYPE_NONE) {
                 if (aNPC_request_house(nactorx, play, 2) == TRUE) {
                     aNPC_act_leave_house_chg_step(nactorx, aNPC_ACT_LEAVE_HOUSE_STEP_OUT_OF_DOOR);
                     nactorx->npc_info.animal->is_home = FALSE;

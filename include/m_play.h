@@ -22,6 +22,55 @@
 extern "C" {
 #endif
 
+enum {
+    FADE_TYPE_NONE,
+    FADE_TYPE_IN,
+    FADE_TYPE_OUT,
+    FADE_TYPE_OUT_START_EMU,
+    FADE_TYPE_OUT_RETURN_TITLE,
+    FADE_TYPE_OUT_GAME_END_TRAIN,
+    FADE_TYPE_OUT_GAME_END,
+    FADE_TYPE_LOCK,
+    FADE_TYPE_SELECT,
+    FADE_TYPE_DEMO,
+    FADE_TYPE_SELECT_END,
+    FADE_TYPE_EVENT,
+    FADE_TYPE_OTHER_ROOM,
+    FADE_TYPE_OUT_NO_RESTART,
+
+    FADE_TYPE_NUM
+};
+
+enum {
+    WIPE_TYPE_NORMAL,
+    WIPE_TYPE_TRIFORCE,
+    WIPE_TYPE_FADE_WHITE,
+    WIPE_TYPE_FADE_BLACK,
+    WIPE_TYPE_CIRCLE_LEFT,
+    WIPE_TYPE_CIRCLE_RIGHT,
+    WIPE_TYPE_EVENT,
+
+    WIPE_TYPE_NUM
+};
+
+enum {
+    WIPE_MODE_NONE,
+    WIPE_MODE_CREATE,
+    WIPE_MODE_INIT,
+    WIPE_MODE_MOVE,
+
+    WIPE_MODE_NUM
+};
+
+enum {
+    FBDEMO_MODE_NONE,
+    FBDEMO_MODE_CREATE,
+    FBDEMO_MODE_INIT,
+    FBDEMO_MODE_MOVE,
+
+    FBDEMO_MODE_NUM
+};
+
 typedef int (*DRAW_CHK_PROC)(ACTOR*, GAME_PLAY*);
 typedef void (*PLAY_WIPE_PROC)(GAME_PLAY*);
 
@@ -75,40 +124,9 @@ struct game_play_s {
     /* 0x2404 */ u8 _2400[0x2600 - 0x2404];
 };
 
-extern fbdemo_c fbdemo;
-
-extern void Game_play_Reset_destiny();
-extern void event_title_flag_on();
-extern void event_title_flag_off();
-extern void Game_play_camera_proc(GAME_PLAY*);
-extern void Game_play_fbdemo_wipe_destroy(GAME_PLAY*);
-extern void Game_play_fbdemo_wipe_create_sub(GAME_PLAY*);
-extern void Game_play_fbdemo_wipe_create(GAME_PLAY*);
-extern void Game_play_fbdemo_wipe_init(GAME_PLAY*);
-extern void Game_play_fbdemo_fade_in_move_end(GAME_PLAY*);
-extern void Game_play_fbdemo_fade_out_start_emu_move_end(GAME_PLAY*);
-extern void Game_play_fbdemo_fade_out_game_end_move_end(GAME_PLAY*);
-extern void Game_play_change_scene_move_end(GAME_PLAY*);
-extern void Game_play_fbdemo_wipe_move(GAME_PLAY*);
-extern void Game_play_fbdemo_wipe_proc(GAME_PLAY*);
-extern Gfx* game_play_set_fog(GAME_PLAY*, Gfx*);
-extern void Game_play_fbdemo_proc(GAME_PLAY*);
 extern void play_cleanup(GAME*);
-extern void VR_Box_ct(GAME_PLAY*);
 extern void play_init(GAME*);
-extern void Game_play_move_fbdemo_not_move(GAME_PLAY*);
-extern void Game_play_move(GAME_PLAY*);
-extern void setupFog(GAME_PLAY*, GRAPH*);
-extern void setupViewer(GAME_PLAY*);
-extern void setupViewMatrix(GAME_PLAY*, GRAPH*, GRAPH*);
-extern void copy_efb_to_texture(Gfx**, void*);
-extern int makeBumpTexture(GAME_PLAY*, GRAPH*, GRAPH*);
-extern void draw_version(GRAPH*);
-extern void Game_play_draw(GAME*);
 extern void play_main(GAME*);
-extern void Gameplay_Scene_Init(GAME_PLAY*);
-extern u8 mPl_SceneNo2SoundRoomType(int);
-extern void Gameplay_Scene_Read(GAME_PLAY*, s16);
 
 #ifdef __cplusplus
 }

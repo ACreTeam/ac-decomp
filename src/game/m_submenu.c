@@ -254,11 +254,11 @@ extern void mSM_submenu_ctrl(GAME_PLAY* play) {
         return;
     }
 
-    if (play->fb_fade_type != 0) {
+    if (play->fb_fade_type != FADE_TYPE_NONE) {
         return;
     }
 
-    if (play->fb_wipe_mode != 0) {
+    if (play->fb_wipe_mode != WIPE_MODE_NONE) {
         return;
     }
 
@@ -309,7 +309,7 @@ extern void mSM_submenu_ctrl(GAME_PLAY* play) {
 
     if (submenu->menu_type != mSM_OVL_NONE) {
         submenu->process_status = mSM_PROCESS_PREWAIT;
-        submenu->mode = 1;
+        submenu->mode = mSM_MODE_PRERENDER_INIT;
         SetGameFrame(1);
     }
 }
@@ -325,7 +325,7 @@ static void mSM_move_Wait(Submenu* submenu) {
 }
 
 static void mSM_move_PREWait(Submenu* submenu) {
-    if (submenu->mode >= 3) {
+    if (submenu->mode >= mSM_MODE_PRERENDER_DONE) {
         submenu->process_status = mSM_PROCESS_LINKWAIT;
     }
 }
@@ -358,7 +358,7 @@ static void mSM_move_LINKWait(Submenu* submenu) {
             item++;
         }
 
-        if (submenu->mode != 4) {
+        if (submenu->mode != mSM_MODE_OTHER) {
             if ((submenu->menu_type == mSM_OVL_LEDIT && submenu->param0 == 0) ||
                 Common_Get(now_private)->gender == mPr_SEX_MALE) {
                 sAdo_SpecChange(5);
@@ -386,9 +386,9 @@ static void mSM_move_End(Submenu* submenu) {
     submenu->open_flag = FALSE;
     SetGameFrame(1);
 
-    if (submenu->mode != 4) {
+    if (submenu->mode != mSM_MODE_OTHER) {
         mMsg_Window_c* msg_win = mMsg_Get_base_window_p();
-        submenu->mode = 0;
+        submenu->mode = mSM_MODE_IDLE;
         mSc_dmacopy_all_exchange_bank(&play->object_exchange);
         SubmenuArea_DoUnlink(dlftbl, submenu);
         load_player(submenu);
@@ -413,7 +413,7 @@ extern void mSM_submenu_move(Submenu* submenu) {
 }
 
 extern void mSM_submenu_draw(Submenu* submenu, GAME* game) {
-    if (submenu->mode >= 3 && submenu->process_status == mSM_PROCESS_PLAY &&
+    if (submenu->mode >= mSM_MODE_PRERENDER_DONE && submenu->process_status == mSM_PROCESS_PLAY &&
         SubmenuArea_visit == &SubmenuArea_dlftbl[mSM_DLF_SUBMENU_OVL]) {
         (*submenu->draw_proc)(submenu, game);
     }

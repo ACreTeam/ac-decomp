@@ -500,7 +500,7 @@ static void aNPS2_make_door_data(Door_data_c* door_data, int type, NPC_P_SEL2_AC
     door_data->exit_position.y = 0;
     door_data->exit_position.z = data_p->pos_z;
     door_data->door_actor_name = EMPTY_NO;
-    door_data->wipe_type = 3;
+    door_data->wipe_type = WIPE_TYPE_FADE_BLACK;
 
     if (type == aNPS2_DOOR_EXIT_TYPE_HOME) {
         int arrange_idx = mHS_get_arrange_idx(p_sel2->player_no);
@@ -510,7 +510,7 @@ static void aNPS2_make_door_data(Door_data_c* door_data, int type, NPC_P_SEL2_AC
         door_data->exit_position.z = homeZ[arrange_idx];
         door_data->exit_orientation = drt[arrange_idx];
         door_data->door_actor_name = HOUSE0 + arrange_idx;
-        Common_Get(transition).wipe_type = 1;
+        Common_Get(transition).wipe_type = WIPE_TYPE_TRIFORCE;
         Now_Private->birthday_present_npc = EMPTY_NO;
 
         if ((Now_Private->state_flags & mPr_FLAG_BIRTHDAY_ACTIVE) != 0) {
@@ -531,7 +531,7 @@ static void aNPS2_make_door_data(Door_data_c* door_data, int type, NPC_P_SEL2_AC
             }
         }
     } else if (type == aNPS2_DOOR_EXIT_TYPE_DEMO2) {
-        Common_Get(transition).wipe_type = 3;
+        Common_Get(transition).wipe_type = WIPE_TYPE_FADE_BLACK;
         mGH_animal_return_init();
     } else {
         Common_Set(demo_profiles[0], mAc_PROFILE_RIDE_OFF_DEMO);
@@ -539,7 +539,7 @@ static void aNPS2_make_door_data(Door_data_c* door_data, int type, NPC_P_SEL2_AC
             Common_Set(demo_profiles[1], mAc_PROFILE_RESET_DEMO);
         }
 
-        Common_Get(transition).wipe_type = 4;
+        Common_Get(transition).wipe_type = WIPE_TYPE_CIRCLE_LEFT;
     }
 }
 
@@ -1232,7 +1232,7 @@ static void aNPS2_game_start_wait(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
 
 static void aNPS2_return_title(NPC_P_SEL2_ACTOR* p_sel2, GAME_PLAY* play) {
     if (mDemo_Check(mDemo_TYPE_SPEAK, (ACTOR*)p_sel2) == FALSE) {
-        play->fb_fade_type = 4;
+        play->fb_fade_type = FADE_TYPE_OUT_RETURN_TITLE;
         mPlib_request_main_invade_type1((GAME*)play);
         Actor_info_save_actor(play);
         aNPS2_change_talk_proc(p_sel2, play, aNPS2_TALK_WAIT);

@@ -19,6 +19,16 @@ typedef struct submenu_s Submenu;
 #define mSM_INV_BUTTON_1 BUTTON_Y
 
 enum {
+    mSM_MODE_IDLE,
+    mSM_MODE_PRERENDER_INIT,
+    mSM_MODE_PRERENDER_WAIT,
+    mSM_MODE_PRERENDER_DONE,
+    mSM_MODE_OTHER,
+
+    mSM_MODE_NUM
+};
+
+enum {
     mSM_PROCESS_WAIT,
     mSM_PROCESS_PREWAIT,
     mSM_PROCESS_LINKWAIT,

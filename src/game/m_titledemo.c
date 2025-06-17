@@ -123,8 +123,8 @@ static void set_player_demo_keydata(int frame) {
 }
 
 static void mTD_game_end_init(GAME_PLAY* play) {
-    play->fb_fade_type = 10; // TODO: enum/define
-    play->fb_wipe_type = 3;  // TODO: enum/define
+    play->fb_fade_type = FADE_TYPE_SELECT_END;
+    play->fb_wipe_type = WIPE_TYPE_FADE_BLACK;
 
     mPlib_request_main_invade_type1((GAME*)play);
     mBGMPsComp_make_ps_wipe(0x521C); // TODO: enum/define

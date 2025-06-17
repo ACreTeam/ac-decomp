@@ -12,7 +12,7 @@ static void aNRG2_set_exit_info(ACTOR* actorx) {
 static void aNRG2_exit_check(ACTOR* actorx, GAME_PLAY* play) {
     PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
 
-    if (player != NULL && player->item_in_front == EXIT_DOOR1 && play->fb_wipe_mode == 0) {
+    if (player != NULL && player->item_in_front == EXIT_DOOR1 && play->fb_wipe_mode == WIPE_MODE_NONE) {
         mDemo_Request(mDemo_TYPE_EXITSCENE, actorx, &aNRG2_set_exit_info);
     }
 }

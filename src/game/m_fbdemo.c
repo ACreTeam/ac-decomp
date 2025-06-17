@@ -6,7 +6,7 @@
 #include "m_play.h"
 #include "libultra/libultra.h"
 
-Gfx fbdemo_gfx_init[] = {
+static Gfx fbdemo_gfx_init[] = {
     gsDPPipeSync(),
     gsSPTexture(0x8000, 0x8000, 0, G_TX_RENDERTILE, G_ON),
     gsSPClearGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN |
@@ -32,7 +32,7 @@ extern void fbdemo_init_gfx(fbdemo_c* this) {
 
     guMtxIdent(&this->modelView1);
     guMtxIdent(&this->modelView2);
-    guOrtho(&this->projection, 0.0f, 320, 240, 0.0f, -1000.0f, 1000.0f, 1.0f);
+    guOrtho(&this->projection, 0.0f, N64_SCREEN_WIDTH, N64_SCREEN_HEIGHT, 0.0f, -1000.0f, 1000.0f, 1.0f);
 
     for (frame = 0; frame < 2; frame++) {
         this->frame = frame;
@@ -57,7 +57,7 @@ extern void fbdemo_init_gfx(fbdemo_c* this) {
 
     gfx = this->gfx;
     for (rowTex = 0, row = 0; row < this->rows; rowTex += 0x20, row++) {
-        gSPVertex(gfx++, SEGMENT_ADDR(0xA, (u32)row * (this->cols + 1) * sizeof(Vtx)), 2 * (this->cols + 1), 0);
+        gSPVertex(gfx++, anime_3_txt + (u32)row * (this->cols + 1) * sizeof(Vtx), 2 * (this->cols + 1), 0);
 
         colTex = 0;
         col = 0;
@@ -65,9 +65,10 @@ extern void fbdemo_init_gfx(fbdemo_c* this) {
         while (col < this->cols) {
             gDPPipeSync(gfx++);
 
-            gDPLoadTextureTile(gfx++, SEGMENT_ADDR(0xB, 0), G_IM_FMT_RGBA, G_IM_SIZ_16b, 320, 240, colTex, rowTex,
-                               colTex + 0x20, rowTex + 0x20, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP,
-                               G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
+            gDPLoadTextureTile(gfx++, anime_4_txt, G_IM_FMT_RGBA, G_IM_SIZ_16b, N64_SCREEN_WIDTH,
+                               N64_SCREEN_HEIGHT, colTex, rowTex, colTex + 0x20, rowTex + 0x20, 0,
+                               G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK,
+                               G_TX_NOLOD, G_TX_NOLOD);
 
             gSP1Quadrangle(gfx++, col2, col2 + 1, +(this->cols) + 2 + col2, this->cols + 1 + col2, 0);
 
@@ -117,7 +118,7 @@ extern void fbdemo_cleanup(fbdemo_c* this) {
 extern fbdemo_c* fbdemo_init(fbdemo_c* this, int cols, int rows) {
     s32 gridsize;
 
-    bzero(this, sizeof(fbdemo));
+    bzero(this, sizeof(fbdemo_c));
 
     this->cols = cols;
     this->rows = rows;
@@ -177,15 +178,15 @@ extern void fbdemo_update(fbdemo_c* this) {
     }
 }
 
-void fbdemo_draw(fbdemo_c* this, Gfx** gfxP) {
+extern void fbdemo_draw(fbdemo_c* this, Gfx** gfxP) {
     Gfx* gfx = *gfxP;
 
     gSPDisplayList(gfx++, fbdemo_gfx_init);
     fbdemo_update(this);
     gSPMatrix(gfx++, &this->projection, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
     gSPMatrix(gfx++, &this->modelView1, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gSPSegment(gfx++, 0xA, this->frame == 0 ? this->vtxFrame1 : this->vtxFrame2);
-    gSPSegment(gfx++, 0xB, this->zBuffer);
+    gSPSegment(gfx++, ANIME_3_TXT_SEG, this->frame == 0 ? this->vtxFrame1 : this->vtxFrame2);
+    gSPSegment(gfx++, ANIME_4_TXT_SEG, this->zBuffer);
     gSPDisplayList(gfx++, fbdemo_gfx_init);
     gSPDisplayList(gfx++, this->gfx);
     gDPPipeSync(gfx++);

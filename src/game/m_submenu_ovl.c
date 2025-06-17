@@ -59,7 +59,7 @@ static void mSM_setup_view(Submenu* submenu, GRAPH* graph, int init_flag) {
     if (init_flag == FALSE) {
         View* view;
 
-        if (submenu->mode != 4) {
+        if (submenu->mode != mSM_MODE_OTHER) {
             view = &((GAME_PLAY*)gamePT)->view;
         } else {
             view = &((GAME_TRADEMARK*)gamePT)->view; // I'm not sure this is the correct game subclass

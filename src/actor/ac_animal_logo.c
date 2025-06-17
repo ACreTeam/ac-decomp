@@ -126,9 +126,9 @@ static void aAL_actor_dt(ACTOR* actor, GAME* game) {
 static void aAL_title_game_data_init_start_select(ANIMAL_LOGO_ACTOR* actor, GAME* game) {
   GAME_PLAY* play = (GAME_PLAY*)game;
 
-  play->fb_fade_type = 8;
-  play->fb_wipe_type = 3;
-  Common_Set(transition.wipe_type, 3);
+  play->fb_fade_type = FADE_TYPE_SELECT;
+  play->fb_wipe_type = WIPE_TYPE_FADE_BLACK;
+  Common_Set(transition.wipe_type, WIPE_TYPE_FADE_BLACK);
   mBGMPsComp_make_ps_wipe(0x1168);
 }
 
@@ -237,7 +237,7 @@ static void aAL_game_start_wait(ANIMAL_LOGO_ACTOR* actor, GAME* game) {
   actor->press_start_opacity = start_opacity;
   actor->start_opacity_timer = new_opacity_timer;
 
-  if (play->fb_fade_type == 10) {
+  if (play->fb_fade_type == FADE_TYPE_SELECT_END) {
     aAL_setupAction(actor, game, aAL_ACTION_6);
   }
   else if (

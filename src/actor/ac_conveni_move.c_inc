@@ -22,7 +22,7 @@ static void aCNV_rewrite_out_data(CONVENI_ACTOR* conveni, GAME_PLAY* play) {
     Door_data_c* out_data_p = Common_GetPointer(structure_exit_door_data);
     xyz_t pos;
 
-    if (play->fb_wipe_mode == 0) {
+    if (play->fb_wipe_mode == WIPE_MODE_NONE) {
         out_data_p->next_scene_id = Save_Get(scene_no);
         out_data_p->exit_orientation = mSc_DIRECT_SOUTH_WEST;
         out_data_p->exit_type = 0;
@@ -36,7 +36,7 @@ static void aCNV_rewrite_out_data(CONVENI_ACTOR* conveni, GAME_PLAY* play) {
         out_data_p->exit_position.y = (s16)pos.y;
         out_data_p->exit_position.z = (s16)pos.z;
         out_data_p->door_actor_name = SHOP1;
-        out_data_p->wipe_type = 1;
+        out_data_p->wipe_type = WIPE_TYPE_TRIFORCE;
         mBGMPsComp_make_ps_wipe(0x2168);
     }
 }

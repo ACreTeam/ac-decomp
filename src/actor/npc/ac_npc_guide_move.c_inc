@@ -745,8 +745,8 @@ static void aNGD_scene_change_wait_init(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play)
 
     /* Init next scene transition */
     goto_next_scene(play, 0, 1);
-    play->fb_wipe_type = 3;
-    Common_Get(transition).wipe_type = 4;
+    play->fb_wipe_type = WIPE_TYPE_FADE_BLACK;
+    Common_Get(transition).wipe_type = WIPE_TYPE_CIRCLE_LEFT;
 
     /* Clear plant growth renew time */
     Save_Set(all_grow_renew_time, mTM_rtcTime_clear_code);

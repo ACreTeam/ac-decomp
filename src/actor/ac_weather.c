@@ -437,12 +437,12 @@ static void Weather_Actor_ct(ACTOR* actor, GAME* game) {
     } else if (((Common_Get(last_scene_no) == SCENE_MY_ROOM_BASEMENT_S) ||
                 ((Common_Get(last_scene_no) - SCENE_MY_ROOM_BASEMENT_M) <= 1U) ||
                 (Common_Get(last_scene_no) == SCENE_MY_ROOM_BASEMENT_LL1)) &&
-               (play->fb_wipe_type == 6)) {
+               (play->fb_wipe_type == WIPE_TYPE_EVENT)) {
         weather->basement_event = 2;
     } else {
         weather->basement_event = 0;
     }
-    if ((play->fb_wipe_type == 6) && (aWeather_IsLand_Event_Check() == 0) &&
+    if ((play->fb_wipe_type == WIPE_TYPE_EVENT) && (aWeather_IsLand_Event_Check() == 0) &&
         (aWeather_Basement_Event_Check(actor) == 0)) {
         weather->current_sound_effect = Common_Get(current_sound_effect);
     } else {

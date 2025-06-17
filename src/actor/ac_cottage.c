@@ -521,7 +521,7 @@ static void Cottage_my_rewrite_door(ACTOR* actor, GAME_PLAY* play) {
     xyz_t pos;
 
     door_data = Common_GetPointer(structure_exit_door_data);
-    if (play->fb_wipe_mode != 0) {
+    if (play->fb_wipe_mode != WIPE_MODE_NONE) {
         return;
     }
 
@@ -540,7 +540,7 @@ static void Cottage_my_rewrite_door(ACTOR* actor, GAME_PLAY* play) {
 
     door_data->door_actor_name = actor->npc_id;
 
-    door_data->wipe_type = 1;
+    door_data->wipe_type = WIPE_TYPE_TRIFORCE;
 
     Common_Get(house_owner_name) = 0;
 }
@@ -550,7 +550,7 @@ static void Cottage_npc_rewrite_door(ACTOR* actor, GAME_PLAY* play) {
     xyz_t pos;
 
     door_data = Common_GetPointer(structure_exit_door_data);
-    if (play->fb_wipe_mode != 0) {
+    if (play->fb_wipe_mode != WIPE_MODE_NONE) {
         return;
     }
 
@@ -569,7 +569,7 @@ static void Cottage_npc_rewrite_door(ACTOR* actor, GAME_PLAY* play) {
 
     door_data->door_actor_name = actor->npc_id;
 
-    door_data->wipe_type = 1;
+    door_data->wipe_type = WIPE_TYPE_TRIFORCE;
 
     Common_Get(house_owner_name) = 0;
 }
@@ -778,7 +778,7 @@ static void Cottage_move_open_in(STRUCTURE_ACTOR* cottage, GAME_PLAY* play) {
 
         goto_other_scene(play, cottage_data->door_data, FALSE);
 
-        play->fb_fade_type = 9;
+        play->fb_fade_type = FADE_TYPE_DEMO;
         mDemo_End(&cottage->actor_class);
 
         Cottage_move_next_init(cottage);

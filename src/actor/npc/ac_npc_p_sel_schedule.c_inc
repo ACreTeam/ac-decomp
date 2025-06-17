@@ -7,7 +7,7 @@ static int aNPS_setup_game_start(GAME_PLAY* play) {
 
     if (mCD_InitGameStart_bg(0, -1, 0, &chan) == 0) {
         goto_other_scene(play, &door_data, TRUE);
-        Common_Set(transition.wipe_type, 3);
+        Common_Set(transition.wipe_type, WIPE_TYPE_FADE_BLACK);
         Common_Set(map_flag, FALSE);
         res = TRUE;
     }

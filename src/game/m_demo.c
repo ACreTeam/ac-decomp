@@ -679,7 +679,7 @@ static int wait_emsg_end() {
     if (demo->data.emsg.scene_delay_timer <= 0 || demo->state == mDemo_STATE_STOP) {
         if (goto_other_scene(play, &demo->data.emsg.door_data, FALSE)) {
             play->fb_wipe_type = demo->data.emsg.door_data.wipe_type;
-            play->fb_fade_type = 11;
+            play->fb_fade_type = FADE_TYPE_EVENT;
             Common_Set(transition.wipe_type, demo->data.emsg.door_data.wipe_type);
             mBGMForce_inform_end();
 
@@ -715,7 +715,7 @@ static int wait_emsg2_end() {
 
         if (goto_other_scene(play, Common_GetPointer(event_door_data), FALSE)) {
             play->fb_wipe_type = Common_Get(event_door_data).wipe_type;
-            play->fb_fade_type = 11;
+            play->fb_fade_type = FADE_TYPE_EVENT;
             Common_Set(transition.wipe_type, Common_Get(event_door_data).wipe_type);
             mBGMForce_inform_end();
             memset(&demo->request_save, 0, sizeof(mDemo_Request_c));

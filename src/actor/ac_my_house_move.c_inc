@@ -60,10 +60,10 @@ static void aMHS_goto_next_pl_scene(GAME_PLAY* play, STRUCTURE_ACTOR* my_house) 
     door_data.exit_position.y = 0;
     door_data.exit_position.z = startZ[my_house->arg0];
     door_data.door_actor_name = EMPTY_NO;
-    door_data.wipe_type = 1;
+    door_data.wipe_type = WIPE_TYPE_TRIFORCE;
 
     goto_other_scene(play, &door_data, 0);
-    play->fb_fade_type = 9;
+    play->fb_fade_type = FADE_TYPE_DEMO;
 }
 
 // In
@@ -131,7 +131,7 @@ static void aMHS_rewrite_pl_out_data(GAME_PLAY* play, STRUCTURE_ACTOR* my_house)
     Door_data_c* exit_data = Common_GetPointer(structure_exit_door_data);
     int direct = my_house->action & 1;
 
-    if (play->fb_wipe_mode == 0) {
+    if (play->fb_wipe_mode == WIPE_MODE_NONE) {
         xyz_t exit_pos;
         s_xyz* exit_pos_p = &exit_data->exit_position;
 
@@ -148,7 +148,7 @@ static void aMHS_rewrite_pl_out_data(GAME_PLAY* play, STRUCTURE_ACTOR* my_house)
         exit_pos_p->y = exit_pos.y;
         exit_pos_p->z = exit_pos.z;
         exit_data->door_actor_name = my_house->actor_class.npc_id;
-        exit_data->wipe_type = 1;
+        exit_data->wipe_type = WIPE_TYPE_TRIFORCE;
 
         Common_Set(house_owner_name, my_house->action);
     }
@@ -469,7 +469,7 @@ static void aMHS_actor_move(ACTOR* actorx, GAME* game) {
     if (my_house->actor_class.world.angle.z > 0) {
         goto_other_scene(play, &door_data, 1);
         Common_Get(transition).wipe_type = 3;
-        play->fb_fade_type = 9;
+        play->fb_fade_type = FADE_TYPE_DEMO;
         my_house->actor_class.world.angle.z = -1;
     }
 }

@@ -15,8 +15,8 @@ static void aNRTC_think_start(NPC_ACTOR* actor, GAME_PLAY* play) {
 static void aNRTC_think_title(NPC_ACTOR* actor, GAME_PLAY* play) {
     NPC_RTC_ACTOR* rtc = (NPC_RTC_ACTOR*)actor;
 
-    play->fb_wipe_type = 3;
-    play->fb_fade_type = 4;
+    play->fb_wipe_type = WIPE_TYPE_FADE_BLACK;
+    play->fb_fade_type = FADE_TYPE_OUT_RETURN_TITLE;
     mPlib_request_main_invade_type1((GAME*)play);
     Actor_info_save_actor(play);
     rtc->think_idx = aNRTC_THINK_WAIT;
@@ -38,7 +38,7 @@ static Door_data_c door_data = {
 static void aNRTC_think_door(NPC_ACTOR* actor, GAME_PLAY* play) {
     if (sAdo_BgmFadeoutCheck() != 0) {
         goto_other_scene(play, &door_data, 1);
-        Common_Set(transition.wipe_type, 3);
+        Common_Set(transition.wipe_type, WIPE_TYPE_FADE_BLACK);
     }
 }
 
@@ -47,7 +47,7 @@ static void aNRTC_think_check(NPC_ACTOR* actor, GAME_PLAY* play) {
     if (sAdo_BgmFadeoutCheck() != 0) {
         goto_other_scene(play, &door_data, 1);
         mCD_ReCheckLoadLand(play);
-        Common_Set(transition.wipe_type, 3);
+        Common_Set(transition.wipe_type, WIPE_TYPE_FADE_BLACK);
         rtc->think_idx = aNRTC_THINK_WAIT;
     }
 }

@@ -3,8 +3,8 @@ static void aNRST_think_start(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
 }
 
 static void aNRST_think_title(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
-    play->fb_wipe_type = 3;
-    play->fb_fade_type = 4;
+    play->fb_wipe_type = WIPE_TYPE_FADE_BLACK;
+    play->fb_fade_type = FADE_TYPE_OUT_RETURN_TITLE;
     mPlib_request_main_invade_type1((GAME*)play);
     Actor_info_save_actor(play);
     actor->think_idx = aNRST_THINK_WAIT;
@@ -24,7 +24,7 @@ static void aNRST_think_door(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
     door_data.extra_data = 1;
     door_data.exit_position.y = 0;
     door_data.door_actor_name = EMPTY_NO;
-    door_data.wipe_type = 3;
+    door_data.wipe_type = WIPE_TYPE_FADE_BLACK;
 
     // set with real data?
     // this is strange and I suspect this was toggled on/off for debugging
@@ -34,8 +34,8 @@ static void aNRST_think_door(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
     door_data.door_actor_name = HOUSE0 + arrange_idx;
 
     goto_other_scene(play, &door_data, TRUE);
-    Common_Get(transition).wipe_type = 1;
-    play->fb_fade_type = 9;
+    Common_Get(transition).wipe_type = WIPE_TYPE_TRIFORCE;
+    play->fb_fade_type = FADE_TYPE_DEMO;
     mBGMPsComp_make_ps_wipe(0x31C2);
 }
 

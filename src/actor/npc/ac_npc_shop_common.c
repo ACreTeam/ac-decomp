@@ -2880,8 +2880,8 @@ static void aNSC_exit_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) 
 
     if (mMsg_Check_main_wait(mMsg_Get_base_window_p()) == TRUE) {
         goto_other_scene(play, &stairs, TRUE);
-        if (play->fb_wipe_mode == 0) {
-            play->fb_fade_type = 12;
+        if (play->fb_wipe_mode == WIPE_MODE_NONE) {
+            play->fb_fade_type = FADE_TYPE_OTHER_ROOM;
             mBGMPsComp_volume_talk_end();
             mBGMPsComp_make_ps_wipe(0x195);
         }
@@ -2891,7 +2891,7 @@ static void aNSC_exit_wait(NPC_SHOP_COMMON_ACTOR* shop_common, GAME_PLAY* play) 
 
     if (mMsg_Check_main_wait(mMsg_Get_base_window_p()) == TRUE) {
         goto_other_scene(play, Common_GetPointer(structure_exit_door_data), TRUE);
-        if (play->fb_wipe_mode == 0) {
+        if (play->fb_wipe_mode == WIPE_MODE_NONE) {
             mBGMPsComp_scene_mode(0xe);
             mBGMPsComp_volume_talk_end();
             mBGMPsComp_make_ps_wipe(0x195);

@@ -122,7 +122,7 @@ static void aTnt_SetBgOffset(ACTOR* actor, int type) {
 static void aTnt_rewrite_out_data(ACTOR* actor, GAME_PLAY* play) {
     Door_data_c* door_data = Common_GetPointer(structure_exit_door_data);
 
-    if (play->fb_wipe_mode == 0) {
+    if (play->fb_wipe_mode == WIPE_MODE_NONE) {
         xyz_t pos;
 
         door_data->next_scene_id = Save_Get(scene_no);
@@ -140,7 +140,7 @@ static void aTnt_rewrite_out_data(ACTOR* actor, GAME_PLAY* play) {
 
         door_data->door_actor_name = TENT;
 
-        door_data->wipe_type = 1;
+        door_data->wipe_type = WIPE_TYPE_TRIFORCE;
         mBGMPsComp_make_ps_wipe(0x2168);
     }
 }

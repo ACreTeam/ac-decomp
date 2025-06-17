@@ -288,7 +288,7 @@ static void aSHM_exit_wait(NPC_SHOP_MASTERSP_ACTOR* shop_mastersp, GAME_PLAY* pl
     if (mMsg_CHECK_MAIN_WAIT() == TRUE) {
         goto_other_scene(play, Common_GetPointer(structure_exit_door_data), TRUE);
 
-        if (play->fb_wipe_mode == 0) {
+        if (play->fb_wipe_mode == WIPE_MODE_NONE) {
             mBGMPsComp_scene_mode(14);
             mBGMPsComp_volume_talk_end();
             mBGMPsComp_make_ps_wipe(0x195);

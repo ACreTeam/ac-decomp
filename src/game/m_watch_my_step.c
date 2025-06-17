@@ -295,7 +295,7 @@ static void navigate_camera_move(GAME_PLAY* play) {
 
     switch (S_navigate.mode) {
         case 0: {
-            if (mPlib_check_able_change_camera_normal_index() != 0 && play->fb_fade_type == 0) {
+            if (mPlib_check_able_change_camera_normal_index() != 0 && play->fb_fade_type == FADE_TYPE_NONE) {
                 S_navigate.timer = 150;
                 S_navigate.mode++;
             }
