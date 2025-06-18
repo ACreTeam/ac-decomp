@@ -276,6 +276,17 @@ def DolphinLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     }
 
 
+def DolphinLibMtx(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
+    return {
+        "lib": lib_name,
+        "mw_version": "GC/1.2.5",
+        "cflags": [*cflags_runtime, "-char signed"],
+        "progress_category": "sdk",
+        "src_dir": "src/static",
+        "objects": objects,
+    }
+
+
 def JSystemLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": lib_name,
@@ -435,14 +446,14 @@ config.libs = [
     DolphinLib(
         "ai",
         [
-            Object(NonMatching, "dolphin/ai/ai.c"),
+            Object(Matching, "dolphin/ai/ai.c"),
         ],
     ),
     DolphinLib(
         "ar",
         [
-            Object(NonMatching, "dolphin/ar/ar.c"),
-            Object(NonMatching, "dolphin/ar/arq.c"),
+            Object(Matching, "dolphin/ar/ar.c"),
+            Object(Matching, "dolphin/ar/arq.c"),
         ],
     ),
     DolphinLib(
@@ -539,13 +550,13 @@ config.libs = [
             Object(Matching, "dolphin/gx/GXTransform.c"),
         ],
     ),
-    DolphinLib(
+    DolphinLibMtx(
         "mtx",
         [
-            Object(NonMatching, "dolphin/mtx/mtx.c"),
-            Object(NonMatching, "dolphin/mtx/mtx44.c"),
-            Object(NonMatching, "dolphin/mtx/mtxvec.c"),
-            Object(NonMatching, "dolphin/mtx/vec.c"),
+            Object(Matching, "dolphin/mtx/mtx.c"),
+            Object(Matching, "dolphin/mtx/mtx44.c"),
+            Object(Matching, "dolphin/mtx/mtxvec.c"),
+            Object(Matching, "dolphin/mtx/vec.c"),
         ],
     ),
     DolphinLib(

@@ -13,10 +13,8 @@ extern "C" {
 #define MTXDegToRad(a) ((a) * 0.01745329252f)
 
 typedef struct {
-    f32 x;
-    f32 y;
-    f32 z;
-} Vec;
+	f32 x, y, z;
+} Vec, *VecPtr, Point3d, *Point3dPtr;
 
 typedef f32 Mtx34[3][4];
 typedef f32 Mtx23[2][3];
@@ -86,26 +84,45 @@ static inline void MTXSetPosition(GC_Mtx mtx, const Vec* pos) {
 ////////////////////////////////////////////
 
 #ifdef MTX_PS
-#define MTXIdentity PSMTXIdentity
-#define MTXCopy PSMTXCopy
-#define MTXConcat PSMTXConcat
-#define MTXConcatArray PSMTXConcatArray
-#define MTXTranspose PSMTXTranspose
-#define MTXInverse PSMTXInverse
-#define MTXInvXpose PSMTXInvXpose
-
-#define MTXScale PSMTXScale
-#define MTXTrans PSMTXTrans
-
-#define MTXMultVec PSMTXMultVec
+#define VECSquareMag      PSVECSquareMag
+#define VECNormalize      PSVECNormalize
+#define VECDistance       PSVECDistance
+#define VECMag            PSVECMag
+#define VECAdd            PSVECAdd
+#define VECDotProduct     PSVECDotProduct
+#define VECSquareDistance PSVECSquareDistance
+#define VECCrossProduct   PSVECCrossProduct
+#define MTXMultVec        PSMTXMultVec
+#define MTXMultVecArray   PSMTXMultVecArray
+#define MTXMultVecSR      PSMTXMultVecSR
+#define MTXScale          PSMTXScale
+#define MTXCopy           PSMTXCopy
+#define MTXConcat         PSMTXConcat
+#define MTXInverse        PSMTXInverse
+#define MTXTranspose      PSMTXTranspose
+#define MTXIdentity       PSMTXIdentity
+#define MTXRotRad         PSMTXRotRad
+#define MTXTrans          PSMTXTrans
 #else
-#define MTXIdentity C_MTXIdentity
-#define MTXCopy C_MTXCopy
-#define MTXConcat C_MTXConcat
-#define MTXConcatArray C_MTXConcatArray
-#define MTXTranspose C_MTXTranspose
-#define MTXInverse C_MTXInverse
-#define MTXInvXpose C_MTXInvXpose
+#define VECSquareMag      C_VECSquareMag
+#define VECNormalize      C_VECNormalize
+#define VECDistance       C_VECDistance
+#define VECMag            C_VECMag
+#define VECAdd            C_VECAdd
+#define VECDotProduct     C_VECDotProduct
+#define VECSquareDistance C_VECSquareDistance
+#define VECCrossProduct   C_VECCrossProduct
+#define MTXMultVec        C_MTXMultVec
+#define MTXMultVecArray   C_MTXMultVecArray
+#define MTXMultVecSR      C_MTXMultVecSR
+#define MTXScale          C_MTXScale
+#define MTXCopy           C_MTXCopy
+#define MTXConcat         C_MTXConcat
+#define MTXInverse        C_MTXInverse
+#define MTXTranspose      C_MTXTranspose
+#define MTXIdentity       C_MTXIdentity
+#define MTXRotRad         C_MTXRotRad
+#define MTXTrans          C_MTXTrans
 #endif
 
 #ifdef __cplusplus

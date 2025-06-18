@@ -35,7 +35,7 @@ void ARQInit();
 void ARQPostRequest(ARQRequest* task, u32 owner, u32 type, u32 priority, u32 source, u32 dest, u32 length, ARQCallback callback);
 
 // AR functions.
-ARCallback ARRegisterDMACallback(ARCallback callback);
+ARQCallback ARRegisterDMACallback(ARQCallback callback);
 u32 ARGetDMAStatus();
 void ARStartDMA(u32 type, u32 mainmem_addr, u32 aram_addr, u32 length);
 u32 ARAlloc(u32 length);
