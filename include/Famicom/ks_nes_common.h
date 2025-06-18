@@ -3,6 +3,8 @@
 
 #include "types.h"
 #include "dolphin/os/OSTime.h"
+#include "libultra/libultra.h"
+#include <dolphin/mtx.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,7 +37,8 @@ typedef struct ksNesCommonWorkPriv {
     /* 0x2A40 */ u8 _2A40[0x800];
     /* 0x3240 */ u8 _3240[0x5c00];
     /* 0x8E40 */ u8 _8E40[0x80];
-    /* 0x8EC0 */ u8 _8EC0[0x58];
+    /* 0x8EC0 */ u8 _8EC0[0x28];
+    /* 0x8EE8 */ Mtx34 draw_mtx;
 } ksNesCommonWorkPriv;
 
 typedef struct ksNesCommonWorkObj {
