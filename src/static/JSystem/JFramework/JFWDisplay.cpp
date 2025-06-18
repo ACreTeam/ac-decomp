@@ -1,5 +1,6 @@
 #include <libc/string.h>
 #include <dolphin/vi.h>
+#include "_mem.h"
 #include "JSystem/J2D/J2DGrafContext.h"
 #include "JSystem/JUtility/JUTAssertion.h"
 #include "JSystem/JUtility/JUTConsole.h"

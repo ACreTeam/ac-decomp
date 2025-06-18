@@ -15,6 +15,7 @@
 #include "m_bgm.h"
 #include "m_random_field.h"
 #include "zurumode.h"
+#include "_mem.h"
 
 // this is cursed
 #define aEvMgr_SHOW_ACTOR_RESULT_NOT_SHOWN (mEv_place_data_c*)-1
