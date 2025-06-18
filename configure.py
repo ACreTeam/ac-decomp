@@ -492,13 +492,13 @@ config.libs = [
     DolphinLib(
         "db",
         [
-            Object(NonMatching, "dolphin/db/db.c"),
+            Object(Matching, "dolphin/db/db.c"),
         ],
     ),
     DolphinLib(
         "dsp",
         [
-            Object(NonMatching, "dolphin/dsp/dsp.c"),
+            Object(Matching, "dolphin/dsp/dsp.c"),
         ],
     ),
     DolphinLib(
@@ -562,7 +562,7 @@ config.libs = [
     DolphinLib(
         "OdemuExi2",
         [
-            Object(NonMatching, "dolphin/OdemuExi2/DebuggerDriver.c"),
+            Object(Matching, "dolphin/OdemuExi2/DebuggerDriver.c", extra_cflags=["-inline deferred"]),
         ],
     ),
     DolphinLib(
