@@ -26,8 +26,7 @@ struct J2DGrafBlend {
 struct J2DGrafContext {
     J2DGrafContext(f32, f32, f32, f32);
 
-    virtual ~J2DGrafContext() {
-    }                                             // _08 (weak)
+    virtual ~J2DGrafContext() {}                                             // _08 (weak)
     virtual void place(const JGeometry::TBox2f&); // _0C
     virtual void place(f32 x, f32 y, f32 width, f32 height) {
         JGeometry::TBox2f box(x, y, x + width, y + height);

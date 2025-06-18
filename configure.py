@@ -795,9 +795,7 @@ config.libs = [
         "objects": [
             Object(NonMatching, "Famicom/ks_nes_core.cpp"),
             Object(NonMatching, "Famicom/ks_nes_draw.cpp"),
-            # TODO: get ~J2DOrthoGraph's dtor in here somehow? 0x800468fc
-            # also add in JUTGamePad::getPortStatus when JUTGamePad is linked?
-            Object(NonMatching, "Famicom/famicom.cpp"),
+            Object(Matching, "Famicom/famicom.cpp"),
             Object(Matching, "Famicom/famicom_nesinfo.cpp"),
         ],
     },

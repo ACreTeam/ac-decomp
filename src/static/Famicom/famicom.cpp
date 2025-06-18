@@ -15,6 +15,7 @@
 #include "JSystem/JKernel/JKRArchive.h"
 #include "JSystem/JKernel/JKRAram.h"
 #include "JSystem/ResTIMG.h"
+#include "JSystem/J2D/J2DGrafContext.h"
 #include "libc64/sprintf.h"
 #include "libjsys/jsyswrapper.h"
 #include "jsyswrap_cpp.h"
@@ -2325,11 +2326,7 @@ static int ksnes_thread_exec(u32 flags) {
     }
 }
 
-inline int GetPortStatus(int port) {
-    JUTGamePad::EPadPort padPort = (JUTGamePad::EPadPort)port;
-    return JUTGamePad::getPortStatus(padPort);
-}
-
+#pragma dont_inline on // @HACK - necessary to not inline JUTGamePad::getPortStatus
 static void nogbaInput() {
     int port;
     u32 disconnected_ports = 0;
@@ -2337,7 +2334,8 @@ static void nogbaInput() {
     for (port = 0; port < PAD_MAX_CONTROLLERS; port++) {
         InputValid[port] = false;
 
-        switch (GetPortStatus(port)) {
+        // switch (GetPortStatus(port)) {
+        switch ((int)JUTGamePad::getPortStatus((JUTGamePad::EPadPort)port)) {
             case PAD_ERR_NONE:
             {
                 InputValid[port] = true;
@@ -2395,6 +2393,14 @@ static void nogbaInput() {
             InputRepeat[port] = 0;
         }
     }
+}
+#pragma dont_inline reset
+
+// @HACK - we need to force J2DOrthoGraph's dtor to emit
+static void fake() {
+    J2DOrthoGraph graph;
+
+    graph.~J2DOrthoGraph();
 }
 
 extern void famicom_1frame() {
