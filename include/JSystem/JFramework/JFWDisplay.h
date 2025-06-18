@@ -98,12 +98,16 @@ class JFWDisplay {
         return sManager;
     }
 
+    const GXRenderModeObj* getRenderMode() const {
+        return mRMode;
+    }
+
     int getEfbHeight() const {
-        return JUTVideo::getManager()->getEfbHeight();
+        return getRenderMode() ->efbHeight;
     }
 
     int getEfbWidth() const {
-        return JUTVideo::getManager()->getFbWidth();
+        return getRenderMode() ->fbWidth;
     }
 
     JUTFader* getFader() const {
@@ -149,6 +153,15 @@ class JFWDisplay {
 
     bool getFBAlpha() {
         return mEnableAlpha;
+    }
+
+    void setGamma(u16 gamma) {
+        mGamma = gamma;
+    }
+
+    void setFrameRate(u16 framerate) {
+        mFrameRate = framerate;
+        mTickRate = 0;
     }
 
     static JFWDisplay* sManager; // 0x80415718

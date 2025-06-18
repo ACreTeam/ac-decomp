@@ -491,8 +491,8 @@ extern void JW_Init() {
     JC_JUTProcBar_setVisibleHeapBar(JC_JUTProcBar_getManager(), FALSE);
     jc_gport = JC_J2DOrthoGraph_new();
     u32 color = TCOLOR_BLACK;
-    jc_fader = JC_JUTFader_new(0, 0, JC_JUTVideo_getFbWidth(JC_JUTVideo_getManager()),
-                               JC_JUTVideo_getEfbHeight(JC_JUTVideo_getManager()), &color);
+    jc_fader = JC_JUTFader_new(0, 0, (u16)JC_JUTVideo_getFbWidth(JC_JUTVideo_getManager()),
+                               (u16)JC_JUTVideo_getEfbHeight(JC_JUTVideo_getManager()), &color);
     JC_JFWDisplay_setFader(display_manager, jc_fader);
     JC_JFWDisplay_setClearColor(display_manager, TCOLOR_BLACK);
     JC_JFWDisplay_setGamma(display_manager, 0);

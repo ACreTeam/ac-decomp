@@ -120,7 +120,7 @@ extern void famicom_emu_init(GAME* game) {
     u8 player;
     int debug;
     void* manager;
-    GXRenderModeObj* render;
+    const GXRenderModeObj* render;
 
     famicom_done = 0;
     famicom_done_countdown = 0;

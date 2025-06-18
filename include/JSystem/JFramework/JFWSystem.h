@@ -62,6 +62,18 @@ struct JFWSystem {
         JUT_ASSERT(sInitCalled == 0);
         CSetUpParam::renderMode = rmode;
     }
+    static JKRHeap* getSystemHeap() {
+        JUT_ASSERT(sInitCalled == 0);
+        return systemHeap;
+    }
+    static JKRHeap* getRootHeap() {
+        JUT_ASSERT(sInitCalled == 0);
+        return rootHeap;
+    }
+    static JUTConsole* getSystemConsole() {
+        JUT_ASSERT(sInitCalled == 0);
+        return systemConsole;
+    }
 };
 
 #endif

@@ -105,9 +105,14 @@ struct JUTException : public JKRThread {
     void setTraceSuppress(u32 supress) {
         mTraceSuppress = supress;
     }
+
     void setGamePad(JUTGamePad* gamePad) {
         mGamePad = gamePad;
         mPadPort = JUTGamePad::Port_Invalid;
+    }
+
+    void enterAllPad() {
+        setGamePad((JUTGamePad*)-1);
     }
 
     static JUTException* getManager() {

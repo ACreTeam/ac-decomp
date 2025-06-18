@@ -120,7 +120,7 @@ class JKRHeap : public JKRDisposer {
     void freeAll();
     void freeTail();
     void fillFreeArea();
-    void resize(void*, u32);
+    s32 resize(void*, u32);
     static s32 getSize(void*, JKRHeap*);
 
     // ... more functions

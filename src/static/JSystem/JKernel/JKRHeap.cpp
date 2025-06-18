@@ -134,9 +134,9 @@ void JKRHeap::freeTail() {
     do_freeTail();
 }
 
-void JKRHeap::resize(void* memoryBlock, u32 newSize) {
+s32 JKRHeap::resize(void* memoryBlock, u32 newSize) {
     JUT_WARNING_F(!mInitFlag, "resize block %x into %x in heap %x", memoryBlock, newSize, this);
-    do_resize(memoryBlock, newSize);
+    return do_resize(memoryBlock, newSize);
 }
 
 s32 JKRHeap::getSize(void* memoryBlock, JKRHeap* heap) {

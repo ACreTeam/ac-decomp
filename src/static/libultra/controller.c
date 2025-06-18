@@ -26,7 +26,7 @@ void __osContGetInitData(u8* p, OSContStatus* s){
     u8 success;
     
     for (i = 0, success = 0; i < __osMaxControllers; i++, s++){
-        JC_JUTGamePad_getPadStatus(&npad, i);
+        npad = JC_JUTGamePad_getPadStatus(i);
 
         if (npad.err == -3) {
             s->errno = 0;

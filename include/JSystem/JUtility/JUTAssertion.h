@@ -13,6 +13,9 @@ void flushMessage();
 void flushMessage_dbPrint();
 u32 getSDevice(void);
 
+void changeDisplayTime(u32 time);
+void changeDevice(u32 device);
+
 void showAssert_f(u32 device, char const* file, int line, char const* errormsg, ...);
 inline void showAssert(u32 device, char const* file, int line, char const* errormsg) {
     showAssert_f(device, file, line, "%s", errormsg);
