@@ -10,8 +10,11 @@
 #include "JSystem/JKernel/JKRDecomp.h"
 #include "JSystem/JKernel/JKRArchive.h"
 #include "JSystem/JKernel/JKRDvdRipper.h"
+#include "JSystem/JUtility/JUTFont.h"
 
 #include "MSL_C/printf.h"
+
+// TODO: there are a ton of unused functions we may want to add to this, check DnM+'s static.map file
 
 #include "../src/static/libjsys/jsyswrapper_ext.cpp"
 #include "../src/static/libjsys/jsyswrapper_main.cpp"

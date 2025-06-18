@@ -6,6 +6,34 @@ extern void* JC_JUTFader_new(int ul_x, int ul_y, int br_x, int br_y, u32* color)
     return new JUTFader(ul_x, ul_y, br_x, br_y, JUtility::TColor(*(GXColor*)color));
 }
 
+// @unused (necessary for virtual function emmission)
+extern int JC_JKRHeap_dump_sort(void* heap) {
+    return reinterpret_cast<JKRHeap*>(heap)->dump_sort();
+}
+
+// @unused
+extern int JC_JKRHeap_check(void* heap) {
+    return reinterpret_cast<JKRHeap*>(heap)->check();
+}
+
+// @fabricated - necessary for virtuals
+extern void JC_JUTResFont_fabricated(void* font) {
+    reinterpret_cast<JUTResFont*>(font)->getLeading();
+    reinterpret_cast<JUTResFont*>(font)->getFontType();
+    reinterpret_cast<JUTResFont*>(font)->getResFont();
+}
+// @unused
+extern int JC_JUTFont_getWidth(void* font) {
+    return reinterpret_cast<JUTResFont*>(font)->getWidth();
+}
+
+// @unused -- extra hacked for the right weak func emission order
+extern int JC_JUTFont_getHeight(void* font) {
+    return reinterpret_cast<JUTResFont*>(font)->getHeight();
+    return reinterpret_cast<JUTResFont*>(font)->getDescent();
+    return reinterpret_cast<JUTResFont*>(font)->getAscent();
+}
+
 extern void* JC_JUTDbPrint_getManager() {
     return JUTDbPrint::getManager();
 }
@@ -327,7 +355,6 @@ extern void JC_JKRDecomp_decode(u8* comp_bufp, u8* decomp_bufp, u32 decomp_buf_s
 
 extern void* JC__JKRGetResource(const char* resourceName) {
     return JKRGetResource(resourceName);
-
 }
 
 extern void JC__JKRRemoveResource(void* res) {
@@ -378,9 +405,11 @@ extern void* JC__JKRAllocFromAram(size_t size) {
     return JKRAllocFromAram(size, JKRAramHeap::Head);
 }
 
+#pragma force_active on
 extern u32 JC_JKRAramBlock_getAddress(void* aramBlock) {
     return reinterpret_cast<JKRAramBlock*>(aramBlock)->getAddress();
 }
+#pragma force_active reset
 
 extern u8* JC__JKRAramToMainRam_block(void* aramBlock, u8* ramDst, size_t size) {
     return JKRAram::aramToMainRam(reinterpret_cast<JKRAramBlock*>(aramBlock), ramDst, size, 0, EXPAND_SWITCH_DEFAULT, 0, nullptr, -1, nullptr);

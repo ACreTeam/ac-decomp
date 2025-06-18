@@ -429,7 +429,7 @@ config.libs = [
         "progress_category": "library",
         "src_dir": "src/static",
         "objects": [
-            Object(NonMatching, "libjsys/jsyswrapper.cpp"),
+            Object(Matching, "libjsys/jsyswrapper.cpp"),
         ],
     },
     DolphinLib(
