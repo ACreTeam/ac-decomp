@@ -20,6 +20,40 @@ block_relocations:
 - source: 0x80052D58
 
 add_relocations:
+# OS.c
+- source: .text:0x80078984
+  type: ha
+  target: __ArenaLo
+- source: .text:0x80078988
+  type: l
+  target: __ArenaLo
+- source: .text:0x800789BC
+  type: ha
+  target: _stack_addr
+- source: .text:0x800789C0
+  type: l
+  target: _stack_addr
+- source: .text:0x800789E0
+  type: ha
+  target: __ArenaHi
+- source: .text:0x800789E4
+  type: l
+  target: __ArenaHi
+
+# OSThread.c
+- source: .text:0x8007DC18
+  type: ha
+  target: _stack_addr
+- source: .text:0x8007DC1C
+  type: l
+  target: _stack_addr
+- source: .text:0x8007DC20
+  type: ha
+  target: _stack_end
+- source: .text:0x8007DC28
+  type: l
+  target: _stack_end
+
 # emu64
 - source: .text:0x8004F4F4 # setup_texture_tile (inlined texture_cache_select)
   type: ha

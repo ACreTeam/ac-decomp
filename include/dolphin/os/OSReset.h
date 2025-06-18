@@ -13,6 +13,11 @@ extern "C" {
 #define OS_RESET_HOTRESET 1 /* Soft reset */
 #define OS_RESET_SHUTDOWN 2
 
+struct OSResetFunctionQueue {
+	struct OSResetFunctionInfo* head;
+	struct OSResetFunctionInfo* tail;
+};
+
 typedef BOOL (*OSResetFunction)(BOOL final);
 typedef struct OSResetFunctionInfo OSResetFunctionInfo;
 

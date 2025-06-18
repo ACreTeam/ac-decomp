@@ -94,6 +94,23 @@ void PPCSetFpNonIEEEMode(void);
 #define MSR_RI          0x00000002  // Recoverable interrupt
 #define MSR_LE          0x00000001  // Little Endian
 
+#define MSR_POW_BIT 13 // Power Management
+#define MSR_ILE_BIT 15 // Interrupt Little Endian
+#define MSR_EE_BIT  16 // external interrupt
+#define MSR_PR_BIT  17 // privilege level (should be 0)
+#define MSR_FP_BIT  18 // floating point available
+#define MSR_ME_BIT  19 // machine check enable
+#define MSR_FE0_BIT 20 // floating point exception enable
+#define MSR_SE_BIT  21 // single step trace enable
+#define MSR_BE_BIT  22 // branch trace enable
+#define MSR_FE1_BIT 23 // floating point exception enable
+#define MSR_IP_BIT  25 // Exception prefix
+#define MSR_IR_BIT  26 // instruction relocate
+#define MSR_DR_BIT  27 // data relocate
+#define MSR_PM_BIT  29 // Performance monitor marked mode
+#define MSR_RI_BIT  30 // Recoverable interrupt
+#define MSR_LE_BIT  31 // Little Endian
+
 #ifdef __cplusplus
 }
 #endif

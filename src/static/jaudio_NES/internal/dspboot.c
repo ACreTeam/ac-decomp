@@ -342,7 +342,7 @@ extern void DSPInit2 (DSPTaskInfo2* task){
     u16 tmp;
     
     enable = OSDisableInterrupts();
-    __OSUnmaskInterrupts(OS_INTRMASK_DSP_DSP);
+    __OSUnmaskInterrupts(OS_INTERRUPTMASK_DSP_DSP);
     
     tmp = __DSPRegs[DSP_CONTROL_STATUS];
     tmp = (tmp & ~0xA8)| 0x800;

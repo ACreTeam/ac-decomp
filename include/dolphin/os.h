@@ -9,6 +9,7 @@
 #include "dolphin/os/OSError.h"
 #include "dolphin/os/OSInterrupt.h"
 #include "dolphin/os/OSModule.h"
+#include "dolphin/os/OSLink.h"
 #include "dolphin/os/OSMemory.h"
 #include "dolphin/os/OSMessage.h"
 #include "libforest/osreport.h" /* OSReport funcs */
@@ -99,6 +100,18 @@ typedef struct OSBootInfo_s {
 
 #define OS_BASE_CACHED (OS_CACHED_REGION_PREFIX << 16)
 #define OS_BASE_UNCACHED (OS_UNCACHED_REGION_PREFIX << 16)
+
+typedef struct BI2Debug {
+	/* 0x00 */ s32 debugMonSize;
+	/* 0x04 */ s32 simMemSize;
+	/* 0x08 */ u32 argOffset;
+	/* 0x0C */ u32 debugFlag;
+	/* 0x10 */ int trackLocation;
+	/* 0x14 */ int trackSize;
+	/* 0x18 */ u32 countryCode;
+	/* 0x1C */ u8 unk[8];
+	/* 0x24 */ u32 padSpec;
+} BI2Debug;
 
 #ifdef __MWERKS__
 u32 __OSPhysicalMemSize   : (OS_BASE_CACHED | 0x0028);

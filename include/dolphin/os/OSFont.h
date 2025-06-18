@@ -7,6 +7,9 @@
 extern "C" {
 #endif
 
+#define OS_FONT_ROM_SIZE_ANSI 0x03000
+#define OS_FONT_ROM_SIZE_SJIS 0x4D000
+
 typedef struct OSFontHeader {
   u16 fontType;      // _00
   u16 firstChar;     // _02, first char code defined in font.

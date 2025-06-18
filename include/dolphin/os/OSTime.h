@@ -46,6 +46,19 @@ typedef struct OSCalendarTime_s {
 OSTime OSCalendarTimeToTicks(OSCalendarTime* td);
 void OSTicksToCalendarTime(OSTime ticks, OSCalendarTime* td);
 
+#define USEC_MAX     1000
+#define MSEC_MAX     1000
+#define MONTH_MAX    12
+#define WEEK_DAY_MAX 7
+#define YEAR_DAY_MAX 365
+
+#define SECS_IN_MIN  60
+#define SECS_IN_HOUR (SECS_IN_MIN * 60)
+#define SECS_IN_DAY  (SECS_IN_HOUR * 24)
+#define SECS_IN_YEAR (SECS_IN_DAY * 365)
+
+#define BIAS 0xB2575
+
 #ifdef __cplusplus
 }
 #endif

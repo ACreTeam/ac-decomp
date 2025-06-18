@@ -85,7 +85,7 @@ s32 search_partial_address(u32 addr, u32* module_id, u32* section_idx, u32* sect
             *section_addr = addr - section_ofs;
           }
           if (module_name_ofs != nullptr) {
-            *module_name_ofs = module_p->info.nameOfs;
+            *module_name_ofs = module_p->info.nameOffset;
           }
 
           return 0; /* success */

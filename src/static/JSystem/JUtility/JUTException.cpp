@@ -187,7 +187,7 @@ bool JUTException::searchPartialModule(u32 address, u32* module_id, u32* section
                     if (section_offset)
                         *section_offset = address - addr;
                     if (name_offset)
-                        *name_offset = module->nameOfs;
+                        *name_offset = module->nameOffset;
                     return true;
                 }
             }
