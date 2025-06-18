@@ -3,6 +3,6 @@
 
 #include "JSystem/JKernel/JKRAram.h"
 #include "JSystem/JMacro.h"
-//#include "JSystem/JUtility/JUTException.h"
+#include "JSystem/JUtility/JUTException.h"
 
 #endif

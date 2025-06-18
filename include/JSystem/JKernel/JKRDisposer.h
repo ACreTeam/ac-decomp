@@ -9,17 +9,15 @@ extern "C" {
 
 class JKRHeap;
 
-class JKRDisposer
-{
-public:
+class JKRDisposer {
+  public:
     JKRDisposer();
     virtual ~JKRDisposer();
 
-public:
+  public:
     JKRHeap* mRootHeap;                 // _4
     JSULink<JKRDisposer> mPointerLinks; // _8
 };
-
 }
 #endif
 

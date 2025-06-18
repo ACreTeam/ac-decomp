@@ -21,6 +21,8 @@ extern double sin(double deg);
 extern double cos(double deg);
 extern double tan(double deg);
 
+extern double ceil(double);
+
 #ifdef __cplusplus
 }
 #endif

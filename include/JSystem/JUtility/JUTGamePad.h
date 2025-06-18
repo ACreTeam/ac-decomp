@@ -10,9 +10,8 @@
 #ifdef __cplusplus
 extern "C" {
 
-class JUTGamePadRecordBase
-{
-public:
+class JUTGamePadRecordBase {
+  public:
     JUTGamePadRecordBase();
     virtual ~JUTGamePadRecordBase();
     virtual void read(PADStatus* status) = 0;
@@ -27,22 +26,11 @@ public:
 };
 
 typedef void (*JUTResetBtnCb)(int, void*);
-class JUTGamePad : public JKRDisposer
-{
-public:
-    enum EPadPort
-    {
-        Port_unknown = -999,
-        Port_Invalid = -1,
-        Port1 = 0,
-        Port2,
-        Port3,
-        Port4,
-        PortRecorder
-    };
+class JUTGamePad : public JKRDisposer {
+  public:
+    enum EPadPort { Port_unknown = -999, Port_Invalid = -1, Port1 = 0, Port2, Port3, Port4, PortRecorder };
 
-    enum EButtons
-    {
+    enum EButtons {
         MAINSTICK_UP = 0x8000000,
         MAINSTICK_DOWN = 0x4000000,
         MAINSTICK_RIGHT = 0x2000000,
@@ -65,24 +53,11 @@ public:
         DPAD_LEFT = 0x1
     };
 
-    enum EStickMode
-    {
-        NonClamped,
-        Clamped
-    };
+    enum EStickMode { NonClamped, Clamped };
 
-    enum EClampMode
-    {
-        NoClamp,
-        Clamp,
-        ClampCircle
-    };
+    enum EClampMode { NoClamp, Clamp, ClampCircle };
 
-    enum EWhichStick
-    {
-        WhichStick_MainStick,
-        WhichStick_SubStick
-    };
+    enum EWhichStick { WhichStick_MainStick, WhichStick_SubStick };
 
     JUTGamePad();
     JUTGamePad(EPadPort port);
@@ -93,7 +68,7 @@ public:
     void clearForReset();
     static void init();
     void initList();
-    void read();
+    static void read();
     static bool recalibrate(u32);
     void setButtonRepeat(u32, u32, u32);
     void update();
@@ -235,38 +210,40 @@ public:
 
     JUTGamePadRecordBase* getPadReplay() const {
         return this->mPadReplay;
-    } 
+    }
 
-    class CButton
-    {
-    public:
-        CButton() { this->clear(); };
+    class CButton {
+      public:
+        CButton() {
+            this->clear();
+        };
 
         void clear();
         void update(const PADStatus* padStatus, u32 buttons);
         void setRepeat(u32 mask, u32 delay, u32 frequency);
 
-        u32 mButton;            // buttons held down
-        u32 mTrigger;           // buttons newly pressed this frame
-        u32 mRelease;           // buttons released this frame
-        u8 mAnalogA;            // 
-        u8 mAnalogB;            // 
-        u8 mAnalogL;            // left trigger percent
-        u8 mAnalogR;            // right trigger percent
-        f32 mAnalogLf;          // left trigger analog percent
-        f32 mAnalogRf;          // right trigger analog percent
-        u32 mRepeat;            // buttons currently marked as "repeated" triggers when held
-        u32 mRepeatTimer;       // frames since current button combo has been held
-        u32 mRepeatLastButton;  // last buttons pressed
-        u32 mRepeatMask;        // button mask to allow repeating trigger inputs
-        u32 mRepeatDelay;       // delay before beginning repeated input
-        u32 mRepeatFrequency;   // repeat input every X frames
+        u32 mButton;           // buttons held down
+        u32 mTrigger;          // buttons newly pressed this frame
+        u32 mRelease;          // buttons released this frame
+        u8 mAnalogA;           //
+        u8 mAnalogB;           //
+        u8 mAnalogL;           // left trigger percent
+        u8 mAnalogR;           // right trigger percent
+        f32 mAnalogLf;         // left trigger analog percent
+        f32 mAnalogRf;         // right trigger analog percent
+        u32 mRepeat;           // buttons currently marked as "repeated" triggers when held
+        u32 mRepeatTimer;      // frames since current button combo has been held
+        u32 mRepeatLastButton; // last buttons pressed
+        u32 mRepeatMask;       // button mask to allow repeating trigger inputs
+        u32 mRepeatDelay;      // delay before beginning repeated input
+        u32 mRepeatFrequency;  // repeat input every X frames
     };
 
-    class CStick
-    {
-    public:
-        CStick() { this->clear(); }
+    class CStick {
+      public:
+        CStick() {
+            this->clear();
+        }
 
         void clear();
         u32 update(s8 x, s8 y, JUTGamePad::EStickMode, JUTGamePad::EWhichStick);
@@ -278,16 +255,13 @@ public:
         s16 mAngle;
     };
 
-    class CRumble
-    {
-    public:
-        enum ERumble {
-            Rumble0,
-            Rumble1,
-            Rumble2
-        };
+    class CRumble {
+      public:
+        enum ERumble { Rumble0, Rumble1, Rumble2 };
 
-        CRumble(JUTGamePad* gamePad) { this->clear(gamePad); }
+        CRumble(JUTGamePad* gamePad) {
+            this->clear(gamePad);
+        }
 
         static u8 mStatus[PAD_MAX_CONTROLLERS];
         static u32 mEnabled;
@@ -299,7 +273,7 @@ public:
         static bool isEnabled(u32 channel) {
             return (JUTGamePad::CRumble::mEnabled & channel) != 0;
         }
-        
+
         void clear();
         void clear(JUTGamePad* gamePad);
         void update(s16);
@@ -312,8 +286,10 @@ public:
     };
 
     class C3ButtonReset {
-    public:
-        C3ButtonReset() { mReset = false; }
+      public:
+        C3ButtonReset() {
+            mReset = false;
+        }
 
         static u32 sResetPattern;
         static u32 sResetMaskPattern;
@@ -328,7 +304,9 @@ public:
         bool mReset;
     };
 
-    static PADStatus *getPadStatus(int idx) { return &mPadStatus[idx]; }
+    static PADStatus* getPadStatus(int idx) {
+        return &mPadStatus[idx];
+    }
 
     static JSUList<JUTGamePad> mPadList;
     static CButton mPadButton[PAD_MAX_CONTROLLERS];
@@ -340,21 +318,19 @@ public:
     static f32 sReleasePoint;
     static PADStatus mPadStatus[PAD_MAX_CONTROLLERS];
 
-
-    CButton mButtons;     // _18
-    CStick mMainStick; // _48
-    CStick mSubStick;       // _58
-    CRumble mRumble;      // _68
-    s16 mPortNum;            // _78
-    s8 mErrorStatus;      // _7A
-    JSULink<JUTGamePad> mLink;  // _7C
+    CButton mButtons;          // _18
+    CStick mMainStick;         // _48
+    CStick mSubStick;          // _58
+    CRumble mRumble;           // _68
+    s16 mPortNum;              // _78
+    s8 mErrorStatus;           // _7A
+    JSULink<JUTGamePad> mLink; // _7C
     JUTGamePadRecordBase* mPadRecord;
     JUTGamePadRecordBase* mPadReplay;
     u32 _94;
-    C3ButtonReset mButtonReset;     // _98
-    OSTime mResetTime; // _A0
+    C3ButtonReset mButtonReset; // _98
+    OSTime mResetTime;          // _A0
 };
-
 }
 #endif
 

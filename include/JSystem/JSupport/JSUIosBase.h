@@ -6,16 +6,24 @@
 
 #ifdef __cplusplus
 class JSUIosBase {
-public:
-  inline JSUIosBase() : mState(GOOD) { }
+  public:
+    inline JSUIosBase() : mState(GOOD) {
+    }
 
-  virtual ~JSUIosBase() { }
+    virtual ~JSUIosBase() {
+    }
 
-  bool isGood() { return !this->mState; }
-  void clrState(EIoState ioState) { this->mState &= ~ioState; }
-  void setState(EIoState ioState) { this->mState |= ioState; }
+    bool isGood() {
+        return !this->mState;
+    }
+    void clrState(EIoState ioState) {
+        this->mState &= ~ioState;
+    }
+    void setState(EIoState ioState) {
+        this->mState |= ioState;
+    }
 
-  u8 mState;
+    u8 mState;
 };
 #endif
 

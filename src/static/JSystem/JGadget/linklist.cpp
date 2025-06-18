@@ -28,7 +28,6 @@ TNodeLinkList::iterator TNodeLinkList::erase(iterator it, iterator itEnd) {
 }
 
 TNodeLinkList::iterator TNodeLinkList::erase(TNodeLinkList::iterator it) {
-  #line 102
   JUT_ASSERT(it.p_!=&oNode_);
 
   iterator itNext = it;
@@ -90,7 +89,6 @@ void TNodeLinkList::splice(TNodeLinkList::iterator it, TNodeLinkList& rSrc, TNod
 }
 
 void TNodeLinkList::splice(iterator it, TNodeLinkList& rSrc) {
-  #line 146
   JUT_ASSERT(this!=&rSrc);
   this->splice(it, rSrc, rSrc.begin(), rSrc.end());
   JUT_ASSERT(rSrc.empty());
@@ -104,7 +102,6 @@ TNodeLinkList::iterator TNodeLinkList::Find(const TLinkListNode* node) {
 #define NULL 0
     
 TNodeLinkList::iterator TNodeLinkList::Insert(iterator it, TLinkListNode* p) {
-  #line 300
   JUT_ASSERT(p!=0);
   TLinkListNode* pIt = it.p_;
   JUT_ASSERT(pIt!=0);
@@ -128,7 +125,6 @@ TNodeLinkList::iterator TNodeLinkList::Insert(iterator it, TLinkListNode* p) {
 #define NULL (void*)0;
 
 TNodeLinkList::iterator TNodeLinkList::Erase(TLinkListNode* p) {
-  #line 325
   JUT_ASSERT(!empty());
   JUT_ASSERT(p!=0);
   JUT_ASSERT(p!=&oNode_);
@@ -151,21 +147,18 @@ bool TNodeLinkList::Confirm() const {
   u32 u = 0;
   const_iterator itEnd = this->end();
   
-  #line 357
   JGADGET_EXITWARN(itEnd.p_==&oNode_);
   const_iterator it = this->begin();
-  JGADGET_EXITWARN(it.p_==oNode_.pNext_); // #line 359
+  JGADGET_EXITWARN(it.p_==oNode_.pNext_);
 
   for (; it != itEnd; ++it, ++u) {
-    JGADGET_EXITWARN(u<size()); // #line 362
+    JGADGET_EXITWARN(u<size());
     const TLinkListNode* pIt = it.p_;
-    JUT_ASSERT(pIt!=0); // #line 364
-    #line 365
+    JUT_ASSERT(pIt!=0);
     JGADGET_EXITWARN(pIt->pNext_->pPrev_==pIt);
-    JGADGET_EXITWARN(pIt->pPrev_->pNext_==pIt); // #line 366
+    JGADGET_EXITWARN(pIt->pPrev_->pNext_==pIt);
   }
 
-  #line 368
   JGADGET_EXITWARN(it.p_==&oNode_);
   JGADGET_EXITWARN(u==size());
   return true;
@@ -183,7 +176,6 @@ bool TNodeLinkList::Confirm_iterator(const_iterator it) const {
     ++itBegin;
   }
 
-  #line 383
   JGADGET_EXITWARN(it==itEnd);
 
   return true;

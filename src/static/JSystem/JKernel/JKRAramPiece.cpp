@@ -12,146 +12,132 @@
 JSUList<JKRAMCommand> JKRAramPiece::sAramPieceCommandList;
 OSMutex JKRAramPiece::mMutex;
 
-JKRAMCommand* JKRAramPiece::prepareCommand(
-  int direction, u32 source, u32 destination, u32 length,
-  JKRAramBlock* aramBlock, JKRAMCommand::AMCommandCallback callback) {
-  JKRAMCommand* cmd = new (JKRGetSystemHeap(), -4) JKRAMCommand();
-  cmd->mDirection = direction;
-  cmd->mSource = source;
-  cmd->mDestination = destination;
-  cmd->mAramBlock = aramBlock;
-  cmd->mLength = length;
-  cmd->mCallback = callback;
+JKRAMCommand* JKRAramPiece::prepareCommand(int direction, u32 source, u32 destination, u32 length,
+                                           JKRAramBlock* aramBlock, JKRAMCommand::AMCommandCallback callback) {
+    JKRAMCommand* cmd = new (JKRGetSystemHeap(), -4) JKRAMCommand();
+    cmd->mDirection = direction;
+    cmd->mSource = source;
+    cmd->mDestination = destination;
+    cmd->mAramBlock = aramBlock;
+    cmd->mLength = length;
+    cmd->mCallback = callback;
 
-  return cmd;
+    return cmd;
 }
 
 void JKRAramPiece::sendCommand(JKRAMCommand* cmd) {
-  JKRAramPiece::startDMA(cmd);
+    JKRAramPiece::startDMA(cmd);
 }
 
-JKRAMCommand* JKRAramPiece::orderAsync(
-  int direction, u32 source, u32 destination, u32 length,
-  JKRAramBlock* aramBlock, JKRAMCommand::AMCommandCallback callback) {
-  JKRAramPiece::lock();
+JKRAMCommand* JKRAramPiece::orderAsync(int direction, u32 source, u32 destination, u32 length, JKRAramBlock* aramBlock,
+                                       JKRAMCommand::AMCommandCallback callback) {
+    JKRAramPiece::lock();
 
-  if (!JKR_ISALIGNED32(source) || !JKR_ISALIGNED32(destination)) {
-    JLOGF("direction = %x\n", direction);
-    JLOGF("source = %x\n", source);
-    JLOGF("destination = %x\n", destination);
-    JLOGF("length = %x\n", length);
-    JPANICLINE(102);
-  }
+    if (!JKR_ISALIGNED32(source) || !JKR_ISALIGNED32(destination)) {
+        JLOGF("direction = %x\n", direction);
+        JLOGF("source = %x\n", source);
+        JLOGF("destination = %x\n", destination);
+        JLOGF("length = %x\n", length);
+        JPANICLINE(102);
+    }
 
-  JKRAramCommand* aramCmd = new (JKRGetSystemHeap(), -4) JKRAramCommand();
-  JKRAMCommand* cmd = JKRAramPiece::prepareCommand(
-    direction, source, destination, length, aramBlock, callback);
-  aramCmd->setting(TRUE, cmd);
-  OSSendMessage((OSMessageQueue*)&JKRAram::sMessageQueue, (OSMessage)aramCmd,
-    OS_MESSAGE_BLOCK);
-  if (cmd->mCallback != nullptr) {
-    JKRAramPiece::sAramPieceCommandList.append(&cmd->mAramPieceCommandLink);
-  }
+    JKRAramCommand* aramCmd = new (JKRGetSystemHeap(), -4) JKRAramCommand();
+    JKRAMCommand* cmd = JKRAramPiece::prepareCommand(direction, source, destination, length, aramBlock, callback);
+    aramCmd->setting(TRUE, cmd);
+    OSSendMessage((OSMessageQueue*)&JKRAram::sMessageQueue, (OSMessage)aramCmd, OS_MESSAGE_BLOCK);
+    if (cmd->mCallback != nullptr) {
+        JKRAramPiece::sAramPieceCommandList.append(&cmd->mAramPieceCommandLink);
+    }
 
-  JKRAramPiece::unlock();
-  return cmd;
+    JKRAramPiece::unlock();
+    return cmd;
 }
 
 bool JKRAramPiece::sync(JKRAMCommand* cmd, BOOL noBlock) {
-  OSMessage msg[1];
+    OSMessage msg[1];
 
-  JKRAramPiece::lock();
+    JKRAramPiece::lock();
 
-  if (!noBlock) {
-    OSReceiveMessage(&cmd->mMesgQueue, msg, OS_MESSAGE_BLOCK);
-    JKRAramPiece::sAramPieceCommandList.remove(&cmd->mAramPieceCommandLink);
-    JKRAramPiece::unlock();
-    return true;
-  }
-  else {
-    if (!OSReceiveMessage(&cmd->mMesgQueue, msg, OS_MESSAGE_NOBLOCK)) {
-      JKRAramPiece::unlock();
-      return false;
+    if (!noBlock) {
+        OSReceiveMessage(&cmd->mMesgQueue, msg, OS_MESSAGE_BLOCK);
+        JKRAramPiece::sAramPieceCommandList.remove(&cmd->mAramPieceCommandLink);
+        JKRAramPiece::unlock();
+        return true;
+    } else {
+        if (!OSReceiveMessage(&cmd->mMesgQueue, msg, OS_MESSAGE_NOBLOCK)) {
+            JKRAramPiece::unlock();
+            return false;
+        } else {
+            JKRAramPiece::sAramPieceCommandList.remove(&cmd->mAramPieceCommandLink);
+            JKRAramPiece::unlock();
+            return true;
+        }
     }
-    else {
-      JKRAramPiece::sAramPieceCommandList.remove(&cmd->mAramPieceCommandLink);
-      JKRAramPiece::unlock();
-      return true;
-    }
-  }
 }
 
-bool JKRAramPiece::orderSync(int direction, u32 source, u32 destination,
-  u32 length, JKRAramBlock* aramBlock) {
-  JKRAramPiece::lock();
+bool JKRAramPiece::orderSync(int direction, u32 source, u32 destination, u32 length, JKRAramBlock* aramBlock) {
+    JKRAramPiece::lock();
 
-  JKRAMCommand* cmd = JKRAramPiece::orderAsync(direction, source, destination,
-    length, aramBlock, nullptr);
-  bool res = JKRAramPiece::sync(cmd, FALSE);
-  delete cmd;
+    JKRAMCommand* cmd = JKRAramPiece::orderAsync(direction, source, destination, length, aramBlock, nullptr);
+    bool res = JKRAramPiece::sync(cmd, FALSE);
+    delete cmd;
 
-  JKRAramPiece::unlock();
-  return res;
+    JKRAramPiece::unlock();
+    return res;
 }
 
 void JKRAramPiece::startDMA(JKRAMCommand* cmd) {
-  if (cmd->mDirection == ARAM_DIR_ARAM_TO_MRAM) {
-    DCInvalidateRange((u8*)cmd->mDestination, cmd->mLength);
-  }
-  else { /* cmd->mDirection == ARAM_DIR_MRAM_TO_ARAM */
-    DCStoreRange((u8*)cmd->mSource, cmd->mLength);
-  }
+    if (cmd->mDirection == ARAM_DIR_ARAM_TO_MRAM) {
+        DCInvalidateRange((u8*)cmd->mDestination, cmd->mLength);
+    } else { /* cmd->mDirection == ARAM_DIR_MRAM_TO_ARAM */
+        DCStoreRange((u8*)cmd->mSource, cmd->mLength);
+    }
 
-  ARQPostRequest(cmd, 0, cmd->mDirection, 0, cmd->mSource, cmd->mDestination,
-    cmd->mLength, JKRAramPiece::doneDMA);
+    ARQPostRequest(cmd, 0, cmd->mDirection, 0, cmd->mSource, cmd->mDestination, cmd->mLength, JKRAramPiece::doneDMA);
 }
 
 void JKRAramPiece::doneDMA(u32 param) {
-  JKRAMCommand* cmd = (JKRAMCommand*)param;
-  if (cmd->mDirection == ARAM_DIR_ARAM_TO_MRAM) {
-    DCInvalidateRange((u8*)cmd->mDestination, cmd->mLength);
-  }
-  if (cmd->mCallbackType != ARAMPIECE_DONE_CALLBACK) {
-    if (cmd->mCallbackType == ARAMPIECE_DONE_DECOMPRESS) {
-      JKRDecomp::sendCommand(cmd->mDecompCommand);
+    JKRAMCommand* cmd = (JKRAMCommand*)param;
+    if (cmd->mDirection == ARAM_DIR_ARAM_TO_MRAM) {
+        DCInvalidateRange((u8*)cmd->mDestination, cmd->mLength);
     }
-  }
-  else {
-    if (cmd->mCallback != nullptr) {
-      (*cmd->mCallback)(param);
+    if (cmd->mCallbackType != ARAMPIECE_DONE_CALLBACK) {
+        if (cmd->mCallbackType == ARAMPIECE_DONE_DECOMPRESS) {
+            JKRDecomp::sendCommand(cmd->mDecompCommand);
+        }
+    } else {
+        if (cmd->mCallback != nullptr) {
+            (*cmd->mCallback)(param);
+        } else {
+            if (cmd->mCompletedMesgQueue != nullptr) {
+                OSSendMessage(cmd->mCompletedMesgQueue, (OSMessage)cmd, OS_MESSAGE_NOBLOCK);
+            } else {
+                OSSendMessage(&cmd->mMesgQueue, (OSMessage)cmd, OS_MESSAGE_NOBLOCK);
+            }
+        }
     }
-    else {
-      if (cmd->mCompletedMesgQueue != nullptr) {
-        OSSendMessage(cmd->mCompletedMesgQueue, (OSMessage)cmd,
-          OS_MESSAGE_NOBLOCK);
-      }
-      else {
-        OSSendMessage(&cmd->mMesgQueue, (OSMessage)cmd, OS_MESSAGE_NOBLOCK);
-      }
-    }
-  }
 }
 
 JKRAMCommand::JKRAMCommand() : mAramPieceCommandLink(this), mLink30(this) {
-  OSInitMessageQueue(&this->mMesgQueue, this->mMesgBuffer, 1);
-  this->mCallback = nullptr;
-  this->mCompletedMesgQueue = nullptr;
-  this->mCallbackType = ARAMPIECE_DONE_CALLBACK;
-  this->_8C = nullptr;
-  this->_90 = nullptr;
-  this->_94 = nullptr;
+    OSInitMessageQueue(&this->mMesgQueue, this->mMesgBuffer, 1);
+    this->mCallback = nullptr;
+    this->mCompletedMesgQueue = nullptr;
+    this->mCallbackType = ARAMPIECE_DONE_CALLBACK;
+    this->_8C = nullptr;
+    this->_90 = nullptr;
+    this->_94 = nullptr;
 }
 
 JKRAMCommand::~JKRAMCommand() {
-  if (this->_8C != nullptr) {
-    delete this->_8C;
-  }
+    if (this->_8C != nullptr) {
+        delete this->_8C;
+    }
 
-  if (this->_90 != nullptr) {
-    delete this->_90;
-  }
+    if (this->_90 != nullptr) {
+        delete this->_90;
+    }
 
-  if (this->_94 != nullptr) {
-    JKRFree(this->_94);
-  }
+    if (this->_94 != nullptr) {
+        JKRFree(this->_94);
+    }
 }

@@ -28,16 +28,16 @@
  */
 void JKRFile::read(void* data, s32 length, s32 ofs) {
 #ifdef JSYSTEM_DEBUG
-  if (!JKR_ISALIGNED(length, 32)) {
-    JUTAssertion::showAssert(JUTAssertion::getSDevice(), __FILE__, __LINE__, "( length & 0x1f ) == 0");
-  }
+    if (!JKR_ISALIGNED(length, 32)) {
+        JUTAssertion::showAssert(JUTAssertion::getSDevice(), __FILE__, __LINE__, "( length & 0x1f ) == 0");
+    }
 #endif
 
-  while (true) {
-    if (this->readData(data, length, ofs) == length) {
-      return;
-    }
+    while (true) {
+        if (this->readData(data, length, ofs) == length) {
+            return;
+        }
 
-    VIWaitForRetrace();
-  }
+        VIWaitForRetrace();
+    }
 }
