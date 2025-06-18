@@ -845,8 +845,8 @@ void emu64::texconv_tile(u8* addr, u8* converted_addr, unsigned int wd, unsigned
 
                         ofs = this->tmem_swap(x_ofs + 4, line_siz);
                         src = (u32*)(addr + ofs);
-                        u32 part02 = (src[0] << 4) & 0xF0F0F0F0;
                         u32 part12 = (src[0] >> 4) & 0x0F0F0F0F;
+                        u32 part02 = (src[0] << 4) & 0xF0F0F0F0;
                         dst[1] = part02 + part12;
                     } else {
                         unsigned int x_ofs = blk_x + y_ofs * wd;
@@ -1021,7 +1021,7 @@ int emu64::replace_combine_to_tev(Gfx* g) {
     /* Set TEV color 0 */
     if (b_color == GX_CC_ZERO) {
         sc_tev.a0 = GX_CC_ZERO;
-        sc_tev.b0 = b_color;
+        sc_tev.b0 = a_color;
         sc_tev.c0 = c_color;
         sc_tev.d0 = d_color;
     } else if (b_color == d_color) {
@@ -1036,7 +1036,7 @@ int emu64::replace_combine_to_tev(Gfx* g) {
     }
 
     /* Set TEV alpha 0 */
-    if (a_alpha == TEV_ALPHA_ZERO) {
+    if (b_alpha == TEV_ALPHA_ZERO) {
         sc_tev.Aa0 = TEV_ALPHA_ZERO;
         sc_tev.Ab0 = a_alpha;
         sc_tev.Ac0 = c_alpha;
@@ -1061,15 +1061,16 @@ int emu64::replace_combine_to_tev(Gfx* g) {
     Ac = setcombine->Ac1;
     Ad = setcombine->Ad1;
 
-    a_color = (GXTevColorArg)tblc[a][0];
-    b_color = (GXTevColorArg)tblc[b][1];
-    c_color = (GXTevColorArg)tblc[c][2];
-    d_color = (GXTevColorArg)tblc[d][3];
+    {
+    GXTevColorArg a_color = (GXTevColorArg)tblc[a][0];
+    GXTevColorArg b_color = (GXTevColorArg)tblc[b][1];
+    GXTevColorArg c_color = (GXTevColorArg)tblc[c][2];
+    GXTevColorArg d_color = (GXTevColorArg)tblc[d][3];
 
-    a_alpha = (GXTevAlphaArg)tbla[Aa][0];
-    b_alpha = (GXTevAlphaArg)tbla[Ab][0];
-    c_alpha = (GXTevAlphaArg)tbla[Ac][1];
-    d_alpha = (GXTevAlphaArg)tbla[Ad][0];
+    GXTevAlphaArg a_alpha = (GXTevAlphaArg)tbla[Aa][0];
+    GXTevAlphaArg b_alpha = (GXTevAlphaArg)tbla[Ab][0];
+    GXTevAlphaArg c_alpha = (GXTevAlphaArg)tbla[Ac][1];
+    GXTevAlphaArg d_alpha = (GXTevAlphaArg)tbla[Ad][0];
 
     /* Set TEV color 1 */
     if (b_color == GX_CC_ZERO) {
@@ -1107,6 +1108,7 @@ int emu64::replace_combine_to_tev(Gfx* g) {
     g->words.w0 = ((Gwords*)&sc_tev)->w0;
     g->words.w1 = ((Gwords*)&sc_tev)->w1;
     return 0;
+    }
 }
 
 int emu64::combine_auto() {
@@ -1644,7 +1646,7 @@ void emu64::combine_manual() {
             GXSetTevColorIn(GX_TEVSTAGE2, GX_CC_ZERO, GX_CC_C1, GX_CC_RASC, GX_CC_CPREV);
             GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_TEXA);
             GXSetTevAlphaIn(GX_TEVSTAGE1, GX_CA_ZERO, GX_CA_APREV, GX_CA_TEXA, GX_CA_ZERO);
-            GXSetTevAlphaIn(GX_TEVSTAGE2, GX_CA_ZERO, GX_CA_APREV, GX_CA_A0, GX_CA_ZERO);
+            GXSetTevAlphaIn(GX_TEVSTAGE2, GX_CA_ZERO, GX_CA_APREV, GX_CA_A0, GX_CA_A1);
             GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
             GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD1, GX_TEXMAP1, GX_COLOR0A0);
             GXSetTevOrder(GX_TEVSTAGE2, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
@@ -1846,27 +1848,23 @@ void emu64::combine_manual() {
                 }
 
                 if (last_highlow < NUM_COMBINER_HIGHLOW_ERRS) {
-                    bool found = false;
                     int i;
-                    for (i = 0; i < last_highlow; i++) {
+                    for (i = 0; i < (int)last_highlow; i++) {
                         if (combine_mode == highlow_errs[i]) {
-                            found = true;
-                            break;
+                            goto default_continue;
                         }
                     }
 
-                    if (!found) {
-
-                        highlow_errs[i] = combine_mode;
-                        this->err_count++;
-                        /* ### Unsupported combine mode ###\ncase 0x%16llx:// */
-                        this->Printf0(VT_COL(YELLOW, BLACK) "### 未対応のコンバインモードです ###\ncase 0x%16llx: // ",
-                                      combine_mode);
-                        this->print_combine(combine_mode);
-                        this->Printf0(VT_RST "\n");
-                    }
+                    highlow_errs[i] = combine_mode;
+                    last_highlow++;
+                    this->err_count++;
+                    /* ### Unsupported combine mode ###\ncase 0x%16llx: // */
+                    this->Printf0(VT_COL(YELLOW, BLACK) "### 未対応のコンバインモードです ###\ncase 0x%16llx: // ",
+                                    combine_mode);
+                    this->print_combine(combine_mode);
+                    this->Printf0(VT_RST "\n");
                 }
-
+            default_continue:
                 /* Default case */
                 GXSetNumTevStages(1);
                 GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ONE);
