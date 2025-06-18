@@ -198,11 +198,11 @@ extern void emu64_refresh() {
 
 static u16 cvtN64ToDol(int n64_fmt, int n64_bpp) {
     u16 dol = emu64::fmtxtbl[n64_fmt][n64_bpp];
-    if (dol != 0xFFFF) {
-        return dol;
+    if (dol == 0xFFFF) {
+        dol = GX_TF_I4;
     }
 
-    return GX_TF_I4;
+    return dol;
 }
 
 MATCH_FORCESTRIP static f32 PsendoArcSinConvert(f32 arcsin) {
@@ -1918,52 +1918,56 @@ void emu64::combine() {
 
 /* TODO: @nonmatching */
 void emu64::setup_texture_tile(int tile) {
-    u16 stride;
-    u16 sizes;
-    u16 sizet;
-    u16 o_width;
-    u16 o_height;
-    u32 tile_ht;
-    u32 tile_wd;
-    u32 width;
-    u32 twd0;
-    u32 tht0;
-    u32 height;
+    unsigned int tile_ht;
+    unsigned int tile_wd;
+    u16 stride0;
+    unsigned int stride;
+    unsigned int sizes;
+    u32 sizet;
+    u16 sizet0;
+    unsigned int width;
+    unsigned int height;
+    unsigned int twd0;
+    unsigned int tht0;
+    
     void* orig_addr;
     void* converted_addr;
-    Gsettile* settile;
+    const Gsettile* settile;
     Gloadblock* loadblock;
     u8* tmem_addr;
-    Gloadtile* loadtile;
-    Gsetimg_new* setimg_new;
+    const Gloadtile* loadtile;
+    const Gsetimg_new* setimg_new;
     unsigned int w;
     unsigned int h;
     GXTexFmts dol_fmt;
-
+    
     EMU64_TIMED_SEGMENT_BEGIN();
     settile = &this->settile_cmds[tile];
     if (settile->line == 0) {
         return;
     }
-
+    
     u32 tmem = settile->tmem;
-    EMU64_ASSERTLINE(tmem / 4 < number(tmem_map), 2862);
+    EMU64_ASSERTLINE(tmem / 4 < number(tmem_map), 2756);
 
     tmem_addr = (u8*)tmem_map[tmem / 4].addr;
     loadblock = &tmem_map[tmem / 4].loadblock;
     loadtile = &tmem_map[tmem / 4].loadtile;
     setimg_new = (Gsetimg_new*)&tmem_map[tmem / 4].setimg2;
-
+    
     if (tmem_addr == nullptr) {
         this->err_count++;
         return;
     }
 
     int shift = (4 - settile->siz);
-    stride = settile->line << shift;
-    sizes = settile->masks != 0 ? (1 << settile->masks) : (1 << 10);
-    sizet = settile->maskt != 0 ? (1 << settile->maskt) : (1 << 10);
-
+    stride0 = settile->line << shift;
+    stride = stride0;
+    sizes = (u16)(settile->masks != 0 ? (u16)(1 << settile->masks) : (1 << 10));
+    sizet = (u16)(settile->maskt != 0 ? (1 << settile->maskt) : (1 << 10));
+    
+    // sizet = sizet0;
+    
     if (setimg_new->setimg2.isDolphin) {
         width = EXPAND_WIDTH(setimg_new->setimg2.wd);
         height = EXPAND_HEIGHT(setimg_new->setimg2.ht);
@@ -1974,17 +1978,19 @@ void emu64::setup_texture_tile(int tile) {
             if (wd == 0) {
                 width = stride;
                 height = (u16)((((loadblock->sh) + 1) << (2 - settile->siz)) / stride);
-            } else {
+            }
+            else {
                 width = (u16)(((1 << (15 - settile->siz)) - 1) / wd + 1);
                 height = (u16)((((loadblock->sh) + 1) << (2 - settile->siz)) / width);
             }
-        } else {
+        }
+        else {
             width = (u16)(((wd + 1) << setimg_new->setimg.siz) >> settile->siz);
             height = 0;
         }
     }
 
-    dol_fmt.raw = cvtN64ToDol(this->settile_cmds[tile].fmt, settile->siz);
+    dol_fmt.raw = cvtN64ToDol(settile->fmt, settile->siz);
 
     if (setimg_new->setimg2.isDolphin) {
         twd0 = width;
@@ -1996,10 +2002,10 @@ void emu64::setup_texture_tile(int tile) {
             twd0 = width;
             orig_addr = tmem_addr;
             tht0 = height;
-
-            if (this->settile_cmds[tile].ct != 0) {
+            
+            if (settile->ct) {
                 u32 tlen = this->settilesize_dolphin_cmds[tile].tlen + 1;
-                if (height > tlen) {
+                if (tht0 > tlen) {
                     tht0 = tlen;
                 }
             }
@@ -2012,49 +2018,46 @@ void emu64::setup_texture_tile(int tile) {
                 /* Translation: ### This tile is already loaded: %08x\n */
                 EMU64_INFOF("### このタイルはすでにロードされています %08x\n", tmem_addr);
 
-                if ((this->settile_cmds[tile].fmt != G_IM_FMT_CI ||
-                     this->texture_info[tile].tlut_name == this->settile_cmds[tile].palette) &&
+                if ((settile->fmt != G_IM_FMT_CI || this->texture_info[tile].tlut_name == settile->palette) &&
                     aflags[AFLAGS_SKIP_TILE_SETUP] != 0) {
                     /* Translation: ### Skip tile setup\n */
                     EMU64_INFO("### タイルの設定はスキップします\n");
                     return;
                 }
             }
+            
+            converted_addr = this->texconv_block_new(tmem_addr, width, tht0, settile->fmt, settile->siz, loadblock->th > 0 ? 0 : settile->line);
+        }
+        else {
+            unsigned int w0;
+            unsigned int w1;
+            unsigned int h0;
+            unsigned int h1;
+            unsigned int ofs0;
+            
+            w0 = ((loadtile->sl << setimg_new->setimg.siz) >> settile->siz) / 4;
+            w1 = ((loadtile->sh << setimg_new->setimg.siz) >> settile->siz) / 4;
+            h0 = loadtile->tl / 4;
+            h1 = loadtile->th / 4;
+            
 
-            u32 t;
-            if (loadblock->th) {
-                t = 0;
-            } else {
-                t = this->settile_cmds[tile].line;
-            }
+            tile_wd = w1 - w0;
+            tile_ht = h1 - h0;
 
-            converted_addr = this->texconv_block_new(tmem_addr, width, height, this->settile_cmds[tile].fmt,
-                                                     this->settile_cmds[tile].siz, t);
-        } else {
-            // Issue is here
-            u32 w0 = loadtile->sl << setimg_new->setimg.siz;
-            w0 >>= this->settile_cmds[tile].siz;
-            u32 h0 = loadtile->tl;
-
-            u32 w1 = loadtile->sh << setimg_new->setimg.siz;
-            w1 >>= this->settile_cmds[tile].siz;
-            u32 h1 = loadtile->th;
-
-            tile_wd = w1 / 4 - w0 / 4;
-            tile_ht = h1 / 4 - h0 / 4;
+            // textconv_tile_new also adds + 1 to tile_wd and tile_ht (as params)
+            // since they're inlined, target is saving the addition instead of
+            // recalculating it
             twd0 = tile_wd + 1;
             tht0 = tile_ht + 1;
 
-            u32 ofs0 = ((w0 / 4) + width * (loadtile->tl / 4));
-            u32 ofs1 = ofs0 << this->settile_cmds[tile].siz;
-            orig_addr = tmem_addr + ofs1 / 2;
-
+            ofs0 = w0 + width * h0;
+            orig_addr = tmem_addr + (ofs0 << settile->siz) / 2;
+            
             if (orig_addr == this->texture_info[tile].img_addr) {
                 /* Translation: ### This tile is already loaded: %08x\n */
                 EMU64_INFOF("### このタイルはすでにロードされています %08x\n", tmem_addr);
 
-                if ((this->settile_cmds[tile].fmt != G_IM_FMT_CI ||
-                     this->texture_info[tile].tlut_name == this->settile_cmds[tile].palette) &&
+                if ((settile->fmt != G_IM_FMT_CI || this->texture_info[tile].tlut_name == settile->palette) &&
                     aflags[AFLAGS_SKIP_TILE_SETUP] != 0) {
                     /* Translation: ### Skip tile setup\n */
                     EMU64_INFO("### タイルの設定はスキップします\n");
@@ -2062,20 +2065,31 @@ void emu64::setup_texture_tile(int tile) {
                 }
             }
 
-            converted_addr = this->texconv_tile_new(tmem_addr, width, this->settile_cmds[tile].fmt,
-                                                    this->settile_cmds[tile].siz, 0, 0, tile_wd, tile_ht, 0);
+            converted_addr = this->texconv_tile_new(
+                tmem_addr,
+                width,
+                settile->fmt, settile->siz,
+                0, 0,
+                tile_wd, tile_ht,
+                0
+            );
         }
     }
 
     if ((this->geometry_mode & G_TEXTURE_GEN_LINEAR) != 0 && aflags[AFLAGS_DO_TEXTURE_LINEAR_CONVERT] != 0) {
-        converted_addr = TextureLinearConvert(converted_addr, twd0, tht0, this->settile_cmds[tile].fmt,
-                                              this->settile_cmds[tile].siz);
+        converted_addr = TextureLinearConvert(converted_addr, twd0, tht0, settile->fmt, settile->siz);
     }
 
     /* TODO: Go back and rename a lot of these variables */
-    EMU64_INFOF("\n : setup_texture_tile %s %s SIZE0=%dx? SIZE0X=%dx%d SIZE7=%dx%d TILE=%dx%d\n",
-                get_fmt_str(this->settile_cmds[tile].fmt), get_siz_str(this->settile_cmds[tile].siz), stride, sizes,
-                sizet, o_width, o_height, width, height);
+    EMU64_INFOF(
+        "\n : setup_texture_tile %s %s SIZE0=%dx? SIZE0X=%dx%d SIZE7=%dx%d TILE=%dx%d\n",
+        get_fmt_str(settile->fmt),
+        get_siz_str(settile->siz),
+        stride,
+        sizes, sizet,
+        width, height,
+        twd0, tht0
+    );
 
     if (converted_addr == nullptr) {
         this->Printf0("TEXTURE OVER!!\n");
@@ -2085,15 +2099,20 @@ void emu64::setup_texture_tile(int tile) {
 
     if (setimg_new->setimg2.isDolphin == FALSE) {
         /* Translation: Texture conversion %08x %s %s %dx%d .data %d .bss %d\n */
-        EMU64_WARNF("テクスチャ変換 %08x %s %s %dx%d .data %d .bss %d\n", tmem_addr,
-                    get_fmt_str(this->settile_cmds[tile].fmt), get_siz_str(this->settile_cmds[tile].siz), width, height,
-                    (s32)texture_cache_data.buffer_current - (s32)texture_cache_data.buffer_start,
-                    (s32)texture_cache_bss.buffer_current - (s32)texture_cache_bss.buffer_start);
+        EMU64_WARNF(
+            "テクスチャ変換 %08x %s %s %dx%d .data %d .bss %d\n",
+            tmem_addr,
+            get_fmt_str(settile->fmt),
+            get_siz_str(settile->siz),
+            twd0, tht0,
+            (s32)texture_cache_data.buffer_current - (s32)texture_cache_data.buffer_start,
+            (s32)texture_cache_bss.buffer_current - (s32)texture_cache_bss.buffer_start
+        );
     }
 
     /* Convert to GC width & height */
     if (setimg_new->setimg2.isDolphin == FALSE) {
-        get_dol_wd_ht(this->settile_cmds[tile].siz, twd0, tht0, &w, &h);
+        get_dol_wd_ht(settile->siz, twd0, tht0, &w, &h);
     } else {
         w = twd0;
         h = tht0;
@@ -2112,15 +2131,16 @@ void emu64::setup_texture_tile(int tile) {
         case 128:
         case 256:
         case 512:
-            if (this->settile_cmds[tile].cs != 0) {
+            if (settile->cs != 0) {
                 int tw = EXPAND_WIDTH(this->settilesize_dolphin_cmds[tile].slen);
-                if (this->settile_cmds[tile].ms && w < tw) {
+                if (settile->ms && w < tw) {
                     wrap_s = GX_MIRROR;
                 } else {
                     wrap_s = GX_CLAMP;
                 }
-            } else {
-                if (this->settile_cmds[tile].ms != 0) {
+            }
+            else {
+                if (settile->ms != 0) {
                     wrap_s = GX_MIRROR;
                 } else {
                     wrap_s = GX_REPEAT;
@@ -2131,7 +2151,7 @@ void emu64::setup_texture_tile(int tile) {
             wrap_s = GX_CLAMP;
             break;
     }
-
+    
     /* Y wrapmode */
     switch (h) {
         case 4:
@@ -2142,15 +2162,16 @@ void emu64::setup_texture_tile(int tile) {
         case 128:
         case 256:
         case 512:
-            if (this->settile_cmds[tile].ct != 0) {
+            if (settile->ct != 0) {
                 int th = EXPAND_WIDTH(this->settilesize_dolphin_cmds[tile].tlen);
-                if (this->settile_cmds[tile].mt && h < th) {
+                if (settile->mt && h < th) {
                     wrap_t = GX_MIRROR;
                 } else {
                     wrap_t = GX_CLAMP;
                 }
-            } else {
-                if (this->settile_cmds[tile].mt != 0) {
+            }
+            else {
+                if (settile->mt != 0) {
                     wrap_t = GX_MIRROR;
                 } else {
                     wrap_t = GX_REPEAT;
@@ -2163,27 +2184,27 @@ void emu64::setup_texture_tile(int tile) {
     }
 
     this->texture_info[tile].img_addr = orig_addr;
-    this->texture_info[tile].format = this->settile_cmds[tile].fmt;
-    this->texture_info[tile].size = this->settile_cmds[tile].siz;
+    this->texture_info[tile].format = settile->fmt;
+    this->texture_info[tile].size = settile->siz;
     this->texture_info[tile].width = w;
     this->texture_info[tile].height = h;
 
-    if (this->settile_cmds[tile].fmt == G_IM_FMT_CI) {
-        int pal = this->settile_cmds[tile].palette;
+    if (settile->fmt == G_IM_FMT_CI) {
+        int pal = settile->palette;
         this->texture_info[tile].tlut_name = pal;
         GXInitTexObjCI(&this->tex_objs[tile], converted_addr, w, h, dol_fmt.citexfmt, wrap_s, wrap_t, GX_FALSE, pal);
-        EMU64_INFOF("GXInitTexObjCI tile_no=%d %dx%d pal_no=%d\n", tile, w, h, this->settile_cmds[tile].palette);
-    } else {
+        EMU64_INFOF("GXInitTexObjCI tile_no=%d %dx%d pal_no=%d\n", tile, w, h, settile->palette);
+    }
+    else {
         this->texture_info[tile].tlut_name = 0xFF;
         GXInitTexObj(&this->tex_objs[tile], converted_addr, w, h, dol_fmt.texfmt, wrap_s, wrap_t, GX_FALSE);
         EMU64_INFOF("GXInitTexObj tile_no=%d %dx%d\n", tile, w, h);
     }
 
-    if (((this->othermode_high & G_TF_BILERP) == 0 || (this->othermode_high & G_CYC_COPY) != 0 ||
-         (aflags[AFLAGS_TEX_GEN_LOD_MODE] == 1)) &&
-        aflags[AFLAGS_TEX_GEN_LOD_MODE] != 2) {
+    if (((this->othermode_high & G_TF_BILERP) == 0 || (this->othermode_high & G_CYC_COPY) != 0 || (aflags[AFLAGS_TEX_GEN_LOD_MODE] == 1)) && aflags[AFLAGS_TEX_GEN_LOD_MODE] != 2) {
         GXInitTexObjLOD(&this->tex_objs[tile], GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
-    } else if (aflags[AFLAGS_TEX_GEN_LOD_MODE] == 3) {
+    }
+    else if (aflags[AFLAGS_TEX_GEN_LOD_MODE] == 3) {
         GXInitTexObjLOD(&this->tex_objs[tile], GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_TRUE, GX_ANISO_1);
     }
 
@@ -2499,16 +2520,16 @@ void emu64::texture_matrix() {
 
         EMU64_ASSERTLINE_DEBUG(this, 4092);
         if (this->texture_info[0].width != 0 && this->texture_info[0].height != 0) {
-            float uls = x32 * shift_tbl[this->settile_cmds[0].shifts];
-            float ult = y32 * shift_tbl[this->settile_cmds[0].shiftt];
+            float t_uls = x32 * shift_tbl[this->settile_cmds[0].shifts];
+            float t_ult = y32 * shift_tbl[this->settile_cmds[0].shiftt];
 
             uls0 = this->settilesize_dolphin_cmds[0].sl;
             ult0 = this->settilesize_dolphin_cmds[0].tl;
 
-            uls = uls * ((fastcast_float(&uls0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
-            ult = ult * ((fastcast_float(&ult0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
-            lrs = uls + (uls * fastcast_float(&this->texture_info[0].width));
-            lrt = ult + (ult * fastcast_float(&this->texture_info[0].height));
+            uls = t_uls * ((fastcast_float(&uls0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
+            ult = t_ult * ((fastcast_float(&ult0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
+            lrs = uls + (t_uls * fastcast_float(&this->texture_info[0].width));
+            lrt = ult + (t_ult * fastcast_float(&this->texture_info[0].height));
 
             if (ult == lrt) {
                 OSReport(VT_COL(RED, WHITE) "ult = %8.3f lrt = %8.3f ult0 = %d y32 = %8.3f texobj[0].ht = %d\n" VT_RST,
@@ -2531,16 +2552,16 @@ void emu64::texture_matrix() {
 
         /* Setup texture tile 1 */
         if (this->texture_info[1].width != 0 && this->texture_info[1].height != 0) {
-            float uls = x32 * shift_tbl[this->settile_cmds[1].shifts];
-            float ult = y32 * shift_tbl[this->settile_cmds[1].shiftt];
+            float t_uls = x32 * shift_tbl[this->settile_cmds[1].shifts];
+            float t_ult = y32 * shift_tbl[this->settile_cmds[1].shiftt];
 
             uls0 = this->settilesize_dolphin_cmds[1].sl;
             ult0 = this->settilesize_dolphin_cmds[1].tl;
 
-            uls = uls * ((fastcast_float(&uls0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
-            ult = ult * ((fastcast_float(&ult0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
-            lrs = uls + (uls * fastcast_float(&this->texture_info[1].width));
-            lrt = ult + (ult * fastcast_float(&this->texture_info[1].height));
+            uls = t_uls * ((fastcast_float(&uls0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
+            ult = t_ult * ((fastcast_float(&ult0) - bilerp_adjust) * (1.0f / 16.0f)); /* 0.0625f */
+            lrs = uls + (t_uls * fastcast_float(&this->texture_info[1].width));
+            lrt = ult + (t_ult * fastcast_float(&this->texture_info[1].height));
 
             if (ult == lrt) {
                 OSReport(VT_COL(RED, WHITE) "ult = %8.3f lrt = %8.3f ult0 = %d y32 = %8.3f texobj[1].ht = %d\n" VT_RST,
@@ -2674,7 +2695,7 @@ void emu64::set_position(unsigned int vtx) {
 
     /* If texture is on, write texture coordinates */
     if (this->texture_gfx.on != G_OFF) {
-        GXTexCoord2s16(emu_vtx->tex_coords.s, emu_vtx->tex_coords.t);
+        GXTexCoord2s16((s16)emu_vtx->tex_coords.s, (s16)emu_vtx->tex_coords.t);
     }
 }
 
@@ -2881,9 +2902,9 @@ void emu64::fill_rectangle(float x0, float y0, float x1, float y1) {
     this->dirty_flags[EMU64_DIRTY_FLAG_PROJECTION_MTX] = true;
 
     x0 = x0 * (1.0f / 320.0f) - 1.0f;
-    y0 = y0 * (1.0f / 240.0f) - -1.0f;
+    y0 = y0 * -(1.0f / 240.0f) - -1.0f;
     x1 = x1 * (1.0f / 320.0f) - 1.0f;
-    y1 = y1 * (1.0f / 240.0f) - -1.0f;
+    y1 = y1 * -(1.0f / 240.0f) - -1.0f;
 
     GXSetCullMode(GX_CULL_NONE);
     this->dirty_flags[EMU64_DIRTY_FLAG_GEOMETRYMODE] = true;
@@ -2964,9 +2985,9 @@ void emu64::draw_rectangle(Gtexrect2* texrect) {
     this->dirty_flags[EMU64_DIRTY_FLAG_PROJECTION_MTX] = true;
 
     x0 = xh * (1.0f / 320.0f) - 1.0f;
-    y0 = yh * (1.0f / 240.0f) - -1.0f;
+    y0 = yh * -(1.0f / 240.0f) - -1.0f;
     x1 = xl * (1.0f / 320.0f) - 1.0f;
-    y1 = yl * (1.0f / 240.0f) - -1.0f;
+    y1 = yl * -(1.0f / 240.0f) - -1.0f;
 
     GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
     GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, (GXTexMapID)tile, GX_COLOR_NULL);
@@ -3181,7 +3202,7 @@ void emu64::dirty_check(int tile, int n_tiles, int do_texture_matrix) {
 
     /* Texture block */
     EMU64_ASSERTLINE_DEBUG(this, 4957);
-    if (do_texture_matrix >= 0) {
+    if (tile >= 0) {
         EMU64_TIMED_SEGMENT_BEGIN();
         /* Flags TEXTURE0/1 are checked but not set in any version of the emulator. Not sure on the names. */
         if (IS_DIRTY(EMU64_DIRTY_FLAG_TEX_TILE0) || IS_DIRTY(EMU64_DIRTY_FLAG_21) ||
@@ -4246,7 +4267,7 @@ void emu64::dl_G_MTX() {
                     mtx44[2][2] = this->near / (this->near - this->far);
                     mtx44[2][3] = (this->near * this->far) / (this->near - this->far);
                     bcopy(mtx34, this->original_projection_mtx, sizeof(this->original_projection_mtx));
-                    bcopy(mtx44, this->position_mtx, sizeof(Mtx44));
+                    bcopy(mtx44, this->projection_mtx, sizeof(Mtx44));
                     this->projection_type = GX_PERSPECTIVE;
                 } else { /* Orthographic projection */
                     this->near = (mtx44[2][3] + 1.0f) / mtx44[2][2];
@@ -4255,7 +4276,7 @@ void emu64::dl_G_MTX() {
                     mtx44[2][3] = this->far / (this->near - this->far);
                     bcopy(mtx34, this->original_projection_mtx, sizeof(this->original_projection_mtx));
                     /* @BUG - this overwrites part of the first entry in model_view_mtx_stack */
-                    bcopy(mtx44, this->position_mtx, sizeof(Mtx44));
+                    bcopy(mtx44, this->projection_mtx, sizeof(Mtx44));
                     this->projection_type = GX_ORTHOGRAPHIC;
                 }
 

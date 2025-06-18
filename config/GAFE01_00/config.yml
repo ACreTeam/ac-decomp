@@ -19,6 +19,47 @@ block_relocations:
 - source: 0x80052D54
 - source: 0x80052D58
 
+add_relocations:
+# emu64
+- source: .text:0x8004F4F4 # setup_texture_tile (inlined texture_cache_select)
+  type: ha
+  target: _f_rodata
+- source: .text:0x8004F4F8 # setup_texture_tile (inlined texture_cache_select)
+  type: l
+  target: _f_rodata
+- source: .text:0x8004F504 # setup_texture_tile (inlined texture_cache_select)
+  type: ha
+  target: _e_data
+- source: .text:0x8004F508 # setup_texture_tile (inlined texture_cache_select)
+  type: l
+  target: _e_data
+
+- source: .text:0x8004F6B4 # setup_texture_tile (inlined texture_cache_select)
+  type: ha
+  target: _f_rodata
+- source: .text:0x8004F6B8 # setup_texture_tile (inlined texture_cache_select)
+  type: l
+  target: _f_rodata
+- source: .text:0x8004F6C4 # setup_texture_tile (inlined texture_cache_select)
+  type: ha
+  target: _e_data
+- source: .text:0x8004F6C8 # setup_texture_tile (inlined texture_cache_select)
+  type: l
+  target: _e_data
+
+- source: .text:0x80052D54 # dl_G_LOADTLUT (inlined texture_cache_select)
+  type: ha
+  target: _f_rodata
+- source: .text:0x80052D58 # dl_G_LOADTLUT (inlined texture_cache_select)
+  type: l
+  target: _f_rodata
+- source: .text:0x80052D64 # dl_G_LOADTLUT (inlined texture_cache_select)
+  type: ha
+  target: _e_data
+- source: .text:0x80052D68 # dl_G_LOADTLUT (inlined texture_cache_select)
+  type: l
+  target: _e_data
+
 extract:
 - symbol: JUTResFONT_Ascfont_fix12
   binary: assets/JSystem/JUtility/FontData/Ascfont_fix12.bfn
