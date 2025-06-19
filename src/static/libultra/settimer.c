@@ -2,15 +2,14 @@
 
 #include <dolphin/os.h>
 
-static void timer_handler(OSAlarm* alarm, OSContext* context);
-
-static void timer_handler(OSAlarm* volatile alarm, OSContext* context) {
-    OSTimer* volatile timer = (OSTimer* volatile)alarm;
+static void timer_handler(OSAlarm* alarm, OSContext* context) {
+    OSTimer* timer = (OSTimer*)alarm;
     BOOL enabled = OSDisableInterrupts();
     
     if ((OSTime)timer->interval != 0) {
         OSSetAlarm(&timer->alarm, (OSTime)timer->interval, timer_handler);
     } else {
+        OSTimer* next = timer->next;
         timer->next->prev = timer->prev;
         timer->prev->next = timer->next;
         timer->next = NULL;
@@ -21,11 +20,15 @@ static void timer_handler(OSAlarm* volatile alarm, OSContext* context) {
     OSRestoreInterrupts(enabled);
 }
 
-extern int osSetTimer(OSTimer* timer, OSTime countdown, OSTime interval, OSMessageQueue* volatile mq, volatile OSMessage msg) {
+
+extern int osSetTimer(OSTimer* timer, OSTime countdown, OSTime interval, OSMessageQueue* mq, OSMessage msg) {
     BOOL enable = OSDisableInterrupts();
     OSTimer* head;
 
-    countdown = countdown == 0 ? interval : countdown;
+    if (countdown == 0) {
+        countdown = interval;
+    }
+    
     OSCreateAlarm(&timer->alarm);
     timer->mq = (OSMessageQueue*)mq;
     timer->msg = msg;

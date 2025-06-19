@@ -420,7 +420,7 @@ config.libs = [
             Object(Matching, "libultra/gu/scale.c"),
             Object(Matching, "libultra/sendmesg.c"),
             Object(Matching, "libultra/setthreadpri.c"),
-            Object(NonMatching, "libultra/settimer.c"),
+            Object(Matching, "libultra/settimer.c", extra_cflags=["-O0", "-opt schedule", "-opt peep"]), # no clue why this file has these flags, but they're necessary
             Object(Matching, "libultra/shutdown.c"),
             Object(Matching, "libultra/gu/sins.c"),
             Object(Matching, "libultra/startthread.c"),
