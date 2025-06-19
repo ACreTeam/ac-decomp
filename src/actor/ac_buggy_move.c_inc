@@ -183,7 +183,7 @@ static int aBGY_open_check() {
 static void aBGY_set_talk_info_close_wait(ACTOR* actor) {
     rgba_t window_color;
 
-    mDemo_Set_msg_num(0x7D5);
+    mDemo_Set_msg_num(MSG_REUSED_SOLD_OUT);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_ListenAble();
 

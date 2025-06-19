@@ -6,6 +6,7 @@
 #include "m_play_h.h"
 #include "m_lib.h"
 #include "m_scene.h"
+#include "m_msg_enum.h"
 
 #ifdef __cplusplus
 extern "C" {
