@@ -2,21 +2,45 @@
 
 #include "boot.h"
 
+// __declspec(weak) void emu64_print::Vprintf(const char* fmt, std::__tag_va_List va_list) const {
+//     vprintf(fmt, va_list);
+// }
+
+__declspec(weak) void emu64_print::Printf0(const char* fmt, ...) {
+    va_list list;
+
+    va_start(list, fmt);
+    // this->Vprintf(fmt, list);
+    vprintf(fmt, list);
+    va_end(list);
+}
+
+__declspec(weak) void emu64_print::Printf(const char* fmt, ...) {
+    va_list list;
+
+    if ((this->print_flags & EMU64_PRINTF_ENABLED_FLAG)) {
+        va_start(list, fmt);
+        // this->Vprintf(fmt, list);
+        vprintf(fmt, list);
+        va_end(list);
+    }
+}
+
 static const char* __unused__reorder_char0A(void) {
     return "\n";
 }
 
 void emu64::disp_matrix(MtxP mtx) {
     static const u8 kakko[] = {'/', '\\', '/', '\\', '|', '|', '|', '|', '|', '|', '|', '|', '\\', '/', '\\', '/'};
-
-    for (int i = 0; i < 4; i++) {
+    int i, j;
+    for (i = 0; i < 4; i++) {
         if (mtx != nullptr) {
-            for (int x = 0; x < 4; x++) {
-                this->Printf("%10.3f", mtx[i][x]);
+            for (j = 0; j < 4; j++) {
+                this->Printf("%10.3f", mtx[i][j]);
             }
         }
 
-        this->Printf("\n", kakko[3 + i * 4]);
+        this->Printf("\n", kakko[i * 4 + 3]);
     }
 }
 
@@ -359,7 +383,7 @@ void emu64::show_render(u32 data) {
         { "G_BL_CLR_IN", "G_BL_CLR_MEM", "G_BL_CLR_BL", "G_BL_CLR_FOG" },
         { "G_BL_A_IN", "G_BL_A_FOG", "G_BL_A_SHADE", "G_BL_0" },
         { "G_BL_CLR_IN", "G_BL_CLR_MEM", "G_BL_CLR_BL", "G_BL_CLR_FOG" },
-        { "G_BL_1MA", "G_BL_A_MEM", "G_BL_0", "G_BL_1" },
+        { "G_BL_1MA", "G_BL_A_MEM", "G_BL_1", "G_BL_0" },
     };
 
     EMU64_LOG("\ngsDPSetRenderBlender(\n");

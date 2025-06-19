@@ -250,17 +250,18 @@ typedef union GXTexFmts {
     u32 raw;
 } GXTexFmts;
 
-inline void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigned int* blk_ht) {
-    static const u8 blk_tbl[4][2] = {
-        { 8, 8 }, // G_IM_SIZ_4b
-        { 8, 4 }, // G_IM_SIZ_8b
-        { 4, 4 }, // G_IM_SIZ_16b
-        { 4, 4 }  // G_IM_SIZ_32b
-    };
+void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigned int* blk_ht);
+// inline void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigned int* blk_ht) {
+//     static const u8 blk_tbl[4][2] = {
+//         { 8, 8 }, // G_IM_SIZ_4b
+//         { 8, 4 }, // G_IM_SIZ_8b
+//         { 4, 4 }, // G_IM_SIZ_16b
+//         { 4, 4 }  // G_IM_SIZ_32b
+//     };
 
-    *blk_wd = blk_tbl[siz][0];
-    *blk_ht = blk_tbl[siz][1];
-}
+//     *blk_wd = blk_tbl[siz][0];
+//     *blk_ht = blk_tbl[siz][1];
+// }
 
 extern void get_dol_wd_ht(unsigned int siz, unsigned int in_wd, unsigned int in_ht, unsigned int* wd, unsigned int* ht);
 
@@ -431,30 +432,35 @@ class Texture {
 
 class emu64_print {
   public:
-    void Printf(const char* fmt, ...) {
-        va_list list;
+    void Printf(const char* fmt, ...);
+    // void Printf(const char* fmt, ...) {
+    //     va_list list;
 
-        if ((this->print_flags & EMU64_PRINTF_ENABLED_FLAG)) {
-            va_start(list, fmt);
-            this->Vprintf(fmt, list);
-            va_end(list);
-        }
-    }
+    //     if ((this->print_flags & EMU64_PRINTF_ENABLED_FLAG)) {
+    //         va_start(list, fmt);
+    //         // this->Vprintf(fmt, list);
+    //         vprintf(fmt, list);
+    //         va_end(list);
+    //     }
+    // }
 
-    void Printf0(const char* fmt, ...) {
-        va_list list;
+    void Printf0(const char* fmt, ...);
+    // void Printf0(const char* fmt, ...) {
+    //     va_list list;
 
-        va_start(list, fmt);
-        this->Vprintf(fmt, list);
-        va_end(list);
-    }
+    //     va_start(list, fmt);
+    //     // this->Vprintf(fmt, list);
+    //     vprintf(fmt, list);
+    //     va_end(list);
+    // }
 
     void Printf1(const char* fmt, ...) {
         va_list list;
 
         if ((this->print_flags & EMU64_PRINTF1_FLAG)) {
             va_start(list, fmt);
-            this->Vprintf(fmt, list);
+            // this->Vprintf(fmt, list);
+            vprintf(fmt, list);
             va_end(list);
         }
     }
@@ -464,7 +470,8 @@ class emu64_print {
 
         if ((this->print_flags & EMU64_PRINTF2_FLAG)) {
             va_start(list, fmt);
-            this->Vprintf(fmt, list);
+            // this->Vprintf(fmt, list);
+            vprintf(fmt, list);
             va_end(list);
         }
     }
@@ -474,7 +481,8 @@ class emu64_print {
 
         if ((this->print_flags & EMU64_PRINTF3_FLAG)) {
             va_start(list, fmt);
-            this->Vprintf(fmt, list);
+            // this->Vprintf(fmt, list);
+            vprintf(fmt, list);
             va_end(list);
         }
     }
@@ -482,10 +490,8 @@ class emu64_print {
   protected:
     u8 print_flags;
 
-  private:
-    void Vprintf(const char* fmt, std::__tag_va_List va_list) {
-        vprintf(fmt, va_list);
-    }
+//   private:
+    // void Vprintf(const char* fmt, std::__tag_va_List va_list) const; // this is only in e+??
 };
 
 #define EMU64_ASSERTLINE(cond, line)        \

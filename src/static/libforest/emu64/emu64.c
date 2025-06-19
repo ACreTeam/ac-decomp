@@ -1,4 +1,5 @@
 #include "libforest/emu64/emu64.hpp"
+#include "libforest/emu64.h"
 
 #include "libultra/libultra.h"
 #include "terminal.h"
@@ -39,10 +40,6 @@ static tmem_t tmem_map[TMEM_ENTRIES];
 
 static u32 texture_cache_num = 0;
 static texture_cache_entry_t texture_cache_list[TEXTURE_CACHE_LIST_SIZE];
-
-/* These are set externally during emu64 initialization */
-static texture_cache_data_entry_t texture_cache_data_entry_tbl[NUM_TEXTURE_CACHE_DATA];
-static int texture_cache_data_entry_num = 0;
 
 static void* texture_cache_alloc(texture_cache_t* cache, u32 size);
 static void* texture_cache_data_search(void* addr);
@@ -86,160 +83,6 @@ static texture_cache_t texture_cache_bss = {
     FALSE,
     0,
 };
-
-extern void emu64_texture_cache_data_entry_set(void* begin, void* end) {
-    texture_cache_data_entry_tbl[texture_cache_data_entry_num].start = begin;
-    texture_cache_data_entry_tbl[texture_cache_data_entry_num].end = end;
-    texture_cache_data_entry_num++;
-}
-
-static texture_cache_t* texture_cache_select(void* addr) {
-    int i;
-
-    if (aflags[AFLAGS_SKIP_TEXTURE_CONV] >= 1 || (addr >= _f_rodata && addr <= _e_data)) {
-        return &texture_cache_data;
-    }
-
-    for (i = 0; i < texture_cache_data_entry_num; i++) {
-        if (addr >= texture_cache_data_entry_tbl[i].start && addr < texture_cache_data_entry_tbl[i].end) {
-            return &texture_cache_data;
-        }
-    }
-
-    return &texture_cache_bss;
-}
-
-static bool texture_cache_is_overflow(texture_cache_t* cache) {
-    return cache->is_overflow;
-}
-
-static void texture_cache_clear(texture_cache_t* cache) {
-    cache->is_overflow = false;
-    cache->buffer_current = cache->buffer_start;
-}
-
-/* @fabricated */
-MATCH_FORCESTRIP static u32 texture_cache_get_max_alloc_size(texture_cache_t* cache) {
-    return cache->buffer_current - cache->buffer_start;
-}
-
-/* @fabricated */
-MATCH_FORCESTRIP static u32 texture_cache_get_alloc_size(texture_cache_t* cache) {
-    return cache->buffer_current - cache->last_alloc_start;
-}
-
-/* @fabricated */
-MATCH_FORCESTRIP static u32 texture_cache_get_free_size(texture_cache_t* cache) {
-    return cache->buffer_end - cache->buffer_current;
-}
-
-/* @fabricated */
-MATCH_FORCESTRIP static u32 texture_cache_get_heap_size(texture_cache_t* cache) {
-    return cache->buffer_end - cache->buffer_start;
-}
-
-static void* texture_cache_alloc(texture_cache_t* cache, u32 size) {
-    cache->last_alloc_start = cache->buffer_current;
-    cache->last_alloc_end = (u8*)ALIGN_NEXT((u32)cache->buffer_current + size, 32);
-
-    if (cache->buffer_pos < cache->last_alloc_end - cache->buffer_start) {
-        cache->buffer_pos = cache->last_alloc_end - cache->buffer_start;
-    }
-
-    if (cache->last_alloc_end > cache->buffer_end) {
-        cache->is_overflow = true;
-        return nullptr;
-    }
-
-    cache->buffer_current = cache->last_alloc_end;
-    return cache->last_alloc_start;
-}
-
-static void* texture_cache_data_search(void* original_addr) {
-    int i;
-
-    for (i = 0; i < texture_cache_num; i++) {
-        if (original_addr == texture_cache_list[i].original) {
-            return texture_cache_list[i].converted;
-        }
-    }
-
-    return nullptr;
-}
-
-static int texture_cache_data_entry(void* original_addr, void* converted_addr) {
-    if (texture_cache_num < TEXTURE_CACHE_LIST_SIZE && original_addr != nullptr && converted_addr != nullptr) {
-        texture_cache_list[texture_cache_num].original = original_addr;
-        texture_cache_list[texture_cache_num].converted = converted_addr;
-        texture_cache_num++;
-        return 0;
-    }
-
-    texture_cache_data.is_overflow = true;
-    return -1;
-}
-
-static void* texture_cache_bss_search(void* original_addr) {
-    return nullptr;
-}
-
-static int texture_cache_bss_entry(void* original_addr, void* converted_addr) {
-    return -1;
-}
-
-static void texture_cache_list_clear() {
-    texture_cache_clear(&texture_cache_data);
-    texture_cache_num = 0;
-}
-
-extern void emu64_refresh() {
-    texture_cache_list_clear();
-}
-
-static u16 cvtN64ToDol(int n64_fmt, int n64_bpp) {
-    u16 dol = emu64::fmtxtbl[n64_fmt][n64_bpp];
-    if (dol == 0xFFFF) {
-        dol = GX_TF_I4;
-    }
-
-    return dol;
-}
-
-MATCH_FORCESTRIP static f32 PsendoArcSinConvert(f32 arcsin) {
-    f32 g = 2.0f * (arcsin - 0.5f);
-    g = g * 0.4623f * g * g + g * 0.5377f;
-
-    return 0.5f + g * 0.5f;
-}
-
-MATCH_FORCESTRIP static void TextureLinearConvert1(Texture* src, Texture* dst) {
-    int y;
-    int x;
-
-    for (y = 0; y < dst->height; y++) {
-        for (x = 0; x < dst->width; x++) {
-            f32 arcsin_x = (f32)x / (f32)(dst->width - 1);
-            f32 arcsin_y = (f32)y / (f32)(dst->height - 1);
-
-            f32 sin_x = PsendoArcSinConvert(arcsin_x);
-            f32 sin_y = PsendoArcSinConvert(arcsin_y);
-
-            dst->putTexel(x, y, src->getTexel(sin_x * (src->width - 1), sin_y * (src->height - 1)));
-        }
-    }
-}
-
-MATCH_FORCESTRIP static void* TextureLinearConvert(void* img_p, unsigned int width, unsigned int height,
-                                                   unsigned int fmt, unsigned int bpp) {
-    texture_cache_t* tex_cache = texture_cache_select(NULL);
-    void* conv_img_p = tex_cache->funcs->alloc(tex_cache, 0x1000);
-    Texture src(img_p, width, height, fmt, bpp);
-    Texture dst(conv_img_p, width, height, fmt, bpp);
-
-    TextureLinearConvert1(&src, &dst);
-
-    return conv_img_p;
-}
 
 #include "../src/static/libforest/emu64/emu64_utility.c"
 
@@ -495,6 +338,171 @@ static const u8 tblc[32][4] = {
     { GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO },     { GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO },
 };
 
+/* These are set externally during emu64 initialization */
+static texture_cache_data_entry_t texture_cache_data_entry_tbl[NUM_TEXTURE_CACHE_DATA];
+static int texture_cache_data_entry_num = 0;
+
+extern void emu64_texture_cache_data_entry_set(void* begin, void* end) {
+    texture_cache_data_entry_tbl[texture_cache_data_entry_num].start = begin;
+    texture_cache_data_entry_tbl[texture_cache_data_entry_num].end = end;
+    texture_cache_data_entry_num++;
+}
+
+static texture_cache_t* texture_cache_select(void* addr) {
+    int i;
+
+    if (aflags[AFLAGS_SKIP_TEXTURE_CONV] >= 1 || (addr >= _f_rodata && addr <= _e_data)) {
+        return &texture_cache_data;
+    }
+
+    for (i = 0; i < texture_cache_data_entry_num; i++) {
+        if (addr >= texture_cache_data_entry_tbl[i].start && addr < texture_cache_data_entry_tbl[i].end) {
+            return &texture_cache_data;
+        }
+    }
+
+    return &texture_cache_bss;
+}
+
+static bool texture_cache_is_overflow(texture_cache_t* cache) {
+    return cache->is_overflow;
+}
+
+static void texture_cache_clear(texture_cache_t* cache) {
+    cache->is_overflow = false;
+    cache->buffer_current = cache->buffer_start;
+}
+
+/* @fabricated */
+static u32 texture_cache_get_max_alloc_size(texture_cache_t* cache) {
+    return cache->buffer_current - cache->buffer_start;
+}
+
+/* @fabricated */
+static u32 texture_cache_get_alloc_size(texture_cache_t* cache) {
+    return cache->buffer_current - cache->last_alloc_start;
+}
+
+/* @fabricated */
+static u32 texture_cache_get_free_size(texture_cache_t* cache) {
+    return cache->buffer_end - cache->buffer_current;
+}
+
+/* @fabricated */
+static u32 texture_cache_get_heap_size(texture_cache_t* cache) {
+    return cache->buffer_end - cache->buffer_start;
+}
+
+static void* texture_cache_alloc(texture_cache_t* cache, u32 size) {
+    cache->last_alloc_start = cache->buffer_current;
+    cache->last_alloc_end = (u8*)ALIGN_NEXT((u32)cache->buffer_current + size, 32);
+
+    if (cache->buffer_pos < cache->last_alloc_end - cache->buffer_start) {
+        cache->buffer_pos = cache->last_alloc_end - cache->buffer_start;
+    }
+
+    if (cache->last_alloc_end > cache->buffer_end) {
+        cache->is_overflow = true;
+        return nullptr;
+    }
+
+    cache->buffer_current = cache->last_alloc_end;
+    return cache->last_alloc_start;
+}
+
+static void* texture_cache_data_search(void* original_addr) {
+    int i;
+
+    for (i = 0; i < texture_cache_num; i++) {
+        if (original_addr == texture_cache_list[i].original) {
+            return texture_cache_list[i].converted;
+        }
+    }
+
+    return nullptr;
+}
+
+static int texture_cache_data_entry(void* original_addr, void* converted_addr) {
+    if (texture_cache_num < TEXTURE_CACHE_LIST_SIZE && original_addr != nullptr && converted_addr != nullptr) {
+        texture_cache_list[texture_cache_num].original = original_addr;
+        texture_cache_list[texture_cache_num].converted = converted_addr;
+        texture_cache_num++;
+        return 0;
+    }
+
+    texture_cache_data.is_overflow = true;
+    return -1;
+}
+
+static void* texture_cache_bss_search(void* original_addr) {
+    return nullptr;
+}
+
+static int texture_cache_bss_entry(void* original_addr, void* converted_addr) {
+    return -1;
+}
+
+static void texture_cache_list_clear() {
+    texture_cache_clear(&texture_cache_data);
+    texture_cache_num = 0;
+}
+
+extern void emu64_refresh() {
+    texture_cache_list_clear();
+}
+
+static u16 cvtN64ToDol(int n64_fmt, int n64_bpp) {
+    u16 dol = emu64::fmtxtbl[n64_fmt][n64_bpp];
+    if (dol == 0xFFFF) {
+        dol = GX_TF_I4;
+    }
+
+    return dol;
+}
+
+// @FAKE - necessary for matching
+f32 PsendoArcSinConvert(f32 arcsin) {
+    return 2.0f * (int)(0.5f * arcsin);
+}
+
+// MATCH_FORCESTRIP static f32 PsendoArcSinConvert(f32 arcsin) {
+//     f32 g = 2.0f * (arcsin - 0.5f);
+//     g = g * 0.4623f * g * g + g * 0.5377f;
+
+//     return 0.5f + g * 0.5f;
+// }
+
+// MATCH_FORCESTRIP static void TextureLinearConvert1(Texture* src, Texture* dst) {
+//     int y;
+//     int x;
+
+//     for (y = 0; y < dst->height; y++) {
+//         for (x = 0; x < dst->width; x++) {
+//             f32 arcsin_x = (f32)x / (f32)(dst->width - 1);
+//             f32 arcsin_y = (f32)y / (f32)(dst->height - 1);
+
+//             f32 sin_x = PsendoArcSinConvert(arcsin_x);
+//             f32 sin_y = PsendoArcSinConvert(arcsin_y);
+
+//             dst->putTexel(x, y, src->getTexel(sin_x * (src->width - 1), sin_y * (src->height - 1)));
+//         }
+//     }
+// }
+
+// MATCH_FORCESTRIP static void* TextureLinearConvert(void* img_p, unsigned int width, unsigned int height,
+//                                                    unsigned int fmt, unsigned int bpp) {
+//     texture_cache_t* tex_cache = texture_cache_select(NULL);
+//     void* conv_img_p = tex_cache->funcs->alloc(tex_cache, 0x1000);
+//     Texture src(img_p, width, height, fmt, bpp);
+//     Texture dst(conv_img_p, width, height, fmt, bpp);
+
+//     TextureLinearConvert1(&src, &dst);
+
+//     return conv_img_p;
+// }
+
+
+
 static void emu64_init2(GXRenderModeObj* render_mode) {
     GC_Mtx m;
     int i;
@@ -705,6 +713,18 @@ void emu64::emu64_init() {
 void emu64::emu64_cleanup() {
     GXSetColorUpdate(GX_TRUE);
     GXSetAlphaUpdate(GX_TRUE);
+}
+
+__declspec(weak) inline void get_blk_wd_ht(unsigned int siz, unsigned int* blk_wd, unsigned int* blk_ht) {
+    static const u8 blk_tbl[4][2] = {
+        { 8, 8 }, // G_IM_SIZ_4b
+        { 8, 4 }, // G_IM_SIZ_8b
+        { 4, 4 }, // G_IM_SIZ_16b
+        { 4, 4 }  // G_IM_SIZ_32b
+    };
+
+    *blk_wd = blk_tbl[siz][0];
+    *blk_ht = blk_tbl[siz][1];
 }
 
 void emu64::printInfo() {
@@ -1916,10 +1936,7 @@ void emu64::combine() {
     }
 }
 
-/* TODO: @nonmatching */
 void emu64::setup_texture_tile(int tile) {
-    unsigned int tile_ht;
-    unsigned int tile_wd;
     u16 stride0;
     unsigned int stride;
     unsigned int sizes;
@@ -2040,15 +2057,8 @@ void emu64::setup_texture_tile(int tile) {
             h0 = loadtile->tl / 4;
             h1 = loadtile->th / 4;
             
-
-            tile_wd = w1 - w0;
-            tile_ht = h1 - h0;
-
-            // textconv_tile_new also adds + 1 to tile_wd and tile_ht (as params)
-            // since they're inlined, target is saving the addition instead of
-            // recalculating it
-            twd0 = tile_wd + 1;
-            tht0 = tile_ht + 1;
+            twd0 = (w1 - w0) + 1;
+            tht0 = (h1 - h0) + 1;
 
             ofs0 = w0 + width * h0;
             orig_addr = tmem_addr + (ofs0 << settile->siz) / 2;
@@ -2065,19 +2075,20 @@ void emu64::setup_texture_tile(int tile) {
                 }
             }
 
+            // issue may be in this inlined function
             converted_addr = this->texconv_tile_new(
                 tmem_addr,
                 width,
                 settile->fmt, settile->siz,
                 0, 0,
-                tile_wd, tile_ht,
+                w1 - w0, h1 - h0,
                 0
             );
         }
     }
 
     if ((this->geometry_mode & G_TEXTURE_GEN_LINEAR) != 0 && aflags[AFLAGS_DO_TEXTURE_LINEAR_CONVERT] != 0) {
-        converted_addr = TextureLinearConvert(converted_addr, twd0, tht0, settile->fmt, settile->siz);
+        // converted_addr = TextureLinearConvert(converted_addr, twd0, tht0, settile->fmt, settile->siz);
     }
 
     /* TODO: Go back and rename a lot of these variables */
@@ -3245,7 +3256,7 @@ void emu64::dirty_check(int tile, int n_tiles, int do_texture_matrix) {
 
                     if ((this->geometry_mode & G_TEXTURE_GEN_LINEAR) != 0 &&
                         aflags[AFLAGS_DO_TEXTURE_LINEAR_CONVERT] != 0) {
-                        img_addr = TextureLinearConvert(img_addr, width, height, tex_info_p->format, tex_info_p->size);
+                        // img_addr = TextureLinearConvert(img_addr, width, height, tex_info_p->format, tex_info_p->size);
                     }
 
                     if (tex_info_p->format == G_IM_FMT_CI) {
@@ -4239,8 +4250,7 @@ void emu64::dl_G_MTX() {
 
         if ((this->print_commands & EMU64_PRINTF3_FLAG) != 0) {
             EMU64_LOGF("%08x %08x %08x\n", gfx_copy.w1, this->seg2k0(gfx_copy.w1), this->seg2k0(gfx_copy.w1));
-            MtxP m = (MtxP)this->seg2k0(gfx_copy.w1);
-            this->disp_matrix(m);
+            this->disp_matrix((MtxP)this->seg2k0(gfx_copy.w1));
         }
     }
 
@@ -5562,13 +5572,13 @@ extern void emu64_set_first_ucode(void* ucode_p) {
     emu64_class.emu64_set_first_ucode(ucode_p);
 }
 
-extern void emu64_set_aflags(unsigned int idx, u8 value) {
+extern void emu64_set_aflags(int idx, int value) {
     if (idx > 0 && idx < aflags_c::getMaxArray()) {
         aflags.set(idx, value);
     }
 }
 
-extern u8 emu64_get_aflags(unsigned int idx) {
+extern int emu64_get_aflags(int idx) {
     if (idx > 0 && idx < aflags_c::getMaxArray()) {
         return aflags[idx];
     }
