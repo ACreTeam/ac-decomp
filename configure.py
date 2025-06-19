@@ -399,7 +399,7 @@ config.libs = [
         "src_dir": "src/static",
         "objects": [
             Object(Matching, "libultra/contquery.c"),
-            Object(NonMatching, "libultra/contreaddata.c"),
+            Object(Matching, "libultra/contreaddata.c"),
             Object(Matching, "libultra/controller.c"),
             Object(Matching, "libultra/contsetch.c"),
             Object(Matching, "libultra/gu/coss.c"),

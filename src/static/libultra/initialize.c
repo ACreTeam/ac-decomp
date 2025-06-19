@@ -1,4 +1,3 @@
-#include "dolphin/os/OSTime.h"
 #include "libultra/libultra.h"
 #include "libultra/contreaddata.h"
 #include "libultra/controller.h"
@@ -30,7 +29,7 @@ void __osInitialize_common(void){
     }
 }
 
-BOOL osIsDisableShutdown(void){
+BOOL osIsDisableShutdown(void) {
 
     return __osDisableShutdownLevel != FALSE;
 }

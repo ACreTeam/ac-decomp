@@ -117,6 +117,29 @@ enum resource_index {
     RESOURCE_NUM
 };
 
+enum {
+    JUT_MAINSTICK_UP = 0x8000000,
+    JUT_MAINSTICK_DOWN = 0x4000000,
+    JUT_MAINSTICK_RIGHT = 0x2000000,
+    JUT_MAINSTICK_LEFT = 0x1000000,
+    JUT_CSTICK_UP = 0x80000,
+    JUT_CSTICK_DOWN = 0x40000,
+    JUT_CSTICK_RIGHT = 0x20000,
+    JUT_CSTICK_LEFT = 0x10000,
+    JUT_START = 0x1000,
+    JUT_Y = 0x800,
+    JUT_X = 0x400,
+    JUT_B = 0x200,
+    JUT_A = 0x100,
+    JUT_L = 0x40,
+    JUT_R = 0x20,
+    JUT_Z = 0x10,
+    JUT_DPAD_UP = 0x8,
+    JUT_DPAD_DOWN = 0x4,
+    JUT_DPAD_RIGHT = 0x2,
+    JUT_DPAD_LEFT = 0x1
+};
+
 extern void JW_UpdateVideoMode();
 extern void JW_SetProgressiveMode(int enabled);
 extern void JW_SetLowResoMode(int enabled);

@@ -63,12 +63,21 @@ typedef struct {
     /* 0x04 */ u8 errno;
 } OSContPad;
 
+typedef struct {
+    OSContPad pad;
+    s8 substickX;
+    s8 substickY;
+    u8 triggerR;
+    u8 triggerL;
+} OSContPadEx;
+
 extern s32 osContInit(OSMessageQueue* mq, u8* pattern_p, OSContStatus* status);
 extern s32 osContStartQuery(OSMessageQueue* mq);
 extern s32 osContStartReadData(OSMessageQueue* mq);
 extern void osContGetQuery(OSContStatus* status);
 extern s32 osContSetCh(u8 num_controllers);
 extern void osContGetReadData(OSContPad* pad);
+extern void osContGetReadDataEx(OSContPadEx* pad);
 
 #ifdef __cplusplus
 }
