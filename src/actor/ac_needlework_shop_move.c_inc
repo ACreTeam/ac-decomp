@@ -197,7 +197,7 @@ static void aNW_open_door_demo_ct() {
 static void aNW_talk_door_demo_ct() {
     static rgba_t window_color = { 145, 60, 40, 255 };
 
-    mDemo_Set_msg_num(0x7DA);
+    mDemo_Set_msg_num(MSG_2010);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
     mPlib_Set_able_hand_all_item_in_demo(TRUE);

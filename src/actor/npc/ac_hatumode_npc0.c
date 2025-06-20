@@ -39,7 +39,7 @@ static void aHN0_actor_ct(ACTOR* actorx, GAME* game) {
     static aNPC_ct_data_c ct_data = {
         &aHN0_actor_move,
         &aHN0_actor_draw,
-        5,
+        aNPC_CT_SCHED_TYPE_SPECIAL,
         (aNPC_TALK_REQUEST_PROC)&none_proc1,
         &aHN0_talk_init,
         &aHN0_talk_end_chk,
@@ -49,12 +49,12 @@ static void aHN0_actor_ct(ACTOR* actorx, GAME* game) {
 
     // clang-format off
     static int base_msg_table[] = {
-        0x1DFF,
-        0x1E11,
-        0x1DED,
-        0x1E23,
-        0x1E35,
-        0x1E47,
+        MSG_7679,
+        MSG_7697,
+        MSG_7661,
+        MSG_7715,
+        MSG_7733,
+        MSG_7751,
     };
     // clang-format on
 
@@ -104,7 +104,8 @@ static void aHN0_actor_move(ACTOR* actorx, GAME* game) {
 
     CLIP(npc_clip)->move_proc(actorx, game);
     ((NPC_ACTOR*)actorx)->collision.pipe.attribute.pipe.radius = 20;
-    if (hatumode_p != NULL && actorx->npc_id != SP_NPC_EV_HATUMODE_0 && hatumode_p->state == 2 && (hatumode_p->flags0 & (1 << (actorx->npc_id - SP_NPC_EV_HATUMODE_0))) == 0) {
+    if (hatumode_p != NULL && actorx->npc_id != SP_NPC_EV_HATUMODE_0 && hatumode_p->state == 2 &&
+        (hatumode_p->flags0 & (1 << (actorx->npc_id - SP_NPC_EV_HATUMODE_0))) == 0) {
         hatumode_p->flags0 |= (1 << (actorx->npc_id - SP_NPC_EV_HATUMODE_0));
         Actor_delete(actorx);
     }

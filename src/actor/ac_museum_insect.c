@@ -708,15 +708,15 @@ int Museum_Insect_GetMsgNo(ACTOR* actorx) {
 
     if (actor->_2F7C < actor->_2F78 - 1) {
         if (insect_caught_by >= 1 && insect_caught_by <= 4) {
-            msgNo = 0x2fa2;
+            msgNo = MSG_12194;
         } else {
-            msgNo = 0x2fa3;
+            msgNo = MSG_12195;
         }
     } else {
         if (insect_caught_by >= 1 && insect_caught_by <= 4) {
-            msgNo = 0x2f9f;
+            msgNo = MSG_12191;
         } else {
-            msgNo = 0x2fa0;
+            msgNo = MSG_12192;
         }
     }
 
@@ -770,15 +770,15 @@ void Museum_Insect_Set_MsgInsectInfo(ACTOR* actorx, int groupNum) {
 
 void Museum_Insect_set_talk_info(ACTOR* actorx) {
     MUSEUM_INSECT_ACTOR* actor = (MUSEUM_INSECT_ACTOR*)actorx;
-    int x;
+    int msg_no;
     if (actor->_2F78 > 0) {
-        x = Museum_Insect_GetMsgNo(actorx);
+        msg_no = Museum_Insect_GetMsgNo(actorx);
         actor->_2F7C++;
     } else {
-        x = 0x2fa1;
+        msg_no = MSG_12193;
     }
     mDemo_Set_talk_window_color(&window_color);
-    mDemo_Set_msg_num(x);
+    mDemo_Set_msg_num(msg_no);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_ListenAble();
     mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);

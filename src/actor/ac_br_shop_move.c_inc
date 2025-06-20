@@ -152,7 +152,7 @@ static int aBRS_open_check(ACTOR* actor) {
 static void aBRS_set_talk_info_close_wait(ACTOR* actor) {
     rgba_t color;
 
-    mDemo_Set_msg_num(0x7D5);
+    mDemo_Set_msg_num(MSG_REUSED_SOLD_OUT);
     mDemo_Set_talk_display_name(0);
     mDemo_Set_camera(1);
     mPlib_Set_able_hand_all_item_in_demo(1);

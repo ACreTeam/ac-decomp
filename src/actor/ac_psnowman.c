@@ -70,7 +70,7 @@ static void aPSM_actor_ct(ACTOR* actor, GAME* game) {
 
     Shape_Info_init(actor, 0.0f, mAc_ActorShadowEllipse, shadow_size, shadow_size);
 
-    snowman->message_num = 0x8A1 + ((Common_Get(snowman_msg_id) + id) % 3) + (current_data->score * 3);
+    snowman->message_num = MSG_2209 + ((Common_Get(snowman_msg_id) + id) % 3) + (current_data->score * 3);
 
     mCoBG_SetPlussOffset(actor->home.position, 3, 100);
 }

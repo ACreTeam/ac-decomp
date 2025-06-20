@@ -172,7 +172,7 @@ static void aDOU_set_talk_info(ACTOR* actor) {
     }
 
     mDemo_Set_talk_turn(FALSE);
-    mDemo_Set_msg_num(0x136B);
+    mDemo_Set_msg_num(MSG_DOZOU);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_camera(TRUE);
     mPlib_Set_able_hand_all_item_in_demo(TRUE);

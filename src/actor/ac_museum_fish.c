@@ -615,8 +615,6 @@ void Museum_Fish_Actor_dt(ACTOR* actor, GAME* game) {
 }
 
 int Museum_Fish_GetMsgNo(MUSEUM_FISH_ACTOR* actor) {
-    // MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
-
     static u8 item_name[mIN_ITEM_NAME_LEN];
     int itemArticle;
     mMsg_Window_c* msg;
@@ -633,16 +631,16 @@ int Museum_Fish_GetMsgNo(MUSEUM_FISH_ACTOR* actor) {
 
     if (actor->fishDisplayMsgIter < actor->numFishDisplayed - 1) {
         if (fishInfo >= 1 && fishInfo <= 4) {
-            return 0x2fa2;
+            return MSG_12194;
         } else {
-            return 0x2fa3;
+            return MSG_12195;
         }
     }
 
     if (fishInfo >= 1 && fishInfo <= 4) {
-        return 0x2f9f;
+        return MSG_12191;
     } else {
-        return 0x2fa0;
+        return MSG_12192;
     }
 }
 
@@ -674,62 +672,30 @@ void Museum_Fish_Set_MsgFishInfo(MUSEUM_FISH_ACTOR* actor, int param2) {
     // defines how many fish are in each grouping of fish names
     static int group_max_num[5] = { 10, 9, 9, 6, 6 };
     static int group_A_fish_name[10] = {
-        aGYO_TYPE_CRUCIAN_CARP,
-        aGYO_TYPE_BROOK_TROUT,
-        aGYO_TYPE_CARP,
-        aGYO_TYPE_KOI,
-        aGYO_TYPE_BARBEL_STEED,
-        aGYO_TYPE_BITTERLING,
-        aGYO_TYPE_EEL,
-        aGYO_TYPE_GOLDFISH,
-        aGYO_TYPE_POPEYED_GOLDFISH,
-        aGYO_TYPE_KILLIFISH,
+        aGYO_TYPE_CRUCIAN_CARP,     aGYO_TYPE_BROOK_TROUT, aGYO_TYPE_CARP, aGYO_TYPE_KOI,
+        aGYO_TYPE_BARBEL_STEED,     aGYO_TYPE_BITTERLING,  aGYO_TYPE_EEL,  aGYO_TYPE_GOLDFISH,
+        aGYO_TYPE_POPEYED_GOLDFISH, aGYO_TYPE_KILLIFISH,
     };
     static int group_B_fish_name[9] = {
-        aGYO_TYPE_CATFISH,
-        aGYO_TYPE_GIANT_CATFISH,
-        aGYO_TYPE_LOACH,
-        aGYO_TYPE_BLUEGILL,
-        aGYO_TYPE_SMALL_BASS,
-        aGYO_TYPE_BASS,
-        aGYO_TYPE_LARGE_BASS,
-        aGYO_TYPE_FRESHWATER_GOBY,
-        aGYO_TYPE_FROG,
+        aGYO_TYPE_CATFISH, aGYO_TYPE_GIANT_CATFISH, aGYO_TYPE_LOACH,           aGYO_TYPE_BLUEGILL, aGYO_TYPE_SMALL_BASS,
+        aGYO_TYPE_BASS,    aGYO_TYPE_LARGE_BASS,    aGYO_TYPE_FRESHWATER_GOBY, aGYO_TYPE_FROG,
     };
     static int group_C_fish_name[9] = {
-        aGYO_TYPE_DACE,
-        aGYO_TYPE_PALE_CHUB,
-        aGYO_TYPE_POND_SMELT,
-        aGYO_TYPE_SWEETFISH,
-        aGYO_TYPE_CHERRY_SALMON,
-        aGYO_TYPE_RAINBOW_TROUT,
-        aGYO_TYPE_LARGE_CHAR,
-        aGYO_TYPE_STRINGFISH,
-        aGYO_TYPE_CRAWFISH,
+        aGYO_TYPE_DACE,       aGYO_TYPE_PALE_CHUB,     aGYO_TYPE_POND_SMELT,
+        aGYO_TYPE_SWEETFISH,  aGYO_TYPE_CHERRY_SALMON, aGYO_TYPE_RAINBOW_TROUT,
+        aGYO_TYPE_LARGE_CHAR, aGYO_TYPE_STRINGFISH,    aGYO_TYPE_CRAWFISH,
     };
     static int group_D_fish_name[6] = {
-        aGYO_TYPE_GIANT_SNAKEHEAD,
-        aGYO_TYPE_GUPPY,
-        aGYO_TYPE_ANGELFISH,
-        aGYO_TYPE_PIRANHA,
-        aGYO_TYPE_AROWANA,
-        aGYO_TYPE_ARAPAIMA,
+        aGYO_TYPE_GIANT_SNAKEHEAD, aGYO_TYPE_GUPPY,   aGYO_TYPE_ANGELFISH,
+        aGYO_TYPE_PIRANHA,         aGYO_TYPE_AROWANA, aGYO_TYPE_ARAPAIMA,
     };
     static int group_E_fish_name[6] = {
-        aGYO_TYPE_SALMON,
-        aGYO_TYPE_COELACANTH,
-        aGYO_TYPE_JELLYFISH,
-        aGYO_TYPE_SEA_BASS,
-        aGYO_TYPE_RED_SNAPPER,
-        aGYO_TYPE_BARRED_KNIFEJAW,
+        aGYO_TYPE_SALMON,   aGYO_TYPE_COELACANTH,  aGYO_TYPE_JELLYFISH,
+        aGYO_TYPE_SEA_BASS, aGYO_TYPE_RED_SNAPPER, aGYO_TYPE_BARRED_KNIFEJAW,
     };
 
     static int* group_fish_name[5] = {
-        group_A_fish_name,
-        group_B_fish_name,
-        group_C_fish_name,
-        group_D_fish_name,
-        group_E_fish_name,
+        group_A_fish_name, group_B_fish_name, group_C_fish_name, group_D_fish_name, group_E_fish_name,
     };
 
     actor->numFishDisplayed = 0;
@@ -751,15 +717,15 @@ void Museum_Fish_set_talk_info(ACTOR* actorx) {
     MUSEUM_FISH_ACTOR* actor = (MUSEUM_FISH_ACTOR*)actorx;
 
     static rgba_t window_color = { 255, 255, 205, 255 };
-    int r3;
+    int msg_no;
     if (actor->numFishDisplayed > 0) { // maybe related to if there are fish in the tank
-        r3 = Museum_Fish_GetMsgNo(actor);
+        msg_no = Museum_Fish_GetMsgNo(actor);
         actor->fishDisplayMsgIter++; // maybe iterating through the fish donation record, given which fish are donated?
     } else {
-        r3 = 0x2fa1;
+        msg_no = MSG_12193;
     }
 
-    mDemo_Set_msg_num(r3);
+    mDemo_Set_msg_num(msg_no);
     mDemo_Set_talk_window_color(&window_color);
     mDemo_Set_talk_display_name(0);
     mDemo_Set_ListenAble();
@@ -858,7 +824,7 @@ void Museum_Fish_Actor_move(ACTOR* actorx, GAME* game) {
         actor->_14d50[i]--;
         if (actor->_14d50[i] < 0) {
             eEC_CLIP->effect_make_proc(eEC_EFFECT_SUISOU_AWA, suisou_awa_pos[i], 2, 0, game, RSV_NO,
-                                                           suisou_awa_group[i], 0);
+                                       suisou_awa_group[i], 0);
             if (actor->_14d78[i] > 0) {
                 actor->_14d78[i]--;
                 actor->_14d50[i] = RANDOMF_RANGE(2, 10);

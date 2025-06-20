@@ -100,7 +100,7 @@ static void aTNN1_actor_ct(ACTOR* actorx, GAME* game) {
     TUNAHIKI_NPC1_ACTOR* actor = (TUNAHIKI_NPC1_ACTOR*)actorx;
 
     if (NPC_CLIP->birth_check_proc(actorx, game) == TRUE) {
-        static int base_msg_table[] = { 0x1984, 0x1990, 0x1978, 0x199C, 0x19A8, 0x19B4 };
+        static int base_msg_table[] = { MSG_6532, MSG_6544, MSG_6520, MSG_6556, MSG_6568, MSG_6580 };
 
         actor->npc_class.schedule.schedule_proc = aTNN1_schedule_proc;
         NPC_CLIP->ct_proc(actorx, game, &ct_data);
@@ -133,12 +133,13 @@ static void aTNN1_actor_init(ACTOR* actorx, GAME* game) {
     NPC_CLIP->init_proc(actorx, game);
 }
 
-static int aTNN1_set_request_act(TUNAHIKI_NPC1_ACTOR* actor, u8 prio, u8 idx, u8 type, u16 obj, s16 move_x, s16 move_z) {
+static int aTNN1_set_request_act(TUNAHIKI_NPC1_ACTOR* actor, u8 prio, u8 idx, u8 type, u16 obj, s16 move_x,
+                                 s16 move_z) {
     int res = FALSE;
 
     if (prio >= actor->npc_class.request.act_priority) {
         u16 args[6];
-        
+
         bzero(args, sizeof(args));
         args[0] = obj;
         args[2] = move_x;
@@ -156,7 +157,7 @@ static int aTNN1_set_request_act(TUNAHIKI_NPC1_ACTOR* actor, u8 prio, u8 idx, u8
 static void aTNN1_actor_move(ACTOR* actorx, GAME* game) {
     aEv_tunahiki_c* tunahiki = (aEv_tunahiki_c*)mEv_get_save_area(mEv_EVENT_SPORTS_FAIR_TUG_OF_WAR, 9);
     TUNAHIKI_NPC1_ACTOR* actor = (TUNAHIKI_NPC1_ACTOR*)actorx;
-    
+
     NPC_CLIP->move_proc(actorx, game);
     actorx->world.position.z = actorx->home.position.z;
 

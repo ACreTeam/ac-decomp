@@ -83,13 +83,13 @@ void goki_set_talk_info_init(ACTOR* actor) {
     int info = mMmd_InsectInfo(0x1c);
     int i;
     if (info < 1 || info > 4) {
-        i = 0x2fa5;
+        i = MSG_12197;
     } else {
         if (info >= 1 && info <= 4) {
             mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR0,
                               common_data.save.save.private_data[info - 1].player_ID.player_name, 8);
         }
-        i = 0x2fa4;
+        i = MSG_12196;
     }
     mDemo_Set_talk_window_color(&window_color);
     mDemo_Set_talk_display_name(0);

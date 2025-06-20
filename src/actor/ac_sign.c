@@ -476,12 +476,12 @@ static void aSIGN_set_talk_info(ACTOR* actorx) {
 
     if (player_no < PLAYER_NUM) {
         if (GETREG(NMREG, 90)) {
-            mDemo_Set_msg_num(0x3065);
+            mDemo_Set_msg_num(MSG_12389);
         } else {
-            mDemo_Set_msg_num(0x3064);
+            mDemo_Set_msg_num(MSG_12388);
         }
     } else {
-        mDemo_Set_msg_num(0x3065);
+        mDemo_Set_msg_num(MSG_12389);
     }
 
     mDemo_Set_talk_display_name(FALSE);

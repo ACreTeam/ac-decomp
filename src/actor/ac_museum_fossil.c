@@ -103,8 +103,8 @@ static void Museum_Fossil_Actor_move(ACTOR* actorx, GAME* game) {
             res = mRmTp_CheckTalkAble(&angle, &pos, aMF_fossil_data_table[i].direct, 42.5f, (GAME_PLAY*)game);
             if (res != FALSE) {
                 museum_fossil->msg_no = (donator == mMmd_DONATOR_NONE)
-                                            ? 0x2FA1
-                                            : ((donator == mMmd_DONATOR_DELETED_PLAYER) ? 0x2FA0 : 0x2F9F);
+                                            ? MSG_12193
+                                            : ((donator == mMmd_DONATOR_DELETED_PLAYER) ? MSG_12192 : MSG_12191);
                 museum_fossil->target_angle = angle;
                 if (mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aMF_SetTalkInfo)) {
                     if (mMmd_IS_DONATED(donator)) {

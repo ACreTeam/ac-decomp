@@ -105,7 +105,8 @@ static void aCD1_before_run(COUNTDOWN_NPC1_ACTOR* actor) {
 static void aCD1_before_turn(COUNTDOWN_NPC1_ACTOR* actor) {
     ACTOR* actorx = (ACTOR*)actor;
 
-    if (chase_angle(&actorx->shape_info.rotation.y, actor->npc_class.movement.mv_angl, DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
+    if (chase_angle(&actorx->shape_info.rotation.y, actor->npc_class.movement.mv_angl, DEG2SHORT_ANGLE2(11.25f)) ==
+        TRUE) {
         actor->next_action = actor->action - 1;
         actor->npc_class.action.step = aNPC_ACTION_END_STEP;
     }
@@ -116,10 +117,11 @@ static void aCD1_before_turn(COUNTDOWN_NPC1_ACTOR* actor) {
 static void aCD1_front_turn(COUNTDOWN_NPC1_ACTOR* actor) {
     ACTOR* actorx = (ACTOR*)actor;
 
-    if (chase_angle(&actorx->shape_info.rotation.y, actor->npc_class.movement.mv_angl, DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
+    if (chase_angle(&actorx->shape_info.rotation.y, actor->npc_class.movement.mv_angl, DEG2SHORT_ANGLE2(11.25f)) ==
+        TRUE) {
         aCD1_setupAction(actor, aCD1_ACT_FRONT_WAIT);
     }
-    
+
     actorx->world.angle.y = actorx->shape_info.rotation.y;
 }
 
@@ -143,8 +145,10 @@ static void aCD1_count_wait(COUNTDOWN_NPC1_ACTOR* actor) {
 }
 
 static void aCD1_fire(COUNTDOWN_NPC1_ACTOR* actor) {
-    if (cKF_FrameControl_passCheck_now(&actor->npc_class.draw.main_animation.keyframe.frame_control, 3.0f) == TRUE && actor->npc_class.actor_class.drawn) {
-        eEC_CLIP->effect_make_proc(eEC_EFFECT_CLACKER, actor->npc_class.right_hand.pos, 1, 0, gamePT, actor->npc_class.actor_class.npc_id, 0, 0);
+    if (cKF_FrameControl_passCheck_now(&actor->npc_class.draw.main_animation.keyframe.frame_control, 3.0f) == TRUE &&
+        actor->npc_class.actor_class.drawn) {
+        eEC_CLIP->effect_make_proc(eEC_EFFECT_CLACKER, actor->npc_class.right_hand.pos, 1, 0, gamePT,
+                                   actor->npc_class.actor_class.npc_id, 0, 0);
     }
 
     if (actor->npc_class.draw.main_animation_state == cKF_STATE_CONTINUE) {
@@ -279,13 +283,18 @@ static void aCD1_decide_demo_flg(COUNTDOWN_NPC1_ACTOR* actor) {
 
     if (now_term != actor->term) {
         if (now_term == aCD1_TERM_1_MIN) {
-            actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+            actor->npc_class.condition_info.demo_flg =
+                aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+                aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
             actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
         } else {
             if ((actor->event_idx & 1) == 1) {
-                actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+                actor->npc_class.condition_info.demo_flg =
+                    aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y |
+                    aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
             } else {
-                actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+                actor->npc_class.condition_info.demo_flg =
+                    aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
             }
 
             actor->npc_class.talk_info.talk_request_proc = aCD1_talk_request;
@@ -300,7 +309,8 @@ static void aCD1_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
 
     if (nactorx->action.idx == aNPC_ACT_SPECIAL) {
         if (actor->term == aCD1_TERM_1_MIN) {
-            if (actor->action != aCD1_ACT_FRONT_TURN && actor->action != aCD1_ACT_FRONT_WAIT && actor->action != aCD1_ACT_COUNT_WAIT) {
+            if (actor->action != aCD1_ACT_FRONT_TURN && actor->action != aCD1_ACT_FRONT_WAIT &&
+                actor->action != aCD1_ACT_COUNT_WAIT) {
                 aCD1_setupAction(actor, aCD1_ACT_FRONT_TURN);
             } else {
                 aCD1_setupAction(actor, actor->action);
@@ -319,7 +329,6 @@ static void aCD1_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
                     case aCD1_TERM_NEW_YEAR:
                         next_action += aCD1_ACT_AFTER_WAIT;
                         break;
-                        
                 }
             }
 
@@ -332,7 +341,8 @@ static void aCD1_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
         aCD1_decide_demo_flg(actor);
     } else if (nactorx->action.step == aNPC_ACTION_END_STEP) {
         if (actor->term == aCD1_TERM_1_MIN) {
-            if (actor->action != aCD1_ACT_FRONT_TURN && actor->action != aCD1_ACT_FRONT_WAIT && actor->action != aCD1_ACT_COUNT_WAIT) {
+            if (actor->action != aCD1_ACT_FRONT_TURN && actor->action != aCD1_ACT_FRONT_WAIT &&
+                actor->action != aCD1_ACT_COUNT_WAIT) {
                 aCD1_setupAction(actor, aCD1_ACT_FRONT_TURN);
             } else {
                 aCD1_setupAction(actor, actor->action);
@@ -346,7 +356,6 @@ static void aCD1_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
                 case aCD1_TERM_NEW_YEAR:
                     next_action += aCD1_ACT_AFTER_WAIT;
                     break;
-                    
             }
 
             nactorx->movement.move_timer = 0;
@@ -411,7 +420,7 @@ static void aCD1_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
         nactorx->movement.mv_angl = angle;
         actor->base_angle = angle;
     }
-    
+
     NPC_CLIP->think_proc(nactorx, play, aNPC_THINK_SPECIAL, aNPC_THINK_TYPE_INIT);
 }
 
@@ -456,7 +465,7 @@ static void aCD1_set_free_str(void) {
 }
 
 static void aCD1_set_talk_info(ACTOR* actorx) {
-    static int msg_base[mNpc_LOOKS_NUM] = { 0x1D68, 0x1D7D, 0x1D53, 0x1D92, 0x1DA7, 0x1DBC };
+    static int msg_base[mNpc_LOOKS_NUM] = { MSG_7528, MSG_7549, MSG_7507, MSG_7570, MSG_7591, MSG_7612 };
     COUNTDOWN_NPC1_ACTOR* actor = (COUNTDOWN_NPC1_ACTOR*)actorx;
     int looks = mNpc_GetNpcLooks(actorx);
     int msg_no = msg_base[looks] + RANDOM(3);
@@ -477,11 +486,11 @@ static void aCD1_talk_request(ACTOR* actorx, GAME* game) {
 
 static int aCD1_talk_init(ACTOR* actorx, GAME* game) {
     COUNTDOWN_NPC1_ACTOR* actor = (COUNTDOWN_NPC1_ACTOR*)actorx;
-    
+
     if (actor->term == aCD1_TERM_1_MIN) {
         actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
     }
-    
+
     mDemo_Set_ListenAble();
     return TRUE;
 }

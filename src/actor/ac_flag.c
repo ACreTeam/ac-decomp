@@ -87,7 +87,7 @@ static void aFLAG_actor_dt(ACTOR* actor, GAME* game) {
 static void aFLAG_set_talk_info(ACTOR* actor) {
     rgba_t window_color;
 
-    mDemo_Set_msg_num(0x3066);
+    mDemo_Set_msg_num(MSG_12390);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_ListenAble();
 

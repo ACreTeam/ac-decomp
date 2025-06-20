@@ -133,9 +133,10 @@ static void aCD0_set_term(COUNTDOWN_NPC0_ACTOR* actor, GAME_PLAY* play) {
         if (bx != play->block_table.block_x || bz != play->block_table.block_z) {
             in_same_block = FALSE;
         }
-        
+
         if (now_term == aCD0_TERM_NEW_YEAR) {
-            eEC_CLIP->effect_make_proc(eEC_EFFECT_HANABI_SWITCH, actor->npc_class.actor_class.world.position, 3, 0, (GAME*)play, RSV_NO, 0, 0);
+            eEC_CLIP->effect_make_proc(eEC_EFFECT_HANABI_SWITCH, actor->npc_class.actor_class.world.position, 3, 0,
+                                       (GAME*)play, RSV_NO, 0, 0);
 
             if (in_same_block == TRUE) {
                 mPlib_request_main_demo_wait_type1((GAME*)play, FALSE, NULL);
@@ -197,7 +198,8 @@ static void aCD0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
 
     switch (actor->term) {
         case aCD0_TERM_NEW_YEAR:
-            eEC_CLIP->effect_make_proc(eEC_EFFECT_HANABI_SWITCH, actor->npc_class.actor_class.world.position, 3, 0, (GAME*)play, RSV_NO, 0, 0);
+            eEC_CLIP->effect_make_proc(eEC_EFFECT_HANABI_SWITCH, actor->npc_class.actor_class.world.position, 3, 0,
+                                       (GAME*)play, RSV_NO, 0, 0);
             break;
         case aCD0_TERM_1_MIN:
             mEv_set_status(mEv_EVENT_NEW_YEARS_EVE_COUNTDOWN, mEv_STATUS_PLAYSOUND);
@@ -247,7 +249,7 @@ static void aCD0_set_free_str(void) {
 }
 
 static void aCD0_set_force_talk_info(ACTOR* actorx) {
-    static int msg_base[mNpc_LOOKS_NUM] = { 0x1D6B, 0x1D80, 0x1D56, 0x1D95, 0x1DAA, 0x1DBF };
+    static int msg_base[mNpc_LOOKS_NUM] = { MSG_7531, MSG_7552, MSG_7510, MSG_7573, MSG_7594, MSG_7615 };
     COUNTDOWN_NPC0_ACTOR* actor = (COUNTDOWN_NPC0_ACTOR*)actorx;
     int looks = mNpc_GetNpcLooks(actorx);
     int msg_no = msg_base[looks];
@@ -272,7 +274,7 @@ static void aCD0_force_talk_request(ACTOR* actorx, GAME* game) {
 }
 
 static void aCD0_set_norm_talk_info(ACTOR* actorx) {
-    static int msg_base[mNpc_LOOKS_NUM] = { 0x1D68, 0x1D7D, 0x1D53, 0x1D92, 0x1DA7, 0x1DBC };
+    static int msg_base[mNpc_LOOKS_NUM] = { MSG_7528, MSG_7549, MSG_7507, MSG_7570, MSG_7591, MSG_7612 };
     COUNTDOWN_NPC0_ACTOR* actor = (COUNTDOWN_NPC0_ACTOR*)actorx;
     int looks = mNpc_GetNpcLooks(actorx);
     int msg_no = msg_base[looks] + RANDOM(3);

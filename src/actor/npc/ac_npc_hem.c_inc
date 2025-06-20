@@ -133,7 +133,7 @@ static void aNHM_change_talk_proc(NPC_HEM_ACTOR* hem, int talk_idx) {
 }
 
 static void aNHM_set_force_talk_info_talk_request() {
-    mDemo_Set_msg_num(0x2C51);
+    mDemo_Set_msg_num(MSG_HEM_GOLD_AXE1);
     mPr_SetFreePossessionItem(Now_Private, ITM_GOLDEN_AXE, mPr_ITEM_COND_NORMAL);
     mSC_trophy_set(mSC_TROPHY_GOLDEN_AXE);
     mFAs_ClearGoodField();

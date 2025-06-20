@@ -99,7 +99,8 @@ static int aPT_SendMail(GAME* game) {
     }
 
     paper_type = (u32)aPT_receive_buf[aPT_MAIL_PAPER_TYPE_OFS] % PAPER_UNIQUE_NUM;
-    present = (mActor_name_t)((aPT_receive_buf[aPT_MAIL_PRESENT_OFS] << 8) | (aPT_receive_buf[aPT_MAIL_PRESENT_OFS + 1]));
+    present =
+        (mActor_name_t)((aPT_receive_buf[aPT_MAIL_PRESENT_OFS] << 8) | (aPT_receive_buf[aPT_MAIL_PRESENT_OFS + 1]));
     npc_id = (mActor_name_t)((aPT_receive_buf[aPT_MAIL_NPC_ID_OFS] << 8) | (aPT_receive_buf[aPT_MAIL_NPC_ID_OFS + 1]));
     header_back_start = aPT_receive_buf[aPT_MAIL_HEADER_BACK_START_OFS];
     if (header_back_start >= MAIL_HEADER_LEN) {
@@ -135,7 +136,7 @@ static int aPT_SendMail(GAME* game) {
             mail.present = present;
             mail.content.header_back_start = header_back_start;
             mail.content.font = mMl_FONT_RECV;
-            
+
             // @BUG - the '== NAME_TYPE_SPNPC' should not be in the macro call
 #ifndef BUGFIXES
             if (ITEM_NAME_GET_TYPE(npc_id == NAME_TYPE_SPNPC)) {
@@ -149,10 +150,11 @@ static int aPT_SendMail(GAME* game) {
             mail.header.recipient.type = mMl_NAME_TYPE_PLAYER;
             bcopy(submenu_name_str, mail.header.sender.personalID.player_name, sizeof(submenu_name_str));
             mail.header.sender.type = mMl_NAME_TYPE_NPC;
-            
+
             idx = aPT_CheckMailBoxVac();
             if (idx != -1) {
-                mMl_copy_mail(&Save_GetPointer(homes[mHS_get_arrange_idx(Common_Get(player_no) & 3)])->mailbox[idx], &mail);
+                mMl_copy_mail(&Save_GetPointer(homes[mHS_get_arrange_idx(Common_Get(player_no) & 3)])->mailbox[idx],
+                              &mail);
                 ret = TRUE;
             }
         }
@@ -160,7 +162,7 @@ static int aPT_SendMail(GAME* game) {
         mEA_SetLetterCardE(card_no);
         return ret;
     }
-    
+
     return FALSE;
 }
 
@@ -499,13 +501,14 @@ static void Pterminal_Actor_move(ACTOR* actorx, GAME* game) {
     if (mDemo_Check(mDemo_TYPE_SPEAK, actorx)) {
         ACTOR* playerx = GET_PLAYER_ACTOR_GAME_ACTOR(game);
         s_xyz player_angle = playerx->shape_info.rotation;
-        
+
         if (actor->proc >= 0 && actor->proc < aPT_PROC_NUM) {
             (*aPT_stat_main_proc_table[actor->proc])(actor, game);
         }
 
         add_calc_short_angle2(&player_angle.y, DEG2SHORT_ANGLE2(-90.0f), CALC_EASE(0.3f), DEG2SHORT_ANGLE2(11.25f), 0);
-        GET_PLAYER_ACTOR_GAME(gamePT)->Set_force_position_angle_proc(gamePT, NULL, &player_angle, mPlayer_FORCE_POSITION_ANGLE_ROTY);
+        GET_PLAYER_ACTOR_GAME(gamePT)->Set_force_position_angle_proc(gamePT, NULL, &player_angle,
+                                                                     mPlayer_FORCE_POSITION_ANGLE_ROTY);
     } else {
         if (chkTrigger(BUTTON_A) && mDemo_Get_talk_actor() == NULL && actor->proc == aPT_PROC_WAIT) {
             xyz_t pos = { 60.0f, 40.0f, 220.0f };
@@ -514,10 +517,10 @@ static void Pterminal_Actor_move(ACTOR* actorx, GAME* game) {
                 int player_no = Common_Get(player_no);
 
                 if (player_no < PLAYER_NUM) {
-                    actor->msg_no = 0x3DEE;
+                    actor->msg_no = MSG_15854;
                     actor->next_proc = aPT_PROC_FIRST_QUESTION;
                 } else {
-                    actor->msg_no = 0x3DEB;
+                    actor->msg_no = MSG_15851;
                     actor->next_proc = aPT_PROC_WAIT;
                 }
 

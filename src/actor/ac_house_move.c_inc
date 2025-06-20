@@ -40,7 +40,7 @@ static void aHUS_set_doorSE(HOUSE_ACTOR* house) {
     static f32 chk_pat_in[] = { 10.0f, 14.0f, 35.0f, 50.0f };
     static f32 chk_pat_out[] = { 2.0f, 8.0f, 33.0f, 40.0f };
     static u16 se_no[] = { NA_SE_6, NA_SE_7, NA_SE_8, NA_SE_9 };
-    
+
     f32* chk_pat_p;
     int i;
 
@@ -98,13 +98,15 @@ static int aHUS_odekake_check(HOUSE_ACTOR* house, GAME_PLAY* play) {
     if (mEvNM_CheckJointEvent(name)) {
         house->arg0_f = 1.0f;
         ret = TRUE;
-    } else if (mNpc_CheckNpcExistBlock(idx, play->block_table.block_x, play->block_table.block_z) && npc_actor_p != NULL) {
+    } else if (mNpc_CheckNpcExistBlock(idx, play->block_table.block_x, play->block_table.block_z) &&
+               npc_actor_p != NULL) {
         if (animal_p->is_home == TRUE) {
             if (house->arg3 == 2) {
                 house->arg0_f = 2.0f;
                 ret = TRUE;
             }
-        } else if (mNpcW_GetWalkInfoStatusGoalAnimalIdx(&status, &goal, idx) && status == mNpcW_INFO_STATUS_WALKING && goal == mNpcW_GOAL_MY_HOME && !animal_p->is_home) {
+        } else if (mNpcW_GetWalkInfoStatusGoalAnimalIdx(&status, &goal, idx) && status == mNpcW_INFO_STATUS_WALKING &&
+                   goal == mNpcW_GOAL_MY_HOME && !animal_p->is_home) {
             house->arg0_f = 1.0f;
             ret = TRUE;
         }
@@ -196,7 +198,8 @@ static void aHUS_setup_animation(HOUSE_ACTOR* house, f32 speed) {
     start = start_idx[type];
     end = end_idx[type];
 
-    cKF_SkeletonInfo_R_init(&house->keyframe, house->keyframe.skeleton, anim_p, start, end, start, speed, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+    cKF_SkeletonInfo_R_init(&house->keyframe, house->keyframe.skeleton, anim_p, start, end, start, speed, 0.0f,
+                            cKF_FRAMECONTROL_STOP, NULL);
 }
 
 static void aHUS_rewrite_out_data(HOUSE_ACTOR* house, GAME_PLAY* play) {
@@ -234,9 +237,9 @@ static void aHUS_set_talk_info_check_player(ACTOR* actorx) {
     int msg_no;
 
     if (house->arg0_f == 2.0f) {
-        msg_no = 0x1363 + aHUS_GET_LOOKS(house); // Sleeping
+        msg_no = MSG_4963 + aHUS_GET_LOOKS(house); // Sleeping
     } else {
-        msg_no = 0x2AFE; // I'm not in right now.
+        msg_no = MSG_11006; // I'm not in right now.
     }
 
     mDemo_Set_msg_num(msg_no);
@@ -477,7 +480,7 @@ static void aHUS_actor_move(ACTOR* actorx, GAME* game) {
 static void aHUS_actor_init(ACTOR* actorx, GAME* game) {
     mActor_name_t name;
 
-    name =actorx->npc_id;
+    name = actorx->npc_id;
     name = name - NPC_HOUSE_START + DUMMY_NPC_HOUSE_000;
     mFI_SetFG_common(name, actorx->home.position, FALSE);
     aHUS_actor_move(actorx, game);

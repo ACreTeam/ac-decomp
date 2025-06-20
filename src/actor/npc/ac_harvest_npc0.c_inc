@@ -174,7 +174,7 @@ static void aHT0_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int proc) {
 
 static void aHT0_set_talk_info(ACTOR* actorx) {
     NPC_HARVEST_NPC0_ACTOR* actor = (NPC_HARVEST_NPC0_ACTOR*)actorx;
-    static int msg_base[] = { 0x3c98, 0x3cb7, 0x3c3b, 0x3c5a, 0x3c79, 0x3cd6 };
+    static int msg_base[] = { MSG_15512, MSG_15543, MSG_15419, MSG_15450, MSG_15481, MSG_15574 };
     int looks = mNpc_GetNpcLooks(&actor->actor.actor_class);
     int msg_no = msg_base[looks] + actor->_9A4 * 3;
     mDemo_Set_msg_num(msg_no + RANDOM(3));
