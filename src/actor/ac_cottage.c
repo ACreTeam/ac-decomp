@@ -593,7 +593,7 @@ static void Cottage_demo_speak_go_out(ACTOR* actor) {
     island_villager = &Get_Island_Villager();
 
     looks = mNpc_GetLooks(island_villager->id.npc_id);
-    mDemo_Set_msg_num((looks & 0xFF) + 0x2AFF);
+    mDemo_Set_msg_num((looks & 0xFF) + MSG_ISLANDER_NOENTRY_SLEEPING_BASE);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_camera(TRUE);
     mPlib_Set_able_hand_all_item_in_demo(TRUE);

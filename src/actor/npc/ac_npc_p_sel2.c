@@ -143,13 +143,13 @@ static void aNPS2_actor_ct(ACTOR* actorx, GAME* game) {
         p_sel2->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FEEL_CHECK;
 
         {
-            static int base_msg_table[] = { 0x13F2, 0x141A, 0x1442, 0x146A, 0x1492, 0x14BA };
+            static int base_msg_table[] = { MSG_5106, MSG_5146, MSG_5186, MSG_5226, MSG_5266, MSG_5306 };
 
             p_sel2->base_message = base_msg_table[mNpc_GetNpcLooks(actorx)];
         }
 
         {
-            static int base_msg_table2[] = { 0x39EE, 0x39F8, 0x3A02, 0x3A0C, 0x3A16, 0x3A20 };
+            static int base_msg_table2[] = { MSG_14830, MSG_14840, MSG_14850, MSG_14860, MSG_14870, MSG_14880 };
 
             p_sel2->base_message2 = base_msg_table2[mNpc_GetNpcLooks(actorx)];
         }

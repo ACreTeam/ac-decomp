@@ -12,15 +12,15 @@ static int aTMN0_change_talk_proc(TAMAIRE_NPC0_ACTOR* actor, int talk_idx) {
 }
 
 static void aTMN0_set_nsg(ACTOR* actorx) {
-    static int base_msg_table[] = { 0x1E65, 0x1E71, 0x1E59, 0x1E7D, 0x1E89, 0x1E95 };
+    static int base_msg_table[] = { MSG_7781, MSG_7793, MSG_7769, MSG_7805, MSG_7817, MSG_7829 };
     int msg_no = base_msg_table[mNpc_GetNpcLooks(actorx)] + RANDOM(3);
-    
+
     mDemo_Set_msg_num(msg_no);
 }
 
 static void aTMN0_set_norm_talk_info(ACTOR* actorx) {
     TAMAIRE_NPC0_ACTOR* actor = (TAMAIRE_NPC0_ACTOR*)actorx;
-    
+
     aTMN0_set_nsg(actorx);
     mDemo_Set_talk_turn(TRUE);
     mDemo_Set_camera(CAMERA2_PROCESS_TALK);

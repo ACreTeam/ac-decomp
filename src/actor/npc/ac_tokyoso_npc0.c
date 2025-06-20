@@ -101,7 +101,7 @@ static void aTKN0_actor_ct(ACTOR* actorx, GAME* game) {
     TOKYOSO_NPC0_ACTOR* actor = (TOKYOSO_NPC0_ACTOR*)actorx;
 
     if (NPC_CLIP->birth_check_proc(actorx, game) == TRUE) {
-        static int base_msg_table[] = { 0x19DD, 0x19ED, 0x19CD, 0x19FD, 0x1A0D, 0x1A1D };
+        static int base_msg_table[] = { MSG_6621, MSG_6637, MSG_6605, MSG_6653, MSG_6669, MSG_6685 };
 
         actor->npc_class.schedule.schedule_proc = aTKN0_schedule_proc;
         NPC_CLIP->ct_proc(actorx, game, &ct_data);
@@ -153,7 +153,7 @@ static int aTKN0_set_request_act(TOKYOSO_NPC0_ACTOR* actor, u8 prio, u8 idx, u8 
 
     if (prio >= actor->npc_class.request.act_priority) {
         u16 args[6];
-        
+
         bzero(args, sizeof(args));
         args[0] = obj;
         args[2] = move_x;

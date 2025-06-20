@@ -98,7 +98,7 @@ static void aMSC_menu_close_wait(MSCORE_CONTROL_ACTOR* mscore_ctrl, GAME_PLAY* p
 }
 
 static void aMSC_set_force_talk_info_talk_request(ACTOR* actorx) {
-    mDemo_Set_msg_num(0x3DDA);
+    mDemo_Set_msg_num(MSG_15834);
     mDemo_Set_talk_turn(FALSE);
     mDemo_Set_camera(CAMERA2_PROCESS_STOP);
     mDemo_Set_talk_display_name(FALSE);

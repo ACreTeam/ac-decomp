@@ -1,6 +1,6 @@
 static void aHTC_ready(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play) {
     aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
-    
+
     if (hatumode_p != NULL && hatumode_p->state == 1) {
         hatumode_control->actor_class.world.position.x = 20 + hatumode_p->yashiro_pos[0];
         hatumode_control->actor_class.world.position.z = 40 + hatumode_p->yashiro_pos[1];
@@ -11,7 +11,7 @@ static void aHTC_ready(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play
 
 static void aHTC_wait(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* play) {
     aEv_hatumode_save_c* hatumode_p = (aEv_hatumode_save_c*)mEv_get_save_area(1, 7);
-    
+
     if (hatumode_p->flags0 & 0x8000) {
         aHTC_setup_move_proc(hatumode_control, 2);
     }
@@ -36,10 +36,10 @@ static void aHTC_request(HATUMODE_CONTROL_ACTOR* hatumode_control, GAME_PLAY* pl
     if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == TRUE) {
         if (mSP_money_check(50)) {
             aHTC_setup_move_proc(hatumode_control, 3);
-            mDemo_Set_msg_num(0x112C);
+            mDemo_Set_msg_num(MSG_4396);
         } else {
             aHTC_setup_move_proc(hatumode_control, 4);
-            mDemo_Set_msg_num(0x112E);
+            mDemo_Set_msg_num(MSG_4398);
         }
     } else {
         if (mDemo_Get_talk_actor() == NULL) {

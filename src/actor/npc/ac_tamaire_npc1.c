@@ -100,7 +100,7 @@ static void aTMN1_actor_ct(ACTOR* actorx, GAME* game) {
     TAMAIRE_NPC1_ACTOR* actor = (TAMAIRE_NPC1_ACTOR*)actorx;
 
     if (NPC_CLIP->birth_check_proc(actorx, game) == TRUE) {
-        static int base_msg_table[] = { 0x1E65, 0x1E71, 0x1E59, 0x1E7D, 0x1E89, 0x1E95 };
+        static int base_msg_table[] = { MSG_7781, MSG_7793, MSG_7769, MSG_7805, MSG_7817, MSG_7829 };
 
         actor->npc_class.schedule.schedule_proc = aTMN1_schedule_proc;
         NPC_CLIP->ct_proc(actorx, game, &ct_data);
@@ -144,7 +144,7 @@ static int aTMN1_set_request_act(TAMAIRE_NPC1_ACTOR* actor, u8 prio, u8 idx, u8 
 
     if (prio >= actor->npc_class.request.act_priority) {
         u16 args[6];
-        
+
         bzero(args, sizeof(args));
         args[0] = obj;
         args[2] = move_x;
@@ -164,7 +164,10 @@ static void aTMN1_tama_process(ACTOR* actorx, GAME* game) {
     static u8 table[] = { TOOL_TAMA2, TOOL_TAMA1, TOOL_TAMA4, TOOL_TAMA3 };
 
     if (actor->npc_class.right_hand.item_actor_p == NULL) {
-        actor->npc_class.right_hand.item_actor_p = CLIP(tools_clip)->aTOL_birth_proc(table[(((mActor_name_t)(actorx->npc_id - SP_NPC_EV_TAMAIRE_1) >> 1) & 1 ^ 1)], aTOL_ACTION_TAKEOUT, actorx, game, -1, NULL);
+        actor->npc_class.right_hand.item_actor_p =
+            CLIP(tools_clip)
+                ->aTOL_birth_proc(table[(((mActor_name_t)(actorx->npc_id - SP_NPC_EV_TAMAIRE_1) >> 1) & 1 ^ 1)],
+                                  aTOL_ACTION_TAKEOUT, actorx, game, -1, NULL);
     } else {
         TOOLS_ACTOR* tama = (TOOLS_ACTOR*)actor->npc_class.right_hand.item_actor_p;
 
@@ -172,7 +175,10 @@ static void aTMN1_tama_process(ACTOR* actorx, GAME* game) {
     }
 
     if (actor->npc_class.left_hand.item_actor_p == NULL) {
-        actor->npc_class.left_hand.item_actor_p = CLIP(tools_clip)->aTOL_birth_proc(table[2 + (((mActor_name_t)(actorx->npc_id - SP_NPC_EV_TAMAIRE_1) >> 1) & 1 ^ 1)], aTOL_ACTION_TAKEOUT, actorx, game, -1, NULL);
+        actor->npc_class.left_hand.item_actor_p =
+            CLIP(tools_clip)
+                ->aTOL_birth_proc(table[2 + (((mActor_name_t)(actorx->npc_id - SP_NPC_EV_TAMAIRE_1) >> 1) & 1 ^ 1)],
+                                  aTOL_ACTION_TAKEOUT, actorx, game, -1, NULL);
     } else {
         TOOLS_ACTOR* tama = (TOOLS_ACTOR*)actor->npc_class.left_hand.item_actor_p;
 
