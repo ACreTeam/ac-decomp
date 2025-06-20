@@ -153,11 +153,11 @@ static void eCoin_dw(eEC_Effect_c* effect, GAME* game) {
 
         OPEN_DISP(game->graph);
 
-        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-        Matrix_RotateX(effect->effect_specific[1], 1);
-        Matrix_RotateY(effect->effect_specific[2], 1);
-        Matrix_RotateZ(effect->effect_specific[3], 1);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+        Matrix_RotateX(effect->effect_specific[1], MTX_MULT);
+        Matrix_RotateY(effect->effect_specific[2], MTX_MULT);
+        Matrix_RotateZ(effect->effect_specific[3], MTX_MULT);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
         gSPSegment(NEXT_POLY_OPA_DISP, G_MWO_SEGMENT_8, eCoin_pal_table[effect->effect_specific[5] & 1]);
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -172,11 +172,11 @@ static void eCoin_dw(eEC_Effect_c* effect, GAME* game) {
 
         OPEN_DISP(game->graph);
 
-        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-        Matrix_RotateX(effect->effect_specific[1], 1);
-        Matrix_RotateY(effect->effect_specific[2], 1);
-        Matrix_RotateZ(effect->effect_specific[3], 1);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+        Matrix_RotateX(effect->effect_specific[1], MTX_MULT);
+        Matrix_RotateY(effect->effect_specific[2], MTX_MULT);
+        Matrix_RotateZ(effect->effect_specific[3], MTX_MULT);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
         gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 128, 255, 255, 255, alpha);
         gSPSegment(NEXT_POLY_XLU_DISP, G_MWO_SEGMENT_8, eCoin_pal_table[effect->effect_specific[5] & 1]);

@@ -462,8 +462,8 @@ static void mAD_set_first_tag(Submenu* submenu, GAME* game, GRAPH* graph, f32 po
     int idx;
 
     idx = 0;
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 
@@ -496,8 +496,8 @@ static void mAD_set_addressSel_tag_field(GRAPH* graph, f32 pos_x, f32 pos_y, int
 
     rgba_t* color_p = &prim_color[idx != 0][col_idx];
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 

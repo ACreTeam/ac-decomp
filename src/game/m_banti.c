@@ -116,7 +116,7 @@ static void banti_chk_disp_left(GAME_PLAY* play) {
 }
 
 static f32 banti_calc_disp_alpha_rate(GAME_PLAY* play) {
-    if (mDemo_CheckDemo() || mEv_CheckTitleDemo() > 0 || banti.disabled) {
+    if (mDemo_CheckDemo() || mEv_IsTitleDemo() || banti.disabled) {
         banti.addressable_type = mPlayer_ADDRESSABLE_FALSE_MOVEMENT;
         add_calc(&banti.alpha, 0.0f, 1.0f - sqrtf(0.8), 0.1f,
                  0.005f); /* quickly fade out on demo screen or title or force disabled */
@@ -394,7 +394,7 @@ static void banti_draw_hiduke_sub(Gfx** gfx_pp, GAME* game, Banti_anim_c* anim, 
     Banti_callback_c callback_data;
 
     Matrix_push();
-    Matrix_translate(set_pos->x, set_pos->y, set_pos->z, 1);
+    Matrix_translate(set_pos->x, set_pos->y, set_pos->z, MTX_MULT);
 
     m = (Mtx*)GRAPH_ALLOC_TYPE(g, Mtx, anim->keyframe.skeleton->num_shown_joints);
     callback_data.mtx = m;
@@ -455,7 +455,7 @@ static void banti_draw_jikan_sub(Gfx** gfx_pp, GAME* game, Banti_anim_c* anim, i
     Banti_callback_c callback_data;
 
     Matrix_push();
-    Matrix_translate(set_pos->x, set_pos->y, set_pos->z, 1);
+    Matrix_translate(set_pos->x, set_pos->y, set_pos->z, MTX_MULT);
 
     if (hide_zero == TRUE) {
         if (idx0 == 0) {
@@ -560,10 +560,10 @@ extern void banti_draw(GAME_PLAY* play) {
             }
         }
 
-        Matrix_scale(16.0f, 16.0f, 16.0f, 0);
+        Matrix_scale(16.0f, 16.0f, 16.0f, MTX_LOAD);
 
         if (banti.disp_left == TRUE) {
-            Matrix_translate(-184.0f, 0.0f, 0.0f, 1);
+            Matrix_translate(-184.0f, 0.0f, 0.0f, MTX_MULT);
         }
 
         {

@@ -160,8 +160,8 @@ static void mBR_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
   u8 t;
   Gfx* gfx;
 
-  Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-  Matrix_translate(x, y, 140.0f, 1);
+  Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+  Matrix_translate(x, y, 140.0f, MTX_MULT);
 
   OPEN_DISP(graph);
   gfx = NOW_POLY_OPA_DISP;

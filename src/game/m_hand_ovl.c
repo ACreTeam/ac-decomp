@@ -926,19 +926,19 @@ static void mHD_hand_shape_draw(Submenu* submenu, GAME* game, int shadow_flag) {
 
     if (mtx != NULL) {
         if (shadow_flag) {
-            Matrix_translate(0.0f, 0.0f, 76.4f, 0);
+            Matrix_translate(0.0f, 0.0f, 76.4f, MTX_LOAD);
         } else {
-            Matrix_translate(0.0f, 0.0f, 77.0f, 0);
+            Matrix_translate(0.0f, 0.0f, 77.0f, MTX_LOAD);
         }
 
         if (shadow_flag) {
-            Matrix_scale(0.042f, 0.042f, 0.0f, 1);
+            Matrix_scale(0.042f, 0.042f, 0.0f, MTX_MULT);
         } else {
-            Matrix_scale(0.04f, 0.04f, 0.04f, 1);
+            Matrix_scale(0.04f, 0.04f, 0.04f, MTX_MULT);
         }
 
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
-        Matrix_rotateXYZ(mHD_ROT_X, mHD_ROT_Y, mHD_ROT_Z, 1);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
+        Matrix_rotateXYZ(mHD_ROT_X, mHD_ROT_Y, mHD_ROT_Z, MTX_MULT);
 
         OPEN_DISP(graph);
 

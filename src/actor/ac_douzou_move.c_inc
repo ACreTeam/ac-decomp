@@ -18,7 +18,7 @@ static int aDOU_set_check(int house_no) {
     Private_c* priv = Save_GetPointer(private_data[player_no]);
     mHm_hs_c* house = Save_GetPointer(homes[house_no]);
 
-    if (mEv_CheckTitleDemo() != 0 && mEv_CheckTitleDemo() != -1 && mEv_CheckTitleDemo() != -9) {
+    if (mEv_CheckTitleDemo() != mEv_TITLEDEMO_NONE && mEv_CheckTitleDemo() != mEv_TITLEDEMO_LOGO && mEv_CheckTitleDemo() != mEv_TITLEDEMO_STAFFROLL) {
         return FALSE;
     } else if (mLd_PlayerManKindCheckNo(player_no) || mPr_CheckPrivate(priv) == FALSE) {
         return FALSE;
@@ -91,7 +91,7 @@ static int aDOU_setEffect_sub(ACTOR* actor, GAME* game, int house_no, int color)
     xyz_t_move(&wpos, &actor->world.position);
     wpos.x += xpostbl[house_no];
     wpos.z += zpostbl[house_no];
-    Matrix_translate(wpos.x, wpos.y, wpos.z, 0);
+    Matrix_translate(wpos.x, wpos.y, wpos.z, MTX_LOAD);
 
     /* Initialize effect offset */
     xyz_t_move(&ofs, &offset_tbl[color]);

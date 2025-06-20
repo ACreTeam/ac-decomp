@@ -1150,8 +1150,8 @@ extern void cKF_SkeletonInfo_R_AnimationMove_base(xyz_t* base, s16* sbase, xyz_t
         base_x = keyframe->base_model_rotation.x;
         update_base = &keyframe->updated_base_model_rotation;
         Matrix_push();
-        Matrix_rotateXYZ(keyframe->current_joint[1].x, keyframe->current_joint[1].y, keyframe->current_joint[1].z, 0);
-        Matrix_to_rotate2_new(get_Matrix_now(), update_base, 0);
+        Matrix_rotateXYZ(keyframe->current_joint[1].x, keyframe->current_joint[1].y, keyframe->current_joint[1].z, MTX_LOAD);
+        Matrix_to_rotate2_new(get_Matrix_now(), update_base, MTX_LOAD);
         Matrix_pull();
         *sbase = angley + angle_c + (update_base->x - base_x);
     }

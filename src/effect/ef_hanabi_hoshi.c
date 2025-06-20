@@ -100,13 +100,13 @@ static void eHanabiHoshi_dw(eEC_Effect_c* effect, GAME* game) {
     OPEN_DISP(game->graph);
     _texture_z_light_fog_prim_xlu(game->graph);
     Matrix_translate(effect->position.x + effect->offset.x, effect->position.y + effect->offset.y,
-                     effect->position.z + effect->offset.z, FALSE);
-    Matrix_RotateX(DEG2SHORT_ANGLE2(270), TRUE);
-    Matrix_RotateZ(-effect->effect_specific[1], TRUE);
-    Matrix_scale(v, 1.f, 1.f, TRUE);
-    Matrix_RotateZ(effect->effect_specific[1], TRUE);
+                     effect->position.z + effect->offset.z, MTX_LOAD);
+    Matrix_RotateX(DEG2SHORT_ANGLE2(270), MTX_MULT);
+    Matrix_RotateZ(-effect->effect_specific[1], MTX_MULT);
+    Matrix_scale(v, 1.f, 1.f, MTX_MULT);
+    Matrix_RotateZ(effect->effect_specific[1], MTX_MULT);
     Matrix_scale(v2 * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), v2 * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f),
-                 v2 * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), TRUE);
+                 v2 * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), MTX_MULT);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, result[4], result[0], result[1], result[2], result[3]);
     gDPSetEnvColor(NEXT_POLY_XLU_DISP, result[5], result[6], result[7], 255);

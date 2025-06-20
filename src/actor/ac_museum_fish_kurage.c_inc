@@ -196,25 +196,25 @@ void mfish_kurage_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     a += (actor->_5F4 * sin_s(actor->_632) + 1.0f);
 
     OPEN_DISP(gamex->graph);
-    Matrix_translate(actor->position.x, actor->position.y, actor->position.z, 0);
-    Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
+    Matrix_translate(actor->position.x, actor->position.y, actor->position.z, MTX_LOAD);
+    Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, MTX_MULT);
     Matrix_scale(actor->init_data.renderScale * a, actor->init_data.renderScale * (1.0f / SQ(a)),
-                 actor->init_data.renderScale * a, 1);
+                 actor->init_data.renderScale * a, MTX_MULT);
     Matrix_push();
 
-    Matrix_RotateY(actor->_63C, 1);
+    Matrix_RotateY(actor->_63C, MTX_MULT);
     Matrix_scale((GETREG(TAKREG, 0x4b) * 0.01f + 0.1f) * sin_s(actor->_63C) + 1.0f, 1.0f,
-                 (GETREG(TAKREG, 0x4b) * 0.01f + 0.1f) * cos_s(actor->_63C) + 1.0f, 1);
-    Matrix_RotateY(-actor->_63C, 1);
+                 (GETREG(TAKREG, 0x4b) * 0.01f + 0.1f) * cos_s(actor->_63C) + 1.0f, MTX_MULT);
+    Matrix_RotateY(-actor->_63C, MTX_MULT);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(NEXT_POLY_XLU_DISP, act_mus_kurage_sakana_body_model);
 
     Matrix_pull();
 
-    Matrix_RotateY(actor->_63C, 1);
+    Matrix_RotateY(actor->_63C, MTX_MULT);
     Matrix_scale((GETREG(TAKREG, 0x4b) * 0.01f + 0.1f) * sin_s(actor->_63C) + 1.0f, 1.0f,
-                 (GETREG(TAKREG, 0x4b) * 0.01f + 0.1f) * cos_s(actor->_63C) + 1.0f, 1);
-    Matrix_RotateY(-actor->_63C, 1);
+                 (GETREG(TAKREG, 0x4b) * 0.01f + 0.1f) * cos_s(actor->_63C) + 1.0f, MTX_MULT);
+    Matrix_RotateY(-actor->_63C, MTX_MULT);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(NEXT_POLY_XLU_DISP, act_mus_kurage_sakana_foot_model);
 

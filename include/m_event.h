@@ -52,6 +52,20 @@ extern "C" {
 #define mEv_TO_DAY(month_day) ((lbRTC_day_t)(month_day))
 #define mEv_TO_MONTH(month_day) ((lbRTC_month_t)((month_day) >> 8))
 
+enum {
+    mEv_TITLEDEMO_STAFFROLL = -9,
+    mEv_TITLEDEMO_LOGO = -1,
+
+    mEv_TITLEDEMO_NONE = 0,
+    mEv_TITLEDEMO_START1,
+    mEv_TITLEDEMO_START2,
+    mEv_TITLEDEMO_START3,
+    mEv_TITLEDEMO_START4,
+    mEv_TITLEDEMO_START5,
+
+    mEv_TITLEDEMO_NUM
+};
+
 typedef union event_monthday_s {
     struct {
         u8 month;
@@ -632,6 +646,8 @@ extern void mEv_SetGateway();
 extern int mEv_CheckGateway();
 extern void mEv_UnSetGateway();
 extern int mEv_CheckTitleDemo();
+#define mEv_IsTitleDemo() (mEv_CheckTitleDemo() > mEv_TITLEDEMO_NONE)
+#define mEv_IsNotTitleDemo() (!mEv_IsTitleDemo())
 extern void mEv_SetTitleDemo(int demo_number);
 extern void mEv_RenewalDataEveryDay();
 extern void mEv_GetEventWeather(s16* weather, s16* intensity);

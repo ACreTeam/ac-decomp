@@ -78,9 +78,9 @@ void minsect_amenbo_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 void minsect_amenbo_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     _texture_z_light_fog_prim_xlu(game->graph);
     OPEN_DISP(game->graph);
-    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z, FALSE);
-    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
-    Matrix_rotateXYZ(actor->_68.x, actor->_68.y + (s16)DEG2SHORT_ANGLE2(180), actor->_68.z, TRUE);
+    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z, MTX_LOAD);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, MTX_MULT);
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y + (s16)DEG2SHORT_ANGLE2(180), actor->_68.z, MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetEnvColor(NEXT_POLY_OPA_DISP, 0, 0xff, 0x9b, 0xff);
     gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
@@ -169,9 +169,9 @@ extern Gfx act_m_mu_ariT_model;
 void ari_alone_draw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     _texture_z_light_fog_prim_xlu(game->graph);
     OPEN_DISP(game->graph);
-    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z + actor->_58, FALSE);
-    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, TRUE);
-    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z + actor->_58, MTX_LOAD);
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, MTX_MULT);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(NEXT_POLY_OPA_DISP, &act_m_mu_ariT_model);
     CLOSE_DISP(game->graph);
@@ -239,8 +239,8 @@ void minsect_draw_shadow(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     scale = (GETREG(TAKREG, 0x28) * 0.001f + 0.005f);
     scale *= minsect_shadow_scale_tbl[(int)actor->_00];
 
-    Matrix_translate(actor->_1C.x, v, actor->_1C.z, FALSE);
-    Matrix_scale(scale, scale, scale, TRUE);
+    Matrix_translate(actor->_1C.x, v, actor->_1C.z, MTX_LOAD);
+    Matrix_scale(scale, scale, scale, MTX_MULT);
     _texture_z_light_fog_prim_shadow(game->graph);
 
     OPEN_SHADOW_DISP(game->graph);

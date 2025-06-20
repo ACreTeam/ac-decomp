@@ -61,8 +61,8 @@ static void aHOI_actor_draw(ACTOR* actorx, GAME* game) {
     handOverItem->gyo_flag = FALSE;
   }
   else {
-    Matrix_RotateY(master->shape_info.rotation.y + DEG2SHORT_ANGLE(-90.0f), 0);
-    Matrix_translate(handOverItem->trans.x, handOverItem->trans.y, handOverItem->trans.z, 1);
+    Matrix_RotateY(master->shape_info.rotation.y + DEG2SHORT_ANGLE(-90.0f), MTX_LOAD);
+    Matrix_translate(handOverItem->trans.x, handOverItem->trans.y, handOverItem->trans.z, MTX_MULT);
     Matrix_Position_Zero(&why_is_this_here);
     Matrix_put(&handOverItem->tools_class.matrix_work);
     Matrix_Position_Zero(&chase_pos);
@@ -78,7 +78,7 @@ static void aHOI_actor_draw(ACTOR* actorx, GAME* game) {
       aHOI_chase_pos(actorx, &chase_pos);
     }
 
-    Matrix_translate(chase_pos.x, chase_pos.y, chase_pos.z, 0);
+    Matrix_translate(chase_pos.x, chase_pos.y, chase_pos.z, MTX_LOAD);
     _texture_z_light_fog_prim(graph);
 
     if (handOverItem->item_type == aHOI_ITEM_TYPE_FISH) {
@@ -87,7 +87,7 @@ static void aHOI_actor_draw(ACTOR* actorx, GAME* game) {
         handOverItem->gyo_flag = TRUE;
       }
 
-      Matrix_scale(scale, scale, scale, 1);
+      Matrix_scale(scale, scale, scale, MTX_MULT);
       OPEN_DISP(graph);
       gfx = NOW_POLY_OPA_DISP;
 
@@ -98,7 +98,7 @@ static void aHOI_actor_draw(ACTOR* actorx, GAME* game) {
       CLOSE_DISP(graph);
     }
     else {
-      Matrix_scale(scale, scale, scale, 1);
+      Matrix_scale(scale, scale, scale, MTX_MULT);
       OPEN_DISP(graph);
       gfx = NOW_POLY_OPA_DISP;
 

@@ -308,8 +308,8 @@ static void aSI_DrawShopFloor(ACTOR* actorx, GAME* game) {
             gSPSegment(NEXT_POLY_OPA_DISP, ANIME_4_TXT_SEG, tex3);
             gSPSegment(NEXT_POLY_OPA_DISP, ANIME_5_TXT_SEG, pal);
 
-            Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-            Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+            Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+            Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
             gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(NEXT_POLY_OPA_DISP, aSI_disp_data_table[shop_level].floor_gfx);
@@ -327,8 +327,8 @@ static void aSI_DrawShopFloor(ACTOR* actorx, GAME* game) {
             gSPSegment(NEXT_POLY_XLU_DISP, ANIME_4_TXT_SEG, tex3);
             gSPSegment(NEXT_POLY_XLU_DISP, ANIME_5_TXT_SEG, pal);
 
-            Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-            Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+            Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+            Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
             gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(NEXT_POLY_XLU_DISP, aSI_disp_data_table[shop_level].floor_xlu_gfx);
@@ -354,8 +354,8 @@ static void aSI_DrawShopFukubiki(ACTOR* actorx, GAME* game) {
 
         OPEN_DISP(game->graph);
 
-        Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-        Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+        Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+        Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         Global_kankyo_set_room_prim(game);
@@ -368,8 +368,8 @@ static void aSI_DrawShopFukubiki(ACTOR* actorx, GAME* game) {
         _texture_z_light_fog_prim_xlu(game->graph);
         OPEN_DISP(game->graph);
 
-        Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-        Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+        Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+        Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(NEXT_POLY_XLU_DISP, aSI_disp_data_table[shop_level].fukubiki_xlu_gfx);
@@ -404,8 +404,8 @@ static void aSI_DrawShopWall(ACTOR* actorx, GAME* game) {
         gSPSegment(NEXT_POLY_OPA_DISP, ANIME_2_TXT_SEG, tex1);
         gSPSegment(NEXT_POLY_OPA_DISP, ANIME_3_TXT_SEG, pal);
 
-        Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-        Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+        Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+        Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         Global_kankyo_set_room_prim(game);
@@ -426,8 +426,8 @@ static void aSI_DrawShopWall(ACTOR* actorx, GAME* game) {
         gSPSegment(NEXT_POLY_XLU_DISP, ANIME_2_TXT_SEG, tex1);
         gSPSegment(NEXT_POLY_XLU_DISP, ANIME_3_TXT_SEG, pal);
 
-        Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-        Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+        Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+        Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         Global_kankyo_set_room_prim(game);

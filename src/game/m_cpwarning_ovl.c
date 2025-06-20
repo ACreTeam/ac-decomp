@@ -98,8 +98,8 @@ static void mCW_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_
     GRAPH* graph = game->graph;
     mCW_Ovl_c* cpwarning_ovl = submenu->overlay->cpwarning_ovl;
 
-    Matrix_scale(16.0f * cpwarning_ovl->scale, 16.0f * cpwarning_ovl->scale, 1.0f, 0);
-    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, 1);
+    Matrix_scale(16.0f * cpwarning_ovl->scale, 16.0f * cpwarning_ovl->scale, 1.0f, MTX_LOAD);
+    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 
@@ -108,9 +108,9 @@ static void mCW_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_
     gSPDisplayList(POLY_OPA_DISP++, dia_att_winT_model);
 
     if (cpwarning_ovl->diary_edit_mode) {
-        Matrix_translate(19.0f, -29.0f, 0.0f, 1);
+        Matrix_translate(19.0f, -29.0f, 0.0f, MTX_MULT);
     } else {
-        Matrix_translate(-19.0f, -29.0f, 0.0f, 1);
+        Matrix_translate(-19.0f, -29.0f, 0.0f, MTX_MULT);
     }
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, dia_att_cursor_model);

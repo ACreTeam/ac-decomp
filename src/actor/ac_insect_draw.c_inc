@@ -30,43 +30,43 @@ static void aINS_actor_draw_sub(GRAPH* graph, aINS_INSECT_ACTOR* insect, GAME* g
 
         Matrix_translate(insect->tools_actor.actor_class.world.position.x,
                          insect->tools_actor.actor_class.world.position.y + 2.0f,
-                         insect->tools_actor.actor_class.world.position.z, 0);
-        Matrix_RotateX(angleX, 1);
-        Matrix_RotateY(angleY, 1);
+                         insect->tools_actor.actor_class.world.position.z, MTX_LOAD);
+        Matrix_RotateX(angleX, MTX_MULT);
+        Matrix_RotateY(angleY, MTX_MULT);
     } else {
         Matrix_translate(insect->tools_actor.actor_class.world.position.x,
                          insect->tools_actor.actor_class.world.position.y + 2.0f,
-                         insect->tools_actor.actor_class.world.position.z, 0);
+                         insect->tools_actor.actor_class.world.position.z, MTX_LOAD);
 
         switch (insect->type) {
             case aINS_INSECT_TYPE_MOLE_CRICKET:
-                Matrix_RotateY(angleY, 1);
-                Matrix_RotateX(angleX, 1);
-                Matrix_RotateZ(insect->tools_actor.actor_class.shape_info.rotation.z, 1);
+                Matrix_RotateY(angleY, MTX_MULT);
+                Matrix_RotateX(angleX, MTX_MULT);
+                Matrix_RotateZ(insect->tools_actor.actor_class.shape_info.rotation.z, MTX_MULT);
                 break;
             case aINS_INSECT_TYPE_SPIDER:
                 switch (draw_type) {
                     case 2:
-                        Matrix_RotateX(angleX, 1);
-                        Matrix_RotateZ(insect->tools_actor.actor_class.shape_info.rotation.z, 1);
+                        Matrix_RotateX(angleX, MTX_MULT);
+                        Matrix_RotateZ(insect->tools_actor.actor_class.shape_info.rotation.z, MTX_MULT);
                         break;
                     default:
-                        Matrix_RotateX(angleX, 1);
-                        Matrix_RotateY(angleY, 1);
-                        Matrix_RotateZ(insect->tools_actor.actor_class.shape_info.rotation.z, 1);
+                        Matrix_RotateX(angleX, MTX_MULT);
+                        Matrix_RotateY(angleY, MTX_MULT);
+                        Matrix_RotateZ(insect->tools_actor.actor_class.shape_info.rotation.z, MTX_MULT);
                         break;
                 }
                 break;
             default:
-                Matrix_RotateX(angleX, 1);
-                Matrix_RotateY(angleY, 1);
-                Matrix_RotateZ(insect->tools_actor.actor_class.shape_info.rotation.z, 1);
+                Matrix_RotateX(angleX, MTX_MULT);
+                Matrix_RotateY(angleY, MTX_MULT);
+                Matrix_RotateZ(insect->tools_actor.actor_class.shape_info.rotation.z, MTX_MULT);
                 break;
         }
     }
 
     Matrix_scale(insect->tools_actor.actor_class.scale.x, insect->tools_actor.actor_class.scale.y,
-                 insect->tools_actor.actor_class.scale.z, 1);
+                 insect->tools_actor.actor_class.scale.z, MTX_MULT);
 
     OPEN_DISP(graph);
     gfx = NOW_POLY_XLU_DISP;

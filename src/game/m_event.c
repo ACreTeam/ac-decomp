@@ -255,7 +255,7 @@ extern void mEv_UnSetGateway() {
     }
 }
 
-static int title_demo_number = -1;
+static int title_demo_number = mEv_TITLEDEMO_LOGO;
 
 extern int mEv_CheckTitleDemo() {
     return title_demo_number;
@@ -1895,7 +1895,7 @@ static void init_event(Event_c* event, int renewal_flag) {
 extern void mEv_init(Event_c* event) {
     int renewal_flag = mEv_INIT_NO_RENEWAL;
 
-    if (mEv_CheckTitleDemo() == 0 && effective_scene()) {
+    if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_NONE && effective_scene()) {
         renewal_flag = mEv_INIT_RENEWAL;
     }
 
@@ -1905,7 +1905,7 @@ extern void mEv_init(Event_c* event) {
 extern void mEv_init_force(Event_c* event) {
     int renewal_flag = mEv_INIT_NO_RENEWAL;
 
-    if (mEv_CheckTitleDemo() == 0) {
+    if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_NONE) {
         renewal_flag = mEv_INIT_FORCE_RENEWAL;
     }
 
@@ -1940,7 +1940,7 @@ extern int mEv_PlayerOK() {
 extern void mEv_run(Event_c* event) {
     status_edge = 0;
 
-    if (mEv_CheckTitleDemo() == 0) {
+    if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_NONE) {
         if (Save_Get(scene_no) == SCENE_START_DEMO || Save_Get(scene_no) == SCENE_START_DEMO2 ||
             Save_Get(scene_no) == SCENE_START_DEMO3 || Save_Get(scene_no) == SCENE_PLAYERSELECT ||
             Save_Get(scene_no) == SCENE_PLAYERSELECT_2 || Save_Get(scene_no) == SCENE_PLAYERSELECT_3 ||
@@ -2537,7 +2537,7 @@ extern int mEv_LiveSonchoPresent() {
 }
 
 extern int mEv_LivePlayer(u32 player_no) {
-    if (mEv_CheckTitleDemo() != 0) {
+    if (mEv_CheckTitleDemo() != mEv_TITLEDEMO_NONE) {
         return FALSE;
     }
 
@@ -2660,7 +2660,7 @@ extern void mEv_sp_debug_print4f(gfxprint_t* gfxprint) {
     );
 
     gfxprint_locate8x8(gfxprint, 30, 11);
-    gfxprint_printf(gfxprint, "%c%c%c%c%c%c%c%c", mEv_CheckTitleDemo() ? 'T' : '.', mEv_CheckFirstIntro() ? 'F' : '.',
+    gfxprint_printf(gfxprint, "%c%c%c%c%c%c%c%c", mEv_CheckTitleDemo() != mEv_TITLEDEMO_NONE ? 'T' : '.', mEv_CheckFirstIntro() ? 'F' : '.',
                     mEv_CheckGateway() ? 'G' : '.', mEv_CheckRealArbeit() ? 'R' : '.', mEv_CheckArbeit() ? 'A' : '.',
                     mDemo_CheckDemo() ? 'D' : '.', !mEv_PlayerOK() ? 'P' : '.',
                     !mEv_LivePlayer(Common_Get(player_no)) ? 'L' : '.');

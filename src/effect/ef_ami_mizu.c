@@ -54,8 +54,8 @@ static void eAmi_Mizu_dw(eEC_Effect_c* effect, GAME* game) {
     
     _texture_z_light_fog_prim_xlu(graph);
 
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, FALSE);
-    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, TRUE);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
     
     OPEN_DISP(graph);
 

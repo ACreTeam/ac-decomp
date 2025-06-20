@@ -505,8 +505,8 @@ static void Train_Window_Actor_draw(ACTOR* actor, GAME* game) {
     TRAIN_WINDOW_ACTOR* window = (TRAIN_WINDOW_ACTOR*)actor;
 
     GRAPH* graph = game->graph;
-    Matrix_translate(0.0f, 0.0f, 0.0f, FALSE);
-    Matrix_scale(0.05f, 0.05f, 0.05f, TRUE);
+    Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+    Matrix_scale(0.05f, 0.05f, 0.05f, MTX_MULT);
 
     OPEN_DISP(graph);
 

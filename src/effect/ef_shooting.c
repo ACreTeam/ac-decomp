@@ -61,12 +61,12 @@ static void eShooting_dw(eEC_Effect_c* effect, GAME* game) {
 
     _texture_z_light_fog_prim_xlu(graph);
 
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, FALSE);
-    Matrix_RotateY(-effect->effect_specific[1], TRUE);
-    Matrix_scale(1.035f, 1.0f, 1.0f, TRUE);
-    Matrix_RotateY(effect->effect_specific[1], TRUE);
-    Matrix_RotateY(effect->arg1, TRUE);
-    Matrix_scale(0.01f, 0.01f, 0.01f * scale_z, TRUE);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_RotateY(-effect->effect_specific[1], MTX_MULT);
+    Matrix_scale(1.035f, 1.0f, 1.0f, MTX_MULT);
+    Matrix_RotateY(effect->effect_specific[1], MTX_MULT);
+    Matrix_RotateY(effect->arg1, MTX_MULT);
+    Matrix_scale(0.01f, 0.01f, 0.01f * scale_z, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPSegment(NEXT_POLY_XLU_DISP, G_MWO_SEGMENT_9, two_tile);

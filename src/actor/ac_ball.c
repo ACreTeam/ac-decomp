@@ -768,8 +768,8 @@ static void aBALL_actor_draw(ACTOR* actor, GAME* game) {
 
     OPEN_DISP(graph);
     gfx = NOW_POLY_OPA_DISP;
-    Matrix_translate(0.0f, ball->ball_y, 0.0f, 1);
-    Matrix_rotateXYZ(ball->angle.x, ball->angle.y, ball->angle.z, 1);
+    Matrix_translate(0.0f, ball->ball_y, 0.0f, MTX_MULT);
+    Matrix_rotateXYZ(ball->angle.x, ball->angle.y, ball->angle.z, MTX_MULT);
     gDPPipeSync(gfx++);
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(gfx++, ball_model_tbl[ball->type]);

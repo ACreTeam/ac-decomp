@@ -108,7 +108,7 @@ static void aNW_actor_draw(ACTOR* actor, GAME* game) {
             CLOSE_DISP(graph);
 
             cKF_Si3_draw_R_SV(game, keyframe, mtx, &aNW_actor_draw_before, &aNW_actor_draw_after, actor);
-            Matrix_translate(0.0f, 60.0f, 0.0f, TRUE);
+            Matrix_translate(0.0f, 60.0f, 0.0f, MTX_MULT);
             (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, &aNW_shadow_data, FALSE);
         }
     }

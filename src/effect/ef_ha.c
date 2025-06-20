@@ -60,14 +60,14 @@ static void eHA_dw(eEC_Effect_c* effect, GAME* game) {
     int opacity = (u8)eEC_CLIP->calc_adjust_proc(EFFECT_LIFETIME - effect->timer, 24, EFFECT_LIFETIME, 255.f, 0.f);
     OPEN_DISP(game->graph);
     _texture_z_light_fog_prim_xlu(game->graph);
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, FALSE);
-    Matrix_mult(&play->billboard_matrix, TRUE);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
     Matrix_translate(effect->offset.x + GETREG(MYKREG, 0x18), effect->offset.y + GETREG(MYKREG, 0x19),
-                     effect->offset.z + GETREG(MYKREG, 0x1a), TRUE);
-    Matrix_RotateZ(eHA_angle_z_data[v], TRUE);
+                     effect->offset.z + GETREG(MYKREG, 0x1a), MTX_MULT);
+    Matrix_RotateZ(eHA_angle_z_data[v], MTX_MULT);
     Matrix_scale(effect->scale.x * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f),
                  effect->scale.y * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f),
-                 effect->scale.z * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), TRUE);
+                 effect->scale.z * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), MTX_MULT);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 128, 255, 255, 255, opacity);
     gDPSetEnvColor(NEXT_POLY_XLU_DISP, 0, 0, 255, 255);

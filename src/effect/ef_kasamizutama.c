@@ -40,8 +40,8 @@ static void eKasamizutama_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
     xyz_t pos;
     f32 sin = 2.5f * sin_s(rand_angle);
     
-    Matrix_RotateY(angle, 0);
-    Matrix_RotateX(DEG2SHORT_ANGLE2(-45.0f), 1);
+    Matrix_RotateY(angle, MTX_LOAD);
+    Matrix_RotateX(DEG2SHORT_ANGLE2(-45.0f), MTX_MULT);
     
     pos.x = (sin) * sin_s(rand);
     pos.y = 2.5f * cos_s(rand_angle);

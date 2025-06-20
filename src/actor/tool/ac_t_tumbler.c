@@ -89,11 +89,11 @@ extern void aTTB_actor_draw(ACTOR* actorx, GAME* game) {
         Matrix_Position_Zero(&actorx->world.position);
         tumbler->tools_class.init_matrix = FALSE;
     } else {
-        Matrix_translate(actorx->world.position.x, actorx->world.position.y, actorx->world.position.z, 0);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(actorx->world.position.x, actorx->world.position.y, actorx->world.position.z, MTX_LOAD);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     }
 
-    Matrix_scale(actorx->scale.x, actorx->scale.y, actorx->scale.z, 1);
+    Matrix_scale(actorx->scale.x, actorx->scale.y, actorx->scale.z, MTX_MULT);
     _texture_z_light_fog_prim_npc(graph);
 
     OPEN_DISP(graph);

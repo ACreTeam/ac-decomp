@@ -100,25 +100,25 @@ static void eKG_dw(eEC_Effect_c* effect, GAME* game) {
 
     _texture_z_light_fog_prim_xlu(game->graph);
 
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, FALSE);
-    Matrix_mult(&play->billboard_matrix, TRUE);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
     Matrix_translate(effect->offset.x + GETREG(MYKREG, 0x18), effect->offset.y - 6.0f + GETREG(MYKREG, 0x19),
-                     effect->offset.z + 30.0f + GETREG(MYKREG, 0x1a), TRUE);
-    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, TRUE);
-    Matrix_translate(-475.0f, 950.0f, 0.0f, TRUE);
-    Matrix_RotateZ(effect->effect_specific[1], TRUE);
+                     effect->offset.z + 30.0f + GETREG(MYKREG, 0x1a), MTX_MULT);
+    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
+    Matrix_translate(-475.0f, 950.0f, 0.0f, MTX_MULT);
+    Matrix_RotateZ(effect->effect_specific[1], MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, effect->effect_specific[4]);
     gSPDisplayList(NEXT_POLY_XLU_DISP, ef_think_l_modelT);
 
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, FALSE);
-    Matrix_mult(&play->billboard_matrix, TRUE);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
     Matrix_translate(effect->offset.x + GETREG(MYKREG, 0x18), effect->offset.y - 6.0f + GETREG(MYKREG, 0x19),
-                     effect->offset.z + 30.0f + GETREG(MYKREG, 0x1a), TRUE);
-    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, TRUE);
-    Matrix_translate(475.0f, 0.0f, 0.0f, TRUE);
-    Matrix_RotateZ(effect->effect_specific[2], TRUE);
+                     effect->offset.z + 30.0f + GETREG(MYKREG, 0x1a), MTX_MULT);
+    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
+    Matrix_translate(475.0f, 0.0f, 0.0f, MTX_MULT);
+    Matrix_RotateZ(effect->effect_specific[2], MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, effect->effect_specific[4]);

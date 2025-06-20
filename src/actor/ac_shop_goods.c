@@ -289,11 +289,11 @@ static void Shop_Goods_Actor_single_drawR(GAME* game, mActor_name_t item, xyz_t*
             LightsN_list_check(lightsN, play->global_light.list, pos);
             LightsN_disp(lightsN, play->game.graph);
 
-            Matrix_translate(pos->x, pos->y, pos->z, 0);
+            Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
             if ((data_p->flags & aSG_DATA_ROTATE_Y_FLAG) && layer == mCoBG_LAYER1) {
-                Matrix_RotateY(angle_y, 1);
+                Matrix_RotateY(angle_y, MTX_MULT);
             }
-            Matrix_scale(scale->x, scale->y, scale->z, 1);
+            Matrix_scale(scale->x, scale->y, scale->z, MTX_MULT);
 
             gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(NEXT_POLY_OPA_DISP, data_p->gfx0[mode]);
@@ -438,11 +438,11 @@ static void aSG_DrawGoods(GRAPH* graph, Global_light* glight, SHOP_GOODS_ACTOR* 
     LightsN_disp(lightsN, graph);
 
     if (gfx0 != NULL || xlu_gfx0 != NULL) {
-        Matrix_translate(pos.x, pos.y, pos.z, 0);
+        Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
         if ((data_p->flags & aSG_DATA_ROTATE_Y_FLAG) && layer == mCoBG_LAYER1) {
-            Matrix_RotateY(SG_angle_y[uz][ux], 1);
+            Matrix_RotateY(SG_angle_y[uz][ux], MTX_MULT);
         }
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
         if (gfx0 != NULL) {
             _texture_z_light_fog_prim(graph);

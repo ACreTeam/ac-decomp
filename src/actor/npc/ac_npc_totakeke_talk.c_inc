@@ -156,8 +156,8 @@ static int aNTT_change_talk_proc(NPC_TOTAKEKE_ACTOR* totakeke, int talk) {
                                  aNTT_talk_submenu,     aNTT_talk_submenu2, aNTT_talk_give };
     totakeke->proc = proc[talk];
     if (talk == aNTT_TALK_STOP_PLAYER) {
-        mEv_SetTitleDemo(-0x9);
-        mDemo_Set_talk_return_demo_wait(0x1);
+        mEv_SetTitleDemo(mEv_TITLEDEMO_STAFFROLL);
+        mDemo_Set_talk_return_demo_wait(TRUE);
         totakeke->_9ab = FALSE;
     }
     return TRUE;
@@ -227,7 +227,7 @@ static int aNTT_talk_init(ACTOR* actorx, GAME* game) {
         case aNTT_THINK_GIVE_MERODY:
         case aNTT_THINK_POCKETS_FULL:
         case aNTT_THINK_GIVE_LATER:
-            mEv_SetTitleDemo(0);
+            mEv_SetTitleDemo(mEv_TITLEDEMO_NONE);
             break;
     }
     return TRUE;

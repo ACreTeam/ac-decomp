@@ -118,17 +118,17 @@ static void eKZH_dw(eEC_Effect_c* effect, GAME* game) {
         OPEN_DISP(game->graph);
 
         _texture_z_light_fog_prim_xlu(game->graph);
-        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-        Matrix_mult(&play->billboard_matrix, 1);
-        Matrix_translate(effect->offset.x + GETREG(MYKREG, 24), effect->offset.y + GETREG(MYKREG, 25), effect->offset.z + GETREG(MYKREG, 26), 1);
+        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+        Matrix_mult(&play->billboard_matrix, MTX_MULT);
+        Matrix_translate(effect->offset.x + GETREG(MYKREG, 24), effect->offset.y + GETREG(MYKREG, 25), effect->offset.z + GETREG(MYKREG, 26), MTX_MULT);
 
         if (effect->effect_specific[1] == 0) {
-            Matrix_RotateZ(effect->effect_specific[3], 1);
+            Matrix_RotateZ(effect->effect_specific[3], MTX_MULT);
         } else {
-            Matrix_RotateZ(-effect->effect_specific[3], 1);
+            Matrix_RotateZ(-effect->effect_specific[3], MTX_MULT);
         }
 
-        Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, 1);
+        Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(NEXT_POLY_XLU_DISP, ef_kaze01_happa_modelT);

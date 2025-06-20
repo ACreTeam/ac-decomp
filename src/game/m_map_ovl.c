@@ -745,9 +745,9 @@ static void mMP_set_house_dl(GRAPH* graph, mMP_Ovl_c* map_ovl, f32 pos_x, f32 po
                 resident_p = label_info->residents;
 
                 for (i = 0; i < label_info->label_cnt; i++) {
-                    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
+                    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
                     Matrix_translate(temp_x + offset_x[(*resident_p)->house_idx % 3],
-                                     base_y + offset_y[(*resident_p)->house_idx / 3], 140.0f, 1);
+                                     base_y + offset_y[(*resident_p)->house_idx / 3], 140.0f, MTX_MULT);
 
                     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                     gSPDisplayList(gfx++, kan_win_npc2T_table[(*resident_p)->house_layer]);
@@ -766,7 +766,7 @@ static void mMP_set_house_dl(GRAPH* graph, mMP_Ovl_c* map_ovl, f32 pos_x, f32 po
 
     /* draw "current acre" icon */
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
     Matrix_translate(
         ((pos_x + 11.7f) - (0.5f * mMP_BLOCK_SIZE_F) + (f32)map_ovl->player_bx * mMP_BLOCK_SIZE_F) + 3.0f + 5.0f,
         (pos_y + 45.7f - (0.5f * mMP_BLOCK_SIZE_F) - (f32)map_ovl->player_bz * mMP_BLOCK_SIZE_F) + 4.0f + 5.0f, 140.0f,
@@ -793,7 +793,7 @@ static void mMP_set_map_dl(GRAPH* graph, mMP_Ovl_c* map_ovl) {
     gSPDisplayList(gfx++, kan_tizu_mode);
 
     Matrix_push();
-    Matrix_translate(11.7f, 45.7f, 0.0f, 1);
+    Matrix_translate(11.7f, 45.7f, 0.0f, MTX_MULT);
 
     for (bz = 0; bz < FG_BLOCK_Z_NUM; bz++) {
         for (bx = 0; bx < FG_BLOCK_X_NUM; bx++) {
@@ -803,12 +803,12 @@ static void mMP_set_map_dl(GRAPH* graph, mMP_Ovl_c* map_ovl) {
             gSPDisplayList(gfx++, kan_tizu_model);
 
             /* move right one acre */
-            Matrix_translate(mMP_BLOCK_SIZE_F, 0.0f, 0.0f, 1);
+            Matrix_translate(mMP_BLOCK_SIZE_F, 0.0f, 0.0f, MTX_MULT);
             block++;
         }
 
         /* move left to '1' acre and down one acre */
-        Matrix_translate((-mMP_BLOCK_SIZE_F) * FG_BLOCK_X_NUM, -mMP_BLOCK_SIZE_F, 0.0f, 1);
+        Matrix_translate((-mMP_BLOCK_SIZE_F) * FG_BLOCK_X_NUM, -mMP_BLOCK_SIZE_F, 0.0f, MTX_MULT);
     }
 
     Matrix_pull();
@@ -829,10 +829,10 @@ static void mMP_set_cursol_dl(GRAPH* graph, mMP_Ovl_c* map_ovl, f32 base_x, f32 
     int frame = map_ovl->cursor_frame;
     Gfx* gfx;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(x + 11.7f, y + 45.7f, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(x + 11.7f, y + 45.7f, 140.0f, MTX_MULT);
 
-    Matrix_scale(cursol_scale[frame], cursol_scale[frame], 1.0f, 1);
+    Matrix_scale(cursol_scale[frame], cursol_scale[frame], 1.0f, MTX_MULT);
 
     OPEN_DISP(graph);
 
@@ -959,7 +959,7 @@ static void mMP_set_label_top_dl(GRAPH* graph, mMP_LabelInfo_c* label_info) {
         gfx = NOW_POLY_OPA_DISP;
 
         Matrix_push();
-        Matrix_translate(label->ofs_x, label->ofs_y, 0.0f, 1);
+        Matrix_translate(label->ofs_x, label->ofs_y, 0.0f, MTX_MULT);
 
         if (label_info->label_no == mMP_LABEL_NPC) {
             resident_p = label_info->residents;
@@ -981,7 +981,7 @@ static void mMP_set_label_top_dl(GRAPH* graph, mMP_LabelInfo_c* label_info) {
                 }
             }
 
-            Matrix_translate(0.0f, -12.0f, 0.0f, 1);
+            Matrix_translate(0.0f, -12.0f, 0.0f, MTX_MULT);
         }
 
         Matrix_pull();
@@ -1007,8 +1007,8 @@ static void mMP_set_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
     f32 str_xpos;
     f32 str_ypos;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(xpos, ypos, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(xpos, ypos, 140.0f, MTX_MULT);
 
     mMP_set_base_dl(graph, menu);
     mMP_set_map_dl(graph, map_ovl);

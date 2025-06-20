@@ -324,11 +324,11 @@ static void aGYR_actor_draw(ACTOR* actorx, GAME* game) {
 
     Matrix_push();
     _texture_z_light_fog_prim(graph);
-    Matrix_translate(actorx->world.position.x, actorx->world.position.y, actorx->world.position.z, 0);
-    Matrix_RotateX(-gyo_release->angle_xz, 1);
-    Matrix_RotateY(gyo_release->angle_y, 1);
-    Matrix_RotateZ(gyo_release->angle_xz, 1);
-    Matrix_scale(actorx->scale.x * 1.2f, actorx->scale.y, actorx->scale.z, 1);
+    Matrix_translate(actorx->world.position.x, actorx->world.position.y, actorx->world.position.z, MTX_LOAD);
+    Matrix_RotateX(-gyo_release->angle_xz, MTX_MULT);
+    Matrix_RotateY(gyo_release->angle_y, MTX_MULT);
+    Matrix_RotateZ(gyo_release->angle_xz, MTX_MULT);
+    Matrix_scale(actorx->scale.x * 1.2f, actorx->scale.y, actorx->scale.z, MTX_MULT);
 
     OPEN_DISP(graph);
 

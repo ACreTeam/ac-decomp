@@ -176,7 +176,7 @@ static void Player_actor_check_nextgoto(ACTOR* actor, GAME* game) {
     mActor_name_t door = player->item_in_front;
 
     if (ITEM_NAME_GET_TYPE(door) == NAME_TYPE_WARP && Player_actor_check_bg_for_next_goto(actor, door) != FALSE &&
-        mEv_CheckTitleDemo() <= 0 && play->fb_wipe_mode == WIPE_MODE_NONE) {
+        mEv_IsNotTitleDemo() && play->fb_wipe_mode == WIPE_MODE_NONE) {
         if (door >= EXIT_DOOR && door < EXIT_DOOR1) {
             mDemo_Request(mDemo_TYPE_EXITSCENE, actor, Player_actor_set_nextgoto_info_type0);
 

@@ -52,13 +52,13 @@ static int aMHS_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, in
             }
 
             if (my_house->arg0 == 0) {
-                Matrix_RotateY(angle, 1);
+                Matrix_RotateY(angle, MTX_MULT);
             } else {
-                Matrix_RotateX(angle, 1);
+                Matrix_RotateX(angle, MTX_MULT);
             }
 
             if (my_house->arg0 == 1) {
-                Matrix_RotateZ(DEG2SHORT_ANGLE(-90.0f), 1);
+                Matrix_RotateZ(DEG2SHORT_ANGLE(-90.0f), MTX_MULT);
             }
         } else {
             *joint_shape = NULL; // do not draw fish decoration joints
@@ -252,8 +252,8 @@ static void aMHS_actor_draw(ACTOR* actorx, GAME* game) {
         cKF_Si3_draw_R_SV((GAME*)play, keyframe, mtx, &aMHS_actor_draw_before, &aMHS_actor_draw_after, my_house);
         shadow_data_pp = shadow_data[my_house->arg0];
         Matrix_translate(my_house->actor_class.world.position.x, my_house->actor_class.world.position.y,
-                         my_house->actor_class.world.position.z, 0);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+                         my_house->actor_class.world.position.z, MTX_LOAD);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
         (*Common_Get(clip).bg_item_clip->draw_shadow_proc)((GAME*)play, shadow_data_pp[my_house->action & 1], 0);
         aMHS_actor_draw_ta_clr(my_house, (GAME*)play);
     }

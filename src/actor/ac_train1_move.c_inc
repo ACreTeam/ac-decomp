@@ -112,7 +112,7 @@ static void aTR1_setupAction(TRAIN1_ACTOR* train1, int action) {
     train1->action = action;
 
     if ((train1->action == 6) || (train1->action == 4)) {
-        if ((mEv_CheckTitleDemo() == 0) && (tr_speed != train1->arg0_f)) {
+        if ((mEv_CheckTitleDemo() == mEv_TITLEDEMO_NONE) && (tr_speed != train1->arg0_f)) {
             aTR1_OngenTrgStart((ACTOR*)train1, 43);
         } else {
             tr_speed = end;
@@ -129,7 +129,7 @@ static void aTR1_actor_move(ACTOR* actor, GAME* game) {
     cKF_SkeletonInfo_R_c* keyframe = &train1->keyframe;
 
     train1->keyframe_state = cKF_SkeletonInfo_R_play(keyframe);
-    if (mEv_CheckTitleDemo() <= 0) {
+    if (mEv_IsNotTitleDemo()) {
         aTR1_position_move((ACTOR*)train1);
     }
     aTR1_passenger_ctrl((ACTOR*)train1);

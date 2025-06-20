@@ -50,7 +50,7 @@ static void eAnahikari_dw(eEC_Effect_c* effect, GAME* game) {
     idx = effect->arg0;
     play = (GAME_PLAY*)game;
 
-    if (mEv_CheckTitleDemo() != -9) {
+    if (mEv_CheckTitleDemo() != mEv_TITLEDEMO_STAFFROLL) {
         if (effect->state == eEC_STATE_NORMAL) {
             alpha = (int)eEC_CLIP->calc_adjust_proc(effect->timer, 0, 60, 200.0f, 0.0f);
         } else if (effect->state == eEC_STATE_FINISHED) {
@@ -62,8 +62,8 @@ static void eAnahikari_dw(eEC_Effect_c* effect, GAME* game) {
         OPEN_DISP(game->graph);
         
         _texture_z_light_fog_prim_xlu(game->graph);
-        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, FALSE);
-        Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, TRUE);
+        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+        Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
         Evw_Anime_Set(play, ef_anahikari_anime_tbl[idx]);
 
         gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, alpha);

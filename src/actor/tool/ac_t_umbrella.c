@@ -315,14 +315,14 @@ static void aTUMB_actor_draw(ACTOR* actor, GAME* game) {
     OPEN_DISP(graph);
     gfx = NOW_POLY_OPA_DISP;
 
-    Matrix_rotateXYZ(0, -0x4000, 0, TRUE);
-    Matrix_scale(umbrella->scale_e.x, umbrella->scale_e.y, umbrella->scale_e.z, TRUE);
+    Matrix_rotateXYZ(0, -0x4000, 0, MTX_MULT);
+    Matrix_scale(umbrella->scale_e.x, umbrella->scale_e.y, umbrella->scale_e.z, MTX_MULT);
 
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(gfx++, umbrella_model->model_e);
 
-    Matrix_translate(4500.0f, 0.0f, 0.0f, TRUE);
-    Matrix_scale(umbrella->scale_kasa.x, umbrella->scale_kasa.y, umbrella->scale_kasa.z, TRUE);
+    Matrix_translate(4500.0f, 0.0f, 0.0f, MTX_MULT);
+    Matrix_scale(umbrella->scale_kasa.x, umbrella->scale_kasa.y, umbrella->scale_kasa.z, MTX_MULT);
 
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 

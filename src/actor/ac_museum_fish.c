@@ -869,8 +869,8 @@ void Museum_Fish_Suisou_draw(ACTOR* actorx, GAME* game, int r5) {
     if (r5 < 4) {
         xyz_t* p = &suisou_pos[r5];
         if (mfish_cull_check(game, &suisou_pos[r5], 350.0f, 20.0f, 650.0f)) {
-            Matrix_translate(suisou_pos[r5].x, 0, suisou_pos[r5].z, 0);
-            Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+            Matrix_translate(suisou_pos[r5].x, 0, suisou_pos[r5].z, MTX_LOAD);
+            Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
             OPEN_DISP(graph);
             gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(play->game.graph),
@@ -891,7 +891,7 @@ void Museum_Fish_Suisou_draw(ACTOR* actorx, GAME* game, int r5) {
             }
         }
     } else if (mfish_cull_check(game, &suisou_pos[4], 215.0f, 25.0f, 0.0f)) {
-        Matrix_scale(0.0625f, 0.0625f, 0.0625f, 0);
+        Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_LOAD);
         OPEN_DISP(graph);
 
         gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(play->game.graph),
@@ -938,8 +938,8 @@ void Museum_Fish_Kusa_Draw(ACTOR* actorx, GAME* game, int r5) {
             mtx = actor->prvKusa[r5].mtx[1];
         }
         OPEN_DISP(game->graph);
-        Matrix_translate(kusa_pos[r5].x, 0, kusa_pos[r5].z, 0);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(kusa_pos[r5].x, 0, kusa_pos[r5].z, MTX_LOAD);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         CLOSE_DISP(game->graph);
         cKF_Si3_draw_R_SV(game, &actor->prvKusa[r5].keyframe, mtx, kusa_before_disp, NULL, &actor->prvKusa[r5]);

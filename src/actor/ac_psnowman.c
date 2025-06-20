@@ -138,9 +138,9 @@ static void aPSM_actor_draw(ACTOR* actor, GAME* game) {
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(gfx++, act_darumaB_model);
     Matrix_translate(actor->world.position.x, actor->world.position.y + snowman->eye_heigth, actor->world.position.z,
-                     FALSE);
-    Matrix_RotateX(0xF380, TRUE);
-    Matrix_scale(snowman->head_scale, snowman->head_scale, snowman->head_scale, TRUE);
+                     MTX_LOAD);
+    Matrix_RotateX(0xF380, MTX_MULT);
+    Matrix_scale(snowman->head_scale, snowman->head_scale, snowman->head_scale, MTX_MULT);
 
     if (snowman->speed > 20.0f) {
         mRlib_PSnowmanBreakNeckSwing(&snowman->head_angle, snowman->speed, snowman->head);

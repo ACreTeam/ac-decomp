@@ -148,8 +148,8 @@ static void setup_mode_Ef_Room_Sunshine_Minsect(ACTOR* actor, GAME_PLAY* play) {
     OPEN_DISP(graph);
 
     Matrix_translate(sunshine->actor_class.world.position.x, sunshine->actor_class.world.position.y,
-                     sunshine->actor_class.world.position.z, 0);
-    Matrix_scale(sunshine->actor_class.scale.x, sunshine->actor_class.scale.y, sunshine->actor_class.scale.z, 1);
+                     sunshine->actor_class.world.position.z, MTX_LOAD);
+    Matrix_scale(sunshine->actor_class.scale.x, sunshine->actor_class.scale.y, sunshine->actor_class.scale.z, MTX_MULT);
 
     gDPPipeSync(NEXT_POLY_XLU_DISP);
 
@@ -177,8 +177,8 @@ static void setup_mode_Ef_Room_Sunshine_Minsect_decal(ACTOR* actor, GAME_PLAY* p
     OPEN_DISP(graph);
 
     Matrix_translate(sunshine->actor_class.world.position.x, sunshine->actor_class.world.position.y,
-                     sunshine->actor_class.world.position.z, 0);
-    Matrix_scale(sunshine->actor_class.scale.x, sunshine->actor_class.scale.y, sunshine->actor_class.scale.z, 1);
+                     sunshine->actor_class.world.position.z, MTX_LOAD);
+    Matrix_scale(sunshine->actor_class.scale.x, sunshine->actor_class.scale.y, sunshine->actor_class.scale.z, MTX_MULT);
 
     gDPPipeSync(NEXT_POLY_OPA_DISP);
 
@@ -208,7 +208,7 @@ static void BG_draw_Minsect(ACTOR* actor, GAME_PLAY* play) {
     }
 
     graph = play->game.graph;
-    Matrix_scale(0.0625f, 0.0625f, 0.0625f, 0);
+    Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_LOAD);
     Global_kankyo_set_room_prim((GAME*)play);
     OPEN_DISP(graph);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(play->game.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -221,7 +221,7 @@ static void BG_draw_Minsect_niwa(ACTOR* actor, GAME_PLAY* play) {
     GRAPH* graph;
 
     graph = play->game.graph;
-    Matrix_scale(0.0625f, 0.0625f, 0.0625f, 0);
+    Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_LOAD);
     Global_kankyo_set_room_prim((GAME*)play);
     OPEN_DISP(graph);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(play->game.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

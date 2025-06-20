@@ -535,14 +535,14 @@ extern void mEnv_DecideWeather_NormalGameStart() {
 
 extern int mEnv_NowWeather() {
   switch (mEv_CheckTitleDemo()) {
-    case 1:
+    case mEv_TITLEDEMO_START1:
       return mEnv_WEATHER_SAKURA;
-    case 2:
+    case mEv_TITLEDEMO_START2:
       return mEnv_WEATHER_RAIN;
-    case 3:
-    case 4:
+    case mEv_TITLEDEMO_START3:
+    case mEv_TITLEDEMO_START4:
       return mEnv_WEATHER_CLEAR;
-    case 5:
+    case mEv_TITLEDEMO_START5:
       return mEnv_WEATHER_SNOW;
   }
 

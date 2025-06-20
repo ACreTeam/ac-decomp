@@ -74,8 +74,8 @@ static void eTL_dw(eEC_Effect_c* effect, GAME* game) {
 
     OPEN_DISP(game->graph);
 
-    Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-    Matrix_scale(0.05f, 0.05f, 0.05f, 1);
+    Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+    Matrix_scale(0.05f, 0.05f, 0.05f, MTX_MULT);
 
     gDPSetPrimColor(NEXT_POLY_OPA_DISP, 0, l, 255, 255, 255, 255);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

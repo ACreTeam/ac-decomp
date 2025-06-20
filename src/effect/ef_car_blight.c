@@ -106,10 +106,10 @@ static void eCar_Blight_dw(eEC_Effect_c* effect, GAME* game) {
         graph = game->graph;
 
         _texture_z_light_fog_prim_xlu(graph); 
-        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, FALSE);
+        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
 
         scaleFact = 1.0f + (0.01f * (f32)(int)GETREG(MYKREG,27));
-        Matrix_scale(effect->scale.x * scaleFact, effect->scale.y * scaleFact, effect->scale.z * scaleFact, TRUE);
+        Matrix_scale(effect->scale.x * scaleFact, effect->scale.y * scaleFact, effect->scale.z * scaleFact, MTX_MULT);
         Setpos_HiliteReflect_xlu_init(&effect->position, play);
 
         gfx = two_tex_scroll_dolphin(game->graph,0, timer * 3, timer * 7, 16, 16, 1,timer * 3, timer * -7, 16,16);

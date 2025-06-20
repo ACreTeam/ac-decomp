@@ -71,8 +71,8 @@ static void Mbg_Actor_draw(ACTOR* actorx, GAME* game) {
     OPEN_DISP(graph);
 
     _texture_z_light_fog_prim(graph);
-    Matrix_translate(pos.x, pos.y, pos.z, 0);
-    Matrix_RotateY(angle_y, 1);
+    Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+    Matrix_RotateY(angle_y, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(NEXT_POLY_OPA_DISP, mbg_model);

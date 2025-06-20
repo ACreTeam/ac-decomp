@@ -93,8 +93,8 @@ static void aMP_DrawOneArt(aMP_pos_c* pos_xz, Gfx* disp, GAME* game) {
     pos.z = pos_xz->z * 40.0f + 20.0f;
     pos.y = 40.0f;
 
-    Matrix_translate(pos.x, pos.y, pos.z, 0);
-    Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+    Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+    Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
     OPEN_DISP(graph);
 

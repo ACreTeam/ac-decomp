@@ -102,12 +102,12 @@ static void aTHB_actor_draw(ACTOR* actor, GAME* game) {
     } else {
         Matrix_translate(hanabi->tools_class.actor_class.world.position.x,
                          hanabi->tools_class.actor_class.world.position.y,
-                         hanabi->tools_class.actor_class.world.position.z, FALSE);
-        Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+                         hanabi->tools_class.actor_class.world.position.z, MTX_LOAD);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     }
 
     Matrix_scale(hanabi->tools_class.actor_class.scale.x, hanabi->tools_class.actor_class.scale.y,
-                 hanabi->tools_class.actor_class.scale.z, TRUE);
+                 hanabi->tools_class.actor_class.scale.z, MTX_MULT);
     _texture_z_light_fog_prim_npc(graph);
 
     gfxp = NOW_POLY_OPA_DISP;

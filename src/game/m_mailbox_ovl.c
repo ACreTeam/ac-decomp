@@ -92,8 +92,8 @@ static void mMB_set_frame_dl(Submenu* submenu, GRAPH* graph, mSM_MenuInfo_c* men
     int tex_x;
     int tex_y;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 
@@ -107,7 +107,7 @@ static void mMB_set_frame_dl(Submenu* submenu, GRAPH* graph, mSM_MenuInfo_c* men
     gSPDisplayList(POLY_OPA_DISP++, pos_win_model);
     
     if (submenu->overlay->mailbox_ovl->display_flag) {
-        Matrix_translate(20.0f, 10.0f, 0.0f, 1);
+        Matrix_translate(20.0f, 10.0f, 0.0f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, pos_yaji_wakuT_model);
     }

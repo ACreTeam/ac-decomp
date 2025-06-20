@@ -65,14 +65,14 @@ static void eKagu_Happa_dw(eEC_Effect_c* effect, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     OPEN_DISP(game->graph);
     _texture_z_light_fog_prim(game->graph);
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, FALSE);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
     if (!effect->arg0) {
-        Matrix_RotateZ(s, TRUE);
-        Matrix_mult(&play->billboard_matrix, TRUE);
+        Matrix_RotateZ(s, MTX_MULT);
+        Matrix_mult(&play->billboard_matrix, MTX_MULT);
     }
     Matrix_scale(effect->scale.x * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f),
                  effect->scale.y * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f),
-                 effect->scale.z * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), TRUE);
+                 effect->scale.z * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(NEXT_POLY_OPA_DISP, aMR_IconNo2Gfx1(effect->arg0));
     gSPDisplayList(NEXT_POLY_OPA_DISP, aMR_IconNo2Gfx2(effect->arg0));

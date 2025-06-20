@@ -214,55 +214,55 @@ static void aMR_DrawOneFurniture(FTR_ACTOR* ftr_actor, ACTOR* actorx, GAME* game
             aMR_fit_ftr_c* fit_ftr_info_p = &parent_ftr->fit_ftr_table[fit_no & 3];
             xyz_t* pos = &fit_ftr_info_p->pos;
 
-            Matrix_translate(fit_ftr_p->position.x, fit_ftr_p->position.y, fit_ftr_p->position.z, 0);
-            Matrix_RotateY(angle, 1);
-            Matrix_translate(fit_ftr_p->base_position.x, fit_ftr_p->base_position.y, fit_ftr_p->base_position.z, 1);
+            Matrix_translate(fit_ftr_p->position.x, fit_ftr_p->position.y, fit_ftr_p->position.z, MTX_LOAD);
+            Matrix_RotateY(angle, MTX_MULT);
+            Matrix_translate(fit_ftr_p->base_position.x, fit_ftr_p->base_position.y, fit_ftr_p->base_position.z, MTX_MULT);
 
             if (ftr_actor->name == 0x9A) { /* lower alarm clock ftr's height */
-                Matrix_translate(pos->x, pos->y - 4.0f, pos->z, 1);
+                Matrix_translate(pos->x, pos->y - 4.0f, pos->z, MTX_MULT);
             } else {
-                Matrix_translate(pos->x, pos->y, pos->z, 1);
+                Matrix_translate(pos->x, pos->y, pos->z, MTX_MULT);
             }
 
-            Matrix_RotateY(ftr_actor->s_angle_y, 1);
-            Matrix_translate(ftr_actor->base_position.x, ftr_actor->base_position.y, ftr_actor->base_position.z, 1);
-
-            if (ftr_actor->state == aFTR_STATE_BIRTH && ftr_actor->shape_type <= aFTR_SHAPE_TYPEB_0) {
-                Matrix_translate(mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, 1);
-            }
-            Matrix_scale(ftr_scale.x, ftr_scale.y, ftr_scale.z, 1);
+            Matrix_RotateY(ftr_actor->s_angle_y, MTX_MULT);
+            Matrix_translate(ftr_actor->base_position.x, ftr_actor->base_position.y, ftr_actor->base_position.z, MTX_MULT);
 
             if (ftr_actor->state == aFTR_STATE_BIRTH && ftr_actor->shape_type <= aFTR_SHAPE_TYPEB_0) {
-                Matrix_translate(-mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, 1);
+                Matrix_translate(mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, MTX_MULT);
             }
-            Matrix_scale(scale, scale, scale, 1);
+            Matrix_scale(ftr_scale.x, ftr_scale.y, ftr_scale.z, MTX_MULT);
+
+            if (ftr_actor->state == aFTR_STATE_BIRTH && ftr_actor->shape_type <= aFTR_SHAPE_TYPEB_0) {
+                Matrix_translate(-mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, MTX_MULT);
+            }
+            Matrix_scale(scale, scale, scale, MTX_MULT);
         } else {
             if (ftr_actor->name == 0x9A) { /* lower alarm clock ftr's height */
-                Matrix_translate(ftr_actor->position.x, ftr_actor->position.y - 4.0f, ftr_actor->position.z, 0);
+                Matrix_translate(ftr_actor->position.x, ftr_actor->position.y - 4.0f, ftr_actor->position.z, MTX_LOAD);
             } else {
-                Matrix_translate(ftr_actor->position.x, ftr_actor->position.y, ftr_actor->position.z, 0);
+                Matrix_translate(ftr_actor->position.x, ftr_actor->position.y, ftr_actor->position.z, MTX_LOAD);
             }
 
-            Matrix_RotateY(ftr_actor->s_angle_y, 1);
+            Matrix_RotateY(ftr_actor->s_angle_y, MTX_MULT);
 
             if (Save_Get(scene_no) == SCENE_MUSEUM_ROOM_FOSSIL &&
                 aFTR_CHECK_INTERACTION(profile->interaction_type, aFTR_INTERACTION_TYPE_FOSSIL) &&
                 profile->shape <= aFTR_SHAPE_TYPEB_0) {
                 Matrix_translate(ftr_actor->base_position.x + 2.5f, ftr_actor->base_position.y,
-                                 ftr_actor->base_position.z, 1);
+                                 ftr_actor->base_position.z, MTX_MULT);
             } else {
-                Matrix_translate(ftr_actor->base_position.x, ftr_actor->base_position.y, ftr_actor->base_position.z, 1);
+                Matrix_translate(ftr_actor->base_position.x, ftr_actor->base_position.y, ftr_actor->base_position.z, MTX_MULT);
             }
 
             if (ftr_actor->state == aFTR_STATE_BIRTH && ftr_actor->shape_type <= aFTR_SHAPE_TYPEB_0) {
-                Matrix_translate(mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, 1);
+                Matrix_translate(mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, MTX_MULT);
             }
-            Matrix_scale(ftr_scale.x, ftr_scale.y, ftr_scale.z, 1);
+            Matrix_scale(ftr_scale.x, ftr_scale.y, ftr_scale.z, MTX_MULT);
 
             if (ftr_actor->state == aFTR_STATE_BIRTH && ftr_actor->shape_type <= aFTR_SHAPE_TYPEB_0) {
-                Matrix_translate(-mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, 1);
+                Matrix_translate(-mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f, MTX_MULT);
             }
-            Matrix_scale(scale, scale, scale, 1);
+            Matrix_scale(scale, scale, scale, MTX_MULT);
         }
 
         aMR_SetLoopTextureAnime(ftr_actor, profile, game);
@@ -355,8 +355,8 @@ static void aMR_DrawLeaf(MY_ROOM_ACTOR* my_room, GAME_PLAY* play) {
         OPEN_DISP(game->graph);
 
         _texture_z_light_fog_prim(game->graph);
-        Matrix_translate(my_room->leaf_info.pos.x, my_room->leaf_info.pos.y, my_room->leaf_info.pos.z, 0);
-        Matrix_scale(scale, scale, scale, 1);
+        Matrix_translate(my_room->leaf_info.pos.x, my_room->leaf_info.pos.y, my_room->leaf_info.pos.z, MTX_LOAD);
+        Matrix_scale(scale, scale, scale, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(NEXT_POLY_OPA_DISP, aMR_IconNo2Gfx1(my_room->pickup_info.icon));

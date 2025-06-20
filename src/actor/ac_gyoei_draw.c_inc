@@ -71,8 +71,8 @@ static void aGYO_actor_draw_fish(GRAPH* graph, aGYO_CTRL_ACTOR* ctrl, GAME* game
     int frame;
 
     Matrix_translate(((ACTOR*)ctrl)->world.position.x, ((ACTOR*)ctrl)->world.position.y - aGYO_hosei_y[ctrl->gyo_type],
-                     ((ACTOR*)ctrl)->world.position.z, 0);
-    Matrix_mult(&play->billboard_matrix, 1);
+                     ((ACTOR*)ctrl)->world.position.z, MTX_LOAD);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
 
     if (ctrl->gyo_type < (aGYO_TYPE_WHALE + 1) && (ctrl->gyo_flags & 0x200) != 0) {
         int cnt;
@@ -114,10 +114,10 @@ static void aGYO_actor_draw_fish(GRAPH* graph, aGYO_CTRL_ACTOR* ctrl, GAME* game
         }
 
         ctrl->move_angle = DEG2SHORT_ANGLE2(13 * sin_s(ctrl->move_counter));
-        Matrix_RotateY(ctrl->move_angle, 1);
+        Matrix_RotateY(ctrl->move_angle, MTX_MULT);
     }
 
-    Matrix_scale(((ACTOR*)ctrl)->scale.x, ((ACTOR*)ctrl)->scale.y, ((ACTOR*)ctrl)->scale.z, 1);
+    Matrix_scale(((ACTOR*)ctrl)->scale.x, ((ACTOR*)ctrl)->scale.y, ((ACTOR*)ctrl)->scale.z, MTX_MULT);
 
     if ((ctrl->gyo_flags & 0x200) != 0 && ctrl->swork2 <= 0) {
         int cnt;
@@ -178,10 +178,10 @@ static void aGYO_actor_draw_gyoei(GRAPH* graph, aGYO_CTRL_ACTOR* ctrl, GAME* gam
     }
 
     Matrix_translate(((ACTOR*)ctrl)->world.position.x, ((ACTOR*)ctrl)->world.position.y,
-                     ((ACTOR*)ctrl)->world.position.z, 0);
-    Matrix_RotateX(angleX, 1);
-    Matrix_RotateY(angleY, 1);
-    Matrix_scale(((ACTOR*)ctrl)->scale.x * 0.4f, ((ACTOR*)ctrl)->scale.y, ((ACTOR*)ctrl)->scale.z, 1);
+                     ((ACTOR*)ctrl)->world.position.z, MTX_LOAD);
+    Matrix_RotateX(angleX, MTX_MULT);
+    Matrix_RotateY(angleY, MTX_MULT);
+    Matrix_scale(((ACTOR*)ctrl)->scale.x * 0.4f, ((ACTOR*)ctrl)->scale.y, ((ACTOR*)ctrl)->scale.z, MTX_MULT);
 
     OPEN_DISP(graph);
 

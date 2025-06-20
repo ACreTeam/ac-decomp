@@ -3,7 +3,7 @@ static int aCOU_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, in
     STRUCTURE_ACTOR* actor = (STRUCTURE_ACTOR*)arg;
 
     if (joint_idx == 2 && (int)actor->arg0_f != 0) {
-        Matrix_RotateZ((s16)actor->arg1_f << 12, TRUE);
+        Matrix_RotateZ((s16)actor->arg1_f << 12, MTX_MULT);
     }
 
     return TRUE;
@@ -67,7 +67,7 @@ static void aCOU_actor_draw(ACTOR* actorx, GAME* game) {
         gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, textbl[digit0]);
         gSPSegment(POLY_OPA_DISP++, ANIME_2_TXT_SEG, textbl[digit1]);
 
-        Matrix_translate(100.0f * xpos_tbl[i], 0.0f, 0.0f, 1);
+        Matrix_translate(100.0f * xpos_tbl[i], 0.0f, 0.0f, MTX_MULT);
 
         CLOSE_POLY_OPA_DISP(graph);
 

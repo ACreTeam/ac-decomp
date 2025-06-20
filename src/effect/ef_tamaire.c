@@ -145,18 +145,18 @@ static void eTamaire_dw(eEC_Effect_c* effect, GAME* game) {
     _texture_z_light_fog_prim_xlu(graph);
 
     if ((effect->effect_specific[2] & 1) == 0) {
-        Matrix_translate(effect->position.x, effect->offset.y - 3.0f, effect->position.z, FALSE);
-        Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, TRUE);
+        Matrix_translate(effect->position.x, effect->offset.y - 3.0f, effect->position.z, MTX_LOAD);
+        Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
 
         gDPSetPrimColor(NEXT_SHADOW_DISP, 0, 255, 0, 0, 0, shadow_alpha);
         gSPMatrix(NEXT_SHADOW_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(NEXT_SHADOW_DISP, ef_tamaire_shadow_modelT);
     }
 
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, FALSE);
-    Matrix_mult(&play->billboard_matrix, TRUE);
-    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, TRUE);
-    Matrix_RotateZ(effect->effect_specific[0], TRUE);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
+    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
+    Matrix_RotateZ(effect->effect_specific[0], MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, (int)alpha);

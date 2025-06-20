@@ -111,8 +111,8 @@ static void aKI_DrawKamakuraIndoorBG(KAMAKURA_INDOOR_ACTOR* k_indoor, GAME* game
     
     OPEN_DISP(game->graph);
 
-    Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-    Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+    Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+    Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

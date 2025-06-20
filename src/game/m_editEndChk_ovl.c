@@ -125,8 +125,8 @@ extern Gfx lat_kakunin_c_model[];
 static void mEE_set_question_field(Submenu* submenu, GRAPH* graph, f32 x, f32 y) {
     Gfx* gfx;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(x, y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(x, y, 140.0f, MTX_MULT);
 
     OPEN_DISP(graph);
     gfx = NOW_POLY_OPA_DISP;
@@ -146,9 +146,9 @@ static void mEE_set_answer_field(Submenu* submenu, GRAPH* graph, mEE_win_data_c*
     f32 scale = submenu->overlay->editEndChk_ovl->scale;
     Gfx* gfx;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(x, y, 140.0f, 1);
-    Matrix_scale(scale, scale, 1.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(x, y, 140.0f, MTX_MULT);
+    Matrix_scale(scale, scale, 1.0f, MTX_MULT);
 
     OPEN_DISP(graph);
     gfx = NOW_POLY_OPA_DISP;
@@ -158,8 +158,8 @@ static void mEE_set_answer_field(Submenu* submenu, GRAPH* graph, mEE_win_data_c*
     gSPDisplayList(gfx++, data->win_model);
 
     if (scale == 1.0f) {
-        Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-        Matrix_translate(x, y - ((f32)submenu->overlay->editEndChk_ovl->selected_answer * 16.0f), 140.0f, 1);
+        Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+        Matrix_translate(x, y - ((f32)submenu->overlay->editEndChk_ovl->selected_answer * 16.0f), 140.0f, MTX_MULT);
         gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(gfx++, data->char_model);
     }

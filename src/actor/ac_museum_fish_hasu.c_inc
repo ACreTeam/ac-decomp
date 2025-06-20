@@ -22,9 +22,9 @@ void mfish_hasu_dw(mfish_hasu_c* actor, GAME* gamex) {
         mtxp = actor->mtx[1];
     }
     OPEN_DISP(gamex->graph);
-    Matrix_translate(hasu_pos.x + GETREG(TAKREG, 0x42) * 0.1f, hasu_pos.y, hasu_pos.z + GETREG(TAKREG, 0x43) * 0.1f, 0);
-    Matrix_RotateY(DEG2SHORT_ANGLE(-180), 1);
-    Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+    Matrix_translate(hasu_pos.x + GETREG(TAKREG, 0x42) * 0.1f, hasu_pos.y, hasu_pos.z + GETREG(TAKREG, 0x43) * 0.1f, MTX_LOAD);
+    Matrix_RotateY(DEG2SHORT_ANGLE(-180), MTX_MULT);
+    Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     cKF_Si3_draw_R_SV(gamex, &actor->keyframe, mtxp, NULL, NULL, NULL);
     CLOSE_DISP(gamex->graph);
@@ -197,16 +197,16 @@ void mfish_kaeru_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     }
 
     OPEN_DISP(gamex->graph);
-    Matrix_translate(hasu_pos.x + GETREG(TAKREG, 0x42) * 0.1f, hasu_pos.y, hasu_pos.z + GETREG(TAKREG, 0x43) * 0.1f, 0);
-    Matrix_RotateY(DEG2SHORT_ANGLE(-180), 1);
-    Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+    Matrix_translate(hasu_pos.x + GETREG(TAKREG, 0x42) * 0.1f, hasu_pos.y, hasu_pos.z + GETREG(TAKREG, 0x43) * 0.1f, MTX_LOAD);
+    Matrix_RotateY(DEG2SHORT_ANGLE(-180), MTX_MULT);
+    Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     cKF_Si3_draw_R_SV(gamex, &keyframe->keyframe, mtxp2, hasu_before_disp, hasu_after_disp, actor);
 
-    Matrix_translate(actor->position.x + actor->_5AC.x, actor->position.y, actor->position.z + actor->_5AC.z, 0);
-    Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z, 1);
-    Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
+    Matrix_translate(actor->position.x + actor->_5AC.x, actor->position.y, actor->position.z + actor->_5AC.z, MTX_LOAD);
+    Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, MTX_MULT);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z, MTX_MULT);
+    Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, NULL, NULL, actor);
     CLOSE_DISP(gamex->graph);

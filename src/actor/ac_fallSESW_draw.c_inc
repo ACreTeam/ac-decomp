@@ -23,7 +23,7 @@ void aFLEW_actor_draw(ACTOR* actor, GAME* game) {
     _texture_z_light_fog_prim_xlu(graph);
 
     if (isWest != FALSE) {
-        Matrix_mult(&flip_mtx, TRUE);
+        Matrix_mult(&flip_mtx, MTX_MULT);
     }
 
     OPEN_DISP(graph);
@@ -63,13 +63,13 @@ void aFLEW_actor_draw(ACTOR* actor, GAME* game) {
             angle =
                 RAD2SHORTANGLE(facos(base_vec_z.z * bboard.z + ((base_vec_z.x * bboard.x) + base_vec_z.y * bboard.y)));
 
-            Matrix_translate(actor->world.position.x, actor->world.position.y, actor->world.position.z, FALSE);
+            Matrix_translate(actor->world.position.x, actor->world.position.y, actor->world.position.z, MTX_LOAD);
             if (actor->npc_id == WATERFALL_WEST) {
-                Matrix_mult(&flip_mtx, TRUE);
+                Matrix_mult(&flip_mtx, MTX_MULT);
             }
-            Matrix_RotateVector(angle, &l, TRUE);
-            Matrix_RotateY(-0x2000, TRUE);
-            Matrix_scale(actor->scale.x, actor->scale.y, actor->scale.z, TRUE);
+            Matrix_RotateVector(angle, &l, MTX_MULT);
+            Matrix_RotateY(-0x2000, MTX_MULT);
+            Matrix_scale(actor->scale.x, actor->scale.y, actor->scale.z, MTX_MULT);
 
             gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gDPSetRenderMode(gfx++, G_RM_FOG_SHADE_A, G_RM_XLU_SURF2);

@@ -117,7 +117,7 @@ static void Player_actor_Item_draw_windmill_After_kaza1_fan(ACTOR* actor) {
 
     Matrix_Position_Zero(item_end);
 
-    Matrix_to_rotate_new(get_Matrix_now(), angle, 0);
+    Matrix_to_rotate_new(get_Matrix_now(), angle, MTX_LOAD);
 
     angle->x *= -1;
     angle->y += 0x8000;
@@ -161,7 +161,7 @@ static void Player_actor_Item_draw_windmill(ACTOR* actor, GAME* game) {
     OPEN_POLY_OPA_DISP(graph);
     ang = (s16)(-0.5f * actor->shape_info.rotation.x);
 
-    Matrix_RotateY(ang, 1);
+    Matrix_RotateY(ang, MTX_MULT);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 

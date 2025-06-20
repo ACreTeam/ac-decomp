@@ -118,8 +118,8 @@ static void mMU_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
     f32 tex_x;
     f32 tex_y;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
     
@@ -139,8 +139,8 @@ static void mMU_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
     gSPDisplayList(POLY_OPA_DISP++, mus_tag_nes_model);
 
     gSPDisplayList(POLY_OPA_DISP++, mus_icon_model_before);
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(menu_info->position[0] - 100.0f, menu_info->position[1] + 28.0f, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(menu_info->position[0] - 100.0f, menu_info->position[1] + 28.0f, 140.0f, MTX_MULT);
 
     for (j = 0, md_item = ITM_MINIDISK_START; j < mMU_ROW_NUM; j++) {
         for (i = 0; i < mMU_COL_NUM; i++) {
@@ -149,11 +149,11 @@ static void mMU_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
                 gSPDisplayList(POLY_OPA_DISP++, mus_icon_model);
             }
 
-            Matrix_translate(20.0f, 0.0f, 0.0f, 1);
+            Matrix_translate(20.0f, 0.0f, 0.0f, MTX_MULT);
             md_item++;
         }
 
-        Matrix_translate(-220.0f, -20.0f, 0.0f, 1);
+        Matrix_translate(-220.0f, -20.0f, 0.0f, MTX_MULT);
     }
     
     gSPDisplayList(POLY_OPA_DISP++, mus_mark_before);
@@ -166,8 +166,8 @@ static void mMU_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 0, 95 + frame * 9, 0, 255);
     gDPSetEnvColor(POLY_OPA_DISP++, frame * 6, 210 + (frame * 9) / 2, frame * 6, 255);
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(menu_info->position[0] - 100.0f, menu_info->position[1] + 28.0f, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(menu_info->position[0] - 100.0f, menu_info->position[1] + 28.0f, 140.0f, MTX_MULT);
 
     for (j = 0, md_item2 = ITM_MINIDISK_START; j < mMU_ROW_NUM; j++) {
         for (i = 0; i < mMU_COL_NUM; i++) {
@@ -176,11 +176,11 @@ static void mMU_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
                 gSPDisplayList(POLY_OPA_DISP++, mus_mark_model);
             }
 
-            Matrix_translate(20.0f, 0.0f, 0.0f, 1);
+            Matrix_translate(20.0f, 0.0f, 0.0f, MTX_MULT);
             md_item2++;
         }
 
-        Matrix_translate(-220.0f, -20.0f, 0.0f, 1);
+        Matrix_translate(-220.0f, -20.0f, 0.0f, MTX_MULT);
     }
 
     CLOSE_POLY_OPA_DISP(graph);

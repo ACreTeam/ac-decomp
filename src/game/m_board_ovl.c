@@ -963,8 +963,8 @@ static void mBD_set_frame_dl(GRAPH* graph, mSM_MenuInfo_c* menu_info, f32 x, f32
     int paper_type = board_ovl->mail.content.paper_type;
     Gfx* gfx;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(x, y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(x, y, 140.0f, MTX_MULT);
 
     OPEN_DISP(graph);
     gfx = NOW_POLY_OPA_DISP;
@@ -1006,8 +1006,8 @@ static void mBD_set_point(Submenu* submenu, GAME* game, f32 x, f32 y) {
     board_ovl->ofs_x = x + (f32)pre_back_width + 36.0f + -96.0f;
     board_ovl->ofs_y = y - -76.0f;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(board_ovl->ofs_x, board_ovl->ofs_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(board_ovl->ofs_x, board_ovl->ofs_y, 140.0f, MTX_MULT);
 
     OPEN_DISP(graph);
     gfx = NOW_POLY_OPA_DISP;

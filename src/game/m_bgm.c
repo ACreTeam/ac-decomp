@@ -661,7 +661,7 @@ static void mBGMRoom_ct(mBGMRoom* room) {
 static void mBGMTime_signal_melody(mBGMTime* time, GAME* game) {
     static u8 signal_melody_buf[mMld_MELODY_LEN];
 
-    if (mEv_CheckFirstIntro() == FALSE && mEv_CheckTitleDemo() != -9 && mFI_CheckFieldData() &&
+    if (mEv_CheckFirstIntro() == FALSE && mEv_CheckTitleDemo() != mEv_TITLEDEMO_STAFFROLL && mFI_CheckFieldData() &&
         mFI_GET_TYPE(mFI_GetFieldId()) != mFI_FIELD_DEMO_STARTDEMO && time->new_year_ev_flag == FALSE &&
         mPlib_get_player_actor_main_index(game) != mPlayer_INDEX_DEMO_GETON_BOAT &&
         mPlib_get_player_actor_main_index(game) != mPlayer_INDEX_DEMO_GETON_BOAT_SITDOWN &&
@@ -2564,7 +2564,7 @@ extern void mBGM_init() {
         mBGMForce* force = &M_bgm.force;
 
         if (field_type == mFI_FIELD_FG) {
-            if (mEv_CheckTitleDemo() > 0) {
+            if (mEv_IsTitleDemo()) {
                 mBGMPsComp_make_ps_demo(70, 0x168); // Play title music
             } else {
                 if ((force->inform != mBGMForce_INFORM_3 && force->inform != mBGMForce_INFORM_7) || force->flag) {
@@ -2596,7 +2596,7 @@ extern void mBGM_cleanup() {
         mActor_name_t field_type = mFI_GET_TYPE(field_id);
 
         if (field_type == mFI_FIELD_FG) {
-            if (mEv_CheckTitleDemo() > 0) {
+            if (mEv_IsTitleDemo()) {
                 mBGMPsComp_delete_ps_demo(70, 0x168); // Stop title music
             } else {
                 if ((force->inform != mBGMForce_INFORM_3 && force->inform != mBGMForce_INFORM_7) || force->flag) {

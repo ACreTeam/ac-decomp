@@ -1,11 +1,11 @@
 static void Player_actor_Set_ItemNoSubmenu(mActor_name_t item) {
-    if (mEv_CheckTitleDemo() <= 0) {
+    if (mEv_IsNotTitleDemo()) {
         Common_Get(now_private)->equipment = item;
     }
 }
 
 static mActor_name_t Player_actor_Get_ItemNoSubmenu(void) {
-    if (mEv_CheckTitleDemo() > 0) {
+    if (mEv_IsTitleDemo()) {
         return mPlib_Get_controller_data_for_title_demo_p()->equipped_item;
     } else {
         return Common_Get(now_private)->equipment;
@@ -390,7 +390,7 @@ static void Player_actor_CorrectSomething_net(ACTOR* actor, xyz_t* pos) {
 
     if (label != NULL && player->item_net_catch_type == mPlayer_NET_CATCH_TYPE_INSECT) {
         Matrix_push();
-        Matrix_translate(pos->x, pos->y, pos->z, FALSE);
+        Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
         Matrix_get(&label->matrix_work);
         Matrix_pull();
         label->init_matrix = TRUE;

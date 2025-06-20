@@ -393,8 +393,8 @@ static void mMS_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
     anm_scale = mscore_ovl->scale;
     inst_count = sAdo_InstCountGet();
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 1.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 1.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 
@@ -431,7 +431,7 @@ static void mMS_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
         stick_x = -91.0f + 21.2f * (play_idx % 8) + ((play_idx < 8) ? 0.0f : 19.0f);
         stick_y = 20.0f + ((play_idx < 8) ? 0.0f : -50.0f);
 
-        Matrix_translate(stick_x, stick_y, 0.0f, 1);
+        Matrix_translate(stick_x, stick_y, 0.0f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, onp_hyouji_moji_mode);
         gSPDisplayList(POLY_OPA_DISP++, onp_hyouji_bouT_model);
@@ -449,10 +449,10 @@ static void mMS_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
 
     for (i = 0; i < 16; i++) {
         note_moji_p = &note_moji[mscore_ovl->melody[i]];
-        Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-        Matrix_translate(base_x, base_y + note_moji_p->ofs_y, 0.0f, 1);
+        Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+        Matrix_translate(base_x, base_y + note_moji_p->ofs_y, 0.0f, MTX_MULT);
         if (i == cursor_idx) {
-            Matrix_scale(scale, scale, 1.0f, 1);
+            Matrix_scale(scale, scale, 1.0f, MTX_MULT);
         }
 
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, note_moji_p->prim_color[0], note_moji_p->prim_color[1],
@@ -478,12 +478,12 @@ static void mMS_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
     for (i = 0; i < 16; i++) {
         if (i != play_idx) {
             note_moji_p = &note_moji[mscore_ovl->melody[i]];
-            Matrix_scale(16.0f, 16.0f, 1.0f, 0);
+            Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
             Matrix_translate(base_x + note_moji_p->frame->offset[0],
-                             base_y + note_moji_p->frame->offset[1] + note_moji_p->ofs_y, 0.0f, 1);
+                             base_y + note_moji_p->frame->offset[1] + note_moji_p->ofs_y, 0.0f, MTX_MULT);
 
             if (i == cursor_idx) {
-                Matrix_scale(scale, scale, 1.0f, 1);
+                Matrix_scale(scale, scale, 1.0f, MTX_MULT);
                 color_p = &color_data[0];
             } else {
                 color_p = &color_data[1];
@@ -512,20 +512,20 @@ static void mMS_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
         gDPSetAlphaCompare(POLY_OPA_DISP++, G_AC_THRESHOLD);
         gDPSetBlendColor(POLY_OPA_DISP++, 255, 255, 255, 40);
 
-        Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-        Matrix_translate(-17.0f + pos_x, -65.0f + pos_y, 140.0f, 1);
-        Matrix_scale(anm_scale, anm_scale, 1.0f, 1);
+        Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+        Matrix_translate(-17.0f + pos_x, -65.0f + pos_y, 140.0f, MTX_MULT);
+        Matrix_scale(anm_scale, anm_scale, 1.0f, MTX_MULT);
         Matrix_push();
 
-        Matrix_translate(16.0f, 35.0f, 0.0f, 1);
-        Matrix_scale(0.897059f, 0.708333f, 1.0f, 1);
+        Matrix_translate(16.0f, 35.0f, 0.0f, MTX_MULT);
+        Matrix_scale(0.897059f, 0.708333f, 1.0f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, 225, 255, 175, 255);
         gDPSetEnvColor(POLY_OPA_DISP++, 0, 255, 40, 255);
         gSPDisplayList(POLY_OPA_DISP++, sen_win_wakuT_model);
         Matrix_pull();
 
-        Matrix_translate(-26.0f, 51.0f - (mscore_ovl->menu_idx + 1) * 16, 0.0f, 1);
+        Matrix_translate(-26.0f, 51.0f - (mscore_ovl->menu_idx + 1) * 16, 0.0f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 235, 60, 60, 255);
         gSPDisplayList(POLY_OPA_DISP++, sen_win_cursor_model);

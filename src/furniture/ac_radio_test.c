@@ -30,7 +30,7 @@ static void fRT_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* d
 
     OPEN_DISP(game->graph);
 
-    Matrix_RotateY(DEG2SHORT_ANGLE(-157.5f), 1);
+    Matrix_RotateY(DEG2SHORT_ANGLE(-157.5f), MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPSegment(NEXT_POLY_OPA_DISP, G_MWO_SEGMENT_8, radio_pal);
     gSPDisplayList(NEXT_POLY_OPA_DISP, radio_DL_model);

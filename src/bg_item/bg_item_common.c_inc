@@ -1807,11 +1807,11 @@ static void bit_cmn_single_draw_BT_shadow(GAME* game, bg_item_common_info_c* com
     draw_pos.cull_flag = FALSE;
     draw_pos.alpha = alpha;
 
-    Matrix_translate(pos->x, pos->y, pos->z, 0);
-    Matrix_RotateY(angle->y, 1);
-    Matrix_RotateX(angle->x, 1);
-    Matrix_RotateZ(angle->z, 1);
-    Matrix_scale(scale->x, scale->y, scale->z, 1);
+    Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
+    Matrix_RotateY(angle->y, MTX_MULT);
+    Matrix_RotateX(angle->x, MTX_MULT);
+    Matrix_RotateZ(angle->z, MTX_MULT);
+    Matrix_scale(scale->x, scale->y, scale->z, MTX_MULT);
     Matrix_get(&draw_pos.mtx);
     bit_cmn_single_draw_item_shadow(game->graph, draw_part, &draw_pos, shadow_pos, shadow_color);
     Matrix_pull();
@@ -1988,11 +1988,11 @@ static void bit_cmn_single_draw_BT(GAME* game, bg_item_common_info_c* common_inf
         draw_pos.cull_flag = FALSE;
         draw_pos.alpha = alpha;
 
-        Matrix_translate(pos->x, pos->y, pos->z, 0);
-        Matrix_RotateY(angle->y, 1);
-        Matrix_RotateX(angle->x, 1);
-        Matrix_RotateZ(angle->z, 1);
-        Matrix_scale(scale->x, scale->y, scale->z, 1);
+        Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
+        Matrix_RotateY(angle->y, MTX_MULT);
+        Matrix_RotateX(angle->x, MTX_MULT);
+        Matrix_RotateZ(angle->z, MTX_MULT);
+        Matrix_scale(scale->x, scale->y, scale->z, MTX_MULT);
         Matrix_get(&draw_pos.mtx);
 
         if (draw_bf != NULL) {
@@ -2460,8 +2460,8 @@ static void bg_item_common_chg_BGDataR(bg_item_common_c* common) {
 
 static void bg_item_common_outPutData(GAME_PLAY* play, bg_item_draw_pos_c* draw_pos, s16 next, int gfx_idx,
                                       xyz_t* pos) {
-    Matrix_translate(pos->x, pos->y, pos->z, 0);
-    Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+    Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
+    Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     Matrix_get(&draw_pos->mtxf);
     draw_pos->next_add_cnt = next;
     draw_pos->sub_idx = gfx_idx;

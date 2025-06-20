@@ -86,7 +86,7 @@ static void eShootingSet_mv(eEC_Effect_c* effect, GAME* game) {
 
     eEC_CLIP->set_continious_env_proc(effect, 100, 100);
 
-    if (mEv_CheckTitleDemo() != -9) {
+    if (mEv_CheckTitleDemo() != mEv_TITLEDEMO_STAFFROLL) {
         if (effect->effect_specific[0] >= effect->effect_specific[1]) {
             effect->effect_specific[0] = 0;
             effect->effect_specific[1] = eShootingSet_GetFrame_MakeNextShooting();

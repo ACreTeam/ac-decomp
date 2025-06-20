@@ -19,27 +19,27 @@ static void aUKI_actor_draw(ACTOR* actorx, GAME* game) {
 
     OPEN_POLY_OPA_DISP(graph);
 
-    Matrix_mult(&uki->mtxf, 1);
+    Matrix_mult(&uki->mtxf, MTX_MULT);
     gDPPipeSync(POLY_OPA_DISP++);
 
     switch (uki->proc) {
         case aUKI_PROC_CARRY:
             aUKI_rotate_calc(uki);
-            Matrix_RotateY(player_actor->shape_info.rotation.y, 1);
+            Matrix_RotateY(player_actor->shape_info.rotation.y, MTX_MULT);
             break;
         case aUKI_PROC_READY:
         case aUKI_PROC_AIR:
             uki->uki_angle.x = search_position_angleX(&actorx->world.position, &uki->rod_top_position);
             uki->uki_angle.y = search_position_angleY(&actorx->world.position, &uki->rod_top_position);
             uki->uki_angle.x += DEG2SHORT_ANGLE2(180.0f);
-            Matrix_RotateY(uki->uki_angle.y, 1);
-            Matrix_RotateX(uki->uki_angle.x, 1);
+            Matrix_RotateY(uki->uki_angle.y, MTX_MULT);
+            Matrix_RotateX(uki->uki_angle.x, MTX_MULT);
             break;
         case aUKI_PROC_CAST:
             add_calc_short_angle2(&uki->uki_angle.x, DEG2SHORT_ANGLE2(90.0f), 1.0f - sqrtf(0.95f), 1024, 0);
             uki->uki_angle.y = search_position_angleY(&actorx->world.position, &uki->rod_top_position);
-            Matrix_RotateY(uki->uki_angle.y, 1);
-            Matrix_RotateX(uki->uki_angle.x, 1);
+            Matrix_RotateY(uki->uki_angle.y, MTX_MULT);
+            Matrix_RotateX(uki->uki_angle.x, MTX_MULT);
             break;
         case aUKI_PROC_HIT:
             uki->uki_angle.y = search_position_angleY(&actorx->world.position, &uki->rod_top_position);
@@ -49,8 +49,8 @@ static void aUKI_actor_draw(ACTOR* actorx, GAME* game) {
                 uki->uki_angle.x = search_position_angleX(&actorx->world.position, &uki->rod_top_position);
                 uki->uki_angle.x += DEG2SHORT_ANGLE2(-90.0f);
             }
-            Matrix_RotateY(uki->uki_angle.y, 1);
-            Matrix_RotateX(uki->uki_angle.x, 1);
+            Matrix_RotateY(uki->uki_angle.y, MTX_MULT);
+            Matrix_RotateX(uki->uki_angle.x, MTX_MULT);
             break;
         case aUKI_PROC_WAIT:
             if (uki->cast_timer == 0) {
@@ -60,13 +60,13 @@ static void aUKI_actor_draw(ACTOR* actorx, GAME* game) {
                 add_calc_short_angle2(&uki->uki_angle.x, DEG2SHORT_ANGLE2(90.0f), 1.0f - sqrtf(0.95f), 1024, 0);
             }
             uki->uki_angle.y = search_position_angleY(&actorx->world.position, &uki->rod_top_position);
-            Matrix_RotateY(uki->uki_angle.y, 1);
-            Matrix_RotateX(uki->uki_angle.x, 1);
+            Matrix_RotateY(uki->uki_angle.y, MTX_MULT);
+            Matrix_RotateX(uki->uki_angle.x, MTX_MULT);
             break;
         case aUKI_PROC_BITE:
             if (uki->gyo_status == 4) {
                 add_calc_short_angle2(&uki->uki_angle.x, DEG2SHORT_ANGLE2(-90.0f), 1.0f - sqrtf(0.95f), 1024, 0);
-                Matrix_RotateY(uki->uki_angle.y, 1);
+                Matrix_RotateY(uki->uki_angle.y, MTX_MULT);
             }
             break;
     }
@@ -74,7 +74,7 @@ static void aUKI_actor_draw(ACTOR* actorx, GAME* game) {
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, uki->color[0], uki->color[1], uki->color[2], 255);
 
-    if (mEv_CheckTitleDemo() > 0) {
+    if (mEv_IsTitleDemo()) {
         item = mPlib_Get_controller_data_for_title_demo_p()->equipped_item;
     } else {
         item = Now_Private->equipment;

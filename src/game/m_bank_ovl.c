@@ -248,8 +248,8 @@ static void mBN_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu)
   u8 s;
   u8 t;
 
-  Matrix_translate(menu->position[0] * 16.0f, menu->position[1] * 16.0f, 140.0f, 0);
-  Matrix_scale(16.0f, 16.0f, 1.0f, 1);
+  Matrix_translate(menu->position[0] * 16.0f, menu->position[1] * 16.0f, 140.0f, MTX_LOAD);
+  Matrix_scale(16.0f, 16.0f, 1.0f, MTX_MULT);
 
   OPEN_DISP(g);
   gfx = NOW_POLY_OPA_DISP;

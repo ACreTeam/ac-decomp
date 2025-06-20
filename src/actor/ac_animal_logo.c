@@ -110,8 +110,8 @@ static void aAL_actor_dt(ACTOR* actor, GAME* game) {
     Common_Set(clip.animal_logo_clip, NULL);
   }
 
-  if (mEv_CheckTitleDemo() != -1) {
-    mEv_SetTitleDemo(0);
+  if (mEv_CheckTitleDemo() != mEv_TITLEDEMO_LOGO) {
+    mEv_SetTitleDemo(mEv_TITLEDEMO_NONE);
   }
 
   cKF_SkeletonInfo_R_dt(&logo_actor->animal.skeleton);
@@ -431,8 +431,8 @@ static void aAL_tm_draw(GRAPH* graph) {
   Gfx* gfx;
 
   Matrix_push();
-  Matrix_translate(1530.0f, 690.0f, 0.0f, 1);
-  Matrix_scale(0.162082675f, 0.162082675f, 0.162082675f, 1);
+  Matrix_translate(1530.0f, 690.0f, 0.0f, MTX_MULT);
+  Matrix_scale(0.162082675f, 0.162082675f, 0.162082675f, MTX_MULT);
 
   OPEN_DISP(graph);
 
@@ -459,8 +459,8 @@ static void aAL_back_draw(GRAPH* graph, ANIMAL_LOGO_ACTOR* actor) {
   Gfx* gfx;
 
   Matrix_push();
-  Matrix_translate(0.0f, 730.0f, 0.0f, 1);
-  Matrix_scale(0.135f, 0.135f, 0.135f, 1);
+  Matrix_translate(0.0f, 730.0f, 0.0f, MTX_MULT);
+  Matrix_scale(0.135f, 0.135f, 0.135f, MTX_MULT);
 
   OPEN_DISP(graph);
 
@@ -577,8 +577,8 @@ static void aAL_title_draw(GAME* game, ANIMAL_LOGO_ACTOR* actor) {
   GRAPH* graph = game->graph;
 
   Matrix_push();
-  Matrix_translate(0.0f, 730.0f, 0.0f, 1);
-  Matrix_scale(0.135f, 0.135f, 0.135f, 1);
+  Matrix_translate(0.0f, 730.0f, 0.0f, MTX_MULT);
+  Matrix_scale(0.135f, 0.135f, 0.135f, MTX_MULT);
 
   OPEN_DISP(graph);
 

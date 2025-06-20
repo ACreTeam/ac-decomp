@@ -94,9 +94,9 @@ static void Museum_Indoor_Actor_draw(ACTOR* actorx, GAME* game) {
         mEnv_GetRoomPrimColor(&r, &g, &b, (GAME_PLAY*)game);
         OPEN_DISP(game->graph);
 
-        Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-        Matrix_RotateY(0, 1);
-        Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+        Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+        Matrix_RotateY(0, MTX_MULT);
+        Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 0, r, g, b, a);

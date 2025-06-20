@@ -568,14 +568,14 @@ void mfish_onefish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
 
     graph = play->game.graph;
 
-    Matrix_translate(actor->position.x, actor->position.y + actor->_5AC.y, actor->position.z, 0);
-    Matrix_RotateY(actor->_60C.y, 1);
+    Matrix_translate(actor->position.x, actor->position.y + actor->_5AC.y, actor->position.z, MTX_LOAD);
+    Matrix_RotateY(actor->_60C.y, MTX_MULT);
 
-    Matrix_translate(0.0f, 0.25f * actor->init_data.ofs_y, 1.5f * actor->init_data.ofs_z, 1);
-    Matrix_RotateX(actor->_60C.x, 1);
-    Matrix_RotateZ(MY_CLAMP(-(actor->_618.z >> 1), DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20)), 1);
-    Matrix_translate(0.0f, 0.25f * -actor->init_data.ofs_y, 0.5f * -actor->init_data.ofs_z, 1);
-    Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
+    Matrix_translate(0.0f, 0.25f * actor->init_data.ofs_y, 1.5f * actor->init_data.ofs_z, MTX_MULT);
+    Matrix_RotateX(actor->_60C.x, MTX_MULT);
+    Matrix_RotateZ(MY_CLAMP(-(actor->_618.z >> 1), DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20)), MTX_MULT);
+    Matrix_translate(0.0f, 0.25f * -actor->init_data.ofs_y, 0.5f * -actor->init_data.ofs_z, MTX_MULT);
+    Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, MTX_MULT);
 
     OPEN_DISP(graph);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(play->game.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

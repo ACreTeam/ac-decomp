@@ -756,10 +756,10 @@ static void mCL_furniture_draw(mCL_Item_c* item, GAME* game) {
     mCL_SetKankyoMapping(profile, (GAME_PLAY*)game);
 
     scale = item->scale;
-    Matrix_RotateY(RAD2SHORT_ANGLE2(DEG2RAD(ftr_actor->angle_y)), 0);
-    Matrix_scale(scale, scale, scale, 1);
-    Matrix_translate(ftr_actor->position.x, ftr_actor->position.y, ftr_actor->position.z, 1);
-    Matrix_scale(profile->scale, profile->scale, profile->scale, 1);
+    Matrix_RotateY(RAD2SHORT_ANGLE2(DEG2RAD(ftr_actor->angle_y)), MTX_LOAD);
+    Matrix_scale(scale, scale, scale, MTX_MULT);
+    Matrix_translate(ftr_actor->position.x, ftr_actor->position.y, ftr_actor->position.z, MTX_MULT);
+    Matrix_scale(profile->scale, profile->scale, profile->scale, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
@@ -852,7 +852,7 @@ static void mCL_music_draw(mCL_Item_c* item, mSM_MenuInfo_c* menu_info, GRAPH* g
     OPEN_DISP(graph);
     gfx = NOW_POLY_OPA_DISP;
 
-    Matrix_RotateZ(cos_s(item->timer * 0x222) * 0x1000, 1);
+    Matrix_RotateZ(cos_s(item->timer * 0x222) * 0x1000, MTX_MULT);
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(gfx++, mCL_music_model);
 
@@ -884,10 +884,10 @@ static void mCL_item_draw(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* gam
     } else if (item->gfx_type != mCL_DRAW_TYPE_NONE) {
         Gfx* gfx;
 
-        Matrix_scale(16.0f, 16.0f, 1.0f, 0);
+        Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
         Matrix_translate((-143.0f + pos_x) + 58.0f + item->ftr_actor.position.x, (97.0f + pos_y) + item->pos_y, 0.0f,
-                         1);
-        Matrix_scale(item->scale, item->scale, 1.0f, 1);
+                         MTX_MULT);
+        Matrix_scale(item->scale, item->scale, 1.0f, MTX_MULT);
 
         OPEN_DISP(graph);
         gfx = NOW_POLY_OPA_DISP;
@@ -1005,8 +1005,8 @@ static void mCL_set_page_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* g
         pos_y = -menu_info->position[1];
     }
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     OPEN_DISP(graph);
     gfx = NOW_POLY_OPA_DISP;
@@ -1047,7 +1047,7 @@ static void mCL_set_page_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* g
 
         if (menu->top_idx != 0) {
             Matrix_push();
-            Matrix_translate(-11.0f, 80.0f, 0.0f, 1);
+            Matrix_translate(-11.0f, 80.0f, 0.0f, MTX_MULT);
 
             gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(gfx++, clg_win_shirushi1T_model);
@@ -1057,8 +1057,8 @@ static void mCL_set_page_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* g
 
         if (menu->top_idx + mCL_MENU_PAGE_SIZE < menu->item_count) {
             Matrix_push();
-            Matrix_translate(-11.0f, -66.0f, 0.0f, 1);
-            Matrix_RotateZ(DEG2SHORT_ANGLE2(-180.0f), 1);
+            Matrix_translate(-11.0f, -66.0f, 0.0f, MTX_MULT);
+            Matrix_RotateZ(DEG2SHORT_ANGLE2(-180.0f), MTX_MULT);
 
             gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(gfx++, clg_win_shirushi1T_model);
@@ -1159,8 +1159,8 @@ static void mCL_set_page_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* g
         if (menu->completed_flag) {
             Gfx* gfx;
 
-            Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-            Matrix_translate(tmp, (97.0f + pos_y) - 163.0f, 140.0f, 1);
+            Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+            Matrix_translate(tmp, (97.0f + pos_y) - 163.0f, 140.0f, MTX_MULT);
 
             OPEN_DISP(graph);
             gfx = NOW_POLY_OPA_DISP;
@@ -1189,8 +1189,8 @@ static void mCL_set_wchange_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GRAP
     int i;
     Gfx* gfx;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(menu_info->position[0], -menu_info->position[1], 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(menu_info->position[0], -menu_info->position[1], 140.0f, MTX_MULT);
 
     OPEN_DISP(graph);
     gfx = NOW_POLY_OPA_DISP;
@@ -1221,7 +1221,7 @@ static void mCL_set_wchange_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GRAP
         }
     }
 
-    Matrix_translate(0.0f, menu_info->position[1] * 2.0f, 0.0f, 1);
+    Matrix_translate(0.0f, menu_info->position[1] * 2.0f, 0.0f, MTX_MULT);
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     win_data = &mCL_win_data[catalog_ovl->page_no];

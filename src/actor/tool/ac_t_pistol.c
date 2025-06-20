@@ -103,11 +103,11 @@ static void aTPT_actor_draw(ACTOR* actor, GAME* game){
     }
     else{
         Matrix_translate(pistol->tools_class.actor_class.world.position.x, pistol->tools_class.actor_class.world.position.y, 
-            pistol->tools_class.actor_class.world.position.z, FALSE);
-            Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+            pistol->tools_class.actor_class.world.position.z, MTX_LOAD);
+            Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     }
 
-    Matrix_scale(pistol->tools_class.actor_class.scale.x, pistol->tools_class.actor_class.scale.y, pistol->tools_class.actor_class.scale.z, TRUE);
+    Matrix_scale(pistol->tools_class.actor_class.scale.x, pistol->tools_class.actor_class.scale.y, pistol->tools_class.actor_class.scale.z, MTX_MULT);
    _texture_z_light_fog_prim_npc(graph); 
 
     gfxp = NOW_POLY_OPA_DISP;
@@ -118,5 +118,3 @@ static void aTPT_actor_draw(ACTOR* actor, GAME* game){
     CLOSE_DISP(graph);
         
 }
-
-

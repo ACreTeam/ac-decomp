@@ -655,7 +655,7 @@ extern void mNtc_set_auto_nwrite_data() {
     lbRTC_year_t set_nwrite_years[mNtc_NWRITE_NUM];
     int write_count;
 
-    if (mEv_CheckTitleDemo() == FALSE && mFI_GET_TYPE(mFI_GetFieldId()) == mFI_TYPE(mFI_FIELDTYPE_FG)) {
+    if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_NONE && mFI_GET_TYPE(mFI_GetFieldId()) == mFI_TYPE(mFI_FIELDTYPE_FG)) {
         int fishing_day;
         now_nwrite_year = Common_Get(auto_nwrite_year);
         if (now_nwrite_year != 0) {

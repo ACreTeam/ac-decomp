@@ -1263,11 +1263,11 @@ static void aSEN_set_matrix(NPC_SENDO_ACTOR* sendo) {
 
         if (boat != NULL) {
             Matrix_translate(boat->actor_class.world.position.x, boat->actor_class.world.position.y,
-                             boat->actor_class.world.position.z, 0);
-            Matrix_RotateY(boat->actor_class.shape_info.rotation.y, 1);
-            Matrix_RotateZ(boat->actor_class.shape_info.rotation.z, 1);
-            Matrix_translate(-8.0f, 20.0f, -34.0f, 1);
-            Matrix_RotateY(sendo->npc_class.actor_class.shape_info.rotation.y, 1);
+                             boat->actor_class.world.position.z, MTX_LOAD);
+            Matrix_RotateY(boat->actor_class.shape_info.rotation.y, MTX_MULT);
+            Matrix_RotateZ(boat->actor_class.shape_info.rotation.z, MTX_MULT);
+            Matrix_translate(-8.0f, 20.0f, -34.0f, MTX_MULT);
+            Matrix_RotateY(sendo->npc_class.actor_class.shape_info.rotation.y, MTX_MULT);
             Matrix_get(&aSEN_matrix);
             Matrix_Position_Zero(&sendo->npc_class.actor_class.world.position);
 

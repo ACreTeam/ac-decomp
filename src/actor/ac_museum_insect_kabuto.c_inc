@@ -115,11 +115,11 @@ void minsect_kabuto_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     _texture_z_light_fog_prim(game->graph);
 
     OPEN_DISP(game->graph);
-    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z, FALSE);
-    Matrix_rotateXYZ(0, 0, actor->_68.z, TRUE);
-    Matrix_rotateXYZ(actor->_74, 0, 0, TRUE);
-    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
-    Matrix_rotateXYZ(DEG2SHORT_ANGLE(90), 0, DEG2SHORT_ANGLE2(180), TRUE);
+    Matrix_translate(actor->_1C.x, actor->_1C.y, actor->_1C.z, MTX_LOAD);
+    Matrix_rotateXYZ(0, 0, actor->_68.z, MTX_MULT);
+    Matrix_rotateXYZ(actor->_74, 0, 0, MTX_MULT);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, MTX_MULT);
+    Matrix_rotateXYZ(DEG2SHORT_ANGLE(90), 0, DEG2SHORT_ANGLE2(180), MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetEnvColor(NEXT_POLY_OPA_DISP, 0, 0xff, 0x9b, 0xff);
     gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);

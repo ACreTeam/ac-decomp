@@ -98,11 +98,11 @@ static void eTurnFootPrint_dw(eEC_Effect_c* effect, GAME* game) {
     OPEN_DISP(game->graph);
 
     _texture_z_light_fog_prim_xlu(game->graph);
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-    Matrix_RotateX(effect->effect_specific[0], 1);
-    Matrix_RotateY(effect->effect_specific[2], 1);
-    Matrix_RotateZ(effect->effect_specific[1], 1);
-    Matrix_scale(scale, 0.0072500003f, scale, 1);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_RotateX(effect->effect_specific[0], MTX_MULT);
+    Matrix_RotateY(effect->effect_specific[2], MTX_MULT);
+    Matrix_RotateZ(effect->effect_specific[1], MTX_MULT);
+    Matrix_scale(scale, 0.0072500003f, scale, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     if (effect->effect_specific[3] != 0) {

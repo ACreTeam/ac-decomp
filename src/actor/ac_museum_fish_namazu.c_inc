@@ -293,7 +293,7 @@ BOOL mfish_namazu_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
         joint_rot->z = MY_CLAMP(s, DEG2SHORT_ANGLE(-30), DEG2SHORT_ANGLE(30));
         s = joint_rot->x + (actor->_618.z >> 2);
         joint_rot->x = MY_CLAMP(s, DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20));
-        Matrix_scale(1.0f, 1.0f + 0.01f * sin_s(actor->_63A + actor->_63C), 1.0f + 0.01f * sin_s(actor->_63A), 1);
+        Matrix_scale(1.0f, 1.0f + 0.01f * sin_s(actor->_63A + actor->_63C), 1.0f + 0.01f * sin_s(actor->_63A), MTX_MULT);
     } else if (joint_idx == 2) {
         s = joint_rot->y - (actor->_618.z << 1);
         joint_rot->y = MY_CLAMP(s, DEG2SHORT_ANGLE(-60), DEG2SHORT_ANGLE(60));
@@ -302,7 +302,7 @@ BOOL mfish_namazu_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
         s = joint_rot->z - (s16)(actor->_640 * (0.6f + GETREG(TAKREG, 0x4E) * 0.01f));
         joint_rot->z = MY_CLAMP(s, DEG2SHORT_ANGLE(-30), DEG2SHORT_ANGLE(30));
         Matrix_scale(1.0f, 1.0f + 0.005f * sin_s(actor->_63A + DEG2SHORT_ANGLE(270)),
-                     1.0f + 0.005f * sin_s(actor->_63A + DEG2SHORT_ANGLE(90)), 1);
+                     1.0f + 0.005f * sin_s(actor->_63A + DEG2SHORT_ANGLE(90)), MTX_MULT);
     }
     return TRUE;
 }
@@ -316,10 +316,10 @@ void mfish_namazu_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         mtxp = skele->mtx[1];
     }
     OPEN_DISP(gamex->graph);
-    Matrix_translate(actor->position.x, actor->position.y, actor->position.z, 0);
-    Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z, 1);
-    Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
+    Matrix_translate(actor->position.x, actor->position.y, actor->position.z, MTX_LOAD);
+    Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, MTX_MULT);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z, MTX_MULT);
+    Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_namazu_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);

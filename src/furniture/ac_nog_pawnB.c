@@ -36,10 +36,10 @@ static int aNogPawnB_DwAfter(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joi
 
         Matrix_Position(&old_pos, &pos);
         Matrix_push();
-        Matrix_translate(pos.x, pos.y, pos.z, 0);
-        Matrix_mult(&play->billboard_matrix, 1);
-        Matrix_RotateY(DEG2SHORT_ANGLE(-90.0f), 1);
-        Matrix_scale(scale_x, scale_y, scale_z, 1);
+        Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+        Matrix_mult(&play->billboard_matrix, MTX_MULT);
+        Matrix_RotateY(DEG2SHORT_ANGLE(-90.0f), MTX_MULT);
+        Matrix_scale(scale_x, scale_y, scale_z, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         Matrix_pull();

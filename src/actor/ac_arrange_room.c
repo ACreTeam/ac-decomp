@@ -120,8 +120,8 @@ static void aAR_DrawFloor(ACTOR* actor, GAME* game) {
 
     graph = game->graph;
 
-    Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-    Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+    Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+    Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
     OPEN_DISP(graph);
 
@@ -147,8 +147,8 @@ static void aAR_DrawWall(ACTOR* actor, GAME* game) {
 
     graph = game->graph;
 
-    Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-    Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+    Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+    Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
     OPEN_DISP(graph);
 

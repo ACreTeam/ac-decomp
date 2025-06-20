@@ -784,7 +784,7 @@ extern f32 get_percent_forAccelBrake(f32 now, f32 start, f32 end, f32 accelerate
 extern void Game_play_Projection_Trans(GAME_PLAY* const play, xyz_t* world_pos, xyz_t* screen_pos) {
     f32 w;
 
-    Matrix_mult(&play->projection_matrix, 0);
+    Matrix_mult(&play->projection_matrix, MTX_LOAD);
     Matrix_Position(world_pos, screen_pos);
     w = play->projection_matrix.ww +
         ((play->projection_matrix.wx * world_pos->x) + (play->projection_matrix.wy * world_pos->y) +

@@ -74,7 +74,7 @@ static void aWeatherRain_make(ACTOR* actor, GAME* game) {
             pos_mod.x += x;
             pos_mod.z += z;
 
-            if (mEv_CheckTitleDemo() == -9) {
+            if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_STAFFROLL) {
                 PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
 
                 pos_mod.y = 70.0f + (120.0f + player->actor_class.world.position.y);
@@ -108,7 +108,7 @@ static void aWeatherRain_MakePicha(ACTOR* actor, GAME* game, xyz_t pos) {
     f32 y;
 
     if (priv_num != -1) {
-        if (mEv_CheckTitleDemo() == -9) {
+        if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_STAFFROLL) {
             PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
 
             y = player->actor_class.world.position.y;
@@ -182,9 +182,9 @@ void aWeatherRain_draw(aWeather_Priv* priv, GAME* game) {
 
         disp = disp >> 1;
 
-        Matrix_translate(pos.x, pos.y, pos.z, FALSE);
-        Matrix_mult(&play->billboard_matrix, 1);
-        Matrix_scale(picha_scale[0], picha_scale[1], picha_scale[2], TRUE);
+        Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+        Matrix_mult(&play->billboard_matrix, MTX_MULT);
+        Matrix_scale(picha_scale[0], picha_scale[1], picha_scale[2], MTX_MULT);
 
         OPEN_DISP(graph);
 

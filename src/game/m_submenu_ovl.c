@@ -1538,9 +1538,9 @@ static void mSM_draw_mail(GRAPH* graph, f32 pos_x, f32 pos_y, f32 scale, Mail_c*
     }
 
     icon = &letter_tex_data_table[type];
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
-    Matrix_scale(scale, scale, 1.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
+    Matrix_scale(scale, scale, 1.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 

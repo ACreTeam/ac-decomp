@@ -2349,11 +2349,11 @@ static void mED_KeyDraw_3D_stick(GRAPH* graph, mED_Ovl_c* editor_ovl) {
   Matrix_push();
 
   if (stick_area >= mED_STICK_AREA_TOP_RIGHT && stick_area <= mED_STICK_AREA_BOTTOM_RIGHT) {
-    Matrix_translate(-111.0f, -50.0f, 0.0f, 1);
-    Matrix_RotateY(DEG2SHORT_ANGLE(-180.0f), 1);
+    Matrix_translate(-111.0f, -50.0f, 0.0f, MTX_MULT);
+    Matrix_RotateY(DEG2SHORT_ANGLE(-180.0f), MTX_MULT);
   }
   else {
-    Matrix_translate(-110.0f, -50.0f, 0.0f, 1);
+    Matrix_translate(-110.0f, -50.0f, 0.0f, MTX_MULT);
   }
   
   OPEN_DISP(graph);
@@ -2379,8 +2379,8 @@ extern Gfx kai_sousa_mojibanT_model[];
 static void mED_KeyDraw(mED_Ovl_c* editor_ovl, GRAPH* graph, f32 x, f32 y) {
   Gfx* gfx;
   
-  Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-  Matrix_translate(x, y, 0.0f, 1);
+  Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+  Matrix_translate(x, y, 0.0f, MTX_MULT);
 
   OPEN_DISP(graph);
   gfx = NOW_POLY_OPA_DISP;
@@ -2438,8 +2438,8 @@ static void mED_InkPotDraw(Submenu* submenu, mED_Ovl_c* editor_ovl, GRAPH* graph
       return;
   }
 
-  Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-  Matrix_translate(x, y, 0.0f, 1);
+  Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+  Matrix_translate(x, y, 0.0f, MTX_MULT);
   single_line_y = 0.0f;
   line_y = ((f32)editor_ovl->now_str_len * 15.0f) / (f32)(editor_ovl->input_length * editor_ovl->max_line_no);
 
@@ -2493,9 +2493,9 @@ static void mED_StringsDraw_spaceCode(GAME* game, rgba_t* color, f32 x, f32 y) {
   OPEN_DISP(graph);
   gfx = NOW_POLY_OPA_DISP;
 
-  Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-  Matrix_translate(x, y, 0.0f, 1);
-  Matrix_scale(0.75f, 1.0f, 1.0f, 1);
+  Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+  Matrix_translate(x, y, 0.0f, MTX_MULT);
+  Matrix_scale(0.75f, 1.0f, 1.0f, MTX_MULT);
 
   gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
   gDPSetPrimColor(gfx++, 0, 255, color->r, color->g, color->b, 255);
@@ -2635,8 +2635,8 @@ static void mED_endCode_draw(Submenu* submenu, GAME* game, f32 x, f32 y) {
   GRAPH* graph = game->graph;
   Gfx* gfx;
 
-  Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-  Matrix_translate(x, y, 140.0f, 1);
+  Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+  Matrix_translate(x, y, 140.0f, MTX_MULT);
 
   OPEN_DISP(graph);
   gfx = NOW_POLY_OPA_DISP;

@@ -420,8 +420,8 @@ static void aMI_DrawMyStep(ACTOR* actorx, GAME* game) {
 
                 OPEN_DISP(graph);
 
-                Matrix_translate(pos->x, pos->y, pos->z, 0);
-                Matrix_scale(aMI_scale_x_table[i] * 0.01f, 0.01f, 0.01f, 1);
+                Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
+                Matrix_scale(aMI_scale_x_table[i] * 0.01f, 0.01f, 0.01f, MTX_MULT);
 
                 gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph),
                           G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -450,8 +450,8 @@ static void aMI_DrawMyFloor(ACTOR* actorx, GAME* game) {
         graph = game->graph;
 
         _texture_z_light_fog_prim(graph);
-        Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-        Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+        Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+        Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
         OPEN_DISP(graph);
 
@@ -600,8 +600,8 @@ static void aMI_DrawMyOriginalFloor(ACTOR* actorx, GAME* game) {
         graph = game->graph;
 
         _texture_z_light_fog_prim(graph);
-        Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-        Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+        Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+        Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
         OPEN_DISP(graph);
 
@@ -639,8 +639,8 @@ static void aMI_DrawMyWall(ACTOR* actorx, GAME* game) {
         graph = game->graph;
 
         _texture_z_light_fog_prim(graph);
-        Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-        Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+        Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+        Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
         OPEN_DISP(graph);
 
@@ -681,8 +681,8 @@ static void aMI_DrawMyOriginalWall(ACTOR* actorx, GAME* game) {
         graph = game->graph;
 
         _texture_z_light_fog_prim(graph);
-        Matrix_translate(0.0f, 0.0f, 0.0f, 0);
-        Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+        Matrix_translate(0.0f, 0.0f, 0.0f, MTX_LOAD);
+        Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
 
         OPEN_DISP(graph);
 

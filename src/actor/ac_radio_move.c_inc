@@ -11,7 +11,7 @@ static void aRAD_wait(RADIO_ACTOR* radio, GAME_PLAY* play){
     if(radio->next_action >= 0x24){
         radio->next_action = 0;
         Matrix_push();
-        Matrix_translate(radio->actor_class.world.position.x,radio->actor_class.world.position.y, radio->actor_class.world.position.z, 0);
+        Matrix_translate(radio->actor_class.world.position.x,radio->actor_class.world.position.y, radio->actor_class.world.position.z, MTX_LOAD);
         Matrix_Position(&def, &newPos);
         Matrix_pull();
 

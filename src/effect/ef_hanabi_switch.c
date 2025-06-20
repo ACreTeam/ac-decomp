@@ -47,7 +47,7 @@ static void eHanabiSwitch_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
 
 static void eHanabiSwitch_mv(eEC_Effect_c* effect, GAME* game) {
     eEC_CLIP->set_continious_env_proc(effect, 300, 300);
-    if (mEv_CheckTitleDemo() != -9) {
+    if (mEv_CheckTitleDemo() != mEv_TITLEDEMO_STAFFROLL) {
         s16 alive_frames;
         if (effect->state == 0) {
             alive_frames = EFFECT_LIFETIME - effect->timer;

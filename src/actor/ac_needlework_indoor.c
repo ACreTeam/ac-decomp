@@ -172,8 +172,8 @@ static void aNI_DrawManekin(ACTOR* actorx, GAME* game) {
 
         _texture_z_light_fog_prim(game->graph);
         Matrix_translate(actor->cloth_move_bg[i].pos.x, actor->cloth_move_bg[i].pos.y,
-                          actor->cloth_move_bg[i].pos.z, 0);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+                          actor->cloth_move_bg[i].pos.z, MTX_LOAD);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
         gSPSegment(NEXT_POLY_OPA_DISP, ANIME_1_TXT_SEG, texture);
         gSPSegment(NEXT_POLY_OPA_DISP, ANIME_2_TXT_SEG, palette);
@@ -199,8 +199,8 @@ static void aNI_DrawUmbrella(ACTOR* actorx, GAME* game) {
 
         _texture_z_light_fog_prim(game->graph);
         Matrix_translate(actor->umbrella_move_bg[i].pos.x, actor->umbrella_move_bg[i].pos.y,
-                          actor->umbrella_move_bg[i].pos.z, 0);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+                          actor->umbrella_move_bg[i].pos.z, MTX_LOAD);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
         gSPSegment(NEXT_POLY_OPA_DISP, ANIME_2_TXT_SEG, texture);
         gSPSegment(NEXT_POLY_OPA_DISP, ANIME_1_TXT_SEG, palette);

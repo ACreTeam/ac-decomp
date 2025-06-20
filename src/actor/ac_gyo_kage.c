@@ -221,10 +221,10 @@ static void aGYO_KAGE_actor_draw(ACTOR* actorx, GAME* game) {
     }
     gyo_kage->alpha = alpha;
 
-    Matrix_translate(actorx->world.position.x, actorx->world.position.y, actorx->world.position.z, 0);
-    Matrix_RotateX(angle_x, 1);
-    Matrix_RotateY(angle_y, 1);
-    Matrix_scale(actorx->scale.x * 0.4f, actorx->scale.y, actorx->scale.z, 1);
+    Matrix_translate(actorx->world.position.x, actorx->world.position.y, actorx->world.position.z, MTX_LOAD);
+    Matrix_RotateX(angle_x, MTX_MULT);
+    Matrix_RotateY(angle_y, MTX_MULT);
+    Matrix_scale(actorx->scale.x * 0.4f, actorx->scale.y, actorx->scale.z, MTX_MULT);
 
     OPEN_DISP(graph);
 

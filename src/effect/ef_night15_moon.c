@@ -120,14 +120,14 @@ static void eNight15Moon_dw(eEC_Effect_c* effect, GAME* game) {
         OPEN_DISP(game->graph);
 
         _texture_z_light_fog_prim_xlu(game->graph);
-        Matrix_translate(effect->position.x + effect->offset.x, effect->position.y + effect->offset.y, effect->position.z + effect->offset.z, 0);
-        Matrix_RotateY(-angle0, 1);
-        Matrix_scale(1.075f, 1.0f, 1.0f, 1);
-        Matrix_RotateY(angle0, 1);
-        Matrix_RotateY(-angle1, 1);
-        Matrix_scale(1.0f, 1.0f, 1.075f, 1);
-        Matrix_RotateY(angle1, 1);
-        Matrix_scale(0.049f, 1.0f, 0.049f, 1);
+        Matrix_translate(effect->position.x + effect->offset.x, effect->position.y + effect->offset.y, effect->position.z + effect->offset.z, MTX_LOAD);
+        Matrix_RotateY(-angle0, MTX_MULT);
+        Matrix_scale(1.075f, 1.0f, 1.0f, MTX_MULT);
+        Matrix_RotateY(angle0, MTX_MULT);
+        Matrix_RotateY(-angle1, MTX_MULT);
+        Matrix_scale(1.0f, 1.0f, 1.075f, MTX_MULT);
+        Matrix_RotateY(angle1, MTX_MULT);
+        Matrix_scale(0.049f, 1.0f, 0.049f, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 40, 255, 255, 100, 170);

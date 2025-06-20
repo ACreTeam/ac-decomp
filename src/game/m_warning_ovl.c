@@ -341,8 +341,8 @@ static void mWR_set_frame_dl(Submenu* submenu, GRAPH* graph, mSM_MenuInfo_c* men
   Gfx* gfx;
   f32 scale = submenu->overlay->warning_ovl->scale * 16.0f;
 
-  Matrix_scale(scale * data->scale_x, scale * data->scale_y, 1.0f, 0);
-  Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, 1);
+  Matrix_scale(scale * data->scale_x, scale * data->scale_y, 1.0f, MTX_LOAD);
+  Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, MTX_MULT);
 
   OPEN_DISP(graph);
   gfx = NOW_POLY_OPA_DISP;
@@ -371,8 +371,8 @@ static void mWR_set_frame_dl(Submenu* submenu, GRAPH* graph, mSM_MenuInfo_c* men
 
     y = (menu_info->position[1] + 60.0f * data->scale_y) - (data->lines[0].pos_y + data->lines[1].pos_y + data->lines[2].pos_y + data->lines[3].pos_y + 8.0f);
 
-    Matrix_scale(scale, scale, 1.0f, 0);
-    Matrix_translate(x, y, 0.0f, 1);
+    Matrix_scale(scale, scale, 1.0f, MTX_LOAD);
+    Matrix_translate(x, y, 0.0f, MTX_MULT);
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(gfx++, att_win_cursor_model);
   }

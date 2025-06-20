@@ -106,8 +106,8 @@ static void aSHR_Present_move(aSHR_Present_c* present, SHRINE_ACTOR* shrine, GAM
             Matrix_push();
             Matrix_translate(shrine->structure_class.actor_class.world.position.x + present->trans.x,
                              shrine->structure_class.actor_class.world.position.y + present->trans.y,
-                             shrine->structure_class.actor_class.world.position.z + present->trans.z, 0);
-            Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+                             shrine->structure_class.actor_class.world.position.z + present->trans.z, MTX_LOAD);
+            Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
             Matrix_get(&handOverItem->tools_class.matrix_work);
             Matrix_pull();
             handOverItem->tools_class.init_matrix = TRUE;

@@ -150,9 +150,9 @@ static int aBT_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int
   switch (joint_idx) {
     case 3:
     {
-      Matrix_translate(boat_actor->actor_class.world.position.x, boat_actor->actor_class.world.position.y, boat_actor->actor_class.world.position.z, 0);
-      Matrix_RotateY(boat_actor->actor_class.shape_info.rotation.y, 1);
-      Matrix_scale(boat_actor->actor_class.scale.x, boat_actor->actor_class.scale.y, boat_actor->actor_class.scale.z, 1);
+      Matrix_translate(boat_actor->actor_class.world.position.x, boat_actor->actor_class.world.position.y, boat_actor->actor_class.world.position.z, MTX_LOAD);
+      Matrix_RotateY(boat_actor->actor_class.shape_info.rotation.y, MTX_MULT);
+      Matrix_scale(boat_actor->actor_class.scale.x, boat_actor->actor_class.scale.y, boat_actor->actor_class.scale.z, MTX_MULT);
       break;
     }
 
