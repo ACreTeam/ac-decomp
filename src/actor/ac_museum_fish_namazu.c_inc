@@ -302,7 +302,7 @@ BOOL mfish_namazu_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
         s = joint_rot->z - (s16)(actor->_640 * (0.6f + GETREG(TAKREG, 0x4E) * 0.01f));
         joint_rot->z = MY_CLAMP(s, DEG2SHORT_ANGLE(-30), DEG2SHORT_ANGLE(30));
         Matrix_scale(1.0f, 1.0f + 0.005f * sin_s(actor->_63A + DEG2SHORT_ANGLE(270)),
-                     1.0f + 0.005f * sin_s(actor->_63A + DEG2SHORT_ANGLE(90)), 1);
+                     1.0f + 0.005f * sin_s(actor->_63A + DEG2SHORT_ANGLE(90)), MTX_MULT);
     }
     return TRUE;
 }

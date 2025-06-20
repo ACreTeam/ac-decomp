@@ -220,12 +220,12 @@ BOOL mfish_seafish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int j
         int s = joint_rot->x + (int)(actor->_618.z * (GETREG(TAKREG, 0x37) * 0.01f + 0.5f));
         joint_rot->x = MIN(MAX(s, DEG2SHORT_ANGLE(-15)), DEG2SHORT_ANGLE(15));
         Matrix_scale(1.0f, (GETREG(TAKREG, 0x36) * 0.001f + 0.035f) * sin_s(actor->_63A + actor->_63C) + 1.0f,
-                     (GETREG(TAKREG, 0x36) * 0.001f + 0.035f) * sin_s(actor->_63A) + 1.0f, 1);
+                     (GETREG(TAKREG, 0x36) * 0.001f + 0.035f) * sin_s(actor->_63A) + 1.0f, MTX_MULT);
     } else if (joint_idx == 2) {
         int v = joint_rot->y - (actor->_618.z << 1);
         joint_rot->y = MIN(MAX(v, DEG2SHORT_ANGLE(-80)), DEG2SHORT_ANGLE(80));
         Matrix_scale(1.0f, sin_s(actor->_63A + DEG2SHORT_ANGLE(270)) * 0.07f + 1.0f,
-                     sin_s(actor->_63A + DEG2SHORT_ANGLE(90)) * 0.07f + 1.0f, 1);
+                     sin_s(actor->_63A + DEG2SHORT_ANGLE(90)) * 0.07f + 1.0f, MTX_MULT);
     }
     return TRUE;
 }

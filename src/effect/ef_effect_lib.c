@@ -98,7 +98,7 @@ static void eEL_AutoMatrixXlu_Offset(GAME* game, xyz_t* pos, xyz_t* scale, xyz_t
     Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
     Matrix_mult(&play->billboard_matrix, MTX_MULT);
     Matrix_translate(offset->x + (f32)(int)GETREG(MYKREG, 24), offset->y + (f32)(int)GETREG(MYKREG, 25),
-                     offset->z + (f32)(int)GETREG(MYKREG, 26), 1);
+                     offset->z + (f32)(int)GETREG(MYKREG, 26), MTX_MULT);
     adj_scale = 1.0f + ((f32)(int)GETREG(MYKREG, 27)) * 0.01f;
     Matrix_scale(scale->x * adj_scale, scale->y * adj_scale, scale->z * adj_scale, MTX_MULT);
 

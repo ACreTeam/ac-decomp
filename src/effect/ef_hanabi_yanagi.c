@@ -91,14 +91,14 @@ static void eHanabiYanagi_dw(eEC_Effect_c* effect, GAME* game) {
     OPEN_DISP(game->graph);
     _texture_z_light_fog_prim_xlu(game->graph);
     Matrix_translate(effect->position.x + effect->offset.x, effect->position.y + effect->offset.y,
-                     effect->position.z + effect->offset.z, FALSE);
+                     effect->position.z + effect->offset.z, MTX_LOAD);
     Matrix_RotateX(DEG2SHORT_ANGLE2(270), MTX_MULT);
     Matrix_RotateZ(-effect->effect_specific[1], MTX_MULT);
     Matrix_scale(v, 1.f, 1.f, MTX_MULT);
     Matrix_RotateZ(effect->effect_specific[1], MTX_MULT);
     Matrix_push();
     Matrix_scale(v2 * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), v2 * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f),
-                 v2 * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), TRUE);
+                 v2 * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), MTX_MULT);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, res1[4], res1[0], res1[1], res1[2], res1[3]);
     gDPSetEnvColor(NEXT_POLY_XLU_DISP, res1[5], res1[6], res1[7], res1[8]);

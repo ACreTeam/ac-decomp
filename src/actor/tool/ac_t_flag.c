@@ -121,7 +121,7 @@ static void aTFL_actor_draw(ACTOR* actor, GAME* game){
     }
     else{
         Matrix_translate(actor->world.position.x, actor->world.position.y, 
-        actor->world.position.z, FALSE);
+        actor->world.position.z, MTX_LOAD);
         Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     }
 

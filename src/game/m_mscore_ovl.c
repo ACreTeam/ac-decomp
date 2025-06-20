@@ -480,7 +480,7 @@ static void mMS_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
             note_moji_p = &note_moji[mscore_ovl->melody[i]];
             Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
             Matrix_translate(base_x + note_moji_p->frame->offset[0],
-                             base_y + note_moji_p->frame->offset[1] + note_moji_p->ofs_y, 0.0f, 1);
+                             base_y + note_moji_p->frame->offset[1] + note_moji_p->ofs_y, 0.0f, MTX_MULT);
 
             if (i == cursor_idx) {
                 Matrix_scale(scale, scale, 1.0f, MTX_MULT);

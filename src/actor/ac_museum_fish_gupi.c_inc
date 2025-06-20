@@ -187,7 +187,7 @@ BOOL mfish_gupi_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int join
         joint_rot->x = MY_CLAMP(s, -DEG2SHORT_ANGLE(30), DEG2SHORT_ANGLE(30));
         joint_rot->z += (s16)(actor->_618.x * (-1.3f + GETREG(TAKREG, 0x4e) * 0.1f));
         Matrix_scale((GETREG(TAKREG, 0x4b) * 0.01f) * cos_s(actor->_63A) + 0.05f + 1.0f,
-                     (GETREG(TAKREG, 0x4c) * 0.01f) * sin_s(actor->_63A) + 0.1f + 1.0f, 1.0f, 1);
+                     (GETREG(TAKREG, 0x4c) * 0.01f) * sin_s(actor->_63A) + 0.1f + 1.0f, 1.0f, MTX_MULT);
     }
     return TRUE;
 }

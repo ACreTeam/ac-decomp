@@ -77,7 +77,7 @@ static void eKamifubuki_one_draw(eEC_Effect_c* effect, xyz_t* pos, GAME* game) {
     Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
     Matrix_RotateVector(effect->effect_specific[0], &effect->offset, MTX_MULT);
     Matrix_scale((GETREG(MYKREG, 0x1b) * 0.01f + 1.f) * 0.003f, (GETREG(MYKREG, 0x1b) * 0.01f + 1.f) * 0.003f,
-                 (GETREG(MYKREG, 0x1b) * 0.01f + 1.f) * 0.003f, TRUE);
+                 (GETREG(MYKREG, 0x1b) * 0.01f + 1.f) * 0.003f, MTX_MULT);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(NEXT_POLY_XLU_DISP, ef_kamihubuki01_00_model);
     CLOSE_DISP(game->graph);

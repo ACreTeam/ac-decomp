@@ -103,7 +103,7 @@ static void eKG_dw(eEC_Effect_c* effect, GAME* game) {
     Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
     Matrix_mult(&play->billboard_matrix, MTX_MULT);
     Matrix_translate(effect->offset.x + GETREG(MYKREG, 0x18), effect->offset.y - 6.0f + GETREG(MYKREG, 0x19),
-                     effect->offset.z + 30.0f + GETREG(MYKREG, 0x1a), TRUE);
+                     effect->offset.z + 30.0f + GETREG(MYKREG, 0x1a), MTX_MULT);
     Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
     Matrix_translate(-475.0f, 950.0f, 0.0f, MTX_MULT);
     Matrix_RotateZ(effect->effect_specific[1], MTX_MULT);
@@ -115,7 +115,7 @@ static void eKG_dw(eEC_Effect_c* effect, GAME* game) {
     Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
     Matrix_mult(&play->billboard_matrix, MTX_MULT);
     Matrix_translate(effect->offset.x + GETREG(MYKREG, 0x18), effect->offset.y - 6.0f + GETREG(MYKREG, 0x19),
-                     effect->offset.z + 30.0f + GETREG(MYKREG, 0x1a), TRUE);
+                     effect->offset.z + 30.0f + GETREG(MYKREG, 0x1a), MTX_MULT);
     Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
     Matrix_translate(475.0f, 0.0f, 0.0f, MTX_MULT);
     Matrix_RotateZ(effect->effect_specific[2], MTX_MULT);

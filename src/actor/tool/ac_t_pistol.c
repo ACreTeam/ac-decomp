@@ -103,7 +103,7 @@ static void aTPT_actor_draw(ACTOR* actor, GAME* game){
     }
     else{
         Matrix_translate(pistol->tools_class.actor_class.world.position.x, pistol->tools_class.actor_class.world.position.y, 
-            pistol->tools_class.actor_class.world.position.z, FALSE);
+            pistol->tools_class.actor_class.world.position.z, MTX_LOAD);
             Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     }
 

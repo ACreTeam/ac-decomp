@@ -264,7 +264,7 @@ BOOL mfish_aroana_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
         joint_rot->x = MIN(MAX(v, DEG2SHORT_ANGLE(-20)), DEG2SHORT_ANGLE(20));
 
         Matrix_scale(1.0f, sin_s(actor->_63A + DEG2SHORT_ANGLE(270)) * 0.05f + 1.0f,
-                     sin_s(actor->_63A + DEG2SHORT_ANGLE(90)) * 0.05f + 1.0f, 1);
+                     sin_s(actor->_63A + DEG2SHORT_ANGLE(90)) * 0.05f + 1.0f, MTX_MULT);
     }
     return 1;
 }

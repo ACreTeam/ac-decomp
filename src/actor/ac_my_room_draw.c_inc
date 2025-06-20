@@ -249,7 +249,7 @@ static void aMR_DrawOneFurniture(FTR_ACTOR* ftr_actor, ACTOR* actorx, GAME* game
                 aFTR_CHECK_INTERACTION(profile->interaction_type, aFTR_INTERACTION_TYPE_FOSSIL) &&
                 profile->shape <= aFTR_SHAPE_TYPEB_0) {
                 Matrix_translate(ftr_actor->base_position.x + 2.5f, ftr_actor->base_position.y,
-                                 ftr_actor->base_position.z, 1);
+                                 ftr_actor->base_position.z, MTX_MULT);
             } else {
                 Matrix_translate(ftr_actor->base_position.x, ftr_actor->base_position.y, ftr_actor->base_position.z, MTX_MULT);
             }

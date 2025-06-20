@@ -219,7 +219,7 @@ void mfish_zarigani_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     }
     OPEN_DISP(gamex->graph);
     Matrix_translate(actor->position.x + actor->_5AC.x, actor->position.y + actor->_5AC.y,
-                     actor->position.z + actor->_5AC.z, 0);
+                     actor->position.z + actor->_5AC.z, MTX_LOAD);
     Matrix_rotateXYZ(actor->_60C.x, actor->_60C.y, actor->_60C.z, MTX_MULT);
     Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z, MTX_MULT);
     Matrix_rotateXYZ(DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE(-180), DEG2SHORT_ANGLE(0), MTX_MULT);

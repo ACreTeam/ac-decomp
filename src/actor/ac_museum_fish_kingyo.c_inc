@@ -236,7 +236,7 @@ BOOL mfish_kingyo_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
         joint_rot->z += (int)(actor->_618.x * (-1.3f + 0.1f * GETREG(TAKREG, 0x4e)));
         Matrix_scale(GETREG(TAKREG, 0x4b) * 0.01f * cos_s(actor->_63A) + 0.05f + 1.0f,
                      GETREG(TAKREG, 0x4c) * 0.01f * sin_s(actor->_63A) + 0.1f + 1.0f,
-                     GETREG(TAKREG, 0x4d) * 0.01f * cos_s(actor->_63A) + 0.1f + 1.0f, 1);
+                     GETREG(TAKREG, 0x4d) * 0.01f * cos_s(actor->_63A) + 0.1f + 1.0f, MTX_MULT);
     }
     return TRUE;
 }

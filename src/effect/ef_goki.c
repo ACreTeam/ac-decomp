@@ -78,7 +78,7 @@ static void eGoki_dw(eEC_Effect_c* effect, GAME* game) {
     Matrix_translate(effect->position.x + effect->offset.x, effect->position.y, effect->position.z, MTX_LOAD);
     Matrix_scale(effect->scale.x * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f),
                  effect->scale.y * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f),
-                 effect->scale.z * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), TRUE);
+                 effect->scale.z * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), MTX_MULT);
     Matrix_mult(&play->billboard_matrix, MTX_MULT);
     Matrix_RotateZ(effect->effect_specific[0], MTX_MULT);
     Evw_Anime_Set(play, ef_goki01_01_evw_anime);

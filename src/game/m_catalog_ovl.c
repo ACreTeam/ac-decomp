@@ -886,7 +886,7 @@ static void mCL_item_draw(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* gam
 
         Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
         Matrix_translate((-143.0f + pos_x) + 58.0f + item->ftr_actor.position.x, (97.0f + pos_y) + item->pos_y, 0.0f,
-                         1);
+                         MTX_MULT);
         Matrix_scale(item->scale, item->scale, 1.0f, MTX_MULT);
 
         OPEN_DISP(graph);

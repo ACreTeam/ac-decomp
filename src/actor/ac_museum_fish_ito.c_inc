@@ -103,7 +103,7 @@ BOOL mfish_ito_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint
         i = joint_rot->x - (actor->_618.z >> 1);
         joint_rot->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20));
         Matrix_scale(1.0f, sin_s(actor->_63A + DEG2SHORT_ANGLE(270)) * 0.05f + 1.0f,
-                     sin_s(actor->_63A + DEG2SHORT_ANGLE(90)) * 0.05f + 1.0f, 1);
+                     sin_s(actor->_63A + DEG2SHORT_ANGLE(90)) * 0.05f + 1.0f, MTX_MULT);
     }
     return TRUE;
 }

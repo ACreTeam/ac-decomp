@@ -222,7 +222,7 @@ extern void watch_my_step_draw(GAME_PLAY* play) {
                 Matrix_push();
                 Matrix_scale(S_watch_my_step.opacity * (S_watch_my_step.scale * 0.75f + 0.25f),
                              S_watch_my_step.opacity * (S_watch_my_step.scale * 0.23333335f + 0.76666665f),
-                             S_watch_my_step.opacity, 1);
+                             S_watch_my_step.opacity, MTX_MULT);
 
                 gSPMatrix(font_gfx++, _Matrix_to_Mtx_new(g), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 Matrix_pull();
@@ -254,7 +254,7 @@ extern void watch_my_step_draw(GAME_PLAY* play) {
 
                 Matrix_push();
                 Matrix_scale(S_watch_my_step.scale * 0.75f + 0.25f, S_watch_my_step.scale * 0.23333335f + 0.76666665f,
-                             1.0f, 1);
+                             1.0f, MTX_MULT);
 
                 gSPMatrix(font_gfx++, _Matrix_to_Mtx_new(g), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 Matrix_pull();

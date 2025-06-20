@@ -252,7 +252,7 @@ static void aMHS_actor_draw(ACTOR* actorx, GAME* game) {
         cKF_Si3_draw_R_SV((GAME*)play, keyframe, mtx, &aMHS_actor_draw_before, &aMHS_actor_draw_after, my_house);
         shadow_data_pp = shadow_data[my_house->arg0];
         Matrix_translate(my_house->actor_class.world.position.x, my_house->actor_class.world.position.y,
-                         my_house->actor_class.world.position.z, 0);
+                         my_house->actor_class.world.position.z, MTX_LOAD);
         Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
         (*Common_Get(clip).bg_item_clip->draw_shadow_proc)((GAME*)play, shadow_data_pp[my_house->action & 1], 0);
         aMHS_actor_draw_ta_clr(my_house, (GAME*)play);

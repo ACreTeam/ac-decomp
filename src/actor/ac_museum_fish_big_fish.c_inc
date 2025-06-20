@@ -179,7 +179,7 @@ BOOL mfish_bfish_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joi
         i = joint_rot->x - (actor->_618.z >> 1);
         joint_rot->x = MY_CLAMP(i, DEG2SHORT_ANGLE(-20), DEG2SHORT_ANGLE(20));
         Matrix_scale(1.0f, 1.0f + v * sin_s(actor->_63A + DEG2SHORT_ANGLE(270)),
-                     1.0f + v * sin_s(actor->_63A + DEG2SHORT_ANGLE(90)), 1);
+                     1.0f + v * sin_s(actor->_63A + DEG2SHORT_ANGLE(90)), MTX_MULT);
     } else if (joint_idx == 3 && actor->fish_idx == aGYO_TYPE_ARAPAIMA) {
         int i = joint_rot->y - actor->_618.z +
                 (int)(actor->_644 * (1.0f + 0.01f * GETREG(TAKREG, 0x16)) *

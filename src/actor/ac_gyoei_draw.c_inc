@@ -71,7 +71,7 @@ static void aGYO_actor_draw_fish(GRAPH* graph, aGYO_CTRL_ACTOR* ctrl, GAME* game
     int frame;
 
     Matrix_translate(((ACTOR*)ctrl)->world.position.x, ((ACTOR*)ctrl)->world.position.y - aGYO_hosei_y[ctrl->gyo_type],
-                     ((ACTOR*)ctrl)->world.position.z, 0);
+                     ((ACTOR*)ctrl)->world.position.z, MTX_LOAD);
     Matrix_mult(&play->billboard_matrix, MTX_MULT);
 
     if (ctrl->gyo_type < (aGYO_TYPE_WHALE + 1) && (ctrl->gyo_flags & 0x200) != 0) {
@@ -178,7 +178,7 @@ static void aGYO_actor_draw_gyoei(GRAPH* graph, aGYO_CTRL_ACTOR* ctrl, GAME* gam
     }
 
     Matrix_translate(((ACTOR*)ctrl)->world.position.x, ((ACTOR*)ctrl)->world.position.y,
-                     ((ACTOR*)ctrl)->world.position.z, 0);
+                     ((ACTOR*)ctrl)->world.position.z, MTX_LOAD);
     Matrix_RotateX(angleX, MTX_MULT);
     Matrix_RotateY(angleY, MTX_MULT);
     Matrix_scale(((ACTOR*)ctrl)->scale.x * 0.4f, ((ACTOR*)ctrl)->scale.y, ((ACTOR*)ctrl)->scale.z, MTX_MULT);

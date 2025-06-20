@@ -156,14 +156,14 @@ BOOL mfish_kaseki_before_disp(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
         i = joint_rot->x + (int)(actor->_618.z * (GETREG(TAKREG, 0x47) * 0.01f + 0.5f));
         joint_rot->x = MIN(MAX(i, DEG2SHORT_ANGLE(-10)), DEG2SHORT_ANGLE(10));
         Matrix_scale(1.0f, (GETREG(TAKREG, 0x36) * 0.001f + 0.02f) * sin_s(actor->_63A + actor->_63C) + 1.0f,
-                     (GETREG(TAKREG, 0x36) * 0.001f + 0.02f) * sin_s(actor->_63A) + 1.0f, 1);
+                     (GETREG(TAKREG, 0x36) * 0.001f + 0.02f) * sin_s(actor->_63A) + 1.0f, MTX_MULT);
     } else if (joint_idx == 2) {
         i = joint_rot->y - (int)(actor->_618.z * (GETREG(TAKREG, 0x46) * 0.01f + 1.25f));
         joint_rot->y = MIN(MAX(i, DEG2SHORT_ANGLE(-50)), DEG2SHORT_ANGLE(50));
         i = joint_rot->x - (int)(actor->_618.z * (GETREG(TAKREG, 0x48) * 0.01f + 0.25f));
         joint_rot->x = MIN(MAX(i, DEG2SHORT_ANGLE(-10)), DEG2SHORT_ANGLE(10));
         Matrix_scale(1.0f, (GETREG(TAKREG, 0x37) * 0.001f + 0.045f) * sin_s(actor->_63A + DEG2SHORT_ANGLE(270)) + 1.0f,
-                     (GETREG(TAKREG, 0x37) * 0.001f + 0.045f) * sin_s(actor->_63A + DEG2SHORT_ANGLE(90)) + 1.0f, 1);
+                     (GETREG(TAKREG, 0x37) * 0.001f + 0.045f) * sin_s(actor->_63A + DEG2SHORT_ANGLE(90)) + 1.0f, MTX_MULT);
     } else if (joint_idx == 3) {
         i = joint_rot->y - (int)(actor->_618.z * (GETREG(TAKREG, 0x47) * 0.01f + 1.25f));
         joint_rot->y = MIN(MAX(i, DEG2SHORT_ANGLE(-50)), DEG2SHORT_ANGLE(50));

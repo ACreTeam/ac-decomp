@@ -73,7 +73,7 @@ static void Mural_Actor_draw(ACTOR* actorx, GAME* game) {
             OPEN_DISP(game->graph);
 
             Matrix_translate(actorx->world.position.x + x * 24.0f, actorx->world.position.y - y * 24.0f,
-                             actorx->world.position.z, 0);
+                             actorx->world.position.z, MTX_LOAD);
             Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
             /* Segment 8 holds the palette */

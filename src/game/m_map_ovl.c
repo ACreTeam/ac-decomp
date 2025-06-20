@@ -747,7 +747,7 @@ static void mMP_set_house_dl(GRAPH* graph, mMP_Ovl_c* map_ovl, f32 pos_x, f32 po
                 for (i = 0; i < label_info->label_cnt; i++) {
                     Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
                     Matrix_translate(temp_x + offset_x[(*resident_p)->house_idx % 3],
-                                     base_y + offset_y[(*resident_p)->house_idx / 3], 140.0f, 1);
+                                     base_y + offset_y[(*resident_p)->house_idx / 3], 140.0f, MTX_MULT);
 
                     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                     gSPDisplayList(gfx++, kan_win_npc2T_table[(*resident_p)->house_layer]);

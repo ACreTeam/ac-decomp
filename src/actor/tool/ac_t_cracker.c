@@ -103,7 +103,7 @@ static void aTCR_actor_draw(ACTOR* actor, GAME* game){
     }
     else{
         Matrix_translate(cracker->tools_class.actor_class.world.position.x, cracker->tools_class.actor_class.world.position.y, 
-            cracker->tools_class.actor_class.world.position.z, FALSE);
+            cracker->tools_class.actor_class.world.position.z, MTX_LOAD);
             Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     }
 

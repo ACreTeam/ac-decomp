@@ -176,7 +176,7 @@ void minsect_hachi_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     Matrix_rotateXYZ(DEG2SHORT_ANGLE(-20), 0, 0, MTX_MULT);
     Matrix_translate(0.0f, actor->_1C.y, 0.0f, MTX_MULT);
     Matrix_translate(-GETREG(NMREG, 0x10) * 0.01f, -GETREG(NMREG, 0x11) * 0.01f, -15.f - GETREG(NMREG, 0xe) * 0.01f,
-                     TRUE);
+                     MTX_MULT);
     Matrix_rotateXYZ(0, actor->_68.y, 0, MTX_MULT);
     Matrix_translate(GETREG(NMREG, 0x10) * 0.01f, GETREG(NMREG, 0x11) * 0.01f, 15.f + GETREG(NMREG, 0xe) * 0.01f, MTX_MULT);
     Matrix_rotateXYZ(0, 0, actor->_68.z, MTX_MULT);

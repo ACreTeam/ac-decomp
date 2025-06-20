@@ -151,7 +151,7 @@ static void setup_mode_Ef_Room_Sunshine_Police(ACTOR* actor, GAME_PLAY* play) {
     OPEN_DISP(graph);
 
     Matrix_translate(sunshine->actor_class.world.position.x, sunshine->actor_class.world.position.y,
-                     sunshine->actor_class.world.position.z, 0);
+                     sunshine->actor_class.world.position.z, MTX_LOAD);
     Matrix_scale(sunshine->actor_class.scale.x, sunshine->actor_class.scale.y, sunshine->actor_class.scale.z, MTX_MULT);
 
     gDPPipeSync(NEXT_POLY_XLU_DISP);
