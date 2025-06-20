@@ -718,17 +718,17 @@ void Matrix_to_rotate_new(MtxF* curm, s_xyz* vec, int flag) {
     temp = curm->xz;
     temp *= temp;
     temp += (curm->zz * curm->zz);
-    vec->x = (fatan2(-curm->yz, sqrtf(temp)) * 10430.3779297f);
+    vec->x = RAD2SHORT_ANGLE2(fatan2(-curm->yz, sqrtf(temp)));
 
-    if ((vec->x == 0x4000) || (vec->x == -0x4000)) {
+    if ((vec->x == DEG2SHORT_ANGLE2(90.0f)) || (vec->x == DEG2SHORT_ANGLE2(-90.0f))) {
         vec->z = 0;
 
-        vec->y = (fatan2(-curm->zx, curm->xx) * 10430.3779297f);
+        vec->y = RAD2SHORT_ANGLE2(fatan2(-curm->zx, curm->xx));
     } else {
-        vec->y = (fatan2(curm->xz, curm->zz) * 10430.3779297f);
+        vec->y = RAD2SHORT_ANGLE2(fatan2(curm->xz, curm->zz));
 
-        if (!flag) {
-            vec->z = (fatan2(curm->yx, curm->yy) * 10430.3779297f);
+        if (flag == MTX_LOAD) {
+            vec->z = RAD2SHORT_ANGLE2(fatan2(curm->yx, curm->yy));
         } else {
             temp = curm->xx;
 
@@ -749,7 +749,7 @@ void Matrix_to_rotate_new(MtxF* curm, s_xyz* vec, int flag) {
 
             /* for a rotation matrix, temp == yx and temp2 == yy
              * which is the same as in the !flag branch */
-            vec->z = (fatan2(temp, temp2) * 10430.3779297f);
+            vec->z = RAD2SHORT_ANGLE2(fatan2(temp, temp2));
         }
     }
 }
@@ -763,16 +763,16 @@ void Matrix_to_rotate2_new(MtxF* curm, s_xyz* v, int flag) {
     temp = curm->xx;
     temp *= temp;
     temp += (curm->yx * curm->yx);
-    v->y = (fatan2(-curm->zx, sqrtf(temp))) * 10430.3779297f;
+    v->y = RAD2SHORT_ANGLE2(fatan2(-curm->zx, sqrtf(temp)));
 
-    if ((v->y == 0x4000) || (v->y == -0x4000)) {
+    if ((v->y == DEG2SHORT_ANGLE2(90.0f)) || (v->y == DEG2SHORT_ANGLE2(-90.0f))) {
         v->x = 0;
-        v->z = (fatan2(-curm->xy, curm->yy) * 10430.3779297f);
+        v->z = RAD2SHORT_ANGLE2(fatan2(-curm->xy, curm->yy));
     } else {
-        v->z = (fatan2(curm->yx, curm->xx) * 10430.3779297f);
+        v->z = RAD2SHORT_ANGLE2(fatan2(curm->yx, curm->xx));
 
-        if (!flag) {
-            v->x = (fatan2(curm->zy, curm->zz) * 10430.3779297f);
+        if (flag == MTX_LOAD) {
+            v->x = RAD2SHORT_ANGLE2(fatan2(curm->zy, curm->zz));
         } else {
             temp = curm->xy;
 
@@ -791,7 +791,7 @@ void Matrix_to_rotate2_new(MtxF* curm, s_xyz* v, int flag) {
             /* temp2 = xz^2+yz^2+zz^2 == 1 for a rotation matrix */
             temp2 = temp3 / sqrtf(temp2);
 
-            v->x = (fatan2(temp, temp2) * 10430.3779297f);
+            v->x = RAD2SHORT_ANGLE2(fatan2(temp, temp2));
         }
     }
 }
