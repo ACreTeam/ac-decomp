@@ -245,7 +245,7 @@ static void aHWN_change_talk_proc(HALLOWEEN_NPC_ACTOR* actorx, int talk_proc_idx
 static void aHWN_set_force_talk_info(ACTOR* actorx) {
     HALLOWEEN_NPC_ACTOR* hwn_actor = (HALLOWEEN_NPC_ACTOR*)actorx;
 
-    mDemo_Set_msg_num(0x098A);
+    mDemo_Set_msg_num(MSG_2442);
     mDemo_Set_talk_turn(TRUE);
     aHWN_change_talk_proc(hwn_actor, aHWN_TALK_FIRST_CALL_TALK);
 }
@@ -273,7 +273,7 @@ static void aHWN_force_talk_request(ACTOR* actorx, GAME* game) {
 static void aHWN_set_norm_talk_info(HALLOWEEN_NPC_ACTOR* actorx) {
     int looks = mNpc_GetLooks(actorx->npc_class.npc_info.event->npc_id);
 
-    mDemo_Set_msg_num(0x09AF + looks);
+    mDemo_Set_msg_num(MSG_2479 + looks);
     aHWN_change_talk_proc(actorx, aHWN_TALK_END_WAIT);
 }
 
@@ -292,8 +292,7 @@ static BOOL aHWN_talk_end_chk(ACTOR* actorx, GAME* game) {
     BOOL res = FALSE;
 
     hwn_actor->talk_proc(hwn_actor, play);
-    if ((mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE) &&
-        (mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE)) {
+    if ((mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE) && (mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE)) {
         if (hwn_actor->npc_class.schedule.step == 1) {
             hwn_actor->npc_class.think.end_flag = TRUE;
         }

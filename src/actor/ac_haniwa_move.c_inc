@@ -158,11 +158,11 @@ static int aHNW_decide_msg_idx_dance(ACTOR* actor) {
 
 static void aHNW_set_talk_info_dance(ACTOR* actor) {
     static int msg_no[aHNW_MSG_NUM] = {
-        0x0934, /* aHNW_MSG_NO_OWNER */
-        0x0935, /* aHNW_MSG_PROCEEDS */
-        0x0925, /* aHNW_MSG_NORMAL */
-        0x0928, /* aHNW_MSG_OTHER_OWNER */
-        0x092E  /* aHNW_MSG_NEED_FRIEND */
+        MSG_2356, /* aHNW_MSG_NO_OWNER */
+        MSG_2357, /* aHNW_MSG_PROCEEDS */
+        MSG_2341, /* aHNW_MSG_NORMAL */
+        MSG_2344, /* aHNW_MSG_OTHER_OWNER */
+        MSG_2350  /* aHNW_MSG_NEED_FRIEND */
     };
 
     HANIWA_ACTOR* haniwa = (HANIWA_ACTOR*)actor;

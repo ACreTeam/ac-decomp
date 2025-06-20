@@ -70,17 +70,23 @@ static void aHN1_setupAction(HANABI_NPC1_ACTOR* actor, int action) {
     actor->act_proc = process[action];
     actor->npc_class.draw.loop_flag = anm_loop_base[action] + RANDOM(anm_loop_rnd[action]);
     aHN1_set_animation(actor, action);
-    
+
     switch (action) {
         case aHN1_ACT_HURRAHS:
-            actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+            actor->npc_class.condition_info.demo_flg =
+                aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+                aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
             break;
         case aHN1_ACT_CLAPPING:
             actor->clap_se_no = clap_se_no[RANDOM(ARRAY_COUNT(clap_se_no))];
-            actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+            actor->npc_class.condition_info.demo_flg =
+                aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y |
+                aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
             break;
         default:
-            actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+            actor->npc_class.condition_info.demo_flg =
+                aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y |
+                aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
             break;
     }
 }
@@ -117,7 +123,7 @@ static void aHN1_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
         if (actor->npc_class.action.idx == aNPC_ACT_SPECIAL) {
             aNPC_attention_c* attention_p = &NPC_CLIP->attention;
             int next_act;
-            
+
             if (attention_p->type == aNPC_ATT_TYPE_NONE) {
                 next_act = aHN1_ACT_FAN;
             } else {
@@ -170,7 +176,7 @@ static void aHN1_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     nactorx->condition_info.hide_request = FALSE;
     nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
     actorx->status_data.weight = MASSTYPE_HEAVY;
-    
+
     {
         int pool_idx = mFI_GetPuleIdx();
         int npc_idx = actorx->npc_id - SP_NPC_EV_HANABI_1;
@@ -201,7 +207,7 @@ static void aHN1_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
 }
 
 static void aHN1_set_talk_info(ACTOR* actorx) {
-    static int msg_base[mNpc_LOOKS_NUM] = { 0x1652, 0x1661, 0x1643, 0x1670, 0x167F, 0x168E };
+    static int msg_base[mNpc_LOOKS_NUM] = { MSG_5714, MSG_5729, MSG_5699, MSG_5744, MSG_5759, MSG_5774 };
     HANABI_NPC1_ACTOR* actor = (HANABI_NPC1_ACTOR*)actorx;
     int looks = mNpc_GetNpcLooks(actorx);
 

@@ -79,7 +79,8 @@ static void aHN0_revise_moveRange(ACTOR* actorx) {
 }
 
 static void aHN0_turn(HANABI_NPC0_ACTOR* actor) {
-    if (chase_angle(&actor->npc_class.actor_class.shape_info.rotation.y, actor->npc_class.movement.mv_angl, DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
+    if (chase_angle(&actor->npc_class.actor_class.shape_info.rotation.y, actor->npc_class.movement.mv_angl,
+                    DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
         actor->next_action = aHN0_ACT_WALK;
         actor->npc_class.action.step = aNPC_ACTION_END_STEP;
     }
@@ -138,13 +139,16 @@ static void aHN0_setupAction(HANABI_NPC0_ACTOR* actor, int action) {
     actor->act_proc = process[action];
     aHN0_set_animation(actor, action);
     aHN0_set_spd_info(actor, action);
-    
+
     if (action == aHN0_ACT_HURRAHS) {
         actor->npc_class.movement.mv_angl = actor->base_angle;
         actor->npc_class.movement.mv_add_angl = DEG2SHORT_ANGLE2(11.25f);
-        actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+        actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
+                                                   aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV |
+                                                   aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
     } else {
-        actor->npc_class.condition_info.demo_flg = aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+        actor->npc_class.condition_info.demo_flg =
+            aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
     }
 }
 
@@ -177,7 +181,7 @@ static void aHN0_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     if (nactorx->action.step == aNPC_ACTION_END_STEP) {
         if (nactorx->action.idx == aNPC_ACT_SPECIAL) {
             int next_act;
-            
+
             if (actor->next_action != -1) {
                 next_act = actor->next_action;
             } else {
@@ -243,7 +247,7 @@ static void aHN0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     actor->next_action = -1;
     nactorx->condition_info.hide_request = FALSE;
     actorx->status_data.weight = MASSTYPE_HEAVY;
-    
+
     angle = RANDOM_F(65536.0f);
     actorx->shape_info.rotation.y = angle;
     actorx->world.angle.y = angle;
@@ -267,7 +271,7 @@ static void aHN0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
 }
 
 static void aHN0_set_talk_info(ACTOR* actorx) {
-    static int msg_base[mNpc_LOOKS_NUM] = { 0x164F, 0x165E, 0x1640, 0x166D, 0x167C, 0x168B };
+    static int msg_base[mNpc_LOOKS_NUM] = { MSG_5711, MSG_5726, MSG_5696, MSG_5741, MSG_5756, MSG_5771 };
     int looks = mNpc_GetNpcLooks(actorx);
 
     mDemo_Set_msg_num(msg_base[looks] + RANDOM(3));

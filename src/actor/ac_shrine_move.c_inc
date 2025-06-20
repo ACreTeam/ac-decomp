@@ -62,7 +62,7 @@ static int aSHR_talk_check(ACTOR* actorx, GAME_PLAY* play) {
 static void aSHR_set_talk_info(ACTOR* actorx) {
     rgba_t window_color;
 
-    mDemo_Set_msg_num(0x1124);
+    mDemo_Set_msg_num(MSG_4388);
     mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_ListenAble();

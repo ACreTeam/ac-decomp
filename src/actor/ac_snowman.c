@@ -78,7 +78,7 @@ static int aSMAN_process_combine_head(ACTOR* actorx, GAME* game);
 static void aSMAN_actor_ct(ACTOR* actorx, GAME* game) {
     static int part_tbl[] = { aSMAN_PART0, aSMAN_PART1 };
     SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
-    
+
     if (actorx->npc_id == ETC_SNOWMAN_BALL_A) {
         f32* move_dist = (f32*)mEv_get_common_area(mEv_EVENT_SNOWMAN_SEASON, aSMAN_PART0);
 
@@ -149,7 +149,8 @@ static void aSMAN_actor_dt(ACTOR* actorx, GAME* game) {
             mEv_clear_common_place(mEv_EVENT_SNOWMAN_SEASON, 100 + aSMAN_PART0);
             mEv_clear_common_area(mEv_EVENT_SNOWMAN_SEASON, aSMAN_PART0);
         } else {
-            if ((actor->flags & aSMAN_FLAG_IN_HOLE) || (actor->flags & aSMAN_FLAG_MOVED) || !mRlib_Set_Position_Check(actorx)) {
+            if ((actor->flags & aSMAN_FLAG_IN_HOLE) || (actor->flags & aSMAN_FLAG_MOVED) ||
+                !mRlib_Set_Position_Check(actorx)) {
                 mEv_clear_common_place(mEv_EVENT_SNOWMAN_SEASON, 100 + aSMAN_PART0);
                 mEv_clear_common_area(mEv_EVENT_SNOWMAN_SEASON, aSMAN_PART0);
             } else {
@@ -173,7 +174,8 @@ static void aSMAN_actor_dt(ACTOR* actorx, GAME* game) {
             mEv_clear_common_place(mEv_EVENT_SNOWMAN_SEASON, 100 + aSMAN_PART1);
             mEv_clear_common_area(mEv_EVENT_SNOWMAN_SEASON, aSMAN_PART1);
         } else {
-            if ((actor->flags & aSMAN_FLAG_IN_HOLE) || (actor->flags & aSMAN_FLAG_MOVED) || !mRlib_Set_Position_Check(actorx)) {
+            if ((actor->flags & aSMAN_FLAG_IN_HOLE) || (actor->flags & aSMAN_FLAG_MOVED) ||
+                !mRlib_Set_Position_Check(actorx)) {
                 mEv_clear_common_place(mEv_EVENT_SNOWMAN_SEASON, 100 + aSMAN_PART1);
                 mEv_clear_common_area(mEv_EVENT_SNOWMAN_SEASON, aSMAN_PART1);
             } else {
@@ -222,7 +224,8 @@ static void aSMAN_GetSnowmanPresentMail(Mail_c* mail) {
     mail_idx += rnd;
     mIN_copy_name_str(item_name, item);
     mHandbill_Set_free_str(mHandbill_FREE_STR0, item_name, sizeof(item_name));
-    mHandbill_Load_HandbillFromRom(mail->content.header, &header_back_start, mail->content.footer, mail->content.body, mail_idx);
+    mHandbill_Load_HandbillFromRom(mail->content.header, &header_back_start, mail->content.footer, mail->content.body,
+                                   mail_idx);
     mail->content.header_back_start = header_back_start;
     mail->content.font = mMl_FONT_RECV;
     mail->content.mail_type = mMl_TYPE_SNOWMAN;
@@ -289,10 +292,12 @@ static int aSMAN_FG_Position_Get(ACTOR* actorx) {
         pos.y = mCoBG_GetBgY_AngleS_FromWpos(NULL, pos, 0.0f);
         // @optimization - function call inside of ABS macro...
         ground_y = ABS(pos.y - mCoBG_GetBgY_AngleS_FromWpos(NULL, actorx->world.position, 0.0f));
-        item = *mFI_GetUnitFG(pos); // @BUG - they don't check for NULL here, and mFI_GetUnitFG can return a NULL pointer.
+        item =
+            *mFI_GetUnitFG(pos); // @BUG - they don't check for NULL here, and mFI_GetUnitFG can return a NULL pointer.
         attr = mCoBG_Wpos2Attribute(pos, NULL);
 
-        if (!mCoBG_ExistHeightGap_KeepAndNow(pos) && item != RSV_NO && item != RSV_WALL_NO && attr != mCoBG_ATTRIBUTE_STONE && attr != mCoBG_ATTRIBUTE_WOOD && ground_y < 60.0f) {
+        if (!mCoBG_ExistHeightGap_KeepAndNow(pos) && item != RSV_NO && item != RSV_WALL_NO &&
+            attr != mCoBG_ATTRIBUTE_STONE && attr != mCoBG_ATTRIBUTE_WOOD && ground_y < 60.0f) {
             actor->fg_pos = pos;
             return TRUE;
         }
@@ -304,7 +309,7 @@ static int aSMAN_FG_Position_Get(ACTOR* actorx) {
 
 static void aSMAN_House_Tree_Rev_Check(ACTOR* actorx) {
     SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
-    
+
     if (mRlib_HeightGapCheck_And_ReversePos(actorx) != TRUE) {
         actor->flags |= aSMAN_FLAG_MOVED;
         Actor_delete(actorx);
@@ -313,12 +318,13 @@ static void aSMAN_House_Tree_Rev_Check(ACTOR* actorx) {
 
 static void aSMAN_Make_Effect_Ground(ACTOR* actorx, GAME* game) {
     SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
-    
+
     if (actor->normalized_scale < 0.2f) {
         return;
     }
 
-    if ((game->frame_counter & 0xF) == 0 && actorx->bg_collision_check.result.unit_attribute == mCoBG_ATTRIBUTE_BUSH && actorx->speed > 1.0f) {
+    if ((game->frame_counter & 0xF) == 0 && actorx->bg_collision_check.result.unit_attribute == mCoBG_ATTRIBUTE_BUSH &&
+        actorx->speed > 1.0f) {
         xyz_t pos = actorx->world.position;
         s16 arg;
         s16 angle;
@@ -368,7 +374,8 @@ static int aSMAN_get_ground_norm(ACTOR* actorx, xyz_t* norm, xyz_t* pos) {
         s16 norm_rate;
         s16 angle;
 
-        if (mRlib_Get_ground_norm_inHole(actorx, norm, &hole_dist, &angle, &norm_rate, 1.0f - actor->normalized_scale * 0.5f)) {
+        if (mRlib_Get_ground_norm_inHole(actorx, norm, &hole_dist, &angle, &norm_rate,
+                                         1.0f - actor->normalized_scale * 0.5f)) {
             aSMAN_get_hole_offset(actorx, hole_dist);
             if ((actor->flags & aSMAN_FLAG_IN_HOLE) == 0) {
                 s16 angle_mod;
@@ -424,7 +431,7 @@ static int aSMAN_player_push_HitWallCheck(ACTOR* actorx, GAME* game) {
     u32 hit_attr_wall = playerx->bg_collision_check.result.hit_attribute_wall;
     s16 wall_angle;
     s16 dAngle;
-    
+
     if ((hit_wall & mCoBG_HIT_WALL) || (hit_attr_wall & mCoBG_HIT_WALL)) {
         wall_angle = mRlib_Get_HitWallAngleY(actorx);
         dAngle = (wall_angle - playerx->world.angle.y) + DEG2SHORT_ANGLE2(180.0f);
@@ -467,7 +474,8 @@ static void aSMAN_set_speed_relations_norm_player_push(ACTOR* actorx, GAME* game
     s16 dAngle = ABS(actorx->world.angle.y - playerx->world.angle.y);
     xyz_t norm;
 
-    if (aSMAN_get_ground_norm(actorx, &norm, &actorx->world.position) && (!F32_IS_ZERO(norm.x) || !F32_IS_ZERO(norm.z))) {
+    if (aSMAN_get_ground_norm(actorx, &norm, &actorx->world.position) &&
+        (!F32_IS_ZERO(norm.x) || !F32_IS_ZERO(norm.z))) {
         if (dAngle < DEG2SHORT_ANGLE2(90.0f)) {
             f32 accel = 0.3f + actor->normalized_scale * 0.099999994f;
             f32 norm_speed;
@@ -476,7 +484,8 @@ static void aSMAN_set_speed_relations_norm_player_push(ACTOR* actorx, GAME* game
             actorx->position_speed.x += norm.x * accel;
             actorx->position_speed.z += norm.z * accel;
             mRlib_spdXZ_to_spdF_Angle(&actorx->position_speed, &norm_speed, &actorx->world.angle.y);
-            actor->base_speed = norm_speed + (actor->normalized_scale * 0.02f + 0.01f) * (actor->base_speed - norm_speed);
+            actor->base_speed =
+                norm_speed + (actor->normalized_scale * 0.02f + 0.01f) * (actor->base_speed - norm_speed);
         } else if (actorx->speed > 0.5f) {
             actor->base_speed = 0.0f;
             actor->accel = 0.0f;
@@ -523,7 +532,8 @@ static int aSMAN_status_check_in_move(SNOWMAN_ACTOR* actor, GAME* game) {
         ret = TRUE;
     }
 
-    if (ret == TRUE && (actor->process == aSMAN_process_player_push || actor->process == aSMAN_process_player_push_scroll)) {
+    if (ret == TRUE &&
+        (actor->process == aSMAN_process_player_push || actor->process == aSMAN_process_player_push_scroll)) {
         aSMAN_player_push_free(game);
     }
 
@@ -535,7 +545,7 @@ static void aSMAN_position_move(ACTOR* actorx) {
 
     mCoBG_GetBgY_AngleS_FromWpos(&actor->ground_angle, actorx->world.position, 0.0f);
     chase_f(&actorx->speed, actor->base_speed, actor->accel);
-    
+
     if ((actor->flags & aSMAN_FLAG_COMBINED) != 0 || (actor->flags & aSMAN_FLAG_IN_HOLE) != 0 ||
         actor->process == aSMAN_process_combine_body || actor->process == aSMAN_process_player_push_scroll) {
         return;
@@ -549,16 +559,19 @@ static int aSMAN_BGcheck(ACTOR* actorx, GAME* game) {
     SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
     f32 r = actor->normalized_scale * 20.0f + 10.0f;
 
-    if ((actor->flags & aSMAN_FLAG_COMBINED) != 0 || actor->process == aSMAN_process_combine_head_jump || actor->process == aSMAN_process_combine_body) {
+    if ((actor->flags & aSMAN_FLAG_COMBINED) != 0 || actor->process == aSMAN_process_combine_head_jump ||
+        actor->process == aSMAN_process_combine_body) {
         return FALSE;
     }
 
     if (actor->process == aSMAN_process_swim) {
-        mCoBG_BgCheckControll(&actor->rev_pos, actorx, r, -r, mCoBG_WALL_TYPE0, mCoBG_REVERSE_TYPE_NO_REVERSE, mCoBG_CHECK_TYPE_NORMAL);
+        mCoBG_BgCheckControll(&actor->rev_pos, actorx, r, -r, mCoBG_WALL_TYPE0, mCoBG_REVERSE_TYPE_NO_REVERSE,
+                              mCoBG_CHECK_TYPE_NORMAL);
         actorx->world.position.x += actor->rev_pos.x;
         actorx->world.position.z += actor->rev_pos.z;
     } else {
-        mCoBG_BgCheckControll(&actor->rev_pos, actorx, r, -r, mCoBG_WALL_TYPE0, mCoBG_REVERSE_TYPE_REVERSE, mCoBG_CHECK_TYPE_NORMAL);
+        mCoBG_BgCheckControll(&actor->rev_pos, actorx, r, -r, mCoBG_WALL_TYPE0, mCoBG_REVERSE_TYPE_REVERSE,
+                              mCoBG_CHECK_TYPE_NORMAL);
         mRlib_Station_step_modify_to_wall(actorx);
 
         if (actorx->world.position.y - actorx->last_world_position.y > 60.0f) {
@@ -581,7 +594,6 @@ static int aSMAN_BGcheck(ACTOR* actorx, GAME* game) {
             return FALSE;
         }
 
-
         diff = actorx->world.angle.y - (angle - DEG2SHORT_ANGLE2(-180.0f));
         if (speed > 0.0f) {
             f32 speed2 = actorx->speed * cos_s(colAngle);
@@ -590,7 +602,8 @@ static int aSMAN_BGcheck(ACTOR* actorx, GAME* game) {
             speed *= 0.7f;
             actorx->speed = sqrtf(SQ(speed) + SQ(speed2));
 
-            if (actor->process != aSMAN_process_player_push && !actorx->bg_collision_check.result.is_in_water && actorx->speed > 0.5f) {
+            if (actor->process != aSMAN_process_player_push && !actorx->bg_collision_check.result.is_in_water &&
+                actorx->speed > 0.5f) {
                 sAdo_OngenTrgStartSpeed(actorx->speed, 0x103, &actorx->world.position);
             }
         } else {
@@ -611,7 +624,7 @@ static int aSMAN_BGcheck(ACTOR* actorx, GAME* game) {
 static int aSMAN_snowman_hit_check(SNOWMAN_ACTOR* actor, GAME* game, ACTOR* oc_actorx) {
     int b_ux;
     int b_uz;
-    
+
     actor->col_actor = oc_actorx;
     if (oc_actorx->id == mAc_PROFILE_SNOWMAN) {
         SNOWMAN_ACTOR* oc_actor = (SNOWMAN_ACTOR*)oc_actorx;
@@ -630,14 +643,18 @@ static int aSMAN_snowman_hit_check(SNOWMAN_ACTOR* actor, GAME* game, ACTOR* oc_a
 
         attr = mCoBG_Wpos2Attribute(center_pos, NULL);
         mFI_Wpos2UtNum_inBlock(&b_ux, &b_uz, center_pos);
-        if (attr == mCoBG_ATTRIBUTE_STONE || attr == mCoBG_ATTRIBUTE_WOOD || mCoBG_Wpos2CheckSlateCol(&center_pos, FALSE) || b_ux == 0 || b_ux == (UT_X_NUM - 1) || b_uz == 0 || b_uz == (UT_Z_NUM - 1) || (oc_actor->flags & aSMAN_FLAG_IN_HOLE) != 0 || oc_actor->ground_angle.x != 0 || oc_actor->ground_angle.z != 0 || !aSNOWMAN_player_block_check((ACTOR*)actor, game)) {
+        if (attr == mCoBG_ATTRIBUTE_STONE || attr == mCoBG_ATTRIBUTE_WOOD ||
+            mCoBG_Wpos2CheckSlateCol(&center_pos, FALSE) || b_ux == 0 || b_ux == (UT_X_NUM - 1) || b_uz == 0 ||
+            b_uz == (UT_Z_NUM - 1) || (oc_actor->flags & aSMAN_FLAG_IN_HOLE) != 0 || oc_actor->ground_angle.x != 0 ||
+            oc_actor->ground_angle.z != 0 || !aSNOWMAN_player_block_check((ACTOR*)actor, game)) {
             return FALSE;
         }
 
-        if (actor->snowman_part != oc_actor->snowman_part && actor->normalized_scale > 0.2f && oc_actor->normalized_scale > 0.2f) {
+        if (actor->snowman_part != oc_actor->snowman_part && actor->normalized_scale > 0.2f &&
+            oc_actor->normalized_scale > 0.2f) {
             actor->actor_class.status_data.weight = MASSTYPE_HEAVY;
             oc_actorx->status_data.weight = MASSTYPE_HEAVY;
-            
+
             if (oc_actor->process == aSMAN_process_player_push || actor->process == aSMAN_process_player_push) {
                 aSMAN_player_push_free(game);
             }
@@ -675,7 +692,7 @@ static void aSMAN_OBJcheck(SNOWMAN_ACTOR* actor, GAME* game) {
 
             if (actor->col_actor != oc_actorx && !aSMAN_snowman_hit_check(actor, game, oc_actorx)) {
                 f32 rate = (1.0f - actor->normalized_scale) * 0.4f;
-                
+
                 tmp = oc_actorx->position_speed;
                 xyz_t_mult_v(&tmp, rate);
                 if (oc_actorx->speed > 0.5f) {
@@ -712,7 +729,8 @@ static void aSMAN_set_speed_relations_norm(ACTOR* actorx) {
     SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
     xyz_t norm;
 
-    if (aSMAN_get_ground_norm(actorx, &norm, &actorx->world.position) && (!F32_IS_ZERO(norm.x) || !F32_IS_ZERO(norm.z))) {
+    if (aSMAN_get_ground_norm(actorx, &norm, &actorx->world.position) &&
+        (!F32_IS_ZERO(norm.x) || !F32_IS_ZERO(norm.z))) {
         f32 vel = actor->normalized_scale * 0.099999994f + 0.3f;
 
         actorx->position_speed.x += norm.x * vel;
@@ -740,7 +758,8 @@ static void aSMAN_set_speed_relations_swim(ACTOR* actorx) {
     water_height = mCoBG_GetWaterHeight_File(actorx->world.position, __FILE__, 1362);
     mCoBG_GetWaterFlow(&flow, actorx->bg_collision_check.result.unit_attribute);
     flow_angle = atans_table(flow.z, flow.x);
-    chase_angle(&actorx->world.angle.y, flow_angle, angl_add_table[ABS(DIFF_SHORT_ANGLE(actorx->world.angle.y, flow_angle)) > DEG2SHORT_ANGLE2(90.0f)]);
+    chase_angle(&actorx->world.angle.y, flow_angle,
+                angl_add_table[ABS(DIFF_SHORT_ANGLE(actorx->world.angle.y, flow_angle)) > DEG2SHORT_ANGLE2(90.0f)]);
     if (actorx->world.position.y < water_height) {
         actorx->max_velocity_y = 1.0f;
     } else {
@@ -757,7 +776,8 @@ static void aSMAN_calc_axis(ACTOR* actorx) {
     SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
 
     if (!F32_IS_ZERO(actor->roll_speed) && actor->process != aSMAN_process_player_push_scroll) {
-        s16 dAngle = (s16)(actor->roll_speed * (DEG2SHORT_ANGLE3(180.0f) / (((actor->normalized_scale * 20.0f + 10.0f) * 2.0f) * 3.14f)));
+        s16 dAngle = (s16)(actor->roll_speed *
+                           (DEG2SHORT_ANGLE3(180.0f) / (((actor->normalized_scale * 20.0f + 10.0f) * 2.0f) * 3.14f)));
 
         if (actor->process == aSMAN_process_swim) {
             f32 rate = (-1.0f - actorx->position_speed.y) / -2.0f;
@@ -906,7 +926,7 @@ static int aSMAN_process_player_push(ACTOR* actorx, GAME* game) {
     s16 move_angle = gamePT->mcon.move_angle + DEG2SHORT_ANGLE2(90.0f);
     s16 diff_angle = DIFF_SHORT_ANGLE(move_angle, player_angle);
     f32 move_pR = gamePT->mcon.move_pR;
-    
+
     add_calc0(&actor->y_ofs, 1.0f - sqrtf(0.5f), 50.0f);
     add_calc(&actor->accel, 0.1f, 1.0f - sqrtf(0.8f), 0.005f, 0.0005f);
 
@@ -924,7 +944,10 @@ static int aSMAN_process_player_push(ACTOR* actorx, GAME* game) {
         s16 norm_angle_diff = aSMAN_get_norm_push_angle_distance(actorx, &norm, player_angle);
 
         {
-            if ((ABS(diff_angle) > DEG2SHORT_ANGLE2(55.0f) || actor->normalized_scale <= 0.2f || aSMAN_player_push_HitWallCheck(actorx, game)) || (((!F32_IS_ZERO(norm.x) || !F32_IS_ZERO(norm.z)) && ABS(norm_angle_diff) < DEG2SHORT_ANGLE2(120.0f)) || move_pR == 0.0f)) {
+            if ((ABS(diff_angle) > DEG2SHORT_ANGLE2(55.0f) || actor->normalized_scale <= 0.2f ||
+                 aSMAN_player_push_HitWallCheck(actorx, game)) ||
+                (((!F32_IS_ZERO(norm.x) || !F32_IS_ZERO(norm.z)) && ABS(norm_angle_diff) < DEG2SHORT_ANGLE2(120.0f)) ||
+                 move_pR == 0.0f)) {
                 aSMAN_player_push_free(game);
                 aSMAN_process_normal_init(actorx);
                 return FALSE;
@@ -951,11 +974,13 @@ static int aSMAN_process_player_push(ACTOR* actorx, GAME* game) {
                 dist = search_position_distanceXZ(&actorx->world.position, &actorx->last_world_position);
                 dist *= 0.4f;
                 mPlib_SetParam_for_push_snowball(&aim_pos, player_angle_y, dist < 1.0f ? dist : 1.0f);
-                
-                mCoBG_BgCheckControll(NULL, playerx, 18.0f, 0.0f, mCoBG_WALL_TYPE1, mCoBG_REVERSE_TYPE_REVERSE, mCoBG_CHECK_TYPE_PLAYER);
+
+                mCoBG_BgCheckControll(NULL, playerx, 18.0f, 0.0f, mCoBG_WALL_TYPE1, mCoBG_REVERSE_TYPE_REVERSE,
+                                      mCoBG_CHECK_TYPE_PLAYER);
                 if ((actorx->bg_collision_check.result.hit_wall & mCoBG_HIT_WALL) != 0) {
                     s16 wall_angle = mRlib_Get_HitWallAngleY(actorx);
-                    s16 wall_angle_diff = DIFF_SHORT_ANGLE(wall_angle - actorx->world.angle.y, DEG2SHORT_ANGLE(-180.0f));
+                    s16 wall_angle_diff =
+                        DIFF_SHORT_ANGLE(wall_angle - actorx->world.angle.y, DEG2SHORT_ANGLE(-180.0f));
 
                     if (wall_angle_diff < DEG2SHORT_ANGLE2(20.0f) && move_pR * cos_s(wall_angle_diff) > 0.7f) {
                         actor->timer++;
@@ -997,7 +1022,7 @@ static void aSMAN_process_player_push_scroll_init(ACTOR* actorx) {
 
 static int aSMAN_process_player_push_scroll(ACTOR* actorx, GAME* game) {
     SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
-    
+
     if (!mPlib_Check_Label_main_wade_snowball(actorx)) {
         aSMAN_process_player_push_init(actorx, game);
     } else {
@@ -1041,11 +1066,13 @@ static int aSMAN_process_swim(ACTOR* actorx, GAME* game) {
     actor->normalized_scale = (actorx->scale.x - 0.01f) / 0.02f;
     if (actorx->scale.x >= 0.01f) {
         if (CLIP(gyo_clip) != NULL) {
-            CLIP(gyo_clip)->ballcheck_gyoei_proc(&actorx->world.position, (actorx->scale.x * 30.0f) / 0.03f, aGYO_BALLCHECK_TYPE_SNOWMAN);
+            CLIP(gyo_clip)->ballcheck_gyoei_proc(&actorx->world.position, (actorx->scale.x * 30.0f) / 0.03f,
+                                                 aGYO_BALLCHECK_TYPE_SNOWMAN);
         }
     }
 
-    if (!actorx->bg_collision_check.result.is_in_water && actorx->bg_collision_check.result.unit_attribute == mCoBG_ATTRIBUTE_WATERFALL) {
+    if (!actorx->bg_collision_check.result.is_in_water &&
+        actorx->bg_collision_check.result.unit_attribute == mCoBG_ATTRIBUTE_WATERFALL) {
         aSMAN_process_air_init(actorx);
     }
 
@@ -1053,7 +1080,8 @@ static int aSMAN_process_swim(ACTOR* actorx, GAME* game) {
         if (((game->frame_counter & 3) == 0 && actor->timer < 16) || (game->frame_counter & 7) == 0) {
             xyz_t pos = actorx->world.position;
             pos.y = mCoBG_GetWaterHeight_File(pos, __FILE__, 1855);
-            eEC_CLIP->effect_make_proc(eEC_EFFECT_TURI_HAMON, pos, 1, actorx->world.angle.y, game, actorx->npc_id, 5, (s16)(actor->normalized_scale * 100.0f));
+            eEC_CLIP->effect_make_proc(eEC_EFFECT_TURI_HAMON, pos, 1, actorx->world.angle.y, game, actorx->npc_id, 5,
+                                       (s16)(actor->normalized_scale * 100.0f));
         }
 
         actor->timer++;
@@ -1087,7 +1115,7 @@ static int aSMAN_process_air(ACTOR* actorx, GAME* game) {
     add_calc0(&actor->y_ofs, CALC_EASE(0.5f), 50.0f);
     if (actorx->bg_collision_check.result.hit_wall & mCoBG_HIT_WALL) {
         s16 wall_angle = mRlib_Get_HitWallAngleY(actorx);
-        
+
         add_calc_short_angle2(&actorx->world.angle.y, wall_angle, CALC_EASE2(0.2f), DEG2SHORT_ANGLE2(22.5f), 45);
         add_calc(&actorx->speed, 3.0f, CALC_EASE(0.5f), 0.25f, 0.05f);
     }
@@ -1096,15 +1124,18 @@ static int aSMAN_process_air(ACTOR* actorx, GAME* game) {
         xyz_t pos = actorx->world.position;
 
         pos.y = mCoBG_GetWaterHeight_File(pos, __FILE__, 1934);
-        eEC_CLIP->effect_make_proc(eEC_EFFECT_AMI_MIZU, pos, 1, 0, game, actorx->npc_id, 2, (s16)(actor->normalized_scale * 100.0f));
+        eEC_CLIP->effect_make_proc(eEC_EFFECT_AMI_MIZU, pos, 1, 0, game, actorx->npc_id, 2,
+                                   (s16)(actor->normalized_scale * 100.0f));
         if (CLIP(gyo_clip) != NULL) {
-            CLIP(gyo_clip)->ballcheck_gyoei_proc(&actorx->world.position, (actorx->scale.x * 30.0f) / 0.03f, aGYO_BALLCHECK_TYPE_NORMAL);
+            CLIP(gyo_clip)->ballcheck_gyoei_proc(&actorx->world.position, (actorx->scale.x * 30.0f) / 0.03f,
+                                                 aGYO_BALLCHECK_TYPE_NORMAL);
         }
 
         sAdo_OngenTrgStart(NA_SE_27, &actorx->world.position);
         aSMAN_process_swim_init(actorx);
     } else if (actorx->bg_collision_check.result.on_ground) {
-        if (actor->fall_height - actorx->world.position.y >= 55.0f || mCoBG_ExistHeightGap_KeepAndNow_Detail(actorx->world.position)) {
+        if (actor->fall_height - actorx->world.position.y >= 55.0f ||
+            mCoBG_ExistHeightGap_KeepAndNow_Detail(actorx->world.position)) {
             actor->flags |= aSMAN_FLAG_MOVED;
             actor->flags |= aSMAN_FLAG_ON_GROUND;
         } else {
@@ -1182,12 +1213,13 @@ static void aSMAN_process_combine_head_jump_init(ACTOR* actorx, GAME* game) {
     oc_pos.x = pos.x;
     oc_pos.z = pos.z;
     xyz_t_sub(&actorx->world.position, &oc_pos, &actor->combine_dist);
-    xyz_t_mult_v(&actor->combine_dist, 1.0f/60.0f);
+    xyz_t_mult_v(&actor->combine_dist, 1.0f / 60.0f);
     actorx->shape_info.draw_shadow = FALSE;
     actor->result = aSMAN_decide_scale_result(actorx->scale.x, oc_actorx->scale.x);
-    actor->msg_no = 0x08A1 + ((Common_Get(snowman_msg_id) + aSMAN_get_snowman_indx()) % mSN_SAVE_COUNT) + actor->result * 3;
+    actor->msg_no =
+        MSG_2209 + ((Common_Get(snowman_msg_id) + aSMAN_get_snowman_indx()) % mSN_SAVE_COUNT) + actor->result * 3;
     actor->body_scale = oc_actor->normalized_scale;
-    
+
     if (actor->result == mSN_RESULT_PERFECT) {
         aSMAN_SendPresentMail();
     }
@@ -1225,7 +1257,7 @@ static int aSMAN_process_combine_head_jump(ACTOR* actorx, GAME* game) {
         return FALSE;
     } else {
         xyz_t_sub(&actorx->world.position, &actor->combine_dist, &actorx->world.position);
-        actorx->shape_info.ofs_y = (actor->timer * 8.0f + actor->timer * -(1.0f/7.5f) * actor->timer) * 25.0f;
+        actorx->shape_info.ofs_y = (actor->timer * 8.0f + actor->timer * -(1.0f / 7.5f) * actor->timer) * 25.0f;
         add_calc_short_angle2(&actor->head_vec.x, 0, CALC_EASE(0.5f), DEG2SHORT_ANGLE2(22.5f), 91);
         add_calc_short_angle2(&actor->head_vec.y, 0, CALC_EASE(0.5f), DEG2SHORT_ANGLE2(22.5f), 91);
         add_calc_short_angle2(&actor->head_vec.z, 0, CALC_EASE(0.5f), DEG2SHORT_ANGLE2(22.5f), 91);
@@ -1235,7 +1267,7 @@ static int aSMAN_process_combine_head_jump(ACTOR* actorx, GAME* game) {
 }
 
 static void aSMAN_set_talk_info_combine_head_init(ACTOR* actorx) {
-    static int base_msg_no[] = { 0x0895, 0x0898, 0x089B, 0x089E };
+    static int base_msg_no[] = { MSG_2197, MSG_2200, MSG_2203, MSG_2206 };
     SNOWMAN_ACTOR* actor = (SNOWMAN_ACTOR*)actorx;
 
     actor->head_vec = ZeroSVec;
@@ -1291,7 +1323,8 @@ static int aSMAN_process_combine_head(ACTOR* actorx, GAME* game) {
         } else {
             actor->flags |= aSMAN_FLAG_NO_SPEAK;
         }
-    } else if (!mRlib_PSnowman_NormalTalk(actorx, (GAME_PLAY*)game, &actor->impact_speed, aSMAN_set_talk_info_normal_init)) {
+    } else if (!mRlib_PSnowman_NormalTalk(actorx, (GAME_PLAY*)game, &actor->impact_speed,
+                                          aSMAN_set_talk_info_normal_init)) {
         SNOWMAN_ACTOR* parent = (SNOWMAN_ACTOR*)actorx->parent_actor;
 
         actor->flags |= aSMAN_FLAG_MOVED;
@@ -1314,7 +1347,7 @@ static void aSMAN_process_combine_body_init(ACTOR* actorx) {
 
     mFI_Wpos2UtCenterWpos(&pos, actorx->world.position);
     xyz_t_sub(&actorx->world.position, &pos, &actor->combine_dist);
-    xyz_t_mult_v(&actor->combine_dist, 1.0f/60.0f);
+    xyz_t_mult_v(&actor->combine_dist, 1.0f / 60.0f);
     speed_x = actor->combine_dist.x;
     speed_z = actor->combine_dist.z;
     actor->roll_speed = sqrtf(SQ(speed_x) + SQ(speed_z));
@@ -1353,7 +1386,8 @@ static void aSMAN_actor_move(ACTOR* actorx, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
     if ((actorx->state_bitfield & ACTOR_STATE_NO_CULL) == 0) {
-        if ((actor->flags & aSMAN_FLAG_COMBINED) != 0 && (actor->flags & aSMAN_FLAG_HEAD_JUMP) != 0 && !aSNOWMAN_player_block_check(actorx, game) && (actor->flags & aSMAN_FLAG_NO_SPEAK) != 0) {
+        if ((actor->flags & aSMAN_FLAG_COMBINED) != 0 && (actor->flags & aSMAN_FLAG_HEAD_JUMP) != 0 &&
+            !aSNOWMAN_player_block_check(actorx, game) && (actor->flags & aSMAN_FLAG_NO_SPEAK) != 0) {
             Actor_delete(actorx);
             Actor_delete(actorx->parent_actor);
             return;

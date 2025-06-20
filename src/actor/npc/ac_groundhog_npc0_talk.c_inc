@@ -31,7 +31,7 @@ static void aGH0_act_chg_data_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
 
 static void aGH0_act_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     GROUNDHOG_NPC0_ACTOR* actor = (GROUNDHOG_NPC0_ACTOR*)nactorx;
-    
+
     aGH0_setupAction(actor, aGH0_ACT_TURN);
     switch (actor->now_term) {
         case aGHC_TERM_EVENT_TIME:
@@ -124,17 +124,19 @@ static void aGH0_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
 static void aGH0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     static s16 def_angle[] = { 0x6B00, 0x8000, 0x8000, 0x9500 };
     static float def_pos[][2] = {
-        {0.0f, -20.0f},
-        {20.0f, 0.0f},
-        {20.0f, 0.0f},
-        {0.0f, -20.0f},
+        { 0.0f, -20.0f },
+        { 20.0f, 0.0f },
+        { 20.0f, 0.0f },
+        { 0.0f, -20.0f },
     };
     GROUNDHOG_NPC0_ACTOR* actor = (GROUNDHOG_NPC0_ACTOR*)nactorx;
     ACTOR* actorx = (ACTOR*)nactorx;
     int event_idx;
 
     nactorx->think.think_proc = aGH0_think_proc;
-    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK |
+                                       aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV |
+                                       aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
     nactorx->condition_info.hide_request = FALSE;
     nactorx->palActorIgnoreTimer = -1;
     actor->next_action = -1;
@@ -159,7 +161,6 @@ static void aGH0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
 
     nactorx->actor_class.world.position.x += def_pos[event_idx][0];
     nactorx->actor_class.world.position.z += def_pos[event_idx][1];
-    
 
     actor->start_kf_pos_randomized = FALSE;
 
@@ -187,7 +188,7 @@ static void aGH0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
 }
 
 static void aGH0_set_norm_talk_info(ACTOR* actorx) {
-    static int msg_base[mNpc_LOOKS_NUM] = { 0x3D52, 0x3D71, 0x3CF5, 0x3D14, 0x3D33, 0x3D90 };
+    static int msg_base[mNpc_LOOKS_NUM] = { MSG_15698, MSG_15729, MSG_15605, MSG_15636, MSG_15667, MSG_15760 };
     GROUNDHOG_NPC0_ACTOR* actor = (GROUNDHOG_NPC0_ACTOR*)actorx;
     int looks = mNpc_GetNpcLooks(actorx);
     int now_term = actor->now_term;
@@ -207,7 +208,7 @@ static void aGH0_norm_talk_request(ACTOR* actorx, GAME* game) {
 
 static int aGH0_talk_init(ACTOR* actorx, GAME* game) {
     GROUNDHOG_NPC0_ACTOR* actor = (GROUNDHOG_NPC0_ACTOR*)actorx;
-    
+
     if (actor->now_term == aGHC_TERM_1_MIN) {
         actor->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)none_proc1;
     } else {

@@ -62,7 +62,7 @@ static void aHM0_setupAction(HANAMI_NPC0_ACTOR* actor, int action) {
     actor->act_proc = process[action];
     actor->npc_class.draw.loop_flag = anm_loop_base[action] + RANDOM(anm_loop_rnd[action]);
     aHM0_set_animation(actor, action);
-    
+
     if (action == aHM0_ACT_MERRY) {
         actor->clap_se_no = clap_se_no[RANDOM(ARRAY_COUNT(clap_se_no))];
     }
@@ -101,10 +101,11 @@ static void aHM0_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
             idx = RANDOM(2);
             idx <<= (actor->event_idx & 1);
             aHM0_setupAction(actor, action[idx]);
-
         }
 
-        nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+        nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+                                           aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y |
+                                           aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
         nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
         aHM0_set_request_act(actor);
     }
@@ -125,7 +126,8 @@ static void aHM0_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
 }
 
 static void aHM0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
-    static s16 def_angle[4] = {DEG2SHORT_ANGLE2(45.0f), DEG2SHORT_ANGLE2(-90.0f), DEG2SHORT_ANGLE2(-45.0f), DEG2SHORT_ANGLE2(90.0f)};
+    static s16 def_angle[4] = { DEG2SHORT_ANGLE2(45.0f), DEG2SHORT_ANGLE2(-90.0f), DEG2SHORT_ANGLE2(-45.0f),
+                                DEG2SHORT_ANGLE2(90.0f) };
     HANAMI_NPC0_ACTOR* actor = (HANAMI_NPC0_ACTOR*)nactorx;
     ACTOR* actorx = (ACTOR*)nactorx;
     int event_idx = actorx->npc_id - SP_NPC_EV_HANAMI_0;
@@ -136,10 +138,12 @@ static void aHM0_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     nactorx->talk_info.turn = aNPC_TALK_TURN_HEAD;
     nactorx->talk_info.default_animation = aNPC_ANIM_SITDOWN_WAIT1;
     actor->event_idx = event_idx;
-    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK | aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+    nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_HEAD_LOOKAT | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+                                       aNPC_COND_DEMO_SKIP_BGCHECK | aNPC_COND_DEMO_SKIP_MOVE_Y |
+                                       aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
     nactorx->collision.check_kind = aNPC_BG_CHECK_TYPE_ONLY_GROUND;
     actorx->status_data.weight = MASSTYPE_HEAVY;
-    
+
     {
         s16 angle = def_angle[event_idx];
 
@@ -166,7 +170,7 @@ static void aHM0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
 }
 
 static void aHM0_set_talk_info(ACTOR* actorx) {
-    static int msg_base[mNpc_LOOKS_NUM] = { 0x192D, 0x193C, 0x191E, 0x194B, 0x195A, 0x1969 };
+    static int msg_base[mNpc_LOOKS_NUM] = { MSG_6445, MSG_6460, MSG_6430, MSG_6475, MSG_6490, MSG_6505 };
     HANAMI_NPC0_ACTOR* actor = (HANAMI_NPC0_ACTOR*)actorx;
     int looks = mNpc_GetNpcLooks(actorx);
 

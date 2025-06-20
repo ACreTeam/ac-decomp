@@ -67,7 +67,8 @@ static void aHM1_revise_moveRange(ACTOR* actorx) {
 }
 
 static void aHM1_turn(HANAMI_NPC1_ACTOR* actor) {
-    if (chase_angle(&actor->npc_class.actor_class.shape_info.rotation.y, actor->npc_class.movement.mv_angl, DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
+    if (chase_angle(&actor->npc_class.actor_class.shape_info.rotation.y, actor->npc_class.movement.mv_angl,
+                    DEG2SHORT_ANGLE2(11.25f)) == TRUE) {
         actor->next_action = aHM1_ACT_WALK;
         actor->npc_class.action.step = aNPC_ACTION_END_STEP;
     }
@@ -145,7 +146,7 @@ static void aHM1_think_main_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     if (nactorx->action.step == aNPC_ACTION_END_STEP) {
         if (nactorx->action.idx == aNPC_ACT_SPECIAL) {
             int next_act;
-            
+
             if (actor->next_action != -1) {
                 next_act = actor->next_action;
             } else {
@@ -209,7 +210,7 @@ static void aHM1_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     actor->next_action = -1;
     nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
     actorx->status_data.weight = MASSTYPE_HEAVY;
-    
+
     angle = def_angle[mFI_GetPuleIdx()];
     actorx->shape_info.rotation.y = angle;
     actorx->world.angle.y = angle;
@@ -231,7 +232,7 @@ static void aHM1_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
 }
 
 static void aHM1_set_talk_info(ACTOR* actorx) {
-    static int msg_base[mNpc_LOOKS_NUM] = { 0x1939, 0x1948, 0x192A, 0x1957, 0x1966, 0x1975 };
+    static int msg_base[mNpc_LOOKS_NUM] = { MSG_6457, MSG_6472, MSG_6442, MSG_6487, MSG_6502, MSG_6517 };
     int looks = mNpc_GetNpcLooks(actorx);
 
     mDemo_Set_msg_num(msg_base[looks] + RANDOM(3));

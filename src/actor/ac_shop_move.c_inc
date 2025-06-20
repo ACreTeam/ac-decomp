@@ -142,28 +142,28 @@ static void aSHOP_set_talk_info_close_wait(ACTOR* actor) {
 
     now_sec = Common_Get(time.now_sec);
     if (mSP_CheckFukubikiDay() != FALSE) {
-        if (now_sec >= (6 * mTM_SECONDS_IN_HOUR)) {
-            msg_no = mSP_ShopOpen() == mSP_SHOP_STATUS_PRE ? 0x7D6 : 0x7D7;
+        if (now_sec >= mTM_TIME2SEC(6, 0, 0)) {
+            msg_no = mSP_ShopOpen() == mSP_SHOP_STATUS_PRE ? MSG_RAFFLE_TIME_ANNOUNCE : MSG_RAFFLE_ENDED;
         } else {
-            msg_no = 0x7CD;
+            msg_no = MSG_SHOP_OPEN;
         }
     } else {
         switch (mSP_ShopOpen()) {
             case mSP_SHOP_STATUS_PRE: // 0
             case mSP_SHOP_STATUS_END: // 1
-                msg_no = 0x7CD;
+                msg_no = MSG_SHOP_OPEN;
                 break;
             case mSP_SHOP_STATUS_PREEVENT: // 4
-                msg_no = 0x7D1;
+                msg_no = MSG_2001;
                 break;
             case mSP_SHOP_STATUS_ENDEVENT: // 5
-                msg_no = 0x7D9;
+                msg_no = MSG_SHOP_CLOSED_ENDEVENT;
                 break;
             case mSP_SHOP_STATUS_RENEW: // 3
-                msg_no = 0x7D8;
+                msg_no = MSG_SHOP_RENEW;
                 break;
             default:
-                msg_no = 0x7CD;
+                msg_no = MSG_SHOP_OPEN;
                 break;
         }
     }

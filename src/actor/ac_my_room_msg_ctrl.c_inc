@@ -1930,7 +1930,7 @@ static int aMR_GetMessageNum(s16 msg_state, MY_ROOM_ACTOR* my_room) {
     FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[my_room->demo_ftrID];
     if (msg_state == aMR_MSG_STATE_OTHER_NO_ITEM) {
         if (Save_Get(scene_no) == SCENE_NPC_HOUSE || Save_Get(scene_no) == SCENE_COTTAGE_NPC) {
-            return 0x2988 + ((ftr_actor->name + my_room->demo_ftrID) & 0xF);
+            return MSG_10632 + ((ftr_actor->name + my_room->demo_ftrID) & 0xF);
         }
     }
 

@@ -59,7 +59,7 @@ static void Ac_Sample_Actor_wait_demo_ct(ACTOR* actor) {
 
     static u8 str_mail[64];
 
-    mDemo_Set_msg_num(9);
+    mDemo_Set_msg_num(MSG_9);
     mMsg_Set_item_str(mMsg_Get_base_window_p(), 0, str0, 6);
     mMsg_Set_item_str(mMsg_Get_base_window_p(), 4, str9, 5);
     mMsg_Set_free_str(mMsg_Get_base_window_p(), 0, str0, 16);

@@ -179,8 +179,8 @@ static void Museum_Picture_Actor_move(ACTOR* actorx, GAME* game) {
 
             if (aMP_CheckTalkAbleDist(&aMP_art_data_table[i].pos, game)) {
                 museum_picture->msg_no = (donator == mMmd_DONATOR_NONE)
-                                             ? 0x2FA1
-                                             : ((donator == mMmd_DONATOR_DELETED_PLAYER) ? 0x2FA0 : 0x2F9F);
+                                             ? MSG_12193
+                                             : ((donator == mMmd_DONATOR_DELETED_PLAYER) ? MSG_12192 : MSG_12191);
                 if (mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aMP_SetTalkInfo) && mMmd_IS_DONATED(donator)) {
                     mActor_name_t item = (i >= 0 && i < mMmd_ART_NUM)
                                              ? (mActor_name_t)(FTR_PAINTING0 + (mActor_name_t)(i << 2))

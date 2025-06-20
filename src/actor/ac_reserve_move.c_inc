@@ -9,7 +9,7 @@ static void aRSV_set_talk_info(ACTOR* actor) {
     rgba_t window_color;
 
     if (reserve->structure_class.arg0 == 0x42) {
-        mDemo_Set_msg_num(0x2B42);
+        mDemo_Set_msg_num(MSG_11074);
     } else {
         if (reserve->structure_class.arg0 >= 6 && reserve->structure_class.arg0 <= 8) {
             mIN_copy_name_str(str, Save_Get(fruit));
@@ -18,7 +18,7 @@ static void aRSV_set_talk_info(ACTOR* actor) {
             mNpc_GetActorWorldName(str2, SP_NPC_SHOP_MASTER);
             mMsg_Set_free_str(mMsg_Get_base_window_p(), mMsg_FREE_STR1, str2, ANIMAL_NAME_LEN);
         }
-        mDemo_Set_msg_num(reserve->structure_class.arg0 + 0x2B2D);
+        mDemo_Set_msg_num(reserve->structure_class.arg0 + MSG_11053);
     }
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_camera(TRUE);
