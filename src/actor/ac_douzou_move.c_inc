@@ -91,7 +91,7 @@ static int aDOU_setEffect_sub(ACTOR* actor, GAME* game, int house_no, int color)
     xyz_t_move(&wpos, &actor->world.position);
     wpos.x += xpostbl[house_no];
     wpos.z += zpostbl[house_no];
-    Matrix_translate(wpos.x, wpos.y, wpos.z, 0);
+    Matrix_translate(wpos.x, wpos.y, wpos.z, MTX_LOAD);
 
     /* Initialize effect offset */
     xyz_t_move(&ofs, &offset_tbl[color]);

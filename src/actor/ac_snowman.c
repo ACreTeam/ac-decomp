@@ -1387,8 +1387,8 @@ static void aSMAN_actor_draw(ACTOR* actorx, GAME* game) {
     int idx;
 
     if ((actor->flags & aSMAN_FLAG_HEAD_JUMP) == 0 || actor->process != aSMAN_process_combine_head) {
-        Matrix_translate(0.0f, actor->y_ofs, 0.0, 1);
-        Matrix_rotateXYZ(actor->head_vec.x, actor->head_vec.y, actor->head_vec.z, 1);
+        Matrix_translate(0.0f, actor->y_ofs, 0.0, MTX_MULT);
+        Matrix_rotateXYZ(actor->head_vec.x, actor->head_vec.y, actor->head_vec.z, MTX_MULT);
         idx = 1;
     } else {
         idx = 0;

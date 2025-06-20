@@ -164,10 +164,10 @@ static void aMSN_DrawDustcloth(aMSN_DustCloth_c* dustcloth, GAME* game) {
             gSPSegment(NEXT_POLY_OPA_DISP, G_MWO_SEGMENT_9, mNW_PaletteIdx2Palette(dustcloth->original_p->palette));
         }
 
-        Matrix_translate(dustcloth->pos.x, dustcloth->pos.y, dustcloth->pos.z, 0);
-        Matrix_RotateY(target_angle_y, 1);
-        Matrix_translate(-dustcloth->target_pos.x, -dustcloth->target_pos.y, -dustcloth->target_pos.z, 1);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(dustcloth->pos.x, dustcloth->pos.y, dustcloth->pos.z, MTX_LOAD);
+        Matrix_RotateY(target_angle_y, MTX_MULT);
+        Matrix_translate(-dustcloth->target_pos.x, -dustcloth->target_pos.y, -dustcloth->target_pos.z, MTX_MULT);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(NEXT_POLY_OPA_DISP, obj_misin_cloth_model);
@@ -196,10 +196,10 @@ static int aMSN_DrawMisinAfter(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int j
     if (joint_idx == 3) {
         OPEN_DISP(game->graph);
 
-        Matrix_translate(87.0f, 62.0f + misin->needle_offset.y, 141.0f, 0);
-        Matrix_RotateY(DEG2SHORT_ANGLE(0.0f), 1);
-        Matrix_RotateZ(DEG2SHORT_ANGLE(-90.0f), 1);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(87.0f, 62.0f + misin->needle_offset.y, 141.0f, MTX_LOAD);
+        Matrix_RotateY(DEG2SHORT_ANGLE(0.0f), MTX_MULT);
+        Matrix_RotateZ(DEG2SHORT_ANGLE(-90.0f), MTX_MULT);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(NEXT_POLY_OPA_DISP, obj_misin_hari_model);
@@ -223,9 +223,9 @@ static void aMSN_DrawMisin(aMSN_Misin_c* misin, GAME* game) {
     if (belt_gfx != NULL) {
         OPEN_DISP(game->graph);
 
-        Matrix_translate(misin->pos.x, misin->pos.y, misin->pos.z, 0);
-        Matrix_RotateY(DEG2SHORT_ANGLE(0.0f), 1);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(misin->pos.x, misin->pos.y, misin->pos.z, MTX_LOAD);
+        Matrix_RotateY(DEG2SHORT_ANGLE(0.0f), MTX_MULT);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 

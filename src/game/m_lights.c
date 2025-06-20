@@ -367,8 +367,8 @@ extern void Light_list_point_draw(GAME_PLAY* play) {
                 rad = (lightInfo->radius * lightInfo->radius) * 2.60000001617e-06f;
                 gDPSetPrimColor(dl++, 0, 0, lightInfo->color[0], lightInfo->color[1], lightInfo->color[2], 50);
 
-                Matrix_translate(lightInfo->x, lightInfo->y, lightInfo->z, 0);
-                Matrix_scale(rad, rad, rad, 1);
+                Matrix_translate(lightInfo->x, lightInfo->y, lightInfo->z, MTX_LOAD);
+                Matrix_scale(rad, rad, rad, MTX_MULT);
 
                 gSPMatrix(dl++, _Matrix_to_Mtx_new(play->game.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 

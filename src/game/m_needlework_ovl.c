@@ -149,9 +149,9 @@ extern void mNW_draw_original(Submenu* submenu, GRAPH* graph, f32 pos_x, f32 pos
 
     OPEN_POLY_OPA_DISP(graph);
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
-    Matrix_scale(scale, scale, 1.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
+    Matrix_scale(scale, scale, 1.0f, MTX_MULT);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, mNW_get_image_texture(submenu, idx));
@@ -289,13 +289,13 @@ static void mNW_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_
     int tex_y;
     int tex_x;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, MTX_MULT);
 
     if (menu_info->data0 == mNW_OPEN_INV) {
-        Matrix_translate(46.0f, 0.0f, 0.0f, 1);
+        Matrix_translate(46.0f, 0.0f, 0.0f, MTX_MULT);
     } else if (menu_info->data0 == mNW_OPEN_DESIGN) {
-        Matrix_translate(10.0f, 0.0f, 0.0f, 1);
+        Matrix_translate(10.0f, 0.0f, 0.0f, MTX_MULT);
     }
 
     OPEN_POLY_OPA_DISP(graph);
@@ -367,7 +367,7 @@ extern void mNW_draw_sav_mark(GAME* game, int x, int y) {
 
     OPEN_POLY_OPA_DISP(graph);
 
-    Matrix_translate((f32)x, (f32)y, 0.0f, 1);
+    Matrix_translate((f32)x, (f32)y, 0.0f, MTX_MULT);
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, sav_mark_winT_model);
 
@@ -409,13 +409,13 @@ static void mNW_set_frame_dl_cpo(Submenu* submenu, GAME* game, mSM_MenuInfo_c* m
     int tex_x;
     int j;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, MTX_MULT);
 
     switch (menu_info->data0) {
         case mNW_OPEN_GBA:
         case mNW_OPEN_CARD:
-            Matrix_translate(136.0f, -5.0f, 0.0f, 1);
+            Matrix_translate(136.0f, -5.0f, 0.0f, MTX_MULT);
             break;
     }
 

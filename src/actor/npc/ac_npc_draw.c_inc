@@ -41,16 +41,16 @@ static void aNPC_set_chn_base(GAME* game, NPC_ACTOR* nactorx, s_xyz* rot_p, xyz_
                             actorx->world.position.z);
     }
 
-    Matrix_scale(0.01f, actorx->scale.y, 0.01f, 1);
-    Matrix_translate(trans_p->x, trans_p->y, trans_p->z, 1);
-    Matrix_scale(actorx->scale.x * 100.0f, 1.0f, actorx->scale.z * 100.0f, 1);
+    Matrix_scale(0.01f, actorx->scale.y, 0.01f, MTX_MULT);
+    Matrix_translate(trans_p->x, trans_p->y, trans_p->z, MTX_MULT);
+    Matrix_scale(actorx->scale.x * 100.0f, 1.0f, actorx->scale.z * 100.0f, MTX_MULT);
     bzero(trans_p, sizeof(xyz_t));
 }
 
 static void aNPC_set_head_angl(GAME* game, NPC_ACTOR* nactorx, s_xyz* rot_p, xyz_t* trans_p) {
     s_xyz world_rot;
 
-    Matrix_to_rotate_new(get_Matrix_now(), &world_rot, 0);
+    Matrix_to_rotate_new(get_Matrix_now(), &world_rot, MTX_LOAD);
     aNPC_search_eye_target(nactorx, (GAME_PLAY*)game, &world_rot, rot_p);
     rot_p->x = nactorx->head.angle_y;
     rot_p->y = nactorx->head.angle_x;
@@ -106,7 +106,7 @@ static void aNPC_set_right_hand_item(GAME* game, NPC_ACTOR* nactorx, int joint_i
         f32 scale = 1.0f / (nactorx->actor_class.scale.x * 100.0f);
 
         Matrix_push();
-        Matrix_scale(scale, scale, scale, 1);
+        Matrix_scale(scale, scale, scale, MTX_MULT);
         Matrix_get(&item_p->matrix_work);
         item_p->init_matrix = TRUE;
         Matrix_pull();
@@ -120,8 +120,8 @@ static void aNPC_set_left_hand_item(GAME* game, NPC_ACTOR* nactorx, int joint_id
     item_p = (TOOLS_ACTOR*)nactorx->left_hand.item_actor_p;
     if (item_p != NULL) {
         Matrix_push();
-        Matrix_translate(nactorx->left_hand.pos.x, nactorx->left_hand.pos.y, nactorx->left_hand.pos.z, 0);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(nactorx->left_hand.pos.x, nactorx->left_hand.pos.y, nactorx->left_hand.pos.z, MTX_LOAD);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
         Matrix_get(&item_p->matrix_work);
         item_p->init_matrix = TRUE;
         Matrix_pull();
@@ -156,7 +156,7 @@ static void aNPC_set_accessory_mtx(NPC_ACTOR* nactorx, int joint_idx) {
             f32 scale = 1.0f / (nactorx->actor_class.scale.x * 100.0f);
 
             Matrix_push();
-            Matrix_scale(scale, scale, scale, 1);
+            Matrix_scale(scale, scale, scale, MTX_MULT);
             Matrix_get(&accessory->matrix_work);
             accessory->init_matrix = TRUE;
             Matrix_pull();

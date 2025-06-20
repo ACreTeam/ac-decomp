@@ -149,8 +149,8 @@ static void aTKT_actor_draw(ACTOR* actor, GAME* game) {
             Matrix_Position_Zero(&actor->world.position);
             keitai->tools_class.init_matrix = FALSE;
         } else {
-            Matrix_translate(actor->world.position.x, actor->world.position.y, actor->world.position.z, FALSE);
-            Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+            Matrix_translate(actor->world.position.x, actor->world.position.y, actor->world.position.z, MTX_LOAD);
+            Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
         }
 
         _texture_z_light_fog_prim_npc(graph);
@@ -158,7 +158,7 @@ static void aTKT_actor_draw(ACTOR* actor, GAME* game) {
         OPEN_DISP(graph);
 
         gfx = NOW_POLY_OPA_DISP;
-        Matrix_scale(actor->scale.x, actor->scale.y, actor->scale.z, TRUE);
+        Matrix_scale(actor->scale.x, actor->scale.y, actor->scale.z, MTX_MULT);
         gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         SET_POLY_OPA_DISP(gfx);
 

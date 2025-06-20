@@ -103,7 +103,7 @@ static void aTHB_actor_draw(ACTOR* actor, GAME* game) {
         Matrix_translate(hanabi->tools_class.actor_class.world.position.x,
                          hanabi->tools_class.actor_class.world.position.y,
                          hanabi->tools_class.actor_class.world.position.z, FALSE);
-        Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     }
 
     Matrix_scale(hanabi->tools_class.actor_class.scale.x, hanabi->tools_class.actor_class.scale.y,

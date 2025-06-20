@@ -28,7 +28,7 @@ static void eKasamizu_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
     static xyz_t base_offset = {0, 45.0f, -20.0f};
     xyz_t pos;
     s16 angle = *(s16*)ct_arg;
-    Matrix_RotateY(angle, 0);
+    Matrix_RotateY(angle, MTX_LOAD);
     Matrix_Position(&base_offset, &pos);
     xyz_t_add(&effect->position, &pos, &effect->position);
     effect->effect_specific[0] = angle;

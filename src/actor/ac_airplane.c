@@ -71,9 +71,9 @@ static void Airplane_Actor_draw(ACTOR* actor, GAME* game) {
         GRAPH* g = game->graph;
 
         _texture_z_light_fog_prim(g);
-        Matrix_RotateX(RAD2SHORTANGLE(DEG2RAD(airplane->rotX)), 1);
-        Matrix_RotateZ(RAD2SHORTANGLE(DEG2RAD(airplane->rotZ)), 1);
-        Matrix_scale(50.0f, 50.0f, 50.0f, 1);
+        Matrix_RotateX(RAD2SHORTANGLE(DEG2RAD(airplane->rotX)), MTX_MULT);
+        Matrix_RotateZ(RAD2SHORTANGLE(DEG2RAD(airplane->rotZ)), MTX_MULT);
+        Matrix_scale(50.0f, 50.0f, 50.0f, MTX_MULT);
 
         OPEN_DISP(g);
         gSPMatrix(NOW_POLY_OPA_DISP++, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

@@ -126,7 +126,7 @@ static void Player_actor_Item_draw(ACTOR* actor, GAME* game) {
                 Matrix_put(&player->right_hand_mtx);
 
                 if (scale != 1.0f) {
-                    Matrix_scale(scale, scale, scale, 1);
+                    Matrix_scale(scale, scale, scale, MTX_MULT);
                 }
                 mtx = _Matrix_to_Mtx_new(game->graph);
 

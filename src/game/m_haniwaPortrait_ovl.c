@@ -28,7 +28,7 @@ static void mHP_haniwaPortrait_shape_draw(Submenu* submenu, mSM_MenuInfo_c* menu
 
   if (mtx != NULL) {
     _texture_z_light_fog_prim(game->graph);
-    Matrix_scale(0.01f, 0.01f, 0.01f, 0);
+    Matrix_scale(0.01f, 0.01f, 0.01f, MTX_LOAD);
 
     OPEN_DISP(graph);
 

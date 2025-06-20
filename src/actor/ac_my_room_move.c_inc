@@ -2556,9 +2556,9 @@ static void aMR_GetItemPosOnMovingFurniture(MY_ROOM_ACTOR* my_room, FTR_ACTOR* f
         s16 angle = ftr_actor->s_angle_y;
         int i;
 
-        Matrix_translate(ftr_actor->position.x, ftr_actor->position.y, ftr_actor->position.z, 0);
-        Matrix_RotateY(angle - parent_ftr->angle_y, 1);
-        Matrix_translate(ftr_actor->base_position.x, ftr_actor->base_position.y, ftr_actor->base_position.z, 1);
+        Matrix_translate(ftr_actor->position.x, ftr_actor->position.y, ftr_actor->position.z, MTX_LOAD);
+        Matrix_RotateY(angle - parent_ftr->angle_y, MTX_MULT);
+        Matrix_translate(ftr_actor->base_position.x, ftr_actor->base_position.y, ftr_actor->base_position.z, MTX_MULT);
 
         for (i = 0; i < aMR_FIT_FTR_MAX; i++) {
             if (parent_ftr->fit_ftr_table[i].exist_flag == TRUE) {

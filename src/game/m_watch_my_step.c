@@ -208,8 +208,8 @@ extern void watch_my_step_draw(GAME_PLAY* play) {
         gSPMatrix(NOW_FONT_DISP++, font_mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
     }
 
-    Matrix_scale(16.0f, 16.0f, 16.0f, 0);
-    Matrix_translate(S_watch_my_step.pos_x, -S_watch_my_step.pos_y, 0.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 16.0f, MTX_LOAD);
+    Matrix_translate(S_watch_my_step.pos_x, -S_watch_my_step.pos_y, 0.0f, MTX_MULT);
 
     {
         Gfx* font_gfx = NOW_FONT_DISP;
@@ -231,7 +231,7 @@ extern void watch_my_step_draw(GAME_PLAY* play) {
             /* fallthrough 3 -> 2 */
             case 2: {
                 Matrix_push();
-                Matrix_translate(S_watch_my_step.trans_x * -1.0f, S_watch_my_step.trans_y * -20.0f, 0.0f, 1);
+                Matrix_translate(S_watch_my_step.trans_x * -1.0f, S_watch_my_step.trans_y * -20.0f, 0.0f, MTX_MULT);
 
                 gSPMatrix(font_gfx++, _Matrix_to_Mtx_new(g), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 Matrix_pull();
@@ -240,7 +240,7 @@ extern void watch_my_step_draw(GAME_PLAY* play) {
             /* fallthrough 2 -> 1 */
             case 1: {
                 Matrix_push();
-                Matrix_translate(S_watch_my_step.trans_x * -13.0f, S_watch_my_step.trans_y * -30.0f, 0.0f, 1);
+                Matrix_translate(S_watch_my_step.trans_x * -13.0f, S_watch_my_step.trans_y * -30.0f, 0.0f, MTX_MULT);
 
                 gSPMatrix(font_gfx++, _Matrix_to_Mtx_new(g), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 Matrix_pull();
@@ -264,7 +264,7 @@ extern void watch_my_step_draw(GAME_PLAY* play) {
         }
 
         /* Reset font matrix scale */
-        Matrix_scale(1.0f, 1.0f, 1.0f, 0);
+        Matrix_scale(1.0f, 1.0f, 1.0f, MTX_LOAD);
         gSPMatrix(font_gfx++, _Matrix_to_Mtx_new(g), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         SET_FONT_DISP(font_gfx);
     }
@@ -356,7 +356,7 @@ static void navigate_camera_draw(GAME_PLAY* play) {
             gSPMatrix(NOW_FONT_DISP++, font_mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
         }
 
-        Matrix_scale(16.0f, 16.0f, 16.0f, 0);
+        Matrix_scale(16.0f, 16.0f, 16.0f, MTX_LOAD);
 
         font_gfx = NOW_FONT_DISP;
         gSPMatrix(font_gfx++, _Matrix_to_Mtx_new(g), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -532,7 +532,7 @@ static void mWt_mybell_confirmation_draw(GAME_PLAY* play) {
             gSPMatrix(NOW_FONT_DISP++, font_mtx, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_PROJECTION);
         }
 
-        Matrix_scale(16.0f, 16.0f, 16.0f, 0);
+        Matrix_scale(16.0f, 16.0f, 16.0f, MTX_LOAD);
 
         font_gfx = NOW_FONT_DISP;
         gSPMatrix(font_gfx++, _Matrix_to_Mtx_new(g), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -550,7 +550,7 @@ static void mWt_mybell_confirmation_draw(GAME_PLAY* play) {
         gDPSetPrimColor(font_gfx++, 0, a, 255, 245, 255, a);
         gSPDisplayList(font_gfx++, mny_win_mojiT_model);
 
-        Matrix_scale(1.0f, 1.0f, 1.0f, 0);
+        Matrix_scale(1.0f, 1.0f, 1.0f, MTX_LOAD);
         gSPMatrix(font_gfx++, _Matrix_to_Mtx_new(g), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
         SET_FONT_DISP(font_gfx);

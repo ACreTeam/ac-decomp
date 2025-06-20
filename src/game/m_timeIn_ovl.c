@@ -305,8 +305,8 @@ static void mTI_set_frame_dl(Submenu* submenu, GRAPH* graph, f32 x, f32 y) {
 
   week = lbRTC_Week(GAME_YEAR_MIN + timeIn_ovl->values[mTI_IDX_YEAR], timeIn_ovl->values[mTI_IDX_MONTH], timeIn_ovl->values[mTI_IDX_DAY]);
 
-  Matrix_translate(x * 16.0f, y * 16.0f, 140.0f, 0);
-  Matrix_scale(16.0f, 16.0f, 1.0f, 1);
+  Matrix_translate(x * 16.0f, y * 16.0f, 140.0f, MTX_LOAD);
+  Matrix_scale(16.0f, 16.0f, 1.0f, MTX_MULT);
 
   OPEN_DISP(graph);
   gfx = NOW_POLY_OPA_DISP;
@@ -370,9 +370,9 @@ static void mTI_set_clock(Submenu* submenu, GRAPH* graph, f32 x, f32 y) {
   r[1] = -(((f32)save_min / (f32)((lbRTC_MINUTES_PER_HOUR * lbRTC_HOURS_PER_DAY) / 2)) * 65536.0f); // hour hand
   r[2] = 0; // second hand?
 
-  Matrix_translate((x + -61.0f) * 16.0f, (y + 45.0f) * 16.0f, 140.0f, 0);
-  Matrix_scale(16.0f, 16.0f, 1.0f, 1);
-  Matrix_translate(-5.0f, -4.0f, 0.0f, 1);
+  Matrix_translate((x + -61.0f) * 16.0f, (y + 45.0f) * 16.0f, 140.0f, MTX_LOAD);
+  Matrix_scale(16.0f, 16.0f, 1.0f, MTX_MULT);
+  Matrix_translate(-5.0f, -4.0f, 0.0f, MTX_MULT);
 
   OPEN_DISP(graph);
   gfx = NOW_POLY_OPA_DISP;
@@ -383,7 +383,7 @@ static void mTI_set_clock(Submenu* submenu, GRAPH* graph, f32 x, f32 y) {
   for (i = 0; i < 3; i++) {
     /* Rotate & draw the clock hand */
     Matrix_push();
-    Matrix_RotateZ(r[i], 1);
+    Matrix_RotateZ(r[i], MTX_MULT);
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(gfx++, displayList_table[i]);
     Matrix_pull();

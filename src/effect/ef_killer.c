@@ -140,9 +140,9 @@ extern Gfx act_killer_model[];
 static void eKL_dw(eEC_Effect_c* effect, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-    Matrix_RotateY(effect->arg0, 1);
-    Matrix_scale(0.01f, 0.01f, effect->scale.z * 0.01f, 1);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_RotateY(effect->arg0, MTX_MULT);
+    Matrix_scale(0.01f, 0.01f, effect->scale.z * 0.01f, MTX_MULT);
     _texture_z_light_fog_prim(game->graph);
 
     OPEN_DISP(game->graph);

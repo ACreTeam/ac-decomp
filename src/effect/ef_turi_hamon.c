@@ -107,8 +107,8 @@ static void eTH_dw(eEC_Effect_c* effect, GAME* game) {
     OPEN_DISP(game->graph);
 
     _texture_z_light_fog_prim_xlu(game->graph);
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, FALSE);
-    Matrix_scale(scale.x, scale.y, scale.z, TRUE);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_scale(scale.x, scale.y, scale.z, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, effect->effect_specific[0]);

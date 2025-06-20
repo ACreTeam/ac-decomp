@@ -560,11 +560,11 @@ static void aFSN_actor_draw(ACTOR* actorx, GAME* game) {
 
     if (fuusen->action != aFSN_ACTION_ESCAPE || fuusen->escape_timer == aFSN_ESCAPE_TIMER || (fuusen->action == aFSN_ACTION_ESCAPE && fuusen->count == 0)) {
       /* Draw present */
-      Matrix_translate(actorx->world.position.x, actorx->world.position.y, actorx->world.position.z, 0);
-      Matrix_scale(0.01f, 0.01f, 0.01f, 1);
-      Matrix_RotateX(actorx->shape_info.rotation.x, 1);
-      Matrix_RotateZ(actorx->shape_info.rotation.z, 1);
-      Matrix_RotateY(actorx->shape_info.rotation.y, 1);
+      Matrix_translate(actorx->world.position.x, actorx->world.position.y, actorx->world.position.z, MTX_LOAD);
+      Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
+      Matrix_RotateX(actorx->shape_info.rotation.x, MTX_MULT);
+      Matrix_RotateZ(actorx->shape_info.rotation.z, MTX_MULT);
+      Matrix_RotateY(actorx->shape_info.rotation.y, MTX_MULT);
       _texture_z_light_fog_prim(graph);
 
       OPEN_DISP(graph);

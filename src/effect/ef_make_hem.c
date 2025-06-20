@@ -118,8 +118,8 @@ static void eMH_dw(eEC_Effect_c* effect, GAME* game) {
     f32 scale = effect->scale.x * 0.01f;
 
     Setpos_HiliteReflect_xlu_init(pos, play);
-    Matrix_translate(pos->x, pos->y, pos->z, 0);
-    Matrix_scale(scale, scale, scale, 1);
+    Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
+    Matrix_scale(scale, scale, scale, MTX_MULT);
     _texture_z_light_fog_prim(game->graph);
 
     OPEN_DISP(game->graph);
@@ -210,9 +210,9 @@ extern Gfx ef_takurami01_kira_modelT[];
 static void eMHK_dw(eEC_Effect_c* effect, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-    Matrix_mult(&play->billboard_matrix, 1);
-    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, 1);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
+    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
     _texture_z_light_fog_prim_xlu(game->graph);
 
     OPEN_DISP(game->graph);
@@ -275,8 +275,8 @@ extern Gfx ef_circle_light_model[];
 static void eMHL_dw(eEC_Effect_c* effect, GAME* game) {
     u8 alpha = effect->effect_specific[0];
 
-    Matrix_translate(effect->position.x, effect->position.y + 0.1f, effect->position.z, 0);
-    Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+    Matrix_translate(effect->position.x, effect->position.y + 0.1f, effect->position.z, MTX_LOAD);
+    Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     _texture_z_light_fog_prim_shadow(game->graph);
 
     OPEN_DISP(game->graph);

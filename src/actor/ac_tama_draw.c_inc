@@ -14,7 +14,7 @@ static void aTAM_actor_draw(ACTOR* actorx, GAME* game) {
   _texture_z_light_fog_prim(graph);
   gfx = NOW_POLY_OPA_DISP;
   gSPSegment(gfx++, G_MWO_SEGMENT_8, pal);
-  Matrix_translate(0.0f, 0.0f, 4000.0f, 1);
+  Matrix_translate(0.0f, 0.0f, 4000.0f, MTX_MULT);
   mtx = _Matrix_to_Mtx_new(graph);
 
   if (mtx != NULL) {

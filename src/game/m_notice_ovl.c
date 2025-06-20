@@ -419,8 +419,8 @@ extern Gfx kei_win_model[];
 static void mNT_set_frame_dl(GRAPH* graph, f32 x, f32 y) {
     Gfx* gfx;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(x, y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(x, y, 140.0f, MTX_MULT);
 
     OPEN_DISP(graph);
     gfx = NOW_POLY_OPA_DISP;
@@ -441,8 +441,8 @@ extern Gfx kei_win_stT_model[];
 static void mNT_set_key_dl(mNT_Ovl_c* notice_ovl, GRAPH* graph, f32 y) {
     Gfx* gfx;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(0.0f, y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(0.0f, y, 140.0f, MTX_MULT);
 
     OPEN_DISP(graph);
     gfx = NOW_POLY_OPA_DISP;
@@ -462,11 +462,11 @@ static void mNT_set_key_dl(mNT_Ovl_c* notice_ovl, GRAPH* graph, f32 y) {
         }
     }
 
-    Matrix_translate(3.0f, 0.0f, 0.0f, 1);
+    Matrix_translate(3.0f, 0.0f, 0.0f, MTX_MULT);
 
     if (notice_ovl->stick_area >= mED_STICK_AREA_TOP_RIGHT && notice_ovl->stick_area <= mED_STICK_AREA_BOTTOM_RIGHT) {
-        Matrix_translate(-0.5f, 0.0f, 0.0f, 1);
-        Matrix_RotateY(DEG2SHORT_ANGLE(-180.0f), 1);
+        Matrix_translate(-0.5f, 0.0f, 0.0f, MTX_MULT);
+        Matrix_RotateY(DEG2SHORT_ANGLE(-180.0f), MTX_MULT);
     }
 
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

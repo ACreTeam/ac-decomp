@@ -861,8 +861,8 @@ void Museum_Insect_Actor_draw(ACTOR* actorx, GAME* game) {
     _texture_z_light_fog_prim_xlu(game->graph);
     Evw_Anime_Set((GAME_PLAY*)game, &obj_museum4_water_evw_anime);
     graph = game->graph;
-    Matrix_translate(100.0f, 0.0f, 0.0f, FALSE);
-    Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+    Matrix_translate(100.0f, 0.0f, 0.0f, MTX_LOAD);
+    Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     OPEN_DISP(graph);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(NEXT_POLY_XLU_DISP, obj_museum4_water_modelT);

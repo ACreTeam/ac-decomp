@@ -183,8 +183,8 @@ static void mLE_set_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_info) 
     f32 text_pos_x;
     f32 text_pos_y;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 
@@ -207,8 +207,8 @@ static void mLE_set_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_info) 
                 int width = mFont_GetStringWidth(editor_ovl->input_str, i, TRUE);
 
                 Matrix_push();
-                Matrix_translate(6.0f + (edit_pos_x - 160.0f) + (f32)width, -(8.0f + (edit_pos_y - 120.0f)), 0.0f, 1);
-                Matrix_scale(0.625f, 1.0f, 1.0f, 1);
+                Matrix_translate(6.0f + (edit_pos_x - 160.0f) + (f32)width, -(8.0f + (edit_pos_y - 120.0f)), 0.0f, MTX_MULT);
+                Matrix_scale(0.625f, 1.0f, 1.0f, MTX_MULT);
                 
                 gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 gSPDisplayList(POLY_OPA_DISP++, lat_sousa_spT_model);

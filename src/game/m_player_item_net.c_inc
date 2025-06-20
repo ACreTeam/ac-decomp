@@ -213,7 +213,7 @@ static int Player_actor_Item_main_net_stop(ACTOR* actor, GAME* game) {
 static void Player_actor_Item_draw_net_After_dummy_net(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
-    Matrix_rotateXYZ(player->net_angle.x, player->net_angle.y, player->net_angle.z, 1);
+    Matrix_rotateXYZ(player->net_angle.x, player->net_angle.y, player->net_angle.z, MTX_MULT);
 }
 
 typedef void (*mPlayer_item_net_draw_proc)(void* arg, GAME* game, cKF_SkeletonInfo_R_c* keyframe, Gfx** joint_shape,
@@ -240,7 +240,7 @@ static void Player_actor_Item_draw_net(ACTOR* actor, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
 
     Matrix_push();
-    Matrix_rotateXYZ(0, 3000, 0, 1);
+    Matrix_rotateXYZ(0, 3000, 0, MTX_MULT);
     Matrix_Position_VecZ(-2400.0f, &player->net_start_pos);
     Matrix_Position_VecZ(5500.0f, &player->net_end_pos);
     Matrix_Position_VecZ(4000.0f, &player->net_pos);

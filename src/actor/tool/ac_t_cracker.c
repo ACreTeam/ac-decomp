@@ -104,10 +104,10 @@ static void aTCR_actor_draw(ACTOR* actor, GAME* game){
     else{
         Matrix_translate(cracker->tools_class.actor_class.world.position.x, cracker->tools_class.actor_class.world.position.y, 
             cracker->tools_class.actor_class.world.position.z, FALSE);
-            Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+            Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     }
 
-    Matrix_scale(cracker->tools_class.actor_class.scale.x, cracker->tools_class.actor_class.scale.y, cracker->tools_class.actor_class.scale.z, TRUE);
+    Matrix_scale(cracker->tools_class.actor_class.scale.x, cracker->tools_class.actor_class.scale.y, cracker->tools_class.actor_class.scale.z, MTX_MULT);
    _texture_z_light_fog_prim_npc(graph); 
 
     gfxp = NOW_POLY_OPA_DISP;
@@ -118,5 +118,3 @@ static void aTCR_actor_draw(ACTOR* actor, GAME* game){
     CLOSE_DISP(graph);
         
 }
-
-

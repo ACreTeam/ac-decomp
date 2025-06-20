@@ -199,7 +199,7 @@ static void aDUM_actor_draw(ACTOR* actor, GAME* game){
     gSPSegment(gfx++, 0x8, pal); 
 
 
-    Matrix_translate(-6000.0f, 0.0f,-10000.0f, 1);
+    Matrix_translate(-6000.0f, 0.0f,-10000.0f, MTX_MULT);
 
     cur =_Matrix_to_Mtx_new(graph);
 

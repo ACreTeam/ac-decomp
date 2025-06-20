@@ -134,20 +134,20 @@ static void eYoung_Tree_dw(eEC_Effect_c* effect, GAME* game) {
 
     graph = game->graph;
     _texture_z_light_fog_prim_xlu(graph);
-    Matrix_translate(effect->position.x, effect->position.y + 3.0f, effect->position.z + 3.0f, 0);
+    Matrix_translate(effect->position.x, effect->position.y + 3.0f, effect->position.z + 3.0f, MTX_LOAD);
 
     if (effect->arg1 == 0 || effect->arg1 == 3) {
-        Matrix_RotateVector(effect->effect_specific[1], &effect->offset, 1);
+        Matrix_RotateVector(effect->effect_specific[1], &effect->offset, MTX_MULT);
     } else if (effect->arg1 == 1) {
-        Matrix_translate(0.0f, (f32)GETREG(TAKREG, 20) + 5.0f, 0.0f, 1);
-        Matrix_RotateVector(effect->effect_specific[1], &effect->offset, 1);
-        Matrix_translate(0.0f, -5.0f - (f32)GETREG(TAKREG, 20), 0.0f, 1);
+        Matrix_translate(0.0f, (f32)GETREG(TAKREG, 20) + 5.0f, 0.0f, MTX_MULT);
+        Matrix_RotateVector(effect->effect_specific[1], &effect->offset, MTX_MULT);
+        Matrix_translate(0.0f, -5.0f - (f32)GETREG(TAKREG, 20), 0.0f, MTX_MULT);
     } else {
-        Matrix_translate(0.0f, 15.0f, 0.0f, 1);
-        Matrix_RotateVector(effect->effect_specific[1], &effect->offset, 1);
-        Matrix_translate(0.0f, -15.0f, 0.0f, 1);
+        Matrix_translate(0.0f, 15.0f, 0.0f, MTX_MULT);
+        Matrix_RotateVector(effect->effect_specific[1], &effect->offset, MTX_MULT);
+        Matrix_translate(0.0f, -15.0f, 0.0f, MTX_MULT);
     }
-    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, 1);
+    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
 
     OPEN_DISP(graph);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

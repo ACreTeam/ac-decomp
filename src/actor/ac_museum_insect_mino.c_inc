@@ -273,15 +273,15 @@ void minsect_mino_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 void minsect_mino_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     _texture_z_light_fog_prim(game->graph);
     OPEN_DISP(game->graph);
-    Matrix_translate(actor->_1C.x, actor->_1C.y + actor->_58, actor->_1C.z, FALSE);
-    Matrix_rotateXYZ(0, actor->_7C, 0, TRUE);
-    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, TRUE);
-    Matrix_rotateXYZ(0, -actor->_7C, 0, TRUE);
-    Matrix_translate(0.f, -actor->_58, 0.f, TRUE);
-    Matrix_rotateXYZ(0, actor->_78, 0, TRUE);
-    Matrix_translate(0.f, 0.f, -2.5f, TRUE);
-    Matrix_rotateXYZ(DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE2(180), 0, TRUE);
-    Matrix_scale(actor->_34.x, actor->_34.y, actor->_34.z, TRUE);
+    Matrix_translate(actor->_1C.x, actor->_1C.y + actor->_58, actor->_1C.z, MTX_LOAD);
+    Matrix_rotateXYZ(0, actor->_7C, 0, MTX_MULT);
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, MTX_MULT);
+    Matrix_rotateXYZ(0, -actor->_7C, 0, MTX_MULT);
+    Matrix_translate(0.f, -actor->_58, 0.f, MTX_MULT);
+    Matrix_rotateXYZ(0, actor->_78, 0, MTX_MULT);
+    Matrix_translate(0.f, 0.f, -2.5f, MTX_MULT);
+    Matrix_rotateXYZ(DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE2(180), 0, MTX_MULT);
+    Matrix_scale(actor->_34.x, actor->_34.y, actor->_34.z, MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetEnvColor(NEXT_POLY_OPA_DISP, 0, 0xff, 0x9b, 0xff);
     if (actor->_80) {
@@ -289,27 +289,27 @@ void minsect_mino_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     } else {
         gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][0]);
     }
-    Matrix_translate(actor->_1C.x, actor->_1C.y + actor->_58, actor->_1C.z, FALSE);
-    Matrix_rotateXYZ(0, actor->_7C, 0, TRUE);
-    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, TRUE);
-    Matrix_rotateXYZ(0, -actor->_7C, 0, TRUE);
-    Matrix_translate(0.0f, -actor->_58, 0.0f, TRUE);
-    Matrix_rotateXYZ(0, actor->_78, 0, TRUE);
+    Matrix_translate(actor->_1C.x, actor->_1C.y + actor->_58, actor->_1C.z, MTX_LOAD);
+    Matrix_rotateXYZ(0, actor->_7C, 0, MTX_MULT);
+    Matrix_rotateXYZ(actor->_68.x, actor->_68.y, actor->_68.z, MTX_MULT);
+    Matrix_rotateXYZ(0, -actor->_7C, 0, MTX_MULT);
+    Matrix_translate(0.0f, -actor->_58, 0.0f, MTX_MULT);
+    Matrix_rotateXYZ(0, actor->_78, 0, MTX_MULT);
     if (GETREG(NMREG, 5)) {
-        Matrix_translate(GETREG(NMREG, 4) * 0.001f, GETREG(NMREG, 5) * 0.01f, GETREG(NMREG, 6) * 0.01f, TRUE);
+        Matrix_translate(GETREG(NMREG, 4) * 0.001f, GETREG(NMREG, 5) * 0.01f, GETREG(NMREG, 6) * 0.01f, MTX_MULT);
     } else if (actor->_80) {
-        Matrix_translate(0.0f, 7.5f, 0.f, TRUE);
+        Matrix_translate(0.0f, 7.5f, 0.f, MTX_MULT);
     } else {
-        Matrix_translate(0.0f, 5.f, 0.f, TRUE);
+        Matrix_translate(0.0f, 5.f, 0.f, MTX_MULT);
     }
     if (GETREG(NMREG, 7)) {
-        Matrix_scale(1.5f, actor->_58 / ((mino_top_pos.y - mino_base_pos.y) - (GETREG(NMREG, 7) * 0.01f)), 1.f, TRUE);
+        Matrix_scale(1.5f, actor->_58 / ((mino_top_pos.y - mino_base_pos.y) - (GETREG(NMREG, 7) * 0.01f)), 1.f, MTX_MULT);
     } else {
-        Matrix_scale(1.5f, actor->_58 / ((mino_top_pos.y - mino_base_pos.y) - 10.f), 1.f, TRUE);
+        Matrix_scale(1.5f, actor->_58 / ((mino_top_pos.y - mino_base_pos.y) - 10.f), 1.f, MTX_MULT);
     }
-    Matrix_translate(0.31f, -8.7f, -2.5f, TRUE);
-    Matrix_rotateXYZ(DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE2(180), 0, TRUE);
-    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    Matrix_translate(0.31f, -8.7f, -2.5f, MTX_MULT);
+    Matrix_rotateXYZ(DEG2SHORT_ANGLE(-90), DEG2SHORT_ANGLE2(180), 0, MTX_MULT);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetEnvColor(NEXT_POLY_OPA_DISP, 0, 0xff, 0x9b, 0xff);
     gSPDisplayList(NEXT_POLY_OPA_DISP, minsect_mdl[actor->_00][2]);

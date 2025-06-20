@@ -83,9 +83,9 @@ extern void mGB_draw_gba(Submenu* submenu, GRAPH* graph, f32 pos_x, f32 pos_y, f
 
     OPEN_POLY_OPA_DISP(graph);
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
-    Matrix_scale(scale, scale, 1.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
+    Matrix_scale(scale, scale, 1.0f, MTX_MULT);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, mGB_get_image_texture(submenu, idx));
@@ -209,8 +209,8 @@ static void mGB_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_
     int tex_x;
     int tex_y;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 
@@ -277,8 +277,8 @@ static void mGB_set_card_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* 
     int tex_y;
     int idx;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 

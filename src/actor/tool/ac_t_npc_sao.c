@@ -79,8 +79,8 @@ extern void aTNS_actor_draw(ACTOR* actorx, GAME* game) {
         Matrix_Position_Zero(&actorx->world.position);
         npc_sao->tool_class.init_matrix = FALSE;
     } else {
-        Matrix_translate(actorx->world.position.x, actorx->world.position.y, actorx->world.position.z, FALSE);
-        Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+        Matrix_translate(actorx->world.position.x, actorx->world.position.y, actorx->world.position.z, MTX_LOAD);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     }
 
     _texture_z_light_fog_prim_npc(g);
@@ -90,8 +90,8 @@ extern void aTNS_actor_draw(ACTOR* actorx, GAME* game) {
 
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(g), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(gfx++, tol_npcsao_1_sao_model);
-    Matrix_translate(npc_sao->pos_x, npc_sao->pos_y, npc_sao->pos_z, FALSE);
-    Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+    Matrix_translate(npc_sao->pos_x, npc_sao->pos_y, npc_sao->pos_z, MTX_LOAD);
+    Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(g), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(gfx++, tol_npcsao_1_uki_model);
 

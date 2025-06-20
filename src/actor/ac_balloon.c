@@ -195,12 +195,12 @@ static void Ac_Balloon_draw_normal(ACTOR* actorx, GAME* game) {
     Matrix_push();
     angle_x = actorx->shape_info.rotation.x - DEG2SHORT_ANGLE2(90.0f);
     angle_y = actorx->shape_info.rotation.y;
-    Matrix_translate(pos->x, pos->y, pos->z, 0);
-    Matrix_RotateY(angle_y, 1);
-    Matrix_RotateX(angle_x, 1);
-    Matrix_RotateZ(DEG2SHORT_ANGLE2(90.0f), 1);
-    Matrix_RotateX(balloon->lean, 1);
-    Matrix_scale(actorx->scale.x, actorx->scale.y, actorx->scale.z, 1);
+    Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
+    Matrix_RotateY(angle_y, MTX_MULT);
+    Matrix_RotateX(angle_x, MTX_MULT);
+    Matrix_RotateZ(DEG2SHORT_ANGLE2(90.0f), MTX_MULT);
+    Matrix_RotateX(balloon->lean, MTX_MULT);
+    Matrix_scale(actorx->scale.x, actorx->scale.y, actorx->scale.z, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 

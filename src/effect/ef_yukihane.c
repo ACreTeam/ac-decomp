@@ -68,10 +68,10 @@ static void eYukihane_dw(eEC_Effect_c* effect, GAME* game) {
     OPEN_DISP(game->graph);
 
     _texture_z_light_fog_prim_xlu(game->graph);
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-    Matrix_RotateX(DEG2SHORT_ANGLE(-45.0f), 1);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_RotateX(DEG2SHORT_ANGLE(-45.0f), MTX_MULT);
     scale = 1.0f + ((f32)(int)GETREG(MYKREG, 27)) * 0.01f;
-    Matrix_scale(effect->scale.x * scale, effect->scale.y * scale, effect->scale.z * scale, 1);
+    Matrix_scale(effect->scale.x * scale, effect->scale.y * scale, effect->scale.z * scale, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPSegment(NEXT_POLY_XLU_DISP, G_MWO_SEGMENT_8, eYukihane_pattern_table[frame]);

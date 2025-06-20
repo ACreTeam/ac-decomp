@@ -35,8 +35,8 @@ static void eKamifubuki_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
     xyz_t p;
     f32 s;
     s = sin_s(d) * 7.f;
-    Matrix_RotateY(a, FALSE);
-    Matrix_RotateX(effect->arg1, TRUE);
+    Matrix_RotateY(a, MTX_LOAD);
+    Matrix_RotateX(effect->arg1, MTX_MULT);
     p.x = s * sin_s(r);
     p.y = cos_s(d) * 7.f;
     p.z = s * cos_s(r);
@@ -51,7 +51,7 @@ static void eKamifubuki_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
     Matrix_Position(&p, &effect->acceleration);
     effect->effect_specific[0] = qrand();
     effect->effect_specific[1] = DEG2SHORT_ANGLE2(RANDOM2_F(15.f) + 15.f);
-    Matrix_rotateXYZ(qrand(), qrand(), qrand(), FALSE);
+    Matrix_rotateXYZ(qrand(), qrand(), qrand(), MTX_LOAD);
     Matrix_Position(&unit_axis, &effect->offset);
     effect->timer = EFFECT_LIFETIME - RANDOM(5.f);
 }
@@ -74,8 +74,8 @@ static void eKamifubuki_mv(eEC_Effect_c* effect, GAME* game) {
 extern Gfx ef_kamihubuki01_00_model[];
 static void eKamifubuki_one_draw(eEC_Effect_c* effect, xyz_t* pos, GAME* game) {
     OPEN_DISP(game->graph);
-    Matrix_translate(pos->x, pos->y, pos->z, FALSE);
-    Matrix_RotateVector(effect->effect_specific[0], &effect->offset, TRUE);
+    Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
+    Matrix_RotateVector(effect->effect_specific[0], &effect->offset, MTX_MULT);
     Matrix_scale((GETREG(MYKREG, 0x1b) * 0.01f + 1.f) * 0.003f, (GETREG(MYKREG, 0x1b) * 0.01f + 1.f) * 0.003f,
                  (GETREG(MYKREG, 0x1b) * 0.01f + 1.f) * 0.003f, TRUE);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

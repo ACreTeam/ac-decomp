@@ -75,12 +75,12 @@ static void eGoki_dw(eEC_Effect_c* effect, GAME* game) {
     int opacity = (u8)eEC_CLIP->calc_adjust_proc(effect->timer, 0, 20, 100.f, 255.f);
     _texture_z_light_fog_prim_xlu(game->graph);
     OPEN_DISP(game->graph);
-    Matrix_translate(effect->position.x + effect->offset.x, effect->position.y, effect->position.z, FALSE);
+    Matrix_translate(effect->position.x + effect->offset.x, effect->position.y, effect->position.z, MTX_LOAD);
     Matrix_scale(effect->scale.x * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f),
                  effect->scale.y * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f),
                  effect->scale.z * (GETREG(MYKREG, 0x1b) * 0.01f + 1.f), TRUE);
-    Matrix_mult(&play->billboard_matrix, TRUE);
-    Matrix_RotateZ(effect->effect_specific[0], TRUE);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
+    Matrix_RotateZ(effect->effect_specific[0], MTX_MULT);
     Evw_Anime_Set(play, ef_goki01_01_evw_anime);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, opacity);

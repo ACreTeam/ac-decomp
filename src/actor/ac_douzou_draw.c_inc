@@ -34,7 +34,7 @@ static int aDOU_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, in
 
   if (joint_idx == 2) {
     f32 scale = scltbl[color];
-    Matrix_scale(scale, scale, scale, 1);
+    Matrix_scale(scale, scale, scale, MTX_MULT);
   }
 
   /* Decide which sex of model to draw (keyframes [2, 4] are male, [5, 7] are female) */
@@ -122,7 +122,7 @@ static void aDOU_actor_draw(ACTOR* actor, GAME* game) {
         gSPSegment(gfx++, G_MWO_SEGMENT_8, eye_tbl[eye_type]);
         gSPSegment(gfx++, G_MWO_SEGMENT_9, mouth_tbl[mouth_type]);
 
-        Matrix_translate(xpostbl[i] * 100.0f, 0.0f, zpostbl[i] * 100.0f, 1);
+        Matrix_translate(xpostbl[i] * 100.0f, 0.0f, zpostbl[i] * 100.0f, MTX_MULT);
 
         SET_POLY_OPA_DISP(gfx);
         CLOSE_DISP(graph);

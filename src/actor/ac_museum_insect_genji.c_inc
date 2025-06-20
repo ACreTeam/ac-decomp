@@ -170,9 +170,9 @@ void genji_light_draw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     b -= (u8)(b * (1.f - actor->_0C));
     _texture_z_light_fog_prim_xlu(game->graph);
     OPEN_POLY_XLU_DISP(game->graph);
-    Matrix_translate(p.x, p.y, p.z, FALSE);
-    Matrix_mult(&((GAME_PLAY*)game)->billboard_matrix, TRUE);
-    Matrix_scale(actor->_14, actor->_14, actor->_14, TRUE);
+    Matrix_translate(p.x, p.y, p.z, MTX_LOAD);
+    Matrix_mult(&((GAME_PLAY*)game)->billboard_matrix, MTX_MULT);
+    Matrix_scale(actor->_14, actor->_14, actor->_14, MTX_MULT);
     gSPMatrix(POLY_XLU_DISP++, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetEnvColor(POLY_XLU_DISP++, 0, 0xff, 0x9b, a);
     gSPDisplayList(POLY_XLU_DISP++, m_genji_disp_tbl[actor->_72]);
@@ -283,10 +283,10 @@ void minsect_genji_dw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     OPEN_DISP(game->graph);
     Matrix_translate(actor->_1C.x + GETREG(NMREG, 0x10) * 0.01f, actor->_1C.y + GETREG(NMREG, 0x11) * 0.01f,
                      actor->_1C.z + GETREG(NMREG, 0x12) * 0.01f, FALSE);
-    Matrix_rotateXYZ(0, 0, actor->_68.z, TRUE);
-    Matrix_rotateXYZ(actor->_7E, 0, 0, TRUE);
-    Matrix_rotateXYZ(DEG2SHORT_ANGLE(110), 0, DEG2SHORT_ANGLE2(180), TRUE);
-    Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+    Matrix_rotateXYZ(0, 0, actor->_68.z, MTX_MULT);
+    Matrix_rotateXYZ(actor->_7E, 0, 0, MTX_MULT);
+    Matrix_rotateXYZ(DEG2SHORT_ANGLE(110), 0, DEG2SHORT_ANGLE2(180), MTX_MULT);
+    Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(NEXT_POLY_OPA_DISP, &act_m_mu_genji_modelT);
     CLOSE_DISP(game->graph);

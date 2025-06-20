@@ -193,8 +193,8 @@ static void mCD_set_base_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y, 
 
     year_ofs = sel / lbRTC_MONTHS_MAX;
     month = sel % lbRTC_MONTHS_MAX;
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 
@@ -244,7 +244,7 @@ static void mCD_set_base_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y, 
     for (i = 0; i < 37; k++) {
         for (j = 0; j < lbRTC_WEEK && i < 37; i++) {
             Matrix_push();
-            Matrix_translate(j * 32, -k * 20, 0.0f, 1);
+            Matrix_translate(j * 32, -k * 20, 0.0f, MTX_MULT);
             
             gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
@@ -268,7 +268,7 @@ static void mCD_set_base_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y, 
     for (k = 0; k < 37; j++) {
         for (i = 0; i < lbRTC_WEEK && k < 37; k++) {
             Matrix_push();
-            Matrix_translate(i * 32, -j * 20, 0.0f, 1);
+            Matrix_translate(i * 32, -j * 20, 0.0f, MTX_MULT);
             
             gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
@@ -299,7 +299,7 @@ static void mCD_set_base_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y, 
         day = calendar->month_entries[sel].day_data[idx] & 0x1F;
         day_type = calendar->day_type;
         Matrix_push();
-        Matrix_translate((idx % lbRTC_WEEK) * 32, -(idx / lbRTC_WEEK) * 20, 0.0f, 1);
+        Matrix_translate((idx % lbRTC_WEEK) * 32, -(idx / lbRTC_WEEK) * 20, 0.0f, MTX_MULT);
 
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPLoadTextureBlock_8b_Dolphin(POLY_OPA_DISP++, cal_win_box2_tex_rgb_ia8, G_IM_FMT_IA, 32, 32, 0, GX_MIRROR, GX_MIRROR, 0, 0);
@@ -310,7 +310,7 @@ static void mCD_set_base_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y, 
         gDPSetEnvColor(POLY_OPA_DISP++, env_p[0], env_p[1], env_p[2], 255);
         gSPDisplayList(POLY_OPA_DISP++, cal_win_boxT_model);
         
-        Matrix_translate(0.0f, 4.0f, 0.0f, 1);
+        Matrix_translate(0.0f, 4.0f, 0.0f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         if (day > 0) {
             prim_p = number2_prim_table[day_type];
@@ -345,7 +345,7 @@ static void mCD_set_base_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y, 
         
         if (calendar->_103C[calendar->_1042] & 0x80) {
             Matrix_push();
-            Matrix_translate(0.0f, 0.0f, 0.0f, 1);
+            Matrix_translate(0.0f, 0.0f, 0.0f, MTX_MULT);
             gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_OPA_DISP++, cal_icon_sakana_model);
             Matrix_pull();
@@ -355,7 +355,7 @@ static void mCD_set_base_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y, 
     
     if (flag == TRUE && calendar->_1043 > 1) {
         Matrix_push();
-        Matrix_translate(calendar->_1034, -1.5f, 0.0f, 1);
+        Matrix_translate(calendar->_1034, -1.5f, 0.0f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 0, 0, 255, calendar->_1054);
         gSPDisplayList(POLY_OPA_DISP++, cal_icon_yajirushi_model);
@@ -386,8 +386,8 @@ static void mCD_set_hyoji_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y)
     GRAPH* graph = game->graph;
     mCD_Ovl_c* calendar = submenu->overlay->calendar_ovl;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 
@@ -414,7 +414,7 @@ static void mCD_set_hyoji_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y)
 
     if (calendar->_105C == mCD_STICK_AREA_RIGHT) {
         Matrix_push();
-        Matrix_RotateY(DEG2SHORT_ANGLE2(180.0f), 1);
+        Matrix_RotateY(DEG2SHORT_ANGLE2(180.0f), MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     }
     gSPDisplayList(POLY_OPA_DISP++, cal_hyouji_stT_model);
@@ -436,8 +436,8 @@ extern Gfx cal_hyouji2_bmojiT_model[];
 static void mCD_set_hyoji2_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y) {
     GRAPH* graph = game->graph;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 

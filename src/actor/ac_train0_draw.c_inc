@@ -10,8 +10,8 @@ static void aTR0_actor_draw(ACTOR* actor, GAME* game) {
     if (mtx != NULL) {
         _texture_z_light_fog_prim_npc(graph);
         Matrix_push();
-        Matrix_translate(train0->arg0_f, train0->actor_class.world.position.y, train0->actor_class.world.position.z, 0);
-        Matrix_scale(train0->actor_class.scale.x, train0->actor_class.scale.y, train0->actor_class.scale.z, 1);
+        Matrix_translate(train0->arg0_f, train0->actor_class.world.position.y, train0->actor_class.world.position.z, MTX_LOAD);
+        Matrix_scale(train0->actor_class.scale.x, train0->actor_class.scale.y, train0->actor_class.scale.z, MTX_MULT);
 
         OPEN_POLY_OPA_DISP(graph);
 

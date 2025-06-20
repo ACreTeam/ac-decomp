@@ -93,11 +93,11 @@ static void eTumbleBodyPrint_dw(eEC_Effect_c* effect, GAME* game) {
     OPEN_DISP(game->graph);
 
     _texture_z_light_fog_prim_xlu(game->graph);
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, 1);
-    Matrix_RotateZ(effect->effect_specific[2], 1);
-    Matrix_RotateX(effect->effect_specific[0], 1);
-    Matrix_RotateY(effect->effect_specific[1], 1);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
+    Matrix_RotateZ(effect->effect_specific[2], MTX_MULT);
+    Matrix_RotateX(effect->effect_specific[0], MTX_MULT);
+    Matrix_RotateY(effect->effect_specific[1], MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     if (effect->effect_specific[3] != 0) {

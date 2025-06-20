@@ -31,8 +31,8 @@ static void aMIK_copyright_draw(GAME* game) {
     gSP2Triangles(NEXT_FONT_DISP, 0, 1, 2, 0, 0, 2, 3, 0);
 
     Matrix_push();
-    Matrix_translate(0.0f, -900.0f, 0.0f, 1);
-    Matrix_scale(0.85f, 0.85f, 1.0f, 1);
+    Matrix_translate(0.0f, -900.0f, 0.0f, MTX_MULT);
+    Matrix_scale(0.85f, 0.85f, 1.0f, MTX_MULT);
     gSPMatrix(NEXT_FONT_DISP, _Matrix_to_Mtx_new(graph), G_MTX_LOAD | G_MTX_NOPUSH);
     gSPDisplayList(NEXT_FONT_DISP, obj_e_mikanbox_copyrightT_model2);
     Matrix_pull();

@@ -65,8 +65,8 @@ static void eYukidaruma_dw(eEC_Effect_c* effect, GAME* game) {
     _texture_z_light_fog_prim_xlu(game->graph);
 
     if (model < ARRAY_COUNT(ef_yukidaruma_model_tbl)) {
-        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-        Matrix_scale(effect->offset.x, effect->offset.x, effect->offset.x, 1);
+        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+        Matrix_scale(effect->offset.x, effect->offset.x, effect->offset.x, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 128, 255, 255, 255, 255);
@@ -74,8 +74,8 @@ static void eYukidaruma_dw(eEC_Effect_c* effect, GAME* game) {
     }
 
     if (frame == 3 || frame == 6 || frame == 9) {
-        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-        Matrix_scale(effect->offset.x, effect->offset.x, effect->offset.x, 1);
+        Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+        Matrix_scale(effect->offset.x, effect->offset.x, effect->offset.x, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 128, 255, 255, 255, 120);

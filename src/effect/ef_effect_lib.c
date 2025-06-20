@@ -95,12 +95,12 @@ static void eEL_AutoMatrixXlu_Offset(GAME* game, xyz_t* pos, xyz_t* scale, xyz_t
     OPEN_DISP(game->graph);
 
     _texture_z_light_fog_prim_xlu(game->graph);
-    Matrix_translate(pos->x, pos->y, pos->z, 0);
-    Matrix_mult(&play->billboard_matrix, 1);
+    Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
     Matrix_translate(offset->x + (f32)(int)GETREG(MYKREG, 24), offset->y + (f32)(int)GETREG(MYKREG, 25),
                      offset->z + (f32)(int)GETREG(MYKREG, 26), 1);
     adj_scale = 1.0f + ((f32)(int)GETREG(MYKREG, 27)) * 0.01f;
-    Matrix_scale(scale->x * adj_scale, scale->y * adj_scale, scale->z * adj_scale, 1);
+    Matrix_scale(scale->x * adj_scale, scale->y * adj_scale, scale->z * adj_scale, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 

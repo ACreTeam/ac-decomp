@@ -448,8 +448,8 @@ static void aFD_DrawBlock(aFD_block_c* block, ACTOR* actorx, GAME* game) {
     xlu_gfx = mFI_GetBGDisplayListRom_XLU(block->bx, block->bz);
     anime_data = mFI_GetBGTexAnimInfo(&anime_frame_count, block->bx, block->bz);
 
-    Matrix_translate(block->wpos.x, block->wpos.y, block->wpos.z, 0);
-    Matrix_scale(0.0625f, 0.0625f, 0.0625f, 1);
+    Matrix_translate(block->wpos.x, block->wpos.y, block->wpos.z, MTX_LOAD);
+    Matrix_scale(0.0625f, 0.0625f, 0.0625f, MTX_MULT);
     _texture_z_light_fog_prim_xlu(game->graph);
     _texture_z_light_fog_prim_bg(game->graph);
 

@@ -264,8 +264,8 @@ static void Shop_Manekin_Actor_draw(ACTOR* actorx, GAME* game) {
             OPEN_DISP(game->graph);
 
             _texture_z_light_fog_prim(game->graph);
-            Matrix_translate(pos.x, pos.y, pos.z, 0);
-            Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+            Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+            Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
             lights = Global_light_read(&play->global_light, game->graph);
             LightsN_list_check(lights, play->global_light.list, &pos);
             LightsN_disp(lights, game->graph);

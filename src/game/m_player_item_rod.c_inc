@@ -367,7 +367,7 @@ static void Player_actor_Item_draw_rod(ACTOR* actor, GAME* game) {
 
     Matrix_Position_VecZ(6000.0f, &player->item_rod_virtual_top_pos);
     Matrix_push();
-    Matrix_RotateZ(player->item_rod_angle_z, 1);
+    Matrix_RotateZ(player->item_rod_angle_z, MTX_MULT);
 
     mtx = _Matrix_to_Mtx_new(play->game.graph);
 

@@ -439,10 +439,10 @@ static void aHG_actor_draw(ACTOR* actorx, GAME* game) {
     HOUSE_GOKI_ACTOR* goki = (HOUSE_GOKI_ACTOR*)actorx;
 
     Matrix_push();
-    Matrix_translate(actorx->world.position.x, actorx->world.position.y + 2.0f, actorx->world.position.z, 0);
-    Matrix_scale(actorx->scale.x, actorx->scale.y, actorx->scale.z, 1);
-    Matrix_RotateX(actorx->shape_info.rotation.x, 1);
-    Matrix_RotateY(actorx->shape_info.rotation.y, 1);
+    Matrix_translate(actorx->world.position.x, actorx->world.position.y + 2.0f, actorx->world.position.z, MTX_LOAD);
+    Matrix_scale(actorx->scale.x, actorx->scale.y, actorx->scale.z, MTX_MULT);
+    Matrix_RotateX(actorx->shape_info.rotation.x, MTX_MULT);
+    Matrix_RotateY(actorx->shape_info.rotation.y, MTX_MULT);
     _texture_z_light_fog_prim_xlu(graph);
 
     OPEN_POLY_XLU_DISP(graph);

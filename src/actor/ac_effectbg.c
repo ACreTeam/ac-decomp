@@ -1025,8 +1025,8 @@ static void EffectBG_object_draw(EffectBg_c* efbg, GAME* game) {
 
     OPEN_DISP(game->graph);
 
-    Matrix_translate(efbg->base_pos.x, efbg->base_pos.y, efbg->base_pos.z, 0);
-    Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+    Matrix_translate(efbg->base_pos.x, efbg->base_pos.y, efbg->base_pos.z, MTX_LOAD);
+    Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
     if (efbg->timer < 70) {
         gDPSetRenderMode(NEXT_POLY_OPA_DISP, G_RM_FOG_SHADE_A, G_RM_AA_ZB_TEX_EDGE2);

@@ -16,11 +16,11 @@ static int aSumHalClk01_DwAfter(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int 
     if (joint_idx == 3) {
         Matrix_Position(&save_pos, &pos);
         Matrix_push();
-        Matrix_translate(pos.x, pos.y, pos.z, 0);
-        Matrix_RotateY(base_angle_y, 1);
-        Matrix_RotateZ(DEG2SHORT_ANGLE(90.0f) - Common_Get(time.rad_hour), 1);
-        Matrix_translate(0.0f, 0.0f, 1.0f, 1);
-        Matrix_scale(scale_x, scale_y, scale_z, 1);
+        Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+        Matrix_RotateY(base_angle_y, MTX_MULT);
+        Matrix_RotateZ(DEG2SHORT_ANGLE(90.0f) - Common_Get(time.rad_hour), MTX_MULT);
+        Matrix_translate(0.0f, 0.0f, 1.0f, MTX_MULT);
+        Matrix_scale(scale_x, scale_y, scale_z, MTX_MULT);
 
         OPEN_DISP(graph);
 
@@ -32,11 +32,11 @@ static int aSumHalClk01_DwAfter(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int 
     } else if (joint_idx == 4) {
         Matrix_Position(&save_pos, &pos);
         Matrix_push();
-        Matrix_translate(pos.x, pos.y, pos.z, 0);
-        Matrix_RotateY(base_angle_y, 1);
-        Matrix_RotateZ(DEG2SHORT_ANGLE(90.0f) - Common_Get(time.rad_min), 1);
-        Matrix_translate(0.0f, 0.0f, 1.0f, 1);
-        Matrix_scale(scale_x, scale_y, scale_z, 1);
+        Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+        Matrix_RotateY(base_angle_y, MTX_MULT);
+        Matrix_RotateZ(DEG2SHORT_ANGLE(90.0f) - Common_Get(time.rad_min), MTX_MULT);
+        Matrix_translate(0.0f, 0.0f, 1.0f, MTX_MULT);
+        Matrix_scale(scale_x, scale_y, scale_z, MTX_MULT);
 
         OPEN_DISP(graph);
 

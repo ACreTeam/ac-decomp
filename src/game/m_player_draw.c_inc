@@ -5,11 +5,11 @@ static void Player_actor_draw_Before_head(ACTOR* actorx, GAME* game, cKF_Skeleto
 
     if (head_angle->x != 0 || head_angle->y != 0 || head_angle->z != 0) {
         Matrix_push();
-        Matrix_mult(&MtxF_clear, 0);
+        Matrix_mult(&MtxF_clear, MTX_LOAD);
         Matrix_softcv3_mult(&ZeroVec, rot);
-        Matrix_RotateX(head_angle->x, 1);
-        Matrix_RotateY(head_angle->y, 1);
-        Matrix_to_rotate2_new(get_Matrix_now(), rot, 0);
+        Matrix_RotateX(head_angle->x, MTX_MULT);
+        Matrix_RotateY(head_angle->y, MTX_MULT);
+        Matrix_to_rotate2_new(get_Matrix_now(), rot, MTX_LOAD);
         Matrix_pull();
     }
 }
@@ -60,7 +60,7 @@ static int Player_actor_draw_Before(GAME* game, cKF_SkeletonInfo_R_c* kf, int jo
 
 static void Player_actor_draw_After_Culc_FootMarkPos(xyz_t* pos, s_xyz* rot) {
     Matrix_Position_Zero(pos);
-    Matrix_to_rotate_new(get_Matrix_now(), rot, 0);
+    Matrix_to_rotate_new(get_Matrix_now(), rot, MTX_LOAD);
 }
 
 static void Player_actor_draw_After_head(ACTOR* actorx, GAME* game, cKF_SkeletonInfo_R_c* kf, Gfx** gfx_pp, u8* flag,
@@ -219,7 +219,7 @@ static void Player_actor_draw_Normal(ACTOR* actorx, GAME* game) {
         }
 
         Matrix_push();
-        Matrix_RotateZ(boat_angle_z, 1);
+        Matrix_RotateZ(boat_angle_z, MTX_MULT);
     }
 
     gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, eye_tex_p);

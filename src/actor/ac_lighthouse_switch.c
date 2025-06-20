@@ -239,9 +239,9 @@ static void aLS_PoleDraw(aLS_pole_c* pole, GAME* game) {
 
         OPEN_DISP(game->graph);
 
-        Matrix_translate(pole->pos.x, pole->pos.y, pole->pos.z, 0);
-        Matrix_RotateY(0, 1);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(pole->pos.x, pole->pos.y, pole->pos.z, MTX_LOAD);
+        Matrix_RotateY(0, MTX_MULT);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPSegment(NEXT_POLY_OPA_DISP, ANIME_1_TXT_SEG, primcolor_gfx);
@@ -263,9 +263,9 @@ static void aLS_SwitchDraw(aLS_switch_c* sw, GAME* game) {
 
         OPEN_DISP(game->graph);
 
-        Matrix_translate(sw->pos.x, sw->pos.y, sw->pos.z, 0);
-        Matrix_RotateY(0, 1);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(sw->pos.x, sw->pos.y, sw->pos.z, MTX_LOAD);
+        Matrix_RotateY(0, MTX_MULT);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPSegment(NEXT_POLY_OPA_DISP, ANIME_1_TXT_SEG, primcolor_gfx);

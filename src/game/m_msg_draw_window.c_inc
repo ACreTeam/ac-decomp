@@ -5,8 +5,8 @@ static void mMsg_SetMatrix(mMsg_Window_c* msg_p, GAME* game, int mode) {
   f32 center_y = (-msg_p->center_y + (SCREEN_HEIGHT_F * 0.5f)) * 16.0f;
 
   Matrix_push();
-  Matrix_translate(center_x, center_y, 0.0f, 1);
-  Matrix_scale(scale, scale, scale, 1);
+  Matrix_translate(center_x, center_y, 0.0f, MTX_MULT);
+  Matrix_scale(scale, scale, scale, MTX_MULT);
 
   OPEN_DISP(graph);
 

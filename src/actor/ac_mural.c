@@ -74,7 +74,7 @@ static void Mural_Actor_draw(ACTOR* actorx, GAME* game) {
 
             Matrix_translate(actorx->world.position.x + x * 24.0f, actorx->world.position.y - y * 24.0f,
                              actorx->world.position.z, 0);
-            Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+            Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
             /* Segment 8 holds the palette */
             gSPSegment(NEXT_POLY_OPA_DISP, G_MWO_SEGMENT_8, mural->mural[i].pal_p);

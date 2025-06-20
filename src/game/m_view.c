@@ -186,17 +186,17 @@ static int do_stretch_view(View* view, Mtx* mtx) {
     Matrix_put(&mtx_f);
     
     /* do rotation */
-    Matrix_RotateX(rot.x, 1);
-    Matrix_RotateY(rot.y, 1);
-    Matrix_RotateZ(rot.z, 1);
+    Matrix_RotateX(rot.x, MTX_MULT);
+    Matrix_RotateY(rot.y, MTX_MULT);
+    Matrix_RotateZ(rot.z, MTX_MULT);
 
     /* do scaling */
-    Matrix_scale(view->stretch.scale.x, view->stretch.scale.y, view->stretch.scale.z, 1);
+    Matrix_scale(view->stretch.scale.x, view->stretch.scale.y, view->stretch.scale.z, MTX_MULT);
 
     /* undo rotation */
-    Matrix_RotateZ(-rot.z, 1);
-    Matrix_RotateY(-rot.y, 1);
-    Matrix_RotateX(-rot.x, 1);
+    Matrix_RotateZ(-rot.z, MTX_MULT);
+    Matrix_RotateY(-rot.y, MTX_MULT);
+    Matrix_RotateX(-rot.x, MTX_MULT);
 
     /* update matrix */
     _Matrix_to_Mtx(mtx);

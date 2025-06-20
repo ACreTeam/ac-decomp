@@ -8327,9 +8327,9 @@ static void mTG_set_win_field(GRAPH* graph, Submenu* submenu, mSM_MenuInfo_c* me
     }
 
     /* Setup tag DL env */
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(tag->base_pos[0] + pos_x, tag->base_pos[1] + pos_y, 140.0f, 1);
-    Matrix_scale(tag->scale, tag->scale, 1.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(tag->base_pos[0] + pos_x, tag->base_pos[1] + pos_y, 140.0f, MTX_MULT);
+    Matrix_scale(tag->scale, tag->scale, 1.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
     gSPDisplayList(POLY_OPA_DISP++, sen_item2_DL_mode);
@@ -8338,8 +8338,8 @@ static void mTG_set_win_field(GRAPH* graph, Submenu* submenu, mSM_MenuInfo_c* me
 
     /* Draw window shadow */
     Matrix_push();
-    Matrix_translate(tag->body_ofs[0], tag->body_ofs[1], 0.0f, 1);
-    Matrix_scale(tag->body_scale[0] * tag->_34, tag->body_scale[1] * tag->_34, 1.0f, 1);
+    Matrix_translate(tag->body_ofs[0], tag->body_ofs[1], 0.0f, MTX_MULT);
+    Matrix_scale(tag->body_scale[0] * tag->_34, tag->body_scale[1] * tag->_34, 1.0f, MTX_MULT);
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, disp_data_p->frame_shadow);
     Matrix_pull();
@@ -8347,7 +8347,7 @@ static void mTG_set_win_field(GRAPH* graph, Submenu* submenu, mSM_MenuInfo_c* me
     /* Draw arrow */
     if (tag->arrow_dir != 0) {
         Matrix_push();
-        Matrix_scale(tag->arrow_scale[0], tag->arrow_scale[1], 1.0f, 1);
+        Matrix_scale(tag->arrow_scale[0], tag->arrow_scale[1], 1.0f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
         if (tag->table == mTG_TABLE_CPORIGINAL_WC) {
@@ -8388,8 +8388,8 @@ static void mTG_set_win_field(GRAPH* graph, Submenu* submenu, mSM_MenuInfo_c* me
 
     /* Draw window */
     Matrix_push();
-    Matrix_translate(tag->body_ofs[0], tag->body_ofs[1], 0.0f, 1);
-    Matrix_scale(tag->body_scale[0] * tag->_34, tag->body_scale[1] * tag->_34, 1.0f, 1);
+    Matrix_translate(tag->body_ofs[0], tag->body_ofs[1], 0.0f, MTX_MULT);
+    Matrix_scale(tag->body_scale[0] * tag->_34, tag->body_scale[1] * tag->_34, 1.0f, MTX_MULT);
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, disp_data_p->frame);
     Matrix_pull();
@@ -8412,7 +8412,7 @@ static void mTG_set_win_field(GRAPH* graph, Submenu* submenu, mSM_MenuInfo_c* me
 
         x = tag->text_ofs[0] + (tag->_34 * -4.0f + tag->body_ofs[0]);
         y = (tag->text_ofs[1] + (tag->_34 * -8.0f + tag->body_ofs[1])) - cursor_ofs * 16.0f * tag->_34;
-        Matrix_translate(x, y, 0.0f, 1);
+        Matrix_translate(x, y, 0.0f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         color_p = &cursol_color[special_color];
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, color_p->r, color_p->g, color_p->b, 255);

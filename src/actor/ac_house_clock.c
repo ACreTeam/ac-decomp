@@ -274,9 +274,9 @@ static int aHC_DrawClockAfter(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
 
         Matrix_Position(&ofs, &pos);
         Matrix_push();
-        Matrix_translate(pos.x, pos.y, pos.z, 0);
-        Matrix_RotateZ(DEG2SHORT_ANGLE2(90.0f) - Common_Get(time).rad_hour, 1);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+        Matrix_RotateZ(DEG2SHORT_ANGLE2(90.0f) - Common_Get(time).rad_hour, MTX_MULT);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         Matrix_pull();
         gSPDisplayList(NEXT_POLY_OPA_DISP, aHC_draw_data[clock_num].short_model);
@@ -287,9 +287,9 @@ static int aHC_DrawClockAfter(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int jo
 
         Matrix_Position(&ofs, &pos);
         Matrix_push();
-        Matrix_translate(pos.x, pos.y, pos.z, 0);
-        Matrix_RotateZ(DEG2SHORT_ANGLE2(90.0f) - Common_Get(time).rad_min, 1);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+        Matrix_RotateZ(DEG2SHORT_ANGLE2(90.0f) - Common_Get(time).rad_min, MTX_MULT);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         Matrix_pull();
         gSPDisplayList(NEXT_POLY_OPA_DISP, aHC_draw_data[clock_num].long_model);
@@ -308,8 +308,8 @@ static void aHC_DrawClock(ACTOR* actorx, GAME* game) {
     _texture_z_light_fog_prim(game->graph);
     OPEN_DISP(game->graph);
 
-    Matrix_translate(house_clock->clock.pos.x, house_clock->clock.pos.y, house_clock->clock.pos.z, 0);
-    Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+    Matrix_translate(house_clock->clock.pos.x, house_clock->clock.pos.y, house_clock->clock.pos.z, MTX_LOAD);
+    Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 

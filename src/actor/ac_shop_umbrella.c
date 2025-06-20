@@ -338,8 +338,8 @@ static void Shop_Umbrella_Actor_draw(ACTOR* actorx, GAME* game) {
             lights = Global_light_read(&play->global_light, play->game.graph);
             LightsN_list_check(lights, play->global_light.list, &pos);
             LightsN_disp(lights, play->game.graph);
-            Matrix_translate(pos.x, pos.y, pos.z, 0);
-            Matrix_scale(scale, scale, scale, 1);
+            Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+            Matrix_scale(scale, scale, scale, MTX_MULT);
 
             gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_LOAD | G_MTX_NOPUSH);
             gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_LOAD | G_MTX_NOPUSH);

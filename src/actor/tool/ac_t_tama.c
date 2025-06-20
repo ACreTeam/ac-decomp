@@ -68,12 +68,12 @@ void aTTM_actor_draw(ACTOR* actor, GAME* game) {
             case 0:
             case 1:
                 Matrix_put(&tama->tools_class.matrix_work);
-                Matrix_scale(0.5f, 0.5f, 0.5f, TRUE);
+                Matrix_scale(0.5f, 0.5f, 0.5f, MTX_MULT);
                 break;
             case 2:
             case 3:
-                Matrix_RotateY(parent->shape_info.rotation.y - 0x4000, FALSE);
-                Matrix_translate(6.0f, 3.0f, 3.0f, TRUE);
+                Matrix_RotateY(parent->shape_info.rotation.y - 0x4000, MTX_LOAD);
+                Matrix_translate(6.0f, 3.0f, 3.0f, MTX_MULT);
                 Matrix_Position_Zero(&position1);
                 Matrix_put(&tama->tools_class.matrix_work);
                 Matrix_Position_Zero(&position2);
@@ -81,8 +81,8 @@ void aTTM_actor_draw(ACTOR* actor, GAME* game) {
                 position2.x += position1.x;
                 position2.y += position1.y;
                 position2.z += position1.z;
-                Matrix_translate(position2.x, position2.y, position2.z, FALSE);
-                Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+                Matrix_translate(position2.x, position2.y, position2.z, MTX_LOAD);
+                Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
                 break;
             default:
                 return;

@@ -10,6 +10,9 @@
 extern "C" {
 #endif
 
+#define MTX_LOAD 0 // load into new matrix
+#define MTX_MULT 1 // multiply into existing matrix
+
 extern MtxF MtxF_clear;
 extern Mtx Mtx_clear;
 

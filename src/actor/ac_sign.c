@@ -839,8 +839,8 @@ static void aSIGN_single_all_draw(SIGN_ACTOR* sign, GAME* game) {
             player_no = (sign->single[i].item >> 3) & 3;
             my_original_idx = sign->single[i].item & 7;
 
-            Matrix_translate(sign_pos.x, sign_pos.y, sign_pos.z - 1.0f, 0);
-            Matrix_scale(sign->single[i].scale.x, sign->single[i].scale.y, sign->single[i].scale.z, 1);
+            Matrix_translate(sign_pos.x, sign_pos.y, sign_pos.z - 1.0f, MTX_LOAD);
+            Matrix_scale(sign->single[i].scale.x, sign->single[i].scale.y, sign->single[i].scale.z, MTX_MULT);
 
             OPEN_POLY_OPA_DISP(graph);
 

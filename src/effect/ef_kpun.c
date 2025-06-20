@@ -135,11 +135,11 @@ static void eKPun_dw(eEC_Effect_c* effect, GAME* game) {
 
     OPEN_DISP(game->graph);
     _texture_z_light_fog_prim_xlu(game->graph);
-    Matrix_translate(pos_p->x, pos_p->y, pos_p->z, 0);
-    Matrix_mult(&play->billboard_matrix, 1);
-    Matrix_RotateZ(effect->effect_specific[0], 1);
-    Matrix_translate(offset_p->x, offset_p->y, offset_p->z, 1);
-    Matrix_scale(scale_p->x, scale_p->y, scale_p->z, 1);
+    Matrix_translate(pos_p->x, pos_p->y, pos_p->z, MTX_LOAD);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
+    Matrix_RotateZ(effect->effect_specific[0], MTX_MULT);
+    Matrix_translate(offset_p->x, offset_p->y, offset_p->z, MTX_MULT);
+    Matrix_scale(scale_p->x, scale_p->y, scale_p->z, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPSegment(NEXT_POLY_XLU_DISP, ANIME_1_TXT_SEG, eKPun_yuge_texture_table[tex0]);

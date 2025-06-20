@@ -62,7 +62,7 @@ static void aTFL_make_vtx(Vtx* v, ACTOR* actor){
     fact = 0;
     if(tools->init_matrix == 1){
         Matrix_put(&flag->tools_class.matrix_work);
-        Matrix_translate(0.0f,0.0f,48.0999984741f,1);
+        Matrix_translate(0.0f, 0.0f, 48.0999984741f, MTX_MULT);
         Matrix_Position_Zero(&pos);
         if(flag->unk1D0 == 0){
             xyz_t_move(&flag->work, &pos);
@@ -122,7 +122,7 @@ static void aTFL_actor_draw(ACTOR* actor, GAME* game){
     else{
         Matrix_translate(actor->world.position.x, actor->world.position.y, 
         actor->world.position.z, FALSE);
-        Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     }
 
     OPEN_DISP(graph);

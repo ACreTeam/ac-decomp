@@ -252,7 +252,7 @@ static void Actor_draw(GAME_PLAY* play, ACTOR* actor) {
     /* Load actor position/scale matrix */
     Matrix_softcv3_load(&actor->shape_info.rotation, actor->world.position.x,
                         actor->world.position.y + actor->shape_info.ofs_y * actor->scale.y, actor->world.position.z);
-    Matrix_scale(actor->scale.x, actor->scale.y, actor->scale.z, 1);
+    Matrix_scale(actor->scale.x, actor->scale.y, actor->scale.z, MTX_MULT);
 
     /* Draw actor */
     Actor_draw_ta_set(actor, play);

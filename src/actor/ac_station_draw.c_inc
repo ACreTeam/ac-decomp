@@ -5,10 +5,10 @@ static int aSTA_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, in
                                    u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
     switch (joint_idx) {
         case 4:
-            Matrix_RotateZ(-Common_Get(time.rad_hour), 1);
+            Matrix_RotateZ(-Common_Get(time.rad_hour), MTX_MULT);
             break;
         case 2:
-            Matrix_RotateZ(-Common_Get(time.rad_min), 1);
+            Matrix_RotateZ(-Common_Get(time.rad_min), MTX_MULT);
             break;
     }
 

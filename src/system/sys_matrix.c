@@ -56,7 +56,7 @@ MtxF* get_Matrix_now(void) {
 void Matrix_mult(MtxF* m, u8 mode) {
     MtxF* curm = get_Matrix_now();
 
-    if (mode == 1) {
+    if (mode == MTX_MULT) {
         Skin_Matrix_MulMatrix(curm, m, curm);
     } else {
         Matrix_copy_MtxF(Matrix_now, m);
@@ -67,7 +67,7 @@ void Matrix_translate(f32 x, f32 y, f32 z, u8 mode) {
     MtxF* curm = Matrix_now;
     f32 tx, ty;
 
-    if (mode == 1) {
+    if (mode == MTX_MULT) {
         tx = curm->xx;
         ty = curm->xy;
         curm->xw += tx * x + ty * y + curm->xz * z;
@@ -88,7 +88,7 @@ void Matrix_translate(f32 x, f32 y, f32 z, u8 mode) {
 void Matrix_scale(f32 x, f32 y, f32 z, u8 mode) {
     MtxF* curm = Matrix_now;
 
-    if (mode == 1) {
+    if (mode == MTX_MULT) {
         curm->xx *= x;
         curm->yx *= x;
         curm->zx *= x;
@@ -112,7 +112,7 @@ void Matrix_RotateX(s16 x, int mode) {
     f32 cos;
     f32 fp, st2;
 
-    if (mode == 1) {
+    if (mode == MTX_MULT) {
         if (x != 0) {
             curm = Matrix_now;
 
@@ -175,7 +175,7 @@ void Matrix_RotateY(s16 y, int mode) {
     f32 cos;
     f32 fp, st2;
 
-    if (mode == 1) {
+    if (mode == MTX_MULT) {
         if (y != 0) {
             curm = Matrix_now;
 
@@ -239,7 +239,7 @@ void Matrix_RotateZ(s16 z, int mode) {
     f32 cos;
     f32 fp, st2;
 
-    if (mode == 1) {
+    if (mode == MTX_MULT) {
         if (z != 0) {
             curm = Matrix_now;
 
@@ -303,7 +303,7 @@ void Matrix_rotateXYZ(s16 x, s16 y, s16 z, int mode) {
     f32 cos;
     f32 fp, st2;
 
-    if (mode == 1) {
+    if (mode == MTX_MULT) {
         sin = sin_s(z);
         cos = cos_s(z);
 
@@ -805,7 +805,7 @@ void Matrix_RotateVector(s16 angle, xyz_t* axis, u8 mode) {
     f32 temp3; // component z
     f32 temp4; // component q?
 
-    if (mode == 1) {
+    if (mode == MTX_MULT) {
         if (angle != 0) {
             curm = Matrix_now;
 

@@ -60,7 +60,7 @@ extern int mRlib_Get_norm_Clif(ACTOR* actor, xyz_t* normal_vec) {
         rot.y = 0.0f;
         rot.z = cos_s(angle);
 
-        Matrix_RotateVector((int)DEG2SHORT_ANGLE((0.5f - percent) * 80.0f), &rot, 0);
+        Matrix_RotateVector((int)DEG2SHORT_ANGLE((0.5f - percent) * 80.0f), &rot, MTX_LOAD);
         Matrix_Position(&pos, normal_vec);
 
         return TRUE;
@@ -79,10 +79,10 @@ extern void mRlib_Roll_Matrix_to_s_xyz(ACTOR* actor, s_xyz* rot, s16 angle) {
   axis.z = -sin_s(actor->world.angle.y);
   axis.y = 0.0f;
 
-  Matrix_RotateVector(angle, &axis, 0);
-  Matrix_rotateXYZ(rot->x, rot->y, rot->z, 1);
+  Matrix_RotateVector(angle, &axis, MTX_LOAD);
+  Matrix_rotateXYZ(rot->x, rot->y, rot->z, MTX_MULT);
   Matrix_get(&matrix);
-  Matrix_to_rotate2_new(&matrix, rot, 0);
+  Matrix_to_rotate2_new(&matrix, rot, MTX_LOAD);
 }
 
 extern s16 mRlib_Get_HitWallAngleY(ACTOR* actor) {
@@ -292,9 +292,9 @@ extern int mRlib_PSnowmanBreakNeckSwing(s16* head_angle_y, f32 f0, f32 scale) {
     rot_x = (f0 * 4.5f) * sin_s(angle);
     rot_z = (f0 * 4.5f) * cos_s(angle);
 
-    Matrix_translate(0.0f, scale * -1400.0f, 0.0f, 1); // move to neck location?
-    Matrix_rotateXYZ(rot_x, 0, rot_z, 1); // rotate at location
-    Matrix_translate(0.0f, scale * 1400.0f, 0.0f, 1); // restore original location
+    Matrix_translate(0.0f, scale * -1400.0f, 0.0f, MTX_MULT); // move to neck location?
+    Matrix_rotateXYZ(rot_x, 0, rot_z, MTX_MULT); // rotate at location
+    Matrix_translate(0.0f, scale * 1400.0f, 0.0f, MTX_MULT); // restore original location
   }
 }
 

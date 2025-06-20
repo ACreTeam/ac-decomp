@@ -165,9 +165,9 @@ extern void mCO_draw_cporiginal(Submenu* submenu, GRAPH* graph, f32 pos_x, f32 p
     
     OPEN_POLY_OPA_DISP(graph);
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
-    Matrix_scale(scale, scale, 1.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
+    Matrix_scale(scale, scale, 1.0f, MTX_MULT);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPSegment(POLY_OPA_DISP++, ANIME_1_TXT_SEG, mCO_get_texture_pat_idx(submenu, idx));
@@ -376,7 +376,7 @@ static void mCO_set_frame_tagS_dl(Submenu* submenu, GAME* game, int folder) {
 
         if (idx != folder) {
             Matrix_push();
-            Matrix_translate(0.0f, -((idx * 29) / 2), 0.0f, 1);
+            Matrix_translate(0.0f, -((idx * 29) / 2), 0.0f, MTX_MULT);
 
             gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, prim_table[idx].r, prim_table[idx].g, prim_table[idx].b, 255);
@@ -419,7 +419,7 @@ static void mCO_set_frame_tagT_dl(Submenu* submenu, GAME* game, int folder) {
     // something is wrong with this function call, likely the calculation for y
     ofs_y = ((folder * 29) / 2);
     ofs_y = 52 - ofs_y;
-    Matrix_translate(105.0f, ofs_y, 0.0f, 1);
+    Matrix_translate(105.0f, ofs_y, 0.0f, MTX_MULT);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, prim_table[folder].r, prim_table[folder].g, prim_table[folder].b, 255);
@@ -549,7 +549,7 @@ static void mCO_set_frame_main_dl(Submenu* submenu, GAME* game, int folder) {
     for (k = 0; k < 4; k++) {
         for (j = 0; j < 3; j++, idx++) {
             Matrix_push();
-            Matrix_translate(32 * j, 29 * -k, 0.0f, 1);
+            Matrix_translate(32 * j, 29 * -k, 0.0f, MTX_MULT);
 
             if (mCO_check_hide_flg(submenu, folder, idx) == FALSE) {
                 gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -661,7 +661,7 @@ static void mCO_set_frame_change_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c
     mCO_Ovl_c* cporiginal_ovl = submenu->overlay->cporiginal_ovl;
 
     Matrix_push();
-    Matrix_translate(menu_info->position[0], -menu_info->position[1], 140.0f, 1);
+    Matrix_translate(menu_info->position[0], -menu_info->position[1], 140.0f, MTX_MULT);
 
     mCO_set_frame_main_dl(submenu, game, folder);
     mCO_set_frame_tagS_dl(submenu, game, cporiginal_ovl->up_folder);
@@ -675,7 +675,7 @@ static void mCO_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_
     mCO_Ovl_c* cporiginal_ovl = submenu->overlay->cporiginal_ovl;
     int folder;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
 
     if (cporiginal_ovl->timer != 0) {
         if (cporiginal_ovl->page_order[0] == cporiginal_ovl->up_folder) {
@@ -685,7 +685,7 @@ static void mCO_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_
         folder = cporiginal_ovl->up_folder;
 
         Matrix_push();
-        Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, 1);
+        Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, MTX_MULT);
         mCO_set_frame_main_dl(submenu, game, folder);
         mCO_set_frame_ueT_dl(submenu, game, folder);
         mCO_set_frame_tagT_dl(submenu, game, folder);
@@ -698,7 +698,7 @@ static void mCO_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_
     } else {
         folder = cporiginal_ovl->page_order[0];
 
-        Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, 1);
+        Matrix_translate(menu_info->position[0], menu_info->position[1], 140.0f, MTX_MULT);
         mCO_set_frame_main_dl(submenu, game, folder);
         mCO_set_frame_tagS_dl(submenu, game, folder);
         mCO_set_frame_ueT_dl(submenu, game, folder);

@@ -710,12 +710,12 @@ static void mIV_pl_shape_item_draw_umbrella(Submenu* submenu, GAME* game) {
 
     gSPLoadGeometryMode(POLY_OPA_DISP++, G_ZBUFFER | G_SHADE | G_FOG | G_LIGHTING | G_SHADING_SMOOTH);
 
-    Matrix_RotateY(DEG2SHORT_ANGLE2(-90.0f), 1);
-    Matrix_translate(800.0f, 0.0f, 0.0f, 1);
+    Matrix_RotateY(DEG2SHORT_ANGLE2(-90.0f), MTX_MULT);
+    Matrix_translate(800.0f, 0.0f, 0.0f, MTX_MULT);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, pl_umb_data_p->e_model);
-    Matrix_translate(4000.0f, 0.0f, 0.0f, 1);
+    Matrix_translate(4000.0f, 0.0f, 0.0f, MTX_MULT);
 
     /* Handle custom designs */
     if (umbrella_item_kind >= mPlayer_ITEM_KIND_ORG_UMBRELLA00) {
@@ -745,11 +745,11 @@ static void mIV_pl_shape_item_draw_rod(Submenu* submenu, GAME* game) {
         Matrix_Position_VecZ(1500.0f, &pos);
         cKF_Si3_draw_R_SV(game, item_kf, mtx, NULL, NULL, NULL);
         Matrix_put(&submenu->overlay->inventory_ovl->item_mtx);
-        Matrix_translate(0.0f, 0.0f, 1500.0f, 1);
-        Matrix_RotateZ(DEG2SHORT_ANGLE2(24.219360f), 1); // 0x1139
-        Matrix_RotateX(DEG2SHORT_ANGLE2(65.494995f), 1); // 0x2E93
-        Matrix_RotateY(DEG2SHORT_ANGLE2(79.634399f), 1); // 0x38A1
-        Matrix_translate(0.0f, -500.0f, 0.0f, 1);
+        Matrix_translate(0.0f, 0.0f, 1500.0f, MTX_MULT);
+        Matrix_RotateZ(DEG2SHORT_ANGLE2(24.219360f), MTX_MULT); // 0x1139
+        Matrix_RotateX(DEG2SHORT_ANGLE2(65.494995f), MTX_MULT); // 0x2E93
+        Matrix_RotateY(DEG2SHORT_ANGLE2(79.634399f), MTX_MULT); // 0x38A1
+        Matrix_translate(0.0f, -500.0f, 0.0f, MTX_MULT);
 
         OPEN_DISP(game->graph);
 
@@ -1117,7 +1117,7 @@ static void mIV_pl_shape_draw(Submenu* submenu, GAME* game) {
             mouth_tex_p = mPlib_Get_mouth_tex_p(0);
         }
 
-        Matrix_scale(0.01f, 0.01f, 0.01f, 0);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_LOAD);
 
         gDPPipeSync(NEXT_POLY_OPA_DISP);
         gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -1153,8 +1153,8 @@ static void mIV_pl_eff_draw(GRAPH* graph, Submenu* submenu) {
     gSPSegment(NEXT_POLY_OPA_DISP, G_MWO_SEGMENT_8, ef_takurami01_menu_render_mode);
     for (i = 0; i < mIV_PLAYER_EFFECT_NUM; i++) {
         if (pl_eff->timer != 0) {
-            Matrix_translate(pl_eff->pos.x, pl_eff->pos.y, pl_eff->pos.z, 0);
-            Matrix_scale(pl_eff->scale, pl_eff->scale, pl_eff->scale, 1);
+            Matrix_translate(pl_eff->pos.x, pl_eff->pos.y, pl_eff->pos.z, MTX_LOAD);
+            Matrix_scale(pl_eff->scale, pl_eff->scale, pl_eff->scale, MTX_MULT);
 
             gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(NEXT_POLY_OPA_DISP, ef_takurami01_kira_modelT);
@@ -1172,7 +1172,7 @@ static void mIV_pl_shadow_draw(GAME_PLAY* play, ACTOR* actorx) {
     if (actorx != NULL) {
         GRAPH* graph = play->game.graph;
 
-        Matrix_scale(actorx->shape_info.shadow_size_x * 0.001f, 1.0f, actorx->shape_info.shadow_size_z * 0.001f, 0);
+        Matrix_scale(actorx->shape_info.shadow_size_x * 0.001f, 1.0f, actorx->shape_info.shadow_size_z * 0.001f, MTX_LOAD);
         _texture_z_light_fog_prim(graph);
 
         OPEN_DISP(graph);
@@ -1471,8 +1471,8 @@ static void mIV_set_base_frame_dl(Submenu* submenu, GAME_PLAY* play, GRAPH* grap
     static Gfx* part_frame[] = { inv_sakana_part_model, inv_mwin_model, inv_mushi_part_model };
     static Gfx* scroll_set[] = { inv_sakana_scroll_mode, NULL, inv_mushi_scroll_mode };
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 

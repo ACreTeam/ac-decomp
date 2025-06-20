@@ -60,9 +60,9 @@ extern Gfx ef_takurami01_kira_modelT[];
 static void eFlash_dw(eEC_Effect_c* effect, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-    Matrix_mult(&play->billboard_matrix, 1);
-    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, 1);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
+    Matrix_scale(effect->scale.x, effect->scale.y, effect->scale.z, MTX_MULT);
     _texture_z_light_fog_prim_xlu(game->graph);
 
     OPEN_DISP(game->graph);

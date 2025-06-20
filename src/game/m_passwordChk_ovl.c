@@ -53,8 +53,8 @@ static void mPC_set_frame_dl(Submenu* submenu, GRAPH* graph, f32 x, f32 y) {
   u8 s;
   u8 t;
 
-  Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-  Matrix_translate(x, y, 140.0f, 1);
+  Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+  Matrix_translate(x, y, 140.0f, MTX_MULT);
 
   OPEN_DISP(graph);
   gfx = NOW_POLY_OPA_DISP;

@@ -413,9 +413,9 @@ static int mCoBG_LineGroundCheck_Move(xyz_t* rev, xyz_t* start_pos, xyz_t* end_p
                 point[1] = pos_p->z;
 
                 if (mCoBG_JudgeMoveBgGroundCheck(point, start, regist_p->active_dist) || mCoBG_JudgeMoveBgGroundCheck(point, end, regist_p->active_dist)) {
-                    Matrix_translate(pos_p->x, pos_p->y, pos_p->z, 0);
-                    Matrix_RotateY(angle, 1);
-                    Matrix_translate(ofs.x, ofs.y, ofs.z, 1);
+                    Matrix_translate(pos_p->x, pos_p->y, pos_p->z, MTX_LOAD);
+                    Matrix_RotateY(angle, MTX_MULT);
+                    Matrix_translate(ofs.x, ofs.y, ofs.z, MTX_MULT);
                     
                     p0 = xyz0;
                     p1 = xyz0;

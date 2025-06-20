@@ -64,8 +64,8 @@ static void bPTI_actor_draw(ACTOR* actorx, GAME* game) {
 
         gSPDisplayList(gfx++, obj_letterT_mat_model);
         for (keep_mail_sum; keep_mail_sum != 0; keep_mail_sum--) {
-            Matrix_translate(*setX_p, 60.0f, 60.0f, 0);
-            Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+            Matrix_translate(*setX_p, 60.0f, 60.0f, MTX_LOAD);
+            Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
 
             gDPPipeSync(gfx++);
             gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

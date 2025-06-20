@@ -146,7 +146,7 @@ void setup_mode_Ef_Room_Sunshine_Museum(ACTOR* actor, GAME_PLAY* play){
 
     Matrix_translate(sunshine->actor_class.world.position.x + GETREG(TAKREG,20), sunshine->actor_class.world.position.y + GETREG(TAKREG,21), 
         sunshine->actor_class.world.position.z + GETREG(TAKREG,22), 0);
-    Matrix_scale(sunshine->actor_class.scale.x, sunshine->actor_class.scale.y, sunshine->actor_class.scale.z,1);
+    Matrix_scale(sunshine->actor_class.scale.x, sunshine->actor_class.scale.y, sunshine->actor_class.scale.z, MTX_MULT);
 
     gDPPipeSync(NEXT_POLY_XLU_DISP);
 

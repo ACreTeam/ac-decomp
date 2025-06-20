@@ -44,9 +44,9 @@ void aFLS_actor_draw(ACTOR* actor, GAME* game) {
             xyz_t_mult_v(&l, 1.0f / vecLen);
             angle = facos(shape_norm_vec.z * bboard.z + ((shape_norm_vec.x * bboard.x) + shape_norm_vec.y * bboard.y));
 
-            Matrix_translate(actor->world.position.x, actor->world.position.y, actor->world.position.z, FALSE);
-            Matrix_RotateVector(RAD2SHORTANGLE(angle), &l, TRUE);
-            Matrix_scale(actor->scale.x, actor->scale.y, actor->scale.z, TRUE);
+            Matrix_translate(actor->world.position.x, actor->world.position.y, actor->world.position.z, MTX_LOAD);
+            Matrix_RotateVector(RAD2SHORTANGLE(angle), &l, MTX_MULT);
+            Matrix_scale(actor->scale.x, actor->scale.y, actor->scale.z, MTX_MULT);
 
             gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gDPSetRenderMode(gfx++, G_RM_FOG_SHADE_A, G_RM_XLU_SURF2);

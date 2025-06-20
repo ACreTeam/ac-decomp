@@ -2216,8 +2216,8 @@ void mDE_set_frame_tool_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
                                      des_tool_kao5_tex };
     GRAPH* graph = game->graph;
     mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
-    Matrix_scale(16.f, 16.f, 1.f, FALSE);
-    Matrix_translate(menu->position[0], menu->position[1], 140.f, TRUE);
+    Matrix_scale(16.f, 16.f, 1.f, MTX_LOAD);
+    Matrix_translate(menu->position[0], menu->position[1], 140.f, MTX_MULT);
     OPEN_POLY_OPA_DISP(graph);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -2268,8 +2268,8 @@ void mDE_set_frame_suuji_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) 
     mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
     GRAPH* graph = game->graph;
     int pal = design_ovl->palette_no + 1;
-    Matrix_scale(16.f, 16.f, 1.f, FALSE);
-    Matrix_translate(menu->position[0], menu->position[1], 140.f, TRUE);
+    Matrix_scale(16.f, 16.f, 1.f, MTX_LOAD);
+    Matrix_translate(menu->position[0], menu->position[1], 140.f, MTX_MULT);
     OPEN_POLY_OPA_DISP(graph);
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     if (design_ovl->mode == mDE_MODE_PALLET) {
@@ -2288,7 +2288,7 @@ void mDE_set_frame_suuji_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) 
         gSPDisplayList(POLY_OPA_DISP++, des_win_suuji2_model);
     } else {
         Matrix_push();
-        Matrix_translate(-2.f, 0.f, 0.f, TRUE);
+        Matrix_translate(-2.f, 0.f, 0.f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPSegment(POLY_OPA_DISP++, ANIME_2_TXT_SEG, suuji_table[pal]);
         gSPDisplayList(POLY_OPA_DISP++, des_win_suuji2_model);
@@ -2301,25 +2301,25 @@ void mDE_set_frame_suuji_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) 
 void mDE_set_frame_mark_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
     GRAPH* graph = game->graph;
     mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
-    Matrix_scale(16.f, 16.f, 1.f, FALSE);
-    Matrix_translate(menu->position[0], menu->position[1], 140.f, TRUE);
+    Matrix_scale(16.f, 16.f, 1.f, MTX_LOAD);
+    Matrix_translate(menu->position[0], menu->position[1], 140.f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
     gSPDisplayList(POLY_OPA_DISP++, des_win_before);
     Matrix_push();
     if (design_ovl->mode == mDE_MODE_TOOL) {
-        Matrix_translate(-112.f + design_ovl->_69E * 0x18, 16.f - design_ovl->_69F * 0x18, 0.f, TRUE);
+        Matrix_translate(-112.f + design_ovl->_69E * 0x18, 16.f - design_ovl->_69F * 0x18, 0.f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 185, 50, 50, 255);
     } else {
-        Matrix_translate(-112.f, 16.f - design_ovl->_69F * 0x18, 0.f, TRUE);
+        Matrix_translate(-112.f, 16.f - design_ovl->_69F * 0x18, 0.f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 215, 195, 195, 255);
     }
     gSPDisplayList(POLY_OPA_DISP++, des_win_marking_model);
     Matrix_pull();
     Matrix_push();
-    Matrix_translate(110.f, 0x3f - design_ovl->_6A4 * 10, 0.f, TRUE);
+    Matrix_translate(110.f, 0x3f - design_ovl->_6A4 * 10, 0.f, MTX_MULT);
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     if (design_ovl->mode != mDE_MODE_PALLET) {
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 0xcd, 0xb9, 0xb9, 255);
@@ -2333,12 +2333,12 @@ void mDE_set_frame_mark_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
     if (design_ovl->mode == mDE_MODE_PALLET) {
         Matrix_push();
         if (design_ovl->_6A5 == 0) {
-            Matrix_translate(110.f, 71.f, 0.f, TRUE);
+            Matrix_translate(110.f, 71.f, 0.f, MTX_MULT);
             gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 185, 50, 50, 255);
             gSPDisplayList(POLY_OPA_DISP++, des_win_marking_model);
         } else {
-            Matrix_translate(110.f, 0x3f - design_ovl->_6A5 * 10, 0.f, TRUE);
+            Matrix_translate(110.f, 0x3f - design_ovl->_6A5 * 10, 0.f, MTX_MULT);
             gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, 255, 80, 80, 255);
             gDPSetEnvColor(POLY_OPA_DISP++, 30, 30, 30, 255);
@@ -2412,9 +2412,9 @@ void mDE_set_frame_cursor_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu)
                 design_ovl->_694 -= b;
 
                 Matrix_push();
-                Matrix_scale(16.f, 16.f, 1.f, FALSE);
-                Matrix_translate(design_ovl->_680, design_ovl->_684, 0.f, TRUE);
-                Matrix_scale(a, 2.f, 1.f, TRUE);
+                Matrix_scale(16.f, 16.f, 1.f, MTX_LOAD);
+                Matrix_translate(design_ovl->_680, design_ovl->_684, 0.f, MTX_MULT);
+                Matrix_scale(a, 2.f, 1.f, MTX_MULT);
                 OPEN_POLY_OPA_DISP(graph);
                 gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 if (GETREG(NMREG, 2)) {
@@ -2429,12 +2429,12 @@ void mDE_set_frame_cursor_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu)
                 Matrix_pull();
 
                 Matrix_push();
-                Matrix_scale(16.f, 16.f, 1.f, FALSE);
-                Matrix_translate(design_ovl->_680, design_ovl->_694, 0.f, TRUE);
+                Matrix_scale(16.f, 16.f, 1.f, MTX_LOAD);
+                Matrix_translate(design_ovl->_680, design_ovl->_694, 0.f, MTX_MULT);
                 if (a) {
                     a += 2.f;
                 }
-                Matrix_scale(a, 2.f, 1.f, TRUE);
+                Matrix_scale(a, 2.f, 1.f, MTX_MULT);
                 OPEN_POLY_OPA_DISP(graph);
                 gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 if (GETREG(NMREG, 2)) {
@@ -2449,9 +2449,9 @@ void mDE_set_frame_cursor_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu)
                 Matrix_pull();
 
                 Matrix_push();
-                Matrix_scale(16.f, 16.f, 1.f, FALSE);
-                Matrix_translate(design_ovl->_680, design_ovl->_684, 0.f, TRUE);
-                Matrix_scale(2.f, b, 1.f, TRUE);
+                Matrix_scale(16.f, 16.f, 1.f, MTX_LOAD);
+                Matrix_translate(design_ovl->_680, design_ovl->_684, 0.f, MTX_MULT);
+                Matrix_scale(2.f, b, 1.f, MTX_MULT);
                 OPEN_POLY_OPA_DISP(graph);
                 gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 if (GETREG(NMREG, 2)) {
@@ -2466,9 +2466,9 @@ void mDE_set_frame_cursor_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu)
                 Matrix_pull();
 
                 Matrix_push();
-                Matrix_scale(16.f, 16.f, 1.f, FALSE);
-                Matrix_translate(design_ovl->_690, design_ovl->_684, 0.f, TRUE);
-                Matrix_scale(2.f, b, 1.f, TRUE);
+                Matrix_scale(16.f, 16.f, 1.f, MTX_LOAD);
+                Matrix_translate(design_ovl->_690, design_ovl->_684, 0.f, MTX_MULT);
+                Matrix_scale(2.f, b, 1.f, MTX_MULT);
                 OPEN_POLY_OPA_DISP(graph);
                 gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 if (GETREG(NMREG, 2)) {
@@ -2483,8 +2483,8 @@ void mDE_set_frame_cursor_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu)
                 Matrix_pull();
             }
         }
-        Matrix_scale(16.f, 16.f, 1.f, FALSE);
-        Matrix_translate(menu->position[0], menu->position[1], 140.f, TRUE);
+        Matrix_scale(16.f, 16.f, 1.f, MTX_LOAD);
+        Matrix_translate(menu->position[0], menu->position[1], 140.f, MTX_MULT);
         OPEN_POLY_OPA_DISP(graph);
         gSPDisplayList(POLY_OPA_DISP++, des_win_before);
         if (design_ovl->_69A && design_ovl->_699 != 9) {
@@ -2495,20 +2495,20 @@ void mDE_set_frame_cursor_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu)
             f2 = 0.f;
             mDE_set_cursor_waku_rotate(design_ovl, 1, &f1, &f2, &s1);
             Matrix_push();
-            Matrix_translate(design_ovl->_658 - 3.f - 75.f - f1, design_ovl->_65C + 2.f - (-75.f) - f2, 0.f, TRUE);
-            Matrix_RotateZ(s1, TRUE);
+            Matrix_translate(design_ovl->_658 - 3.f - 75.f - f1, design_ovl->_65C + 2.f - (-75.f) - f2, 0.f, MTX_MULT);
+            Matrix_RotateZ(s1, MTX_MULT);
             gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_OPA_DISP++, des_cursor_waku1T_model);
             Matrix_pull();
         } else if (design_ovl->_69A && design_ovl->_699 == 9) {
             Matrix_push();
-            Matrix_translate(design_ovl->_658 - 3.f - 75.f, (design_ovl->_65C + 10.f) - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_658 - 3.f - 75.f, (design_ovl->_65C + 10.f) - (-75.f), 0.f, MTX_MULT);
             gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(POLY_OPA_DISP++, des_cursor_wakuT_model);
             Matrix_pull();
         }
         if (design_ovl->_699 == 1) {
-            Matrix_translate(design_ovl->_650 + 1.f - 75.f, design_ovl->_654 + 11.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 + 1.f - 75.f, design_ovl->_654 + 11.f - (-75.f), 0.f, MTX_MULT);
         } else if (design_ovl->_699 == 2) {
             if (design_ovl->_69A) {
                 float f1, f2;
@@ -2517,35 +2517,35 @@ void mDE_set_frame_cursor_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu)
                 f1 = 0.f;
                 f2 = 0.f;
                 mDE_set_cursor_waku_rotate(design_ovl, 0, &f1, &f2, &s1);
-                Matrix_translate(design_ovl->_650 - 4.f - 75.f - f1, design_ovl->_654 + 3.f - (-75.f) - f2, 0.f, TRUE);
-                Matrix_RotateZ(s1, TRUE);
+                Matrix_translate(design_ovl->_650 - 4.f - 75.f - f1, design_ovl->_654 + 3.f - (-75.f) - f2, 0.f, MTX_MULT);
+                Matrix_RotateZ(s1, MTX_MULT);
             } else {
-                Matrix_translate(design_ovl->_650 - 3.f - 75.f, design_ovl->_654 + 2.f - (-75.f), 0.f, TRUE);
+                Matrix_translate(design_ovl->_650 - 3.f - 75.f, design_ovl->_654 + 2.f - (-75.f), 0.f, MTX_MULT);
             }
         } else if (design_ovl->_699 == 3) {
-            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, MTX_MULT);
         } else if (design_ovl->_699 == 4) {
-            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, MTX_MULT);
         } else if (design_ovl->_699 == 5) {
-            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, MTX_MULT);
         } else if (design_ovl->_699 == 6) {
-            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, MTX_MULT);
         } else if (design_ovl->_699 == 7) {
-            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 8.f - (-75.f), 0.f, MTX_MULT);
         } else if (design_ovl->_699 == 9) {
-            Matrix_translate(design_ovl->_650 - 3.f - 75.f, design_ovl->_654 + 10.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 - 3.f - 75.f, design_ovl->_654 + 10.f - (-75.f), 0.f, MTX_MULT);
         } else if (design_ovl->_699 == 10) {
-            Matrix_translate(design_ovl->_650 - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, MTX_MULT);
         } else if (design_ovl->_699 == 11) {
-            Matrix_translate(design_ovl->_650 - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, MTX_MULT);
         } else if (design_ovl->_699 == 12) {
-            Matrix_translate(design_ovl->_650 + 2.f - 75.f, design_ovl->_654 + 7.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 + 2.f - 75.f, design_ovl->_654 + 7.f - (-75.f), 0.f, MTX_MULT);
         } else if (design_ovl->_699 == 13) {
-            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, MTX_MULT);
         } else if (design_ovl->_699 == 14) {
-            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 - 1.f - 75.f, design_ovl->_654 + 5.f - (-75.f), 0.f, MTX_MULT);
         } else {
-            Matrix_translate(design_ovl->_650 + 8.f - 75.f, design_ovl->_654 + 13.f - (-75.f), 0.f, TRUE);
+            Matrix_translate(design_ovl->_650 + 8.f - 75.f, design_ovl->_654 + 13.f - (-75.f), 0.f, MTX_MULT);
         }
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         if (design_ovl->_69A && design_ovl->_699 == 2) {
@@ -2563,8 +2563,8 @@ void mDE_set_frame_main_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
 
     GRAPH* graph = game->graph;
     mDE_Ovl_c* design_ovl = submenu->overlay->design_ovl;
-    Matrix_scale(16.f, 16.f, 1.f, FALSE);
-    Matrix_translate(menu->position[0], menu->position[1], 140.f, TRUE);
+    Matrix_scale(16.f, 16.f, 1.f, MTX_LOAD);
+    Matrix_translate(menu->position[0], menu->position[1], 140.f, MTX_MULT);
     OPEN_POLY_OPA_DISP(graph);
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, des_win_before_model);
@@ -2591,7 +2591,7 @@ void mDE_set_frame_main_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu) {
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 128, design_ovl->rgb8_pal[i + 1].r, design_ovl->rgb8_pal[i + 1].g,
                         design_ovl->rgb8_pal[i + 1].b, 255);
         gSPDisplayList(POLY_OPA_DISP++, des_win_color_model);
-        Matrix_translate(0.f, -10.f, 0.f, TRUE);
+        Matrix_translate(0.f, -10.f, 0.f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     }
     Matrix_pull();

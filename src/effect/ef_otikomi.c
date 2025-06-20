@@ -102,29 +102,29 @@ static void eOMN_dw(eEC_Effect_c* effect, GAME* game) {
 
     OPEN_DISP(game->graph);
 
-    Matrix_translate(effect->position.x, effect->position.y + 4.0f, effect->position.z, FALSE);
-    Matrix_mult(&play->billboard_matrix, TRUE);
+    Matrix_translate(effect->position.x, effect->position.y + 4.0f, effect->position.z, MTX_LOAD);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
     Matrix_translate(effect->offset.x + GETREG(MYKREG, 0x18), effect->offset.y + GETREG(MYKREG, 0x19),
                      effect->offset.z + 2.0f + GETREG(MYKREG, 0x1a), TRUE);
     if (GETREG(MYKREG, 0)) {
-        Matrix_RotateZ(-effect->effect_specific[0], TRUE);
-        Matrix_scale(scale_m * 1.025f, scale_m, scale_m, TRUE);
-        Matrix_RotateZ(effect->effect_specific[0], TRUE);
+        Matrix_RotateZ(-effect->effect_specific[0], MTX_MULT);
+        Matrix_scale(scale_m * 1.025f, scale_m, scale_m, MTX_MULT);
+        Matrix_RotateZ(effect->effect_specific[0], MTX_MULT);
     } else {
-        Matrix_scale(0.01f, 0.01f, 0.01f, TRUE);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     }
-    Matrix_scale(effect->velocity.z * 1.3f, effect->velocity.y, 1.0f, TRUE);
+    Matrix_scale(effect->velocity.z * 1.3f, effect->velocity.y, 1.0f, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 40, 30, 40, alpha);
     gDPSetEnvColor(NEXT_POLY_XLU_DISP, 100, 100, 255, 255);
     gSPDisplayList(NEXT_POLY_XLU_DISP, ef_doyon01_00_modelT);
 
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, FALSE);
-    Matrix_mult(&play->billboard_matrix, TRUE);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
     Matrix_translate(effect->offset.x + GETREG(MYKREG, 0x18), effect->offset.y + GETREG(MYKREG, 0x19),
                      effect->offset.z + GETREG(MYKREG, 0x1a), TRUE);
-    Matrix_scale(0.015f, scale_y, 0.01f, TRUE);
+    Matrix_scale(0.015f, scale_y, 0.01f, MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 0, 255, 255, alpha2);

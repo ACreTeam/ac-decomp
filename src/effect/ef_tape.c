@@ -40,8 +40,8 @@ static void eTape_ct(eEC_Effect_c* effect, GAME* game, void* ct_arg) {
     pos.x = ofs_x * sin_s(effect->effect_specific[1]);
     pos.z = ofs_x * cos_s(effect->effect_specific[1]);
     pos.y = cos_s(effect->effect_specific[0]) * 2.0f;
-    Matrix_RotateY(effect->arg0, 0);
-    Matrix_RotateX(effect->arg1, 1);
+    Matrix_RotateY(effect->arg0, MTX_LOAD);
+    Matrix_RotateX(effect->arg1, MTX_MULT);
     Matrix_Position(&pos, &effect->velocity);
     effect->acceleration = ZeroVec;
     effect->acceleration.y = -0.025f;
@@ -83,12 +83,12 @@ static void eTape_dw(eEC_Effect_c* effect, GAME* game) {
 
     OPEN_DISP(game->graph);
     _texture_z_light_fog_prim_xlu(game->graph);
-    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, 0);
-    Matrix_RotateY(effect->arg0, 1);
-    Matrix_RotateX(effect->arg1, 1);
-    Matrix_rotateXYZ(effect->effect_specific[0], effect->effect_specific[1], 0, 1);
+    Matrix_translate(effect->position.x, effect->position.y, effect->position.z, MTX_LOAD);
+    Matrix_RotateY(effect->arg0, MTX_MULT);
+    Matrix_RotateX(effect->arg1, MTX_MULT);
+    Matrix_rotateXYZ(effect->effect_specific[0], effect->effect_specific[1], 0, MTX_MULT);
     scale = GETREG(MYKREG, 27) * 0.01f + 1.0f;
-    Matrix_scale(0.01f * scale, scale_y * scale, scale_z * scale, 1);
+    Matrix_scale(0.01f * scale, scale_y * scale, scale_z * scale, MTX_MULT);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 155, 155, 0, a);
     gSPDisplayList(NEXT_POLY_XLU_DISP, ef_tape01_01_model);

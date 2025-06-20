@@ -191,12 +191,12 @@ void mfish_small_fish_dw(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
     }
     v = actor->_60C.x * 0.7f;
     OPEN_DISP(gamex->graph);
-    Matrix_translate(actor->position.x, actor->position.y, actor->position.z, 0);
-    Matrix_RotateY(actor->_60C.y, 1);
-    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z * 1.5f, 1);
-    Matrix_RotateX(v, 1);
-    Matrix_translate(0.0f, 0.0f, -actor->init_data.ofs_z * 0.5f, 1);
-    Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, 1);
+    Matrix_translate(actor->position.x, actor->position.y, actor->position.z, MTX_LOAD);
+    Matrix_RotateY(actor->_60C.y, MTX_MULT);
+    Matrix_translate(0.0f, 0.0f, actor->init_data.ofs_z * 1.5f, MTX_MULT);
+    Matrix_RotateX(v, MTX_MULT);
+    Matrix_translate(0.0f, 0.0f, -actor->init_data.ofs_z * 0.5f, MTX_MULT);
+    Matrix_scale(actor->init_data.renderScale, actor->init_data.renderScale, actor->init_data.renderScale, MTX_MULT);
     gSPMatrix(NEXT_POLY_OPA_DISP, _Matrix_to_Mtx_new(gamex->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     cKF_Si3_draw_R_SV(gamex, &skele->keyframe, mtxp, mfish_sfish_before_disp, NULL, actor);
     CLOSE_DISP(gamex->graph);

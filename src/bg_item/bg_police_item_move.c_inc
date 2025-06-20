@@ -12,8 +12,8 @@ static void bPI_outPutData(u16* draw_start, bPI_draw_pos_c** draw_pos_pp, u16* d
         pos.z = block_tbl->pos_z + pos_table[(idx >> 4) & 15];
         pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 1.0f);
 
-        Matrix_translate(pos.x, pos.y, pos.z, 0);
-        Matrix_scale(0.01f, 0.01f, 0.01f, 1);
+        Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+        Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
         Matrix_get(&(*draw_pos_pp)->mtx);
         (*draw_pos_pp)->next = draw_start[type] - *data_count;
         draw_start[type] = *data_count;

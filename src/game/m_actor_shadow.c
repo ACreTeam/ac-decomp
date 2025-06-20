@@ -216,42 +216,42 @@ void mActorShadow_DrawActorShadow(ACTOR* actor, Shadow_Info* shadow, GAME_PLAY* 
             x = actor->shape_info.shadow_position->x + ofs.x;
             y = actor->shape_info.shadow_position->y + y_adjust + ofs.y;
             z = actor->shape_info.shadow_position->z + ofs.z;
-            Matrix_translate(x, y, z, 0);
+            Matrix_translate(x, y, z, MTX_LOAD);
             break;
         default:
             x = shadow->position.x + ofs.x;
             y = shadow->groundY + y_adjust + ofs.y;
             z = shadow->position.z + ofs.z;
-            Matrix_translate(x, y, z, 0);
+            Matrix_translate(x, y, z, MTX_LOAD);
             break;
     }
 
     switch (actor->shape_info.force_shadow_position) {
         case 1:
-            Matrix_RotateZ(0, 1);
-            Matrix_RotateX(0, 1);
+            Matrix_RotateZ(0, MTX_MULT);
+            Matrix_RotateX(0, MTX_MULT);
             break;
         default:
-            Matrix_RotateZ(shadow->unk24, 1);
-            Matrix_RotateX(shadow->unk20, 1);
+            Matrix_RotateZ(shadow->unk24, MTX_MULT);
+            Matrix_RotateX(shadow->unk20, MTX_MULT);
             break;
     }
 
     if ((shadow->kind == 0) && (id == 0)) {
-        Matrix_RotateY(shadow->unk26, 1);
+        Matrix_RotateY(shadow->unk26, MTX_MULT);
     }
 
     switch (id) {
         case 1:
-            Matrix_scale(shadow->unk10, shadow->unk10, rad, 1);
+            Matrix_scale(shadow->unk10, shadow->unk10, rad, MTX_MULT);
             break;
         default:
             switch (actor->shape_info.force_shadow_position) {
                 case 1:
-                    Matrix_scale(shadow->unk10, shadow->unk10, shadow->unk10, 1);
+                    Matrix_scale(shadow->unk10, shadow->unk10, shadow->unk10, MTX_MULT);
                     break;
                 default:
-                    Matrix_scale(scale, scale, scale, 1);
+                    Matrix_scale(scale, scale, scale, MTX_MULT);
                     break;
             }
             break;

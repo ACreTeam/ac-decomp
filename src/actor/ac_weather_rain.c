@@ -182,9 +182,9 @@ void aWeatherRain_draw(aWeather_Priv* priv, GAME* game) {
 
         disp = disp >> 1;
 
-        Matrix_translate(pos.x, pos.y, pos.z, FALSE);
-        Matrix_mult(&play->billboard_matrix, 1);
-        Matrix_scale(picha_scale[0], picha_scale[1], picha_scale[2], TRUE);
+        Matrix_translate(pos.x, pos.y, pos.z, MTX_LOAD);
+        Matrix_mult(&play->billboard_matrix, MTX_MULT);
+        Matrix_scale(picha_scale[0], picha_scale[1], picha_scale[2], MTX_MULT);
 
         OPEN_DISP(graph);
 

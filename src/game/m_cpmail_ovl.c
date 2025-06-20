@@ -234,8 +234,8 @@ static void mCM_set_page_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* g
     int tex_x;
     int tex_y;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 
@@ -263,7 +263,7 @@ static void mCM_set_page_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* g
     }
 
     if (cpmail_ovl->next_page_id == page_num) {
-        Matrix_translate(97.0f, 51.0f - 15.0f * page_num, 0.0f, 1);
+        Matrix_translate(97.0f, 51.0f - 15.0f * page_num, 0.0f, MTX_MULT);
         gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
         gSPDisplayList(POLY_OPA_DISP++, ctl_sentaku_taguT_model);
     }

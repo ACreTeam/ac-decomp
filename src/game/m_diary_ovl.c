@@ -654,8 +654,8 @@ extern Gfx dia_win_mojiT_model[];
 static void mDI_set_button_dl(GRAPH* graph, f32 pos_x, f32 pos_y) {
     OPEN_POLY_OPA_DISP(graph);
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, dia_init_mode);
@@ -729,8 +729,8 @@ static void mDI_set_frame_dl(GRAPH* graph, mSM_MenuInfo_c* menu_info, mDI_Ovl_c*
 
     OPEN_POLY_OPA_DISP(graph);
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, 140.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, dia_init_mode_letter);
@@ -740,20 +740,20 @@ static void mDI_set_frame_dl(GRAPH* graph, mSM_MenuInfo_c* menu_info, mDI_Ovl_c*
     gSPDisplayList(POLY_OPA_DISP++, dia_win_tukiT_model);
 
     Matrix_push();
-    Matrix_translate(month_tex_adjust[month], 0.0f, 0.0f, 1);
+    Matrix_translate(month_tex_adjust[month], 0.0f, 0.0f, MTX_MULT);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, dia_win_moji_model);
 
     Matrix_pull();
 
-    Matrix_translate(0.0f, -194.0f, 0.0f, 1);
+    Matrix_translate(0.0f, -194.0f, 0.0f, MTX_MULT);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, dia_win2_wT_model);
     gSPDisplayList(POLY_OPA_DISP++, dia_win2_fusenT_model);
     
-    Matrix_translate(0.0f, -164.0f, 0.0f, 1);
+    Matrix_translate(0.0f, -164.0f, 0.0f, MTX_MULT);
 
     gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, dia_win3_wT_model);

@@ -253,12 +253,12 @@ static void Player_actor_Item_draw_balloon(ACTOR* actor, GAME* game) {
     scale = player->item_scale;
     angle = DEG2SHORT_ANGLE2(-90.0f) + player->balloon_lean_angle + angle_p->x + player->ballon_add_rot_x;
 
-    Matrix_translate(player->right_hand_pos.x, player->right_hand_pos.y, player->right_hand_pos.z, 0);
-    Matrix_RotateY(rot, 1);
-    Matrix_RotateX(angle, 1);
-    Matrix_RotateZ(0x4000, 1);
-    Matrix_RotateX(player->balloon_angle.z, 1);
-    Matrix_scale(actor->scale.x * scale, actor->scale.y * scale, actor->scale.z * scale, 1);
+    Matrix_translate(player->right_hand_pos.x, player->right_hand_pos.y, player->right_hand_pos.z, MTX_LOAD);
+    Matrix_RotateY(rot, MTX_MULT);
+    Matrix_RotateX(angle, MTX_MULT);
+    Matrix_RotateZ(0x4000, MTX_MULT);
+    Matrix_RotateX(player->balloon_angle.z, MTX_MULT);
+    Matrix_scale(actor->scale.x * scale, actor->scale.y * scale, actor->scale.z * scale, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 

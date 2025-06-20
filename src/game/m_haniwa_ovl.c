@@ -261,8 +261,8 @@ static void mHW_set_frame_dl(Submenu* submenu, GRAPH* graph, f32 pos_x, f32 pos_
     int tex_x;
     int tex_y;
 
-    Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-    Matrix_translate(pos_x, pos_y, -809.0f, 1);
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, -809.0f, MTX_MULT);
 
     OPEN_POLY_OPA_DISP(graph);
 

@@ -161,8 +161,8 @@ static void mRP_set_frame_dl(Submenu* submenu, GRAPH* graph, mSM_MenuInfo_c* men
   int t;
   Gfx* gfx;
 
-  Matrix_scale(16.0f, 16.0f, 1.0f, 0);
-  Matrix_translate(x, y, 140.0f, 1);
+  Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+  Matrix_translate(x, y, 140.0f, MTX_MULT);
 
   OPEN_DISP(graph);
   gfx = NOW_POLY_OPA_DISP;

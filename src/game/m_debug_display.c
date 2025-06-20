@@ -86,10 +86,10 @@ static void debug_display_output_sprite_16x16_I8(Debug_display* display, void* t
     softsprite_prim(play->game.graph);
     gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 0, display->color.r, display->color.g, display->color.b, display->color.a);
 
-    Matrix_translate(display->pos.x, display->pos.y, display->pos.z, 0);
-    Matrix_scale(display->scale.x, display->scale.y, display->scale.z, 1);
-    Matrix_mult(&play->billboard_matrix, 1);
-    Matrix_rotateXYZ(display->rot.x, display->rot.y, display->rot.z, 1);
+    Matrix_translate(display->pos.x, display->pos.y, display->pos.z, MTX_LOAD);
+    Matrix_scale(display->scale.x, display->scale.y, display->scale.z, MTX_MULT);
+    Matrix_mult(&play->billboard_matrix, MTX_MULT);
+    Matrix_rotateXYZ(display->rot.x, display->rot.y, display->rot.z, MTX_MULT);
 
     gDPLoadTextureBlock(NEXT_POLY_XLU_DISP, txt, G_IM_FMT_I, G_IM_SIZ_8b, 16, 16, 0, G_TX_NOMIRROR | G_TX_WRAP,
                         G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD);
@@ -112,7 +112,7 @@ static void debug_display_output_polygon(Debug_display* display, void* dl, GAME_
     gSPSetLights1(NEXT_POLY_XLU_DISP, material);
 
     Matrix_softcv3_load(&display->rot, display->pos.x, display->pos.y, display->pos.z);
-    Matrix_scale(display->scale.x, display->scale.y, display->scale.z, 1);
+    Matrix_scale(display->scale.x, display->scale.y, display->scale.z, MTX_MULT);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(play->game.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
     gSPDisplayList(NEXT_POLY_XLU_DISP, dl);
