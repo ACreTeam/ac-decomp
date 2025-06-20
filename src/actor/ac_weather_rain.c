@@ -74,7 +74,7 @@ static void aWeatherRain_make(ACTOR* actor, GAME* game) {
             pos_mod.x += x;
             pos_mod.z += z;
 
-            if (mEv_CheckTitleDemo() == -9) {
+            if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_STAFFROLL) {
                 PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
 
                 pos_mod.y = 70.0f + (120.0f + player->actor_class.world.position.y);
@@ -108,7 +108,7 @@ static void aWeatherRain_MakePicha(ACTOR* actor, GAME* game, xyz_t pos) {
     f32 y;
 
     if (priv_num != -1) {
-        if (mEv_CheckTitleDemo() == -9) {
+        if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_STAFFROLL) {
             PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
 
             y = player->actor_class.world.position.y;

@@ -1360,7 +1360,7 @@ static void aQMgr_actor_move_main(ACTOR* actorx, GAME* game) {
 
     u8 mode = *manager->mode;
 
-    if (mEv_CheckTitleDemo() <= 0) {
+    if (mEv_IsNotTitleDemo()) {
         (*move_proc[mode])(manager);
     }
 

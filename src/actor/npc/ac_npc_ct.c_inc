@@ -343,7 +343,7 @@ static void aNPC_actor_ct(ACTOR* actorx, GAME* game, aNPC_ct_data_c* ct_data) {
 
         nactorx->draw.frame_sub_speed = 1.0f;
 
-        if (mEv_CheckTitleDemo() > 0) {
+        if (mEv_IsTitleDemo()) {
             actorx->status_data.weight = 0;
         }
 

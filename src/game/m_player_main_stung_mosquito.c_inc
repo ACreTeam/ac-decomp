@@ -2,7 +2,7 @@ static int Player_actor_request_main_stung_mosquito_all(GAME* game, void* label,
     PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
     int main_index = player->now_main_index;
 
-    if (mEv_CheckTitleDemo() > 0) {
+    if (mEv_IsTitleDemo()) {
         return FALSE;
     }
 

@@ -45,7 +45,7 @@ static int aNPC_check_uzai(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     // clang-format on
     int ret = FALSE;
 
-    if (mEv_CheckTitleDemo() > 0 || (nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_UZAI_CHECK)) {
+    if (mEv_IsTitleDemo() || (nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_UZAI_CHECK)) {
         nactorx->uzai.flag = 0;
         return FALSE;
     }

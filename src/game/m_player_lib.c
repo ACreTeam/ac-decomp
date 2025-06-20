@@ -3568,7 +3568,7 @@ extern mActor_name_t mPlib_Get_itemNo_forWindow(void) {
 
 extern int mPlib_able_birth_bee(void) {
     if (mEv_CheckFirstIntro() != FALSE || Common_Get(reset_flag) != FALSE ||
-        Common_Get(player_bee_chase_flag) != FALSE || mEv_CheckTitleDemo() > 0) {
+        Common_Get(player_bee_chase_flag) != FALSE || mEv_IsTitleDemo()) {
         return FALSE;
     }
 

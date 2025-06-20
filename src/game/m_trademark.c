@@ -133,8 +133,8 @@ static void trademark_goto_demo_scene(GAME_TRADEMARK* trademark) {
     mEv_ClearEventInfo();
 
     demo_no = mEv_CheckTitleDemo();
-    if (demo_no > 0) {
-        Door_data_c* demo_door_data = l_demo_door_data_table[demo_no - 1];
+    if (demo_no > mEv_TITLEDEMO_NONE) {
+        Door_data_c* demo_door_data = l_demo_door_data_table[demo_no -mEv_TITLEDEMO_START1 ];
 
         Common_Set(door_data, *demo_door_data);
         Common_Set(door_data.next_scene_id, demo_door_data->next_scene_id + 1); // go to next demo scene

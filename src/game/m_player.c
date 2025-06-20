@@ -621,7 +621,7 @@ static void Player_actor_init_value(ACTOR* actorx, GAME* game) {
 extern void Player_actor_ct(ACTOR* actorx, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
-    if (mEv_CheckTitleDemo() > 0) {
+    if (mEv_IsTitleDemo()) {
         actorx->status_data.weight = 255;
     } else {
         actorx->status_data.weight = 50;
@@ -650,7 +650,7 @@ extern void Player_actor_dt(ACTOR* actorx, GAME* game) {
     Player_actor_Reset_bee_chase(actorx);             //
     Player_actor_Check_player_sunburn_for_dt(actorx); //
 
-    if (mEv_CheckTitleDemo() <= 0 && player->bgm_volume_mode != mPlayer_BGM_VOLUME_MODE_NORMAL) {
+    if (mEv_IsNotTitleDemo() && player->bgm_volume_mode != mPlayer_BGM_VOLUME_MODE_NORMAL) {
         switch (player->bgm_volume_mode) {
             case mPlayer_BGM_VOLUME_MODE_COLLECT_INSECTS:
                 mBGMPsComp_volume_collect_insects_end();

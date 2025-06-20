@@ -50,7 +50,7 @@ static void eAnahikari_dw(eEC_Effect_c* effect, GAME* game) {
     idx = effect->arg0;
     play = (GAME_PLAY*)game;
 
-    if (mEv_CheckTitleDemo() != -9) {
+    if (mEv_CheckTitleDemo() != mEv_TITLEDEMO_STAFFROLL) {
         if (effect->state == eEC_STATE_NORMAL) {
             alpha = (int)eEC_CLIP->calc_adjust_proc(effect->timer, 0, 60, 200.0f, 0.0f);
         } else if (effect->state == eEC_STATE_FINISHED) {

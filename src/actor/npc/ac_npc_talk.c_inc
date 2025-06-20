@@ -646,7 +646,7 @@ static void aNPC_talk_request_check(ACTOR* actorx, GAME* game) {
 
     if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_TALK_CHECK) == 0 &&
         nactorx->condition_info.talk_condition == aNPC_TALK_TYPE_NONE && !nactorx->condition_info.hide_flg) {
-        if (mEv_CheckTitleDemo() == 0 || mEv_CheckTitleDemo() == -9) {
+        if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_NONE || mEv_CheckTitleDemo() == mEv_TITLEDEMO_STAFFROLL) {
             if (nactorx->action.idx != aNPC_ACT_TALK) {
 #ifndef aNPC_NPC2
                 if (ITEM_NAME_GET_TYPE(actorx->npc_id) == NAME_TYPE_SPNPC &&

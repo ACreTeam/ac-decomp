@@ -110,8 +110,8 @@ static void aAL_actor_dt(ACTOR* actor, GAME* game) {
     Common_Set(clip.animal_logo_clip, NULL);
   }
 
-  if (mEv_CheckTitleDemo() != -1) {
-    mEv_SetTitleDemo(0);
+  if (mEv_CheckTitleDemo() != mEv_TITLEDEMO_LOGO) {
+    mEv_SetTitleDemo(mEv_TITLEDEMO_NONE);
   }
 
   cKF_SkeletonInfo_R_dt(&logo_actor->animal.skeleton);

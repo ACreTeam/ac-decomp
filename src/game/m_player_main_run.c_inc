@@ -70,7 +70,7 @@ static void Player_actor_request_proc_index_fromRun_common(ACTOR* actor, GAME* g
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     f32 speed;
 
-    Player_actor_Set_ScrollDemo_forWade(actor, game, mEv_CheckTitleDemo() <= 0);
+    Player_actor_Set_ScrollDemo_forWade(actor, game, mEv_IsNotTitleDemo());
 
     if (!actor->bg_collision_check.result.on_ground) {
         Player_actor_request_main_fall_all(game, -5.0f, 1, mPlayer_REQUEST_PRIORITY_1);

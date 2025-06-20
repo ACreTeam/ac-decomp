@@ -1046,7 +1046,7 @@ static void aNPC_actor_move_c(ACTOR* actorx, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
     aNPC_dma_cloth_data(actorx);
-    if (mEv_CheckTitleDemo() <= 0) {
+    if (mEv_IsNotTitleDemo()) {
         aNPC_greeting_area_check(play);
     }
 

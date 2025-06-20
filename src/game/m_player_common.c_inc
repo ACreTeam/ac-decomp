@@ -1153,7 +1153,7 @@ static void Player_actor_SetupItemScale(ACTOR* actorx, GAME* game) {
 }
 
 static void Player_actor_SetupWeight(ACTOR* actorx) {
-    if (mEv_CheckTitleDemo() <= 0) {
+    if (mEv_IsNotTitleDemo()) {
         PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
         int main_idx = player->now_main_index;
 
@@ -3427,7 +3427,7 @@ static int Player_actor_Check_axe_after(ACTOR* actorx, xyz_t* target_pos_p, mAct
 }
 
 static mActor_name_t Player_actor_GetitemNo_forDamageAxe(mActor_name_t itemNo, int reflected) {
-    if (mEv_CheckTitleDemo() > 0) {
+    if (mEv_IsTitleDemo()) {
         return itemNo;
     }
 
@@ -6856,7 +6856,7 @@ static int Player_actor_CheckAndRequest_ItemInOut(ACTOR* actorx, GAME* game, int
 }
 
 static void Player_actor_Set_bgm_volume(ACTOR* actorx, int main_index) {
-    if (mPlayer_MAIN_INDEX_VALID(main_index) != FALSE && mEv_CheckTitleDemo() <= 0) {
+    if (mPlayer_MAIN_INDEX_VALID(main_index) != FALSE && mEv_IsNotTitleDemo()) {
         // clang-format off
         static const s8 data[] = {
             mPlayer_BGM_VOLUME_MODE_NORMAL,
@@ -7059,7 +7059,7 @@ static int Player_actor_GetSnowballPos_forWadeSnowball(ACTOR* actorx, xyz_t* pos
 
 static int Player_actor_CheckCondition_forWadeSnowball(GAME* game, const xyz_t* pos_p, s16 angle_y) {
     return Player_actor_CheckAbleMoveWadeBlock(game, pos_p, angle_y, 0.65f, DEG2SHORT_ANGLE2(5.0f),
-                                               mEv_CheckTitleDemo() <= 0);
+                                               mEv_IsNotTitleDemo());
 }
 
 static void Player_actor_Culc_player_frame_counter(ACTOR* actorx) {
@@ -7446,7 +7446,7 @@ static int Player_actor_CheckAndRequest_main_pickup_all(GAME* game) {
         Player_actor_check_cancel_request_change_proc_index(mPlayer_INDEX_PICKUP) == FALSE) {
         int can_exchange = field_type == mFI_FIELDTYPE2_FG;
 
-        if (mEv_CheckTitleDemo() <= 0) {
+        if (mEv_IsNotTitleDemo()) {
             /* Check for picking up items in your house */
             if (Common_Get(clip).my_room_clip != NULL) {
                 mActor_name_t item = Common_Get(clip).my_room_clip->search_pickup_ftr_proc(game);
@@ -7528,7 +7528,7 @@ static int Player_actor_CheckAndRequest_main_pickup_all(GAME* game) {
                     mActor_name_t changed_item = ITEM_IS_SIGNBOARD(item) ? ITM_SIGNBOARD : item;
                     int item_is_signboard = item != changed_item;
 
-                    if (mEv_CheckTitleDemo() > 0) {
+                    if (mEv_IsTitleDemo()) {
                         if (Player_actor_request_main_pickup(game, changed_item, &target_pos, &item_pos, -1,
                                                              item_is_signboard)) {
                             return TRUE;
@@ -7835,7 +7835,7 @@ static void Player_actor_Reset_bee_chase(ACTOR* actorx) {
 }
 
 static void Player_actor_Check_player_sunburn_ChangeDay(void) {
-    if (mEv_CheckTitleDemo() <= 0) {
+    if (mEv_IsNotTitleDemo()) {
         mActor_name_t field_id = mFI_GetFieldId();
 
         if (mFI_GET_TYPE(field_id) == mFI_FIELD_FG) {
@@ -7856,7 +7856,7 @@ static void Player_actor_Check_player_sunburn_ChangeDay(void) {
 }
 
 static void Player_actor_Check_player_sunburn_rankdown_interval(ACTOR* actorx) {
-    if (mEv_CheckTitleDemo() <= 0) {
+    if (mEv_IsNotTitleDemo()) {
         mActor_name_t field_id = mFI_GetFieldId();
 
         if (mFI_GET_TYPE(field_id) == mFI_FIELD_FG) {
@@ -7902,7 +7902,7 @@ static void Player_actor_Check_player_sunburn_rankdown_interval(ACTOR* actorx) {
 static void Player_actor_Check_player_sunburn_rankdown(ACTOR* actorx) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
 
-    if (mEv_CheckTitleDemo() <= 0) {
+    if (mEv_IsNotTitleDemo()) {
         mActor_name_t field_id = mFI_GetFieldId();
 
         if (mFI_GET_TYPE(field_id) == mFI_FIELD_FG) {
@@ -7927,7 +7927,7 @@ static void Player_actor_Check_player_sunburn_rankdown(ACTOR* actorx) {
 static void Player_actor_Check_player_sunburn_rankup(ACTOR* actorx) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
 
-    if (player->player_sunburn_rankup == FALSE && mEv_CheckTitleDemo() <= 0) {
+    if (player->player_sunburn_rankup == FALSE && mEv_IsNotTitleDemo()) {
         mActor_name_t field_id = mFI_GetFieldId();
 
         if (mFI_GET_TYPE(field_id) == mFI_FIELD_FG) {
@@ -8377,7 +8377,7 @@ static int Player_actor_check_able_change_camera_normal_index(ACTOR* actorx) {
         return FALSE;
     }
 
-    if (mEv_CheckTitleDemo() <= 0 && mPlib_Check_scene_able_change_camera_pos()) {
+    if (mEv_IsNotTitleDemo() && mPlib_Check_scene_able_change_camera_pos()) {
         int main_index = player->now_main_index;
 
         if (mPlayer_MAIN_INDEX_VALID(main_index) != FALSE) {

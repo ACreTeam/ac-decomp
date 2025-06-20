@@ -53,7 +53,7 @@ static void Player_actor_setup_main_Pickup(ACTOR* actorx, GAME* game) {
 
     if (slot_idx >= 0) {
         main_pickup_p->exchange_flag = FALSE;
-    } else if (mEv_CheckTitleDemo() > 0) {
+    } else if (mEv_IsTitleDemo()) {
         main_pickup_p->exchange_flag = FALSE;
     } else {
         main_pickup_p->exchange_flag = TRUE;

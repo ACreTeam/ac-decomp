@@ -80,7 +80,7 @@ extern void watch_my_step_move(GAME_PLAY* play) {
 
     S_watch_my_step.draw_type = 0;
 
-    if (mEv_CheckTitleDemo() <= 0) {
+    if (mEv_IsNotTitleDemo()) {
         window_item = mPlib_Get_itemNo_forWindow();
 
         switch (S_watch_my_step.mode) {

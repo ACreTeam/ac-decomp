@@ -250,7 +250,7 @@ static void aWeather_ChangeEnvSE(ACTOR* actorx, GAME* game, s16 status, s16 leve
         weather->current_sound_effect = -1000;
     }
 
-    if (mEv_CheckTitleDemo() <= 0) {
+    if (mEv_IsNotTitleDemo()) {
         if (Save_Get(scene_no) == SCENE_START_DEMO || Save_Get(scene_no) == SCENE_START_DEMO2 ||
             Save_Get(scene_no) == SCENE_START_DEMO3) {
             return;
@@ -383,14 +383,14 @@ static void Weather_Actor_ct(ACTOR* actor, GAME* game) {
 
     aWeather_SetClip(actor, 0);
 
-    if (mEv_CheckTitleDemo() > 0) {
-        cur = mEv_CheckTitleDemo() - 1;
+    if (mEv_IsTitleDemo()) {
+        cur = mEv_CheckTitleDemo() - mEv_TITLEDEMO_START1;
 
         weather->current_status = DemoWeatherTbl[cur][0];
         weather->next_status = DemoWeatherTbl[cur][0];
         weather->current_level = DemoWeatherTbl[cur][1];
         weather->current_aim_level = DemoWeatherTbl[cur][1];
-    } else if (mFI_GetClimate() == 1) {
+    } else if (mFI_GetClimate() == mFI_CLIMATE_ISLAND) {
         weather->current_status = Common_Get(island_weather);
         weather->next_status = Common_Get(island_weather);
         weather->current_level = Common_Get(island_weather_intensity);
@@ -595,7 +595,7 @@ static void aWeather_ChangeWeatherTime0(ACTOR* actorx) {
     s16 evWeather, evIntensity;
     s16 save_weather;
 
-    if ((mEv_CheckTitleDemo() <= 0)) {
+    if (mEv_IsNotTitleDemo()) {
         if ((Save_Get(scene_no) == SCENE_START_DEMO) || (Save_Get(scene_no) == SCENE_START_DEMO2) ||
             Save_Get(scene_no) == SCENE_START_DEMO3) {
             return;
@@ -607,21 +607,21 @@ static void aWeather_ChangeWeatherTime0(ACTOR* actorx) {
                 rndWeather = evWeather;
                 rndIntensity = evIntensity;
             }
-            if ((mEv_CheckRealArbeit() == 1) && (rndWeather == 1)) {
-                rndWeather = 0;
-                rndIntensity = 0;
+            if ((mEv_CheckRealArbeit() == TRUE) && (rndWeather == mEnv_WEATHER_RAIN)) {
+                rndWeather = mEnv_WEATHER_CLEAR;
+                rndIntensity = mEnv_WEATHER_INTENSITY_NONE;
             }
             mTM_off_renew_time(0);
 
             save_weather = mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather));
-            if (rndWeather == 0 || rndWeather == 3) {
-                if (save_weather == 2 || save_weather == 1) {
+            if (rndWeather == mEnv_WEATHER_CLEAR || rndWeather == mEnv_WEATHER_SAKURA) {
+                if (save_weather == mEnv_WEATHER_SNOW || save_weather == mEnv_WEATHER_RAIN) {
                     mEnv_PreRainNowFine_Init();
                 }
             }
             Save_Set(weather, rndIntensity | (rndWeather * 16));
 
-            if (((mEv_CheckTitleDemo() != -9) || (weather->sound_flag != 1)) && (mFI_CheckInIsland() == 0)) {
+            if (((mEv_CheckTitleDemo() != mEv_TITLEDEMO_STAFFROLL) || (weather->sound_flag != 1)) && (mFI_CheckInIsland() == 0)) {
                 aWeather_RequestChangeWeather(actorx, rndWeather, rndIntensity);
             }
             Common_Set(weather_time, Common_Get(time.rtc_time));

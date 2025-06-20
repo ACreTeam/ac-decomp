@@ -1,5 +1,5 @@
 static int Player_actor_CheckController_forPickup(GAME* game) {
-    if (mEv_CheckTitleDemo() > 0) {
+    if (mEv_IsTitleDemo()) {
         mPlayer_Controller_Data_c* data = mPlib_Get_controller_data_for_title_demo_p();
         ACTOR* actorx = GET_PLAYER_ACTOR_GAME_ACTOR(game);
         PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
@@ -18,7 +18,7 @@ static int Player_actor_CheckController_forAxe(GAME* game) {
     s8 kind = Player_actor_Get_ItemKind(actorx, player->now_main_index);
 
     if (mPlayer_ITEM_IS_AXE(kind) != FALSE) {
-        if (mEv_CheckTitleDemo() > 0) {
+        if (mEv_IsTitleDemo()) {
             return mPlib_Get_controller_data_for_title_demo_p()->trigger_btn_a;
         }
         return chkTrigger(BUTTON_A);
@@ -33,7 +33,7 @@ static int Player_actor_CheckController_forNet(GAME* game) {
     s8 kind = Player_actor_Get_ItemKind(actorx, player->now_main_index);
 
     if (mPlayer_ITEM_IS_NET(kind) != FALSE) {
-        if (mEv_CheckTitleDemo() > 0) {
+        if (mEv_IsTitleDemo()) {
             return mPlib_Get_controller_data_for_title_demo_p()->btn_a;
         }
         return chkButton(BUTTON_A);
@@ -48,7 +48,7 @@ static int Player_actor_CheckController_forRod(GAME* game) {
     s8 kind = Player_actor_Get_ItemKind(actorx, player->now_main_index);
 
     if (mPlayer_ITEM_IS_ROD(kind) != FALSE) {
-        if (mEv_CheckTitleDemo() > 0) {
+        if (mEv_IsTitleDemo()) {
             return mPlib_Get_controller_data_for_title_demo_p()->trigger_btn_a;
         }
         return chkTrigger(BUTTON_A);
@@ -63,7 +63,7 @@ static int Player_actor_CheckController_forScoop(GAME* game) {
     s8 kind = Player_actor_Get_ItemKind(actorx, player->now_main_index);
 
     if (mPlayer_ITEM_IS_SHOVEL(kind) != FALSE) {
-        if (mEv_CheckTitleDemo() > 0) {
+        if (mEv_IsTitleDemo()) {
             return mPlib_Get_controller_data_for_title_demo_p()->trigger_btn_a;
         }
         return chkTrigger(BUTTON_A);
@@ -78,7 +78,7 @@ static int Player_actor_CheckController_forUmbrella(GAME* game) {
     s8 kind = Player_actor_Get_ItemKind(actorx, player->now_main_index);
 
     if (mPlayer_ITEM_IS_UMBRELLA(kind) != FALSE) {
-        if (mEv_CheckTitleDemo() > 0) {
+        if (mEv_IsTitleDemo()) {
             return mPlib_Get_controller_data_for_title_demo_p()->trigger_btn_a;
         }
         return chkTrigger(BUTTON_A);
@@ -93,7 +93,7 @@ static int Player_actor_CheckController_forFan(GAME* game, int type) {
     s8 kind = Player_actor_Get_ItemKind(actorx, player->now_main_index);
 
     if (mPlayer_ITEM_IS_FAN(kind) != FALSE) {
-        if (mEv_CheckTitleDemo() > 0) {
+        if (mEv_IsTitleDemo()) {
             mPlayer_Controller_Data_c* data = mPlib_Get_controller_data_for_title_demo_p();
             if (type != 0) {
                 return data->trigger_btn_a;
@@ -117,7 +117,7 @@ static int Player_actor_CheckController_forShake_tree(GAME* game) {
     s8 kind = Player_actor_Get_ItemKind(actorx, player->now_main_index);
 
     if (!mPlayer_ITEM_KIND_CHECK(kind, 0, mPlayer_ITEM_KIND_NUM) || mPlayer_ITEM_IS_NOT_TOOL(kind) != FALSE) {
-        if (mEv_CheckTitleDemo() > 0) {
+        if (mEv_IsTitleDemo()) {
             mPlayer_Controller_Data_c* data = mPlib_Get_controller_data_for_title_demo_p();
             return (data->trigger_btn_a != 0) && (data->btn_b == 0);
         } else {
@@ -132,47 +132,47 @@ static f32 Player_actor_CheckController_forStruggle_pitfall(void) {
 }
 
 static int Player_actor_CheckController_forDush(void) {
-    return (mEv_CheckTitleDemo() > 0) ? mPlib_Get_controller_data_for_title_demo_p()->btn_b
+    return (mEv_IsTitleDemo()) ? mPlib_Get_controller_data_for_title_demo_p()->btn_b
                                       : mPlib_CheckButtonOnly_forDush();
 }
 
 static f32 Player_actor_GetController_move_percentX(void) {
-    return (mEv_CheckTitleDemo() > 0) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.move_pX
+    return (mEv_IsTitleDemo()) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.move_pX
                                       : gamePT->mcon.move_pX;
 }
 
 static f32 Player_actor_GetController_move_percentY(void) {
-    return (mEv_CheckTitleDemo() > 0) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.move_pY
+    return (mEv_IsTitleDemo()) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.move_pY
                                       : gamePT->mcon.move_pY;
 }
 
 static f32 Player_actor_GetController_move_percentR(void) {
-    return (mEv_CheckTitleDemo() > 0) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.move_pR
+    return (mEv_IsTitleDemo()) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.move_pR
                                       : gamePT->mcon.move_pR;
 }
 
 static s16 Player_actor_GetController_move_angle(void) {
-    return (mEv_CheckTitleDemo() > 0) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.move_angle
+    return (mEv_IsTitleDemo()) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.move_angle
                                       : gamePT->mcon.move_angle;
 }
 
 static s16 Player_actor_GetController_old_move_angle(void) {
-    return (mEv_CheckTitleDemo() > 0) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.last_move_angle
+    return (mEv_IsTitleDemo()) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.last_move_angle
                                       : gamePT->mcon.last_move_angle;
 }
 
 static f32 Player_actor_GetController_recognize_percentR(void) {
-    return (mEv_CheckTitleDemo() > 0) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.adjusted_pR
+    return (mEv_IsTitleDemo()) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.adjusted_pR
                                       : gamePT->mcon.adjusted_pR;
 }
 
 static f32 Player_actor_GetController_old_recognize_percentR(void) {
-    return (mEv_CheckTitleDemo() > 0) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.last_adjusted_pR
+    return (mEv_IsTitleDemo()) ? mPlib_Get_controller_data_for_title_demo_p()->mcon.last_adjusted_pR
                                       : gamePT->mcon.last_adjusted_pR;
 }
 
 static int Player_actor_CheckController_forRadio_exercise(GAME* game) {
-    if (mEv_CheckTitleDemo() > 0) {
+    if (mEv_IsTitleDemo()) {
         return -1;
     }
 

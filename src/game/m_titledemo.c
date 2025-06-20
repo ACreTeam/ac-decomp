@@ -14,7 +14,7 @@
 #define mTD_HEADER_TOOL 4
 #define mTD_HEADER_SIZE 5
 
-static int S_now_demono = -1;
+static int S_now_demono = mEv_TITLEDEMO_LOGO;
 static int S_tdemo_frame;
 static u16 S_titledemo_to_play;
 
@@ -26,12 +26,12 @@ static u16 get_demo_header(int titledemo_no, int key) {
 }
 
 extern int mTD_demono_get() {
-    if (S_now_demono == -1) {
-        S_now_demono = 1;
+    if (S_now_demono == mEv_TITLEDEMO_LOGO) {
+        S_now_demono = mEv_TITLEDEMO_START1;
     } else {
         S_now_demono++;
         if (S_now_demono > mTD_TITLE_DEMO_NUM) {
-            S_now_demono = 1;
+            S_now_demono = mEv_TITLEDEMO_START1;
         }
     }
 
@@ -41,9 +41,9 @@ extern int mTD_demono_get() {
 extern void mTD_player_keydata_init(GAME_PLAY* play) {
     PLAYER_ACTOR* player = get_player_actor_withoutCheck(play);
 
-    if (mEv_CheckTitleDemo() > 0) {
+    if (mEv_IsTitleDemo()) {
         u16 angle;
-        mActor_name_t tool = get_demo_header(mEv_CheckTitleDemo() - 1, mTD_HEADER_TOOL);
+        mActor_name_t tool = get_demo_header(mEv_CheckTitleDemo() - mEv_TITLEDEMO_START1, mTD_HEADER_TOOL);
 
         if (tool == ITM_AXE) {
             tool = ITM_AXE;
@@ -54,7 +54,7 @@ extern void mTD_player_keydata_init(GAME_PLAY* play) {
         }
 
         mPlib_SetData2_controller_data_for_title_demo(tool);
-        angle = get_demo_header(mEv_CheckTitleDemo() - 1, mTD_HEADER_ROTATION);
+        angle = get_demo_header(mEv_CheckTitleDemo() - mEv_TITLEDEMO_START1, mTD_HEADER_ROTATION);
 
         player->actor_class.shape_info.rotation.y = angle;
         player->actor_class.world.angle.y = angle;
@@ -68,7 +68,7 @@ static u16 get_tdemo_keydata(int frame) {
     u16* pact_data_keydata_pt[mTD_TITLE_DEMO_NUM] = { pact0_key_data, pact1_key_data, pact2_key_data, pact3_key_data,
                                                       pact4_key_data };
 
-    return pact_data_keydata_pt[mEv_CheckTitleDemo() - 1][frame];
+    return pact_data_keydata_pt[mEv_CheckTitleDemo() - mEv_TITLEDEMO_START1][frame];
 }
 
 /* @fakematch? - the weirdness with btn_a needing to be assigned to a u8 then int needs to be investigated */
@@ -131,7 +131,7 @@ static void mTD_game_end_init(GAME_PLAY* play) {
 }
 
 extern void title_demo_move(GAME_PLAY* play) {
-    if (mEv_CheckTitleDemo() > 0) {
+    if (mEv_IsTitleDemo()) {
         set_player_demo_keydata(S_tdemo_frame);
         S_tdemo_frame++;
 
@@ -162,11 +162,11 @@ extern void mTD_rtc_reserve() {
 
 extern int mTD_get_titledemo_no() {
     int titledemo_no = S_now_demono;
-    if (titledemo_no <= 0) {
-        titledemo_no = 1;
+    if (titledemo_no <= mEv_TITLEDEMO_NONE) {
+        titledemo_no = mEv_TITLEDEMO_START1;
     }
 
-    return titledemo_no - 1;
+    return titledemo_no - mEv_TITLEDEMO_START1;
 }
 
 extern int mTD_tdemo_button_ok_check() {

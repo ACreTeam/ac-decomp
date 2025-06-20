@@ -816,8 +816,8 @@ static int choice_demo_sub() {
         mDemo_Request_c* request = &demo->request[i];
         int type = request->type;
 
-        if (((mEv_CheckTitleDemo() == 0 || type == mDemo_TYPE_SCROLL ||
-              (mEv_CheckTitleDemo() == -9 && type == mDemo_TYPE_SPEAK && request->actor != NULL &&
+        if (((mEv_CheckTitleDemo() == mEv_TITLEDEMO_NONE || type == mDemo_TYPE_SCROLL ||
+              (mEv_CheckTitleDemo() == mEv_TITLEDEMO_STAFFROLL && type == mDemo_TYPE_SPEAK && request->actor != NULL &&
                request->actor->id == mAc_PROFILE_NPC_TOTAKEKE)) &&
              (demo->request_save.type != mDemo_TYPE_NONE || type >= demo->priority_type)) &&
             (*check_func[type])() != FALSE) {

@@ -280,7 +280,7 @@ static void aSTM_think_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     } else if (mEv_CheckFirstJob() == TRUE) {
         think_idx = aSTM_THINK_5;
     } else {
-        if (mEv_CheckTitleDemo() <= 0) {
+        if (mEv_IsNotTitleDemo()) {
             actorx->world.position.x += mFI_UT_WORLDSIZE_X_F;
         }
 

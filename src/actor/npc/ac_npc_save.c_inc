@@ -72,7 +72,7 @@ static void aNPC_actor_save_for_special(ACTOR* actorx) {
 static void aNPC_actor_save(ACTOR* actorx, GAME* game) {
     NPC_ACTOR* nactorx = (NPC_ACTOR*)actorx;
 
-    if (mEv_CheckTitleDemo() <= 0) {
+    if (mEv_IsNotTitleDemo()) {
         if (ITEM_NAME_GET_TYPE(actorx->npc_id) == NAME_TYPE_NPC) {
             aNPC_actor_save_for_normal(actorx);
         } else {

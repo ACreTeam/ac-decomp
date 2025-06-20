@@ -779,8 +779,21 @@ static void draw_version(GRAPH* graph) {
 
 static void Game_play_draw(GAME_PLAY* play) {
     GRAPH* graph = play->game.graph;
+    u8 fill_r = 0;
+    u8 fill_g = 0;
+    u8 fill_b = 0;
 
-    DisplayList_initialize(graph, 0, 0, 0, &play->game);
+    // @BUG - when removing display list segment function present in N64, the devs went slightly too far
+    // and removed setting the background fill color while in the main field area.
+#ifdef BUGFIXES
+    if (Common_Get(field_type) == mFI_FIELDTYPE2_FG && mEv_CheckTitleDemo() != mEv_TITLEDEMO_STAFFROLL) {
+        fill_r = play->kankyo.base_light.background_color[0];
+        fill_g = play->kankyo.base_light.background_color[1];
+        fill_b = play->kankyo.base_light.background_color[2];
+    }
+#endif
+
+    DisplayList_initialize(graph, fill_r, fill_g, fill_b, &play->game);
 
     if ((GETREG(HREG, 80) != 10) || (GETREG(HREG, 82) != 0)) {
         setupFog(play, graph);
@@ -795,13 +808,13 @@ static void Game_play_draw(GAME_PLAY* play) {
     }
     if (zurumode_flag != 0) {
         switch (mEv_CheckTitleDemo()) {
-            case -9:
-            case -1:
+            case mEv_TITLEDEMO_STAFFROLL:
+            case mEv_TITLEDEMO_LOGO:
             default:
                 draw_version(graph);
                 break;
 
-            case 0:
+            case mEv_TITLEDEMO_NONE:
                 break;
         }
     }

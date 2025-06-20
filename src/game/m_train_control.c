@@ -101,7 +101,7 @@ static int mTRC_go_process() {
     int res = FALSE;
     int demo_no = mEv_CheckTitleDemo();
 
-    if (((int)demo_no == 0 || demo_no == 1 || demo_no == -9) && Common_Get(field_draw_type) != FIELD_DRAW_TYPE_TRAIN &&
+    if (((int)demo_no == mEv_TITLEDEMO_NONE || demo_no == mEv_TITLEDEMO_START1 || demo_no == mEv_TITLEDEMO_STAFFROLL) && Common_Get(field_draw_type) != FIELD_DRAW_TYPE_TRAIN &&
         Common_Get(field_draw_type) != FIELD_DRAW_TYPE_PLAYER_SELECT) {
         res = TRUE;
     }
@@ -212,7 +212,7 @@ static void mTRC_norm_init() {
 static int mTRC_schedule(GAME_PLAY* play) {
     int res = -1;
 
-    if (mEv_CheckTitleDemo() == 1) {
+    if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_START1) {
         if (Common_Get(train_action) == mTRC_ACTION_NONE) {
             mTRC_mati_init();
         }

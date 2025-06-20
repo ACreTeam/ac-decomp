@@ -439,7 +439,7 @@ static void mVibInfo_move(mVibInfo_c* vib_info) {
 }
 
 static void mVibctl_check_title_demo() {
-  if (mFI_CheckFieldData() && mFI_GET_TYPE(mFI_GetFieldId()) == mFI_FIELDTYPE_FG && mEv_CheckTitleDemo() > 0) {
+  if (mFI_CheckFieldData() && mFI_GET_TYPE(mFI_GetFieldId()) == mFI_FIELDTYPE_FG && mEv_IsTitleDemo()) {
     mVibctl_set_force_stop(mVibctl_FLAG_FORCE_STOP2);
   }
   else {

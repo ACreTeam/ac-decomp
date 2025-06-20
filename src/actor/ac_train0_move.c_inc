@@ -33,7 +33,7 @@ static void aTR0_set_effect(ACTOR* actor, GAME* game) {
         pos.x += 36.0f;
         pos.y += 110.0f;
 
-        if (mEv_CheckTitleDemo() == 0) {
+        if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_NONE) {
             eEC_CLIP->effect_make_proc(eEC_EFFECT_KISHA_KEMURI, pos, 1, 0, game, train0->actor_class.npc_id, 0, 0);
         }
     } else {
@@ -52,7 +52,7 @@ static void aTR0_steam_work_sub(ACTOR* actor, GAME* game, int x_idx) {
     pos.y = train0->actor_class.world.position.y + 21.0f;
     pos.z = train0->actor_class.world.position.z + 42.0f;
     unk2c0 = train0->arg2;
-    if (mEv_CheckTitleDemo() == 0) {
+    if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_NONE) {
         (*Common_Get(clip.effect_clip)->effect_make_proc)(eEC_EFFECT_STEAM, pos, 1, angl[x_idx], game,
                                                           train0->actor_class.npc_id, 0, 0);
     }
@@ -177,7 +177,7 @@ static void aTR0_actor_move(ACTOR* actor, GAME* game) {
         aTR0_steam_work(actor, game);
     }
 
-    if (mEv_CheckTitleDemo() == 1) {
+    if (mEv_CheckTitleDemo() == mEv_TITLEDEMO_START1) {
         train0->arg0_f = -125.0f + train0->actor_class.world.position.x;
     } else {
         aTR0_ctrl_back_car(actor);

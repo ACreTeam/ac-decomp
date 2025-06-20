@@ -84,7 +84,7 @@ extern void mCon_main(GAME* game) {
  * @return TRUE when the button combination is pressed, FALSE otherwise
  **/
 extern int chkButton(u16 mask) {
-  if (mEv_CheckTitleDemo() > 0) {
+  if (mEv_IsTitleDemo()) {
     return FALSE;
   }
 
@@ -97,7 +97,7 @@ extern int chkButton(u16 mask) {
  * @return Pressed buttons
  **/
 extern u16 getButton() {
-  if (mEv_CheckTitleDemo() > 0) {
+  if (mEv_IsTitleDemo()) {
     return BUTTON_NONE;
   }
 
@@ -111,7 +111,7 @@ extern u16 getButton() {
  * @return TRUE when the button combination was pressed this frame, FALSE otherwise
  **/
 extern int chkTrigger(u16 mask) {
-  if (mEv_CheckTitleDemo() > 0) {
+  if (mEv_IsTitleDemo()) {
     return FALSE;
   }
 
@@ -124,7 +124,7 @@ extern int chkTrigger(u16 mask) {
  * @return Buttons pressed on the current frame
  **/
 extern u16 getTrigger() {
-  if (mEv_CheckTitleDemo() > 0) {
+  if (mEv_IsTitleDemo()) {
     return BUTTON_NONE;
   }
 
@@ -137,7 +137,7 @@ extern u16 getTrigger() {
  * @return Joystick X position
  **/
 extern int getJoystick_X() {
-  if (mEv_CheckTitleDemo() > 0) {
+  if (mEv_IsTitleDemo()) {
     return 0;
   }
 
@@ -150,7 +150,7 @@ extern int getJoystick_X() {
  * @return Joystick Y position
  **/
 extern int getJoystick_Y() {
-  if (mEv_CheckTitleDemo() > 0) {
+  if (mEv_IsTitleDemo()) {
     return 0;
   }
 
