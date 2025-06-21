@@ -140,8 +140,9 @@ static void EffecterInit_Perc(jc_* jc, Pmap_* pmap, u16 id)
 	jc->panMatrices[3].values[1] = 0.0f;
 
 	// PERC instruments only have rand and not osc
+    Pmap_* map;
 	for (u32 i = 0; i < 2; i++) {
-		Pmap_* map = (Pmap_*)((int*)pmap + i + 2);
+		 map = (Pmap_*)((int*)pmap + i + 2);
 		if (map->_00) {
 			f32 r      = Bank_RandToOfs(map->_00);
 			f32* REF_r = &r;
@@ -361,10 +362,10 @@ static BOOL __Oneshot_StartMonoPolyCheck(jc_* jc, u32 id)
 {
 	jcs_* mgr = jc->mMgr;
 	jc_* chan = mgr->activeChannels;
+	u32 index = 0;
 	u8 flag   = id >> 0x18;
 	u8 poly   = polys_table[flag & 0xf];
 
-	u32 index = 0;
 
 	if (poly == 0) {
 		return TRUE;
@@ -605,7 +606,8 @@ void SetKeyTarget_1Shot(jc_* jc, u8 key, u32 steps)
 	}
 
 	f32 pitch = C5BASE_PITCHTABLE[pitchKey];
-	SetPitchTarget_1Shot(jc, jc->basePitch * pitch, steps);
+    pitch = jc->basePitch * pitch;
+	SetPitchTarget_1Shot(jc, pitch, steps);
 }
 
 /*
@@ -741,6 +743,7 @@ void FlushRelease_1Shot(jcs_* jcs)
  */
 static BOOL Jesus1Shot_Update(jc_* jc, JCSTATUS jstatus)
 {
+    Oscbuf_* buf;
 	u32 test    = FALSE;
 	jc_** jcptr = &jc;
 	s32 status  = jstatus;
@@ -748,7 +751,7 @@ static BOOL Jesus1Shot_Update(jc_* jc, JCSTATUS jstatus)
 	if (status == 0) {
 		for (u32 i = 0; i < 2; i++) {
 			if (jc->mOscillators[i]) {
-				Oscbuf_* buf = &jc->mOscBuffers[i];
+				buf = &jc->mOscBuffers[i];
 				if (buf->state != 6 && buf->state != 7) {
 					buf->state = 4;
 					test       = TRUE;
@@ -904,7 +907,7 @@ jc_* Play_1shot(jcs_* jcs, SOUNDID_ sound, u32 id)
 	chan->panMatrices[3].values[0] = 0.0f;
 	EffecterInit(chan, inst);
 
-	int flag = sound.value >> 0x10 | inst->mFlag << 0x18;
+	int flag = inst->mFlag << 0x18 | sound.value >> 0x10;
 	switch (inst->mFlag & 0xc0) {
 	case 0xc0:
 		flag |= 0xffffff;

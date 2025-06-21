@@ -784,7 +784,7 @@ config.libs = [
             Object(NonMatching, "jaudio_NES/internal/memory.c"),
             Object(Matching, "jaudio_NES/internal/midplay.c"),
             Object(Matching, "jaudio_NES/internal/noteon.c"),
-            Object(NonMatching, "jaudio_NES/internal/oneshot.c"),
+            Object(Matching, "jaudio_NES/internal/oneshot.c"),
             Object(NonMatching, "jaudio_NES/internal/rate.c"),
             Object(NonMatching, "jaudio_NES/internal/rspsim.c"),
             Object(Matching, "jaudio_NES/internal/seqsetup.c"),
