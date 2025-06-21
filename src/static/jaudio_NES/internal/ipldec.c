@@ -19,11 +19,10 @@ static DSPTask* WriteTask(u8 target, u32 cmd, void* task, DSPCallback callback)
 		return NULL;
 	}
 
-	DSPTask* dspTask  = &EX_DSPTASK[TASK_WRITEPTR];
-	dspTask->target   = target;
-	dspTask->cmd      = cmd;
-	dspTask->task     = task;
-	dspTask->callback = callback;
+	EX_DSPTASK[TASK_WRITEPTR].target   = target;
+	EX_DSPTASK[TASK_WRITEPTR].cmd      = cmd;
+	EX_DSPTASK[TASK_WRITEPTR].task     = task;
+	EX_DSPTASK[TASK_WRITEPTR].callback = callback;
 
 	TASK_WRITEPTR++;
 	if (TASK_WRITEPTR == 4) {
@@ -107,7 +106,7 @@ void Jac_DSPcardDecodeAsync(void* task, void* cmd, DSPCallback callback)
  * Address:	........
  * Size:	00004C
  */
-void Jac_DSPagbDecodeAsync(void*, void*, void (*)(void*))
+void Jac_DSPagbDecodeAsync(void* task, void* cmd, DSPCallback callback)
 {
-	// UNUSED FUNCTION
+	while (WriteTask(DSPTARGET_AGB, (u32)cmd, task, callback) == NULL) {}
 }

@@ -776,7 +776,7 @@ config.libs = [
             Object(NonMatching, "jaudio_NES/internal/fat.c"),
             Object(NonMatching, "jaudio_NES/internal/fxinterface.c"),
             Object(NonMatching, "jaudio_NES/internal/heapctrl.c"),
-            Object(NonMatching, "jaudio_NES/internal/ipldec.c"),
+            Object(Matching, "jaudio_NES/internal/ipldec.c"),
             Object(NonMatching, "jaudio_NES/internal/ja_calc.c"),
             Object(NonMatching, "jaudio_NES/internal/jammain_2.c"),
             Object(NonMatching, "jaudio_NES/internal/jamosc.c"),
