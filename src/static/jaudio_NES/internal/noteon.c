@@ -16,16 +16,18 @@ s32 NoteON(seqp_* track, s32 channel, s32 flag1, s32 flag2, s32 playFlag)
 	if (track->isMuted && (track->pauseStatus & 0x40)) {
 		return -1;
 	}
-
+    
 	if (track->channels[channel]) {
 		NoteOFF(track, channel);
 	}
 
-	seqp_* parent = track->parent;
-	jcs_* jcs     = &track->parentController;
+    jc_* sound;
 	u32 reg;
-
-	seqp_* temp = parent;
+	seqp_* temp;
+    seqp_* parent = track->parent;
+	jcs_* jcs     = &track->parentController;
+	
+    temp = parent;
 	while (jcs->chanCount == 0 || jcs->freeChannels == 0) {
 		if (temp == NULL) {
 			jcs = &track->parentController;
@@ -36,7 +38,7 @@ s32 NoteON(seqp_* track, s32 channel, s32 flag1, s32 flag2, s32 playFlag)
 	}
 
 	if (track->flags == 4) {
-		if (parent == NULL) {
+		if (track->parent == NULL) {
 			return -1;
 		}
 
@@ -63,15 +65,18 @@ s32 NoteON(seqp_* track, s32 channel, s32 flag1, s32 flag2, s32 playFlag)
 
 	reg      = Jam_ReadRegDirect(track, 6);
 	u16 phys = Jac_BnkVirtualToPhysical(reg >> 8);
+    u32 r    = reg & 0xFF;
 	u32 b    = (phys & 0xff) << 8 | reg & 0xff;
 	u32 a    = b << 16 | flag1 << 8 | flag2;
 
-	jc_* sound;
 	SOUNDID_ id;
+    u32 flag;
+    u32 i;
+
 	id.value = a;
-	if ((u8)reg >= 0xf0) {
+	if (r >= 0xf0) {
 		sound = Play_1shot_Osc(jcs, id, playFlag);
-	} else if ((u8)reg >= 0xe4) {
+	} else if (r >= 0xe4) {
 		sound = Play_1shot_Perc(jcs, id, playFlag);
 	} else {
 		sound = Play_1shot(jcs, id, playFlag);
@@ -84,27 +89,26 @@ s32 NoteON(seqp_* track, s32 channel, s32 flag1, s32 flag2, s32 playFlag)
 	UpdatePanPower_1Shot(sound, track->regParam.param.arguments[0], track->regParam.param.arguments[1], track->regParam.param.arguments[2],
 	                     track->regParam.param.arguments[3]);
 
-	for (u32 i = 0; i < 2; i++) {
-		u32 flag = track->oscillatorRouting[i];
-		if (flag == 15 || flag == 14) {
-			continue;
-		}
+	for (i = 0; i < 2; i++) {
+		flag = track->oscillatorRouting[i];
+        
+		if (flag != 15 && flag != 14) {
+            if (flag >= 8) {
+                flag -= 8;
+                if (sound->mOscillators[flag]) {
+                    track->oscillators[i] = *sound->mOscillators[flag];
+                }
+            } else if (flag >= 4) {
+                flag -= 4;
+                s16* prev = track->oscillators[i].releaseVecOffset;
+                if (sound->mOscillators[flag]) {
+                    track->oscillators[i]                  = *sound->mOscillators[flag];
+                    track->oscillators[i].releaseVecOffset = prev;
+                }
+            }
 
-		if (flag >= 8) {
-			flag -= 8;
-			if (sound->mOscillators[flag]) {
-				track->oscillators[i] = *sound->mOscillators[flag];
-			}
-		} else if (flag >= 4) {
-			flag -= 4;
-			s16* prev = track->oscillators[i].releaseVecOffset;
-			if (sound->mOscillators[flag]) {
-				track->oscillators[i]                  = *sound->mOscillators[flag];
-				track->oscillators[i].releaseVecOffset = prev;
-			}
-		}
-
-		Effecter_Overwrite_1ShotD(sound, &track->oscillators[i], flag);
+            Effecter_Overwrite_1ShotD(sound, &track->oscillators[i], flag);
+        }
 	}
 
 	Jam_UpdateTrack(track, 3);
@@ -192,10 +196,7 @@ BOOL CheckNoteStop(seqp_* track, s32 param_2)
 			track->activeSoundIds[param_2] = 0;
 			return TRUE;
 		}
-		if (jc->note == 0xff) {
-			return TRUE;
-		}
-		return FALSE;
+		return jc->note == 0xff;
 	}
 	return TRUE;
 }
