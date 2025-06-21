@@ -1,10 +1,13 @@
+#undef DEBUG
+#define DEBUG 1
+
 #include "jaudio_NES/dsp_cardunlock.h"
 
-#include "dolphin/os.h"
-#include "dolphin/card.h"
 #include "MSL_C/rand.h"
 #include "jaudio_NES/ipldec.h"
 #include "_mem.h"
+#include "dolphin/os.h"
+#include "dolphin/card.h"
 #include "card/__card.h"
 
 #define DATA_SCRAMBLE_R(data) (~(data ^ (data >> 7) ^ (data >> 15) ^ (data >> 23)))
@@ -72,7 +75,7 @@ static u32 bitrev(u32 data)
  */
 static s32 ReadArrayUnlock(s32 chan, u32 data, void* rbuf, s32 length, BOOL mode)
 {
-	ASSERTLINE(216, 0 <= chan && chan < 2);
+	ASSERTLINE(217, 0 <= chan && chan < 2);
 	CARDControl* card = &__CARDBlock[chan];
 
 	if (!EXISelect(chan, 0, 4))
@@ -133,7 +136,12 @@ static u32 DummyLen()
 		srand(result);
 		result = (rand() & 0x1f) + 1;
 	}
-	return result < 4 ? 4 : result;
+
+    if (result < 4) {
+        result = 4;
+    }
+
+	return result;
 }
 
 static void InitCallback(void* dspTask);
@@ -155,18 +163,25 @@ int __CARDUnlock(int chan, u8 flashID[12])
 {
 	u32 Ans1, Ans2;
 	u8 rbuf[64];
-
-	// The nonsense
+    u32 para1A;
+    u32 para1B;
+    u32 para2A;
+    u32 para2B;
+    
+    // The nonsense
 	CARDControl* card           = &__CARDBlock[chan];
 	DSPTaskInfo* task           = &card->task;
 	CARDDecodeParameters* param = (CARDDecodeParameters*)card->workArea;
 	u8* input                   = (u8*)param + sizeof(CARDDecodeParameters);
 	input                       = (u8*)OSRoundUp32B(input);
 	u8* output                  = input + 32;
-
+    
 	u32 data;
 	s32 dummy;
 	s32 rlen;
+
+    u32 shift;
+	u32 wk;
 
 	data  = GetInitVal();
 	dummy = DummyLen();
@@ -176,9 +191,6 @@ int __CARDUnlock(int chan, u8 flashID[12])
 
 	// TODO: Pikmin uses `card->formatStep`, but every other
 	// decomp uses `card->scramble`. What's up with that?
-
-	u32 shift;
-	u32 wk;
 
 	shift            = dummy * 8 + 1;
 	wk               = exnor_1st(data, shift);
@@ -191,11 +203,11 @@ int __CARDUnlock(int chan, u8 flashID[12])
 	if (ReadArrayUnlock(chan, data, rbuf, rlen, TRUE) < CARD_RESULT_READY)
 		return CARD_RESULT_NOCARD;
 
-	u32 para1A = *(u32*)(rbuf + 0);
-	u32 para1B = *(u32*)(rbuf + 4);
+	para1A = *(u32*)(rbuf + 0);
+	para1B = *(u32*)(rbuf + 4);
 	Ans1       = *(u32*)(rbuf + 8);
-	u32 para2A = *(u32*)(rbuf + 12);
-	u32 para2B = *(u32*)(rbuf + 16);
+	para2A = *(u32*)(rbuf + 12);
+	para2B = *(u32*)(rbuf + 16);
 	para1A ^= card->formatStep;
 
 	shift            = 32;
@@ -277,7 +289,7 @@ static void DoneCallback(void* dspTask)
 			break;
 		}
 	}
-	ASSERTLINE(548, 0 <= chan && chan < 2);
+	ASSERTLINE(549, 0 <= chan && chan < 2);
 
 	// The nonsense
 	CARDDecodeParameters* param = (CARDDecodeParameters*)card->workArea;

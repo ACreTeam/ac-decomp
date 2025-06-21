@@ -4,6 +4,10 @@
 #include <dolphin/card.h>
 #include <dolphin/exi.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define CARDIsValidBlockNo(card, iBlock) (CARD_NUM_SYSTEM_BLOCK <= (iBlock) && (iBlock) < (card)->cBlock)
 
 // CARDStatEx.c
@@ -12,7 +16,7 @@ long __CARDSetStatusExAsync(long chan, long fileNo, struct CARDDir * dirent, voi
 long __CARDSetStatusEx(long chan, long fileNo, struct CARDDir * dirent);
 
 // CARDUnlock.c
-s32 __CARDUnlock(s32 chan, u8 flashID[12]);
+// s32 __CARDUnlock(s32 chan, u8 flashID[12]);
 
 // CARDRead.c
 s32 __CARDSeek(CARDFileInfo *fileInfo, s32 length, s32 offset, CARDControl **pcard);
@@ -86,5 +90,9 @@ void __CARDSetDiskID(DVDDiskID *id);
 s32 __CARDGetControlBlock(s32 chan, CARDControl **pcard);
 s32 __CARDPutControlBlock(CARDControl *card, s32 result);
 s32 __CARDSync(s32 chan);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _DOLPHIN_CARD_INTERNAL_H_

@@ -3,6 +3,10 @@
 
 #include <dolphin/os/OSContext.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef enum {
     EXI_STATE_DMA_ACCESS = (1 << 0),
     EXI_STATE_IMM_ACCESS = (1 << 1),
@@ -46,5 +50,9 @@ BOOL EXIDetach(s32 channel);
 u32 EXIGetState(s32 channel);
 s32 EXIGetID(s32 channel, u32 device, u32* id);
 void EXIProbeReset(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
