@@ -104,8 +104,8 @@ static seqp_* GetNewTrack()
 	}
 
 	track = FREE_SEQP_QUEUE[GET_P];
-	++GET_P;
 	--SEQ_REMAIN;
+	++GET_P;
 
 	if (GET_P == FREE_SEQP_QUEUE_SIZE) {
 		GET_P = 0;
@@ -486,8 +486,6 @@ s32 Jaq_OpenTrack(seqp_* track, u32 flags, u32 source)
 	u8 childIndex;
 	u8 trackFlags;
 
-	u8* REF_index;
-
 	childIndex = (flags & 0b00001111);
 	trackFlags = (flags & 0b11000000) >> 6;
 	if ((flags & 0b00100000)) {
@@ -498,7 +496,6 @@ s32 Jaq_OpenTrack(seqp_* track, u32 flags, u32 source)
 		childIndex = Jam_ReadRegDirect(track, childIndex);
 	}
 
-	REF_index = &childIndex;
 	if (childIndex >= 16) {
 		return -1;
 	}
@@ -515,7 +512,8 @@ s32 Jaq_OpenTrack(seqp_* track, u32 flags, u32 source)
 
 	track->children[childIndex] = newChildTrack;
 
-	newChildTrack->trackId        = ((track->trackId << 4 | childIndex) & 0xFFFFFFF) | ((track->trackId & 0xF0000000) + 0x10000000);
+    u32 trackId = track->trackId;
+	newChildTrack->trackId        = ((trackId << 4 | childIndex) & 0xFFFFFFF) | ((trackId & 0xF0000000) + 0x10000000);
 	newChildTrack->connectionId   = 0;
 	newChildTrack->dataSourceMode = track->dataSourceMode;
 	newChildTrack->flags          = trackFlags;
