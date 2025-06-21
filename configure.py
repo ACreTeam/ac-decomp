@@ -757,7 +757,7 @@ config.libs = [
             Object(Matching, "jaudio_NES/internal/streamctrl.c"),
             Object(Matching, "jaudio_NES/internal/sub_sys.c"),
             Object(Matching, "jaudio_NES/internal/track.c"),
-            Object(NonMatching, "jaudio_NES/internal/aramcall.c"),
+            Object(Matching, "jaudio_NES/internal/aramcall.c"),
             Object(NonMatching, "jaudio_NES/internal/audioconst.c"),
             Object(NonMatching, "jaudio_NES/internal/audiotable.c"),
             Object(NonMatching, "jaudio_NES/internal/audiowork.c"),
