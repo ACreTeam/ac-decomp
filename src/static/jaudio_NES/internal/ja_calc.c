@@ -43,9 +43,10 @@ f32 atanf2(f32 x, f32 y)
  * Address:	........
  * Size:	000020
  */
-void sinf2(f32)
+f32 sinf2(f32 x)
 {
-	// UNUSED FUNCTION
+	// @fabricated
+    return std::sinf(x);
 }
 
 /*
