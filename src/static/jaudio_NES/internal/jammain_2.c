@@ -12,6 +12,8 @@
 #include "jaudio_NES/driverinterface.h"
 
 #include "dolphin/os/OSError.h"
+#include <dolphin/os/OSFastCast.h>
+#include <dolphin/os.h>
 
 // TODO IN THIS FILE: What do the return values for the `Cmd_` functions signify?
 // 0 is probably success / "no error".  Return values 1 and 2 have been observed.
@@ -20,7 +22,7 @@
 #define TRACK_LIST_SIZE (32)
 
 typedef struct TrackListPair TrackListPair;
-typedef struct ArgListPair ArgListPair;
+typedef struct Arghead_ Arghead_;
 
 /**
  * @brief This is an invented pair-like struct, needed for `TRACK_LIST`.
@@ -37,7 +39,7 @@ struct TrackListPair {
  *
  * @note Size: 4.
  */
-struct ArgListPair {
+struct Arghead_ {
 	u16 argCount;
 	u16 argTypes; // This is a bitfield array of eight 2-bit values
 };
@@ -97,9 +99,8 @@ static u8 __ByteReadOfs(seqp_* track, u32 ofs)
  */
 static u16 __WordReadOfs(seqp_* track, u32 ofs)
 {
-	u16 result;
-	result = __ByteReadOfs(track, ofs + 0) << 8;
-	result |= __ByteReadOfs(track, ofs + 1) << 0;
+	u16 result = __ByteReadOfs(track, ofs + 0) << 8;
+	result |= __ByteReadOfs(track, ofs + 1);
 	return result;
 }
 
@@ -113,7 +114,7 @@ static u32 __24ReadOfs(seqp_* track, u32 ofs)
 	u32 result;
 	result = __ByteReadOfs(track, ofs + 0) << 16;
 	result |= __ByteReadOfs(track, ofs + 1) << 8;
-	result |= __ByteReadOfs(track, ofs + 2) << 0;
+	result |= __ByteReadOfs(track, ofs + 2);
 	return result;
 }
 
@@ -126,7 +127,7 @@ static u32 __LongReadOfs(seqp_* track, u32 ofs)
 {
 	u32 result;
 	result = __WordReadOfs(track, ofs + 0) << 16;
-	result |= __WordReadOfs(track, ofs + 2) << 0;
+	result |= __WordReadOfs(track, ofs + 2);
 	return result;
 }
 
@@ -157,7 +158,7 @@ static u16 __WordRead(seqp_* track)
 {
 	u16 result;
 	result = __ByteRead(track) << 8;
-	result |= __ByteRead(track) << 0;
+	result |= __ByteRead(track);
 	return result;
 }
 
@@ -171,7 +172,7 @@ static u32 __24Read(seqp_* track)
 	u32 result;
 	result = __ByteRead(track) << 16;
 	result |= __ByteRead(track) << 8;
-	result |= __ByteRead(track) << 0;
+	result |= __ByteRead(track);
 	return result;
 }
 
@@ -185,7 +186,7 @@ static u32 __32Read(seqp_* track)
 	// Despite being unused, it's obvious this function is similar to `__LongReadOfs`.
 	u32 result;
 	result = __WordRead(track) << 16;
-	result |= __WordRead(track) << 0;
+	result |= __WordRead(track);
 	return result;
 }
 
@@ -672,8 +673,10 @@ u32 Jam_ReadReg32(seqp_* track, u8 index)
  */
 void Jam_WriteRegXY(seqp_* track, u32 param_2)
 {
-	Jam_WriteRegDirect(track, 4, (u16)(param_2 >> 16));
-	Jam_WriteRegDirect(track, 5, (u16)(param_2));
+    u16 v = param_2 >> 16;
+	Jam_WriteRegDirect(track, 4, (u16)v);
+    u16 v2 = param_2;
+	Jam_WriteRegDirect(track, 5, (u16)v2);
 }
 
 /*
@@ -1273,8 +1276,8 @@ static f32 __PanCalc(f32 param_1, f32 param_2, f32 param_3, u8 param_4)
  */
 void Jam_UpdateTrackAll(seqp_* track)
 {
-	f32 pitchCents;
 	f32 volumeValue;
+	f32 pitchCents;
 	f32 panValue;
 	f32 fxMixValue;
 	f32 dolbyValue;
@@ -1283,7 +1286,7 @@ void Jam_UpdateTrackAll(seqp_* track)
 
 	f32 panScaled;
 	s8 pan8bit;
-	u8 panDelayLeft;
+	s8 panDelayLeft;
 
 	size_t i;
 
@@ -1387,14 +1390,9 @@ void Jam_UpdateTrackAll(seqp_* track)
  * Address:	80010E00
  * Size:	00000C
  */
-static void OSf32tos8(register f32* in, register s8* out)
+static void OSf32tos8(register f32* in, volatile register s8* out)
 {
-#ifdef __MWERKS__
-	asm {
-		lfs       f1, 0 (in)
-		psq_st    f1, 0 (out), 0x1, OS_FASTCAST_S8
-	}
-#endif
+    *out = __OSf32tos8(*in);
 }
 
 /*
@@ -1426,7 +1424,7 @@ void Jam_UpdateTrack(seqp_* track, u32 updateFlags)
 	// Used for `OSf32tos8`
 	f32 masterLevelF32;
 	s8 masterRight;
-	u8 masterLeft;
+	s8 masterLeft;
 
 	regionAttenuation = track->regParam.param.arguments[3] / 32767.0f;
 
@@ -1741,8 +1739,8 @@ void Jam_SetInterrupt(seqp_* track, u16 interrupt)
  */
 BOOL Jam_TryInterrupt(seqp_* track)
 {
-	int i;
 	u32 mask;
+	int i;
 
 	if (track->interruptActive) {
 		return FALSE;
@@ -1910,8 +1908,9 @@ static u32 Cmd_LoopE()
 
 	uVar1 = SEQ_P->loopCounters[SEQ_P->callStackDepth - 1];
 	if (uVar1 != 0) {
-		uVar1 -= 1;
+		uVar1 = (u16)(uVar1 - 1);
 	}
+    
 	if (uVar1 == 0) {
 		SEQ_P->callStackDepth -= 1;
 		return 0;
@@ -2181,7 +2180,8 @@ static u32 Cmd_DisInterrupt()
 	u8 arg;
 	arg = SEQ_ARG[0];
 	arg = 1 << arg;
-	SEQ_P->interruptEnable &= ~arg;
+    arg = ~arg;
+	SEQ_P->interruptEnable &= arg;
 	return 0;
 }
 
@@ -2475,11 +2475,11 @@ static u32 Cmd_PanSwSet()
  */
 static u32 Cmd_OscRoute()
 {
-	u8 oscRoute;
 	u8 uVar2;
+	u8 oscRoute;
 
-	oscRoute = SEQ_ARG[0] & 0xf;
 	uVar2    = SEQ_ARG[0] >> 4 & 0xf;
+	oscRoute = SEQ_ARG[0] & 0xf;
 
 	SEQ_P->oscillatorRouting[uVar2] = oscRoute;
 	if (oscRoute == 14) {
@@ -2598,12 +2598,8 @@ static u32 Cmd_Printf()
 				fmtFlags[fmtCount] = 3;
 				fmtStr[i]          = 'd';
 				break;
-			case 'R': // ?
+            case 'R':
 				fmtFlags[fmtCount] = 4;
-				fmtStr[i]          = 'x';
-				break;
-			case 't': // ?
-				fmtFlags[fmtCount] = 5;
 				fmtStr[i]          = 'x';
 				break;
 			}
@@ -2615,20 +2611,20 @@ static u32 Cmd_Printf()
 		fmtParms[i] = __ByteRead(SEQ_P);
 		if (fmtFlags[i] == 2) {
 			fmtParms[i] = (u32)Jam_OfsToAddr(SEQ_P, fmtParms[i]);
-		} else if (fmtFlags[i] == 5) {
-			fmtParms[i] = SEQ_P->trackId;
-		} else if (fmtFlags[i] >= 3) {
+		// } else if (fmtFlags[i] == 5) {
+		// 	fmtParms[i] = SEQ_P->trackId;
+		}
+        
+        if (fmtFlags[i] >= 3) {
 			fmtParms[i] = __ExchangeRegisterValue(SEQ_P, fmtParms[i]);
 		}
 	}
 	// A restoration of this command's functionality can be enabled below:
-#if 0
 	OSReport(fmtStr, fmtParms[0], fmtParms[1], fmtParms[2], fmtParms[3]);
-#endif
 	return 0;
 }
 
-static ArgListPair Arglist[CMD_COUNT] = {
+static Arghead_ Arglist[CMD_COUNT] = {
 	{ 0, 0x0000 }, //
 	{ 2, 0x0008 }, // OpenTrack
 	{ 2, 0x0008 }, // OpenTrackBros
@@ -2770,7 +2766,7 @@ static CmdFunction CMDP_LIST[CMD_COUNT] = {
  */
 u32 Cmd_Process(seqp_* track, u8 cmd, u16 param_3)
 {
-	ArgListPair argpair;
+	Arghead_ argpair;
 	u16 argTypes;
 	size_t i;
 	u32 arg;
@@ -2809,6 +2805,8 @@ u32 Cmd_Process(seqp_* track, u8 cmd, u16 param_3)
 
 	function = CMDP_LIST[cmd - 0xC0];
 	if (!function) {
+        OSReport("Error: NULL Command Pointer (cmd. %x ) \n", cmd);
+        OSReport("SEQP %x  Access Offset %d\n", track, track->programCounter);
 		return 0;
 	}
 	return function();
@@ -2877,16 +2875,6 @@ s32 Jam_SeqmainNote(seqp_* track, u8 isMuted)
 	jc_* pjVar3;
 	int iVar11_3;
 	u8 voice;
-
-	if (0) {
-		(void)&bVar10;
-	}
-	if (0) {
-		(void)&keyTarget;
-	}
-	if (0) {
-		(void)&local_64;
-	}
 
 	seqRes = 0;
 	if (track->parent && track->doChangeTempo == TRUE) {
@@ -2977,7 +2965,9 @@ try_interrupt:
 				pitch += track->finalTranspose;
 			}
 
-			(void)pitch;
+			if (pitch >= 128) {
+                OSReport("♪Jam/Seq :: Error Note %d\n", pitch);
+            }
 
 			if (bVar10 >> 5 & 2) {
 				keyTarget = pitch;
@@ -3023,10 +3013,8 @@ try_interrupt:
 			var_r26   = FALSE;
 
 			for (int j = 0; j < 1; j++) {
+                // u8* track_p = track->_94;
 				int unused = j * 2;
-				(void)&pitch;
-				(void)(s32)velocity;
-				(void)track->_94[voice];
 
 				if (cond) {
 					duration = uVar2;
@@ -3051,7 +3039,7 @@ try_interrupt:
 					if (track->isPaused && (track->pauseStatus & 0x10)) {
 						iVar11_2 = -1;
 					} else {
-						iVar11_2 = NoteON(track, voice, pitch, velocity, duration);
+						iVar11_2 = NoteON(track, voice, (u8)pitch, velocity, duration);
 					}
 				}
 
@@ -3075,11 +3063,11 @@ try_interrupt:
 
 			if (track->_D4 & 2) {
 				s32 steps = duration;
-				if (steps == -1) {
+				if (duration == -1) {
 					steps = Jam_SEQtimeToDSPtime(track, uVar2, track->_CC);
 				}
 				SetKeyTarget_1Shot(track->channels[0], keyTarget + track->finalTranspose, steps);
-				pitch = keyTarget;
+				pitch = (u8)keyTarget;
 			}
 
 			track->_D5 = pitch;
@@ -3098,6 +3086,7 @@ try_interrupt:
 				bVar10_2 = __ByteRead(track);
 				uVar6    = __ExchangeRegisterValue(track, bVar10_2 & 7);
 				if (uVar6 > 7 || uVar6 == 0) {
+                    OSReport("♪Jam/main :: r-noteoff error\n");
 					if ((bVar10_2 & 0x80) != 0) {
 						__ByteRead(track);
 					}
@@ -3157,7 +3146,11 @@ try_interrupt:
 				goto try_interrupt;
 			} else if (cmdResult == 3) {
 				return -1;
-			}
+			} else if (cmdResult == 0x80) {
+                OSReport("\x1b[4%dm", cmdResult);
+                OSReport("♪Jam/seq :: Sequence Error occerd... I try to continue\n");
+                OSReport("\x1b[m");
+            }
 		}
 	}
 
@@ -3188,6 +3181,9 @@ LAB_800136e0:
 
 	for (int i = 0; i < 16; i++) {
 		if (track->children[i] && track->children[i]->trackState != 0) {
+            if (track != track->children[i]->parent) {
+                OSReport("##########Error:: Track %d の共有違反です\n", i);
+            }
 			// Return of the worst bit extract extraction method known to man.
 			BOOL childIsMuted = track->isMuted | ((track->childMuteMask & (1 << i)) >> i);
 			if (Jam_SeqmainNote(track->children[i], childIsMuted) == -1) {

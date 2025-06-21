@@ -257,17 +257,15 @@ BOOL Jac_AllocHeap(jaheap_* heap, jaheap_* parent, u32 size)
 	u32 y;
 	jaheap_* temp;
 	jaheap_* temp2;
-	jaheap_* temp3;
 	jaheap_* result;
 	u32 t;
 	u32 max;
 	u32 x;
-    int ret;
 
 	size = OSRoundUp32B(size);
 
 	if (parent->startAddress == 0) {
-		ret = FALSE;
+		return FALSE;
 	} else if (heap->startAddress && heap->startAddress != -1) {
 		return FALSE;
 	} else if (parent->size - parent->usedSize < size) {
@@ -302,14 +300,14 @@ BOOL Jac_AllocHeap(jaheap_* heap, jaheap_* parent, u32 size)
             heap->nextSibling  = parent->firstChild;
             parent->firstChild = heap;
         } else {
-            temp = parent->firstChild;
+            temp2 = parent->firstChild;
             while (TRUE) {
-                if (temp->nextSibling == result) {
-                    heap->nextSibling  = temp->nextSibling;
-                    temp->nextSibling = heap;
+                if (temp2->nextSibling == result) {
+                    heap->nextSibling  = temp2->nextSibling;
+                    temp2->nextSibling = heap;
                     break;
                 }
-                temp = temp->nextSibling;
+                temp2 = temp2->nextSibling;
             }
         }
 
@@ -322,7 +320,7 @@ BOOL Jac_AllocHeap(jaheap_* heap, jaheap_* parent, u32 size)
         heap->firstChild   = NULL;
         heap->parent       = parent;
         parent->childCount++;
-        ret = TRUE;
+        return TRUE;
 	} else {
         heap->startAddress = parent->startAddress + parent->usedSize;
         heap->size         = size;
@@ -333,11 +331,11 @@ BOOL Jac_AllocHeap(jaheap_* heap, jaheap_* parent, u32 size)
         heap->firstChild   = NULL;
         heap->parent       = parent;
 
-        temp = parent->firstChild;
-        if (temp == NULL) {
+        if (parent->firstChild == NULL) {
             parent->firstChild = heap;
             heap->nextSibling  = NULL;
         } else {
+            temp = parent->firstChild;
             while (TRUE) {
                 if (temp->nextSibling == NULL) {
                     temp->nextSibling = heap;
@@ -352,8 +350,6 @@ BOOL Jac_AllocHeap(jaheap_* heap, jaheap_* parent, u32 size)
         parent->childCount++;
         return TRUE;
     }
-
-    return ret;
 }
 
 /*
