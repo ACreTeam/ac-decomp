@@ -735,6 +735,7 @@ config.libs = [
             "-char signed",
             "-sdata 8",
             "-sdata2 8",
+            "-fp_contract on",
         ],
         "progress_category": "library",
         "src_dir": "src/static",

@@ -12,15 +12,17 @@ static u32 FORCE_RELEASE_TABLE[3] = { 5, 15, 0 };
  * Address:	8000CFC0
  * Size:	000030
  */
-Inst_* Bank_InstChange(Bank_* bank, volatile u32 VOLATILE_index)
+Inst_* Bank_InstChange(Bank_* bank, u32 index)
 {
-	u32 index;
+    Inst_* ret;
 
-	index = VOLATILE_index;
-	if (!bank) {
-		return NULL;
-	}
-	return bank->mInstruments[index];
+	if (bank == NULL) {
+		ret = NULL;
+	} else {
+	    ret = bank->mInstruments[index];
+    }
+
+    return ret;
 }
 
 /*
@@ -28,15 +30,17 @@ Inst_* Bank_InstChange(Bank_* bank, volatile u32 VOLATILE_index)
  * Address:	........
  * Size:	000030
  */
-Voice_* Bank_VoiceChange(Bank_* bank, volatile u32 VOLATILE_index)
+Voice_* Bank_VoiceChange(Bank_* bank, u32 index)
 {
-	u32 index;
+    Voice_* ret;
 
-	index = VOLATILE_index;
-	if (!bank) {
-		return NULL;
-	}
-	return bank->mVoices[index];
+	if (bank == NULL) {
+		ret = NULL;
+	} else {
+	    ret = bank->mVoices[index];
+    }
+
+    return ret;
 }
 
 /*
@@ -44,15 +48,17 @@ Voice_* Bank_VoiceChange(Bank_* bank, volatile u32 VOLATILE_index)
  * Address:	8000D000
  * Size:	000030
  */
-Perc_* Bank_PercChange(Bank_* bank, volatile u32 VOLATILE_index)
+Perc_* Bank_PercChange(Bank_* bank, u32 index)
 {
-	u32 index;
+    Perc_* ret;
 
-	index = VOLATILE_index;
-	if (!bank) {
-		return NULL;
-	}
-	return bank->mPercs[index];
+	if (bank == NULL) {
+        ret = NULL;
+	} else {
+		ret = bank->mPercs[index];
+    }
+
+	return ret;
 }
 
 /*
@@ -145,22 +151,24 @@ int Bank_GetVoiceMap(Voice_* voice, u16 id)
  */
 f32 Bank_SenseToOfs(Sense_* sensor, u8 p2)
 {
+    f32 t;
+    f32 s;
+
 	if (!sensor) {
 		return 1.0f;
-	}
+	} else if (sensor->threshold == 127 || sensor->threshold == 0) {
+		return sensor->min + p2 * (sensor->max - sensor->min) / 127.0f;
+	} else if (p2 < sensor->threshold) {
+        t = p2;
+        s = sensor->threshold;
+		return sensor->min + (1.0f - sensor->min) * (t / s);
+	} else {
+        int thresh = sensor->threshold;
 
-	if (sensor->threshold == 127 || sensor->threshold == 0) {
-		return sensor->min + (f32)p2 * (sensor->max - sensor->min) / 127.0f;
-	}
-
-	if (p2 < sensor->threshold) {
-		return sensor->min + (1.0f - sensor->min) * ((f32)p2 / (f32)sensor->threshold);
-	}
-
-	int a = p2 - sensor->threshold;
-	int b = 127 - sensor->threshold;
-
-	return 1.0f + (sensor->max - 1.0f) * ((f32)a / (f32)b);
+        t = p2 - thresh;
+        s = 127 - thresh;
+        return 1.0f + (sensor->max - 1.0f) * ((t) / (s));
+    }
 }
 
 /*
@@ -190,9 +198,12 @@ f32 Bank_OscToOfs(Osc_* osc, Oscbuf_* buf)
 {
 	f32 sub;
 	int offset;
-	s16 val0, val1, val2;
+    s16 val1;
+    s16 val2;
+	s16 val0;
 	f32 calc;
 	s16* table;
+    f32 v;
 
 	if (osc == NULL) {
 		buf->value = 1.0f;
@@ -272,10 +283,10 @@ f32 Bank_OscToOfs(Osc_* osc, Oscbuf_* buf)
 			buf->state = 0;
 			break;
 		}
+
 		val0 = table[offset + 0];
 		val1 = table[offset + 1];
 		val2 = table[offset + 2];
-
 		if (val0 == 0xd) {
 			buf->tableIndex = val2;
 			continue;
@@ -292,10 +303,11 @@ f32 Bank_OscToOfs(Osc_* osc, Oscbuf_* buf)
 			buf->targetValue = val2 / 32768.0f;
 			buf->tableIndex++;
 		} else {
-			f32 x = (u16)val1;
-			x *= (JAC_DAC_RATE / 80.0f) / 600.0f;
-			buf->timeCounter = x;
-			buf->targetValue = val2 / 32768.0f;
+            // issue here
+            v = (u16)(int)val1;
+            v = v * ((JAC_DAC_RATE / 80.0f) / 600.0f);
+			buf->timeCounter = v;
+			buf->targetValue = (int)val2 / 32768.0f;
 			buf->deltaRate   = (buf->targetValue - buf->value) / buf->timeCounter;
 			buf->tableIndex++;
 		}
