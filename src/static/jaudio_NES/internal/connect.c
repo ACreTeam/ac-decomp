@@ -271,11 +271,8 @@ u16 Jac_WsPhysicalToVirtual(u16 ws)
  */
 void Jac_WsConnectTableSet(u32 id, u32 val)
 {
-	u32* id2 = &id;
-	u32* bnk = &val;
-
 	if (id != 0xffff && id < 0x100 && WS_V2P_TABLE[id] == -1) {
-		WS_V2P_TABLE[id] = *bnk;
+		WS_V2P_TABLE[id] = val;
 	}
 }
 
@@ -286,11 +283,8 @@ void Jac_WsConnectTableSet(u32 id, u32 val)
  */
 void Jac_BnkConnectTableSet(u32 id, u32 val)
 {
-	u32* id2 = &id;
-	u32* bnk = &val;
-
 	if (id != 0xffff && id < 0x100 && BNK_V2P_TABLE[id] == -1) {
-		BNK_V2P_TABLE[id] = *bnk;
+		BNK_V2P_TABLE[id] = val;
 	}
 }
 

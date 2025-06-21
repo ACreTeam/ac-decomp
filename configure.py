@@ -765,7 +765,7 @@ config.libs = [
             Object(NonMatching, "jaudio_NES/internal/centcalc.c"),
             Object(NonMatching, "jaudio_NES/internal/channel.c"),
             Object(NonMatching, "jaudio_NES/internal/cmdstack.c"),
-            Object(NonMatching, "jaudio_NES/internal/connect.c"),
+            Object(Matching, "jaudio_NES/internal/connect.c"),
             Object(NonMatching, "jaudio_NES/internal/driver.c"),
             Object(Matching, "jaudio_NES/internal/driverinterface.c"),
             Object(Matching, "jaudio_NES/internal/dsp_cardunlock.c"),
