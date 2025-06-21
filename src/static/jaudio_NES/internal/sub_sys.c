@@ -600,7 +600,7 @@ static s32 Nap_SilenceCheck_Inner(s32 flags) {
         playback_chan = &channel->playback_ch;
         if (channel->common_ch.enabled) {
             common_chan = &channel->common_ch;
-            if (playback_chan->adsr_envp.status != ADSR_STATUS_DISABLED) {
+            if (playback_chan->adsr_envp.state.flags.status != ADSR_STATUS_DISABLED) {
                 if (flags >= AUDIO_NOTE_SAMPLE_NOTES) {
                     tuned_sample = common_chan->tuned_sample;
                     if ((tuned_sample == nullptr) || common_chan->is_synth_wave) {
@@ -614,7 +614,7 @@ static s32 Nap_SilenceCheck_Inner(s32 flags) {
 
                 if ((flags & AUDIO_NOTE_RELEASE) == AUDIO_NOTE_RELEASE) {
                     playback_chan->adsr_envp.fadeout_velocity = AG.audio_params.updates_per_frame_inverse;
-                    playback_chan->adsr_envp.release = TRUE;
+                    playback_chan->adsr_envp.state.flags.release = TRUE;
                 }
 
                 channelCount++;

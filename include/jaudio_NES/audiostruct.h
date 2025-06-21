@@ -180,11 +180,16 @@ typedef struct envdat_ {
 
 /* sizeof(envp) == 0x20 */
 typedef struct envp_ {
-    /* 0x00 */ u8 unused : 1;
-    /* 0x00 */ u8 hang : 1;
-    /* 0x00 */ u8 decay : 1;
-    /* 0x00 */ u8 release : 1;
-    /* 0x00 */ u8 status : 4;
+    union {
+        struct {
+            /* 0x00 */ u8 unused : 1;
+            /* 0x00 */ u8 hang : 1;
+            /* 0x00 */ u8 decay : 1;
+            /* 0x00 */ u8 release : 1;
+            /* 0x00 */ u8 status : 4;
+        } flags;
+        u8 as_byte;
+    } state;
 
     /* 0x01 */ u8 envelope_idx;
     /* 0x02 */ s16 delay;
@@ -444,6 +449,15 @@ typedef struct macro_ {
     /* 0x19 */ s8 value;
 } macro;
 
+typedef union subtrack_updates {
+    struct {
+            /* 0x01 */ u8 frequency_scale : 1;
+            /* 0x01 */ u8 volume : 1;
+            /* 0x01 */ u8 pan : 1;
+        } flags;
+        /* 0x01 */ u8 as_byte;
+} subtrack_updates;
+
 /* SubTrack struct */
 /* sizeof(sub) == 0xE0 */
 typedef struct sub_ {
@@ -455,16 +469,7 @@ typedef struct sub_ {
     /* 0x00 */ u8 stereo_effects : 1;
     /* 0x00 */ u8 large_notes : 1;
     /* 0x00 */ u8 unused : 1;
-
-    union {
-        struct {
-            /* 0x01 */ u8 frequency_scale : 1;
-            /* 0x01 */ u8 volume : 1;
-            /* 0x01 */ u8 pan : 1;
-        } flags;
-        /* 0x01 */ u8 as_byte;
-    } changes;
-
+    /* 0x01 */ subtrack_updates changes;
     /* 0x02 */ u8 note_alloc_policy;
     /* 0x03 */ u8 mute_flags;
     /* 0x04 */ u8 target_reverb_vol;
@@ -580,15 +585,15 @@ struct note_ {
 
     union {
         struct {
-            /* 0x0A */ u16 bit0 : 1;
-            /* 0x0A */ u16 bit1 : 1;
+            /* 0x0A */ u16 skip_volume_update : 1;
+            /* 0x0A */ u16 skip_freq_scale_update : 1;
             /* 0x0A */ u16 bit2 : 1;
             /* 0x0A */ u16 use_vibrato : 1;
             /* 0x0A */ u16 add_subtrack_transposition : 1;
             /* 0x0A */ u16 bit5 : 1;
             /* 0x0A */ u16 bit6 : 1;
             /* 0x0A */ u16 bit7 : 1;
-            /* 0x0B */ u16 bit8 : 1;
+            /* 0x0B */ u16 skip_pan_update : 1;
             /* 0x0B */ u16 bit9 : 1;
             /* 0x0B */ u16 bitA : 1;
             /* 0x0B */ u16 bitB : 1;

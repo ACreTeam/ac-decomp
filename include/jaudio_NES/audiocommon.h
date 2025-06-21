@@ -19,6 +19,7 @@ extern "C" {
 #define AUDIO_GROUP_MAX 5
 #define AUDIO_SUBTRACK_NUM 16
 #define AUDIO_NOTE_MAX 128
+#define AUDIO_SUBTRACK_NOTE_NUM 4
 
 #define AUDIO_TATUMS_PER_BEAT 48
 
@@ -29,6 +30,12 @@ extern "C" {
 #define AUDIO_MUTE_FLAG_SOFTEN (1 << 5)
 #define AUDIO_MUTE_FLAG_STOP_NOTE (1 << 6)
 #define AUDIO_MUTE_FLAG_STOP_SCRIPT (1 << 7)
+
+#define ADSR_DISABLE 0
+#define ADSR_HANG -1
+#define ADSR_GOTO -2
+#define ADSR_RESTART -3
+#define ADSR_SPECIAL4 -4 // TODO: figure this out
 
 #define NA_MAKE_COMMAND(a0, a1, a2, a3) \
     (u32)((((a0) & 0xFF) << 24) | (((a1) & 0xFF) << 16) | (((a2) & 0xFF) << 8) | (((a3) & 0xFF) << 0))

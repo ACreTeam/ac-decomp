@@ -12,5 +12,6 @@ extern u8 DEFAULT_VTABLE[];
 extern u8 DEFAULT_GTABLE[];
 
 extern u8 BDB_SEQDATA[];
+extern s16* WAVEMEM_TABLE[];
 
 #endif
