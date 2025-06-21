@@ -57,11 +57,11 @@ extern void Jac_SetAudioARAMSize(u32 size) {
     SELECTED_ARAM_SIZE = size;
 }
 
-extern void ARAllocFull(u32* outSize) {
+extern void* ARAllocFull(u32* outSize) {
     u32 freeSize = aram_hp.length - ((int)aram_hp.current - (int)aram_hp.base);
-
-    Nas_HeapAlloc(&aram_hp, freeSize - 32);
+    void* alloc = Nas_HeapAlloc(&aram_hp, freeSize - 32);
     *outSize = freeSize - 32;
+    return alloc;
 }
 
 extern void Jac_InitARAM(u32 loadAudiorom) {

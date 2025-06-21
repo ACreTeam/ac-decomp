@@ -1,138 +1,166 @@
-#include "jaudio_NES/audiostruct.h"
+#include "jaudio_NES/bankread.h"
 
 #include "jaudio_NES/connect.h"
+#include "jaudio_NES/bx.h"
 
-static void PTconvert(void** s, u32 ramaddr) {
-    u32 ofs = (u32)*s;
+#define BANKP_SIZE (0x100)
+static Bank_* bankp[BANKP_SIZE];
 
-    if (ofs >= ramaddr || ofs == 0) {
-        return;
-    }
-
-    *s = (void*)(ofs + ramaddr);
+/*
+ * --INFO--
+ * Address:	8000BE00
+ * Size:	000024
+ */
+static void PTconvert(void** pointer, u32 base_address)
+{
+	if (*pointer >= (void*)base_address || *pointer == NULL) {
+		return;
+	}
+	*pointer = *(char**)pointer + base_address;
 }
 
-// @nonmatching - regswaps (need to make structs for these)
-static Bank* Bank_Test(u8* data) {
-    InstBank* ibnk = (InstBank*)data;
-    u32 ramaddr = (u32)data;
-    Bank* bank = &ibnk->bank;
-    u32 i;
-    u32 j;
-    void** unk_pp;
-    u32 k;
-    void* unk;
-    void** inst_p;
-    void* inst;
+/*
+ * --INFO--
+ * Address:	8000BE40
+ * Size:	000270
+ */
+Bank_* Bank_Test(u8* ibnk_address)
+{
+	u32 i, k, j;
+	u32 base_addr    = (u32)ibnk_address;
+	Bank_* startBank = (Bank_*)(ibnk_address + 0x20);
+	if (startBank->mMagic != 'BANK') {
+		return NULL;
+	}
 
-    if (bank->magic != 'BANK') {
-        return NULL;
-    }
+	for (i = 0; i < BANK_TEST_INST_COUNT; ++i) {
+		PTconvert((void**)&startBank->mInstruments[i], base_addr);
 
-    for (i = 0; i < ARRAY_COUNT(bank->part0); i++) {
-        inst_p = (void**)&bank->part0[i];
-        PTconvert(inst_p, ramaddr);
+		Inst_* inst = (Inst_*)startBank->mInstruments[i];
+		if (!inst) {
+			continue;
+		}
 
-        inst = *inst_p;
-        if (inst != NULL) {
-            for (j = 0; j < 2; j++) {
-                unk_pp = (void**)((u32)inst + j * 4 + 0x10);
-                PTconvert((void**)(unk_pp), ramaddr);
-                PTconvert((void**)((u32)inst + j * 4 + 0x18), ramaddr);
-                PTconvert((void**)((u32)inst + j * 4 + 0x20), ramaddr);
-                
-                if (*unk_pp != NULL) {
-                    PTconvert((void**)((u32)*unk_pp + 0x08), ramaddr);
-                    PTconvert((void**)((u32)*unk_pp + 0x0C), ramaddr);
-                }
-            }
+		// each instrument has two oscillators, effects, and sensors
+		for (j = 0; j < 2; j++) {
+			PTconvert((void**)&inst->mOscillators[j], base_addr);
+			PTconvert((void**)&inst->mEffects[j], base_addr);
+			PTconvert((void**)&inst->mSensors[j], base_addr);
 
-            for (j = 0; j < *((u32*)inst + 0x28); j++) {
-                unk_pp = (void**)((u32)inst + j * 4 + 0x2C);
-                
-                PTconvert(unk_pp, ramaddr);
-                for (k = 0; k < *(u32*)((u32)*unk_pp + 4); k++) {
-                    PTconvert((void**)((u32)*unk_pp + k * 4 + 8), ramaddr);
-                }
-            }
-        }
-    }
+			if (inst->mOscillators[j]) {
+				PTconvert((void**)&inst->mOscillators[j]->attackVecOffset, base_addr);
+				PTconvert((void**)&inst->mOscillators[j]->releaseVecOffset, base_addr);
+			}
+		}
 
-    for (i = 0; i < ARRAY_COUNT(bank->part1); i++) {
-        inst_p = (void**)&bank->part1[i];
+		// each instrument also has a certain number of key regions
+		for (j = 0; j < inst->mKeyRegionCount; j++) {
+			PTconvert((void**)&inst->mKeyRegions[j], base_addr);
 
-        PTconvert(inst_p, ramaddr);
-        inst = *inst_p;
+			for (k = 0; k < inst->mKeyRegions[j]->mVelocityCount; k++) {
+				PTconvert((void**)&inst->mKeyRegions[j]->mVelocities[k], base_addr);
+			}
+		}
+	}
 
-        if (inst != NULL) {
-            for (j = 0; j < *((u32*)inst + 0x08); j++) {
-                void** unk = (void**)((u32)inst + j * 4 + 0x0C);
-                
-                PTconvert(unk, ramaddr);
-            }
-        }
-    }
+	// treat the next block of 100 as voices (for some reason)
+	for (i = 0; i < BANK_TEST_VOICE_COUNT; i++) {
+		PTconvert((void**)&(startBank->mInstruments + BANK_TEST_VOICE_OFFSET)[i], base_addr);
 
-    for (i = 0; i < ARRAY_COUNT(bank->part2); i++) {
-        inst_p = (void**)&bank->part2[i];
-        inst;
+		Voice_* voice = (Voice_*)(startBank->mInstruments + BANK_TEST_VOICE_OFFSET)[i];
+		if (!voice) {
+			continue;
+		}
 
-        PTconvert(inst_p, ramaddr);
+		for (j = 0; j < voice->size; j++) {
+			PTconvert(&voice->_0C[j], base_addr);
+		}
+	}
 
-        inst = *inst_p;
-        if (inst != NULL) {
-            for (j = 0; j < 128; j++) {
-                unk_pp = (void**)((u32)inst + j * 4 + 0x88);
+	// treat the next block of 12 as percussion (for some reason)
+	for (i = 0; i < BANK_TEST_PERC_COUNT; i++) {
+		PTconvert((void**)&(startBank->mInstruments + BANK_TEST_PERC_OFFSET)[i], base_addr);
 
-                PTconvert(unk_pp, ramaddr);
+		Perc_* perc = (Perc_*)(startBank->mInstruments + BANK_TEST_PERC_OFFSET)[i];
+		if (!perc) {
+			continue;
+		}
 
-                unk = *unk_pp;
-                if (unk != NULL) {
-                    PTconvert((void**)((u32)unk + 0x08), ramaddr);
-                    PTconvert((void**)((u32)unk + 0x0C), ramaddr);
+		for (j = 0; j < 128; j++) {
+			PTconvert((void**)&perc->mKeyRegions[j], base_addr);
 
-                    for (k = 0; k < *(u32*)((u32)unk + 0x10); k++) {
-                        PTconvert((void**)((u32)unk + k * 4 + 0x14), ramaddr);
-                    }
-                }
-            }
-        }
-    }
+			PercKeymap_* key = perc->mKeyRegions[j];
+			if (!key) {
+				continue;
+			}
 
-    return bank;
+			PTconvert(&key->_08, base_addr);
+			PTconvert(&key->_0C, base_addr);
+
+			for (k = 0; k < key->mVelocityCount; k++) {
+				PTconvert((void**)&key->mVelocities[k], base_addr);
+			}
+		}
+	}
+
+	return startBank;
 }
 
-static Bank* bankp[256];
-
-static BOOL __Bank_Regist_Inner(u8* bank, u32 pid, u32 vid) {
-    Jac_BnkConnectTableSet(vid, pid);
-    bankp[pid] = Bank_Test(bank);
-
-    if (bankp[pid] != NULL) {
-        return TRUE;
-    }
-
-    return FALSE;
+/*
+ * --INFO--
+ * Address:	8000C0C0
+ * Size:	000068
+ */
+static BOOL __Bank_Regist_Inner(u8* ibnk, u32 param_2, u32 param_3)
+{
+	Jac_BnkConnectTableSet(param_3, param_2);
+	bankp[param_2] = Bank_Test(ibnk);
+	if (!bankp[param_2])
+		return FALSE;
+	return TRUE;
 }
 
-BOOL Bank_Regist(void* bank, u32 pid) {
-    InstBank* ibnk = (InstBank*)bank;
-
-    return __Bank_Regist_Inner((u8*)bank, pid, ibnk->vid);
+/*
+ * --INFO--
+ * Address:	8000C140
+ * Size:	000024
+ */
+BOOL Bank_Regist(void* ibnk, u32 param_2)
+{
+	return __Bank_Regist_Inner((u8*)ibnk, param_2, ((Ibnk_*)ibnk)->_08);
 }
 
-void Bank_Init(void) {
-    int i;
-
-    for (i = 0; i < ARRAY_COUNT(bankp); i++) {
-        bankp[i] = NULL;
-    }
+/*
+ * --INFO--
+ * Address:	........
+ * Size:	000020
+ */
+BOOL Bank_Regist_Direct(void* ibnk, u32 param_2, u32 param_3)
+{
+	return __Bank_Regist_Inner((u8*)ibnk, param_2, param_3);
 }
 
-Bank* Bank_Get(u32 pid) {
-    if (pid >= ARRAY_COUNT(bankp)) {
-        return NULL;
-    }
+/*
+ * --INFO--
+ * Address:	8000C180
+ * Size:	00002C
+ */
+void Bank_Init()
+{
+	for (int i = 0; i < BANKP_SIZE; ++i) {
+		bankp[i] = NULL;
+	}
+}
 
-    return bankp[pid];
+/*
+ * --INFO--
+ * Address:	8000C1C0
+ * Size:	000028
+ */
+Bank_* Bank_Get(u32 index)
+{
+	if (index >= BANKP_SIZE) {
+		return NULL;
+	}
+	return bankp[index];
 }

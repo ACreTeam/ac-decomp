@@ -1,19 +1,14 @@
-#ifndef BANKREAD_H
-#define BANKREAD_H
+#ifndef _JAUDIO_BANKREAD_H
+#define _JAUDIO_BANKREAD_H
 
 #include "types.h"
-#include "audiostruct.h"
 
-#ifdef __cplusplus
-extern "C" {
+typedef struct Bank_ Bank_;
+
+Bank_* Bank_Test(u8*);
+BOOL Bank_Regist(void*, u32);
+BOOL Bank_Regist_Direct(void*, u32, u32);
+void Bank_Init();
+Bank_* Bank_Get(u32);
+
 #endif
-
-BOOL Bank_Regist(void* bank, u32 pid);
-void Bank_Init(void);
-Bank* Bank_Get(u32 pid);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* BANKREAD_H */

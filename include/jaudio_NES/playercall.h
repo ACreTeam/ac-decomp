@@ -8,6 +8,14 @@
 extern "C" {
 #endif
 
+typedef s32 (*PlayerCallBack)(void*);
+
+typedef struct PLAYER_CALL_ {
+	PlayerCallBack callback; // _00
+	void* arg;               // _04
+	u32 DSP_mode;            // _08
+} PLAYER_CALL;
+
 extern void ResetPlayerCallback();
 extern s32 Jac_RegisterDspPlayerCallback(PlayerCallBack callback, void* arg);
 extern s32 Jac_RegisterPlayerCallback(PlayerCallBack callback, void* arg);

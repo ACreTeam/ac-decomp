@@ -256,7 +256,7 @@ static int aBC_chk_near_boat_block(BIRTH_CONTROL_ACTOR* birth_control, GAME_PLAY
 }
 
 static void aBC_set_boat(BIRTH_CONTROL_ACTOR* birth_control, GAME_PLAY* play) {
-  if (mEv_CheckNotTitleDemo() && aBC_chk_near_boat_block(birth_control, play) == TRUE) {
+  if (mEv_IsNotTitleDemo() && aBC_chk_near_boat_block(birth_control, play) == TRUE) {
     mActor_name_t* boat_ut_p = mFI_UtNum2UtFG(5 * UT_X_NUM + 5, 6 * UT_Z_NUM + 10); // Set boat at F-5, unit 5-10 (x-z)
 
     if (boat_ut_p != NULL) {

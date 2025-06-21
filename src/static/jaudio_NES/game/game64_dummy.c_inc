@@ -168,25 +168,25 @@ u8 NIN_WAVE[] ATTRIBUTE_ALIGN(32) = {
 void __OK(u32 a) {
     (void)a;
     int r31 = Jaq_SetSeqData(0, NIN_SEQ, 0x60, 0);
-    int unused1 = Jaq_StartSeq(r31);
+    int unused1 = Jaq_StartSeq((u8)r31);
 }
 
 u32 bootsound_ptr;
 u32 bootsound_size;
 
-u32 dummy_callback(char* a, u32 b, u32 c, u32* d, JAHEAP* e) {
+u32 dummy_callback(char* a, u32 b, u32 c, u32* d, jaheap_* e) {
     (void)a;
     (void)b;
     (void)c;
-    JAHEAP* heap2;
-    JAHEAP* heap;
+    BOOL allocd;
+    jaheap_* heap;
     Init_AramMotherHeap();
     heap = Get_AramMotherHeap();
-    heap2 = Jac_AllocHeap(e, heap, bootsound_size);
-    if ((s32)heap2 == 0) {
+    allocd = Jac_AllocHeap(e, heap, bootsound_size);
+    if (allocd == 0) {
         return 0;
     }
-    u32 p = (u32)e->_08;
+    u32 p = (u32)e->startAddress;
     int unused = DVDT_DRAMtoARAM(0, bootsound_ptr, p, bootsound_size, d, 0);
     return p;
 }

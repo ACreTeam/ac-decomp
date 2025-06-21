@@ -1,5 +1,5 @@
-#ifndef JAUDIO_MEMORY_H
-#define JAUDIO_MEMORY_H
+#ifndef _JAUDIO_MEMORY_H
+#define _JAUDIO_MEMORY_H
 
 #include "types.h"
 #include "jaudio_NES/audiostruct.h"

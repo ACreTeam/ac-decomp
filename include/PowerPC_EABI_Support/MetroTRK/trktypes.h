@@ -2,7 +2,7 @@
 #define _METROTRK_TRKTYPES_H
 
 #include "types.h"
-#include "Dolphin/OS/OSInterrupt.h"
+#include "dolphin/os/OSInterrupt.h"
 #include "PowerPC_EABI_Support/MetroTRK/trkenum.h"
 
 #ifdef __cplusplus
