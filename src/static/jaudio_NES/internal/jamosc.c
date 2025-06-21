@@ -21,9 +21,6 @@ Osc_ OSC_DEF    = { 0, 1.0f, NULL, REL_TABLE, 1.0f, 0.0f };
  */
 void Osc_Update_Param(seqp_* track, u8 id, f32 val)
 {
-	u8* REF_id   = &id;
-	f32* REF_val = &val;
-
 	switch (id) {
 	case 6:
 		track->oscillators[0].width = val;
@@ -163,11 +160,17 @@ void Osc_Setup_ADSR(seqp_* track, s16* addr)
  */
 void Osc_Setup_Full(seqp_* track, u8 flag, u32 offs1, u32 offs2)
 {
-	u32 a   = flag & 0xF;
-	u32 b   = flag & 0x40;
-	u32 idx = (flag >> 4) & 0x1;
-	u32 c   = flag & 0x20;
-	u32 d   = flag & 0x80;
+    u8 idx;
+    u8 a;
+    u8 b;
+    u8 c;
+    u8 d;
+
+    idx = (flag >> 4) & 0x1;
+    a   = flag & 0xF;
+    b   = flag & 0x40;
+    c   = flag & 0x20;
+    d   = flag & 0x80;
 	if (d) {
 		track->oscillators[idx] = ENVELOPE_DEF;
 
