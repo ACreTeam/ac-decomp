@@ -1,9 +1,12 @@
-#include "gba/GBAPriv.h"
-#include "dolphin/os.h"
-#include "_mem.h"
+#undef DEBUG
+#define DEBUG 1
 
-//TODO: remove this once ipldec is decompiled
-extern void Jac_DSPagbDecodeAsync(void*, void*, void (*)(void*));
+#include "jaudio_NES/dsp_GBAKey.h"
+
+#include "jaudio_NES/ipldec.h"
+#include "gba/GBAPriv.h"
+#include "dolphin/dsp.h"
+#include "_mem.h"
 
 static s32 F152(DSPTaskInfo* task) {
     s32 chan; // r31
@@ -16,7 +19,7 @@ static s32 F152(DSPTaskInfo* task) {
         }
     }
     
-    (void)((0 <= chan && chan < 4) || (OSPanic(__FILE__, 173, "Failed assertion 0 <= chan && chan < 4"), 0));
+    ASSERTLINE(173, 0 <= chan && chan < 4);
     OSPanic(__FILE__, 174, "GBA - unexpected dsp call");
     return -1;
 }

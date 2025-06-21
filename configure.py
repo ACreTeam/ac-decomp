@@ -769,7 +769,7 @@ config.libs = [
             Object(NonMatching, "jaudio_NES/internal/driver.c"),
             Object(NonMatching, "jaudio_NES/internal/driverinterface.c"),
             Object(Matching, "jaudio_NES/internal/dsp_cardunlock.c"),
-            Object(NonMatching, "jaudio_NES/internal/dsp_GBAKey.c"),
+            Object(Matching, "jaudio_NES/internal/dsp_GBAKey.c"),
             Object(NonMatching, "jaudio_NES/internal/dspdriver.c"),
             Object(NonMatching, "jaudio_NES/internal/dspinterface.c"),
             Object(NonMatching, "jaudio_NES/internal/effect.c"),

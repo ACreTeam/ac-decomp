@@ -8,6 +8,7 @@
 // Global functions (all C++, so no extern C wrap).
 BOOL DspExtraTaskCheck();
 void Jac_DSPcardDecodeAsync(void*, void*, DSPCallback);
+void Jac_DSPagbDecodeAsync(void* task, void* cmd, DSPCallback callback);
 
 // IPL Decode specific structs.
 
