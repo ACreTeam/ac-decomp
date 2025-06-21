@@ -763,7 +763,7 @@ config.libs = [
             Object(NonMatching, "jaudio_NES/internal/audiowork.c"),
             Object(Matching, "jaudio_NES/internal/bankdrv.c", extra_cflags=["-proc 7400"]),
             Object(Matching, "jaudio_NES/internal/bankread.c"),
-            Object(NonMatching, "jaudio_NES/internal/centcalc.c"),
+            Object(Matching, "jaudio_NES/internal/centcalc.c"),
             Object(NonMatching, "jaudio_NES/internal/channel.c"),
             Object(Matching, "jaudio_NES/internal/cmdstack.c"),
             Object(Matching, "jaudio_NES/internal/connect.c"),
