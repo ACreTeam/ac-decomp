@@ -262,18 +262,15 @@ BOOL Jac_AllocHeap(jaheap_* heap, jaheap_* parent, u32 size)
 	u32 t;
 	u32 max;
 	u32 x;
+    int ret;
 
-	u32 fixedSize = OSRoundUp32B(size);
+	size = OSRoundUp32B(size);
 
 	if (parent->startAddress == 0) {
+		ret = FALSE;
+	} else if (heap->startAddress && heap->startAddress != -1) {
 		return FALSE;
-	}
-
-	if (heap->startAddress && heap->startAddress != -1) {
-		return FALSE;
-	}
-
-	if (parent->size - parent->usedSize < fixedSize) {
+	} else if (parent->size - parent->usedSize < size) {
 		temp   = parent->firstChild;
 		y      = parent->startAddress;
 		result = NULL;
@@ -283,8 +280,8 @@ BOOL Jac_AllocHeap(jaheap_* heap, jaheap_* parent, u32 size)
 				break;
 			}
 			x = temp->startAddress - y;
-			if (x >= fixedSize) {
-				x -= fixedSize;
+			if (x >= size) {
+				x -= size;
 
 				if (x < max) {
 					result = temp;
@@ -301,61 +298,62 @@ BOOL Jac_AllocHeap(jaheap_* heap, jaheap_* parent, u32 size)
 			return FALSE;
 		}
 
-		if (result == parent->firstChild) {
-			heap->nextSibling  = parent->firstChild;
-			parent->firstChild = heap;
-		} else {
-			temp3 = parent->firstChild;
-			while (TRUE) {
-				if (temp3->nextSibling == result) {
-					heap->nextSibling  = temp3->nextSibling;
-					temp3->nextSibling = heap;
-					break;
-				}
-				temp3 = temp3->nextSibling;
-			}
-		}
+        if (result == parent->firstChild) {
+            heap->nextSibling  = parent->firstChild;
+            parent->firstChild = heap;
+        } else {
+            temp = parent->firstChild;
+            while (TRUE) {
+                if (temp->nextSibling == result) {
+                    heap->nextSibling  = temp->nextSibling;
+                    temp->nextSibling = heap;
+                    break;
+                }
+                temp = temp->nextSibling;
+            }
+        }
 
-		heap->startAddress = t;
-		heap->size         = fixedSize;
-		heap->usedSize     = 0;
-		heap->isRootHeap   = 0;
-		heap->memoryType   = parent->memoryType;
-		heap->childCount   = 0;
-		heap->firstChild   = NULL;
-		heap->parent       = parent;
-		parent->childCount++;
-		return TRUE;
-	}
-
-	heap->startAddress = parent->startAddress + parent->usedSize;
-	heap->size         = fixedSize;
-	heap->usedSize     = 0;
-	heap->isRootHeap   = 0;
-	heap->memoryType   = parent->memoryType;
-	heap->childCount   = 0;
-	heap->firstChild   = NULL;
-	heap->parent       = parent;
-
-	temp2 = parent->firstChild;
-	!temp2;
-	if (temp2 == NULL) {
-		parent->firstChild = heap;
-		heap->nextSibling  = NULL;
+        heap->startAddress = t;
+        heap->size         = size;
+        heap->usedSize     = 0;
+        heap->isRootHeap   = 0;
+        heap->memoryType   = parent->memoryType;
+        heap->childCount   = 0;
+        heap->firstChild   = NULL;
+        heap->parent       = parent;
+        parent->childCount++;
+        ret = TRUE;
 	} else {
-		while (TRUE) {
-			if (temp2->nextSibling == NULL) {
-				temp2->nextSibling = heap;
-				break;
-			}
-			temp2 = temp2->nextSibling;
-		}
-	}
+        heap->startAddress = parent->startAddress + parent->usedSize;
+        heap->size         = size;
+        heap->usedSize     = 0;
+        heap->isRootHeap   = 0;
+        heap->memoryType   = parent->memoryType;
+        heap->childCount   = 0;
+        heap->firstChild   = NULL;
+        heap->parent       = parent;
 
-	heap->nextSibling = NULL;
-	parent->usedSize += fixedSize;
-	parent->childCount++;
-	return TRUE;
+        temp = parent->firstChild;
+        if (temp == NULL) {
+            parent->firstChild = heap;
+            heap->nextSibling  = NULL;
+        } else {
+            while (TRUE) {
+                if (temp->nextSibling == NULL) {
+                    temp->nextSibling = heap;
+                    break;
+                }
+                temp = temp->nextSibling;
+            }
+        }
+
+        heap->nextSibling = NULL;
+        parent->usedSize += size;
+        parent->childCount++;
+        return TRUE;
+    }
+
+    return ret;
 }
 
 /*
