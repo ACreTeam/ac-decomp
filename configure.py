@@ -774,7 +774,7 @@ config.libs = [
             Object(Equivalent, "jaudio_NES/internal/dspdriver.c"),
             Object(Matching, "jaudio_NES/internal/dspinterface.c"),
             Object(NonMatching, "jaudio_NES/internal/effect.c"),
-            Object(NonMatching, "jaudio_NES/internal/fat.c"),
+            Object(Matching, "jaudio_NES/internal/fat.c"),
             Object(Matching, "jaudio_NES/internal/fxinterface.c"),
             Object(NonMatching, "jaudio_NES/internal/heapctrl.c"),
             Object(Matching, "jaudio_NES/internal/ipldec.c"),

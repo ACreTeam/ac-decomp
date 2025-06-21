@@ -6,9 +6,9 @@ static int ACTIVE_FATS;
 static int USEFAT_TAIL;
 static u8* fatheapptr;
 
-typedef struct FATEntry FATEntry;
+typedef struct FAT_ FAT_;
 
-struct FATEntry {
+struct FAT_ {
 	u16 ownerHandle; // _00
 	u16 blockSize;   // _02
 	u8* addr;        // _04
@@ -21,10 +21,10 @@ static struct FAT_info2 {
 	u16 blockCount; // _02
 } FH_TO_FAT[FAT_SIZE];
 
-static FATEntry FAT[FAT_SIZE];
+static FAT_ FAT[FAT_SIZE];
 
 // havent figured this out yet
-static struct FATEntry fattmp[FAT_SIZE];
+// static struct FAT_ fattmp[FAT_SIZE];
 
 /*
  * --INFO--
@@ -85,6 +85,8 @@ void FAT_InitSystem(u8* heap, u32 size)
  */
 int FAT_AllocateMemory(u32 size)
 {
+    int b;
+    u16 res;
 	u32 a = 0;
 
 	for (int i = 0; i < FAT_SIZE; i++) {
@@ -97,13 +99,13 @@ int FAT_AllocateMemory(u32 size)
 	if (a == FAT_SIZE) {
 		return 0xffff;
 	}
-	u16 res = a;
 
+	res = a;
 	if (size == 0) {
 		return 0xffff;
 	}
 
-	int b = size + 0xfff >> 0xc;
+	b = size + 0xfff >> 0xc;
 	if (ACTIVE_FATS - USEFAT_TAIL < b) {
 		return 0xffff;
 	}
@@ -126,18 +128,20 @@ int FAT_AllocateMemory(u32 size)
  */
 int FAT_FreeMemory(u16 size)
 {
-	u16 temp;
-	u32 i;
+    u32 i;
 	u32 start;
 	u16 size2;
+    u16 temp;
 	u32 count;
 	u16 tail;
+    FAT_ fattmp[FAT_SIZE];
 
-	count                      = FH_TO_FAT[size].blockCount;
 	start                      = FH_TO_FAT[size].startBlock;
-	FH_TO_FAT[size].blockCount = 0;
-	size2                      = start + count;
+	count                      = FH_TO_FAT[size].blockCount;
+	size2                      = start;
+    size2                     += count;
 	tail                       = USEFAT_TAIL - size2;
+	FH_TO_FAT[size].blockCount = 0;
 
 	if (tail == 0) {
 		USEFAT_TAIL -= count;
@@ -149,8 +153,7 @@ int FAT_FreeMemory(u16 size)
 
 	for (i = 0; i < count; i++) {
 		fattmp[i] = FAT[start + i];
-
-		fattmp[i].ownerHandle = 0xffff;
+        fattmp[i].ownerHandle = 0xffff;
 	}
 
 	temp = 0xffff;
@@ -167,131 +170,6 @@ int FAT_FreeMemory(u16 size)
 		FAT[USEFAT_TAIL + i] = fattmp[i];
 	}
 	return 0;
-	/*
-	.loc_0x0:
-	  stwu      r1, -0x20(r1)
-	  lis       r4, 0x8031
-	  subi      r4, r4, 0x2118
-	  rlwinm    r0,r3,2,14,29
-	  stmw      r30, 0x18(r1)
-	  add       r3, r4, r0
-	  li        r11, 0
-	  lhzx      r0, r4, r0
-	  lhz       r5, 0x2(r3)
-	  sth       r11, 0x2(r3)
-	  add       r3, r0, r5
-	  rlwinm    r3,r3,0,16,31
-	  lwz       r6, 0x2BF4(r13)
-	  sub       r7, r6, r3
-	  rlwinm.   r30,r7,0,16,31
-	  bne-      .loc_0x84
-	  sub       r0, r6, r5
-	  lis       r3, 0x1
-	  stw       r0, 0x2BF4(r13)
-	  subi      r6, r3, 0x1
-	  li        r8, 0
-	  lwz       r7, 0x2BF4(r13)
-	  mtctr     r5
-	  cmplwi    r5, 0
-	  ble-      .loc_0x7C
-
-	.loc_0x64:
-	  add       r0, r7, r8
-	  addi      r8, r8, 0x1
-	  rlwinm    r0,r0,3,0,28
-	  add       r3, r4, r0
-	  sth       r6, 0x400(r3)
-	  bdnz+     .loc_0x64
-
-	.loc_0x7C:
-	  li        r3, 0
-	  b         .loc_0x184
-
-	.loc_0x84:
-	  lis       r7, 0x1
-	  addi      r6, r11, 0
-	  subi      r7, r7, 0x1
-	  mtctr     r5
-	  cmplwi    r5, 0
-	  ble-      .loc_0xCC
-
-	.loc_0x9C:
-	  add       r8, r0, r11
-	  add       r10, r4, r6
-	  rlwinm    r8,r8,3,0,28
-	  addi      r11, r11, 0x1
-	  add       r8, r4, r8
-	  addi      r6, r6, 0x8
-	  lwz       r9, 0x400(r8)
-	  lwz       r8, 0x404(r8)
-	  stw       r9, 0xC00(r10)
-	  stw       r8, 0xC04(r10)
-	  sth       r7, 0xC00(r10)
-	  bdnz+     .loc_0x9C
-
-	.loc_0xCC:
-	  lis       r6, 0x1
-	  li        r12, 0
-	  subi      r31, r6, 0x1
-	  mtctr     r30
-	  cmplwi    r30, 0
-	  ble-      .loc_0x130
-
-	.loc_0xE4:
-	  add       r6, r3, r12
-	  add       r11, r0, r12
-	  rlwinm    r7,r6,3,0,28
-	  rlwinm    r6,r11,3,0,28
-	  add       r10, r4, r7
-	  add       r9, r4, r6
-	  lwz       r8, 0x400(r10)
-	  rlwinm    r6,r31,0,16,31
-	  lwz       r7, 0x404(r10)
-	  stw       r8, 0x400(r9)
-	  stw       r7, 0x404(r9)
-	  lhz       r7, 0x400(r10)
-	  cmplw     r6, r7
-	  beq-      .loc_0x128
-	  rlwinm    r6,r7,2,0,29
-	  mr        r31, r7
-	  sthx      r11, r4, r6
-
-	.loc_0x128:
-	  addi      r12, r12, 0x1
-	  bdnz+     .loc_0xE4
-
-	.loc_0x130:
-	  lwz       r0, 0x2BF4(r13)
-	  li        r9, 0
-	  li        r3, 0
-	  sub       r0, r0, r5
-	  stw       r0, 0x2BF4(r13)
-	  lwz       r8, 0x2BF4(r13)
-	  mtctr     r5
-	  cmplwi    r5, 0
-	  ble-      .loc_0x180
-
-	.loc_0x154:
-	  add       r7, r4, r3
-	  add       r0, r8, r9
-	  rlwinm    r6,r0,3,0,28
-	  lwz       r5, 0xC00(r7)
-	  lwz       r0, 0xC04(r7)
-	  add       r6, r4, r6
-	  addi      r9, r9, 0x1
-	  addi      r3, r3, 0x8
-	  stw       r5, 0x400(r6)
-	  stw       r0, 0x404(r6)
-	  bdnz+     .loc_0x154
-
-	.loc_0x180:
-	  li        r3, 0
-
-	.loc_0x184:
-	  lmw       r30, 0x18(r1)
-	  addi      r1, r1, 0x20
-	  blr
-	*/
 }
 
 /*
