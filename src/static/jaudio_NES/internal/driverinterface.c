@@ -106,31 +106,33 @@ void List_GlobalChannel()
  */
 int List_CutChannel(jc_* jc)
 {
-	jc_* chan = (jc_*)*jc->chanListHead;
-	int num   = 0;
+    jc_* orig = jc;
+	jc_* chan = *jc->chanListHead;
+    int num   = 0;
+    int ret;
 
 	if (chan == jc) {
-		*jc->chanListHead = jc->mNext;
+		*jc->chanListHead = (jc_*)jc->mNext;
 		jc->chanListHead  = NULL;
-		return 0;
+        return 0;
 	}
+    
+    while (TRUE) {
+        num++;
+        if (chan == NULL) {
+            return -1;
+        }
 
-	while (TRUE) {
-		num++;
-		if (chan == NULL) {
-			return -1;
-		}
+        jc = (jc_*)chan->mNext;
+        if (jc == orig) {
+            break;
+        }
 
-		if (chan->mNext == jc) {
-			break;
-		}
+        chan = (jc_*)chan->mNext;
+    }
 
-		chan = (jc_*)chan->mNext;
-	}
-
-	chan->mNext      = jc->mNext;
-	jc->chanListHead = NULL;
-
+    chan->mNext      = orig->mNext;
+    orig->chanListHead = NULL;
 	return num;
 }
 
@@ -160,7 +162,7 @@ jc_* List_GetChannel(jc_** jc)
 void List_AddChannelTail(jc_** jc, jc_* in)
 {
 	jc_* chan        = *jc;
-	in->chanListHead = (void**)jc;
+	in->chanListHead = jc;
 
 	if (chan == NULL) {
 		*jc       = in;
@@ -188,7 +190,7 @@ void List_AddChannelTail(jc_** jc, jc_* in)
 void List_AddChannel(jc_** jc, jc_* in)
 {
 	jc_* chan        = *jc;
-	in->chanListHead = (void**)jc;
+	in->chanListHead = jc;
 	*jc              = in;
 	in->mNext        = chan;
 }
@@ -756,9 +758,9 @@ static void KillBrokenLogicalChannels(dspch_* ch)
  */
 static int CommonCallbackLogicalChannel(dspch_* ch, u32 a)
 {
-	u32 b   = 0;
-	jc_* jc = ch->_08;
+    jc_* jc = ch->_08;
 	u32 i;
+	u32 b   = 0;
 	dspch_** REF_ch = &ch;
 	jc_** REF_jc    = &jc;
 	if (jc == NULL) {
@@ -942,16 +944,16 @@ BOOL PlayLogicalChannel(jc_* jc)
 
 	for (u32 i = 0; i < 6; i++) {
 		MixConfig bus = jc->busRouting[i];
-		if (JAC_SYSTEM_OUTPUT_MODE == 0) {
-			switch (bus.parts.upper) {
-			case 8:
-				bus.parts.upper = 11;
-				break;
-			case 9:
-				bus.parts.upper = 2;
-				break;
-			}
-		}
+		// if (JAC_SYSTEM_OUTPUT_MODE == 0) {
+		// 	switch (bus.parts.upper) {
+		// 	case 8:
+		// 		bus.parts.upper = 11;
+		// 		break;
+		// 	case 9:
+		// 		bus.parts.upper = 2;
+		// 		break;
+		// 	}
+		// }
 		DSP_SetBusConnect(jc->dspChannel->buffer_idx, i, bus.parts.upper);
 	}
 
@@ -1020,9 +1022,8 @@ BOOL Add_WaitDSPChannel(jc_* jc)
 BOOL Del_WaitDSPChannel(jc_* jc)
 {
 	for (u32 i = 0; i < cur_waits; i++) {
-		u32 a = (cur_top + i) & 0x1F;
-		if (waitp[a] == jc) {
-			waitp[a] = NULL;
+		if (waitp[(cur_top + i) & 0x1F] == jc) {
+			waitp[(cur_top + i) & 0x1F] = NULL;
 			return TRUE;
 		}
 	}

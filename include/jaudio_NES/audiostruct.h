@@ -1055,7 +1055,7 @@ struct jc_ {
 	u8 pauseFlag;                       // _02
 	u8 toFlush;                         // _03
 	jcs_* mMgr;                         // _04
-	void** chanListHead;                // _08
+	struct jc_** chanListHead;                // _08
 	u8 logicalChanType;                 // _0C, 0 = Wave, 1 = ??, 2 = Oscillator
 	Wave_* waveData;                    // _10
 	u32 _14;                            // _14
