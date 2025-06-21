@@ -761,7 +761,7 @@ config.libs = [
             Object(NonMatching, "jaudio_NES/internal/audioconst.c"),
             Object(NonMatching, "jaudio_NES/internal/audiotable.c"),
             Object(NonMatching, "jaudio_NES/internal/audiowork.c"),
-            Object(NonMatching, "jaudio_NES/internal/bankdrv.c"),
+            Object(NonMatching, "jaudio_NES/internal/bankdrv.c", extra_cflags=["-proc 7400"]),
             Object(Matching, "jaudio_NES/internal/bankread.c"),
             Object(NonMatching, "jaudio_NES/internal/centcalc.c"),
             Object(NonMatching, "jaudio_NES/internal/channel.c"),
