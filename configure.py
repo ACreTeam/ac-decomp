@@ -789,7 +789,7 @@ config.libs = [
             Object(NonMatching, "jaudio_NES/internal/seqsetup.c"),
             Object(Equivalent, "jaudio_NES/internal/system.c"),
             Object(Matching, "jaudio_NES/internal/tables.c"),
-            Object(NonMatching, "jaudio_NES/internal/waveread.c"),
+            Object(Matching, "jaudio_NES/internal/waveread.c"),
         ],
     },
     {

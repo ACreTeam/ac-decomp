@@ -36,16 +36,16 @@ static void PTconvert(void** pointer, u32 base_address)
  */
 CtrlGroup_* Wave_Test(u8* data)
 {
-	u32 i, j;
-	u32 base_addr = (u32)data;
-	WaveArchiveBank_* arcBank;
+    u32 base_addr = (u32)data;
 	CtrlGroup_* group;
-	WaveArchive_* arc;
-	WaveArchive_** REF_arc;
 	SCNE_* scene;
+	Ctrl_* cst;
 	Ctrl_* cdf;
 	Ctrl_* cex;
-	Ctrl_* cst;
+	u32 i;
+    u32 j;
+	WaveArchiveBank_* arcBank;
+	WaveArchive_* arc;
 
 	PTconvert((void**)&((Wsys_*)data)->waveArcBank, base_addr);
 	PTconvert((void**)&((Wsys_*)data)->ctrlGroup, base_addr);
@@ -63,7 +63,6 @@ CtrlGroup_* Wave_Test(u8* data)
 	for (i = 0; i < arcBank->count; i++) {
 		PTconvert((void**)&arcBank->waveGroups[i], base_addr);
 		arc     = arcBank->waveGroups[i];
-		REF_arc = &arc;
 		Jac_InitHeap(&arc->heap);
 		arc->heap.startAddress = 0;
 
