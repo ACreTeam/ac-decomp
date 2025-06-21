@@ -991,6 +991,7 @@ struct dspch_ {
 	u8 _03;                 // _03
 	u16 _04;                // _04
 	u16 _06;                // _06
+	// u32 _08;               // _08
 	jc_* _08;               // _08
 	DSPChannelCallback _0C; // _0C
 

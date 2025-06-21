@@ -53,16 +53,16 @@ void InitDSPchannel()
  */
 dspch_* AllocDSPchannel(u32 param_1, u32 param_2)
 {
-
+    jc_* jc = (jc_*)param_2;
 	s32 i;
-	u32* p2 = &param_2;
-	s32* ip = &i;
+	
 	if (param_1 == 0) {
 
 		for (i = 0; i < DSPCH_LENGTH; ++i) {
 			if (DSPCH[i]._01 == 0) {
-				DSPCH[i]._01 = TRUE;
-				DSPCH[i]._08 = (jc_*)param_2;
+                // @nonmatching - r0/r6 regswap
+                DSPCH[i]._01 = true;
+				DSPCH[i]._08 = jc;
 				DSPCH[i]._03 = 1;
 				DSP_AllocInit(i);
 				return &DSPCH[i];
@@ -316,13 +316,13 @@ void UpdateDSPchannelAll()
 		BreakLowerActiveDSPchannel(0x7e);
 	}
 
+    dspch_* chan;
 	for (u32 i = 0; i < DSPCH_LENGTH; i++) {
-		dspch_* chan     = &DSPCH[i];
-		dspch_** chanptr = &chan;
-
+		chan     = &DSPCH[i];
 		if (chan->_01 == FALSE) {
 			continue;
 		}
+
 		DSPchannel_* buf = GetDspHandle(chan->buffer_idx);
 		if (buf->done) {
 			if (chan->_0C) {
@@ -344,14 +344,13 @@ void UpdateDSPchannelAll()
 		}
 
 		if (chan->_0C) {
-			u16* ptr = &chan->_06;
-			u16 a    = *ptr;
-			if (a) {
-				*ptr = a - 1;
+			if (chan->_06) {
+				chan->_06--;
 			}
-			if (*ptr == 0) {
-				*ptr = chan->_0C(chan, 0);
-				if (*ptr == 0) {
+
+			if (chan->_06 == 0) {
+				chan->_06 = chan->_0C(chan, 0);
+				if (chan->_06 == 0) {
 					buf->done    = FALSE;
 					buf->enabled = FALSE;
 					__Entry_WaitChannel(1);
