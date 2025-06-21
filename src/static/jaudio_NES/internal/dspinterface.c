@@ -227,7 +227,7 @@ void DSP_AllocInit(u8 idx)
 	buf->done              = DSP_FALSE;
 	buf->endRequested      = DSP_FALSE;
 	buf->enabled           = DSP_FALSE;
-	DSP_InitFilter(idx);
+	// DSP_InitFilter(idx);
 	DSP_FlushChannel(idx);
 }
 
