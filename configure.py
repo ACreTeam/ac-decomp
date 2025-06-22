@@ -764,7 +764,7 @@ config.libs = [
             Object(Matching, "jaudio_NES/internal/bankdrv.c", extra_cflags=["-pragma \"scheduling 7400\""]),
             Object(Matching, "jaudio_NES/internal/bankread.c"),
             Object(Matching, "jaudio_NES/internal/centcalc.c"),
-            Object(NonMatching, "jaudio_NES/internal/channel.c"),
+            Object(Matching, "jaudio_NES/internal/channel.c"),
             Object(Matching, "jaudio_NES/internal/cmdstack.c"),
             Object(Matching, "jaudio_NES/internal/connect.c"),
             Object(NonMatching, "jaudio_NES/internal/driver.c"),

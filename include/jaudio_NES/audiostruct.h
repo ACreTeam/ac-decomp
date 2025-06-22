@@ -16,8 +16,8 @@ typedef struct link_ link;
 
 /* sizeof(struct link_) == 0x10 */
 struct link_ {
-    /* 0x00 */ link* next;
-    /* 0x04 */ link* prev;
+    /* 0x00 */ link* prev;
+    /* 0x04 */ link* next;
     union {
         /* 0x08 */ s32 numAfter; /* when link is head */
         /* 0x08 */ void* pData;  /* when link is node */
@@ -127,17 +127,24 @@ typedef struct wtstr_ {
 
 /* sizeof(phase) == 0x01 */
 typedef struct phase_ {
-    union {
-        struct {
-            /* 0x00 */ u8 _unused : 2;
-            /* 0x00 */ u8 type : 2;
-            /* 0x00 */ u8 strong_right : 1;
-            /* 0x00 */ u8 strong_left : 1;
-            /* 0x00 */ u8 strong_reverb_right : 1;
-            /* 0x00 */ u8 strong_reverb_left : 1;
-        };
-        /* 0x00 */ u8 asU8;
-    };
+    // union {
+    //     struct {
+    //         /* 0x00 */ u8 _unused : 2;
+    //         /* 0x00 */ u8 type : 2;
+    //         /* 0x00 */ u8 strong_right : 1;
+    //         /* 0x00 */ u8 strong_left : 1;
+    //         /* 0x00 */ u8 strong_reverb_right : 1;
+    //         /* 0x00 */ u8 strong_reverb_left : 1;
+    //     } flags;
+    //     /* 0x00 */ u8 asU8;
+    // };
+
+    /* 0x00 */ u8 _unused : 2;
+    /* 0x00 */ u8 type : 2;
+    /* 0x00 */ u8 strong_right : 1;
+    /* 0x00 */ u8 strong_left : 1;
+    /* 0x00 */ u8 strong_reverb_right : 1;
+    /* 0x00 */ u8 strong_reverb_left : 1;
 } phase;
 
 /* sizeof(sweep) == 0x0C */
@@ -218,10 +225,10 @@ typedef struct commonch_ {
     /* 0x00 */ u8 strong_right : 1;
     /* 0x00 */ u8 strong_left : 1;
     /* 0x00 */ u8 strong_reverb_right : 1;
-    /* 0x00 */ u8 storng_reverb_left : 1;
+    /* 0x00 */ u8 strong_reverb_left : 1;
 
     /* 0x01 */ u8 reverb_idx : 3;
-    /* 0x01 */ u8 book_ofs : 2;
+    /* 0x01 */ u8 __book_ofs : 2;
     /* 0x01 */ u8 is_synth_wave : 1;
     /* 0x01 */ u8 has_two_parts : 1;
     /* 0x01 */ u8 use_haas_effect : 1;
@@ -243,7 +250,7 @@ typedef struct commonch_ {
     /* 0x14 */ s16* filter;
     /* 0x18 */ u8 _18;
     /* 0x19 */ u8 surround_effect_idx;
-    /* 0x1A */ u8 _1A;
+    /* 0x1A */ u8 book_ofs;
     /* 0x1B */ u8 _1B[4];
 } commonch;
 
@@ -289,7 +296,7 @@ typedef struct playbackparams_ {
     /* 0x04 */ phase stereo_phase;
     /* 0x05 */ u8 comb_filter_size;
     /* 0x06 */ u16 comb_filter_gain;
-    /* 0x08 */ f32 frequency_scale;
+    /* 0x08 */ f32 pitch;
     /* 0x0C */ f32 velocity;
     /* 0x10 */ s16* filter;
     /* 0x14 */ s16* filter_buf;
@@ -331,18 +338,10 @@ struct channel_ {
 
 /* sizeof(drvparam) == 0x1C */
 typedef struct drvparam_ {
-    /* 0x00 */ u8 _00;
-    /* 0x01 */ u8 _01;
-    /* 0x02 */ u8 _02;
-    /* 0x03 */ u8 _03;
-    /* 0x04 */ phase phase;
-    /* 0x08 */ f32 pitch;
-    /* 0x0C */ f32 volume;
-    /* 0x10 */ int _10;
-    /* 0x14 */ int _14;
-    /* 0x18 */ u8 _18;
+    /* 0x00 */ playbackparams playback;
+    /* 0x18 */ u8 comb_filter_size;
     /* 0x19 */ u8 _19;
-    /* 0x1A */ u16 _1A;
+    /* 0x1A */ u16 comb_filter_gain;
 } drvparam;
 
 /* sizeof(voicetable) == 0x20 */
@@ -357,19 +356,19 @@ typedef struct voicetable_ {
     /* 0x18 */ wtstr high_pitch_tuned_sample;
 } voicetable;
 
-/* sizeof(percvoicetable) == 0x10 */
-typedef struct percvoicetable_ {
+/* sizeof(perctable) == 0x10 */
+typedef struct perctable_ {
     /* 0x00 */ u8 adsr_decay_idx;
     /* 0x01 */ u8 pan;
     /* 0x02 */ u8 is_relocated;
     /* 0x04 */ wtstr tuned_sample;
     /* 0x0C */ envdat* envelope;
-} percvoicetable;
+} perctable;
 
-/* sizeof(veffvoicetable) == 0x08 */
-typedef struct veffvoicetable_ {
+/* sizeof(percvoicetable) == 0x08 */
+typedef struct percvoicetable_ {
     /* 0x00 */ wtstr tuned_sample;
-} veffvoicetable;
+} percvoicetable;
 
 /* sizeof(voiceinfo) == 0x14 */
 typedef struct voiceinfo_ {
@@ -379,8 +378,8 @@ typedef struct voiceinfo_ {
     /* 0x03 */ u8 wave_bank_id1;
     /* 0x04 */ u16 num_sfx;
     /* 0x08 */ voicetable** instruments;
-    /* 0x0C */ percvoicetable** percussion;
-    /* 0x10 */ veffvoicetable* effects;
+    /* 0x0C */ perctable** percussion;
+    /* 0x10 */ percvoicetable* effects;
 } voiceinfo;
 
 /* sizeof(delayparam) == 0x1C */
@@ -927,6 +926,8 @@ typedef struct AudioGlobals {
     /* 0x8AAC */ AudioPort audio_port_cmds[256];
     /* 0x92AC */ s32 _92AC;
 } AudioGlobals;
+
+#define NA_NO_NOTE ((note*)-1)
 
 // typedef union SOUNDID_ {
 //     struct {

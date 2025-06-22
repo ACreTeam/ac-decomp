@@ -138,6 +138,15 @@ typedef enum LpsCacheState {
     /* 3 */ LPS_CACHE_STATE_DONE
 } LpsCacheState;
 
+typedef enum PhaseType {
+    PHASE_TYPE_0,
+    PHASE_TYPE_1,
+    PHASE_TYPE_2,
+    PHASE_TYPE_3,
+
+    PHASE_TYPE_NUM
+} PhaseType;
+
 #define VOICE_TYPE_PERCUSSION 0
 #define VOICE_TYPE_SOUND_EFF 1
 #define VOICE_TYPE_INSTRUMENT_START 2

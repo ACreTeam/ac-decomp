@@ -95,7 +95,7 @@ void* Nas_2ndHeapAlloc(ALHeap*, s32)
  * Address:	........
  * Size:	00003C
  */
-void Nas_NcHeapAlloc(ALHeap*, s32)
+void* Nas_NcHeapAlloc(ALHeap*, s32)
 {
 	// UNUSED FUNCTION
 }

@@ -552,7 +552,7 @@ static void __SetSubParam(sub* subtrack, AudioPort* port) {
             subtrack->comb_filter_gain = port->param.asU16;
             break;
         case AUDIOCMD_OP_SUB_SET_STEREO:
-            subtrack->stereo_phase.asU8 = port->param.asU8;
+            *(u8*)&subtrack->stereo_phase = port->param.asU8;
             break;
         case AUDIOCMD_OP_SUB_SET_SET_START_POS:
             subtrack->sample_start_pos = port->param.asS32;

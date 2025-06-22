@@ -7,6 +7,7 @@
 extern void Nas_HeapInit(ALHeap* heap, u8* base, s32 len);
 extern void* Nas_HeapAlloc(ALHeap* heap, s32 size);
 extern void* Nas_HeapAlloc_CL(ALHeap* heap, s32 size);
+extern void* Nas_NcHeapAlloc(ALHeap* heap, s32 size);
 extern void* Nas_2ndHeapAlloc(ALHeap* heap, s32 size);
 extern void* Nas_Alloc_Single(s32 size, s32 bank_id, u8* wave_addr, s8 medium, s32 cache);
 

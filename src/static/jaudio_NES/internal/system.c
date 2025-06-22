@@ -406,7 +406,7 @@ s32 Nas_LoadVoice(s32 bank_id, s32 instId, s32 drumId) {
             __Nas_LoadVoice_Inner(voice->high_pitch_tuned_sample.wavetable, bank_id);
         }
     } else if (instId == 0x7F) {
-        percvoicetable* perc = PercToPp(bank_id, drumId);
+        perctable* perc = PercToPp(bank_id, drumId);
 
         if (perc == NULL) {
             return -1;
@@ -809,8 +809,8 @@ static void Nas_BankOfsToAddr_Inner(s32 bank_id, u8* ctrl_p, WaveMedia* wave_med
     u32 ofs;
     u32 inst_ofs;
     voicetable* inst;
-    percvoicetable* percvt;
-    veffvoicetable* sfx;
+    perctable* percvt;
+    percvoicetable* sfx;
     s32 i;
     s32 n_perc_inst, n_voice_inst, n_sfx_inst;
     n_voice_inst = AG.voice_info[bank_id].num_instruments;
@@ -823,14 +823,14 @@ static void Nas_BankOfsToAddr_Inner(s32 bank_id, u8* ctrl_p, WaveMedia* wave_med
         *BANK_ENTRY(ctrl_p, 0) = OFS2RAM(ctrl_p, ofs);
 
         for (i = 0; i < n_perc_inst; i++) {
-            inst_ofs = (u32)((percvoicetable**)*BANK_ENTRY(ctrl_p, 0))[i];
+            inst_ofs = (u32)((perctable**)*BANK_ENTRY(ctrl_p, 0))[i];
             if (inst_ofs == 0) {
                 continue; // empty percussion/drum entry
             }
 
             inst_ofs += (u32)ctrl_p;//OFS2RAM(ctrl_p, ofs);
-            percvt = (percvoicetable*)inst_ofs;
-            ((percvoicetable**)*BANK_ENTRY(ctrl_p, 0))[i] = percvt;
+            percvt = (perctable*)inst_ofs;
+            ((perctable**)*BANK_ENTRY(ctrl_p, 0))[i] = percvt;
 
             // Percussion may already have been relocated since percussion
             // can appear in list multiple times
@@ -851,8 +851,8 @@ static void Nas_BankOfsToAddr_Inner(s32 bank_id, u8* ctrl_p, WaveMedia* wave_med
         *BANK_ENTRY(ctrl_p, 1) = OFS2RAM(ctrl_p, ofs);
 
         for (i = 0; i < n_sfx_inst; i++) {
-            inst_ofs = (u32)(((veffvoicetable*)*BANK_ENTRY(ctrl_p, 1)) + i);
-            sfx = (veffvoicetable*)inst_ofs;
+            inst_ofs = (u32)(((percvoicetable*)*BANK_ENTRY(ctrl_p, 1)) + i);
+            sfx = (percvoicetable*)inst_ofs;
 
             // check for null sfx or null sample wave table pointer
             if (sfx == NULL || sfx->tuned_sample.wavetable == NULL) {
@@ -897,8 +897,8 @@ static void Nas_BankOfsToAddr_Inner(s32 bank_id, u8* ctrl_p, WaveMedia* wave_med
         }
     }
 
-    AG.voice_info[bank_id].percussion = (percvoicetable**)*BANK_ENTRY(ctrl_p, 0);
-    AG.voice_info[bank_id].effects = (veffvoicetable*)*BANK_ENTRY(ctrl_p, 1);
+    AG.voice_info[bank_id].percussion = (perctable**)*BANK_ENTRY(ctrl_p, 0);
+    AG.voice_info[bank_id].effects = (percvoicetable*)*BANK_ENTRY(ctrl_p, 1);
     AG.voice_info[bank_id].instruments = (voicetable**)BANK_ENTRY(ctrl_p, 2);
 }
 
@@ -1330,7 +1330,7 @@ static smzwavetable* __GetWaveTable(s32 bank_id, s32 inst_id) {
 
         return vt->normal_pitch_tuned_sample.wavetable;
     } else if (inst_id <= 255) {
-        percvoicetable* pvt = PercToPp(bank_id, inst_id - 128);
+        perctable* pvt = PercToPp(bank_id, inst_id - 128);
 
         if (pvt == NULL) {
             return NULL;
@@ -1338,7 +1338,7 @@ static smzwavetable* __GetWaveTable(s32 bank_id, s32 inst_id) {
 
         return pvt->tuned_sample.wavetable;
     } else {
-        veffvoicetable* evt = VpercToVep(bank_id, inst_id - 256);
+        percvoicetable* evt = VpercToVep(bank_id, inst_id - 256);
 
         if (evt == NULL) {
             return NULL;
@@ -1885,9 +1885,9 @@ void WaveReload(s32 bank_id, s32 async, WaveMedia* wavemedia) {
     s32 n_drums;
     s32 n_instruments;
     s32 n_sfx;
-    percvoicetable* percussion;
+    perctable* percussion;
     voicetable* instrument;
-    veffvoicetable* sfx;
+    percvoicetable* sfx;
     Bgloadreq* preload;
     Bgloadreq* top_preload;
     smzwavetable* wavetable;

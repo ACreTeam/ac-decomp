@@ -250,7 +250,7 @@ static void Nas_InitSubTrack(sub* subtrack) {
         subtrack->stereo_effects = FALSE;
         subtrack->large_notes = FALSE;
         subtrack->book_ofs = 0;
-        subtrack->stereo_phase.asU8 = 0;
+        *(u8*)&subtrack->stereo_phase = 0;
         subtrack->changes.as_byte = 0xFF;
         subtrack->macro_player.depth = 0;
         subtrack->volume = 1.0f;
@@ -324,7 +324,7 @@ static s32 Nas_EntryNoteTrack(sub* subtrack, int note_idx) {
     entry_note->ignore_drum_pan = FALSE;
     entry_note->_00bit1 = FALSE;
     entry_note->note_properties_need_init = FALSE;
-    entry_note->stereo_phase.asU8 = 0;
+    *(u8*)&entry_note->stereo_phase = 0;
     entry_note->portamento_sweep.mode = 0;
     entry_note->macro_player.depth = 0;
     entry_note->gate_time = 128;
@@ -464,7 +464,7 @@ extern void Nas_ReleaseGroup(group* grp) {
 }
 
 extern void Nas_AddList(link* root, link* list) {
-    if (list->next != nullptr) {
+    if (list->prev != nullptr) {
         static BOOL first = TRUE;
 
         if (first) {
@@ -478,25 +478,25 @@ extern void Nas_AddList(link* root, link* list) {
         OSReport("List %x\n", list);
         OSReport("Root %x\n", root);
     } else {
-        root->next->prev = list;
-        list->next = root->next;
-        list->prev = root;
-        root->next = list;
+        root->prev->next = list;
+        list->prev = root->prev;
+        list->next = root;
+        root->prev = list;
         root->numAfter++;
         list->pNode = root->pNode;
     }
 }
 
 extern void* Nas_GetList(link* root) {
-    link* list = root->next;
+    link* list = root->prev;
 
     if (list == root) {
         return nullptr;
     }
 
-    list->next->prev = root;
-    root->next = list->next;
-    list->next = nullptr;
+    list->prev->next = root;
+    root->prev = list->prev;
+    list->prev = nullptr;
     root->numAfter--;
     return list->pData;
 }
@@ -504,14 +504,14 @@ extern void* Nas_GetList(link* root) {
 static void Nas_InitNoteList(void) {
     s32 i;
 
-    AG.note_link.next = &AG.note_link;
     AG.note_link.prev = &AG.note_link;
+    AG.note_link.next = &AG.note_link;
     AG.note_link.numAfter = 0;
     AG.note_link.pNode = nullptr;
 
     for (i = 0; i < AUDIO_NOTE_MAX; i++) {
         AG.notes[i].link.pData = &AG.notes[i];
-        AG.notes[i].link.next = nullptr;
+        AG.notes[i].link.prev = nullptr;
         Nas_AddList(&AG.note_link, &AG.notes[i].link);
     }
 }
@@ -749,7 +749,7 @@ static s32 __Command_Seq(note* n) {
                 n->ignore_drum_pan = TRUE;
                 break;
             case 0xCD:
-                n->stereo_phase.asU8 = Nas_ReadByteData(m);
+                *(u8*)&n->stereo_phase = Nas_ReadByteData(m);
                 break;
             case 0xCE:
                 cmdArgU8 = 128 + Nas_ReadByteData(m);
@@ -785,8 +785,8 @@ static s32 __SetVoice(note* n, s32 arg) {
     f32 freq_scale2;
     wtstr* tuned_sample;
     voicetable* instrument;
-    percvoicetable* percussion;
-    veffvoicetable* effect;
+    perctable* percussion;
+    percvoicetable* effect;
     sub* subtrack;
     group* grp;
     u16 effect_id;
@@ -1450,7 +1450,7 @@ static void Nas_SubSeq(sub* subtrack) {
                                     subtrack->stereo_effects = FALSE;
                                 }
 
-                                subtrack->stereo_phase.asU8 = cmdArgU8 & 0x7F;
+                                *(u8*)&subtrack->stereo_phase = cmdArgU8 & 0x7F;
                                 break;
                             case 0xD1: // set note allocation policy
                                 cmdArgU8 = (u8)cmdArgs[0];
