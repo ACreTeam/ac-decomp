@@ -17,7 +17,7 @@ typedef struct __va_list_struct {
 
 typedef _va_list_struct __va_list[1];
 
-void* __va_arg(_va_list_struct* list, int type);
+void* __va_arg(_va_list_struct* list, long type);
 
 #define __va_start(list, fmt) __builtin_va_info(&list)
 #ifdef __MWERKS__

@@ -1,5 +1,7 @@
 static int fragmentID = -2;
 
+extern char* GetR2(void);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -24,12 +26,10 @@ extern void __destroy_global_chain(void);
 }
 #endif
 
-asm char* GetR2(void) {
-    // clang-format off
-    nofralloc
-    mr r3, r2
-    blr
-    // clang-format on
+extern void __init_cpp_exceptions(void) {
+    if (fragmentID == -2) {
+        fragmentID = __register_fragment(&_eti_init_info, GetR2());
+    }
 }
 
 extern void __fini_cpp_exceptions(void) {
@@ -39,10 +39,12 @@ extern void __fini_cpp_exceptions(void) {
     }
 }
 
-extern void __init_cpp_exceptions(void) {
-    if (fragmentID == -2) {
-        fragmentID = __register_fragment(&_eti_init_info, GetR2());
-    }
+asm char* GetR2(void) {
+#ifdef __MWERKS__ // clang-format off
+    nofralloc
+    mr r3, r2
+    blr
+#endif // clang-format on
 }
 
 __declspec(section ".ctors") extern void* const __init_cpp_exceptions_reference = __init_cpp_exceptions;
