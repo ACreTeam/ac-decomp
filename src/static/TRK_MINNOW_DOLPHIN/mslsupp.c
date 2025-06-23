@@ -1,5 +1,4 @@
 #include "PowerPC_EABI_Support/MetroTRK/trk.h"
-#include <stddef.h>
 
 // forward declares
 DSIOResult __read_file(u32 handle, u8* buffer, size_t* count, void* ref_con);

@@ -19,4 +19,6 @@
 #define LONG_MAX 2147483647
 #define ULONG_MAX 4294967295
 
+#define DBL_MANT_DIG 53
+
 #endif

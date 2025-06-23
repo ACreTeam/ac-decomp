@@ -1,7 +1,7 @@
 #ifndef _METROTRK_TRKENUM_H
 #define _METROTRK_TRKENUM_H
 
-#include "types.h"
+#include <dolphin/types.h>
 
 #ifdef __cplusplus
 extern "C" {

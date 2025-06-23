@@ -1,16 +1,13 @@
 #ifndef _MSL_CTYPE_API_H
 #define _MSL_CTYPE_API_H
 
-#include "types.h"
-
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif // ifdef __cplusplus
 
-    extern unsigned char __ctype_map[256];
-    extern unsigned char __lower_map[256];
-    extern unsigned char __upper_map[256];
+extern unsigned char __ctype_map[256];
+extern unsigned char __lower_map[256];
+extern unsigned char __upper_map[256];
 
 #define __control_char 0x01
 #define __motion_char 0x02

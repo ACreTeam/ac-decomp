@@ -12,7 +12,7 @@
 
 /**
  * Float square root implementation.
- * 
+ *
  * NOTE: this function causes a bug in the Metrowerks C Compiler from GC MW 1.3.X
  * to be exhibited. Weak extern inlined functions that contain an initialized
  * static variable turn off data pooling for the translation unit which they are
@@ -41,9 +41,13 @@ SQRTF_LINKAGE inline float sqrtf(float x) {
 #undef SQRTF_LINKAGE
 #endif
 
+// Dirty hack to avoid the current header mess
+#ifndef FABS_DECLARED
+#define FABS_DECLARED
 extern inline double fabs(double x) {
     return __fabs(x);
 }
+#endif
 
 inline float fabsf(float x) {
     return (float)fabs((double)x);
@@ -73,8 +77,8 @@ extern inline double sqrt(double x) {
 extern "C" {
 #endif
 
-//double atan2(double, double);
-//double acos(float);
+// double atan2(double, double);
+// double acos(float);
 
 #ifdef __cplusplus
 }
