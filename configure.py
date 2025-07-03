@@ -760,7 +760,7 @@ config.libs = [
             Object(Matching, "jaudio_NES/internal/aramcall.c"),
             Object(Matching, "jaudio_NES/internal/audioconst.c"),
             Object(Matching, "jaudio_NES/internal/audiotable.c"),
-            Object(NonMatching, "jaudio_NES/internal/audiowork.c"),
+            Object(Matching, "jaudio_NES/internal/audiowork.c"),
             Object(Matching, "jaudio_NES/internal/bankdrv.c", extra_cflags=["-pragma \"scheduling 7400\""]),
             Object(Matching, "jaudio_NES/internal/bankread.c"),
             Object(Matching, "jaudio_NES/internal/centcalc.c"),
