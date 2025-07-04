@@ -829,7 +829,7 @@ config.libs = [
             Object(Matching, "MSL_C.PPCEABI.bare.H/e_atan2.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/e_rem_pio2.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/errno.c"),
-            Object(NonMatching, "MSL_C.PPCEABI.bare.H/file_io.c"),
+            Object(Matching, "MSL_C.PPCEABI.bare.H/file_io.c"),
             Object(NonMatching, "MSL_C.PPCEABI.bare.H/FILE_POS.C"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/float.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/k_cos.c"),
