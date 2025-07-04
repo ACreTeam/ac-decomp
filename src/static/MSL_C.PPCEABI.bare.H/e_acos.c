@@ -35,6 +35,7 @@
  */
 
 #include "MSL_C/MSL_Common_Embedded/Math/fdlibm.h"
+#include "MSL_C/w_math.h"
 
 #ifdef __STDC__
 static const double

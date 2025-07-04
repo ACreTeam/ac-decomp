@@ -3,6 +3,7 @@
 #include <dolphin/os.h>
 #include "jaudio_NES/sample.h"
 #include "jaudio_NES/rate.h"
+#include "jaudio_NES/audiocommon.h"
 
 static u8 DMEM[0x1000] ATTRIBUTE_ALIGN(32);
 static u32 ADPCM_BOOKBUF_SIZE = 0;
@@ -94,16 +95,16 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
         pTaskCmds += 2;
 
         switch (cmdHi >> 24) {
-            case 24: // A_LOADCACHE (special to GC?)
+            case A_CMD_LOADCACHE: // A_LOADCACHE (special to GC?)
                 sp128 = (u8*)cmdLo;
                 sp12C = cmdHi & 0xFFFF;
                 DCTouchRange((void*)cmdLo, ((cmdHi >> 16) & 0xFF) * 16);
                 break;
 
-            case 0: // A_SPNOOP
+            case A_CMD_SPNOOP: // A_SPNOOP
                 break;
 
-            case 1: { // A_ADPCM
+            case A_CMD_ADPCM: { // A_ADPCM
                 u8 flags = cmdHi >> 16;
                 if (flags & 1) {
                     // clear history
@@ -184,13 +185,13 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case 2: // A_CLEARBUFF
+            case A_CMD_CLEARBUFF: // A_CLEARBUFF
                 u16 addr = cmdHi & 0xFFFF;
                 u16 size = cmdLo & 0xFFFF;
                 Jac_bzero(&DMEM[addr], size);
                 break;
 
-            case 5: { // A_RESAMPLE
+            case A_CMD_RESAMPLE: { // A_RESAMPLE
                 s16 spC[8];
                 s16* var_r4;
                 s16* var_r6;
@@ -263,13 +264,13 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case 8: // A_SETBUFF
+            case A_CMD_SETBUFF: // A_SETBUFF
                 DMEMIn = cmdHi & 0xFFFF;
                 DMEMOut = (cmdLo >> 16) & 0xFFFF;
                 DMEMCount = cmdLo & 0xFFFF;
                 break;
 
-            case 9: { // A_DUPLICATE
+            case A_CMD_DUPLICATE: { // A_DUPLICATE
                 u16 src = cmdHi & 0xFFFF;
                 u16 dst = cmdLo >> 16;
                 s32 count = (cmdHi >> 16) & 0xFF;
@@ -290,7 +291,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
             // case 6: // A_RESAMPLE_ZOH
             //     break;
 
-            case 10: { // A_DMEMMOVE
+            case A_CMD_DMEMMOVE: { // A_DMEMMOVE
                 u16 src = cmdHi & 0xFFFF;
                 u16 dst = cmdLo >> 16;
                 u16 size = cmdLo & 0xFFFF;
@@ -298,13 +299,13 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case 11: // A_LOADADPCM
+            case A_CMD_LOADADPCM: // A_LOADADPCM
                 Jac_bcopy((void*)cmdLo, ADPCM_BOOKBUF, cmdHi & 0xFFFF);
                 ADPCM_BOOKBUF_SIZE = cmdHi & 0xFFFF;
                 break;
             
-            case 4: // A_ADDMIXER
-            case 12: { // A_MIXER
+            case A_CMD_ADDMIXER: // A_ADDMIXER
+            case A_CMD_MIXER: { // A_MIXER
                 s16* src = DMEM_OFS(cmdLo >> 16);
                 s16* dst = DMEM_OFS(cmdLo & 0xFFFF);
                 s32 count = (cmdHi >> 16) & 0xFF;
@@ -326,7 +327,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case 13: { // A_INTERLEAVE
+            case A_CMD_INTERLEAVE: { // A_INTERLEAVE
                 u16 inL = cmdLo >> 16;
                 u16 inR = cmdLo & 0xFFFF;
                 u16 out = cmdHi & 0xFFFF;
@@ -354,11 +355,11 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
             // case 14: // A_HILOGAIN
             //     break;
 
-            case 15: // A_SETLOOP
+            case A_CMD_SETLOOP: // A_SETLOOP
                 loop_point = (void*)cmdLo;
                 break;
 
-            case 16: { // ???
+            case A_CMD_UNK16: { // ???
                 u8 count = (cmdHi >> 16) & 0xFF;
                 u32 dst = cmdHi & 0xFFFF;
                 u32 src = cmdLo >> 16;
@@ -372,7 +373,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case 17: { // A_INTERL
+            case A_CMD_INTERL: { // A_INTERL
                 s32 count = cmdHi & 0xFFFF;
                 s16* src = (s16*)&DMEM[cmdLo >> 16];
                 s16* dst = (s16*)&DMEM[cmdLo & 0xFFFF];
@@ -386,19 +387,19 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case 20: { // A_LOADBUFF
+            case A_CMD_LOADBUFF: { // A_LOADBUFF
                 u16 size = ((cmdHi >> 16) & 0xFF) * 16;
                 Jac_bcopy((void*)cmdLo, (s16*)&DMEM[cmdHi & 0xFFFF], size);
                 break;
             }
 
-            case 21: { // A_SAVEBUFF
+            case A_CMD_SAVEBUFF: { // A_SAVEBUFF
                 u16 size = ((cmdHi >> 16) & 0xFF) * 16;
                 Jac_bcopy(DMEM_OFS(cmdHi & 0xFFFF), (void*)cmdLo, size);
                 break;
             }
 
-            case 18: { // A_ENVSETUP1
+            case A_CMD_ENVSETUP1: { // A_ENVSETUP1
                 u8 temp = cmdHi >> 16;
                 envParam1_1 = cmdHi & 0xFFFF;
                 envParam1_2 = cmdLo >> 16;
@@ -407,12 +408,12 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case 22: // A_ENVSETUP2
+            case A_CMD_ENVSETUP2: // A_ENVSETUP2
                 envParam2_0 = cmdLo >> 16;
                 envParam2_1 = cmdLo & 0xFFFF;
                 break;
 
-            case 19: { // A_ENVMIXER
+            case A_CMD_ENVMIXER: { // A_ENVMIXER
                 s32 var_r16;
                 s16* var_r17;
                 s16* var_r18;
@@ -532,7 +533,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case 23: { // A_S8DEC
+            case A_CMD_S8DEC: { // A_S8DEC
                 u8 flags = cmdHi >> 16;
 
                 if (flags & 1) {
@@ -561,7 +562,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case 7: { // A_FILTER
+            case A_CMD_FILTER: { // A_FILTER
                 s16 sp3C[16];
                 s16 sp1C[16];
                 u8 flags;
@@ -616,7 +617,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case 25: // ??? (special to GC?)
+            case A_CMD_EXIT: // ??? (special to GC?)
                 return i + 1;
         }
     }
