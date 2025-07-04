@@ -187,6 +187,22 @@ bytecopy:
     } while (1);
 }
 
+int strncmp(const char* str1, const char* str2, size_t n)
+{
+	const unsigned char* p1 = (unsigned char*)str1 - 1;
+	const unsigned char* p2 = (unsigned char*)str2 - 1;
+	unsigned long c1, c2;
+
+	n++;
+
+	while (--n)
+		if ((c1 = *++p1) != (c2 = *++p2))
+			return (c1 - c2);
+		else if (!c1)
+			break;
+	return 0;
+}
+
 char* strchr(const char* str, int c) {
     const unsigned char* p = (unsigned char*)str - 1;
     unsigned long chr = (c & 0xFF);
