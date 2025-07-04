@@ -14,7 +14,7 @@ extern void* Nas_Alloc_Single(s32 size, s32 bank_id, u8* wave_addr, s8 medium, s
 extern void* Nas_CacheOff(u8* addr, s32 size);
 
 extern void* Nas_SzHeapAlloc(s32 table_type, s32 size, s32 cache_type, s32 id);
-extern u32 Nas_SzCacheCheck(s32 type, s32 cache_type, s32 id);
+extern void* Nas_SzCacheCheck(s32 type, s32 cache_type, s32 id);
 extern void Nas_SzStayDelete(s32 type);
 extern void Nas_SzHeapReset(u32 fix_size);
 
