@@ -1,8 +1,8 @@
 #include "MSL_C/ansi_files.h"
 
-char stderr_buff[0x100];
-char stdout_buff[0x100];
 char stdin_buff[0x100];
+char stdout_buff[0x100];
+char stderr_buff[0x100];
 
 extern int __close_console(__file_handle file);
 extern int __write_console(__file_handle file, unsigned char* buf, size_t* count, __idle_proc idle_fn);
@@ -104,28 +104,40 @@ extern files __files = {
     },
 };
 
-unsigned int __flush_all(void) {
+void __close_all(void) {
+    FILE* p = &__files._stdin;
+    FILE* plast;
+
+	while(p != NULL)
+	{
+		if (p->file_mode.file_kind != __closed_file)
+		{
+			fclose(p);
+		}
+
+		plast = p;
+		p     = (FILE*)p->next;
+		if (plast->char_buffer)
+			free(plast);
+		else
+		{
+			plast->file_mode.file_kind = __unavailable_file;
+			if ((p != NULL) && p->char_buffer)
+				plast->next = NULL;
+		}
+	}
 }
 
-void __close_all(void) {
-    FILE* file = &__files._stdin;
-
-    while (file) {
-        FILE* curr;
-
-        if (file->file_mode.file_kind & 0x3)
-            fclose(file);
-
-        curr = file->next;
-        file = file->next;
-        if (curr->char_buffer) {
-            free(curr);
-            continue;
+unsigned int __flush_all(void)
+{
+    unsigned int retval = 0;
+    FILE* __stream;
+    __stream = &__files._stdin;
+    while (__stream) {
+        if ((__stream->file_mode.file_kind) && (fflush(__stream))) {
+        retval = -1;
         }
-
-        file->file_mode.file_kind = 3;
-
-        if (file && file->char_buffer)
-            curr->next = NULL;
-    }
+        __stream = (FILE*)__stream->next;
+    };
+    return retval;
 }

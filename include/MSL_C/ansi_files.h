@@ -28,7 +28,7 @@ enum __file_kinds {
     __disk_file,
     __console_file,
     __string_file,
-    __unavailable_file,
+    __unavailable_file = 3, // TODO: figure out which one of these file kinds is not present
 };
 
 enum __file_orientation {
