@@ -58,6 +58,10 @@ size_t __fwrite(const void* buffer, size_t size, size_t count, FILE* stream) {
             if (num_bytes > bytes_to_go)
                 num_bytes = bytes_to_go;
 
+            if (stream->file_mode.buffer_mode == 1 && num_bytes > 0 && (newline = __memrchr(write_ptr, '\n', num_bytes))) {
+                num_bytes = (size_t)newline + 1 - (size_t)write_ptr;
+            }
+
             if (num_bytes) {
                 memcpy(stream->buffer_ptr, write_ptr, num_bytes);
 
@@ -67,11 +71,6 @@ size_t __fwrite(const void* buffer, size_t size, size_t count, FILE* stream) {
 
                 stream->buffer_ptr += num_bytes;
                 stream->buffer_length -= num_bytes;
-            }
-
-            if (!stream->buffer_length && (int)stream->file_mode.file_kind == __string_file) {
-                bytes_written += bytes_to_go;
-                break;
             }
 
             if (!stream->buffer_length || newline != NULL || (stream->file_mode.buffer_mode == _IONBF)) {
