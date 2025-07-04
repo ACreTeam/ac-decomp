@@ -846,7 +846,7 @@ config.libs = [
             Object(Matching, "MSL_C.PPCEABI.bare.H/s_cos.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/s_floor.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/s_frexp.c"),
-            Object(NonMatching, "MSL_C.PPCEABI.bare.H/s_ldexp.c"),
+            Object(Matching, "MSL_C.PPCEABI.bare.H/s_ldexp.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/s_modf.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/s_sin.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/scanf.c"),
