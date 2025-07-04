@@ -837,7 +837,7 @@ config.libs = [
             Object(Matching, "MSL_C.PPCEABI.bare.H/k_sin.c"),
             Object(NonMatching, "MSL_C.PPCEABI.bare.H/mbstring.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/mem.c"),
-            Object(NonMatching, "MSL_C.PPCEABI.bare.H/mem_funcs.c"),
+            Object(Matching, "MSL_C.PPCEABI.bare.H/mem_funcs.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/misc_io.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/printf.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/rand.c"),
