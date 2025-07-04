@@ -825,7 +825,7 @@ config.libs = [
             Object(Matching, "MSL_C.PPCEABI.bare.H/buffer_io.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/ctype.c"),
             Object(NonMatching, "MSL_C.PPCEABI.bare.H/direct_io.c"),
-            Object(NonMatching, "MSL_C.PPCEABI.bare.H/e_acos.c"),
+            Object(Matching, "MSL_C.PPCEABI.bare.H/e_acos.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/e_atan2.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/e_rem_pio2.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/errno.c"),
