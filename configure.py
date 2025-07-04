@@ -849,7 +849,7 @@ config.libs = [
             Object(NonMatching, "MSL_C.PPCEABI.bare.H/s_ldexp.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/s_modf.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/s_sin.c"),
-            Object(NonMatching, "MSL_C.PPCEABI.bare.H/scanf.c"),
+            Object(Matching, "MSL_C.PPCEABI.bare.H/scanf.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/string.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/strtoul.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/uart_console_io.c"),

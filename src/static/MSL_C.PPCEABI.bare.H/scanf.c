@@ -1,7 +1,7 @@
 #include "MSL_C/scanf.h"
 
 int __StringRead(void* pPtr, int ch, int act) {
-    int ret;
+    char ret;
     __InStrCtrl* Iscp = (__InStrCtrl*)pPtr;
 
     switch (act) {
@@ -13,7 +13,7 @@ int __StringRead(void* pPtr, int ch, int act) {
                 return -1;
             } else {
                 Iscp->NextChar++;
-                return ret;
+                return (unsigned char)ret;
             }
 
         case __UngetAChar:
