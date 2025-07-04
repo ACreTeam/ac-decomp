@@ -32,6 +32,10 @@ size_t unicode_to_UTF8(char* r3, wchar_t r4) {
 }
 #pragma dont_inline off
 
+size_t wctomb(char* s, wchar_t wchar) {
+    return unicode_to_UTF8(s, wchar);
+}
+
 size_t wcstombs(char* s, const wchar_t* pwcs, size_t n) {
     char decoded[4];
     wchar_t w;
@@ -51,7 +55,7 @@ size_t wcstombs(char* s, const wchar_t* pwcs, size_t n) {
             break;
         }
         ++p;
-        num = unicode_to_UTF8(decoded, w);
+        num = wctomb(decoded, w);
 
         if (i + num > n)
             break;
