@@ -785,7 +785,7 @@ config.libs = [
             Object(Matching, "jaudio_NES/internal/midplay.c"),
             Object(Matching, "jaudio_NES/internal/noteon.c"),
             Object(Matching, "jaudio_NES/internal/oneshot.c"),
-            Object(NonMatching, "jaudio_NES/internal/rate.c"),
+            Object(Matching, "jaudio_NES/internal/rate.c"),
             Object(NonMatching, "jaudio_NES/internal/rspsim.c"),
             Object(Matching, "jaudio_NES/internal/seqsetup.c"),
             Object(Equivalent, "jaudio_NES/internal/system.c", extra_cflags=["-pragma \"scheduling 7400\""]),
