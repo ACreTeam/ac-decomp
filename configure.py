@@ -814,7 +814,7 @@ config.libs = [
     {
         "lib": "MSL_C.PPCEABI.bare.H",
         "mw_version": config.linker_version,
-        "cflags": [*cflags_runtime, "-inline auto,deferred", "-use_lmw_stmw on", "-char signed", "-fp_contract on"],
+        "cflags": [*cflags_runtime, "-inline auto,deferred", "-use_lmw_stmw on", "-char signed", "-fp_contract on", "-str pool,readonly"],
         "progress_category": "sdk",
         "src_dir": "src/static",
         "objects": [
@@ -839,7 +839,7 @@ config.libs = [
             Object(Matching, "MSL_C.PPCEABI.bare.H/mem.c"),
             Object(NonMatching, "MSL_C.PPCEABI.bare.H/mem_funcs.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/misc_io.c"),
-            Object(NonMatching, "MSL_C.PPCEABI.bare.H/printf.c"),
+            Object(Matching, "MSL_C.PPCEABI.bare.H/printf.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/rand.c"),
             Object(NonMatching, "MSL_C.PPCEABI.bare.H/s_atan.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/s_copysign.c"),
