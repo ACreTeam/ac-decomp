@@ -174,8 +174,6 @@ void __str2dec(decimal* d, const char* s, short exp) {
     if (*s != 0) {
         if (*s < 5)
             return;
-        if (*s > 5)
-            goto round;
 
         {
             const char* p = s + 1;
@@ -193,7 +191,7 @@ void __str2dec(decimal* d, const char* s, short exp) {
     }
 }
 
-void __two_exp(decimal* result, long exp) {
+void __two_exp(decimal* result, short exp) {
     switch (exp) {
         case -64:
             __str2dec(result, "542101086242752217003726400434970855712890625", -20);
@@ -269,11 +267,14 @@ void __two_exp(decimal* result, long exp) {
         if (exp & 1) {
             temp = *result;
             if (exp > 0) {
-                __str2dec(&x2, "2", 0);
+                decimal temp2;
+                __str2dec(&temp2, "2", 0);
+                __timesdec(result, &temp, &temp2);
             } else {
-                __str2dec(&x2, "5", -1);
+                decimal temp2;
+                __str2dec(&temp2, "5", -1);
+                __timesdec(result, &temp, &temp2);
             }
-            __timesdec(result, &temp, &x2);
         }
     }
 }
@@ -304,7 +305,7 @@ void __num2dec_internal(decimal* d, double x) {
     {
         int exp;
         double frac = frexp(x, &exp);
-        long num_bits_extract = DBL_MANT_DIG - __count_trailing_zero(frac);
+        short num_bits_extract = DBL_MANT_DIG - __count_trailing_zero(frac);
         double integer;
         decimal int_d, pow2_d;
 
@@ -313,6 +314,42 @@ void __num2dec_internal(decimal* d, double x) {
         __ull2dec(&int_d, (unsigned long long)integer);
         __timesdec(d, &int_d, &pow2_d);
         d->sign = sign;
+    }
+}
+
+static int __must_round(const decimal* d, int digits){
+    //regswap fun here
+    unsigned char const* i = d->sig.text + digits;
+            
+    if (*i > 5) {
+        return 1;
+    }
+    
+    if (*i < 5) {
+        return -1;
+    }
+    
+    for(i++; i < d->sig.text + d->sig.length; i++){
+        if (*i != 0) {
+            return 1;
+        }
+    }
+                  
+    if (d->sig.text[digits - 1] & 1) {
+        return 1;
+    }
+
+    return -1;
+}
+
+static void __rounddec(decimal* d, int digits){
+    if (digits > 0 && digits < d->sig.length) {
+        int unkBool = __must_round(d,digits);
+        d->sig.length = digits;
+            
+        if (unkBool >= 0) {
+            __dorounddecup(d, digits);
+        }
     }
 }
 
@@ -340,4 +377,12 @@ void __num2dec(const decform* form, double x, decimal* d) {
     for (i = 0; i < d->sig.length; i++) {
         d->sig.text[i] += '0';
     }
+}
+
+// @unused
+double __dec2num(const decimal* d)
+{
+    decimal max;
+
+	__str2dec(&max, "179769313486231580793729011405303420", 308);
 }

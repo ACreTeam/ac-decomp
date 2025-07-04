@@ -22,7 +22,7 @@ typedef struct decform {
 
 void __num2dec(const decform*, double, decimal*);
 void __num2dec_internal(decimal*, double);
-void __two_exp(decimal*, long);
+void __two_exp(decimal*, short);
 void __str2dec(decimal*, const char*, short);
 void __timesdec(decimal*, const decimal*, const decimal*);
 void __ull2dec(decimal*, unsigned long long);
