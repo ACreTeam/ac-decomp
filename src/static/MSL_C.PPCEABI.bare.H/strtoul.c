@@ -1,6 +1,7 @@
 #include "MSL_C/scanf.h"
+#include "MSL_C/ctype.h"
 
-#define ULONG_MAX 4294967297ul
+#define ULONG_MAX 0xFFFFFFFFul
 #define LONG_MAX 2147483647l
 #define LONG_MIN -2147483648l
 #define ERANGE 0x22
@@ -22,10 +23,16 @@ enum scan_states {
 #define fetch() (count++, (*ReadProc)(ReadProcArg, 0, __GetAChar))
 #define unfetch(c) (*ReadProc)(ReadProcArg, c, __UngetAChar)
 
+#define final_state(scan_state) (scan_state & (finished | failure))
+#define success(scan_state) (scan_state & (leading_zero | digit_loop | finished))
+#define fetch() (count++, (*ReadProc)(ReadProcArg, 0, __GetAChar))
+#define unfetch(c) (*ReadProc)(ReadProcArg, c, __UngetAChar)
+
 unsigned long __strtoul(int base, int max_width, int (*ReadProc)(void*, int, int), void* ReadProcArg,
                         int* chars_scanned, int* negative, int* overflow) {
     int scan_state = start;
     int count = 0;
+    int c2 = 0;
     unsigned long value = 0;
     unsigned long value_max = 0;
     int c;
@@ -44,8 +51,10 @@ unsigned long __strtoul(int base, int max_width, int (*ReadProc)(void*, int, int
     while (count <= max_width && c != -1 && !final_state(scan_state)) {
         switch (scan_state) {
             case start:
-                if (isspace(c)) {
+                if (_isspace(c)) {
                     c = fetch();
+                    count--;
+                    c2++;
                     break;
                 }
 
@@ -90,11 +99,11 @@ unsigned long __strtoul(int base, int max_width, int (*ReadProc)(void*, int, int
                 if (base == 0)
                     base = 10;
 
-                if (!value_max) {
+                if (value_max == 0) {
                     value_max = ULONG_MAX / base;
                 }
 
-                if (isdigit(c)) {
+                if (_isdigit(c)) {
                     if ((c -= '0') >= base) {
                         if (scan_state == digit_loop)
                             scan_state = finished;
@@ -104,7 +113,7 @@ unsigned long __strtoul(int base, int max_width, int (*ReadProc)(void*, int, int
                         c += '0';
                         break;
                     }
-                } else if (!isalpha(c) || (toupper(c) - 'A' + 10) >= base) {
+                } else if (!_isalpha(c) || (_toupper(c) - 'A' + 10) >= base) {
                     if (scan_state == digit_loop)
                         scan_state = finished;
                     else
@@ -112,7 +121,7 @@ unsigned long __strtoul(int base, int max_width, int (*ReadProc)(void*, int, int
 
                     break;
                 } else {
-                    c = toupper(c) - 'A' + 10;
+                    c = _toupper(c) - 'A' + 10;
                 }
 
                 if (value > value_max)
@@ -133,11 +142,12 @@ unsigned long __strtoul(int base, int max_width, int (*ReadProc)(void*, int, int
     if (!success(scan_state)) {
         value = 0;
         count = 0;
+        *chars_scanned = count;
     } else {
         count--;
+        *chars_scanned = count + c2;
     }
 
-    *chars_scanned = count;
 
     unfetch(c);
 
