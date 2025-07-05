@@ -113,12 +113,12 @@ user:
 
 __declspec(section ".init") asm void __init_registers(void){
     nofralloc
-    lis r1, 0x8021
-    ori r1, r1, 0xA710
-    lis r2, 0x8022
-    ori r2, r2, 0xBE0
-    lis r13, 0x8021
-    ori r13, r13, 0xFB80
+    lis r1, _stack_addr@h
+    ori r1, r1, _stack_addr@l
+    lis r2, _SDA2_BASE_@h
+    ori r2, r2, _SDA2_BASE_@l
+    lis r13, _SDA_BASE_@h
+    ori r13, r13, _SDA_BASE_@l
     blr
 }
 /* clang-format on */
