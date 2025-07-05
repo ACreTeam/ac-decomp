@@ -21,6 +21,12 @@ block_relocations:
 
 add_relocations:
 # OS.c
+- source: .init:0x80003278
+  type: hi
+  target: _stack_addr
+- source: .init:0x8000327C
+  type: l
+  target: _stack_addr
 - source: .text:0x80078984
   type: ha
   target: __ArenaLo
