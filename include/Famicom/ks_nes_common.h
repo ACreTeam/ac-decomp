@@ -30,12 +30,26 @@ extern "C" {
 #define KS_NES_BYTES_PER_KB (1024)
 #define KS_NES_TO_KB(b) ((f32)b * (1.0f / (f32)KS_NES_BYTES_PER_KB))
 
+typedef struct _0B40_struct {
+    u8* _00;
+    u8* _04;
+    u8* _08;
+    u32 _0C;
+    u32 _10;
+    u32 _14;
+    u8 _18;
+    u8 _19;
+    u8 pad2[0x6];
+} B40_struct; // size == 0x20
+
 typedef struct ksNesCommonWorkPriv {
     /* 0x0000 */ u8 wram[KS_NES_WRAM_SIZE];
     /* 0x0800 */ u8 _0800[0x340];
-    /* 0x0B40 */ u8* _0B40[0x7c0];
+    /* 0x0B40 */ B40_struct _0B40[0xf0];
+    /* 0x2940 */ u8 _2940[0x100];
     /* 0x2A40 */ u8 _2A40[0x800];
-    /* 0x3240 */ u8 _3240[0x5c00];
+    /* 0x3240 */ u8 _3240[0x4800];
+    /* 0x7840 */ u8 _7840[0x1400];
     /* 0x8E40 */ u8 _8E40[0x80];
     /* 0x8EC0 */ u8 _8EC0[0x28];
     /* 0x8EE8 */ Mtx34 draw_mtx;
