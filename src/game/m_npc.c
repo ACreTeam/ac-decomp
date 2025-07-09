@@ -1925,7 +1925,7 @@ static void mNpc_GetXmasCardData(Mail_c* mail, PersonalID_c* pid) {
     mail->content.mail_type = mMl_TYPE_XMAS;
     mPr_CopyPersonalID(&mail->header.recipient.personalID, pid);
     mail->header.recipient.type = mMl_NAME_TYPE_PLAYER;
-    mail->present = FTR_FAMICOM_BALLOON_FIGHT;
+    mail->present = FTR_START(FTR_FAMICOM_COMMON01);
     mail->content.paper_type = 22; // festive paper
 }
 
@@ -3066,7 +3066,7 @@ static int mNpc_CheckSelectFurniture(mActor_name_t item) {
         !(item >= FTR_FISH_START && item <= FTR_FISH_END) &&         // Fish (furniture)
         !(item >= HANIWA_START && item <= HANIWA_END) &&             // Gyroids
         !(item >= FTR_DINO_START && item <= FTR_DINO_END) &&         // Idenitfied fossils
-        !(item >= FTR_FAMICOM_START && item <= FTR_FAMICOM_END)      // NES/Famicom games
+        !(item >= FTR_START(FTR_FAMICOM_COMMON00) && item <= FTR_END(FTR_FAMICOM_COMMON18)) // NES/Famicom games
     ) {
         res = TRUE;
     }

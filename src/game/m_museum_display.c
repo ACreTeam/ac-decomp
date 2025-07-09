@@ -90,16 +90,16 @@ extern void mMmd_SetFish(int fish_no) {
 }
 
 extern int mMmd_GetDisplayInfo(mActor_name_t item) {
-  if (item >= FTR_DINO_TRICERA_SKULL && item <= FTR_DINO_TRILOBITE_WEST) {
+  if (item >= FTR_START(FTR_DIN_TRIKERA_HEAD) && item <= FTR_END(FTR_DIN_TRILOBITE)) {
     int fossil_idx;
     int valid = FALSE;
 
     /* ??? why check this again */
-    if (item >= FTR_DINO_TRICERA_SKULL && item <= FTR_DINO_TRILOBITE_WEST) {
+    if (item >= FTR_START(FTR_DIN_TRIKERA_HEAD) && item <= FTR_END(FTR_DIN_TRILOBITE)) {
       valid = TRUE;
     }
 
-    fossil_idx = valid != FALSE ? FTR_IDX_2_NO(item - FTR_DINO_TRICERA_SKULL) : 0;
+    fossil_idx = valid != FALSE ? FTR_IDX_2_NO(item - FTR_START(FTR_DIN_TRIKERA_HEAD)) : 0;
     if (mMmd_FossilInfo(fossil_idx) >= mMmd_DONATOR_PLAYER1 && mMmd_FossilInfo(fossil_idx) <= mMmd_DONATOR_DELETED_PLAYER) {
       return mMmd_DISPLAY_ALREADY_DONATED;
     }
@@ -107,16 +107,16 @@ extern int mMmd_GetDisplayInfo(mActor_name_t item) {
       return mMmd_DISPLAY_CAN_DONATE;
     }
   }
-  else if (item >= FTR_PAINTING0 && item <= FTR_PAINTING14_WEST) {
+  else if (item >= FTR_START(FTR_SUM_ART01) && item <= FTR_END(FTR_SUM_ART15)) {
     int painting_idx;
     int valid = FALSE;
 
     /* ??? why check this again */
-    if (item >= FTR_PAINTING0 && item <= FTR_PAINTING14_WEST) {
+    if (item >= FTR_START(FTR_SUM_ART01) && item <= FTR_END(FTR_SUM_ART15)) {
       valid = TRUE;
     }
 
-    painting_idx = valid != FALSE ? FTR_IDX_2_NO(item - FTR_PAINTING0) : 0;
+    painting_idx = valid != FALSE ? FTR_IDX_2_NO(item - FTR_START(FTR_SUM_ART01)) : 0;
     if (mMmd_ArtInfo(painting_idx) >= mMmd_DONATOR_PLAYER1 && mMmd_ArtInfo(painting_idx) <= mMmd_DONATOR_DELETED_PLAYER) {
       return mMmd_DISPLAY_ALREADY_DONATED;
     }
@@ -164,31 +164,31 @@ extern int mMmd_GetDisplayInfo(mActor_name_t item) {
 
 extern int mMmd_RequestMuseumDisplay(mActor_name_t item) {
   if (mLd_PlayerManKindCheck() == FALSE) {
-    if (item >= FTR_DINO_TRICERA_SKULL && item <= FTR_DINO_TRILOBITE_WEST) {
+    if (item >= FTR_START(FTR_DIN_TRIKERA_HEAD) && item <= FTR_END(FTR_DIN_TRILOBITE)) {
       int fossil_idx;
       int valid = FALSE;
 
       /* ??? why check this again */
-      if (item >= FTR_DINO_TRICERA_SKULL && item <= FTR_DINO_TRILOBITE_WEST) {
+      if (item >= FTR_START(FTR_DIN_TRIKERA_HEAD) && item <= FTR_END(FTR_DIN_TRILOBITE)) {
         valid = TRUE;
       }
 
-      fossil_idx = valid != FALSE ? FTR_IDX_2_NO(item - FTR_DINO_TRICERA_SKULL) : 0;
+      fossil_idx = valid != FALSE ? FTR_IDX_2_NO(item - FTR_START(FTR_DIN_TRIKERA_HEAD)) : 0;
       if (mMmd_FossilInfo(fossil_idx) < mMmd_DONATOR_PLAYER1 || mMmd_FossilInfo(fossil_idx) > mMmd_DONATOR_DELETED_PLAYER) {
         mMmd_SetFossil(fossil_idx);
         return TRUE;
       }
     }
-    else if (item >= FTR_PAINTING0 && item <= FTR_PAINTING14_WEST) {
+    else if (item >= FTR_START(FTR_SUM_ART01) && item <= FTR_END(FTR_SUM_ART15)) {
       int painting_idx;
       int valid = FALSE;
 
       /* ??? why check this again */
-      if (item >= FTR_PAINTING0 && item <= FTR_PAINTING14_WEST) {
+      if (item >= FTR_START(FTR_SUM_ART01) && item <= FTR_END(FTR_SUM_ART15)) {
         valid = TRUE;
       }
 
-      painting_idx = valid != FALSE ? FTR_IDX_2_NO(item - FTR_PAINTING0) : 0;
+      painting_idx = valid != FALSE ? FTR_IDX_2_NO(item - FTR_START(FTR_SUM_ART01)) : 0;
       if (mMmd_ArtInfo(painting_idx) < mMmd_DONATOR_PLAYER1 || mMmd_ArtInfo(painting_idx) > mMmd_DONATOR_DELETED_PLAYER) {
         mMmd_SetArt(painting_idx);
         return TRUE;
@@ -238,38 +238,38 @@ typedef struct museum_display_fossil_data_s {
 #define mMmd_UT(x, z) ((((z) & 0xF) << 4) | ((x) & 0xF))
 
 static mMmd_fossil_data_c mMmd_museum_fossil_data[mMmd_FOSSIL_NUM] = {
-  { mMmd_UT(5, 2), FTR_DINO_DISP_TRICERA, mRmTp_DIRECT_NORTH }, /* tricera skull */
-  { mMmd_UT(1, 2), FTR_DINO_DISP_TRICERA, mRmTp_DIRECT_NORTH }, /* tricera tail */
-  { mMmd_UT(3, 2), FTR_DINO_DISP_TRICERA, mRmTp_DIRECT_NORTH }, /* tricera torso */
+  { mMmd_UT(5, 2), FTR_START(FTR_DIN_TRIKERA_DUMMY), mRmTp_DIRECT_NORTH }, /* tricera skull */
+  { mMmd_UT(1, 2), FTR_START(FTR_DIN_TRIKERA_DUMMY), mRmTp_DIRECT_NORTH }, /* tricera tail */
+  { mMmd_UT(3, 2), FTR_START(FTR_DIN_TRIKERA_DUMMY), mRmTp_DIRECT_NORTH }, /* tricera torso */
   
-  { mMmd_UT(9, 2), FTR_DINO_DISP_TREX, mRmTp_DIRECT_SOUTH }, /* T-rex skull */
-  { mMmd_UT(13, 2), FTR_DINO_DISP_TREX, mRmTp_DIRECT_SOUTH }, /* T-rex tail */
-  { mMmd_UT(11, 2), FTR_DINO_DISP_TREX, mRmTp_DIRECT_SOUTH }, /* T-rex torso */
+  { mMmd_UT(9, 2), FTR_START(FTR_DIN_TREX_DUMMY), mRmTp_DIRECT_SOUTH }, /* T-rex skull */
+  { mMmd_UT(13, 2), FTR_START(FTR_DIN_TREX_DUMMY), mRmTp_DIRECT_SOUTH }, /* T-rex tail */
+  { mMmd_UT(11, 2), FTR_START(FTR_DIN_TREX_DUMMY), mRmTp_DIRECT_SOUTH }, /* T-rex torso */
   
-  { mMmd_UT(5, 10), FTR_DINO_DISP_BRONTO, mRmTp_DIRECT_NORTH }, /* apato skull */
-  { mMmd_UT(1, 10), FTR_DINO_DISP_BRONTO, mRmTp_DIRECT_NORTH }, /* apato tail */
-  { mMmd_UT(3, 10), FTR_DINO_DISP_BRONTO, mRmTp_DIRECT_NORTH }, /* apato torso  */
+  { mMmd_UT(5, 10), FTR_START(FTR_DIN_BRONT_DUMMY), mRmTp_DIRECT_NORTH }, /* apato skull */
+  { mMmd_UT(1, 10), FTR_START(FTR_DIN_BRONT_DUMMY), mRmTp_DIRECT_NORTH }, /* apato tail */
+  { mMmd_UT(3, 10), FTR_START(FTR_DIN_BRONT_DUMMY), mRmTp_DIRECT_NORTH }, /* apato torso  */
   
-  { mMmd_UT(10, 6), FTR_DINO_DISP_STEGO, mRmTp_DIRECT_EAST }, /* stego skull */
-  { mMmd_UT(13, 5), FTR_DINO_DISP_STEGO2, mRmTp_DIRECT_SOUTH }, /* stego tail */
-  { mMmd_UT(11, 5), FTR_DINO_DISP_STEGO2, mRmTp_DIRECT_SOUTH }, /* stego torso */
+  { mMmd_UT(10, 6), FTR_START(FTR_DIN_STEGO_DUMMYA), mRmTp_DIRECT_EAST }, /* stego skull */
+  { mMmd_UT(13, 5), FTR_START(FTR_DIN_STEGO_DUMMYB), mRmTp_DIRECT_SOUTH }, /* stego tail */
+  { mMmd_UT(11, 5), FTR_START(FTR_DIN_STEGO_DUMMYB), mRmTp_DIRECT_SOUTH }, /* stego torso */
 
-  { mMmd_UT(6, 6), FTR_DINO_DISP_PTERA, mRmTp_DIRECT_SOUTH }, /* ptera skull */
-  { mMmd_UT(6, 5), FTR_DINO_DISP_PTERA, mRmTp_DIRECT_SOUTH }, /* ptera right wing */
-  { mMmd_UT(6, 7), FTR_DINO_DISP_PTERA, mRmTp_DIRECT_SOUTH }, /* ptera left wing */
+  { mMmd_UT(6, 6), FTR_START(FTR_DIN_PTERA_DUMMY), mRmTp_DIRECT_SOUTH }, /* ptera skull */
+  { mMmd_UT(6, 5), FTR_START(FTR_DIN_PTERA_DUMMY), mRmTp_DIRECT_SOUTH }, /* ptera right wing */
+  { mMmd_UT(6, 7), FTR_START(FTR_DIN_PTERA_DUMMY), mRmTp_DIRECT_SOUTH }, /* ptera left wing */
 
-  { mMmd_UT(9, 10), FTR_DINO_DISP_PLESIO, mRmTp_DIRECT_SOUTH }, /* plesio skull */
-  { mMmd_UT(11, 10), FTR_DINO_DISP_PLESIO, mRmTp_DIRECT_SOUTH }, /* plesio neck */
-  { mMmd_UT(13, 10), FTR_DINO_DISP_PLESIO, mRmTp_DIRECT_SOUTH }, /* plesio torso */
+  { mMmd_UT(9, 10), FTR_START(FTR_DIN_HUTABA_DUMMY), mRmTp_DIRECT_SOUTH }, /* plesio skull */
+  { mMmd_UT(11, 10), FTR_START(FTR_DIN_HUTABA_DUMMY), mRmTp_DIRECT_SOUTH }, /* plesio neck */
+  { mMmd_UT(13, 10), FTR_START(FTR_DIN_HUTABA_DUMMY), mRmTp_DIRECT_SOUTH }, /* plesio torso */
 
-  { mMmd_UT(2, 7), FTR_DINO_DISP_MAMMOTH, mRmTp_DIRECT_EAST }, /* mammoth skull */
-  { mMmd_UT(2, 5), FTR_DINO_DISP_MAMMOTH, mRmTp_DIRECT_EAST }, /* mammoth torso */
+  { mMmd_UT(2, 7), FTR_START(FTR_DIN_MAMMOTH_DUMMY), mRmTp_DIRECT_EAST }, /* mammoth skull */
+  { mMmd_UT(2, 5), FTR_START(FTR_DIN_MAMMOTH_DUMMY), mRmTp_DIRECT_EAST }, /* mammoth torso */
 
-  { mMmd_UT(6, 8), FTR_FOSSIL, mRmTp_DIRECT_SOUTH }, /* amber */
-  { mMmd_UT(7, 8), FTR_FOSSIL, mRmTp_DIRECT_SOUTH }, /* dinosaur track */
-  { mMmd_UT(8, 8), FTR_FOSSIL, mRmTp_DIRECT_SOUTH }, /* ammonite */
-  { mMmd_UT(9, 8), FTR_FOSSIL, mRmTp_DIRECT_SOUTH }, /* dinosaur egg */
-  { mMmd_UT(10, 8), FTR_FOSSIL, mRmTp_DIRECT_SOUTH } /* trilobite */
+  { mMmd_UT(6, 8), FTR_START(FTR_DIN_DUMMY), mRmTp_DIRECT_SOUTH }, /* amber */
+  { mMmd_UT(7, 8), FTR_START(FTR_DIN_DUMMY), mRmTp_DIRECT_SOUTH }, /* dinosaur track */
+  { mMmd_UT(8, 8), FTR_START(FTR_DIN_DUMMY), mRmTp_DIRECT_SOUTH }, /* ammonite */
+  { mMmd_UT(9, 8), FTR_START(FTR_DIN_DUMMY), mRmTp_DIRECT_SOUTH }, /* dinosaur egg */
+  { mMmd_UT(10, 8), FTR_START(FTR_DIN_DUMMY), mRmTp_DIRECT_SOUTH } /* trilobite */
 };
 
 static void mMmd_MuseumFossilProcess_MakeFgData() {
@@ -293,9 +293,9 @@ static void mMmd_MuseumFossilProcess_MakeFgData() {
         }
 
         /* TODO: this might be a fake match */
-        item = FTR_DINO_TRICERA_SKULL;
+        item = FTR_START(FTR_DIN_TRIKERA_HEAD);
         if (valid) {
-          mActor_name_t fossil_ftr_idx = FTR_DINO_TRICERA_SKULL + (mActor_name_t)FTR_NO_2_IDX(fossil_idx);
+          mActor_name_t fossil_ftr_idx = FTR_START(FTR_DIN_TRIKERA_HEAD) + (mActor_name_t)FTR_NO_2_IDX(fossil_idx);
           item = fossil_ftr_idx;
         }
         //item = (valid != FALSE ? (mActor_name_t)(FTR_DINO_TRICERA_SKULL + (mActor_name_t)FTR_NO_2_IDX(fossil_idx)) : FTR_DINO_TRICERA_SKULL);

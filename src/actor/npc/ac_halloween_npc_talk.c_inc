@@ -13,7 +13,7 @@ static int aHWN_get_trick_type(void) {
                     int ftr_idx = mRmTp_FtrItemNo2FtrIdx(*pockets_p);
 
                     // check furniture is not jack-o'-lantern nor jack-in-the-box
-                    if (ftr_idx != 0x127 && ftr_idx != 0x131) {
+                    if (ftr_idx != FTR_SUM_HAL_PKIN && ftr_idx != FTR_SUM_HAL_BOX01) {
                         idx[count++] = i;
                     }
                 }

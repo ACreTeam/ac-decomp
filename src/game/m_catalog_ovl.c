@@ -303,7 +303,7 @@ static void mCL_furniture_init(mCL_Item_c* item, mActor_name_t item_no) {
         ftr_actor->position.y = 0.0f;
         item->price = mSP_ItemNo2ItemPrice(item_no);
     } else if ((mRmTp_FtrItemNo2FtrIdx(item_no) >= 0x3FC && mRmTp_FtrItemNo2FtrIdx(item_no) <= 0x403) ||
-               (item_no >= FTR_COLLEGERULE && item_no <= FTR_CALLIGRAPHY_PAD_WEST) ||
+               (item_no >= FTR_START(FTR_NOG_COLLEGENOTE) && item_no <= FTR_END(FTR_IKE_NIKKI_WAFU1)) ||
                (mRmTp_FtrItemNo2FtrIdx(item_no) >= 0x453 && mRmTp_FtrItemNo2FtrIdx(item_no) <= 0x45A) ||
                (mRmTp_FtrItemNo2FtrIdx(item_no) >= 0x45B && mRmTp_FtrItemNo2FtrIdx(item_no) <= 0x462) ||
                (mRmTp_FtrItemNo2FtrIdx(item_no) >= 0x44F && mRmTp_FtrItemNo2FtrIdx(item_no) <= 0x452) ||
@@ -315,7 +315,7 @@ static void mCL_furniture_init(mCL_Item_c* item, mActor_name_t item_no) {
     } else if (item_no >= FTR_DINO_START && item_no <= FTR_DINO_END) {
         item->pos_y = 45.0f;
 
-        if (item_no == FTR_DINO_APATO_SKULL) {
+        if (item_no == FTR_START(FTR_DIN_BRONT_HEAD)) {
             item->scale = 0.5f;
             ftr_actor->position.y = -mFI_UNIT_BASE_SIZE_F;
         } else {

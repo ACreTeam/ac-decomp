@@ -964,22 +964,22 @@ extern int mMpswd_check_present_user(mActor_name_t item) {
     switch (ITEM_NAME_GET_TYPE(item)) {
         case NAME_TYPE_FTR0:
         case NAME_TYPE_FTR1: {
-            if (item >= FTR_CLOTH_MANNIQUIN000_SOUTH && item <= FTR_CLOTH_MANNIQUIN254_WEST) {
+            if (item >= FTR_CLOTH_START && item <= FTR_CLOTH_END) {
                 item = mRmTp_FtrItemNo2Item1ItemNo(item, FALSE);
                 if (mSP_SearchItemCategoryPriority(item, mSP_KIND_CLOTH, mSP_LISTTYPE_COMMON, NULL) ||
                     mSP_SearchItemCategoryPriority(item, mSP_KIND_CLOTH, mSP_LISTTYPE_UNCOMMON, NULL) ||
                     mSP_SearchItemCategoryPriority(item, mSP_KIND_CLOTH, mSP_LISTTYPE_RARE, NULL)) {
                     price = mSP_ItemNo2ItemPrice(item);
                 }
-            } else if (item >= FTR_UMBRELLA00_SOUTH && item <= FTR_UMBRELLA31_WEST) {
+            } else if (item >= FTR_UMBRELLA_START && item <= FTR_UMBRELLA_END) {
                 price = mSP_ItemNo2ItemPrice(mRmTp_FtrItemNo2Item1ItemNo(item, FALSE));
             } else if ( // TODO: furniture index values need to be declared in some header file as defines
-                (mRmTp_FtrItemNo2FtrIdx(item) >= 0x3FC && mRmTp_FtrItemNo2FtrIdx(item) <= 0x403) || // balloons
-                (item >= FTR_COLLEGERULE && item <= FTR_CALLIGRAPHY_PAD_WEST) ||                    // diaries
-                (mRmTp_FtrItemNo2FtrIdx(item) >= 0x453 && mRmTp_FtrItemNo2FtrIdx(item) <= 0x45A) || // fans
-                (mRmTp_FtrItemNo2FtrIdx(item) >= 0x45B && mRmTp_FtrItemNo2FtrIdx(item) <= 0x462) || // pinwheels
-                (mRmTp_FtrItemNo2FtrIdx(item) >= 0x44F && mRmTp_FtrItemNo2FtrIdx(item) <= 0x452) || // golden tools
-                (mRmTp_FtrItemNo2FtrIdx(item) >= 0x463 && mRmTp_FtrItemNo2FtrIdx(item) <= 0x466)    // regular tools
+                (mRmTp_FtrItemNo2FtrIdx(item) >= FTR_NOG_BALLOON_COMMON0 && mRmTp_FtrItemNo2FtrIdx(item) <= FTR_NOG_BALLOON_COMMON7) || // balloons
+                (item >= FTR_START(FTR_NOG_COLLEGENOTE) && item <= FTR_END(FTR_IKE_NIKKI_WAFU1)) ||                    // diaries
+                (mRmTp_FtrItemNo2FtrIdx(item) >= FTR_UTIWA0 && mRmTp_FtrItemNo2FtrIdx(item) <= FTR_UTIWA7) || // fans
+                (mRmTp_FtrItemNo2FtrIdx(item) >= FTR_KAZAGURUMA0 && mRmTp_FtrItemNo2FtrIdx(item) <= FTR_KAZAGURUMA7) || // pinwheels
+                (mRmTp_FtrItemNo2FtrIdx(item) >= FTR_GOLD_ITEM0 && mRmTp_FtrItemNo2FtrIdx(item) <= FTR_GOLD_ITEM3) || // golden tools
+                (mRmTp_FtrItemNo2FtrIdx(item) >= FTR_TOOL0 && mRmTp_FtrItemNo2FtrIdx(item) <= FTR_TOOL3)    // regular tools
             ) {
                 /* Convert furniture to their item1 variants */
                 price = mSP_ItemNo2ItemPrice(mRmTp_FtrItemNo2Item1ItemNo(item, FALSE));

@@ -122,7 +122,7 @@ static mActor_name_t mIV_set_collect_itemNo(int type, int page) {
         }
     } else {
         int fish_no = mIV_fish_collect_list[type];
-        int bit = FTR_IDX_2_NO(FTR_NO_2_IDX(0x31A) + (u32)FTR_NO_2_IDX(fish_no));
+        int bit = FTR_IDX_2_NO(FTR_NO_2_IDX(FTR_SUM_FUNA) + (u32)FTR_NO_2_IDX(fish_no));
 
         if (Now_Private->furniture_collected_bitfield[bit >> 5] & (1 << (bit & 31))) {
             return mNT_FishIdx2FishItemNo(fish_no);

@@ -190,34 +190,34 @@ extern void mSC_trophy_set(u8 num) {
 
 extern mActor_name_t mSC_trophy_item(u8 soncho_event) {
     static mActor_name_t soncho_item_table[mSC_EVENT_NUM] = {
-        ITM_FOOD_APPLE,         // mSC_EVENT_NEW_YEARS_DAY
-        FTR_WEED_MODEL,         // mSC_EVENT_FOUNDERS_DAY
-        FTR_NEEDLEWORK_MODEL,   // mSC_EVENT_GRADUATION_DAY
-        FTR_SUPER_TORTIMER,     // mSC_EVENT_APRILFOOLS_DAY
-        ITM_FOOD_APPLE,         // mSC_EVENT_TOWN_DAY
-        FTR_LOVELY_PHONE,       // mSC_EVENT_MOTHERS_DAY
-        FTR_MARKET_MODEL,       // mSC_EVENT_SALE_DAY
-        FTR_PINK_TREE_MODEL,    // mSC_EVENT_CHERRY_BLOSSOM_FESTIVAL
-        FTR_SPRING_MEDAL,       // mSC_EVENT_SPRING_SPORTS_FAIR
-        FTR_TREE_MODEL,         // mSC_EVENT_NATURE_DAY
-        FTR_DUMP_MODEL,         // mSC_EVENT_SPRING_CLEANING
-        FTR_LOCOMOTIVE_MODEL,   // mSC_EVENT_FATHERS_DAY
-        FTR_ANGLER_TROPHY,      // mSC_EVENT_FISHING_TOURNEY_1
-        ITM_FOOD_PEAR,          // mSC_EVENT_GROUNDHOG_DAY
-        FTR_BOTTLED_SHIP,       // mSC_EVENT_EXPLORERS_DAY
-        FTR_BOTTLE_ROCKET,      // mSC_EVENT_FIREWORKS_SHOW
-        FTR_TELESCOPE,          // mSC_EVENT_METEOR_SHOWER
-        FTR_MOON,               // mSC_EVENT_HARVEST_MOON_FESTIVAL
-        FTR_WELL_MODEL,         // mSC_EVENT_MAYORS_DAY
-        FTR_POLICE_MODEL,       // mSC_EVENT_OFFICERS_DAY
-        FTR_AUTUMN_MEDAL,       // mSC_EVENT_FALL_SPORTS_FAIR
-        FTR_FORTUNE_TENT_MODEL, // mSC_EVENT_HALLOWEEN
-        FTR_FISHING_TROPHY,     // mSC_EVENT_FISHING_TOURNEY_2
-        FTR_SNOWMAN,            // mSC_EVENT_SNOW_DAY
-        FTR_SHOP_MDOEL,         // mSC_EVENT_LABOR_DAY
-        ITM_FOOD_APPLE,         // mSC_EVENT_TOY_DAY
-        FTR_NOISEMAKER,         // mSC_EVENT_NEW_YEARS_EVE_COUNTDOWN
-        FTR_CORNUCOPIA          // mSC_EVENT_HARVEST_FESTIVAL
+        ITM_FOOD_APPLE,             // mSC_EVENT_NEW_YEARS_DAY
+        FTR_START(FTR_NOG_ZASSOU),       // mSC_EVENT_FOUNDERS_DAY
+        FTR_START(FTR_TAK_TAILOR),       // mSC_EVENT_GRADUATION_DAY
+        FTR_START(FTR_TAK_NES01),        // mSC_EVENT_APRILFOOLS_DAY
+        ITM_FOOD_APPLE,             // mSC_EVENT_TOWN_DAY
+        FTR_START(FTR_IKE_K_OTOME01),    // mSC_EVENT_MOTHERS_DAY
+        FTR_START(FTR_NOG_YAMISHOP),     // mSC_EVENT_SALE_DAY
+        FTR_START(FTR_NOG_F_TREE),       // mSC_EVENT_CHERRY_BLOSSOM_FESTIVAL
+        FTR_START(FTR_IKU_GOLD_GREEN),   // mSC_EVENT_SPRING_SPORTS_FAIR
+        FTR_START(FTR_NOG_S_TREE),       // mSC_EVENT_NATURE_DAY
+        FTR_START(FTR_NOG_DUMP),         // mSC_EVENT_SPRING_CLEANING
+        FTR_START(FTR_IKE_K_KID01),      // mSC_EVENT_FATHERS_DAY
+        FTR_START(FTR_IKE_FISH_TRO2),    // mSC_EVENT_FISHING_TOURNEY_1
+        ITM_FOOD_PEAR,              // mSC_EVENT_GROUNDHOG_DAY
+        FTR_START(FTR_IKE_JNY_BOTLE01),  // mSC_EVENT_EXPLORERS_DAY
+        FTR_START(FTR_YAZ_ROCKET),       // mSC_EVENT_FIREWORKS_SHOW
+        FTR_START(FTR_YAZ_TELESCOPE),    // mSC_EVENT_METEOR_SHOWER
+        FTR_START(FTR_TAK_MOON),         // mSC_EVENT_HARVEST_MOON_FESTIVAL
+        FTR_START(FTR_NOG_SHRINE),       // mSC_EVENT_MAYORS_DAY
+        FTR_START(FTR_NOG_KOBAN),        // mSC_EVENT_OFFICERS_DAY
+        FTR_START(FTR_IKU_GOLD_RED),     // mSC_EVENT_FALL_SPORTS_FAIR
+        FTR_START(FTR_NOG_URANAI),       // mSC_EVENT_HALLOWEEN
+        FTR_START(FTR_YAZ_FISH_TROPHY),  // mSC_EVENT_FISHING_TOURNEY_2
+        FTR_START(FTR_NOG_SNOWMAN),      // mSC_EVENT_SNOW_DAY
+        FTR_START(FTR_NOG_SHOP1),        // mSC_EVENT_LABOR_DAY
+        ITM_FOOD_APPLE,             // mSC_EVENT_TOY_DAY
+        FTR_START(FTR_TAK_NOISE),        // mSC_EVENT_NEW_YEARS_EVE_COUNTDOWN
+        FTR_START(FTR_NOG_CORNUCOPIA)    // mSC_EVENT_HARVEST_FESTIVAL
     };
 
     mActor_name_t item = ITM_FOOD_APPLE;
@@ -236,9 +236,9 @@ extern mActor_name_t mSC_trophy_item(u8 soncho_event) {
 
             case mSC_EVENT_TOY_DAY: {
                 if (Common_Get(now_private)->gender == mPr_SEX_MALE) {
-                    item = FTR_MINI_CAR;
+                    item = FTR_START(FTR_IKE_K_IVEBOY01);
                 } else {
-                    item = FTR_DOLLY;
+                    item = FTR_START(FTR_IID_NINGYOU);
                 }
                 break;
             }
@@ -608,7 +608,7 @@ extern int mSC_Radio_Set_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor) {
                     taisou_actor->talk_proc = mSCR_TALK_INSPECTION;
                     card = mSC_Radio_have_taisou_card();
                     mSC_Radio_stamp_card(radiocard->days);
-                    taisou_actor->held_item = FTR_AEROBICS_RADIO;
+                    taisou_actor->held_item = FTR_START(FTR_RADIO_TEST);
                     mSC_Radio_change_taisou_card(card, taisou_actor->held_item);
                     mIN_copy_name_str(item_name, taisou_actor->held_item);
                     article = mIN_get_item_article(taisou_actor->held_item);
@@ -636,7 +636,7 @@ extern int mSC_Radio_Set_Talk_Proc(TAISOU_NPC0_ACTOR* taisou_actor) {
                     } else {
                         taisou_actor->talk_proc = mSCR_TALK_NEXT_INSPECTION;
                         radiocard->days++;
-                        taisou_actor->held_item = FTR_AEROBICS_RADIO;
+                        taisou_actor->held_item = FTR_START(FTR_RADIO_TEST);
                         mPr_SetFreePossessionItem(Common_Get(now_private), taisou_actor->held_item,
                                                   mPr_ITEM_COND_NORMAL);
                         mIN_copy_name_str(item_name, taisou_actor->held_item);
@@ -962,10 +962,10 @@ extern void mSC_LightHouse_Event_Clear(int player_no) {
 
 extern mActor_name_t mSC_LightHouse_Event_Present_Item(u32 player_no) {
     if (Save_Get(LightHouse).renew_time.month == lbRTC_JANUARY) {
-        return FTR_LIGHTHOUSE_MODEL;
+        return FTR_START(FTR_TAK_TOUDAI);
     }
 
-    return FTR_CHOCOLATES;
+    return FTR_START(FTR_IKE_JNY_MAKADA01);
 }
 
 static void mSC_LightHouse_clear_data() {

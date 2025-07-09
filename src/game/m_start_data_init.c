@@ -234,11 +234,11 @@ static int mSDI_StartInitNew(GAME* game, int player_no, int malloc_flag) {
     mNpc_SetRemoveAnimalNo(Save_GetPointer(remove_animal_idx), animals, -1);
     title_game_haniwa_data_init();
     mPB_police_box_init(g);
-    mSN_snowman_init(); //
+    mSN_snowman_init();
     mHS_house_init();
-    mGH_animal_return_init();                    //
-    mMC_mask_cat_init();                         //
-    mDE_maskcat_init(Save_GetPointer(mask_cat)); //
+    mGH_animal_return_init();
+    mMC_mask_cat_init();
+    mDE_maskcat_init(Save_GetPointer(mask_cat));
 
     lbRTC_TimeCopy(Save_GetPointer(last_grow_time), &mTM_rtcTime_clear_code);
     lbRTC_TimeCopy(Save_GetPointer(treasure_buried_time), &mTM_rtcTime_clear_code);
@@ -299,11 +299,11 @@ static int mSDI_StartInitFrom(GAME* game, int player_no, int malloc_flag) {
             if (priv->exists == TRUE) {
                 Common_Set(now_private, priv);
                 Common_Set(player_no, player_no);
-                mFM_SetBlockKindLoadCombi(g); //
-                mEv_init_force(&play->event); //
+                mFM_SetBlockKindLoadCombi(g);
+                mEv_init_force(&play->event);
                 mHsRm_GetHuusuiRoom(g, player_no);
                 mCkRh_DecideNowGokiFamilyCount(player_no);
-                mSP_ExchangeLineUp_InGame(g); //
+                mSP_ExchangeLineUp_InGame(g);
                 mNpc_SetRemoveAnimalNo(Save_GetPointer(remove_animal_idx), animals, -1);
                 mMkRm_MarkRoom(g);
                 mRmTp_SetDefaultLightSwitchData(2); // TODO: enum
@@ -314,11 +314,11 @@ static int mSDI_StartInitFrom(GAME* game, int player_no, int malloc_flag) {
                 priv->exists = TRUE;
                 Common_Set(now_private, priv);
                 Common_Set(player_no, player_no);
-                mFM_SetBlockKindLoadCombi(g); //
-                mEv_init_force(&play->event); //
+                mFM_SetBlockKindLoadCombi(g);
+                mEv_init_force(&play->event);
                 mHsRm_GetHuusuiRoom(g, player_no);
                 mCkRh_DecideNowGokiFamilyCount(player_no);
-                mSP_ExchangeLineUp_InGame(g); //
+                mSP_ExchangeLineUp_InGame(g);
                 mNpc_SetRemoveAnimalNo(Save_GetPointer(remove_animal_idx), animals, -1);
 
                 /* Punish player by deleting their pockets and some pending items */
@@ -327,8 +327,8 @@ static int mSDI_StartInitFrom(GAME* game, int player_no, int malloc_flag) {
                 priv->inventory.lotto_ticket_mail_storage = 0;
                 priv->inventory.item_conditions = 0;
                 priv->inventory.wallet = 0;
-                mQst_ClearDelivery(priv->deliveries, mPr_DELIVERY_QUEST_NUM); //
-                mQst_ClearErrand(priv->errands, mPr_ERRAND_QUEST_NUM);        //
+                mQst_ClearDelivery(priv->deliveries, mPr_DELIVERY_QUEST_NUM);
+                mQst_ClearErrand(priv->errands, mPr_ERRAND_QUEST_NUM);
 
                 mMkRm_MarkRoom(g);
                 mRmTp_SetDefaultLightSwitchData(2); // TODO: enum
@@ -402,10 +402,10 @@ static int mSDI_StartInitPak(GAME* game, int player_no, int malloc_flag) {
         mCkRh_DecideNowGokiFamilyCount(player_no);
         mSP_ExchangeLineUp_InGame(g);
         mNpc_SetRemoveAnimalNo(Save_GetPointer(remove_animal_idx), animals, -1);
-        mNpc_SetReturnAnimal(mNpc_GetInAnimalP()); //
-        mNpc_SendRegisteredGoodbyMail();           //
+        mNpc_SetReturnAnimal(mNpc_GetInAnimalP());
+        mNpc_SendRegisteredGoodbyMail();
         mMkRm_MarkRoom(g);
-        mEv_SetGateway();                   //
+        mEv_SetGateway();
         mRmTp_SetDefaultLightSwitchData(2); // TODO: enum
         res = TRUE;
     }
@@ -425,61 +425,61 @@ extern void mSDI_StartInitAfter(GAME* game, int renew_mode, int malloc_flag) {
     mEA_InitLetterCardE();
     Common_Set(last_field_id, -1);
     mHm_SetNowHome();
-    mNpc_RenewalAnimalMemory(); //
-    mNpc_ForceRemove();         //
+    mNpc_RenewalAnimalMemory();
+    mNpc_ForceRemove();
     mTM_renewal_renew_time();
     mEv_ClearEventInfo();
-    mEnv_DecideWeather_NormalGameStart(); //
+    mEnv_DecideWeather_NormalGameStart();
     mMl_start_send_mail();
     mPO_first_work(play);
     mTM_set_season();
-    mAGrw_ClearAllShine_Stone(); //
+    mAGrw_ClearAllShine_Stone();
     mAGrw_RestoreStoneShine(Common_Get(player_no));
     mFAs_SetFieldRank();
     mEv_2nd_init(&play->event);
-    mNpc_Grow(); //
+    mNpc_Grow();
     Kabu_manager();
     mNpc_InitNpcData();
-    mNpc_InitNpcList(Common_Get(npclist), ANIMAL_NUM_MAX); //
+    mNpc_InitNpcList(Common_Get(npclist), ANIMAL_NUM_MAX);
     mNpc_SetNpcList(Common_Get(npclist), animals, ANIMAL_NUM_MAX, malloc_flag);
     mNpc_InitNpcList(Common_Get(island_npclist), 1);
-    mNpc_ClearTalkInfo(); //
+    mNpc_ClearTalkInfo();
 
     if (renew_mode == 1) {
-        mFM_RenewalReserve(); //
+        mFM_RenewalReserve();
     }
 
-    mNpc_ChangePresentCloth();                        //
-    mQst_ClearNotSaveQuest(Common_GetPointer(quest)); //
-    mGH_check_delete();                               //
-    mMC_check_delete();                               //
-    mFM_SetIslandNpcRoomData(game, malloc_flag);      //
-    mCD_calendar_wellcome_on();                       //
-    mPr_SetItemCollectBit(FTR_TAPEDECK);
-    mPr_SetItemCollectBit(FTR_COLLEGERULE);
-    mPr_SetItemCollectBit(FTR_ORANGEBOX);
-    mNPS_set_all_schedule_area();                   //
-    mNpcW_InitNpcWalk(Common_GetPointer(npc_walk)); //
+    mNpc_ChangePresentCloth();
+    mQst_ClearNotSaveQuest(Common_GetPointer(quest));
+    mGH_check_delete();
+    mMC_check_delete();
+    mFM_SetIslandNpcRoomData(game, malloc_flag);
+    mCD_calendar_wellcome_on();
+    mPr_SetItemCollectBit(FTR_START(FTR_SUM_CASSE01));
+    mPr_SetItemCollectBit(FTR_START(FTR_NOG_COLLEGENOTE));
+    mPr_SetItemCollectBit(FTR_START(FTR_NOG_MIKANBOX));
+    mNPS_set_all_schedule_area();
+    mNpcW_InitNpcWalk(Common_GetPointer(npc_walk));
     mHm_CheckRehouseOrder();
     decide_fish_location(Common_GetPointer(fish_location));
     mTRC_init(game);
     Common_Set(goki_shocked_flag, FALSE);
-    mNtc_auto_nwrite_time_ct(); //
+    mNtc_auto_nwrite_time_ct();
     mPr_SendMailFromMother();
-    mNpc_Remail(); //
+    mNpc_Remail();
     mPr_SendForeingerAnimalMail(Common_Get(now_private));
     mPr_StartSetCompleteTalkInfo();
-    mMsm_SendInformationMail(); //
-    mMsm_SendCompMail();        //
-    mFI_SetFirstSetShell();     //
+    mMsm_SendInformationMail();
+    mMsm_SendCompMail();
+    mFI_SetFirstSetShell();
     mMsr_FirstClearMushroom();
-    mSN_decide_msg(); //
+    mSN_decide_msg();
     mPr_RenewalMapInfo(Common_Get(now_private)->maps, mPr_FOREIGN_MAP_COUNT, Save_GetPointer(land_info));
-    mSP_SetTanukiShopStatus();        //
-    mEnv_DecideTodayWindPowerRange(); //
+    mSP_SetTanukiShopStatus();
+    mEnv_DecideTodayWindPowerRange();
     mFI_SetClimate(mFI_CLIMATE_0);
-    mISL_RestoreIsland(); //
-    mNpc_SendHPMail();    //
+    mISL_RestoreIsland();
+    mNpc_SendHPMail();
 }
 
 typedef int (*mSDI_INIT_PROC)(GAME*, int, int);
@@ -489,7 +489,7 @@ extern int mSDI_StartInitBefore(GAME* game, int player_no, int init_mode, int ma
                                                             &mSDI_StartInitFrom, &mSDI_StartInitPak,
                                                             &mSDI_StartInitErr };
 
-    mEv_UnSetGateway(); //
+    mEv_UnSetGateway();
     return (*init_proc[init_mode])(game, player_no, malloc_flag);
 }
 

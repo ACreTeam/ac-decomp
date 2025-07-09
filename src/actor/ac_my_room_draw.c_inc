@@ -218,7 +218,7 @@ static void aMR_DrawOneFurniture(FTR_ACTOR* ftr_actor, ACTOR* actorx, GAME* game
             Matrix_RotateY(angle, MTX_MULT);
             Matrix_translate(fit_ftr_p->base_position.x, fit_ftr_p->base_position.y, fit_ftr_p->base_position.z, MTX_MULT);
 
-            if (ftr_actor->name == 0x9A) { /* lower alarm clock ftr's height */
+            if (ftr_actor->name == FTR_SUM_MEZACLOCK) { /* lower alarm clock ftr's height */
                 Matrix_translate(pos->x, pos->y - 4.0f, pos->z, MTX_MULT);
             } else {
                 Matrix_translate(pos->x, pos->y, pos->z, MTX_MULT);
@@ -237,7 +237,7 @@ static void aMR_DrawOneFurniture(FTR_ACTOR* ftr_actor, ACTOR* actorx, GAME* game
             }
             Matrix_scale(scale, scale, scale, MTX_MULT);
         } else {
-            if (ftr_actor->name == 0x9A) { /* lower alarm clock ftr's height */
+            if (ftr_actor->name == FTR_SUM_MEZACLOCK) { /* lower alarm clock ftr's height */
                 Matrix_translate(ftr_actor->position.x, ftr_actor->position.y - 4.0f, ftr_actor->position.z, MTX_LOAD);
             } else {
                 Matrix_translate(ftr_actor->position.x, ftr_actor->position.y, ftr_actor->position.z, MTX_LOAD);
@@ -372,7 +372,7 @@ static void My_Room_Actor_draw(ACTOR* actorx, GAME* game) {
     MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
     GAME_PLAY* play = (GAME_PLAY*)game;
 
-    aMR_DrawFurniture(my_room, play, FALSE, 0x41C); /* lighthouse model */
-    aMR_DrawFurniture(my_room, play, TRUE, 0x41C);  /* lighthouse model */
+    aMR_DrawFurniture(my_room, play, FALSE, FTR_TAK_TOUDAI); /* lighthouse model */
+    aMR_DrawFurniture(my_room, play, TRUE, FTR_TAK_TOUDAI);  /* lighthouse model */
     aMR_DrawLeaf(my_room, play);
 }

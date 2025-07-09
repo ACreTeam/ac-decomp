@@ -268,7 +268,7 @@ static int aMR_ItemPutInFurniture(FTR_ACTOR* ftr_actor, mActor_name_t item) {
 
 static int aMR_ItemNo2IconNo(mActor_name_t item_no) {
     if (ITEM_IS_FTR(item_no)) {
-        if (item_no >= FTR_COLLEGERULE && item_no <= FTR_CALLIGRAPHY_PAD_WEST) {
+        if (item_no >= FTR_START(FTR_NOG_COLLEGENOTE) && item_no <= FTR_END(FTR_IKE_NIKKI_WAFU1)) {
             return aMR_ICON_DIARY;
         }
 
@@ -2130,7 +2130,7 @@ static void aMR_CallSitDownOngenPosSE(const xyz_t* pos) {
 
         /* Check for massage chair */
         switch (ftr_actor->name) {
-            case 0x152:
+            case FTR_KON_MASAJI:
                 sAdo_OngenPos((u32)ftr_actor, 39, &ftr_actor->position);
                 break;
         }
@@ -2286,27 +2286,27 @@ extern s16 aMR_GetParentAngleOffset(FTR_ACTOR* ftr_actor, ACTOR* actorx) {
 
 extern u8 aMR_GetAlphaEdge(u16 ftr_name) {
     switch (ftr_name) {
-        case 0x41:  // classic cabinet
-        case 0x120: // violin
-        case 0x121: // bass (instrument)
-        case 0x122: // cello
+        case FTR_SUM_CLASSICWARDROPE01:  // classic cabinet
+        case FTR_SUM_VIOLA01: // violin
+        case FTR_SUM_BASS01: // bass (instrument)
+        case FTR_SUM_CELLO01: // cello
             return 11;
-        case 0x393: // kitschy clock
-        case 0x394: // antique clock
+        case FTR_KON_AMECLOCK: // kitschy clock
+        case FTR_KON_ATQCLOCK: // antique clock
             return 250;
-        case 0x3FC: // red balloon
-        case 0x3FD: // yellow balloon
-        case 0x3FE: // blue balloon
-        case 0x3FF: // green balloon
-        case 0x400: // purple balloon
-        case 0x401: // bunny p. balloon
-        case 0x402: // bunny b. balloon
-        case 0x403: // bunny o. balloon
+        case FTR_NOG_BALLOON_COMMON0: // red balloon
+        case FTR_NOG_BALLOON_COMMON1: // yellow balloon
+        case FTR_NOG_BALLOON_COMMON2: // blue balloon
+        case FTR_NOG_BALLOON_COMMON3: // green balloon
+        case FTR_NOG_BALLOON_COMMON4: // purple balloon
+        case FTR_NOG_BALLOON_COMMON5: // bunny p. balloon
+        case FTR_NOG_BALLOON_COMMON6: // bunny b. balloon
+        case FTR_NOG_BALLOON_COMMON7: // bunny o. balloon
             return 96;
-        case 0x415:
+        case FTR_IKE_K_TANABATA01:
             return 127; // tanabata palm
-        case 0x4CC:
-            return 20; // harvest bureau
+        case FTR_YOS_WHEEL:
+            return 20; // wagon wheel
         default:
             return 127;
     }
@@ -2314,11 +2314,11 @@ extern u8 aMR_GetAlphaEdge(u16 ftr_name) {
 
 extern int aMR_DrawDolphinMode(u16 ftr_name) {
     switch (ftr_name) {
-        case 0x406: // stone coin
-        case 0x49D: // hamster cage
-        case 0x4CF: // neutral corner
-        case 0x4D0: // red corner
-        case 0x4D1: // blue corner
+        case FTR_TAK_MONEY: // stone coin
+        case FTR_TAK_HAM1: // hamster cage
+        case FTR_IKE_PRORES_LING01: // neutral corner
+        case FTR_IKE_PRORES_LING02: // red corner
+        case FTR_IKE_PRORES_LING03: // blue corner
             return TRUE;
         default:
             return FALSE;

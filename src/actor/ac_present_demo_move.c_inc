@@ -4,7 +4,7 @@ static void aPRD_setup_present(PRESENT_DEMO_ACTOR* present_demo) {
 
     if (Common_Get(time.rtc_time.month) == Now_Private->birthday.month && Common_Get(time.rtc_time.day) == Now_Private->birthday.day && Now_Private->birthday_present_npc != EMPTY_NO) {
         type = aPRD_TYPE_BIRTHDAY;
-        present = FTR_FAMICOM_DONKEY_KONG;
+        present = FTR_START(FTR_FAMICOM_COMMON02);
     } else if (mSC_LightHouse_Event_Check(Common_Get(player_no)) != mSC_LIGHTHOUSE_EVENT_NONE) {
         switch (mSC_LightHouse_Event_Check(Common_Get(player_no))) {
             case mSC_LIGHTHOUSE_EVENT_JAN_CONTRIBUTED:

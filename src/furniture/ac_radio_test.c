@@ -13,7 +13,7 @@ static void fRT_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* d
 
             (*Common_Get(clip).effect_clip->effect_make_proc)(eEC_EFFECT_KONPU, pos, 1,
                                                               ftr_actor->s_angle_y + DEG2SHORT_ANGLE(337.5f), game,
-                                                              FTR_AEROBICS_RADIO, 1, 0);
+                                                              FTR_START(FTR_RADIO_TEST), 1, 0);
             ftr_actor->dynamic_work_s[0] = 0;
         }
 

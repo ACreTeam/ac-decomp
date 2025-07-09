@@ -2793,10 +2793,10 @@ static int mMkRm_DecideLetterNo(mActor_name_t* present, mHm_hs_c* house, int poi
     int letter_idx = RANDOM(3);
 
     if (points >= mMkRm_REWARD0_POINTS && house->flags.hra_reward0 == FALSE) {
-        present[0] = FTR_HOUSE_MODEL;
+        present[0] = FTR_START(FTR_NOG_MYHOME2);
         return mHandbill_HRA_REWARD0;
     } else if (points >= mMkRm_REWARD1_POINTS && house->flags.hra_reward1 == FALSE) {
-        present[0] = FTR_MANOR_MODEL;
+        present[0] = FTR_START(FTR_NOG_MYHOME4);
         return mHandbill_HRA_REWARD1;
     } else {
         int i;
