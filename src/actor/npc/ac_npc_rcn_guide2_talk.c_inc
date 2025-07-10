@@ -163,7 +163,7 @@ static void aNRG2_stepup_j2(u32 kind, NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
 
 static void aNRG2_stepup_j3(u32 kind, NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
     /* List of 'no good' furniture, seemingly only ones you can walk on? */
-    static mActor_name_t ng_list[] = { FTR_MANHOLE_COVER, FTR_BATH_MAT };
+    static mActor_name_t ng_list[] = { FTR_START(FTR_TAK_HOLE01), FTR_START(FTR_KON_MAT) };
     mQst_errand_c* errand_p;
     AnmPersonalID_c* anm_pid_p;
     mActor_name_t ftr;
@@ -426,7 +426,7 @@ static void aNRG2_demo_start_wait_talk_proc(NPC_RCN_GUIDE2_ACTOR* rcn_guide2) {
     static mActor_name_t itemNo[] = {
         ITM_CLOTH016,        /* work uniform */
         ITM_WHITE_PANSY_BAG, /* flower bag */
-        FTR_FAN,             /* furniture */
+        FTR_START(FTR_NOG_FAN01), /* furniture */
         ITM_PAPER55,         /* simple paper */
         ITM_CARPET00,        /* carpet */
         ITM_AXE,             /* axe */

@@ -195,7 +195,7 @@ static void aMR_SetMoveSE(FTR_ACTOR* ftr_actor) {
     int floor_idx;
 
     switch (ftr_actor->name) {
-        case 0x406: /* stone coin */
+        case FTR_TAK_MONEY: /* stone coin */
             contact_layer = aMR_GetContactInfoLayer1();
 
             if (ftr_actor->state == aFTR_STATE_WAIT_PUSH || ftr_actor->state == aFTR_STATE_WAIT_PUSH2 ||
@@ -215,7 +215,7 @@ static void aMR_SetMoveSE(FTR_ACTOR* ftr_actor) {
                 }
             }
             break;
-        case 0x4E8: /* lawn mower */
+        case FTR_NOG_LAWNMOWER: /* lawn mower */
             floor_idx = Common_Get(floor_idx);
 
             if (floor_idx == FLOOR_NPC026 || floor_idx == FLOOR_NPC048) {

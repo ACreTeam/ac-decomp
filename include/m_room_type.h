@@ -92,7 +92,7 @@ typedef struct room_type_place_info_one_s {
     int ut_z;
 } mRmTp_FtrPlaceInfoOne_t;
 
-#define FTR_NUM 1266
+// #define FTR_NUM 1266
 
 #define FTR_GET_ROTATION(f) ((f)&3)
 #define FTR_IDX_2_NO(f) ((f) >> 2)

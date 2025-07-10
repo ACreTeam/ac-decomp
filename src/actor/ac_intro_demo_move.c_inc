@@ -170,7 +170,7 @@ static void aID_retire_rcn_guide_wait(INTRO_DEMO_ACTOR* intro_demo, GAME_PLAY* p
         mHS_set_use(Common_Get(player_no), intro_demo->house_idx);
 
         mPr_SetItemCollectBit(Now_Private->cloth.item);
-        mPr_SetItemCollectBit(FTR_TAPEDECK);
+        mPr_SetItemCollectBit(FTR_START(FTR_SUM_CASSE01));
         mPr_SetItemCollectBit(ITM_CARPET_START +
                               Save_Get(homes[intro_demo->house_idx]).floors[0].wall_floor.flooring_idx);
         mPr_SetItemCollectBit(ITM_WALL_START +

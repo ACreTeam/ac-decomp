@@ -183,8 +183,8 @@ static void Museum_Picture_Actor_move(ACTOR* actorx, GAME* game) {
                                              : ((donator == mMmd_DONATOR_DELETED_PLAYER) ? MSG_12192 : MSG_12191);
                 if (mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aMP_SetTalkInfo) && mMmd_IS_DONATED(donator)) {
                     mActor_name_t item = (i >= 0 && i < mMmd_ART_NUM)
-                                             ? (mActor_name_t)(FTR_PAINTING0 + (mActor_name_t)(i << 2))
-                                             : FTR_PAINTING0;
+                                             ? (mActor_name_t)(FTR_START(FTR_SUM_ART01) + (mActor_name_t)(i << 2))
+                                             : FTR_START(FTR_SUM_ART01);
 
                     /* Copy the art item's name */
                     mIN_copy_name_str(item_name, item);

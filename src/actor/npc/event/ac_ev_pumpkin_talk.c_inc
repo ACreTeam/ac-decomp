@@ -13,7 +13,7 @@ static int aEPK_get_trick_type(void) {
                     int ftr_idx = mRmTp_FtrItemNo2FtrIdx(*pocket_p);
 
                     // skip jack-o'-lantern and jack-in-the-box
-                    if (ftr_idx != 0x127 && ftr_idx != 0x131) {
+                    if (ftr_idx != FTR_SUM_HAL_PKIN && ftr_idx != FTR_SUM_HAL_BOX01) {
                         idx[count] = i;
                         count++;
                     }

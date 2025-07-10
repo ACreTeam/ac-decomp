@@ -555,8 +555,8 @@ extern void mPr_SetItemCollectBit(mActor_name_t item) {
     mActor_name_t ftr_item_no = mRmTp_Item1ItemNo2FtrItemNo_AtPlayerRoom(item, 0);
     int item_type;
 
-    if ((ftr_item_no >= FTR_FISH00 && ftr_item_no <= FTR_FISH39_WEST) ||
-        (ftr_item_no >= FTR_INSECT00 && ftr_item_no <= FTR_INSECT39_WEST)) {
+    if ((ftr_item_no >= FTR_FISH_START && ftr_item_no <= FTR_FISH_END) ||
+        (ftr_item_no >= FTR_INSECT_START && ftr_item_no <= FTR_INSECT_END)) {
         return;
     }
 
@@ -889,7 +889,7 @@ static int mPr_SendMotherMailDate(mPr_mother_mail_info_c* mother_mail, lbRTC_tim
     if (Common_Get(now_private)->birthday.month == send_time->month &&
         Common_Get(now_private)->birthday.day == send_time->day) {
         mail_no = 0x184 + RANDOM(mPr_MOTHER_MAIL_MONTHLY_NUM);
-        present = FTR_BIRTHDAY_CAKE;
+        present = FTR_START(FTR_SUM_BDCAKE01);
     } else if (send_time->month == send_time->day) {
         int letter_num = (send_time->month - 1) * mPr_MOTHER_MAIL_MONTHLY_NUM + RANDOM(mPr_MOTHER_MAIL_MONTHLY_NUM);
         mail_no = 0x164 + letter_num;
@@ -1123,11 +1123,11 @@ static void mPr_GetMotherMailNormalData(mPr_mother_mail_data_c* send_data, int* 
             break;
 
         case 37:
-            *present = FTR_PAPA_BEAR;
+            *present = FTR_START(FTR_SUM_DOLL02);
             break;
 
         case 38:
-            *present = FTR_DRACAENA;
+            *present = FTR_START(FTR_SUM_PL_DRACAENA);
             break;
 
         case 40:

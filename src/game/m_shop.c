@@ -159,9 +159,9 @@ static void mSP_SetSeasonFTR(mActor_name_t* item_table, int count) {
     if (count > 0 && month == lbRTC_DECEMBER) {
 
         if (day <= 24) {
-            mSP_SetSeasonFTR_local_december(item_table, count, FTR_FESTIVE_TREE, FTR_BIG_FESTIVE_TREE);
+            mSP_SetSeasonFTR_local_december(item_table, count, FTR_START(FTR_NOG_XTREE), FTR_START(FTR_KON_XTREE02));
         } else if (day >= 26) {
-            mSP_SetSeasonFTR_local_december(item_table, count, FTR_FESTIVE_CANDLE, FTR_FESTIVE_FLAG);
+            mSP_SetSeasonFTR_local_december(item_table, count, FTR_START(FTR_YAZ_CANDLE), FTR_START(FTR_YOS_KFLAG));
         }
     }
 }
@@ -491,8 +491,9 @@ static int mSP_NoList(mActor_name_t* items_table, int count, mActor_name_t* list
 }
 
 static void mSP_SetDummyItem(mActor_name_t* items_table, int count, int kind) {
-    mActor_name_t dummy_table[mSP_KIND_EXTENDED_MAX] = { FTR_CLASSIC_WARDROBE, ITM_PAPER00, ITM_CLOTH000,
-                                                         ITM_CARPET00,         ITM_WALL00,  ITM_DIARY00 };
+    mActor_name_t dummy_table[mSP_KIND_EXTENDED_MAX] = {
+        FTR_START(FTR_SUM_CLCHEST03), ITM_PAPER00, ITM_CLOTH000, ITM_CARPET00, ITM_WALL00, ITM_DIARY00
+    };
 
     mActor_name_t dummy_item = dummy_table[kind];
     int i;
@@ -1909,7 +1910,7 @@ static mActor_name_t mSP_FtrBirthIdx2ItemNo(u8 birth_type, int birth_idx) {
         birth_type_p++;
     }
 
-    return FTR_DINO_TREX_SKULL;
+    return FTR_START(FTR_DIN_TREX_HEAD);
 }
 
 extern mActor_name_t mSP_RandomOneFossilSelect(int multi_fossil) {
@@ -2229,9 +2230,10 @@ extern mActor_name_t mSP_SelectFishginPresent(int player_no) {
                                                         mSP_LISTTYPE_EVENT);
 }
 
-mActor_name_t mSP_gc_famicom_table[8] = { FTR_FAMICOM_CLU_CLU_LAND, FTR_FAMICOM_BALLOON_FIGHT, FTR_FAMICOM_DONKEY_KONG,
-                                          FTR_FAMICOM_DK_JR_MATCH,  FTR_FAMICOM_PINBALL,       FTR_FAMICOM_TENNIS,
-                                          FTR_FAMICOM_GOLF,         FTR_FAMICOM_EXCITEBIKE };
+mActor_name_t mSP_gc_famicom_table[8] = {
+    FTR_START(FTR_FAMICOM_COMMON00), FTR_START(FTR_FAMICOM_COMMON01), FTR_START(FTR_FAMICOM_COMMON02), FTR_START(FTR_FAMICOM_COMMON03),
+    FTR_START(FTR_FAMICOM_COMMON04), FTR_START(FTR_FAMICOM_COMMON05), FTR_START(FTR_FAMICOM_COMMON06), FTR_START(FTR_FAMICOM_COMMON13),
+};
 
 /* @unused size: 0xDC */
 // static mActor_name_t mSP_RandomOneFamicomSelect(...)
@@ -2462,7 +2464,7 @@ extern const char* mSP_ShopStatus2String(int status) {
 extern mActor_name_t mSP_GetRandomStationToyItemNo() {
     /* TODO: where does this go? DnM+ indicates no unused functions after this, but data appears after str_table in
      * mSP_ShopStatus2String */
-    static mActor_name_t train[2] = { FTR_LOCOMOTIVE_MODEL, FTR_TRAIN_CAR_MODEL };
+    static mActor_name_t train[2] = { FTR_START(FTR_IKE_K_KID01), FTR_START(FTR_IKE_K_KID02) };
 
     /* TODO: furniture item index enum/defines */
     return mRmTp_FtrIdx2FtrItemNo(0x42A + RANDOM(15), mRmTp_DIRECT_SOUTH);

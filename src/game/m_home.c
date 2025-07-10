@@ -310,10 +310,10 @@ typedef struct {
 
 /* list of default properties for each house */
 static mHm_player_room_default_data_c l_mHm_player_room_default_data[PLAYER_NUM] = {
-    { 3, 38, 4, 1, FTR_TAPEDECK },  /* Top-left house, stone wall & old flooring */
-    { 41, 42, 4, 1, FTR_TAPEDECK }, /* Top-right house, wood panelling & steel flooring */
-    { 55, 5, 4, 1, FTR_TAPEDECK },  /* Bottom-left house, shanty wall & birch flooring */
-    { 42, 34, 4, 1, FTR_TAPEDECK }  /* Bottom-right house, concrete wall & charcoal tile */
+    { 3, 38, 4, 1, FTR_START(FTR_SUM_CASSE01) },  /* Top-left house, stone wall & old flooring */
+    { 41, 42, 4, 1, FTR_START(FTR_SUM_CASSE01) }, /* Top-right house, wood panelling & steel flooring */
+    { 55, 5, 4, 1, FTR_START(FTR_SUM_CASSE01) },  /* Bottom-left house, shanty wall & birch flooring */
+    { 42, 34, 4, 1, FTR_START(FTR_SUM_CASSE01) }  /* Bottom-right house, concrete wall & charcoal tile */
 };
 
 /**
@@ -329,7 +329,7 @@ extern void mHm_SetDefaultPlayerRoomData(int home_no) {
 
     Save_Set(homes[home_no & 3].floors[mHm_ROOM_MAIN].layer_main.items[ut_z][ut_x],
              l_mHm_player_room_default_data[home_no & 3].item);
-    Save_Set(homes[home_no & 3].floors[mHm_ROOM_MAIN].layer_main.items[1][1], FTR_ORANGEBOX);
+    Save_Set(homes[home_no & 3].floors[mHm_ROOM_MAIN].layer_main.items[1][1], FTR_START(FTR_NOG_MIKANBOX));
     Save_Set(homes[home_no & 3].floors[mHm_ROOM_MAIN].layer_secondary.items[1][1], ITM_DIARY00);
 
     for (i = 0; i < mHm_ROOM_NUM; i++) {
@@ -572,13 +572,13 @@ static void mHm_SetDefaultCottageData(mHm_cottage_c* cottage) {
         return;
     }
 
-    cottage->room.wall_floor.flooring_idx = 13;
-    cottage->room.wall_floor.wallpaper_idx = 13;
+    cottage->room.wall_floor.flooring_idx = FLOOR_NPC013;
+    cottage->room.wall_floor.wallpaper_idx = WALL_NPC013;
 
-    cottage->room.layer_main.items[3][3] = FTR_REDALOHASHIRT;
-    cottage->room.layer_main.items[3][6] = FTR_BLUEALOHASHIRT;
-    cottage->room.layer_main.items[6][3] = FTR_REDALOHASHIRT;
-    cottage->room.layer_main.items[6][6] = FTR_BLUEALOHASHIRT;
+    cottage->room.layer_main.items[3][3] = FTR_START(FTR_FMANEKIN026);
+    cottage->room.layer_main.items[3][6] = FTR_START(FTR_FMANEKIN027);
+    cottage->room.layer_main.items[6][3] = FTR_START(FTR_FMANEKIN026);
+    cottage->room.layer_main.items[6][6] = FTR_START(FTR_FMANEKIN027);
 }
 
 /**

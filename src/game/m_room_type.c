@@ -1929,22 +1929,22 @@ extern mActor_name_t mRmTp_Item1ItemNo2FtrItemNo_AtPlayerRoom(mActor_name_t item
 
         return FTR_UMBRELLA_START + (is_valid ? item1_no - ITM_UMBRELLA_START : 0) * mRmTp_DIRECT_NUM;
     } else if (item1_no >= ITM_BALLOON_START && item1_no <= ITM_BUNNY_O_BALLOON) {
-        return mRmTp_FtrIdx2FtrItemNo(0x3FC + ((item1_no - ITM_BALLOON_START) & 7), mRmTp_DIRECT_SOUTH);
+        return mRmTp_FtrIdx2FtrItemNo(FTR_NOG_BALLOON_COMMON0 + ((item1_no - ITM_BALLOON_START) & 7), mRmTp_DIRECT_SOUTH);
     }
 
     if (no_convert_tools == FALSE) {
         if (item1_no >= ITM_DIARY_START && item1_no <= ITM_DIARY15) {
-            return FTR_COLLEGERULE + ((item1_no - ITM_DIARY_START) & 15) * mRmTp_DIRECT_NUM;
+            return FTR_START(FTR_NOG_COLLEGENOTE) + ((item1_no - ITM_DIARY_START) & 15) * mRmTp_DIRECT_NUM;
         } else if (item1_no >= ITM_BLUEBELL_FAN && item1_no <= ITM_LEAF_FAN) {
-            return mRmTp_FtrIdx2FtrItemNo(0x453 + ((item1_no - ITM_BLUEBELL_FAN) & 7), mRmTp_DIRECT_SOUTH);
+            return mRmTp_FtrIdx2FtrItemNo(FTR_UTIWA0 + ((item1_no - ITM_BLUEBELL_FAN) & 7), mRmTp_DIRECT_SOUTH);
         } else if (item1_no >= ITM_YELLOW_PINWHEEL && item1_no <= ITM_FANCY_PINWHEEL) {
-            return mRmTp_FtrIdx2FtrItemNo(0x45B + ((item1_no - ITM_YELLOW_PINWHEEL) & 7), mRmTp_DIRECT_SOUTH);
+            return mRmTp_FtrIdx2FtrItemNo(FTR_KAZAGURUMA0 + ((item1_no - ITM_YELLOW_PINWHEEL) & 7), mRmTp_DIRECT_SOUTH);
         } else if (item1_no >= ITM_GOLDEN_NET && item1_no <= ITM_GOLDEN_ROD) {
-            return mRmTp_FtrIdx2FtrItemNo(0x44F + ((item1_no - ITM_GOLDEN_NET) & 3), mRmTp_DIRECT_SOUTH);
+            return mRmTp_FtrIdx2FtrItemNo(FTR_GOLD_ITEM0 + ((item1_no - ITM_GOLDEN_NET) & 3), mRmTp_DIRECT_SOUTH);
         } else if (item1_no >= ITM_NET && item1_no <= ITM_ROD) {
-            return mRmTp_FtrIdx2FtrItemNo(0x463 + ((item1_no - ITM_NET) & 3), mRmTp_DIRECT_SOUTH);
+            return mRmTp_FtrIdx2FtrItemNo(FTR_TOOL0 + ((item1_no - ITM_NET) & 3), mRmTp_DIRECT_SOUTH);
         } else if (item1_no >= ITM_AXE_USE_1 && item1_no <= ITM_AXE_USE_7) {
-            return FTR_AXE;
+            return FTR_START(FTR_TOOL1);
         }
     }
 
@@ -1968,18 +1968,18 @@ extern mActor_name_t mRmTp_FtrItemNo2Item1ItemNo(mActor_name_t ftr_no, int no_co
         return mNT_FishIdx2FishItemNo(is_valid ? (ftr_no - FTR_FISH_START) >> 2 : 0);
     } else if (ftr_no >= FTR_UMBRELLA_START && ftr_no <= FTR_UMBRELLA_END) {
         return ITM_UMBRELLA_START + ((ftr_no - FTR_UMBRELLA_START) >> 2);
-    } else if (mRmTp_FtrItemNo2FtrIdx(ftr_no) >= 0x3FC && mRmTp_FtrItemNo2FtrIdx(ftr_no) <= 0x403) {
-        return ITM_BALLOON_START + ((mRmTp_FtrItemNo2FtrIdx(ftr_no) - 0x3FC) & 7);
-    } else if (ftr_no >= FTR_COLLEGERULE && ftr_no <= FTR_CALLIGRAPHY_PAD_WEST) {
-        return ITM_DIARY_START + (((ftr_no - FTR_COLLEGERULE) >> 2) & 15);
-    } else if (mRmTp_FtrItemNo2FtrIdx(ftr_no) >= 0x453 && mRmTp_FtrItemNo2FtrIdx(ftr_no) <= 0x45A) {
-        return ITM_BLUEBELL_FAN + ((mRmTp_FtrItemNo2FtrIdx(ftr_no) - 0x453) & 7);
-    } else if (mRmTp_FtrItemNo2FtrIdx(ftr_no) >= 0x45B && mRmTp_FtrItemNo2FtrIdx(ftr_no) <= 0x462) {
-        return ITM_YELLOW_PINWHEEL + ((mRmTp_FtrItemNo2FtrIdx(ftr_no) - 0x45B) & 7);
-    } else if (mRmTp_FtrItemNo2FtrIdx(ftr_no) >= 0x44F && mRmTp_FtrItemNo2FtrIdx(ftr_no) <= 0x452) {
-        return ITM_GOLDEN_NET + ((mRmTp_FtrItemNo2FtrIdx(ftr_no) - 0x44F) & 3);
-    } else if (mRmTp_FtrItemNo2FtrIdx(ftr_no) >= 0x463 && mRmTp_FtrItemNo2FtrIdx(ftr_no) <= 0x466) {
-        return ITM_NET + ((mRmTp_FtrItemNo2FtrIdx(ftr_no) - 0x463) & 3);
+    } else if (mRmTp_FtrItemNo2FtrIdx(ftr_no) >= FTR_NOG_BALLOON_COMMON0 && mRmTp_FtrItemNo2FtrIdx(ftr_no) <= 0x403) {
+        return ITM_BALLOON_START + ((mRmTp_FtrItemNo2FtrIdx(ftr_no) - FTR_NOG_BALLOON_COMMON0) & 7);
+    } else if (ftr_no >= FTR_START(FTR_NOG_COLLEGENOTE) && ftr_no <= FTR_END(FTR_IKE_NIKKI_WAFU1)) {
+        return ITM_DIARY_START + (((ftr_no - FTR_START(FTR_NOG_COLLEGENOTE)) >> 2) & 15);
+    } else if (mRmTp_FtrItemNo2FtrIdx(ftr_no) >= FTR_UTIWA0 && mRmTp_FtrItemNo2FtrIdx(ftr_no) <= 0x45A) {
+        return ITM_BLUEBELL_FAN + ((mRmTp_FtrItemNo2FtrIdx(ftr_no) - FTR_UTIWA0) & 7);
+    } else if (mRmTp_FtrItemNo2FtrIdx(ftr_no) >= FTR_KAZAGURUMA0 && mRmTp_FtrItemNo2FtrIdx(ftr_no) <= 0x462) {
+        return ITM_YELLOW_PINWHEEL + ((mRmTp_FtrItemNo2FtrIdx(ftr_no) - FTR_KAZAGURUMA0) & 7);
+    } else if (mRmTp_FtrItemNo2FtrIdx(ftr_no) >= FTR_GOLD_ITEM0 && mRmTp_FtrItemNo2FtrIdx(ftr_no) <= 0x452) {
+        return ITM_GOLDEN_NET + ((mRmTp_FtrItemNo2FtrIdx(ftr_no) - FTR_GOLD_ITEM0) & 3);
+    } else if (mRmTp_FtrItemNo2FtrIdx(ftr_no) >= FTR_TOOL0 && mRmTp_FtrItemNo2FtrIdx(ftr_no) <= 0x466) {
+        return ITM_NET + ((mRmTp_FtrItemNo2FtrIdx(ftr_no) - FTR_TOOL0) & 3);
     }
 
     return ftr_no;

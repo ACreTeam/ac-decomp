@@ -200,16 +200,16 @@ static void aSMAN_GetSnowmanPresentMail(Mail_c* mail) {
     int header_back_start;
     // clang-format off
     static mActor_name_t snow_item_table[] = {
-        FTR_SNOWMAN_FRIDGE,
-        FTR_SNOWMAN_TABLE,
-        FTR_SNOWMAN_BED,
-        FTR_SNOWMAN_CHAIR,
-        FTR_SNOWMAN_LAMP,
-        FTR_SNOWMAN_SOFA,
-        FTR_SNOWMAN_TV,
-        FTR_SNOWMAN_DRESSER,
-        FTR_SNOWMAN_WARDROBE,
-        FTR_SNOWMAN_CLOCK,
+        FTR_START(FTR_KON_SNOWFREEZER),
+        FTR_START(FTR_KON_SNOWTABLE),
+        FTR_START(FTR_KON_SNOWBED),
+        FTR_START(FTR_TAK_SNOWISU),
+        FTR_START(FTR_TAK_SNOWLAMP),
+        FTR_START(FTR_KON_SNOWSOFA),
+        FTR_START(FTR_KON_SNOWTV),
+        FTR_START(FTR_KON_SNOWTANSU),
+        FTR_START(FTR_KON_SNOWBOX),
+        FTR_START(FTR_KON_SNOWCLOCK),
         ITM_CARPET25,
         ITM_WALL25,
     };

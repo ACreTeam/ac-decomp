@@ -1004,16 +1004,16 @@ static void drop_fruit(mActor_name_t fg_item, int ut_x, int ut_z, xyz_t* drop_po
         { TREE_10000BELLS, ITM_MONEY_10000, TREE, 3 },
         { TREE_30000BELLS, ITM_MONEY_30000, TREE, 3 },
         { TREE_100BELLS, ITM_MONEY_100, TREE, 3 },
-        { TREE_FTR, FTR_FAN, TREE, 1 },
+        { TREE_FTR, FTR_START(FTR_NOG_FAN01), TREE, 1 },
         { TREE_BEES, HONEYCOMB, TREE, 1 },
         { TREE_PRESENT, ITM_PRESENT, TREE, 1 },
         { TREE_BELLS, ITM_MONEY_100, TREE, 1 },
         { TREE_PALM_FRUIT, ITM_FOOD_COCONUT, TREE_PALM_NOFRUIT_0, 2 },
         { CEDAR_TREE_BELLS, ITM_MONEY_100, CEDAR_TREE, 1 },
-        { CEDAR_TREE_FTR, FTR_FAN, CEDAR_TREE, 1 },
+        { CEDAR_TREE_FTR, FTR_START(FTR_NOG_FAN01), CEDAR_TREE, 1 },
         { CEDAR_TREE_BEES, HONEYCOMB, CEDAR_TREE, 1 },
         { GOLD_TREE_BELLS, ITM_MONEY_100, GOLD_TREE, 1 },
-        { GOLD_TREE_FTR, FTR_FAN, GOLD_TREE, 1 },
+        { GOLD_TREE_FTR, FTR_START(FTR_NOG_FAN01), GOLD_TREE, 1 },
         { GOLD_TREE_BEES, HONEYCOMB, GOLD_TREE, 1 },
         { GOLD_TREE_SHOVEL, ITM_GOLDEN_SHOVEL, GOLD_TREE, 1 },
     };
@@ -1025,7 +1025,7 @@ static void drop_fruit(mActor_name_t fg_item, int ut_x, int ut_z, xyz_t* drop_po
         if (fg_item == fg_ytable[i].src_tree_item) {
             mActor_name_t item = fg_ytable[i].dropped_item;
 
-            if (item == FTR_FAN) {
+            if (item == FTR_START(FTR_NOG_FAN01)) {
                 int list = mSP_LISTTYPE_ABC;
                 mActor_name_t ftr_item;
 

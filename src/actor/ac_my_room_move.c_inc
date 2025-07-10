@@ -1047,18 +1047,18 @@ static int aMR_ManageMoveBottun(MY_ROOM_ACTOR* my_room, GAME* game, aMR_contact_
                                     return TRUE;
                                 }
                             }
-                        } else if (ftr_idx == 0x4A0) { /* Super Tortimer */
+                        } else if (ftr_idx == FTR_TAK_NES01) { /* Super Tortimer */
                             if (aMR_FtrIdx2ChangeFtrSwitch(actorx, contact->ftrID)) {
                                 my_room->requested_msg_type = aMR_MSG_STATE_HITOKOTO2;
                                 return TRUE;
                             }
-                        } else if (ftr_idx == 0x411) { /* lovely phone */
+                        } else if (ftr_idx == FTR_IKE_K_OTOME01) { /* lovely phone */
                             if (aMR_FtrIdx2ChangeFtrSwitch(actorx, contact->ftrID)) {
                                 my_room->requested_msg_type = aMR_MSG_STATE_HITOKOTO;
                                 sAdo_OngenTrgStart(NA_SE_166, &ftr_actor->position);
                                 return TRUE;
                             }
-                        } else if (ftr_idx == 0x415) { /* tanabata palm */
+                        } else if (ftr_idx == FTR_IKE_K_TANABATA01) { /* tanabata palm */
                             if (aMR_FtrIdx2ChangeFtrSwitch(actorx, contact->ftrID)) {
                                 my_room->requested_msg_type = aMR_MSG_STATE_HITOKOTO1;
                                 return TRUE;
@@ -1124,7 +1124,7 @@ static int aMR_ManageMoveBottun(MY_ROOM_ACTOR* my_room, GAME* game, aMR_contact_
                                     return TRUE;
                                 }
                             }
-                        } else if (ftr_actor->name == 0x3F6) { /* Mouth of Truth */
+                        } else if (ftr_actor->name == FTR_IKE_JNY_TRUTH01) { /* Mouth of Truth */
                             if (contact->contact_direction == aMR_CONTACT_DIR_FRONT &&
                                 aMR_FtrIdx2ChangeFtrSwitch(actorx, contact->ftrID)) {
                                 my_room->state = 0;
@@ -1467,7 +1467,7 @@ static mActor_name_t aMR_GetBirthFurniture(u16 ftr_no, int angle_idx) {
         return mRmTp_FtrIdx2FtrItemNo(ftr_no, angle_idx & 3);
     }
 
-    return FTR_FAN;
+    return FTR_START(FTR_NOG_FAN01);
 }
 
 static int aMR_CheckPlaceSituation(int ut, int target_ut, u16 ftr_no, u16 angle_idx) {
@@ -1891,10 +1891,10 @@ static int aMR_JudgeBreedNewFurniture(GAME* game, u16 ftr_no, int* ut_x, int* ut
                     angle_idx = mRmTp_DIRECT_WEST;
                 }
 
-                if (ftr_no == 0x3C4 || (ftr_no >= 0x3FC && ftr_no <= 0x403)) {
+                if (ftr_no == FTR_DIN_STEGO_HEAD || (ftr_no >= FTR_NOG_BALLOON_COMMON0 && ftr_no <= FTR_NOG_BALLOON_COMMON7)) {
                     /* Add a rotation for stego skull & the balloon furniture items */
                     angle_idx++;
-                } else if (ftr_no == 0x33B) {
+                } else if (ftr_no == FTR_NOG_KAERU) {
                     /* Add two rotations for the frog furniture */
                     angle_idx += 2;
                 }
@@ -2832,37 +2832,37 @@ static void aMR_MakeClockInfo(MY_ROOM_ACTOR* my_room, GAME* game) {
 
 static u16 aMR_Fname2ConpoIndex(u16 fname) {
     switch (fname) {
-        case 0x055: /* retro stereo */
+        case FTR_SUM_STEREO01: /* retro stereo */
             return 1;
-        case 0x37E: /* phonograph */
+        case FTR_SUM_CHIKUON01: /* phonograph */
             return 2;
-        case 0x37F: /* turntable */
+        case FTR_SUM_CHIKUON02: /* turntable */
             return 3;
-        case 0x380: /* jukebox */
+        case FTR_SUM_JUKEBOX: /* jukebox */
             return 4;
-        case 0x385: /* lovely stereo */
+        case FTR_SUM_LV_STEREO: /* lovely stereo */
             return 5;
-        case 0x381: /* red boom box */
+        case FTR_SUM_RADIO01: /* red boom box */
             return 6;
-        case 0x382: /* white boom box */
+        case FTR_SUM_RADIO02: /* white boom box */
             return 7;
-        case 0x396: /* tape deck */
+        case FTR_SUM_CASSE01: /* tape deck */
             return 8;
-        case 0x395: /* reel-to-reel */
+        case FTR_SUM_RECO01: /* reel-to-reel */
             return 9;
-        case 0x079: /* gold stereo */
+        case FTR_SUM_CONPO01: /* gold stereo */
             return 10;
-        case 0x383: /* high-end stereo */
+        case FTR_SUM_CONPO02: /* high-end stereo */
             return 11;
-        case 0x384: /* hi-fi stereo */
+        case FTR_SUM_STEREO02: /* hi-fi stereo */
             return 12;
-        case 0x38F: /* robo-stereo */
+        case FTR_SUM_ROBOCONPO: /* robo-stereo */
             return 13;
-        case 0x390: /* dice stereo */
+        case FTR_SUM_SAICONPO: /* dice stereo */
             return 14;
-        case 0x397: /* CD player */
+        case FTR_SUM_MD01: /* CD player */
             return 15;
-        case 0x3B4: /* kiddie stereo */
+        case FTR_NOG_TRI_AUDIO01: /* kiddie stereo */
             return 16;
         default:
             return 1;

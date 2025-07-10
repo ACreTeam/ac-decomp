@@ -3039,20 +3039,20 @@ static int mTG_nw_drop_furniture(GAME_PLAY* play, int type, int image_no) {
 
     switch (type) {
         case mNW_TYPE_MANEKIN:
-            idx = aMR_CLIP->judge_breed_new_ftr_proc(game, 0x2EA + (image_no & 7), &ux, &uz, &rot, &sq_ofs, &layer);
+            idx = aMR_CLIP->judge_breed_new_ftr_proc(game, FTR_MYFMANEKIN0 + (image_no & 7), &ux, &uz, &rot, &sq_ofs, &layer);
             break;
         case mNW_TYPE_UMBRELLA:
-            idx = aMR_CLIP->judge_breed_new_ftr_proc(game, 0x362 + (image_no & 7), &ux, &uz, &rot, &sq_ofs, &layer);
+            idx = aMR_CLIP->judge_breed_new_ftr_proc(game, FTR_MYFUMBRELLA0 + (image_no & 7), &ux, &uz, &rot, &sq_ofs, &layer);
             break;
     }
 
     if (idx >= 0) {
         switch (type) {
             case mNW_TYPE_MANEKIN:
-                aMR_CLIP->reserve_ftr_proc(game, 0x2EA + (image_no & 7), idx, ux, uz, rot, sq_ofs, layer);
+                aMR_CLIP->reserve_ftr_proc(game, FTR_MYFMANEKIN0 + (image_no & 7), idx, ux, uz, rot, sq_ofs, layer);
                 break;
             case mNW_TYPE_UMBRELLA:
-                aMR_CLIP->reserve_ftr_proc(game, 0x362 + (image_no & 7), idx, ux, uz, rot, sq_ofs, layer);
+                aMR_CLIP->reserve_ftr_proc(game, FTR_MYFUMBRELLA0 + (image_no & 7), idx, ux, uz, rot, sq_ofs, layer);
                 break;
         }
     }

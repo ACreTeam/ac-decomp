@@ -72,11 +72,11 @@ static int mMsm_GetFossilMailNo(mActor_name_t fossil) {
 
     int type = 0; // invalid item
 
-    if (fossil >= FTR_DINO_TRICERA_SKULL && fossil <= FTR_DINO_TRILOBITE_WEST) {
+    if (fossil >= FTR_START(FTR_DIN_TRIKERA_HEAD) && fossil <= FTR_END(FTR_DIN_TRILOBITE)) {
         type = 1; // valid fossil
     }
 
-    return mail_no_table[type != 0 ? (fossil - FTR_DINO_TRICERA_SKULL) >> 2 : 0];
+    return mail_no_table[type != 0 ? (fossil - FTR_START(FTR_DIN_TRIKERA_HEAD)) >> 2 : 0];
 }
 
 static void mMsm_GetRemailAddIdx(int* add, int* shift, int idx) {
@@ -652,7 +652,7 @@ extern void mMsm_SendCompMail() {
 
                 mHandbill_Set_free_str(mHandbill_FREE_STR0, Save_Get(land_info.name), land_name_len);
 
-                if (mMl_send_mail_postoffice(&priv->player_ID, i, FTR_MUSEUM_MODEL, ITM_PAPER24, 0x22F,
+                if (mMl_send_mail_postoffice(&priv->player_ID, i, FTR_START(FTR_NOG_MUSEUM), ITM_PAPER24, 0x22F,
                                              l_museum_name_str, mMl_DATA2, mMl_TYPE_MAIL) == TRUE) {
                     mMsm_SetPrivateCompMail(priv, mPr_FLAG_MUSEUM_COMP_HANDBILL_RECEIVED);
                 }
