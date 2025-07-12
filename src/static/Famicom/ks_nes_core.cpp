@@ -2354,15 +2354,14 @@ void ksNesConvertChrToI8(ksNesCommonWorkObj* wp, const u8* data, u32 flags) {
     u32 j;
     u32 d;
     u32 mask;
-    
+
     bufSize = (wp->chr_to_i8_buf_size > CHR_TO_I8_BUF_SIZE ? 0x100 : wp->chr_to_i8_buf_size >> 12);
     idx = (flags >> 9) & 0x1f;
-    
+
     a = (flags & 0x40) << 5;
     b = (flags >> 4) & 0x18;
     c = (flags & 0x3f) << 5;
     abc = c + a + b;
-
 
     for (i = 0; i < 8; i++) {
         if (i & 1) {
@@ -2373,7 +2372,8 @@ void ksNesConvertChrToI8(ksNesCommonWorkObj* wp, const u8* data, u32 flags) {
 
         mask = 0x8080;
         for (j = 0; j < 8; j++) {
-            wp->chr_to_u8_bufp[abc + (flags & 0x3e00) * 8 + (i * (bufSize >> 3)) * 0x1000 + j] = (((d & mask) & 0xff00) != 0 ? 2 : 0) | (((u16)(d & mask) & 0x00FF) != 0 ? 1 : 0);
+            wp->chr_to_u8_bufp[abc + (flags & 0x3e00) * 8 + (i * (bufSize >> 3)) * 0x1000 + j] =
+                (((d & mask) & 0xff00) != 0 ? 2 : 0) | (((u16)(d & mask) & 0x00FF) != 0 ? 1 : 0);
             mask >>= 1;
         }
         DCStoreRangeNoSync(wp->chr_to_u8_bufp + (((idx) + (i * (bufSize >> 3))) * 0x1000 + b + a + c), 0x20);
@@ -2405,7 +2405,8 @@ void ksNesConvertChrToI8MMC5(ksNesCommonWorkObj* wp, const u8* ptr, u32 flag) {
         mask = 0x8080;
 
         for (j = 0; j < 8; j++) {
-            wp->chr_to_u8_bufp[abc + (flag & (0x3F << 9)) * 8 + (i * (adj >> 3)) * 0x1000 + j] = (((v & mask) & 0xFF00) != 0 ? 2 : 0) | ((((u16)(v & mask)) & 0x00FF) != 0 ? 1 : 0);
+            wp->chr_to_u8_bufp[abc + (flag & (0x3F << 9)) * 8 + (i * (adj >> 3)) * 0x1000 + j] =
+                (((v & mask) & 0xFF00) != 0 ? 2 : 0) | ((((u16)(v & mask)) & 0x00FF) != 0 ? 1 : 0);
             mask >>= 1;
         }
 
@@ -2477,8 +2478,8 @@ int ksNesQDFastLoad(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
     }
 
     memset(sp->wram + 0x200, 0, 0x600);
-    boot_file_no = search_p[25]; // boot file number
-    file_count = search_p[QD_BLOCK_DISKINFO_SZ + 1]; // amount->file_amount
+    boot_file_no = search_p[25];                           // boot file number
+    file_count = search_p[QD_BLOCK_DISKINFO_SZ + 1];       // amount->file_amount
     search_p += QD_BLOCK_DISKINFO_SZ + QD_BLOCK_AMOUNT_SZ; // skip immediately to first file info block
 
     while (file_count != 0 && search_p < disk_end_p) {
@@ -2496,7 +2497,9 @@ int ksNesQDFastLoad(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
                 if (load_ofs < KS_NES_CHRRAM_SIZE && size <= KS_NES_CHRRAM_SIZE) {
                     memcpy(sp->chrramp + load_ofs, &search_p[QD_BLOCK_FILEHEADER_SZ + 1], size);
                 }
-            } else if (((load_ofs < KS_NES_WRAM_SIZE || load_ofs > (0x6000-1)) && (load_ofs < 0xE000 && ((load_ofs + size) <= KS_NES_WRAM_SIZE || (load_ofs + size) > 0x6000))) && (load_ofs + size) <= 0xE000 && (size <= KS_NES_BBRAM_SIZE && size != 0)) {
+            } else if (((load_ofs < KS_NES_WRAM_SIZE || load_ofs > (0x6000 - 1)) &&
+                        (load_ofs < 0xE000 && ((load_ofs + size) <= KS_NES_WRAM_SIZE || (load_ofs + size) > 0x6000))) &&
+                       (load_ofs + size) <= 0xE000 && (size <= KS_NES_BBRAM_SIZE && size != 0)) {
                 if (load_ofs < KS_NES_WRAM_SIZE) {
                     memcpy(sp->wram + load_ofs, &search_p[QD_BLOCK_FILEHEADER_SZ + 1], size);
                 } else {
@@ -2562,7 +2565,7 @@ search_start:
         return -1;
     }
 
-    search_p[0] = 3; // write file header block code? (3)
+    search_p[0] = 3;            // write file header block code? (3)
     search_p[1] = sp->wram[14]; // write file number?
     memcpy(search_p + 2, sp->_176E + 10, 14);
 
@@ -2571,7 +2574,7 @@ search_start:
     search_p += 19;
 
     // write data
-    
+
     j = 0;
     for (j = 0; j < save_len; j++) {
         u8* read_p = (&sp->cpu_0000_1fff)[ksNes_ADDR2BANK(read_ofs + j)] + j;
@@ -2635,9 +2638,9 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
     u8* nesromp;
     OSTick os_tick;
     uint uVar4;
-    int iVar4;
     size_t count;
     u8 bVar1;
+    int i;
 
     // 0x40XX values appear to be NES APU addresses
     // 0x5015 could be the address of the MMC5's audio status register
@@ -2659,23 +2662,17 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
     if ((flags & 0x40) == 0) {
         Sound_SetC000(sp->wram);
         Sound_SetE000(sp->wram);
-        count = 0;
-        uVar4 = 0;
 
-        do {
-            if (!(count & 7) && 0x40 <= count && count < 0x90) {
+        for (u32 i = 0; i < 0x106; i++) {
+            if (!(i & 7) && 0x40 <= i && i < 0x90) {
 
-                uVar1 = count - 0x40 >> 3 & 0x3fffffff;
+                uVar1 = i - 0x40 >> 3 & 0x3fffffff;
 
-                Sound_Write((u16)sound_init_data[uVar1], (u8)sound_init_data[uVar1 + 1], uVar4);
+                Sound_Write((u16)sound_init_data[uVar1], (u8)sound_init_data[uVar1 + 1], i * 0x72);
             }
 
-            Sound_Write(0, 0, uVar4);
-
-            count++;
-            uVar4 += 0x72;
-
-        } while (count < 0x106);
+            Sound_Write(0, 0, i * 0x72);
+        }
     }
 
     if (flags & 1) {
@@ -2692,32 +2689,23 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
     } else {
         // fill ram with a predetermined pattern.
 
-        iVar2 = 0;
-
-        for (count = 0x200; count; count--) {
+        for (i = 0, iVar2 = 0; i < 0x200; iVar2 += 4, i++) {
             wramp = &sp->wram[iVar2];
 
             wramp[0] = 0x0f;
             wramp[1] = 0xef;
             wramp[2] = 0xfe;
             wramp[3] = 0x7d;
-
-            iVar2 += 4;
         }
     }
 
     // zero out the private work struct
     memset(&wp->work_priv, 0, sizeof(ksNesCommonWorkPriv));
 
-    iVar4 = 0;
-    iVar2 = 0;
-
     // the state struct is (mostly) zeroed out.
     // this sets up some self referential pointer in the state struct for an unknown reason.
-    for (count = 0x18; count; count--) {
-        sp->_186C[iVar2] = &sp->_0800[table[iVar4 & 0xf] * 0x100];
-        iVar4++;
-        iVar2++;
+    for (i = 0; i < 0x18; i++) {
+        sp->_186C[i] = &sp->_0800[table[i & 0xf] * 0x100];
     }
 
     sp->nesromp = wp->nesromp;
@@ -2775,34 +2763,21 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
         memcpy(sp->palette_normal, &ksNesPaletteNormal, 0x80);
     }
 
-    iVar2 = 0;
-
-    for (count = 0x80; count; count--) {
-        sp->_16CC[iVar2] = 0x0f;
-        iVar2++;
+    for (i = 0; i < 0x80; i++) {
+        sp->_16CC[i] = 0x0f;
     }
 
-    iVar2 = 0;
-
-    for (count = 8; count; count--) {
-        sp->_16A0[iVar2] = 0x20;
-        iVar2++;
+    for (i = 0; i < 8; i++) {
+        sp->_16A0[i] = 0x20;
     }
 
-    iVar2 = 0;
-
-    // i think we're dealing a new type of struct here.
-    for (count = 0xf0; count; count--) {
-        wp->work_priv._0B40[iVar2] = sp->_1810[0];
-        wp->work_priv._0B40[iVar2 + 1] = sp->_1810[1];
-        iVar2 += 8;
+    for (i = 0; i < 0xf0; i++) {
+        wp->work_priv._0B40[i]._00 = sp->_1810[0];
+        wp->work_priv._0B40[i]._04 = sp->_1810[1];
     }
 
-    iVar2 = 0;
-
-    for (count = 8; count; count--) {
-        sp->_17FC[iVar2] = (u8)iVar2;
-        iVar2++;
+    for (i = 0; i < 8; i++) {
+        sp->_17FC[i] = (u8)i;
     }
 
     memset(wp->chr_to_u8_bufp, 0, wp->chr_to_i8_buf_size);

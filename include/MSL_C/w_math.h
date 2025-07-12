@@ -3,7 +3,7 @@
 
 #include "MSL_C/MSL_Common/float.h"
 
-#ifndef BUGFIXES
+#if !defined(BUGFIXES) && !defined(FIX_SQRT_LINKAGE)
 #define SQRTF_LINKAGE extern
 #else
 // making the function static instead of extern resolves the bug
