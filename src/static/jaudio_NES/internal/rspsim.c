@@ -373,7 +373,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case A_CMD_INTERL: { // A_INTERL
+            case A_CMD_HALFCUT: { // A_INTERL
                 s32 count = cmdHi & 0xFFFF;
                 s16* src = (s16*)&DMEM[cmdLo >> 16];
                 s16* dst = (s16*)&DMEM[cmdLo & 0xFFFF];
@@ -387,19 +387,19 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case A_CMD_LOADBUFF: { // A_LOADBUFF
+            case A_CMD_LOADBUFFER2: { // A_LOADBUFF2
                 u16 size = ((cmdHi >> 16) & 0xFF) * 16;
                 Jac_bcopy((void*)cmdLo, (s16*)&DMEM[cmdHi & 0xFFFF], size);
                 break;
             }
 
-            case A_CMD_SAVEBUFF: { // A_SAVEBUFF
+            case A_CMD_SAVEBUFFER2: { // A_SAVEBUFF2
                 u16 size = ((cmdHi >> 16) & 0xFF) * 16;
                 Jac_bcopy(DMEM_OFS(cmdHi & 0xFFFF), (void*)cmdLo, size);
                 break;
             }
 
-            case A_CMD_ENVSETUP1: { // A_ENVSETUP1
+            case A_CMD_SETENVPARAM: { // A_ENVSETUP1
                 u8 temp = cmdHi >> 16;
                 envParam1_1 = cmdHi & 0xFFFF;
                 envParam1_2 = cmdLo >> 16;
@@ -408,7 +408,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case A_CMD_ENVSETUP2: // A_ENVSETUP2
+            case A_CMD_SETENVPARAM2: // A_ENVSETUP2
                 envParam2_0 = cmdLo >> 16;
                 envParam2_1 = cmdLo & 0xFFFF;
                 break;
@@ -533,7 +533,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case A_CMD_S8DEC: { // A_S8DEC
+            case A_CMD_PCM8DEC: { // A_S8DEC
                 u8 flags = cmdHi >> 16;
 
                 if (flags & 1) {
@@ -562,7 +562,7 @@ extern s32 RspStart(u32* pTaskCmds, s32 allTasks) {
                 break;
             }
 
-            case A_CMD_FILTER: { // A_FILTER
+            case A_CMD_FIRFILTER: { // A_FILTER
                 s16 sp3C[16];
                 s16 sp1C[16];
                 u8 flags;

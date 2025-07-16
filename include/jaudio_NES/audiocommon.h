@@ -2,6 +2,7 @@
 #define AUDIOCOMMON_H
 
 #include "types.h"
+#include "PR/abi.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,25 +46,101 @@ extern "C" {
 #define A_CMD_ADDMIXER      4
 #define A_CMD_RESAMPLE      5
 #define A_CMD_RESAMPLE_ZOH  6
-#define A_CMD_FILTER        7
+#define A_CMD_FIRFILTER     7
 #define A_CMD_SETBUFF       8
 #define A_CMD_DUPLICATE     9
 #define A_CMD_DMEMMOVE      10
 #define A_CMD_LOADADPCM     11
 #define A_CMD_MIXER         12
 #define A_CMD_INTERLEAVE    13
-#define A_CMD_HILOGAIN      14
+#define A_CMD_DISTFILTER    14
 #define A_CMD_SETLOOP       15
 #define A_CMD_UNK16         16
-#define A_CMD_INTERL        17
-#define A_CMD_ENVSETUP1     18
+#define A_CMD_HALFCUT       17
+#define A_CMD_SETENVPARAM   18
 #define A_CMD_ENVMIXER      19
-#define A_CMD_LOADBUFF      20
-#define A_CMD_SAVEBUFF      21
-#define A_CMD_ENVSETUP2     22
-#define A_CMD_S8DEC         23
+#define A_CMD_LOADBUFFER2   20
+#define A_CMD_SAVEBUFFER2   21
+#define A_CMD_SETENVPARAM2  22
+#define A_CMD_PCM8DEC       23
 #define A_CMD_LOADCACHE     24
 #define A_CMD_EXIT          25
+
+#define	aHalfCut(pkt, src, dst, len)						\
+{									\
+	Acmd *_a = (Acmd *)pkt;						\
+									\
+	_a->words.w0 = _SHIFTL(A_CMD_HALFCUT, 24, 8) | _SHIFTL(len, 0, 16);    		\
+	_a->words.w1 = _SHIFTL(src, 16, 16) | _SHIFTL(dst, 0, 16);		\
+}
+
+#define	aSetEnvParam(pkt, revVol, rampRev, rampL, rampR)						\
+{									\
+	Acmd *_a = (Acmd *)pkt;						\
+									\
+	_a->words.w0 = _SHIFTL(A_CMD_SETENVPARAM, 24, 8) | _SHIFTL(revVol, 16, 8) | _SHIFTL(rampRev, 0, 16);    		\
+	_a->words.w1 = _SHIFTL(rampL, 16, 16) | _SHIFTL(rampR, 0, 16);		\
+}
+
+#define	aLoadBuffer2(pkt, dst, src, len)						\
+{									\
+	Acmd *_a = (Acmd *)pkt;						\
+									\
+	_a->words.w0 = _SHIFTL(A_CMD_LOADBUFFER2, 24, 8) | _SHIFTL((len) >> 4, 16, 8) | _SHIFTL(src, 0, 16);    		\
+	_a->words.w1 = (u32)(dst);		\
+}
+
+#define	aSaveBuffer2(pkt, dst, src, len)						\
+{									\
+	Acmd *_a = (Acmd *)pkt;						\
+									\
+	_a->words.w0 = _SHIFTL(A_CMD_SAVEBUFFER2, 24, 8) | _SHIFTL((len) >> 4, 16, 8) | _SHIFTL(src, 0, 16);    		\
+	_a->words.w1 = (u32)(dst);		\
+}
+
+#define	aSetEnvParam2(pkt, volL, volR)						\
+{									\
+	Acmd *_a = (Acmd *)pkt;						\
+									\
+	_a->words.w0 = _SHIFTL(A_CMD_SETENVPARAM2, 24, 8);    		\
+	_a->words.w1 = _SHIFTL(volL, 16, 16) | _SHIFTL(volR, 0, 16);		\
+}
+
+#define aPCM8dec(pkt, flags, state)						\
+{									\
+	Acmd *_a = (Acmd *)pkt;						\
+									\
+	_a->words.w0 = _SHIFTL(A_CMD_PCM8DEC, 24, 8) | _SHIFTL(flags, 16, 8);    		\
+	_a->words.w1 = (u32)(state);		\
+}
+
+#define aDistFilter(pkt, gain, dmem_in, dmem_out, len)						\
+{									\
+	Acmd *_a = (Acmd *)pkt;						\
+									\
+	_a->words.w0 = _SHIFTL(A_CMD_DISTFILTER, 24, 8) | _SHIFTL(gain, 16, 8) | _SHIFTL(len, 0, 16);    		\
+	_a->words.w1 = _SHIFTL(dmem_in, 16, 16) | _SHIFTL(dmem_out, 0, 16);		\
+}
+
+#define aNoiseFilter(pkt, buf, f, addr, len)                               \
+{                                                                       \
+        Acmd *_a = (Acmd *)pkt;                                         \
+                                                                        \
+        _a->words.w0 = _SHIFTL(A_CMD_SPNOOP, 24, 8) | _SHIFTL(f, 16, 8) |   \
+                    _SHIFTL(addr, 0, 16);                         \
+        _a->words.w1 = _SHIFTL(len, 16, 16) | _SHIFTL(buf, 0, 16);                            \
+}
+
+#define aFirFilter(pkt, f, bufSize, addr)                               \
+{                                                                       \
+        Acmd *_a = (Acmd *)pkt;                                         \
+                                                                        \
+        _a->words.w0 = _SHIFTL(A_CMD_FIRFILTER, 24, 8) | _SHIFTL(f, 16, 8) |   \
+                    _SHIFTL(bufSize, 0, 16);                         \
+        _a->words.w1 = (unsigned int)(addr);                            \
+}
+
+#define aFirLoadTable(pkt, size, addr) aFirFilter(pkt, 2, size, addr)
 
 #define NA_MAKE_COMMAND(a0, a1, a2, a3) \
     (u32)((((a0) & 0xFF) << 24) | (((a1) & 0xFF) << 16) | (((a2) & 0xFF) << 8) | (((a3) & 0xFF) << 0))
