@@ -30,7 +30,7 @@ void osWritebackDCache(void* vaddr, u32 nbytes);
 u32 osGetCount(void);
 OSTime osGetTime(void);
 
-extern s32 osAppNMIBuffer[];
+extern s32 osAppNMIBuffer[16];
 extern int osShutdown;
 extern u8 __osResetSwitchPressed;
 

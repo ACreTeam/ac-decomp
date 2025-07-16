@@ -19,54 +19,54 @@ void osShutdownStart(int val) {
     OSReport("***osShutdownStart***\n");
     dstat = DVDGetDriveStatus();
 
-    if (dstat == -1) { 
+    if (dstat == -1) {
         while (TRUE) {}
     }
-        osIsEnableShutdown();
-        PADRecalibrate(0xF0000000);
-        Na_Reset();
+    osIsEnableShutdown();
+    PADRecalibrate(0xF0000000);
+    Na_Reset();
 
-        gthread = GXGetCurrentGXThread();
-        enable = OSDisableInterrupts();
-        cthread = OSGetCurrentThread();
+    gthread = GXGetCurrentGXThread();
+    enable = OSDisableInterrupts();
+    cthread = OSGetCurrentThread();
 
-        if(gthread != cthread){
-            OSCancelThread(gthread);
-            GXSetCurrentGXThread();
-        }
-        GXFlush();
-        GXAbortFrame();
-        GXDrawDone();
+    if (gthread != cthread) {
+        OSCancelThread(gthread);
+        GXSetCurrentGXThread();
+    }
+    GXFlush();
+    GXAbortFrame();
+    GXDrawDone();
 
-        OSRestoreInterrupts(enable);
-        JW_JUTXfb_clearIndex();
-        VIWaitForRetrace();
-        VISetBlack(TRUE);
-        VIFlush();
-        VIWaitForRetrace();
-        osStopTimerAll();
-        LCDisable();
-        OSReport("リセットしてもこれだけは忘れない。 osAppNMIBuffer[15] = %08x\n", osAppNMIBuffer[15]);
+    OSRestoreInterrupts(enable);
+    JW_JUTXfb_clearIndex();
+    VIWaitForRetrace();
+    VISetBlack(TRUE);
+    VIFlush();
+    VIWaitForRetrace();
+    osStopTimerAll();
+    LCDisable();
+    OSReport("リセットしてもこれだけは忘れない。 osAppNMIBuffer[15] = %08x\n", osAppNMIBuffer[15]);
 
-        if((val == 2) && (DVDCheckDisk() == 0)){
-            OSReport("蓋空き。ホットリセットします。\n");
-            val = 0;
-        }
+    if ((val == 2) && (DVDCheckDisk() == 0)) {
+        OSReport("蓋空き。ホットリセットします。\n");
+        val = 0;
+    }
 
     if (APPNMI_HOTRESET_GET()) {
-        OSResetSystem(FALSE, 0, FALSE);
+        OSResetSystem(OS_RESET_RESTART, 0, FALSE);
         return;
     }
-    switch (val) {     
-    case 0:
-        OSResetSystem(TRUE,osAppNMIBuffer[15], FALSE);
-        break;
-    case 1:
-        HotResetIplMenu();
-        break;
-    case 2:
-        bcopy(osAppNMIBuffer, (void*)0x811FFFC0, 0x40U);
-        OSResetSystem(0, 0x80000000, FALSE);
-        break;;
+    switch (val) {
+        case OS_RESET_RESTART:
+            OSResetSystem(OS_RESET_HOTRESET, osAppNMIBuffer[15], FALSE);
+            break;
+        case OS_RESET_HOTRESET:
+            HotResetIplMenu();
+            break;
+        case OS_RESET_SHUTDOWN:
+            bcopy(osAppNMIBuffer, NMISaveArea, sizeof(osAppNMIBuffer));
+            OSResetSystem(OS_RESET_RESTART, 0x80000000, FALSE);
+            break;
     }
 }
