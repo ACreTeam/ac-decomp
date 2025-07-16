@@ -1008,7 +1008,7 @@ void __Nas_MemoryReconfig() {
     /*0x0002*/ AG._0002 = spec->_14;
 
     s32 tmp = AG.audio_params.updates_per_frame;
-    /*0x28BC*/ AG.max_tempo = ((((60.0f * 1000.0f * 48) * tmp) / AGC.timeBase) / AG._29D8) / 1.04613;
+    /*0x28BC*/ AG.max_tempo = ((((60.0f * 1000.0f * AUDIO_TATUMS_PER_BEAT) * tmp) / AGC.timeBase) / AG._29D8) / 1.04613;
 
     /*0x2894*/ AG._2894 = (f32)AG.refresh_rate * (f32)tmp / AG.audio_params.ai_sampling_frequency / AG.max_tempo;
 

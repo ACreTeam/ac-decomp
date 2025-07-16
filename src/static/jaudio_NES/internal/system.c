@@ -1742,7 +1742,12 @@ s32 Nas_BankOfsToAddr(s32 bank_id, u8* ctrl_p, WaveMedia* wave_media, s32 async)
     s32 i;
     s32 preloading;
     static ALHeap awheap;
+    u8 medium;
+    
+    u8 __stack_pad[12];
+    s32* i_p = &i; // this feels wrong but w/e
 
+    
     preloading = FALSE;
     if (AG.num_requested_samples != 0) {
         preloading = TRUE;
@@ -1755,7 +1760,7 @@ s32 Nas_BankOfsToAddr(s32 bank_id, u8* ctrl_p, WaveMedia* wave_media, s32 async)
 
     size = 0;
     for (i = 0; i < AG.num_used_samples; i++) {
-        size += ALIGN_NEXT(AG.used_samples[i]->size, 32);
+        size += ALIGN_NEXT(AG.used_samples[i]->size, 16);
     }
 
     for (i = 0; i < AG.num_used_samples; i++) {
@@ -1768,26 +1773,28 @@ s32 Nas_BankOfsToAddr(s32 bank_id, u8* ctrl_p, WaveMedia* wave_media, s32 async)
 
         switch (async) {
             case FALSE:
-                if (wavetable->medium == wave_media->wave0_media) {
+                medium = wavetable->medium;
+                if (medium == wave_media->wave0_media) {
                     wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, wave_media->wave0_bank_id, wavetable->sample,
-                                                       wavetable->medium, CACHE_PERSISTENT);
-                } else if (wavetable->medium == wave_media->wave1_media) {
+                                                       (s8)medium, CACHE_PERSISTENT);
+                } else if (medium == wave_media->wave1_media) {
                     wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, wave_media->wave1_bank_id, wavetable->sample,
-                                                       wavetable->medium, CACHE_PERSISTENT);
-                } else if (wavetable->medium == MEDIUM_DISK_DRIVE) {
-                    wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, 0xFE, wavetable->sample, wavetable->medium,
+                                                       (s8)wavetable->medium, CACHE_PERSISTENT);
+                } else if (medium == MEDIUM_DISK_DRIVE) {
+                    wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, 0xFE, wavetable->sample, (s8)wavetable->medium,
                                                        CACHE_PERSISTENT);
                 }
                 break;
             case TRUE:
-                if (wavetable->medium == wave_media->wave0_media) {
+                medium = wavetable->medium;
+                if (medium == wave_media->wave0_media) {
                     wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, wave_media->wave0_bank_id, wavetable->sample,
-                                                       wavetable->medium, CACHE_TEMPORARY);
-                } else if (wavetable->medium == wave_media->wave1_media) {
+                                                       (s8)wavetable->medium, CACHE_TEMPORARY);
+                } else if (medium == wave_media->wave1_media) {
                     wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, wave_media->wave1_bank_id, wavetable->sample,
-                                                       wavetable->medium, CACHE_TEMPORARY);
-                } else if (wavetable->medium == MEDIUM_DISK_DRIVE) {
-                    wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, 0xFE, wavetable->sample, wavetable->medium,
+                                                       (s8)wavetable->medium, CACHE_TEMPORARY);
+                } else if (medium == MEDIUM_DISK_DRIVE) {
+                    wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, 0xFE, wavetable->sample, (s8)wavetable->medium,
                                                        CACHE_TEMPORARY);
                 }
                 break;

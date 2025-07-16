@@ -217,7 +217,7 @@ extern void Na_GetStaffRollInfo(StaffRollInfo_c* info) {
             break;
     }
 
-    temp = info->beat * 48;
+    temp = info->beat * AUDIO_TATUMS_PER_BEAT;
     info->_01 = counter / temp;
     counter -= info->_01 * temp;
     info->percent = (f32)counter / temp;

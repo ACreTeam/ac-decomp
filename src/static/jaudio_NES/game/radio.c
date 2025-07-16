@@ -35,7 +35,7 @@ int Na_GetRadioCounter(Radio_c* radio) {
         radio->measure_progress = counter / 768.0f;
     }
 
-    radio->tempo = AG.groups[sou_now_bgm_handle].tempo / 48;
+    radio->tempo = AG.groups[sou_now_bgm_handle].tempo / AUDIO_TATUMS_PER_BEAT;
     tempo = radio->tempo;
     return 0;
 }

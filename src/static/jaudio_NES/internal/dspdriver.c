@@ -46,6 +46,14 @@ void InitDSPchannel()
 	}
 }
 
+typedef enum DSPChannelAllocState {
+	DSPCHAN_Free          = 0, // Channel is available for allocation
+	DSPCHAN_MonoAllocated = 1, // Channel allocated for mono playback
+	DSPCHAN_StereoLeft    = 2, // Left channel of stereo pair
+	DSPCHAN_StereoRight   = 3, // Right channel of stereo pair
+	DSPCHAN_Stopping      = 4  // Channel is being force stopped
+} DSPChannelAllocState;
+
 /*
  * --INFO--
  * Address:	8000AD60
@@ -53,16 +61,17 @@ void InitDSPchannel()
  */
 dspch_* AllocDSPchannel(u32 param_1, u32 param_2)
 {
-    jc_* jc = (jc_*)param_2;
+
 	s32 i;
-	
+	u8 __stack_pad[1];
+	jc_* p2 = (jc_*)param_2;
+	s32* ip = &i;
 	if (param_1 == 0) {
 
 		for (i = 0; i < DSPCH_LENGTH; ++i) {
-			if (DSPCH[i]._01 == 0) {
-                // @nonmatching - r0/r6 regswap
-                DSPCH[i]._01 = true;
-				DSPCH[i]._08 = jc;
+			if (DSPCH[i]._01 == DSPCHAN_Free) {
+				DSPCH[i]._01 = DSPCHAN_MonoAllocated;
+                DSPCH[i]._08 = p2;
 				DSPCH[i]._03 = 1;
 				DSP_AllocInit(i);
 				return &DSPCH[i];
@@ -73,13 +82,13 @@ dspch_* AllocDSPchannel(u32 param_1, u32 param_2)
 
 	for (i = 1; i < DSPCH_LENGTH; i += 2) {
 
-		if (DSPCH[i]._01 || DSPCH[i - 1]._01)
+		if (DSPCH[i]._01 != DSPCHAN_Free || DSPCH[i - 1]._01 != DSPCHAN_Free)
 			continue;
 
-		DSPCH[i]._01     = 3;
-		DSPCH[i - 1]._01 = 2;
-		DSPCH[i]._08     = (jc_*)param_2;
-		DSPCH[i - 1]._08 = (jc_*)param_2;
+		DSPCH[i]._01      = DSPCHAN_StereoRight;
+		DSPCH[i - 1]._01  = DSPCHAN_StereoLeft;
+		DSPCH[i]._08     = p2;
+		DSPCH[i - 1]._08 = p2;
 		DSP_AllocInit(i);
 		DSP_AllocInit(i - 1);
 		return &DSPCH[i - 1];

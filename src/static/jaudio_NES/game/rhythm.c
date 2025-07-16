@@ -331,7 +331,7 @@ static s8 Na_GetRhythmSeNum(s8 num, sub* sub) {
 
 extern void Na_GetRhythmInfo(TempoBeat_c* tempo) {
     if (tempo != nullptr) {
-        tempo->tempo = (AG.groups[2].tempo / 48);
+        tempo->tempo = (AG.groups[2].tempo / AUDIO_TATUMS_PER_BEAT);
         tempo->beat = Na_GetRhythmBeatType();
     }
 }
@@ -348,10 +348,10 @@ extern void Na_SetRhythmInfo(TempoBeat_c* tempo) {
 }
 
 static void tempo_adjust(group* group) {
-    int tempo = (AG.groups[2].tempo / 48);
+    int tempo = (AG.groups[2].tempo / AUDIO_TATUMS_PER_BEAT);
     int newTempo;
     if (AG.groups[sou_now_bgm_handle].flags.enabled != 0) {
-        newTempo = (AG.groups[sou_now_bgm_handle].tempo / 48);
+        newTempo = (AG.groups[sou_now_bgm_handle].tempo / AUDIO_TATUMS_PER_BEAT);
 
         if (tempo > newTempo) {
             tempo--;
@@ -359,7 +359,7 @@ static void tempo_adjust(group* group) {
             tempo++;
         }
     }
-    group->tempo = tempo * 48;
+    group->tempo = tempo * AUDIO_TATUMS_PER_BEAT;
 }
 
 static s8 Na_RhythmGrpProcess(s8 arg0, group* group) {
@@ -368,7 +368,7 @@ static s8 Na_RhythmGrpProcess(s8 arg0, group* group) {
     int r30;
     int r31;
     int ret = 1;
-    r29 = 24;
+    r29 = AUDIO_TATUMS_PER_BEAT / 2;
     static int pre_beat_type = -1;
     static int pre_frame_per_step = -1;
 
@@ -380,7 +380,7 @@ static s8 Na_RhythmGrpProcess(s8 arg0, group* group) {
             r29 = 16;
         }
     } else {
-        r29 = 24;
+        r29 = AUDIO_TATUMS_PER_BEAT / 2;
     }
 
     /* random call to arg0 so it is stored on the stack, can also do (void)arg0 */
@@ -392,7 +392,7 @@ static s8 Na_RhythmGrpProcess(s8 arg0, group* group) {
     } else if (Na_GetRhythmBeatType() == 0) {
         r27 = r31 + 32;
     } else {
-        r27 = r31 + 24;
+        r27 = r31 + AUDIO_TATUMS_PER_BEAT / 2;
     }
 
     if (pre_beat_type != rhythm_beat_type) {
@@ -410,11 +410,11 @@ static s8 Na_RhythmGrpProcess(s8 arg0, group* group) {
         r30 = 0;
     }
 
-    if (r30 > 24) {
-        r30 -= 48;
+    if (r30 > (AUDIO_TATUMS_PER_BEAT / 2)) {
+        r30 -= AUDIO_TATUMS_PER_BEAT;
     }
-    if (r30 < -24) {
-        r30 += 48;
+    if (r30 < (-AUDIO_TATUMS_PER_BEAT / 2)) {
+        r30 += AUDIO_TATUMS_PER_BEAT;
     }
 
     if (r30 > 1 || r30 < -1) {

@@ -175,7 +175,7 @@ static void Init_Track(seqp_* track, u32 dataAddress, seqp_* parent)
 		track->baseData         = (u8*)dataAddress;
 		track->programCounter   = 0;
 		track->tempo            = 120;
-		track->timeBase         = 48;
+		track->timeBase         = AUDIO_TATUMS_PER_BEAT;
 		track->timeRelationMode = 1;
 		track->isPaused         = FALSE;
 		track->pauseStatus      = 10;
