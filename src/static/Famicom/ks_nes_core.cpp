@@ -3077,9 +3077,9 @@ entry ksNesInit03
     blr
 
 entry ksNesInit04
-    // state_temp->_1840 = (void *)0x8003c8e8; // ksNesLinecntIrq04
-    lis r8, 0x8003 // ksNesLinecntIrq04@h
-    ori r8, r8, 0xc8e8 // ksNesLinecntIrq04@l
+    // state_temp->_1840 = ksNesLinecntIrq04;
+    lis r8, ksNesLinecntIrq04@h
+    ori r8, r8, ksNesLinecntIrq04@l
     stw r8, state_temp->_1840
 
     blr
@@ -3110,19 +3110,19 @@ init_05:
     li r8, 0x01
     stb r8, state_temp->_17B0[4]
 
-    // state_temp->store_func[2] = (void *)0x8003cba0; // ksNesStore05_4000
-    lis r8, 0x8003 // ksNesStore05_4000@h
-    ori r8, r8, 0xcba0 // ksNesStore05_4000@l
+    // state_temp->store_func[2] = ksNesStore05_4000
+    lis r8, ksNesStore05_4000@h
+    ori r8, r8, ksNesStore05_4000@l
     stw r8, state_temp->store_func[2]
 
-    // state_temp->load_func[2] = (void *)0x8003d01c; // ksNesLoad05_4000
-    lis r8, 0x8003 // ksNesLoad05_4000@h
-    ori r8, r8, 0xd01c // ksNesLoad05_4000@l
+    // state_temp->load_func[2] = ksNesLoad05_4000
+    lis r8, ksNesLoad05_4000@h 
+    ori r8, r8, ksNesLoad05_4000@l
     stw r8, state_temp->load_func[2]
 
-    // state_temp->_1840 = (void *)0x8003cb8c; // ksNesLinecntIrq05Vcount
-    lis r8, 0x8003 // ksNesLinecntIrq05Vcount@h
-    ori r8, r8, 0xcb8c // ksNesLinecntIrq05Vcount@l
+    // state_temp->_1840 = ksNesLinecntIrq05Vcount
+    lis r8, ksNesLinecntIrq05Vcount@h
+    ori r8, r8, ksNesLinecntIrq05Vcount@l
     stw r8, state_temp->_1840
 
     blr
@@ -3144,9 +3144,9 @@ entry ksNesInit09
     blr
 
 entry ksNesInit12
-    // state_temp->_1840 = (void *)0x8003d1e4; // ksNesLinecntIrq49
-    lis r8, 0x8003 // ksNesLinecntIrq49@h
-    ori r8, r8, 0xd1e4 // ksNesLinecntIrq49@l
+    // state_temp->_1840 = ksNesLinecntIrq49
+    lis r8, ksNesLinecntIrq49@h 
+    ori r8, r8, ksNesLinecntIrq49@l 
     stw r8, state_temp->_1840
 
     blr
@@ -3163,27 +3163,27 @@ entry ksNesInit13
     blr
 
 init_13:
-    // state_temp->store_func[2] = (void *)0x8003d368; // ksNesStore13_4000
-    lis r8, 0x8003 // ksNesStore13_4000@h
-    ori r8, r8, 0xd368 // ksNesStore13_4000@l
+    // state_temp->store_func[2] = ksNesStore13_4000
+    lis r8, ksNesStore13_4000@h
+    ori r8, r8, ksNesStore13_4000@l
     stw r8, state_temp->store_func[2]
 
-    // state_temp->load_func[2] = (void *)0x8003d3dc; // ksNesLoad13_4000
-    lis r8, 0x8003 // ksNesLoad13_4000@h
-    ori r8, r8, 0xd3dc // ksNesLoad13_4000@l
+    // state_temp->load_func[2] = ksNesLoad13_4000
+    lis r8, ksNesLoad13_4000@h
+    ori r8, r8, ksNesLoad13_4000@l
     stw r8, state_temp->load_func[2]
 
-    // state_temp->_1840 = (void *)0x8003d1e4; // ksNesLinecntIrq49
-    lis r8, 0x8003 // ksNesLinecntIrq49@h
-    ori r8, r8, 0xd1e4 // ksNesLinecntIrq49@l
+    // state_temp->_1840 = ksNesLinecntIrq49
+    lis r8, ksNesLinecntIrq49@h
+    ori r8, r8, ksNesLinecntIrq49@l
     stw r8, state_temp->_1840
 
     blr
 
 entry ksNesInit15
-    // state_temp->_1840 = (void *)0x8003d754; // ksNesLinecntIrq19
-    lis r8, 0x8003 // ksNesLinecntIrq19@h
-    ori r8, r8, 0xd754 // ksNesLinecntIrq19@l
+    // state_temp->_1840 = ksNesLinecntIrq19
+    lis r8, ksNesLinecntIrq19@h
+    ori r8, r8, ksNesLinecntIrq19@l
     stw r8, state_temp->_1840
 
     blr
@@ -3193,9 +3193,9 @@ entry ksNesInit18
     li r8, 0x01
     stb r8, state_temp->_17B0[0x1e]
 
-    // state_temp->_1840 = (void *)0x8003d5d8; // ksNesLinecntIrq18
-    lis r8, 0x8003 // ksNesLinecntIrq18@h
-    ori r8, r8, 0xd5d8 // ksNesLinecntIrq18@l
+    // state_temp->_1840 = ksNesLinecntIrq18
+    lis r8, ksNesLinecntIrq18@h
+    ori r8, r8, ksNesLinecntIrq18@l
     stw r8, state_temp->_1840
 
     blr
@@ -3209,9 +3209,9 @@ entry ksNesInit1a
     li r8, 0x02;
     stb r8, state_temp->_17B0[0x1e]
 
-    // state_temp->_1840 = (void *)0x8003d5d8; // ksNesLinecntIrq18
-    lis r8, 0x8003 // ksNesLinecntIrq18@h
-    ori r8, r8, 0xd5d8 // ksNesLinecntIrq18@l
+    // state_temp->_1840 = ksNesLinecntIrq18
+    lis r8, ksNesLinecntIrq18@h
+    ori r8, r8, ksNesLinecntIrq18@l
     stw r8, state_temp->_1840
 
     blr
@@ -3228,38 +3228,38 @@ entry ksNesInit42
     blr
 
 entry ksNesInit43
-    // state_temp->_1840 = (void *)0x8003d928; // ksNesLinecntIrq43
-    lis r8, 0x8003 // ksNesLinecntIrq43@h
-    ori r8, r8, 0xd928 // ksNesLinecntIrq43@l
+    // state_temp->_1840 = ksNesLinecntIrq43
+    lis r8, ksNesLinecntIrq43@h
+    ori r8, r8, ksNesLinecntIrq43@l
     stw r8, state_temp->_1840
 
     blr
 
 entry ksNesInit45
-    // state_temp->_1840 = (void *)0x8003d1e4; // ksNesLinecntIrq49
-    lis r8, 0x8003 // ksNesLinecntIrq49@h
-    ori r8, r8, 0xd1e4 // ksNesLinecntIrq49@l
+    // state_temp->_1840 = ksNesLinecntIrq49
+    lis r8, ksNesLinecntIrq49@h
+    ori r8, r8, ksNesLinecntIrq49@l
     stw r8, state_temp->_1840
 
-    // state_temp->store_func[3] = (void*)0x8003ada4; // ksNesLinecntIrqDefault
-    lis r8, 0x8003 // ksNesLinecntIrqDefault@h
-    ori r8, r8, 0xada4 // ksNesLinecntIrqDefault@l
+    // state_temp->store_func[3] = ksNesLinecntIrqDefault
+    lis r8, ksNesLinecntIrqDefault@h
+    ori r8, r8, ksNesLinecntIrqDefault@l
     stw r8, state_temp->store_func[3]
 
     blr
 
 entry ksNesInit49
-    // state_temp->_1840 = (void *)0x8003d1e4; // ksNesLinecntIrq49
-    lis r8, 0x8003 // ksNesLinecntIrq49@h
-    ori r8, r8, 0xd1e4 // ksNesLinecntIrq49@l
+    // state_temp->_1840 = ksNesLinecntIrq49
+    lis r8, ksNesLinecntIrq49@h
+    ori r8, r8, ksNesLinecntIrq49@l
     stw r8, state_temp->_1840
 
     blr
 
 entry ksNesInit56
-    // state_temp->store_func[3] = (void *)0x8003dd3c; // ksNesStore56_6000
-    lis r8, 0x8003 // ksNesStore56_6000@h
-    ori r8, r8, 0xdd3c // ksNesStore56_6000@l
+    // state_temp->store_func[3] = ksNesStore56_6000
+    lis r8, ksNesStore56_6000@h
+    ori r8, r8, ksNesStore56_6000@l 
     stw r8, state_temp->store_func[3]
 
     blr
