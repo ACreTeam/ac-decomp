@@ -106,7 +106,6 @@ u8 ksNesInitQDDataTbl[11] = {
 
 typedef void (*STORE_05_FUNC)(u32, u32);
 
-// 0x800D667C
 STORE_05_FUNC ksNesStore05FuncTbl[] = {
     (STORE_05_FUNC)ksNesStore05_5100,
     (STORE_05_FUNC)ksNesStore05_5101,
@@ -6513,8 +6512,8 @@ L_8003D328:
     cmpwi r7, 0x0
     bne ksNesLinecntIrqDefault
     extrwi r8, r4, 4, 26
-    lis r7, 0x800d
-    ori r7, r7, 0x67c0
+    lis r7, ksNesVoiceIdTable_12@h
+    ori r7, r7, ksNesVoiceIdTable_12@l
     lbzx r3, r7, r8
 L_8003D354:
     lwz r9, 0x185c(state_temp)
@@ -7391,5 +7390,4 @@ L_8003DE94:
 
 // clang-format on
 
-// address: 0x8003bfdc
 // void ksNesStoreBBRAM() {}
