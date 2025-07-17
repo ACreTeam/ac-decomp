@@ -25361,3 +25361,13 @@ modules:
     header: assets/obj_s_house_i_pal.inc
     header_type: none
     custom_type: pal16
+
+  - symbol: act_ant_tex
+    binary: assets/act_ant_tex.bin
+    header: assets/act_ant_tex.inc
+    header_type: raw
+
+  - symbol: act_ant_v
+    binary: assets/act_ant_v.bin
+    header: assets/act_ant_v.inc
+    custom_type: vtx
