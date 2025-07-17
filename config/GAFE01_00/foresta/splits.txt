@@ -3627,7 +3627,7 @@ f_furniture.c:
 	.rodata     start:0x0000C100 end:0x0000C28C
 	.data       start:0x00087840 end:0x00092DA0
 
-data/dataobject/dataobject_92DA0:
+data/model/glider.c:
 	.data       start:0x00092DA0 end:0x00092EA0
 
 data/npc/model/mdl/bev_1.c:
@@ -3636,10 +3636,10 @@ data/npc/model/mdl/bev_1.c:
 data/npc/model/tex/bev_1.c:
 	.data       start:0x000952E0 end:0x00096000
 
-data/npc/model/mdl/act_ant.c:
+data/model/act_ant.c:
 	.data       start:0x00096000 end:0x00096328
 
-data/npc/model/mdl/act_ant_anim.c:
+data/model/act_ant_anim.c:
 	.data       start:0x00096328 end:0x00096338
 
 data/npc/model/mdl/ant_1.c:

@@ -2631,8 +2631,9 @@ config.libs = [
             Object(Matching, "data/field/mvactor/tent.c"),
             Object(Matching, "data/field/mvactor/title_demo.c"),
             Object(Matching, "data/field/mvactor/water_test.c"),
-            Object(Matching, "data/npc/model/mdl/act_ant.c"),
-            Object(Matching, "data/npc/model/mdl/act_ant_anim.c"),
+            Object(Matching, "data/model/act_ant.c"),
+            Object(Matching, "data/model/act_ant_anim.c"),
+            Object(Matching, "data/model/glider.c"),
         ],
     ),
 ]

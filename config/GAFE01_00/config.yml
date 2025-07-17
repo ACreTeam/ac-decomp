@@ -25371,3 +25371,8 @@ modules:
     binary: assets/act_ant_v.bin
     header: assets/act_ant_v.inc
     custom_type: vtx
+
+  - symbol: glider_v
+    binary: assets/glider_v.bin
+    header: assets/glider_v.inc
+    custom_type: vtx
