@@ -3639,7 +3639,7 @@ data/npc/model/tex/bev_1.c:
 data/npc/model/mdl/act_ant.c:
 	.data       start:0x00096000 end:0x00096328
 
-data/dataobject/dataobject_96328.c:
+data/npc/model/mdl/act_ant_anim.c:
 	.data       start:0x00096328 end:0x00096338
 
 data/npc/model/mdl/ant_1.c:
