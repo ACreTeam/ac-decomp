@@ -5,7 +5,7 @@ from dataclasses import dataclass
 def SEGMENT_ADDR(num, off): return (((num) << 24) + (off))
 
 
-SHOW_CODE = True
+SHOW_CODE = False
 
 SOFTSPRITE_MTX_SEG = 0x07
 ANIME_1_TXT_SEG = 0x08
