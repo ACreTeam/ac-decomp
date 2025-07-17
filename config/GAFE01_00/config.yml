@@ -25370,9 +25370,28 @@ modules:
   - symbol: act_ant_v
     binary: assets/act_ant_v.bin
     header: assets/act_ant_v.inc
+    header_type: none
     custom_type: vtx
 
   - symbol: glider_v
     binary: assets/glider_v.bin
     header: assets/glider_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_ball_b_pal
+    binary: assets/act_ball_b_pal.bin
+    header: assets/act_ball_b_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_ball_b_1_tex
+    binary: assets/act_ball_b_1_tex.bin
+    header: assets/act_ball_b_1_tex.inc
+    header_type: raw
+    
+  - symbol: act_ball_b_v
+    binary: assets/act_ball_b_v.bin
+    header: assets/act_ball_b_v.inc
+    header_type: none
     custom_type: vtx

@@ -3678,10 +3678,16 @@ data/scene/broker_shop.c:
 data/scene/buggy.c:
 	.data       start:0x0009FBC0 end:0x0009FC28
 
-data/dataobject/dataobject_9FC28:
+data/model/act_ball_b.c:
 	.data       start:0x0009FC28 end:0x0009FFD8
+
+data/dataobject/dataobject_9FFD8:
 	.data       start:0x0009FFD8 end:0x000A0738
+
+data/dataobject/dataobject_A0738:
 	.data       start:0x000A0738 end:0x000A1120
+
+data/dataobject/dataobject_A1120:
 	.data       start:0x000A1120 end:0x000A1B78
 
 data/npc/model/mdl/bea_1.c:
