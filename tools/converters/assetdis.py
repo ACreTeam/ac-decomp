@@ -153,12 +153,16 @@ def lookup_bins_and_symbols(lines: list[str], name: str):
     data_lines = lines[begin_ind+1:end_ind]
 
     for line in data_lines:
-        data = line.split(".4byte ")[1]
-        try:
-            out_bin.extend(int(data, 16).to_bytes(4, 'big'))
-        except Exception as e:
+        if ".4byte" in line:
+            data = line.split(".4byte ")[1]
+            try:
+                out_bin.extend(int(data, 16).to_bytes(4, 'big'))
+            except Exception as e:
+                out_bin.extend(b'\0\0\0\0')
+                out_symbols.append(data)
+        elif ".rel" in line:
             out_bin.extend(b'\0\0\0\0')
-            out_symbols.append(data)
+            out_symbols.append(f"&{line.split(".rel ")[1].split(",")[0]}[xxx]")
     return out_bin, out_symbols
 
 

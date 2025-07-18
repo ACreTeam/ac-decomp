@@ -3681,7 +3681,7 @@ data/scene/buggy.c:
 data/model/act_ball_b.c:
 	.data       start:0x0009FC28 end:0x0009FFD8
 
-data/dataobject/dataobject_9FFD8:
+data/model/act_ball_d.c:
 	.data       start:0x0009FFD8 end:0x000A0738
 
 data/dataobject/dataobject_A0738:

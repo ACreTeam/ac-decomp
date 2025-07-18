@@ -2635,6 +2635,7 @@ config.libs = [
             Object(Matching, "data/model/act_ant_anim.c"),
             Object(Matching, "data/model/glider.c"),
             Object(Matching, "data/model/act_ball_b.c"),
+            Object(Matching, "data/model/act_ball_d.c"),
         ],
     ),
 ]

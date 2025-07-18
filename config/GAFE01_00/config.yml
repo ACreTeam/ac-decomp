@@ -25395,3 +25395,30 @@ modules:
     header: assets/act_ball_b_v.inc
     header_type: none
     custom_type: vtx
+
+  - symbol: act_ball_d_v
+    binary: assets/act_ball_d_v.bin
+    header: assets/act_ball_d_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_ball_d_pal
+    binary: assets/act_ball_d_pal.bin
+    header: assets/act_ball_d_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_ball_d_1_tex
+    binary: assets/act_ball_d_1_tex.bin
+    header: assets/act_ball_d_1_tex.inc
+    header_type: raw
+
+  - symbol: act_ball_d_2_tex
+    binary: assets/act_ball_d_2_tex.bin
+    header: assets/act_ball_d_2_tex.inc
+    header_type: raw
+
+  - symbol: act_ball_d_3_tex
+    binary: assets/act_ball_d_3_tex.bin
+    header: assets/act_ball_d_3_tex.inc
+    header_type: raw
