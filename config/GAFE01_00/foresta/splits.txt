@@ -3720,14 +3720,28 @@ data/npc/model/tex/bea_9.c:
 data/npc/model/tex/bea_10.c:
 	.data       start:0x000ACC40 end:0x000ADE60
 
-data/dataobject/dataobject_ADE60:
+data/model/act_bee.c:
 	.data       start:0x000ADE60 end:0x000AE620
+
+data/model/f_honeycomb.c:
 	.data       start:0x000AE620 end:0x000AE920
+
+data/model/f_tree.c:
 	.data       start:0x000AE920 end:0x000AEB40
+
+data/model/f_tree1.c:
 	.data       start:0x000AEB40 end:0x000AECE0
+
+data/model/f_tree2.c:
 	.data       start:0x000AECE0 end:0x000AF5C0
+
+data/model/f_tree3.c:
 	.data       start:0x000AF5C0 end:0x000AFF40
+
+data/model/f_tree4.c:
 	.data       start:0x000AFF40 end:0x000B0918
+
+data/model/f_tree5.c:
 	.data       start:0x000B0918 end:0x000B0B48
 
 data/field/bg/acre/bg_data.c:

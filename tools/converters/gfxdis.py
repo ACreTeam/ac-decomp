@@ -1549,8 +1549,8 @@ def gfx_gsSPSettImg(data):
         return gf_call("gsDPSetTextureImage_Dolphin", data,
                        B2A(21, 3, DU, strarg_fmt),
                        B2A(19, 2, DU, strarg_siz),
-                       B2A(10, 8, DU, lambda x: str((x+1)*4)),
                        B2A(0, 10, DU, lambda x: str(x+1)),
+                       B2A(10, 8, DU, lambda x: str((x+1)*4)),
                        GFX_SYMBOL)
     else:
         return gf_call("gsDPSetTextureImage", data,

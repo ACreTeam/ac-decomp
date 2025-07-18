@@ -25455,4 +25455,92 @@ modules:
     header: assets/act_balloon_v.inc
     header_type: none
     custom_type: vtx
+
+  - symbol: act_bee_tex_txt
+    binary: assets/act_bee_tex_txt.bin
+    header: assets/act_bee_tex_txt.inc
+    header_type: raw
     
+  - symbol: act_bee_v
+    binary: assets/act_bee_v.bin
+    header: assets/act_bee_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_f_honeycomb_pal
+    binary: assets/obj_f_honeycomb_pal.bin
+    header: assets/obj_f_honeycomb_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: obj_f_honeycomb_tex
+    binary: assets/obj_f_honeycomb_tex.bin
+    header: assets/obj_f_honeycomb_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_honeycomb_v
+    binary: assets/obj_f_honeycomb_v.bin
+    header: assets/obj_f_honeycomb_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_f_tree_baby_tex
+    binary: assets/obj_f_tree_baby_tex.bin
+    header: assets/obj_f_tree_baby_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_tree1_v
+    binary: assets/obj_f_tree1_v.bin
+    header: assets/obj_f_tree1_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_f_tree_dead_tex
+    binary: assets/obj_f_tree_dead_tex.bin
+    header: assets/obj_f_tree_dead_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_tree1_dead_v
+    binary: assets/obj_f_tree1_dead_v.bin
+    header: assets/obj_f_tree1_dead_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_f_tree_young_tex
+    binary: assets/obj_f_tree_young_tex.bin
+    header: assets/obj_f_tree_young_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_tree2_v
+    binary: assets/obj_f_tree2_v.bin
+    header: assets/obj_f_tree2_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_f_tree_leaf_tex
+    binary: assets/obj_f_tree_leaf_tex.bin
+    header: assets/obj_f_tree_leaf_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_tree3_v
+    binary: assets/obj_f_tree3_v.bin
+    header: assets/obj_f_tree3_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_f_tree_trunk_tex
+    binary: assets/obj_f_tree_trunk_tex.bin
+    header: assets/obj_f_tree_trunk_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_tree4_v
+    binary: assets/obj_f_tree4_v.bin
+    header: assets/obj_f_tree4_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_f_tree5_v
+    binary: assets/obj_f_tree5_v.bin
+    header: assets/obj_f_tree5_v.inc
+    header_type: none
+    custom_type: vtx
