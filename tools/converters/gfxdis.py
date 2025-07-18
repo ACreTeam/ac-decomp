@@ -1633,6 +1633,17 @@ def gfx_gsDPSetTileSize(data):
                    )
 
 
+def gfx_gsSp1Triangle(data):
+    def _C(v):
+        return str(v//2)
+    return gf_call("gsSP1Triangle", data,
+                   B2A(16, 8, DU, _C),
+                   B2A(8, 8, DU, _C),
+                   B2A(0, 8, DU, _C),
+                   B2A(0, 1, DU, lambda _: "0")
+                   )
+
+
 def gfx_gsDPSetTile_Dolphin(data):
     return gf_call("gsDPSetTile_Dolphin", data, B2A(20, 4, DU, strarg_dolphintile), B2A(16, 3, DU), B2A(12, 4, DU), B2A(10, 2, DU, strarg_texwrap), B2A(8, 2, DU, strarg_texwrap), B2A(4, 4, DU), B2A(4, 4, DU))
 
@@ -1687,6 +1698,7 @@ extended_func = None
 
 
 def gfx_gsSPNTrianglesInit(data):
+    global triangle_count, extended_func
     assert (extract_data_lower(data, 0, 1) == 0)
     # if extract_data_lower(data, 0, 1) == 0:
     #     count = extract_data_upper(data, 17, 7) + 1
@@ -1765,6 +1777,7 @@ GFX_LOOKUP = {
     G_SETTILE: gfx_gsDPSetTile,
     G_LOADBLOCK: gfx_gsDPLoadBlock,
     G_SETTILESIZE: gfx_gsDPSetTileSize,
+    G_TRI1: gfx_gsSp1Triangle,
 }
 
 

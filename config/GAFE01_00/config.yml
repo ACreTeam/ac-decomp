@@ -25422,3 +25422,37 @@ modules:
     binary: assets/act_ball_d_3_tex.bin
     header: assets/act_ball_d_3_tex.inc
     header_type: raw
+
+  - symbol: act_ball_s_pal
+    binary: assets/act_ball_s_pal.bin
+    header: assets/act_ball_s_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_ball_s_5_tex
+    binary: assets/act_ball_s_5_tex.bin
+    header: assets/act_ball_s_5_tex.inc
+    header_type: raw
+
+  - symbol: act_ball_s_v
+    binary: assets/act_ball_s_v.bin
+    header: assets/act_ball_s_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_balloon_wire_tex_txt
+    binary: assets/act_balloon_wire_tex_txt.bin
+    header: assets/act_balloon_wire_tex_txt.inc
+    header_type: raw
+
+  - symbol: act_balloon_head_tex_rgb_ia8
+    binary: assets/act_balloon_head_tex_rgb_ia8.bin
+    header: assets/act_balloon_head_tex_rgb_ia8.inc
+    header_type: raw
+
+  - symbol: act_balloon_v
+    binary: assets/act_balloon_v.bin
+    header: assets/act_balloon_v.inc
+    header_type: none
+    custom_type: vtx
+    

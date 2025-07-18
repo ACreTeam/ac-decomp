@@ -3684,10 +3684,10 @@ data/model/act_ball_b.c:
 data/model/act_ball_d.c:
 	.data       start:0x0009FFD8 end:0x000A0738
 
-data/dataobject/dataobject_A0738:
+data/model/act_ball_s.c:
 	.data       start:0x000A0738 end:0x000A1120
 
-data/dataobject/dataobject_A1120:
+data/model/act_balloon.c:
 	.data       start:0x000A1120 end:0x000A1B78
 
 data/npc/model/mdl/bea_1.c:
