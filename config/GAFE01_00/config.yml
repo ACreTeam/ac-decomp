@@ -25361,3 +25361,186 @@ modules:
     header: assets/obj_s_house_i_pal.inc
     header_type: none
     custom_type: pal16
+
+  - symbol: act_ant_tex
+    binary: assets/act_ant_tex.bin
+    header: assets/act_ant_tex.inc
+    header_type: raw
+
+  - symbol: act_ant_v
+    binary: assets/act_ant_v.bin
+    header: assets/act_ant_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: glider_v
+    binary: assets/glider_v.bin
+    header: assets/glider_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_ball_b_pal
+    binary: assets/act_ball_b_pal.bin
+    header: assets/act_ball_b_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_ball_b_1_tex
+    binary: assets/act_ball_b_1_tex.bin
+    header: assets/act_ball_b_1_tex.inc
+    header_type: raw
+    
+  - symbol: act_ball_b_v
+    binary: assets/act_ball_b_v.bin
+    header: assets/act_ball_b_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_ball_d_v
+    binary: assets/act_ball_d_v.bin
+    header: assets/act_ball_d_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_ball_d_pal
+    binary: assets/act_ball_d_pal.bin
+    header: assets/act_ball_d_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_ball_d_1_tex
+    binary: assets/act_ball_d_1_tex.bin
+    header: assets/act_ball_d_1_tex.inc
+    header_type: raw
+
+  - symbol: act_ball_d_2_tex
+    binary: assets/act_ball_d_2_tex.bin
+    header: assets/act_ball_d_2_tex.inc
+    header_type: raw
+
+  - symbol: act_ball_d_3_tex
+    binary: assets/act_ball_d_3_tex.bin
+    header: assets/act_ball_d_3_tex.inc
+    header_type: raw
+
+  - symbol: act_ball_s_pal
+    binary: assets/act_ball_s_pal.bin
+    header: assets/act_ball_s_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_ball_s_5_tex
+    binary: assets/act_ball_s_5_tex.bin
+    header: assets/act_ball_s_5_tex.inc
+    header_type: raw
+
+  - symbol: act_ball_s_v
+    binary: assets/act_ball_s_v.bin
+    header: assets/act_ball_s_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_balloon_wire_tex_txt
+    binary: assets/act_balloon_wire_tex_txt.bin
+    header: assets/act_balloon_wire_tex_txt.inc
+    header_type: raw
+
+  - symbol: act_balloon_head_tex_rgb_ia8
+    binary: assets/act_balloon_head_tex_rgb_ia8.bin
+    header: assets/act_balloon_head_tex_rgb_ia8.inc
+    header_type: raw
+
+  - symbol: act_balloon_v
+    binary: assets/act_balloon_v.bin
+    header: assets/act_balloon_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_bee_tex_txt
+    binary: assets/act_bee_tex_txt.bin
+    header: assets/act_bee_tex_txt.inc
+    header_type: raw
+    
+  - symbol: act_bee_v
+    binary: assets/act_bee_v.bin
+    header: assets/act_bee_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_f_honeycomb_pal
+    binary: assets/obj_f_honeycomb_pal.bin
+    header: assets/obj_f_honeycomb_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: obj_f_honeycomb_tex
+    binary: assets/obj_f_honeycomb_tex.bin
+    header: assets/obj_f_honeycomb_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_honeycomb_v
+    binary: assets/obj_f_honeycomb_v.bin
+    header: assets/obj_f_honeycomb_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_f_tree_baby_tex
+    binary: assets/obj_f_tree_baby_tex.bin
+    header: assets/obj_f_tree_baby_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_tree1_v
+    binary: assets/obj_f_tree1_v.bin
+    header: assets/obj_f_tree1_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_f_tree_dead_tex
+    binary: assets/obj_f_tree_dead_tex.bin
+    header: assets/obj_f_tree_dead_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_tree1_dead_v
+    binary: assets/obj_f_tree1_dead_v.bin
+    header: assets/obj_f_tree1_dead_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_f_tree_young_tex
+    binary: assets/obj_f_tree_young_tex.bin
+    header: assets/obj_f_tree_young_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_tree2_v
+    binary: assets/obj_f_tree2_v.bin
+    header: assets/obj_f_tree2_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_f_tree_leaf_tex
+    binary: assets/obj_f_tree_leaf_tex.bin
+    header: assets/obj_f_tree_leaf_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_tree3_v
+    binary: assets/obj_f_tree3_v.bin
+    header: assets/obj_f_tree3_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_f_tree_trunk_tex
+    binary: assets/obj_f_tree_trunk_tex.bin
+    header: assets/obj_f_tree_trunk_tex.inc
+    header_type: raw
+    
+  - symbol: obj_f_tree4_v
+    binary: assets/obj_f_tree4_v.bin
+    header: assets/obj_f_tree4_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_f_tree5_v
+    binary: assets/obj_f_tree5_v.bin
+    header: assets/obj_f_tree5_v.inc
+    header_type: none
+    custom_type: vtx
