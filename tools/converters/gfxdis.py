@@ -1650,9 +1650,9 @@ def gfx_gsDPSetTile_Dolphin(data):
 
 def gfx_dl(data):
     if extract_data_upper(data, 16, 8) == 0:
-        return gf_call("gsSPDisplayList", data, B2A(0, 32, DL, hex))
+        return gf_call("gsSPDisplayList", data, GFX_SYMBOL)
     else:
-        return gf_call("gsSPBranchList", data, B2A(0, 32, DL, hex))
+        return gf_call("gsSPBranchList", data, GFX_SYMBOL)
 
 
 def gfx_gsSPEndDisplayList(data):

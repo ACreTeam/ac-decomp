@@ -36,5 +36,8 @@ Gfx obj_f_honeycombT_mat_model[] = {
     gsSPEndDisplayList()
 };
 
-Gfx obj_f_honeycombT_gfx_model[] = { gsSPVertex(obj_f_honeycomb_v, 4, 0), gsSP2Triangles(0, 1, 2, 0, 0, 2, 3, 0),
-                                     gsSPEndDisplayList() };
+Gfx obj_f_honeycombT_gfx_model[] = {
+    gsSPVertex(obj_f_honeycomb_v, 4, 0),
+    gsSP2Triangles(0, 1, 2, 0, 0, 2, 3, 0),
+    gsSPEndDisplayList(),
+};
