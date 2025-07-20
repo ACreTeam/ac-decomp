@@ -3,6 +3,9 @@ from gfxdis import convert_binary_to_gfx
 from dataclasses import dataclass
 import struct
 
+ASSET_ALIGN = "ATTRIBUTE_ALIGN(32)"
+NO_ALIGN = ""
+
 
 @dataclass
 class struct_ref:
@@ -347,23 +350,23 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
             continue
         if type == "Vtx":
             data = f'#include "assets/{obj_name}.inc"'
-            converted_types[obj_name] = (type, data, "")
+            converted_types[obj_name] = (type, data, NO_ALIGN)
         elif type == "Gfx":
             data = convert_binary_to_gfx(
                 *lookup_bins_and_symbols(lines, obj_name))
-            converted_types[obj_name] = (type, data, "")
+            converted_types[obj_name] = (type, data, NO_ALIGN)
         elif type == "PAL":
             data = f'#include "assets/{obj_name}.inc"'
-            converted_types[obj_name] = ("u16", data, "")
+            converted_types[obj_name] = ("u16", data, ASSET_ALIGN)
         elif type == "TEX":
             data = f'#include "assets/{obj_name}.inc"'
-            converted_types[obj_name] = ("u8", data, "")
+            converted_types[obj_name] = ("u8", data, ASSET_ALIGN)
 
         elif type in lookup_table:
             res: struct_parse_result = lookup_table[type](
                 *lookup_bins_and_symbols2(lines, obj_name))
             data = res.formatted_str
-            converted_types[obj_name] = (type, data, "")
+            converted_types[obj_name] = (type, data, NO_ALIGN)
             if len(res.referenced_objects) > 0:
                 found_types = [(ref.symbol_name, ref.symbol_type)
                                for ref in res.referenced_objects] + found_types
@@ -371,7 +374,7 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
     out = header + "\n\n"
     for obj in all_objs:
         this_type, out_data, align = converted_types.get(
-            obj, ("u8", f'#include "assets/{obj}.inc"', ""))
+            obj, ("u8", f'#include "assets/{obj}.inc"', NO_ALIGN))
         out += f"{this_type} {obj}[] {align}= {{ \n{out_data}\n}};\n\n"
     # print(out)
     with open(dest_path, "w") as f:

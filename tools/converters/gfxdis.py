@@ -324,6 +324,8 @@ G_CYC_FILL = (3 << G_MDSFT_CYCLETYPE)
 G_PM_1PRIMITIVE = (1 << G_MDSFT_PIPELINE)
 G_PM_NPRIMITIVE = (0 << G_MDSFT_PIPELINE)
 
+G_TLUT_DOLPHIN = 2
+
 
 def GBL_c1(m1a, m1b, m2a, m2b): return (m1a) << 30 | (
     m1b) << 26 | (m2a) << 22 | (m2b) << 18
@@ -1573,7 +1575,10 @@ def gfx_gsDPLoadSync(data):
 
 
 def gfx_gsDPLoadTLUTCmd(data):
-    return gf_call("gsDPLoadTLUTCmd", data, B2A(24, 3, DL, strarg_tile), B2A(14, 10, DL))
+    if extract_data_upper(data, 22, 2) == G_TLUT_DOLPHIN:
+        return gf_call("gsDPLoadTLUT_Dolphin", data, B2A(16, 4, DU), B2A(0, 14, DU), B2A(14, 2, DU), GFX_SYMBOL)
+    else:
+        return gf_call("gsDPLoadTLUTCmd", data, B2A(24, 3, DL, strarg_tile), B2A(14, 10, DL))
 
 
 def gfx_SetCombineLERP(data):
