@@ -36,7 +36,7 @@ def strarg_animesegment(v):
         anime_3_txt: "anime_3_txt",
         anime_4_txt: "anime_4_txt",
         anime_5_txt: "anime_5_txt",
-        anime_6_txt: "anime_6_txt"
+        anime_6_txt: "anime_6_mdl"
     }.get(v, str(v))
 
 
@@ -53,7 +53,10 @@ def symbol_lookup(addr):
     else:
         seg = f"{strarg_animesegment(addr & 0xff000000)}"
         if (addr & 0x00ffffff):
-            seg += f" + 0x{addr & 0x00ffffff:X}"
+            if seg == "anime_6_mdl":
+                seg = f"&anime_6_mdl[{(addr & 0x00ffffff) // 0x40}]"
+            else:
+                seg += f" + 0x{addr & 0x00ffffff:X}"
         return seg
 
 
@@ -1649,6 +1652,14 @@ def gfx_gsSp1Triangle(data):
                    )
 
 
+def gfx_gsDPSetEnvColor(data):
+    return gf_call("gsDPSetEnvColor", data,
+                   B2A(24, 8, DL),
+                   B2A(16, 8, DL),
+                   B2A(8, 8, DL),
+                   B2A(0, 8, DL))
+
+
 def gfx_gsDPSetTile_Dolphin(data):
     return gf_call("gsDPSetTile_Dolphin", data, B2A(20, 4, DU, strarg_dolphintile), B2A(16, 3, DU), B2A(12, 4, DU), B2A(10, 2, DU, strarg_texwrap), B2A(8, 2, DU, strarg_texwrap), B2A(4, 4, DU), B2A(4, 4, DU))
 
@@ -1783,6 +1794,7 @@ GFX_LOOKUP = {
     G_LOADBLOCK: gfx_gsDPLoadBlock,
     G_SETTILESIZE: gfx_gsDPSetTileSize,
     G_TRI1: gfx_gsSp1Triangle,
+    G_SETENVCOLOR: gfx_gsDPSetEnvColor
 }
 
 

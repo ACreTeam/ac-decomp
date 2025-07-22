@@ -2771,6 +2771,9 @@ config.libs = [
             Object(NonMatching, "data/model/obj_x_cedar5.c"),
             Object(NonMatching, "data/model/obj_x_honeycomb.c"),
             Object(NonMatching, "data/model/obj_x_tree5.c"),
+            Object(Matching, "data/model/boy_model.c"),
+            Object(Matching, "data/model/player_anim.c"),
+            Object(Matching, "data/model/player_tool.c"),
         ],
     ),
 ]

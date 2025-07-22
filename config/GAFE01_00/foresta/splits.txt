@@ -4182,9 +4182,13 @@ data/npc/model/tex/brd_9.c:
 data/npc/model/tex/brd_10.c:
 	.data       start:0x001311A0 end:0x00131EC0
 
-data/dataobject/dataobject_131EC0:
+data/model/boy_model.c:
 	.data       start:0x00131EC0 end:0x001346F8
+
+data/model/player_anim.c:
 	.data       start:0x001346F8 end:0x00171E00
+
+data/model/player_tool.c:
 	.data       start:0x00171E00 end:0x00188A60
 
 data/player/BOY_part_data.c:

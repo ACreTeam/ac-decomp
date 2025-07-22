@@ -26006,3 +26006,809 @@ modules:
     header: assets/obj_notice_shadow_v.inc
     header_type: none
     custom_type: vtx
+                    
+  - symbol: boy_1_horn_tex_txt
+    binary: assets/boy_1_horn_tex_txt.bin
+    header: assets/boy_1_horn_tex_txt.inc
+    header_type: raw
+                        
+  - symbol: boy_1_skin_tex_txt
+    binary: assets/boy_1_skin_tex_txt.bin
+    header: assets/boy_1_skin_tex_txt.inc
+    header_type: raw
+                            
+  - symbol: boy_1_hole_tex_txt
+    binary: assets/boy_1_hole_tex_txt.bin
+    header: assets/boy_1_hole_tex_txt.inc
+    header_type: raw
+                                
+  - symbol: boy_1_shoe_tex_txt
+    binary: assets/boy_1_shoe_tex_txt.bin
+    header: assets/boy_1_shoe_tex_txt.inc
+    header_type: raw
+                                    
+  - symbol: boy_1_bottom_tex_txt
+    binary: assets/boy_1_bottom_tex_txt.bin
+    header: assets/boy_1_bottom_tex_txt.inc
+    header_type: raw
+                                        
+  - symbol: boy_1_foot_tex_txt
+    binary: assets/boy_1_foot_tex_txt.bin
+    header: assets/boy_1_foot_tex_txt.inc
+    header_type: raw
+        
+  - symbol: boy_1_pants_tex_txt
+    binary: assets/boy_1_pants_tex_txt.bin
+    header: assets/boy_1_pants_tex_txt.inc
+    header_type: raw
+
+  - symbol: boy_1_v
+    binary: assets/boy_1_v.bin
+    header: assets/boy_1_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: tol_axe_1_pal
+    binary: assets/tol_axe_1_pal.bin
+    header: assets/tol_axe_1_pal.inc
+    header_type: none
+    custom_type: pal16
+            
+  - symbol: tol_axe_1_tuka1_tex_txt
+    binary: assets/tol_axe_1_tuka1_tex_txt.bin
+    header: assets/tol_axe_1_tuka1_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_axe_1_edge2_tex_txt
+    binary: assets/tol_axe_1_edge2_tex_txt.bin
+    header: assets/tol_axe_1_edge2_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_axe_1_edge1_tex_txt
+    binary: assets/tol_axe_1_edge1_tex_txt.bin
+    header: assets/tol_axe_1_edge1_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_axe_1_v
+    binary: assets/tol_axe_1_v.bin
+    header: assets/tol_axe_1_v.inc
+    header_type: none
+    custom_type: vtx
+            
+  - symbol: tol_axe_1_b_pal
+    binary: assets/tol_axe_1_b_pal.bin
+    header: assets/tol_axe_1_b_pal.inc
+    header_type: none
+    custom_type: pal16
+            
+  - symbol: tol_axe_1_b_tuka1_tex_txt
+    binary: assets/tol_axe_1_b_tuka1_tex_txt.bin
+    header: assets/tol_axe_1_b_tuka1_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_axe_1_b_edge2_tex_txt
+    binary: assets/tol_axe_1_b_edge2_tex_txt.bin
+    header: assets/tol_axe_1_b_edge2_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_axe_1_b_edge1_tex_txt
+    binary: assets/tol_axe_1_b_edge1_tex_txt.bin
+    header: assets/tol_axe_1_b_edge1_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_axe_1_b_v
+    binary: assets/tol_axe_1_b_v.bin
+    header: assets/tol_axe_1_b_v.inc
+    header_type: none
+    custom_type: vtx
+                
+  - symbol: tol_axe_1_c_pal
+    binary: assets/tol_axe_1_c_pal.bin
+    header: assets/tol_axe_1_c_pal.inc
+    header_type: none
+    custom_type: pal16
+            
+  - symbol: tol_axe_1_c_tuka1_tex_txt
+    binary: assets/tol_axe_1_c_tuka1_tex_txt.bin
+    header: assets/tol_axe_1_c_tuka1_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_axe_1_c_edge2_tex_txt
+    binary: assets/tol_axe_1_c_edge2_tex_txt.bin
+    header: assets/tol_axe_1_c_edge2_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_axe_1_c_edge1_tex_txt
+    binary: assets/tol_axe_1_c_edge1_tex_txt.bin
+    header: assets/tol_axe_1_c_edge1_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_axe_1_c_v
+    binary: assets/tol_axe_1_c_v.bin
+    header: assets/tol_axe_1_c_v.inc
+    header_type: none
+    custom_type: vtx
+             
+  - symbol: tol_axe_2_pal
+    binary: assets/tol_axe_2_pal.bin
+    header: assets/tol_axe_2_pal.inc
+    header_type: none
+    custom_type: pal16
+            
+  - symbol: tol_axe_2_tuka1_tex_txt
+    binary: assets/tol_axe_2_tuka1_tex_txt.bin
+    header: assets/tol_axe_2_tuka1_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_axe_2_edge2_tex_txt
+    binary: assets/tol_axe_2_edge2_tex_txt.bin
+    header: assets/tol_axe_2_edge2_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_axe_2_edge1_tex_txt
+    binary: assets/tol_axe_2_edge1_tex_txt.bin
+    header: assets/tol_axe_2_edge1_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_axe_2_v
+    binary: assets/tol_axe_2_v.bin
+    header: assets/tol_axe_2_v.inc
+    header_type: none
+    custom_type: vtx
+                 
+  - symbol: act_m_net1_pal
+    binary: assets/act_m_net1_pal.bin
+    header: assets/act_m_net1_pal.inc
+    header_type: none
+    custom_type: pal16
+            
+  - symbol: tol_net_1_tuka1_tex_txt
+    binary: assets/tol_net_1_tuka1_tex_txt.bin
+    header: assets/tol_net_1_tuka1_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_net_1_main1_tex_txt
+    binary: assets/tol_net_1_main1_tex_txt.bin
+    header: assets/tol_net_1_main1_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_net_1_hole1_tex_txt
+    binary: assets/tol_net_1_hole1_tex_txt.bin
+    header: assets/tol_net_1_hole1_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_net_1_v
+    binary: assets/tol_net_1_v.bin
+    header: assets/tol_net_1_v.inc
+    header_type: none
+    custom_type: vtx
+          
+  - symbol: tol_net_2_pal
+    binary: assets/tol_net_2_pal.bin
+    header: assets/tol_net_2_pal.inc
+    header_type: none
+    custom_type: pal16
+            
+  - symbol: tol_net_2_main1_tex_txt
+    binary: assets/tol_net_2_main1_tex_txt.bin
+    header: assets/tol_net_2_main1_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_net_2_tuka1_tex_txt
+    binary: assets/tol_net_2_tuka1_tex_txt.bin
+    header: assets/tol_net_2_tuka1_tex_txt.inc
+    header_type: raw
+                
+  - symbol: tol_net_2_hole1_tex_txt
+    binary: assets/tol_net_2_hole1_tex_txt.bin
+    header: assets/tol_net_2_hole1_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_net_2_v
+    binary: assets/tol_net_2_v.bin
+    header: assets/tol_net_2_v.inc
+    header_type: none
+    custom_type: vtx
+              
+  - symbol: tol_sao_1_pal!.data:0x175e20
+    binary: assets/player_tool/tol_sao_1_pal.bin
+    header: assets/player_tool/tol_sao_1_pal.inc
+    header_type: none
+    custom_type: pal16
+            
+  - symbol: tol_sao_1_main1_tex_txt
+    binary: assets/tol_sao_1_main1_tex_txt.bin
+    header: assets/tol_sao_1_main1_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_sao_1_v
+    binary: assets/tol_sao_1_v.bin
+    header: assets/tol_sao_1_v.inc
+    header_type: none
+    custom_type: vtx
+                  
+  - symbol: tol_sao_2_pal!.data:0x176640
+    binary: assets/player_tool/tol_sao_2_pal.bin
+    header: assets/player_tool/tol_sao_2_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_sao_2_main1_tex_txt
+    binary: assets/tol_sao_2_main1_tex_txt.bin
+    header: assets/tol_sao_2_main1_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_sao_2_v
+    binary: assets/tol_sao_2_v.bin
+    header: assets/tol_sao_2_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_scoop_1_pal
+    binary: assets/act_m_scoop_1_pal.bin
+    header: assets/act_m_scoop_1_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_scoop_1_main1_tex_txt
+    binary: assets/tol_scoop_1_main1_tex_txt.bin
+    header: assets/tol_scoop_1_main1_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_scoop_1_tuka1_tex_txt
+    binary: assets/tol_scoop_1_tuka1_tex_txt.bin
+    header: assets/tol_scoop_1_tuka1_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_scoop_1_tuka2_tex_txt
+    binary: assets/tol_scoop_1_tuka2_tex_txt.bin
+    header: assets/tol_scoop_1_tuka2_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_scoop_1_tuka3_tex_txt
+    binary: assets/tol_scoop_1_tuka3_tex_txt.bin
+    header: assets/tol_scoop_1_tuka3_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_scoop_1_main2_tex_txt
+    binary: assets/tol_scoop_1_main2_tex_txt.bin
+    header: assets/tol_scoop_1_main2_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_scoop_1_v
+    binary: assets/tol_scoop_1_v.bin
+    header: assets/tol_scoop_1_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: tol_scoop_2_pal
+    binary: assets/tol_scoop_2_pal.bin
+    header: assets/tol_scoop_2_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_scoop_2_main1_tex_txt
+    binary: assets/tol_scoop_2_main1_tex_txt.bin
+    header: assets/tol_scoop_2_main1_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_scoop_2_tuka1_tex_txt
+    binary: assets/tol_scoop_2_tuka1_tex_txt.bin
+    header: assets/tol_scoop_2_tuka1_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_scoop_2_tuka2_tex_txt
+    binary: assets/tol_scoop_2_tuka2_tex_txt.bin
+    header: assets/tol_scoop_2_tuka2_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_scoop_2_tuka3_tex_txt
+    binary: assets/tol_scoop_2_tuka3_tex_txt.bin
+    header: assets/tol_scoop_2_tuka3_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_scoop_2_main2_tex_txt
+    binary: assets/tol_scoop_2_main2_tex_txt.bin
+    header: assets/tol_scoop_2_main2_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_scoop_2_v
+    binary: assets/tol_scoop_2_v.bin
+    header: assets/tol_scoop_2_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: tol_balloon1_wire_tex_txt!.data:0x178880
+    binary: assets/player_tool/tol_balloon1_wire_tex_txt.bin
+    header: assets/player_tool/tol_balloon1_wire_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_balloonA_head_tex_rgb_ia8
+    binary: assets/tol_balloonA_head_tex_rgb_ia8.bin
+    header: assets/tol_balloonA_head_tex_rgb_ia8.inc
+    header_type: raw
+
+  - symbol: tol_balloon1_v
+    binary: assets/tol_balloon1_v.bin
+    header: assets/tol_balloon1_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: tol_balloonB_wire_tex_txt
+    binary: assets/tol_balloonB_wire_tex_txt.bin
+    header: assets/tol_balloonB_wire_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_balloonB_head_tex_rgb_ia8
+    binary: assets/tol_balloonB_head_tex_rgb_ia8.bin
+    header: assets/tol_balloonB_head_tex_rgb_ia8.inc
+    header_type: raw
+
+  - symbol: tol_balloon2_v
+    binary: assets/tol_balloon2_v.bin
+    header: assets/tol_balloon2_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: tol_balloonC_wire_tex_txt
+    binary: assets/tol_balloonC_wire_tex_txt.bin
+    header: assets/tol_balloonC_wire_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_balloonC_head_tex_rgb_ia8
+    binary: assets/tol_balloonC_head_tex_rgb_ia8.bin
+    header: assets/tol_balloonC_head_tex_rgb_ia8.inc
+    header_type: raw
+
+  - symbol: tol_balloon3_v
+    binary: assets/tol_balloon3_v.bin
+    header: assets/tol_balloon3_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: tol_balloonD_wire_tex_txt
+    binary: assets/tol_balloonD_wire_tex_txt.bin
+    header: assets/tol_balloonD_wire_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_balloonD_head_tex_rgb_ia8
+    binary: assets/tol_balloonD_head_tex_rgb_ia8.bin
+    header: assets/tol_balloonD_head_tex_rgb_ia8.inc
+    header_type: raw
+
+  - symbol: tol_balloon4_v
+    binary: assets/tol_balloon4_v.bin
+    header: assets/tol_balloon4_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: tol_balloonE_wire_tex_txt
+    binary: assets/tol_balloonE_wire_tex_txt.bin
+    header: assets/tol_balloonE_wire_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_balloonE_head_tex_rgb_ia8
+    binary: assets/tol_balloonE_head_tex_rgb_ia8.bin
+    header: assets/tol_balloonE_head_tex_rgb_ia8.inc
+    header_type: raw
+
+  - symbol: tol_balloon5_v
+    binary: assets/tol_balloon5_v.bin
+    header: assets/tol_balloon5_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: tol_balloonF_wire_tex_txt
+    binary: assets/tol_balloonF_wire_tex_txt.bin
+    header: assets/tol_balloonF_wire_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_balloonF5_head_tex_rgb_ia8
+    binary: assets/tol_balloonF5_head_tex_rgb_ia8.bin
+    header: assets/tol_balloonF5_head_tex_rgb_ia8.inc
+    header_type: raw
+
+  - symbol: tol_balloon6_v
+    binary: assets/tol_balloon6_v.bin
+    header: assets/tol_balloon6_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: tol_balloonG_wire_tex_txt
+    binary: assets/tol_balloonG_wire_tex_txt.bin
+    header: assets/tol_balloonG_wire_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_balloonG5_head_tex_rgb_ia8
+    binary: assets/tol_balloonG5_head_tex_rgb_ia8.bin
+    header: assets/tol_balloonG5_head_tex_rgb_ia8.inc
+    header_type: raw
+
+  - symbol: tol_balloon7_v
+    binary: assets/tol_balloon7_v.bin
+    header: assets/tol_balloon7_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: tol_balloonH_wire_tex_txt
+    binary: assets/tol_balloonH_wire_tex_txt.bin
+    header: assets/tol_balloonH_wire_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_balloonH5_head_tex_rgb_ia8
+    binary: assets/tol_balloonH5_head_tex_rgb_ia8.bin
+    header: assets/tol_balloonH5_head_tex_rgb_ia8.inc
+    header_type: raw
+
+  - symbol: tol_balloon8_v
+    binary: assets/tol_balloon8_v.bin
+    header: assets/tol_balloon8_v.inc
+    header_type: none
+    custom_type: vtx
+            
+  - symbol: tol_kaza_1_pal!.data:0x180580
+    binary: assets/player_tool/tol_kaza_1_pal.bin
+    header: assets/player_tool/tol_kaza_1_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_kaza_1_a_tex_txt!.data:0x1805a0
+    binary: assets/player_tool/tol_kaza_1_a_tex_txt.bin
+    header: assets/player_tool/tol_kaza_1_a_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_1_c_tex_txt!.data:0x1807a0
+    binary: assets/player_tool/tol_kaza_1_c_tex_txt.bin
+    header: assets/player_tool/tol_kaza_1_c_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_1_b_tex_txt!.data:0x1809a0
+    binary: assets/player_tool/tol_kaza_1_b_tex_txt.bin
+    header: assets/player_tool/tol_kaza_1_b_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_kaza1_v
+    binary: assets/tol_kaza1_v.bin
+    header: assets/tol_kaza1_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: tol_kaza_2_pal!.data:0x180ee0
+    binary: assets/player_tool/tol_kaza_2_pal.bin
+    header: assets/player_tool/tol_kaza_2_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_kaza_2_a_tex_txt!.data:0x180f00
+    binary: assets/player_tool/tol_kaza_2_a_tex_txt.bin
+    header: assets/player_tool/tol_kaza_2_a_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_2_c_tex_txt!.data:0x181100
+    binary: assets/player_tool/tol_kaza_2_c_tex_txt.bin
+    header: assets/player_tool/tol_kaza_2_c_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_2_b_tex_txt!.data:0x181300
+    binary: assets/player_tool/tol_kaza_2_b_tex_txt.bin
+    header: assets/player_tool/tol_kaza_2_b_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_kaza2_v
+    binary: assets/tol_kaza2_v.bin
+    header: assets/tol_kaza2_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: tol_kaza_3_pal!.data:0x181840
+    binary: assets/player_tool/tol_kaza_3_pal.bin
+    header: assets/player_tool/tol_kaza_3_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_kaza_3_a_tex_txt!.data:0x181860
+    binary: assets/player_tool/tol_kaza_3_a_tex_txt.bin
+    header: assets/player_tool/tol_kaza_3_a_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_3_c_tex_txt!.data:0x181a60
+    binary: assets/player_tool/tol_kaza_3_c_tex_txt.bin
+    header: assets/player_tool/tol_kaza_3_c_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_3_b_tex_txt!.data:0x181c60
+    binary: assets/player_tool/tol_kaza_3_b_tex_txt.bin
+    header: assets/player_tool/tol_kaza_3_b_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_kaza3_v
+    binary: assets/tol_kaza3_v.bin
+    header: assets/tol_kaza3_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: tol_kaza_4_pal!.data:0x1821a0
+    binary: assets/player_tool/tol_kaza_4_pal.bin
+    header: assets/player_tool/tol_kaza_4_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_kaza_4_a_tex_txt!.data:0x1821c0
+    binary: assets/player_tool/tol_kaza_4_a_tex_txt.bin
+    header: assets/player_tool/tol_kaza_4_a_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_4_c_tex_txt!.data:0x1823c0
+    binary: assets/player_tool/tol_kaza_4_c_tex_txt.bin
+    header: assets/player_tool/tol_kaza_4_c_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_4_b_tex_txt!.data:0x1825c0
+    binary: assets/player_tool/tol_kaza_4_b_tex_txt.bin
+    header: assets/player_tool/tol_kaza_4_b_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_kaza4_v
+    binary: assets/tol_kaza4_v.bin
+    header: assets/tol_kaza4_v.inc
+    header_type: none
+    custom_type: vtx
+       
+  - symbol: tol_kaza_5_pal!.data:0x182b00
+    binary: assets/player_tool/tol_kaza_5_pal.bin
+    header: assets/player_tool/tol_kaza_5_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_kaza_5_a_tex_txt!.data:0x182b20
+    binary: assets/player_tool/tol_kaza_5_a_tex_txt.bin
+    header: assets/player_tool/tol_kaza_5_a_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_5_c_tex_txt!.data:0x182d20
+    binary: assets/player_tool/tol_kaza_5_c_tex_txt.bin
+    header: assets/player_tool/tol_kaza_5_c_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_5_b_tex_txt!.data:0x182f20
+    binary: assets/player_tool/tol_kaza_5_b_tex_txt.bin
+    header: assets/player_tool/tol_kaza_5_b_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_kaza5_v
+    binary: assets/tol_kaza5_v.bin
+    header: assets/tol_kaza5_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: tol_kaza_6_pal!.data:0x183460
+    binary: assets/player_tool/tol_kaza_6_pal.bin
+    header: assets/player_tool/tol_kaza_6_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_kaza_6_a_tex_txt!.data:0x183480
+    binary: assets/player_tool/tol_kaza_6_a_tex_txt.bin
+    header: assets/player_tool/tol_kaza_6_a_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_6_c_tex_txt!.data:0x183680
+    binary: assets/player_tool/tol_kaza_6_c_tex_txt.bin
+    header: assets/player_tool/tol_kaza_6_c_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_6_b_tex_txt!.data:0x183880
+    binary: assets/player_tool/tol_kaza_6_b_tex_txt.bin
+    header: assets/player_tool/tol_kaza_6_b_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_kaza6_v
+    binary: assets/tol_kaza6_v.bin
+    header: assets/tol_kaza6_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: tol_kaza_7_pal!.data:0x183dc0
+    binary: assets/player_tool/tol_kaza_7_pal.bin
+    header: assets/player_tool/tol_kaza_7_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_kaza_7_a_tex_txt!.data:0x183de0
+    binary: assets/player_tool/tol_kaza_7_a_tex_txt.bin
+    header: assets/player_tool/tol_kaza_7_a_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_kaza_7_c_tex_txt!.data:0x183fe0
+    binary: assets/player_tool/tol_kaza_7_c_tex_txt.bin
+    header: assets/player_tool/tol_kaza_7_c_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_7_d_tex_txt!.data:0x1841e0
+    binary: assets/player_tool/tol_kaza_7_d_tex_txt.bin
+    header: assets/player_tool/tol_kaza_7_d_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_7_b_tex_txt!.data:0x184260
+    binary: assets/player_tool/tol_kaza_7_b_tex_txt.bin
+    header: assets/player_tool/tol_kaza_7_b_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_kaza7_v
+    binary: assets/tol_kaza7_v.bin
+    header: assets/tol_kaza7_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: tol_kaza_8_pal!.data:0x184f60
+    binary: assets/player_tool/tol_kaza_8_pal.bin
+    header: assets/player_tool/tol_kaza_8_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_kaza_8_d_tex_txt!.data:0x184f80
+    binary: assets/player_tool/tol_kaza_8_d_tex_txt.bin
+    header: assets/player_tool/tol_kaza_8_d_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_kaza_8_a_tex_txt!.data:0x185000
+    binary: assets/player_tool/tol_kaza_8_a_tex_txt.bin
+    header: assets/player_tool/tol_kaza_8_a_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_8_c_tex_txt!.data:0x185200
+    binary: assets/player_tool/tol_kaza_8_c_tex_txt.bin
+    header: assets/player_tool/tol_kaza_8_c_tex_txt.inc
+    header_type: raw
+    
+  - symbol: tol_kaza_8_e_tex_txt!.data:0x185400
+    binary: assets/player_tool/tol_kaza_8_e_tex_txt.bin
+    header: assets/player_tool/tol_kaza_8_e_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_kaza_8_b_tex_txt!.data:0x185480
+    binary: assets/player_tool/tol_kaza_8_b_tex_txt.bin
+    header: assets/player_tool/tol_kaza_8_b_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_kaza8_v
+    binary: assets/tol_kaza8_v.bin
+    header: assets/tol_kaza8_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: tol_fan1_pal!.data:0x186020
+    binary: assets/player_tool/tol_fan1_pal.bin
+    header: assets/player_tool/tol_fan1_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_fan1_tex_txt!.data:0x186040
+    binary: assets/player_tool/tol_fan1_tex_txt.bin
+    header: assets/player_tool/tol_fan1_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_fan1_v
+    binary: assets/tol_fan1_v.bin
+    header: assets/tol_fan1_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: tol_fan2_pal!.data:0x186520
+    binary: assets/player_tool/tol_fan2_pal.bin
+    header: assets/player_tool/tol_fan2_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_fan2_tex_txt!.data:0x186540
+    binary: assets/player_tool/tol_fan2_tex_txt.bin
+    header: assets/player_tool/tol_fan2_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_fan2_v
+    binary: assets/tol_fan2_v.bin
+    header: assets/tol_fan2_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: tol_fan3_pal!.data:0x186a20
+    binary: assets/player_tool/tol_fan3_pal.bin
+    header: assets/player_tool/tol_fan3_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_fan3_tex_txt!.data:0x186a40
+    binary: assets/player_tool/tol_fan3_tex_txt.bin
+    header: assets/player_tool/tol_fan3_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_fan3_v
+    binary: assets/tol_fan3_v.bin
+    header: assets/tol_fan3_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: tol_fan4_pal!.data:0x186f20
+    binary: assets/player_tool/tol_fan4_pal.bin
+    header: assets/player_tool/tol_fan4_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_fan4_tex_txt!.data:0x186f40
+    binary: assets/player_tool/tol_fan4_tex_txt.bin
+    header: assets/player_tool/tol_fan4_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_fan4_v
+    binary: assets/tol_fan4_v.bin
+    header: assets/tol_fan4_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: tol_fan5_pal!.data:0x187420
+    binary: assets/player_tool/tol_fan5_pal.bin
+    header: assets/player_tool/tol_fan5_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_fan5_tex_txt!.data:0x187440
+    binary: assets/player_tool/tol_fan5_tex_txt.bin
+    header: assets/player_tool/tol_fan5_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_fan5_v
+    binary: assets/tol_fan5_v.bin
+    header: assets/tol_fan5_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: tol_fan6_pal!.data:0x187920
+    binary: assets/player_tool/tol_fan6_pal.bin
+    header: assets/player_tool/tol_fan6_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_fan6_tex_txt!.data:0x187940
+    binary: assets/player_tool/tol_fan6_tex_txt.bin
+    header: assets/player_tool/tol_fan6_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_fan6_v
+    binary: assets/tol_fan6_v.bin
+    header: assets/tol_fan6_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: tol_fan7_pal!.data:0x188060
+    binary: assets/player_tool/tol_fan7_pal.bin
+    header: assets/player_tool/tol_fan7_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_fan7_tex_txt!.data:0x188080
+    binary: assets/player_tool/tol_fan7_tex_txt.bin
+    header: assets/player_tool/tol_fan7_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_fan7_v
+    binary: assets/tol_fan7_v.bin
+    header: assets/tol_fan7_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: tol_fan8_pal!.data:0x188560
+    binary: assets/player_tool/tol_fan8_pal.bin
+    header: assets/player_tool/tol_fan8_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: tol_fan8_tex_txt!.data:0x188580
+    binary: assets/player_tool/tol_fan8_tex_txt.bin
+    header: assets/player_tool/tol_fan8_tex_txt.inc
+    header_type: raw
+
+  - symbol: tol_fan8_v
+    binary: assets/tol_fan8_v.bin
+    header: assets/tol_fan8_v.inc
+    header_type: none
+    custom_type: vtx

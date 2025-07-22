@@ -251,7 +251,22 @@ def lookup_bins_and_symbols(lines: list[str], name: str):
         elif ".rel" in line:
             out_bin.extend(b'\0\0\0\0')
             out_symbols.append(f"&{line.split(".rel ")[1].split(",")[0]}[0]")
+        elif ".byte" in line:
+            data = line.split(".byte ")[1]
+            out_bin.extend(int(data, 16).to_bytes(1, 'big'))
+
     return out_bin, out_symbols
+
+
+def lookup_static(lines: list[str], name: str):
+    lookfor = f".obj {name}"
+    for line in lines:
+        if line.startswith(lookfor):
+            if line.startswith(lookfor + ", local"):
+                return "static "
+            else:
+                return ""
+    return ""
 
 
 def lookup_bins_and_symbols2(lines: list[str], name: str):
@@ -278,7 +293,17 @@ def lookup_bins_and_symbols2(lines: list[str], name: str):
         elif ".2byte" in line:
             data = line.split(".2byte ")[1]
             out_bin.extend(int(data, 16).to_bytes(2, 'big'))
-            offset_count += 4
+            offset_count += 2
+        elif ".byte" in line:
+            data = line.split(".byte ")[1]
+            if ", " in data:
+                for d in data.split(", "):
+                    out_bin.extend(int(d, 16).to_bytes(1, 'big'))
+                    offset_count += 1
+            else:
+                out_bin.extend(int(data, 16).to_bytes(1, 'big'))
+                offset_count += 1
+
         elif ".rel" in line:
             out_bin.extend(b'\0\0\0\0')
             data = f"&{line.split(".rel ")[1].split(",")[0]}[xxx]"
@@ -310,6 +335,8 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
                 found_types.append((this_obj, "Vtx"))
             elif "_model" in this_obj:
                 found_types.append((this_obj, "Gfx"))
+            elif "_tex_index" in this_obj:
+                found_types.append((this_obj, "u8"))
             elif this_obj.endswith("evw_anime"):
                 found_types.append((this_obj, "EVW_ANIME_DATA"))
             elif this_obj.endswith("_pal"):
@@ -375,7 +402,8 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
     for obj in all_objs:
         this_type, out_data, align = converted_types.get(
             obj, ("u8", f'#include "assets/{obj}.inc"', NO_ALIGN))
-        out += f"{this_type} {obj}[] {align}= {{ \n{out_data}\n}};\n\n"
+        static_typing = lookup_static(lines, obj)
+        out += f"{static_typing}{this_type} {obj}[] {align}= {{ \n{out_data}\n}};\n\n"
     # print(out)
     with open(dest_path, "w") as f:
         f.write(out)
