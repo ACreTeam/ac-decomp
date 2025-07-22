@@ -3627,7 +3627,7 @@ f_furniture.c:
 	.rodata     start:0x0000C100 end:0x0000C28C
 	.data       start:0x00087840 end:0x00092DA0
 
-data/dataobject/dataobject_92DA0:
+data/model/glider.c:
 	.data       start:0x00092DA0 end:0x00092EA0
 
 data/npc/model/mdl/bev_1.c:
@@ -3636,8 +3636,10 @@ data/npc/model/mdl/bev_1.c:
 data/npc/model/tex/bev_1.c:
 	.data       start:0x000952E0 end:0x00096000
 
-data/dataobject/dataobject_96000:
+data/model/act_ant.c:
 	.data       start:0x00096000 end:0x00096328
+
+data/model/act_ant_anim.c:
 	.data       start:0x00096328 end:0x00096338
 
 data/npc/model/mdl/ant_1.c:
@@ -3676,10 +3678,16 @@ data/scene/broker_shop.c:
 data/scene/buggy.c:
 	.data       start:0x0009FBC0 end:0x0009FC28
 
-data/dataobject/dataobject_9FC28:
+data/model/act_ball_b.c:
 	.data       start:0x0009FC28 end:0x0009FFD8
+
+data/model/act_ball_d.c:
 	.data       start:0x0009FFD8 end:0x000A0738
+
+data/model/act_ball_s.c:
 	.data       start:0x000A0738 end:0x000A1120
+
+data/model/act_balloon.c:
 	.data       start:0x000A1120 end:0x000A1B78
 
 data/npc/model/mdl/bea_1.c:
@@ -3712,14 +3720,28 @@ data/npc/model/tex/bea_9.c:
 data/npc/model/tex/bea_10.c:
 	.data       start:0x000ACC40 end:0x000ADE60
 
-data/dataobject/dataobject_ADE60:
+data/model/act_bee.c:
 	.data       start:0x000ADE60 end:0x000AE620
+
+data/model/f_honeycomb.c:
 	.data       start:0x000AE620 end:0x000AE920
+
+data/model/f_tree.c:
 	.data       start:0x000AE920 end:0x000AEB40
+
+data/model/f_tree1.c:
 	.data       start:0x000AEB40 end:0x000AECE0
+
+data/model/f_tree2.c:
 	.data       start:0x000AECE0 end:0x000AF5C0
+
+data/model/f_tree3.c:
 	.data       start:0x000AF5C0 end:0x000AFF40
+
+data/model/f_tree4.c:
 	.data       start:0x000AFF40 end:0x000B0918
+
+data/model/f_tree5.c:
 	.data       start:0x000B0918 end:0x000B0B48
 
 data/field/bg/acre/bg_data.c:
