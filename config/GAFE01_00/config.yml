@@ -26812,3 +26812,208 @@ modules:
     header: assets/tol_fan8_v.inc
     header_type: none
     custom_type: vtx
+
+  - symbol: obj_palm_shadow_tex
+    binary: assets/obj_palm_shadow_tex.bin
+    header: assets/obj_palm_shadow_tex.inc
+    header_type: raw
+
+  - symbol: obj_palm3_shadow_v
+    binary: assets/obj_palm3_shadow_v.bin
+    header: assets/obj_palm3_shadow_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_palm4_shadow_v
+    binary: assets/obj_palm4_shadow_v.bin
+    header: assets/obj_palm4_shadow_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_palm5_shadow_v
+    binary: assets/obj_palm5_shadow_v.bin
+    header: assets/obj_palm5_shadow_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_pstump_shadow_tex!.data:0x106c60
+    binary: assets/obj_pstump3/obj_pstump_shadow_tex.bin
+    header: assets/obj_pstump3/obj_pstump_shadow_tex.inc
+    header_type: raw
+
+  - symbol: obj_pstump3_shadow_v
+    binary: assets/obj_pstump3_shadow_v.bin
+    header: assets/obj_pstump3_shadow_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_pstump_shadow_tex!.data:0x106ee0
+    binary: assets/obj_pstump4/obj_pstump_shadow_tex.bin
+    header: assets/obj_pstump4/obj_pstump_shadow_tex.inc
+    header_type: raw
+
+  - symbol: obj_pstump4_shadow_v
+    binary: assets/obj_pstump4_shadow_v.bin
+    header: assets/obj_pstump4_shadow_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_pstump_shadow_tex!.data:0x107160
+    binary: assets/obj_pstump5/obj_pstump_shadow_tex.bin
+    header: assets/obj_pstump5/obj_pstump_shadow_tex.inc
+    header_type: raw
+
+  - symbol: obj_pstump5_shadow_v
+    binary: assets/obj_pstump5_shadow_v.bin
+    header: assets/obj_pstump5_shadow_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_w_palm_baby_tex
+    binary: assets/obj_w_palm_baby_tex.bin
+    header: assets/obj_w_palm_baby_tex.inc
+    header_type: raw
+
+  - symbol: obj_s_palm1_v
+    binary: assets/obj_s_palm1_v.bin
+    header: assets/obj_s_palm1_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_s_palm_dead_tex
+    binary: assets/obj_s_palm_dead_tex.bin
+    header: assets/obj_s_palm_dead_tex.inc
+    header_type: raw
+
+  - symbol: obj_s_palm1_dead_v
+    binary: assets/obj_s_palm1_dead_v.bin
+    header: assets/obj_s_palm1_dead_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_s_palm_young_tex!.data:0x107760
+    binary: assets/obj_s_palm2/obj_s_palm_young_tex.bin
+    header: assets/obj_s_palm2/obj_s_palm_young_tex.inc
+    header_type: raw
+
+  - symbol: obj_s_palm2_v
+    binary: assets/obj_s_palm2_v.bin
+    header: assets/obj_s_palm2_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: obj_s_palm_leaf_tex!.data:0x108020
+    binary: assets/obj_s_palm3/obj_s_palm_leaf_tex.bin
+    header: assets/obj_s_palm3/obj_s_palm_leaf_tex.inc
+    header_type: raw
+        
+  - symbol: obj_s_palm_young_tex!.data:0x108820
+    binary: assets/obj_s_palm3/obj_s_palm_young_tex.bin
+    header: assets/obj_s_palm3/obj_s_palm_young_tex.inc
+    header_type: raw
+
+  - symbol: obj_s_palm3_v
+    binary: assets/obj_s_palm3_v.bin
+    header: assets/obj_s_palm3_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: obj_s_palm_leaf_tex!.data:0x109220
+    binary: assets/obj_s_palm4/obj_s_palm_leaf_tex.bin
+    header: assets/obj_s_palm4/obj_s_palm_leaf_tex.inc
+    header_type: raw
+        
+  - symbol: obj_s_palm_trunk_tex!.data:0x109a20
+    binary: assets/obj_s_palm4/obj_s_palm_trunk_tex.bin
+    header: assets/obj_s_palm4/obj_s_palm_trunk_tex.inc
+    header_type: raw
+
+  - symbol: obj_s_palm4_v
+    binary: assets/obj_s_palm4_v.bin
+    header: assets/obj_s_palm4_v.inc
+    header_type: none
+    custom_type: vtx
+            
+  - symbol: obj_s_palm_leaf_tex!.data:0x10a520
+    binary: assets/obj_s_palm5/obj_s_palm_leaf_tex.bin
+    header: assets/obj_s_palm5/obj_s_palm_leaf_tex.inc
+    header_type: raw
+        
+  - symbol: obj_s_palm_trunk_tex!.data:0x10ad20
+    binary: assets/obj_s_palm5/obj_s_palm_trunk_tex.bin
+    header: assets/obj_s_palm5/obj_s_palm_trunk_tex.inc
+    header_type: raw
+
+  - symbol: obj_s_palm5_v
+    binary: assets/obj_s_palm5_v.bin
+    header: assets/obj_s_palm5_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: obj_s_palm5_coco_v
+    binary: assets/obj_s_palm5_coco_v.bin
+    header: assets/obj_s_palm5_coco_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: obj_s_palm_young_tex!.data:0x10ba00
+    binary: assets/obj_s_pstump2/obj_s_palm_young_tex.bin
+    header: assets/obj_s_pstump2/obj_s_palm_young_tex.inc
+    header_type: raw
+
+  - symbol: obj_s_pstump2_v
+    binary: assets/obj_s_pstump2_v.bin
+    header: assets/obj_s_pstump2_v.inc
+    header_type: none
+    custom_type: vtx
+  
+  - symbol: obj_s_palm_young_tex!.data:0x10c2c0
+    binary: assets/obj_s_pstump3/obj_s_palm_young_tex.bin
+    header: assets/obj_s_pstump3/obj_s_palm_young_tex.inc
+    header_type: raw
+
+  - symbol: obj_s_pstump3_v
+    binary: assets/obj_s_pstump3_v.bin
+    header: assets/obj_s_pstump3_v.inc
+    header_type: none
+    custom_type: vtx
+      
+  - symbol: obj_s_palm_stump_tex!.data:0x10cb80
+    binary: assets/obj_s_pstump4/obj_s_palm_stump_tex.bin
+    header: assets/obj_s_pstump4/obj_s_palm_stump_tex.inc
+    header_type: raw
+
+  - symbol: obj_s_pstump4_v
+    binary: assets/obj_s_pstump4_v.bin
+    header: assets/obj_s_pstump4_v.inc
+    header_type: none
+    custom_type: vtx
+      
+  - symbol: obj_s_palm_stump_tex!.data:0x10cb80
+    binary: assets/obj_s_pstump5/obj_s_palm_stump_tex.bin
+    header: assets/obj_s_pstump5/obj_s_palm_stump_tex.inc
+    header_type: raw
+
+  - symbol: obj_s_pstump5_v
+    binary: assets/obj_s_pstump5_v.bin
+    header: assets/obj_s_pstump5_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_sightmap_pal!.data:0x10d500
+    binary: assets/obj_s_sightmap/obj_sightmap_pal.bin
+    header: assets/obj_s_sightmap/obj_sightmap_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: obj_s_sightmap_tex
+    binary: assets/obj_s_sightmap_tex.bin
+    header: assets/obj_s_sightmap_tex.inc
+    header_type: raw
+
+  - symbol: obj_s_sightmap_v
+    binary: assets/obj_s_sightmap_v.bin
+    header: assets/obj_s_sightmap_v.inc
+    header_type: none
+    custom_type: vtx
+    
