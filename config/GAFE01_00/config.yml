@@ -27733,3 +27733,118 @@ modules:
     header: assets/obj_x_tree5_light_v.inc
     header_type: none
     custom_type: vtx
+
+  - symbol: FONT_nes_tex_choice
+    binary: assets/FONT_nes_tex_choice.bin
+    header: assets/FONT_nes_tex_choice.inc
+    header_type: raw
+
+  - symbol: FONT_nes_tex_cursor
+    binary: assets/FONT_nes_tex_cursor.bin
+    header: assets/FONT_nes_tex_cursor.inc
+    header_type: raw
+
+  - symbol: FONT_nes_tex_font1
+    binary: assets/FONT_nes_tex_font1.bin
+    header: assets/FONT_nes_tex_font1.inc
+    header_type: raw
+
+  - symbol: FONT_nes_tex_jyouge
+    binary: assets/FONT_nes_tex_jyouge.bin
+    header: assets/FONT_nes_tex_jyouge.inc
+    header_type: raw
+
+  - symbol: FONT_nes_tex_next
+    binary: assets/FONT_nes_tex_next.bin
+    header: assets/FONT_nes_tex_next.inc
+    header_type: raw
+
+  - symbol: FONT_nes_tex_sayuu
+    binary: assets/FONT_nes_tex_sayuu.bin
+    header: assets/FONT_nes_tex_sayuu.inc
+    header_type: raw
+
+  - symbol: obj_gara_pal
+    binary: assets/obj_gara_pal.bin
+    header: assets/obj_gara_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: obj_gara_tex_txt
+    binary: assets/obj_gara_tex_txt.bin
+    header: assets/obj_gara_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_gara_v
+    binary: assets/obj_gara_v.bin
+    header: assets/obj_gara_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_fukuball_pal
+    binary: assets/act_fukuball_pal.bin
+    header: assets/act_fukuball_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_fukutama1_tex
+    binary: assets/act_fukutama1_tex.bin
+    header: assets/act_fukutama1_tex.inc
+    header_type: raw
+
+  - symbol: act_fukutama2_tex
+    binary: assets/act_fukutama2_tex.bin
+    header: assets/act_fukutama2_tex.inc
+    header_type: raw
+
+  - symbol: act_fukutama3_tex
+    binary: assets/act_fukutama3_tex.bin
+    header: assets/act_fukutama3_tex.inc
+    header_type: raw
+
+  - symbol: act_fukutama4_tex
+    binary: assets/act_fukutama4_tex.bin
+    header: assets/act_fukutama4_tex.inc
+    header_type: raw
+
+  - symbol: act_fukutama_v
+    binary: assets/act_fukutama_v.bin
+    header: assets/act_fukutama_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: grl_1_skin_tex_txt
+    binary: assets/grl_1_skin_tex_txt.bin
+    header: assets/grl_1_skin_tex_txt.inc
+    header_type: raw
+
+  - symbol: grl_1_hair_tex_txt
+    binary: assets/grl_1_hair_tex_txt.bin
+    header: assets/grl_1_hair_tex_txt.inc
+    header_type: raw
+
+  - symbol: grl_1_shoe_tex_txt
+    binary: assets/grl_1_shoe_tex_txt.bin
+    header: assets/grl_1_shoe_tex_txt.inc
+    header_type: raw
+
+  - symbol: grl_1_bottom_tex_txt
+    binary: assets/grl_1_bottom_tex_txt.bin
+    header: assets/grl_1_bottom_tex_txt.inc
+    header_type: raw
+
+  - symbol: grl_1_foot_tex_txt
+    binary: assets/grl_1_foot_tex_txt.bin
+    header: assets/grl_1_foot_tex_txt.inc
+    header_type: raw
+
+  - symbol: grl_1_hole_tex_txt
+    binary: assets/grl_1_hole_tex_txt.bin
+    header: assets/grl_1_hole_tex_txt.inc
+    header_type: raw
+    
+  - symbol: grl_1_v
+    binary: assets/grl_1_v.bin
+    header: assets/grl_1_v.inc
+    header_type: none
+    custom_type: vtx

@@ -4503,12 +4503,22 @@ data/scene/field_tool_field.c:
 data/field/field_data.c:
 	.data       start:0x002024B0 end:0x00204600
 
-data/dataobject/dataobject_204600:
+data/font/FONT_nes_tex_choice.c:
 	.data       start:0x00204600 end:0x00204680
+
+data/font/FONT_nes_tex_cursor.c:
 	.data       start:0x00204680 end:0x00204700
+
+data/font/FONT_nes_tex_font1.c:
 	.data       start:0x00204700 end:0x0020A700
+
+data/font/FONT_nes_tex_jyouge.c:
 	.data       start:0x0020A700 end:0x0020A780
+
+data/font/FONT_nes_tex_next.c:
 	.data       start:0x0020A780 end:0x0020A800
+
+data/font/FONT_nes_tex_sayuu.c:
 	.data       start:0x0020A800 end:0x0020A880
 
 data/npc/model/mdl/flg_1.c:
@@ -4559,7 +4569,7 @@ data/npc/model/mdl/rcf_1.c:
 data/npc/model/tex/rcf_1.c:
 	.data       start:0x0021D4A0 end:0x0021E3C0
 
-data/dataobject/dataobject_21E3C0:
+data/model/obj_garagara.c:
 	.data       start:0x0021E3C0 end:0x0021F608
 
 data/npc/model/mdl/gst_1.c:
@@ -4568,7 +4578,7 @@ data/npc/model/mdl/gst_1.c:
 data/npc/model/tex/gst_1.c:
 	.data       start:0x00220C80 end:0x00221C20
 
-data/dataobject/dataobject_221C20:
+data/model/girl_model.c:
 	.data       start:0x00221C20 end:0x00224230
 
 data/npc/model/mdl/goa_1.c:
