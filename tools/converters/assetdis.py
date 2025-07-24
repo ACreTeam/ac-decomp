@@ -381,7 +381,7 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
         elif type == "Gfx":
             data = convert_binary_to_gfx(
                 *lookup_bins_and_symbols(lines, obj_name))
-            converted_types[obj_name] = (type, data, NO_ALIGN)
+            converted_types[obj_name] = (type, data + ",", NO_ALIGN)
         elif type == "PAL":
             data = f'#include "assets/{obj_name}.inc"'
             converted_types[obj_name] = ("u16", data, ASSET_ALIGN)
