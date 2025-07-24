@@ -61,18 +61,18 @@ typedef enum DSPChannelAllocState {
  */
 dspch_* AllocDSPchannel(u32 param_1, u32 param_2)
 {
-
+    jc_* jc = (jc_*)param_2;
 	s32 i;
-	u8 __stack_pad[1];
-	jc_* p2 = (jc_*)param_2;
-	s32* ip = &i;
+	
 	if (param_1 == 0) {
-
 		for (i = 0; i < DSPCH_LENGTH; ++i) {
-			if (DSPCH[i]._01 == DSPCHAN_Free) {
-				DSPCH[i]._01 = DSPCHAN_MonoAllocated;
-                DSPCH[i]._08 = p2;
-				DSPCH[i]._03 = 1;
+            dspch_* ch = &DSPCH[i];
+			if (!ch->_01) {
+                // what the hell is this LOL, whatever it matches
+                ch = (dspch_*)&((volatile dspch_*)DSPCH)[i];
+				ch->_01 = true;
+				ch->_08 = jc;
+				ch->_03 = 1;
 				DSP_AllocInit(i);
 				return &DSPCH[i];
 			}
@@ -82,13 +82,13 @@ dspch_* AllocDSPchannel(u32 param_1, u32 param_2)
 
 	for (i = 1; i < DSPCH_LENGTH; i += 2) {
 
-		if (DSPCH[i]._01 != DSPCHAN_Free || DSPCH[i - 1]._01 != DSPCHAN_Free)
+		if (DSPCH[i]._01 || DSPCH[i - 1]._01)
 			continue;
 
-		DSPCH[i]._01      = DSPCHAN_StereoRight;
-		DSPCH[i - 1]._01  = DSPCHAN_StereoLeft;
-		DSPCH[i]._08     = p2;
-		DSPCH[i - 1]._08 = p2;
+		DSPCH[i]._01     = 3;
+		DSPCH[i - 1]._01 = 2;
+		DSPCH[i]._08     = jc;
+		DSPCH[i - 1]._08 = jc;
 		DSP_AllocInit(i);
 		DSP_AllocInit(i - 1);
 		return &DSPCH[i - 1];

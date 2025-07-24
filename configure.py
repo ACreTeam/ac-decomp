@@ -771,7 +771,7 @@ config.libs = [
             Object(Matching, "jaudio_NES/internal/driverinterface.c"),
             Object(Matching, "jaudio_NES/internal/dsp_cardunlock.c"),
             Object(Matching, "jaudio_NES/internal/dsp_GBAKey.c"),
-            Object(Equivalent, "jaudio_NES/internal/dspdriver.c", extra_cflags=["-vector on"]),
+            Object(Matching, "jaudio_NES/internal/dspdriver.c", extra_cflags=["-vector on"]),
             Object(Matching, "jaudio_NES/internal/dspinterface.c"),
             Object(Matching, "jaudio_NES/internal/effect.c", extra_cflags=["-pragma \"scheduling 7400\""]),
             Object(Matching, "jaudio_NES/internal/fat.c"),
