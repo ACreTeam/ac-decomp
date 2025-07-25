@@ -3747,30 +3747,76 @@ data/model/f_tree5.c:
 data/field/bg/acre/bg_data.c:
 	.data       start:0x000B0B48 end:0x000FE340
 
-data/dataobject/dataobject_FE340:
+data/model/obj_a_01_flower.c:
 	.data       start:0x000FE340 end:0x000FE6A0
+
+data/model/obj_gold_01.c:
 	.data       start:0x000FE6A0 end:0x000FE860
+
+data/model/mFM_obj_01_zassou.c:
 	.data       start:0x000FE860 end:0x000FE980
+
+data/model/obj_cedar3.c:
 	.data       start:0x000FE980 end:0x000FE9F0
+
+data/model/obj_cedar4.c:
 	.data       start:0x000FE9F0 end:0x000FEA60
+
+data/model/obj_cedar5.c:
 	.data       start:0x000FEA60 end:0x000FECD0
+
+data/model/obj_cstump3.c:
 	.data       start:0x000FECD0 end:0x000FED40
+
+data/model/obj_cstump4.c:
 	.data       start:0x000FED40 end:0x000FEDC0
+
+data/model/obj_cstump5.c:
 	.data       start:0x000FEDC0 end:0x000FF040
+
+data/model/obj_s_cedar_baby.c:
 	.data       start:0x000FF040 end:0x000FF240
+
+data/model/obj_s_cedar_dead.c:
 	.data       start:0x000FF240 end:0x000FF3B8
+
+data/model/obj_s_cedar2.c:
 	.data       start:0x000FF3B8 end:0x000FF480
+
+data/model/obj_s_cedar3.c:
 	.data       start:0x000FF480 end:0x00100700
+
+data/model/obj_s_cedar4.c:
 	.data       start:0x00100700 end:0x00101308
+
+data/model/obj_s_cedar5.c:
 	.data       start:0x00101308 end:0x00101880
+
+data/model/obj_s_cstump2.c:
 	.data       start:0x00101880 end:0x00101930
+
+data/model/obj_s_cstump3.c:
 	.data       start:0x00101930 end:0x001019E0
+
+data/model/obj_s_cstump4.c:
 	.data       start:0x001019E0 end:0x00101E90
+
+data/model/obj_s_cstump5.c:
 	.data       start:0x00101E90 end:0x00101F40
+
+data/model/obj_crack.c:
 	.data       start:0x00101F40 end:0x00102180
+
+data/model/obj_s_fenceL.c:
 	.data       start:0x00102180 end:0x00102620
+
+data/model/obj_fenceL_shadow.c:
 	.data       start:0x00102620 end:0x00102890
+
+data/model/obj_s_fenceS.c:
 	.data       start:0x00102890 end:0x00102910
+
+data/model/obj_fenceS_shadow.c:
 	.data       start:0x00102910 end:0x00102980
 
 data/field/bg/flower/obj_flower.c:
@@ -3779,107 +3825,307 @@ data/field/bg/flower/obj_flower.c:
 data/field/bg/flower/obj_flower_leaf.c:
 	.data       start:0x001033C0 end:0x00103C40
 
-data/dataobject/dataobject_103C40:
+data/model/obj_zassou_a.c:
 	.data       start:0x00103C40 end:0x001040B8
+
+data/model/obj_zassou_b.c:
 	.data       start:0x001040B8 end:0x00104110
+
+data/model/obj_zassou_c.c:
 	.data       start:0x00104110 end:0x00104180
+
+data/model/obj_hole.c:
 	.data       start:0x00104180 end:0x00104EC0
+
+data/model/obj_hole_pal.c:
 	.data       start:0x00104EC0 end:0x00104F00
+
+data/model/obj_s_honeycomb.c:
 	.data       start:0x00104F00 end:0x00105200
+
+data/model/obj_s_melody.c:
 	.data       start:0x00105200 end:0x00105B00
+
+data/model/obj_melody.c:
 	.data       start:0x00105B00 end:0x00105D80
+
+data/model/obj_s_notice.c:
 	.data       start:0x00105D80 end:0x00106680
+
+data/model/obj_notice.c:
 	.data       start:0x00106680 end:0x00106900
+
+data/model/obj_palm3.c:
 	.data       start:0x00106900 end:0x00106B70
+
+data/model/obj_palm4.c:
 	.data       start:0x00106B70 end:0x00106BE0
+
+data/model/obj_palm5.c:
 	.data       start:0x00106BE0 end:0x00106C60
+
+data/model/obj_pstump3.c:
 	.data       start:0x00106C60 end:0x00106EE0
+
+data/model/obj_pstump4.c:
 	.data       start:0x00106EE0 end:0x00107160
+
+data/model/obj_pstump5.c:
 	.data       start:0x00107160 end:0x001073E0
+
+data/model/obj_w_palm.c:
 	.data       start:0x001073E0 end:0x001075E0
+
+data/model/obj_w_palm1.c:
 	.data       start:0x001075E0 end:0x00107760
+
+data/model/obj_s_palm2.c:
 	.data       start:0x00107760 end:0x00108020
+
+data/model/obj_s_palm3.c:
 	.data       start:0x00108020 end:0x00109220
+
+data/model/obj_s_palm4.c:
 	.data       start:0x00109220 end:0x0010A520
+
+data/model/obj_s_palm5.c:
 	.data       start:0x0010A520 end:0x0010B960
+
+data/model/obj_s_palm5_coco.c:
 	.data       start:0x0010B960 end:0x0010BA00
+
+data/model/obj_s_pstump2.c:
 	.data       start:0x0010BA00 end:0x0010C2C0
+
+data/model/obj_s_pstump3.c:
 	.data       start:0x0010C2C0 end:0x0010CB80
+
+data/model/obj_s_pstump4.c:
 	.data       start:0x0010CB80 end:0x0010D040
+
+data/model/obj_s_pstump5.c:
 	.data       start:0x0010D040 end:0x0010D500
+
+data/model/obj_s_sightmap.c:
 	.data       start:0x0010D500 end:0x0010DE00
+
+data/model/obj_sightmap_shadow.c:
 	.data       start:0x0010DE00 end:0x0010E080
+
+data/model/obj_s_stoneA.c:
 	.data       start:0x0010E080 end:0x0010E3A0
+
+data/model/obj_stoneA_shadow.c:
 	.data       start:0x0010E3A0 end:0x0010E500
+
+data/model/obj_s_stoneB.c:
 	.data       start:0x0010E500 end:0x0010E5F0
+
+data/model/obj_stoneB_shadow.c:
 	.data       start:0x0010E5F0 end:0x0010E6D0
+
+data/model/obj_s_stoneC.c:
 	.data       start:0x0010E6D0 end:0x0010E7C0
+
+data/model/obj_stoneC_shadow.c:
 	.data       start:0x0010E7C0 end:0x0010E8A0
+
+data/model/obj_s_stoneD.c:
 	.data       start:0x0010E8A0 end:0x0010E9C8
+
+data/model/obj_stoneD_shadow.c:
 	.data       start:0x0010E9C8 end:0x0010EA60
+
+data/model/obj_s_stoneE.c:
 	.data       start:0x0010EA60 end:0x0010EB88
+
+data/model/obj_stoneE_shadow.c:
 	.data       start:0x0010EB88 end:0x0010EC48
+
+data/model/obj_s_stump2.c:
 	.data       start:0x0010EC48 end:0x0010ED18
+
+data/model/obj_s_stump3.c:
 	.data       start:0x0010ED18 end:0x0010EE00
+
+data/model/obj_stump3_shadow.c:
 	.data       start:0x0010EE00 end:0x0010F080
+
+data/model/obj_s_stump4.c:
 	.data       start:0x0010F080 end:0x0010F550
+
+data/model/obj_stump4_shadow.c:
 	.data       start:0x0010F550 end:0x0010F5C0
+
+data/model/obj_s_stump5.c:
 	.data       start:0x0010F5C0 end:0x0010F690
+
+data/model/obj_stump5_shadow.c:
 	.data       start:0x0010F690 end:0x0010F700
+
+data/model/obj_item_tane.c:
 	.data       start:0x0010F700 end:0x0010F820
+
+data/model/obj_s_tree1.c:
 	.data       start:0x0010F820 end:0x0010FA40
+
+data/model/obj_s_tree_dead.c:
 	.data       start:0x0010FA40 end:0x0010FBE0
+
+data/model/obj_s_tree2.c:
 	.data       start:0x0010FBE0 end:0x001104A0
+
+data/model/obj_s_tree3.c:
 	.data       start:0x001104A0 end:0x00110E00
+
+data/model/obj_tree_shadow.c:
 	.data       start:0x00110E00 end:0x00111080
+
+data/model/obj_s_tree4.c:
 	.data       start:0x00111080 end:0x00111A18
+
+data/model/obj_tree4_shadow.c:
 	.data       start:0x00111A18 end:0x00111AA0
+
+data/model/obj_s_tree5.c:
 	.data       start:0x00111AA0 end:0x00111CD0
+
+data/model/obj_s_tree5_apple.c:
 	.data       start:0x00111CD0 end:0x00111DB0
+
+data/model/obj_tree5_shadow.c:
 	.data       start:0x00111DB0 end:0x00111E20
+
+data/model/mFm_obj_palm_01.c:
 	.data       start:0x00111E20 end:0x00111FE0
+
+data/model/mFm_obj_tree_01.c:
 	.data       start:0x00111FE0 end:0x001121A0
+
+data/model/mFm_obj_tree_01_dol.c:
 	.data       start:0x001121A0 end:0x00112360
+
+data/model/obj_w_cedar1.c:
 	.data       start:0x00112360 end:0x00112560
+
+data/model/obj_w_cedar1_dead.c:
 	.data       start:0x00112560 end:0x001126D8
+
+data/model/obj_w_cedar2.c:
 	.data       start:0x001126D8 end:0x001127A0
+
+data/model/obj_w_cedar3.c:
 	.data       start:0x001127A0 end:0x00113A20
+
+data/model/obj_w_cedar4.c:
 	.data       start:0x00113A20 end:0x00114628
+
+data/model/obj_w_cedar5.c:
 	.data       start:0x00114628 end:0x00114BA0
+
+data/model/obj_w_cstump2.c:
 	.data       start:0x00114BA0 end:0x00114C50
+
+data/model/obj_w_cstump3.c:
 	.data       start:0x00114C50 end:0x00114D00
+
+data/model/obj_w_cstump4.c:
 	.data       start:0x00114D00 end:0x001151B0
+
+data/model/obj_w_cstump5.c:
 	.data       start:0x001151B0 end:0x00115260
+
+data/model/obj_w_fenceL.c:
 	.data       start:0x00115260 end:0x001156E0
+
+data/model/obj_w_fenceS.c:
 	.data       start:0x001156E0 end:0x00115760
+
+data/model/obj_w_honeycomb.c:
 	.data       start:0x00115760 end:0x00115A60
+
+data/model/obj_w_melody.c:
 	.data       start:0x00115A60 end:0x00116360
+
+data/model/obj_w_notice.c:
 	.data       start:0x00116360 end:0x00116C60
+
+data/model/obj_s_palm1.c:
 	.data       start:0x00116C60 end:0x00116E60
+
+data/model/obj_w_palm1_dead.c:
 	.data       start:0x00116E60 end:0x00116FE0
+
+data/model/obj_w_palm2.c:
 	.data       start:0x00116FE0 end:0x001178A0
+
+data/model/obj_w_palm3.c:
 	.data       start:0x001178A0 end:0x00118AA0
+
+data/model/obj_w_palm4.c:
 	.data       start:0x00118AA0 end:0x00119DC0
+
+data/model/obj_w_palm5.c:
 	.data       start:0x00119DC0 end:0x0011B200
+
+data/model/obj_w_palm5_coco.c:
 	.data       start:0x0011B200 end:0x0011B2A0
+
+data/model/obj_w_pstump2.c:
 	.data       start:0x0011B2A0 end:0x0011BB60
+
+data/model/obj_w_pstump3.c:
 	.data       start:0x0011BB60 end:0x0011C420
+
+data/model/obj_w_pstump4.c:
 	.data       start:0x0011C420 end:0x0011C8E0
+
+data/model/obj_w_pstump5.c:
 	.data       start:0x0011C8E0 end:0x0011CDA0
+
+data/model/obj_w_sightmap.c:
 	.data       start:0x0011CDA0 end:0x0011D6A0
+
+data/model/obj_w_stoneA.c:
 	.data       start:0x0011D6A0 end:0x0011D9B0
+
+data/model/obj_w_stoneB.c:
 	.data       start:0x0011D9B0 end:0x0011DAA0
+
+data/model/obj_w_stoneC.c:
 	.data       start:0x0011DAA0 end:0x0011DB90
+
+data/model/obj_w_stoneD.c:
 	.data       start:0x0011DB90 end:0x0011DCB8
+
+data/model/obj_w_stoneE.c:
 	.data       start:0x0011DCB8 end:0x0011DDE0
+
+data/model/obj_w_tree1.c:
 	.data       start:0x0011DDE0 end:0x0011E000
+
+data/model/obj_w_tree1_dead.c:
 	.data       start:0x0011E000 end:0x0011E1A0
+
+data/model/obj_w_tree2.c:
 	.data       start:0x0011E1A0 end:0x0011EA80
+
+data/model/obj_w_tree3.c:
 	.data       start:0x0011EA80 end:0x0011F400
+
+data/model/obj_w_tree4.c:
 	.data       start:0x0011F400 end:0x0011FDD8
+
+data/model/obj_w_tree5.c:
 	.data       start:0x0011FDD8 end:0x00120020
+
+data/model/obj_x_cedar5.c:
 	.data       start:0x00120020 end:0x00120488
+
+data/model/obj_x_honeycomb.c:
 	.data       start:0x00120488 end:0x00120780
+
+data/model/obj_x_tree5.c:
 	.data       start:0x00120780 end:0x00120AA8
 
 data/npc/model/mdl/pbr_1.c:
@@ -3936,9 +4182,13 @@ data/npc/model/tex/brd_9.c:
 data/npc/model/tex/brd_10.c:
 	.data       start:0x001311A0 end:0x00131EC0
 
-data/dataobject/dataobject_131EC0:
+data/model/boy_model.c:
 	.data       start:0x00131EC0 end:0x001346F8
+
+data/model/player_anim.c:
 	.data       start:0x001346F8 end:0x00171E00
+
+data/model/player_tool.c:
 	.data       start:0x00171E00 end:0x00188A60
 
 data/player/BOY_part_data.c:
@@ -4253,12 +4503,22 @@ data/scene/field_tool_field.c:
 data/field/field_data.c:
 	.data       start:0x002024B0 end:0x00204600
 
-data/dataobject/dataobject_204600:
+data/font/FONT_nes_tex_choice.c:
 	.data       start:0x00204600 end:0x00204680
+
+data/font/FONT_nes_tex_cursor.c:
 	.data       start:0x00204680 end:0x00204700
+
+data/font/FONT_nes_tex_font1.c:
 	.data       start:0x00204700 end:0x0020A700
+
+data/font/FONT_nes_tex_jyouge.c:
 	.data       start:0x0020A700 end:0x0020A780
+
+data/font/FONT_nes_tex_next.c:
 	.data       start:0x0020A780 end:0x0020A800
+
+data/font/FONT_nes_tex_sayuu.c:
 	.data       start:0x0020A800 end:0x0020A880
 
 data/npc/model/mdl/flg_1.c:
@@ -4309,7 +4569,7 @@ data/npc/model/mdl/rcf_1.c:
 data/npc/model/tex/rcf_1.c:
 	.data       start:0x0021D4A0 end:0x0021E3C0
 
-data/dataobject/dataobject_21E3C0:
+data/model/obj_garagara.c:
 	.data       start:0x0021E3C0 end:0x0021F608
 
 data/npc/model/mdl/gst_1.c:
@@ -4318,7 +4578,7 @@ data/npc/model/mdl/gst_1.c:
 data/npc/model/tex/gst_1.c:
 	.data       start:0x00220C80 end:0x00221C20
 
-data/dataobject/dataobject_221C20:
+data/model/girl_model.c:
 	.data       start:0x00221C20 end:0x00224230
 
 data/npc/model/mdl/goa_1.c:

@@ -36,7 +36,7 @@ def strarg_animesegment(v):
         anime_3_txt: "anime_3_txt",
         anime_4_txt: "anime_4_txt",
         anime_5_txt: "anime_5_txt",
-        anime_6_txt: "anime_6_txt"
+        anime_6_txt: "anime_6_mdl"
     }.get(v, str(v))
 
 
@@ -53,7 +53,10 @@ def symbol_lookup(addr):
     else:
         seg = f"{strarg_animesegment(addr & 0xff000000)}"
         if (addr & 0x00ffffff):
-            seg += f" + 0x{addr & 0x00ffffff:X}"
+            if seg == "anime_6_mdl":
+                seg = f"&anime_6_mdl[{(addr & 0x00ffffff) // 0x40}]"
+            else:
+                seg += f" + 0x{addr & 0x00ffffff:X}"
         return seg
 
 
@@ -323,6 +326,8 @@ G_CYC_FILL = (3 << G_MDSFT_CYCLETYPE)
 
 G_PM_1PRIMITIVE = (1 << G_MDSFT_PIPELINE)
 G_PM_NPRIMITIVE = (0 << G_MDSFT_PIPELINE)
+
+G_TLUT_DOLPHIN = 2
 
 
 def GBL_c1(m1a, m1b, m2a, m2b): return (m1a) << 30 | (
@@ -1573,7 +1578,10 @@ def gfx_gsDPLoadSync(data):
 
 
 def gfx_gsDPLoadTLUTCmd(data):
-    return gf_call("gsDPLoadTLUTCmd", data, B2A(24, 3, DL, strarg_tile), B2A(14, 10, DL))
+    if extract_data_upper(data, 22, 2) == G_TLUT_DOLPHIN:
+        return gf_call("gsDPLoadTLUT_Dolphin", data, B2A(16, 4, DU), B2A(0, 14, DU), B2A(14, 2, DU), GFX_SYMBOL)
+    else:
+        return gf_call("gsDPLoadTLUTCmd", data, B2A(24, 3, DL, strarg_tile), B2A(14, 10, DL))
 
 
 def gfx_SetCombineLERP(data):
@@ -1642,6 +1650,14 @@ def gfx_gsSp1Triangle(data):
                    B2A(0, 8, DU, _C),
                    B2A(0, 1, DU, lambda _: "0")
                    )
+
+
+def gfx_gsDPSetEnvColor(data):
+    return gf_call("gsDPSetEnvColor", data,
+                   B2A(24, 8, DL),
+                   B2A(16, 8, DL),
+                   B2A(8, 8, DL),
+                   B2A(0, 8, DL))
 
 
 def gfx_gsDPSetTile_Dolphin(data):
@@ -1778,6 +1794,7 @@ GFX_LOOKUP = {
     G_LOADBLOCK: gfx_gsDPLoadBlock,
     G_SETTILESIZE: gfx_gsDPSetTileSize,
     G_TRI1: gfx_gsSp1Triangle,
+    G_SETENVCOLOR: gfx_gsDPSetEnvColor
 }
 
 

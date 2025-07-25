@@ -37,6 +37,7 @@ extern "C" {
 #define anime_5_model SEGMENT_ADDR(ANIME_5_TXT_SEG, 0)
 #define anime_6_txt SEGMENT_ADDR(ANIME_6_TXT_SEG, 0)
 #define anime_6_model SEGMENT_ADDR(ANIME_6_TXT_SEG, 0)
+#define anime_6_mdl ((Mtx*)anime_6_model)
 
 /* New Microcode Command Ids */
 #define G_TRIN 0x09
