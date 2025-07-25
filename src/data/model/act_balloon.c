@@ -86,12 +86,13 @@ s16 cKF_ds_act_balloon_tbl[] = { 1,   -100, 20,   10,  -57,  252, 32,   99,   -3
                                  -38, 61,   -100, -20, 1,    24,  130,  14,   47,  -54, 43,  -49, 37,  61,
                                  24,  136,  1,    -24, -130, 14,  -47,  54,   43,  49,  -37, 61,  -24, -136 };
 
-cKF_Animation_R_c cKF_ba_r_act_balloon[] = { { cKF_ckcb_r_act_balloon_tbl, cKF_ds_act_balloon_tbl,
-                                               cKF_kn_act_balloon_tbl, cKF_c_act_balloon_tbl, -1, 61 } };
+cKF_Animation_R_c cKF_ba_r_act_balloon = {
+    cKF_ckcb_r_act_balloon_tbl, cKF_ds_act_balloon_tbl, cKF_kn_act_balloon_tbl, cKF_c_act_balloon_tbl, -1, 61
+};
 
 cKF_Joint_R_c cKF_je_r_act_balloon_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 1500, 0 } },
                                              { act_balloon_wireA_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                              { act_balloon_wireB_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 1250, 0, 0 } },
                                              { act_balloon_head_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 1250, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_act_balloon[] = { { ARRAY_COUNT(cKF_je_r_act_balloon_tbl), 3, cKF_je_r_act_balloon_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_act_balloon = { ARRAY_COUNT(cKF_je_r_act_balloon_tbl), 3, cKF_je_r_act_balloon_tbl };

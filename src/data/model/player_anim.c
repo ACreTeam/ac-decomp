@@ -36,8 +36,9 @@ s16 cKF_ds_ply_1_wait1_tbl[] = {
     33, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_wait1[] = { { cKF_ckcb_r_ply_1_wait1_tbl, cKF_ds_ply_1_wait1_tbl,
-                                               cKF_kn_ply_1_wait1_tbl, cKF_c_ply_1_wait1_tbl, -1, 33 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_wait1 = {
+    cKF_ckcb_r_ply_1_wait1_tbl, cKF_ds_ply_1_wait1_tbl, cKF_kn_ply_1_wait1_tbl, cKF_c_ply_1_wait1_tbl, -1, 33
+};
 
 u8 cKF_ckcb_r_ply_1_walk1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -73,8 +74,9 @@ s16 cKF_ds_ply_1_walk1_tbl[] = {
     1,  0,    0,     17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_walk1[] = { { cKF_ckcb_r_ply_1_walk1_tbl, cKF_ds_ply_1_walk1_tbl,
-                                               cKF_kn_ply_1_walk1_tbl, cKF_c_ply_1_walk1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_walk1 = {
+    cKF_ckcb_r_ply_1_walk1_tbl, cKF_ds_ply_1_walk1_tbl, cKF_kn_ply_1_walk1_tbl, cKF_c_ply_1_walk1_tbl, -1, 17
+};
 
 u8 cKF_ckcb_r_ply_1_axe1_tbl[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -85,7 +87,7 @@ s16 cKF_c_ply_1_axe1_tbl[] = { 0,    1000, 0,    0,    0, 900,  0,   0,    0,   
                                900,  -300, -400, 710,  0, -800, 0,   920,  300,  -135, 0,    0,    0,    0,
                                -900, 0,    0,    0,    0, 0,    0,   0,    0,    0,    0 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_axe1[] = { { cKF_ckcb_r_ply_1_axe1_tbl, NULL, NULL, cKF_c_ply_1_axe1_tbl, -1, 2 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_axe1 = { cKF_ckcb_r_ply_1_axe1_tbl, NULL, NULL, cKF_c_ply_1_axe1_tbl, -1, 2 };
 
 u8 cKF_ckcb_r_ply_1_run1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -129,8 +131,9 @@ s16 cKF_ds_ply_1_run1_tbl[] = {
     17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_run1[] = { { cKF_ckcb_r_ply_1_run1_tbl, cKF_ds_ply_1_run1_tbl, cKF_kn_ply_1_run1_tbl,
-                                              cKF_c_ply_1_run1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_run1 = {
+    cKF_ckcb_r_ply_1_run1_tbl, cKF_ds_ply_1_run1_tbl, cKF_kn_ply_1_run1_tbl, cKF_c_ply_1_run1_tbl, -1, 17
+};
 
 u8 cKF_ckcb_r_ply_1_push1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -167,8 +170,9 @@ s16 cKF_ds_ply_1_push1_tbl[] = {
     25, 0,    0,     1,  0,    0,     25, 0,    0,     1,  0,    0,    25, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_push1[] = { { cKF_ckcb_r_ply_1_push1_tbl, cKF_ds_ply_1_push1_tbl,
-                                               cKF_kn_ply_1_push1_tbl, cKF_c_ply_1_push1_tbl, -1, 25 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_push1 = {
+    cKF_ckcb_r_ply_1_push1_tbl, cKF_ds_ply_1_push1_tbl, cKF_kn_ply_1_push1_tbl, cKF_c_ply_1_push1_tbl, -1, 25
+};
 
 u8 cKF_ckcb_r_ply_1_pull1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -212,8 +216,9 @@ s16 cKF_ds_ply_1_pull1_tbl[] = {
     25, 0,    0,   1,  0,    0,      25, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_pull1[] = { { cKF_ckcb_r_ply_1_pull1_tbl, cKF_ds_ply_1_pull1_tbl,
-                                               cKF_kn_ply_1_pull1_tbl, cKF_c_ply_1_pull1_tbl, -1, 25 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_pull1 = {
+    cKF_ckcb_r_ply_1_pull1_tbl, cKF_ds_ply_1_pull1_tbl, cKF_kn_ply_1_pull1_tbl, cKF_c_ply_1_pull1_tbl, -1, 25
+};
 
 u8 cKF_ckcb_r_ply_1_hold_wait1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -248,8 +253,12 @@ s16 cKF_ds_ply_1_hold_wait1_tbl[] = {
     1,  0,    0,    17, 0,    0, 1,  0,    0,    17, 0,    0,    1,  0,    0,    17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_hold_wait1[] = { { cKF_ckcb_r_ply_1_hold_wait1_tbl, cKF_ds_ply_1_hold_wait1_tbl,
-                                                    cKF_kn_ply_1_hold_wait1_tbl, cKF_c_ply_1_hold_wait1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_hold_wait1 = { cKF_ckcb_r_ply_1_hold_wait1_tbl,
+                                                cKF_ds_ply_1_hold_wait1_tbl,
+                                                cKF_kn_ply_1_hold_wait1_tbl,
+                                                cKF_c_ply_1_hold_wait1_tbl,
+                                                -1,
+                                                17 };
 
 u8 cKF_ckcb_r_ply_1_pickup1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -294,8 +303,9 @@ s16 cKF_ds_ply_1_pickup1_tbl[] = {
     29, 100,  0,    1,  0,    0,   29, 0,    0,     1,  0,    0,     29, 0,    0,   1,  0,    0,     29, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_pickup1[] = { { cKF_ckcb_r_ply_1_pickup1_tbl, cKF_ds_ply_1_pickup1_tbl,
-                                                 cKF_kn_ply_1_pickup1_tbl, cKF_c_ply_1_pickup1_tbl, -1, 29 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_pickup1 = {
+    cKF_ckcb_r_ply_1_pickup1_tbl, cKF_ds_ply_1_pickup1_tbl, cKF_kn_ply_1_pickup1_tbl, cKF_c_ply_1_pickup1_tbl, -1, 29
+};
 
 u8 cKF_ckcb_r_ply_1_Lturn1_tbl[] = { 48, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 2, 7, 7, 0, 7, 0, 0 };
 
@@ -325,8 +335,9 @@ s16 cKF_ds_ply_1_Lturn1_tbl[] = {
     1,  0,    0,     13, 0,    0,     1,  0,     0,    13, 0,   0,     1,  0,    0,    13, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_Lturn1[] = { { cKF_ckcb_r_ply_1_Lturn1_tbl, cKF_ds_ply_1_Lturn1_tbl,
-                                                cKF_kn_ply_1_Lturn1_tbl, cKF_c_ply_1_Lturn1_tbl, -1, 13 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_Lturn1 = {
+    cKF_ckcb_r_ply_1_Lturn1_tbl, cKF_ds_ply_1_Lturn1_tbl, cKF_kn_ply_1_Lturn1_tbl, cKF_c_ply_1_Lturn1_tbl, -1, 13
+};
 
 u8 cKF_ckcb_r_ply_1_Rturn1_tbl[] = { 48, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 2, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -355,8 +366,9 @@ s16 cKF_ds_ply_1_Rturn1_tbl[] = {
     1,  0,    0,     13, 0,    0,     1,  0,    0,    13, 0,    0,   1,  0,    0,     13, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_Rturn1[] = { { cKF_ckcb_r_ply_1_Rturn1_tbl, cKF_ds_ply_1_Rturn1_tbl,
-                                                cKF_kn_ply_1_Rturn1_tbl, cKF_c_ply_1_Rturn1_tbl, -1, 13 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_Rturn1 = {
+    cKF_ckcb_r_ply_1_Rturn1_tbl, cKF_ds_ply_1_Rturn1_tbl, cKF_kn_ply_1_Rturn1_tbl, cKF_c_ply_1_Rturn1_tbl, -1, 13
+};
 
 u8 cKF_ckcb_r_ply_1_get1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -383,8 +395,9 @@ s16 cKF_ds_ply_1_get1_tbl[] = {
     1,  0,    0, 11, 0,    0,   1,  0,    0,   11, 0,    0,   1, 0,    0,   11, 0,    0, 1,  0,    0,    11, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_get1[] = { { cKF_ckcb_r_ply_1_get1_tbl, cKF_ds_ply_1_get1_tbl, cKF_kn_ply_1_get1_tbl,
-                                              cKF_c_ply_1_get1_tbl, -1, 11 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_get1 = {
+    cKF_ckcb_r_ply_1_get1_tbl, cKF_ds_ply_1_get1_tbl, cKF_kn_ply_1_get1_tbl, cKF_c_ply_1_get1_tbl, -1, 11
+};
 
 u8 cKF_ckcb_r_ply_1_get_change1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -449,9 +462,12 @@ s16 cKF_ds_ply_1_get_change1_tbl[] = {
     1,  0,     0,    93, 0,     0,     1,  0,    0,     93, 0,    0,     1,  0,    0,     93, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_get_change1[] = { { cKF_ckcb_r_ply_1_get_change1_tbl, cKF_ds_ply_1_get_change1_tbl,
-                                                     cKF_kn_ply_1_get_change1_tbl, cKF_c_ply_1_get_change1_tbl, -1,
-                                                     93 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_get_change1 = { cKF_ckcb_r_ply_1_get_change1_tbl,
+                                                 cKF_ds_ply_1_get_change1_tbl,
+                                                 cKF_kn_ply_1_get_change1_tbl,
+                                                 cKF_c_ply_1_get_change1_tbl,
+                                                 -1,
+                                                 93 };
 
 u8 ply_1_get_change11_tex_index[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -505,9 +521,12 @@ s16 cKF_ds_ply_1_get_putaway1_tbl[] = {
     31, 0,     0, 1,  0,     0, 31, 0,    0,    1,  0,    0, 31, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_get_putaway1[] = { { cKF_ckcb_r_ply_1_get_putaway1_tbl, cKF_ds_ply_1_get_putaway1_tbl,
-                                                      cKF_kn_ply_1_get_putaway1_tbl, cKF_c_ply_1_get_putaway1_tbl, -1,
-                                                      31 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_get_putaway1 = { cKF_ckcb_r_ply_1_get_putaway1_tbl,
+                                                  cKF_ds_ply_1_get_putaway1_tbl,
+                                                  cKF_kn_ply_1_get_putaway1_tbl,
+                                                  cKF_c_ply_1_get_putaway1_tbl,
+                                                  -1,
+                                                  31 };
 
 u8 cKF_ckcb_r_ply_1_open1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -584,8 +603,9 @@ s16 cKF_ds_ply_1_open1_tbl[] = {
     65, 0,     0,     1,  0,     0,      65, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_open1[] = { { cKF_ckcb_r_ply_1_open1_tbl, cKF_ds_ply_1_open1_tbl,
-                                               cKF_kn_ply_1_open1_tbl, cKF_c_ply_1_open1_tbl, -1, 65 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_open1 = {
+    cKF_ckcb_r_ply_1_open1_tbl, cKF_ds_ply_1_open1_tbl, cKF_kn_ply_1_open1_tbl, cKF_c_ply_1_open1_tbl, -1, 65
+};
 
 u8 cKF_ckcb_r_ply_1_putaway1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -613,8 +633,9 @@ s16 cKF_ds_ply_1_putaway1_tbl[] = {
     1, -125, 0, 5, -75,  0, 9, -125, 0, 1, 0,     0, 9, 0,     0, 1, 0,    0, 9, 0,    0, 1, 0,    0, 9, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_putaway1[] = { { cKF_ckcb_r_ply_1_putaway1_tbl, cKF_ds_ply_1_putaway1_tbl,
-                                                  cKF_kn_ply_1_putaway1_tbl, cKF_c_ply_1_putaway1_tbl, -1, 9 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_putaway1 = {
+    cKF_ckcb_r_ply_1_putaway1_tbl, cKF_ds_ply_1_putaway1_tbl, cKF_kn_ply_1_putaway1_tbl, cKF_c_ply_1_putaway1_tbl, -1, 9
+};
 
 u8 cKF_ckcb_r_ply_1_trans_wait1_tbl[] = {
     16, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -645,9 +666,12 @@ s16 cKF_ds_ply_1_trans_wait1_tbl[] = {
     17, 0,    0, 1,  0,    0,    17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_trans_wait1[] = { { cKF_ckcb_r_ply_1_trans_wait1_tbl, cKF_ds_ply_1_trans_wait1_tbl,
-                                                     cKF_kn_ply_1_trans_wait1_tbl, cKF_c_ply_1_trans_wait1_tbl, -1,
-                                                     17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_trans_wait1 = { cKF_ckcb_r_ply_1_trans_wait1_tbl,
+                                                 cKF_ds_ply_1_trans_wait1_tbl,
+                                                 cKF_kn_ply_1_trans_wait1_tbl,
+                                                 cKF_c_ply_1_trans_wait1_tbl,
+                                                 -1,
+                                                 17 };
 
 u8 cKF_ckcb_r_ply_1_transfer1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -708,8 +732,12 @@ s16 cKF_ds_ply_1_transfer1_tbl[] = {
     1,  0,    0,    39, 0,    0,    1,  0,    0,    39, 0,    0,     1,  0,    0,    39, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_transfer1[] = { { cKF_ckcb_r_ply_1_transfer1_tbl, cKF_ds_ply_1_transfer1_tbl,
-                                                   cKF_kn_ply_1_transfer1_tbl, cKF_c_ply_1_transfer1_tbl, -1, 39 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_transfer1 = { cKF_ckcb_r_ply_1_transfer1_tbl,
+                                               cKF_ds_ply_1_transfer1_tbl,
+                                               cKF_kn_ply_1_transfer1_tbl,
+                                               cKF_c_ply_1_transfer1_tbl,
+                                               -1,
+                                               39 };
 
 u8 cKF_ckcb_r_ply_1_umb_open1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -757,8 +785,12 @@ s16 cKF_ds_ply_1_umb_open1_tbl[] = {
     1,  0,     0,    26, 0,    0,     1,  0,    0,     26, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_umb_open1[] = { { cKF_ckcb_r_ply_1_umb_open1_tbl, cKF_ds_ply_1_umb_open1_tbl,
-                                                   cKF_kn_ply_1_umb_open1_tbl, cKF_c_ply_1_umb_open1_tbl, -1, 26 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_umb_open1 = { cKF_ckcb_r_ply_1_umb_open1_tbl,
+                                               cKF_ds_ply_1_umb_open1_tbl,
+                                               cKF_kn_ply_1_umb_open1_tbl,
+                                               cKF_c_ply_1_umb_open1_tbl,
+                                               -1,
+                                               26 };
 
 u8 cKF_ckcb_r_ply_1_umbrella1_tbl[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -769,8 +801,8 @@ s16 cKF_c_ply_1_umbrella1_tbl[] = { 0,    1000, 0,    0,    0,    900,   0,   0,
                                     900,  -170, -365, 540,  -200, -1060, 420, -8, -50,  -350, 0,   0,    0,    0,
                                     -900, 0,    0,    0,    0,    0,     0,   0,  0,    0,    0 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_umbrella1[] = { { cKF_ckcb_r_ply_1_umbrella1_tbl, NULL, NULL,
-                                                   cKF_c_ply_1_umbrella1_tbl, -1, 2 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_umbrella1 = { cKF_ckcb_r_ply_1_umbrella1_tbl, NULL, NULL,
+                                               cKF_c_ply_1_umbrella1_tbl,      -1,   2 };
 
 u8 cKF_ckcb_r_ply_1_dash1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -812,8 +844,9 @@ s16 cKF_ds_ply_1_dash1_tbl[] = {
     1,  0,    0,     17, 0,     0,     1,  0,    0,     17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_dash1[] = { { cKF_ckcb_r_ply_1_dash1_tbl, cKF_ds_ply_1_dash1_tbl,
-                                               cKF_kn_ply_1_dash1_tbl, cKF_c_ply_1_dash1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_dash1 = {
+    cKF_ckcb_r_ply_1_dash1_tbl, cKF_ds_ply_1_dash1_tbl, cKF_kn_ply_1_dash1_tbl, cKF_c_ply_1_dash1_tbl, -1, 17
+};
 
 u8 cKF_ckcb_r_ply_1_run_slip1_tbl[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -824,8 +857,8 @@ s16 cKF_c_ply_1_run_slip1_tbl[] = { 0,    1200, 0,    0,    0,   900,  -600, 400
                                     900,  0,    150,  0,    0,   -450, 0,    0,   158, 0,    200,  0,    -160, 0,
                                     -900, 0,    0,    0,    0,   0,    0,    0,   0,   0,    0 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_run_slip1[] = { { cKF_ckcb_r_ply_1_run_slip1_tbl, NULL, NULL,
-                                                   cKF_c_ply_1_run_slip1_tbl, -1, 2 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_run_slip1 = { cKF_ckcb_r_ply_1_run_slip1_tbl, NULL, NULL,
+                                               cKF_c_ply_1_run_slip1_tbl,      -1,   2 };
 
 u8 cKF_ckcb_r_ply_1_get_pull1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -855,8 +888,12 @@ s16 cKF_ds_ply_1_get_pull1_tbl[] = {
     11, 0,    0, 1,  0,    0, 11, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_get_pull1[] = { { cKF_ckcb_r_ply_1_get_pull1_tbl, cKF_ds_ply_1_get_pull1_tbl,
-                                                   cKF_kn_ply_1_get_pull1_tbl, cKF_c_ply_1_get_pull1_tbl, -1, 11 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_get_pull1 = { cKF_ckcb_r_ply_1_get_pull1_tbl,
+                                               cKF_ds_ply_1_get_pull1_tbl,
+                                               cKF_kn_ply_1_get_pull1_tbl,
+                                               cKF_c_ply_1_get_pull1_tbl,
+                                               -1,
+                                               11 };
 
 u8 cKF_ckcb_r_ply_1_get_m1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -922,8 +959,9 @@ s16 cKF_ds_ply_1_get_m1_tbl[] = {
     52, 0,    0,     1,  0,    0,    52, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_get_m1[] = { { cKF_ckcb_r_ply_1_get_m1_tbl, cKF_ds_ply_1_get_m1_tbl,
-                                                cKF_kn_ply_1_get_m1_tbl, cKF_c_ply_1_get_m1_tbl, -1, 52 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_get_m1 = {
+    cKF_ckcb_r_ply_1_get_m1_tbl, cKF_ds_ply_1_get_m1_tbl, cKF_kn_ply_1_get_m1_tbl, cKF_c_ply_1_get_m1_tbl, -1, 52
+};
 
 u8 cKF_ckcb_r_ply_1_kamae_move_m1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7,
                                             7,  0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
@@ -969,9 +1007,12 @@ s16 cKF_ds_ply_1_kamae_move_m1_tbl[] = {
     17, 0,     0,     1,  0,    0,    17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kamae_move_m1[] = { { cKF_ckcb_r_ply_1_kamae_move_m1_tbl,
-                                                       cKF_ds_ply_1_kamae_move_m1_tbl, cKF_kn_ply_1_kamae_move_m1_tbl,
-                                                       cKF_c_ply_1_kamae_move_m1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kamae_move_m1 = { cKF_ckcb_r_ply_1_kamae_move_m1_tbl,
+                                                   cKF_ds_ply_1_kamae_move_m1_tbl,
+                                                   cKF_kn_ply_1_kamae_move_m1_tbl,
+                                                   cKF_c_ply_1_kamae_move_m1_tbl,
+                                                   -1,
+                                                   17 };
 
 u8 cKF_ckcb_r_ply_1_kamae_wait_m1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7,
                                             7,  0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
@@ -1008,9 +1049,12 @@ s16 cKF_ds_ply_1_kamae_wait_m1_tbl[] = {
     1,  0,     0,    17, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kamae_wait_m1[] = { { cKF_ckcb_r_ply_1_kamae_wait_m1_tbl,
-                                                       cKF_ds_ply_1_kamae_wait_m1_tbl, cKF_kn_ply_1_kamae_wait_m1_tbl,
-                                                       cKF_c_ply_1_kamae_wait_m1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kamae_wait_m1 = { cKF_ckcb_r_ply_1_kamae_wait_m1_tbl,
+                                                   cKF_ds_ply_1_kamae_wait_m1_tbl,
+                                                   cKF_kn_ply_1_kamae_wait_m1_tbl,
+                                                   cKF_c_ply_1_kamae_wait_m1_tbl,
+                                                   -1,
+                                                   17 };
 
 u8 cKF_ckcb_r_ply_1_kokeru_a1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -1054,8 +1098,12 @@ s16 cKF_ds_ply_1_kokeru_a1_tbl[] = {
     17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kokeru_a1[] = { { cKF_ckcb_r_ply_1_kokeru_a1_tbl, cKF_ds_ply_1_kokeru_a1_tbl,
-                                                   cKF_kn_ply_1_kokeru_a1_tbl, cKF_c_ply_1_kokeru_a1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kokeru_a1 = { cKF_ckcb_r_ply_1_kokeru_a1_tbl,
+                                               cKF_ds_ply_1_kokeru_a1_tbl,
+                                               cKF_kn_ply_1_kokeru_a1_tbl,
+                                               cKF_c_ply_1_kokeru_a1_tbl,
+                                               -1,
+                                               17 };
 
 u8 ply_1_kokeru_a11_tex_index[] = { 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
@@ -1113,10 +1161,12 @@ s16 cKF_ds_ply_1_kokeru_getup_a1_tbl[] = {
     1,  0,    0,     32, 0,    0,     1,  0,     0,     32, 0,     0,     1,  0,    0,     32, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kokeru_getup_a1[] = {
-    { cKF_ckcb_r_ply_1_kokeru_getup_a1_tbl, cKF_ds_ply_1_kokeru_getup_a1_tbl, cKF_kn_ply_1_kokeru_getup_a1_tbl,
-      cKF_c_ply_1_kokeru_getup_a1_tbl, -1, 32 }
-};
+cKF_Animation_R_c cKF_ba_r_ply_1_kokeru_getup_a1 = { cKF_ckcb_r_ply_1_kokeru_getup_a1_tbl,
+                                                     cKF_ds_ply_1_kokeru_getup_a1_tbl,
+                                                     cKF_kn_ply_1_kokeru_getup_a1_tbl,
+                                                     cKF_c_ply_1_kokeru_getup_a1_tbl,
+                                                     -1,
+                                                     32 };
 
 u8 ply_1_kokeru_getup_a11_tex_index[] = { 5, 5, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
                                           3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 };
@@ -1174,10 +1224,12 @@ s16 cKF_ds_ply_1_kokeru_getup_n1_tbl[] = {
     1,  0,     0,    32, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kokeru_getup_n1[] = {
-    { cKF_ckcb_r_ply_1_kokeru_getup_n1_tbl, cKF_ds_ply_1_kokeru_getup_n1_tbl, cKF_kn_ply_1_kokeru_getup_n1_tbl,
-      cKF_c_ply_1_kokeru_getup_n1_tbl, -1, 32 }
-};
+cKF_Animation_R_c cKF_ba_r_ply_1_kokeru_getup_n1 = { cKF_ckcb_r_ply_1_kokeru_getup_n1_tbl,
+                                                     cKF_ds_ply_1_kokeru_getup_n1_tbl,
+                                                     cKF_kn_ply_1_kokeru_getup_n1_tbl,
+                                                     cKF_c_ply_1_kokeru_getup_n1_tbl,
+                                                     -1,
+                                                     32 };
 
 u8 ply_1_kokeru_getup_n11_tex_index[] = { 5, 5, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
                                           3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 };
@@ -1226,8 +1278,12 @@ s16 cKF_ds_ply_1_kokeru_n1_tbl[] = {
     17, 0,    0,     1,  0,    0,    17, 0,     0,     1,  0,     0,     17, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kokeru_n1[] = { { cKF_ckcb_r_ply_1_kokeru_n1_tbl, cKF_ds_ply_1_kokeru_n1_tbl,
-                                                   cKF_kn_ply_1_kokeru_n1_tbl, cKF_c_ply_1_kokeru_n1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kokeru_n1 = { cKF_ckcb_r_ply_1_kokeru_n1_tbl,
+                                               cKF_ds_ply_1_kokeru_n1_tbl,
+                                               cKF_kn_ply_1_kokeru_n1_tbl,
+                                               cKF_c_ply_1_kokeru_n1_tbl,
+                                               -1,
+                                               17 };
 
 u8 ply_1_kokeru_n11_tex_index[] = { 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
@@ -1242,7 +1298,7 @@ s16 cKF_c_ply_1_net1_tbl[] = { 0,    1000, 0,    0,    0,    900,   0,    0,   0
                                900,  -300, -130, 320,  -800, -1290, 1040, 475, -350, -245, 0,   0,    0,    0,
                                -900, 0,    0,    0,    0,    0,     0,    0,   0,    0,    0 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_net1[] = { { cKF_ckcb_r_ply_1_net1_tbl, NULL, NULL, cKF_c_ply_1_net1_tbl, -1, 2 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_net1 = { cKF_ckcb_r_ply_1_net1_tbl, NULL, NULL, cKF_c_ply_1_net1_tbl, -1, 2 };
 
 u8 cKF_ckcb_r_ply_1_net_swing1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -1291,8 +1347,12 @@ s16 cKF_ds_ply_1_net_swing1_tbl[] = {
     10, 0,     0,     1,  0,     0,     10, 0,     0,     1,  0,     0,     10, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_net_swing1[] = { { cKF_ckcb_r_ply_1_net_swing1_tbl, cKF_ds_ply_1_net_swing1_tbl,
-                                                    cKF_kn_ply_1_net_swing1_tbl, cKF_c_ply_1_net_swing1_tbl, -1, 10 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_net_swing1 = { cKF_ckcb_r_ply_1_net_swing1_tbl,
+                                                cKF_ds_ply_1_net_swing1_tbl,
+                                                cKF_kn_ply_1_net_swing1_tbl,
+                                                cKF_c_ply_1_net_swing1_tbl,
+                                                -1,
+                                                10 };
 
 u8 cKF_ckcb_r_ply_1_axe_swing1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -1359,8 +1419,12 @@ s16 cKF_ds_ply_1_axe_swing1_tbl[] = {
     30, 0,    0,     1,  0,     0,     30, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_axe_swing1[] = { { cKF_ckcb_r_ply_1_axe_swing1_tbl, cKF_ds_ply_1_axe_swing1_tbl,
-                                                    cKF_kn_ply_1_axe_swing1_tbl, cKF_c_ply_1_axe_swing1_tbl, -1, 30 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_axe_swing1 = { cKF_ckcb_r_ply_1_axe_swing1_tbl,
+                                                cKF_ds_ply_1_axe_swing1_tbl,
+                                                cKF_kn_ply_1_axe_swing1_tbl,
+                                                cKF_c_ply_1_axe_swing1_tbl,
+                                                -1,
+                                                30 };
 
 u8 ply_1_axe_swing11_tex_index[] = { 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
                                      3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0 };
@@ -1379,8 +1443,8 @@ s16 cKF_c_ply_1_kamae_slip_m1_tbl[] = {
     850,  -70, 100,  700, -40,  50,   0,    -900,  0,   0, 0,    0,    0,    0,    0,   0,   0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kamae_slip_m1[] = { { cKF_ckcb_r_ply_1_kamae_slip_m1_tbl, NULL, NULL,
-                                                       cKF_c_ply_1_kamae_slip_m1_tbl, -1, 2 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kamae_slip_m1 = { cKF_ckcb_r_ply_1_kamae_slip_m1_tbl, NULL, NULL,
+                                                   cKF_c_ply_1_kamae_slip_m1_tbl,      -1,   2 };
 
 u8 cKF_ckcb_r_ply_1_kokeru1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -1422,8 +1486,9 @@ s16 cKF_ds_ply_1_kokeru1_tbl[] = {
     1,  0,    0,     17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kokeru1[] = { { cKF_ckcb_r_ply_1_kokeru1_tbl, cKF_ds_ply_1_kokeru1_tbl,
-                                                 cKF_kn_ply_1_kokeru1_tbl, cKF_c_ply_1_kokeru1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kokeru1 = {
+    cKF_ckcb_r_ply_1_kokeru1_tbl, cKF_ds_ply_1_kokeru1_tbl, cKF_kn_ply_1_kokeru1_tbl, cKF_c_ply_1_kokeru1_tbl, -1, 17
+};
 
 u8 ply_1_kokeru11_tex_index[] = { 3, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
@@ -1477,9 +1542,12 @@ s16 cKF_ds_ply_1_kokeru_getup1_tbl[] = {
     32, 0,    0,    1,  0,    0,     32, 0,     0,     1,  0,     0,     32, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kokeru_getup1[] = { { cKF_ckcb_r_ply_1_kokeru_getup1_tbl,
-                                                       cKF_ds_ply_1_kokeru_getup1_tbl, cKF_kn_ply_1_kokeru_getup1_tbl,
-                                                       cKF_c_ply_1_kokeru_getup1_tbl, -1, 32 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kokeru_getup1 = { cKF_ckcb_r_ply_1_kokeru_getup1_tbl,
+                                                   cKF_ds_ply_1_kokeru_getup1_tbl,
+                                                   cKF_kn_ply_1_kokeru_getup1_tbl,
+                                                   cKF_c_ply_1_kokeru_getup1_tbl,
+                                                   -1,
+                                                   32 };
 
 u8 ply_1_kokeru_getup11_tex_index[] = { 5, 5, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
                                         3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 };
@@ -1547,8 +1615,12 @@ s16 cKF_ds_ply_1_sitdown1_tbl[] = {
     1,  0,    0,     3,  0,    0,     25, 0,    0,     1,  0,    0,     3,  0,    0,     25, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_sitdown1[] = { { cKF_ckcb_r_ply_1_sitdown1_tbl, cKF_ds_ply_1_sitdown1_tbl,
-                                                  cKF_kn_ply_1_sitdown1_tbl, cKF_c_ply_1_sitdown1_tbl, -1, 25 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_sitdown1 = { cKF_ckcb_r_ply_1_sitdown1_tbl,
+                                              cKF_ds_ply_1_sitdown1_tbl,
+                                              cKF_kn_ply_1_sitdown1_tbl,
+                                              cKF_c_ply_1_sitdown1_tbl,
+                                              -1,
+                                              25 };
 
 u8 cKF_ckcb_r_ply_1_sitdown_wait1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7,
                                             7,  0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
@@ -1584,9 +1656,12 @@ s16 cKF_ds_ply_1_sitdown_wait1_tbl[] = {
     31, 0,    0,    1,  0,    0,   31, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_sitdown_wait1[] = { { cKF_ckcb_r_ply_1_sitdown_wait1_tbl,
-                                                       cKF_ds_ply_1_sitdown_wait1_tbl, cKF_kn_ply_1_sitdown_wait1_tbl,
-                                                       cKF_c_ply_1_sitdown_wait1_tbl, -1, 31 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_sitdown_wait1 = { cKF_ckcb_r_ply_1_sitdown_wait1_tbl,
+                                                   cKF_ds_ply_1_sitdown_wait1_tbl,
+                                                   cKF_kn_ply_1_sitdown_wait1_tbl,
+                                                   cKF_c_ply_1_sitdown_wait1_tbl,
+                                                   -1,
+                                                   31 };
 
 u8 cKF_ckcb_r_ply_1_standup1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -1641,8 +1716,12 @@ s16 cKF_ds_ply_1_standup1_tbl[] = {
     27, 0,    0,     1,  0,    0,     27, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_standup1[] = { { cKF_ckcb_r_ply_1_standup1_tbl, cKF_ds_ply_1_standup1_tbl,
-                                                  cKF_kn_ply_1_standup1_tbl, cKF_c_ply_1_standup1_tbl, -1, 27 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_standup1 = { cKF_ckcb_r_ply_1_standup1_tbl,
+                                              cKF_ds_ply_1_standup1_tbl,
+                                              cKF_kn_ply_1_standup1_tbl,
+                                              cKF_c_ply_1_standup1_tbl,
+                                              -1,
+                                              27 };
 
 u8 cKF_ckcb_r_ply_1_putaway_m1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -1677,8 +1756,12 @@ s16 cKF_ds_ply_1_putaway_m1_tbl[] = {
     16, 75,   0, 19, 100,  0, 1,  0,    0, 19, 0,    0, 1,  0,    0, 19, 0,    0, 1,  0,    0, 19, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_putaway_m1[] = { { cKF_ckcb_r_ply_1_putaway_m1_tbl, cKF_ds_ply_1_putaway_m1_tbl,
-                                                    cKF_kn_ply_1_putaway_m1_tbl, cKF_c_ply_1_putaway_m1_tbl, -1, 19 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_putaway_m1 = { cKF_ckcb_r_ply_1_putaway_m1_tbl,
+                                                cKF_ds_ply_1_putaway_m1_tbl,
+                                                cKF_kn_ply_1_putaway_m1_tbl,
+                                                cKF_c_ply_1_putaway_m1_tbl,
+                                                -1,
+                                                19 };
 
 u8 cKF_ckcb_r_ply_1_bed_wait1_tbl[] = { 63, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -1709,8 +1792,12 @@ s16 cKF_ds_ply_1_bed_wait1_tbl[] = {
     49, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_bed_wait1[] = { { cKF_ckcb_r_ply_1_bed_wait1_tbl, cKF_ds_ply_1_bed_wait1_tbl,
-                                                   cKF_kn_ply_1_bed_wait1_tbl, cKF_c_ply_1_bed_wait1_tbl, -1, 49 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_bed_wait1 = { cKF_ckcb_r_ply_1_bed_wait1_tbl,
+                                               cKF_ds_ply_1_bed_wait1_tbl,
+                                               cKF_kn_ply_1_bed_wait1_tbl,
+                                               cKF_c_ply_1_bed_wait1_tbl,
+                                               -1,
+                                               49 };
 
 u8 cKF_ckcb_r_ply_1_inbed_L1_tbl[] = { 63, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -1770,8 +1857,12 @@ s16 cKF_ds_ply_1_inbed_L1_tbl[] = {
     37, 0,    0,     1,  0,    0,     37, 0,     0,     1,  0,     0,     37, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_inbed_L1[] = { { cKF_ckcb_r_ply_1_inbed_L1_tbl, cKF_ds_ply_1_inbed_L1_tbl,
-                                                  cKF_kn_ply_1_inbed_L1_tbl, cKF_c_ply_1_inbed_L1_tbl, -1, 37 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_inbed_L1 = { cKF_ckcb_r_ply_1_inbed_L1_tbl,
+                                              cKF_ds_ply_1_inbed_L1_tbl,
+                                              cKF_kn_ply_1_inbed_L1_tbl,
+                                              cKF_c_ply_1_inbed_L1_tbl,
+                                              -1,
+                                              37 };
 
 u8 cKF_ckcb_r_ply_1_inbed_R1_tbl[] = { 63, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -1832,8 +1923,12 @@ s16 cKF_ds_ply_1_inbed_R1_tbl[] = {
     37, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_inbed_R1[] = { { cKF_ckcb_r_ply_1_inbed_R1_tbl, cKF_ds_ply_1_inbed_R1_tbl,
-                                                  cKF_kn_ply_1_inbed_R1_tbl, cKF_c_ply_1_inbed_R1_tbl, -1, 37 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_inbed_R1 = { cKF_ckcb_r_ply_1_inbed_R1_tbl,
+                                              cKF_ds_ply_1_inbed_R1_tbl,
+                                              cKF_kn_ply_1_inbed_R1_tbl,
+                                              cKF_c_ply_1_inbed_R1_tbl,
+                                              -1,
+                                              37 };
 
 u8 cKF_ckcb_r_ply_1_intrain1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -1919,8 +2014,12 @@ s16 cKF_ds_ply_1_intrain1_tbl[] = {
     1,   0,    0,     131, 0,    0,     1,   0,    0,     131, 0,    0,     1,   0,    0,     131, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_intrain1[] = { { cKF_ckcb_r_ply_1_intrain1_tbl, cKF_ds_ply_1_intrain1_tbl,
-                                                  cKF_kn_ply_1_intrain1_tbl, cKF_c_ply_1_intrain1_tbl, -1, 131 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_intrain1 = { cKF_ckcb_r_ply_1_intrain1_tbl,
+                                              cKF_ds_ply_1_intrain1_tbl,
+                                              cKF_kn_ply_1_intrain1_tbl,
+                                              cKF_c_ply_1_intrain1_tbl,
+                                              -1,
+                                              131 };
 
 u8 cKF_ckcb_r_ply_1_kagu_open_d1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -1975,9 +2074,12 @@ s16 cKF_ds_ply_1_kagu_open_d1_tbl[] = {
     16, 0,    0,     1,  0,    0,     16, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kagu_open_d1[] = { { cKF_ckcb_r_ply_1_kagu_open_d1_tbl, cKF_ds_ply_1_kagu_open_d1_tbl,
-                                                      cKF_kn_ply_1_kagu_open_d1_tbl, cKF_c_ply_1_kagu_open_d1_tbl, -1,
-                                                      16 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kagu_open_d1 = { cKF_ckcb_r_ply_1_kagu_open_d1_tbl,
+                                                  cKF_ds_ply_1_kagu_open_d1_tbl,
+                                                  cKF_kn_ply_1_kagu_open_d1_tbl,
+                                                  cKF_c_ply_1_kagu_open_d1_tbl,
+                                                  -1,
+                                                  16 };
 
 u8 cKF_ckcb_r_ply_1_kagu_open_h1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -2015,9 +2117,12 @@ s16 cKF_ds_ply_1_kagu_open_h1_tbl[] = {
     10, 0,    0,     1,  0,    0,    10, 0,    0,    1,  0,    0,     10, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kagu_open_h1[] = { { cKF_ckcb_r_ply_1_kagu_open_h1_tbl, cKF_ds_ply_1_kagu_open_h1_tbl,
-                                                      cKF_kn_ply_1_kagu_open_h1_tbl, cKF_c_ply_1_kagu_open_h1_tbl, -1,
-                                                      10 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kagu_open_h1 = { cKF_ckcb_r_ply_1_kagu_open_h1_tbl,
+                                                  cKF_ds_ply_1_kagu_open_h1_tbl,
+                                                  cKF_kn_ply_1_kagu_open_h1_tbl,
+                                                  cKF_c_ply_1_kagu_open_h1_tbl,
+                                                  -1,
+                                                  10 };
 
 u8 cKF_ckcb_r_ply_1_kagu_open_k1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -2053,9 +2158,12 @@ s16 cKF_ds_ply_1_kagu_open_k1_tbl[] = {
     12, 0,    0,    1,  0,    0,    12, 0,    0,    1,  0,    0,     12, 0,    0,     1,  0,    0,     12, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kagu_open_k1[] = { { cKF_ckcb_r_ply_1_kagu_open_k1_tbl, cKF_ds_ply_1_kagu_open_k1_tbl,
-                                                      cKF_kn_ply_1_kagu_open_k1_tbl, cKF_c_ply_1_kagu_open_k1_tbl, -1,
-                                                      12 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kagu_open_k1 = { cKF_ckcb_r_ply_1_kagu_open_k1_tbl,
+                                                  cKF_ds_ply_1_kagu_open_k1_tbl,
+                                                  cKF_kn_ply_1_kagu_open_k1_tbl,
+                                                  cKF_c_ply_1_kagu_open_k1_tbl,
+                                                  -1,
+                                                  12 };
 
 u8 cKF_ckcb_r_ply_1_negaeri_L1_tbl[] = {
     63, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -2112,8 +2220,12 @@ s16 cKF_ds_ply_1_negaeri_L1_tbl[] = {
     33, 0,     0,     1,  0,     0,     33, 0,     0,     1,  0,     0,     33, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_negaeri_L1[] = { { cKF_ckcb_r_ply_1_negaeri_L1_tbl, cKF_ds_ply_1_negaeri_L1_tbl,
-                                                    cKF_kn_ply_1_negaeri_L1_tbl, cKF_c_ply_1_negaeri_L1_tbl, -1, 33 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_negaeri_L1 = { cKF_ckcb_r_ply_1_negaeri_L1_tbl,
+                                                cKF_ds_ply_1_negaeri_L1_tbl,
+                                                cKF_kn_ply_1_negaeri_L1_tbl,
+                                                cKF_c_ply_1_negaeri_L1_tbl,
+                                                -1,
+                                                33 };
 
 u8 cKF_ckcb_r_ply_1_negaeri_R1_tbl[] = {
     63, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -2170,8 +2282,12 @@ s16 cKF_ds_ply_1_negaeri_R1_tbl[] = {
     33, 0,    0,     1,  0,    0,     33, 0,    0,     1,  0,    0,     33, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_negaeri_R1[] = { { cKF_ckcb_r_ply_1_negaeri_R1_tbl, cKF_ds_ply_1_negaeri_R1_tbl,
-                                                    cKF_kn_ply_1_negaeri_R1_tbl, cKF_c_ply_1_negaeri_R1_tbl, -1, 33 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_negaeri_R1 = { cKF_ckcb_r_ply_1_negaeri_R1_tbl,
+                                                cKF_ds_ply_1_negaeri_R1_tbl,
+                                                cKF_kn_ply_1_negaeri_R1_tbl,
+                                                cKF_c_ply_1_negaeri_R1_tbl,
+                                                -1,
+                                                33 };
 
 u8 cKF_ckcb_r_ply_1_outbed_L1_tbl[] = { 63, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -2233,8 +2349,12 @@ s16 cKF_ds_ply_1_outbed_L1_tbl[] = {
     33, 0,     0,     1,  0,     0,     33, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_outbed_L1[] = { { cKF_ckcb_r_ply_1_outbed_L1_tbl, cKF_ds_ply_1_outbed_L1_tbl,
-                                                   cKF_kn_ply_1_outbed_L1_tbl, cKF_c_ply_1_outbed_L1_tbl, -1, 33 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_outbed_L1 = { cKF_ckcb_r_ply_1_outbed_L1_tbl,
+                                               cKF_ds_ply_1_outbed_L1_tbl,
+                                               cKF_kn_ply_1_outbed_L1_tbl,
+                                               cKF_c_ply_1_outbed_L1_tbl,
+                                               -1,
+                                               33 };
 
 u8 cKF_ckcb_r_ply_1_outbed_R1_tbl[] = { 63, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -2296,8 +2416,12 @@ s16 cKF_ds_ply_1_outbed_R1_tbl[] = {
     33, 0,     0,     1,  0,    0,     33, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_outbed_R1[] = { { cKF_ckcb_r_ply_1_outbed_R1_tbl, cKF_ds_ply_1_outbed_R1_tbl,
-                                                   cKF_kn_ply_1_outbed_R1_tbl, cKF_c_ply_1_outbed_R1_tbl, -1, 33 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_outbed_R1 = { cKF_ckcb_r_ply_1_outbed_R1_tbl,
+                                               cKF_ds_ply_1_outbed_R1_tbl,
+                                               cKF_kn_ply_1_outbed_R1_tbl,
+                                               cKF_c_ply_1_outbed_R1_tbl,
+                                               -1,
+                                               33 };
 
 u8 cKF_ckcb_r_ply_1_outtrain1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -2350,8 +2474,12 @@ s16 cKF_ds_ply_1_outtrain1_tbl[] = {
     29, 0,    0,     1,  0,    0,     29, 0,    0,     1,  0,    0,     29, 0,    0,    1,  0,    0,    29, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_outtrain1[] = { { cKF_ckcb_r_ply_1_outtrain1_tbl, cKF_ds_ply_1_outtrain1_tbl,
-                                                   cKF_kn_ply_1_outtrain1_tbl, cKF_c_ply_1_outtrain1_tbl, -1, 29 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_outtrain1 = { cKF_ckcb_r_ply_1_outtrain1_tbl,
+                                               cKF_ds_ply_1_outtrain1_tbl,
+                                               cKF_kn_ply_1_outtrain1_tbl,
+                                               cKF_c_ply_1_outtrain1_tbl,
+                                               -1,
+                                               29 };
 
 u8 cKF_ckcb_r_ply_1_kagu_close_d1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7,
                                             7,  0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
@@ -2400,9 +2528,12 @@ s16 cKF_ds_ply_1_kagu_close_d1_tbl[] = {
     16, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kagu_close_d1[] = { { cKF_ckcb_r_ply_1_kagu_close_d1_tbl,
-                                                       cKF_ds_ply_1_kagu_close_d1_tbl, cKF_kn_ply_1_kagu_close_d1_tbl,
-                                                       cKF_c_ply_1_kagu_close_d1_tbl, -1, 16 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kagu_close_d1 = { cKF_ckcb_r_ply_1_kagu_close_d1_tbl,
+                                                   cKF_ds_ply_1_kagu_close_d1_tbl,
+                                                   cKF_kn_ply_1_kagu_close_d1_tbl,
+                                                   cKF_c_ply_1_kagu_close_d1_tbl,
+                                                   -1,
+                                                   16 };
 
 u8 cKF_ckcb_r_ply_1_kagu_close_h1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7,
                                             7,  0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
@@ -2435,9 +2566,12 @@ s16 cKF_ds_ply_1_kagu_close_h1_tbl[] = {
     10, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kagu_close_h1[] = { { cKF_ckcb_r_ply_1_kagu_close_h1_tbl,
-                                                       cKF_ds_ply_1_kagu_close_h1_tbl, cKF_kn_ply_1_kagu_close_h1_tbl,
-                                                       cKF_c_ply_1_kagu_close_h1_tbl, -1, 10 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kagu_close_h1 = { cKF_ckcb_r_ply_1_kagu_close_h1_tbl,
+                                                   cKF_ds_ply_1_kagu_close_h1_tbl,
+                                                   cKF_kn_ply_1_kagu_close_h1_tbl,
+                                                   cKF_c_ply_1_kagu_close_h1_tbl,
+                                                   -1,
+                                                   10 };
 
 u8 cKF_ckcb_r_ply_1_kagu_close_k1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7,
                                             7,  0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
@@ -2472,9 +2606,12 @@ s16 cKF_ds_ply_1_kagu_close_k1_tbl[] = {
     12, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kagu_close_k1[] = { { cKF_ckcb_r_ply_1_kagu_close_k1_tbl,
-                                                       cKF_ds_ply_1_kagu_close_k1_tbl, cKF_kn_ply_1_kagu_close_k1_tbl,
-                                                       cKF_c_ply_1_kagu_close_k1_tbl, -1, 12 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kagu_close_k1 = { cKF_ckcb_r_ply_1_kagu_close_k1_tbl,
+                                                   cKF_ds_ply_1_kagu_close_k1_tbl,
+                                                   cKF_kn_ply_1_kagu_close_k1_tbl,
+                                                   cKF_c_ply_1_kagu_close_k1_tbl,
+                                                   -1,
+                                                   12 };
 
 u8 cKF_ckcb_r_ply_1_kagu_wait_d1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -2514,9 +2651,12 @@ s16 cKF_ds_ply_1_kagu_wait_d1_tbl[] = {
     29, 0,    0,  1,  0,    0,    29, 0,    0,    1,  0,    0,    29, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kagu_wait_d1[] = { { cKF_ckcb_r_ply_1_kagu_wait_d1_tbl, cKF_ds_ply_1_kagu_wait_d1_tbl,
-                                                      cKF_kn_ply_1_kagu_wait_d1_tbl, cKF_c_ply_1_kagu_wait_d1_tbl, -1,
-                                                      29 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kagu_wait_d1 = { cKF_ckcb_r_ply_1_kagu_wait_d1_tbl,
+                                                  cKF_ds_ply_1_kagu_wait_d1_tbl,
+                                                  cKF_kn_ply_1_kagu_wait_d1_tbl,
+                                                  cKF_c_ply_1_kagu_wait_d1_tbl,
+                                                  -1,
+                                                  29 };
 
 u8 cKF_ckcb_r_ply_1_kagu_wait_h1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -2554,9 +2694,12 @@ s16 cKF_ds_ply_1_kagu_wait_h1_tbl[] = {
     29, 0,    0,    1,  0,    0,    29, 0,    0,    1,  0,    0,    29, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kagu_wait_h1[] = { { cKF_ckcb_r_ply_1_kagu_wait_h1_tbl, cKF_ds_ply_1_kagu_wait_h1_tbl,
-                                                      cKF_kn_ply_1_kagu_wait_h1_tbl, cKF_c_ply_1_kagu_wait_h1_tbl, -1,
-                                                      29 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kagu_wait_h1 = { cKF_ckcb_r_ply_1_kagu_wait_h1_tbl,
+                                                  cKF_ds_ply_1_kagu_wait_h1_tbl,
+                                                  cKF_kn_ply_1_kagu_wait_h1_tbl,
+                                                  cKF_c_ply_1_kagu_wait_h1_tbl,
+                                                  -1,
+                                                  29 };
 
 u8 cKF_ckcb_r_ply_1_kagu_wait_k1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -2594,9 +2737,12 @@ s16 cKF_ds_ply_1_kagu_wait_k1_tbl[] = {
     29, 0,    0,    1,  0,    0,   29, 0,    0,    1,  0,    0,    29, 0,    0,   1,  0,    0,    29, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kagu_wait_k1[] = { { cKF_ckcb_r_ply_1_kagu_wait_k1_tbl, cKF_ds_ply_1_kagu_wait_k1_tbl,
-                                                      cKF_kn_ply_1_kagu_wait_k1_tbl, cKF_c_ply_1_kagu_wait_k1_tbl, -1,
-                                                      29 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kagu_wait_k1 = { cKF_ckcb_r_ply_1_kagu_wait_k1_tbl,
+                                                  cKF_ds_ply_1_kagu_wait_k1_tbl,
+                                                  cKF_kn_ply_1_kagu_wait_k1_tbl,
+                                                  cKF_c_ply_1_kagu_wait_k1_tbl,
+                                                  -1,
+                                                  29 };
 
 u8 cKF_ckcb_r_ply_1_go_out_o1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -2669,8 +2815,12 @@ s16 cKF_ds_ply_1_go_out_o1_tbl[] = {
     1,  0,     0,     59, 0,     0,     1,  0,     0,     59, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_go_out_o1[] = { { cKF_ckcb_r_ply_1_go_out_o1_tbl, cKF_ds_ply_1_go_out_o1_tbl,
-                                                   cKF_kn_ply_1_go_out_o1_tbl, cKF_c_ply_1_go_out_o1_tbl, -1, 59 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_go_out_o1 = { cKF_ckcb_r_ply_1_go_out_o1_tbl,
+                                               cKF_ds_ply_1_go_out_o1_tbl,
+                                               cKF_kn_ply_1_go_out_o1_tbl,
+                                               cKF_c_ply_1_go_out_o1_tbl,
+                                               -1,
+                                               59 };
 
 u8 cKF_ckcb_r_ply_1_go_out_s1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -2716,8 +2866,12 @@ s16 cKF_ds_ply_1_go_out_s1_tbl[] = {
     31, 0,    0,     1,  0,    0,     31, 0,    0, 1,  0,    0,    31, 0,    0,    1,  0,     0,    31, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_go_out_s1[] = { { cKF_ckcb_r_ply_1_go_out_s1_tbl, cKF_ds_ply_1_go_out_s1_tbl,
-                                                   cKF_kn_ply_1_go_out_s1_tbl, cKF_c_ply_1_go_out_s1_tbl, -1, 31 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_go_out_s1 = { cKF_ckcb_r_ply_1_go_out_s1_tbl,
+                                               cKF_ds_ply_1_go_out_s1_tbl,
+                                               cKF_kn_ply_1_go_out_s1_tbl,
+                                               cKF_c_ply_1_go_out_s1_tbl,
+                                               -1,
+                                               31 };
 
 u8 cKF_ckcb_r_ply_1_into_s1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -2759,8 +2913,9 @@ s16 cKF_ds_ply_1_into_s1_tbl[] = {
     49, -40,  0,    1,  0,    0,    49, 0,    0,     1,  0,    0,    49, 0,    0,     1,  0,    0,    49, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_into_s1[] = { { cKF_ckcb_r_ply_1_into_s1_tbl, cKF_ds_ply_1_into_s1_tbl,
-                                                 cKF_kn_ply_1_into_s1_tbl, cKF_c_ply_1_into_s1_tbl, -1, 49 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_into_s1 = {
+    cKF_ckcb_r_ply_1_into_s1_tbl, cKF_ds_ply_1_into_s1_tbl, cKF_kn_ply_1_into_s1_tbl, cKF_c_ply_1_into_s1_tbl, -1, 49
+};
 
 u8 cKF_ckcb_r_ply_1_axe_hane1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -2832,8 +2987,12 @@ s16 cKF_ds_ply_1_axe_hane1_tbl[] = {
     1,  0,     0,     38, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_axe_hane1[] = { { cKF_ckcb_r_ply_1_axe_hane1_tbl, cKF_ds_ply_1_axe_hane1_tbl,
-                                                   cKF_kn_ply_1_axe_hane1_tbl, cKF_c_ply_1_axe_hane1_tbl, -1, 38 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_axe_hane1 = { cKF_ckcb_r_ply_1_axe_hane1_tbl,
+                                               cKF_ds_ply_1_axe_hane1_tbl,
+                                               cKF_kn_ply_1_axe_hane1_tbl,
+                                               cKF_c_ply_1_axe_hane1_tbl,
+                                               -1,
+                                               38 };
 
 u8 ply_1_axe_hane11_tex_index[] = { 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5, 5, 4, 4,
                                     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -2909,8 +3068,12 @@ s16 cKF_ds_ply_1_axe_suka1_tbl[] = {
     1,  0,     0,     41, 0,     0,     1,  0,     0,     41, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_axe_suka1[] = { { cKF_ckcb_r_ply_1_axe_suka1_tbl, cKF_ds_ply_1_axe_suka1_tbl,
-                                                   cKF_kn_ply_1_axe_suka1_tbl, cKF_c_ply_1_axe_suka1_tbl, -1, 41 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_axe_suka1 = { cKF_ckcb_r_ply_1_axe_suka1_tbl,
+                                               cKF_ds_ply_1_axe_suka1_tbl,
+                                               cKF_kn_ply_1_axe_suka1_tbl,
+                                               cKF_c_ply_1_axe_suka1_tbl,
+                                               -1,
+                                               41 };
 
 u8 ply_1_axe_suka11_tex_index[] = { 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5, 5, 5, 5, 5, 5,
                                     5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 3, 3, 3, 3, 3, 0 };
@@ -2929,8 +3092,8 @@ s16 cKF_c_ply_1_hold_wait_h1_tbl[] = { 0,    1000, 200,  0,   0, 900,  50,  0,  
                                        900,  -900, -850, 900, 0, 0,    100, 0,    0,    0,    0,  -160, 0,   0,
                                        -900, 0,    0,    0,   0, 0,    0,   0,    0,    0,    0 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_hold_wait_h1[] = { { cKF_ckcb_r_ply_1_hold_wait_h1_tbl, NULL, NULL,
-                                                      cKF_c_ply_1_hold_wait_h1_tbl, -1, 2 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_hold_wait_h1 = { cKF_ckcb_r_ply_1_hold_wait_h1_tbl, NULL, NULL,
+                                                  cKF_c_ply_1_hold_wait_h1_tbl,      -1,   2 };
 
 u8 cKF_ckcb_r_ply_1_hold_wait_o1_tbl[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
@@ -2943,8 +3106,8 @@ s16 cKF_c_ply_1_hold_wait_o1_tbl[] = { 0,    1000, 200,  0,    0, 900,  50,   -2
                                        900,  900,  -850, -900, 0, 0,    -80,  0,    0,   0,    0,  -120, 0,   0,
                                        -900, 0,    0,    0,    0, 0,    0,    0,    0,   0,    0 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_hold_wait_o1[] = { { cKF_ckcb_r_ply_1_hold_wait_o1_tbl, NULL, NULL,
-                                                      cKF_c_ply_1_hold_wait_o1_tbl, -1, 2 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_hold_wait_o1 = { cKF_ckcb_r_ply_1_hold_wait_o1_tbl, NULL, NULL,
+                                                  cKF_c_ply_1_hold_wait_o1_tbl,      -1,   2 };
 
 u8 cKF_ckcb_r_ply_1_get_t1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -2984,8 +3147,9 @@ s16 cKF_ds_ply_1_get_t1_tbl[] = {
     22, 0,     0,     1,  0,    0,     22, 0,    0,     1,  0,    0,     22, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_get_t1[] = { { cKF_ckcb_r_ply_1_get_t1_tbl, cKF_ds_ply_1_get_t1_tbl,
-                                                cKF_kn_ply_1_get_t1_tbl, cKF_c_ply_1_get_t1_tbl, -1, 22 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_get_t1 = {
+    cKF_ckcb_r_ply_1_get_t1_tbl, cKF_ds_ply_1_get_t1_tbl, cKF_kn_ply_1_get_t1_tbl, cKF_c_ply_1_get_t1_tbl, -1, 22
+};
 
 u8 ply_1_get_t11_tex_index[] = { 3, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 };
 
@@ -3042,8 +3206,9 @@ s16 cKF_ds_ply_1_get_t2_tbl[] = {
     34, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_get_t2[] = { { cKF_ckcb_r_ply_1_get_t2_tbl, cKF_ds_ply_1_get_t2_tbl,
-                                                cKF_kn_ply_1_get_t2_tbl, cKF_c_ply_1_get_t2_tbl, -1, 34 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_get_t2 = {
+    cKF_ckcb_r_ply_1_get_t2_tbl, cKF_ds_ply_1_get_t2_tbl, cKF_kn_ply_1_get_t2_tbl, cKF_c_ply_1_get_t2_tbl, -1, 34
+};
 
 u8 ply_1_get_t21_tex_index[] = { 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -3081,8 +3246,12 @@ s16 cKF_ds_ply_1_putaway_t1_tbl[] = {
     16, 75,   0, 19, 100,  0, 1,  0,    0, 19, 0,    0, 1,  0,    0, 19, 0,    0, 1,  0,    0, 19, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_putaway_t1[] = { { cKF_ckcb_r_ply_1_putaway_t1_tbl, cKF_ds_ply_1_putaway_t1_tbl,
-                                                    cKF_kn_ply_1_putaway_t1_tbl, cKF_c_ply_1_putaway_t1_tbl, -1, 19 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_putaway_t1 = { cKF_ckcb_r_ply_1_putaway_t1_tbl,
+                                                cKF_ds_ply_1_putaway_t1_tbl,
+                                                cKF_kn_ply_1_putaway_t1_tbl,
+                                                cKF_c_ply_1_putaway_t1_tbl,
+                                                -1,
+                                                19 };
 
 u8 cKF_ckcb_r_ply_1_sao1_tbl[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -3093,7 +3262,7 @@ s16 cKF_c_ply_1_sao1_tbl[] = { 0,    1000, 0,    0,    0,    900,  0,   0,    0,
                                900,  -50,  -850, 200,  -100, -300, 100, 1100, 350,   80,   0,    0,    0,    0,
                                -900, 0,    0,    0,    0,    0,    0,   0,    0,     0,    0 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_sao1[] = { { cKF_ckcb_r_ply_1_sao1_tbl, NULL, NULL, cKF_c_ply_1_sao1_tbl, -1, 2 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_sao1 = { cKF_ckcb_r_ply_1_sao1_tbl, NULL, NULL, cKF_c_ply_1_sao1_tbl, -1, 2 };
 
 u8 cKF_ckcb_r_ply_1_sao_swing1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -3152,8 +3321,12 @@ s16 cKF_ds_ply_1_sao_swing1_tbl[] = {
     1,  0,    0,     32, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_sao_swing1[] = { { cKF_ckcb_r_ply_1_sao_swing1_tbl, cKF_ds_ply_1_sao_swing1_tbl,
-                                                    cKF_kn_ply_1_sao_swing1_tbl, cKF_c_ply_1_sao_swing1_tbl, -1, 32 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_sao_swing1 = { cKF_ckcb_r_ply_1_sao_swing1_tbl,
+                                                cKF_ds_ply_1_sao_swing1_tbl,
+                                                cKF_kn_ply_1_sao_swing1_tbl,
+                                                cKF_c_ply_1_sao_swing1_tbl,
+                                                -1,
+                                                32 };
 
 u8 cKF_ckcb_r_ply_1_turi_hiki1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -3192,8 +3365,12 @@ s16 cKF_ds_ply_1_turi_hiki1_tbl[] = {
     10, -10,  0, 13, 30,   0, 1,  0,    0, 13, 0,     0, 1,  0,    0, 13, 0,    0, 1,  0,    0, 13, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_turi_hiki1[] = { { cKF_ckcb_r_ply_1_turi_hiki1_tbl, cKF_ds_ply_1_turi_hiki1_tbl,
-                                                    cKF_kn_ply_1_turi_hiki1_tbl, cKF_c_ply_1_turi_hiki1_tbl, -1, 13 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_turi_hiki1 = { cKF_ckcb_r_ply_1_turi_hiki1_tbl,
+                                                cKF_ds_ply_1_turi_hiki1_tbl,
+                                                cKF_kn_ply_1_turi_hiki1_tbl,
+                                                cKF_c_ply_1_turi_hiki1_tbl,
+                                                -1,
+                                                13 };
 
 u8 cKF_ckcb_r_ply_1_turi_wait1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -3228,8 +3405,12 @@ s16 cKF_ds_ply_1_turi_wait1_tbl[] = {
     33, 0,     -52, 1,  0,     0,    33, 0,     0,    1,  0,    0,   33, 0,    0,   1,  0,    0,    33, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_turi_wait1[] = { { cKF_ckcb_r_ply_1_turi_wait1_tbl, cKF_ds_ply_1_turi_wait1_tbl,
-                                                    cKF_kn_ply_1_turi_wait1_tbl, cKF_c_ply_1_turi_wait1_tbl, -1, 33 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_turi_wait1 = { cKF_ckcb_r_ply_1_turi_wait1_tbl,
+                                                cKF_ds_ply_1_turi_wait1_tbl,
+                                                cKF_kn_ply_1_turi_wait1_tbl,
+                                                cKF_c_ply_1_turi_wait1_tbl,
+                                                -1,
+                                                33 };
 
 u8 cKF_ckcb_r_ply_1_not_get_t1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -3275,8 +3456,12 @@ s16 cKF_ds_ply_1_not_get_t1_tbl[] = {
     1,  0,    0,     27, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_not_get_t1[] = { { cKF_ckcb_r_ply_1_not_get_t1_tbl, cKF_ds_ply_1_not_get_t1_tbl,
-                                                    cKF_kn_ply_1_not_get_t1_tbl, cKF_c_ply_1_not_get_t1_tbl, -1, 27 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_not_get_t1 = { cKF_ckcb_r_ply_1_not_get_t1_tbl,
+                                                cKF_ds_ply_1_not_get_t1_tbl,
+                                                cKF_kn_ply_1_not_get_t1_tbl,
+                                                cKF_c_ply_1_not_get_t1_tbl,
+                                                -1,
+                                                27 };
 
 u8 ply_1_not_get_t11_tex_index[] = { 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
@@ -3312,9 +3497,12 @@ s16 cKF_ds_ply_1_menu_catch1_tbl[] = {
     1, 0,    0,     5, 0,    0,     1, 0,    0,    5, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_menu_catch1[] = { { cKF_ckcb_r_ply_1_menu_catch1_tbl, cKF_ds_ply_1_menu_catch1_tbl,
-                                                     cKF_kn_ply_1_menu_catch1_tbl, cKF_c_ply_1_menu_catch1_tbl, -1,
-                                                     5 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_menu_catch1 = { cKF_ckcb_r_ply_1_menu_catch1_tbl,
+                                                 cKF_ds_ply_1_menu_catch1_tbl,
+                                                 cKF_kn_ply_1_menu_catch1_tbl,
+                                                 cKF_c_ply_1_menu_catch1_tbl,
+                                                 -1,
+                                                 5 };
 
 u8 cKF_ckcb_r_ply_1_menu_change1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -3384,9 +3572,12 @@ s16 cKF_ds_ply_1_menu_change1_tbl[] = {
     93, 0,     0,     1,  0,     0,     93, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_menu_change1[] = { { cKF_ckcb_r_ply_1_menu_change1_tbl, cKF_ds_ply_1_menu_change1_tbl,
-                                                      cKF_kn_ply_1_menu_change1_tbl, cKF_c_ply_1_menu_change1_tbl, -1,
-                                                      93 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_menu_change1 = { cKF_ckcb_r_ply_1_menu_change1_tbl,
+                                                  cKF_ds_ply_1_menu_change1_tbl,
+                                                  cKF_kn_ply_1_menu_change1_tbl,
+                                                  cKF_c_ply_1_menu_change1_tbl,
+                                                  -1,
+                                                  93 };
 
 u8 ply_1_menu_change11_tex_index[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -3460,8 +3651,12 @@ s16 cKF_ds_ply_1_umb_close1_tbl[] = {
     1,  0,     0,     30, 0,    0,     1,  0,     0,     30, 0,     0,     1,  0,    0,     30, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_umb_close1[] = { { cKF_ckcb_r_ply_1_umb_close1_tbl, cKF_ds_ply_1_umb_close1_tbl,
-                                                    cKF_kn_ply_1_umb_close1_tbl, cKF_c_ply_1_umb_close1_tbl, -1, 30 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_umb_close1 = { cKF_ckcb_r_ply_1_umb_close1_tbl,
+                                                cKF_ds_ply_1_umb_close1_tbl,
+                                                cKF_kn_ply_1_umb_close1_tbl,
+                                                cKF_c_ply_1_umb_close1_tbl,
+                                                -1,
+                                                30 };
 
 u8 cKF_ckcb_r_ply_1_not_sao_swing1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 0, 0,
                                              7,  0, 7, 7, 0, 7, 7, 7, 7, 0, 0, 0, 0 };
@@ -3503,10 +3698,12 @@ s16 cKF_ds_ply_1_not_sao_swing1_tbl[] = {
     1,  0,    -983,  7,  -100,  225,   11, -40,  406,   15, -30,  0,     25, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_not_sao_swing1[] = {
-    { cKF_ckcb_r_ply_1_not_sao_swing1_tbl, cKF_ds_ply_1_not_sao_swing1_tbl, cKF_kn_ply_1_not_sao_swing1_tbl,
-      cKF_c_ply_1_not_sao_swing1_tbl, -1, 25 }
-};
+cKF_Animation_R_c cKF_ba_r_ply_1_not_sao_swing1 = { cKF_ckcb_r_ply_1_not_sao_swing1_tbl,
+                                                    cKF_ds_ply_1_not_sao_swing1_tbl,
+                                                    cKF_kn_ply_1_not_sao_swing1_tbl,
+                                                    cKF_c_ply_1_not_sao_swing1_tbl,
+                                                    -1,
+                                                    25 };
 
 u8 ply_1_not_sao_swing11_tex_index[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 };
 
@@ -3543,9 +3740,12 @@ s16 cKF_ds_ply_1_intrain_wait1_tbl[] = {
     31, 0,    0,    1,  0,    0, 31, 0,    0,    1,  0,    0,  31, 0,    0,    1,  0,    0,    31, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_intrain_wait1[] = { { cKF_ckcb_r_ply_1_intrain_wait1_tbl,
-                                                       cKF_ds_ply_1_intrain_wait1_tbl, cKF_kn_ply_1_intrain_wait1_tbl,
-                                                       cKF_c_ply_1_intrain_wait1_tbl, -1, 31 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_intrain_wait1 = { cKF_ckcb_r_ply_1_intrain_wait1_tbl,
+                                                   cKF_ds_ply_1_intrain_wait1_tbl,
+                                                   cKF_kn_ply_1_intrain_wait1_tbl,
+                                                   cKF_c_ply_1_intrain_wait1_tbl,
+                                                   -1,
+                                                   31 };
 
 u8 cKF_ckcb_r_ply_1_clear_table1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -3620,9 +3820,12 @@ s16 cKF_ds_ply_1_clear_table1_tbl[] = {
     41, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_clear_table1[] = { { cKF_ckcb_r_ply_1_clear_table1_tbl, cKF_ds_ply_1_clear_table1_tbl,
-                                                      cKF_kn_ply_1_clear_table1_tbl, cKF_c_ply_1_clear_table1_tbl, -1,
-                                                      41 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_clear_table1 = { cKF_ckcb_r_ply_1_clear_table1_tbl,
+                                                  cKF_ds_ply_1_clear_table1_tbl,
+                                                  cKF_kn_ply_1_clear_table1_tbl,
+                                                  cKF_c_ply_1_clear_table1_tbl,
+                                                  -1,
+                                                  41 };
 
 u8 cKF_ckcb_r_ply_1_dig1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -3700,8 +3903,9 @@ s16 cKF_ds_ply_1_dig1_tbl[] = {
     1,  0,    0,     41, 0,    0,     1,  0,    0,     41, 0,    0,     1,  0,    0,     41, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_dig1[] = { { cKF_ckcb_r_ply_1_dig1_tbl, cKF_ds_ply_1_dig1_tbl, cKF_kn_ply_1_dig1_tbl,
-                                              cKF_c_ply_1_dig1_tbl, -1, 41 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_dig1 = {
+    cKF_ckcb_r_ply_1_dig1_tbl, cKF_ds_ply_1_dig1_tbl, cKF_kn_ply_1_dig1_tbl, cKF_c_ply_1_dig1_tbl, -1, 41
+};
 
 u8 cKF_ckcb_r_ply_1_fill_up1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -3798,8 +4002,12 @@ s16 cKF_ds_ply_1_fill_up1_tbl[] = {
     1,  0,    0,     51, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_fill_up1[] = { { cKF_ckcb_r_ply_1_fill_up1_tbl, cKF_ds_ply_1_fill_up1_tbl,
-                                                  cKF_kn_ply_1_fill_up1_tbl, cKF_c_ply_1_fill_up1_tbl, -1, 51 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_fill_up1 = { cKF_ckcb_r_ply_1_fill_up1_tbl,
+                                              cKF_ds_ply_1_fill_up1_tbl,
+                                              cKF_kn_ply_1_fill_up1_tbl,
+                                              cKF_c_ply_1_fill_up1_tbl,
+                                              -1,
+                                              51 };
 
 u8 cKF_ckcb_r_ply_1_not_dig1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -3872,8 +4080,12 @@ s16 cKF_ds_ply_1_not_dig1_tbl[] = {
     15, 0,    0,     35, 0,     0,     1,  0,     0,     15, 0,     0,     35, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_not_dig1[] = { { cKF_ckcb_r_ply_1_not_dig1_tbl, cKF_ds_ply_1_not_dig1_tbl,
-                                                  cKF_kn_ply_1_not_dig1_tbl, cKF_c_ply_1_not_dig1_tbl, -1, 35 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_not_dig1 = { cKF_ckcb_r_ply_1_not_dig1_tbl,
+                                              cKF_ds_ply_1_not_dig1_tbl,
+                                              cKF_kn_ply_1_not_dig1_tbl,
+                                              cKF_c_ply_1_not_dig1_tbl,
+                                              -1,
+                                              35 };
 
 u8 ply_1_not_dig11_tex_index[] = { 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5, 5, 4, 4,
                                    4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 0, 0, 0, 0, 0 };
@@ -3954,10 +4166,12 @@ s16 cKF_ds_ply_1_clear_table_l1_tbl[] = {
     41, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_clear_table_l1[] = {
-    { cKF_ckcb_r_ply_1_clear_table_l1_tbl, cKF_ds_ply_1_clear_table_l1_tbl, cKF_kn_ply_1_clear_table_l1_tbl,
-      cKF_c_ply_1_clear_table_l1_tbl, -1, 41 }
-};
+cKF_Animation_R_c cKF_ba_r_ply_1_clear_table_l1 = { cKF_ckcb_r_ply_1_clear_table_l1_tbl,
+                                                    cKF_ds_ply_1_clear_table_l1_tbl,
+                                                    cKF_kn_ply_1_clear_table_l1_tbl,
+                                                    cKF_c_ply_1_clear_table_l1_tbl,
+                                                    -1,
+                                                    41 };
 
 u8 cKF_ckcb_r_ply_1_pickup_l1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -4006,8 +4220,12 @@ s16 cKF_ds_ply_1_pickup_l1_tbl[] = {
     1,  0,    0,     37, 0,    0,    1,  0,    0,   37, 0,    0,    1,  0,    0,    37, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_pickup_l1[] = { { cKF_ckcb_r_ply_1_pickup_l1_tbl, cKF_ds_ply_1_pickup_l1_tbl,
-                                                   cKF_kn_ply_1_pickup_l1_tbl, cKF_c_ply_1_pickup_l1_tbl, -1, 37 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_pickup_l1 = { cKF_ckcb_r_ply_1_pickup_l1_tbl,
+                                               cKF_ds_ply_1_pickup_l1_tbl,
+                                               cKF_kn_ply_1_pickup_l1_tbl,
+                                               cKF_c_ply_1_pickup_l1_tbl,
+                                               -1,
+                                               37 };
 
 u8 cKF_ckcb_r_ply_1_scoop1_tbl[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -4018,8 +4236,7 @@ s16 cKF_c_ply_1_scoop1_tbl[] = { 0,    1000, 0,    0,    0, 900,  0,   0,    0, 
                                  900,  -300, -400, 710,  0, -800, 0,   1024, 0,    -125, 0,    0,    0,    0,
                                  -900, 0,    0,    0,    0, 0,    0,   0,    0,    0,    0 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_scoop1[] = { { cKF_ckcb_r_ply_1_scoop1_tbl, NULL, NULL, cKF_c_ply_1_scoop1_tbl, -1,
-                                                2 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_scoop1 = { cKF_ckcb_r_ply_1_scoop1_tbl, NULL, NULL, cKF_c_ply_1_scoop1_tbl, -1, 2 };
 
 u8 cKF_ckcb_r_ply_1_confirm1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -4078,8 +4295,12 @@ s16 cKF_ds_ply_1_confirm1_tbl[] = {
     1,  0,    0,     31, 0,    0,     1,  0,    0,     31, 0,    0,     1,  0,    0,     31, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_confirm1[] = { { cKF_ckcb_r_ply_1_confirm1_tbl, cKF_ds_ply_1_confirm1_tbl,
-                                                  cKF_kn_ply_1_confirm1_tbl, cKF_c_ply_1_confirm1_tbl, -1, 31 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_confirm1 = { cKF_ckcb_r_ply_1_confirm1_tbl,
+                                              cKF_ds_ply_1_confirm1_tbl,
+                                              cKF_kn_ply_1_confirm1_tbl,
+                                              cKF_c_ply_1_confirm1_tbl,
+                                              -1,
+                                              31 };
 
 u8 cKF_ckcb_r_ply_1_dig_suka1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -4151,8 +4372,12 @@ s16 cKF_ds_ply_1_dig_suka1_tbl[] = {
     1,  0,    0,     41, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_dig_suka1[] = { { cKF_ckcb_r_ply_1_dig_suka1_tbl, cKF_ds_ply_1_dig_suka1_tbl,
-                                                   cKF_kn_ply_1_dig_suka1_tbl, cKF_c_ply_1_dig_suka1_tbl, -1, 41 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_dig_suka1 = { cKF_ckcb_r_ply_1_dig_suka1_tbl,
+                                               cKF_ds_ply_1_dig_suka1_tbl,
+                                               cKF_kn_ply_1_dig_suka1_tbl,
+                                               cKF_c_ply_1_dig_suka1_tbl,
+                                               -1,
+                                               41 };
 
 u8 ply_1_dig_suka11_tex_index[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 5, 5, 5, 5, 5, 5,
                                     5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 3, 3, 3, 3, 3, 0 };
@@ -4271,8 +4496,9 @@ s16 cKF_ds_ply_1_get_d1_tbl[] = {
     1,  0,     0,     66, 0,     0,     1,  0,     0,     66, 0,     0,     1,  0,    0,     66, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_get_d1[] = { { cKF_ckcb_r_ply_1_get_d1_tbl, cKF_ds_ply_1_get_d1_tbl,
-                                                cKF_kn_ply_1_get_d1_tbl, cKF_c_ply_1_get_d1_tbl, -1, 66 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_get_d1 = {
+    cKF_ckcb_r_ply_1_get_d1_tbl, cKF_ds_ply_1_get_d1_tbl, cKF_kn_ply_1_get_d1_tbl, cKF_c_ply_1_get_d1_tbl, -1, 66
+};
 
 u8 cKF_ckcb_r_ply_1_putaway_d1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -4307,8 +4533,12 @@ s16 cKF_ds_ply_1_putaway_d1_tbl[] = {
     16, 75,   0, 19, 100,  0, 1,  0,    0, 19, 0,    0, 1,  0,    0, 19, 0,    0, 1,  0,    0, 19, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_putaway_d1[] = { { cKF_ckcb_r_ply_1_putaway_d1_tbl, cKF_ds_ply_1_putaway_d1_tbl,
-                                                    cKF_kn_ply_1_putaway_d1_tbl, cKF_c_ply_1_putaway_d1_tbl, -1, 19 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_putaway_d1 = { cKF_ckcb_r_ply_1_putaway_d1_tbl,
+                                                cKF_ds_ply_1_putaway_d1_tbl,
+                                                cKF_kn_ply_1_putaway_d1_tbl,
+                                                cKF_c_ply_1_putaway_d1_tbl,
+                                                -1,
+                                                19 };
 
 u8 cKF_ckcb_r_ply_1_dig_kabu1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -4410,8 +4640,12 @@ s16 cKF_ds_ply_1_dig_kabu1_tbl[] = {
     1,  0,     0,     59, 0,    0,     1,  0,    0,      59, 0,    0,     1,  0,    0,     59, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_dig_kabu1[] = { { cKF_ckcb_r_ply_1_dig_kabu1_tbl, cKF_ds_ply_1_dig_kabu1_tbl,
-                                                   cKF_kn_ply_1_dig_kabu1_tbl, cKF_c_ply_1_dig_kabu1_tbl, -1, 59 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_dig_kabu1 = { cKF_ckcb_r_ply_1_dig_kabu1_tbl,
+                                               cKF_ds_ply_1_dig_kabu1_tbl,
+                                               cKF_kn_ply_1_dig_kabu1_tbl,
+                                               cKF_c_ply_1_dig_kabu1_tbl,
+                                               -1,
+                                               59 };
 
 u8 cKF_ckcb_r_ply_1_fill_up_i1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -4528,8 +4762,12 @@ s16 cKF_ds_ply_1_fill_up_i1_tbl[] = {
     8,  0,    0,     58, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_fill_up_i1[] = { { cKF_ckcb_r_ply_1_fill_up_i1_tbl, cKF_ds_ply_1_fill_up_i1_tbl,
-                                                    cKF_kn_ply_1_fill_up_i1_tbl, cKF_c_ply_1_fill_up_i1_tbl, -1, 58 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_fill_up_i1 = { cKF_ckcb_r_ply_1_fill_up_i1_tbl,
+                                                cKF_ds_ply_1_fill_up_i1_tbl,
+                                                cKF_kn_ply_1_fill_up_i1_tbl,
+                                                cKF_c_ply_1_fill_up_i1_tbl,
+                                                -1,
+                                                58 };
 
 u8 cKF_ckcb_r_ply_1_send_mail1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -4587,8 +4825,12 @@ s16 cKF_ds_ply_1_send_mail1_tbl[] = {
     1,  0,    0,     38, 0,     0,     1,  0,     0,    38, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_send_mail1[] = { { cKF_ckcb_r_ply_1_send_mail1_tbl, cKF_ds_ply_1_send_mail1_tbl,
-                                                    cKF_kn_ply_1_send_mail1_tbl, cKF_c_ply_1_send_mail1_tbl, -1, 38 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_send_mail1 = { cKF_ckcb_r_ply_1_send_mail1_tbl,
+                                                cKF_ds_ply_1_send_mail1_tbl,
+                                                cKF_kn_ply_1_send_mail1_tbl,
+                                                cKF_c_ply_1_send_mail1_tbl,
+                                                -1,
+                                                38 };
 
 u8 cKF_ckcb_r_ply_1_get_f1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -4615,8 +4857,9 @@ s16 cKF_ds_ply_1_get_f1_tbl[] = {
     1,  0,    0, 11, 0,    -273, 1,  0,    0,   11, 0,    0,   1, 0,    0,   11, 0,    0, 1,  0,    0,    11, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_get_f1[] = { { cKF_ckcb_r_ply_1_get_f1_tbl, cKF_ds_ply_1_get_f1_tbl,
-                                                cKF_kn_ply_1_get_f1_tbl, cKF_c_ply_1_get_f1_tbl, -1, 11 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_get_f1 = {
+    cKF_ckcb_r_ply_1_get_f1_tbl, cKF_ds_ply_1_get_f1_tbl, cKF_kn_ply_1_get_f1_tbl, cKF_c_ply_1_get_f1_tbl, -1, 11
+};
 
 u8 cKF_ckcb_r_ply_1_get_pull_f1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -4648,9 +4891,12 @@ s16 cKF_ds_ply_1_get_pull_f1_tbl[] = {
     11, 0,    0, 1,  0,    0, 11, 0,    0,   1,  0,    0, 11, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_get_pull_f1[] = { { cKF_ckcb_r_ply_1_get_pull_f1_tbl, cKF_ds_ply_1_get_pull_f1_tbl,
-                                                     cKF_kn_ply_1_get_pull_f1_tbl, cKF_c_ply_1_get_pull_f1_tbl, -1,
-                                                     11 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_get_pull_f1 = { cKF_ckcb_r_ply_1_get_pull_f1_tbl,
+                                                 cKF_ds_ply_1_get_pull_f1_tbl,
+                                                 cKF_kn_ply_1_get_pull_f1_tbl,
+                                                 cKF_c_ply_1_get_pull_f1_tbl,
+                                                 -1,
+                                                 11 };
 
 u8 cKF_ckcb_r_ply_1_get_putaway_f1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7,
                                              7,  0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
@@ -4692,10 +4938,12 @@ s16 cKF_ds_ply_1_get_putaway_f1_tbl[] = {
     1,  0,    0, 31, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_get_putaway_f1[] = {
-    { cKF_ckcb_r_ply_1_get_putaway_f1_tbl, cKF_ds_ply_1_get_putaway_f1_tbl, cKF_kn_ply_1_get_putaway_f1_tbl,
-      cKF_c_ply_1_get_putaway_f1_tbl, -1, 31 }
-};
+cKF_Animation_R_c cKF_ba_r_ply_1_get_putaway_f1 = { cKF_ckcb_r_ply_1_get_putaway_f1_tbl,
+                                                    cKF_ds_ply_1_get_putaway_f1_tbl,
+                                                    cKF_kn_ply_1_get_putaway_f1_tbl,
+                                                    cKF_c_ply_1_get_putaway_f1_tbl,
+                                                    -1,
+                                                    31 };
 
 u8 cKF_ckcb_r_ply_1_trans_wait_f1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7,
                                             7,  0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
@@ -4726,9 +4974,12 @@ s16 cKF_ds_ply_1_trans_wait_f1_tbl[] = {
     17, 0,    -150, 1,  0,    0, 17, 0,    0,   1, 0,    0, 17, 0,    0, 1,  0,    0,    17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_trans_wait_f1[] = { { cKF_ckcb_r_ply_1_trans_wait_f1_tbl,
-                                                       cKF_ds_ply_1_trans_wait_f1_tbl, cKF_kn_ply_1_trans_wait_f1_tbl,
-                                                       cKF_c_ply_1_trans_wait_f1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_trans_wait_f1 = { cKF_ckcb_r_ply_1_trans_wait_f1_tbl,
+                                                   cKF_ds_ply_1_trans_wait_f1_tbl,
+                                                   cKF_kn_ply_1_trans_wait_f1_tbl,
+                                                   cKF_c_ply_1_trans_wait_f1_tbl,
+                                                   -1,
+                                                   17 };
 
 u8 cKF_ckcb_r_ply_1_transfer_f1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -4792,9 +5043,12 @@ s16 cKF_ds_ply_1_transfer_f1_tbl[] = {
     39, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_transfer_f1[] = { { cKF_ckcb_r_ply_1_transfer_f1_tbl, cKF_ds_ply_1_transfer_f1_tbl,
-                                                     cKF_kn_ply_1_transfer_f1_tbl, cKF_c_ply_1_transfer_f1_tbl, -1,
-                                                     39 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_transfer_f1 = { cKF_ckcb_r_ply_1_transfer_f1_tbl,
+                                                 cKF_ds_ply_1_transfer_f1_tbl,
+                                                 cKF_kn_ply_1_transfer_f1_tbl,
+                                                 cKF_c_ply_1_transfer_f1_tbl,
+                                                 -1,
+                                                 39 };
 
 u8 cKF_ckcb_r_ply_1_shake1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -4864,8 +5118,9 @@ s16 cKF_ds_ply_1_shake1_tbl[] = {
     39, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_shake1[] = { { cKF_ckcb_r_ply_1_shake1_tbl, cKF_ds_ply_1_shake1_tbl,
-                                                cKF_kn_ply_1_shake1_tbl, cKF_c_ply_1_shake1_tbl, -1, 39 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_shake1 = {
+    cKF_ckcb_r_ply_1_shake1_tbl, cKF_ds_ply_1_shake1_tbl, cKF_kn_ply_1_shake1_tbl, cKF_c_ply_1_shake1_tbl, -1, 39
+};
 
 u8 ply_1_shake12_tex_index[] = { 0, 0, 0, 1, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
                                  3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 2, 2, 0, 0, 0, 0, 0 };
@@ -4904,8 +5159,9 @@ s16 cKF_ds_ply_1_tired1_tbl[] = {
     21, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_tired1[] = { { cKF_ckcb_r_ply_1_tired1_tbl, cKF_ds_ply_1_tired1_tbl,
-                                                cKF_kn_ply_1_tired1_tbl, cKF_c_ply_1_tired1_tbl, -1, 21 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_tired1 = {
+    cKF_ckcb_r_ply_1_tired1_tbl, cKF_ds_ply_1_tired1_tbl, cKF_kn_ply_1_tired1_tbl, cKF_c_ply_1_tired1_tbl, -1, 21
+};
 
 u8 cKF_ckcb_r_ply_1_wash1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -4951,8 +5207,9 @@ s16 cKF_ds_ply_1_wash1_tbl[] = {
     17, 0,     0,    1,  0,     0,     17, 0,     0,     1,  0,     0,    17, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_wash1[] = { { cKF_ckcb_r_ply_1_wash1_tbl, cKF_ds_ply_1_wash1_tbl,
-                                               cKF_kn_ply_1_wash1_tbl, cKF_c_ply_1_wash1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_wash1 = {
+    cKF_ckcb_r_ply_1_wash1_tbl, cKF_ds_ply_1_wash1_tbl, cKF_kn_ply_1_wash1_tbl, cKF_c_ply_1_wash1_tbl, -1, 17
+};
 
 u8 cKF_ckcb_r_ply_1_wash2_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -4996,8 +5253,9 @@ s16 cKF_ds_ply_1_wash2_tbl[] = {
     1,  0,    0,     17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_wash2[] = { { cKF_ckcb_r_ply_1_wash2_tbl, cKF_ds_ply_1_wash2_tbl,
-                                               cKF_kn_ply_1_wash2_tbl, cKF_c_ply_1_wash2_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_wash2 = {
+    cKF_ckcb_r_ply_1_wash2_tbl, cKF_ds_ply_1_wash2_tbl, cKF_kn_ply_1_wash2_tbl, cKF_c_ply_1_wash2_tbl, -1, 17
+};
 
 u8 cKF_ckcb_r_ply_1_wash3_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -5037,8 +5295,9 @@ s16 cKF_ds_ply_1_wash3_tbl[] = {
     1,  0,     0,     17, 0,     0,     1,  0,     0,    17, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_wash3[] = { { cKF_ckcb_r_ply_1_wash3_tbl, cKF_ds_ply_1_wash3_tbl,
-                                               cKF_kn_ply_1_wash3_tbl, cKF_c_ply_1_wash3_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_wash3 = {
+    cKF_ckcb_r_ply_1_wash3_tbl, cKF_ds_ply_1_wash3_tbl, cKF_kn_ply_1_wash3_tbl, cKF_c_ply_1_wash3_tbl, -1, 17
+};
 
 u8 cKF_ckcb_r_ply_1_wash4_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -5072,8 +5331,9 @@ s16 cKF_ds_ply_1_wash4_tbl[] = {
     17, 0,     0,    1,  0,     0,    17, 0,    0,    1,  0,    0,     17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_wash4[] = { { cKF_ckcb_r_ply_1_wash4_tbl, cKF_ds_ply_1_wash4_tbl,
-                                               cKF_kn_ply_1_wash4_tbl, cKF_c_ply_1_wash4_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_wash4 = {
+    cKF_ckcb_r_ply_1_wash4_tbl, cKF_ds_ply_1_wash4_tbl, cKF_kn_ply_1_wash4_tbl, cKF_c_ply_1_wash4_tbl, -1, 17
+};
 
 u8 cKF_ckcb_r_ply_1_wash5_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -5108,8 +5368,9 @@ s16 cKF_ds_ply_1_wash5_tbl[] = {
     1,  0,    0,    17, 0,    0,    1,  0,    0,   17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_wash5[] = { { cKF_ckcb_r_ply_1_wash5_tbl, cKF_ds_ply_1_wash5_tbl,
-                                               cKF_kn_ply_1_wash5_tbl, cKF_c_ply_1_wash5_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_wash5 = {
+    cKF_ckcb_r_ply_1_wash5_tbl, cKF_ds_ply_1_wash5_tbl, cKF_kn_ply_1_wash5_tbl, cKF_c_ply_1_wash5_tbl, -1, 17
+};
 
 u8 cKF_ckcb_r_ply_1_fukubiki1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -5169,8 +5430,12 @@ s16 cKF_ds_ply_1_fukubiki1_tbl[] = {
     56, 0,    0,     1,  0,    0,     56, 0,    0,     1,  0,    0,     56, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_fukubiki1[] = { { cKF_ckcb_r_ply_1_fukubiki1_tbl, cKF_ds_ply_1_fukubiki1_tbl,
-                                                   cKF_kn_ply_1_fukubiki1_tbl, cKF_c_ply_1_fukubiki1_tbl, -1, 56 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_fukubiki1 = { cKF_ckcb_r_ply_1_fukubiki1_tbl,
+                                               cKF_ds_ply_1_fukubiki1_tbl,
+                                               cKF_kn_ply_1_fukubiki1_tbl,
+                                               cKF_c_ply_1_fukubiki1_tbl,
+                                               -1,
+                                               56 };
 
 u8 cKF_ckcb_r_ply_1_omairi1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -5249,8 +5514,9 @@ s16 cKF_ds_ply_1_omairi1_tbl[] = {
     1,  0,    0,     91, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_omairi1[] = { { cKF_ckcb_r_ply_1_omairi1_tbl, cKF_ds_ply_1_omairi1_tbl,
-                                                 cKF_kn_ply_1_omairi1_tbl, cKF_c_ply_1_omairi1_tbl, -1, 91 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_omairi1 = {
+    cKF_ckcb_r_ply_1_omairi1_tbl, cKF_ds_ply_1_omairi1_tbl, cKF_kn_ply_1_omairi1_tbl, cKF_c_ply_1_omairi1_tbl, -1, 91
+};
 
 u8 cKF_ckcb_r_ply_1_saisen1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -5310,8 +5576,9 @@ s16 cKF_ds_ply_1_saisen1_tbl[] = {
     1,  0,     0,     43, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_saisen1[] = { { cKF_ckcb_r_ply_1_saisen1_tbl, cKF_ds_ply_1_saisen1_tbl,
-                                                 cKF_kn_ply_1_saisen1_tbl, cKF_c_ply_1_saisen1_tbl, -1, 43 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_saisen1 = {
+    cKF_ckcb_r_ply_1_saisen1_tbl, cKF_ds_ply_1_saisen1_tbl, cKF_kn_ply_1_saisen1_tbl, cKF_c_ply_1_saisen1_tbl, -1, 43
+};
 
 u8 cKF_ckcb_r_ply_1_return_mail1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -5346,9 +5613,12 @@ s16 cKF_ds_ply_1_return_mail1_tbl[] = {
     12, 0,    0,    1,  0,    0,     12, 0,    0, 1,  0,    0,    12, 0,    0,     1,  0,    0,    12, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_return_mail1[] = { { cKF_ckcb_r_ply_1_return_mail1_tbl, cKF_ds_ply_1_return_mail1_tbl,
-                                                      cKF_kn_ply_1_return_mail1_tbl, cKF_c_ply_1_return_mail1_tbl, -1,
-                                                      12 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_return_mail1 = { cKF_ckcb_r_ply_1_return_mail1_tbl,
+                                                  cKF_ds_ply_1_return_mail1_tbl,
+                                                  cKF_kn_ply_1_return_mail1_tbl,
+                                                  cKF_c_ply_1_return_mail1_tbl,
+                                                  -1,
+                                                  12 };
 
 u8 cKF_ckcb_r_ply_1_return_mail2_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -5392,9 +5662,12 @@ s16 cKF_ds_ply_1_return_mail2_tbl[] = {
     1,  0,    0,    19, 0,    0,     1,  0,    0,     19, 0,    0,     1,  0,     0,   19, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_return_mail2[] = { { cKF_ckcb_r_ply_1_return_mail2_tbl, cKF_ds_ply_1_return_mail2_tbl,
-                                                      cKF_kn_ply_1_return_mail2_tbl, cKF_c_ply_1_return_mail2_tbl, -1,
-                                                      19 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_return_mail2 = { cKF_ckcb_r_ply_1_return_mail2_tbl,
+                                                  cKF_ds_ply_1_return_mail2_tbl,
+                                                  cKF_kn_ply_1_return_mail2_tbl,
+                                                  cKF_c_ply_1_return_mail2_tbl,
+                                                  -1,
+                                                  19 };
 
 u8 cKF_ckcb_r_ply_1_return_mail3_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -5437,9 +5710,12 @@ s16 cKF_ds_ply_1_return_mail3_tbl[] = {
     1,  0,    0,   20, 0,    0, 1,  0,     0, 20, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_return_mail3[] = { { cKF_ckcb_r_ply_1_return_mail3_tbl, cKF_ds_ply_1_return_mail3_tbl,
-                                                      cKF_kn_ply_1_return_mail3_tbl, cKF_c_ply_1_return_mail3_tbl, -1,
-                                                      20 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_return_mail3 = { cKF_ckcb_r_ply_1_return_mail3_tbl,
+                                                  cKF_ds_ply_1_return_mail3_tbl,
+                                                  cKF_kn_ply_1_return_mail3_tbl,
+                                                  cKF_c_ply_1_return_mail3_tbl,
+                                                  -1,
+                                                  20 };
 
 u8 cKF_ckcb_r_ply_1_eat1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 0, 0, 0 };
 
@@ -5502,8 +5778,9 @@ s16 cKF_ds_ply_1_eat1_tbl[] = {
     82, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_eat1[] = { { cKF_ckcb_r_ply_1_eat1_tbl, cKF_ds_ply_1_eat1_tbl, cKF_kn_ply_1_eat1_tbl,
-                                              cKF_c_ply_1_eat1_tbl, -1, 82 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_eat1 = {
+    cKF_ckcb_r_ply_1_eat1_tbl, cKF_ds_ply_1_eat1_tbl, cKF_kn_ply_1_eat1_tbl, cKF_c_ply_1_eat1_tbl, -1, 82
+};
 
 u8 ply_1_eat11_tex_index[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0, 0, 0, 2, 2, 2, 1, 0, 0,
                                0, 0, 2, 2, 2, 1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -5543,8 +5820,9 @@ s16 cKF_ds_ply_1_gaaan1_tbl[] = {
     5,  198,  0,    6,  178,  0, 7,  188,  335,  11, 190,  -202, 1,  0,    0,   11, 0,    152
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_gaaan1[] = { { cKF_ckcb_r_ply_1_gaaan1_tbl, cKF_ds_ply_1_gaaan1_tbl,
-                                                cKF_kn_ply_1_gaaan1_tbl, cKF_c_ply_1_gaaan1_tbl, -1, 11 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_gaaan1 = {
+    cKF_ckcb_r_ply_1_gaaan1_tbl, cKF_ds_ply_1_gaaan1_tbl, cKF_kn_ply_1_gaaan1_tbl, cKF_c_ply_1_gaaan1_tbl, -1, 11
+};
 
 u8 ply_1_gaaan11_tex_index[] = { 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5 };
 
@@ -5578,8 +5856,9 @@ s16 cKF_ds_ply_1_gaaan2_tbl[] = {
     8,  170,  0,   24, 215,  0,    31, 190,  -202, 1,  0,    152,  8,  20,   0,    24, -20,  0,    31, 0,    152
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_gaaan2[] = { { cKF_ckcb_r_ply_1_gaaan2_tbl, cKF_ds_ply_1_gaaan2_tbl,
-                                                cKF_kn_ply_1_gaaan2_tbl, cKF_c_ply_1_gaaan2_tbl, -1, 31 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_gaaan2 = {
+    cKF_ckcb_r_ply_1_gaaan2_tbl, cKF_ds_ply_1_gaaan2_tbl, cKF_kn_ply_1_gaaan2_tbl, cKF_c_ply_1_gaaan2_tbl, -1, 31
+};
 
 u8 cKF_ckcb_r_ply_1_deru1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -5635,8 +5914,9 @@ s16 cKF_ds_ply_1_deru1_tbl[] = {
     1,  0,     0,      57, 0,     0,      1,  0,     0,     57, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_deru1[] = { { cKF_ckcb_r_ply_1_deru1_tbl, cKF_ds_ply_1_deru1_tbl,
-                                               cKF_kn_ply_1_deru1_tbl, cKF_c_ply_1_deru1_tbl, -1, 57 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_deru1 = {
+    cKF_ckcb_r_ply_1_deru1_tbl, cKF_ds_ply_1_deru1_tbl, cKF_kn_ply_1_deru1_tbl, cKF_c_ply_1_deru1_tbl, -1, 57
+};
 
 u8 ply_1_deru11_tex_index[] = { 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5,
                                 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3 };
@@ -5695,8 +5975,12 @@ s16 cKF_ds_ply_1_guratuku1_tbl[] = {
     25, 0,    0,     1,  0,    0,    25, 0,    0,     1,  0,    0,     25, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_guratuku1[] = { { cKF_ckcb_r_ply_1_guratuku1_tbl, cKF_ds_ply_1_guratuku1_tbl,
-                                                   cKF_kn_ply_1_guratuku1_tbl, cKF_c_ply_1_guratuku1_tbl, -1, 25 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_guratuku1 = { cKF_ckcb_r_ply_1_guratuku1_tbl,
+                                               cKF_ds_ply_1_guratuku1_tbl,
+                                               cKF_kn_ply_1_guratuku1_tbl,
+                                               cKF_c_ply_1_guratuku1_tbl,
+                                               -1,
+                                               25 };
 
 u8 ply_1_guratuku11_tex_index[] = { 0, 3, 4, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5 };
 
@@ -5760,8 +6044,9 @@ s16 cKF_ds_ply_1_mogaku1_tbl[] = {
     41, 0,    0,     1,  0,    0,     41, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_mogaku1[] = { { cKF_ckcb_r_ply_1_mogaku1_tbl, cKF_ds_ply_1_mogaku1_tbl,
-                                                 cKF_kn_ply_1_mogaku1_tbl, cKF_c_ply_1_mogaku1_tbl, -1, 41 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_mogaku1 = {
+    cKF_ckcb_r_ply_1_mogaku1_tbl, cKF_ds_ply_1_mogaku1_tbl, cKF_kn_ply_1_mogaku1_tbl, cKF_c_ply_1_mogaku1_tbl, -1, 41
+};
 
 u8 ply_1_mogaku11_tex_index[] = { 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5,
                                   5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5 };
@@ -5798,8 +6083,9 @@ s16 cKF_ds_ply_1_otiru1_tbl[] = {
     1, 0,    0,     9, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_otiru1[] = { { cKF_ckcb_r_ply_1_otiru1_tbl, cKF_ds_ply_1_otiru1_tbl,
-                                                cKF_kn_ply_1_otiru1_tbl, cKF_c_ply_1_otiru1_tbl, -1, 9 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_otiru1 = {
+    cKF_ckcb_r_ply_1_otiru1_tbl, cKF_ds_ply_1_otiru1_tbl, cKF_kn_ply_1_otiru1_tbl, cKF_c_ply_1_otiru1_tbl, -1, 9
+};
 
 u8 ply_1_otiru11_tex_index[] = { 5, 5, 5, 5, 4, 4, 5, 5, 5 };
 
@@ -5854,8 +6140,9 @@ s16 cKF_ds_ply_1_zassou1_tbl[] = {
     25, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_zassou1[] = { { cKF_ckcb_r_ply_1_zassou1_tbl, cKF_ds_ply_1_zassou1_tbl,
-                                                 cKF_kn_ply_1_zassou1_tbl, cKF_c_ply_1_zassou1_tbl, -1, 25 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_zassou1 = {
+    cKF_ckcb_r_ply_1_zassou1_tbl, cKF_ds_ply_1_zassou1_tbl, cKF_kn_ply_1_zassou1_tbl, cKF_c_ply_1_zassou1_tbl, -1, 25
+};
 
 u8 cKF_ckcb_r_ply_1_knock1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -5903,8 +6190,9 @@ s16 cKF_ds_ply_1_knock1_tbl[] = {
     24, 0,    0,    1,  0,    0,    24, 0,    0,     1,  0,    0,     24, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_knock1[] = { { cKF_ckcb_r_ply_1_knock1_tbl, cKF_ds_ply_1_knock1_tbl,
-                                                cKF_kn_ply_1_knock1_tbl, cKF_c_ply_1_knock1_tbl, -1, 24 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_knock1 = {
+    cKF_ckcb_r_ply_1_knock1_tbl, cKF_ds_ply_1_knock1_tbl, cKF_kn_ply_1_knock1_tbl, cKF_c_ply_1_knock1_tbl, -1, 24
+};
 
 u8 cKF_ckcb_r_ply_1_biku1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -5964,8 +6252,9 @@ s16 cKF_ds_ply_1_biku1_tbl[] = {
     1,  0,    0,     25, 0,    0,     1,  0,    0,     25, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_biku1[] = { { cKF_ckcb_r_ply_1_biku1_tbl, cKF_ds_ply_1_biku1_tbl,
-                                               cKF_kn_ply_1_biku1_tbl, cKF_c_ply_1_biku1_tbl, -1, 25 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_biku1 = {
+    cKF_ckcb_r_ply_1_biku1_tbl, cKF_ds_ply_1_biku1_tbl, cKF_kn_ply_1_biku1_tbl, cKF_c_ply_1_biku1_tbl, -1, 25
+};
 
 u8 ply_1_biku11_tex_index[] = { 3, 3, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
 
@@ -6081,8 +6370,9 @@ s16 cKF_ds_ply_1_hati1_tbl[] = {
     65, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_hati1[] = { { cKF_ckcb_r_ply_1_hati1_tbl, cKF_ds_ply_1_hati1_tbl,
-                                               cKF_kn_ply_1_hati1_tbl, cKF_c_ply_1_hati1_tbl, -1, 65 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_hati1 = {
+    cKF_ckcb_r_ply_1_hati1_tbl, cKF_ds_ply_1_hati1_tbl, cKF_kn_ply_1_hati1_tbl, cKF_c_ply_1_hati1_tbl, -1, 65
+};
 
 u8 ply_1_hati11_tex_index[] = { 0, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5,
                                 5, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 4,
@@ -6152,8 +6442,9 @@ s16 cKF_ds_ply_1_hati2_tbl[] = {
     1,  -1844, 0,     62, -487, 0,     1,  0,    0,     62, 0,    0,     1,  0,    0,     62, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_hati2[] = { { cKF_ckcb_r_ply_1_hati2_tbl, cKF_ds_ply_1_hati2_tbl,
-                                               cKF_kn_ply_1_hati2_tbl, cKF_c_ply_1_hati2_tbl, -1, 62 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_hati2 = {
+    cKF_ckcb_r_ply_1_hati2_tbl, cKF_ds_ply_1_hati2_tbl, cKF_kn_ply_1_hati2_tbl, cKF_c_ply_1_hati2_tbl, -1, 62
+};
 
 u8 ply_1_hati21_tex_index[] = { 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 3, 3, 3, 3, 3, 3, 3, 3,
                                 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5, 5, 4, 4, 4,
@@ -6228,8 +6519,9 @@ s16 cKF_ds_ply_1_hati3_tbl[] = {
     1,  -487, 0,    32, 0,     0,     1,  0,     0,     32, 0,    0,     1,  0,    0,     32, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_hati3[] = { { cKF_ckcb_r_ply_1_hati3_tbl, cKF_ds_ply_1_hati3_tbl,
-                                               cKF_kn_ply_1_hati3_tbl, cKF_c_ply_1_hati3_tbl, -1, 32 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_hati3 = {
+    cKF_ckcb_r_ply_1_hati3_tbl, cKF_ds_ply_1_hati3_tbl, cKF_kn_ply_1_hati3_tbl, cKF_c_ply_1_hati3_tbl, -1, 32
+};
 
 u8 ply_1_hati31_tex_index[] = { 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
                                 3, 3, 3, 3, 3, 3, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5 };
@@ -6279,8 +6571,12 @@ s16 cKF_ds_ply_1_push_yuki1_tbl[] = {
     17, 0,    0,     1,  0,    0,    17, 0,    0,     1,  0,    0,     17, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_push_yuki1[] = { { cKF_ckcb_r_ply_1_push_yuki1_tbl, cKF_ds_ply_1_push_yuki1_tbl,
-                                                    cKF_kn_ply_1_push_yuki1_tbl, cKF_c_ply_1_push_yuki1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_push_yuki1 = { cKF_ckcb_r_ply_1_push_yuki1_tbl,
+                                                cKF_ds_ply_1_push_yuki1_tbl,
+                                                cKF_kn_ply_1_push_yuki1_tbl,
+                                                cKF_c_ply_1_push_yuki1_tbl,
+                                                -1,
+                                                17 };
 
 u8 cKF_ckcb_r_ply_1_deru2_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -6342,8 +6638,9 @@ s16 cKF_ds_ply_1_deru2_tbl[] = {
     1,  0,     0,      57, 0,     0,      1,  0,     0,      57, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_deru2[] = { { cKF_ckcb_r_ply_1_deru2_tbl, cKF_ds_ply_1_deru2_tbl,
-                                               cKF_kn_ply_1_deru2_tbl, cKF_c_ply_1_deru2_tbl, -1, 57 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_deru2 = {
+    cKF_ckcb_r_ply_1_deru2_tbl, cKF_ds_ply_1_deru2_tbl, cKF_kn_ply_1_deru2_tbl, cKF_c_ply_1_deru2_tbl, -1, 57
+};
 
 u8 ply_1_deru21_tex_index[] = { 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5,
                                 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3 };
@@ -6383,8 +6680,9 @@ s16 cKF_ds_ply_1_otiru2_tbl[] = {
     1, 0,    0,     9, 0,    0,     1, 0,    0,     9, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_otiru2[] = { { cKF_ckcb_r_ply_1_otiru2_tbl, cKF_ds_ply_1_otiru2_tbl,
-                                                cKF_kn_ply_1_otiru2_tbl, cKF_c_ply_1_otiru2_tbl, -1, 9 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_otiru2 = {
+    cKF_ckcb_r_ply_1_otiru2_tbl, cKF_ds_ply_1_otiru2_tbl, cKF_kn_ply_1_otiru2_tbl, cKF_c_ply_1_otiru2_tbl, -1, 9
+};
 
 u8 ply_1_otiru21_tex_index[] = { 5, 5, 5, 5, 4, 4, 5, 5, 5 };
 
@@ -6467,8 +6765,12 @@ s16 cKF_ds_ply_1_itazura1_tbl[] = {
     1,  0,    0,     49, 0,    0,      1,  0,    0,     49, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_itazura1[] = { { cKF_ckcb_r_ply_1_itazura1_tbl, cKF_ds_ply_1_itazura1_tbl,
-                                                  cKF_kn_ply_1_itazura1_tbl, cKF_c_ply_1_itazura1_tbl, -1, 49 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_itazura1 = { cKF_ckcb_r_ply_1_itazura1_tbl,
+                                              cKF_ds_ply_1_itazura1_tbl,
+                                              cKF_kn_ply_1_itazura1_tbl,
+                                              cKF_c_ply_1_itazura1_tbl,
+                                              -1,
+                                              49 };
 
 u8 ply_1_itazura11_tex_index[] = { 0, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5,
                                    5, 5, 5, 5, 5, 4, 3, 3, 3, 3, 3, 3, 4, 5, 5, 5, 5, 5, 5, 4, 3, 3, 3, 3 };
@@ -6524,8 +6826,12 @@ s16 cKF_ds_ply_1_umb_rot1_tbl[] = {
     1,  0,     0,     57, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_umb_rot1[] = { { cKF_ckcb_r_ply_1_umb_rot1_tbl, cKF_ds_ply_1_umb_rot1_tbl,
-                                                  cKF_kn_ply_1_umb_rot1_tbl, cKF_c_ply_1_umb_rot1_tbl, -1, 57 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_umb_rot1 = { cKF_ckcb_r_ply_1_umb_rot1_tbl,
+                                              cKF_ds_ply_1_umb_rot1_tbl,
+                                              cKF_kn_ply_1_umb_rot1_tbl,
+                                              cKF_c_ply_1_umb_rot1_tbl,
+                                              -1,
+                                              57 };
 
 u8 cKF_ckcb_r_ply_1_pickup_wait1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -6575,9 +6881,12 @@ s16 cKF_ds_ply_1_pickup_wait1_tbl[] = {
     25, 0,    0,    1,  0,    0,    25, 0,    0,    1,  0,    0,    25, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_pickup_wait1[] = { { cKF_ckcb_r_ply_1_pickup_wait1_tbl, cKF_ds_ply_1_pickup_wait1_tbl,
-                                                      cKF_kn_ply_1_pickup_wait1_tbl, cKF_c_ply_1_pickup_wait1_tbl, -1,
-                                                      25 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_pickup_wait1 = { cKF_ckcb_r_ply_1_pickup_wait1_tbl,
+                                                  cKF_ds_ply_1_pickup_wait1_tbl,
+                                                  cKF_kn_ply_1_pickup_wait1_tbl,
+                                                  cKF_c_ply_1_pickup_wait1_tbl,
+                                                  -1,
+                                                  25 };
 
 u8 cKF_ckcb_r_ply_1_yatta1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -6672,8 +6981,9 @@ s16 cKF_ds_ply_1_yatta1_tbl[] = {
     1,  0,    0,     53, 0,    0,     1,  0,     0,      53, 0,     0,     1,  0,    0,     53, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_yatta1[] = { { cKF_ckcb_r_ply_1_yatta1_tbl, cKF_ds_ply_1_yatta1_tbl,
-                                                cKF_kn_ply_1_yatta1_tbl, cKF_c_ply_1_yatta1_tbl, -1, 53 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_yatta1 = {
+    cKF_ckcb_r_ply_1_yatta1_tbl, cKF_ds_ply_1_yatta1_tbl, cKF_kn_ply_1_yatta1_tbl, cKF_c_ply_1_yatta1_tbl, -1, 53
+};
 
 u8 ply_1_yatta11_tex_index[] = { 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2 };
@@ -6777,8 +7087,9 @@ s16 cKF_ds_ply_1_yatta2_tbl[] = {
     53, 0,     0,     1,  0,    0,     53, 0,    0,      1,  0,    0,     53, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_yatta2[] = { { cKF_ckcb_r_ply_1_yatta2_tbl, cKF_ds_ply_1_yatta2_tbl,
-                                                cKF_kn_ply_1_yatta2_tbl, cKF_c_ply_1_yatta2_tbl, -1, 53 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_yatta2 = {
+    cKF_ckcb_r_ply_1_yatta2_tbl, cKF_ds_ply_1_yatta2_tbl, cKF_kn_ply_1_yatta2_tbl, cKF_c_ply_1_yatta2_tbl, -1, 53
+};
 
 u8 ply_1_yatta21_tex_index[] = { 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2 };
@@ -6878,8 +7189,9 @@ s16 cKF_ds_ply_1_yatta3_tbl[] = {
     53, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_yatta3[] = { { cKF_ckcb_r_ply_1_yatta3_tbl, cKF_ds_ply_1_yatta3_tbl,
-                                                cKF_kn_ply_1_yatta3_tbl, cKF_c_ply_1_yatta3_tbl, -1, 53 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_yatta3 = {
+    cKF_ckcb_r_ply_1_yatta3_tbl, cKF_ds_ply_1_yatta3_tbl, cKF_kn_ply_1_yatta3_tbl, cKF_c_ply_1_yatta3_tbl, -1, 53
+};
 
 u8 ply_1_yatta31_tex_index[] = { 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
                                  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2 };
@@ -6896,8 +7208,7 @@ s16 cKF_c_ply_1_kaza1_tbl[] = { 0,    1000, 0,    0,    0,   900,  0,   0,  0,  
                                 900,  450,  -450, 150,  300, -150, 0,   50, 0,    300,  0,   0,    0,    0,
                                 -900, 0,    0,    0,    0,   0,    0,   0,  0,    0,    0 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_kaza1[] = { { cKF_ckcb_r_ply_1_kaza1_tbl, NULL, NULL, cKF_c_ply_1_kaza1_tbl, -1,
-                                               29 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_kaza1 = { cKF_ckcb_r_ply_1_kaza1_tbl, NULL, NULL, cKF_c_ply_1_kaza1_tbl, -1, 29 };
 
 u8 cKF_ckcb_r_ply_1_mosquito1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -6951,8 +7262,12 @@ s16 cKF_ds_ply_1_mosquito1_tbl[] = {
     1,  0,    0,    31,  0,     0,      1,  0,    0,     31, 0,    0,     1,  0,    0,    31,  0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_mosquito1[] = { { cKF_ckcb_r_ply_1_mosquito1_tbl, cKF_ds_ply_1_mosquito1_tbl,
-                                                   cKF_kn_ply_1_mosquito1_tbl, cKF_c_ply_1_mosquito1_tbl, -1, 31 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_mosquito1 = { cKF_ckcb_r_ply_1_mosquito1_tbl,
+                                               cKF_ds_ply_1_mosquito1_tbl,
+                                               cKF_kn_ply_1_mosquito1_tbl,
+                                               cKF_c_ply_1_mosquito1_tbl,
+                                               -1,
+                                               31 };
 
 u8 ply_1_mosquito11_tex_index[] = { 3, 3, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4,
                                     4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
@@ -6990,8 +7305,12 @@ s16 cKF_ds_ply_1_mosquito2_tbl[] = {
     31, -14,  10
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_mosquito2[] = { { cKF_ckcb_r_ply_1_mosquito2_tbl, cKF_ds_ply_1_mosquito2_tbl,
-                                                   cKF_kn_ply_1_mosquito2_tbl, cKF_c_ply_1_mosquito2_tbl, -1, 31 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_mosquito2 = { cKF_ckcb_r_ply_1_mosquito2_tbl,
+                                               cKF_ds_ply_1_mosquito2_tbl,
+                                               cKF_kn_ply_1_mosquito2_tbl,
+                                               cKF_c_ply_1_mosquito2_tbl,
+                                               -1,
+                                               31 };
 
 u8 cKF_ckcb_r_ply_1_ride1_tbl[] = { 31, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -7060,8 +7379,9 @@ s16 cKF_ds_ply_1_ride1_tbl[] = {
     30, 0,    0,     1,  0,    0,      13, 0,    0,     28, 0,    0,     30, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_ride1[] = { { cKF_ckcb_r_ply_1_ride1_tbl, cKF_ds_ply_1_ride1_tbl,
-                                               cKF_kn_ply_1_ride1_tbl, cKF_c_ply_1_ride1_tbl, -1, 30 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_ride1 = {
+    cKF_ckcb_r_ply_1_ride1_tbl, cKF_ds_ply_1_ride1_tbl, cKF_kn_ply_1_ride1_tbl, cKF_c_ply_1_ride1_tbl, -1, 30
+};
 
 u8 cKF_ckcb_r_ply_1_ride2_tbl[] = { 63, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -7129,8 +7449,9 @@ s16 cKF_ds_ply_1_ride2_tbl[] = {
     12, 0,     0,     14, 0,    0,    36, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_ride2[] = { { cKF_ckcb_r_ply_1_ride2_tbl, cKF_ds_ply_1_ride2_tbl,
-                                               cKF_kn_ply_1_ride2_tbl, cKF_c_ply_1_ride2_tbl, -1, 36 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_ride2 = {
+    cKF_ckcb_r_ply_1_ride2_tbl, cKF_ds_ply_1_ride2_tbl, cKF_kn_ply_1_ride2_tbl, cKF_c_ply_1_ride2_tbl, -1, 36
+};
 
 u8 cKF_ckcb_r_ply_1_ridewait_tbl[] = { 63, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -7166,8 +7487,12 @@ s16 cKF_ds_ply_1_ridewait_tbl[] = {
     1,  0,    0,  61, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_ridewait[] = { { cKF_ckcb_r_ply_1_ridewait_tbl, cKF_ds_ply_1_ridewait_tbl,
-                                                  cKF_kn_ply_1_ridewait_tbl, cKF_c_ply_1_ridewait_tbl, -1, 61 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_ridewait = { cKF_ckcb_r_ply_1_ridewait_tbl,
+                                              cKF_ds_ply_1_ridewait_tbl,
+                                              cKF_kn_ply_1_ridewait_tbl,
+                                              cKF_c_ply_1_ridewait_tbl,
+                                              -1,
+                                              61 };
 
 u8 cKF_ckcb_r_ply_1_getoff1_tbl[] = { 63, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -7257,8 +7582,9 @@ s16 cKF_ds_ply_1_getoff1_tbl[] = {
     41, 0,     0,     1,  0,    0,      22, 0,    0,     27, 0,    0,      28, 0,     0,     41, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_getoff1[] = { { cKF_ckcb_r_ply_1_getoff1_tbl, cKF_ds_ply_1_getoff1_tbl,
-                                                 cKF_kn_ply_1_getoff1_tbl, cKF_c_ply_1_getoff1_tbl, -1, 41 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_getoff1 = {
+    cKF_ckcb_r_ply_1_getoff1_tbl, cKF_ds_ply_1_getoff1_tbl, cKF_kn_ply_1_getoff1_tbl, cKF_c_ply_1_getoff1_tbl, -1, 41
+};
 
 u8 cKF_ckcb_r_ply_1_getoff2_tbl[] = { 63, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -7329,8 +7655,9 @@ s16 cKF_ds_ply_1_getoff2_tbl[] = {
     33, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_getoff2[] = { { cKF_ckcb_r_ply_1_getoff2_tbl, cKF_ds_ply_1_getoff2_tbl,
-                                                 cKF_kn_ply_1_getoff2_tbl, cKF_c_ply_1_getoff2_tbl, -1, 33 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_getoff2 = {
+    cKF_ckcb_r_ply_1_getoff2_tbl, cKF_ds_ply_1_getoff2_tbl, cKF_kn_ply_1_getoff2_tbl, cKF_c_ply_1_getoff2_tbl, -1, 33
+};
 
 u8 cKF_ckcb_r_ply_1_utiwa_wait1_tbl[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 0, 0, 0, 0, 0
@@ -7351,9 +7678,12 @@ s16 cKF_ds_ply_1_utiwa_wait1_tbl[] = { 1,  -58,  -97,  8,  -100, 0,    16, -55, 
                                        10, 300,  0,    17, 630,  1063, 1,  -495, -324, 2,  -500, 0,    10, -400, 0,
                                        17, -495, -324, 1,  348,  138,  2,  350,  0,    10, 300,  0,    17, 348,  138 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_utiwa_wait1[] = { { cKF_ckcb_r_ply_1_utiwa_wait1_tbl, cKF_ds_ply_1_utiwa_wait1_tbl,
-                                                     cKF_kn_ply_1_utiwa_wait1_tbl, cKF_c_ply_1_utiwa_wait1_tbl, -1,
-                                                     17 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_utiwa_wait1 = { cKF_ckcb_r_ply_1_utiwa_wait1_tbl,
+                                                 cKF_ds_ply_1_utiwa_wait1_tbl,
+                                                 cKF_kn_ply_1_utiwa_wait1_tbl,
+                                                 cKF_c_ply_1_utiwa_wait1_tbl,
+                                                 -1,
+                                                 17 };
 
 u8 cKF_ckcb_r_ply_1_utiwa_d1_tbl[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 7, 7, 7, 0, 0, 0, 0 };
 
@@ -7375,8 +7705,9 @@ s16 cKF_ds_ply_1_utiwa_d1_tbl[] = {
     1, 31,   0,    9, 31,  0,    1, 51,   0,    9, 51,   0,    1, -63,  0,     9, -63,  0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_utiwa_d1[] = { { cKF_ckcb_r_ply_1_utiwa_d1_tbl, cKF_ds_ply_1_utiwa_d1_tbl,
-                                                  cKF_kn_ply_1_utiwa_d1_tbl, cKF_c_ply_1_utiwa_d1_tbl, -1, 9 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_utiwa_d1 = {
+    cKF_ckcb_r_ply_1_utiwa_d1_tbl, cKF_ds_ply_1_utiwa_d1_tbl, cKF_kn_ply_1_utiwa_d1_tbl, cKF_c_ply_1_utiwa_d1_tbl, -1, 9
+};
 
 u8 cKF_ckcb_r_ply_1_axe_break1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -7462,8 +7793,12 @@ s16 cKF_ds_ply_1_axe_break1_tbl[] = {
     1,  0,     0,      47, 0,    0,     61, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_axe_break1[] = { { cKF_ckcb_r_ply_1_axe_break1_tbl, cKF_ds_ply_1_axe_break1_tbl,
-                                                    cKF_kn_ply_1_axe_break1_tbl, cKF_c_ply_1_axe_break1_tbl, -1, 61 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_axe_break1 = { cKF_ckcb_r_ply_1_axe_break1_tbl,
+                                                cKF_ds_ply_1_axe_break1_tbl,
+                                                cKF_kn_ply_1_axe_break1_tbl,
+                                                cKF_c_ply_1_axe_break1_tbl,
+                                                -1,
+                                                61 };
 
 u8 ply_1_axe_break11_tex_index[] = { 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 5, 5, 4, 4, 4, 4,
                                      4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -7517,10 +7852,12 @@ s16 cKF_ds_ply_1_axe_breakwait1_tbl[] = {
     33, 0,    0,    1,  0,    0,    33, 0,    0,    1,  0,    0, 33, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_axe_breakwait1[] = {
-    { cKF_ckcb_r_ply_1_axe_breakwait1_tbl, cKF_ds_ply_1_axe_breakwait1_tbl, cKF_kn_ply_1_axe_breakwait1_tbl,
-      cKF_c_ply_1_axe_breakwait1_tbl, -1, 33 }
-};
+cKF_Animation_R_c cKF_ba_r_ply_1_axe_breakwait1 = { cKF_ckcb_r_ply_1_axe_breakwait1_tbl,
+                                                    cKF_ds_ply_1_axe_breakwait1_tbl,
+                                                    cKF_kn_ply_1_axe_breakwait1_tbl,
+                                                    cKF_c_ply_1_axe_breakwait1_tbl,
+                                                    -1,
+                                                    33 };
 
 u8 cKF_ckcb_r_ply_1_light_on1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -7584,8 +7921,12 @@ s16 cKF_ds_ply_1_light_on1_tbl[] = {
     48, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_light_on1[] = { { cKF_ckcb_r_ply_1_light_on1_tbl, cKF_ds_ply_1_light_on1_tbl,
-                                                   cKF_kn_ply_1_light_on1_tbl, cKF_c_ply_1_light_on1_tbl, -1, 48 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_light_on1 = { cKF_ckcb_r_ply_1_light_on1_tbl,
+                                               cKF_ds_ply_1_light_on1_tbl,
+                                               cKF_kn_ply_1_light_on1_tbl,
+                                               cKF_c_ply_1_light_on1_tbl,
+                                               -1,
+                                               48 };
 
 u8 cKF_ckcb_r_ply_1_taisou1_tbl[] = { 24, 2, 0, 7, 2, 3, 0, 7, 2, 3, 0, 2, 2, 2, 0, 7, 2, 0, 7, 2, 7, 2, 0, 7, 0, 0 };
 
@@ -7630,8 +7971,9 @@ s16 cKF_ds_ply_1_taisou1_tbl[] = {
     81, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou1[] = { { cKF_ckcb_r_ply_1_taisou1_tbl, cKF_ds_ply_1_taisou1_tbl,
-                                                 cKF_kn_ply_1_taisou1_tbl, cKF_c_ply_1_taisou1_tbl, -1, 81 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou1 = {
+    cKF_ckcb_r_ply_1_taisou1_tbl, cKF_ds_ply_1_taisou1_tbl, cKF_kn_ply_1_taisou1_tbl, cKF_c_ply_1_taisou1_tbl, -1, 81
+};
 
 u8 cKF_ckcb_r_ply_1_taisou2_1_tbl[] = { 24, 2, 0, 7, 7, 3, 0, 7, 7, 3, 0, 7, 7, 2, 0, 7, 2, 0, 7, 2, 7, 7, 0, 7, 0, 0 };
 
@@ -7664,8 +8006,12 @@ s16 cKF_ds_ply_1_taisou2_1_tbl[] = {
     1,  0,     0,    81, 0,     0,     1,  0,     0,     81, 0,     0,    1,  0,     0, 81, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou2_1[] = { { cKF_ckcb_r_ply_1_taisou2_1_tbl, cKF_ds_ply_1_taisou2_1_tbl,
-                                                   cKF_kn_ply_1_taisou2_1_tbl, cKF_c_ply_1_taisou2_1_tbl, -1, 81 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou2_1 = { cKF_ckcb_r_ply_1_taisou2_1_tbl,
+                                               cKF_ds_ply_1_taisou2_1_tbl,
+                                               cKF_kn_ply_1_taisou2_1_tbl,
+                                               cKF_c_ply_1_taisou2_1_tbl,
+                                               -1,
+                                               81 };
 
 u8 cKF_ckcb_r_ply_1_taisou2_2_tbl[] = { 24, 2, 0, 7, 7, 3, 0, 7, 7, 3, 0, 7, 7, 2, 0, 7, 2, 0, 7, 2, 7, 7, 0, 7, 0, 0 };
 
@@ -7700,8 +8046,12 @@ s16 cKF_ds_ply_1_taisou2_2_tbl[] = {
     81, 0,     0,   1,  0,     0,    81, 0,     0,     1,  0,    0,    81, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou2_2[] = { { cKF_ckcb_r_ply_1_taisou2_2_tbl, cKF_ds_ply_1_taisou2_2_tbl,
-                                                   cKF_kn_ply_1_taisou2_2_tbl, cKF_c_ply_1_taisou2_2_tbl, -1, 81 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou2_2 = { cKF_ckcb_r_ply_1_taisou2_2_tbl,
+                                               cKF_ds_ply_1_taisou2_2_tbl,
+                                               cKF_kn_ply_1_taisou2_2_tbl,
+                                               cKF_c_ply_1_taisou2_2_tbl,
+                                               -1,
+                                               81 };
 
 u8 cKF_ckcb_r_ply_1_taisou3_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -7844,8 +8194,9 @@ s16 cKF_ds_ply_1_taisou3_tbl[] = {
     161, 0,    0,     1,   0,    0,     161, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou3[] = { { cKF_ckcb_r_ply_1_taisou3_tbl, cKF_ds_ply_1_taisou3_tbl,
-                                                 cKF_kn_ply_1_taisou3_tbl, cKF_c_ply_1_taisou3_tbl, -1, 161 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou3 = {
+    cKF_ckcb_r_ply_1_taisou3_tbl, cKF_ds_ply_1_taisou3_tbl, cKF_kn_ply_1_taisou3_tbl, cKF_c_ply_1_taisou3_tbl, -1, 161
+};
 
 u8 cKF_ckcb_r_ply_1_taisou4_1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 2, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -7909,8 +8260,12 @@ s16 cKF_ds_ply_1_taisou4_1_tbl[] = {
     1,  0,    0,    81, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou4_1[] = { { cKF_ckcb_r_ply_1_taisou4_1_tbl, cKF_ds_ply_1_taisou4_1_tbl,
-                                                   cKF_kn_ply_1_taisou4_1_tbl, cKF_c_ply_1_taisou4_1_tbl, -1, 81 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou4_1 = { cKF_ckcb_r_ply_1_taisou4_1_tbl,
+                                               cKF_ds_ply_1_taisou4_1_tbl,
+                                               cKF_kn_ply_1_taisou4_1_tbl,
+                                               cKF_c_ply_1_taisou4_1_tbl,
+                                               -1,
+                                               81 };
 
 u8 cKF_ckcb_r_ply_1_taisou4_2_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 0, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -7971,8 +8326,12 @@ s16 cKF_ds_ply_1_taisou4_2_tbl[] = {
     81, 0,    0,     1,  0,    0,     81, 0,     0,     1,  0,     0,     81, 0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou4_2[] = { { cKF_ckcb_r_ply_1_taisou4_2_tbl, cKF_ds_ply_1_taisou4_2_tbl,
-                                                   cKF_kn_ply_1_taisou4_2_tbl, cKF_c_ply_1_taisou4_2_tbl, -1, 81 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou4_2 = { cKF_ckcb_r_ply_1_taisou4_2_tbl,
+                                               cKF_ds_ply_1_taisou4_2_tbl,
+                                               cKF_kn_ply_1_taisou4_2_tbl,
+                                               cKF_c_ply_1_taisou4_2_tbl,
+                                               -1,
+                                               81 };
 
 u8 cKF_ckcb_r_ply_1_taisou5_1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -8041,8 +8400,12 @@ s16 cKF_ds_ply_1_taisou5_1_tbl[] = {
     81, 0,    0,    1,  0,    0,    81, 0,    0,     1,  0,    0,    81, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou5_1[] = { { cKF_ckcb_r_ply_1_taisou5_1_tbl, cKF_ds_ply_1_taisou5_1_tbl,
-                                                   cKF_kn_ply_1_taisou5_1_tbl, cKF_c_ply_1_taisou5_1_tbl, -1, 81 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou5_1 = { cKF_ckcb_r_ply_1_taisou5_1_tbl,
+                                               cKF_ds_ply_1_taisou5_1_tbl,
+                                               cKF_kn_ply_1_taisou5_1_tbl,
+                                               cKF_c_ply_1_taisou5_1_tbl,
+                                               -1,
+                                               81 };
 
 u8 cKF_ckcb_r_ply_1_taisou5_2_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 3, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -8111,8 +8474,12 @@ s16 cKF_ds_ply_1_taisou5_2_tbl[] = {
     81, 0,    0,    1,  0,    0,    81, 0,    0,   1,  0,    0,     81, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou5_2[] = { { cKF_ckcb_r_ply_1_taisou5_2_tbl, cKF_ds_ply_1_taisou5_2_tbl,
-                                                   cKF_kn_ply_1_taisou5_2_tbl, cKF_c_ply_1_taisou5_2_tbl, -1, 81 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou5_2 = { cKF_ckcb_r_ply_1_taisou5_2_tbl,
+                                               cKF_ds_ply_1_taisou5_2_tbl,
+                                               cKF_kn_ply_1_taisou5_2_tbl,
+                                               cKF_c_ply_1_taisou5_2_tbl,
+                                               -1,
+                                               81 };
 
 u8 cKF_ckcb_r_ply_1_taisou6_1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 6, 7, 0, 7, 7, 7, 0, 7, 6, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -8162,8 +8529,12 @@ s16 cKF_ds_ply_1_taisou6_1_tbl[] = {
     1,  0,    0,    81, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou6_1[] = { { cKF_ckcb_r_ply_1_taisou6_1_tbl, cKF_ds_ply_1_taisou6_1_tbl,
-                                                   cKF_kn_ply_1_taisou6_1_tbl, cKF_c_ply_1_taisou6_1_tbl, -1, 81 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou6_1 = { cKF_ckcb_r_ply_1_taisou6_1_tbl,
+                                               cKF_ds_ply_1_taisou6_1_tbl,
+                                               cKF_kn_ply_1_taisou6_1_tbl,
+                                               cKF_c_ply_1_taisou6_1_tbl,
+                                               -1,
+                                               81 };
 
 u8 cKF_ckcb_r_ply_1_taisou6_2_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 6, 7, 0, 7, 7, 7, 0, 7, 6, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -8213,8 +8584,12 @@ s16 cKF_ds_ply_1_taisou6_2_tbl[] = {
     1,  0,    0,  81, 0,    0,     1,  0,    0,   81, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou6_2[] = { { cKF_ckcb_r_ply_1_taisou6_2_tbl, cKF_ds_ply_1_taisou6_2_tbl,
-                                                   cKF_kn_ply_1_taisou6_2_tbl, cKF_c_ply_1_taisou6_2_tbl, -1, 81 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou6_2 = { cKF_ckcb_r_ply_1_taisou6_2_tbl,
+                                               cKF_ds_ply_1_taisou6_2_tbl,
+                                               cKF_kn_ply_1_taisou6_2_tbl,
+                                               cKF_c_ply_1_taisou6_2_tbl,
+                                               -1,
+                                               81 };
 
 u8 cKF_ckcb_r_ply_1_taisou7_1_tbl[] = { 40, 3, 0, 7, 2, 3, 0, 7, 2, 3, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -8255,8 +8630,12 @@ s16 cKF_ds_ply_1_taisou7_1_tbl[] = {
     81, 0,    0,    1,  0,    0,    81, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou7_1[] = { { cKF_ckcb_r_ply_1_taisou7_1_tbl, cKF_ds_ply_1_taisou7_1_tbl,
-                                                   cKF_kn_ply_1_taisou7_1_tbl, cKF_c_ply_1_taisou7_1_tbl, -1, 81 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou7_1 = { cKF_ckcb_r_ply_1_taisou7_1_tbl,
+                                               cKF_ds_ply_1_taisou7_1_tbl,
+                                               cKF_kn_ply_1_taisou7_1_tbl,
+                                               cKF_c_ply_1_taisou7_1_tbl,
+                                               -1,
+                                               81 };
 
 u8 cKF_ckcb_r_ply_1_taisou7_2_tbl[] = { 40, 3, 0, 7, 2, 3, 0, 7, 2, 3, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
 
@@ -8297,8 +8676,12 @@ s16 cKF_ds_ply_1_taisou7_2_tbl[] = {
     1,  0,    0,    81, 0,    0,     1,  0,    0,    81, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_taisou7_2[] = { { cKF_ckcb_r_ply_1_taisou7_2_tbl, cKF_ds_ply_1_taisou7_2_tbl,
-                                                   cKF_kn_ply_1_taisou7_2_tbl, cKF_c_ply_1_taisou7_2_tbl, -1, 81 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_taisou7_2 = { cKF_ckcb_r_ply_1_taisou7_2_tbl,
+                                               cKF_ds_ply_1_taisou7_2_tbl,
+                                               cKF_kn_ply_1_taisou7_2_tbl,
+                                               cKF_c_ply_1_taisou7_2_tbl,
+                                               -1,
+                                               81 };
 
 u8 cKF_ckcb_r_ply_1_omairi_us1_tbl[] = {
     56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0
@@ -8336,5 +8719,9 @@ s16 cKF_ds_ply_1_omairi_us1_tbl[] = {
     1,  0,    0,   46, 0,    0, 1,  0,    0,  46, 0,    0,    1,  0,    0,   46, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_ply_1_omairi_us1[] = { { cKF_ckcb_r_ply_1_omairi_us1_tbl, cKF_ds_ply_1_omairi_us1_tbl,
-                                                    cKF_kn_ply_1_omairi_us1_tbl, cKF_c_ply_1_omairi_us1_tbl, -1, 46 } };
+cKF_Animation_R_c cKF_ba_r_ply_1_omairi_us1 = { cKF_ckcb_r_ply_1_omairi_us1_tbl,
+                                                cKF_ds_ply_1_omairi_us1_tbl,
+                                                cKF_kn_ply_1_omairi_us1_tbl,
+                                                cKF_c_ply_1_omairi_us1_tbl,
+                                                -1,
+                                                46 };

@@ -107,8 +107,9 @@ s16 cKF_c_obj_gara_tbl[] = { 0, 0, 0, 0, 0, 900, 0, 0, 0, 0, 0 };
 s16 cKF_ds_obj_gara_tbl[] = { 1,  0,     -2019, 2,  -67,   -2141, 17, -1674, -3504, 21, -2136, -3460, 26, -2700, -3221,
                               31, -3157, -2242, 40, -3581, -637,  43, -3616, -58,   47, -3602, 97,    48, -3600, 58 };
 
-cKF_Animation_R_c cKF_ba_r_obj_gara[] = { { cKF_ckcb_r_obj_gara_tbl, cKF_ds_obj_gara_tbl, cKF_kn_obj_gara_tbl,
-                                            cKF_c_obj_gara_tbl, -1, 48 } };
+cKF_Animation_R_c cKF_ba_r_obj_gara = {
+    cKF_ckcb_r_obj_gara_tbl, cKF_ds_obj_gara_tbl, cKF_kn_obj_gara_tbl, cKF_c_obj_gara_tbl, -1, 48
+};
 
 u16 act_fukuball_pal[] = {
 #include "assets/act_fukuball_pal.inc"
@@ -170,6 +171,4 @@ cKF_Joint_R_c cKF_je_r_obj_gara_tbl[] = {
     { obj_gara_hex_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 1400, 0, 0 } },
 };
 
-cKF_Skeleton_R_c cKF_bs_r_obj_gara[] = {
-    { ARRAY_COUNT(cKF_je_r_obj_gara_tbl), 2, cKF_je_r_obj_gara_tbl },
-};
+cKF_Skeleton_R_c cKF_bs_r_obj_gara = { ARRAY_COUNT(cKF_je_r_obj_gara_tbl), 2, cKF_je_r_obj_gara_tbl };

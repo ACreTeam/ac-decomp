@@ -27848,3 +27848,1854 @@ modules:
     header: assets/grl_1_v.inc
     header_type: none
     custom_type: vtx
+
+  - symbol: act_f28_akikan_pal
+    binary: assets/act_f28_akikan_pal.bin
+    header: assets/act_f28_akikan_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f28_akikan_tex
+    binary: assets/act_f28_akikan_tex.bin
+    header: assets/act_f28_akikan_tex.inc
+    header_type: raw
+
+  - symbol: act_f28_akikan_v
+    binary: assets/act_f28_akikan_v.bin
+    header: assets/act_f28_akikan_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f29_angel_pal
+    binary: assets/act_f29_angel_pal.bin
+    header: assets/act_f29_angel_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f29_angel_tex
+    binary: assets/act_f29_angel_tex.bin
+    header: assets/act_f29_angel_tex.inc
+    header_type: raw
+
+  - symbol: act_f29_angel_a_v
+    binary: assets/act_f29_angel_a_v.bin
+    header: assets/act_f29_angel_a_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f29_angel_b_v
+    binary: assets/act_f29_angel_b_v.bin
+    header: assets/act_f29_angel_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f29_angel_c_v
+    binary: assets/act_f29_angel_c_v.bin
+    header: assets/act_f29_angel_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f26_aroana_pal
+    binary: assets/act_f26_aroana_pal.bin
+    header: assets/act_f26_aroana_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f26_aroana_tex
+    binary: assets/act_f26_aroana_tex.bin
+    header: assets/act_f26_aroana_tex.inc
+    header_type: raw
+
+  - symbol: act_f26_aroana_a_v
+    binary: assets/act_f26_aroana_a_v.bin
+    header: assets/act_f26_aroana_a_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f26_aroana_b_v
+    binary: assets/act_f26_aroana_b_v.bin
+    header: assets/act_f26_aroana_b_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f26_aroana_c_v
+    binary: assets/act_f26_aroana_c_v.bin
+    header: assets/act_f26_aroana_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f18_ayu_pal
+    binary: assets/act_f18_ayu_pal.bin
+    header: assets/act_f18_ayu_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f18_ayu_tex
+    binary: assets/act_f18_ayu_tex.bin
+    header: assets/act_f18_ayu_tex.inc
+    header_type: raw
+
+  - symbol: act_f18_ayu_a_v
+    binary: assets/act_f18_ayu_a_v.bin
+    header: assets/act_f18_ayu_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f18_ayu_b_v
+    binary: assets/act_f18_ayu_b_v.bin
+    header: assets/act_f18_ayu_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f18_ayu_c_v
+    binary: assets/act_f18_ayu_c_v.bin
+    header: assets/act_f18_ayu_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f08_bassl_pal
+    binary: assets/act_f08_bassl_pal.bin
+    header: assets/act_f08_bassl_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f08_bassl_tex
+    binary: assets/act_f08_bassl_tex.bin
+    header: assets/act_f08_bassl_tex.inc
+    header_type: raw
+
+  - symbol: act_f08_bassl_a_v
+    binary: assets/act_f08_bassl_a_v.bin
+    header: assets/act_f08_bassl_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f08_bassl_b_v
+    binary: assets/act_f08_bassl_b_v.bin
+    header: assets/act_f08_bassl_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f08_bassl_c_v
+    binary: assets/act_f08_bassl_c_v.bin
+    header: assets/act_f08_bassl_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f07_bassm_pal
+    binary: assets/act_f07_bassm_pal.bin
+    header: assets/act_f07_bassm_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f07_bassm_tex
+    binary: assets/act_f07_bassm_tex.bin
+    header: assets/act_f07_bassm_tex.inc
+    header_type: raw
+
+  - symbol: act_f07_bassm_a_v
+    binary: assets/act_f07_bassm_a_v.bin
+    header: assets/act_f07_bassm_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f07_bassm_b_v
+    binary: assets/act_f07_bassm_b_v.bin
+    header: assets/act_f07_bassm_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f07_bassm_c_v
+    binary: assets/act_f07_bassm_c_v.bin
+    header: assets/act_f07_bassm_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f06_bass_pal
+    binary: assets/act_f06_bass_pal.bin
+    header: assets/act_f06_bass_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f06_bass_tex
+    binary: assets/act_f06_bass_tex.bin
+    header: assets/act_f06_bass_tex.inc
+    header_type: raw
+
+  - symbol: act_f06_bass_a_v
+    binary: assets/act_f06_bass_a_v.bin
+    header: assets/act_f06_bass_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f06_bass_b_v
+    binary: assets/act_f06_bass_b_v.bin
+    header: assets/act_f06_bass_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f06_bass_c_v
+    binary: assets/act_f06_bass_c_v.bin
+    header: assets/act_f06_bass_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f09_gill_pal
+    binary: assets/act_f09_gill_pal.bin
+    header: assets/act_f09_gill_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f09_gill_tex
+    binary: assets/act_f09_gill_tex.bin
+    header: assets/act_f09_gill_tex.inc
+    header_type: raw
+
+  - symbol: act_f09_gill_a_v
+    binary: assets/act_f09_gill_a_v.bin
+    header: assets/act_f09_gill_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f09_gill_b_v
+    binary: assets/act_f09_gill_b_v.bin
+    header: assets/act_f09_gill_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f09_gill_c_v
+    binary: assets/act_f09_gill_c_v.bin
+    header: assets/act_f09_gill_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f31_demekin_pal
+    binary: assets/act_f31_demekin_pal.bin
+    header: assets/act_f31_demekin_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f31_demekin_tex
+    binary: assets/act_f31_demekin_tex.bin
+    header: assets/act_f31_demekin_tex.inc
+    header_type: raw
+
+  - symbol: act_f31_demekin_a_v
+    binary: assets/act_f31_demekin_a_v.bin
+    header: assets/act_f31_demekin_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f31_demekin_b_v
+    binary: assets/act_f31_demekin_b_v.bin
+    header: assets/act_f31_demekin_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f31_demekin_c_v
+    binary: assets/act_f31_demekin_c_v.bin
+    header: assets/act_f31_demekin_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f16_dojyo_pal
+    binary: assets/act_f16_dojyo_pal.bin
+    header: assets/act_f16_dojyo_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f16_dojyo_tex
+    binary: assets/act_f16_dojyo_tex.bin
+    header: assets/act_f16_dojyo_tex.inc
+    header_type: raw
+
+  - symbol: act_f16_dojyo_a_v
+    binary: assets/act_f16_dojyo_a_v.bin
+    header: assets/act_f16_dojyo_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f16_dojyo_b_v
+    binary: assets/act_f16_dojyo_b_v.bin
+    header: assets/act_f16_dojyo_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f16_dojyo_c_v
+    binary: assets/act_f16_dojyo_c_v.bin
+    header: assets/act_f16_dojyo_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f28_donko_pal
+    binary: assets/act_f28_donko_pal.bin
+    header: assets/act_f28_donko_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f28_donko_tex
+    binary: assets/act_f28_donko_tex.bin
+    header: assets/act_f28_donko_tex.inc
+    header_type: raw
+
+  - symbol: act_f28_donko_a_v
+    binary: assets/act_f28_donko_a_v.bin
+    header: assets/act_f28_donko_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f28_donko_b_v
+    binary: assets/act_f28_donko_b_v.bin
+    header: assets/act_f28_donko_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f28_donko_c_v
+    binary: assets/act_f28_donko_c_v.bin
+    header: assets/act_f28_donko_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f01_funa_pal
+    binary: assets/act_f01_funa_pal.bin
+    header: assets/act_f01_funa_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f01_funa_tex
+    binary: assets/act_f01_funa_tex.bin
+    header: assets/act_f01_funa_tex.inc
+    header_type: raw
+
+  - symbol: act_f01_funa_a_v
+    binary: assets/act_f01_funa_a_v.bin
+    header: assets/act_f01_funa_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f01_funa_b_v
+    binary: assets/act_f01_funa_b_v.bin
+    header: assets/act_f01_funa_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f01_funa_c_v
+    binary: assets/act_f01_funa_c_v.bin
+    header: assets/act_f01_funa_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f30_gupi_pal
+    binary: assets/act_f30_gupi_pal.bin
+    header: assets/act_f30_gupi_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f30_gupi_tex
+    binary: assets/act_f30_gupi_tex.bin
+    header: assets/act_f30_gupi_tex.inc
+    header_type: raw
+
+  - symbol: act_f30_gupi_a_v
+    binary: assets/act_f30_gupi_a_v.bin
+    header: assets/act_f30_gupi_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f30_gupi_b_v
+    binary: assets/act_f30_gupi_b_v.bin
+    header: assets/act_f30_gupi_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f30_gupi_c_v
+    binary: assets/act_f30_gupi_c_v.bin
+    header: assets/act_f30_gupi_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f02_hera_pal
+    binary: assets/act_f02_hera_pal.bin
+    header: assets/act_f02_hera_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f02_hera_tex
+    binary: assets/act_f02_hera_tex.bin
+    header: assets/act_f02_hera_tex.inc
+    header_type: raw
+
+  - symbol: act_f02_hera_a_v
+    binary: assets/act_f02_hera_a_v.bin
+    header: assets/act_f02_hera_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f02_hera_b_v
+    binary: assets/act_f02_hera_b_v.bin
+    header: assets/act_f02_hera_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f02_hera_c_v
+    binary: assets/act_f02_hera_c_v.bin
+    header: assets/act_f02_hera_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: int_nog_isidai_pal!.data:0x23c8a0
+    binary: assets/act_f40_isidai/int_nog_isidai_pal.bin
+    header: assets/act_f40_isidai/int_nog_isidai_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f40_isidai_tex
+    binary: assets/act_f40_isidai_tex.bin
+    header: assets/act_f40_isidai_tex.inc
+    header_type: raw
+
+  - symbol: act_f40_isidai_a_v
+    binary: assets/act_f40_isidai_a_v.bin
+    header: assets/act_f40_isidai_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f40_isidai_b_v
+    binary: assets/act_f40_isidai_b_v.bin
+    header: assets/act_f40_isidai_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f40_isidai_c_v
+    binary: assets/act_f40_isidai_c_v.bin
+    header: assets/act_f40_isidai_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f22_ito_pal
+    binary: assets/act_f22_ito_pal.bin
+    header: assets/act_f22_ito_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f22_ito_tex
+    binary: assets/act_f22_ito_tex.bin
+    header: assets/act_f22_ito_tex.inc
+    header_type: raw
+
+  - symbol: act_f22_ito_a_v
+    binary: assets/act_f22_ito_a_v.bin
+    header: assets/act_f22_ito_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f22_ito_b_v
+    binary: assets/act_f22_ito_b_v.bin
+    header: assets/act_f22_ito_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f22_ito_c_v
+    binary: assets/act_f22_ito_c_v.bin
+    header: assets/act_f22_ito_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: int_nog_kaeru_pal!.data:0x23d5e0
+    binary: assets/act_f36_kaeru/int_nog_kaeru_pal.bin
+    header: assets/act_f36_kaeru/int_nog_kaeru_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f36_kaeru_tex
+    binary: assets/act_f36_kaeru_tex.bin
+    header: assets/act_f36_kaeru_tex.inc
+    header_type: raw
+
+  - symbol: act_f36_kaeru_a_v
+    binary: assets/act_f36_kaeru_a_v.bin
+    header: assets/act_f36_kaeru_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f36_kaeru_b_v
+    binary: assets/act_f36_kaeru_b_v.bin
+    header: assets/act_f36_kaeru_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f36_kaeru_c_v
+    binary: assets/act_f36_kaeru_c_v.bin
+    header: assets/act_f36_kaeru_c_v.inc
+    header_type: none
+    custom_type: vtx
+      
+  - symbol: act_gyoei02_0_int_i4
+    binary: assets/act_gyoei02_0_int_i4.bin
+    header: assets/act_gyoei02_0_int_i4.inc
+    header_type: raw
+          
+  - symbol: act_gyoei02_1_int_i4
+    binary: assets/act_gyoei02_1_int_i4.bin
+    header: assets/act_gyoei02_1_int_i4.inc
+    header_type: raw
+          
+  - symbol: act_gyoei02_2_int_i4
+    binary: assets/act_gyoei02_2_int_i4.bin
+    header: assets/act_gyoei02_2_int_i4.inc
+    header_type: raw
+          
+  - symbol: act_gyoei02_3_int_i4
+    binary: assets/act_gyoei02_3_int_i4.bin
+    header: assets/act_gyoei02_3_int_i4.inc
+    header_type: raw
+
+  - symbol: act_gyoei02_00_v
+    binary: assets/act_gyoei02_00_v.bin
+    header: assets/act_gyoei02_00_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f32_kaseki_pal
+    binary: assets/act_f32_kaseki_pal.bin
+    header: assets/act_f32_kaseki_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f32_kaseki_tex
+    binary: assets/act_f32_kaseki_tex.bin
+    header: assets/act_f32_kaseki_tex.inc
+    header_type: raw
+
+  - symbol: act_f32_kaseki_a_v
+    binary: assets/act_f32_kaseki_a_v.bin
+    header: assets/act_f32_kaseki_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f32_kaseki_b_v
+    binary: assets/act_f32_kaseki_b_v.bin
+    header: assets/act_f32_kaseki_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f32_kaseki_c_v
+    binary: assets/act_f32_kaseki_c_v.bin
+    header: assets/act_f32_kaseki_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f24_kingyo_pal
+    binary: assets/act_f24_kingyo_pal.bin
+    header: assets/act_f24_kingyo_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f24_kingyo_tex
+    binary: assets/act_f24_kingyo_tex.bin
+    header: assets/act_f24_kingyo_tex.inc
+    header_type: raw
+
+  - symbol: act_f24_kingyo_a_v
+    binary: assets/act_f24_kingyo_a_v.bin
+    header: assets/act_f24_kingyo_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f24_kingyo_b_v
+    binary: assets/act_f24_kingyo_b_v.bin
+    header: assets/act_f24_kingyo_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f24_kingyo_c_v
+    binary: assets/act_f24_kingyo_c_v.bin
+    header: assets/act_f24_kingyo_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f03_koi_pal
+    binary: assets/act_f03_koi_pal.bin
+    header: assets/act_f03_koi_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f03_koi_tex
+    binary: assets/act_f03_koi_tex.bin
+    header: assets/act_f03_koi_tex.inc
+    header_type: raw
+
+  - symbol: act_f03_koi_a_v
+    binary: assets/act_f03_koi_a_v.bin
+    header: assets/act_f03_koi_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f03_koi_b_v
+    binary: assets/act_f03_koi_b_v.bin
+    header: assets/act_f03_koi_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f03_koi_c_v
+    binary: assets/act_f03_koi_c_v.bin
+    header: assets/act_f03_koi_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f37_kurage_pal!.data:0x23f3c0
+    binary: assets/act_f37_kurage/act_f37_kurage_pal.bin
+    header: assets/act_f37_kurage/act_f37_kurage_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f37_kurage_head_tex
+    binary: assets/act_f37_kurage_head_tex.bin
+    header: assets/act_f37_kurage_head_tex.inc
+    header_type: raw
+  
+  - symbol: act_f37_kurage_foot_tex
+    binary: assets/act_f37_kurage_foot_tex.bin
+    header: assets/act_f37_kurage_foot_tex.inc
+    header_type: raw
+
+  - symbol: act_f37_kurage_a_v
+    binary: assets/act_f37_kurage_a_v.bin
+    header: assets/act_f37_kurage_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f37_kurage_b_v
+    binary: assets/act_f37_kurage_b_v.bin
+    header: assets/act_f37_kurage_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f37_kurage_c_v
+    binary: assets/act_f37_kurage_c_v.bin
+    header: assets/act_f37_kurage_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: int_nog_medaka_pal!.data:0x23f9e0
+    binary: assets/act_f33_medaka/int_nog_medaka_pal.bin
+    header: assets/act_f33_medaka/int_nog_medaka_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f33_medaka_tex
+    binary: assets/act_f33_medaka_tex.bin
+    header: assets/act_f33_medaka_tex.inc
+    header_type: raw
+
+  - symbol: act_f33_medaka_a_v
+    binary: assets/act_f33_medaka_a_v.bin
+    header: assets/act_f33_medaka_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f33_medaka_b_v
+    binary: assets/act_f33_medaka_b_v.bin
+    header: assets/act_f33_medaka_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f33_medaka_c_v
+    binary: assets/act_f33_medaka_c_v.bin
+    header: assets/act_f33_medaka_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f30_nagagutu_pal
+    binary: assets/act_f30_nagagutu_pal.bin
+    header: assets/act_f30_nagagutu_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f30_nagagutu_tex
+    binary: assets/act_f30_nagagutu_tex.bin
+    header: assets/act_f30_nagagutu_tex.inc
+    header_type: raw
+
+  - symbol: act_f30_nagagutu_v
+    binary: assets/act_f30_nagagutu_v.bin
+    header: assets/act_f30_nagagutu_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f05_namazu_pal
+    binary: assets/act_f05_namazu_pal.bin
+    header: assets/act_f05_namazu_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f05_namazu_tex
+    binary: assets/act_f05_namazu_tex.bin
+    header: assets/act_f05_namazu_tex.inc
+    header_type: raw
+
+  - symbol: act_f05_namazu_a_v
+    binary: assets/act_f05_namazu_a_v.bin
+    header: assets/act_f05_namazu_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f05_namazu_b_v
+    binary: assets/act_f05_namazu_b_v.bin
+    header: assets/act_f05_namazu_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f05_namazu_c_v
+    binary: assets/act_f05_namazu_c_v.bin
+    header: assets/act_f05_namazu_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f12_nigoi_pal
+    binary: assets/act_f12_nigoi_pal.bin
+    header: assets/act_f12_nigoi_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f12_nigoi_tex
+    binary: assets/act_f12_nigoi_tex.bin
+    header: assets/act_f12_nigoi_tex.inc
+    header_type: raw
+
+  - symbol: act_f12_nigoi_a_v
+    binary: assets/act_f12_nigoi_a_v.bin
+    header: assets/act_f12_nigoi_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f12_nigoi_b_v
+    binary: assets/act_f12_nigoi_b_v.bin
+    header: assets/act_f12_nigoi_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f12_nigoi_c_v
+    binary: assets/act_f12_nigoi_c_v.bin
+    header: assets/act_f12_nigoi_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f21_niji_pal
+    binary: assets/act_f21_niji_pal.bin
+    header: assets/act_f21_niji_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f21_niji_tex
+    binary: assets/act_f21_niji_tex.bin
+    header: assets/act_f21_niji_tex.inc
+    header_type: raw
+
+  - symbol: act_f21_niji_a_v
+    binary: assets/act_f21_niji_a_v.bin
+    header: assets/act_f21_niji_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f21_niji_b_v
+    binary: assets/act_f21_niji_b_v.bin
+    header: assets/act_f21_niji_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f21_niji_c_v
+    binary: assets/act_f21_niji_c_v.bin
+    header: assets/act_f21_niji_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f04_nisiki_pal
+    binary: assets/act_f04_nisiki_pal.bin
+    header: assets/act_f04_nisiki_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f04_nisiki_tex
+    binary: assets/act_f04_nisiki_tex.bin
+    header: assets/act_f04_nisiki_tex.inc
+    header_type: raw
+
+  - symbol: act_f04_nisiki_a_v
+    binary: assets/act_f04_nisiki_a_v.bin
+    header: assets/act_f04_nisiki_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f04_nisiki_b_v
+    binary: assets/act_f04_nisiki_b_v.bin
+    header: assets/act_f04_nisiki_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f04_nisiki_c_v
+    binary: assets/act_f04_nisiki_c_v.bin
+    header: assets/act_f04_nisiki_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f14_oikawa_pal
+    binary: assets/act_f14_oikawa_pal.bin
+    header: assets/act_f14_oikawa_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f14_oikawa_tex
+    binary: assets/act_f14_oikawa_tex.bin
+    header: assets/act_f14_oikawa_tex.inc
+    header_type: raw
+
+  - symbol: act_f14_oikawa_a_v
+    binary: assets/act_f14_oikawa_a_v.bin
+    header: assets/act_f14_oikawa_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f14_oikawa_b_v
+    binary: assets/act_f14_oikawa_b_v.bin
+    header: assets/act_f14_oikawa_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f14_oikawa_c_v
+    binary: assets/act_f14_oikawa_c_v.bin
+    header: assets/act_f14_oikawa_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f20_iwana_pal
+    binary: assets/act_f20_iwana_pal.bin
+    header: assets/act_f20_iwana_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f20_iwana_tex
+    binary: assets/act_f20_iwana_tex.bin
+    header: assets/act_f20_iwana_tex.inc
+    header_type: raw
+
+  - symbol: act_f20_iwana_a_v
+    binary: assets/act_f20_iwana_a_v.bin
+    header: assets/act_f20_iwana_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f20_iwana_b_v
+    binary: assets/act_f20_iwana_b_v.bin
+    header: assets/act_f20_iwana_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f20_iwana_c_v
+    binary: assets/act_f20_iwana_c_v.bin
+    header: assets/act_f20_iwana_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f10_oonamazu_pal
+    binary: assets/act_f10_oonamazu_pal.bin
+    header: assets/act_f10_oonamazu_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f10_oonamazu_tex
+    binary: assets/act_f10_oonamazu_tex.bin
+    header: assets/act_f10_oonamazu_tex.inc
+    header_type: raw
+
+  - symbol: act_f10_oonamazu_a_v
+    binary: assets/act_f10_oonamazu_a_v.bin
+    header: assets/act_f10_oonamazu_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f10_oonamazu_b_v
+    binary: assets/act_f10_oonamazu_b_v.bin
+    header: assets/act_f10_oonamazu_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f10_oonamazu_c_v
+    binary: assets/act_f10_oonamazu_c_v.bin
+    header: assets/act_f10_oonamazu_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: int_nog_piraluku_pal!.data:0x242bc0
+    binary: assets/act_f34_piraluku/int_nog_piraluku_pal.bin
+    header: assets/act_f34_piraluku/int_nog_piraluku_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f34_piraluku_tex
+    binary: assets/act_f34_piraluku_tex.bin
+    header: assets/act_f34_piraluku_tex.inc
+    header_type: raw
+
+  - symbol: act_f34_piraluku_a_v
+    binary: assets/act_f34_piraluku_a_v.bin
+    header: assets/act_f34_piraluku_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f34_piraluku_b_v
+    binary: assets/act_f34_piraluku_b_v.bin
+    header: assets/act_f34_piraluku_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f34_piraluku_c_v
+    binary: assets/act_f34_piraluku_c_v.bin
+    header: assets/act_f34_piraluku_c_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f25_pirania_pal
+    binary: assets/act_f25_pirania_pal.bin
+    header: assets/act_f25_pirania_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f25_pirania_tex
+    binary: assets/act_f25_pirania_tex.bin
+    header: assets/act_f25_pirania_tex.inc
+    header_type: raw
+
+  - symbol: act_f25_pirania_a_v
+    binary: assets/act_f25_pirania_a_v.bin
+    header: assets/act_f25_pirania_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f25_pirania_b_v
+    binary: assets/act_f25_pirania_b_v.bin
+    header: assets/act_f25_pirania_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f25_pirania_c_v
+    binary: assets/act_f25_pirania_c_v.bin
+    header: assets/act_f25_pirania_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f11_raigyo_pal
+    binary: assets/act_f11_raigyo_pal.bin
+    header: assets/act_f11_raigyo_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f11_raigyo_tex
+    binary: assets/act_f11_raigyo_tex.bin
+    header: assets/act_f11_raigyo_tex.inc
+    header_type: raw
+
+  - symbol: act_f11_raigyo_a_v
+    binary: assets/act_f11_raigyo_a_v.bin
+    header: assets/act_f11_raigyo_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f11_raigyo_b_v
+    binary: assets/act_f11_raigyo_b_v.bin
+    header: assets/act_f11_raigyo_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f11_raigyo_c_v
+    binary: assets/act_f11_raigyo_c_v.bin
+    header: assets/act_f11_raigyo_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f23_sake_pal
+    binary: assets/act_f23_sake_pal.bin
+    header: assets/act_f23_sake_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f23_sake_tex
+    binary: assets/act_f23_sake_tex.bin
+    header: assets/act_f23_sake_tex.inc
+    header_type: raw
+
+  - symbol: act_f23_sake_a_v
+    binary: assets/act_f23_sake_a_v.bin
+    header: assets/act_f23_sake_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f23_sake_b_v
+    binary: assets/act_f23_sake_b_v.bin
+    header: assets/act_f23_sake_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f23_sake_c_v
+    binary: assets/act_f23_sake_c_v.bin
+    header: assets/act_f23_sake_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: int_nog_suzuki_pal!.data:0x244560
+    binary: assets/act_f38_suzuki/int_nog_suzuki_pal.bin
+    header: assets/act_f38_suzuki/int_nog_suzuki_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f38_suzuki_tex
+    binary: assets/act_f38_suzuki_tex.bin
+    header: assets/act_f38_suzuki_tex.inc
+    header_type: raw
+
+  - symbol: act_f38_suzuki_a_v
+    binary: assets/act_f38_suzuki_a_v.bin
+    header: assets/act_f38_suzuki_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f38_suzuki_b_v
+    binary: assets/act_f38_suzuki_b_v.bin
+    header: assets/act_f38_suzuki_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f38_suzuki_c_v
+    binary: assets/act_f38_suzuki_c_v.bin
+    header: assets/act_f38_suzuki_c_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: int_nog_tai_pal!.data:0x244b80
+    binary: assets/act_f39_tai/int_nog_tai_pal.bin
+    header: assets/act_f39_tai/int_nog_tai_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f39_tai_tex
+    binary: assets/act_f39_tai_tex.bin
+    header: assets/act_f39_tai_tex.inc
+    header_type: raw
+
+  - symbol: act_f39_tai_a_v
+    binary: assets/act_f39_tai_a_v.bin
+    header: assets/act_f39_tai_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f39_tai_b_v
+    binary: assets/act_f39_tai_b_v.bin
+    header: assets/act_f39_tai_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f39_tai_c_v
+    binary: assets/act_f39_tai_c_v.bin
+    header: assets/act_f39_tai_c_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: act_f31_taiya_pal
+    binary: assets/act_f31_taiya_pal.bin
+    header: assets/act_f31_taiya_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f31_taiya_tex
+    binary: assets/act_f31_taiya_tex.bin
+    header: assets/act_f31_taiya_tex.inc
+    header_type: raw
+
+  - symbol: act_f31_taiya_v
+    binary: assets/act_f31_taiya_v.bin
+    header: assets/act_f31_taiya_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f15_tanago_pal
+    binary: assets/act_f15_tanago_pal.bin
+    header: assets/act_f15_tanago_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f15_tanago_tex
+    binary: assets/act_f15_tanago_tex.bin
+    header: assets/act_f15_tanago_tex.inc
+    header_type: raw
+
+  - symbol: act_f15_tanago_a_v
+    binary: assets/act_f15_tanago_a_v.bin
+    header: assets/act_f15_tanago_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f15_tanago_b_v
+    binary: assets/act_f15_tanago_b_v.bin
+    header: assets/act_f15_tanago_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f15_tanago_c_v
+    binary: assets/act_f15_tanago_c_v.bin
+    header: assets/act_f15_tanago_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f13_ugui_pal
+    binary: assets/act_f13_ugui_pal.bin
+    header: assets/act_f13_ugui_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f13_ugui_tex
+    binary: assets/act_f13_ugui_tex.bin
+    header: assets/act_f13_ugui_tex.inc
+    header_type: raw
+
+  - symbol: act_f13_ugui_a_v
+    binary: assets/act_f13_ugui_a_v.bin
+    header: assets/act_f13_ugui_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f13_ugui_b_v
+    binary: assets/act_f13_ugui_b_v.bin
+    header: assets/act_f13_ugui_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f13_ugui_c_v
+    binary: assets/act_f13_ugui_c_v.bin
+    header: assets/act_f13_ugui_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f27_unagi_pal
+    binary: assets/act_f27_unagi_pal.bin
+    header: assets/act_f27_unagi_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f27_unagi_tex
+    binary: assets/act_f27_unagi_tex.bin
+    header: assets/act_f27_unagi_tex.inc
+    header_type: raw
+
+  - symbol: act_f27_unagi_a_v
+    binary: assets/act_f27_unagi_a_v.bin
+    header: assets/act_f27_unagi_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f27_unagi_b_v
+    binary: assets/act_f27_unagi_b_v.bin
+    header: assets/act_f27_unagi_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f27_unagi_c_v
+    binary: assets/act_f27_unagi_c_v.bin
+    header: assets/act_f27_unagi_c_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_f17_wakasagi_pal
+    binary: assets/act_f17_wakasagi_pal.bin
+    header: assets/act_f17_wakasagi_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f17_wakasagi_tex
+    binary: assets/act_f17_wakasagi_tex.bin
+    header: assets/act_f17_wakasagi_tex.inc
+    header_type: raw
+
+  - symbol: act_f17_wakasagi_a_v
+    binary: assets/act_f17_wakasagi_a_v.bin
+    header: assets/act_f17_wakasagi_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f17_wakasagi_b_v
+    binary: assets/act_f17_wakasagi_b_v.bin
+    header: assets/act_f17_wakasagi_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f17_wakasagi_c_v
+    binary: assets/act_f17_wakasagi_c_v.bin
+    header: assets/act_f17_wakasagi_c_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f19_yamame_pal
+    binary: assets/act_f19_yamame_pal.bin
+    header: assets/act_f19_yamame_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f19_yamame_tex
+    binary: assets/act_f19_yamame_tex.bin
+    header: assets/act_f19_yamame_tex.inc
+    header_type: raw
+
+  - symbol: act_f19_yamame_a_v
+    binary: assets/act_f19_yamame_a_v.bin
+    header: assets/act_f19_yamame_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f19_yamame_b_v
+    binary: assets/act_f19_yamame_b_v.bin
+    header: assets/act_f19_yamame_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f19_yamame_c_v
+    binary: assets/act_f19_yamame_c_v.bin
+    header: assets/act_f19_yamame_c_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: int_nog_zarigani_pal!.data:0x247020
+    binary: assets/act_f35_zarigani/int_nog_zarigani_pal.bin
+    header: assets/act_f35_zarigani/int_nog_zarigani_pal.inc
+    header_type: none
+    custom_type: pal16
+  
+  - symbol: act_f35_zarigani_tex
+    binary: assets/act_f35_zarigani_tex.bin
+    header: assets/act_f35_zarigani_tex.inc
+    header_type: raw
+
+  - symbol: act_f35_zarigani_a_v
+    binary: assets/act_f35_zarigani_a_v.bin
+    header: assets/act_f35_zarigani_a_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f35_zarigani_b_v
+    binary: assets/act_f35_zarigani_b_v.bin
+    header: assets/act_f35_zarigani_b_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_f35_zarigani_c_v
+    binary: assets/act_f35_zarigani_c_v.bin
+    header: assets/act_f35_zarigani_c_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: rom_myhome_ug_pal
+    binary: assets/rom_myhome_ug_pal.bin
+    header: assets/rom_myhome_ug_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: rom_myhome_pal!.data:0x2c1a60
+    binary: assets/rom_myhome_ug/rom_myhome_pal.bin
+    header: assets/rom_myhome_ug/rom_myhome_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: rom_myhome_ugf1_tex
+    binary: assets/rom_myhome_ugf1_tex.bin
+    header: assets/rom_myhome_ugf1_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome_enter2_tex!.data:0x2c2280
+    binary: assets/rom_myhome_ug/rom_myhome_enter2_tex.bin
+    header: assets/rom_myhome_ug/rom_myhome_enter2_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome_ugw1_tex
+    binary: assets/rom_myhome_ugw1_tex.bin
+    header: assets/rom_myhome_ugw1_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome_ugw2_tex
+    binary: assets/rom_myhome_ugw2_tex.bin
+    header: assets/rom_myhome_ugw2_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome_ug_v
+    binary: assets/rom_myhome_ug_v.bin
+    header: assets/rom_myhome_ug_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: hnw_v
+    binary: assets/hnw_v.bin
+    header: assets/hnw_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: hnw_face
+    binary: assets/hnw_face.bin
+    header: assets/hnw_face.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: hnw_tmem_txt
+    binary: assets/hnw_tmem_txt.bin
+    header: assets/hnw_tmem_txt.inc
+    header_type: raw
+
+  - symbol: act_m_house_goki_pal
+    binary: assets/act_m_house_goki_pal.bin
+    header: assets/act_m_house_goki_pal.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: act_m_house_goki
+    binary: assets/act_m_house_goki.bin
+    header: assets/act_m_house_goki.inc
+    header_type: raw
+
+  - symbol: act_m_house_goki_v
+    binary: assets/act_m_house_goki_v.bin
+    header: assets/act_m_house_goki_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_abura_pal!.data:0x2620c0
+    binary: assets/act_m_abura/act_m_abura_pal.bin
+    header: assets/act_m_abura/act_m_abura_pal.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: act_m_abura!.data:0x2620e0
+    binary: assets/act_m_abura/act_m_abura.bin
+    header: assets/act_m_abura/act_m_abura.inc
+    header_type: raw
+
+  - symbol: act_m_abura_v!.data:0x2622e0
+    binary: assets/act_m_abura/act_m_abura_v.bin
+    header: assets/act_m_abura/act_m_abura_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_m_akiakane_pal!.data:0x262560
+    binary: assets/act_m_akiakane/act_m_akiakane_pal.bin
+    header: assets/act_m_akiakane/act_m_akiakane_pal.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: act_m_akiakane!.data:0x262580
+    binary: assets/act_m_akiakane/act_m_akiakane.bin
+    header: assets/act_m_akiakane/act_m_akiakane.inc
+    header_type: raw
+
+  - symbol: act_m_akiakane_v!.data:0x262700
+    binary: assets/act_m_akiakane/act_m_akiakane_v.bin
+    header: assets/act_m_akiakane/act_m_akiakane_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_m_amenbo_pal!.data:0x262940
+    binary: assets/act_m_amenbo/act_m_amenbo_pal.bin
+    header: assets/act_m_amenbo/act_m_amenbo_pal.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: act_m_amenbo_tex!.data:0x262960
+    binary: assets/act_m_amenbo/act_m_amenbo_tex.bin
+    header: assets/act_m_amenbo/act_m_amenbo_tex.inc
+    header_type: raw
+
+  - symbol: act_m_amenbo_v!.data:0x262ae0
+    binary: assets/act_m_amenbo/act_m_amenbo_v.bin
+    header: assets/act_m_amenbo/act_m_amenbo_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_m_ari_pal!.data:0x262c80
+    binary: assets/act_m_ari/act_m_ari_pal.bin
+    header: assets/act_m_ari/act_m_ari_pal.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: act_m_ari_tex!.data:0x262ca0
+    binary: assets/act_m_ari/act_m_ari_tex.bin
+    header: assets/act_m_ari/act_m_ari_tex.inc
+    header_type: raw
+
+  - symbol: act_m_ari_v!.data:0x262da0
+    binary: assets/act_m_ari/act_m_ari_v.bin
+    header: assets/act_m_ari/act_m_ari_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_m_dango_pal!.data:0x262e60
+    binary: assets/act_m_dango/act_m_dango_pal.bin
+    header: assets/act_m_dango/act_m_dango_pal.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: act_m_dango_tex!.data:0x262e80
+    binary: assets/act_m_dango/act_m_dango_tex.bin
+    header: assets/act_m_dango/act_m_dango_tex.inc
+    header_type: raw
+
+  - symbol: act_m_dango_v!.data:0x263000
+    binary: assets/act_m_dango/act_m_dango_v.bin
+    header: assets/act_m_dango/act_m_dango_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_m_danna_pal!.data:0x263180
+    binary: assets/act_m_danna/act_m_danna_pal.bin
+    header: assets/act_m_danna/act_m_danna_pal.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: act_m_danna!.data:0x2631a0
+    binary: assets/act_m_danna/act_m_danna.bin
+    header: assets/act_m_danna/act_m_danna.inc
+    header_type: raw
+
+  - symbol: act_m_danna_v!.data:0x2633a0
+    binary: assets/act_m_danna/act_m_danna_v.bin
+    header: assets/act_m_danna/act_m_danna_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: act_m_genji_h1_txt!.data:0x263520
+    binary: assets/act_m_genji2/act_m_genji_h1_txt.bin
+    header: assets/act_m_genji2/act_m_genji_h1_txt.inc
+    header_type: raw
+
+  - symbol: act_m_genji2_v!.data:0x263720
+    binary: assets/act_m_genji2/act_m_genji2_v.bin
+    header: assets/act_m_genji2/act_m_genji2_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_m_ginyanma_pal!.data:0x263980
+    binary: assets/act_m_ginyanma/act_m_ginyanma_pal.bin
+    header: assets/act_m_ginyanma/act_m_ginyanma_pal.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: act_m_ginyanma!.data:0x2639a0
+    binary: assets/act_m_ginyanma/act_m_ginyanma.bin
+    header: assets/act_m_ginyanma/act_m_ginyanma.inc
+    header_type: raw
+
+  - symbol: act_m_ginyanma_v!.data:0x263b20
+    binary: assets/act_m_ginyanma/act_m_ginyanma_v.bin
+    header: assets/act_m_ginyanma/act_m_ginyanma_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: act_m_gomadara_pal!.data:0x263d60
+    binary: assets/act_m_gomadara/act_m_gomadara_pal.bin
+    header: assets/act_m_gomadara/act_m_gomadara_pal.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: act_m_gomadara!.data:0x263d80
+    binary: assets/act_m_gomadara/act_m_gomadara.bin
+    header: assets/act_m_gomadara/act_m_gomadara.inc
+    header_type: raw
+
+  - symbol: act_m_gomadara_v!.data:0x263f80
+    binary: assets/act_m_gomadara/act_m_gomadara_v.bin
+    header: assets/act_m_gomadara/act_m_gomadara_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: act_m_higurashi_pal!.data:0x264100
+    binary: assets/act_m_higurashi/act_m_higurashi_pal.bin
+    header: assets/act_m_higurashi/act_m_higurashi_pal.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: act_m_higurashi!.data:0x264120
+    binary: assets/act_m_higurashi/act_m_higurashi.bin
+    header: assets/act_m_higurashi/act_m_higurashi.inc
+    header_type: raw
+
+  - symbol: act_m_higurashi_v!.data:0x264320
+    binary: assets/act_m_higurashi/act_m_higurashi_v.bin
+    header: assets/act_m_higurashi/act_m_higurashi_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: act_m_hirata_pal!.data:0x2645a0
+    binary: assets/act_m_hirata/act_m_hirata_pal.bin
+    header: assets/act_m_hirata/act_m_hirata_pal.inc
+    header_type: none
+    custom_type: pal16
+    
+  - symbol: act_m_hirata!.data:0x2645c0
+    binary: assets/act_m_hirata/act_m_hirata.bin
+    header: assets/act_m_hirata/act_m_hirata.inc
+    header_type: raw
+
+  - symbol: act_m_hirata_v!.data:0x2647c0
+    binary: assets/act_m_hirata/act_m_hirata_v.bin
+    header: assets/act_m_hirata/act_m_hirata_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_hitodama_h2_txt
+    binary: assets/act_m_hitodama_h2_txt.bin
+    header: assets/act_m_hitodama_h2_txt.inc
+    header_type: raw
+    
+  - symbol: act_m_hitodama_h1_txt
+    binary: assets/act_m_hitodama_h1_txt.bin
+    header: assets/act_m_hitodama_h1_txt.inc
+    header_type: raw
+
+  - symbol: act_m_hitodama_v
+    binary: assets/act_m_hitodama_v.bin
+    header: assets/act_m_hitodama_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_ka_pal!.data:0x264e60
+    binary: assets/act_m_ka/act_m_ka_pal.bin
+    header: assets/act_m_ka/act_m_ka_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_ka_tex!.data:0x264e80
+    binary: assets/act_m_ka/act_m_ka_tex.bin
+    header: assets/act_m_ka/act_m_ka_tex.inc
+    header_type: raw
+
+  - symbol: act_m_ka_v!.data:0x265000
+    binary: assets/act_m_ka/act_m_ka_v.bin
+    header: assets/act_m_ka/act_m_ka_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_kabuto_pal!.data:0x2652a0
+    binary: assets/act_m_kabuto/act_m_kabuto_pal.bin
+    header: assets/act_m_kabuto/act_m_kabuto_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_kabuto!.data:0x2652c0
+    binary: assets/act_m_kabuto/act_m_kabuto.bin
+    header: assets/act_m_kabuto/act_m_kabuto.inc
+    header_type: raw
+
+  - symbol: act_m_kabuto_v!.data:0x2654c0
+    binary: assets/act_m_kabuto/act_m_kabuto_v.bin
+    header: assets/act_m_kabuto/act_m_kabuto_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_m_kamakiri_pal!.data:0x265660
+    binary: assets/act_m_kamakiri/act_m_kamakiri_pal.bin
+    header: assets/act_m_kamakiri/act_m_kamakiri_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_kamakiri!.data:0x265680
+    binary: assets/act_m_kamakiri/act_m_kamakiri.bin
+    header: assets/act_m_kamakiri/act_m_kamakiri.inc
+    header_type: raw
+
+  - symbol: act_m_kamakiri_v!.data:0x265880
+    binary: assets/act_m_kamakiri/act_m_kamakiri_v.bin
+    header: assets/act_m_kamakiri/act_m_kamakiri_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_m_kanabun_pal!.data:0x265a60
+    binary: assets/act_m_kanabun/act_m_kanabun_pal.bin
+    header: assets/act_m_kanabun/act_m_kanabun_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_kanabun!.data:0x265a80
+    binary: assets/act_m_kanabun/act_m_kanabun.bin
+    header: assets/act_m_kanabun/act_m_kanabun.inc
+    header_type: raw
+
+  - symbol: act_m_kanabun_v!.data:0x265c80
+    binary: assets/act_m_kanabun/act_m_kanabun_v.bin
+    header: assets/act_m_kanabun/act_m_kanabun_v.inc
+    header_type: none
+    custom_type: vtx
+        
+  - symbol: act_m_kera_pal!.data:0x265e00
+    binary: assets/act_m_kera/act_m_kera_pal.bin
+    header: assets/act_m_kera/act_m_kera_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_kera_tex!.data:0x265e20
+    binary: assets/act_m_kera/act_m_kera_tex.bin
+    header: assets/act_m_kera/act_m_kera_tex.inc
+    header_type: raw
+
+  - symbol: act_m_kera_v!.data:0x265f20
+    binary: assets/act_m_kera/act_m_kera_v.bin
+    header: assets/act_m_kera/act_m_kera_v.inc
+    header_type: none
+    custom_type: vtx
+            
+  - symbol: act_m_kiageha_pal!.data:0x265fe0
+    binary: assets/act_m_kiageha/act_m_kiageha_pal.bin
+    header: assets/act_m_kiageha/act_m_kiageha_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_kiageha!.data:0x266000
+    binary: assets/act_m_kiageha/act_m_kiageha.bin
+    header: assets/act_m_kiageha/act_m_kiageha.inc
+    header_type: raw
+
+  - symbol: act_m_kiageha_v!.data:0x266200
+    binary: assets/act_m_kiageha/act_m_kiageha_v.bin
+    header: assets/act_m_kiageha/act_m_kiageha_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_kirigirisu_pal!.data:0x266380
+    binary: assets/act_m_kirigirisu/act_m_kirigirisu_pal.bin
+    header: assets/act_m_kirigirisu/act_m_kirigirisu_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_kirigirisu!.data:0x2663a0
+    binary: assets/act_m_kirigirisu/act_m_kirigirisu.bin
+    header: assets/act_m_kirigirisu/act_m_kirigirisu.inc
+    header_type: raw
+
+  - symbol: act_m_kirigirisu_v!.data:0x2665a0
+    binary: assets/act_m_kirigirisu/act_m_kirigirisu_v.bin
+    header: assets/act_m_kirigirisu/act_m_kirigirisu_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_koorogi_pal!.data:0x2667a0
+    binary: assets/act_m_koorogi/act_m_koorogi_pal.bin
+    header: assets/act_m_koorogi/act_m_koorogi_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_koorogi!.data:0x2667c0
+    binary: assets/act_m_koorogi/act_m_koorogi.bin
+    header: assets/act_m_koorogi/act_m_koorogi.inc
+    header_type: raw
+
+  - symbol: act_m_koorogi_v!.data:0x266940
+    binary: assets/act_m_koorogi/act_m_koorogi_v.bin
+    header: assets/act_m_koorogi/act_m_koorogi_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_hachi_pal!.data:0x266a40
+    binary: assets/act_m_hachi/act_m_hachi_pal.bin
+    header: assets/act_m_hachi/act_m_hachi_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_hachi!.data:0x266a60
+    binary: assets/act_m_hachi/act_m_hachi.bin
+    header: assets/act_m_hachi/act_m_hachi.inc
+    header_type: raw
+
+  - symbol: act_m_hachi_v!.data:0x266c60
+    binary: assets/act_m_hachi/act_m_hachi_v.bin
+    header: assets/act_m_hachi/act_m_hachi_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_kumo_pal!.data:0x266ee0
+    binary: assets/act_m_kumo/act_m_kumo_pal.bin
+    header: assets/act_m_kumo/act_m_kumo_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_kumo_tex!.data:0x266f00
+    binary: assets/act_m_kumo/act_m_kumo_tex.bin
+    header: assets/act_m_kumo/act_m_kumo_tex.inc
+    header_type: raw
+
+  - symbol: act_m_kumo_v!.data:0x267080
+    binary: assets/act_m_kumo/act_m_kumo_v.bin
+    header: assets/act_m_kumo/act_m_kumo_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_maimai_pal!.data:0x2672a0
+    binary: assets/act_m_maimai/act_m_maimai_pal.bin
+    header: assets/act_m_maimai/act_m_maimai_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_maimai_tex!.data:0x2672c0
+    binary: assets/act_m_maimai/act_m_maimai_tex.bin
+    header: assets/act_m_maimai/act_m_maimai_tex.inc
+    header_type: raw
+
+  - symbol: act_m_maimai_v!.data:0x2674c0
+    binary: assets/act_m_maimai/act_m_maimai_v.bin
+    header: assets/act_m_maimai/act_m_maimai_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_matumushi_pal!.data:0x267640
+    binary: assets/act_m_matmushi/act_m_matumushi_pal.bin
+    header: assets/act_m_matmushi/act_m_matumushi_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_matumushi!.data:0x267660
+    binary: assets/act_m_matmushi/act_m_matumushi.bin
+    header: assets/act_m_matmushi/act_m_matumushi.inc
+    header_type: raw
+
+  - symbol: act_m_matumushi_v!.data:0x2677e0
+    binary: assets/act_m_matmushi/act_m_matumushi_v.bin
+    header: assets/act_m_matmushi/act_m_matumushi_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_minmin_pal!.data:0x2678e0
+    binary: assets/act_m_minmin/act_m_minmin_pal.bin
+    header: assets/act_m_minmin/act_m_minmin_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_minmin!.data:0x267900
+    binary: assets/act_m_minmin/act_m_minmin.bin
+    header: assets/act_m_minmin/act_m_minmin.inc
+    header_type: raw
+
+  - symbol: act_m_minmin_v!.data:0x267b00
+    binary: assets/act_m_minmin/act_m_minmin_v.bin
+    header: assets/act_m_minmin/act_m_minmin_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_mino_pal!.data:0x267d80
+    binary: assets/act_m_mino/act_m_mino_pal.bin
+    header: assets/act_m_mino/act_m_mino_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_mino_tex!.data:0x267da0
+    binary: assets/act_m_mino/act_m_mino_tex.bin
+    header: assets/act_m_mino/act_m_mino_tex.inc
+    header_type: raw
+
+  - symbol: act_m_mino_v!.data:0x267fa0
+    binary: assets/act_m_mino/act_m_mino_v.bin
+    header: assets/act_m_mino/act_m_mino_v.inc
+    header_type: none
+    custom_type: vtx
+    
+  - symbol: act_m_miyama_pal!.data:0x268200
+    binary: assets/act_m_miyama/act_m_miyama_pal.bin
+    header: assets/act_m_miyama/act_m_miyama_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_miyama!.data:0x268220
+    binary: assets/act_m_miyama/act_m_miyama.bin
+    header: assets/act_m_miyama/act_m_miyama.inc
+    header_type: raw
+
+  - symbol: act_m_miyama_v!.data:0x268420
+    binary: assets/act_m_miyama/act_m_miyama_v.bin
+    header: assets/act_m_miyama/act_m_miyama_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_monki_pal!.data:0x2685A0
+    binary: assets/act_m_monki/act_m_monki_pal.bin
+    header: assets/act_m_monki/act_m_monki_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_monki!.data:0x2685C0
+    binary: assets/act_m_monki/act_m_monki.bin
+    header: assets/act_m_monki/act_m_monki.inc
+    header_type: raw
+
+  - symbol: act_m_monki_v!.data:0x268640
+    binary: assets/act_m_monki/act_m_monki_v.bin
+    header: assets/act_m_monki/act_m_monki_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_monshiro_pal!.data:0x2687C0
+    binary: assets/act_m_monshiro/act_m_monshiro_pal.bin
+    header: assets/act_m_monshiro/act_m_monshiro_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_monshiro!.data:0x2687E0
+    binary: assets/act_m_monshiro/act_m_monshiro.bin
+    header: assets/act_m_monshiro/act_m_monshiro.inc
+    header_type: raw
+
+  - symbol: act_m_monshiro_v!.data:0x268860
+    binary: assets/act_m_monshiro/act_m_monshiro_v.bin
+    header: assets/act_m_monshiro/act_m_monshiro_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_nanahoshi_pal!.data:0x2689E0
+    binary: assets/act_m_nanahoshi/act_m_nanahoshi_pal.bin
+    header: assets/act_m_nanahoshi/act_m_nanahoshi_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_nanahoshi!.data:0x268A00
+    binary: assets/act_m_nanahoshi/act_m_nanahoshi.bin
+    header: assets/act_m_nanahoshi/act_m_nanahoshi.inc
+    header_type: raw
+
+  - symbol: act_m_nanahoshi_v!.data:0x268B00
+    binary: assets/act_m_nanahoshi/act_m_nanahoshi_v.bin
+    header: assets/act_m_nanahoshi/act_m_nanahoshi_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_nokogiri_pal!.data:0x268DC0
+    binary: assets/act_m_nokogiri/act_m_nokogiri_pal.bin
+    header: assets/act_m_nokogiri/act_m_nokogiri_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_nokogiri!.data:0x268DE0
+    binary: assets/act_m_nokogiri/act_m_nokogiri.bin
+    header: assets/act_m_nokogiri/act_m_nokogiri.inc
+    header_type: raw
+
+  - symbol: act_m_nokogiri_v!.data:0x268FE0
+    binary: assets/act_m_nokogiri/act_m_nokogiri_v.bin
+    header: assets/act_m_nokogiri/act_m_nokogiri_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_ohmurasaki_pal!.data:0x269160
+    binary: assets/act_m_ohmurasaki/act_m_ohmurasaki_pal.bin
+    header: assets/act_m_ohmurasaki/act_m_ohmurasaki_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_ohmurasaki!.data:0x269180
+    binary: assets/act_m_ohmurasaki/act_m_ohmurasaki.bin
+    header: assets/act_m_ohmurasaki/act_m_ohmurasaki.inc
+    header_type: raw
+
+  - symbol: act_m_ohmurasaki_v!.data:0x269380
+    binary: assets/act_m_ohmurasaki/act_m_ohmurasaki_v.bin
+    header: assets/act_m_ohmurasaki/act_m_ohmurasaki_v.inc
+    header_type: none
+    custom_type: vtx
