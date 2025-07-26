@@ -1661,7 +1661,7 @@ def gfx_gsDPSetEnvColor(data):
 
 
 def gfx_gsDPSetTile_Dolphin(data):
-    return gf_call("gsDPSetTile_Dolphin", data, B2A(20, 4, DU, strarg_dolphintile), B2A(16, 3, DU), B2A(12, 4, DU), B2A(10, 2, DU, strarg_texwrap), B2A(8, 2, DU, strarg_texwrap), B2A(4, 4, DU), B2A(4, 4, DU))
+    return gf_call("gsDPSetTile_Dolphin", data, B2A(20, 4, DU, strarg_dolphintile), B2A(16, 3, DU), B2A(12, 4, DU), B2A(10, 2, DU, strarg_texwrap), B2A(8, 2, DU, strarg_texwrap), B2A(4, 4, DU), B2A(0, 4, DU))
 
 
 def gfx_dl(data):

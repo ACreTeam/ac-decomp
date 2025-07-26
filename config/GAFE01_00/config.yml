@@ -29699,3 +29699,601 @@ modules:
     header: assets/act_m_ohmurasaki/act_m_ohmurasaki_v.inc
     header_type: none
     custom_type: vtx
+
+  - symbol: act_m_okuwa_pal!.data:0x269500
+    binary: assets/act_m_okuwa/act_m_okuwa_pal.bin
+    header: assets/act_m_okuwa/act_m_okuwa_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_okuwa!.data:0x269520
+    binary: assets/act_m_okuwa/act_m_okuwa.bin
+    header: assets/act_m_okuwa/act_m_okuwa.inc
+    header_type: raw
+
+  - symbol: act_m_okuwa_v!.data:0x269720
+    binary: assets/act_m_okuwa/act_m_okuwa_v.bin
+    header: assets/act_m_okuwa/act_m_okuwa_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_oniyanma_pal!.data:0x2698A0
+    binary: assets/act_m_oniyanma/act_m_oniyanma_pal.bin
+    header: assets/act_m_oniyanma/act_m_oniyanma_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_oniyanma!.data:0x2698C0
+    binary: assets/act_m_oniyanma/act_m_oniyanma.bin
+    header: assets/act_m_oniyanma/act_m_oniyanma.inc
+    header_type: raw
+
+  - symbol: act_m_oniyanma_v!.data:0x269A40
+    binary: assets/act_m_oniyanma/act_m_oniyanma_v.bin
+    header: assets/act_m_oniyanma/act_m_oniyanma_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_shiokara_pal!.data:0x269C80
+    binary: assets/act_m_shiokara/act_m_shiokara_pal.bin
+    header: assets/act_m_shiokara/act_m_shiokara_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_shiokara!.data:0x269CA0
+    binary: assets/act_m_shiokara/act_m_shiokara.bin
+    header: assets/act_m_shiokara/act_m_shiokara.inc
+    header_type: raw
+
+  - symbol: act_m_shiokara_v!.data:0x269E20
+    binary: assets/act_m_shiokara/act_m_shiokara_v.bin
+    header: assets/act_m_shiokara/act_m_shiokara_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_suzumushi_pal!.data:0x26A060
+    binary: assets/act_m_suzumushi/act_m_suzumushi_pal.bin
+    header: assets/act_m_suzumushi/act_m_suzumushi_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_suzumushi!.data:0x26A080
+    binary: assets/act_m_suzumushi/act_m_suzumushi.bin
+    header: assets/act_m_suzumushi/act_m_suzumushi.inc
+    header_type: raw
+
+  - symbol: act_m_suzumushi_v!.data:0x26A280
+    binary: assets/act_m_suzumushi/act_m_suzumushi_v.bin
+    header: assets/act_m_suzumushi/act_m_suzumushi_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_syouryou_pal!.data:0x26A3E0
+    binary: assets/act_m_syouryou/act_m_syouryou_pal.bin
+    header: assets/act_m_syouryou/act_m_syouryou_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_syouryou!.data:0x26A400
+    binary: assets/act_m_syouryou/act_m_syouryou.bin
+    header: assets/act_m_syouryou/act_m_syouryou.inc
+    header_type: raw
+
+  - symbol: act_m_syouryou_v!.data:0x26A600
+    binary: assets/act_m_syouryou/act_m_syouryou_v.bin
+    header: assets/act_m_syouryou/act_m_syouryou_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_tamamushi_pal!.data:0x26A7E0
+    binary: assets/act_m_tamamushi/act_m_tamamushi_pal.bin
+    header: assets/act_m_tamamushi/act_m_tamamushi_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_tamamushi!.data:0x26A800
+    binary: assets/act_m_tamamushi/act_m_tamamushi.bin
+    header: assets/act_m_tamamushi/act_m_tamamushi.inc
+    header_type: raw
+
+  - symbol: act_m_tamamushi_v!.data:0x26AA00
+    binary: assets/act_m_tamamushi/act_m_tamamushi_v.bin
+    header: assets/act_m_tamamushi/act_m_tamamushi_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_tentou_pal!.data:0x26AB80
+    binary: assets/act_m_tentou/act_m_tentou_pal.bin
+    header: assets/act_m_tentou/act_m_tentou_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_tentou!.data:0x26ABA0
+    binary: assets/act_m_tentou/act_m_tentou.bin
+    header: assets/act_m_tentou/act_m_tentou.inc
+    header_type: raw
+
+  - symbol: act_m_tentou_v!.data:0x26ACA0
+    binary: assets/act_m_tentou/act_m_tentou_v.bin
+    header: assets/act_m_tentou/act_m_tentou_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_tonosama_pal!.data:0x26AF60
+    binary: assets/act_m_tonosama/act_m_tonosama_pal.bin
+    header: assets/act_m_tonosama/act_m_tonosama_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_tonosama!.data:0x26AF80
+    binary: assets/act_m_tonosama/act_m_tonosama.bin
+    header: assets/act_m_tonosama/act_m_tonosama.inc
+    header_type: raw
+
+  - symbol: act_m_tonosama_v!.data:0x26B180
+    binary: assets/act_m_tonosama/act_m_tonosama_v.bin
+    header: assets/act_m_tonosama/act_m_tonosama_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: act_m_tukutuku_pal!.data:0x26B360
+    binary: assets/act_m_tukutuku/act_m_tukutuku_pal.bin
+    header: assets/act_m_tukutuku/act_m_tukutuku_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: act_m_tukutuku!.data:0x26B380
+    binary: assets/act_m_tukutuku/act_m_tukutuku.bin
+    header: assets/act_m_tukutuku/act_m_tukutuku.inc
+    header_type: raw
+
+  - symbol: act_m_tukutuku_v!.data:0x26B580
+    binary: assets/act_m_tukutuku/act_m_tukutuku_v.bin
+    header: assets/act_m_tukutuku/act_m_tukutuku_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_otiba01_pal
+    binary: assets/obj_otiba01_pal.bin
+    header: assets/obj_otiba01_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: ef_otiba_0_tex
+    binary: assets/ef_otiba_0_tex.bin
+    header: assets/ef_otiba_0_tex.inc
+    header_type: raw
+
+  - symbol: ef_otiba01_00_v
+    binary: assets/ef_otiba01_00_v.bin
+    header: assets/ef_otiba01_00_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: ef_otiba_1_tex
+    binary: assets/ef_otiba_1_tex.bin
+    header: assets/ef_otiba_1_tex.inc
+    header_type: raw
+
+  - symbol: ef_otiba01_01_v
+    binary: assets/ef_otiba01_01_v.bin
+    header: assets/ef_otiba01_01_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: ef_otiba_2_tex
+    binary: assets/ef_otiba_2_tex.bin
+    header: assets/ef_otiba_2_tex.inc
+    header_type: raw
+
+  - symbol: ef_otiba01_02_v
+    binary: assets/ef_otiba01_02_v.bin
+    header: assets/ef_otiba01_02_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_toudai_pole_pal
+    binary: assets/obj_toudai_pole_pal.bin
+    header: assets/obj_toudai_pole_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: obj_toudai_poleA_tex_pic_ci4_pal
+    binary: assets/obj_toudai_poleA_tex_pic_ci4_pal.bin
+    header: assets/obj_toudai_poleA_tex_pic_ci4_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: obj_toudai_poleE_tex_txt
+    binary: assets/obj_toudai_poleE_tex_txt.bin
+    header: assets/obj_toudai_poleE_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_toudai_pole_kage_txt
+    binary: assets/obj_toudai_pole_kage_txt.bin
+    header: assets/obj_toudai_pole_kage_txt.inc
+    header_type: raw
+
+  - symbol: obj_toudai_poleB_tex_txt
+    binary: assets/obj_toudai_poleB_tex_txt.bin
+    header: assets/obj_toudai_poleB_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_toudai_poleC_tex_txt
+    binary: assets/obj_toudai_poleC_tex_txt.bin
+    header: assets/obj_toudai_poleC_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_toudai_poleD_tex_txt
+    binary: assets/obj_toudai_poleD_tex_txt.bin
+    header: assets/obj_toudai_poleD_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_toudai_poleA_tex_txt
+    binary: assets/obj_toudai_poleA_tex_txt.bin
+    header: assets/obj_toudai_poleA_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_toudai_pole_v
+    binary: assets/obj_toudai_pole_v.bin
+    header: assets/obj_toudai_pole_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_toudai_switch_pal
+    binary: assets/obj_toudai_switch_pal.bin
+    header: assets/obj_toudai_switch_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: obj_toudai_switch_tex_txt
+    binary: assets/obj_toudai_switch_tex_txt.bin
+    header: assets/obj_toudai_switch_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_toudai_switch_v
+    binary: assets/obj_toudai_switch_v.bin
+    header: assets/obj_toudai_switch_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_s_post_pal
+    binary: assets/obj_s_post_pal.bin
+    header: assets/obj_s_post_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: obj_s_post_flag1_tex_txt
+    binary: assets/obj_s_post_flag1_tex_txt.bin
+    header: assets/obj_s_post_flag1_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_s_post_flag2_TA_tex_txt
+    binary: assets/obj_s_post_flag2_TA_tex_txt.bin
+    header: assets/obj_s_post_flag2_TA_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_s_post_flag3_TA_tex_txt
+    binary: assets/obj_s_post_flag3_TA_tex_txt.bin
+    header: assets/obj_s_post_flag3_TA_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_s_post_front1_tex_txt
+    binary: assets/obj_s_post_front1_tex_txt.bin
+    header: assets/obj_s_post_front1_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_s_post_front2_tex_txt
+    binary: assets/obj_s_post_front2_tex_txt.bin
+    header: assets/obj_s_post_front2_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_s_post_side1_tex_txt
+    binary: assets/obj_s_post_side1_tex_txt.bin
+    header: assets/obj_s_post_side1_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_s_post_leg1_tex_txt
+    binary: assets/obj_s_post_leg1_tex_txt.bin
+    header: assets/obj_s_post_leg1_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_s_post_inside1_tex_txt
+    binary: assets/obj_s_post_inside1_tex_txt.bin
+    header: assets/obj_s_post_inside1_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_s_post_v
+    binary: assets/obj_s_post_v.bin
+    header: assets/obj_s_post_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_w_post_flag_on_wait1_evw_anime_2_tex_table
+    binary: assets/obj_w_post_flag_on_wait1_evw_anime_2_tex_table.bin
+    header: assets/obj_w_post_flag_on_wait1_evw_anime_2_tex_table.inc
+    header_type: raw
+
+  - symbol: obj_w_post_pal
+    binary: assets/obj_w_post_pal.bin
+    header: assets/obj_w_post_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: obj_w_post_flag1_tex_txt
+    binary: assets/obj_w_post_flag1_tex_txt.bin
+    header: assets/obj_w_post_flag1_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_w_post_flag2_TA_tex_txt
+    binary: assets/obj_w_post_flag2_TA_tex_txt.bin
+    header: assets/obj_w_post_flag2_TA_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_w_post_flag3_TA_tex_txt
+    binary: assets/obj_w_post_flag3_TA_tex_txt.bin
+    header: assets/obj_w_post_flag3_TA_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_w_post_front1_tex_txt
+    binary: assets/obj_w_post_front1_tex_txt.bin
+    header: assets/obj_w_post_front1_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_w_post_front2_tex_txt
+    binary: assets/obj_w_post_front2_tex_txt.bin
+    header: assets/obj_w_post_front2_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_w_post_side1_tex_txt
+    binary: assets/obj_w_post_side1_tex_txt.bin
+    header: assets/obj_w_post_side1_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_w_post_leg1_tex_txt
+    binary: assets/obj_w_post_leg1_tex_txt.bin
+    header: assets/obj_w_post_leg1_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_w_post_inside1_tex_txt
+    binary: assets/obj_w_post_inside1_tex_txt.bin
+    header: assets/obj_w_post_inside1_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_w_post_v
+    binary: assets/obj_w_post_v.bin
+    header: assets/obj_w_post_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_misin_cloth_v
+    binary: assets/obj_misin_cloth_v.bin
+    header: assets/obj_misin_cloth_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: obj_misin_pal
+    binary: assets/obj_misin_pal.bin
+    header: assets/obj_misin_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: obj_misin_belt_tex_pic_ci4_pal
+    binary: assets/obj_misin_belt_tex_pic_ci4_pal.bin
+    header: assets/obj_misin_belt_tex_pic_ci4_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: obj_misin_ito1_tex_txt
+    binary: assets/obj_misin_ito1_tex_txt.bin
+    header: assets/obj_misin_ito1_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_misin_ito2_tex_txt
+    binary: assets/obj_misin_ito2_tex_txt.bin
+    header: assets/obj_misin_ito2_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_misin_maru_tex_txt
+    binary: assets/obj_misin_maru_tex_txt.bin
+    header: assets/obj_misin_maru_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_misin_jiku_tex_txt
+    binary: assets/obj_misin_jiku_tex_txt.bin
+    header: assets/obj_misin_jiku_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_misin_ana_tex_txt
+    binary: assets/obj_misin_ana_tex_txt.bin
+    header: assets/obj_misin_ana_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_misin_hari_tex_txt
+    binary: assets/obj_misin_hari_tex_txt.bin
+    header: assets/obj_misin_hari_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_misin_ito3_tex_txt
+    binary: assets/obj_misin_ito3_tex_txt.bin
+    header: assets/obj_misin_ito3_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_misin_belt_tex_txt
+    binary: assets/obj_misin_belt_tex_txt.bin
+    header: assets/obj_misin_belt_tex_txt.inc
+    header_type: raw
+
+  - symbol: obj_misin_v
+    binary: assets/obj_misin_v.bin
+    header: assets/obj_misin_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome1_floor_v
+    binary: assets/rom_myhome1_floor_v.bin
+    header: assets/rom_myhome1_floor_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome_pal!.data:0x2B7B00
+    binary: assets/rom_myhome1_wall/rom_myhome_pal.bin
+    header: assets/rom_myhome1_wall/rom_myhome_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: rom_myhome_window_tex!.data:0x2B7B20
+    binary: assets/rom_myhome1_wall/rom_myhome_window_tex.bin
+    header: assets/rom_myhome1_wall/rom_myhome_window_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome_enter2_tex!.data:0x2B7D20
+    binary: assets/rom_myhome1_wall/rom_myhome_enter2_tex.bin
+    header: assets/rom_myhome1_wall/rom_myhome_enter2_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome1_wall_v
+    binary: assets/rom_myhome1_wall_v.bin
+    header: assets/rom_myhome1_wall_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome2_floor_v
+    binary: assets/rom_myhome2_floor_v.bin
+    header: assets/rom_myhome2_floor_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome_pal!.data:0x2B9600
+    binary: assets/rom_myhome2_wall/rom_myhome_pal.bin
+    header: assets/rom_myhome2_wall/rom_myhome_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: rom_myhome_window_tex!.data:0x2B9620
+    binary: assets/rom_myhome2_wall/rom_myhome_window_tex.bin
+    header: assets/rom_myhome2_wall/rom_myhome_window_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome_enter_tex
+    binary: assets/rom_myhome_enter_tex.bin
+    header: assets/rom_myhome_enter_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome2_wall_v
+    binary: assets/rom_myhome2_wall_v.bin
+    header: assets/rom_myhome2_wall_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome2B_floor_v
+    binary: assets/rom_myhome2B_floor_v.bin
+    header: assets/rom_myhome2B_floor_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome_pal!.data:0x2BAD00
+    binary: assets/rom_myhome2B_wall/rom_myhome_pal.bin
+    header: assets/rom_myhome2B_wall/rom_myhome_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: rom_myhome_window_tex!.data:0x2BAD20
+    binary: assets/rom_myhome2B_wall/rom_myhome_window_tex.bin
+    header: assets/rom_myhome2B_wall/rom_myhome_window_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome_enter2_tex!.data:0x2BAF20
+    binary: assets/rom_myhome2B_wall/rom_myhome_enter2_tex.bin
+    header: assets/rom_myhome2B_wall/rom_myhome_enter2_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome2B_wall_v
+    binary: assets/rom_myhome2B_wall_v.bin
+    header: assets/rom_myhome2B_wall_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome3_floor_v
+    binary: assets/rom_myhome3_floor_v.bin
+    header: assets/rom_myhome3_floor_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome_pal!.data:0x2BCAC0
+    binary: assets/rom_myhome3_wall/rom_myhome_pal.bin
+    header: assets/rom_myhome3_wall/rom_myhome_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: rom_myhome_window_tex!.data:0x2BCAE0
+    binary: assets/rom_myhome3_wall/rom_myhome_window_tex.bin
+    header: assets/rom_myhome3_wall/rom_myhome_window_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome_enter2_tex!.data:0x2BCCE0
+    binary: assets/rom_myhome3_wall/rom_myhome_enter2_tex.bin
+    header: assets/rom_myhome3_wall/rom_myhome_enter2_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome3_wall_v
+    binary: assets/rom_myhome3_wall_v.bin
+    header: assets/rom_myhome3_wall_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome4_1_floor_v
+    binary: assets/rom_myhome4_1_floor_v.bin
+    header: assets/rom_myhome4_1_floor_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome_pal!.data:0x2BE760
+    binary: assets/rom_myhome4_1_wall/rom_myhome_pal.bin
+    header: assets/rom_myhome4_1_wall/rom_myhome_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: rom_myhome_window_tex!.data:0x2BE780
+    binary: assets/rom_myhome4_1_wall/rom_myhome_window_tex.bin
+    header: assets/rom_myhome4_1_wall/rom_myhome_window_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome_enter2_tex!.data:0x2BE980
+    binary: assets/rom_myhome4_1_wall/rom_myhome_enter2_tex.bin
+    header: assets/rom_myhome4_1_wall/rom_myhome_enter2_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome4_1_wall_v
+    binary: assets/rom_myhome4_1_wall_v.bin
+    header: assets/rom_myhome4_1_wall_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome4_2_floor_v
+    binary: assets/rom_myhome4_2_floor_v.bin
+    header: assets/rom_myhome4_2_floor_v.inc
+    header_type: none
+    custom_type: vtx
+
+  - symbol: rom_myhome_pal!.data:0x2C0440
+    binary: assets/rom_myhome4_2_wall/rom_myhome_pal.bin
+    header: assets/rom_myhome4_2_wall/rom_myhome_pal.inc
+    header_type: none
+    custom_type: pal16
+
+  - symbol: rom_myhome_window_tex!.data:0x2C0460
+    binary: assets/rom_myhome4_2_wall/rom_myhome_window_tex.bin
+    header: assets/rom_myhome4_2_wall/rom_myhome_window_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome_enter2_tex!.data:0x2C0660
+    binary: assets/rom_myhome4_2_wall/rom_myhome_enter2_tex.bin
+    header: assets/rom_myhome4_2_wall/rom_myhome_enter2_tex.inc
+    header_type: raw
+
+  - symbol: rom_myhome4_2_wall_v
+    binary: assets/rom_myhome4_2_wall_v.bin
+    header: assets/rom_myhome4_2_wall_v.inc
+    header_type: none
+    custom_type: vtx

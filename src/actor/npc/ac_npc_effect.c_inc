@@ -32,7 +32,7 @@ static void aNPC_set_feel_effect(GAME* game, NPC_ACTOR* nactorx) {
     aNPC_effect_data_c* data_p = &effect_data[feel_effect_p->feel_type];
     f32 feel_counter = nactorx->draw.feel_effect_counter;
     int set_num = feel_effect_p->set_num;
-    u32* set_p = (u32*)feel_effect_p->set_p;
+    u32* set_p = feel_effect_p->set_p;
 
     while (set_num != 0) {
         f32 tmp = (f32)*set_p - feel_counter;

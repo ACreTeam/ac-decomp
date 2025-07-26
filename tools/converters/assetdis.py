@@ -146,6 +146,41 @@ FRAMECONTROL_MODE = dict_enum_from_list([
     "cKF_FRAMECONTROL_REPEAT",
 ])
 
+MOUTH_TYPES = dict_enum_from_list([
+    "aNPC_MOUTH_TEX0",
+    "aNPC_MOUTH_TEX1",
+    "aNPC_MOUTH_TEX2",
+    "aNPC_MOUTH_TEX3",
+    "aNPC_MOUTH_TEX4",
+    "aNPC_MOUTH_TEX5",
+    "aNPC_MOUTH_TEX_NUM"
+])
+
+EYE_TYPES = dict_enum_from_list([
+    "aNPC_EYE_TEX0",
+    "aNPC_EYE_TEX1",
+    "aNPC_EYE_TEX2",
+    "aNPC_EYE_TEX3",
+    "aNPC_EYE_TEX4",
+    "aNPC_EYE_TEX5",
+    "aNPC_EYE_TEX6",
+    "aNPC_EYE_TEX7",
+    "aNPC_EYE_TEX_NUM",
+])
+
+FEEL_TYPES = dict_enum_from_list([
+    "mNpc_FEEL_NORMAL",
+    "mNpc_FEEL_HAPPY",
+    "mNpc_FEEL_ANGRY",
+    "mNpc_FEEL_SAD",
+    "mNpc_FEEL_SLEEPY",
+    "mNpc_FEEL_PITFALL",
+    "mNpc_FEEL_6",
+    "mNpc_FEEL_UZAI_0",
+    "mNpc_FEEL_UZAI_1",
+    "mNpc_FEEL_ALL_NUM"
+])
+
 
 @dataclass
 class struct_ref:
@@ -157,6 +192,7 @@ class struct_ref:
 class struct_parse_result:
     formatted_str: str
     referenced_objects: list[struct_ref]
+    c_type: str = None
 
 
 def anim_type_conv(anim_type: int):
@@ -301,7 +337,96 @@ def parse_evw_texanime(buff: bytes, symbols: list[str]):
             "animation_pattern": "u8",
             "keyframes": "u16",
         }.get(name, None)
-    return parse_bin_formatted(buff, this_format, symbols, type_conv=tcf)
+
+    def fcf(name, value, symbols):
+        if name == "frame_count":
+            return F"ARRAY_COUNT({symbols['animation_pattern']})"
+    res = parse_bin_formatted(
+        buff, this_format, symbols, type_conv=tcf, fmt_conv=fcf)
+    res.c_type = "EVW_ANIME_TEXANIME"
+    return res
+
+
+def parse_voidstarlist(buff: bytes, symbols: dict[int:str]):
+    return struct_parse_result(", ".join(symbols.values()), [], "void*")
+
+
+def parse_aNPC_se_data_table_c(buff: bytes, symbols: dict[int:str]):
+    this_format = [("p", "lfoot_data"), ("p", "rfoot_data"),
+                   ("l", "other_se_type"), ("p", "other_se_data")]
+
+    def tcf(name, symbols):
+        return {
+            "lfoot_data": "aNPC_se_data_c",
+            "rfoot_data": "aNPC_se_data_c",
+            "other_se_data": "aNPC_other_se_data_c",
+        }.get(name, None)
+
+    def vcf(name, value, symbols):
+        if name == "other_se_type":
+            return {
+                0: "aNPC_OTHER_SE_TYPE_NONE",
+                1: "aNPC_OTHER_SE_TYPE1",
+            }.get(value, str(value))
+
+    return parse_bin_formatted(buff, this_format, symbols, vcf, tcf)
+
+
+def parse_aNPC_se_data_c(buff: bytes, symbols: dict[int:str]):
+    this_format = [("l", "num_check_frames"), ("p", "check_frame_tbl")]
+
+    def tcf(name, symbols):
+        return {
+            "check_frame_tbl": "int"
+        }.get(name, None)
+
+    def fcf(name, value, symbols):
+        if name == "num_check_frames":
+            return f"ARRAY_COUNT({symbols['check_frame_tbl']})"
+    # def vcf(name, value, symbols):
+    #     if name == "other_se_type":
+    #         return {
+    #             0: "aNPC_OTHER_SE_TYPE_NONE",
+    #             1: "aNPC_OTHER_SE_TYPE1",
+    #         }.get(value, str(value))
+
+    return parse_bin_formatted(buff, this_format, symbols, type_conv=tcf, fmt_conv=fcf)
+
+
+def parse_aNPC_feel_effect_c(buff: bytes, symbols: dict[int:str]):
+    this_format = [("h", "feel_type"),
+                   ("B", "max"), ("B", "set_num"), ("p", "set_p")]
+
+    def tcf(name, symbols):
+        return {
+            "set_p": "u32"
+        }.get(name, None)
+
+    def fcf(name, value, symbols):
+        if name == "feel_type":
+            return FEEL_TYPES.get(value, str(value))
+        if name == "set_num":
+            return f"ARRAY_COUNT({symbols['set_p']})"
+
+    return parse_bin_formatted(buff, this_format, symbols, type_conv=tcf, fmt_conv=fcf)
+
+
+def parse_aNPC_other_se_data_c(buff: bytes, symbols: dict[int:str]):
+    this_format = [("l", "num_check_frames"),
+                   ("p", "check_frame_tbl"), ("H", "se_no"), None, None]
+
+    def tcf(name, symbols):
+        return {
+            "check_frame_tbl": "int"
+        }.get(name, None)
+
+    def fcf(name, value, symbols):
+        if name == "num_check_frames":
+            return f"{{ ARRAY_COUNT({symbols['check_frame_tbl']})"
+        if name == "check_frame_tbl":
+            return f"{value}}}"
+
+    return parse_bin_formatted(buff, this_format, symbols, type_conv=tcf, fmt_conv=fcf)
 
 
 def parse_cKF_Skeleton_R_c(buff: bytes, symbols: list[str]):
@@ -366,8 +491,8 @@ def parse_aNPC_Animation_c(buff: bytes, symbols: list[str]):
             "fixed_table": "s16",
             "eye_seq_p": "u8",
             "mouth_seq_p": "u8",
-            # "feel_effect": "aNPC_feel_effect_c",
-            # "se_data_table": "aNPC_se_data_table_c",
+            "feel_effect": "aNPC_feel_effect_c",
+            "se_data_table": "aNPC_se_data_table_c",
         }.get(name, None)
 
     def fcf(name, value, symbols):
@@ -385,6 +510,10 @@ def parse_aNPC_Animation_c(buff: bytes, symbols: list[str]):
             return EFFECT_TYPES.get(value, str(value))
         if name == "mode":
             return FRAMECONTROL_MODE.get(value, str(value))
+        if name == "mouth_seq_type":
+            return MOUTH_TYPES.get(value, str(value))
+        if name == "eye_seq_type":
+            return EYE_TYPES.get(value, str(value))
 
     return parse_bin_formatted(buff, this_format, symbols, vcf, tcf, fcf)
 
@@ -416,19 +545,31 @@ def parse_cKF_Joint_R_c(buff: bytes, symbols: list[str]):
 def parse_u16(buff: bytes, symbols: list[str]):
     vals = struct.unpack(">" + "H" * (len(buff) // 2), buff)
     out_str = ",\n".join(str(x) for x in vals)
+    return struct_parse_result(out_str, [], "u16")
+
+
+def parse_int(buff: bytes, symbols: list[str]):
+    vals = struct.unpack(">" + "l" * (len(buff) // 4), buff)
+    out_str = ",\n".join(str(x) for x in vals)
+    return struct_parse_result(out_str, [])
+
+
+def parse_u32(buff: bytes, symbols: list[str]):
+    vals = struct.unpack(">" + "L" * (len(buff) // 4), buff)
+    out_str = ",\n".join(str(x) for x in vals)
     return struct_parse_result(out_str, [])
 
 
 def parse_s16(buff: bytes, symbols: list[str]):
     vals = struct.unpack(">" + "h" * (len(buff) // 2), buff)
     out_str = ",\n".join(str(x) for x in vals)
-    return struct_parse_result(out_str, [])
+    return struct_parse_result(out_str, [], "s16")
 
 
 def parse_u8(buff: bytes, symbols: list[str]):
     vals = struct.unpack(">" + "B" * len(buff), buff)
     out_str = ",\n".join(str(x) for x in vals)
-    return struct_parse_result(out_str, [])
+    return struct_parse_result(out_str, [], "u8")
 
 
 def lookup_rel_vtx_offset(lines: list[str], name: str):
@@ -436,7 +577,7 @@ def lookup_rel_vtx_offset(lines: list[str], name: str):
     offset = 0
     inside = False
     for line in lines:
-        if line.startswith(f".obj {symbol_name}"):
+        if line.startswith(f".obj {symbol_name},"):
             inside = True
         if not inside:
             continue
@@ -461,7 +602,7 @@ def lookup_bins_and_symbols(lines: list[str], name: str):
     begin_ind = 0
     end_ind = 0
     for i, line in enumerate(lines):
-        if line.startswith(f".obj {name}"):
+        if line.startswith(f".obj {name},"):
             begin_ind = i
         if line.startswith(f".endobj {name}"):
             end_ind = i
@@ -510,10 +651,11 @@ def lookup_bins_and_symbols2(lines: list[str], name: str):
     begin_ind = 0
     end_ind = 0
     for i, line in enumerate(lines):
-        if line.startswith(f".obj {name}"):
+        if line.startswith(f".obj {name},"):
             begin_ind = i
-        if line.startswith(f".endobj {name}"):
+        if line == f".endobj {name}":
             end_ind = i
+            break
     data_lines = lines[begin_ind+1:end_ind]
     offset_count = 0
     for line in data_lines:
@@ -565,7 +707,7 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
         pathlib.PurePosixPath(dest_path).relative_to("src"))
 
     includes = ["libforest/gbi_extensions.h",
-                "PR/gbi.h", "evw_anime.h", "c_keyframe.h", "ac_npc.h"]
+                "PR/gbi.h", "evw_anime.h", "c_keyframe.h", "ac_npc.h", "ef_effect_control.h"]
 
     header = "\n".join([f'#include "{x}"' for x in includes]) + "\n"
 
@@ -617,9 +759,14 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
         "u8": parse_u8,
         "u16": parse_u16,
         "s16": parse_s16,
+        "int": parse_int,
+        "u32": parse_u32,
         "aNPC_Animation_c": parse_aNPC_Animation_c,
-        # "aNPC_feel_effect_c": parse_aNPC_Animation_c,
-        # "aNPC_se_data_table_c": parse_aNPC_Animation_c,
+        "VOID*_LIST": parse_voidstarlist,
+        "aNPC_se_data_table_c": parse_aNPC_se_data_table_c,
+        "aNPC_se_data_c": parse_aNPC_se_data_c,
+        "aNPC_other_se_data_c": parse_aNPC_other_se_data_c,
+        "aNPC_feel_effect_c": parse_aNPC_feel_effect_c,
     }
     # we now have a list of objects+type
     while len(found_types) > 0:
@@ -644,6 +791,8 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
         elif type in lookup_table:
             res: struct_parse_result = lookup_table[type](
                 *lookup_bins_and_symbols2(lines, obj_name))
+            if res.c_type != None:
+                type = res.c_type
             data = res.formatted_str
             converted_types[obj_name] = (type, data, NO_ALIGN)
             if len(res.referenced_objects) > 0:
@@ -677,41 +826,41 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
     with open(config_py, "w") as f:
         f.write(config_txt)
 
-    config_yaml = "config/GAFE01_00/config.yml"
-    with open(config_yaml, "a") as f:
-        for i, line in enumerate(out.split("\n")):
-            if line.startswith("#include \"assets"):
-                prev_line = out.split("\n")[i-1]
-                parts = prev_line.split("=")[0].split(" ")
-                type = parts[0]
-                name = parts[1]
-                im_static = False
-                if type == "static":
-                    im_static = True
-                    type = parts[1]
-                    name = parts[2]
-                name = name[:-2]  # cut off the array []
-                if im_static:
-                    out_config = f"""
-  - symbol: {name}!.data:{lookup_address(lines, name)}
-    binary: assets/{src_file_name}/{name}.bin
-    header: assets/{src_file_name}/{name}.inc
-"""
-                else:
-                    out_config = f"""
-  - symbol: {name}
-    binary: assets/{name}.bin
-    header: assets/{name}.inc
-"""
-                if type == "u8":
-                    out_config += "    header_type: raw\n"
-                elif type == "Vtx":
-                    out_config += "    header_type: none\n    custom_type: vtx\n"
-                elif type == "u16":
-                    out_config += "    header_type: none\n    custom_type: pal16\n"
-                else:
-                    assert (False)
-                f.write(out_config)
+#     config_yaml = "config/GAFE01_00/config.yml"
+#     with open(config_yaml, "a") as f:
+#         for i, line in enumerate(out.split("\n")):
+#             if line.startswith("#include \"assets"):
+#                 prev_line = out.split("\n")[i-1]
+#                 parts = prev_line.split("=")[0].split(" ")
+#                 type = parts[0]
+#                 name = parts[1]
+#                 im_static = False
+#                 if type == "static":
+#                     im_static = True
+#                     type = parts[1]
+#                     name = parts[2]
+#                 name = name[:-2]  # cut off the array []
+#                 if im_static:
+#                     out_config = f"""
+#   - symbol: {name}!.data:{lookup_address(lines, name)}
+#     binary: assets/{src_file_name}/{name}.bin
+#     header: assets/{src_file_name}/{name}.inc
+# """
+#                 else:
+#                     out_config = f"""
+#   - symbol: {name}
+#     binary: assets/{name}.bin
+#     header: assets/{name}.inc
+# """
+#                 if type == "u8":
+#                     out_config += "    header_type: raw\n"
+#                 elif type == "Vtx":
+#                     out_config += "    header_type: none\n    custom_type: vtx\n"
+#                 elif type == "u16":
+#                     out_config += "    header_type: none\n    custom_type: pal16\n"
+#                 else:
+#                     assert (False)
+#                 f.write(out_config)
 
 
 def main():

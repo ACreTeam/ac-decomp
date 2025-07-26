@@ -3,6 +3,7 @@
 #include "evw_anime.h"
 #include "c_keyframe.h"
 #include "ac_npc.h"
+#include "ef_effect_control.h"
 
 u8 cKF_ckcb_r_npc_1_get_pull_wait1_tbl[] = { 56, 7, 0, 7, 7, 7, 0, 7, 7, 7, 0, 7, 7,
                                              7,  0, 7, 7, 0, 7, 7, 7, 7, 0, 7, 0, 0 };
@@ -44,10 +45,10 @@ aNPC_Animation_c cKF_ba_r_npc_1_get_pull_wait1 = {
     cKF_FRAMECONTROL_REPEAT,
     -5.0f,
     NULL,
-    1,
+    aNPC_EYE_TEX1,
     -1,
     NULL,
-    1,
+    aNPC_MOUTH_TEX1,
     0,
     -1,
     -1,
