@@ -71,7 +71,7 @@ enum {
     aNPC_SUB_ANIM_NONE,
     aNPC_SUB_ANIM_UMBRELLA,
     aNPC_SUB_ANIM_UTIWA, // paper fan
-    aNPC_SUB_ANIM_TUE, // Tortimer's cane
+    aNPC_SUB_ANIM_TUE,   // Tortimer's cane
 
     aNPC_SUB_ANIM_NUM
 };
@@ -116,8 +116,27 @@ enum {
 
 typedef struct ac_npc_clip_s aNPC_Clip_c;
 
-#define aNPC_EYE_TEX_NUM 8
-#define aNPC_MOUTH_TEX_NUM 6
+enum {
+    aNPC_EYE_TEX0,
+    aNPC_EYE_TEX1,
+    aNPC_EYE_TEX2,
+    aNPC_EYE_TEX3,
+    aNPC_EYE_TEX4,
+    aNPC_EYE_TEX5,
+    aNPC_EYE_TEX6,
+    aNPC_EYE_TEX7,
+    aNPC_EYE_TEX_NUM,
+};
+
+enum {
+    aNPC_MOUTH_TEX0,
+    aNPC_MOUTH_TEX1,
+    aNPC_MOUTH_TEX2,
+    aNPC_MOUTH_TEX3,
+    aNPC_MOUTH_TEX4,
+    aNPC_MOUTH_TEX5,
+    aNPC_MOUTH_TEX_NUM,
+};
 
 /* sizeof(aNPC_draw_tex_data_c) == 0x4C */
 typedef struct ac_npc_draw_data_tex_s {
@@ -246,7 +265,8 @@ typedef struct npc_overlay_s {
     int used;
 } aNPC_overlay_c;
 
-typedef int (*aNPC_SETUP_ACTOR_PROC)(GAME_PLAY* play, mActor_name_t name, s8 idx, int mvlist_no, s16 arg, int bx, int bz, int ux, int uz);
+typedef int (*aNPC_SETUP_ACTOR_PROC)(GAME_PLAY* play, mActor_name_t name, s8 idx, int mvlist_no, s16 arg, int bx,
+                                     int bz, int ux, int uz);
 typedef void (*aNPC_GET_OVERLAY_AREA_PROC)(ACTOR_DLFTBL*, u8*, size_t, mActor_name_t);
 typedef void (*aNPC_DMA_DRAW_DATA_PROC)(aNPC_draw_data_c*, mActor_name_t);
 typedef void (*aNPC_FREE_OVERLAY_AREA_PROC)(ACTOR_DLFTBL*);
@@ -266,7 +286,8 @@ typedef void (*aNPC_SET_DST_POS_PROC)(NPC_ACTOR*, f32, f32);
 
 typedef void (*aNPC_REBUILD_DMA_PROC)();
 typedef int (*aNPC_SET_REQUEST_ACT_PROC)(NPC_ACTOR* nactorx, u8 priority, u8 act_idx, u8 act_type, u16* arg_data);
-typedef int (*aNPC_SET_HEAD_REQUEST_PROC)(NPC_ACTOR* nactorx, u8 priority, u8 type, ACTOR* target_actor, xyz_t* target_pos);
+typedef int (*aNPC_SET_HEAD_REQUEST_PROC)(NPC_ACTOR* nactorx, u8 priority, u8 type, ACTOR* target_actor,
+                                          xyz_t* target_pos);
 typedef void (*aNPC_TALK_DEMO_PROC)(ACTOR*);
 typedef void (*aNPC_ANIMATION_INIT_PROC)(ACTOR*, int, int);
 typedef void (*aNPC_CHG_SCHEDULE_PROC)(NPC_ACTOR*, GAME_PLAY*, u8);
@@ -373,7 +394,7 @@ typedef struct {
     s16 feel_type;
     u8 max;
     u8 set_num;
-    u8* set_p;
+    u32* set_p;
 } aNPC_feel_effect_c;
 
 typedef struct npc_draw_info_s {
@@ -699,9 +720,9 @@ typedef struct npc_request_s {
 #define aNPC_COND_DEMO_SKIP_UZAI_CHECK (1 << 15)      /* 0x8000 */
 
 enum {
-    aNPC_ENTRANCE_TYPE_NONE, // not near any entrance
+    aNPC_ENTRANCE_TYPE_NONE,   // not near any entrance
     aNPC_ENTRANCE_TYPE_NEARBY, // near a house entrance
-    aNPC_ENTRANCE_TYPE_AT, // at a house entrance
+    aNPC_ENTRANCE_TYPE_AT,     // at a house entrance
 
     aNPC_ENTRANCE_TYPE_NUM
 };
@@ -805,7 +826,7 @@ enum {
 
 enum {
     aNPC_FRIENDSHIP_NORMAL, // default
-    aNPC_FRIENDSHIP_AVOID, // avoid player (hate player)
+    aNPC_FRIENDSHIP_AVOID,  // avoid player (hate player)
     aNPC_FRIENDSHIP_SEARCH, // search for player (love player)
 
     aNPC_FRIENDSHIP_NUM
@@ -835,10 +856,10 @@ typedef struct npc_movement_s {
 } aNPC_movement_c;
 
 enum {
-    aNPC_BG_CHECK_TYPE_NONE, // no collision
+    aNPC_BG_CHECK_TYPE_NONE,        // no collision
     aNPC_BG_CHECK_TYPE_ONLY_GROUND, // only ground collision
-    aNPC_BG_CHECK_TYPE_NORMAL, // standard
-    aNPC_BG_CHECK_TYPE_RANGE, // standard plus range
+    aNPC_BG_CHECK_TYPE_NORMAL,      // standard
+    aNPC_BG_CHECK_TYPE_RANGE,       // standard plus range
 
     aNPC_BG_CHECK_TYPE_NUM
 };
@@ -984,7 +1005,7 @@ typedef struct {
     int anim_idx;
 } aNPC_anim_info_c;
 
-#define aNPC_DEMO_GIVE_ITEM(item, mode, present) \
+#define aNPC_DEMO_GIVE_ITEM(item, mode, present)       \
     mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, (item)); \
     mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, (mode)); \
     mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, (present))

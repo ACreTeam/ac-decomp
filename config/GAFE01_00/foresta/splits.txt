@@ -4626,50 +4626,136 @@ data/npc/model/mdl/xct_1.c:
 data/npc/model/tex/xct_1.c:
 	.data       start:0x00236B80 end:0x00237F20
 
-data/dataobject/dataobject_237F20:
+data/model/act_f28_akikan.c:
 	.data       start:0x00237F20 end:0x00238100
+
+data/model/act_f29_angel.c:
 	.data       start:0x00238100 end:0x00238720
+
+data/model/act_f26_aroana.c:
 	.data       start:0x00238720 end:0x00238D40
+
+data/model/act_f18_ayu.c:
 	.data       start:0x00238D40 end:0x00239360
+
+data/model/act_f08_bassl.c:
 	.data       start:0x00239360 end:0x00239980
+
+data/model/act_f07_bassm.c:
 	.data       start:0x00239980 end:0x00239FA0
+
+data/model/act_f06_bass.c:
 	.data       start:0x00239FA0 end:0x0023A4C0
+
+data/model/act_f09_gill.c:
 	.data       start:0x0023A4C0 end:0x0023A9E0
+
+data/model/act_f31_demekin.c:
 	.data       start:0x0023A9E0 end:0x0023AF00
+
+data/model/act_f16_dojyo.c:
 	.data       start:0x0023AF00 end:0x0023B320
+
+data/model/act_f28_donko.c:
 	.data       start:0x0023B320 end:0x0023B840
+
+data/model/act_f01_funa.c:
 	.data       start:0x0023B840 end:0x0023BD60
+
+data/model/act_f30_gupi.c:
 	.data       start:0x0023BD60 end:0x0023C280
+
+data/model/act_f02_hera.c:
 	.data       start:0x0023C280 end:0x0023C8A0
+
+data/model/act_f40_isidai.c:
 	.data       start:0x0023C8A0 end:0x0023CEC0
+
+data/model/act_f22_ito.c:
 	.data       start:0x0023CEC0 end:0x0023D5E0
+
+data/model/act_f36_kaeru.c:
 	.data       start:0x0023D5E0 end:0x0023DCA0
+
+data/model/act_gyoei02.c:
 	.data       start:0x0023DCA0 end:0x0023E140
+
+data/model/act_f32_kaseki.c:
 	.data       start:0x0023E140 end:0x0023E880
+
+data/model/act_f24_kingyo.c:
 	.data       start:0x0023E880 end:0x0023EDA0
+
+data/model/act_f03_koi.c:
 	.data       start:0x0023EDA0 end:0x0023F3C0
+
+data/model/act_f37_kurage.c:
 	.data       start:0x0023F3C0 end:0x0023F9E0
+
+data/model/act_f33_medaka.c:
 	.data       start:0x0023F9E0 end:0x0023FE00
+
+data/model/act_f30_nagagutu.c:
 	.data       start:0x0023FE00 end:0x002400E0
+
+data/model/act_f05_namazu.c:
 	.data       start:0x002400E0 end:0x00240700
+
+data/model/act_f12_nigoi.c:
 	.data       start:0x00240700 end:0x00240D20
+
+data/model/act_f21_niji.c:
 	.data       start:0x00240D20 end:0x00241340
+
+data/model/act_f04_nisiki.c:
 	.data       start:0x00241340 end:0x00241960
+
+data/model/act_f14_oikawa.c:
 	.data       start:0x00241960 end:0x00241E80
+
+data/model/act_f20_iwana.c:
 	.data       start:0x00241E80 end:0x002424A0
+
+data/model/act_f10_oonamazu.c:
 	.data       start:0x002424A0 end:0x00242BC0
+
+data/model/act_f34_piraluku.c:
 	.data       start:0x00242BC0 end:0x002432E0
+
+data/model/act_f25_pirania.c:
 	.data       start:0x002432E0 end:0x00243800
+
+data/model/act_f11_raigyo.c:
 	.data       start:0x00243800 end:0x00243F40
+
+data/model/act_f23_sake.c:
 	.data       start:0x00243F40 end:0x00244560
+
+data/model/act_f38_suzuki.c:
 	.data       start:0x00244560 end:0x00244B80
+
+data/model/act_f39_tai.c:
 	.data       start:0x00244B80 end:0x002451A0
+
+data/model/act_f31_taiya.c:
 	.data       start:0x002451A0 end:0x00245580
+
+data/model/act_f15_tanago.c:
 	.data       start:0x00245580 end:0x00245AA0
+
+data/model/act_f13_ugui.c:
 	.data       start:0x00245AA0 end:0x002460C0
+
+data/model/act_f27_unagi.c:
 	.data       start:0x002460C0 end:0x002465E0
+
+data/model/act_f17_wakasagi.c:
 	.data       start:0x002465E0 end:0x00246A00
+
+data/model/act_f19_yamame.c:
 	.data       start:0x00246A00 end:0x00247020
+
+data/model/act_f35_zarigani.c:
 	.data       start:0x00247020 end:0x00247428
 
 data/npc/model/mdl/bpt_1.c:
@@ -4684,9 +4770,13 @@ data/npc/model/mdl/pkn_1.c:
 data/npc/model/tex/pkn_1.c:
 	.data       start:0x0024BEE0 end:0x0024C580
 
-data/dataobject/dataobject_24C580:
+data/model/hnw_model.c:
 	.data       start:0x0024C580 end:0x0024DC50
+
+data/model/hnw_move.c:
 	.data       start:0x0024DC50 end:0x0024DD60
+
+data/model/hnw_face.c:
 	.data       start:0x0024DD60 end:0x0024E580
 
 data/npc/model/mdl/hem_1.c:
@@ -4746,48 +4836,130 @@ data/npc/model/tex/hrs_7.c:
 data/npc/model/tex/hrs_8.c:
 	.data       start:0x00260F80 end:0x00261D20
 
-data/dataobject/dataobject_261D20:
+data/model/act_m_house_goki.c:
 	.data       start:0x00261D20 end:0x002620C0
+
+data/model/act_m_abura.c:
 	.data       start:0x002620C0 end:0x00262560
+
+data/model/act_m_akiakane.c:
 	.data       start:0x00262560 end:0x00262940
+
+data/model/act_m_amenbo.c:
 	.data       start:0x00262940 end:0x00262C80
+
+data/model/act_m_ari.c:
 	.data       start:0x00262C80 end:0x00262E60
+
+data/model/act_m_dango.c:
 	.data       start:0x00262E60 end:0x00263180
+
+data/model/act_m_danna.c:
 	.data       start:0x00263180 end:0x00263520
+
+data/model/act_m_genji2.c:
 	.data       start:0x00263520 end:0x00263980
+
+data/model/act_m_ginyanma.c:
 	.data       start:0x00263980 end:0x00263D60
+
+data/model/act_m_gomadara.c:
 	.data       start:0x00263D60 end:0x00264100
+
+data/model/act_m_higurashi.c:
 	.data       start:0x00264100 end:0x002645A0
+
+data/model/act_m_hirata.c:
 	.data       start:0x002645A0 end:0x00264940
+
+data/model/act_m_hitodama.c:
 	.data       start:0x00264940 end:0x00264E60
+
+data/model/act_m_ka.c:
 	.data       start:0x00264E60 end:0x002652A0
+
+data/model/act_m_kabuto.c:
 	.data       start:0x002652A0 end:0x00265660
+
+data/model/act_m_kamakiri.c:
 	.data       start:0x00265660 end:0x00265A60
+
+data/model/act_m_kanabun.c:
 	.data       start:0x00265A60 end:0x00265E00
+
+data/model/act_m_kera.c:
 	.data       start:0x00265E00 end:0x00265FE0
+
+data/model/act_m_kiageha.c:
 	.data       start:0x00265FE0 end:0x00266380
+
+data/model/act_m_kirigirisu.c:
 	.data       start:0x00266380 end:0x002667A0
+
+data/model/act_m_koorogi.c:
 	.data       start:0x002667A0 end:0x00266A40
+
+data/model/act_m_hachi.c:
 	.data       start:0x00266A40 end:0x00266EE0
+
+data/model/act_m_kumo.c:
 	.data       start:0x00266EE0 end:0x002672A0
+
+data/model/act_m_maimai.c:
 	.data       start:0x002672A0 end:0x00267640
+
+data/model/act_m_matmushi.c:
 	.data       start:0x00267640 end:0x002678E0
+
+data/model/act_m_minmin.c:
 	.data       start:0x002678E0 end:0x00267D80
+
+data/model/act_m_mino.c:
 	.data       start:0x00267D80 end:0x00268200
+
+data/model/act_m_miyama.c:
 	.data       start:0x00268200 end:0x002685A0
+
+data/model/act_m_monki.c:
 	.data       start:0x002685A0 end:0x002687C0
+
+data/model/act_m_monshiro.c:
 	.data       start:0x002687C0 end:0x002689E0
+
+data/model/act_m_nanahoshi.c:
 	.data       start:0x002689E0 end:0x00268DC0
+
+data/model/act_m_nokogiri.c:
 	.data       start:0x00268DC0 end:0x00269160
+
+data/model/act_m_ohmurasaki.c:
 	.data       start:0x00269160 end:0x00269500
+
+data/model/act_m_okuwa.c:
 	.data       start:0x00269500 end:0x002698A0
+
+data/model/act_m_oniyanma.c:
 	.data       start:0x002698A0 end:0x00269C80
+
+data/model/act_m_shiokara.c:
 	.data       start:0x00269C80 end:0x0026A060
+
+data/model/act_m_suzumushi.c:
 	.data       start:0x0026A060 end:0x0026A3E0
+
+data/model/act_m_syouryou.c:
 	.data       start:0x0026A3E0 end:0x0026A7E0
+
+data/model/act_m_tamamushi.c:
 	.data       start:0x0026A7E0 end:0x0026AB80
+
+data/model/act_m_tentou.c:
 	.data       start:0x0026AB80 end:0x0026AF60
+
+data/model/act_m_tonosama.c:
 	.data       start:0x0026AF60 end:0x0026B360
+
+data/model/act_m_tukutuku.c:
 	.data       start:0x0026B360 end:0x0026B800
 
 data/npc/model/mdl/plj_1.c:
@@ -4865,9 +5037,13 @@ data/npc/model/tex/kal_6.c:
 data/scene/lighthouse.c:
 	.data       start:0x00291CA0 end:0x00291D20
 
-data/dataobject/dataobject_291D20:
+data/model/ef_otiba.c:
 	.data       start:0x00291D20 end:0x00292080
+
+data/model/obj_toudai_pole.c:
 	.data       start:0x00292080 end:0x00294260
+
+data/model/obj_toudai_switch.c:
 	.data       start:0x00294260 end:0x00294510
 
 data/npc/model/mdl/lon_1.c:
@@ -4900,16 +5076,34 @@ data/scene/museum_insect.c:
 data/scene/museum_picture.c:
 	.data       start:0x0029B8F0 end:0x0029B9A0
 
-data/dataobject/dataobject_29B9A0:
+data/model/obj_s_post.c:
 	.data       start:0x0029B9A0 end:0x0029B9E8
+
+data/model/obj_s_post_delivery.c:
 	.data       start:0x0029B9E8 end:0x0029BAD8
+
+data/model/obj_s_post_flag_off.c:
 	.data       start:0x0029BAD8 end:0x0029BB98
+
+data/model/obj_s_post_flag_on.c:
 	.data       start:0x0029BB98 end:0x0029BC70
+
+data/model/obj_s_post_flag_on_wait_anim.c:
 	.data       start:0x0029BC70 end:0x0029BCB0
+
+data/model/obj_s_post_flag_on_wait.c:
 	.data       start:0x0029BCB0 end:0x0029BD80
+
+data/model/obj_s_post_flag_model.c:
 	.data       start:0x0029BD80 end:0x0029CB00
+
+data/model/obj_s_post_open.c:
 	.data       start:0x0029CB00 end:0x0029CBD0
+
+data/model/obj_w_post_flag_on_wait_anim.c:
 	.data       start:0x0029CBD0 end:0x0029CC20
+
+data/model/obj_w_post_model.c:
 	.data       start:0x0029CC20 end:0x0029D9A0
 
 data/npc/model/mdl/mos_1.c:
@@ -4936,8 +5130,10 @@ data/npc/model/mdl/mka_1.c:
 data/npc/model/tex/mka_1.c:
 	.data       start:0x002A86C0 end:0x002A8B60
 
-data/dataobject/dataobject_2A8B60:
+data/model/obj_misin_cloth.c:
 	.data       start:0x002A8B60 end:0x002A8C00
+
+data/model/obj_misin.c:
 	.data       start:0x002A8C00 end:0x002A99A8
 
 data/npc/model/mdl/mus_1.c:
@@ -4976,22 +5172,52 @@ data/npc/model/tex/mus_10.c:
 data/model/mural/obj_mural.c:
 	.data       start:0x002B7100 end:0x002B7200
 
-data/dataobject/dataobject_2B7200:
+data/model/rom_myhome1_floor.c:
 	.data       start:0x002B7200 end:0x002B7B00
+
+data/model/rom_myhome1_wall.c:
 	.data       start:0x002B7B00 end:0x002B8F20
+
+data/model/rom_myhome2_floor.c:
 	.data       start:0x002B8F20 end:0x002B9600
+
+data/model/rom_myhome2_wall.c:
 	.data       start:0x002B9600 end:0x002BA380
+
+data/model/rom_myhome2B_flooar.c:
 	.data       start:0x002BA380 end:0x002BAD00
+
+data/model/rom_myhome2B_wall.c:
 	.data       start:0x002BAD00 end:0x002BC180
+
+data/model/rom_myhome3_floor.c:
 	.data       start:0x002BC180 end:0x002BCAC0
+
+data/model/rom_myhome3_wall.c:
 	.data       start:0x002BCAC0 end:0x002BDE20
+
+data/model/rom_myhome4_1_floor.c:
 	.data       start:0x002BDE20 end:0x002BE760
+
+data/model/rom_myhome4_1_wall.c:
 	.data       start:0x002BE760 end:0x002BFAC0
+
+data/model/rom_myhome4_2_floor.c:
 	.data       start:0x002BFAC0 end:0x002C0440
+
+data/model/rom_myhome4_2_wall.c:
 	.data       start:0x002C0440 end:0x002C1A40
+
+data/model/rom_myhome_ug.c:
 	.data       start:0x002C1A40 end:0x002C45D0
+
+data/model/furniture_pull.c:
 	.data       start:0x002C45D0 end:0x002C4680
+
+data/model/furniture_push.c:
 	.data       start:0x002C4680 end:0x002C4730
+
+data/model/furniture_stop.c:
 	.data       start:0x002C4730 end:0x002C4768
 
 data/scene/NEEDLEWORK.c:
@@ -5015,250 +5241,736 @@ data/npc/model/mdl/hgs_1.c:
 data/npc/model/tex/hgs_1.c:
 	.data       start:0x002CA780 end:0x002CB660
 
-data/dataobject/dataobject_2CB660:
+data/npc/npc_1_a1.c:
 	.data       start:0x002CB660 end:0x002CBAE0
+
+data/npc/npc_1_a2.c:
 	.data       start:0x002CBAE0 end:0x002CBEF0
+
+data/npc/npc_1_a2_r1.c:
 	.data       start:0x002CBEF0 end:0x002CC2F8
+
+data/npc/npc_1_a_f1.c:
 	.data       start:0x002CC2F8 end:0x002CC6E0
+
+data/npc/npc_1_a_f2.c:
 	.data       start:0x002CC6E0 end:0x002CCAD8
+
+data/npc/npc_1_a_r1.c:
 	.data       start:0x002CCAD8 end:0x002CCEE0
+
+data/npc/npc_1_a_r2.c:
 	.data       start:0x002CCEE0 end:0x002CD2B0
+
+data/npc/npc_1_aisatu1.c:
 	.data       start:0x002CD2B0 end:0x002CD908
+
+data/npc/npc_1_aisatu2.c:
 	.data       start:0x002CD908 end:0x002CDE70
+
+data/npc/npc_1_aisatu3.c:
 	.data       start:0x002CDE70 end:0x002CE4A0
+
+data/npc/npc_1_aisatu4.c:
 	.data       start:0x002CE4A0 end:0x002CEA50
+
+data/npc/npc_1_akireru_r1.c:
 	.data       start:0x002CEA50 end:0x002CEE80
+
+data/npc/npc_1_akireru_r2.c:
 	.data       start:0x002CEE80 end:0x002CEF80
+
+data/npc/npc_1_aseru1.c:
 	.data       start:0x002CEF80 end:0x002CF420
+
+data/npc/npc_1_aseru2.c:
 	.data       start:0x002CF420 end:0x002CFA68
+
+data/npc/npc_1_aseru_f1.c:
 	.data       start:0x002CFA68 end:0x002CFF08
+
+data/npc/npc_1_aseru_f2.c:
 	.data       start:0x002CFF08 end:0x002D0590
+
+data/npc/npc_1_aseru_i1.c:
 	.data       start:0x002D0590 end:0x002D0A30
+
+data/npc/npc_1_aseru_i2.c:
 	.data       start:0x002D0A30 end:0x002D1030
+
+data/npc/npc_1_buruburu1.c:
 	.data       start:0x002D1030 end:0x002D14A0
+
+data/npc/npc_1_buruburu2.c:
 	.data       start:0x002D14A0 end:0x002D19C8
+
+data/npc/npc_1_contract1.c:
 	.data       start:0x002D19C8 end:0x002D1DB0
+
+data/npc/npc_1_contract2.c:
 	.data       start:0x002D1DB0 end:0x002D22C0
+
+data/npc/npc_1_contract3.c:
 	.data       start:0x002D22C0 end:0x002D2988
+
+data/npc/npc_1_not_contract1.c:
 	.data       start:0x002D2988 end:0x002D2FA0
+
+data/npc/npc_1_cracker_count1.c:
 	.data       start:0x002D2FA0 end:0x002D3400
+
+data/npc/npc_1_cracker_fire1.c:
 	.data       start:0x002D3400 end:0x002D3AB8
+
+data/npc/npc_1_cracker_run1.c:
 	.data       start:0x002D3AB8 end:0x002D3F98
+
+data/npc/npc_1_cracker_wait1.c:
 	.data       start:0x002D3F98 end:0x002D4750
+
+data/npc/npc_1_getup_seg1.c:
 	.data       start:0x002D4750 end:0x002D4DF8
+
+data/npc/npc_1_getup_wait_seg1.c:
 	.data       start:0x002D4DF8 end:0x002D4EF8
+
+data/npc/npc_1_piku_seg1.c:
 	.data       start:0x002D4EF8 end:0x002D54E0
+
+data/npc/npc_1_delivery1.c:
 	.data       start:0x002D54E0 end:0x002D60E0
+
+data/npc/npc_1_fly1.c:
 	.data       start:0x002D60E0 end:0x002D6590
+
+data/npc/npc_1_flyaway1.c:
 	.data       start:0x002D6590 end:0x002D6D70
+
+data/npc/npc_1_kyoro1.c:
 	.data       start:0x002D6D70 end:0x002D72C0
+
+data/npc/npc_1_landing1.c:
 	.data       start:0x002D72C0 end:0x002D73C0
+
+data/npc/npc_1_landing2.c:
 	.data       start:0x002D73C0 end:0x002D7878
+
+data/npc/npc_1_landing3.c:
 	.data       start:0x002D7878 end:0x002D7DA0
+
+data/npc/npc_1_gaaan1.c:
 	.data       start:0x002D7DA0 end:0x002D82B0
+
+data/npc/npc_1_gaaan2.c:
 	.data       start:0x002D82B0 end:0x002D8690
+
+data/npc/npc_1_gekido_r1.c:
 	.data       start:0x002D8690 end:0x002D8A48
+
+data/npc/npc_1_gekido_r2.c:
 	.data       start:0x002D8A48 end:0x002D8FE8
+
+data/npc/npc_1_estimate_f1.c:
 	.data       start:0x002D8FE8 end:0x002D9A28
+
+data/npc/npc_1_get1.c:
 	.data       start:0x002D9A28 end:0x002D9DD0
+
+data/npc/npc_1_get_change1.c:
 	.data       start:0x002D9DD0 end:0x002DA848
+
+data/npc/npc_1_get_eat1.c:
 	.data       start:0x002DA848 end:0x002DB088
+
+data/npc/npc_1_get_f1.c:
 	.data       start:0x002DB088 end:0x002DB430
+
+data/npc/npc_1_get_pull1.c:
 	.data       start:0x002DB430 end:0x002DB848
+
+data/npc/npc_1_get_pull_f1.c:
 	.data       start:0x002DB848 end:0x002DBC08
+
+data/npc/npc_1_get_pull_wait1.c:
 	.data       start:0x002DBC08 end:0x002DC020
+
+data/npc/npc_1_get_pull_wait_f1.c:
 	.data       start:0x002DC020 end:0x002DC448
+
+data/npc/npc_1_get_putaway1.c:
 	.data       start:0x002DC448 end:0x002DCA70
+
+data/npc/npc_1_get_putaway_f1.c:
 	.data       start:0x002DCA70 end:0x002DD0B0
+
+data/npc/npc_1_get_return1.c:
 	.data       start:0x002DD0B0 end:0x002DD4C8
+
+data/npc/npc_1_get_return_f1.c:
 	.data       start:0x002DD4C8 end:0x002DD888
+
+data/npc/npc_1_gstwait1.c:
 	.data       start:0x002DD888 end:0x002DDC20
+
+data/npc/npc_1_goukyu1.c:
 	.data       start:0x002DDC20 end:0x002DE058
+
+data/npc/npc_1_goukyu2.c:
 	.data       start:0x002DE058 end:0x002DE440
+
+data/npc/npc_1_ha1.c:
 	.data       start:0x002DE440 end:0x002DE8D0
+
+data/npc/npc_1_ha2.c:
 	.data       start:0x002DE8D0 end:0x002DECD8
+
+data/npc/npc_1_ha_e1.c:
 	.data       start:0x002DECD8 end:0x002DF100
+
+data/npc/npc_1_ha_e2.c:
 	.data       start:0x002DF100 end:0x002DF4C0
+
+data/npc/npc_1_ha_f1.c:
 	.data       start:0x002DF4C0 end:0x002DF8F0
+
+data/npc/npc_1_ha_f2.c:
 	.data       start:0x002DF8F0 end:0x002DFD08
+
+data/npc/npc_1_ha_i1.c:
 	.data       start:0x002DFD08 end:0x002E0110
+
+data/npc/npc_1_ha_i2.c:
 	.data       start:0x002E0110 end:0x002E0510
+
+data/npc/npc_1_banzai1.c:
 	.data       start:0x002E0510 end:0x002E0C30
+
+data/npc/npc_1_clap1.c:
 	.data       start:0x002E0C30 end:0x002E1078
+
+data/npc/npc_1_utiwa_wait1.c:
 	.data       start:0x002E1078 end:0x002E1230
+
+data/npc/npc_1_dance1.c:
 	.data       start:0x002E1230 end:0x002E1DC8
+
+data/npc/npc_1_sitdown_clap1.c:
 	.data       start:0x002E1DC8 end:0x002E23E8
+
+data/npc/npc_1_sitdown_drink1.c:
 	.data       start:0x002E23E8 end:0x002E2B58
+
+data/npc/npc_1_sitdown_happy1.c:
 	.data       start:0x002E2B58 end:0x002E2FB0
+
+data/npc/npc_1_happy1.c:
 	.data       start:0x002E2FB0 end:0x002E3358
+
+data/npc/npc_1_happy2.c:
 	.data       start:0x002E3358 end:0x002E3A00
+
+data/npc/npc_1_happy_f1.c:
 	.data       start:0x002E3A00 end:0x002E3DB0
+
+data/npc/npc_1_happy_f2.c:
 	.data       start:0x002E3DB0 end:0x002E4448
+
+data/npc/npc_1_happy_i1.c:
 	.data       start:0x002E4448 end:0x002E47F8
+
+data/npc/npc_1_happy_i2.c:
 	.data       start:0x002E47F8 end:0x002E4DE8
+
+data/npc/npc_1_hate1.c:
 	.data       start:0x002E4DE8 end:0x002E51F8
+
+data/npc/npc_1_hate2.c:
 	.data       start:0x002E51F8 end:0x002E55F8
+
+data/npc/npc_1_hate_f1.c:
 	.data       start:0x002E55F8 end:0x002E59F0
+
+data/npc/npc_1_hate_f2.c:
 	.data       start:0x002E59F0 end:0x002E5DF8
+
+data/npc/npc_1_hate_i1.c:
 	.data       start:0x002E5DF8 end:0x002E61B0
+
+data/npc/npc_1_hate_i2.c:
 	.data       start:0x002E61B0 end:0x002E65C8
+
+data/npc/npc_1_omairi1.c:
 	.data       start:0x002E65C8 end:0x002E6A88
+
+data/npc/npc_1_saisen1.c:
 	.data       start:0x002E6A88 end:0x002E72E0
+
+data/npc/npc_1_hirameki1.c:
 	.data       start:0x002E72E0 end:0x002E7800
+
+data/npc/npc_1_hirameki2.c:
 	.data       start:0x002E7800 end:0x002E7C48
+
+data/npc/npc_1_hyuuu1.c:
 	.data       start:0x002E7C48 end:0x002E82A0
+
+data/npc/npc_1_hyuuu2.c:
 	.data       start:0x002E82A0 end:0x002E83A0
+
+data/npc/npc_1_hyuuu_r1.c:
 	.data       start:0x002E83A0 end:0x002E88B0
+
+data/npc/npc_1_hyuuu_r2.c:
 	.data       start:0x002E88B0 end:0x002E89B0
+
+data/npc/npc_1_wipkogu1.c:
 	.data       start:0x002E89B0 end:0x002E90C8
+
+data/npc/npc_1_wipwait1.c:
 	.data       start:0x002E90C8 end:0x002E96C0
+
+data/npc/npc_1_wipwait2.c:
 	.data       start:0x002E96C0 end:0x002E9C60
+
+data/npc/npc_1_keirei1.c:
 	.data       start:0x002E9C60 end:0x002EA2C8
+
+data/npc/npc_1_kieeeei1.c:
 	.data       start:0x002EA2C8 end:0x002EA858
+
+data/npc/npc_1_kieeeei2.c:
 	.data       start:0x002EA858 end:0x002EAAE8
+
+data/npc/npc_1_gaaan_d1.c:
 	.data       start:0x002EAAE8 end:0x002EAF58
+
+data/npc/npc_1_gaaan_d2.c:
 	.data       start:0x002EAF58 end:0x002EB3A0
+
+data/npc/npc_1_ha_d1.c:
 	.data       start:0x002EB3A0 end:0x002EB7C8
+
+data/npc/npc_1_ha_d2.c:
 	.data       start:0x002EB7C8 end:0x002EBBD8
+
+data/npc/npc_1_hate_d1.c:
 	.data       start:0x002EBBD8 end:0x002EBFD0
+
+data/npc/npc_1_hate_d2.c:
 	.data       start:0x002EBFD0 end:0x002EC3B0
+
+data/npc/npc_1_hirameki_d1.c:
 	.data       start:0x002EC3B0 end:0x002EC8B0
+
+data/npc/npc_1_hirameki_d2.c:
 	.data       start:0x002EC8B0 end:0x002ECCE8
+
+data/npc/npc_1_keitai_off1.c:
 	.data       start:0x002ECCE8 end:0x002ED370
+
+data/npc/npc_1_keitai_on1.c:
 	.data       start:0x002ED370 end:0x002EDAA0
+
+data/npc/npc_1_keitai_talk1.c:
 	.data       start:0x002EDAA0 end:0x002EDE90
+
+data/npc/npc_1_keitai_talk2.c:
 	.data       start:0x002EDE90 end:0x002EE318
+
+data/npc/npc_1_komari_d1.c:
 	.data       start:0x002EE318 end:0x002EE738
+
+data/npc/npc_1_musu_d1.c:
 	.data       start:0x002EE738 end:0x002EEB58
+
+data/npc/npc_1_niko_d1.c:
 	.data       start:0x002EEB58 end:0x002EEF80
+
+data/npc/npc_1_open_d1.c:
 	.data       start:0x002EEF80 end:0x002EF8C0
+
+data/npc/npc_1_open_d2.c:
 	.data       start:0x002EF8C0 end:0x002EFF78
+
+data/npc/npc_1_sitdown_d1.c:
 	.data       start:0x002EFF78 end:0x002F09C0
+
+data/npc/npc_1_sitdown_wait_d1.c:
 	.data       start:0x002F09C0 end:0x002F0E08
+
+data/npc/npc_1_smile_d1.c:
 	.data       start:0x002F0E08 end:0x002F1260
+
+data/npc/npc_1_smile_d2.c:
 	.data       start:0x002F1260 end:0x002F16B0
+
+data/npc/npc_1_standup_d1.c:
 	.data       start:0x002F16B0 end:0x002F1D40
+
+data/npc/npc_1_to_deck_d1.c:
 	.data       start:0x002F1D40 end:0x002F23B0
+
+data/npc/npc_1_komari1.c:
 	.data       start:0x002F23B0 end:0x002F2830
+
+data/npc/npc_1_komari_f1.c:
 	.data       start:0x002F2830 end:0x002F2C90
+
+data/npc/npc_1_komari_i1.c:
 	.data       start:0x002F2C90 end:0x002F30C8
+
+data/npc/npc_1_kutipaku1.c:
 	.data       start:0x002F30C8 end:0x002F3258
+
+data/npc/npc_1_kutipaku2.c:
 	.data       start:0x002F3258 end:0x002F3400
+
+data/npc/npc_1_love1.c:
 	.data       start:0x002F3400 end:0x002F3908
+
+data/npc/npc_1_love2.c:
 	.data       start:0x002F3908 end:0x002F3D48
+
+data/npc/npc_1_love_i1.c:
 	.data       start:0x002F3D48 end:0x002F4298
+
+data/npc/npc_1_love_i2.c:
 	.data       start:0x002F4298 end:0x002F46B8
+
+data/npc/npc_1_lovelove1.c:
 	.data       start:0x002F46B8 end:0x002F4C08
+
+data/npc/npc_1_lovelove2.c:
 	.data       start:0x002F4C08 end:0x002F5350
+
+data/npc/npc_1_lovelove_f1.c:
 	.data       start:0x002F5350 end:0x002F58A0
+
+data/npc/npc_1_lovelove_f2.c:
 	.data       start:0x002F58A0 end:0x002F6010
+
+data/npc/npc_1_appear1.c:
 	.data       start:0x002F6010 end:0x002F6650
+
+data/npc/npc_1_go_ug1.c:
 	.data       start:0x002F6650 end:0x002F6C18
+
+data/npc/npc_1_wait_r1.c:
 	.data       start:0x002F6C18 end:0x002F7110
+
+data/npc/npc_1_matarou_r1.c:
 	.data       start:0x002F7110 end:0x002F7528
+
+data/npc/npc_1_matarou_r2.c:
 	.data       start:0x002F7528 end:0x002F78A0
+
+data/npc/npc_1_misin1.c:
 	.data       start:0x002F78A0 end:0x002F8030
+
+data/npc/npc_1_run1.c:
 	.data       start:0x002F8030 end:0x002F8560
+
+data/npc/npc_1_wait1.c:
 	.data       start:0x002F8560 end:0x002F88D0
+
+data/npc/npc_1_wait_ai1.c:
 	.data       start:0x002F88D0 end:0x002F8D38
+
+data/npc/npc_1_wait_do1.c:
 	.data       start:0x002F8D38 end:0x002F9560
+
+data/npc/npc_1_wait_ki1.c:
 	.data       start:0x002F9560 end:0x002F9C10
+
+data/npc/npc_1_wait_nemu1.c:
 	.data       start:0x002F9C10 end:0x002FA120
+
+data/npc/npc_1_walk1.c:
 	.data       start:0x002FA120 end:0x002FA628
+
+data/npc/npc_1_walk_ai1.c:
 	.data       start:0x002FA628 end:0x002FAB40
+
+data/npc/npc_1_walk_do1.c:
 	.data       start:0x002FAB40 end:0x002FB230
+
+data/npc/npc_1_walk_ki1.c:
 	.data       start:0x002FB230 end:0x002FB898
+
+data/npc/npc_1_muka1.c:
 	.data       start:0x002FB898 end:0x002FBFF0
+
+data/npc/npc_1_muka2.c:
 	.data       start:0x002FBFF0 end:0x002FC2E8
+
+data/npc/npc_1_musu1.c:
 	.data       start:0x002FC2E8 end:0x002FC750
+
+data/npc/npc_1_musu_f1.c:
 	.data       start:0x002FC750 end:0x002FCB98
+
+data/npc/npc_1_musu_i1.c:
 	.data       start:0x002FCB98 end:0x002FCFF8
+
+data/npc/npc_1_musu_r1.c:
 	.data       start:0x002FCFF8 end:0x002FD4F0
+
+data/npc/npc_1_muuuuu1.c:
 	.data       start:0x002FD4F0 end:0x002FDA88
+
+data/npc/npc_1_muuuuu2.c:
 	.data       start:0x002FDA88 end:0x002FDE90
+
+data/npc/npc_1_muuuuu_f1.c:
 	.data       start:0x002FDE90 end:0x002FE3F0
+
+data/npc/npc_1_muuuuu_f2.c:
 	.data       start:0x002FE3F0 end:0x002FE7F8
+
+data/npc/npc_1_muuuuu_i1.c:
 	.data       start:0x002FE7F8 end:0x002FED18
+
+data/npc/npc_1_muuuuu_i2.c:
 	.data       start:0x002FED18 end:0x002FF120
+
+data/npc/npc_1_neboke1.c:
 	.data       start:0x002FF120 end:0x002FF770
+
+data/npc/npc_1_neboke2.c:
 	.data       start:0x002FF770 end:0x002FFC48
+
+data/npc/npc_1_niko1.c:
 	.data       start:0x002FFC48 end:0x00300128
+
+data/npc/npc_1_niko_f1.c:
 	.data       start:0x00300128 end:0x00300628
+
+data/npc/npc_1_niko_i1.c:
 	.data       start:0x00300628 end:0x00300B18
+
+data/npc/npc_1_kokkuri_d1.c:
 	.data       start:0x00300B18 end:0x00300EF0
+
+data/npc/npc_1_kokkuri_d2.c:
 	.data       start:0x00300EF0 end:0x00301668
+
+data/npc/npc_1_go_out1.c:
 	.data       start:0x00301668 end:0x003020E0
+
+data/npc/npc_1_open1.c:
 	.data       start:0x003020E0 end:0x003029E8
+
+data/npc/npc_1_otikomu1.c:
 	.data       start:0x003029E8 end:0x00302FF8
+
+data/npc/npc_1_otikomu2.c:
 	.data       start:0x00302FF8 end:0x00303440
+
+data/npc/npc_1_deru1.c:
 	.data       start:0x00303440 end:0x00303B48
+
+data/npc/npc_1_deru2.c:
 	.data       start:0x00303B48 end:0x003042F8
+
+data/npc/npc_1_guratuku1.c:
 	.data       start:0x003042F8 end:0x00304A68
+
+data/npc/npc_1_mogaku1.c:
 	.data       start:0x00304A68 end:0x00305248
+
+data/npc/npc_1_otiru1.c:
 	.data       start:0x00305248 end:0x003056B8
+
+data/npc/npc_1_otiru2.c:
 	.data       start:0x003056B8 end:0x00305B30
+
+data/npc/npc_1_punpun1.c:
 	.data       start:0x00305B30 end:0x00305FD8
+
+data/npc/npc_1_punpun2.c:
 	.data       start:0x00305FD8 end:0x00306408
+
+data/npc/npc_1_punpun_r1.c:
 	.data       start:0x00306408 end:0x00306838
+
+data/npc/npc_1_punpun_r2.c:
 	.data       start:0x00306838 end:0x00306C20
+
+data/npc/npc_1_gyafun1.c:
 	.data       start:0x00306C20 end:0x003074F0
+
+data/npc/npc_1_gyafun2.c:
 	.data       start:0x003074F0 end:0x00307BD8
+
+data/npc/npc_1_shituren1.c:
 	.data       start:0x00307BD8 end:0x00308238
+
+data/npc/npc_1_shituren2.c:
 	.data       start:0x00308238 end:0x00308338
+
+data/npc/npc_1_shituren_i1.c:
 	.data       start:0x00308338 end:0x00308920
+
+data/npc/npc_1_shituren_i2.c:
 	.data       start:0x00308920 end:0x00308A20
+
+data/npc/npc_1_smile1.c:
 	.data       start:0x00308A20 end:0x00308FA0
+
+data/npc/npc_1_smile2.c:
 	.data       start:0x00308FA0 end:0x003093C8
+
+data/npc/npc_1_smile_f1.c:
 	.data       start:0x003093C8 end:0x003098F0
+
+data/npc/npc_1_smile_f2.c:
 	.data       start:0x003098F0 end:0x00309DE8
+
+data/npc/npc_1_intro1_a.c:
 	.data       start:0x00309DE8 end:0x0030A7B8
+
+data/npc/npc_1_intro1_b.c:
 	.data       start:0x0030A7B8 end:0x0030B0D0
+
+data/npc/npc_1_kiduku1.c:
 	.data       start:0x0030B0D0 end:0x0030BA18
+
+data/npc/npc_1_kiduku2.c:
 	.data       start:0x0030BA18 end:0x0030C088
+
+data/npc/npc_1_taisou1.c:
 	.data       start:0x0030C088 end:0x0030C7E0
+
+data/npc/npc_1_taisou2.c:
 	.data       start:0x0030C7E0 end:0x0030CEB8
+
+data/npc/npc_1_taisou3_a.c:
 	.data       start:0x0030CEB8 end:0x0030D9B0
+
+data/npc/npc_1_taisou3_b.c:
 	.data       start:0x0030D9B0 end:0x0030E4A8
+
+data/npc/npc_1_taisou4_a.c:
 	.data       start:0x0030E4A8 end:0x0030ECF8
+
+data/npc/npc_1_taisou4_b.c:
 	.data       start:0x0030ECF8 end:0x0030F548
+
+data/npc/npc_1_taisou5_a.c:
 	.data       start:0x0030F548 end:0x0030FF48
+
+data/npc/npc_1_taisou5_b.c:
 	.data       start:0x0030FF48 end:0x00310948
+
+data/npc/npc_1_taisou6_a.c:
 	.data       start:0x00310948 end:0x00311140
+
+data/npc/npc_1_taisou6_b.c:
 	.data       start:0x00311140 end:0x00311930
+
+data/npc/npc_1_taisou7.c:
 	.data       start:0x00311930 end:0x003122D0
+
+data/npc/npc_1_tamahiroi1.c:
 	.data       start:0x003122D0 end:0x00312C40
+
+data/npc/npc_1_tamanage1.c:
 	.data       start:0x00312C40 end:0x003132C8
+
+data/npc/npc_1_asihumi1.c:
 	.data       start:0x003132C8 end:0x00313848
+
+data/npc/npc_1_don1.c:
 	.data       start:0x00313848 end:0x00313D40
+
+data/npc/npc_1_kokeru1.c:
 	.data       start:0x00313D40 end:0x00314308
+
+data/npc/npc_1_kokeru_getup1.c:
 	.data       start:0x00314308 end:0x003149E8
+
+data/npc/npc_1_ready1.c:
 	.data       start:0x003149E8 end:0x00314EC0
+
+data/npc/npc_1_tamakome1.c:
 	.data       start:0x00314EC0 end:0x00315328
+
+data/npc/npc_1_tired1.c:
 	.data       start:0x00315328 end:0x003157F8
+
+data/npc/npc_1_warmup1.c:
 	.data       start:0x003157F8 end:0x003160D8
+
+data/npc/npc_1_youi1.c:
 	.data       start:0x003160D8 end:0x00316518
+
+data/npc/npc_1_3haku_e1.c:
 	.data       start:0x00316518 end:0x00316AF0
+
+data/npc/npc_1_4haku_e1.c:
 	.data       start:0x00316AF0 end:0x00317138
+
+data/npc/npc_1_ensou_e1.c:
 	.data       start:0x00317138 end:0x003178E0
+
+data/npc/npc_1_wait_e1.c:
 	.data       start:0x003178E0 end:0x00317D60
+
+data/npc/npc_1_send_mail1.c:
 	.data       start:0x00317D60 end:0x00318538
+
+data/npc/npc_1_trans_wait1.c:
 	.data       start:0x00318538 end:0x00318950
+
+data/npc/npc_1_trans_wait_f1.c:
 	.data       start:0x00318950 end:0x00318D68
+
+data/npc/npc_1_transfer1.c:
 	.data       start:0x00318D68 end:0x00319690
+
+data/npc/npc_1_transfer_f1.c:
 	.data       start:0x00319690 end:0x00319FC0
+
+data/npc/npc_1_tue1.c:
 	.data       start:0x00319FC0 end:0x0031A348
+
+data/npc/npc_1_kuisinbo1.c:
 	.data       start:0x0031A348 end:0x0031AC08
+
+data/npc/npc_1_sanbasi1.c:
 	.data       start:0x0031AC08 end:0x0031B118
+
+data/npc/npc_1_hatafuri1.c:
 	.data       start:0x0031B118 end:0x0031B9F8
+
+data/npc/npc_1_tunahiki_aiko1.c:
 	.data       start:0x0031B9F8 end:0x0031BFA0
+
+data/npc/npc_1_tunahiki_furi1.c:
 	.data       start:0x0031BFA0 end:0x0031C698
+
+data/npc/npc_1_tunahiki_yuri1.c:
 	.data       start:0x0031C698 end:0x0031CCE0
+
+data/npc/npc_1_turi_wait1.c:
 	.data       start:0x0031CCE0 end:0x0031D178
+
+data/npc/npc_1_tkukoro1.c:
 	.data       start:0x0031D178 end:0x0031DCD8
+
+data/npc/npc_1_umb_close1.c:
 	.data       start:0x0031DCD8 end:0x0031E4D0
+
+data/npc/npc_1_umb_open1.c:
 	.data       start:0x0031E4D0 end:0x0031ED68
+
+data/npc/npc_1_umbrella1.c:
 	.data       start:0x0031ED68 end:0x0031EE68
+
+data/npc/npc_1_warudakumi1.c:
 	.data       start:0x0031EE68 end:0x0031F268
+
+data/npc/npc_1_warudakumi2.c:
 	.data       start:0x0031F268 end:0x0031F890
 
 data/npc/default_list.c:

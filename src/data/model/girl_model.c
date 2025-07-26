@@ -389,6 +389,4 @@ cKF_Joint_R_c cKF_je_r_grl_1_tbl[] = {
     { NULL, 0, cKF_JOINT_FLAG_DISP_OPA, { 1375, 0, 0 } },
 };
 
-cKF_Skeleton_R_c cKF_bs_r_grl_1[] = {
-    { ARRAY_COUNT(cKF_je_r_grl_1_tbl), 13, cKF_je_r_grl_1_tbl },
-};
+cKF_Skeleton_R_c cKF_bs_r_grl_1 = { ARRAY_COUNT(cKF_je_r_grl_1_tbl), 13, cKF_je_r_grl_1_tbl };

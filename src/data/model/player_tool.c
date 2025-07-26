@@ -304,7 +304,7 @@ cKF_Joint_R_c cKF_je_r_tol_net_1_tbl[] = {
     { main2_net_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 1900, 0, 0 } },
 };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_net_1[] = { { ARRAY_COUNT(cKF_je_r_tol_net_1_tbl), 3, cKF_je_r_tol_net_1_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_net_1 = { ARRAY_COUNT(cKF_je_r_tol_net_1_tbl), 3, cKF_je_r_tol_net_1_tbl };
 
 u16 tol_net_2_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/tol_net_2_pal.inc"
@@ -406,7 +406,7 @@ cKF_Joint_R_c cKF_je_r_tol_net_2_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, {
                                            { main_netB_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 100, 0, 0 } },
                                            { main2_netB_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 1900, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_net_2[] = { { ARRAY_COUNT(cKF_je_r_tol_net_2_tbl), 3, cKF_je_r_tol_net_2_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_net_2 = { ARRAY_COUNT(cKF_je_r_tol_net_2_tbl), 3, cKF_je_r_tol_net_2_tbl };
 
 u8 cKF_ckcb_r_tol_net_1_get_m1_tbl[] = { 0, 0, 7, 0, 7, 7 };
 
@@ -423,8 +423,12 @@ s16 cKF_ds_tol_net_1_get_m1_tbl[] = {
     24, -290, 1235, 29, 150,  1869,  34, 250,  0, 36, 100,  -3725, 42, -600, 0,    48, 200,  0,   52, -100, 0
 };
 
-cKF_Animation_R_c cKF_ba_r_tol_net_1_get_m1[] = { { cKF_ckcb_r_tol_net_1_get_m1_tbl, cKF_ds_tol_net_1_get_m1_tbl,
-                                                    cKF_kn_tol_net_1_get_m1_tbl, cKF_c_tol_net_1_get_m1_tbl, -1, 52 } };
+cKF_Animation_R_c cKF_ba_r_tol_net_1_get_m1 = { cKF_ckcb_r_tol_net_1_get_m1_tbl,
+                                                cKF_ds_tol_net_1_get_m1_tbl,
+                                                cKF_kn_tol_net_1_get_m1_tbl,
+                                                cKF_c_tol_net_1_get_m1_tbl,
+                                                -1,
+                                                52 };
 
 u8 cKF_ckcb_r_tol_net_1_net_swing1_tbl[] = { 0, 0, 7, 0, 7, 7 };
 
@@ -437,10 +441,12 @@ s16 cKF_ds_tol_net_1_net_swing1_tbl[] = { 1,    0, 0, 10, 0,  0,  1, 0,    0, 10
                                           -100, 0, 9, 0,  0,  10, 0, 0,    1, 0,  0,  10, 0,  0,    1, 0,  0,
                                           10,   0, 0, 1,  0,  0,  5, -350, 0, 7,  0,  0,  10, -150, 0 };
 
-cKF_Animation_R_c cKF_ba_r_tol_net_1_net_swing1[] = {
-    { cKF_ckcb_r_tol_net_1_net_swing1_tbl, cKF_ds_tol_net_1_net_swing1_tbl, cKF_kn_tol_net_1_net_swing1_tbl,
-      cKF_c_tol_net_1_net_swing1_tbl, -1, 10 }
-};
+cKF_Animation_R_c cKF_ba_r_tol_net_1_net_swing1 = { cKF_ckcb_r_tol_net_1_net_swing1_tbl,
+                                                    cKF_ds_tol_net_1_net_swing1_tbl,
+                                                    cKF_kn_tol_net_1_net_swing1_tbl,
+                                                    cKF_c_tol_net_1_net_swing1_tbl,
+                                                    -1,
+                                                    10 };
 
 u8 cKF_ckcb_r_tol_net_1_kamae_main_m1_tbl[] = { 0, 0, 7, 0, 7, 7 };
 
@@ -455,10 +461,12 @@ s16 cKF_ds_tol_net_1_kamae_main_m1_tbl[] = { 1,   0,   0,   17,  0,    0,  1,   
                                              188, 3,   0,   373, 7,    25, 0,   11, 0,  -381, 15,  -25, 0,   17,
                                              -19, 188, 1,   18,  223,  3,  25,  0,  11, -25,  0,   17,  18,  223 };
 
-cKF_Animation_R_c cKF_ba_r_tol_net_1_kamae_main_m1[] = {
-    { cKF_ckcb_r_tol_net_1_kamae_main_m1_tbl, cKF_ds_tol_net_1_kamae_main_m1_tbl, cKF_kn_tol_net_1_kamae_main_m1_tbl,
-      cKF_c_tol_net_1_kamae_main_m1_tbl, -1, 17 }
-};
+cKF_Animation_R_c cKF_ba_r_tol_net_1_kamae_main_m1 = { cKF_ckcb_r_tol_net_1_kamae_main_m1_tbl,
+                                                       cKF_ds_tol_net_1_kamae_main_m1_tbl,
+                                                       cKF_kn_tol_net_1_kamae_main_m1_tbl,
+                                                       cKF_c_tol_net_1_kamae_main_m1_tbl,
+                                                       -1,
+                                                       17 };
 
 u8 cKF_ckcb_r_tol_net_1_kokeru_getup_n1_tbl[] = { 0, 0, 0, 0, 3, 7 };
 
@@ -477,10 +485,12 @@ s16 cKF_ds_tol_net_1_kokeru_getup_n1_tbl[] = {
     -773, 25,    -307, 417,  26,    -272, 1604, 28,    -122, 2022, 31,   -6,    412,  32,   0,     195
 };
 
-cKF_Animation_R_c cKF_ba_r_tol_net_1_kokeru_getup_n1[] = {
-    { cKF_ckcb_r_tol_net_1_kokeru_getup_n1_tbl, cKF_ds_tol_net_1_kokeru_getup_n1_tbl,
-      cKF_kn_tol_net_1_kokeru_getup_n1_tbl, cKF_c_tol_net_1_kokeru_getup_n1_tbl, -1, 32 }
-};
+cKF_Animation_R_c cKF_ba_r_tol_net_1_kokeru_getup_n1 = { cKF_ckcb_r_tol_net_1_kokeru_getup_n1_tbl,
+                                                         cKF_ds_tol_net_1_kokeru_getup_n1_tbl,
+                                                         cKF_kn_tol_net_1_kokeru_getup_n1_tbl,
+                                                         cKF_c_tol_net_1_kokeru_getup_n1_tbl,
+                                                         -1,
+                                                         32 };
 
 u8 cKF_ckcb_r_tol_net_1_kokeru_n1_tbl[] = { 0, 0, 7, 0, 7, 7 };
 
@@ -496,9 +506,12 @@ s16 cKF_ds_tol_net_1_kokeru_n1_tbl[] = { 1,  0,    0,     31, 0,    0,     1,  0
                                          10, 0,    0,     17, 700,  1073,  31, 900,  0,    1,  0,   0, 5,  500,  0,
                                          8,  -290, -3843, 11, -450, 0,     17, 0,    2439, 31, 390, 0 };
 
-cKF_Animation_R_c cKF_ba_r_tol_net_1_kokeru_n1[] = { { cKF_ckcb_r_tol_net_1_kokeru_n1_tbl,
-                                                       cKF_ds_tol_net_1_kokeru_n1_tbl, cKF_kn_tol_net_1_kokeru_n1_tbl,
-                                                       cKF_c_tol_net_1_kokeru_n1_tbl, -1, 31 } };
+cKF_Animation_R_c cKF_ba_r_tol_net_1_kokeru_n1 = { cKF_ckcb_r_tol_net_1_kokeru_n1_tbl,
+                                                   cKF_ds_tol_net_1_kokeru_n1_tbl,
+                                                   cKF_kn_tol_net_1_kokeru_n1_tbl,
+                                                   cKF_c_tol_net_1_kokeru_n1_tbl,
+                                                   -1,
+                                                   31 };
 
 u8 cKF_ckcb_r_tol_net_1_swing_wait1_tbl[] = { 0, 0, 7, 0, 7, 7 };
 
@@ -513,10 +526,12 @@ s16 cKF_ds_tol_net_1_swing_wait1_tbl[] = { 1,    0,    0,     21,  0,    0,   1,
                                            0,    0,    21,    0,   0,    1,   0,     -6054, 3,    -200, 0,  5,    0,
                                            6067, 10,   700,   0,   18,   -50, -1513, 21,    -100, 0 };
 
-cKF_Animation_R_c cKF_ba_r_tol_net_1_swing_wait1[] = {
-    { cKF_ckcb_r_tol_net_1_swing_wait1_tbl, cKF_ds_tol_net_1_swing_wait1_tbl, cKF_kn_tol_net_1_swing_wait1_tbl,
-      cKF_c_tol_net_1_swing_wait1_tbl, -1, 21 }
-};
+cKF_Animation_R_c cKF_ba_r_tol_net_1_swing_wait1 = { cKF_ckcb_r_tol_net_1_swing_wait1_tbl,
+                                                     cKF_ds_tol_net_1_swing_wait1_tbl,
+                                                     cKF_kn_tol_net_1_swing_wait1_tbl,
+                                                     cKF_c_tol_net_1_swing_wait1_tbl,
+                                                     -1,
+                                                     21 };
 
 u8 cKF_ckcb_r_tol_net_1_yatta_m1_tbl[] = { 0, 0, 7, 0, 7, 7 };
 
@@ -535,9 +550,12 @@ s16 cKF_ds_tol_net_1_yatta_m1_tbl[] = {
     44, 0,    0,     48, -200, -2347, 53, -550, 0
 };
 
-cKF_Animation_R_c cKF_ba_r_tol_net_1_yatta_m1[] = { { cKF_ckcb_r_tol_net_1_yatta_m1_tbl, cKF_ds_tol_net_1_yatta_m1_tbl,
-                                                      cKF_kn_tol_net_1_yatta_m1_tbl, cKF_c_tol_net_1_yatta_m1_tbl, -1,
-                                                      53 } };
+cKF_Animation_R_c cKF_ba_r_tol_net_1_yatta_m1 = { cKF_ckcb_r_tol_net_1_yatta_m1_tbl,
+                                                  cKF_ds_tol_net_1_yatta_m1_tbl,
+                                                  cKF_kn_tol_net_1_yatta_m1_tbl,
+                                                  cKF_c_tol_net_1_yatta_m1_tbl,
+                                                  -1,
+                                                  53 };
 
 static u16 tol_sao_1_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/player_tool/tol_sao_1_pal.inc"
@@ -634,7 +652,7 @@ cKF_Joint_R_c cKF_je_r_tol_sao_1_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, {
                                            { main3_sao_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 1850, 0, 0 } },
                                            { main4_sao_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 1600, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_sao_1[] = { { ARRAY_COUNT(cKF_je_r_tol_sao_1_tbl), 4, cKF_je_r_tol_sao_1_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_sao_1 = { ARRAY_COUNT(cKF_je_r_tol_sao_1_tbl), 4, cKF_je_r_tol_sao_1_tbl };
 
 static u16 tol_sao_2_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/player_tool/tol_sao_2_pal.inc"
@@ -731,7 +749,7 @@ cKF_Joint_R_c cKF_je_r_tol_sao_2_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, {
                                            { main3_saoB_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 1850, 0, 0 } },
                                            { main4_saoB_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 1600, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_sao_2[] = { { ARRAY_COUNT(cKF_je_r_tol_sao_2_tbl), 4, cKF_je_r_tol_sao_2_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_sao_2 = { ARRAY_COUNT(cKF_je_r_tol_sao_2_tbl), 4, cKF_je_r_tol_sao_2_tbl };
 
 u8 cKF_ckcb_r_tol_sao_1_sao_get_t1_tbl[] = { 0, 0, 1, 1, 1 };
 
@@ -747,10 +765,12 @@ s16 cKF_ds_tol_sao_1_sao_get_t1_tbl[] = { 1,    -150, -279, 3,    -160, 139,  8,
                                           3107, 9,    0,    2602, 10,   70,   1345, 13,   45,   -925, 14,   14,  -673,
                                           15,   0,    -210, 16,   0,    0,    22,   0,    0 };
 
-cKF_Animation_R_c cKF_ba_r_tol_sao_1_sao_get_t1[] = {
-    { cKF_ckcb_r_tol_sao_1_sao_get_t1_tbl, cKF_ds_tol_sao_1_sao_get_t1_tbl, cKF_kn_tol_sao_1_sao_get_t1_tbl,
-      cKF_c_tol_sao_1_sao_get_t1_tbl, -1, 22 }
-};
+cKF_Animation_R_c cKF_ba_r_tol_sao_1_sao_get_t1 = { cKF_ckcb_r_tol_sao_1_sao_get_t1_tbl,
+                                                    cKF_ds_tol_sao_1_sao_get_t1_tbl,
+                                                    cKF_kn_tol_sao_1_sao_get_t1_tbl,
+                                                    cKF_c_tol_sao_1_sao_get_t1_tbl,
+                                                    -1,
+                                                    22 };
 
 u8 cKF_ckcb_r_tol_sao_1_sao_move1_tbl[] = { 56, 7, 1, 7, 7 };
 
@@ -765,9 +785,12 @@ s16 cKF_ds_tol_sao_1_sao_move1_tbl[] = {
     1, 0,   0, 17, 0,   0, 1, 69, -1141, 4,  -45, 0, 8, 90, 0, 12, -45, 0, 16, 90, 0, 17, 69, -1141
 };
 
-cKF_Animation_R_c cKF_ba_r_tol_sao_1_sao_move1[] = { { cKF_ckcb_r_tol_sao_1_sao_move1_tbl,
-                                                       cKF_ds_tol_sao_1_sao_move1_tbl, cKF_kn_tol_sao_1_sao_move1_tbl,
-                                                       cKF_c_tol_sao_1_sao_move1_tbl, -1, 17 } };
+cKF_Animation_R_c cKF_ba_r_tol_sao_1_sao_move1 = { cKF_ckcb_r_tol_sao_1_sao_move1_tbl,
+                                                   cKF_ds_tol_sao_1_sao_move1_tbl,
+                                                   cKF_kn_tol_sao_1_sao_move1_tbl,
+                                                   cKF_c_tol_sao_1_sao_move1_tbl,
+                                                   -1,
+                                                   17 };
 
 u8 cKF_ckcb_r_tol_sao_1_sao_sinari1_tbl[] = { 0, 0, 1, 1, 1 };
 
@@ -778,10 +801,12 @@ s16 cKF_c_tol_sao_1_sao_sinari1_tbl[] = { 0, 0, 0, 900, 0, 0, 0, 0, 900, 0, 0, 0
 s16 cKF_ds_tol_sao_1_sao_sinari1_tbl[] = { 1,   300,  -50,  360, -300, -50,  1,   600,  -100,
                                            360, -600, -100, 1,   900,  -150, 360, -900, -150 };
 
-cKF_Animation_R_c cKF_ba_r_tol_sao_1_sao_sinari1[] = {
-    { cKF_ckcb_r_tol_sao_1_sao_sinari1_tbl, cKF_ds_tol_sao_1_sao_sinari1_tbl, cKF_kn_tol_sao_1_sao_sinari1_tbl,
-      cKF_c_tol_sao_1_sao_sinari1_tbl, -1, 360 }
-};
+cKF_Animation_R_c cKF_ba_r_tol_sao_1_sao_sinari1 = { cKF_ckcb_r_tol_sao_1_sao_sinari1_tbl,
+                                                     cKF_ds_tol_sao_1_sao_sinari1_tbl,
+                                                     cKF_kn_tol_sao_1_sao_sinari1_tbl,
+                                                     cKF_c_tol_sao_1_sao_sinari1_tbl,
+                                                     -1,
+                                                     360 };
 
 u8 cKF_ckcb_r_tol_sao_1_sao_swing1_tbl[] = { 0, 0, 1, 1, 1 };
 
@@ -801,10 +826,12 @@ s16 cKF_ds_tol_sao_1_sao_swing1_tbl[] = {
     -111, 1667, 23,    -39,   1667, 24,   0,     583,  25,   0,     0,     34,   0,     0
 };
 
-cKF_Animation_R_c cKF_ba_r_tol_sao_1_sao_swing1[] = {
-    { cKF_ckcb_r_tol_sao_1_sao_swing1_tbl, cKF_ds_tol_sao_1_sao_swing1_tbl, cKF_kn_tol_sao_1_sao_swing1_tbl,
-      cKF_c_tol_sao_1_sao_swing1_tbl, -1, 34 }
-};
+cKF_Animation_R_c cKF_ba_r_tol_sao_1_sao_swing1 = { cKF_ckcb_r_tol_sao_1_sao_swing1_tbl,
+                                                    cKF_ds_tol_sao_1_sao_swing1_tbl,
+                                                    cKF_kn_tol_sao_1_sao_swing1_tbl,
+                                                    cKF_c_tol_sao_1_sao_swing1_tbl,
+                                                    -1,
+                                                    34 };
 
 u8 cKF_ckcb_r_tol_sao_1_sao_wait1_tbl[] = { 56, 7, 7, 7, 7 };
 
@@ -821,9 +848,12 @@ s16 cKF_ds_tol_sao_1_sao_wait1_tbl[] = { 1,  0,   0, 33, 0,  0, 1,  0,   0,    3
                                          1,  0,   0, 3,  0,  0, 33, 0,   0,    1,  -24, -569, 3, -45, 0, 10, 90,  0,
                                          19, -45, 0, 27, 90, 0, 33, -24, -569 };
 
-cKF_Animation_R_c cKF_ba_r_tol_sao_1_sao_wait1[] = { { cKF_ckcb_r_tol_sao_1_sao_wait1_tbl,
-                                                       cKF_ds_tol_sao_1_sao_wait1_tbl, cKF_kn_tol_sao_1_sao_wait1_tbl,
-                                                       cKF_c_tol_sao_1_sao_wait1_tbl, -1, 33 } };
+cKF_Animation_R_c cKF_ba_r_tol_sao_1_sao_wait1 = { cKF_ckcb_r_tol_sao_1_sao_wait1_tbl,
+                                                   cKF_ds_tol_sao_1_sao_wait1_tbl,
+                                                   cKF_kn_tol_sao_1_sao_wait1_tbl,
+                                                   cKF_c_tol_sao_1_sao_wait1_tbl,
+                                                   -1,
+                                                   33 };
 
 u8 cKF_ckcb_r_tol_sao_1_not_sao_swing1_tbl[] = { 0, 0, 1, 1, 1 };
 
@@ -841,10 +871,12 @@ s16 cKF_ds_tol_sao_1_not_sao_swing1_tbl[] = {
     26, 7,   1000,  27, 30,  125,   28, 15,   -450,  29, 0,    -225,  30, 0,    0,     34, 0,    0
 };
 
-cKF_Animation_R_c cKF_ba_r_tol_sao_1_not_sao_swing1[] = {
-    { cKF_ckcb_r_tol_sao_1_not_sao_swing1_tbl, cKF_ds_tol_sao_1_not_sao_swing1_tbl, cKF_kn_tol_sao_1_not_sao_swing1_tbl,
-      cKF_c_tol_sao_1_not_sao_swing1_tbl, -1, 34 }
-};
+cKF_Animation_R_c cKF_ba_r_tol_sao_1_not_sao_swing1 = { cKF_ckcb_r_tol_sao_1_not_sao_swing1_tbl,
+                                                        cKF_ds_tol_sao_1_not_sao_swing1_tbl,
+                                                        cKF_kn_tol_sao_1_not_sao_swing1_tbl,
+                                                        cKF_c_tol_sao_1_not_sao_swing1_tbl,
+                                                        -1,
+                                                        34 };
 
 u16 act_m_scoop_1_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/act_m_scoop_1_pal.inc"
@@ -1096,7 +1128,7 @@ cKF_Joint_R_c cKF_je_r_tol_balloon1_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA
                                               { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                               { tol_balloonA_head_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_balloon1[] = { { ARRAY_COUNT(cKF_je_r_tol_balloon1_tbl), 4, cKF_je_r_tol_balloon1_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_balloon1 = { ARRAY_COUNT(cKF_je_r_tol_balloon1_tbl), 4, cKF_je_r_tol_balloon1_tbl };
 
 u8 tol_balloonB_wire_tex_txt[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/tol_balloonB_wire_tex_txt.inc"
@@ -1200,7 +1232,7 @@ cKF_Joint_R_c cKF_je_r_tol_balloon2_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA
                                               { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                               { tol_balloonB_head_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_balloon2[] = { { ARRAY_COUNT(cKF_je_r_tol_balloon2_tbl), 4, cKF_je_r_tol_balloon2_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_balloon2 = { ARRAY_COUNT(cKF_je_r_tol_balloon2_tbl), 4, cKF_je_r_tol_balloon2_tbl };
 
 u8 tol_balloonC_wire_tex_txt[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/tol_balloonC_wire_tex_txt.inc"
@@ -1306,7 +1338,7 @@ cKF_Joint_R_c cKF_je_r_tol_balloon3_tbl[] = {
     { tol_balloonC_head_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
 };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_balloon3[] = { { ARRAY_COUNT(cKF_je_r_tol_balloon3_tbl), 4, cKF_je_r_tol_balloon3_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_balloon3 = { ARRAY_COUNT(cKF_je_r_tol_balloon3_tbl), 4, cKF_je_r_tol_balloon3_tbl };
 
 u8 tol_balloonD_wire_tex_txt[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/tol_balloonD_wire_tex_txt.inc"
@@ -1410,7 +1442,7 @@ cKF_Joint_R_c cKF_je_r_tol_balloon4_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA
                                               { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                               { tol_balloonD_head_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_balloon4[] = { { ARRAY_COUNT(cKF_je_r_tol_balloon4_tbl), 4, cKF_je_r_tol_balloon4_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_balloon4 = { ARRAY_COUNT(cKF_je_r_tol_balloon4_tbl), 4, cKF_je_r_tol_balloon4_tbl };
 
 u8 tol_balloonE_wire_tex_txt[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/tol_balloonE_wire_tex_txt.inc"
@@ -1514,7 +1546,7 @@ cKF_Joint_R_c cKF_je_r_tol_balloon5_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA
                                               { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                               { tol_balloonE_head_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_balloon5[] = { { ARRAY_COUNT(cKF_je_r_tol_balloon5_tbl), 4, cKF_je_r_tol_balloon5_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_balloon5 = { ARRAY_COUNT(cKF_je_r_tol_balloon5_tbl), 4, cKF_je_r_tol_balloon5_tbl };
 
 u8 tol_balloonF_wire_tex_txt[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/tol_balloonF_wire_tex_txt.inc"
@@ -1643,7 +1675,7 @@ cKF_Joint_R_c cKF_je_r_tol_balloon6_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA
                                               { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                               { tol_balloonF_head_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_balloon6[] = { { ARRAY_COUNT(cKF_je_r_tol_balloon6_tbl), 4, cKF_je_r_tol_balloon6_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_balloon6 = { ARRAY_COUNT(cKF_je_r_tol_balloon6_tbl), 4, cKF_je_r_tol_balloon6_tbl };
 
 u8 tol_balloonG_wire_tex_txt[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/tol_balloonG_wire_tex_txt.inc"
@@ -1772,7 +1804,7 @@ cKF_Joint_R_c cKF_je_r_tol_balloon7_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA
                                               { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                               { tol_balloonG_head_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_balloon7[] = { { ARRAY_COUNT(cKF_je_r_tol_balloon7_tbl), 4, cKF_je_r_tol_balloon7_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_balloon7 = { ARRAY_COUNT(cKF_je_r_tol_balloon7_tbl), 4, cKF_je_r_tol_balloon7_tbl };
 
 u8 tol_balloonH_wire_tex_txt[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/tol_balloonH_wire_tex_txt.inc"
@@ -1901,7 +1933,7 @@ cKF_Joint_R_c cKF_je_r_tol_balloon8_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA
                                               { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                               { tol_balloonH_head_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_balloon8[] = { { ARRAY_COUNT(cKF_je_r_tol_balloon8_tbl), 4, cKF_je_r_tol_balloon8_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_balloon8 = { ARRAY_COUNT(cKF_je_r_tol_balloon8_tbl), 4, cKF_je_r_tol_balloon8_tbl };
 
 u8 cKF_ckcb_r_tol_balloon1_wait_tbl[] = { 0, 3, 7, 7, 0, 0, 7 };
 
@@ -1918,9 +1950,12 @@ s16 cKF_ds_tol_balloon1_wait_tbl[] = { 1,    -50,  0,    31,  50,  0,    61,   -
                                        1,    -52,  -150, 9,   -75, 1,    39,   75,   13,  61,  -52, -150, 1,    103,
                                        331,  9,    150,  -1,  39,  -150, -2,   61,   103, 300 };
 
-cKF_Animation_R_c cKF_ba_r_tol_balloon1_wait[] = { { cKF_ckcb_r_tol_balloon1_wait_tbl, cKF_ds_tol_balloon1_wait_tbl,
-                                                     cKF_kn_tol_balloon1_wait_tbl, cKF_c_tol_balloon1_wait_tbl, -1,
-                                                     61 } };
+cKF_Animation_R_c cKF_ba_r_tol_balloon1_wait = { cKF_ckcb_r_tol_balloon1_wait_tbl,
+                                                 cKF_ds_tol_balloon1_wait_tbl,
+                                                 cKF_kn_tol_balloon1_wait_tbl,
+                                                 cKF_c_tol_balloon1_wait_tbl,
+                                                 -1,
+                                                 61 };
 
 u8 cKF_ckcb_r_tol_balloon1_gyaza1_tbl[] = { 0, 7, 7, 7, 0, 0, 7 };
 
@@ -1969,9 +2004,12 @@ s16 cKF_ds_tol_balloon1_gyaza1_tbl[] = {
     25, -201,  780,   26, -161,  3008,  27, 0,     5394
 };
 
-cKF_Animation_R_c cKF_ba_r_tol_balloon1_gyaza1[] = { { cKF_ckcb_r_tol_balloon1_gyaza1_tbl,
-                                                       cKF_ds_tol_balloon1_gyaza1_tbl, cKF_kn_tol_balloon1_gyaza1_tbl,
-                                                       cKF_c_tol_balloon1_gyaza1_tbl, -1, 27 } };
+cKF_Animation_R_c cKF_ba_r_tol_balloon1_gyaza1 = { cKF_ckcb_r_tol_balloon1_gyaza1_tbl,
+                                                   cKF_ds_tol_balloon1_gyaza1_tbl,
+                                                   cKF_kn_tol_balloon1_gyaza1_tbl,
+                                                   cKF_c_tol_balloon1_gyaza1_tbl,
+                                                   -1,
+                                                   27 };
 
 static u16 tol_kaza_1_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/player_tool/tol_kaza_1_pal.inc"
@@ -2037,7 +2075,7 @@ cKF_Joint_R_c cKF_je_r_tol_kaza1_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, {
                                            { tol_kaza1_base_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                            { tol_kaza1_fan_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 2250, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_kaza1[] = { { ARRAY_COUNT(cKF_je_r_tol_kaza1_tbl), 2, cKF_je_r_tol_kaza1_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_kaza1 = { ARRAY_COUNT(cKF_je_r_tol_kaza1_tbl), 2, cKF_je_r_tol_kaza1_tbl };
 
 static u16 tol_kaza_2_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/player_tool/tol_kaza_2_pal.inc"
@@ -2103,7 +2141,7 @@ cKF_Joint_R_c cKF_je_r_tol_kaza2_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, {
                                            { tol_kaza2_base_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                            { tol_kaza2_fan_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 2250, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_kaza2[] = { { ARRAY_COUNT(cKF_je_r_tol_kaza2_tbl), 2, cKF_je_r_tol_kaza2_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_kaza2 = { ARRAY_COUNT(cKF_je_r_tol_kaza2_tbl), 2, cKF_je_r_tol_kaza2_tbl };
 
 static u16 tol_kaza_3_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/player_tool/tol_kaza_3_pal.inc"
@@ -2169,7 +2207,7 @@ cKF_Joint_R_c cKF_je_r_tol_kaza3_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, {
                                            { tol_kaza3_base_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                            { tol_kaza3_fan_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 2250, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_kaza3[] = { { ARRAY_COUNT(cKF_je_r_tol_kaza3_tbl), 2, cKF_je_r_tol_kaza3_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_kaza3 = { ARRAY_COUNT(cKF_je_r_tol_kaza3_tbl), 2, cKF_je_r_tol_kaza3_tbl };
 
 static u16 tol_kaza_4_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/player_tool/tol_kaza_4_pal.inc"
@@ -2235,7 +2273,7 @@ cKF_Joint_R_c cKF_je_r_tol_kaza4_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, {
                                            { tol_kaza4_base_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                            { tol_kaza4_fan_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 2250, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_kaza4[] = { { ARRAY_COUNT(cKF_je_r_tol_kaza4_tbl), 2, cKF_je_r_tol_kaza4_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_kaza4 = { ARRAY_COUNT(cKF_je_r_tol_kaza4_tbl), 2, cKF_je_r_tol_kaza4_tbl };
 
 static u16 tol_kaza_5_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/player_tool/tol_kaza_5_pal.inc"
@@ -2301,7 +2339,7 @@ cKF_Joint_R_c cKF_je_r_tol_kaza5_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, {
                                            { tol_kaza5_base_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                            { tol_kaza5_fan_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 2250, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_kaza5[] = { { ARRAY_COUNT(cKF_je_r_tol_kaza5_tbl), 2, cKF_je_r_tol_kaza5_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_kaza5 = { ARRAY_COUNT(cKF_je_r_tol_kaza5_tbl), 2, cKF_je_r_tol_kaza5_tbl };
 
 static u16 tol_kaza_6_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/player_tool/tol_kaza_6_pal.inc"
@@ -2367,7 +2405,7 @@ cKF_Joint_R_c cKF_je_r_tol_kaza6_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, {
                                            { tol_kaza6_base_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                            { tol_kaza6_fan_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 2250, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_kaza6[] = { { ARRAY_COUNT(cKF_je_r_tol_kaza6_tbl), 2, cKF_je_r_tol_kaza6_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_kaza6 = { ARRAY_COUNT(cKF_je_r_tol_kaza6_tbl), 2, cKF_je_r_tol_kaza6_tbl };
 
 static u16 tol_kaza_7_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/player_tool/tol_kaza_7_pal.inc"
@@ -2477,7 +2515,7 @@ cKF_Joint_R_c cKF_je_r_tol_kaza7_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, {
                                            { tol_kaza7_base_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                            { tol_kaza7_fan_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 2250, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_kaza7[] = { { ARRAY_COUNT(cKF_je_r_tol_kaza7_tbl), 2, cKF_je_r_tol_kaza7_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_kaza7 = { ARRAY_COUNT(cKF_je_r_tol_kaza7_tbl), 2, cKF_je_r_tol_kaza7_tbl };
 
 static u16 tol_kaza_8_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/player_tool/tol_kaza_8_pal.inc"
@@ -2588,7 +2626,7 @@ cKF_Joint_R_c cKF_je_r_tol_kaza8_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_OPA, {
                                            { tol_kaza8_base_model, 1, cKF_JOINT_FLAG_DISP_OPA, { 0, 0, 0 } },
                                            { tol_kaza8_fan_model, 0, cKF_JOINT_FLAG_DISP_OPA, { 2250, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_tol_kaza8[] = { { ARRAY_COUNT(cKF_je_r_tol_kaza8_tbl), 2, cKF_je_r_tol_kaza8_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_tol_kaza8 = { ARRAY_COUNT(cKF_je_r_tol_kaza8_tbl), 2, cKF_je_r_tol_kaza8_tbl };
 
 u8 cKF_ckcb_r_tol_kaza1_wait_tbl[] = { 56, 7, 7 };
 
@@ -2600,8 +2638,12 @@ s16 cKF_ds_tol_kaza1_wait_tbl[] = { 1, 0, 0, 361, 0, 0, 1, 0,    0, 361, 0,    0
                                     1, 0, 0, 361, 0, 0, 1, -900, 0, 361, -900, 0, 1, 0, 0,   361, 0,    0,
                                     1, 0, 0, 361, 0, 0, 1, 0,    0, 361, 0,    0, 1, 0, 300, 361, 3600, 300 };
 
-cKF_Animation_R_c cKF_ba_r_tol_kaza1_wait[] = { { cKF_ckcb_r_tol_kaza1_wait_tbl, cKF_ds_tol_kaza1_wait_tbl,
-                                                  cKF_kn_tol_kaza1_wait_tbl, cKF_c_tol_kaza1_wait_tbl, -1, 361 } };
+cKF_Animation_R_c cKF_ba_r_tol_kaza1_wait = { cKF_ckcb_r_tol_kaza1_wait_tbl,
+                                              cKF_ds_tol_kaza1_wait_tbl,
+                                              cKF_kn_tol_kaza1_wait_tbl,
+                                              cKF_c_tol_kaza1_wait_tbl,
+                                              -1,
+                                              361 };
 
 static u16 tol_fan1_pal[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/player_tool/tol_fan1_pal.inc"

@@ -79,12 +79,13 @@ s16 cKF_c_act_bee_tbl[] = { 0, 0, 0, 0, 900, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 s16 cKF_ds_act_bee_tbl[] = { 1, 300, -100, 181, -300, -100, 1, 300, -100, 181, -300, -100 };
 
-cKF_Animation_R_c cKF_ba_r_act_bee[] = { { cKF_ckcb_r_act_bee_tbl, cKF_ds_act_bee_tbl, cKF_kn_act_bee_tbl,
-                                           cKF_c_act_bee_tbl, -1, 181 } };
+cKF_Animation_R_c cKF_ba_r_act_bee = {
+    cKF_ckcb_r_act_bee_tbl, cKF_ds_act_bee_tbl, cKF_kn_act_bee_tbl, cKF_c_act_bee_tbl, -1, 181
+};
 
 cKF_Joint_R_c cKF_je_r_act_bee_tbl[] = { { NULL, 1, cKF_JOINT_FLAG_DISP_XLU, { 0, 0, 0 } },
                                          { act_bee_A_model, 1, cKF_JOINT_FLAG_DISP_XLU, { 0, 0, 0 } },
                                          { act_bee_B_model, 1, cKF_JOINT_FLAG_DISP_XLU, { 1000, 0, 0 } },
                                          { act_bee_C_model, 0, cKF_JOINT_FLAG_DISP_XLU, { 1500, 0, 0 } } };
 
-cKF_Skeleton_R_c cKF_bs_r_act_bee[] = { { ARRAY_COUNT(cKF_je_r_act_bee_tbl), 3, cKF_je_r_act_bee_tbl } };
+cKF_Skeleton_R_c cKF_bs_r_act_bee = { ARRAY_COUNT(cKF_je_r_act_bee_tbl), 3, cKF_je_r_act_bee_tbl };
