@@ -9,15 +9,23 @@
 extern "C" {
 #endif
 
-extern ACTOR_PROFILE Room_Sunshine_Museum_Profile;
+enum {
+    Ef_Room_Sunshine_Museum_TOP_RIGHT,
+    Ef_Room_Sunshine_Museum_TOP_LEFT,
+    Ef_Room_Sunshine_Museum_BOTTOM_RIGHT,
+    Ef_Room_Sunshine_Museum_BOTTOM_LEFT,
 
-typedef struct effect_room_sunshine_museum_s{
+    Ef_Room_Sunshine_Museum_NUM
+};
+
+typedef struct effect_room_sunshine_museum_s {
     ROOMSUNSHINE_ACTOR ef_sunshine_class;
-}ROOMSUNSHINEMUSEUM_ACTOR;    
+} ROOMSUNSHINEMUSEUM_ACTOR;
+
+extern ACTOR_PROFILE Room_Sunshine_Museum_Profile;
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-

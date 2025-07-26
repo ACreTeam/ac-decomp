@@ -6,12 +6,11 @@
 #include "m_collision_bg.h"
 #include "sys_matrix.h"
 
-void Ef_Room_Sunshine_Museum_actor_ct(ACTOR* actor, GAME* play);
-void Ef_Room_Sunshine_Museum_actor_dt(ACTOR* actor, GAME* play);
-void Ef_Room_Sunshine_MuseumL_actor_draw(ACTOR* actor, GAME* play);
-void Ef_Room_Sunshine_MuseumL_actor_move(ACTOR* actor, GAME* play);
-void Ef_Room_Sunshine_MuseumR_actor_draw(ACTOR* actor, GAME* play);
-void Ef_Room_Sunshine_MuseumR_actor_move(ACTOR* actor, GAME* play);
+void Ef_Room_Sunshine_Museum_actor_ct(ACTOR* actorx, GAME* game);
+void Ef_Room_Sunshine_MuseumL_actor_draw(ACTOR* actorx, GAME* game);
+void Ef_Room_Sunshine_MuseumL_actor_move(ACTOR* actorx, GAME* game);
+void Ef_Room_Sunshine_MuseumR_actor_draw(ACTOR* actorx, GAME* game);
+void Ef_Room_Sunshine_MuseumR_actor_move(ACTOR* actorx, GAME* game);
 
 extern Gfx obj_museum1_shine_model[];
 extern Gfx obj_museum1_shine_modelT[];
@@ -30,176 +29,134 @@ ACTOR_PROFILE Room_Sunshine_Museum_Profile = {
     NULL,
 };
 
-void Ef_Room_Sunshine_Museum_actor_ct(ACTOR* actor, GAME* game){
-    ROOMSUNSHINEMUSEUM_ACTOR* museum = (ROOMSUNSHINEMUSEUM_ACTOR*)actor;
-    xyz_t pos;
-    xyz_t pos2; 
-    xyz_t pos3;
-    
+static void Ef_Room_Sunshine_Museum_actor_ct(ACTOR* actorx, GAME* game) {
+    ROOMSUNSHINEMUSEUM_ACTOR* museum = (ROOMSUNSHINEMUSEUM_ACTOR*)actorx;
+
     museum->ef_sunshine_class.unk_174 = 0;
-
-    if(museum->ef_sunshine_class.actor_class.actor_specific == 0){
-        museum->ef_sunshine_class.actor_class.mv_proc = Ef_Room_Sunshine_MuseumL_actor_move;
-        museum->ef_sunshine_class.actor_class.dw_proc = Ef_Room_Sunshine_MuseumL_actor_draw;
-    }
-    else{
-        museum->ef_sunshine_class.actor_class.world.position.x -= 1.0f;
+    if (actorx->actor_specific == Ef_Room_Sunshine_Museum_TOP_RIGHT) {
+        actorx->mv_proc = Ef_Room_Sunshine_MuseumL_actor_move;
+        actorx->dw_proc = Ef_Room_Sunshine_MuseumL_actor_draw;
+    } else {
+        actorx->world.position.x -= 1.0f;
     }
 
-    museum->ef_sunshine_class.actor_class.world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(museum->ef_sunshine_class.actor_class.world.position, 0.0f);
+    actorx->world.position.y = mCoBG_GetBgY_OnlyCenter_FromWpos(actorx->world.position, 0.0f);
 
-    museum->ef_sunshine_class.actor_class.scale.x = 0.01f;
-    museum->ef_sunshine_class.actor_class.scale.y = 0.01f;
-    museum->ef_sunshine_class.actor_class.scale.z = 0.01f;
+    actorx->scale.x = 0.01f;
+    actorx->scale.y = 0.01f;
+    actorx->scale.z = 0.01f;
 
-    switch(museum->ef_sunshine_class.actor_class.actor_specific){
-
-        case 2:
-            
-            museum->ef_sunshine_class.actor_class.mv_proc = Ef_Room_Sunshine_MuseumL_actor_move;
-            museum->ef_sunshine_class.actor_class.dw_proc = Ef_Room_Sunshine_MuseumL_actor_draw;
-            museum->ef_sunshine_class.actor_class.world.position.x += 5.0f;
-            museum->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(museum->ef_sunshine_class.actor_class.world.position, 0.0f) - 40.0f;
-            museum->ef_sunshine_class.actor_class.world.position.x -= 6.0f;
-        break;
-
-        case 3:
-            museum->ef_sunshine_class.actor_class.world.position.x -= 5.0f;
-            museum->ef_sunshine_class.actor_class.world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(pos3 = museum->ef_sunshine_class.actor_class.world.position, 0.0f) - 40.0f;
-            museum->ef_sunshine_class.actor_class.world.position.x += 6.0f;
-        break;
+    switch (actorx->actor_specific) {
+        case Ef_Room_Sunshine_Museum_BOTTOM_RIGHT:
+            actorx->mv_proc = Ef_Room_Sunshine_MuseumL_actor_move;
+            actorx->dw_proc = Ef_Room_Sunshine_MuseumL_actor_draw;
+            actorx->world.position.x += 5.0f;
+            actorx->world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(actorx->world.position, 0.0f) - 40.0f;
+            actorx->world.position.x -= 6.0f;
+            break;
+        case Ef_Room_Sunshine_Museum_BOTTOM_LEFT:
+            actorx->world.position.x -= 5.0f;
+            actorx->world.position.y = 1.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(actorx->world.position, 0.0f) - 40.0f;
+            actorx->world.position.x += 6.0f;
+            break;
     }
 }
 
-f32 calc_scale_Ef_Room_Sunshine_Museum(int flag, int sec){
-    
-    if(flag == 0){
-        return 0.01f * (1.5f * sin_s((sec << 14) / 28800.0f));
-    }
-    else{
-        return 0.01f * (1.5f * sin_s((sec << 14) / 14400.0f));
+static f32 calc_scale_Ef_Room_Sunshine_Museum(int flag, int sec) {
+    if (flag == 0) {
+        return 0.01f * (1.5f * sin_s((sec * DEG2SHORT_ANGLE2(90.0f)) / (f32)mTM_TIME2SEC(8, 0, 0)));
+    } else {
+        return 0.01f * (1.5f * sin_s((sec * DEG2SHORT_ANGLE2(90.0f)) / (f32)mTM_TIME2SEC(4, 0, 0)));
     }
 }
 
-int calc_alpha_Ef_Room_SunshineMuseum(){
-    f32 ret;
-    int sec;
- 
-    if(Common_Get(time.now_sec) < 14400){
-        ret = 120.0f * ((14400 - Common_Get(time.now_sec)) / 14400.0f);     
-    }
-    else if(Common_Get(time.now_sec) < 72000){
-        //any other number matches codegen, but 43200 breaks
-        sec = (Common_Get(time.now_sec) - 43200) >= 0 ? 
-            (Common_Get(time.now_sec) - 43200U) : -(Common_Get(time.now_sec) - 43200U);
+static u8 calc_alpha_Ef_Room_SunshineMuseum(void) {
+    int sec = Common_Get(time.now_sec);
+    f32 alpha;
 
-        ret = 255.0f * ((28800 - sec) / 28800.0f);
-    }
-    else{
-        ret = 120.0f  * ((14400 - (86400 - Common_Get(time.now_sec))) / 14400.0f);
+    if (sec < mTM_TIME2SEC(4, 0, 0)) {
+        alpha = 120.0f * ((mTM_TIME2SEC(4, 0, 0) - sec) / (f32)mTM_TIME2SEC(4, 0, 0));
+    } else if (sec < mTM_TIME2SEC(20, 0, 0)) {
+        alpha = 255.0f * ((mTM_TIME2SEC(8, 0, 0) - ABS(sec - mTM_TIME2SEC(12, 0, 0))) / (f32)mTM_TIME2SEC(8, 0, 0));
+    } else {
+        alpha = 120.0f * ((mTM_TIME2SEC(4, 0, 0) - (mTM_TIME2SEC(24, 0, 0) - sec)) / (f32)mTM_TIME2SEC(4, 0, 0));
     }
 
-    if((Common_Get(weather) == 1) || (Common_Get(weather) == 2)){
-        ret *= 0.6f;
+    if ((Common_Get(weather) == mEnv_WEATHER_RAIN) || (Common_Get(weather) == mEnv_WEATHER_SNOW)) {
+        alpha *= 0.6f;
     }
-    
-    return (u8)ret;
+
+    return (int)alpha;
 }
 
-void Ef_Room_Sunshine_MuseumL_actor_move(ACTOR* actor, GAME* game){
-    ROOMSUNSHINEMUSEUM_ACTOR* museum = (ROOMSUNSHINEMUSEUM_ACTOR*)actor;
-    
-    if(Common_Get(time.now_sec) < 14400){
-        museum->ef_sunshine_class.actor_class.scale.x = calc_scale_Ef_Room_Sunshine_Museum(1, Common_Get(time.now_sec));
-    }
-    else if ((Common_Get(time.now_sec) >= 43200) && (Common_Get(time.now_sec) < 72000)){
-        museum->ef_sunshine_class.actor_class.scale.x = calc_scale_Ef_Room_Sunshine_Museum(0, Common_Get(time.now_sec) - 43200);
-    }
-    else{
-    museum->ef_sunshine_class.actor_class.scale.x = 0.0f;
+static void Ef_Room_Sunshine_MuseumL_actor_move(ACTOR* actorx, GAME* game) {
+    int now_sec = Common_Get(time.now_sec);
+
+    if (now_sec < mTM_TIME2SEC(4, 0, 0)) {
+        actorx->scale.x = calc_scale_Ef_Room_Sunshine_Museum(1, now_sec);
+    } else if (now_sec >= mTM_TIME2SEC(12, 0, 0) && now_sec < mTM_TIME2SEC(20, 0, 0)) {
+        actorx->scale.x = calc_scale_Ef_Room_Sunshine_Museum(0, now_sec - mTM_TIME2SEC(12, 0, 0));
+    } else {
+        actorx->scale.x = 0.0f;
     }
 }
 
-void Ef_Room_Sunshine_MuseumR_actor_move(ACTOR* actor, GAME* game){
-    ROOMSUNSHINEMUSEUM_ACTOR* museum = (ROOMSUNSHINEMUSEUM_ACTOR*)actor;
-    
-    if((Common_Get(time.now_sec) >= 14400) && (Common_Get(time.now_sec) < 43200)){
-        museum->ef_sunshine_class.actor_class.scale.x = -calc_scale_Ef_Room_Sunshine_Museum(0, 43200 - Common_Get(time.now_sec));
-    }
-    else if (Common_Get(time.now_sec) >= 72000){
-        museum->ef_sunshine_class.actor_class.scale.x = -calc_scale_Ef_Room_Sunshine_Museum(1, 86400 -Common_Get(time.now_sec));
-    }
-    else{
-    museum->ef_sunshine_class.actor_class.scale.x = 0.0f;
+static void Ef_Room_Sunshine_MuseumR_actor_move(ACTOR* actorx, GAME* game) {
+    int now_sec = Common_Get(time.now_sec);
+
+    if (now_sec >= mTM_TIME2SEC(4, 0, 0) && now_sec < mTM_TIME2SEC(12, 0, 0)) {
+        actorx->scale.x = -calc_scale_Ef_Room_Sunshine_Museum(0, mTM_TIME2SEC(12, 0, 0) - now_sec);
+    } else if (now_sec >= mTM_TIME2SEC(20, 0, 0)) {
+        actorx->scale.x = -calc_scale_Ef_Room_Sunshine_Museum(1, mTM_TIME2SEC(24, 0, 0) - now_sec);
+    } else {
+        actorx->scale.x = 0.0f;
     }
 }
 
-
-void setup_mode_Ef_Room_Sunshine_Museum(ACTOR* actor, GAME_PLAY* play){
-    ROOMSUNSHINE_ACTOR* sunshine = (ROOMSUNSHINE_ACTOR*)actor;
+static void setup_mode_Ef_Room_Sunshine_Museum(ACTOR* actorx, GAME* game) {
     u8* color;
-    int calc;
+    u8 prim_l;
 
-    GRAPH* graph = play->game.graph;
+    OPEN_DISP(game->graph);
 
-    OPEN_DISP(graph);
-
-    Matrix_translate(sunshine->actor_class.world.position.x + GETREG(TAKREG,20), sunshine->actor_class.world.position.y + GETREG(TAKREG,21), 
-        sunshine->actor_class.world.position.z + GETREG(TAKREG,22), MTX_LOAD);
-    Matrix_scale(sunshine->actor_class.scale.x, sunshine->actor_class.scale.y, sunshine->actor_class.scale.z, MTX_MULT);
+    Matrix_translate(actorx->world.position.x + GETREG(TAKREG, 20), actorx->world.position.y + GETREG(TAKREG, 21),
+                     actorx->world.position.z + GETREG(TAKREG, 22), MTX_LOAD);
+    Matrix_scale(actorx->scale.x, actorx->scale.y, actorx->scale.z, MTX_MULT);
 
     gDPPipeSync(NEXT_POLY_XLU_DISP);
+    gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
-    gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(play->game.graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-
-    if((Common_Get(time.now_sec) >= 14400) && (Common_Get(time.now_sec) < 72000)){
-         color =play->kankyo.base_light.sun_color_window;
-    }
-    else{
-        color =play->kankyo.base_light.moon_color_window;
+    if ((Common_Get(time.now_sec) >= mTM_TIME2SEC(4, 0, 0)) && (Common_Get(time.now_sec) < mTM_TIME2SEC(20, 0, 0))) {
+        color = ((GAME_PLAY*)game)->kankyo.base_light.sun_color_window;
+    } else {
+        color = ((GAME_PLAY*)game)->kankyo.base_light.moon_color_window;
     }
 
-    calc = ((u8)calc_alpha_Ef_Room_SunshineMuseum() * mKK_windowlight_alpha_get());
- 
-    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, calc, color[0], color[1], color[2], 75);
-    CLOSE_DISP(graph);
-    
+    prim_l = calc_alpha_Ef_Room_SunshineMuseum() * mKK_windowlight_alpha_get();
+    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, prim_l, color[0], color[1], color[2], 75);
+    CLOSE_DISP(game->graph);
 }
 
-void Ef_Room_Sunshine_MuseumL_actor_draw(ACTOR* actor, GAME* game){
-    GRAPH* graph;
-    GAME_PLAY* play = (GAME_PLAY*)game;
+static void Ef_Room_Sunshine_MuseumL_actor_draw(ACTOR* actorx, GAME* game) {
+    if (!(mKK_windowlight_alpha_get() < 0.0001f) && (actorx->scale.x != 0.0f)) {
+        OPEN_DISP(game->graph);
 
-    if(!(mKK_windowlight_alpha_get() < 9.99999974738e-05f) && (actor->scale.x != 0.0f)){
-    
-        graph = play->game.graph;
-        setup_mode_Ef_Room_Sunshine_Museum(actor, play);
-        
-        OPEN_DISP(graph);
-        
+        setup_mode_Ef_Room_Sunshine_Museum(actorx, game);
         gSPDisplayList(NEXT_POLY_XLU_DISP, obj_museum1_shine_model);
         gSPDisplayList(NEXT_POLY_XLU_DISP, obj_museum1_shine_modelT);
-        
-         
-        CLOSE_DISP(graph);
+
+        CLOSE_DISP(game->graph);
     }
 }
 
-void Ef_Room_Sunshine_MuseumR_actor_draw(ACTOR* actor, GAME* game){
-    GRAPH* graph;
-    GAME_PLAY* play = (GAME_PLAY*)game;
+static void Ef_Room_Sunshine_MuseumR_actor_draw(ACTOR* actorx, GAME* game) {
+    if (!(mKK_windowlight_alpha_get() < 0.0001f) && (actorx->scale.x != 0.0f)) {
+        OPEN_DISP(game->graph);
 
-    if(!(mKK_windowlight_alpha_get() < 9.99999974738e-05f) && (actor->scale.x != 0.0f)){
-    
-        graph = play->game.graph;
-        setup_mode_Ef_Room_Sunshine_Museum(actor, play);
-        
-        OPEN_DISP(graph);
-        
+        setup_mode_Ef_Room_Sunshine_Museum(actorx, game);
         gSPDisplayList(NEXT_POLY_XLU_DISP, obj_museum1_shine_model);
         gSPDisplayList(NEXT_POLY_XLU_DISP, obj_museum1_shine_modelT);
-        
-         
-        CLOSE_DISP(graph);
+
+        CLOSE_DISP(game->graph);
     }
 }
