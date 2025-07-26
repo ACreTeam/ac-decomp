@@ -6292,7 +6292,6 @@ data/dataobject/dataobject_38D7E0:
 	.data       start:0x0038DEE0 end:0x0038E3E0
 	.data       start:0x0038E3E0 end:0x0038E9B8
 	.data       start:0x0038E9B8 end:0x0038ECD0
-	.data       start:0x0038ECD0 end:0x0038ECE0
 	.data       start:0x0038ECE0 end:0x0038F120
 	.data       start:0x0038F120 end:0x0038F660
 	.data       start:0x0038F660 end:0x0038F920
@@ -6340,7 +6339,6 @@ data/dataobject/dataobject_38D7E0:
 	.data       start:0x0039D3C0 end:0x0039D8E0
 	.data       start:0x0039D8E0 end:0x0039DE00
 	.data       start:0x0039DE00 end:0x0039E308
-	.data       start:0x0039E308 end:0x0039E320
 	.data       start:0x0039E320 end:0x0039E840
 	.data       start:0x0039E840 end:0x0039F060
 	.data       start:0x0039F060 end:0x003B1FA0
@@ -6360,7 +6358,6 @@ data/dataobject/dataobject_3B5AC0:
 	.data       start:0x003C0780 end:0x003C0870
 	.data       start:0x003C0870 end:0x003C08D0
 	.data       start:0x003C08D0 end:0x003C0A08
-	.data       start:0x003C0A08 end:0x003C0A20
 	.data       start:0x003C0A20 end:0x003C0CC0
 	.data       start:0x003C0CC0 end:0x003C9940
 	.data       start:0x003C9940 end:0x003CB200
@@ -6986,7 +6983,6 @@ data/field/bg/beach_pal.c:
 
 data/dataobject/dataobject_60C928:
 	.data       start:0x0060C928 end:0x0060CD28
-	.data       start:0x0060CD28 end:0x0060CD40
 
 data/field/bg/acre/grd_yamishop/grd_yamishop.c:
 	.data       start:0x0060CD40 end:0x006106A0
@@ -7038,7 +7034,6 @@ data/item/binsen_price.c:
 
 data/dataobject/dataobject_692030:
 	.data       start:0x00620930 end:0x00620950
-	.data       start:0x00620950 end:0x00620960
 	.data       start:0x00620960 end:0x00622160
 	.data       start:0x00622160 end:0x00623960
 	.data       start:0x00623960 end:0x00623980
@@ -7304,7 +7299,6 @@ data/dataobject/dataobject_642D80:
 	.data       start:0x00660860 end:0x00661700
 	.data       start:0x00661700 end:0x006618A0
 	.data       start:0x006618A0 end:0x00661B38
-	.data       start:0x00661B38 end:0x00661B40
 	.data       start:0x00661B40 end:0x006623C0
 	.data       start:0x006623C0 end:0x00662C30
 	.data       start:0x00662C30 end:0x00662EC0
@@ -7348,7 +7342,6 @@ data/dataobject/dataobject_642D80:
 	.data       start:0x0066E280 end:0x0066E980
 	.data       start:0x0066E980 end:0x0066EAA0
 	.data       start:0x0066EAA0 end:0x0066F538
-	.data       start:0x0066F538 end:0x0066F540
 	.data       start:0x0066F540 end:0x0066FD60
 	.data       start:0x0066FD60 end:0x00670200
 	.data       start:0x00670200 end:0x00670B40
@@ -7366,7 +7359,6 @@ data/dataobject/dataobject_642D80:
 	.data       start:0x00674E60 end:0x00675700
 	.data       start:0x00675700 end:0x006758A0
 	.data       start:0x006758A0 end:0x00675DF8
-	.data       start:0x00675DF8 end:0x00675E00
 	.data       start:0x00675E00 end:0x00676980
 	.data       start:0x00676980 end:0x00677CC0
 	.data       start:0x00677CC0 end:0x00678160
@@ -9087,7 +9079,6 @@ data/field/bg/acre/rom_museum3/rom_museum3.c:
 data/dataobject/dataobject_8DA918:
 	.data       start:0x008DA918 end:0x008DA960
 	.data       start:0x008DA960 end:0x008DB378
-	.data       start:0x008DB378 end:0x008DB380
 	.data       start:0x008DB380 end:0x008DBD60
 
 data/field/bg/acre/rom_tailor/rom_tailor.c:
@@ -9107,7 +9098,6 @@ data/dataobject/dataobject_8E4AB0:
 	.data       start:0x008EE920 end:0x008F01E0
 	.data       start:0x008F01E0 end:0x008F0C40
 	.data       start:0x008F0C40 end:0x008F24B8
-	.data       start:0x008F24B8 end:0x008F24C0
 	.data       start:0x008F24C0 end:0x008F2D00
 	.data       start:0x008F2D00 end:0x008F3540
 	.data       start:0x008F3540 end:0x008F44A0
@@ -9183,7 +9173,6 @@ data/dataobject/dataobject_8E4AB0:
 	.data       start:0x0092A640 end:0x0092B140
 	.data       start:0x0092B140 end:0x0092BDA0
 	.data       start:0x0092BDA0 end:0x0092C768
-	.data       start:0x0092C768 end:0x0092C780
 	.data       start:0x0092C780 end:0x0092CF20
 	.data       start:0x0092CF20 end:0x0092D5C0
 	.data       start:0x0092D5C0 end:0x0092DC90
@@ -9308,7 +9297,6 @@ data/dataobject/dataobject_95F920:
 	.data       start:0x0099BE60 end:0x0099CD20
 	.data       start:0x0099CD20 end:0x0099DC00
 	.data       start:0x0099DC00 end:0x0099EAB0
-	.data       start:0x0099EAB0 end:0x0099EAC0
 	.data       start:0x0099EAC0 end:0x0099F780
 	.data       start:0x0099F780 end:0x009A0420
 	.data       start:0x009A0420 end:0x009A0F60
@@ -9580,7 +9568,6 @@ data/dataobject/dataobject_95F920:
 	.data       start:0x00A73860 end:0x00A74AE0
 	.data       start:0x00A74AE0 end:0x00A75720
 	.data       start:0x00A75720 end:0x00A76738
-	.data       start:0x00A76738 end:0x00A76740
 	.data       start:0x00A76740 end:0x00A774C0
 	.data       start:0x00A774C0 end:0x00A78140
 	.data       start:0x00A78140 end:0x00A78C60
