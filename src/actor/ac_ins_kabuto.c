@@ -47,7 +47,13 @@ extern void aIKB_actor_init(ACTOR* actorx, GAME* game) {
         mActor_name_t* fg_p = mFI_GetUnitFG(actorx->world.position);
         int init_type;
 
+        // @BUG - devs forgot to check for the item variants of the cedar tree.
+        // This causes the 'invisible bug' glitch.
+#ifndef BUGFIXES
         if (fg_p != NULL && *fg_p == CEDAR_TREE) {
+#else
+        if (fg_p != NULL && (*fg_p == CEDAR_TREE || *fg_p == CEDAR_TREE_BELLS || *fg_p == CEDAR_TREE_FTR || *fg_p == CEDAR_TREE_BEES || *fg_p == CEDAR_TREE_LIGHTS)) {
+#endif
             init_type = aIKB_INIT_CEDAR;
         } else {
             init_type = aIKB_INIT_TREE;
