@@ -721,7 +721,7 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
 
             if this_obj.endswith("_v"):
                 found_types.append((this_obj, "Vtx"))
-            elif "_model" in this_obj:
+            elif "_model" in this_obj or this_obj.endswith("_ef"):
                 found_types.append((this_obj, "Gfx"))
             elif "_tex_index" in this_obj:
                 found_types.append((this_obj, "u8"))
