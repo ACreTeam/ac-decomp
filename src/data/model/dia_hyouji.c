@@ -5,15 +5,16 @@
 #include "ac_npc.h"
 #include "ef_effect_control.h"
 
+extern Vtx dia_hyouji_v[];
 u8 dir_win_diary_tex[] ATTRIBUTE_ALIGN(32) = {
 #include "assets/dir_win_diary_tex.inc"
 };
 
-static u8 kei_win_quit_tex[] ATTRIBUTE_ALIGN(32) = {
+static u8 kei_win_quit_tex[] = {
 #include "assets/dia_hyouji/kei_win_quit_tex.inc"
 };
 
-static u8 lat_tegami_b2_tex[] ATTRIBUTE_ALIGN(32) = {
+static u8 lat_tegami_b2_tex[] = {
 #include "assets/dia_hyouji/lat_tegami_b2_tex.inc"
 };
 
@@ -21,7 +22,7 @@ u8 lat_sousa_2b1_tex_rgb_i4[] = {
 #include "assets/lat_sousa_2b1_tex_rgb_i4.inc"
 };
 
-static u8 lat_tegami_b3_tex[] ATTRIBUTE_ALIGN(32) = {
+static u8 lat_tegami_b3_tex[] = {
 #include "assets/dia_hyouji/lat_tegami_b3_tex.inc"
 };
 
@@ -79,8 +80,13 @@ Gfx dia_win_mojiT_model[] = {
     gsSPEndDisplayList(),
 };
 
-u8 dia_init_mode_letter[] = {
-#include "assets/dia_init_mode_letter.inc"
+Gfx dia_init_mode_letter[] = {
+    gsSPLoadGeometryMode(G_SHADE | G_CULL_BACK | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsDPSetOtherMode(G_AD_NOTPATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_RGBA16 | G_TL_TILE |
+                         G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE,
+                     G_AC_NONE | G_ZS_PIXEL | G_RM_CLD_SURF | G_RM_CLD_SURF2),
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsSPEndDisplayList(),
 };
 
 Gfx dia_init_mode[] = {

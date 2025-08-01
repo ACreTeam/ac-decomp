@@ -33896,11 +33896,6 @@ modules:
     header_type: none
     custom_type: vtx
 
-  - symbol: dia_init_mode_letter
-    binary: assets/dia_init_mode_letter.bin
-    header: assets/dia_init_mode_letter.inc
-    header_type: raw
-
   - symbol: lat_letter01_pal!.data:0x4076E0
     binary: assets/dia_win/lat_letter01_pal.bin
     header: assets/dia_win/lat_letter01_pal.inc
