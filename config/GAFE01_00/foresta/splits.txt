@@ -6054,7 +6054,7 @@ data/scene/p_room_bm_m.c:
 data/scene/p_room_bm_s.c:
 	.data       start:0x00333980 end:0x00333A00
 
-data/dataobject/dataobject_333A00:
+data/model/pswd_famicom_list.c:
 	.data       start:0x00333A00 end:0x00333A28
 
 data/npc/model/mdl/pgn_1.c:
@@ -6192,7 +6192,7 @@ data/npc/model/mdl/mob_1.c:
 data/npc/model/tex/mob_1.c:
 	.data       start:0x0036B5A0 end:0x0036CA40
 
-data/dataobject/dataobject_36CA40:
+data/model/ef_ame02_00.c:
 	.data       start:0x0036CA40 end:0x0036CE40
 
 data/npc/model/mdl/rhn_1.c:
@@ -6210,14 +6210,28 @@ data/npc/model/tex/rhn_3.c:
 data/npc/model/tex/rhn_4.c:
 	.data       start:0x00372C60 end:0x00373E80
 
-data/dataobject/dataobject_373E80:
+data/model/room_lightR.c:
 	.data       start:0x00373E80 end:0x00374140
+
+data/model/obj_museum4_shine.c:
 	.data       start:0x00374140 end:0x003749E0
+
+data/model/rom_museum4_ue.c:
 	.data       start:0x003749E0 end:0x003794C8
+
+data/model/obj_museum1_shine.c:
 	.data       start:0x003794C8 end:0x0037A450
+
+data/model/obj_koban_shine.c:
 	.data       start:0x0037A450 end:0x0037A890
+
+data/model/obj_yubinkyoku_shine.c:
 	.data       start:0x0037A890 end:0x0037AD00
+
+data/model/tol_rope_1.c:
 	.data       start:0x0037AD00 end:0x0037B3A0
+
+data/model/tol_rope_1_shadow.c:
 	.data       start:0x0037B3A0 end:0x0037B698
 
 data/scene/shop01.c:
@@ -6244,7 +6258,7 @@ data/scene/start_demo2.c:
 data/scene/start_demo3.c:
 	.data       start:0x0037BA18 end:0x0037BAA0
 
-data/dataobject/dataobject_37BAA0:
+data/model/ef_hanabira01_00.c:
 	.data       start:0x0037BAA0 end:0x0037BC48
 
 data/npc/model/mdl/snt_1.c:
@@ -6286,62 +6300,172 @@ data/npc/model/mdl/rcn_1.c:
 data/npc/model/tex/rcn_1.c:
 	.data       start:0x0038C980 end:0x0038D7E0
 
-data/dataobject/dataobject_38D7E0:
+data/model/obj_item_apple.c:
 	.data       start:0x0038D7E0 end:0x0038DAA0
+
+data/model/obj_shop_axe.c:
 	.data       start:0x0038DAA0 end:0x0038DEE0
+
+data/model/obj_shop_paper.c:
 	.data       start:0x0038DEE0 end:0x0038E3E0
+
+data/model/obj_shop_carpet.c:
 	.data       start:0x0038E3E0 end:0x0038E9B8
+
+data/model/item_fish.c:
 	.data       start:0x0038E9B8 end:0x0038ECD0
+
+data/model/obj_item_fossil.c:
 	.data       start:0x0038ECE0 end:0x0038F120
+
+data/model/obj_shop_fuku.c:
 	.data       start:0x0038F120 end:0x0038F660
+
+data/model/obj_item_kabu.c:
 	.data       start:0x0038F660 end:0x0038F920
+
+data/model/obj_shop_kanban.c:
 	.data       start:0x0038F920 end:0x0038FCA0
+
+data/model/obj_shop_kaza1.c:
 	.data       start:0x0038FCA0 end:0x00390620
+
+data/model/obj_shop_kaza2.c:
 	.data       start:0x00390620 end:0x00390FA0
+
+data/model/obj_shop_kaza3.c:
 	.data       start:0x00390FA0 end:0x00391920
+
+data/model/obj_shop_kaza4.c:
 	.data       start:0x00391920 end:0x003922A0
+
+data/model/obj_shop_kaza5.c:
 	.data       start:0x003922A0 end:0x00392C20
+
+data/model/obj_shop_kaza6.c:
 	.data       start:0x00392C20 end:0x003935A0
+
+data/model/obj_shop_kaza7.c:
 	.data       start:0x003935A0 end:0x00394700
+
+data/model/obj_shop_kaza8.c:
 	.data       start:0x00394700 end:0x00395720
+
+data/model/obj_item_matutake.c:
 	.data       start:0x00395720 end:0x003959E0
+
+data/model/obj_shop_md.c:
 	.data       start:0x003959E0 end:0x00395CA0
+
+data/model/obj_shop_cnaegi.c:
 	.data       start:0x00395CA0 end:0x00396080
+
+data/model/obj_shop_naegi.c:
 	.data       start:0x00396080 end:0x003964E0
+
+data/model/obj_shop_net.c:
 	.data       start:0x003964E0 end:0x003968A0
+
+data/model/obj_item_orange.c:
 	.data       start:0x003968A0 end:0x00396B60
+
+data/model/obj_shop_paint.c:
 	.data       start:0x00396B60 end:0x00397440
+
+data/model/obj_shop_rod.c:
 	.data       start:0x00397440 end:0x003978E0
+
+data/model/obj_shop_sango.c:
 	.data       start:0x003978E0 end:0x00397C00
+
+data/model/obj_shop_seed.c:
 	.data       start:0x00397C00 end:0x00397FE0
+
+data/model/obj_shop_honegai.c:
 	.data       start:0x00397FE0 end:0x003981A0
+
+data/model/obj_shop_horagai.c:
 	.data       start:0x003981A0 end:0x003983E0
+
+data/model/obj_shop_komagai.c:
 	.data       start:0x003983E0 end:0x00398560
+
+data/model/obj_shop_takaragai.c:
 	.data       start:0x00398560 end:0x003986E0
+
+data/model/obj_shop_ougigai.c:
 	.data       start:0x003986E0 end:0x00398900
+
+data/model/obj_shop_sakuragai.c:
 	.data       start:0x00398900 end:0x00398C00
+
+data/model/obj_shop_shakogai.c:
 	.data       start:0x00398C00 end:0x00398E20
+
+data/model/obj_shop_shovel.c:
 	.data       start:0x00398E20 end:0x00399260
+
+data/model/obj_shop_soldout.c:
 	.data       start:0x00399260 end:0x003995C0
+
+data/model/obj_shop_ticket.c:
 	.data       start:0x003995C0 end:0x00399820
+
+data/model/obj_shop_axe2.c:
 	.data       start:0x00399820 end:0x00399C60
+
+data/model/obj_shop_net2.c:
 	.data       start:0x00399C60 end:0x0039A020
+
+data/model/obj_shop_rod2.c:
 	.data       start:0x0039A020 end:0x0039A4C0
+
+data/model/obj_shop_shovel2.c:
 	.data       start:0x0039A4C0 end:0x0039A900
+
+data/model/obj_shop_akican.c:
 	.data       start:0x0039A900 end:0x0039AF00
+
+data/model/obj_shop_nagagutu.c:
 	.data       start:0x0039AF00 end:0x0039B480
+
+data/model/obj_shop_tire.c:
 	.data       start:0x0039B480 end:0x0039BA20
+
+data/model/obj_shop_utiwa1.c:
 	.data       start:0x0039BA20 end:0x0039BF40
+
+data/model/obj_shop_utiwa2.c:
 	.data       start:0x0039BF40 end:0x0039C460
+
+data/model/obj_shop_utiwa3.c:
 	.data       start:0x0039C460 end:0x0039C980
+
+data/model/obj_shop_utiwa4.c:
 	.data       start:0x0039C980 end:0x0039CEA0
+
+data/model/obj_shop_utiwa5.c:
 	.data       start:0x0039CEA0 end:0x0039D3C0
+
+data/model/obj_shop_utiwa6.c:
 	.data       start:0x0039D3C0 end:0x0039D8E0
+
+data/model/obj_shop_utiwa7.c:
 	.data       start:0x0039D8E0 end:0x0039DE00
+
+data/model/obj_shop_utiwa8.c:
 	.data       start:0x0039DE00 end:0x0039E308
+
+data/model/obj_shop_wall.c:
 	.data       start:0x0039E320 end:0x0039E840
+
+data/model/obj_shop_manekin.c:
 	.data       start:0x0039E840 end:0x0039F060
+
+data/model/obj_shop_umb01.c:
 	.data       start:0x0039F060 end:0x003B1FA0
+
+data/model/obj_s_kanban.c:
 	.data       start:0x003B1FA0 end:0x003B2CB0
 
 data/npc/model/mdl/kab_1.c:
@@ -6350,217 +6474,637 @@ data/npc/model/mdl/kab_1.c:
 data/npc/model/tex/kab_1.c:
 	.data       start:0x003B4EA0 end:0x003B5AC0
 
-data/dataobject/dataobject_3B5AC0:
+data/model/lat_atena_kageT.c:
 	.data       start:0x003B5AC0 end:0x003B5D60
+
+data/model/lat_mes.c:
 	.data       start:0x003B5D60 end:0x003B6200
+
+data/model/tyo_win.c:
 	.data       start:0x003B6200 end:0x003BBA40
+
+data/model/bir_win.c:
 	.data       start:0x003BBA40 end:0x003C0780
+
+data/model/lat_hani.c:
 	.data       start:0x003C0780 end:0x003C0870
+
+data/model/lat_letter.c:
 	.data       start:0x003C0870 end:0x003C08D0
+
+data/model/lat_point.c:
 	.data       start:0x003C08D0 end:0x003C0A08
+
+data/model/ctl_sentaku.c:
 	.data       start:0x003C0A20 end:0x003C0CC0
+
+data/model/ctl_win1.c:
 	.data       start:0x003C0CC0 end:0x003C9940
+
+data/model/dia_att.c:
 	.data       start:0x003C9940 end:0x003CB200
+
+data/model/cal_hyouji.c:
 	.data       start:0x003CB200 end:0x003CF1C0
+
+data/model/cal_hyouji2.c:
 	.data       start:0x003CF1C0 end:0x003D1320
+
+data/model/cal_icon1.c:
 	.data       start:0x003D1320 end:0x003D14C0
+
+data/model/cal_icon2.c:
 	.data       start:0x003D14C0 end:0x003D15C0
+
+data/model/cal_icon3.c:
 	.data       start:0x003D15C0 end:0x003D1780
+
+data/model/cal_nen.c:
 	.data       start:0x003D1780 end:0x003D1E20
+
+data/model/cal_win_tuki.c:
 	.data       start:0x003D1E20 end:0x003D2180
+
+data/model/cal_win.c:
 	.data       start:0x003D2180 end:0x003E2340
+
+data/model/cad_win.c:
 	.data       start:0x003E2340 end:0x003E4A00
+
+data/model/clg_floor2.c:
 	.data       start:0x003E4A00 end:0x003E4D40
+
+data/model/clg_hoshi.c:
 	.data       start:0x003E4D40 end:0x003E4E60
+
+data/model/clg_hyouji.c:
 	.data       start:0x003E4E60 end:0x003E5AF0
+
+data/model/mCL_lat_letter.c:
 	.data       start:0x003E5AF0 end:0x003E5B50
+
+data/model/clg_music.c:
 	.data       start:0x003E5B50 end:0x003E5E60
+
+data/model/clg_shirushi.c:
 	.data       start:0x003E5E60 end:0x003E5F60
+
+data/model/clg_tagu.c:
 	.data       start:0x003E5F60 end:0x003E6CF0
+
+data/model/mCL_rom_myhome1_wall.c:
 	.data       start:0x003E6CF0 end:0x003E6E80
+
+data/model/clg_win1.c:
 	.data       start:0x003E6E80 end:0x003EF880
+
+data/model/inv_mb.c:
 	.data       start:0x003EF880 end:0x003EF980
+
+data/model/sav_mb_model.c:
 	.data       start:0x003EF980 end:0x003EFC20
+
+data/model/sav_sentaku.c:
 	.data       start:0x003EFC20 end:0x003EFEA0
+
+data/model/sav_win1.c:
 	.data       start:0x003EFEA0 end:0x003F7260
+
+data/model/sav_win.c:
 	.data       start:0x003F7260 end:0x003F7360
+
+data/model/des_cursor.c:
 	.data       start:0x003F7360 end:0x003F9280
+
+data/model/des_cursor2.c:
 	.data       start:0x003F9280 end:0x003FA540
+
+data/model/des_marking.c:
 	.data       start:0x003FA540 end:0x003FA7B0
+
+data/model/des_sen.c:
 	.data       start:0x003FA7B0 end:0x003FA840
+
+data/model/des_suuji.c:
 	.data       start:0x003FA840 end:0x003FAF20
+
+data/model/des_tool.c:
 	.data       start:0x003FAF20 end:0x00400680
+
+data/model/des_tool2.c:
 	.data       start:0x00400680 end:0x00401D80
+
+data/model/des_win.c:
 	.data       start:0x00401D80 end:0x004059A0
+
+data/model/dia_hyouji.c:
 	.data       start:0x004059A0 end:0x004076E0
+
+data/model/dia_win.c:
 	.data       start:0x004076E0 end:0x0040ABA0
+
+data/model/dia_win2.c:
 	.data       start:0x0040ABA0 end:0x0040AE20
+
+data/model/dia_win3.c:
 	.data       start:0x0040AE20 end:0x0040B100
+
+data/model/lat_kakunin.c:
 	.data       start:0x0040B100 end:0x0040B620
+
+data/model/onp_sentaku.c:
 	.data       start:0x0040B620 end:0x0040C780
+
+data/model/lat_sentaku2.c:
 	.data       start:0x0040C780 end:0x0040D8C0
+
+data/model/kai_sousa.c:
 	.data       start:0x0040D8C0 end:0x00420AA0
+
+data/model/kai_sousa2.c:
 	.data       start:0x00420AA0 end:0x00421520
+
+data/model/lat_sp.c:
 	.data       start:0x00421520 end:0x00421B60
+
+data/model/sousa_ink.c:
 	.data       start:0x00421B60 end:0x00423340
+
+data/model/agb_yajirushi.c:
 	.data       start:0x00423340 end:0x004237E0
+
+data/model/gba_win.c:
 	.data       start:0x004237E0 end:0x00427010
+
+data/model/hni_den.c:
 	.data       start:0x00427010 end:0x0042AC00
+
+data/model/cKF_bs_r_hnd.c:
 	.data       start:0x0042AC00 end:0x0042D400
+
+data/model/hni_win.c:
 	.data       start:0x0042D400 end:0x00433FC0
+
+data/model/inv_mushi.c:
 	.data       start:0x00433FC0 end:0x00438B40
+
+data/model/inv_mwin.c:
 	.data       start:0x00438B40 end:0x0043ED80
+
+data/model/inv_sakana.c:
 	.data       start:0x0043ED80 end:0x004440D0
+
+data/model/tol_uki_1.c:
 	.data       start:0x004440D0 end:0x00444490
+
+data/model/tol_uki_2.c:
 	.data       start:0x00444490 end:0x00444860
+
+data/model/inv_mwin_binsen.c:
 	.data       start:0x00444860 end:0x00445080
+
+data/model/inv_mwin_cnaegi.c:
 	.data       start:0x00445080 end:0x004452A0
+
+data/model/inv_mwin_2cabu1.c:
 	.data       start:0x004452A0 end:0x004454C0
+
+data/model/inv_mwin_fukubukuro.c:
 	.data       start:0x004454C0 end:0x00445900
+
+data/model/inv_mwin_g.c:
 	.data       start:0x00445900 end:0x00446180
+
+data/model/inv_mwin_hitodama.c:
 	.data       start:0x00446180 end:0x00446BA0
+
+data/model/inv_mwin2.c:
 	.data       start:0x00446BA0 end:0x0044B3A0
+
+data/model/inv_mwin3.c:
 	.data       start:0x0044B3A0 end:0x0044FBA0
+
+data/model/inv_mwin4.c:
 	.data       start:0x0044FBA0 end:0x0044FC60
+
+data/model/inv_mwin_nuts.c:
 	.data       start:0x0044FC60 end:0x0044FE80
+
+data/model/inv_mwin_fork.c:
 	.data       start:0x0044FE80 end:0x004500A0
+
+data/model/inv_mwin_fuku3.c:
 	.data       start:0x004500A0 end:0x004502C0
+
+data/model/inv_mwin_ame.c:
 	.data       start:0x004502C0 end:0x004504E0
+
+data/model/inv_mwin5.c:
 	.data       start:0x004504E0 end:0x00450FA0
+
+data/model/inv_mwin6.c:
 	.data       start:0x00450FA0 end:0x00451C60
+
+data/model/inv_mwin_matutake.c:
 	.data       start:0x00451C60 end:0x00451E80
+
+data/model/inv_mwin_haniwa.c:
 	.data       start:0x00451E80 end:0x004520A0
+
+data/model/inv_mwin7.c:
 	.data       start:0x004520A0 end:0x00452900
+
+data/model/inv_mwin8.c:
 	.data       start:0x00452900 end:0x00452D40
+
+data/model/inv_mwin9.c:
 	.data       start:0x00452D40 end:0x00454280
+
+data/model/inv_mwin_kaseki.c:
 	.data       start:0x00454280 end:0x004546C0
+
+data/model/inv_mwin10.c:
 	.data       start:0x004546C0 end:0x00454F40
+
+data/model/inv_mwin11.c:
 	.data       start:0x00454F40 end:0x00455BA0
+
+data/model/inv_mwin12.c:
 	.data       start:0x00455BA0 end:0x00456420
+
+data/model/inv_mwin_cabu.c:
 	.data       start:0x00456420 end:0x00456A40
+
+data/model/inv_mwin_okane.c:
 	.data       start:0x00456A40 end:0x00457260
+
+data/model/inv_mwin_pbox.c:
 	.data       start:0x00457260 end:0x00457480
+
+data/model/inv_mwin13.c:
 	.data       start:0x00457480 end:0x00458360
+
+data/model/inv_mark.c:
 	.data       start:0x00458360 end:0x004584D0
+
+data/model/inv_item.c:
 	.data       start:0x004584D0 end:0x004585A0
+
+data/model/inv_mwin_sanddollar.c:
 	.data       start:0x004585A0 end:0x004587C0
+
+data/model/inv_mwin_unknown.c:
 	.data       start:0x004587C0 end:0x004589E0
+
+data/model/inv_mwin_kanban.c:
 	.data       start:0x004589E0 end:0x00458C00
+
+data/model/inv_mwin14.c:
 	.data       start:0x00458C00 end:0x00459260
+
+data/model/inv_mwin15.c:
 	.data       start:0x00459260 end:0x0045A460
+
+data/model/inv_mwin_nittki.c:
 	.data       start:0x0045A460 end:0x0045A680
+
+data/model/inv_mwin_ono.c:
 	.data       start:0x0045A680 end:0x0045AA80
+
+data/model/inv_mwin_pbox2.c:
 	.data       start:0x0045AA80 end:0x0045B520
+
+data/model/inv_mwin16.c:
 	.data       start:0x0045B520 end:0x0045C720
+
+data/model/inv_mwin_taisou.c:
 	.data       start:0x0045C720 end:0x0045C940
+
+data/model/inv_mwin_yashi.c:
 	.data       start:0x0045C940 end:0x0045CB60
+
+data/model/dna_win.c:
 	.data       start:0x0045CB60 end:0x0045FFE0
+
+data/model/kti_win.c:
 	.data       start:0x0045FFE0 end:0x00464DA0
+
+data/model/mra_win.c:
 	.data       start:0x00464DA0 end:0x0046A000
+
+data/model/nam_win.c:
 	.data       start:0x0046A000 end:0x0046F060
+
+data/model/req_win.c:
 	.data       start:0x0046F060 end:0x00472FE0
+
+data/model/rst_win.c:
 	.data       start:0x00472FE0 end:0x00476120
+
+data/model/shi_win.c:
 	.data       start:0x00476120 end:0x0047A040
+
+data/model/lat_letter01.c:
 	.data       start:0x0047A040 end:0x0047A490
+
+data/model/lat_letter02.c:
 	.data       start:0x0047A490 end:0x0047AAC8
+
+data/model/lat_letter03.c:
 	.data       start:0x0047AAC8 end:0x0047B0C0
+
+data/model/lat_letter04.c:
 	.data       start:0x0047B0C0 end:0x0047B4E0
+
+data/model/lat_letter05.c:
 	.data       start:0x0047B4E0 end:0x0047B7D0
+
+data/model/lat_letter06.c:
 	.data       start:0x0047B7D0 end:0x0047BE38
+
+data/model/lat_letter07.c:
 	.data       start:0x0047BE38 end:0x0047C1D0
+
+data/model/lat_letter08.c:
 	.data       start:0x0047C1D0 end:0x0047C578
+
+data/model/lat_letter09.c:
 	.data       start:0x0047C578 end:0x0047C928
+
+data/model/lat_letter10.c:
 	.data       start:0x0047C928 end:0x0047CDA0
+
+data/model/lat_letter11.c:
 	.data       start:0x0047CDA0 end:0x0047CF00
+
+data/model/lat_letter12.c:
 	.data       start:0x0047CF00 end:0x0047D068
+
+data/model/lat_letter13.c:
 	.data       start:0x0047D068 end:0x0047D368
+
+data/model/lat_letter14.c:
 	.data       start:0x0047D368 end:0x0047D540
+
+data/model/lat_letter15.c:
 	.data       start:0x0047D540 end:0x0047D648
+
+data/model/lat_letter16.c:
 	.data       start:0x0047D648 end:0x0047D7B8
+
+data/model/lat_letter17.c:
 	.data       start:0x0047D7B8 end:0x0047D8A8
+
+data/model/lat_letter18.c:
 	.data       start:0x0047D8A8 end:0x0047DC18
+
+data/model/lat_letter19.c:
 	.data       start:0x0047DC18 end:0x0047DE48
+
+data/model/lat_letter20.c:
 	.data       start:0x0047DE48 end:0x0047DF40
+
+data/model/lat_letter21.c:
 	.data       start:0x0047DF40 end:0x0047E0C0
+
+data/model/lat_letter22.c:
 	.data       start:0x0047E0C0 end:0x0047E3C0
+
+data/model/lat_letter23.c:
 	.data       start:0x0047E3C0 end:0x0047E680
+
+data/model/lat_letter24.c:
 	.data       start:0x0047E680 end:0x0047E8E8
+
+data/model/lat_letter25.c:
 	.data       start:0x0047E8E8 end:0x0047ED70
+
+data/model/lat_letter26.c:
 	.data       start:0x0047ED70 end:0x0047F5E8
+
+data/model/lat_letter27.c:
 	.data       start:0x0047F5E8 end:0x0047F808
+
+data/model/lat_letter28.c:
 	.data       start:0x0047F808 end:0x0047FC08
+
+data/model/lat_letter65.c:
 	.data       start:0x0047FC08 end:0x0047FF40
+
+data/model/lat_letter30.c:
 	.data       start:0x0047FF40 end:0x004804C8
+
+data/model/lat_letter31.c:
 	.data       start:0x004804C8 end:0x00480738
+
+data/model/lat_letter32.c:
 	.data       start:0x00480738 end:0x004808E0
+
+data/model/lat_letter33.c:
 	.data       start:0x004808E0 end:0x00480B00
+
+data/model/lat_letter34.c:
 	.data       start:0x00480B00 end:0x00480ED8
+
+data/model/lat_letter35.c:
 	.data       start:0x00480ED8 end:0x004811C0
+
+data/model/lat_letter36.c:
 	.data       start:0x004811C0 end:0x004815F8
+
+data/model/lat_letter37.c:
 	.data       start:0x004815F8 end:0x004819D8
+
+data/model/lat_letter38.c:
 	.data       start:0x004819D8 end:0x00481AB8
+
+data/model/lat_letter39.c:
 	.data       start:0x00481AB8 end:0x00481D80
+
+data/model/lat_letter40.c:
 	.data       start:0x00481D80 end:0x004820A0
+
+data/model/lat_letter41.c:
 	.data       start:0x004820A0 end:0x00482330
+
+data/model/lat_letter42.c:
 	.data       start:0x00482330 end:0x004825C0
+
+data/model/lat_letter43.c:
 	.data       start:0x004825C0 end:0x004826A8
+
+data/model/lat_letter44.c:
 	.data       start:0x004826A8 end:0x00482958
+
+data/model/lat_letter45.c:
 	.data       start:0x00482958 end:0x00482E38
+
+data/model/lat_letter46.c:
 	.data       start:0x00482E38 end:0x00483000
+
+data/model/lat_letter47.c:
 	.data       start:0x00483000 end:0x004830E8
+
+data/model/lat_letter48.c:
 	.data       start:0x004830E8 end:0x00483490
+
+data/model/lat_letter49.c:
 	.data       start:0x00483490 end:0x004835C8
+
+data/model/lat_letter50.c:
 	.data       start:0x004835C8 end:0x00483828
+
+data/model/lat_letter51.c:
 	.data       start:0x00483828 end:0x00483AD0
+
+data/model/lat_letter52.c:
 	.data       start:0x00483AD0 end:0x00483D78
+
+data/model/lat_letter53.c:
 	.data       start:0x00483D78 end:0x00483F88
+
+data/model/lat_letter54.c:
 	.data       start:0x00483F88 end:0x00484070
+
+data/model/lat_letter55.c:
 	.data       start:0x00484070 end:0x004845E8
+
+data/model/lat_letter56.c:
 	.data       start:0x004845E8 end:0x004848D8
+
+data/model/lat_letter57.c:
 	.data       start:0x004848D8 end:0x00484A30
+
+data/model/lat_letter58.c:
 	.data       start:0x00484A30 end:0x00484C98
+
+data/model/lat_letter59.c:
 	.data       start:0x00484C98 end:0x00484DA8
+
+data/model/lat_letter60.c:
 	.data       start:0x00484DA8 end:0x00485418
+
+data/model/lat_letter61.c:
 	.data       start:0x00485418 end:0x00485988
+
+data/model/lat_letter62.c:
 	.data       start:0x00485988 end:0x00485D90
+
+data/model/lat_letter63.c:
 	.data       start:0x00485D90 end:0x00486578
+
+data/model/lat_letter64.c:
 	.data       start:0x00486578 end:0x004868C0
+
+data/model/lat_letter64_xk_tex.c:
 	.data       start:0x004868C0 end:0x0049F8C0
+
+data/model/onp_hyouji.c:
 	.data       start:0x0049F8C0 end:0x004A2500
+
+data/model/onp_hyouji2.c:
 	.data       start:0x004A2500 end:0x004A4180
+
+data/model/onp_win.c:
 	.data       start:0x004A4180 end:0x004A9580
+
+data/model/pos_win.c:
 	.data       start:0x004A9580 end:0x004ADCC8
+
+data/model/pos_yaji.c:
 	.data       start:0x004ADCC8 end:0x004AE1A0
+
+data/model/kan_eki.c:
 	.data       start:0x004AE1A0 end:0x004AE340
+
+data/model/kan_fune.c:
 	.data       start:0x004AE340 end:0x004AE4E0
+
+data/model/kan_gomi.c:
 	.data       start:0x004AE4E0 end:0x004AE5E0
+
+data/model/kan_hyouji.c:
 	.data       start:0x004AE5E0 end:0x004AE6E0
+
+data/model/kan_hyouji2.c:
 	.data       start:0x004AE6E0 end:0x004AF100
+
+data/model/kan_hyouji3.c:
 	.data       start:0x004AF100 end:0x004AF300
+
+data/model/kan_tizu.c:
 	.data       start:0x004AF300 end:0x004AF3A0
+
+data/model/kan_waku.c:
 	.data       start:0x004AF3A0 end:0x004B45C0
+
+data/model/kan_win.c:
 	.data       start:0x004B45C0 end:0x004BA0D8
+
+data/model/mMP_house_pos_list.c:
 	.data       start:0x004BA0D8 end:0x004BAA60
+
+data/model/mus_mark.c:
 	.data       start:0x004BAA60 end:0x004BAC40
+
+data/model/mus_icon.c:
 	.data       start:0x004BAC40 end:0x004BAF00
+
+data/model/mus_win.c:
 	.data       start:0x004BAF00 end:0x004BE760
+
+data/model/mus_win2.c:
 	.data       start:0x004BE760 end:0x004BEC00
+
+data/model/inv_original.c:
 	.data       start:0x004BEC00 end:0x004C3880
+
+data/model/sav_mark.c:
 	.data       start:0x004C3880 end:0x004C3A20
+
+data/model/kei_hyouji.c:
 	.data       start:0x004C3A20 end:0x004CD1E0
+
+data/model/kei_win.c:
 	.data       start:0x004CD1E0 end:0x004D0540
+
+data/model/pwd_win.c:
 	.data       start:0x004D0540 end:0x004D4180
+
+data/model/pas_start.c:
 	.data       start:0x004D4180 end:0x004D43C0
+
+data/model/pas_win.c:
 	.data       start:0x004D43C0 end:0x004D7E60
+
+data/model/fkm_win.c:
 	.data       start:0x004D7E60 end:0x004DB9E0
+
+data/model/sen_itemw.c:
 	.data       start:0x004DB9E0 end:0x004DC980
+
+data/model/sen_qitem.c:
 	.data       start:0x004DC980 end:0x004DDE20
+
+data/model/sen_win.c:
 	.data       start:0x004DDE20 end:0x004E1320
+
+data/model/tim_hari.c:
 	.data       start:0x004E1320 end:0x004E1EA0
+
+data/model/tim_win.c:
 	.data       start:0x004E1EA0 end:0x004E9600
+
+data/model/att_win.c:
 	.data       start:0x004E9600 end:0x004EAEE0
+
+data/model/ef_yuki01_00.c:
 	.data       start:0x004EAEE0 end:0x004EB000
+
+data/model/act_darumaA.c:
 	.data       start:0x004EB000 end:0x004EB588
+
+data/model/act_darumaB.c:
 	.data       start:0x004EB588 end:0x004EBAC0
 
 data/npc/model/mdl/ttl_1.c:
@@ -6617,78 +7161,220 @@ data/model/structure/palette/structure_pal_data.c:
 data/model/structure/structure_pal.c:
 	.data       start:0x00501BC0 end:0x00501EE0
 
-data/dataobject/dataobject_501EE0:
+data/model/obj_yamishop_shadow.c:
 	.data       start:0x00501EE0 end:0x005021C0
+
+data/model/obj_uranai_shadow.c:
 	.data       start:0x005021C0 end:0x00502500
+
+data/model/obj_e_count_shadow.c:
 	.data       start:0x00502500 end:0x005027A0
+
+data/model/obj_s_douzou_shadow.c:
 	.data       start:0x005027A0 end:0x00502980
+
+data/model/obj_dump_shadow.c:
 	.data       start:0x00502980 end:0x00502F20
+
+data/model/obj_frag_shadow.c:
 	.data       start:0x00502F20 end:0x00503200
+
+data/model/obj_e_ghog_shadow.c:
 	.data       start:0x00503200 end:0x00503340
+
+data/model/obj_e_hfes_shadow_a.c:
 	.data       start:0x00503340 end:0x00503A00
+
+data/model/obj_s_house_i_shadow.c:
 	.data       start:0x00503A00 end:0x00503CC0
+
+data/model/obj_e_kago_shadow.c:
 	.data       start:0x00503CC0 end:0x00504000
+
+data/model/obj_w_kamakura_shadow.c:
 	.data       start:0x00504000 end:0x005043C0
+
+data/model/obj_e_koinobori_shadow.c:
 	.data       start:0x005043C0 end:0x005046A0
+
+data/model/obj_e_mikuji_shadow.c:
 	.data       start:0x005046A0 end:0x00504980
+
+data/model/obj_museum_shadow.c:
 	.data       start:0x00504980 end:0x00504C60
+
+data/model/obj_s_myhome_i_shadow.c:
 	.data       start:0x00504C60 end:0x00504EA0
+
+data/model/obj_house1_shadow.c:
 	.data       start:0x00504EA0 end:0x00506320
+
+data/model/obj_myhome1_shadowE.c:
 	.data       start:0x00506320 end:0x00508020
+
+data/model/obj_s_kouban_shadow.c:
 	.data       start:0x00508020 end:0x005083E0
+
+data/model/obj_s_yubinkyoku_shadow.c:
 	.data       start:0x005083E0 end:0x00508720
+
+data/model/obj_e_radio_shadow.c:
 	.data       start:0x00508720 end:0x00508A00
+
+data/model/reserve_shadow.c:
 	.data       start:0x00508A00 end:0x00508F20
+
+data/model/obj_car_shadow.c:
 	.data       start:0x00508F20 end:0x00509300
+
+data/model/obj_shop1_shadow.c:
 	.data       start:0x00509300 end:0x00509F00
+
+data/model/obj_shrine_shadow.c:
 	.data       start:0x00509F00 end:0x0050A260
+
+data/model/obj_station1_shadow.c:
 	.data       start:0x0050A260 end:0x0050B4A0
+
+data/model/obj_s_tailor_shadow.c:
 	.data       start:0x0050B4A0 end:0x0050B5E0
+
+data/model/obj_s_tent_shadow.c:
 	.data       start:0x0050B5E0 end:0x0050B8A0
+
+data/model/obj_s_toudai_shadow.c:
 	.data       start:0x0050B8A0 end:0x0050BA20
+
+data/model/obj_e_tukimi_l_shadow.c:
 	.data       start:0x0050BA20 end:0x0050BFE0
+
+data/model/obj_e_turi_l_shadow.c:
 	.data       start:0x0050BFE0 end:0x0050C560
+
+data/model/obj_e_yatai_shadow_l.c:
 	.data       start:0x0050C560 end:0x0050C720
+
+data/model/obj_e_boat.c:
 	.data       start:0x0050C720 end:0x0050E760
+
+data/model/obj_s_yamishop.c:
 	.data       start:0x0050E760 end:0x005116C0
+
+data/model/obj_s_bridgeA.c:
 	.data       start:0x005116C0 end:0x00514F80
+
+data/model/obj_s_uranai.c:
 	.data       start:0x00514F80 end:0x00517E40
+
+data/model/obj_e_count01.c:
 	.data       start:0x00517E40 end:0x00519EC0
+
+data/model/obj_e_count02_cl.c:
 	.data       start:0x00519EC0 end:0x0051B520
+
+data/model/obj_s_douzou.c:
 	.data       start:0x0051B520 end:0x005208A0
+
+data/model/obj_s_dump.c:
 	.data       start:0x005208A0 end:0x00523360
+
+data/model/obj_fallS.c:
 	.data       start:0x00523360 end:0x005245E0
+
+data/model/obj_fallSE.c:
 	.data       start:0x005245E0 end:0x00525860
+
+data/model/obj_s_frag.c:
 	.data       start:0x00525860 end:0x005278A0
+
+data/model/obj_e_ghog.c:
 	.data       start:0x005278A0 end:0x005283E0
+
+data/model/obj_e_hanami_a.c:
 	.data       start:0x005283E0 end:0x0052AEC0
+
+data/model/obj_s_house_i.c:
 	.data       start:0x0052AEC0 end:0x0052D240
+
+data/model/obj_e_hfes_a.c:
 	.data       start:0x0052D240 end:0x00531980
+
+data/model/obj_e_kago_r.c:
 	.data       start:0x00531980 end:0x005356C0
+
+data/model/obj_w_kamakura.c:
 	.data       start:0x005356C0 end:0x005376E0
+
+data/model/obj_e_koinobori.c:
 	.data       start:0x005376E0 end:0x00539E60
+
+data/model/obj_s_lotus.c:
 	.data       start:0x00539E60 end:0x0053B400
+
+data/model/obj_e_mikanbox.c:
 	.data       start:0x0053B400 end:0x0053DBA0
+
+data/model/obj_e_mikuji.c:
 	.data       start:0x0053DBA0 end:0x0053E9E0
+
+data/model/obj_s_museum.c:
 	.data       start:0x0053E9E0 end:0x00543160
+
+data/model/obj_s_myhome_i.c:
 	.data       start:0x00543160 end:0x00545680
+
+data/model/obj_s_house1.c:
 	.data       start:0x00545680 end:0x0055D300
+
+data/model/obj_s_myhome1.c:
 	.data       start:0x0055D300 end:0x00571440
+
+data/model/obj_s_kouban.c:
 	.data       start:0x00571440 end:0x00575200
+
+data/model/obj_s_yubinkyoku.c:
 	.data       start:0x00575200 end:0x005791C0
+
+data/model/obj_e_radio.c:
 	.data       start:0x005791C0 end:0x0057A520
+
+data/model/obj_s_buildsite.c:
 	.data       start:0x0057A520 end:0x0057B960
+
+data/model/obj_s_car.c:
 	.data       start:0x0057B960 end:0x0057DA60
+
+data/model/obj_s_shop1.c:
 	.data       start:0x0057DA60 end:0x0058EDA0
+
+data/model/obj_s_shrine.c:
 	.data       start:0x0058EDA0 end:0x00597D20
+
+data/model/obj_s_station1.c:
 	.data       start:0x00597D20 end:0x005A4640
+
+data/model/obj_s_tailor.c:
 	.data       start:0x005A4640 end:0x005A8B80
+
+data/model/obj_s_tent.c:
 	.data       start:0x005A8B80 end:0x005AA4E0
+
+data/model/obj_s_toudai.c:
 	.data       start:0x005AA4E0 end:0x005AD3E0
+
+data/model/obj_train1_1.c:
 	.data       start:0x005AD3E0 end:0x005B0400
+
+data/model/obj_train_3.c:
 	.data       start:0x005B0400 end:0x005B2740
+
+data/model/obj_e_tukimi_r.c:
 	.data       start:0x005B2740 end:0x005B69C0
+
+data/model/obj_e_turi_l.c:
 	.data       start:0x005B69C0 end:0x005B8F60
+
+data/model/obj_e_yatai_l.c:
 	.data       start:0x005B8F60 end:0x005BC5C0
 
 data/npc/model/mdl/rcs_1.c:
@@ -6712,67 +7398,187 @@ data/scene/test_step01.c:
 data/scene/title_demo.c:
 	.data       start:0x005BF618 end:0x005BF6A0
 
-data/dataobject/dataobject_5BF6A0:
+data/model/crw_anrium1.c:
 	.data       start:0x005BF6A0 end:0x005BFBE0
+
+data/model/crw_bag1.c:
 	.data       start:0x005BFBE0 end:0x005C0460
+
+data/model/crw_bag2.c:
 	.data       start:0x005C0460 end:0x005C0AE0
+
+data/model/crw_biscus1.c:
 	.data       start:0x005C0AE0 end:0x005C13E0
+
+data/model/crw_biscus2.c:
 	.data       start:0x005C13E0 end:0x005C1CE0
+
+data/model/crw_biscus3.c:
 	.data       start:0x005C1CE0 end:0x005C25E0
+
+data/model/crw_biscus4.c:
 	.data       start:0x005C25E0 end:0x005C2EE0
+
+data/model/crw_cobra.c:
 	.data       start:0x005C2EE0 end:0x005C34C0
+
+data/model/tol_cracker_1.c:
 	.data       start:0x005C34C0 end:0x005C3920
+
+data/model/tol_hata_01.c:
 	.data       start:0x005C3920 end:0x005C3C78
+
+data/model/tol_hata_01_evw_anime.c:
 	.data       start:0x005C3C78 end:0x005C3CC0
+
+data/model/crw_hasu1.c:
 	.data       start:0x005C3CC0 end:0x005C4560
+
+data/model/crw_hat1.c:
 	.data       start:0x005C4560 end:0x005C4BC0
+
+data/model/crw_hat2.c:
 	.data       start:0x005C4BC0 end:0x005C5220
+
+data/model/crw_hat3.c:
 	.data       start:0x005C5220 end:0x005C5880
+
+data/model/tol_kamicup_1.c:
 	.data       start:0x005C5880 end:0x005C5E80
+
+data/model/cKF_ba_r_tol_keitai_1_keitai_off1.c:
 	.data       start:0x005C5E80 end:0x005C5F38
+
+data/model/cKF_ba_r_tol_keitai_1_keitai_on1.c:
 	.data       start:0x005C5F38 end:0x005C5FC0
+
+data/model/tol_keitai_1.c:
 	.data       start:0x005C5FC0 end:0x005C6700
+
+data/model/tol_kenjyu_1.c:
 	.data       start:0x005C6700 end:0x005C6DE0
+
+data/model/tol_npcsao_1.c:
 	.data       start:0x005C6DE0 end:0x005C75A0
+
+data/model/crw_rei1.c:
 	.data       start:0x005C75A0 end:0x005C8780
+
+data/model/crw_rei2.c:
 	.data       start:0x005C8780 end:0x005C9960
+
+data/model/ef_tamaire01_r.c:
 	.data       start:0x005C9960 end:0x005C9E00
+
+data/model/tol_tamaire.c:
 	.data       start:0x005C9E00 end:0x005CAAC0
+
+data/model/tol_umb_01.c:
 	.data       start:0x005CAAC0 end:0x005CB360
+
+data/model/tol_umb_02.c:
 	.data       start:0x005CB360 end:0x005CBE80
+
+data/model/tol_umb_03.c:
 	.data       start:0x005CBE80 end:0x005CC920
+
+data/model/tol_umb_04.c:
 	.data       start:0x005CC920 end:0x005CD1C0
+
+data/model/tol_umb_05.c:
 	.data       start:0x005CD1C0 end:0x005CDA60
+
+data/model/tol_umb_06.c:
 	.data       start:0x005CDA60 end:0x005CE580
+
+data/model/tol_umb_07.c:
 	.data       start:0x005CE580 end:0x005CF020
+
+data/model/tol_umb_08.c:
 	.data       start:0x005CF020 end:0x005CF920
+
+data/model/tol_umb_09.c:
 	.data       start:0x005CF920 end:0x005D0220
+
+data/model/tol_umb_10.c:
 	.data       start:0x005D0220 end:0x005D0B20
+
+data/model/tol_umb_11.c:
 	.data       start:0x005D0B20 end:0x005D1420
+
+data/model/tol_umb_12.c:
 	.data       start:0x005D1420 end:0x005D1F20
+
+data/model/tol_umb_13.c:
 	.data       start:0x005D1F20 end:0x005D2820
+
+data/model/tol_umb_14.c:
 	.data       start:0x005D2820 end:0x005D30C0
+
+data/model/tol_umb_15.c:
 	.data       start:0x005D30C0 end:0x005D3AA0
+
+data/model/tol_umb_16.c:
 	.data       start:0x005D3AA0 end:0x005D4340
+
+data/model/tol_umb_17.c:
 	.data       start:0x005D4340 end:0x005D4D40
+
+data/model/tol_umb_18.c:
 	.data       start:0x005D4D40 end:0x005D5540
+
+data/model/tol_umb_19.c:
 	.data       start:0x005D5540 end:0x005D5F00
+
+data/model/tol_umb_20.c:
 	.data       start:0x005D5F00 end:0x005D6720
+
+data/model/tol_umb_21.c:
 	.data       start:0x005D6720 end:0x005D71C0
+
+data/model/tol_umb_22.c:
 	.data       start:0x005D71C0 end:0x005D7A80
+
+data/model/tol_umb_23.c:
 	.data       start:0x005D7A80 end:0x005D8580
+
+data/model/tol_umb_24.c:
 	.data       start:0x005D8580 end:0x005D8E60
+
+data/model/tol_umb_25.c:
 	.data       start:0x005D8E60 end:0x005D96E0
+
+data/model/tol_umb_26.c:
 	.data       start:0x005D96E0 end:0x005DA0E0
+
+data/model/tol_umb_27.c:
 	.data       start:0x005DA0E0 end:0x005DAB60
+
+data/model/tol_umb_28.c:
 	.data       start:0x005DAB60 end:0x005DB3E0
+
+data/model/tol_umb_29.c:
 	.data       start:0x005DB3E0 end:0x005DBC80
+
+data/model/tol_umb_30.c:
 	.data       start:0x005DBC80 end:0x005DC520
+
+data/model/tol_umb_31.c:
 	.data       start:0x005DC520 end:0x005DCE20
+
+data/model/tol_umb_32.c:
 	.data       start:0x005DCE20 end:0x005DD6C0
+
+data/model/tol_umb_w.c:
 	.data       start:0x005DD6C0 end:0x005DDD60
+
+data/model/tol_utiwa_1.c:
 	.data       start:0x005DDD60 end:0x005DE280
+
+data/model/crw_zinnia1.c:
 	.data       start:0x005DE280 end:0x005DEAC0
+
+data/model/crw_zinnia2.c:
 	.data       start:0x005DEAC0 end:0x005DF300
 
 data/scene/test01.c:
@@ -6805,19 +7611,43 @@ data/npc/model/tex/tig_3.c:
 data/npc/model/tex/tig_4.c:
 	.data       start:0x005E4280 end:0x005E5020
 
-data/dataobject/dataobject_5E5020:
+data/model/log_win_logo3_tex.c:
 	.data       start:0x005E5020 end:0x005E5420
+
+data/model/log_win_logo4_tex.c:
 	.data       start:0x005E5420 end:0x005E5820
+
+data/model/log_win_nintendo1_tex.c:
 	.data       start:0x005E5820 end:0x005E5C20
+
+data/model/log_win_nintendo2_tex.c:
 	.data       start:0x005E5C20 end:0x005E6020
+
+data/model/log_win_nintendo3_tex.c:
 	.data       start:0x005E6020 end:0x005E6420
+
+data/model/cKF_ba_r_logo_us_animal.c:
 	.data       start:0x005E6420 end:0x005E6A20
+
+data/model/logo_us_animal.c:
 	.data       start:0x005E6A20 end:0x005EA2E0
+
+data/model/logo_us_back.c:
 	.data       start:0x005EA2E0 end:0x005EE480
+
+data/model/cKF_ba_r_logo_us_cros.c:
 	.data       start:0x005EE480 end:0x005EEB40
+
+data/model/logo_us_cros.c:
 	.data       start:0x005EEB40 end:0x005F1040
+
+data/model/cKF_ba_r_logo_us_sing.c:
 	.data       start:0x005F1040 end:0x005F1760
+
+data/model/logo_us_sing.c:
 	.data       start:0x005F1760 end:0x005F3A60
+
+data/model/logo_us_tm.c:
 	.data       start:0x005F3A60 end:0x005F3CD8
 
 data/titledemo/pact0.c:
@@ -6841,9 +7671,13 @@ data/npc/model/mdl/end_1.c:
 data/npc/model/tex/end_1.c:
 	.data       start:0x005FABC0 end:0x005FBEA0
 
-data/dataobject/dataobject_5FBEA0:
+data/model/cKF_ba_r_obj_romtrain_door.c:
 	.data       start:0x005FBEA0 end:0x005FBF80
+
+data/model/obj_romtrain_door.c:
 	.data       start:0x005FBF80 end:0x005FC6E0
+
+data/model/rom_train_out.c:
 	.data       start:0x005FC6E0 end:0x005FE210
 
 data/npc/model/mdl/tuk_1.c:
@@ -6852,8 +7686,10 @@ data/npc/model/mdl/tuk_1.c:
 data/npc/model/tex/tuk_1.c:
 	.data       start:0x00600B80 end:0x00601A20
 
-data/dataobject/dataobject_601A20:
+data/model/tol_uki_12.c:
 	.data       start:0x00601A20 end:0x00601D60
+
+data/model/tol_uki_22.c:
 	.data       start:0x00601D60 end:0x00602088
 
 data/npc/model/mdl/wol_1.c:
@@ -6970,18 +7806,28 @@ data/field/mvactor/title_demo.c:
 data/field/mvactor/water_test.c:
 	.data       start:0x00609410 end:0x00609440
 
-data/dataobject/dataobject_609440:
+data/model/int_ari_isu01.c:
 	.data       start:0x00609440 end:0x00609FA0
+
+data/model/int_ari_kitchen01.c:
 	.data       start:0x00609FA0 end:0x0060AA40
+
+data/model/int_ari_reizou01.c:
 	.data       start:0x0060AA40 end:0x0060B560
+
+data/model/int_ari_table01.c:
 	.data       start:0x0060B560 end:0x0060C2A8
+
+data/model/mFM_grd_beachA_tex.c:
 	.data       start:0x0060C2A8 end:0x0060C6A8
+
+data/model/mFM_grd_beachB_tex.c:
 	.data       start:0x0060C6A8 end:0x0060C7A8
 
 data/field/bg/beach_pal.c:
 	.data       start:0x0060C7A8 end:0x0060C928
 
-data/dataobject/dataobject_60C928:
+data/model/mFM_grd_s_beach_tex.c:
 	.data       start:0x0060C928 end:0x0060CD28
 
 data/field/bg/acre/grd_yamishop/grd_yamishop.c:
@@ -7032,16 +7878,34 @@ data/item/binsen_list.c:
 data/item/binsen_price.c:
 	.data       start:0x006208A8 end:0x00620930
 
-data/dataobject/dataobject_692030:
+data/model/mFM_grd_s_bridge1_pal.c:
 	.data       start:0x00620930 end:0x00620950
+
+data/model/mFM_grd_s_bridge1.c:
 	.data       start:0x00620960 end:0x00622160
+
+data/model/mFM_grd_w_bridge1.c:
 	.data       start:0x00622160 end:0x00623960
+
+data/model/mFM_grd_s_bridge2_pal.c:
 	.data       start:0x00623960 end:0x00623980
+
+data/model/mFM_grd_s_bridge2.c:
 	.data       start:0x00623980 end:0x00625180
+
+data/model/mFM_grd_w_bridge2.c:
 	.data       start:0x00625180 end:0x00626980
+
+data/model/mFM_grd_s_bushA.c:
 	.data       start:0x00626980 end:0x00628180
+
+data/model/mFM_grd_w_bushA.c:
 	.data       start:0x00628180 end:0x00629980
+
+data/model/mFM_grd_s_bushB.c:
 	.data       start:0x00629980 end:0x0062A580
+
+data/model/mFM_grd_w_bushB.c:
 	.data       start:0x0062A580 end:0x0062B180
 
 data/field/bg/bush_pal.c:
@@ -7056,8 +7920,10 @@ data/item/carpet_price.c:
 data/field/bg/cliff_pal.c:
 	.data       start:0x0062B488 end:0x0062B620
 
-data/dataobject/dataobject_62B620:
+data/model/mFM_grd_s_cliff.c:
 	.data       start:0x0062B620 end:0x0062CE20
+
+data/model/mFM_grd_w_cliff.c:
 	.data       start:0x0062CE20 end:0x0062E620
 
 data/item/cloth_list.c:
@@ -7069,391 +7935,1147 @@ data/item/cloth_price.c:
 data/item/diary_price.c:
 	.data       start:0x0062EA78 end:0x0062EAA0
 
-data/dataobject/dataobject_62EAA0:
+data/model/int_din_amber.c:
 	.data       start:0x0062EAA0 end:0x0062F960
+
+data/model/int_din_ammonite.c:
 	.data       start:0x0062F960 end:0x00630480
+
+data/model/int_din_bront_body.c:
 	.data       start:0x00630480 end:0x00631200
+
+data/model/int_din_bront_dummy.c:
 	.data       start:0x00631200 end:0x00631520
+
+data/model/int_din_bront_head.c:
 	.data       start:0x00631520 end:0x00632120
+
+data/model/int_din_bront_tail.c:
 	.data       start:0x00632120 end:0x006328C0
+
+data/model/int_din_dummy.c:
 	.data       start:0x006328C0 end:0x006332A0
+
+data/model/int_din_egg.c:
 	.data       start:0x006332A0 end:0x00633CE0
+
+data/model/int_din_hutaba_body.c:
 	.data       start:0x00633CE0 end:0x00634920
+
+data/model/int_din_hutaba_dummy.c:
 	.data       start:0x00634920 end:0x00634C40
+
+data/model/int_din_hutaba_head.c:
 	.data       start:0x00634C40 end:0x00635940
+
+data/model/int_din_hutaba_neck.c:
 	.data       start:0x00635940 end:0x006361C0
+
+data/model/int_din_mammoth_body.c:
 	.data       start:0x006361C0 end:0x00637040
+
+data/model/int_din_mammoth_dummy.c:
 	.data       start:0x00637040 end:0x00637360
+
+data/model/int_din_mammoth_head.c:
 	.data       start:0x00637360 end:0x00637F60
+
+data/model/int_din_ptera_Lwing.c:
 	.data       start:0x00637F60 end:0x006387C0
+
+data/model/int_din_ptera_Rwing.c:
 	.data       start:0x006387C0 end:0x00639040
+
+data/model/int_din_ptera_dummy.c:
 	.data       start:0x00639040 end:0x00639360
+
+data/model/int_din_ptera_head.c:
 	.data       start:0x00639360 end:0x0063A180
+
+data/model/int_din_stego_body.c:
 	.data       start:0x0063A180 end:0x0063AF20
+
+data/model/int_din_stego_dummyA.c:
 	.data       start:0x0063AF20 end:0x0063B240
+
+data/model/int_din_stego_dummyB.c:
 	.data       start:0x0063B240 end:0x0063B560
+
+data/model/int_din_stego_head.c:
 	.data       start:0x0063B560 end:0x0063BF20
+
+data/model/int_din_stego_tail.c:
 	.data       start:0x0063BF20 end:0x0063C940
+
+data/model/int_din_stump.c:
 	.data       start:0x0063C940 end:0x0063D400
+
+data/model/int_din_trex_body.c:
 	.data       start:0x0063D400 end:0x0063E200
+
+data/model/int_din_trex_dummy.c:
 	.data       start:0x0063E200 end:0x0063E520
+
+data/model/int_din_trex_head.c:
 	.data       start:0x0063E520 end:0x0063F100
+
+data/model/int_din_trex_tail.c:
 	.data       start:0x0063F100 end:0x0063FAE0
+
+data/model/int_din_trikera_body.c:
 	.data       start:0x0063FAE0 end:0x00640840
+
+data/model/int_din_trikera_dummy.c:
 	.data       start:0x00640840 end:0x00640B60
+
+data/model/int_din_trikera_head.c:
 	.data       start:0x00640B60 end:0x00641780
+
+data/model/int_din_trikera_tail.c:
 	.data       start:0x00641780 end:0x006421C0
+
+data/model/int_din_trilobite.c:
 	.data       start:0x006421C0 end:0x00642C00
 
 data/field/bg/earth_pal.c:
 	.data       start:0x00642C00 end:0x00642D80
 
-data/dataobject/dataobject_642D80:
+data/model/mFM_grd_s_earth.c:
 	.data       start:0x00642D80 end:0x00644580
+
+data/model/mFM_grd_w_earth.c:
 	.data       start:0x00644580 end:0x00645D80
+
+data/model/cKF_ba_r_ef_f_tree3_cutL.c:
 	.data       start:0x00645D80 end:0x00645FC0
+
+data/model/ef_f_tree3_cutL.c:
 	.data       start:0x00645FC0 end:0x00646108
+
+data/model/cKF_ba_r_ef_f_tree3_cutR.c:
 	.data       start:0x00646108 end:0x00646348
+
+data/model/ef_f_tree3_cutR.c:
 	.data       start:0x00646348 end:0x00646490
+
+data/model/cKF_ba_r_ef_f_tree3_shakeL.c:
 	.data       start:0x00646490 end:0x00646540
+
+data/model/cKF_ba_r_ef_f_tree3_shakeS.c:
 	.data       start:0x00646540 end:0x00646590
+
+data/model/cKF_ba_r_ef_f_tree3_shake.c:
 	.data       start:0x00646590 end:0x006465F8
+
+data/model/ef_f_tree3_shake.c:
 	.data       start:0x006465F8 end:0x00646690
+
+data/model/cKF_ba_r_ef_f_tree4_cutL.c:
 	.data       start:0x00646690 end:0x006468D0
+
+data/model/ef_f_tree4_cutL.c:
 	.data       start:0x006468D0 end:0x00646A78
+
+data/model/cKF_ba_r_ef_f_tree4_cutR.c:
 	.data       start:0x00646A78 end:0x00646CB8
+
+data/model/ef_f_tree4_cutR.c:
 	.data       start:0x00646CB8 end:0x00646E60
+
+data/model/cKF_ba_r_ef_f_tree4_shakeL.c:
 	.data       start:0x00646E60 end:0x00646F10
+
+data/model/cKF_ba_r_ef_f_tree4_shakeS.c:
 	.data       start:0x00646F10 end:0x00646F60
+
+data/model/cKF_ba_r_ef_f_tree4_shake.c:
 	.data       start:0x00646F60 end:0x00646FC8
+
+data/model/ef_f_tree4_shake.c:
 	.data       start:0x00646FC8 end:0x006470C0
+
+data/model/cKF_ba_r_ef_f_tree5_cutL.c:
 	.data       start:0x006470C0 end:0x00647300
+
+data/model/ef_f_tree5_cutL.c:
 	.data       start:0x00647300 end:0x00647508
+
+data/model/cKF_ba_r_ef_f_tree5_cutR.c:
 	.data       start:0x00647508 end:0x00647748
+
+data/model/ef_f_tree5_cutR.c:
 	.data       start:0x00647748 end:0x00647950
+
+data/model/cKF_ba_r_ef_f_tree5_shakeL.c:
 	.data       start:0x00647950 end:0x006479F0
+
+data/model/cKF_ba_r_ef_f_tree5_shakeS.c:
 	.data       start:0x006479F0 end:0x00647A40
+
+data/model/cKF_ba_r_ef_f_tree5_shake.c:
 	.data       start:0x00647A40 end:0x00647AA8
+
+data/model/ef_f_tree5_shake.c:
 	.data       start:0x00647AA8 end:0x00647C00
+
+data/model/ef_f_tree.c:
 	.data       start:0x00647C00 end:0x00647C60
+
+data/model/obj_f_tree.c:
 	.data       start:0x00647C60 end:0x00648C60
+
+data/model/cKF_ba_r_ef_s_cedar3_cutL.c:
 	.data       start:0x00648C60 end:0x00648EA0
+
+data/model/ef_s_cedar3_cutL.c:
 	.data       start:0x00648EA0 end:0x00649110
+
+data/model/cKF_ba_r_ef_s_cedar3_cutR.c:
 	.data       start:0x00649110 end:0x00649350
+
+data/model/ef_s_cedar3_cutR.c:
 	.data       start:0x00649350 end:0x006495C0
+
+data/model/cKF_ba_r_ef_s_cedar3_shakeL.c:
 	.data       start:0x006495C0 end:0x00649660
+
+data/model/cKF_ba_r_ef_s_cedar3_shakeS.c:
 	.data       start:0x00649660 end:0x006496B0
+
+data/model/cKF_ba_r_ef_s_cedar3_shake.c:
 	.data       start:0x006496B0 end:0x00649720
+
+data/model/ef_s_cedar3_shake.c:
 	.data       start:0x00649720 end:0x006498E0
+
+data/model/cKF_ba_r_ef_s_cedar4_cutL.c:
 	.data       start:0x006498E0 end:0x00649B20
+
+data/model/ef_s_cedar4_cutL.c:
 	.data       start:0x00649B20 end:0x00649F30
+
+data/model/cKF_ba_r_ef_s_cedar4_cutR.c:
 	.data       start:0x00649F30 end:0x0064A170
+
+data/model/ef_s_cedar4_cutR.c:
 	.data       start:0x0064A170 end:0x0064A580
+
+data/model/cKF_ba_r_ef_s_cedar4_shakeL.c:
 	.data       start:0x0064A580 end:0x0064A620
+
+data/model/cKF_ba_r_ef_s_cedar4_shakeS.c:
 	.data       start:0x0064A620 end:0x0064A670
+
+data/model/cKF_ba_r_ef_s_cedar4_shake.c:
 	.data       start:0x0064A670 end:0x0064A6E0
+
+data/model/ef_s_cedar4_shake.c:
 	.data       start:0x0064A6E0 end:0x0064AA40
+
+data/model/cKF_ba_r_ef_s_cedar5_cutL.c:
 	.data       start:0x0064AA40 end:0x0064AC80
+
+data/model/ef_s_cedar5_cutL.c:
 	.data       start:0x0064AC80 end:0x0064B200
+
+data/model/cKF_ba_r_ef_s_cedar5_cutR.c:
 	.data       start:0x0064B200 end:0x0064B440
+
+data/model/ef_s_cedar5_cutR.c:
 	.data       start:0x0064B440 end:0x0064B9C0
+
+data/model/cKF_ba_r_ef_s_cedar5_shakeL.c:
 	.data       start:0x0064B9C0 end:0x0064BA60
+
+data/model/cKF_ba_r_ef_s_cedar5_shakeS.c:
 	.data       start:0x0064BA60 end:0x0064BAB0
+
+data/model/cKF_ba_r_ef_s_cedar5_shake.c:
 	.data       start:0x0064BAB0 end:0x0064BB20
+
+data/model/ef_s_cedar5_shake.c:
 	.data       start:0x0064BB20 end:0x0064BFF0
+
+data/model/ef_s_cedar.c:
 	.data       start:0x0064BFF0 end:0x0064C060
+
+data/model/obj_s_cedar.c:
 	.data       start:0x0064C060 end:0x0064D060
+
+data/model/cKF_ba_r_ef_s_palm3_cutL.c:
 	.data       start:0x0064D060 end:0x0064D2C0
+
+data/model/ef_s_palm3_cutL.c:
 	.data       start:0x0064D2C0 end:0x0064D4C0
+
+data/model/cKF_ba_r_ef_s_palm3_cutR.c:
 	.data       start:0x0064D4C0 end:0x0064D720
+
+data/model/ef_s_palm3_cutR.c:
 	.data       start:0x0064D720 end:0x0064D920
+
+data/model/cKF_ba_r_ef_s_palm3_shakeL.c:
 	.data       start:0x0064D920 end:0x0064D9D0
+
+data/model/cKF_ba_r_ef_s_palm3_shakeS.c:
 	.data       start:0x0064D9D0 end:0x0064DA20
+
+data/model/cKF_ba_r_ef_s_palm3_shake.c:
 	.data       start:0x0064DA20 end:0x0064DAA0
+
+data/model/ef_s_palm3_shake.c:
 	.data       start:0x0064DAA0 end:0x0064DBF0
+
+data/model/cKF_ba_r_ef_s_palm4_cutL.c:
 	.data       start:0x0064DBF0 end:0x0064DE50
+
+data/model/ef_s_palm4_cutL.c:
 	.data       start:0x0064DE50 end:0x0064E160
+
+data/model/cKF_ba_r_ef_s_palm4_cutR.c:
 	.data       start:0x0064E160 end:0x0064E3C0
+
+data/model/ef_s_palm4_cutR.c:
 	.data       start:0x0064E3C0 end:0x0064E6D0
+
+data/model/cKF_ba_r_ef_s_palm4_shakeL.c:
 	.data       start:0x0064E6D0 end:0x0064E780
+
+data/model/cKF_ba_r_ef_s_palm4_shakeS.c:
 	.data       start:0x0064E780 end:0x0064E7D0
+
+data/model/cKF_ba_r_ef_s_palm4_shake.c:
 	.data       start:0x0064E7D0 end:0x0064E838
+
+data/model/ef_s_palm4_shake.c:
 	.data       start:0x0064E838 end:0x0064EA98
+
+data/model/cKF_ba_r_ef_s_palm5_cutL.c:
 	.data       start:0x0064EA98 end:0x0064ECF8
+
+data/model/ef_s_palm5_cutL.c:
 	.data       start:0x0064ECF8 end:0x0064F128
+
+data/model/cKF_ba_r_ef_s_palm5_cutR.c:
 	.data       start:0x0064F128 end:0x0064F388
+
+data/model/ef_s_palm5_cutR.c:
 	.data       start:0x0064F388 end:0x0064F7B8
+
+data/model/cKF_ba_r_ef_s_palm5_shakeL.c:
 	.data       start:0x0064F7B8 end:0x0064F868
+
+data/model/cKF_ba_r_ef_s_palm5_shakeS.c:
 	.data       start:0x0064F868 end:0x0064F8F0
+
+data/model/cKF_ba_r_ef_s_palm5_shake.c:
 	.data       start:0x0064F8F0 end:0x0064F958
+
+data/model/ef_s_palm5_shake.c:
 	.data       start:0x0064F958 end:0x0064FCD8
+
+data/model/ef_s_palm.c:
 	.data       start:0x0064FCD8 end:0x0064FD40
+
+data/model/obj_s_palm.c:
 	.data       start:0x0064FD40 end:0x00650D40
+
+data/model/cKF_ba_r_ef_s_tree3_cutL.c:
 	.data       start:0x00650D40 end:0x00650F80
+
+data/model/ef_s_tree3_cutL.c:
 	.data       start:0x00650F80 end:0x006510C8
+
+data/model/cKF_ba_r_ef_s_tree3_cutR.c:
 	.data       start:0x006510C8 end:0x00651308
+
+data/model/ef_s_tree3_cutR.c:
 	.data       start:0x00651308 end:0x00651450
+
+data/model/cKF_ba_r_ef_s_tree3_shakeL.c:
 	.data       start:0x00651450 end:0x00651500
+
+data/model/cKF_ba_r_ef_s_tree3_shakeS.c:
 	.data       start:0x00651500 end:0x00651550
+
+data/model/cKF_ba_r_ef_s_tree3_shake.c:
 	.data       start:0x00651550 end:0x006515B8
+
+data/model/ef_s_tree3_shake.c:
 	.data       start:0x006515B8 end:0x00651650
+
+data/model/cKF_ba_r_ef_s_tree4_cutL.c:
 	.data       start:0x00651650 end:0x00651890
+
+data/model/ef_s_tree4_cutL.c:
 	.data       start:0x00651890 end:0x00651A38
+
+data/model/cKF_ba_r_ef_s_tree4_cutR.c:
 	.data       start:0x00651A38 end:0x00651C78
+
+data/model/ef_s_tree4_cutR.c:
 	.data       start:0x00651C78 end:0x00651E20
+
+data/model/cKF_ba_r_ef_s_tree4_shakeL.c:
 	.data       start:0x00651E20 end:0x00651ED0
+
+data/model/cKF_ba_r_ef_s_tree4_shakeS.c:
 	.data       start:0x00651ED0 end:0x00651F20
+
+data/model/cKF_ba_r_ef_s_tree4_shake.c:
 	.data       start:0x00651F20 end:0x00651F88
+
+data/model/ef_s_tree4_shake.c:
 	.data       start:0x00651F88 end:0x00652080
+
+data/model/cKF_ba_r_ef_s_tree5_cutL.c:
 	.data       start:0x00652080 end:0x006522C0
+
+data/model/ef_s_tree5_cutL.c:
 	.data       start:0x006522C0 end:0x006524C8
+
+data/model/cKF_ba_r_ef_s_tree5_cutR.c:
 	.data       start:0x006524C8 end:0x00652708
+
+data/model/ef_s_tree5_cutR.c:
 	.data       start:0x00652708 end:0x00652910
+
+data/model/cKF_ba_r_ef_s_tree5_shakeL.c:
 	.data       start:0x00652910 end:0x006529B0
+
+data/model/cKF_ba_r_ef_s_tree5_shakeS.c:
 	.data       start:0x006529B0 end:0x00652A00
+
+data/model/cKF_ba_r_ef_s_tree5_shake.c:
 	.data       start:0x00652A00 end:0x00652A68
+
+data/model/ef_s_tree5_shake.c:
 	.data       start:0x00652A68 end:0x00652BC0
+
+data/model/ef_s_tree.c:
 	.data       start:0x00652BC0 end:0x00652C20
+
+data/model/obj_s_tree.c:
 	.data       start:0x00652C20 end:0x00653C20
+
+data/model/cKF_ba_r_ef_w_cedar3_cutL.c:
 	.data       start:0x00653C20 end:0x00653E60
+
+data/model/ef_w_cedar3_cutL.c:
 	.data       start:0x00653E60 end:0x006540D0
+
+data/model/cKF_ba_r_ef_w_cedar3_cutR.c:
 	.data       start:0x006540D0 end:0x00654310
+
+data/model/ef_w_cedar3_cutR.c:
 	.data       start:0x00654310 end:0x00654580
+
+data/model/cKF_ba_r_ef_w_cedar3_shakeL.c:
 	.data       start:0x00654580 end:0x00654620
+
+data/model/cKF_ba_r_ef_w_cedar3_shakeS.c:
 	.data       start:0x00654620 end:0x00654670
+
+data/model/cKF_ba_r_ef_w_cedar3_shake.c:
 	.data       start:0x00654670 end:0x006546E0
+
+data/model/ef_w_cedar3_shake.c:
 	.data       start:0x006546E0 end:0x006548A0
+
+data/model/cKF_ba_r_ef_w_cedar4_cutL.c:
 	.data       start:0x006548A0 end:0x00654AE0
+
+data/model/ef_w_cedar4_cutL.c:
 	.data       start:0x00654AE0 end:0x00654EF0
+
+data/model/cKF_ba_r_ef_w_cedar4_cutR.c:
 	.data       start:0x00654EF0 end:0x00655130
+
+data/model/ef_w_cedar4_cutR.c:
 	.data       start:0x00655130 end:0x00655540
+
+data/model/cKF_ba_r_ef_w_cedar4_shakeL.c:
 	.data       start:0x00655540 end:0x006555E0
+
+data/model/cKF_ba_r_ef_w_cedar4_shakeS.c:
 	.data       start:0x006555E0 end:0x00655630
+
+data/model/cKF_ba_r_ef_w_cedar4_shake.c:
 	.data       start:0x00655630 end:0x006556A0
+
+data/model/ef_w_cedar4_shake.c:
 	.data       start:0x006556A0 end:0x00655A00
+
+data/model/cKF_ba_r_ef_x_cedar5_cutL.c:
 	.data       start:0x00655A00 end:0x00655C48
+
+data/model/ef_x_cedar5_cutL.c:
 	.data       start:0x00655C48 end:0x006563C0
+
+data/model/cKF_ba_r_ef_x_cedar5_cutR.c:
 	.data       start:0x006563C0 end:0x00656608
+
+data/model/ef_x_cedar5_cutR.c:
 	.data       start:0x00656608 end:0x00656D80
+
+data/model/cKF_ba_r_ef_x_cedar5_shakeL.c:
 	.data       start:0x00656D80 end:0x00656E28
+
+data/model/cKF_ba_r_ef_x_cedar5_shakeS.c:
 	.data       start:0x00656E28 end:0x00656E80
+
+data/model/cKF_ba_r_ef_x_cedar5_shake.c:
 	.data       start:0x00656E80 end:0x00656EF8
+
+data/model/ef_x_cedar5_shake.c:
 	.data       start:0x00656EF8 end:0x006575C0
+
+data/model/ef_w_cedar.c:
 	.data       start:0x006575C0 end:0x00657660
+
+data/model/obj_x_cedar_light_tex_txt.c:
 	.data       start:0x00657660 end:0x00658880
+
+data/model/cKF_ba_r_ef_w_palm3_cutL.c:
 	.data       start:0x00658880 end:0x00658AE0
+
+data/model/ef_w_palm3_cutL.c:
 	.data       start:0x00658AE0 end:0x00658CE0
+
+data/model/cKF_ba_r_ef_w_palm3_cutR.c:
 	.data       start:0x00658CE0 end:0x00658F40
+
+data/model/ef_w_palm3_cutR.c:
 	.data       start:0x00658F40 end:0x00659140
+
+data/model/cKF_ba_r_ef_w_palm3_shakeL.c:
 	.data       start:0x00659140 end:0x006591F0
+
+data/model/cKF_ba_r_ef_w_palm3_shakeS.c:
 	.data       start:0x006591F0 end:0x00659240
+
+data/model/cKF_ba_r_ef_w_palm3_shake.c:
 	.data       start:0x00659240 end:0x006592C0
+
+data/model/ef_w_palm3_shake.c:
 	.data       start:0x006592C0 end:0x00659410
+
+data/model/cKF_ba_r_ef_w_palm4_cutL.c:
 	.data       start:0x00659410 end:0x00659670
+
+data/model/ef_w_palm4_cutL.c:
 	.data       start:0x00659670 end:0x00659980
+
+data/model/cKF_ba_r_ef_w_palm4_cutR.c:
 	.data       start:0x00659980 end:0x00659BE0
+
+data/model/ef_w_palm4_cutR.c:
 	.data       start:0x00659BE0 end:0x00659EF0
+
+data/model/cKF_ba_r_ef_w_palm4_shakeL.c:
 	.data       start:0x00659EF0 end:0x00659FA0
+
+data/model/cKF_ba_r_ef_w_palm4_shakeS.c:
 	.data       start:0x00659FA0 end:0x00659FF0
+
+data/model/cKF_ba_r_ef_w_palm4_shake.c:
 	.data       start:0x00659FF0 end:0x0065A058
+
+data/model/ef_w_palm4_shake.c:
 	.data       start:0x0065A058 end:0x0065A2B8
+
+data/model/cKF_ba_r_ef_w_palm5_cutL.c:
 	.data       start:0x0065A2B8 end:0x0065A518
+
+data/model/ef_w_palm5_cutL.c:
 	.data       start:0x0065A518 end:0x0065A948
+
+data/model/cKF_ba_r_ef_w_palm5_cutR.c:
 	.data       start:0x0065A948 end:0x0065ABA8
+
+data/model/ef_w_palm5_cutR.c:
 	.data       start:0x0065ABA8 end:0x0065AFD8
+
+data/model/cKF_ba_r_ef_w_palm5_shakeL.c:
 	.data       start:0x0065AFD8 end:0x0065B088
+
+data/model/cKF_ba_r_ef_w_palm5_shakeS.c:
 	.data       start:0x0065B088 end:0x0065B110
+
+data/model/cKF_ba_r_ef_w_palm5_shake.c:
 	.data       start:0x0065B110 end:0x0065B178
+
+data/model/ef_w_palm5_shake.c:
 	.data       start:0x0065B178 end:0x0065B4F8
+
+data/model/ef_w_palm.c:
 	.data       start:0x0065B4F8 end:0x0065B560
+
+data/model/obj_w_palm6.c:
 	.data       start:0x0065B560 end:0x0065C560
+
+data/model/cKF_ba_r_ef_w_tree3_cutL.c:
 	.data       start:0x0065C560 end:0x0065C7A0
+
+data/model/ef_w_tree3_cutL.c:
 	.data       start:0x0065C7A0 end:0x0065C8E8
+
+data/model/cKF_ba_r_ef_w_tree3_cutR.c:
 	.data       start:0x0065C8E8 end:0x0065CB28
+
+data/model/ef_w_tree3_cutR.c:
 	.data       start:0x0065CB28 end:0x0065CC70
+
+data/model/cKF_ba_r_ef_w_tree3_shakeL.c:
 	.data       start:0x0065CC70 end:0x0065CD20
+
+data/model/cKF_ba_r_ef_w_tree3_shakeS.c:
 	.data       start:0x0065CD20 end:0x0065CD70
+
+data/model/cKF_ba_r_ef_w_tree3_shake.c:
 	.data       start:0x0065CD70 end:0x0065CDD8
+
+data/model/ef_w_tree3_shake.c:
 	.data       start:0x0065CDD8 end:0x0065CE70
+
+data/model/cKF_ba_r_ef_w_tree4_cutL.c:
 	.data       start:0x0065CE70 end:0x0065D0B0
+
+data/model/ef_w_tree4_cutL.c:
 	.data       start:0x0065D0B0 end:0x0065D258
+
+data/model/cKF_ba_r_ef_w_tree4_cutR.c:
 	.data       start:0x0065D258 end:0x0065D498
+
+data/model/ef_w_tree4_cutR.c:
 	.data       start:0x0065D498 end:0x0065D640
+
+data/model/cKF_ba_r_ef_w_tree4_shakeL.c:
 	.data       start:0x0065D640 end:0x0065D6F0
+
+data/model/cKF_ba_r_ef_w_tree4_shakeS.c:
 	.data       start:0x0065D6F0 end:0x0065D740
+
+data/model/cKF_ba_r_ef_w_tree4_shake.c:
 	.data       start:0x0065D740 end:0x0065D7A8
+
+data/model/ef_w_tree4_shake.c:
 	.data       start:0x0065D7A8 end:0x0065D8A0
+
+data/model/ef_w_tree.c:
 	.data       start:0x0065D8A0 end:0x0065D938
+
+data/model/cKF_ba_r_ef_x_tree5_cutL.c:
 	.data       start:0x0065D938 end:0x0065DB80
+
+data/model/ef_x_tree5_cutL.c:
 	.data       start:0x0065DB80 end:0x0065DE88
+
+data/model/cKF_ba_r_ef_x_tree5_cutR.c:
 	.data       start:0x0065DE88 end:0x0065E0D0
+
+data/model/ef_x_tree5_cutR.c:
 	.data       start:0x0065E0D0 end:0x0065E3D8
+
+data/model/cKF_ba_r_ef_x_tree5_shakeL.c:
 	.data       start:0x0065E3D8 end:0x0065E480
+
+data/model/cKF_ba_r_ef_x_tree5_shakeS.c:
 	.data       start:0x0065E480 end:0x0065E4D8
+
+data/model/cKF_ba_r_ef_x_tree5_shake.c:
 	.data       start:0x0065E4D8 end:0x0065E548
+
+data/model/ef_x_tree5_shake.c:
 	.data       start:0x0065E548 end:0x0065E7A0
+
+data/model/obj_x_tree_light_tex_txt.c:
 	.data       start:0x0065E7A0 end:0x0065F9C0
+
+data/model/ef_anahikari01_01.c:
 	.data       start:0x0065F9C0 end:0x0065FFA0
+
+data/model/ef_ase01_00.c:
 	.data       start:0x0065FFA0 end:0x00660140
+
+data/model/ef_ase02_00.c:
 	.data       start:0x00660140 end:0x00660860
+
+data/model/ef_axe1.c:
 	.data       start:0x00660860 end:0x00661700
+
+data/model/ef_peke01_00.c:
 	.data       start:0x00661700 end:0x006618A0
+
+data/model/ef_buruburu01_00.c:
 	.data       start:0x006618A0 end:0x00661B38
+
+data/model/ef_s_yabu01_00.c:
 	.data       start:0x00661B40 end:0x006623C0
+
+data/model/ef_car01.c:
 	.data       start:0x006623C0 end:0x00662C30
+
+data/model/ef_kamihubuki01_00.c:
 	.data       start:0x00662C30 end:0x00662EC0
+
+data/model/ef_coin.c:
 	.data       start:0x00662EC0 end:0x00663480
+
+data/model/ef_daruma01_00.c:
 	.data       start:0x00663480 end:0x00663D80
+
+data/model/ef_anahori01_00.c:
 	.data       start:0x00663D80 end:0x00664A60
+
+data/model/ef_doyon01_00.c:
 	.data       start:0x00664A60 end:0x00664F00
+
+data/model/ef_dust01_00.c:
 	.data       start:0x00664F00 end:0x00665260
+
+data/model/ef_gimonhu01_00.c:
 	.data       start:0x00665260 end:0x00665700
+
+data/model/ef_goki01_01.c:
 	.data       start:0x00665700 end:0x006659C0
+
+data/model/ef_ha01_00.c:
 	.data       start:0x006659C0 end:0x00665E60
+
+data/model/ef_hana01_tu_a.c:
 	.data       start:0x00665E60 end:0x00666360
+
+data/model/ef_hanabi_b_00.c:
 	.data       start:0x00666360 end:0x00666C00
+
+data/model/ef_hanabi_h_00.c:
 	.data       start:0x00666C00 end:0x006674A0
+
+data/model/ef_hanabi_y_00.c:
 	.data       start:0x006674A0 end:0x00667D40
+
+data/model/ef_hirameki01_den.c:
 	.data       start:0x00667D40 end:0x00668100
+
+data/model/ef_star01_00.c:
 	.data       start:0x00668100 end:0x006685A0
+
+data/model/ef_think_l.c:
 	.data       start:0x006685A0 end:0x00668A40
+
+data/model/ef_think_s.c:
 	.data       start:0x00668A40 end:0x00668EE0
+
+data/model/ef_kantanhu01_00.c:
 	.data       start:0x00668EE0 end:0x00669380
+
+data/model/ef_kaze01.c:
 	.data       start:0x00669380 end:0x006697C0
+
+data/model/ef_kikuzu01_00.c:
 	.data       start:0x006697C0 end:0x00669960
+
+data/model/act_killer.c:
 	.data       start:0x00669960 end:0x00669DC0
+
+data/model/ef_kisha_kemuri01_00.c:
 	.data       start:0x00669DC0 end:0x00669F60
+
+data/model/ef_amimizu01_00.c:
 	.data       start:0x00669F60 end:0x0066A240
+
+data/model/ef_kore.c:
 	.data       start:0x0066A240 end:0x0066A4E0
+
+data/model/ef_lovelove01_00.c:
 	.data       start:0x0066A4E0 end:0x0066A680
+
+data/model/ef_lovelove02_00.c:
 	.data       start:0x0066A680 end:0x0066AB20
+
+data/model/ef_circle_light.c:
 	.data       start:0x0066AB20 end:0x0066ADC0
+
+data/model/ef_sphere_light.c:
 	.data       start:0x0066ADC0 end:0x0066B3E0
+
+data/model/ef_ongen.c:
 	.data       start:0x0066B3E0 end:0x0066B620
+
+data/model/ef_koke_suiteki01_00.c:
 	.data       start:0x0066B620 end:0x0066B8C0
+
+data/model/ef_motiyuge01_00.c:
 	.data       start:0x0066B8C0 end:0x0066BAE0
+
+data/model/ef_muka01_00.c:
 	.data       start:0x0066BAE0 end:0x0066BF80
+
+data/model/ef_namida01.c:
 	.data       start:0x0066BF80 end:0x0066C120
+
+data/model/ef_neboke_awa01.c:
 	.data       start:0x0066C120 end:0x0066C2C0
+
+data/model/ef_moon01_01.c:
 	.data       start:0x0066C2C0 end:0x0066CDA0
+
+data/model/ef_moon01_00.c:
 	.data       start:0x0066CDA0 end:0x0066D880
+
+data/model/ef_onpu01_00.c:
 	.data       start:0x0066D880 end:0x0066DD60
+
+data/model/ef_otikomi_us2.c:
 	.data       start:0x0066DD60 end:0x0066E280
+
+data/model/ef_bodyprint01_00.c:
 	.data       start:0x0066E280 end:0x0066E980
+
+data/model/ef_pun01_01.c:
 	.data       start:0x0066E980 end:0x0066EAA0
+
+data/model/ef_pun01_00.c:
 	.data       start:0x0066EAA0 end:0x0066F538
+
+data/model/ef_reset_hole.c:
 	.data       start:0x0066F540 end:0x0066FD60
+
+data/model/ef_shock01_00.c:
 	.data       start:0x0066FD60 end:0x00670200
+
+data/model/ef_nagare01.c:
 	.data       start:0x00670200 end:0x00670B40
+
+data/model/ef_siawase01_00.c:
 	.data       start:0x00670B40 end:0x00670FA0
+
+data/model/ef_sibuki01_00.c:
 	.data       start:0x00670FA0 end:0x006716E0
+
+data/model/ef_situren01_00.c:
 	.data       start:0x006716E0 end:0x00671F40
+
+data/model/ef_sleep01.c:
 	.data       start:0x00671F40 end:0x006723E0
+
+data/model/ef_museum5_awa1.c:
 	.data       start:0x006723E0 end:0x00672500
+
+data/model/ef_taberu01_00.c:
 	.data       start:0x00672500 end:0x00672CA0
+
+data/model/ef_takurami01_yoko.c:
 	.data       start:0x00672CA0 end:0x006731C0
+
+data/model/ef_tamaire01_r2.c:
 	.data       start:0x006731C0 end:0x006738E0
+
+data/model/obj_tent_lamp.c:
 	.data       start:0x006738E0 end:0x006744A0
+
+data/model/ef_turi_hamon01_00.c:
 	.data       start:0x006744A0 end:0x006745C0
+
+data/model/ef_turi_hane01_00.c:
 	.data       start:0x006745C0 end:0x00674E60
+
+data/model/ef_turi_hane02_00.c:
 	.data       start:0x00674E60 end:0x00675700
+
+data/model/ef_turi_suiteki01_00.c:
 	.data       start:0x00675700 end:0x006758A0
+
+data/model/ef_uranai01_00.c:
 	.data       start:0x006758A0 end:0x00675DF8
+
+data/model/ef_warau01_00.c:
 	.data       start:0x00675E00 end:0x00676980
+
+data/model/ef_s_youngtree_00.c:
 	.data       start:0x00676980 end:0x00677CC0
+
+data/model/ef_koke_yuki01_00.c:
 	.data       start:0x00677CC0 end:0x00678160
+
+data/model/ef_yukihane01_00.c:
 	.data       start:0x00678160 end:0x00678600
+
+data/model/cKF_ba_r_act_mus_angel_a1.c:
 	.data       start:0x00678600 end:0x006786E0
+
+data/model/act_mus_angel_a1.c:
 	.data       start:0x006786E0 end:0x00679720
+
+data/model/cKF_ba_r_act_mus_aroana_a1.c:
 	.data       start:0x00679720 end:0x00679800
+
+data/model/act_mus_aroana_a1.c:
 	.data       start:0x00679800 end:0x00679F68
+
+data/model/cKF_ba_r_act_mus_ayu_a1.c:
 	.data       start:0x00679F68 end:0x0067A040
+
+data/model/act_mus_ayu_a1.c:
 	.data       start:0x0067A040 end:0x0067A890
+
+data/model/cKF_ba_r_act_mus_bass_a1.c:
 	.data       start:0x0067A890 end:0x0067A960
+
+data/model/act_mus_bass_a1.c:
 	.data       start:0x0067A960 end:0x0067B028
+
+data/model/cKF_ba_r_act_mus_bassl_a1.c:
 	.data       start:0x0067B028 end:0x0067B100
+
+data/model/act_mus_bassl_a1.c:
 	.data       start:0x0067B100 end:0x0067B8C8
+
+data/model/cKF_ba_r_act_mus_bassm_a1.c:
 	.data       start:0x0067B8C8 end:0x0067B9A0
+
+data/model/act_mus_bassm_a1.c:
 	.data       start:0x0067B9A0 end:0x0067C168
+
+data/model/cKF_ba_r_act_mus_demekin_a1.c:
 	.data       start:0x0067C168 end:0x0067C240
+
+data/model/act_mus_demekin_a1.c:
 	.data       start:0x0067C240 end:0x0067CC90
+
+data/model/cKF_ba_r_act_mus_dojyo_a1.c:
 	.data       start:0x0067CC90 end:0x0067CD60
+
+data/model/act_mus_dojyo_a1.c:
 	.data       start:0x0067CD60 end:0x0067D368
+
+data/model/cKF_ba_r_act_mus_donko_a1.c:
 	.data       start:0x0067D368 end:0x0067D460
+
+data/model/act_mus_donko_a1.c:
 	.data       start:0x0067D460 end:0x0067DB20
+
+data/model/cKF_ba_r_act_mus_funa_a1.c:
 	.data       start:0x0067DB20 end:0x0067DC00
+
+data/model/act_mus_funa_a1.c:
 	.data       start:0x0067DC00 end:0x0067E2A0
+
+data/model/cKF_ba_r_act_mus_gill_a1.c:
 	.data       start:0x0067E2A0 end:0x0067E380
+
+data/model/act_mus_gill_a1.c:
 	.data       start:0x0067E380 end:0x0067EA20
+
+data/model/cKF_ba_r_act_mus_gupi_a1.c:
 	.data       start:0x0067EA20 end:0x0067EB00
+
+data/model/act_mus_gupi_a1.c:
 	.data       start:0x0067EB00 end:0x0067F1E8
+
+data/model/cKF_ba_r_act_mus_hera_a1.c:
 	.data       start:0x0067F1E8 end:0x0067F2C0
+
+data/model/act_mus_hera_a1.c:
 	.data       start:0x0067F2C0 end:0x0067FAF0
+
+data/model/cKF_ba_r_act_mus_isidai_a1.c:
 	.data       start:0x0067FAF0 end:0x0067FBC0
+
+data/model/act_mus_isidai_a1.c:
 	.data       start:0x0067FBC0 end:0x00680410
+
+data/model/cKF_ba_r_act_mus_ito_a1.c:
 	.data       start:0x00680410 end:0x00680500
+
+data/model/act_mus_ito_a1.c:
 	.data       start:0x00680500 end:0x00680F30
+
+data/model/cKF_ba_r_act_mus_iwana_a1.c:
 	.data       start:0x00680F30 end:0x00681000
+
+data/model/act_mus_iwana_a1.c:
 	.data       start:0x00681000 end:0x00681830
+
+data/model/cKF_ba_r_act_mus_kaeru_a1.c:
 	.data       start:0x00681830 end:0x00681888
+
+data/model/cKF_ba_r_act_mus_kaeru_a1_big.c:
 	.data       start:0x00681888 end:0x00681900
+
+data/model/act_mus_kaeru_a1.c:
 	.data       start:0x00681900 end:0x00683258
+
+data/model/cKF_ba_r_act_mus_kaseki_a1.c:
 	.data       start:0x00683258 end:0x006833A0
+
+data/model/act_mus_kaseki_a1.c:
 	.data       start:0x006833A0 end:0x00683ED8
+
+data/model/cKF_ba_r_act_mus_kingyo_a1.c:
 	.data       start:0x00683ED8 end:0x00683FC0
+
+data/model/act_mus_kingyo_a1.c:
 	.data       start:0x00683FC0 end:0x00684990
+
+data/model/cKF_ba_r_act_mus_koi_a1.c:
 	.data       start:0x00684990 end:0x00684A60
+
+data/model/act_mus_koi_a1.c:
 	.data       start:0x00684A60 end:0x00685260
+
+data/model/act_mus_kurage_a1.c:
 	.data       start:0x00685260 end:0x006858C0
+
+data/model/cKF_ba_r_act_mus_medaka_a1.c:
 	.data       start:0x006858C0 end:0x006859A0
+
+data/model/act_mus_medaka_a1.c:
 	.data       start:0x006859A0 end:0x00685EC0
+
+data/model/cKF_ba_r_act_mus_namazu_a1.c:
 	.data       start:0x00685EC0 end:0x00685FA0
+
+data/model/act_mus_namazu_a1.c:
 	.data       start:0x00685FA0 end:0x006869D8
+
+data/model/cKF_ba_r_act_mus_nigoi_a1.c:
 	.data       start:0x006869D8 end:0x00686AC0
+
+data/model/act_mus_nigoi_a1.c:
 	.data       start:0x00686AC0 end:0x006872F8
+
+data/model/cKF_ba_r_act_mus_niji_a1.c:
 	.data       start:0x006872F8 end:0x006873E0
+
+data/model/act_mus_niji_a1.c:
 	.data       start:0x006873E0 end:0x00687BF0
+
+data/model/cKF_ba_r_act_mus_nisiki_a1.c:
 	.data       start:0x00687BF0 end:0x00687CC0
+
+data/model/act_mus_nisiki_a1.c:
 	.data       start:0x00687CC0 end:0x006884A8
+
+data/model/cKF_ba_r_act_mus_oikawa_a1.c:
 	.data       start:0x006884A8 end:0x006885A0
+
+data/model/act_mus_oikawa_a1.c:
 	.data       start:0x006885A0 end:0x00688C40
+
+data/model/cKF_ba_r_act_mus_onamazu_a1.c:
 	.data       start:0x00688C40 end:0x00688D20
+
+data/model/act_mus_onamazu_a1.c:
 	.data       start:0x00688D20 end:0x006898A0
+
+data/model/cKF_ba_r_act_mus_pira_a1.c:
 	.data       start:0x006898A0 end:0x006899E0
+
+data/model/act_mus_pira_a1.c:
 	.data       start:0x006899E0 end:0x0068A688
+
+data/model/cKF_ba_r_act_mus_pirania_a1.c:
 	.data       start:0x0068A688 end:0x0068A760
+
+data/model/act_mus_pirania_a1.c:
 	.data       start:0x0068A760 end:0x0068ADF8
+
+data/model/cKF_ba_r_act_mus_raigyo_a1.c:
 	.data       start:0x0068ADF8 end:0x0068AF00
+
+data/model/act_mus_raigyo_a1.c:
 	.data       start:0x0068AF00 end:0x0068B758
+
+data/model/cKF_ba_r_act_mus_sake_a1.c:
 	.data       start:0x0068B758 end:0x0068B840
+
+data/model/act_mus_sake_a1.c:
 	.data       start:0x0068B840 end:0x0068C058
+
+data/model/cKF_ba_r_act_mus_suzuki_a1.c:
 	.data       start:0x0068C058 end:0x0068C140
+
+data/model/act_mus_suzuki_a1.c:
 	.data       start:0x0068C140 end:0x0068C920
+
+data/model/cKF_ba_r_act_mus_tai_a1.c:
 	.data       start:0x0068C920 end:0x0068CA00
+
+data/model/act_mus_tai_a1.c:
 	.data       start:0x0068CA00 end:0x0068D1E8
+
+data/model/cKF_ba_r_act_mus_tanago_a1.c:
 	.data       start:0x0068D1E8 end:0x0068D2C0
+
+data/model/act_mus_tanago_a1.c:
 	.data       start:0x0068D2C0 end:0x0068D920
+
+data/model/cKF_ba_r_act_mus_ugui_a1.c:
 	.data       start:0x0068D920 end:0x0068DA00
+
+data/model/act_mus_ugui_a1.c:
 	.data       start:0x0068DA00 end:0x0068E100
+
+data/model/act_mus_unagi_a1.c:
 	.data       start:0x0068E100 end:0x0068EE80
+
+data/model/cKF_ba_r_act_mus_unagi_a2.c:
 	.data       start:0x0068EE80 end:0x0068EF08
+
+data/model/cKF_ba_r_act_mus_wakasa_a1.c:
 	.data       start:0x0068EF08 end:0x0068F000
+
+data/model/act_mus_wakasa_a1.c:
 	.data       start:0x0068F000 end:0x0068F608
+
+data/model/cKF_ba_r_act_mus_yamame_a1.c:
 	.data       start:0x0068F608 end:0x0068F6E0
+
+data/model/act_mus_yamame_a1.c:
 	.data       start:0x0068F6E0 end:0x0068FF38
+
+data/model/cKF_ba_r_act_mus_zari.c:
 	.data       start:0x0068FF38 end:0x006900A0
+
+data/model/act_mus_zari.c:
 	.data       start:0x006900A0 end:0x00690A40
+
+data/model/obj_museum5.c:
 	.data       start:0x00690A40 end:0x006949E0
+
+data/model/obj_museum5_evw_anime.c:
 	.data       start:0x006949E0 end:0x006949F0
+
+data/model/cKF_ba_r_obj_museum5_hasu.c:
 	.data       start:0x006949F0 end:0x00694AA0
+
+data/model/obj_museum5_hasu.c:
 	.data       start:0x00694AA0 end:0x00694FD0
+
+data/model/cKF_ba_r_obj_museum5_kusa1.c:
 	.data       start:0x00694FD0 end:0x00695080
+
+data/model/obj_museum5_kusa1.c:
 	.data       start:0x00695080 end:0x00695A20
+
+data/model/cKF_ba_r_obj_museum5_kusa2.c:
 	.data       start:0x00695A20 end:0x00695AC0
+
+data/model/obj_museum5_kusa2.c:
 	.data       start:0x00695AC0 end:0x00695FE8
+
+data/model/cKF_ba_r_obj_museum5_kusa3.c:
 	.data       start:0x00695FE8 end:0x00696080
+
+data/model/obj_museum5_kusa3.c:
 	.data       start:0x00696080 end:0x00696860
+
+data/model/obj_suisou1.c:
 	.data       start:0x00696860 end:0x006981A0
+
+data/model/obj_suisou1_evw_anime.c:
 	.data       start:0x006981A0 end:0x006981B0
 
 data/item/fish_price.c:
@@ -7468,9 +9090,13 @@ data/item/ftr_list.c:
 data/item/ftr_price.c:
 	.data       start:0x006986F8 end:0x006990E0
 
-data/dataobject/dataobject_6990E0:
+data/model/int_dummy.c:
 	.data       start:0x006990E0 end:0x00699220
+
+data/model/mFM_grd_s_grass.c:
 	.data       start:0x00699220 end:0x00699820
+
+data/model/mFM_grd_w_grass.c:
 	.data       start:0x00699820 end:0x00699E20
 
 data/field/bg/acre/grd_s_c1_1/grd_s_c1_1.c:
@@ -8628,415 +10254,1219 @@ data/field/bg/acre/grd_s_t_st1_2/grd_s_t_st1_2.c:
 data/field/bg/acre/grd_s_t_st1_3/grd_s_t_st1_3.c:
 	.data       start:0x00787D80 end:0x00788CA0
 
-data/dataobject/dataobject_788CA0:
+data/model/int_hnw001.c:
 	.data       start:0x00788CA0 end:0x00789CA0
+
+data/model/int_hnw002.c:
 	.data       start:0x00789CA0 end:0x0078ACA0
+
+data/model/int_hnw003.c:
 	.data       start:0x0078ACA0 end:0x0078BCA0
+
+data/model/int_hnw004.c:
 	.data       start:0x0078BCA0 end:0x0078CD20
+
+data/model/int_hnw005.c:
 	.data       start:0x0078CD20 end:0x0078DDC0
+
+data/model/int_hnw006.c:
 	.data       start:0x0078DDC0 end:0x0078EE20
+
+data/model/int_hnw007.c:
 	.data       start:0x0078EE20 end:0x0078FEE0
+
+data/model/int_hnw008.c:
 	.data       start:0x0078FEE0 end:0x00790FA0
+
+data/model/int_hnw009.c:
 	.data       start:0x00790FA0 end:0x00792000
+
+data/model/int_hnw010.c:
 	.data       start:0x00792000 end:0x00793020
+
+data/model/int_hnw011.c:
 	.data       start:0x00793020 end:0x007940C0
+
+data/model/int_hnw012.c:
 	.data       start:0x007940C0 end:0x007951C0
+
+data/model/int_hnw013.c:
 	.data       start:0x007951C0 end:0x007962C0
+
+data/model/int_hnw014.c:
 	.data       start:0x007962C0 end:0x007973E0
+
+data/model/int_hnw015.c:
 	.data       start:0x007973E0 end:0x00798560
+
+data/model/int_hnw016.c:
 	.data       start:0x00798560 end:0x00799600
+
+data/model/int_hnw017.c:
 	.data       start:0x00799600 end:0x0079A640
+
+data/model/int_hnw018.c:
 	.data       start:0x0079A640 end:0x0079B660
+
+data/model/int_hnw019.c:
 	.data       start:0x0079B660 end:0x0079C900
+
+data/model/int_hnw020.c:
 	.data       start:0x0079C900 end:0x0079D8A0
+
+data/model/int_hnw021.c:
 	.data       start:0x0079D8A0 end:0x0079E860
+
+data/model/int_hnw022.c:
 	.data       start:0x0079E860 end:0x0079F840
+
+data/model/int_hnw023.c:
 	.data       start:0x0079F840 end:0x007A0880
+
+data/model/int_hnw024.c:
 	.data       start:0x007A0880 end:0x007A18A0
+
+data/model/int_hnw025.c:
 	.data       start:0x007A18A0 end:0x007A28C0
+
+data/model/int_hnw026.c:
 	.data       start:0x007A28C0 end:0x007A38C0
+
+data/model/int_hnw027.c:
 	.data       start:0x007A38C0 end:0x007A48C0
+
+data/model/int_hnw028.c:
 	.data       start:0x007A48C0 end:0x007A5960
+
+data/model/int_hnw029.c:
 	.data       start:0x007A5960 end:0x007A6940
+
+data/model/int_hnw030.c:
 	.data       start:0x007A6940 end:0x007A7900
+
+data/model/int_hnw031.c:
 	.data       start:0x007A7900 end:0x007A8940
+
+data/model/int_hnw032.c:
 	.data       start:0x007A8940 end:0x007A9940
+
+data/model/int_hnw033.c:
 	.data       start:0x007A9940 end:0x007AA960
+
+data/model/int_hnw034.c:
 	.data       start:0x007AA960 end:0x007ABA20
+
+data/model/int_hnw035.c:
 	.data       start:0x007ABA20 end:0x007ACA00
+
+data/model/int_hnw036.c:
 	.data       start:0x007ACA00 end:0x007AD9E0
+
+data/model/int_hnw037.c:
 	.data       start:0x007AD9E0 end:0x007AEA60
+
+data/model/int_hnw038.c:
 	.data       start:0x007AEA60 end:0x007AFB20
+
+data/model/int_hnw039.c:
 	.data       start:0x007AFB20 end:0x007B0BC0
+
+data/model/int_hnw040.c:
 	.data       start:0x007B0BC0 end:0x007B1C80
+
+data/model/int_hnw041.c:
 	.data       start:0x007B1C80 end:0x007B2D00
+
+data/model/int_hnw042.c:
 	.data       start:0x007B2D00 end:0x007B3D40
+
+data/model/int_hnw043.c:
 	.data       start:0x007B3D40 end:0x007B4D40
+
+data/model/int_hnw044.c:
 	.data       start:0x007B4D40 end:0x007B5D60
+
+data/model/int_hnw045.c:
 	.data       start:0x007B5D60 end:0x007B6D80
+
+data/model/int_hnw046.c:
 	.data       start:0x007B6D80 end:0x007B7D80
+
+data/model/int_hnw047.c:
 	.data       start:0x007B7D80 end:0x007B8EC0
+
+data/model/int_hnw048.c:
 	.data       start:0x007B8EC0 end:0x007BA080
+
+data/model/int_hnw049.c:
 	.data       start:0x007BA080 end:0x007BB240
+
+data/model/int_hnw050.c:
 	.data       start:0x007BB240 end:0x007BC3A0
+
+data/model/int_hnw051.c:
 	.data       start:0x007BC3A0 end:0x007BD540
+
+data/model/int_hnw052.c:
 	.data       start:0x007BD540 end:0x007BE560
+
+data/model/int_hnw053.c:
 	.data       start:0x007BE560 end:0x007BF5A0
+
+data/model/int_hnw054.c:
 	.data       start:0x007BF5A0 end:0x007C05A0
+
+data/model/int_hnw055.c:
 	.data       start:0x007C05A0 end:0x007C1680
+
+data/model/int_hnw056.c:
 	.data       start:0x007C1680 end:0x007C2760
+
+data/model/int_hnw057.c:
 	.data       start:0x007C2760 end:0x007C3860
+
+data/model/int_hnw058.c:
 	.data       start:0x007C3860 end:0x007C4880
+
+data/model/int_hnw059.c:
 	.data       start:0x007C4880 end:0x007C5920
+
+data/model/int_hnw060.c:
 	.data       start:0x007C5920 end:0x007C6AA0
+
+data/model/int_hnw061.c:
 	.data       start:0x007C6AA0 end:0x007C7C40
+
+data/model/int_hnw062.c:
 	.data       start:0x007C7C40 end:0x007C8D20
+
+data/model/int_hnw063.c:
 	.data       start:0x007C8D20 end:0x007C9E00
+
+data/model/int_hnw064.c:
 	.data       start:0x007C9E00 end:0x007CAF00
+
+data/model/int_hnw065.c:
 	.data       start:0x007CAF00 end:0x007CBFE0
+
+data/model/int_hnw066.c:
 	.data       start:0x007CBFE0 end:0x007CD0E0
+
+data/model/int_hnw067.c:
 	.data       start:0x007CD0E0 end:0x007CE1E0
+
+data/model/int_hnw068.c:
 	.data       start:0x007CE1E0 end:0x007CF2A0
+
+data/model/int_hnw069.c:
 	.data       start:0x007CF2A0 end:0x007D0380
+
+data/model/int_hnw070.c:
 	.data       start:0x007D0380 end:0x007D1440
+
+data/model/int_hnw071.c:
 	.data       start:0x007D1440 end:0x007D2500
+
+data/model/int_hnw072.c:
 	.data       start:0x007D2500 end:0x007D3740
+
+data/model/int_hnw073.c:
 	.data       start:0x007D3740 end:0x007D4840
+
+data/model/int_hnw074.c:
 	.data       start:0x007D4840 end:0x007D5920
+
+data/model/int_hnw075.c:
 	.data       start:0x007D5920 end:0x007D6A20
+
+data/model/int_hnw076.c:
 	.data       start:0x007D6A20 end:0x007D7AA0
+
+data/model/int_hnw077.c:
 	.data       start:0x007D7AA0 end:0x007D8C40
+
+data/model/int_hnw078.c:
 	.data       start:0x007D8C40 end:0x007D9CC0
+
+data/model/int_hnw079.c:
 	.data       start:0x007D9CC0 end:0x007DAEC0
+
+data/model/int_hnw080.c:
 	.data       start:0x007DAEC0 end:0x007DBF20
+
+data/model/int_hnw081.c:
 	.data       start:0x007DBF20 end:0x007DCF80
+
+data/model/int_hnw082.c:
 	.data       start:0x007DCF80 end:0x007DDFE0
+
+data/model/int_hnw083.c:
 	.data       start:0x007DDFE0 end:0x007DF060
+
+data/model/int_hnw084.c:
 	.data       start:0x007DF060 end:0x007E00E0
+
+data/model/int_hnw085.c:
 	.data       start:0x007E00E0 end:0x007E1120
+
+data/model/int_hnw086.c:
 	.data       start:0x007E1120 end:0x007E2120
+
+data/model/int_hnw087.c:
 	.data       start:0x007E2120 end:0x007E3100
+
+data/model/int_hnw088.c:
 	.data       start:0x007E3100 end:0x007E4140
+
+data/model/int_hnw089.c:
 	.data       start:0x007E4140 end:0x007E5180
+
+data/model/int_hnw090.c:
 	.data       start:0x007E5180 end:0x007E61E0
+
+data/model/int_hnw091.c:
 	.data       start:0x007E61E0 end:0x007E72A0
+
+data/model/int_hnw092.c:
 	.data       start:0x007E72A0 end:0x007E8380
+
+data/model/int_hnw093.c:
 	.data       start:0x007E8380 end:0x007E94C0
+
+data/model/int_hnw094.c:
 	.data       start:0x007E94C0 end:0x007EA5C0
+
+data/model/int_hnw095.c:
 	.data       start:0x007EA5C0 end:0x007EB6A0
+
+data/model/int_hnw096.c:
 	.data       start:0x007EB6A0 end:0x007EC780
+
+data/model/int_hnw097.c:
 	.data       start:0x007EC780 end:0x007ED840
+
+data/model/int_hnw098.c:
 	.data       start:0x007ED840 end:0x007EE860
+
+data/model/int_hnw099.c:
 	.data       start:0x007EE860 end:0x007EF8A0
+
+data/model/int_hnw100.c:
 	.data       start:0x007EF8A0 end:0x007F08C0
+
+data/model/int_hnw101.c:
 	.data       start:0x007F08C0 end:0x007F1980
+
+data/model/int_hnw102.c:
 	.data       start:0x007F1980 end:0x007F2A60
+
+data/model/int_hnw103.c:
 	.data       start:0x007F2A60 end:0x007F3B40
+
+data/model/int_hnw104.c:
 	.data       start:0x007F3B40 end:0x007F4C20
+
+data/model/int_hnw105.c:
 	.data       start:0x007F4C20 end:0x007F5C00
+
+data/model/int_hnw106.c:
 	.data       start:0x007F5C00 end:0x007F6BE0
+
+data/model/int_hnw107.c:
 	.data       start:0x007F6BE0 end:0x007F7C40
+
+data/model/int_hnw108.c:
 	.data       start:0x007F7C40 end:0x007F8C60
+
+data/model/int_hnw109.c:
 	.data       start:0x007F8C60 end:0x007F9C00
+
+data/model/int_hnw110.c:
 	.data       start:0x007F9C00 end:0x007FAC00
+
+data/model/int_hnw111.c:
 	.data       start:0x007FAC00 end:0x007FBBC0
+
+data/model/int_hnw112.c:
 	.data       start:0x007FBBC0 end:0x007FCB60
+
+data/model/int_hnw113.c:
 	.data       start:0x007FCB60 end:0x007FDCA0
+
+data/model/int_hnw114.c:
 	.data       start:0x007FDCA0 end:0x007FEE00
+
+data/model/int_hnw115.c:
 	.data       start:0x007FEE00 end:0x007FFF60
+
+data/model/int_hnw116.c:
 	.data       start:0x007FFF60 end:0x00801080
+
+data/model/int_hnw117.c:
 	.data       start:0x00801080 end:0x008021C0
+
+data/model/int_hnw118.c:
 	.data       start:0x008021C0 end:0x00803320
+
+data/model/int_hnw119.c:
 	.data       start:0x00803320 end:0x00804400
+
+data/model/int_hnw120.c:
 	.data       start:0x00804400 end:0x00805500
+
+data/model/int_hnw121.c:
 	.data       start:0x00805500 end:0x00806640
+
+data/model/int_hnw122.c:
 	.data       start:0x00806640 end:0x00807640
+
+data/model/int_hnw123.c:
 	.data       start:0x00807640 end:0x008086A0
+
+data/model/int_hnw124.c:
 	.data       start:0x008086A0 end:0x008096E0
+
+data/model/int_hnw125.c:
 	.data       start:0x008096E0 end:0x0080A7E0
+
+data/model/int_hnw126.c:
 	.data       start:0x0080A7E0 end:0x0080B900
+
+data/model/int_hnw127.c:
 	.data       start:0x0080B900 end:0x0080CAA0
+
+data/model/int_hos_Tdesk.c:
 	.data       start:0x0080CAA0 end:0x0080D4E0
+
+data/model/int_hos_turkey_sofa.c:
 	.data       start:0x0080D4E0 end:0x0080E240
+
+data/model/int_hos_deskL.c:
 	.data       start:0x0080E240 end:0x0080F0E0
+
+data/model/int_hos_deskR.c:
 	.data       start:0x0080F0E0 end:0x00810020
+
+data/model/int_hos_flip.c:
 	.data       start:0x00810020 end:0x00810F60
+
+data/model/int_hos_mario_hata.c:
 	.data       start:0x00810F60 end:0x008116C0
+
+data/model/int_hos_mario_kinoko.c:
 	.data       start:0x008116C0 end:0x00811E40
+
+data/model/int_hos_piknic.c:
 	.data       start:0x00811E40 end:0x00812DC0
+
+data/model/int_iid_benti.c:
 	.data       start:0x00812DC0 end:0x00814060
+
+data/model/int_iid_diary.c:
 	.data       start:0x00814060 end:0x008147C0
+
+data/model/int_iid_funediary.c:
 	.data       start:0x008147C0 end:0x00814F20
+
+data/model/int_iid_mdiary.c:
 	.data       start:0x00814F20 end:0x008156C0
+
+data/model/int_iid_newdiary.c:
 	.data       start:0x008156C0 end:0x00815EC0
+
+data/model/int_iid_ningyou.c:
 	.data       start:0x00815EC0 end:0x008176C0
+
+data/model/int_iid_snow.c:
 	.data       start:0x008176C0 end:0x00819B00
+
+data/model/int_iid_surf.c:
 	.data       start:0x00819B00 end:0x0081B120
+
+data/model/int_iid_yuki.c:
 	.data       start:0x0081B120 end:0x0081BE00
+
+data/model/int_ike_art_ang.c:
 	.data       start:0x0081BE00 end:0x0081CAA0
+
+data/model/int_ike_art_fel.c:
 	.data       start:0x0081CAA0 end:0x0081D8E0
+
+data/model/int_ike_art_sya.c:
 	.data       start:0x0081D8E0 end:0x0081E580
+
+data/model/int_ike_island_hako01.c:
 	.data       start:0x0081E580 end:0x00820340
+
+data/model/int_ike_island_sensui01.c:
 	.data       start:0x00820340 end:0x00821540
+
+data/model/int_ike_island_uku01.c:
 	.data       start:0x00821540 end:0x00822120
+
+data/model/int_ike_jny_afmen01.c:
 	.data       start:0x00822120 end:0x00822CC0
+
+data/model/int_ike_jny_botle01.c:
 	.data       start:0x00822CC0 end:0x008240C0
+
+data/model/int_ike_jny_gate01.c:
 	.data       start:0x008240C0 end:0x00824E20
+
+data/model/int_ike_jny_gojyu01.c:
 	.data       start:0x00824E20 end:0x00825E60
+
+data/model/int_ike_jny_hariko01.c:
 	.data       start:0x00825E60 end:0x00827180
+
+data/model/int_ike_jny_houi01.c:
 	.data       start:0x00827180 end:0x00827BC0
+
+data/model/int_ike_jny_kibori01.c:
 	.data       start:0x00827BC0 end:0x00829080
+
+data/model/int_ike_jny_makada01.c:
 	.data       start:0x00829080 end:0x00829760
+
+data/model/int_ike_jny_moai01.c:
 	.data       start:0x00829760 end:0x0082A560
+
+data/model/int_ike_jny_ningyo01.c:
 	.data       start:0x0082A560 end:0x0082B5C0
+
+data/model/int_ike_jny_pisa01.c:
 	.data       start:0x0082B5C0 end:0x0082C680
+
+data/model/int_ike_jny_rosia01.c:
 	.data       start:0x0082C680 end:0x0082D520
+
+data/model/int_ike_jny_sirser01.c:
 	.data       start:0x0082D520 end:0x0082E2E0
+
+data/model/int_ike_jny_sirser201.c:
 	.data       start:0x0082E2E0 end:0x0082F0A0
+
+data/model/int_ike_jny_syon01.c:
 	.data       start:0x0082F0A0 end:0x008305E0
+
+data/model/int_ike_jny_tower01.c:
 	.data       start:0x008305E0 end:0x00831700
+
+data/model/int_ike_jny_truth01.c:
 	.data       start:0x00831700 end:0x00832500
+
+data/model/int_ike_jpn_tansu01.c:
 	.data       start:0x00832500 end:0x00833240
+
+data/model/int_ike_k_count01.c:
 	.data       start:0x00833240 end:0x00833B00
+
+data/model/int_ike_k_iveboy01.c:
 	.data       start:0x00833B00 end:0x00835340
+
+data/model/int_ike_k_kid01.c:
 	.data       start:0x00835340 end:0x00836A20
+
+data/model/int_ike_k_kid02.c:
 	.data       start:0x00836A20 end:0x00837B20
+
+data/model/int_ike_k_mame01.c:
 	.data       start:0x00837B20 end:0x00838520
+
+data/model/int_ike_k_otome01.c:
 	.data       start:0x00838520 end:0x00839480
+
+data/model/int_ike_k_sinnen01.c:
 	.data       start:0x00839480 end:0x00839CE0
+
+data/model/int_ike_k_sum01.c:
 	.data       start:0x00839CE0 end:0x0083A680
+
+data/model/int_ike_k_tanabata01.c:
 	.data       start:0x0083A680 end:0x0083B500
+
+data/model/int_ike_k_turis01.c:
 	.data       start:0x0083B500 end:0x0083CFC0
+
+data/model/int_ike_kama_danro01.c:
 	.data       start:0x0083CFC0 end:0x0083E980
+
+data/model/int_ike_nikki_fan1.c:
 	.data       start:0x0083E980 end:0x0083EF00
+
+data/model/int_ike_nikki_fan2.c:
 	.data       start:0x0083EF00 end:0x0083F480
+
+data/model/int_ike_nikki_fan3.c:
 	.data       start:0x0083F480 end:0x0083FA00
+
+data/model/int_ike_nikki_fan4.c:
 	.data       start:0x0083FA00 end:0x0083FF80
+
+data/model/int_ike_nikki_fan5.c:
 	.data       start:0x0083FF80 end:0x00840500
+
+data/model/int_ike_nikki_wafu1.c:
 	.data       start:0x00840500 end:0x00840CE0
+
+data/model/int_ike_prores_bench01.c:
 	.data       start:0x00840CE0 end:0x00841BE0
+
+data/model/int_ike_prores_fense01.c:
 	.data       start:0x00841BE0 end:0x008423A0
+
+data/model/int_ike_prores_ling01.c:
 	.data       start:0x008423A0 end:0x00842FC0
+
+data/model/int_ike_prores_ling02.c:
 	.data       start:0x00842FC0 end:0x00843C80
+
+data/model/int_ike_prores_ling03.c:
 	.data       start:0x00843C80 end:0x00844940
+
+data/model/int_ike_prores_mat01.c:
 	.data       start:0x00844940 end:0x00844E20
+
+data/model/int_ike_prores_punch01.c:
 	.data       start:0x00844E20 end:0x00845A60
+
+data/model/int_ike_prores_sandbag01.c:
 	.data       start:0x00845A60 end:0x00846B00
+
+data/model/int_ike_prores_table01.c:
 	.data       start:0x00846B00 end:0x00847740
+
+data/model/int_ike_pst_pig01.c:
 	.data       start:0x00847740 end:0x00848280
+
+data/model/int_ike_pst_tesyu01.c:
 	.data       start:0x00848280 end:0x00848A80
+
+data/model/int_ike_tent_bike01.c:
 	.data       start:0x00848A80 end:0x00849D60
+
+data/model/int_ike_tent_fire01.c:
 	.data       start:0x00849D60 end:0x0084B500
+
+data/model/int_ike_tent_fire02.c:
 	.data       start:0x0084B500 end:0x0084C8A0
+
+data/model/int_ike_tent_kayak01.c:
 	.data       start:0x0084C8A0 end:0x0084D3A0
+
+data/model/int_ike_tent_knap01.c:
 	.data       start:0x0084D3A0 end:0x0084E280
+
+data/model/int_ike_tent_sleepbag01.c:
 	.data       start:0x0084E280 end:0x0084E980
+
+data/model/int_iku_bugzapper.c:
 	.data       start:0x0084E980 end:0x0084F5C0
+
+data/model/int_iku_busstop.c:
 	.data       start:0x0084F5C0 end:0x00850380
+
+data/model/int_iku_candy.c:
 	.data       start:0x00850380 end:0x00851000
+
+data/model/int_iku_cement.c:
 	.data       start:0x00851000 end:0x00851EE0
+
+data/model/int_iku_chair.c:
 	.data       start:0x00851EE0 end:0x00852F40
+
+data/model/int_iku_cocoa.c:
 	.data       start:0x00852F40 end:0x00853BA0
+
+data/model/int_iku_cow.c:
 	.data       start:0x00853BA0 end:0x00854860
+
+data/model/int_iku_denko.c:
 	.data       start:0x00854860 end:0x00855320
+
+data/model/int_iku_flagman.c:
 	.data       start:0x00855320 end:0x00855DE0
+
+data/model/int_iku_flip_top.c:
 	.data       start:0x00855DE0 end:0x00856DC0
+
+data/model/int_iku_gold_green.c:
 	.data       start:0x00856DC0 end:0x00857C40
+
+data/model/int_iku_gold_red.c:
 	.data       start:0x00857C40 end:0x00858980
+
+data/model/int_iku_ham.c:
 	.data       start:0x00858980 end:0x00859780
+
+data/model/int_iku_hazardous.c:
 	.data       start:0x00859780 end:0x0085A2E0
+
+data/model/int_iku_ido.c:
 	.data       start:0x0085A2E0 end:0x0085B460
+
+data/model/int_iku_jack.c:
 	.data       start:0x0085B460 end:0x0085C180
+
+data/model/int_iku_jersey.c:
 	.data       start:0x0085C180 end:0x0085C820
+
+data/model/int_iku_mario_coin.c:
 	.data       start:0x0085C820 end:0x0085CF00
+
+data/model/int_iku_mario_dokan.c:
 	.data       start:0x0085CF00 end:0x0085D6A0
+
+data/model/int_iku_mario_hatena.c:
 	.data       start:0x0085D6A0 end:0x0085E1E0
+
+data/model/int_iku_mario_koura.c:
 	.data       start:0x0085E1E0 end:0x0085EDE0
+
+data/model/int_iku_mario_renga.c:
 	.data       start:0x0085EDE0 end:0x0085F3C0
+
+data/model/int_iku_mario_star.c:
 	.data       start:0x0085F3C0 end:0x0085F780
+
+data/model/int_iku_mario_taihou.c:
 	.data       start:0x0085F780 end:0x008607A0
+
+data/model/int_iku_orange.c:
 	.data       start:0x008607A0 end:0x00861300
+
+data/model/int_iku_reducespeed.c:
 	.data       start:0x00861300 end:0x00861CC0
+
+data/model/int_iku_roller.c:
 	.data       start:0x00861CC0 end:0x00862C60
+
+data/model/int_iku_saku_a.c:
 	.data       start:0x00862C60 end:0x00863EA0
+
+data/model/int_iku_saku_b.c:
 	.data       start:0x00863EA0 end:0x00864540
+
+data/model/int_iku_sawhorsev.c:
 	.data       start:0x00864540 end:0x00865320
+
+data/model/int_iku_slip.c:
 	.data       start:0x00865320 end:0x00865DE0
+
+data/model/int_iku_tumble.c:
 	.data       start:0x00865DE0 end:0x00866A20
+
+data/model/int_iku_turkey_bed.c:
 	.data       start:0x00866A20 end:0x00867C40
+
+data/model/int_iku_turkey_lamp.c:
 	.data       start:0x00867C40 end:0x00868A20
+
+data/model/int_iku_turkey_table.c:
 	.data       start:0x00868A20 end:0x00869640
+
+data/model/int_iku_turkey_TV.c:
 	.data       start:0x00869640 end:0x0086A520
+
+data/model/int_iku_ukai.c:
 	.data       start:0x0086A520 end:0x0086AFE0
+
+data/model/int_iku_work.c:
 	.data       start:0x0086AFE0 end:0x0086BAA0
+
+data/model/act_m_abura2.c:
 	.data       start:0x0086BAA0 end:0x0086BFB0
+
+data/model/act_m_akiakane2.c:
 	.data       start:0x0086BFB0 end:0x0086C4C8
+
+data/model/act_m_amenbo2.c:
 	.data       start:0x0086C4C8 end:0x0086C8D8
+
+data/model/act_m_ari2.c:
 	.data       start:0x0086C8D8 end:0x0086CB20
+
+data/model/act_m_dango2.c:
 	.data       start:0x0086CB20 end:0x0086CF00
+
+data/model/act_m_danna2.c:
 	.data       start:0x0086CF00 end:0x0086D380
+
+data/model/act_m_genji.c:
 	.data       start:0x0086D380 end:0x0086D560
+
+data/model/act_m_genji22.c:
 	.data       start:0x0086D560 end:0x0086DAC0
+
+data/model/act_m_ginyanma2.c:
 	.data       start:0x0086DAC0 end:0x0086DFD8
+
+data/model/act_m_gomadara2.c:
 	.data       start:0x0086DFD8 end:0x0086E380
+
+data/model/act_m_hachi2.c:
 	.data       start:0x0086E380 end:0x0086E958
+
+data/model/act_m_higurashi2.c:
 	.data       start:0x0086E958 end:0x0086EE68
+
+data/model/act_m_hirata2.c:
 	.data       start:0x0086EE68 end:0x0086F210
+
+data/model/cKF_ba_r_act_m_hirata_b.c:
 	.data       start:0x0086F210 end:0x0086F2C0
+
+data/model/act_m_hirata_b.c:
 	.data       start:0x0086F2C0 end:0x0086FE10
+
+data/model/act_m_ka2.c:
 	.data       start:0x0086FE10 end:0x00870388
+
+data/model/act_m_kabuto2.c:
 	.data       start:0x00870388 end:0x00870758
+
+data/model/act_m_kamakiri2.c:
 	.data       start:0x00870758 end:0x00870C68
+
+data/model/act_m_kanabun2.c:
 	.data       start:0x00870C68 end:0x00871010
+
+data/model/act_m_kera2.c:
 	.data       start:0x00871010 end:0x00871258
+
+data/model/act_m_kiageha2.c:
 	.data       start:0x00871258 end:0x008716C8
+
+data/model/act_m_kirigirisu2.c:
 	.data       start:0x008716C8 end:0x00871BB8
+
+data/model/act_m_koorogi2.c:
 	.data       start:0x00871BB8 end:0x00871F80
+
+data/model/act_m_kumo2.c:
 	.data       start:0x00871F80 end:0x00872470
+
+data/model/act_m_maimai2.c:
 	.data       start:0x00872470 end:0x00872880
+
+data/model/act_m_matumushi.c:
 	.data       start:0x00872880 end:0x00872C48
+
+data/model/act_m_minmin2.c:
 	.data       start:0x00872C48 end:0x00873158
+
+data/model/act_m_mino2.c:
 	.data       start:0x00873158 end:0x00873700
+
+data/model/act_m_miyama2.c:
 	.data       start:0x00873700 end:0x00873AA8
+
+data/model/cKF_ba_r_act_m_miyama_b.c:
 	.data       start:0x00873AA8 end:0x00873B58
+
+data/model/act_m_miyama_b.c:
 	.data       start:0x00873B58 end:0x008746A8
+
+data/model/act_m_monki2.c:
 	.data       start:0x008746A8 end:0x00874998
+
+data/model/act_m_monshiro2.c:
 	.data       start:0x00874998 end:0x00874C88
+
+data/model/act_m_nanahoshi2.c:
 	.data       start:0x00874C88 end:0x00875168
+
+data/model/act_m_nokogiri2.c:
 	.data       start:0x00875168 end:0x00875510
+
+data/model/cKF_ba_r_act_m_nokogiri_b.c:
 	.data       start:0x00875510 end:0x008755C0
+
+data/model/act_m_nokogiri_b.c:
 	.data       start:0x008755C0 end:0x00876110
+
+data/model/act_m_ohmurasaki2.c:
 	.data       start:0x00876110 end:0x00876580
+
+data/model/act_m_okuwa2.c:
 	.data       start:0x00876580 end:0x00876928
+
+data/model/cKF_ba_r_act_m_okuwa_b.c:
 	.data       start:0x00876928 end:0x008769E0
+
+data/model/act_m_okuwa_b.c:
 	.data       start:0x008769E0 end:0x00877530
+
+data/model/act_m_oniyanma2.c:
 	.data       start:0x00877530 end:0x00877A48
+
+data/model/ef_shadow_in.c:
 	.data       start:0x00877A48 end:0x00877B10
+
+data/model/act_m_shiokara2.c:
 	.data       start:0x00877B10 end:0x00878028
+
+data/model/act_m_suzumushi2.c:
 	.data       start:0x00878028 end:0x00878470
+
+data/model/act_m_syouryou2.c:
 	.data       start:0x00878470 end:0x00878938
+
+data/model/act_m_tamamushi2.c:
 	.data       start:0x00878938 end:0x00878CE0
+
+data/model/act_m_tentou2.c:
 	.data       start:0x00878CE0 end:0x008791C0
+
+data/model/act_m_tonosama2.c:
 	.data       start:0x008791C0 end:0x00879698
+
+data/model/act_m_tukutuku2.c:
 	.data       start:0x00879698 end:0x00879BA8
+
+data/model/obj_museum4_water.c:
 	.data       start:0x00879BA8 end:0x0087A0B8
+
+data/model/obj_museum4_water_evw_anime.c:
 	.data       start:0x0087A0B8 end:0x0087A0C8
 
 data/item/insect_price.c:
 	.data       start:0x0087A0C8 end:0x0087A140
 
-data/dataobject/dataobject_87A140:
+data/model/rom_kamakura.c:
 	.data       start:0x0087A140 end:0x0087EA40
+
+data/model/cam_win.c:
 	.data       start:0x0087EA40 end:0x008805D8
+
+data/model/cKF_ba_r_clk_hiniti.c:
 	.data       start:0x008805D8 end:0x00880640
+
+data/model/clk_hiniti.c:
 	.data       start:0x00880640 end:0x00888420
+
+data/model/cKF_ba_r_clk_jikan.c:
 	.data       start:0x00888420 end:0x00888480
+
+data/model/clk_jikan.c:
 	.data       start:0x00888480 end:0x00889160
+
+data/model/clk_win.c:
 	.data       start:0x00889160 end:0x0088B870
+
+data/model/darrow.c:
 	.data       start:0x0088B870 end:0x0088C260
+
+data/model/ef_wipe1.c:
 	.data       start:0x0088C260 end:0x0088C7D0
+
+data/model/ef_wipe2.c:
 	.data       start:0x0088C7D0 end:0x0088CD28
+
+data/model/ef_wipe3.c:
 	.data       start:0x0088CD28 end:0x0088D278
+
+data/model/ef_shadow_in2.c:
 	.data       start:0x0088D278 end:0x0088D440
+
+data/model/ef_shadow_out.c:
 	.data       start:0x0088D440 end:0x0088D740
+
+data/model/obj_item_axe.c:
 	.data       start:0x0088D740 end:0x0088DA00
+
+data/model/obj_item_axe2.c:
 	.data       start:0x0088DA00 end:0x0088DCC0
+
+data/model/obj_item_carpet.c:
 	.data       start:0x0088DCC0 end:0x0088DF80
+
+data/model/obj_item_fuku.c:
 	.data       start:0x0088DF80 end:0x0088E240
+
+data/model/obj_item_kaza.c:
 	.data       start:0x0088E240 end:0x0088E500
+
+data/model/obj_item_net.c:
 	.data       start:0x0088E500 end:0x0088E7C0
+
+data/model/obj_item_net2.c:
 	.data       start:0x0088E7C0 end:0x0088EA80
+
+data/model/obj_item_paper.c:
 	.data       start:0x0088EA80 end:0x0088ED40
+
+data/model/obj_item_rod.c:
 	.data       start:0x0088ED40 end:0x0088F000
+
+data/model/obj_item_rod2.c:
 	.data       start:0x0088F000 end:0x0088F2C0
+
+data/model/obj_item_seed.c:
 	.data       start:0x0088F2C0 end:0x0088F580
+
+data/model/obj_item_shovel.c:
 	.data       start:0x0088F580 end:0x0088F840
+
+data/model/obj_item_shovel2.c:
 	.data       start:0x0088F840 end:0x0088FB00
+
+data/model/obj_item_taisou.c:
 	.data       start:0x0088FB00 end:0x0088FDC0
+
+data/model/obj_item_ticket.c:
 	.data       start:0x0088FDC0 end:0x00890080
+
+data/model/obj_item_utiwa.c:
 	.data       start:0x00890080 end:0x00890340
+
+data/model/obj_item_wall.c:
 	.data       start:0x00890340 end:0x00890600
+
+data/model/obj_item_apple2.c:
 	.data       start:0x00890600 end:0x008908C0
+
+data/model/obj_item_bag.c:
 	.data       start:0x008908C0 end:0x00890B80
+
+data/model/obj_item_bone.c:
 	.data       start:0x00890B80 end:0x00890E40
+
+data/model/obj_item_box.c:
 	.data       start:0x00890E40 end:0x00891100
+
+data/model/obj_item_cage.c:
 	.data       start:0x00891100 end:0x008913C0
+
+data/model/obj_shop_candy.c:
 	.data       start:0x008913C0 end:0x008916A0
+
+data/model/obj_item_cloth.c:
 	.data       start:0x008916A0 end:0x00891960
+
+data/model/obj_item_coco.c:
 	.data       start:0x00891960 end:0x00891C20
+
+data/model/obj_item_diary.c:
 	.data       start:0x00891C20 end:0x00891EE0
+
+data/model/obj_item_fish.c:
 	.data       start:0x00891EE0 end:0x00892200
+
+data/model/obj_item_fork.c:
 	.data       start:0x00892200 end:0x008924C0
+
+data/model/obj_item_fossil2.c:
 	.data       start:0x008924C0 end:0x00892780
+
+data/model/obj_item_haniwa.c:
 	.data       start:0x00892780 end:0x00892A40
+
+data/model/obj_item_kabu2.c:
 	.data       start:0x00892A40 end:0x00892D00
+
+data/model/obj_item_leaf.c:
 	.data       start:0x00892D00 end:0x00892FC0
+
+data/model/obj_shop_letter.c:
 	.data       start:0x00892FC0 end:0x00893280
+
+data/model/obj_item_matutake2.c:
 	.data       start:0x00893280 end:0x00893540
+
+data/model/obj_item_nuts.c:
 	.data       start:0x00893540 end:0x00893800
+
+data/model/obj_item_omikuji.c:
 	.data       start:0x00893800 end:0x00893AC0
+
+data/model/obj_item_orange2.c:
 	.data       start:0x00893AC0 end:0x00893D80
+
+data/model/obj_item_other.c:
 	.data       start:0x00893D80 end:0x00894040
+
+data/model/obj_item_otosi.c:
 	.data       start:0x00894040 end:0x00894300
+
+data/model/obj_item_pack.c:
 	.data       start:0x00894300 end:0x008945C0
+
+data/model/obj_item_peach.c:
 	.data       start:0x008945C0 end:0x00894880
+
+data/model/obj_item_pear.c:
 	.data       start:0x00894880 end:0x00894B40
+
+data/model/obj_item_present.c:
 	.data       start:0x00894B40 end:0x00894E00
+
+data/model/obj_item_roll.c:
 	.data       start:0x00894E00 end:0x008950C0
+
+data/model/obj_item_tane2.c:
 	.data       start:0x008950C0 end:0x00895200
+
+data/model/obj_item_shellA.c:
 	.data       start:0x00895200 end:0x00895340
+
+data/model/obj_item_shellB.c:
 	.data       start:0x00895340 end:0x00895480
+
+data/model/obj_item_shellC.c:
 	.data       start:0x00895480 end:0x008955C0
+
+data/model/obj_item_tool.c:
 	.data       start:0x008955C0 end:0x00895880
+
+data/model/obj_item_trash.c:
 	.data       start:0x00895880 end:0x00895B40
+
+data/model/obj_item_umbrella.c:
 	.data       start:0x00895B40 end:0x00895E00
+
+data/model/point_light.c:
 	.data       start:0x00895E00 end:0x008966A0
+
+data/model/mny_win.c:
 	.data       start:0x008966A0 end:0x00897340
+
+data/model/fki_win.c:
 	.data       start:0x00897340 end:0x00897C40
+
+data/model/int_kob_getabako1.c:
 	.data       start:0x00897C40 end:0x00898D00
+
+data/model/int_kob_getabako2.c:
 	.data       start:0x00898D00 end:0x00899DA0
+
+data/model/int_kob_jimudesk.c:
 	.data       start:0x00899DA0 end:0x0089AB40
+
+data/model/int_kob_jimuisu.c:
 	.data       start:0x0089AB40 end:0x0089B6E0
+
+data/model/int_kob_locker1.c:
 	.data       start:0x0089B6E0 end:0x0089C200
+
+data/model/int_kob_mastersword.c:
 	.data       start:0x0089C200 end:0x0089D0A0
+
+data/model/int_kob_ncube.c:
 	.data       start:0x0089D0A0 end:0x0089DCC0
+
+data/model/int_kob_pipeisu.c:
 	.data       start:0x0089DCC0 end:0x0089E680
+
+data/model/int_kob_rika_desk.c:
 	.data       start:0x0089E680 end:0x0089F560
+
+data/model/int_kob_tobibako.c:
 	.data       start:0x0089F560 end:0x0089FF20
+
+data/model/int_kon_ameclock.c:
 	.data       start:0x0089FF20 end:0x008A0C40
+
+data/model/int_kon_atqclock.c:
 	.data       start:0x008A0C40 end:0x008A1BE0
+
+data/model/int_kon_blueclock.c:
 	.data       start:0x008A1BE0 end:0x008A2620
+
+data/model/int_kon_cracker.c:
 	.data       start:0x008A2620 end:0x008A3460
+
+data/model/int_kon_gomi03.c:
 	.data       start:0x008A3460 end:0x008A3CA0
+
+data/model/int_kon_gomi04.c:
 	.data       start:0x008A3CA0 end:0x008A4740
+
+data/model/int_kon_grclock.c:
 	.data       start:0x008A4740 end:0x008A5480
+
+data/model/int_kon_isi01.c:
 	.data       start:0x008A5480 end:0x008A5BA0
+
+data/model/int_kon_isi02.c:
 	.data       start:0x008A5BA0 end:0x008A65C0
+
+data/model/int_kon_isi03.c:
 	.data       start:0x008A65C0 end:0x008A7100
+
+data/model/int_kon_isi04.c:
 	.data       start:0x008A7100 end:0x008A7D20
+
+data/model/int_kon_isi05.c:
 	.data       start:0x008A7D20 end:0x008A8760
+
+data/model/int_kon_isi06.c:
 	.data       start:0x008A8760 end:0x008A93C0
+
+data/model/int_kon_jihanki02.c:
 	.data       start:0x008A93C0 end:0x008AA1A0
+
+data/model/int_kon_jihanki03.c:
 	.data       start:0x008AA1A0 end:0x008AACA0
+
+data/model/int_kon_mimiclock.c:
 	.data       start:0x008AACA0 end:0x008ABA00
+
+data/model/int_kon_musya.c:
 	.data       start:0x008ABA00 end:0x008AC9E0
+
+data/model/int_kon_pound.c:
 	.data       start:0x008AC9E0 end:0x008AD6E0
+
+data/model/int_kon_redclock.c:
 	.data       start:0x008AD6E0 end:0x008AE3E0
+
+data/model/int_kon_sisiodosi.c:
 	.data       start:0x008AE3E0 end:0x008AF1A0
+
+data/model/int_kon_snowbed.c:
 	.data       start:0x008AF1A0 end:0x008AFDC0
+
+data/model/int_kon_snowbox.c:
 	.data       start:0x008AFDC0 end:0x008B0C40
+
+data/model/int_kon_snowclock.c:
 	.data       start:0x008B0C40 end:0x008B1B00
+
+data/model/int_kon_snowfreezer.c:
 	.data       start:0x008B1B00 end:0x008B2760
+
+data/model/int_kon_snowsofa.c:
 	.data       start:0x008B2760 end:0x008B3360
+
+data/model/int_kon_snowtable.c:
 	.data       start:0x008B3360 end:0x008B3EE0
+
+data/model/int_kon_snowtansu.c:
 	.data       start:0x008B3EE0 end:0x008B4B80
+
+data/model/int_kon_snowtv.c:
 	.data       start:0x008B4B80 end:0x008B59E0
+
+data/model/int_kon_taiju.c:
 	.data       start:0x008B59E0 end:0x008B6640
+
+data/model/int_kon_tubo.c:
 	.data       start:0x008B6640 end:0x008B7080
+
+data/model/int_kon_tubo2.c:
 	.data       start:0x008B7080 end:0x008B7B80
+
+data/model/int_kon_tubo3.c:
 	.data       start:0x008B7B80 end:0x008B87C0
+
+data/model/int_kon_tukue.c:
 	.data       start:0x008B87C0 end:0x008B9200
+
+data/model/int_kon_waclock.c:
 	.data       start:0x008B9200 end:0x008B9FC0
+
+data/model/int_kon_xtree02.c:
 	.data       start:0x008B9FC0 end:0x008BB020
 
 data/field/bg/acre/rom_toudai/rom_toudai.c:
@@ -9054,147 +11484,379 @@ data/item/md_price.c:
 data/field/bg/acre/rom_museum1/rom_museum1.c:
 	.data       start:0x008C65A0 end:0x008CC868
 
-data/dataobject/dataobject_8CC868:
+data/model/museum_entrance_actable.c:
 	.data       start:0x008CC868 end:0x008CC8C0
 
 data/field/bg/acre/rom_museum5/rom_museum5.c:
 	.data       start:0x008CC8C0 end:0x008CF7A0
 
-data/dataobject/dataobject_8CF7A0:
+data/model/rom_museum5_wall.c:
 	.data       start:0x008CF7A0 end:0x008D0088
+
+data/model/museum_fish_actable.c:
 	.data       start:0x008D0088 end:0x008D00C0
 
 data/field/bg/acre/rom_museum2/rom_museum2.c:
 	.data       start:0x008D00C0 end:0x008D3658
 
-data/dataobject/dataobject_8D3658:
+data/model/museum_fossil_actable.c:
 	.data       start:0x008D3658 end:0x008D36A0
+
+data/model/rom_museum4.c:
 	.data       start:0x008D36A0 end:0x008D6620
+
+data/model/rom_museum4_wall.c:
 	.data       start:0x008D6620 end:0x008D6908
+
+data/model/museum_insect_actable.c:
 	.data       start:0x008D6908 end:0x008D6940
 
 data/field/bg/acre/rom_museum3/rom_museum3.c:
 	.data       start:0x008D6940 end:0x008DA918
 
-data/dataobject/dataobject_8DA918:
+data/model/museum_picture_actable.c:
 	.data       start:0x008DA918 end:0x008DA960
+
+data/model/obj_myhome_step_down.c:
 	.data       start:0x008DA960 end:0x008DB378
+
+data/model/obj_myhome_step_up.c:
 	.data       start:0x008DB380 end:0x008DBD60
 
 data/field/bg/acre/rom_tailor/rom_tailor.c:
 	.data       start:0x008DBD60 end:0x008E4AB0
 
-data/dataobject/dataobject_8E4AB0:
+data/model/needlework_actable.c:
 	.data       start:0x008E4AB0 end:0x008E4B20
+
+data/model/int_nog_amenbo.c:
 	.data       start:0x008E4B20 end:0x008E5A80
+
+data/model/int_nog_ari.c:
 	.data       start:0x008E5A80 end:0x008E67A0
+
+data/model/int_nog_balloon1.c:
 	.data       start:0x008E67A0 end:0x008E77A0
+
+data/model/int_nog_balloon2.c:
 	.data       start:0x008E77A0 end:0x008E87A0
+
+data/model/int_nog_balloon3.c:
 	.data       start:0x008E87A0 end:0x008E97A0
+
+data/model/int_nog_balloon4.c:
 	.data       start:0x008E97A0 end:0x008EA7A0
+
+data/model/int_nog_balloon5.c:
 	.data       start:0x008EA7A0 end:0x008EB7A0
+
+data/model/int_nog_balloon6.c:
 	.data       start:0x008EB7A0 end:0x008ED060
+
+data/model/int_nog_balloon7.c:
 	.data       start:0x008ED060 end:0x008EE920
+
+data/model/int_nog_balloon8.c:
 	.data       start:0x008EE920 end:0x008F01E0
+
+data/model/int_nog_beachbed.c:
 	.data       start:0x008F01E0 end:0x008F0C40
+
+data/model/int_nog_beachtable.c:
 	.data       start:0x008F0C40 end:0x008F24B8
+
+data/model/int_nog_bishopB.c:
 	.data       start:0x008F24C0 end:0x008F2D00
+
+data/model/int_nog_bishopW.c:
 	.data       start:0x008F2D00 end:0x008F3540
+
+data/model/int_nog_burner.c:
 	.data       start:0x008F3540 end:0x008F44A0
+
+data/model/int_nog_collegenote.c:
 	.data       start:0x008F44A0 end:0x008F4D60
+
+data/model/int_nog_cornucopia.c:
 	.data       start:0x008F4D60 end:0x008F5980
+
+data/model/int_nog_cosmos.c:
 	.data       start:0x008F5980 end:0x008F5FE0
+
+data/model/int_nog_dango.c:
 	.data       start:0x008F5FE0 end:0x008F6D20
+
+data/model/int_nog_dump.c:
 	.data       start:0x008F6D20 end:0x008F82A0
+
+data/model/int_nog_earth.c:
 	.data       start:0x008F82A0 end:0x008F8560
+
+data/model/int_nog_f_tree.c:
 	.data       start:0x008F8560 end:0x008F92A0
+
+data/model/int_nog_fan.c:
 	.data       start:0x008F92A0 end:0x008FA0C0
+
+data/model/int_nog_flat.c:
 	.data       start:0x008FA0C0 end:0x008FA200
+
+data/model/int_nog_gong.c:
 	.data       start:0x008FA200 end:0x008FADE0
+
+data/model/int_nog_harddiary.c:
 	.data       start:0x008FADE0 end:0x008FB4E0
+
+data/model/int_nog_isidai.c:
 	.data       start:0x008FB4E0 end:0x008FC300
+
+data/model/int_nog_ka.c:
 	.data       start:0x008FC300 end:0x008FD1E0
+
+data/model/int_nog_kaeru.c:
 	.data       start:0x008FD1E0 end:0x008FF4E0
+
+data/model/int_nog_kamakura.c:
 	.data       start:0x008FF4E0 end:0x008FFE80
+
+data/model/int_nog_kera.c:
 	.data       start:0x008FFE80 end:0x00900CA0
+
+data/model/int_nog_kingB.c:
 	.data       start:0x00900CA0 end:0x00901660
+
+data/model/int_nog_kingW.c:
 	.data       start:0x00901660 end:0x00902020
+
+data/model/int_nog_knightB.c:
 	.data       start:0x00902020 end:0x00902980
+
+data/model/int_nog_knightW.c:
 	.data       start:0x00902980 end:0x009032E0
+
+data/model/int_nog_koban.c:
 	.data       start:0x009032E0 end:0x00903FC0
+
+data/model/int_nog_kumo.c:
 	.data       start:0x00903FC0 end:0x00904F80
+
+data/model/int_nog_kurage.c:
 	.data       start:0x00904F80 end:0x00905DA0
+
+data/model/int_nog_lawnmower.c:
 	.data       start:0x00905DA0 end:0x009070A0
+
+data/model/int_nog_maimai.c:
 	.data       start:0x009070A0 end:0x00907F60
+
+data/model/int_nog_medaka.c:
 	.data       start:0x00907F60 end:0x00908CE0
+
+data/model/int_nog_mikanbox.c:
 	.data       start:0x00908CE0 end:0x00909300
+
+data/model/int_nog_mino.c:
 	.data       start:0x00909300 end:0x0090A1E0
+
+data/model/int_nog_museum.c:
 	.data       start:0x0090A1E0 end:0x0090B260
+
+data/model/int_nog_myhome2.c:
 	.data       start:0x0090B260 end:0x0090BE40
+
+data/model/int_nog_myhome4.c:
 	.data       start:0x0090BE40 end:0x0090CD20
+
+data/model/int_nog_nabe.c:
 	.data       start:0x0090CD20 end:0x0090DC20
+
+data/model/int_nog_pansy.c:
 	.data       start:0x0090DC20 end:0x0090E260
+
+data/model/int_nog_pawnB.c:
 	.data       start:0x0090E260 end:0x0090E960
+
+data/model/int_nog_pawnW.c:
 	.data       start:0x0090E960 end:0x0090F060
+
+data/model/int_nog_piraluku.c:
 	.data       start:0x0090F060 end:0x0090FFA0
+
+data/model/int_nog_queenB.c:
 	.data       start:0x0090FFA0 end:0x00910740
+
+data/model/int_nog_queenW.c:
 	.data       start:0x00910740 end:0x00910EE0
+
+data/model/int_nog_rail.c:
 	.data       start:0x00910EE0 end:0x00911100
+
+data/model/int_nog_rookB.c:
 	.data       start:0x00911100 end:0x00911880
+
+data/model/int_nog_rookW.c:
 	.data       start:0x00911880 end:0x00912000
+
+data/model/int_nog_s_tree.c:
 	.data       start:0x00912000 end:0x00912D40
+
+data/model/int_nog_schoolnote.c:
 	.data       start:0x00912D40 end:0x00913600
+
+data/model/int_nog_shop1.c:
 	.data       start:0x00913600 end:0x00914380
+
+data/model/int_nog_shrine.c:
 	.data       start:0x00914380 end:0x009154A0
+
+data/model/int_nog_snowman.c:
 	.data       start:0x009154A0 end:0x00915D20
+
+data/model/int_nog_sprinkler.c:
 	.data       start:0x00915D20 end:0x00916E20
+
+data/model/int_nog_station1.c:
 	.data       start:0x00916E20 end:0x009185E0
+
+data/model/int_nog_station2.c:
 	.data       start:0x009185E0 end:0x0091A380
+
+data/model/int_nog_station3.c:
 	.data       start:0x0091A380 end:0x0091B7E0
+
+data/model/int_nog_suzuki.c:
 	.data       start:0x0091B7E0 end:0x0091C660
+
+data/model/int_nog_systemnote.c:
 	.data       start:0x0091C660 end:0x0091CE60
+
+data/model/int_nog_tai.c:
 	.data       start:0x0091CE60 end:0x0091DC80
+
+data/model/int_nog_tri_audio01.c:
 	.data       start:0x0091DC80 end:0x0091E660
+
+data/model/int_nog_tri_bed01.c:
 	.data       start:0x0091E660 end:0x0091F260
+
+data/model/int_nog_tri_chair01.c:
 	.data       start:0x0091F260 end:0x0091FF40
+
+data/model/int_nog_tri_chest01.c:
 	.data       start:0x0091FF40 end:0x00920CA0
+
+data/model/int_nog_tri_chest02.c:
 	.data       start:0x00920CA0 end:0x00921C00
+
+data/model/int_nog_tri_chest03.c:
 	.data       start:0x00921C00 end:0x00922940
+
+data/model/int_nog_tri_clock01.c:
 	.data       start:0x00922940 end:0x00923880
+
+data/model/int_nog_tri_rack01.c:
 	.data       start:0x00923880 end:0x00924560
+
+data/model/int_nog_tri_sofa01.c:
 	.data       start:0x00924560 end:0x00925200
+
+data/model/int_nog_tri_table01.c:
 	.data       start:0x00925200 end:0x00925D40
+
+data/model/int_nog_tudurinote.c:
 	.data       start:0x00925D40 end:0x00926AA0
+
+data/model/int_nog_turip.c:
 	.data       start:0x00926AA0 end:0x009272E0
+
+data/model/int_nog_uranai.c:
 	.data       start:0x009272E0 end:0x00927D20
+
+data/model/int_nog_w_tree.c:
 	.data       start:0x00927D20 end:0x00928E40
+
+data/model/int_nog_xtree.c:
 	.data       start:0x00928E40 end:0x00929C60
+
+data/model/int_nog_yamishop.c:
 	.data       start:0x00929C60 end:0x0092A640
+
+data/model/int_nog_yubin.c:
 	.data       start:0x0092A640 end:0x0092B140
+
+data/model/int_nog_zarigani.c:
 	.data       start:0x0092B140 end:0x0092BDA0
+
+data/model/int_nog_zassou.c:
 	.data       start:0x0092BDA0 end:0x0092C768
+
+data/model/obj_art01.c:
 	.data       start:0x0092C780 end:0x0092CF20
+
+data/model/obj_art02.c:
 	.data       start:0x0092CF20 end:0x0092D5C0
+
+data/model/obj_art03.c:
 	.data       start:0x0092D5C0 end:0x0092DC90
+
+data/model/obj_art04.c:
 	.data       start:0x0092DC90 end:0x0092E418
+
+data/model/obj_art05.c:
 	.data       start:0x0092E418 end:0x0092EBA0
+
+data/model/obj_art06.c:
 	.data       start:0x0092EBA0 end:0x0092F340
+
+data/model/obj_art07.c:
 	.data       start:0x0092F340 end:0x0092FB88
+
+data/model/obj_art08.c:
 	.data       start:0x0092FB88 end:0x00930310
+
+data/model/obj_art09.c:
 	.data       start:0x00930310 end:0x00930A98
+
+data/model/obj_art10.c:
 	.data       start:0x00930A98 end:0x00931220
+
+data/model/obj_art11.c:
 	.data       start:0x00931220 end:0x009319C0
+
+data/model/obj_art12.c:
 	.data       start:0x009319C0 end:0x00932060
+
+data/model/obj_art13.c:
 	.data       start:0x00932060 end:0x009327E8
+
+data/model/obj_art14.c:
 	.data       start:0x009327E8 end:0x00932F70
+
+data/model/obj_art15.c:
 	.data       start:0x00932F70 end:0x009336F8
+
+data/model/obj_art_dummy01.c:
 	.data       start:0x009336F8 end:0x00933E80
+
+data/model/obj_art_dummy02.c:
 	.data       start:0x00933E80 end:0x00934620
+
+data/model/obj_art_dummy03.c:
 	.data       start:0x00934620 end:0x00934CC0
+
+data/model/obj_art_dummy04.c:
 	.data       start:0x00934CC0 end:0x00935448
+
+data/model/obj_art_dummy05.c:
 	.data       start:0x00935448 end:0x00935BD0
+
+data/model/obj_art_dummy06.c:
 	.data       start:0x00935BD0 end:0x00936358
+
+data/model/obj_art_dummy07.c:
 	.data       start:0x00936358 end:0x00936AE0
+
+data/model/obj_art_dummy08.c:
 	.data       start:0x00936AE0 end:0x00937268
 
 data/item/plant_price.c:
@@ -9215,23 +11877,55 @@ data/field/bg/acre/police_indoor/police_indoor.c:
 data/field/bg/rail_pal.c:
 	.data       start:0x0093EDC8 end:0x0093EF60
 
-data/dataobject/dataobject_93EF60:
+data/model/mFM_grd_s_rail.c:
 	.data       start:0x0093EF60 end:0x00940760
+
+data/model/mFM_grd_w_rail.c:
 	.data       start:0x00940760 end:0x00941F60
+
+data/model/mFM_grd_s_river.c:
 	.data       start:0x00941F60 end:0x00942B60
+
+data/model/mFM_grd_w_river.c:
 	.data       start:0x00942B60 end:0x00943760
+
+data/model/mFM_grd_s_sand.c:
 	.data       start:0x00943760 end:0x00944360
+
+data/model/mFM_grd_w_sand.c:
 	.data       start:0x00944360 end:0x00944F60
+
+data/model/obj_clock_koban.c:
 	.data       start:0x00944F60 end:0x00945830
+
+data/model/obj_clock_museum1.c:
 	.data       start:0x00945830 end:0x00947800
+
+data/model/obj_clock_tailor.c:
 	.data       start:0x00947800 end:0x00948850
+
+data/model/obj_clock_shop1.c:
 	.data       start:0x00948850 end:0x009498B0
+
+data/model/obj_clock_shop2.c:
 	.data       start:0x009498B0 end:0x00949FC0
+
+data/model/obj_clock_shop3.c:
 	.data       start:0x00949FC0 end:0x0094A800
+
+data/model/obj_clock_shop4.c:
 	.data       start:0x0094A800 end:0x0094B7D8
+
+data/model/obj_clock_yub.c:
 	.data       start:0x0094B7D8 end:0x0094C260
+
+data/model/rom_shop2w.c:
 	.data       start:0x0094C260 end:0x0094F3A0
+
+data/model/rom_shop2f.c:
 	.data       start:0x0094F3A0 end:0x0094F880
+
+data/model/rom_shop2_fuku.c:
 	.data       start:0x0094F880 end:0x00952A80
 
 data/field/bg/acre/rom_shop4_1/rom_shop4_1.c:
@@ -9240,407 +11934,1207 @@ data/field/bg/acre/rom_shop4_1/rom_shop4_1.c:
 data/field/bg/acre/rom_shop4_fuku/rom_shop4_fuku.c:
 	.data       start:0x00958F00 end:0x0095F920
 
-data/dataobject/dataobject_95F920:
+data/model/rom_shop4_2w.c:
 	.data       start:0x0095F920 end:0x00964830
+
+data/model/rom_shop4_2f.c:
 	.data       start:0x00964830 end:0x00964CA0
+
+data/model/rom_shop3w.c:
 	.data       start:0x00964CA0 end:0x00969A20
+
+data/model/rom_shop3f.c:
 	.data       start:0x00969A20 end:0x00969D60
+
+data/model/rom_shop3_fuku.c:
 	.data       start:0x00969D60 end:0x0096ED80
+
+data/model/rom_shop1w.c:
 	.data       start:0x0096ED80 end:0x00971A98
+
+data/model/rom_shop1f.c:
 	.data       start:0x00971A98 end:0x00972180
+
+data/model/rom_shop1_fuku.c:
 	.data       start:0x00972180 end:0x00977E40
+
+data/model/mFM_grd_sprashA_tex.c:
 	.data       start:0x00977E40 end:0x00978040
+
+data/model/mFM_grd_sprashC_tex.c:
 	.data       start:0x00978040 end:0x00978240
+
+data/model/mFM_grd_s_station1_pal.c:
 	.data       start:0x00978240 end:0x00978260
+
+data/model/mFM_grd_s_station.c:
 	.data       start:0x00978260 end:0x00979A60
+
+data/model/mFM_grd_w_station.c:
 	.data       start:0x00979A60 end:0x0097B260
+
+data/model/mFM_grd_s_stone.c:
 	.data       start:0x0097B260 end:0x0097CA60
+
+data/model/mFM_grd_w_stone.c:
 	.data       start:0x0097CA60 end:0x0097E260
+
+data/model/int_sugi_alchair.c:
 	.data       start:0x0097E260 end:0x0097EEA0
+
+data/model/int_sugi_barbecue.c:
 	.data       start:0x0097EEA0 end:0x009803A0
+
+data/model/int_sugi_chesstable.c:
 	.data       start:0x009803A0 end:0x009810C0
+
+data/model/int_sugi_kpool.c:
 	.data       start:0x009810C0 end:0x00982230
+
+data/model/int_sugi_kpool_evw_anime.c:
 	.data       start:0x00982230 end:0x00982240
+
+data/model/int_sugi_radiator.c:
 	.data       start:0x00982240 end:0x00983140
+
+data/model/int_sugi_torch.c:
 	.data       start:0x00983140 end:0x00984520
+
+data/model/int_sum_abura.c:
 	.data       start:0x00984520 end:0x009855E0
+
+data/model/int_sum_akiakane.c:
 	.data       start:0x009855E0 end:0x00986560
+
+data/model/int_sum_angel.c:
 	.data       start:0x00986560 end:0x00987420
+
+data/model/int_sum_aroana.c:
 	.data       start:0x00987420 end:0x00988180
+
+data/model/int_sum_art01.c:
 	.data       start:0x00988180 end:0x00988E20
+
+data/model/int_sum_art04.c:
 	.data       start:0x00988E20 end:0x00989AC0
+
+data/model/int_sum_art05.c:
 	.data       start:0x00989AC0 end:0x0098A760
+
+data/model/int_sum_art06.c:
 	.data       start:0x0098A760 end:0x0098B400
+
+data/model/int_sum_art08.c:
 	.data       start:0x0098B400 end:0x0098C0A0
+
+data/model/int_sum_art09.c:
 	.data       start:0x0098C0A0 end:0x0098CD40
+
+data/model/int_sum_art10.c:
 	.data       start:0x0098CD40 end:0x0098D9E0
+
+data/model/int_sum_art11.c:
 	.data       start:0x0098D9E0 end:0x0098E680
+
+data/model/int_sum_art12.c:
 	.data       start:0x0098E680 end:0x0098F320
+
+data/model/int_sum_art13.c:
 	.data       start:0x0098F320 end:0x0098FFC0
+
+data/model/int_sum_art14.c:
 	.data       start:0x0098FFC0 end:0x00990C60
+
+data/model/int_sum_art15.c:
 	.data       start:0x00990C60 end:0x00991900
+
+data/model/int_sum_asi_bed01.c:
 	.data       start:0x00991900 end:0x009925A0
+
+data/model/int_sum_asi_chair01.c:
 	.data       start:0x009925A0 end:0x009932C0
+
+data/model/int_sum_asi_chair02.c:
 	.data       start:0x009932C0 end:0x00993EA0
+
+data/model/int_sum_asi_chest01.c:
 	.data       start:0x00993EA0 end:0x00994A80
+
+data/model/int_sum_asi_chest02.c:
 	.data       start:0x00994A80 end:0x009955A0
+
+data/model/int_sum_asi_chest03.c:
 	.data       start:0x009955A0 end:0x00996460
+
+data/model/int_sum_asi_lanp01.c:
 	.data       start:0x00996460 end:0x009969C0
+
+data/model/int_sum_asi_screen01.c:
 	.data       start:0x009969C0 end:0x00996F00
+
+data/model/int_sum_asi_table01.c:
 	.data       start:0x00996F00 end:0x009978E0
+
+data/model/int_sum_asi_table02.c:
 	.data       start:0x009978E0 end:0x009982C0
+
+data/model/int_sum_asi_taiko.c:
 	.data       start:0x009982C0 end:0x009989E0
+
+data/model/int_sum_ayu.c:
 	.data       start:0x009989E0 end:0x009998A0
+
+data/model/int_sum_baketu.c:
 	.data       start:0x009998A0 end:0x0099A3C0
+
+data/model/int_sum_bass.c:
 	.data       start:0x0099A3C0 end:0x0099B120
+
+data/model/int_sum_bass01.c:
 	.data       start:0x0099B120 end:0x0099BE60
+
+data/model/int_sum_bassl.c:
 	.data       start:0x0099BE60 end:0x0099CD20
+
+data/model/int_sum_bassm.c:
 	.data       start:0x0099CD20 end:0x0099DC00
+
+data/model/int_sum_bdcake01.c:
 	.data       start:0x0099DC00 end:0x0099EAB0
+
+data/model/int_sum_billiads.c:
 	.data       start:0x0099EAC0 end:0x0099F780
+
+data/model/int_sum_biwa01.c:
 	.data       start:0x0099F780 end:0x009A0420
+
+data/model/int_sum_bla_bed01.c:
 	.data       start:0x009A0420 end:0x009A0F60
+
+data/model/int_sum_bla_chair02.c:
 	.data       start:0x009A0F60 end:0x009A1B60
+
+data/model/int_sum_bla_chest01.c:
 	.data       start:0x009A1B60 end:0x009A2660
+
+data/model/int_sum_bla_chest02.c:
 	.data       start:0x009A2660 end:0x009A33A0
+
+data/model/int_sum_bla_chest03.c:
 	.data       start:0x009A33A0 end:0x009A4160
+
+data/model/int_sum_bla_desk01.c:
 	.data       start:0x009A4160 end:0x009A4D60
+
+data/model/int_sum_bla_lanp.c:
 	.data       start:0x009A4D60 end:0x009A5640
+
+data/model/int_sum_bla_sofa02.c:
 	.data       start:0x009A5640 end:0x009A6240
+
+data/model/int_sum_bla_table01.c:
 	.data       start:0x009A6240 end:0x009A6D20
+
+data/model/int_sum_bla_table02.c:
 	.data       start:0x009A6D20 end:0x009A75A0
+
+data/model/int_sum_blue_bed01.c:
 	.data       start:0x009A75A0 end:0x009A8100
+
+data/model/int_sum_blue_bench01.c:
 	.data       start:0x009A8100 end:0x009A8AC0
+
+data/model/int_sum_blue_bureau01.c:
 	.data       start:0x009A8AC0 end:0x009A9820
+
+data/model/int_sum_blue_cab01.c:
 	.data       start:0x009A9820 end:0x009AA720
+
+data/model/int_sum_blue_chair01.c:
 	.data       start:0x009AA720 end:0x009AAE60
+
+data/model/int_sum_blue_chest01.c:
 	.data       start:0x009AAE60 end:0x009AB9C0
+
+data/model/int_sum_blue_chest02.c:
 	.data       start:0x009AB9C0 end:0x009AC440
+
+data/model/int_sum_blue_clk.c:
 	.data       start:0x009AC440 end:0x009AD2C0
+
+data/model/int_sum_blue_lowchest01.c:
 	.data       start:0x009AD2C0 end:0x009ADF40
+
+data/model/int_sum_blue_table01.c:
 	.data       start:0x009ADF40 end:0x009AE7C0
+
+data/model/int_sum_bon_boke.c:
 	.data       start:0x009AE7C0 end:0x009AF4E0
+
+data/model/int_sum_bon_matu01.c:
 	.data       start:0x009AF4E0 end:0x009B0340
+
+data/model/int_sum_bon_matu02.c:
 	.data       start:0x009B0340 end:0x009B1200
+
+data/model/int_sum_bon_matu03.c:
 	.data       start:0x009B1200 end:0x009B2000
+
+data/model/int_sum_bon_momiji.c:
 	.data       start:0x009B2000 end:0x009B2DE0
+
+data/model/int_sum_bon_pira.c:
 	.data       start:0x009B2DE0 end:0x009B3E80
+
+data/model/int_sum_bon_sanshu.c:
 	.data       start:0x009B3E80 end:0x009B4E00
+
+data/model/int_sum_bon_satuki.c:
 	.data       start:0x009B4E00 end:0x009B5C00
+
+data/model/int_sum_bon_turu.c:
 	.data       start:0x009B5C00 end:0x009B69A0
+
+data/model/int_sum_bon_ume.c:
 	.data       start:0x009B69A0 end:0x009B76E0
+
+data/model/int_sum_bookcht01.c:
 	.data       start:0x009B76E0 end:0x009B8260
+
+data/model/int_sum_casse01.c:
 	.data       start:0x009B8260 end:0x009B8EC0
+
+data/model/int_sum_cello01.c:
 	.data       start:0x009B8EC0 end:0x009B9C00
+
+data/model/int_sum_chair01.c:
 	.data       start:0x009B9C00 end:0x009BA8C0
+
+data/model/int_sum_chikuon01.c:
 	.data       start:0x009BA8C0 end:0x009BB320
+
+data/model/int_sum_chikuon02.c:
 	.data       start:0x009BB320 end:0x009BC020
+
+data/model/int_sum_classiccabinet01.c:
 	.data       start:0x009BC020 end:0x009BCE40
+
+data/model/int_sum_classicchair01.c:
 	.data       start:0x009BCE40 end:0x009BDA60
+
+data/model/int_sum_clchest01.c:
 	.data       start:0x009BDA60 end:0x009BE9E0
+
+data/model/int_sum_classicchest02.c:
 	.data       start:0x009BE9E0 end:0x009BF6C0
+
+data/model/int_sum_classictable01.c:
 	.data       start:0x009BF6C0 end:0x009C0060
+
+data/model/int_sum_classicwardrope01.c:
 	.data       start:0x009C0060 end:0x009C0E60
+
+data/model/int_sum_clbed02.c:
 	.data       start:0x009C0E60 end:0x009C1A80
+
+data/model/int_sum_clchair02.c:
 	.data       start:0x009C1A80 end:0x009C2760
+
+data/model/int_sum_clchest03.c:
 	.data       start:0x009C2760 end:0x009C3540
+
+data/model/int_sum_col_chair01.c:
 	.data       start:0x009C3540 end:0x009C3E60
+
+data/model/int_sum_col_chair02.c:
 	.data       start:0x009C3E60 end:0x009C4780
+
+data/model/int_sum_col_chair03.c:
 	.data       start:0x009C4780 end:0x009C50A0
+
+data/model/int_sum_comp01.c:
 	.data       start:0x009C50A0 end:0x009C5FE0
+
+data/model/int_sum_conga01.c:
 	.data       start:0x009C5FE0 end:0x009C67E0
+
+data/model/int_sum_conpo01.c:
 	.data       start:0x009C67E0 end:0x009C74C0
+
+data/model/int_sum_conpo02.c:
 	.data       start:0x009C74C0 end:0x009C8380
+
+data/model/int_sum_cont_bed01.c:
 	.data       start:0x009C8380 end:0x009C8FA0
+
+data/model/int_sum_cont_cab01.c:
 	.data       start:0x009C8FA0 end:0x009C9DE0
+
+data/model/int_sum_cont_chair01.c:
 	.data       start:0x009C9DE0 end:0x009CA980
+
+data/model/int_sum_cont_chest01.c:
 	.data       start:0x009CA980 end:0x009CB760
+
+data/model/int_sum_cont_chest02.c:
 	.data       start:0x009CB760 end:0x009CC600
+
+data/model/int_sum_cont_chest03.c:
 	.data       start:0x009CC600 end:0x009CD220
+
+data/model/int_sum_cont_sofa01.c:
 	.data       start:0x009CD220 end:0x009CE000
+
+data/model/int_sum_cont_sofa02.c:
 	.data       start:0x009CE000 end:0x009CEDE0
+
+data/model/int_sum_cont_table01.c:
 	.data       start:0x009CEDE0 end:0x009CF720
+
+data/model/int_sum_cont_table02.c:
 	.data       start:0x009CF720 end:0x009D0120
+
+data/model/int_sum_cupboard01.c:
 	.data       start:0x009D0120 end:0x009D0D80
+
+data/model/int_sum_danna.c:
 	.data       start:0x009D0D80 end:0x009D1E40
+
+data/model/int_sum_demekin.c:
 	.data       start:0x009D1E40 end:0x009D2A20
+
+data/model/int_sum_desk01.c:
 	.data       start:0x009D2A20 end:0x009D38C0
+
+data/model/int_sum_dojyo.c:
 	.data       start:0x009D38C0 end:0x009D4440
+
+data/model/int_sum_doll01.c:
 	.data       start:0x009D4440 end:0x009D53C0
+
+data/model/int_sum_doll02.c:
 	.data       start:0x009D53C0 end:0x009D6160
+
+data/model/int_sum_doll03.c:
 	.data       start:0x009D6160 end:0x009D6F00
+
+data/model/int_sum_doll04.c:
 	.data       start:0x009D6F00 end:0x009D7CA0
+
+data/model/int_sum_doll05.c:
 	.data       start:0x009D7CA0 end:0x009D86C0
+
+data/model/int_sum_doll06.c:
 	.data       start:0x009D86C0 end:0x009D90E0
+
+data/model/int_sum_doll07.c:
 	.data       start:0x009D90E0 end:0x009D9B00
+
+data/model/int_sum_doll08.c:
 	.data       start:0x009D9B00 end:0x009DA520
+
+data/model/int_sum_doll09.c:
 	.data       start:0x009DA520 end:0x009DAF40
+
+data/model/int_sum_doll10.c:
 	.data       start:0x009DAF40 end:0x009DB960
+
+data/model/int_sum_doll11.c:
 	.data       start:0x009DB960 end:0x009DC380
+
+data/model/int_sum_donko.c:
 	.data       start:0x009DC380 end:0x009DD140
+
+data/model/int_sum_fruitbed01.c:
 	.data       start:0x009DD140 end:0x009DDB80
+
+data/model/int_sum_fruitchair01.c:
 	.data       start:0x009DDB80 end:0x009DE580
+
+data/model/int_sum_fruitchair02.c:
 	.data       start:0x009DE580 end:0x009DEF80
+
+data/model/int_sum_fruitchair03.c:
 	.data       start:0x009DEF80 end:0x009DF7C0
+
+data/model/int_sum_fruitchair04.c:
 	.data       start:0x009DF7C0 end:0x009E0000
+
+data/model/int_sum_fruitchest01.c:
 	.data       start:0x009E0000 end:0x009E0D60
+
+data/model/int_sum_fruitchest03.c:
 	.data       start:0x009E0D60 end:0x009E1CC0
+
+data/model/int_sum_fruitclk.c:
 	.data       start:0x009E1CC0 end:0x009E2880
+
+data/model/int_sum_fruittable01.c:
 	.data       start:0x009E2880 end:0x009E3320
+
+data/model/int_sum_fruittable02.c:
 	.data       start:0x009E3320 end:0x009E3D60
+
+data/model/int_sum_fruittable03.c:
 	.data       start:0x009E3D60 end:0x009E4480
+
+data/model/int_sum_fruittv01.c:
 	.data       start:0x009E4480 end:0x009E5460
+
+data/model/int_sum_funa.c:
 	.data       start:0x009E5460 end:0x009E6260
+
+data/model/int_sum_genji.c:
 	.data       start:0x009E6260 end:0x009E71A0
+
+data/model/int_sum_gill.c:
 	.data       start:0x009E71A0 end:0x009E7E20
+
+data/model/int_sum_ginyanma.c:
 	.data       start:0x009E7E20 end:0x009E8DA0
+
+data/model/int_sum_globe01.c:
 	.data       start:0x009E8DA0 end:0x009E9920
+
+data/model/int_sum_golfbag01.c:
 	.data       start:0x009E9920 end:0x009EA8A0
+
+data/model/int_sum_golfbag02.c:
 	.data       start:0x009EA8A0 end:0x009EB860
+
+data/model/int_sum_golfbag03.c:
 	.data       start:0x009EB860 end:0x009EC7E0
+
+data/model/int_sum_gomadara.c:
 	.data       start:0x009EC7E0 end:0x009ED740
+
+data/model/int_sum_gre_bed01.c:
 	.data       start:0x009ED740 end:0x009EE460
+
+data/model/int_sum_gre_chair01.c:
 	.data       start:0x009EE460 end:0x009EF100
+
+data/model/int_sum_gre_chair02.c:
 	.data       start:0x009EF100 end:0x009EFDC0
+
+data/model/int_sum_gre_chest01.c:
 	.data       start:0x009EFDC0 end:0x009F09E0
+
+data/model/int_sum_gre_chest02.c:
 	.data       start:0x009F09E0 end:0x009F1860
+
+data/model/int_sum_gre_chest03.c:
 	.data       start:0x009F1860 end:0x009F24A0
+
+data/model/int_sum_gre_counter01.c:
 	.data       start:0x009F24A0 end:0x009F32C0
+
+data/model/int_sum_gre_desk01.c:
 	.data       start:0x009F32C0 end:0x009F3C60
+
+data/model/int_sum_gre_lanp01.c:
 	.data       start:0x009F3C60 end:0x009F48E0
+
+data/model/int_sum_gre_table01.c:
 	.data       start:0x009F48E0 end:0x009F5300
+
+data/model/int_sum_guitar01.c:
 	.data       start:0x009F5300 end:0x009F6080
+
+data/model/int_sum_guitar02.c:
 	.data       start:0x009F6080 end:0x009F6E00
+
+data/model/int_sum_guitar03.c:
 	.data       start:0x009F6E00 end:0x009F7BE0
+
+data/model/int_sum_gupi.c:
 	.data       start:0x009F7BE0 end:0x009F89A0
+
+data/model/int_sum_hachi.c:
 	.data       start:0x009F89A0 end:0x009F9980
+
+data/model/int_sum_hal_bed01.c:
 	.data       start:0x009F9980 end:0x009FA5C0
+
+data/model/int_sum_hal_box01.c:
 	.data       start:0x009FA5C0 end:0x009FB480
+
+data/model/int_sum_hal_chair01.c:
 	.data       start:0x009FB480 end:0x009FC2A0
+
+data/model/int_sum_hal_chest01.c:
 	.data       start:0x009FC2A0 end:0x009FCFA0
+
+data/model/int_sum_hal_chest02.c:
 	.data       start:0x009FCFA0 end:0x009FDF20
+
+data/model/int_sum_hal_chest03.c:
 	.data       start:0x009FDF20 end:0x009FEE60
+
+data/model/int_sum_hal_clk01.c:
 	.data       start:0x009FEE60 end:0x009FFDC0
+
+data/model/int_sum_hal_lanp01.c:
 	.data       start:0x009FFDC0 end:0x00A00820
+
+data/model/int_sum_hal_mirror01.c:
 	.data       start:0x00A00820 end:0x00A01660
+
+data/model/int_sum_hal_pkin.c:
 	.data       start:0x00A01660 end:0x00A02180
+
+data/model/int_sum_hal_sofa01.c:
 	.data       start:0x00A02180 end:0x00A02F20
+
+data/model/int_sum_hal_table01.c:
 	.data       start:0x00A02F20 end:0x00A03CE0
+
+data/model/int_sum_harp.c:
 	.data       start:0x00A03CE0 end:0x00A04A20
+
+data/model/int_sum_hera.c:
 	.data       start:0x00A04A20 end:0x00A058A0
+
+data/model/int_sum_higurashi.c:
 	.data       start:0x00A058A0 end:0x00A06A00
+
+data/model/int_sum_hirata.c:
 	.data       start:0x00A06A00 end:0x00A077C0
+
+data/model/int_sum_ito.c:
 	.data       start:0x00A077C0 end:0x00A085C0
+
+data/model/int_sum_iwana.c:
 	.data       start:0x00A085C0 end:0x00A09320
+
+data/model/int_sum_jukebox.c:
 	.data       start:0x00A09320 end:0x00A09EA0
+
+data/model/int_sum_kabuto.c:
 	.data       start:0x00A09EA0 end:0x00A0ABC0
+
+data/model/int_sum_kamakiri.c:
 	.data       start:0x00A0ABC0 end:0x00A0B9E0
+
+data/model/int_sum_kanabun.c:
 	.data       start:0x00A0B9E0 end:0x00A0C780
+
+data/model/int_sum_kaseki.c:
 	.data       start:0x00A0C780 end:0x00A0D580
+
+data/model/int_sum_kiageha.c:
 	.data       start:0x00A0D580 end:0x00A0E540
+
+data/model/int_sum_kingyo.c:
 	.data       start:0x00A0E540 end:0x00A0F140
+
+data/model/int_sum_kirigirisu.c:
 	.data       start:0x00A0F140 end:0x00A10100
+
+data/model/int_sum_kisha.c:
 	.data       start:0x00A10100 end:0x00A112A0
+
+data/model/int_sum_kitchair01.c:
 	.data       start:0x00A112A0 end:0x00A11EC0
+
+data/model/int_sum_kittable01.c:
 	.data       start:0x00A11EC0 end:0x00A127A0
+
+data/model/int_sum_koi.c:
 	.data       start:0x00A127A0 end:0x00A13560
+
+data/model/int_sum_kokuban.c:
 	.data       start:0x00A13560 end:0x00A14340
+
+data/model/int_sum_koorogi.c:
 	.data       start:0x00A14340 end:0x00A153C0
+
+data/model/int_sum_liccabed.c:
 	.data       start:0x00A153C0 end:0x00A15FA0
+
+data/model/int_sum_liccachair.c:
 	.data       start:0x00A15FA0 end:0x00A16AC0
+
+data/model/int_sum_liccachest.c:
 	.data       start:0x00A16AC0 end:0x00A17A20
+
+data/model/int_sum_liccakitchen.c:
 	.data       start:0x00A17A20 end:0x00A186E0
+
+data/model/int_sum_liccalanp.c:
 	.data       start:0x00A186E0 end:0x00A19040
+
+data/model/int_sum_liccalowchest.c:
 	.data       start:0x00A19040 end:0x00A19D40
+
+data/model/int_sum_liccalowtable.c:
 	.data       start:0x00A19D40 end:0x00A1A6E0
+
+data/model/int_sum_liccamirror.c:
 	.data       start:0x00A1A6E0 end:0x00A1B280
+
+data/model/int_sum_liccapiano.c:
 	.data       start:0x00A1B280 end:0x00A1C0C0
+
+data/model/int_sum_liccasofa.c:
 	.data       start:0x00A1C0C0 end:0x00A1CDA0
+
+data/model/int_sum_liccatable.c:
 	.data       start:0x00A1CDA0 end:0x00A1D660
+
+data/model/int_sum_log_bed01.c:
 	.data       start:0x00A1D660 end:0x00A1E1A0
+
+data/model/int_sum_log_chair01.c:
 	.data       start:0x00A1E1A0 end:0x00A1EF20
+
+data/model/int_sum_log_chair02.c:
 	.data       start:0x00A1EF20 end:0x00A1F900
+
+data/model/int_sum_log_chair03.c:
 	.data       start:0x00A1F900 end:0x00A202A0
+
+data/model/int_sum_log_chest01.c:
 	.data       start:0x00A202A0 end:0x00A210A0
+
+data/model/int_sum_log_chest02.c:
 	.data       start:0x00A210A0 end:0x00A21F60
+
+data/model/int_sum_log_chest03.c:
 	.data       start:0x00A21F60 end:0x00A22E00
+
+data/model/int_sum_log_hatoclk.c:
 	.data       start:0x00A22E00 end:0x00A23FE0
+
+data/model/int_sum_log_table01.c:
 	.data       start:0x00A23FE0 end:0x00A24A40
+
+data/model/int_sum_log_table02.c:
 	.data       start:0x00A24A40 end:0x00A25560
+
+data/model/int_sum_lv_stereo.c:
 	.data       start:0x00A25560 end:0x00A26320
+
+data/model/int_sum_matumushi.c:
 	.data       start:0x00A26320 end:0x00A27380
+
+data/model/int_sum_md01.c:
 	.data       start:0x00A27380 end:0x00A27D00
+
+data/model/int_sum_mezaclock.c:
 	.data       start:0x00A27D00 end:0x00A28BC0
+
+data/model/int_sum_minmin.c:
 	.data       start:0x00A28BC0 end:0x00A29D20
+
+data/model/int_sum_misin01.c:
 	.data       start:0x00A29D20 end:0x00A2ACC0
+
+data/model/int_sum_miyama.c:
 	.data       start:0x00A2ACC0 end:0x00A2BA80
+
+data/model/int_sum_mizunomi.c:
 	.data       start:0x00A2BA80 end:0x00A2C780
+
+data/model/int_sum_monki.c:
 	.data       start:0x00A2C780 end:0x00A2D5C0
+
+data/model/int_sum_monshiro.c:
 	.data       start:0x00A2D5C0 end:0x00A2E3A0
+
+data/model/int_sum_namazu.c:
 	.data       start:0x00A2E3A0 end:0x00A2F200
+
+data/model/int_sum_nanahoshi.c:
 	.data       start:0x00A2F200 end:0x00A30000
+
+data/model/int_sum_nigoi.c:
 	.data       start:0x00A30000 end:0x00A30EC0
+
+data/model/int_sum_niji.c:
 	.data       start:0x00A30EC0 end:0x00A31D80
+
+data/model/int_sum_nisiki.c:
 	.data       start:0x00A31D80 end:0x00A32AA0
+
+data/model/int_sum_nokogiri.c:
 	.data       start:0x00A32AA0 end:0x00A33880
+
+data/model/int_sum_ohmurasaki.c:
 	.data       start:0x00A33880 end:0x00A34840
+
+data/model/int_sum_oikawa.c:
 	.data       start:0x00A34840 end:0x00A35760
+
+data/model/int_sum_okiagari01.c:
 	.data       start:0x00A35760 end:0x00A36260
+
+data/model/int_sum_okuwa.c:
 	.data       start:0x00A36260 end:0x00A37060
+
+data/model/int_sum_oldclk01.c:
 	.data       start:0x00A37060 end:0x00A37F40
+
+data/model/int_sum_oldsofa01.c:
 	.data       start:0x00A37F40 end:0x00A38C20
+
+data/model/int_sum_oniyanma.c:
 	.data       start:0x00A38C20 end:0x00A39B80
+
+data/model/int_sum_oonamazu.c:
 	.data       start:0x00A39B80 end:0x00A3A960
+
+data/model/int_sum_pet01.c:
 	.data       start:0x00A3A960 end:0x00A3B940
+
+data/model/int_sum_piano01.c:
 	.data       start:0x00A3B940 end:0x00A3C780
+
+data/model/int_sum_pirania.c:
 	.data       start:0x00A3C780 end:0x00A3D560
+
+data/model/int_sum_pl_aloe01.c:
 	.data       start:0x00A3D560 end:0x00A3E000
+
+data/model/int_sum_pl_ananas.c:
 	.data       start:0x00A3E000 end:0x00A3EBC0
+
+data/model/int_sum_pl_benjyami.c:
 	.data       start:0x00A3EBC0 end:0x00A3F500
+
+data/model/int_sum_asi_plant01.c:
 	.data       start:0x00A3F500 end:0x00A3FE20
+
+data/model/int_sum_pl_cocos.c:
 	.data       start:0x00A3FE20 end:0x00A407E0
+
+data/model/int_sum_pl_compacta.c:
 	.data       start:0x00A407E0 end:0x00A41260
+
+data/model/int_sum_pl_draca02.c:
 	.data       start:0x00A41260 end:0x00A41FE0
+
+data/model/int_sum_pl_dracaena.c:
 	.data       start:0x00A41FE0 end:0x00A42BE0
+
+data/model/int_sum_pl_gomunoki.c:
 	.data       start:0x00A42BE0 end:0x00A43920
+
+data/model/int_sum_pl_hirasabo.c:
 	.data       start:0x00A43920 end:0x00A44500
+
+data/model/int_sum_pl_kuroton.c:
 	.data       start:0x00A44500 end:0x00A452C0
+
+data/model/int_sum_pl_pakila.c:
 	.data       start:0x00A452C0 end:0x00A45FA0
+
+data/model/int_sum_pl_pothos.c:
 	.data       start:0x00A45FA0 end:0x00A469E0
+
+data/model/int_sum_asi_plant02.c:
 	.data       start:0x00A469E0 end:0x00A47640
+
+data/model/int_sum_pl_yamayasi.c:
 	.data       start:0x00A47640 end:0x00A48380
+
+data/model/int_sum_popchair01.c:
 	.data       start:0x00A48380 end:0x00A48E60
+
+data/model/int_sum_popchair02.c:
 	.data       start:0x00A48E60 end:0x00A49940
+
+data/model/int_sum_popchair03.c:
 	.data       start:0x00A49940 end:0x00A4A420
+
+data/model/int_sum_poptable01.c:
 	.data       start:0x00A4A420 end:0x00A4AD80
+
+data/model/int_sum_poptable02.c:
 	.data       start:0x00A4AD80 end:0x00A4B6E0
+
+data/model/int_sum_poptable03.c:
 	.data       start:0x00A4B6E0 end:0x00A4C040
+
+data/model/int_sum_radio01.c:
 	.data       start:0x00A4C040 end:0x00A4CAA0
+
+data/model/int_sum_radio02.c:
 	.data       start:0x00A4CAA0 end:0x00A4D4E0
+
+data/model/int_sum_raigyo.c:
 	.data       start:0x00A4D4E0 end:0x00A4E380
+
+data/model/int_sum_ratan_bed01.c:
 	.data       start:0x00A4E380 end:0x00A4EF00
+
+data/model/int_sum_ratan_chest01.c:
 	.data       start:0x00A4EF00 end:0x00A4FA80
+
+data/model/int_sum_ratan_chest02.c:
 	.data       start:0x00A4FA80 end:0x00A50780
+
+data/model/int_sum_ratan_chest03.c:
 	.data       start:0x00A50780 end:0x00A51460
+
+data/model/int_sum_ratan_isu01.c:
 	.data       start:0x00A51460 end:0x00A520E0
+
+data/model/int_sum_ratan_isu02.c:
 	.data       start:0x00A520E0 end:0x00A52CE0
+
+data/model/int_sum_ratan_lanp.c:
 	.data       start:0x00A52CE0 end:0x00A534C0
+
+data/model/int_sum_ratan_mirror.c:
 	.data       start:0x00A534C0 end:0x00A541E0
+
+data/model/int_sum_ratan_screen.c:
 	.data       start:0x00A541E0 end:0x00A54580
+
+data/model/int_sum_ratan_table01.c:
 	.data       start:0x00A54580 end:0x00A54D00
+
+data/model/int_sum_reco01.c:
 	.data       start:0x00A54D00 end:0x00A55940
+
+data/model/int_sum_roboclk.c:
 	.data       start:0x00A55940 end:0x00A56AC0
+
+data/model/int_sum_roboconpo.c:
 	.data       start:0x00A56AC0 end:0x00A579E0
+
+data/model/int_sum_sabo01.c:
 	.data       start:0x00A579E0 end:0x00A58300
+
+data/model/int_sum_sabo02.c:
 	.data       start:0x00A58300 end:0x00A58B00
+
+data/model/int_sum_saiconpo.c:
 	.data       start:0x00A58B00 end:0x00A59220
+
+data/model/int_sum_sake.c:
 	.data       start:0x00A59220 end:0x00A59F80
+
+data/model/int_sum_shiokara.c:
 	.data       start:0x00A59F80 end:0x00A5AF00
+
+data/model/int_sum_shoukaki.c:
 	.data       start:0x00A5AF00 end:0x00A5BA40
+
+data/model/int_sum_slot.c:
 	.data       start:0x00A5BA40 end:0x00A5CAE0
+
+data/model/int_sum_sofe01.c:
 	.data       start:0x00A5CAE0 end:0x00A5D860
+
+data/model/int_sum_sofe02.c:
 	.data       start:0x00A5D860 end:0x00A5E680
+
+data/model/int_sum_sofe03.c:
 	.data       start:0x00A5E680 end:0x00A5F3A0
+
+data/model/int_sum_stereo01.c:
 	.data       start:0x00A5F3A0 end:0x00A60260
+
+data/model/int_sum_stereo02.c:
 	.data       start:0x00A60260 end:0x00A60F40
+
+data/model/int_sum_stove01.c:
 	.data       start:0x00A60F40 end:0x00A61C40
+
+data/model/int_sum_suberi01.c:
 	.data       start:0x00A61C40 end:0x00A628C0
+
+data/model/int_sum_suzumushi.c:
 	.data       start:0x00A628C0 end:0x00A639A0
+
+data/model/int_sum_syouryou.c:
 	.data       start:0x00A639A0 end:0x00A649C0
+
+data/model/int_sum_taiko01.c:
 	.data       start:0x00A649C0 end:0x00A65620
+
+data/model/int_sum_takkyu.c:
 	.data       start:0x00A65620 end:0x00A66280
+
+data/model/int_sum_tamamushi.c:
 	.data       start:0x00A66280 end:0x00A67040
+
+data/model/int_sum_tanago.c:
 	.data       start:0x00A67040 end:0x00A67E00
+
+data/model/int_sum_taru01.c:
 	.data       start:0x00A67E00 end:0x00A688C0
+
+data/model/int_sum_taru02.c:
 	.data       start:0x00A688C0 end:0x00A69380
+
+data/model/int_sum_tekin01.c:
 	.data       start:0x00A69380 end:0x00A6A2A0
+
+data/model/int_sum_tentou.c:
 	.data       start:0x00A6A2A0 end:0x00A6B0A0
+
+data/model/int_sum_timpani01.c:
 	.data       start:0x00A6B0A0 end:0x00A6BF20
+
+data/model/int_sum_tonosama.c:
 	.data       start:0x00A6BF20 end:0x00A6CF60
+
+data/model/int_sum_totemp01.c:
 	.data       start:0x00A6CF60 end:0x00A6DB20
+
+data/model/int_sum_totemp02.c:
 	.data       start:0x00A6DB20 end:0x00A6E720
+
+data/model/int_sum_totemp03.c:
 	.data       start:0x00A6E720 end:0x00A6F360
+
+data/model/int_sum_totemp04.c:
 	.data       start:0x00A6F360 end:0x00A6FE80
+
+data/model/int_sum_touro01.c:
 	.data       start:0x00A6FE80 end:0x00A70AA0
+
+data/model/int_sum_touro02.c:
 	.data       start:0x00A70AA0 end:0x00A719C0
+
+data/model/int_sum_touro03.c:
 	.data       start:0x00A719C0 end:0x00A72920
+
+data/model/int_sum_touro04.c:
 	.data       start:0x00A72920 end:0x00A73860
+
+data/model/int_sum_tukutuku.c:
 	.data       start:0x00A73860 end:0x00A74AE0
+
+data/model/int_sum_tv01.c:
 	.data       start:0x00A74AE0 end:0x00A75720
+
+data/model/int_sum_tv02.c:
 	.data       start:0x00A75720 end:0x00A76738
+
+data/model/int_sum_ugui.c:
 	.data       start:0x00A76740 end:0x00A774C0
+
+data/model/int_sum_unagi.c:
 	.data       start:0x00A774C0 end:0x00A78140
+
+data/model/int_sum_uwa_cup01.c:
 	.data       start:0x00A78140 end:0x00A78C60
+
+data/model/int_sum_uwa_poto01.c:
 	.data       start:0x00A78C60 end:0x00A79460
+
+data/model/int_sum_uwa_vase01.c:
 	.data       start:0x00A79460 end:0x00A79D20
+
+data/model/int_sum_uwa_vase02.c:
 	.data       start:0x00A79D20 end:0x00A7A860
+
+data/model/int_sum_uwa_vase03.c:
 	.data       start:0x00A7A860 end:0x00A7B220
+
+data/model/int_sum_viola01.c:
 	.data       start:0x00A7B220 end:0x00A7BF20
+
+data/model/int_sum_wakasagi.c:
 	.data       start:0x00A7BF20 end:0x00A7CBE0
+
+data/model/int_sum_wc01.c:
 	.data       start:0x00A7CBE0 end:0x00A7DAE0
+
+data/model/int_sum_wc02.c:
 	.data       start:0x00A7DAE0 end:0x00A7EA20
+
+data/model/int_sum_whi_bed01.c:
 	.data       start:0x00A7EA20 end:0x00A7F660
+
+data/model/int_sum_whi_chest01.c:
 	.data       start:0x00A7F660 end:0x00A802C0
+
+data/model/int_sum_whi_chest02.c:
 	.data       start:0x00A802C0 end:0x00A81040
+
+data/model/int_sum_whi_lanp.c:
 	.data       start:0x00A81040 end:0x00A81C40
+
+data/model/int_sum_whi_mirror.c:
 	.data       start:0x00A81C40 end:0x00A82A80
+
+data/model/int_sum_whi_sofa01.c:
 	.data       start:0x00A82A80 end:0x00A83740
+
+data/model/int_sum_x_bed01.c:
 	.data       start:0x00A83740 end:0x00A84500
+
+data/model/int_sum_x_chair01.c:
 	.data       start:0x00A84500 end:0x00A85280
+
+data/model/int_sum_x_chest01.c:
 	.data       start:0x00A85280 end:0x00A86220
+
+data/model/int_sum_x_chest02.c:
 	.data       start:0x00A86220 end:0x00A870E0
+
+data/model/int_sum_x_chest03.c:
 	.data       start:0x00A870E0 end:0x00A87FC0
+
+data/model/int_sum_x_clk.c:
 	.data       start:0x00A87FC0 end:0x00A88EC0
+
+data/model/int_sum_x_lanp.c:
 	.data       start:0x00A88EC0 end:0x00A89C00
+
+data/model/int_sum_x_piano.c:
 	.data       start:0x00A89C00 end:0x00A8AB20
+
+data/model/int_sum_x_sofa01.c:
 	.data       start:0x00A8AB20 end:0x00A8B940
+
+data/model/int_sum_x_table01.c:
 	.data       start:0x00A8B940 end:0x00A8C580
+
+data/model/int_sum_yamame.c:
 	.data       start:0x00A8C580 end:0x00A8D300
+
+data/model/int_tak_apollo1.c:
 	.data       start:0x00A8D300 end:0x00A8E120
+
+data/model/int_tak_arwing.c:
 	.data       start:0x00A8E120 end:0x00A8F220
+
+data/model/int_tak_asteroid1.c:
 	.data       start:0x00A8F220 end:0x00A90280
+
+data/model/int_tak_astro.c:
 	.data       start:0x00A90280 end:0x00A910A0
+
+data/model/int_tak_barber.c:
 	.data       start:0x00A910A0 end:0x00A919E0
+
+data/model/int_tak_cone01.c:
 	.data       start:0x00A919E0 end:0x00A91F00
+
+data/model/int_tak_cone03.c:
 	.data       start:0x00A91F00 end:0x00A92420
+
+data/model/int_tak_cube.c:
 	.data       start:0x00A92420 end:0x00A93040
+
+data/model/int_tak_drum02.c:
 	.data       start:0x00A93040 end:0x00A937C0
+
+data/model/int_tak_eisei.c:
 	.data       start:0x00A937C0 end:0x00A945C0
+
+data/model/int_tak_ham1.c:
 	.data       start:0x00A945C0 end:0x00A95300
+
+data/model/int_tak_hole01.c:
 	.data       start:0x00A95300 end:0x00A955E0
+
+data/model/int_tak_ice.c:
 	.data       start:0x00A955E0 end:0x00A96760
+
+data/model/int_tak_isu03.c:
 	.data       start:0x00A96760 end:0x00A96EA0
+
+data/model/int_tak_lion.c:
 	.data       start:0x00A96EA0 end:0x00A97E20
+
+data/model/int_tak_megami.c:
 	.data       start:0x00A97E20 end:0x00A994A0
+
+data/model/int_tak_metro.c:
 	.data       start:0x00A994A0 end:0x00A99E60
+
+data/model/int_tak_money.c:
 	.data       start:0x00A99E60 end:0x00A9A9A0
+
+data/model/int_tak_moon.c:
 	.data       start:0x00A9A9A0 end:0x00A9B6C0
+
+data/model/int_tak_mooncar.c:
 	.data       start:0x00A9B6C0 end:0x00A9C460
+
+data/model/int_tak_moti.c:
 	.data       start:0x00A9C460 end:0x00A9D160
+
+data/model/int_tak_neko.c:
 	.data       start:0x00A9D160 end:0x00A9DF60
+
+data/model/int_tak_nes01.c:
 	.data       start:0x00A9DF60 end:0x00AA18A0
+
+data/model/int_tak_nikki01.c:
 	.data       start:0x00AA18A0 end:0x00AA2240
+
+data/model/int_tak_noise.c:
 	.data       start:0x00AA2240 end:0x00AA2A80
+
+data/model/int_tak_rocket1.c:
 	.data       start:0x00AA2A80 end:0x00AA3840
+
+data/model/int_tak_shuttle.c:
 	.data       start:0x00AA3840 end:0x00AA4660
+
+data/model/int_tak_snowisu.c:
 	.data       start:0x00AA4660 end:0x00AA4F00
+
+data/model/int_tak_snowlamp.c:
 	.data       start:0x00AA4F00 end:0x00AA5900
+
+data/model/int_tak_sori01.c:
 	.data       start:0x00AA5900 end:0x00AA6B00
+
+data/model/int_tak_station.c:
 	.data       start:0x00AA6B00 end:0x00AA7540
+
+data/model/int_tak_stew.c:
 	.data       start:0x00AA7540 end:0x00AA8000
+
+data/model/int_tak_syogi.c:
 	.data       start:0x00AA8000 end:0x00AA8640
+
+data/model/int_tak_table02.c:
 	.data       start:0x00AA8640 end:0x00AA9060
+
+data/model/int_tak_tailor.c:
 	.data       start:0x00AA9060 end:0x00AA9F80
+
+data/model/int_tak_tekkin.c:
 	.data       start:0x00AA9F80 end:0x00AAA8E0
+
+data/model/int_tak_tent.c:
 	.data       start:0x00AAA8E0 end:0x00AAB720
+
+data/model/int_tak_tent_box.c:
 	.data       start:0x00AAB720 end:0x00AAC0C0
+
+data/model/int_tak_tent_lamp.c:
 	.data       start:0x00AAC0C0 end:0x00AAC820
+
+data/model/int_tak_tetra.c:
 	.data       start:0x00AAC820 end:0x00AAD0E0
+
+data/model/int_tak_toudai.c:
 	.data       start:0x00AAD0E0 end:0x00AADF40
+
+data/model/int_tak_ufo.c:
 	.data       start:0x00AADF40 end:0x00AAEA00
+
+data/model/int_tak_yaji.c:
 	.data       start:0x00AAEA00 end:0x00AAEFA0
+
+data/model/int_tak_yoroi.c:
 	.data       start:0x00AAEFA0 end:0x00AB02A0
+
+data/model/mFM_grd_s_tekkyo.c:
 	.data       start:0x00AB02A0 end:0x00AB1AA0
+
+data/model/mFM_grd_w_tekkyo.c:
 	.data       start:0x00AB1AA0 end:0x00AB32A0
 
 data/field/bg/acre/rom_tent/rom_tent.c:
@@ -9655,8 +13149,10 @@ data/item/tool_price.c:
 data/field/bg/acre/rom_train_in/rom_train_in.c:
 	.data       start:0x00AB9840 end:0x00ABF900
 
-data/dataobject/dataobject_ABF900:
+data/model/mFM_grd_s_tunnel.c:
 	.data       start:0x00ABF900 end:0x00AC1100
+
+data/model/mFM_grd_w_tunnel.c:
 	.data       start:0x00AC1100 end:0x00AC2100
 
 data/field/bg/acre/rom_uranai/rom_uranai_evw_anime.c:
@@ -9671,35 +13167,95 @@ data/item/wall_list.c:
 data/item/wall_price.c:
 	.data       start:0x00AC8468 end:0x00AC84F0
 
-data/dataobject/dataobject_AC84F0:
+data/model/mFM_grd_water1_tex.c:
 	.data       start:0x00AC84F0 end:0x00AC86F0
+
+data/model/mFM_grd_water2_tex.c:
 	.data       start:0x00AC86F0 end:0x00AC88F0
+
+data/model/mFM_grd_wave1_tex.c:
 	.data       start:0x00AC88F0 end:0x00AC8CF0
+
+data/model/mFM_grd_wave2_tex.c:
 	.data       start:0x00AC8CF0 end:0x00AC94F0
+
+data/model/mFM_grd_wave3_tex.c:
 	.data       start:0x00AC94F0 end:0x00AC9900
+
+data/model/int_yaz_b_bath.c:
 	.data       start:0x00AC9900 end:0x00ACA520
+
+data/model/int_yaz_b_house.c:
 	.data       start:0x00ACA520 end:0x00ACB3A0
+
+data/model/int_yaz_candle.c:
 	.data       start:0x00ACB3A0 end:0x00ACC340
+
+data/model/int_yaz_fish_trophy.c:
 	.data       start:0x00ACC340 end:0x00ACD040
+
+data/model/int_yaz_mario_flower.c:
 	.data       start:0x00ACD040 end:0x00ACD8C0
+
+data/model/int_yaz_rocket.c:
 	.data       start:0x00ACD8C0 end:0x00ACE4E0
+
+data/model/int_yaz_telescope.c:
 	.data       start:0x00ACE4E0 end:0x00ACF1E0
+
+data/model/int_yaz_tub.c:
 	.data       start:0x00ACF1E0 end:0x00ACFFA0
+
+data/model/int_yaz_turkey_chair.c:
 	.data       start:0x00ACFFA0 end:0x00AD0E60
+
+data/model/int_yaz_turkey_chest.c:
 	.data       start:0x00AD0E60 end:0x00AD1E80
+
+data/model/int_yaz_turkey_closet.c:
 	.data       start:0x00AD1E80 end:0x00AD2EA0
+
+data/model/int_yaz_wagon.c:
 	.data       start:0x00AD2EA0 end:0x00AD3E20
+
+data/model/int_yos_b_feeder.c:
 	.data       start:0x00AD3E20 end:0x00AD4BA0
+
+data/model/int_yos_cactus.c:
 	.data       start:0x00AD4BA0 end:0x00AD5400
+
+data/model/int_yos_flamingo.c:
 	.data       start:0x00AD5400 end:0x00AD6180
+
+data/model/int_yos_flamingo2.c:
 	.data       start:0x00AD6180 end:0x00AD6F00
+
+data/model/int_yos_gnome.c:
 	.data       start:0x00AD6F00 end:0x00AD7D00
+
+data/model/int_yos_kflag.c:
 	.data       start:0x00AD7D00 end:0x00AD8440
+
+data/model/int_yos_luigi.c:
 	.data       start:0x00AD8440 end:0x00AD9480
+
+data/model/int_yos_mailbox.c:
 	.data       start:0x00AD9480 end:0x00ADA0E0
+
+data/model/int_yos_mario.c:
 	.data       start:0x00ADA0E0 end:0x00ADB0A0
+
+data/model/int_yos_pbstove.c:
 	.data       start:0x00ADB0A0 end:0x00ADC040
+
+data/model/int_yos_terrace.c:
 	.data       start:0x00ADC040 end:0x00ADCF80
+
+data/model/int_yos_turkey_mirror.c:
 	.data       start:0x00ADCF80 end:0x00ADDF60
+
+data/model/int_yos_turkey_watch.c:
 	.data       start:0x00ADDF60 end:0x00ADEBC0
+
+data/model/int_yos_wheel.c:
 	.data       start:0x00ADEBC0 end:0x00ADF4F8

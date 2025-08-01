@@ -324,7 +324,9 @@ def parse_evw_anime_colreg(buff: bytes, symbols: list[str]):
 
 def parse_evw_anime_scroll(buff: bytes, symbols: list[str]):
     this_format = [("b", "x"), ("b", "y"), ("B", "width"), ("B", "height")]
-    return parse_bin_formatted(buff, this_format, symbols)
+    res = parse_bin_formatted(buff, this_format, symbols)
+    res.c_type = "EVW_ANIME_SCROLL"
+    return res
 
 
 def parse_evw_texanime(buff: bytes, symbols: list[str]):
@@ -604,7 +606,7 @@ def lookup_bins_and_symbols(lines: list[str], name: str):
     for i, line in enumerate(lines):
         if line.startswith(f".obj {name},"):
             begin_ind = i
-        if line.startswith(f".endobj {name}"):
+        if line == f".endobj {name}":
             end_ind = i
     data_lines = lines[begin_ind+1:end_ind]
 
@@ -643,6 +645,28 @@ def lookup_static(lines: list[str], name: str):
     if is_static(lines, name):
         return "static "
     return ""
+
+
+def lookup_align(lines: list[str], name: str):
+    out = ""
+    align_32 = False
+    inside_obj = False
+    for i, line in enumerate(lines):
+        if line == ".balign 32":
+            align_32 = True
+        if line.startswith(f".obj {name},"):
+            if align_32:
+                return ASSET_ALIGN
+            else:
+                return NO_ALIGN
+        elif line.startswith(".obj"):
+            inside_obj = True
+        elif line.startswith(f".endobj"):
+            inside_obj = False
+            align_32 = False
+        elif not inside_obj and line.startswith("\t.4byte"):
+            align_32 = True
+    return out
 
 
 def lookup_bins_and_symbols2(lines: list[str], name: str):
@@ -699,7 +723,84 @@ def lookup_address(lines: list[str], name: str):
     assert (False)
 
 
-def convert_source_to_gfx_c_source(src_file, dest_path):
+def mark_matching(config_change_path):
+    config_py = "configure.py"
+    with open(config_py, "r") as f:
+        config_txt = f.read()
+
+    config_txt = config_txt.replace(f"Object(NonMatching, \"{config_change_path}\"),",
+                                    f"Object(Matching, \"{config_change_path}\"),")
+    with open(config_py, "w") as f:
+        f.write(config_txt)
+
+
+def update_extracted_assets(lines: list[str], out: str, src_file_name: str):
+    config_yaml = "config/GAFE01_00/config.yml"
+    with open(config_yaml, "a") as f:
+        for i, line in enumerate(out.split("\n")):
+            if line.startswith("#include \"assets"):
+                prev_line = out.split("\n")[i-1]
+                parts = prev_line.split("=")[0].split(" ")
+                type = parts[0]
+                name = parts[1]
+                im_static = False
+                if type == "static":
+                    im_static = True
+                    type = parts[1]
+                    name = parts[2]
+                name = name[:-2]  # cut off the array []
+                if im_static:
+                    out_config = f"""
+  - symbol: {name}!.data:{lookup_address(lines, name)}
+    binary: assets/{src_file_name}/{name}.bin
+    header: assets/{src_file_name}/{name}.inc
+"""
+                else:
+                    out_config = f"""
+  - symbol: {name}
+    binary: assets/{name}.bin
+    header: assets/{name}.inc
+"""
+                if type == "u8":
+                    out_config += "    header_type: raw\n"
+                elif type == "Vtx":
+                    out_config += "    header_type: none\n    custom_type: vtx\n"
+                elif type == "u16":
+                    out_config += "    header_type: none\n    custom_type: pal16\n"
+                else:
+                    assert (False)
+                f.write(out_config)
+
+
+def get_externs(lines: list[str]):
+    found_objs: set[str] = set()
+    found_refs: set[str] = set()
+    for line in lines:
+        if line.startswith(".obj "):
+            found_objs.add(line.split(" ")[1][:-1])
+        elif line.startswith("\t.4byte") and not line.startswith("\t.4byte 0x"):
+            name = line.split(" ")[1]
+            if name not in found_objs:
+                found_refs.add(name)
+        elif line.startswith("\t.rel"):
+            name = line.split(" ")[1][:-1]
+            found_refs.add(name)
+            if name not in found_objs:
+                found_refs.add(name)
+    externs = []
+    for ex in found_refs:
+        type = "u8"
+        if ex.endswith("_pal"):
+            type = "u16"
+        elif ex.endswith("_model"):
+            type = "Gfx"
+        elif ex.endswith("_v"):
+            type = "Vtx"
+        externs.append(f"extern {type} {ex}[];")
+    return "\n".join(externs) + "\n"
+
+
+def convert_source_to_gfx_c_source(src_file, dest_path, known_types: dict[str, str], should_extract_symbols=False, should_link=False):
     with open(src_file) as f:
         lines = f.read().split("\n")
     src_file_name = pathlib.Path(src_file).stem
@@ -718,10 +819,18 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
         if line.startswith(".obj"):
             this_obj = line.split(" ")[1].strip(",")
             all_objs.append(this_obj)
-
-            if this_obj.endswith("_v"):
+            if this_obj in known_types:
+                found_types.append((this_obj, known_types[this_obj]))
+            elif this_obj.endswith("_v") or \
+                    this_obj.endswith("_v2"):
                 found_types.append((this_obj, "Vtx"))
-            elif "_model" in this_obj:
+            elif "_model" in this_obj or \
+                    this_obj.endswith("_setmode") or \
+                    this_obj.endswith("_modeset") or \
+                    this_obj.endswith("_mode") or \
+                    this_obj.endswith("_gfx") or \
+                    this_obj.endswith("_vtx") or \
+                    this_obj.endswith("_gfx2"):
                 found_types.append((this_obj, "Gfx"))
             elif "_tex_index" in this_obj:
                 found_types.append((this_obj, "u8"))
@@ -778,15 +887,15 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
         if obj_name in converted_types:
             continue
         if type == "Vtx":
-            converted_types[obj_name] = (type, default_data, NO_ALIGN)
+            converted_types[obj_name] = (type, default_data)
         elif type == "Gfx":
-            data = convert_binary_to_gfx(
-                *lookup_bins_and_symbols(lines, obj_name))
-            converted_types[obj_name] = (type, data + ",", NO_ALIGN)
+            bins, symbols = lookup_bins_and_symbols(lines, obj_name)
+            data = convert_binary_to_gfx(bins, symbols)
+            converted_types[obj_name] = (type, data + ",")
         elif type == "PAL":
-            converted_types[obj_name] = ("u16", default_data, ASSET_ALIGN)
+            converted_types[obj_name] = ("u16", default_data)
         elif type == "TEX":
-            converted_types[obj_name] = ("u8", default_data, ASSET_ALIGN)
+            converted_types[obj_name] = ("u8", default_data)
 
         elif type in lookup_table:
             res: struct_parse_result = lookup_table[type](
@@ -794,20 +903,24 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
             if res.c_type != None:
                 type = res.c_type
             data = res.formatted_str
-            converted_types[obj_name] = (type, data, NO_ALIGN)
+            converted_types[obj_name] = (type, data)
             if len(res.referenced_objects) > 0:
                 found_types = [(ref.symbol_name, ref.symbol_type)
                                for ref in res.referenced_objects] + found_types
 
     out = header + "\n"
+    # find extern referenced files
+    out += get_externs(lines)
+
     for obj in all_objs:
         default_include = f'#include "assets/{obj}.inc"'
         if is_static(lines, obj):
             default_include = f'#include "assets/{src_file_name}/{obj}.inc"'
 
-        this_type, out_data, align = converted_types.get(
-            obj, ("u8", default_include, NO_ALIGN))
+        this_type, out_data = converted_types.get(
+            obj, ("u8", default_include))
         static_typing = lookup_static(lines, obj)
+        align = lookup_align(lines, obj)
         if this_type in ["aNPC_Animation_c", "cKF_Animation_R_c", "cKF_Skeleton_R_c"]:
             out += f"{static_typing}{this_type} {obj} {align}= \n{out_data}\n;\n\n"
         else:
@@ -815,52 +928,10 @@ def convert_source_to_gfx_c_source(src_file, dest_path):
 
     with open(dest_path, "w") as f:
         f.write(out)
-
-    # print(out)
-    config_py = "configure.py"
-    with open(config_py, "r") as f:
-        config_txt = f.read()
-
-    config_txt = config_txt.replace(f"Object(NonMatching, \"{config_change_path}\"),",
-                                    f"Object(Matching, \"{config_change_path}\"),")
-    with open(config_py, "w") as f:
-        f.write(config_txt)
-
-#     config_yaml = "config/GAFE01_00/config.yml"
-#     with open(config_yaml, "a") as f:
-#         for i, line in enumerate(out.split("\n")):
-#             if line.startswith("#include \"assets"):
-#                 prev_line = out.split("\n")[i-1]
-#                 parts = prev_line.split("=")[0].split(" ")
-#                 type = parts[0]
-#                 name = parts[1]
-#                 im_static = False
-#                 if type == "static":
-#                     im_static = True
-#                     type = parts[1]
-#                     name = parts[2]
-#                 name = name[:-2]  # cut off the array []
-#                 if im_static:
-#                     out_config = f"""
-#   - symbol: {name}!.data:{lookup_address(lines, name)}
-#     binary: assets/{src_file_name}/{name}.bin
-#     header: assets/{src_file_name}/{name}.inc
-# """
-#                 else:
-#                     out_config = f"""
-#   - symbol: {name}
-#     binary: assets/{name}.bin
-#     header: assets/{name}.inc
-# """
-#                 if type == "u8":
-#                     out_config += "    header_type: raw\n"
-#                 elif type == "Vtx":
-#                     out_config += "    header_type: none\n    custom_type: vtx\n"
-#                 elif type == "u16":
-#                     out_config += "    header_type: none\n    custom_type: pal16\n"
-#                 else:
-#                     assert (False)
-#                 f.write(out_config)
+    if should_link:
+        mark_matching(config_change_path)
+    if should_extract_symbols:
+        update_extracted_assets(lines, out, src_file_name)
 
 
 def main():
@@ -868,7 +939,10 @@ def main():
         description="Converts a binary file into gfx calls"
     )
     parser.add_argument("src_path", type=str, help="Binary source file path")
-
+    parser.add_argument('-t', '--types', action='append', required=False)
+    parser.add_argument('-u', '--update_splits',
+                        action='store_true', default=False)
+    parser.add_argument('-l', '--link', action='store_true', default=False)
     args = parser.parse_args()
 
     presented_path = args.src_path
@@ -877,7 +951,14 @@ def main():
         "./build/GAFE01_00/foresta/asm/") / (presented_path[:-2] + ".s"))
     dest_path = str(pathlib.PurePosixPath("src") / presented_path)
     print(dest_path)
-    convert_source_to_gfx_c_source(src_path, dest_path)
+    print(f"update splits: {args.update_splits}")
+    print(f"update link: {args.link}")
+    known_types = {}
+    if args.types != None:
+        known_types = {x.split(",")[1]: x.split(",")[0] for x in args.types}
+    # print(known_types)
+    convert_source_to_gfx_c_source(
+        src_path, dest_path, known_types, args.update_splits, args.link)
 
 
 if __name__ == "__main__":

@@ -149,6 +149,15 @@ G_TEXTURE_GEN_LINEAR = (1 << 19)
 G_LOD = (1 << 20)
 G_CLIPPING = 0x00800000
 
+G_LIGHTING_POSITIONAL = 0x400000
+G_DECAL_LEQUAL = 0x00
+G_DECAL_GEQUAL = 0x10
+G_DECAL_EQUAL = 0x20
+G_DECAL_ALWAYS = 0x30
+G_DECAL_SPECIAL = 0x40
+G_DECAL_ALL = (G_DECAL_ALWAYS | G_DECAL_SPECIAL)
+G_LIGHTING_GC = 0x00800000
+
 G_MDSFT_ALPHADITHER = 4
 G_MDSFT_RGBDITHER = 6
 G_MDSFT_COMBKEY = 8
@@ -1337,7 +1346,7 @@ def strarg_zs(v):
     return othermodelo_str(v, MDMASK_ZSRCSEL)
 
 
-def strarg_orthermodelo(v):
+def strarg_othermodelo(v):
     return othermodelo_str(v, MDMASK_ALPHACOMPARE | MDMASK_ZSRCSEL | MDMASK_RM_C1 | MDMASK_RM_C2)
 
 
@@ -1425,13 +1434,49 @@ def strarg_gm(arg):
             buf += (" | ")
         buf += ("G_CLIPPING")
 
+    if (arg & G_LIGHTING_POSITIONAL):
+        if (len(buf) > 0):
+            buf += (" | ")
+        buf += ("G_LIGHTING_POSITIONAL")
+
+    if (arg & G_DECAL_ALL == G_DECAL_ALL):
+        if (len(buf) > 0):
+            buf += (" | ")
+        buf += ("G_DECAL_ALL")
+    elif (arg & G_DECAL_ALWAYS == G_DECAL_ALWAYS):
+        if (len(buf) > 0):
+            buf += (" | ")
+        buf += ("G_DECAL_ALWAYS")
+    elif (arg & G_DECAL_EQUAL):
+        if (len(buf) > 0):
+            buf += (" | ")
+        buf += ("G_DECAL_EQUAL")
+    elif (arg & G_DECAL_GEQUAL):
+        if (len(buf) > 0):
+            buf += (" | ")
+        buf += ("G_DECAL_GEQUAL")
+    else:
+        if (len(buf) > 0):
+            buf += (" | ")
+        buf += ("G_DECAL_LEQUAL")
+    if (arg & G_DECAL_SPECIAL and arg & G_DECAL_ALWAYS == 0):
+        if (len(buf) > 0):
+            buf += (" | ")
+        buf += ("G_DECAL_SPECIAL")
+
+    if (arg & G_LIGHTING_GC):
+        if (len(buf) > 0):
+            buf += (" | ")
+        buf += ("G_LIGHTING_GC")
+
     arg = arg & ~(G_ZBUFFER | G_TEXTURE_ENABLE | G_SHADE | G_CULL_BOTH | G_FOG |
                   G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD |
-                  G_SHADING_SMOOTH | G_CLIPPING)
+                  G_SHADING_SMOOTH | G_CLIPPING | G_LIGHTING_GC | G_DECAL_SPECIAL |
+                  G_DECAL_ALWAYS | G_LIGHTING_POSITIONAL)
     if (arg):
         if (len(buf) > 0):
             buf += (" | ")
-        buf += f"{arg:08x}"
+        buf += f"0x{arg:08x}"
 
     return buf
 
@@ -1499,10 +1544,11 @@ def gf_call(name: str, data: bytes, *offs: BitToArgs) -> str:
 
 
 def unsupported_gfx_call(data):
+    out = ""
     if SHOW_CODE:
-        return f"/* {extract_data_upper(data):08x} {extract_data_lower(data):08x} */ UNSUPPORTED_CALL({", ".join(f"0x{d:02x}" for d in data)})"
-    else:
-        return f"UNSUPPORTED_CALL({", ".join(f"0x{d:02x}" for d in data)})"
+        out += f"/* {extract_data_upper(data):08x} {extract_data_lower(data):08x} */ "
+    return out + f"UNSUPPORTED_CALL({', '.join(f'0x{a:02x}' for a in data)})"
+    # return out + f"{{0x{int.from_bytes(data[0:4]):08x}, 0x{int.from_bytes(data[4:8]):08x}}}"
 
 
 def gfx_gsSPTexture(data):
@@ -1531,21 +1577,26 @@ def gfx_gsDPSetTextureLUT(data):
                    B2A(0, 32, DL, strarg_tt))
 
 
+def gfx_gsDPSetCycleType(data):
+    return gf_call("gsDPSetCycleType", data,
+                   B2A(0, 32, DL, strarg_cyc))
+
+
 def gfx_gsSPSetOther_Hi(data):
     length = extract_data_upper(data, 0, 8) + 1
     shift = 32 - (extract_data_upper(data, 8, 8) + length)
     return {
-        (G_MDSFT_ALPHADITHER, G_MDSIZ_ALPHADITHER): None,
-        (G_MDSFT_RGBDITHER, G_MDSIZ_RGBDITHER): None,
-        (G_MDSFT_COMBKEY, G_MDSIZ_COMBKEY): None,
-        (G_MDSFT_TEXTCONV, G_MDSIZ_TEXTCONV): None,
-        (G_MDSFT_TEXTFILT, G_MDSIZ_TEXTFILT): None,
+        # (G_MDSFT_ALPHADITHER, G_MDSIZ_ALPHADITHER): None,
+        # (G_MDSFT_RGBDITHER, G_MDSIZ_RGBDITHER): None,
+        # (G_MDSFT_COMBKEY, G_MDSIZ_COMBKEY): None,
+        # (G_MDSFT_TEXTCONV, G_MDSIZ_TEXTCONV): None,
+        # (G_MDSFT_TEXTFILT, G_MDSIZ_TEXTFILT): None,
         (G_MDSFT_TEXTLUT, G_MDSIZ_TEXTLUT): gfx_gsDPSetTextureLUT,
-        (G_MDSFT_TEXTLOD, G_MDSIZ_TEXTLOD): None,
-        (G_MDSFT_TEXTDETAIL, G_MDSIZ_TEXTDETAIL): None,
-        (G_MDSFT_TEXTPERSP, G_MDSIZ_TEXTPERSP): None,
-        (G_MDSFT_CYCLETYPE, G_MDSIZ_CYCLETYPE): None,
-        (G_MDSFT_PIPELINE, G_MDSIZ_PIPELINE): None,
+        # (G_MDSFT_TEXTLOD, G_MDSIZ_TEXTLOD): None,
+        # (G_MDSFT_TEXTDETAIL, G_MDSIZ_TEXTDETAIL): None,
+        # (G_MDSFT_TEXTPERSP, G_MDSIZ_TEXTPERSP): None,
+        (G_MDSFT_CYCLETYPE, G_MDSIZ_CYCLETYPE): gfx_gsDPSetCycleType,
+        # (G_MDSFT_PIPELINE, G_MDSIZ_PIPELINE): None,
     }.get((shift, length), unsupported_gfx_call)(data)
 
 
@@ -1658,6 +1709,34 @@ def gfx_gsDPSetEnvColor(data):
                    B2A(16, 8, DL),
                    B2A(8, 8, DL),
                    B2A(0, 8, DL))
+
+
+def gfx_gsDPSetOtherMode(data):
+    return gf_call("gsDPSetOtherMode", data,
+                   B2A(0, 24, DU, strarg_othermodehi),
+                   B2A(0, 32, DL, strarg_othermodelo))
+
+
+def gfx_gsSPNTriangles(data):
+    global triangle_count, extended_func
+    count = extract_data_upper(data, 17, 7) + 1 - 3
+    if count > 0:
+        triangle_count = count
+        extended_func = gfx_gsSPNTriangles_5b
+
+    return gf_call("gsSPNTriangles", data,
+                   B2A(17, 7, DU, lambda x: str(x+1)),
+                   B2A(4, 5, DL), B2A(9, 5, DL), B2A(14, 5, DL),
+                   B2A(19, 5, DL), B2A(24, 5, DL), B2A(29, 5, DS),
+                   B2A(2, 5, DU), B2A(7, 5, DU), B2A(12, 5, DU),
+                   )
+
+
+def gfx_gsSPCullDisplayList(data):
+    return gf_call("gsSPCullDisplayList", data,
+                   B2A(0, 16, DU, lambda x: str(x//2)),
+                   B2A(0, 16, DL, lambda x: str(x//2))
+                   )
 
 
 def gfx_gsDPSetTile_Dolphin(data):
@@ -1794,7 +1873,10 @@ GFX_LOOKUP = {
     G_LOADBLOCK: gfx_gsDPLoadBlock,
     G_SETTILESIZE: gfx_gsDPSetTileSize,
     G_TRI1: gfx_gsSp1Triangle,
-    G_SETENVCOLOR: gfx_gsDPSetEnvColor
+    G_SETENVCOLOR: gfx_gsDPSetEnvColor,
+    G_RDPSETOTHERMODE: gfx_gsDPSetOtherMode,
+    G_TRIN: gfx_gsSPNTriangles,
+    G_CULLDL: gfx_gsSPCullDisplayList
 }
 
 

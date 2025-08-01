@@ -1,0 +1,30 @@
+#include "libforest/gbi_extensions.h"
+#include "PR/gbi.h"
+#include "evw_anime.h"
+#include "c_keyframe.h"
+#include "ac_npc.h"
+#include "ef_effect_control.h"
+
+u8 obj_w_kamakura_shadow[] ATTRIBUTE_ALIGN(32) = {
+#include "assets/obj_w_kamakura_shadow.inc"
+};
+
+Vtx obj_w_kamakura_shadow_v[] = {
+#include "assets/obj_w_kamakura_shadow_v.inc"
+};
+
+Gfx obj_e_kamakura_shadow_model[] = {
+    gsSPTexture(0, 0, 0, G_TX_RENDERTILE, G_ON),
+    gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, TEXEL0, 0, PRIM_LOD_FRAC, 0, 0, 0, 0, COMBINED, 0, 0, 0, COMBINED),
+    gsDPSetRenderMode(G_RM_FOG_SHADE_A, G_RM_AA_ZB_XLU_DECAL2),
+    gsDPSetTextureImage_Dolphin(G_IM_FMT_I, G_IM_SIZ_4b, 32, 32, obj_w_kamakura_shadow),
+    gsDPSetTile_Dolphin(G_DOLPHIN_TLUT_DEFAULT_MODE, 0, 15, GX_REPEAT, GX_CLAMP, 0, 0),
+    gsSPLoadGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH | G_DECAL_LEQUAL),
+    gsSPVertex(anime_1_txt, 20, 0),
+    gsSPNTrianglesInit_5b(18, 0, 1, 2, 0, 2, 3, 4, 5, 1),
+    gsSPNTriangles_5b(4, 1, 0, 3, 2, 6, 3, 6, 7, 7, 6, 8),
+    gsSPNTriangles_5b(7, 8, 9, 10, 11, 5, 10, 5, 4, 12, 13, 11),
+    gsSPNTriangles_5b(12, 11, 10, 14, 15, 13, 14, 13, 12, 9, 8, 16),
+    gsSPNTriangles_5b(9, 16, 17, 15, 14, 18, 15, 18, 19, 0, 0, 0),
+    gsSPEndDisplayList(),
+};
