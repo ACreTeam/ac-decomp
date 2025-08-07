@@ -1,4 +1,4 @@
-#include "Famicom/famicom.h"
+#include "Famicom/famicomPriv.h"
 
 #include "_mem.h"
 #include "dolphin/os.h"

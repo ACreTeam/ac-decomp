@@ -2,7 +2,7 @@
 #define FAMICOMINTERNAL_H
 
 #include "types.h"
-#include "Famicom/famicom.h"
+#include "Famicom/famicomPriv.h"
 #include "Famicom/ks_nes.h"
 
 #define MURA_GAME_NAME_SIZE 16

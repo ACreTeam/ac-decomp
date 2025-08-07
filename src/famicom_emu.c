@@ -1,7 +1,7 @@
 
 #include "famicom_emu.h"
 
-#include "Famicom/famicom.h"
+#include "Famicom/famicomPriv.h"
 #include "_mem.h"
 #include "dolphin/gx.h"
 #include "jsyswrap.h"

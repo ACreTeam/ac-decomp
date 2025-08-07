@@ -19,7 +19,7 @@
 #include "m_card.h"
 #include "m_eappli.h"
 #include "famicom_emu.h"
-#include "Famicom/famicom.h"
+#include "Famicom/famicomPriv.h"
 #include "m_malloc.h"
 #include "m_field_info.h"
 #include "m_time.h"

@@ -1,4 +1,4 @@
-#include "Famicom/famicom.h"
+#include "Famicom/famicomPriv.h"
 #include "Famicom/famicomInternal.hpp"
 
 #include "libc/string.h"
@@ -2135,7 +2135,7 @@ static int famicom_rom_load() {
         OSReport("err code=%d (0x%x), %x,%x,%x,%x,%x,%x\n",
             reset_res, reset_res, famicomCommon.wp, famicomCommon.sp,
             famicomCommon.wp->work_priv.wram, famicomCommon.wp->work_priv._0B40,
-            famicomCommon.wp->work_priv._2A40, famicomCommon.sp->_17FC
+            famicomCommon.wp->work_priv._2A40, famicomCommon.sp->ppu_chr_banks
         );
         OSReport("NES emu reset failed!!");
     }
@@ -2293,7 +2293,7 @@ static int ksnes_thread_exec(u32 flags) {
     if (ksnes_emu_stack != nullptr) {
         OSTime timeout = OSMillisecondsToTicks(2000); // 2 second timeout
 
-        if (famicomCommon.sp->disk_motor) {
+        if (famicomCommon.sp->motor_timer != 0) {
             // Disk motor is on.
             OSReport("ディスクモーターオン\n");
         }
@@ -2581,7 +2581,7 @@ extern void famicom_1frame() {
         filer_demo_mode = FILER_DEMO_MODE_NORMAL;
     }
 
-    if ((flags & 0x400) != 0 && famicomCommon.sp->disk_motor != 0 && (famicomCommon.sp->_16B4 & 0x10)) {
+    if ((flags & 0x400) != 0 && famicomCommon.sp->motor_timer != 0 && (famicomCommon.sp->vblank_frame_counter & 0x10)) {
         // Please wait
         JUTReport(400, 350, 1, "omati kudasai...");
     }
