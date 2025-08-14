@@ -24,6 +24,7 @@ jobs:
     # Normalize file mod times
     - name: Restore git file mtimes
       run: |
+        apt-get update && apt-get install -y python3-pip
         pip install --user git-restore-mtime
         ~/.local/bin/git-restore-mtime
 
