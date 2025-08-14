@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [GAFE01_00]
+        version: [GAFE01_00, GAFU01_00]
 
     steps:
     # Checkout the repository
