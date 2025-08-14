@@ -264,10 +264,12 @@ cflags_foresta = [
 if version_num >= 1:
     cflags_foresta.append("-O4,p")
     cflags_foresta.append("-inline off")
+    config.linker_version = "GC/2.0"
+    foresta_compiler = "GC/2.0"
 else:
     cflags_foresta.append("-O4,s")
-
-config.linker_version = "GC/1.3.2"
+    config.linker_version = "GC/1.3.2"
+    foresta_compiler = "GC/1.3.2"
 
 
 # Helper function for Dolphin libraries
@@ -308,7 +310,7 @@ def JSystemLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
 def Rel(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": lib_name,
-        "mw_version": "GC/1.3.2",
+        "mw_version": foresta_compiler,
         "cflags": cflags_foresta,
         "progress_category": "game",
         "objects": objects,
@@ -958,7 +960,7 @@ config.libs = [
         "actor",
         [
             Object(Matching, "actor/ac_airplane.c"),
-            Object(MatchingFor("GAFE01_00"), "actor/ac_animal_logo.c"),
+            Object(Matching, "actor/ac_animal_logo.c"),
             Object(Matching, "actor/ac_ant.c"),
             Object(Matching, "actor/ac_aprilfool_control.c"),
             Object(Matching, "actor/ac_arrange_ftr.c"),

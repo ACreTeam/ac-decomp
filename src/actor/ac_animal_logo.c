@@ -30,6 +30,12 @@
 #define TITLE_WIDTH 64
 #define TITLE_HEIGHT 16
 
+#if VERSION == VER_GAFE01_00
+#define aAL_IN_FRAMES 121.0f
+#elif VERSION == VER_GAFU01_00
+#define aAL_IN_FRAMES 101.0f
+#endif
+
 extern u8 log_win_nintendo1_tex[];
 extern u8 log_win_nintendo2_tex[];
 extern u8 log_win_nintendo3_tex[];
@@ -262,9 +268,9 @@ extern cKF_Animation_R_c cKF_ba_r_logo_us_cros;
 extern cKF_Animation_R_c cKF_ba_r_logo_us_sing;
 
 static void aAL_logo_in_init(ANIMAL_LOGO_ACTOR* actor, GAME* game) {
-  cKF_SkeletonInfo_R_init(&actor->animal.skeleton, actor->animal.skeleton.skeleton, &cKF_ba_r_logo_us_animal, 1.0f, 121.0f, 1.0f, 0.5f, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
-  cKF_SkeletonInfo_R_init(&actor->cros.skeleton, actor->cros.skeleton.skeleton, &cKF_ba_r_logo_us_cros, 1.0f, 121.0f, 1.0f, 0.5f, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
-  cKF_SkeletonInfo_R_init(&actor->sing.skeleton, actor->sing.skeleton.skeleton, &cKF_ba_r_logo_us_sing, 1.0f, 121.0f, 1.0f, 0.5f, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+  cKF_SkeletonInfo_R_init(&actor->animal.skeleton, actor->animal.skeleton.skeleton, &cKF_ba_r_logo_us_animal, 1.0f, aAL_IN_FRAMES, 1.0f, 0.5f, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+  cKF_SkeletonInfo_R_init(&actor->cros.skeleton, actor->cros.skeleton.skeleton, &cKF_ba_r_logo_us_cros, 1.0f, aAL_IN_FRAMES, 1.0f, 0.5f, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
+  cKF_SkeletonInfo_R_init(&actor->sing.skeleton, actor->sing.skeleton.skeleton, &cKF_ba_r_logo_us_sing, 1.0f, aAL_IN_FRAMES, 1.0f, 0.5f, 0.0f, cKF_FRAMECONTROL_STOP, NULL);
 
   actor->copyright_opacity = 0;
   actor->titledemo_no = mTD_get_titledemo_no();
@@ -338,6 +344,7 @@ static void aAL_actor_move(ACTOR* actor, GAME* game) {
   (*logo_actor->action_proc)(logo_actor, game);
 }
 
+#if VERSION == VER_GAFE01_00
 static void aAL_copyright_draw(ANIMAL_LOGO_ACTOR* actor, GRAPH* graph) {
   static const u32 draw_pos_x[3] = { 61, 125, 189 };
   static const u32 draw_pos_y[3] = { 198, 198, 198 };
@@ -419,6 +426,41 @@ static void aAL_copyright_draw(ANIMAL_LOGO_ACTOR* actor, GRAPH* graph) {
 
   CLOSE_DISP(graph);
 }
+#elif VERSION == VER_GAFU01_00
+extern Gfx logo_nin_copyT_model[];
+
+static void aAL_copyright_draw(ANIMAL_LOGO_ACTOR* actor, GRAPH* graph) {
+    // clang-format off
+    static const Gfx init_disp[] = {
+        gsSPTexture(0, 0, 0, 0, G_ON),
+        gsSPLoadGeometryMode(G_CULL_BACK),
+        gsDPSetOtherMode(G_AD_DISABLE | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PRIM | G_RM_XLU_SURF | G_RM_XLU_SURF2),
+        gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0),
+        gsSPEndDisplayList(),
+    };
+    // clang-format on
+
+    actor->copyright_opacity += aAL_COPYRIGHT_ALPHA_RATE;
+    if (actor->copyright_opacity >= 255) {
+        actor->copyright_opacity = 255;
+    }
+
+    Matrix_push();
+
+    OPEN_FONT_DISP(graph);
+
+    Matrix_translate(32.0f, -1376.0f, 0.0f, MTX_MULT);
+    Matrix_scale(0.16208267f, 0.16208267f, 0.16208267f, MTX_MULT);
+    gSPMatrix(FONT_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gDPSetPrimColor(FONT_DISP++, 0, 255, 255, 255, 255, actor->copyright_opacity);
+    gSPDisplayList(FONT_DISP++, init_disp);
+    gSPDisplayList(FONT_DISP++, logo_nin_copyT_model);
+
+    CLOSE_FONT_DISP(graph);
+
+    Matrix_pull();
+}
+#endif
 
 static void aAL_tm_draw(GRAPH* graph) {
   static const Gfx init_disp[] = {

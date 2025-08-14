@@ -1,6 +1,6 @@
 object_base: orig/GAFU01_00
 object: sys/main.dol
-hash: ae1eb839a218f96cfa09c730adadd932ba6bd1ce
+hash: AE1EB839A218F96CFA09C730ADADD932BA6BD1CE
 name: static
 symbols: config/GAFU01_00/symbols.txt
 splits: config/GAFU01_00/splits.txt
@@ -429,7 +429,7 @@ extract:
 
 modules:
 - object: files/foresta.rel.szs
-  hash: 7d91c20ebc85ef2197ca07eb7348d5477b2ff478
+  hash: 7D91C20EBC85EF2197CA07EB7348D5477B2FF478
   symbols: config/GAFU01_00/foresta/symbols.txt
   splits: config/GAFU01_00/foresta/splits.txt
   # map: orig/GAFU01_00/files/foresta.map

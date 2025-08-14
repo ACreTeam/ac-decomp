@@ -235,6 +235,28 @@ extern void graph_dt(GRAPH* graph);
 
 #define SHADOW_DISP __shadow_gfx
 
+// clang-format off
+#define OPEN_FONT_DISP(g)                \
+    do {} while (0);                     \
+    OPEN_DISP(g);                        \
+    {                                    \
+        Gfx* __font_gfx = NOW_FONT_DISP; \
+        s32 __font_opened = 0;           \
+        do {} while (0)
+// clang-format on
+
+// clang-format off
+#define CLOSE_FONT_DISP(g)         \
+       do {} while (0);            \
+        (void)__font_opened;       \
+        SET_FONT_DISP(__font_gfx); \
+    }                              \
+    CLOSE_DISP(g);                 \
+    do {} while (0)
+// clang-format on
+
+#define FONT_DISP __font_gfx
+
 #define GRAPH_ALLOC(graph, size)                        \
     ((void*)((graph)->polygon_opaque_thaga.tha.tail_p = \
                  (char*)((int)(graph)->polygon_opaque_thaga.tha.tail_p - (int)(size))))
