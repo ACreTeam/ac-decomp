@@ -643,6 +643,7 @@ static void mDI_diary_ovl_move(Submenu* submenu) {
     (*ovl_move_proc[menu_info->proc_status])(submenu, menu_info);
 }
 
+#if VERSION == VER_GAFE01_00
 extern Gfx dia_init_mode[];
 // extern Gfx kei_win_b2_model[];
 extern Gfx kei_win_b2_model_1_data_4075A0[];
@@ -666,6 +667,31 @@ static void mDI_set_button_dl(GRAPH* graph, f32 pos_x, f32 pos_y) {
 
     CLOSE_POLY_OPA_DISP(graph);
 }
+#else
+extern Gfx dia_init_mode[];
+// extern Gfx kei_win_b2_model[];
+extern Gfx kei_win_b2_model_1_data_407600[];
+// extern Gfx kei_win_amojiT_model[];
+extern Gfx kei_win_amojiT_model_1_data_407680[];
+extern Gfx dia_win_bb_model[];
+extern Gfx dia_win_mojiT_model[];
+
+static void mDI_set_button_dl(GRAPH* graph, f32 pos_x, f32 pos_y) {
+    OPEN_POLY_OPA_DISP(graph);
+
+    Matrix_scale(16.0f, 16.0f, 1.0f, MTX_LOAD);
+    Matrix_translate(pos_x, pos_y, 140.0f, MTX_MULT);
+
+    gSPMatrix(POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    gSPDisplayList(POLY_OPA_DISP++, dia_init_mode);
+    gSPDisplayList(POLY_OPA_DISP++, kei_win_b2_model_1_data_407600);
+    gSPDisplayList(POLY_OPA_DISP++, kei_win_amojiT_model_1_data_407680);
+    gSPDisplayList(POLY_OPA_DISP++, dia_win_bb_model);
+    gSPDisplayList(POLY_OPA_DISP++, dia_win_mojiT_model);
+
+    CLOSE_POLY_OPA_DISP(graph);
+}
+#endif
 
 extern Gfx dia_init_mode_letter[];
 extern Gfx dia_win_wT_model[];

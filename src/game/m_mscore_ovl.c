@@ -352,7 +352,11 @@ extern Gfx onp_win_mojiT_model[];
 extern Gfx onp_win_zT_model[];
 extern Gfx onp_win_rT_model[];
 extern Gfx onp_win_sT_model[];
+#if VERSION == VER_GAFE01_00
 extern Gfx onp_win_rmoji_model[];
+#else
+extern Gfx onp_win_rmoji_model_1_data_4A4020[];
+#endif
 extern Gfx onp_win_owariT_model[];
 
 extern Gfx sen_item2_DL_mode[];
@@ -413,8 +417,11 @@ static void mMS_set_dl(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game) 
     gSPDisplayList(POLY_OPA_DISP++, onp_win_zT_model);
     gSPDisplayList(POLY_OPA_DISP++, onp_win_rT_model);
     gSPDisplayList(POLY_OPA_DISP++, onp_win_sT_model);
+#if VERSION == VER_GAFE01_00
     gSPDisplayList(POLY_OPA_DISP++, onp_win_rmoji_model);
-
+#else
+    gSPDisplayList(POLY_OPA_DISP++, onp_win_rmoji_model_1_data_4A4020);
+#endif
     color_p = (mscore_ovl->cursor_idx == 16) ? &color_data[0] : &color_data[1];
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 255, color_p->r, color_p->g, color_p->b, 255);
     gSPDisplayList(POLY_OPA_DISP++, onp_win_owariT_model);

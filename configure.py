@@ -254,7 +254,6 @@ cflags_runtime = [
 cflags_foresta = [
     *cflags_base,
     *cflags_common,
-    "-O4,s",
     "-sdata 0",
     "-sdata2 0",
     "-d IS_REL",
@@ -263,7 +262,10 @@ cflags_foresta = [
 ]
 
 if version_num >= 1:
+    cflags_foresta.append("-O4,p")
     cflags_foresta.append("-inline off")
+else:
+    cflags_foresta.append("-O4,s")
 
 config.linker_version = "GC/1.3.2"
 
@@ -1417,7 +1419,7 @@ config.libs = [
             Object(Matching, "game/m_demo.c"),
             Object(Matching, "game/m_design_ovl.c"),
             Object(Matching, "game/m_diary.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_diary_ovl.c"),
+            Object(Matching, "game/m_diary_ovl.c"),
             Object(Matching, "game/m_eappli.c"),
             Object(Matching, "game/m_editEndChk_ovl.c"),
             Object(Matching, "game/m_editor_ovl.c"),
@@ -1464,7 +1466,7 @@ config.libs = [
             Object(Matching, "game/m_mark_room.c"),
             Object(Matching, "game/m_mark_room_ovl.c"),
             Object(Matching, "game/m_melody.c"),
-            Object(MatchingFor("GAFE01_00"), "game/m_mscore_ovl.c"),
+            Object(Matching, "game/m_mscore_ovl.c"),
             Object(Matching, "game/m_msg.c"),
             Object(Matching, "game/m_museum.c"),
             Object(Matching, "game/m_museum_display.c"),
