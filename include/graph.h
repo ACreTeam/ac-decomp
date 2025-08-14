@@ -5,6 +5,7 @@
 #include "PR/mbi.h"
 #include "THA_GA.h"
 #include "dolphin/os/OSMessage.h"
+#include "boot.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -239,7 +240,9 @@ extern void graph_dt(GRAPH* graph);
                  (char*)((int)(graph)->polygon_opaque_thaga.tha.tail_p - (int)(size))))
 #define GRAPH_ALLOC_TYPE(graph, type, num) (GRAPH_ALLOC(graph, sizeof(type) * (num)))
 
+#if VERSION != VER_GAFU01_00
 extern u8 SoftResetEnable;
+#endif
 extern GRAPH graph_class;
 
 #ifdef __cplusplus

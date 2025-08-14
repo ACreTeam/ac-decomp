@@ -172,6 +172,7 @@ asm unsigned __cvt_fp2unsigned(register double d) {
 #endif // clang-format on
 }
 
+#pragma force_active on
 static asm void __save_fpr(void) {
 #ifdef __MWERKS__ // clang-format off
 	nofralloc
@@ -379,6 +380,7 @@ static asm void __restore_gpr(void) {
 		blr
 #endif // clang-format on
 }
+#pragma force_active reset
 
 asm void __div2u(void) {
 #ifdef __MWERKS__ // clang-format off

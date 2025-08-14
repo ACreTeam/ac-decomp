@@ -36,6 +36,9 @@ static BOOL fakemain_check;
 OSTime InitialStartTime; /* TODO: this appears to be N64's type of OSTime (u64), and not Dolphin's (s64) */
 void* boot_copyDate;
 void* HotStartEntry;
+#if VERSION == VER_GAFU01_00
+u8 SoftResetEnable;
+#endif
 u8 boot_sound_initializing;
 
 /**

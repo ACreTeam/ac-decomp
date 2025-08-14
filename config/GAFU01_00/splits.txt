@@ -12,7 +12,7 @@ Sections:
 	.sbss       type:bss align:16
 	.sdata2     type:rodata align:32
 
-boot.o:
+boot.c:
 	.text       start:0x80005680 end:0x8000661C
 	.rodata     start:0x800B35A0 end:0x800B35A8
 	.data       start:0x800B9DA0 end:0x800BA390
@@ -1429,207 +1429,207 @@ gx.a/GXPerf.c:
 	.text       start:0x800A2764 end:0x800A3080
 	.data       start:0x800EC738 end:0x800EC828
 
-Runtime.PPCEABI.H.a/__va_arg.c:
+Runtime.PPCEABI.H/__va_arg.c:
 	.text       start:0x800A3080 end:0x800A3148
 
-Runtime.PPCEABI.H.a/global_destructor_chain.c:
+Runtime.PPCEABI.H/global_destructor_chain.c:
 	.text       start:0x800A3148 end:0x800A31A8
 	.dtors      start:0x800B3588 end:0x800B358C
 	.sbss       start:0x8022AB30 end:0x8022AB38
 
-Runtime.PPCEABI.H.a/CPlusLibPPC.cp:
+Runtime.PPCEABI.H/CPlusLibPPC.cp:
 	.text       start:0x800A31A8 end:0x800A31D8
 
-Runtime.PPCEABI.H.a/NMWException.cp:
+Runtime.PPCEABI.H/NMWException.cp:
 	extab       start:0x800055E0 end:0x80005608
 	extabindex  start:0x80005620 end:0x80005644
 	.text       start:0x800A31D8 end:0x800A3404
 
-Runtime.PPCEABI.H.a/ptmf.c:
+Runtime.PPCEABI.H/ptmf.c:
 	.text       start:0x800A3404 end:0x800A345C
 
-Runtime.PPCEABI.H.a/runtime.c:
+Runtime.PPCEABI.H/runtime.c:
 	.text       start:0x800A345C end:0x800A3BD8
 	.rodata     start:0x800B9190 end:0x800B91A8
 
-Runtime.PPCEABI.H.a/__init_cpp_exceptions.cpp:
+Runtime.PPCEABI.H/__init_cpp_exceptions.cpp:
 	.text       start:0x800A3BD8 end:0x800A3C54
 	.ctors      start:0x800B3540 end:0x800B3544
 	.dtors      start:0x800B3580 end:0x800B3588
 	.sdata      start:0x8022A130 end:0x8022A138
 
-Runtime.PPCEABI.H.a/Gecko_ExceptionPPC.cp:
+Runtime.PPCEABI.H/Gecko_ExceptionPPC.cp:
 	.text       start:0x800A3C54 end:0x800A3CBC
 	.bss        start:0x8021C408 end:0x8021C418
 
-MSL_C.PPCEABI.bare.H.a/abort_exit.c:
+MSL_C.PPCEABI.bare.H/abort_exit.c:
 	.text       start:0x800A3CBC end:0x800A3DAC
 	.bss        start:0x8021C418 end:0x8021C518
 	.sbss       start:0x8022AB38 end:0x8022AB48
 
-MSL_C.PPCEABI.bare.H.a/errno.c:
+MSL_C.PPCEABI.bare.H/errno.c:
 	.sbss       start:0x8022AB48 end:0x8022AB50
 
-MSL_C.PPCEABI.bare.H.a/ansi_files.c:
+MSL_C.PPCEABI.bare.H/ansi_files.c:
 	.text       start:0x800A3DAC end:0x800A3EC4
 	.data       start:0x800EC828 end:0x800EC968
 	.bss        start:0x8021C518 end:0x8021C818
 
-MSL_C.PPCEABI.bare.H.a/ansi_fp.c:
+MSL_C.PPCEABI.bare.H/ansi_fp.c:
 	.text       start:0x800A3EC4 end:0x800A5E18
 	.rodata     start:0x800B91A8 end:0x800B9288
 	.data       start:0x800EC968 end:0x800ECA90
 	.sdata2     start:0x8022B4E8 end:0x8022B4F0
 
-MSL_C.PPCEABI.bare.H.a/arith.c:
+MSL_C.PPCEABI.bare.H/arith.c:
 	.text       start:0x800A5E18 end:0x800A5FDC
 
-MSL_C.PPCEABI.bare.H.a/buffer_io.c:
+MSL_C.PPCEABI.bare.H/buffer_io.c:
 	.text       start:0x800A5FDC end:0x800A60D4
 
-MSL_C.PPCEABI.bare.H.a/critical_regions.gamecube.c:
+MSL_C.PPCEABI.bare.H/critical_regions.gamecube.c:
 	.text       start:0x800A60D4 end:0x800A60E0
 
-MSL_C.PPCEABI.bare.H.a/ctype.c:
+MSL_C.PPCEABI.bare.H/ctype.c:
 	.text       start:0x800A60E0 end:0x800A6104
 	.data       start:0x800ECA90 end:0x800ECD90
 
-MSL_C.PPCEABI.bare.H.a/direct_io.c:
+MSL_C.PPCEABI.bare.H/direct_io.c:
 	.text       start:0x800A6104 end:0x800A648C
 
-MSL_C.PPCEABI.bare.H.a/file_io.c:
+MSL_C.PPCEABI.bare.H/file_io.c:
 	.text       start:0x800A648C end:0x800A6780
 
-MSL_C.PPCEABI.bare.H.a/FILE_POS.C:
+MSL_C.PPCEABI.bare.H/FILE_POS.C:
 	.text       start:0x800A6780 end:0x800A6B40
 
-MSL_C.PPCEABI.bare.H.a/mbstring.c:
+MSL_C.PPCEABI.bare.H/mbstring.c:
 	.text       start:0x800A6B40 end:0x800A6C58
 	.sdata2     start:0x8022B4F0 end:0x8022B4F8
 
-MSL_C.PPCEABI.bare.H.a/mem.c:
+MSL_C.PPCEABI.bare.H/mem.c:
 	.text       start:0x800A6C58 end:0x800A6DC8
 
-MSL_C.PPCEABI.bare.H.a/mem_funcs.c:
+MSL_C.PPCEABI.bare.H/mem_funcs.c:
 	.text       start:0x800A6DC8 end:0x800A7098
 
-MSL_C.PPCEABI.bare.H.a/misc_io.c:
+MSL_C.PPCEABI.bare.H/misc_io.c:
 	.text       start:0x800A7098 end:0x800A70A8
 
-MSL_C.PPCEABI.bare.H.a/printf.c:
+MSL_C.PPCEABI.bare.H/printf.c:
 	.text       start:0x800A70A8 end:0x800A9198
 	.rodata     start:0x800B9288 end:0x800B92B0
 	.data       start:0x800ECD90 end:0x800ECFC0
 	.sdata      start:0x8022A138 end:0x8022A140
 	.sdata2     start:0x8022B4F8 end:0x8022B500
 
-MSL_C.PPCEABI.bare.H.a/rand.c:
+MSL_C.PPCEABI.bare.H/rand.c:
 	.text       start:0x800A9198 end:0x800A91C0
 	.sdata      start:0x8022A140 end:0x8022A148
 
-MSL_C.PPCEABI.bare.H.a/float.c:
+MSL_C.PPCEABI.bare.H/float.c:
 	.sdata      start:0x8022A148 end:0x8022A150
 
-MSL_C.PPCEABI.bare.H.a/scanf.c:
+MSL_C.PPCEABI.bare.H/scanf.c:
 	.text       start:0x800A91C0 end:0x800A9250
 
-MSL_C.PPCEABI.bare.H.a/string.c:
+MSL_C.PPCEABI.bare.H/string.c:
 	.text       start:0x800A9250 end:0x800A9594
 
-MSL_C.PPCEABI.bare.H.a/strtoul.c:
+MSL_C.PPCEABI.bare.H/strtoul.c:
 	.text       start:0x800A9594 end:0x800A99FC
 	.data       start:0x800ECFC0 end:0x800ED008
 
-MSL_C.PPCEABI.bare.H.a/wchar_io.c:
+MSL_C.PPCEABI.bare.H/wchar_io.c:
 	.text       start:0x800A99FC end:0x800A9A84
 
-MSL_C.PPCEABI.bare.H.a/uart_console_io_gcn.c:
+MSL_C.PPCEABI.bare.H/uart_console_io_gcn.c:
 	.text       start:0x800A9A84 end:0x800A9B5C
 	.sbss       start:0x8022AB50 end:0x8022AB58
 
-MSL_C.PPCEABI.bare.H.a/e_acos.c:
+MSL_C.PPCEABI.bare.H/e_acos.c:
 	.text       start:0x800A9B5C end:0x800A9D98
 	.sdata2     start:0x8022B500 end:0x8022B588
 
-MSL_C.PPCEABI.bare.H.a/e_atan2.c:
+MSL_C.PPCEABI.bare.H/e_atan2.c:
 	.text       start:0x800A9D98 end:0x800AA028
 	.sdata2     start:0x8022B588 end:0x8022B5E0
 
-MSL_C.PPCEABI.bare.H.a/e_pow.c:
+MSL_C.PPCEABI.bare.H/e_pow.c:
 	.text       start:0x800AA028 end:0x800AA858
 	.rodata     start:0x800B92B0 end:0x800B92E0
 	.sdata2     start:0x8022B5E0 end:0x8022B6F0
 
-MSL_C.PPCEABI.bare.H.a/e_rem_pio2.c:
+MSL_C.PPCEABI.bare.H/e_rem_pio2.c:
 	.text       start:0x800AA858 end:0x800AABF8
 	.rodata     start:0x800B92E0 end:0x800B9468
 	.sdata2     start:0x8022B6F0 end:0x8022B748
 
-MSL_C.PPCEABI.bare.H.a/k_cos.c:
+MSL_C.PPCEABI.bare.H/k_cos.c:
 	.text       start:0x800AABF8 end:0x800AACEC
 	.sdata2     start:0x8022B748 end:0x8022B790
 
-MSL_C.PPCEABI.bare.H.a/k_rem_pio2.c:
+MSL_C.PPCEABI.bare.H/k_rem_pio2.c:
 	.text       start:0x800AACEC end:0x800ABB40
 	.rodata     start:0x800B9468 end:0x800B94B8
 	.sdata2     start:0x8022B790 end:0x8022B7D0
 
-MSL_C.PPCEABI.bare.H.a/k_sin.c:
+MSL_C.PPCEABI.bare.H/k_sin.c:
 	.text       start:0x800ABB40 end:0x800ABBE0
 	.sdata2     start:0x8022B7D0 end:0x8022B808
 
-MSL_C.PPCEABI.bare.H.a/s_atan.c:
+MSL_C.PPCEABI.bare.H/s_atan.c:
 	.text       start:0x800ABBE0 end:0x800ABDF8
 	.rodata     start:0x800B94B8 end:0x800B9550
 	.sdata2     start:0x8022B808 end:0x8022B830
 
-MSL_C.PPCEABI.bare.H.a/s_ceil.c:
+MSL_C.PPCEABI.bare.H/s_ceil.c:
 	.text       start:0x800ABDF8 end:0x800ABF3C
 	.sdata2     start:0x8022B830 end:0x8022B840
 
-MSL_C.PPCEABI.bare.H.a/s_copysign.c:
+MSL_C.PPCEABI.bare.H/s_copysign.c:
 	.text       start:0x800ABF3C end:0x800ABF64
 
-MSL_C.PPCEABI.bare.H.a/s_cos.c:
+MSL_C.PPCEABI.bare.H/s_cos.c:
 	.text       start:0x800ABF64 end:0x800AC038
 	.sdata2     start:0x8022B840 end:0x8022B848
 
-MSL_C.PPCEABI.bare.H.a/s_floor.c:
+MSL_C.PPCEABI.bare.H/s_floor.c:
 	.text       start:0x800AC038 end:0x800AC180
 	.sdata2     start:0x8022B848 end:0x8022B858
 
-MSL_C.PPCEABI.bare.H.a/s_frexp.c:
+MSL_C.PPCEABI.bare.H/s_frexp.c:
 	.text       start:0x800AC180 end:0x800AC20C
 	.sdata2     start:0x8022B858 end:0x8022B860
 
-MSL_C.PPCEABI.bare.H.a/s_ldexp.c:
+MSL_C.PPCEABI.bare.H/s_ldexp.c:
 	.text       start:0x800AC20C end:0x800AC3D0
 	.sdata2     start:0x8022B860 end:0x8022B888
 
-MSL_C.PPCEABI.bare.H.a/s_modf.c:
+MSL_C.PPCEABI.bare.H/s_modf.c:
 	.text       start:0x800AC3D0 end:0x800AC4CC
 
-MSL_C.PPCEABI.bare.H.a/s_sin.c:
+MSL_C.PPCEABI.bare.H/s_sin.c:
 	.text       start:0x800AC4CC end:0x800AC5A4
 	.sdata2     start:0x8022B888 end:0x8022B890
 
-MSL_C.PPCEABI.bare.H.a/w_acos.c:
+MSL_C.PPCEABI.bare.H/w_acos.c:
 	.text       start:0x800AC5A4 end:0x800AC5C4
 
-MSL_C.PPCEABI.bare.H.a/w_atan2.c:
+MSL_C.PPCEABI.bare.H/w_atan2.c:
 	.text       start:0x800AC5C4 end:0x800AC5E4
 
-MSL_C.PPCEABI.bare.H.a/w_pow.c:
+MSL_C.PPCEABI.bare.H/w_pow.c:
 	.text       start:0x800AC5E4 end:0x800AC604
 
-MSL_C.PPCEABI.bare.H.a/e_sqrt.c:
+MSL_C.PPCEABI.bare.H/e_sqrt.c:
 	.text       start:0x800AC604 end:0x800AC828
 	.sdata2     start:0x8022B890 end:0x8022B898
 
-MSL_C.PPCEABI.bare.H.a/math_ppc.c:
+MSL_C.PPCEABI.bare.H/math_ppc.c:
 	.text       start:0x800AC828 end:0x800AC88C
 
-MSL_C.PPCEABI.bare.H.a/w_sqrt.c:
+MSL_C.PPCEABI.bare.H/w_sqrt.c:
 	.text       start:0x800AC88C end:0x800AC8AC
 
 TRK_Minnow_Dolphin.a/mainloop.c:
@@ -1686,7 +1686,7 @@ TRK_Minnow_Dolphin.a/notify.c:
 TRK_Minnow_Dolphin.a/flush_cache.c:
 	.text       start:0x800AF2D4 end:0x800AF30C
 
-Runtime.PPCEABI.H.a/__mem.c:
+Runtime.PPCEABI.H/__mem.c:
 	.init       start:0x80003458 end:0x80003590
 
 TRK_Minnow_Dolphin.a/mem_TRK.c:

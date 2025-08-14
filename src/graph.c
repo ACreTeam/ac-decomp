@@ -29,7 +29,9 @@
 GRAPH graph_class;
 
 static int skip_frame; // TODO: this is actually declared in graph_main
+#if VERSION != VER_GAFU01_00
 u8 SoftResetEnable;
+#endif
 static int frame; // TODO: this is actually declared in graph_task_set00
 
 #define CONSTRUCT_THA_GA(tha_ga, name, name2) \

@@ -17,26 +17,35 @@ static u32 Env_DataL3 = 0x9058C4DE;
 
 static Acmd* __LoadAuxBuf(Acmd* cmd, u16 ofs, u16 startPos, s32 size, delay* del_p);
 static Acmd* __SaveAuxBuf(Acmd* cmd, u16 ofs, u16 startPos, s32 size, delay* del_p);
+static Acmd* Nas_SaveBufferAuto(Acmd* cmd, u16 ofs, u16 size, s32 startAddr);
 
 static void Nas_CpuFX(s32 chunkLen, s32 updateIdx, s32 reverbIdx) {
-    delay* del_p = &AG.synth_delay[reverbIdx];
-    delayparam* param_p = &del_p->params[del_p->cur_frame][updateIdx];
-    s32 count = chunkLen / del_p->downsample_rate;
+    delayparam* param_p;
+    s32 count;
+    delay* del_p;
+    s32 t;
     s32 i;
-    
-    if (del_p->resample_effect_on && (u32)count == 1 && del_p->right_save_resample_buf != NULL) {
-        s32 sample;
-        s32 n = 10;
-        s32 s = 10;
+    s32 sample2;
+    s32 next_buf_pos;
+    s32 t2;
+    s32 idx;
+    s32 t3;
+    s32 sample;
+    s32 n;
+    s32 s;
 
+    del_p = &AG.synth_delay[reverbIdx];
+    param_p = &del_p->params[del_p->cur_frame][updateIdx];
+    count = chunkLen / AG.synth_delay[reverbIdx].downsample_rate;
+    if (AG.synth_delay[reverbIdx].resample_effect_on && AG.synth_delay[reverbIdx].downsample_rate == 1 && del_p->right_save_resample_buf != NULL) {
         count += del_p->resample_effect_extra_samples;
         param_p->save_resample_num_samples = count;
         param_p->load_resample_pitch = (param_p->save_resample_num_samples << 15) / chunkLen;
         param_p->save_resample_pitch = (chunkLen << 15) / param_p->save_resample_num_samples;
         
+        n = 10;
+        s = 10;
         for (i = 0; i < 10; i++) {
-            s32 sample2;
-
             n--;
             sample = del_p->resample_effect_load_unk + param_p->load_resample_pitch * chunkLen * SAMPLE_SIZE;
             sample2 = (sample >> 16);
@@ -53,17 +62,15 @@ static void Nas_CpuFX(s32 chunkLen, s32 updateIdx, s32 reverbIdx) {
 
         del_p->resample_effect_load_unk = sample;
 
-        for (i = 0; i < 10; i++) {
-            s32 sample2;
-
+        for (i = 0; i < 10; i++) {            
             s--;
-            sample = del_p->resample_effect_save_unk + param_p->save_resample_pitch * chunkLen * SAMPLE_SIZE;
+            sample = del_p->resample_effect_save_unk + param_p->save_resample_pitch * count * SAMPLE_SIZE;
             sample2 = (sample >> 16);
-            if (sample2 != count && s == 0) {
+            if (sample2 != chunkLen && s == 0) {
                 param_p->save_resample_pitch = (chunkLen * 0x10000 - del_p->resample_effect_save_unk) / (count * SAMPLE_SIZE);
-            } else if (sample2 > count) {
+            } else if (sample2 > chunkLen) {
                 param_p->save_resample_pitch--;
-            } else if (sample2 < count) {
+            } else if (sample2 < chunkLen) {
                 param_p->save_resample_pitch++;
             } else {
                 break;
@@ -73,49 +80,46 @@ static void Nas_CpuFX(s32 chunkLen, s32 updateIdx, s32 reverbIdx) {
         del_p->resample_effect_save_unk = sample;
     }
 
-    s32 next_buf_pos = del_p->next_reverb_buf_pos;
-    {
-        s32 t = del_p->next_reverb_buf_pos + count - del_p->delay_num_samples;
+    next_buf_pos = del_p->next_reverb_buf_pos;
+    t = del_p->next_reverb_buf_pos + count - del_p->delay_num_samples;
 
-        if (t < 0) {
-            param_p->size = count * SAMPLE_SIZE;
-            param_p->wrapped_size = 0;
-            param_p->start_pos = del_p->next_reverb_buf_pos;
-            del_p->next_reverb_buf_pos += t;
-        } else {
-            param_p->size = (count - t) * SAMPLE_SIZE;
-            param_p->wrapped_size = t * SAMPLE_SIZE;
-            param_p->start_pos = del_p->next_reverb_buf_pos;
-            del_p->next_reverb_buf_pos = t;
-        }
+    if (t < 0) {
+        param_p->size = count * SAMPLE_SIZE;
+        param_p->wrapped_size = 0;
+        param_p->start_pos = del_p->next_reverb_buf_pos;
+        del_p->next_reverb_buf_pos += count;
+    } else {
+        param_p->size = (count - t) * SAMPLE_SIZE;
+        param_p->wrapped_size = t * SAMPLE_SIZE;
+        param_p->start_pos = del_p->next_reverb_buf_pos;
+        del_p->next_reverb_buf_pos = t;
     }
 
     param_p->n_samples_after_downsampling = count;
     param_p->n_samples = chunkLen;
 
     if (del_p->sub_delay != 0) {
-        s32 t = del_p->delay_num_samples;
-        
-        next_buf_pos += del_p->sub_delay;
-        while (next_buf_pos >= t) {
-            next_buf_pos -= t;
+        t = del_p->delay_num_samples;
+        idx = next_buf_pos + del_p->sub_delay;
+        while (idx >= t) {
+            idx -= t;
         }
 
         param_p = del_p->sub_params[del_p->cur_frame] + updateIdx;
-        s32 t2 = chunkLen / del_p->downsample_rate;
-        s32 t3 = next_buf_pos + t2 - t;
+        t2 = chunkLen / del_p->downsample_rate;
+        t3 = idx + t2 - t;
 
         if (t3 < 0) {
             param_p->size = t2 * SAMPLE_SIZE;
             param_p->wrapped_size = 0;
-            param_p->start_pos = next_buf_pos;
+            param_p->start_pos = idx;
         } else {
             param_p->size = (t2 - t3) * SAMPLE_SIZE;
             param_p->wrapped_size = t3 * SAMPLE_SIZE;
-            param_p->start_pos = next_buf_pos;
+            param_p->start_pos = idx;
         }
 
-        param_p->n_samples_after_downsampling = count;
+        param_p->n_samples_after_downsampling = t2;
         param_p->n_samples = chunkLen;
     }
 }
@@ -279,5 +283,99 @@ static Acmd* Nas_CrossMix(Acmd* cmd, delay* del_p) {
     aDMEMMove(cmd++, 0xC40, 0x6E0, 0x1A0);
     aMix(cmd++, 0x1A, del_p->leak_rtl, 0xDE0, 0xC40);
     aMix(cmd++, 0x1A, del_p->leak_ltl, 0x6E0, 0xDe0);
+    return cmd;
+}
+
+static Acmd* Nas_LoadAuxBufferC(Acmd* cmd, s32 samples_per_update, delay* del_p, s16 update_idx) {
+    delayparam* param = &del_p->params[del_p->cur_frame][update_idx];
+    s16 ofs_size = (param->start_pos & 7) * SAMPLE_SIZE;
+    
+    cmd = __LoadAuxBuf(cmd, 0x3A0, param->start_pos - (ofs_size / SAMPLE_SIZE), 0x1A0, del_p);
+    if (param->wrapped_size != 0) {
+        s16 wrapped_ofs_size = ALIGN_NEXT(ofs_size + param->size, 16);
+        
+        cmd = __LoadAuxBuf(cmd, 0x3A0 + wrapped_ofs_size, 0, 0x1A0 - wrapped_ofs_size, del_p);
+    }
+
+    aSetBuffer(cmd++, 0, 0x3A0 + ofs_size, 0xC40, samples_per_update * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, del_p->downsample_pitch, del_p->left_load_resample_buf);
+    aSetBuffer(cmd++, 0, 0x3A0 + 0x1A0 + ofs_size, 0xDE0, samples_per_update * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, del_p->downsample_pitch, del_p->right_load_resample_buf);
+    return cmd;
+}
+
+static Acmd* Nas_SaveAuxBufferCH(Acmd* cmd, delay* del_p, s16 update_idx) {
+    delayparam* param = &del_p->params[del_p->cur_frame][update_idx];
+    s16 samples = param->n_samples;
+    u32 size = samples * SAMPLE_SIZE;
+
+    aDMEMMove(cmd++, 0xC40, 0x3A0, size);
+    aSetBuffer(cmd++, 0, 0x3A0, 0x6E0, param->save_resample_num_samples * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, param->save_resample_pitch, del_p->left_save_resample_buf);
+    cmd = Nas_SaveBufferAuto(cmd, 0x6E0, param->size, (s32)&del_p->left_reverb_buf[param->start_pos]);
+    if (param->wrapped_size != 0) {
+        cmd = Nas_SaveBufferAuto(cmd, 0x6E0 + param->size, param->wrapped_size, (s32)&del_p->left_reverb_buf[0]);
+    }
+
+    aDMEMMove(cmd++, 0xDE0, 0x3A0, size);
+    aSetBuffer(cmd++, 0, 0x3A0, 0x6E0, param->save_resample_num_samples * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, param->save_resample_pitch, del_p->right_save_resample_buf);
+    cmd = Nas_SaveBufferAuto(cmd, 0x6E0, param->size, (s32)&del_p->right_reverb_buf[param->start_pos]);
+    if (param->wrapped_size != 0) {
+        cmd = Nas_SaveBufferAuto(cmd, 0x6E0 + param->size, param->wrapped_size, (s32)&del_p->right_reverb_buf[0]);
+    }
+
+    return cmd;
+}
+
+static Acmd* Nas_LoadAuxBufferCH(Acmd* cmd, s32 samples_per_update, delay* del_p, s16 update_idx) {
+    delayparam* param = &del_p->params[del_p->cur_frame][update_idx];
+    s16 ofs_size = (param->start_pos & 7) * SAMPLE_SIZE;
+    
+    cmd = __LoadAuxBuf(cmd, 0x3A0, param->start_pos - (ofs_size / SAMPLE_SIZE), 0x1A0, del_p);
+    if (param->wrapped_size != 0) {
+        s16 wrapped_ofs_size = ALIGN_NEXT(ofs_size + param->size, 16);
+        s32 load_size = 0x1A0 - wrapped_ofs_size;
+
+        if (load_size > 0) {
+            cmd = __LoadAuxBuf(cmd, 0x3A0 + wrapped_ofs_size, 0, load_size, del_p);
+        }
+    }
+
+    aSetBuffer(cmd++, 0, 0x3A0 + ofs_size, 0xC40, samples_per_update * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, param->load_resample_pitch, del_p->left_load_resample_buf);
+    aSetBuffer(cmd++, 0, 0x3A0 + 0x1A0 + ofs_size, 0xDE0, samples_per_update * SAMPLE_SIZE);
+    aResample(cmd++, del_p->resample_flags, param->load_resample_pitch, del_p->right_load_resample_buf);
+    return cmd;
+}
+
+static Acmd* Nas_DelayFilter(Acmd* cmd, s32 size, delay* del_p) {
+    if (del_p->filter_left != NULL) {
+        aFirLoadTable(cmd++, size, del_p->filter_left);
+        aFirFilter(cmd++, del_p->resample_flags, 0xC40, del_p->filter_left_state);
+    }
+
+    if (del_p->filter_right != NULL) {
+        aFirLoadTable(cmd++, size, del_p->filter_right);
+        aFirFilter(cmd++, del_p->resample_flags, 0xDE0, del_p->filter_right_state);
+    }
+
+    return cmd;
+}
+
+static Acmd* Nas_SendLine(Acmd* cmd, delay* del_p, s32 update_idx) {
+    delay* mix_delay;
+
+    if (del_p->mix_reverb_idx >= AG.num_synth_reverbs) {
+        return cmd;
+    }
+
+    mix_delay = &AG.synth_delay[del_p->mix_reverb_idx];
+    if (mix_delay->downsample_rate == 1) {
+        cmd = Nas_LoadAux2nd(cmd, mix_delay, update_idx);
+        aMix(cmd++, 0x34, del_p->mix_reverb_strength, 0xC40, 0x3A0);
+        cmd = Nas_LoadAux2nd(cmd, mix_delay, update_idx);
+    }
+
     return cmd;
 }

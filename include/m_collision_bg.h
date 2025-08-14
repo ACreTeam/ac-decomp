@@ -507,6 +507,10 @@ extern int mCoBG_GetWaterFlow(xyz_t* flow, u32 attr);
 extern int mCoBG_CheckWaveAttr(u32 attr);
 extern int mCoBG_CheckSand2Sea(xyz_t* pos);
 
+#if VERSION == VER_GAFU01_00
+extern int mCoBG_GetCrossCircleAndLine2DvectorPlaneXZ_Xyz(xyz_t* cross1, xyz_t* cross2, const xyz_t* point, const xyz_t* vec, const xyz_t* center, f32 radius);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

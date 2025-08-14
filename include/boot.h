@@ -33,6 +33,10 @@ OSModuleHeader* BaseModule AT_ADDRESS(0x800030C8);
 #define MAKE_PARTIAL_ADDRESS(segment, ofs) \
   (((segment) << 28) + (ofs & 0x01FFFFFF))
 
+#if VERSION == VER_GAFU01_00
+extern u8 SoftResetEnable;
+#endif
+
 #ifdef __cplusplus
 }
 #endif

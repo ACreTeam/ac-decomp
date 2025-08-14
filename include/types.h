@@ -5,6 +5,9 @@
 #include <dolphin/types.h>
 #include "macros.h"
 
+#define VER_GAFE01_00 0
+#define VER_GAFU01_00 1
+
 typedef signed char s8;
 typedef signed short s16;
 typedef signed long s32;

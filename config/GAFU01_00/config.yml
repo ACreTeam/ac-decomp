@@ -7,45 +7,43 @@ splits: config/GAFU01_00/splits.txt
 # map: orig/GAFU01_00/files/static.map
 common_start: 0x8021F4F4
 mw_comment_version: 10
-# symbols_known: true
+symbols_known: true
 fill_gaps: false
 ldscript_template: config/GAFU01_00/ldscript.tpl
 
-# block_relocations:
+block_relocations:
 # emu64
-# - source: 0x8004F4F4
-# - source: 0x8004F4F8
-# - source: 0x8004F6B4
-# - source: 0x8004F6B8
-# - source: 0x80052D54
-# - source: 0x80052D58
+- source: 0x8004D784
+- source: 0x8004D788
+# jaudio_NES/dspboot.o
+- source: 0x800DF5D8
 
-# add_relocations:
+add_relocations:
 # OS.c
-# - source: .init:0x80003278
-#   type: hi
-#   target: _stack_addr
-# - source: .init:0x8000327C
-#   type: l
-#   target: _stack_addr
-# - source: .text:0x80078984
-#   type: ha
-#   target: __ArenaLo
-# - source: .text:0x80078988
-#   type: l
-#   target: __ArenaLo
-# - source: .text:0x800789BC
-#   type: ha
-#   target: _stack_addr
-# - source: .text:0x800789C0
-#   type: l
-#   target: _stack_addr
-# - source: .text:0x800789E0
-#   type: ha
-#   target: __ArenaHi
-# - source: .text:0x800789E4
-#   type: l
-#   target: __ArenaHi
+- source: .init:0x80003324
+  type: hi
+  target: _stack_addr
+- source: .init:0x80003328
+  type: l
+  target: _stack_addr
+- source: .text:0x8007E9EC
+  type: ha
+  target: __ArenaLo
+- source: .text:0x8007E9F0
+  type: l
+  target: __ArenaLo
+- source: .text:0x8007EA24
+  type: ha
+  target: _stack_addr
+- source: .text:0x8007EA28
+  type: l
+  target: _stack_addr
+- source: .text:0x8007EA48
+  type: ha
+  target: __ArenaHi
+- source: .text:0x8007EA4C
+  type: l
+  target: __ArenaHi
 
 # OSThread.c
 # - source: .text:0x8007DC18
