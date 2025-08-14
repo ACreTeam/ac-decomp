@@ -255,13 +255,15 @@ cflags_foresta = [
     *cflags_base,
     *cflags_common,
     "-O4,s",
-    f"-inline {"auto" if version_num == 0 else "off"}",
     "-sdata 0",
     "-sdata2 0",
     "-d IS_REL",
     "-requireprotos",
     "-sym on",
 ]
+
+if version_num >= 1:
+    cflags_foresta.append("-inline off")
 
 config.linker_version = "GC/1.3.2"
 
