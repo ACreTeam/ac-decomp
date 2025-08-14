@@ -15,6 +15,10 @@ jobs:
         version: [GAFE01_00, GAFU01_00]
 
     steps:
+    # Install uv
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+
     # Checkout the repository
     - name: Checkout
       uses: actions/checkout@v4
@@ -24,9 +28,7 @@ jobs:
     # Normalize file mod times
     - name: Restore git file mtimes
       run: |
-        apt-get update && apt-get install -y python3-pip
-        pip install --user git-restore-mtime
-        ~/.local/bin/git-restore-mtime
+        uvx git-restore-mtime
 
     # Set Git config
     - name: Git config
@@ -41,7 +43,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: build/${{ matrix.version }}
-        key: ${{ runner.os }}-${{ matrix.version }}-${{ hashFiles('configure.py', 'build_scripts/**') }}
+        key: ${{ runner.os }}-${{ matrix.version }}-${{ hashFiles('configure.py', '.ninja_deps', 'build_scripts/**') }}
         restore-keys: |
           ${{ runner.os }}-${{ matrix.version }}-
 
