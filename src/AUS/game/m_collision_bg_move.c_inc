@@ -1,0 +1,496 @@
+static mCoBG_bg_size_c mCoBG_mBgDataA = { 20.0f, 20.0f, 20.0f, 20.0f };
+static mCoBG_bg_size_c mCoBG_mBgDataB_0 = { 60.0f, 20.0f, 20.0f, 20.0f };
+static mCoBG_bg_size_c mCoBG_mBgDataB_180 = { 20.0f, 60.0f, 20.0f, 20.0f };
+static mCoBG_bg_size_c mCoBG_mBgDataB_270 = { 20.0f, 20.0f, 20.0f, 60.0f };
+static mCoBG_bg_size_c mCoBG_mBgDataB_90 = { 20.0f, 20.0f, 60.0f, 20.0f };
+static mCoBG_bg_size_c mCoBG_mBgDataC = { 40.0f, 40.0f, 40.0f, 40.0f };
+
+static mCoBG_bg_size_c* mCoBG_mBg_data[] = {
+    &mCoBG_mBgDataA, &mCoBG_mBgDataB_0, &mCoBG_mBgDataB_180, &mCoBG_mBgDataB_270, &mCoBG_mBgDataB_90, &mCoBG_mBgDataC,
+};
+
+extern int mCoBG_JudgeMoveBgGroundCheck(f32* point, f32* goal, f32 dist) {
+    f32 delta[2];
+
+    delta[0] = ABS(point[0] - goal[0]);
+    delta[1] = ABS(point[1] - goal[1]);
+    if (delta[0] < dist && delta[1] < dist) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void mCoBG_SetLinePos(f32* line, f32 x, f32 z) {
+    line[0] = x;
+    line[1] = z;
+}
+
+static void mCoBG_PlusLinePos(f32* line, f32 x, f32 z) {
+    line[0] += x;
+    line[1] += z;
+}
+
+static void mCoBG_PlusEqualPos(xyz_t* p0, xyz_t* p1) {
+    p0->x += p1->x;
+    p0->y += p1->y;
+    p0->z += p1->z;
+}
+
+extern int mCoBG_GetMoveBgHeight(f32* move_bg_height, xyz_t* pos_p) {
+    mCoBG_mBgMgr_c* bg_mgr = &l_mBgMgr;
+    mCoBG_bg_regist_c* regist_p;
+    xyz_t* wpos;
+    mCoBG_bg_regist_c** regist_pp = bg_mgr->regist_p;
+    f32 pos[2];
+    int i;
+    f32 left;
+    f32 right;
+    f32 up;
+    f32 down;
+    int move_bg_idx = -1;
+    xyz_t* base_ofs;
+    mCoBG_bg_size_c* size_p;
+    f32 base[2];
+    f32 angleY_rad;
+    f32 rate;
+
+    *move_bg_height = -500.0f;
+    pos[0] = pos_p->x;
+    pos[1] = pos_p->z;
+    if (bg_mgr->count != 0) {
+        for (i = 0; i < mCoBG_MOVE_REGIST_MAX; i++) {
+            regist_p = *regist_pp;
+            if (regist_p != NULL) {
+                wpos = regist_p->wpos;
+                size_p = regist_p->bg_size;
+                base_ofs = regist_p->base_ofs;
+                base[0] = wpos->x;
+                base[1] = wpos->z;
+
+                if (mCoBG_JudgeMoveBgGroundCheck(base, pos, regist_p->active_dist)) {
+                    f32 leftUp_pos[2];
+                    f32 leftDown_pos[2];
+                    f32 rightDown_pos[2];
+
+                    angleY_rad = SHORT2RAD_ANGLE2(*regist_p->angle_y);
+                    rate = regist_p->scale_percent != NULL ? *regist_p->scale_percent : 1.0f;
+                    left = size_p->left_size * rate;
+                    right = size_p->right_size * rate;
+                    up = size_p->up_size * rate;
+                    down = size_p->down_size * rate;
+
+                    mCoBG_SetLinePos(leftUp_pos, -left, -up);
+                    mCoBG_SetLinePos(leftDown_pos, -left, down);
+                    mCoBG_SetLinePos(rightDown_pos, right, down);
+                    if (base_ofs != NULL) {
+                        mCoBG_PlusLinePos(leftUp_pos, base_ofs->x, base_ofs->z);
+                        mCoBG_PlusLinePos(leftDown_pos, base_ofs->x, base_ofs->z);
+                        mCoBG_PlusLinePos(rightDown_pos, base_ofs->x, base_ofs->z);
+                    }
+
+                    if (angleY_rad != 0.0f) {
+                        mCoBG_RotateY(leftUp_pos, angleY_rad);
+                        mCoBG_RotateY(leftDown_pos, angleY_rad);
+                        mCoBG_RotateY(rightDown_pos, angleY_rad);
+                    }
+
+                    mCoBG_PlusLinePos(leftUp_pos, wpos->x, wpos->z);
+                    mCoBG_PlusLinePos(leftDown_pos, wpos->x, wpos->z);
+                    mCoBG_PlusLinePos(rightDown_pos, wpos->x, wpos->z);
+
+                    if (mCoBG_RangeCheckLinePoint(leftUp_pos, leftDown_pos, pos) &&
+                        mCoBG_RangeCheckLinePoint(leftDown_pos, rightDown_pos, pos)) {
+                        *move_bg_height = wpos->y + regist_p->height;
+                        move_bg_idx = i;
+                    }
+                }
+            }
+
+            regist_pp++;
+        }
+    }
+
+    return move_bg_idx;
+}
+
+// @unused, @fabricated
+extern void mCoBG_InitMoveBgContact(mCoBG_bg_contact_c* contact) {
+    bzero(contact, sizeof(mCoBG_bg_contact_c));
+    bzero(&l_VecInf, sizeof(mCoBG_vec_info_c));
+    bzero(&l_ActorInf, sizeof(mCoBG_ActorInf_c));
+    bzero(&l_mBgMgr, sizeof(mCoBG_mBgMgr_c));
+}
+
+extern int mCoBG_RegistMoveBg(mCoBG_bg_regist_c* regist, xyz_t* wpos, xyz_t* old_wpos, s16* angleY, f32 height,
+                              mCoBG_bg_size_c* size, f32* scale_percent, mCoBG_bg_contact_c* contact, xyz_t* base_ofs,
+                              int type, u32 attribute, f32 check_dist) {
+    mCoBG_mBgMgr_c* bg_mgr = &l_mBgMgr;
+    mCoBG_bg_regist_c** regist_pp = bg_mgr->regist_p;
+    int i;
+
+    if (bg_mgr->count < mCoBG_MOVE_REGIST_MAX) {
+        for (i = 0; i < mCoBG_MOVE_REGIST_MAX; i++) {
+            if (regist_pp[i] == NULL) {
+                regist_pp[i] = regist;
+                if (type == mCoBG_FTR_TYPE_NUM) {
+                    regist_pp[i]->bg_size = size;
+                } else {
+                    regist_pp[i]->bg_size = mCoBG_mBg_data[type];
+                }
+
+                regist_pp[i]->height = height;
+                regist_pp[i]->base_ofs = base_ofs;
+                regist_pp[i]->contact = contact;
+                regist_pp[i]->wpos = wpos;
+                regist_pp[i]->last_wpos = old_wpos;
+                regist_pp[i]->angle_y = angleY;
+                regist_pp[i]->attribute = attribute;
+                regist_pp[i]->active_dist = check_dist;
+                regist_pp[i]->scale_percent = scale_percent;
+                if (regist_pp[i]->contact != NULL) {
+                    bzero(regist_pp[i]->contact, sizeof(mCoBG_bg_contact_c));
+                }
+
+                bg_mgr->count++;
+                return i;
+            }
+        }
+    }
+
+    return -1;
+}
+
+extern mCoBG_bg_regist_c* mCoBG_Idx2RegistPointer(int move_bg_idx) {
+    mCoBG_mBgMgr_c* bg_mgr = &l_mBgMgr;
+    mCoBG_bg_regist_c** regist_pp = bg_mgr->regist_p;
+
+    if (bg_mgr->count != 0 && move_bg_idx >= 0 && move_bg_idx < mCoBG_MOVE_REGIST_MAX) {
+        return regist_pp[move_bg_idx];
+    }
+
+    return NULL;
+}
+
+extern void mCoBG_CrossOffMoveBg(int move_bg_idx) {
+    mCoBG_mBgMgr_c* bg_mgr = &l_mBgMgr;
+    mCoBG_bg_regist_c** regist_pp = bg_mgr->regist_p;
+
+    if (move_bg_idx > -1 && move_bg_idx < mCoBG_MOVE_REGIST_MAX && bg_mgr->count != 0 &&
+        move_bg_idx < mCoBG_MOVE_REGIST_MAX) {
+        if (regist_pp[move_bg_idx] != NULL) {
+            bzero(regist_pp[move_bg_idx], sizeof(mCoBG_bg_regist_c));
+            regist_pp[move_bg_idx] = NULL;
+            bg_mgr->count--;
+        }
+    }
+}
+
+extern void mCoBG_InitMoveBgData(void) {
+    mCoBG_mBgMgr_c* bg_mgr = &l_mBgMgr;
+    mCoBG_bg_regist_c** regist_pp = bg_mgr->regist_p;
+    int i;
+
+    bg_mgr->count = 0;
+    for (i = 0; i < mCoBG_MOVE_REGIST_MAX; i++) {
+        regist_pp[i] = NULL;
+    }
+}
+
+static void mCoBG_SetBaseOffset(f32* start, f32* end, xyz_t* base_ofs) {
+    if (base_ofs != NULL) {
+        mCoBG_PlusLinePos(start, base_ofs->x, base_ofs->z);
+        mCoBG_PlusLinePos(end, base_ofs->x, base_ofs->z);
+    }
+}
+
+static void mCoBG_MakeCommonData(mCoBG_unit_vec_info_c* unit_vec, mCoBG_bg_regist_c* regist) {
+    unit_vec->regist_p = regist;
+    unit_vec->atr_wall = FALSE;
+}
+
+static f32 norm_up[2] = { 0.0f, -1.0f };
+static f32 norm_lt[2] = { -1.0f, 0.0f };
+static f32 norm_dn[2] = { 0.0f, 1.0f };
+static f32 norm_rt[2] = { 1.0f, 0.0f };
+static f32* norm_table[4] = { norm_up, norm_lt, norm_dn, norm_rt };
+
+static void mCoBG_GetNorm(f32* norm, int direct) {
+    f32* np = norm_table[direct & 3];
+
+    norm[0] = np[0];
+    norm[1] = np[1];
+}
+
+static void mCoBG_SetMoveBgHeightInf(mCoBG_WallBounds_c* bounds, xyz_t* pos, f32 height) {
+    bounds->start_top = pos->y + height;
+    bounds->start_btm = pos->y;
+    bounds->end_top = bounds->start_top;
+    bounds->end_btm = pos->y;
+}
+
+static void mCoBG_SetMoveBgContactSide(mCoBG_bg_regist_c* regist, ACTOR* actorx, s16 angle) {
+    mCoBG_bg_contact_c* contact = regist->contact;
+
+    if (contact != NULL) {
+        mCoBG_side_contact_c* side_contact = contact->side_contact;
+        int* count = &contact->side_count;
+
+        if (*count < 5) {
+            side_contact[*count].name = actorx->id;
+            side_contact[*count].angle = angle;
+            (*count)++;
+        }
+    }
+}
+
+static void mCoBG_SetMoveBgContactOn(mCoBG_bg_regist_c* regist, ACTOR* actorx) {
+    mCoBG_bg_contact_c* contact = regist->contact;
+
+    if (contact != NULL) {
+        mCoBG_on_contact_info_c* info = &contact->on_contact;
+        mCoBG_on_contact_c* on_contact = info->contact;
+        int* count = &info->count;
+
+        if (*count < 5) {
+            on_contact[*count].name = actorx->id;
+            (*count)++;
+        }
+    }
+}
+
+static void mCoBG_MoveBgGroundCheck(xyz_t* rev, mCoBG_ActorInf_c* actor_info, ACTOR* actorx,
+                                    mCoBG_CheckResult_c* result, s_xyz* angle) {
+    f32 height = -500.0f;
+    f32 dist = actor_info->ground_dist;
+    xyz_t pos;
+    int on_move_bg_idx;
+
+    pos.x = actorx->world.position.x + rev->x;
+    pos.y = 0.0f;
+    pos.z = actorx->world.position.z + rev->z;
+    if (actorx->id != mAc_PROFILE_GYOEI) {
+        on_move_bg_idx = mCoBG_GetMoveBgHeight(&height, &pos);
+        if (on_move_bg_idx != -1 && (actorx->world.position.y + dist + rev->y) <= height) {
+            mCoBG_bg_regist_c* on_regist = mCoBG_Idx2RegistPointer(on_move_bg_idx);
+
+            if (on_regist != NULL) {
+                s_xyz angle0 = { 0, 0, 0 };
+
+                rev->y = (height - dist) - actorx->world.position.y;
+                *angle = angle0;
+                result->on_ground = TRUE;
+                result->is_on_move_bg_obj = TRUE;
+                result->unit_attribute = on_regist->attribute;
+                actorx->shape_info.move_bg_idx = on_move_bg_idx;
+                actorx->position_speed.y = 0.0f;
+                mCoBG_SetMoveBgContactOn(on_regist, actorx);
+            }
+        }
+    }
+}
+
+static void mCoBG_RotateMoveBgCollisionData(mCoBG_unit_vec_info_c* unit_vec, f32 rad) {
+    f32* normal = unit_vec->normal;
+    f32* start = unit_vec->start;
+    f32* end = unit_vec->end;
+
+    if (ABS(RAD2DEG(rad)) >= 0.05f) {
+        mCoBG_RotateY(normal, rad);
+        mCoBG_RotateY(start, rad);
+        mCoBG_RotateY(end, rad);
+    }
+}
+
+static void mCoBG_SizeData2CollisionData(mCoBG_bg_regist_c* regist, mCoBG_vec_info_c* vec_info, u8 check_type,
+                                         int move_bg_idx) {
+    int* unit_count_p;
+    mCoBG_unit_vec_info_c* unit_vec;
+    xyz_t pos;
+    f32* start;
+    f32* end;
+    f32* normal;
+    mCoBG_WallBounds_c* bounds;
+    mCoBG_unit_vec_info_c* ut_vec_p;
+    s16 angleY;
+    f32 angleY_rad;
+    f32 height;
+    xyz_t* base_ofs;
+    mCoBG_bg_size_c* size;
+    mCoBG_tab_c tab_data;
+    f32 rate;
+
+    unit_count_p = &vec_info->unit_count;
+    unit_vec = vec_info->unit;
+    pos = *regist->wpos;
+    angleY = *regist->angle_y;
+    angleY_rad = SHORT2RAD_ANGLE2(angleY);
+    height = regist->height;
+    base_ofs = regist->base_ofs;
+    size = regist->bg_size;
+    tab_data = mCoBG_tab_data[check_type];
+    rate = 1.0f;
+
+    if (regist->scale_percent != NULL) {
+        rate = *regist->scale_percent;
+    }
+
+    if (*unit_count_p < mCoBG_UNIT_VEC_INFO_MAX) {
+        ut_vec_p = &unit_vec[*unit_count_p];
+        start = ut_vec_p->start;
+        end = ut_vec_p->end;
+        normal = ut_vec_p->normal;
+        bounds = &ut_vec_p->wall_bounds;
+
+        mCoBG_SetLinePos(start, -(size->left_size * rate) - tab_data.t0, -(size->up_size * rate));
+        mCoBG_SetLinePos(end, (size->right_size * rate) + tab_data.t0, -(size->up_size * rate));
+        mCoBG_SetBaseOffset(start, end, base_ofs);
+        mCoBG_SetMoveBgHeightInf(bounds, &pos, height);
+        mCoBG_GetNorm(normal, mCoBG_NORM_DIRECT_UP);
+        ut_vec_p->wall_name = mCoBG_WALL_UP;
+        ut_vec_p->normal_angle = DEG2SHORT_ANGLE2(180.0f);
+        mCoBG_MakeCommonData(ut_vec_p, regist);
+        mCoBG_RotateMoveBgCollisionData(ut_vec_p, angleY_rad);
+        ut_vec_p->normal_angle += angleY;
+        mCoBG_PlusLinePos(start, pos.x, pos.z);
+        mCoBG_PlusLinePos(end, pos.x, pos.z);
+        (*unit_count_p)++;
+    }
+
+    if (*unit_count_p < mCoBG_UNIT_VEC_INFO_MAX) {
+        ut_vec_p = &unit_vec[*unit_count_p];
+        start = ut_vec_p->start;
+        end = ut_vec_p->end;
+        normal = ut_vec_p->normal;
+        bounds = &ut_vec_p->wall_bounds;
+
+        mCoBG_SetLinePos(start, -(size->left_size * rate), (size->down_size * rate) + tab_data.t0);
+        mCoBG_SetLinePos(end, -(size->left_size * rate), -(size->up_size * rate) - tab_data.t0);
+        mCoBG_SetBaseOffset(start, end, base_ofs);
+        mCoBG_SetMoveBgHeightInf(bounds, &pos, height);
+        mCoBG_GetNorm(normal, mCoBG_NORM_DIRECT_LEFT);
+        ut_vec_p->wall_name = mCoBG_WALL_LEFT;
+        ut_vec_p->normal_angle = DEG2SHORT_ANGLE2(-90.0f);
+        mCoBG_MakeCommonData(ut_vec_p, regist);
+        mCoBG_RotateMoveBgCollisionData(ut_vec_p, angleY_rad);
+        ut_vec_p->normal_angle += angleY;
+        mCoBG_PlusLinePos(start, pos.x, pos.z);
+        mCoBG_PlusLinePos(end, pos.x, pos.z);
+        (*unit_count_p)++;
+    }
+
+    if (*unit_count_p < mCoBG_UNIT_VEC_INFO_MAX) {
+        ut_vec_p = &unit_vec[*unit_count_p];
+        start = ut_vec_p->start;
+        end = ut_vec_p->end;
+        normal = ut_vec_p->normal;
+        bounds = &ut_vec_p->wall_bounds;
+
+        mCoBG_SetLinePos(start, (size->right_size * rate) + tab_data.t0, (size->down_size * rate));
+        mCoBG_SetLinePos(end, -(size->left_size * rate) - tab_data.t0, (size->down_size * rate));
+        mCoBG_SetBaseOffset(start, end, base_ofs);
+        mCoBG_SetMoveBgHeightInf(bounds, &pos, height);
+        mCoBG_GetNorm(normal, mCoBG_NORM_DIRECT_DOWN);
+        ut_vec_p->wall_name = mCoBG_WALL_DOWN;
+        ut_vec_p->normal_angle = DEG2SHORT_ANGLE2(0.0f);
+        mCoBG_MakeCommonData(ut_vec_p, regist);
+        mCoBG_RotateMoveBgCollisionData(ut_vec_p, angleY_rad);
+        ut_vec_p->normal_angle += angleY;
+        mCoBG_PlusLinePos(start, pos.x, pos.z);
+        mCoBG_PlusLinePos(end, pos.x, pos.z);
+        (*unit_count_p)++;
+    }
+
+    if (*unit_count_p < mCoBG_UNIT_VEC_INFO_MAX) {
+        ut_vec_p = &unit_vec[*unit_count_p];
+        start = ut_vec_p->start;
+        end = ut_vec_p->end;
+        normal = ut_vec_p->normal;
+        bounds = &ut_vec_p->wall_bounds;
+
+        mCoBG_SetLinePos(start, (size->right_size * rate), -(size->up_size * rate) - tab_data.t0);
+        mCoBG_SetLinePos(end, (size->right_size * rate), (size->down_size * rate) + tab_data.t0);
+        mCoBG_SetBaseOffset(start, end, base_ofs);
+        mCoBG_SetMoveBgHeightInf(bounds, &pos, height);
+        mCoBG_GetNorm(normal, mCoBG_NORM_DIRECT_RIGHT);
+        ut_vec_p->wall_name = mCoBG_WALL_RIGHT;
+        ut_vec_p->normal_angle = DEG2SHORT_ANGLE2(90.0f);
+        mCoBG_MakeCommonData(ut_vec_p, regist);
+        mCoBG_RotateMoveBgCollisionData(ut_vec_p, angleY_rad);
+        ut_vec_p->normal_angle += angleY;
+        mCoBG_PlusLinePos(start, pos.x, pos.z);
+        mCoBG_PlusLinePos(end, pos.x, pos.z);
+        (*unit_count_p)++;
+    }
+}
+
+static void mCoBG_MakeMoveBgVector(mCoBG_vec_info_c* vec_info, mCoBG_mBgMgr_c* bg_mgr, const xyz_t* pos,
+                                   u8 check_type) {
+    int bg_count = bg_mgr->count;
+    int i;
+    int count = 0;
+    mCoBG_bg_regist_c** regist_pp = bg_mgr->regist_p;
+
+    if (bg_count != 0) {
+        for (i = 0; i < mCoBG_MOVE_REGIST_MAX; i++) {
+            if (regist_pp[i] != NULL) {
+                xyz_t* regist_pos = regist_pp[i]->wpos;
+
+                if (Math3DLength2D(pos->x, pos->z, regist_pos->x, regist_pos->z) < regist_pp[i]->active_dist) {
+                    mCoBG_SizeData2CollisionData(regist_pp[i], vec_info, check_type, i);
+                    count++;
+                    if (count >= bg_count) {
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+typedef struct {
+    ACTOR* actor;
+    int move_bg_idx;
+    mCoBG_bg_regist_c regist;
+} mCoBG_boat_collision_c;
+
+static mCoBG_boat_collision_c l_mCoBG_boat_move_bg_data[2];
+
+static mCoBG_bg_size_c l_mCoBG_boat_size = { 20.0f, 20.0f, 40.0f, 40.0f };
+
+extern void mCoBG_InitBoatCollision(void) {
+    int i;
+
+    for (i = 0; i < 2; i++) {
+        bzero(&l_mCoBG_boat_move_bg_data[i], sizeof(mCoBG_boat_collision_c));
+        l_mCoBG_boat_move_bg_data[i].move_bg_idx = -1;
+    }
+
+    bzero(&l_mBgMgr, sizeof(l_mBgMgr));
+}
+
+extern void mCoBG_MakeBoatCollision(ACTOR* actor, xyz_t* pos, s16* angle_y) {
+    int i;
+
+    for (i = 0; i < 2; i++) {
+        if (l_mCoBG_boat_move_bg_data[i].move_bg_idx == -1) {
+            l_mCoBG_boat_move_bg_data[i].move_bg_idx =
+                mCoBG_RegistMoveBg(&l_mCoBG_boat_move_bg_data[i].regist, pos, pos, angle_y, 30.0f, &l_mCoBG_boat_size,
+                                   NULL, NULL, NULL, mCoBG_FTR_TYPE_NUM, mCoBG_ATTRIBUTE_SAND, 120.0f);
+            l_mCoBG_boat_move_bg_data[i].actor = actor;
+            break;
+        }
+    }
+}
+
+extern void mCoBG_DeleteBoatCollision(ACTOR* actor) {
+    int i;
+
+    for (i = 0; i < 2; i++) {
+        if (actor == l_mCoBG_boat_move_bg_data[i].actor) {
+            mCoBG_CrossOffMoveBg(l_mCoBG_boat_move_bg_data[i].move_bg_idx);
+            l_mCoBG_boat_move_bg_data[i].move_bg_idx = -1;
+            break;
+        }
+    }
+}

@@ -1,0 +1,1146 @@
+// @unused, @fabricated, size mismatch
+extern void mCoBG_GetSlopeSlideVector(xyz_t* vec, xyz_t pos) {
+    xyz_t normal;
+    xyz_t v1;
+    f32 vec_len;
+    f32 mult;
+
+    mCoBG_GetBgNorm_FromWpos(&normal, pos);
+    *vec = normal;
+    vec->y *= -1.0f;
+    if (vec->x != 0.0f || vec->y != 0.0f || vec->z != 0.0f) {
+        mult = 3.0f / sqrtf(SQ(vec->x) + SQ(vec->y) + sqrt(vec->z));
+
+        v1.x = vec->x * mult;
+        v1.y = (vec->y * 5.0f) * mult;
+        v1.z = vec->z * mult;
+        *vec = v1;
+    }
+}
+
+extern f32 mCoBG_GetBgY_AngleS_FromWpos(s_xyz* ground_angle, xyz_t pos, f32 ground_dist) {
+    mCoBG_UnitInfo_c ut_info;
+    s_xyz normal_ground_angle;
+    f32 normal_y;
+    f32 column_y;
+    f32 move_y;
+    static s_xyz ground_angle0 = { 0, 0, 0 };
+
+    if (ground_angle != NULL) {
+        *ground_angle = ground_angle0;
+    }
+
+    mCoBG_Wpos2UnitInfo(&ut_info, pos);
+    normal_y = mCoBG_GetBGHeight_Normal(&normal_ground_angle, &ut_info);
+    column_y = mCoBG_GetBGHeight_Column(&pos, &ut_info);
+    mCoBG_GetMoveBgHeight(&move_y, &pos);
+    
+    if (ground_angle != NULL && normal_y >= column_y && normal_y >= move_y) {
+        *ground_angle = normal_ground_angle;
+        return normal_y - ground_dist;
+    }
+
+    return MAX(MAX(normal_y, column_y), MAX(normal_y, move_y)) - ground_dist;
+}
+
+extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos(xyz_t pos, f32 ground_dist) {
+    f32 y;
+    mCoBG_Collision_u* collision;
+    int ux;
+    int uz;
+
+
+    mFI_Wpos2UtNum(&ux, &uz, pos);
+    collision = mFI_UtNum2UtCol(ux, uz);
+    y = 10.0f * collision->data.center;
+    return (y + mFI_UtNum2BaseHeight(ux, uz)) - ground_dist;
+}
+
+extern f32 mCoBG_Wpos2BgUtCenterHeight_AddColumn(xyz_t pos) {
+    f32 y;
+    mCoBG_UnitInfo_c ut_info;
+    mCoBG_column_c column;
+
+    mCoBG_Wpos2UnitInfo(&ut_info, pos);
+    if (mCoBG_MakeOneColumnCollisionData(&column, &ut_info, FALSE, NULL, -1, -1)) {
+        return column.height;
+    }
+
+    y = 10.0f * ut_info.collision->data.center;
+    return y + mFI_UtNum2BaseHeight(ut_info.ut_x, ut_info.ut_z);
+}
+
+extern f32 mCoBG_GetBgY_OnlyCenter_FromWpos2(xyz_t pos, f32 ground_dist) {
+    int ux;
+    int uz;
+
+    mFI_Wpos2UtNum(&ux, &uz, pos);
+    return (mFI_UtNum2UtKeepH(ux, uz) * 10.0f + mFI_UtNum2BaseHeight(ux, uz)) - ground_dist;
+}
+
+extern void mCoBG_GetBgNorm_FromWpos(xyz_t* norm, xyz_t wpos) {
+    static xyz_t norm0 = { 0.0f, 0.0f, 0.0f };
+    mCoBG_UnitInfo_c ut_info;
+    s16 area;
+
+    *norm = norm0; // @unnecessary
+    mCoBG_Wpos2UnitInfo(&ut_info, wpos);
+    mCoBG_GetUnitArea(&ut_info, &area);
+
+    switch (ut_info.collision->data.slate_flag) {
+        case 0:
+            if (
+                ut_info.collision->data.center != ut_info.collision->data.top_left ||
+                ut_info.collision->data.center != ut_info.collision->data.bot_left ||
+                ut_info.collision->data.center != ut_info.collision->data.bot_right ||
+                ut_info.collision->data.center != ut_info.collision->data.top_right
+            ) {
+                mCoBG_GetNormTriangle(norm, NULL, ut_info.collision, area);
+                norm->x *= 0.1f;
+                norm->y *= 0.1f;
+                norm->z *= 0.1f;
+            } else {
+                mCoBG_SetXyz_t(norm, 0.0f, 100.0f, 0.0f);
+            }
+            break;
+        case 1:
+            mCoBG_SetXyz_t(norm, 0.0f, 100.0f, 0.0f);
+            break;
+        default:
+            // this is impossible to hit because slate_flag is only 1 bit
+            mCoBG_SetXyz_t(norm, 0.0f, 0.0f, 0.0f);
+            break;
+    }
+}
+
+extern int mCoBG_ScrollCheck(xyz_t start, xyz_t end, f32 radius) {
+    int ux;
+    int uz;
+    f32 speed[2];
+
+    speed[0] = end.x - start.x;
+    speed[1] = end.z - start.z;
+
+    if (ABS(speed[0]) == 0.0f && ABS(speed[1]) == 0.0f) {
+        return FALSE;
+    }
+
+    mFI_Wpos2UtNum(&ux, &uz, end);
+    mCoBG_MakeSizeUnitInfo(l_crtutInf, ux, uz, 3);
+    mCoBG_MakeUnitVector(&l_VecInf, l_crtutInf, 3, mCoBG_CHECK_TYPE_NORMAL, TRUE, TRUE, FALSE);
+
+    {
+        f32 startp[2];
+        f32 endp[2];
+        int count = l_VecInf.unit_count;
+        mCoBG_unit_vec_info_c* unit_vec = l_VecInf.unit;
+        mCoBG_column_c* column;
+        int i;
+
+        startp[0] = start.x;
+        startp[1] = start.z;
+        endp[0] = end.x;
+        endp[1] = end.z;
+        for (i = 0; i < count; i++) {
+            f32 dist;
+
+            if (mCoBG_RangeCheckLinePoint(unit_vec->start, unit_vec->end, endp) &&
+                mCoBG_GetDistPointAndLine2D_Norm(&dist, unit_vec->start, unit_vec->end, unit_vec->normal, endp) &&
+                dist <= (radius - 0.1f)) {
+                return FALSE;
+            }
+
+            if (mCoBG_GetCrossJudge_2Vector(startp, endp, unit_vec->start, unit_vec->end)) {
+                return FALSE;
+            }
+
+            unit_vec++;
+        }
+
+        {
+            mCoBG_column_c* col2;
+            int count;
+
+            column = l_VecInf.column;
+            mCoBG_MakeColumnCollisionData(column, &l_VecInf.col_count, l_crtutInf, 3, TRUE, NULL, -1, -1);
+            count = l_VecInf.col_count;
+            if (count != 0) {
+                col2 = column;
+                for (i = 0; i < count; i++) {
+                    f32 dx = end.x - col2->pos.x;
+                    f32 dz = end.z - col2->pos.z;
+                    f32 check_dist = radius + col2->radius;
+                    f32 dist = sqrtf(SQ(dx) + SQ(dz));
+
+                    if (dist <= check_dist) {
+                        return FALSE;
+                    }
+
+                    col2++;
+                }
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+static u8 l_attribute_action_info[64] = {
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT4,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT2,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT4,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT2,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NO_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+    mCoBG_ATR_NPC | mCoBG_ATR_NO_PLACE | mCoBG_KILL_PLANT,
+    mCoBG_ATR_NPC | mCoBG_ATR_PLACE | mCoBG_PLANT0,
+};
+
+static int mCoBG_CheckPlace_OrgAttr(u32 org_attr) {
+    return (l_attribute_action_info[org_attr] >> 3) & 1;
+}
+
+extern int mCoBG_CheckPlace(xyz_t pos) {
+    mCoBG_Collision_u* collision = mFI_GetUnitCol(pos);
+    u32 org_attr = collision->data.unit_attribute;
+
+    return mCoBG_CheckPlace_OrgAttr(org_attr);
+}
+
+// @unused, @fabricated
+extern int mCoBG_UtCheckPlace(int ux, int uz) {
+    mCoBG_Collision_u* collision = mFI_UtNum2UtCol(ux, uz);
+    u32 org_attr = collision->data.unit_attribute;
+
+    return mCoBG_CheckPlace_OrgAttr(org_attr);
+}
+
+extern int mCoBG_Attribute2CheckPlant(u32 attr, const xyz_t* pos) {
+    if (mFI_GET_TYPE(mFI_GetFieldId()) == mFI_FIELDTYPE2_FG) {
+        u8 info = l_attribute_action_info[attr];
+        u8 plant = info & 7;
+
+        if (attr == mCoBG_ATTRIBUTE_63) {
+            mCoBG_Collision_u* col;
+            u32 new_attr;
+            xyz_t new_pos;
+
+            new_pos = *pos;
+            new_pos.z +=mFI_UT_WORLDSIZE_Z_F;
+            col = mFI_GetUnitCol(new_pos);
+            new_attr = col->data.unit_attribute;
+            return mCoBG_Attribute2CheckPlant(new_attr, &new_pos);
+        } else {
+            if (plant != mCoBG_KILL_PLANT) {
+                return plant;
+            }
+
+            return -1;
+        }
+    }
+
+    return -1;
+}
+
+extern int mCoBG_CheckPlant(xyz_t pos) {
+    mCoBG_Collision_u* collision = mFI_GetUnitCol(pos);
+    u32 org_attr = collision->data.unit_attribute;
+
+    return mCoBG_Attribute2CheckPlant(org_attr, &pos);
+}
+
+// @unused, @fabricated
+extern int mCoBG_Unit2CheckNpc(int ux, int uz) {
+    mCoBG_Collision_u* collision = mFI_UtNum2UtCol(ux, uz);
+    u32 org_attr = collision->data.unit_attribute;
+
+    return mCoBG_Attr2CheckPlaceNpc(org_attr);
+}
+
+extern int mCoBG_Wpos2CheckNpc(xyz_t pos) {
+    mCoBG_Collision_u* collision = mFI_GetUnitCol(pos);
+    u32 org_attr = collision->data.unit_attribute;
+
+    return mCoBG_Attr2CheckPlaceNpc(org_attr);
+}
+
+// @unused, @fabricated
+extern int mCoBG_Attr2CheckPoorGround(u32 attr) {
+    u8 info = l_attribute_action_info[attr];
+    u8 plant = info & 7;
+
+    if (plant == mCoBG_KILL_PLANT || plant == mCoBG_PLANT0) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+extern int mCoBG_Attr2CheckPlaceNpc(u32 attr) {
+    u8 info = l_attribute_action_info[attr & 0x3F];
+
+    return (info >> 4) & 1;
+}
+
+extern int mCoBG_UtNum2BgAttr(int ux, int uz) {
+    mCoBG_Collision_u* col = mFI_UtNum2UtCol(ux, uz);
+
+    if (col != NULL) {
+        return col->data.unit_attribute;
+    }
+
+    return mCoBG_ATTRIBUTE_GRASS0;
+}
+
+extern f32 mCoBG_UtNum2UtCenterY(int ux, int uz) {
+    f32 pos_x = (f32)ux;
+    f32 pos_z = (f32)uz;
+    xyz_t pos;
+
+    pos.x = mFI_UT_WORLDSIZE_HALF_X_F + pos_x * mFI_UT_WORLDSIZE_X_F;
+    pos.y = 0.0f;
+    pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + pos_z * mFI_UT_WORLDSIZE_Z_F;
+    if (uz >= (FG_BLOCK_Z_NUM + 1) * UT_Z_NUM) {
+        return 40.0f;
+    }
+
+    return mCoBG_GetBgY_OnlyCenter_FromWpos(pos, 0.0f);
+}
+
+extern f32 mCoBG_UtNum2UtCenterY_Keep(int ux, int uz) {
+    f32 pos_x = (f32)ux;
+    f32 pos_z = (f32)uz;
+    xyz_t pos;
+
+    pos.x = mFI_UT_WORLDSIZE_HALF_X_F + pos_x * mFI_UT_WORLDSIZE_X_F;
+    pos.y = 0.0f;
+    pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + pos_z * mFI_UT_WORLDSIZE_Z_F;
+    return mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 0.0f);
+}
+
+extern u32 mCoBG_Wpos2BgAttribute_Original(xyz_t pos) {
+    mCoBG_Collision_u* col = mFI_GetUnitCol(pos);
+
+    return col->data.unit_attribute;
+}
+
+static u32 mCoBG_SelectBiggerUnint(u32 a, u32 b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+static u32 mCoBG_SelectSmallerUnint(u32 a, u32 b) {
+    if (a < b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+static u32 mCoBG_GetMaxOffset(u32 p0, u32 p1, u32 p2, u32 p3, u32 p4) {
+    return mCoBG_SelectBiggerUnint(
+        mCoBG_SelectBiggerUnint(mCoBG_SelectBiggerUnint(p0, p1), mCoBG_SelectBiggerUnint(p2, p3)),
+        p4
+    );
+}
+
+static u32 mCoBG_GetMinOffset(u32 p0, u32 p1, u32 p2, u32 p3, u32 p4) {
+    return mCoBG_SelectSmallerUnint(
+        mCoBG_SelectSmallerUnint(mCoBG_SelectSmallerUnint(p0, p1), mCoBG_SelectSmallerUnint(p2, p3)),
+        p4
+    );
+}
+
+// clang-format off
+static mCoBG_Collision_u mCoBG_hole_data[] = {
+    { 0, 0, 0, 0, 0, 0, 0 },
+    { 0, 1, 2, 0, 0, 2, 0 },
+    { 0, 1, 0, 2, 2, 0, 0 },
+    { 0, 1, 0, 0, 2, 2, 0 },
+    { 0, 1, 2, 2, 0, 0, 0 },
+    { 0, 2, 2, 0, 2, 4, 0 },
+    { 0, 2, 4, 2, 0, 2, 0 },
+    { 0, 2, 0, 2, 4, 2, 0 },
+    { 0, 2, 2, 4, 2, 0, 0 },
+    { 0, 2, 2, 0, 2, 2, 0 },
+    { 0, 2, 2, 2, 0, 2, 0 },
+    { 0, 2, 0, 2, 2, 2, 0 },
+    { 0, 2, 2, 2, 2, 0, 0 },
+    { 0, 0, 0, 0, 0, 2, 0 },
+    { 0, 0, 2, 0, 0, 0, 0 },
+    { 0, 0, 0, 0, 2, 0, 0 },
+    { 0, 0, 0, 2, 0, 0, 0 },
+    { 0, 1, 0, 0, 0, 2, 0 },
+    { 0, 1, 2, 0, 0, 0, 0 },
+    { 0, 1, 0, 0, 2, 0, 0 },
+    { 0, 1, 0, 2, 0, 0, 0 },
+    { 0, 1, 2, 2, 0, 2, 0 },
+    { 0, 1, 2, 0, 2, 2, 0 },
+    { 0, 1, 2, 2, 2, 0, 0 },
+    { 0, 1, 0, 2, 2, 2, 0 },
+};
+// clang-format on
+
+extern int mCoBG_GetHoleNumber_ClData(mCoBG_Collision_u* col) {
+    mCoBG_Collision_u check_col;
+    int i;
+    u32 min;
+    u32 attr;
+
+    attr = col->data.unit_attribute;
+    check_col = *col;
+    min = mCoBG_GetMinOffset(col->data.center, col->data.top_left, col->data.bot_left, col->data.bot_right, col->data.top_right);
+    check_col.data.center -= min;
+    check_col.data.bot_right -= min;
+    check_col.data.top_left -= min;
+    check_col.data.bot_left -= min;
+    check_col.data.top_right -= min;
+
+    for (i = 0; i < ARRAY_COUNT(mCoBG_hole_data); i++) {
+        if (attr == (check_col.raw - mCoBG_hole_data[i].raw)) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+extern int mCoBG_GetHoleNumber(xyz_t pos) {
+    mCoBG_Collision_u* col = mFI_GetUnitCol(pos);
+
+    return mCoBG_GetHoleNumber_ClData(col);
+}
+
+extern int mCoBG_BnumUnum2HoleNumber(int bx, int bz, int b_ux, int b_uz) {
+    int ux = bx * UT_X_NUM + b_ux;
+    int uz = bz * UT_Z_NUM + b_uz;
+    mCoBG_Collision_u* col = mFI_UtNum2UtCol(ux, uz);
+
+    if (col != NULL) {
+        return mCoBG_GetHoleNumber_ClData(col);
+    } else {
+        return -1;
+    }
+}
+
+extern int mCoBG_CheckHole_OrgAttr(u32 attr) {
+    switch (attr) {
+        case mCoBG_ATTRIBUTE_HOLE:
+        case mCoBG_ATTRIBUTE_GRASS0:
+        case mCoBG_ATTRIBUTE_GRASS1:
+        case mCoBG_ATTRIBUTE_GRASS2:
+        case mCoBG_ATTRIBUTE_SOIL0:
+        case mCoBG_ATTRIBUTE_SOIL1:
+        case mCoBG_ATTRIBUTE_SOIL2:
+        case mCoBG_ATTRIBUTE_SAND:
+        case mCoBG_ATTRIBUTE_25:
+        case mCoBG_ATTRIBUTE_26:
+        case mCoBG_ATTRIBUTE_36:
+        case mCoBG_ATTRIBUTE_43:
+        case mCoBG_ATTRIBUTE_44:
+        case mCoBG_ATTRIBUTE_45:
+        case mCoBG_ATTRIBUTE_46:
+        case mCoBG_ATTRIBUTE_59:
+        case mCoBG_ATTRIBUTE_60:
+        case mCoBG_ATTRIBUTE_61:
+        case mCoBG_ATTRIBUTE_62:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
+extern int mCoBG_CheckSandUt_ForFish(xyz_t* pos) {
+    mCoBG_Collision_u* col = mFI_GetUnitCol(*pos);
+    u32 attr = col->data.unit_attribute;
+
+    switch (attr) {
+        case mCoBG_ATTRIBUTE_HOLE:
+        case mCoBG_ATTRIBUTE_SAND:
+        case mCoBG_ATTRIBUTE_25:
+        case mCoBG_ATTRIBUTE_26:
+        case mCoBG_ATTRIBUTE_36:
+        case mCoBG_ATTRIBUTE_37:
+        case mCoBG_ATTRIBUTE_38:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
+extern int mCoBG_CheckSandHole_ClData(mCoBG_Collision_u* col) {
+    u32 attr = col->data.unit_attribute;
+
+    switch (attr) {
+        case mCoBG_ATTRIBUTE_HOLE:
+        case mCoBG_ATTRIBUTE_SAND:
+        case mCoBG_ATTRIBUTE_25:
+        case mCoBG_ATTRIBUTE_26:
+        case mCoBG_ATTRIBUTE_36:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
+// @unused, @fabricated
+extern int mCoBG_BnumUnum2SandHole(int bx, int bz, int b_ux, int b_uz) {
+    int ux = bx * UT_X_NUM + b_ux;
+    int uz = bz * UT_Z_NUM + b_uz;
+    mCoBG_Collision_u* col = mFI_UtNum2UtCol(ux, uz);
+
+    if (col != NULL) {
+        return mCoBG_CheckSandHole_ClData(col);
+    } else {
+        return FALSE;
+    }
+}
+
+extern int mCoBG_CheckHole(xyz_t pos) {
+    mCoBG_Collision_u* col = mFI_GetUnitCol(pos);
+    u32 attr = col->data.unit_attribute;
+
+    if (mCoBG_CheckHole_OrgAttr(attr)) {
+        return TRUE;
+    }
+
+    if (attr == mCoBG_ATTRIBUTE_63) {
+        static const xyz_t area_offset_table[mCoBG_AREA_NUM] = {
+            { 10.0f, 0.0f, 0.0f },
+            { -10.0f, 0.0f, 0.0f },
+            { 0.0f, 0.0f, 10.0f },
+            { 0.0f, 0.0f, -10.0f },
+        };
+
+        int i;
+        xyz_t center = { 0.0f, 0.0f, 0.0f };
+        xyz_t check = { 0.0f, 0.0f, 0.0f };
+
+        // @enhancement - why are we setting the values to 0.0f when they're already initialized to 0?
+        center.x = 0.0f;
+        center.y = 0.0f;
+        center.z = 0.0f;
+        if (mFI_Wpos2UtCenterWpos(&center, pos)) {
+            center.y = 0.0f;
+            for (i = 0; i < mCoBG_AREA_NUM; i++) {
+                check.x = center.x + area_offset_table[i].x;
+                check.y = center.y + area_offset_table[i].y;
+                check.z = center.z + area_offset_table[i].z;
+                if (mCoBG_CheckHole_OrgAttr(mCoBG_Wpos2Attribute(check, NULL)) == FALSE) {
+                    return FALSE;
+                }
+            }
+
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+extern int mCoBG_CheckSkySwing(xyz_t pos) {
+    mCoBG_Collision_u* col = mFI_GetUnitCol(pos);
+    u32 attr = col->data.unit_attribute;
+
+    if (attr >= mCoBG_ATTRIBUTE_WAVE && attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+        return TRUE;
+    }
+
+    if (attr == mCoBG_ATTRIBUTE_SEA || attr == mCoBG_ATTRIBUTE_37 || attr == mCoBG_ATTRIBUTE_38) {
+        return TRUE;
+    }
+
+    if (attr >= mCoBG_ATTRIBUTE_39 && attr <= mCoBG_ATTRIBUTE_62) {
+        if (attr >= mCoBG_ATTRIBUTE_47 && attr <= mCoBG_ATTRIBUTE_54) {
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+extern int mCoBG_CheckGrassX_ClData(mCoBG_Collision_u* col) {
+    u32 attr = col->data.unit_attribute;
+
+    switch (attr) {
+        case mCoBG_ATTRIBUTE_GRASS3:
+        case mCoBG_ATTRIBUTE_47:
+        case mCoBG_ATTRIBUTE_48:
+        case mCoBG_ATTRIBUTE_49:
+        case mCoBG_ATTRIBUTE_50:
+        case mCoBG_ATTRIBUTE_51:
+        case mCoBG_ATTRIBUTE_52:
+        case mCoBG_ATTRIBUTE_53:
+        case mCoBG_ATTRIBUTE_54:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
+extern int mCoBG_CheckGrassX(const xyz_t* pos) {
+    mCoBG_Collision_u* col = mFI_GetUnitCol(*pos);
+
+    return mCoBG_CheckGrassX_ClData(col);
+}
+
+extern int mCoBG_CheckWave_ClData(mCoBG_Collision_u* col) {
+    u32 attr = col->data.unit_attribute;
+
+    switch (attr) {
+        case mCoBG_ATTRIBUTE_WAVE:
+        case mCoBG_ATTRIBUTE_25:
+        case mCoBG_ATTRIBUTE_26:
+        case mCoBG_ATTRIBUTE_36:
+        case mCoBG_ATTRIBUTE_37:
+        case mCoBG_ATTRIBUTE_38:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
+extern int mCoBG_CheckWave(const xyz_t* pos) {
+    mCoBG_Collision_u* col = mFI_GetUnitCol(*pos);
+
+    return mCoBG_CheckWave_ClData(col);
+}
+
+extern int mCoBG_CheckAcceptDesignSign(const xyz_t* pos_p) {
+    int ux;
+    int uz;
+    int bx;
+    int bz;
+
+    if (mFI_Wpos2BkandUtNuminBlock(&bx, &bz, &ux, &uz, *pos_p)) {
+        mRF_gate_c* gate;
+        int gate_count = 0;
+        u8 block_type = mFI_BkNum2BlockType(bx, bz);
+        int i;
+        int j;
+        int ut = uz * UT_X_NUM + ux;
+        
+        // Check location in player house block
+        if (bx == 3 && bz == 2) {
+            // check bottom center units
+            if (
+                // clang-format off
+                ut == UNITXZ_2_UNIT(6, 14) || ut == UNITXZ_2_UNIT(7, 14) || ut == UNITXZ_2_UNIT(8, 14) || ut == UNITXZ_2_UNIT(9, 14) ||
+                ut == UNITXZ_2_UNIT(6, 15) || ut == UNITXZ_2_UNIT(7, 15) || ut == UNITXZ_2_UNIT(8, 15) || ut == UNITXZ_2_UNIT(9, 15)
+                // clang-format on
+            ) {
+                return FALSE;
+            }
+        } else if (bx == 3 && bz == 3) { // acre directly below player house block
+            // check top center units
+            if (
+                // clang-format off
+                ut == UNITXZ_2_UNIT(7, 0) || ut == UNITXZ_2_UNIT(8, 0) ||
+                ut == UNITXZ_2_UNIT(7, 1) || ut == UNITXZ_2_UNIT(8, 1) ||
+                ut == UNITXZ_2_UNIT(7, 2) || ut == UNITXZ_2_UNIT(8, 2)
+                // clang-format on
+            ) {
+                return FALSE;
+            }
+        }
+
+        for (i = 0; i < mRF_DIRECT_NUM; i++) {
+            gate = mRF_BlockTypeDirect2GateData(&gate_count, block_type, i);
+            if (gate != NULL) {
+                for (j = 0; j < gate_count; j++) {
+                    if (ut == gate[j].ut0 || ut == gate[j].ut1) {
+                        return FALSE;
+                    }
+                }
+            }
+        }
+
+        if (mCoBG_CheckGrassX(pos_p) == FALSE && mCoBG_CheckWave(pos_p) == FALSE) {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+extern f32 mCoBG_GetBgHeightGapBetweenNowDefault(xyz_t pos) {
+    return mCoBG_Wpos2BgUtCenterHeight_AddColumn(pos) - mCoBG_GetBgY_OnlyCenter_FromWpos2(pos, 0.0f);
+}
+
+extern int mCoBG_ExistHeightGap_KeepAndNow(xyz_t pos) {
+    if ((int)mCoBG_GetBgHeightGapBetweenNowDefault(pos) != 0) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+extern int mCoBG_SearchWaterLimitDistN(xyz_t* water_pos, xyz_t pos, s16 angle, f32 dist_limit, int divide) {
+    static xyz_t pos0 = { 0.0f, 0.0f, 0.0f };
+    static xyz_t offset[] = {
+        { 12.0f, 0.0f, 12.0f },
+        { 12.0f, 0.0f, -12.0f },
+        { -12.0f, 0.0f, -12.0f },
+        { -12.0f, 0.0f, 12.0f },
+    };
+
+    *water_pos = pos0;
+    pos.y = 0.0f;
+    if (divide >= 1) {
+        f32 divide_dist = dist_limit / (f32)divide;
+        xyz_t vec = { 0.0f, 0.0f, 1.0f };
+        xyz_t search;
+        int i;
+        u32 attr;
+
+        sMath_RotateY(&vec, SHORT2RAD_ANGLE2(angle));
+        for (i = 0; i <= divide; i++) {
+            search.x = pos.x + vec.x * (divide_dist * i);
+            search.y = pos.y + vec.y * (divide_dist * i);
+            search.z = pos.z + vec.z * (divide_dist * i);
+            attr = mCoBG_Wpos2Attribute(search, NULL);
+            if (mCoBG_CheckWaterAttribute(attr)) {
+                xyz_t search2;
+                int j;
+                int water_count = 0;
+
+                for (j = 0; j < ARRAY_COUNT(offset); j++) {
+                    search2 = search;
+                    search2.x += offset[j].x;
+                    search2.z += offset[j].z;
+                    attr = mCoBG_Wpos2Attribute(search2, NULL);
+                    if (mCoBG_CheckWaterAttribute(attr) == FALSE) {
+                        break;
+                    }
+
+                    water_count++;
+                }
+
+                if (water_count == ARRAY_COUNT(offset)) {
+                    *water_pos = search;
+                    water_pos->y = mCoBG_GetWaterHeight_File(search, __FILE__, 1137);
+                    return TRUE;
+                }
+
+            }
+        }
+
+        return FALSE;
+    }
+
+    return FALSE;
+}
+
+// @unused, @fabricated
+extern int mCoBG_CheckRoughPathInRoom(const xyz_t* pos) {
+    static xyz_t pos_offset_table[] = {
+        { 0.0f, 0.0f, -mFI_UT_WORLDSIZE_Z_F },
+        { -mFI_UT_WORLDSIZE_X_F, 0.0f, 0.0f },
+        { 0.0f, 0.0f, mFI_UT_WORLDSIZE_Z_F },
+        { mFI_UT_WORLDSIZE_X_F, 0.0f, 0.0f },
+    };
+
+    f32 y = mCoBG_GetBgY_AngleS_FromWpos(NULL, *pos, 0.0f);
+    f32 check_y;
+    xyz_t check_pos;
+    int i;
+    int p = 0;
+
+    for (i = 0; i < 4; i++) {
+        check_pos.x = pos->x + pos_offset_table[i].x;
+        check_pos.z = pos->z + pos_offset_table[i].z;
+        check_y = mCoBG_GetBgY_AngleS_FromWpos(NULL, check_pos, 0.0f);
+        if (check_y <= y) {
+            p |= (1 << i);
+        }
+    }
+
+    return p;
+}
+
+extern f32 mCoBG_GetBalloonGroundY(const xyz_t* pos) {
+    mCoBG_UnitInfo_c ut_info;
+    s_xyz normal_ground_angle;
+    f32 normal_y;
+    u32 attr;
+    int bx;
+    int bz;
+
+    attr = mCoBG_Wpos2Attribute(*pos, NULL);
+    if (mFI_Wpos2BlockNum(&bx, &bz, *pos)) {
+        u32 block_kind = mFI_BkNum2BlockKind(bx, bz);
+
+        if ((block_kind & mRF_BLOCKKIND_MARINE) != 0) {
+            if (mCoBG_CheckWaterAttribute(attr) == TRUE || attr == mCoBG_ATTRIBUTE_WAVE || attr == mCoBG_ATTRIBUTE_SAND || attr == mCoBG_ATTRIBUTE_SEA) {
+                return mFI_UNIT_BASE_SIZE_F;
+            }
+        }
+    }
+
+    mCoBG_Wpos2UnitInfo(&ut_info, *pos);
+    normal_y = mCoBG_GetBGHeight_Normal(&normal_ground_angle, &ut_info);
+    if (mCoBG_CheckWaterAttribute(attr)) {
+        return mFI_UNIT_BASE_SIZE_F + normal_y;
+    }
+
+    return normal_y;
+}
+
+extern int mCoBG_CheckAttribute_BallRolling(s16* angle, const xyz_t* pos) {
+    u32 attr = mCoBG_Wpos2BgAttribute_Original(*pos);
+
+    angle[0] = -1;
+    angle[1] = -1;
+
+    if (attr >= mCoBG_ATTRIBUTE_27 && attr <= mCoBG_ATTRIBUTE_62) {
+        int i;
+        int idx = attr - mCoBG_ATTRIBUTE_27;
+        int idx2;
+
+        for (i = 0; i < 2; i++) {
+            idx2 = mCoBG_forbid_vector_idx[idx][i];
+
+            if (idx2 != -1) {
+                angle[i] = mCoBG_make_vector_table[idx2 & 7].norm_angle + DEG2SHORT_ANGLE2(180.0f);
+            }
+        }
+    }
+
+    if (angle[0] != -1 || angle[1] != -1) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static f32 mCoBG_CheckBallRollingAreaRate(const xyz_t* pos, const xyz_t* start_pos, const xyz_t* end_pos) {
+    f32 cross[2];
+    f32 end[2];
+    f32 start[2];
+    f32 point[2];
+
+    end[0] = end_pos->x;
+    end[1] = end_pos->z;
+    start[0] = start_pos->x;
+    start[1] = start_pos->z;
+    point[0] = pos->x;
+    point[1] = pos->z;
+    
+    if (mCoBG_GetCrossLineAndPerpendicular(cross, end, start, point)) {
+        f32 dist_start_end_x = end[0] - start[0];
+        f32 dist_start_end_z = end[1] - start[1];
+        f32 dist_start_end = sqrtf(SQ(dist_start_end_x) + SQ(dist_start_end_z));
+        f32 dist_start_cross_x = cross[0] - start[0];
+        f32 dist_start_cross_z = cross[1] - start[1];
+        f32 dist_start_cross = sqrtf(SQ(dist_start_cross_x) + SQ(dist_start_cross_z));
+        f32 rate;
+
+        if (F32_IS_ZERO(dist_start_end) == FALSE) {
+            rate = dist_start_cross / dist_start_end;
+        } else {
+            rate = -1.0f;
+        }
+
+        if (mCoBG_RangeCheckLinePoint(start, end, cross) == FALSE) {
+            rate = -1.0f;
+        }
+
+        return rate;
+    }
+
+    return 1.0f;
+}
+
+extern f32 mCoBG_CheckBallRollingArea(s16 angle, const xyz_t* pos) {
+    xyz_t center;
+
+    if (angle != -1) {
+        if (mFI_Wpos2UtCenterWpos(&center, *pos)) {
+            xyz_t pos_in_unit;
+
+            pos_in_unit.x = pos->x - center.x;
+            pos_in_unit.y = pos->y - center.y;
+            pos_in_unit.z = pos->z - center.z;
+
+            if (angle == DEG2SHORT_ANGLE(0.0f)) {
+                static xyz_t start_pos = { 0.0f, 0.0f, mFI_UT_WORLDSIZE_HALF_Z_F };
+                static xyz_t end_pos = { 0.0f, 0.0f, -mFI_UT_WORLDSIZE_HALF_Z_F };
+
+                return mCoBG_CheckBallRollingAreaRate(&pos_in_unit, &start_pos, &end_pos);
+            }
+
+            if (angle == DEG2SHORT_ANGLE(45.0f)) {
+                static xyz_t start_pos = { 0.0f, 0.0f, 0.0f };
+                static xyz_t end_pos = { -mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f };
+
+                return mCoBG_CheckBallRollingAreaRate(&pos_in_unit, &start_pos, &end_pos);
+            }
+
+            if (angle == DEG2SHORT_ANGLE(90.0f)) {
+                static xyz_t start_pos = { mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f };
+                static xyz_t end_pos = { -mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f };
+
+                return mCoBG_CheckBallRollingAreaRate(&pos_in_unit, &start_pos, &end_pos);
+            }
+
+            if (angle == DEG2SHORT_ANGLE(135.0f)) {
+                static xyz_t start_pos = { 0.0f, 0.0f, 0.0f };
+                static xyz_t end_pos = { -mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, mFI_UT_WORLDSIZE_HALF_Z_F };
+
+                return mCoBG_CheckBallRollingAreaRate(&pos_in_unit, &start_pos, &end_pos);
+            }
+
+            if (angle == DEG2SHORT_ANGLE(-180.0f)) {
+                static xyz_t start_pos = { 0.0f, 0.0f, -mFI_UT_WORLDSIZE_HALF_Z_F };
+                static xyz_t end_pos = { 0.0f, 0.0f, mFI_UT_WORLDSIZE_HALF_Z_F };
+
+                return mCoBG_CheckBallRollingAreaRate(&pos_in_unit, &start_pos, &end_pos);
+            }
+
+            if (angle == DEG2SHORT_ANGLE(-135.0f)) {
+                static xyz_t start_pos = { 0.0f, 0.0f, 0.0f };
+                static xyz_t end_pos = { -mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, -mFI_UT_WORLDSIZE_HALF_Z_F };
+
+                return mCoBG_CheckBallRollingAreaRate(&pos_in_unit, &start_pos, &end_pos);
+            }
+
+            if (angle == DEG2SHORT_ANGLE(-90.0f)) {
+                static xyz_t start_pos = { -mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f };
+                static xyz_t end_pos = { mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, 0.0f };
+
+                return mCoBG_CheckBallRollingAreaRate(&pos_in_unit, &start_pos, &end_pos);
+            }
+
+            if (angle == DEG2SHORT_ANGLE(-45.0f)) {
+                static xyz_t start_pos = { 0.0f, 0.0f, 0.0f };
+                static xyz_t end_pos = { mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, -mFI_UT_WORLDSIZE_HALF_Z_F };
+
+                return mCoBG_CheckBallRollingAreaRate(&pos_in_unit, &start_pos, &end_pos);
+            }
+        }
+    }
+
+    return 1.0f;
+}
+
+extern f32 mCoBG_Wpos2GroundCheckOnly(const xyz_t* pos, f32 ground_dist) {
+    f32 ground_y = mCoBG_GetBgY_AngleS_FromWpos(NULL, *pos, ground_dist);
+
+    if (pos->y < ground_y) {
+        return ground_y - pos->y;
+    }
+
+    return 0.0f;
+}
+
+extern int mCoBG_ExistHeightGap_KeepAndNow_Detail(xyz_t pos) {
+    mCoBG_UnitInfo_c ut_info;
+    f32 center_height;
+
+    center_height = mCoBG_Wpos2BgUtCenterHeight_AddColumn(pos);
+    mCoBG_Wpos2UnitInfo(&ut_info, pos);
+
+    if (ut_info.attribute >= mCoBG_ATTRIBUTE_27 && ut_info.attribute <= mCoBG_ATTRIBUTE_31) {
+        return FALSE;
+    }
+
+    if (mCoBG_ExistHeightGap_KeepAndNow(pos) == FALSE) {
+        return FALSE;
+    }
+
+    if (ut_info.slate_flag) {
+        xyz_t center;
+        xyz_t vec;
+        f32 corner0;
+        f32 corner1;
+
+        mFI_Wpos2UtCenterWpos(&center, pos);
+        xyz_t_sub(&pos, &center, &vec);
+
+        corner0 = (vec.x - vec.z >= 0.0f) ? ut_info.rightUp_offset : ut_info.leftDown_offset;
+        corner1 = (vec.x + vec.z >= 0.0f) ? ut_info.rightDown_offset : ut_info.leftUp_offset;
+        if (corner0 < center_height || corner1 < center_height) {
+            return FALSE;
+        }
+
+    }
+
+    return TRUE;
+}
+
+extern int mCoBG_Wpos2CheckSlateCol(const xyz_t* pos, int check_attr) {
+    mCoBG_Collision_u* col = mFI_GetUnitCol(*pos);
+    u32 attr = col->data.unit_attribute;
+
+    if (col->data.slate_flag) {
+        return TRUE;
+    }
+
+    if (check_attr) {
+        switch (attr) {
+            case mCoBG_ATTRIBUTE_27:
+            case mCoBG_ATTRIBUTE_28:
+            case mCoBG_ATTRIBUTE_29:
+            case mCoBG_ATTRIBUTE_30:
+            case mCoBG_ATTRIBUTE_37:
+            case mCoBG_ATTRIBUTE_38:
+            case mCoBG_ATTRIBUTE_39:
+            case mCoBG_ATTRIBUTE_40:
+            case mCoBG_ATTRIBUTE_41:
+            case mCoBG_ATTRIBUTE_42:
+            case mCoBG_ATTRIBUTE_55:
+            case mCoBG_ATTRIBUTE_56:
+            case mCoBG_ATTRIBUTE_57:
+            case mCoBG_ATTRIBUTE_58:
+                return TRUE;
+            default:
+                return FALSE;
+        }
+    }
+    return FALSE;
+}
+
+extern int mCoBG_WoodSoundEffect(const xyz_t* pos) {
+    u32 attr = mCoBG_Wpos2BgAttribute_Original(*pos);
+
+    switch (attr) {
+        case mCoBG_ATTRIBUTE_WOOD:
+        case mCoBG_ATTRIBUTE_27:
+        case mCoBG_ATTRIBUTE_28:
+        case mCoBG_ATTRIBUTE_29:
+        case mCoBG_ATTRIBUTE_30:
+        case mCoBG_ATTRIBUTE_31:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
+extern int mCoBG_CheckCliffAttr(u32 attr) {
+    if (attr >= mCoBG_ATTRIBUTE_47 && attr <= mCoBG_ATTRIBUTE_54) {
+        return TRUE;
+    }
+
+    if (attr == mCoBG_ATTRIBUTE_55 || attr == mCoBG_ATTRIBUTE_56 || attr == mCoBG_ATTRIBUTE_57 || attr == mCoBG_ATTRIBUTE_58) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+extern f32 mCoBG_GetShadowBgY_AngleS_FromWpos(s_xyz* ground_angle, xyz_t pos, f32 ground_dist) {
+    mCoBG_UnitInfo_c ut_info;
+    s_xyz angle0 = { 0, 0, 0 };
+
+    mCoBG_Wpos2UnitInfo(&ut_info, pos);
+    if (ground_angle != NULL) {
+        *ground_angle = angle0;
+    }
+
+    if (ut_info.collision->data.center != mFI_UtNum2UtKeepH(ut_info.ut_x, ut_info.ut_z)) {
+        if (ut_info.attribute >= mCoBG_ATTRIBUTE_27 && ut_info.attribute <= mCoBG_ATTRIBUTE_31) {
+            return mCoBG_GetBGHeight_Normal(ground_angle, &ut_info) - ground_dist;
+        }
+
+        return mFI_UtNum2UtKeepH(ut_info.ut_x, ut_info.ut_z) * 10.0f + mFI_UtNum2BaseHeight(ut_info.ut_x, ut_info.ut_z) - ground_dist;
+    }
+
+    return mCoBG_GetBGHeight_Normal(ground_angle, &ut_info) - ground_dist;
+}
+
+extern int mCoBG_CheckUtFlat(const xyz_t* pos) {
+    mCoBG_Collision_u* col = mFI_GetUnitCol(*pos);
+
+    // clang-format off
+    if (
+        col->data.center == col->data.top_left &&
+        col->data.center == col->data.bot_left &&
+        col->data.center == col->data.bot_right &&
+        col->data.center == col->data.top_right
+    ) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+extern int mCoBG_Height2GetLayer(f32 height) {
+    if (height < 100.0f) {
+        return mCoBG_LAYER0;
+    } else {
+        if (mRF_CheckFieldStep3()) {
+            if (height < 220.0f) {
+                return mCoBG_LAYER1;
+            } else {
+                return mCoBG_LAYER2;
+            }
+        } else {
+            return mCoBG_LAYER1;
+        }
+    }
+}
+
+extern int mCoBG_GetLayer(const xyz_t* pos) {
+    return mCoBG_Height2GetLayer(mCoBG_GetBgY_OnlyCenter_FromWpos2(*pos, 0.0f));
+}

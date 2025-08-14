@@ -1,0 +1,662 @@
+static void mCoBG_UnitNoName2StartEnd(f32* start, f32* end, f32 ux, f32 uz, u8 wall_name, u8 check_type) {
+    mCoBG_tab_c tab = mCoBG_tab_data[check_type];
+
+    switch (wall_name) {
+        case mCoBG_WALL_UP:
+            start[0] = ux * mFI_UT_WORLDSIZE_X_F - tab.t0;
+            start[1] = uz * mFI_UT_WORLDSIZE_Z_F;
+            end[0] = start[0] + mFI_UT_WORLDSIZE_X_F + tab.t1;
+            end[1] = start[1];
+            break;
+        case mCoBG_WALL_LEFT:
+            start[0] = ux * mFI_UT_WORLDSIZE_X_F;
+            start[1] = uz * mFI_UT_WORLDSIZE_Z_F - tab.t0;
+            end[0] = start[0];
+            end[1] = start[1] + mFI_UT_WORLDSIZE_Z_F + tab.t1;
+            break;
+        case mCoBG_WALL_DOWN:
+            end[0] = ux * mFI_UT_WORLDSIZE_X_F - tab.t0;
+            end[1] = (uz + 1) * mFI_UT_WORLDSIZE_Z_F;
+            start[0] = end[0] + mFI_UT_WORLDSIZE_X_F + tab.t1;
+            start[1] = end[1];
+            break;
+        case mCoBG_WALL_RIGHT:
+            start[0] = (ux + 1) * mFI_UT_WORLDSIZE_X_F;
+            start[1] = uz * mFI_UT_WORLDSIZE_Z_F - tab.t0;
+            end[0] = start[0];
+            end[1] = start[1] + mFI_UT_WORLDSIZE_Z_F + tab.t1;
+            break;
+        case mCoBG_WALL_SLATE_UP:
+            start[0] = ux * mFI_UT_WORLDSIZE_X_F - tab.t0;
+            end[0] = start[0] + tab.t1 + mFI_UT_WORLDSIZE_X_F;
+            start[1] = (uz + 1) * mFI_UT_WORLDSIZE_Z_F + tab.t0;
+            end[1] = start[1] - mFI_UT_WORLDSIZE_Z_F - tab.t1;
+            break;
+        case mCoBG_WALL_SLATE_DOWN:
+            start[0] = ux * mFI_UT_WORLDSIZE_X_F - tab.t0;
+            end[0] = start[0] + tab.t1 + mFI_UT_WORLDSIZE_X_F;
+            start[1] = uz * mFI_UT_WORLDSIZE_Z_F - tab.t0;
+            end[1] = start[1] + mFI_UT_WORLDSIZE_Z_F + tab.t1;
+            break;
+    }
+}
+
+static u8 l_make33_coldata[9] = {
+    0x00, 0x02, 0x02, 0x01, 0x03, 0x03, 0x01, 0x03,
+    0x03,
+};
+
+static u8 l_make55_coldata[25] = {
+    0x00, 0x02, 0x02, 0x02, 0x02, 0x01, 0x03, 0x03,
+    0x03, 0x03, 0x01, 0x03, 0x03, 0x03, 0x03, 0x01,
+    0x03, 0x03, 0x03, 0x03, 0x01, 0x03, 0x03, 0x03,
+    0x03,
+};
+
+static u8 l_make77_coldata[49] = {
+    0x00, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
+    0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x01, 0x03,
+    0x03, 0x03, 0x03, 0x03, 0x03, 0x01, 0x03, 0x03,
+    0x03, 0x03, 0x03, 0x03, 0x01, 0x03, 0x03, 0x03,
+    0x03, 0x03, 0x03, 0x01, 0x03, 0x03, 0x03, 0x03,
+    0x03, 0x03, 0x01, 0x03, 0x03, 0x03, 0x03, 0x03,
+    0x03,
+};
+
+static u8 mCoBG_SearchSlateDetail(mCoBG_CollisionData_c* col) {
+    if (col->bot_right != col->top_left) {
+        return mCoBG_WALL_SLATE_UP;
+    } else if (col->top_right != col->bot_left) {
+        return mCoBG_WALL_SLATE_DOWN;
+    } else {
+        return mCoBG_WALL_SLATE_UP;
+    }
+}
+
+static u8 mCoBG_SearchWallFlag(mCoBG_unit_vec_info_c* unit_vec, mCoBG_UnitInfo_c* ut_info0, mCoBG_UnitInfo_c* ut_info1, u8 wall_name) {
+    switch (wall_name) {
+        case mCoBG_WALL_UP:
+            if (ut_info0->leftUp_offset != ut_info1->leftDown_offset || ut_info0->rightUp_offset != ut_info1->rightDown_offset) {
+                if (ut_info1->leftDown_offset > ut_info0->leftUp_offset || ut_info1->rightDown_offset > ut_info0->rightUp_offset) {
+                    mCoBG_SetXZ(unit_vec->normal, 0.0f, 1.0f);
+                    unit_vec->normal_angle = DEG2SHORT_ANGLE2(0.0f);
+                    return TRUE;
+                } else {
+                    mCoBG_SetXZ(unit_vec->normal, 0.0f, -1.0f);
+                    unit_vec->normal_angle = DEG2SHORT_ANGLE2(180.0f);
+                    return TRUE;
+                }
+            }
+            break;
+        case mCoBG_WALL_LEFT:
+            if (ut_info0->leftUp_offset != ut_info1->rightUp_offset || ut_info0->leftDown_offset != ut_info1->rightDown_offset) {
+                if (ut_info1->rightUp_offset > ut_info0->leftUp_offset || ut_info1->rightDown_offset > ut_info0->leftDown_offset) {
+                    mCoBG_SetXZ(unit_vec->normal, 1.0f, 0.0f);
+                    unit_vec->normal_angle = DEG2SHORT_ANGLE2(90.0f);
+                    return TRUE;
+                } else {
+                    mCoBG_SetXZ(unit_vec->normal, -1.0f, 0.0f);
+                    unit_vec->normal_angle = DEG2SHORT_ANGLE2(-90.0f);
+                    return TRUE;
+                }
+            }
+            break;
+        case mCoBG_WALL_DOWN:
+            if (ut_info0->leftDown_offset != ut_info1->leftUp_offset || ut_info0->rightDown_offset != ut_info1->rightUp_offset) {
+                if (ut_info1->leftUp_offset > ut_info0->leftDown_offset || ut_info1->rightUp_offset > ut_info0->rightDown_offset) {
+                    mCoBG_SetXZ(unit_vec->normal, 0.0f, -1.0f);
+                    unit_vec->normal_angle = DEG2SHORT_ANGLE2(180.0f);
+                    return TRUE;
+                } else {
+                    mCoBG_SetXZ(unit_vec->normal, 0.0f, 1.0f);
+                    unit_vec->normal_angle = DEG2SHORT_ANGLE2(0.0f);
+                    return TRUE;
+                }
+            }
+            break;
+        case mCoBG_WALL_RIGHT:
+            if (ut_info0->rightUp_offset != ut_info1->leftUp_offset || ut_info0->rightDown_offset != ut_info1->leftDown_offset) {
+                if (ut_info1->leftUp_offset > ut_info0->leftDown_offset || ut_info1->rightUp_offset > ut_info0->rightDown_offset) {
+                    mCoBG_SetXZ(unit_vec->normal, -1.0f, 0.0f);
+                    unit_vec->normal_angle = DEG2SHORT_ANGLE2(-90.0f);
+                    return TRUE;
+                } else {
+                    mCoBG_SetXZ(unit_vec->normal, 1.0f, 0.0f);
+                    unit_vec->normal_angle = DEG2SHORT_ANGLE2(90.0f);
+                    return TRUE;
+                }
+            }
+            break;
+    }
+
+    return FALSE;
+}
+
+static void mCoBG_SetTopBtm(mCoBG_WallBounds_c* bounds, f32 start_top, f32 end_top, f32 start_btm, f32 end_btm) {
+    bounds->start_top = start_top;
+    bounds->end_top = end_top;
+    bounds->start_btm = start_btm;
+    bounds->end_btm = end_btm;
+}
+
+static void mCoBG_GetUnitVecInf_SlatingWall(mCoBG_unit_vec_info_c* unit_vec, mCoBG_UnitInfo_c* unit_info, u8 name, u8 check_type) {
+    f32 ux = unit_info->ut_x;
+    f32 uz = unit_info->ut_z;
+    f32* start = unit_vec->start;
+    f32* end = unit_vec->end;
+    f32* normal = unit_vec->normal;
+    mCoBG_WallBounds_c* bounds = &unit_vec->wall_bounds;
+
+    unit_vec->wall_name = name;
+    switch (name) {
+        case mCoBG_WALL_SLATE_UP:
+            mCoBG_UnitNoName2StartEnd(start, end, ux, uz, mCoBG_WALL_SLATE_UP, check_type);
+            if (unit_info->leftUp_offset > unit_info->rightDown_offset) {
+                mCoBG_SetXZ(normal, SQRT_OF_2_DIV_2, SQRT_OF_2_DIV_2);
+                unit_vec->normal_angle = DEG2SHORT_ANGLE2(45.0f);
+                mCoBG_SetTopBtm(bounds, unit_info->leftUp_offset, unit_info->leftUp_offset, unit_info->rightDown_offset, unit_info->rightDown_offset);
+            } else {
+                mCoBG_SetXZ(normal, -SQRT_OF_2_DIV_2, -SQRT_OF_2_DIV_2);
+                unit_vec->normal_angle = DEG2SHORT_ANGLE2(-135.0f);
+                mCoBG_SetTopBtm(bounds, unit_info->rightDown_offset, unit_info->rightDown_offset, unit_info->leftUp_offset, unit_info->leftUp_offset);
+            }
+            break;
+        case mCoBG_WALL_SLATE_DOWN:
+            mCoBG_UnitNoName2StartEnd(start, end, ux, uz, mCoBG_WALL_SLATE_DOWN, check_type);
+            if (unit_info->leftDown_offset > unit_info->rightUp_offset) {
+                mCoBG_SetXZ(normal, SQRT_OF_2_DIV_2, -SQRT_OF_2_DIV_2);
+                unit_vec->normal_angle = DEG2SHORT_ANGLE2(135.0f);
+                mCoBG_SetTopBtm(bounds, unit_info->leftDown_offset, unit_info->leftDown_offset, unit_info->rightUp_offset, unit_info->rightUp_offset);
+            } else {
+                mCoBG_SetXZ(normal, -SQRT_OF_2_DIV_2, SQRT_OF_2_DIV_2);
+                unit_vec->normal_angle = DEG2SHORT_ANGLE2(-45.0f);
+                mCoBG_SetTopBtm(bounds, unit_info->rightUp_offset, unit_info->rightUp_offset, unit_info->leftDown_offset, unit_info->leftDown_offset);
+            }
+            break;
+    }
+}
+
+static void mCoBG_JudgeTopAndSet(f32* top, f32* bot, f32 y0, f32 y1) {
+    if (y0 >= y1) {
+        *top = y0;
+        *bot = y1;
+    } else {
+        *top = y1;
+        *bot = y0;
+    }
+}
+
+static void mCoBG_UtInf2NormalWallVector(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* unit_info0, mCoBG_UnitInfo_c* unit_info1, s16 wall_name, u8 check_type) {
+    f32 ux = unit_info0->ut_x;
+    f32 uz = unit_info0->ut_z;
+    int count = vec_info->unit_count;
+    mCoBG_unit_vec_info_c* unit_vec = &vec_info->unit[count];
+    mCoBG_WallBounds_c* bounds = &unit_vec->wall_bounds;
+    f32* start = unit_vec->start;
+    f32* end = unit_vec->end;
+
+    unit_vec->regist_p = NULL;
+    unit_vec->atr_wall = FALSE;
+    
+    switch (wall_name) {
+        case mCoBG_WALL_UP:
+            if (mCoBG_SearchWallFlag(unit_vec, unit_info0, unit_info1, mCoBG_WALL_UP)) {
+                // @BUG - isn't this missing?
+                // unit_vec->wall_name = mCoBG_WALL_UP;
+                mCoBG_UnitNoName2StartEnd(start, end, ux, uz, mCoBG_WALL_UP, check_type);
+                mCoBG_JudgeTopAndSet(&bounds->start_top, &bounds->start_btm, unit_info0->leftUp_offset, unit_info1->leftDown_offset);
+                mCoBG_JudgeTopAndSet(&bounds->end_top, &bounds->end_btm, unit_info0->rightUp_offset, unit_info1->rightDown_offset);
+                unit_vec->regist_p = NULL;
+                unit_vec->atr_wall = FALSE;
+                vec_info->unit_count++;
+            }
+            break;
+        case mCoBG_WALL_LEFT:
+            if (mCoBG_SearchWallFlag(unit_vec, unit_info0, unit_info1, mCoBG_WALL_LEFT)) {
+                unit_vec->wall_name = mCoBG_WALL_LEFT;
+                mCoBG_UnitNoName2StartEnd(start, end, ux, uz, mCoBG_WALL_LEFT, check_type);
+                mCoBG_JudgeTopAndSet(&bounds->start_top, &bounds->start_btm, unit_info0->leftUp_offset, unit_info1->rightUp_offset);
+                mCoBG_JudgeTopAndSet(&bounds->end_top, &bounds->end_btm, unit_info0->leftDown_offset, unit_info1->rightDown_offset);
+                unit_vec->regist_p = NULL;
+                unit_vec->atr_wall = FALSE;
+                vec_info->unit_count++;
+            }
+            break;
+        case mCoBG_WALL_DOWN:
+            if (mCoBG_SearchWallFlag(unit_vec, unit_info0, unit_info1, mCoBG_WALL_DOWN)) {
+                unit_vec->wall_name = mCoBG_WALL_DOWN;
+                mCoBG_UnitNoName2StartEnd(start, end, ux, uz, mCoBG_WALL_DOWN, check_type);
+                mCoBG_JudgeTopAndSet(&bounds->start_top, &bounds->start_btm, unit_info0->leftDown_offset, unit_info1->leftUp_offset);
+                mCoBG_JudgeTopAndSet(&bounds->end_top, &bounds->end_btm, unit_info0->rightDown_offset, unit_info1->rightUp_offset);
+                unit_vec->regist_p = NULL;
+                unit_vec->atr_wall = FALSE;
+                vec_info->unit_count++;
+            }
+            break;
+        case mCoBG_WALL_RIGHT:
+            if (mCoBG_SearchWallFlag(unit_vec, unit_info0, unit_info1, mCoBG_WALL_RIGHT)) {
+                unit_vec->wall_name = mCoBG_WALL_RIGHT;
+                mCoBG_UnitNoName2StartEnd(start, end, ux, uz, mCoBG_WALL_RIGHT, check_type);
+                mCoBG_JudgeTopAndSet(&bounds->start_top, &bounds->start_btm, unit_info0->rightUp_offset, unit_info1->leftUp_offset);
+                mCoBG_JudgeTopAndSet(&bounds->end_top, &bounds->end_btm, unit_info0->rightDown_offset, unit_info1->leftDown_offset);
+                unit_vec->regist_p = NULL;
+                unit_vec->atr_wall = FALSE;
+                vec_info->unit_count++;
+            }
+            break;
+    }
+}
+
+static void mCoBG_UtInf2NormalSlateWallVector(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info0, mCoBG_UnitInfo_c* ut_info1, s16 wall_name, u8 check_type) {
+    mCoBG_UnitInfo_c tmp_ut_info;
+
+    if (ut_info0->slate_flag == FALSE && ut_info1->slate_flag == TRUE) {
+        u8 slateDir = mCoBG_SearchSlateDetail(&ut_info1->collision->data);
+
+        tmp_ut_info = *ut_info1;
+        switch (wall_name) {
+            case mCoBG_WALL_UP:
+                if (slateDir == mCoBG_WALL_SLATE_UP) {
+                    tmp_ut_info.leftDown_offset = tmp_ut_info.rightDown_offset;
+                } else {
+                    tmp_ut_info.rightDown_offset = tmp_ut_info.leftDown_offset;
+                }
+                break;
+            case mCoBG_WALL_LEFT:
+                if (slateDir == mCoBG_WALL_SLATE_UP) {
+                    tmp_ut_info.rightUp_offset = tmp_ut_info.rightDown_offset;
+                } else {
+                    tmp_ut_info.rightDown_offset = tmp_ut_info.rightUp_offset;
+                }
+                break;
+            case mCoBG_WALL_DOWN:
+                if (slateDir == mCoBG_WALL_SLATE_UP) {
+                    tmp_ut_info.rightUp_offset = tmp_ut_info.leftUp_offset;
+                } else {
+                    tmp_ut_info.leftUp_offset = tmp_ut_info.rightUp_offset;
+                }
+                break;
+            case mCoBG_WALL_RIGHT:
+                if (slateDir == mCoBG_WALL_SLATE_UP) {
+                    tmp_ut_info.leftDown_offset = tmp_ut_info.leftUp_offset;
+                } else {
+                    tmp_ut_info.leftUp_offset = tmp_ut_info.leftDown_offset;
+                }
+                break;
+        }
+
+        mCoBG_UtInf2NormalWallVector(vec_info, ut_info0, &tmp_ut_info, wall_name, check_type);
+    } else if (ut_info0->slate_flag == TRUE && ut_info1->slate_flag == FALSE) {
+        u8 slateDir = mCoBG_SearchSlateDetail(&ut_info0->collision->data);
+
+        tmp_ut_info = *ut_info0;
+        switch (wall_name) {
+            case mCoBG_WALL_UP:
+                if (slateDir == mCoBG_WALL_SLATE_UP) {
+                    tmp_ut_info.rightUp_offset = tmp_ut_info.leftUp_offset;
+                } else {
+                    tmp_ut_info.leftUp_offset = tmp_ut_info.rightUp_offset;
+                }
+                break;
+            case mCoBG_WALL_LEFT:
+                if (slateDir == mCoBG_WALL_SLATE_UP) {
+                    tmp_ut_info.leftDown_offset = tmp_ut_info.leftUp_offset;
+                } else {
+                    tmp_ut_info.leftUp_offset = tmp_ut_info.leftDown_offset;
+                }
+                break;
+            case mCoBG_WALL_DOWN:
+            if (slateDir == mCoBG_WALL_SLATE_UP) {
+                    tmp_ut_info.leftDown_offset = tmp_ut_info.rightDown_offset;
+                } else {
+                    tmp_ut_info.rightDown_offset = tmp_ut_info.leftDown_offset;
+                }
+                break;
+            case mCoBG_WALL_RIGHT:
+                if (slateDir == mCoBG_WALL_SLATE_UP) {
+                    tmp_ut_info.rightDown_offset = tmp_ut_info.rightUp_offset;
+                } else {
+                    tmp_ut_info.rightUp_offset = tmp_ut_info.rightDown_offset;
+                }
+                break;
+        }
+
+        mCoBG_UtInf2NormalWallVector(vec_info, &tmp_ut_info, ut_info1, wall_name, check_type);
+    }
+}
+
+typedef void (*mCoBG_MAKE_NORMAL_WALL_PROC)(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info0, mCoBG_UnitInfo_c* ut_info1, s16 wall_name, u8 check_type);
+
+static void mCoBG_RegistNormalWallVector_AttributeOn(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info0, mCoBG_UnitInfo_c* ut_info1, s16 wall_name, u8 check_type, s16 old_in_water) {
+    static mCoBG_MAKE_NORMAL_WALL_PROC make_normal_wall_proc[] = { &mCoBG_UtInf2NormalWallVector, &mCoBG_UtInf2NormalSlateWallVector };
+
+    if (vec_info->unit_count < mCoBG_UNIT_VEC_INFO_MAX) {
+        int proc = ut_info0->slate_flag | ut_info1->slate_flag;
+
+        (*make_normal_wall_proc[proc & 1])(vec_info, ut_info0, ut_info1, wall_name, check_type);
+    }
+}
+
+static void mCoBG_UnitInf2NormalVector(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info0, mCoBG_UnitInfo_c* ut_info1, s16 wall_name, u8 check_type) {
+    static mCoBG_MAKE_NORMAL_WALL_PROC make_normal_wall_proc[] = { &mCoBG_UtInf2NormalWallVector, &mCoBG_UtInf2NormalSlateWallVector };
+    int proc = ut_info0->slate_flag | ut_info1->slate_flag;
+
+    (*make_normal_wall_proc[proc & 1])(vec_info, ut_info0, ut_info1, wall_name, check_type);
+}
+
+static void mCoBG_RegistNormalWallVector_AttributeOff(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info0, mCoBG_UnitInfo_c* ut_info1, s16 wall_name, u8 check_type, s16 old_in_water) {
+    if (vec_info->unit_count < mCoBG_UNIT_VEC_INFO_MAX) {
+        if (old_in_water) {
+            if (ut_info0->attribute == mCoBG_ATTRIBUTE_WOOD && ut_info1->attribute >= mCoBG_ATTRIBUTE_27 && ut_info1->attribute <= mCoBG_ATTRIBUTE_35) {
+                mCoBG_UnitInfo_c tmp_ut_info = *ut_info1;
+                f32 min_h = MIN(MIN(tmp_ut_info.leftDown_offset, tmp_ut_info.leftUp_offset), MIN(tmp_ut_info.rightDown_offset, tmp_ut_info.rightUp_offset));
+
+                tmp_ut_info.slate_flag = FALSE;
+                tmp_ut_info.leftDown_offset = min_h;
+                tmp_ut_info.leftUp_offset = min_h;
+                tmp_ut_info.rightDown_offset = min_h;
+                tmp_ut_info.rightUp_offset = min_h;
+                mCoBG_UnitInf2NormalVector(vec_info, ut_info0, &tmp_ut_info, wall_name, check_type);
+            } else if (ut_info1->attribute == mCoBG_ATTRIBUTE_WOOD && ut_info0->attribute >= mCoBG_ATTRIBUTE_27 && ut_info0->attribute <= mCoBG_ATTRIBUTE_35) {
+                mCoBG_UnitInfo_c tmp_ut_info = *ut_info0;
+                f32 min_h = MIN(MIN(tmp_ut_info.leftDown_offset, tmp_ut_info.leftUp_offset), MIN(tmp_ut_info.rightDown_offset, tmp_ut_info.rightUp_offset));
+
+                tmp_ut_info.slate_flag = FALSE;
+                tmp_ut_info.leftDown_offset = min_h;
+                tmp_ut_info.leftUp_offset = min_h;
+                tmp_ut_info.rightDown_offset = min_h;
+                tmp_ut_info.rightUp_offset = min_h;
+                mCoBG_UnitInf2NormalVector(vec_info, &tmp_ut_info, ut_info1, wall_name, check_type);
+            } else if (!(ut_info0->attribute >= mCoBG_ATTRIBUTE_27 && ut_info0->attribute <= mCoBG_ATTRIBUTE_35) && !(ut_info1->attribute >= mCoBG_ATTRIBUTE_27 && ut_info1->attribute <= mCoBG_ATTRIBUTE_35)) {
+                mCoBG_UnitInf2NormalVector(vec_info, ut_info0, ut_info1, wall_name, check_type);
+            }
+        } else {
+            mCoBG_UnitInf2NormalVector(vec_info, ut_info0, ut_info1, wall_name, check_type);
+        }
+    }
+}
+
+static void mCoBG_RegistSlatingWallVector_AttributeOn_NoSlate(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type, s16 old_in_water) {
+    // nothing
+}
+
+static void mCoBG_RegistSlatingWallVector_AttributeOn_Slate(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type, s16 old_in_water) {
+    if (vec_info->unit_count < mCoBG_UNIT_VEC_INFO_MAX) {
+        mCoBG_unit_vec_info_c* unit_vec = vec_info->unit;
+        int* unit_count_p = &vec_info->unit_count;
+
+        unit_vec[*unit_count_p].wall_name = mCoBG_SearchSlateDetail(&ut_info->collision->data);
+        mCoBG_GetUnitVecInf_SlatingWall(&unit_vec[*unit_count_p], ut_info, unit_vec[*unit_count_p].wall_name, check_type);
+        unit_vec[0].regist_p = NULL; // @BUG: ??? shouldn't this be unit_vec->regist_p = NULL;
+        (*unit_count_p)++;
+    }
+}
+
+typedef void (*mCoBG_ATTRON_MAKE_SLATE_WALL_PROC)(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type, s16 old_in_water);
+
+static void mCoBG_RegistSlatingWallVector_AttributeOn(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type, s16 old_in_water) {
+    static mCoBG_ATTRON_MAKE_SLATE_WALL_PROC attron_make_slate_wall_proc_table[] = { &mCoBG_RegistSlatingWallVector_AttributeOn_NoSlate, &mCoBG_RegistSlatingWallVector_AttributeOn_Slate };
+
+    (*attron_make_slate_wall_proc_table[ut_info->slate_flag & 1])(vec_info, ut_info, check_type, old_in_water);
+}
+
+static void mCoBG_RegistSlatingWallVector_AttributeOff_Slate_NoOldInWater(mCoBG_unit_vec_info_c* unit_vec, mCoBG_UnitInfo_c* ut_info, int* unit_count_p, u8 check_type) {
+    unit_vec->wall_name = mCoBG_SearchSlateDetail(&ut_info->collision->data);
+    mCoBG_GetUnitVecInf_SlatingWall(unit_vec, ut_info, unit_vec->wall_name, check_type);
+    unit_vec->regist_p = NULL;
+    (*unit_count_p)++;
+}
+
+static void mCoBG_RegistSlatingWallVector_AttributeOff_Slate_OldInWater(mCoBG_unit_vec_info_c* unit_vec, mCoBG_UnitInfo_c* ut_info, int* unit_count_p, u8 check_type) {
+    if (ut_info->attribute >= mCoBG_ATTRIBUTE_27 && ut_info->attribute <= mCoBG_ATTRIBUTE_35) {
+        return;
+    }
+
+    unit_vec->wall_name = mCoBG_SearchSlateDetail(&ut_info->collision->data);
+    mCoBG_GetUnitVecInf_SlatingWall(unit_vec, ut_info, unit_vec->wall_name, check_type);
+    unit_vec->regist_p = NULL;
+    (*unit_count_p)++;
+}
+
+typedef void (*mCoBG_MAKE_SLATE_WALL_PROC2)(mCoBG_unit_vec_info_c* unit_vec, mCoBG_UnitInfo_c* ut_info, int* unit_count_p, u8 check_type);
+
+static void mCoBG_RegistSlatingWallVector_AttributeOff_Slate(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type, s16 old_in_water) {
+    static mCoBG_MAKE_SLATE_WALL_PROC2 make_slate_wall_proc_table2[] = { &mCoBG_RegistSlatingWallVector_AttributeOff_Slate_NoOldInWater, &mCoBG_RegistSlatingWallVector_AttributeOff_Slate_OldInWater };
+    mCoBG_unit_vec_info_c* all_unit_vec = vec_info->unit;
+    int* unit_count_p = &vec_info->unit_count;
+    mCoBG_unit_vec_info_c* unit_vec = &all_unit_vec[*unit_count_p];
+
+    if (*unit_count_p < mCoBG_UNIT_VEC_INFO_MAX) {
+        (*make_slate_wall_proc_table2[old_in_water & 1])(unit_vec, ut_info, unit_count_p, check_type);
+    }
+}
+
+static void mCoBG_RegistSlatingWallVector_AttributeOff_NoSlate(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type, s16 old_in_water) {
+    // nothing
+}
+
+static void mCoBG_RegistSlatingWallVector_AttributeOff(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type, s16 old_in_water) {
+    static mCoBG_ATTRON_MAKE_SLATE_WALL_PROC make_slate_wall_proc_table[] = { &mCoBG_RegistSlatingWallVector_AttributeOff_NoSlate, &mCoBG_RegistSlatingWallVector_AttributeOff_Slate };
+
+    (*make_slate_wall_proc_table[ut_info->slate_flag & 1])(vec_info, ut_info, check_type, old_in_water);
+}
+
+static u8* mCoBG_GetUnitInfSearchData(int count) {
+    switch (count) {
+        case 3:
+            return l_make33_coldata;
+        case 5:
+            return l_make55_coldata;
+        case 7:
+            return l_make77_coldata;
+        default:
+            return l_make33_coldata;
+    }
+}
+
+static void mCoBG_MakeForbidVectorData(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type) {
+    u8 attribute = ut_info->attribute;
+    int* unit_count_p = &vec_info->unit_count;
+    mCoBG_unit_vec_info_c* unit_vec = &vec_info->unit[*unit_count_p];
+    f32 ux = ut_info->ut_x;
+    f32 uz = ut_info->ut_z;
+    int forbid_idx_idx = attribute - mCoBG_ATTRIBUTE_27;
+    int i;
+
+    for (i = 0; i < 2; i++) {
+        s16* data = mCoBG_forbid_vector_idx[forbid_idx_idx];
+        s16 idx = data[i];
+
+        if (idx != -1) {
+            mCoBG_forbid_vec_data_c* forbid_data = &mCoBG_make_vector_table[idx];
+
+            unit_vec->normal[0] = forbid_data->norm[0];
+            unit_vec->normal[1] = forbid_data->norm[1];
+            unit_vec->normal_angle = forbid_data->norm_angle;
+            unit_vec->wall_name = forbid_data->wall_name;
+            mCoBG_UnitNoName2StartEnd(unit_vec->start, unit_vec->end, ux, uz, unit_vec->wall_name, check_type);
+            unit_vec->atr_wall = TRUE;
+            unit_vec->regist_p = NULL;
+            unit_vec++;
+            (*unit_count_p)++;
+        }
+    }
+}
+
+static void mCoBG_MakeForbidAttrVector_DUMMY(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type) {
+    // nothing
+}
+
+static void mCoBG_MakeForbidAttrVector(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type) {
+    u32 attribute = ut_info->attribute;
+
+    if (attribute >= mCoBG_ATTRIBUTE_27 && attribute <= mCoBG_ATTRIBUTE_62) {
+        mCoBG_MakeForbidVectorData(vec_info, ut_info, check_type);
+    }
+}
+
+typedef void (*mCoBG_REGIST_NORMAL_WALL_PROC)(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info0, mCoBG_UnitInfo_c* ut_info1, s16 wall_name, u8 check_type, s16 old_in_water);
+typedef void (*mCoBG_REGIST_SLATE_WALL_PROC)(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type, s16 old_in_water);
+typedef void (*mCoBG_MAKE_FORBID_ATTR_VECTOR_PROC)(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, u8 check_type);
+
+static void mCoBG_MakeUnitVector(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, s16 ut_count, u8 check_type, s16 attr_wall, s16 old_on_ground, s16 old_in_water) {
+    static mCoBG_REGIST_NORMAL_WALL_PROC make_normal_wall[] = { &mCoBG_RegistNormalWallVector_AttributeOff, &mCoBG_RegistNormalWallVector_AttributeOn };
+    static mCoBG_REGIST_SLATE_WALL_PROC make_slate_wall[] = { &mCoBG_RegistSlatingWallVector_AttributeOff, &mCoBG_RegistSlatingWallVector_AttributeOn };
+    int unit;
+    int ut_count2 = SQ(ut_count);
+    u8* make_info_p;
+    int forbid_proc = (old_on_ground & attr_wall) & 1;
+    mCoBG_UnitInfo_c* ut_info_p = ut_info;
+    int bx;
+    int bz;
+
+    vec_info->unit_count = 0;
+    make_info_p = mCoBG_GetUnitInfSearchData(ut_count);
+    if (mFI_Wpos2BlockNum(&bx, &bz, l_ActorInf.center_pos)) {
+        u32 kind = mFI_BkNum2BlockKind(bx, bz);
+
+        if ((kind & mRF_BLOCKKIND_DOCK) != 0 || (kind & mRF_BLOCKKIND_ISLAND) != 0) {
+            old_in_water = FALSE;
+        }
+    }
+
+    for (unit = 0; unit < ut_count2; unit++) {
+        static mCoBG_MAKE_FORBID_ATTR_VECTOR_PROC make_forbid_atr_vector_proc[] = { &mCoBG_MakeForbidAttrVector_DUMMY, &mCoBG_MakeForbidAttrVector };
+
+        (*make_slate_wall[attr_wall])(vec_info, ut_info_p, check_type, old_in_water);
+        if (make_info_p[0] & 1) {
+            (*make_normal_wall[attr_wall])(vec_info, ut_info_p, &ut_info[unit - ut_count], mCoBG_WALL_UP, check_type, old_in_water);
+        }
+
+        if (make_info_p[0] & 2) {
+            (*make_normal_wall[attr_wall])(vec_info, ut_info_p, &ut_info[unit - 1], mCoBG_WALL_LEFT, check_type, old_in_water);
+        }
+
+        if (make_info_p[0] & 4) {
+            (*make_normal_wall[attr_wall])(vec_info, ut_info_p, &ut_info[unit + ut_count], mCoBG_WALL_DOWN, check_type, old_in_water);
+        }
+
+        if (make_info_p[0] & 8) {
+            (*make_normal_wall[attr_wall])(vec_info, ut_info_p, &ut_info[unit + 1], mCoBG_WALL_RIGHT, check_type, old_in_water);
+        }
+
+        (*make_forbid_atr_vector_proc[forbid_proc])(vec_info, ut_info_p, check_type);
+        make_info_p++;
+        ut_info_p++;
+    }
+}
+
+typedef struct {
+    int dx;
+    int dz;
+    
+    s16 normal_angle0;
+    f32 normal0[2];
+    u8 wall_name0;
+
+    s16 normal_angle1;
+    f32 normal1[2];
+    u8 wall_name1;
+} mCoBG_defence_wall_info_c;
+
+static int mCoBG_CircleDefenceWallIdx(int dx, int dz, s16* normal0_p, f32* normal0, u8* wall_name0_p, s16* normal1_p, f32* normal1, u8* wall_name1_p) {
+    int i;
+    // clang-format off
+    static mCoBG_defence_wall_info_c defence_wall_info[] = {
+        { 1,  0,    DEG2SHORT_ANGLE2(0.0f), {            0.0f,             1.0f},         mCoBG_WALL_UP, DEG2SHORT_ANGLE2(180.0f), {            0.0f,           -1.0f},         mCoBG_WALL_UP},
+        {-1,  0,    DEG2SHORT_ANGLE2(0.0f), {            0.0f,             1.0f},         mCoBG_WALL_UP, DEG2SHORT_ANGLE2(180.0f), {            0.0f,           -1.0f},         mCoBG_WALL_UP},
+        { 0,  1,   DEG2SHORT_ANGLE2(90.0f), {            1.0f,             0.0f},      mCoBG_WALL_RIGHT, DEG2SHORT_ANGLE2(-90.0f), {           -1.0f,            0.0f},      mCoBG_WALL_RIGHT},
+        { 0, -1,   DEG2SHORT_ANGLE2(90.0f), {            1.0f,             0.0f},      mCoBG_WALL_RIGHT, DEG2SHORT_ANGLE2(-90.0f), {           -1.0f,            0.0f},      mCoBG_WALL_RIGHT},
+        { 1,  1,  DEG2SHORT_ANGLE2(135.0f), { SQRT_OF_2_DIV_2, -SQRT_OF_2_DIV_2}, mCoBG_WALL_SLATE_DOWN, DEG2SHORT_ANGLE2(-45.0f), {-SQRT_OF_2_DIV_2, SQRT_OF_2_DIV_2}, mCoBG_WALL_SLATE_DOWN},
+        {-1, -1,  DEG2SHORT_ANGLE2(135.0f), { SQRT_OF_2_DIV_2, -SQRT_OF_2_DIV_2}, mCoBG_WALL_SLATE_DOWN, DEG2SHORT_ANGLE2(-45.0f), {-SQRT_OF_2_DIV_2, SQRT_OF_2_DIV_2}, mCoBG_WALL_SLATE_DOWN},
+        { 1, -1, DEG2SHORT_ANGLE2(-135.0f), {-SQRT_OF_2_DIV_2, -SQRT_OF_2_DIV_2},   mCoBG_WALL_SLATE_UP,  DEG2SHORT_ANGLE2(45.0f), { SQRT_OF_2_DIV_2, SQRT_OF_2_DIV_2},   mCoBG_WALL_SLATE_UP},
+        {-1,  1, DEG2SHORT_ANGLE2(-135.0f), {-SQRT_OF_2_DIV_2, -SQRT_OF_2_DIV_2},   mCoBG_WALL_SLATE_UP,  DEG2SHORT_ANGLE2(45.0f), { SQRT_OF_2_DIV_2, SQRT_OF_2_DIV_2},   mCoBG_WALL_SLATE_UP},
+    };
+    // clang-format on
+    mCoBG_defence_wall_info_c* defence_p = defence_wall_info;
+
+    for (i = 0; i < ARRAY_COUNT(defence_wall_info); i++) {
+        if (dx == defence_p->dx && dz == defence_p->dz) {
+            *normal0_p = defence_p->normal_angle0;
+            normal0[0] = defence_p->normal0[0];
+            normal0[1] = defence_p->normal0[1];
+            *wall_name0_p = defence_p->wall_name0;
+
+            *normal1_p = defence_p->normal_angle1;
+            normal1[0] = defence_p->normal1[0];
+            normal1[1] = defence_p->normal1[1];
+            *wall_name1_p = defence_p->wall_name1;
+
+            return i;
+        }
+
+        defence_p++;
+    }
+
+    return -1;
+}
+
+static void mCoBG_MakeCircleDefenceWall(mCoBG_ActorInf_c* actor_info, s16 attr_wall) {
+    if (attr_wall && actor_info->old_on_ground) {
+        mCoBG_column_c* col0;
+        mCoBG_column_c* col1;
+        int col_count = l_VecInf.col_count;
+        mCoBG_unit_vec_info_c* all_unit_vec = l_VecInf.unit;
+        int* unit_count_p = &l_VecInf.unit_count;
+        mCoBG_unit_vec_info_c* unit_vec;
+        int i0;
+        int i1;
+        int dx;
+        int dz;
+        s16 normal_angle0;
+        s16 normal_angle1;
+        f32 normal0[2];
+        f32 normal1[2];
+        u8 wall_name0;
+        u8 wall_name1;
+        
+        col0 = l_VecInf.column;
+        for (i0 = 0; i0 < col_count; i0++) {
+            col1 = l_VecInf.column;
+            for (i1 = 0; i1 < col_count; i1++) {
+                if (i0 != i1 && mCoBG_CircleDefenceWallIdx(col0->ux - col1->ux, col0->uz - col1->uz, &normal_angle0, normal0, &wall_name0, &normal_angle1, normal1, &wall_name1) != -1) {
+                    if (*unit_count_p < mCoBG_UNIT_VEC_INFO_MAX) {
+                        unit_vec = &all_unit_vec[*unit_count_p];
+
+                        unit_vec->start[0] = col0->pos.x;
+                        unit_vec->start[1] = col0->pos.z;
+                        unit_vec->end[0] = col1->pos.x;
+                        unit_vec->end[1] = col1->pos.z;
+                        unit_vec->normal[0] = normal0[0];
+                        unit_vec->normal[1] = normal0[1];
+                        unit_vec->normal_angle = normal_angle0;
+                        unit_vec->regist_p = NULL;
+                        unit_vec->atr_wall = TRUE;
+                        unit_vec->wall_name = wall_name0;
+                        (*unit_count_p)++;
+                    }
+
+                    if (*unit_count_p < mCoBG_UNIT_VEC_INFO_MAX) {
+                        unit_vec = &all_unit_vec[*unit_count_p];
+
+                        unit_vec->start[0] = col0->pos.x;
+                        unit_vec->start[1] = col0->pos.z;
+                        unit_vec->end[0] = col1->pos.x;
+                        unit_vec->end[1] = col1->pos.z;
+                        unit_vec->normal[0] = normal1[0];
+                        unit_vec->normal[1] = normal1[1];
+                        unit_vec->normal_angle = normal_angle1;
+                        unit_vec->regist_p = NULL;
+                        unit_vec->atr_wall = TRUE;
+                        unit_vec->wall_name = wall_name1;
+                        (*unit_count_p)++;
+                    }
+                }
+
+                col1++;
+            }
+
+            col0++;
+        }
+    }
+}

@@ -1,0 +1,578 @@
+typedef struct {
+    xyz_t pos;
+    int in_use;
+    f32 start_radius;
+    f32 end_radius;
+    f32 now_radius;
+    s16 start_timer;
+    s16 now_timer;
+} mCoBG_regist_circle_info_c;
+
+static int mCoBG_regist_decal_circle_count = 0;
+static mCoBG_regist_circle_info_c mCoBG_regist_circle_info[3];
+static mCoBG_column_c mCoBG_decal_circle[3];
+
+static f32 mCoBG_CalcAdjust(s16 now_a, s16 start_a, s16 end_a, f32 start_val, f32 end_val) {
+    if (start_a == end_a) {
+        return start_val;
+    }
+
+    if (now_a <= start_a) {
+        return start_val;
+    }
+
+    if (now_a >= end_a) {
+        return end_val;
+    }
+
+    {
+        f32 d_a = now_a - start_a;
+        f32 n_a = end_a - start_a;
+        f32 n_val = end_val - start_val;
+
+        return start_val + d_a * (n_val / n_a);
+    }
+}
+
+static void mCoBG_CalcTimerDecalCircleOne(mCoBG_regist_circle_info_c* regist, mCoBG_column_c* col_circle) {
+    if (regist->in_use == TRUE) {
+        if (regist->start_timer != -100) {
+            regist->now_radius = mCoBG_CalcAdjust(regist->start_timer - regist->now_timer, 0, regist->start_timer, regist->start_radius, regist->end_radius);
+            col_circle->pos = regist->pos;
+            col_circle->height = regist->pos.y;
+            col_circle->radius = regist->now_radius;
+            col_circle->atr_wall = TRUE;
+            col_circle->ux = (int)(col_circle->pos.x / mFI_UT_WORLDSIZE_X_F);
+            col_circle->uz = (int)(col_circle->pos.z / mFI_UT_WORLDSIZE_Z_F);
+            regist->now_timer--;
+            if (regist->now_timer < 0) {
+                regist->in_use = FALSE;
+                mCoBG_regist_decal_circle_count--;
+            }
+        }
+    }
+}
+
+extern void mCoBG_CalcTimerDecalCircle(void) {
+    int i;
+    mCoBG_regist_circle_info_c* regist = mCoBG_regist_circle_info;
+    mCoBG_column_c* col_circle = mCoBG_decal_circle;
+
+    if (mCoBG_regist_decal_circle_count > 0) {
+        for (i = 0; i < 3; i++) {
+            mCoBG_CalcTimerDecalCircleOne(regist, col_circle);
+            regist++;
+            col_circle++;
+        }
+    }
+}
+
+extern int mCoBG_RegistDecalCircle(const xyz_t* pos, f32 start_radius, f32 end_radius, s16 timer) {
+    int i;
+    mCoBG_regist_circle_info_c* regist = mCoBG_regist_circle_info;
+    mCoBG_column_c* col_circle = mCoBG_decal_circle;
+
+    if (mCoBG_regist_decal_circle_count < 3) {
+        for (i = 0; i < 3; i++) {
+            if (regist->in_use == FALSE) {
+                // @BUG - this will clobber data below mCoBG_regist_circle_info???
+                // because we don't break/return after finding a free
+                // circle and we clear the WHOLE array, we can clear into
+                // mCoBG_decal_circle's data.
+#ifndef BUGFIXES
+                bzero(regist, sizeof(mCoBG_regist_circle_info));
+#else
+                bzero(regist, sizeof(mCoBG_regist_circle_info_c));
+#endif
+                bzero(col_circle, sizeof(mCoBG_column_c));
+
+                regist->in_use = TRUE;
+                regist->pos = *pos;
+                regist->start_radius = start_radius;
+                regist->end_radius = end_radius;
+                regist->now_radius = start_radius;
+                regist->start_timer = timer;
+                regist->now_timer = timer;
+                mCoBG_CalcTimerDecalCircleOne(regist, col_circle);
+                mCoBG_regist_decal_circle_count++;
+                // @BUG - shouldn't this exit immediately?
+                // As it stands, all free 'decal circle' collision columns
+                // will be utilized.
+#ifdef BUGFIXES
+                return i;
+#endif
+            }
+
+            regist++;
+            col_circle++;
+        }
+    }
+
+    return -1;
+}
+
+extern void mCoBG_InitDecalCircle(void) {
+    // @BUG - they incorrectly clear 3x the memory necessary.
+    // I'm guessing that they did 3 * sizeof(array) rather than
+    // 3 * sizeof(struct).
+#ifndef BUGFIXES
+    bzero(mCoBG_regist_circle_info, 3 * sizeof(mCoBG_regist_circle_info));
+#else
+    bzero(mCoBG_regist_circle_info, sizeof(mCoBG_regist_circle_info_c));
+#endif
+    bzero(mCoBG_decal_circle, sizeof(mCoBG_decal_circle));
+    mCoBG_regist_decal_circle_count = 0;
+}
+
+// @unused, @fabricated
+extern void mCoBG_CrossOffDecalCircle(int idx) {
+    if (idx >= 0 && idx < 3) {
+        bzero(&mCoBG_regist_circle_info[idx], sizeof(mCoBG_regist_circle_info_c));
+        bzero(&mCoBG_decal_circle[idx], sizeof(mCoBG_decal_circle));
+        mCoBG_regist_decal_circle_count--;
+    }
+}
+
+static int mCoBG_MakeOneColumnCollisionData(mCoBG_column_c* col, mCoBG_UnitInfo_c* ut_info, int old_on_ground, mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_proc, int ux, int uz) {
+    if ((check_proc != NULL && (*check_proc)(ut_info->item) == FALSE) || check_proc == NULL) {
+        if (ut_info->ut_x == ux && ut_info->ut_z == uz) {
+            return FALSE;
+        }
+
+        if (old_on_ground == TRUE && (ITEM_IS_HOLE(ut_info->item) || ut_info->item == HOLE_SHINE || ut_info->item == RSV_HOLE)) {
+            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
+            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
+            col->pos.y = 0.0f;
+            col->ux = ut_info->ut_x;
+            col->uz = ut_info->ut_z;
+            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->height = col->pos.y;
+            col->radius = 19.0f;
+            col->atr_wall = TRUE;
+            return TRUE;
+        }
+
+        if (IS_ITEM_SMALL_TREE(ut_info->item)) {
+            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
+            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
+            col->pos.y = 0.0f;
+            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->height = col->pos.y + 30.0f;
+            col->ux = ut_info->ut_x;
+            col->uz = ut_info->ut_z;
+            col->radius = 19.0f;
+            col->atr_wall = FALSE;
+            return TRUE;
+        }
+
+        if (IS_ITEM_MED_TREE(ut_info->item)) {
+            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
+            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
+            col->pos.y = 0.0f;
+            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->height = col->pos.y + 40.0f;
+            col->ux = ut_info->ut_x;
+            col->uz = ut_info->ut_z;
+            col->radius = 19.0f;
+            col->atr_wall = FALSE;
+            return TRUE;
+        }
+
+        if (IS_ITEM_LARGE_TREE(ut_info->item)) {
+            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
+            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
+            col->pos.y = 0.0f;
+            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->height = col->pos.y + 60.0f;
+            col->ux = ut_info->ut_x;
+            col->uz = ut_info->ut_z;
+            col->radius = 19.0f;
+            col->atr_wall = FALSE;
+            return TRUE;
+        }
+
+        if (IS_ITEM_FULL_TREE(ut_info->item) || ut_info->item == RSV_TREE) {
+            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
+            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
+            col->pos.y = 0.0f;
+            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->height = col->pos.y + 80.0f;
+            col->ux = ut_info->ut_x;
+            col->uz = ut_info->ut_z;
+            col->radius = 19.0f;
+            col->atr_wall = FALSE;
+            return TRUE;
+        }
+
+        if (IS_ITEM_TREE_STUMP(ut_info->item)) {
+            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
+            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
+            col->pos.y = 0.0f;
+            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->ux = ut_info->ut_x;
+            col->uz = ut_info->ut_z;
+
+            if (ut_info->item == TREE_STUMP001 || ut_info->item == TREE_PALM_STUMP001 || ut_info->item == CEDAR_TREE_STUMP001 || ut_info->item == GOLD_TREE_STUMP001) {
+                col->radius = 10.0f;
+                col->height = col->pos.y + 30.0f;
+            } else {
+                col->radius = 18.0f;
+                col->height = col->pos.y + 30.0f;
+            }
+            col->atr_wall = FALSE;
+            return TRUE;
+        }
+
+        if (IS_ITEM_ROCK(ut_info->item)) {
+            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
+            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
+            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->ux = ut_info->ut_x;
+            col->uz = ut_info->ut_z;
+            col->radius = 19.0f;
+            col->height = col->pos.y + 31.5f;
+            col->atr_wall = FALSE;
+            return TRUE;
+        }
+
+        if (ut_info->item == DUMMY_MAILBOX0 || ut_info->item == DUMMY_MAILBOX1 || ut_info->item == DUMMY_MAILBOX2 || ut_info->item == DUMMY_MAILBOX3) {
+            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
+            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
+            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->ux = ut_info->ut_x;
+            col->uz = ut_info->ut_z;
+            col->radius = 15.0f;
+            col->height = col->pos.y + 50.0f;
+            col->atr_wall = FALSE;
+            return TRUE;
+        }
+
+        if (ITEM_IS_SIGN(ut_info->item)) {
+            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
+            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
+            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->radius = 19.0f;
+            col->height = col->pos.y + 45.0f;
+            col->ux = ut_info->ut_x;
+            col->uz = ut_info->ut_z;
+            col->atr_wall = FALSE;
+            return TRUE;
+        }
+
+        if (ut_info->item == RSV_SIGNBOARD) {
+            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
+            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
+            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->radius = 10.0f;
+            col->height = col->pos.y + 45.0f;
+            col->ux = ut_info->ut_x;
+            col->uz = ut_info->ut_z;
+            col->atr_wall = FALSE;
+            return TRUE;
+        }
+
+        if (ut_info->item == DUMMY_KOINOBORI || ut_info->item == DUMMY_FLAG) {
+            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
+            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
+            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->radius = 19.0f;
+            col->height = col->pos.y + 160.0f;
+            col->ux = ut_info->ut_x;
+            col->uz = ut_info->ut_z;
+            col->atr_wall = FALSE;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+static void mCoBG_MakeColumnCollisionData(mCoBG_column_c* col, int* col_count_p, mCoBG_UnitInfo_c* ut_info, int count, int old_on_ground, mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_item_proc, int ux, int uz) {
+    int count_sq = SQ(count);
+    int i;
+
+    *col_count_p = 0;
+    for (i = 0; i < count_sq; i++) {
+        if (*col_count_p < 16) {
+            mCoBG_MakeOneColumnCollisionData(col, ut_info, old_on_ground, check_item_proc, ux, uz);
+            col++;
+            (*col_count_p)++;
+        }
+
+        ut_info++;
+    }
+}
+
+static void mCoBG_ColumnCheck_NormalWall(xyz_t* rev, mCoBG_ActorInf_c* actor_info, const xyz_t* pos, const xyz_t* old_pos, mCoBG_column_c* col, s16 attr_wall) {
+    f32 ground_dist = actor_info->ground_dist;
+    f32 now_y = ground_dist + pos->y;
+
+    if (mCoBG_JudgePointInCircle_Xyz(old_pos, &col->pos, col->radius) == FALSE && (col->height >= (now_y + 3.0f))) {
+        f32 dx = pos->x - col->pos.x;
+        f32 dz = pos->z - col->pos.z;
+        f32 dist = sqrtf(SQ(dx) + SQ(dz));
+        f32 check_dist = actor_info->range + col->radius;
+
+        if (dist < check_dist) {
+            xyz_t rev_vec;
+            f32 rev_dist = check_dist - dist;
+            xyz_t rev_unit_vec;
+            mCoBG_WallHeight_c height;
+            s16 angle = atans_table(dz, dx);
+            f32 div;
+
+            rev_vec.x = pos->x - col->pos.x;
+            rev_vec.y = 0.0f;
+            rev_vec.z = pos->z - col->pos.z;
+
+            if (F32_IS_ZERO(dist)) {
+                div = 1.0f;
+            } else {
+                div = 1.0f / dist;
+            }
+
+            rev_unit_vec.x = rev_vec.x * div;
+            rev_unit_vec.y = 0.0f;
+            rev_unit_vec.z = rev_vec.z * div;
+
+            rev->x = rev_unit_vec.x * rev_dist;
+            rev->y = rev_unit_vec.y * rev_dist;
+            rev->z = rev_unit_vec.z * rev_dist;
+            height.top = col->height;
+            height.bot = col->pos.y;
+            mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, &height, angle, FALSE);
+        } else {
+            f32 diff = dist - check_dist;
+
+            if (diff > 0.0f && diff < 2.7f) {
+                mCoBG_WallHeight_c height;
+                s16 angle = atans_table(dz, dx);
+
+                height.top = col->height;
+                height.bot = col->pos.y;
+                mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, &height, angle, FALSE);
+            }
+        }
+    }
+}
+
+static void mCoBG_ColumnCheckOldOnGround_AttrWall(xyz_t* rev, mCoBG_ActorInf_c* actor_info, const xyz_t* pos, const xyz_t* old_pos, mCoBG_column_c* col) {
+    if (mCoBG_JudgePointInCircle_Xyz(old_pos, &col->pos, col->radius) == FALSE) {
+        f32 dx = pos->x - col->pos.x;
+        f32 dz = pos->z - col->pos.z;
+        f32 dist = sqrtf(SQ(dx) + SQ(dz));
+        f32 check_dist = actor_info->range + col->radius;
+
+        if (dist < check_dist) {
+            xyz_t rev_vec;
+            f32 rev_dist = check_dist - dist;
+            xyz_t rev_unit_vec;
+            s16 angle = atans_table(dz, dx);
+            f32 div;
+
+            rev_vec.x = pos->x - col->pos.x;
+            rev_vec.y = 0.0f;
+            rev_vec.z = pos->z - col->pos.z;
+
+            if (F32_IS_ZERO(dist)) {
+                div = 1.0f;
+            } else {
+                div = 1.0f / dist;
+            }
+
+            rev_unit_vec.x = rev_vec.x * div;
+            rev_unit_vec.y = 0.0f;
+            rev_unit_vec.z = rev_vec.z * div;
+
+            rev->x = rev_unit_vec.x * rev_dist;
+            rev->y = rev_unit_vec.y * rev_dist;
+            rev->z = rev_unit_vec.z * rev_dist;
+            mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, NULL, angle, TRUE);
+        } else {
+            f32 diff = dist - check_dist;
+
+            if (diff > 0.0f && diff < 2.7f) {
+                s16 angle = atans_table(dz, dx);
+
+                mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, NULL, angle, TRUE);
+            }
+        }
+    }
+}
+
+static void mCoBG_ColumnCheckNotOldOnGround_AttrWall(xyz_t* rev, mCoBG_ActorInf_c* actor_info, const xyz_t* pos, const xyz_t* old_pos, mCoBG_column_c* col) {
+    // nothing
+}
+
+typedef void (*mCoBG_ATR_COLUMN_SUB_PROC)(xyz_t* rev, mCoBG_ActorInf_c* actor_info, const xyz_t* pos, const xyz_t* old_pos, mCoBG_column_c* col);
+
+static void mCoBG_ColumnCheck_AttrWall(xyz_t* rev, mCoBG_ActorInf_c* actor_info, const xyz_t* pos, const xyz_t* old_pos, mCoBG_column_c* col, s16 attr_wall) {
+    if (attr_wall != FALSE) {
+        static mCoBG_ATR_COLUMN_SUB_PROC atr_column_sub_proc_table[] = { &mCoBG_ColumnCheckNotOldOnGround_AttrWall, &mCoBG_ColumnCheckOldOnGround_AttrWall };
+
+        (*atr_column_sub_proc_table[actor_info->old_on_ground])(rev, actor_info, pos, old_pos, col);
+    }
+}
+
+typedef void (*mCoBG_WALL_CHECK_PROC)(xyz_t* rev, mCoBG_ActorInf_c* actor_info, const xyz_t* pos, const xyz_t* old_pos, mCoBG_column_c* col, s16 attr_wall);
+
+static void mCoBG_ColumnWallCheck(xyz_t* rev, mCoBG_ActorInf_c* actor_info, const xyz_t* pos, mCoBG_column_c* col, int col_count, s16 attr_wall) {
+    static mCoBG_WALL_CHECK_PROC column_wall_check_func[] = { &mCoBG_ColumnCheck_NormalWall, &mCoBG_ColumnCheck_AttrWall };
+    static xyz_t reverse0 = { 0.0f, 0.0f, 0.0f };
+
+    *rev = reverse0;
+    if (col_count != 0) {
+        int i;
+
+        for (i = 0; i < col_count; i++) {
+            xyz_t reverse = { 0.0f, 0.0f, 0.0f };
+            xyz_t tmp_pos;
+
+            tmp_pos.x = pos->x + rev->x;
+            tmp_pos.y = pos->y + rev->y;
+            tmp_pos.z = pos->z + rev->z;
+            (*column_wall_check_func[col->atr_wall])(&reverse, actor_info, &tmp_pos, &actor_info->old_center_pos, col, attr_wall);
+            rev->x += reverse.x;
+            rev->z += reverse.z;
+            rev->y = 0.0f;
+
+            col++;
+        }
+    }
+}
+
+static f32 mCoBG_GetBGHeight_Column(const xyz_t* pos, mCoBG_UnitInfo_c* ut_info) {
+    mCoBG_column_c col;
+
+    if (mCoBG_MakeOneColumnCollisionData(&col, ut_info, FALSE, NULL, -1, -1) && mCoBG_JudgePointInCircle_Xyz(pos, &col.pos, col.radius)) {
+        return col.height;
+    }
+
+    return 0.0f;
+}
+
+static int mCoBG_LineWallCheck_Column(xyz_t* rev, mCoBG_column_c* col, int col_count, const xyz_t* start_pos, const xyz_t* end_pos) {
+    int i;
+    xyz_t vec_end_start;
+    xyz_t tmp_end;
+    static xyz_t reverse0 = { 0.0f, 0.0f, 0.0f };
+    xyz_t reverse = reverse0;
+
+    for (i = 0; i < col_count; i++) {
+        f32 vec_end_start_len_xz;
+        
+        tmp_end.x = end_pos->x + reverse.x;
+        tmp_end.y = end_pos->y + reverse.y;
+        tmp_end.z = end_pos->z + reverse.z;
+
+        reverse = reverse0;
+
+        vec_end_start.x = start_pos->x - tmp_end.x;
+        vec_end_start.y = start_pos->y - tmp_end.y;
+        vec_end_start.z = start_pos->z - tmp_end.z;
+
+        vec_end_start_len_xz = sqrtf(SQ(vec_end_start.x) + SQ(vec_end_start.z));
+        if (!F32_IS_ZERO(vec_end_start_len_xz)) {
+            xyz_t cross0;
+            xyz_t cross1;
+
+            if (mCoBG_JudgePointInCircle_Xyz(start_pos, &col->pos, col->radius) == FALSE &&
+                mCoBG_GetCrossCircleAndLine2DvectorPlaneXZ_Xyz(&cross0, &cross1, start_pos, &vec_end_start, &col->pos, col->radius)) {
+                f32 rev_dist_xz;
+                xyz_t reverse_vec;
+                xyz_t delta_cross0_xz;
+                xyz_t delta_cross1_xz;
+                f32 dist_sq_cross0_xz;
+                f32 dist_sq_cross1_xz;
+
+                delta_cross0_xz.x = cross0.x - start_pos->x;
+                delta_cross0_xz.z = cross0.z - start_pos->z;
+                delta_cross1_xz.x = cross1.x - start_pos->x;
+                delta_cross1_xz.z = cross1.z - start_pos->z;
+                dist_sq_cross0_xz = SQ(delta_cross0_xz.x) + SQ(delta_cross0_xz.z);
+                dist_sq_cross1_xz = SQ(delta_cross1_xz.x) + SQ(delta_cross1_xz.z);
+
+                if (dist_sq_cross0_xz < dist_sq_cross1_xz) {
+                    if (((cross0.x >= start_pos->x && cross0.x <= tmp_end.x) || (cross0.x >= tmp_end.x && cross0.x <= start_pos->x)) &&
+                        ((cross0.z >= start_pos->z && cross0.z <= tmp_end.z) || (cross0.z >= tmp_end.z && cross0.z <= start_pos->z))
+                    ) {
+                        f32 mult;
+                        
+                        rev_dist_xz = vec_end_start_len_xz - sqrtf(dist_sq_cross0_xz);
+                        mult = rev_dist_xz / vec_end_start_len_xz;
+
+                        reverse_vec.x = vec_end_start.x * mult;
+                        reverse_vec.y = vec_end_start.y * mult;
+                        reverse_vec.z = vec_end_start.z * mult;
+                        if ((end_pos->y + reverse_vec.y) <= col->height) {
+                            *rev = reverse_vec;
+                            return TRUE;
+                        }
+                    }
+                } else {
+                    if (((cross1.x >= start_pos->x && cross1.x <= tmp_end.x) || (cross1.x >= tmp_end.x && cross1.x <= start_pos->x)) &&
+                        ((cross1.z >= start_pos->z && cross1.z <= tmp_end.z) || (cross1.z >= tmp_end.z && cross1.z <= start_pos->z))
+                    ) {
+                        f32 mult;
+
+                        rev_dist_xz = vec_end_start_len_xz - sqrtf(dist_sq_cross1_xz);
+                        mult = rev_dist_xz / vec_end_start_len_xz;
+
+                        reverse_vec.x = vec_end_start.x * mult;
+                        reverse_vec.y = vec_end_start.y * mult;
+                        reverse_vec.z = vec_end_start.z * mult;
+                        if ((end_pos->y + reverse_vec.y) <= col->height) {
+                            *rev = reverse_vec;
+                            return TRUE;
+                        }
+                    }
+                }
+            }
+
+            col++;
+        }
+    }
+
+    return FALSE;
+}
+
+static int mCoBG_LineGroundCheck_Column(xyz_t* rev, mCoBG_column_c* col, int col_count, const xyz_t* start_pos, const xyz_t* end_pos) {
+    int i;
+    static xyz_t reverse0; // @BUG - isn't this supposed to be initialized with data?
+    xyz_t reverse;
+    xyz_t tmp_end;
+    xyz_t vec_end_start;
+
+    reverse = reverse0;
+    for (i = 0; i < col_count; i++) {
+        if (start_pos->y > col->height && end_pos->y < col->height) {
+            f32 vec_y;
+
+            tmp_end.x = end_pos->x + reverse.x;
+            tmp_end.y = end_pos->y + reverse.y;
+            tmp_end.z = end_pos->z + reverse.z;
+
+            reverse = reverse0;
+            vec_end_start.x = start_pos->x - tmp_end.x;
+            vec_end_start.y = start_pos->y - tmp_end.y;
+            vec_end_start.z = start_pos->z - tmp_end.z;
+
+            vec_y = col->height - tmp_end.y;
+            if (!F32_IS_ZERO(vec_end_start.y)) {
+                f32 mult = vec_y / vec_end_start.y;
+
+                reverse.x = vec_end_start.x * mult;
+                reverse.y = vec_end_start.y * mult;
+                reverse.z = vec_end_start.z * mult;
+                *rev = reverse;
+                return TRUE;
+            }
+
+            return FALSE;
+        }
+
+        col++;
+    }
+
+    return FALSE;
+}

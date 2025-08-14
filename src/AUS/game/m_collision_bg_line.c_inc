@@ -1,0 +1,593 @@
+static void mCoBG_GetSpeedXZ(f32* speed, xyz_t* start, xyz_t* end) {
+    speed[0] = end->x - start->x;
+    speed[1] = end->z - start->z;
+}
+
+static void mCoBG_TransCenter(int* x, int* z, f32* speed, int ut_count) {
+    int count = ut_count >> 1;
+
+    if (!F32_IS_ZERO(speed[0])) {
+        if (speed[0] > 0.0f) {
+            (*x) += count;
+        } else {
+            (*x) -= count;
+        }
+    }
+
+    if (!F32_IS_ZERO(speed[1])) {
+        if (speed[1] > 0.0f) {
+            (*z) += count;
+        } else {
+            (*z) -= count;
+        }
+    }
+}
+
+static int mCoBG_UvecInf2PolygonVtx(xyz_t* v0, xyz_t* v1, xyz_t* v2, int idx, mCoBG_unit_vec_info_c* unit_vec) {
+    switch (idx & 1) {
+        case 0:
+            if (unit_vec->wall_bounds.start_top != unit_vec->wall_bounds.start_btm) {
+                v0->x = unit_vec->start[0];
+                v0->y = unit_vec->wall_bounds.start_top;
+                v0->z = unit_vec->start[1];
+
+                v1->x = unit_vec->start[0];
+                v1->y = unit_vec->wall_bounds.start_btm;
+                v1->z = unit_vec->start[1];
+
+                v2->x = unit_vec->end[0];
+                v2->y = unit_vec->wall_bounds.end_top;
+                v2->z = unit_vec->end[1];
+                return TRUE;
+            }
+            break;
+        case 1:
+        default:
+            if (unit_vec->wall_bounds.end_top != unit_vec->wall_bounds.end_btm) {
+                v0->x = unit_vec->end[0];
+                v0->y = unit_vec->wall_bounds.end_top;
+                v0->z = unit_vec->end[1];
+
+                v1->x = unit_vec->start[0];
+                v1->y = unit_vec->wall_bounds.start_btm;
+                v1->z = unit_vec->start[1];
+
+                v2->x = unit_vec->end[0];
+                v2->y = unit_vec->wall_bounds.end_btm;
+                v2->z = unit_vec->end[1];
+                return TRUE;
+            }
+            break;
+    }
+
+    return FALSE;
+}
+
+static int mCoBG_GetRevWallPlaneAndVector(xyz_t* rev, mCoBG_unit_vec_info_c* unit_vec, xyz_t start_pos, xyz_t end_pos, f32* start, f32* end) {
+    xyz_t rev0 = { 0.0f, 0.0f, 0.0f };
+
+    *rev = rev0;
+    if (mCoBG_SearchWallFront(start, unit_vec) == TRUE && mCoBG_SearchWallFront(end, unit_vec) == FALSE) {
+        xyz_t v0;
+        xyz_t v1;
+        xyz_t v2;
+        xyz_t cross;
+        int i;
+
+        for (i = 0; i < 2; i++) {
+            if (mCoBG_UvecInf2PolygonVtx(&v0, &v1, &v2, i, unit_vec)) {
+                if (mCoBG_GetCrossTriangleAndLine3D(&cross, v0, v1, v2, start_pos, end_pos)) {
+                    rev->x = cross.x - end_pos.x;
+                    rev->y = cross.y - end_pos.y;
+                    rev->z = cross.z - end_pos.z;
+                    return TRUE;
+                }
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+static int mCoBG_LineWallCheck(xyz_t* rev, xyz_t start_pos, xyz_t end_pos) {
+    int i;
+    int count = l_VecInf.unit_count;
+    mCoBG_unit_vec_info_c* unit_vec = l_VecInf.unit;
+    f32 start[2];
+    f32 end[2];
+
+
+    start[0] = start_pos.x;
+    start[1] = start_pos.z;
+    end[0] = end_pos.x;
+    end[1] = end_pos.z;
+    for (i = 0; i < count; i++) {
+        xyz_t tmp_rev = { 0.0f, 0.0f, 0.0f };
+        if (mCoBG_GetRevWallPlaneAndVector(&tmp_rev, unit_vec, start_pos, end_pos, start, end)) {
+            rev->x = tmp_rev.x;
+            rev->y = tmp_rev.y;
+            rev->z = tmp_rev.z;
+            return TRUE;
+        }
+
+        unit_vec++;
+    }
+
+    return FALSE;
+}
+
+static void mCoBG_GetAreaPolygon(xyz_t* v0, xyz_t* v1, xyz_t* v2, mCoBG_UnitInfo_c* ut_info, int area) {
+    mCoBG_Collision_u* col = ut_info->collision;
+    f32 x = ut_info->ut_x * mFI_UT_WORLDSIZE_X_F;
+    f32 z = ut_info->ut_z * mFI_UT_WORLDSIZE_Z_F;
+    f32 center_y = col->data.center * 10.0f + ut_info->base_height;
+
+    if (ut_info->slate_flag == FALSE) {
+        switch (area) {
+            case mCoBG_AREA_N:
+                v0->x = x;
+                v0->y = ut_info->leftUp_offset;
+                v0->z = z;
+
+                v1->x = x + mFI_UT_WORLDSIZE_HALF_X_F;
+                v1->y = center_y;
+                v1->z = z + mFI_UT_WORLDSIZE_HALF_Z_F;
+
+                v2->x = x + mFI_UT_WORLDSIZE_X_F;
+                v2->y = ut_info->rightUp_offset;
+                v2->z = z;
+                break;
+            case mCoBG_AREA_W:
+                v0->x = x;
+                v0->y = ut_info->leftUp_offset;
+                v0->z = z;
+
+                v1->x = x;
+                v1->y = ut_info->leftDown_offset;
+                v1->z = z + mFI_UT_WORLDSIZE_Z_F;
+
+                v2->x = x + mFI_UT_WORLDSIZE_HALF_X_F;
+                v2->y = center_y;
+                v2->z = z + mFI_UT_WORLDSIZE_HALF_Z_F;
+                break;
+            case mCoBG_AREA_S:
+                v0->x = x + mFI_UT_WORLDSIZE_HALF_X_F;
+                v0->y = center_y;
+                v0->z = z + mFI_UT_WORLDSIZE_HALF_Z_F;
+
+                v1->x = x;
+                v1->y = ut_info->leftDown_offset;
+                v2->z = z + mFI_UT_WORLDSIZE_Z_F;
+
+                v2->x = x + mFI_UT_WORLDSIZE_X_F;
+                v2->y = ut_info->rightDown_offset;
+                v1->z = z + mFI_UT_WORLDSIZE_Z_F;
+                break;
+            default:
+            // case mCoBG_AREA_E:
+                v0->x = x + mFI_UT_WORLDSIZE_HALF_X_F;
+                v0->y = center_y;
+                v0->z = z + mFI_UT_WORLDSIZE_HALF_Z_F;
+
+                v1->x = x + mFI_UT_WORLDSIZE_X_F;
+                v1->y = ut_info->rightDown_offset;
+                v1->z = z + mFI_UT_WORLDSIZE_Z_F;
+
+                v2->x = x + mFI_UT_WORLDSIZE_X_F;
+                v2->y = ut_info->rightUp_offset;
+                v2->z = z;
+                break;
+        }
+    } else {
+        switch (area) {
+            case mCoBG_AREA_N:
+                v0->x = x;
+                v0->y = ut_info->leftUp_offset;
+                v0->z = z;
+
+                v1->x = x + mFI_UT_WORLDSIZE_HALF_X_F;
+                v1->y = center_y;
+                v1->z = z + mFI_UT_WORLDSIZE_HALF_Z_F;
+
+                v2->x = x + mFI_UT_WORLDSIZE_X_F;
+                v2->y = ut_info->rightUp_offset;
+                v2->z = z;
+
+                if (ut_info->leftUp_offset < ut_info->rightUp_offset) {
+                    v0->y = v1->y;
+                    v2->y = v1->y;
+                } else if (ut_info->leftUp_offset > ut_info->rightUp_offset) {
+                    v0->y = v2->y;
+                    v1->y = v2->y;
+                }
+                break;
+            case mCoBG_AREA_W:
+                v0->x = x;
+                v0->y = ut_info->leftUp_offset;
+                v0->z = z;
+
+                v1->x = x;
+                v1->y = ut_info->leftDown_offset;
+                v1->z = z + mFI_UT_WORLDSIZE_Z_F;
+
+                v2->x = x + mFI_UT_WORLDSIZE_HALF_X_F;
+                v2->y = center_y;
+                v2->z = z + mFI_UT_WORLDSIZE_HALF_Z_F;
+
+                if (ut_info->leftUp_offset > ut_info->leftDown_offset) {
+                    v0->y = v1->y;
+                    // @BUG - this should be v2->y = v1->y
+#ifndef BUGFXIES
+                    v0->y = v1->y;
+#else
+                    v2->y = v1->y;
+#endif
+                } else if (ut_info->leftUp_offset < ut_info->leftDown_offset) {
+                    v1->y = v0->y;
+                    v2->y = v0->y;
+                }
+                break;
+            case mCoBG_AREA_S:
+                v0->x = x + mFI_UT_WORLDSIZE_HALF_X_F;
+                v0->y = center_y;
+                v0->z = z + mFI_UT_WORLDSIZE_HALF_Z_F;
+
+                v1->x = x;
+                v1->y = ut_info->leftDown_offset;
+                v2->z = z + mFI_UT_WORLDSIZE_Z_F;
+
+                v2->x = x + mFI_UT_WORLDSIZE_X_F;
+                v2->y = ut_info->rightDown_offset;
+                v1->z = z + mFI_UT_WORLDSIZE_Z_F;
+
+                if (ut_info->leftDown_offset < ut_info->rightDown_offset) {
+                    v0->y = v1->y;
+                    v2->y = v1->y;
+                } else if (ut_info->leftDown_offset > ut_info->rightDown_offset) {
+                    v0->y = v2->y;
+                    v1->y = v2->y;
+                }
+
+                break;
+            // case mCoBG_AREA_E:
+            default:
+                v0->x = x + mFI_UT_WORLDSIZE_HALF_X_F;
+                v0->y = center_y;
+                v0->z = z + mFI_UT_WORLDSIZE_HALF_Z_F;
+                
+                v1->x = x + mFI_UT_WORLDSIZE_X_F;
+                v1->y = ut_info->rightDown_offset;
+                v1->z = z + mFI_UT_WORLDSIZE_Z_F;
+
+                v2->x = x + mFI_UT_WORLDSIZE_X_F;
+                v2->y = ut_info->rightUp_offset;
+                v2->z = z;
+
+                if (ut_info->rightUp_offset < ut_info->rightDown_offset) {
+                    v0->y = v2->y;
+                    v1->y = v2->y;
+                } else if (ut_info->rightUp_offset > ut_info->rightDown_offset) {
+                    v0->y = v1->y;
+                    v2->y = v1->y;
+                }
+                break;
+        }
+    }
+}
+
+static void mCoBG_GetFlatGroundPolygon(xyz_t* v0, xyz_t* v1, xyz_t* v2, f32 bg_y, f32 x, f32 z, int type) {
+    static xyz_t offset_from_base[][3] = {
+        { { 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 40.0f}, {40.0f, 0.0f,  0.0f} },
+        { {40.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 40.0f}, {40.0f, 0.0f, 40.0f} },
+    };
+    xyz_t* ofs = offset_from_base[type & 1];
+
+    v0->x = x + ofs[0].x;
+    v0->y = bg_y;
+    v0->z = z + ofs[0].z;
+
+    v1->x = x + ofs[1].x;
+    v1->y = bg_y;
+    v1->z = z + ofs[1].z;
+
+    v2->x = x + ofs[2].x;
+    v2->y = bg_y;
+    v2->z = z + ofs[2].z;
+}
+
+static int mCoBG_GetRevGroundAndLine(xyz_t* rev, mCoBG_UnitInfo_c* ut_info, xyz_t start_pos, xyz_t end_pos) {
+    xyz_t v0;
+    xyz_t v1;
+    xyz_t v2;
+    xyz_t cross = { 0.0f, 0.0f, 0.0f };
+    int area;
+    f32 a;
+    f32 b;
+    f32 c;
+    f32 d;
+    f32 dist_start;
+    f32 dist_end;
+
+    if (
+        // clang-format off
+        ut_info->collision->data.center == ut_info->collision->data.top_left &&
+        ut_info->collision->data.center == ut_info->collision->data.bot_left &&
+        ut_info->collision->data.center == ut_info->collision->data.bot_right &&
+        ut_info->collision->data.center == ut_info->collision->data.top_right
+        // clang-format on
+    ) {
+        f32 bg_y;
+        f32 x;
+        f32 z;
+        int i;
+
+        if (start_pos.y >= end_pos.y) {
+            bg_y = ut_info->leftUp_offset;
+            x = ut_info->ut_x * mFI_UT_WORLDSIZE_X_F;
+            z = ut_info->ut_z * mFI_UT_WORLDSIZE_Z_F;
+
+            for (i = 0; i < 2; i++) {
+                mCoBG_GetFlatGroundPolygon(&v0, &v1, &v2, bg_y, x, z, i);
+                Math3DPlane(&v0, &v1, &v2, &a, &b, &c, &d);
+
+                dist_start = Math3DSignedLengthPlaneAndPos(a, b, c, d, &start_pos);
+                dist_end = Math3DSignedLengthPlaneAndPos(a, b, c, d, &end_pos);
+                if (dist_start >= 0.0f && dist_end <= 0.0f) {
+                    if (mCoBG_GetCrossTriangleAndLine3D(&cross, v0, v1, v2, start_pos, end_pos)) {
+                        rev->x = cross.x - end_pos.x;
+                        rev->y = cross.y - end_pos.y;
+                        rev->z = cross.z - end_pos.z;
+                        return TRUE;
+                    }
+                }
+            }
+        }
+    } else {
+        for (area = mCoBG_AREA_N; area < mCoBG_AREA_NUM; area++) {
+            mCoBG_GetAreaPolygon(&v0, &v1, &v2, ut_info, area);
+            Math3DPlane(&v0, &v1, &v2, &a, &b, &c, &d);
+
+            dist_start = Math3DSignedLengthPlaneAndPos(a, b, c, d, &start_pos);
+            dist_end = Math3DSignedLengthPlaneAndPos(a, b, c, d, &end_pos);
+            if (dist_start >= 0.0f && dist_end <= 0.0f) {
+                if (mCoBG_GetCrossTriangleAndLine3D(&cross, v0, v1, v2, start_pos, end_pos)) {
+                    rev->x = cross.x - end_pos.x;
+                    rev->y = cross.y - end_pos.y;
+                    rev->z = cross.z - end_pos.z;
+                    return TRUE;
+                }
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+static int mCoBG_LineGroundCheck_Move(xyz_t* rev, xyz_t* start_pos, xyz_t* end_pos) {
+    mCoBG_bg_regist_c* regist_p;
+    mCoBG_mBgMgr_c* bg_mgr = &l_mBgMgr;
+    mCoBG_bg_regist_c** regist_pp = bg_mgr->regist_p; 
+    xyz_t ofs;
+    xyz_t p0;
+    xyz_t p1;
+    xyz_t p2;
+    xyz_t p3;
+    xyz_t v0;
+    xyz_t v1;
+    xyz_t v2;
+    xyz_t v3;
+    xyz_t cross;
+    f32 a;
+    f32 b;
+    f32 c;
+    f32 d;
+    f32 dist_start;
+    f32 dist_end;
+    f32 start[2];
+    f32 end[2];
+    f32 point[2];
+    int i;
+    mCoBG_bg_size_c* size_p;
+    f32 rate;
+    xyz_t* pos_p;
+    s16 angle;
+
+    start[0] = start_pos->x;
+    start[1] = start_pos->z;
+    end[0] = end_pos->x;
+    end[1] = end_pos->z;
+
+    if (bg_mgr->count != 0) {
+        for (i = 0; i < mCoBG_MOVE_REGIST_MAX; i++) {
+            regist_p = *regist_pp; // might be regist_pp[i]
+
+            if (regist_p != NULL) {
+                static xyz_t xyz0 = { 0.0f, 0.0f, 0.0f };
+                
+                size_p = regist_p->bg_size;
+                ofs = regist_p->base_ofs != NULL ? *regist_p->base_ofs : xyz0;
+                angle = regist_p->angle_y != NULL ? *regist_p->angle_y : 0;
+                rate = regist_p->scale_percent != NULL ? *regist_p->scale_percent : 1.0f;
+                pos_p = regist_p->wpos;
+                point[0] = pos_p->x;
+                point[1] = pos_p->z;
+
+                if (mCoBG_JudgeMoveBgGroundCheck(point, start, regist_p->active_dist) || mCoBG_JudgeMoveBgGroundCheck(point, end, regist_p->active_dist)) {
+                    Matrix_translate(pos_p->x, pos_p->y, pos_p->z, MTX_LOAD);
+                    Matrix_RotateY(angle, MTX_MULT);
+                    Matrix_translate(ofs.x, ofs.y, ofs.z, MTX_MULT);
+                    
+                    p0 = xyz0;
+                    p1 = xyz0;
+                    p2 = xyz0;
+                    p3 = xyz0;
+
+                    p0.x -= size_p->left_size * rate;
+                    p0.z -= size_p->up_size * rate;
+                    p0.y += regist_p->height;
+                    Matrix_Position(&p0, &v0);
+
+                    p1.x -= size_p->left_size * rate;
+                    p1.z += size_p->down_size * rate;
+                    p1.y += regist_p->height;
+                    Matrix_Position(&p1, &v1);
+
+                    p2.x += size_p->right_size * rate;
+                    p2.z += size_p->down_size * rate;
+                    p2.y += regist_p->height;
+                    Matrix_Position(&p2, &v2);
+
+                    p3.x += size_p->right_size * rate;
+                    p3.z -= size_p->up_size * rate;
+                    p3.y += regist_p->height;
+                    Matrix_Position(&p3, &v3);
+
+                    Math3DPlane(&v0, &v1, &v2, &a, &b, &c, &d);
+                    dist_start = Math3DSignedLengthPlaneAndPos(a, b, c, d, start_pos);
+                    dist_end = Math3DSignedLengthPlaneAndPos(a, b, c, d, end_pos);
+
+                    if (dist_start >= 0.0f && dist_end <= 0.0f) {
+                        if (mCoBG_GetCrossTriangleAndLine3D(&cross, v0, v1, v2, *start_pos, *end_pos)) {
+                            rev->x = cross.x - end_pos->x;
+                            rev->y = cross.y - end_pos->y;
+                            rev->z = cross.z - end_pos->z;
+                            return TRUE;
+                        }
+                    }
+
+                    Math3DPlane(&v0, &v2, &v3, &a, &b, &c, &d);
+                    dist_start = Math3DSignedLengthPlaneAndPos(a, b, c, d, start_pos);
+                    dist_end = Math3DSignedLengthPlaneAndPos(a, b, c, d, end_pos);
+
+                    if (dist_start >= 0.0f && dist_end <= 0.0f) {
+                        if (mCoBG_GetCrossTriangleAndLine3D(&cross, v0, v2, v3, *start_pos, *end_pos)) {
+                            rev->x = cross.x - end_pos->x;
+                            rev->y = cross.y - end_pos->y;
+                            rev->z = cross.z - end_pos->z;
+                            return TRUE;
+                        }
+                    }
+                }
+
+                regist_pp++;
+            }
+        }
+    }
+
+    return FALSE;
+}
+
+static int mCoBG_LineGroundCheck(xyz_t* rev, xyz_t start_pos, xyz_t end_pos) {
+    mCoBG_UnitInfo_c* ut_info = l_crtutInf;
+    int i;
+    xyz_t ground_rev = { 0.0f, 0.0f, 0.0f };
+    xyz_t move_rev = { 0.0f, 0.0f, 0.0f };
+
+    for (i = 0; i < 9; i++) {
+        if (mCoBG_GetRevGroundAndLine(&ground_rev, ut_info, start_pos, end_pos)) {
+            *rev = ground_rev;
+            return TRUE;
+        }
+
+        ut_info++;
+    }
+
+    if (mCoBG_LineGroundCheck_Move(&move_rev, &start_pos, &end_pos)) {
+        *rev = move_rev;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static void mCoBG_MakeLineCheckCollisionData(xyz_t start_pos, xyz_t end_pos) {
+    int ux;
+    int uz;
+    f32 speed[2];
+
+    mCoBG_GetSpeedXZ(speed, &start_pos, &end_pos);
+    mFI_Wpos2UtNum(&ux, &uz, start_pos);
+    mCoBG_TransCenter(&ux, &uz, speed, 3);
+    mCoBG_MakeSizeUnitInfo(l_crtutInf, ux, uz, 3);
+    mCoBG_MakeUnitVector(&l_VecInf, l_crtutInf, 3, mCoBG_CHECK_TYPE_NORMAL, TRUE, FALSE, FALSE);
+}
+
+static int mCoBG_JudgeStartLineCheck(xyz_t* rev, xyz_t start_pos, xyz_t end_pos) {
+    if (rev != NULL) {
+        mCoBG_InitRevpos(rev);
+    }
+
+    if (F32_IS_ZERO(start_pos.x - end_pos.x) && F32_IS_ZERO(start_pos.y - end_pos.y) && F32_IS_ZERO(start_pos.z - end_pos.z)) {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static void mCoBG_SetWallGroundReverse(xyz_t* rev, const xyz_t* wall_rev, const xyz_t* ground_rev, const xyz_t* wall_col_rev, const xyz_t* ground_col_rev) {
+    if (rev != NULL) {
+        rev->x = wall_rev->x + ground_rev->x + wall_col_rev->x + ground_col_rev->x;
+        rev->y = wall_rev->y + ground_rev->y + wall_col_rev->y + ground_col_rev->y;
+        rev->z = wall_rev->z + ground_rev->z + wall_col_rev->z + ground_col_rev->z;
+    }
+}
+
+extern int mCoBG_LineCheck_RemoveFg(xyz_t* rev, xyz_t start_pos, xyz_t end_pos, mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_proc, int line_check_type) {
+    int ret = 0;
+
+    bzero(l_crtutInf, sizeof(l_crtutInf));
+    bzero(&l_VecInf, sizeof(l_VecInf));
+
+    if (mCoBG_JudgeStartLineCheck(rev, start_pos, end_pos)) {
+        xyz_t wall_rev = { 0.0f, 0.0f, 0.0f };
+        xyz_t ground_rev = { 0.0f, 0.0f, 0.0f };
+        xyz_t wall_col_rev = { 0.0f, 0.0f, 0.0f };
+        xyz_t ground_col_rev = { 0.0f, 0.0f, 0.0f };
+
+        mCoBG_MakeLineCheckCollisionData(start_pos, end_pos);
+        mCoBG_MakeMoveBgVector(&l_VecInf, &l_mBgMgr, &end_pos, mCoBG_CHECK_TYPE_PLAYER);
+        mCoBG_MakeColumnCollisionData(l_VecInf.column, &l_VecInf.col_count, l_crtutInf, 3, FALSE, check_proc, -1, -1);
+
+        if ((line_check_type & mCoBG_LINE_CHECK_WALL) != 0) {
+            if (mCoBG_LineWallCheck(&wall_rev, start_pos, end_pos)) {
+                ret |= mCoBG_LINE_CHECK_WALL;
+            }
+            mCoBG_PlusEqualPos(&end_pos, &wall_rev);
+            
+            if (mCoBG_LineWallCheck_Column(&wall_col_rev, l_VecInf.column, l_VecInf.col_count, &start_pos, &end_pos)) {
+                ret |= mCoBG_LINE_CHECK_WALL;
+            }
+            mCoBG_PlusEqualPos(&end_pos, &wall_col_rev);
+        }
+
+        if ((line_check_type & mCoBG_LINE_CHECK_GROUND) != 0) {
+            if (mCoBG_LineGroundCheck(&ground_rev, start_pos, end_pos)) {
+                ret |= mCoBG_LINE_CHECK_GROUND;
+            }
+            mCoBG_PlusEqualPos(&end_pos, &ground_rev);
+            
+            if (mCoBG_LineGroundCheck_Column(&ground_col_rev, l_VecInf.column, l_VecInf.col_count, &start_pos, &end_pos)) {
+                ret |= mCoBG_LINE_CHECK_GROUND;
+            }
+            mCoBG_PlusEqualPos(&end_pos, &ground_col_rev);
+        }
+
+        if ((line_check_type & mCoBG_LINE_CHECK_WATER) != 0) {
+            if ((end_pos.y <= 21.0f && start_pos.y >= 19.0f) || (start_pos.y <= 21.0f && end_pos.y >= 19.0f)) {
+                ret |= mCoBG_LINE_CHECK_WATER;
+            } else {
+                if (mCoBG_CheckWaterAttribute(mCoBG_Wpos2Attribute(end_pos, NULL))) {
+                    f32 water_y = mCoBG_GetWaterHeight_File(end_pos, __FILE__, 880);
+
+                    if (end_pos.y <= water_y + 1.0f) {
+                        ret |= mCoBG_LINE_CHECK_UNDERWATER;
+                    }
+                }
+            }
+        }
+
+        mCoBG_SetWallGroundReverse(rev, &wall_rev, &ground_rev, &wall_col_rev, &ground_col_rev);
+    }
+
+    return ret;
+}

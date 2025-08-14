@@ -1,0 +1,184 @@
+extern f32 mCoBG_GetBgY_AngleS_FromWpos2(s_xyz* ground_angle, xyz_t pos, f32 ground_dist) {
+    mCoBG_UnitInfo_c ut_info;
+    s_xyz normal_ground_angle;
+    f32 normal_y;
+    f32 column_y;
+    static s_xyz ground_angle0 = { 0, 0, 0 };
+    f32 t0;
+    f32 t1;
+    f32 ret;
+
+    if (ground_angle != NULL) {
+        *ground_angle = ground_angle0;
+    }
+
+    mCoBG_Wpos2UnitInfo(&ut_info, pos);
+    normal_y = mCoBG_GetBGHeight_Normal(&normal_ground_angle, &ut_info);
+    column_y = mCoBG_GetBGHeight_Column(&pos, &ut_info);
+    
+    if (ground_angle != NULL && normal_y >= column_y && normal_y >= -100.0f) {
+        *ground_angle = normal_ground_angle;
+        return normal_y - ground_dist;
+    }
+
+    t0 = MAX(normal_y, -100.0f);
+    t1 = MAX(normal_y, column_y);
+    if (t1 > t0) {
+        ret = MAX(normal_y, column_y);
+    } else {
+        ret = MAX(normal_y, -100.0f);
+    }
+
+    return ret - ground_dist;
+}
+
+extern f32 mCoBG_GetWaterHeight_File(xyz_t pos, char* file, int line) {
+    u32 attr;
+    int ux;
+    int uz;
+    mCoBG_Collision_u* col;
+    xyz_t mod_pos = pos;
+
+    mFI_Wpos2UtNum(&ux, &uz, pos);
+    col = mFI_UtNum2UtCol(ux, uz);
+    attr = col->data.unit_attribute;
+
+    if (attr == mCoBG_ATTRIBUTE_SEA || attr == mCoBG_ATTRIBUTE_37 || attr == mCoBG_ATTRIBUTE_38) {
+        return 20.0f;
+    }
+
+    if (attr >= mCoBG_ATTRIBUTE_WATER && attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+        return 20.0f + mCoBG_GetBgY_AngleS_FromWpos2(NULL, pos, 0.0f);
+    }
+
+    if (attr >= mCoBG_ATTRIBUTE_27 && attr <= mCoBG_ATTRIBUTE_35) {
+        int idx = attr - mCoBG_ATTRIBUTE_27;
+        int search = mCoBG_bridge_search_water[idx];
+        u32 new_attr;
+        int i;
+
+        for (i = 0; i < mSc_DIRECT_NUM; i++) {
+            if ((search & (1 << i)) != 0) {
+                int ux;
+                int uz;
+
+                mCoBG_PlussDirectOffset(&mod_pos, pos, i);
+                mFI_Wpos2UtNum(&ux, &uz, mod_pos);
+                new_attr = mFI_UtNum2UtCol(ux, uz)->data.unit_attribute;
+
+                if (new_attr >= mCoBG_ATTRIBUTE_WATER && new_attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+                    return 20.0f + mCoBG_GetBgY_AngleS_FromWpos2(NULL, mod_pos, 0.0f);
+                }
+            }
+        }
+    } else if (attr >= mCoBG_ATTRIBUTE_39 && attr <= mCoBG_ATTRIBUTE_42) {
+        u32 attr2 = mCoBG_Wpos2Attribute(pos, NULL);
+
+        if (attr2 >= mCoBG_ATTRIBUTE_WATER && attr2 <= mCoBG_ATTRIBUTE_RIVER_NE) {
+            int i;
+            u32 new_attr;
+            xyz_t new_pos;
+            int idx = attr - mCoBG_ATTRIBUTE_39;
+            int search = mCoBG_grass3_search_water[idx];
+
+            for (i = 0; i < mSc_DIRECT_NUM; i++) {
+                if ((search & (1 << i)) != 0) {
+                    int ux;
+                    int uz;
+
+                    mCoBG_PlussDirectOffset(&new_pos, pos, i);
+                    mFI_Wpos2UtNum(&ux, &uz, new_pos);
+                    new_attr = mFI_UtNum2UtCol(ux, uz)->data.unit_attribute;
+
+                    if (new_attr >= mCoBG_ATTRIBUTE_WATER && new_attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+                        return 20.0f + mCoBG_GetBgY_AngleS_FromWpos2(NULL, new_pos, 0.0f);
+                    }
+                }
+            }
+        }
+    }
+
+    return -100.0f;
+}
+
+
+extern int mCoBG_CheckWaterAttribute(u32 attr) {
+    if (attr == mCoBG_ATTRIBUTE_SEA) {
+        return TRUE;
+    }
+
+    if (attr >= mCoBG_ATTRIBUTE_WATER && attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+extern int mCoBG_CheckWaterAttribute_OutOfSea(u32 attr) {
+    if (attr >= mCoBG_ATTRIBUTE_WATER && attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static f32 mCoBG_wave_cos = 0.0f;
+
+extern void mCoBG_WaveCos2BgCheck(f32 value) {
+    mCoBG_wave_cos = value;
+}
+
+extern f32 mCoBG_WaveCos(void) {
+    return mCoBG_wave_cos;
+}
+
+extern int mCoBG_GetWaterFlow(xyz_t* flow, u32 attr) {
+    static xyz_t flow_data[] = {
+        {0.0f, 0.0f, 0.0f},
+        {0.0f, -5.0f, 0.0f},
+        {0.0f, 0.0f, -0.5f},
+        {-0.35355338f, 0.0f, -0.35355338f},
+        {-0.5f, 0.0f, 0.0f},
+        {-0.35355338f, 0.0f, 0.35355338f},
+        {0.0f, 0.0f, 0.5f},
+        {0.35355338f, 0.0f, 0.35355338f},
+        {0.5f, 0.0f, 0.0f},
+        {0.35355338f, 0.0f, -0.35355338f},
+    };
+
+    if (attr == mCoBG_ATTRIBUTE_SEA) {
+        static const xyz_t sea_flow = { 0.0f, 0.0f, -1.0f };
+
+        *flow = sea_flow;
+        return TRUE;
+    }
+
+    if (mCoBG_CheckWaterAttribute(attr)) {
+        int idx = attr - mCoBG_ATTRIBUTE_WATER;
+
+        *flow = flow_data[idx];
+        return TRUE;
+    }
+
+    *flow = flow_data[0];
+    return FALSE;
+}
+
+extern int mCoBG_CheckWaveAttr(u32 attr) {
+    if (attr == mCoBG_ATTRIBUTE_WAVE || attr == mCoBG_ATTRIBUTE_36 || attr == mCoBG_ATTRIBUTE_25 || attr == mCoBG_ATTRIBUTE_26) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+// @unused, @fabricated
+extern int mCoBG_CheckSand2Sea(xyz_t* pos) {
+    u32 attr = mCoBG_Wpos2BgAttribute_Original(*pos);
+
+    if (attr == mCoBG_ATTRIBUTE_SEA || mCoBG_CheckWaveAttr(attr)) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
