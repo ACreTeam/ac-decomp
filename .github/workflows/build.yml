@@ -15,10 +15,6 @@ jobs:
         version: [GAFE01_00, GAFU01_00]
 
     steps:
-    # Install uv
-    - name: Install uv
-      uses: astral-sh/setup-uv@v6
-
     # Checkout the repository
     - name: Checkout
       uses: actions/checkout@v4
@@ -26,9 +22,8 @@ jobs:
         submodules: recursive
 
     # Normalize file mod times
-    - name: Restore git file mtimes
-      run: |
-        uvx git-restore-mtime
+    - name: restore timestamps
+      uses: chetan/git-restore-mtime-action@v2
 
     # Set Git config
     - name: Git config
