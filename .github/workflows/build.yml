@@ -21,6 +21,12 @@ jobs:
       with:
         submodules: recursive
 
+    # Normalize file mod times
+    - name: Restore git file mtimes
+      run: |
+        pip install --user git-restore-mtime
+        ~/.local/bin/git-restore-mtime
+
     # Set Git config
     - name: Git config
       run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
