@@ -52,7 +52,7 @@ typedef struct notice_date_data_s {
     /* 0x02 */ u16 date;
 } mNtc_date_data_c;
 
-static mNtc_date_data_c mNtc_auto_nwrite_data[48];
+static mNtc_date_data_c mNtc_auto_nwrite_data[mNtc_DATA_LIST_NUM];
 
 static void mNtc_copy_data_list() {
     static mNtc_date_data_c auto_nwrite_date_data[mNtc_DATA_LIST_NUM] = {

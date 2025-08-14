@@ -2323,23 +2323,18 @@ extern void mNpc_SetDefAnimal(Animal_c* animal, mActor_name_t npc_id, mNpc_Defau
 }
 
 static void mNpc_SetHaveAppeared(mActor_name_t npc_id) {
-    u8 v;
-    int idx;
-    int bit;
     u8* used_tbl = Save_Get(npc_used_tbl);
+    int idx;
     int i;
 
     if (ITEM_NAME_GET_TYPE(npc_id) == NAME_TYPE_NPC) {
         idx = npc_id & 0xFFF;
         i = idx / 8;
-
+        
         if (i < ARRAY_COUNT(Save_Get(npc_used_tbl))) {
-            /* what in the fuck */
-            v = used_tbl[i];
-            bit = idx & 7;
-            bit = 1 << bit;
-            v |= bit;
-            used_tbl[i] = v;
+            used_tbl += i;
+            idx = idx & 7u;
+            *used_tbl |= 1 << idx;
         }
     }
 }
@@ -2350,7 +2345,8 @@ static int mNpc_GetHaveAppeared_idx(int idx) {
     int res = TRUE;
 
     if (i < ARRAY_COUNT(Save_Get(npc_used_tbl))) {
-        res = (used_tbl[i] >> (idx & 7)) & 1;
+        used_tbl += i;
+        res = (*used_tbl >> (idx & 7u)) & 1;
     }
 
     return res;
