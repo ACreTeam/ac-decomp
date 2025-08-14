@@ -29,6 +29,15 @@ jobs:
     - name: Prepare
       run: cp -R /orig .
 
+    # Restore any cached files
+    - name: Cache build
+      uses: actions/cache@v4
+      with:
+        path: build/${{ matrix.version }}
+        key: ${{ runner.os }}-${{ matrix.version }}-${{ hashFiles('configure.py', 'build_scripts/**') }}
+        restore-keys: |
+          ${{ runner.os }}-${{ matrix.version }}-
+
     # Build the project
     - name: Build
       run: |
