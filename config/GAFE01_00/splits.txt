@@ -1336,7 +1336,7 @@ MSL_C.PPCEABI.bare.H/direct_io.c:
 MSL_C.PPCEABI.bare.H/file_io.c:
 	.text       start:0x8009C9EC end:0x8009CBE4
 
-MSL_C.PPCEABI.bare.H/FILE_POS.C:
+MSL_C.PPCEABI.bare.H/FILE_POS.c:
 	.text       start:0x8009CBE4 end:0x8009CEB0
 
 MSL_C.PPCEABI.bare.H/mbstring.c:
