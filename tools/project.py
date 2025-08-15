@@ -16,6 +16,7 @@ import math
 import os
 import platform
 import sys
+from typing import Union
 from pathlib import Path
 from typing import IO, Any, Dict, Iterable, List, Optional, Set, Tuple, Union, cast
 
@@ -657,8 +658,7 @@ def generate_build_ninja(
         if config.custom_build_steps and step in config.custom_build_steps:
             n.comment(f"Custom build steps ({step})")
             for custom_step in config.custom_build_steps[step]:
-                outputs = cast(List[str | Path], custom_step.get("outputs"))
-
+                outputs = cast(List[Union[str, Path]], custom_step.get("outputs"))
                 if isinstance(outputs, list):
                     implicit.extend(outputs)
                 else:

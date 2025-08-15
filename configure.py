@@ -5004,75 +5004,61 @@ out_dir = config.build_dir / version
 def emit_build_rule(asset):
     steps = config.custom_build_steps.setdefault("pre-compile", [])
 
-    match asset.get("custom_type"):
-        case None:
-            return
-
-        case "pal16":
-            steps.append(
-                {
-                    "rule": "convert_pal16",
-                    "inputs": out_dir / "bin" / asset["binary"],
-                    "outputs": out_dir / "include" / asset["header"],
-                    "variables": {
-                        "symbol": asset["symbol"],
-                    },
-                    "implicit": Path("tools/converters/pal16dis.py"),
-                }
-            )
-
-        case "pal16c":
-            # Run the script in scan mode first to generate a .dd file
-            input = out_dir / "bin" / asset["binary"]
-            out_base = out_dir / "include" / asset["header"]
-            dyndep = out_dir / "include" / f"{asset['header']}.dd"
-            # We need a stamp file to use as a marker for ninja
-            stamp = out_dir / "include" / f"{asset['header']}.stamp"
-            steps.append(
-                {
-                    "rule": "scan_pal16_chunked",
-                    "inputs": input,
-                    "outputs": dyndep,
-                    "variables": {
-                        "base": out_base,
-                        "stamp": stamp,
-                        "symbol": asset["symbol"],
-                    },
-                    "implicit": Path("tools/converters/pal16dis_chunked.py"),
-                }
-            )
-            # Now the script will generate all the dynamic outputs and stamp file
-            steps.append(
-                {
-                    "rule": "convert_pal16_chunked",
-                    "inputs": input,
-                    "outputs": stamp,
-                    "variables": {
-                        "base": out_base,
-                        "symbol": asset["symbol"],
-                    },
-                    "implicit": Path("tools/converters/pal16dis_chunked.py"),
-                    "dyndep": dyndep,
-                    "order_only": dyndep,
-                }
-            )
-
-        case "vtx":
-            steps.append(
-                {
-                    "rule": "convert_vtx",
-                    "inputs": out_dir / "bin" / asset["binary"],
-                    "outputs": out_dir / "include" / asset["header"],
-                    "variables": {
-                        "symbol": asset["symbol"],
-                    },
-                    "implicit": Path("tools/converters/vtxdis.py"),
-                }
-            )
-
-        case _:
-            print("Unknown asset type: " + asset["custom_type"])
-
+    custom_type = asset.get("custom_type")
+    if custom_type is None:
+        return
+    elif custom_type == "pal16":
+        steps.append({
+            "rule": "convert_pal16",
+            "inputs": out_dir / "bin" / asset["binary"],
+            "outputs": out_dir / "include" / asset["header"],
+            "variables": {
+                "symbol": asset["symbol"],
+            },
+            "implicit": Path("tools/converters/pal16dis.py"),
+        })
+    elif custom_type == "pal16c":
+        # Run the script in scan mode first to generate a .dd file
+        input = out_dir / "bin" / asset["binary"]
+        out_base = out_dir / "include" / asset["header"]
+        dyndep = out_dir / "include" / f"{asset['header']}.dd"
+        # We need a stamp file to use as a marker for ninja
+        stamp = out_dir / "include" / f"{asset['header']}.stamp"
+        steps.append({
+            "rule": "scan_pal16_chunked",
+            "inputs": input, 
+            "outputs": dyndep,
+            "variables": {
+                "base": out_base,
+                "stamp": stamp,
+                "symbol": asset["symbol"],
+            },
+            "implicit": Path("tools/converters/pal16dis_chunked.py"),
+        })
+        steps.append({
+            "rule": "convert_pal16_chunked",
+            "inputs": input,
+            "outputs": stamp,
+            "variables": {
+                "base": out_base,
+                "symbol": asset["symbol"],
+            },
+            "implicit": Path("tools/converters/pal16dis_chunked.py"),
+            "dyndep": dyndep,
+            "order_only": dyndep,
+        })
+    elif custom_type == "vtx":
+        steps.append({
+            "rule": "convert_vtx",
+            "inputs": out_dir / "bin" / asset["binary"],
+            "outputs": out_dir / "include" / asset["header"],
+            "variables": {
+                "symbol": asset["symbol"],
+            },
+            "implicit": Path("tools/converters/vtxdis.py"),
+        })
+    else:
+        print("Unknown asset type: " + custom_type)
 
 # Parse the config and create the build rules for all our assets
 config_path = out_dir / "config.json"
