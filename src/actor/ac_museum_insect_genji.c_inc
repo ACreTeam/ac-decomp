@@ -217,7 +217,7 @@ void minsect_genji_mv(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     actor->_82--;
     if (actor->_82 < 0) {
         actor->_80 = DEG2SHORT_ANGLE(-7);
-        actor->_82 = (int)RANDOM_F(60.f) + 600;
+        actor->_82 = RANDOM(60.f) + 600;
         if (RANDOM_F(1.f) > 0.5f) {
             actor->_5E_s16 = DEG2SHORT_ANGLE(RANDOM2_F(40.f));
         } else {

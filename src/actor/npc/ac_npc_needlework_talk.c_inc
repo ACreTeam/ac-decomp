@@ -42,7 +42,7 @@ static int aNNW_get_sister_message(void) {
     if (sister_now >= aNNW_SISTER_STORY_NOW_NUM) {
         msg_no = -1;
     } else {
-        msg_no = 0x3012 + aNNW_message_table[sister_story * aNNW_SISTER_STORY_NOW_NUM + sister_now];
+        msg_no = MSG_12306 + aNNW_message_table[sister_story * aNNW_SISTER_STORY_NOW_NUM + sister_now];
     }
 
     return msg_no;
@@ -1319,7 +1319,7 @@ static int aNNW_change_talk_proc_next(NPC_NEEDLEWORK_ACTOR* actor) {
 }
 
 static void aNNW_set_force_talk_info(ACTOR* actorx) {
-    static int force_msg_table[] = { 0x2FD1, 0x2FD2, 0x2FD3, 0x2FF2, 0x2FF3, 0x3034, 0x3035 };
+    static int force_msg_table[] = { MSG_12241, MSG_12242, MSG_12243, MSG_12274, MSG_12275, MSG_12340, MSG_12341 };
     NPC_NEEDLEWORK_ACTOR* actor = (NPC_NEEDLEWORK_ACTOR*)actorx;
     ACTOR* sisterx;
 
@@ -1425,10 +1425,10 @@ static void aNNW_set_norm_talk_info(ACTOR* actorx) {
         } else {
             if (aNNW_first_talk_check(0x40)) {
                 talk_idx = aNNW_TALK_WHAT_HAPPEN;
-                msg_no = 0x3005;
+                msg_no = MSG_12293;
             } else {
                 talk_idx = aNNW_TALK_WHAT_HAPPEN_FIRST;
-                msg_no = 0x2FD4;
+                msg_no = MSG_12244;
             }
 
             actor->delay_frames = 10;

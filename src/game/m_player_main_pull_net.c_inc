@@ -92,10 +92,10 @@ static void Player_actor_SearchAnimation_Pull_net(ACTOR* actor, GAME* game, f32 
 }
 
 static int Player_actor_Get_mushi_msg_num(int msg_offs) {
-    int ret_msg_no = msg_offs + 0x2FA1;
+    int ret_msg_no = msg_offs + MSG_12193;
 
     if (msg_offs < 0x20) {
-        ret_msg_no = msg_offs + 0xA2C;
+        ret_msg_no = msg_offs + MSG_2604;
     }
 
     return ret_msg_no;
@@ -107,7 +107,7 @@ static void Player_actor_Pull_net_demo_ct(ACTOR* actor) {
     mMsg_Window_c* win = mMsg_Get_base_window_p();
     u32 label = player->item_net_catch_label;
     s8 type = player->item_net_catch_type;
-    int msg_no = 0xA2C;
+    int msg_no = MSG_2604;
 
     if (label != 0) {
         int idx = player->item_net_catch_insect_idx;
@@ -121,9 +121,9 @@ static void Player_actor_Pull_net_demo_ct(ACTOR* actor) {
                                                                 ITM_SPIRIT0, ITM_SPIRIT4, FALSE);
 
             if (item_idx == -1) {
-                msg_no = 0x2F03;
+                msg_no = MSG_12035;
             } else {
-                msg_no = Common_Get(now_private)->inventory.pockets[item_idx] + 0x1DC;
+                msg_no = Common_Get(now_private)->inventory.pockets[item_idx] + MSG_476;
             }
         } else if (main_index == mPlayer_INDEX_PULL_NET) {
             u8 str[mIN_ITEM_NAME_LEN];
@@ -144,7 +144,7 @@ static void Player_actor_Pull_net_demo_ct(ACTOR* actor) {
                     item = ((aINS_INSECT_ACTOR*)label)->item;
                 }
                 mMsg_Set_item_str_art(win, mMsg_ITEM_STR0, str, sizeof(str), mIN_get_item_article(item));
-                msg_no = 0xA4E;
+                msg_no = MSG_2638;
             } else {
                 msg_no = Player_actor_Get_mushi_msg_num(idx);
             }

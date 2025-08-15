@@ -119,8 +119,8 @@ static void aAPC_talk_set_proc(mActor_name_t actor_name) {
 }
 
 static int aAPC_get_msg_num_proc(mActor_name_t actor_name, int update_talked) {
-    static int msg_num_table[11] = { 0x3BB5, 0x3BAC, 0x3BB0, 0x3BB1, 0x3BB2, 0x3BB3,
-                                     0x3BB4, 0x3BAE, 0x3BAF, 0x3BAD, 0x3BB6 };
+    static int msg_num_table[11] = { MSG_15285, MSG_15276, MSG_15280, MSG_15281, MSG_15282, MSG_15283,
+                                     MSG_15284, MSG_15278, MSG_15279, MSG_15277, MSG_15286 };
 
     int data_idx = aAPC_get_data_idx(actor_name);
     int msg_num = -1;

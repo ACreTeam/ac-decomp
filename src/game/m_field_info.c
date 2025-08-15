@@ -3148,7 +3148,7 @@ static mActor_name_t mFI_GetShell(int is_island) {
     }
 
     /* Return a random shell from the selected table */
-    index = (int)RANDOM_F(shell_max[table]);
+    index = RANDOM(shell_max[table]);
     return shell_table[table][index];
 }
 

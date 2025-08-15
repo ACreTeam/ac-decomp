@@ -138,10 +138,10 @@ static void Player_actor_DeleteMark_Notice_rod(ACTOR* actor) {
 }
 
 static int Player_actor_Get_sakana_msg_num(int msg_offs) {
-    int ret_msg_no = msg_offs + 0x2FA9;
+    int ret_msg_no = msg_offs + MSG_12201;
 
     if (msg_offs < 0x20) {
-        ret_msg_no = msg_offs + 0x1327;
+        ret_msg_no = msg_offs + MSG_4903;
     }
 
     return ret_msg_no;
@@ -152,7 +152,7 @@ static void Player_actor_Notice_rod_demo_ct(ACTOR* actor) {
     rgba_t color;
     mMsg_Window_c* win = mMsg_Get_base_window_p();
     UKI_ACTOR* uki = (UKI_ACTOR*)player->fishing_rod_actor_p;
-    int msg_no = 0x1327;
+    int msg_no = MSG_4903;
 
     if (uki != NULL) {
         int type = uki->gyo_type;
@@ -167,7 +167,7 @@ static void Player_actor_Notice_rod_demo_ct(ACTOR* actor) {
                         mIN_copy_name_str(str, uki->get_fish_type_proc(&uki->actor_class));
                         mMsg_Set_item_str_art(win, mMsg_ITEM_STR0, str, sizeof(str),
                                               mIN_get_item_article(uki->get_fish_type_proc(&uki->actor_class)));
-                        msg_no = 0x1349;
+                        msg_no = MSG_4937;
                     } else {
                         msg_no = Player_actor_Get_sakana_msg_num(type);
                     }
@@ -175,7 +175,7 @@ static void Player_actor_Notice_rod_demo_ct(ACTOR* actor) {
                     msg_no = Player_actor_Get_sakana_msg_num(type);
                 }
             } else {
-                msg_no = type + 0x1997;
+                msg_no = type + MSG_6551;
             }
         }
     }

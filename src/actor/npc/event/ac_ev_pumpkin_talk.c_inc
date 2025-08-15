@@ -20,7 +20,8 @@ static int aEPK_get_trick_type(void) {
                 }
                 break;
             case NAME_TYPE_ITEM1:
-                if (ITEM_NAME_GET_CAT(*pocket_p) != ITEM1_CAT_TOOL && (NowPrivate_GetItemCond(i) & mPr_ITEM_COND_QUEST) == 0) {
+                if (ITEM_NAME_GET_CAT(*pocket_p) != ITEM1_CAT_TOOL &&
+                    (NowPrivate_GetItemCond(i) & mPr_ITEM_COND_QUEST) == 0) {
                     idx[count] = i;
                     count++;
                 }
@@ -248,7 +249,7 @@ static void aEPK_give_a_present_demo_start_wait_talk_proc(EV_PUMPKIN_ACTOR* pump
 static void aEPK_give_a_present_demo_end_wait_talk_proc(EV_PUMPKIN_ACTOR* pumpkin, GAME_PLAY* play) {
     if (aHOI_TRANSFER_DONE()) {
         mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
-        
+
         mMsg_Unset_LockContinue(msg_p);
         mMsg_Set_continue_msg_num(msg_p, 0x09BA);
         aEPK_change_talk_proc(pumpkin, aEPK_END_TALK);
@@ -258,7 +259,7 @@ static void aEPK_give_a_present_demo_end_wait_talk_proc(EV_PUMPKIN_ACTOR* pumpki
 static void aEPK_pl_demo_code_end_wait_talk_proc(EV_PUMPKIN_ACTOR* pumpkin, GAME_PLAY* play) {
     if (mDemo_Get_OrderValue(mDemo_ORDER_PLAYER, 0) == 0) {
         mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
-        
+
         mMsg_Unset_LockContinue(msg_p);
         mMsg_Set_ForceNext(msg_p);
         mMsg_ChangeMsgData(msg_p, 0x09B7);
@@ -304,11 +305,11 @@ static void aEPK_set_talk_info(ACTOR* actorx) {
     mEv_set_status(mEv_EVENT_HALLOWEEN, mEv_STATUS_TALK);
     if (play->block_table.block_x == common_p->bx && play->block_table.block_z == common_p->bz) {
         int rnd = RANDOM(6);
-        
-        msg_no = 0x09BC + rnd;
+
+        msg_no = MSG_2492 + rnd;
         talk_act = aEPK_END_TALK;
     } else {
-        msg_no = 0x098A;
+        msg_no = MSG_2442;
         talk_act = aEPK_FIRST_CALL_TALK_PROC;
     }
 

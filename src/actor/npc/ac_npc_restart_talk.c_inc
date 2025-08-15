@@ -1,7 +1,7 @@
 static int aNRST_get_message(NPC_RESTART_ACTOR* actor, int idx, int group) {
-    static int msg_table[] = { 0x30CD, 0x30E1, 0x30F5, 0x3109, 0x311D, 0x3131 };
-    static int msg_table2[] = { 0x2B09, 0x2B0F, 0x2B15, 0x2B1B, 0x2B21, 0x2B27 };
-    static int msg_table3[] = { 0x3B14, 0x3B1E, 0x3B28, 0x3B32, 0x3B3C, 0x3B46 };
+    static int msg_table[] = { MSG_12493, MSG_12513, MSG_12533, MSG_12553, MSG_12573, MSG_12593 };
+    static int msg_table2[] = { MSG_11017, MSG_11023, MSG_11029, MSG_11035, MSG_11041, MSG_11047 };
+    static int msg_table3[] = { MSG_15124, MSG_15134, MSG_15144, MSG_15154, MSG_15164, MSG_15174 };
     int looks = mNpc_GetNpcLooks((ACTOR*)actor);
     int msg_no;
 
@@ -305,7 +305,7 @@ static int aNRST_talk_end_chk(ACTOR* actorx, GAME* game) {
     int ret = FALSE;
 
     actor->talk_proc(actor, play);
-    if (!mDemo_Check(mDemo_TYPE_SPEAK, actorx)) {        
+    if (!mDemo_Check(mDemo_TYPE_SPEAK, actorx)) {
         aNRST_think_init_proc((NPC_ACTOR*)actorx, play);
         actor->talk_end = TRUE;
         ret = TRUE;

@@ -279,7 +279,7 @@ static void aNGD_approach(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
 }
 
 static void aNGD_set_talk_info_talk_start_wait(ACTOR* actorx) {
-    mDemo_Set_msg_num(0x2AC6);
+    mDemo_Set_msg_num(MSG_10950);
     aNGD_set_default_talk_info();
     ((NPC_GUIDE_ACTOR*)actorx)->obj_look_type = aNGD_OBJ_LOOK_TYPE_TALK;
 }
@@ -536,7 +536,7 @@ static void aNGD_move_to_deck(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
 }
 
 static void aNGD_set_talk_info_keitai_on(ACTOR* actorx) {
-    mDemo_Set_msg_num(0x2AD0);
+    mDemo_Set_msg_num(MSG_10960);
     aNGD_set_default_talk_info();
 }
 
@@ -597,7 +597,7 @@ static void aNGD_return_approach(NPC_GUIDE_ACTOR* guide, GAME_PLAY* play) {
 }
 
 static void aNGD_set_talk_info_last_talk_start_wait(ACTOR* actorx) {
-    mDemo_Set_msg_num(0x2AD1);
+    mDemo_Set_msg_num(MSG_10961);
     aNGD_set_default_talk_info();
     ((NPC_GUIDE_ACTOR*)actorx)->obj_look_type = aNGD_OBJ_LOOK_TYPE_TALK;
 }

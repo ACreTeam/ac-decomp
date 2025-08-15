@@ -272,10 +272,10 @@ static void aBTD_sing_sendo_start_wait_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLA
   };
 
   static int sing_1st_part_msg_base_no[4] = {
-    0x3091,
-    0x3163,
-    0x3096,
-    0x3168
+    MSG_12433,
+    MSG_12643,
+    MSG_12438,
+    MSG_12648
   };
 
   int at_island = boat_demo->at_island;
@@ -310,10 +310,10 @@ static void aBTD_sing_sendo_start_wait_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLA
 
 static void aBTD_sendo_dialogue_start_wait_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
   static int sing_dialogue_msg_base_no[4] = {
-    0x309B,
-    0x316D,
-    0x30A5,
-    0x3177
+    MSG_12443,
+    MSG_12653,
+    MSG_12453,
+    MSG_12663
   };
 
   int msg_no = sing_dialogue_msg_base_no[boat_demo->player_pattern] + boat_demo->sing_dialog_ofs;
@@ -331,10 +331,10 @@ static void aBTD_sing_sendo_start_wait2_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PL
   };
 
   static int sing_2nd_part_msg_base_no[4] = {
-    0x30AF,
-    0x3181,
-    0x30AF,
-    0x3181
+    MSG_12463,
+    MSG_12673,
+    MSG_12463,
+    MSG_12673
   };
 
   int song_no;

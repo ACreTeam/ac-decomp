@@ -86,7 +86,7 @@ static void aEGH_byebye_check(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
             switch (ghost->think_act) {
                 case aEGH_THINK_SPEAK: {
                     aEGH_setup_think_proc(ghost, play, aEGH_THINK_BYEBYE);
-                    ghost->msg_no = 0x2EDD;
+                    ghost->msg_no = MSG_11997;
                     ghost->npc_class.actor_class.talk_distance = 1000.0f;
                     ghost->_9AA = 1;
                     break;
@@ -198,12 +198,12 @@ static void aEGH_normal_wait_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
 static void aEGH_irai_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
     ghost->npc_class.actor_class.talk_distance = 80.0f;
     aEGH_normal_wait_init(ghost, play);
-    ghost->msg_no = 0x2EE2;
+    ghost->msg_no = MSG_12002;
 }
 
 static void aEGH_irai_af_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
     ghost->npc_class.actor_class.talk_distance = 55.0f;
-    ghost->msg_no = 0x2EE7;
+    ghost->msg_no = MSG_12007;
     (*Common_Get(clip).npc_clip->chg_schedule_proc)((NPC_ACTOR*)ghost, play, 5);
     ghost->npc_class.actor_class.status_data.weight = 80;
 }
@@ -211,13 +211,13 @@ static void aEGH_irai_af_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
 static void aEGH_bye_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
     ghost->npc_class.actor_class.talk_distance = 280.0f;
     aEGH_normal_wait_init(ghost, play);
-    ghost->msg_no = 0x2ED8;
+    ghost->msg_no = MSG_11992;
 }
 
 static void aEGH_welcom_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
     ghost->npc_class.actor_class.talk_distance = 200.0f;
     aEGH_normal_wait_init(ghost, play);
-    ghost->msg_no = 0x2ED3;
+    ghost->msg_no = MSG_11987;
 }
 
 static void aEGH_byebye_init(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {

@@ -247,11 +247,11 @@ static int aNM2_get_msg_no_mishiranuneko_talk_start() {
     int before_idx = aNM2_GetBeforePrivateIdx(Now_Private);
     int private_idx = mPr_GetPrivateIdx(&Now_Private->player_ID);
     if (before_idx != -1) {
-        res = 0x3274;
+        res = MSG_12916;
     } else if (private_idx != -1) {
-        res = 0x3275;
+        res = MSG_12917;
     } else {
-        res = 0x3276;
+        res = MSG_12918;
     }
     return res;
 }
@@ -338,7 +338,7 @@ static void aNM2_set_talk_info_announce_start_wait(ACTOR* actorx) {
     rgba_t color;
 
     mMsg_SET_FREE_STR(mMsg_FREE_STR1, Save_Get(land_info.name), LAND_NAME_SIZE);
-    mDemo_Set_msg_num(0x35af);
+    mDemo_Set_msg_num(MSG_13743);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
     mDemo_Set_talk_change_player(FALSE);
@@ -513,9 +513,9 @@ static void aNM2_set_talk_info_talk_start_wait(ACTOR* actorx) {
     int msg_no;
     mMsg_SET_FREE_STR(mMsg_FREE_STR1, Save_Get(land_info).name, LAND_NAME_SIZE);
     if ((Now_Private->state_flags & mPr_FLAG_1)) {
-        msg_no = 0x33f3;
+        msg_no = MSG_13299;
     } else {
-        msg_no = 0x33f2;
+        msg_no = MSG_13298;
         Now_Private->state_flags |= mPr_FLAG_1;
     }
     mDemo_Set_msg_num(msg_no);

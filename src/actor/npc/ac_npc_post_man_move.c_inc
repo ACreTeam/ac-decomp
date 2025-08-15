@@ -54,7 +54,7 @@ static void aPMAN_talk_check(NPC_POST_MAN* actor, GAME_PLAY* play) {
 
 static void aPMAN_set_talk_info_talk_check(ACTOR* actorx) {
     static f32 rnd_base[] = { 12.0f, 4.0f };
-    static int msg_no_base[] = { 0x08BF, 0x08CB };
+    static int msg_no_base[] = { MSG_2239, MSG_2251 };
     NPC_POST_MAN* actor = (NPC_POST_MAN*)actorx;
     int type;
     int msg_no;
