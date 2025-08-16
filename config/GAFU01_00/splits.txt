@@ -1500,7 +1500,7 @@ MSL_C.PPCEABI.bare.H/direct_io.c:
 MSL_C.PPCEABI.bare.H/file_io.c:
 	.text       start:0x800A648C end:0x800A6780
 
-MSL_C.PPCEABI.bare.H/FILE_POS.C:
+MSL_C.PPCEABI.bare.H/FILE_POS.c:
 	.text       start:0x800A6780 end:0x800A6B40
 
 MSL_C.PPCEABI.bare.H/mbstring.c:

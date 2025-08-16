@@ -28,7 +28,7 @@ jobs:
 
     # Normalize file mod times
     - name: Restore timestamps
-      run: uv run https://raw.githubusercontent.com/MestreLion/git-tools/refs/tags/v2022.12/git-restore-mtime
+      run: uv run https://raw.githubusercontent.com/MestreLion/git-tools/refs/tags/v2022.12/git-restore-mtime --merge --commit-time
 
     # Copy the original files to the workspace
     - name: Prepare
@@ -55,15 +55,14 @@ jobs:
       run: |
         python configure.py --map --version ${{ matrix.version }} \
             --binutils /binutils --compilers /compilers
-        ninja all_source build/${{ matrix.version }}/progress.json \
-            build/${{ matrix.version }}/report.json
+        ninja all_source progress build/${{ matrix.version }}/report.json
 
     # Upload map files
     - name: Upload map
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.version }}_maps
-        path: build/${{ matrix.version }}/**/*.MAP
+        path: build/${{ matrix.version }}/**/*.map
 
     # Upload progress report
     - name: Upload report

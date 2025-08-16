@@ -108,6 +108,12 @@ parser.add_argument(
     help="path to sjiswrap.exe (optional)",
 )
 parser.add_argument(
+    "--ninja",
+    metavar="BINARY",
+    type=Path,
+    help="path to ninja binary (optional)"
+)
+parser.add_argument(
     "--orthrus",
     metavar="BINARY",
     type=Path,
@@ -123,6 +129,13 @@ parser.add_argument(
     dest="non_matching",
     action="store_true",
     help="builds equivalent (but non-matching) or modded objects",
+)
+parser.add_argument(
+    "--warn",
+    dest="warn",
+    type=str,
+    choices=["all", "off", "error"],
+    help="how to handle warnings",
 )
 parser.add_argument(
     "--no-progress",
@@ -146,6 +159,7 @@ config.generate_map = args.map
 config.non_matching = args.non_matching
 config.sjiswrap_path = args.sjiswrap
 config.orthrus_path = args.orthrus
+config.ninja_path = args.ninja
 config.progress = args.progress
 if not is_windows():
     config.wrapper = args.wrapper
@@ -155,11 +169,11 @@ if not config.non_matching:
 
 # Tool versions
 config.binutils_tag = "2.42-1"
-config.compilers_tag = "20240706"
+config.compilers_tag = "20250812"
 config.dtk_tag = "v1.6.2"
-config.objdiff_tag = "v3.0.0-beta.9"
-config.sjiswrap_tag = "v1.2.0"
-config.wibo_tag = "0.6.11"
+config.objdiff_tag = "v3.0.0-beta.14"
+config.sjiswrap_tag = "v1.2.1"
+config.wibo_tag = "0.7.0"
 config.orthrus_tag = "v0.2.0"
 
 # Project
@@ -180,7 +194,7 @@ config.asflags = [
 config.ldflags = [
     "-fp hardware",
     "-nodefaults",
-    "-warn off",
+    "-warn off",  # Ignore forcestrip warnings
 ]
 if args.debug:
     config.ldflags.append("-g")
@@ -227,6 +241,14 @@ if args.debug:
     cflags_base.extend(["-sym on", "-DDEBUG=1", "-D_DEBUG"])
 else:
     cflags_base.extend(["-sym on", "-DDEBUG=0", "-DNDEBUG"])
+
+# Warning flags
+if args.warn == "all":
+    cflags_base.append("-W all")
+elif args.warn == "off":
+    cflags_base.append("-W off")
+elif args.warn == "error":
+    cflags_base.append("-W error")
 
 cflags_common = [
     # Needed for N64 SDK
@@ -838,7 +860,7 @@ config.libs = [
             Object(Matching, "MSL_C.PPCEABI.bare.H/e_rem_pio2.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/errno.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/file_io.c"),
-            Object(Matching, "MSL_C.PPCEABI.bare.H/FILE_POS.C"),
+            Object(Matching, "MSL_C.PPCEABI.bare.H/FILE_POS.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/float.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/k_cos.c"),
             Object(Matching, "MSL_C.PPCEABI.bare.H/k_rem_pio2.c"),
@@ -5146,6 +5168,24 @@ for file_path in N64_SDK_files:
         except Exception as e:
             print(f"Error fetching {file_path}: {e}")
 
+
+# Optional callback to adjust link order. This can be used to add, remove, or reorder objects.
+# This is called once per module, with the module ID and the current link order.
+#
+# For example, this adds "dummy.c" to the end of the DOL link order if configured with --non-matching.
+# "dummy.c" *must* be configured as a Matching (or Equivalent) object in order to be linked.
+def link_order_callback(module_id: int, objects: List[str]) -> List[str]:
+    # Don't modify the link order for matching builds
+    if not config.non_matching:
+        return objects
+    if module_id == 0:  # DOL
+        return objects + ["dummy.c"]
+    return objects
+
+# Uncomment to enable the link order callback.
+# config.link_order_callback = link_order_callback
+
+
 # Optional extra categories for progress tracking
 # Adjust as desired for your project
 config.progress_categories = [
@@ -5156,6 +5196,12 @@ config.progress_categories = [
     ProgressCategory("library", "Library Code"),
 ]
 config.progress_each_module = args.verbose
+# Optional extra arguments to `objdiff-cli report generate`
+config.progress_report_args = [
+    # Marks relocations as mismatching if the target value is different
+    # Default is "functionRelocDiffs=none", which is most lenient
+    # "--config functionRelocDiffs=data_value",
+]
 
 if args.mode == "configure":
     # Write build.ninja and objdiff.json
