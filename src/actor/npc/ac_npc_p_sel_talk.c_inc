@@ -170,7 +170,7 @@ static void aNPS_change_talk_proc(NPC_P_SEL_ACTOR* p_sel, int talk_idx) {
 }
 
 static void aNPS_set_talk_info_talk_request(ACTOR* actorx) {
-    int msg_no = !mFRm_CheckSaveData() ? 0x09C7 : 0x09CA;
+    int msg_no = !mFRm_CheckSaveData() ? MSG_2503 : MSG_2506;
 
     mDemo_Set_msg_num(msg_no);
     mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);

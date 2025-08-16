@@ -73,7 +73,7 @@ static int aETKY_DecidePresent(u16* given_bitfield) {
     int check_count = 0;
     int selected;
     int i;
-    
+
     if ((*given_bitfield & aETKY_ALL_BITS) == aETKY_ALL_BITS) {
         *given_bitfield = 0;
     }
@@ -229,7 +229,7 @@ static void aETKY_think_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int proc_type)
 
 static void aETKY_schedule_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     EV_TURKEY_ACTOR* turkey = (EV_TURKEY_ACTOR*)nactorx;
-    
+
     nactorx->think.think_proc = aETKY_think_proc;
     nactorx->condition_info.hide_request = FALSE;
     nactorx->palActorIgnoreTimer = -1;
@@ -462,14 +462,14 @@ static void aETKY_GetTalkStartStatus(int* msg_no, int* next_talk_act, ACTOR* act
     aEv_turkey_common_c* common_p = turkey->ev_common_p;
 
     if (turkey->_9B1 == 1) {
-        *msg_no = 0x3C1D + gamePT->frame_counter % 5;
+        *msg_no = MSG_15389 + gamePT->frame_counter % 5;
         *next_talk_act = aETKY_TALK_WAIT_END;
     } else {
-        *msg_no = 0x3BFE;
+        *msg_no = MSG_15358;
         *next_talk_act = aETKY_TALK_EXPLAIN_ENV0;
 
         if (common_p != NULL && common_p->_00 != 0) {
-            *msg_no = 0x3C05 + turkey->present_idx;
+            *msg_no = MSG_15365 + turkey->present_idx;
             *next_talk_act = aETKY_TALK_FIND_REAC;
         }
     }
@@ -491,7 +491,7 @@ static void aETKY_SetTalkInfo(ACTOR* actorx) {
 
 static void aETKY_TalkRequest(ACTOR* actorx, GAME* game) {
     EV_TURKEY_ACTOR* turkey = (EV_TURKEY_ACTOR*)actorx;
-    
+
     if (turkey->_9B1 == 0) {
         ACTOR* playerx = GET_PLAYER_ACTOR_GAME_ACTOR(game);
         xyz_t delta;
@@ -531,7 +531,7 @@ static int aETKY_TalkEndCheck(ACTOR* actorx, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
 
     (*turkey->talk_proc)(turkey, play);
-    
+
     if (!mDemo_Check(mDemo_TYPE_TALK, actorx) && !mDemo_Check(mDemo_TYPE_SPEAK, actorx)) {
         return TRUE;
     }
@@ -551,7 +551,7 @@ static int aETKY_TalkEndCheck(ACTOR* actorx, GAME* game) {
 }
 
 static void aETKY_actor_move(ACTOR* actorx, GAME* game) {
-    EV_TURKEY_ACTOR* turkey = (EV_TURKEY_ACTOR*)actorx;    
+    EV_TURKEY_ACTOR* turkey = (EV_TURKEY_ACTOR*)actorx;
     ACTOR* playerx = GET_PLAYER_ACTOR_GAME_ACTOR(game); // @unused
 
     turkey->npc_class.palActorIgnoreTimer = -1;
