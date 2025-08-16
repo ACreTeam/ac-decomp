@@ -126,12 +126,13 @@ static void mHD_hand_position_move(Submenu* submenu) {
     dY = pos[1] - hand_ovl->info.pos[1];
 
     if (fabsf(dX) > 0.01f || fabsf(dY) > 0.01f) {
-        f32 dist = sqrtf(dX * dX + dY * dY);
-        f32 dist2 = dist;
-        f32 rate_speed = sqrtf(1.0f - rate);
-        s16 p0 = (GETREG(UREG, 19));
-        s16 p1 = (GETREG(UREG, 20));
-        f32 calc = add_calc(&dist2, 0.0f, 1.0f - rate_speed, (12.0f + p0 * 0.1f) * 0.5f, (1.0f + p1 * 0.1f) * 0.5f);
+        f32 dist;
+        f32 dist2;
+        f32 calc;
+
+        dist = dist2 = sqrtf(SQ(dX) + SQ(dY));
+        dist = dist2; // this second set is necessary for Aus version, seems sus
+        calc = add_calc(&dist2, 0.0f, CALC_EASE(rate), (12.0f + GETREG(UREG, 19) * 0.1f) * 0.5f, (1.0f + GETREG(UREG, 20) * 0.1f) * 0.5f);
 
         if (fabsf(calc) < 0.1f) {
             if (hand_ovl->info.move_flag == mHD_MOVE_SWITCH_LEFT) {

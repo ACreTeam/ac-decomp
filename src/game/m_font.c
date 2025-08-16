@@ -60,14 +60,13 @@ static int mMsg_CutLeftSpace(u8* str, int str_len) {
     return str_len - i;
 }
 
-static u8 mFont_suji_data[] = "0123456789";
+static u8 mFont_suji_data[10] = "0123456789";
 
 static int mFont_suji_check(u8 c) {
-    u8* suji = mFont_suji_data;
     int i;
 
     for (i = 0; i < 10; i++) {
-        if (c == suji[i]) {
+        if (c == mFont_suji_data[i]) {
             return TRUE;
         }
     }
@@ -201,13 +200,11 @@ extern u8 mFont_small_to_capital(u8 small) {
     u8* t = (u8*)tbl;
     int i;
 
-    for (i = 0; i < 56; i++) {
+    for (i = 0; i < 56; i++, t += 2) {
         if (t[0] == small) {
             res = t[1];
             break;
         }
-
-        t += 2;
     }
 
     return res;

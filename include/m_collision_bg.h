@@ -74,45 +74,45 @@ enum background_attribute {
     mCoBG_ATTRIBUTE_WOOD,
     mCoBG_ATTRIBUTE_SEA,
 
-    mCoBG_ATTRIBUTE_25,
-    mCoBG_ATTRIBUTE_26,
-    mCoBG_ATTRIBUTE_27,
-    mCoBG_ATTRIBUTE_28,
-    mCoBG_ATTRIBUTE_29,
-    mCoBG_ATTRIBUTE_30,
-    mCoBG_ATTRIBUTE_31,
-    mCoBG_ATTRIBUTE_32,
-    mCoBG_ATTRIBUTE_33,
-    mCoBG_ATTRIBUTE_34,
-    mCoBG_ATTRIBUTE_35,
-    mCoBG_ATTRIBUTE_36,
-    mCoBG_ATTRIBUTE_37,
-    mCoBG_ATTRIBUTE_38,
-    mCoBG_ATTRIBUTE_39,
-    mCoBG_ATTRIBUTE_40,
-    mCoBG_ATTRIBUTE_41,
-    mCoBG_ATTRIBUTE_42,
-    mCoBG_ATTRIBUTE_43,
-    mCoBG_ATTRIBUTE_44,
-    mCoBG_ATTRIBUTE_45,
-    mCoBG_ATTRIBUTE_46,
-    mCoBG_ATTRIBUTE_47,
-    mCoBG_ATTRIBUTE_48,
-    mCoBG_ATTRIBUTE_49,
-    mCoBG_ATTRIBUTE_50,
-    mCoBG_ATTRIBUTE_51,
-    mCoBG_ATTRIBUTE_52,
-    mCoBG_ATTRIBUTE_53,
-    mCoBG_ATTRIBUTE_54,
-    mCoBG_ATTRIBUTE_55,
-    mCoBG_ATTRIBUTE_56,
-    mCoBG_ATTRIBUTE_57,
-    mCoBG_ATTRIBUTE_58,
-    mCoBG_ATTRIBUTE_59,
-    mCoBG_ATTRIBUTE_60,
-    mCoBG_ATTRIBUTE_61,
-    mCoBG_ATTRIBUTE_62,
-    mCoBG_ATTRIBUTE_63,
+    mCoBG_ATTRIBUTE_25, // wave_se2
+    mCoBG_ATTRIBUTE_26, // wave_sw2
+    mCoBG_ATTRIBUTE_27, // wood bridge nw
+    mCoBG_ATTRIBUTE_28, // wood bridge sw
+    mCoBG_ATTRIBUTE_29, // wood bridge se
+    mCoBG_ATTRIBUTE_30, // wood bridge ne
+    mCoBG_ATTRIBUTE_31, // wood bridge center
+    mCoBG_ATTRIBUTE_32, // stone bridge n
+    mCoBG_ATTRIBUTE_33, // stone bridge e
+    mCoBG_ATTRIBUTE_34, // stone bridge w
+    mCoBG_ATTRIBUTE_35, // stone bridge s
+    mCoBG_ATTRIBUTE_36, // wave_s
+    mCoBG_ATTRIBUTE_37, // wave_se
+    mCoBG_ATTRIBUTE_38, // wave_sw
+    mCoBG_ATTRIBUTE_39, // river bank nw
+    mCoBG_ATTRIBUTE_40, // river bank sw
+    mCoBG_ATTRIBUTE_41, // river bank se
+    mCoBG_ATTRIBUTE_42, // river bank ne
+    mCoBG_ATTRIBUTE_43, // grass 3 north (river)
+    mCoBG_ATTRIBUTE_44, // grass 3 east (river)
+    mCoBG_ATTRIBUTE_45, // grass 3 west (river)
+    mCoBG_ATTRIBUTE_46, // grass 3 south (river)
+    mCoBG_ATTRIBUTE_47, // grass 4 north (cliff)
+    mCoBG_ATTRIBUTE_48, // grass 4 east (cliff)
+    mCoBG_ATTRIBUTE_49, // grass 4 west (cliff)
+    mCoBG_ATTRIBUTE_50, // grass 4 south (cliff)
+    mCoBG_ATTRIBUTE_51, // grass 4 tunnel left upper
+    mCoBG_ATTRIBUTE_52, // grass 4 tunnel left lower
+    mCoBG_ATTRIBUTE_53, // grass 4 tunnel right lower
+    mCoBG_ATTRIBUTE_54, // grass 4 tunnel right upper
+    mCoBG_ATTRIBUTE_55, // grass 3 north west (cliff)
+    mCoBG_ATTRIBUTE_56, // grass 3 south west (cliff)
+    mCoBG_ATTRIBUTE_57, // grass 3 south east (cliff)
+    mCoBG_ATTRIBUTE_58, // grass 3 north east (cliff)
+    mCoBG_ATTRIBUTE_59, // grass 3 north west (river bank)
+    mCoBG_ATTRIBUTE_60, // grass 3 south west (river bank)
+    mCoBG_ATTRIBUTE_61, // grass 3 south east (river bank)
+    mCoBG_ATTRIBUTE_62, // grass 3 north east (river bank)
+    mCoBG_ATTRIBUTE_63, // slate (slope)
     // ...
 
     mCoBG_ATTRIBUTE_NONE = 100
@@ -457,7 +457,11 @@ extern int mCoBG_CheckSandUt_ForFish(xyz_t* pos);
 extern int mCoBG_CheckSandHole_ClData(mCoBG_Collision_u* col);
 extern int mCoBG_BnumUnum2SandHole(int bx, int bz, int b_ux, int b_uz);
 extern int mCoBG_CheckHole(xyz_t pos);
-extern int mCoBG_CheckSkySwing(xyz_t pos);
+#if VERSION >= VER_GAFU01_00
+extern int mCoBG_CheckAirSwing(xyz_t pos);
+#else
+extern int mCoBG_CheckAirSwing(xyz_t pos);
+#endif
 extern int mCoBG_CheckGrassX_ClData(mCoBG_Collision_u* col);
 extern int mCoBG_CheckGrassX(const xyz_t* pos);
 extern int mCoBG_CheckWave_ClData(mCoBG_Collision_u* col);
@@ -496,7 +500,11 @@ extern void mCoBG_Ut2SetDefaultOffset(int ux, int uz);
 
 extern int mCoBG_LineCheck_RemoveFg(xyz_t* rev, xyz_t start_pos, xyz_t end_pos, mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_proc, int line_check_type);
 
+#if VERSION >= VER_GAFU01_00
+extern f32 mCoBG_Wpos2BgHeight_AngleSXXX(s_xyz* ground_angle, xyz_t pos, f32 ground_dist);
+#else
 extern f32 mCoBG_GetBgY_AngleS_FromWpos2(s_xyz* ground_angle, xyz_t pos, f32 ground_dist);
+#endif
 extern f32 mCoBG_GetWaterHeight_File(xyz_t pos, char* file, int line);
 #define mCoBG_GetWaterHeight(wpos) mCoBG_GetWaterHeight_File(wpos, __FILE__, __LINE__)
 extern int mCoBG_CheckWaterAttribute(u32 attr);

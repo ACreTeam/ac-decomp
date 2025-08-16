@@ -2723,14 +2723,15 @@ static void mNpc_SetNpcHome(Animal_c* animal, Anmhome_c* reserved, u8 reserved_n
                 idx = fake_table_p[n];
 
                 if (idx >= reserved_num) {
-                    /* I don't like this */
-                    while ((idx = fake_table_p[n], idx >= reserved_num) && n < reserved_num) {
+                    while ((fake_table_p[n] >= reserved_num) && n < reserved_num) {
                         n++;
                     }
 
                     if (n >= reserved_num) {
                         return;
                     }
+
+                    idx = fake_table_p[n];
                 }
 
                 if (idx < reserved_num) {
@@ -4330,6 +4331,7 @@ static int mNpc_GrowLooksNpcIdx(u8 looks) {
     }
 
     if (candidates > 0) {
+        looks_table = npc_looks_table;
         selected = RANDOM(candidates);
         npc_idx = 0;
 
@@ -4338,7 +4340,7 @@ static int mNpc_GrowLooksNpcIdx(u8 looks) {
                 break;
             }
 
-            for (j = 0; j < 8; j++) {
+            for (j = 0; j < 8; looks_table++, npc_idx++, j++) {
                 if (npc_idx >= NPC_NUM) {
                     break;
                 }
@@ -4351,8 +4353,6 @@ static int mNpc_GrowLooksNpcIdx(u8 looks) {
                         selected--;
                     }
                 }
-
-                npc_idx++;
             }
 
             if (res != -1) {
@@ -4617,7 +4617,6 @@ extern int mNpc_GetMakeUtNuminBlock_hard_area(int* ut_x, int* ut_z, int bx, int 
     int now_ut_x;
     int now_ut_z;
     mCoBG_Collision_u* col;
-    mCoBG_Collision_u* col_p;
     mActor_name_t* items;
     int min_ut_x;
     int min_ut_z;
@@ -4639,14 +4638,10 @@ extern int mNpc_GetMakeUtNuminBlock_hard_area(int* ut_x, int* ut_z, int bx, int 
     if (items != NULL && col != NULL) {
         for (i = restrict_area; i < UT_Z_NUM - restrict_area; i++) {
             for (j = restrict_area; j < UT_X_NUM - restrict_area; j++) {
-                col_p = &col[i * UT_X_NUM + j];
-
-                if (mNpc_CheckNpcSet_fgcol_hard(items[i * UT_X_NUM + j], col_p->data.unit_attribute) == TRUE) {
-                    center = col_p->data.center;
-
+                if (mNpc_CheckNpcSet_fgcol_hard(items[i * UT_X_NUM + j], col[i * UT_X_NUM + j].data.unit_attribute) == TRUE) {
                     /* Check that the height of each point on the unit is equal*/
-                    if ((int)center == col_p->data.top_left && center == col_p->data.bot_left &&
-                        center == col_p->data.bot_right && (int)center == col_p->data.top_right) {
+                    if (col[i * UT_X_NUM + j].data.center == col[i * UT_X_NUM + j].data.top_left && col[i * UT_X_NUM + j].data.center == col[i * UT_X_NUM + j].data.bot_left &&
+                        col[i * UT_X_NUM + j].data.center == col[i * UT_X_NUM + j].data.bot_right && col[i * UT_X_NUM + j].data.center == col[i * UT_X_NUM + j].data.top_right) {
 
                         now_ut_x = 8 - j;
                         now_ut_z = 8 - i;
@@ -4801,10 +4796,7 @@ extern int mNpc_GetMakeUtNuminBlock_hide_hard_area(int* ut_x, int* ut_z, int bx,
     int now_ut_z;
     int now_ut_x;
     mCoBG_Collision_u* col_top;
-    mCoBG_Collision_u* col_p;
     mActor_name_t* fg_top;
-    mActor_name_t* item_p;
-    u32 center;
     int min_ut_x;
     int min_ut_z;
     int res;
@@ -4827,15 +4819,10 @@ extern int mNpc_GetMakeUtNuminBlock_hide_hard_area(int* ut_x, int* ut_z, int bx,
 
         for (i = restrict_area; i < UT_Z_NUM - restrict_area; i++) {
             for (j = restrict_area; j < UT_X_NUM - restrict_area; j++) {
-                item_p = &fg_top[i * UT_X_NUM + j];
-                col_p = &col_top[i * UT_X_NUM + j];
-
-                if (mNpc_CheckNpcSet_fgcol_hard(item_p[0], col_p->data.unit_attribute) == TRUE) {
-                    center = col_p->data.center;
-
+                if (mNpc_CheckNpcSet_fgcol_hard(fg_top[i * UT_X_NUM + j], col_top[i * UT_X_NUM + j].data.unit_attribute) == TRUE) {
                     /* Check that the height of each point on the unit is equal*/
-                    if ((int)center == col_p->data.top_left && center == col_p->data.bot_left &&
-                        center == col_p->data.bot_right && (int)center == col_p->data.top_right &&
+                    if (col_top[i * UT_X_NUM + j].data.center == col_top[i * UT_X_NUM + j].data.top_left && col_top[i * UT_X_NUM + j].data.center == col_top[i * UT_X_NUM + j].data.bot_left &&
+                        col_top[i * UT_X_NUM + j].data.center == col_top[i * UT_X_NUM + j].data.bot_right && col_top[i * UT_X_NUM + j].data.center == col_top[i * UT_X_NUM + j].data.top_right &&
                         ((hide_ut_bit[i] >> j) & 1) == 1) {
 
                         now_ut_x = 8 - j;
@@ -5753,6 +5740,113 @@ extern int mNpc_CheckFtrIsIslandNormalFtr(mActor_name_t ftr) {
     return res;
 }
 
+// TODO: The deviation here is likely fakematch
+#if VERSION != VER_GAFE01_00
+extern int mNpc_SetIslandFtr(PersonalID_c* pid, mActor_name_t ftr) {
+    int n;
+    Anmmem_c* memory;
+    mActor_name_t* island_room;
+    mActor_name_t rsv_item;
+    int variant;
+    int set;
+    int direct;
+    int i;
+    int j;
+    int slot;
+    int mem_idx;
+
+    memory = Save_Get(island).animal.memories;
+    island_room = mNpc_GetIslandRoomP(Save_Get(island).animal.id.npc_id);
+    n = 0;
+    rsv_item = EMPTY_NO;
+    set = FALSE;
+    slot = 0;
+    direct = 0;
+
+    if (ITEM_IS_FTR(ftr) && island_room != NULL && pid != NULL && mPr_NullCheckPersonalID(pid) == FALSE) {
+        mem_idx = mNpc_GetAnimalMemoryIdx(pid, memory, ANIMAL_MEMORY_NUM);
+
+        if (mem_idx == -1) {
+            memory = &memory[mNpc_ForceGetFreeAnimalMemoryIdx(&Save_Get(island).animal, memory, ANIMAL_MEMORY_NUM)];
+            mNpc_SetAnimalMemory(pid, &Save_Get(island).animal.id, memory);
+        } else {
+            memory = &memory[mem_idx];
+        }
+
+        /* Unnecessary NULL check, memory is guaranteed to exist */
+        if (memory != NULL) {
+            if (mNpc_CheckFtrIsIslandBestFtr(ftr) == TRUE) {
+                int idx = mNpc_GetIslandFtrIdx(ftr);
+
+                if (idx != -1 && mNpc_CheckIslandNpcRoomFtrIdx(idx) == -1) {
+                    memory->memuni.island.have_bitfield |= (1 << idx);
+                    set = TRUE;
+                }
+            } else {
+                mActor_name_t ftr_variant0;
+                mActor_name_t ftr_variant1;
+                int ftr_unit = aMR_GetFurnitureUnit(ftr);
+
+                if (ftr_unit == mRmTp_FTRSIZE_1x1) {
+                    ftr_variant0 = RSV_ISLAND_FTR0;
+                    ftr_variant1 = RSV_ISLAND_FTR4;
+                } else {
+                    ftr_variant0 = RSV_ISLAND_FTR0 + (ftr_unit + 1) * 4;
+                    ftr_variant1 = EMPTY_NO;
+                }
+
+                for (i = 0; i < UT_TOTAL_NUM; i++) {
+                    if (ITEM_IS_FTR(*island_room)) {
+                        n++;
+                    } else if (*island_room >= RSV_ISLAND_FTR0 && *island_room <= RSV_ISLAND_FTR15) {
+                        variant = -1;
+
+                        for (j = 0; j < mRmTp_DIRECT_NUM; j++) {
+                            if (*island_room == (mActor_name_t)(ftr_variant0 + j)) {
+                                direct = j;
+                                variant = 0;
+                                break;
+                            } else if (*island_room == (mActor_name_t)(ftr_variant1 + j)) {
+                                direct = j;
+                                variant = 1;
+                                break;
+                            }
+                        }
+
+                        if (variant != -1 && mNpc_CheckIslandNpcRoomFtrIdx(n) == -1) {
+                            memory->memuni.island.have_bitfield |= (1 << n);
+
+                            if (variant == 0) {
+                                slot = (ftr_variant0 - RSV_ISLAND_FTR0) / mNpc_ISLAND_FTR_SAVE_NUM;
+                            } else {
+                                slot = (ftr_variant1 - RSV_ISLAND_FTR0) / mNpc_ISLAND_FTR_SAVE_NUM;
+                            }
+
+                            if (slot < mNpc_ISLAND_FTR_SAVE_NUM) {
+                                Save_Get(island).animal.anmuni.island_ftr[slot] =
+                                    aMR_FurnitureFg_to_FurnitureFgWithDirect(ftr, direct);
+                                set = TRUE;
+                            }
+
+                            break;
+                        }
+
+                        n++;
+                    }
+
+                    if (n == mNpc_ISLAND_FTR_NUM) {
+                        break;
+                    }
+
+                    island_room++;
+                }
+            }
+        }
+    }
+
+    return set;
+}
+#else
 extern int mNpc_SetIslandFtr(PersonalID_c* pid, mActor_name_t ftr) {
     int n;
     Anmmem_c* memory;
@@ -5858,6 +5952,7 @@ extern int mNpc_SetIslandFtr(PersonalID_c* pid, mActor_name_t ftr) {
 
     return set;
 }
+#endif
 
 extern int mNpc_EraseIslandFtr(mActor_name_t ftr) {
     int n;

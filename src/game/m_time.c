@@ -248,7 +248,7 @@ extern void mTM_set_renew_is() {
  * @param renew_time Pointer to the lbRTC_ymd_c struct where the renewal time will be stored.
  * @param time Pointer to the lbRTC_time_c struct from which the renewal time will be taken.
  */
-extern void mTM_set_renew_time(lbRTC_ymd_c* renew_time, const lbRTC_time_c* time) {
+extern void mTM_set_renew_time(lbRTC_ymd_c* renew_time, lbRTC_time_c* time) {
   renew_time->year = time->year;
   renew_time->month = time->month;
   renew_time->day = time->day;
@@ -275,7 +275,7 @@ extern void mTM_ymd_2_time(lbRTC_time_c* time, lbRTC_ymd_c* ymd) {
  */
 extern void mTM_renewal_renew_time() {
   lbRTC_ymd_c* renew_time = Save_GetPointer(renew_time);
-  const lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
+  lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
     
   // Check if the renewal time has changed
   if (
@@ -362,6 +362,7 @@ static int mTM_TimestepControl() {
   int add_sec;
   int tstep;
 
+#if VERSION < VER_GAFU01_00
   // Check if certain input conditions are met, and if so, adjust the time step and flags accordingly
   if (zurumode_flag >= 2 && debug_disp == 1 && (gamePT->pads[1].on.button & BUTTON_R) == BUTTON_R) {
     if (id < mTM_TIMESTEP_NUM) {
@@ -386,6 +387,7 @@ static int mTM_TimestepControl() {
       id = 0;
     }
   }
+#endif
 
   return id != 0;
 }

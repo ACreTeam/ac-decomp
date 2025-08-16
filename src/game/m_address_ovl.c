@@ -311,10 +311,10 @@ static void mAD_turn_page_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     int i;
     f32 pos;
 
-    pos = adrs_ovl->pos_x;
-    if (fabsf(pos) < 14.0f) {
+    pos = fabsf(adrs_ovl->pos_x);
+    if (pos < 14.0f) {
         adrs_ovl->speed_x *= sqrtf(2.0f);
-    } else if (fabsf(pos) > 30.0f) {
+    } else if (pos > 30.0f) {
         adrs_ovl->speed_x *= sqrtf(0.5f);
 
         if (fabsf(adrs_ovl->speed_x) < 0.25f) {
@@ -345,11 +345,10 @@ static void mAD_turn_page2_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
     mAD_Ovl_c* adrs_ovl = submenu->overlay->address_ovl;
     f32 pos;
 
-    pos = adrs_ovl->pos_x;
-
-    if (fabsf(pos) > 30.0f) {
+    pos = fabsf(adrs_ovl->pos_x);
+    if (pos > 30.0f) {
         adrs_ovl->speed_x *= sqrtf(2.0f);
-    } else if (fabsf(pos) < 14.0f) {
+    } else if (pos < 14.0f) {
         adrs_ovl->speed_x *= sqrtf(0.5f);
     }
 

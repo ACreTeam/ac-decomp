@@ -10,6 +10,14 @@
 #include "m_scene_table.h"
 #include "m_common_data.h"
 
+#if VERSION >= VER_GAFU01_00
+#define CAMERA2_STAFFROLL_CENTER_X_ROT_STEP_DIVISOR 3333
+#define CAMERA2_STAFFROLL_CENTER_Y_ROT_STEP_DIVISOR 2166
+#else
+#define CAMERA2_STAFFROLL_CENTER_X_ROT_STEP_DIVISOR 4000
+#define CAMERA2_STAFFROLL_CENTER_Y_ROT_STEP_DIVISOR 2600
+#endif
+
 static void Camera2_main_Normal_AdjustDistanceAndDirection(GAME_PLAY* play, f32* dist, s_xyz* dir);
 static void Camera2_change_main_index(GAME_PLAY* play);
 
@@ -67,25 +75,19 @@ static f32 Camera2_GetUnderBorderAdjust() {
     }
 }
 
-static void Camera2_PolaPosCalc(xyz_t* eye, s16 inv_dir_x, s16 inv_dir_y, xyz_t* center, f32 dist) {
-    f32 dist_x;
-    f32 inv_dir_x_f;
-    f32 inv_dir_y_f;
-    f32 x;
-    f32 y;
-    f32 z;
+static void Camera2_PolaPosCalc(xyz_t* eye, s16 inv_dir_x, s16 inv_dir_y, const xyz_t* center, f32 dist) {
+    f32 dist_xz;
+    f32 angle_x;
+    f32 angle_y;
+
+    angle_x = SHORTANGLE2RAD(inv_dir_x);
+    angle_y = SHORTANGLE2RAD(inv_dir_y);
 
     *eye = *center;
-    inv_dir_x_f = inv_dir_x * SHORTANGLE2RAD(1);
-    inv_dir_y_f = inv_dir_y * SHORTANGLE2RAD(1);
-    y = sin(inv_dir_x_f);
-    eye->y += dist * y;
-    x = cos(inv_dir_x_f);
-    dist_x = dist * x;
-    x = sin(inv_dir_y_f);
-    eye->x += dist_x * x;
-    z = cos(inv_dir_y_f);
-    eye->z += dist_x * z;
+    eye->y += dist * sinf(angle_x);
+    dist_xz = dist * cosf(angle_x);
+    eye->x += dist_xz * sinf(angle_y);
+    eye->z += dist_xz * cosf(angle_y);
 }
 
 static void Camera2_SetEyePos_fromCenterPosCalc(GAME_PLAY* play, xyz_t* center, xyz_t* eye) {
@@ -161,7 +163,7 @@ static void Camera2_MoveDirectionAngleXYZ(GAME_PLAY* play, const s_xyz* goal_dir
     }
 }
 
-static void Camera2_SetDirectionAngleXYZ(GAME_PLAY* play, s_xyz* goal_dir, int delta) {
+static void Camera2_SetDirectionAngleXYZ(GAME_PLAY* play, const s_xyz* goal_dir, int delta) {
     Camera2* camera = &play->camera;
     s_xyz* dir = &camera->direction;
     s_xyz* dir_vel = &camera->direction_velocity;
@@ -766,11 +768,12 @@ extern int Camera2_CheckEnterCullingArea(f32 pos_x, f32 pos_z, f32 width) {
 
 extern void Camera2_ClearActorTalking_Cull(GAME_PLAY* play) {
     Actor_list* actor_list;
-    ACTOR* actor;
     int i;
 
     actor_list = play->actor_info.list;
     for (i = 0; i < ACTOR_PART_NUM; i++) {
+        ACTOR* actor;
+
         for (actor = actor_list->actor; actor != NULL; actor = actor->next_actor) {
             actor->cull_while_talking = FALSE;
         }
@@ -1002,17 +1005,21 @@ extern int Camera2_request_main_talk(GAME_PLAY* play, ACTOR* speaker, ACTOR* lis
     return FALSE;
 }
 
-extern int Camera2_request_main_talk_pos(GAME_PLAY* play, ACTOR* speaker, xyz_t* listener_pos, int priority) {
-    if ((play->camera.now_main_index == CAMERA2_PROCESS_TALK ||
-         play->camera.requested_main_index == CAMERA2_PROCESS_TALK) &&
-        (Math3DLength(&play->camera.request_data.talk.listener_pos, listener_pos) < 1.0f)) {
+extern int Camera2_request_main_talk_pos(GAME_PLAY* play, ACTOR* speaker, const xyz_t* const listener_pos,
+                                         int priority) {
+    Camera2* camera = &play->camera;
+
+    if ((camera->now_main_index == CAMERA2_PROCESS_TALK || camera->requested_main_index == CAMERA2_PROCESS_TALK) &&
+        (Math3DLength(&camera->request_data.talk.listener_pos, listener_pos) < 1.0f)) {
         return FALSE;
     } else {
         if (Camera2_check_request_main_priority(play, priority) > 0) {
-            play->camera.request_data.talk.speaker_actor = speaker;
-            play->camera.request_data.talk.listener_actor = NULL;
-            play->camera.request_data.talk.listener_pos = *listener_pos;
-            play->camera.request_data.talk.flags = 1;
+            CameraRequestTalk* req_p = &camera->request_data.talk;
+
+            req_p->speaker_actor = speaker;
+            req_p->listener_actor = NULL;
+            req_p->listener_pos = *listener_pos;
+            req_p->flags = 1;
             Camera2_request_main_index(play, CAMERA2_PROCESS_TALK, priority);
             return TRUE;
         }
@@ -1689,8 +1696,8 @@ static void Camera2_setup_main_Item(GAME_PLAY* play) {
     play->camera.requested_main_index_priority = 0;
 }
 
-extern int Camera2_request_main_lock(GAME_PLAY* play, xyz_t* center_pos, xyz_t* eye_pos, f32 fov_y, int morph_counter,
-                                     f32 near, f32 far, int priority) {
+extern int Camera2_request_main_lock(GAME_PLAY* play, const xyz_t* center_pos, const xyz_t* eye_pos, f32 fov_y,
+                                     int morph_counter, f32 near, f32 far, int priority) {
     if (Camera2_check_request_main_priority(play, priority) > 0) {
         play->camera.request_data.lock.center_pos = *center_pos;
         play->camera.request_data.lock.eye_pos = *eye_pos;
@@ -1718,7 +1725,7 @@ static void Camera2_setup_main_Lock(GAME_PLAY* play) {
     Camera2_setup_main_Base(play);
 }
 
-static void Camera2_Lock_SetCenterPos(GAME_PLAY* play, xyz_t* center_pos, int step) {
+static void Camera2_Lock_SetCenterPos(GAME_PLAY* play, const xyz_t* center_pos, int step) {
     Camera2* camera = &play->camera;
 
     xyz_t* center_vel_p = &camera->movement_velocity;
@@ -1734,7 +1741,7 @@ static void Camera2_Lock_SetCenterPos(GAME_PLAY* play, xyz_t* center_pos, int st
     center_vel_p->z = center_p->z - pre_center.z;
 }
 
-static void Camera2_Lock_SetEyePos(GAME_PLAY* play, xyz_t* eye, int step) {
+static void Camera2_Lock_SetEyePos(GAME_PLAY* play, const xyz_t* eye, int step) {
     xyz_t* eye_p = &play->camera.lookat.eye;
 
     inter_float(&eye_p->x, eye->x, step);
@@ -1907,8 +1914,8 @@ static void Camera2_main_Door(GAME_PLAY* play) {
     Camera2_change_main_index(play);
 }
 
-extern int Camera2_request_main_simple2(GAME_PLAY* play, xyz_t* center, s_xyz* dir, f32 dist, int morph_counter,
-                                        int mode, int priority) {
+extern int Camera2_request_main_simple2(GAME_PLAY* play, const xyz_t* center, const s_xyz* dir, f32 dist,
+                                        int morph_counter, int mode, int priority) {
     if (Camera2_check_request_main_priority(play, priority) > 0) {
         play->camera.request_data.simple.center_pos = *center;
         play->camera.request_data.simple.angle = *dir;
@@ -1969,7 +1976,7 @@ extern int Camera2_request_main_simple_fishing(GAME_PLAY* play, const xyz_t* pla
 
     return Camera2_request_main_simple(play, &center, &dir, dist * dist_mult, 40, priority);
 }
-extern int Camera2_request_main_simple_fishing_return(GAME_PLAY* play, xyz_t* player_pos, int priority) {
+extern int Camera2_request_main_simple_fishing_return(GAME_PLAY* play, const xyz_t* player_pos, int priority) {
     xyz_t center_pos;
     s_xyz dir;
     f32 dist;
@@ -1979,7 +1986,7 @@ extern int Camera2_request_main_simple_fishing_return(GAME_PLAY* play, xyz_t* pl
     return Camera2_request_main_simple(play, &center_pos, &dir, dist, 30, priority);
 }
 
-extern int Camera2_request_main_simple(GAME_PLAY* play, xyz_t* pos, s_xyz* dir, f32 dist, int morph_counter,
+extern int Camera2_request_main_simple(GAME_PLAY* play, const xyz_t* pos, const s_xyz* dir, f32 dist, int morph_counter,
                                        int priority) {
     if (Camera2_check_request_main_priority(play, priority) > 0) {
         play->camera.request_data.simple.center_pos = *pos;
@@ -2116,8 +2123,9 @@ extern int Camera2_request_main_needlework_talk(GAME_PLAY* play, ACTOR* speaker,
         angle_y = DEG2SHORT_ANGLE(-180.0f);
     }
 
+    diff_x = fabsf(diff_x);
     angle_x = DEG2SHORT_ANGLE(5.495f);
-    if (fabsf(diff_x) < mFI_UT_WORLDSIZE_X_F) {
+    if (diff_x < mFI_UT_WORLDSIZE_X_F) {
         angle_x = DEG2SHORT_ANGLE(13.735f);
     }
 
@@ -2161,6 +2169,7 @@ static void Camera2_Cust_Talk_ChangeCameraCenterPos_BetweenSpeakerToListener(GAM
         xyz_t* pos0;
         xyz_t* pos1;
         xyz_t center;
+        f32 unused;
 
         if (speaker == NULL) {
             pos0 = &listener->eye.position;
@@ -2173,6 +2182,7 @@ static void Camera2_Cust_Talk_ChangeCameraCenterPos_BetweenSpeakerToListener(GAM
             pos0 = &speaker->eye.position;
         }
 
+        unused = fabsf(dist);
         center.x = pos0->x + center_ratio * (pos1->x - pos0->x);
         center.y = pos0->y + center_ratio * (pos1->y - pos0->y);
         center.z = pos0->z + center_ratio * (pos1->z - pos0->z);
@@ -2247,8 +2257,9 @@ extern int Camera2_Inter_set_reverse_mode(GAME_PLAY* play) {
     return TRUE;
 }
 
-extern int Camera2_request_main_inter(GAME_PLAY* play, xyz_t* start_center, xyz_t* start_eye, xyz_t* goal_center,
-                                      xyz_t* goal_eye, f32 s0, f32 s1, u32 flags, int morph_counter, int priority) {
+extern int Camera2_request_main_inter(GAME_PLAY* play, const xyz_t* start_center, const xyz_t* start_eye,
+                                      const xyz_t* goal_center, const xyz_t* goal_eye, f32 s0, f32 s1, u32 flags,
+                                      int morph_counter, int priority) {
     if (Camera2_check_request_main_priority(play, priority) > 0) {
         play->camera.request_data.inter.starting_center_pos = *start_center;
         play->camera.request_data.inter.starting_eye_pos = *start_eye;
@@ -2457,17 +2468,23 @@ static void Camera2_Staff_Roll_Center(GAME_PLAY* play, ACTOR* speaker, ACTOR* li
         h *= ((1.0f + sin_s(temp2) * 0.2f) - 0.2f) * 45.0f;
 
         // likely fakematch
-        temp = (int)((-(f32)camera->main_data.staff_roll.rotation_y_delta / 2600.0f) * 65535.0f) + 0x10000;
+        temp =
+            (int)((-(f32)camera->main_data.staff_roll.rotation_y_delta / CAMERA2_STAFFROLL_CENTER_Y_ROT_STEP_DIVISOR) *
+                  65535.0f) +
+            0x10000;
         temp += camera->main_data.staff_roll.last_direction.y;
-        y_rot_x = sin_s(temp + -0x4000);
+        y_rot_x = sin_s(temp + DEG2SHORT_ANGLE2(-90.0f));
 
         goal_center.y = center_y;
         goal_center.x = center_x + h * y_rot_x;
 
         // likely fakematch
-        temp = (int)((-(f32)camera->main_data.staff_roll.rotation_y_delta / 2600.0f) * 65535.0f) + 0x10000;
+        temp =
+            (int)((-(f32)camera->main_data.staff_roll.rotation_y_delta / CAMERA2_STAFFROLL_CENTER_Y_ROT_STEP_DIVISOR) *
+                  65535.0f) +
+            0x10000;
         temp += camera->main_data.staff_roll.last_direction.y;
-        y_rot_z = cos_s(temp + -0x4000);
+        y_rot_z = cos_s(temp + DEG2SHORT_ANGLE2(-90.0f));
 
         goal_center.z = center_z + h * y_rot_z;
 
@@ -2486,10 +2503,10 @@ static void Camera2_Staff_Roll_DistAngle(GAME_PLAY* play, ACTOR* speaker, ACTOR*
 
     temp = ((f32)camera->main_data.staff_roll.r_delta / 4600.0f) * 65535.0f;
     dist = ((sin_s(temp) * 0.2f + 1.0f) - 0.2f) * 575.0f;
-    temp = ((f32)camera->main_data.staff_roll.rotation_x_delta / 4000.0f) * 65536.0f;
+    temp = ((f32)camera->main_data.staff_roll.rotation_x_delta / CAMERA2_STAFFROLL_CENTER_X_ROT_STEP_DIVISOR) * 65536.0f;
 
     angle->x = (s16)(sin_s(temp) * 5000.0f);
-    angle->y = (s16)((-(f32)camera->main_data.staff_roll.rotation_y_delta / 2600.0f) * 65535.0f) +
+    angle->y = (s16)((-(f32)camera->main_data.staff_roll.rotation_y_delta / CAMERA2_STAFFROLL_CENTER_Y_ROT_STEP_DIVISOR) * 65535.0f) +
                camera->main_data.staff_roll.last_direction.y + (u16)SHT_MIN_S;
     angle->z = 0;
 
@@ -2575,13 +2592,13 @@ static void Camera2_main_Staff_Roll_SetPos(GAME_PLAY* play) {
             }
 
             main_data->staff_roll.rotation_x_delta++;
-            if (main_data->staff_roll.rotation_x_delta > 4000) {
+            if (main_data->staff_roll.rotation_x_delta > CAMERA2_STAFFROLL_CENTER_X_ROT_STEP_DIVISOR) {
                 main_data->staff_roll.rotation_x_delta = 0;
             }
         }
 
         main_data->staff_roll.rotation_y_delta++;
-        if (main_data->staff_roll.rotation_y_delta > 2600) {
+        if (main_data->staff_roll.rotation_y_delta > CAMERA2_STAFFROLL_CENTER_Y_ROT_STEP_DIVISOR) {
             main_data->staff_roll.rotation_y_delta = 0;
         }
 

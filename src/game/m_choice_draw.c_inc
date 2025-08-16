@@ -1,168 +1,147 @@
 static void mChoice_SetMatrix(mChoice_c* choice, GAME* game, int type) {
-  GRAPH* graph = game->graph;
-  f32 scale = choice->scale;
-  f32 x = ( choice->center_x - 160.0f) * 16.0f;
-  f32 y = (-choice->center_y + 120.0f) * 16.0f;
+    GRAPH* graph = game->graph;
+    f32 scale = choice->scale;
+    f32 x = (choice->center_x - 160.0f) * 16.0f;
+    f32 y = (-choice->center_y + 120.0f) * 16.0f;
 
-  Matrix_push();
-  Matrix_translate(x, y, 0.0f, MTX_MULT);
-  Matrix_scale(scale, scale, 1.0f, MTX_MULT);
+    Matrix_push();
+    Matrix_translate(x, y, 0.0f, MTX_MULT);
+    Matrix_scale(scale, scale, 1.0f, MTX_MULT);
 
-  OPEN_DISP(graph);
+    OPEN_DISP(graph);
 
-  if (type == mFont_MODE_FONT) {
-    gSPMatrix(NOW_FONT_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-  }
-  else {
-    gSPMatrix(NOW_POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-  }
+    if (type == mFont_MODE_FONT) {
+        gSPMatrix(NOW_FONT_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    } else {
+        gSPMatrix(NOW_POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    }
 
-  CLOSE_DISP(graph);
+    CLOSE_DISP(graph);
 }
 
 static void mChoice_SetMatrixDisplay(mChoice_c* choice, GAME* game, int type) {
-  GRAPH* graph = game->graph;
-  f32 scale_x = choice->scale_x;
-  f32 scale_y = choice->scale_y;
+    GRAPH* graph = game->graph;
+    f32 scale_x = choice->scale_x;
+    f32 scale_y = choice->scale_y;
 
-  Matrix_push();
-  Matrix_scale(scale_x, scale_y, 1.0f, MTX_MULT);
+    Matrix_push();
+    Matrix_scale(scale_x, scale_y, 1.0f, MTX_MULT);
 
-  OPEN_DISP(graph);
+    OPEN_DISP(graph);
 
-  if (type == mFont_MODE_FONT) {
-    gSPMatrix(NOW_FONT_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-  }
-  else {
-    gSPMatrix(NOW_POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-  }
+    if (type == mFont_MODE_FONT) {
+        gSPMatrix(NOW_FONT_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    } else {
+        gSPMatrix(NOW_POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    }
 
-  CLOSE_DISP(graph);
+    CLOSE_DISP(graph);
 }
 
 static void mChoice_UnSetMatrix() {
-  Matrix_pull();
+    Matrix_pull();
 }
 
 static void mChoice_UnSetMatrixDisplay(GAME* game, int type) {
-  GRAPH* graph = game->graph;
-  
-  Matrix_pull();
+    GRAPH* graph = game->graph;
 
-  OPEN_DISP(graph);
+    Matrix_pull();
 
-  if (type == mFont_MODE_FONT) {
-    gSPMatrix(NOW_FONT_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-  }
-  else {
-    gSPMatrix(NOW_POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-  }
+    OPEN_DISP(graph);
 
-  CLOSE_DISP(graph);
+    if (type == mFont_MODE_FONT) {
+        gSPMatrix(NOW_FONT_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    } else {
+        gSPMatrix(NOW_POLY_OPA_DISP++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+    }
+
+    CLOSE_DISP(graph);
 }
 
 static u8 con_waku_swaku3_tex[] ATTRIBUTE_ALIGN(32) = {
-  #ifndef __INTELLISENSE__
-  #include "assets/con_waku_swaku3_tex.inc"
-  #endif
+#ifndef __INTELLISENSE__
+#include "assets/con_waku_swaku3_tex.inc"
+#endif
 };
 
 static Vtx con_sentaku2_v[] = {
-  #ifndef __INTELLISENSE__
-  #include "assets/con_sentaku2_v.inc"
-  #endif
+#ifndef __INTELLISENSE__
+#include "assets/con_sentaku2_v.inc"
+#endif
 };
 
 static Gfx con_sentaku2_modelT[] = {
-  gsSPTexture(0, 0, 0, 0, G_ON),
-  gsDPSetPrimColor(0, 255, 255, 255, 155, 255),
-  gsDPLoadTextureBlock_4b_Dolphin(con_waku_swaku3_tex, G_IM_FMT_I, 128, 64, 15, GX_MIRROR, GX_MIRROR, 0, 0),
-  gsSPVertex(&con_sentaku2_v[0], 4, 0),
-  gsSPNTrianglesInit_5b(
-    2, // tri count
-    0, 1, 2, // tri0
-    0, 2, 3, // tri1
-    0, 0, 0 // tri2
-  ),
-  gsSPEndDisplayList()
+    gsSPTexture(0, 0, 0, 0, G_ON),
+    gsDPSetPrimColor(0, 255, 255, 255, 155, 255),
+    gsDPLoadTextureBlock_4b_Dolphin(con_waku_swaku3_tex, G_IM_FMT_I, 128, 64, 15, GX_MIRROR, GX_MIRROR, 0, 0),
+    gsSPVertex(&con_sentaku2_v[0], 4, 0),
+    gsSPNTrianglesInit_5b(2,       // tri count
+                          0, 1, 2, // tri0
+                          0, 2, 3, // tri1
+                          0, 0, 0  // tri2
+                          ),
+    gsSPEndDisplayList(),
 };
 
 static Gfx mChoice_init_disp[] = {
-  gsDPPipeSync(),
-  gsSPClearGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN | G_TEXTURE_GEN_LINEAR | G_LOD | G_SHADING_SMOOTH),
-  gsDPSetTextureLOD(G_TL_TILE),
-  gsDPSetTextureConvert(G_TC_FILT),
-  gsDPSetTextureFilter(G_TF_BILERP),
-  gsDPSetCycleType(G_CYC_1CYCLE),
-  gsDPSetTexturePersp(G_TP_PERSP),
-  gsDPSetAlphaDither(G_AD_DISABLE),
-  gsDPSetColorDither(G_CD_DISABLE),
-  gsDPSetCombineKey(G_CK_NONE),
-  gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0),
-  gsDPSetRenderMode(G_RM_XLU_SURF, G_RM_XLU_SURF2),
-  gsSPEndDisplayList()
+    gsDPPipeSync(),
+    gsSPClearGeometryMode(G_ZBUFFER | G_SHADE | G_CULL_BOTH | G_FOG | G_LIGHTING | G_TEXTURE_GEN |
+                          G_TEXTURE_GEN_LINEAR | G_LOD | G_SHADING_SMOOTH),
+    gsDPSetTextureLOD(G_TL_TILE),
+    gsDPSetTextureConvert(G_TC_FILT),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetTexturePersp(G_TP_PERSP),
+    gsDPSetAlphaDither(G_AD_DISABLE),
+    gsDPSetColorDither(G_CD_DISABLE),
+    gsDPSetCombineKey(G_CK_NONE),
+    gsDPSetCombineLERP(0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0),
+    gsDPSetRenderMode(G_RM_XLU_SURF, G_RM_XLU_SURF2),
+    gsSPEndDisplayList(),
 };
 
 static void mChoice_DrawWindowBody(mChoice_c* choice, GAME* game, int type) {
-  GRAPH* graph = game->graph;
+    GRAPH* graph = game->graph;
 
-  OPEN_DISP(graph);
+    OPEN_DISP(graph);
 
-  if (type == mFont_MODE_FONT) {
-    gSPDisplayList(NOW_FONT_DISP++, mChoice_init_disp);
-    gSPDisplayList(NOW_FONT_DISP++, con_sentaku2_modelT);
-  }
-  else {
-    gSPDisplayList(NOW_POLY_OPA_DISP++, mChoice_init_disp);
-    gSPDisplayList(NOW_POLY_OPA_DISP++, con_sentaku2_modelT);
-  }
+    if (type == mFont_MODE_FONT) {
+        gSPDisplayList(NOW_FONT_DISP++, mChoice_init_disp);
+        gSPDisplayList(NOW_FONT_DISP++, con_sentaku2_modelT);
+    } else {
+        gSPDisplayList(NOW_POLY_OPA_DISP++, mChoice_init_disp);
+        gSPDisplayList(NOW_POLY_OPA_DISP++, con_sentaku2_modelT);
+    }
 
-  CLOSE_DISP(graph);
+    CLOSE_DISP(graph);
 }
 
 static void mChoice_DrawFont(mChoice_c* choice, GAME* game, int type) {
-  int i;
-  int choice_num = choice->data.choice_num;
-  f32 x = choice->text_x;
-  f32 y = choice->text_y;
-  int selected_idx = choice->selected_choice_idx;
-  int r;
-  int g;
-  int b;
+    int i;
+    int choice_num = choice->data.choice_num;
+    f32 x = choice->text_x;
+    f32 y = choice->text_y;
+    int selected_idx = choice->selected_choice_idx;
+    int r;
+    int g;
+    int b;
 
-  for (i = 0; i < choice_num; i++) {
-    if (i == selected_idx) {
-      r = choice->selected_choice_text_color.r;
-      g = choice->selected_choice_text_color.g;
-      b = choice->selected_choice_text_color.b;
-      mFont_SetMarkChar(
-        game,
-        mFont_MARKTYPE_CHOICE,
-        x - 16.0f, y,
-        choice->background_color.r, choice->background_color.g, choice->background_color.b, 255,
-        FALSE,
-        1.0f, 1.0f,
-        type
-      );
+    for (i = 0; i < choice_num; i++) {
+        if (i == selected_idx) {
+            r = choice->selected_choice_text_color.r;
+            g = choice->selected_choice_text_color.g;
+            b = choice->selected_choice_text_color.b;
+            mFont_SetMarkChar(game, mFont_MARKTYPE_CHOICE, x - 16.0f, y, choice->background_color.r,
+                              choice->background_color.g, choice->background_color.b, 255, FALSE, 1.0f, 1.0f, type);
+        } else {
+            r = choice->text_color.r;
+            g = choice->text_color.g;
+            b = choice->text_color.b;
+        }
+
+        mFont_SetLineStrings_AndSpace(game, choice->data.strings[i], choice->data.string_lens[i], x, y, r, g, b, 255,
+                                      FALSE, TRUE, 0, 1.0f, 1.0f, type);
+
+        y += 16.0f;
     }
-    else {
-      r = choice->text_color.r;
-      g = choice->text_color.g;
-      b = choice->text_color.b;
-    }
-
-    mFont_SetLineStrings_AndSpace(
-      game,
-      choice->data.strings[i], choice->data.string_lens[i],
-      x, y,
-      r, g, b, 255,
-      FALSE,
-      TRUE,
-      0,
-      1.0f, 1.0f,
-      type
-    );
-
-    y += 16.0f;
-  }
 }

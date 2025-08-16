@@ -8,8 +8,21 @@
 extern "C" {
 #endif
 
+#if VERSION >= VER_GAFU01_00
+#define mTRC_SLOW_SPEED 2.6f // speed stopping/starting
+#define mTRC_FAST_SPEED 7.2f // speed when farther away from station
+#define mTRC_SLOW_RATE (0.21000001f) // rate at which slowing down occurs
+#define mTRC_STOP_RATE 0.0084f // rate at which stopping occurs
+#define mTRC_START_RATE 0.0047f // rate at which starting occurs
+#define mTRC_SPEEDUP_RATE 0.0047f // rate at which speeding up occurs
+#else
 #define mTRC_SLOW_SPEED 2.0f // speed stopping/starting
 #define mTRC_FAST_SPEED 6.0f // speed when farther away from station
+#define mTRC_SLOW_RATE 0.01f // rate at which slowing down occurs
+#define mTRC_STOP_RATE 0.005f // rate at which stopping occurs
+#define mTRC_START_RATE 0.00345f // rate at which starting occurs
+#define mTRC_SPEEDUP_RATE 0.00345f // rate at which speeding up occurs
+#endif
 
 enum {
     mTRC_ACTION_NONE,

@@ -21,6 +21,17 @@ extern double sin(double deg);
 extern double cos(double deg);
 extern double tan(double deg);
 
+float sinf(float);
+float cosf(float);
+
+inline float sinf(float x) {
+    return (float)sin((double)x);
+}
+
+inline float cosf(float x) {
+    return (float)cos((double)x);
+}
+
 extern double ceil(double);
 
 #ifdef __cplusplus

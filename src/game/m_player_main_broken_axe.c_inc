@@ -1,4 +1,4 @@
-static int Player_actor_request_main_broken_axe_type_reflect(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+static int Player_actor_request_main_broken_axe_type_reflect(GAME* game, xyz_t* pos, mActor_name_t hit_item,
                                                              ACTOR* hit_actor, int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_BROKEN_AXE, priority)) {
         PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
@@ -13,7 +13,7 @@ static int Player_actor_request_main_broken_axe_type_reflect(GAME* game, const x
 
     return FALSE;
 }
-static int Player_actor_request_main_broken_axe_type_swing(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+static int Player_actor_request_main_broken_axe_type_swing(GAME* game, xyz_t* pos, mActor_name_t hit_item,
                                                            int hit_ut_x, int hit_ut_z, int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_BROKEN_AXE, priority)) {
         PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);

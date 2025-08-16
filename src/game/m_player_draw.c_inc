@@ -374,4 +374,18 @@ static void Player_actor_draw_Normal(ACTOR* actorx, GAME* game) {
     if (moving_in_boat) {
         Matrix_pull();
     }
+
+#if VERSION >= VER_GAFU01_00
+    if (player->item_net_catch_correct_pos_set) {
+        TOOLS_ACTOR* label = (TOOLS_ACTOR*)player->item_net_catch_label;
+        
+        if (label != NULL && player->item_net_catch_type == mPlayer_NET_CATCH_TYPE_INSECT) {
+            Matrix_push();
+            Matrix_translate(player->item_net_catch_correct_pos.x, player->item_net_catch_correct_pos.y, player->item_net_catch_correct_pos.z, MTX_LOAD);
+            Matrix_get(&label->matrix_work);
+            Matrix_pull();
+            label->init_matrix = TRUE;
+        }
+    }
+#endif
 }

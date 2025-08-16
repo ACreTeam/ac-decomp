@@ -949,13 +949,17 @@ static void mSP_SelectTool(mActor_name_t* goods_list, int* count, int tool_num, 
 
     /* Add paint & signboard if shop is Nookway or greater */
     if (shop_level >= mSP_SHOP_TYPE_SUPER) {
-        if (paint_idx >= PAINT_NUM) {
+        if ((u16)paint_idx >= PAINT_NUM) {
             paint_idx = 0; /* wrap over to beginning */
         }
 
         goods_list[count[0]] = ITM_RED_PAINT + paint_idx;
         paint_idx++;
+#if VERSION == VER_GAFU01_00
+        Save_Get(shop).shop_info.paint_color = (u16)paint_idx;
+#else
         Save_Get(shop).shop_info.paint_color = paint_idx;
+#endif
         count[0]++;
         goods_list[count[0]] = ITM_SIGNBOARD;
         count[0]++;
@@ -967,7 +971,7 @@ static void mSP_SelectTool(mActor_name_t* goods_list, int* count, int tool_num, 
 }
 
 static void mSP_SelectPlant(mActor_name_t* goods_list, int* count, int flower_count, int sapling_count,
-                            int shop_level) {
+                            const int shop_level) {
     u8 flower_use[FLOWER_NUM];
     int i;
 
@@ -983,7 +987,7 @@ static void mSP_SelectPlant(mActor_name_t* goods_list, int* count, int flower_co
         count[0] += 1;
     }
 
-    for (i = 0; i < sapling_count; i++) {
+    for (i = sapling_count; i > 0; i--) {
         goods_list[count[0]] = ITM_SAPLING;
         count[0] += 1;
     }
@@ -2369,6 +2373,7 @@ static void mSP_SelectRandomItemToAGB_Unit(mActor_name_t* item, xyz_t* wpos, int
     }
 }
 
+#if VERSION == VER_GAFE01_00
 // @fakematch
 // @HACK - we shouldn't have to force propagation off, nor access the Save_t* struct directly
 #pragma opt_propagation off
@@ -2448,6 +2453,79 @@ extern void mSP_SelectRandomItemToAGB() {
     wpos.z = wpos.z;
 }
 #pragma opt_propagation reset
+#else
+extern void mSP_SelectRandomItemToAGB() {
+    int i;
+    int ut_x;
+    int ut_z;
+    xyz_t* wpos_p;
+    mActor_name_t* start_p;
+    mActor_name_t* item_p;
+    xyz_t tpos;
+
+    xyz_t wpos = { 0.0f, 0.0f, 0.0f };
+    int bx = 0;
+    int bz = 0;
+
+    mFI_BlockKind2BkNum(&bx, &bz, mRF_BLOCKKIND_ISLAND_LEFT);
+
+    /* convert all unit island items to valid items */
+    for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
+        item_p = &Save_Get(island).fgblock[0][i].items[0][0];
+
+        mFI_BkNum2WposXZ(&wpos.x, &wpos.z, bx + i, bz);
+        wpos.x += mFI_UT_WORLDSIZE_HALF_X_F;
+        wpos.z += mFI_UT_WORLDSIZE_HALF_Z_F;
+        tpos.x = wpos.x;
+
+        for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
+            wpos.x = tpos.x;
+
+            for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
+                mSP_SelectRandomItemToAGB_Unit(item_p, &wpos, ut_x, ut_z);
+                wpos.x += mFI_UT_WORLDSIZE_X_F;
+                item_p++;
+            }
+
+            wpos.z += mFI_UT_WORLDSIZE_Z_F;
+        }
+    }
+
+    /* add correctly placed signboard actor */
+    for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
+        item_p = &Save_Get(island).fgblock[0][i].items[0][0];
+        
+        for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
+            for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
+                start_p = &Save_Get(island).fgblock[0][i].items[0][0];
+                if (item_p[0] == COTTAGE_NPC) {
+                    start_p[(((ut_x - 1) & 15) + (((ut_z + 1) & 0xF) << 4))] = ACTOR_PROP_VILLAGER_SIGNBOARD;
+                }
+
+                item_p++;
+            }
+        }
+    }
+
+    /* remove incorrectly placed signboard actors */
+    for (i = 0; i < mISL_FG_BLOCK_X_NUM; i++) {
+        item_p = &Save_Get(island).fgblock[0][i].items[0][0];
+        start_p = &Save_Get(island).fgblock[0][i].items[0][0];
+
+        for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
+            for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
+                if (item_p[0] == ACTOR_PROP_VILLAGER_SIGNBOARD &&
+                    start_p[((ut_x + 1) & 15) + (((ut_z - 1) & 0xF) << 4)] != COTTAGE_NPC) {
+                    item_p[0] = EMPTY_NO;
+                }
+
+                item_p++;
+            }
+        }
+    }
+    wpos.z = wpos.z;
+}
+#endif
 
 extern const char* mSP_ShopStatus2String(int status) {
     static char dummy[] = "hahaha";

@@ -1,583 +1,573 @@
 extern mChoice_c* mChoice_Get_base_window_p() {
-  return &mMsg_Get_base_window_p()->choice_window;
+    return &mMsg_Get_base_window_p()->choice_window;
 }
 
 static void mChoice_init(mChoice_c* choice, GAME* game) {
-  choice->center_x = 191.0f;
-  choice->center_y = 83.0f;
-  choice->text_color.r = 180;
-  choice->text_color.g = 150;
-  choice->text_color.b = 110;
-  choice->text_color.a = 255;
-  choice->text_scale_x = 1.0f;
-  choice->text_scale_y = 1.0f;
-  choice->text_x = 104.0f;
-  choice->text_y = 96.0f;
-  choice->scale_x = 1.0f;
-  choice->scale_y = 1.0f;
-  choice->data.choice_num = mChoice_CHOICE_NUM;
-  choice->selected_choice_idx = mChoice_CHOICE0;
-  choice->selected_choice_text_color.r = 120;
-  choice->selected_choice_text_color.g = 50;
-  choice->selected_choice_text_color.b = 50;
-  choice->selected_choice_text_color.a = 255;
-  choice->background_color.r = 0;
-  choice->background_color.g = 195;
-  choice->background_color.b = 185;
-  choice->background_color.a = 255;
-  choice->choice_automove_timer = 0.0f;
-  choice->_D4 = 232.0f;
-  choice->_D8 = 104.0f;
-  choice->scale = 0.0f;
-  choice->main_index = mChoice_MAIN_HIDE;
-  choice->requested_main_index = -1;
-  choice->window_visible_flag = FALSE;
-  choice->font_visible_flag = FALSE;
-  choice->choice_automove_type = mChoice_AUTOMOVE_STOPPED;
-  choice->choice_automove_timer = 0.0f; // duplicate set
-  choice->timer = 0.0f;
-  choice->no_b_flag = FALSE;
-  choice->no_close_flag = FALSE;
+    choice->center_x = 191.0f;
+    choice->center_y = 83.0f;
+    choice->text_color.r = 180;
+    choice->text_color.g = 150;
+    choice->text_color.b = 110;
+    choice->text_color.a = 255;
+    choice->text_scale_x = 1.0f;
+    choice->text_scale_y = 1.0f;
+    choice->text_x = 104.0f;
+    choice->text_y = 96.0f;
+    choice->scale_x = 1.0f;
+    choice->scale_y = 1.0f;
+    choice->data.choice_num = mChoice_CHOICE_NUM;
+    choice->selected_choice_idx = mChoice_CHOICE0;
+    choice->selected_choice_text_color.r = 120;
+    choice->selected_choice_text_color.g = 50;
+    choice->selected_choice_text_color.b = 50;
+    choice->selected_choice_text_color.a = 255;
+    choice->background_color.r = 0;
+    choice->background_color.g = 195;
+    choice->background_color.b = 185;
+    choice->background_color.a = 255;
+    choice->choice_automove_timer = 0.0f;
+    choice->_D4 = 232.0f;
+    choice->_D8 = 104.0f;
+    choice->scale = 0.0f;
+    choice->main_index = mChoice_MAIN_HIDE;
+    choice->requested_main_index = -1;
+    choice->window_visible_flag = FALSE;
+    choice->font_visible_flag = FALSE;
+    choice->choice_automove_type = mChoice_AUTOMOVE_STOPPED;
+    choice->choice_automove_timer = 0.0f; // duplicate set
+    choice->timer = 0.0f;
+    choice->no_b_flag = FALSE;
+    choice->no_close_flag = FALSE;
 }
 
 extern void mChoice_Change_request_main_index(mChoice_c* choice, int request_main_index) {
-  choice->requested_main_index = request_main_index;
+    choice->requested_main_index = request_main_index;
 }
 
 extern int mChoice_check_main_index(mChoice_c* choice) {
-  return choice->main_index;
+    return choice->main_index;
 }
 
 extern int mChoice_check_main_normal(mChoice_c* choice) {
-  if (mChoice_check_main_index(choice) == mChoice_MAIN_NORMAL) {
-    return TRUE;
-  }
+    if (mChoice_check_main_index(choice) == mChoice_MAIN_NORMAL) {
+        return TRUE;
+    }
 
-  return FALSE;
+    return FALSE;
 }
 
 static void mChoice_Init_choice_data(mChoice_c* choice) {
-  choice->data.choice_num = 0;
+    choice->data.choice_num = 0;
 }
 
 static int mChoice_Add_choice_data(mChoice_c* choice, u8* str, int max_len) {
-  if (str != NULL && max_len > 0 && max_len <= mChoice_CHOICE_STRING_LEN) {
-    int num = choice->data.choice_num;
+    if (str != NULL && max_len > 0 && max_len <= mChoice_CHOICE_STRING_LEN) {
+        int num = choice->data.choice_num;
 
-    if (num < mChoice_CHOICE_NUM) {
-      int len = mMsg_Get_Length_String(str, max_len);
-      u8* dst = choice->data.strings[num];
-      int i;
+        if (num < mChoice_CHOICE_NUM) {
+            int i;
+            int len = mMsg_Get_Length_String(str, max_len);
+            u8* dst = choice->data.strings[num];
 
-      for (i = 0; i < len; i++) {
-        *dst++ = *str++;
-      }
+            for (i = 0; i < len; i++) {
+                *dst++ = *str++;
+            }
 
-      choice->data.string_lens[num] = len;
-      choice->data.choice_num++;
-      return num;
+            choice->data.string_lens[num] = len;
+            choice->data.choice_num++;
+            return num;
+        }
     }
-  }
 
-  return -1;
+    return -1;
 }
 
-extern void mChoice_Set_choice_data(
-  mChoice_c* choice,
-  u8* str0, int str0_len,
-  u8* str1, int str1_len,
-  u8* str2, int str2_len,
-  u8* str3, int str3_len,
-  u8* str4, int str4_len,
-  u8* str5, int str5_len
-) {
-  mChoice_Init_choice_data(choice);
+extern void mChoice_Set_choice_data(mChoice_c* choice, u8* str0, int str0_len, u8* str1, int str1_len, u8* str2,
+                                    int str2_len, u8* str3, int str3_len, u8* str4, int str4_len, u8* str5,
+                                    int str5_len) {
+    mChoice_Init_choice_data(choice);
 
-  if (str0 != NULL && str0_len > 0 && str0_len <= mChoice_CHOICE_STRING_LEN) {
-    mChoice_Add_choice_data(choice, str0, str0_len);
-  }
+    if (str0 != NULL && str0_len > 0 && str0_len <= mChoice_CHOICE_STRING_LEN) {
+        mChoice_Add_choice_data(choice, str0, str0_len);
+    }
 
-  if (str1 != NULL && str1_len > 0 && str1_len <= mChoice_CHOICE_STRING_LEN) {
-    mChoice_Add_choice_data(choice, str1, str1_len);
-  }
+    if (str1 != NULL && str1_len > 0 && str1_len <= mChoice_CHOICE_STRING_LEN) {
+        mChoice_Add_choice_data(choice, str1, str1_len);
+    }
 
-  if (str2 != NULL && str2_len > 0 && str2_len <= mChoice_CHOICE_STRING_LEN) {
-    mChoice_Add_choice_data(choice, str2, str2_len);
-  }
+    if (str2 != NULL && str2_len > 0 && str2_len <= mChoice_CHOICE_STRING_LEN) {
+        mChoice_Add_choice_data(choice, str2, str2_len);
+    }
 
-  if (str3 != NULL && str3_len > 0 && str3_len <= mChoice_CHOICE_STRING_LEN) {
-    mChoice_Add_choice_data(choice, str3, str3_len);
-  }
+    if (str3 != NULL && str3_len > 0 && str3_len <= mChoice_CHOICE_STRING_LEN) {
+        mChoice_Add_choice_data(choice, str3, str3_len);
+    }
 
-  if (str4 != NULL && str4_len > 0 && str4_len <= mChoice_CHOICE_STRING_LEN) {
-    mChoice_Add_choice_data(choice, str4, str4_len);
-  }
+    if (str4 != NULL && str4_len > 0 && str4_len <= mChoice_CHOICE_STRING_LEN) {
+        mChoice_Add_choice_data(choice, str4, str4_len);
+    }
 
-  if (str5 != NULL && str5_len > 0 && str5_len <= mChoice_CHOICE_STRING_LEN) {
-    mChoice_Add_choice_data(choice, str5, str5_len);
-  }
+    if (str5 != NULL && str5_len > 0 && str5_len <= mChoice_CHOICE_STRING_LEN) {
+        mChoice_Add_choice_data(choice, str5, str5_len);
+    }
 }
 
 static int mChoice_Get_MaxStringDotWidth(mChoice_c* choice) {
-  int i;
-  int choice_num = choice->data.choice_num;
-  int max_width = 0;
+    int i;
+    int choice_num = choice->data.choice_num;
+    int max_width = 0;
 
-  for (i = 0; i < choice_num; i++) {
-    u8* str = choice->data.strings[i];
-    int len = choice->data.string_lens[i];
-    int width = mFont_GetStringWidth(str, len, TRUE);
+    for (i = 0; i < choice_num; i++) {
+        u8* str = choice->data.strings[i];
+        int len = choice->data.string_lens[i];
+        int width = mFont_GetStringWidth(str, len, TRUE);
 
-    if (width > max_width) {
-      max_width = width;
+        if (width > max_width) {
+            max_width = width;
+        }
     }
-  }
 
-  return max_width;
+    return max_width;
 }
 
 static int mChoice_Get_MaxStringDotHeight(mChoice_c* choice) {
-  return choice->data.choice_num * 16;
+    return choice->data.choice_num * 16;
 }
 
 static void mChoice_Set_DisplayScaleAndDisplayPos(mChoice_c* choice) {
-  int dw = mChoice_Get_MaxStringDotWidth(choice);
-  f32 dotW = ((f32)dw - 24.0f) / 96.0f;
-  int dh = mChoice_Get_MaxStringDotHeight(choice);
-  f32 dotH = ((f32)dh - 32.0f) / 32.0f;
-  f32 scaleX = (dotW * 0.5833333730697632f) + (1.0f/2.4f);
-  f32 scaleY = (dotH * 0.3142857f) + (0.6857143f);
-  int choice_num = choice->data.choice_num;
-  f32 tempDotH;
+    int dw = mChoice_Get_MaxStringDotWidth(choice);
+    f32 dotW = ((f32)dw - 24.0f) / 96.0f;
+    int dh = mChoice_Get_MaxStringDotHeight(choice);
+    f32 dotH = ((f32)dh - 32.0f) / 32.0f;
+    f32 scaleX = (dotW * 0.5833333730697632f) + (1.0f / 2.4f);
+    f32 scaleY = (dotH * 0.3142857f) + (0.6857143f);
+    int choice_num = choice->data.choice_num;
+    f32 tempDotH;
 
-  choice->scale_x = scaleX;
-  choice->scale_y = scaleY;
-  tempDotH = dotH * -20.057144f;
-  choice->text_x = (dotW * -48.0f) + 152.0f;
-    
-  if (choice_num > 4) {
-    choice->text_y = tempDotH + 105.0f + (f32)(choice_num - 3) * 2.0f;
-  }
-  else {
-    choice->text_y = tempDotH + 105.0f;
-  }
+    choice->scale_x = scaleX;
+    choice->scale_y = scaleY;
+    tempDotH = dotH * -20.057144f;
+    choice->text_x = (dotW * -48.0f) + 152.0f;
 
-  tempDotH = dotH * 20.057144f;
-  choice->center_x = 242.0f;
-  choice->center_x_begin = 242.0f;
-  choice->center_x_target = 242.0f + (dotW * -35.0f);
+    if (choice_num > 4) {
+        choice->text_y = tempDotH + 105.0f + (f32)(choice_num - 3) * 2.0f;
+    } else {
+        choice->text_y = tempDotH + 105.0f;
+    }
 
-  choice->center_y = 169.0f;
-  choice->center_y_begin = 169.0f;
+    tempDotH = dotH * 20.057144f;
+    choice->center_x = 242.0f;
+    choice->center_x_begin = 242.0f;
+    choice->center_x_target = 242.0f + (dotW * -35.0f);
 
-  if (choice_num > 4) {
-    choice->center_y_target = (169.0f + tempDotH) - (f32)(choice_num - 4) * 16.0f;
-  }
-  else {
-    choice->center_y_target = 169.0f + tempDotH;
-  }
+    choice->center_y = 169.0f;
+    choice->center_y_begin = 169.0f;
+
+    if (choice_num > 4) {
+        choice->center_y_target = (169.0f + tempDotH) - (f32)(choice_num - 4) * 16.0f;
+    } else {
+        choice->center_y_target = 169.0f + tempDotH;
+    }
 }
 
 extern int mChoice_Get_ChoseNum(mChoice_c* choice) {
-  return choice->data.selected_choice_idx;
+    return choice->data.selected_choice_idx;
 }
 
 extern void mChoice_Clear_ChoseNum(mChoice_c* choice) {
-  choice->data.selected_choice_idx = -1;
+    choice->data.selected_choice_idx = -1;
 }
 
-static void mChoice_check_ct(mChoice_c* choice) { }
+static void mChoice_check_ct(mChoice_c* choice) {
+}
 
 static void mChoice_Get_StringDataAddressAndSize(int idx, u32* addr, u32* size) {
-  mMsg_Get_BodyParam(Choice_table_rom_start, Choice_rom_start, idx, addr, size);
+    mMsg_Get_BodyParam(Choice_table_rom_start, Choice_rom_start, idx, addr, size);
 }
 
 static int mChoice_Put_String_PLAYER_NAME(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyPlayerName(data, idx, max_size, FALSE);
+    return mMsg_CopyPlayerName(data, idx, max_size, FALSE);
 }
 
 static int mChoice_Put_String_TALK_NAME(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyTalkName(actor, data, idx, max_size, FALSE);
+    return mMsg_CopyTalkName(actor, data, idx, max_size, FALSE);
 }
 
 static int mChoice_Put_String_TAIL(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyTail(actor, data, idx, max_size, FALSE);
+    return mMsg_CopyTail(actor, data, idx, max_size, FALSE);
 }
 
 static int mChoice_Put_String_YEAR(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyYear(data, idx, max_size);
+    return mMsg_CopyYear(data, idx, max_size);
 }
 
 static int mChoice_Put_String_MONTH(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyMonth(data, idx, max_size);
+    return mMsg_CopyMonth(data, idx, max_size);
 }
 
 static int mChoice_Put_String_WEEK(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyWeek(data, idx, max_size);
+    return mMsg_CopyWeek(data, idx, max_size);
 }
 
 static int mChoice_Put_String_DAY(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyDay(data, idx, max_size);
+    return mMsg_CopyDay(data, idx, max_size);
 }
 
 static int mChoice_Put_String_HOUR(u8* data, int idx, int max_size, ACTOR* actor) {
-  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
-  int hour = Common_Get(time.rtc_time.hour);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int hour = Common_Get(time.rtc_time.hour);
 
-  if (hour < 12) {
-    msg_p->status_flags |= mMsg_STATUS_FLAG_USE_AM;
-  }
-  else {
-    msg_p->status_flags &= ~mMsg_STATUS_FLAG_USE_AM;
-  }
+    if (hour < 12) {
+        msg_p->status_flags |= mMsg_STATUS_FLAG_USE_AM;
+    } else {
+        msg_p->status_flags &= ~mMsg_STATUS_FLAG_USE_AM;
+    }
 
-  return mMsg_CopyHour(data, idx, max_size);
+    return mMsg_CopyHour(data, idx, max_size);
 }
 
 static int mChoice_Put_String_MIN(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyMin(data, idx, max_size);
+    return mMsg_CopyMin(data, idx, max_size);
 }
 
 static int mChoice_Put_String_SEC(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopySec(data, idx, max_size);
+    return mMsg_CopySec(data, idx, max_size);
 }
 
 static int mChoice_Put_String_FREE(u8* data, int idx, int max_size, ACTOR* actor, int free_idx) {
-  return mMsg_CopyFree(mMsg_Get_base_window_p(), free_idx, data, idx, max_size, mIN_ARTICLE_NUM, FALSE);
+    return mMsg_CopyFree(mMsg_Get_base_window_p(), free_idx, data, idx, max_size, mIN_ARTICLE_NUM, FALSE);
 }
 
 static int mChoice_Put_String_FREE0(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR0);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR0);
 }
 
 static int mChoice_Put_String_FREE1(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR1);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR1);
 }
 
 static int mChoice_Put_String_FREE2(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR2);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR2);
 }
 
 static int mChoice_Put_String_FREE3(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR3);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR3);
 }
 
 static int mChoice_Put_String_FREE4(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR4);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR4);
 }
 
 static int mChoice_Put_String_FREE5(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR5);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR5);
 }
 
 static int mChoice_Put_String_FREE6(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR6);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR6);
 }
 
 static int mChoice_Put_String_FREE7(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR7);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR7);
 }
 
 static int mChoice_Put_String_FREE8(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR8);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR8);
 }
 
 static int mChoice_Put_String_FREE9(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR9);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR9);
 }
 
 static int mChoice_Put_String_FREE10(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR10);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR10);
 }
 
 static int mChoice_Put_String_FREE11(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR11);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR11);
 }
 
 static int mChoice_Put_String_FREE12(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR12);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR12);
 }
 
 static int mChoice_Put_String_FREE13(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR13);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR13);
 }
 
 static int mChoice_Put_String_FREE14(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR14);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR14);
 }
 
 static int mChoice_Put_String_FREE15(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR15);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR15);
 }
 
 static int mChoice_Put_String_FREE16(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR16);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR16);
 }
 
 static int mChoice_Put_String_FREE17(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR17);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR17);
 }
 
 static int mChoice_Put_String_FREE18(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR18);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR18);
 }
 
 static int mChoice_Put_String_FREE19(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR19);
+    return mChoice_Put_String_FREE(data, idx, max_size, actor, mMsg_FREE_STR19);
 }
 
 static int mChoice_Put_String_DETERMINATION(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyDetermination(mMsg_Get_base_window_p(), data, idx, max_size);
+    return mMsg_CopyDetermination(mMsg_Get_base_window_p(), data, idx, max_size);
 }
 
 static int mChoice_Put_String_COUNTRY_NAME(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyCountryName(data, idx, max_size, FALSE);
+    return mMsg_CopyCountryName(data, idx, max_size, FALSE);
 }
 
 static int mChoice_Put_String_RAMDOM_NUMBER2(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyRamdomNumber2(data, idx, max_size);
+    return mMsg_CopyRamdomNumber2(data, idx, max_size);
 }
 
 static int mChoice_Put_String_ITEM(u8* data, int idx, int max_size, ACTOR* actor, int item_idx) {
-  return mMsg_CopyItem(mMsg_Get_base_window_p(), item_idx, data, idx, max_size, mIN_ARTICLE_NUM, FALSE);
+    return mMsg_CopyItem(mMsg_Get_base_window_p(), item_idx, data, idx, max_size, mIN_ARTICLE_NUM, FALSE);
 }
 
 static int mChoice_Put_String_ITEM0(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_ITEM(data, idx, max_size, actor, mMsg_ITEM_STR0);
+    return mChoice_Put_String_ITEM(data, idx, max_size, actor, mMsg_ITEM_STR0);
 }
 
 static int mChoice_Put_String_ITEM1(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_ITEM(data, idx, max_size, actor, mMsg_ITEM_STR1);
+    return mChoice_Put_String_ITEM(data, idx, max_size, actor, mMsg_ITEM_STR1);
 }
 
 static int mChoice_Put_String_ITEM2(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_ITEM(data, idx, max_size, actor, mMsg_ITEM_STR2);
+    return mChoice_Put_String_ITEM(data, idx, max_size, actor, mMsg_ITEM_STR2);
 }
 
 static int mChoice_Put_String_ITEM3(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_ITEM(data, idx, max_size, actor, mMsg_ITEM_STR3);
+    return mChoice_Put_String_ITEM(data, idx, max_size, actor, mMsg_ITEM_STR3);
 }
 
 static int mChoice_Put_String_ITEM4(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mChoice_Put_String_ITEM(data, idx, max_size, actor, mMsg_ITEM_STR4);
+    return mChoice_Put_String_ITEM(data, idx, max_size, actor, mMsg_ITEM_STR4);
 }
 
 static int mChoice_Put_String_ISLAND_NAME(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyIslandName(data, idx, max_size, FALSE);
+    return mMsg_CopyIslandName(data, idx, max_size, FALSE);
 }
 
 static int mChoice_Put_String_AMPM(u8* data, int idx, int max_size, ACTOR* actor) {
-  return mMsg_CopyAmPm(mMsg_Get_base_window_p(), data, idx, max_size);
+    return mMsg_CopyAmPm(mMsg_Get_base_window_p(), data, idx, max_size);
 }
 
 typedef int (*mChoice_PUT_STRING_PROC)(u8*, int, int, ACTOR*);
 
 static int mChoice_Put_String(u8* data, int idx, int max_size, ACTOR* actor) {
-  static const mChoice_PUT_STRING_PROC proc[mFont_CONT_CODE_NUM] = {
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    &mChoice_Put_String_PLAYER_NAME,
-    &mChoice_Put_String_TALK_NAME,
-    &mChoice_Put_String_TAIL,
-    &mChoice_Put_String_YEAR,
-    &mChoice_Put_String_MONTH,
-    &mChoice_Put_String_WEEK,
-    &mChoice_Put_String_DAY,
-    &mChoice_Put_String_HOUR,
-    &mChoice_Put_String_MIN,
-    &mChoice_Put_String_SEC,
-    &mChoice_Put_String_FREE0,
-    &mChoice_Put_String_FREE1,
-    &mChoice_Put_String_FREE2,
-    &mChoice_Put_String_FREE3,
-    &mChoice_Put_String_FREE4,
-    &mChoice_Put_String_FREE5,
-    &mChoice_Put_String_FREE6,
-    &mChoice_Put_String_FREE7,
-    &mChoice_Put_String_FREE8,
-    &mChoice_Put_String_FREE9,
-    &mChoice_Put_String_DETERMINATION,
-    &mChoice_Put_String_COUNTRY_NAME,
-    &mChoice_Put_String_RAMDOM_NUMBER2,
-    &mChoice_Put_String_ITEM0,
-    &mChoice_Put_String_ITEM1,
-    &mChoice_Put_String_ITEM2,
-    &mChoice_Put_String_ITEM3,
-    &mChoice_Put_String_ITEM4,
-    &mChoice_Put_String_FREE10,
-    &mChoice_Put_String_FREE11,
-    &mChoice_Put_String_FREE12,
-    &mChoice_Put_String_FREE13,
-    &mChoice_Put_String_FREE14,
-    &mChoice_Put_String_FREE15,
-    &mChoice_Put_String_FREE16,
-    &mChoice_Put_String_FREE17,
-    &mChoice_Put_String_FREE18,
-    &mChoice_Put_String_FREE19,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    &mChoice_Put_String_ISLAND_NAME,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    &mChoice_Put_String_AMPM,
-    NULL,
-    NULL,
-    NULL,
-    NULL
-  };
+    static const mChoice_PUT_STRING_PROC proc[mFont_CONT_CODE_NUM] = {
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &mChoice_Put_String_PLAYER_NAME,
+        &mChoice_Put_String_TALK_NAME,
+        &mChoice_Put_String_TAIL,
+        &mChoice_Put_String_YEAR,
+        &mChoice_Put_String_MONTH,
+        &mChoice_Put_String_WEEK,
+        &mChoice_Put_String_DAY,
+        &mChoice_Put_String_HOUR,
+        &mChoice_Put_String_MIN,
+        &mChoice_Put_String_SEC,
+        &mChoice_Put_String_FREE0,
+        &mChoice_Put_String_FREE1,
+        &mChoice_Put_String_FREE2,
+        &mChoice_Put_String_FREE3,
+        &mChoice_Put_String_FREE4,
+        &mChoice_Put_String_FREE5,
+        &mChoice_Put_String_FREE6,
+        &mChoice_Put_String_FREE7,
+        &mChoice_Put_String_FREE8,
+        &mChoice_Put_String_FREE9,
+        &mChoice_Put_String_DETERMINATION,
+        &mChoice_Put_String_COUNTRY_NAME,
+        &mChoice_Put_String_RAMDOM_NUMBER2,
+        &mChoice_Put_String_ITEM0,
+        &mChoice_Put_String_ITEM1,
+        &mChoice_Put_String_ITEM2,
+        &mChoice_Put_String_ITEM3,
+        &mChoice_Put_String_ITEM4,
+        &mChoice_Put_String_FREE10,
+        &mChoice_Put_String_FREE11,
+        &mChoice_Put_String_FREE12,
+        &mChoice_Put_String_FREE13,
+        &mChoice_Put_String_FREE14,
+        &mChoice_Put_String_FREE15,
+        &mChoice_Put_String_FREE16,
+        &mChoice_Put_String_FREE17,
+        &mChoice_Put_String_FREE18,
+        &mChoice_Put_String_FREE19,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &mChoice_Put_String_ISLAND_NAME,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        &mChoice_Put_String_AMPM,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+    };
 
-  int type = data[idx + 1];
+    int type = data[idx + 1];
 
-  if (type >= 0 && type < mFont_CONT_CODE_NUM && proc[type] != NULL) {
-    return (*proc[type])(data, idx, max_size, actor);
-  }
+    if (type >= 0 && type < mFont_CONT_CODE_NUM && proc[type] != NULL) {
+        return (*proc[type])(data, idx, max_size, actor);
+    }
 
-  return max_size;
+    return max_size;
 }
 
 static void mChoice_Change_ControlCode(u8* data, int max_size, ACTOR* actor) {
-  u8* src_p = data;
-  int new_max_size = max_size;
-  int idx = 0;
-  u8 code;
+    u8* src_p = data;
+    int new_max_size = max_size;
+    int idx = 0;
+    u8 code;
 
-  while (idx < new_max_size) {
-    code = *src_p;
+    while (idx < new_max_size) {
+        code = *src_p;
 
-    if (code == CHAR_CONTROL_CODE) {
-      new_max_size = mChoice_Put_String(data, idx, new_max_size, actor);
+        if (code == CHAR_CONTROL_CODE) {
+            new_max_size = mChoice_Put_String(data, idx, new_max_size, actor);
+        } else {
+            idx++;
+            src_p++;
+        }
     }
-    else {
-      idx++;
-      src_p++;
-    }
-  }
 }
 
 extern void mChoice_Load_ChoseStringFromRom(mChoice_c* choice, u8* str, int str_no, ACTOR* actor) {
-  if (str_no >= 0 && str_no < mChoice_SELECT_STR_NUM) {
-    u32 addr;
-    u32 size;
+    if (str_no >= 0 && str_no < mChoice_SELECT_STR_NUM) {
+        u32 addr;
+        u32 size;
 
-    mChoice_Get_StringDataAddressAndSize(str_no, &addr, &size);
+        mChoice_Get_StringDataAddressAndSize(str_no, &addr, &size);
 
-    if (size == 0) {
-      mem_clear(str, mChoice_CHOICE_STRING_LEN, CHAR_SPACE);
+        if (size == 0) {
+            mem_clear(str, mChoice_CHOICE_STRING_LEN, CHAR_SPACE);
+        } else if (addr != 0) {
+            static u8 buff[80] ATTRIBUTE_ALIGN(32);
+            u32 align_addr = ALIGN_PREV(addr, 32);
+            u32 ofs = addr - align_addr;
+            u32 align_size = ALIGN_NEXT(ofs + size, 32);
+            int max;
+            int i;
+            u8* dst_p;
+            u8* src_p;
+
+            _JW_GetResourceAram(align_addr, buff, align_size);
+
+            max = mChoice_CHOICE_STRING_LEN;
+            if (size < mChoice_CHOICE_STRING_LEN) {
+                max = size;
+            }
+
+            src_p = &buff[ofs];
+            dst_p = str;
+
+            /* Copy string from the temp aligned buffer to the destination */
+            for (i = 0; i < max; i++) {
+                *dst_p++ = *src_p++;
+            }
+
+            /* Fill remaining space with space characters */
+            for (i; i < mChoice_CHOICE_STRING_LEN; i++) {
+                *dst_p++ = CHAR_SPACE;
+            }
+
+            /* Process any control codes */
+            mChoice_Change_ControlCode(str, mChoice_CHOICE_STRING_LEN, actor);
+        }
     }
-    else if (addr != 0) {
-      static u8 buff[80] ATTRIBUTE_ALIGN(32);
-      u32 align_addr = ALIGN_PREV(addr, 32);
-      u32 ofs = addr - align_addr;
-      u32 align_size = ALIGN_NEXT(ofs + size, 32);
-      int max;
-      int i;
-      u8* src_p;
-      u8* dst_p;
-
-      _JW_GetResourceAram(align_addr, buff, align_size);
-
-      max = mChoice_CHOICE_STRING_LEN;
-      if (size < mChoice_CHOICE_STRING_LEN) {
-        max = size;
-      }
-
-      src_p = &buff[ofs];
-      dst_p = str;
-
-      /* Copy string from the temp aligned buffer to the destination */
-      for (i = 0; i < max; i++) {
-        *dst_p++ = *src_p++;
-      }
-
-      /* Fill remaining space with space characters */
-      for (i; i < mChoice_CHOICE_STRING_LEN; i++) {
-        *dst_p++ = CHAR_SPACE;
-      }
-
-      /* Process any control codes */
-      mChoice_Change_ControlCode(str, mChoice_CHOICE_STRING_LEN, actor);
-    }
-  }
 }
 
 extern void mChoice_no_b_set(mChoice_c* choice) {
-  choice->no_b_flag = TRUE;
+    choice->no_b_flag = TRUE;
 }
 
 extern void mChoice_no_b_close_set(mChoice_c* choice) {
-  choice->no_b_flag = TRUE;
-  choice->no_close_flag = TRUE;
+    choice->no_b_flag = TRUE;
+    choice->no_close_flag = TRUE;
 }

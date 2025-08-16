@@ -253,8 +253,8 @@ extern void sAdos_KishaStatusTrg(u8 state) {
     Na_KishaStatusTrg(state);
 }
 
-extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 distance1, u32 ongenNum2, u16 angle2,
-                                   f32 distance2) {
+extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, f32 distance1, u16 angle1, u32 ongenNum2,
+                                   f32 distance2, u16 angle2) {
     Na_KishaStatusLevel(speed, ongenNum1, angle1, distance1, ongenNum2, angle2, distance2);
 }
 

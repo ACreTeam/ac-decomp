@@ -16,9 +16,10 @@ typedef struct collision_keep_s {
     int unk_C;
 } mFI_col_keep_c;
 
-static mFI_col_keep_c l_keepcld[mFI_NUM_COL_KEEP] = { { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 },
-                                                      { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 },
-                                                      { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 } };
+static mFI_col_keep_c l_keepcld[mFI_NUM_COL_KEEP] = {
+    { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 },
+    { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 }, { 0xFF, 0xFF, 0 },
+};
 
 extern void mFI_ClearFieldData() {
     g_fdinfo = NULL;
@@ -1284,10 +1285,20 @@ extern int mFI_GetBlockUtNum2FG(mActor_name_t* item, int bx, int bz, int ut_x, i
         int num = mFI_GetBlockNum(bx, bz);
         int ut_num = mFI_GetUtNum(ut_x, ut_z);
 
+        // Aus version added a NULL check on the acre item data pointer
+#if VERSION >= VER_GAFU01_00
+        if (g_fdinfo->block_info[num].fg_info.items_p != NULL) {
+            res = TRUE;
+            *item = g_fdinfo->block_info[num].fg_info.items_p[ut_num];
+        } else {
+            *item = RSV_NO;
+        }
+#else
         res = TRUE;
-        item[0] = g_fdinfo->block_info[num].fg_info.items_p[ut_num];
+        *item = g_fdinfo->block_info[num].fg_info.items_p[ut_num];
+#endif
     } else {
-        item[0] = RSV_NO;
+        *item = RSV_NO;
     }
 
     return res;
@@ -1330,8 +1341,16 @@ extern int mFI_UtNumtoFGSet_common(mActor_name_t item, int ut_x, int ut_z, int u
 
     mFI_GetUtNumInBK(&b_ut_x, &b_ut_z, ut_x, ut_z);
     ut_num = mFI_GetUtNum(b_ut_x, b_ut_z);
-    g_fdinfo->block_info[block_num].fg_info.items_p[ut_num] = item;
 
+    // Aus version added a NULL check on the acre item data pointer
+#if VERSION >= VER_GAFU01_00
+    if (g_fdinfo->block_info[block_num].fg_info.items_p == NULL) {
+        return FALSE;
+    }
+#endif
+
+    g_fdinfo->block_info[block_num].fg_info.items_p[ut_num] = item;
+    
     if (update) {
         mFI_SetFGUpData();
     }
@@ -2118,9 +2137,22 @@ static int mFI_LineDepositOFF(u16* deposit, int ut_x) {
     return FALSE;
 }
 
+// Aus added NULL check
+#if VERSION >= VER_GAFU01_00
+extern int mFI_GetLineDeposit(u16* deposit, int ut_x) {
+    int ret = FALSE;
+
+    if (deposit != NULL) {
+        ret = ((*deposit) >> ut_x) & 1;
+    }
+    
+    return ret;
+}
+#else
 extern int mFI_GetLineDeposit(u16* deposit, int ut_x) {
     return (deposit[0] >> ut_x) & 1;
 }
+#endif
 
 typedef int (*mFI_SET_DEPOSIT_PROC)(u16*, int);
 
@@ -2369,7 +2401,11 @@ extern int mFI_GetDigStatus(mActor_name_t* item, xyz_t wpos, int golden_shovel) 
                     break;
                 }
             }
-        } else if (mCoBG_CheckSkySwing(wpos) == TRUE) {
+#if VERSION >= VER_GAFU01_00
+        } else if (mCoBG_CheckAirSwing(wpos) == TRUE) {
+#else
+        } else if (mCoBG_CheckAirSwing(wpos) == TRUE) {
+#endif
             status = mFI_DIGSTATUS_MISS;
         }
     }
@@ -2417,9 +2453,13 @@ extern void mFI_ClearBeecomb(int bx, int bz) {
 static void mFI_SetFGStructureKeep(mActor_name_t* item_p, mActor_name_t replace_item, int destroy_item) {
     if (destroy_item == FALSE) {
         mPB_keep_item(*item_p);
+// Aus version cleans up any snowmen here
+#if VERSION >= VER_GAFU01_00
+        mSN_ClearSnowman(item_p);
+#endif
     }
 
-    item_p[0] = replace_item;
+    *item_p = replace_item;
 }
 
 static mActor_name_t l_set_fg_table[3 * 3];
@@ -3189,16 +3229,16 @@ static void mFI_SetShellBlock(mActor_name_t* fg_p, mCoBG_Collision_u* col_p, int
     }
 }
 
+// TODO: I think this is fakematch
 static void mFI_SetShellSandyBeachBlock(u8* can_set_ut_num, u8* shell_num_inblock) {
-    int bz;
     int shell_num;
     int bx;
     int i;
+    u8 bz;
 
     for (i = 0; i < 7; i++) {
         if (can_set_ut_num[0] != 0) {
-            shell_num = shell_num_inblock[0];
-
+            shell_num = *shell_num_inblock;
             if (shell_num > 0) {
                 bx = l_sandy_beach_bx[i];
                 bz = l_sandy_beach_bz[i];
@@ -3355,19 +3395,23 @@ static int mFI_CheckBlockSetTreasure(int* block, int bx, int bz) {
 }
 
 extern int mFI_SetTreasure(int* selected_bx, int* selected_bz, mActor_name_t item) {
-    static int no_check_block_table[2 * 4] = {
+    static int no_check_block_table[4][2] = {
         3, 1, /* train station */
         3, 2, /* player house */
         0, 0, /* wishing well/shrine (dynamic) */
         0, 0  /* lake (dynamic) */
     };
 
-    u8 depositable_num_block[FG_BLOCK_TOTAL_NUM];
     mFM_fg_c* fg_block;
     mFM_fg_c* fg_block_p;
+    mCoBG_Collision_u* col_p;
+    u8 depositable_num_block[FG_BLOCK_TOTAL_NUM];
     u8* depositable_num_p2;
     u8* depositable_num_p;
     u8 depositable_blocks;
+    int selected_block;
+    int i;
+    int j;
     int res;
 
     fg_block = Save_Get(fg[0]);
@@ -3377,18 +3421,15 @@ extern int mFI_SetTreasure(int* selected_bx, int* selected_bz, mActor_name_t ite
     res = FALSE;
 
     if (Save_Get(scene_no) == SCENE_FG) {
-        int bz;
 
         bzero(depositable_num_p, FG_BLOCK_TOTAL_NUM);
-        mFI_BlockKind2BkNum(&no_check_block_table[4], &no_check_block_table[5], mRF_BLOCKKIND_SHRINE);
-        mFI_BlockKind2BkNum(&no_check_block_table[6], &no_check_block_table[7], mRF_BLOCKKIND_POOL);
+        mFI_BlockKind2BkNum(&no_check_block_table[2][0], &no_check_block_table[2][1], mRF_BLOCKKIND_SHRINE);
+        mFI_BlockKind2BkNum(&no_check_block_table[3][0], &no_check_block_table[3][1], mRF_BLOCKKIND_POOL);
 
-        for (bz = 0; bz < FG_BLOCK_Z_NUM; bz++) {
-            int bx;
-
-            for (bx = 0; bx < FG_BLOCK_X_NUM; bx++) {
-                if (mFI_CheckBlockSetTreasure(no_check_block_table, bx + 1, bz + 1) == TRUE) {
-                    mCoBG_Collision_u* col_p = mFI_GetBkNum2ColTop(bx + 1, bz + 1);
+        for (i = 0; i < FG_BLOCK_Z_NUM; i++) {
+            for (j = 0; j < FG_BLOCK_X_NUM; j++) {
+                if (mFI_CheckBlockSetTreasure((int*)no_check_block_table, j + 1, i + 1) == TRUE) {
+                    col_p = mFI_GetBkNum2ColTop(j + 1, i + 1);
 
                     depositable_num_p[0] = mMsm_GetDepositAbleNum(fg_block_p->items[0], col_p);
 
@@ -3403,10 +3444,6 @@ extern int mFI_SetTreasure(int* selected_bx, int* selected_bz, mActor_name_t ite
         }
 
         if (depositable_blocks != 0) {
-            u8* depositable_num_p; // removing this line fixes regalloc but causes regswaps
-            int selected_block;
-            int i;
-
             depositable_num_p2 = depositable_num_block;
             selected_block = RANDOM(depositable_blocks);
             for (i = 0; i < FG_BLOCK_TOTAL_NUM; i++) {

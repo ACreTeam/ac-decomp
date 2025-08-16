@@ -3250,11 +3250,19 @@ static int Player_actor_Check_axe_after(ACTOR* actorx, xyz_t* target_pos_p, mAct
         }
 
         for (i = 0; i < unit_count; i++) {
+// TODO: this feels fake, unlikely to have been changed between US and Aus
+#if VERSION == VER_GAFE01_00
             unit_center_p = &unit_center_pos[i];
             unit_exist_table[i] = mFI_Wpos2UtCenterWpos(unit_center_p, unit_pos[i]);
             if (unit_exist_table[i] != FALSE) {
                 f32 dx = unit_center_p->x - player_move_pos.x;
                 f32 dz = unit_center_p->z - player_move_pos.z;
+#else
+            unit_exist_table[i] = mFI_Wpos2UtCenterWpos(&unit_center_pos[i], unit_pos[i]);
+            if (unit_exist_table[i] != FALSE) {
+                f32 dx = unit_center_pos[i].x - player_move_pos.x;
+                f32 dz = unit_center_pos[i].z - player_move_pos.z;
+#endif
                 f32 dist_center = Math3DVecLength2D(dx, dz);
                 int angle_center = atans_table(dz, dx) - player_angle_y;
                 int abs_angle_center = ABS(angle_center);
@@ -3684,7 +3692,7 @@ static int Player_actor_Set_ScrollDemo_forDemo_wade(ACTOR* actorx) {
     return FALSE;
 }
 
-static int Player_actor_Set_ScrollDemo_forDemo_geton_boat_wade(ACTOR* actorx, s16 angle_y, f32 border_start) {
+static int Player_actor_Set_ScrollDemo_forDemo_geton_boat_wade(ACTOR* actorx, f32 border_start, s16 angle_y) {
     int dir = Player_actor_CheckAbleMoveDemoWadeBoatBlock(actorx, angle_y, border_start);
 
     if (dir != mFI_MOVEDIR_NONE) {
@@ -4245,8 +4253,14 @@ static int Player_actor_able_request_main_index_for_reset(int request_main_index
     return FALSE;
 }
 
+#if VERSION >= VER_GAFU01_00
+#define Player_actor_RESET_COUNT_FOR_RESET 4
+#else
+#define Player_actor_RESET_COUNT_FOR_RESET 2
+#endif
+
 static int Player_actor_check_able_request_main_index_for_reset(int request_main_index) {
-    if (Common_Get(reset_flag) && Now_Private->reset_count == 2 &&
+    if (Common_Get(reset_flag) && Now_Private->reset_count == Player_actor_RESET_COUNT_FOR_RESET &&
         Player_actor_able_request_main_index_for_reset(request_main_index) != FALSE) {
         if (Common_Get(reset_type) != 3) {
             Common_Set(reset_type, 3);
@@ -7154,7 +7168,7 @@ static void Player_actor_Get_PickupHandPosition(ACTOR* actorx, xyz_t* pos_p, f32
     pos_p->z += z;
 }
 
-static void Player_actor_Get_ItemDisplayPos(xyz_t* item_pos_p, xyz_t* center_pos_p) {
+static void Player_actor_Get_ItemDisplayPos(xyz_t* item_pos_p, const xyz_t* center_pos_p) {
     if (Common_Get(clip).bg_item_clip != NULL && Common_Get(clip).bg_item_clip->rand_pos_get_proc != NULL) {
         const xyz_t pos = *center_pos_p;
 
@@ -8088,7 +8102,10 @@ static void Player_actor_Check_player_change_color_for_main(ACTOR* actorx) {
     }
 }
 
+#if VERSION == VER_GAFE01_00
 static int Player_actor_Check_InBlockRadioExercise(ACTOR* actorx) {
+    // @BUG - the logic in this prevents radio exercise from working
+    // indoors when an aerobics event is active
     if (mEv_check_status(mEv_EVENT_MORNING_AEROBICS, mEv_STATUS_RUN) ||
         mEv_check_status(mEv_EVENT_SPORTS_FAIR_AEROBICS, mEv_STATUS_RUN)) {
         int bx;
@@ -8115,6 +8132,33 @@ static int Player_actor_Check_InBlockRadioExercise(ACTOR* actorx) {
 
     return FALSE;
 }
+#else
+static int Player_actor_Check_InBlockRadioExercise(ACTOR* actorx) {
+    int field_type = Common_Get(field_type);
+    if (field_type == mFI_FIELDTYPE2_FG) { 
+        if (mEv_check_status(mEv_EVENT_MORNING_AEROBICS, mEv_STATUS_RUN) ||
+            mEv_check_status(mEv_EVENT_SPORTS_FAIR_AEROBICS, mEv_STATUS_RUN)) {
+            int bx;
+            int bz;
+
+            if (mFI_BlockKind2BkNum(&bx, &bz, mRF_BLOCKKIND_SHRINE)) {
+                int player_bx;
+                int player_bz;
+
+                if (mFI_Wpos2BlockNum(&player_bx, &player_bz, actorx->world.position)) {
+                    if (player_bx == bx && player_bz == bz) {
+                        return TRUE;
+                    }
+                }
+            }
+        }
+    } else if (aMR_RadioBgmNow()) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+#endif
 
 static int Player_actor_Check_AbleRadioExercise(ACTOR* actorx) {
     /* Player must be in the same block as aerobics radio, or in a house room with one playing */
@@ -8547,3 +8591,11 @@ static void Player_actor_Set_Indoor_Camera_Index(ACTOR* actorx, GAME* game) {
         }
     }
 }
+
+#if VERSION >= VER_GAFU01_00
+static void Player_actor_Reset_item_net_catch_correct_pos(ACTOR* actorx) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
+
+    player->item_net_catch_correct_pos_set = FALSE;
+}
+#endif

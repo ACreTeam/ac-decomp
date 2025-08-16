@@ -482,8 +482,7 @@ extern void mHm_CheckRehouseOrder() {
     }
 
     for (i = 0; i < PLAYER_NUM; i++) {
-        u32* state_flags = Save_GetPointer(private_data[i].state_flags);
-        *state_flags &= (~0x200); /* TODO: these need an enum/defines */
+        Save_Get(private_data[i].state_flags) &= (~0x200); /* TODO: these need an enum/defines */
     }
 }
 

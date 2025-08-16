@@ -917,8 +917,8 @@ static void mAGrw_ChangeItemBlock2(mActor_name_t* block_items, u8 changeable_num
                                    mActor_name_t* source_table, int table_num) {
     int changed = FALSE;
     int selected = RANDOM(changeable_num);
-    int i;
     int j;
+    int i;
 
     for (i = 0; i < UT_TOTAL_NUM; i++) {
         for (j = 0; j < table_num; j++) {
@@ -1519,8 +1519,10 @@ static void mAGrw_SetCarpOnHomeBlock(mAGrw_CarpInfo_c* carp_info, mFM_fg_c* fg_b
             } else {
                 block_house_info[0]++;
             }
-        }
 
+        }
+        
+        fg_block++;
         block_info++;
     }
 
@@ -1807,8 +1809,21 @@ typedef int (*mAGrw_CHECK_FG_PROC)(mActor_name_t);
 static void mAGrw_LimitTreeLineIsland(mFM_fg_c* island_block) {
     static mAGrw_CHECK_FG_PROC check_fg[mAGrw_TREE_STAGE_NUM] = { &mAGrw_CheckTree000, &mAGrw_CheckTree001,
                                                                   &mAGrw_CheckTree002, &mAGrw_CheckTree003,
-                                                                  &mAGrw_CheckTree004 };
-
+                                                                  &mAGrw_CheckTree004, };
+// TODO: Ordering needs to be fixed, this seems fake
+#if VERSION >= VER_GAFU01_00
+    int tree_size_count_tbl[mAGrw_TREE_STAGE_NUM];
+    mFM_fg_c* island_block_p;
+    u8 ignored_record;
+    int max_trees;
+    int selected;
+    mActor_name_t* items;
+    int trees;
+    int ut_x;
+    int ut_z;
+    int tree_size;
+    int block;
+#else
     int tree_size_count_tbl[mAGrw_TREE_STAGE_NUM];
     mFM_fg_c* island_block_p;
     u8 ignored_record;
@@ -1820,6 +1835,7 @@ static void mAGrw_LimitTreeLineIsland(mFM_fg_c* island_block) {
     int trees;
     int tree_size;
     int block;
+#endif
 
     island_block_p = island_block;
 
@@ -2157,9 +2173,9 @@ static void mAGrw_SetblockCancelUtInfo(u16* cancel_ut, mActor_name_t* items, int
         &mAGrw_CheckCancel57,     &mAGrw_CheckCancel68,      &mAGrw_CheckCancel77
     };
 
+    int proc;
     int ut_z;
     int ut_x;
-    int proc;
 
     for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
         for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {

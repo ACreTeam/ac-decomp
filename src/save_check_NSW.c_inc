@@ -98,9 +98,9 @@ static int sCck_CheckSaveData_nw_visitor_NSW(Private_c* priv) {
 static int sCck_CheckSaveData_my_org_no_table_NSW(Private_c* priv) {
     u8 my_org_no;
     int field = 0;
+    int i;
     int total = 0;
     u8* my_org_no_table = priv->my_org_no_table;
-    int i;
     int res;
 
     for (i = 0; i < mPr_ORIGINAL_DESIGN_COUNT; i++) {

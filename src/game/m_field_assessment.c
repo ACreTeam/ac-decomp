@@ -211,8 +211,8 @@ static int mFAs_GetFieldGoodBlockNum_common(int* condition_num, int* block_x, in
     int condition_result;
     int flower_num;
     int block_dust_num;
-    int i;
     int dust_num;
+    int i;
     int selected_block_x;
     int selected_block_z;
     int tree_num;

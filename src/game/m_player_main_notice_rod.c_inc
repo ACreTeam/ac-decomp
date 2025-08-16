@@ -234,8 +234,13 @@ static int Player_actor_MessageControl_Notice_rod(ACTOR* actor, GAME* game, int 
 
         case 2:
             if (!mMsg_Check_MainNormal(win)) {
+#if VERSION >= VER_GAFU01_00
+                Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_YATTA2, mPlayer_ANIM_YATTA2, 1.0f, 1.0f,
+                                                 0.6f, -5.0f, 0, 0);
+#else
                 Player_actor_InitAnimation_Base2(actor, game, mPlayer_ANIM_YATTA2, mPlayer_ANIM_YATTA2, 1.0f, 1.0f,
                                                  0.5f, -5.0f, 0, 0);
+#endif
                 mBGMPsComp_delete_ps_fanfare(0x28, 0x168);
                 mBGMPsComp_make_ps_fanfare(0x4C, 0x168);
                 mMsg_Set_LockContinue(win);

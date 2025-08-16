@@ -94,8 +94,7 @@ static int Player_actor_Movement_Demo_walk(ACTOR* actorx, f32* over_speed_normal
             speed_mod = 0.01f + (speed_mod - 0.05f) * 0.5157895f;
         }
 
-        speed_mod = sqrtf(1.0f - speed_mod);
-        add_calc_short_angle2(&actorx->world.angle.y, goal_angle_y, 1.0f - speed_mod, 2500, 50);
+        add_calc_short_angle2(&actorx->world.angle.y, goal_angle_y, CALC_EASE(speed_mod), 2500, 50);
         if (player->animation0_idx != mPlayer_ANIM_WAIT1) {
             actorx->shape_info.rotation.y = actorx->world.angle.y;
         }

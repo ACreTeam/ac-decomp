@@ -24,6 +24,12 @@ extern "C" {
 #define mEnv_WIND_TERM_NUM 4u
 #define mEnv_WIND_CHANGE_RATE (f32)(10 * mTM_SECONDS_IN_MINUTE * 60) // 60fps, 10 minutes
 
+#if VERSION == VER_GAFU01_00
+#define mEnv_CHANGE_WEATHER_ENV_RATE (1.0f/250.0f);
+#else
+#define mEnv_CHANGE_WEATHER_ENV_RATE (1.0f/600.0f);
+#endif
+
 enum weather {
     mEnv_WEATHER_CLEAR,
     mEnv_WEATHER_RAIN,

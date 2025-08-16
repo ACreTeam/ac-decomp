@@ -168,15 +168,14 @@ static void mCD_set_base_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y, 
     int year_ofs;
     int t0;
     int flag;
-    int k;
     int j;
+    int k;
     int i;
     int type;
     int day;
     int day_type;
     u8* prim_p;
     u8* env_p;
-    int tex_idx;
     lbRTC_time_c* rtc_time;
 
     calendar = submenu->overlay->calendar_ovl;
@@ -224,12 +223,9 @@ static void mCD_set_base_dl(Submenu* submenu, GAME* game, f32 pos_x, f32 pos_y, 
 
     gSPDisplayList(POLY_OPA_DISP++, cal_win_nen_before);
 
-    t0 = (rtc_time->year + year_ofs);
-    t0--;
-    for (j = 0; j < 4; j++) {
-        tex_idx = t0 % 10;
-
-        gDPLoadTextureBlock_4b_Dolphin(POLY_OPA_DISP++, cal_win_nen_txt_table[tex_idx], G_IM_FMT_I, 16, 16, 15, GX_MIRROR, GX_MIRROR, 0, 0);
+    t0 = rtc_time->year - 1 + year_ofs;
+    for (j = 0; j < 4; j++, t0) {
+        gDPLoadTextureBlock_4b_Dolphin(POLY_OPA_DISP++, cal_win_nen_txt_table[t0 % 10], G_IM_FMT_I, 16, 16, 15, GX_MIRROR, GX_MIRROR, 0, 0);
         gSPDisplayList(POLY_OPA_DISP++, cal_win_nen_table[j]);
         
         t0 /= 10;

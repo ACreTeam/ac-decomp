@@ -321,17 +321,19 @@ static void mMpswd_adjust_letter(u8* pswd_str) {
     int i;
 
     for (i = 0; i < mMpswd_PASSWORD_STR_LEN; i++) {
-        switch (pswd_str[i]) {
+        switch (*pswd_str) {
             case CHAR_ZERO: {
-                pswd_str[i] = CHAR_O; // 0 -> O
+                *pswd_str = CHAR_O; // 0 -> O
                 break;
             }
 
             case CHAR_ONE: {
-                pswd_str[i] = CHAR_l; // 1 -> l
+                *pswd_str = CHAR_l; // 1 -> l
                 break;
             }
         }
+
+        pswd_str++;
     }
 }
 
@@ -474,7 +476,7 @@ static void mMpswd_chg_8bits_code(u8* eightbits, u8* sixbits) {
     } while (TRUE);
 }
 
-static void mMpswd_get_RSA_key_code(int* p, int* q, int* r, int** select_table, const u8* pswd) {
+static void mMpswd_get_RSA_key_code(int* p, int* q, int* r, int** select_table, u8* pswd) {
     u32 rsa_info = pswd[mMpswd_RSA_INFO_IDX];
     int p_idx = rsa_info & 3;
     int q_idx = (rsa_info >> 2) & 3;
@@ -563,15 +565,22 @@ static void mMpswd_decode_RSA_cipher(u8* pswd) {
     pow = 1;
 
     /* Calculate exponent d for decryption */
-    do {
+    for (pow = 1; ; pow++) {
         n = pow * pq_1 + 1;
         if (n % r == 0) {
             r = n / r;
             break;
         }
+    }
+    // do {
+    //     n = pow * pq_1 + 1;
+    //     if (n % r == 0) {
+    //         r = n / r;
+    //         break;
+    //     }
 
-        pow++;
-    } while (TRUE);
+    //     pow++;
+    // } while (TRUE);
 
     rsa_keysave = pswd[mMpswd_RSA_KEYSAVE_IDX];
     for (i = 0; i < 8; i++) {
@@ -920,6 +929,7 @@ extern int mMpswd_password_zuru_check(mMpswd_password_c* password) {
     int cheated = TRUE;
 
     if (password->type < mMpswd_CODETYPE_NUM) {
+        u8* str_p;
         int checksum = 0;
         int i;
 

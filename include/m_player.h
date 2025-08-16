@@ -2142,6 +2142,10 @@ struct player_actor_s {
     /* 0x0F24 */ u32 item_net_catch_label_request_force;
     /* 0x0F28 */ s8 item_net_catch_type_request_force;
     /* 0x0F2C */ int item_net_catch_insect_idx;
+#if VERSION >= VER_GAFU01_00
+    /* 0x0F30 */ xyz_t item_net_catch_correct_pos;
+    /* 0x0F3C */ int item_net_catch_correct_pos_set;
+#endif
     /* 0x0F30 */ ACTOR* fishing_rod_actor_p;
     /* 0x0F34 */ xyz_t item_rod_top_pos;
     /* 0x0F40 */ xyz_t item_rod_virtual_top_pos;

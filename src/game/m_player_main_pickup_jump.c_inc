@@ -77,7 +77,7 @@ static void Player_actor_settle_main_Pickup_jump(ACTOR* actorx, GAME* game) {
     }
 }
 
-static void Player_actor_Movement_Pickup_jump_common(ACTOR* actorx, xyz_t* target_pos_p) {
+static void Player_actor_Movement_Pickup_jump_common(ACTOR* actorx, const xyz_t* target_pos_p) {
     xyz_t* player_pos_p = &actorx->world.position;
     f32 dx = target_pos_p->x - player_pos_p->x;
     f32 dz = target_pos_p->z - player_pos_p->z;

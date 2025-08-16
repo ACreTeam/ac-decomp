@@ -15,8 +15,13 @@ static void Player_actor_setup_main_Complete_payment(ACTOR* actorx, GAME* game) 
     complete_payment_p->timer = 0.0f;
     complete_payment_p->msg_mode = 0;
 
+#if VERSION >= VER_GAFU01_00
+    Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_YATTA1, mPlayer_ANIM_YATTA1, 1.0f, 1.0f, 0.6f, 0.0f,
+                                     cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);
+#else
     Player_actor_InitAnimation_Base2(actorx, game, mPlayer_ANIM_YATTA1, mPlayer_ANIM_YATTA1, 1.0f, 1.0f, 0.5f, 0.0f,
                                      cKF_FRAMECONTROL_STOP, mPlayer_PART_TABLE_NORMAL);
+#endif
     Player_actor_setup_main_Base(actorx, game);
     bgm_num = Player_actor_sound_Get_bgm_num_forCompletePayment();
     mBGMPsComp_make_ps_fanfare(bgm_num, 0x168);

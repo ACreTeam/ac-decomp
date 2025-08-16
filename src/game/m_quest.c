@@ -127,8 +127,8 @@ extern void mQst_CopyErrand(mQst_errand_c* dst, mQst_errand_c* src) {
     dst->errand_type = src->errand_type;
     // dst->info = src->info;
 
-    /* what the fuck guys */
-    for (i = 0; i < sizeof(mQst_errand_info_u); i++) {
+    /* why are we copying it like this? */
+    for (i = 0; i < (int)sizeof(mQst_errand_info_u); i++) {
         *info_dst_p = *info_src_p;
         info_dst_p++;
         info_src_p++;

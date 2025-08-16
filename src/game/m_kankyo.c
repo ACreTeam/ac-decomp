@@ -1504,8 +1504,9 @@ static void mEnv_ChangeRGBLight(u8* dst, u8* src_nxt_w0, u8* src_nxt_w1, u8* src
     int i;
 
     for (i = 0; i < 3; i++) {
-        dst[0] = weather_change_bias * (f1 * (src_nxt_w0[0] + f0 * ((f32)src_nxt_w1[0] - (f32)src_nxt_w0[0]))) +
-                 inverse_weather_change_bias * (f1 * (src_now_w0[0] + f0 * ((f32)src_now_w1[0] - (f32)src_now_w0[0])));
+        *dst =
+            weather_change_bias * (f1 * (*src_nxt_w0 + f0 * ((f32)*src_nxt_w1 - (f32)*src_nxt_w0))) +
+            inverse_weather_change_bias * (f1 * (*src_now_w0 + f0 * ((f32)*src_now_w1 - (f32)*src_now_w0)));
 
         dst++;
         src_nxt_w0++;
@@ -2113,7 +2114,7 @@ extern void mEnv_ManagePointLight(GAME_PLAY* play, Kankyo* kankyo, Global_light*
 
 static void mEnv_ManageChangeWeatherEnvRate() {
     if (l_mEnv_electric_light.now_weather != l_mEnv_electric_light.next_weather) {
-        l_mEnv_electric_light.change_weather_env_rate += (1.0f / 600.0f);
+        l_mEnv_electric_light.change_weather_env_rate += mEnv_CHANGE_WEATHER_ENV_RATE;
 
         if (l_mEnv_electric_light.change_weather_env_rate >= 1.0f) {
             l_mEnv_electric_light.change_weather_env_rate = 1.0f;
@@ -2203,7 +2204,11 @@ static int mEnv_CheckNpcRoomPointLightNiceStatus() {
         schedule = Common_GetPointer(npc_schedule[ANIMAL_NUM_MAX]);
 
         if (schedule != NULL) {
-            if (schedule->current_type == mNPS_SCHED_IN_HOUSE && animal->is_home == TRUE &&
+            if (
+#if VERSION < VER_GAFU01_00
+            schedule->current_type == mNPS_SCHED_IN_HOUSE &&
+#endif
+            animal->is_home == TRUE &&
                 (Common_Get(time).now_sec < mEnv_NPC_LIGHTS_OFF_TIME ||
                  Common_Get(time).now_sec >= mEnv_NPC_LIGHTS_ON_TIME)) {
                 return TRUE;
@@ -2216,7 +2221,11 @@ static int mEnv_CheckNpcRoomPointLightNiceStatus() {
             schedule = mNPS_get_schedule_area(&animal->id);
 
             if (schedule != NULL) {
-                if (schedule->current_type == mNPS_SCHED_IN_HOUSE && animal->is_home == TRUE &&
+                if (
+#if VERSION < VER_GAFU01_00
+                    schedule->current_type == mNPS_SCHED_IN_HOUSE &&
+#endif
+                    animal->is_home == TRUE &&
                     (Common_Get(time).now_sec < mEnv_NPC_LIGHTS_OFF_TIME ||
                      Common_Get(time).now_sec >= mEnv_NPC_LIGHTS_ON_TIME)) {
                     return TRUE;
@@ -2394,8 +2403,8 @@ extern int mEnv_ReservePointLight(GAME_PLAY* play, xyz_t* pos, u8 r, u8 g, u8 b,
         if (l_mEnv_electric_light.point_light_list_buf[i] == NULL) {
             point_light = &l_mEnv_electric_light.point_lights[i];
 
-            Light_point_ct(point_light, pos->x, pos->y, pos->z, r, g, b, power);
-            list = Global_light_list_new((GAME*)play, &play->global_light, point_light);
+            Light_point_ct(&l_mEnv_electric_light.point_lights[i], pos->x, pos->y, pos->z, r, g, b, power);
+            list = Global_light_list_new((GAME*)play, &play->global_light, &l_mEnv_electric_light.point_lights[i]);
 
             if (list != NULL) {
                 l_mEnv_electric_light.point_light_list_buf[i] = list;

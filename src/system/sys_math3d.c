@@ -167,7 +167,7 @@ extern f32 Math3DLengthSquare(xyz_t* a, xyz_t* b) {
     return Math3DVecLengthSquare(&d);
 }
 
-extern f32 Math3DLength(xyz_t* a, xyz_t* b) {
+extern f32 Math3DLength(const xyz_t* a, const xyz_t* b) {
     return search_position_distance(a, b);
 }
 
@@ -180,7 +180,7 @@ static f32 Math3DLength_s_f(s_xyz* a, xyz_t* b) {
     return Math3DVecLength(&d);
 }
 
-extern void Math3DVectorProduct2Vec(const xyz_t* a, xyz_t* b, xyz_t* ret) {
+extern void Math3DVectorProduct2Vec(const xyz_t* a, const xyz_t* b, xyz_t* ret) {
     ret->x = (a->y * b->z) - (a->z * b->y);
     ret->y = (a->z * b->x) - (a->x * b->z);
     ret->z = (a->x * b->y) - (a->y * b->x);
@@ -252,16 +252,16 @@ FORCESTRIP xyz_t* _bss_func03() {
 }
 #endif
 
-extern f32 Math3DPlaneFunc(f32 nox, f32 noy, f32 noz, f32 odist, xyz_t* pl) {
+extern f32 Math3DPlaneFunc(f32 nox, f32 noy, f32 noz, f32 odist, const xyz_t* pl) {
     return ((nox * pl->x) + (noy * pl->y) + (noz * pl->z) + odist);
 }
 
-extern f32 Math3DLengthPlaneAndPos(f32 nox, f32 noy, f32 noz, f32 odist, xyz_t* pl) {
+extern f32 Math3DLengthPlaneAndPos(f32 nox, f32 noy, f32 noz, f32 odist, const xyz_t* pl) {
     f32 res = fabsf(Math3DSignedLengthPlaneAndPos(nox, noy, noz, odist, pl));
     return res;
 }
 
-extern f32 Math3DSignedLengthPlaneAndPos(f32 nox, f32 noy, f32 noz, f32 odist, xyz_t* pl) {
+extern f32 Math3DSignedLengthPlaneAndPos(f32 nox, f32 noy, f32 noz, f32 odist, const xyz_t* pl) {
 
     f32 nm;
 
@@ -323,7 +323,7 @@ extern int Math3DTriangleCrossYLine_scope(xyz_t* v0, xyz_t* v1, xyz_t* v2, f32 n
                                           f32 x, f32* yint, f32 y0, f32 y1) {
     xyz_t pl;
     f32 das, dbs;
-    if ((float)__fabs(noy) < 0.008f) {
+    if (F32_IS_ZERO(noy)) {
         return 0;
     }
 
@@ -414,7 +414,7 @@ extern int Math3DTriangleCrossZCheck_general(xyz_t* v0, xyz_t* v1, xyz_t* v2, f3
         return 1;
     }
 
-    if ((float)__fabs(noz) > 0.5f) {
+    if (fabsf(noz) > 0.5f) {
         if (Math3D_pointVsLineSegmentLengthSquare2D(x, y, v0->x, v0->y, v1->x, v1->y, &edge) && (edge < dist_sq)) {
             return 1;
         }
@@ -451,7 +451,7 @@ extern int Math3D_pointVsLineSegmentLengthSquare2D(f32 x0, f32 y0, f32 x1, f32 y
 
     d = (diffx * diffx) + (diffy * diffy);
 
-    if ((float)__fabs(d) < 0.008f) {
+    if (F32_IS_ZERO(d)) {
         *lsq = 0;
         return 0;
     }
@@ -471,21 +471,21 @@ extern int Math3D_pointVsLineSegmentLengthSquare2D(f32 x0, f32 y0, f32 x1, f32 y
 extern int Math3D_sphereCrossLineSegment(Math3D_sphere_c* s, Math3D_linef_c* l) {
     static xyz_t h;
     f32 lc;
-    f32 delta_sq;
     xyz_t linediff;
-
+    
     f32 r_sq;
     f32 cen_x_sq;
     f32 cen_y_sq;
     f32 cen_z_sq;
-
+    
     f32 ofs_x;
     f32 ofs_y;
     f32 ofs_z;
-
+    
     f32 x;
     f32 y;
     f32 z;
+    f32 delta_sq;
 
     if ((Math3D_sphereCollisionPoint(s, &l->a)) || Math3D_sphereCollisionPoint(s, &l->b)) {
         return 1;
@@ -648,6 +648,33 @@ extern int Math3D_pipeVsPos(Math3D_pipe_c* c, xyz_t* p) {
 }
 
 extern int Math3D_pipeCrossLine(Math3D_pipe_c* c, xyz_t* la, xyz_t* lb, xyz_t* ia, xyz_t* ib) {
+#if VERSION >= VER_GAFU01_00
+    int sa;
+    int sb;
+    int i;
+    int co;
+    int f = 0;
+    xyz_t ca;
+    xyz_t cb;
+    xyz_t ab;
+    xyz_t intpos[4];
+    f32 z = 0.0f;
+    f32 fb;
+    f32 bix;
+    f32 biz;
+    f32 tix;
+    f32 tiz;
+    f32 iba;
+    f32 ibd;
+    f32 t2;
+    f32 fa = 0.0f;
+    f32 fba = 0.0f;
+    f32 t;
+    f32 rsqd;
+    f32 t3;
+    f32 rsq;
+    f32 dc;
+#else
     f32 z = 0.0f;
     int f = 0;
     int sa, sb, i, co;
@@ -667,6 +694,7 @@ extern int Math3D_pipeCrossLine(Math3D_pipe_c* c, xyz_t* la, xyz_t* lb, xyz_t* i
     f32 t3;
     f32 rsq;
     f32 dc;
+#endif
 
     if (Math3D_pipeVsPos(c, la) && Math3D_pipeVsPos(c, lb)) {
         *ia = *la;

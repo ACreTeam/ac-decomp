@@ -110,7 +110,7 @@ extern int mCoBG_GetDimension2Idx(f32 p0, f32 p1, f32 p2) {
     return mCoBG_DIM_ALL;
 }
 
-extern int mCoBG_GetCrossTriangleAndLine3D(xyz_t* cross, xyz_t v0, xyz_t v1, xyz_t v2, xyz_t line0, xyz_t line1) {
+extern int mCoBG_GetCrossTriangleAndLine3D(xyz_t* cross, xyz_t v0, xyz_t v1, xyz_t v2, const xyz_t line0, const xyz_t line1) {
     f32 x;
     f32 y;
     f32 z;
@@ -127,10 +127,10 @@ extern int mCoBG_GetCrossTriangleAndLine3D(xyz_t* cross, xyz_t v0, xyz_t v1, xyz
     cross->z = 0.0f;
 
     Math3DPlane(&v0, &v1, &v2, &nox, &noy, &noz, &dist);
-    t = (nox * line0.x + noy * line0.y + noz * line0.z) + dist;
     x = line0.x - line1.x;
     y = line0.y - line1.y;
     z = line0.z - line1.z;
+    t = (nox * line0.x + noy * line0.y + noz * line0.z) + dist;
     ldist = nox * x + noy * y + noz * z;
     if (!F32_IS_ZERO(ldist)) {
         int dim;

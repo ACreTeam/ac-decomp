@@ -364,41 +364,41 @@ static int last_day_of_month(lbRTC_month_t month) {
 
 static void init_weekday1st() {
     lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
-    lbRTC_month_t month;
     lbRTC_month_t temp;
     lbRTC_month_t i;
-    int weekday;
+    lbRTC_month_t j;
+    lbRTC_month_t month;
+    int t;
 
     month = rtc_time->month & 0xF;
     weekday1st_year = rtc_time->year;
 
-    weekday = (rtc_time->weekday + (1 - rtc_time->day)) % lbRTC_WEEK;
-    if (weekday < 0) {
-        weekday += lbRTC_WEEK;
+    t = (rtc_time->weekday + (1 - rtc_time->day)) % lbRTC_WEEK;
+    if (t < 0) {
+        t += lbRTC_WEEK;
     }
 
-    weekday1st[month] = weekday;
+    weekday1st[month] = t;
 
-    for (i = month, temp = month + 1; temp <= lbRTC_MONTHS_MAX; i++, temp++) {
-        int last = last_day_of_month(i);
-        int t = (weekday1st[i] + (u8)last) % lbRTC_WEEK;
+    for (i = month, j = month + 1; j <= lbRTC_MONTHS_MAX; i++, j++) {
+        temp = last_day_of_month(i);
+        t = (weekday1st[i] + temp) % lbRTC_WEEK;
 
         if (t < 0) {
             t += lbRTC_WEEK;
         }
 
-        weekday1st[temp] = t;
+        weekday1st[j] = t;
     }
 
-    for (temp = month - 1, i = month; temp >= lbRTC_JANUARY; i--, temp--) {
-        lbRTC_day_t last_day = last_day_of_month(temp);
-
-        weekday = (weekday1st[i] - last_day) % lbRTC_WEEK;
-        if (weekday < 0) {
-            weekday += lbRTC_WEEK;
+    for (j = month - 1, i = month; j >= lbRTC_JANUARY; i--, j--) {
+        temp = last_day_of_month(j);
+        t = (weekday1st[i] - temp) % lbRTC_WEEK;
+        if (t < 0) {
+            t += lbRTC_WEEK;
         }
 
-        weekday1st[temp] = weekday;
+        weekday1st[j] = t;
     }
 }
 
@@ -574,24 +574,21 @@ extern int mEv_weekday2day(lbRTC_month_t month, int week, int weekday) {
 }
 
 static int get_end_time(u32 active_hours) {
-    int hour;
     int i;
 
     if ((active_hours & ((1 << 24) - 1)) == 0) {
         return -1; /* no active hours */
     }
 
-    hour = 23;
-    for (i = 0; i < 24; i++) {
+    for (i = 23; i >= 0; i--) {
         if ((active_hours & (1 << 23)) != 0) {
             break;
         }
 
         active_hours <<= 1; /* move hours left by one bit, MSB is latest hour */
-        hour--;
     }
 
-    return hour;
+    return i;
 }
 
 extern int mEv_get_end_time(int event_type) {
@@ -856,6 +853,7 @@ static int init_special_event(int new_event) {
     mEv_save_common_data_c* ev_save_common;
     u16* dates_p;
     s16 event_year;
+    int t;
 
     switch (Common_Get(last_scene_no)) {
         case SCENE_BUGGY:
@@ -899,6 +897,20 @@ static int init_special_event(int new_event) {
     special_ymdh.raw = (dates_p[mEv_SAVE_DATE_SPECIAL0] << 8) & 0x000FFFF00;
     special_ymdh.year = event_year % 100;
 
+    
+    
+#if VERSION >= VER_GAFU01_00
+    rtc_ymdh.raw = (rtc_sched.md) << 8;
+    rtc_ymdh.year = rtc_time->year % 100;
+    rtc_ymdh.hour = rtc_time->hour;
+    special_end_ymdh.raw = (dates_p[mEv_SAVE_DATE_SPECIAL2] << 8) & 0x000FFFF00;
+    t = event_year % 100;
+    if (dates_p[mEv_SAVE_DATE_SPECIAL0] > dates_p[mEv_SAVE_DATE_SPECIAL2]) {
+        t++;
+    }
+
+    special_end_ymdh.year = t;
+#else
     rtc_ymdh.raw = (rtc_sched.md) << 8;
     rtc_ymdh.year = rtc_time->year % 100;
     rtc_ymdh.hour = rtc_time->hour;
@@ -907,6 +919,7 @@ static int init_special_event(int new_event) {
                                                    dates_p[mEv_SAVE_DATE_SPECIAL0] > rtc_sched.md)
                                                       ? 1
                                                       : 0);
+#endif
 
     special_end_ymdh.hour = get_special_event_end_time(type);
 
@@ -945,6 +958,12 @@ static int init_special_event(int new_event) {
             }
 
             special_monthday[0].raw = after_n_day(rtc_sched.md, next_event_day_gap);
+// Aus version prevents special events from happening on the last day of the year
+#if VERSION >= VER_GAFU01_00
+            if (special_monthday[0].raw == mEv_MonthDay(lbRTC_DECEMBER, 31)) {
+                special_monthday[0].raw = after_n_day(special_monthday[0].raw, 1);
+            }
+#endif
             if (rtc_sched.md <= sale_day && sale_day <= special_monthday[0].raw) {
                 /* Force the next special event to be Crazy Redd since Sale Day falls between now and the rolled
                  * event date */
@@ -1668,21 +1687,21 @@ static int effective_scene() {
 }
 
 static void update_schedule_today(Event_c* event) {
-    int month;
+    lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
+    // int month;
     u8 equinox_day = 0;
     mEv_schedule_date_u today_date;
     mEv_MonthDay_u birthday_date;
     mEv_schedule_c sched;
-    lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
     mEv_schedule_c* sched_p = &sched;
     Private_c* priv = &Save_Get(private_data[Common_Get(player_no)]);
     int i;
     int type;
 
     if (mEv_ArbeitPlayer_kari(Common_Get(player_no)) == FALSE) {
-        month = rtc_time->month;
+        // month = rtc_time->month;
 
-        today_date.d.month = month;
+        today_date.d.month = rtc_time->month;
         today_date.d.day = rtc_time->day;
         today_date.d.hour = rtc_time->hour;
         today_date.d._2 = 0;
@@ -1708,7 +1727,7 @@ static void update_schedule_today(Event_c* event) {
             if (sched.type == mEv_EVENT_SUMMER_CAMPER) {
                 mEv_MonthDay_u camper_date;
 
-                switch (month) {
+                switch (today_date.d.month) {
                     case lbRTC_JUNE:
                     case lbRTC_JULY:
                     case lbRTC_AUGUST:
@@ -1912,6 +1931,23 @@ extern void mEv_init_force(Event_c* event) {
     init_event(event, renewal_flag);
 }
 
+// Aus checks if the save weather is set to rain, not the current weather.
+// This would prevent a bug where Morning Aerobics could be scheduled
+// in the rain because the previous weather was clear.
+#if VERSION >= VER_GAFU01_00
+extern void mEv_2nd_init(Event_c* event) {
+    /* Disable morning aerobics if it is scheduled and the weather is rain */
+    u8 index = index_today[mEv_EVENT_MORNING_AEROBICS];
+
+    if (index != 0xFF && mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather)) == mEnv_WEATHER_RAIN) {
+        mEv_event_today_c* ev_today = &event_today[index];
+
+        mEv_clear_status(mEv_EVENT_MORNING_AEROBICS, mEv_STATUS_ACTIVE);
+        ev_today->type = -1;
+        index_today[mEv_EVENT_MORNING_AEROBICS] = 0xFF;
+    }
+}
+#else
 extern void mEv_2nd_init(Event_c* event) {
     /* Disable morning aerobics if it is scheduled and the weather is rain */
     if (Common_Get(weather) == mEnv_WEATHER_RAIN) {
@@ -1926,6 +1962,7 @@ extern void mEv_2nd_init(Event_c* event) {
         }
     }
 }
+#endif
 
 extern int mEv_PlayerOK() {
     int res = FALSE;
@@ -2499,8 +2536,8 @@ extern int mEv_get_rumor() {
 
 extern void mEv_actor_dying_message(int type, ACTOR* actor) {
     xyz_t pos = actor->world.position;
-    mEv_common_data_c* ev_common = Common_GetPointer(event_common);
     mActor_name_t actor_name = actor->npc_id;
+    mEv_common_data_c* ev_common = Common_GetPointer(event_common);
     int i;
 
     for (i = 0; i < mEv_PLACE_NUM; i++) {
@@ -2621,22 +2658,22 @@ extern int mEv_GetHour(Event_c* event) {
 }
 
 extern void mEv_debug_print4f(gfxprint_t* gfxprint) {
-    // int x = 0;
     int i;
     int event_idx = 0;
 
     for (i = 0; i < mEv_TODAY_EVENT_NUM; i++) {
-        if (event_today[i].type != -1 && mEv_check_status(event_today[i].type, mEv_STATUS_ACTIVE)) {
+        mEv_event_today_c* ev = &event_today[i];
+
+        if (ev->type != -1 && mEv_check_status(ev->type, mEv_STATUS_ACTIVE)) {
             gfxprint_color(gfxprint, 245, 200, 170, 255);
             gfxprint_locate8x8(gfxprint, 3 + event_idx * 3, 5);
-            gfxprint_printf(gfxprint, "%3d", event_today[i].type);
+            gfxprint_printf(gfxprint, "%3d", ev->type);
             event_idx++;
-            // x += 3;
 
             if (event_idx >= 9) {
-                if (mEv_check_status(event_today[i].type, mEv_STATUS_ERROR) == FALSE) {
+                if (mEv_check_status(ev->type, mEv_STATUS_ERROR) == FALSE) {
                     gfxprint_color(gfxprint, 245, 150, 120, 255);
-                } else if (mEv_check_status(event_today[i].type, mEv_STATUS_RUN)) {
+                } else if (mEv_check_status(ev->type, mEv_STATUS_RUN)) {
                     gfxprint_color(gfxprint, 180, 150, 160, 255);
                 } else {
                     gfxprint_color(gfxprint, 140, 120, 120, 255);
@@ -2770,7 +2807,7 @@ extern int mEv_someone_died() {
 
 extern void mEv_special_event_soldout(int type) {
     GAME_PLAY* play = (GAME_PLAY*)gamePT;
-    mEv_event_today_c* ev_today;
+    mEv_event_today_c* ev_today = event_today;
     int i;
 
     for (i = 0; i < mEv_TODAY_EVENT_NUM; i++) {

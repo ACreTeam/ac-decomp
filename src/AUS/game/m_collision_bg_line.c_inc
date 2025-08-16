@@ -1,4 +1,5 @@
-static void mCoBG_GetSpeedXZ(f32* speed, xyz_t* start, xyz_t* end) {
+// GAFU01 changed start & end to const
+static void mCoBG_GetSpeedXZ(f32* speed, const xyz_t* start, const xyz_t* end) {
     speed[0] = end->x - start->x;
     speed[1] = end->z - start->z;
 }
@@ -295,7 +296,8 @@ static void mCoBG_GetFlatGroundPolygon(xyz_t* v0, xyz_t* v1, xyz_t* v2, f32 bg_y
     v2->z = z + ofs[2].z;
 }
 
-static int mCoBG_GetRevGroundAndLine(xyz_t* rev, mCoBG_UnitInfo_c* ut_info, xyz_t start_pos, xyz_t end_pos) {
+// GAFU01 changed start_pos & end_pos to be const xyz_t* instead of struct copies
+static int mCoBG_GetRevGroundAndLine(xyz_t* rev, mCoBG_UnitInfo_c* ut_info, const xyz_t* start_pos, const xyz_t* end_pos) {
     xyz_t v0;
     xyz_t v1;
     xyz_t v2;
@@ -307,6 +309,7 @@ static int mCoBG_GetRevGroundAndLine(xyz_t* rev, mCoBG_UnitInfo_c* ut_info, xyz_
     f32 d;
     f32 dist_start;
     f32 dist_end;
+    xyz_t tmp;
 
     if (
         // clang-format off
@@ -321,7 +324,7 @@ static int mCoBG_GetRevGroundAndLine(xyz_t* rev, mCoBG_UnitInfo_c* ut_info, xyz_
         f32 z;
         int i;
 
-        if (start_pos.y >= end_pos.y) {
+        if (start_pos->y >= end_pos->y) {
             bg_y = ut_info->leftUp_offset;
             x = ut_info->ut_x * mFI_UT_WORLDSIZE_X_F;
             z = ut_info->ut_z * mFI_UT_WORLDSIZE_Z_F;
@@ -330,13 +333,13 @@ static int mCoBG_GetRevGroundAndLine(xyz_t* rev, mCoBG_UnitInfo_c* ut_info, xyz_
                 mCoBG_GetFlatGroundPolygon(&v0, &v1, &v2, bg_y, x, z, i);
                 Math3DPlane(&v0, &v1, &v2, &a, &b, &c, &d);
 
-                dist_start = Math3DSignedLengthPlaneAndPos(a, b, c, d, &start_pos);
-                dist_end = Math3DSignedLengthPlaneAndPos(a, b, c, d, &end_pos);
+                dist_start = Math3DSignedLengthPlaneAndPos(a, b, c, d, start_pos);
+                dist_end = Math3DSignedLengthPlaneAndPos(a, b, c, d, end_pos);
                 if (dist_start >= 0.0f && dist_end <= 0.0f) {
-                    if (mCoBG_GetCrossTriangleAndLine3D(&cross, v0, v1, v2, start_pos, end_pos)) {
-                        rev->x = cross.x - end_pos.x;
-                        rev->y = cross.y - end_pos.y;
-                        rev->z = cross.z - end_pos.z;
+                    if (mCoBG_GetCrossTriangleAndLine3D(&cross, v0, v1, v2, *start_pos, *end_pos)) {
+                        rev->x = cross.x - end_pos->x;
+                        rev->y = cross.y - end_pos->y;
+                        rev->z = cross.z - end_pos->z;
                         return TRUE;
                     }
                 }
@@ -347,13 +350,13 @@ static int mCoBG_GetRevGroundAndLine(xyz_t* rev, mCoBG_UnitInfo_c* ut_info, xyz_
             mCoBG_GetAreaPolygon(&v0, &v1, &v2, ut_info, area);
             Math3DPlane(&v0, &v1, &v2, &a, &b, &c, &d);
 
-            dist_start = Math3DSignedLengthPlaneAndPos(a, b, c, d, &start_pos);
-            dist_end = Math3DSignedLengthPlaneAndPos(a, b, c, d, &end_pos);
+            dist_start = Math3DSignedLengthPlaneAndPos(a, b, c, d, start_pos);
+            dist_end = Math3DSignedLengthPlaneAndPos(a, b, c, d, end_pos);
             if (dist_start >= 0.0f && dist_end <= 0.0f) {
-                if (mCoBG_GetCrossTriangleAndLine3D(&cross, v0, v1, v2, start_pos, end_pos)) {
-                    rev->x = cross.x - end_pos.x;
-                    rev->y = cross.y - end_pos.y;
-                    rev->z = cross.z - end_pos.z;
+                if (mCoBG_GetCrossTriangleAndLine3D(&cross, v0, v1, v2, *start_pos, *end_pos)) {
+                        rev->x = cross.x - end_pos->x;
+                        rev->y = cross.y - end_pos->y;
+                        rev->z = cross.z - end_pos->z;
                     return TRUE;
                 }
             }
@@ -363,7 +366,8 @@ static int mCoBG_GetRevGroundAndLine(xyz_t* rev, mCoBG_UnitInfo_c* ut_info, xyz_
     return FALSE;
 }
 
-static int mCoBG_LineGroundCheck_Move(xyz_t* rev, xyz_t* start_pos, xyz_t* end_pos) {
+// GAFU01 changed start_pos & end_pos to be const
+static int mCoBG_LineGroundCheck_Move(xyz_t* rev, const xyz_t* start_pos, const xyz_t* end_pos) {
     mCoBG_bg_regist_c* regist_p;
     mCoBG_mBgMgr_c* bg_mgr = &l_mBgMgr;
     mCoBG_bg_regist_c** regist_pp = bg_mgr->regist_p; 
@@ -477,7 +481,8 @@ static int mCoBG_LineGroundCheck_Move(xyz_t* rev, xyz_t* start_pos, xyz_t* end_p
     return FALSE;
 }
 
-static int mCoBG_LineGroundCheck(xyz_t* rev, xyz_t start_pos, xyz_t end_pos) {
+// GAFU01 changed start_pos and end_pos to be const xyz_t*
+static int mCoBG_LineGroundCheck(xyz_t* rev, const xyz_t* start_pos, const xyz_t* end_pos) {
     mCoBG_UnitInfo_c* ut_info = l_crtutInf;
     int i;
     xyz_t ground_rev = { 0.0f, 0.0f, 0.0f };
@@ -492,7 +497,7 @@ static int mCoBG_LineGroundCheck(xyz_t* rev, xyz_t start_pos, xyz_t end_pos) {
         ut_info++;
     }
 
-    if (mCoBG_LineGroundCheck_Move(&move_rev, &start_pos, &end_pos)) {
+    if (mCoBG_LineGroundCheck_Move(&move_rev, start_pos, end_pos)) {
         *rev = move_rev;
         return TRUE;
     }
@@ -500,24 +505,26 @@ static int mCoBG_LineGroundCheck(xyz_t* rev, xyz_t start_pos, xyz_t end_pos) {
     return FALSE;
 }
 
-static void mCoBG_MakeLineCheckCollisionData(xyz_t start_pos, xyz_t end_pos) {
+// GAFU01 changed start_pos and end_pos to be const xyz_t*
+static void mCoBG_MakeLineCheckCollisionData(const xyz_t* start_pos, const xyz_t* end_pos) {
     int ux;
     int uz;
     f32 speed[2];
 
-    mCoBG_GetSpeedXZ(speed, &start_pos, &end_pos);
-    mFI_Wpos2UtNum(&ux, &uz, start_pos);
+    mCoBG_GetSpeedXZ(speed, start_pos, end_pos);
+    mFI_Wpos2UtNum(&ux, &uz, *start_pos);
     mCoBG_TransCenter(&ux, &uz, speed, 3);
     mCoBG_MakeSizeUnitInfo(l_crtutInf, ux, uz, 3);
     mCoBG_MakeUnitVector(&l_VecInf, l_crtutInf, 3, mCoBG_CHECK_TYPE_NORMAL, TRUE, FALSE, FALSE);
 }
 
-static int mCoBG_JudgeStartLineCheck(xyz_t* rev, xyz_t start_pos, xyz_t end_pos) {
+// GAFU01 changed start_pos and end_pos to be const xyz_t*
+static int mCoBG_JudgeStartLineCheck(xyz_t* rev, const xyz_t* start_pos, const xyz_t* end_pos) {
     if (rev != NULL) {
         mCoBG_InitRevpos(rev);
     }
 
-    if (F32_IS_ZERO(start_pos.x - end_pos.x) && F32_IS_ZERO(start_pos.y - end_pos.y) && F32_IS_ZERO(start_pos.z - end_pos.z)) {
+    if (F32_IS_ZERO(start_pos->x - end_pos->x) && F32_IS_ZERO(start_pos->y - end_pos->y) && F32_IS_ZERO(start_pos->z - end_pos->z)) {
         return FALSE;
     }
 
@@ -532,21 +539,27 @@ static void mCoBG_SetWallGroundReverse(xyz_t* rev, const xyz_t* wall_rev, const 
     }
 }
 
+static void mCoBG_PlusEqualPos(xyz_t* p0, xyz_t* p1) {
+    p0->x += p1->x;
+    p0->y += p1->y;
+    p0->z += p1->z;
+}
+
 extern int mCoBG_LineCheck_RemoveFg(xyz_t* rev, xyz_t start_pos, xyz_t end_pos, mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_proc, int line_check_type) {
     int ret = 0;
 
     bzero(l_crtutInf, sizeof(l_crtutInf));
     bzero(&l_VecInf, sizeof(l_VecInf));
 
-    if (mCoBG_JudgeStartLineCheck(rev, start_pos, end_pos)) {
+    if (mCoBG_JudgeStartLineCheck(rev, &start_pos, &end_pos)) {
         xyz_t wall_rev = { 0.0f, 0.0f, 0.0f };
         xyz_t ground_rev = { 0.0f, 0.0f, 0.0f };
         xyz_t wall_col_rev = { 0.0f, 0.0f, 0.0f };
         xyz_t ground_col_rev = { 0.0f, 0.0f, 0.0f };
 
-        mCoBG_MakeLineCheckCollisionData(start_pos, end_pos);
+        mCoBG_MakeLineCheckCollisionData(&start_pos, &end_pos);
         mCoBG_MakeMoveBgVector(&l_VecInf, &l_mBgMgr, &end_pos, mCoBG_CHECK_TYPE_PLAYER);
-        mCoBG_MakeColumnCollisionData(l_VecInf.column, &l_VecInf.col_count, l_crtutInf, 3, FALSE, check_proc, -1, -1);
+        mCoBG_MakeColumnCollisionData(NULL, l_VecInf.column, &l_VecInf.col_count, l_crtutInf, 3, FALSE, check_proc, -1, -1);
 
         if ((line_check_type & mCoBG_LINE_CHECK_WALL) != 0) {
             if (mCoBG_LineWallCheck(&wall_rev, start_pos, end_pos)) {
@@ -561,7 +574,7 @@ extern int mCoBG_LineCheck_RemoveFg(xyz_t* rev, xyz_t start_pos, xyz_t end_pos, 
         }
 
         if ((line_check_type & mCoBG_LINE_CHECK_GROUND) != 0) {
-            if (mCoBG_LineGroundCheck(&ground_rev, start_pos, end_pos)) {
+            if (mCoBG_LineGroundCheck(&ground_rev, &start_pos, &end_pos)) {
                 ret |= mCoBG_LINE_CHECK_GROUND;
             }
             mCoBG_PlusEqualPos(&end_pos, &ground_rev);
@@ -577,7 +590,7 @@ extern int mCoBG_LineCheck_RemoveFg(xyz_t* rev, xyz_t start_pos, xyz_t end_pos, 
                 ret |= mCoBG_LINE_CHECK_WATER;
             } else {
                 if (mCoBG_CheckWaterAttribute(mCoBG_Wpos2Attribute(end_pos, NULL))) {
-                    f32 water_y = mCoBG_GetWaterHeight_File(end_pos, __FILE__, 880);
+                    f32 water_y = mCoBG_GetWaterHeight_File(end_pos, __FILE__, 894);
 
                     if (end_pos.y <= water_y + 1.0f) {
                         ret |= mCoBG_LINE_CHECK_UNDERWATER;

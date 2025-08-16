@@ -248,6 +248,9 @@ static void Player_actor_move_other_func1(ACTOR* actor, GAME* game) {
     Player_actor_Check_player_sunburn_ChangeDay();
     Player_actor_Check_player_sunburn_for_main(actor);
     Player_actor_Check_player_change_color_for_main(actor);
+#if VERSION >= VER_GAFU01_00
+    Player_actor_Reset_item_net_catch_correct_pos(actor);
+#endif
 }
 
 static void Player_actor_move_other_func2(ACTOR* actor, GAME* game) {

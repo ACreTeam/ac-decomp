@@ -580,7 +580,11 @@ static int mRF_DecideBaseCliff(u8* block_data) {
   mRF_TraceCliffBlock(block_data, 1, bz);
   mRF_SetEndCliffBlock(block_data);
 
-  return mRF_LastCheckCliff(block_data, 1, bz) != FALSE;
+  if (mRF_LastCheckCliff(block_data, 1, bz)) {
+    return TRUE;
+  }
+  
+  return FALSE;
 }
 
 static u8 mRF_RiverAlbuminCliff(u8 cliff_type, u8 river_type) {
@@ -1256,7 +1260,7 @@ static void mRF_CopyBlockBaseHeightData(mFM_combination_c* combi_table, u8* base
   int i;
 
   for (i = 0; i < BLOCK_TOTAL_NUM; i++) {
-    combi_table->height = *base_height;
+    combi_table->height = (u8)*base_height;
     combi_table++;
     base_height++;
   }

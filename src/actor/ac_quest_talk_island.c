@@ -192,7 +192,7 @@ static void aQMgr_normal_set_free_str(QUEST_MANAGER_ACTOR* manager) {
     mMsg_SET_FREE_STR(mMsg_FREE_STR12, animal->parent_name, LAND_NAME_SIZE);
 }
 
-typedef int (*aQMgr_CALENDAR_CONV_PROC)(lbRTC_ymd_c*, const lbRTC_ymd_c*);
+typedef int (*aQMgr_CALENDAR_CONV_PROC)(lbRTC_ymd_c*, lbRTC_ymd_c*);
 
 static void aQMgr_set_calendar_free_str(aQMgr_CALENDAR_CONV_PROC conv_proc, int month_str_no, int day_str_no, u8 month, u8 day) {
     static u8 uru_tuki[10] = "leap month";
@@ -1600,18 +1600,15 @@ static int aQMgr_decide_player_msg_no(QUEST_MANAGER_ACTOR* manager, int looks) {
 static Anmmem_c* aQMgr_get_other_memory(Anmmem_c* memory, int cnt, PersonalID_c* pid, int needs_letter) {
     int j;
     int mem_cnt;
-    Anmmem_c* mem;
-    int i;
     Anmmem_c* ret_mem = NULL;
+    int i;
     int sel_idx;
 
     ret_mem = NULL;
     mem_cnt = 0;
 
     for (i = 0; i < cnt; i++) {
-        mem = &memory[i];
-
-        if (!mNpc_CheckFreeAnimalMemory(mem) && mPr_CheckCmpPersonalID(pid, &mem->memory_player_id) != TRUE && (!needs_letter || mem->letter_info.exists == TRUE)) {
+        if (!mNpc_CheckFreeAnimalMemory(&memory[i]) && mPr_CheckCmpPersonalID(pid, &memory[i].memory_player_id) != TRUE && (!needs_letter || memory[i].letter_info.exists == TRUE)) {
             mem_cnt++;
         }
     }
@@ -1620,11 +1617,9 @@ static Anmmem_c* aQMgr_get_other_memory(Anmmem_c* memory, int cnt, PersonalID_c*
         sel_idx = RANDOM(mem_cnt);
 
         for (j = 0; j < cnt; j++) {
-            mem = &memory[j];
-
-            if (!mNpc_CheckFreeAnimalMemory(mem) && !mPr_CheckCmpPersonalID(pid, &mem->memory_player_id) && (!needs_letter || mem->letter_info.exists == TRUE)) {
+            if (!mNpc_CheckFreeAnimalMemory(&memory[j]) && !mPr_CheckCmpPersonalID(pid, &memory[j].memory_player_id) && (!needs_letter || memory[j].letter_info.exists == TRUE)) {
                 if (sel_idx == 0) {
-                    ret_mem = mem;
+                    ret_mem = &memory[j];
                     break;
                 }
 

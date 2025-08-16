@@ -404,36 +404,42 @@ static mActor_name_t mMP_GetFgBlockName(mMP_Ovl_c* map_ovl, int block_x, int blo
 }
 
 static void mMP_set_house_data(mMP_Ovl_c* map_ovl, mSM_MenuInfo_c* menu) {
-    static u8 akiya_str[PLAYER_NAME_LEN] = { CHAR_f,     CHAR_r,     CHAR_e,     CHAR_e,
-                                             CHAR_SPACE, CHAR_SPACE, CHAR_SPACE, CHAR_SPACE };
+    static u8 akiya_str[PLAYER_NAME_LEN] = "free    ";
 
-    mMP_ResidentInfo_c* resident_p = &map_ovl->player_info[0];
-    mMP_LabelInfo_c* player_block_label = &map_ovl->label_info[1][2];
-    Private_c* priv = Save_Get(private_data);
-    mMP_HousePos_c* house_pos2;
-    Animal_c* animal = Save_Get(animals);
-    int residents;
+    mMP_ResidentInfo_c* resident_p;
+    mMP_LabelInfo_c* block_label;
+    mMP_HousePos_c* house_pos;
+    mMP_HousePos_c* house_pos_top;
+    mMP_HousePos_Entry_c* pos_info;
+    Private_c* priv;
+    Animal_c* animal;
+    Anmhome_c* home;
     int i;
+    int j;
+    int residents;
+    mActor_name_t fgblock_name;
+
+    priv = Save_Get(private_data);
+    animal = Save_Get(animals);
+    resident_p = &map_ovl->player_info[0];
+    block_label = &map_ovl->label_info[1][2];
 
     /* Process player resident info first */
-
-    player_block_label->label_cnt = PLAYER_NUM;
-    player_block_label->label_no = mMP_LABEL_PLAYER;
+    block_label->label_cnt = PLAYER_NUM;
+    block_label->label_no = mMP_LABEL_PLAYER;
 
     residents = 0;
-    for (i = 0; i < PLAYER_NUM; i++) {
+    for (i = 0; i < PLAYER_NUM; i++, priv++) {
         if (mPr_CheckPrivate(priv) == TRUE && (Common_Get(now_private) != priv || mEv_CheckFirstIntro() == FALSE)) {
             mPr_CopyPlayerName(resident_p->name, priv->player_ID.player_name);
             resident_p->sex = priv->gender;
             resident_p->house_layer = 0;
             resident_p->house_idx = 0;
 
-            player_block_label->residents[residents] = resident_p;
+            block_label->residents[residents] = resident_p;
             residents++;
             resident_p++;
         }
-
-        priv++;
     }
 
     for (residents; residents < PLAYER_NUM; residents++, resident_p++) {
@@ -441,83 +447,64 @@ static void mMP_set_house_data(mMP_Ovl_c* map_ovl, mSM_MenuInfo_c* menu) {
         resident_p->sex = -1;
         resident_p->house_layer = 0;
 
-        player_block_label->residents[residents] = resident_p;
+        block_label->residents[residents] = resident_p;
     }
 
-    house_pos2 = mMP_house_pos_list;
+    house_pos_top = mMP_house_pos_list;
     /* Process animal resident info next */
     resident_p = &map_ovl->animal_info[0];
     residents = 0;
 
     for (i = 0; i < ANIMAL_NUM_MAX; i++, animal++, resident_p++) {
         if (mNpc_CheckFreeAnimalInfo(animal) == FALSE) {
-            Anmhome_c* home = &animal->home_info;
+            home = &animal->home_info;
             mNpc_GetNpcWorldNameAnm(resident_p->name, &animal->id);
             resident_p->sex = mNpc_GetLooks2Sex(animal->id.looks);
             resident_p->house_layer = mMP_check_layer(Common_Get(npclist[i].house_position.y));
 
-            {
-                mActor_name_t fgblock_name = mMP_GetFgBlockName(map_ovl, home->block_x, home->block_z);
-                mMP_HousePos_c* house_pos = house_pos2;
-                mMP_HousePos_Entry_c* pos_info = house_pos[0].entries;
+            fgblock_name = mMP_GetFgBlockName(map_ovl, home->block_x, home->block_z);
+            house_pos = house_pos_top;
+            pos_info = house_pos[0].entries;
 
-                for (house_pos; house_pos->fgblock_name != 0x03B8; house_pos++) {
-                    if (fgblock_name == house_pos->fgblock_name) {
-                        int j;
-                        pos_info = house_pos->entries;
+            for (house_pos; house_pos->fgblock_name != 0x03B8; house_pos++) {
+                if (fgblock_name == house_pos->fgblock_name) {
+                    pos_info = house_pos->entries;
 
-                        for (j = 0; j < 3; j++, pos_info++) {
-                            if (pos_info->ut_x == home->ut_x && pos_info->ut_z == home->ut_z - 1) {
-                                break;
-                            }
+                    for (j = 0; j < 3; j++, pos_info++) {
+                        if (pos_info->ut_x == home->ut_x && pos_info->ut_z == home->ut_z - 1) {
+                            break;
                         }
-
-                        if (j == 3) {
-                            pos_info = &house_pos->entries[0]; // default
-                        }
-
-                        break;
                     }
+
+                    if (j == 3) {
+                        pos_info = &house_pos->entries[0]; // default
+                    }
+
+                    break;
                 }
-
-                resident_p->house_idx = pos_info->idx;
             }
 
-            {
-                int bx = home->block_x - 1;
-                int bz = home->block_z - 1;
-                mMP_LabelInfo_c* label_info = &map_ovl->label_info[bz][bx];
+            resident_p->house_idx = pos_info->idx;
 
-                label_info->residents[label_info->label_cnt] = resident_p;
-                label_info->label_cnt++;
-                label_info->label_no = mMP_LABEL_NPC;
-            }
+            block_label = &map_ovl->label_info[home->block_z - 1][home->block_x - 1];
+            block_label->residents[block_label->label_cnt] = resident_p;
+            block_label->label_cnt++;
+            block_label->label_no = mMP_LABEL_NPC;
         }
     }
 
     /* Sort villager houses by layer, with lower layers coming first */
-    {
-        mMP_ResidentInfo_c* resident;
-        mMP_ResidentInfo_c* next_resident;
-        mMP_LabelInfo_c* label_info = (mMP_LabelInfo_c*)map_ovl->label_info;
-        for (i = 0; i < FG_BLOCK_TOTAL_NUM; i++) {
-            if (label_info->label_no == mMP_LABEL_NPC && label_info->label_cnt > 1) {
-
-                int j;
-                for (j = 0; j < label_info->label_cnt - 1; j++) {
-
-                    resident = label_info->residents[j];
-                    next_resident = label_info->residents[j + 1];
-
-                    if (resident->house_layer > next_resident->house_layer) {
-                        label_info->residents[j] = next_resident;
-                        label_info->residents[j + 1] = resident;
-                        j = -1;
-                    }
+    block_label = (mMP_LabelInfo_c*)map_ovl->label_info;
+    for (i = 0; i < FG_BLOCK_TOTAL_NUM; i++, block_label++) {
+        if (block_label->label_no == mMP_LABEL_NPC && block_label->label_cnt > 1) {
+            for (j = 0; j < block_label->label_cnt - 1; j++) {
+                if (block_label->residents[j]->house_layer > block_label->residents[j + 1]->house_layer) {
+                    resident_p = block_label->residents[j];
+                    block_label->residents[j] = block_label->residents[j + 1];
+                    block_label->residents[j + 1] = resident_p;
+                    j = -1;
                 }
             }
-
-            label_info++;
         }
     }
 }
@@ -603,9 +590,8 @@ static void mMP_set_init_data(mMP_Ovl_c* map_ovl, mSM_MenuInfo_c* menu_info) {
 
     mMP_set_map_texture_pal(map_ovl);
 
-    for (i = 0; i < FG_BLOCK_TOTAL_NUM; i++) {
+    for (i = 0; i < FG_BLOCK_TOTAL_NUM; i++, label_info++) {
         label_info->label_cnt = 0;
-        label_info++;
     }
 
     mMP_set_house_data(map_ovl, menu_info);

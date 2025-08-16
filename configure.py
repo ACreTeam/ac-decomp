@@ -264,8 +264,8 @@ cflags_foresta = [
 if version_num >= 1:
     cflags_foresta.append("-O4,p")
     cflags_foresta.append("-inline off")
-    config.linker_version = "GC/2.0"
-    foresta_compiler = "GC/2.0"
+    config.linker_version = "GC/2.6"
+    foresta_compiler = "GC/2.6"
 else:
     cflags_foresta.append("-O4,s")
     config.linker_version = "GC/1.3.2"
@@ -930,7 +930,7 @@ config.libs = [
         "foresta",
         [
             Object(Matching, "audio.c"),
-            Object(Matching, "c_keyframe.c"),
+            Object(MatchingFor("GAFE01_00"), "c_keyframe.c"),
             Object(Matching, "ev_cherry_manager.c"),
             Object(Matching, "evw_anime.c"),
             Object(Matching, "executor.c"),
@@ -1387,7 +1387,7 @@ config.libs = [
             Object(Matching, "game/m_actor_shadow.c"),
             Object(Matching, "game/m_address_ovl.c"),
             Object(Matching, "game/m_all_grow.c"),
-            Object(Matching, "game/m_all_grow_ovl.c"),
+            Object(MatchingFor("GAFE01_00"), "game/m_all_grow_ovl.c"),
             Object(Matching, "game/m_bank_ovl.c"),
             Object(Matching, "game/m_banti.c"),
             Object(Matching, "game/m_bg_item.c"),
@@ -1398,7 +1398,7 @@ config.libs = [
             Object(Matching, "game/m_calendar.c"),
             Object(Matching, "game/m_calendar_ovl.c"),
             Object(Matching, "game/m_camera2.c"),
-            Object(Matching, "game/m_card.c"),
+            Object(MatchingFor("GAFE01_00"), "game/m_card.c"),
             Object(Matching, "game/m_catalog_ovl.c"),
             Object(Matching, "game/m_choice.c"),
             Object(Matching, "game/m_clip.c"),
@@ -1416,7 +1416,7 @@ config.libs = [
             Object(Matching, "game/m_cpwarning_ovl.c"),
             Object(Matching, "game/m_debug.c"),
             Object(Matching, "game/m_debug_display.c"),
-            Object(Matching, "game/m_debug_hayakawa.c"),
+            Object(MatchingFor("GAFE01"), "game/m_debug_hayakawa.c"),
             Object(Matching, "game/m_debug_mode.c"),
             Object(Matching, "game/m_demo.c"),
             Object(Matching, "game/m_design_ovl.c"),
@@ -1425,7 +1425,7 @@ config.libs = [
             Object(Matching, "game/m_eappli.c"),
             Object(Matching, "game/m_editEndChk_ovl.c"),
             Object(Matching, "game/m_editor_ovl.c"),
-            Object(Matching, "game/m_event.c"),
+            Object(MatchingFor("GAFE01"), "game/m_event.c"),
             Object(Matching, "game/m_event_map_npc.c"),
             Object(Matching, "game/m_fbdemo.c"),
             Object(Matching, "game/m_fbdemo_fade.c"),
@@ -1433,7 +1433,7 @@ config.libs = [
             Object(Matching, "game/m_fbdemo_wipe1.c"),
             Object(Matching, "game/m_field_assessment.c"),
             Object(Matching, "game/m_field_info.c"),
-            Object(Matching, "game/m_field_make.c"),
+            Object(MatchingFor("GAFE01"), "game/m_field_make.c"),
             Object(Matching, "game/m_fishrecord.c"),
             Object(Matching, "game/m_flashrom.c"),
             Object(Matching, "game/m_font.c"),
@@ -1450,10 +1450,10 @@ config.libs = [
             Object(Matching, "game/m_huusui_room.c"),
             Object(Matching, "game/m_huusui_room_ovl.c"),
             Object(Matching, "game/m_inventory_ovl.c"),
-            Object(Matching, "game/m_island.c"),
+            Object(MatchingFor("GAFE01"), "game/m_island.c"),
             Object(Matching, "game/m_item_name.c"),
             Object(Matching, "game/m_kabu_manager.c"),
-            Object(Matching, "game/m_kankyo.c"),
+            Object(MatchingFor("GAFE01"), "game/m_kankyo.c"),
             Object(Matching, "game/m_land.c"),
             Object(Matching, "game/m_ledit_ovl.c"),
             Object(Matching, "game/m_lib.c"),
@@ -1461,7 +1461,7 @@ config.libs = [
             Object(Matching, "game/m_mail.c"),
             Object(Matching, "game/m_mail_check.c"),
             Object(Matching, "game/m_mail_check_ovl.c"),
-            Object(Matching, "game/m_mail_password_check.c"),
+            Object(MatchingFor("GAFE01"), "game/m_mail_password_check.c"),
             Object(Matching, "game/m_mailbox_ovl.c"),
             Object(Matching, "game/m_malloc.c"),
             Object(Matching, "game/m_map_ovl.c"),
@@ -1513,7 +1513,7 @@ config.libs = [
             Object(Matching, "game/m_string.c"),
             Object(Matching, "game/m_submenu.c"),
             Object(Matching, "game/m_submenu_ovl.c"),
-            Object(Matching, "game/m_tag_ovl.c"),
+            Object(MatchingFor("GAFE01_00"), "game/m_tag_ovl.c"),
             Object(Matching, "game/m_time.c"),
             Object(Matching, "game/m_timeIn_ovl.c"),
             Object(Matching, "game/m_titledemo.c"),

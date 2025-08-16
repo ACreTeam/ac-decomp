@@ -31,12 +31,6 @@ static void mCoBG_PlusLinePos(f32* line, f32 x, f32 z) {
     line[1] += z;
 }
 
-static void mCoBG_PlusEqualPos(xyz_t* p0, xyz_t* p1) {
-    p0->x += p1->x;
-    p0->y += p1->y;
-    p0->z += p1->z;
-}
-
 extern int mCoBG_GetMoveBgHeight(f32* move_bg_height, xyz_t* pos_p) {
     mCoBG_mBgMgr_c* bg_mgr = &l_mBgMgr;
     mCoBG_bg_regist_c* regist_p;

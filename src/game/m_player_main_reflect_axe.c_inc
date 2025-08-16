@@ -1,4 +1,4 @@
-static void Player_actor_request_main_reflect_axe_common(mPlayer_request_reflect_axe_c* req_axe, const xyz_t* pos,
+static void Player_actor_request_main_reflect_axe_common(mPlayer_request_reflect_axe_c* req_axe, xyz_t* pos,
                                                          mActor_name_t hit_item, u16 damage_no, ACTOR* hit_actor) {
     req_axe->goal_pos = *pos;
     req_axe->hit_item = hit_item;
@@ -6,7 +6,7 @@ static void Player_actor_request_main_reflect_axe_common(mPlayer_request_reflect
     req_axe->axe_damage_no = damage_no;
 }
 
-static int Player_actor_request_main_reflect_axe_all(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+static int Player_actor_request_main_reflect_axe_all(GAME* game, xyz_t* pos, mActor_name_t hit_item,
                                                      u16 damage_no, ACTOR* hit_actor, int priority) {
     if (Player_actor_check_request_main_able(game, mPlayer_INDEX_REFLECT_AXE, priority)) {
         PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);

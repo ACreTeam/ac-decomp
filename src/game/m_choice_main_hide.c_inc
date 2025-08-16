@@ -1,7 +1,7 @@
 static void mChoice_Main_Hide(mChoice_c* choice, GAME* game) {
-  mChoice_MainSetup(choice, game);
+    mChoice_MainSetup(choice, game);
 }
 
 static void mChoice_MainSetup_Hide(mChoice_c* choice, GAME* game) {
-  mChoice_init(choice, game);
+    mChoice_init(choice, game);
 }

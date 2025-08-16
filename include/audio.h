@@ -115,8 +115,8 @@ extern int sAdo_SubGameOK();
 extern void sAdo_Tenki(u8 mode);
 
 extern void sAdos_KishaStatusTrg(u8 state);
-extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, u16 angle1, f32 distance1, u32 ongenNum2, u16 angle2,
-                                   f32 distance2);
+extern void sAdos_KishaStatusLevel(f32 speed, u32 ongenNum1, f32 distance1, u16 angle1, u32 ongenNum2,
+                                   f32 distance2, u16 angle2);
 
 extern int sAdos_GetRadioCounter(Radio_c* radio);
 extern void sAdos_GetKappaCounter(void* p);

@@ -17,7 +17,7 @@ extern "C" {
 
 extern void mLd_StartFlagOn();
 extern int mLd_CheckStartFlag();
-extern int mLd_NullCheckLandName(const u8* land_name);
+extern int mLd_NullCheckLandName(u8* land_name);
 extern int mLd_CheckId(u16 land_id);
 extern int mLd_CheckCmpLandName(u8* name_a, u8* name_b);
 extern int mLd_CheckCmpLand(u8* name_a, u16 id_a, u8* name_b, u16 id_b);

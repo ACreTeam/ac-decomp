@@ -12,6 +12,7 @@
 #include "m_lib.h"
 #include "m_name_table.h"
 #include "m_collision_bg.h"
+#include "m_random_field.h"
 
 #define mTRC_RTC_TIME_SECONDS(rtc_time) \
     (rtc_time->sec + (rtc_time->min + rtc_time->hour * mTM_MINUTES_IN_HOUR) * mTM_SECONDS_IN_MINUTE)
@@ -38,40 +39,39 @@ static void mTRC_SetMicPos(GAME_PLAY* play, xyz_t* mic_pos) {
     mic_pos->z = pos.z + z; // equates to pos.z + 77.0f
 }
 
-static void mTRC_KishaStatusLevel(GAME_PLAY* play, xyz_t pos, f32 speed) {
-    xyz_t mic_pos;
-
+static void mTRC_KishaStatusLevel(GAME_PLAY* play, f32 speed, xyz_t pos) {
+    f32 distance;
+    f32 distance2;
     f32 x;
     f32 y;
     f32 z;
-
     s16 angle;
+    xyz_t mic_pos;
     u16 unsigned_angle;
-    f32 distance;
-
-    s16 angle2;
     u16 unsigned_angle2;
-    f32 distance2;
+    u32 ongen;
+    u32 ongen2;
 
     mTRC_SetMicPos(play, &mic_pos);
+
     x = pos.x - mic_pos.x;
     y = pos.y - mic_pos.y;
     z = pos.z - mic_pos.z;
-
     angle = atans_table(z, x);
-    distance = sqrtf(x * x + y * y + z * z);
+    distance = sqrtf(SQ(x) + SQ(y) + SQ(z));
     unsigned_angle = (int)angle;
-
+    
     x = (pos.x - 250.0f) - mic_pos.x;
     y = pos.y - mic_pos.y;
     z = pos.z - mic_pos.z;
+    angle = atans_table(z, x);
+    distance2 = sqrtf(SQ(x) + SQ(y) + SQ(z));
+    unsigned_angle2 = (int)angle;
 
-    angle2 = atans_table(z, x);
-    distance2 = sqrtf(x * x + y * y + z * z);
-    unsigned_angle2 = (int)angle2;
-
-    sAdos_KishaStatusLevel(speed, (u32)Common_GetPointer(train_coming_flag), unsigned_angle, distance,
-                           (u32)Common_GetPointer(train_exists_flag), unsigned_angle2, distance2);
+    ongen = (u32)Common_GetPointer(train_coming_flag);
+    ongen2 = (u32)Common_GetPointer(train_exists_flag);
+    sAdos_KishaStatusLevel(speed, ongen, distance, unsigned_angle,
+                           ongen2, distance2, unsigned_angle2);
 }
 
 static void mTRC_KishaStatusTrg(u8 state) {
@@ -85,15 +85,12 @@ static void mTRC_KishaStatusTrg(u8 state) {
 static int aTRC_area_check(GAME_PLAY* play, xyz_t pos) {
     int block_x;
     int block_z;
-    int x_diff;
 
     mFI_Wpos2BlockNum(&block_x, &block_z, pos);
-    x_diff = (block_x - play->block_table.block_x) >= 0 ? (block_x - play->block_table.block_x)
-                                                        : -(block_x - play->block_table.block_x);
-
-    if (x_diff >= 2 || block_z != play->block_table.block_z) {
+    if (ABS(block_x - play->block_table.block_x) >= 2 || block_z != play->block_table.block_z) {
         return FALSE;
     }
+
     return TRUE;
 }
 
@@ -123,11 +120,10 @@ static u32 mTRC_get_depart_time() {
         HOUR_MIN_SEC_TO_SECS(24, 19, 0)
     };
 
-    int i = 0;
-    u32 depart_time;
     lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
     u32 now_sec = mTRC_RTC_TIME_SECONDS(rtc_time);
-    int day;
+    u32 depart_time;
+    int i = 0;
 
     while (TRUE) {
         if (time_table[i] >= now_sec) {
@@ -157,7 +153,11 @@ static void mTRC_mati_init() {
 
     pos.x = 2367.0f;
     pos.z = 740.0f;
+#if VERSION >= VER_GAFU01_00
+    pos.y = mRF_CheckFieldStep3() ? 300 : 180;
+#else
     pos.y = 180.0f;
+#endif
     Common_Set(train_position, pos);
 }
 
@@ -175,7 +175,11 @@ static void mTRC_demo_init() {
 
     pos.x = 2037.0f;
     pos.z = 740.0f;
+#if VERSION >= VER_GAFU01_00
+    pos.y = mRF_CheckFieldStep3() ? 300 : 180;
+#else
     pos.y = 180.0f;
+#endif
     Common_Set(train_position, pos);
 }
 
@@ -190,7 +194,11 @@ static void mTRC_call_init() {
 
     pos.x = 1904.0f;
     pos.z = 740.0f;
+#if VERSION >= VER_GAFU01_00
+    pos.y = mRF_CheckFieldStep3() ? 300 : 180;
+#else
     pos.y = 180.0f;
+#endif
     Common_Set(train_position, pos);
 }
 
@@ -205,7 +213,11 @@ static void mTRC_norm_init() {
 
     pos.x = 320.0f;
     pos.z = 740.0f;
+#if VERSION >= VER_GAFU01_00
+    pos.y = mRF_CheckFieldStep3() ? 300 : 180;
+#else
     pos.y = 180.0f;
+#endif
     Common_Set(train_position, pos);
 }
 
@@ -302,7 +314,7 @@ static void mTRC_trainControl(GAME_PLAY* play, int state) {
         }
 
         case mTRC_ACTION_BEGIN_SLOWDOWN: {
-            chase_f(&speed, mTRC_SLOW_SPEED, 0.01f);
+            chase_f(&speed, mTRC_SLOW_SPEED, mTRC_SLOW_RATE);
             if (pos.x > 2165.0f) {
                 action = mTRC_ACTION_BEGIN_STOP;
                 speed = mTRC_SLOW_SPEED;
@@ -311,7 +323,7 @@ static void mTRC_trainControl(GAME_PLAY* play, int state) {
         }
 
         case mTRC_ACTION_BEGIN_STOP: {
-            chase_f(&speed, 0.0f, 0.005f);
+            chase_f(&speed, 0.0f, mTRC_STOP_RATE);
             if (fabsf(speed) < 0.008f) {
                 signal = TRUE;
                 timer = 48;
@@ -361,7 +373,7 @@ static void mTRC_trainControl(GAME_PLAY* play, int state) {
         }
 
         case mTRC_ACTION_BEGIN_PULL_OUT: {
-            chase_f(&speed, mTRC_SLOW_SPEED, 0.00345f);
+            chase_f(&speed, mTRC_SLOW_SPEED, mTRC_START_RATE);
 
             if (timer == 0) {
                 action = mTRC_ACTION_SPEED_UP;
@@ -372,7 +384,7 @@ static void mTRC_trainControl(GAME_PLAY* play, int state) {
         }
 
         case mTRC_ACTION_SPEED_UP: {
-            chase_f(&speed, mTRC_FAST_SPEED, 0.00345);
+            chase_f(&speed, mTRC_FAST_SPEED, mTRC_SPEEDUP_RATE);
             if (pos.x > 4400.0f) {
                 start_timer = mTRC_get_depart_time();
                 action = mTRC_ACTION_NONE;
@@ -390,7 +402,7 @@ static void mTRC_trainControl(GAME_PLAY* play, int state) {
         }
 
         pos.x += 0.5f * speed;
-        mTRC_KishaStatusLevel(play, pos, speed);
+        mTRC_KishaStatusLevel(play, speed, pos);
     }
 
     if (now_state >= 0) {
