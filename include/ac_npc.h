@@ -820,6 +820,9 @@ typedef struct npc_speed_s {
 enum {
     aNPC_MOVE_RANGE_TYPE_BLOCK,
     aNPC_MOVE_RANGE_TYPE_CIRCLE,
+#if VERSION >= VER_GAFU01_00
+    aNPC_MOVE_RANGE_TYPE_SQUARE,
+#endif
 
     aNPC_MOVE_RANGE_TYPE_NUM
 };

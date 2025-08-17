@@ -1,580 +1,558 @@
 static void aBT_passenger_ctrl(BOAT_ACTOR* boat_actor) {
-  if (boat_actor->actor_class.child_actor != NULL) {
-    xyz_t passenger_pos;
-    s_xyz passenger_angle;
-    BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
+    if (boat_actor->actor_class.child_actor != NULL) {
+        xyz_t passenger_pos;
+        s_xyz passenger_angle;
+        BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
 
-    xyz_t_add(&boat_actor->actor_class.world.position, &boat_demo->passenger_ofs, &passenger_pos);
-    passenger_angle.y = boat_actor->actor_class.shape_info.rotation.y - DEG2SHORT_ANGLE(-180.0f);
+        xyz_t_add(&boat_actor->actor_class.world.position, &boat_demo->passenger_ofs, &passenger_pos);
+        passenger_angle.y = boat_actor->actor_class.shape_info.rotation.y - DEG2SHORT_ANGLE(-180.0f);
 
-    (*GET_PLAYER_ACTOR_NOW()->Set_force_position_angle_proc)(
-      gamePT,
-      &passenger_pos, &passenger_angle,
-      mPlayer_FORCE_POSITION_ANGLE_POSX | mPlayer_FORCE_POSITION_ANGLE_POSY | mPlayer_FORCE_POSITION_ANGLE_POSZ |
-        mPlayer_FORCE_POSITION_ANGLE_ROTY
-    );
+        (*GET_PLAYER_ACTOR_NOW()->Set_force_position_angle_proc)(
+            gamePT, &passenger_pos, &passenger_angle,
+            mPlayer_FORCE_POSITION_ANGLE_POSX | mPlayer_FORCE_POSITION_ANGLE_POSY | mPlayer_FORCE_POSITION_ANGLE_POSZ |
+                mPlayer_FORCE_POSITION_ANGLE_ROTY);
 
-    mPlib_Set_boat_angleZ(boat_actor->actor_class.shape_info.rotation.z);
-  }
+        mPlib_Set_boat_angleZ(boat_actor->actor_class.shape_info.rotation.z);
+    }
 }
 
 static int aBT_check_other_boat(ACTOR* actorx, GAME* game) {
-  GAME_PLAY* play = (GAME_PLAY*)game;
-  ACTOR* actor = play->actor_info.list[ACTOR_PART_ITEM].actor;
-  int res = TRUE;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    ACTOR* actor = play->actor_info.list[ACTOR_PART_ITEM].actor;
+    int res = TRUE;
 
-  while (TRUE) {
-    ACTOR* other_actor = Actor_info_fgName_search_sub(actor, BOAT);
+    while (TRUE) {
+        ACTOR* other_actor = Actor_info_fgName_search_sub(actor, BOAT);
 
-    if (other_actor == NULL) {
-      break;
+        if (other_actor == NULL) {
+            break;
+        } else if (other_actor != actorx) {
+            res = FALSE;
+            break;
+        }
+
+        actor = other_actor->next_actor;
     }
-    else if (other_actor != actorx) {
-      res = FALSE;
-      break;
-    }
 
-    actor = other_actor->next_actor;
-  }
-
-  return res;
+    return res;
 }
 
 static void aBT_anime_proc(BOAT_ACTOR* boat_actor) {
-  if (boat_actor->action == aBT_ACTION_MOVE) {
-    NPC_SENDO_ACTOR* sendo_actor = ((BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor)->npc_sendo_actor;
+    if (boat_actor->action == aBT_ACTION_MOVE) {
+        NPC_SENDO_ACTOR* sendo_actor = ((BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor)->npc_sendo_actor;
 
-    /* Attempt to sync boat animation with Kapp'n's animation */
-    if (sendo_actor != NULL && sendo_actor->npc_class.draw.animation_id == 123) {
-      cKF_SkeletonInfo_R_c* keyframe = &sendo_actor->npc_class.draw.main_animation.keyframe;
+        /* Attempt to sync boat animation with Kapp'n's animation */
+        if (sendo_actor != NULL && sendo_actor->npc_class.draw.animation_id == 123) {
+            cKF_SkeletonInfo_R_c* keyframe = &sendo_actor->npc_class.draw.main_animation.keyframe;
 
-      boat_actor->keyframe.frame_control.current_frame = keyframe->frame_control.current_frame;
+            boat_actor->keyframe.frame_control.current_frame = keyframe->frame_control.current_frame;
 
-      if (
-        cKF_FrameControl_passCheck_now(&keyframe->frame_control, 35.0f) == TRUE ||
-        cKF_FrameControl_passCheck_now(&keyframe->frame_control, 52.0f) == TRUE
-      ) {
-        boat_actor->roll_timer = 400;
-      }
+            if (cKF_FrameControl_passCheck_now(&keyframe->frame_control, 35.0f) == TRUE ||
+                cKF_FrameControl_passCheck_now(&keyframe->frame_control, 52.0f) == TRUE) {
+                boat_actor->roll_timer = 400;
+            }
+        }
+
+        cKF_SkeletonInfo_R_play(&boat_actor->keyframe);
     }
-
-    cKF_SkeletonInfo_R_play(&boat_actor->keyframe);
-  }
 }
 
 static void aBT_roll_ctrl(BOAT_ACTOR* boat_actor) {
-  int timer = boat_actor->roll_timer;
-  int timer_sub = timer - 200;
-  int roll_cycle;
+    int timer = boat_actor->roll_timer;
+    int timer_sub = timer - 200;
+    int roll_cycle;
 
-  if (ABS(timer_sub) < 2) {
-    timer = 200;
-  }
-  else if (timer_sub < 0) {
-    timer += 2;
-  }
-  else {
-    timer -= 2;
-  }
+    if (ABS(timer_sub) < 2) {
+        timer = 200;
+    } else if (timer_sub < 0) {
+        timer += 2;
+    } else {
+        timer -= 2;
+    }
 
-  boat_actor->roll_timer = timer;
-  roll_cycle = boat_actor->roll_cycle;
-  roll_cycle += timer;
-  boat_actor->roll_cycle = roll_cycle;
-  boat_actor->actor_class.shape_info.rotation.z = sin_s(roll_cycle) * 1024.0f; // [-5.625f, 5.625f] degree rocking arc
+    boat_actor->roll_timer = timer;
+    roll_cycle = boat_actor->roll_cycle;
+    roll_cycle += timer;
+    boat_actor->roll_cycle = roll_cycle;
+    boat_actor->actor_class.shape_info.rotation.z = sin_s(roll_cycle) * 1024.0f; // [-5.625f, 5.625f] degree rocking arc
 }
 
 static int aBT_check_alive(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  int bx;
-  int bz;
-  int alive = FALSE;
+    int bx;
+    int bz;
+    int alive = FALSE;
 
-  if (
-    mFI_Wpos2BlockNum(&bx, &bz, boat_actor->actor_class.world.position) == TRUE &&
-    play->block_table.block_x == bx && play->block_table.block_z == bz
-  ) {
-    alive = TRUE;
-  }
+    if (mFI_Wpos2BlockNum(&bx, &bz, boat_actor->actor_class.world.position) == TRUE &&
+        play->block_table.block_x == bx && play->block_table.block_z == bz) {
+        alive = TRUE;
+    }
 
-  return alive;
+    return alive;
 }
 
 static void aBT_up_down_proc(BOAT_ACTOR* boat_actor) {
-  if (boat_actor->actor_class.world.position.y < boat_actor->actor_class.home.position.y) {
-    if (boat_actor->actor_class.max_velocity_y < 0.0f) {
-      boat_actor->actor_class.gravity = 0.003f + RANDOM_F(0.002f);
-    }
+    if (boat_actor->actor_class.world.position.y < boat_actor->actor_class.home.position.y) {
+        if (boat_actor->actor_class.max_velocity_y < 0.0f) {
+            boat_actor->actor_class.gravity = 0.003f + RANDOM_F(0.002f);
+        }
 
-    boat_actor->actor_class.max_velocity_y = 0.1f;
-  }
-  else {
-    if (boat_actor->actor_class.max_velocity_y > 0.0f) {
-      boat_actor->actor_class.gravity = 0.003f + RANDOM_F(0.002f);
-    }
+        boat_actor->actor_class.max_velocity_y = 0.1f;
+    } else {
+        if (boat_actor->actor_class.max_velocity_y > 0.0f) {
+            boat_actor->actor_class.gravity = 0.003f + RANDOM_F(0.002f);
+        }
 
-    boat_actor->actor_class.max_velocity_y = -0.1f;
-  }
+        boat_actor->actor_class.max_velocity_y = -0.1f;
+    }
 }
 
 static void aBT_position_move(BOAT_ACTOR* boat_actor) {
-  aBT_up_down_proc(boat_actor);
-  Actor_position_moveF((ACTOR*)boat_actor);
+    aBT_up_down_proc(boat_actor);
+    Actor_position_moveF((ACTOR*)boat_actor);
 
-  if ((boat_actor->actor_class.world.position.y - boat_actor->actor_class.home.position.y) - -1.6f < 0.0f) {
-    boat_actor->actor_class.world.position.y = boat_actor->actor_class.home.position.y + -1.6f;
-  }
+    if ((boat_actor->actor_class.world.position.y - boat_actor->actor_class.home.position.y) - -1.6f < 0.0f) {
+        boat_actor->actor_class.world.position.y = boat_actor->actor_class.home.position.y + -1.6f;
+    }
 }
 
 static void aBT_calc_wave_angl(BOAT_ACTOR* boat_actor, s16 angle) {
-  f32 var_f1_2;
-  f32 var_f2_2;
-  s16 var_r30;
-  s16 var_r4;
-  s16 var_r5;
-  s16 _2CC_diff = boat_actor->_2CC;
-  s16 _2D0_diff = boat_actor->_2D0;
-  s16 half_rudder = ABS(boat_actor->rudder) * 0.5f;
-  
-  _2CC_diff -= angle;
-  _2D0_diff -= angle;
-  
-  if (ABS((int)_2CC_diff) >= 0x300) {
-    var_f2_2 = (f32)ABS(_2CC_diff);
-    if (var_f2_2 > 1536.0f) {
-      var_f2_2 = 1536.0f;
-    }
-    
-    if (half_rudder > 40) {
-      var_r4 = half_rudder;
-    }
-    else {
-      var_r4 = 40;
+    f32 var_f1_2;
+    f32 var_f2_2;
+    s16 var_r30;
+    s16 var_r4;
+    s16 var_r5;
+    s16 _2CC_diff = boat_actor->_2CC;
+    s16 _2D0_diff = boat_actor->_2D0;
+    s16 half_rudder = ABS(boat_actor->rudder) * 0.5f;
+
+    _2CC_diff -= angle;
+    _2D0_diff -= angle;
+
+    if (ABS((int)_2CC_diff) >= 0x300) {
+        var_f2_2 = (f32)ABS(_2CC_diff);
+        if (var_f2_2 > 1536.0f) {
+            var_f2_2 = 1536.0f;
+        }
+
+        if (half_rudder > 40) {
+            var_r4 = half_rudder;
+        } else {
+            var_r4 = 40;
+        }
+
+        var_r5 = ((int)((f32)(var_r4 - 30) * ((var_f2_2 - 768.0f) / 768.0f)) + 30);
+    } else {
+        var_r5 = 30;
     }
 
-    var_r5 = ((int)((f32)(var_r4 - 30) * ((var_f2_2 - 768.0f) / 768.0f)) + 30);
-  }
-  else {
-    var_r5 = 30;
-  }
-  
-  if (ABS(_2D0_diff) >= 0x600) {
-    var_f1_2 = (f32)ABS(_2D0_diff);
-    if (var_f1_2 > 2304.0f) {
-      var_f1_2 = 2304.0f;
+    if (ABS(_2D0_diff) >= 0x600) {
+        var_f1_2 = (f32)ABS(_2D0_diff);
+        if (var_f1_2 > 2304.0f) {
+            var_f1_2 = 2304.0f;
+        }
+
+        if (half_rudder > 30) {
+            var_r4 = half_rudder;
+        } else {
+            var_r4 = 30;
+        }
+
+        var_r30 = ((int)((f32)(var_r4 - 20) * ((var_f1_2 - 1536.0f) / 768.0f)) + 20);
+    } else {
+        var_r30 = 20;
     }
-    
-    if (half_rudder > 30) {
-      var_r4 = half_rudder;
-    }
-    else {
-      var_r4 = 30;
-    }
-    
-    var_r30 = ((int)((f32)(var_r4 - 20) * ((var_f1_2 - 1536.0f) / 768.0f)) + 20);
-  }
-  else {
-    var_r30 = 20;
-  }
-  
-  chase_angle(&_2CC_diff, 0, var_r5);
-  chase_angle(&_2D0_diff, 0, var_r30);
-  boat_actor->_2CC = _2CC_diff;
-  boat_actor->_2D0 = _2D0_diff;
+
+    chase_angle(&_2CC_diff, 0, var_r5);
+    chase_angle(&_2D0_diff, 0, var_r30);
+    boat_actor->_2CC = _2CC_diff;
+    boat_actor->_2D0 = _2D0_diff;
 }
 
 static void aBT_ctrl_rudder(BOAT_ACTOR* boat_actor, s16 p0, s16 p1, s16 p2) {
-  s16 rudder = boat_actor->rudder;
-  s16 step;
+    s16 rudder = boat_actor->rudder;
+    s16 step;
 
-  if (rudder * p2 >= 0) {
-    if (p1 > 256) {
-      step = ((p1 - 256) * 14) / 768 + 2;
+    if (rudder * p2 >= 0) {
+        if (p1 > 256) {
+            step = ((p1 - 256) * 14) / 768 + 2;
 
-      if (step > 16) {
+            if (step > 16) {
+                step = 16;
+            }
+        } else {
+            step = 2;
+        }
+    } else {
         step = 16;
-      }
     }
-    else {
-      step = 2;
+
+    step /= 2.0f;
+    if (p0 == 0) {
+        rudder = 0;
+    } else if (p0 < 0) {
+        rudder -= step;
+
+        if (rudder < -38) {
+            rudder = -38;
+        }
+    } else {
+        rudder += step;
+
+        if (rudder > 38) {
+            rudder = 38;
+        }
     }
-  }
-  else {
-    step = 16;
-  }
 
-  step /= 2.0f;
-  if (p0 == 0) {
-    rudder = 0;
-  }
-  else if (p0 < 0) {
-    rudder -= step;
-
-    if (rudder < -38) {
-      rudder = -38;
-    }
-  }
-  else {
-    rudder += step;
-
-    if (rudder > 38) {
-      rudder = 38;
-    }
-  }
-
-  boat_actor->rudder = rudder;
+    boat_actor->rudder = rudder;
 }
 
 static void aBT_ctrl_direction(BOAT_ACTOR* boat_actor) {
-  int point = boat_actor->point;
-  s16 anglY = boat_actor->actor_class.shape_info.rotation.y;
-  xyz_t* chk_point = &aBT_chk_point[point];
-  f32 dZ = chk_point->z - boat_actor->actor_class.world.position.z;
-  f32 dX = chk_point->x - boat_actor->actor_class.world.position.x;
-  s16 p2 = atans_table(dZ, dX);
-  s16 p0 = p2 - boat_actor->actor_class.world.angle.y; // diff to target rotation
-  s16 p1 = ABS(p0);
-  f32 rudder;
+    int point = boat_actor->point;
+    xyz_t* chk_point;
+    f32 dZ;
+    f32 dX;
+    s16 p2;
+    s16 p0;
+    s16 p1;
+    s16 anglY;
+    f32 rudder;
 
-  aBT_ctrl_rudder(boat_actor, p0, p1, p2);
-  rudder = boat_actor->rudder * 0.5f;
-  
-  if ((f32)p0 * rudder <= 0.0f && (f32)p1 < ABS(rudder)) {
-    boat_actor->actor_class.world.angle.y = p2;
-  }
-  else {
-    boat_actor->actor_class.world.angle.y += rudder;
-  }
+    anglY = boat_actor->actor_class.shape_info.rotation.y;
+    chk_point = &aBT_chk_point[point];
+    dZ = chk_point->z - boat_actor->actor_class.world.position.z;
+    dX = chk_point->x - boat_actor->actor_class.world.position.x;
+    p2 = atans_table(dZ, dX);
+    p0 = p2 - boat_actor->actor_class.world.angle.y; // diff to target rotation
+    p1 = ABS(p0);
 
-  boat_actor->actor_class.shape_info.rotation.y = boat_actor->actor_class.world.angle.y;
-  aBT_calc_wave_angl(boat_actor, boat_actor->actor_class.shape_info.rotation.y - anglY);
+    aBT_ctrl_rudder(boat_actor, p0, p1, p2);
 
-  if (boat_actor->direction == aBT_DIRECTION_TO_ISLAND) {
-    if (dZ < 0.0f) {
-      boat_actor->point = point + 1;
+    rudder = FRAMERATE_ADJ(boat_actor->rudder * 0.5f);
+    if ((f32)p0 * rudder <= 0.0f && (f32)p1 < ABS(rudder)) {
+        boat_actor->actor_class.world.angle.y = p2;
+    } else {
+        boat_actor->actor_class.world.angle.y += rudder;
     }
-  }
-  else {
-    if (dZ > 0.0f) {
-      boat_actor->point = point - 1;
+
+    boat_actor->actor_class.shape_info.rotation.y = boat_actor->actor_class.world.angle.y;
+    aBT_calc_wave_angl(boat_actor, boat_actor->actor_class.shape_info.rotation.y - anglY);
+
+    if (boat_actor->direction == aBT_DIRECTION_TO_ISLAND) {
+        if (dZ < 0.0f) {
+            boat_actor->point = point + 1;
+        }
+    } else {
+        if (dZ > 0.0f) {
+            boat_actor->point = point - 1;
+        }
     }
-  }
 }
 
 static void aBT_calc_speed(BOAT_ACTOR* boat_actor) {
-  f32 target;
-  f32 step;
+    f32 target;
+    f32 step;
 
-  if (boat_actor->point == aBT_last_point_idx[boat_actor->direction]) {
-    target = 0.0f;
-    step = 0.0017f;
-  }
-  else {
-    target = 0.625f;
-    step = 0.01f;
-  }
+    if (boat_actor->point == aBT_last_point_idx[boat_actor->direction]) {
+        target = 0.0f;
+        step = FRAMERATE_SELECT(0.0017f, 0.0021f);
+    } else {
+        target = FRAMERATE_ADJ(0.625f);
+        step = 0.01f;
+    }
 
-  chase_f(&boat_actor->actor_class.speed, target, step);
+    chase_f(&boat_actor->actor_class.speed, target, step);
 }
 
 static void aBT_demo_ctrl_birth_wait(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  ACTOR* boat_demo = Actor_info_make_actor(&play->actor_info, (GAME*)play, mAc_PROFILE_BOAT_DEMO, 0.0f, 0.0f, 0.0f, 0, 0, 0, -1, -1, -1, EMPTY_NO, -1, -1, -1);
+    ACTOR* boat_demo = Actor_info_make_actor(&play->actor_info, (GAME*)play, mAc_PROFILE_BOAT_DEMO, 0.0f, 0.0f, 0.0f, 0,
+                                             0, 0, -1, -1, -1, EMPTY_NO, -1, -1, -1);
 
-  if (boat_demo != NULL) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_WAIT);
-  }
+    if (boat_demo != NULL) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_WAIT);
+    }
 }
 
 static void aBT_wait(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  if (aBT_check_alive(boat_actor, play) == FALSE) {
-    boat_actor->action = -1;
-  }
-  else {
-    BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
+    if (aBT_check_alive(boat_actor, play) == FALSE) {
+        boat_actor->action = -1;
+    } else {
+        BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
 
-    if (boat_demo != NULL && boat_demo->action == aBTD_ACTION_PL_RIDE_ON_END_WAIT) {
-      aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_MOVE_START_WAIT);
+        if (boat_demo != NULL && boat_demo->action == aBTD_ACTION_PL_RIDE_ON_END_WAIT) {
+            aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_MOVE_START_WAIT);
+        }
     }
-  }
 }
 
 static void aBT_pl_ride_move_start_wait(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  GAME* game = (GAME*)play;
+    GAME* game = (GAME*)play;
 
-  if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_DEMO_WALK) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_MOVE_END_WAIT);
-  }
-  else {
-    s16 dir = boat_actor->actor_class.shape_info.rotation.y + DEG2SHORT_ANGLE(90.0f);
-    f32 x = cos_s(dir);
-    f32 z = sin_s(dir);
-    
-    mPlib_request_main_demo_walk_type1(
-      game,
-      boat_actor->actor_class.world.position.x + x * 56.0f, boat_actor->actor_class.world.position.z + z * 56.0f,
-      1.0f,
-      0
-    );
-  }
+    if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_DEMO_WALK) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_MOVE_END_WAIT);
+    } else {
+        s16 dir = boat_actor->actor_class.shape_info.rotation.y + DEG2SHORT_ANGLE(90.0f);
+        f32 x = cos_s(dir);
+        f32 z = sin_s(dir);
+
+        mPlib_request_main_demo_walk_type1(game, boat_actor->actor_class.world.position.x + x * 56.0f,
+                                           boat_actor->actor_class.world.position.z + z * 56.0f, 1.0f, 0);
+    }
 }
 
 static void aBT_pl_ride_move_end_wait(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  if (mPlib_Get_end_player_demo_walk()) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_ON_START_WAIT);
-  }
+    if (mPlib_Get_end_player_demo_walk()) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_ON_START_WAIT);
+    }
 }
 
 static void aBT_pl_ride_on_start_wait(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_GETON_BOAT) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_ON_END_WAIT);
-  }
-  else {
-    s16 dir = boat_actor->actor_class.shape_info.rotation.y + DEG2SHORT_ANGLE(90.0f);
-    f32 x = cos_s(dir);
-    f32 z = sin_s(dir);
-    
-    mPlib_request_main_demo_geton_boat_type1(
-      boat_actor->actor_class.world.position.x + x * 56.0f, boat_actor->actor_class.world.position.z + z * 56.0f,
-      boat_actor->actor_class.shape_info.rotation.y + DEG2SHORT_ANGLE(-90.0f)
-    );
-  }
+    if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_GETON_BOAT) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_ON_END_WAIT);
+    } else {
+        s16 dir = boat_actor->actor_class.shape_info.rotation.y + DEG2SHORT_ANGLE(90.0f);
+        f32 x = cos_s(dir);
+        f32 z = sin_s(dir);
+
+        mPlib_request_main_demo_geton_boat_type1(
+            boat_actor->actor_class.world.position.x + x * 56.0f, boat_actor->actor_class.world.position.z + z * 56.0f,
+            boat_actor->actor_class.shape_info.rotation.y + DEG2SHORT_ANGLE(-90.0f));
+    }
 }
 
 static void aBT_pl_ride_on_end_wait(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_GETON_BOAT_SITDOWN) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_SITDOWN_END_WAIT);
-  }
+    if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_GETON_BOAT_SITDOWN) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_SITDOWN_END_WAIT);
+    }
 }
 
 static void aBT_sitdown_end_wait(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_GETON_BOAT_WAIT) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_MOVE_WAIT);
-  }
+    if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_GETON_BOAT_WAIT) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_MOVE_WAIT);
+    }
 }
 
 static void aBT_move_wait(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
+    BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
 
-  if (boat_demo != NULL && boat_demo->action == aBTD_ACTION_SONG_BGM_START_WAIT) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_MOVE);
-  }
+    if (boat_demo != NULL && boat_demo->action == aBTD_ACTION_SONG_BGM_START_WAIT) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_MOVE);
+    }
 }
 
 static void aBT_move(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  aBT_ctrl_direction(boat_actor);
+    aBT_ctrl_direction(boat_actor);
 
-  if (boat_actor->direction == aBT_DIRECTION_TO_ISLAND) {
-    if (boat_actor->point >= 8) {
-      aBT_setupAction(boat_actor, play, aBT_ACTION_DRAW_UP);
-    }
-    else {
-      if (boat_actor->action == aBT_ACTION_MOVE && boat_actor->point == 7) {
-        aBT_setupAction(boat_actor, play, aBT_ACTION_MOMENT);
-      }
+    if (boat_actor->direction == aBT_DIRECTION_TO_ISLAND) {
+        if (boat_actor->point >= 8) {
+            aBT_setupAction(boat_actor, play, aBT_ACTION_DRAW_UP);
+        } else {
+            if (boat_actor->action == aBT_ACTION_MOVE && boat_actor->point == 7) {
+                aBT_setupAction(boat_actor, play, aBT_ACTION_MOMENT);
+            }
 
-      aBT_calc_speed(boat_actor);
-    }
-  }
-  else if (boat_actor->point <= -1) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_DRAW_UP);
-  }
-  else {
-    if (boat_actor->action == aBT_ACTION_MOVE && boat_actor->point == 0) {
-      aBT_setupAction(boat_actor, play, aBT_ACTION_MOMENT);
-    }
+            aBT_calc_speed(boat_actor);
+        }
+    } else if (boat_actor->point <= -1) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_DRAW_UP);
+    } else {
+        if (boat_actor->action == aBT_ACTION_MOVE && boat_actor->point == 0) {
+            aBT_setupAction(boat_actor, play, aBT_ACTION_MOMENT);
+        }
 
-    aBT_calc_speed(boat_actor);
-  }
+        aBT_calc_speed(boat_actor);
+    }
 }
 
 static void aBT_draw_up(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  int last_point_idx = aBT_last_point_idx[boat_actor->direction];
-  xyz_t* last_chk_point = &aBT_chk_point[last_point_idx];
-  s16 anglY = boat_actor->actor_class.shape_info.rotation.y;
-  int drawn_up_point = 0;
+    int last_point_idx = aBT_last_point_idx[boat_actor->direction];
+    xyz_t* last_chk_point = &aBT_chk_point[last_point_idx];
+    s16 anglY = boat_actor->actor_class.shape_info.rotation.y;
+    int drawn_up_point = 0;
 
-  chase_f(&boat_actor->rudder, 16.0f, 0.5f);
+    chase_f(&boat_actor->rudder, 16.0f, 0.5f);
 
-  /* Wait for proper rotation */
-  if (chase_angle(&boat_actor->actor_class.shape_info.rotation.y, aBT_init_angleY[boat_actor->direction], boat_actor->rudder) == TRUE) {
-    drawn_up_point++;
-  }
+    /* Wait for proper rotation */
+    if (chase_angle(&boat_actor->actor_class.shape_info.rotation.y, aBT_init_angleY[boat_actor->direction],
+                    FRAMERATE_ADJ(boat_actor->rudder)) == TRUE) {
+        drawn_up_point++;
+    }
 
-  boat_actor->actor_class.world.angle.y = boat_actor->actor_class.shape_info.rotation.y;
-  aBT_calc_wave_angl(boat_actor, boat_actor->actor_class.shape_info.rotation.y - anglY);
+    boat_actor->actor_class.world.angle.y = boat_actor->actor_class.shape_info.rotation.y;
+    aBT_calc_wave_angl(boat_actor, boat_actor->actor_class.shape_info.rotation.y - anglY);
 
-  /* Wait for proper X coordinate */
-  if (chase_f(&boat_actor->actor_class.world.position.x, last_chk_point->x, 0.05f) == TRUE) {
-    drawn_up_point++;
-  }
+    /* Wait for proper X coordinate */
+    if (chase_f(&boat_actor->actor_class.world.position.x, last_chk_point->x, 0.05f) == TRUE) {
+        drawn_up_point++;
+    }
 
-  /* Wait for proper Z coordinate */
-  if (chase_f(&boat_actor->actor_class.world.position.z, last_chk_point->z, 0.05f) == TRUE) {
-    drawn_up_point++;
-  }
+    /* Wait for proper Z coordinate */
+    if (chase_f(&boat_actor->actor_class.world.position.z, last_chk_point->z, 0.05f) == TRUE) {
+        drawn_up_point++;
+    }
 
-  /* Ensure all three criteria are met */
-  if (drawn_up_point == 3) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_ARRIVE_CALL_END_WAIT);
-  }
+    /* Ensure all three criteria are met */
+    if (drawn_up_point == 3) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_ARRIVE_CALL_END_WAIT);
+    }
 }
 
 static void aBT_arrive_call_end_wait(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
+    BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
 
-  if (boat_demo->action == aBTD_ACTION_PL_RIDE_OFF_END_WAIT) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_OFF_START_WAIT);
-  }
+    if (boat_demo->action == aBTD_ACTION_PL_RIDE_OFF_END_WAIT) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_OFF_START_WAIT);
+    }
 }
 
 static void aBT_pl_ride_off_start_wait(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_GETOFF_BOAT_STANDUP) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_OFF_END_WAIT);
-  }
-  else {
-    xyz_t pos;
-    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
-    s16 dir = boat_actor->actor_class.shape_info.rotation.y + DEG2SHORT_ANGLE(-90.0f);
-    f32 z = cos_s(dir);
-    f32 x = sin_s(dir);
+    if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_GETOFF_BOAT_STANDUP) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_PL_RIDE_OFF_END_WAIT);
+    } else {
+        xyz_t pos;
+        PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+        s16 dir = boat_actor->actor_class.shape_info.rotation.y + DEG2SHORT_ANGLE(-90.0f);
+        f32 z = cos_s(dir);
+        f32 x = sin_s(dir);
 
-    pos.x = player->actor_class.world.position.x + x * 47.0f;
-    pos.y = 40.0f;
-    pos.z = player->actor_class.world.position.z + z * 47.0f;
+        pos.x = player->actor_class.world.position.x + x * 47.0f;
+        pos.y = 40.0f;
+        pos.z = player->actor_class.world.position.z + z * 47.0f;
 
-    mPlib_request_main_demo_getoff_boat_standup_type1(&pos, boat_actor->actor_class.shape_info.rotation.y + DEG2SHORT_ANGLE(-90.0f));
-  }
+        mPlib_request_main_demo_getoff_boat_standup_type1(&pos, boat_actor->actor_class.shape_info.rotation.y +
+                                                                    DEG2SHORT_ANGLE(-90.0f));
+    }
 }
 
 static void aBT_pl_ride_off_end_wait(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_WAIT) {
-    aBT_setupAction(boat_actor, play, aBT_ACTION_ANCHOR);
-  }
+    if (mPlib_get_player_actor_main_index((GAME*)play) == mPlayer_INDEX_DEMO_WAIT) {
+        aBT_setupAction(boat_actor, play, aBT_ACTION_ANCHOR);
+    }
 }
 
 static void aBT_anchor(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  if (aBT_check_alive(boat_actor, play) == FALSE) {
-    boat_actor->action = -1;
-  }
+    if (aBT_check_alive(boat_actor, play) == FALSE) {
+        boat_actor->action = -1;
+    }
 }
 
 typedef void (*aBT_INIT_PROC)(BOAT_ACTOR*, GAME_PLAY*);
 
 static void aBT_wait_init(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  boat_actor->actor_class.speed = 0.0f;
+    boat_actor->actor_class.speed = 0.0f;
 }
 
 static void aBT_sitdown_end_wait_init(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
-  BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
-  
-  boat_actor->actor_class.child_actor = (ACTOR*)player;
-  xyz_t_sub(&player->actor_class.world.position, &boat_actor->actor_class.world.position, &boat_demo->passenger_ofs);
-  boat_actor->roll_timer += 800;
-  boat_actor->actor_class.position_speed.y = -0.2f;
+    PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
+    BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
+
+    boat_actor->actor_class.child_actor = (ACTOR*)player;
+    xyz_t_sub(&player->actor_class.world.position, &boat_actor->actor_class.world.position, &boat_demo->passenger_ofs);
+    boat_actor->roll_timer += 800;
+    boat_actor->actor_class.position_speed.y = -0.2f;
 }
 
 static void aBT_move_wait_init(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
+    BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
 
-  boat_demo->demo_act = aBTD_DEMO_START_CALL_END;
+    boat_demo->demo_act = aBTD_DEMO_START_CALL_END;
 }
 
 static void aBT_move_init(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  static int chk_point_idx[aBT_DIRECTION_NUM] = { 1, 6 };
+    static int chk_point_idx[aBT_DIRECTION_NUM] = { 1, 6 };
 
-  boat_actor->point = chk_point_idx[boat_actor->direction];
+    boat_actor->point = chk_point_idx[boat_actor->direction];
 }
 
 static void aBT_moment_init(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
+    BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
 
-  boat_demo->demo_act = aBTD_DEMO_TOUCH_WHARF_END;
+    boat_demo->demo_act = aBTD_DEMO_TOUCH_WHARF_END;
 }
 
 static void aBT_draw_up_init(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  boat_actor->actor_class.speed = 0.0f;
+    boat_actor->actor_class.speed = 0.0f;
 }
 
 static void aBT_arrive_call_end_wait_init(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
+    BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
 
-  boat_demo->demo_act = aBTD_DEMO_PL_RIDE_OFF_START;
+    boat_demo->demo_act = aBTD_DEMO_PL_RIDE_OFF_START;
 }
 
 static void aBT_pl_ride_off_start_wait_init(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  boat_actor->actor_class.child_actor = NULL;
+    boat_actor->actor_class.child_actor = NULL;
 }
 
 static void aBT_pl_ride_off_end_wait_init(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  boat_actor->roll_timer += 800;
+    boat_actor->roll_timer += 800;
 }
 
 static void aBT_anchor_init(BOAT_ACTOR* boat_actor, GAME_PLAY* play) {
-  BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
+    BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)boat_actor->actor_class.parent_actor;
 
-  boat_demo->demo_act = aBTD_DEMO_ANCHOR;
-  mPlib_request_main_wait_type3((GAME*)play);
+    boat_demo->demo_act = aBTD_DEMO_ANCHOR;
+    mPlib_request_main_wait_type3((GAME*)play);
 }
 
 static void aBT_setupAction(BOAT_ACTOR* boat_actor, GAME_PLAY* play, int action) {
-  static aBT_INIT_PROC init_proc[aBT_ACTION_NUM] = {
-    (aBT_INIT_PROC)&none_proc1,
-    &aBT_wait_init,
-    (aBT_INIT_PROC)&none_proc1,
-    (aBT_INIT_PROC)&none_proc1,
-    (aBT_INIT_PROC)&none_proc1,
-    (aBT_INIT_PROC)&none_proc1,
-    &aBT_sitdown_end_wait_init,
-    &aBT_move_wait_init,
-    &aBT_move_init,
-    &aBT_moment_init,
-    &aBT_draw_up_init,
-    &aBT_arrive_call_end_wait_init,
-    &aBT_pl_ride_off_start_wait_init,
-    &aBT_pl_ride_off_end_wait_init,
-    &aBT_anchor_init
-  };
+    static aBT_INIT_PROC init_proc[aBT_ACTION_NUM] = {
+        (aBT_INIT_PROC)&none_proc1,
+        &aBT_wait_init,
+        (aBT_INIT_PROC)&none_proc1,
+        (aBT_INIT_PROC)&none_proc1,
+        (aBT_INIT_PROC)&none_proc1,
+        (aBT_INIT_PROC)&none_proc1,
+        &aBT_sitdown_end_wait_init,
+        &aBT_move_wait_init,
+        &aBT_move_init,
+        &aBT_moment_init,
+        &aBT_draw_up_init,
+        &aBT_arrive_call_end_wait_init,
+        &aBT_pl_ride_off_start_wait_init,
+        &aBT_pl_ride_off_end_wait_init,
+        &aBT_anchor_init,
+    };
 
-  static aBT_PROC process[aBT_ACTION_NUM] = {
-    &aBT_demo_ctrl_birth_wait,
-    &aBT_wait,
-    &aBT_pl_ride_move_start_wait,
-    &aBT_pl_ride_move_end_wait,
-    &aBT_pl_ride_on_start_wait,
-    &aBT_pl_ride_on_end_wait,
-    &aBT_sitdown_end_wait,
-    &aBT_move_wait,
-    &aBT_move,
-    &aBT_move,
-    &aBT_draw_up,
-    &aBT_arrive_call_end_wait,
-    &aBT_pl_ride_off_start_wait,
-    &aBT_pl_ride_off_end_wait,
-    &aBT_anchor
-  };
-  
-  boat_actor->action = action;
-  boat_actor->action_proc = process[action];
-  (*init_proc[action])(boat_actor, play);
+    static aBT_PROC process[aBT_ACTION_NUM] = {
+        &aBT_demo_ctrl_birth_wait,
+        &aBT_wait,
+        &aBT_pl_ride_move_start_wait,
+        &aBT_pl_ride_move_end_wait,
+        &aBT_pl_ride_on_start_wait,
+        &aBT_pl_ride_on_end_wait,
+        &aBT_sitdown_end_wait,
+        &aBT_move_wait,
+        &aBT_move,
+        &aBT_move,
+        &aBT_draw_up,
+        &aBT_arrive_call_end_wait,
+        &aBT_pl_ride_off_start_wait,
+        &aBT_pl_ride_off_end_wait,
+        &aBT_anchor,
+    };
+
+    boat_actor->action = action;
+    boat_actor->action_proc = process[action];
+    (*init_proc[action])(boat_actor, play);
 }
 
 static void aBT_actor_move(ACTOR* actorx, GAME* game) {
-  BOAT_ACTOR* boat_actor = (BOAT_ACTOR*)actorx;
-  GAME_PLAY* play = (GAME_PLAY*)game;
+    BOAT_ACTOR* boat_actor = (BOAT_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
 
-  aBT_anime_proc(boat_actor);
-  aBT_position_move(boat_actor);
-  aBT_roll_ctrl(boat_actor);
-  (*boat_actor->action_proc)(boat_actor, play);
-  aBT_passenger_ctrl(boat_actor);
+    aBT_anime_proc(boat_actor);
+    aBT_position_move(boat_actor);
+    aBT_roll_ctrl(boat_actor);
+    (*boat_actor->action_proc)(boat_actor, play);
+    aBT_passenger_ctrl(boat_actor);
 
-  if (boat_actor->action == -1) {
-    Actor_delete(actorx);
-  }
+    if (boat_actor->action == -1) {
+        Actor_delete(actorx);
+    }
 }
 
 static void aBT_actor_init(ACTOR* actorx, GAME* game) {
-  mFI_SetFG_common(DUMMY_BOAT, actorx->home.position, FALSE);
-  aBT_actor_move(actorx, game);
-  actorx->mv_proc = &aBT_actor_move;
+    mFI_SetFG_common(DUMMY_BOAT, actorx->home.position, FALSE);
+    aBT_actor_move(actorx, game);
+    actorx->mv_proc = &aBT_actor_move;
 }

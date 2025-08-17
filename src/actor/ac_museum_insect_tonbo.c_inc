@@ -427,13 +427,13 @@ void minsect_tonbo_rock_process(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
                 }
                 if (chase_s(&actor->_7E, atans_table(p2.y, p2.z), (s16)DEG2SHORT_ANGLE2(v)) &&
                     chase_s(&actor->_80, atans_table(p2.y, -p2.x), (s16)DEG2SHORT_ANGLE2(v)) &&
-                    (f32)__fabs(actor->_1C.x - p.x) < 0.008f && (f32)__fabs(actor->_1C.y - p.y) < 0.008f &&
-                    (f32)__fabs(actor->_1C.z - p.z) < 0.008f) {
+                    F32_IS_ZERO(actor->_1C.x - p.x) && F32_IS_ZERO(actor->_1C.y - p.y) &&
+                    F32_IS_ZERO(actor->_1C.z - p.z)) {
                     minsect_tonbo_rock_wait_process_init(actor, game);
                 }
             }
-        } else if ((f32)__fabs(actor->_1C.x - p.x) < 0.008f && (f32)__fabs(actor->_1C.y - p.y) < 0.008f &&
-                   (f32)__fabs(actor->_1C.z - p.z) < 0.008f) {
+        } else if (F32_IS_ZERO(actor->_1C.x - p.x) && F32_IS_ZERO(actor->_1C.y - p.y) &&
+                   F32_IS_ZERO(actor->_1C.z - p.z)) {
             minsect_tonbo_rock_wait_process_init(actor, game);
         }
     }

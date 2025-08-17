@@ -132,10 +132,13 @@ void mfish_bass_normal_process_init(MUSEUM_FISH_PRIVATE_DATA* fishActor) {
 }
 
 void mfish_bass_normal_process(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
+    f32 v;
+    f32 v2;
+
     if (((actor->_62E_flags & 0x200) != 0 && actor->_632 > DEG2SHORT_ANGLE(20)) || actor->_640 > 0) {
-        f32 v = (actor->_5AC.y * 0.03f + 0.02f);
+        v = (actor->_5AC.y * 0.03f + 0.02f);
         add_calc2(&actor->_5EC,
-                  v + (actor->_5AC.y * 0.02f + 0.03f) * (float)((actor->_632 - DEG2SHORT_ANGLE(20)) / 364),
+                  (actor->_5AC.y * 0.03f + 0.02f) + (actor->_5AC.y * 0.02f + 0.03f) * (float)((actor->_632 - DEG2SHORT_ANGLE(20)) / 364),
                   actor->_5AC.y * 0.04f + 0.01f, actor->_5AC.y * 0.02f + 0.01f);
         add_calc(&actor->_5E8, actor->_5F0, CALC_EASE(v), actor->_5EC * 0.5f, 0.025f);
     }

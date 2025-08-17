@@ -415,10 +415,9 @@ static void aMI_DrawMyStep(ACTOR* actorx, GAME* game) {
             int size = aMI_size_dsp_table[my_indoor->room_kind].size;
 
             if (size >= 0 && size < aMI_ROOM_SIZE_NUM) {
-                GRAPH* graph = game->graph;
                 xyz_t* pos = &step_draw_pos[size];
 
-                OPEN_DISP(graph);
+                OPEN_DISP(game->graph);
 
                 Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
                 Matrix_scale(aMI_scale_x_table[i] * 0.01f, 0.01f, 0.01f, MTX_MULT);
@@ -427,7 +426,7 @@ static void aMI_DrawMyStep(ACTOR* actorx, GAME* game) {
                           G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
                 gSPDisplayList(NEXT_POLY_OPA_DISP, aMI_step_data[i].disp);
 
-                CLOSE_DISP(graph);
+                CLOSE_DISP(game->graph);
             }
         }
     }

@@ -7,7 +7,7 @@ extern void aMR_SetSurprise(ACTOR* actorx, s16 angle_y) {
     }
 }
 
-static int aMR_MakeIndoorGoki(xyz_t* pos, s16 arg, s16 angle_y, GAME* game) {
+static int aMR_MakeIndoorGoki(const xyz_t* pos, s16 arg, s16 angle_y, GAME* game) {
     GAME_PLAY* play = (GAME_PLAY*)game;
     ACTOR* actor = Actor_info_make_actor(&play->actor_info, game, mAc_PROFILE_HOUSE_GOKI, pos->x, pos->y, pos->z, 0,
                                          angle_y, 0, -1, -1, -1, EMPTY_NO, arg, -1, -1);

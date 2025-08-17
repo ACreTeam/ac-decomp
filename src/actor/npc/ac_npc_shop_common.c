@@ -825,9 +825,9 @@ static int aNSC_check_money_overflow(u32 p1, u32 counter) {
 }
 
 static int aNSC_check_buy_item_sub(u32* quant, mActor_name_t itm_name) {
-    int i;
     mActor_name_t* item = Now_Private->inventory.pockets;
     int res = aNSC_CHECK_BUY_NORMAL_SUB;
+    int i;
 
     for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++) {
         if (*item == itm_name) {

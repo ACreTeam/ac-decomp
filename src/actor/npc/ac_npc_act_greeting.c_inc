@@ -510,8 +510,9 @@ static u8 aNPC_get_greeting_step(ACTOR* actorx) {
 }
 
 static void aNPC_act_greeting_chg_step(NPC_ACTOR* nactorx, u8 step) {
+    // Why 11? is this a bug?
     // clang-format off
-    static u8 act_idx[] = {
+    static u8 act_idx[11] = {
         aNPC_ACTION_TYPE_TURN,
         aNPC_ACTION_TYPE_WALK,
         aNPC_ACTION_TYPE_PAL_WAIT,
@@ -522,6 +523,7 @@ static void aNPC_act_greeting_chg_step(NPC_ACTOR* nactorx, u8 step) {
         aNPC_ACTION_TYPE_GET_CHANGE,
         aNPC_ACTION_TYPE_GET_CHANGE,
         aNPC_ACTION_TYPE_GET_CHANGE,
+        aNPC_ACT_GREETING_STEP_TURN, // bug?
     };
     // clang-format on
 

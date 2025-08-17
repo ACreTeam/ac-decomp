@@ -1309,7 +1309,12 @@ static int aSOG_gyoei_place_check(u8 spawn_area, u32 block_type) {
       break;
 
     case aSOG_SPAWN_AREA_RIVER_MOUTH:
+// Aus version clarifies that 'river mouth' spawns can only spawn in the river & sea block.
+#if VERSION >= VER_GAFU01_00
+      if ((block_type & (mRF_BLOCKKIND_RIVER | mRF_BLOCKKIND_MARINE)) != (mRF_BLOCKKIND_RIVER | mRF_BLOCKKIND_MARINE)) {
+#else
       if ((block_type & mRF_BLOCKKIND_RIVER) != mRF_BLOCKKIND_RIVER) {
+#endif
         res = FALSE;
       }
       break;

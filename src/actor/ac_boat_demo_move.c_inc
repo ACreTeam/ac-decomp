@@ -1,433 +1,387 @@
 static int aBTD_check_sendo_and_boat(BOAT_DEMO_ACTOR* boat_demo) {
-  int res = TRUE;
+    int res = TRUE;
 
-  if (boat_demo->npc_sendo_actor == NULL) {
-    if (boat_demo->boat_actor != NULL) {
-      Actor_delete((ACTOR*)boat_demo->boat_actor);
+    if (boat_demo->npc_sendo_actor == NULL) {
+        if (boat_demo->boat_actor != NULL) {
+            Actor_delete((ACTOR*)boat_demo->boat_actor);
+        }
+
+        res = FALSE;
     }
 
-    res = FALSE;
-  }
+    if (boat_demo->boat_actor == NULL) {
+        if (boat_demo->npc_sendo_actor != NULL) {
+            Actor_delete((ACTOR*)boat_demo->npc_sendo_actor);
+        }
 
-  if (boat_demo->boat_actor == NULL) {
-    if (boat_demo->npc_sendo_actor != NULL) {
-      Actor_delete((ACTOR*)boat_demo->npc_sendo_actor);
+        res = FALSE;
     }
 
-    res = FALSE;
-  }
-
-  return res;
+    return res;
 }
 
 static int aBTD_regist_island_npc_info() {
-  Island_c* island = Save_GetPointer(island);
-  Animal_c* animal = &island->animal;
-  mNpc_NpcList_c* npclist = Common_Get(island_npclist);
-  int res;
+    Island_c* island = Save_GetPointer(island);
+    Animal_c* animal = &island->animal;
+    mNpc_NpcList_c* npclist = Common_Get(island_npclist);
+    int res;
 
-  mNpc_SetNpcList(npclist, animal, mISL_ISLANDER_NUM, TRUE);
+    mNpc_SetNpcList(npclist, animal, mISL_ISLANDER_NUM, TRUE);
 
-  res = mFI_RegistMoveActorList(
-    npclist->name,
-    animal->home_info.block_x, animal->home_info.block_z,
-    animal->home_info.ut_x, animal->home_info.ut_z,
-    -ANIMAL_NUM_MAX,
-    0
-  );
+    res = mFI_RegistMoveActorList(npclist->name, animal->home_info.block_x, animal->home_info.block_z,
+                                  animal->home_info.ut_x, animal->home_info.ut_z, -ANIMAL_NUM_MAX, 0);
 
-  if (res == TRUE) {
-    mNPS_set_island_schedule_area(&animal->id);
-  }
+    if (res == TRUE) {
+        mNPS_set_island_schedule_area(&animal->id);
+    }
 
-  return res;
+    return res;
 }
 
 static int aBTD_unregist_island_npc_info() {
-  mNpc_NpcList_c* npclist = Common_Get(island_npclist);
-  Island_c* island = Save_GetPointer(island);
-  Animal_c* animal = &island->animal;
-  int res = mFI_UnregistMoveActorList(
-    npclist->name,
-    animal->home_info.block_x,
-    animal->home_info.block_z
-  );
+    mNpc_NpcList_c* npclist = Common_Get(island_npclist);
+    Island_c* island = Save_GetPointer(island);
+    Animal_c* animal = &island->animal;
+    int res = mFI_UnregistMoveActorList(npclist->name, animal->home_info.block_x, animal->home_info.block_z);
 
-  if (res == TRUE) {
-    mNPS_reset_schedule_area(&Save_Get(island).animal.id);
-    mNpc_InitNpcList(npclist, mISL_ISLANDER_NUM);
-  }
+    if (res == TRUE) {
+        mNPS_reset_schedule_area(&Save_Get(island).animal.id);
+        mNpc_InitNpcList(npclist, mISL_ISLANDER_NUM);
+    }
 
-  return res;
+    return res;
 }
 
 static void aBTD_chg_regist_island_npc_info(BOAT_DEMO_ACTOR* boat_demo) {
-  if (boat_demo->at_island == FALSE) {
-    if (boat_demo->island_npc_info_registered == FALSE && aBTD_regist_island_npc_info() == TRUE) {
-      boat_demo->island_npc_info_registered = TRUE;
+    if (boat_demo->at_island == FALSE) {
+        if (boat_demo->island_npc_info_registered == FALSE && aBTD_regist_island_npc_info() == TRUE) {
+            boat_demo->island_npc_info_registered = TRUE;
+        }
+    } else {
+        if (boat_demo->island_npc_info_registered == TRUE && aBTD_unregist_island_npc_info() == TRUE) {
+            boat_demo->island_npc_info_registered = FALSE;
+        }
     }
-  }
-  else {
-    if (boat_demo->island_npc_info_registered == TRUE && aBTD_unregist_island_npc_info() == TRUE) {
-      boat_demo->island_npc_info_registered = FALSE;
-    }
-  }
 }
 
 static void aBTD_setup_castaway(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  if (boat_demo->action > aBTD_ACTION_PL_RIDE_ON_START_WAIT && boat_demo->action != aBTD_ACTION_ANCHOR_WAIT) {
-    if (mEv_check_status(mEv_EVENT_DOZAEMON, mEv_STATUS_RUN) && (Common_Get(spnpc_first_talk_flags) & (1 << aNPC_SPNPC_BIT_DOZAEMON)) == 0) {
-      mEv_dozaemon_c* dozaemon_ev = (mEv_dozaemon_c*)mEv_reserve_save_area(mEv_EVENT_DOZAEMON, 13); // Shouldn't this be mEv_get_save_area?
+    if (boat_demo->action > aBTD_ACTION_PL_RIDE_ON_START_WAIT && boat_demo->action != aBTD_ACTION_ANCHOR_WAIT) {
+        if (mEv_check_status(mEv_EVENT_DOZAEMON, mEv_STATUS_RUN) &&
+            (Common_Get(spnpc_first_talk_flags) & (1 << aNPC_SPNPC_BIT_DOZAEMON)) == 0) {
+            mEv_dozaemon_c* dozaemon_ev =
+                (mEv_dozaemon_c*)mEv_reserve_save_area(mEv_EVENT_DOZAEMON, 13); // Shouldn't this be mEv_get_save_area?
 
-      if (
-        (dozaemon_ev == NULL || (dozaemon_ev->flags & 1) == 0) &&
-        Save_Get(event_save_common).dozaemon_completed != TRUE &&
-        boat_demo->castaway_actor == NULL
-      ) {
-        int setupActor = (*Common_Get(clip).npc_clip->setupActor_proc)(play, SP_NPC_CASTAWAY, -1, -1, -1, -1 , -1, 0, 0);
+            if ((dozaemon_ev == NULL || (dozaemon_ev->flags & 1) == 0) &&
+                Save_Get(event_save_common).dozaemon_completed != TRUE && boat_demo->castaway_actor == NULL) {
+                int setupActor =
+                    (*Common_Get(clip).npc_clip->setupActor_proc)(play, SP_NPC_CASTAWAY, -1, -1, -1, -1, -1, 0, 0);
 
-        if (setupActor == TRUE) {
-          EV_CASTAWAY_ACTOR* castaway = (EV_CASTAWAY_ACTOR*)Actor_info_fgName_search(&play->actor_info, SP_NPC_CASTAWAY, ACTOR_PART_NPC);
+                if (setupActor == TRUE) {
+                    EV_CASTAWAY_ACTOR* castaway = (EV_CASTAWAY_ACTOR*)Actor_info_fgName_search(
+                        &play->actor_info, SP_NPC_CASTAWAY, ACTOR_PART_NPC);
 
-          if (castaway != NULL) {
-            boat_demo->castaway_actor = castaway;
-          }
+                    if (castaway != NULL) {
+                        boat_demo->castaway_actor = castaway;
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }
 
 static void aBTD_change_season(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  if (boat_demo->at_island == TRUE) {
-    mFI_SetClimate(mFI_CLIMATE_0);
-    mFM_returnSeason();
-    aWeather_RequestChangeWeatherFromIsland();
-    mNpc_ClearIslandPresentFtrInfo();
-    mNpc_SetIslandGetLetter(FALSE);
-    mNpc_SetIslandCheckFtrMsg(FALSE);
-  }
-  else {
-    mFI_SetClimate(mFI_CLIMATE_ISLAND);
-    mFM_toSummer();
-    aWeather_RequestChangeWeatherToIsland();
-    mISL_ChangeBG();
-    mRmTp_DecideCottageDefaultLightSwitch();
-    mSP_SelectRandomItemToAGB();
-    mISL_ClearNowPlayerAction();
-    mNpc_SetIslandPresentFtr();
-    mNpc_SetIslandRoomFtr(&Save_Get(island).animal);
-    mNpc_SetIslandGetLetter(FALSE);
-    mNpc_SetIslandCheckFtrMsg(FALSE);
-  }
+    if (boat_demo->at_island == TRUE) {
+        mFI_SetClimate(mFI_CLIMATE_0);
+        mFM_returnSeason();
+        aWeather_RequestChangeWeatherFromIsland();
+        mNpc_ClearIslandPresentFtrInfo();
+        mNpc_SetIslandGetLetter(FALSE);
+        mNpc_SetIslandCheckFtrMsg(FALSE);
+    } else {
+        mFI_SetClimate(mFI_CLIMATE_ISLAND);
+        mFM_toSummer();
+        aWeather_RequestChangeWeatherToIsland();
+        mISL_ChangeBG();
+        mRmTp_DecideCottageDefaultLightSwitch();
+        mSP_SelectRandomItemToAGB();
+        mISL_ClearNowPlayerAction();
+        mNpc_SetIslandPresentFtr();
+        mNpc_SetIslandRoomFtr(&Save_Get(island).animal);
+        mNpc_SetIslandGetLetter(FALSE);
+        mNpc_SetIslandCheckFtrMsg(FALSE);
+    }
 
-  mBI_change_bg_item(play);
+    mBI_change_bg_item(play);
 }
 
 static void aBTD_sendo_birth_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  if (Common_Get(clip).npc_clip != NULL && Common_Get(clip).npc_clip->setupActor_proc != NULL) {
-    int sendo_birth = (*Common_Get(clip).npc_clip->setupActor_proc)(play, SP_NPC_SENDO, -1, -1, -1, -1, -1, 0, 0);
+    if (Common_Get(clip).npc_clip != NULL && Common_Get(clip).npc_clip->setupActor_proc != NULL) {
+        int sendo_birth = (*Common_Get(clip).npc_clip->setupActor_proc)(play, SP_NPC_SENDO, -1, -1, -1, -1, -1, 0, 0);
 
-    if (sendo_birth == TRUE) {
-      NPC_SENDO_ACTOR* sendo_actor = (NPC_SENDO_ACTOR*)Actor_info_fgName_search(&play->actor_info, SP_NPC_SENDO, ACTOR_PART_NPC);
+        if (sendo_birth == TRUE) {
+            NPC_SENDO_ACTOR* sendo_actor =
+                (NPC_SENDO_ACTOR*)Actor_info_fgName_search(&play->actor_info, SP_NPC_SENDO, ACTOR_PART_NPC);
 
-      if (sendo_actor != NULL) {
-        BOAT_ACTOR* boat_actor = (BOAT_ACTOR*)Actor_info_fgName_search(&play->actor_info, BOAT, ACTOR_PART_ITEM);
+            if (sendo_actor != NULL) {
+                BOAT_ACTOR* boat_actor =
+                    (BOAT_ACTOR*)Actor_info_fgName_search(&play->actor_info, BOAT, ACTOR_PART_ITEM);
 
-        boat_demo->npc_sendo_actor = sendo_actor;
-        boat_demo->boat_actor = boat_actor;
+                boat_demo->npc_sendo_actor = sendo_actor;
+                boat_demo->boat_actor = boat_actor;
 
-        sendo_actor->npc_class.actor_class.parent_actor = (ACTOR*)boat_demo;
-        boat_actor->actor_class.parent_actor = (ACTOR*)boat_demo;
+                sendo_actor->npc_class.actor_class.parent_actor = (ACTOR*)boat_demo;
+                boat_actor->actor_class.parent_actor = (ACTOR*)boat_demo;
 
-        aBTD_setupAction(boat_demo, play, aBTD_ACTION_PL_RIDE_ON_START_WAIT);
-      }
+                aBTD_setupAction(boat_demo, play, aBTD_ACTION_PL_RIDE_ON_START_WAIT);
+            }
+        }
     }
-  }
 }
 
 static void aBTD_pl_ride_on_start_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  if (aBTD_check_sendo_and_boat(boat_demo) == FALSE) {
-    Actor_delete((ACTOR*)boat_demo);
-  }
-  else if (boat_demo->demo_act == aBTD_DEMO_PL_RIDE_ON_END) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_PL_RIDE_ON_END_WAIT);
-  }
+    if (aBTD_check_sendo_and_boat(boat_demo) == FALSE) {
+        Actor_delete((ACTOR*)boat_demo);
+    } else if (boat_demo->demo_act == aBTD_DEMO_PL_RIDE_ON_END) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_PL_RIDE_ON_END_WAIT);
+    }
 }
 
 static void aBTD_pl_ride_on_end_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  if (boat_demo->demo_act == aBTD_DEMO_START_CALL_END) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_START_CALL_END_WAIT);
-  }
+    if (boat_demo->demo_act == aBTD_DEMO_START_CALL_END) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_START_CALL_END_WAIT);
+    }
 }
 
 static void aBTD_start_call_end_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  if (boat_demo->demo_act == aBTD_DEMO_MOVE_BOAT_END) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_SONG_BGM_START_WAIT);
-  }
+    if (boat_demo->demo_act == aBTD_DEMO_MOVE_BOAT_END) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_SONG_BGM_START_WAIT);
+    }
 }
 
 static void aBTD_song_bgm_start_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  boat_demo->song_bgm_timer--;
+    boat_demo->song_bgm_timer--;
 
-  if (boat_demo->song_bgm_timer <= 0) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_SING_SENDO_START_WAIT);
-  }
+    if (boat_demo->song_bgm_timer <= 0) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_SING_SENDO_START_WAIT);
+    }
 }
 
 static void aBTD_sing_sendo_start_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  boat_demo->song_bgm_timer--;
+    boat_demo->song_bgm_timer--;
 
-  if (boat_demo->song_bgm_timer <= 0) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_SING_SENDO_MSG_SET_WAIT);
-  }
+    if (boat_demo->song_bgm_timer <= 0) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_SING_SENDO_MSG_SET_WAIT);
+    }
 }
 
 static void aBTD_sing_sendo_msg_set_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  int msg_no = mMsg_Get_msg_num(mMsg_Get_base_window_p());
-    
-  if (msg_no == boat_demo->sing_msg_no) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_SENDO_DIALOGUE_START_WAIT);
-  }
+    int msg_no = mMsg_Get_msg_num(mMsg_Get_base_window_p());
+
+    if (msg_no == boat_demo->sing_msg_no) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_SENDO_DIALOGUE_START_WAIT);
+    }
 }
 
 static void aBTD_sendo_dialogue_start_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  int msg_no = mMsg_Get_msg_num(mMsg_Get_base_window_p());
-    
-  if (msg_no == boat_demo->sing_msg_no) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_SING_SENDO_START_WAIT2);
-  }
+    int msg_no = mMsg_Get_msg_num(mMsg_Get_base_window_p());
+
+    if (msg_no == boat_demo->sing_msg_no) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_SING_SENDO_START_WAIT2);
+    }
 }
 
 static void aBTD_sing_sendo_start_wait2(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  int msg_no = mMsg_Get_msg_num(mMsg_Get_base_window_p());
-    
-  if (msg_no == boat_demo->sing_msg_no) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_MOVE_BOAT_END_WAIT);
-  }
+    int msg_no = mMsg_Get_msg_num(mMsg_Get_base_window_p());
 
-  aBTD_chg_regist_island_npc_info(boat_demo);
+    if (msg_no == boat_demo->sing_msg_no) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_MOVE_BOAT_END_WAIT);
+    }
+
+    aBTD_chg_regist_island_npc_info(boat_demo);
 }
 
 static void aBTD_move_boat_end_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  if (boat_demo->demo_act == aBTD_DEMO_TOUCH_WHARF_END) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_TOUCH_WHARF_END_WAIT);
-  }
+    if (boat_demo->demo_act == aBTD_DEMO_TOUCH_WHARF_END) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_TOUCH_WHARF_END_WAIT);
+    }
 }
 
 static void aBTD_touch_wharf_end_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  if (boat_demo->touching_wharf == FALSE) {
-    boat_demo->touch_wharf_timer--;
+    if (boat_demo->touching_wharf == FALSE) {
+        boat_demo->touch_wharf_timer--;
 
-    if (boat_demo->touch_wharf_timer <= 0) {
-      sAdo_OngenTrgStart(0x165, &boat_demo->boat_actor->actor_class.world.position);
-      boat_demo->touching_wharf = TRUE;
+        if (boat_demo->touch_wharf_timer <= 0) {
+            sAdo_OngenTrgStart(0x165, &boat_demo->boat_actor->actor_class.world.position);
+            boat_demo->touching_wharf = TRUE;
+        }
     }
-  }
 
-  if (boat_demo->demo_act == aBTD_DEMO_PL_RIDE_OFF_START) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_PL_RIDE_OFF_START_WAIT);
-  }
+    if (boat_demo->demo_act == aBTD_DEMO_PL_RIDE_OFF_START) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_PL_RIDE_OFF_START_WAIT);
+    }
 }
 
 static void aBTD_pl_ride_off_start_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  if (boat_demo->demo_act == aBTD_DEMO_PL_RIDE_OFF_END) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_PL_RIDE_OFF_END_WAIT);
-  }
+    if (boat_demo->demo_act == aBTD_DEMO_PL_RIDE_OFF_END) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_PL_RIDE_OFF_END_WAIT);
+    }
 }
 
 static void aBTD_pl_ride_off_end_wait(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  if (boat_demo->demo_act == aBTD_DEMO_ANCHOR) {
-    aBTD_setupAction(boat_demo, play, aBTD_ACTION_ANCHOR_WAIT);
-  }
+    if (boat_demo->demo_act == aBTD_DEMO_ANCHOR) {
+        aBTD_setupAction(boat_demo, play, aBTD_ACTION_ANCHOR_WAIT);
+    }
 }
 
 static void aBTD_anchor(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  if (aBTD_check_sendo_and_boat(boat_demo) == FALSE) {
-    Actor_delete((ACTOR*)boat_demo);
-  }
+    if (aBTD_check_sendo_and_boat(boat_demo) == FALSE) {
+        Actor_delete((ACTOR*)boat_demo);
+    }
 }
 
 typedef void (*aBTD_INIT_PROC)(BOAT_DEMO_ACTOR*, GAME_PLAY*);
 
 static void aBTD_start_call_end_wait_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  mBGMPsComp_make_ps_quietField(0x168);
+    mBGMPsComp_make_ps_quietField(0x168);
 }
 
 static void aBTD_song_bgm_start_wait_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  boat_demo->song_bgm_timer = 0;
+    boat_demo->song_bgm_timer = 0;
 }
 
 static void aBTD_sing_sendo_start_wait_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  static int player_pattern_table[2][2] = {
-    { 0, 1 },
-    { 2, 3 }
-  };
+    static int player_pattern_table[2][2] = { { 0, 1 }, { 2, 3 } };
 
-  static u8 sing_1st_part_bgm_no[4][5] = {
-    { 0x5C, 0x5D, 0x5E, 0x5F, 0x60 },
-    { 0x66, 0x67, 0x68, 0x69, 0x6A },
-    { 0x61, 0x62, 0x63, 0x64, 0x65 },
-    { 0x6B, 0x6C, 0x6D, 0x6E, 0x6F }
-  };
+    static u8 sing_1st_part_bgm_no[4][5] = {
+        { 0x5C, 0x5D, 0x5E, 0x5F, 0x60 },
+        { 0x66, 0x67, 0x68, 0x69, 0x6A },
+        { 0x61, 0x62, 0x63, 0x64, 0x65 },
+        { 0x6B, 0x6C, 0x6D, 0x6E, 0x6F },
+    };
 
-  static int sing_1st_part_msg_base_no[4] = {
-    0x3091,
-    0x3163,
-    0x3096,
-    0x3168
-  };
+    static int sing_1st_part_msg_base_no[4] = { 0x3091, 0x3163, 0x3096, 0x3168 };
 
-  int at_island = boat_demo->at_island;
-  int gender = Common_Get(now_private)->gender;
-  int kappn_song;
-  int player_pattern;
+    int at_island = boat_demo->at_island;
+    int gender = Common_Get(now_private)->gender;
+    int kappn_song;
+    int player_pattern;
 
-  do {
-    kappn_song = RANDOM(5);
-    if (!at_island) {
-      if (kappn_song != Save_Get(island).last_song_to_island) {
-        Save_Get(island).last_song_to_island = kappn_song;
-        break;
-      }
-    }
-    else {
-      if (kappn_song != Save_Get(island).last_song_from_island) {
-        Save_Get(island).last_song_from_island = kappn_song;
-        break;
-      }
-    }
-  } while (TRUE);
-  
-  player_pattern = player_pattern_table[at_island][gender];
-  boat_demo->player_pattern = player_pattern;
-  mBGMPsComp_make_ps_lost_fanfare(sing_1st_part_bgm_no[player_pattern][kappn_song], 0x168);
-  boat_demo->sing_msg_no = sing_1st_part_msg_base_no[player_pattern] + kappn_song;
-  boat_demo->sing_dialog_ofs = RANDOM(10);
-  boat_demo->sing_2nd_part = RANDOM(10);
-  boat_demo->song_bgm_timer = 930;
+    do {
+        kappn_song = RANDOM(5);
+        if (!at_island) {
+            if (kappn_song != Save_Get(island).last_song_to_island) {
+                Save_Get(island).last_song_to_island = kappn_song;
+                break;
+            }
+        } else {
+            if (kappn_song != Save_Get(island).last_song_from_island) {
+                Save_Get(island).last_song_from_island = kappn_song;
+                break;
+            }
+        }
+    } while (TRUE);
+
+    player_pattern = player_pattern_table[at_island][gender];
+    boat_demo->player_pattern = player_pattern;
+    mBGMPsComp_make_ps_lost_fanfare(sing_1st_part_bgm_no[player_pattern][kappn_song], 0x168);
+    boat_demo->sing_msg_no = sing_1st_part_msg_base_no[player_pattern] + kappn_song;
+    boat_demo->sing_dialog_ofs = RANDOM(10);
+    boat_demo->sing_2nd_part = RANDOM(10);
+    boat_demo->song_bgm_timer = FRAMERATE_TIMER(930);
 }
 
 static void aBTD_sendo_dialogue_start_wait_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  static int sing_dialogue_msg_base_no[4] = {
-    0x309B,
-    0x316D,
-    0x30A5,
-    0x3177
-  };
+    static int sing_dialogue_msg_base_no[4] = { 0x309B, 0x316D, 0x30A5, 0x3177 };
 
-  int msg_no = sing_dialogue_msg_base_no[boat_demo->player_pattern] + boat_demo->sing_dialog_ofs;
+    int msg_no = sing_dialogue_msg_base_no[boat_demo->player_pattern] + boat_demo->sing_dialog_ofs;
 
-  mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg_no);
-  boat_demo->sing_msg_no = msg_no;
-  mMsg_sound_set_voice_silent(mMsg_Get_base_window_p(), TRUE);
-  aBTD_change_season(boat_demo, play);
+    mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg_no);
+    boat_demo->sing_msg_no = msg_no;
+    mMsg_sound_set_voice_silent(mMsg_Get_base_window_p(), TRUE);
+    aBTD_change_season(boat_demo, play);
 }
 
 static void aBTD_sing_sendo_start_wait2_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  static u8 sing_2nd_part_bgm_no[10] = {
-    0x70, 0x71, 0x72, 0x73, 0x74,
-    0x75, 0x76, 0x77, 0x78, 0x79
-  };
+    static u8 sing_2nd_part_bgm_no[10] = { 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79 };
 
-  static int sing_2nd_part_msg_base_no[4] = {
-    0x30AF,
-    0x3181,
-    0x30AF,
-    0x3181
-  };
+    static int sing_2nd_part_msg_base_no[4] = { 0x30AF, 0x3181, 0x30AF, 0x3181 };
 
-  int song_no;
-  int msg_no;
-  
+    int song_no;
+    int msg_no;
 
-  mMsg_sound_unset_voice_silent(mMsg_Get_base_window_p(), TRUE);
+    mMsg_sound_unset_voice_silent(mMsg_Get_base_window_p(), TRUE);
 
-  song_no = sing_2nd_part_bgm_no[boat_demo->sing_2nd_part];
-  mBGMPsComp_make_ps_demo(song_no, 0x168);
-  boat_demo->sing_2nd_part_bgm_no = song_no;
+    song_no = sing_2nd_part_bgm_no[boat_demo->sing_2nd_part];
+    mBGMPsComp_make_ps_demo(song_no, 0x168);
+    boat_demo->sing_2nd_part_bgm_no = song_no;
 
-  msg_no = sing_2nd_part_msg_base_no[boat_demo->player_pattern] + boat_demo->sing_2nd_part;
-  mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg_no);
-  boat_demo->sing_msg_no = msg_no;
+    msg_no = sing_2nd_part_msg_base_no[boat_demo->player_pattern] + boat_demo->sing_2nd_part;
+    mMsg_Set_continue_msg_num(mMsg_Get_base_window_p(), msg_no);
+    boat_demo->sing_msg_no = msg_no;
 }
 
 static void aBTD_move_boat_end_wait_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  mMsg_sound_set_voice_silent(mMsg_Get_base_window_p(), TRUE);
+    mMsg_sound_set_voice_silent(mMsg_Get_base_window_p(), TRUE);
 }
 
 static void aBTD_touch_wharf_end_wait_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  boat_demo->touching_wharf = FALSE;
-  boat_demo->touch_wharf_timer = 190;
+    boat_demo->touching_wharf = FALSE;
+    boat_demo->touch_wharf_timer = FRAMERATE_TIMER(190);
 }
 
 static void aBTD_pl_ride_off_start_wait_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  mBGMPsComp_delete_ps_demo(boat_demo->sing_2nd_part_bgm_no, 0x168);
+    mBGMPsComp_delete_ps_demo(boat_demo->sing_2nd_part_bgm_no, 0x168);
 }
 
 static void aBTD_anchor_init(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play) {
-  mBGMPsComp_delete_ps_quietField();
+    mBGMPsComp_delete_ps_quietField();
 
-  if (boat_demo->castaway_actor != NULL) {
-    Actor_delete((ACTOR*)boat_demo->castaway_actor);
-  }
+    if (boat_demo->castaway_actor != NULL) {
+        Actor_delete((ACTOR*)boat_demo->castaway_actor);
+    }
 }
 
 static void aBTD_init_proc(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play, int action) {
-  static aBTD_INIT_PROC init_proc[aBTD_ACTION_NUM] = {
-    (aBTD_INIT_PROC)&none_proc1,
-    (aBTD_INIT_PROC)&none_proc1,
-    (aBTD_INIT_PROC)&none_proc1,
-    &aBTD_start_call_end_wait_init,
-    &aBTD_song_bgm_start_wait_init,
-    &aBTD_sing_sendo_start_wait_init,
-    (aBTD_INIT_PROC)&none_proc1,
-    &aBTD_sendo_dialogue_start_wait_init,
-    &aBTD_sing_sendo_start_wait2_init,
-    &aBTD_move_boat_end_wait_init,
-    &aBTD_touch_wharf_end_wait_init,
-    &aBTD_pl_ride_off_start_wait_init,
-    (aBTD_INIT_PROC)&none_proc1,
-    &aBTD_anchor_init
-  };
+    static aBTD_INIT_PROC init_proc[aBTD_ACTION_NUM] = {
+        (aBTD_INIT_PROC)&none_proc1,       (aBTD_INIT_PROC)&none_proc1,
+        (aBTD_INIT_PROC)&none_proc1,       &aBTD_start_call_end_wait_init,
+        &aBTD_song_bgm_start_wait_init,    &aBTD_sing_sendo_start_wait_init,
+        (aBTD_INIT_PROC)&none_proc1,       &aBTD_sendo_dialogue_start_wait_init,
+        &aBTD_sing_sendo_start_wait2_init, &aBTD_move_boat_end_wait_init,
+        &aBTD_touch_wharf_end_wait_init,   &aBTD_pl_ride_off_start_wait_init,
+        (aBTD_INIT_PROC)&none_proc1,       &aBTD_anchor_init,
+    };
 
-  (*init_proc[action])(boat_demo, play);
+    (*init_proc[action])(boat_demo, play);
 }
 
 static void aBTD_setupAction(BOAT_DEMO_ACTOR* boat_demo, GAME_PLAY* play, int action) {
-  static aBTD_PROC process[aBTD_ACTION_NUM] = {
-    &aBTD_sendo_birth_wait,
-    &aBTD_pl_ride_on_start_wait,
-    &aBTD_pl_ride_on_end_wait,
-    &aBTD_start_call_end_wait,
-    &aBTD_song_bgm_start_wait,
-    &aBTD_sing_sendo_start_wait,
-    &aBTD_sing_sendo_msg_set_wait,
-    &aBTD_sendo_dialogue_start_wait,
-    &aBTD_sing_sendo_start_wait2,
-    &aBTD_move_boat_end_wait,
-    &aBTD_touch_wharf_end_wait,
-    &aBTD_pl_ride_off_start_wait,
-    &aBTD_pl_ride_off_end_wait,
-    &aBTD_anchor
-  };
+    static aBTD_PROC process[aBTD_ACTION_NUM] = {
+        &aBTD_sendo_birth_wait,        &aBTD_pl_ride_on_start_wait,
+        &aBTD_pl_ride_on_end_wait,     &aBTD_start_call_end_wait,
+        &aBTD_song_bgm_start_wait,     &aBTD_sing_sendo_start_wait,
+        &aBTD_sing_sendo_msg_set_wait, &aBTD_sendo_dialogue_start_wait,
+        &aBTD_sing_sendo_start_wait2,  &aBTD_move_boat_end_wait,
+        &aBTD_touch_wharf_end_wait,    &aBTD_pl_ride_off_start_wait,
+        &aBTD_pl_ride_off_end_wait,    &aBTD_anchor,
+    };
 
-  boat_demo->action_proc = process[action];
-  boat_demo->action = action;
-  aBTD_init_proc(boat_demo, play, action);
+    boat_demo->action_proc = process[action];
+    boat_demo->action = action;
+    aBTD_init_proc(boat_demo, play, action);
 }
 
 static void aBTD_actor_move(ACTOR* actorx, GAME* game) {
-  BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)actorx;
-  GAME_PLAY* play = (GAME_PLAY*)game;
-  BOAT_ACTOR* boat_actor = boat_demo->boat_actor;
+    BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    BOAT_ACTOR* boat_actor = boat_demo->boat_actor;
 
-  if (boat_actor != NULL) {
-    actorx->shape_info.rotation.x = boat_actor->actor_class.shape_info.rotation.x;
-    actorx->shape_info.rotation.y = boat_actor->actor_class.shape_info.rotation.y;
-    boat_demo->boat_speed = boat_actor->actor_class.speed;
-  }
+    if (boat_actor != NULL) {
+        actorx->shape_info.rotation.x = boat_actor->actor_class.shape_info.rotation.x;
+        actorx->shape_info.rotation.y = boat_actor->actor_class.shape_info.rotation.y;
+        boat_demo->boat_speed = boat_actor->actor_class.speed;
+    }
 
-  aBTD_setup_castaway(boat_demo, play);
-  (*boat_demo->action_proc)(boat_demo, play);
+    aBTD_setup_castaway(boat_demo, play);
+    (*boat_demo->action_proc)(boat_demo, play);
 }

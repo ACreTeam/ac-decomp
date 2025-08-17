@@ -273,6 +273,7 @@ static void Shop_Goods_Actor_single_drawR(GAME* game, mActor_name_t item, xyz_t*
         LightsN* lightsN;
 
         if (item >= data_p->item_start && item <= data_p->item_end) {
+            const aSG_data_c* data_p = &src_data_p[i];
             int xlu_flag = data_p->xlu_gfx0[mode] != NULL;
             GRAPH* graph;
 

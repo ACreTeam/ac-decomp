@@ -842,7 +842,7 @@ void Museum_Insect_Actor_dt(ACTOR* actor, GAME* game) {
 void Museum_Insect_Actor_move(ACTOR* actorx, GAME* game) {
     MUSEUM_INSECT_ACTOR* actor = (MUSEUM_INSECT_ACTOR*)actorx;
     int i;
-    actor->actor.world.position.y = 4000.f;
+    actorx->world.position.y = 4000.f;
     Museum_Insect_Talk_process(actorx, game);
     for (i = 0; i < aINS_INSECT_TYPE_NUM; i++) {
         if (actor->privInsects[i]._8C & 1) {
@@ -856,17 +856,20 @@ extern Gfx obj_museum4_water_modelT[];
 
 void Museum_Insect_Actor_draw(ACTOR* actorx, GAME* game) {
     MUSEUM_INSECT_ACTOR* actor = (MUSEUM_INSECT_ACTOR*)actorx;
-    GRAPH* graph;
     int i;
+
     _texture_z_light_fog_prim_xlu(game->graph);
     Evw_Anime_Set((GAME_PLAY*)game, &obj_museum4_water_evw_anime);
-    graph = game->graph;
+
+    OPEN_DISP(game->graph);
+    
     Matrix_translate(100.0f, 0.0f, 0.0f, MTX_LOAD);
     Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
-    OPEN_DISP(graph);
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(NEXT_POLY_XLU_DISP, obj_museum4_water_modelT);
-    CLOSE_DISP(graph);
+    
+    CLOSE_DISP(game->graph);
+    
     for (i = 0; i < aINS_INSECT_TYPE_NUM; i++) {
         if (actor->privInsects[i]._8C & 1) {
             if (GETREG(TAKREG, 0) == i + 1) {

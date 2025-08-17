@@ -41,8 +41,8 @@ static void Ac_Balloon_main_hide(ACTOR* actorx, GAME* game) {
     Ac_Balloon_Movement_hide(actorx, game);
 }
 
-extern void Ac_Balloon_request_fly(ACTOR* actorx, GAME* game, int balloon_type, s_xyz* angle_p, s16 lean, xyz_t* pos_p,
-                                   f32 start_frame, f32 speed) {
+extern void Ac_Balloon_request_fly(ACTOR* actorx, GAME* game, int balloon_type, const s_xyz* angle_p, s16 lean,
+                                   const xyz_t* pos_p, f32 start_frame, f32 speed) {
     BALLOON_ACTOR* balloon = (BALLOON_ACTOR*)actorx;
 
     balloon->setup_mode = Ac_Balloon_MODE_FLY;

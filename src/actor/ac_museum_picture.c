@@ -85,7 +85,7 @@ static void Museum_Picture_Actor_dt(ACTOR* actorx, GAME* game) {
     // nothing
 }
 
-static void aMP_DrawOneArt(aMP_pos_c* pos_xz, Gfx* disp, GAME* game) {
+static void aMP_DrawOneArt(const aMP_pos_c* pos_xz, Gfx* disp, GAME* game) {
     GRAPH* graph = game->graph;
     xyz_t pos = { 0.0f, 0.0f, 0.0f };
 
@@ -117,10 +117,10 @@ static void Museum_Picture_Actor_draw(ACTOR* actorx, GAME* game) {
 }
 
 static int aMP_CheckTalkAble(xyz_t* pos, int direct, GAME* game, f32 dist) {
-    static int direct_table[] = { mRmTp_DIRECT_NORTH, -1, -1, mRmTp_DIRECT_WEST,
-                                  mRmTp_DIRECT_WEST,  -1, -1, mRmTp_DIRECT_SOUTH,
-                                  mRmTp_DIRECT_SOUTH, -1, -1, mRmTp_DIRECT_EAST,
-                                  mRmTp_DIRECT_EAST,  -1, -1, mRmTp_DIRECT_NORTH };
+    static int direct_table[] = {
+        mRmTp_DIRECT_NORTH, -1, -1, mRmTp_DIRECT_WEST, mRmTp_DIRECT_WEST, -1, -1, mRmTp_DIRECT_SOUTH,
+        mRmTp_DIRECT_SOUTH, -1, -1, mRmTp_DIRECT_EAST, mRmTp_DIRECT_EAST, -1, -1, mRmTp_DIRECT_NORTH,
+    };
 
     PLAYER_ACTOR* player = GET_PLAYER_ACTOR((GAME_PLAY*)game);
 
@@ -128,11 +128,7 @@ static int aMP_CheckTalkAble(xyz_t* pos, int direct, GAME* game, f32 dist) {
         f32 dx = player->actor_class.world.position.x - pos->x;
         f32 dz = player->actor_class.world.position.z - pos->z;
 
-        if (sqrtf(dx * dx + dz * dz) <= dist) {
-            return TRUE;
-        } else {
-            return FALSE;
-        }
+        return sqrtf(SQ(dx) + SQ(dz)) <= dist ? TRUE : FALSE;
     }
 
     return FALSE;

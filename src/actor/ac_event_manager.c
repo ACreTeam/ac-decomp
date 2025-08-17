@@ -3665,6 +3665,7 @@ static int river_start_block(int* bx, int* bz) {
 }
 
 static void river_stream(u8* blocks, int count) {
+    int n = count;
     int river_bx;
     int river_bz;
     int i;
@@ -3672,7 +3673,7 @@ static void river_stream(u8* blocks, int count) {
 
     // zero out block data
     j = 0;
-    for (i = 0; i < count; i++) {
+    for (count; count > 0; count--) {
         blocks[j + 0] = 0;
         blocks[j + 1] = 0;
         j += 2;
@@ -3681,7 +3682,7 @@ static void river_stream(u8* blocks, int count) {
     // find the start block
     if (river_start_block(&river_bx, &river_bz)) {
         // trace the river
-        for (i = 1; i < count && river_bz < 7; i++) {
+        for (i = 1; i < n && river_bz < 7; i++) {
             blocks[(i - 1) * 2 + 0] = river_bx;
             blocks[(i - 1) * 2 + 1] = river_bz;
 

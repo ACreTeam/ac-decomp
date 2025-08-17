@@ -61,7 +61,7 @@ static void aBEE_actor_ct(ACTOR* actorx, GAME* game) {
 }
 
 static f32 aBEE_calc_scale_sub(f32* scale_p, f32 target, f32 frac, f32 max_step) {
-    return add_calc(scale_p, target, 1.0f - sqrtf(1.0f - frac), max_step * 0.5f, 0.0f);
+    return add_calc(scale_p, target, CALC_EASE(frac), max_step * 0.5f, 0.0f);
 }
 
 static void aBEE_calc_scale(BEE_ACTOR* bee, f32 frac, f32 max_step) {
@@ -85,6 +85,7 @@ static void aBEE_fly_move_common(BEE_ACTOR* bee, GAME* game) {
     f32 speed;
     f32 angle = fabsf(90.0f - bee->start_frame) * 7.5f;
     int speed_angle;
+    s16 d_angle;
     s16 abs_speed_angle;
     f32 target_frame;
     f32 diff;
@@ -99,8 +100,9 @@ static void aBEE_fly_move_common(BEE_ACTOR* bee, GAME* game) {
             break;
     }
 
-    add_calc_short_angle2(&bee->add_angle, bee->base_angle - (s16)angle, 1.0f - sqrtf(0.6f), 250, 0);
-    add_calc_short_angle2(&bee->actor_class.world.angle.y, bee->actor_class.player_angle_y, 1.0f - sqrtf(0.6f), bee->add_angle >> 1, 0);
+    d_angle = bee->base_angle - (s16)angle;
+    add_calc_short_angle2(&bee->add_angle, d_angle, CALC_EASE(0.4f), 250, 0);
+    add_calc_short_angle2(&bee->actor_class.world.angle.y, bee->actor_class.player_angle_y, CALC_EASE(0.4f), bee->add_angle >> 1, 0);
     bee->actor_class.shape_info.rotation.y = bee->actor_class.world.angle.y;
     speed_angle = (int)(bee->actor_class.world.angle.y - bee->actor_class.player_angle_y);
     abs_speed_angle = ABS((s16)speed_angle);
@@ -110,7 +112,7 @@ static void aBEE_fly_move_common(BEE_ACTOR* bee, GAME* game) {
 
     bee->speed = 2.9f;
     bee->speed += fabsf((f32)((DEG2SHORT_ANGLE2(180.0f) - abs_speed_angle) / DEG2SHORT_ANGLE2(30.0f)));
-    add_calc(&bee->actor_class.speed, bee->speed, 1.0f - sqrtf(0.7f), 0.15f, 0.0f);
+    add_calc(&bee->actor_class.speed, bee->speed, CALC_EASE(0.3f), 0.15f, 0.0f);
 
     bee->bobbing_counter += 0x900;
     if (player != NULL) {
@@ -124,7 +126,7 @@ static void aBEE_fly_move_common(BEE_ACTOR* bee, GAME* game) {
     } else if (target_frame > 180.0f) {
         target_frame = 180.0f;
     }
-    add_calc(&bee->start_frame, target_frame, 1.0f - sqrtf(0.5f), 5.0f, 0.0f);
+    add_calc(&bee->start_frame, target_frame, CALC_EASE(0.5f), 5.0f, 0.0f);
 
     diff = fabsf(90.0f - bee->start_frame);
     bee->size.x = (0.75f + diff / 360.0f) * 0.01f;
@@ -134,8 +136,8 @@ static void aBEE_fly_move_common(BEE_ACTOR* bee, GAME* game) {
 }
 
 static void aBEE_calc_fly_angle(ACTOR* actorx) {
-    add_calc_short_angle2(&actorx->shape_info.rotation.z, 0, 1.0f - sqrtf(0.7f), 1000, 0);
-    add_calc_short_angle2(&actorx->shape_info.rotation.x, 0, 1.0f - sqrtf(0.7f), 1000, 0);
+    add_calc_short_angle2(&actorx->shape_info.rotation.z, 0, CALC_EASE(0.3f), 1000, 0);
+    add_calc_short_angle2(&actorx->shape_info.rotation.x, 0, CALC_EASE(0.3f), 1000, 0);
 }
 
 static void aBEE_appear(ACTOR* actorx, GAME* game) {
@@ -354,7 +356,7 @@ static void aBEE_actor_move(ACTOR* actorx, GAME* game) {
 
         (*bee->action_proc)(actorx, game);
         aBEE_anime_proc(bee);
-        add_calc(&actorx->world.position.y, bee->pos_y, 1.0f - sqrtf(0.7f), 1.5f, 0.0f);
+        add_calc(&actorx->world.position.y, bee->pos_y, CALC_EASE(0.3f), 1.5f, 0.0f);
     }
 }
 

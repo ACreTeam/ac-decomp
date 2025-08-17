@@ -4,143 +4,140 @@
 #include "bg_item_h.h"
 #include "m_house.h"
 
+static int aDOU_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape,
+                                  u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
+    static rgba_t prmcolor[mHS_HOUSE_NUM] = {
+        { 255, 255, 0, 255 },
+        { 200, 200, 255, 255 },
+        { 255, 100, 50, 255 },
+        { 0, 255, 40, 255 },
+    };
 
-static int aDOU_actor_draw_before(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int joint_idx, Gfx** joint_shape, u8* joint_flags, void* arg, s_xyz* joint_rot, xyz_t* joint_pos) {
-  static rgba_t prmcolor[mHS_HOUSE_NUM] = {
-    { 255, 255,   0, 255 },
-    { 200, 200, 255, 255 },
-    { 255, 100,  50, 255 },
-    {   0, 255,  40, 255 }
-  };
+    static rgba_t envcolor[mHS_HOUSE_NUM] = {
+        { 100, 30, 0, 255 },
+        { 80, 80, 100, 255 },
+        { 40, 20, 0, 255 },
+        { 0, 30, 30, 255 },
+    };
 
-  static rgba_t envcolor[mHS_HOUSE_NUM] = {
-    { 100,  30,   0, 255 },
-    {  80,  80, 100, 255 },
-    {  40,  20,   0, 255 },
-    {   0,  30,  30, 255 }
-  };
+    static f32 scltbl[mHS_HOUSE_NUM] = {
+        1.00f,
+        0.85f,
+        0.70f,
+        0.55f,
+    };
 
-  static f32 scltbl[mHS_HOUSE_NUM] = {
-    1.00f,
-    0.85f,
-    0.70f,
-    0.55f
-  };
+    GRAPH* graph = game->graph;
+    STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)arg;
+    int draw = FALSE;
+    int color = douzou->arg1;
 
-  GRAPH* graph = game->graph;
-  STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)arg;
-  int draw = FALSE;
-  int color = douzou->arg1;
-
-  if (joint_idx == 2) {
-    f32 scale = scltbl[color];
-    Matrix_scale(scale, scale, scale, MTX_MULT);
-  }
-
-  /* Decide which sex of model to draw (keyframes [2, 4] are male, [5, 7] are female) */
-  if (joint_idx == 2 || joint_idx == 3 || joint_idx == 4) {
-    /* Male actor draw check */
-    if (douzou->arg0 >= mPr_FACE_TYPE_NUM) {
-      *joint_shape = NULL;
+    if (joint_idx == 2) {
+        f32 scale = scltbl[color];
+        Matrix_scale(scale, scale, scale, MTX_MULT);
     }
-    else {
-      draw = TRUE;
+
+    /* Decide which sex of model to draw (keyframes [2, 4] are male, [5, 7] are female) */
+    if (joint_idx == 2 || joint_idx == 3 || joint_idx == 4) {
+        /* Male actor draw check */
+        if (douzou->arg0 >= mPr_FACE_TYPE_NUM) {
+            *joint_shape = NULL;
+        } else {
+            draw = TRUE;
+        }
+    } else if (joint_idx == 5 || joint_idx == 6 || joint_idx == 7) {
+        /* Female actor draw check */
+        if (douzou->arg0 <= mPr_FACE_TYPE7) {
+            *joint_shape = NULL;
+        } else {
+            draw = TRUE;
+        }
     }
-  }
-  else if (joint_idx == 5 || joint_idx == 6 || joint_idx == 7) {
-    /* Female actor draw check */
-    if (douzou->arg0 <= mPr_FACE_TYPE7) {
-      *joint_shape = NULL;
+
+    if (draw || joint_idx == 8) {
+        Gfx* gfx;
+        OPEN_DISP(graph);
+
+        gfx = NOW_POLY_OPA_DISP;
+        gDPPipeSync(gfx++);
+        gDPSetEnvColor(gfx++, envcolor[color].r, envcolor[color].g, envcolor[color].b, 255);
+        gDPSetPrimColor(gfx++, 0, 255, prmcolor[color].r, prmcolor[color].g, prmcolor[color].b, prmcolor[color].a);
+        SET_POLY_OPA_DISP(gfx);
+
+        CLOSE_DISP(graph);
     }
-    else {
-      draw = TRUE;
-    }
-  }
 
-  if (draw || joint_idx == 8) {
-    Gfx* gfx;
-    OPEN_DISP(graph);
-
-    gfx = NOW_POLY_OPA_DISP;
-    gDPPipeSync(gfx++);
-    gDPSetEnvColor(gfx++, envcolor[color].r, envcolor[color].g, envcolor[color].b, 255);
-    gDPSetPrimColor(gfx++, 0, 255, prmcolor[color].r, prmcolor[color].g, prmcolor[color].b, prmcolor[color].a);
-    SET_POLY_OPA_DISP(gfx);
-
-    CLOSE_DISP(graph);
-  }
-
-  return TRUE;
+    return TRUE;
 }
 
 static void aDOU_actor_draw(ACTOR* actor, GAME* game) {
-  GAME_PLAY* play = (GAME_PLAY*)game;
-  GRAPH* graph = game->graph;
-  STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
-  cKF_SkeletonInfo_R_c* keyframe = &douzou->keyframe;
-  u16* pal = (*Common_Get(clip).structure_clip->get_pal_segment_proc)(aSTR_PAL_DOUZOU_DAI);
-  int disp_joints = keyframe->skeleton->num_shown_joints;
-  Mtx* m;
-  int i;
-
-  _texture_z_light_fog_prim(graph);
-
-  for (i = 0; i < mHS_HOUSE_NUM; i++) {
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    GRAPH* graph = game->graph;
+    STRUCTURE_ACTOR* douzou = (STRUCTURE_ACTOR*)actor;
+    cKF_SkeletonInfo_R_c* keyframe = &douzou->keyframe;
+    u16* pal = (*Common_Get(clip).structure_clip->get_pal_segment_proc)(aSTR_PAL_DOUZOU_DAI);
+    int disp_joints = keyframe->skeleton->num_shown_joints;
+    Mtx* m;
     int type;
     int eye_type;
     int mouth_type;
-    if (aDOU_set_check(i)) {
-      m = GRAPH_ALLOC_TYPE(graph, Mtx, disp_joints);
+    int i;
 
-      if (m == NULL) {
-        return;
-      }
+    _texture_z_light_fog_prim(graph);
 
-      douzou->arg0 = aDOU_get_douzou_type(i);
-      type = douzou->arg0;
-      mouth_type = type;
-      eye_type = type;
+    for (i = 0; i < mHS_HOUSE_NUM; i++) {
+        if (aDOU_set_check(i)) {
+            m = GRAPH_ALLOC_TYPE(graph, Mtx, disp_joints);
 
-      if (douzou->season == mTM_SEASON_WINTER) {
-        mouth_type = type + mPr_SEX_NUM * mPr_FACE_TYPE_NUM;
-        eye_type = type + mPr_SEX_NUM * mPr_FACE_TYPE_NUM;
-      }
+            if (m == NULL) {
+                return;
+            }
 
-      douzou->arg1 = aDOU_get_color(i);
+            douzou->arg0 = aDOU_get_douzou_type(i);
+            type = douzou->arg0;
+            mouth_type = type;
+            eye_type = type;
 
-      Matrix_push();
+            if (douzou->season == mTM_SEASON_WINTER) {
+                mouth_type = type + mPr_SEX_NUM * mPr_FACE_TYPE_NUM;
+                eye_type = type + mPr_SEX_NUM * mPr_FACE_TYPE_NUM;
+            }
 
-      {
-        Gfx* gfx;
+            douzou->arg1 = aDOU_get_color(i);
 
-        OPEN_DISP(graph);
-        gfx = NOW_POLY_OPA_DISP;
-        
-        gDPPipeSync(gfx++);
-        
-        gSPSegment(gfx++, G_MWO_SEGMENT_A, pal);
-        gSPSegment(gfx++, G_MWO_SEGMENT_8, eye_tbl[eye_type]);
-        gSPSegment(gfx++, G_MWO_SEGMENT_9, mouth_tbl[mouth_type]);
+            Matrix_push();
 
-        Matrix_translate(xpostbl[i] * 100.0f, 0.0f, zpostbl[i] * 100.0f, MTX_MULT);
+            {
+                Gfx* gfx;
 
-        SET_POLY_OPA_DISP(gfx);
-        CLOSE_DISP(graph);
-      }
+                OPEN_DISP(graph);
+                gfx = NOW_POLY_OPA_DISP;
 
-      {
-        xyz_t wpos;
+                gDPPipeSync(gfx++);
 
-        xyz_t_move(&wpos, &actor->world.position);
-        wpos.x += xpostbl[i];
-        wpos.z += zpostbl[i];
+                gSPSegment(gfx++, G_MWO_SEGMENT_A, pal);
+                gSPSegment(gfx++, G_MWO_SEGMENT_8, eye_tbl[eye_type]);
+                gSPSegment(gfx++, G_MWO_SEGMENT_9, mouth_tbl[mouth_type]);
 
-        Setpos_HiliteReflect_init(&wpos, play);
-      }
+                Matrix_translate(xpostbl[i] * 100.0f, 0.0f, zpostbl[i] * 100.0f, MTX_MULT);
 
-      cKF_Si3_draw_R_SV(game, keyframe, m, &aDOU_actor_draw_before, NULL, actor);
-      (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, &aDOU_shadow_data, FALSE);
-      Matrix_pull();
+                SET_POLY_OPA_DISP(gfx);
+                CLOSE_DISP(graph);
+            }
+
+            {
+                xyz_t wpos;
+
+                xyz_t_move(&wpos, &actor->world.position);
+                wpos.x += xpostbl[i];
+                wpos.z += zpostbl[i];
+
+                Setpos_HiliteReflect_init(&wpos, play);
+            }
+
+            cKF_Si3_draw_R_SV(game, keyframe, m, &aDOU_actor_draw_before, NULL, actor);
+            (*Common_Get(clip).bg_item_clip->draw_shadow_proc)(game, &aDOU_shadow_data, FALSE);
+            Matrix_pull();
+        }
     }
-  }
 }

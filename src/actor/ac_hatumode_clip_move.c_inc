@@ -88,7 +88,7 @@ static void aHTC_clip_talk_info(ACTOR* actorx, int type) {
     // clang-format off
     static aHN0_talk_info_c dt_tbl0[] = {
         { 1, aHN0_TALK_WAIT },
-        { 0, aHN0_TALK_WAIT },
+        // { 0, aHN0_TALK_WAIT },
     };
     // clang-format on
 

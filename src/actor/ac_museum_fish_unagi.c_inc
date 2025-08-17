@@ -121,7 +121,7 @@ void mfish_unagi_rail_move(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex) {
         v = 0.0f;
     }
     v3 = search_position_distance(&actor->position, &pp[actor->_642]);
-    if ((f32)(__fabs(chase_xyz_t(&actor->position, &pp[actor->_642], v2))) < 0.008f) {
+    if (F32_IS_ZERO(chase_xyz_t(&actor->position, &pp[actor->_642], v2))) {
         if (actor->_640 < unagi_rail_num_tbl[actor->_646] - 1) {
             actor->_640++;
         } else {
@@ -170,7 +170,7 @@ void mfish_unagi_normal_to_reverse(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex)
     }
 
     v1 = search_position_distance(&actor->position, &p[actor->_642]);
-    if ((f32)__fabs(chase_xyz_t(&actor->position, &p[actor->_642], v0)) < 0.008f) {
+    if (F32_IS_ZERO(chase_xyz_t(&actor->position, &p[actor->_642], v0))) {
         if (actor->_640 < 11) {
             actor->_640++;
         } else {
@@ -217,7 +217,7 @@ void mfish_unagi_rail_move_reverse(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex)
         c = 0.0f;
     }
     v1 = search_position_distance(&actor->position, &p[actor->_642]);
-    if ((f32)__fabs(chase_xyz_t(&actor->position, &p[actor->_642], v0)) < 0.008f) {
+    if (F32_IS_ZERO(chase_xyz_t(&actor->position, &p[actor->_642], v0))) {
         if (actor->_640 > 1) {
             actor->_640--;
         } else if (actor->_640 == 1) {
@@ -268,7 +268,7 @@ void mfish_unagi_reverse_to_normal(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* gamex)
         c = 0.0f;
     }
     v1 = search_position_distance(&actor->position, &p[actor->_642]);
-    if ((f32)__fabs(chase_xyz_t(&actor->position, &p[actor->_642], v0)) < 0.008f) {
+    if (F32_IS_ZERO(chase_xyz_t(&actor->position, &p[actor->_642], v0))) {
         if (actor->_640 > 1) {
             actor->_640--;
         } else if (actor->_640 == 1) {

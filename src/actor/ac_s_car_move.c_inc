@@ -11,8 +11,8 @@ static void aSCR_set_bgOffset(STRUCTURE_ACTOR* car, int offs) {
     static f32 addZ[] = { 40.0f, 0.0f, -40.0f };
 
     mCoBG_OffsetTable_c* offset;
-    int i;
     int j;
+    int i;
     xyz_t pos;
 
     offset = height_table[offs];

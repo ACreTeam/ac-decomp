@@ -36,7 +36,7 @@ void mi_dango_move_init(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 void mi_dango_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     actor->_7C = 0;
     actor->_6E--;
-    if ((f32)__fabs(actor->_40) < 0.008f) {
+    if (F32_IS_ZERO(actor->_40)) {
         if (actor->_6E < 0) {
             actor->_40 = RANDOM_F(0.1f) + 0.065f;
             actor->_6E = (s16)RANDOM_F(560.f) + 40;

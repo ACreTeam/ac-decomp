@@ -170,12 +170,10 @@ static int aNNW_trend_check_umbrella(int umbrella_idx) {
     int count;
 
     animals = Save_Get(animals);
-    i = 0;
-    count = 0;
     idx = (umbrella_idx & 3) + UMBRELLA_NUM;
     umbrella_idx += UMBRELLA_NUM;
-
-    for (i; i < ANIMAL_NUM_MAX; i++) {
+    
+    for (i = 0, count = 0; i < ANIMAL_NUM_MAX; i++) {
         animal = &animals[i];
         if (!mNpc_CheckFreeAnimalPersonalID(&animal->id)) {
             if (animal->umbrella_id == umbrella_idx || animal->umbrella_id == idx) {

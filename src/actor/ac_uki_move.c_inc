@@ -214,7 +214,7 @@ static void aUKI_clear_spd(ACTOR* actorx) {
     actorx->position_speed.z = 0.0f;
 }
 
-static void aUKI_parabola_init(UKI_ACTOR* uki, const xyz_t* p0, const xyz_t* p1, s16 timer, u8 type) {
+static void aUKI_parabola_init(UKI_ACTOR* uki, xyz_t* p0, xyz_t* p1, s16 timer, u8 type) {
     f32 y_param;
     f32 f = (f32)(int)timer;
     f32 step = f * 0.5f;

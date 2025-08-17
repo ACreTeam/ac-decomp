@@ -32,4 +32,3 @@ void osWritebackDCache(void* buf, u32 len) {
 u32 osGetCount(void) {
 	return OSGetTick();
 }
-

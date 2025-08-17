@@ -323,8 +323,14 @@ static int aSIGN_actor_set_target(SIGN_ACTOR* sign, GAME* game) {
                                     int abs_angle_y = ABS(angle_y);
 
                                     if (abs_angle_y < DEG2SHORT_ANGLE2(45.0f)) {
+// TODO: fakematch? Why do these differ?
+#if VERSION == VER_GAFU01_00
                                         s16 d_angle_y =
-                                            (angle_y + DEG2SHORT_ANGLE2(180.0f)) - player_actor->shape_info.rotation.y;
+                                            (s16)(angle_y + DEG2SHORT_ANGLE2(180.0f)) - player_actor->shape_info.rotation.y;
+#else
+                                            s16 d_angle_y =
+                                                (angle_y + DEG2SHORT_ANGLE2(180.0f)) - player_actor->shape_info.rotation.y;
+#endif
                                         s16 diff_angle_y = ABS(d_angle_y);
 
                                         if (diff_angle_y <= DEG2SHORT_ANGLE2(68.83483f)) {
@@ -761,7 +767,7 @@ static void aSIGN_random_set(void) {
         for (bx = 0; bx < bx_max; bx++) {
             fg_p = mFI_BkNumtoUtFGTop(bx, bz);
             for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
-                for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
+                for (ut_x = 0; ut_x < UT_X_NUM; ut_x++, fg_p++) {
                     if (*fg_p == TREE && GETREG(NMREG, 0) == 1000) {
                         mFI_UtNumtoFGSet_common(SIGNBOARD_START + (qrand() >> 27), bx * UT_X_NUM + ut_x,
                                                 bz * UT_Z_NUM + ut_z, TRUE);
@@ -771,8 +777,6 @@ static void aSIGN_random_set(void) {
                                                     bz * UT_Z_NUM + ut_z, TRUE);
                         }
                     }
-
-                    fg_p++;
                 }
             }
         }
@@ -792,12 +796,10 @@ static void aSIGN_all_clear(void) {
         for (bx = 0; bx < bx_max; bx++) {
             fg_p = mFI_BkNumtoUtFGTop(bx, bz);
             for (ut_z = 0; ut_z < UT_Z_NUM; ut_z++) {
-                for (ut_x = 0; ut_x < UT_X_NUM; ut_x++) {
+                for (ut_x = 0; ut_x < UT_X_NUM; ut_x++, fg_p++) {
                     if (*fg_p >= SIGNBOARD_START && *fg_p < (SIGNBOARD_END + 1)) {
                         mFI_UtNumtoFGSet_common(EMPTY_NO, bx * UT_X_NUM + ut_x, bz * UT_Z_NUM + ut_z, TRUE);
                     }
-
-                    fg_p++;
                 }
             }
         }

@@ -64,6 +64,45 @@ static u8* aSM_SucureBank(size_t size, GAME* game) {
     return (u8*)zelda_malloc_align(size, 32);
 }
 
+// TODO: fakematch
+#if VERSION == VER_GAFU01_00
+static int aSM_SecureManakinBank(ACTOR* actorx, GAME* game) {
+    SHOP_MANEKIN_ACTOR* shop_manekin = (SHOP_MANEKIN_ACTOR*)actorx;
+    int count = shop_manekin->current_block_manekin_num;
+    MANEKIN_ACTOR* manekin = shop_manekin->manekin_actors;
+    int i;
+    u8* tex_p;
+    u8* pal_p;
+    u32 size;
+    u32 pal_size;
+    u32 ofs;
+
+    // size = (count + 1) * mNW_DESIGN_TEX_SIZE;
+    tex_p = aSM_SucureBank((count + 1) * mNW_DESIGN_TEX_SIZE, game);
+    if (tex_p == NULL) {
+        return FALSE;
+    }
+
+    for (i = 0; i < count; i++) {
+        manekin[i].tex_p = tex_p + (int)(i * mNW_DESIGN_TEX_SIZE);
+    }
+
+    shop_manekin->naked_tex_p = tex_p + (count * mNW_DESIGN_TEX_SIZE);
+
+    pal_p = aSM_SucureBank((count + 1) * mNW_PALETTE_SIZE, game);
+    if (pal_p == NULL) {
+        return FALSE;
+    }
+
+    for (i = 0; i < count; i++) {
+        manekin[i].palette_p = pal_p + (int)(i << 5);
+    }
+
+    shop_manekin->naked_pal_p = pal_p + (int)(count << 5);
+
+    return TRUE;
+}
+#else
 static int aSM_SecureManakinBank(ACTOR* actorx, GAME* game) {
     SHOP_MANEKIN_ACTOR* shop_manekin = (SHOP_MANEKIN_ACTOR*)actorx;
     int count = shop_manekin->current_block_manekin_num;
@@ -98,6 +137,7 @@ static int aSM_SecureManakinBank(ACTOR* actorx, GAME* game) {
 
     return TRUE;
 }
+#endif
 
 static void aSM_SearchManekinPlace(int* ux, int* uz, mActor_name_t* item, int idx, int bx, int bz) {
     mActor_name_t* fg_p = mFI_BkNumtoUtFGTop(bx, bz);

@@ -129,11 +129,15 @@ static u8 aNNW_next_target(NPC_NEEDLEWORK_ACTOR* actor, GAME_PLAY* play) {
                 return 0;
             } else {
                 for (i = 0; i < 5; i++) {
-                    // TODO: This likely explains why the other tables in this TU needed to be 1D instead of 2D
+// TODO: fakematch
+#if VERSION >= VER_GAFU01_00
+                    area = near_area_table[now_area][i];
+#else
                     u8* table_p = (u8*)near_area_table;
                     
                     table_p += now_area * 5;
                     area = table_p[i];
+#endif
                     if (area == player_area) {
                         return 0;
                     }

@@ -28,12 +28,21 @@ static void aSHR_set_bgOffset(ACTOR* actorx, int table_idx) {
     for (i = 0; i < 4; i++) {
         xyz_t pos;
 
+#if VERSION >= VER_GAFU01_00
+        pos.z = actorx->home.position.z + addZ[i];
+        pos.x = actorx->home.position.x + addX[0];
+        mCoBG_SetPluss5PointOffset_file(pos, height_table_p[0], __FILE__, 241);
+
+        pos.x = actorx->home.position.x + addX[1];
+        mCoBG_SetPluss5PointOffset_file(pos, height_table_p[1], __FILE__, 245);
+#else
         pos.z = actorx->home.position.z + addZ[i];
         pos.x = actorx->home.position.x + addX[0];
         mCoBG_SetPluss5PointOffset_file(pos, height_table_p[0], __FILE__, 238);
 
         pos.x = actorx->home.position.x + addX[1];
         mCoBG_SetPluss5PointOffset_file(pos, height_table_p[1], __FILE__, 242);
+#endif
 
         height_table_p += 2;
     }

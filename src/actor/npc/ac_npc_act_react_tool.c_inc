@@ -90,9 +90,16 @@ static void aNPC_act_react_tool_init_proc(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     if (nactorx->think.force_call_flag == aNPC_FORCE_CALL_REQUEST) {
         nactorx->condition_info.demo_flg = 0;
     } else {
+// Aus version removes the check skip flags for movement bounding
+#if VERSION >= VER_GAFU01_00
+        nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
+            aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_ITEM | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
+            aNPC_COND_DEMO_SKIP_MOVE_Y;
+#else
         nactorx->condition_info.demo_flg = aNPC_COND_DEMO_SKIP_ENTRANCE_CHECK | aNPC_COND_DEMO_SKIP_HEAD_LOOKAT |
             aNPC_COND_DEMO_SKIP_TALK_CHECK | aNPC_COND_DEMO_SKIP_ITEM | aNPC_COND_DEMO_SKIP_FORWARD_CHECK |
             aNPC_COND_DEMO_SKIP_MOVE_Y | aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV | aNPC_COND_DEMO_SKIP_MOVE_RANGE_CHECK;
+#endif
     }
 
     switch (feel) {

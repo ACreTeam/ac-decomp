@@ -14,6 +14,43 @@ static void aMJN2_act_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
     (*act_proc[type])(nactorx, play);
 }
 
+// Aus adds a missing check for pressing Y (opens inventory),
+// and a check for interactions with signboards.
+#if VERSION >= VER_GAFU01_00
+static int aMJN2_check_submenu(GAME_PLAY* play) {
+    int ret = FALSE;
+
+    if (chkTrigger(BUTTON_START) || chkTrigger(BUTTON_Y) || mSM_CHECK_OPEN_MAP() == TRUE) {
+        ret = TRUE;
+    } else {
+        ACTOR* playerx = GET_PLAYER_ACTOR_ACTOR(play);
+
+        if (playerx != NULL) {
+            PLAYER_ACTOR* player = (PLAYER_ACTOR*)playerx;
+
+            if (player->a_btn_pressed == TRUE &&
+                ABS(DIFF_SHORT_ANGLE(playerx->shape_info.rotation.y, DEG2SHORT_ANGLE(-180.0f))) < DEG2SHORT_ANGLE2(45.0f)) {
+                if (ITEM_IS_SIGNBOARD(player->item_in_front)) {
+                    ret = TRUE;
+                } else {
+                    switch (player->item_in_front) {
+                        case MESSAGE_BOARD0:
+                        case MESSAGE_BOARD1:
+                        case MAP_BOARD0:
+                        case MAP_BOARD1:
+                            ret = TRUE;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    return ret;
+}
+#else
 static int aMJN2_check_submenu(GAME_PLAY* play) {
     int ret = FALSE;
 
@@ -43,6 +80,7 @@ static int aMJN2_check_submenu(GAME_PLAY* play) {
 
     return ret;
 }
+#endif
 
 static void aMJN2_start_wait(NPC_MAJIN2_ACTOR* actor, GAME_PLAY* play) {
     if (!mPlib_check_player_actor_main_index_OutDoorMove2((GAME*)play)) {

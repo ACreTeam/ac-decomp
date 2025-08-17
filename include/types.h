@@ -8,6 +8,18 @@
 #define VER_GAFE01_00 0
 #define VER_GAFU01_00 1
 
+// TODO: add PAL version to this check
+// Adjusts values based on regional frame rate (Hz)
+#if VERSION == VER_GAFU01_00
+#define FRAMERATE_ADJ(n) (((n) * 60) / 50) // less frames so more value
+#define FRAMERATE_TIMER(n) (((n) * 50) / 60) // less frames so less timer
+#define FRAMERATE_SELECT(f60, f50) (f50)
+#else
+#define FRAMERATE_ADJ(n) (n)
+#define FRAMERATE_TIMER(n) (n)
+#define FRAMERATE_SELECT(f60, f50) (f60)
+#endif
+
 typedef signed char s8;
 typedef signed short s16;
 typedef signed long s32;

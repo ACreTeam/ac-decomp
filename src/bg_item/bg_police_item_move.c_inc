@@ -64,7 +64,7 @@ static void bPI_set_draw_tbl(BG_POLICE_ITEM_ACTOR* bg_police_item, bPI_draw_tbl_
         u16* start_idx_p = draw_tbl->draw_data.start_idx;
         u16* draw_start_p = draw_start;
 
-        for (i = 0; i < ARRAY_COUNT(draw_start); i++) {
+        for (i = 1; i < ARRAY_COUNT(draw_start) + 1; i++) {
             *start_idx_p++ = *draw_start_p++;
         }
     }

@@ -48,8 +48,8 @@ struct balloon_actor_s {
 };
 
 extern void Ac_Balloon_request_hide(ACTOR* actorx, GAME* game);
-extern void Ac_Balloon_request_fly(ACTOR* actorx, GAME* game, int balloon_type, s_xyz* angle_p, s16 lean, xyz_t* pos_p,
-                                   f32 start_frame, f32 speed);
+extern void Ac_Balloon_request_fly(ACTOR* actorx, GAME* game, int balloon_type, const s_xyz* angle_p, s16 lean,
+                                   const xyz_t* pos_p, f32 start_frame, f32 speed);
 
 extern ACTOR_PROFILE Balloon_Profile;
 

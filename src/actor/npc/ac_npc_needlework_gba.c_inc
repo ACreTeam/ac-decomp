@@ -1,5 +1,12 @@
+// Aus version increased client program size by 0x04 bytes
+// and loader program by 0x3C bytes
+#if VERSION >= VER_GAFU01_00
+#define aNNW_CLIENT_PRG_SIZE 0xACC4
+#define aNNW_CLIENT_LDR_SIZE 0x8D5C
+#else
 #define aNNW_CLIENT_PRG_SIZE 0xACC0
 #define aNNW_CLIENT_LDR_SIZE 0x8D20
+#endif
 
 #ifndef __INTELLISENSE__
 static u8 aNNW_client_prg[] = {

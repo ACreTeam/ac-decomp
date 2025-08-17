@@ -112,12 +112,13 @@ static int aWeather_GetWeatherPrvNum(ACTOR* actor) {
     WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
     aWeather_Priv* priv = weather->priv;
     int i;
-    int num = 0;
 
-    for (i = 100; i != 0; i--, priv++, num++) {
+    for (i = 0; i < 100; i++) {
         if (priv->use == 0) {
-            return num;
+            return i;
         }
+
+        priv++;
     }
 
     return -1;
@@ -373,7 +374,11 @@ static void aWeather_SnowInAdvance(ACTOR* actorx, GAME* game, int moves) {
 
 static void Weather_Actor_ct(ACTOR* actor, GAME* game) {
     static s16 DemoWeatherTbl[5][2] = {
-        3, 1, 1, 2, 0, 0, 0, 0, 2, 1,
+        { mEnv_WEATHER_SAKURA, mEnv_WEATHER_INTENSITY_LIGHT },
+        { mEnv_WEATHER_RAIN, mEnv_WEATHER_INTENSITY_NORMAL },
+        { mEnv_WEATHER_CLEAR, mEnv_WEATHER_INTENSITY_NONE },
+        { mEnv_WEATHER_CLEAR, mEnv_WEATHER_INTENSITY_NONE },
+        { mEnv_WEATHER_SNOW, mEnv_WEATHER_INTENSITY_LIGHT },
     };
     WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
     GAME_PLAY* play = (GAME_PLAY*)game;
@@ -399,7 +404,13 @@ static void Weather_Actor_ct(ACTOR* actor, GAME* game) {
         weather->current_status = mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather));
         weather->next_status = weather->current_status;
         weather->current_level = mEnv_SAVE_GET_WEATHER_INTENSITY(Save_Get(weather));
+// Aus version sets the aim level to the current level (from save) rather than from the
+// common data struct
+#if VERSION >= VER_GAFU01_00
+        weather->current_aim_level = weather->current_level;
+#else
         weather->current_aim_level = Common_Get(weather_intensity);
+#endif
     }
 
     weather->ptr = NULL;
@@ -526,17 +537,19 @@ static void aWeather_MoveWeatherPrv(ACTOR* actorx, GAME* game) {
 
 static int aWeather_CountWeatherPrivate(ACTOR* actorx) {
     WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actorx;
-    int i;
-    int count;
     aWeather_Priv* priv = weather->priv;
+    int count;
+    int i;
 
     count = 0;
 
-    for (i = 0; i < 100; i++, priv++) {
+    for (i = 0; i < 100; i++) {
 
         if (priv->use != 0) {
             count++;
         }
+
+        priv++;
     }
 
     return count;
@@ -660,18 +673,22 @@ static void aWeather_MakeKaminari(ACTOR* actorx) {
 }
 
 static void Weather_Actor_move(ACTOR* actor, GAME* game) {
-    GAME_PLAY* play = (GAME_PLAY*)game;
-    WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
-
     xyz_t* pos;
+    WEATHER_ACTOR* weather;
+    GAME_PLAY* play;
     Camera2* camera;
+    CameraLookat* lookat;
     s16 angle;
     s16 umbrella;
-
+    mActor_name_t field_id;
+    
     pos = Camera2_getCenterPos_p();
+    weather = (WEATHER_ACTOR*)actor;
+    play = (GAME_PLAY*)game;
     camera = &play->camera;
+    lookat = &camera->lookat;
+    angle = search_position_angleY(&lookat->center, &lookat->eye);
 
-    angle = search_position_angleY(&camera->lookat.center, &camera->lookat.eye);
     aWeather_MakeKaminari(actor);
     aWeather_CheckWeatherTimer(actor);
     aWeather_MakeWeatherPrv(actor, game);
@@ -683,9 +700,14 @@ static void Weather_Actor_move(ACTOR* actor, GAME* game) {
 
     aWeather_ChangeWeatherTime0(actor);
 
-    if (Common_Get(weather) == 1) {
+    if (Common_Get(weather) == mEnv_WEATHER_RAIN) {
         umbrella = mPlib_check_player_open_umbrella(game);
+#if VERSION == VER_GAFU01_00
+        field_id = mFI_GetFieldId();
+        if (mFI_GET_TYPE(field_id) == mFI_FIELDTYPE2_FG && umbrella != weather->umbrella_flag) {
+#else
         if (umbrella != weather->umbrella_flag) {
+#endif
             aWeather_ChangeEnvSE(actor, game, weather->current_status, weather->current_level);
         }
 
