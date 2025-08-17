@@ -96,7 +96,7 @@ static void eHanabira_dw(eEC_Effect_c* effect, GAME* game) {
         } break;
     }
     gSPMatrix(NEXT_POLY_XLU_DISP, m, G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, v);
+    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, (u8)v);
     gSPDisplayList(NEXT_POLY_XLU_DISP, ef_hanabira_model_tbl[effect->effect_specific[0]]);
     CLOSE_DISP(game->graph);
 }

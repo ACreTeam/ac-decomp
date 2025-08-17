@@ -91,7 +91,7 @@ static void eKT_dw(eEC_Effect_c* effect, GAME* game) {
     eEC_CLIP->auto_matrix_xlu_offset_proc(game, &effect->position, &effect->scale, &effect->offset);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 128, 255, 255, 255, alpha);
+    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 128, 255, 255, 255, (u8)alpha);
     gSPDisplayList(NEXT_POLY_XLU_DISP, ef_kantanhu01_00_modelT);
 
     CLOSE_DISP(game->graph);
