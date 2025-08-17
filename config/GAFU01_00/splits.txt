@@ -58,18 +58,18 @@ nintendo_hi_0.o:
 	.text       start:0x800084B0 end:0x800084B0
 	.data       start:0x800CD680 end:0x800D6F80
 
-jaudio_NES.o/dummyprobe.c:
+jaudio_NES/game/dummyprobe.c:
 	.text       start:0x800084B0 end:0x800084B8
 
-jaudio_NES.o/audioheaders.c:
+jaudio_NES/game/audioheaders.c:
 	.text       start:0x800084B8 end:0x800084B8
 	.data       start:0x800D6F80 end:0x800D8DC0
 
-jaudio_NES.o/verysimple.c:
+jaudio_NES/game/verysimple.c:
 	.text       start:0x800084B8 end:0x80008540
 	.sdata      start:0x802299A0 end:0x802299A8
 
-jaudio_NES.o/emusound.c:
+jaudio_NES/game/emusound.c:
 	.text       start:0x80008540 end:0x80008540
 	.text       start:0x80008540 end:0x80008D40
 	.text       start:0x80008D40 end:0x80009400
@@ -88,7 +88,7 @@ jaudio_NES.o/emusound.c:
 	.sbss       start:0x8022A160 end:0x8022A1C8
 	.sdata2     start:0x8022ABA0 end:0x8022AC20
 
-jaudio_NES.o/game64.c:
+jaudio_NES/game/game64.c:
 	.text       start:0x8000BBC0 end:0x8000BBC0
 	.text       start:0x8000BBC0 end:0x8000BD48
 	.text       start:0x8000BD48 end:0x8001560C
@@ -99,35 +99,35 @@ jaudio_NES.o/game64.c:
 	.sbss       start:0x8022A1C8 end:0x8022A270
 	.sdata2     start:0x8022AC20 end:0x8022AD20
 
-jaudio_NES.o/melody.c:
+jaudio_NES/game/melody.c:
 	.text       start:0x8001560C end:0x80015A3C
 	.rodata     start:0x800B3958 end:0x800B42C0
 	.sbss       start:0x8022A270 end:0x8022A280
 	.sdata2     start:0x8022AD20 end:0x8022AD28
 
-jaudio_NES.o/rhythm.c:
+jaudio_NES/game/rhythm.c:
 	.text       start:0x80015A3C end:0x800165DC
 	.bss        start:0x80186CD8 end:0x80186D80
 	.sdata      start:0x802299F0 end:0x802299F8
 	.sbss       start:0x8022A280 end:0x8022A290
 	.sdata2     start:0x8022AD28 end:0x8022AD40
 
-jaudio_NES.o/radio.c:
+jaudio_NES/game/radio.c:
 	.text       start:0x800165DC end:0x8001675C
 	.sdata2     start:0x8022AD40 end:0x8022AD50
 
-jaudio_NES.o/kappa.c:
+jaudio_NES/game/kappa.c:
 	.text       start:0x8001675C end:0x80016830
 	.sbss       start:0x8022A290 end:0x8022A298
 	.sdata2     start:0x8022AD50 end:0x8022AD60
 
-jaudio_NES.o/staff.c:
+jaudio_NES/game/staff.c:
 	.text       start:0x80016830 end:0x80016D00
 	.data       start:0x800DA2C8 end:0x800DA3E0
 	.sbss       start:0x8022A298 end:0x8022A2A8
 	.sdata2     start:0x8022AD60 end:0x8022AD68
 
-jaudio_NES.o/rspsim.c:
+jaudio_NES/internal/rspsim.c:
 	.text       start:0x80016D00 end:0x80017E60
 	.data       start:0x800DA3E0 end:0x800DA668
 	.bss        start:0x80186D80 end:0x80187EA0
@@ -135,23 +135,23 @@ jaudio_NES.o/rspsim.c:
 	.sbss       start:0x8022A2A8 end:0x8022A2D0
 	.sdata2     start:0x8022AD68 end:0x8022AD70
 
-jaudio_NES.o/aictrl.c:
+jaudio_NES/internal/aictrl.c:
 	.text       start:0x80017E60 end:0x80018620
 	.rodata     start:0x800B42C0 end:0x800B42D8
 	.bss        start:0x80187EA0 end:0x80187EC0
 	.sbss       start:0x8022A2D0 end:0x8022A300
 	.sdata2     start:0x8022AD70 end:0x8022AD80
 
-jaudio_NES.o/sample.c:
+jaudio_NES/internal/sample.c:
 	.text       start:0x80018620 end:0x80018900
 
-jaudio_NES.o/dummyrom.c:
+jaudio_NES/internal/dummyrom.c:
 	.text       start:0x80018900 end:0x80018BA0
 	.rodata     start:0x800B42D8 end:0x800B42E8
 	.bss        start:0x8021F4F4 end:0x8021F508 align:4 common
 	.sbss       start:0x8022A300 end:0x8022A320
 
-jaudio_NES.o/audiothread.c:
+jaudio_NES/internal/audiothread.c:
 	.text       start:0x80018BA0 end:0x80019080
 	.text       start:0x80019080 end:0x800190C0
 	.rodata     start:0x800B42E8 end:0x800B42F8
@@ -160,46 +160,46 @@ jaudio_NES.o/audiothread.c:
 	.sbss       start:0x8022A320 end:0x8022A340
 	.sdata2     start:0x8022AD80 end:0x8022AD88
 
-jaudio_NES.o/neosthread.c:
+jaudio_NES/internal/neosthread.c:
 	.text       start:0x800190C0 end:0x80019360
 	.rodata     start:0x800B42F8 end:0x800B4318
 	.bss        start:0x8018DF20 end:0x80194340
 	.sdata      start:0x80229A00 end:0x80229A08
 	.sbss       start:0x8022A340 end:0x8022A358
 
-jaudio_NES.o/streamctrl.c:
+jaudio_NES/internal/streamctrl.c:
 	.text       start:0x80019360 end:0x80019740
 	.data       start:0x800DA668 end:0x800DA738
 	.bss        start:0x80194340 end:0x801943B0
 	.sdata2     start:0x8022AD88 end:0x8022AD98
 
-jaudio_NES.o/dspbuf.c:
+jaudio_NES/internal/dspbuf.c:
 	.text       start:0x80019740 end:0x80019AC0
 	.rodata     start:0x800B4318 end:0x800B4330
 	.bss        start:0x801943B0 end:0x801943C0
 	.sbss       start:0x8022A358 end:0x8022A368
 
-jaudio_NES.o/cpubuf.c:
+jaudio_NES/internal/cpubuf.c:
 	.text       start:0x80019AC0 end:0x80019DA0
 	.bss        start:0x801943C0 end:0x801943D0
 	.sbss       start:0x8022A368 end:0x8022A378
 
-jaudio_NES.o/playercall.c:
+jaudio_NES/internal/playercall.c:
 	.text       start:0x80019DA0 end:0x8001A0A0
 	.bss        start:0x801943D0 end:0x80194490
 
-jaudio_NES.o/dvdthread.c:
+jaudio_NES/internal/dvdthread.c:
 	.text       start:0x8001A0A0 end:0x8001AD78
 	.data       start:0x800DA738 end:0x800DA758
 	.bss        start:0x80194490 end:0x8019D0A8
 	.sbss       start:0x8022A378 end:0x8022A3C8
 
-jaudio_NES.o/rate.c:
+jaudio_NES/internal/rate.c:
 	.text       start:0x8001AD78 end:0x8001AD78
 	.sdata      start:0x80229A08 end:0x80229A18
 	.sbss       start:0x8022A3C8 end:0x8022A3D0
 
-jaudio_NES.o/driver.c:
+jaudio_NES/internal/driver.c:
 	.text       start:0x8001AD78 end:0x8001AD80
 	.text       start:0x8001AD80 end:0x8001B020
 	.text       start:0x8001B020 end:0x8001D140
@@ -212,7 +212,7 @@ jaudio_NES.o/driver.c:
 	.sbss       start:0x8022A3D0 end:0x8022A3D8
 	.sdata2     start:0x8022AD98 end:0x8022ADB8
 
-jaudio_NES.o/memory.c:
+jaudio_NES/internal/memory.c:
 	.text       start:0x8001DA14 end:0x8001DA20
 	.text       start:0x8001DA20 end:0x8001DBC0
 	.text       start:0x8001DBC0 end:0x8001DE00
@@ -228,7 +228,7 @@ jaudio_NES.o/memory.c:
 	.sbss       start:0x8022A3D8 end:0x8022A3E0
 	.sdata2     start:0x8022ADB8 end:0x8022AE00
 
-jaudio_NES.o/system.c:
+jaudio_NES/internal/system.c:
 	.text       start:0x80020C2C end:0x80020C40
 	.text       start:0x80020C40 end:0x80021300
 	.text       start:0x80021300 end:0x80021B00
@@ -248,7 +248,7 @@ jaudio_NES.o/system.c:
 	.sbss       start:0x8022A3E0 end:0x8022A3F0
 	.sdata2     start:0x8022AE00 end:0x8022AE10
 
-jaudio_NES.o/sub_sys.c:
+jaudio_NES/internal/sub_sys.c:
 	.text       start:0x80024AB4 end:0x80024AC0
 	.text       start:0x80024AC0 end:0x80024AC0
 	.text       start:0x80024AC0 end:0x800250E0
@@ -260,30 +260,30 @@ jaudio_NES.o/sub_sys.c:
 	.sbss       start:0x8022A3F0 end:0x8022A408
 	.sdata2     start:0x8022AE10 end:0x8022AE28
 
-jaudio_NES.o/audiowork.c:
+jaudio_NES/internal/audiowork.c:
 	.text       start:0x800260F8 end:0x800260F8
 	.bss        start:0x80220598 end:0x802298D8 align:4 common
 	.sbss       start:0x8022A408 end:0x8022A420
 
-jaudio_NES.o/audiotable.c:
+jaudio_NES/internal/audiotable.c:
 	.text       start:0x800260F8 end:0x800260F8
 	.data       start:0x800DA850 end:0x800DDB28
 
-jaudio_NES.o/os.c:
+jaudio_NES/internal/os.c:
 	.text       start:0x800260F8 end:0x80026100
 	.text       start:0x80026100 end:0x80026160
 	.text       start:0x80026160 end:0x80026160
 	.text       start:0x80026160 end:0x80026160
 	.text       start:0x80026160 end:0x800262E0
 
-jaudio_NES.o/astest.c:
+jaudio_NES/internal/astest.c:
 	.text       start:0x800262E0 end:0x800263C8
 
-jaudio_NES.o/audioconst.c:
+jaudio_NES/internal/audioconst.c:
 	.text       start:0x800263C8 end:0x800263C8
 	.data       start:0x800DDB28 end:0x800DDB88
 
-jaudio_NES.o/channel.c:
+jaudio_NES/internal/channel.c:
 	.text       start:0x800263C8 end:0x800263E0
 	.text       start:0x800263E0 end:0x80026820
 	.text       start:0x80026820 end:0x80026DE0
@@ -293,7 +293,7 @@ jaudio_NES.o/channel.c:
 	.text       start:0x800280C0 end:0x800281A8
 	.sdata2     start:0x8022AE28 end:0x8022AE60
 
-jaudio_NES.o/effect.c:
+jaudio_NES/internal/effect.c:
 	.text       start:0x800281A8 end:0x800281C0
 	.text       start:0x800281C0 end:0x800284E0
 	.text       start:0x800284E0 end:0x80028A40
@@ -302,7 +302,7 @@ jaudio_NES.o/effect.c:
 	.sdata      start:0x80229A30 end:0x80229A38
 	.sdata2     start:0x8022AE60 end:0x8022AE90
 
-jaudio_NES.o/track.c:
+jaudio_NES/internal/track.c:
 	.text       start:0x80028E2C end:0x80028E40
 	.text       start:0x80028E40 end:0x80029080
 	.text       start:0x80029080 end:0x80029A40
@@ -317,31 +317,31 @@ jaudio_NES.o/track.c:
 	.sbss       start:0x8022A420 end:0x8022A428
 	.sdata2     start:0x8022AE90 end:0x8022AED0
 
-jaudio_NES.o/dspboot.c:
+jaudio_NES/internal/dspboot.c:
 	.text       start:0x8002C900 end:0x8002C980
 	.text       start:0x8002C980 end:0x8002CD00
 	.rodata     start:0x800B4540 end:0x800B4560
 	.data       start:0x800DDFC0 end:0x800DF9C0
 	.sdata2     start:0x8022AED0 end:0x8022AED8
 
-jaudio_NES.o/dspproc.c:
+jaudio_NES/internal/dspproc.c:
 	.text       start:0x8002CD00 end:0x8002CFC0
 	.sdata      start:0x80229A38 end:0x80229A40
 
-jaudio_NES.o/ipldec.c:
+jaudio_NES/internal/ipldec.c:
 	.text       start:0x8002CFC0 end:0x8002D220
 	.bss        start:0x802298D8 end:0x80229918 align:4 common
 	.sbss       start:0x8022A428 end:0x8022A430
 
-jaudio_NES.o/dsp_cardunlock.c:
+jaudio_NES/internal/dsp_cardunlock.c:
 	.text       start:0x8002D220 end:0x8002DA40
 	.rodata     start:0x800B4560 end:0x800B45A0
 
-jaudio_NES.o/dsp_GBAKey.c:
+jaudio_NES/internal/dsp_GBAKey.c:
 	.text       start:0x8002DA40 end:0x8002DBE0
 	.rodata     start:0x800B45A0 end:0x800B45F8
 
-jaudio_NES.o/driverinterface.c:
+jaudio_NES/internal/driverinterface.c:
 	.text       start:0x8002DBE0 end:0x8002F520
 	.data       start:0x800DF9C0 end:0x800DFA58
 	.bss        start:0x8019D0C0 end:0x801B1240
@@ -349,76 +349,76 @@ jaudio_NES.o/driverinterface.c:
 	.sbss       start:0x8022A430 end:0x8022A440
 	.sdata2     start:0x8022AED8 end:0x8022AEF0
 
-jaudio_NES.o/dspdriver.c:
+jaudio_NES/internal/dspdriver.c:
 	.text       start:0x8002F520 end:0x8002FDA0
 	.data       start:0x800DFA58 end:0x800DFA80
 	.bss        start:0x801B1240 end:0x801B1640
 	.sbss       start:0x8022A440 end:0x8022A448
 	.sdata2     start:0x8022AEF0 end:0x8022AF00
 
-jaudio_NES.o/dspinterface.c:
+jaudio_NES/internal/dspinterface.c:
 	.text       start:0x8002FDA0 end:0x80030480
 	.data       start:0x800DFA80 end:0x800DFEE0
 	.bss        start:0x801B1640 end:0x801B76C0
 	.sdata      start:0x80229A48 end:0x80229A58
 
-jaudio_NES.o/fxinterface.c:
+jaudio_NES/internal/fxinterface.c:
 	.text       start:0x80030480 end:0x800305B4
 	.data       start:0x800DFEE0 end:0x800DFEF8
 
-jaudio_NES.o/tables.c:
+jaudio_NES/internal/tables.c:
 	.text       start:0x800305B4 end:0x800305C0
 	.data       start:0x800DFEF8 end:0x800E00F8
 
-jaudio_NES.o/bankread.c:
+jaudio_NES/internal/bankread.c:
 	.text       start:0x800305C0 end:0x800309A0
 	.bss        start:0x801B76C0 end:0x801B7AC0
 
-jaudio_NES.o/waveread.c:
+jaudio_NES/internal/waveread.c:
 	.text       start:0x800309A0 end:0x80030EA0
 	.bss        start:0x801B7AC0 end:0x801B82C0
 	.bss        start:0x80229918 end:0x80229958 align:4 common
 
-jaudio_NES.o/connect.c:
+jaudio_NES/internal/connect.c:
 	.text       start:0x80030EA0 end:0x80031540
 	.bss        start:0x801B82C0 end:0x801B86C0
 
-jaudio_NES.o/bankdrv.c:
+jaudio_NES/internal/bankdrv.c:
 	.text       start:0x80031540 end:0x80031CC0
 	.data       start:0x800E00F8 end:0x800E0108
 	.sdata2     start:0x8022AF00 end:0x8022AF28
 
-jaudio_NES.o/random.c:
+jaudio_NES/internal/random.c:
 	.text       start:0x80031CC0 end:0x80031D60
 	.sdata      start:0x80229A58 end:0x80229A60
 	.sdata2     start:0x8022AF28 end:0x8022AF38
 
-jaudio_NES.o/aramcall.c:
+jaudio_NES/internal/aramcall.c:
 	.text       start:0x80031D60 end:0x800320A0
 	.data       start:0x800E0108 end:0x800E0148
 	.bss        start:0x80229958 end:0x80229984 align:4 common
 	.sdata      start:0x80229A60 end:0x80229A68
 	.sbss       start:0x8022A448 end:0x8022A450
 
-jaudio_NES.o/ja_calc.c:
+jaudio_NES/internal/ja_calc.c:
 	.text       start:0x800320A0 end:0x800322C0
 	.bss        start:0x801B86C0 end:0x801B8AC8
 	.sdata2     start:0x8022AF38 end:0x8022AF70
 
-jaudio_NES.o/fat.c:
+jaudio_NES/internal/fat.c:
 	.text       start:0x800322C0 end:0x80032720
 	.bss        start:0x801B8AC8 end:0x801B96C8
 	.sbss       start:0x8022A450 end:0x8022A458
 
-jaudio_NES.o/cmdstack.c:
+jaudio_NES/internal/cmdstack.c:
 	.text       start:0x80032720 end:0x800328C0
 	.sbss       start:0x8022A458 end:0x8022A468
 
-jaudio_NES.o/heapctrl.c:
+jaudio_NES/internal/heapctrl.c:
 	.text       start:0x800328C0 end:0x80032CE0
 	.sbss       start:0x8022A468 end:0x8022A470
 
-jaudio_NES.o/jammain_2.c:
+jaudio_NES/internal/jammain_2.c:
 	.text       start:0x80032CE0 end:0x80033BA0
 	.text       start:0x80033BA0 end:0x80034680
 	.text       start:0x80034680 end:0x80034960
@@ -433,31 +433,31 @@ jaudio_NES.o/jammain_2.c:
 	.sbss       start:0x8022A470 end:0x8022A480
 	.sdata2     start:0x8022AF70 end:0x8022AFC8
 
-jaudio_NES.o/noteon.c:
+jaudio_NES/internal/noteon.c:
 	.text       start:0x80036B60 end:0x800370A0
 	.sdata2     start:0x8022AFC8 end:0x8022AFD0
 
-jaudio_NES.o/seqsetup.c:
+jaudio_NES/internal/seqsetup.c:
 	.text       start:0x800370A0 end:0x80037DA0
 	.bss        start:0x801B97E8 end:0x801FD440
 	.sbss       start:0x8022A480 end:0x8022A490
 	.sdata2     start:0x8022AFD0 end:0x8022AFE0
 
-jaudio_NES.o/midplay.c:
+jaudio_NES/internal/midplay.c:
 	.text       start:0x80037DA0 end:0x80037DA0
 	.data       start:0x800E0408 end:0x800E0808
 
-jaudio_NES.o/centcalc.c:
+jaudio_NES/internal/centcalc.c:
 	.text       start:0x80037DA0 end:0x80037E60
 	.data       start:0x800E0808 end:0x800E0908
 	.sdata2     start:0x8022AFE0 end:0x8022AFF8
 
-jaudio_NES.o/jamosc.c:
+jaudio_NES/internal/jamosc.c:
 	.text       start:0x80037E60 end:0x800382A0
 	.data       start:0x800E0908 end:0x800E09F0
 	.sdata2     start:0x8022AFF8 end:0x8022B000
 
-jaudio_NES.o/oneshot.c:
+jaudio_NES/internal/oneshot.c:
 	.text       start:0x800382A0 end:0x80038F80
 	.text       start:0x80038F80 end:0x80039400
 	.text       start:0x80039400 end:0x80039520
