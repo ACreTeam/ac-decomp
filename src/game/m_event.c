@@ -364,41 +364,41 @@ static int last_day_of_month(lbRTC_month_t month) {
 
 static void init_weekday1st() {
     lbRTC_time_c* rtc_time = Common_GetPointer(time.rtc_time);
+    lbRTC_month_t month;
     lbRTC_month_t temp;
     lbRTC_month_t i;
-    lbRTC_month_t j;
-    lbRTC_month_t month;
-    int t;
+    int weekday;
 
     month = rtc_time->month & 0xF;
     weekday1st_year = rtc_time->year;
 
-    t = (rtc_time->weekday + (1 - rtc_time->day)) % lbRTC_WEEK;
-    if (t < 0) {
-        t += lbRTC_WEEK;
+    weekday = (rtc_time->weekday + (1 - rtc_time->day)) % lbRTC_WEEK;
+    if (weekday < 0) {
+        weekday += lbRTC_WEEK;
     }
 
-    weekday1st[month] = t;
+    weekday1st[month] = weekday;
 
-    for (i = month, j = month + 1; j <= lbRTC_MONTHS_MAX; i++, j++) {
-        temp = last_day_of_month(i);
-        t = (weekday1st[i] + temp) % lbRTC_WEEK;
+    for (i = month, temp = month + 1; temp <= lbRTC_MONTHS_MAX; i++, temp++) {
+        int last = last_day_of_month(i);
+        int t = (weekday1st[i] + (u8)last) % lbRTC_WEEK;
 
         if (t < 0) {
             t += lbRTC_WEEK;
         }
 
-        weekday1st[j] = t;
+        weekday1st[temp] = t;
     }
 
-    for (j = month - 1, i = month; j >= lbRTC_JANUARY; i--, j--) {
-        temp = last_day_of_month(j);
-        t = (weekday1st[i] - temp) % lbRTC_WEEK;
-        if (t < 0) {
-            t += lbRTC_WEEK;
+    for (temp = month - 1, i = month; temp >= lbRTC_JANUARY; i--, temp--) {
+        lbRTC_day_t last_day = last_day_of_month(temp);
+
+        weekday = (weekday1st[i] - last_day) % lbRTC_WEEK;
+        if (weekday < 0) {
+            weekday += lbRTC_WEEK;
         }
 
-        weekday1st[j] = t;
+        weekday1st[temp] = weekday;
     }
 }
 
