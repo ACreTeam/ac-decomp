@@ -1394,14 +1394,18 @@ static void mFM_SetIslandFg(mFM_combo_info_c* combi_info_p, mFM_fg_data_c** sort
 }
 
 static mFM_combination_c l_combiID[BLOCK_TOTAL_NUM] = {
-    { 209, 1 }, { 201, 1 }, { 201, 1 }, { 201, 1 }, { 202, 1 }, { 201, 1 }, { 210, 1 }, { 205, 1 }, { 172, 1 },
-    { 222, 1 }, { 189, 1 }, { 176, 1 }, { 225, 1 }, { 208, 1 }, { 203, 1 }, { 159, 1 }, { 5, 1 },   { 215, 1 },
-    { 93, 1 },  { 37, 1 },  { 206, 1 }, { 203, 1 }, { 45, 0 },  { 101, 0 }, { 96, 1 },  { 152, 1 }, { 108, 0 },
-    { 207, 0 }, { 204, 0 }, { 42, 0 },  { 163, 0 }, { 64, 0 },  { 164, 0 }, { 213, 0 }, { 206, 0 }, { 203, 0 },
-    { 157, 0 }, { 217, 0 }, { 127, 0 }, { 38, 0 },  { 160, 0 }, { 206, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 },
-    { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 },
-    { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 },
-    { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 }, { 196, 0 },
+    // clang-format off
+    { BLOCK_COMBI_GRD_S_E4_1, 1 }, { BLOCK_COMBI_GRD_S_E1_1, 1 }, { BLOCK_COMBI_GRD_S_E1_1, 1 }, { BLOCK_COMBI_GRD_S_E1_1, 1 }, { BLOCK_COMBI_GRD_S_E1_R1_1, 1 }, { BLOCK_COMBI_GRD_S_E1_1, 1 }, { BLOCK_COMBI_GRD_S_E5_1, 1 },
+    { BLOCK_COMBI_GRD_S_E2_T_1, 1 }, { BLOCK_COMBI_GRD_S_T_9, 1 }, { BLOCK_COMBI_GRD_S_T_SH_2, 1 }, { BLOCK_COMBI_GRD_S_T_ST1_3, 1 }, { BLOCK_COMBI_GRD_S_T_R1_4, 1 }, { BLOCK_COMBI_GRD_S_T_PO_3, 1 }, { BLOCK_COMBI_GRD_S_E3_T_1, 1 },
+    { BLOCK_COMBI_GRD_S_E2_1, 1 }, { BLOCK_COMBI_GRD_S_F_5, 1 }, { BLOCK_COMBI_GRD_5, 1 },   { BLOCK_COMBI_GRD_S_F_MH_2, 1 }, { BLOCK_COMBI_GRD_S_R1_3, 1 },  { BLOCK_COMBI_GRD_S_F_1, 1 },  { BLOCK_COMBI_GRD_S_E3_1, 1 },
+    { BLOCK_COMBI_GRD_S_E2_1, 1 }, { BLOCK_COMBI_GRD_S_C4_1, 0 },  { BLOCK_COMBI_GRD_S_C5_S_2, 0 }, { BLOCK_COMBI_GRD_S_R7_2, 1 },  { BLOCK_COMBI_GRD_S_R6_B_2, 1 }, { BLOCK_COMBI_GRD_S_C4_2, 0 }, { BLOCK_COMBI_GRD_S_E3_C1_1, 0 },
+    { BLOCK_COMBI_GRD_S_E2_C1_1, 0 }, { BLOCK_COMBI_GRD_S_C2_1, 0 },  { BLOCK_COMBI_GRD_S_F_9, 0 }, { BLOCK_COMBI_GRD_S_R1_B_1, 0 },  { BLOCK_COMBI_GRD_S_F_10, 0 }, { BLOCK_COMBI_GRD_S_F_KO_3, 0 }, { BLOCK_COMBI_GRD_S_E3_1, 0 },
+    { BLOCK_COMBI_GRD_S_E2_1, 0 }, { BLOCK_COMBI_GRD_S_F_3, 0 }, { BLOCK_COMBI_GRD_S_F_PK_1, 0 }, { BLOCK_COMBI_GRD_S_R1_P_1, 0 }, { BLOCK_COMBI_GRD_S_F_2, 0 },  { BLOCK_COMBI_GRD_S_F_6, 0 }, { BLOCK_COMBI_GRD_S_E3_1, 0 },
+    { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 },
+    { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 },
+    { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 },
+    { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 }, { BLOCK_COMBI_GRD_S_F_9_1, 0 },
+    // clang-format on
 };
 
 u8* g_block_type_p = l_block_type;

@@ -10,6 +10,7 @@
 #include "m_item_name.h"
 #include "m_name_table.h"
 #include "m_room_type.h"
+#include "m_fg_type.h"
 
 extern mActor_name_t* mSP_ftr_list[];
 extern mActor_name_t* mSP_binsen_list[];
@@ -1526,41 +1527,41 @@ extern mActor_name_t mSP_GetNowShopBgNum() {
     switch (Save_Get(scene_no)) {
         case SCENE_SHOP0: {
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
-                return 0xFA;
+                return BG_TYPE_ROM_SHOP1_FUKU;
             }
 
-            return 0xF8;
+            return BG_TYPE_ROM_SHOP1;
         }
 
         case SCENE_CONVENI: {
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
-                return 0xFB;
+                return BG_TYPE_ROM_SHOP2_FUKU;
             }
 
-            return 0xFE;
+            return BG_TYPE_ROM_SHOP2;
         }
 
         case SCENE_SUPER: {
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
-                return 0xFC;
+                return BG_TYPE_ROM_SHOP3_FUKU;
             }
 
-            return 0x102;
+            return BG_TYPE_ROM_SHOP3;
         }
 
         case SCENE_DEPART: {
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
-                return 0xFD;
+                return BG_TYPE_ROM_SHOP4_FUKU;
             }
 
-            return 0x100;
+            return BG_TYPE_ROM_SHOP4_1;
         }
 
         case SCENE_DEPART_2:
-            return 0x101;
+            return BG_TYPE_ROM_SHOP4_2;
 
         default:
-            return 0xFE;
+            return BG_TYPE_ROM_SHOP2;
     }
 }
 
@@ -1578,124 +1579,124 @@ extern mActor_name_t mSP_GetNowShopFgNum() {
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_EVENT) {
                 if (event_kind == mSP_KIND_FURNITURE) {
                     mSP_what_special_sale = mSP_KIND_FURNITURE;
-                    return 0x163;
+                    return FG_TYPE_ROM_SHOP1_SALE_FTR;
                 }
 
                 if (event_kind == mSP_KIND_CLOTH) {
                     mSP_what_special_sale = mSP_KIND_CLOTH;
-                    return 0x166;
+                    return FG_TYPE_ROM_SHOP1_SALE_CLOTH;
                 }
 
                 if (event_kind == mSP_KIND_WALLPAPER) {
                     mSP_what_special_sale = mSP_KIND_WALLPAPER;
-                    return 0x165;
+                    return FG_TYPE_ROM_SHOP1_SALE_WALL;
                 }
 
                 mSP_what_special_sale = mSP_KIND_CARPET;
-                return 0x164;
+                return FG_TYPE_ROM_SHOP1_SALE_CARPET;
             }
 
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
-                return 0x14D;
+                return FG_TYPE_ROM_SHOP1_FUKU;
             }
 
-            return 0x22;
+            return FG_TYPE_ROM_SHOP1;
         }
 
         case SCENE_CONVENI: {
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_EVENT) {
                 if (Save_Get(event_save_data).special.event.bargin.kind == mSP_KIND_FURNITURE) {
                     mSP_what_special_sale = mSP_KIND_FURNITURE;
-                    return 0x167;
+                    return FG_TYPE_ROM_SHOP2_SALE_FTR;
                 }
 
                 if (Save_Get(event_save_data).special.event.bargin.kind == mSP_KIND_CLOTH) {
                     mSP_what_special_sale = mSP_KIND_CLOTH;
-                    return 0x16A;
+                    return FG_TYPE_ROM_SHOP2_SALE_CLOTH;
                 }
 
                 if (Save_Get(event_save_data).special.event.bargin.kind == mSP_KIND_WALLPAPER) {
                     mSP_what_special_sale = mSP_KIND_WALLPAPER;
-                    return 0x169;
+                    return FG_TYPE_ROM_SHOP2_SALE_WALL;
                 }
 
                 mSP_what_special_sale = mSP_KIND_CARPET;
-                return 0x168;
+                return FG_TYPE_ROM_SHOP2_SALE_CARPET;
             }
 
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
-                return 0x14E;
+                return FG_TYPE_ROM_SHOP2_FUKU;
             }
 
-            return 0x23;
+            return FG_TYPE_ROM_SHOP2;
         }
 
         case SCENE_SUPER: {
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_EVENT) {
                 if (Save_Get(event_save_data).special.event.bargin.kind == mSP_KIND_FURNITURE) {
                     mSP_what_special_sale = mSP_KIND_FURNITURE;
-                    return 0x16B;
+                    return FG_TYPE_ROM_SHOP3_SALE_FTR;
                 }
 
                 if (Save_Get(event_save_data).special.event.bargin.kind == mSP_KIND_CLOTH) {
                     mSP_what_special_sale = mSP_KIND_CLOTH;
-                    return 0x16E;
+                    return FG_TYPE_ROM_SHOP3_SALE_CLOTH;
                 }
 
                 if (Save_Get(event_save_data).special.event.bargin.kind == mSP_KIND_WALLPAPER) {
                     mSP_what_special_sale = mSP_KIND_WALLPAPER;
-                    return 0x16D;
+                    return FG_TYPE_ROM_SHOP3_SALE_WALL;
                 }
 
                 mSP_what_special_sale = mSP_KIND_CARPET;
-                return 0x16C;
+                return FG_TYPE_ROM_SHOP3_SALE_CARPET;
             }
 
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
-                return 0x14F;
+                return FG_TYPE_ROM_SHOP3_FUKU;
             }
 
-            return 0x24;
+            return FG_TYPE_ROM_SHOP3;
         }
 
         case SCENE_DEPART: {
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_EVENT) {
-                return 0x16F;
+                return FG_TYPE_ROM_SHOP4_1_SALE;
             }
 
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
-                return 0x150;
+                return FG_TYPE_ROM_SHOP4_1_FUKU;
             }
 
-            return 0x25;
+            return FG_TYPE_ROM_SHOP4_1;
         }
 
         case SCENE_DEPART_2: {
             if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_EVENT) {
                 if (Save_Get(event_save_data).special.event.bargin.kind == mSP_KIND_FURNITURE) {
                     mSP_what_special_sale = mSP_KIND_FURNITURE;
-                    return 0x170;
+                    return FG_TYPE_ROM_SHOP4_2_SALE_FTR;
                 }
 
                 if (Save_Get(event_save_data).special.event.bargin.kind == mSP_KIND_CLOTH) {
                     mSP_what_special_sale = mSP_KIND_CLOTH;
-                    return 0x173;
+                    return FG_TYPE_ROM_SHOP4_2_SALE_CLOTH;
                 }
 
                 if (Save_Get(event_save_data).special.event.bargin.kind == mSP_KIND_WALLPAPER) {
                     mSP_what_special_sale = mSP_KIND_WALLPAPER;
-                    return 0x172;
+                    return FG_TYPE_ROM_SHOP4_2_SALE_WALL;
                 }
 
                 mSP_what_special_sale = mSP_KIND_CARPET;
-                return 0x171;
+                return FG_TYPE_ROM_SHOP4_2_SALE_CARPET;
             }
 
-            return 0x26;
+            return FG_TYPE_ROM_SHOP4_2;
         }
 
         default:
-            return 0x25;
+            return FG_TYPE_ROM_SHOP4_1;
     }
 }
 

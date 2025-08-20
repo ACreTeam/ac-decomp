@@ -89,48 +89,336 @@ extern u8 kan_tizu_c7r1b_TA_tex_txt[];
 extern u8 kan_tizu_mwf_TA_tex_txt[];
 
 static u8* l_map_texture[mFM_BLOCK_TYPE_NUM] = {
-    kan_tizu_f_TA_tex_txt,     kan_tizu_f_TA_tex_txt,     kan_tizu_f_TA_tex_txt,     kan_tizu_f_TA_tex_txt,
-    kan_tizu_f_TA_tex_txt,     kan_tizu_f_TA_tex_txt,     kan_tizu_f_TA_tex_txt,     kan_tizu_f_TA_tex_txt,
-    kan_tizu_f_TA_tex_txt,     kan_tizu_f_TA_tex_txt,     kan_tizu_f_TA_tex_txt,     kan_tizu_tst1_TA_tex_txt,
-    kan_tizu_t_TA_tex_txt,     kan_tizu_tr1_TA_tex_txt,   kan_tizu_fmh_TA_tex_txt,   kan_tizu_c1_TA_tex_txt,
-    kan_tizu_c2_TA_tex_txt,    kan_tizu_c3_TA_tex_txt,    kan_tizu_c4_TA_tex_txt,    kan_tizu_c5_TA_tex_txt,
-    kan_tizu_c6_TA_tex_txt,    kan_tizu_c7_TA_tex_txt,    kan_tizu_c1r1_TA_tex_txt,  kan_tizu_c2r1_TA_tex_txt,
-    kan_tizu_c3r1_TA_tex_txt,  kan_tizu_c4r1_TA_tex_txt,  kan_tizu_c5r1_TA_tex_txt,  kan_tizu_c6r1_TA_tex_txt,
-    kan_tizu_c7r1_TA_tex_txt,  kan_tizu_c1r2_TA_tex_txt,  kan_tizu_c2r2_TA_tex_txt,  kan_tizu_c3r2_TA_tex_txt,
-    kan_tizu_c4r2_TA_tex_txt,  kan_tizu_c5r2_TA_tex_txt,  kan_tizu_c1r2_TA_tex_txt,  kan_tizu_c4r2_TA_tex_txt,
-    kan_tizu_c5r2_TA_tex_txt,  kan_tizu_c6r3_TA_tex_txt,  kan_tizu_c7r3_TA_tex_txt,  kan_tizu_f_TA_tex_txt,
-    kan_tizu_r1_TA_tex_txt,    kan_tizu_r2_TA_tex_txt,    kan_tizu_r2_TA_tex_txt,    kan_tizu_r4_TA_tex_txt,
-    kan_tizu_r5_TA_tex_txt,    kan_tizu_r6_TA_tex_txt,    kan_tizu_r7_TA_tex_txt,    kan_tizu_r1b_TA_tex_txt,
-    kan_tizu_r2b_TA_tex_txt,   kan_tizu_r2b_TA_tex_txt,   kan_tizu_r4b_TA_tex_txt,   kan_tizu_r5b_TA_tex_txt,
-    kan_tizu_r6b_TA_tex_txt,   kan_tizu_r7b_TA_tex_txt,   kan_tizu_c1s_TA_tex_txt,   kan_tizu_c2s_TA_tex_txt,
-    kan_tizu_c3s_TA_tex_txt,   kan_tizu_c4s_TA_tex_txt,   kan_tizu_c5s_TA_tex_txt,   kan_tizu_c6s_TA_tex_txt,
-    kan_tizu_c7s_TA_tex_txt,   kan_tizu_f_TA_tex_txt,     kan_tizu_f_TA_tex_txt,     kan_tizu_m_TA_tex_txt,
-    kan_tizu_mr1_TA_tex_txt,   kan_tizu_fsh_TA_tex_txt,   kan_tizu_fpk_TA_tex_txt,   kan_tizu_fpo_TA_tex_txt,
-    kan_tizu_fko_TA_tex_txt,   kan_tizu_pr1_TA_tex_txt,   kan_tizu_pr2_TA_tex_txt,   kan_tizu_pr2_TA_tex_txt,
-    kan_tizu_pr4_TA_tex_txt,   kan_tizu_pr5_TA_tex_txt,   kan_tizu_pr6_TA_tex_txt,   kan_tizu_pr7_TA_tex_txt,
-    kan_tizu_f_TA_tex_txt,     kan_tizu_r1_TA_tex_txt,    kan_tizu_c1_TA_tex_txt,    kan_tizu_c1_TA_tex_txt,
-    kan_tizu_c1_TA_tex_txt,    kan_tizu_c1_TA_tex_txt,    kan_tizu_mr1b_TA_tex_txt,  kan_tizu_mr1_TA_tex_txt,
-    kan_tizu_fmu_TA_tex_txt,   kan_tizu_fta_TA_tex_txt,   kan_tizu_tr1b_TA_tex_txt,  kan_tizu_c1r2b_TA_tex_txt,
-    kan_tizu_c3r1b_TA_tex_txt, kan_tizu_c4r1b_TA_tex_txt, kan_tizu_c4r2b_TA_tex_txt, kan_tizu_c5r2b_TA_tex_txt,
-    kan_tizu_c6r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt,
-    kan_tizu_c7r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt, kan_tizu_c7r1b_TA_tex_txt,
-    kan_tizu_mwf_TA_tex_txt,   kan_tizu_mwf_TA_tex_txt,   kan_tizu_mwf_TA_tex_txt,   kan_tizu_mwf_TA_tex_txt,
-    kan_tizu_mwf_TA_tex_txt,   kan_tizu_c1r2b_TA_tex_txt, kan_tizu_c4r2b_TA_tex_txt, kan_tizu_c5r2b_TA_tex_txt,
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_TOP
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIVER
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_LEFT
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_3
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIGHT
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_CORNER_TOP_LEFT
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_6
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_TRACKS
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_CORNER_TOP_RIGHT
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_LEFT_TUNNEL
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIGHT_TUNNEL
+    kan_tizu_tst1_TA_tex_txt, // mFM_BLOCK_TYPE_TRACKS_STATION
+    kan_tizu_t_TA_tex_txt, // mFM_BLOCK_TYPE_TRACKS_DUMP
+    kan_tizu_tr1_TA_tex_txt, // mFM_BLOCK_TYPE_TRACKS_RIVER
+    kan_tizu_fmh_TA_tex_txt, // mFM_BLOCK_TYPE_PLAYER_HOUSE
+    kan_tizu_c1_TA_tex_txt, // mFM_BLOCK_TYPE_CLIFF_HORIZONTAL
+    kan_tizu_c2_TA_tex_txt, // mFM_BLOCK_TYPE_CLIFF_BOTTOM_RIGHT_CORNER
+    kan_tizu_c3_TA_tex_txt, // mFM_BLOCK_TYPE_CLIFF_VERTICAL_RIGHT
+    kan_tizu_c4_TA_tex_txt, // mFM_BLOCK_TYPE_CLIFF_TOP_RIGHT_CORNER
+    kan_tizu_c5_TA_tex_txt, // mFM_BLOCK_TYPE_CLIFF_TOP_LEFT_CORNER
+    kan_tizu_c6_TA_tex_txt, // mFM_BLOCK_TYPE_CLIFF_VERTICAL_LEFT
+    kan_tizu_c7_TA_tex_txt, // mFM_BLOCK_TYPE_CLIFF_BOTTOM_LEFT_CORNER
+    kan_tizu_c1r1_TA_tex_txt, // mFM_BLOCK_TYPE_WATERFALL_STRAIGHT_CLIFF_HORIZONTAL
+    kan_tizu_c2r1_TA_tex_txt, // mFM_BLOCK_TYPE_WATERFALL_STRAIGHT_CLIFF_BOTTOM_RIGHT_CORNER
+    kan_tizu_c3r1_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_RIGHT
+    kan_tizu_c4r1_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_TOP_RIGHT_CORNER
+    kan_tizu_c5r1_TA_tex_txt, // mFM_BLOCK_TYPE_WATERFALL_STRAIGHT_CLIFF_TOP_LEFT_CORNER
+    kan_tizu_c6r1_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_LEFT
+    kan_tizu_c7r1_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_BOTTOM_LEFT_CORNER
+    kan_tizu_c1r2_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_HORIZONTAL
+    kan_tizu_c2r2_TA_tex_txt, // mFM_BLOCK_TYPE_WATERFALL_EAST_CLIFF_BOTTOM_RIGHT_CORNER
+    kan_tizu_c3r2_TA_tex_txt, // mFM_BLOCK_TYPE_WATERFALL_EAST_CLIFF_VERTICAL_RIGHT
+    kan_tizu_c4r2_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_RIGHT_CORNER
+    kan_tizu_c5r2_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_LEFT_CORNER
+    kan_tizu_c1r2_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_HORIZONTAL
+    kan_tizu_c4r2_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_RIGHT_CORNER
+    kan_tizu_c5r2_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_LEFT_CORNER
+    kan_tizu_c6r3_TA_tex_txt, // mFM_BLOCK_TYPE_WATERFALL_WEST_CLIFF_VERTICAL_LEFT
+    kan_tizu_c7r3_TA_tex_txt, // mFM_BLOCK_TYPE_WATERFALL_WEST_CLIFF_BOTTOM_LEFT_CORNER
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_FLAT
+    kan_tizu_r1_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_SOUTH
+    kan_tizu_r2_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_EAST
+    kan_tizu_r2_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_WEST
+    kan_tizu_r4_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_SOUTH_EAST
+    kan_tizu_r5_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_EAST_SOUTH
+    kan_tizu_r6_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_SOUTH_WEST
+    kan_tizu_r7_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_WEST_SOUTH
+    kan_tizu_r1b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_SOUTH_BRIDGE
+    kan_tizu_r2b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_EAST_BRIDGE
+    kan_tizu_r2b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_WEST_BRIDGE
+    kan_tizu_r4b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_SOUTH_EAST_BRIDGE
+    kan_tizu_r5b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_EAST_SOUTH_BRIDGE
+    kan_tizu_r6b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_SOUTH_WEST_BRIDGE
+    kan_tizu_r7b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_WEST_SOUTH_BRIDGE
+    kan_tizu_c1s_TA_tex_txt, // mFM_BLOCK_TYPE_SLOPE_HORIZONTAL
+    kan_tizu_c2s_TA_tex_txt, // mFM_BLOCK_TYPE_SLOPE_BOTTOM_RIGHT_CORNER
+    kan_tizu_c3s_TA_tex_txt, // mFM_BLOCK_TYPE_SLOPE_VERTICAL_RIGHT
+    kan_tizu_c4s_TA_tex_txt, // mFM_BLOCK_TYPE_SLOPE_TOP_RIGHT_CORNER
+    kan_tizu_c5s_TA_tex_txt, // mFM_BLOCK_TYPE_SLOPE_TOP_LEFT_CORNER
+    kan_tizu_c6s_TA_tex_txt, // mFM_BLOCK_TYPE_SLOPE_VERTICAL_LEFT
+    kan_tizu_c7s_TA_tex_txt, // mFM_BLOCK_TYPE_SLOPE_BOTTOM_LEFT_CORNER
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_LEFT_TRANSITION
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIGHT_TRANSITION
+    kan_tizu_m_TA_tex_txt, // mFM_BLOCK_TYPE_BEACH
+    kan_tizu_mr1_TA_tex_txt, // mFM_BLOCK_TYPE_BEACH_RIVER
+    kan_tizu_fsh_TA_tex_txt, // mFM_BLOCK_TYPE_TRACKS_SHOP
+    kan_tizu_fpk_TA_tex_txt, // mFM_BLOCK_TYPE_SHRINE
+    kan_tizu_fpo_TA_tex_txt, // mFM_BLOCK_TYPE_TRACKS_POST_OFFICE
+    kan_tizu_fko_TA_tex_txt, // mFM_BLOCK_TYPE_POLICE_BOX
+    kan_tizu_pr1_TA_tex_txt, // mFM_BLOCK_TYPE_POOL_SOUTH
+    kan_tizu_pr2_TA_tex_txt, // mFM_BLOCK_TYPE_POOL_EAST
+    kan_tizu_pr2_TA_tex_txt, // mFM_BLOCK_TYPE_POOL_WEST
+    kan_tizu_pr4_TA_tex_txt, // mFM_BLOCK_TYPE_POOL_SOUTH_EAST
+    kan_tizu_pr5_TA_tex_txt, // mFM_BLOCK_TYPE_POOL_EAST_SOUTH
+    kan_tizu_pr6_TA_tex_txt, // mFM_BLOCK_TYPE_POOL_SOUTH_WEST
+    kan_tizu_pr7_TA_tex_txt, // mFM_BLOCK_TYPE_POOL_WEST_SOUTH
+    kan_tizu_f_TA_tex_txt, // mFM_BLOCK_TYPE_TRACKS6
+    kan_tizu_r1_TA_tex_txt, // mFM_BLOCK_TYPE_TRACKS7
+    kan_tizu_c1_TA_tex_txt, // mFM_BLOCK_TYPE_TRACKS8
+    kan_tizu_c1_TA_tex_txt, // mFM_BLOCK_TYPE_TRACKS9
+    kan_tizu_c1_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_OCEAN_LEFT
+    kan_tizu_c1_TA_tex_txt, // mFM_BLOCK_TYPE_BORDER_CLIFF_OCEAN_RIGHT
+    kan_tizu_mr1b_TA_tex_txt, // mFM_BLOCK_TYPE_BEACH_RIVER_BRIDGE
+    kan_tizu_mr1_TA_tex_txt, // mFM_BLOCK_TYPE_OCEAN
+    kan_tizu_fmu_TA_tex_txt, // mFM_BLOCK_TYPE_MUSEUM
+    kan_tizu_fta_TA_tex_txt, // mFM_BLOCK_TYPE_NEEDLEWORK
+    kan_tizu_tr1b_TA_tex_txt, // mFM_BLOCK_TYPE_TRACKS_RIVER_BRIDGE
+    kan_tizu_c1r2b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_HORIZONTAL_BRIDGE
+    kan_tizu_c3r1b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_RIGHT_BRIDGE
+    kan_tizu_c4r1b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_TOP_RIGHT_CORNER_BRIDGE
+    kan_tizu_c4r2b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_RIGHT_CORNER_BRIDGE
+    kan_tizu_c5r2b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_LEFT_CORNER_BRIDGE
+    kan_tizu_c6r1b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_LEFT_BRIDGE
+    kan_tizu_c7r1b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_BOTTOM_LEFT_CORNER_BRIDGE
+    kan_tizu_c7r1b_TA_tex_txt, // mFM_BLOCK_TYPE_OCEAN_2
+    kan_tizu_c7r1b_TA_tex_txt, // mFM_BLOCK_TYPE_OCEAN_3
+    kan_tizu_c7r1b_TA_tex_txt, // mFM_BLOCK_TYPE_OCEAN_4
+    kan_tizu_c7r1b_TA_tex_txt, // mFM_BLOCK_TYPE_OCEAN_5
+    kan_tizu_c7r1b_TA_tex_txt, // mFM_BLOCK_TYPE_ISLAND_LEFT
+    kan_tizu_c7r1b_TA_tex_txt, // mFM_BLOCK_TYPE_ISLAND_RIGHT
+    kan_tizu_mwf_TA_tex_txt, // mFM_BLOCK_TYPE_PORT
+    kan_tizu_mwf_TA_tex_txt, // mFM_BLOCK_TYPE_SEA_EXCEPTIONAL
+    kan_tizu_mwf_TA_tex_txt, // mFM_BLOCK_TYPE_OCEAN_6
+    kan_tizu_mwf_TA_tex_txt, // mFM_BLOCK_TYPE_OCEAN_7
+    kan_tizu_mwf_TA_tex_txt, // mFM_BLOCK_TYPE_OCEAN_8
+    kan_tizu_c1r2b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_HORIZONTAL_BRIDGE
+    kan_tizu_c4r2b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_RIGHT_CORNER_BRIDGE
+    kan_tizu_c5r2b_TA_tex_txt, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_LEFT_CORNER_BRIDGE
 };
 
 static u8 l_map_pal[mFM_BLOCK_TYPE_NUM] = {
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0,
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_TOP
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIVER
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_LEFT
+    0, // mFM_BLOCK_TYPE_3
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIGHT
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_CORNER_TOP_LEFT
+    0, // mFM_BLOCK_TYPE_6
+    0, // mFM_BLOCK_TYPE_TRACKS
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_CORNER_TOP_RIGHT
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_LEFT_TUNNEL
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIGHT_TUNNEL
+    1, // mFM_BLOCK_TYPE_TRACKS_STATION
+    1, // mFM_BLOCK_TYPE_TRACKS_DUMP
+    1, // mFM_BLOCK_TYPE_TRACKS_RIVER
+    1, // mFM_BLOCK_TYPE_PLAYER_HOUSE
+    0, // mFM_BLOCK_TYPE_CLIFF_HORIZONTAL
+    0, // mFM_BLOCK_TYPE_CLIFF_BOTTOM_RIGHT_CORNER
+    0, // mFM_BLOCK_TYPE_CLIFF_VERTICAL_RIGHT
+    0, // mFM_BLOCK_TYPE_CLIFF_TOP_RIGHT_CORNER
+    0, // mFM_BLOCK_TYPE_CLIFF_TOP_LEFT_CORNER
+    0, // mFM_BLOCK_TYPE_CLIFF_VERTICAL_LEFT
+    0, // mFM_BLOCK_TYPE_CLIFF_BOTTOM_LEFT_CORNER
+    0, // mFM_BLOCK_TYPE_WATERFALL_STRAIGHT_CLIFF_HORIZONTAL
+    0, // mFM_BLOCK_TYPE_WATERFALL_STRAIGHT_CLIFF_BOTTOM_RIGHT_CORNER
+    0, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_RIGHT
+    0, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_TOP_RIGHT_CORNER
+    0, // mFM_BLOCK_TYPE_WATERFALL_STRAIGHT_CLIFF_TOP_LEFT_CORNER
+    0, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_LEFT
+    0, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_BOTTOM_LEFT_CORNER
+    0, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_HORIZONTAL
+    0, // mFM_BLOCK_TYPE_WATERFALL_EAST_CLIFF_BOTTOM_RIGHT_CORNER
+    0, // mFM_BLOCK_TYPE_WATERFALL_EAST_CLIFF_VERTICAL_RIGHT
+    0, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_RIGHT_CORNER
+    0, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_LEFT_CORNER
+    0, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_HORIZONTAL
+    0, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_RIGHT_CORNER
+    0, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_LEFT_CORNER
+    0, // mFM_BLOCK_TYPE_WATERFALL_WEST_CLIFF_VERTICAL_LEFT
+    0, // mFM_BLOCK_TYPE_WATERFALL_WEST_CLIFF_BOTTOM_LEFT_CORNER
+    0, // mFM_BLOCK_TYPE_FLAT
+    0, // mFM_BLOCK_TYPE_RIVER_SOUTH
+    0, // mFM_BLOCK_TYPE_RIVER_EAST
+    0, // mFM_BLOCK_TYPE_RIVER_WEST
+    0, // mFM_BLOCK_TYPE_RIVER_SOUTH_EAST
+    0, // mFM_BLOCK_TYPE_RIVER_EAST_SOUTH
+    0, // mFM_BLOCK_TYPE_RIVER_SOUTH_WEST
+    0, // mFM_BLOCK_TYPE_RIVER_WEST_SOUTH
+    0, // mFM_BLOCK_TYPE_RIVER_SOUTH_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_EAST_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_WEST_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_SOUTH_EAST_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_EAST_SOUTH_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_SOUTH_WEST_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_WEST_SOUTH_BRIDGE
+    0, // mFM_BLOCK_TYPE_SLOPE_HORIZONTAL
+    0, // mFM_BLOCK_TYPE_SLOPE_BOTTOM_RIGHT_CORNER
+    0, // mFM_BLOCK_TYPE_SLOPE_VERTICAL_RIGHT
+    0, // mFM_BLOCK_TYPE_SLOPE_TOP_RIGHT_CORNER
+    0, // mFM_BLOCK_TYPE_SLOPE_TOP_LEFT_CORNER
+    0, // mFM_BLOCK_TYPE_SLOPE_VERTICAL_LEFT
+    0, // mFM_BLOCK_TYPE_SLOPE_BOTTOM_LEFT_CORNER
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_LEFT_TRANSITION
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIGHT_TRANSITION
+    1, // mFM_BLOCK_TYPE_BEACH
+    1, // mFM_BLOCK_TYPE_BEACH_RIVER
+    1, // mFM_BLOCK_TYPE_TRACKS_SHOP
+    1, // mFM_BLOCK_TYPE_SHRINE
+    1, // mFM_BLOCK_TYPE_TRACKS_POST_OFFICE
+    1, // mFM_BLOCK_TYPE_POLICE_BOX
+    0, // mFM_BLOCK_TYPE_POOL_SOUTH
+    0, // mFM_BLOCK_TYPE_POOL_EAST
+    0, // mFM_BLOCK_TYPE_POOL_WEST
+    0, // mFM_BLOCK_TYPE_POOL_SOUTH_EAST
+    0, // mFM_BLOCK_TYPE_POOL_EAST_SOUTH
+    0, // mFM_BLOCK_TYPE_POOL_SOUTH_WEST
+    0, // mFM_BLOCK_TYPE_POOL_WEST_SOUTH
+    0, // mFM_BLOCK_TYPE_TRACKS6
+    0, // mFM_BLOCK_TYPE_TRACKS7
+    0, // mFM_BLOCK_TYPE_TRACKS8
+    0, // mFM_BLOCK_TYPE_TRACKS9
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_OCEAN_LEFT
+    0, // mFM_BLOCK_TYPE_BORDER_CLIFF_OCEAN_RIGHT
+    1, // mFM_BLOCK_TYPE_BEACH_RIVER_BRIDGE
+    1, // mFM_BLOCK_TYPE_OCEAN
+    1, // mFM_BLOCK_TYPE_MUSEUM
+    1, // mFM_BLOCK_TYPE_NEEDLEWORK
+    1, // mFM_BLOCK_TYPE_TRACKS_RIVER_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_HORIZONTAL_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_RIGHT_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_TOP_RIGHT_CORNER_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_RIGHT_CORNER_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_LEFT_CORNER_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_LEFT_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_BOTTOM_LEFT_CORNER_BRIDGE
+    0, // mFM_BLOCK_TYPE_OCEAN_2
+    0, // mFM_BLOCK_TYPE_OCEAN_3
+    0, // mFM_BLOCK_TYPE_OCEAN_4
+    0, // mFM_BLOCK_TYPE_OCEAN_5
+    0, // mFM_BLOCK_TYPE_ISLAND_LEFT
+    0, // mFM_BLOCK_TYPE_ISLAND_RIGHT
+    1, // mFM_BLOCK_TYPE_PORT
+    1, // mFM_BLOCK_TYPE_SEA_EXCEPTIONAL
+    1, // mFM_BLOCK_TYPE_OCEAN_6
+    1, // mFM_BLOCK_TYPE_OCEAN_7
+    1, // mFM_BLOCK_TYPE_OCEAN_8
+    0, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_HORIZONTAL_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_RIGHT_CORNER_BRIDGE
+    0, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_LEFT_CORNER_BRIDGE
 };
 
 static u8 pluss_bridge[mFM_BLOCK_TYPE_NUM] = {
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x56, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x58, 0x59, 0xff, 0x5c, 0x5d, 0x57, 0xff, 0xff, 0x5a, 0x5b, 0x69, 0x6a,
-    0x6b, 0xff, 0xff, 0xff, 0x2f, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x52, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_TOP
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIVER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_LEFT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_3
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIGHT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_CORNER_TOP_LEFT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_6
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_TRACKS
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_CORNER_TOP_RIGHT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_LEFT_TUNNEL
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIGHT_TUNNEL
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_TRACKS_STATION
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_TRACKS_DUMP
+    mFM_BLOCK_TYPE_TRACKS_RIVER_BRIDGE, // mFM_BLOCK_TYPE_TRACKS_RIVER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_PLAYER_HOUSE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_CLIFF_HORIZONTAL
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_CLIFF_BOTTOM_RIGHT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_CLIFF_VERTICAL_RIGHT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_CLIFF_TOP_RIGHT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_CLIFF_TOP_LEFT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_CLIFF_VERTICAL_LEFT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_CLIFF_BOTTOM_LEFT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_WATERFALL_STRAIGHT_CLIFF_HORIZONTAL
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_WATERFALL_STRAIGHT_CLIFF_BOTTOM_RIGHT_CORNER
+    mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_RIGHT_BRIDGE, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_RIGHT
+    mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_TOP_RIGHT_CORNER_BRIDGE, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_TOP_RIGHT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_WATERFALL_STRAIGHT_CLIFF_TOP_LEFT_CORNER
+    mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_LEFT_BRIDGE, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_LEFT
+    mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_BOTTOM_LEFT_CORNER_BRIDGE, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_BOTTOM_LEFT_CORNER
+    mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_HORIZONTAL_BRIDGE, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_HORIZONTAL
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_WATERFALL_EAST_CLIFF_BOTTOM_RIGHT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_WATERFALL_EAST_CLIFF_VERTICAL_RIGHT
+    mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_RIGHT_CORNER_BRIDGE, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_RIGHT_CORNER
+    mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_LEFT_CORNER_BRIDGE, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_LEFT_CORNER
+    mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_HORIZONTAL_BRIDGE, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_HORIZONTAL
+    mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_RIGHT_CORNER_BRIDGE, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_RIGHT_CORNER
+    mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_LEFT_CORNER_BRIDGE, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_LEFT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_WATERFALL_WEST_CLIFF_VERTICAL_LEFT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_WATERFALL_WEST_CLIFF_BOTTOM_LEFT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_FLAT
+    mFM_BLOCK_TYPE_RIVER_SOUTH_BRIDGE, // mFM_BLOCK_TYPE_RIVER_SOUTH
+    mFM_BLOCK_TYPE_RIVER_EAST_BRIDGE, // mFM_BLOCK_TYPE_RIVER_EAST
+    mFM_BLOCK_TYPE_RIVER_WEST_BRIDGE, // mFM_BLOCK_TYPE_RIVER_WEST
+    mFM_BLOCK_TYPE_RIVER_SOUTH_EAST_BRIDGE, // mFM_BLOCK_TYPE_RIVER_SOUTH_EAST
+    mFM_BLOCK_TYPE_RIVER_EAST_SOUTH_BRIDGE, // mFM_BLOCK_TYPE_RIVER_EAST_SOUTH
+    mFM_BLOCK_TYPE_RIVER_SOUTH_WEST_BRIDGE, // mFM_BLOCK_TYPE_RIVER_SOUTH_WEST
+    mFM_BLOCK_TYPE_RIVER_WEST_SOUTH_BRIDGE, // mFM_BLOCK_TYPE_RIVER_WEST_SOUTH
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_SOUTH_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_EAST_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_WEST_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_SOUTH_EAST_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_EAST_SOUTH_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_SOUTH_WEST_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_WEST_SOUTH_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_SLOPE_HORIZONTAL
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_SLOPE_BOTTOM_RIGHT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_SLOPE_VERTICAL_RIGHT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_SLOPE_TOP_RIGHT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_SLOPE_TOP_LEFT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_SLOPE_VERTICAL_LEFT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_SLOPE_BOTTOM_LEFT_CORNER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_LEFT_TRANSITION
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_RIGHT_TRANSITION
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BEACH
+    mFM_BLOCK_TYPE_BEACH_RIVER_BRIDGE, // mFM_BLOCK_TYPE_BEACH_RIVER
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_TRACKS_SHOP
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_SHRINE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_TRACKS_POST_OFFICE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_POLICE_BOX
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_POOL_SOUTH
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_POOL_EAST
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_POOL_WEST
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_POOL_SOUTH_EAST
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_POOL_EAST_SOUTH
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_POOL_SOUTH_WEST
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_POOL_WEST_SOUTH
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_TRACKS6
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_TRACKS7
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_TRACKS8
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_TRACKS9
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_OCEAN_LEFT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BORDER_CLIFF_OCEAN_RIGHT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_BEACH_RIVER_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_OCEAN
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_MUSEUM
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_NEEDLEWORK
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_TRACKS_RIVER_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_HORIZONTAL_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_RIGHT_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_TOP_RIGHT_CORNER_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_RIGHT_CORNER_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_EAST_CLIFF_TOP_LEFT_CORNER_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_VERTICAL_LEFT_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_STRAIGHT_CLIFF_BOTTOM_LEFT_CORNER_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_OCEAN_2
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_OCEAN_3
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_OCEAN_4
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_OCEAN_5
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_ISLAND_LEFT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_ISLAND_RIGHT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_PORT
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_SEA_EXCEPTIONAL
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_OCEAN_6
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_OCEAN_7
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_OCEAN_8
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_HORIZONTAL_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_RIGHT_CORNER_BRIDGE
+    mFM_BLOCK_TYPE_NONE, // mFM_BLOCK_TYPE_RIVER_WEST_CLIFF_TOP_LEFT_CORNER_BRIDGE
 };
 
 extern Gfx kan_win_model[];
@@ -343,7 +631,9 @@ static int mMP_check_layer(f32 y) {
 
 static int mMP_check_bg_kind(u8 kind) {
     int res = TRUE;
-    if (kind <= 8 || kind == 0x3D || kind == 0x3E || kind == 9 || kind == 10) {
+    if (kind <= mFM_BLOCK_TYPE_BORDER_CLIFF_CORNER_TOP_RIGHT || kind == mFM_BLOCK_TYPE_BORDER_CLIFF_LEFT_TRANSITION ||
+        kind == mFM_BLOCK_TYPE_BORDER_CLIFF_RIGHT_TRANSITION || kind == mFM_BLOCK_TYPE_BORDER_CLIFF_LEFT_TUNNEL ||
+        kind == mFM_BLOCK_TYPE_BORDER_CLIFF_RIGHT_TUNNEL) {
         res = FALSE;
     }
 
@@ -356,7 +646,7 @@ static void mMP_make_max_no_table(int* max_no_table, int count) {
     int j = 0;
 
     for (i = 0; i < count; i++) {
-        max_no_table[i] = 39;
+        max_no_table[i] = mFM_BLOCK_TYPE_FLAT;
     }
 
     // i = BLOCKXZ_2_BLOCKIDX(0, 1);
@@ -783,8 +1073,8 @@ static void mMP_set_map_dl(GRAPH* graph, mMP_Ovl_c* map_ovl) {
 
     for (bz = 0; bz < FG_BLOCK_Z_NUM; bz++) {
         for (bx = 0; bx < FG_BLOCK_X_NUM; bx++) {
-            gSPSegment(gfx++, G_MWO_SEGMENT_8, map_ovl->map_texture[block]);
-            gSPSegment(gfx++, G_MWO_SEGMENT_9, l_kan_tizu_pal[map_ovl->map_pal[block]]);
+            gSPSegment(gfx++, ANIME_1_TXT_SEG, map_ovl->map_texture[block]);
+            gSPSegment(gfx++, ANIME_2_TXT_SEG, l_kan_tizu_pal[map_ovl->map_pal[block]]);
             gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
             gSPDisplayList(gfx++, kan_tizu_model);
 
@@ -909,20 +1199,20 @@ static void mMP_set_win_dl(GRAPH* graph, mMP_Ovl_c* map_ovl, mMP_LabelInfo_c* la
     gfx = NOW_POLY_OPA_DISP;
 
     /* move X-acre number texture into segment 8 and Z-acre character texture int segment 9 */
-    gSPSegment(gfx++, G_MWO_SEGMENT_8, kan_win_evw_anime_1_tex_table[map_ovl->sel_bx]);
-    gSPSegment(gfx++, G_MWO_SEGMENT_9, kan_win_evw_anime_2_tex_table[map_ovl->sel_bz]);
+    gSPSegment(gfx++, ANIME_1_TXT_SEG, kan_win_evw_anime_1_tex_table[map_ovl->sel_bx]);
+    gSPSegment(gfx++, ANIME_2_TXT_SEG, kan_win_evw_anime_2_tex_table[map_ovl->sel_bz]);
 
     /* move label area texture into segment 10 based on number of labels */
     if (label_count == 4) {
-        gSPSegment(gfx++, G_MWO_SEGMENT_A, kan_win_waku4T_model_p);
+        gSPSegment(gfx++, ANIME_3_TXT_SEG, kan_win_waku4T_model_p);
     } else if (label_count == 3) {
-        gSPSegment(gfx++, G_MWO_SEGMENT_A, kan_win_waku3T_model_p);
+        gSPSegment(gfx++, ANIME_3_TXT_SEG, kan_win_waku3T_model_p);
     } else if (label_count == 1) {
-        gSPSegment(gfx++, G_MWO_SEGMENT_A, kan_win_wakuT_model_p);
+        gSPSegment(gfx++, ANIME_3_TXT_SEG, kan_win_wakuT_model_p);
     } else if (label_count == 0) {
-        gSPSegment(gfx++, G_MWO_SEGMENT_A, kan_win_waku1T_model_p);
+        gSPSegment(gfx++, ANIME_3_TXT_SEG, kan_win_waku1T_model_p);
     } else { /* label_count == 2 */
-        gSPSegment(gfx++, G_MWO_SEGMENT_A, kan_win_waku2T_model_p);
+        gSPSegment(gfx++, ANIME_3_TXT_SEG, kan_win_waku2T_model_p);
     }
 
     gSPMatrix(gfx++, _Matrix_to_Mtx_new(graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);

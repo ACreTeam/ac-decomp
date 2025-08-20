@@ -7,6 +7,8 @@
 #include "m_play.h"
 #include "libultra/libultra.h"
 #include "m_player_lib.h"
+#include "m_bg_type.h"
+#include "m_fg_type.h"
 
 static mCoBG_Collision_u l_edge_ut = { { 0, 31, 31, 31, 31, 31, mCoBG_ATTRIBUTE_GRASS0 } };
 
@@ -266,7 +268,7 @@ extern int mFI_BlockCheck(int block_x, int block_z) {
     int num = mFI_GetBlockNum(block_x, block_z);
 
     if (block_x < 0 || block_x >= mFI_GetBlockXMax() || block_z < 0 || block_z >= mFI_GetBlockZMax() ||
-        g_fdinfo->block_info[num].bg_info.bg_id.combination_type == 292) {
+        g_fdinfo->block_info[num].bg_info.bg_id.combination_type == BG_TYPE_292) {
         return FALSE;
     }
 
@@ -1085,7 +1087,7 @@ extern void mFI_BGDisplayListRefresh(xyz_t wpos) {
     if (mFI_Wpos2BlockNum(&bx, &bz, wpos)) {
         num = mFI_GetBlockNum(bx, bz);
 
-        if (g_fdinfo->block_info[num].bg_info.bg_id.combination_type != 292) {
+        if (g_fdinfo->block_info[num].bg_info.bg_id.combination_type != BG_TYPE_292) {
             mFI_BGDispMake(&disp_bitfield, bx, bz);
         }
     }
@@ -1335,7 +1337,7 @@ extern int mFI_UtNumtoFGSet_common(mActor_name_t item, int ut_x, int ut_z, int u
     }
 
     block_num = mFI_GetBlockNum(bx, bz);
-    if (g_fdinfo->block_info[block_num].fg_info.fg_id == 203) {
+    if (g_fdinfo->block_info[block_num].fg_info.fg_id == FG_TYPE_EMPTY) {
         return FALSE;
     }
 
