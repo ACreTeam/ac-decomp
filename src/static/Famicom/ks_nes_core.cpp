@@ -2673,7 +2673,7 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
 
     if (flags & 1) {
         // temporarily save the work ram state.
-        memcpy(&wp->work_priv.wram, &sp->wram, KS_NES_WRAM_SIZE);
+        memcpy(&wp->work_priv._0000, &sp->wram, KS_NES_WRAM_SIZE);
     }
 
     // zero out the state struct.
@@ -2681,7 +2681,7 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
 
     if (flags & 1) {
         // restore the previously saved work ram state.
-        memcpy(&sp->wram, &wp->work_priv.wram, KS_NES_WRAM_SIZE);
+        memcpy(&sp->wram, &wp->work_priv._0000, KS_NES_WRAM_SIZE);
     } else {
         // fill ram with a predetermined pattern.
 
