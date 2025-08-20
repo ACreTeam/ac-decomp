@@ -379,3 +379,138 @@ static Acmd* Nas_SendLine(Acmd* cmd, delay* del_p, s32 update_idx) {
 
     return cmd;
 }
+
+static Acmd* Nas_LoadAuxBuffer1(Acmd* cmd, s32 samples_per_update, delay* del_p, s16 update_idx) {
+    delayparam* param_p = &del_p->params[del_p->cur_frame][update_idx];
+    
+    cmd = __LoadAuxBuf(cmd, 0xC40, param_p->start_pos, param_p->size, del_p);
+    if (param_p->wrapped_size != 0) {
+        cmd = __LoadAuxBuf(cmd, 0xC40 + param_p->size, 0, param_p->wrapped_size, del_p);
+    }
+
+    return cmd;
+}
+
+static Acmd* Nas_LoadAuxBuffer1_B(Acmd* cmd, s32 samples_per_update, delay* del_p, s16 update_idx) {
+    delayparam* param_p = &del_p->sub_params[del_p->cur_frame][update_idx];
+    
+    cmd = __LoadAuxBuf(cmd, 0xC40, param_p->start_pos, param_p->size, del_p);
+    if (param_p->wrapped_size != 0) {
+        cmd = __LoadAuxBuf(cmd, 0xC40 + param_p->size, 0, param_p->wrapped_size, del_p);
+    }
+
+    return cmd;
+}
+
+static Acmd* Nas_SaveBufferAuto(Acmd* cmd, u16 dmem, u16 size, s32 startAddr) {
+    s32 startUnaligned = startAddr & 15;
+    s32 endAddr = startAddr + size;
+    s32 endUnaligned = endAddr & 15;
+
+    if (endUnaligned != 0) {
+        aLoadBuffer2(cmd++, (endAddr - endUnaligned), 0x380, 16);
+        aDMEMMove(cmd++, dmem, 0x390, size);
+        aDMEMMove(cmd++, 0x380 + endUnaligned, 0x390 + size, 16 - endUnaligned);
+        size += 16 - endUnaligned;
+        dmem = 0x390;
+    }
+    
+    if (startUnaligned != 0) {
+        aLoadBuffer2(cmd++, (startAddr - startUnaligned), 0x380, 16);
+        aDMEMMove(cmd++, dmem, 0x380 + startUnaligned, size);
+
+        size += startUnaligned;
+        dmem = 0x380;
+    }
+
+    aSaveBuffer2(cmd++, startAddr - startUnaligned, dmem, size);
+    return cmd;
+}
+
+static Acmd* __LoadAuxBuf(Acmd* cmd, u16 dmem, u16 startPos, s32 size, delay* del_p) {
+    aLoadBuffer2(cmd++, &del_p->left_reverb_buf[startPos], dmem, size);
+    aLoadBuffer2(cmd++, &del_p->right_reverb_buf[startPos], dmem + 0x1A0, size);
+    return cmd;
+}
+
+static Acmd* __SaveAuxBuf(Acmd* cmd, u16 dmem, u16 startPos, s32 size, delay* del_p) {
+    aSaveBuffer2(cmd++, &del_p->left_reverb_buf[startPos], dmem, size);
+    aSaveBuffer2(cmd++, &del_p->right_reverb_buf[startPos], dmem + 0x1A0, size);
+    return cmd;
+}
+
+static Acmd* Nas_LoadAuxBuffer_B(Acmd* cmd, s32 numSamplesPerUpdate, delay* del_p, s16 updateIdx) {
+    if (del_p->downsample_rate == 1) {
+        cmd = Nas_LoadAuxBuffer1_B(cmd, numSamplesPerUpdate, del_p, updateIdx);
+    }
+
+    return cmd;
+}
+
+static Acmd* Nas_LoadAuxBuffer(Acmd* cmd, s32 numSamplesPerUpdate, delay* del_p, s16 updateIdx) {
+    if (del_p->downsample_rate == 1) {
+        if (del_p->resample_effect_on) {
+            cmd = Nas_LoadAuxBufferCH(cmd, numSamplesPerUpdate, del_p, updateIdx);
+        } else {
+            cmd = Nas_LoadAuxBuffer1(cmd, numSamplesPerUpdate, del_p, updateIdx);
+        }
+    } else {
+        cmd = Nas_LoadAuxBufferC(cmd, numSamplesPerUpdate, del_p, updateIdx);
+    }
+
+    return cmd;
+}
+
+static Acmd* Nas_SaveAuxBuffer(Acmd* cmd, delay* del_p, s16 update_idx) {
+    delayparam* param = &del_p->params[del_p->cur_frame][update_idx];
+    s32 downsample_rate;
+    s32 n_samples;
+
+    switch (del_p->downsample_rate) {
+        case 1:
+            if (del_p->resample_effect_on) {
+                cmd = Nas_SaveAuxBufferCH(cmd, del_p, update_idx);
+            } else {
+                cmd = __SaveAuxBuf(cmd, 0xC40, param->start_pos, param->size, del_p);
+                if (param->wrapped_size != 0) {
+                    cmd = __SaveAuxBuf(cmd, 0xC40 + param->size, 0, param->wrapped_size, del_p);
+                }
+            }
+            break;
+        default:
+            downsample_rate = del_p->downsample_rate;
+            n_samples = 13 * 16; // 16 = SAMPLES_PER_FRAME
+
+            while (downsample_rate > 1) {
+                aHalfCut(cmd++, 0xC40, 0xC40, n_samples);
+                aHalfCut(cmd++, 0xDE0, 0xDE0, n_samples);
+                n_samples >>= 1;
+                downsample_rate >>= 1;
+            }
+
+            if (param->size != 0) {
+                cmd = Nas_SaveBufferAuto(cmd, 0xC40, (u16)param->size, (s32)&del_p->left_reverb_buf[param->start_pos]);
+                cmd = Nas_SaveBufferAuto(cmd, 0xDE0, (u16)param->size, (s32)&del_p->right_reverb_buf[param->start_pos]);
+            }
+
+            if (param->wrapped_size != 0) {
+                cmd = Nas_SaveBufferAuto(cmd, 0xC40 + param->size, (u16)param->wrapped_size, (s32)&del_p->left_reverb_buf[0]);
+                cmd = Nas_SaveBufferAuto(cmd, 0xDE0 + param->size, (u16)param->wrapped_size, (s32)&del_p->right_reverb_buf[0]);
+            }
+            break;
+    }
+
+    del_p->resample_flags = 0;
+    return cmd;
+}
+
+static Acmd* Nas_SaveAuxBuffer_B(Acmd* cmd, delay* del_p, s16 update_idx) {
+    delayparam* param = &del_p->sub_params[del_p->cur_frame][update_idx];
+    
+    cmd = __SaveAuxBuf(cmd, 0xC40, param->start_pos, param->size, del_p);
+    if (param->wrapped_size != 0) {
+        cmd = __SaveAuxBuf(cmd, 0xC40 + param->size, 0, param->wrapped_size, del_p);
+    }
+
+    return cmd;
+}
