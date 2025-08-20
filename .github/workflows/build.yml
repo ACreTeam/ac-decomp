@@ -48,7 +48,8 @@ jobs:
           include/PR/mbi.h
           include/PR/ultratypes.h
           include/compiler/gcc/stdlib.h
-        key: ${{ runner.os }}-${{ matrix.version }}
+        key: ${{ runner.os }}-${{ matrix.version }}-${{ github.sha }}
+        restore-keys: ${{ runner.os }}-${{ matrix.version }}-
 
     # Build the project
     - name: Build
