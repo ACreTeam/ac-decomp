@@ -56,25 +56,38 @@ extern "C" {
 typedef struct _0B40_struct {
     u8* _00;
     u8* _04;
-    u8* _08;
+    // u8* _08;
+    u8 _08[4]; // idk how many elements this should be
     u32 _0C;
     u32 _10;
     u32 _14;
     u8 _18;
     u8 _19;
-    u8 pad2[0x6];
+    u8 _1A;
+    u8 _1B;
+    u8 _1C;
+    u8 _1D;
+    u8 _1E;
+    u8 _1F;
 } B40_struct; // size == 0x20
 
+typedef struct _0340_struct {
+    u8 _00[0x20];
+} _0340_struct; // size = 0x20
+
 typedef struct ksNesCommonWorkPriv {
-    /* 0x0000 */ u8 wram[KS_NES_WRAM_SIZE];
-    /* 0x0800 */ u8 _0800[0x340];
-    /* 0x0B40 */ B40_struct _0B40[0xf0];
+    /* 0x0000 */ u8 _0000[0x200];
+    /* 0x0200 */ u8 _0200[0xF0];
+    /* 0x02F0 */ u8 _pad_02F0[0x10];
+    /* 0x0300 */ u8 _0300[0x40];
+    /* 0x0340 */ _0340_struct _0340[0x40];
+    /* 0x0B40 */ B40_struct _0B40[240];
     /* 0x2940 */ u8 _2940[0x100];
     /* 0x2A40 */ u8 _2A40[0x800];
     /* 0x3240 */ u8 _3240[0x4800];
     /* 0x7840 */ u8 _7840[0x1400];
-    /* 0x8E40 */ u8 _8E40[0x80];
-    /* 0x8EC0 */ u8 _8EC0[0x28];
+    /* 0x8E40 */ u8 _8E40[0x80]; // 4x16 texture IA8
+    /* 0x8EC0 */ u8 _8EC0[0x28]; // 8x4 texture IA8
     /* 0x8EE8 */ Mtx34 draw_mtx;
 } ksNesCommonWorkPriv;
 

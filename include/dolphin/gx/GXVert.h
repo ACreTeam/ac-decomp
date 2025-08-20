@@ -147,6 +147,11 @@ static inline void GXPosition1x8(u8 index) {
   GXWGFifo.u8 = index;
 }
 
+static inline void GXTexCoord2u16(u16 s, u16 t) {
+    GXWGFifo.u16 = s;
+    GXWGFifo.u16 = t;
+}
+
 static inline void GXEnd(void) {}
 
 #endif
