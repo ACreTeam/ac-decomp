@@ -43,7 +43,8 @@ static void aEMK_get_omikuji(Mail_c* mail, int idx) {
     mString_Load_StringFromRom(pf_string, sizeof(pf_string), 0x2C1 + kekka_table[idx]);
     mHandbill_Set_free_str(mHandbill_FREE_STR4, pf_string, sizeof(pf_string));
     load_idx = 0x072 + RANDOM(3);
-    mHandbill_Load_HandbillFromRom(mail->content.header, &header_back_start, mail->content.footer, mail->content.body, load_idx);
+    mHandbill_Load_HandbillFromRom(mail->content.header, &header_back_start, mail->content.footer, mail->content.body,
+                                   load_idx);
     mail->content.font = mMl_FONT_RECV;
     mail->content.header_back_start = header_back_start;
     mail->content.mail_type = mMl_TYPE_OMIKUJI;
@@ -63,7 +64,7 @@ static void aEMK_talk_select(EV_MIKO_ACTOR* miko, GAME_PLAY* play) {
                     mMsg_SET_CONTINUE_MSG_NUM(0x190E);
                     aEMK_setupAction(miko, play, aEMK_TALK_END_WAIT);
                 }
-                
+
                 break;
             case mChoice_CHOICE1:
                 aEMK_setupAction(miko, play, aEMK_TALK_END_WAIT);
@@ -100,7 +101,7 @@ static void aEMK_talk_give(EV_MIKO_ACTOR* miko, GAME_PLAY* play) {
 
         if (Now_Private != NULL) {
             idx = mMl_chk_mail_free_space(Now_Private->mail, mPr_INVENTORY_MAIL_COUNT);
-            
+
             if (idx != -1) {
                 mail.content.paper_type = (u8)ITM_PAPER25;
                 mMl_copy_mail(&Now_Private->mail[idx], &mail);
@@ -148,9 +149,9 @@ static void aEMK_set_talk_info(ACTOR* actorx) {
     EV_MIKO_ACTOR* miko = (EV_MIKO_ACTOR*)actorx;
 
     if (miko->in_front == TRUE) {
-        msg_no = 0x190C;
+        msg_no = MSG_6412;
     } else {
-        msg_no = 0x1916;
+        msg_no = MSG_6422;
     }
 
     mDemo_Set_msg_num(msg_no);
@@ -182,8 +183,10 @@ static int aEMK_talk_end_chk(ACTOR* actorx, GAME* game) {
 
     if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
         ret = TRUE;
-        NPC_CLIP->set_dst_pos_proc((NPC_ACTOR*)miko, actorx->world.position.x + 10.0f, actorx->world.position.z + 10.0f);
-        aEMK_set_request_act(miko, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT, actorx->world.position.x + 10.0f, actorx->world.position.z + 10.0f);
+        NPC_CLIP->set_dst_pos_proc((NPC_ACTOR*)miko, actorx->world.position.x + 10.0f,
+                                   actorx->world.position.z + 10.0f);
+        aEMK_set_request_act(miko, 4, aNPC_ACT_TURN, aNPC_ACT_TYPE_TO_POINT, aNPC_ACT_OBJ_DEFAULT,
+                             actorx->world.position.x + 10.0f, actorx->world.position.z + 10.0f);
     }
 
     return ret;

@@ -322,11 +322,11 @@ static void aTS0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
 
 static void aTS0_set_talk_info(ACTOR* actorx) {
     static int msg_base[][mNpc_LOOKS_NUM] = {
-        {0x1A3C, 0x1A4B, 0x1A2D, 0x1A5A, 0x1A69, 0x1A78},
-        {0x1A96, 0x1AA5, 0x1A87, 0x1AB4, 0x1AC3, 0x1AD2},
+        { MSG_6716, MSG_6731, MSG_6701, MSG_6746, MSG_6761, MSG_6776 },
+        { MSG_6806, MSG_6821, MSG_6791, MSG_6836, MSG_6851, MSG_6866 },
     };
 
-    static int msg_base2[] = { 0x2665, 0x2668 };
+    static int msg_base2[] = { MSG_9829, MSG_9832 };
     TAISOU_NPC0_ACTOR* actor = (TAISOU_NPC0_ACTOR*)actorx; // this needs to be moved into r29
     int looks = mNpc_GetNpcLooks(actorx);
     int event_type;

@@ -82,9 +82,9 @@ static void Player_actor_Pickup_exchange_demo_ct(ACTOR* actorx) {
     rgba_t window_color;
 
     if (Common_Get(field_type) == mFI_FIELDTYPE2_FG) {
-        msg_no = 0x17B2;
+        msg_no = MSG_6066;
     } else {
-        msg_no = 0x17B3;
+        msg_no = MSG_6067;
     }
 
     mDemo_Set_msg_num(msg_no);
