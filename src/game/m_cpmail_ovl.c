@@ -347,6 +347,7 @@ static void mCM_cpmail_ovl_draw(Submenu* submenu, GAME* game) {
 }
 
 static void mCM_cpmail_draw_init(mSM_MenuInfo_c* menu_info) {
+#if VERSION < VER_GAFU01_00
     mCM_disp_data_c* disp_data_p = &mCM_disp_data[0];
     int i;
 
@@ -356,6 +357,7 @@ static void mCM_cpmail_draw_init(mSM_MenuInfo_c* menu_info) {
         disp_data_p->tex_p = (u8*)disp_data_p->tex_p;
         disp_data_p++;
     }
+#endif
 }
 
 extern void mCM_cpmail_ovl_set_proc(Submenu* submenu) {

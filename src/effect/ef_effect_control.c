@@ -180,7 +180,7 @@ static void eEC_Name2EffectMake(int effect_id, xyz_t pos, int prio, s16 angle, G
             eEC_Effect_c* effect = eEC_ctrl_work.effects;
 
             /* Check if any of the spawned effects are an exact match to this one */
-            for (i = 0; i < eEC_EFFECT_ACTIVE_MAX; i++, active_flags++, effect++) {
+            for (i = 0; i < eEC_EFFECT_ACTIVE_MAX; active_flags++, effect++, i++) {
                 if (*active_flags && effect->name == effect_id && effect->item_name == item_name) {
                     return;
                 }

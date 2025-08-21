@@ -159,7 +159,7 @@ static void eTamaire_dw(eEC_Effect_c* effect, GAME* game) {
     Matrix_RotateZ(effect->effect_specific[0], MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, (int)alpha);
+    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, (u8)(int)alpha);
     gSPDisplayList(NEXT_POLY_XLU_DISP, tamaire_model[effect->arg0]);
 
     CLOSE_DISP(graph);

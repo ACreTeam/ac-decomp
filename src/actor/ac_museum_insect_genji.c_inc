@@ -155,7 +155,7 @@ void genji_light_move(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
 void genji_light_draw(MUSEUM_INSECT_PRIVATE_DATA* actor, GAME* game) {
     xyz_t p = actor->_1C;
     u8 a, b;
-    if ((f32)__fabs(actor->_0C) < 0.008f) {
+    if (F32_IS_ZERO(actor->_0C)) {
         return;
     }
 

@@ -47,7 +47,7 @@ static s8 Player_actor_Get_ItemKind(ACTOR* actor, int kind) {
 
 static int Player_actor_Get_BasicItemMainIndex_fromItemKind(int kind) {
     // clang-format off
-    static const s8 data[] = {
+    static const s8 data[mPlayer_ITEM_KIND_NUM+1] = {
         mPlayer_ITEM_MAIN_AXE_NORMAL,
         mPlayer_ITEM_MAIN_AXE_NORMAL,
         mPlayer_ITEM_MAIN_AXE_NORMAL,
@@ -384,7 +384,18 @@ static void Player_actor_LoadOrDestruct_Item(ACTOR* actor, int kind, int anim_id
     }
 }
 
-static void Player_actor_CorrectSomething_net(ACTOR* actor, xyz_t* pos) {
+#if VERSION >= VER_GAFU01_00
+static void Player_actor_CorrectSomething_net(ACTOR* actor, const xyz_t* pos) {
+    PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    TOOLS_ACTOR* label = (TOOLS_ACTOR*)player->item_net_catch_label;
+
+    if (label != NULL && player->item_net_catch_type == mPlayer_NET_CATCH_TYPE_INSECT && !player->item_net_catch_correct_pos_set) {
+        player->item_net_catch_correct_pos = *pos;
+        player->item_net_catch_correct_pos_set = TRUE;
+    }
+}
+#else
+static void Player_actor_CorrectSomething_net(ACTOR* actor, const xyz_t* pos) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
     TOOLS_ACTOR* label = (TOOLS_ACTOR*)player->item_net_catch_label;
 
@@ -396,6 +407,7 @@ static void Player_actor_CorrectSomething_net(ACTOR* actor, xyz_t* pos) {
         label->init_matrix = TRUE;
     }
 }
+#endif
 
 static int Player_actor_Check_ItemAnimationToItemKind(int kind, int anim) {
     int res;

@@ -18,10 +18,10 @@ static void aNRST_think_door(NPC_RESTART_ACTOR* actor, GAME_PLAY* play) {
     int arrange_idx = mHS_get_arrange_idx(Common_Get(player_no));
     
     door_data.next_scene_id = SCENE_FG;
-    door_data.exit_position.x = 2240;
-    door_data.exit_position.z = 2240;
     door_data.exit_type = 1;
     door_data.extra_data = 1;
+    door_data.exit_position.x = 2240;
+    door_data.exit_position.z = 2240;
     door_data.exit_position.y = 0;
     door_data.door_actor_name = EMPTY_NO;
     door_data.wipe_type = WIPE_TYPE_FADE_BLACK;

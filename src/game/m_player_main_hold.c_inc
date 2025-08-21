@@ -70,9 +70,9 @@ static int Player_actor_CulcAnimation_Hold(ACTOR* actor) {
 
 static void Player_actor_Movement_Hold(ACTOR* actor) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actor;
+    s16 angle = player->main_data.hold.angle_y;
     f32 x = player->main_data.hold.player_pos.x;
     f32 z = player->main_data.hold.player_pos.z;
-    s16 angle = player->main_data.hold.angle_y;
 
     add_calc_short_angle2(&actor->shape_info.rotation.y, angle, 1.0f - sqrtf(0.5), 8192, 50);
     actor->world.angle.y = actor->shape_info.rotation.y;

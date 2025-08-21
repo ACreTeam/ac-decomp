@@ -254,6 +254,8 @@ enum {
 
 void mDE_setup_action(mDE_Ovl_c* design_ovl, int param_2);
 
+#define mDE_EXTRACT_COMPONENT(c, s, b) (((c) & (((1 << (b)) - 1)) << (s)) >> (s))
+
 static void mDE_pallet_RGB5A3_to_RGB24(mDE_Ovl_c* design_ovl) {
     int i;
 
@@ -262,14 +264,20 @@ static void mDE_pallet_RGB5A3_to_RGB24(mDE_Ovl_c* design_ovl) {
 
         if (color & 0x8000) {
             // fully opaque, a1r5g5b5
-            design_ovl->rgb8_pal[i].r = (((color >> 10) & 0x1F) * 255) / 31;
-            design_ovl->rgb8_pal[i].g = (((color >> 5) & 0x1F) * 255) / 31;
-            design_ovl->rgb8_pal[i].b = (((color >> 0) & 0x1F) * 255) / 31;
+            // design_ovl->rgb8_pal[i].r = (((color >> 10) & 0x1F) * 255) / 31;
+            // design_ovl->rgb8_pal[i].g = (((color >> 5) & 0x1F) * 255) / 31;
+            // design_ovl->rgb8_pal[i].b = (((color >> 0) & 0x1F) * 255) / 31;
+            design_ovl->rgb8_pal[i].r = (mDE_EXTRACT_COMPONENT(color, 10, 5) * 255) / 31;
+            design_ovl->rgb8_pal[i].g = (mDE_EXTRACT_COMPONENT(color,  5, 5) * 255) / 31;
+            design_ovl->rgb8_pal[i].b = (mDE_EXTRACT_COMPONENT(color,  0, 5) * 255) / 31;
         } else {
             // transparent color, a3r4g4b4
-            design_ovl->rgb8_pal[i].r = ((color >> 8) & 0xF) * 17;
-            design_ovl->rgb8_pal[i].g = ((color >> 4) & 0xF) * 17;
-            design_ovl->rgb8_pal[i].b = ((color >> 0) & 0xF) * 17;
+            // design_ovl->rgb8_pal[i].r = ((color >> 8) & 0xF) * 17;
+            // design_ovl->rgb8_pal[i].g = ((color >> 4) & 0xF) * 17;
+            // design_ovl->rgb8_pal[i].b = ((color >> 0) & 0xF) * 17;
+            design_ovl->rgb8_pal[i].r = mDE_EXTRACT_COMPONENT(color, 8, 4) * 17;
+            design_ovl->rgb8_pal[i].g = mDE_EXTRACT_COMPONENT(color, 4, 4) * 17;
+            design_ovl->rgb8_pal[i].b = mDE_EXTRACT_COMPONENT(color, 0, 4) * 17;
         }
     }
 }

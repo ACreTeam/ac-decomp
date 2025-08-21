@@ -32,7 +32,12 @@ static void aMBX_check_take_mail(MAILBOX_ACTOR* actor, GAME_PLAY* play) {
         int abs_dAngle = ABS(dAngle);
 
         if (abs_dAngle < aMBX_PLAYER_OPEN_ANGLE && player->a_btn_pressed == TRUE && pl_no == Common_Get(player_no) && player->item_in_front == (DUMMY_MAILBOX0 + arrange_idx)) {
+// Aus version changed the reset count needed for the 'free roam' Resetti interaction
+#if VERSION >= VER_GAFU01_00
+            if (Common_Get(reset_flag) == TRUE && Now_Private->reset_count < 4) {
+#else
             if (Common_Get(reset_flag) == TRUE && Now_Private->reset_count < 3) {
+#endif
                 Common_Set(reset_type, 5);
             } else if (!mPr_NullCheckPersonalID(&Save_Get(homes[arrange_idx]).ownerID)) {
                 Submenu* submenu = &play->submenu;

@@ -31,13 +31,13 @@
 /* Static function declarations, add as needed for intellisense */
 static void Player_actor_Item_Setup_main(ACTOR* actor, int now, int last);
 static mActor_name_t Player_actor_Get_ItemNoSubmenu(void);
-static int Player_actor_request_main_broken_axe_type_swing(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+static int Player_actor_request_main_broken_axe_type_swing(GAME* game, xyz_t* pos, mActor_name_t hit_item,
                                                            int hit_ut_x, int hit_ut_z, int priority);
-static int Player_actor_request_main_swing_axe_all(GAME* game, const xyz_t* pos, mActor_name_t hit_item, u16 damage_no,
+static int Player_actor_request_main_swing_axe_all(GAME* game, xyz_t* pos, mActor_name_t hit_item, u16 damage_no,
                                                    int hit_ut_x, int hit_ut_z, int priority);
-static int Player_actor_request_main_broken_axe_type_reflect(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+static int Player_actor_request_main_broken_axe_type_reflect(GAME* game, xyz_t* pos, mActor_name_t hit_item,
                                                              ACTOR* hit_actor, int priority);
-static int Player_actor_request_main_reflect_axe_all(GAME* game, const xyz_t* pos, mActor_name_t hit_item,
+static int Player_actor_request_main_reflect_axe_all(GAME* game, xyz_t* pos, mActor_name_t hit_item,
                                                      u16 damage_no, ACTOR* hit_actor, int priority);
 static int Player_actor_request_main_air_axe_all(GAME* game, int priority);
 static int Player_actor_request_main_rotate_umbrella_all(GAME* game, int prio);
@@ -306,8 +306,8 @@ static int Player_actor_request_main_release_creature_all(GAME* game, int type, 
                                                           ACTOR* release_actor_p, int prio);
 static int Player_actor_request_main_complete_payment(GAME* game, int prio);
 static int Player_actor_request_main_push(GAME* game, int ftr_no, s16 angle_y, xyz_t* pos, int priority);
-static int Player_actor_request_main_pull(GAME* game, int ftr_no, s16 angle, xyz_t* start_pos, xyz_t* end_pos,
-                                          xyz_t* ofs, int priority);
+static int Player_actor_request_main_pull(GAME* game, int ftr_no, s16 angle, const xyz_t* start_pos, const xyz_t* end_pos,
+                                          const xyz_t* ofs, int priority);
 static int Player_actor_request_main_rotate_furniture(GAME* game, int ftr_no, s16 angle, xyz_t* pos, int type,
                                                       int priority);
 static int Player_actor_request_main_open_furniture(GAME* game, s16 angle, xyz_t* pos, int anim_idx, int priority);
@@ -505,18 +505,13 @@ static int Player_actor_request_main_demo_getoff_boat_all(GAME* game, const xyz_
 
 static void Player_actor_init_value(ACTOR* actorx, GAME* game) {
     PLAYER_ACTOR* player = (PLAYER_ACTOR*)actorx;
-    GAME_PLAY* play = (GAME_PLAY*)game;
-    int* shake_tree_table_ut_x_p;
-    int* shake_tree_table_ut_z_p;
-    s8* radio_exercise_command_ring_buffer_p;
-    int i;
 
     player->actor_class.gravity = -1.0f;
     player->actor_class.max_velocity_y = -8.0f;
     player->actor_class.scale.x = 0.01f;
     player->actor_class.scale.y = 0.01f;
     player->actor_class.scale.z = 0.01f;
-    player->balloon_actor = Actor_info_make_actor(&play->actor_info, game, mAc_PROFILE_BALLOON,
+    player->balloon_actor = Actor_info_make_actor(&((GAME_PLAY*)game)->actor_info, game, mAc_PROFILE_BALLOON,
                                                   actorx->world.position.x, actorx->world.position.y,
                                                   actorx->world.position.z, 0, 0, 0, -1, -1, -1, EMPTY_NO, -1, -1, -1);
     player->animation0_idx = -1;
@@ -603,17 +598,36 @@ static void Player_actor_init_value(ACTOR* actorx, GAME* game) {
     player->Check_able_force_speak_label_proc = &Player_actor_Check_able_force_speak_label;
     player->Check_stung_mosquito_proc = &Player_actor_Check_stung_mosquito;
 
-    shake_tree_table_ut_x_p = player->shake_tree_ut_x;
-    shake_tree_table_ut_z_p = player->shake_tree_ut_z;
-    for (i = 0; i < 3; i++) {
-        *shake_tree_table_ut_x_p++ = -1;
-        *shake_tree_table_ut_z_p++ = -1;
+    {
+        int* shake_tree_table_ut_x_p = player->shake_tree_ut_x;
+        int* shake_tree_table_ut_z_p = player->shake_tree_ut_z;
+        int i;
+
+        for (i = 0; i < 3; i++) {
+            *shake_tree_table_ut_x_p++ = -1;
+            *shake_tree_table_ut_z_p++ = -1;
+        }
     }
 
-    radio_exercise_command_ring_buffer_p = player->radio_exercise_command_ring_buffer;
-    for (i = 0; i < 8; i++) {
-        *radio_exercise_command_ring_buffer_p++ = -1;
+// TODO: I don't like this deviation between 1.3.2/US AC and 2.0/Aus AC
+#if VERSION >= VER_GAFU01_00
+    {
+        int i;
+
+        for (i = 0; i < 8; i++) {
+            player->radio_exercise_command_ring_buffer[i] = -1;
+        }
     }
+#else
+    {
+        s8* radio_exercise_command_ring_buffer_p = player->radio_exercise_command_ring_buffer;
+        int i;
+
+        for (i = 0; i < 8; i++) {
+            *radio_exercise_command_ring_buffer_p++ = -1;
+        }
+    }
+#endif
 
     Player_actor_Set_old_sound_frame_counter(actorx);
 }

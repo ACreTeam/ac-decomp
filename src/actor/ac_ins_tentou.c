@@ -69,6 +69,10 @@ extern void aITT_actor_init(ACTOR* actorx, GAME* game) {
         actorx->world.position.y = 6.0f + mCoBG_GetBgY_OnlyCenter_FromWpos(actorx->world.position, -19.0f);
         actorx->shape_info.draw_shadow = FALSE;
         xyz_t_move(&actorx->home.position, &actorx->world.position);
+// Aus stores the spawn unit in work variables
+#if VERSION >= VER_GAFU01_00
+        mFI_Wpos2UtNum(&insect->s32_work0, &insect->s32_work3, actorx->world.position);
+#endif
         action = aITT_ACT_WAIT;
     } else {
         // aINS_INIT_RELEASE
@@ -212,6 +216,11 @@ static int aITT_check_patience(ACTOR* actorx, GAME* game) {
                 insect->patience = 100.0f;
             } else if (aITT_check_player_scoop(actorx) == TRUE) {
                 insect->patience = 100.0f;
+// Aus version checks if the insect is in a unit without a flower
+#if VERSION >= VER_GAFU01_00
+            } else if (aITT_check_flower(actorx) == FALSE) {
+                insect->patience = 100.0f;
+#endif
             }
 
             if (insect->patience > 90.0f) {
@@ -492,7 +501,8 @@ static void aITT_actor_move(ACTOR* actorx, GAME* game) {
         // @BUG - They forgot to make a separate case for the snail,
         // so it uses the ladybug/spotted ladybug/mantis let escape behavior.
         // This was fixed in the Australian release.
-#ifndef BUGFIXES
+        // Aus version fixes this!
+#if !defined(BUGFIXES) && VERSION < VER_GAFU01_00
         aITT_setupAction(insect, aITT_ACT_LET_ESCAPE, game);
 #else
         int action;

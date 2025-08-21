@@ -2134,7 +2134,7 @@ static int famicom_rom_load() {
     if (reset_res != 0) {
         OSReport("err code=%d (0x%x), %x,%x,%x,%x,%x,%x\n",
             reset_res, reset_res, famicomCommon.wp, famicomCommon.sp,
-            famicomCommon.wp->work_priv.wram, famicomCommon.wp->work_priv._0B40,
+            famicomCommon.wp->work_priv._0000, famicomCommon.wp->work_priv._0B40,
             famicomCommon.wp->work_priv._2A40, famicomCommon.sp->ppu_chr_banks
         );
         OSReport("NES emu reset failed!!");

@@ -985,6 +985,116 @@ void Museum_Fish_BGCheck(MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
     }
 }
 
+// TODO: fakematch
+#if VERSION == VER_GAFU01_00
+void Museum_Fish_Kusa_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
+    static int kusa_group_tbl[14] = {
+        mfish_TANK_0,
+        mfish_TANK_2,
+        mfish_TANK_1,
+        mfish_TANK_3,
+        mfish_TANK_3,
+        mfish_TANK_4,
+        mfish_TANK_4,
+        mfish_TANK_4,
+        mfish_TANK_4,
+        mfish_TANK_4,
+        mfish_TANK_0,
+        mfish_TANK_2,
+        mfish_TANK_1,
+        mfish_TANK_3,
+    };
+
+    MUSEUM_FISH_ACTOR* realActor = (MUSEUM_FISH_ACTOR*)actor; // dangit!
+    MUSEUM_FISH_PRIVATE_DATA* f = realActor->prvFish;
+    int i;
+    int j;
+    s16 v;
+    f32 f30 = 0.0f;
+    f32 f29 = 0.0f;
+    f32 f28 = 0.0f;
+    f32 temp;
+    f32 f1;
+    f32 z;
+    f32 x;
+    f32 dSQ;
+    f32 dx;
+    f32 dy;
+    f32 t;
+    f32 sq;
+    f32 d;
+    
+    for (i = 0; i < aGYO_TYPE_NUM; i++, f++) {
+        f->_62E_flags &= ~0x100;
+
+        // this if statement salso works as a continue statement
+        if (f->fish_idx != aGYO_TYPE_EEL && f->fish_idx != aGYO_TYPE_COELACANTH &&
+            f->fish_idx != aGYO_TYPE_FROG) {
+
+            for (j = 0; j < 14; j++) {
+                f1 = (j < 5) ? 90.0f : (j < 10) ? 115.0f : 80.0f;
+
+                if (kusa_group_tbl[j] == f->tank && f->objchk_pos.y < f1) {
+                    if (kusa_group_tbl[j] == mfish_TANK_4) {
+                        if (f->fish_idx == aGYO_TYPE_COELACANTH) {
+                            d = 5.0f + f->init_data._08;
+                        } else {
+                            d = 10.0f + f->init_data._08;
+                        }
+                        dSQ = SQ(d);
+                    } else {
+                        d = 5.0f + f->init_data._08;
+                        dSQ = SQ(d);
+                    }
+
+                    x = f->objchk_pos.x - (kusa_pos[j].x + realActor->prvKusa[j]._540.x);
+                    z = f->objchk_pos.z - (kusa_pos[j].z + realActor->prvKusa[j]._540.z);
+
+                    sq = SQ(x) + SQ(z);
+                    if (sq < dSQ) {
+                        v = atans_table(z, x);
+
+                        temp = d - sqrtf(sq);
+                        temp *= 0.1f;
+                        // d -= sqrtf(sq);
+                        // d *= 0.1f;
+                        f30 += sin_s(v) * (temp);
+                        if (kusa_group_tbl[j] == mfish_TANK_4) {
+                            f29 += MAX(cos_s(v), 0.2f) * temp;
+                        } else {
+                            f29 += cos_s(v) * temp;
+                        }
+
+                        f28 += 1;
+
+                        realActor->prvKusa[j]._540.x -= (f->init_data._20 * 1.5f) * temp * sin_s(v);
+
+                        if (kusa_group_tbl[j] == mfish_TANK_4) {
+                            realActor->prvKusa[j]._540.z -= (f->init_data._20 * 1.5f) * temp * MAX(cos_s(v), 0.1f);
+                        } else {
+                            realActor->prvKusa[j]._540.z -= (f->init_data._20 * 1.5f) * temp * cos_s(v);
+                        }
+                        t = SQ(realActor->prvKusa[j]._540.x) + SQ(realActor->prvKusa[j]._540.z);
+                        t = sqrtf(t);
+                        if (t > 4.0f) {
+                            xyz_t_mult_v(&realActor->prvKusa[j]._540, 4.0f / t);
+                        }
+                        realActor->prvKusa[j]._538.y = DEG2SHORT_ANGLE(3.5f);
+                    }
+                }
+            }
+            if (f28 > 0.0f) {
+                f->_62E_flags |= 0x100;
+                f->position.x += (f30 / f28);
+                f->position.z += (f29 / f28);
+            }
+            f28 = 0.0f;
+            f29 = 0.0f;
+            f30 = 0.0f;
+        }
+    }
+}
+#else
 void Museum_Fish_Kusa_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
     static int kusa_group_tbl[14] = {
         mfish_TANK_0,
@@ -1087,6 +1197,7 @@ void Museum_Fish_Kusa_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
         }
     }
 }
+#endif
 
 void Museum_Fish_Object_Check(MUSEUM_FISH_ACTOR* actor, GAME* game) {
     int i;
@@ -1345,14 +1456,14 @@ void mfish_get_player_area(MUSEUM_FISH_ACTOR* actor, GAME* gamex) {
 }
 
 void mfish_get_flow_vec(xyz_t* pos, MUSEUM_FISH_PRIVATE_DATA* actor, GAME* game) {
-    f32 v;
     xyz_t p2;
     xyz_t p = suisou_pos[actor->tank];
     xyz_t t;
     xyz_t p3;
-
-    f32 xy;
+    
     f32 s;
+    f32 v;
+    f32 xy;
     s16 s2;
 
     f32 d;

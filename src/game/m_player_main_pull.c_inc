@@ -1,14 +1,15 @@
-static int Player_actor_request_main_pull(GAME* game, int ftr_no, s16 angle, xyz_t* start_pos, xyz_t* end_pos,
-                                          xyz_t* ofs, int priority) {
+static int Player_actor_request_main_pull(GAME* game, int ftr_no, s16 angle, const xyz_t* start_pos, const xyz_t* end_pos,
+                                          const xyz_t* ofs, int priority) {
     if (mPlib_get_player_actor_main_index(game) == mPlayer_INDEX_HOLD &&
         Player_actor_check_request_main_able(game, mPlayer_INDEX_PULL, priority)) {
         PLAYER_ACTOR* player = GET_PLAYER_ACTOR_GAME(game);
+        mPlayer_request_pull_c* req_pull_p = &player->requested_main_index_data.pull;
 
-        player->requested_main_index_data.pull.ftrNo = ftr_no;
-        player->requested_main_index_data.pull.angle_y = angle;
-        player->requested_main_index_data.pull.start_pos = *start_pos;
-        player->requested_main_index_data.pull.end_pos = *end_pos;
-        player->requested_main_index_data.pull.ofs = *ofs;
+        req_pull_p->ftrNo = ftr_no;
+        req_pull_p->angle_y = angle;
+        req_pull_p->start_pos = *start_pos;
+        req_pull_p->end_pos = *end_pos;
+        req_pull_p->ofs = *ofs;
 
         Player_actor_request_main_index(game, mPlayer_INDEX_PULL, priority);
 

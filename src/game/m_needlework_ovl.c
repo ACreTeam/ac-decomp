@@ -338,12 +338,11 @@ static void mNW_set_frame_dl(Submenu* submenu, GAME* game, mSM_MenuInfo_c* menu_
 extern Gfx sav_mark_winT_before_model[];
 
 extern void mNW_draw_sav_mark_before(GAME* game) {
-    GRAPH* graph = game->graph;
     int g;
     int prim_g;
     int env_g;
 
-    OPEN_POLY_OPA_DISP(graph);
+    OPEN_POLY_OPA_DISP(game->graph);
 
     gSPDisplayList(POLY_OPA_DISP++, sav_mark_winT_before_model);
     g = game->frame_counter % 40;
@@ -356,7 +355,7 @@ extern void mNW_draw_sav_mark_before(GAME* game) {
     env_g = g * 3;
     gDPSetEnvColor(POLY_OPA_DISP++, env_g, 210 + g * 2, env_g, 255);
 
-    CLOSE_POLY_OPA_DISP(graph);
+    CLOSE_POLY_OPA_DISP(game->graph);
 }
 
 extern Gfx sav_mark_winT_model[];
@@ -456,6 +455,22 @@ static void mNW_set_frame_dl_cpo(Submenu* submenu, GAME* game, mSM_MenuInfo_c* m
     CLOSE_POLY_OPA_DISP(graph);
 
     mNW_draw_sav_mark_before(game);
+
+// TODO: I don't like this devation. It's probably fake.
+#if VERSION >= VER_GAFU01_00
+    {
+        s16* y_p = mark_table_y;
+        s16* x_p = mark_table_x;
+        int j;
+        for (j = 0; j < mNW_DESIGN_COUNT; j++, y_p++, x_p++) {
+            if (mNW_check_mark_flg(submenu, j)) {
+                Matrix_push();
+                mNW_draw_sav_mark(game, *x_p, *y_p);
+                Matrix_pull();
+            }
+        }
+    }
+#else
     for (j = 0; j < mNW_DESIGN_COUNT; j++) {
         if (mNW_check_mark_flg(submenu, j)) {
             Matrix_push();
@@ -463,6 +478,7 @@ static void mNW_set_frame_dl_cpo(Submenu* submenu, GAME* game, mSM_MenuInfo_c* m
             Matrix_pull();
         }
     }
+#endif
 }
 
 static void mNW_needlework_ovl_draw(Submenu* submenu, GAME* game) {

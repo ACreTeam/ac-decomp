@@ -76,16 +76,16 @@ void ksNesDrawClearEFBFirst(ksNesCommonWorkObj* wp) {
     GXLoadPosMtxImm(wp->work_priv.draw_mtx, 0);
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
     {
-        GXPosition2s16(0x80, -0x80);
+        GXPosition2s16(128, -128);
         GXColor1u32(0x00ff0000);
 
-        GXPosition2s16(0x180, -0x80);
+        GXPosition2s16(384, -128);
         GXColor1u32(0x00000000);
 
-        GXPosition2s16(0x180, -0x180);
+        GXPosition2s16(384, -384);
         GXColor1u32(0x0000ff00);
 
-        GXPosition2s16(0x80, -0x180);
+        GXPosition2s16(128, -384);
         GXColor1u32(0x00000000);
     }
     GXEnd();
@@ -114,6 +114,8 @@ void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj*) {
 }
 
 void ksNesDrawBG(ksNesCommonWorkObj*, ksNesStateObj*) {
+    const static GXColor color_r_0xf0 = { 240, 0, 0, 0 };
+    // GXSetIndTexMtx(GX_ITM_0, );
 }
 
 u32 ksNesDrawMakeOBJBlankVtxList(ksNesCommonWorkObj* wp) {
@@ -126,18 +128,18 @@ u32 ksNesDrawMakeOBJBlankVtxList(ksNesCommonWorkObj* wp) {
         if (bMask != comparison_mask && ((bMask != 0) || (comparison_mask != 4)) &&
             (bMask != 4 || comparison_mask != 0)) {
             if (ret & 1 != 0) {
-                wp->work_priv.wram[ret] = i - wp->_004C[ret + 0x13];
+                wp->work_priv._0000[ret] = i - wp->_004C[ret + 0x13];
                 ret++;
             }
             if ((comparison_mask == 20) || (wp->work_priv._0B40[i]._19 & 0x10) == 0) {
-                wp->work_priv.wram[ret++] = i;
+                wp->work_priv._0000[ret++] = i;
             }
             comparison_mask = wp->work_priv._0B40[i]._19 & 0x14;
         }
     }
 
     if (ret & 1) {
-        wp->work_priv.wram[ret] = i - wp->_004C[ret + 0x13];
+        wp->work_priv._0000[ret] = i - wp->_004C[ret + 0x13];
         ret++;
     }
     return ret;
@@ -153,65 +155,60 @@ u32 ksNesDrawMakeOBJAppearVtxList(ksNesCommonWorkObj* wp) {
         if (bMask != comparison_mask && ((bMask != 0) || (comparison_mask != 4)) &&
             (bMask != 4 || comparison_mask != 0)) {
             if (ret & 1 != 0) {
-                wp->work_priv.wram[ret] = i - wp->_004C[ret + 0x13];
+                wp->work_priv._0000[ret] = i - wp->_004C[ret + 0x13];
                 ret++;
             }
             if ((wp->work_priv._0B40[i]._19 & 0x10)) {
-                wp->work_priv.wram[ret++] = i;
+                wp->work_priv._0000[ret++] = i;
             }
             comparison_mask = wp->work_priv._0B40[i]._19 & 0x14;
         }
     }
 
     if (ret & 1) {
-        wp->work_priv.wram[ret] = i - wp->_004C[ret + 0x13];
+        wp->work_priv._0000[ret] = i - wp->_004C[ret + 0x13];
         ret++;
     }
     return ret;
 }
 
 void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
-    u32 size = 0x100000;
-    int i;
+    u32 size = wp->chr_to_i8_buf_size <= CHR_TO_I8_BUF_SIZE ? wp->chr_to_i8_buf_size : CHR_TO_I8_BUF_SIZE;
+    // int i;
     GXTexObj GStack_7c;
     GXTexObj GStack_9c;
     GXTexObj GStack_bc;
-    if (wp->chr_to_i8_buf_size <= 0x100000) {
-        size = wp->chr_to_i8_buf_size;
-    }
+    u32 i;
+    u32 j;
+    
     if (c == 0) {
-        for (u32 i = 0; i < 0x110; i++) {
-            u32 v;
-            if (i < 0xf0) {
-                v = 8;
-                if (state->frame_flags & 0x2000) {
-                    v = 255;
-                }
-            } else {
-                v = 0;
-            }
-            wp->work_priv.wram[i] = v;
+        for (i = 0; i < 0x110; i++) {
+            wp->work_priv._0000[i] = i < 0xF0 ? ((state->frame_flags & 0x2000) ? 255 : 8) : 0;
             if ((wp->work_priv._0B40[i]._19 & 0x10) == 0) {
-                wp->work_priv.wram[i] = 0;
+                wp->work_priv._0000[i] = 0;
             }
         }
         if (state->prg_size == 0x40000 && memcmp(state->prgromp + 0x3ffe9, "MARIO 3", 7) == 0) {
             for (i = 0; i < 0xf0; i++) {
                 if (wp->work_priv._0B40[i]._0C == 0x7e7e7e7e) {
-                    wp->work_priv.wram[i] = 0;
+                    wp->work_priv._0000[i] = 0;
                 }
             }
         }
-        memset(&wp->work_priv.wram[0x340], 0, 0x800);
-        u8* uVar6 = &wp->work_priv.wram[0x340];
+
+        memset(&wp->work_priv._0340, 0, sizeof(wp->work_priv._0340));
+        int b;
+        int _c;
         int a;
-        for (u32 i = 0; i < 0x100; i++) {
-            int _j = 8;
+        int _j;
+        _0340_struct* _340_p = wp->work_priv._0340;
+        
+        for (i = 0; i < 0x100; i += 4) {
+            _j = 8;
             if (wp->work_priv._0B40[wp->work_priv._2940[i]]._18 & 0x20) {
                 _j = 0x10;
             }
             a = 0;
-            int b, _c;
             if (wp->work_priv._2940[i + 2] & 0x80) {
                 b = _j << 2;
                 _c = -4;
@@ -219,31 +216,28 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
                 b = 0;
                 _c = 4;
             }
-            u32 j, val;
             for (j = 0; j < _j; j++) {
-                int ind = j + wp->work_priv._2940[i];
-                val = wp->work_priv.wram[ind];
-                if (val) {
-                    wp->work_priv.wram[ind]--;
+                if (wp->work_priv._0000[wp->work_priv._2940[i] + j] != 0) {
+                    wp->work_priv._0000[wp->work_priv._2940[i] + j]--;
                     if ((a & 2) == 0) {
-                        uVar6[a] = wp->work_priv._2940[i] + j;
-                        uVar6[a + 1] = b;
+                        _340_p->_00[a] = j + wp->work_priv._2940[i];
+                        _340_p->_00[a + 1] = b;
                         a += 2;
                     }
                 } else if ((a & 2) != 0) {
-                    uVar6[a] = wp->work_priv._2940[i] + j;
-                    uVar6[a + 1] = b;
+                    _340_p->_00[a] = j + wp->work_priv._2940[i];
+                    _340_p->_00[a + 1] = b;
                     a += 2;
                 }
                 b += _c;
-                val = b;
             }
             if ((a & 2) != 0) {
-                uVar6[a] = wp->work_priv._2940[i] + j;
-                uVar6[a + 1] = val;
+                _340_p->_00[a] = j + wp->work_priv._2940[i];
+                _340_p->_00[a + 1] = b;
                 a += 2;
             }
-            wp->work_priv.wram[0x300 + (i / 4)] = a;
+            wp->work_priv._0300[i >> 2] = a;
+            _340_p++;
         }
     }
     GXSetNumChans(1);
@@ -286,7 +280,7 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
     GXSetIndTexOrder(GX_INDTEXSTAGE1, GX_TEXCOORD1, GX_TEXMAP2);
     GXSetIndTexCoordScale(GX_INDTEXSTAGE1, GX_ITS_8, GX_ITS_1);
     {
-        u32 i;
+        // u32 i;
         for (i = 0; size > (0x8000 << i); i++) {}
 
         static f32 indtexmtx_obj[2][3] = { { 0.5f, 0.f, 0.f }, { 0.f, 0.0625f, 0.f } };
@@ -310,6 +304,143 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
     GXSetTevAlphaIn(GX_TEVSTAGE2, GX_CA_APREV, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO);
     GXSetTevAlphaOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_AND, GX_ALWAYS, 0);
+
+    u32 n_verts = 0;
+    for (i = 0; i < 0x100; i += 4) {
+        if (c == 0 || (wp->work_priv._2940[i + 2] & 0x20) != 0) {
+            n_verts += wp->work_priv._0300[i >> 2];
+        }
+    }
+
+    u32 idx = 0x100-4;
+    u32 idx2 = 0x40-1;
+    GXBegin(GX_QUADS, GX_VTXFMT0, n_verts);
+    while (TRUE) {
+        _0340_struct* _0340_thing = &wp->work_priv._0340[idx2];
+        u8* bruh = _0340_thing->_00;
+        // u32 scanline_idx = wp->work_priv._2940[idx];
+        u32 flags = wp->work_priv._2940[idx + 1];
+        u32 flags2;
+
+        if (wp->work_priv._0B40[wp->work_priv._2940[idx]]._18 & 0x20) {
+            flags2 = wp->work_priv._0B40[wp->work_priv._2940[idx]]._08[(flags >> 6) | ((flags & 1) << 2)];
+            flags &= (u8)~0x01;
+        } else {
+            flags2 = wp->work_priv._0B40[wp->work_priv._2940[idx]]._08[(flags >> 6) | ((wp->work_priv._0B40[wp->work_priv._2940[idx]]._18 >> 1) & 4)];
+        }
+
+        // u32 flags3 = wp->work_priv._2940[idx + 2];
+        u32 x0 = wp->work_priv._2940[idx + 3] + 128;
+        u32 x1 = wp->work_priv._2940[idx + 3] + 136;
+        u32 color = ((wp->work_priv._2940[idx + 2] & 3) * 0x10 + 4) * 0x01000000;
+
+        if (c != 0) {
+            if ((flags & 0x20) == 0) {
+                goto loop_condition;
+            }
+        }  else {
+            if ((flags & 0x20) != 0) {
+                color |= 0xFF010000;
+            }
+        }
+        
+        u32 s0;
+        u32 t0;
+        u32 s1;
+        u32 s1_2;
+        u32 t1;
+        u32 t1_2;
+        u32 temp;
+        // u32 j;
+
+        s0 = 0;
+        t0 = (flags2 & (u8)~0x01) * 2;
+        temp = ((flags & 0x3F) * 0x20) | ((flags2 & 0x01) * 0x800);
+
+        if (wp->work_priv._2940[idx + 2] & 0x40) {
+            s1 = temp + 32;
+            s1_2 = temp;
+        } else {
+            s1 = temp;
+            s1_2 = temp + 32;
+        }
+
+        for (j = 0; j < wp->work_priv._0300[idx >> 2]; j += 4) {
+            u32 y0 = -129 - bruh[0];
+            t1 = bruh[1];
+            u32 y1 = -129 - bruh[2];
+            t1_2 = bruh[3];
+
+            bruh += 4;
+            GXPosition2s16(x0, y0);
+            GXColor1u32(color);
+            GXTexCoord2u16(s0, t0);
+            GXTexCoord2u16(s1, t1);
+            
+            GXPosition2s16(x1, y0);
+            GXColor1u32(color);
+            GXTexCoord2u16(s0, t0);
+            GXTexCoord2u16(s1_2, t1);
+
+            GXPosition2s16(x1, y1);
+            GXColor1u32(color);
+            GXTexCoord2u16(s0, t0);
+            GXTexCoord2u16(s1_2, t1_2);
+
+            GXPosition2s16(x0, y1);
+            GXColor1u32(color);
+            GXTexCoord2u16(s0, t0);
+            GXTexCoord2u16(s1, t1_2);
+        }
+
+        
+loop_condition:
+        if (idx == 0) {
+            break;
+        }
+
+        idx -= 4;
+        idx2--;
+    }
+
+    GXEnd();
+
+    if (c != 0) {
+        u32 n = ksNesDrawMakeOBJBlankVtxList(wp);
+
+        if (n != 0) {
+            GXSetNumChans(1);
+            GXSetNumTexGens(0);
+            GXSetNumTevStages(1);
+            GXSetNumIndStages(0);
+            GXSetBlendMode(GX_BM_LOGIC, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_COPY);
+            GXClearVtxDesc();
+            GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
+            GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
+            GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XY, GX_S16, 0);
+            GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+            GXSetTevDirect(GX_TEVSTAGE0);
+            GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+            GXSetChanCtrl(GX_COLOR0A0, GX_FALSE, GX_SRC_VTX, GX_SRC_VTX, GX_LIGHT_NULL, GX_DF_NONE, GX_AF_NONE);
+            GXSetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+            GXSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
+            
+            GXBegin(GX_QUADS, GX_VTXFMT0, n * 2);
+            for (u32 i = 0; i < n; i += 2) {
+                s16 x1 = (wp->work_priv._0B40[wp->work_priv._0000[i]]._19 & 0x14) == 0x10 ? 136 : 384;
+
+                GXPosition2s16(128, -128 - wp->work_priv._0000[i]);
+                GXColor1u32(0x00000000);
+                GXPosition2s16(x1, -128 - wp->work_priv._0000[i]);
+                GXColor1u32(0x00000000);
+                GXPosition2s16(x1, -128 - wp->work_priv._0000[i] - wp->work_priv._0000[i + 1]);
+                GXColor1u32(0x00000000);
+                GXPosition2s16(128, -128 - wp->work_priv._0000[i] - wp->work_priv._0000[i + 1]);
+                GXColor1u32(0x00000000);
+            }
+            GXEnd();
+        }
+    }
 }
 
 void ksNesDrawOBJMMC5(ksNesCommonWorkObj*, ksNesStateObj*, u32) {

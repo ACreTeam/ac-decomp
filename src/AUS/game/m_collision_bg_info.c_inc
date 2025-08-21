@@ -62,7 +62,7 @@ extern f32 mCoBG_Wpos2BgUtCenterHeight_AddColumn(xyz_t pos) {
     mCoBG_column_c column;
 
     mCoBG_Wpos2UnitInfo(&ut_info, pos);
-    if (mCoBG_MakeOneColumnCollisionData(&column, &ut_info, FALSE, NULL, -1, -1)) {
+    if (mCoBG_MakeOneColumnCollisionData(NULL, &column, &ut_info, FALSE, NULL, -1, -1)) {
         return column.height;
     }
 
@@ -160,11 +160,12 @@ extern int mCoBG_ScrollCheck(xyz_t start, xyz_t end, f32 radius) {
         {
             mCoBG_column_c* col2;
             int count;
+            int i;
 
             column = l_VecInf.column;
-            mCoBG_MakeColumnCollisionData(column, &l_VecInf.col_count, l_crtutInf, 3, TRUE, NULL, -1, -1);
+            mCoBG_MakeColumnCollisionData(NULL, column, &l_VecInf.col_count, l_crtutInf, 3, TRUE, NULL, -1, -1);
             count = l_VecInf.col_count;
-            if (count != 0) {
+            if (count > 0) {
                 col2 = column;
                 for (i = 0; i < count; i++) {
                     f32 dx = end.x - col2->pos.x;
@@ -597,7 +598,7 @@ extern int mCoBG_CheckHole(xyz_t pos) {
     return FALSE;
 }
 
-extern int mCoBG_CheckSkySwing(xyz_t pos) {
+extern int mCoBG_CheckAirSwing(xyz_t pos) {
     mCoBG_Collision_u* col = mFI_GetUnitCol(pos);
     u32 attr = col->data.unit_attribute;
 
@@ -779,7 +780,7 @@ extern int mCoBG_SearchWaterLimitDistN(xyz_t* water_pos, xyz_t pos, s16 angle, f
 
                 if (water_count == ARRAY_COUNT(offset)) {
                     *water_pos = search;
-                    water_pos->y = mCoBG_GetWaterHeight_File(search, __FILE__, 1137);
+                    water_pos->y = mCoBG_GetWaterHeight_File(search, __FILE__, 1310);
                     return TRUE;
                 }
 
@@ -819,6 +820,7 @@ extern int mCoBG_CheckRoughPathInRoom(const xyz_t* pos) {
     return p;
 }
 
+// GAFU01 checks for sea wave attributes
 extern f32 mCoBG_GetBalloonGroundY(const xyz_t* pos) {
     mCoBG_UnitInfo_c ut_info;
     s_xyz normal_ground_angle;
@@ -832,7 +834,8 @@ extern f32 mCoBG_GetBalloonGroundY(const xyz_t* pos) {
         u32 block_kind = mFI_BkNum2BlockKind(bx, bz);
 
         if ((block_kind & mRF_BLOCKKIND_MARINE) != 0) {
-            if (mCoBG_CheckWaterAttribute(attr) == TRUE || attr == mCoBG_ATTRIBUTE_WAVE || attr == mCoBG_ATTRIBUTE_SAND || attr == mCoBG_ATTRIBUTE_SEA) {
+            if (mCoBG_CheckWaterAttribute(attr) == TRUE || attr == mCoBG_ATTRIBUTE_WAVE || attr == mCoBG_ATTRIBUTE_SAND ||
+                attr == mCoBG_ATTRIBUTE_SEA || attr == mCoBG_ATTRIBUTE_37 || attr == mCoBG_ATTRIBUTE_38) {
                 return mFI_UNIT_BASE_SIZE_F;
             }
         }
@@ -894,13 +897,7 @@ static f32 mCoBG_CheckBallRollingAreaRate(const xyz_t* pos, const xyz_t* start_p
         f32 dist_start_cross_x = cross[0] - start[0];
         f32 dist_start_cross_z = cross[1] - start[1];
         f32 dist_start_cross = sqrtf(SQ(dist_start_cross_x) + SQ(dist_start_cross_z));
-        f32 rate;
-
-        if (F32_IS_ZERO(dist_start_end) == FALSE) {
-            rate = dist_start_cross / dist_start_end;
-        } else {
-            rate = -1.0f;
-        }
+        f32 rate = !F32_IS_ZERO(dist_start_end) ? dist_start_cross / dist_start_end : -1.0f;
 
         if (mCoBG_RangeCheckLinePoint(start, end, cross) == FALSE) {
             rate = -1.0f;
@@ -1143,4 +1140,478 @@ extern int mCoBG_Height2GetLayer(f32 height) {
 
 extern int mCoBG_GetLayer(const xyz_t* pos) {
     return mCoBG_Height2GetLayer(mCoBG_GetBgY_OnlyCenter_FromWpos2(*pos, 0.0f));
+}
+
+// GAFU01 renames mCoBG_GetBgY_AngleS_FromWpos2 to this
+extern f32 mCoBG_Wpos2BgHeight_AngleSXXX(s_xyz* ground_angle, xyz_t pos, f32 ground_dist) {
+    mCoBG_UnitInfo_c ut_info;
+    s_xyz normal_ground_angle;
+    f32 normal_y;
+    f32 column_y;
+    static s_xyz ground_angle0 = { 0, 0, 0 };
+    f32 t0;
+    f32 t1;
+    f32 ret;
+
+    if (ground_angle != NULL) {
+        *ground_angle = ground_angle0;
+    }
+
+    mCoBG_Wpos2UnitInfo(&ut_info, pos);
+    normal_y = mCoBG_GetBGHeight_Normal(&normal_ground_angle, &ut_info);
+    column_y = mCoBG_GetBGHeight_Column(&pos, &ut_info);
+    
+    if (ground_angle != NULL && normal_y >= column_y && normal_y >= -100.0f) {
+        *ground_angle = normal_ground_angle;
+        return normal_y - ground_dist;
+    }
+
+    t0 = MAX(normal_y, -100.0f);
+    t1 = MAX(normal_y, column_y);
+    if (t1 > t0) {
+        ret = MAX(normal_y, column_y);
+    } else {
+        ret = MAX(normal_y, -100.0f);
+    }
+
+    return ret - ground_dist;
+}
+
+
+
+// GAFU01 adds checks for sea attributes when checking from bridge tiles
+extern f32 mCoBG_GetWaterHeight_File(xyz_t pos, char* file, int line) {
+    u32 attr;
+    int ux;
+    int uz;
+    mCoBG_Collision_u* col;
+    xyz_t mod_pos = pos;
+
+    mFI_Wpos2UtNum(&ux, &uz, pos);
+    col = mFI_UtNum2UtCol(ux, uz);
+    attr = col->data.unit_attribute;
+
+    if (attr == mCoBG_ATTRIBUTE_SEA || attr == mCoBG_ATTRIBUTE_37 || attr == mCoBG_ATTRIBUTE_38) {
+        return 20.0f;
+    }
+
+    if (attr >= mCoBG_ATTRIBUTE_WATER && attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+        return 20.0f + mCoBG_Wpos2BgHeight_AngleSXXX(NULL, pos, 0.0f);
+    }
+
+    if (attr >= mCoBG_ATTRIBUTE_27 && attr <= mCoBG_ATTRIBUTE_35) {
+        int idx = attr - mCoBG_ATTRIBUTE_27;
+        int search = mCoBG_bridge_search_water[idx];
+        u32 new_attr;
+        int i;
+
+        for (i = 0; i < mSc_DIRECT_NUM; i++) {
+            if ((search & (1 << i)) != 0) {
+                int ux;
+                int uz;
+
+                mCoBG_PlussDirectOffset(&mod_pos, pos, i);
+                mFI_Wpos2UtNum(&ux, &uz, mod_pos);
+                new_attr = mFI_UtNum2UtCol(ux, uz)->data.unit_attribute;
+
+                if (new_attr == mCoBG_ATTRIBUTE_SEA || new_attr == mCoBG_ATTRIBUTE_37 || new_attr == mCoBG_ATTRIBUTE_38) {
+                    return 20.0f;
+                }
+
+                if (new_attr >= mCoBG_ATTRIBUTE_WATER && new_attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+                    return 20.0f + mCoBG_Wpos2BgHeight_AngleSXXX(NULL, mod_pos, 0.0f);
+                }
+            }
+        }
+    } else if (attr >= mCoBG_ATTRIBUTE_39 && attr <= mCoBG_ATTRIBUTE_42) {
+        u32 attr2 = mCoBG_Wpos2Attribute(pos, NULL);
+
+        if (attr2 >= mCoBG_ATTRIBUTE_WATER && attr2 <= mCoBG_ATTRIBUTE_RIVER_NE) {
+            int i;
+            u32 new_attr;
+            xyz_t new_pos;
+            int idx = attr - mCoBG_ATTRIBUTE_39;
+            int search = mCoBG_grass3_search_water[idx];
+
+            for (i = 0; i < mSc_DIRECT_NUM; i++) {
+                if ((search & (1 << i)) != 0) {
+                    int ux;
+                    int uz;
+
+                    mCoBG_PlussDirectOffset(&new_pos, pos, i);
+                    mFI_Wpos2UtNum(&ux, &uz, new_pos);
+                    new_attr = mFI_UtNum2UtCol(ux, uz)->data.unit_attribute;
+
+                    if (new_attr >= mCoBG_ATTRIBUTE_WATER && new_attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+                        return 20.0f + mCoBG_Wpos2BgHeight_AngleSXXX(NULL, new_pos, 0.0f);
+                    }
+                }
+            }
+        }
+    }
+
+    return -100.0f;
+}
+
+// GAFU01 checks two missing sea attributes
+extern int mCoBG_CheckWaterAttribute(u32 attr) {
+    if (attr == mCoBG_ATTRIBUTE_SEA || attr == mCoBG_ATTRIBUTE_37 || attr == mCoBG_ATTRIBUTE_38) {
+        return TRUE;
+    }
+
+    if (attr >= mCoBG_ATTRIBUTE_WATER && attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+extern int mCoBG_CheckWaterAttribute_OutOfSea(u32 attr) {
+    return (attr >= mCoBG_ATTRIBUTE_WATER && attr <= mCoBG_ATTRIBUTE_RIVER_NE) != FALSE;
+}
+
+static f32 mCoBG_wave_cos = 0.0f;
+
+extern void mCoBG_WaveCos2BgCheck(f32 value) {
+    mCoBG_wave_cos = value;
+}
+
+extern f32 mCoBG_WaveCos(void) {
+    return mCoBG_wave_cos;
+}
+
+extern int mCoBG_GetWaterFlow(xyz_t* flow, u32 attr) {
+    static xyz_t flow_data[] = {
+        {0.0f, 0.0f, 0.0f},
+        {0.0f, -5.0f, 0.0f},
+        {0.0f, 0.0f, -0.5f},
+        {-0.35355338f, 0.0f, -0.35355338f},
+        {-0.5f, 0.0f, 0.0f},
+        {-0.35355338f, 0.0f, 0.35355338f},
+        {0.0f, 0.0f, 0.5f},
+        {0.35355338f, 0.0f, 0.35355338f},
+        {0.5f, 0.0f, 0.0f},
+        {0.35355338f, 0.0f, -0.35355338f},
+    };
+
+    if (attr == mCoBG_ATTRIBUTE_SEA) {
+        static const xyz_t sea_flow = { 0.0f, 0.0f, -1.0f };
+
+        *flow = sea_flow;
+        return TRUE;
+    }
+
+    if (mCoBG_CheckWaterAttribute(attr)) {
+        int idx = attr - mCoBG_ATTRIBUTE_WATER;
+
+        *flow = flow_data[idx];
+        return TRUE;
+    }
+
+    *flow = flow_data[0];
+    return FALSE;
+}
+
+extern int mCoBG_CheckWaveAttr(u32 attr) {
+    switch (attr) {
+        case mCoBG_ATTRIBUTE_WAVE:
+        case mCoBG_ATTRIBUTE_36:
+        case mCoBG_ATTRIBUTE_25:
+        case mCoBG_ATTRIBUTE_26:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
+// @unused, @fabricated
+extern int mCoBG_CheckSand2Sea(xyz_t* pos) {
+    u32 attr = mCoBG_Wpos2BgAttribute_Original(*pos);
+
+    if (attr == mCoBG_ATTRIBUTE_SEA || mCoBG_CheckWaveAttr(attr)) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+
+static u32 mCoBG_OffsetInRule(int ofs) {
+    if (ofs > 31) {
+        return 31;
+    }
+
+    return CLAMP(ofs, 0, ofs);
+}
+
+static void mCoBG_SetBestBgY(mCoBG_Collision_u* col, s16* change_ofs) {
+    u32 max = mCoBG_GetMaxOffset(col->data.center, col->data.top_left, col->data.bot_left, col->data.bot_right, col->data.top_right);
+    u32 min = mCoBG_GetMinOffset(col->data.center, col->data.top_left, col->data.bot_left, col->data.bot_right, col->data.top_right);
+}
+
+static void mCoBG_TidyChangeOffset(s16* change_ofs, mCoBG_Collision_u* col) {
+    if (
+        // clang-format off
+        col->data.center + *change_ofs > 31 ||
+        col->data.top_left + *change_ofs > 31 ||
+        col->data.bot_left + *change_ofs > 31 ||
+        col->data.bot_right + *change_ofs > 31 ||
+        col->data.top_right + *change_ofs > 31 ||
+        col->data.center + *change_ofs < 0 ||
+        col->data.top_left + *change_ofs < 0 ||
+        col->data.bot_left + *change_ofs < 0 ||
+        col->data.bot_right + *change_ofs < 0 ||
+        col->data.top_right + *change_ofs < 0
+        // clang-format on
+    ) {
+        mCoBG_SetBestBgY(col, change_ofs);
+    }
+}
+
+// @unused, @fabricated
+extern void mCoBG_Ut2SetPlussOffset(int ux, int uz, s16 change_ofs, s16 attr) {
+    xyz_t pos = { 0.0f, 0.0f, 0.0f };
+
+    if (mFI_UtNum2CenterWpos(&pos, ux, uz)) {
+        mCoBG_SetPlussOffset(pos, change_ofs, attr);
+    }
+}
+
+extern void mCoBG_SetPlussOffset(xyz_t wpos, s16 change_ofs, s16 attr) {
+    int ux;
+    int uz;
+
+    if (mFI_Wpos2UtNum(&ux, &uz, wpos)) {
+        mCoBG_Collision_u* col = mFI_UtNum2UtCol(ux, uz);
+        u8 keep_h = mFI_UtNum2UtKeepH(ux, uz);
+
+        if (keep_h == col->data.center) {
+            mCoBG_TidyChangeOffset(&change_ofs, col);
+        } else {
+            u32 gap = keep_h - col->data.center;
+
+            col->data.center = (u8)keep_h;
+            col->data.top_left += gap;
+            col->data.bot_left += gap;
+            col->data.bot_right += gap;
+            col->data.top_right += gap;
+            mCoBG_TidyChangeOffset(&change_ofs, col);
+        }
+
+        col->data.center += change_ofs;
+        col->data.bot_left += change_ofs;
+        col->data.top_left += change_ofs;
+        col->data.top_right += change_ofs;
+        col->data.bot_right += change_ofs;
+
+        if (attr != mCoBG_ATTRIBUTE_NONE) {
+            col->data.unit_attribute = (s16)attr;
+        }
+
+    }
+}
+
+extern void mCoBG_SetAttribute(xyz_t pos, s16 attr) {
+    mCoBG_Collision_u* col;
+    int ux;
+    int uz;
+
+    if (mFI_Wpos2UtNum(&ux, &uz, pos)) {
+        col = mFI_UtNum2UtCol(ux, uz);
+        if (attr != mCoBG_ATTRIBUTE_NONE) {
+            col->data.unit_attribute = (s16)attr;
+        }
+    }
+}
+
+extern void mCoBG_Ut2SetPluss5PointOffset_file(int ux, int uz, mCoBG_OffsetTable_c ofs_data, char* file, int line) {
+    xyz_t pos = { 0.0f, 0.0f, 0.0f };
+
+    if (mFI_UtNum2CenterWpos(&pos, ux, uz)) {
+        mCoBG_SetPluss5PointOffset_file(pos, ofs_data, file, line);
+    }
+}
+
+extern void mCoBG_SetPluss5PointOffset_file(xyz_t pos, mCoBG_OffsetTable_c ofs_data, char* file, int line) {
+    int ux;
+    int uz;
+
+    if (mFI_Wpos2UtNum(&ux, &uz, pos)) {
+        u8 keep_h = mFI_UtNum2UtKeepH(ux, uz);
+        mCoBG_Collision_u* col = mFI_UtNum2UtCol(ux, uz);
+
+        if (
+            // clang-format off
+            col->data.center == col->data.top_left &&
+            col->data.center == col->data.bot_left &&
+            col->data.center == col->data.bot_right &&
+            col->data.center == col->data.top_right
+            // clang-format on
+        ) {
+            col->data.center = mCoBG_OffsetInRule(keep_h + ofs_data.centerRight_offset);
+            col->data.top_left = mCoBG_OffsetInRule(keep_h + ofs_data.leftUp_offset);
+            col->data.bot_left = mCoBG_OffsetInRule(keep_h + ofs_data.leftDown_offset);
+            col->data.bot_right = mCoBG_OffsetInRule(keep_h + ofs_data.rightDown_offset);
+            col->data.top_right = mCoBG_OffsetInRule(keep_h + ofs_data.rightUp_offset);
+            col->data.slate_flag = (s8)ofs_data.shape;
+
+            if (ofs_data.unit_attribute != mCoBG_ATTRIBUTE_NONE) {
+                col->data.unit_attribute = ofs_data.unit_attribute;
+            }
+        } else if (
+            // clang-format off
+            ofs_data.centerRight_offset == 0 &&
+            ofs_data.leftUp_offset == 0 &&
+            ofs_data.leftDown_offset == 0 &&
+            ofs_data.rightDown_offset == 0 &&
+            ofs_data.rightUp_offset == 0
+            // clang-format on
+        ) {
+            if (col->data.slate_flag) {
+                col->data.center = keep_h;
+                col->data.top_left = keep_h;
+                col->data.bot_left = keep_h;
+                col->data.bot_right = keep_h;
+                col->data.top_right = keep_h;
+                col->data.slate_flag = FALSE;
+            } else {
+                col->data.center = keep_h;
+                col->data.top_left = keep_h;
+                col->data.bot_left = keep_h;
+                col->data.bot_right = keep_h;
+                col->data.top_right = keep_h;
+            }
+
+            if (ofs_data.unit_attribute != mCoBG_ATTRIBUTE_NONE) {
+                col->data.unit_attribute = ofs_data.unit_attribute;
+            }
+        }
+    }
+}
+
+typedef struct {
+    u8 src;
+    u8 dst;
+} mCoBG_change_poor_c;
+
+extern int mCoBG_Change2PoorAttr(mCoBG_Collision_u* col) {
+    static mCoBG_change_poor_c change_data[] = {
+        { mCoBG_ATTRIBUTE_GRASS0, mCoBG_ATTRIBUTE_GRASS2 },
+        { mCoBG_ATTRIBUTE_GRASS1, mCoBG_ATTRIBUTE_GRASS2 },
+        { mCoBG_ATTRIBUTE_SOIL0, mCoBG_ATTRIBUTE_SOIL2 },
+        { mCoBG_ATTRIBUTE_SOIL1, mCoBG_ATTRIBUTE_SOIL2 },
+    };
+    const u8 attr = col->data.unit_attribute;
+    int i;
+
+    for (i = 0; i < ARRAY_COUNT(change_data); i++) {
+        if (attr == change_data[i].src) {
+            col->data.unit_attribute = change_data[i].dst;
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+
+extern void mCoBG_Ut2SetDefaultOffset(int ux, int uz) {
+    static mCoBG_OffsetTable_c offset_data = { mCoBG_ATTRIBUTE_NONE, 0, 0, 0, 0, 0, FALSE };
+
+    mCoBG_Ut2SetPluss5PointOffset_file(ux, uz, offset_data, __FILE__, 2724);
+}
+
+int mCoBG_block_bgcheck_mode = mCoBG_BLOCK_BGCHECK_MODE_NORMAL;
+
+extern void mCoBG_InitBlockBgCheckMode(void) {
+    mCoBG_block_bgcheck_mode = mCoBG_BLOCK_BGCHECK_MODE_NORMAL;
+}
+
+extern int mCoBG_ChangeBlockBgCheckMode(int mode) {
+    mCoBG_block_bgcheck_mode = mode & 1;
+    return mCoBG_block_bgcheck_mode;
+}
+
+extern int mCoBG_GetBlockBgCheckMode(void) {
+    return mCoBG_block_bgcheck_mode & 1;
+}
+
+extern xyz_t mCoBG_UniqueWallCheck(ACTOR* actorx, f32 range, f32 y_ofs) {
+    int bx;
+    int bz;
+    xyz_t ret = { 0.0f, 0.0f, 0.0f };
+
+    mCoBG_InitRevpos(&l_ActorInf.rev_pos);
+    mCoBG_GetCurrentCenterPosition(&l_ActorInf.center_pos, actorx);
+    mCoBG_GetOldCenterPosition(&l_ActorInf.old_center_pos, actorx);
+    mCoBG_GetSpeedByWpos(l_ActorInf.speed_xz0, actorx);
+
+    if (mFI_Wpos2BlockNum(&bx, &bz, l_ActorInf.old_center_pos)) {
+        xyz_t block_base = { 0.0f, 0.0f, 0.0f };
+
+        mCoBG_SetXyz_t(&l_ActorInf.rev_pos, 0.0f, 0.0f, 0.0f);
+        mFI_BkNum2WposXZ(&block_base.x, &block_base.z, bx, bz);
+        if (mCoBG_GetBlockBgCheckMode() == mCoBG_BLOCK_BGCHECK_MODE_INTRO_DEMO &&
+            (mFI_BkNum2BlockKind(bx, bz) & mRF_BLOCKKIND_PLAYER) != 0
+        ) {
+            block_base.x += mFI_UT_WORLDSIZE_X_F;
+            block_base.z += mFI_UT_WORLDSIZE_Z_F;
+            return mCoBG_ScopeWallCheck(actorx, &block_base, mFI_BK_WORLDSIZE_X - 2 * mFI_UT_WORLDSIZE_X, mFI_BK_WORLDSIZE_Z - 2 * mFI_UT_WORLDSIZE_Z, range, y_ofs);
+        } else {
+            return mCoBG_ScopeWallCheck(actorx, &block_base, mFI_BK_WORLDSIZE_X, mFI_BK_WORLDSIZE_Z, range, y_ofs);
+        }
+    }
+
+    return ret;
+}
+
+// GAFU01 reworks this to check based on the actor's world position, use stack xyz_t instead of l_ActorInf.rev_pos,
+// and moves carry out reverse to before the ground check.
+extern xyz_t mCoBG_ScopeWallCheck(ACTOR* actorx, const xyz_t* base_pos, f32 x, f32 z, f32 range, f32 y_ofs) {
+    f32 start[2];
+    f32 end[2];
+    s16 rev_type;
+    xyz_t rev = { 0.0f, 0.0f, 0.0f };
+    xyz_t rev_new;
+    xyz_t xyz_t_why;
+
+    mCoBG_InitRevpos(&l_ActorInf.rev_pos);
+    mCoBG_GetCurrentCenterPosition(&l_ActorInf.center_pos, actorx);
+    mCoBG_GetOldCenterPosition(&l_ActorInf.old_center_pos, actorx);
+    mCoBG_GetSpeedByWpos(l_ActorInf.speed_xz0, actorx);
+
+    if (l_ActorInf.speed_xz0[0] != 0.0f || l_ActorInf.speed_xz0[1] != 0.0f) {
+        start[0] = (base_pos->x);
+        start[1] = (base_pos->z);
+        end[0] = start[0] + x;
+        end[1] = start[1] + z;
+        
+        start[0] += range;
+        start[1] += range;
+
+        end[0] -= range;
+        end[1] -= range;
+
+        mCoBG_SetXyz_t(&rev_new, 0.0f, 0.0f, 0.0f);
+
+        if (actorx->world.position.x < start[0]) {
+            rev_new.x = start[0] - actorx->world.position.x;
+        } else if (actorx->world.position.x > end[0]) {
+            rev_new.x = end[0] - actorx->world.position.x;
+        }
+
+        if (actorx->world.position.z < start[1]) {
+            rev_new.z = start[1] - actorx->world.position.z;
+        } else if (actorx->world.position.z > end[1]) {
+            rev_new.z = end[1] - actorx->world.position.z;
+        }
+
+        mCoBG_CarryOutReverse(actorx, rev_new, mCoBG_REVERSE_TYPE_REVERSE);
+        mCoBG_GroundCheck(&l_ActorInf.rev_pos, &l_ActorInf, actorx, y_ofs, &actorx->bg_collision_check.result, NULL, FALSE);
+        xyz_t_why.x = rev_new.x;
+        xyz_t_why.y = l_ActorInf.rev_pos.y;
+        xyz_t_why.z = rev_new.z;
+        return xyz_t_why;
+    }
+
+    return rev;
 }

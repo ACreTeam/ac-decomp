@@ -52,9 +52,9 @@ static void eKG_mv(eEC_Effect_c* effect, GAME* game) {
     s16 orig_es1 = effect->effect_specific[1];
     eEC_CLIP->set_continious_env_proc(effect, 36, 20);
 
-    if (effect->effect_specific[0] < 10) {
-        effect->effect_specific[1] += DEG2SHORT_ANGLE(2.5f);
-        effect->effect_specific[2] -= DEG2SHORT_ANGLE(3.75f);
+    if (effect->effect_specific[0] < FRAMERATE_TIMER(10)) {
+        effect->effect_specific[1] += FRAMERATE_TIMER(DEG2SHORT_ANGLE(2.5f));
+        effect->effect_specific[2] -= FRAMERATE_TIMER(DEG2SHORT_ANGLE(3.75f));
     }
 
     if ((effect->effect_specific[1] >= 0) && (orig_es1 < 0)) {
@@ -64,7 +64,7 @@ static void eKG_mv(eEC_Effect_c* effect, GAME* game) {
 
     effect->effect_specific[0]++;
 
-    if (effect->effect_specific[0] >= 25) {
+    if (effect->effect_specific[0] >= FRAMERATE_SELECT(25, 21)) {
         effect->effect_specific[0] = 0;
     }
 
@@ -121,7 +121,7 @@ static void eKG_dw(eEC_Effect_c* effect, GAME* game) {
     Matrix_RotateZ(effect->effect_specific[2], MTX_MULT);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, effect->effect_specific[4]);
+    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, (u8)effect->effect_specific[4]);
     gSPDisplayList(NEXT_POLY_XLU_DISP, ef_think_s_modelT);
 
     CLOSE_DISP(game->graph);

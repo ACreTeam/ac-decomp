@@ -726,6 +726,7 @@ static void aMR_AllContactCheck(MY_ROOM_ACTOR* my_room, aMR_contact_info_c* cont
 
 extern cKF_Animation_R_c cKF_ba_r_furniture_pull;
 
+// Aus plays move animation at half speed
 static void aMR_SetPullMoveAnime(FTR_ACTOR* ftr_actor, GAME* game, MY_ROOM_ACTOR* my_room,
                                  aMR_contact_info_c* contact_info) {
     cKF_SkeletonInfo_R_c* keyframe = &my_room->keyframe;
@@ -743,11 +744,17 @@ static void aMR_SetPullMoveAnime(FTR_ACTOR* ftr_actor, GAME* game, MY_ROOM_ACTOR
     cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyframe, 0.0f, 0.0f, 0.0f, 0, 0, 0);
     cKF_SkeletonInfo_R_AnimationMove_ct_base(pos, pos, 0, 0, 0.0f, keyframe, TRUE);
     cKF_SkeletonInfo_R_init_standard_stop_morph(keyframe, &cKF_ba_r_furniture_pull, NULL, -3.0f);
+
+#if VERSION >= VER_GAFU01_00
+    keyframe->frame_control.speed = 0.5f;
+#endif
+
     cKF_SkeletonInfo_R_play(keyframe);
 }
 
 extern cKF_Animation_R_c cKF_ba_r_furniture_push;
 
+// Aus plays move animation at half speed
 static void aMR_SetPushMoveAnime(FTR_ACTOR* ftr_actor, GAME* game, MY_ROOM_ACTOR* my_room,
                                  aMR_contact_info_c* contact_info) {
     cKF_SkeletonInfo_R_c* keyframe = &my_room->keyframe;
@@ -765,6 +772,11 @@ static void aMR_SetPushMoveAnime(FTR_ACTOR* ftr_actor, GAME* game, MY_ROOM_ACTOR
     cKF_SkeletonInfo_R_Animation_Set_base_shape_trs(keyframe, 0.0f, 0.0f, 0.0f, 0, 0, 0);
     cKF_SkeletonInfo_R_AnimationMove_ct_base(pos, pos, 0, 0, 0.0f, keyframe, TRUE);
     cKF_SkeletonInfo_R_init_standard_stop(keyframe, &cKF_ba_r_furniture_push, NULL);
+
+#if VERSION >= VER_GAFU01_00
+    keyframe->frame_control.speed = 0.5f;
+#endif
+
     cKF_SkeletonInfo_R_play(keyframe);
 }
 
@@ -1334,11 +1346,11 @@ static void aMR_MngFtrContactAction(ACTOR* actorx, GAME* game) {
 
 #include "../src/actor/ac_my_room_action.c_inc"
 
-static f32 aMR_GetDistXZ(const xyz_t* pos0, const xyz_t* pos1) {
+static f32 aMR_GetDistXZ(xyz_t* pos0, xyz_t* pos1) {
     f32 diff_x = pos0->x - pos1->x;
     f32 diff_z = pos0->z - pos1->z;
 
-    return sqrtf((diff_x * diff_x) + (diff_z * diff_z));
+    return sqrtf(SQ(diff_x) + SQ(diff_z));
 }
 
 static void aMR_SetFurnitureBaseNorm(aFTR_collision_c* ftr_col) {
@@ -1399,7 +1411,7 @@ static void aMR_MakeBaseFurnitureCollisionData(aFTR_collision_c* ftr_col, u16 ft
     ftr_col[3].edge_contact_ratio = edge_z;
 }
 
-static void aMR_PlussPosition(aFTR_collision_c* ftr_col, const xyz_t* plus_amount) {
+static void aMR_PlussPosition(aFTR_collision_c* ftr_col, xyz_t* plus_amount) {
     int i;
 
     for (i = 0; i < aFTR_EDGE_COL_NUM; i++) {
@@ -1627,15 +1639,13 @@ static int aMR_JudgePickUpCommon(mActor_name_t* pickup_item_p, ACTOR* actorx, in
 static int square_offset_data[] = { 0, -1, -UT_X_NUM, -(UT_X_NUM + 1) };
 
 static mActor_name_t aMR_SearchPickupFurniture(GAME* game) {
-    mActor_name_t layer1_item;
     ACTOR* actorx = aMR_CLIP->my_room_actor_p;
     MY_ROOM_ACTOR* my_room = (MY_ROOM_ACTOR*)actorx;
     u32 player_no = Common_Get(player_no);
     mActor_name_t* fg_layer1_p = aMR_GetLayerTopFg(mCoBG_LAYER1);
     mActor_name_t* fg_layer0_p = aMR_GetLayerTopFg(mCoBG_LAYER0);
-    GAME_PLAY* play = (GAME_PLAY*)game;
 
-    if (mCoBG_CheckUtFlat(&GET_PLAYER_ACTOR(play)->actor_class.world.position) == FALSE) {
+    if (mCoBG_CheckUtFlat(&GET_PLAYER_ACTOR_GAME_ACTOR(game)->world.position) == FALSE) {
         return EMPTY_NO;
     }
 
@@ -1646,8 +1656,9 @@ static mActor_name_t aMR_SearchPickupFurniture(GAME* game) {
 
     my_room->pickup_info.ftrID = -1;
     if (aMR_CheckRoomOwner(player_no, my_room)) {
-        PLAYER_ACTOR* player = GET_PLAYER_ACTOR(play);
-        s16 player_angle = player->actor_class.shape_info.rotation.y;
+        GAME_PLAY* play = (GAME_PLAY*)game;
+        ACTOR* playerx = GET_PLAYER_ACTOR_GAME_ACTOR(game);
+        s16 player_angle = playerx->shape_info.rotation.y;
         int ut_x;
         int ut_z;
         int target_ut_x;
@@ -1667,8 +1678,9 @@ static mActor_name_t aMR_SearchPickupFurniture(GAME* game) {
         FTR_ACTOR* ftr_actor;
         u8 exists2;
         FTR_ACTOR* ftr_actor2;
+        mActor_name_t layer1_item;
 
-        aMR_Wpos2PlaceNumber(&ut_x, &ut_z, player->actor_class.world.position, 0);
+        aMR_Wpos2PlaceNumber(&ut_x, &ut_z, playerx->world.position, 0);
         ut = ut_x + ut_z * UT_X_NUM;
 
         /* Search the three closest 'in front of' units relative to the player's look direction */
@@ -1679,8 +1691,8 @@ static mActor_name_t aMR_SearchPickupFurniture(GAME* game) {
             target_ut = target_ut_x + target_ut_z * UT_X_NUM;
             mFI_UtNum2CenterWpos(&ut_pos, target_ut_x, target_ut_z);
 
-            dX = player->actor_class.world.position.x - ut_pos.x;
-            dZ = player->actor_class.world.position.z - ut_pos.z;
+            dX = playerx->world.position.x - ut_pos.x;
+            dZ = playerx->world.position.z - ut_pos.z;
             dist_sq = SQ(dX) + SQ(dZ);
 
             if (aMR_UnitNum2FtrItemNoFtrID(&item, &ftrID, target_ut_x, target_ut_z, mCoBG_LAYER1) &&
@@ -1700,8 +1712,8 @@ static mActor_name_t aMR_SearchPickupFurniture(GAME* game) {
                 }
             }
 
-            layer1_item = fg_layer1_p[target_ut];
-            if (ITEM_NAME_GET_TYPE((int)fg_layer1_p[target_ut]) == NAME_TYPE_ITEM1 && dist_sq <= SQ(56.0f)) {
+            if (ITEM_NAME_GET_TYPE(fg_layer1_p[target_ut]) == NAME_TYPE_ITEM1 && dist_sq <= SQ(56.0f)) {
+                layer1_item = fg_layer1_p[target_ut];
                 my_room->pickup_info.leaf_pos.x = (f32)target_ut_x * mFI_UT_WORLDSIZE_X_F + mFI_UT_WORLDSIZE_HALF_X_F;
                 my_room->pickup_info.leaf_pos.y = 0.0f;
                 my_room->pickup_info.leaf_pos.z = (f32)target_ut_z * mFI_UT_WORLDSIZE_Z_F + mFI_UT_WORLDSIZE_HALF_Z_F;
@@ -3022,7 +3034,7 @@ static int aMR_JudgePlayerAction(xyz_t* out_pos0, xyz_t* out_pos1, int ftrID) {
     return 1;
 }
 
-static void aMR_PlayerMoveFurniture(int ftrID, xyz_t* pos) {
+static void aMR_PlayerMoveFurniture(int ftrID, const xyz_t* pos) {
     if (l_aMR_work.ftr_actor_list != NULL && l_aMR_work.used_list != NULL) {
         FTR_ACTOR* ftr_actor = &l_aMR_work.ftr_actor_list[ftrID];
         xyz_t* ftr_pos = &ftr_actor->position;

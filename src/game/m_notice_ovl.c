@@ -403,6 +403,11 @@ static void mNT_notice_ovl_move(Submenu* submenu) {
     (*ovl_move_proc[menu_info->proc_status])(submenu, menu_info);
 }
 
+#if VERSION >= VER_GAFU01_00
+static void mNT_notice_draw_init(mSM_MenuInfo_c* menu_info) {
+    // stubbed
+}
+#else
 static u8** mNT_notice_draw_init(mSM_MenuInfo_c* menu_info) {
     u8** tex_p = kei_win_st_tex_tbl;
     int i;
@@ -413,6 +418,7 @@ static u8** mNT_notice_draw_init(mSM_MenuInfo_c* menu_info) {
 
     return tex_p;
 }
+#endif
 
 extern Gfx kei_win_model[];
 

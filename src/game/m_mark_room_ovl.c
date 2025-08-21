@@ -3034,7 +3034,8 @@ static void mMkRm_EvaluateCompleteObstacle(int* points, mActor_name_t** layer_ut
                         mActor_name_t item = ut_info[(ut_z * UT_Z_NUM) + ut_x];
 
                         if (ITEM_IS_FTR(item)) {
-                            int series = mMkRm_ftr_info[mRmTp_FtrItemNo2FtrIdx(item)].series;
+                            int ftr_no = mRmTp_FtrItemNo2FtrIdx(item);
+                            int series = mMkRm_ftr_info[ftr_no].series;
 
                             if (series != theme_idx) {
                                 obstacles++;
@@ -3236,8 +3237,8 @@ static int mMkRm_EvaluateThemeSeriesComplete(int* points, int* complete_theme, m
             if (ftr_in_theme != 0) {
                 u32 perfect_bit;
                 int j;
-                int wall_floor_idx = mMkRm_series_info[i].wall_floor_idx;
                 u32 complete_bit = mMkRm_search_table[i];
+                int wall_floor_idx = mMkRm_series_info[i].wall_floor_idx;
 #ifndef IMPROVEMENTS
                 perfect_bit = 0;
 
@@ -3464,16 +3465,15 @@ static void mMkRm_InitSearchTable() {
     u32* search_table_p = mMkRm_search_table;
     int series;
 
-    for (series = 0; series < mMkRm_SERIES_NUM; series++) {
+    for (series = 0; series < mMkRm_SERIES_NUM; series++, search_table_p++) {
         search_table_p[0] = 0;
-        search_table_p++;
     }
 }
 
 static void mMkRm_AssignIdxInGroup_BaseSeries(int series) {
+    int i;
     int group_idx = mMkRm_NOT_NECESSITY;
     int num_ftr = 0;
-    int i;
 
     for (i = 0; i < FTR_NUM; i++) {
         if (series == mMkRm_ftr_info[i].series) {
@@ -3490,9 +3490,9 @@ static void mMkRm_AssignIdxInGroup_BaseSeries(int series) {
 }
 
 static void mMkRm_AssignIdxInGroup_ThemeSeries(int series) {
+    int i;
     int group_idx = 0;
     int num_ftr = 0;
-    int i;
 
     for (i = 0; i < FTR_NUM; i++) {
         if (series == mMkRm_ftr_info[i].series) {
@@ -3506,9 +3506,9 @@ static void mMkRm_AssignIdxInGroup_ThemeSeries(int series) {
 }
 
 static void mMkRm_AssignIdxInGroup_SetSeries(int series) {
+    int i;
     int group_idx = 0;
     int num_ftr = 0;
-    int i;
 
     for (i = 0; i < FTR_NUM; i++) {
         if (series == mMkRm_ftr_info[i].series) {
@@ -3522,9 +3522,9 @@ static void mMkRm_AssignIdxInGroup_SetSeries(int series) {
 }
 
 static void mMkRm_AssignIdxInGroup_OneSeries(int series) {
+    int i;
     int group_idx = 0;
     int num_ftr = 0;
-    int i;
 
     for (i = 0; i < FTR_NUM; i++) {
         if (series == mMkRm_ftr_info[i].series) {

@@ -81,7 +81,43 @@ static int aNPC_circleRangeCheck(NPC_ACTOR* nactorx, xyz_t* rev_pos_p, xyz_t pos
     return ret;
 }
 
+// Aus added this function
+#if VERSION >= VER_GAFU01_00
+static int aNPC_squareRangeCheck(NPC_ACTOR* nactorx, xyz_t pos) {
+    int ux;
+    int uz;
+    int ret = TRUE;
+
+    if (mFI_Wpos2UtNum_inBlock(&ux, &uz, pos) == TRUE) {
+        if (ux < 1 || ux > (UT_X_NUM - 1) || uz < 1 || uz > (UT_Z_NUM - 1)) {
+            ret = FALSE;
+        }
+    } else {
+        ret = FALSE;
+    }
+
+    return ret;
+}
+#endif
+
 // is this supposed to be 'Revise'?
+// Aus removes the condition flag checks and collision kind check
+#if VERSION >= VER_GAFU01_00
+static void aNPC_circleRangeRevice(NPC_ACTOR* nactorx) {
+    xyz_t rev_pos;
+    int res = aNPC_circleRangeCheck(nactorx, &rev_pos, nactorx->actor_class.world.position);
+
+    if (nactorx->movement.range_type == aNPC_MOVE_RANGE_TYPE_CIRCLE) {
+        if (nactorx->action.type != aNPC_ACT_TYPE_SEARCH ||
+            (nactorx->movement.target != NULL && nactorx->movement.target->part != ACTOR_PART_PLAYER)) {
+            nactorx->actor_class.world.position.x += rev_pos.x;
+            nactorx->actor_class.world.position.z += rev_pos.z;
+        }
+    } else if (res == TRUE && nactorx->condition_info.entrance_flag == aNPC_ENTRANCE_TYPE_NONE) {
+        nactorx->movement.range_type = aNPC_MOVE_RANGE_TYPE_CIRCLE;
+    }
+}
+#else
 static void aNPC_circleRangeRevice(NPC_ACTOR* nactorx) {
     if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV) == 0 &&
         (nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_LOVE_CHECK) == 0 &&
@@ -100,6 +136,48 @@ static void aNPC_circleRangeRevice(NPC_ACTOR* nactorx) {
         }
     }
 }
+#endif
+
+// Aus version adds this function
+#if VERSION >= VER_GAFU01_00
+static void aNPC_moveRangeRevice(NPC_ACTOR* nactorx) {
+    int bx;
+    int bz;
+    int ux;
+    int uz;
+
+    if ((nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_MOVE_CIRCLE_REV) == 0 &&
+        (nactorx->condition_info.demo_flg & aNPC_COND_DEMO_SKIP_LOVE_CHECK) == 0 &&
+        nactorx->collision.check_kind == aNPC_BG_CHECK_TYPE_RANGE) {
+        switch (nactorx->movement.range_type) {
+            case aNPC_MOVE_RANGE_TYPE_BLOCK:
+                if (mFI_Wpos2BlockNum(&bx, &bz, nactorx->actor_class.world.position) == TRUE) {
+                    if (bx != nactorx->actor_class.block_x || bz != nactorx->actor_class.block_z) {
+                        xyz_t_move(&nactorx->actor_class.world.position, &nactorx->actor_class.last_world_position);
+                        nactorx->actor_class.block_x = bx;
+                        nactorx->actor_class.block_z = bz;
+                    }
+                } else {
+                    xyz_t_move(&nactorx->actor_class.world.position, &nactorx->actor_class.last_world_position);
+                    nactorx->actor_class.block_x = bx;
+                    nactorx->actor_class.block_z = bz;
+                }
+                break;
+            case aNPC_MOVE_RANGE_TYPE_CIRCLE:
+                break;
+            case aNPC_MOVE_RANGE_TYPE_SQUARE:
+                if (mFI_Wpos2UtNum_inBlock(&ux, &uz, nactorx->actor_class.world.position) == TRUE) {
+                    if (ux < 1 || ux >= (UT_X_NUM - 1) || uz < 1 || uz >= (UT_Z_NUM - 1)) {
+                        xyz_t_move(&nactorx->actor_class.world.position, &nactorx->actor_class.last_world_position);
+                    }
+                }
+                break;
+        }
+
+        aNPC_circleRangeRevice(nactorx);
+    }
+}
+#endif
 
 static int aNPC_moveRangeCheck2(NPC_ACTOR* nactorx, xyz_t* rev_pos_p, xyz_t pos, u8 range_type) {
     int ret = TRUE;
@@ -115,6 +193,12 @@ static int aNPC_moveRangeCheck2(NPC_ACTOR* nactorx, xyz_t* rev_pos_p, xyz_t pos,
         case aNPC_MOVE_RANGE_TYPE_CIRCLE:
             ret = aNPC_circleRangeCheck(nactorx, rev_pos_p, pos);
             break;
+// Aus version adds this new move range bound type
+#if VERSION >= VER_GAFU01_00
+        case aNPC_MOVE_RANGE_TYPE_SQUARE:
+            ret = aNPC_squareRangeCheck(nactorx, pos);
+            break;
+#endif
     }
 
     return ret;

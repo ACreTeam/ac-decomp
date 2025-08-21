@@ -148,7 +148,7 @@ extern void mNW_AGB_to_GC_texture(u8* agb, u8* gc) {
 
     for (i = 0; i < mNW_DESIGN_TEX_SIZE; i++) {
         u8 src = *agb++;
-        *gc++ = (((src >> 4) & 0xF) | ((src & 0xF) << 4));
+        *gc++ = (((src & 0xF0) >> 4) | ((src & 0xF) << 4));
     }
 }
 

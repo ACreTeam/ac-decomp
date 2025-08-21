@@ -1,162 +1,148 @@
 static void mChoice_determimation_set(mChoice_c* choice) {
-  mChoice_Data_c* choice_data = &choice->data;
-  int idx = choice->selected_choice_idx;
+    mChoice_Data_c* choice_data = &choice->data;
+    int idx = choice->selected_choice_idx;
 
-  bcopy(choice_data->strings[idx], choice_data->determination_string, mChoice_CHOICE_STRING_LEN);
-  choice_data->determination_len = choice_data->string_lens[idx];
-  choice_data->selected_choice_idx = idx;
+    bcopy(choice_data->strings[idx], choice_data->determination_string, mChoice_CHOICE_STRING_LEN);
+    choice_data->determination_len = choice_data->string_lens[idx];
+    choice_data->selected_choice_idx = idx;
 }
 
 static int mChoice_Main_Normal_SetChoice(mChoice_c* choice, GAME* game) {
-  int res = FALSE;
+    int res = FALSE;
 
-  if (chkTrigger(BUTTON_A)) {
-    mChoice_determimation_set(choice);
-    res = TRUE;
-  }
-  else if (choice->no_b_flag && chkTrigger(BUTTON_B)) {
-    choice->selected_choice_idx = choice->data.choice_num - 1;
-    mChoice_determimation_set(choice);
-    res = TRUE;
-  }
-  else {
-    f32 percent = gamePT->mcon.adjusted_pY;
-    int* choice_automove_p = &choice->choice_automove_type;
-    f32* choice_automove_timer_p = &choice->choice_automove_timer;
-    int* selected_idx_p = &choice->selected_choice_idx;
-    int cursor_sfx = FALSE;
+    if (chkTrigger(BUTTON_A)) {
+        mChoice_determimation_set(choice);
+        res = TRUE;
+    } else if (choice->no_b_flag && chkTrigger(BUTTON_B)) {
+        choice->selected_choice_idx = choice->data.choice_num - 1;
+        mChoice_determimation_set(choice);
+        res = TRUE;
+    } else {
+        f32 percent = gamePT->mcon.adjusted_pY;
+        int* choice_automove_p = &choice->choice_automove_type;
+        f32* choice_automove_timer_p = &choice->choice_automove_timer;
+        int* selected_idx_p = &choice->selected_choice_idx;
+        int cursor_sfx = FALSE;
 
-    switch (*choice_automove_p) {
-      case mChoice_AUTOMOVE_INCREMENT_WAIT:
-      {
-        if (percent < 0.0f || chkButton(BUTTON_CDOWN)) {
-          (*choice_automove_timer_p) += 1.0f;
+        switch (*choice_automove_p) {
+            case mChoice_AUTOMOVE_INCREMENT_WAIT: {
+                if (percent < 0.0f || chkButton(BUTTON_CDOWN)) {
+                    (*choice_automove_timer_p) += 1.0f;
 
-          if (*choice_automove_timer_p >= 18.0f) {
-            *choice_automove_timer_p = 0.0f;
-            *choice_automove_p = mChoice_AUTOMOVE_INCREMENT;
-            (*selected_idx_p)++;
-            cursor_sfx = TRUE;
-          }
-        }
-        else {
-          *choice_automove_p = mChoice_AUTOMOVE_STOPPED;
-          *choice_automove_timer_p = 0.0f;
-        }
+                    if (*choice_automove_timer_p >= 18.0f) {
+                        *choice_automove_timer_p = 0.0f;
+                        *choice_automove_p = mChoice_AUTOMOVE_INCREMENT;
+                        (*selected_idx_p)++;
+                        cursor_sfx = TRUE;
+                    }
+                } else {
+                    *choice_automove_p = mChoice_AUTOMOVE_STOPPED;
+                    *choice_automove_timer_p = 0.0f;
+                }
 
-        break;
-      }
+                break;
+            }
 
-      case mChoice_AUTOMOVE_INCREMENT:
-      {
-        if (percent < 0.0f || chkButton(BUTTON_CDOWN)) {
-          (*choice_automove_timer_p) += 1.0f;
+            case mChoice_AUTOMOVE_INCREMENT: {
+                if (percent < 0.0f || chkButton(BUTTON_CDOWN)) {
+                    (*choice_automove_timer_p) += 1.0f;
 
-          if (*choice_automove_timer_p >= 9.0f) {
-            *choice_automove_timer_p = 0.0f;
-            (*selected_idx_p)++;
-            cursor_sfx = TRUE;
-          }
-        }
-        else {
-          *choice_automove_p = mChoice_AUTOMOVE_STOPPED;
-          *choice_automove_timer_p = 0.0f;
-        }
+                    if (*choice_automove_timer_p >= 9.0f) {
+                        *choice_automove_timer_p = 0.0f;
+                        (*selected_idx_p)++;
+                        cursor_sfx = TRUE;
+                    }
+                } else {
+                    *choice_automove_p = mChoice_AUTOMOVE_STOPPED;
+                    *choice_automove_timer_p = 0.0f;
+                }
 
-        break;
-      }
+                break;
+            }
 
-      case mChoice_AUTOMOVE_DECREMENT_WAIT:
-      {
-        if (percent > 0.0f || chkButton(BUTTON_CUP)) {
-          (*choice_automove_timer_p) += 1.0f;
+            case mChoice_AUTOMOVE_DECREMENT_WAIT: {
+                if (percent > 0.0f || chkButton(BUTTON_CUP)) {
+                    (*choice_automove_timer_p) += 1.0f;
 
-          if (*choice_automove_timer_p >= 18.0f) {
-            *choice_automove_timer_p = 0.0f;
-            *choice_automove_p = mChoice_AUTOMOVE_DECREMENT;
-            (*selected_idx_p)--;
-            cursor_sfx = TRUE;
-          }
-        }
-        else {
-          *choice_automove_p = mChoice_AUTOMOVE_STOPPED;
-          *choice_automove_timer_p = 0.0f;
-        }
+                    if (*choice_automove_timer_p >= 18.0f) {
+                        *choice_automove_timer_p = 0.0f;
+                        *choice_automove_p = mChoice_AUTOMOVE_DECREMENT;
+                        (*selected_idx_p)--;
+                        cursor_sfx = TRUE;
+                    }
+                } else {
+                    *choice_automove_p = mChoice_AUTOMOVE_STOPPED;
+                    *choice_automove_timer_p = 0.0f;
+                }
 
-        break;
-      }
+                break;
+            }
 
-      case mChoice_AUTOMOVE_DECREMENT:
-      {
-        if (percent > 0.0f || chkButton(BUTTON_CUP)) {
-          (*choice_automove_timer_p) += 1.0f;
+            case mChoice_AUTOMOVE_DECREMENT: {
+                if (percent > 0.0f || chkButton(BUTTON_CUP)) {
+                    (*choice_automove_timer_p) += 1.0f;
 
-          if (*choice_automove_timer_p >= 9.0f) {
-            *choice_automove_timer_p = 0.0f;
-            (*selected_idx_p)--;
-            cursor_sfx = TRUE;
-          }
-        }
-        else {
-          *choice_automove_p = mChoice_AUTOMOVE_STOPPED;
-          *choice_automove_timer_p = 0.0f;
-        }
+                    if (*choice_automove_timer_p >= 9.0f) {
+                        *choice_automove_timer_p = 0.0f;
+                        (*selected_idx_p)--;
+                        cursor_sfx = TRUE;
+                    }
+                } else {
+                    *choice_automove_p = mChoice_AUTOMOVE_STOPPED;
+                    *choice_automove_timer_p = 0.0f;
+                }
 
-        break;
-      }
+                break;
+            }
 
-      default:
-      {
-        if (percent > 0.0f || chkTrigger(BUTTON_CUP)) {
-          *choice_automove_p = mChoice_AUTOMOVE_DECREMENT_WAIT;
-          *choice_automove_timer_p = 0.0f;
-          (*selected_idx_p)--;
-          cursor_sfx = TRUE;
-        }
-        else if (percent < 0.0f || chkTrigger(BUTTON_CDOWN)) {
-          *choice_automove_p = mChoice_AUTOMOVE_INCREMENT_WAIT;
-          *choice_automove_timer_p = 0.0f;
-          (*selected_idx_p)++;
-          cursor_sfx = TRUE;
+            default: {
+                if (percent > 0.0f || chkTrigger(BUTTON_CUP)) {
+                    *choice_automove_p = mChoice_AUTOMOVE_DECREMENT_WAIT;
+                    *choice_automove_timer_p = 0.0f;
+                    (*selected_idx_p)--;
+                    cursor_sfx = TRUE;
+                } else if (percent < 0.0f || chkTrigger(BUTTON_CDOWN)) {
+                    *choice_automove_p = mChoice_AUTOMOVE_INCREMENT_WAIT;
+                    *choice_automove_timer_p = 0.0f;
+                    (*selected_idx_p)++;
+                    cursor_sfx = TRUE;
+                }
+
+                break;
+            }
         }
 
-        break;
-      }
+        if ((*selected_idx_p) < 0) {
+            *selected_idx_p = 0;
+        } else if ((*selected_idx_p) >= choice->data.choice_num) {
+            *selected_idx_p = choice->data.choice_num - 1;
+        } else {
+            if (cursor_sfx) {
+                mChoice_sound_CURSOL();
+            }
+        }
     }
 
-    if ((*selected_idx_p) < 0) {
-      *selected_idx_p = 0;
-    }
-    else if ((*selected_idx_p) >= choice->data.choice_num) {
-      *selected_idx_p = choice->data.choice_num - 1;
-    }
-    else {
-      if (cursor_sfx) {
-        mChoice_sound_CURSOL();
-      }
-    }
-  }
-
-  return res;
+    return res;
 }
 
 static void mChoice_request_main_index_fromNormal(mChoice_c* choice, GAME* game, int close_flag) {
-  if (close_flag) {
-    mChoice_Change_request_main_index(choice, mChoice_MAIN_DISAPPEAR);
-  }
+    if (close_flag) {
+        mChoice_Change_request_main_index(choice, mChoice_MAIN_DISAPPEAR);
+    }
 }
 
 static void mChoice_Main_Normal(mChoice_c* choice, GAME* game) {
-  int close_flag = mChoice_Main_Normal_SetChoice(choice, game);
+    int close_flag = mChoice_Main_Normal_SetChoice(choice, game);
 
-  mChoice_request_main_index_fromNormal(choice, game, close_flag);
-  mChoice_MainSetup(choice, game);
+    mChoice_request_main_index_fromNormal(choice, game, close_flag);
+    mChoice_MainSetup(choice, game);
 }
 
 static void mChoice_MainSetup_Normal(mChoice_c* choice, GAME* game) {
-  choice->scale = 1.0f;
-  choice->timer = 0.0f;
-  choice->requested_main_index = -1;
-  choice->main_index = mChoice_MAIN_NORMAL;
-  choice->font_visible_flag = TRUE;
+    choice->scale = 1.0f;
+    choice->timer = 0.0f;
+    choice->requested_main_index = -1;
+    choice->main_index = mChoice_MAIN_NORMAL;
+    choice->font_visible_flag = TRUE;
 }

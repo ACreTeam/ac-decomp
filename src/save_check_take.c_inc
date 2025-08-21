@@ -2,88 +2,86 @@
 #include "m_font.h"
 
 static int sChk_board_save_check() {
-  mNtc_board_post_c* board = Save_Get(noticeboard);
-  int max = mNtc_notice_write_num();
-  int i;
-  int j;
-  
-  for (i = 0; i < max; i++) {
-    u8* msg = board->message;
-    if (lbRTC_time_c_save_data_check(&board->post_time)) {
-      mFRm_ERRORLINE(65);
-      return TRUE;
+    mNtc_board_post_c* board = Save_Get(noticeboard);
+    int max = mNtc_notice_write_num();
+    int i;
+    int j;
+
+    for (i = 0; i < max; i++) {
+        u8* msg = board->message;
+        if (lbRTC_time_c_save_data_check(&board->post_time)) {
+            mFRm_ERRORLINE(65);
+            return TRUE;
+        }
+
+        for (j = 0; j < MAIL_BODY_LEN; j++) {
+            if (mFont_char_save_data_check(msg[0])) {
+                mFRm_ERRORLINE(73);
+                return TRUE;
+            }
+
+            msg++;
+        }
+
+        board++;
     }
 
-    for (j = 0; j < MAIL_BODY_LEN; j++) {
-      if (mFont_char_save_data_check(msg[0])) {
-        mFRm_ERRORLINE(73);
-        return TRUE;
-      }
-
-      msg++;
-    }
-
-    board++;
-  }
-
-  return FALSE;
+    return FALSE;
 }
 
 static int sChk_weather_save_check() {
-  u32 weather = mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather));
-  u32 intensity = mEnv_SAVE_GET_WEATHER_INTENSITY(Save_Get(weather));
-  
-  if (intensity >= mEnv_WEATHER_INTENSITY_NUM || weather >= mEnv_WEATHER_LEAVES) {
-    mFRm_ERRORLINE(141);
-    return TRUE;
-  }
-  else {
-    return FALSE;
-  }
+    u32 weather = mEnv_SAVE_GET_WEATHER_TYPE(Save_Get(weather));
+    u32 intensity = mEnv_SAVE_GET_WEATHER_INTENSITY(Save_Get(weather));
+
+    if (intensity >= mEnv_WEATHER_INTENSITY_NUM || weather >= mEnv_WEATHER_LEAVES) {
+        mFRm_ERRORLINE(141);
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
 
+// TODO: fakematch
 static int sChk_snowman_save_check() {
-  u8 year;
-  u8 month;
-  u8 day;
-  u8 hour;
-  mSN_snowman_save_c* data = Save_GetPointer(snowmen);
+#if VERSION != VER_GAFE01_00
+    mSN_snowman_save_c* data = Save_GetPointer(snowmen);
+#endif
+    u8 year;
+    u8 month;
+    u8 day;
+    u8 hour;
+#if VERSION == VER_GAFE01_00
+    mSN_snowman_save_c* data = Save_GetPointer(snowmen);
+#endif
 
-  year = Save_Get(snowman_year);
-  month = Save_Get(snowman_month);
-  day = Save_Get(snowman_day);
-  hour = Save_Get(snowman_hour);
-    
-  if (
-    year > GAME_YEAR_MAX - 1 ||
-    month > lbRTC_DECEMBER ||
-    day > 31 ||
-    hour >= 24
-  ) {
-    mFRm_ERRORLINE(168);
-    return TRUE;
-  }
-  else {
-    int i;
+    year = Save_Get(snowman_year);
+    month = Save_Get(snowman_month);
+    day = Save_Get(snowman_day);
+    hour = Save_Get(snowman_hour);
 
-    for (i = 0; i < mSN_SAVE_COUNT; i++) {
-      mSN_snowman_data_c* data2 = data->snowmen_data + i;
-
-      if (data2->score >= 4 || data2->exists > 1) {
-        mFRm_ERRORLINE(179);
+    if (year > GAME_YEAR_MAX - 1 || month > lbRTC_DECEMBER || day > 31 || hour >= 24) {
+        mFRm_ERRORLINE(168);
         return TRUE;
-      }
-    }
-  }
+    } else {
+        int i;
 
-  return FALSE;
+        for (i = 0; i < mSN_SAVE_COUNT; i++) {
+            mSN_snowman_data_c* data2 = data->snowmen_data + i;
+
+            if (data2->score >= 4 || data2->exists > 1) {
+                mFRm_ERRORLINE(179);
+                return TRUE;
+            }
+        }
+    }
+
+    return FALSE;
 }
 
 static int sChk_check_save_take() {
-  if (sChk_snowman_save_check() || sChk_board_save_check() || sChk_weather_save_check()) {
-    return TRUE;
-  }
-  else {
-    return FALSE;
-  }
+    if (sChk_snowman_save_check() || sChk_board_save_check() || sChk_weather_save_check()) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }

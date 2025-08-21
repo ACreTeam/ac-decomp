@@ -35,11 +35,13 @@ aWeather_Profile_c iam_weather_rain = {
 static int aWeatherRain_DecideMakeRainCount(ACTOR* actor) {
     WEATHER_ACTOR* weather = (WEATHER_ACTOR*)actor;
 
-    if (weather->current_level == 1) {
+    if (weather->current_level == mEnv_WEATHER_INTENSITY_LIGHT) {
         return 1;
+    } else if (weather->current_level == mEnv_WEATHER_INTENSITY_NORMAL) {
+        return 2;
+    } else {
+        return 3;
     }
-
-    return (weather->current_level - 2 ? 0 : -1) + 3;
 }
 
 static void aWeatherRain_make(ACTOR* actor, GAME* game) {

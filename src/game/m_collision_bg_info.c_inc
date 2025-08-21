@@ -567,7 +567,9 @@ extern int mCoBG_CheckHole(xyz_t pos) {
     return FALSE;
 }
 
-extern int mCoBG_CheckSkySwing(xyz_t pos) {
+// Renamed in Aus version
+#if VERSION >= VER_GAFU01_00
+extern int mCoBG_CheckAirSwing(xyz_t pos) {
     mCoBG_Collision_u* col = mFI_GetUnitCol(pos);
     u32 attr = col->data.unit_attribute;
 
@@ -589,6 +591,30 @@ extern int mCoBG_CheckSkySwing(xyz_t pos) {
 
     return FALSE;
 }
+#else
+extern int mCoBG_CheckAirSwing(xyz_t pos) {
+    mCoBG_Collision_u* col = mFI_GetUnitCol(pos);
+    u32 attr = col->data.unit_attribute;
+
+    if (attr >= mCoBG_ATTRIBUTE_WAVE && attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+        return TRUE;
+    }
+
+    if (attr == mCoBG_ATTRIBUTE_SEA || attr == mCoBG_ATTRIBUTE_37 || attr == mCoBG_ATTRIBUTE_38) {
+        return TRUE;
+    }
+
+    if (attr >= mCoBG_ATTRIBUTE_39 && attr <= mCoBG_ATTRIBUTE_62) {
+        if (attr >= mCoBG_ATTRIBUTE_47 && attr <= mCoBG_ATTRIBUTE_54) {
+            return FALSE;
+        } else {
+            return TRUE;
+        }
+    }
+
+    return FALSE;
+}
+#endif
 
 extern int mCoBG_CheckGrassX_ClData(mCoBG_Collision_u* col) {
     u32 attr = col->data.unit_attribute;

@@ -542,8 +542,8 @@ static int sChk_MaskCat_c_sub(MaskCat_c* mask_cat, int depth) {
 }
 
 static int sChk_check_save_data() {
-    int res = FALSE;
     Save_t* save = Common_GetPointer(save.save);
+    int res = FALSE;
     int i;
 
     for (i = 0; i < mHS_HOUSE_NUM; i++) {

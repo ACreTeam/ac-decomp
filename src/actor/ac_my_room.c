@@ -853,8 +853,8 @@ static void aMR_InitHaniwaOnTable(ACTOR* actorx) {
     int* haniwa_on_table_p = my_room->haniwa_on_table;
     int i;
 
-    for (i = 0; i < aMR_HANIWA_ON_TABLE_NUM; i++, haniwa_on_table_p++) {
-        *haniwa_on_table_p = -1;
+    for (i = 0; i < aMR_HANIWA_ON_TABLE_NUM; i++) {
+        *haniwa_on_table_p++ = -1;
     }
 }
 
@@ -1403,7 +1403,8 @@ static void aMR_SecureFurnitureBank(MY_ROOM_ACTOR* my_room, GAME* game) {
     bank_p = (u8*)zelda_malloc_align(size, 32);
     my_room->bank0_p = bank_p;
     for (i = 0; i < my_room->bank_count0; i++) {
-        l_bank_address_table[i] = bank_p + i * aMR_FTR_BANK_SIZE;
+        int size = i * aMR_FTR_BANK_SIZE;
+        l_bank_address_table[i] = bank_p + (int)size;
     }
 
     if (my_room->bank_count1 > 0) {
@@ -1487,7 +1488,7 @@ static int aMR_JudgeBreedNewFurniture(GAME* game, u16 ftr_no, int* ut_x, int* ut
 static mActor_name_t aMR_SearchPickupFurniture(GAME* game);
 static void aMR_Furniture2ItemBag(GAME* game);
 static int aMR_JudgePlayerAction(xyz_t* wpos0, xyz_t* wpos1, int ftr_actor_idx);
-static void aMR_PlayerMoveFurniture(int ftr_actor_idx, xyz_t* wpos);
+static void aMR_PlayerMoveFurniture(int ftr_actor_idx, const xyz_t* wpos);
 static int aMR_ftrID2Wpos(xyz_t* wpos, int ftr_id);
 static int aMR_UnitNum2FtrItemNoFtrID(mActor_name_t* ftr_item_no, int* ftr_id, int ut_x, int ut_z, int layer);
 static void aMR_FtrID2ExtinguishFurniture(int ftr_id);
@@ -1699,10 +1700,10 @@ static void aMR_OneMDFurnitureSwitchOn(void) {
 
 static void aMR_InitFurnitureWork(void) {
     int i;
+    int j;
 
     for (i = mCoBG_LAYER0; i < mCoBG_LAYER2; i++) {
         u8* place_p = aMR_place_table[i & 1];
-        int j;
 
         for (j = 0; j < UT_TOTAL_NUM; j++) {
             if (*place_p != 201 && *place_p != 200) {

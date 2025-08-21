@@ -1,19 +1,19 @@
 static void mChoice_sound_SENTAKU_KETTEI() {
-  sAdo_SysTrgStart(NA_SE_SENTAKU_KETTEI);
+    sAdo_SysTrgStart(NA_SE_SENTAKU_KETTEI);
 }
 
 static void mChoice_sound_SENTAKU_OPEN() {
-  sAdo_SysTrgStart(NA_SE_SENTAKU_OPEN);
+    sAdo_SysTrgStart(NA_SE_SENTAKU_OPEN);
 }
 
 static void mChoice_sound_CURSOL() {
-  sAdo_SysTrgStart(NA_SE_CURSOL);
+    sAdo_SysTrgStart(NA_SE_CURSOL);
 }
 
 static void mChoice_sound_ZOOMDOWN_SHORT() {
-  sAdo_SysTrgStart(SE_SINGLETON(NA_SE_ZOOMDOWN_SHORT));
+    sAdo_SysTrgStart(SE_SINGLETON(NA_SE_ZOOMDOWN_SHORT));
 }
 
 static void mChoice_sound_ZOOMDOWN_LONG() {
-  sAdo_SysTrgStart(SE_SINGLETON(NA_SE_ZOOMDOWN_LONG));
+    sAdo_SysTrgStart(SE_SINGLETON(NA_SE_ZOOMDOWN_LONG));
 }

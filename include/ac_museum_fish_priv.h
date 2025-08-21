@@ -9,6 +9,7 @@
 #include "m_debug_mode.h"
 #include "m_rcp.h"
 #include "ac_gyoei.h"
+#include "sys_math.h"
 
 #ifdef __cplusplus
 extern "C" {

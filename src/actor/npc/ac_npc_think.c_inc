@@ -208,7 +208,18 @@ static int aNPC_check_entrance(NPC_ACTOR* nactorx) {
             }
 
             aNPC_set_request_act(nactorx, 2, act, aNPC_ACT_TYPE_TO_POINT, arg_data);
+// Aus version changes special NPC movement time to be within a sub-square of the acre,
+// instead of anywhere in the acre. This was probably added to stop the Jingle glitch
+// where you can talk to Jingle from another acre and break his logic.
+#if VERSION >= VER_GAFU01_00
+            if (aNPC_IS_NRM_NPC(nactorx)) {
+                nactorx->movement.range_type = aNPC_MOVE_RANGE_TYPE_BLOCK;
+            } else {
+                nactorx->movement.range_type = aNPC_MOVE_RANGE_TYPE_SQUARE;
+            }
+#else
             nactorx->movement.range_type = aNPC_MOVE_RANGE_TYPE_BLOCK;
+#endif
         } else {
             aNPC_set_request_act(nactorx, 2, aNPC_ACT_WAIT, aNPC_ACT_TYPE_DEFAULT, aNPC_req_default_data);
         }

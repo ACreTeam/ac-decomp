@@ -42,6 +42,46 @@ static void fIIH_ct(FTR_ACTOR* ftr_actor, u8* data) {
     cKF_SkeletonInfo_R_play(keyf);
 }
 
+// Aus version reworks the treasure chest movement animation to process the state
+// on the current frame instead of the previous frame's state.
+#if VERSION >= VER_GAFU01_00
+void fIIH_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
+    cKF_SkeletonInfo_R_c* keyf = &ftr_actor->keyframe;
+    int state = cKF_SkeletonInfo_R_play(keyf);
+
+    if (state == cKF_STATE_STOPPED) {
+        keyf->frame_control.speed = 0.0f;
+    }
+
+    if ((ftr_actor->switch_changed_flag != FALSE) &&
+        (aMR_GetContactInfoLayer1()->contact_direction == aMR_CONTACT_DIR_FRONT) &&
+        (state == cKF_STATE_STOPPED)) {
+        ftr_actor->dynamic_work_s[0] = (ftr_actor->dynamic_work_s[0] + 1) & 1;
+        if (ftr_actor->dynamic_work_s[0] != FALSE) {
+            cKF_SkeletonInfo_R_init_standard_stop(keyf, &cKF_ba_r_int_ike_island_hako01, NULL);
+            keyf->frame_control.start_frame = 1.0f;
+            keyf->frame_control.end_frame = cKF_ba_r_int_ike_island_hako01.frames;
+            keyf->frame_control.speed = 0.5f;
+            sAdo_OngenTrgStart(0x16AU, &ftr_actor->position);
+        } else {
+            cKF_SkeletonInfo_R_init_standard_stop(keyf, &cKF_ba_r_int_ike_island_hako02, NULL);
+            keyf->frame_control.start_frame = 1.0f;
+            keyf->frame_control.end_frame = cKF_ba_r_int_ike_island_hako02.frames;
+            keyf->frame_control.speed = 0.5f;
+            sAdo_OngenTrgStart(0x16B, &ftr_actor->position);
+        }
+    }
+    if (aFTR_CAN_PLAY_SE(ftr_actor)) {
+        if (ftr_actor->dynamic_work_s[0] != 0) {
+            if (keyf->frame_control.current_frame > 25.0f) {
+                sAdo_OngenPos((u32)ftr_actor, 0x52, &ftr_actor->position);
+            }
+        } else if (keyf->frame_control.current_frame < 25.0f) {
+            sAdo_OngenPos((u32)ftr_actor, 0x52, &ftr_actor->position);
+        }
+    }
+}
+#else
 void fIIH_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     cKF_SkeletonInfo_R_c* keyf;
 
@@ -77,6 +117,7 @@ void fIIH_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
         keyf->frame_control.speed = 0.0f;
     }
 }
+#endif
 
 void fIIH_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
     GAME_PLAY* play = (GAME_PLAY*)game;

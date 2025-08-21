@@ -733,7 +733,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_259,
+        BG_TYPE_ROM_MY_ROOM_S,
         NULL,
         NULL,
         NULL,
@@ -770,7 +770,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_260,
+        BG_TYPE_ROM_MY_ROOM_M,
         NULL,
         NULL,
         NULL,
@@ -807,7 +807,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_242,
+        BG_TYPE_ROM_MY_ROOM_L,
         NULL,
         NULL,
         NULL,
@@ -881,7 +881,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_246,
+        BG_TYPE_NPC_ROOM01,
         NULL,
         NULL,
         NULL,
@@ -918,7 +918,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_248,
+        BG_TYPE_ROM_SHOP1,
         NULL,
         NULL,
         NULL,
@@ -8022,7 +8022,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_254,
+        BG_TYPE_ROM_SHOP2,
         NULL,
         NULL,
         NULL,
@@ -8059,7 +8059,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_258,
+        BG_TYPE_ROM_SHOP3,
         NULL,
         NULL,
         NULL,
@@ -8133,7 +8133,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_257,
+        BG_TYPE_ROM_SHOP4_2,
         NULL,
         NULL,
         NULL,
@@ -8429,7 +8429,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_250,
+        BG_TYPE_ROM_SHOP1_FUKU,
         NULL,
         NULL,
         NULL,
@@ -8466,7 +8466,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_251,
+        BG_TYPE_ROM_SHOP2_FUKU,
         NULL,
         NULL,
         NULL,
@@ -8503,7 +8503,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_252,
+        BG_TYPE_ROM_SHOP3_FUKU,
         NULL,
         NULL,
         NULL,
@@ -9465,7 +9465,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_282,
+        BG_TYPE_ROM_MUSEUM4,
         NULL,
         NULL,
         NULL,
@@ -9502,7 +9502,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_283,
+        BG_TYPE_ROM_MY_ROOM_LL1,
         NULL,
         NULL,
         NULL,
@@ -9539,7 +9539,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_284,
+        BG_TYPE_ROM_MY_ROOM_LL2,
         NULL,
         NULL,
         NULL,
@@ -9613,7 +9613,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_286,
+        BG_TYPE_ROM_MY_ROOM_M_BASEMENT,
         NULL,
         NULL,
         NULL,
@@ -9650,7 +9650,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_287,
+        BG_TYPE_ROM_MY_ROOM_L_BASEMENT,
         NULL,
         NULL,
         NULL,
@@ -9687,7 +9687,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_288,
+        BG_TYPE_ROM_MY_ROOM_LL1_BASEMENT,
         NULL,
         NULL,
         NULL,
@@ -9724,7 +9724,7 @@ extern mFM_bg_data_c data_bgd[] = {
         },
     },
     {
-        BG_TYPE_289,
+        BG_TYPE_ROM_MY_ROOM_BASEMENT,
         NULL,
         NULL,
         NULL,

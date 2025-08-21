@@ -412,10 +412,8 @@ static void aIBT_wait(ACTOR* actor, GAME* game) {
     } else if (aIBT_check_patience(insect,game) == TRUE) {
         aIBT_setupAction(insect, aIBT_ACTION_AVOID, game);
     } else {
-        f32 step = sqrtf(0.5);
-
         add_calc_short_angle2(&actor->shape_info.rotation.y,
-                              actor->world.angle.y, 1.0f - step, 0x2000, 0);
+                              actor->world.angle.y, CALC_EASE(0.5f), 0x2000, 0);
 
         if ((insect->type >= 0xF) || (insect->type < 0xD)) {
             int idx = insect->type - 15;

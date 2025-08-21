@@ -27,7 +27,7 @@
 #include "m_roll_lib.h"
 #include "m_house.h"
 
-static void mTG_mark_main_CLR(Submenu* submenu, mSM_MenuInfo_c* menu_info);
+static void mTG_mark_main_CLR(Submenu* submenu, const mSM_MenuInfo_c* menu_info);
 
 enum {
     mTG_QSTR_TYPE_NONE,
@@ -1606,7 +1606,7 @@ static int mTG_strcpy(u8* dst, u8* src, int dst_max, int src_max) {
     return dst_max;
 }
 
-static int mTG_strcat_color(u8* str, u8* src, int str_max, int src_max, rgba_t* color) {
+static int mTG_strcat_color(u8* str, u8* src, int str_max, int src_max, const rgba_t* color) {
     /* 0x7F 0x05 0x00 0x00 0x00 0x00 */
     static u8 font_color_base[] = { CHAR_CONTROL_CODE, mFont_CONT_CODE_SET_COLOR_CHAR, 0, 0, 0, 0 };
     int str_len = mMl_strlen(str, str_max, CHAR_SPACE);
@@ -1618,7 +1618,7 @@ static int mTG_strcat_color(u8* str, u8* src, int str_max, int src_max, rgba_t* 
         if ((col_len + src_len) > str_max) {
             src_len -= (col_len + src_len) - str_max;
         }
-
+        
         str[col_len - 4] = color->r;
         str[col_len - 3] = color->g;
         str[col_len - 2] = color->b;
@@ -3210,10 +3210,9 @@ static void mTG_sell_all_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
         item_p = submenu->item_p;
         count = 0;
 
-        for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++) {
+        for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++, item_p++) {
             item_p->item = EMPTY_NO;
             item_p->slot_no = 0;
-            item_p++;
         }
 
         item_p = submenu->item_p;
@@ -3339,6 +3338,8 @@ static void mTG_dump_mail_mark_exe_proc(Submenu* submenu, mSM_MenuInfo_c* menu_i
     int i;
 
     if (menu_info->menu_type == mSM_OVL_MAILBOX) {
+        int i;
+
         mailbox_ovl->mark_flag = FALSE;
         for (i = 0; i < HOME_MAILBOX_SIZE; i++) {
             Mail_c* mail = &Common_Get(now_home)->mailbox[i];
@@ -3355,6 +3356,7 @@ static void mTG_dump_mail_mark_exe_proc(Submenu* submenu, mSM_MenuInfo_c* menu_i
         }
     } else if (menu_info->menu_type == mSM_OVL_CPMAIL) {
         int page = cpmail_ovl->page_order[0];
+        int i;
 
         for (i = 0; i < mCD_KEEP_MAIL_COUNT; i++) {
             Mail_c* mail = &cpmail_ovl->card_mail->mail[page][i];
@@ -4512,8 +4514,8 @@ static int mTG_bit_chk(u8* flags, u8* masks, int count) {
     int res = 0;
     int i;
 
-    for (i = 0; i < count; i++) {
-        res |= *flags++ & *masks++;
+    for (i = 0; i < count; i++, flags++, masks++) {
+        res |= *flags & *masks;
     }
 
     return res;
@@ -4522,32 +4524,32 @@ static int mTG_bit_chk(u8* flags, u8* masks, int count) {
 static void mTG_bit_on(u8* flags, u8* bits, int count) {
     int i;
 
-    for (i = 0; i < count; i++) {
-        *flags++ |= *bits++;
+    for (i = 0; i < count; i++, flags++, bits++) {
+        *flags |= *bits;
     }
 }
 
 static void mTG_bit_off(u8* flags, u8* bits, int count) {
     int i;
 
-    for (i = 0; i < count; i++) {
-        *flags++ &= ~*bits++;
+    for (i = 0; i < count; i++, flags++, bits++) {
+        *flags &= ~*bits;
     }
 }
 
 static void mTG_bit_rvs(u8* flags, u8* bits, int count) {
     int i;
 
-    for (i = 0; i < count; i++) {
-        *flags++ ^= *bits++;
+    for (i = 0; i < count; i++, flags++, bits++) {
+        *flags ^= *bits;
     }
 }
 
 static void mTG_bit_clr(u8* flags, u8* bits, int count) {
     int i;
 
-    for (i = 0; i < count; i++) {
-        *flags++ = 0;
+    for (i = 0; i < count; i++, flags++) {
+        *flags = 0;
     }
 }
 
@@ -4555,20 +4557,21 @@ static int mTG_bit_chk_all0(u8* flags, u8* bits, int count) {
     int res = 0;
     int i;
 
-    for (i = 0; i < count; i++) {
-        res |= *flags++ == 0;
+    for (i = 0; i < count; i++, flags++) {
+        res |= *flags == 0;
     }
 
     return res;
 }
 
-extern int mTG_mark_mainX(Submenu* submenu, mSM_MenuInfo_c* menu_info, int table, int table_idx, int mode,
+extern int mTG_mark_mainX(Submenu* submenu, const mSM_MenuInfo_c* menu_info, int table, int table_idx, int mode,
                           int* chk_result) {
-    int mark_res;
-    Mail_c* mail;
+    int mark_res = FALSE;
     mTG_mark_field_u set_flags;
     mTG_mark_field_u* current_flags_p;
     int max_flag_count;
+    int menu_type;
+    int param;
     int chk_res = FALSE;
     int i;
 
@@ -4576,8 +4579,7 @@ extern int mTG_mark_mainX(Submenu* submenu, mSM_MenuInfo_c* menu_info, int table
         set_flags.u8array[i] = 0;
     }
 
-    mail = mTG_get_mail_pointer(submenu, NULL);
-    mark_res = mTG_mark_main_sub(submenu, menu_info->menu_type, menu_info->data0, table, table_idx, mail, mode,
+    mark_res = mTG_mark_main_sub(submenu, menu_info->menu_type, menu_info->data0, table, table_idx, mTG_get_mail_pointer(submenu, NULL), mode,
                                  &current_flags_p, &max_flag_count, &set_flags);
     if (mark_res) {
         int byte_count = ((max_flag_count + 15) / 16) * 2;
@@ -4615,7 +4617,7 @@ extern int mTG_mark_mainX(Submenu* submenu, mSM_MenuInfo_c* menu_info, int table
     return mark_res;
 }
 
-static void mTG_mark_main_CLR(Submenu* submenu, mSM_MenuInfo_c* menu_info) {
+static void mTG_mark_main_CLR(Submenu* submenu, const mSM_MenuInfo_c* menu_info) {
     switch (menu_info->menu_type) {
         case mSM_OVL_INVENTORY:
             mTG_mark_mainX(submenu, menu_info, mTG_TABLE_ITEM, 0, mTG_MARK_CLR, NULL);
@@ -5050,7 +5052,6 @@ static void mTG_hukubukuro_open_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info
     int free_idx[3];
     mActor_name_t items[3];
     int idx;
-    int t_idx;
     int i;
     int j;
     int count;
@@ -5067,7 +5068,8 @@ static void mTG_hukubukuro_open_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info
     idx = mTG_get_table_idx(&submenu->overlay->tag_ovl->tags[0]);
     for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++, item_p++) {
         if (*item_p == EMPTY_NO) {
-            free_idx[count++] = i;
+            free_idx[count] = i;
+            count++;
             if (count == 3) {
                 break;
             }
@@ -5131,9 +5133,8 @@ static void mTG_hukubukuro_open_proc(Submenu* submenu, mSM_MenuInfo_c* menu_info
 
         /* Give items */
         for (j = 0; j < 3; j++) {
-            t_idx = free_idx[j];
-            mPr_SetPossessionItem(Now_Private, t_idx, items[j], mPr_ITEM_COND_NORMAL);
-            inv_ovl->item_scale_type[t_idx] = mIV_ITEM_SCALE_TYPE_GROW + j;
+            mPr_SetPossessionItem(Now_Private, free_idx[j], items[j], mPr_ITEM_COND_NORMAL);
+            inv_ovl->item_scale_type[free_idx[j]] = mIV_ITEM_SCALE_TYPE_GROW + j;
         }
 
         mTG_return_tag_init(submenu, mTG_TYPE_NONE, mTG_RETURN_CLOSE);
@@ -5629,11 +5630,11 @@ static void mTG_cpack_change_mail_mark_decide(Submenu* submenu, mIV_Ovl_c* inv_o
     cpmail_mark->idx_tbl[1] = inv_free_idx;
     cpmail_mark->idx_tbl[2] = cpmail_move_idx;
     cpmail_mark->idx_tbl[3] = cpmail_free_idx;
-
+    
     tag_ovl->_370 = 0.0f;
     cpmail_mark->_4A = 0b11; // 3
     cpmail_mark->mode = mTG_CHANGE_MAIL_MARK_MOVE;
-
+    
     inv_menu = &submenu->overlay->menu_info[mSM_OVL_INVENTORY];
     cpmail_menu = &submenu->overlay->menu_info[mSM_OVL_CPMAIL];
 
@@ -7732,8 +7733,8 @@ static void mTG_change_original_mark_decide(Submenu* submenu, mNW_Ovl_c* nw_ovl,
     mTG_cporiginal_mark_c* mark_p = &tag_ovl->original_mark.mark[mark_idx];
 
     for (i = 0; i < mTG_ORG_TYPE_NUM; i++) {
-        mark_max = original_mark_p->mark_max[i];
         idx1[i] = -1;
+        mark_max = original_mark_p->mark_max[i];
         for (j = 0; j < mark_max; j++) {
             if ((original_mark_p->mark_flg[i] & (1 << j)) != 0) {
                 mark_p->idx[i] = j;
@@ -7825,8 +7826,8 @@ static void mTG_move_delete(Submenu* submenu, mTG_tag_c* tag) {
                     int i;
 
                     mPr_SetPossessionItem(Now_Private, (u32)idx, EMPTY_NO, mPr_ITEM_COND_NORMAL);
-                    for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++) {
-                        *scale_p++ = mIV_ITEM_SCALE_TYPE_NONE;
+                    for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++, scale_p++) {
+                        *scale_p = mIV_ITEM_SCALE_TYPE_NONE;
                     }
                 }
             }
@@ -8586,11 +8587,12 @@ static void mTG_set_select(GAME* game, mSM_MenuInfo_c* menu_info, mTG_tag_c* tag
 
 static void mTG_set_character(Submenu* submenu, mSM_MenuInfo_c* menu_info, GAME* game, GRAPH* graph, mTG_tag_c* tag,
                               f32 base_x, f32 base_y) {
-    f32 scale_rate = tag->scale * 0.875f;
+    f32 scale = tag->scale;
+    f32 scale_rate = scale * 0.875f;
 
     if (!F32_IS_ZERO(tag->scale)) {
-        f32 pos_x = 160.0f + (tag->base_pos[0] + base_x + tag->scale * (tag->body_ofs[0] + tag->text_ofs[0]));
-        f32 pos_y = 120.0f - (tag->base_pos[1] + base_y + tag->scale * (tag->body_ofs[1] + tag->text_ofs[1]));
+        f32 pos_x = 160.0f + (tag->base_pos[0] + base_x + scale * (tag->body_ofs[0] + tag->text_ofs[0]));
+        f32 pos_y = 120.0f - (tag->base_pos[1] + base_y + scale * (tag->body_ofs[1] + tag->text_ofs[1]));
         mTG_tag_data_c* tag_data_p = &mTG_label_table[tag->type];
 
         submenu->overlay->set_char_matrix_proc(graph);

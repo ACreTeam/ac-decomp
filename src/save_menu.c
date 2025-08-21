@@ -226,17 +226,17 @@ extern void save_menu_cleanup(GAME* game) {
 }
 
 extern void save_menu_init(GAME* game) {
-    GRAPH* g = game->graph;
-    View* view;
     GAME_SAVE_MENU* save_menu = (GAME_SAVE_MENU*)game;
+    View* view = &save_menu->view;
+    GRAPH* g = game->graph;
     int i;
 
     game->exec = &save_menu_main;
     game->cleanup = &save_menu_cleanup;
 
-    view = &save_menu->view;
     initView(view, g);
     view->flag = VIEW_UPDATE_ORTHOGRAPHIC;
+    
     new_Matrix(game);
     SetGameFrame(1);
 

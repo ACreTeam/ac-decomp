@@ -347,8 +347,8 @@ void CollisionCheck_setOC_HitInfo(ClObj_c* col1, ClObjElem_c* colelem1, xyz_t* p
 
     f32 weight1;
     f32 weight2;
-    f32 minweight;
     f32 comweight;
+    f32 minweight;
 
     f32 coldis1;
     f32 coldis2;

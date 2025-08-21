@@ -353,11 +353,11 @@ static void mEvMN_SetNpcJointEvRandom(u8* animal_idx, int max) {
     animal_idx -= max;
 
     if (animal_count > 0 && mLd_PlayerManKindCheck() == FALSE) {
-        animal = Save_Get(animals);
+        Animal_c* sec_animal = animal;
 
         for (i = 0; i < ANIMAL_NUM_MAX; i++) {
             if (((animal_bitfield >> i) & 1) == 1 &&
-                mEvMN_CheckCanJointEvent(animal[i].memories, &Now_Private->player_ID) == FALSE) {
+                mEvMN_CheckCanJointEvent(sec_animal[i].memories, &Now_Private->player_ID) == FALSE) {
                 animal_count--;
                 animal_bitfield &= ~(1 << i);
 

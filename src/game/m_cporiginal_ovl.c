@@ -571,15 +571,13 @@ static void mCO_set_frame_main_dl(Submenu* submenu, GAME* game, int folder) {
 
     idx = 0;
     for (k = 0; k < 4; k++) {
-        for (j = 0; j < 3; j++) {
+        for (j = 0; j < 3; j++, idx++) {
             if (mCO_check_mark_flg(submenu, idx)) {
                 Matrix_push();
                 
                 mNW_draw_sav_mark(game, 32 * j, 44 + -k * 29);
                 Matrix_pull();
             }
-
-            idx++;
         }
     }
 

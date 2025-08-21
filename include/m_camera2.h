@@ -339,7 +339,7 @@ extern xyz_t* Camera2_getMicPos_p(GAME_PLAY* play);
 extern int Camera2NormalState_get(GAME_PLAY* play);
 extern int Camera2_request_main_wade(GAME_PLAY* play, xyz_t* pos, int priority, f32 goal_time);
 extern int Camera2_request_main_talk(GAME_PLAY* play, ACTOR* speaker, ACTOR* listener, int priority);
-extern int Camera2_request_main_talk_pos(GAME_PLAY* play, ACTOR* speaker, xyz_t* listener_pos, int priority);
+extern int Camera2_request_main_talk_pos(GAME_PLAY* play, ACTOR* speaker, const xyz_t* const listener_pos, int priority);
 extern int Camera2_request_main_normal(GAME_PLAY* play, int flags, int priority);
 extern int Camera2_request_main_demo(GAME_PLAY* play, const xyz_t* start_center, const f32 start_dist,
                                      const s_xyz* start_dir, const xyz_t* goal_center, const f32 goal_dist,
@@ -351,16 +351,16 @@ extern int Camera2_request_main_demo_fromNowPos(GAME_PLAY* play, const xyz_t* go
 extern int Camera2_request_main_demo_fromNowPos2(GAME_PLAY* play, const xyz_t* goal_center, const f32 goal_delta,
                                                  const f32 accel_delta, const f32 braking_delta, const int priority);
 extern int Camera2_request_main_item(GAME_PLAY* play, int type, int priority);
-extern int Camera2_request_main_lock(GAME_PLAY* play, xyz_t* center_pos, xyz_t* eye_pos, f32 fov_y, int morph_counter,
+extern int Camera2_request_main_lock(GAME_PLAY* play, const xyz_t* center_pos, const xyz_t* eye_pos, f32 fov_y, int morph_counter,
                                      f32 near, f32 far, int priority);
 extern int Camera2_request_main_door(GAME_PLAY* play, ACTOR* door_actor, u32 flags, int priority);
-extern int Camera2_request_main_simple2(GAME_PLAY* play, xyz_t* center, s_xyz* dir, f32 dist, int morph_counter,
+extern int Camera2_request_main_simple2(GAME_PLAY* play, const xyz_t* center, const s_xyz* dir, f32 dist, int morph_counter,
                                         int mode, int priority);
 extern int Camera2_request_main_simple_kirin(GAME_PLAY* play, const xyz_t* center, int priority);
 extern int Camera2_request_main_simple_fishing(GAME_PLAY* play, const xyz_t* player_pos, const xyz_t* bobber_pos,
                                                int priority);
-extern int Camera2_request_main_simple_fishing_return(GAME_PLAY* play, xyz_t* player_pos, int priority);
-extern int Camera2_request_main_simple(GAME_PLAY* play, xyz_t* pos, s_xyz* dir, f32 dist, int morph_counter,
+extern int Camera2_request_main_simple_fishing_return(GAME_PLAY* play, const xyz_t* player_pos, int priority);
+extern int Camera2_request_main_simple(GAME_PLAY* play, const xyz_t* pos, const s_xyz* dir, f32 dist, int morph_counter,
                                        int priority);
 extern void Camera2_main_Simple_AngleDistStd(GAME_PLAY* play, s_xyz* angle, f32* dist);
 extern int Camera2_request_main_listen_front_low_talk(GAME_PLAY* play, ACTOR* speaker, ACTOR* listener, int priority);
@@ -369,8 +369,8 @@ extern int Camera2_request_main_cust_talk(GAME_PLAY* play, ACTOR* speaker, ACTOR
                                           int priority, s16 angle_x, s16 angle_y, f32 distance);
 extern int Camera2_request_BuySikimono_WallPaper(GAME_PLAY* play, xyz_t* center, xyz_t* eye);
 extern int Camera2_Inter_set_reverse_mode(GAME_PLAY* play);
-extern int Camera2_request_main_inter(GAME_PLAY* play, xyz_t* start_center, xyz_t* start_eye, xyz_t* goal_center,
-                                      xyz_t* goal_eye, f32 s0, f32 s1, u32 flags, int morph_counter, int priority);
+extern int Camera2_request_main_inter(GAME_PLAY* play, const xyz_t* start_center, const xyz_t* start_eye, const xyz_t* goal_center,
+                                      const xyz_t* goal_eye, f32 s0, f32 s1, u32 flags, int morph_counter, int priority);
 extern int Camera2_request_main_staff_roll(GAME_PLAY* play, ACTOR* speaker, ACTOR* listener, int priority);
 extern void Init_Camera2(GAME_PLAY* play);
 extern void Camera2_process(GAME_PLAY* play);

@@ -53,25 +53,25 @@ static void aNTT_roll2(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     CLIP(mikanbox_clip)->roll_proc(totakeke, play);
     weather = CLIP(weather_clip);
     if (weather != NULL) {
-        if (totakeke->roll4_count == 0x15e0) {
+        if (totakeke->roll4_count == FRAMERATE_SELECT(5600, 4665)) {
             weather->change_weather(weather->actor, mEnv_WEATHER_SAKURA, mEnv_WEATHER_INTENSITY_HEAVY);
-        } else if (totakeke->roll4_count == 0x51e) {
+        } else if (totakeke->roll4_count == FRAMERATE_SELECT(1310, 1090)) {
             weather->change_weather(weather->actor, mEnv_WEATHER_RAIN, mEnv_WEATHER_INTENSITY_HEAVY);
-        } else if (totakeke->roll4_count == 0x992) {
+        } else if (totakeke->roll4_count == FRAMERATE_SELECT(2450, 2041)) {
             weather->change_weather(weather->actor, mEnv_WEATHER_LEAVES, mEnv_WEATHER_INTENSITY_HEAVY);
-        } else if (totakeke->roll4_count == 0xf46) {
+        } else if (totakeke->roll4_count == FRAMERATE_SELECT(3910, 3258)) {
             weather->change_weather(weather->actor, mEnv_WEATHER_SNOW, mEnv_WEATHER_INTENSITY_HEAVY);
-        } else if (totakeke->roll4_count == 0x74e) {
+        } else if (totakeke->roll4_count == FRAMERATE_SELECT(1870, 1558)) {
             weather->change_weather(weather->actor, mEnv_WEATHER_RAIN, mEnv_WEATHER_INTENSITY_NONE);
-        } else if (totakeke->roll4_count == 0xb9a) {
+        } else if (totakeke->roll4_count == FRAMERATE_SELECT(2970, 2550)) {
             weather->change_weather(weather->actor, mEnv_WEATHER_LEAVES, mEnv_WEATHER_INTENSITY_NONE);
-        } else if (totakeke->roll4_count == 0x12c0) {
+        } else if (totakeke->roll4_count == FRAMERATE_SELECT(4800, 3975)) {
             weather->change_weather(weather->actor, mEnv_WEATHER_SNOW, mEnv_WEATHER_INTENSITY_NONE);
-        } else if (totakeke->roll4_count == 0x18ce) {
+        } else if (totakeke->roll4_count == FRAMERATE_SELECT(6350, 5165)) {
             weather->change_weather(weather->actor, mEnv_WEATHER_SAKURA, mEnv_WEATHER_INTENSITY_NONE);
         }
     }
-    if (totakeke->roll2_count > 0x1be) {
+    if (totakeke->roll2_count > FRAMERATE_SELECT(446, 372)) {
         totakeke->_9a2 += 1;
         if (totakeke->_9a2 >= 0x10) {
             aNTT_setup_think_proc(totakeke, play, 0x8);
@@ -87,19 +87,19 @@ static void aNTT_roll4(NPC_TOTAKEKE_ACTOR *totakeke, GAME_PLAY *play) {
     aNTT_event_save_c *save = (aNTT_event_save_c *)mEv_get_save_area(mEv_EVENT_KK_SLIDER, 0xa);
     totakeke->roll4_count += 1;
     CLIP(mikanbox_clip)->roll_proc(totakeke, play);
-    if (totakeke->roll4_count >= 0x1d88 || totakeke->roll4_count <= 0x1c70) {
+    if (totakeke->roll4_count >= FRAMERATE_SELECT(7560, 6330) || totakeke->roll4_count <= FRAMERATE_SELECT(7280, 6070)) {
         save->copyright_alpha = 0;
-    } else if (totakeke->roll4_count > 0x1d38) {
-        save->copyright_alpha = 3.1875f * (0x1d88 - totakeke->roll4_count);
-    } else if (totakeke->roll4_count < 0x1cc0) {
-        save->copyright_alpha = 3.1875f * (totakeke->roll4_count - 0x1c70);
+    } else if (totakeke->roll4_count > FRAMERATE_SELECT(7480, 6250)) {
+        save->copyright_alpha = 3.1875f * (FRAMERATE_SELECT(7560, 6330) - totakeke->roll4_count);
+    } else if (totakeke->roll4_count < FRAMERATE_SELECT(7360, 6150)) {
+        save->copyright_alpha = 3.1875f * (totakeke->roll4_count - FRAMERATE_SELECT(7280, 6070));
     } else {
         save->copyright_alpha = 255;
     }
 
     if (CLIP(mikanbox_clip) != NULL) {
         CLIP(mikanbox_clip)->sound_proc(totakeke, play, 0);
-        if (CLIP(mikanbox_clip)->section_chk_proc(0x4) && totakeke->roll4_count > 0x1d88) {
+        if (CLIP(mikanbox_clip)->section_chk_proc(0x4) && totakeke->roll4_count > FRAMERATE_SELECT(7560, 6330)) {
             save->copyright_alpha = 0;
             aNTT_setup_think_proc(totakeke, play, 0x9);
         }

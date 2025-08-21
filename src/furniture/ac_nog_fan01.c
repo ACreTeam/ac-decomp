@@ -49,9 +49,11 @@ static void aNogFan_ct(FTR_ACTOR* ftr_actor, u8* data) {
 }
 
 static void aNogFan_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {
-    static int fan_kurukuru_data[] = {
-        1, 1, 1, 2, 2, 2, 2, 2, 3, 0xFFFFFFFF,
-    };
+#if VERSION >= VER_GAFU01_00
+    static int fan_rot_frame_counter_dat[] = { 1, 1, 1, 2, 2, 2, 2, 2, 3, -1 };
+#else
+    static int fan_kurukuru_data[] = { 1, 1, 1, 2, 2, 2, 2, 2, 3, -1 };
+#endif
     int num;
     int idx;
 
@@ -61,27 +63,36 @@ static void aNogFan_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u
 
     aNogFan_ChangeSwitch(ftr_actor);
     if (ftr_actor->switch_bit != FALSE) {
-        f32 step = sqrtf(0.94999998807907);
-
-        add_calc(&ftr_actor->dynamic_work_f[0], 0.5f, 1.0f - step, 0.25f, 0.0005f);
+        add_calc(&ftr_actor->dynamic_work_f[0], 0.5f, CALC_EASE(0.05f), 0.25f, 0.0005f);
 
         if (aFTR_CAN_PLAY_SE(ftr_actor)) {
             sAdo_OngenPos((u32)ftr_actor, 1, &ftr_actor->position);
         }
     } else {
-        f32 step = sqrtf(0.94999998807907);
-
-        add_calc(&ftr_actor->dynamic_work_f[0], 0.0f, 1.0f - step, 0.25f, 0.0005f);
+        add_calc(&ftr_actor->dynamic_work_f[0], 0.0f, CALC_EASE(0.05f), 0.25f, 0.0005f);
     }
 
     keyf->frame_control.speed = ftr_actor->dynamic_work_f[0];
     cKF_SkeletonInfo_R_play(keyf);
 
     idx = 9.0f - (2.0f * (ftr_actor->dynamic_work_f[0] * 9.0f));
+    
+#if VERSION >= VER_GAFU01_00
+    if ((idx != ARRAY_COUNT(fan_rot_frame_counter_dat) - 1)) {
+        ftr_actor->dynamic_work_s[0]++;
+        num = fan_rot_frame_counter_dat[idx];
+        if ((ftr_actor->dynamic_work_s[0] >= num)) {
+            ftr_actor->dynamic_work_s[0] = 0;
+            ftr_actor->tex_animation.frame++;
+
+            if (ftr_actor->tex_animation.frame >= 6 || ftr_actor->tex_animation.frame < 0) {
+                ftr_actor->tex_animation.frame = 0;
+            }
+        }
+    }
+#else
     ftr_actor->dynamic_work_s[0]++;
-
     num = fan_kurukuru_data[idx];
-
     if ((num != -1) && (ftr_actor->dynamic_work_s[0] >= num)) {
         ftr_actor->dynamic_work_s[0] = 0;
         ftr_actor->tex_animation.frame++;
@@ -90,6 +101,7 @@ static void aNogFan_mv(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u
             ftr_actor->tex_animation.frame = 0;
         }
     }
+#endif
 }
 
 static void aNogFan_dw(FTR_ACTOR* ftr_actor, ACTOR* my_room_actor, GAME* game, u8* data) {

@@ -13,8 +13,14 @@
 extern "C" {
 #endif
 
+// Aus version increased program size by 0x04 bytes
+#if VERSION >= VER_GAFU01_00
+#define aBTD_LOADER_SIZE 0xC83C
+#define aBTD_PROGRAM_SIZE 0x15248
+#else
 #define aBTD_LOADER_SIZE 0xC83C
 #define aBTD_PROGRAM_SIZE 0x15244
+#endif
 
 enum {
     aBTD_ACTION_SENDO_BIRTH_WAIT,

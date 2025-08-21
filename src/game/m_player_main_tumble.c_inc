@@ -30,7 +30,7 @@ static void Player_actor_setup_Item_Tumble(ACTOR* actor, GAME* game, int kind, f
 }
 
 static int Player_actor_Get_PlayerAnimeIndex_fromItemKind_Tumble(int kind) {
-    static const u8 data[] = {
+    static const u8 data[mPlayer_ITEM_KIND_NUM+1] = {
         mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1,
         mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_A1,
         mPlayer_ANIM_KOKERU_A1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1, mPlayer_ANIM_KOKERU_N1,

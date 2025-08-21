@@ -712,8 +712,9 @@ static void bIT_actor_drop_move_fly(bg_item_drop_c* drop);
 static void bIT_actor_drop_move_wait(bg_item_drop_c* drop);
 
 static int bIT_actor_drop_entry_main(bg_item_drop_table_c* drop_info, bg_item_drop_c* src_drop) {
-    int res = FALSE;
+    mActor_name_t* fg_item_p;
     bg_item_drop_c* drop = drop_info->drop_p;
+    int res = FALSE;
     int i;
 
     for (i = 0; i < drop_info->count; i++, drop++) {
@@ -751,7 +752,7 @@ static int bIT_actor_drop_entry_main(bg_item_drop_table_c* drop_info, bg_item_dr
                 xyz_t_move(&drop->last_position, &src_drop->position);
 
                 if (drop->fg_item != HONEYCOMB) {
-                    mActor_name_t* fg_item_p = mFI_GetUnitFG(src_drop->target_position);
+                    fg_item_p = mFI_GetUnitFG(src_drop->target_position);
 
                     if (fg_item_p != NULL) {
                         drop->target_pos_fg_item = *fg_item_p;
@@ -1062,8 +1063,8 @@ static void drop_fruit(mActor_name_t fg_item, int ut_x, int ut_z, xyz_t* drop_po
 static int BIT_actor_tree_cutcount_check(GAME* game, int ut_x, int ut_z) {
     bg_item_common_c* common_p = bIT_CLIP->bg_item_common_p;
     int res = 0;
-    int bx;
     int i;
+    int bx;
     int bz;
 
     for (i = 0; i < common_p->item_table.count; i++) {
@@ -1761,7 +1762,7 @@ static void bit_cmn_single_draw_loop_type1(GRAPH* graph, Gfx** gfx_pp, bIT_draw_
 }
 
 static void bit_cmn_single_draw_item_shadow(GRAPH* graph, bg_item_draw_part_c* draw_part,
-                                            bIT_draw_pos_entry_c* draw_pos_entry, f32 shadow_pos, rgba_t* color) {
+                                            bIT_draw_pos_entry_c* draw_pos_entry, f32 shadow_pos, const rgba_t* color) {
     bg_item_draw_list_c* draw_list = draw_part->shadow_draw_list;
 
     if (draw_list != NULL) {
@@ -2058,12 +2059,12 @@ static void bit_cmn_single_drawS(GAME* game, bg_item_common_info_c* common_info,
 }
 
 static void bIT_common_info_tbl_copy(bg_item_tbl_c* dst, bg_item_tbl_c* src) {
+    int i;
     u8* src_p = src->info;
     u8* dst_p = dst->info;
-    int i;
 
-    for (i = 0; i < UT_TOTAL_NUM; i++) {
-        *dst_p++ = *src_p++;
+    for (i = 0; i < UT_TOTAL_NUM; i++, dst_p++, src_p++) {
+        *dst_p = *src_p;
     }
 }
 
@@ -2458,8 +2459,8 @@ static void bg_item_common_chg_BGDataR(bg_item_common_c* common) {
     }
 }
 
-static void bg_item_common_outPutData(GAME_PLAY* play, bg_item_draw_pos_c* draw_pos, s16 next, int gfx_idx,
-                                      xyz_t* pos) {
+static void bg_item_common_outPutData(const GAME_PLAY* const play, bg_item_draw_pos_c* const draw_pos, const s16 next, int gfx_idx,
+                                      const xyz_t* const pos) {
     Matrix_translate(pos->x, pos->y, pos->z, MTX_LOAD);
     Matrix_scale(0.01f, 0.01f, 0.01f, MTX_MULT);
     Matrix_get(&draw_pos->mtxf);
@@ -2467,8 +2468,8 @@ static void bg_item_common_outPutData(GAME_PLAY* play, bg_item_draw_pos_c* draw_
     draw_pos->sub_idx = gfx_idx;
 }
 
-static void bg_item_common_classifyitemDataTable(GAME_PLAY* play, bg_item_draw_table_c* draw_table,
-                                                 mFI_block_tbl_c* block_table, u16* start_idx_tbl,
+static void bg_item_common_classifyitemDataTable(const GAME_PLAY* const play, bg_item_draw_table_c* draw_table,
+                                                 const mFI_block_tbl_c* block_table, u16* start_idx_tbl,
                                                  bg_item_type_data_c** type_data_table,
                                                  bg_item_draw_part_table_c* draw_part_table) {
     Matrix_push();
@@ -2578,17 +2579,17 @@ static void bg_item_common_classifyitemDataTable(GAME_PLAY* play, bg_item_draw_t
 
 // Part 3
 
-static void bg_item_common_set_draw_tbl(GAME_PLAY* play, bg_item_draw_table_c* draw_tbl, mFI_block_tbl_c* block_tbl,
+static void bg_item_common_set_draw_tbl(GAME_PLAY* play, bg_item_draw_table_c* draw_tbl, const mFI_block_tbl_c* block_tbl,
                                         bg_item_type_data_c** type_data_table,
                                         bg_item_draw_part_table_c* draw_part_table) {
     bg_item_draw_pos_c* draw_pos;
     u16 start_idx_tbl[bIT_DRAW_TYPE_MAX];
+    int i;
     u16* start_idx_p = start_idx_tbl;
     u16* draw_start_idx_p;
-    int i;
 
-    for (i = 0; i < bIT_DRAW_TYPE_MAX; i++, start_idx_p++) {
-        *start_idx_p = 0;
+    for (i = 0; i < bIT_DRAW_TYPE_MAX; i++) {
+        *start_idx_p++ = 0;
     }
 
     draw_pos = draw_tbl->draw_data.draw_pos;
@@ -2600,8 +2601,8 @@ static void bg_item_common_set_draw_tbl(GAME_PLAY* play, bg_item_draw_table_c* d
 
     start_idx_p = start_idx_tbl;
     draw_start_idx_p = draw_tbl->draw_data.idx_p;
-    for (i = 0; i < bIT_DRAW_TYPE_MAX; i++, start_idx_p++, draw_start_idx_p++) {
-        *draw_start_idx_p = *start_idx_p;
+    for (i = 0; i < bIT_DRAW_TYPE_MAX; i++) {
+        *draw_start_idx_p++ = *start_idx_p++;
     }
 
     draw_tbl->draw_flag = TRUE;
@@ -2993,7 +2994,7 @@ static void bg_item_common_draw_item_body(GRAPH* graph, Gfx** gfx_pp, bg_item_dr
 typedef void (*bIT_DRAW_SHADOW_PROC)(GRAPH*, Gfx**, bg_item_draw_list_c*, int, Vtx*, bg_item_draw_pos_c*, Gfx**);
 
 static void bg_item_common_draw_item_shadow(GRAPH* graph, Gfx** gfx_pp, bg_item_draw_part_c* draw_part,
-                                            bg_item_draw_pos_c* draw_pos, f32 shadow_pos, rgba_t* shadow_color) {
+                                            bg_item_draw_pos_c* draw_pos, f32 shadow_pos, const rgba_t* shadow_color) {
     bg_item_draw_list_c* draw_list = draw_part->shadow_draw_list;
 
     if (draw_list != NULL) {

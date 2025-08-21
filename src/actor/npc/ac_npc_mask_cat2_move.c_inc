@@ -289,15 +289,19 @@ static void aNM2_make_shasho(NPC_MASK_CAT2_ACTOR* actorx, GAME_PLAY* play) {
 }
 
 static BOOL aNM2_chk_mask_texture() {
-    int i;
-    u8* design_data;
     BOOL res = FALSE;
-    for (i = mNW_DESIGN_TEX_SIZE, design_data = Save_Get(mask_cat.design.design.data); i > 0; i--, design_data++) {
+    u8* design_data = Save_Get(mask_cat.design.design.data);
+    int i;
+
+    for (i = 0; i < mNW_DESIGN_TEX_SIZE; i++) {
         if (*design_data != 0xFF) {
             res = TRUE;
             break;
         }
+
+        design_data++;
     }
+    
     return res;
 }
 

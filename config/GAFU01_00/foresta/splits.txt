@@ -3560,7 +3560,7 @@ audio.c:
 	.data       start:0x00087810 end:0x000878A0
 	.bss        start:0x002332D8 end:0x002332DC
 
-f_furniture.o:
+f_furniture.c:
 	.text       start:0x002C4694 end:0x002C49C0
 	.text       start:0x002C49C0 end:0x002C4B80
 	.text       start:0x002C4B80 end:0x002C4C50

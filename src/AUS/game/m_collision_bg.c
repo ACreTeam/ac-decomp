@@ -8,6 +8,8 @@
 #include "m_random_field.h"
 #include "sys_matrix.h"
 
+#define mCoBG_VIRTUAL_ACTOR_ID 2000
+
 typedef struct {
     xyz_t pos;
     f32 height;
@@ -22,7 +24,7 @@ typedef struct {
     f32 start_btm;
     f32 end_top;
     f32 end_btm;
- }mCoBG_WallBounds_c;
+} mCoBG_WallBounds_c;
 
 typedef struct {
     f32 start[2];
@@ -62,13 +64,19 @@ static mCoBG_ActorInf_c l_ActorInf;
 static mCoBG_mBgMgr_c l_mBgMgr;
 
 static void mCoBG_SetMoveBgContactSide(mCoBG_bg_regist_c* regist_p, ACTOR* actorx, s16 angle);
-static void mCoBG_MakeUnitVector(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, s16 unit_count, u8 check_type, s16 atr_wall, s16 old_on_ground, s16 old_in_water);
-static void mCoBG_MakeMoveBgVector(mCoBG_vec_info_c* vec_info, mCoBG_mBgMgr_c* mbg_mgr, const xyz_t* pos, u8 check_type);
-static void mCoBG_MakeColumnCollisionData(mCoBG_column_c* column, int* column_count, mCoBG_UnitInfo_c* ut_info, int unit_count, int old_on_ground, mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_item_proc, int start, int end);
+static void mCoBG_MakeUnitVector(mCoBG_vec_info_c* vec_info, mCoBG_UnitInfo_c* ut_info, s16 unit_count, u8 check_type,
+                                 s16 atr_wall, s16 old_on_ground, s16 old_in_water);
+static void mCoBG_MakeMoveBgVector(mCoBG_vec_info_c* vec_info, mCoBG_mBgMgr_c* mbg_mgr, const xyz_t* pos,
+                                   u8 check_type);
+static void mCoBG_MakeColumnCollisionData(ACTOR* actorx, mCoBG_column_c* col, int* col_count_p,
+                                          mCoBG_UnitInfo_c* ut_info, int count, int old_on_ground,
+                                          mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_item_proc, int ux, int uz);
 static void mCoBG_MakeCircleDefenceWall(mCoBG_ActorInf_c* actor_info, s16 attr_wall);
-static void mCoBG_ColumnWallCheck(xyz_t* rev, mCoBG_ActorInf_c* actor_info, const xyz_t* pos, mCoBG_column_c* column, int column_count, s16 atr_wall);
+static void mCoBG_ColumnWallCheck(xyz_t* rev, mCoBG_ActorInf_c* actor_info, const xyz_t* pos, mCoBG_column_c* column,
+                                  int column_count, s16 atr_wall);
 static f32 mCoBG_GetBGHeight_Column(const xyz_t* pos, mCoBG_UnitInfo_c* unit_info);
-static void mCoBG_MoveBgGroundCheck(xyz_t* rev_pos, mCoBG_ActorInf_c* actor_info, ACTOR* actorx, mCoBG_CheckResult_c* result, s_xyz* angle);
+static void mCoBG_MoveBgGroundCheck(xyz_t* rev_pos, mCoBG_ActorInf_c* actor_info, ACTOR* actorx,
+                                    mCoBG_CheckResult_c* result, s_xyz* angle);
 
 static u8 mCoBG_bridge_search_water[] = { 3, 6, 12, 9, 240, 1, 8, 2, 4, 3, 6, 12, 9 };
 static u8 mCoBG_grass3_search_water[] = { 3, 6, 12, 9 };
@@ -80,6 +88,7 @@ typedef struct {
 } mCoBG_forbid_vec_data_c;
 
 static mCoBG_forbid_vec_data_c mCoBG_make_vector_table[] = {
+    // clang-format off
     {DEG2SHORT_ANGLE2(0.0f), {0.0f, 1.0f}, mCoBG_WALL_UP},
     {DEG2SHORT_ANGLE2(-90.0f), {-1.0f, 0.0f}, mCoBG_WALL_RIGHT},
     {DEG2SHORT_ANGLE2(90.0f), {1.0f, 0.0f}, mCoBG_WALL_LEFT},
@@ -88,134 +97,134 @@ static mCoBG_forbid_vec_data_c mCoBG_make_vector_table[] = {
     {DEG2SHORT_ANGLE2(135.0f), {SQRT_OF_2_DIV_2, -SQRT_OF_2_DIV_2}, mCoBG_WALL_SLATE_DOWN},
     {DEG2SHORT_ANGLE2(225.0f), {-SQRT_OF_2_DIV_2, -SQRT_OF_2_DIV_2}, mCoBG_WALL_SLATE_UP},
     {DEG2SHORT_ANGLE2(315.0f), {-SQRT_OF_2_DIV_2, SQRT_OF_2_DIV_2}, mCoBG_WALL_SLATE_DOWN},
+    // clang-format on
 };
 
 static s16 mCoBG_forbid_vector_idx[][2] = {
-   {4, -1}, {5, -1}, {6, -1}, {7, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1},
-   {3, -1}, {3, -1}, {6, -1}, {5, -1}, {4, -1}, {5, -1}, {6, -1}, {7, -1},
-   {0, -1}, {1, -1}, {2, -1}, {3, -1}, {0, -1}, {1, -1}, {2, -1}, {3, -1},
-   {0, 2}, {3, 2}, {3, 1}, {0, 1}, {4, -1}, {5, -1}, {6, -1}, {7, -1},
-   {0, 2}, {3, 2}, {3, 1}, {0, 1},
+    { 4, -1 }, { 5, -1 }, { 6, -1 }, { 7, -1 }, { -1, -1 }, { 0, -1 }, { 1, -1 }, { 2, -1 }, { 3, -1 },
+    { 3, -1 }, { 6, -1 }, { 5, -1 }, { 4, -1 }, { 5, -1 },  { 6, -1 }, { 7, -1 }, { 0, -1 }, { 1, -1 },
+    { 2, -1 }, { 3, -1 }, { 0, -1 }, { 1, -1 }, { 2, -1 },  { 3, -1 }, { 0, 2 },  { 3, 2 },  { 3, 1 },
+    { 0, 1 },  { 4, -1 }, { 5, -1 }, { 6, -1 }, { 7, -1 },  { 0, 2 },  { 3, 2 },  { 3, 1 },  { 0, 1 },
 };
 
 static xyz_t mCoBG_unit_offset[mCoBG_DIRECT_NUM] = {
-  {                  0.0f, 0.0f, -mFI_UNIT_BASE_SIZE_F },
-  { -mFI_UNIT_BASE_SIZE_F, 0.0f,                  0.0f },
-  {                  0.0f, 0.0f,  mFI_UNIT_BASE_SIZE_F },
-  {  mFI_UNIT_BASE_SIZE_F, 0.0f,                  0.0f },
-  { -mFI_UNIT_BASE_SIZE_F, 0.0f, -mFI_UNIT_BASE_SIZE_F },
-  { -mFI_UNIT_BASE_SIZE_F, 0.0f,  mFI_UNIT_BASE_SIZE_F },
-  {  mFI_UNIT_BASE_SIZE_F, 0.0f,  mFI_UNIT_BASE_SIZE_F },
-  {  mFI_UNIT_BASE_SIZE_F, 0.0f, -mFI_UNIT_BASE_SIZE_F }
+    // clang-format off
+    {                  0.0f, 0.0f, -mFI_UNIT_BASE_SIZE_F },
+    { -mFI_UNIT_BASE_SIZE_F, 0.0f,                  0.0f },
+    {                  0.0f, 0.0f,  mFI_UNIT_BASE_SIZE_F },
+    {  mFI_UNIT_BASE_SIZE_F, 0.0f,                  0.0f },
+    { -mFI_UNIT_BASE_SIZE_F, 0.0f, -mFI_UNIT_BASE_SIZE_F },
+    { -mFI_UNIT_BASE_SIZE_F, 0.0f,  mFI_UNIT_BASE_SIZE_F },
+    {  mFI_UNIT_BASE_SIZE_F, 0.0f,  mFI_UNIT_BASE_SIZE_F },
+    {  mFI_UNIT_BASE_SIZE_F, 0.0f, -mFI_UNIT_BASE_SIZE_F },
+    // clang-format on
 };
 
 static void mCoBG_PlussDirectOffset(xyz_t* ofs_wpos, xyz_t wpos, int direct) {
-  if (ofs_wpos != NULL && direct >= 0 && direct < mCoBG_DIRECT_NUM) {
-    ofs_wpos->x = wpos.x + mCoBG_unit_offset[direct].x;
-    ofs_wpos->y = wpos.y + mCoBG_unit_offset[direct].y;
-    ofs_wpos->z = wpos.z + mCoBG_unit_offset[direct].z;
-  }
+    if (ofs_wpos != NULL && direct >= 0 && direct < mCoBG_DIRECT_NUM) {
+        ofs_wpos->x = wpos.x + mCoBG_unit_offset[direct].x;
+        ofs_wpos->y = wpos.y + mCoBG_unit_offset[direct].y;
+        ofs_wpos->z = wpos.z + mCoBG_unit_offset[direct].z;
+    }
 }
 
 static void mCoBG_SetXyz_t(xyz_t* pos, f32 x, f32 y, f32 z) {
-  pos->x = x;
-  pos->y = y;
-  pos->z = z;
+    pos->x = x;
+    pos->y = y;
+    pos->z = z;
 }
 
 static void mCoBG_SetXZ(f32* xz, f32 x, f32 z) {
-  xz[0] = x;
-  xz[1] = z;
+    xz[0] = x;
+    xz[1] = z;
 }
 
 static void mCoBG_Wpos2Upos(xyz_t* upos, xyz_t wpos, int ut_x, int ut_z) {
-  upos->x = wpos.x - (ut_x * mFI_UT_WORLDSIZE_X_F);
-  upos->z = wpos.z - (ut_z * mFI_UT_WORLDSIZE_Z_F);
+    upos->x = wpos.x - (ut_x * mFI_UT_WORLDSIZE_X_F);
+    upos->z = wpos.z - (ut_z * mFI_UT_WORLDSIZE_Z_F);
 
-  upos->x -= mFI_UT_WORLDSIZE_HALF_X_F;
-  upos->z -= mFI_UT_WORLDSIZE_HALF_Z_F;
+    upos->x -= mFI_UT_WORLDSIZE_HALF_X_F;
+    upos->z -= mFI_UT_WORLDSIZE_HALF_Z_F;
 }
 
 static void mCoBG_Unit2UnitInfo_OutOfUnitPos(mCoBG_UnitInfo_c* unit_info, int ut_x, int ut_z) {
-  mActor_name_t* item_p;
+    mActor_name_t* item_p;
 
-  unit_info->ut_x = ut_x;
-  unit_info->ut_z = ut_z;
-  unit_info->collision = mFI_UtNum2UtCol(ut_x, ut_z);
-  unit_info->base_height = mFI_UtNum2BaseHeight(ut_x, ut_z);
-  unit_info->leftUp_offset = unit_info->collision->data.top_left * 10.0f + unit_info->base_height;
-  unit_info->leftDown_offset = unit_info->collision->data.bot_left * 10.0f + unit_info->base_height;
-  unit_info->rightDown_offset = unit_info->collision->data.bot_right * 10.0f + unit_info->base_height;
-  unit_info->rightUp_offset = unit_info->collision->data.top_right * 10.0f + unit_info->base_height;
-  unit_info->slate_flag = unit_info->collision->data.slate_flag;
-  unit_info->attribute = unit_info->collision->data.unit_attribute;
+    unit_info->ut_x = ut_x;
+    unit_info->ut_z = ut_z;
+    unit_info->collision = mFI_UtNum2UtCol(ut_x, ut_z);
+    unit_info->base_height = mFI_UtNum2BaseHeight(ut_x, ut_z);
+    unit_info->leftUp_offset = unit_info->collision->data.top_left * 10.0f + unit_info->base_height;
+    unit_info->leftDown_offset = unit_info->collision->data.bot_left * 10.0f + unit_info->base_height;
+    unit_info->rightDown_offset = unit_info->collision->data.bot_right * 10.0f + unit_info->base_height;
+    unit_info->rightUp_offset = unit_info->collision->data.top_right * 10.0f + unit_info->base_height;
+    unit_info->slate_flag = unit_info->collision->data.slate_flag;
+    unit_info->attribute = unit_info->collision->data.unit_attribute;
 
-  item_p = mFI_UtNum2UtFG(ut_x, ut_z);
+    item_p = mFI_UtNum2UtFG(ut_x, ut_z);
 
-  if (item_p != NULL) {
-    unit_info->item = *item_p;
-  }
-  else {
-    unit_info->item = EMPTY_NO;
-  }
+    if (item_p != NULL) {
+        unit_info->item = *item_p;
+    } else {
+        unit_info->item = EMPTY_NO;
+    }
 }
 
 static void mCoBG_Wpos2UnitInfo(mCoBG_UnitInfo_c* unit_info, xyz_t wpos) {
-  xyz_t upos = { 0.0f, 0.0f, 0.0f };
-  int ut_x;
-  int ut_z;
+    xyz_t upos = { 0.0f, 0.0f, 0.0f };
+    int ut_x;
+    int ut_z;
 
-  mFI_Wpos2UtNum(&ut_x, &ut_z, wpos);
-  mCoBG_Unit2UnitInfo_OutOfUnitPos(unit_info, ut_x, ut_z);
-  mCoBG_Wpos2Upos(&upos, wpos, ut_x, ut_z);
-  unit_info->unit_pos[0] = upos.x;
-  unit_info->unit_pos[1] = upos.z;
+    mFI_Wpos2UtNum(&ut_x, &ut_z, wpos);
+    mCoBG_Unit2UnitInfo_OutOfUnitPos(unit_info, ut_x, ut_z);
+    mCoBG_Wpos2Upos(&upos, wpos, ut_x, ut_z);
+    unit_info->unit_pos[0] = upos.x;
+    unit_info->unit_pos[1] = upos.z;
 }
-
 
 /*
 Area unit triangle
 
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
-1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 
-1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 
-1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 
-1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 
-1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 
-1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 
-1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 
-1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 
-1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 
-1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 
-1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 
-1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3
+1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3
+1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3
+1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3
+1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3
+1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3
+1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3
+1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3
+1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3 3
+1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3 3
+1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3
+1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 3
 
 Bias towards the top and left triangles.
 Top:    440
@@ -228,280 +237,292 @@ NOTE: The top of the triangle is denoted as the "bottom" by the devs as it is in
 
 /* This function works on a "unit position" which is [-20.0f, 20.0f) in XZ */
 static void mCoBG_GetUnitArea(mCoBG_UnitInfo_c* unit_info, s16* unit_area) {
-  f32 x = unit_info->unit_pos[0];
-  f32 z = unit_info->unit_pos[1];
+    f32 x = unit_info->unit_pos[0];
+    f32 z = unit_info->unit_pos[1];
 
-  // Determine the triangle based on the x and z coordinates
-  if (x < z) {
-    if (z > -x) {
-      unit_area[0] = mCoBG_AREA_S;
+    // Determine the triangle based on the x and z coordinates
+    if (x < z) {
+        if (z > -x) {
+            unit_area[0] = mCoBG_AREA_S;
+        } else {
+            unit_area[0] = mCoBG_AREA_W;
+        }
+    } else if (z > -x) {
+        unit_area[0] = mCoBG_AREA_E;
+    } else { // z <= x && z <= -x
+        unit_area[0] = mCoBG_AREA_N;
     }
-    else {
-      unit_area[0] = mCoBG_AREA_W;
-    }
-  }
-  else if (z > -x) {
-    unit_area[0] = mCoBG_AREA_E;
-  }
-  else { // z <= x && z <= -x
-    unit_area[0] = mCoBG_AREA_N;
-  }
 }
 
-
 static void mCoBG_GetGroundAngleFromVtx3(s_xyz* ground_angle, f32* v0, f32* v1, f32* v2, s16 unit_area) {
-  if (ground_angle != NULL) {
-    xyz_t avg;
-    f32 a0;
-    f32 a1;
-    
-    ground_angle->y = 0;
-    avg.x = 0.5f * (v1[0] + v2[0]);
-    avg.y = 0.5f * (v1[1] + v2[1]);
-    avg.z = 0.5f * (v1[2] + v2[2]);
+    if (ground_angle != NULL) {
+        xyz_t avg;
+        f32 a0;
+        f32 a1;
 
-    switch (unit_area) {
-      case mCoBG_AREA_N:
-      {
-        a0 = v0[2] - avg.z;
-        a1 = v0[1] - avg.y;
-        ground_angle->x = atans_table(a0, -a1);
+        ground_angle->y = 0;
+        avg.x = 0.5f * (v1[0] + v2[0]);
+        avg.y = 0.5f * (v1[1] + v2[1]);
+        avg.z = 0.5f * (v1[2] + v2[2]);
 
-        a0 = v1[0] - v2[0];
-        a1 = v1[1] - v2[1];
-        ground_angle->z = atans_table(a0, a1);
-        break;
-      }
+        switch (unit_area) {
+            case mCoBG_AREA_N: {
+                a0 = v0[2] - avg.z;
+                a1 = v0[1] - avg.y;
+                ground_angle->x = atans_table(a0, -a1);
 
-      case mCoBG_AREA_S:
-      {
-        a0 = avg.z - v0[2];
-        a1 = -(avg.y - v0[1]);
-        ground_angle->x = atans_table(a0, a1);
+                a0 = v1[0] - v2[0];
+                a1 = v1[1] - v2[1];
+                ground_angle->z = atans_table(a0, a1);
+                break;
+            }
 
-        a0 = v2[0] - v1[0];
-        a1 = v2[1] - v1[1];
-        ground_angle->z = atans_table(a0, a1);
-        break;
-      }
+            case mCoBG_AREA_S: {
+                a0 = avg.z - v0[2];
+                a1 = -(avg.y - v0[1]);
+                ground_angle->x = atans_table(a0, a1);
 
-      case mCoBG_AREA_W:
-      {
-        a0 = v2[2] - v1[2];
-        a1 = v2[1] - v1[1];
-        ground_angle->x = atans_table(a0, -a1);
-        
-        a0 = v0[0] - avg.x;
-        a1 = v0[1] - avg.y;
-        ground_angle->z = atans_table(a0, a1);
-        break;
-      }
+                a0 = v2[0] - v1[0];
+                a1 = v2[1] - v1[1];
+                ground_angle->z = atans_table(a0, a1);
+                break;
+            }
 
-      case mCoBG_AREA_E:
-      {
-        a0 = v1[2] - v2[2];
-        a1 = -(v1[1] - v2[1]);
-        ground_angle->x = atans_table(a0, a1);
+            case mCoBG_AREA_W: {
+                a0 = v2[2] - v1[2];
+                a1 = v2[1] - v1[1];
+                ground_angle->x = atans_table(a0, -a1);
 
-        a0 = avg.x - v0[0];
-        a1 = avg.y - v0[1];
-        ground_angle->z = atans_table(a0, a1);
-        break;
-      }
+                a0 = v0[0] - avg.x;
+                a1 = v0[1] - avg.y;
+                ground_angle->z = atans_table(a0, a1);
+                break;
+            }
+
+            case mCoBG_AREA_E: {
+                a0 = v1[2] - v2[2];
+                a1 = -(v1[1] - v2[1]);
+                ground_angle->x = atans_table(a0, a1);
+
+                a0 = avg.x - v0[0];
+                a1 = avg.y - v0[1];
+                ground_angle->z = atans_table(a0, a1);
+                break;
+            }
+        }
     }
-  }
 }
 
 static void mCoBG_GetArea3Point(s16 area, f32* v0, f32* v1, f32* v2, mCoBG_Collision_u* col) {
-  switch (area) {
-    case mCoBG_AREA_N:
-    {
-      v0[1] = col->data.center * 10.0f;
-      v1[0] = mFI_UT_WORLDSIZE_HALF_X_F;
-      v1[1] = col->data.top_right * 10.0f;
-      v1[2] = -mFI_UT_WORLDSIZE_HALF_Z_F;
-      v2[0] = -mFI_UT_WORLDSIZE_HALF_X_F;
-      v2[1] = col->data.top_left * 10.0f; /* BUG? Shouldn't this be bot_left (top = +Z, bot = -Z) of the triangle */
-      v2[2] = -mFI_UT_WORLDSIZE_HALF_Z_F;
-      break;
-    }
+    switch (area) {
+        case mCoBG_AREA_N: {
+            v0[1] = col->data.center * 10.0f;
+            v1[0] = mFI_UT_WORLDSIZE_HALF_X_F;
+            v1[1] = col->data.top_right * 10.0f;
+            v1[2] = -mFI_UT_WORLDSIZE_HALF_Z_F;
+            v2[0] = -mFI_UT_WORLDSIZE_HALF_X_F;
+            v2[1] =
+                col->data.top_left * 10.0f; /* BUG? Shouldn't this be bot_left (top = +Z, bot = -Z) of the triangle */
+            v2[2] = -mFI_UT_WORLDSIZE_HALF_Z_F;
+            break;
+        }
 
-    case mCoBG_AREA_W:
-    {
-      v0[1] = col->data.center * 10.0f;
-      v1[0] = -mFI_UT_WORLDSIZE_HALF_X_F;
-      v1[1] = col->data.top_left * 10.0f;
-      v1[2] = -mFI_UT_WORLDSIZE_HALF_Z_F;
-      v2[0] = -mFI_UT_WORLDSIZE_HALF_X_F;
-      v2[1] = col->data.bot_left * 10.0f;
-      v2[2] = mFI_UT_WORLDSIZE_HALF_Z_F;
-      break;
-    }
+        case mCoBG_AREA_W: {
+            v0[1] = col->data.center * 10.0f;
+            v1[0] = -mFI_UT_WORLDSIZE_HALF_X_F;
+            v1[1] = col->data.top_left * 10.0f;
+            v1[2] = -mFI_UT_WORLDSIZE_HALF_Z_F;
+            v2[0] = -mFI_UT_WORLDSIZE_HALF_X_F;
+            v2[1] = col->data.bot_left * 10.0f;
+            v2[2] = mFI_UT_WORLDSIZE_HALF_Z_F;
+            break;
+        }
 
-    case mCoBG_AREA_S:
-    {
-      v0[1] = col->data.center * 10.0f;
-      v1[0] = -mFI_UT_WORLDSIZE_HALF_X_F;
-      v1[1] = col->data.bot_left * 10.0f;  /* BUG? Shouldn't this be top_left (top = +Z, bot = -Z) of the triangle */
-      v1[2] = mFI_UT_WORLDSIZE_HALF_Z_F;
-      v2[0] = mFI_UT_WORLDSIZE_HALF_X_F;
-      v2[1] = col->data.bot_right * 10.0f;
-      v2[2] = mFI_UT_WORLDSIZE_HALF_Z_F;
-      break;
-    }
+        case mCoBG_AREA_S: {
+            v0[1] = col->data.center * 10.0f;
+            v1[0] = -mFI_UT_WORLDSIZE_HALF_X_F;
+            v1[1] =
+                col->data.bot_left * 10.0f; /* BUG? Shouldn't this be top_left (top = +Z, bot = -Z) of the triangle */
+            v1[2] = mFI_UT_WORLDSIZE_HALF_Z_F;
+            v2[0] = mFI_UT_WORLDSIZE_HALF_X_F;
+            v2[1] = col->data.bot_right * 10.0f;
+            v2[2] = mFI_UT_WORLDSIZE_HALF_Z_F;
+            break;
+        }
 
-    case mCoBG_AREA_E:
-    {
-      v0[1] = col->data.center * 10.0f;
-      v1[0] = mFI_UT_WORLDSIZE_HALF_X_F;
-      v1[1] = col->data.bot_right * 10.0f;
-      v1[2] = mFI_UT_WORLDSIZE_HALF_Z_F;
-      v2[0] = mFI_UT_WORLDSIZE_HALF_X_F;
-      v2[1] = col->data.top_right * 10.0f;
-      v2[2] = -mFI_UT_WORLDSIZE_HALF_Z_F;
-      break;
+        case mCoBG_AREA_E: {
+            v0[1] = col->data.center * 10.0f;
+            v1[0] = mFI_UT_WORLDSIZE_HALF_X_F;
+            v1[1] = col->data.bot_right * 10.0f;
+            v1[2] = mFI_UT_WORLDSIZE_HALF_Z_F;
+            v2[0] = mFI_UT_WORLDSIZE_HALF_X_F;
+            v2[1] = col->data.top_right * 10.0f;
+            v2[2] = -mFI_UT_WORLDSIZE_HALF_Z_F;
+            break;
+        }
     }
-  }
 }
 
 static void mCoBG_GetNormTriangle(xyz_t* norm, s_xyz* ground_angle, mCoBG_Collision_u* col, s16 area) {
-  f32 v0[3] = { 0.0f, 0.0f, 0.0f };
-  f32 v1[3] = { 0.0f, 0.0f, 0.0f };
-  f32 v2[3] = { 0.0f, 0.0f, 0.0f };
+    f32 v0[3] = { 0.0f, 0.0f, 0.0f };
+    f32 v1[3] = { 0.0f, 0.0f, 0.0f };
+    f32 v2[3] = { 0.0f, 0.0f, 0.0f };
 
-  mCoBG_GetArea3Point(area, v0, v1, v2, col);
-  mCoBG_GetNorm_By3Point(norm, v0, v1, v2);
-  mCoBG_GetGroundAngleFromVtx3(ground_angle, v0, v1, v2, area);
+    mCoBG_GetArea3Point(area, v0, v1, v2, col);
+    mCoBG_GetNorm_By3Point(norm, v0, v1, v2);
+    mCoBG_GetGroundAngleFromVtx3(ground_angle, v0, v1, v2, area);
 }
 
 static mCoBG_ActorInf_c l_ActorInf;
 
-static void mCoBG_AdjustActorY(xyz_t* rev_pos, ACTOR* actor, f32 ground_y, f32 water_y, f32 ground_dist, mCoBG_CheckResult_c* check_res, mCoBG_ActorInf_c* actor_info, int check_water) {
-  actor->bg_collision_check.ground_y = ground_y;
+static void mCoBG_AdjustActorY(xyz_t* rev_pos, ACTOR* actor, f32 ground_y, f32 water_y, f32 ground_dist,
+                               mCoBG_CheckResult_c* check_res, mCoBG_ActorInf_c* actor_info, int check_water) {
+    actor->bg_collision_check.ground_y = ground_y;
 
-  if (check_water) {
-    f32 actor_y = actor->world.position.y;
-    f32 actor_foot_y = actor_y + ground_dist;
-    f32 water_ground_y = (water_y - (mFI_UNIT_BASE_SIZE_F / 2.0f));
+    if (check_water) {
+        f32 actor_y = actor->world.position.y;
+        f32 actor_foot_y = actor_y + ground_dist;
+        f32 water_ground_y = (water_y - (mFI_UNIT_BASE_SIZE_F / 2.0f));
 
-    if (water_ground_y >= actor_foot_y) {
-      rev_pos->y = (water_ground_y - ground_dist) - actor_y;
-      check_res->is_in_water = TRUE;
-      check_res->on_ground = TRUE;
-      actor->position_speed.y = 0.0f;
-    }
-    else if (water_y >= actor_foot_y) {
-      check_res->is_in_water = TRUE;
-    }
-  }
-  else {
-    f32 actor_y = actor->world.position.y;
-    f32 actor_foot_y = actor_y + ground_dist;
+        if (water_ground_y >= actor_foot_y) {
+            rev_pos->y = (water_ground_y - ground_dist) - actor_y;
+            check_res->is_in_water = TRUE;
+            check_res->on_ground = TRUE;
+            actor->position_speed.y = 0.0f;
+        } else if (water_y >= actor_foot_y) {
+            check_res->is_in_water = TRUE;
+        }
+    } else {
+        f32 actor_y;
+        f32 actor_foot_y;
 
-    if (ground_y >= actor_foot_y) {
-      rev_pos->y = (ground_y - ground_dist) - actor_y;
-      check_res->on_ground = TRUE;
-      actor->position_speed.y = 0.0f; // stop actor from moving downward anymore
-    }
-    else if (actor_info->old_on_ground && actor_info->old_ground_y > actor_info->ground_y) {
-      f32 dist_to_ground = ABS(ground_y - actor_foot_y);
-      f32 xz_vel = sqrtf(SQ(actor_info->speed_xz0[0]) + SQ(actor_info->speed_xz0[1]));
+// Aus version adds another water check for the case where
+// an actor's foot position is at or below the water height.
+#if VERSION >= VER_GAFU01_00
+        if (water_y >= actor->world.position.y + ground_dist) {
+            check_res->is_in_water = TRUE;
+        }
+#endif
 
-      if (dist_to_ground <= xz_vel) {
-        rev_pos->y = (ground_y - ground_dist) - actor->world.position.y;
-        check_res->on_ground = TRUE;
-        actor->position_speed.y = 0.0f;
-      }
+        actor_y = actor->world.position.y;
+        actor_foot_y = actor_y + ground_dist;
+        if (ground_y >= actor_foot_y) {
+            rev_pos->y = (ground_y - ground_dist) - actor_y;
+            check_res->on_ground = TRUE;
+            actor->position_speed.y = 0.0f; // stop actor from moving downward anymore
+        } else if (actor_info->old_on_ground && actor_info->old_ground_y > actor_info->ground_y) {
+            f32 dist_to_ground = ABS(ground_y - actor_foot_y);
+            f32 xz_vel = sqrtf(SQ(actor_info->speed_xz0[0]) + SQ(actor_info->speed_xz0[1]));
+
+            if (dist_to_ground <= xz_vel) {
+                rev_pos->y = (ground_y - ground_dist) - actor->world.position.y;
+                check_res->on_ground = TRUE;
+                actor->position_speed.y = 0.0f;
+            }
+        }
     }
-  }
 }
 
 static f32 mCoBG_GroundPolygonInfo2BgHeight(xyz_t* norm, mCoBG_UnitInfo_c* unit_info) {
-  f32 dot = -(norm->y * (unit_info->collision->data.center * 10.0f)) + (norm->x * unit_info->unit_pos[0] + norm->z * unit_info->unit_pos[1]);
-  return dot / -norm->y; // dot product scaled by y normal
+    f32 dot = -(norm->y * (unit_info->collision->data.center * 10.0f)) +
+              (norm->x * unit_info->unit_pos[0] + norm->z * unit_info->unit_pos[1]);
+    return dot / -norm->y; // dot product scaled by y normal
 }
 
 static void mCoBG_GetSpeedByWpos(f32* speed, ACTOR* actor) {
-  speed[0] = actor->world.position.x - actor->last_world_position.x;
-  speed[1] = actor->world.position.z - actor->last_world_position.z;
+    speed[0] = actor->world.position.x - actor->last_world_position.x;
+    speed[1] = actor->world.position.z - actor->last_world_position.z;
 }
 
 static void mCoBG_CarryOutReverse(ACTOR* actor, xyz_t rev_pos, s16 type) {
-  if (type == 0) {
-    actor->world.position.x += rev_pos.x;
-    actor->world.position.y += rev_pos.y;
-    actor->world.position.z += rev_pos.z;
-  }
-
-  if (actor->bg_collision_check.result.unit_attribute >= mCoBG_ATTRIBUTE_WATER && actor->bg_collision_check.result.unit_attribute <= mCoBG_ATTRIBUTE_RIVER_NE) {
-    xyz_t pos = actor->world.position;
-
-    f32 water_height = mCoBG_GetWaterHeight_File(pos, __FILE__, 1303);
-    if ((pos.y + l_ActorInf.ground_dist) <= water_height) {
-      actor->bg_collision_check.result.is_in_water = TRUE;
+    if (type == 0) {
+        actor->world.position.x += rev_pos.x;
+        actor->world.position.y += rev_pos.y;
+        actor->world.position.z += rev_pos.z;
     }
-  }
+
+// Aus version now considers all true water tile attributes when updating the 'is_in_water'
+// flag during a position reversion.
+#if VERSION >= VER_GAFU01_00
+    if ((actor->bg_collision_check.result.unit_attribute >= mCoBG_ATTRIBUTE_WATER &&
+         actor->bg_collision_check.result.unit_attribute <= mCoBG_ATTRIBUTE_RIVER_NE) ||
+        actor->bg_collision_check.result.unit_attribute == mCoBG_ATTRIBUTE_SEA ||
+        actor->bg_collision_check.result.unit_attribute == mCoBG_ATTRIBUTE_37 ||
+        actor->bg_collision_check.result.unit_attribute == mCoBG_ATTRIBUTE_38) {
+#else
+    if (actor->bg_collision_check.result.unit_attribute >= mCoBG_ATTRIBUTE_WATER &&
+        actor->bg_collision_check.result.unit_attribute <= mCoBG_ATTRIBUTE_RIVER_NE) {
+#endif
+        xyz_t pos = actor->world.position;
+
+#if VERSION == VER_GAFU01_00
+        f32 water_height = mCoBG_GetWaterHeight_File(pos, __FILE__, 1399);
+#elif VERSION == VER_GAFE01_00
+        f32 water_height = mCoBG_GetWaterHeight_File(pos, __FILE__, 1303);
+#endif
+        if ((pos.y + l_ActorInf.ground_dist) <= water_height) {
+            actor->bg_collision_check.result.is_in_water = TRUE;
+        }
+    }
 }
 
 static void mCoBG_InitRevpos(xyz_t* rev_pos) {
-  rev_pos->x = 0.0f;
-  rev_pos->y = 0.0f;
-  rev_pos->z = 0.0f;
+    rev_pos->x = 0.0f;
+    rev_pos->y = 0.0f;
+    rev_pos->z = 0.0f;
 }
 
-static void mCoBG_MakeSizeUnitInfo(mCoBG_UnitInfo_c *unit_info, int ut_x, int ut_z, s16 size) {
-  int x;
-  int z;
-  int start_x;
-  int start_z;
-  int end_x;
-  int end_z;
-  
-  start_z = ut_z - (size >> 1);
-  start_x = ut_x - (size >> 1);
-  end_z = start_z + size;
-  end_x = start_x + size;
+static void mCoBG_MakeSizeUnitInfo(mCoBG_UnitInfo_c* unit_info, int ut_x, int ut_z, s16 size) {
+    int x;
+    int z;
+    int start_x;
+    int start_z;
+    int end_x;
+    int end_z;
 
-  for (z = start_z; z < end_z; z++) {
-    for (x = start_x; x < end_x; x++) {
-      mCoBG_Unit2UnitInfo_OutOfUnitPos(unit_info, x, z);
-      unit_info++;
+    start_z = ut_z - (size >> 1);
+    start_x = ut_x - (size >> 1);
+    end_z = start_z + size;
+    end_x = start_x + size;
+
+    for (z = start_z; z < end_z; z++) {
+        for (x = start_x; x < end_x; x++) {
+            mCoBG_Unit2UnitInfo_OutOfUnitPos(unit_info, x, z);
+            unit_info++;
+        }
     }
-  }
 }
-
 
 static void mCoBG_MakeTab2MoveTail(f32* dst_xz, f32* src_xz) {
-  f32 x_bias = ABS(src_xz[0]) / (ABS(src_xz[0]) + ABS(src_xz[1]));
-  f32 z_bias = 1.0f - x_bias;
+    f32 x_bias = ABS(src_xz[0]) / (ABS(src_xz[0]) + ABS(src_xz[1]));
+    f32 z_bias = 1.0f - x_bias;
 
-  if (src_xz[0] > 0.0f) {
-    dst_xz[0] -= x_bias * 0.2f;
-  }
-  else if (src_xz[0] < 0.0f) {
-    dst_xz[0] += x_bias * 0.2f;
-  }
+    if (src_xz[0] > 0.0f) {
+        dst_xz[0] -= x_bias * 0.2f;
+    } else if (src_xz[0] < 0.0f) {
+        dst_xz[0] += x_bias * 0.2f;
+    }
 
-  if (src_xz[1] > 0.0f) {
-    dst_xz[1] -= z_bias * 0.2f;
-  }
-  else if (src_xz[1] < 0.0f) {
-    dst_xz[1] += z_bias * 0.2f;
-  }
+    if (src_xz[1] > 0.0f) {
+        dst_xz[1] -= z_bias * 0.2f;
+    } else if (src_xz[1] < 0.0f) {
+        dst_xz[1] += z_bias * 0.2f;
+    }
 }
 
 static u32 mCoBG_SearchAttribute(xyz_t wpos, int direct, s8* cant_dig) {
-  xyz_t next_ut;
+    xyz_t next_ut;
 
-  wpos.y = 0.0f;
-  mCoBG_PlussDirectOffset(&next_ut, wpos, direct);
-  return mCoBG_Wpos2Attribute(next_ut, cant_dig);
+    wpos.y = 0.0f;
+    mCoBG_PlussDirectOffset(&next_ut, wpos, direct);
+    return mCoBG_Wpos2Attribute(next_ut, cant_dig);
 }
 
-static void mCoBG_RegistCollisionWallInfo(mCoBG_ActorInf_c* actor_inf, mCoBG_WallInfo_c* wall_info, mCoBG_WallHeight_c* wall_height, s16 angle_y, s16 atr) {
+static void mCoBG_RegistCollisionWallInfo(mCoBG_ActorInf_c* actor_inf, mCoBG_WallInfo_c* wall_info,
+                                          mCoBG_WallHeight_c* wall_height, s16 angle_y, s16 atr) {
     int i;
     int count;
-    
+
     if (wall_height != NULL) {
         actor_inf->wall_height = *wall_height;
     }
@@ -558,7 +579,7 @@ static void mCoBG_GetWallHeight(mCoBG_WallHeight_c* wall_height, mCoBG_unit_vec_
         xyz_t vec;
         f32 p;
         f32 t;
-        
+
         vec.x = end[0] - start[0];
         vec.z = end[1] - start[1];
 
@@ -580,7 +601,8 @@ static void mCoBG_GetWallHeight(mCoBG_WallHeight_c* wall_height, mCoBG_unit_vec_
     }
 }
 
-static int mCoBG_CheckHeightExactly(mCoBG_WallHeight_c* wall_height, f32 pos_y, mCoBG_unit_vec_info_c* unit_vec, f32* point) {
+static int mCoBG_CheckHeightExactly(mCoBG_WallHeight_c* wall_height, f32 pos_y, mCoBG_unit_vec_info_c* unit_vec,
+                                    f32* point) {
     mCoBG_WallBounds_c* bounds = &unit_vec->wall_bounds;
     f32* start = unit_vec->start;
     f32* end = unit_vec->end;
@@ -594,13 +616,17 @@ static int mCoBG_CheckHeightExactly(mCoBG_WallHeight_c* wall_height, f32 pos_y, 
             return TRUE;
         }
     } else {
-        switch(unit_vec->wall_name) {
+        switch (unit_vec->wall_name) {
             case mCoBG_WALL_LEFT:
             case mCoBG_WALL_RIGHT:
                 div = end[1] - start[1];
                 if (!F32_IS_ZERO(div)) {
-                    wall_height->top = bounds->start_top + (point[1] - start[1]) * ((bounds->end_top - bounds->start_top) / (end[1] - start[1]));
-                    wall_height->bot = bounds->start_btm + (point[1] - start[1]) * ((bounds->end_btm - bounds->start_btm) / (end[1] - start[1]));
+                    wall_height->top =
+                        bounds->start_top +
+                        (point[1] - start[1]) * ((bounds->end_top - bounds->start_top) / (end[1] - start[1]));
+                    wall_height->bot =
+                        bounds->start_btm +
+                        (point[1] - start[1]) * ((bounds->end_btm - bounds->start_btm) / (end[1] - start[1]));
 
                     if (pos_y + 3.0f <= wall_height->top) {
                         return TRUE;
@@ -611,8 +637,12 @@ static int mCoBG_CheckHeightExactly(mCoBG_WallHeight_c* wall_height, f32 pos_y, 
             case mCoBG_WALL_DOWN:
                 div = end[0] - start[0];
                 if (!F32_IS_ZERO(div)) {
-                    wall_height->top = bounds->start_top + (point[0] - start[0]) * ((bounds->end_top - bounds->start_top) / (end[0] - start[0]));
-                    wall_height->bot = bounds->start_btm + (point[0] - start[0]) * ((bounds->end_btm - bounds->start_btm) / (end[0] - start[0]));
+                    wall_height->top =
+                        bounds->start_top +
+                        (point[0] - start[0]) * ((bounds->end_top - bounds->start_top) / (end[0] - start[0]));
+                    wall_height->bot =
+                        bounds->start_btm +
+                        (point[0] - start[0]) * ((bounds->end_btm - bounds->start_btm) / (end[0] - start[0]));
 
                     if (pos_y + 3.0f <= wall_height->top) {
                         return TRUE;
@@ -637,7 +667,8 @@ static int mCoBG_SearchWallFront(f32* point, mCoBG_unit_vec_info_c* unit_vec) {
 }
 
 static int mCoBG_Check45Angle(s16 angle0, s16 angle1) {
-    if (ABS(angle1 - angle0) <= (u16)DEG2SHORT_ANGLE(45.0f) || ABS(angle1 - angle0) >= (u16)(DEG2SHORT_ANGLE(-45.0f) - 1)) {
+    if (ABS(angle1 - angle0) <= (u16)DEG2SHORT_ANGLE(45.0f) ||
+        ABS(angle1 - angle0) >= (u16)(DEG2SHORT_ANGLE(-45.0f) - 1)) {
         return TRUE;
     }
 
@@ -665,7 +696,7 @@ static void mCoBG_RegistWallCount(mCoBG_CheckResult_c* col_res, mCoBG_WallInfo_c
         f32 z1 = cosf_table(r1);
         s16 avg_angle = atans_table((z0 + z1) * 0.5f, (x0 + x1) * 0.5f);
 
-        if (mCoBG_Check45Angle((DEG2SHORT_ANGLE2(180.0f)-1) + avg_angle, angle)) {
+        if (mCoBG_Check45Angle((DEG2SHORT_ANGLE2(180.0f) - 1) + avg_angle, angle)) {
             col_res->unk_flag4 = TRUE;
         }
     }
@@ -687,7 +718,7 @@ static void mCoBG_MakeHitWallFalg(mCoBG_CheckResult_c* col_res, mCoBG_WallInfo_c
 }
 
 static void mCoBG_SearchColOwnPart(s16 actor_angleY, s16 wall_angleY, mCoBG_Check_c* check_p, s16 wall_type) {
-    if (mCoBG_Check45Angle((wall_angleY + DEG2SHORT_ANGLE2(180.0f)-1), actor_angleY)) {
+    if (mCoBG_Check45Angle((wall_angleY + DEG2SHORT_ANGLE2(180.0f) - 1), actor_angleY)) {
         if (wall_type == mCoBG_WALL_TYPE0) {
             check_p->result.hit_wall |= mCoBG_HIT_WALL_FRONT;
             check_p->in_front_wall_angle_y = wall_angleY;
@@ -726,7 +757,8 @@ static void mCoBG_MakePartDirectHitWallFlag(ACTOR* actorx) {
     s16 actor_angleY = actorx->shape_info.rotation.y;
     int i;
 
-    if (check_p->result.hit_wall != mCoBG_DIDNT_HIT_WALL || check_p->result.hit_attribute_wall != mCoBG_DIDNT_HIT_WALL) {
+    if (check_p->result.hit_wall != mCoBG_DIDNT_HIT_WALL ||
+        check_p->result.hit_attribute_wall != mCoBG_DIDNT_HIT_WALL) {
         for (i = 0; i < count; i++) {
             wall_angleY = check_p->wall_info[i].angleY;
             wall_type = check_p->wall_info[i].type;
@@ -737,11 +769,12 @@ static void mCoBG_MakePartDirectHitWallFlag(ACTOR* actorx) {
     if (count == 2) {
         u16 dangle = check_p->wall_info[0].angleY - check_p->wall_info[1].angleY;
 
-        if (dangle > (DEG2SHORT_ANGLE2(180.0f)-3) && dangle < (DEG2SHORT_ANGLE2(180.0f)+3)) {
+        if (dangle > (DEG2SHORT_ANGLE2(180.0f) - 3) && dangle < (DEG2SHORT_ANGLE2(180.0f) + 3)) {
             check_p->result.unk_flag2 = TRUE;
         }
 
-        if (check_p->wall_info[0].type == mCoBG_WALL_TYPE0 && check_p->wall_info[1].type == mCoBG_WALL_TYPE0 && dangle < DEG2SHORT_ANGLE2(67.5f)) {
+        if (check_p->wall_info[0].type == mCoBG_WALL_TYPE0 && check_p->wall_info[1].type == mCoBG_WALL_TYPE0 &&
+            dangle < DEG2SHORT_ANGLE2(67.5f)) {
             check_p->result.unk_flag2 = TRUE;
         }
     }
@@ -767,7 +800,8 @@ static s16 mCoBG_GetWallKind(mCoBG_unit_vec_info_c* unit_vec) {
     return mCoBG_WALL_KIND_NORMAL;
 }
 
-static void mCoBG_Cross2Reverse_NormalWall(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start, f32* actor_end, mCoBG_ActorInf_c* actor_inf, ACTOR* actorx) {
+static void mCoBG_Cross2Reverse_NormalWall(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start,
+                                           f32* actor_end, mCoBG_ActorInf_c* actor_inf, ACTOR* actorx) {
 
     if (mCoBG_RoughCheckWallHeight(actor_inf->old_ground_y - 5.0f, &unit_vec->wall_bounds)) {
         mCoBG_WallHeight_c height;
@@ -782,7 +816,8 @@ static void mCoBG_Cross2Reverse_NormalWall(f32* reverse, mCoBG_unit_vec_info_c* 
 
                 reverse[0] = unit_vec->normal[0] * rev_dist;
                 reverse[1] = unit_vec->normal[1] * rev_dist;
-                mCoBG_RegistCollisionWallInfo(actor_inf, actor_inf->wall_info, &height, unit_vec->normal_angle, unit_vec->atr_wall);
+                mCoBG_RegistCollisionWallInfo(actor_inf, actor_inf->wall_info, &height, unit_vec->normal_angle,
+                                              unit_vec->atr_wall);
                 if (unit_vec->regist_p != NULL) {
                     mCoBG_SetMoveBgContactSide(unit_vec->regist_p, actorx, unit_vec->normal_angle);
                 }
@@ -791,34 +826,42 @@ static void mCoBG_Cross2Reverse_NormalWall(f32* reverse, mCoBG_unit_vec_info_c* 
     }
 }
 
-static void mCoBG_Cross2Reverse_AttributeWall(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start, f32* actor_end, mCoBG_ActorInf_c* actor_inf, ACTOR* actorx) {
+static void mCoBG_Cross2Reverse_AttributeWall(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start,
+                                              f32* actor_end, mCoBG_ActorInf_c* actor_inf, ACTOR* actorx) {
     if (mCoBG_GetCrossJudge_2Vector(actor_start, actor_end, unit_vec->start, unit_vec->end)) {
         f32 cross[2];
-        
+
         mCoBG_GetCross2Line(cross, actor_start, actor_end, unit_vec->start, unit_vec->end);
         reverse[0] = cross[0] - actor_end[0];
         reverse[1] = cross[1] - actor_end[1];
-        mCoBG_RegistCollisionWallInfo(actor_inf, actor_inf->wall_info, NULL, unit_vec->normal_angle, unit_vec->atr_wall);
+        mCoBG_RegistCollisionWallInfo(actor_inf, actor_inf->wall_info, NULL, unit_vec->normal_angle,
+                                      unit_vec->atr_wall);
     }
 }
 
-typedef void (*mCoBG_CROSS_REV_PROC)(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start, f32* actor_end, mCoBG_ActorInf_c* actor_inf, ACTOR* actorx);
+typedef void (*mCoBG_CROSS_REV_PROC)(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start, f32* actor_end,
+                                     mCoBG_ActorInf_c* actor_inf, ACTOR* actorx);
 
-static void mCoBG_Cross2Reverse(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, int unit, f32* actor_start, f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
+static void mCoBG_Cross2Reverse(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, int unit, f32* actor_start,
+                                f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
     f32 speed[2];
 
     speed[0] = actor_end[0] - actor_start[0];
     speed[1] = actor_end[1] - actor_start[1];
 
-    if (mCoBG_GetPointInfoFrontLine(unit_vec->start, actor_start, unit_vec->normal) && mCoBG_JudgeWallFromVector(speed, unit_vec->normal)) {
-        static mCoBG_CROSS_REV_PROC cross_rev_proc[] = { &mCoBG_Cross2Reverse_NormalWall, &mCoBG_Cross2Reverse_AttributeWall, &mCoBG_Cross2Reverse_NormalWall };
+    if (mCoBG_GetPointInfoFrontLine(unit_vec->start, actor_start, unit_vec->normal) &&
+        mCoBG_JudgeWallFromVector(speed, unit_vec->normal)) {
+        static mCoBG_CROSS_REV_PROC cross_rev_proc[] = { &mCoBG_Cross2Reverse_NormalWall,
+                                                         &mCoBG_Cross2Reverse_AttributeWall,
+                                                         &mCoBG_Cross2Reverse_NormalWall };
         s16 kind = mCoBG_GetWallKind(unit_vec);
 
         (*cross_rev_proc[kind])(reverse, unit_vec, actor_start, actor_end, actor_info, actorx);
     }
 }
 
-static int mCoBG_Distance2Reverse_NormalWall(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start, f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
+static int mCoBG_Distance2Reverse_NormalWall(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start,
+                                             f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
     f32 dist;
 
     if (mCoBG_GetDistPointAndLine2D_Norm(&dist, unit_vec->start, unit_vec->end, unit_vec->normal, actor_end)) {
@@ -826,12 +869,14 @@ static int mCoBG_Distance2Reverse_NormalWall(f32* reverse, mCoBG_unit_vec_info_c
 
         if (dist < actor_info->range) {
 
-            if (mCoBG_RoughCheckWallHeight(actor_info->old_ground_y - 5.0f, &unit_vec->wall_bounds) && mCoBG_CheckHeightExactly(&height, actor_info->old_ground_y - 5.0f, unit_vec, actor_end)) {
+            if (mCoBG_RoughCheckWallHeight(actor_info->old_ground_y - 5.0f, &unit_vec->wall_bounds) &&
+                mCoBG_CheckHeightExactly(&height, actor_info->old_ground_y - 5.0f, unit_vec, actor_end)) {
                 f32 rev_dist = (actor_info->range - dist) + 0.00001f;
 
                 reverse[0] = unit_vec->normal[0] * rev_dist;
                 reverse[1] = unit_vec->normal[1] * rev_dist;
-                mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, &height, unit_vec->normal_angle, unit_vec->atr_wall);
+                mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, &height, unit_vec->normal_angle,
+                                              unit_vec->atr_wall);
 
                 if (unit_vec->regist_p != NULL) {
                     mCoBG_SetMoveBgContactSide(unit_vec->regist_p, actorx, unit_vec->normal_angle);
@@ -839,8 +884,11 @@ static int mCoBG_Distance2Reverse_NormalWall(f32* reverse, mCoBG_unit_vec_info_c
 
                 return TRUE;
             }
-        } else if (ABS(dist - actor_info->range) < 2.7f && mCoBG_RoughCheckWallHeight(actor_info->old_ground_y - 5.0f, &unit_vec->wall_bounds) && mCoBG_CheckHeightExactly(&height, actor_info->old_ground_y - 5.0f, unit_vec, actor_end)) {
-            mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, &height, unit_vec->normal_angle, unit_vec->atr_wall);
+        } else if (ABS(dist - actor_info->range) < 2.7f &&
+                   mCoBG_RoughCheckWallHeight(actor_info->old_ground_y - 5.0f, &unit_vec->wall_bounds) &&
+                   mCoBG_CheckHeightExactly(&height, actor_info->old_ground_y - 5.0f, unit_vec, actor_end)) {
+            mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, &height, unit_vec->normal_angle,
+                                          unit_vec->atr_wall);
 
             if (unit_vec->regist_p != NULL) {
                 mCoBG_SetMoveBgContactSide(unit_vec->regist_p, actorx, unit_vec->normal_angle);
@@ -853,7 +901,8 @@ static int mCoBG_Distance2Reverse_NormalWall(f32* reverse, mCoBG_unit_vec_info_c
     return FALSE;
 }
 
-static void mCoBG_GetSpecialDistanceReverse(f32* reverse, f32* actor_end, mCoBG_unit_vec_info_c* unit_vec, f32* cross0, f32* cross1, f32* edge) {
+static void mCoBG_GetSpecialDistanceReverse(f32* reverse, f32* actor_end, mCoBG_unit_vec_info_c* unit_vec, f32* cross0,
+                                            f32* cross1, f32* edge) {
     if (!mCoBG_GetPointInfoFrontLine(unit_vec->start, cross0, unit_vec->normal)) {
         reverse[0] = edge[0] - cross0[0];
         reverse[1] = edge[1] - cross0[1];
@@ -877,7 +926,7 @@ static int mCoBG_CheckDistSPCheck(mCoBG_unit_vec_info_c* unit_vec, f32* point) {
 
             if ((ABS(start[0] - point[0]) < 0.1f && ABS(start[1] - point[1]) < 0.1f) ||
                 (ABS(end[0] - point[0]) < 0.1f && ABS(end[1] - point[1]) < 0.1f)) {
-                if ((u16)(unit_vec->normal_angle - cur_unit_vec_p->normal_angle) < (DEG2SHORT_ANGLE2(90.0f)-0x100)) {
+                if ((u16)(unit_vec->normal_angle - cur_unit_vec_p->normal_angle) < (DEG2SHORT_ANGLE2(90.0f) - 0x100)) {
                     return FALSE;
                 }
             }
@@ -889,8 +938,10 @@ static int mCoBG_CheckDistSPCheck(mCoBG_unit_vec_info_c* unit_vec, f32* point) {
     return TRUE;
 }
 
-static int mCoBG_Distance2Reverse_NormalWall_Special(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start, f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
-    if (mCoBG_GetPointInfoFrontLine(unit_vec->start, actor_end, unit_vec->normal) && mCoBG_GetPointInfoFrontLine(unit_vec->start, actor_start, unit_vec->normal)) {
+static int mCoBG_Distance2Reverse_NormalWall_Special(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start,
+                                                     f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
+    if (mCoBG_GetPointInfoFrontLine(unit_vec->start, actor_end, unit_vec->normal) &&
+        mCoBG_GetPointInfoFrontLine(unit_vec->start, actor_start, unit_vec->normal)) {
         f32 dist;
 
         mCoBG_GetDistPointAndLine2D_Norm(&dist, unit_vec->start, unit_vec->end, unit_vec->normal, actor_end);
@@ -903,14 +954,16 @@ static int mCoBG_Distance2Reverse_NormalWall_Special(f32* reverse, mCoBG_unit_ve
                     return FALSE;
                 }
 
-                if (mCoBG_GetCrossCircleAndLine2Dvector(cross0, cross1, unit_vec->start, unit_vec->normal, actor_end, actor_info->range)) {
+                if (mCoBG_GetCrossCircleAndLine2Dvector(cross0, cross1, unit_vec->start, unit_vec->normal, actor_end,
+                                                        actor_info->range)) {
                     mCoBG_WallHeight_c height;
 
                     height.top = unit_vec->wall_bounds.start_top;
                     height.bot = unit_vec->wall_bounds.start_btm;
                     if ((actor_info->old_ground_y - 5.0f) + 3.0f <= height.top) {
                         mCoBG_GetSpecialDistanceReverse(reverse, actor_end, unit_vec, cross0, cross1, unit_vec->start);
-                        mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, &height, unit_vec->normal_angle, unit_vec->atr_wall);
+                        mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, &height,
+                                                      unit_vec->normal_angle, unit_vec->atr_wall);
                         if (unit_vec->regist_p != NULL) {
                             mCoBG_SetMoveBgContactSide(unit_vec->regist_p, actorx, unit_vec->normal_angle);
                         }
@@ -923,14 +976,16 @@ static int mCoBG_Distance2Reverse_NormalWall_Special(f32* reverse, mCoBG_unit_ve
                     return FALSE;
                 }
 
-                if (mCoBG_GetCrossCircleAndLine2Dvector(cross0, cross1, unit_vec->end, unit_vec->normal, actor_end, actor_info->range)) {
+                if (mCoBG_GetCrossCircleAndLine2Dvector(cross0, cross1, unit_vec->end, unit_vec->normal, actor_end,
+                                                        actor_info->range)) {
                     mCoBG_WallHeight_c height;
 
                     height.top = unit_vec->wall_bounds.end_top;
                     height.bot = unit_vec->wall_bounds.end_btm;
                     if ((actor_info->old_ground_y - 5.0f) + 3.0f <= height.top) {
                         mCoBG_GetSpecialDistanceReverse(reverse, actor_end, unit_vec, cross0, cross1, unit_vec->end);
-                        mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, &height, unit_vec->normal_angle, unit_vec->atr_wall);
+                        mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, &height,
+                                                      unit_vec->normal_angle, unit_vec->atr_wall);
                         if (unit_vec->regist_p != NULL) {
                             mCoBG_SetMoveBgContactSide(unit_vec->regist_p, actorx, unit_vec->normal_angle);
                         }
@@ -945,7 +1000,8 @@ static int mCoBG_Distance2Reverse_NormalWall_Special(f32* reverse, mCoBG_unit_ve
     return FALSE;
 }
 
-static int mCoBG_Distance2Reverse_AttributeWall(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start, f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
+static int mCoBG_Distance2Reverse_AttributeWall(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start,
+                                                f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
     f32 dist;
 
     if (mCoBG_GetDistPointAndLine2D_Norm(&dist, unit_vec->start, unit_vec->end, unit_vec->normal, actor_end)) {
@@ -954,10 +1010,12 @@ static int mCoBG_Distance2Reverse_AttributeWall(f32* reverse, mCoBG_unit_vec_inf
 
             reverse[0] = unit_vec->normal[0] * rev_dist;
             reverse[1] = unit_vec->normal[1] * rev_dist;
-            mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, NULL, unit_vec->normal_angle, unit_vec->atr_wall);
+            mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, NULL, unit_vec->normal_angle,
+                                          unit_vec->atr_wall);
             return TRUE;
         } else if (ABS(dist - actor_info->range) < 2.7f) {
-            mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, NULL, unit_vec->normal_angle, unit_vec->atr_wall);
+            mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, NULL, unit_vec->normal_angle,
+                                          unit_vec->atr_wall);
             return TRUE;
         }
     }
@@ -965,8 +1023,10 @@ static int mCoBG_Distance2Reverse_AttributeWall(f32* reverse, mCoBG_unit_vec_inf
     return FALSE;
 }
 
-static int mCoBG_Distance2Reverse_AttributeWall_Special(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start, f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
-    if (mCoBG_GetPointInfoFrontLine(unit_vec->start, actor_end, unit_vec->normal) && mCoBG_GetPointInfoFrontLine(unit_vec->start, actor_start, unit_vec->normal)) {
+static int mCoBG_Distance2Reverse_AttributeWall_Special(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start,
+                                                        f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
+    if (mCoBG_GetPointInfoFrontLine(unit_vec->start, actor_end, unit_vec->normal) &&
+        mCoBG_GetPointInfoFrontLine(unit_vec->start, actor_start, unit_vec->normal)) {
         f32 dist;
 
         mCoBG_GetDistPointAndLine2D_Norm(&dist, unit_vec->start, unit_vec->end, unit_vec->normal, actor_end);
@@ -979,9 +1039,11 @@ static int mCoBG_Distance2Reverse_AttributeWall_Special(f32* reverse, mCoBG_unit
                     return FALSE;
                 }
 
-                if (mCoBG_GetCrossCircleAndLine2Dvector(cross0, cross1, unit_vec->start, unit_vec->normal, actor_end, actor_info->range)) {
+                if (mCoBG_GetCrossCircleAndLine2Dvector(cross0, cross1, unit_vec->start, unit_vec->normal, actor_end,
+                                                        actor_info->range)) {
                     mCoBG_GetSpecialDistanceReverse(reverse, actor_end, unit_vec, cross0, cross1, unit_vec->start);
-                    mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, NULL, unit_vec->normal_angle, unit_vec->atr_wall);
+                    mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, NULL, unit_vec->normal_angle,
+                                                  unit_vec->atr_wall);
                     return TRUE;
                 }
             } else if (mCoBG_JudgePointInCircle(unit_vec->end, actor_end, actor_info->range)) {
@@ -989,9 +1051,11 @@ static int mCoBG_Distance2Reverse_AttributeWall_Special(f32* reverse, mCoBG_unit
                     return FALSE;
                 }
 
-                if (mCoBG_GetCrossCircleAndLine2Dvector(cross0, cross1, unit_vec->end, unit_vec->normal, actor_end, actor_info->range)) {
+                if (mCoBG_GetCrossCircleAndLine2Dvector(cross0, cross1, unit_vec->end, unit_vec->normal, actor_end,
+                                                        actor_info->range)) {
                     mCoBG_GetSpecialDistanceReverse(reverse, actor_end, unit_vec, cross0, cross1, unit_vec->end);
-                    mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, NULL, unit_vec->normal_angle, unit_vec->atr_wall);
+                    mCoBG_RegistCollisionWallInfo(actor_info, actor_info->wall_info, NULL, unit_vec->normal_angle,
+                                                  unit_vec->atr_wall);
                     return TRUE;
                 }
             }
@@ -1001,20 +1065,40 @@ static int mCoBG_Distance2Reverse_AttributeWall_Special(f32* reverse, mCoBG_unit
     return FALSE;
 }
 
-typedef int (*mCoBG_DIST_REV_PROC)(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start, f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx);
-typedef int (*mCoBG_DIST_REV_PLAYER_PROC)(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start, f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx);
+typedef int (*mCoBG_DIST_REV_PROC)(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start, f32* actor_end,
+                                   mCoBG_ActorInf_c* actor_info, ACTOR* actorx);
+typedef int (*mCoBG_DIST_REV_PLAYER_PROC)(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, f32* actor_start,
+                                          f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx);
 
-static void mCoBG_Distance2Reverse(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, int unit, f32* actor_start, f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
-    static mCoBG_DIST_REV_PROC dist_rev_proc[] = { &mCoBG_Distance2Reverse_NormalWall, &mCoBG_Distance2Reverse_AttributeWall, &mCoBG_Distance2Reverse_NormalWall };
-    static mCoBG_DIST_REV_PLAYER_PROC dist_rev_proc_player[] = { &mCoBG_Distance2Reverse_NormalWall_Special, &mCoBG_Distance2Reverse_AttributeWall_Special, &mCoBG_Distance2Reverse_NormalWall_Special };
+// GAFU01 adds a secondary distance check for the actor end pos if the actor
+// is the "virtual" actor.
+static void mCoBG_Distance2Reverse(f32* reverse, mCoBG_unit_vec_info_c* unit_vec, int unit, f32* actor_start,
+                                   f32* actor_end, mCoBG_ActorInf_c* actor_info, ACTOR* actorx) {
+    static mCoBG_DIST_REV_PROC dist_rev_proc[] = {
+        &mCoBG_Distance2Reverse_NormalWall,
+        &mCoBG_Distance2Reverse_AttributeWall,
+        &mCoBG_Distance2Reverse_NormalWall,
+    };
+    static mCoBG_DIST_REV_PLAYER_PROC dist_rev_proc_player[] = {
+        &mCoBG_Distance2Reverse_NormalWall_Special,
+        &mCoBG_Distance2Reverse_AttributeWall_Special,
+        &mCoBG_Distance2Reverse_NormalWall_Special,
+    };
     s16 kind;
 
     if (mCoBG_GetPointInfoFrontLine(unit_vec->start, actor_start, unit_vec->normal)) {
         switch (actor_info->check_type) {
             case mCoBG_CHECK_TYPE_NORMAL:
                 if (mCoBG_RangeCheckLinePoint(unit_vec->start, unit_vec->end, actor_start)) {
-                    kind = mCoBG_GetWallKind(unit_vec);
-                    (*dist_rev_proc[kind])(reverse, unit_vec, actor_start, actor_end, actor_info, actorx);
+                    if (actorx->id == mCoBG_VIRTUAL_ACTOR_ID) {
+                        if (mCoBG_RangeCheckLinePoint(unit_vec->start, unit_vec->end, actor_end)) {
+                            kind = mCoBG_GetWallKind(unit_vec);
+                            (*dist_rev_proc[kind])(reverse, unit_vec, actor_start, actor_end, actor_info, actorx);
+                        }
+                    } else {
+                        kind = mCoBG_GetWallKind(unit_vec);
+                        (*dist_rev_proc[kind])(reverse, unit_vec, actor_start, actor_end, actor_info, actorx);
+                    }
                 }
                 break;
             default:
@@ -1055,9 +1139,9 @@ static void mCoBG_MergeSortFloat(f32* data, int first, int last) {
         bk = 0;
         while (pre < pre_count && bk < bk_count) {
             if (pre_work[pre] <= bk_work[bk]) {
-                data[set++] = pre_work[pre++]; 
+                data[set++] = pre_work[pre++];
             } else {
-                data[set++] = bk_work[bk++];             
+                data[set++] = bk_work[bk++];
             }
         }
 
@@ -1115,7 +1199,8 @@ static void mCoBG_GetWallPriority(u8* prio_tbl, mCoBG_vec_info_c* vec_info, f32*
     }
 }
 
-static void mCoBG_GetWallReverse(mCoBG_ActorInf_c* actor_info, const xyz_t* pos, mCoBG_vec_info_c* vec_info, ACTOR* actorx) {
+static void mCoBG_GetWallReverse(mCoBG_ActorInf_c* actor_info, const xyz_t* pos, mCoBG_vec_info_c* vec_info,
+                                 ACTOR* actorx) {
     mCoBG_unit_vec_info_c* unit_vec;
     f32 actor_start[2];
     f32 actor_end[2];
@@ -1157,11 +1242,11 @@ static void mCoBG_GetWallReverse(mCoBG_ActorInf_c* actor_info, const xyz_t* pos,
         for (j = 0; j < count; j++) {
             rev[0] = 0.0f;
             rev[1] = 0.0f;
-            mCoBG_Distance2Reverse(rev, &unit_vec[prio_tbl[j]], prio_tbl[j], actor_start, actor_end, actor_info, actorx);
+            mCoBG_Distance2Reverse(rev, &unit_vec[prio_tbl[j]], prio_tbl[j], actor_start, actor_end, actor_info,
+                                   actorx);
             actor_end[0] += rev[0];
             actor_end[1] += rev[1];
         }
-
 
         unit_vec = vec_info->unit;
         for (i = 0; i < count; i++) {
@@ -1175,7 +1260,7 @@ static void mCoBG_GetWallReverse(mCoBG_ActorInf_c* actor_info, const xyz_t* pos,
     } else {
         f32 rev[2];
         f32 spd = sqrtf(SQ(speed[0]) + SQ(speed[1]));
-        
+
         if (spd > actor_info->range * 0.5f) {
             unit_vec = vec_info->unit;
             for (unit = 0; unit < count; unit++) {
@@ -1222,61 +1307,65 @@ static mCoBG_UnitInfo_c l_crtutInf[50];
 static void mCoBG_WallCheck(ACTOR* actorx, mCoBG_ActorInf_c* actor_info, s16 atr_wall, mCoBG_Check_c* check_p) {
     int ux;
     int uz;
+    // GAFU01 moves initialization to function start
+    xyz_t pos;
+    xyz_t rev0 = { 0.0f, 0.0f, 0.0f };
+    xyz_t rev1 = { 0.0f, 0.0f, 0.0f };
 
     bzero(l_crtutInf, sizeof(l_crtutInf));
     bzero(&l_VecInf, sizeof(l_VecInf));
     mCoBG_GetSpeedByWpos(l_ActorInf.speed_xz0, actorx);
     mFI_Wpos2UtNum(&ux, &uz, actor_info->center_pos);
     mCoBG_MakeSizeUnitInfo(l_crtutInf, ux, uz, actor_info->ut_count);
-    if (actorx->id == mAc_PROFILE_PLAYER && (ABS(l_ActorInf.speed_xz0[0]) > 100.0f || ABS(l_ActorInf.speed_xz0[1]) > 100.0f)) {
+    if (actorx->id == mAc_PROFILE_PLAYER &&
+        (ABS(l_ActorInf.speed_xz0[0]) > 100.0f || ABS(l_ActorInf.speed_xz0[1]) > 100.0f)) {
         return;
     }
 
-    mCoBG_MakeUnitVector(&l_VecInf, l_crtutInf, actor_info->ut_count, actor_info->check_type, atr_wall, actor_info->old_on_ground, actor_info->old_in_water);
-    if (actorx->id != mAc_PROFILE_GYOEI) {
+    mCoBG_MakeUnitVector(&l_VecInf, l_crtutInf, actor_info->ut_count, actor_info->check_type, atr_wall,
+                         actor_info->old_on_ground, actor_info->old_in_water);
+
+    // GAFU01 added profile filter check for the gyoei shadow that happens when
+    // releasing a fish or scaring it away.
+    if (actorx->id != mAc_PROFILE_GYOEI && actorx->id != mAc_PROFILE_GYO_KAGE) {
         mCoBG_MakeMoveBgVector(&l_VecInf, &l_mBgMgr, &actorx->world.position, actor_info->check_type);
     }
 
-    mCoBG_MakeColumnCollisionData(l_VecInf.column, &l_VecInf.col_count, l_crtutInf, actor_info->ut_count, actor_info->old_on_ground, NULL, l_ActorInf._68, l_ActorInf._6C);
+    mCoBG_MakeColumnCollisionData(actorx, l_VecInf.column, &l_VecInf.col_count, l_crtutInf, actor_info->ut_count,
+                                  actor_info->old_on_ground, NULL, l_ActorInf._68, l_ActorInf._6C);
     mCoBG_MakeCircleDefenceWall(actor_info, atr_wall);
+    
+    pos.x = actorx->world.position.x + actor_info->rev_pos.x;
+    pos.y = actorx->world.position.y + actor_info->rev_pos.y;
+    pos.z = actorx->world.position.z + actor_info->rev_pos.z;
+    mCoBG_ColumnWallCheck(&rev0, actor_info, &pos, l_VecInf.column, l_VecInf.col_count, atr_wall);
+    actor_info->rev_pos.x += rev0.x;
+    actor_info->rev_pos.y += rev0.y;
+    actor_info->rev_pos.z += rev0.z;
 
-    {
-        xyz_t pos;
-        xyz_t rev0 = { 0.0f, 0.0f, 0.0f };
-        xyz_t rev1 = { 0.0f, 0.0f, 0.0f };
+    pos.x = actorx->world.position.x + actor_info->rev_pos.x;
+    pos.y = actorx->world.position.y + actor_info->rev_pos.y;
+    pos.z = actorx->world.position.z + actor_info->rev_pos.z;
+    mCoBG_ColumnWallCheck(&rev1, actor_info, &pos, mCoBG_decal_circle, mCoBG_regist_decal_circle_count, atr_wall);
+    actor_info->rev_pos.x += rev1.x;
+    actor_info->rev_pos.y += rev1.y;
+    actor_info->rev_pos.z += rev1.z;
 
-        pos.x = actorx->world.position.x + actor_info->rev_pos.x;
-        pos.y = actorx->world.position.y + actor_info->rev_pos.y;
-        pos.z = actorx->world.position.z + actor_info->rev_pos.z;
-        mCoBG_ColumnWallCheck(&rev0, actor_info, &pos, l_VecInf.column, l_VecInf.col_count, atr_wall);
-        actor_info->rev_pos.x += rev0.x;
-        actor_info->rev_pos.y += rev0.y;
-        actor_info->rev_pos.z += rev0.z;
+    actorx->world.position.x += actor_info->rev_pos.x;
+    actorx->world.position.y += actor_info->rev_pos.y;
+    actorx->world.position.z += actor_info->rev_pos.z;
+    mCoBG_GetWallReverse(actor_info, &actorx->world.position, &l_VecInf, actorx);
+    mCoBG_MakeHitWallFalg(&actorx->bg_collision_check.result, actor_info->wall_info);
 
-        pos.x = actorx->world.position.x + actor_info->rev_pos.x;
-        pos.y = actorx->world.position.y + actor_info->rev_pos.y;
-        pos.z = actorx->world.position.z + actor_info->rev_pos.z;
-        mCoBG_ColumnWallCheck(&rev1, actor_info, &pos, mCoBG_decal_circle, mCoBG_regist_decal_circle_count, atr_wall);
-        actor_info->rev_pos.x += rev1.x;
-        actor_info->rev_pos.y += rev1.y;
-        actor_info->rev_pos.z += rev1.z;
+    actorx->bg_collision_check.wall_bottom_y = actor_info->wall_height.bot;
+    actorx->bg_collision_check.wall_top_y = actor_info->wall_height.top;
+    actorx->bg_collision_check.wall_info[0].angleY = actor_info->wall_info[0].angleY;
+    actorx->bg_collision_check.wall_info[1].angleY = actor_info->wall_info[1].angleY;
+    actorx->bg_collision_check.wall_info[0].type = actor_info->wall_info[0].type;
+    actorx->bg_collision_check.wall_info[1].type = actor_info->wall_info[1].type;
 
-        actorx->world.position.x += actor_info->rev_pos.x;
-        actorx->world.position.y += actor_info->rev_pos.y;
-        actorx->world.position.z += actor_info->rev_pos.z;
-        mCoBG_GetWallReverse(actor_info, &actorx->world.position, &l_VecInf, actorx);
-        mCoBG_MakeHitWallFalg(&actorx->bg_collision_check.result, actor_info->wall_info);
-        
-        actorx->bg_collision_check.wall_bottom_y = actor_info->wall_height.bot;
-        actorx->bg_collision_check.wall_top_y = actor_info->wall_height.top;
-        actorx->bg_collision_check.wall_info[0].angleY = actor_info->wall_info[0].angleY;
-        actorx->bg_collision_check.wall_info[1].angleY = actor_info->wall_info[1].angleY;
-        actorx->bg_collision_check.wall_info[0].type = actor_info->wall_info[0].type;
-        actorx->bg_collision_check.wall_info[1].type = actor_info->wall_info[1].type;
-
-        mCoBG_RegistWallCount(&actorx->bg_collision_check.result, actor_info->wall_info, actorx->shape_info.rotation.y);
-        mCoBG_MakePartDirectHitWallFlag(actorx);
-    }
+    mCoBG_RegistWallCount(&actorx->bg_collision_check.result, actor_info->wall_info, actorx->shape_info.rotation.y);
+    mCoBG_MakePartDirectHitWallFlag(actorx);
 }
 
 static f32 mCoBG_GetAreaYSlatingUnit(mCoBG_UnitInfo_c* unit_info, s16 type, s16 area) {
@@ -1306,7 +1395,7 @@ static f32 mCoBG_GetAreaYSlatingUnit(mCoBG_UnitInfo_c* unit_info, s16 type, s16 
             }
             break;
     }
-    
+
     return 0.0f;
 }
 
@@ -1318,27 +1407,32 @@ static void mCoBG_GetOldCenterPosition(xyz_t* old_center_pos, ACTOR* actorx) {
     *old_center_pos = actorx->last_world_position;
 }
 
+// GAFU01 adds a temp 0.0f and adds to ground_normal_y.
 static f32 mCoBG_GetBGHeight_Normal_NormalGround(s_xyz* angle, mCoBG_UnitInfo_c* unit_info) {
     xyz_t normal;
     s16 area;
     f32 ground_normal_y;
+    f32 tmp = 0.0f;
 
-    if (
-        unit_info->collision->data.center != unit_info->collision->data.top_left ||
+    if (unit_info->collision->data.center != unit_info->collision->data.top_left ||
         unit_info->collision->data.center != unit_info->collision->data.bot_left ||
         unit_info->collision->data.center != unit_info->collision->data.bot_right ||
-        unit_info->collision->data.center != unit_info->collision->data.top_right
-    ) {
+        unit_info->collision->data.center != unit_info->collision->data.top_right) {
         mCoBG_GetUnitArea(unit_info, &area);
         mCoBG_GetNormTriangle(&normal, angle, unit_info->collision, area);
-        ground_normal_y = mCoBG_GroundPolygonInfo2BgHeight(&normal, unit_info) + mFI_UtNum2BaseHeight(unit_info->ut_x, unit_info->ut_z);
+        ground_normal_y = mCoBG_GroundPolygonInfo2BgHeight(&normal, unit_info) +
+                          mFI_UtNum2BaseHeight(unit_info->ut_x, unit_info->ut_z);
+        ground_normal_y += tmp;
     } else {
-        ground_normal_y = unit_info->collision->data.center * 10.0f + mFI_UtNum2BaseHeight(unit_info->ut_x, unit_info->ut_z);
+        ground_normal_y =
+            unit_info->collision->data.center * 10.0f + mFI_UtNum2BaseHeight(unit_info->ut_x, unit_info->ut_z);
+
         if (angle != NULL) {
             angle->x = 0;
             angle->y = 0;
             angle->z = 0;
         }
+        ground_normal_y += tmp;
     }
 
     return ground_normal_y;
@@ -1350,10 +1444,12 @@ static f32 mCoBG_GetBGHeight_Normal_SlateGround(s_xyz* angle, mCoBG_UnitInfo_c* 
 
     if (unit_info->collision->data.top_left != unit_info->collision->data.bot_right) {
         mCoBG_GetUnitArea(unit_info, &area);
-        ground_normal_y = mCoBG_GetAreaYSlatingUnit(unit_info, mCoBG_WALL_SLATE_UP, area) + mFI_UtNum2BaseHeight(unit_info->ut_x, unit_info->ut_z);
+        ground_normal_y = mCoBG_GetAreaYSlatingUnit(unit_info, mCoBG_WALL_SLATE_UP, area) +
+                          mFI_UtNum2BaseHeight(unit_info->ut_x, unit_info->ut_z);
     } else {
         mCoBG_GetUnitArea(unit_info, &area);
-        ground_normal_y = mCoBG_GetAreaYSlatingUnit(unit_info, mCoBG_WALL_SLATE_DOWN, area) + mFI_UtNum2BaseHeight(unit_info->ut_x, unit_info->ut_z);
+        ground_normal_y = mCoBG_GetAreaYSlatingUnit(unit_info, mCoBG_WALL_SLATE_DOWN, area) +
+                          mFI_UtNum2BaseHeight(unit_info->ut_x, unit_info->ut_z);
     }
 
     if (angle != NULL) {
@@ -1368,25 +1464,31 @@ static f32 mCoBG_GetBGHeight_Normal_SlateGround(s_xyz* angle, mCoBG_UnitInfo_c* 
 typedef f32 (*mCoBG_GET_BG_Y_NORMAL_PROC)(s_xyz* angle, mCoBG_UnitInfo_c* unit_info);
 
 static f32 mCoBG_GetBGHeight_Normal(s_xyz* angle, mCoBG_UnitInfo_c* unit_info) {
-    static mCoBG_GET_BG_Y_NORMAL_PROC get_bg_y_normal_proc[] = { &mCoBG_GetBGHeight_Normal_NormalGround, &mCoBG_GetBGHeight_Normal_SlateGround };
+    static mCoBG_GET_BG_Y_NORMAL_PROC get_bg_y_normal_proc[] = { &mCoBG_GetBGHeight_Normal_NormalGround,
+                                                                 &mCoBG_GetBGHeight_Normal_SlateGround };
 
     return (*get_bg_y_normal_proc[unit_info->collision->data.slate_flag])(angle, unit_info);
 }
 
-static void mCoBG_MakeJumpFlag_NotOldOnGround(mCoBG_CheckResult_c* result, mCoBG_ActorInf_c* actor_info, xyz_t* rev, f32 ground_normal_y) {
+static void mCoBG_MakeJumpFlag_NotOldOnGround(mCoBG_CheckResult_c* result, mCoBG_ActorInf_c* actor_info, xyz_t* rev,
+                                              f32 ground_normal_y) {
     // nothing
 }
 
-static void mCoBG_MakeJumpFlag_OldOnGround(mCoBG_CheckResult_c* result, mCoBG_ActorInf_c* actor_info, xyz_t* rev, f32 ground_normal_y) {
+static void mCoBG_MakeJumpFlag_OldOnGround(mCoBG_CheckResult_c* result, mCoBG_ActorInf_c* actor_info, xyz_t* rev,
+                                           f32 ground_normal_y) {
     if (actor_info->ground_y + rev->y > (ground_normal_y + 0.01f)) {
         result->jump_flag = TRUE;
     }
 }
 
-typedef void (*mCoBG_MAKE_JUMP_FLAG_PROC)(mCoBG_CheckResult_c* result, mCoBG_ActorInf_c* actor_info, xyz_t* rev, f32 ground_normal_y);
+typedef void (*mCoBG_MAKE_JUMP_FLAG_PROC)(mCoBG_CheckResult_c* result, mCoBG_ActorInf_c* actor_info, xyz_t* rev,
+                                          f32 ground_normal_y);
 
-static void mCoBG_MakeJumpFlag(mCoBG_CheckResult_c* result, mCoBG_ActorInf_c* actor_info, xyz_t* rev, f32 ground_normal_y) {
-    static mCoBG_MAKE_JUMP_FLAG_PROC make_jump_flag_proc[] = { &mCoBG_MakeJumpFlag_NotOldOnGround, &mCoBG_MakeJumpFlag_OldOnGround };
+static void mCoBG_MakeJumpFlag(mCoBG_CheckResult_c* result, mCoBG_ActorInf_c* actor_info, xyz_t* rev,
+                               f32 ground_normal_y) {
+    static mCoBG_MAKE_JUMP_FLAG_PROC make_jump_flag_proc[] = { &mCoBG_MakeJumpFlag_NotOldOnGround,
+                                                               &mCoBG_MakeJumpFlag_OldOnGround };
 
     (*make_jump_flag_proc[actor_info->old_on_ground & 1])(result, actor_info, rev, ground_normal_y);
 }
@@ -1460,31 +1562,36 @@ static u32 mCoBG_CheckWaveAtrDetail(xyz_t* point, mCoBG_wave_c* wave_p) {
 
 static u32 mCoBG_GetWaveDynamicAttr(u32 orig_attr, xyz_t* pos) {
     if (orig_attr == mCoBG_ATTRIBUTE_36) {
-        static mCoBG_wave_c wave_s_info = { { 0.0f, 0.0f, mFI_UT_WORLDSIZE_HALF_Z_F }, { 0.0f, 0.0f, -mFI_UT_WORLDSIZE_HALF_Z_F } };
+        static mCoBG_wave_c wave_s_info = { { 0.0f, 0.0f, mFI_UT_WORLDSIZE_HALF_Z_F },
+                                            { 0.0f, 0.0f, -mFI_UT_WORLDSIZE_HALF_Z_F } };
 
         return mCoBG_CheckWaveAtrDetail(pos, &wave_s_info);
     }
 
     if (orig_attr == mCoBG_ATTRIBUTE_37) {
-        static mCoBG_wave_c wave_se_info = { { 0.0f, 0.0f, 0.0f }, { -mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, -mFI_UT_WORLDSIZE_HALF_Z_F } };
+        static mCoBG_wave_c wave_se_info = { { 0.0f, 0.0f, 0.0f },
+                                             { -mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, -mFI_UT_WORLDSIZE_HALF_Z_F } };
 
         return mCoBG_CheckWaveAtrDetail(pos, &wave_se_info);
     }
 
     if (orig_attr == mCoBG_ATTRIBUTE_38) {
-        static mCoBG_wave_c wave_sw_info = { { 0.0f, 0.0f, 0.0f }, { mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, mFI_UT_WORLDSIZE_HALF_Z_F } };
+        static mCoBG_wave_c wave_sw_info = { { 0.0f, 0.0f, 0.0f },
+                                             { mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, mFI_UT_WORLDSIZE_HALF_Z_F } };
 
         return mCoBG_CheckWaveAtrDetail(pos, &wave_sw_info);
     }
 
     if (orig_attr == mCoBG_ATTRIBUTE_25) {
-        static mCoBG_wave_c wave_se2_info = { { mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, mFI_UT_WORLDSIZE_HALF_Z_F }, { 0.0f, 0.0f, 0.0f } };
+        static mCoBG_wave_c wave_se2_info = { { mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, mFI_UT_WORLDSIZE_HALF_Z_F },
+                                              { 0.0f, 0.0f, 0.0f } };
 
         return mCoBG_CheckWaveAtrDetail(pos, &wave_se2_info);
     }
 
     if (orig_attr == mCoBG_ATTRIBUTE_26) {
-        static mCoBG_wave_c wave_sw2_info = { { -mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, mFI_UT_WORLDSIZE_HALF_Z_F }, { 0.0f, 0.0f, 0.0f } };
+        static mCoBG_wave_c wave_sw2_info = { { -mFI_UT_WORLDSIZE_HALF_X_F, 0.0f, mFI_UT_WORLDSIZE_HALF_Z_F },
+                                              { 0.0f, 0.0f, 0.0f } };
 
         return mCoBG_CheckWaveAtrDetail(pos, &wave_sw2_info);
     }
@@ -1516,7 +1623,7 @@ extern u32 mCoBG_Wpos2Attribute(xyz_t pos, s8* cant_dig) {
     mCoBG_UnitInfo_c unit_info;
     u32 attr;
     s16 area;
-    
+
     pos.y = 0.0f;
     mCoBG_Wpos2UnitInfo(&unit_info, pos);
     attr = unit_info.collision->data.unit_attribute;
@@ -1588,7 +1695,8 @@ extern u32 mCoBG_Wpos2Attribute(xyz_t pos, s8* cant_dig) {
             mCoBG_GetUnitArea(&unit_info, &area);
             idx = attr - mCoBG_ATTRIBUTE_39;
 
-            if ((mCoBG_grass3_water_info[idx][area] <= mCoBG_ATTRIBUTE_GRASS3 && Common_Get(field_type) != mFI_FIELDTYPE2_FG) == FALSE) {
+            if ((mCoBG_grass3_water_info[idx][area] <= mCoBG_ATTRIBUTE_GRASS3 &&
+                 Common_Get(field_type) != mFI_FIELDTYPE2_FG) == FALSE) {
                 return mCoBG_grass3_water_info[idx][area];
             } else {
                 return mCoBG_ATTRIBUTE_FLOOR;
@@ -1681,9 +1789,6 @@ static u32 mCoBG_SearchWaterAttributeFrom4Area(xyz_t pos) {
     return mCoBG_unit_attribute_water_info[attr];
 }
 
-#include "../src/AUS/game/m_collision_bg_info.c_inc"
-#include "../src/AUS/game/m_collision_bg_rewrite.c_inc"
-
 static f32 mCoBG_GetBGHeight_NormalColumn(mCoBG_UnitInfo_c* unit_info, s_xyz* ground_angle, const xyz_t* pos) {
     static s_xyz ground_angle0; // @BUG - shouldn't this be initialized?
     s_xyz normal_ground_angle;
@@ -1709,7 +1814,11 @@ static f32 mCoBG_GetBGHeight_NormalColumn(mCoBG_UnitInfo_c* unit_info, s_xyz* gr
     }
 }
 
-static void mCoBG_GroundCheck(xyz_t* rev, mCoBG_ActorInf_c* actor_info, ACTOR* actorx, f32 actor_ground_dist, mCoBG_CheckResult_c* result, s_xyz* angle, s16 attribute_wall) {
+// GAFU01 adds more checks for sea and corner wave attributes to determine when an
+// actor is in water. It also only allows the fishing bobber, gyoei, and gyoei shadow actors
+// to be in water while in the sea and corner wave attribute tiles.
+static void mCoBG_GroundCheck(xyz_t* rev, mCoBG_ActorInf_c* actor_info, ACTOR* actorx, f32 actor_ground_dist,
+                              mCoBG_CheckResult_c* result, s_xyz* angle, s16 attribute_wall) {
     mCoBG_UnitInfo_c unit_info;
     xyz_t pos;
     f32 ground_y;
@@ -1725,7 +1834,8 @@ static void mCoBG_GroundCheck(xyz_t* rev, mCoBG_ActorInf_c* actor_info, ACTOR* a
     attr = unit_info.collision->data.unit_attribute;
 
     if (attr == mCoBG_ATTRIBUTE_63 || (attr >= mCoBG_ATTRIBUTE_27 && attr <= mCoBG_ATTRIBUTE_62)) {
-        if (attribute_wall == FALSE && actor_info->old_in_water == TRUE && (attr >= mCoBG_ATTRIBUTE_27 && attr <= mCoBG_ATTRIBUTE_35)) {
+        if (attribute_wall == FALSE && actor_info->old_in_water == TRUE &&
+            (attr >= mCoBG_ATTRIBUTE_27 && attr <= mCoBG_ATTRIBUTE_35)) {
             int idx = attr - mCoBG_ATTRIBUTE_27;
             int flags = mCoBG_bridge_search_water[idx];
             xyz_t next_pos;
@@ -1735,9 +1845,12 @@ static void mCoBG_GroundCheck(xyz_t* rev, mCoBG_ActorInf_c* actor_info, ACTOR* a
                 if ((flags & (1 << i)) != 0) {
                     mCoBG_PlussDirectOffset(&next_pos, pos, i);
                     next_unit_attr = mCoBG_SearchWaterAttributeFrom4Area(next_pos);
-                    if (next_unit_attr >= mCoBG_ATTRIBUTE_WATER && next_unit_attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+                    if (next_unit_attr == mCoBG_ATTRIBUTE_SEA || next_unit_attr == mCoBG_ATTRIBUTE_37 || next_unit_attr == mCoBG_ATTRIBUTE_38) {
                         water_flag = TRUE;
-                        water_y = mCoBG_GetWaterHeight_File(pos, __FILE__, 3883);
+                        water_y = 20.0f;
+                    } else if (next_unit_attr >= mCoBG_ATTRIBUTE_WATER && next_unit_attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
+                        water_flag = TRUE;
+                        water_y = mCoBG_GetWaterHeight_File(pos, __FILE__, 4058);
                     }
                 }
 
@@ -1751,10 +1864,16 @@ static void mCoBG_GroundCheck(xyz_t* rev, mCoBG_ActorInf_c* actor_info, ACTOR* a
         }
     } else {
         if (attr >= mCoBG_ATTRIBUTE_WATER && attr <= mCoBG_ATTRIBUTE_RIVER_NE) {
-            water_flag = TRUE;
+            if (actorx->id == mAc_PROFILE_UKI || actorx->id == mAc_PROFILE_GYOEI || actorx->id == mAc_PROFILE_GYO_KAGE) {
+                water_flag = TRUE;
+            }
+
             water_y = 20.0f + mCoBG_GetBgY_AngleS_FromWpos(NULL, pos, 0.0f);
-        } else if (attr == mCoBG_ATTRIBUTE_SEA) {
-            water_flag = TRUE;
+        } else if (attr == mCoBG_ATTRIBUTE_SEA || attr == mCoBG_ATTRIBUTE_37 || attr == mCoBG_ATTRIBUTE_38) {
+            if (actorx->id == mAc_PROFILE_UKI || actorx->id == mAc_PROFILE_GYOEI || actorx->id == mAc_PROFILE_GYO_KAGE) {
+                water_flag = TRUE;
+            }
+
             water_y = 20.0f;
         } else {
             attr = mCoBG_Wpos2Attribute(pos, NULL);
@@ -1767,10 +1886,6 @@ static void mCoBG_GroundCheck(xyz_t* rev, mCoBG_ActorInf_c* actor_info, ACTOR* a
     mCoBG_AdjustActorY(rev, actorx, ground_y, water_y, actor_ground_dist, result, actor_info, water_flag);
     mCoBG_MakeJumpFlag(result, actor_info, rev, ground_y);
 }
-
-#include "../src/AUS/game/m_collision_bg_block.c_inc"
-#include "../src/AUS/game/m_collision_bg_line.c_inc"
-#include "../src/AUS/game/m_collision_bg_water.c_inc"
 
 extern void mCoBG_InitBgCheckResult(mCoBG_CheckResult_c* result) {
     result->on_ground = FALSE;
@@ -1812,7 +1927,11 @@ static s16 mCoBG_ActorFearture2CheckRange(mCoBG_ActorInf_c* actor_info) {
     return 7;
 }
 
-static void mCoBG_MakeActorInf(mCoBG_ActorInf_c* actor_info, ACTOR* actorx, f32 range, f32 ground_dist, s16 check_type, int ux, int uz) {
+#include "../src/AUS/game/m_collision_bg_info.c_inc"
+#include "../src/AUS/game/m_collision_bg_line.c_inc"
+
+static void mCoBG_MakeActorInf(mCoBG_ActorInf_c* actor_info, ACTOR* actorx, f32 range, f32 ground_dist, s16 check_type,
+                               int ux, int uz) {
     actor_info->_68 = ux;
     actor_info->_6C = uz;
     actor_info->old_in_water = actorx->bg_collision_check.result.is_in_water;
@@ -1874,27 +1993,49 @@ static void mCoBG_MoveActorWithMoveBg_OnMoveBg(ACTOR* actorx) {
 typedef void (*mCoBG_MOVE_BG_MOVE_ACTOR_PROC)(ACTOR* actorx);
 
 static void mCoBG_MoveActorWithMoveBg(ACTOR* actorx) {
-    static mCoBG_MOVE_BG_MOVE_ACTOR_PROC move_bg_move_actor_proc[] = { &mCoBG_MoveActorWithMoveBg_NotOnMoveBg, &mCoBG_MoveActorWithMoveBg_OnMoveBg };
+    static mCoBG_MOVE_BG_MOVE_ACTOR_PROC move_bg_move_actor_proc[] = { &mCoBG_MoveActorWithMoveBg_NotOnMoveBg,
+                                                                       &mCoBG_MoveActorWithMoveBg_OnMoveBg };
 
     (*move_bg_move_actor_proc[actorx->bg_collision_check.result.is_on_move_bg_obj])(actorx);
 }
 
+// GAFU01 adds more checks for the basement and player cottage
+// in scope check for house cockroach actor
 static void mCoBG_RoomScopeCheck(ACTOR* actorx, f32 range, f32 ground_dist) {
     if (actorx->id == mAc_PROFILE_HOUSE_GOKI) {
         int scene = Save_Get(scene_no);
         static xyz_t base_pos = { mFI_UT_WORLDSIZE_X_F, 0.0f, mFI_UT_WORLDSIZE_Z_F };
 
-        if (scene == SCENE_MY_ROOM_S) {
-            mCoBG_ScopeWallCheck(actorx, &base_pos, 160.0f, 160.0f, range, ground_dist);
-        } else if (scene == SCENE_MY_ROOM_M || scene == SCENE_MY_ROOM_LL2) {
-            mCoBG_ScopeWallCheck(actorx, &base_pos, 240.0f, 240.0f, range, ground_dist);
-        } else if (scene == SCENE_MY_ROOM_L || scene == SCENE_MY_ROOM_LL1) {
-            mCoBG_ScopeWallCheck(actorx, &base_pos, 320.0f, 320.0f, range, ground_dist);
+        switch (scene) {
+            case SCENE_MY_ROOM_S: {
+                mCoBG_ScopeWallCheck(actorx, &base_pos, 160.0f, 160.0f, range, ground_dist);
+                break;
+            }
+
+            case SCENE_MY_ROOM_M:
+            case SCENE_MY_ROOM_LL2: {
+                mCoBG_ScopeWallCheck(actorx, &base_pos, 240.0f, 240.0f, range, ground_dist);
+                break;
+            }
+
+            case SCENE_MY_ROOM_L:
+            case SCENE_MY_ROOM_LL1:
+            case SCENE_MY_ROOM_BASEMENT_S:
+            case SCENE_MY_ROOM_BASEMENT_M:
+            case SCENE_MY_ROOM_BASEMENT_L:
+            case SCENE_MY_ROOM_BASEMENT_LL1:
+            case SCENE_COTTAGE_MY: {
+                mCoBG_ScopeWallCheck(actorx, &base_pos, 320.0f, 320.0f, range, ground_dist);
+                break;
+            }
         }
     }
 }
 
-extern void mCoBG_BgCheckControll_RemoveDirectedUnitColumn(xyz_t* actor_revpos, ACTOR* actorx, f32 range, f32 ground_dist, s16 attr_wall, s16 rev_type, s16 check_type, int ux, int uz) {
+// GAFU01 removes the unknown flag1 being set to actor_info's _64 field
+extern void mCoBG_BgCheckControll_RemoveDirectedUnitColumn(xyz_t* actor_revpos, ACTOR* actorx, f32 range,
+                                                           f32 ground_dist, s16 attr_wall, s16 rev_type, s16 check_type,
+                                                           int ux, int uz) {
     s_xyz angle = { 0.0f, 0.0f, 0.0f };
     mCoBG_Check_c prev_check = actorx->bg_collision_check;
 
@@ -1904,8 +2045,9 @@ extern void mCoBG_BgCheckControll_RemoveDirectedUnitColumn(xyz_t* actor_revpos, 
     mCoBG_GetOldCenterPosition(&l_ActorInf.old_center_pos, actorx);
     mCoBG_MakeActorInf(&l_ActorInf, actorx, range, ground_dist, check_type, ux, uz);
     mCoBG_WallCheck(actorx, &l_ActorInf, attr_wall, &prev_check);
-    actorx->bg_collision_check.result.unk_flag1 = l_ActorInf._64;
-    mCoBG_GroundCheck(&l_ActorInf.rev_pos, &l_ActorInf, actorx, ground_dist, &actorx->bg_collision_check.result, &angle, attr_wall);
+    // actorx->bg_collision_check.result.unk_flag1 = l_ActorInf._64;
+    mCoBG_GroundCheck(&l_ActorInf.rev_pos, &l_ActorInf, actorx, ground_dist, &actorx->bg_collision_check.result, &angle,
+                      attr_wall);
     mCoBG_MoveBgGroundCheck(&l_ActorInf.rev_pos, &l_ActorInf, actorx, &actorx->bg_collision_check.result, &angle);
     mCoBG_CarryOutReverse(actorx, l_ActorInf.rev_pos, rev_type);
     mCoBG_GiveRevposToActor(actor_revpos, l_ActorInf.rev_pos);
@@ -1914,11 +2056,15 @@ extern void mCoBG_BgCheckControll_RemoveDirectedUnitColumn(xyz_t* actor_revpos, 
     l_ActorInf._6C = -1;
 }
 
-extern void mCoBG_BgCheckControll(xyz_t* actor_revpos, ACTOR* actorx, f32 range, f32 ground_dist, s16 attr_wall, s16 rev_type, s16 check_type) {
-    mCoBG_BgCheckControll_RemoveDirectedUnitColumn(actor_revpos, actorx, range, ground_dist, attr_wall, rev_type, check_type, -1, -1);
+extern void mCoBG_BgCheckControll(xyz_t* actor_revpos, ACTOR* actorx, f32 range, f32 ground_dist, s16 attr_wall,
+                                  s16 rev_type, s16 check_type) {
+    mCoBG_BgCheckControll_RemoveDirectedUnitColumn(actor_revpos, actorx, range, ground_dist, attr_wall, rev_type,
+                                                   check_type, -1, -1);
 }
 
-extern void mCoBG_WallCheckOnly(xyz_t* actor_revpos, ACTOR* actorx, f32 range, f32 ground_dist, s16 rev_type, s16 check_type) {
+// GAFU01 removes the unknown flag1 being set to actor_info's _64 field
+extern void mCoBG_WallCheckOnly(xyz_t* actor_revpos, ACTOR* actorx, f32 range, f32 ground_dist, s16 rev_type,
+                                s16 check_type) {
     s16 attr_wall = FALSE;
     mCoBG_Check_c prev_check = actorx->bg_collision_check;
 
@@ -1927,7 +2073,7 @@ extern void mCoBG_WallCheckOnly(xyz_t* actor_revpos, ACTOR* actorx, f32 range, f
     mCoBG_GetOldCenterPosition(&l_ActorInf.old_center_pos, actorx);
     mCoBG_MakeActorInf(&l_ActorInf, actorx, range, ground_dist, check_type, -1, -1);
     mCoBG_WallCheck(actorx, &l_ActorInf, attr_wall, &prev_check);
-    actorx->bg_collision_check.result.unk_flag1 = l_ActorInf._64;
+    // actorx->bg_collision_check.result.unk_flag1 = l_ActorInf._64;
     mCoBG_CarryOutReverse(actorx, l_ActorInf.rev_pos, rev_type);
     mCoBG_GiveRevposToActor(actor_revpos, l_ActorInf.rev_pos);
     mCoBG_RoomScopeCheck(actorx, range, ground_dist);
@@ -1942,19 +2088,22 @@ extern void mCoBG_GroundCheckOnly(xyz_t* actor_revpos, ACTOR* actorx, f32 range,
     mCoBG_GetOldCenterPosition(&l_ActorInf.old_center_pos, actorx);
     mCoBG_GetSpeedByWpos(l_ActorInf.speed_xz0, actorx);
     mCoBG_MakeActorInf(&l_ActorInf, actorx, 0.0f, ground_dist, mCoBG_CHECK_TYPE_NORMAL, -1, -1);
-    mCoBG_GroundCheck(&l_ActorInf.rev_pos, &l_ActorInf, actorx, ground_dist, &actorx->bg_collision_check.result, &angle, FALSE);
+    mCoBG_GroundCheck(&l_ActorInf.rev_pos, &l_ActorInf, actorx, ground_dist, &actorx->bg_collision_check.result, &angle,
+                      FALSE);
     mCoBG_CarryOutReverse(actorx, l_ActorInf.rev_pos, rev_type);
     mCoBG_GiveRevposToActor(actor_revpos, l_ActorInf.rev_pos);
 }
 
 static ACTOR Virtual_Actor;
 
+// GAFU01 adds a special profile ID for the virtual actor
 extern void mCoBG_VirtualBGCheck(xyz_t* rev_pos_p, mCoBG_Check_c* bg_check, const xyz_t* start_pos_p,
                                  const xyz_t* end_pos_p, s16 angle_y, s16 water_flag, s16 ground_flag, f32 range,
                                  f32 ground_dist, s16 attr_wall, s16 rev_type, s16 check_type) {
     ACTOR* actorx = &Virtual_Actor;
 
     bzero(actorx, sizeof(ACTOR));
+    actorx->id = mCoBG_VIRTUAL_ACTOR_ID;
     actorx->world.position = *end_pos_p;
     actorx->last_world_position = *start_pos_p;
     actorx->bg_collision_check.result.is_in_water = (s16)water_flag;

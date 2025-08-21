@@ -249,7 +249,7 @@ extern void watch_my_step_draw(GAME_PLAY* play) {
             }
 
             case 4: {
-                int a = S_watch_my_step.opacity * 255.0f;
+                u8 a = S_watch_my_step.opacity * 255.0f;
                 gDPSetPrimColor(font_gfx++, 0, a, 255, 255, 215, a);
 
                 Matrix_push();

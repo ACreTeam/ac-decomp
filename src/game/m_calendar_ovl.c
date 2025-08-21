@@ -32,7 +32,11 @@ static u32 mCD_sp_soncho_chk(lbRTC_year_t year, lbRTC_month_t month, lbRTC_day_t
 
     switch (month) {
         case lbRTC_JUNE:
+#if VERSION == VER_GAFU01_00
+            wday = lbRTC_Week(year, month, day);
+#else
             wday = lbRTC_Week(year, month, day + 1);
+#endif
             if (wday == lbRTC_SUNDAY && 1 + ((day - wday) / lbRTC_WEEK) == 3) {
                 chk = (1 << 0);
             }

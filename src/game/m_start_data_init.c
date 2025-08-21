@@ -44,6 +44,9 @@ static void title_game_haniwa_data_init() {
     int line_len;
     int haniwa_msg_len;
     int i;
+    int j;
+    Haniwa_c* haniwa;
+    mHm_hs_c* house;
     u8* dst;
 
     /* Load message line-by-line */
@@ -62,9 +65,8 @@ static void title_game_haniwa_data_init() {
     }
 
     for (i = 0; i < mHS_HOUSE_NUM; i++) {
-        Haniwa_c* haniwa = &Save_Get(homes + i)->haniwa;
-        mHm_hs_c* house = Save_Get(homes + i);
-        int j;
+        haniwa = &Save_Get(homes + i)->haniwa;
+        house = Save_Get(homes + i);
 
         /* Copy default message */
         mem_copy(house->haniwa.message, haniwa_buf, HANIWA_MESSAGE_LEN);
@@ -169,6 +171,118 @@ static void mSDI_PullTreeUnderPlayerBlock() {
     }
 }
 
+// TODO: I don't like this deviation
+#if VERSION != VER_GAFE01_00
+static int mSDI_StartInitNew(GAME* game, int player_no, int malloc_flag) {
+    Private_c* priv;
+    Animal_c* animals = Save_Get(animals);
+    mActor_name_t* fruit_p = Save_GetPointer(fruit);
+    int town_day;
+    GAME* g = NULL;
+    int i;
+    int ret = TRUE;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+
+    Common_Set(scene_from_title_demo, SCENE_START_DEMO);
+    lbRTC_GetTime(Common_GetPointer(time.rtc_time));
+    osSyncPrintf("player no -- %d\n", player_no);
+    Common_Set(player_no, player_no);
+
+    priv = Save_GetPointer(private_data[player_no]);
+    Common_Set(now_private, priv);
+    priv->gender = mPr_SEX_MALE;
+    decide_fruit(fruit_p);
+    mFM_DecideBgTexIdx(Save_GetPointer(bg_tex_idx));
+    mFAs_ClearGoodField();
+
+    if (malloc_flag == FALSE) {
+        g = game;
+    }
+
+    bzero(Save_Get(deposit), sizeof(Save_Get(deposit)));
+    Save_Set(dust_flag, FALSE);
+    bzero(Save_GetPointer(island), sizeof(Island_c));
+    mFM_InitFgCombiSaveData(g);
+
+    /* Remove trees */
+    mSDI_PullTree();
+    mSDI_PullTreeUnderPlayerBlock();
+
+    mFM_SetBlockKindLoadCombi(g);
+
+    /* Tree -> Fruit Tree */
+    mAGrw_ChangeTree2FruitTree();
+
+    /* Tree -> Cedar Tree */
+    mAGrw_ChangeTree2Cedar();
+
+    
+    priv = Save_Get(private_data);
+    mMld_SetDefaultMelody();
+    mLd_LandDataInit();
+    mEv_ClearEventSaveInfo(Save_GetPointer(event_save_data));
+    mEv_init(&play->event);
+    mNpc_InitNpcAllInfo(malloc_flag);
+    
+    for (i = 0; i < PLAYER_NUM; i++) {
+        mPr_ClearPrivateInfo(priv);
+
+        Save_Get(homes[i]).outlook_pal = i;
+        Save_Get(homes[i]).next_outlook_pal = i;
+        bzero(&Save_Get(homes[i]).size_info, sizeof(mHm_rmsz_c));
+
+        mPr_ClearMotherMailInfo(&Save_Get(mother_mail[i]));
+        priv++;
+    }
+
+    mPr_InitPrivateInfo(priv - PLAYER_NUM + player_no);
+    mNpc_SetRemoveAnimalNo(Save_GetPointer(remove_animal_idx), animals, -1);
+    title_game_haniwa_data_init();
+    mPB_police_box_init(g);
+    mSN_snowman_init();
+    mHS_house_init();
+    mGH_animal_return_init();
+    mMC_mask_cat_init();
+    mDE_maskcat_init(Save_GetPointer(mask_cat));
+
+    lbRTC_TimeCopy(Save_GetPointer(last_grow_time), &mTM_rtcTime_clear_code);
+    lbRTC_TimeCopy(Save_GetPointer(treasure_buried_time), &mTM_rtcTime_clear_code);
+    lbRTC_TimeCopy(Save_GetPointer(treasure_checked_time), &mTM_rtcTime_clear_code);
+    lbRTC_TimeCopy(Save_GetPointer(saved_auto_nwrite_time), &mTM_rtcTime_clear_code);
+
+    Save_Set(station_type, RANDOM(15));
+    Save_Set(island.last_song_to_island, -1);
+    Save_Set(island.last_song_from_island, -1);
+
+    mPr_SetPossessionItem(Common_Get(now_private), 0, ITM_MONEY_1000, mPr_ITEM_COND_QUEST);
+
+    town_day = RANDOM(30) + 1; /* Initial spread is [1, 30] */
+    if (town_day >= 4) {
+        town_day++; /* Add an extra day so that 4th of July is never chosen, so [1, 3] U [5, 31] */
+    }
+
+    Save_Set(town_day, town_day);
+
+    mCkRh_InitGokiSaveData_AllRoom();
+
+    mNW_InitMyOriginal();
+    mNW_InitNeedleworkData();
+
+    mEv_2nd_init(&play->event);
+
+    mISL_init(Save_GetPointer(island));
+
+    famicom_emu_initial_common_data();
+
+    mRmTp_SetDefaultLightSwitchData(1); // TODO: lightswitch enum
+
+    mFI_PullTanukiPathTrees();
+
+    Common_Set(_2dbe1, 0);
+
+    return ret;
+}
+#else
 static int mSDI_StartInitNew(GAME* game, int player_no, int malloc_flag) {
     int town_day;
     Private_c* priv;
@@ -277,6 +391,7 @@ static int mSDI_StartInitNew(GAME* game, int player_no, int malloc_flag) {
 
     return TRUE;
 }
+#endif
 
 static int mSDI_StartInitFrom(GAME* game, int player_no, int malloc_flag) {
     GAME_PLAY* play = (GAME_PLAY*)game;

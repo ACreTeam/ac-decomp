@@ -186,10 +186,10 @@ static void banti_chk_anime_start() {
     u8 banti_min;
     u8 rtc_min;
 
-    int work1;
-    int work0;
     int disp0;
     int disp1;
+    int work0;
+    int work1;
 
     if (banti.month_anim.state == banti_ANIM_STATE_STOPPED &&
         banti.displayed_time.month != Common_GetPointer(time.rtc_time)->month) {
@@ -203,22 +203,20 @@ static void banti_chk_anime_start() {
         banti.day_anim.state = banti_ANIM_STATE_PLAYING;
     }
 
-    banti_hour = banti.displayed_time.hour;
-    if (banti_hour == 0 || banti_hour == 12) {
+    if (banti.displayed_time.hour == 0 || banti.displayed_time.hour == 12) {
         work0 = 12;
-    } else if (banti_hour > 11) {
-        work0 = banti_hour - 12;
+    } else if (banti.displayed_time.hour > 11) {
+        work0 = banti.displayed_time.hour - 12;
     } else {
-        work0 = banti_hour;
+        work0 = banti.displayed_time.hour;
     }
 
-    rtc_hour = Common_GetPointer(time.rtc_time)->hour;
-    if (rtc_hour == 0 || rtc_hour == 12) {
+    if (Common_Get(time.rtc_time.hour) == 0 || Common_Get(time.rtc_time.hour) == 12) {
         work1 = 12;
-    } else if (rtc_hour > 11) {
-        work1 = rtc_hour - 12;
+    } else if (Common_Get(time.rtc_time.hour) > 11) {
+        work1 = Common_Get(time.rtc_time.hour) - 12;
     } else {
-        work1 = rtc_hour;
+        work1 = Common_Get(time.rtc_time.hour);
     }
 
     disp0 = work0 / 10;

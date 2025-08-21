@@ -292,7 +292,7 @@ struct tag_ovl_s {
 };
 
 extern int mTG_mark_main(Submenu*, mSM_MenuInfo_c*, int, int*);
-extern int mTG_mark_mainX(Submenu*, mSM_MenuInfo_c*, int, int, int, int*);
+extern int mTG_mark_mainX(Submenu*, const mSM_MenuInfo_c*, int, int, int, int*);
 
 extern void mTG_tag_ovl_construct(Submenu* submenu);
 extern void mTG_tag_ovl_destruct(Submenu* submenu);

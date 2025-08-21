@@ -1604,17 +1604,16 @@ static int mIV_is_mark_check(mIV_Ovl_c* inv_ovl, int idx) {
 extern Gfx inv_item_mode[];
 
 static void mIV_set_item(Submenu* submenu, mSM_MenuInfo_c* menu_info, GRAPH* graph, f32 pos_x, f32 pos_y) {
-    mTG_Ovl_c* tag_ovl;
-    mTG_tag_c* tag;
     mIV_Ovl_c* inv_ovl;
     mActor_name_t* item;
     u8* scale_type;
+    mTG_tag_c* tag;
     int i;
     int anim_frame;
     f32 hand_pos[2];
     f32 scale;
     int no_wc_flag;
-
+    
     tag = &submenu->overlay->tag_ovl->tags[0];
     inv_ovl = submenu->overlay->inventory_ovl;
     item = Now_Private->inventory.pockets;
@@ -1653,8 +1652,8 @@ static void mIV_set_item(Submenu* submenu, mSM_MenuInfo_c* menu_info, GRAPH* gra
                     }
 
                     case mIV_ITEM_SCALE_TYPE_SHRINK: {
-                        anim_frame = 70 - inv_ovl->remove_timer;
                         scale = (f32)inv_ovl->remove_timer * (1.0f / 12.0f);
+                        anim_frame = 70 - inv_ovl->remove_timer;
 
                         if (anim_frame >= 6) {
                             anim_frame = 5;
@@ -1663,10 +1662,10 @@ static void mIV_set_item(Submenu* submenu, mSM_MenuInfo_c* menu_info, GRAPH* gra
                     }
 
                     default: {
-                        anim_frame = 0;
                         scale =
                             1.0f - (f32)(inv_ovl->remove_timer - 14 - (*scale_type - mIV_ITEM_SCALE_TYPE_GROW) * 14) *
                                        (1.0f / 12.0f);
+                        anim_frame = 0;
                         break;
                     }
                 }
@@ -1677,8 +1676,8 @@ static void mIV_set_item(Submenu* submenu, mSM_MenuInfo_c* menu_info, GRAPH* gra
                     scale = 0.0f;
                 }
             } else {
-                anim_frame = 0;
                 scale = 1.0f;
+                anim_frame = 0;
             }
 
             /* @BUG - they compare int (anim_frame) to float (0.0f) here instead of just 0 */
@@ -1689,7 +1688,7 @@ static void mIV_set_item(Submenu* submenu, mSM_MenuInfo_c* menu_info, GRAPH* gra
 
             submenu->overlay->draw_item_proc(
                 graph, pos_x + hand_pos[0], pos_y + hand_pos[1], scale, *item,
-                ((Now_Private->inventory.item_conditions >> (i * 2)) & mPr_ITEM_COND_PRESENT) != 0,
+                (NowPrivate_GetItemCond(i) & mPr_ITEM_COND_PRESENT) != 0,
                 !no_wc_flag && (inv_ovl->selectable_item_bitfield & (1 << i)), anim_frame, FALSE,
                 mIV_is_mark_check(inv_ovl, i));
         }

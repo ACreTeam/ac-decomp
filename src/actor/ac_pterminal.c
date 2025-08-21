@@ -206,11 +206,7 @@ static int aPT_CheckTalkAble(xyz_t* pos, int direct, GAME* game, f32 dist) {
         f32 dx = playerx->world.position.x - pos->x;
         f32 dz = playerx->world.position.z - pos->z;
 
-        if (sqrtf(SQ(dx) + SQ(dz)) <= dist) {
-            return TRUE;
-        }
-
-        return FALSE;
+        return sqrtf(SQ(dx) + SQ(dz)) <= dist ? TRUE : FALSE;
     }
 
     return FALSE;
@@ -301,6 +297,7 @@ static void aPT_Connect_AGB_to_Rcv_Init(PTERMINAL_ACTOR* actor, GAME* game) {
     mGcgba_EndComm();
 }
 
+// Aus version sets the force next flag upon fail
 static void aPT_Connect_AGB_to_Rcv(PTERMINAL_ACTOR* actor, GAME* game) {
     if (mMsg_CHECK_MAINNORMALCONTINUE()) {
         if (mMsg_GET_MSG_NUM() == 0x3DEF) {
@@ -317,6 +314,9 @@ static void aPT_Connect_AGB_to_Rcv(PTERMINAL_ACTOR* actor, GAME* game) {
                     if (actor->counter >= 60) {
                         mMsg_UNSET_LOCKCONTINUE();
                         mMsg_SET_CONTINUE_MSG_NUM(0x3DF3);
+#if VERSION >= VER_GAFU01_00
+                        mMsg_SET_FORCENEXT();
+#endif
                         aPT_Setup(actor, game, aPT_PROC_WAIT);
                     }
                     break;
@@ -334,6 +334,7 @@ static void aPT_Connect_AGB_to_Snd_Init(PTERMINAL_ACTOR* actor, GAME* game) {
     mGcgba_EndComm();
 }
 
+// Aus version sets the force next flag upon fail
 static void aPT_Connect_AGB_to_Snd(PTERMINAL_ACTOR* actor, GAME* game) {
     if (mMsg_CHECK_MAINNORMALCONTINUE()) {
         if (mMsg_GET_MSG_NUM() == 0x3DF2) {
@@ -350,6 +351,9 @@ static void aPT_Connect_AGB_to_Snd(PTERMINAL_ACTOR* actor, GAME* game) {
                     if (actor->counter >= 60) {
                         mMsg_UNSET_LOCKCONTINUE();
                         mMsg_SET_CONTINUE_MSG_NUM(0x3DF3);
+#if VERSION >= VER_GAFU01_00
+                        mMsg_SET_FORCENEXT();
+#endif
                         aPT_Setup(actor, game, aPT_PROC_WAIT);
                     }
                     break;

@@ -10,7 +10,11 @@ aFTR_PROFILE iam_sum_hal_table01 = {
 	NULL,
 	NULL,
 	NULL,
+#if VERSION >= VER_GAFU01_00
+	33.0f,
+#else
 	32.0f,
+#endif
 	0.01f,
 	aFTR_SHAPE_TYPEC,
 	mCoBG_FTR_TYPEC,

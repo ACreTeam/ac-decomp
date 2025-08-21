@@ -2176,8 +2176,11 @@ extern int mPlib_request_main_groundhog_type1(GAME* game) {
 }
 
 extern int mPlib_request_main_door_type1(GAME* game, const xyz_t* pos_p, s16 angle_y, int door_type, void* door_label) {
-    return GET_PLAYER_ACTOR_GAME(game)->request_main_door_all_proc(game, pos_p, angle_y, door_type, door_label,
-                                                                   mPlayer_REQUEST_PRIORITY_7) != FALSE;
+    if (GET_PLAYER_ACTOR_GAME(game)->request_main_door_all_proc(game, pos_p, angle_y, door_type, door_label,
+                                                                mPlayer_REQUEST_PRIORITY_7)) {
+        return TRUE;
+    }
+    return FALSE;
 }
 
 extern int mPlib_request_main_door_type2(GAME* game, const xyz_t* pos_p, s16 angle_y, int door_type, void* door_label) {
@@ -3181,6 +3184,13 @@ extern int mPlib_Check_scoop_after(GAME* game, xyz_t* pos_p, mActor_name_t* item
                             /* Don't let the player hit NPCs with the shovel */
                             hit_actor_p = mPlib_Search_exist_npc_inCircle_forScoop(game, pos_p, SQ(39.0f));
                             if (hit_actor_p != NULL) {
+#if VERSION >= VER_GAFU01_00
+                                if (is_stone_tencoin) {
+                                    *item_p = scoop_fg;
+                                    return mPlayer_INDEX_REFLECT_SCOOP;
+                                }
+#endif
+
                                 return mPlayer_INDEX_AIR_SCOOP;
                             }
 

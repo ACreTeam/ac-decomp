@@ -17,7 +17,6 @@ u8* fNNB_texture_table[] = {
 extern Gfx int_nog_nabe_fire_model[];
 void fNNB_ct(FTR_ACTOR* ftr_actor, u8* data) {
     cKF_SkeletonInfo_R_c* keyf;
-    u32 t;
 
     keyf = &ftr_actor->keyframe;
     cKF_SkeletonInfo_R_ct(keyf, &cKF_bs_r_int_nog_nabe, &cKF_ba_r_int_nog_nabe, ftr_actor->joint, ftr_actor->morph);
@@ -25,9 +24,8 @@ void fNNB_ct(FTR_ACTOR* ftr_actor, u8* data) {
     keyf->frame_control.speed = 0.0f;
     keyf->frame_control.start_frame = 1.0f;
     keyf->frame_control.end_frame = cKF_ba_r_int_nog_nabe.frames;
-    t = 1 - ftr_actor->switch_bit;
-    ftr_actor->dynamic_work_s[0] = t > 0;
-    if (ftr_actor->dynamic_work_s[0] == 0) {
+    ftr_actor->dynamic_work_s[0] = ftr_actor->switch_bit != TRUE;
+    if (!ftr_actor->dynamic_work_s[0]) {
         keyf->frame_control.current_frame = cKF_ba_r_int_nog_nabe.frames;
     }
     cKF_SkeletonInfo_R_play(keyf);

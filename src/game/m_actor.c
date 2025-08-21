@@ -145,7 +145,7 @@ static void Actor_ct(ACTOR* actor, GAME* game) {
     actor->scale.y = 0.01f;
     actor->scale.z = 0.01f;
     actor->max_velocity_y = -20.0f;
-    actor->player_distance = 3.4028235E+38;
+    actor->player_distance = FLT_MAX; //3.4028235E+38;
     actor->cull_width = 350.0f;
     actor->cull_height = 700.0f;
     actor->cull_distance = 1000.0f;
@@ -274,8 +274,9 @@ extern int Actor_draw_actor_no_culling_check2(ACTOR* actor, xyz_t* camera_pos, f
 
     if (-actor->cull_radius < camera_pos->z && camera_pos->z < actor->cull_distance + actor->cull_radius) {
         f32 m = camera_w < 1.0f ? 1.0f : 1.0f / camera_w;
+        int width_OK = (m * (fabsf(camera_pos->x) - actor->cull_width)) < 1.0f;
 
-        if ((m * (fabsf(camera_pos->x) - actor->cull_width)) < 1.0f &&
+        if (width_OK &&
             (m * (camera_pos->y + actor->cull_height)) > -1.0f && (m * (camera_pos->y - actor->cull_radius) < 1.0f)) {
             res = TRUE;
         }

@@ -218,7 +218,7 @@ static int lbRk_KyuurekiDays(int year, int month) {
  * @param kyuu_ymd The input date in the kyuureki calendar.
  * @return TRUE if the conversion is successful, FALSE if the input date is invalid.
  */
-extern int lbRk_ToSeiyouReki(lbRTC_ymd_c* seiyo_ymd, const lbRTC_ymd_c* kyuu_ymd) {
+extern int lbRk_ToSeiyouReki(lbRTC_ymd_c* seiyo_ymd, lbRTC_ymd_c* kyuu_ymd) {
   int seireki_days;
   int year;
   int month;
@@ -275,7 +275,7 @@ extern int lbRk_ToSeiyouReki(lbRTC_ymd_c* seiyo_ymd, const lbRTC_ymd_c* kyuu_ymd
  * @param seiyo_ymd The input date in the Gregorian calendar.
  * @return TRUE if the conversion is successful, FALSE if the input date is invalid.
  */
-extern int lbRk_ToKyuuReki(lbRTC_ymd_c* kyuu_ymd, const lbRTC_ymd_c* seiyo_ymd) {
+extern int lbRk_ToKyuuReki(lbRTC_ymd_c* kyuu_ymd, lbRTC_ymd_c* seiyo_ymd) {
   lbRTC_ymd_c kyuu_date = (lbRTC_ymd_c){lbRk_YEAR_MIN, lbRk_KYUU_MONTH_START, lbRk_KYUU_DAY_START};
   lbRTC_ymd_c seyio_date;
 

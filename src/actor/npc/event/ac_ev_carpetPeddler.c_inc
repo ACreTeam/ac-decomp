@@ -2,7 +2,7 @@ int aECPD_check_possession() {
     mActor_name_t* pocket = Now_Private->inventory.pockets;
     int i;
     int res = FALSE;
-    for (i = mPr_POCKETS_SLOT_COUNT; i > 0; i--) {
+    for (i = 0; i < mPr_POCKETS_SLOT_COUNT; i++) {
         if (ITEM_NAME_GET_TYPE(*pocket) == NAME_TYPE_ITEM1) {
             if (ITEM_NAME_GET_CAT(*pocket) == ITEM1_CAT_CARPET) {
                 res = TRUE;
@@ -184,11 +184,13 @@ void aECPD_1st_check_init(EV_CARPETPEDDLER_ACTOR* peddler, GAME_PLAY* play) {
     u8 item_str[mIN_ITEM_NAME_LEN];
     u8 price_str[6];
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    int n = Save_Get(event_save_data).special.event.arabian.used;
     int price = eECPD_PRICE_START;
-    int i;
-    for (i = 0; i != Save_Get(event_save_data).special.event.arabian.used; i++) {
+    
+    for (n; n != 0; n--) {
         price *= 2;
     }
+
     peddler->price = price;
     mFont_UnintToString(price_str, sizeof(price_str), price, 0x5, TRUE, FALSE, TRUE);
     mMsg_Set_free_str(msg_p, 0x0, price_str, sizeof(price_str));

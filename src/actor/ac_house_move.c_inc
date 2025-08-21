@@ -341,7 +341,19 @@ static void aHUS_set_bgOffset(ACTOR* actorx, int idx) {
     int i;
 
     for (i = 0; i < 3; i++) {
+#if VERSION == VER_GAFU01_00
         pos.z = actorx->home.position.z + addZ[i];
+
+        pos.x = actorx->home.position.x + addX[0];
+        mCoBG_SetPluss5PointOffset_file(pos, ofs_p[0], __FILE__, 623);
+
+        pos.x = actorx->home.position.x + addX[1];
+        mCoBG_SetPluss5PointOffset_file(pos, ofs_p[1], __FILE__, 627);
+
+        pos.x = actorx->home.position.x + addX[2];
+        mCoBG_SetPluss5PointOffset_file(pos, ofs_p[2], __FILE__, 631);
+#elif VERSION == VER_GAFE01_00
+                pos.z = actorx->home.position.z + addZ[i];
 
         pos.x = actorx->home.position.x + addX[0];
         mCoBG_SetPluss5PointOffset_file(pos, ofs_p[0], __FILE__, 620);
@@ -351,6 +363,7 @@ static void aHUS_set_bgOffset(ACTOR* actorx, int idx) {
 
         pos.x = actorx->home.position.x + addX[2];
         mCoBG_SetPluss5PointOffset_file(pos, ofs_p[2], __FILE__, 628);
+#endif
 
         ofs_p += 3;
     }
@@ -371,8 +384,13 @@ static f32 aHUS_ctrl_light(HOUSE_ACTOR* house) {
         return 0.0f;
     }
 
-    if (sched_p->current_type == mNPS_SCHED_IN_HOUSE && animal_p->is_home == TRUE &&
-        (now_sec >= (18 * mTM_SECONDS_IN_HOUR) || now_sec <= (5 * mTM_SECONDS_IN_HOUR))) {
+// Aus changed lights to always be on at night as long as villager is awake
+#if VERSION >= VER_GAFU01_00
+    if (sched_p->current_type != mNPS_SCHED_SLEEP && animal_p->is_home == TRUE &&
+#else
+        if (sched_p->current_type == mNPS_SCHED_IN_HOUSE && animal_p->is_home == TRUE &&
+#endif
+        (now_sec >= mTM_TIME2SEC(18, 0, 0) || now_sec <= mTM_TIME2SEC(5, 0, 0))) {
         if (house->request_type == 2) {
             return 0.0f;
         } else {

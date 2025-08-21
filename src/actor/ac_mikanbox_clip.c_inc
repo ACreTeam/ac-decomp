@@ -74,12 +74,12 @@ static void aMKBC_clip_roll_draw(GAME_PLAY* play, int timer, int page) {
     start_idx = page_table[page];
     end_idx = page_table[page + 1];
 
-    if (timer < 40 || timer > 446) {
+    if (timer < 40 || timer > FRAMERATE_SELECT(446, 372)) {
         alpha = 0;
     } else if (timer < 120) {
         alpha = (u8)((timer - 40) * 3.1875f);
-    } else if (timer > 366) {
-        alpha = (u8)((446 - timer) * 3.1875f);
+    } else if (timer > FRAMERATE_SELECT(366, 292)) {
+        alpha = (u8)((FRAMERATE_SELECT(446, 372) - timer) * 3.1875f);
     } else {
         alpha = 255;
     }
@@ -287,7 +287,7 @@ static void aMKBC_clip_roll_proc(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play) {
         kk_save->_00 = 550;
     }
 
-    if (kk->show_timer >= 4800) {
+    if (kk->show_timer >= FRAMERATE_TIMER(4800)) {
         if (kk->majin_flag) {
             kk_save->bitfield |= aNTT_FLAG_SP_DELETE_MAJIN;
             kk->majin_flag = FALSE;
@@ -296,7 +296,7 @@ static void aMKBC_clip_roll_proc(NPC_TOTAKEKE_ACTOR* kk, GAME_PLAY* play) {
         kk_save->_00 = 120;
     } else if (now_sec >= mTM_TIME2SEC(20, 45, 0) && now_sec <= mTM_TIME2SEC(20, 55, 0)) {
         if (kk->majin_flag == FALSE) {
-            if (kk->show_timer >= 3600 && kk->show_timer < 3610) {
+            if (kk->show_timer >= FRAMERATE_TIMER(3600) && kk->show_timer < FRAMERATE_SELECT(3610, 3010)) {
                 mFI_Wpos2UtNum_inBlock(&ux, &uz, actorx->world.position);
                 kk->majin_flag = CLIP(npc_clip)->setupActor_proc(play, SP_NPC_MAJIN5, -1, -1, -1, table_p->block_x, table_p->block_z, ux, uz);
             }

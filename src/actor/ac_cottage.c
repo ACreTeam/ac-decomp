@@ -274,7 +274,13 @@ static f32 Cottage_npc_light_aim(STRUCTURE_ACTOR* cottage) {
     schedule = mNPS_get_schedule_area(&island_villager->id);
     now_sec = Common_Get(time.now_sec);
 
+// Aus changes the NPC islander cottage's lights to be on as long as they aren't asleep,
+// instead of only being on when they're inside and awake.
+#if VERSION >= VER_GAFU01_00
+    if (schedule != NULL && schedule->current_type != mNPS_SCHED_SLEEP && island_villager->is_home != FALSE &&
+#else
     if (schedule != NULL && schedule->current_type == mNPS_SCHED_IN_HOUSE && island_villager->is_home != FALSE &&
+#endif
         (now_sec >= (18 * mTM_SECONDS_IN_HOUR) || now_sec <= (5 * mTM_SECONDS_IN_HOUR)) && cottage->request_type != Cottage_ACTION_OPEN_PL_OUT_INIT) {
         return 1.0f;
     }
@@ -458,7 +464,11 @@ static void Cottage_my_set_bgOffset(STRUCTURE_ACTOR* cottage, int offs) {
         pos.x = cottage->actor_class.home.position.x + ((mFI_UT_WORLDSIZE_X_F * (f32)unit_offset[i].x));
         pos.z = cottage->actor_class.home.position.z + ((mFI_UT_WORLDSIZE_Z_F * (f32)unit_offset[i].z));
 
+#if VERSION >= VER_GAFU01_00
+        mCoBG_SetPluss5PointOffset_file(pos, rewrite_data[i], __FILE__, 790);
+#else
         mCoBG_SetPluss5PointOffset_file(pos, rewrite_data[i], __FILE__, 787);
+#endif
     }
 }
 
@@ -488,6 +498,18 @@ static void Cottage_npc_set_bgOffset(STRUCTURE_ACTOR* cottage, int offs) {
 
     offset = height_table[offs];
     for (i = 0; i < 3; i++) {
+#if VERSION >= VER_GAFU01_00
+        pos.z = cottage->actor_class.home.position.z + addZ[i];
+
+        pos.x = cottage->actor_class.home.position.x + addX[0];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[0], __FILE__, 839);
+
+        pos.x = cottage->actor_class.home.position.x + addX[1];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[1], __FILE__, 843);
+
+        pos.x = cottage->actor_class.home.position.x + addX[2];
+        mCoBG_SetPluss5PointOffset_file(pos, offset[2], __FILE__, 847);
+#else
         pos.z = cottage->actor_class.home.position.z + addZ[i];
 
         pos.x = cottage->actor_class.home.position.x + addX[0];
@@ -498,6 +520,7 @@ static void Cottage_npc_set_bgOffset(STRUCTURE_ACTOR* cottage, int offs) {
 
         pos.x = cottage->actor_class.home.position.x + addX[2];
         mCoBG_SetPluss5PointOffset_file(pos, offset[2], __FILE__, 844);
+#endif
 
         offset += 3;
     }

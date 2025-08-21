@@ -141,14 +141,12 @@ static void mNtc_operate_data_list() {
 
 static void mNtc_sort_data_list() {
     mNtc_date_data_c replace_data;
-    mNtc_date_data_c now_data;
     int replace_idx;
     int i, j;
 
     /* sort from earliest to latest dates */
     for (i = 0; i < mNtc_DATA_LIST_NUM; i++) {
-        now_data = mNtc_auto_nwrite_data[i];
-        replace_data = now_data;
+        replace_data = mNtc_auto_nwrite_data[i];
         replace_idx = i;
 
         /* search through all entries ahead and find the next closest date */
@@ -160,7 +158,7 @@ static void mNtc_sort_data_list() {
         }
 
         /* swap the entries */
-        mNtc_auto_nwrite_data[replace_idx] = now_data;
+        mNtc_auto_nwrite_data[replace_idx] = mNtc_auto_nwrite_data[i];
         mNtc_auto_nwrite_data[i] = replace_data;
     }
 }
@@ -283,6 +281,8 @@ static void mNtc_set_treasure_string(AnmPersonalID_c* sender_id, mActor_name_t i
     mHandbill_Set_free_str(5, land_name, land_name_len);
 }
 
+// TODO: deviation implies fakematch
+#if VERSION != VER_GAFE01_00
 static void mNtc_check_treasure() {
     lbRTC_time_c* treasure_buried_time;
     lbRTC_time_c* treasure_checked_time;
@@ -292,6 +292,104 @@ static void mNtc_check_treasure() {
     u32 comp_time_buried;
     lbRTC_time_c rtc_time;
     int valid_animal_ids[ANIMAL_NUM_MAX];
+    int* valid_id_p;
+    Animal_c* selected_animal;
+    int valid_animal_num;
+    int i;
+    u8 header[mHandbill_FOOTER_LEN];
+    u8 footer[mHandbill_FOOTER_LEN];
+    int mem;
+    int interval_days;
+    int header_back_pos;
+    mNtc_board_post_c post;
+    mActor_name_t item;
+    int b_x;
+    int b_z;
+    f32 rng;
+    int list_type;
+
+    treasure_buried_time = Save_GetPointer(treasure_buried_time);
+    treasure_checked_time = Save_GetPointer(treasure_checked_time);
+    animal = Save_Get(animals);
+    land_info = Save_GetPointer(land_info);
+    valid_animal_num = 0;
+    rtc_time = Common_Get(time.rtc_time);
+
+    if (rtc_time.hour >= mTM_FIELD_RENEW_HOUR) {
+        comp_time_rtc = lbRTC_TIME_TO_U32(&rtc_time);
+        comp_time_buried = lbRTC_TIME_TO_U32(treasure_buried_time);
+        if (comp_time_rtc > comp_time_buried) {
+            interval_days = lbRTC_GetIntervalDays(treasure_buried_time, &rtc_time);
+        } else if (comp_time_rtc < comp_time_buried) {
+            interval_days = lbRTC_GetIntervalDays(&rtc_time, treasure_buried_time);
+        } else {
+            interval_days = 0;
+        }
+
+        if (lbRTC_IsEqualTime(treasure_buried_time, &mTM_rtcTime_clear_code, lbRTC_CHECK_ALL) ||
+            interval_days >= mNtc_MIN_DAYS_BETWEEN_TREASURE) {
+            if (lbRTC_IsEqualTime(treasure_checked_time, &mTM_rtcTime_clear_code, lbRTC_CHECK_ALL) ||
+                treasure_checked_time->year != rtc_time.year || treasure_checked_time->month != rtc_time.month ||
+                treasure_checked_time->day != rtc_time.day) {
+                for (i = 0, valid_id_p = valid_animal_ids; i < ANIMAL_NUM_MAX; i++, animal++) {
+                    if (mNpc_CheckFreeAnimalPersonalID(&animal->id) == FALSE) {
+                        for (mem = 0; mem < ANIMAL_MEMORY_NUM; mem++) {
+                            if (animal->memories[mem].memory_player_id.land_id == land_info->id &&
+                                mLd_CheckCmpLandName(animal->memories[mem].memory_player_id.land_name,
+                                                     land_info->name)) {
+                                if (valid_animal_num == ANIMAL_NUM_MAX) {
+                                    return;
+                                }
+
+                                valid_animal_num++;
+                                *valid_id_p++ = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (valid_animal_num != 0 && fqrand() < mNtc_TREASURE_CHANCE) {
+                    b_x = 0;
+                    b_z = 0;
+
+                    /* 1/3rd chance of pitfall, 2/3rds chance of rare furniture */
+                    rng = fqrand();
+                    if (rng < (1.0f / 3.0f)) {
+                        item = ITM_PITFALL;
+                    } else {
+                        list_type = rng < (2.0f / 3.0f)
+                                        ? mSP_LISTTYPE_LOTTERY
+                                        : mSP_LISTTYPE_EVENT; /* 50/50 to roll redd or lottery furniture*/
+                        mSP_SelectRandomItem_New(NULL, &item, 1, NULL, 0, mSP_KIND_FURNITURE, list_type, FALSE);
+                    }
+
+                    if (mFI_SetTreasure(&b_x, &b_z, item)) {
+                        selected_animal =
+                            Save_GetPointer(animals[valid_animal_ids[RANDOM(valid_animal_num) % valid_animal_num]]);
+                        mNtc_set_treasure_string(&selected_animal->id, item, b_x, b_z);
+                        lbRTC_TimeCopy(&post.post_time, &rtc_time);
+                        mHandbill_Load_HandbillFromRom(header, &header_back_pos, footer, post.message,
+                                                       0x1F0 + selected_animal->id.looks * 3 + (RANDOM(3) % 3));
+                        mNtc_notice_write(&post);
+                        lbRTC_TimeCopy(treasure_buried_time, &rtc_time);
+                    }
+                }
+            }
+        }
+    }
+}
+#else
+static void mNtc_check_treasure() {
+    lbRTC_time_c* treasure_buried_time;
+    lbRTC_time_c* treasure_checked_time;
+    Animal_c* animal;
+    mLd_land_info_c* land_info;
+    u32 comp_time_rtc;
+    u32 comp_time_buried;
+    lbRTC_time_c rtc_time;
+    int valid_animal_ids[ANIMAL_NUM_MAX];
+    Animal_c* selected_animal;
     int valid_animal_num;
     int i;
     u8 header[mHandbill_FOOTER_LEN];
@@ -362,12 +460,12 @@ static void mNtc_check_treasure() {
                     }
 
                     if (mFI_SetTreasure(&b_x, &b_z, item)) {
-                        animal =
+                        selected_animal =
                             Save_GetPointer(animals[valid_animal_ids[RANDOM(valid_animal_num) % valid_animal_num]]);
-                        mNtc_set_treasure_string(&animal->id, item, b_x, b_z);
+                        mNtc_set_treasure_string(&selected_animal->id, item, b_x, b_z);
                         lbRTC_TimeCopy(&post.post_time, &rtc_time);
                         mHandbill_Load_HandbillFromRom(header, &header_back_pos, footer, post.message,
-                                                       0x1F0 + animal->id.looks * 3 + (RANDOM(3) % 3));
+                                                       0x1F0 + selected_animal->id.looks * 3 + (RANDOM(3) % 3));
                         mNtc_notice_write(&post);
                         lbRTC_TimeCopy(treasure_buried_time, &rtc_time);
                     }
@@ -376,6 +474,7 @@ static void mNtc_check_treasure() {
         }
     }
 }
+#endif
 
 static void mNtc_set_near_old_nwrite_data(lbRTC_time_c* nwrite_time, lbRTC_year_t* nwrite_year, u8* nwrite_num) {
     mNtc_date_data_c* auto_nwrite_p;

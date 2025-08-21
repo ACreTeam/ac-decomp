@@ -822,7 +822,7 @@ static void aQMgr_set_free_str_memory(Anmmem_c* memory) {
     aQMgr_set_number_free_str_add_nichi(memory->last_speak_time.day, mMsg_FREE_STR19);
 }
 
-typedef int (*aQMgr_CALENDAR_CONV_PROC)(lbRTC_ymd_c*, const lbRTC_ymd_c*);
+typedef int (*aQMgr_CALENDAR_CONV_PROC)(lbRTC_ymd_c*, lbRTC_ymd_c*);
 
 static void aQMgr_set_calendar_free_str(aQMgr_CALENDAR_CONV_PROC conv_proc, int month_str_no, int day_str_no, u8 month, u8 day) {
     static u8 uru_tuki[10] = "leap month";

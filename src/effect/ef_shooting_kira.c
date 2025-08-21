@@ -95,7 +95,7 @@ static void eShootingKira_dw(eEC_Effect_c* effect, GAME* game) {
     OPEN_DISP(game->graph);
 
     gSPMatrix(NEXT_POLY_XLU_DISP, _Matrix_to_Mtx_new(game->graph), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, (int)alpha);
+    gDPSetPrimColor(NEXT_POLY_XLU_DISP, 0, 255, 255, 255, 255, (u8)(int)alpha);
     gSPSegment(NEXT_POLY_XLU_DISP, ANIME_1_TXT_SEG, ef_takurami01_normal_render_mode);
     gSPDisplayList(NEXT_POLY_XLU_DISP, ef_takurami01_kira_modelT);
 

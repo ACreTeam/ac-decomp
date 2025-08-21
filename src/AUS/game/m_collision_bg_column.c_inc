@@ -1,3 +1,121 @@
+// GAFU01 reworks how fg collisions are processed
+
+static int mCoBG_it_is_hole(mActor_name_t item, ACTOR* actorx) {
+    if (ITEM_IS_HOLE(item) || item == HOLE_SHINE || item == RSV_HOLE) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static int mCoBG_it_is_tree_level2(mActor_name_t item, ACTOR* actorx) {
+    return IS_ITEM_SMALL_TREE(item) != FALSE;
+}
+
+static int mCoBG_it_is_tree_level3(mActor_name_t item, ACTOR* actorx) {
+    return IS_ITEM_MED_TREE(item) != FALSE;
+}
+
+static int mCoBG_it_is_tree_level4(mActor_name_t item, ACTOR* actorx) {
+    return IS_ITEM_LARGE_TREE(item) != FALSE;
+}
+
+static int mCoBG_it_is_tree_level5(mActor_name_t item, ACTOR* actorx) {
+    return IS_ITEM_FULL_TREE(item) != FALSE;
+}
+
+static int mCoBG_it_is_stump0(mActor_name_t item, ACTOR* actorx) {
+    // OK, this is just bad. There was no need to wastefully use the
+    // 'IS_ITEM_TREE_STUMP' macro only to filter out the size 0 stumps.
+    if (IS_ITEM_TREE_STUMP(item) && (item == TREE_STUMP001 || item == TREE_PALM_STUMP001 || item == CEDAR_TREE_STUMP001 || item == GOLD_TREE_STUMP001)) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static int mCoBG_it_is_stump1(mActor_name_t item, ACTOR* actorx) {
+    // This just keeps getting worse haha
+    if (IS_ITEM_TREE_STUMP(item) && !mCoBG_it_is_stump0(item, actorx)) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static int mCoBG_it_is_stone(mActor_name_t item, ACTOR* actorx) {
+    return (IS_ITEM_STONE(item) || IS_ITEM_STONE_TC(item)) != FALSE;
+}
+
+static int mCoBG_it_is_post(mActor_name_t item, ACTOR* actorx) {
+    if (item == DUMMY_MAILBOX0 || item == DUMMY_MAILBOX1 || item == DUMMY_MAILBOX2 || item == DUMMY_MAILBOX3) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static int mCoBG_it_is_sign(mActor_name_t item, ACTOR* actorx) {
+    if (item == DUMMY_RESERVE || ITEM_IS_SIGNBOARD(item)) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+static int mCoBG_it_is_sign_dummy(mActor_name_t item, ACTOR* actorx) {
+    return item == RSV_SIGNBOARD;
+}
+
+static int mCoBG_it_is_flag(mActor_name_t item, ACTOR* actorx) {
+    if (item == DUMMY_KOINOBORI || item == DUMMY_FLAG) {
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+typedef int (*mCoBG_COL_ITEM_CHK_PROC)(mActor_name_t item, ACTOR* actorx);
+
+typedef struct {
+    mCoBG_COL_ITEM_CHK_PROC chk_proc;
+    f32 radius;
+    f32 height;
+    int chk_old_on_ground;
+} mCoBG_fg_collision_data_c;
+
+static mCoBG_fg_collision_data_c mCoBG_fg_collision_data[] = {
+    // clang-format off
+    { mCoBG_it_is_hole,        19.0f,   0.0f,  TRUE },
+    { mCoBG_it_is_tree_level2, 19.0f,  30.0f, FALSE },
+    { mCoBG_it_is_tree_level3, 19.0f,  40.0f, FALSE },
+    { mCoBG_it_is_tree_level4, 19.0f,  60.0f, FALSE },
+    { mCoBG_it_is_tree_level5, 19.0f,  80.0f, FALSE },
+    { mCoBG_it_is_stump0,      10.0f,  30.0f, FALSE },
+    { mCoBG_it_is_stump1,      18.0f,  30.0f, FALSE },
+    { mCoBG_it_is_stone,       19.0f,  31.5f, FALSE },
+    { mCoBG_it_is_post,        15.0f,  50.0f, FALSE },
+    { mCoBG_it_is_sign,        19.0f,  45.0f, FALSE },
+    { mCoBG_it_is_sign_dummy,  10.0f,  45.0f, FALSE },
+    { mCoBG_it_is_flag,        19.0f, 160.0f, FALSE },
+    // clang-format on
+};
+
+static mCoBG_fg_collision_data_c* mCoBG_get_fg_collision_data_p(ACTOR* actorx, mActor_name_t item) {
+    u32 i;
+    mCoBG_fg_collision_data_c* col_p = mCoBG_fg_collision_data;
+
+    for (i = 0; i < ARRAY_COUNT(mCoBG_fg_collision_data); i++) {
+        if (col_p->chk_proc(item, actorx) == TRUE) {
+            return col_p;
+        }
+
+        col_p++;
+    }
+
+    return NULL;
+}
+
 typedef struct {
     xyz_t pos;
     int in_use;
@@ -133,153 +251,31 @@ extern void mCoBG_CrossOffDecalCircle(int idx) {
     }
 }
 
-static int mCoBG_MakeOneColumnCollisionData(mCoBG_column_c* col, mCoBG_UnitInfo_c* ut_info, int old_on_ground, mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_proc, int ux, int uz) {
+// GAFU01 passes in the actor and uses data driven approach
+// to process
+static int mCoBG_MakeOneColumnCollisionData(ACTOR* actorx, mCoBG_column_c* col, mCoBG_UnitInfo_c* ut_info, int old_on_ground, mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_proc, int ux, int uz) {
     if ((check_proc != NULL && (*check_proc)(ut_info->item) == FALSE) || check_proc == NULL) {
+        mCoBG_fg_collision_data_c* col_data_p;
+        
         if (ut_info->ut_x == ux && ut_info->ut_z == uz) {
             return FALSE;
         }
 
-        if (old_on_ground == TRUE && (ITEM_IS_HOLE(ut_info->item) || ut_info->item == HOLE_SHINE || ut_info->item == RSV_HOLE)) {
-            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
-            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
-            col->pos.y = 0.0f;
-            col->ux = ut_info->ut_x;
-            col->uz = ut_info->ut_z;
-            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
-            col->height = col->pos.y;
-            col->radius = 19.0f;
-            col->atr_wall = TRUE;
-            return TRUE;
-        }
-
-        if (IS_ITEM_SMALL_TREE(ut_info->item)) {
-            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
-            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
-            col->pos.y = 0.0f;
-            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
-            col->height = col->pos.y + 30.0f;
-            col->ux = ut_info->ut_x;
-            col->uz = ut_info->ut_z;
-            col->radius = 19.0f;
-            col->atr_wall = FALSE;
-            return TRUE;
-        }
-
-        if (IS_ITEM_MED_TREE(ut_info->item)) {
-            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
-            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
-            col->pos.y = 0.0f;
-            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
-            col->height = col->pos.y + 40.0f;
-            col->ux = ut_info->ut_x;
-            col->uz = ut_info->ut_z;
-            col->radius = 19.0f;
-            col->atr_wall = FALSE;
-            return TRUE;
-        }
-
-        if (IS_ITEM_LARGE_TREE(ut_info->item)) {
-            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
-            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
-            col->pos.y = 0.0f;
-            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
-            col->height = col->pos.y + 60.0f;
-            col->ux = ut_info->ut_x;
-            col->uz = ut_info->ut_z;
-            col->radius = 19.0f;
-            col->atr_wall = FALSE;
-            return TRUE;
-        }
-
-        if (IS_ITEM_FULL_TREE(ut_info->item) || ut_info->item == RSV_TREE) {
-            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
-            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
-            col->pos.y = 0.0f;
-            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
-            col->height = col->pos.y + 80.0f;
-            col->ux = ut_info->ut_x;
-            col->uz = ut_info->ut_z;
-            col->radius = 19.0f;
-            col->atr_wall = FALSE;
-            return TRUE;
-        }
-
-        if (IS_ITEM_TREE_STUMP(ut_info->item)) {
-            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
-            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
-            col->pos.y = 0.0f;
-            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
-            col->ux = ut_info->ut_x;
-            col->uz = ut_info->ut_z;
-
-            if (ut_info->item == TREE_STUMP001 || ut_info->item == TREE_PALM_STUMP001 || ut_info->item == CEDAR_TREE_STUMP001 || ut_info->item == GOLD_TREE_STUMP001) {
-                col->radius = 10.0f;
-                col->height = col->pos.y + 30.0f;
-            } else {
-                col->radius = 18.0f;
-                col->height = col->pos.y + 30.0f;
+        col_data_p = mCoBG_get_fg_collision_data_p(actorx, ut_info->item);
+        if (col_data_p != NULL) {
+            if (col_data_p->chk_old_on_ground == TRUE && old_on_ground != TRUE) {
+                return FALSE;
             }
-            col->atr_wall = FALSE;
-            return TRUE;
-        }
 
-        if (IS_ITEM_ROCK(ut_info->item)) {
-            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
-            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
-            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
+            col->pos.x = ut_info->ut_x * mFI_UT_WORLDSIZE_X_F + mFI_UT_WORLDSIZE_HALF_X_F;
+            col->pos.z = ut_info->ut_z * mFI_UT_WORLDSIZE_Z_F + mFI_UT_WORLDSIZE_HALF_Z_F;
+            col->pos.y = 0.0f;
             col->ux = ut_info->ut_x;
             col->uz = ut_info->ut_z;
-            col->radius = 19.0f;
-            col->height = col->pos.y + 31.5f;
-            col->atr_wall = FALSE;
-            return TRUE;
-        }
-
-        if (ut_info->item == DUMMY_MAILBOX0 || ut_info->item == DUMMY_MAILBOX1 || ut_info->item == DUMMY_MAILBOX2 || ut_info->item == DUMMY_MAILBOX3) {
-            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
-            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
             col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
-            col->ux = ut_info->ut_x;
-            col->uz = ut_info->ut_z;
-            col->radius = 15.0f;
-            col->height = col->pos.y + 50.0f;
-            col->atr_wall = FALSE;
-            return TRUE;
-        }
-
-        if (ITEM_IS_SIGN(ut_info->item)) {
-            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
-            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
-            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
-            col->radius = 19.0f;
-            col->height = col->pos.y + 45.0f;
-            col->ux = ut_info->ut_x;
-            col->uz = ut_info->ut_z;
-            col->atr_wall = FALSE;
-            return TRUE;
-        }
-
-        if (ut_info->item == RSV_SIGNBOARD) {
-            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
-            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
-            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
-            col->radius = 10.0f;
-            col->height = col->pos.y + 45.0f;
-            col->ux = ut_info->ut_x;
-            col->uz = ut_info->ut_z;
-            col->atr_wall = FALSE;
-            return TRUE;
-        }
-
-        if (ut_info->item == DUMMY_KOINOBORI || ut_info->item == DUMMY_FLAG) {
-            col->pos.x = mFI_UT_WORLDSIZE_HALF_X_F + mFI_UT_WORLDSIZE_X_F * ut_info->ut_x;
-            col->pos.z = mFI_UT_WORLDSIZE_HALF_Z_F + mFI_UT_WORLDSIZE_Z_F * ut_info->ut_z;
-            col->pos.y = mCoBG_GetBgY_OnlyCenter_FromWpos2(col->pos, 0.0f);
-            col->radius = 19.0f;
-            col->height = col->pos.y + 160.0f;
-            col->ux = ut_info->ut_x;
-            col->uz = ut_info->ut_z;
-            col->atr_wall = FALSE;
+            col->height = col->pos.y + col_data_p->height;
+            col->radius = col_data_p->radius;
+            col->atr_wall = col_data_p->chk_old_on_ground;
             return TRUE;
         }
     }
@@ -287,16 +283,19 @@ static int mCoBG_MakeOneColumnCollisionData(mCoBG_column_c* col, mCoBG_UnitInfo_
     return FALSE;
 }
 
-static void mCoBG_MakeColumnCollisionData(mCoBG_column_c* col, int* col_count_p, mCoBG_UnitInfo_c* ut_info, int count, int old_on_ground, mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_item_proc, int ux, int uz) {
+// GAFU01 passes in the actor
+static void mCoBG_MakeColumnCollisionData(ACTOR* actorx, mCoBG_column_c* col, int* col_count_p, mCoBG_UnitInfo_c* ut_info, int count, int old_on_ground, mCoBG_COLUMN_CHECK_ITEM_TYPE_PROC check_item_proc, int ux, int uz) {
     int count_sq = SQ(count);
     int i;
 
     *col_count_p = 0;
     for (i = 0; i < count_sq; i++) {
         if (*col_count_p < 16) {
-            mCoBG_MakeOneColumnCollisionData(col, ut_info, old_on_ground, check_item_proc, ux, uz);
-            col++;
-            (*col_count_p)++;
+            // GAFU01 checks the collision exists instead of just processing it always
+            if (mCoBG_MakeOneColumnCollisionData(actorx, col, ut_info, old_on_ground, check_item_proc, ux, uz)) {
+                col++;
+                (*col_count_p)++;
+            }
         }
 
         ut_info++;
@@ -444,7 +443,7 @@ static void mCoBG_ColumnWallCheck(xyz_t* rev, mCoBG_ActorInf_c* actor_info, cons
 static f32 mCoBG_GetBGHeight_Column(const xyz_t* pos, mCoBG_UnitInfo_c* ut_info) {
     mCoBG_column_c col;
 
-    if (mCoBG_MakeOneColumnCollisionData(&col, ut_info, FALSE, NULL, -1, -1) && mCoBG_JudgePointInCircle_Xyz(pos, &col.pos, col.radius)) {
+    if (mCoBG_MakeOneColumnCollisionData(NULL, &col, ut_info, FALSE, NULL, -1, -1) && mCoBG_JudgePointInCircle_Xyz(pos, &col.pos, col.radius)) {
         return col.height;
     }
 
@@ -553,11 +552,12 @@ static int mCoBG_LineGroundCheck_Column(xyz_t* rev, mCoBG_column_c* col, int col
             tmp_end.z = end_pos->z + reverse.z;
 
             reverse = reverse0;
+            vec_y = col->height - tmp_end.y;
+            
             vec_end_start.x = start_pos->x - tmp_end.x;
             vec_end_start.y = start_pos->y - tmp_end.y;
             vec_end_start.z = start_pos->z - tmp_end.z;
 
-            vec_y = col->height - tmp_end.y;
             if (!F32_IS_ZERO(vec_end_start.y)) {
                 f32 mult = vec_y / vec_end_start.y;
 

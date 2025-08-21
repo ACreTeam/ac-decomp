@@ -73,13 +73,13 @@ extern f32 Math3DLength2D(f32 x0, f32 x1, f32 y0, f32 y1);
 extern f32 Math3DVecLengthSquare(xyz_t* v);
 extern f32 Math3DVecLength(xyz_t* v);
 extern f32 Math3DLengthSquare(xyz_t* a, xyz_t* b);
-extern f32 Math3DLength(xyz_t* a, xyz_t* b);
-extern void Math3DVectorProduct2Vec(const xyz_t* a, xyz_t* b, xyz_t* ret);
+extern f32 Math3DLength(const xyz_t* a, const xyz_t* b);
+extern void Math3DVectorProduct2Vec(const xyz_t* a, const xyz_t* b, xyz_t* ret);
 extern void Math3DVectorProductXYZ(xyz_t* va, xyz_t* vb, xyz_t* vc, xyz_t* ret);
 extern void Math3DPlane(xyz_t* va, xyz_t* vb, xyz_t* vc, f32* nox, f32* noy, f32* noz, f32* odist);
-extern f32 Math3DPlaneFunc(f32 nox, f32 noy, f32 noz, f32 odist, xyz_t* pl);
-extern f32 Math3DLengthPlaneAndPos(f32 nox, f32 noy, f32 noz, f32 odist, xyz_t* pl);
-extern f32 Math3DSignedLengthPlaneAndPos(f32 nox, f32 noy, f32 noz, f32 odist, xyz_t* pl);
+extern f32 Math3DPlaneFunc(f32 nox, f32 noy, f32 noz, f32 odist, const xyz_t* pl);
+extern f32 Math3DLengthPlaneAndPos(f32 nox, f32 noy, f32 noz, f32 odist, const xyz_t* pl);
+extern f32 Math3DSignedLengthPlaneAndPos(f32 nox, f32 noy, f32 noz, f32 odist, const xyz_t* pl);
 extern int Math3DTriangleCrossYCheck_general(xyz_t* v0, xyz_t* v1, xyz_t* v2, f32 z, f32 x, f32 dt, f32 dist, f32 noy);
 extern int Math3DTriangleCrossYLine_scope(xyz_t* v0, xyz_t* v1, xyz_t* v2, f32 nox, f32 noy, f32 noz, f32 dst, f32 z,
                                           f32 x, f32* yint, f32 y0, f32 y1);

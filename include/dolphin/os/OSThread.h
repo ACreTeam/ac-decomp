@@ -67,6 +67,12 @@ struct OSThread
 
     u8 *stackBase; // the thread's designated stack (high address)
     u32 *stackEnd; // last word of stack (low address)
+
+// TODO: we should be using a newer SDK version
+#if VERSION >= VER_GAFU01_00
+    s32 error;
+    void* specific[2];
+#endif
 };
 
 // Thread states

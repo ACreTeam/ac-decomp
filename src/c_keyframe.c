@@ -365,10 +365,16 @@ extern void cKF_SkeletonInfo_R_init(cKF_SkeletonInfo_R_c* keyframe, cKF_Skeleton
  * @param keyframe Pointer to the skeleton info structure containing joint and target positions.
  */
 static void cKF_SkeletonInfo_R_morphJoint(cKF_SkeletonInfo_R_c* keyframe) {
-    f32 step;
     int i;
     s_xyz* current_joint = keyframe->current_joint;
     s_xyz* target_joint = keyframe->target_joint;
+    f32 step;
+    s16 next_joint_x;
+    s16 next_joint_y;
+    s16 next_joint_z;
+    s16 next_target_x;
+    s16 next_target_y;
+    s16 next_target_z;
 
     if (!(F32_IS_ZERO(keyframe->morph_counter))) {
         step = 0.5f / fabsf(keyframe->morph_counter);
@@ -382,14 +388,14 @@ static void cKF_SkeletonInfo_R_morphJoint(cKF_SkeletonInfo_R_c* keyframe) {
     target_joint++;
 
     for (i = 0; i < keyframe->skeleton->num_joints; i++) {
-        s16 next_joint_x = current_joint->x;
-        s16 next_target_x = target_joint->x;
+        next_joint_x = current_joint->x;
+        next_target_x = target_joint->x;
 
-        s16 next_joint_y = current_joint->y;
-        s16 next_joint_z = current_joint->z;
+        next_joint_y = current_joint->y;
+        next_joint_z = current_joint->z;
 
-        s16 next_target_y = target_joint->y;
-        s16 next_target_z = target_joint->z;
+        next_target_y = target_joint->y;
+        next_target_z = target_joint->z;
 
         if (next_joint_x != next_target_x || next_joint_y != next_target_y || next_joint_z != next_target_z) {
             f32 difxyz = fabsf((f32)next_target_x - (f32)next_joint_x) + fabsf((f32)next_target_y - (f32)next_joint_y) +
@@ -417,6 +423,129 @@ static void cKF_SkeletonInfo_R_morphJoint(cKF_SkeletonInfo_R_c* keyframe) {
     }
 }
 
+// TODO: There's probably no difference between this and US.
+// The inlines used to match US are fake.
+#if VERSION >= VER_GAFU01_00
+extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
+    int i;
+    int j;
+    u8* flagTable;
+    int keyTableIndex = 0;
+    int fixedTableIndex = 0;
+    int dataIndex = 0;
+    s16* jointValuePtr;
+    s16* fixedTable;
+    s16* dataTable;
+    s16* keyTable;
+    u32 jointFlag; // Check translation (xyz)
+
+    // Choose between current and target joint based on morph counter
+    if (F32_IS_ZERO(keyframe->morph_counter)) {
+        jointValuePtr = &keyframe->current_joint->x;
+    } else {
+        jointValuePtr = &keyframe->target_joint->x;
+    }
+
+    jointFlag = cKF_ANIMATION_BIT_TRANS_X;
+
+    // Retrieve animation tables
+    fixedTable = keyframe->animation->fixed_table;
+    keyTable = keyframe->animation->key_table;
+    dataTable = keyframe->animation->data_table;
+    flagTable = keyframe->animation->flag_table;
+
+    
+
+    // Process root translation x -> y -> z
+    for (j = 0; j < 3; j++) {
+        if (*flagTable & jointFlag) {
+            // Apply joint translation
+            *jointValuePtr =
+                cKF_KeyCalc(dataIndex, keyTable[keyTableIndex], dataTable, keyframe->frame_control.current_frame);
+            dataIndex += keyTable[keyTableIndex];
+            keyTableIndex++;
+        } else {
+            // Use fixed value if not flagged for keyframe animation
+            *jointValuePtr = fixedTable[fixedTableIndex];
+            fixedTableIndex++;
+        }
+
+        jointFlag >>= 1; // Shift x -> y -> z
+        jointValuePtr++; // Move to next joint
+    }
+
+    // Process remaining joint rotations
+    for (i = 0; i < keyframe->skeleton->num_joints; i++) {
+        jointFlag = cKF_ANIMATION_BIT_ROT_X; // Reset flag for new joint
+
+        // Process each joint x -> y -> z
+        for (j = 0; j < 3; j++) {
+            f32 adjustedJointValue;
+            f32 mod;
+
+            // Similar logic to above, but for each joint in the skeleton
+            if (jointFlag & flagTable[i]) {
+                *jointValuePtr =
+                    cKF_KeyCalc(dataIndex, keyTable[keyTableIndex], dataTable, keyframe->frame_control.current_frame);
+                dataIndex += keyTable[keyTableIndex];
+                keyTableIndex++;
+            } else {
+                *jointValuePtr = fixedTable[fixedTableIndex];
+                fixedTableIndex++;
+            }
+
+            // Reduce the value by 90% and clamp to [0, 360) degrees converted back to binangle (s16)
+            // This effectively limits any joint's maximum rotation to be in the range of [-36.8, 36.7] degrees
+            adjustedJointValue = *jointValuePtr * 0.1f;
+            mod = MOD_F(adjustedJointValue, 360.0f);
+            *jointValuePtr = DEG2SHORT_ANGLE(mod);
+            jointValuePtr++;
+
+
+            jointFlag >>= 1; // Shift flag for next component x -> y -> z
+        }
+
+        // flagTable++;
+    }
+
+    // Apply rotation differences if available
+    if (keyframe->rotation_diff_table != NULL) {
+        s_xyz* currentJointPtr = (F32_IS_ZERO(keyframe->morph_counter)) ? keyframe->current_joint : keyframe->target_joint;
+
+        currentJointPtr++; // Skip first joint, usually root, which is handled separately
+        for (j = 0; j < keyframe->skeleton->num_joints; j++) {
+            // Apply rotation differences to each joint
+            currentJointPtr->x += keyframe->rotation_diff_table[j].x;
+            currentJointPtr->y += keyframe->rotation_diff_table[j].y;
+            currentJointPtr->z += keyframe->rotation_diff_table[j].z;
+
+            currentJointPtr++; // Move to next joint
+        }
+    }
+
+    // Handle morphing and play control based on morph counter
+    if (F32_IS_ZERO(keyframe->morph_counter)) {
+        // Play normally if no morphing is needed
+        return cKF_FrameControl_play(&keyframe->frame_control);
+    } else if (keyframe->morph_counter > 0.0f) {
+        // Morph towards target, decreasing morph counter
+        cKF_SkeletonInfo_R_morphJoint(keyframe);
+        keyframe->morph_counter -= 0.5f;
+        if (keyframe->morph_counter <= 0.0f) {
+            keyframe->morph_counter = 0.0f; // Clamp to zero if over-decremented
+        }
+        return cKF_STATE_NONE;
+    } else {
+        // Morph from target, increasing morph counter towards zero
+        cKF_SkeletonInfo_R_morphJoint(keyframe);
+        keyframe->morph_counter += 0.5f;
+        if (keyframe->morph_counter >= 0.0f) {
+            keyframe->morph_counter = 0.0f; // Clamp to zero if over-incremented
+        }
+        return cKF_FrameControl_play(&keyframe->frame_control);
+    }
+}
+#else
 /**
  * Retrieves the flag table from an animation structure.
  *
@@ -574,6 +703,7 @@ extern int cKF_SkeletonInfo_R_play(cKF_SkeletonInfo_R_c* keyframe) {
 
     return state;
 }
+#endif
 
 extern void cKF_Si3_draw_SV_R_child(GAME* game, cKF_SkeletonInfo_R_c* keyframe, int* joint_num,
                                     cKF_draw_callback prerender_callback, cKF_draw_callback postrender_callback,
@@ -909,7 +1039,11 @@ extern int cKF_SkeletonInfo_R_combine_play(cKF_SkeletonInfo_R_c* info1, cKF_Skel
     cKF_SkeletonInfo_R_combine_rotation(&joint, &combinet, &combine[0], part_table);
 
     if (info1->rotation_diff_table != NULL) {
-        applyjoint = (F32_IS_ZERO(info1->morph_counter)) ? info1->current_joint : info1->target_joint;
+        if (F32_IS_ZERO(info1->morph_counter)) {
+            applyjoint = info1->current_joint;
+        } else {
+            applyjoint = info1->target_joint;
+        }
 
         applyjoint += 1;
         for (i = 0; i < info1->skeleton->num_joints; i++) {
@@ -972,7 +1106,11 @@ extern void cKF_SkeletonInfo_R_T_combine_play(int* state1, int* state2, int* sta
     cKF_SkeletonInfo_R_combine_rotation(&joint, &combinet, &combine[0], part_table);
 
     if (info1->rotation_diff_table != NULL) {
-        applyjoint = (F32_IS_ZERO(info1->morph_counter)) ? info1->current_joint : info1->target_joint;
+        if (F32_IS_ZERO(info1->morph_counter)) {
+            applyjoint = info1->current_joint;
+        } else {
+            applyjoint = info1->target_joint;
+        }
 
         applyjoint += 1;
         for (i = 0; i < info1->skeleton->num_joints; i++) {

@@ -94,21 +94,19 @@ extern void mHandbill_Set_free_str_art(int str_num, u8* str, int str_len, int ar
 }
 
 static void mHandbill_CopyString(u8* dst, u8* src, int len) {
-    for (len; len > 0; len--) {
+    int i;
+
+    for (i = 0; i < len; i++) {
         *dst++ = *src++;
     }
 }
 
 extern int mHandbill_MoveDataCut(u8* data, int buf_size, int dst_idx, int src_idx, int data_len, int fill_type) {
     int new_len = data_len;
-    int i;
 
     if (dst_idx < src_idx) {
-        u8* dst = data + dst_idx;
-        u8* src = data + src_idx;
-
-        for (i = src_idx; i < data_len; i++) {
-            data[dst_idx] = data[src_idx++];
+        for (src_idx; src_idx < data_len; src_idx++) {
+            data[dst_idx] = data[src_idx];
             dst_idx++;
         }
 
@@ -129,6 +127,7 @@ extern int mHandbill_MoveDataCut(u8* data, int buf_size, int dst_idx, int src_id
         }
     } else if (dst_idx > src_idx) {
         int move_size = data_len - src_idx;
+        int i;
         u8* dst;
         u8* src;
 
@@ -531,10 +530,10 @@ static void mHandbill_Load_SuperStringFromRom(u8* buf, int buf_size, int* header
             u32 aligned_addr = ALIGN_PREV(super_address, 32); // align to 32 bytes for ARAM DMA
             u32 data_ofs = super_address - aligned_addr;      // calculate offset for desired data
             u32 size = ALIGN_NEXT(data_ofs + super_size, 32);
+            int i;
             int move_size;
             u8* dst;
             u8* src;
-            int i;
 
             bzero(buff, 90);
             _JW_GetResourceAram(aligned_addr, buff, size);
@@ -572,18 +571,20 @@ static void mHandbill_Load_PsStringFromRom(u8* buf, int buf_size, int ps_no) {
             u32 aligned_addr = ALIGN_PREV(ps_address, 32); // align to 32 bytes for ARAM DMA
             u32 data_ofs = ps_address - aligned_addr;      // calculate offset for desired data
             u32 size = ALIGN_NEXT(data_ofs + ps_size, 32);
-            int sz;
             int i;
+            int sz;
             u8* dst;
+            u8* src;
 
             _JW_GetResourceAram(aligned_addr, buff, size);
 
             /* Move desired data to output buffer */
             sz = (int)ps_size < buf_size ? ps_size : buf_size;
             dst = buf;
+            src = buff + data_ofs;
             for (i = 0; i < sz; i++) {
-                *dst = buff[data_ofs + i];
-                dst++;
+                // *dst = src[data_ofs + i];
+                *dst++ = *src++;
             }
 
             /* Initialize remaining buffer to spaces */
@@ -622,8 +623,8 @@ static void mHandbill_Load_MailFromRom(u8* buf, int mail_no) {
             {
                 int i;
                 int j;
-                u8* src = &mHandbill_mail_buff[data_ofs];
                 u8* dst = buf;
+                u8* src = &mHandbill_mail_buff[data_ofs];
                 int sz = mHandbill_BODY_LEN;
 
                 if (mail_size < mHandbill_BODY_LEN) {
@@ -726,20 +727,15 @@ static int mHandbillzDMA_body_load(mHandbillzDMA_c* dma_info) {
             _JW_GetResourceAram(aligned_addr, dma_info->ram_buf, size);
 
             if (data_ofs != 0) {
+                int i;
+                const int size = dma_info->dma_size;
                 u8* src;
                 u8* dst;
-                int size;
-                int i;
 
                 dst = dma_info->ram_buf;
                 src = dst + data_ofs;
-                size = dma_info->dma_size;
-
-                for (i = 0; i < size; i++) {
-                    u8 b = *src;
-                    src++;
-                    *dst = b;
-                    dst++;
+                for (i = 0; i < size; i++, dst++, src++) {
+                    *dst = *src;
                 }
             }
         }

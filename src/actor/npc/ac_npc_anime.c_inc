@@ -105,19 +105,16 @@ static void aNPC_set_anime_se_info(NPC_ACTOR* nactorx, aNPC_Animation_c* anim) {
             nactorx->draw.se.rfoot.num_check_frames = 0;
         }
 
-        n = data_table_p->other_se_type;
-        if (n != aNPC_OTHER_SE_TYPE_NONE) {
+        if (data_table_p->other_se_type != aNPC_OTHER_SE_TYPE_NONE) {
+            n = data_table_p->other_se_type;
             nactorx->draw.se.other_se_type = n;
             other_data_p = data_table_p->other_se_data;
             dst_data_p = nactorx->draw.se.other_se;
 
-            while (n != 0) {
+            for (i = 0; i != n; i++, other_data_p++, dst_data_p++) {
                 dst_data_p->se_data.num_check_frames = other_data_p->se_data.num_check_frames;
                 dst_data_p->se_data.check_frame_tbl = other_data_p->se_data.check_frame_tbl;
                 dst_data_p->se_no = other_data_p->se_no;
-                other_data_p++;
-                dst_data_p++;
-                n--;
             }
         } else {
             aNPC_other_se_data_c* dst_data_p = nactorx->draw.se.other_se;

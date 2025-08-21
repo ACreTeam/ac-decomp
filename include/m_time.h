@@ -78,7 +78,7 @@ extern void mTM_set_season();
 extern int mTM_check_renew_time(u8 renew_flag);
 extern void mTM_off_renew_time(u8 renew_flag);
 extern void mTM_set_renew_is();
-extern void mTM_set_renew_time(lbRTC_ymd_c* renew_time, const lbRTC_time_c* time);
+extern void mTM_set_renew_time(lbRTC_ymd_c* renew_time, lbRTC_time_c* time);
 extern void mTM_ymd_2_time(lbRTC_time_c* time, lbRTC_ymd_c* ymd);
 extern void mTM_renewal_renew_time();
 extern void mTM_clear_renew_is();

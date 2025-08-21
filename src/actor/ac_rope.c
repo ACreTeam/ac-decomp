@@ -67,15 +67,15 @@ static void aRP_make_vtx(Vtx* vtx) {
     };
 
     Vtx* make;
-    int fact;
     u8* flag;
     int i;
+    int fact;
 
     flag = flg;
     fact = (*(f32*)mEv_get_save_area(0xE, 9) * 100.0f);
     make = tol_rope_1_v;
 
-    for (i = 0; i < ARRAY_SIZE(tol_rope_1_v, Vtx); i++, vtx++, flag++) {
+    for (i = 0; i < ARRAY_SIZE(tol_rope_1_v, Vtx); i++) {
         vtx[0] = make[0];
 
         if (flag[0] == 1) {
@@ -85,6 +85,8 @@ static void aRP_make_vtx(Vtx* vtx) {
         }
 
         make++;
+        vtx++;
+        flag++;
     }
 }
 

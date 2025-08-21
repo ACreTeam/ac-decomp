@@ -41,7 +41,12 @@ static void Player_actor_request_proc_index_fromDemo_geton_boat_wait(ACTOR* acto
     }
 
     angle_y += DEG2SHORT_ANGLE2(180.0f);
-    Player_actor_Set_ScrollDemo_forDemo_geton_boat_wade(actorx, angle_y, ((speed * 0.5f) * 36.0f) * 0.05f);
+// TODO: I don't like that this deviates between versions for something very simple.
+#if VERSION >= VER_GAFU01_00
+    Player_actor_Set_ScrollDemo_forDemo_geton_boat_wade(actorx, ((speed * 0.5f) * 36.0f) * 0.05f, (s16)angle_y);
+#else
+    Player_actor_Set_ScrollDemo_forDemo_geton_boat_wade(actorx, ((speed * 0.5f) * 36.0f) * 0.05f, angle_y);
+#endif
 }
 
 static void Player_actor_main_Demo_geton_boat_wait(ACTOR* actorx, GAME* game) {

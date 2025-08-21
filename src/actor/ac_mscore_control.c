@@ -153,6 +153,7 @@ static void aMSC_check_connect_agb_start_wait(MSCORE_CONTROL_ACTOR* mscore_ctrl,
     }
 }
 
+// Aus version sets force next flag when connection fails
 static void aMSC_check_connect_agb_end_wait(MSCORE_CONTROL_ACTOR* mscore_ctrl, GAME_PLAY* play) {
     int next_act_idx = -1;
 
@@ -177,6 +178,9 @@ static void aMSC_check_connect_agb_end_wait(MSCORE_CONTROL_ACTOR* mscore_ctrl, G
 
         mMsg_Set_continue_msg_num(msg_p, 0x3DDF);
         mMsg_Unset_LockContinue(msg_p);
+#if VERSION >= VER_GAFU01_00
+        mMsg_SET_FORCENEXT();
+#endif
         mGcgba_EndComm();
         aMSC_setupAction(mscore_ctrl, aMSC_ACT_TALK_END_WAIT);
     }
