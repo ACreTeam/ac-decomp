@@ -17,6 +17,7 @@ typedef enum SET_EXT_POINTER_TYPE {
 typedef s32 (*Na_DmaProc)(OSPiHandle* handle, OSIoMesg* mb, s32 direction);
 typedef s32 (*Na_SyncProc)(u8* param0, s32 param1);
 
+extern void* Nas_WaveDmaCallBack(u32 device_addr, u32 size, s32 arg2, u8* waveload_idx, s32 medium);
 extern void Nas_InitAudio(u64* acmdBuf, s32 acmdBufSize);
 extern void Nas_FastCopy(u8* SrcAddr, u8* DestAdd, size_t Length, s32 medium);
 extern void Nas_FastDiskCopy(u8* SrcAddr, u8* DestAdd, size_t Length, s32 medium);

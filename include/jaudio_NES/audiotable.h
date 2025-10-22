@@ -22,4 +22,6 @@ extern f32 PhoneLeft[];
 extern f32 WideLeft[];
 extern f32 StereoLeft[];
 
+extern u8 VELOCONV_TABLE[][256];
+
 #endif
