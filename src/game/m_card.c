@@ -2384,11 +2384,15 @@ static void mCD_set_number_str(char* str, u8 num) {
     int f = FALSE;
     int fig_table[3];
     int i;
-
+    
     bzero(fig_table, sizeof(fig_table));
+    
     for (i = 0; i < 3; i++) {
-        fig_table[i] = n % 10;
-        n /= 10;
+        const int remain = n % 10;
+        const int div = n / 10;
+        
+        fig_table[i] = remain;
+        n = div;
     }
 
     for (i = 2; i > 0; i--) {
