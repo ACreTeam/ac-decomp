@@ -38,6 +38,8 @@ extern "C" {
 #define ADSR_RESTART -3
 #define ADSR_SPECIAL4 -4 // TODO: figure this out
 
+#define A_ADPCM_SHORT 0x04
+
 // Audio ABI commands
 #define A_CMD_SPNOOP        0
 #define A_CMD_ADPCM         1
@@ -96,6 +98,14 @@ extern "C" {
 									\
 	_a->words.w0 = _SHIFTL(A_CMD_SAVEBUFFER2, 24, 8) | _SHIFTL((len) >> 4, 16, 8) | _SHIFTL(src, 0, 16);    		\
 	_a->words.w1 = (u32)(dst);		\
+}
+
+#define	aInterleave2(pkt, o, l, r, c)						\
+{									\
+	Acmd *_a = (Acmd *)pkt;						\
+									\
+    _a->words.w0 = (_SHIFTL(A_INTERLEAVE, 24, 8) | _SHIFTL(c >> 4, 16, 8) | _SHIFTL(o, 0, 16));            \
+    _a->words.w1 = _SHIFTL(l, 16, 16) | _SHIFTL(r, 0, 16);          \
 }
 
 #define	aSetEnvParam2(pkt, volL, volR)						\
@@ -233,7 +243,9 @@ typedef enum SampleCodec {
     /* 2 */ CODEC_S16_INMEMORY,
     /* 3 */ CODEC_SMALL_ADPCM, // 16 2-byte samples (32 bytes) compressed into 2-bit samples (4 bytes) + 1 header byte
     /* 4 */ CODEC_REVERB,
-    /* 5 */ CODEC_S16
+    /* 5 */ CODEC_S16,
+    /* 6 */ CODEC_UNK6,
+    /* 7 */ CODEC_UNK7,
 } SampleCodec;
 
 typedef enum LpsCacheState {
