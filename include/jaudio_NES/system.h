@@ -61,6 +61,7 @@ extern void Nas_BgCopyInit(void);
 extern void MK_Init(void);
 extern void Nas_WaveDmaNew(s32 n_channels);
 
+extern Na_SyncProc NA_SYNC_PROC;
 extern BOOL AUDIO_SYSTEM_READY;
 extern Na_DmaProc NA_DMA_PROC;
 extern OSMesgQueue MK_QUEUE;
