@@ -68,6 +68,14 @@ extern "C" {
 #define A_CMD_LOADCACHE     24
 #define A_CMD_EXIT          25
 
+#define aUnkCmd3(pkt, a1, a2, a3)                                       \
+{                                                                       \
+        Acmd *_a = (Acmd *)pkt;                                         \
+                                                                        \
+        _a->words.w0 = _SHIFTL(A_CMD_UNK3, 24, 8) | _SHIFTL(a3, 0, 16);     \
+        _a->words.w1 = _SHIFTL(a1, 16, 16) | _SHIFTL(a2, 0, 16);        \
+}
+
 #define	aHalfCut(pkt, src, dst, len)						\
 {									\
 	Acmd *_a = (Acmd *)pkt;						\
@@ -82,6 +90,14 @@ extern "C" {
 									\
 	_a->words.w0 = _SHIFTL(A_CMD_SETENVPARAM, 24, 8) | _SHIFTL(revVol, 16, 8) | _SHIFTL(rampRev, 0, 16);    		\
 	_a->words.w1 = _SHIFTL(rampL, 16, 16) | _SHIFTL(rampR, 0, 16);		\
+}
+
+#define	aLoadCache(pkt, dst, src, len)						\
+{									\
+	Acmd *_a = (Acmd *)pkt;						\
+									\
+	_a->words.w0 = _SHIFTL(A_CMD_LOADCACHE, 24, 8) | _SHIFTL((len) >> 4, 16, 8) | _SHIFTL(src, 0, 16);    		\
+	_a->words.w1 = (u32)(dst);		\
 }
 
 #define	aLoadBuffer2(pkt, dst, src, len)						\
@@ -234,7 +250,8 @@ typedef enum SoundOutputMode {
     /* 0 */ SOUND_OUTPUT_STEREO,
     /* 1 */ SOUND_OUTPUT_HEADSET,
     /* 2 */ SOUND_OUTPUT_SURROUND,
-    /* 3 */ SOUND_OUTPUT_MONO
+    /* 3 */ SOUND_OUTPUT_MONO,
+    /* 4 */ SOUND_OUTPUT_DOLBY_SURROUND
 } SoundOutputMode;
 
 typedef enum SampleCodec {
