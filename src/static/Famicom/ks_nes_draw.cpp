@@ -519,39 +519,40 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
         { 1.0f, 0.0f, 0.0f },
         { 0.0f, 0.0f, 0.0f }
     };
+    static const GXColor black2 = { 0, 0, 0, 0 }; // unused, corrects stack
     static const GXColor black = { 0, 0, 0, 0 };
     static const GXColor color0 = { 0x3A, 0x3A, 0x3A, 0x00 };
     static const GXColor color1 = { 0x71, 0x71, 0x71, 0x00 };
     static const GXColor color2 = { 0x15, 0x15, 0x15, 0x00 };
 
+    u32 cnt;
     u32 i;
-    u32 unk_cnt;
-    u32 quad_cnt;
     u32 unk_r7;
+    u8 y;
     u32 val;
     u32 clr;
     u8 *work;
     GXTexObj obj;
     GXTexObj obj2;
-    u8 y;
 
-    unk_cnt = 0;
+    cnt = 0;
+    i = 8;
     unk_r7 = 0xFF;
-    for (i = 8; i < 228 + 8; i++) {
-        val = wp->work_priv._0B40[i]._19;
-        if ((val & 0xE1) != unk_r7) {
+    for (; i < 228 + 8; i++) {
+        val = wp->work_priv._0B40[i]._19 & 0xE1;
+        if (val != unk_r7) {
             unk_r7 = val;
-            if ((unk_cnt & 1) != 0) {
-                wp->work_priv._0000[unk_cnt++] = i - 8;
+            if ((cnt & 1) != 0) {
+                wp->work_priv._0000[cnt++] = i - 8;
             }
-            wp->work_priv._0000[unk_cnt++] = i - 8;
+            wp->work_priv._0000[cnt++] = i - 8;
         }
     }
 
-    if ((unk_cnt & 1) != 0) {
-        wp->work_priv._0000[unk_cnt++] = i - 8;
+    if ((cnt & 1) != 0) {
+        wp->work_priv._0000[cnt++] = i - 8;
     }
-    wp->work_priv._0000[unk_cnt] = 0xFF;
+    wp->work_priv._0000[cnt] = 0xFF;
 
     GXInitTexObj(&obj2, wp->result_bufp, 256, 228, GX_TF_I8, GX_CLAMP, GX_CLAMP, 0);
     GXInitTexObjLOD(&obj2, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
@@ -574,15 +575,15 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
     
     GXSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
-    quad_cnt = 0;
+    cnt = 0;
     for (i = 0; wp->work_priv._0000[i] != 0xFF; i += 2) {
         val = wp->work_priv._0B40[wp->work_priv._0000[i]]._19;
         if ((val & 0xE1) == 0) { 
-            quad_cnt += 4;
+            cnt += 4;
         }
     }
 
-    if (quad_cnt != 0) {
+    if (cnt != 0) {
         GXSetNumChans(0);
         GXSetNumTexGens(1);
         GXSetNumTevStages(1);
@@ -595,15 +596,14 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
         GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_U16, 8);
         GXSetTevOp(GX_TEVSTAGE0, GX_REPLACE);
 
-        GXBegin(GX_QUADS, GX_VTXFMT0, quad_cnt);
+        GXBegin(GX_QUADS, GX_VTXFMT0, cnt);
 
         do {
-            work = ((u8*)wp + i);
-            y = work[0x60];
             i -= 2;
-            val = wp->work_priv._0B40[i & 0xFF]._19 & 0xE1;
+            work = ((u8*)wp + i);
+            val = wp->work_priv._0B40[work[0x60]]._19 & 0xE1;
             if (val == 0) {
-                GXPosition2s16(0x180, -136 - y);
+                GXPosition2s16(0x180, -136 - work[0x60]);
                 GXTexCoord2u16(0x100, work[0x60]);
 
                 GXPosition2s16(0x180, -136 - work[0x61]);
@@ -618,15 +618,15 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
         } while (i != 0);
     }
 
-    quad_cnt = 0;
+    cnt = 0;
     for (i = 0; wp->work_priv._0000[i] != 0xFF; i += 2) {
         val = wp->work_priv._0B40[wp->work_priv._0000[i]]._19;
         if ((val & 0xE1) != 0) { 
-            quad_cnt += 4;
+            cnt += 4;
         }
     }
 
-    if (quad_cnt != 0) {
+    if (cnt != 0) {
         GXSetNumChans(1);
         GXSetNumTexGens(1);
         GXSetNumTevStages(4);
@@ -684,26 +684,24 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
         GXSetTevColor(GX_TEVREG1, color1);
         GXSetTevColor(GX_TEVREG2, color2);
 
-        GXBegin(GX_QUADS, GX_VTXFMT0, quad_cnt);
+        GXBegin(GX_QUADS, GX_VTXFMT0, cnt);
 
         do {
             i -= 2;
             work = (u8*)wp + i;
-            val = wp->work_priv._0B40[work[0x60]]._19;
-            y = work[0x60];
-            if ((val & 0xE1) != 0) {
+            if ((wp->work_priv._0B40[work[0x60]]._19 & 0xE1) != 0) {
                 clr = 0x2F2F2F00;
-                if ((val & 0x20) != 0) {
+                if ((wp->work_priv._0B40[work[0x60]]._19 & 0x20) != 0) {
                     clr += 0x10000000;
                 }
-                if ((val & 0x40) != 0) {
+                if ((wp->work_priv._0B40[work[0x60]]._19 & 0x40) != 0) {
                     clr += 0x00100000;
                 }
-                if ((val & 0x80) != 0) {
+                if ((wp->work_priv._0B40[work[0x60]]._19 & 0x80) != 0) {
                     clr += 0x00001000;
                 }
 
-                GXPosition2s16(0x180, -136 - y);
+                GXPosition2s16(0x180, -136 - work[0x60]);
                 GXColor1u32(clr);
                 GXTexCoord2u16(0x100, work[0x60]);
 
