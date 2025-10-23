@@ -496,7 +496,7 @@ void ksNesDrawOBJI8ToEFB(ksNesCommonWorkObj* wp, u8* buf) {
     
     for (i = 0; i < cnt; i += 2) {
         work = (u8*)wp + i; // if it works...
-        u = ((wp->work_priv._0B40[(u8)((u8*)wp)[i + 0x60]]._19 & 0x14) - 8) == 8 ? 8 : 0;
+        u = (wp->work_priv._0B40[(u8)((u8*)wp)[i + 0x60]]._19 & 0x14) == 0x10 ? 8 : 0;
         
         // s32 y = -128 - ((work[0x60] & 0xFF));
         GXPosition2s16(u + 0x80, -128 - work[0x60]);
