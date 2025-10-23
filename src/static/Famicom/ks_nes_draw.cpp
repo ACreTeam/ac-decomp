@@ -516,8 +516,11 @@ void ksNesDrawOBJI8ToEFB(ksNesCommonWorkObj* wp, u8* buf) {
 }
 
 void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
+    static const GXColor black = { 0, 0, 0, 0 };
+
     int i;
     GXTexObj obj;
+    GXTexObj obj2;
 
     for (i = 0; i < 228; i++) {
         if ((wp->work_priv._0B40[i + 8]._19 & 0xE1) != 0xFF) {
@@ -528,9 +531,26 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
     }
 
     GXInitTexObj(&obj, wp->result_bufp, 256, 228, GX_TF_I8, GX_CLAMP, GX_CLAMP, 0);
+    GXInitTexObjLOD(&obj, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
+    GXLoadTexObj(&obj, GX_TEXMAP1);
+
+    GXInitTexObj(&obj2, &wp->work_priv._2A40[0x50], 256, 4, GX_TF_RGB5A3, GX_CLAMP, GX_CLAMP, 0);
+    GXInitTexObjLOD(&obj2, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
+    GXLoadTexObj(&obj2, GX_TEXMAP0);
+
+    GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 60, GX_FALSE, 125);
+
+    int cnt = 0;
 
     // ...
 
+    while (cnt != 0) {
+
+    }
+
+    GXSetTexCopySrc(128, 136, 256, 228);
+    GXSetTexCopyDst(256, 228, GX_TF_RGB565, GX_FALSE);
+    GXSetCopyClear(black, 0xFFFFFF);
     GXCopyTex(wp->result_bufp, GX_FALSE);
     GXPixModeSync();
 }
