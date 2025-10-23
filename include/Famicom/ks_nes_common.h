@@ -75,6 +75,13 @@ typedef struct _0340_struct {
     u8 _00[0x20];
 } _0340_struct; // size = 0x20
 
+typedef struct ksNesWorkPriv2940_struct {
+    u8 _00;
+    u8 _01;
+    u8 _02;
+    u8 _03;
+} ksNesWorkPriv2940_struct;
+
 typedef struct ksNesCommonWorkPriv {
     /* 0x0000 */ u8 _0000[0x200];
     /* 0x0200 */ u8 _0200[0xF0];
@@ -82,7 +89,7 @@ typedef struct ksNesCommonWorkPriv {
     /* 0x0300 */ u8 _0300[0x40];
     /* 0x0340 */ _0340_struct _0340[0x40];
     /* 0x0B40 */ B40_struct _0B40[240];
-    /* 0x2940 */ u8 _2940[0x100];
+    /* 0x2940 */ ksNesWorkPriv2940_struct _2940[64];
     /* 0x2A40 */ u8 _2A40[0x800];
     /* 0x3240 */ u8 _3240[0x4800];
     /* 0x7840 */ u8 _7840[0x1400];
