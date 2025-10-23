@@ -1,5 +1,3 @@
-#include "Famicom/ks_nes_common.h"
-#include "types.h"
 #define FIX_SQRT_LINKAGE
 #include "Famicom/ks_nes_draw.h"
 #include "dolphin/gx.h"
