@@ -1,5 +1,6 @@
 #include "jaudio_NES/driver.h"
 
+#include "PR/abi.h"
 #include "jaudio_NES/audiocommon.h"
 #include "jaudio_NES/audiostruct.h"
 #include "jaudio_NES/astest.h"
@@ -7,6 +8,7 @@
 #include "jaudio_NES/track.h"
 #include "jaudio_NES/system.h"
 #include "os/OSCache.h"
+#include "types.h"
 
 #define DMEM_TEMP 0x380
 #define DMEM_WET_TEMP 0x3A0
@@ -14,8 +16,11 @@
 #define DMEM_LEFT_CH 0x900
 #define DMEM_RIGHT_CH 0xAA0
 #define DMEM_WET_LEFT_CH 0xC40
+#define DMEM_WET_RIGHT_CH 0xDE0
 #define DMEM_UNCOMPRESSED_NOTE 0x540
 #define DMEM_COMPRESSED_ADPCM_DATA 0x900
+#define DMEM_HAAS_TEMP 0x580
+#define DMEM_SURROUND_TEMP 0x480
 
 typedef enum {
     /* 0 */ HAAS_EFFECT_DELAY_NONE,
@@ -23,14 +28,14 @@ typedef enum {
     /* 2 */ HAAS_EFFECT_DELAY_RIGHT // Delay right channel so that left channel is heard first
 } HaasEffectDelaySide;
 
-static u16 NOISE_TABLE[] = { 0, 1, 2, 4, 8, 12, 16, 20, 24, 32, 36, 40, 46, 52, 56, 53 };
+static u16 NOISE_TABLE[] = { 0, 1, 2, 4, 8, 12, 16, 20, 24, 32, 36, 40, 46, 52, 56, 64 };
 static dspch_ DSPCH[64];
 static s32 STOP_VELOCONV = 0;
 
-static u32 Env_DataH = (A_ENVMIXER << 24) | (0x00 << 16) | (0x00 << 8) | (0x00);
-static u32 Env_DataL1 = 0x58AAC4DE;
-static u32 Env_DataL2 = 0x9058C4DE;
-static u32 Env_DataL3 = 0x9058C4DE;
+static u32 Env_DataH = (A_CMD_ENVMIXER << 24) | (0x00 << 16) | (0x00 << 8) | (0x00);
+static u32 Env_Data_L1 = 0x58AAC4DE;
+static u32 Env_Data_L2 = 0x9058C4DE;
+static u32 Env_Data_L3 = 0x90AAC4DE;
 
 static Acmd* __LoadAuxBuf(Acmd* cmd, u16 ofs, u16 startPos, s32 size, delay* del_p);
 static Acmd* __SaveAuxBuf(Acmd* cmd, u16 ofs, u16 startPos, s32 size, delay* del_p);
@@ -1237,6 +1242,219 @@ codec_continue_and_skip:
             cmd = Nas_Synth_Delay(cmd, common, driver, size, flags, haasEffectDelaySide);
         }
     }
+
+    return cmd;
+}
+
+Acmd* Nas_DolbySurround(Acmd* cmd, commonch* common, driverch* driver, s32 num_samples_per_update, s32 haas_dmem, s32 flags) {
+    s32 size;
+    s32 wetGain;
+    u16 dryGain;
+    s64 dmem = DMEM_SURROUND_TEMP;
+    f32 decayGain;
+
+    size = num_samples_per_update * SAMPLE_SIZE;
+    Nas_DMEMMove(cmd++, haas_dmem, DMEM_HAAS_TEMP, size);
+    dryGain = driver->surround_effect_gain;
+
+    if (flags == A_INIT) {
+        aClearBuffer(cmd++, dmem, sizeof(driver->synth_params->surround_effect_state));
+        driver->surround_effect_gain = 0;
+    } else {
+        wetGain = (driver->surround_effect_gain * driver->cur_reverb_vol) >> 7;
+        
+        aLoadBuffer2(cmd++, driver->synth_params->surround_effect_state, dmem, sizeof(driver->synth_params->surround_effect_state));
+        
+        aMix(cmd++, size >> 4, dryGain, dmem, DMEM_LEFT_CH);
+        aMix(cmd++, size >> 4, (dryGain ^ 0xFFFF), dmem, DMEM_RIGHT_CH);
+        
+        aMix(cmd++, size >> 4, wetGain, dmem, DMEM_WET_LEFT_CH);
+        aMix(cmd++, size >> 4, (wetGain ^ 0xFFFF), dmem, DMEM_WET_RIGHT_CH);
+    }
+
+    aSaveBuffer2(cmd++, DMEM_SURROUND_TEMP + size, driver->synth_params->surround_effect_state, sizeof(driver->synth_params->surround_effect_state));
+
+    decayGain = (common->target_volume_left + common->target_volume_right) / 8192.0f; // 1.0f / 0x2000
+
+    if (decayGain > 1.0f) {
+        decayGain = 1.0f;
+    }
+
+    decayGain = decayGain * StereoLeft[127 - common->surround_effect_idx];
+    driver->surround_effect_gain = ((decayGain * 0x7FFF) + driver->surround_effect_gain) / 2;
+
+    Nas_DMEMMove(cmd++, DMEM_HAAS_TEMP, haas_dmem, size);
+
+    return cmd;
+}
+
+extern Acmd* Nas_Synth_Resample(Acmd* cmd, const driverch* driver, s32 size, u16 pitch, u16 sampleDmemBeforeResampling, s32 flags) {
+    if (pitch == 0) {
+        Nas_ClearBuffer(cmd++, DMEM_TEMP, size);
+    } else {
+        aSetBuffer(cmd++, 0, sampleDmemBeforeResampling, DMEM_TEMP, size);
+        aResample(cmd++, flags, pitch, driver->synth_params->final_resample_state);
+    }
+
+    return cmd;
+}
+
+extern Acmd* Nas_Synth_Envelope(Acmd* cmd, commonch* common, driverch* driver, s32 samples_per_update, u16 dmem, s32 haasEffectDelaySide, s32 flags) {
+    u16 targetVolRight;
+    u16 targetVolLeft;
+    u32 dmemDests;
+    u16 curVolLeft;
+    u16 curVolRight;
+    s32 curReverbVolAndFlags;
+    u16 curReverbVol;
+    s32 targetReverbVol;
+    s16 rampLeft;
+    s16 rampRight;
+    s16 rampReverb;
+    f32 defaultPanVolume;
+
+    
+    targetReverbVol = common->target_reverb_volume;
+    curVolLeft = driver->current_volume_left;
+    curVolRight = driver->current_volume_right;
+
+    targetVolLeft = common->target_volume_left << 4;
+    targetVolRight = common->target_volume_right << 4;
+
+    if ((AG.sound_mode == SOUND_OUTPUT_DOLBY_SURROUND)) {
+        u8 idx = common->surround_effect_idx;
+        
+        if (idx != 0xFF) {
+            defaultPanVolume = StereoLeft[idx];
+            targetVolLeft *= defaultPanVolume;
+            targetVolRight *= defaultPanVolume;
+        }
+    }
+
+    if (targetVolLeft != curVolLeft) {
+        rampLeft = (targetVolLeft - curVolLeft) / (samples_per_update >> 3);
+    } else {
+        rampLeft = 0;
+    }
+
+    if (targetVolRight != curVolRight) {
+        rampRight = (targetVolRight - curVolRight) / (samples_per_update >> 3);
+    } else {
+        rampRight = 0;
+    }
+
+    curReverbVolAndFlags = (s16)driver->cur_reverb_vol;
+    if (targetReverbVol != curReverbVolAndFlags) {
+        curReverbVol = curReverbVolAndFlags & 0x7F;
+        rampReverb = (((targetReverbVol & 0x7F) - (curReverbVol)) << 9) / (samples_per_update >> 3);
+        driver->cur_reverb_vol = targetReverbVol;
+    } else {
+        rampReverb = 0;
+    }
+
+    driver->current_volume_left = curVolLeft + (rampLeft * (samples_per_update >> 3));
+    driver->current_volume_right = curVolRight + (rampRight * (samples_per_update >> 3));
+
+    if (common->use_haas_effect) {
+        Nas_ClearBuffer(cmd++, DMEM_HAAS_TEMP, DMEM_1CH_SIZE);
+        curReverbVol = curReverbVolAndFlags & 0x7F;
+        Nas_SetEnvParam(cmd++, curReverbVol * 2, rampReverb, rampLeft, rampRight);
+        Nas_SetEnvParam2(cmd++, curVolLeft, curVolRight);
+
+        switch (haasEffectDelaySide) {
+            case HAAS_EFFECT_DELAY_LEFT:
+                // Store the left dry channel in a temp space to be delayed to produce the haas effect
+                dmemDests = Env_Data_L1;
+                break;
+
+            case HAAS_EFFECT_DELAY_RIGHT:
+                // Store the right dry channel in a temp space to be delayed to produce the haas effect
+                dmemDests = Env_Data_L2;
+                break;
+
+            default: // HAAS_EFFECT_DELAY_NONE
+                dmemDests = Env_Data_L3;
+                break;
+        }
+    } else {
+        curReverbVol = curReverbVolAndFlags & 0x7F;
+        aSetEnvParam(cmd++, curReverbVol * 2, rampReverb, rampLeft, rampRight);
+        aSetEnvParam2(cmd++, curVolLeft, curVolRight);
+        dmemDests = Env_Data_L3;
+    }
+
+    aEnvMixer2(cmd++, dmem, samples_per_update, (curReverbVolAndFlags & 0x80) >> 7,
+              common->strong_reverb_right, common->strong_reverb_left,
+              common->strong_right, common->strong_left, dmemDests, Env_DataH);
+
+    return cmd;
+}
+
+extern Acmd* Nas_Synth_Delay(Acmd* cmd, commonch* common, driverch* driver, s32 size, s32 flags, s32 haasEffectDelaySide) {
+    u16 dmemDest;
+    u16 pitch;
+    u16 prevHaasEffectDelaySize;
+    u16 haasEffectDelaySize;
+
+    switch (haasEffectDelaySide) {
+        case HAAS_EFFECT_DELAY_LEFT:
+            // Delay the sample on the left channel
+            // This allows the right channel to be heard first
+            dmemDest = DMEM_LEFT_CH;
+            haasEffectDelaySize = common->haas_effect_left_delay_size;
+            prevHaasEffectDelaySize = driver->prev_haas_effect_left_delay_size;
+            driver->prev_haas_effect_left_delay_size = haasEffectDelaySize;
+            driver->prev_haas_effect_right_delay_size = 0;
+            break;
+
+        case HAAS_EFFECT_DELAY_RIGHT:
+            // Delay the sample on the right channel
+            // This allows the left channel to be heard first
+            dmemDest = DMEM_RIGHT_CH;
+            haasEffectDelaySize = common->haas_effect_right_delay_size;
+            prevHaasEffectDelaySize = driver->prev_haas_effect_right_delay_size;
+            driver->prev_haas_effect_right_delay_size = haasEffectDelaySize;
+            driver->prev_haas_effect_left_delay_size = 0;
+            break;
+
+        default: // HAAS_EFFECT_DELAY_NONE
+            return cmd;
+    }
+
+    if (flags != A_INIT) {
+        // Slightly adjust the sample rate in order to fit a change in sample delay
+        if (haasEffectDelaySize != prevHaasEffectDelaySize) {
+            pitch = (((size << 0xF) / 2) - 1) / ((size + haasEffectDelaySize - prevHaasEffectDelaySize - 2) / 2);
+            aSetBuffer(cmd++, 0, DMEM_HAAS_TEMP, DMEM_TEMP, size + haasEffectDelaySize - prevHaasEffectDelaySize);
+            aResampleZoh(cmd++, pitch, 0);
+        } else {
+            aDMEMMove(cmd++, DMEM_HAAS_TEMP, DMEM_TEMP, size);
+        }
+
+        if (prevHaasEffectDelaySize != 0) {
+            aLoadBuffer2(cmd++, driver->synth_params->haas_effect_delay_state, DMEM_HAAS_TEMP,
+                        ALIGN_NEXT(prevHaasEffectDelaySize, 16));
+            aDMEMMove(cmd++, DMEM_TEMP, DMEM_HAAS_TEMP + prevHaasEffectDelaySize,
+                      size + haasEffectDelaySize - prevHaasEffectDelaySize);
+        } else {
+            aDMEMMove(cmd++, DMEM_TEMP, DMEM_HAAS_TEMP, size + haasEffectDelaySize);
+        }
+    } else {
+        // Just apply a delay directly
+        aDMEMMove(cmd++, DMEM_HAAS_TEMP, DMEM_TEMP, size);
+        if (haasEffectDelaySize) { // != 0
+            aClearBuffer(cmd++, DMEM_HAAS_TEMP, haasEffectDelaySize);
+        }
+        aDMEMMove(cmd++, DMEM_TEMP, DMEM_HAAS_TEMP + haasEffectDelaySize, size);
+    }
+
+    if (haasEffectDelaySize) { // != 0
+        // Save excessive samples for next iteration
+        aSaveBuffer2(cmd++, DMEM_HAAS_TEMP + size, driver->synth_params->haas_effect_delay_state,
+                    ALIGN_NEXT(haasEffectDelaySize, 16));
+    }
+
+    aAddMixer(cmd++, ALIGN_NEXT(size, 64), DMEM_HAAS_TEMP, dmemDest, 0x7FFF);
 
     return cmd;
 }
