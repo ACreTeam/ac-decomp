@@ -1,8 +1,11 @@
+#include "Famicom/ks_nes_common.h"
+#include "types.h"
 #define FIX_SQRT_LINKAGE
 #include "Famicom/ks_nes_draw.h"
 #include "dolphin/gx.h"
 #include "dolphin/PPCArch.h"
 #include "_mem.h"
+#include "dolphin/os.h"
 
 u8 ksNesPaletteNormal[] = {
     0xc2, 0x10, 0x80, 0x17, 0x98, 0x17, 0xc0, 0x14, 0xdc, 0x0d, 0xd8, 0x03, 0xd8, 0x00, 0xc8, 0x80, 0xbc, 0xa0, 0x80,
@@ -91,15 +94,61 @@ void ksNesDrawClearEFBFirst(ksNesCommonWorkObj* wp) {
     GXEnd();
 }
 
-void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 ind) {
-    u32 myInd = 0x7fff;
-    u8 myInd2 = 0x80;
-    if (ind) {
-        myInd = 9;
+// TODO: this function needs help
+void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mapper4) {
+    u32 trigger_col = 0x7fff;
+    u8 CHR_flag_xor = 0x80;
+    u32 row;
+    u32 col;
+
+    if (mapper4) {
+        trigger_col = 9;
     }
-    if (wp->chr_to_i8_buf_size <= 0x1000000) {
-        myInd2 = wp->chr_to_i8_buf_size >> 0xd;
+
+    if (wp->chr_to_i8_buf_size <= CHR_TO_I8_BUF_SIZE * 16) {
+        CHR_flag_xor = wp->chr_to_i8_buf_size >> 13;
     }
+
+    for (row = 8; row < 236; row++) {
+        u8 scanline_ctrl0 = wp->work_priv._0B40[row]._1C;
+        u8 scanline_ctrl1 = wp->work_priv._0B40[row]._1B;
+        u32* patternPtrBase = &wp->work_priv._0B40[row]._10;
+        u8* nametable_p;
+        u8 tile_byte;
+        u8 palette_bits;
+        u8 nibble_acc; // @bug - uninitialized
+        u32 dst_idx;
+
+        for (col = 0; col < 34; col++) {
+
+            if (col == trigger_col) {
+                patternPtrBase -= 2;
+            }
+
+            // _00 and _04 are pointers to ppu_nametable_pointers[0/1]?
+            nametable_p = &(wp->work_priv._0B40[row]._00)[((scanline_ctrl0 >> 7) & 1)];
+            if (((u32)nametable_p) & OS_BASE_CACHED) {
+                tile_byte = nametable_p[((scanline_ctrl0 & 0xF8) << 2) + ((scanline_ctrl1 & 0xF8) >> 3)];
+                nibble_acc = ((nametable_p[0x3C0 + ((scanline_ctrl0 & 0xE0) >> 2) + ((scanline_ctrl1 & 0xE0) >> 7)] >> (((scanline_ctrl0 & 0x10) >> 2) | ((scanline_ctrl1 & 0x10) >> 3))) & 3) | (nibble_acc << 4);
+            } else {
+                tile_byte = ((u32)nametable_p) >> 8;
+                nibble_acc = (((u32)nametable_p) & 3) | (nibble_acc << 4);
+            }
+
+            palette_bits = patternPtrBase[((wp->work_priv._0B40[row]._18 & 0x10) >> 2) | (tile_byte >> 6)];
+            dst_idx = ((col & 3) * 2) + ((col & 0x3C) * 8) + ((row & 3) * 8) + ((row >> 2) * 288);
+
+            wp->work_priv._3240[dst_idx + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
+            wp->work_priv._3240[dst_idx + 1] = (palette_bits >> 1) ^ (CHR_flag_xor & -((scanline_ctrl0 & 0x04) >> 2));
+
+            if ((col & 1) != 0) {
+                wp->work_priv._7840[((col >> 1) & 3) + (col & 0x38) * 4 + (row & 7) * 4 + (row >> 3) * 160] = nibble_acc;
+            }
+
+            scanline_ctrl1 += 8;
+        }
+    }
+
     DCFlushRangeNoSync(wp->work_priv._3240, sizeof(wp->work_priv._3240));
     DCFlushRangeNoSync(wp->work_priv._7840, sizeof(wp->work_priv._7840));
 }
@@ -107,10 +156,51 @@ void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 ind) {
 void ksNesDrawMakeBGIndTexMMC5(ksNesCommonWorkObj*, ksNesStateObj*) {
 }
 
-void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj*, u32) {
+#define ksNes_MMC2_LATCH_LO 0xFD // select chr bank 0/2
+#define ksNes_MMC2_LATCH_HI 0xFE // select chr bank 1/3
+
+void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 mode) {
 }
 
-void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj*) {
+void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
+    u32 i;
+    u32 j;
+    u32 max;
+    u32 chr_bank;
+    
+    memset(&wp->work_priv._0200, 0, sizeof(wp->work_priv._0200));
+    for (i = 0; i < 64; i++) {
+        // _0B40 is the scanline state, _2940 is list of scanline triggers?
+        if (wp->work_priv._2940[i]._00 >= 236 || (wp->work_priv._2940[i]._01 != ksNes_MMC2_LATCH_HI && wp->work_priv._2940[i]._01 != ksNes_MMC2_LATCH_LO)) {
+            continue;
+        }
+
+        j = wp->work_priv._2940[i]._00;
+        max = (((wp->work_priv._0B40[j]._18 >> 2) & 0x08) + 8) + j;
+        do {
+            wp->work_priv._0200[j] = wp->work_priv._2940[i]._01;
+            j++;
+        } while(j < max);
+    }
+
+    // _0200 is the scanline marker entries
+    for (i = 0, chr_bank = 0; i < ARRAY_COUNT(wp->work_priv._0200); i++) {
+        if (wp->work_priv._0200[i] == ksNes_MMC2_LATCH_HI) {
+            chr_bank = 0;
+        } else if (wp->work_priv._0200[i] == ksNes_MMC2_LATCH_LO) {
+            chr_bank = 1;
+        }
+
+        if (chr_bank) {
+            wp->work_priv._0B40[i]._08[0] = wp->work_priv._0B40[i]._08[1] - 1;
+            wp->work_priv._0B40[i]._08[2] = wp->work_priv._0B40[i]._08[1] + 1;
+            wp->work_priv._0B40[i]._08[3] = wp->work_priv._0B40[i]._08[1] + 2;
+        } else {
+            wp->work_priv._0B40[i]._08[1] = wp->work_priv._0B40[i]._08[0] + 1;
+            wp->work_priv._0B40[i]._08[2] = wp->work_priv._0B40[i]._08[0] + 2;
+            wp->work_priv._0B40[i]._08[3] = wp->work_priv._0B40[i]._08[0] + 3;
+        }
+    }
 }
 
 void ksNesDrawBG(ksNesCommonWorkObj*, ksNesStateObj*) {
@@ -205,11 +295,11 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
         
         for (i = 0; i < 0x100; i += 4) {
             _j = 8;
-            if (wp->work_priv._0B40[wp->work_priv._2940[i]]._18 & 0x20) {
+            if (wp->work_priv._0B40[wp->work_priv._2940[i]._00]._18 & 0x20) {
                 _j = 0x10;
             }
             a = 0;
-            if (wp->work_priv._2940[i + 2] & 0x80) {
+            if (wp->work_priv._2940[i]._02 & 0x80) {
                 b = _j << 2;
                 _c = -4;
             } else {
@@ -217,22 +307,22 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
                 _c = 4;
             }
             for (j = 0; j < _j; j++) {
-                if (wp->work_priv._0000[wp->work_priv._2940[i] + j] != 0) {
-                    wp->work_priv._0000[wp->work_priv._2940[i] + j]--;
+                if (wp->work_priv._0000[wp->work_priv._2940[i]._00 + j] != 0) {
+                    wp->work_priv._0000[wp->work_priv._2940[i]._00 + j]--;
                     if ((a & 2) == 0) {
-                        _340_p->_00[a] = j + wp->work_priv._2940[i];
+                        _340_p->_00[a] = j + wp->work_priv._2940[i]._00;
                         _340_p->_00[a + 1] = b;
                         a += 2;
                     }
                 } else if ((a & 2) != 0) {
-                    _340_p->_00[a] = j + wp->work_priv._2940[i];
+                    _340_p->_00[a] = j + wp->work_priv._2940[i]._00;
                     _340_p->_00[a + 1] = b;
                     a += 2;
                 }
                 b += _c;
             }
             if ((a & 2) != 0) {
-                _340_p->_00[a] = j + wp->work_priv._2940[i];
+                _340_p->_00[a] = j + wp->work_priv._2940[i]._00;
                 _340_p->_00[a + 1] = b;
                 a += 2;
             }
@@ -307,7 +397,7 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
 
     u32 n_verts = 0;
     for (i = 0; i < 0x100; i += 4) {
-        if (c == 0 || (wp->work_priv._2940[i + 2] & 0x20) != 0) {
+        if (c == 0 || (wp->work_priv._2940[i]._02 & 0x20) != 0) {
             n_verts += wp->work_priv._0300[i >> 2];
         }
     }
@@ -319,20 +409,20 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
         _0340_struct* _0340_thing = &wp->work_priv._0340[idx2];
         u8* bruh = _0340_thing->_00;
         // u32 scanline_idx = wp->work_priv._2940[idx];
-        u32 flags = wp->work_priv._2940[idx + 1];
+        u32 flags = wp->work_priv._2940[idx]._01;
         u32 flags2;
 
-        if (wp->work_priv._0B40[wp->work_priv._2940[idx]]._18 & 0x20) {
-            flags2 = wp->work_priv._0B40[wp->work_priv._2940[idx]]._08[(flags >> 6) | ((flags & 1) << 2)];
+        if (wp->work_priv._0B40[wp->work_priv._2940[idx]._00]._18 & 0x20) {
+            flags2 = wp->work_priv._0B40[wp->work_priv._2940[idx]._00]._08[(flags >> 6) | ((flags & 1) << 2)];
             flags &= (u8)~0x01;
         } else {
-            flags2 = wp->work_priv._0B40[wp->work_priv._2940[idx]]._08[(flags >> 6) | ((wp->work_priv._0B40[wp->work_priv._2940[idx]]._18 >> 1) & 4)];
+            flags2 = wp->work_priv._0B40[wp->work_priv._2940[idx]._00]._08[(flags >> 6) | ((wp->work_priv._0B40[wp->work_priv._2940[idx]._00]._18 >> 1) & 4)];
         }
 
         // u32 flags3 = wp->work_priv._2940[idx + 2];
-        u32 x0 = wp->work_priv._2940[idx + 3] + 128;
-        u32 x1 = wp->work_priv._2940[idx + 3] + 136;
-        u32 color = ((wp->work_priv._2940[idx + 2] & 3) * 0x10 + 4) * 0x01000000;
+        u32 x0 = wp->work_priv._2940[idx]._03 + 128;
+        u32 x1 = wp->work_priv._2940[idx]._03 + 136;
+        u32 color = ((wp->work_priv._2940[idx]._02 & 3) * 0x10 + 4) * 0x01000000;
 
         if (c != 0) {
             if ((flags & 0x20) == 0) {
@@ -357,7 +447,7 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
         t0 = (flags2 & (u8)~0x01) * 2;
         temp = ((flags & 0x3F) * 0x20) | ((flags2 & 0x01) * 0x800);
 
-        if (wp->work_priv._2940[idx + 2] & 0x40) {
+        if (wp->work_priv._2940[idx]._02 & 0x40) {
             s1 = temp + 32;
             s1_2 = temp;
         } else {
