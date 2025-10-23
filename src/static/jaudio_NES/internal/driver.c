@@ -25,7 +25,7 @@ typedef enum {
 
 static u16 NOISE_TABLE[] = { 0, 1, 2, 4, 8, 12, 16, 20, 24, 32, 36, 40, 46, 52, 56, 53 };
 static dspch_ DSPCH[64];
-static u32 STOP_VELOCONV = 0;
+static s32 STOP_VELOCONV = 0;
 
 static u32 Env_DataH = (A_ENVMIXER << 24) | (0x00 << 16) | (0x00 << 8) | (0x00);
 static u32 Env_DataL1 = 0x58AAC4DE;
@@ -655,7 +655,6 @@ extern Acmd* Nas_DriveRsp(s16* aiBuf, s32 aiBufLen, Acmd* cmd, s32 updateIndex) 
     return cmd;
 }
 
-// TODO: this function was taken mostly from MM but needs a lot of work
 extern Acmd* Nas_SynthMain(s32 chan_id, commonch* common, driverch* driver, s16* samples, s32 samples_per_update, Acmd* cmd, s32 update_idx) {
     s32 pad1[1];
     s32 size;
@@ -663,21 +662,22 @@ extern Acmd* Nas_SynthMain(s32 chan_id, commonch* common, driverch* driver, s16*
     smzwavetable* sample;
     adpcmloop* loopInfo;
     s32 numSamplesUntilEnd;
+    s32 flags;
+    s32 skipBytes;
+    s32 dmemUncompressedAddrOffset1;
+    s32 numSamplesToLoadAdj;
+    s32 numSamplesProcessed;
+    s32 numFirstFrameSamplesToIgnore;
+    s32 numSamplesToDecode;
     s32 numSamplesInThisIteration;
     s32 sampleFinished;
     s32 loopToPoint;
-    s32 flags;
     u16 frequencyFixedPoint;
     s32 gain;
     s32 frameIndex;
-    s32 skipBytes;
-    void* combFilterState;
-    s32 numSamplesToDecode;
-    s32 numFirstFrameSamplesToIgnore;
-    u8* sampleAddr;
     u32 numSamplesToLoadFixedPoint;
-    s32 numSamplesToLoadAdj;
-    s32 numSamplesProcessed;
+    s32 numSamplesToLoad;
+    u8* sampleAddr;
     s32 sampleEndPos;
     s32 numSamplesToProcess;
     s32 dmemUncompressedAddrOffset2;
@@ -685,526 +685,557 @@ extern Acmd* Nas_SynthMain(s32 chan_id, commonch* common, driverch* driver, s16*
     s32 numSamplesInFirstFrame;
     s32 numTrailingSamplesToIgnore;
     s32 pad3[3];
+    s16 sampleDataDmemAddr;
     s32 frameSize;
     s32 numFramesToDecode;
-    s32 skipInitialSamples;
-    s32 zeroOffset;
     u8* samplesToLoadAddr;
     s32 numParts;
     s32 curPart;
     s32 sampleDataChunkAlignPad;
     s32 haasEffectDelaySide;
-    s32 numSamplesToLoadFirstPart;
-    u16 sampleDmemBeforeResampling;
+    s32 sampleDataChunkSize;
+    s32 skipInitialSamples;
+    s32 zeroOffset;
     s32 sampleAddrOffset;
     s32 combFilterDmem;
-    s32 dmemUncompressedAddrOffset1;
     channel* chan;
-    u32 numSamplesToLoad;
-    u16 combFilterSize;
-    u16 combFilterGain;
+    u32 combFilterSize;
+    u32 combFilterGain;
+    void* combFilterState;
     s16* filter;
+    s32 numSamplesToLoadFirstPart;
+    u16 sampleDmemBeforeResampling;
+    u16 something_unused_from_sm64;
+    u32 stack_chan_id;
+    u32 stack_update_idx;
+    u8* tmpSamplesToLoadAddr;
     s32 bookOffset = common->book_ofs;
     s32 finished = common->finished;
-    s32 sampleDataChunkSize;
-    s16 sampleDataDmemAddr;
 
+    something_unused_from_sm64 = 0;
     chan = &AG.channels[chan_id];
-    flags = A_CONTINUE;
     DCTouchRange(chan, sizeof(channel));
     size = SAMPLE_SIZE * samples_per_update;
+    
+    // Deviation from MM: Ensure that the wavetable isn't null
+    if (common->tuned_sample != NULL) {
+        flags = A_CONTINUE;
 
-    // Initialize the synthesis state
-    if (common->needs_init == true) {
-        flags = A_INIT;
-        driver->at_loop_point = false;
-        driver->stop_loop = false;
-        driver->sample_pos_integer_part = chan->playback_ch.start_sample_pos;
-        driver->sample_pos_fractional_part = 0;
-        driver->current_volume_left = 0;
-        driver->current_volume_right = 0;
-        driver->prev_haas_effect_left_delay_size = 0;
-        driver->prev_haas_effect_right_delay_size = 0;
-        driver->cur_reverb_vol = common->target_reverb_volume;
-        driver->num_parts = 0;
-        driver->comb_filter_needs_init = true;
-        chan->common_ch.finished = false;
-        driver->_18[7] = chan->playback_ch._80; // Never set, never used
-        finished = false;
-    }
+        // Initialize the synthesis state
+        if (common->needs_init == true) {
+            flags = A_INIT;
+            driver->at_loop_point = false;
+            driver->stop_loop = false;
+            driver->sample_pos_integer_part = chan->playback_ch.start_sample_pos;
+            driver->sample_pos_fractional_part = 0;
 
-    // Process the sample in either one or two parts
-    numParts = common->has_two_parts + 1;
-
-    // Determine number of samples to load based on samples_per_update and relative frequency
-    frequencyFixedPoint = common->frequency_fixed_point;
-    numSamplesToLoadFixedPoint = (frequencyFixedPoint * size) + driver->sample_pos_fractional_part;
-    numSamplesToLoad = numSamplesToLoadFixedPoint >> 16;
-
-    if (numSamplesToLoad == 0) {
-        skipBytes = false;
-    }
-
-    driver->sample_pos_fractional_part = numSamplesToLoadFixedPoint & 0xFFFF;
-
-    // Partially-optimized out no-op ifs required for matching. SM64 decomp
-    // makes it clear that this is how it should look.
-    if ((driver->num_parts == 1) && (numParts == 2)) {
-    } else if ((driver->num_parts == 2) && (numParts == 1)) {
-    } else {
-    }
-
-    driver->num_parts = numParts;
-
-    // deviation from MM here, no synth wave check
-
-    sample = common->tuned_sample->wavetable;
-    loopInfo = sample->loop;
-
-    if (chan->playback_ch.status != 0) {
-        driver->stop_loop = true;
-    }
-
-    if ((loopInfo->count == 2) && driver->stop_loop) {
-        sampleEndPos = loopInfo->sample_end;
-    } else {
-        sampleEndPos = loopInfo->loop_end;
-    }
-
-    sampleAddr = sample->sample;
-    numSamplesToLoadFirstPart = 0;
-
-    // If the frequency requested is more than double that of the raw sample,
-    // then the sample processing is split into two parts.
-    for (curPart = 0; curPart < numParts; curPart++) {
-        numSamplesProcessed = 0;
-        dmemUncompressedAddrOffset1 = 0;
-
-        // Adjust the number of samples to load only if there are two parts and an odd number of samples
-        if (numParts == 1) {
-            numSamplesToLoadAdj = numSamplesToLoad;
-        } else if (numSamplesToLoad & 1) {
-            // round down for the first part
-            // round up for the second part
-            numSamplesToLoadAdj = (numSamplesToLoad & ~1) + (curPart * 2);
-        } else {
-            numSamplesToLoadAdj = numSamplesToLoad;
-        }
-
-        // Load the ADPCM codeBook
-        if ((sample->codec == CODEC_ADPCM) || (sample->codec == CODEC_SMALL_ADPCM)) {
-            if (AG.adpcm_code_book != sample->book->codebook) {
-                u32 numEntries;
-
-                switch (bookOffset) {
-                    case 1:
-                        // AG.adpcm_code_book = &gInvalidAdpcmCodeBook[1];
-                        break;
-
-                    case 2:
-                    case 3:
-                    default:
-                        AG.adpcm_code_book = sample->book->codebook;
-                        break;
-                }
-
-                numEntries = SAMPLES_PER_FRAME * sample->book->order * sample->book->n_predictors;
-                aLoadADPCM(cmd++, numEntries, AG.adpcm_code_book);
-            }
-        }
-
-        // Continue processing samples until the number of samples needed to load is reached
-        while (numSamplesProcessed != numSamplesToLoadAdj) {
-            sampleFinished = false;
-            loopToPoint = false;
-            dmemUncompressedAddrOffset2 = 0;
-
-            numFirstFrameSamplesToIgnore = driver->sample_pos_integer_part & 0xF;
-            numSamplesUntilEnd = sampleEndPos - driver->sample_pos_integer_part;
-
-            // Calculate number of samples to process this loop
-            numSamplesToProcess = numSamplesToLoadAdj - numSamplesProcessed;
-
-            if ((numFirstFrameSamplesToIgnore == 0) && !driver->at_loop_point) {
-                numFirstFrameSamplesToIgnore = SAMPLES_PER_FRAME;
-            }
-            numSamplesInFirstFrame = SAMPLES_PER_FRAME - numFirstFrameSamplesToIgnore;
-
-            // Determine the number of samples to decode based on whether the end will be reached or not.
-            if (numSamplesToProcess < numSamplesUntilEnd) {
-                // The end will not be reached.
-                numFramesToDecode =
-                    (s32)(numSamplesToProcess - numSamplesInFirstFrame + SAMPLES_PER_FRAME - 1) / SAMPLES_PER_FRAME;
-                numSamplesToDecode = numFramesToDecode * SAMPLES_PER_FRAME;
-                numTrailingSamplesToIgnore = numSamplesInFirstFrame + numSamplesToDecode - numSamplesToProcess;
+            // deviation from MM
+            if (chan->playback_ch.adsr_envp.state.flags.unused == TRUE) {
+                // previously unused ADSR state bit seems to be used for preserving volume
+                driver->current_volume_left = common->target_volume_left << 4;
+                driver->current_volume_right = common->target_volume_right << 4;
             } else {
-                // The end will be reached.
-                numSamplesToDecode = numSamplesUntilEnd - numSamplesInFirstFrame;
-                numTrailingSamplesToIgnore = 0;
-                if (numSamplesToDecode <= 0) {
-                    numSamplesToDecode = 0;
-                    numSamplesInFirstFrame = numSamplesUntilEnd;
-                }
-                numFramesToDecode = (numSamplesToDecode + SAMPLES_PER_FRAME - 1) / SAMPLES_PER_FRAME;
-                if (loopInfo->count != 0) {
-                    if ((loopInfo->count == 2) && driver->stop_loop) {
-                        sampleFinished = true;
-                    } else {
-                        // Loop around and restart
-                        loopToPoint = true;
+                driver->current_volume_left = 0;
+                driver->current_volume_right = 0;
+            }
+
+            driver->prev_haas_effect_left_delay_size = 0;
+            driver->prev_haas_effect_right_delay_size = 0;
+            driver->cur_reverb_vol = common->target_reverb_volume;
+            driver->num_parts = 0;
+            driver->comb_filter_needs_init = true;
+            chan->common_ch.finished = false;
+            driver->vel_conv_table_idx = chan->playback_ch.vel_conv_table_idx;
+            finished = false;
+        }
+
+        // Process the sample in either one or two parts
+        numParts = common->has_two_parts + 1;
+
+        // Determine number of samples to load based on samples_per_update and relative frequency
+        frequencyFixedPoint = common->frequency_fixed_point;
+        numSamplesToLoadFixedPoint = (frequencyFixedPoint * samples_per_update * SAMPLE_SIZE) + driver->sample_pos_fractional_part;
+        numSamplesToLoad = (u16)(numSamplesToLoadFixedPoint >> 16);
+
+        if (numSamplesToLoad == 0) {
+            skipBytes = false;
+        }
+
+        driver->sample_pos_fractional_part = numSamplesToLoadFixedPoint & 0xFFFF;
+
+        // Partially-optimized out no-op ifs required for matching. SM64 decomp
+        // makes it clear that this is how it should look.
+        if (((driver->num_parts == 1) && (numParts == 2))) {
+        } else if (((driver->num_parts == 2) && (numParts == 1))) {
+        } else {
+            something_unused_from_sm64 = 0;
+        }
+        
+        driver->num_parts = numParts;
+        
+        // deviation from MM here, no synth wave check
+        
+        sample = common->tuned_sample->wavetable;
+        loopInfo = sample->loop;
+
+        if (chan->playback_ch.status != 0) {
+            driver->stop_loop = true;
+        }
+
+        if ((loopInfo->count == 2) && driver->stop_loop) {
+            sampleEndPos = loopInfo->sample_end;
+        } else {
+            sampleEndPos = loopInfo->loop_end;
+        }
+
+        stack_chan_id = chan_id;
+        stack_update_idx = update_idx;
+        sampleAddr = sample->sample;
+        numSamplesToLoadFirstPart = 0;
+
+        // If the frequency requested is more than double that of the raw sample,
+        // then the sample processing is split into two parts.
+        for (curPart = 0; curPart < numParts; curPart++) {
+            numSamplesProcessed = 0;
+            dmemUncompressedAddrOffset1 = 0;
+
+            // Adjust the number of samples to load only if there are two parts and an odd number of samples
+            if (numParts == 1) {
+                numSamplesToLoadAdj = numSamplesToLoad;
+            } else if ((s32)numSamplesToLoad & 1) {
+                // round down for the first part
+                // round up for the second part
+                numSamplesToLoadAdj = (numSamplesToLoad & ~1) + (curPart * 2);
+            } else {
+                numSamplesToLoadAdj = numSamplesToLoad;
+            }
+
+            // Load the ADPCM codeBook
+            if ((sample->codec == CODEC_ADPCM) || (sample->codec == CODEC_SMALL_ADPCM)) {
+                if (AG.adpcm_code_book != sample->book->codebook) {
+                    u32 numEntries;
+
+                    switch (bookOffset) {
+                        case 1:
+                            // AG.adpcm_code_book = &gInvalidAdpcmCodeBook[1];
+                            // break;
+
+                        case 2:
+                        case 3:
+                        default:
+                            AG.adpcm_code_book = sample->book->codebook;
+                            break;
                     }
-                } else {
-                    sampleFinished = true;
+
+                    numEntries = SAMPLE_SIZE * sample->book->order * sample->book->n_predictors;
+                    numEntries *= 8; // deviation from MM: multiply numEntries by 8
+                    if (numEntries != 0) {
+                        aLoadADPCM(cmd++, numEntries, AG.adpcm_code_book);
+                    }
                 }
             }
 
-            // Set parameters based on compression type
-            switch (sample->codec) {
-                case CODEC_ADPCM:
-                    // 16 2-byte samples (32 bytes) compressed into 4-bit samples (8 bytes) + 1 header byte
-                    frameSize = 9;
-                    skipInitialSamples = SAMPLES_PER_FRAME;
-                    zeroOffset = 0;
-                    break;
+            // Continue processing samples until the number of samples needed to load is reached
+            while (numSamplesProcessed != numSamplesToLoadAdj) {
+                sampleFinished = false;
+                loopToPoint = false;
+                dmemUncompressedAddrOffset2 = 0;
 
-                case CODEC_SMALL_ADPCM:
-                    // 16 2-byte samples (32 bytes) compressed into 2-bit samples (4 bytes) + 1 header byte
-                    frameSize = 5;
-                    skipInitialSamples = SAMPLES_PER_FRAME;
-                    zeroOffset = 0;
-                    break;
+                numFirstFrameSamplesToIgnore = driver->sample_pos_integer_part & 0xF;
+                numSamplesUntilEnd = sampleEndPos - driver->sample_pos_integer_part;
 
-                case CODEC_UNK7:
-                    // 2 2-byte samples (4 bytes) processed without decompression
-                    frameSize = 4;
-                    skipInitialSamples = SAMPLES_PER_FRAME;
-                    zeroOffset = 0;
-                    break;
+                // Calculate number of samples to process this loop
+                numSamplesToProcess = numSamplesToLoadAdj - numSamplesProcessed;
 
-                case CODEC_S8:
-                    // 16 2-byte samples (32 bytes) compressed into 8-bit samples (16 bytes)
-                    frameSize = 16;
-                    skipInitialSamples = SAMPLES_PER_FRAME;
-                    zeroOffset = 0;
-                    break;
+                if ((numFirstFrameSamplesToIgnore == 0) && !driver->at_loop_point) {
+                    numFirstFrameSamplesToIgnore = SAMPLES_PER_FRAME;
+                }
+                numSamplesInFirstFrame = SAMPLES_PER_FRAME - numFirstFrameSamplesToIgnore;
 
-                case CODEC_REVERB:
-                    reverbAddrSrc = (void*)0xFFFFFFFF;
-                    if (NA_SOUND_CALLBACK != NULL) {
-                        reverbAddrSrc = NA_SOUND_CALLBACK(sample, numSamplesToLoadAdj, flags, chan_id);
+                // Determine the number of samples to decode based on whether the end will be reached or not.
+                if (numSamplesUntilEnd > numSamplesToProcess) {
+                    // The end will not be reached.
+                    numFramesToDecode =
+                        (s32)(numSamplesToProcess + SAMPLES_PER_FRAME - 1 - numSamplesInFirstFrame) / SAMPLES_PER_FRAME;
+                    numSamplesToDecode = numFramesToDecode * SAMPLES_PER_FRAME;
+                    numTrailingSamplesToIgnore = numSamplesInFirstFrame + numSamplesToDecode - numSamplesToProcess;
+                } else {
+                    // The end will be reached.
+                    numSamplesToDecode = numSamplesUntilEnd - numSamplesInFirstFrame;
+                    if (numSamplesToDecode <= 0) {
+                        numSamplesToDecode = 0;
+                        numSamplesInFirstFrame = numSamplesUntilEnd;
                     }
-
-                    if (reverbAddrSrc == (void*)0xFFFFFFFF) {
-                        sampleFinished = true;
-                    } else if (reverbAddrSrc == NULL) {
-                        return cmd;
+                    numTrailingSamplesToIgnore = 0;
+                    numFramesToDecode = (numSamplesToDecode + SAMPLES_PER_FRAME - 1) / SAMPLES_PER_FRAME;
+                    if (loopInfo->count != 0) {
+                        if ((loopInfo->count == 2) && driver->stop_loop) {
+                            sampleFinished = true;
+                        } else {
+                            // Loop around and restart
+                            loopToPoint = true;
+                        }
                     } else {
-                        Nas_LoadBuffer2(cmd++, DMEM_UNCOMPRESSED_NOTE,
-                                                (numSamplesToLoadAdj + SAMPLES_PER_FRAME) * SAMPLE_SIZE,
-                                                (s32)reverbAddrSrc);
-                        flags = A_CONTINUE;
+                        sampleFinished = true;
+                    }
+                }
+
+                // Set parameters based on compression type
+                switch (sample->codec) {
+                    case CODEC_ADPCM:
+                        // 16 2-byte samples (32 bytes) compressed into 4-bit samples (8 bytes) + 1 header byte
+                        frameSize = 9;
+                        skipInitialSamples = SAMPLES_PER_FRAME;
+                        zeroOffset = 0;
+                        break;
+
+                    case CODEC_SMALL_ADPCM:
+                        // 16 2-byte samples (32 bytes) compressed into 2-bit samples (4 bytes) + 1 header byte
+                        frameSize = 5;
+                        skipInitialSamples = SAMPLES_PER_FRAME;
+                        zeroOffset = 0;
+                        break;
+
+                    case CODEC_UNK7:
+                        // 2 2-byte samples (4 bytes) processed without decompression
+                        frameSize = 4;
+                        skipInitialSamples = SAMPLES_PER_FRAME;
+                        zeroOffset = 0;
+                        break;
+
+                    case CODEC_S8:
+                        // 16 2-byte samples (32 bytes) compressed into 8-bit samples (16 bytes)
+                        frameSize = 16;
+                        skipInitialSamples = SAMPLES_PER_FRAME;
+                        zeroOffset = 0;
+                        break;
+
+                    case CODEC_REVERB:
+                        reverbAddrSrc = (void*)0xFFFFFFFF;
+                        if (NA_SOUND_CALLBACK != NULL) {
+                            // ???
+                            reverbAddrSrc = (void*)((u32)NA_SOUND_CALLBACK(sample, numSamplesToLoadAdj, flags, chan_id) & 0xFF);
+                        }
+
+                        if ((s32)reverbAddrSrc == 0xFFFFFFFF) {
+                            sampleFinished = true;
+                        } else if ((s32)reverbAddrSrc == 0) {
+                            return cmd;
+                        } else {
+                            Nas_LoadBuffer2(cmd++, DMEM_UNCOMPRESSED_NOTE,
+                                numSamplesToLoadAdj * SAMPLE_SIZE + SAMPLES_PER_FRAME * SAMPLE_SIZE,
+                                (s32)reverbAddrSrc);
+                            // deviation from MM:
+                            goto codec_continue_and_skip;
+                            // flags = A_CONTINUE;
+                            // skipBytes = 0;
+                            // numSamplesProcessed = numSamplesToLoadAdj;
+                            // dmemUncompressedAddrOffset1 = numSamplesToLoadAdj;
+                        }
+                        goto skip;
+
+                    case CODEC_S16_INMEMORY:
+                    case CODEC_UNK6:
+                        Nas_ClearBuffer(cmd++, DMEM_UNCOMPRESSED_NOTE,
+                            numSamplesToLoadAdj * SAMPLE_SIZE + SAMPLES_PER_FRAME * SAMPLE_SIZE);
+codec_continue_and_skip:
                         skipBytes = 0;
+                        flags = A_CONTINUE;
                         numSamplesProcessed = numSamplesToLoadAdj;
                         dmemUncompressedAddrOffset1 = numSamplesToLoadAdj;
-                    }
-                    goto skip;
+                        goto skip;
 
-                case CODEC_S16_INMEMORY:
-                case CODEC_UNK6:
-                    Nas_ClearBuffer(cmd++, DMEM_UNCOMPRESSED_NOTE,
-                                            (numSamplesToLoadAdj + SAMPLES_PER_FRAME) * SAMPLE_SIZE);
-                    flags = A_CONTINUE;
-                    skipBytes = 0;
-                    numSamplesProcessed = numSamplesToLoadAdj;
-                    dmemUncompressedAddrOffset1 = numSamplesToLoadAdj;
-                    goto skip;
-
-                case CODEC_S16:
-                    Nas_ClearBuffer(cmd++, DMEM_UNCOMPRESSED_NOTE,
-                                            (numSamplesToLoadAdj + SAMPLES_PER_FRAME) * SAMPLE_SIZE);
-                    flags = A_CONTINUE;
-                    skipBytes = 0;
-                    numSamplesProcessed = numSamplesToLoadAdj;
-                    dmemUncompressedAddrOffset1 = numSamplesToLoadAdj;
-                    goto skip;
-
-                default:
-                    break;
-            }
-
-            // Move the compressed raw sample data from ram into the rsp (DMEM)
-            if (numFramesToDecode != 0) {
-                // Get the offset from the start of the sample to where the sample is currently playing from
-                frameIndex = (driver->sample_pos_integer_part + skipInitialSamples - numFirstFrameSamplesToIgnore) /
-                                SAMPLES_PER_FRAME;
-                sampleAddrOffset = frameIndex * frameSize;
-
-                // Get the ram address of the requested sample chunk
-                if (sample->medium == MEDIUM_RAM) {
-                    // Sample is already loaded into ram
-                    samplesToLoadAddr = sampleAddr + (zeroOffset + sampleAddrOffset);
-                } else if (AG._2A14) { // always false
-                    return cmd;
-                } else if (sample->medium == MEDIUM_DISK) {
-                    // This medium is unsupported so terminate processing this chan
-                    return cmd;
-                } else {
-                    // This medium is not in ram, so dma the requested sample into ram
-                    samplesToLoadAddr = (u8*)Nas_WaveDmaCallBack((u32)(sampleAddr + (zeroOffset + sampleAddrOffset)),
-                        ALIGN_PREV((numFramesToDecode * frameSize) + SAMPLES_PER_FRAME, 16), flags,
-                        &driver->sample_dma_idx, sample->medium);
-                }
-
-                if (samplesToLoadAddr == NULL) {
-                    // The ram address was unsuccessfully allocated
-                    return cmd;
-                }
-
-                // Move the raw sample chunk from ram to the rsp
-                // DMEM at the addresses before DMEM_COMPRESSED_ADPCM_DATA
-                sampleDataChunkAlignPad = (u32)samplesToLoadAddr & 0xF;
-                sampleDataChunkSize = ALIGN_PREV((numFramesToDecode * frameSize) + SAMPLES_PER_FRAME, 16);
-                sampleDataDmemAddr = DMEM_COMPRESSED_ADPCM_DATA - sampleDataChunkSize;
-                aLoadBuffer2(cmd++, samplesToLoadAddr - sampleDataChunkAlignPad, sampleDataDmemAddr,
-                            sampleDataChunkSize);
-            } else {
-                numSamplesToDecode = 0;
-                sampleDataChunkAlignPad = 0;
-            }
-
-            if (driver->at_loop_point) {
-                aSetLoop(cmd++, sample->loop->predictor_state);
-                flags = A_LOOP;
-                driver->at_loop_point = false;
-            }
-
-            numSamplesInThisIteration = numSamplesToDecode + numSamplesInFirstFrame - numTrailingSamplesToIgnore;
-
-            if (numSamplesProcessed == 0) {
-                //! FAKE:
-                if (1) {}
-                skipBytes = numFirstFrameSamplesToIgnore * SAMPLE_SIZE;
-            } else {
-                dmemUncompressedAddrOffset2 = ALIGN_PREV(dmemUncompressedAddrOffset1 + 8 * SAMPLE_SIZE, 16);
-            }
-
-            // Decompress the raw sample chunks in the rsp
-            // Goes from adpcm (compressed) sample data to pcm (uncompressed) sample data
-            switch (sample->codec) {
-                case CODEC_ADPCM:
-                    sampleDataChunkSize = ALIGN_PREV((numFramesToDecode * frameSize) + SAMPLES_PER_FRAME, 16);
-                    sampleDataDmemAddr = DMEM_COMPRESSED_ADPCM_DATA - sampleDataChunkSize;
-                    aSetBuffer(cmd++, 0, sampleDataDmemAddr + sampleDataChunkAlignPad,
-                                DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset2,
-                                numSamplesToDecode * SAMPLE_SIZE);
-                    aADPCMdec(cmd++, flags, driver->synth_params->adpcm_state);
-                    break;
-
-                case CODEC_SMALL_ADPCM:
-                    sampleDataChunkSize = ALIGN_PREV((numFramesToDecode * frameSize) + SAMPLES_PER_FRAME, 16);
-                    sampleDataDmemAddr = DMEM_COMPRESSED_ADPCM_DATA - sampleDataChunkSize;
-                    aSetBuffer(cmd++, 0, sampleDataDmemAddr + sampleDataChunkAlignPad,
-                                DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset2,
-                                numSamplesToDecode * SAMPLE_SIZE);
-                    aADPCMdec(cmd++, flags | A_ADPCM_SHORT, driver->synth_params->adpcm_state);
-                    break;
-
-                case CODEC_S8:
-                    sampleDataChunkSize = ALIGN_PREV((numFramesToDecode * frameSize) + SAMPLES_PER_FRAME, 16);
-                    sampleDataDmemAddr = DMEM_COMPRESSED_ADPCM_DATA - sampleDataChunkSize;
-                    Nas_SetBuffer(cmd++, 0, sampleDataDmemAddr + sampleDataChunkAlignPad,
-                                            DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset2,
-                                            numSamplesToDecode * SAMPLE_SIZE);
-                    Nas_PCM8dec(cmd++, flags, (s32)driver->synth_params->adpcm_state);
-                    break;
-
-                case CODEC_UNK7:
-                default:
-                    // No decompression
-                    break;
-            }
-
-            if (numSamplesProcessed != 0) {
-                aDMEMMove(cmd++,
-                            DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset2 +
-                                (numFirstFrameSamplesToIgnore * SAMPLE_SIZE),
-                            DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset1,
-                            numSamplesInThisIteration * SAMPLE_SIZE);
-            }
-
-            numSamplesProcessed += numSamplesInThisIteration;
-
-            switch (flags) {
-                case A_INIT:
-                    skipBytes = SAMPLES_PER_FRAME * SAMPLE_SIZE;
-                    dmemUncompressedAddrOffset1 = (numSamplesToDecode + SAMPLES_PER_FRAME) * SAMPLE_SIZE;
-                    break;
-
-                case A_LOOP:
-                    dmemUncompressedAddrOffset1 =
-                        numSamplesInThisIteration * SAMPLE_SIZE + dmemUncompressedAddrOffset1;
-                    break;
-
-                default:
-                    if (dmemUncompressedAddrOffset1 != 0) {
-                        dmemUncompressedAddrOffset1 =
-                            numSamplesInThisIteration * SAMPLE_SIZE + dmemUncompressedAddrOffset1;
-                    } else {
-                        dmemUncompressedAddrOffset1 =
-                            (numFirstFrameSamplesToIgnore + numSamplesInThisIteration) * SAMPLE_SIZE;
-                    }
-                    break;
-            }
-
-            flags = A_CONTINUE;
-
-        skip:
-
-            // Update what to do with the samples next
-            if (sampleFinished) {
-                if ((numSamplesToLoadAdj - numSamplesProcessed) != 0) {
-                    Nas_ClearBuffer(cmd++, DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset1,
-                                            (numSamplesToLoadAdj - numSamplesProcessed) * SAMPLE_SIZE);
-                }
-                finished = true;
-                chan->common_ch.finished = true;
-                __Nas_WaveTerminateProcess(update_idx, chan_id);
-                break; // break out of the for-loop
-            } else if (loopToPoint) {
-                driver->at_loop_point = true;
-                driver->sample_pos_integer_part = loopInfo->loop_start;
-            } else {
-                driver->sample_pos_integer_part += numSamplesToProcess;
-            }
-        }
-
-        switch (numParts) {
-            case 1:
-                sampleDmemBeforeResampling = DMEM_UNCOMPRESSED_NOTE + skipBytes;
-                break;
-
-            case 2:
-                switch (curPart) {
-                    case 0:
-                        Nas_HalfCut(cmd++, DMEM_UNCOMPRESSED_NOTE + skipBytes,
-                                            DMEM_TEMP + (SAMPLES_PER_FRAME * SAMPLE_SIZE),
-                                            ALIGN_PREV(numSamplesToLoadAdj / 2, 8));
-                        numSamplesToLoadFirstPart = numSamplesToLoadAdj;
-                        sampleDmemBeforeResampling = DMEM_TEMP + (SAMPLES_PER_FRAME * SAMPLE_SIZE);
-                        if (finished) {
-                            Nas_ClearBuffer(cmd++, sampleDmemBeforeResampling + numSamplesToLoadFirstPart,
-                                                    numSamplesToLoadAdj + SAMPLES_PER_FRAME);
-                        }
-                        break;
-
-                    case 1:
-                        Nas_HalfCut(cmd++, DMEM_UNCOMPRESSED_NOTE + skipBytes,
-                                            DMEM_TEMP + (SAMPLES_PER_FRAME * SAMPLE_SIZE) + numSamplesToLoadFirstPart,
-                                            ALIGN_PREV(numSamplesToLoadAdj / 2, 8));
-                        break;
+                    case CODEC_S16:
+                        Nas_ClearBuffer(cmd++, DMEM_UNCOMPRESSED_NOTE,
+                            numSamplesToLoadAdj * SAMPLE_SIZE + SAMPLES_PER_FRAME * SAMPLE_SIZE);
+                        skipBytes = 0;
+                        flags = A_CONTINUE;
+                        numSamplesProcessed = numSamplesToLoadAdj;
+                        dmemUncompressedAddrOffset1 = numSamplesToLoadAdj;
+                        goto skip;
 
                     default:
                         break;
                 }
+
+                sampleDataChunkSize = ALIGN_PREV((numFramesToDecode * frameSize) + 31, 16);
+                sampleDataDmemAddr = DMEM_COMPRESSED_ADPCM_DATA - sampleDataChunkSize;
+
+                // Move the compressed raw sample data from ram into the rsp (DMEM)
+                if (numFramesToDecode != 0) {
+                    // Get the offset from the start of the sample to where the sample is currently playing from
+                    frameIndex = (skipInitialSamples + driver->sample_pos_integer_part  - numFirstFrameSamplesToIgnore) /
+                                    SAMPLES_PER_FRAME;
+                    sampleAddrOffset = frameIndex * frameSize;
+                    tmpSamplesToLoadAddr = sampleAddr + sampleAddrOffset;
+                    tmpSamplesToLoadAddr += zeroOffset;
+
+                    // Get the ram address of the requested sample chunk
+                    if (sample->medium == MEDIUM_RAM) {
+                        // Sample is already loaded into ram
+                        if (sample->bit31 == TRUE) {
+                            samplesToLoadAddr = (u8*)(*NA_SYNC_PROC)(tmpSamplesToLoadAddr, numFramesToDecode * frameSize);
+                        } else {
+                            samplesToLoadAddr = tmpSamplesToLoadAddr;
+                        }
+                    } else if (AG._2A14) { // always false
+                        return cmd;
+                    } else if (sample->medium == MEDIUM_DISK) {
+                        // This medium is unsupported so terminate processing this chan
+                        return cmd;
+                    } else {
+                        // This medium is not in ram, so dma the requested sample into ram
+                        samplesToLoadAddr = (u8*)Nas_WaveDmaCallBack((u32)(tmpSamplesToLoadAddr),
+                        sampleDataChunkSize, flags,
+                            &driver->sample_dma_idx, sample->medium);
+                    }
+
+                    if (samplesToLoadAddr == NULL) {
+                        // The ram address was unsuccessfully allocated
+                        return cmd;
+                    }
+
+                    // Move the raw sample chunk from ram to the rsp
+                    // DMEM at the addresses before DMEM_COMPRESSED_ADPCM_DATA
+                    sampleDataChunkAlignPad = (u32)samplesToLoadAddr & 0xF;
+                    aLoadCache(cmd++, samplesToLoadAddr - sampleDataChunkAlignPad, sampleDataDmemAddr,
+                                sampleDataChunkSize);
+                } else {
+                    numSamplesToDecode = 0;
+                    sampleDataChunkAlignPad = 0;
+                }
+
+                if (driver->at_loop_point) {
+                    aSetLoop(cmd++, sample->loop->predictor_state);
+                    flags = A_LOOP;
+                    driver->at_loop_point = false;
+                }
+
+                numSamplesInThisIteration = numSamplesToDecode + numSamplesInFirstFrame - numTrailingSamplesToIgnore;
+
+                if (numSamplesProcessed == 0) {
+                    //! FAKE:
+                    if (1) {}
+                    skipBytes = numFirstFrameSamplesToIgnore * SAMPLE_SIZE;
+                } else {
+                    dmemUncompressedAddrOffset2 = ALIGN_NEXT(dmemUncompressedAddrOffset1 + 8 * SAMPLE_SIZE, 16);
+                }
+
+                // Decompress the raw sample chunks in the rsp
+                // Goes from adpcm (compressed) sample data to pcm (uncompressed) sample data
+                switch (sample->codec) {
+                    case CODEC_ADPCM:
+                        aSetBuffer(cmd++, 0, sampleDataDmemAddr + sampleDataChunkAlignPad,
+                                    DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset2,
+                                    numSamplesToDecode * SAMPLE_SIZE);
+                        aADPCMdec(cmd++, flags, driver->synth_params->adpcm_state);
+                        break;
+
+                    case CODEC_SMALL_ADPCM:
+                        aSetBuffer(cmd++, 0, sampleDataDmemAddr + sampleDataChunkAlignPad,
+                                    DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset2,
+                                    numSamplesToDecode * SAMPLE_SIZE);
+                        aADPCMdec(cmd++, flags | A_ADPCM_SHORT, driver->synth_params->adpcm_state);
+                        break;
+
+                    case CODEC_S8:
+                        Nas_SetBuffer(cmd++, 0, sampleDataDmemAddr + sampleDataChunkAlignPad,
+                                                DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset2,
+                                                numSamplesToDecode * SAMPLE_SIZE);
+                        Nas_PCM8dec(cmd++, flags, (s32)driver->synth_params->adpcm_state);
+                        break;
+
+                    case CODEC_UNK7:
+                    default:
+                        // No decompression
+                        break;
+                }
+
+                if (numSamplesProcessed != 0) {
+                    aDMEMMove(cmd++,
+                                DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset2 +
+                                    (numFirstFrameSamplesToIgnore * SAMPLE_SIZE),
+                                DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset1,
+                                numSamplesInThisIteration * SAMPLE_SIZE);
+                }
+
+                numSamplesProcessed += numSamplesInThisIteration;
+
+                switch (flags) {
+                    case A_INIT:
+                        skipBytes = SAMPLES_PER_FRAME * SAMPLE_SIZE;
+                        dmemUncompressedAddrOffset1 = numSamplesToDecode * SAMPLE_SIZE + SAMPLES_PER_FRAME * SAMPLE_SIZE;
+                        break;
+
+                    case A_LOOP:
+                        dmemUncompressedAddrOffset1 =
+                            numSamplesInThisIteration * SAMPLE_SIZE + dmemUncompressedAddrOffset1;
+                        break;
+
+                    default:
+                        if (dmemUncompressedAddrOffset1 != 0) {
+                            dmemUncompressedAddrOffset1 =
+                                numSamplesInThisIteration * SAMPLE_SIZE + dmemUncompressedAddrOffset1;
+                        } else {
+                            dmemUncompressedAddrOffset1 =
+                                (numFirstFrameSamplesToIgnore + numSamplesInThisIteration) * SAMPLE_SIZE;
+                        }
+                        break;
+                }
+
+                flags = A_CONTINUE;
+
+            skip:
+
+                // Update what to do with the samples next
+                if (sampleFinished) {
+                    s32 dmemClearCount = numSamplesToLoadAdj - numSamplesProcessed;
+                    if (dmemClearCount != 0) {
+                        Nas_ClearBuffer(cmd++, DMEM_UNCOMPRESSED_NOTE + dmemUncompressedAddrOffset1,
+                            dmemClearCount * SAMPLE_SIZE);
+                    }
+                    finished = true;
+                    chan->common_ch.finished = true;
+                    __Nas_WaveTerminateProcess(stack_update_idx, stack_chan_id);
+                    break; // break out of the for-loop
+                } else if (loopToPoint) {
+                    driver->at_loop_point = true;
+                    driver->sample_pos_integer_part = loopInfo->loop_start;
+                } else {
+                    driver->sample_pos_integer_part += numSamplesToProcess;
+                }
+            }
+
+            switch (numParts) {
+                case 1:
+                    sampleDmemBeforeResampling = DMEM_UNCOMPRESSED_NOTE + skipBytes;
+                    break;
+
+                case 2:
+                    switch (curPart) {
+                        case 0:
+                            Nas_HalfCut(cmd++, DMEM_UNCOMPRESSED_NOTE + skipBytes,
+                                                DMEM_TEMP + (SAMPLES_PER_FRAME * SAMPLE_SIZE),
+                                                ALIGN_NEXT(numSamplesToLoadAdj / 2, 8));
+                            numSamplesToLoadFirstPart = numSamplesToLoadAdj;
+                            sampleDmemBeforeResampling = DMEM_TEMP + (SAMPLES_PER_FRAME * SAMPLE_SIZE);
+                            if (finished) {
+                                Nas_ClearBuffer(cmd++, sampleDmemBeforeResampling + numSamplesToLoadFirstPart,
+                                                        numSamplesToLoadAdj + SAMPLES_PER_FRAME);
+                            }
+                            break;
+
+                        case 1:
+                            Nas_HalfCut(cmd++, DMEM_UNCOMPRESSED_NOTE + skipBytes,
+                                                DMEM_TEMP + (SAMPLES_PER_FRAME * SAMPLE_SIZE) + numSamplesToLoadFirstPart,
+                                                ALIGN_NEXT(numSamplesToLoadAdj / 2, 8));
+                            break;
+
+                        default:
+                            break;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+            if (finished) {
                 break;
-
-            default:
-                break;
+            }
         }
-        if (finished) {
-            break;
+
+        // Update the flags for the signal processing below
+        flags = A_CONTINUE;
+        if (common->needs_init == true) {
+            flags = A_INIT;
+            common->needs_init = false;
         }
-    }
 
-    // Update the flags for the signal processing below
-    flags = A_CONTINUE;
-    if (common->needs_init == true) {
-        common->needs_init = false;
-        flags = A_INIT;
-    }
+        // Resample the decompressed mono-signal to the correct pitch
+        cmd = Nas_Synth_Resample(cmd, driver, size, frequencyFixedPoint,
+                                    sampleDmemBeforeResampling, flags | something_unused_from_sm64);
 
-    // Resample the decompressed mono-signal to the correct pitch
-    cmd = Nas_Synth_Resample(cmd, driver, size, frequencyFixedPoint,
-                                   sampleDmemBeforeResampling, flags);
-
-    // Not present in MM
-    if (bookOffset != 0) {
-        Nas_NoiseFilter(cmd++, DMEM_TEMP, samples_per_update, NOISE_TABLE[bookOffset >> 4], NOISE_TABLE[bookOffset & 0xF]);
-    }
-
-    // Apply the gain to the mono-signal to adjust the volume
-    gain = common->gain;
-    if (gain != 0) {
-        // A gain of 0x10 (a UQ4.4 number) is equivalent to 1.0 and represents no volume change
-        if (gain < 0x10) {
-            gain = 0x10;
+        // Not present in MM
+        if (bookOffset != 0) {
+            Nas_NoiseFilter(cmd++, DMEM_TEMP, samples_per_update, NOISE_TABLE[(bookOffset >> 4) & 0xF], NOISE_TABLE[bookOffset & 0xF]);
         }
-        Nas_DistFilter(cmd++, gain, DMEM_TEMP, 0, size * SAMPLE_SIZE);
-    }
 
-    // Not in MM
-    if (!STOP_VELOCONV) {
-        // Load the velocity convolution table into DMEM_0x800
-        aLoadBuffer2(cmd++, (u32)VELOCONV_TABLE[bookOffset], 0x800, sizeof(VELOCONV_TABLE[bookOffset]));
-    }
+        // Apply the gain to the mono-signal to adjust the volume
+        gain = common->gain;
+        if (gain != 0) {
+            // A gain of 0x10 (a UQ4.4 number) is equivalent to 1.0 and represents no volume change
+            if (gain < 0x10) {
+                gain = 0x10;
+            }
+            Nas_DistFilter(cmd++, gain, DMEM_TEMP, 0, size + SAMPLES_PER_FRAME * SAMPLE_SIZE);
+        }
 
-    // Apply the filter to the mono-signal
-    filter = common->filter;
-    if (filter != 0) {
-        Nas_FirLoadTable(cmd++, size, filter);
-        Nas_FirFilter(cmd++, flags, DMEM_TEMP, driver->synth_params->filter_state);
-    }
+        // Not in MM
+        if (!STOP_VELOCONV) {
+            // Load the velocity convolution table into DMEM_0x800
+            s32 vel_conv_idx = driver->vel_conv_table_idx;
+            aLoadBuffer2(cmd++, (u32)VELOCONV_TABLE[vel_conv_idx], 0x800, sizeof(VELOCONV_TABLE[vel_conv_idx]));
+            aUnkCmd3(cmd++, DMEM_TEMP, 0x800, samples_per_update);
+        }
 
-    // Apply the comb filter to the mono-signal by taking the signal with a small temporal offset,
-    // and adding it back to itself
-    combFilterSize = common->comb_filter_size;
-    combFilterGain = common->comb_filter_gain;
-    combFilterState = driver->synth_params->comb_filter_state;
-    if ((combFilterSize != 0) && (common->comb_filter_gain != 0)) {
-        Nas_DMEMMove(cmd++, DMEM_TEMP, DMEM_COMB_TEMP, size);
-        combFilterDmem = DMEM_COMB_TEMP - combFilterSize;
-        if (driver->comb_filter_needs_init) {
-            Nas_ClearBuffer(cmd++, combFilterDmem, combFilterSize);
-            driver->comb_filter_needs_init = false;
+        // Apply the filter to the mono-signal
+        filter = common->filter;
+        if (filter != 0) {
+            Nas_FirLoadTable(cmd++, size, filter);
+            Nas_FirFilter(cmd++, flags, DMEM_TEMP, driver->synth_params->filter_state);
+        }
+
+        // Apply the comb filter to the mono-signal by taking the signal with a small temporal offset,
+        // and adding it back to itself
+        combFilterSize = common->comb_filter_size;
+        combFilterGain = common->comb_filter_gain;
+        combFilterState = driver->synth_params->comb_filter_state;
+        if ((common->comb_filter_size != 0) && (common->comb_filter_gain != 0)) {
+            Nas_DMEMMove(cmd++, DMEM_TEMP, DMEM_COMB_TEMP, size);
+            // combFilterDmem = DMEM_COMB_TEMP - combFilterSize;
+            if (driver->comb_filter_needs_init) {
+                Nas_ClearBuffer(cmd++, DMEM_COMB_TEMP - combFilterSize, combFilterSize);
+                driver->comb_filter_needs_init = false;
+            } else {
+                Nas_LoadBuffer2(cmd++, DMEM_COMB_TEMP - combFilterSize, combFilterSize, (s32)combFilterState);
+            }
+            Nas_SaveBuffer2(cmd++, DMEM_TEMP - combFilterSize + size, combFilterSize, (s32)combFilterState);
+            Nas_Mix(cmd++, size >> 4, combFilterGain, DMEM_COMB_TEMP, DMEM_COMB_TEMP - combFilterSize);
+            Nas_DMEMMove(cmd++, DMEM_COMB_TEMP - combFilterSize, DMEM_TEMP, size);
         } else {
-            Nas_LoadBuffer2(cmd++, combFilterDmem, combFilterSize, (s32)combFilterState);
+            driver->comb_filter_needs_init = true;
         }
-        Nas_SaveBuffer2(cmd++, DMEM_TEMP + size - combFilterSize, combFilterSize, (s32)combFilterState);
-        Nas_Mix(cmd++, size >> 4, combFilterGain, DMEM_COMB_TEMP, combFilterDmem);
-        Nas_DMEMMove(cmd++, combFilterDmem, DMEM_TEMP, size);
-    } else {
-        driver->comb_filter_needs_init = true;
-    }
 
-    // Determine the behavior of the audio processing that leads to the haas effect
-    if ((common->haas_effect_left_delay_size != 0) || (driver->prev_haas_effect_left_delay_size != 0)) {
-        haasEffectDelaySide = HAAS_EFFECT_DELAY_LEFT;
-    } else if ((common->haas_effect_right_delay_size != 0) || (driver->prev_haas_effect_right_delay_size != 0)) {
-        haasEffectDelaySide = HAAS_EFFECT_DELAY_RIGHT;
-    } else {
-        haasEffectDelaySide = HAAS_EFFECT_DELAY_NONE;
-    }
-
-    // Apply an unknown effect based on the surround sound-mode
-    if (AG.sound_mode == SOUND_OUTPUT_SURROUND) {
-        // common->target_volume_left = common->target_volume_left >> 1;
-        // common->target_volume_right = common->target_volume_right >> 1;
-        if (common->surround_effect_idx != 0xFF) {
-            cmd = Nas_DolbySurround(cmd, common, driver, samples_per_update, DMEM_TEMP, flags);
+        // Determine the behavior of the audio processing that leads to the haas effect
+        if ((common->haas_effect_left_delay_size != 0) || (driver->prev_haas_effect_left_delay_size != 0)) {
+            haasEffectDelaySide = HAAS_EFFECT_DELAY_LEFT;
+        } else if ((common->haas_effect_right_delay_size != 0) || (driver->prev_haas_effect_right_delay_size != 0)) {
+            haasEffectDelaySide = HAAS_EFFECT_DELAY_RIGHT;
+        } else {
+            haasEffectDelaySide = HAAS_EFFECT_DELAY_NONE;
         }
-    }
 
-    // Split the mono-signal into left and right channels:
-    // Both for dry signal (to go to the speakers now)
-    // and for wet signal (to go to a reverb buffer to be stored, and brought back later to produce an echo)
-    cmd = Nas_Synth_Envelope(cmd, common, driver, samples_per_update, DMEM_TEMP, haasEffectDelaySide, flags);
-
-    // Apply the haas effect by delaying either the left or the right channel by a small amount
-    if (common->use_haas_effect) {
-        if (!(flags & A_INIT)) {
-            flags = A_CONTINUE;
+        // Apply an unknown effect based on the surround sound-mode
+        if (AG.sound_mode == SOUND_OUTPUT_DOLBY_SURROUND) {
+            // common->target_volume_left = common->target_volume_left >> 1;
+            // common->target_volume_right = common->target_volume_right >> 1;
+            if (common->surround_effect_idx != 0xFF) {
+                cmd = Nas_DolbySurround(cmd, common, driver, samples_per_update, DMEM_TEMP, flags);
+            }
         }
-        cmd = Nas_Synth_Delay(cmd, common, driver, size, flags, haasEffectDelaySide);
+
+        // Split the mono-signal into left and right channels:
+        // Both for dry signal (to go to the speakers now)
+        // and for wet signal (to go to a reverb buffer to be stored, and brought back later to produce an echo)
+        cmd = Nas_Synth_Envelope(cmd, common, driver, samples_per_update, DMEM_TEMP, haasEffectDelaySide, flags);
+
+        // Apply the haas effect by delaying either the left or the right channel by a small amount
+        if (common->use_haas_effect) {
+            if (!(flags & A_INIT)) {
+                flags = A_CONTINUE;
+            }
+            cmd = Nas_Synth_Delay(cmd, common, driver, size, flags, haasEffectDelaySide);
+        }
     }
 
     return cmd;
