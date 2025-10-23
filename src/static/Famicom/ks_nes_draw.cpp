@@ -457,6 +457,62 @@ void ksNesDrawFlushEFBToRed8(u8* buf) {
 }
 
 void ksNesDrawOBJI8ToEFB(ksNesCommonWorkObj* wp, u8* buf) {
+    GXTexObj obj;
+    u32 i;
+    s32 u;
+    u8* work;
+    u32 cnt;
+
+    GXSetNumChans(0);
+    GXSetNumTexGens(1);
+    GXSetNumTevStages(1);
+    GXSetNumIndStages(0);
+    GXSetBlendMode(GX_BM_LOGIC, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_COPY);
+
+    GXClearVtxDesc();
+    GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
+    GXSetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XY, GX_S16, 0);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_U16, 8);
+    
+    GXInitTexObj(&obj, (void*)buf, 256, 228, GX_TF_I8, GX_CLAMP, GX_CLAMP, 0);
+    GXInitTexObjLOD(&obj, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
+    GXLoadTexObj(&obj, GX_TEXMAP0);
+
+    GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 60);
+    GXSetTexCoordScaleManually(GX_TEXCOORD0, GX_TRUE, 0x100, 0x100);
+    GXSetTexCoordBias(GX_TEXCOORD0, 0, 0);
+
+    GXSetTevDirect(GX_TEVSTAGE0);
+    GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR_NULL);
+    GXSetTevOp(GX_TEVSTAGE0, GX_REPLACE);
+
+    GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_AND, GX_ALWAYS, 0);
+    
+    cnt = ksNesDrawMakeOBJAppearVtxList(wp);
+    if (cnt == 0) return;
+
+    GXBegin(GX_QUADS, GX_VTXFMT0, cnt * 2);
+    
+    for (i = 0; i < cnt; i += 2) {
+        work = (u8*)wp + i; // if it works...
+        u = (wp->work_priv._0B40[(u8)((u8*)wp)[i + 0x60]]._19 & 0x14) == 0x10 ? 8 : 0;
+        
+        // s32 y = -128 - ((work[0x60] & 0xFF));
+        GXPosition2s16(u + 0x80, -128 - work[0x60]);
+        GXTexCoord2u16(u, work[0x60] - 8);
+
+        GXPosition2s16(0x180, -128 - work[0x60]);
+        GXTexCoord2u16(0x100, work[0x60] - 8);
+
+        GXPosition2s16(0x180, -128 - work[0x60] - work[0x61]);
+        GXTexCoord2u16(0x100, work[0x60] + work[0x61] - 8);
+
+        GXPosition2s16(u + 0x80, -128 - work[0x60] - work[0x61]);
+        GXTexCoord2u16(u, work[0x60] + work[0x61] - 8);
+    }
+
+    GXEnd();
 }
 
 void ksNesDrawEmuResult(ksNesCommonWorkObj*) {
