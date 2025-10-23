@@ -515,7 +515,24 @@ void ksNesDrawOBJI8ToEFB(ksNesCommonWorkObj* wp, u8* buf) {
     GXEnd();
 }
 
-void ksNesDrawEmuResult(ksNesCommonWorkObj*) {
+void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
+    int i;
+    GXTexObj obj;
+
+    for (i = 0; i < 228; i++) {
+        if ((wp->work_priv._0B40[i + 8]._19 & 0xE1) != 0xFF) {
+            if ((i & 1) != 0) {
+                i++;
+            }
+        }
+    }
+
+    GXInitTexObj(&obj, wp->result_bufp, 256, 228, GX_TF_I8, GX_CLAMP, GX_CLAMP, 0);
+
+    // ...
+
+    GXCopyTex(wp->result_bufp, GX_FALSE);
+    GXPixModeSync();
 }
 
 void ksNesDraw(ksNesCommonWorkObj* wp, ksNesStateObj* state) {
