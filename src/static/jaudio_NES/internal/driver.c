@@ -1391,10 +1391,10 @@ extern Acmd* Nas_Synth_Envelope(Acmd* cmd, commonch* common, driverch* driver, s
 }
 
 extern Acmd* Nas_Synth_Delay(Acmd* cmd, commonch* common, driverch* driver, s32 size, s32 flags, s32 haasEffectDelaySide) {
+    u16 haasEffectDelaySize;
+    u16 prevHaasEffectDelaySize;
     u16 dmemDest;
     u16 pitch;
-    u16 prevHaasEffectDelaySize;
-    u16 haasEffectDelaySize;
 
     switch (haasEffectDelaySide) {
         case HAAS_EFFECT_DELAY_LEFT:
@@ -1424,7 +1424,7 @@ extern Acmd* Nas_Synth_Delay(Acmd* cmd, commonch* common, driverch* driver, s32 
     if (flags != A_INIT) {
         // Slightly adjust the sample rate in order to fit a change in sample delay
         if (haasEffectDelaySize != prevHaasEffectDelaySize) {
-            pitch = (((size << 0xF) / 2) - 1) / ((size + haasEffectDelaySize - prevHaasEffectDelaySize - 2) / 2);
+            pitch = pitch = (((size << 0xF) / 2) - 1) / ((size + haasEffectDelaySize - prevHaasEffectDelaySize - 2) / 2);
             aSetBuffer(cmd++, 0, DMEM_HAAS_TEMP, DMEM_TEMP, size + haasEffectDelaySize - prevHaasEffectDelaySize);
             aResampleZoh(cmd++, pitch, 0);
         } else {
@@ -1450,7 +1450,7 @@ extern Acmd* Nas_Synth_Delay(Acmd* cmd, commonch* common, driverch* driver, s32 
 
     if (haasEffectDelaySize) { // != 0
         // Save excessive samples for next iteration
-        aSaveBuffer2(cmd++, DMEM_HAAS_TEMP + size, driver->synth_params->haas_effect_delay_state,
+        aSaveBuffer2(cmd++, driver->synth_params->haas_effect_delay_state, DMEM_HAAS_TEMP + size,
                     ALIGN_NEXT(haasEffectDelaySize, 16));
     }
 
