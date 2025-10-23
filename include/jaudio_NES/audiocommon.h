@@ -168,6 +168,36 @@ extern "C" {
 
 #define aFirLoadTable(pkt, size, addr) aFirFilter(pkt, 2, size, addr)
 
+#define aEnvMixer2(pkt, dmemi, count, swapLR, x0, x1, x2, x3, m, bits)   \
+{                                                                       \
+        Acmd *_a = (Acmd *)pkt;                                         \
+                                                                        \
+        _a->words.w0 = (bits | _SHIFTL(dmemi >> 4, 16, 8) |             \
+                _SHIFTL(count, 8, 8) | _SHIFTL(swapLR, 4, 1) |          \
+                _SHIFTL(x0, 3, 1) | _SHIFTL(x1, 2, 1) |                 \
+                _SHIFTL(x2, 1, 1) | _SHIFTL(x3, 0, 1));                 \
+        _a->words.w1 = (unsigned int)(m);                               \
+}
+
+#define aAddMixer(pkt, count, dmemi, dmemo, a4)                         \
+{                                                                       \
+        Acmd *_a = (Acmd *)pkt;                                         \
+                                                                        \
+        _a->words.w0 = (_SHIFTL(A_CMD_ADDMIXER, 24, 8) |                    \
+                _SHIFTL(count >> 4, 16, 8) | _SHIFTL(a4, 0, 16));       \
+        _a->words.w1 = _SHIFTL(dmemi, 16, 16) | _SHIFTL(dmemo, 0, 16);  \
+}
+
+// from MM
+#define aResampleZoh(pkt, pitch, pitchAccu)                             \
+{                                                                       \
+        Acmd *_a = (Acmd *)pkt;                                         \
+                                                                        \
+        _a->words.w0 = (_SHIFTL(A_CMD_RESAMPLE_ZOH, 24, 8) |                \
+                _SHIFTL(pitch, 0, 16));                                 \
+        _a->words.w1 = _SHIFTL(pitchAccu, 0, 16);                       \
+}
+
 #define NA_MAKE_COMMAND(a0, a1, a2, a3) \
     (u32)((((a0) & 0xFF) << 24) | (((a1) & 0xFF) << 16) | (((a2) & 0xFF) << 8) | (((a3) & 0xFF) << 0))
 
