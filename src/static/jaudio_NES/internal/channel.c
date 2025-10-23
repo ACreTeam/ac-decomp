@@ -805,9 +805,9 @@ extern void Nas_EntryTrack(channel* chan, note* n) {
         }
     }
 
-    playback->_80 = (int)(n->velocity_square2 * 11.5f);
-    if (playback->_80 > 15) {
-        playback->_80 = 15;
+    playback->vel_conv_table_idx = (int)(n->velocity_square2 * 11.5f);
+    if (playback->vel_conv_table_idx > 15) {
+        playback->vel_conv_table_idx = 15;
     }
 
     playback->bank_id = subtrack->bank_id;

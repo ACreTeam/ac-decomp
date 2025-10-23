@@ -68,6 +68,14 @@ extern "C" {
 #define A_CMD_LOADCACHE     24
 #define A_CMD_EXIT          25
 
+#define aUnkCmd3(pkt, a1, a2, a3)                                       \
+{                                                                       \
+        Acmd *_a = (Acmd *)pkt;                                         \
+                                                                        \
+        _a->words.w0 = _SHIFTL(A_CMD_UNK3, 24, 8) | _SHIFTL(a3, 0, 16);     \
+        _a->words.w1 = _SHIFTL(a1, 16, 16) | _SHIFTL(a2, 0, 16);        \
+}
+
 #define	aHalfCut(pkt, src, dst, len)						\
 {									\
 	Acmd *_a = (Acmd *)pkt;						\
@@ -82,6 +90,14 @@ extern "C" {
 									\
 	_a->words.w0 = _SHIFTL(A_CMD_SETENVPARAM, 24, 8) | _SHIFTL(revVol, 16, 8) | _SHIFTL(rampRev, 0, 16);    		\
 	_a->words.w1 = _SHIFTL(rampL, 16, 16) | _SHIFTL(rampR, 0, 16);		\
+}
+
+#define	aLoadCache(pkt, dst, src, len)						\
+{									\
+	Acmd *_a = (Acmd *)pkt;						\
+									\
+	_a->words.w0 = _SHIFTL(A_CMD_LOADCACHE, 24, 8) | _SHIFTL((len) >> 4, 16, 8) | _SHIFTL(src, 0, 16);    		\
+	_a->words.w1 = (u32)(dst);		\
 }
 
 #define	aLoadBuffer2(pkt, dst, src, len)						\
@@ -151,6 +167,36 @@ extern "C" {
 }
 
 #define aFirLoadTable(pkt, size, addr) aFirFilter(pkt, 2, size, addr)
+
+#define aEnvMixer2(pkt, dmemi, count, swapLR, x0, x1, x2, x3, m, bits)   \
+{                                                                       \
+        Acmd *_a = (Acmd *)pkt;                                         \
+                                                                        \
+        _a->words.w0 = (bits | _SHIFTL(dmemi >> 4, 16, 8) |             \
+                _SHIFTL(count, 8, 8) | _SHIFTL(swapLR, 4, 1) |          \
+                _SHIFTL(x0, 3, 1) | _SHIFTL(x1, 2, 1) |                 \
+                _SHIFTL(x2, 1, 1) | _SHIFTL(x3, 0, 1));                 \
+        _a->words.w1 = (unsigned int)(m);                               \
+}
+
+#define aAddMixer(pkt, count, dmemi, dmemo, a4)                         \
+{                                                                       \
+        Acmd *_a = (Acmd *)pkt;                                         \
+                                                                        \
+        _a->words.w0 = (_SHIFTL(A_CMD_ADDMIXER, 24, 8) |                    \
+                _SHIFTL(count >> 4, 16, 8) | _SHIFTL(a4, 0, 16));       \
+        _a->words.w1 = _SHIFTL(dmemi, 16, 16) | _SHIFTL(dmemo, 0, 16);  \
+}
+
+// from MM
+#define aResampleZoh(pkt, pitch, pitchAccu)                             \
+{                                                                       \
+        Acmd *_a = (Acmd *)pkt;                                         \
+                                                                        \
+        _a->words.w0 = (_SHIFTL(A_CMD_RESAMPLE_ZOH, 24, 8) |                \
+                _SHIFTL(pitch, 0, 16));                                 \
+        _a->words.w1 = _SHIFTL(pitchAccu, 0, 16);                       \
+}
 
 #define NA_MAKE_COMMAND(a0, a1, a2, a3) \
     (u32)((((a0) & 0xFF) << 24) | (((a1) & 0xFF) << 16) | (((a2) & 0xFF) << 8) | (((a3) & 0xFF) << 0))
@@ -234,7 +280,8 @@ typedef enum SoundOutputMode {
     /* 0 */ SOUND_OUTPUT_STEREO,
     /* 1 */ SOUND_OUTPUT_HEADSET,
     /* 2 */ SOUND_OUTPUT_SURROUND,
-    /* 3 */ SOUND_OUTPUT_MONO
+    /* 3 */ SOUND_OUTPUT_MONO,
+    /* 4 */ SOUND_OUTPUT_DOLBY_SURROUND
 } SoundOutputMode;
 
 typedef enum SampleCodec {

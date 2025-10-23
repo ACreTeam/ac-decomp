@@ -278,7 +278,7 @@ typedef struct driverch_ {
     /* 0x06 */ u8 comb_filter_needs_init;
     /* 0x07 */ u8 vel_conv_table_idx;
     /* 0x08 */ u16 sample_pos_fractional_part;
-    /* 0x0A */ u16 sound_effect_gain;
+    /* 0x0A */ u16 surround_effect_gain;
     /* 0x0C */ s32 sample_pos_integer_part;
     /* 0x10 */ synthparams* synth_params;
     /* 0x14 */ s16 current_volume_left;
@@ -322,7 +322,7 @@ typedef struct playbackch_ {
     /* 0x54 */ sweep portamento_sweep;
     /* 0x60 */ tmtable vibrato_tmtable;
     /* 0x7C */ s32 _7C;
-    /* 0x80 */ u8 _80;
+    /* 0x80 */ u8 vel_conv_table_idx;
     /* 0x84 */ u32 start_sample_pos;
     /* 0x88 */ u8 _88[0x18];
 } playbackch;
