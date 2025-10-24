@@ -125,7 +125,7 @@ void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mapper4) {
                 nibble_acc = (((u32)nametable_p) & 3) | (nibble_acc << 4);
                 tile_byte = (((u32)nametable_p) >> 8) & 0xFF;
             } else {
-                nibble_acc = ((nametable_p[0x3C0 + ((scanline_ctrl0 & 0xE0) >> 2) + ((scanline_ctrl1 & 0xE0) >> 5)] >> ((((scanline_ctrl1 & 0x10) >> 3) | (scanline_ctrl0 & 0x10) >> 2))) & 3) | (nibble_acc << 4);
+                nibble_acc = (((nametable_p[0x3C0 + ((scanline_ctrl0 & 0xE0) >> 2) + ((scanline_ctrl1 & 0xE0) >> 5)] >> ((((scanline_ctrl1 & 0x10) >> 3) | (scanline_ctrl0 & 0x10) >> 2))) & 3) & 0x0F) | ((nibble_acc << 4));
                 tile_byte = nametable_p[((scanline_ctrl0 & 0xF8) << 2) + ((scanline_ctrl1 & 0xF8) >> 3)];
             }
 
@@ -147,7 +147,55 @@ void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mapper4) {
     DCFlushRangeNoSync(wp->work_priv._7840, sizeof(wp->work_priv._7840));
 }
 
-void ksNesDrawMakeBGIndTexMMC5(ksNesCommonWorkObj*, ksNesStateObj*) {
+void ksNesDrawMakeBGIndTexMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
+    u32 banks_mask = sp->chr_banks & 0x1FC;
+    u32 row;
+    u32 col;
+    
+    for (row = 8; row < 236; row++) {
+        u32 tile_byte;
+        u32 scanline_ctrl0 = wp->work_priv._0B40[row]._1C;
+        u32 scanline_ctrl1 = wp->work_priv._0B40[row]._1B;
+        u32 nibble_acc; // @bug - uninitialized
+        u8* patternPtrBase = (u8*)&wp->work_priv._0B40[row]._10;
+        u32 palette_bits;
+        u32 tmp;
+        u8* nametable_p;
+
+        for (col = 0; col < 34; col++) {
+            // _00 and _04 are pointers to ppu_nametable_pointers[0/1]?
+            nametable_p = (&wp->work_priv._0B40[row]._00)[((scanline_ctrl1 >> 8) & 1)];
+            if (((s32)nametable_p) >= 0) {
+                nibble_acc = (((u32)nametable_p) & 3) | (nibble_acc << 4);
+                tile_byte = (((u32)nametable_p) >> 8) & 0xFF;
+            } else {
+                nibble_acc = ((nametable_p[0x3C0 + ((scanline_ctrl0 & 0xE0) >> 2) + ((scanline_ctrl1 & 0xE0) >> 5)] >> ((((scanline_ctrl1 & 0x10) >> 3) | (scanline_ctrl0 & 0x10) >> 2))) & 3) | (nibble_acc << 4);
+                tile_byte = nametable_p[((scanline_ctrl0 & 0xF8) << 2) + ((scanline_ctrl1 & 0xF8) >> 3)];
+            }
+
+            // issue in this area too probably
+            if (wp->work_priv._0B40[row]._1D & 0x20) {
+                nibble_acc = (nibble_acc & 0xF0) | (sp->mmc5_extension_ram[((scanline_ctrl1 >> 3) & 0x1F) + ((scanline_ctrl0 & 0xF8) << 2)] >> 6) & 0x0F;
+                palette_bits = ((sp->mmc5_extension_ram[((scanline_ctrl1 >> 3) & 0x1F) + ((scanline_ctrl0 & 0xF8) << 2)] << 2) & banks_mask) | ((u8)tile_byte >> 6);
+            } else {
+                tmp = ((wp->work_priv._0B40[row]._18 & 0x10) >> 2) | ((tile_byte >> 6) & 0x3);
+                palette_bits = ((wp->work_priv._0B40[row]._1F << (tmp + 1)) & 0x100) | (patternPtrBase[tmp]);
+            }
+
+            // issue is here
+            wp->work_priv._3240[(((col & 3) * 2) + ((col & 0x3C) * 8) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
+            wp->work_priv._3240[(((col & 3) * 2) + ((col & 0x3C) * 8) + ((row >> 2) * 288) + ((row & 3) * 8)) + 1] = (palette_bits >> 1);
+
+            if ((col & 1) != 0) {
+                wp->work_priv._7840[((col >> 1) & 3) + (col & 0x38) * 4 + ((row & 7) * 4 + (row >> 3) * 160)] = nibble_acc;
+            }
+
+            scanline_ctrl1 += 8;
+        }
+    }
+
+    DCFlushRangeNoSync(wp->work_priv._3240, sizeof(wp->work_priv._3240));
+    DCFlushRangeNoSync(wp->work_priv._7840, sizeof(wp->work_priv._7840));
 }
 
 #define ksNes_MMC2_LATCH_LO 0xFD // select chr bank 0/2
