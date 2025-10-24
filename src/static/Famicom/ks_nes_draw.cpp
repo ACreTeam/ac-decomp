@@ -1,3 +1,6 @@
+#include "gx/GXEnum.h"
+#include "gx/GXTexture.h"
+#include "gx/GXVert.h"
 #define FIX_SQRT_LINKAGE
 #include "Famicom/ks_nes_draw.h"
 #include "dolphin/gx.h"
@@ -201,9 +204,174 @@ void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
     }
 }
 
-void ksNesDrawBG(ksNesCommonWorkObj*, ksNesStateObj*) {
-    const static GXColor color_r_0xf0 = { 240, 0, 0, 0 };
-    // GXSetIndTexMtx(GX_ITM_0, );
+void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
+    static const GXColor color_r_0xf0 = { 240, 0, 0, 0 };
+    static f32 indtexmtx_screen[2][3] = {
+        {0.5f, 0.0f, 0.0f},
+        {0.0f, 0.0625f, 0.0f},
+    };
+
+    GXTexObj obj0;
+    GXTexObj obj1;
+    GXTexObj obj2;
+    u32 curline;
+    u32 cnt;
+    u32 color;
+    u32 x0;
+    u32 x1;
+    s16 y;
+    u32 i;
+    u32 j;
+
+    GXSetNumChans(1);
+    GXSetNumTexGens(2);
+    GXSetNumTevStages(3);
+    GXSetNumIndStages(1);
+    GXSetBlendMode(GX_BM_LOGIC, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_COPY);
+    GXClearVtxDesc();
+    GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
+    GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
+    GXSetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGB, GX_RGBA4, 0);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_CLR_RGBA, GX_RGBX8, 10);
+    GXInitTexObj(&obj0, wp->work_priv._7840, 40, 256, GX_TF_I4, GX_CLAMP, GX_REPEAT, 0);
+    GXInitTexObjLOD(&obj0, GX_NEAR, GX_NEAR, 0.0, 0.0, 0.0, 0, 0, GX_ANISO_1);
+    GXLoadTexObj(&obj0, GX_TEXMAP0);
+    GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
+    GXSetTexCoordScaleManually(GX_TEXCOORD0, GX_TRUE, 128, 1025);
+    GXSetTexCoordBias(GX_TEXCOORD0, GX_FALSE, GX_FALSE);
+    GXSetTevDirect(GX_TEVSTAGE0);
+    GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR_NULL);
+    GXSetTevColor(GX_TEVREG0, color_r_0xf0);
+    GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_TEXC, GX_CC_ZERO, GX_CC_C0, GX_CC_TEXC);
+    GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_SUB, GX_TB_ZERO, GX_CS_SCALE_1, 1, GX_TEVPREV);
+    GXInitTexObj(&obj1, wp->work_priv._3240, 36, 256, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+    GXInitTexObjLOD(&obj1, GX_NEAR, GX_NEAR, 0.0, 0.0, 0.0, 0, 0, GX_ANISO_1);
+    GXLoadTexObj(&obj1, GX_TEXMAP1);
+    GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
+    GXSetTexCoordScaleManually(GX_TEXCOORD1, GX_TRUE, 1024, 1025);
+    GXSetTexCoordBias(GX_TEXCOORD1, GX_FALSE, GX_FALSE);
+    GXSetIndTexOrder(GX_INDTEXSTAGE0, GX_TEXCOORD1, GX_TEXMAP1);
+    GXSetIndTexCoordScale(GX_INDTEXSTAGE0, GX_ITS_8, GX_ITS_1);
+    GXSetIndTexMtx(GX_ITM_0, indtexmtx_screen, 36);
+    GXSetTevIndirect(GX_TEVSTAGE1, GX_INDTEXSTAGE0, GX_ITF_8, GX_ITB_NONE, GX_ITM_0, GX_ITW_16, GX_ITW_0, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD1, GX_TEXMAP2, GX_COLOR_NULL);
+    GXSetTevColorIn(GX_TEVSTAGE1, GX_CC_TEXC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_CPREV);
+    GXSetTevColorOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1, GX_TEVPREV);
+    GXSetTevAlphaIn(GX_TEVSTAGE1, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_TEXA);
+    GXSetTevAlphaOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1, GX_TEVPREV);
+    GXSetTevDirect(GX_TEVSTAGE2);
+    GXSetTevOrder(GX_TEVSTAGE2, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+    GXSetChanCtrl(GX_COLOR0A0, 0, GX_SRC_VTX, GX_SRC_VTX, GX_LIGHT_NULL, GX_DF_NONE, GX_AF_NONE);
+    GXSetTevColorIn(GX_TEVSTAGE2, GX_CC_RASC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_CPREV);
+    GXSetTevColorOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1, GX_TEVPREV);
+    GXSetTevAlphaIn(GX_TEVSTAGE2, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_APREV);
+    GXSetTevAlphaOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1, GX_TEVPREV);
+    GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_AND, GX_ALWAYS, 0);
+    GXSetLineWidth(6, GX_TO_ZERO);
+
+    for (i = 0; i < 8; i++) {
+        if (sp->ppu_render_latches[i] != 0) {
+            if (sp->mapper == 5) {
+                GXInitTexObj(&obj2, wp->chr_to_u8_bufp + (wp->chr_to_i8_buf_size >> 3) * i, 1024, wp->chr_to_i8_buf_size >> 13, GX_TF_I8, GX_MIRROR, GX_CLAMP, 0);
+                GXInitTexObjLOD(&obj2, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
+                GXLoadTexObj(&obj2, GX_TEXMAP2);
+            } else if ((i & 1) == 0) {
+                if (wp->chr_to_i8_buf_size > CHR_TO_I8_BUF_SIZE) {
+                    GXInitTexObj(&obj2, wp->chr_to_u8_bufp + 0x20000 * (i & 6), 1024, 256, GX_TF_I8, GX_MIRROR, GX_CLAMP, 0);
+                } else {
+                    GXInitTexObj(&obj2, wp->chr_to_u8_bufp + (wp->chr_to_i8_buf_size >> 3) * (i & 6), 1024, wp->chr_to_i8_buf_size >> 12, GX_TF_I8, GX_MIRROR, GX_CLAMP, 0);
+                }
+
+                GXInitTexObjLOD(&obj2, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
+                GXLoadTexObj(&obj2, GX_TEXMAP2);
+            }
+
+            cnt = 0;
+            curline = sp->ppu_render_latches[i + 8];
+            j = curline;
+            do {
+                if ((wp->work_priv._0B40[j]._19 & 0x08) != 0 && j >= 8 && j < 236) {
+                    cnt += 2;
+                }
+                j = wp->work_priv._0B40[j]._1A;
+            } while (j != 0);
+
+            if (cnt != 0) {
+                GXBegin(GX_LINES, GX_VTXFMT0, cnt);
+
+                do {
+                    if ((wp->work_priv._0B40[curline]._19 & 0x08) != 0 && curline >= 8 && curline < 236) {
+                        if ((wp->work_priv._0B40[curline]._19 & 0x02) == 0) {
+                            x0 = 0x80 + 8;
+                            x1 = (wp->work_priv._0B40[curline]._1B & 0x07) + 8;
+                        } else {
+                            x0 = 0x80 - (wp->work_priv._0B40[curline]._1B & 0x07);
+                            x1 = 0;
+                        }
+
+                        color = (wp->work_priv._0B40[curline]._18 & 0xC0) << 24;
+
+                        GXPosition2s16(x0, -0x81 - curline);
+                        GXColor1u32(color);
+                        GXTexCoord2u16(x1, curline);
+
+                        GXPosition2s16(x0 + 0x100 + 8, -0x81 - curline);
+                        GXColor1u32(color);
+                        GXTexCoord2u16(x1 + 0x100 + 8, curline);
+                    }
+
+                    curline = wp->work_priv._0B40[curline]._1A;
+                } while (curline != 0);
+
+                GXEnd();
+            }
+        }
+    }
+
+    cnt = 0;
+    for (i = 8; i < 236; i++) {
+        if ((wp->work_priv._0B40[i]._19 & 0x08) == 0) {
+            cnt += 2;
+        }
+    }
+
+    if (cnt != 0) {
+        GXSetNumTexGens(0);
+        GXSetNumTevStages(1);
+        GXSetNumIndStages(0);
+        GXClearVtxDesc();
+        GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
+        GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
+        GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGB, GX_RGBA4, 0);
+        GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+        GXSetTevDirect(GX_TEVSTAGE0);
+        GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+        GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_RASC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO);
+        GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1, GX_TEVPREV);
+        GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO);
+        GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1, GX_TEVPREV);
+        GXSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
+
+        GXBegin(GX_LINES, GX_VTXFMT0, cnt);
+
+        for (i = 8; i < 236; i++) {
+
+            if ((wp->work_priv._0B40[i]._19 & 0x08) == 0) {
+                s16 y = -0x81 - i;
+                u32 color = (wp->work_priv._0B40[i]._18 & 0xC0) << 24;
+
+                GXPosition2s16(0x80, y);
+                GXColor1u32(color);
+
+                GXPosition2s16(0x180, y);
+                GXColor1u32(color);
+            }
+        }
+
+        GXEnd();
+    }
 }
 
 u32 ksNesDrawMakeOBJBlankVtxList(ksNesCommonWorkObj* wp) {
