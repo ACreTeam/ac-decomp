@@ -772,7 +772,7 @@ void ksNesDrawOBJI8ToEFB(ksNesCommonWorkObj* wp, u8* buf) {
 
 void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
     static f32 indtexmtx[2][3] = {
-        { 1.0f, 0.0f, 0.0f },
+        { 0.5f, 0.0f, 0.0f },
         { 0.0f, 0.0f, 0.0f }
     };
     static const GXColor black2 = { 0, 0, 0, 0 }; // unused, corrects stack
