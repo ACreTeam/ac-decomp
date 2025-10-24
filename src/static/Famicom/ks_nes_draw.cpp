@@ -700,6 +700,7 @@ loop_condition:
 }
 
 void ksNesDrawOBJMMC5(ksNesCommonWorkObj*, ksNesStateObj*, u32) {
+    static const GXColor color_thres = { 255, 1, 0, 0 };
 }
 
 void ksNesDrawFlushEFBToRed8(u8* buf) {
@@ -775,7 +776,6 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
         { 0.5f, 0.0f, 0.0f },
         { 0.0f, 0.0f, 0.0f }
     };
-    static const GXColor black2 = { 0, 0, 0, 0 }; // unused, corrects stack
     static const GXColor black = { 0, 0, 0, 0 };
     static const GXColor color0 = { 0x3A, 0x3A, 0x3A, 0x00 };
     static const GXColor color1 = { 0x71, 0x71, 0x71, 0x00 };
