@@ -95,55 +95,47 @@ void ksNesDrawClearEFBFirst(ksNesCommonWorkObj* wp) {
     GXEnd();
 }
 
-// TODO: this function needs help
 void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mapper4) {
-    u32 trigger_col = 0x7fff;
-    u8 CHR_flag_xor = 0x80;
+    u32 trigger_col = mapper4 ? 9 : 0x7fff;
+    u32 CHR_flag_xor = wp->chr_to_i8_buf_size <= CHR_TO_I8_BUF_SIZE ? (wp->chr_to_i8_buf_size >> 13) : 0x80;
     u32 row;
     u32 col;
-
-    if (mapper4) {
-        trigger_col = 9;
-    }
-
-    if (wp->chr_to_i8_buf_size <= CHR_TO_I8_BUF_SIZE * 16) {
-        CHR_flag_xor = wp->chr_to_i8_buf_size >> 13;
-    }
-
+    
     for (row = 8; row < 236; row++) {
-        u8 scanline_ctrl0 = wp->work_priv._0B40[row]._1C;
-        u8 scanline_ctrl1 = wp->work_priv._0B40[row]._1B;
-        u32* patternPtrBase = &wp->work_priv._0B40[row]._10;
+        u32 scanline_ctrl0 = wp->work_priv._0B40[row]._1C;
+        u32 scanline_ctrl1 = wp->work_priv._0B40[row]._1B;
+        u8* patternPtrBase = (u8*)&wp->work_priv._0B40[row]._10;
         u8* nametable_p;
         u8 tile_byte;
-        u8 palette_bits;
-        u8 nibble_acc; // @bug - uninitialized
+        u32 palette_bits;
+        u32 nibble_acc; // @bug - uninitialized
         u32 dst_idx;
+        u32 mask;
+
+        mask = (scanline_ctrl0 & 0x04) ? CHR_flag_xor : 0;
 
         for (col = 0; col < 34; col++) {
-
             if (col == trigger_col) {
-                patternPtrBase -= 2;
+                patternPtrBase -= 8;
             }
 
             // _00 and _04 are pointers to ppu_nametable_pointers[0/1]?
-            nametable_p = &(wp->work_priv._0B40[row]._00)[((scanline_ctrl0 >> 7) & 1)];
-            if (((u32)nametable_p) & OS_BASE_CACHED) {
-                tile_byte = nametable_p[((scanline_ctrl0 & 0xF8) << 2) + ((scanline_ctrl1 & 0xF8) >> 3)];
-                nibble_acc = ((nametable_p[0x3C0 + ((scanline_ctrl0 & 0xE0) >> 2) + ((scanline_ctrl1 & 0xE0) >> 7)] >> (((scanline_ctrl0 & 0x10) >> 2) | ((scanline_ctrl1 & 0x10) >> 3))) & 3) | (nibble_acc << 4);
-            } else {
-                tile_byte = ((u32)nametable_p) >> 8;
+            nametable_p = (&wp->work_priv._0B40[row]._00)[((scanline_ctrl1 >> 7) & 1) * 2];
+            if (((s32)nametable_p) >= 0) {
                 nibble_acc = (((u32)nametable_p) & 3) | (nibble_acc << 4);
+                tile_byte = (((u32)nametable_p) >> 8) & 0xFF;
+            } else {
+                nibble_acc = ((nametable_p[0x3C0 + ((scanline_ctrl0 & 0xE0) >> 2) + ((scanline_ctrl1 & 0xE0) >> 5)] >> (((scanline_ctrl0 & 0x10) >> 2) | ((scanline_ctrl1 & 0x10) >> 3))) & 3) | (nibble_acc << 4);
+                tile_byte = nametable_p[((scanline_ctrl0 & 0xF8) << 2) + ((scanline_ctrl1 & 0xF8) >> 3)];
             }
 
-            palette_bits = patternPtrBase[((wp->work_priv._0B40[row]._18 & 0x10) >> 2) | (tile_byte >> 6)];
-            dst_idx = ((col & 3) * 2) + ((col & 0x3C) * 8) + ((row & 3) * 8) + ((row >> 2) * 288);
+            palette_bits = patternPtrBase[(tile_byte >> 6) | ((wp->work_priv._0B40[row]._18 & 0x10) >> 2)];
 
-            wp->work_priv._3240[dst_idx + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
-            wp->work_priv._3240[dst_idx + 1] = (palette_bits >> 1) ^ (CHR_flag_xor & -((scanline_ctrl0 & 0x04) >> 2));
+            wp->work_priv._3240[(((row & 3) * 8) + ((row >> 2) * 288) + ((col & 3) * 2) + ((col & 0x3C) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
+            wp->work_priv._3240[(((row & 3) * 8) + ((row >> 2) * 288) + ((col & 3) * 2) + ((col & 0x3C) * 8)) + 1] = (palette_bits >> 1) ^ mask;
 
             if ((col & 1) != 0) {
-                wp->work_priv._7840[((col >> 1) & 3) + (col & 0x38) * 4 + (row & 7) * 4 + (row >> 3) * 160] = nibble_acc;
+                wp->work_priv._7840[((col >> 1) & 3) + (col & 0x38) * 4 + ((row & 7) * 4 + (row >> 3) * 160)] = nibble_acc;
             }
 
             scanline_ctrl1 += 8;
