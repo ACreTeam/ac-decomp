@@ -207,8 +207,7 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 mode) {
 void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
     u32 i;
     u32 j;
-    u32 max;
-    u32 chr_bank;
+    u32 k;
     
     memset(&wp->work_priv._0200, 0, sizeof(wp->work_priv._0200));
     for (i = 0; i < 64; i++) {
@@ -218,22 +217,22 @@ void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
         }
 
         j = wp->work_priv._2940[i]._00;
-        max = (((wp->work_priv._0B40[j]._18 >> 2) & 0x08) + 8) + j;
+        k = (((wp->work_priv._0B40[j]._18 >> 2) & 0x08) + 8) + j;
         do {
             wp->work_priv._0200[j] = wp->work_priv._2940[i]._01;
             j++;
-        } while(j < max);
+        } while(j < k);
     }
 
     // _0200 is the scanline marker entries
-    for (i = 0, chr_bank = 0; i < ARRAY_COUNT(wp->work_priv._0200); i++) {
+    for (i = 0, k = 0; i < ARRAY_COUNT(wp->work_priv._0200); i++) {
         if (wp->work_priv._0200[i] == ksNes_MMC2_LATCH_HI) {
-            chr_bank = 0;
+            k = 0;
         } else if (wp->work_priv._0200[i] == ksNes_MMC2_LATCH_LO) {
-            chr_bank = 1;
+            k = 1;
         }
 
-        if (chr_bank) {
+        if (k) {
             wp->work_priv._0B40[i]._08[0] = wp->work_priv._0B40[i]._08[1] - 1;
             wp->work_priv._0B40[i]._08[2] = wp->work_priv._0B40[i]._08[1] + 1;
             wp->work_priv._0B40[i]._08[3] = wp->work_priv._0B40[i]._08[1] + 2;
