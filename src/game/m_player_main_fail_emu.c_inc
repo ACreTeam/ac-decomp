@@ -44,7 +44,7 @@ static void Player_actor_BGcheck_Fail_emu(ACTOR* actorx) {
 static void Player_actor_Fail_emu_demo_ct(ACTOR* actorx) {
     rgba_t window_color;
 
-    mDemo_Set_msg_num(0x2B6A);
+    mDemo_Set_msg_num(MSG_11114);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_ListenAble();
 

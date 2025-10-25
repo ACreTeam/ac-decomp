@@ -113,16 +113,16 @@ static void Player_actor_Demo_get_golden_item_demo_ct(ACTOR* actorx) {
 
     switch (type) {
         case mPlayer_GOLDEN_ITEM_TYPE_AXE:
-            msg_no = 0x306F;
+            msg_no = MSG_12399;
             break;
         case mPlayer_GOLDEN_ITEM_TYPE_NET:
-            msg_no = 0x306D;
+            msg_no = MSG_12397;
             break;
         case mPlayer_GOLDEN_ITEM_TYPE_ROD:
-            msg_no = 0x306E;
+            msg_no = MSG_12398;
             break;
         default:
-            msg_no = 0x3070;
+            msg_no = MSG_12400;
             break;
     }
 

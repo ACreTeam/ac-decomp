@@ -166,7 +166,7 @@ static void Player_actor_Get_scoop_demo_ct(ACTOR* actor) {
 
     mIN_copy_name_str(str, item);
     mMsg_Set_item_str_art(win, 0, str, sizeof(str), mIN_get_item_article(item));
-    mDemo_Set_msg_num(0x17AF);
+    mDemo_Set_msg_num(MSG_6063);
     mDemo_Set_talk_display_name(FALSE);
     mDemo_Set_camera(CAMERA2_PROCESS_ITEM);
     mDemo_Set_ListenAble();

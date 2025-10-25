@@ -211,41 +211,41 @@ static void aNRTC_set_talk_info_talk_request() {
 
     switch (Common_Get(save_error_type)) {
         case mFRm_ERROR_BAD_RTC:
-            msg = 0x09CC;
+            msg = MSG_2508;
             break;
         case mFRm_ERROR_DATA_CORRUPTED:
-            msg = 0x09D1;
+            msg = MSG_2513;
             break;
         case mFRm_ERROR_MEMCARD_INVALID:
-            msg = 0x09DA;
+            msg = MSG_2522;
             break;
         case mFRm_ERROR_MEMCARD_NO_SPACE:
-            msg = 0x09D8;
+            msg = MSG_2520;
             break;
         case mFRm_ERROR_NO_MEMCARD:
-            msg = 0x09D4;
+            msg = MSG_2516;
             break;
         case mFRm_ERROR_MEMCARD_TRAVELDATA_CONFLICT:
-            msg = 0x09E2;
+            msg = MSG_2530;
             break;
         case mFRm_ERROR_MEMCARD_DAMAGED:
-            msg = 0x09E4;
+            msg = MSG_2532;
             break;
         case mFRm_ERROR_MEMCARD_NO_FILES:
-            msg = 0x09E3;
+            msg = MSG_2531;
             break;
         case mFRm_ERROR_MEMCARD_FORMAT:
-            msg = 0x09E5;
+            msg = MSG_2533;
             break;
         case mFRm_ERROR_NOT_MEMCARD:
-            msg = 0x09E6;
+            msg = MSG_2534;
             break;
         default:
-            msg = 0x09D4;
+            msg = MSG_2516;
             break;
     }
 
-    mDemo_Set_msg_num(msg);
+    mDemo_Set_msg_num(msg); //
     mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
 }
 
