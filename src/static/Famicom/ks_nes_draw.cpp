@@ -423,7 +423,7 @@ u32 ksNesDrawMakeOBJBlankVtxList(ksNesCommonWorkObj* wp) {
         int bMask = wp->work_priv._0B40[i]._19 & 0x14;
         if (bMask != comparison_mask && ((bMask != 0) || (comparison_mask != 4)) &&
             (bMask != 4 || comparison_mask != 0)) {
-            if (ret & 1 != 0) {
+            if ((ret & 1) != 0) {
                 wp->work_priv._0000[ret] = i - wp->_004C[ret + 0x13];
                 ret++;
             }
@@ -450,7 +450,7 @@ u32 ksNesDrawMakeOBJAppearVtxList(ksNesCommonWorkObj* wp) {
         int bMask = wp->work_priv._0B40[i]._19 & 0x14;
         if (bMask != comparison_mask && ((bMask != 0) || (comparison_mask != 4)) &&
             (bMask != 4 || comparison_mask != 0)) {
-            if (ret & 1 != 0) {
+            if ((ret & 1) != 0) {
                 wp->work_priv._0000[ret] = i - wp->_004C[ret + 0x13];
                 ret++;
             }
@@ -580,8 +580,8 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
         for (i = 0; size > (0x8000 << i); i++) {}
 
         static f32 indtexmtx_obj[2][3] = { { 0.5f, 0.f, 0.f }, { 0.f, 0.0625f, 0.f } };
-        indtexmtx_obj[0][0] = 0.5f / (i >= 4 ? (1 << i - 3) : 1);
-        indtexmtx_obj[1][1] = 0.5f / (i <= 2 ? (1 << 3 - i) : 1);
+        indtexmtx_obj[0][0] = 0.5f / (i >= 4 ? (1 << (i - 3)) : 1);
+        indtexmtx_obj[1][1] = 0.5f / (i <= 2 ? (1 << (3 - i)) : 1);
         GXSetIndTexMtx(GX_ITM_0, indtexmtx_obj, 36 + (i < 4 ? 0 : i - 3));
     }
     GXSetTevIndirect(GX_TEVSTAGE1, GX_INDTEXSTAGE1, GX_ITF_8, GX_ITB_NONE, GX_ITM_0, GX_ITW_OFF, GX_ITW_0, GX_TRUE,
@@ -593,7 +593,7 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
     GXSetTevAlphaOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
     GXSetTevDirect(GX_TEVSTAGE2);
     GXSetTevOrder(GX_TEVSTAGE2, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
-    const static GXColor color_thres = { 0xff, 1, 0, 0 };
+    static const GXColor color_thres = { 255, 1, 0, 0 };
     GXSetTevColor(GX_TEVREG0, color_thres);
     GXSetTevColorIn(GX_TEVSTAGE2, GX_CC_C0, GX_CC_C2, GX_CC_CPREV, GX_CC_ZERO);
     GXSetTevColorOp(GX_TEVSTAGE2, GX_TEV_COMP_GR16_GT, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
@@ -739,8 +739,249 @@ loop_condition:
     }
 }
 
-void ksNesDrawOBJMMC5(ksNesCommonWorkObj*, ksNesStateObj*, u32) {
+void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 c) {
     static const GXColor color_thres = { 255, 1, 0, 0 };
+    // clang-format off
+    static f32 indtexmtx_obj[2][3] = {
+        { 0.5f, 0.0f,    0.0f },
+        { 0.0f, 0.0625f, 0.0f },
+    };
+    // clang-format on
+
+    GXTexObj obj3;
+    GXTexObj obj;
+    GXTexObj obj2;
+    size_t var_r25 = wp->chr_to_i8_buf_size;
+    u32 sft;
+    u32 var_r3;
+    u32 i, j;
+    u32 var_r15;
+    u32 var_r24;
+    u32 x;
+    u32 x1, x2, y1, y2;
+    u32 u1, u2, v;
+    u32 clr;
+    u32 flags;
+    u8 *work;
+
+    GXSetNumChans(1);
+    GXSetNumTexGens(2);
+    GXSetNumTevStages(3);
+    GXSetNumIndStages(2);
+    GXSetBlendMode(GX_BM_LOGIC, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_COPY);
+
+    GXClearVtxDesc();
+    GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
+    GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
+    GXSetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+    GXSetVtxDesc(GX_VA_TEX1, GX_DIRECT);
+
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XY, GX_S16, 0);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_U16, 10);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX1, GX_TEX_ST, GX_U16, 10);
+
+    GXInitTexObj(&obj, wp->work_priv._8EC0, 8, 4, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+    GXInitTexObjLOD(&obj, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
+    GXLoadTexObj(&obj, GX_TEXMAP1);
+
+    GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 60);
+    GXSetTexCoordScaleManually(GX_TEXCOORD0, GX_TRUE, 0x100, 0x101);
+    GXSetTexCoordBias(GX_TEXCOORD0, 0, 0);
+    
+    GXSetIndTexOrder(GX_INDTEXSTAGE0, GX_TEXCOORD0, GX_TEXMAP1);
+    GXSetIndTexCoordScale(GX_INDTEXSTAGE0, GX_ITS_8, GX_ITS_1);
+
+    GXSetTevIndirect(GX_TEVSTAGE0, GX_INDTEXSTAGE0, GX_ITF_8, GX_ITB_NONE, GX_ITM_OFF, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE, GX_ITBA_OFF);
+    GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEX_DISABLE, GX_COLOR0A0);
+    GXSetChanCtrl(GX_COLOR0A0, GX_FALSE, GX_SRC_VTX, GX_SRC_VTX, 0, GX_DF_NONE, GX_AF_NONE);
+    GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_RASC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO);
+    GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVREG2);
+
+    GXInitTexObj(&obj2, wp->work_priv._8E40, 4, 16, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+    GXInitTexObjLOD(&obj2, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
+    GXLoadTexObj(&obj2, GX_TEXMAP2);
+
+    GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX1, 60);
+    GXSetTexCoordScaleManually(GX_TEXCOORD1, GX_TRUE, 0x100, 0x101);
+    GXSetTexCoordBias(GX_TEXCOORD1, 0, 0);
+    GXSetIndTexOrder(GX_INDTEXSTAGE1, GX_TEXCOORD1, GX_TEXMAP2);
+    GXSetIndTexCoordScale(GX_INDTEXSTAGE1, GX_ITS_8, GX_ITS_1);
+    
+    sft = 0;
+    while (var_r25 > (0x8000 << sft)) {
+        sft++;
+    }
+
+    indtexmtx_obj[0][0] = 0.5f / (sft >= 4 ? (1 << (sft - 3)) : 1);
+    indtexmtx_obj[1][1] = 0.5f / (sft <= 2 ? (1 << (3 - sft)) : 1);
+    GXSetIndTexMtx(GX_ITM_0, indtexmtx_obj, 36 + (sft < 4 ? 0 : sft - 3));
+
+    GXSetTevIndirect(GX_TEVSTAGE1, GX_INDTEXSTAGE1, GX_ITF_8, GX_ITB_NONE, GX_ITM_0, GX_ITW_OFF, GX_ITW_0, GX_TRUE, GX_FALSE, GX_ITBA_OFF);
+    GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD1, GX_TEXMAP0, GX_COLOR_NULL);
+    GXSetTevColorIn(GX_TEVSTAGE1, GX_CC_C2, GX_CC_ZERO, GX_CC_ZERO, GX_CC_TEXC);
+    GXSetTevColorOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn(GX_TEVSTAGE1, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_TEXA);
+    GXSetTevAlphaOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    
+    GXSetTevDirect(GX_TEVSTAGE2);
+    GXSetTevOrder(GX_TEVSTAGE2, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
+    GXSetTevColor(GX_TEVREG0, color_thres);
+    GXSetTevColorIn(GX_TEVSTAGE2, GX_CC_C0, GX_CC_C2, GX_CC_CPREV, GX_CC_ZERO);
+    GXSetTevColorOp(GX_TEVSTAGE2, GX_TEV_COMP_GR16_GT, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetTevAlphaIn(GX_TEVSTAGE2, GX_CA_APREV, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
+    GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_AND, GX_ALWAYS, 0);
+
+    var_r24 = 0;
+    for (i = 0; i < ARRAY_COUNT(wp->work_priv._2940); i++) {
+        if (c == 0 || (wp->work_priv._2940[i]._02 & 0x20) != 0) {
+            var_r24 += (wp->work_priv._0B40[wp->work_priv._2940[i]._00]._18 & 0x20) ? 8 : 4;
+        }
+    }
+
+    for (i = 0; i < 8; i += 4) {
+        GXInitTexObj(&obj3, &wp->chr_to_u8_bufp[(var_r25 >> 3) * i], 1024, var_r25 >> 11, GX_TF_I8, GX_MIRROR, GX_CLAMP, 0);
+        GXInitTexObjLOD(&obj3, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
+        GXLoadTexObj(&obj3, GX_TEXMAP0);
+
+        // why is this loop value loaded here???
+        j = 63 * sizeof(wp->work_priv._2940[0]);
+        GXBegin(GX_QUADS, GX_VTXFMT0, var_r24);
+        while (TRUE) {
+            u8 scanline = ((u8*)wp->work_priv._2940)[j + 0];
+            u32 obj_flags = ((u8*)wp->work_priv._2940)[j + 1];
+            u32 mode = (wp->work_priv._0B40[scanline]._18 >> 5) & 1;
+            u32 palette_bits;
+            u32 tmp;
+
+            if (mode != 0) {
+                palette_bits = (obj_flags >> 6) | ((obj_flags & 1) << 2);
+                palette_bits = ((wp->work_priv._0B40[scanline]._1E << (palette_bits + 1)) & 0x100) | ((wp->work_priv._0B40[scanline]._08[palette_bits]));
+                obj_flags &= 0xFE;
+            } else {
+                palette_bits = (obj_flags >> 6) | (wp->work_priv._0B40[scanline]._18 >> 1) & 4;
+                palette_bits = ((wp->work_priv._0B40[scanline]._1E << (palette_bits + 1)) & 0x100) | ((wp->work_priv._0B40[scanline]._08[palette_bits]));
+            }
+
+
+            flags = ((u8*)wp->work_priv._2940)[j + 2];
+            x1 = ((u8*)wp->work_priv._2940)[j + 3] + 128;
+            x2 = ((u8*)wp->work_priv._2940)[j + 3] + 128 + 8;
+            clr = ((((flags & 0x03) * 16) + 4) | (wp->work_priv._0B40[scanline]._18 & 0xC0)) << 24;
+
+            if (c != 0) {
+                if ((flags & 0x20) == 0) {
+                    goto loop_point;
+                }
+            } else if ((flags & 0x20) != 0) {
+                clr |= 0xFF010000;
+            }
+
+            v = (palette_bits << 1) & 0x3FC;
+            tmp = ((obj_flags << 5) & 0x7E0) | ((palette_bits << 0xB) & 0x800 & ~0x7E0);
+            if (flags & 0x40) {
+                u2 = tmp;
+                u1 = tmp + 0x20;
+            } else {
+                u1 = tmp;
+                u2 = tmp + 0x20;
+            }
+            if ((flags & 0x80) != 0) {
+                tmp = (-0x81 - scanline) + i;
+                y1 = tmp - 8;
+                y2 = tmp - 4;
+                if (var_r24 != 0) {
+                    u1 += 0x20;
+                    u2 += 0x20;
+                }
+            } else {
+                tmp = (-0x81 - scanline) - i;
+                y1 = tmp;
+                y2 = tmp - 4;
+            }
+            do {
+                GXPosition2s16(x1, y1);
+                GXColor1u32(clr);
+                GXTexCoord2u16(0, v);
+                GXTexCoord2u16(u1, 0);
+            
+                GXPosition2s16(x2, y1);
+                GXColor1u32(clr);
+                GXTexCoord2u16(0, v);
+                GXTexCoord2u16(u2, 0);
+            
+                GXPosition2s16(x2, y2);
+                GXColor1u32(clr);
+                GXTexCoord2u16(0, v);
+                GXTexCoord2u16(u2, 0x10);
+            
+                GXPosition2s16(x1, y2);
+                GXColor1u32(clr);
+                GXTexCoord2u16(0, v);
+                GXTexCoord2u16(u1, 0x10);
+            
+                y1 -= 8;
+                y2 -= 8;
+                if ((flags & 0x80) != 0) {
+                    u1 -= 0x20;
+                    u2 -= 0x20;
+                } else {
+                    u1 += 0x20;
+                    u2 += 0x20;
+                }
+            } while (var_r24-- != 0);
+
+loop_point:
+            if (j == 0) break;
+            j -= sizeof(wp->work_priv._2940[0]);
+        }
+
+        GXEnd();
+    }
+
+    if (c == 0) return;
+
+    u32 quads = ksNesDrawMakeOBJBlankVtxList(wp);
+    if (quads == 0) return;
+
+    GXSetNumChans(1);
+    GXSetNumTexGens(0);
+    GXSetNumTevStages(1);
+    GXSetNumIndStages(0);
+    GXSetBlendMode(GX_BM_LOGIC, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_COPY);
+
+    GXClearVtxDesc();
+    GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
+    GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
+
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XY, GX_S16, 0);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+    
+    GXSetTevDirect(GX_TEVSTAGE0);
+    GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+    GXSetChanCtrl(GX_COLOR0A0, GX_FALSE, GX_SRC_VTX, GX_SRC_VTX, 0, GX_DF_NONE, GX_AF_NONE);
+    GXSetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+    
+    GXSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
+
+    GXBegin(GX_QUADS, GX_VTXFMT0, quads << 1);
+    for (i = 0; i < quads; i += 2) {
+        work = (u8*)wp + i;
+        x = 0x180;
+        if ((wp->work_priv._0B40[(u8)((u8*)wp + i)[0x60]]._19 & 0x14) == 0x10) {
+            x = 0x88;
+        }
+        GXPosition2s16(0x80, -128 - x);
+        GXColor1u32(0);
+        GXPosition2s16(x, -128 - work[0x60]);
+        GXColor1u32(0);
+        GXPosition2s16(x, -128 - work[0x60] - work[0x61]);
+        GXColor1u32(0);
+        GXPosition2s16(0x80, -128 - work[0x60] - work[0x61]);
+        GXColor1u32(0);
+    }
+    GXEnd();
 }
 
 void ksNesDrawFlushEFBToRed8(u8* buf) {
