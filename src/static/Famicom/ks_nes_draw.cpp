@@ -201,7 +201,104 @@ void ksNesDrawMakeBGIndTexMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
 #define ksNes_MMC2_LATCH_LO 0xFD // select chr bank 0/2
 #define ksNes_MMC2_LATCH_HI 0xFE // select chr bank 1/3
 
-void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 mode) {
+void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
+    u32 CHR_flag_xor = wp->chr_to_i8_buf_size <= CHR_TO_I8_BUF_SIZE ? (wp->chr_to_i8_buf_size >> 13) : 0x80;
+    u32 mmc2_bank = 0x02; // 0x02 = unset
+    u32 row;
+    u32 col;
+    u32 i;
+    int j;
+
+    i = 239;
+    do {
+        u32 scanline_ctrl1 = wp->work_priv._0B40[i]._1B;
+        u32 idx = (wp->work_priv._0B40[i]._1C & 0xF8) * 4;
+
+        for (j = 0; j < 34; j++) {
+            u32 val = ((&wp->work_priv._0B40[i]._00)[(scanline_ctrl1 >> 8) & 1] + ((scanline_ctrl1 >> 3) & 0x1F))[idx];
+
+            if (val == ksNes_MMC2_LATCH_HI) {
+                mmc2_bank = 0x00;
+            } else if (val == ksNes_MMC2_LATCH_LO) {
+                mmc2_bank = 0x01;
+            }
+
+            scanline_ctrl1 += 8;
+        }
+    } while (i-- != 0 && mmc2_bank == 0x02);
+
+    // If the bank is still unset, use the default bank
+    if (mmc2_bank == 0x02) {
+        mmc2_bank = default_bank;
+    }
+
+    for (i = 0; i < 8; i++) {
+        u32 scanline_ctrl1 = wp->work_priv._0B40[i]._1B;
+        u32 idx = (wp->work_priv._0B40[i]._1C & 0xF8) * 4;
+
+        for (j = 0; j < 34; j++) {
+            u32 val = ((&wp->work_priv._0B40[i]._00)[(scanline_ctrl1 >> 8) & 1] + ((scanline_ctrl1 >> 3) & 0x1F))[idx];
+
+            if (val == ksNes_MMC2_LATCH_HI) {
+                mmc2_bank = 0x00;
+            } else if (val == ksNes_MMC2_LATCH_LO) {
+                mmc2_bank = 0x01;
+            }
+
+            scanline_ctrl1 += 8;
+        }
+    }
+
+    for (row = 8; row < 236; row++) {
+        u32 scanline_ctrl0 = wp->work_priv._0B40[row]._1C;
+        u32 scanline_ctrl1 = wp->work_priv._0B40[row]._1B;
+        u32 mask;
+        u32 nibble_acc; // @bug - uninitialized
+        u8* patternPtrBase = wp->work_priv._0B40[row]._08;
+        u32 tile_byte;
+        u32 palette_bits;
+        u32 dst_idx;
+        u8* nametable_p;
+
+        mask = mask = (scanline_ctrl0 & 0x04) ? CHR_flag_xor : 0; // bruh
+
+        for (col = 0; col < 34; col++) {
+
+            // _00 and _04 are pointers to ppu_nametable_pointers[0/1]?
+            nametable_p = (&wp->work_priv._0B40[row]._00)[((scanline_ctrl1 >> 8) & 1)];
+            if (((s32)nametable_p) >= 0) {
+                nibble_acc = (((u32)nametable_p) & 3) | (nibble_acc << 4);
+                tile_byte = (((u32)nametable_p) >> 8) & 0xFF;
+            } else {
+                nibble_acc = (((nametable_p[0x3C0 + ((scanline_ctrl0 & 0xE0) >> 2) + ((scanline_ctrl1 & 0xE0) >> 5)] >> ((((scanline_ctrl1 & 0x10) >> 3) | (scanline_ctrl0 & 0x10) >> 2))) & 3) & 0x0F) | ((nibble_acc << 4));
+                tile_byte = nametable_p[((scanline_ctrl0 & 0xF8) << 2) + ((scanline_ctrl1 & 0xF8) >> 3)];
+
+                if (tile_byte == ksNes_MMC2_LATCH_HI) {
+                    palette_bits = patternPtrBase[(mmc2_bank) | ((wp->work_priv._0B40[row]._18 & 0x10) >> 2)] | 0x03;
+                    mmc2_bank = 0x00;
+                    goto set;
+                } else if (tile_byte == ksNes_MMC2_LATCH_LO) {
+                    mmc2_bank = 0x01;
+                }
+            }
+
+            palette_bits = ((u8)tile_byte >> 6) | patternPtrBase[((mmc2_bank) | ((wp->work_priv._0B40[row]._18 & 0x10) >> 2))];
+            
+set:
+            // issue is here
+            wp->work_priv._3240[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
+            wp->work_priv._3240[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 1] = (palette_bits >> 1) ^ mask;
+
+            if ((col & 1) != 0) {
+                wp->work_priv._7840[((col >> 1) & 3) + (col & 0x38) * 4 + ((row & 7) * 4 + (row >> 3) * 160)] = nibble_acc;
+            }
+
+            scanline_ctrl1 += 8;
+        }
+    }
+
+    DCFlushRangeNoSync(wp->work_priv._3240, sizeof(wp->work_priv._3240));
+    DCFlushRangeNoSync(wp->work_priv._7840, sizeof(wp->work_priv._7840));
 }
 
 void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
