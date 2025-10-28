@@ -753,7 +753,7 @@ void* ksNesMapperInitFuncTbl[185][5] = {
         ksNesLinecntIrqDefault,
         ksNesLinecntIrqDefault,
         ksNesLinecntIrqDefault,
-    }
+    },
 };
 
 typedef struct {
@@ -2318,13 +2318,13 @@ void ksNesDrawMakeOBJIndTex(ksNesCommonWorkObj* wp) {
 #define TO_IND1(x) (((x) / 4) * 32) + (((x) % 4) * 8)
 #define TO_IND2(x) (((x) / 4) * 32) + (((x) % 4) * 2)
         for (j = 0; j < 4; j++) {
-            wp->work_priv._8E40[TO_IND1(i) + TO_IND2(j)] = (i >> 3) & 1;
-            wp->work_priv._8E40[TO_IND1(i) + TO_IND2(j) + 1] = array[i & 7] << 2;
+            wp->draw_ctx.sprite_indirect_lut[TO_IND1(i) + TO_IND2(j)] = (i >> 3) & 1;
+            wp->draw_ctx.sprite_indirect_lut[TO_IND1(i) + TO_IND2(j) + 1] = array[i & 7] << 2;
         }
     }
 #undef TO_IND1
 #undef TO_IND2
-    DCFlushRangeNoSync(wp->work_priv._8E40, sizeof(wp->work_priv._8E40));
+    DCFlushRangeNoSync(wp->draw_ctx.sprite_indirect_lut, sizeof(wp->draw_ctx.sprite_indirect_lut));
 }
 
 void ksNesDrawMakeOBJIndTexMMC5(ksNesCommonWorkObj* wp) {
@@ -2333,13 +2333,13 @@ void ksNesDrawMakeOBJIndTexMMC5(ksNesCommonWorkObj* wp) {
     for (u32 i = 0; i < 16; i++) {
         for (u32 j = 0; j < 4; j++) {
             static const u8 array[] = { 0x00, 0x01, 0x02, 0x03 };
-            wp->work_priv._8E40[TO_IND1(i) + TO_IND2(j)] = 0;
-            wp->work_priv._8E40[TO_IND1(i) + TO_IND2(j) + 1] = array[i % 4] * 4;
+            wp->draw_ctx.sprite_indirect_lut[TO_IND1(i) + TO_IND2(j)] = 0;
+            wp->draw_ctx.sprite_indirect_lut[TO_IND1(i) + TO_IND2(j) + 1] = array[i % 4] * 4;
         }
     }
 #undef TO_IND1
 #undef TO_IND2
-    DCFlushRangeNoSync(&wp->work_priv._8E40, sizeof(wp->work_priv._8E40));
+    DCFlushRangeNoSync(&wp->draw_ctx.sprite_indirect_lut, sizeof(wp->draw_ctx.sprite_indirect_lut));
 }
 
 void ksNesConvertChrToI8(ksNesCommonWorkObj* wp, const u8* data, u32 flags) {
@@ -2650,8 +2650,8 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
 
     // looks like we're checking memory alignment.
     // maybe done for performance reasons?
-    if ((uint)wp & 0x1f || (uint)sp & 0x1f || (uint)&wp->work_priv & 0x1f || (uint)&wp->work_priv._0B40 & 0x1f ||
-        (uint)sp->ppu_chr_banks & 0x03 || (uint)&wp->work_priv._2A40 & 0x1f) {
+    if ((uint)wp & 0x1f || (uint)sp & 0x1f || (uint)&wp->draw_ctx & 0x1f || (uint)&wp->draw_ctx.ppu_scanline_regs & 0x1f ||
+        (uint)sp->ppu_chr_banks & 0x03 || (uint)&wp->draw_ctx.post_process_lut & 0x1f) {
         return 0x515;
     }
 
@@ -2673,7 +2673,7 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
 
     if (flags & 1) {
         // temporarily save the work ram state.
-        memcpy(&wp->work_priv._0000, &sp->wram, KS_NES_WRAM_SIZE);
+        memcpy(&wp->draw_ctx, &sp->wram, KS_NES_WRAM_SIZE);
     }
 
     // zero out the state struct.
@@ -2681,7 +2681,7 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
 
     if (flags & 1) {
         // restore the previously saved work ram state.
-        memcpy(&sp->wram, &wp->work_priv._0000, KS_NES_WRAM_SIZE);
+        memcpy(&sp->wram, &wp->draw_ctx, KS_NES_WRAM_SIZE);
     } else {
         // fill ram with a predetermined pattern.
 
@@ -2696,7 +2696,7 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
     }
 
     // zero out the private work struct
-    memset(&wp->work_priv, 0, sizeof(ksNesCommonWorkPriv));
+    memset(&wp->draw_ctx, 0, sizeof(ksNesDrawCtx));
 
     for (i = 0; i < 0x18; i++) {
         sp->ppu_chr_bank_pointers[i] = &sp->ppu_nametable_ram[table[i & 0xf] * 0x100];
@@ -2731,7 +2731,7 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
         // extract the chr ram/rom size from the ines header and convert it from 8k chunks to bytes.
         sp->chr_size = (size_t)sp->nesromp[0x5] << 0xd;
 
-        if ((sp->chr_size > 0x40000) && ((sp->mapper != 5 || (wp->chr_to_i8_buf_size < sp->chr_size << 2)))) {
+        if ((sp->chr_size > 0x40000) && ((sp->mapper != KS_NES_MAPPER_MMC5 || (wp->chr_to_i8_buf_size < sp->chr_size << 2)))) {
             return 0x584;
         }
 
@@ -2744,7 +2744,7 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
 
     sp->reset_flags = flags;
 
-    if (sp->mapper == 5) {
+    if (sp->mapper == KS_NES_MAPPER_MMC5) {
         ksNesDrawMakeOBJIndTexMMC5(wp);
     } else {
         ksNesDrawMakeOBJIndTex(wp);
@@ -2763,8 +2763,8 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
     }
 
     for (i = 0; i < 0xf0; i++) {
-        wp->work_priv._0B40[i]._00 = sp->ppu_nametable_pointers[0];
-        wp->work_priv._0B40[i]._04 = sp->ppu_nametable_pointers[1];
+        wp->draw_ctx.ppu_scanline_regs[i].nametable_ptrs[0] = sp->ppu_nametable_pointers[0];
+        wp->draw_ctx.ppu_scanline_regs[i].nametable_ptrs[1] = sp->ppu_nametable_pointers[1];
     }
 
     for (i = 0; i < 8; i++) {
@@ -2782,7 +2782,7 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
         sp->chrramp = chrramp;
         sp->chr_size = 0x2000;
 
-        if (((flags & 8) != 0) && (sp->mapper == 5)) {
+        if (((flags & 8) != 0) && (sp->mapper == KS_NES_MAPPER_MMC5)) {
             sp->chr_size = 0x20000;
         }
 
@@ -2793,7 +2793,7 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
     } else {
         sp->chrramp = sp->prgromp + sp->prg_size;
 
-        if (sp->mapper == 5) {
+        if (sp->mapper == KS_NES_MAPPER_MMC5) {
             for (uVar4 = 0; uVar4 < sp->chr_size; uVar4 = uVar4 + 0x10) {
                 ksNesConvertChrToI8MMC5(wp, sp->chrramp + uVar4, uVar4 >> 4);
             }
@@ -2902,11 +2902,11 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
         Sound_SetE000(&sp->cpu_e000_ffff[0xe000]);
 
         switch (sp->mapper) {
-            case 5: // Nintendo's MMC5
+            case KS_NES_MAPPER_MMC5: // Nintendo's MMC5
                 Sound_SetMMC(0);
                 break;
-            case 24: // Konami's VRC6a
-            case 26: // Konami's VRC6b
+            case KS_NES_MAPPER_KONAMI_VRC6A: // Konami's VRC6a
+            case KS_NES_MAPPER_KONAMI_VRC6B: // Konami's VRC6b
                 Sound_SetMMC(1);
                 Sound_Write(0x5015, 7, 0);
                 break;
@@ -2976,6 +2976,9 @@ void ksNesEmuFrame(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags) {
 #define REGISTER_FLAG_OVERFLOW r21
 #define REGISTER_FLAG_NEGATIVE r22
 #define REGISTER_CYCLE_COUNT r25
+// r26 is reused for various purposes throughout the code
+#define REGISTER_SCANLINE_STATE r26
+#define REGISTER_TEMP_26 r26
 #define WRAM r31
 
 // clang-format off
@@ -3300,7 +3303,7 @@ asm void ksNesEmuFrameAsm(register ksNesCommonWorkObj* work_arg, register ksNesS
     stw r3, 0x08(r1)
     stw r4, 0x0c(r1)
     mr state_temp, state_arg
-    addi r7, work_arg, work_arg->work_priv._0B40
+    addi r7, work_arg, work_arg->draw_ctx.ppu_scanline_regs
     stw r7, 0xf4(r1)
     lwz r7, 0x14(r3)
     stw r7, 0xf0(r1)
@@ -3476,7 +3479,7 @@ ksNesMainLoop1:
 
 somewhere:
     lha r3, state_temp->ppu_scanline_counter
-    clrlslwi. r7, REGISTER_CYCLE_COUNT, 30, 3
+    clrlslwi. r7, REGISTER_CYCLE_COUNT, 30, 3 // r7 = (REGISTER_CYCLE_COUNT & 0x3) << 3
     lha r9, state_temp->cpu_cycles_per_vblank_scanline
     rlwimi REGISTER_CYCLE_COUNT, REGISTER_CYCLE_COUNT, 31, 30, 31
     beq LAB_8003b2f0
@@ -3488,24 +3491,27 @@ somewhere:
     cmpwi r3, 0xf0
     bge LAB_8003b3b4
 
+    // r7 holds the cycle count % 4 multiplied by 8 to get the index to write the ppu_chr_banks into the scanline state's registers
+    // this is done to accomodate different mapper implementations
     lwz r9, 0xf4(r1)
     slwi r8, r3, 5
     lwz r0, state_temp->ppu_chr_banks[0]
     lwz r10, state_temp->ppu_chr_banks[4]
-    add  r26, r8, r9
-    stwux r0, r7, r26
+    add  REGISTER_SCANLINE_STATE, r8, r9 // r26 holds a pointer to the current scanline state struct
+    stwux r0, r7, REGISTER_SCANLINE_STATE // store ((u32*)ppu_chr_banks)[0] to wp->draw_ctx.ppu_scanline_regs[state_temp->ppu_scanline_counter]._00[cycle_count & 3][0]
     andi. r0, REGISTER_CYCLE_COUNT, 0x1
-    stw r10, 0x4(r7)
+    stw r10, (ksNesPPUScanlineState.nametable_ptrs[1])(r7) // store ((u32*)ppu_chr_banks)[4] to wp->draw_ctx.ppu_scanline_regs[r3]._00[cycle_count & 3][1]
     bne ksNesMainLoop1
 
     lhz r0, state_temp->ppu_register_cache[0]
     lbz r8, state_temp->_17C6
     lbz r7, state_temp->mapper
     rlwimi r0, r8, 0x9, 0x10, 0x11
-    sth r0, 0x18(r26)
-    cmpwi r7, 0x5
+    sth r0, (ksNesPPUScanlineState.ppu_ctrl)(REGISTER_SCANLINE_STATE) // update both ppu_ctrl and ppumask_flags (PPUCTRL and PPUMASK regs)
+    cmpwi r7, KS_NES_MAPPER_MMC5
     bne LAB_8003b19c
 
+    // handle MMC5 specific logic
     lbz r7, state_temp->_17C7
     stb r0, state_temp->_17C7
     xor r9, r7, r0
@@ -3519,7 +3525,7 @@ somewhere:
     add        r8, r8, r7
     stb        r9, state_temp->_17C6
     rlwimi     r0, r9, 0x9, 0x10, 0x11
-    sth        r0, 0x18(r26)
+    sth        r0, (ksNesPPUScanlineState.ppu_ctrl)(REGISTER_SCANLINE_STATE)
     add        r9, r9, r7
     lswi       r3, r8, 0x10
     addi       r8, r8, 0x10
@@ -3597,7 +3603,7 @@ LAB_8003afb0:
     cmpw       r7, r0
     bne        LAB_8003afb0
 LAB_8003afc4:
-    stb        r10, 0x1e(r26)
+    stb        r10, (ksNesPPUScanlineState.chr_bank_ext_upper_sprite)(REGISTER_SCANLINE_STATE)
     lbz        r0, state_temp->ppu_register_cache[0]
     andi.      r0, r0, 0x20
     beq        LAB_8003b134
@@ -3609,7 +3615,7 @@ LAB_8003afc4:
     cmpwi      r7, 0x0
     bne        LAB_8003b01c
     rlwinm     r9, r9, 0x3, 0x0, 0x1c
-    addi       r6, r26, 0xf
+    addi       r6, REGISTER_SCANLINE_STATE, 0xf
     and        r9, r9, r8
     addi       r0, r6, 0x8
 LAB_8003b000:
@@ -3622,7 +3628,7 @@ LAB_8003b000:
     b          LAB_8003b138
 LAB_8003b01c:
     rlwinm     r9, r9, 0x2, 0x0, 0x1d
-    addi       r6, r26, 0x10
+    addi       r6, REGISTER_SCANLINE_STATE, 0x10
     and        r9, r9, r8
     addi       r0, r6, 0x4
 LAB_8003b02c:
@@ -3641,20 +3647,20 @@ LAB_8003b054:
     bne        LAB_8003b0b0
     rlwinm     r9, r9, 0x1, 0x0, 0x1e
     and        r9, r9, r8
-    stb        r9, 0x12(r26)
-    stb        r9, 0x16(r26)
+    stb        r9, 0x12(REGISTER_SCANLINE_STATE)
+    stb        r9, 0x16(REGISTER_SCANLINE_STATE)
     addi       r9, r9, 0x1
-    stb        r9, 0x13(r26)
-    stb        r9, 0x17(r26)
+    stb        r9, 0x13(REGISTER_SCANLINE_STATE)
+    stb        r9, 0x17(REGISTER_SCANLINE_STATE)
     rlwinm     r10, r9, 0x1d, 0x1a, 0x1a
-    lbz        r9, 0x17a9(state_temp)
+    lbz        r9, state_temp->_17A9
     rlwinm     r9, r9, 0x1, 0x0, 0x1e
     and        r9, r9, r8
-    stb        r9, 0x10(r26)
-    stb        r9, 0x14(r26)
+    stb        r9, 0x10(REGISTER_SCANLINE_STATE)
+    stb        r9, 0x14(REGISTER_SCANLINE_STATE)
     addi       r9, r9, 0x1
-    stb        r9, 0x11(r26)
-    stb        r9, 0x15(r26)
+    stb        r9, 0x11(REGISTER_SCANLINE_STATE)
+    stb        r9, 0x15(REGISTER_SCANLINE_STATE)
     rlwimi     r10, r8, 0x1f, 0x18, 0x18
     rlwinm     r9, r10, 0x1f, 0x1, 0x1f
     or         r10, r10, r9
@@ -3663,18 +3669,18 @@ LAB_8003b054:
 LAB_8003b0b0:
     lbz        r10, state_temp->mapper_chr_bank_ext[11]
     and        r9, r9, r8
-    stb        r9, 0x13(r26)
-    lbz        r9, 0x17aa(state_temp)
+    stb        r9, 0x13(REGISTER_SCANLINE_STATE)
+    lbz        r9, state_temp->_17AA
     and        r9, r9, r8
-    stb        r9, 0x12(r26)
-    lbz        r9, 0x17a9(state_temp)
+    stb        r9, 0x12(REGISTER_SCANLINE_STATE)
+    lbz        r9, state_temp->_17A9
     and        r9, r9, r8
-    stb        r9, 0x11(r26)
-    lbz        r9, 0x17a8(state_temp)
+    stb        r9, 0x11(REGISTER_SCANLINE_STATE)
+    lbz        r9, state_temp->_17A8
     and        r9, r9, r8
-    stb        r9, 0x10(r26)
-    lwz        r9, 0x10(r26)
-    stw        r9, 0x14(r26)
+    stb        r9, 0x10(REGISTER_SCANLINE_STATE)
+    lwz        r9, (ksNesPPUScanlineState.chr_bank_bg[0])(REGISTER_SCANLINE_STATE)
+    stw        r9, (ksNesPPUScanlineState.chr_bank_bg[1])(REGISTER_SCANLINE_STATE)
     lbz        r9, state_temp->mapper_chr_bank_ext[10]
     subi       r10, r10, 0x1
     lbz        r8, state_temp->mapper_chr_bank_ext[9]
@@ -3695,9 +3701,9 @@ LAB_8003b0b0:
     or         r10, r10, r0
     b          LAB_8003b138
 LAB_8003b134:
-    lbz        r10, 0x1e(r26)
+    lbz        r10, (ksNesPPUScanlineState.chr_bank_ext_upper_sprite)(REGISTER_SCANLINE_STATE)
 LAB_8003b138:
-    stb        r10, 0x1f(r26)
+    stb        r10, (ksNesPPUScanlineState.chr_bank_ext_upper_bg)(REGISTER_SCANLINE_STATE)
     lhz        r7, state_temp->ppu_vram_addr_v_hi
     addi       r0, state_temp, state_temp->ppu_nametable_pointers
     xori       r9, r7, 0x100
@@ -3720,9 +3726,9 @@ LAB_8003b174:
     bne        LAB_8003b188
     ori        r10, r10, 0x20
 LAB_8003b188:
-    stb        r10, 0x1d(r26)
-    stw        r8, 0x0(r26)
-    stw        r9, 0x4(r26)
+    stb        r10, (ksNesPPUScanlineState.mmc5_ext_mode)(REGISTER_SCANLINE_STATE)
+    stw        r8, (ksNesPPUScanlineState.nametable_ptrs[0])(REGISTER_SCANLINE_STATE)
+    stw        r9, (ksNesPPUScanlineState.nametable_ptrs[1])(REGISTER_SCANLINE_STATE)
     andi.      r4, r7, 0x7
     b          LAB_8003b1dc
 LAB_8003b19c:
@@ -3733,8 +3739,8 @@ LAB_8003b19c:
     rlwinm     r9, r9, 0x1a, 0x1c, 0x1d
     lwzx       r8, r8, r0
     lwzx       r9, r9, r0
-    stw        r8, 0x0(r26)
-    stw        r9, 0x4(r26)
+    stw        r8, (ksNesPPUScanlineState.nametable_ptrs[0])(REGISTER_SCANLINE_STATE)
+    stw        r9, (ksNesPPUScanlineState.nametable_ptrs[1])(REGISTER_SCANLINE_STATE)
     rlwinm     r8, r7, 0x1e, 0x1f, 0x1f
     rlwinm     r9, r7, 0x1, 0x0, 0x1e
     xor        r10, r7, r8
@@ -3743,11 +3749,11 @@ LAB_8003b19c:
     rlwimi     r8, r9, 0x0, 0x1d, 0x1d
     or         r4, r8, r10
 LAB_8003b1dc:
-    stb        r7, 0x1c(r26)
+    stb        r7, (ksNesPPUScanlineState.vram_addr_y)(REGISTER_SCANLINE_STATE)
     add        r4, state_temp, r4
     addi       r8, r7, 0x1
     andi.      r0, r7, 0x300
-    lbz        r10, 0x174c(r4)
+    lbz        r10, (ksNesStateObj.ppu_render_latches)(r4)
     andi.      r8, r8, 0xff
     cmpwi      r8, 0xf0
     lbz        r9, state_temp->ppu_fine_x_scroll
@@ -3755,22 +3761,22 @@ LAB_8003b1dc:
     xori       r0, r0, 0x200
     li         r8, 0x0
 LAB_8003b208:
-    sth        r9, 0x1a(r26)
+    sth        r9, (ksNesPPUScanlineState.fine_x_and_next)(REGISTER_SCANLINE_STATE)
     or         r8, r8, r0
     sth        r8, state_temp->ppu_vram_addr_v_hi
     subic.     r10, r10, 0x80
-    lbz        r9, 0x175c(r4)
+    lbz        r9, (ksNesStateObj.ppu_render_latches + 0x10)(r4)
     beq        LAB_8003b230
-    stb        r10, 0x174c(r4)
-    stb        r3, 0x1754(r4)
-    stb        r3, 0x175c(r4)
+    stb        r10, (ksNesStateObj.ppu_render_latches)(r4)
+    stb        r3, (ksNesStateObj.ppu_render_latches + 0x08)(r4)
+    stb        r3, (ksNesStateObj.ppu_render_latches + 0x10)(r4)
     b          LAB_8003b244
 LAB_8003b230:
     subf       r8, r9, r3
-    stb        r3, 0x175c(r4)
+    stb        r3, (ksNesStateObj.ppu_render_latches + 0x10)(r4)
     rlwinm     r8, r8, 0x5, 0x0, 0x1a
-    subf       r8, r8, r26
-    stb        r3, 0x1a(r8)
+    subf       r8, r8, REGISTER_SCANLINE_STATE
+    stb        r3, (ksNesPPUScanlineState.fine_x_and_next)(r8)
 LAB_8003b244:
     lbz        r8, 0x1020(state_temp)
     lbz        r10, state_temp->sprite0_hit_scanline
@@ -3978,7 +3984,7 @@ LAB_8003b4fc:
     li         r9, 0x0
     stswi      r8, r7, 0x8
     lbz        r8, state_temp->mapper
-    cmpwi      r8, 0x5
+    cmpwi      r8, KS_NES_MAPPER_MMC5
     bne        LAB_8003b54c
     li         r7, 0x40
     stb        r7, state_temp->mmc5_scanline_irq_status
@@ -5115,7 +5121,7 @@ entry ksNesStore2006
     rlwinm r7, r8, 30, 22, 28
     rlwimi r7, r8, 20, 30, 31
     lbz r9, state_temp->mapper
-    cmpwi r9, 0x5
+    cmpwi r9, KS_NES_MAPPER_MMC5
     bne L_8003C0D4
     andi. r7, r7, 0x7ffe
 L_8003C0D4:
@@ -5163,7 +5169,7 @@ L_8003C130:
     lbz r7, state_temp->mapper
     clrrwi r9, r9, 4
     add r4, r8, r9
-    cmpwi r7, 0x5
+    cmpwi r7, KS_NES_MAPPER_MMC5
     beq L_8003C180
     bl ksNesConvertChrToI8
     b L_8003C184

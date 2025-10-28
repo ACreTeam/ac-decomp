@@ -2134,8 +2134,8 @@ static int famicom_rom_load() {
     if (reset_res != 0) {
         OSReport("err code=%d (0x%x), %x,%x,%x,%x,%x,%x\n",
             reset_res, reset_res, famicomCommon.wp, famicomCommon.sp,
-            famicomCommon.wp->work_priv._0000, famicomCommon.wp->work_priv._0B40,
-            famicomCommon.wp->work_priv._2A40, famicomCommon.sp->ppu_chr_banks
+            famicomCommon.wp->draw_ctx.sprite_scanline_limit, famicomCommon.wp->draw_ctx.ppu_scanline_regs,
+            famicomCommon.wp->draw_ctx.post_process_lut, famicomCommon.sp->ppu_chr_banks
         );
         OSReport("NES emu reset failed!!");
     }
@@ -2479,7 +2479,7 @@ extern void famicom_1frame() {
         }
 
         if (nines_over_mode) {
-            flags |= 0x2000;
+            flags |= KS_NES_FLAG_NINES_OVER_MODE;
         }
 
         
