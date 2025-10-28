@@ -162,7 +162,7 @@ typedef struct ksNesOAMEntry {
 
 typedef struct ksNesDrawCtx {
     /* 0x0000 */ union {
-        u8 sprite_scanline_limit[KS_NES_SCANLINE_COUNT]; // tracks the number of sprites that have been drawn on each scanline
+        u8 sprite_scanline_limit[KS_NES_SCANLINE_SPRITE_OVERDRAW_COUNT]; // tracks the number of sprites that have been drawn on each scanline
         u8 scanline_y_coords[2 * 256]; // tracks the Y coordinate of the top & bottom of each scanline
     };
 

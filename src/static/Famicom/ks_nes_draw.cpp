@@ -74,7 +74,7 @@ void ksNesDrawClearEFBFirst(ksNesCommonWorkObj* wp) {
     GXClearVtxDesc();
     GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
     GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
-    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGB, GX_RGBA4, 0);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XY, GX_S16, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
     GXSetCurrentMtx(0);
     GXLoadPosMtxImm(wp->draw_ctx.draw_mtx, 0);
@@ -366,9 +366,9 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
     GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
     GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
     GXSetVtxDesc(GX_VA_TEX0, GX_DIRECT);
-    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGB, GX_RGBA4, 0);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XY, GX_S16, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
-    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_CLR_RGBA, GX_RGBX8, 10);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_S, GX_U16, 10);
     GXInitTexObj(&obj0, wp->draw_ctx.bg_palette_attr_texture, 40, 256, GX_TF_I4, GX_CLAMP, GX_REPEAT, 0);
     GXInitTexObjLOD(&obj0, GX_NEAR, GX_NEAR, 0.0, 0.0, 0.0, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&obj0, GX_TEXMAP0);
@@ -478,7 +478,7 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
         GXClearVtxDesc();
         GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
         GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
-        GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGB, GX_RGBA4, 0);
+        GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XY, GX_S16, 0);
         GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
         GXSetTevDirect(GX_TEVSTAGE0);
         GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
@@ -577,10 +577,20 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
             wp->draw_ctx.sprite_scanline_limit[i] = i < KS_NES_SCANLINE_COUNT ? ((state->frame_flags & KS_NES_FLAG_NINES_OVER_MODE) ? 255 : KS_NES_SPRITES_PER_SCANLINE) : 0;
             
             // Disable sprites if the ppu's config on this scanline doesn't have sprites enabled.
+            // @BUG - ppu_scanline_regs only has 240 entries, but this loop iterates 272 times.
+            // When i >= 240, this reads 32 bytes past the array into OAMTable memory,
+            // treating random OAM data as PPU mask flags to decide if sprites should be disabled.
+#ifndef BUGFIXES
             if ((wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SHOW_SPRITES) == 0) {
                 wp->draw_ctx.sprite_scanline_limit[i] = 0;
             }
+#else
+            if (i < KS_NES_SCANLINE_COUNT && (wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SHOW_SPRITES) == 0) {
+                wp->draw_ctx.sprite_scanline_limit[i] = 0;
+            }
+#endif
         }
+
 
         if (state->prg_size == 0x40000 && memcmp(state->prgromp + 0x3ffe9, "MARIO 3", 7) == 0) {
             for (i = 0; i < ARRAY_COUNT(wp->draw_ctx.ppu_scanline_regs); i++) {
@@ -599,14 +609,16 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
         int a;
         int _j;
         ksNesSpriteQuadData* quad_p = wp->draw_ctx.sprite_quad_data;
+        int idx2;
         
+        idx2 = 0;
         for (i = 0; i < 0x100; i += 4) {
             _j = 8; // 8x8 sprite
-            if (wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[i].y_pos].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) {
+            if (wp->draw_ctx.ppu_scanline_regs[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) {
                 _j = 16; // 8x16 sprite
             }
             a = 0;
-            if (wp->draw_ctx.OAMTable[i].attributes & KS_NES_OAM_ATTR_FLIP_VERTICAL) {
+            if (((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->attributes & KS_NES_OAM_ATTR_FLIP_VERTICAL) {
                 b = _j << 2;
                 _c = -4;
             } else {
@@ -614,27 +626,30 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
                 _c = 4;
             }
             for (j = 0; j < _j; j++) {
-                if (wp->draw_ctx.sprite_scanline_limit[wp->draw_ctx.OAMTable[i].y_pos + j] != 0) {
-                    wp->draw_ctx.sprite_scanline_limit[wp->draw_ctx.OAMTable[i].y_pos + j]--;
+                u32 ypos = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos;
+                ypos += j;
+                if (wp->draw_ctx.sprite_scanline_limit[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos + j] != 0) {
+                    wp->draw_ctx.sprite_scanline_limit[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos + j]--;
                     if ((a & 2) == 0) {
-                        quad_p->y_and_v_pairs[a] = j + wp->draw_ctx.OAMTable[i].y_pos;
+                        quad_p->y_and_v_pairs[a] = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos + j;
                         quad_p->y_and_v_pairs[a + 1] = b;
                         a += 2;
                     }
                 } else if ((a & 2) != 0) {
-                    quad_p->y_and_v_pairs[a] = j + wp->draw_ctx.OAMTable[i].y_pos;
+                    quad_p->y_and_v_pairs[a] = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos + j;
                     quad_p->y_and_v_pairs[a + 1] = b;
                     a += 2;
                 }
                 b += _c;
             }
             if ((a & 2) != 0) {
-                quad_p->y_and_v_pairs[a] = j + wp->draw_ctx.OAMTable[i].y_pos;
+                quad_p->y_and_v_pairs[a] = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + i))->y_pos + j;
                 quad_p->y_and_v_pairs[a + 1] = b;
                 a += 2;
             }
             wp->draw_ctx.sprite_vertex_count[i >> 2] = a;
             quad_p++;
+            idx2++;
         }
     }
     GXSetNumChans(1);
@@ -647,10 +662,10 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
     GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
     GXSetVtxDesc(GX_VA_TEX0, GX_DIRECT);
     GXSetVtxDesc(GX_VA_TEX1, GX_DIRECT);
-    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGB, GX_RGBA4, 0);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XY, GX_S16, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
-    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_CLR_RGBA, GX_RGBX8, 10);
-    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX1, GX_CLR_RGBA, GX_RGBX8, 10);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_S, GX_U16, 10);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX1, GX_TEX_S, GX_U16, 10);
     GXInitTexObj(&GStack_7c, wp->chr_to_u8_bufp, 0x400, (u16)(size >> 10), GX_TF_I8, GX_MIRROR, GX_CLAMP, 0);
     GXInitTexObjLOD(&GStack_7c, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&GStack_7c, GX_TEXMAP0);
@@ -707,37 +722,40 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
     GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
     u32 n_verts = 0;
+    u32 idx2 = 0;
     for (i = 0; i < ARRAY_COUNT(wp->draw_ctx.OAMTable); i++) {
         // draw sprites
-        if (sprite_priority_pass == 0 || (wp->draw_ctx.OAMTable[i].attributes & KS_NES_OAM_ATTR_PRIORITY) != 0) {
-            n_verts += wp->draw_ctx.sprite_vertex_count[i];
+        if (sprite_priority_pass == 0 || (((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx2))->attributes & KS_NES_OAM_ATTR_PRIORITY) != 0) {
+            n_verts += wp->draw_ctx.sprite_vertex_count[idx2 >> 2];
         }
+
+        idx2 += 4;
     }
 
-    // u32 idx = 0x100-4;
-    u32 idx2 = ARRAY_COUNT(wp->draw_ctx.OAMTable) - 1;
+    u32 idx = 0x100-4;
+    idx2 = ARRAY_COUNT(wp->draw_ctx.OAMTable) - 1;
     GXBegin(GX_QUADS, GX_VTXFMT0, n_verts);
     while (TRUE) {
-        ksNesSpriteQuadData* quad_p = &wp->draw_ctx.sprite_quad_data[idx2];
-        u8* quad_pairs = quad_p->y_and_v_pairs;
+        // ksNesSpriteQuadData* quad_p = &wp->draw_ctx.sprite_quad_data[idx2];
         // u32 scanline_idx = wp->draw_ctx.OAMTable[idx];
-        u32 tile_index = wp->draw_ctx.OAMTable[idx2].tile_index;
+        u8* quad_pairs = ((ksNesSpriteQuadData*)((u8*)wp->draw_ctx.sprite_quad_data + (idx << 3)))->y_and_v_pairs;
+        u32 tile_index = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->tile_index;
         u32 flags2;
 
-        if (wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[idx2].y_pos].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) {
+        if (wp->draw_ctx.ppu_scanline_regs[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->y_pos].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) {
             // 8x16 sprite
-            flags2 = wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[idx2].y_pos].chr_bank_sprite[(tile_index >> 6) | ((tile_index & KS_NES_OAM_TILE_BANK) << 2)];
+            flags2 = wp->draw_ctx.ppu_scanline_regs[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->y_pos].chr_bank_sprite[(tile_index >> 6) | ((tile_index & KS_NES_OAM_TILE_BANK) << 2)];
             tile_index &= KS_NES_OAM_TILE_IDX;
         } else {
             // 8x8 sprite
-            flags2 = wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[idx2].y_pos].chr_bank_sprite[(tile_index >> 6) | ((wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[idx2].y_pos].ppu_ctrl >> 1) & 4)];
+            flags2 = wp->draw_ctx.ppu_scanline_regs[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->y_pos].chr_bank_sprite[(tile_index >> 6) | ((wp->draw_ctx.ppu_scanline_regs[((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->y_pos].ppu_ctrl >> 1) & 4)];
         }
 
         // u32 flags3 = wp->draw_ctx.OAMTable[idx + 2];
-        u32 oam_attrs = wp->draw_ctx.OAMTable[idx2].attributes;
-        u32 x0 = wp->draw_ctx.OAMTable[idx2].x_pos + 128;
-        u32 x1 = wp->draw_ctx.OAMTable[idx2].x_pos + 136;
-        u32 color = ((wp->draw_ctx.OAMTable[idx2].x_pos & 3) * 16 + 4) * 0x01000000;
+        u32 oam_attrs = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->attributes;
+        u32 x0 = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->x_pos + 128;
+        u32 x1 = ((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->x_pos + 136;
+        u32 color = ((((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->x_pos & 3) * 16 + 4) * 0x01000000;
 
         if (sprite_priority_pass != 0) {
             // We're in the BG pass so skip if the sprite is supposed to be drawn in front of the BG
@@ -764,7 +782,7 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
         t0 = (flags2 & 0xFE) * 2; // select chr bank offset
         temp = ((tile_index & 0x3F) * 0x20) | ((flags2 & 0x01) * 0x800); // flags2 bit0 determines the pattern table
 
-        if (wp->draw_ctx.OAMTable[idx2].attributes & KS_NES_OAM_ATTR_FLIP_HORIZONTAL) {
+        if (((ksNesOAMEntry*)((u8*)wp->draw_ctx.OAMTable + idx))->attributes & KS_NES_OAM_ATTR_FLIP_HORIZONTAL) {
             s1 = temp + 32;
             s1_2 = temp;
         } else {
@@ -772,7 +790,7 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
             s1_2 = temp + 32;
         }
 
-        for (j = 0; j < wp->draw_ctx.sprite_vertex_count[idx2]; j += 4) {
+        for (j = 0; j < wp->draw_ctx.sprite_vertex_count[idx >> 2]; j += 4) {
             u32 y0 = -129 - quad_pairs[0];
             t1 = quad_pairs[1];
             u32 y1 = -129 - quad_pairs[2];
@@ -802,12 +820,12 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_prior
 
         
 loop_condition:
-        if (idx2 == 0) {
+        if (idx == 0) {
             break;
         }
 
-        // idx -= 4;
-        idx2--;
+        idx -= 4;
+        // idx2--;
     }
 
     GXEnd();
