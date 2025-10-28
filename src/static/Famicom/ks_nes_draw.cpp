@@ -1190,9 +1190,7 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
     GXTexObj obj2;
 
     cnt = 0;
-    i = 8;
-    color_effects_state = 0xFF;
-    for (; i < ARRAY_COUNT(wp->draw_ctx.ppu_scanline_regs); i++) {
+    for (i = 8, color_effects_state = 0xFF; i < ARRAY_COUNT(wp->draw_ctx.ppu_scanline_regs) - 4; i++) {
         val = wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_COLOR_EFFECTS;
         if (val != color_effects_state) {
             color_effects_state = val;
