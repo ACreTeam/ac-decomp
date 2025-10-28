@@ -13,6 +13,15 @@ extern "C" {
 #define KS_NES_WIDTH 256
 #define KS_NES_HEIGHT 228
 
+
+#define KS_NES_SCANLINE_COUNT 240 // 228 visible + 8 pre-render + 8 post-render
+#define KS_NES_SCANLINE_SPRITE_OVERDRAW_COUNT (KS_NES_SCANLINE_COUNT + 32) // 272
+
+#define KS_NES_CENTER_X (KS_NES_WIDTH / 2)
+#define KS_NES_CENTER_Y (KS_NES_SCANLINE_SPRITE_OVERDRAW_COUNT / 2)
+
+#define KS_NES_OAM_TABLE_SIZE 64
+
 #define CHR_TO_I8_BUF_SIZE 0x100000
 #define KS_NES_NESFILE_HEADER_SIZE 0x10
 #define KS_NES_PRGROM_SIZE 0x80000 // 512kb for MMC3
@@ -31,9 +40,44 @@ extern "C" {
 #define KS_NES_BYTES_PER_KB (1024)
 #define KS_NES_TO_KB(b) ((f32)b * (1.0f / (f32)KS_NES_BYTES_PER_KB))
 
-#define KS_NES_PPU_STATUS_FLG_SPRITE_OVERFLOW (1 << 5)
-#define KS_NES_PPU_STATUS_FLG_SPRITE_ZERO_HIT (1 << 6)
-#define KS_NES_PPU_STATUS_FLG_VBLANK (1 << 7)
+// NES PPU Control Register ($2000) flags
+#define KS_NES_PPU_CTRL_NAMETABLE_MASK      0x03  // Nametable select (0-3)
+#define KS_NES_PPU_CTRL_NAMETABLE_0         0x00  // Nametable at $2000
+#define KS_NES_PPU_CTRL_NAMETABLE_1         0x01  // Nametable at $2400
+#define KS_NES_PPU_CTRL_NAMETABLE_2         0x02  // Nametable at $2800
+#define KS_NES_PPU_CTRL_NAMETABLE_3         0x03  // Nametable at $2C00
+
+#define KS_NES_PPU_CTRL_VRAM_INCREMENT      0x04  // VRAM address increment (0=add 1 across, 1=add 32 down)
+#define KS_NES_PPU_CTRL_SPRITE_PATTERN      0x08  // Sprite pattern table for 8x8 sprites (0=$0000, 1=$1000)
+#define KS_NES_PPU_CTRL_BG_PATTERN          0x10  // Background pattern table (0=$0000, 1=$1000)
+#define KS_NES_PPU_CTRL_SPRITE_SIZE         0x20  // Sprite size (0=8x8, 1=8x16)
+#define KS_NES_PPU_CTRL_MASTER_SLAVE        0x40  // PPU master/slave select
+#define KS_NES_PPU_CTRL_NMI_ENABLE          0x80  // Generate NMI at start of vertical blanking
+
+// Sprite sizes
+#define KS_NES_PPU_CTRL_SPRITE_SIZE_8x8     0x00  // 8x8 sprite size
+#define KS_NES_PPU_CTRL_SPRITE_SIZE_8x16    0x20  // 8x16 sprite size
+
+// NES PPU Mask Register ($2001) flags
+#define KS_NES_PPU_MASK_GREYSCALE           0x01  // Greyscale mode
+#define KS_NES_PPU_MASK_SHOW_BG_LEFT        0x02  // Show background in leftmost 8 pixels
+#define KS_NES_PPU_MASK_SHOW_SPRITES_LEFT   0x04  // Show sprites in leftmost 8 pixels
+#define KS_NES_PPU_MASK_SHOW_BG             0x08  // Enable background rendering
+#define KS_NES_PPU_MASK_SHOW_SPRITES        0x10  // Enable sprite rendering
+#define KS_NES_PPU_MASK_EMPHASIZE_RED       0x20  // Emphasize red channel
+#define KS_NES_PPU_MASK_EMPHASIZE_GREEN     0x40  // Emphasize green channel
+#define KS_NES_PPU_MASK_EMPHASIZE_BLUE      0x80  // Emphasize blue channel
+
+// NES PPU Status Register ($2002) flags
+#define KS_NES_PPU_STATUS_FLG_SPRITE_OVERFLOW   (1 << 5) // 0x20
+#define KS_NES_PPU_STATUS_FLG_SPRITE_ZERO_HIT   (1 << 6) // 0x40
+#define KS_NES_PPU_STATUS_FLG_VBLANK            (1 << 7) // 0x80
+
+// Combined masks used in the codebase
+// All color modification bits (greyscale + RGB emphasis)
+#define KS_NES_PPU_MASK_COLOR_EFFECTS       (KS_NES_PPU_MASK_GREYSCALE | KS_NES_PPU_MASK_EMPHASIZE_RED | KS_NES_PPU_MASK_EMPHASIZE_GREEN | KS_NES_PPU_MASK_EMPHASIZE_BLUE) // 0xE1
+// Sprites enabled + leftmost sprites
+#define KS_NES_PPU_MASK_SPRITES_COMBINED    (KS_NES_PPU_MASK_SHOW_SPRITES_LEFT | KS_NES_PPU_MASK_SHOW_SPRITES) // 0x14
 
 // Timer IRQ control register @ 0x4022
 #define KS_NES_FDS_TIMER_CTRL_FLG_IRQ_REPEAT (1 << 0) // 0 = don't repeat, 1 = repeat
@@ -53,50 +97,88 @@ extern "C" {
 #define KS_NES_FDS_CTRL_FLG_CRC_ENABLE (1 << 6) // 0 = disable/reset, 1 = enable
 #define KS_NES_FDS_CTRL_FLG_INTERRUPT_ENABLE (1 << 7) // 1 = generate IRQ every time byte transfer flag is raised
 
-typedef struct _0B40_struct {
-    u8* _00;
-    u8* _04;
-    // u8* _08;
-    u8 _08[4]; // idk how many elements this should be
-    u32 _0C;
-    u32 _10;
-    u32 _14;
-    u8 _18;
-    u8 _19;
-    u8 _1A;
-    u8 _1B;
-    u8 _1C;
-    u8 _1D;
-    u8 _1E;
-    u8 _1F;
-} B40_struct; // size == 0x20
+// OAM Tile/Index Flags
+#define KS_NES_OAM_TILE_BANK 0x01
+#define KS_NES_OAM_TILE_IDX 0xFE
 
-typedef struct _0340_struct {
-    u8 _00[0x20];
-} _0340_struct; // size = 0x20
+// OAM Attribute Flags
+#define KS_NES_OAM_ATTR_PALETTE_MASK 0x03
+#define KS_NES_OAM_ATTR_PRIORITY (1 << 5) // 0x20, 0 = in front of background, 1 = behind background
+#define KS_NES_OAM_ATTR_FLIP_HORIZONTAL (1 << 6) // 0x40, 0 = normal, 1 = flip horizontally
+#define KS_NES_OAM_ATTR_FLIP_VERTICAL (1 << 7) // 0x80, 0 = normal, 1 = flip vertically
 
-typedef struct ksNesWorkPriv2940_struct {
-    u8 _00;
-    u8 _01;
-    u8 _02;
-    u8 _03;
-} ksNesWorkPriv2940_struct;
+// Misc
+#define KS_NES_SPRITES_PER_SCANLINE 8
 
-typedef struct ksNesCommonWorkPriv {
-    /* 0x0000 */ u8 _0000[0x200];
-    /* 0x0200 */ u8 _0200[0xF0];
-    /* 0x02F0 */ u8 _pad_02F0[0x10];
-    /* 0x0300 */ u8 _0300[0x40];
-    /* 0x0340 */ _0340_struct _0340[0x40];
-    /* 0x0B40 */ B40_struct _0B40[240];
-    /* 0x2940 */ ksNesWorkPriv2940_struct _2940[64];
-    /* 0x2A40 */ u8 _2A40[0x800];
-    /* 0x3240 */ u8 _3240[0x4800];
-    /* 0x7840 */ u8 _7840[0x1400];
-    /* 0x8E40 */ u8 _8E40[0x80]; // 4x16 texture IA8
-    /* 0x8EC0 */ u8 _8EC0[0x28]; // 8x4 texture IA8
+// Mapper definitions
+#define KS_NES_MAPPER_NROM 0
+#define KS_NES_MAPPER_MMC1 1
+#define KS_NES_MAPPER_UxROM 2
+#define KS_NES_MAPPER_CNROM 3
+#define KS_NES_MAPPER_MMC3 4
+#define KS_NES_MAPPER_MMC5 5
+#define KS_NES_MAPPER_MMC2 9
+#define KS_NES_MAPPER_MMC4 10
+
+#define KS_NES_MAPPER_KONAMI_VRC6A 24
+#define KS_NES_MAPPER_KONAMI_VRC6B 26
+
+// Emulator flags
+#define KS_NES_FLAG_NINES_OVER_MODE (1 << 13) // 0x2000, enables "nines over" mode which allows drawing more than 8 sprites per scanline
+
+typedef struct ksNesPPUScanlineState {
+    u8* nametable_ptrs[2];
+    // Either chr_bank_sprite or chr_bank_bg_mmc3 is used depending on mapper type and CPU cycle
+    union {
+        u8 chr_bank_sprite[4]; // lower four bytes are unused when not in MMC3 mode
+        u32 chr_bank_bg_mmc3[2]; // used in ksNesDrawMakeBGIndTex when the scanline column is >= 9.
+    };
+
+    u32 chr_bank_bg[2];
+    u8 ppu_ctrl;
+    u8 ppumask_flags;
+    u8 fine_x_and_next;
+    u8 vram_addr_coarse_x;
+    u8 vram_addr_y;
+
+    // MMC5-only state
+    u8 mmc5_ext_mode;
+    u8 chr_bank_ext_upper_sprite;
+    u8 chr_bank_ext_upper_bg;
+} ksNesPPUScanlineState; // size == 0x20
+
+typedef struct ksNesSpriteQuadData {
+    u8 y_and_v_pairs[32]; // Pairs of (Y position, texture V coord) for quad segments
+                          // Each quad segment uses 4 bytes: y_top, v_top, y_bottom, v_bottom
+                          // Supports up to 8 quad segments per sprite
+} ksNesSpriteQuadData; // size = 0x20
+
+typedef struct ksNesOAMEntry {
+    u8 y_pos;
+    u8 tile_index;
+    u8 attributes;
+    u8 x_pos;
+} ksNesOAMEntry;
+
+typedef struct ksNesDrawCtx {
+    /* 0x0000 */ union {
+        u8 sprite_scanline_limit[KS_NES_SCANLINE_COUNT]; // tracks the number of sprites that have been drawn on each scanline
+        u8 scanline_y_coords[2 * 256]; // tracks the Y coordinate of the top & bottom of each scanline
+    };
+
+    /* 0x0200 */ u8 mmc2_scanline_latch_tiles[KS_NES_SCANLINE_COUNT]; // tracks which tiles should be accessible on each scanline based on MMC2 latch settings
+    /* 0x02F0 */ u8 _pad_02F0[0x10]; // might be included in mmc2_scanline_latch_tiles
+    /* 0x0300 */ u8 sprite_vertex_count[KS_NES_OAM_TABLE_SIZE];
+    /* 0x0340 */ ksNesSpriteQuadData sprite_quad_data[KS_NES_OAM_TABLE_SIZE];
+    /* 0x0B40 */ ksNesPPUScanlineState ppu_scanline_regs[KS_NES_SCANLINE_COUNT];
+    /* 0x2940 */ ksNesOAMEntry OAMTable[KS_NES_OAM_TABLE_SIZE];
+    /* 0x2A40 */ u8 post_process_lut[0x800];
+    /* 0x3240 */ u8 bg_tile_index_texture[(36 * 256) * 2]; // IA8 texture, holds information about the background tile indices and pattern table data
+    /* 0x7840 */ u8 bg_palette_attr_texture[(40 * 256) / 2]; // I4 texture, holds background palette attributes
+    /* 0x8E40 */ u8 sprite_indirect_lut[(16 * 4) * 2]; // 4x16 texture IA8, handles indirect tex coords, for mirroring and sized sprites
+    /* 0x8EC0 */ u8 sprite_chr_bank_lut[(5 * 4) * 2]; // 8x4 IA8 sprite CHR bank lookup table -- @ BUG - this is setup as a 5x4 IA8 texture, but gets loaded as 8x4.
     /* 0x8EE8 */ Mtx34 draw_mtx;
-} ksNesCommonWorkPriv;
+} ksNesDrawCtx;
 
 typedef struct ksNesCommonWorkObj {
     /* 0x0000 */ u8* nesromp;
@@ -117,7 +199,7 @@ typedef struct ksNesCommonWorkObj {
     /* 0x003C */ u8 _003C[0x0048 - 0x003C];
     /* 0x0048 */ size_t prg_size;
     /* 0x004C */ u8 _004C[0x0060 - 0x004C];
-    /* 0x0060 */ ksNesCommonWorkPriv work_priv;
+    /* 0x0060 */ ksNesDrawCtx draw_ctx;
 } ksNesCommonWorkObj;
 
 typedef struct ksNesStateObj {

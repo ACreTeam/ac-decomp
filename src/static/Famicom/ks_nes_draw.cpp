@@ -39,7 +39,7 @@ void ksNesDrawInit(ksNesCommonWorkObj* wp) {
     GXSetTevSwapMode(GX_TEVSTAGE3, GX_TEV_SWAP0, GX_TEV_SWAP0);
     C_MTXOrtho(mtx, 0, -480.f, 0.f, 640.f, 0.f, 2000.f);
     GXSetProjection(mtx, GX_ORTHOGRAPHIC);
-    C_MTXLookAt(wp->work_priv.draw_mtx, &v1, &v2, &v3);
+    C_MTXLookAt(wp->draw_ctx.draw_mtx, &v1, &v2, &v3);
 }
 
 void ksNesDrawEnd() {
@@ -60,7 +60,7 @@ void ksNesDrawEnd() {
 }
 
 void ksNesDrawClearEFBFirst(ksNesCommonWorkObj* wp) {
-    DCFlushRange(&wp->work_priv._2A40, sizeof(wp->work_priv._2A40));
+    DCFlushRange(wp->draw_ctx.post_process_lut, sizeof(wp->draw_ctx.post_process_lut));
     GXSetNumChans(1);
     GXSetNumTexGens(0);
     GXSetNumTevStages(1);
@@ -77,7 +77,7 @@ void ksNesDrawClearEFBFirst(ksNesCommonWorkObj* wp) {
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGB, GX_RGBA4, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
     GXSetCurrentMtx(0);
-    GXLoadPosMtxImm(wp->work_priv.draw_mtx, 0);
+    GXLoadPosMtxImm(wp->draw_ctx.draw_mtx, 0);
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
     {
         GXPosition2s16(128, -128);
@@ -95,18 +95,18 @@ void ksNesDrawClearEFBFirst(ksNesCommonWorkObj* wp) {
     GXEnd();
 }
 
-void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mapper4) {
-    u32 trigger_col = mapper4 ? 9 : 0x7fff;
+void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mmc3) {
+    u32 trigger_col = mmc3 ? 9 : 0x7fff;
     u32 CHR_flag_xor = wp->chr_to_i8_buf_size <= CHR_TO_I8_BUF_SIZE ? (wp->chr_to_i8_buf_size >> 13) : 0x80;
     u32 row;
     u32 col;
     
     for (row = 8; row < 236; row++) {
-        u32 scanline_ctrl0 = wp->work_priv._0B40[row]._1C;
-        u32 scanline_ctrl1 = wp->work_priv._0B40[row]._1B;
+        u32 scanline_ctrl0 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_y;
+        u32 scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_coarse_x;
         u32 mask;
         u32 nibble_acc; // @bug - uninitialized
-        u8* patternPtrBase = (u8*)&wp->work_priv._0B40[row]._10;
+        u8* patternPtrBase = (u8*)wp->draw_ctx.ppu_scanline_regs[row].chr_bank_bg;
         u32 tile_byte;
         u32 palette_bits;
         u32 dst_idx;
@@ -119,8 +119,7 @@ void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mapper4) {
                 patternPtrBase -= 8;
             }
 
-            // _00 and _04 are pointers to ppu_nametable_pointers[0/1]?
-            nametable_p = (&wp->work_priv._0B40[row]._00)[((scanline_ctrl1 >> 8) & 1)];
+            nametable_p = wp->draw_ctx.ppu_scanline_regs[row].nametable_ptrs[((scanline_ctrl1 >> 8) & 1)];
             if (((s32)nametable_p) >= 0) {
                 nibble_acc = (((u32)nametable_p) & 3) | (nibble_acc << 4);
                 tile_byte = (((u32)nametable_p) >> 8) & 0xFF;
@@ -129,22 +128,22 @@ void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mapper4) {
                 tile_byte = nametable_p[((scanline_ctrl0 & 0xF8) << 2) + ((scanline_ctrl1 & 0xF8) >> 3)];
             }
 
-            palette_bits = patternPtrBase[((u8)tile_byte >> 6) | ((wp->work_priv._0B40[row]._18 & 0x10) >> 2)];
+            palette_bits = patternPtrBase[((u8)tile_byte >> 6) | ((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl & 0x10) >> 2)];
 
             // issue is here
-            wp->work_priv._3240[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
-            wp->work_priv._3240[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 1] = (palette_bits >> 1) ^ mask;
+            wp->draw_ctx.bg_tile_index_texture[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
+            wp->draw_ctx.bg_tile_index_texture[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 1] = (palette_bits >> 1) ^ mask;
 
             if ((col & 1) != 0) {
-                wp->work_priv._7840[((col >> 1) & 3) + (col & 0x38) * 4 + ((row & 7) * 4 + (row >> 3) * 160)] = nibble_acc;
+                wp->draw_ctx.bg_palette_attr_texture[((col >> 1) & 3) + (col & 0x38) * 4 + ((row & 7) * 4 + (row >> 3) * 160)] = nibble_acc;
             }
 
             scanline_ctrl1 += 8;
         }
     }
 
-    DCFlushRangeNoSync(wp->work_priv._3240, sizeof(wp->work_priv._3240));
-    DCFlushRangeNoSync(wp->work_priv._7840, sizeof(wp->work_priv._7840));
+    DCFlushRangeNoSync(wp->draw_ctx.bg_tile_index_texture, sizeof(wp->draw_ctx.bg_tile_index_texture));
+    DCFlushRangeNoSync(wp->draw_ctx.bg_palette_attr_texture, sizeof(wp->draw_ctx.bg_palette_attr_texture));
 }
 
 void ksNesDrawMakeBGIndTexMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
@@ -154,17 +153,16 @@ void ksNesDrawMakeBGIndTexMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
     
     for (row = 8; row < 236; row++) {
         u32 tile_byte;
-        u32 scanline_ctrl0 = wp->work_priv._0B40[row]._1C;
-        u32 scanline_ctrl1 = wp->work_priv._0B40[row]._1B;
+        u32 scanline_ctrl0 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_y;
+        u32 scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_coarse_x;
         u32 nibble_acc; // @bug - uninitialized
-        u8* patternPtrBase = (u8*)&wp->work_priv._0B40[row]._10;
+        u8* patternPtrBase = (u8*)&wp->draw_ctx.ppu_scanline_regs[row].chr_bank_bg;
         u32 palette_bits;
         u32 tmp;
         u8* nametable_p;
 
         for (col = 0; col < 34; col++) {
-            // _00 and _04 are pointers to ppu_nametable_pointers[0/1]?
-            nametable_p = (&wp->work_priv._0B40[row]._00)[((scanline_ctrl1 >> 8) & 1)];
+            nametable_p = wp->draw_ctx.ppu_scanline_regs[row].nametable_ptrs[((scanline_ctrl1 >> 8) & 1)];
             if (((s32)nametable_p) >= 0) {
                 nibble_acc = (((u32)nametable_p) & 3) | (nibble_acc << 4);
                 tile_byte = (((u32)nametable_p) >> 8) & 0xFF;
@@ -174,28 +172,29 @@ void ksNesDrawMakeBGIndTexMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
             }
 
             // issue in this area too probably
-            if (wp->work_priv._0B40[row]._1D & 0x20) {
+            if (wp->draw_ctx.ppu_scanline_regs[row].mmc5_ext_mode & 0x20) {
+                // MMC5 extension ram
                 nibble_acc = (nibble_acc & 0xF0) | (sp->mmc5_extension_ram[((scanline_ctrl1 >> 3) & 0x1F) + ((scanline_ctrl0 & 0xF8) << 2)] >> 6) & 0x0F;
                 palette_bits = ((sp->mmc5_extension_ram[((scanline_ctrl1 >> 3) & 0x1F) + ((scanline_ctrl0 & 0xF8) << 2)] << 2) & banks_mask) | ((u8)tile_byte >> 6);
             } else {
-                tmp = ((wp->work_priv._0B40[row]._18 & 0x10) >> 2) | ((tile_byte >> 6) & 0x3);
-                palette_bits = ((wp->work_priv._0B40[row]._1F << (tmp + 1)) & 0x100) | (patternPtrBase[tmp]);
+                tmp = ((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl & 0x10) >> 2) | ((tile_byte >> 6) & 0x3);
+                palette_bits = ((wp->draw_ctx.ppu_scanline_regs[row].chr_bank_ext_upper_bg << (tmp + 1)) & 0x100) | (patternPtrBase[tmp]);
             }
 
             // issue is here
-            wp->work_priv._3240[(((col & 3) * 2) + ((col & 0x3C) * 8) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
-            wp->work_priv._3240[(((col & 3) * 2) + ((col & 0x3C) * 8) + ((row >> 2) * 288) + ((row & 3) * 8)) + 1] = (palette_bits >> 1);
+            wp->draw_ctx.bg_tile_index_texture[(((col & 3) * 2) + ((col & 0x3C) * 8) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
+            wp->draw_ctx.bg_tile_index_texture[(((col & 3) * 2) + ((col & 0x3C) * 8) + ((row >> 2) * 288) + ((row & 3) * 8)) + 1] = (palette_bits >> 1);
 
             if ((col & 1) != 0) {
-                wp->work_priv._7840[((col >> 1) & 3) + (col & 0x38) * 4 + ((row & 7) * 4 + (row >> 3) * 160)] = nibble_acc;
+                wp->draw_ctx.bg_palette_attr_texture[((col >> 1) & 3) + (col & 0x38) * 4 + ((row & 7) * 4 + (row >> 3) * 160)] = nibble_acc;
             }
 
             scanline_ctrl1 += 8;
         }
     }
 
-    DCFlushRangeNoSync(wp->work_priv._3240, sizeof(wp->work_priv._3240));
-    DCFlushRangeNoSync(wp->work_priv._7840, sizeof(wp->work_priv._7840));
+    DCFlushRangeNoSync(wp->draw_ctx.bg_tile_index_texture, sizeof(wp->draw_ctx.bg_tile_index_texture));
+    DCFlushRangeNoSync(wp->draw_ctx.bg_palette_attr_texture, sizeof(wp->draw_ctx.bg_palette_attr_texture));
 }
 
 #define ksNes_MMC2_LATCH_LO 0xFD // select chr bank 0/2
@@ -211,11 +210,11 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
 
     i = 239;
     do {
-        u32 scanline_ctrl1 = wp->work_priv._0B40[i]._1B;
-        u32 idx = (wp->work_priv._0B40[i]._1C & 0xF8) * 4;
+        u32 scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[i].vram_addr_coarse_x;
+        u32 idx = (wp->draw_ctx.ppu_scanline_regs[i].vram_addr_y & 0xF8) * 4;
 
         for (j = 0; j < 34; j++) {
-            u32 val = ((&wp->work_priv._0B40[i]._00)[(scanline_ctrl1 >> 8) & 1] + ((scanline_ctrl1 >> 3) & 0x1F))[idx];
+            u32 val = (wp->draw_ctx.ppu_scanline_regs[i].nametable_ptrs[(scanline_ctrl1 >> 8) & 1] + ((scanline_ctrl1 >> 3) & 0x1F))[idx];
 
             if (val == ksNes_MMC2_LATCH_HI) {
                 mmc2_bank = 0x00;
@@ -233,11 +232,11 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
     }
 
     for (i = 0; i < 8; i++) {
-        u32 scanline_ctrl1 = wp->work_priv._0B40[i]._1B;
-        u32 idx = (wp->work_priv._0B40[i]._1C & 0xF8) * 4;
+        u32 scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[i].vram_addr_coarse_x;
+        u32 idx = (wp->draw_ctx.ppu_scanline_regs[i].vram_addr_y & 0xF8) * 4;
 
         for (j = 0; j < 34; j++) {
-            u32 val = ((&wp->work_priv._0B40[i]._00)[(scanline_ctrl1 >> 8) & 1] + ((scanline_ctrl1 >> 3) & 0x1F))[idx];
+            u32 val = (wp->draw_ctx.ppu_scanline_regs[i].nametable_ptrs[(scanline_ctrl1 >> 8) & 1] + ((scanline_ctrl1 >> 3) & 0x1F))[idx];
 
             if (val == ksNes_MMC2_LATCH_HI) {
                 mmc2_bank = 0x00;
@@ -250,11 +249,11 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
     }
 
     for (row = 8; row < 236; row++) {
-        u32 scanline_ctrl0 = wp->work_priv._0B40[row]._1C;
-        u32 scanline_ctrl1 = wp->work_priv._0B40[row]._1B;
+        u32 scanline_ctrl0 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_y;
+        u32 scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_coarse_x;
         u32 mask;
         u32 nibble_acc; // @bug - uninitialized
-        u8* patternPtrBase = wp->work_priv._0B40[row]._08;
+        u8* patternPtrBase = wp->draw_ctx.ppu_scanline_regs[row].chr_bank_sprite;
         u32 tile_byte;
         u32 palette_bits;
         u32 dst_idx;
@@ -263,9 +262,7 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
         mask = mask = (scanline_ctrl0 & 0x04) ? CHR_flag_xor : 0; // bruh
 
         for (col = 0; col < 34; col++) {
-
-            // _00 and _04 are pointers to ppu_nametable_pointers[0/1]?
-            nametable_p = (&wp->work_priv._0B40[row]._00)[((scanline_ctrl1 >> 8) & 1)];
+            nametable_p = wp->draw_ctx.ppu_scanline_regs[row].nametable_ptrs[((scanline_ctrl1 >> 8) & 1)];
             if (((s32)nametable_p) >= 0) {
                 nibble_acc = (((u32)nametable_p) & 3) | (nibble_acc << 4);
                 tile_byte = (((u32)nametable_p) >> 8) & 0xFF;
@@ -274,7 +271,7 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
                 tile_byte = nametable_p[((scanline_ctrl0 & 0xF8) << 2) + ((scanline_ctrl1 & 0xF8) >> 3)];
 
                 if (tile_byte == ksNes_MMC2_LATCH_HI) {
-                    palette_bits = patternPtrBase[(mmc2_bank) | ((wp->work_priv._0B40[row]._18 & 0x10) >> 2)] | 0x03;
+                    palette_bits = patternPtrBase[(mmc2_bank) | ((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl & 0x10) >> 2)] | 0x03;
                     mmc2_bank = 0x00;
                     goto set;
                 } else if (tile_byte == ksNes_MMC2_LATCH_LO) {
@@ -282,23 +279,23 @@ void ksNesDrawMakeBGIndTexMMC2(ksNesCommonWorkObj* wp, u32 default_bank) {
                 }
             }
 
-            palette_bits = ((u8)tile_byte >> 6) | patternPtrBase[((mmc2_bank) | ((wp->work_priv._0B40[row]._18 & 0x10) >> 2))];
+            palette_bits = ((u8)tile_byte >> 6) | patternPtrBase[((mmc2_bank) | ((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl & 0x10) >> 2))];
             
 set:
             // issue is here
-            wp->work_priv._3240[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
-            wp->work_priv._3240[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 1] = (palette_bits >> 1) ^ mask;
+            wp->draw_ctx.bg_tile_index_texture[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
+            wp->draw_ctx.bg_tile_index_texture[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 1] = (palette_bits >> 1) ^ mask;
 
             if ((col & 1) != 0) {
-                wp->work_priv._7840[((col >> 1) & 3) + (col & 0x38) * 4 + ((row & 7) * 4 + (row >> 3) * 160)] = nibble_acc;
+                wp->draw_ctx.bg_palette_attr_texture[((col >> 1) & 3) + (col & 0x38) * 4 + ((row & 7) * 4 + (row >> 3) * 160)] = nibble_acc;
             }
 
             scanline_ctrl1 += 8;
         }
     }
 
-    DCFlushRangeNoSync(wp->work_priv._3240, sizeof(wp->work_priv._3240));
-    DCFlushRangeNoSync(wp->work_priv._7840, sizeof(wp->work_priv._7840));
+    DCFlushRangeNoSync(wp->draw_ctx.bg_tile_index_texture, sizeof(wp->draw_ctx.bg_tile_index_texture));
+    DCFlushRangeNoSync(wp->draw_ctx.bg_palette_attr_texture, sizeof(wp->draw_ctx.bg_palette_attr_texture));
 }
 
 void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
@@ -306,37 +303,37 @@ void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
     u32 j;
     u32 k;
     
-    memset(&wp->work_priv._0200, 0, sizeof(wp->work_priv._0200));
-    for (i = 0; i < 64; i++) {
-        // _0B40 is the scanline state, _2940 is list of scanline triggers?
-        if (wp->work_priv._2940[i]._00 >= 236 || (wp->work_priv._2940[i]._01 != ksNes_MMC2_LATCH_HI && wp->work_priv._2940[i]._01 != ksNes_MMC2_LATCH_LO)) {
+    memset(wp->draw_ctx.mmc2_scanline_latch_tiles, 0, sizeof(wp->draw_ctx.mmc2_scanline_latch_tiles));
+    for (i = 0; i < ARRAY_COUNT(wp->draw_ctx.OAMTable); i++) {
+        // ppu_scanline_regs is the scanline state, OAMTable is list of scanline triggers?
+        if (wp->draw_ctx.OAMTable[i].y_pos >= 236 || (wp->draw_ctx.OAMTable[i].tile_index != ksNes_MMC2_LATCH_HI && wp->draw_ctx.OAMTable[i].tile_index != ksNes_MMC2_LATCH_LO)) {
             continue;
         }
 
-        j = wp->work_priv._2940[i]._00;
-        k = (((wp->work_priv._0B40[j]._18 >> 2) & 0x08) + 8) + j;
+        j = wp->draw_ctx.OAMTable[i].y_pos;
+        k = (((wp->draw_ctx.ppu_scanline_regs[j].ppu_ctrl >> 2) & 0x08) + 8) + j;
         do {
-            wp->work_priv._0200[j] = wp->work_priv._2940[i]._01;
+            wp->draw_ctx.mmc2_scanline_latch_tiles[j] = wp->draw_ctx.OAMTable[i].tile_index;
             j++;
         } while(j < k);
     }
 
     // _0200 is the scanline marker entries
-    for (i = 0, k = 0; i < ARRAY_COUNT(wp->work_priv._0200); i++) {
-        if (wp->work_priv._0200[i] == ksNes_MMC2_LATCH_HI) {
+    for (i = 0, k = 0; i < ARRAY_COUNT(wp->draw_ctx.mmc2_scanline_latch_tiles); i++) {
+        if (wp->draw_ctx.mmc2_scanline_latch_tiles[i] == ksNes_MMC2_LATCH_HI) {
             k = 0;
-        } else if (wp->work_priv._0200[i] == ksNes_MMC2_LATCH_LO) {
+        } else if (wp->draw_ctx.mmc2_scanline_latch_tiles[i] == ksNes_MMC2_LATCH_LO) {
             k = 1;
         }
 
         if (k) {
-            wp->work_priv._0B40[i]._08[0] = wp->work_priv._0B40[i]._08[1] - 1;
-            wp->work_priv._0B40[i]._08[2] = wp->work_priv._0B40[i]._08[1] + 1;
-            wp->work_priv._0B40[i]._08[3] = wp->work_priv._0B40[i]._08[1] + 2;
+            wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[0] = wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[1] - 1;
+            wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[2] = wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[1] + 1;
+            wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[3] = wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[1] + 2;
         } else {
-            wp->work_priv._0B40[i]._08[1] = wp->work_priv._0B40[i]._08[0] + 1;
-            wp->work_priv._0B40[i]._08[2] = wp->work_priv._0B40[i]._08[0] + 2;
-            wp->work_priv._0B40[i]._08[3] = wp->work_priv._0B40[i]._08[0] + 3;
+            wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[1] = wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[0] + 1;
+            wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[2] = wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[0] + 2;
+            wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[3] = wp->draw_ctx.ppu_scanline_regs[i].chr_bank_sprite[0] + 3;
         }
     }
 }
@@ -344,8 +341,8 @@ void ksNesDrawOBJSetupMMC2(ksNesCommonWorkObj* wp) {
 void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
     static const GXColor color_r_0xf0 = { 240, 0, 0, 0 };
     static f32 indtexmtx_screen[2][3] = {
-        {0.5f, 0.0f, 0.0f},
-        {0.0f, 0.0625f, 0.0f},
+        {0.5f, 0.0f, 0.0f}, // S offset = (Intensity from bg_tile_index_texture) × 0.5
+        {0.0f, 0.0625f, 0.0f}, // T offset = (Alpha from bg_tile_index_texture) × 0.0625 (1/16)
     };
 
     GXTexObj obj0;
@@ -372,7 +369,7 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_CLR_RGB, GX_RGBA4, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_CLR_RGBA, GX_RGBX8, 10);
-    GXInitTexObj(&obj0, wp->work_priv._7840, 40, 256, GX_TF_I4, GX_CLAMP, GX_REPEAT, 0);
+    GXInitTexObj(&obj0, wp->draw_ctx.bg_palette_attr_texture, 40, 256, GX_TF_I4, GX_CLAMP, GX_REPEAT, 0);
     GXInitTexObjLOD(&obj0, GX_NEAR, GX_NEAR, 0.0, 0.0, 0.0, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&obj0, GX_TEXMAP0);
     GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
@@ -383,7 +380,7 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
     GXSetTevColor(GX_TEVREG0, color_r_0xf0);
     GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_TEXC, GX_CC_ZERO, GX_CC_C0, GX_CC_TEXC);
     GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_SUB, GX_TB_ZERO, GX_CS_SCALE_1, 1, GX_TEVPREV);
-    GXInitTexObj(&obj1, wp->work_priv._3240, 36, 256, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+    GXInitTexObj(&obj1, wp->draw_ctx.bg_tile_index_texture, 36, 256, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
     GXInitTexObjLOD(&obj1, GX_NEAR, GX_NEAR, 0.0, 0.0, 0.0, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&obj1, GX_TEXMAP1);
     GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
@@ -410,7 +407,7 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
 
     for (i = 0; i < 8; i++) {
         if (sp->ppu_render_latches[i] != 0) {
-            if (sp->mapper == 5) {
+            if (sp->mapper == KS_NES_MAPPER_MMC5) {
                 GXInitTexObj(&obj2, wp->chr_to_u8_bufp + (wp->chr_to_i8_buf_size >> 3) * i, 1024, wp->chr_to_i8_buf_size >> 13, GX_TF_I8, GX_MIRROR, GX_CLAMP, 0);
                 GXInitTexObjLOD(&obj2, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
                 GXLoadTexObj(&obj2, GX_TEXMAP2);
@@ -429,26 +426,26 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
             curline = sp->ppu_render_latches[i + 8];
             j = curline;
             do {
-                if ((wp->work_priv._0B40[j]._19 & 0x08) != 0 && j >= 8 && j < 236) {
+                if ((wp->draw_ctx.ppu_scanline_regs[j].ppumask_flags & KS_NES_PPU_MASK_SHOW_BG) != 0 && j >= 8 && j < 236) {
                     cnt += 2;
                 }
-                j = wp->work_priv._0B40[j]._1A;
+                j = wp->draw_ctx.ppu_scanline_regs[j].fine_x_and_next;
             } while (j != 0);
 
             if (cnt != 0) {
                 GXBegin(GX_LINES, GX_VTXFMT0, cnt);
 
                 do {
-                    if ((wp->work_priv._0B40[curline]._19 & 0x08) != 0 && curline >= 8 && curline < 236) {
-                        if ((wp->work_priv._0B40[curline]._19 & 0x02) == 0) {
+                    if ((wp->draw_ctx.ppu_scanline_regs[curline].ppumask_flags & KS_NES_PPU_MASK_SHOW_BG) != 0 && curline >= 8 && curline < 236) {
+                        if ((wp->draw_ctx.ppu_scanline_regs[curline].ppumask_flags & KS_NES_PPU_MASK_SHOW_BG_LEFT) == 0) {
                             x0 = 0x80 + 8;
-                            x1 = (wp->work_priv._0B40[curline]._1B & 0x07) + 8;
+                            x1 = (wp->draw_ctx.ppu_scanline_regs[curline].vram_addr_coarse_x & 0x07) + 8;
                         } else {
-                            x0 = 0x80 - (wp->work_priv._0B40[curline]._1B & 0x07);
+                            x0 = 0x80 - (wp->draw_ctx.ppu_scanline_regs[curline].vram_addr_coarse_x & 0x07);
                             x1 = 0;
                         }
 
-                        color = (wp->work_priv._0B40[curline]._18 & 0xC0) << 24;
+                        color = (wp->draw_ctx.ppu_scanline_regs[curline].ppu_ctrl & 0xC0) << 24;
 
                         GXPosition2s16(x0, -0x81 - curline);
                         GXColor1u32(color);
@@ -459,7 +456,7 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
                         GXTexCoord2u16(x1 + 0x100 + 8, curline);
                     }
 
-                    curline = wp->work_priv._0B40[curline]._1A;
+                    curline = wp->draw_ctx.ppu_scanline_regs[curline].fine_x_and_next;
                 } while (curline != 0);
 
                 GXEnd();
@@ -469,7 +466,7 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
 
     cnt = 0;
     for (i = 8; i < 236; i++) {
-        if ((wp->work_priv._0B40[i]._19 & 0x08) == 0) {
+        if ((wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SHOW_BG) == 0) {
             cnt += 2;
         }
     }
@@ -495,9 +492,9 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
 
         for (i = 8; i < 236; i++) {
 
-            if ((wp->work_priv._0B40[i]._19 & 0x08) == 0) {
+            if ((wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SHOW_BG) == 0) {
                 s16 y = -0x81 - i;
-                u32 color = (wp->work_priv._0B40[i]._18 & 0xC0) << 24;
+                u32 color = (wp->draw_ctx.ppu_scanline_regs[i].ppu_ctrl & 0xC0) << 24;
 
                 GXPosition2s16(0x80, y);
                 GXColor1u32(color);
@@ -513,26 +510,26 @@ void ksNesDrawBG(ksNesCommonWorkObj* wp, ksNesStateObj* sp) {
 
 u32 ksNesDrawMakeOBJBlankVtxList(ksNesCommonWorkObj* wp) {
     u32 ret = 0;
-    u32 comparison_mask = 20;
+    u32 comparison_mask = KS_NES_PPU_MASK_SPRITES_COMBINED;
     int i;
 
-    for (i = 8; i < 0xf0; i++) {
-        int bMask = wp->work_priv._0B40[i]._19 & 0x14;
-        if (bMask != comparison_mask && ((bMask != 0) || (comparison_mask != 4)) &&
-            (bMask != 4 || comparison_mask != 0)) {
+    for (i = 8; i < ARRAY_COUNT(wp->draw_ctx.ppu_scanline_regs); i++) {
+        int bMask = wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SPRITES_COMBINED;
+        if (bMask != comparison_mask && ((bMask != 0) || (comparison_mask != KS_NES_PPU_MASK_SHOW_SPRITES_LEFT)) &&
+            (bMask != KS_NES_PPU_MASK_SHOW_SPRITES_LEFT || comparison_mask != 0)) {
             if ((ret & 1) != 0) {
-                wp->work_priv._0000[ret] = i - wp->_004C[ret + 0x13];
+                wp->draw_ctx.scanline_y_coords[ret] = i - wp->_004C[ret + 19];
                 ret++;
             }
-            if ((comparison_mask == 20) || (wp->work_priv._0B40[i]._19 & 0x10) == 0) {
-                wp->work_priv._0000[ret++] = i;
+            if ((comparison_mask == KS_NES_PPU_MASK_SPRITES_COMBINED) || (wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SHOW_SPRITES) == 0) {
+                wp->draw_ctx.scanline_y_coords[ret++] = i;
             }
-            comparison_mask = wp->work_priv._0B40[i]._19 & 0x14;
+            comparison_mask = wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SPRITES_COMBINED;
         }
     }
 
     if (ret & 1) {
-        wp->work_priv._0000[ret] = i - wp->_004C[ret + 0x13];
+        wp->draw_ctx.scanline_y_coords[ret] = i - wp->_004C[ret + 19];
         ret++;
     }
     return ret;
@@ -543,29 +540,29 @@ u32 ksNesDrawMakeOBJAppearVtxList(ksNesCommonWorkObj* wp) {
     u32 comparison_mask = 0;
     int i;
 
-    for (i = 8; i < 0xf0; i++) {
-        int bMask = wp->work_priv._0B40[i]._19 & 0x14;
-        if (bMask != comparison_mask && ((bMask != 0) || (comparison_mask != 4)) &&
-            (bMask != 4 || comparison_mask != 0)) {
+    for (i = 8; i < ARRAY_COUNT(wp->draw_ctx.ppu_scanline_regs); i++) {
+        int bMask = wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SPRITES_COMBINED;
+        if (bMask != comparison_mask && ((bMask != 0) || (comparison_mask != KS_NES_PPU_MASK_SHOW_SPRITES_LEFT)) &&
+            (bMask != KS_NES_PPU_MASK_SHOW_SPRITES_LEFT || comparison_mask != 0)) {
             if ((ret & 1) != 0) {
-                wp->work_priv._0000[ret] = i - wp->_004C[ret + 0x13];
+                wp->draw_ctx.scanline_y_coords[ret] = i - wp->_004C[ret + 19];
                 ret++;
             }
-            if ((wp->work_priv._0B40[i]._19 & 0x10)) {
-                wp->work_priv._0000[ret++] = i;
+            if ((wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SHOW_SPRITES)) {
+                wp->draw_ctx.scanline_y_coords[ret++] = i;
             }
-            comparison_mask = wp->work_priv._0B40[i]._19 & 0x14;
+            comparison_mask = wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SPRITES_COMBINED;
         }
     }
 
     if (ret & 1) {
-        wp->work_priv._0000[ret] = i - wp->_004C[ret + 0x13];
+        wp->draw_ctx.scanline_y_coords[ret] = i - wp->_004C[ret + 19];
         ret++;
     }
     return ret;
 }
 
-void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
+void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 sprite_priority_pass) {
     u32 size = wp->chr_to_i8_buf_size <= CHR_TO_I8_BUF_SIZE ? wp->chr_to_i8_buf_size : CHR_TO_I8_BUF_SIZE;
     // int i;
     GXTexObj GStack_7c;
@@ -574,35 +571,42 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
     u32 i;
     u32 j;
     
-    if (c == 0) {
-        for (i = 0; i < 0x110; i++) {
-            wp->work_priv._0000[i] = i < 0xF0 ? ((state->frame_flags & 0x2000) ? 255 : 8) : 0;
-            if ((wp->work_priv._0B40[i]._19 & 0x10) == 0) {
-                wp->work_priv._0000[i] = 0;
+    // check the pass is for foreground sprites
+    if (sprite_priority_pass == 0) {
+        for (i = 0; i < KS_NES_SCANLINE_SPRITE_OVERDRAW_COUNT; i++) {
+            wp->draw_ctx.sprite_scanline_limit[i] = i < KS_NES_SCANLINE_COUNT ? ((state->frame_flags & KS_NES_FLAG_NINES_OVER_MODE) ? 255 : KS_NES_SPRITES_PER_SCANLINE) : 0;
+            
+            // Disable sprites if the ppu's config on this scanline doesn't have sprites enabled.
+            if ((wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SHOW_SPRITES) == 0) {
+                wp->draw_ctx.sprite_scanline_limit[i] = 0;
             }
         }
+
         if (state->prg_size == 0x40000 && memcmp(state->prgromp + 0x3ffe9, "MARIO 3", 7) == 0) {
-            for (i = 0; i < 0xf0; i++) {
-                if (wp->work_priv._0B40[i]._0C == 0x7e7e7e7e) {
-                    wp->work_priv._0000[i] = 0;
+            for (i = 0; i < ARRAY_COUNT(wp->draw_ctx.ppu_scanline_regs); i++) {
+                // This is a hack for SMB3 where the emulator was drawing sprites (OBJ) on transition screens because
+                // it isn't accurate enough. So, when this specific bank setup is detected on the MMC3 chip's alternate
+                // banks, sprites are entirely disabled by setting the per-scanline limit to 0.
+                if (wp->draw_ctx.ppu_scanline_regs[i].chr_bank_bg_mmc3[1] == 0x7e7e7e7e) {
+                    wp->draw_ctx.sprite_scanline_limit[i] = 0;
                 }
             }
         }
 
-        memset(&wp->work_priv._0340, 0, sizeof(wp->work_priv._0340));
+        memset(wp->draw_ctx.sprite_quad_data, 0, sizeof(wp->draw_ctx.sprite_quad_data));
         int b;
         int _c;
         int a;
         int _j;
-        _0340_struct* _340_p = wp->work_priv._0340;
+        ksNesSpriteQuadData* quad_p = wp->draw_ctx.sprite_quad_data;
         
         for (i = 0; i < 0x100; i += 4) {
-            _j = 8;
-            if (wp->work_priv._0B40[wp->work_priv._2940[i]._00]._18 & 0x20) {
-                _j = 0x10;
+            _j = 8; // 8x8 sprite
+            if (wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[i].y_pos].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) {
+                _j = 16; // 8x16 sprite
             }
             a = 0;
-            if (wp->work_priv._2940[i]._02 & 0x80) {
+            if (wp->draw_ctx.OAMTable[i].attributes & KS_NES_OAM_ATTR_FLIP_VERTICAL) {
                 b = _j << 2;
                 _c = -4;
             } else {
@@ -610,27 +614,27 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
                 _c = 4;
             }
             for (j = 0; j < _j; j++) {
-                if (wp->work_priv._0000[wp->work_priv._2940[i]._00 + j] != 0) {
-                    wp->work_priv._0000[wp->work_priv._2940[i]._00 + j]--;
+                if (wp->draw_ctx.sprite_scanline_limit[wp->draw_ctx.OAMTable[i].y_pos + j] != 0) {
+                    wp->draw_ctx.sprite_scanline_limit[wp->draw_ctx.OAMTable[i].y_pos + j]--;
                     if ((a & 2) == 0) {
-                        _340_p->_00[a] = j + wp->work_priv._2940[i]._00;
-                        _340_p->_00[a + 1] = b;
+                        quad_p->y_and_v_pairs[a] = j + wp->draw_ctx.OAMTable[i].y_pos;
+                        quad_p->y_and_v_pairs[a + 1] = b;
                         a += 2;
                     }
                 } else if ((a & 2) != 0) {
-                    _340_p->_00[a] = j + wp->work_priv._2940[i]._00;
-                    _340_p->_00[a + 1] = b;
+                    quad_p->y_and_v_pairs[a] = j + wp->draw_ctx.OAMTable[i].y_pos;
+                    quad_p->y_and_v_pairs[a + 1] = b;
                     a += 2;
                 }
                 b += _c;
             }
             if ((a & 2) != 0) {
-                _340_p->_00[a] = j + wp->work_priv._2940[i]._00;
-                _340_p->_00[a + 1] = b;
+                quad_p->y_and_v_pairs[a] = j + wp->draw_ctx.OAMTable[i].y_pos;
+                quad_p->y_and_v_pairs[a + 1] = b;
                 a += 2;
             }
-            wp->work_priv._0300[i >> 2] = a;
-            _340_p++;
+            wp->draw_ctx.sprite_vertex_count[i >> 2] = a;
+            quad_p++;
         }
     }
     GXSetNumChans(1);
@@ -650,7 +654,11 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
     GXInitTexObj(&GStack_7c, wp->chr_to_u8_bufp, 0x400, (u16)(size >> 10), GX_TF_I8, GX_MIRROR, GX_CLAMP, 0);
     GXInitTexObjLOD(&GStack_7c, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&GStack_7c, GX_TEXMAP0);
-    GXInitTexObj(&GStack_9c, wp->work_priv._8EC0, 8, 4, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+#ifndef BUGFIXES
+    GXInitTexObj(&GStack_9c, wp->draw_ctx.sprite_chr_bank_lut, 8, 4, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+#else
+    GXInitTexObj(&GStack_9c, wp->draw_ctx.sprite_chr_bank_lut, 5, 4, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+#endif
     GXInitTexObjLOD(&GStack_9c, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&GStack_9c, GX_TEXMAP1);
     GXSetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 0x3c);
@@ -664,7 +672,7 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
     GXSetChanCtrl(GX_COLOR0A0, GX_FALSE, GX_SRC_VTX, GX_SRC_VTX, 0, GX_DF_NONE, GX_AF_NONE);
     GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_RASC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO);
     GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVREG2);
-    GXInitTexObj(&GStack_bc, wp->work_priv._8E40, 4, 0x10, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+    GXInitTexObj(&GStack_bc, wp->draw_ctx.sprite_indirect_lut, 4, 16, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
     GXInitTexObjLOD(&GStack_bc, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0, 0, GX_ANISO_1);
     GXLoadTexObj(&GStack_bc, GX_TEXMAP2);
     GXSetTexCoordGen(GX_TEXCOORD1, GX_TG_MTX2x4, GX_TG_TEX1, 0x3c);
@@ -699,40 +707,46 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
     GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
     u32 n_verts = 0;
-    for (i = 0; i < 0x100; i += 4) {
-        if (c == 0 || (wp->work_priv._2940[i]._02 & 0x20) != 0) {
-            n_verts += wp->work_priv._0300[i >> 2];
+    for (i = 0; i < ARRAY_COUNT(wp->draw_ctx.OAMTable); i++) {
+        // draw sprites
+        if (sprite_priority_pass == 0 || (wp->draw_ctx.OAMTable[i].attributes & KS_NES_OAM_ATTR_PRIORITY) != 0) {
+            n_verts += wp->draw_ctx.sprite_vertex_count[i];
         }
     }
 
-    u32 idx = 0x100-4;
-    u32 idx2 = 0x40-1;
+    // u32 idx = 0x100-4;
+    u32 idx2 = ARRAY_COUNT(wp->draw_ctx.OAMTable) - 1;
     GXBegin(GX_QUADS, GX_VTXFMT0, n_verts);
     while (TRUE) {
-        _0340_struct* _0340_thing = &wp->work_priv._0340[idx2];
-        u8* bruh = _0340_thing->_00;
-        // u32 scanline_idx = wp->work_priv._2940[idx];
-        u32 flags = wp->work_priv._2940[idx]._01;
+        ksNesSpriteQuadData* quad_p = &wp->draw_ctx.sprite_quad_data[idx2];
+        u8* quad_pairs = quad_p->y_and_v_pairs;
+        // u32 scanline_idx = wp->draw_ctx.OAMTable[idx];
+        u32 tile_index = wp->draw_ctx.OAMTable[idx2].tile_index;
         u32 flags2;
 
-        if (wp->work_priv._0B40[wp->work_priv._2940[idx]._00]._18 & 0x20) {
-            flags2 = wp->work_priv._0B40[wp->work_priv._2940[idx]._00]._08[(flags >> 6) | ((flags & 1) << 2)];
-            flags &= (u8)~0x01;
+        if (wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[idx2].y_pos].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) {
+            // 8x16 sprite
+            flags2 = wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[idx2].y_pos].chr_bank_sprite[(tile_index >> 6) | ((tile_index & KS_NES_OAM_TILE_BANK) << 2)];
+            tile_index &= KS_NES_OAM_TILE_IDX;
         } else {
-            flags2 = wp->work_priv._0B40[wp->work_priv._2940[idx]._00]._08[(flags >> 6) | ((wp->work_priv._0B40[wp->work_priv._2940[idx]._00]._18 >> 1) & 4)];
+            // 8x8 sprite
+            flags2 = wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[idx2].y_pos].chr_bank_sprite[(tile_index >> 6) | ((wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[idx2].y_pos].ppu_ctrl >> 1) & 4)];
         }
 
-        // u32 flags3 = wp->work_priv._2940[idx + 2];
-        u32 x0 = wp->work_priv._2940[idx]._03 + 128;
-        u32 x1 = wp->work_priv._2940[idx]._03 + 136;
-        u32 color = ((wp->work_priv._2940[idx]._02 & 3) * 0x10 + 4) * 0x01000000;
+        // u32 flags3 = wp->draw_ctx.OAMTable[idx + 2];
+        u32 oam_attrs = wp->draw_ctx.OAMTable[idx2].attributes;
+        u32 x0 = wp->draw_ctx.OAMTable[idx2].x_pos + 128;
+        u32 x1 = wp->draw_ctx.OAMTable[idx2].x_pos + 136;
+        u32 color = ((wp->draw_ctx.OAMTable[idx2].x_pos & 3) * 16 + 4) * 0x01000000;
 
-        if (c != 0) {
-            if ((flags & 0x20) == 0) {
+        if (sprite_priority_pass != 0) {
+            // We're in the BG pass so skip if the sprite is supposed to be drawn in front of the BG
+            if ((oam_attrs & KS_NES_OAM_ATTR_PRIORITY) == 0) {
                 goto loop_condition;
             }
-        }  else {
-            if ((flags & 0x20) != 0) {
+        } else {
+            // We're in the FG pass
+            if ((oam_attrs & KS_NES_OAM_ATTR_PRIORITY) != 0) {
                 color |= 0xFF010000;
             }
         }
@@ -747,10 +761,10 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
         // u32 j;
 
         s0 = 0;
-        t0 = (flags2 & (u8)~0x01) * 2;
-        temp = ((flags & 0x3F) * 0x20) | ((flags2 & 0x01) * 0x800);
+        t0 = (flags2 & 0xFE) * 2; // select chr bank offset
+        temp = ((tile_index & 0x3F) * 0x20) | ((flags2 & 0x01) * 0x800); // flags2 bit0 determines the pattern table
 
-        if (wp->work_priv._2940[idx]._02 & 0x40) {
+        if (wp->draw_ctx.OAMTable[idx2].attributes & KS_NES_OAM_ATTR_FLIP_HORIZONTAL) {
             s1 = temp + 32;
             s1_2 = temp;
         } else {
@@ -758,13 +772,13 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
             s1_2 = temp + 32;
         }
 
-        for (j = 0; j < wp->work_priv._0300[idx >> 2]; j += 4) {
-            u32 y0 = -129 - bruh[0];
-            t1 = bruh[1];
-            u32 y1 = -129 - bruh[2];
-            t1_2 = bruh[3];
+        for (j = 0; j < wp->draw_ctx.sprite_vertex_count[idx2]; j += 4) {
+            u32 y0 = -129 - quad_pairs[0];
+            t1 = quad_pairs[1];
+            u32 y1 = -129 - quad_pairs[2];
+            t1_2 = quad_pairs[3];
 
-            bruh += 4;
+            quad_pairs += 4;
             GXPosition2s16(x0, y0);
             GXColor1u32(color);
             GXTexCoord2u16(s0, t0);
@@ -788,17 +802,17 @@ void ksNesDrawOBJ(ksNesCommonWorkObj* wp, ksNesStateObj* state, u32 c) {
 
         
 loop_condition:
-        if (idx == 0) {
+        if (idx2 == 0) {
             break;
         }
 
-        idx -= 4;
+        // idx -= 4;
         idx2--;
     }
 
     GXEnd();
 
-    if (c != 0) {
+    if (sprite_priority_pass != 0) {
         u32 n = ksNesDrawMakeOBJBlankVtxList(wp);
 
         if (n != 0) {
@@ -820,15 +834,15 @@ loop_condition:
             
             GXBegin(GX_QUADS, GX_VTXFMT0, n * 2);
             for (u32 i = 0; i < n; i += 2) {
-                s16 x1 = (wp->work_priv._0B40[wp->work_priv._0000[i]]._19 & 0x14) == 0x10 ? 136 : 384;
+                s16 x1 = (wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.scanline_y_coords[i]].ppumask_flags & KS_NES_PPU_MASK_SPRITES_COMBINED) == KS_NES_PPU_MASK_SHOW_SPRITES ? 136 : 384;
 
-                GXPosition2s16(128, -128 - wp->work_priv._0000[i]);
+                GXPosition2s16(128, -128 - wp->draw_ctx.scanline_y_coords[i]);
                 GXColor1u32(0x00000000);
-                GXPosition2s16(x1, -128 - wp->work_priv._0000[i]);
+                GXPosition2s16(x1, -128 - wp->draw_ctx.scanline_y_coords[i]);
                 GXColor1u32(0x00000000);
-                GXPosition2s16(x1, -128 - wp->work_priv._0000[i] - wp->work_priv._0000[i + 1]);
+                GXPosition2s16(x1, -128 - wp->draw_ctx.scanline_y_coords[i] - wp->draw_ctx.scanline_y_coords[i + 1]);
                 GXColor1u32(0x00000000);
-                GXPosition2s16(128, -128 - wp->work_priv._0000[i] - wp->work_priv._0000[i + 1]);
+                GXPosition2s16(128, -128 - wp->draw_ctx.scanline_y_coords[i] - wp->draw_ctx.scanline_y_coords[i + 1]);
                 GXColor1u32(0x00000000);
             }
             GXEnd();
@@ -836,7 +850,7 @@ loop_condition:
     }
 }
 
-void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 c) {
+void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 sprite_priority_pass) {
     static const GXColor color_thres = { 255, 1, 0, 0 };
     // clang-format off
     static f32 indtexmtx_obj[2][3] = {
@@ -858,7 +872,7 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 c) {
     u32 x1, x2, y1, y2;
     u32 u1, u2, v;
     u32 clr;
-    u32 flags;
+    u32 oam_attrs;
     u8 *work;
 
     GXSetNumChans(1);
@@ -878,7 +892,11 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 c) {
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_U16, 10);
     GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX1, GX_TEX_ST, GX_U16, 10);
 
-    GXInitTexObj(&obj, wp->work_priv._8EC0, 8, 4, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+#ifndef BUGFIXES
+    GXInitTexObj(&obj, wp->draw_ctx.sprite_chr_bank_lut, 8, 4, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+#else
+    GXInitTexObj(&GStack_9c, wp->draw_ctx.sprite_chr_bank_lut, 5, 4, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+#endif
     GXInitTexObjLOD(&obj, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
     GXLoadTexObj(&obj, GX_TEXMAP1);
 
@@ -895,7 +913,7 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 c) {
     GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_RASC, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO);
     GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVREG2);
 
-    GXInitTexObj(&obj2, wp->work_priv._8E40, 4, 16, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
+    GXInitTexObj(&obj2, wp->draw_ctx.sprite_indirect_lut, 4, 16, GX_TF_IA8, GX_CLAMP, GX_CLAMP, 0);
     GXInitTexObjLOD(&obj2, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
     GXLoadTexObj(&obj2, GX_TEXMAP2);
 
@@ -931,9 +949,9 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 c) {
     GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
     var_r24 = 0;
-    for (i = 0; i < ARRAY_COUNT(wp->work_priv._2940); i++) {
-        if (c == 0 || (wp->work_priv._2940[i]._02 & 0x20) != 0) {
-            var_r24 += (wp->work_priv._0B40[wp->work_priv._2940[i]._00]._18 & 0x20) ? 8 : 4;
+    for (i = 0; i < ARRAY_COUNT(wp->draw_ctx.OAMTable); i++) {
+        if (sprite_priority_pass == 0 || (wp->draw_ctx.OAMTable[i].attributes & KS_NES_PPU_CTRL_SPRITE_SIZE) != 0) {
+            var_r24 += (wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[i].y_pos].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) ? 8 : 4;
         }
     }
 
@@ -943,48 +961,50 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 c) {
         GXLoadTexObj(&obj3, GX_TEXMAP0);
 
         // why is this loop value loaded here???
-        j = 63 * sizeof(wp->work_priv._2940[0]);
+        j = (ARRAY_COUNT(wp->draw_ctx.OAMTable) - 1) * sizeof(wp->draw_ctx.OAMTable[0]);
         GXBegin(GX_QUADS, GX_VTXFMT0, var_r24);
         while (TRUE) {
-            u8 scanline = ((u8*)wp->work_priv._2940)[j + 0];
-            u32 obj_flags = ((u8*)wp->work_priv._2940)[j + 1];
-            u32 mode = (wp->work_priv._0B40[scanline]._18 >> 5) & 1;
+            u8 scanline = ((u8*)wp->draw_ctx.OAMTable)[j + 0];
+            u32 tile_idx = ((u8*)wp->draw_ctx.OAMTable)[j + 1]; // loading tile index & bank
+            u32 size_mode = (wp->draw_ctx.ppu_scanline_regs[scanline].ppu_ctrl >> 5) & 1; // sprite size mode, 0 = 8x8, 1 = 8x16
             u32 palette_bits;
             u32 tmp;
 
-            if (mode != 0) {
-                palette_bits = (obj_flags >> 6) | ((obj_flags & 1) << 2);
-                palette_bits = ((wp->work_priv._0B40[scanline]._1E << (palette_bits + 1)) & 0x100) | ((wp->work_priv._0B40[scanline]._08[palette_bits]));
-                obj_flags &= 0xFE;
+            if (size_mode != 0) {
+                // 8x16 sprite
+                palette_bits = (tile_idx >> 6) | ((tile_idx & KS_NES_OAM_TILE_BANK) << 2);
+                palette_bits = ((wp->draw_ctx.ppu_scanline_regs[scanline].chr_bank_ext_upper_sprite << (palette_bits + 1)) & 0x100) | ((wp->draw_ctx.ppu_scanline_regs[scanline].chr_bank_sprite[palette_bits]));
+                tile_idx &= KS_NES_OAM_TILE_IDX;
             } else {
-                palette_bits = (obj_flags >> 6) | (wp->work_priv._0B40[scanline]._18 >> 1) & 4;
-                palette_bits = ((wp->work_priv._0B40[scanline]._1E << (palette_bits + 1)) & 0x100) | ((wp->work_priv._0B40[scanline]._08[palette_bits]));
+                // 8x8 sprite
+                palette_bits = (tile_idx >> 6) | (wp->draw_ctx.ppu_scanline_regs[scanline].ppu_ctrl >> 1) & 4;
+                palette_bits = ((wp->draw_ctx.ppu_scanline_regs[scanline].chr_bank_ext_upper_sprite << (palette_bits + 1)) & 0x100) | ((wp->draw_ctx.ppu_scanline_regs[scanline].chr_bank_sprite[palette_bits]));
             }
 
 
-            flags = ((u8*)wp->work_priv._2940)[j + 2];
-            x1 = ((u8*)wp->work_priv._2940)[j + 3] + 128;
-            x2 = ((u8*)wp->work_priv._2940)[j + 3] + 128 + 8;
-            clr = ((((flags & 0x03) * 16) + 4) | (wp->work_priv._0B40[scanline]._18 & 0xC0)) << 24;
+            oam_attrs = ((u8*)wp->draw_ctx.OAMTable)[j + 2]; // OAM attributes
+            x1 = ((u8*)wp->draw_ctx.OAMTable)[j + 3] + 128; // OAM X position
+            x2 = ((u8*)wp->draw_ctx.OAMTable)[j + 3] + 128 + 8; // OAM X position + 8
+            clr = ((((oam_attrs & KS_NES_OAM_ATTR_PALETTE_MASK) * 16) + 4) | (wp->draw_ctx.ppu_scanline_regs[scanline].ppu_ctrl & (KS_NES_PPU_CTRL_NMI_ENABLE | KS_NES_PPU_CTRL_MASTER_SLAVE))) << 24;
 
-            if (c != 0) {
-                if ((flags & 0x20) == 0) {
+            if (sprite_priority_pass != 0) {
+                if ((oam_attrs & KS_NES_OAM_ATTR_PRIORITY) == 0) {
                     goto loop_point;
                 }
-            } else if ((flags & 0x20) != 0) {
+            } else if ((oam_attrs & KS_NES_OAM_ATTR_PRIORITY) != 0) {
                 clr |= 0xFF010000;
             }
 
             v = (palette_bits << 1) & 0x3FC;
-            tmp = ((obj_flags << 5) & 0x7E0) | ((palette_bits << 0xB) & 0x800 & ~0x7E0);
-            if (flags & 0x40) {
+            tmp = ((tile_idx << 5) & 0x7E0) | ((palette_bits << 0xB) & 0x800 & ~0x7E0);
+            if (oam_attrs & KS_NES_OAM_ATTR_FLIP_HORIZONTAL) {
                 u2 = tmp;
                 u1 = tmp + 0x20;
             } else {
                 u1 = tmp;
                 u2 = tmp + 0x20;
             }
-            if ((flags & 0x80) != 0) {
+            if ((oam_attrs & KS_NES_OAM_ATTR_FLIP_VERTICAL) != 0) {
                 tmp = (-0x81 - scanline) + i;
                 y1 = tmp - 8;
                 y2 = tmp - 4;
@@ -1020,7 +1040,7 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 c) {
             
                 y1 -= 8;
                 y2 -= 8;
-                if ((flags & 0x80) != 0) {
+                if ((oam_attrs & KS_NES_OAM_ATTR_FLIP_VERTICAL) != 0) {
                     u1 -= 0x20;
                     u2 -= 0x20;
                 } else {
@@ -1031,13 +1051,13 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 c) {
 
 loop_point:
             if (j == 0) break;
-            j -= sizeof(wp->work_priv._2940[0]);
+            j -= sizeof(wp->draw_ctx.OAMTable[0]);
         }
 
         GXEnd();
     }
 
-    if (c == 0) return;
+    if (sprite_priority_pass == 0) return;
 
     u32 quads = ksNesDrawMakeOBJBlankVtxList(wp);
     if (quads == 0) return;
@@ -1064,9 +1084,9 @@ loop_point:
 
     GXBegin(GX_QUADS, GX_VTXFMT0, quads << 1);
     for (i = 0; i < quads; i += 2) {
-        work = (u8*)wp + i;
+        work = (u8*)wp + i; // wp->draw_ctx.scanline_y_coords[i, i + 1] (top & bottom)
         x = 0x180;
-        if ((wp->work_priv._0B40[(u8)((u8*)wp + i)[0x60]]._19 & 0x14) == 0x10) {
+        if ((wp->draw_ctx.ppu_scanline_regs[(u8)((u8*)wp + i)[0x60]].ppumask_flags & KS_NES_PPU_MASK_SPRITES_COMBINED) == KS_NES_PPU_MASK_SHOW_SPRITES) {
             x = 0x88;
         }
         GXPosition2s16(0x80, -128 - x);
@@ -1131,7 +1151,7 @@ void ksNesDrawOBJI8ToEFB(ksNesCommonWorkObj* wp, u8* buf) {
     
     for (i = 0; i < cnt; i += 2) {
         work = (u8*)wp + i; // if it works...
-        u = (wp->work_priv._0B40[(u8)((u8*)wp)[i + 0x60]]._19 & 0x14) == 0x10 ? 8 : 0;
+        u = (wp->draw_ctx.ppu_scanline_regs[(u8)((u8*)wp)[i + 0x60]].ppumask_flags & KS_NES_PPU_MASK_SPRITES_COMBINED) == KS_NES_PPU_MASK_SHOW_SPRITES ? 8 : 0;
         
         GXPosition2s16(u + 0x80, -128 - work[0x60]);
         GXTexCoord2u16(u, work[0x60] - 8);
@@ -1161,7 +1181,7 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
 
     u32 cnt;
     u32 i;
-    u32 unk_r7;
+    u32 color_effects_state;
     u8 y;
     u32 val;
     u32 clr;
@@ -1171,28 +1191,29 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
 
     cnt = 0;
     i = 8;
-    unk_r7 = 0xFF;
-    for (; i < 228 + 8; i++) {
-        val = wp->work_priv._0B40[i]._19 & 0xE1;
-        if (val != unk_r7) {
-            unk_r7 = val;
+    color_effects_state = 0xFF;
+    for (; i < ARRAY_COUNT(wp->draw_ctx.ppu_scanline_regs); i++) {
+        val = wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_COLOR_EFFECTS;
+        if (val != color_effects_state) {
+            color_effects_state = val;
             if ((cnt & 1) != 0) {
-                wp->work_priv._0000[cnt++] = i - 8;
+                wp->draw_ctx.scanline_y_coords[cnt++] = i - 8;
             }
-            wp->work_priv._0000[cnt++] = i - 8;
+            wp->draw_ctx.scanline_y_coords[cnt++] = i - 8;
         }
     }
 
     if ((cnt & 1) != 0) {
-        wp->work_priv._0000[cnt++] = i - 8;
+        wp->draw_ctx.scanline_y_coords[cnt++] = i - 8;
     }
-    wp->work_priv._0000[cnt] = 0xFF;
+    wp->draw_ctx.scanline_y_coords[cnt] = 0xFF;
 
-    GXInitTexObj(&obj2, wp->result_bufp, 256, 228, GX_TF_I8, GX_CLAMP, GX_CLAMP, 0);
+    GXInitTexObj(&obj2, wp->result_bufp, KS_NES_WIDTH, KS_NES_HEIGHT, GX_TF_I8, GX_CLAMP, GX_CLAMP, 0);
     GXInitTexObjLOD(&obj2, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
     GXLoadTexObj(&obj2, GX_TEXMAP1);
 
-    GXInitTexObj(&obj, wp->work_priv._2A40, 256, 4, GX_TF_RGB5A3, GX_CLAMP, GX_CLAMP, 0);
+    // Sampling LUT for applying color effects like color emphasis (I think)
+    GXInitTexObj(&obj, wp->draw_ctx.post_process_lut, 256, 4, GX_TF_RGB5A3, GX_CLAMP, GX_CLAMP, 0);
     GXInitTexObjLOD(&obj, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, GX_FALSE, GX_FALSE, GX_ANISO_1);
     GXLoadTexObj(&obj, GX_TEXMAP0);
 
@@ -1210,10 +1231,10 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
     GXSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
     cnt = 0;
-    for (i = 0; wp->work_priv._0000[i] != 0xFF; i += 2) {
-        val = wp->work_priv._0B40[wp->work_priv._0000[i]]._19;
-        if ((val & 0xE1) == 0) { 
-            cnt += 4;
+    for (i = 0; wp->draw_ctx.scanline_y_coords[i] != 0xFF; i += 2) {
+        val = wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.scanline_y_coords[i]].ppumask_flags;
+        if ((val & KS_NES_PPU_MASK_COLOR_EFFECTS) == 0) { 
+            cnt += 4; // has color and no color emphasis
         }
     }
 
@@ -1235,27 +1256,27 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
         do {
             i -= 2;
             work = ((u8*)wp + i);
-            val = wp->work_priv._0B40[work[0x60]]._19 & 0xE1;
+            val = wp->draw_ctx.ppu_scanline_regs[work[0x60]].ppumask_flags & KS_NES_PPU_MASK_COLOR_EFFECTS;
             if (val == 0) {
-                GXPosition2s16(0x180, -136 - work[0x60]);
-                GXTexCoord2u16(0x100, work[0x60]);
+                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x60]);
+                GXTexCoord2u16(256, work[0x60]);
 
-                GXPosition2s16(0x180, -136 - work[0x61]);
-                GXTexCoord2u16(0x100, work[0x61]);
+                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x61]);
+                GXTexCoord2u16(256, work[0x61]);
 
-                GXPosition2s16(0x080, -136 - work[0x61]);
-                GXTexCoord2u16(0x000, work[0x61]);
+                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x61]);
+                GXTexCoord2u16(0, work[0x61]);
 
-                GXPosition2s16(0x080, -136 - work[0x60]);
-                GXTexCoord2u16(0x000, work[0x60]);
+                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x60]);
+                GXTexCoord2u16(0, work[0x60]);
             }
         } while (i != 0);
     }
 
     cnt = 0;
-    for (i = 0; wp->work_priv._0000[i] != 0xFF; i += 2) {
-        val = wp->work_priv._0B40[wp->work_priv._0000[i]]._19;
-        if ((val & 0xE1) != 0) { 
+    for (i = 0; wp->draw_ctx.scanline_y_coords[i] != 0xFF; i += 2) {
+        val = wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.scanline_y_coords[i]].ppumask_flags;
+        if ((val & KS_NES_PPU_MASK_COLOR_EFFECTS) != 0) { 
             cnt += 4;
         }
     }
@@ -1322,40 +1343,40 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
 
         do {
             i -= 2;
-            work = (u8*)wp + i;
-            if ((wp->work_priv._0B40[work[0x60]]._19 & 0xE1) != 0) {
+            work = (u8*)wp + i; // wp->draw_ctx.scanline_y_coords[i, i + 1] (top & bottom)
+            if ((wp->draw_ctx.ppu_scanline_regs[work[0x60]].ppumask_flags & KS_NES_PPU_MASK_COLOR_EFFECTS) != 0) {
                 clr = 0x2F2F2F00;
-                if ((wp->work_priv._0B40[work[0x60]]._19 & 0x20) != 0) {
+                if ((wp->draw_ctx.ppu_scanline_regs[work[0x60]].ppumask_flags & KS_NES_PPU_MASK_EMPHASIZE_RED) != 0) {
                     clr += 0x10000000;
                 }
-                if ((wp->work_priv._0B40[work[0x60]]._19 & 0x40) != 0) {
+                if ((wp->draw_ctx.ppu_scanline_regs[work[0x60]].ppumask_flags & KS_NES_PPU_MASK_EMPHASIZE_GREEN) != 0) {
                     clr += 0x00100000;
                 }
-                if ((wp->work_priv._0B40[work[0x60]]._19 & 0x80) != 0) {
+                if ((wp->draw_ctx.ppu_scanline_regs[work[0x60]].ppumask_flags & KS_NES_PPU_MASK_EMPHASIZE_BLUE) != 0) {
                     clr += 0x00001000;
                 }
 
-                GXPosition2s16(0x180, -136 - work[0x60]);
+                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x60]);
                 GXColor1u32(clr);
-                GXTexCoord2u16(0x100, work[0x60]);
+                GXTexCoord2u16(256, work[0x60]);
 
-                GXPosition2s16(0x180, -136 - work[0x61]);
+                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x61]);
                 GXColor1u32(clr);
-                GXTexCoord2u16(0x100, work[0x61]);
+                GXTexCoord2u16(256, work[0x61]);
 
-                GXPosition2s16(0x080, -136 - work[0x61]);
+                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x61]);
                 GXColor1u32(clr);
-                GXTexCoord2u16(0x000, work[0x61]);
+                GXTexCoord2u16(0, work[0x61]);
 
-                GXPosition2s16(0x080, -136 - work[0x60]);
+                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x60]);
                 GXColor1u32(clr);
-                GXTexCoord2u16(0x000, work[0x60]);
+                GXTexCoord2u16(0, work[0x60]);
             }
         } while (i != 0);
     }
 
-    GXSetTexCopySrc(128, 136, 256, 228);
-    GXSetTexCopyDst(256, 228, GX_TF_RGB565, GX_FALSE);
+    GXSetTexCopySrc(KS_NES_CENTER_X, KS_NES_CENTER_Y, KS_NES_WIDTH, KS_NES_HEIGHT);
+    GXSetTexCopyDst(KS_NES_WIDTH, KS_NES_HEIGHT, GX_TF_RGB565, GX_FALSE);
     GXSetCopyClear(black, 0xFFFFFF);
     GXCopyTex(wp->result_bufp, GX_FALSE);
     GXPixModeSync();
@@ -1364,22 +1385,22 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
 void ksNesDraw(ksNesCommonWorkObj* wp, ksNesStateObj* state) {
     ksNesDrawInit(wp);
     ksNesDrawClearEFBFirst(wp);
-    if (state->mapper == 9 || state->mapper == 10) {
-        ksNesDrawMakeBGIndTexMMC2(wp, state->mapper == 9 ? TRUE : FALSE);
+    if (state->mapper == KS_NES_MAPPER_MMC2 || state->mapper == KS_NES_MAPPER_MMC4) {
+        ksNesDrawMakeBGIndTexMMC2(wp, state->mapper == KS_NES_MAPPER_MMC2 ? TRUE : FALSE);
         ksNesDrawOBJSetupMMC2(wp);
-    } else if (state->mapper == 5) {
+    } else if (state->mapper == KS_NES_MAPPER_MMC5) {
         ksNesDrawMakeBGIndTexMMC5(wp, state);
     } else {
-        ksNesDrawMakeBGIndTex(wp, state->mapper == 4 ? TRUE : FALSE);
+        ksNesDrawMakeBGIndTex(wp, state->mapper == KS_NES_MAPPER_MMC3 ? TRUE : FALSE);
     }
     PPCSync();
-    if (state->mapper == 5) {
+    if (state->mapper == KS_NES_MAPPER_MMC5) {
         ksNesDrawOBJMMC5(wp, state, 0);
     } else {
         ksNesDrawOBJ(wp, state, 0);
     }
     ksNesDrawFlushEFBToRed8(wp->result_bufp);
-    if (state->mapper == 5) {
+    if (state->mapper == KS_NES_MAPPER_MMC5) {
         ksNesDrawOBJMMC5(wp, state, 1);
     } else {
         ksNesDrawOBJ(wp, state, 1);
