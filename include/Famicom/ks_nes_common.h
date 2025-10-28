@@ -130,7 +130,7 @@ typedef struct ksNesPPUScanlineState {
     u8* nametable_ptrs[2];
     // Either chr_bank_sprite or chr_bank_bg_mmc3 is used depending on mapper type and CPU cycle
     union {
-        u8 chr_bank_sprite[4]; // lower four bytes are unused when not in MMC3 mode
+        u8 chr_bank_sprite[8];
         u32 chr_bank_bg_mmc3[2]; // used in ksNesDrawMakeBGIndTex when the scanline column is >= 9.
     };
 
