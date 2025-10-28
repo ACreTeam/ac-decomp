@@ -166,8 +166,7 @@ typedef struct ksNesDrawCtx {
         u8 scanline_y_coords[2 * 256]; // tracks the Y coordinate of the top & bottom of each scanline
     };
 
-    /* 0x0200 */ u8 mmc2_scanline_latch_tiles[KS_NES_SCANLINE_COUNT]; // tracks which tiles should be accessible on each scanline based on MMC2 latch settings
-    /* 0x02F0 */ u8 _pad_02F0[0x10]; // might be included in mmc2_scanline_latch_tiles
+    /* 0x0200 */ u8 mmc2_scanline_latch_tiles[KS_NES_SCANLINE_COUNT + 16]; // tracks which tiles should be accessible on each scanline based on MMC2 latch settings
     /* 0x0300 */ u8 sprite_vertex_count[KS_NES_OAM_TABLE_SIZE];
     /* 0x0340 */ ksNesSpriteQuadData sprite_quad_data[KS_NES_OAM_TABLE_SIZE];
     /* 0x0B40 */ ksNesPPUScanlineState ppu_scanline_regs[KS_NES_SCANLINE_COUNT];
