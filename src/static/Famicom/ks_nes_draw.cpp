@@ -518,7 +518,7 @@ u32 ksNesDrawMakeOBJBlankVtxList(ksNesCommonWorkObj* wp) {
         if (bMask != comparison_mask && ((bMask != 0) || (comparison_mask != KS_NES_PPU_MASK_SHOW_SPRITES_LEFT)) &&
             (bMask != KS_NES_PPU_MASK_SHOW_SPRITES_LEFT || comparison_mask != 0)) {
             if ((ret & 1) != 0) {
-                wp->draw_ctx.scanline_y_coords[ret] = i - wp->_004C[ret + 19];
+                wp->draw_ctx.scanline_y_coords[ret] = i - wp->draw_ctx.scanline_y_coords[ret - 1];
                 ret++;
             }
             if ((comparison_mask == KS_NES_PPU_MASK_SPRITES_COMBINED) || (wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SHOW_SPRITES) == 0) {
@@ -529,7 +529,7 @@ u32 ksNesDrawMakeOBJBlankVtxList(ksNesCommonWorkObj* wp) {
     }
 
     if (ret & 1) {
-        wp->draw_ctx.scanline_y_coords[ret] = i - wp->_004C[ret + 19];
+        wp->draw_ctx.scanline_y_coords[ret] = i - wp->draw_ctx.scanline_y_coords[ret - 1];
         ret++;
     }
     return ret;
@@ -545,7 +545,7 @@ u32 ksNesDrawMakeOBJAppearVtxList(ksNesCommonWorkObj* wp) {
         if (bMask != comparison_mask && ((bMask != 0) || (comparison_mask != KS_NES_PPU_MASK_SHOW_SPRITES_LEFT)) &&
             (bMask != KS_NES_PPU_MASK_SHOW_SPRITES_LEFT || comparison_mask != 0)) {
             if ((ret & 1) != 0) {
-                wp->draw_ctx.scanline_y_coords[ret] = i - wp->_004C[ret + 19];
+                wp->draw_ctx.scanline_y_coords[ret] = i - wp->draw_ctx.scanline_y_coords[ret - 1];
                 ret++;
             }
             if ((wp->draw_ctx.ppu_scanline_regs[i].ppumask_flags & KS_NES_PPU_MASK_SHOW_SPRITES)) {
@@ -556,7 +556,7 @@ u32 ksNesDrawMakeOBJAppearVtxList(ksNesCommonWorkObj* wp) {
     }
 
     if (ret & 1) {
-        wp->draw_ctx.scanline_y_coords[ret] = i - wp->_004C[ret + 19];
+        wp->draw_ctx.scanline_y_coords[ret] = i - wp->draw_ctx.scanline_y_coords[ret - 1];
         ret++;
     }
     return ret;
