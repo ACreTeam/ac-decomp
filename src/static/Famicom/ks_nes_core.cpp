@@ -88,8 +88,8 @@ STORE_IO_FUNC ksNesStoreIOFuncTblDefault[] = {
 typedef void (*STORE_QD_FUNC)(u32, u32);
 
 STORE_QD_FUNC ksNesStoreQDFuncTbl[] = {
-    (STORE_QD_FUNC)ksNesStoreQD_4020,
-    (STORE_QD_FUNC)ksNesStoreQD_4020,
+    (STORE_QD_FUNC)ksNesStoreQD_4020, // 4020 (timer irq reload value lo)
+    (STORE_QD_FUNC)ksNesStoreQD_4020, // 4021 (timer irq reload value hi)
     (STORE_QD_FUNC)ksNesStoreQD_4022,
     (STORE_QD_FUNC)ksNesStoreQD_4023,
     (STORE_QD_FUNC)ksNesStoreQD_4024,
@@ -2710,7 +2710,7 @@ int ksNesReset(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 flags, u8* chrramp
             return 0x570;
         }
         memcpy(&sp->ppu_nametable_pointers[0], &sp->ppu_chr_bank_pointers[12], 0x10);
-        sp->fds_disk_count = wp->_001D;
+        sp->fds_disk_count = wp->fds_disk_count;
     } else {
         // extract the mapper number from the ines header
         sp->mapper = (nesromp[7] & 0xf0) | (nesromp[6] >> 4);
@@ -3279,6 +3279,15 @@ extern "C" void _restgpr_14(void);
 
 // TODO: use ksNesStateObj members instead of hardcoded offsets
 asm void ksNesEmuFrameAsm(register ksNesCommonWorkObj* work_arg, register ksNesStateObj* state_arg) {
+    // these might be part of a fralloc? they're stored twice
+    #define STACK_WORK_ARG 0x08(r1)
+    #define STACK_STATE_ARG 0x0C(r1)
+
+    #define STACK_FRAMES 0xEC(r1)
+    #define STACK_CPU_CYCLES 0xF0(r1)
+    #define STACK_PPU_SCANLINE_REGS 0xF4(r1)
+
+
     register int local_25;
     register int local_26;
     register int local_27;
@@ -3300,15 +3309,15 @@ asm void ksNesEmuFrameAsm(register ksNesCommonWorkObj* work_arg, register ksNesS
     //fralloc
     stw r3, 0xe0(r1)
     stw r4, 0xe4(r1)
-    stw r3, 0x08(r1)
-    stw r4, 0x0c(r1)
+    stw r3, STACK_WORK_ARG
+    stw r4, STACK_STATE_ARG
     mr state_temp, state_arg
     addi r7, work_arg, work_arg->draw_ctx.ppu_scanline_regs
-    stw r7, 0xf4(r1)
-    lwz r7, 0x14(r3)
-    stw r7, 0xf0(r1)
-    lbz r7, 0x1c(r3)
-    stw r7, 0xec(r1)
+    stw r7, STACK_PPU_SCANLINE_REGS
+    lwz r7, (ksNesCommonWorkObj.cpu_cycle_count)(r3)
+    stw r7, STACK_CPU_CYCLES
+    lbz r7, (ksNesCommonWorkObj.frames)(r3)
+    stw r7, STACK_FRAMES
 
     // r8 = state_temp->frame_flags & 0x4000 ? 2 : 0
     lwz r7, state_temp->frame_flags
@@ -3493,7 +3502,7 @@ somewhere:
 
     // r7 holds the cycle count % 4 multiplied by 8 to get the index to write the ppu_chr_banks into the scanline state's registers
     // this is done to accomodate different mapper implementations
-    lwz r9, 0xf4(r1)
+    lwz r9, STACK_PPU_SCANLINE_REGS
     slwi r8, r3, 5
     lwz r0, state_temp->ppu_chr_banks[0]
     lwz r10, state_temp->ppu_chr_banks[4]
@@ -3647,20 +3656,20 @@ LAB_8003b054:
     bne        LAB_8003b0b0
     rlwinm     r9, r9, 0x1, 0x0, 0x1e
     and        r9, r9, r8
-    stb        r9, 0x12(REGISTER_SCANLINE_STATE)
-    stb        r9, 0x16(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[0] + 2)(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[1] + 2)(REGISTER_SCANLINE_STATE)
     addi       r9, r9, 0x1
-    stb        r9, 0x13(REGISTER_SCANLINE_STATE)
-    stb        r9, 0x17(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[0] + 3)(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[1] + 3)(REGISTER_SCANLINE_STATE)
     rlwinm     r10, r9, 0x1d, 0x1a, 0x1a
     lbz        r9, state_temp->_17A9
     rlwinm     r9, r9, 0x1, 0x0, 0x1e
     and        r9, r9, r8
-    stb        r9, 0x10(REGISTER_SCANLINE_STATE)
-    stb        r9, 0x14(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[0] + 0)(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[1] + 0)(REGISTER_SCANLINE_STATE)
     addi       r9, r9, 0x1
-    stb        r9, 0x11(REGISTER_SCANLINE_STATE)
-    stb        r9, 0x15(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[0] + 1)(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[1] + 1)(REGISTER_SCANLINE_STATE)
     rlwimi     r10, r8, 0x1f, 0x18, 0x18
     rlwinm     r9, r10, 0x1f, 0x1, 0x1f
     or         r10, r10, r9
@@ -3669,16 +3678,16 @@ LAB_8003b054:
 LAB_8003b0b0:
     lbz        r10, state_temp->mapper_chr_bank_ext[11]
     and        r9, r9, r8
-    stb        r9, 0x13(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[0] + 3)(REGISTER_SCANLINE_STATE)
     lbz        r9, state_temp->_17AA
     and        r9, r9, r8
-    stb        r9, 0x12(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[0] + 2)(REGISTER_SCANLINE_STATE)
     lbz        r9, state_temp->_17A9
     and        r9, r9, r8
-    stb        r9, 0x11(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[0] + 1)(REGISTER_SCANLINE_STATE)
     lbz        r9, state_temp->_17A8
     and        r9, r9, r8
-    stb        r9, 0x10(REGISTER_SCANLINE_STATE)
+    stb        r9, (ksNesPPUScanlineState.chr_bank_bg[0] + 0)(REGISTER_SCANLINE_STATE)
     lwz        r9, (ksNesPPUScanlineState.chr_bank_bg[0])(REGISTER_SCANLINE_STATE)
     stw        r9, (ksNesPPUScanlineState.chr_bank_bg[1])(REGISTER_SCANLINE_STATE)
     lbz        r9, state_temp->mapper_chr_bank_ext[10]
@@ -3714,14 +3723,14 @@ LAB_8003b138:
     addi       r0, state_temp, state_temp->cartridge_nametable_ram
     cmpw       r8, r0
     bne        LAB_8003b168
-    lhz        r8, 0x17ac(state_temp)
+    lhz        r8, state_temp->_17AC
 LAB_8003b168:
     cmpw       r9, r0
     bne        LAB_8003b174
-    lhz        r9, 0x17ac(state_temp)
+    lhz        r9, state_temp->_17AC
 LAB_8003b174:
     lbz        r0, state_temp->mmc5_ext_ram_mode
-    lbz        r10, 0x17c0(state_temp)
+    lbz        r10, state_temp->_17C0
     cmpwi      r0, 0x1
     bne        LAB_8003b188
     ori        r10, r10, 0x20
@@ -3827,35 +3836,36 @@ LAB_8003b2d8:
     b          ksNesMainLoop1
 LAB_8003b2f0:
     lwz        r8, state_temp->frame_flags
-    lwz        r5, 0xf0(r1)
-    lbz        r7, 0xec(r1)
+    lwz        r5, STACK_CPU_CYCLES
+    lbz        r7, STACK_FRAMES
     andi.      r8, r8, 0x1000
     bne        LAB_8003b340
-    divwu      r5, r5, r7
+    divwu      r5, r5, r7 // r5 = frames / _0014
     li         r3, 0x0
     bl         Sound_Write
-    li         r3, 0x4015
+    li         r3, KS_NES_REG_APU_STATUS
     bl         Sound_Read
     lbz        r7, state_temp->cpu_state.irq_status_flags
     lbz        r8, state_temp->cpu_state.irq_mask_flags
     or         r7, r7, r3
     and        r7, r7, r8
     stb        r7, state_temp->cpu_state.irq_status_flags
-    li         r3, 0x5015
+// check MMC5 audio status for MMC5 pulse1 and pulse2
+    li         r3, KS_NES_REG_MMC5_AUDIO_STATUS
     bl         Sound_Read
-    andi.      r3, r3, 0x3
+    andi.      r3, r3, KS_NES_REG_MMC5_AUDIO_STATUS_PULSE_MASK
     stb        r3, state_temp->mmc5_apu_status
     lha        r3, state_temp->ppu_scanline_counter
 LAB_8003b340:
     lha        r9, state_temp->cpu_cycles_per_visible_scanline
     addi       r8, r3, 0x1
-    lwz        r7, 0xf0(r1)
+    lwz        r7, STACK_CPU_CYCLES
     add        REGISTER_CYCLE_COUNT, REGISTER_CYCLE_COUNT, r9
     lha        r10, state_temp->scanline_irq_target_val
     lha        r9, state_temp->mmc5_scanline_irq_target_val
     sth        r8, state_temp->ppu_scanline_counter
-    addi       r7, r7, 0x72
-    stw        r7, 0xf0(r1)
+    addi       r7, r7, KS_NES_CPU_CYCLES_PER_SCANLINE
+    stw        r7, STACK_CPU_CYCLES
     cmpw       r8, r9
     beq        ksNesLinecntIrq05Timer // LAB_8003cb78
     cmpw       r8, r10
@@ -3888,19 +3898,19 @@ LAB_8003b3b4:
     lwz        r8, state_temp->vblank_frame_counter
     stb        r7, state_temp->ppu_internal_state[2]
     sth        r9, state_temp->ppu_scanline_counter
-    lwz        r9, 0x8(r1)
+    lwz        r9, STACK_WORK_ARG
     addi       r8, r8, 0x1
     stw        r8, state_temp->vblank_frame_counter
-    lwz        r7, 0x44(r9)
+    lwz        r7, (ksNesCommonWorkObj._0044)(r9)
     addi       r7, r7, 0x1
-    stw        r7, 0x44(r9)
+    stw        r7, (ksNesCommonWorkObj._0044)(r9)
     lbz        r7, state_temp->fds_ready_delay_counter
     cmpwi      r7, 0xc3
     bgt        LAB_8003b418
     cmpwi      r7, 0x78
     blt        LAB_8003b418
-    lwz        r9, 0x8(r1)
-    lwz        r8, 0x20(r9)
+    lwz        r9, STACK_WORK_ARG
+    lwz        r8, (ksNesCommonWorkObj.pads[0])(r9)
     rlwinm.    r8, r8, 0x1, 0x1f, 0x1f
     beq        LAB_8003b420
     li         r7, 0xc3
@@ -3919,13 +3929,13 @@ LAB_8003b434:
     li         r8, 0x0
 LAB_8003b440:
     stb        r8, state_temp->motor_timer
-    lwz        r9, 0x8(r1)
+    lwz        r9, STACK_WORK_ARG
     li         r8, 0x80
     addi       r7, state_temp, state_temp->ppu_palette_ram
     mtspr      CTR, r8
     li         r8, 0x0
-    addi       r9, r9, 0x2aa0
-    addi       r3, state_temp, 0x18e8
+    addi       r9, r9, ksNesCommonWorkObj.draw_ctx.post_process_lut
+    addi       r3, state_temp, state_temp->palette_normal
 LAB_8003b460:
     lbzx       r0, r7, r8
     rlwinm     r10, r8, 0x1, 0x1a, 0x1a
@@ -3976,10 +3986,10 @@ LAB_8003b4fc:
     sth        r8, state_temp->ppu_vram_addr_v_hi
     stb        r7, state_temp->ppu_internal_state[2]
     li         r8, 0x0
-    sth        r8, 0x17c4(state_temp)
+    sth        r8, state_temp->_17C4
     lbz        r7, state_temp->ppu_register_cache[1]
-    stb        r7, 0x17c7(state_temp)
-    addi       r7, state_temp, 0x174c
+    stb        r7, state_temp->_17C7
+    addi       r7, state_temp, state_temp->ppu_render_latches
     li         r8, 0x0
     li         r9, 0x0
     stswi      r8, r7, 0x8
@@ -3989,11 +3999,11 @@ LAB_8003b4fc:
     li         r7, 0x40
     stb        r7, state_temp->mmc5_scanline_irq_status
 LAB_8003b54c:
-    lwz        r9, 0x8(r1)
-    li         r0, 0x40
-    addi       r7, state_temp, state_temp->primary_oam
+    lwz        r9, STACK_WORK_ARG
+    li         r0, KS_NES_OAM_TABLE_SIZE
+    addi       r7, state_temp, state_temp->primary_oam - 4
     mtctr      r0
-    addi       r9, r9, 0x299c
+    addi       r9, r9, (ksNesCommonWorkObj.draw_ctx.OAMTable) - 4
 LAB_8003b560:
     lwzu       r0, 0x4(r7)
     stwu       r0, 0x4(r9)
@@ -4014,12 +4024,12 @@ LAB_8003b598:
     stb        REGISTER_FLAG_OVERFLOW, state_temp->cpu_state.flag_v
     stb        REGISTER_FLAG_NEGATIVE, state_temp->cpu_state.flag_n
     stw        REGISTER_CYCLE_COUNT, state_temp->cycle_count
-    lwz        r3, 0x8(r1)
-    lwz        r7, 0xf0(r1)
-    lwz        r8, 0x18(r3)
-    stw        r7, 0x14(r3)
+    lwz        r3, STACK_WORK_ARG
+    lwz        r7, STACK_CPU_CYCLES
+    lwz        r8, (ksNesCommonWorkObj.total_cpu_cycles)(r3)
+    stw        r7, (ksNesCommonWorkObj.cpu_cycle_count)(r3)
     add        r8, r8, r7
-    stw        r8, 0x18(r3)
+    stw        r8, (ksNesCommonWorkObj.total_cpu_cycles)(r3)
 
     addi r11, r1, 0x140
     bl _restgpr_14
@@ -4081,12 +4091,12 @@ entry ksNesInst_load8_absx
     subi       r7, REGISTER_PC, 0x1
     add        r4, r4, REGISTER_X
     rlwinm     r8, r7, 0x15, 0x1b, 0x1d
-    lwzx       r9, r27, r8
+    lwzx       r9, state_cpu_ranges, r8
     lbzx       r8, r9, r7
     rlwinm     r8, r8, 0x8, 0x0, 0x17
     add        r3, r8, r4
     rlwinm     r26, r3, 0x15, 0x1b, 0x1d
-    lwzx       r9, r29, r26
+    lwzx       r9, state_load_func, r26
     mtlr       r9
     blr
 
@@ -4094,12 +4104,12 @@ entry ksNesInst_load8_absy
     subi       r7, REGISTER_PC, 0x1
     add        r4, r4, REGISTER_Y
     rlwinm     r8, r7, 0x15, 0x1b, 0x1d
-    lwzx       r9, r27, r8
+    lwzx       r9, state_cpu_ranges, r8
     lbzx       r8, r9, r7
     rlwinm     r8, r8, 0x8, 0x0, 0x17
     add        r3, r8, r4
     rlwinm     r26, r3, 0x15, 0x1b, 0x1d
-    lwzx       r9, r29, r26
+    lwzx       r9, state_load_func, r26
     mtlr       r9
     blr
 
@@ -4125,7 +4135,7 @@ entry ksNesInst_load8_dxi
     lbzx       r8, state_temp, r8
     rlwinm     r26, r8, 0x1d, 0x1b, 0x1d
     rlwimi     r3, r8, 0x8, 0x10, 0x17
-    lwzx       r9, r29, r26
+    lwzx       r9, state_load_func, r26
     mtlr       r9
     blr
 
@@ -4138,7 +4148,7 @@ entry ksNesInst_load8_dyi
     rlwinm     r8, r8, 0x8, 0x0, 0x17
     add        r3, r8, r3
     rlwinm     r26, r3, 0x15, 0x1b, 0x1d
-    lwzx       r9, r29, r26
+    lwzx       r9, state_load_func, r26
     mtlr       r9
     blr
 
@@ -4211,21 +4221,21 @@ entry ksNesInst_sty_94
 
 //STA absolute	    STA oper	8D	3	4  
 entry ksNesInst_sta_8d
-    lwzx r8, r28, r26
+    lwzx r8, state_store_func, r26
     mr r4, REGISTER_A
     mtctr r8
     bctr
 
 //STX absolute	    STX oper	8E	3	4  
 entry ksNesInst_stx_8e
-    lwzx r8, r28, r26
+    lwzx r8, state_store_func, r26
     mr r4, REGISTER_X
     mtctr r8
     bctr
 
 // STY absolute     STY oper	8C	3	4  
 entry ksNesInst_sty_8c
-    lwzx r8, r28, r26
+    lwzx r8, state_store_func, r26
     mr r4, REGISTER_Y
     mtctr r8
     bctr
@@ -4235,7 +4245,7 @@ entry ksNesInst_sta_9d
     add r3, r3, REGISTER_X
     mr r4, REGISTER_A
     rlwinm r26, r3, 21, 27, 29 //  (r3 >> 11) & 0x1C
-    lwzx r8, r28, r26
+    lwzx r8, state_store_func, r26
     mtctr r8
     bctr
 
@@ -4244,7 +4254,7 @@ entry ksNesInst_sta_99
     add r3, r3, REGISTER_Y
     mr r4, REGISTER_A
     rlwinm r26, r3, 21, 27, 29 //  (r3 >> 11) & 0x1C
-    lwzx r8, r28, r26
+    lwzx r8, state_store_func, r26
     mtctr r8
     bctr
 
@@ -4255,7 +4265,7 @@ entry ksNesInst_sta_81
     lbzx r3, WRAM, r8
     rlwinm r26, r3, 29, 27, 29 // (r3 >> 3) & 0x1C;
     slwi r3, r3, 8
-    lwzx r8, r28, r26
+    lwzx r8, state_store_func, r26
     or r3, r3, r4
     mtctr r8
     mr r4, REGISTER_A
@@ -4270,7 +4280,7 @@ entry ksNesInst_sta_91
     add r3, r3, REGISTER_Y
     rlwinm r26, r4, 29, 27, 29
     slwi r4, r4, 8
-    lwzx r8, r28, r26
+    lwzx r8, state_store_func, r26
     add r3, r3, r4
     mtctr r8
     mr r4, REGISTER_A
@@ -4448,7 +4458,7 @@ entry ksNesInst_eor_41
 // INC  zeropage	INC oper	E6	2	5  
 // Increment Memory by One
 entry ksNesInst_inc_e6
-    lwzx r7, r28, r26
+    lwzx r7, state_store_func, r26
     addi REGISTER_FLAG_ZERO, r4, 0x1
     mtctr r7
     andi. REGISTER_FLAG_NEGATIVE, REGISTER_FLAG_ZERO, 0x80
@@ -4458,7 +4468,7 @@ entry ksNesInst_inc_e6
 // DEC  zeropage	DEC oper	C6	2	5  
 // Decrement Memory by One
 entry ksNesInst_dec_c6
-    lwzx r7, r28, r26
+    lwzx r7, state_store_func, r26
     subi REGISTER_FLAG_ZERO, r4, 0x1
     mtctr r7
     andi. REGISTER_FLAG_NEGATIVE, REGISTER_FLAG_ZERO, 0x80
@@ -4477,7 +4487,7 @@ entry ksNesInst_asl_0a
 // ASL  zeropage	ASL oper	06	2	5  
 // Shift Left One Bit (Memory or Accumulator)
 entry ksNesInst_asl_06
-    lwzx r7, r28, r26
+    lwzx r7, state_store_func, r26
     slwi REGISTER_FLAG_ZERO, r4, 1
     mtctr r7
     extrwi REGISTER_FLAG_CARRY, r4, 1, 24 // (r4 >> 7) & 0x1
@@ -4497,7 +4507,7 @@ b ksNesLinecntIrqDefault
 // LSR  zeropage	LSR oper	46	2	5  
 // Shift One Bit Right (Memory or Accumulator)
 entry ksNesInst_lsr_46
-    lwzx r7, r28, r26
+    lwzx r7, state_store_func, r26
     li REGISTER_FLAG_NEGATIVE, 0x0
     mtctr r7
     andi. REGISTER_FLAG_CARRY, r4, 0x1
@@ -4518,7 +4528,7 @@ entry ksNesInst_rol_2a
 // ROL  zeropage	ROL oper	26	2	5  
 // Rotate One Bit Left (Memory or Accumulator)
 entry ksNesInst_rol_26
-    lwzx r7, r28, r26
+    lwzx r7, state_store_func, r26
     slwi REGISTER_FLAG_ZERO, r4, 1
     mtctr r7
     rlwinm REGISTER_FLAG_NEGATIVE, r4, 1, 24, 24 // (r4 << 1) & 0x80
@@ -4543,7 +4553,7 @@ entry ksNesInst_ror_6a
 // ROR  zeropage	ROR oper	66	2	5  
 // Rotate One Bit Right (Memory or Accumulator)
 entry ksNesInst_ror_66
-    lwzx r7, r28, r26
+    lwzx r7, state_store_func, r26
     slwi REGISTER_FLAG_ZERO, REGISTER_FLAG_CARRY, 7
     mtctr r7
     andi. REGISTER_FLAG_CARRY, r4, 0x1
@@ -4710,7 +4720,7 @@ entry ksNesInst_jmp_4c
 // JMP  indirect	JMP (oper)	6C	3	5  
 // Jump to New Location
 entry ksNesInst_jmp_6c
-    lwzx r9, r27, r26
+    lwzx r9, state_cpu_ranges, r26
     subi r7, r3, 0x2000
     addi r4, r3, 0x1
     rlwinm r7, r7, 16, 16, 20
@@ -4738,7 +4748,7 @@ entry ksNesActivateIntrIRQ
 entry ksNesActivateIntr
     li r9, 0x24
 L_8003BC60:
-    lwz r8, (0x169C)(state_temp)//(ksNesStateObj.cpu_e000_ffff)(state_temp)
+    lwz r8, state_temp->cpu_e000_ffff
     mr r4, REGISTER_PC
     lbzux REGISTER_PC, r8, r7
     lbz r7, 0x1(r8)
@@ -4886,7 +4896,7 @@ entry ksNesLoadWRAM
 
 entry ksNesLoadBBRAM
     // r7 = r27[r26]
-    lwzx       r7,r27,r26
+    lwzx       r7,state_cpu_ranges,r26
     // r4 = r7[r3]
     lbzx       r4,r7,r3
     bctr
@@ -4933,7 +4943,7 @@ LAB_8003be58:
     bctr
 
 entry ksNesLoadIO
-    addi r8, r29, 0x20
+    addi r8, state_load_func, (8 * sizeof(void*)) // state->load_io_func immediately follows state_load_func (state->load_func), so move to the beginning of it by skipping over all entries in state_load_func.
     clrlslwi r7, r3, 26, 2
     lwzx r0, r8, r7
     cmpwi r3, 0x4018
@@ -5041,7 +5051,7 @@ entry ksNesStoreWRAM
     b ksNesLinecntIrqDefault
 
 entry ksNesStoreBBRAM
-    lwzx       r7,r27,r26
+    lwzx       r7,state_cpu_ranges,r26
     stbx       r4,r7,r3
     b          ksNesLinecntIrqDefault
 
@@ -5183,7 +5193,7 @@ L_8003C18C:
     blt L_8003C114
     cmpwi r7, 0x3f20
     bge L_8003C114
-    lbz r10, 0x17c6(state_temp)
+    lbz r10, state_temp->_17C6
     andi. r8, r7, 0x1f
     andi. r0, r4, 0x3f
     andi. r9, r7, 0xf
@@ -5193,7 +5203,7 @@ L_8003C18C:
     andi. r9, r7, 0x3
     beq L_8003C114
     stbx r0, r10, r8
-    sth r7, 0x17c4(state_temp)
+    sth r7, state_temp->_17C4
     b L_8003C114
 L_8003C1CC:
     stb r0, 0x0(r10)
@@ -5204,11 +5214,11 @@ L_8003C1CC:
     stb r0, 0x14(r10)
     stb r0, 0x18(r10)
     stb r0, 0x1c(r10)
-    sth r7, 0x17c4(state_temp)
+    sth r7, state_temp->_17C4
     b L_8003C114
 
 entry ksNesStoreIO
-    subi r8, r28, 0xa0
+    subi r8, state_store_func, (40 * sizeof(void*)) // state_store_func already exists as a register, so backtrack to the beginning of state->store_io_func which immediately preceeds it
     clrlslwi r7, r3, 26, 2
     lwzx r0, r8, r7
     cmpwi r3, 0x4027
@@ -5261,8 +5271,8 @@ entry ksNesStore4003
 
 entry ksNesStore4000
     lwz r8, state_temp->frame_flags
-    lwz r5, 0xf0(r1)
-    lbz r7, 0xec(r1)
+    lwz r5, STACK_CPU_CYCLES
+    lbz r7, STACK_FRAMES
     andi. r8, r8, 0x1000
     bne ksNesLinecntIrqDefault
     divwu r5, r5, r7
@@ -5272,9 +5282,9 @@ entry ksNesStore4000
 entry ksNesStore4014
     rlwinm r7, r4, 29, 27, 29
     slwi r8, r4, 8
-    lwzx r7, r27, r7
+    lwzx r7, state_cpu_ranges, r7
     li r0, 0x40
-    addi r9, state_temp, state_temp->primary_oam
+    addi r9, state_temp, state_temp->primary_oam - sizeof(ksNesOAMEntry)
     mtctr r0
     add r7, r7, r8
     subi r7, r7, 0x4
@@ -5289,18 +5299,18 @@ entry ksNesStore4016
     andi. r7, r4, 0x1
     stb r4, state_temp->cpu_state.controller_strobe
     beq ksNesLinecntIrqDefault
-    lwz r9, 0x8(r1)
-    lwz r7, 0x20(r9)
-    lwz r8, 0x24(r9)
+    lwz r9, STACK_WORK_ARG
+    lwz r7, (ksNesCommonWorkObj.pads[0])(r9)
+    lwz r8, (ksNesCommonWorkObj.pads[1])(r9)
     stw r7, state_temp->io_shift_registers[0]
     stw r8, state_temp->io_shift_registers[1]
-    lwz r7, 0x28(r9)
-    lwz r8, 0x2c(r9)
+    lwz r7, (ksNesCommonWorkObj.pads[2])(r9)
+    lwz r8, (ksNesCommonWorkObj.pads[3])(r9)
     stw r7, state_temp->io_shift_registers[2]
     stw r8, state_temp->io_shift_registers[3]
-    lwz r7, 0x30(r9)
-    lwz r8, 0x34(r9)
-    lwz r0, 0x38(r9)
+    lwz r7, (ksNesCommonWorkObj.pads[4])(r9)
+    lwz r8, (ksNesCommonWorkObj.pads[5])(r9)
+    lwz r0, (ksNesCommonWorkObj.pads[6])(r9)
     stw r7, state_temp->io_shift_registers[4]
     stw r8, state_temp->io_shift_registers[5]
     stw r0, state_temp->io_shift_registers[6]
@@ -5324,22 +5334,22 @@ entry ksNesInst_wdm_42
     subi REGISTER_PC, REGISTER_PC, 0x2
     b ksNesLinecntIrqDefault
 L_8003C36C:
-    stb REGISTER_A, 0xe(state_temp)
+    stb REGISTER_A, state_temp->wram[0xE]
     cmpwi REGISTER_A, 0xff
     beq ksNesLinecntIrqDefault
     add r7, state_temp, REGISTER_STACK
-    lbzu r9, 0x101(r7)
+    lbzu r9, (ksNesStateObj.wram + 0x101)(r7)
     lbz r8, 0x1(r7)
     rlwimi r9, r8, 8, 16, 23
     addi r5, r9, 0x1
     addi r6, r9, 0x5
     sth r6, state_temp->wdm_return_addr
     rlwinm r26, r5, 21, 27, 29
-    lwzx r7, r27, r26
+    lwzx r7, state_cpu_ranges, r26
     lbzx r7, r7, r5
     addi r5, r5, 0x1
     rlwinm r26, r5, 21, 27, 29
-    lwzx r8, r27, r26
+    lwzx r8, state_cpu_ranges, r26
     lbzx r8, r8, r5
     addi r5, r5, 0x1
     rlwimi r7, r8, 8, 16, 23
@@ -5347,31 +5357,31 @@ L_8003C36C:
     addi r4, state_temp, state_temp->_176E[10-1]
 L_8003C3C0:
     rlwinm r26, r7, 21, 27, 29
-    lwzx r8, r27, r26
+    lwzx r8, state_cpu_ranges, r26
     lbzx r8, r8, r7
     addi r7, r7, 0x1
     stbu r8, 0x1(r3)
     cmpw r3, r4
     bne L_8003C3C0
     rlwinm r26, r5, 21, 27, 29
-    lwzx r7, r27, r26
+    lwzx r7, state_cpu_ranges, r26
     lbzx r7, r7, r5
     addi r5, r5, 0x1
     rlwinm r26, r5, 21, 27, 29
-    lwzx r8, r27, r26
+    lwzx r8, state_cpu_ranges, r26
     lbzx r8, r8, r5
     rlwimi r7, r8, 8, 16, 23
     addi r3, r4, 0x11
 L_8003C400:
     rlwinm r26, r7, 21, 27, 29
-    lwzx r8, r27, r26
+    lwzx r8, state_cpu_ranges, r26
     lbzx r8, r8, r7
     addi r7, r7, 0x1
     stbu r8, 0x1(r4)
     cmpw r4, r3
     bne L_8003C400
-    lwz r3, 0x8(r1)
-    lwz r4, 0xc(r1)
+    lwz r3, STACK_WORK_ARG
+    lwz r4, STACK_STATE_ARG
     bl ksNesQDFastSave
     andi. REGISTER_FLAG_ZERO, r3, 0xff
     andi. REGISTER_A, r3, 0xff
@@ -5380,15 +5390,15 @@ L_8003C400:
     lhz REGISTER_PC, state_temp->wdm_return_addr
     b ksNesLinecntIrqDefault
 L_8003C440:
-    lwz r9, 0x8(r1)
-    lwz r8, 0x20(r9)
+    lwz r9, STACK_WORK_ARG
+    lwz r8, (ksNesCommonWorkObj.pads[0])(r9)
     srwi r7, r8, 28
     cmpwi r7, 0x6
     beq L_8003C45C
     li r8, 0x46
     stb r8, state_temp->fds_disk_drive_status
 L_8003C45C:
-    lbz REGISTER_A, 0x90(state_temp)
+    lbz REGISTER_A, state_temp->wram[0x90]
     b ksNesLinecntIrqDefault
 L_8003C464:
     andi. r7, REGISTER_A, 0xf0
@@ -5427,7 +5437,7 @@ L_8003C4D8:
     stb REGISTER_A, 0x1(state_temp)
     rlwinm r26, REGISTER_A, 29, 27, 29
     rlwimi r7, REGISTER_A, 8, 16, 23
-    lwzx r8, r27, r26
+    lwzx r8, state_cpu_ranges, r26
     add r7, r7, r8
     addi r7, r7, 0x1
     lswi r8, r7, 8
@@ -5497,7 +5507,7 @@ L_8003C5A8:
     b ksNesMainLoop2
 
 entry ksNesStoreQD_4020
-    subi r7, state_temp, 0x2855
+    subi r7, state_temp, 0x4020 - state_temp->_17CB // offset into 17CB, timer control 0x2855
     stbx r4, r7, r3
     b ksNesLinecntIrqDefault
 
@@ -5505,9 +5515,9 @@ entry ksNesStoreQD_4022
     stb r4, state_temp->fds_timer_control_register
     andi. r8, r4, KS_NES_FDS_TIMRE_CTRL_FLG_IRQ_ENABLE
     stb r8, state_temp->cpu_state.mapper_irq_enable
-    lbz r8, 0x17cc(state_temp)
-    lbz r7, 0x17cb(state_temp)
-    li r0, 0x72
+    lbz r8, state_temp->_17CC
+    lbz r7, state_temp->_17CB
+    li r0, KS_NES_CPU_CYCLES_PER_SCANLINE
     lha r9, state_temp->ppu_scanline_counter
     rlwimi r7, r8, 8, 16, 23
     divwu r8, r7, r0
@@ -5572,8 +5582,8 @@ L_8003C69C:
     sth r7, state_temp->qd_disk_head_position.split.lower
 L_8003C6BC:
     rlwinm r7, r4, 1, 27, 27
-    addi r0, state_temp, 0x1888
-    addi r9, state_temp, 0x180c
+    addi r0, state_temp, state_temp->ppu_chr_bank_pointers[8] - sizeof(u32*)
+    addi r9, state_temp, state_temp->ppu_nametable_pointers[0] - sizeof(u32*)
     add r7, r7, r0
     addi r0, r7, 0x10
 L_8003C6D0:
@@ -5696,8 +5706,8 @@ L_8003C850:
     bne L_8003C850
 L_8003C86C:
     clrlslwi r7, r7, 30, 4
-    addi r0, state_temp, 0x1868
-    addi r9, state_temp, 0x180c
+    addi r0, state_temp, state_temp->ppu_chr_bank_pointers[0] - sizeof(u32*)
+    addi r9, state_temp, state_temp->ppu_nametable_pointers[0] - sizeof(u32*)
     add r7, r7, r0
     addi r0, r7, 0x10
 L_8003C880:
@@ -5880,8 +5890,8 @@ entry ksNesStore04_a000
     andi. r7, r3, 0x1
     bne ksNesLinecntIrqDefault
     clrlslwi r7, r4, 31, 4
-    addi r0, state_temp, 0x1888
-    addi r9, state_temp, 0x180c
+    addi r0, state_temp, state_temp->ppu_chr_bank_pointers[8] - sizeof(u8*)
+    addi r9, state_temp, state_temp->ppu_nametable_pointers[0] - sizeof(u8*)
     add r7, r7, r0
     addi r0, r7, 0x10
 L_8003CB0C:
@@ -5922,7 +5932,7 @@ entry ksNesStore04_e000
 
 entry ksNesLinecntIrq05Timer
     li r0, 0x80
-    stb r0, 0x17bb(state_temp)
+    stb r0, state_temp->mmc5a_hardware_timer_irq_upper
     li r0, 0x7fff
     sth r0, state_temp->mmc5_scanline_irq_target_val
     b SUB_8003b3a0
@@ -5950,11 +5960,11 @@ LAB_8003cbc8:
     bgt        ksNesLinecntIrqDefault
     subic.     r7,r3,0x5209
     blt        LAB_8003cc20
-    addi       r8,state_temp,0x17cb
+    addi       r8,state_temp,state_temp->_17CB
     stbx       r4,r8,r7
     bne        ksNesLinecntIrqDefault
-    lbz        r8,0x17cc(state_temp)
-    li         r9,0x72
+    lbz        r8,state_temp->_17CC
+    li         r9,KS_NES_CPU_CYCLES_PER_SCANLINE
     rlwimi     r4,r8,0x8,0x10,0x17
     cmpwi      r4,0x0
     beq        LAB_8003cc14
@@ -5963,7 +5973,7 @@ LAB_8003cbc8:
     add        r7,r7,r8
     sth        r7,state_temp->mmc5_scanline_irq_target_val
     li         r8,0x0
-    stb        r8,0x17cc(state_temp)
+    stb        r8,state_temp->_17CC
     b          ksNesLinecntIrqDefault
 LAB_8003cc14:
     li         r7,0x7fff
@@ -6004,7 +6014,7 @@ LAB_8003cc84:
     bne        LAB_8003cc94
     andi.      r4,r4,0xdf
 LAB_8003cc94:
-    addi       r8,state_temp,0x17c0
+    addi       r8,state_temp,state_temp->_17C0
     stbx       r4,r8,r7
     b          ksNesLinecntIrqDefault
 LAB_8003cca0:
@@ -6019,13 +6029,13 @@ LAB_8003cca0:
     mtspr      CTR,r8
     bctr
 LAB_8003ccc8:
-    cmpwi      r3,0x5015
+    cmpwi      r3,KS_NES_REG_MMC5_AUDIO_STATUS
     bgt        ksNesLinecntIrqDefault
     beq        ksNesStore4000
-    cmpwi      r3,0x5011
+    cmpwi      r3,KS_NES_REG_MMC5_AUDIO_RAW_PCM
     bgt        ksNesLinecntIrqDefault
     beq        LAB_8003ccf0
-    cmpwi      r3,0x5010
+    cmpwi      r3,KS_NES_REG_MMC5_AUDIO_PCM_MODE_IRQ
     beq        LAB_8003ccf0
     cmpwi      r3,0x5008
     bge        ksNesLinecntIrqDefault
@@ -6235,7 +6245,7 @@ entry ksNesStore05_5120
     lbz r9, state_temp->_179F
     addi r8, state_temp, state_temp->_176E[18] // TODO: Check this
     stbx r4, r8, r7
-    addi r8, state_temp, 0x17e4
+    addi r8, state_temp, state_temp->_17E4
     stbx r9, r8, r7
     b L_8003CE6C
 
@@ -6243,7 +6253,7 @@ entry ksNesStore05_5128
     lbz r9, state_temp->_179F
     addi r8, state_temp, state_temp->_176E[18] // TODO: Check this
     stbx r4, r8, r7
-    addi r8, state_temp, 0x17e4
+    addi r8, state_temp, state_temp->_17E4
     stbx r9, r8, r7
     b ksNesLinecntIrqDefault
 
@@ -6303,7 +6313,7 @@ L_8003D038:
     stb r7, state_temp->mmc5_apu_pcm_mode_irq
     bctr
 L_8003D054:
-    cmpwi r3, 0x5015
+    cmpwi r3, KS_NES_REG_MMC5_AUDIO_STATUS
     bltctr
     bgt L_8003D068
     lbz r4, state_temp->mmc5_apu_status
@@ -6400,8 +6410,8 @@ entry ksNesStore09_e000
     b ksNesLinecntIrqDefault
 L_8003D188:
     clrlslwi r7, r4, 31, 4
-    addi r0, state_temp, 0x1888
-    addi r9, state_temp, 0x180c
+    addi r0, state_temp, state_temp->ppu_chr_bank_pointers[8] - sizeof(u8*)
+    addi r9, state_temp, state_temp->ppu_nametable_pointers[0] - sizeof(u8*)
     add r7, r7, r0
     addi r0, r7, 0x10
 L_8003D19C:
@@ -6437,7 +6447,7 @@ entry ksNesLinecntIrq49
 
 entry ksNesStore12_8000
     rlwinm r7, r3, 22, 29, 29
-    addi r0, state_temp, 0x17d0
+    addi r0, state_temp, state_temp->_17D0
     rlwimi r7, r3, 0, 30, 31
     andi. r8, r4, 0xf
     cmpwi r7, 0x6
@@ -6462,12 +6472,12 @@ L_8003D234:
     slwi r8, r8, 13
     add r7, r7, state_temp
     add r8, r8, r9
-    stw r8, 0x1690(r7)
+    stw r8, (ksNesStateObj.cpu_8000_9fff)(r7)
     b ksNesLinecntIrqDefault
 
 entry ksNesStore12_a000
     rlwinm r7, r3, 22, 27, 29
-    addi r0, state_temp, 0x17ce
+    addi r0, state_temp, state_temp->_17CE
     rlwimi r7, r3, 0, 30, 31
     andi. r8, r4, 0xf
     stbx r8, r7, r0
@@ -6482,7 +6492,7 @@ L_8003D294:
     lhz r10, state_temp->chr_banks
     or r8, r8, r9
     srwi r7, r7, 1
-    addi r0, state_temp, 0x17f8
+    addi r0, state_temp, state_temp->bbramp
     and r8, r8, r10
     stbx r8, r7, r0
     b ksNesLinecntIrqDefault
@@ -6492,7 +6502,7 @@ entry ksNesStore12_e000
     bne L_8003D2CC
     andi. r8, r4, 0xf
     andi. r7, r3, 0x3
-    addi r0, state_temp, 0x17e6
+    addi r0, state_temp, state_temp->_17E6
     stbx r8, r7, r0
     b ksNesLinecntIrqDefault
 L_8003D2CC:
@@ -6502,14 +6512,14 @@ L_8003D2CC:
     beq ksNesLinecntIrqDefault
     andi. r7, r4, 0x1
     stb r7, state_temp->cpu_state.mapper_irq_enable
-    lbz r7, 0x17e6(state_temp)
-    lbz r8, 0x17e7(state_temp)
-    lbz r9, 0x17e8(state_temp)
-    lbz r10, 0x17e9(state_temp)
+    lbz r7, state_temp->_17E6
+    lbz r8, state_temp->_17E7
+    lbz r9, state_temp->_17E8
+    lbz r10, state_temp->_17E9
     rlwimi r7, r8, 4, 24, 27
     rlwimi r7, r9, 8, 20, 23
     rlwimi r7, r10, 12, 16, 19
-    li r8, 0x72
+    li r8, KS_NES_CPU_CYCLES_PER_SCANLINE
     divwu r9, r7, r8
     lha r8, state_temp->ppu_scanline_counter
     add r8, r8, r9
@@ -6544,23 +6554,23 @@ entry ksNesStore13_4000
     blt ksNesStoreIO
     beq L_8003D3B4
     extrwi r8, r3, 1, 20
-    addi r7, state_temp, 0x17cb
+    addi r7, state_temp, state_temp->_17CB
     stbx r4, r7, r8
-    lbz r8, 0x17cc(state_temp)
-    lbz r7, 0x17cb(state_temp)
+    lbz r8, state_temp->_17CC
+    lbz r7, state_temp->_17CB
     andi. r9, r8, 0x80
     stb r9, state_temp->cpu_state.mapper_irq_enable
     rlwimi r7, r8, 8, 17, 23
     li r8, 0x7fff
     subf r7, r7, r8
-    li r8, 0x72
+    li r8, KS_NES_CPU_CYCLES_PER_SCANLINE
     divwu r9, r7, r8
     lha r8, state_temp->ppu_scanline_counter
     add r9, r9, r8
     sth r9, state_temp->scanline_irq_target_val
     b ksNesLinecntIrqDefault
 L_8003D3B4:
-    lbz r8, 0x17ea(state_temp)
+    lbz r8, state_temp->_17EA
     lwz r7, state_temp->bbramp
     andi. r9, r8, 0x7f
     andi. r10, r8, 0x80
@@ -6568,7 +6578,7 @@ L_8003D3B4:
     beq ksNesLinecntIrqDefault
     addi r8, r8, 0x1
     ori r8, r8, 0x80
-    stb r8, 0x17ea(state_temp)
+    stb r8, state_temp->_17EA
     b ksNesLinecntIrqDefault
     
 entry ksNesLoad13_4000
@@ -6579,18 +6589,18 @@ entry ksNesLoad13_4000
     lha r8, state_temp->scanline_irq_target_val
     subf r7, r7, r8
     li r8, 0x7fff
-    mulli r7, r7, 0x72
+    mulli r7, r7, KS_NES_CPU_CYCLES_PER_SCANLINE
     andi. r9, r3, 0x800
     subf r7, r7, r8
     bne L_8003D410
     andi. r4, r7, 0xff
     bctr
 L_8003D410:
-    lbz r4, 0x17cc(state_temp)
+    lbz r4, state_temp->_17CC
     rlwimi r4, r7, 0, 25, 31
     bctr
 L_8003D41C:
-    lbz r8, 0x17ea(state_temp)
+    lbz r8, state_temp->_17EA
     lwz r7, state_temp->bbramp
     andi. r9, r8, 0x7f
     andi. r10, r8, 0x80
@@ -6598,7 +6608,7 @@ L_8003D41C:
     beqctr
     addi r8, r8, 0x1
     ori r8, r8, 0x80
-    stb r8, 0x17ea(state_temp)
+    stb r8, state_temp->_17EA
     bctr
 
 entry ksNesStore13_8000
@@ -6639,7 +6649,7 @@ L_8003D4B4:
     lbz r9, state_temp->prg_banks
     extrwi r7, r3, 2, 19
     rlwinm r8, r3, 23, 28, 29
-    addi r5, state_temp, 0x1690
+    addi r5, state_temp, state_temp->cpu_8000_9fff
     and r9, r9, r4
     addi r7, r7, 0x4
     lwz r10, state_temp->prgromp
@@ -6649,7 +6659,7 @@ L_8003D4B4:
     stwx r9, r5, r8
     b ksNesLinecntIrqDefault
 L_8003D4E4:
-    stb r4, 0x17ea(state_temp)
+    stb r4, state_temp->_17EA
     b ksNesLinecntIrqDefault
 
 entry ksNesStore16_8000
@@ -6666,8 +6676,8 @@ entry ksNesStore16_8000
 
 entry ksNesStore16_9000
     clrlslwi r7, r4, 30, 4
-    addi r0, state_temp, 0x1888
-    addi r9, state_temp, 0x180c
+    addi r0, state_temp, state_temp->ppu_chr_bank_pointers[8] - sizeof(u8*)
+    addi r9, state_temp, state_temp->ppu_nametable_pointers[0] - sizeof(u8*)
     add r7, r7, r0
     addi r0, r7, 0x10
 L_8003D528:
@@ -6697,7 +6707,7 @@ entry ksNesStore16_b000
     rlwimi r7, r3, 0, 31, 31
     srwi r8, r4, 1
     add r7, r7, state_temp
-    stb r8, 0x17f6(r7)
+    stb r8, (ksNesStateObj.ppu_chr_banks - 6)(r7) // dunno if this is right but I'd assume so?
     b ksNesLinecntIrqDefault
 
 entry ksNesStore17_a000
@@ -6712,7 +6722,7 @@ entry ksNesStore17_b000
     addi r7, r7, 0x1
 L_8003D5A0:
     add r7, r7, state_temp
-    lbz r10, 0x17f6(r7)
+    lbz r10, (ksNesStateObj.ppu_chr_banks - 6)(r7) // dunno if this is right but I'd assume so?
     andi. r8, r3, 0x5
     bne L_8003D814
     b L_8003D820
@@ -6736,7 +6746,7 @@ entry ksNesLinecntIrq18
     sth r8, state_temp->scanline_irq_target_val
     b L_8003D608
 L_8003D5F0:
-    lbz r8, 0x17cf(state_temp)
+    lbz r8, state_temp->_17CF
     lha r9, state_temp->ppu_scanline_counter
     li r10, 0x100
     subf r8, r8, r10
@@ -6761,7 +6771,7 @@ entry ksNesStore18_8000
     stw r7, state_temp->cpu_a000_bfff
     b ksNesLinecntIrqDefault
 L_8003D644:
-    lbz r10, 0x17cd(state_temp)
+    lbz r10, state_temp->_17CD
     andi. r7, r3, 0x3000
     subi r7, r7, 0x1000
     srwi r7, r7, 10
@@ -6781,8 +6791,8 @@ entry ksNesStore18_a000
     cmpwi r7, 0x1003
     bne L_8003D644
     rlwinm r7, r4, 2, 26, 27
-    addi r0, state_temp, 0x1888
-    addi r9, state_temp, 0x180c
+    addi r0, state_temp, state_temp->ppu_chr_bank_pointers[8] - sizeof(u8*)
+    addi r9, state_temp, state_temp->ppu_nametable_pointers[0] - sizeof(u8*)
     add r7, r7, r0
     addi r0, r7, 0x10
 L_8003D698:
@@ -6804,7 +6814,7 @@ entry ksNesStore18_c000
     stw r7, state_temp->cpu_c000_dfff
     b ksNesLinecntIrqDefault
 L_8003D6D4:
-    lbz r9, 0x17cd(state_temp)
+    lbz r9, state_temp->_17CD
     andi. r8, r3, 0x3
     beq L_8003D6EC
     cmpwi r8, 0x3
@@ -6822,17 +6832,17 @@ entry ksNesStore18_e000
     beq L_8003D6D4
     andi. r7, r3, 0x3
     beq L_8003D720
-    lbz r10, 0x17ce(state_temp)
+    lbz r10, state_temp->_17CE
     and. r8, r3, r10
     bne L_8003D728
     b ksNesLinecntIrqDefault
 L_8003D720:
-    stb r4, 0x17cf(state_temp)
+    stb r4, state_temp->_17CF
     b ksNesLinecntIrqDefault
 L_8003D728:
     andi. r7, r4, 0x3
     stb r7, state_temp->cpu_state.mapper_irq_enable
-    lbz r8, 0x17cf(state_temp)
+    lbz r8, state_temp->_17CF
     lha r9, state_temp->ppu_scanline_counter
     li r10, 0x100
     subf r8, r8, r10
@@ -6851,13 +6861,13 @@ entry ksNesLinecntIrq19
     b ksNesMainLoop2
     
 entry ksNesStore19_8000
-    lbz r8, 0x17c9(state_temp)
+    lbz r8, state_temp->_17C9
     andi. r7, r3, 0x1000
     bne L_8003D7A4
     lwz r7, state_temp->prgromp
     lbz r9, state_temp->prg_banks
     and r9, r9, r4
-    stb r9, 0x17ca(state_temp)
+    stb r9, state_temp->_17CA
     subi r9, r9, 0x4
     slwi r9, r9, 13
     add r7, r7, r9
@@ -6867,11 +6877,11 @@ L_8003D79C:
     stw r7, state_temp->cpu_8000_9fff
     b ksNesLinecntIrqDefault
 L_8003D7A4:
-    lbz r8, 0x17c9(state_temp)
+    lbz r8, state_temp->_17C9
     andi. r7, r3, 0x2
     beq ksNesStore16_9000
-    lbz r9, 0x17ca(state_temp)
-    stb r4, 0x17c9(state_temp)
+    lbz r9, state_temp->_17CA
+    stb r4, state_temp->_17C9
     xor r8, r8, r4
     andi. r8, r8, 0x2
     bne ksNesLinecntIrqDefault
@@ -6898,16 +6908,16 @@ entry ksNesStore19_b000
     addi r7, r7, 0x1
 L_8003D804:
     add r7, r7, state_temp
-    lbz r10, 0x17f6(r7)
+    lbz r10, (ksNesStateObj.ppu_chr_banks - 6)(r7)
     andi. r8, r3, 0x42
     beq L_8003D820
 L_8003D814:
     rlwimi r10, r4, 4, 24, 27
-    stb r10, 0x17f6(r7)
+    stb r10, (ksNesStateObj.ppu_chr_banks - 6)(r7)
     b ksNesLinecntIrqDefault
 L_8003D820:
     rlwimi r10, r4, 0, 28, 31
-    stb r10, 0x17f6(r7)
+    stb r10, (ksNesStateObj.ppu_chr_banks - 6)(r7)
     b ksNesLinecntIrqDefault
 
 entry ksNesStore19_e000
@@ -6930,18 +6940,18 @@ entry ksNesStore19_e000
     b ksNesLinecntIrqDefault
 L_8003D870:
     andi. r8, r4, 0xf
-    stb r8, 0x17cb(state_temp)
+    stb r8, state_temp->_17CB
     b ksNesLinecntIrqDefault
 L_8003D87C:
     slwi r8, r4, 4
-    stb r8, 0x17cc(state_temp)
+    stb r8, state_temp->_17CC
     b ksNesLinecntIrqDefault
 L_8003D888:
     andi. r7, r4, 0x2
     stb r7, state_temp->cpu_state.mapper_irq_enable
     lha r10, state_temp->ppu_scanline_counter
-    lbz r7, 0x17cb(state_temp)
-    lbz r8, 0x17cc(state_temp)
+    lbz r7, state_temp->_17CB
+    lbz r8, state_temp->_17CC
     sth r10, state_temp->mapper19_irq_scanline_latch
     or r7, r7, r8
     li r9, 0x101
@@ -6950,8 +6960,8 @@ L_8003D888:
     sth r10, state_temp->scanline_irq_target_val
     b ksNesLinecntIrqDefault
 L_8003D8B8:
-    lbz r7, 0x17cb(state_temp)
-    lbz r8, 0x17cc(state_temp)
+    lbz r7, state_temp->_17CB
+    lbz r8, state_temp->_17CC
     lha r10, state_temp->mapper19_irq_scanline_latch
     or r7, r7, r8
     add r10, r10, r7
@@ -6960,7 +6970,7 @@ L_8003D8B8:
 
 entry ksNesStore42_8000
     lhz r5, state_temp->chr_banks
-    addi r7, state_temp, 0x17fb
+    addi r7, state_temp, state_temp->ppu_chr_banks[0] - 1
     clrlslwi r10, r4, 28, 3
     addi r0, r7, 0x8
     and r10, r10, r5
@@ -7018,16 +7028,16 @@ entry ksNesStore44_8000
 entry ksNesStore44_c000
     lhz r8, state_temp->chr_banks
     extrwi r7, r3, 1, 19
-    addi r9, state_temp, 0x17eb
+    addi r9, state_temp, state_temp->_17EB
     and r8, r8, r4
     stbx r8, r9, r7
 L_8003D9A4:
-    lbz r0, 0x17ed(state_temp)
+    lbz r0, state_temp->_17ED
     andi. r8, r0, 0x10
     bne L_8003D9D8
     clrlslwi r7, r0, 30, 4
-    addi r0, state_temp, 0x1888
-    addi r9, state_temp, 0x180c
+    addi r0, state_temp, state_temp->ppu_chr_bank_pointers[8] - sizeof(u8*)
+    addi r9, state_temp, state_temp->ppu_nametable_pointers[0] - sizeof(u8*)
     add r7, r7, r0
     addi r0, r7, 0x10
 L_8003D9C4:
@@ -7037,9 +7047,9 @@ L_8003D9C4:
     bne L_8003D9C4
     b ksNesLinecntIrqDefault
 L_8003D9D8:
-    lbz r7, 0x17eb(state_temp)
+    lbz r7, state_temp->_17EB
     lwz r9, state_temp->chrramp
-    lbz r8, 0x17ec(state_temp)
+    lbz r8, state_temp->_17EC
     addis r9, r9, 0x2
     slwi r7, r7, 10
     slwi r8, r8, 10
@@ -7085,16 +7095,16 @@ entry ksNesStore44_e000
     stw r7, state_temp->cpu_a000_bfff
     b ksNesLinecntIrqDefault
 L_8003DA80:
-    stb r4, 0x17ed(state_temp)
+    stb r4, state_temp->_17ED
     b L_8003D9A4
     
 // Sunsoft FME-7
 entry ksNesStore45_8000
-    stb r4, 0x17ee(state_temp)
+    stb r4, state_temp->_17EE
     b ksNesLinecntIrqDefault
 
 entry ksNesStore45_a000
-    lbz r7, 0x17ee(state_temp)
+    lbz r7, state_temp->_17EE
     cmpwi r7, 0x8
     blt L_8003DAD0
     cmpwi r7, 0xc
@@ -7104,7 +7114,7 @@ entry ksNesStore45_a000
     lwz r9, state_temp->prgromp
     subi r7, r7, 0x5
     and r8, r8, r4
-    addi r0, state_temp, 0x168c
+    addi r0, state_temp, state_temp->cpu_6000_7fff
     subf r8, r7, r8
     slwi r8, r8, 13
     add r8, r8, r9
@@ -7119,8 +7129,8 @@ L_8003DAD0:
 L_8003DAE4:
     bne L_8003DB10
     clrlslwi r7, r4, 30, 4
-    addi r0, state_temp, 0x1888
-    addi r9, state_temp, 0x180c
+    addi r0, state_temp, state_temp->ppu_chr_bank_pointers[8] - sizeof(u8*)
+    addi r9, state_temp, state_temp->ppu_nametable_pointers[0] - sizeof(u8*)
     add r7, r7, r0
     addi r0, r7, 0x10
 L_8003DAFC:
@@ -7138,9 +7148,9 @@ L_8003DB10:
     li r8, 0x0
 L_8003DB28:
     stb r8, state_temp->cpu_state.mapper_irq_enable
-    lbz r8, 0x17cc(state_temp)
-    lbz r7, 0x17cb(state_temp)
-    li r0, 0x72
+    lbz r8, state_temp->_17CC
+    lbz r7, state_temp->_17CB
+    li r0, KS_NES_CPU_CYCLES_PER_SCANLINE
     lha r9, state_temp->ppu_scanline_counter
     rlwimi r7, r8, 8, 16, 23
     divwu r8, r7, r0
@@ -7151,7 +7161,7 @@ L_8003DB28:
 L_8003DB54:
     cmpwi r7, 0x10
     bge ksNesLinecntIrqDefault
-    addi r0, state_temp, 0x17bd
+    addi r0, state_temp, (state_temp->_17BE - sizeof(u8))
     stbx r4, r7, r0
     b ksNesLinecntIrqDefault
 
@@ -7168,7 +7178,7 @@ entry ksNesStore46_8000
     lhz r8, state_temp->chr_banks
     clrlslwi r7, r4, 28, 3
     and r8, r8, r7
-    addi r9, state_temp, 0x17fb
+    addi r9, state_temp, (state_temp->ppu_chr_banks[0] - sizeof(u8))
     addi r0, r9, 0x8
 L_8003DBA0:
     stbu r8, 0x1(r9)
@@ -7194,17 +7204,17 @@ entry ksNesStore49_a000
     clrlslwi r7, r4, 28, 4
 L_8003DBE8:
     add r8, r8, state_temp
-    stb r7, 0x17cb(r8)
+    stb r7, (ksNesStateObj._17CB)(r8)
     b ksNesLinecntIrqDefault
     
 entry ksNesStore49_c000
-    lbz r8, 0x17cb(state_temp)
+    lbz r8, state_temp->_17CB
     andi. r7, r4, 0x2
-    lbz r9, 0x17cc(state_temp)
+    lbz r9, state_temp->_17CC
     lha r10, state_temp->ppu_scanline_counter
     stb r7, state_temp->cpu_state.mapper_irq_enable
     or r8, r8, r9
-    li r9, 0x17a
+    li r9, 378
     subf r8, r8, r9
     add r8, r8, r10
     sth r8, state_temp->scanline_irq_target_val
@@ -7221,7 +7231,7 @@ entry ksNesStore4b_a000
     lwz r10, state_temp->prgromp
     rlwinm r7, r3, 21, 28, 29
     and r9, r9, r4
-    addi r8, state_temp, 0x1690
+    addi r8, state_temp, state_temp->cpu_8000_9fff
     slwi r9, r9, 13
     subf r10, r0, r10
     add r9, r9, r10
@@ -7231,7 +7241,7 @@ L_8003DC54:
     lbz r7, (ksNesStateObj.ppu_chr_banks)(state_temp)
     rlwinm r8, r4, 5, 25, 25
     lhz r9, state_temp->chr_banks
-    addi r10, state_temp, 0x17fb
+    addi r10, state_temp, (state_temp->ppu_chr_banks[0] - sizeof(u8))
     andi. r7, r7, 0x3c
     addi r0, r10, 0x4
     or r7, r7, r8
@@ -7253,8 +7263,8 @@ L_8003DC9C:
     addi r7, r7, 0x1
     bne L_8003DC9C
     clrlslwi r7, r4, 31, 4
-    addi r0, state_temp, 0x1888
-    addi r9, state_temp, 0x180c
+    addi r0, state_temp, (state_temp->ppu_chr_bank_pointers[8] - sizeof(u8*))
+    addi r9, state_temp, (state_temp->ppu_nametable_pointers[0] - sizeof(u32))
     add r7, r7, r0
     addi r0, r7, 0x10
 L_8003DCC0:
@@ -7270,7 +7280,7 @@ entry ksNesStore4b_e000
     clrlslwi r8, r4, 28, 2
     bne L_8003DD10
     lbz r7, (ksNesStateObj.ppu_chr_banks)(state_temp)
-    addi r10, state_temp, 0x17fb
+    addi r10, state_temp, (state_temp->ppu_chr_banks[0] - sizeof(u8))
     addi r0, r10, 0x4
     andi. r7, r7, 0x40
     or r7, r7, r8
@@ -7283,7 +7293,7 @@ L_8003DCFC:
     b ksNesLinecntIrqDefault
 L_8003DD10:
     lbz r7, state_temp->ppu_chr_banks[4]
-    addi r10, state_temp, 0x17ff
+    addi r10, state_temp, (state_temp->ppu_chr_banks[4] - sizeof(u8))
     addi r0, r10, 0x4
     andi. r7, r7, 0x40
     or r7, r7, r8
@@ -7310,7 +7320,7 @@ entry ksNesStore56_6000
     stw r10, state_temp->cpu_c000_dfff
     stw r10, state_temp->cpu_e000_ffff
     clrlslwi r7, r4, 30, 3
-    addi r8, state_temp, 0x17fb
+    addi r8, state_temp, (state_temp->ppu_chr_banks - sizeof(u8))
     rlwimi r7, r4, 31, 26, 26
     addi r0, r8, 0x8
 L_8003DD80:
@@ -7355,7 +7365,7 @@ entry ksNesStore59_c000
     lhz r8, state_temp->chr_banks
     clrlslwi r7, r4, 29, 3
     rlwimi r7, r4, 31, 25, 25
-    addi r9, state_temp, 0x17fb
+    addi r9, state_temp, (state_temp->ppu_chr_banks - sizeof(u8))
     and r7, r7, r8
     addi r0, r9, 0x8
 L_8003DE18:
@@ -7364,8 +7374,8 @@ L_8003DE18:
     cmpw r9, r0
     bne L_8003DE18
     rlwinm r7, r4, 1, 27, 27
-    addi r0, state_temp, 0x1868
-    addi r9, state_temp, 0x180c
+    addi r0, state_temp, state_temp->nesromp
+    addi r9, state_temp, (state_temp->ppu_nametable_pointers - sizeof(u32))
     add r7, r7, r0
     addi r0, r7, 0x10
 L_8003DE3C:

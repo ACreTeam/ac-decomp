@@ -2119,11 +2119,11 @@ static int famicom_rom_load() {
     u32 flags = 0;
     wp->prg_size = KS_NES_PRGROM_SIZE;
     wp->noise_bufp = famicomCommon.noise_bufp;
-    wp->_001D = 4;
+    wp->fds_disk_count = 4;
     wp->chr_to_u8_bufp = famicomCommon.chr_to_i8_bufp;
     wp->chr_to_i8_buf_size = CHR_TO_I8_BUF_SIZE;
     wp->result_bufp = famicomCommon.result_bufp;
-    wp->_0018 = 0;
+    wp->total_cpu_cycles = 0;
 
     if (famicomCommon.noise_bufp == nullptr) {
         flags |= 0x40; // no sound?
@@ -2412,9 +2412,9 @@ extern void famicom_1frame() {
     }
 
     famicom_key_convert();
-    famicomCommon.wp->_0030 = 0;
-    famicomCommon.wp->_0034 = 0;
-    famicomCommon.wp->_0038 = 0;
+    famicomCommon.wp->pads[4] = 0;
+    famicomCommon.wp->pads[5] = 0;
+    famicomCommon.wp->pads[6] = 0;
 
     /* Special input modes activated when L & R are held */
     /*
@@ -2502,7 +2502,7 @@ extern void famicom_1frame() {
             speed_show--;
         }
 
-        famicomCommon.wp->_0014 = 0;
+        famicomCommon.wp->cpu_cycle_count = 0;
         famicomCommon.wp->frames = frames;
 
         do {
