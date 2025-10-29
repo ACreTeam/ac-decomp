@@ -13,6 +13,8 @@ extern "C" {
 #define KS_NES_WIDTH 256
 #define KS_NES_HEIGHT 228
 
+#define KS_NES_PPU_CYCLES_PER_SCANLINE 341
+#define KS_NES_CPU_CYCLES_PER_SCANLINE 114
 
 #define KS_NES_SCANLINE_COUNT 240 // 228 visible + 8 pre-render + 8 post-render
 #define KS_NES_SCANLINE_SPRITE_OVERDRAW_COUNT (KS_NES_SCANLINE_COUNT + 32) // 272
@@ -123,6 +125,32 @@ extern "C" {
 #define KS_NES_MAPPER_KONAMI_VRC6A 24
 #define KS_NES_MAPPER_KONAMI_VRC6B 26
 
+// Memory mapped register addresses
+
+// APU Registers & Flags
+#define KS_NES_REG_APU_STATUS 0x4015
+#define KS_NES_REG_APU_STATUS_FLG_PULSE1_ENABLE (1 << 0)
+#define KS_NES_REG_APU_STATUS_FLG_PULSE2_ENABLE (1 << 1)
+#define KS_NES_REG_APU_STATUS_FLG_TRIANGLE_ENABLE (1 << 2)
+#define KS_NES_REG_APU_STATUS_FLG_NOISE_ENABLE (1 << 3)
+#define KS_NES_REG_APU_STATUS_FLG_DMC_ENABLE (1 << 4)
+
+// MMC5 Audio Registers & Flags
+#define KS_NES_REG_MMC5_AUDIO_PULSE1_TIMER 0x5000
+#define KS_NES_REG_MMC5_AUDIO_PULSE1_LENGTH_CTR 0x5001
+#define KS_NES_REG_MMC5_AUDIO_PULSE1_ENVELOPE 0x5002
+#define KS_NES_REG_MMC5_AUDIO_PULSE1_SWEEP 0x5003
+#define KS_NES_REG_MMC5_AUDIO_PULSE2_TIMER 0x5004
+#define KS_NES_REG_MMC5_AUDIO_PULSE2_LENGTH_CTR 0x5005
+#define KS_NES_REG_MMC5_AUDIO_PULSE2_ENVELOPE 0x5006
+#define KS_NES_REG_MMC5_AUDIO_PULSE2_SWEEP 0x5007
+#define KS_NES_REG_MMC5_AUDIO_PCM_MODE_IRQ 0x5010 // bit0 = mode select, 0 = write, 1 = read & bit7 = PCM IRQ enable
+#define KS_NES_REG_MMC5_AUDIO_RAW_PCM 0x5011
+#define KS_NES_REG_MMC5_AUDIO_STATUS 0x5015 // only bottom two bits are used (bit0/1) and toggle pulse1/2
+#define KS_NES_REG_MMC5_AUDIO_STATUS_PULSE1 (1 << 0)
+#define KS_NES_REG_MMC5_AUDIO_STATUS_PULSE2 (1 << 1)
+#define KS_NES_REG_MMC5_AUDIO_STATUS_PULSE_MASK (KS_NES_REG_MMC5_AUDIO_STATUS_PULSE1 | KS_NES_REG_MMC5_AUDIO_STATUS_PULSE2)
+
 // Emulator flags
 #define KS_NES_FLAG_NINES_OVER_MODE (1 << 13) // 0x2000, enables "nines over" mode which allows drawing more than 8 sprites per scanline
 
@@ -160,10 +188,17 @@ typedef struct ksNesOAMEntry {
     u8 x_pos;
 } ksNesOAMEntry;
 
+// I suspect this struct is fake but it makes readability easier and matches.
+typedef struct ksNesScanlineYCoords {
+    u8 top;
+    u8 bottom;
+} ksNesScanlineYCoords;
+
 typedef struct ksNesDrawCtx {
     /* 0x0000 */ union {
         u8 sprite_scanline_limit[KS_NES_SCANLINE_SPRITE_OVERDRAW_COUNT]; // tracks the number of sprites that have been drawn on each scanline
         u8 scanline_y_coords[2 * 256]; // tracks the Y coordinate of the top & bottom of each scanline
+        u8 scanline_raw_buf[512]; // raw buffer (most likely definition?)
     };
 
     /* 0x0200 */ u8 mmc2_scanline_latch_tiles[KS_NES_SCANLINE_COUNT + 16]; // tracks which tiles should be accessible on each scanline based on MMC2 latch settings
@@ -179,23 +214,25 @@ typedef struct ksNesDrawCtx {
     /* 0x8EE8 */ Mtx34 draw_mtx;
 } ksNesDrawCtx;
 
+#define KS_NES_TYPE_FROM_DRAW_CTX_SCANLINE_BUF_OFS(type, draw_ctx, ofs) ((type*)((((u8*)(draw_ctx).scanline_raw_buf) + (ofs))))
+#define KS_NES_TYPE_FROM_DRAW_CTX_SCANLINE_BUF(type, draw_ctx, idx) ((type*)(((u8*)(draw_ctx).scanline_raw_buf) + ((idx) * sizeof(type))))
+
 typedef struct ksNesCommonWorkObj {
     /* 0x0000 */ u8* nesromp;
     /* 0x0004 */ u8* noise_bufp;
     /* 0x0008 */ size_t chr_to_i8_buf_size;
     /* 0x000C */ u8* chr_to_u8_bufp;
     /* 0x0010 */ u8* result_bufp;
-    /* 0x0014 */ int _0014;
-    /* 0x0018 */ int _0018;
+    /* 0x0014 */ u32 cpu_cycle_count;
+    /* 0x0018 */ u32 total_cpu_cycles;
     /* 0x001C */ u8 frames;
-    /* 0x001D */ u8 _001D;
+    /* 0x001D */ u8 fds_disk_count;
     /* 0x001E */ u8 _001E;
     /* 0x001F */ u8 _001F;
-    /* 0x0020 */ u32 pads[4];
-    /* 0x0030 */ u32 _0030;
-    /* 0x0034 */ u32 _0034;
-    /* 0x0038 */ u32 _0038;
-    /* 0x003C */ u8 _003C[0x0048 - 0x003C];
+    /* 0x0020 */ u32 pads[4+3];
+    /* 0x003C */ u8 _003C;
+    /* 0x0040 */ u32 _0040;
+    /* 0x0044 */ u32 _0044;
     /* 0x0048 */ size_t prg_size;
     /* 0x004C */ u8 _004C[0x0060 - 0x004C];
     /* 0x0060 */ ksNesDrawCtx draw_ctx;
@@ -205,16 +242,16 @@ typedef struct ksNesStateObj {
     /* 0x0000 */ u8 wram[KS_NES_WRAM_SIZE];
     /* 0x0800 */ u8 ppu_nametable_ram[KS_NES_PPU_NAMETABLE_RAM_SIZE];
     /* 0x1000 */ u8 cartridge_nametable_ram[28];
-    /* 0x101C */ u8 primary_oam[0x100];
-    /* 0x111C */ u8 _pad[4]; // this might not exist and instead the next member might be ATTRIBUTE_ALIGN(16/32)
+    /* 0x101C */ u8 _pad[4]; // this might not exist and instead the next member might be ATTRIBUTE_ALIGN(16/32)
+    /* 0x1020 */ ksNesOAMEntry primary_oam[KS_NES_OAM_TABLE_SIZE]; // u8 primary_oam[0x100];
     /* 0x1120 */ u8 mmc5_extension_ram[0x400];
     // these are all function pointers.
     // leaving these as void pointers until we figure out the function signature.
     /* 0x1520 */ void* store_ppu_func[8];   // ksNesStorePPUFuncTblDefault
-    /* 0x1540 */ void* store_io_func[0x28]; // ksNesStoreIOFuncTblDefault
+    /* 0x1540 */ void* store_io_func[40]; // ksNesStoreIOFuncTblDefault
     /* 0x15E0 */ void* store_func[8];       // ksNesStoreFuncTblDefault
     /* 0x1600 */ void* load_func[8];        // ksNesLoadFuncTblDefault
-    /* 0x1620 */ void* load_io_func[0x18];  // ksNesLoadIOFuncTblDefault
+    /* 0x1620 */ void* load_io_func[24];  // ksNesLoadIOFuncTblDefault
     /* 0x1680 */ u8* cpu_0000_1fff;         // work RAM and its mirrors
     /* 0x1684 */ u8* cpu_2000_3fff;         // PPU registers and their mirrors
     /* 0x1688 */ u8* cpu_4000_5fff;         // APU registers, I/O registers, and usually unmapped cartridge addresses

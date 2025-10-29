@@ -106,11 +106,14 @@ void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mmc3) {
         u32 scanline_ctrl1 = wp->draw_ctx.ppu_scanline_regs[row].vram_addr_coarse_x;
         u32 mask;
         u32 nibble_acc; // @bug - uninitialized
-        u8* patternPtrBase = (u8*)wp->draw_ctx.ppu_scanline_regs[row].chr_bank_bg;
+        u8* patternPtrBase;
         u32 tile_byte;
         u32 palette_bits;
         u32 dst_idx;
         u8* nametable_p;
+        u32 flags;
+
+        patternPtrBase = (u8*)wp->draw_ctx.ppu_scanline_regs[row].chr_bank_bg;
 
         mask = mask = (scanline_ctrl0 & 0x04) ? CHR_flag_xor : 0; // bruh
 
@@ -128,7 +131,7 @@ void ksNesDrawMakeBGIndTex(ksNesCommonWorkObj* wp, u32 mmc3) {
                 tile_byte = nametable_p[((scanline_ctrl0 & 0xF8) << 2) + ((scanline_ctrl1 & 0xF8) >> 3)];
             }
 
-            palette_bits = patternPtrBase[((u8)tile_byte >> 6) | ((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl & 0x10) >> 2)];
+            palette_bits = patternPtrBase[((u8)tile_byte >> 6) | ((wp->draw_ctx.ppu_scanline_regs[row].ppu_ctrl & KS_NES_PPU_CTRL_BG_PATTERN) >> 2)];
 
             // issue is here
             wp->draw_ctx.bg_tile_index_texture[(((col & 0x3C) * 8) + ((col & 3) * 2) + ((row >> 2) * 288) + ((row & 3) * 8)) + 0] = (((palette_bits & 1) << 6) | (tile_byte & 0x3F)) - (col & 1);
@@ -892,6 +895,7 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 sprite_prio
     u32 clr;
     u32 oam_attrs;
     u8 *work;
+    ksNesScanlineYCoords* coords_p;
 
     GXSetNumChans(1);
     GXSetNumTexGens(2);
@@ -968,7 +972,7 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 sprite_prio
 
     var_r24 = 0;
     for (i = 0; i < ARRAY_COUNT(wp->draw_ctx.OAMTable); i++) {
-        if (sprite_priority_pass == 0 || (wp->draw_ctx.OAMTable[i].attributes & KS_NES_PPU_CTRL_SPRITE_SIZE) != 0) {
+        if (sprite_priority_pass == 0 || (wp->draw_ctx.OAMTable[i].attributes & KS_NES_OAM_ATTR_PRIORITY) != 0) {
             var_r24 += (wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.OAMTable[i].y_pos].ppu_ctrl & KS_NES_PPU_CTRL_SPRITE_SIZE) ? 8 : 4;
         }
     }
@@ -982,8 +986,9 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 sprite_prio
         j = (ARRAY_COUNT(wp->draw_ctx.OAMTable) - 1) * sizeof(wp->draw_ctx.OAMTable[0]);
         GXBegin(GX_QUADS, GX_VTXFMT0, var_r24);
         while (TRUE) {
-            u8 scanline = ((u8*)wp->draw_ctx.OAMTable)[j + 0];
-            u32 tile_idx = ((u8*)wp->draw_ctx.OAMTable)[j + 1]; // loading tile index & bank
+            ksNesOAMEntry* oam_p = KS_NES_TYPE_FROM_DRAW_CTX_SCANLINE_BUF_OFS(ksNesOAMEntry, wp->draw_ctx, j);
+            u8 scanline = oam_p->y_pos;
+            u32 tile_idx = oam_p->tile_index; // loading tile index & bank
             u32 size_mode = (wp->draw_ctx.ppu_scanline_regs[scanline].ppu_ctrl >> 5) & 1; // sprite size mode, 0 = 8x8, 1 = 8x16
             u32 palette_bits;
             u32 tmp;
@@ -1000,9 +1005,9 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 sprite_prio
             }
 
 
-            oam_attrs = ((u8*)wp->draw_ctx.OAMTable)[j + 2]; // OAM attributes
-            x1 = ((u8*)wp->draw_ctx.OAMTable)[j + 3] + 128; // OAM X position
-            x2 = ((u8*)wp->draw_ctx.OAMTable)[j + 3] + 128 + 8; // OAM X position + 8
+            oam_attrs = oam_p->attributes; // OAM attributes
+            x1 = oam_p->x_pos + 128; // OAM X position
+            x2 = oam_p->x_pos + 128 + 8; // OAM X position + 8
             clr = ((((oam_attrs & KS_NES_OAM_ATTR_PALETTE_MASK) * 16) + 4) | (wp->draw_ctx.ppu_scanline_regs[scanline].ppu_ctrl & (KS_NES_PPU_CTRL_NMI_ENABLE | KS_NES_PPU_CTRL_MASTER_SLAVE))) << 24;
 
             if (sprite_priority_pass != 0) {
@@ -1069,7 +1074,7 @@ void ksNesDrawOBJMMC5(ksNesCommonWorkObj* wp, ksNesStateObj* sp, u32 sprite_prio
 
 loop_point:
             if (j == 0) break;
-            j -= sizeof(wp->draw_ctx.OAMTable[0]);
+            j -= sizeof(ksNesOAMEntry);
         }
 
         GXEnd();
@@ -1102,18 +1107,20 @@ loop_point:
 
     GXBegin(GX_QUADS, GX_VTXFMT0, quads << 1);
     for (i = 0; i < quads; i += 2) {
-        work = (u8*)wp + i; // wp->draw_ctx.scanline_y_coords[i, i + 1] (top & bottom)
-        x = 0x180;
-        if ((wp->draw_ctx.ppu_scanline_regs[(u8)((u8*)wp + i)[0x60]].ppumask_flags & KS_NES_PPU_MASK_SPRITES_COMBINED) == KS_NES_PPU_MASK_SHOW_SPRITES) {
-            x = 0x88;
+        ksNesScanlineYCoords* coords_p = KS_NES_TYPE_FROM_DRAW_CTX_SCANLINE_BUF_OFS(ksNesScanlineYCoords, wp->draw_ctx, i);
+        u8 scanline_top = (u8)KS_NES_TYPE_FROM_DRAW_CTX_SCANLINE_BUF_OFS(ksNesScanlineYCoords, wp->draw_ctx, i)->top;
+        // work = (u8*)wp + i; // wp->draw_ctx.scanline_y_coords[i, i + 1] (top & bottom)
+        x = 384;
+        if ((wp->draw_ctx.ppu_scanline_regs[scanline_top].ppumask_flags & KS_NES_PPU_MASK_SPRITES_COMBINED) == KS_NES_PPU_MASK_SHOW_SPRITES) {
+            x = 136;
         }
-        GXPosition2s16(0x80, -128 - x);
+        GXPosition2s16(128, -128 - x);
         GXColor1u32(0);
-        GXPosition2s16(x, -128 - work[0x60]);
+        GXPosition2s16(x, -128 - coords_p->top);
         GXColor1u32(0);
-        GXPosition2s16(x, -128 - work[0x60] - work[0x61]);
+        GXPosition2s16(x, -128 - coords_p->top - coords_p->bottom);
         GXColor1u32(0);
-        GXPosition2s16(0x80, -128 - work[0x60] - work[0x61]);
+        GXPosition2s16(128, -128 - coords_p->top - coords_p->bottom);
         GXColor1u32(0);
     }
     GXEnd();
@@ -1121,8 +1128,8 @@ loop_point:
 
 void ksNesDrawFlushEFBToRed8(u8* buf) {
     static const GXColor black = { 0, 0, 0, 0 };
-    GXSetTexCopySrc(0x80, 0x88, 0x100, 0xe4);
-    GXSetTexCopyDst(0x100, 0xe4, GX_CTF_R8, GX_FALSE);
+    GXSetTexCopySrc(128, 136, 256, 228);
+    GXSetTexCopyDst(256, 228, GX_CTF_R8, GX_FALSE);
     GXSetCopyClear(black, 0xffffff);
     GXCopyTex(buf, GX_FALSE);
     GXPixModeSync();
@@ -1132,8 +1139,7 @@ void ksNesDrawFlushEFBToRed8(u8* buf) {
 void ksNesDrawOBJI8ToEFB(ksNesCommonWorkObj* wp, u8* buf) {
     GXTexObj obj;
     u32 i;
-    s32 u;
-    u8* work;
+    u32 x;
     u32 cnt;
 
     GXSetNumChans(0);
@@ -1167,21 +1173,21 @@ void ksNesDrawOBJI8ToEFB(ksNesCommonWorkObj* wp, u8* buf) {
 
     GXBegin(GX_QUADS, GX_VTXFMT0, cnt * 2);
     
-    for (i = 0; i < cnt; i += 2) {
-        work = (u8*)wp + i; // if it works...
-        u = (wp->draw_ctx.ppu_scanline_regs[(u8)((u8*)wp)[i + 0x60]].ppumask_flags & KS_NES_PPU_MASK_SPRITES_COMBINED) == KS_NES_PPU_MASK_SHOW_SPRITES ? 8 : 0;
-        
-        GXPosition2s16(u + 0x80, -128 - work[0x60]);
-        GXTexCoord2u16(u, work[0x60] - 8);
+    for (i = 0; i < cnt; i += sizeof(ksNesScanlineYCoords)) {
+        ksNesScanlineYCoords* scanline_y_coords = KS_NES_TYPE_FROM_DRAW_CTX_SCANLINE_BUF_OFS(ksNesScanlineYCoords, wp->draw_ctx, i);
+        x = (wp->draw_ctx.ppu_scanline_regs[(u8)KS_NES_TYPE_FROM_DRAW_CTX_SCANLINE_BUF_OFS(ksNesScanlineYCoords, wp->draw_ctx, i)->top].ppumask_flags & KS_NES_PPU_MASK_SPRITES_COMBINED) == KS_NES_PPU_MASK_SHOW_SPRITES ? 8 : 0;
 
-        GXPosition2s16(0x180, -128 - work[0x60]);
-        GXTexCoord2u16(0x100, work[0x60] - 8);
+        GXPosition2s16(x + 0x80, -128 - scanline_y_coords->top);
+        GXTexCoord2u16(x, scanline_y_coords->top - 8);
 
-        GXPosition2s16(0x180, -128 - work[0x60] - work[0x61]);
-        GXTexCoord2u16(0x100, work[0x60] + work[0x61] - 8);
+        GXPosition2s16(0x180, -128 - scanline_y_coords->top);
+        GXTexCoord2u16(0x100, scanline_y_coords->top - 8);
 
-        GXPosition2s16(u + 0x80, -128 - work[0x60] - work[0x61]);
-        GXTexCoord2u16(u, work[0x60] + work[0x61] - 8);
+        GXPosition2s16(0x180, -128 - scanline_y_coords->top - scanline_y_coords->bottom);
+        GXTexCoord2u16(0x100, scanline_y_coords->top + scanline_y_coords->bottom - 8);
+
+        GXPosition2s16(x + 0x80, -128 - scanline_y_coords->top - scanline_y_coords->bottom);
+        GXTexCoord2u16(x, scanline_y_coords->top + scanline_y_coords->bottom - 8);
     }
 
     GXEnd();
@@ -1203,7 +1209,7 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
     u8 y;
     u32 val;
     u32 clr;
-    u8 *work;
+    ksNesScanlineYCoords* scanline_y_coords;
     GXTexObj obj;
     GXTexObj obj2;
 
@@ -1246,14 +1252,16 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
     
     GXSetAlphaCompare(GX_ALWAYS, 0, GX_AOP_AND, GX_ALWAYS, 0);
 
+    // Count non-grayscale scanlines
     cnt = 0;
-    for (i = 0; wp->draw_ctx.scanline_y_coords[i] != 0xFF; i += 2) {
+    for (i = 0; wp->draw_ctx.scanline_y_coords[i] != 0xFF; i += sizeof(ksNesScanlineYCoords)) {
         val = wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.scanline_y_coords[i]].ppumask_flags;
         if ((val & KS_NES_PPU_MASK_COLOR_EFFECTS) == 0) { 
             cnt += 4; // has color and no color emphasis
         }
     }
 
+    // Draw non-grayscale scanlines
     if (cnt != 0) {
         GXSetNumChans(0);
         GXSetNumTexGens(1);
@@ -1270,25 +1278,26 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
         GXBegin(GX_QUADS, GX_VTXFMT0, cnt);
 
         do {
-            i -= 2;
-            work = ((u8*)wp + i);
-            val = wp->draw_ctx.ppu_scanline_regs[work[0x60]].ppumask_flags & KS_NES_PPU_MASK_COLOR_EFFECTS;
+            i -= sizeof(ksNesScanlineYCoords);
+            scanline_y_coords = KS_NES_TYPE_FROM_DRAW_CTX_SCANLINE_BUF_OFS(ksNesScanlineYCoords, wp->draw_ctx, i);
+            val = wp->draw_ctx.ppu_scanline_regs[scanline_y_coords->top].ppumask_flags & KS_NES_PPU_MASK_COLOR_EFFECTS;
             if (val == 0) {
-                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x60]);
-                GXTexCoord2u16(256, work[0x60]);
+                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - scanline_y_coords->top);
+                GXTexCoord2u16(256, scanline_y_coords->top);
 
-                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x61]);
-                GXTexCoord2u16(256, work[0x61]);
+                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - scanline_y_coords->bottom);
+                GXTexCoord2u16(256, scanline_y_coords->bottom);
 
-                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x61]);
-                GXTexCoord2u16(0, work[0x61]);
+                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - scanline_y_coords->bottom);
+                GXTexCoord2u16(0, scanline_y_coords->bottom);
 
-                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x60]);
-                GXTexCoord2u16(0, work[0x60]);
+                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - scanline_y_coords->top);
+                GXTexCoord2u16(0, scanline_y_coords->top);
             }
         } while (i != 0);
     }
 
+    // Count grayscale scanlines
     cnt = 0;
     for (i = 0; wp->draw_ctx.scanline_y_coords[i] != 0xFF; i += 2) {
         val = wp->draw_ctx.ppu_scanline_regs[wp->draw_ctx.scanline_y_coords[i]].ppumask_flags;
@@ -1297,6 +1306,7 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
         }
     }
 
+    // Draw grayscale scanlines
     if (cnt != 0) {
         GXSetNumChans(1);
         GXSetNumTexGens(1);
@@ -1358,35 +1368,37 @@ void ksNesDrawEmuResult(ksNesCommonWorkObj* wp) {
         GXBegin(GX_QUADS, GX_VTXFMT0, cnt);
 
         do {
-            i -= 2;
-            work = (u8*)wp + i; // wp->draw_ctx.scanline_y_coords[i, i + 1] (top & bottom)
-            if ((wp->draw_ctx.ppu_scanline_regs[work[0x60]].ppumask_flags & KS_NES_PPU_MASK_COLOR_EFFECTS) != 0) {
-                clr = 0x2F2F2F00;
-                if ((wp->draw_ctx.ppu_scanline_regs[work[0x60]].ppumask_flags & KS_NES_PPU_MASK_EMPHASIZE_RED) != 0) {
+            i -= sizeof(ksNesScanlineYCoords);
+            scanline_y_coords = KS_NES_TYPE_FROM_DRAW_CTX_SCANLINE_BUF_OFS(ksNesScanlineYCoords, wp->draw_ctx, i);
+            if ((wp->draw_ctx.ppu_scanline_regs[scanline_y_coords->top].ppumask_flags & KS_NES_PPU_MASK_COLOR_EFFECTS) != 0) {
+                clr = 0x2F2F2F00; // If any of the grayscale color bits are set, force the color to RGB8 (47, 47, 47) (chroma removed, only luma left)
+                
+                // For each emphasis bit set, add one to the luma value to get 48 (0x30).
+                if ((wp->draw_ctx.ppu_scanline_regs[scanline_y_coords->top].ppumask_flags & KS_NES_PPU_MASK_EMPHASIZE_RED) != 0) {
                     clr += 0x10000000;
                 }
-                if ((wp->draw_ctx.ppu_scanline_regs[work[0x60]].ppumask_flags & KS_NES_PPU_MASK_EMPHASIZE_GREEN) != 0) {
+                if ((wp->draw_ctx.ppu_scanline_regs[scanline_y_coords->top].ppumask_flags & KS_NES_PPU_MASK_EMPHASIZE_GREEN) != 0) {
                     clr += 0x00100000;
                 }
-                if ((wp->draw_ctx.ppu_scanline_regs[work[0x60]].ppumask_flags & KS_NES_PPU_MASK_EMPHASIZE_BLUE) != 0) {
+                if ((wp->draw_ctx.ppu_scanline_regs[scanline_y_coords->top].ppumask_flags & KS_NES_PPU_MASK_EMPHASIZE_BLUE) != 0) {
                     clr += 0x00001000;
                 }
 
-                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x60]);
+                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - scanline_y_coords->top);
                 GXColor1u32(clr);
-                GXTexCoord2u16(256, work[0x60]);
+                GXTexCoord2u16(256, scanline_y_coords->top);
 
-                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x61]);
+                GXPosition2s16(KS_NES_WIDTH + KS_NES_CENTER_X, -KS_NES_CENTER_Y - scanline_y_coords->bottom);
                 GXColor1u32(clr);
-                GXTexCoord2u16(256, work[0x61]);
+                GXTexCoord2u16(256, scanline_y_coords->bottom);
 
-                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x61]);
+                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - scanline_y_coords->bottom);
                 GXColor1u32(clr);
-                GXTexCoord2u16(0, work[0x61]);
+                GXTexCoord2u16(0, scanline_y_coords->bottom);
 
-                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - work[0x60]);
+                GXPosition2s16(KS_NES_CENTER_X, -KS_NES_CENTER_Y - scanline_y_coords->top);
                 GXColor1u32(clr);
-                GXTexCoord2u16(0, work[0x60]);
+                GXTexCoord2u16(0, scanline_y_coords->top);
             }
         } while (i != 0);
     }
