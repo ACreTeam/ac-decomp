@@ -4988,7 +4988,28 @@ config.libs = [
             Object(Matching, "data/model/int_yos_wheel.c",),
         ],
     ),
+    # custom TUs to be injected into foresta.rel (for modding).
+    # anything added here should also go into config.add_objects[1].
+    # example:
+    #    under 'game_custom' lib: Object(Matching, "src/path/to/my/custom/c_file.c"),
+    #    under config.add_obejcts[1]: ""src/path/to/my/custom/c_file.c""
+    {
+        "lib": "game_custom",
+        "cflags": cflags_foresta,
+        "objects": [
+            # Object(Matching, "src/path/to/my/custom/c_file.c"),
+        ],
+    },
 ]
+
+config.add_objects = {
+    # module_id => object names
+    # module_id 0 is DOL
+    # module_id 1 is foresta.rel
+    1: [
+        # "src/path/to/my/custom/c_file.c",
+    ],
+}
 
 # Define our custom asset processing scripts
 config.custom_build_rules = [
