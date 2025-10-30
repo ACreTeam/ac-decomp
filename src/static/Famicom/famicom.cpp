@@ -32,7 +32,7 @@
 static u8 __unused_implicit[0x40] ATTRIBUTE_ALIGN(32);
 #endif
 
-static u8 commentImageBuffer[CARD_COMMENT_SIZE + 0x5800];
+static u8 commentImageBuffer[CARD_COMMENT_SIZE + 0x5800] ATTRIBUTE_ALIGN(32);
 u8 save_game_image = false;
 FamicomCommon famicomCommon;
 u8 famicomCommonSave[0x1980 + sizeof(FamicomSaveDataHeader)];
@@ -2343,11 +2343,11 @@ static void nogbaInput() {
                 InputData[port] = ((JUTGamePad*)gamePad)[port].mButtons.mButton;
                 
                 if (((JUTGamePad*)gamePad)[port].mButtons.mAnalogL != 0) {
-                    InputData[port] |= BUTTON_X;
+                    InputData[port] |= JUTGamePad::L;
                 }
 
                 if (((JUTGamePad*)gamePad)[port].mButtons.mAnalogR != 0) {
-                    InputData[port] |= BUTTON_L;
+                    InputData[port] |= JUTGamePad::R;
                 }
                 break;
             }
