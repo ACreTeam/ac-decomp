@@ -13,7 +13,7 @@ extern "C" {
 
 typedef struct actor_haniwa_s HANIWA_ACTOR;
 
-typedef void (*HANIWA_ACTOR_PROC)(ACTOR*, GAME*);
+typedef void (*HANIWA_ACTOR_PROC)(HANIWA_ACTOR*, GAME*);
 
 enum haniwa_msg {
     aHNW_MSG_NO_OWNER,
