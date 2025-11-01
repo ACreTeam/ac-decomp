@@ -16,8 +16,11 @@ static void aEMJ_act_init_proc(NPC_ACTOR* actor, GAME_PLAY* play) {
 }
 
 static void aEMJ_act_proc(NPC_ACTOR* actor, GAME_PLAY* play, int idx) {
-    static aNPC_SUB_PROC act_proc[] = { aEMJ_act_init_proc, (aNPC_SUB_PROC)none_proc1,
-                                        (aNPC_SUB_PROC)none_proc1, };
+    static aNPC_SUB_PROC act_proc[] = {
+        aEMJ_act_init_proc,
+        (aNPC_SUB_PROC)none_proc1,
+        (aNPC_SUB_PROC)none_proc1,
+    };
 
     (*act_proc[idx])(actor, play);
 }
@@ -54,8 +57,8 @@ static void aEMJ_think_init_proc(NPC_ACTOR* actor, GAME_PLAY* play) {
 
     majin->npc_class.action.act_proc = aEMJ_act_proc;
     aEMJ_set_request_act(majin, play);
-    eEC_CLIP->effect_make_proc(eEC_EFFECT_RESET_HOLE, actor->actor_class.world.position, 3, actor->actor_class.shape_info.rotation.y,
-                                                   &play->game, RSV_NO, 0, 0);
+    eEC_CLIP->effect_make_proc(eEC_EFFECT_RESET_HOLE, actor->actor_class.world.position, 3,
+                               actor->actor_class.shape_info.rotation.y, &play->game, RSV_NO, 0, 0);
     aEMJ_setup_think_proc(majin, aEMJ_ACT_APPEAR);
 }
 
@@ -116,16 +119,16 @@ static void aEMJ_set_force_talk_info() {
 
     switch (Common_Get(weather)) {
         case mEnv_WEATHER_CLEAR:
-            msg_num = 0x3DAF + RANDOM(3);
+            msg_num = MSG_15791 + RANDOM(3);
             break;
 
         case mEnv_WEATHER_SNOW:
-            msg_num = 0x3DB2 + RANDOM(3);
+            msg_num = MSG_15794 + RANDOM(3);
             break;
 
         default:
         case mEnv_WEATHER_RAIN:
-            msg_num = 0x3DAF;
+            msg_num = MSG_15791;
             break;
     }
 

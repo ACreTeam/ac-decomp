@@ -175,7 +175,7 @@ static void aEKPD_setupAction(EV_KABUPEDDLER_ACTOR* kabuPeddler, GAME_PLAY* play
 }
 
 static void aEKPD_set_talk_info(ACTOR* actorx) {
-    int msg_no = aEKPD_check_look() == TRUE ? 0x0718 : 0x06FD;
+    int msg_no = aEKPD_check_look() == TRUE ? MSG_1816 : MSG_1789;
 
     mDemo_Set_msg_num(msg_no);
 }

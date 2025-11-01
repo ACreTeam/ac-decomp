@@ -1,70 +1,69 @@
 static int aEGH_hitodama_num() {
-  int i;
-  int num;
-  Private_c* priv = Common_Get(now_private);
+    int i;
+    int num;
+    Private_c* priv = Common_Get(now_private);
 
-  for (i = 0, num = 0; i < mEv_GHOST_HITODAMA_NUM; i++) {
-    int n = mPr_GetPossessionItemSumWithCond(priv, ITM_SPIRIT0 + i, mPr_ITEM_COND_NORMAL);
-    
-    num += n * (i + 1);
-  }
+    for (i = 0, num = 0; i < mEv_GHOST_HITODAMA_NUM; i++) {
+        int n = mPr_GetPossessionItemSumWithCond(priv, ITM_SPIRIT0 + i, mPr_ITEM_COND_NORMAL);
 
-  return num;
+        num += n * (i + 1);
+    }
+
+    return num;
 }
 
 static void aEGH_okoruhito() {
-  static u8 pf_string[mMsg_FREE_STRING_LEN];
-  mEv_gst_c* ghost_ev = (mEv_gst_c*)mEv_get_save_area(mEv_EVENT_GHOST, 54);
+    static u8 pf_string[mMsg_FREE_STRING_LEN];
+    mEv_gst_c* ghost_ev = (mEv_gst_c*)mEv_get_save_area(mEv_EVENT_GHOST, 54);
 
-  mString_Load_StringFromRom(pf_string, sizeof(pf_string), 0x62E + ghost_ev->okoruhito_str_no);
-  mMsg_Set_item_str(mMsg_Get_base_window_p(), mMsg_FREE_STR1, pf_string, sizeof(pf_string));
+    mString_Load_StringFromRom(pf_string, sizeof(pf_string), 0x62E + ghost_ev->okoruhito_str_no);
+    mMsg_Set_item_str(mMsg_Get_base_window_p(), mMsg_FREE_STR1, pf_string, sizeof(pf_string));
 }
 
 static void aEGH_delete_hitodama() {
-  int i;
-  int num;
-  Private_c* priv = Common_Get(now_private);
+    int i;
+    int num;
+    Private_c* priv = Common_Get(now_private);
 
-  for (i = 0, num = 0; i < mEv_GHOST_HITODAMA_NUM; i++) {
-    int idx = mPr_GetPossessionItemIdxWithCond(priv, ITM_SPIRIT0 + i, mPr_ITEM_COND_NORMAL);
+    for (i = 0, num = 0; i < mEv_GHOST_HITODAMA_NUM; i++) {
+        int idx = mPr_GetPossessionItemIdxWithCond(priv, ITM_SPIRIT0 + i, mPr_ITEM_COND_NORMAL);
 
-    while (idx != -1) {
-      mPr_SetPossessionItem(Common_Get(now_private), idx, EMPTY_NO, mPr_ITEM_COND_NORMAL);
-      idx = mPr_GetPossessionItemIdxWithCond(priv, ITM_SPIRIT0 + i, mPr_ITEM_COND_NORMAL);
+        while (idx != -1) {
+            mPr_SetPossessionItem(Common_Get(now_private), idx, EMPTY_NO, mPr_ITEM_COND_NORMAL);
+            idx = mPr_GetPossessionItemIdxWithCond(priv, ITM_SPIRIT0 + i, mPr_ITEM_COND_NORMAL);
+        }
     }
-  }
 }
 
 static mActor_name_t aEGH_get_collect(int selected_idx, mActor_name_t* list) {
-  while (*list != EMPTY_NO) {
-    if (mSP_CollectCheck(*list) == FALSE) {
-      if (selected_idx > 0) {
-        selected_idx--;
-      }
-      else {
-        return *list;
-      }
+    while (*list != EMPTY_NO) {
+        if (mSP_CollectCheck(*list) == FALSE) {
+            if (selected_idx > 0) {
+                selected_idx--;
+            } else {
+                return *list;
+            }
+        }
+
+        list++;
     }
 
-    list++;
-  }
-
-  return EMPTY_NO;
+    return EMPTY_NO;
 }
 
 static void aEGH_check_collect_num(int* list_num, int* uncollect_num, mActor_name_t* list) {
-  *list_num = 0;
-  *uncollect_num = 0;
-  
-  while (*list != EMPTY_NO) {
-    (*list_num)++;
+    *list_num = 0;
+    *uncollect_num = 0;
 
-    if (mSP_CollectCheck(*list) == FALSE) {
-      (*uncollect_num)++;
+    while (*list != EMPTY_NO) {
+        (*list_num)++;
+
+        if (mSP_CollectCheck(*list) == FALSE) {
+            (*uncollect_num)++;
+        }
+
+        list++;
     }
-
-    list++;
-  }
 }
 
 extern mActor_name_t ftr_listA[];
@@ -89,537 +88,401 @@ extern mActor_name_t binsen_listB[];
 extern mActor_name_t binsen_listC[];
 
 static mActor_name_t list_haniwa[HANIWA_NUM + 1] = {
-  FTR_START(FTR_HNW_COMMON000),
-  FTR_START(FTR_HNW_COMMON001),
-  FTR_START(FTR_HNW_COMMON002),
-  FTR_START(FTR_HNW_COMMON003),
-  FTR_START(FTR_HNW_COMMON004),
-  FTR_START(FTR_HNW_COMMON005),
-  FTR_START(FTR_HNW_COMMON006),
-  FTR_START(FTR_HNW_COMMON007),
-  FTR_START(FTR_HNW_COMMON008),
-  FTR_START(FTR_HNW_COMMON009),
-  FTR_START(FTR_HNW_COMMON010),
-  FTR_START(FTR_HNW_COMMON011),
-  FTR_START(FTR_HNW_COMMON012),
-  FTR_START(FTR_HNW_COMMON013),
-  FTR_START(FTR_HNW_COMMON014),
-  FTR_START(FTR_HNW_COMMON015),
-  FTR_START(FTR_HNW_COMMON016),
-  FTR_START(FTR_HNW_COMMON017),
-  FTR_START(FTR_HNW_COMMON018),
-  FTR_START(FTR_HNW_COMMON019),
-  FTR_START(FTR_HNW_COMMON020),
-  FTR_START(FTR_HNW_COMMON021),
-  FTR_START(FTR_HNW_COMMON022),
-  FTR_START(FTR_HNW_COMMON023),
-  FTR_START(FTR_HNW_COMMON024),
-  FTR_START(FTR_HNW_COMMON025),
-  FTR_START(FTR_HNW_COMMON026),
-  FTR_START(FTR_HNW_COMMON027),
-  FTR_START(FTR_HNW_COMMON028),
-  FTR_START(FTR_HNW_COMMON029),
-  FTR_START(FTR_HNW_COMMON030),
-  FTR_START(FTR_HNW_COMMON031),
-  FTR_START(FTR_HNW_COMMON032),
-  FTR_START(FTR_HNW_COMMON033),
-  FTR_START(FTR_HNW_COMMON034),
-  FTR_START(FTR_HNW_COMMON035),
-  FTR_START(FTR_HNW_COMMON036),
-  FTR_START(FTR_HNW_COMMON037),
-  FTR_START(FTR_HNW_COMMON038),
-  FTR_START(FTR_HNW_COMMON039),
-  FTR_START(FTR_HNW_COMMON040),
-  FTR_START(FTR_HNW_COMMON041),
-  FTR_START(FTR_HNW_COMMON042),
-  FTR_START(FTR_HNW_COMMON043),
-  FTR_START(FTR_HNW_COMMON044),
-  FTR_START(FTR_HNW_COMMON045),
-  FTR_START(FTR_HNW_COMMON046),
-  FTR_START(FTR_HNW_COMMON047),
-  FTR_START(FTR_HNW_COMMON048),
-  FTR_START(FTR_HNW_COMMON049),
-  FTR_START(FTR_HNW_COMMON050),
-  FTR_START(FTR_HNW_COMMON051),
-  FTR_START(FTR_HNW_COMMON052),
-  FTR_START(FTR_HNW_COMMON053),
-  FTR_START(FTR_HNW_COMMON054),
-  FTR_START(FTR_HNW_COMMON055),
-  FTR_START(FTR_HNW_COMMON056),
-  FTR_START(FTR_HNW_COMMON057),
-  FTR_START(FTR_HNW_COMMON058),
-  FTR_START(FTR_HNW_COMMON059),
-  FTR_START(FTR_HNW_COMMON060),
-  FTR_START(FTR_HNW_COMMON061),
-  FTR_START(FTR_HNW_COMMON062),
-  FTR_START(FTR_HNW_COMMON063),
-  FTR_START(FTR_HNW_COMMON064),
-  FTR_START(FTR_HNW_COMMON065),
-  FTR_START(FTR_HNW_COMMON066),
-  FTR_START(FTR_HNW_COMMON067),
-  FTR_START(FTR_HNW_COMMON068),
-  FTR_START(FTR_HNW_COMMON069),
-  FTR_START(FTR_HNW_COMMON070),
-  FTR_START(FTR_HNW_COMMON071),
-  FTR_START(FTR_HNW_COMMON072),
-  FTR_START(FTR_HNW_COMMON073),
-  FTR_START(FTR_HNW_COMMON074),
-  FTR_START(FTR_HNW_COMMON075),
-  FTR_START(FTR_HNW_COMMON076),
-  FTR_START(FTR_HNW_COMMON077),
-  FTR_START(FTR_HNW_COMMON078),
-  FTR_START(FTR_HNW_COMMON079),
-  FTR_START(FTR_HNW_COMMON080),
-  FTR_START(FTR_HNW_COMMON081),
-  FTR_START(FTR_HNW_COMMON082),
-  FTR_START(FTR_HNW_COMMON083),
-  FTR_START(FTR_HNW_COMMON084),
-  FTR_START(FTR_HNW_COMMON085),
-  FTR_START(FTR_HNW_COMMON086),
-  FTR_START(FTR_HNW_COMMON087),
-  FTR_START(FTR_HNW_COMMON088),
-  FTR_START(FTR_HNW_COMMON089),
-  FTR_START(FTR_HNW_COMMON090),
-  FTR_START(FTR_HNW_COMMON091),
-  FTR_START(FTR_HNW_COMMON092),
-  FTR_START(FTR_HNW_COMMON093),
-  FTR_START(FTR_HNW_COMMON094),
-  FTR_START(FTR_HNW_COMMON095),
-  FTR_START(FTR_HNW_COMMON096),
-  FTR_START(FTR_HNW_COMMON097),
-  FTR_START(FTR_HNW_COMMON098),
-  FTR_START(FTR_HNW_COMMON099),
-  FTR_START(FTR_HNW_COMMON100),
-  FTR_START(FTR_HNW_COMMON101),
-  FTR_START(FTR_HNW_COMMON102),
-  FTR_START(FTR_HNW_COMMON103),
-  FTR_START(FTR_HNW_COMMON104),
-  FTR_START(FTR_HNW_COMMON105),
-  FTR_START(FTR_HNW_COMMON106),
-  FTR_START(FTR_HNW_COMMON107),
-  FTR_START(FTR_HNW_COMMON108),
-  FTR_START(FTR_HNW_COMMON109),
-  FTR_START(FTR_HNW_COMMON110),
-  FTR_START(FTR_HNW_COMMON111),
-  FTR_START(FTR_HNW_COMMON112),
-  FTR_START(FTR_HNW_COMMON113),
-  FTR_START(FTR_HNW_COMMON114),
-  FTR_START(FTR_HNW_COMMON115),
-  FTR_START(FTR_HNW_COMMON116),
-  FTR_START(FTR_HNW_COMMON117),
-  FTR_START(FTR_HNW_COMMON118),
-  FTR_START(FTR_HNW_COMMON119),
-  FTR_START(FTR_HNW_COMMON120),
-  FTR_START(FTR_HNW_COMMON121),
-  FTR_START(FTR_HNW_COMMON122),
-  FTR_START(FTR_HNW_COMMON123),
-  FTR_START(FTR_HNW_COMMON124),
-  FTR_START(FTR_HNW_COMMON125),
-  FTR_START(FTR_HNW_COMMON126),
-  EMPTY_NO /* end of list */
+    FTR_START(FTR_HNW_COMMON000), FTR_START(FTR_HNW_COMMON001),
+    FTR_START(FTR_HNW_COMMON002), FTR_START(FTR_HNW_COMMON003),
+    FTR_START(FTR_HNW_COMMON004), FTR_START(FTR_HNW_COMMON005),
+    FTR_START(FTR_HNW_COMMON006), FTR_START(FTR_HNW_COMMON007),
+    FTR_START(FTR_HNW_COMMON008), FTR_START(FTR_HNW_COMMON009),
+    FTR_START(FTR_HNW_COMMON010), FTR_START(FTR_HNW_COMMON011),
+    FTR_START(FTR_HNW_COMMON012), FTR_START(FTR_HNW_COMMON013),
+    FTR_START(FTR_HNW_COMMON014), FTR_START(FTR_HNW_COMMON015),
+    FTR_START(FTR_HNW_COMMON016), FTR_START(FTR_HNW_COMMON017),
+    FTR_START(FTR_HNW_COMMON018), FTR_START(FTR_HNW_COMMON019),
+    FTR_START(FTR_HNW_COMMON020), FTR_START(FTR_HNW_COMMON021),
+    FTR_START(FTR_HNW_COMMON022), FTR_START(FTR_HNW_COMMON023),
+    FTR_START(FTR_HNW_COMMON024), FTR_START(FTR_HNW_COMMON025),
+    FTR_START(FTR_HNW_COMMON026), FTR_START(FTR_HNW_COMMON027),
+    FTR_START(FTR_HNW_COMMON028), FTR_START(FTR_HNW_COMMON029),
+    FTR_START(FTR_HNW_COMMON030), FTR_START(FTR_HNW_COMMON031),
+    FTR_START(FTR_HNW_COMMON032), FTR_START(FTR_HNW_COMMON033),
+    FTR_START(FTR_HNW_COMMON034), FTR_START(FTR_HNW_COMMON035),
+    FTR_START(FTR_HNW_COMMON036), FTR_START(FTR_HNW_COMMON037),
+    FTR_START(FTR_HNW_COMMON038), FTR_START(FTR_HNW_COMMON039),
+    FTR_START(FTR_HNW_COMMON040), FTR_START(FTR_HNW_COMMON041),
+    FTR_START(FTR_HNW_COMMON042), FTR_START(FTR_HNW_COMMON043),
+    FTR_START(FTR_HNW_COMMON044), FTR_START(FTR_HNW_COMMON045),
+    FTR_START(FTR_HNW_COMMON046), FTR_START(FTR_HNW_COMMON047),
+    FTR_START(FTR_HNW_COMMON048), FTR_START(FTR_HNW_COMMON049),
+    FTR_START(FTR_HNW_COMMON050), FTR_START(FTR_HNW_COMMON051),
+    FTR_START(FTR_HNW_COMMON052), FTR_START(FTR_HNW_COMMON053),
+    FTR_START(FTR_HNW_COMMON054), FTR_START(FTR_HNW_COMMON055),
+    FTR_START(FTR_HNW_COMMON056), FTR_START(FTR_HNW_COMMON057),
+    FTR_START(FTR_HNW_COMMON058), FTR_START(FTR_HNW_COMMON059),
+    FTR_START(FTR_HNW_COMMON060), FTR_START(FTR_HNW_COMMON061),
+    FTR_START(FTR_HNW_COMMON062), FTR_START(FTR_HNW_COMMON063),
+    FTR_START(FTR_HNW_COMMON064), FTR_START(FTR_HNW_COMMON065),
+    FTR_START(FTR_HNW_COMMON066), FTR_START(FTR_HNW_COMMON067),
+    FTR_START(FTR_HNW_COMMON068), FTR_START(FTR_HNW_COMMON069),
+    FTR_START(FTR_HNW_COMMON070), FTR_START(FTR_HNW_COMMON071),
+    FTR_START(FTR_HNW_COMMON072), FTR_START(FTR_HNW_COMMON073),
+    FTR_START(FTR_HNW_COMMON074), FTR_START(FTR_HNW_COMMON075),
+    FTR_START(FTR_HNW_COMMON076), FTR_START(FTR_HNW_COMMON077),
+    FTR_START(FTR_HNW_COMMON078), FTR_START(FTR_HNW_COMMON079),
+    FTR_START(FTR_HNW_COMMON080), FTR_START(FTR_HNW_COMMON081),
+    FTR_START(FTR_HNW_COMMON082), FTR_START(FTR_HNW_COMMON083),
+    FTR_START(FTR_HNW_COMMON084), FTR_START(FTR_HNW_COMMON085),
+    FTR_START(FTR_HNW_COMMON086), FTR_START(FTR_HNW_COMMON087),
+    FTR_START(FTR_HNW_COMMON088), FTR_START(FTR_HNW_COMMON089),
+    FTR_START(FTR_HNW_COMMON090), FTR_START(FTR_HNW_COMMON091),
+    FTR_START(FTR_HNW_COMMON092), FTR_START(FTR_HNW_COMMON093),
+    FTR_START(FTR_HNW_COMMON094), FTR_START(FTR_HNW_COMMON095),
+    FTR_START(FTR_HNW_COMMON096), FTR_START(FTR_HNW_COMMON097),
+    FTR_START(FTR_HNW_COMMON098), FTR_START(FTR_HNW_COMMON099),
+    FTR_START(FTR_HNW_COMMON100), FTR_START(FTR_HNW_COMMON101),
+    FTR_START(FTR_HNW_COMMON102), FTR_START(FTR_HNW_COMMON103),
+    FTR_START(FTR_HNW_COMMON104), FTR_START(FTR_HNW_COMMON105),
+    FTR_START(FTR_HNW_COMMON106), FTR_START(FTR_HNW_COMMON107),
+    FTR_START(FTR_HNW_COMMON108), FTR_START(FTR_HNW_COMMON109),
+    FTR_START(FTR_HNW_COMMON110), FTR_START(FTR_HNW_COMMON111),
+    FTR_START(FTR_HNW_COMMON112), FTR_START(FTR_HNW_COMMON113),
+    FTR_START(FTR_HNW_COMMON114), FTR_START(FTR_HNW_COMMON115),
+    FTR_START(FTR_HNW_COMMON116), FTR_START(FTR_HNW_COMMON117),
+    FTR_START(FTR_HNW_COMMON118), FTR_START(FTR_HNW_COMMON119),
+    FTR_START(FTR_HNW_COMMON120), FTR_START(FTR_HNW_COMMON121),
+    FTR_START(FTR_HNW_COMMON122), FTR_START(FTR_HNW_COMMON123),
+    FTR_START(FTR_HNW_COMMON124), FTR_START(FTR_HNW_COMMON125),
+    FTR_START(FTR_HNW_COMMON126), EMPTY_NO /* end of list */
 };
 
 static mActor_name_t umbrella_list[UMBRELLA_NUM + 1] = {
-  ITM_UMBRELLA00,
-  ITM_UMBRELLA01,
-  ITM_UMBRELLA02,
-  ITM_UMBRELLA03,
-  ITM_UMBRELLA04,
-  ITM_UMBRELLA05,
-  ITM_UMBRELLA06,
-  ITM_UMBRELLA07,
-  ITM_UMBRELLA08,
-  ITM_UMBRELLA09,
-  ITM_UMBRELLA10,
-  ITM_UMBRELLA11,
-  ITM_UMBRELLA12,
-  ITM_UMBRELLA13,
-  ITM_UMBRELLA14,
-  ITM_UMBRELLA15,
-  ITM_UMBRELLA16,
-  ITM_UMBRELLA17,
-  ITM_UMBRELLA18,
-  ITM_UMBRELLA19,
-  ITM_UMBRELLA20,
-  ITM_UMBRELLA21,
-  ITM_UMBRELLA22,
-  ITM_UMBRELLA23,
-  ITM_UMBRELLA24,
-  ITM_UMBRELLA25,
-  ITM_UMBRELLA26,
-  ITM_UMBRELLA27,
-  ITM_UMBRELLA28,
-  ITM_UMBRELLA29,
-  ITM_UMBRELLA30,
-  ITM_UMBRELLA31,
-  EMPTY_NO /* end of list */
+    ITM_UMBRELLA00, ITM_UMBRELLA01, ITM_UMBRELLA02, ITM_UMBRELLA03, ITM_UMBRELLA04, ITM_UMBRELLA05, ITM_UMBRELLA06,
+    ITM_UMBRELLA07, ITM_UMBRELLA08, ITM_UMBRELLA09, ITM_UMBRELLA10, ITM_UMBRELLA11, ITM_UMBRELLA12, ITM_UMBRELLA13,
+    ITM_UMBRELLA14, ITM_UMBRELLA15, ITM_UMBRELLA16, ITM_UMBRELLA17, ITM_UMBRELLA18, ITM_UMBRELLA19, ITM_UMBRELLA20,
+    ITM_UMBRELLA21, ITM_UMBRELLA22, ITM_UMBRELLA23, ITM_UMBRELLA24, ITM_UMBRELLA25, ITM_UMBRELLA26, ITM_UMBRELLA27,
+    ITM_UMBRELLA28, ITM_UMBRELLA29, ITM_UMBRELLA30, ITM_UMBRELLA31, EMPTY_NO /* end of list */
 };
 
 static mActor_name_t aEGH_not_collect_get() {
-  static mActor_name_t* item_list[aEGH_ITEM_LIST_NUM] = {
-    ftr_listA,
-    ftr_listB,
-    ftr_listC,
-    ftr_listEvent,
-    ftr_listLottery,
-    carpet_listA,
-    carpet_listB,
-    carpet_listC,
-    carpet_listEvent,
-    wall_listA,
-    wall_listB,
-    wall_listC,
-    wall_listEvent,
-    cloth_listA,
-    cloth_listB,
-    cloth_listC,
-    cloth_listEvent,
-    binsen_listA,
-    binsen_listB,
-    binsen_listC,
-    list_haniwa,
-    umbrella_list
-  };
+    static mActor_name_t* item_list[aEGH_ITEM_LIST_NUM] = { ftr_listA,        ftr_listB,    ftr_listC,    ftr_listEvent,
+                                                            ftr_listLottery,  carpet_listA, carpet_listB, carpet_listC,
+                                                            carpet_listEvent, wall_listA,   wall_listB,   wall_listC,
+                                                            wall_listEvent,   cloth_listA,  cloth_listB,  cloth_listC,
+                                                            cloth_listEvent,  binsen_listA, binsen_listB, binsen_listC,
+                                                            list_haniwa,      umbrella_list };
 
-  int list_num_tbl[aEGH_ITEM_LIST_NUM];
-  int uncollect_num_tbl[aEGH_ITEM_LIST_NUM];
-  int no_uncollected_flag = FALSE;
-  int selected_idx;
-  mActor_name_t item;
-  int i;
-  int total_count;
+    int list_num_tbl[aEGH_ITEM_LIST_NUM];
+    int uncollect_num_tbl[aEGH_ITEM_LIST_NUM];
+    int no_uncollected_flag = FALSE;
+    int selected_idx;
+    mActor_name_t item;
+    int i;
+    int total_count;
 
-  /* Calculate total items in each list and uncollected items in each list */
-  for (i = 0; i < aEGH_ITEM_LIST_NUM; i++) {
-    aEGH_check_collect_num(&list_num_tbl[i], &uncollect_num_tbl[i], item_list[i]);
-  }
+    /* Calculate total items in each list and uncollected items in each list */
+    for (i = 0; i < aEGH_ITEM_LIST_NUM; i++) {
+        aEGH_check_collect_num(&list_num_tbl[i], &uncollect_num_tbl[i], item_list[i]);
+    }
 
-  for (i = 0, total_count = 0; i < aEGH_ITEM_LIST_NUM; i++) {
-    total_count += uncollect_num_tbl[i];
-  }
-
-  /* If no uncollected items remain, select one at random from all lists */
-  if (total_count == 0) {
-    no_uncollected_flag = TRUE; /* all items collected */
     for (i = 0, total_count = 0; i < aEGH_ITEM_LIST_NUM; i++) {
-      total_count += list_num_tbl[i];
-    }
-  }
-
-  selected_idx = RANDOM(total_count);
-  if (no_uncollected_flag) {
-    /* Transform the absolute idx into the list idx by removing all entries up to the selected list */
-    for (i = 0; i < aEGH_ITEM_LIST_NUM && selected_idx >= list_num_tbl[i]; i++) {
-      selected_idx -= list_num_tbl[i];
+        total_count += uncollect_num_tbl[i];
     }
 
-    if (i != aEGH_ITEM_LIST_NUM) {
-      item = item_list[i][selected_idx];
-    }
-    else {
-      item = ITM_FOOD_PEACH; /* If we somehow failed to select an item, we'll give them a peach */
-    }
-  }
-  else {
-    /* Transform the absolute idx into the list idx by removing all entries up to the selected list */
-    for (i = 0; i < aEGH_ITEM_LIST_NUM && selected_idx >= uncollect_num_tbl[i]; i++) {
-      selected_idx -= uncollect_num_tbl[i];
+    /* If no uncollected items remain, select one at random from all lists */
+    if (total_count == 0) {
+        no_uncollected_flag = TRUE; /* all items collected */
+        for (i = 0, total_count = 0; i < aEGH_ITEM_LIST_NUM; i++) {
+            total_count += list_num_tbl[i];
+        }
     }
 
-    if (i != aEGH_ITEM_LIST_NUM) {
-      item = aEGH_get_collect(selected_idx, item_list[i]); /* Get the uncollected item from the list */
+    selected_idx = RANDOM(total_count);
+    if (no_uncollected_flag) {
+        /* Transform the absolute idx into the list idx by removing all entries up to the selected list */
+        for (i = 0; i < aEGH_ITEM_LIST_NUM && selected_idx >= list_num_tbl[i]; i++) {
+            selected_idx -= list_num_tbl[i];
+        }
 
-      if (item == EMPTY_NO) {
-        item = ITM_FOOD_APPLE; /* If we somehow failed to get an uncollected item, we'll give them an apple */
-      }
-    }
-    else {
-      item = ITM_FOOD_PEACH; /* If we somehow failed to select an item, we'll give them a peach */
-    }
-  }
+        if (i != aEGH_ITEM_LIST_NUM) {
+            item = item_list[i][selected_idx];
+        } else {
+            item = ITM_FOOD_PEACH; /* If we somehow failed to select an item, we'll give them a peach */
+        }
+    } else {
+        /* Transform the absolute idx into the list idx by removing all entries up to the selected list */
+        for (i = 0; i < aEGH_ITEM_LIST_NUM && selected_idx >= uncollect_num_tbl[i]; i++) {
+            selected_idx -= uncollect_num_tbl[i];
+        }
 
-  return mRmTp_FtrItemNo2Item1ItemNo(item, TRUE);
+        if (i != aEGH_ITEM_LIST_NUM) {
+            item = aEGH_get_collect(selected_idx, item_list[i]); /* Get the uncollected item from the list */
+
+            if (item == EMPTY_NO) {
+                item = ITM_FOOD_APPLE; /* If we somehow failed to get an uncollected item, we'll give them an apple */
+            }
+        } else {
+            item = ITM_FOOD_PEACH; /* If we somehow failed to select an item, we'll give them a peach */
+        }
+    }
+
+    return mRmTp_FtrItemNo2Item1ItemNo(item, TRUE);
 }
 
 static void aEGH_give_me_wait(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
-  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
 
-  switch (order) {
-    case 1:
-    {
-      mPlib_request_main_give_type1((GAME*)play, ITM_SPIRIT0, 7, FALSE, FALSE);
-      mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 2);
-      mMsg_Set_LockContinue(mMsg_Get_base_window_p());
-      mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 3);
-      aEGH_delete_hitodama();
-      break;
+    switch (order) {
+        case 1: {
+            mPlib_request_main_give_type1((GAME*)play, ITM_SPIRIT0, 7, FALSE, FALSE);
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 2);
+            mMsg_Set_LockContinue(mMsg_Get_base_window_p());
+            mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 1, 3);
+            aEGH_delete_hitodama();
+            break;
+        }
+
+        case 2: {
+            if (Common_Get(clip).handOverItem_clip->master_actor == NULL) {
+                mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
+                mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+                aEGH_change_talk_proc(ghost, aEGH_TALK_SELECT_WAIT);
+            }
+
+            break;
+        }
     }
-
-    case 2:
-    {
-      if (Common_Get(clip).handOverItem_clip->master_actor == NULL) {
-        mMsg_Unset_LockContinue(mMsg_Get_base_window_p());
-        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
-        aEGH_change_talk_proc(ghost, aEGH_TALK_SELECT_WAIT);
-      }
-
-      break;
-    }
-  }
 }
 
 static void aEGH_select_wait(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
-  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
-  mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
-  mEv_gst_c* ghost_data = (mEv_gst_c*)mEv_get_save_area(mEv_EVENT_GHOST, 54);
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
+    mEv_gst_c* ghost_data = (mEv_gst_c*)mEv_get_save_area(mEv_EVENT_GHOST, 54);
 
-  if (order == 1 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p())) {
-    ghost->after_talk_think_act = 1;
-    ghost_data->flags |= mEv_GHOST_FLAG_RETURNED_SPIRITS;
-    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+    if (order == 1 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p())) {
+        ghost->after_talk_think_act = 1;
+        ghost_data->flags |= mEv_GHOST_FLAG_RETURNED_SPIRITS;
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
 
-    switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
-      case mChoice_CHOICE0: /* Clear weeds */
-      {
-        u32 num_weeds = mFI_GetItemNumField(GRASS_A, GRASS_C);
+        switch (mChoice_Get_ChoseNum(mChoice_Get_base_window_p())) {
+            case mChoice_CHOICE0: /* Clear weeds */
+            {
+                u32 num_weeds = mFI_GetItemNumField(GRASS_A, GRASS_C);
 
-        if (num_weeds < 50) {
-          mMsg_Set_continue_msg_num(msg_p, 0x2EF1);
+                if (num_weeds < 50) {
+                    mMsg_Set_continue_msg_num(msg_p, 0x2EF1);
+                } else if (num_weeds < 150) {
+                    mMsg_Set_continue_msg_num(msg_p, 0x2EF2);
+                } else if (num_weeds < 450) {
+                    mMsg_Set_continue_msg_num(msg_p, 0x2EF3);
+                } else if (num_weeds < 900) {
+                    mMsg_Set_continue_msg_num(msg_p, 0x2EF4);
+                } else {
+                    mMsg_Set_continue_msg_num(msg_p, 0x2EF5);
+                }
+
+                aEGH_change_talk_proc(ghost, aEGH_TALK_CLEAR_GRASS);
+                break;
+            }
+
+            case mChoice_CHOICE1: {
+                aEGH_change_talk_proc(ghost, aEGH_TALK_SELECT_ROOF);
+                ghost->roof_pal = 0;
+                break;
+            }
+
+            case mChoice_CHOICE2: {
+                u8 name[mIN_ITEM_NAME_LEN];
+
+                aEGH_change_talk_proc(ghost, aEGH_TALK_GIVE_YOU_WAIT);
+                ghost->give_item = aEGH_not_collect_get();
+                mIN_copy_name_str(name, ghost->give_item);
+                mMsg_Set_item_str_art(msg_p, mMsg_ITEM_STR0, name, mIN_ITEM_NAME_LEN,
+                                      mIN_get_item_article(ghost->give_item));
+                break;
+            }
         }
-        else if (num_weeds < 150) {
-          mMsg_Set_continue_msg_num(msg_p, 0x2EF2);
-        }
-        else if (num_weeds < 450) {
-          mMsg_Set_continue_msg_num(msg_p, 0x2EF3);
-        }
-        else if (num_weeds < 900) {
-          mMsg_Set_continue_msg_num(msg_p, 0x2EF4);
-        }
-        else {
-          mMsg_Set_continue_msg_num(msg_p, 0x2EF5);
-        }
-
-        aEGH_change_talk_proc(ghost, aEGH_TALK_CLEAR_GRASS);
-        break;
-      }
-
-      case mChoice_CHOICE1:
-      {
-        aEGH_change_talk_proc(ghost, aEGH_TALK_SELECT_ROOF);
-        ghost->roof_pal = 0;
-        break;
-      }
-
-      case mChoice_CHOICE2:
-      {
-        u8 name[mIN_ITEM_NAME_LEN];
-
-        aEGH_change_talk_proc(ghost, aEGH_TALK_GIVE_YOU_WAIT);
-        ghost->give_item = aEGH_not_collect_get();
-        mIN_copy_name_str(name, ghost->give_item);
-        mMsg_Set_item_str_art(msg_p, mMsg_ITEM_STR0, name, mIN_ITEM_NAME_LEN, mIN_get_item_article(ghost->give_item));
-        break;
-      }
     }
-  }
 }
 
 static void aEGH_select_roof(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
-  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
-  int arrange_idx = mHS_get_arrange_idx(Common_Get(player_no));
-  mHm_hs_c* home = Save_GetPointer(homes[arrange_idx]);
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 9);
+    int arrange_idx = mHS_get_arrange_idx(Common_Get(player_no));
+    mHm_hs_c* home = Save_GetPointer(homes[arrange_idx]);
 
-  if (order == 1 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p())) {
-    int selected;
+    if (order == 1 && mMsg_Check_MainNormalContinue(mMsg_Get_base_window_p())) {
+        int selected;
 
-    mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
-    selected = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC0, 9, 0);
+        selected = mChoice_Get_ChoseNum(mChoice_Get_base_window_p());
 
-    if (selected >= mChoice_CHOICE3) {
-      ghost->roof_pal += 3;
+        if (selected >= mChoice_CHOICE3) {
+            ghost->roof_pal += 3;
 
-      if (ghost->roof_pal >= mSP_ROOF_COLOR_NUM) {
-        ghost->roof_pal = 0;
-      }
+            if (ghost->roof_pal >= mSP_ROOF_COLOR_NUM) {
+                ghost->roof_pal = 0;
+            }
+        } else {
+            ghost->roof_pal += (u8)selected;
+            home->outlook_pal = ghost->roof_pal;
+
+            /* Only update the 'next outlook' palette if the player doesn't have a coat of paint already scheduled */
+            if ((Common_Get(now_private)->state_flags & mPr_FLAG_UPDATE_OUTLOOK_PENDING) == 0) {
+                home->next_outlook_pal = ghost->roof_pal;
+            }
+
+            aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
+        }
     }
-    else {
-      ghost->roof_pal += (u8)selected;
-      home->outlook_pal = ghost->roof_pal;
-
-      /* Only update the 'next outlook' palette if the player doesn't have a coat of paint already scheduled */
-      if ((Common_Get(now_private)->state_flags & mPr_FLAG_UPDATE_OUTLOOK_PENDING) == 0) {
-        home->next_outlook_pal = ghost->roof_pal;
-      }
-
-      aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
-    }
-  }
 }
 
 static void aEGH_give_you_wait(EV_GHOST_ACTOR* ghost, GAME_PLAY* play) {
-  int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
+    int order = mDemo_Get_OrderValue(mDemo_ORDER_NPC0, 1);
 
-  if (order == 2) {
-    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, ghost->give_item);
-    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, 7);
-    mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, 0);
-    mPr_SetFreePossessionItem(Common_Get(now_private), ghost->give_item, mPr_ITEM_COND_NORMAL);
-    aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
-  }
+    if (order == 2) {
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 0, ghost->give_item);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 1, 7);
+        mDemo_Set_OrderValue(mDemo_ORDER_NPC1, 2, 0);
+        mPr_SetFreePossessionItem(Common_Get(now_private), ghost->give_item, mPr_ITEM_COND_NORMAL);
+        aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
+    }
 }
 
 static int aEGH_change_talk_proc(EV_GHOST_ACTOR* ghost, u8 talk_act) {
-  ghost->talk_act = talk_act;
-  return TRUE;
+    ghost->talk_act = talk_act;
+    return TRUE;
 }
 
 static void aEGH_set_force_talk_info(ACTOR* actorx) {
-  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
-  mEv_gst_common_c* ghost_common = (mEv_gst_common_c*)mEv_get_common_area(mEv_EVENT_GHOST, 55);
+    EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+    mEv_gst_common_c* ghost_common = (mEv_gst_common_c*)mEv_get_common_area(mEv_EVENT_GHOST, 55);
 
-  mDemo_Set_msg_num(ghost->msg_no + RANDOM(5));
-  aEGH_okoruhito();
+    mDemo_Set_msg_num(ghost->msg_no + RANDOM(5));
+    aEGH_okoruhito();
 
-  switch (ghost->msg_no) {
-    case 0x2EE2:
-    {
-      mDemo_Set_talk_turn(TRUE);
-      mDemo_Set_camera(CAMERA2_PROCESS_TALK);
-      
-      if (aEGH_bitcheck_func(aEGH_BIT_FOUND_GHOST) == FALSE) {
-        sAdo_SysTrgStart(0x6B);
-        aEGH_bitset_func(aEGH_BIT_FOUND_GHOST);
-      }
+    switch (ghost->msg_no) {
+        case MSG_12002: {
+            mDemo_Set_talk_turn(TRUE);
+            mDemo_Set_camera(CAMERA2_PROCESS_TALK);
 
-      ghost_common->flags |= mEv_GHOST_FLAG_ACTIVE;
-      break;
+            if (aEGH_bitcheck_func(aEGH_BIT_FOUND_GHOST) == FALSE) {
+                sAdo_SysTrgStart(0x6B);
+                aEGH_bitset_func(aEGH_BIT_FOUND_GHOST);
+            }
+
+            ghost_common->flags |= mEv_GHOST_FLAG_ACTIVE;
+            break;
+        }
+
+        case MSG_11997: {
+            mDemo_Set_talk_turn(TRUE);
+            mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+            break;
+        }
+
+        case MSG_11987:
+        case MSG_11992: {
+            mDemo_Set_talk_turn(FALSE);
+            mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+            mMsg_sound_set_voice_click(mMsg_Get_base_window_p());
+            break;
+        }
+
+        default: {
+            mDemo_Set_talk_turn(FALSE);
+            mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
+            break;
+        }
     }
 
-    case 0x2EDD:
-    {
-      mDemo_Set_talk_turn(TRUE);
-      mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
-      break;
-    }
-
-    case 0x2ED3:
-    case 0x2ED8:
-    {
-      mDemo_Set_talk_turn(FALSE);
-      mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
-      mMsg_sound_set_voice_click(mMsg_Get_base_window_p());
-      break;
-    }
-
-    default:
-    {
-      mDemo_Set_talk_turn(FALSE);
-      mDemo_Set_camera(CAMERA2_PROCESS_NORMAL);
-      break;
-    }
-  }
-
-  aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
+    aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
 }
 
 static void aEGH_force_talk_request(ACTOR* actorx, GAME* game) {
-  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
-  GAME_PLAY* play = (GAME_PLAY*)game;
-  f32 dist = GET_PLAYER_ACTOR(play)->actor_class.world.position.y - actorx->world.position.y;
+    EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    f32 dist = GET_PLAYER_ACTOR(play)->actor_class.world.position.y - actorx->world.position.y;
 
-  if (dist < 0.0f) {
-    dist = -dist;
-  }
+    if (dist < 0.0f) {
+        dist = -dist;
+    }
 
-  if (!(
-      !(ghost->_9A7 == FALSE && actorx->player_distance_xz < actorx->talk_distance) ||
-      !(dist < 60.0f) && (ghost->_9AA == FALSE)
-  )) {
-    mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aEGH_set_force_talk_info);
-  }
-  else {
-    ghost->_9A7 = FALSE;
-  }
+    if (!(!(ghost->_9A7 == FALSE && actorx->player_distance_xz < actorx->talk_distance) ||
+          !(dist < 60.0f) && (ghost->_9AA == FALSE))) {
+        mDemo_Request(mDemo_TYPE_SPEAK, actorx, &aEGH_set_force_talk_info);
+    } else {
+        ghost->_9A7 = FALSE;
+    }
 }
 
 static void aEGH_set_norm_talk_info(ACTOR* actorx) {
-  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
-  int hitodama_num;
-  int msg_no;
+    EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+    int hitodama_num;
+    int msg_no;
 
-  aEGH_okoruhito();
-  mDemo_Set_talk_turn(TRUE);
-  mDemo_Set_camera(CAMERA2_PROCESS_TALK);
-  aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
+    aEGH_okoruhito();
+    mDemo_Set_talk_turn(TRUE);
+    mDemo_Set_camera(CAMERA2_PROCESS_TALK);
+    aEGH_change_talk_proc(ghost, aEGH_TALK_END_WAIT);
 
-  hitodama_num = aEGH_hitodama_num();
-  if (hitodama_num == 0) {
-    msg_no = 0x2EE7 + RANDOM(5);
-  }
-  else if (hitodama_num >= mEv_GHOST_HITODAMA_NUM) {
-    msg_no = 0x2EF0;
-    aEGH_change_talk_proc(ghost, aEGH_TALK_GIVE_ME_WAIT);
-    Save_Get(event_save_common).ghost_day = 0;
-  }
-  else {
-    msg_no = 0x2EEB + hitodama_num;
-  }
+    hitodama_num = aEGH_hitodama_num();
+    if (hitodama_num == 0) {
+        msg_no = MSG_12007 + RANDOM(5);
+    } else if (hitodama_num >= mEv_GHOST_HITODAMA_NUM) {
+        msg_no = MSG_12016;
+        aEGH_change_talk_proc(ghost, aEGH_TALK_GIVE_ME_WAIT);
+        Save_Get(event_save_common).ghost_day = 0;
+    } else {
+        msg_no = MSG_12011 + hitodama_num;
+    }
 
-  mDemo_Set_msg_num(msg_no);
+    mDemo_Set_msg_num(msg_no);
 }
 
 static void aEGH_norm_talk_request(ACTOR* actorx, GAME* game) {
-  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+    EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
 
-  if (ghost->_9A7 == FALSE) {
-    mDemo_Request(mDemo_TYPE_TALK, actorx, &aEGH_set_norm_talk_info);
-  }
-  else {
-    ghost->_9A7 = FALSE;
-  }
+    if (ghost->_9A7 == FALSE) {
+        mDemo_Request(mDemo_TYPE_TALK, actorx, &aEGH_set_norm_talk_info);
+    } else {
+        ghost->_9A7 = FALSE;
+    }
 }
 
 static int aEGH_talk_init(ACTOR* actorx, GAME* game) {
-  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+    EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
 
-  ghost->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)&none_proc1;
-  mDemo_Set_ListenAble();
-  mDemo_Start(actorx);
-  return TRUE;
+    ghost->npc_class.talk_info.talk_request_proc = (aNPC_TALK_REQUEST_PROC)&none_proc1;
+    mDemo_Set_ListenAble();
+    mDemo_Start(actorx);
+    return TRUE;
 }
 
 typedef void (*aEGH_TALK_PROC)(EV_GHOST_ACTOR*, GAME_PLAY*);
 
 static int aEGH_talk_end_chk(ACTOR* actorx, GAME* game) {
-  static aEGH_TALK_PROC proc[aEGH_TALK_NUM] = {
-    (aEGH_TALK_PROC)&none_proc1,
-    &aEGH_give_me_wait,
-    &aEGH_select_wait,
-    &aEGH_select_roof,
-    &aEGH_give_you_wait,
-    (aEGH_TALK_PROC)&none_proc1
-  };
+    static aEGH_TALK_PROC proc[aEGH_TALK_NUM] = { (aEGH_TALK_PROC)&none_proc1, &aEGH_give_me_wait,
+                                                  &aEGH_select_wait,           &aEGH_select_roof,
+                                                  &aEGH_give_you_wait,         (aEGH_TALK_PROC)&none_proc1 };
 
-  EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
-  GAME_PLAY* play = (GAME_PLAY*)game;
-  int res = FALSE;
+    EV_GHOST_ACTOR* ghost = (EV_GHOST_ACTOR*)actorx;
+    GAME_PLAY* play = (GAME_PLAY*)game;
+    int res = FALSE;
 
-  (*proc[ghost->talk_act])(ghost, play);
+    (*proc[ghost->talk_act])(ghost, play);
 
-  if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE && mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {
-    if (ghost->talk_act == aEGH_TALK_CLEAR_GRASS) {
-      Save_Set(clear_grass, TRUE);
+    if (mDemo_Check(mDemo_TYPE_SPEAK, actorx) == FALSE && mDemo_Check(mDemo_TYPE_TALK, actorx) == FALSE) {
+        if (ghost->talk_act == aEGH_TALK_CLEAR_GRASS) {
+            Save_Set(clear_grass, TRUE);
+        }
+
+        aEGH_setup_think_proc(ghost, play, ghost->after_talk_think_act);
+
+        if (ghost->melody_inst != 0) {
+            ghost->npc_class.talk_info.melody_inst = ghost->melody_inst;
+            ghost->melody_inst = 0;
+        }
+
+        res = TRUE;
     }
 
-    aEGH_setup_think_proc(ghost, play, ghost->after_talk_think_act);
-
-    if (ghost->melody_inst != 0) {
-      ghost->npc_class.talk_info.melody_inst = ghost->melody_inst;
-      ghost->melody_inst = 0;
-    }
-
-    res = TRUE;
-  }
-
-  return res;
+    return res;
 }

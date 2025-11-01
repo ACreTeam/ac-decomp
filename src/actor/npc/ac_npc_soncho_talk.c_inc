@@ -11,11 +11,11 @@ static void aNS_set_norm_talk_info(ACTOR* actorx) {
     aNS_change_talk_proc(actor, aNS_TALK_END_WAIT);
 
     if (mSC_check_ArbeitPlayer()) {
-        mDemo_Set_msg_num(0x3AFF + RANDOM(3));
+        mDemo_Set_msg_num(MSG_15103 + RANDOM(3));
     } else if (mSC_LightHouse_travel_check()) {
-        mDemo_Set_msg_num(0x3B02);
+        mDemo_Set_msg_num(MSG_15106);
     } else {
-        mDemo_Set_msg_num(0x3AFC);
+        mDemo_Set_msg_num(MSG_15100);
     }
 }
 
