@@ -60,7 +60,7 @@ extern void Na_GetStaffRollInfo(StaffRollInfo_c* info) {
         subtrack = group->subtracks[i];
         if (subtrack != nullptr) {
             note = subtrack->note_layers[0];
-            if (note != nullptr && note->_00bit3) {
+            if (note != nullptr && note->channel_attached) {
                 channel = note->channel;
                 if (channel != nullptr && channel->common_ch.enabled) {
                     /* Found our enabled note channel, get mouth type */

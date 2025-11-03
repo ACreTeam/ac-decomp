@@ -320,9 +320,9 @@ static s32 Nas_EntryNoteTrack(sub* subtrack, int note_idx) {
     entry_note->finished = FALSE;
     entry_note->muted = FALSE;
     entry_note->continuous = FALSE;
-    entry_note->_00bit3 = FALSE;
+    entry_note->channel_attached = FALSE;
     entry_note->ignore_drum_pan = FALSE;
-    entry_note->_00bit1 = FALSE;
+    entry_note->continuous_channel_released = FALSE;
     entry_note->note_properties_need_init = FALSE;
     *(u8*)&entry_note->stereo_phase = 0;
     entry_note->portamento_sweep.mode = 0;
@@ -601,11 +601,11 @@ static void __Stop_Note(note* n) {
 }
 
 static s32 __SetChannel(note* n, s32 same_sample) {
-    if (n->continuous == TRUE && n->_00bit1 == TRUE) {
+    if (n->continuous == TRUE && n->continuous_channel_released == TRUE) {
         return 0;
     }
 
-    if (n->continuous != TRUE || n->channel == nullptr || n->_00bit3 == FALSE || same_sample != TRUE ||
+    if (n->continuous != TRUE || n->channel == nullptr || n->channel_attached == FALSE || same_sample != TRUE ||
         n->channel->playback_ch.current_parent_note != n) {
         if (same_sample == FALSE) {
             Nas_Release_Channel(n);
@@ -678,7 +678,7 @@ static s32 __Command_Seq(note* n) {
             case NOTE_CMD_CONTINUOUS_ON:
             case NOTE_CMD_CONTINUOUS_OFF:
                 n->continuous = cmd == NOTE_CMD_CONTINUOUS_ON;
-                n->_00bit1 = FALSE;
+                n->continuous_channel_released = FALSE;
                 Nas_Release_Channel(n);
                 break;
             case NOTE_CMD_SET_SHORT_NOTE_DEFAULT_DELAY:
@@ -774,6 +774,8 @@ static s32 __Command_Seq(note* n) {
                 }
         }
     }
+
+    return cmd;
 }
 
 static s32 __SetVoice(note* n, s32 arg) {
@@ -1035,7 +1037,7 @@ static s32 __SetNote(note* n, s32 cmd) {
     if (cmd == 0xC0) {
         n->delay = Nas_ReadLengthData(m);
         n->muted = TRUE;
-        n->_00bit1 = FALSE;
+        n->continuous_channel_released = FALSE;
         return COMMON_SCRIPT_END;
     }
 
@@ -1685,7 +1687,7 @@ static void Nas_SubSeq(sub* subtrack) {
                                 subtrack->note_layers[lo_bits]->macro_player.pc = &grp->seq_data[cmdArgU16];
                             }
                             break;
-                        // [0x90 - 0x93]
+                        // [0x90 - 0x97] NOTE: 0x94-0x97 are invalid and will be changed to 0x90.
                         case SUBTRACK_CMD_NOTE_STOP_MASK: // stop note layer
                             Nas_CloseNoteTrack(subtrack, lo_bits);
                             break;

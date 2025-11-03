@@ -251,7 +251,7 @@ extern void Nas_UpdateChannel(void) {
                         }
                     } else {
                         if (playback_chan->current_parent_note != NA_NO_NOTE) {
-                            playback_chan->current_parent_note->_00bit1 = TRUE;
+                            playback_chan->current_parent_note->continuous_channel_released = TRUE;
                         }
 
                         Nas_StopVoice(chan);
@@ -262,7 +262,7 @@ extern void Nas_UpdateChannel(void) {
                 }
             } else if (playback_chan->adsr_envp.state.flags.status == ADSR_STATUS_DISABLED) {
                 if (playback_chan->current_parent_note != NA_NO_NOTE) {
-                    playback_chan->current_parent_note->_00bit1 = TRUE;
+                    playback_chan->current_parent_note->continuous_channel_released = TRUE;
                 }
 
                 Nas_StopVoice(chan);
@@ -501,7 +501,7 @@ static void __Nas_Release_Channel_Main(note* n, int target) {
         return;
     }
 
-    n->_00bit3 = FALSE;
+    n->channel_attached = FALSE;
 
     if (n->channel == NULL) {
         return;
@@ -777,7 +777,7 @@ extern void Nas_EntryTrack(channel* chan, note* n) {
     playback->current_parent_note = n;
     playback->priority = subtrack->note_priority;
     n->note_properties_need_init = TRUE;
-    n->_00bit3 = TRUE;
+    n->channel_attached = TRUE;
     n->channel = chan;
     subtrack->channel = chan;
     subtrack->note = n;
@@ -949,7 +949,7 @@ extern channel* Nas_AllocationOnRequest(note* n) {
     return chan;
 
 null_return:
-    n->_00bit3 = TRUE;
+    n->channel_attached = TRUE;
     return NULL;
 }
 

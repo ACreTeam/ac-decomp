@@ -568,9 +568,9 @@ struct note_ {
     /* 0x00 */ u8 finished : 1;
     /* 0x00 */ u8 muted : 1;
     /* 0x00 */ u8 continuous : 1;
-    /* 0x00 */ u8 _00bit3 : 1;
+    /* 0x00 */ u8 channel_attached : 1;
     /* 0x00 */ u8 ignore_drum_pan : 1;
-    /* 0x00 */ u8 _00bit1 : 1;
+    /* 0x00 */ u8 continuous_channel_released : 1;
     /* 0x00 */ u8 note_properties_need_init : 1;
     /* 0x01 */ phase stereo_phase;
     /* 0x02 */ u8 inst_or_wave;

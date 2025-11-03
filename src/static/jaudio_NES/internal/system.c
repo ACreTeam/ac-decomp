@@ -1731,24 +1731,22 @@ static void __WaveTouch(wtstr* wavetouch_str, u32 ram_addr, WaveMedia* wave_medi
     }
 }
 
-// @non-matching - regswaps caused by AG not being loaded into r28
 s32 Nas_BankOfsToAddr(s32 bank_id, u8* ctrl_p, WaveMedia* wave_media, s32 async) {
     Bgloadreq* preload;
     Bgloadreq* top_preload;
     smzwavetable* wavetable;
-    s32 size;
-    s32 n_chunks;
-    u8* wave_ram_p;
-    s32 i;
-    s32 preloading;
+    s32 size = 0;
+    s32 n_chunks = 1;
+    u8* wave_ram_p = NULL;
+    s32 preloading = FALSE;
     static ALHeap awheap;
-    u8 medium;
+    s32 i;
+    s8 medium = 0;
     
-    u8 __stack_pad[12];
-    s32* i_p = &i; // this feels wrong but w/e
+    // u8 __stack_pad[12];
+    // s32* i_p = &i; // this feels wrong but w/e
 
     
-    preloading = FALSE;
     if (AG.num_requested_samples != 0) {
         preloading = TRUE;
     } else {
@@ -1760,7 +1758,7 @@ s32 Nas_BankOfsToAddr(s32 bank_id, u8* ctrl_p, WaveMedia* wave_media, s32 async)
 
     size = 0;
     for (i = 0; i < AG.num_used_samples; i++) {
-        size += ALIGN_NEXT(AG.used_samples[i]->size, 16);
+        size += ALIGN_NEXT(AG.used_samples[i]->size & 0xFFFFFF, 16);
     }
 
     for (i = 0; i < AG.num_used_samples; i++) {
@@ -1772,32 +1770,33 @@ s32 Nas_BankOfsToAddr(s32 bank_id, u8* ctrl_p, WaveMedia* wave_media, s32 async)
         wave_ram_p = NULL;
 
         switch (async) {
-            case FALSE:
-                medium = wavetable->medium;
-                if (medium == wave_media->wave0_media) {
+            case FALSE: {
+                u8 medium = wavetable->medium;
+                if (wavetable->medium == wave_media->wave0_media) {
                     wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, wave_media->wave0_bank_id, wavetable->sample,
-                                                       (s8)medium, CACHE_PERSISTENT);
-                } else if (medium == wave_media->wave1_media) {
+                        (s8)(wavetable->medium & 0xFF), CACHE_PERSISTENT);
+                } else if (wavetable->medium == wave_media->wave1_media) {
                     wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, wave_media->wave1_bank_id, wavetable->sample,
-                                                       (s8)wavetable->medium, CACHE_PERSISTENT);
-                } else if (medium == MEDIUM_DISK_DRIVE) {
-                    wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, 0xFE, wavetable->sample, (s8)wavetable->medium,
+                        (s8)(wavetable->medium & 0xFF), CACHE_PERSISTENT);
+                } else if (wavetable->medium == MEDIUM_DISK_DRIVE) {
+                    wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, 0xFE, wavetable->sample, (s8)(wavetable->medium & 0xFF),
                                                        CACHE_PERSISTENT);
                 }
-                break;
-            case TRUE:
-                medium = wavetable->medium;
-                if (medium == wave_media->wave0_media) {
-                    wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, wave_media->wave0_bank_id, wavetable->sample,
-                                                       (s8)wavetable->medium, CACHE_TEMPORARY);
-                } else if (medium == wave_media->wave1_media) {
+            } break;
+            case TRUE: {
+                u8 medium = wavetable->medium;
+                if ((u8)wavetable->medium == wave_media->wave0_media) {
+                    // the size & 0xFFFFFF is necessary... but only once...
+                    wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size & 0xFFFFFF, wave_media->wave0_bank_id, wavetable->sample,
+                        (u8)wavetable->medium, CACHE_TEMPORARY);
+                } else if ((u8)wavetable->medium == wave_media->wave1_media) {
                     wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, wave_media->wave1_bank_id, wavetable->sample,
-                                                       (s8)wavetable->medium, CACHE_TEMPORARY);
-                } else if (medium == MEDIUM_DISK_DRIVE) {
-                    wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, 0xFE, wavetable->sample, (s8)wavetable->medium,
-                                                       CACHE_TEMPORARY);
+                        (u8)wavetable->medium, CACHE_TEMPORARY);
+                } else if ((u8)wavetable->medium == MEDIUM_DISK_DRIVE) {
+                    wave_ram_p = (u8*)Nas_Alloc_Single(wavetable->size, 0xFE, wavetable->sample, (u8)wavetable->medium,
+                        CACHE_TEMPORARY);
                 }
-                break;
+            } break;
         }
 
         if (wave_ram_p == NULL) {
@@ -1830,9 +1829,10 @@ s32 Nas_BankOfsToAddr(s32 bank_id, u8* ctrl_p, WaveMedia* wave_media, s32 async)
 
     AG.num_used_samples = 0;
     if (AG.num_requested_samples != 0 && !preloading) {
-        top_preload = &AG.requested_samples[AG.num_requested_samples - 1];
+        i = AG.num_requested_samples - 1;
+        top_preload = &AG.requested_samples[i];
         wavetable = top_preload->sample;
-        n_chunks = 1;
+        // n_chunks = 1;
         n_chunks += (wavetable->size / 0x1000);
         Nas_BgCopyReq(wavetable->sample, top_preload->ram_addr, wavetable->size, wavetable->medium, n_chunks,
                       &AG.preload_sample_queue, top_preload->encoded_info);
