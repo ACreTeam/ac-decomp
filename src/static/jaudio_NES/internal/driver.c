@@ -1248,7 +1248,7 @@ codec_continue_and_skip:
 
 Acmd* Nas_DolbySurround(Acmd* cmd, commonch* common, driverch* driver, s32 num_samples_per_update, s32 haas_dmem, s32 flags) {
     s32 size;
-    s32 wetGain;
+    u16 wetGain;
     u16 dryGain;
     s64 dmem = DMEM_SURROUND_TEMP;
     f32 decayGain;
@@ -1266,16 +1266,15 @@ Acmd* Nas_DolbySurround(Acmd* cmd, commonch* common, driverch* driver, s32 num_s
         aLoadBuffer2(cmd++, driver->synth_params->surround_effect_state, dmem, sizeof(driver->synth_params->surround_effect_state));
         
         aMix(cmd++, size >> 4, dryGain, dmem, DMEM_LEFT_CH);
-        aMix(cmd++, size >> 4, (dryGain ^ 0xFFFF), dmem, DMEM_RIGHT_CH);
+        aMix(cmd++, size >> 4, (u16)(dryGain ^ 0xFFFF), dmem, DMEM_RIGHT_CH);
         
         aMix(cmd++, size >> 4, wetGain, dmem, DMEM_WET_LEFT_CH);
         aMix(cmd++, size >> 4, (wetGain ^ 0xFFFF), dmem, DMEM_WET_RIGHT_CH);
     }
 
-    aSaveBuffer2(cmd++, DMEM_SURROUND_TEMP + size, driver->synth_params->surround_effect_state, sizeof(driver->synth_params->surround_effect_state));
-
-    decayGain = (common->target_volume_left + common->target_volume_right) / 8192.0f; // 1.0f / 0x2000
-
+    aSaveBuffer2(cmd++, driver->synth_params->surround_effect_state, DMEM_SURROUND_TEMP + size, sizeof(driver->synth_params->surround_effect_state));
+    
+    decayGain = (common->target_volume_left + common->target_volume_right) / 8192.0f;
     if (decayGain > 1.0f) {
         decayGain = 1.0f;
     }
@@ -1321,7 +1320,7 @@ extern Acmd* Nas_Synth_Envelope(Acmd* cmd, commonch* common, driverch* driver, s
     targetVolLeft = common->target_volume_left << 4;
     targetVolRight = common->target_volume_right << 4;
 
-    if ((AG.sound_mode == SOUND_OUTPUT_DOLBY_SURROUND)) {
+    if (AG.sound_mode == SOUND_OUTPUT_DOLBY_SURROUND) {
         u8 idx = common->surround_effect_idx;
         
         if (idx != 0xFF) {
@@ -1377,8 +1376,8 @@ extern Acmd* Nas_Synth_Envelope(Acmd* cmd, commonch* common, driverch* driver, s
                 break;
         }
     } else {
-        curReverbVol = curReverbVolAndFlags & 0x7F;
-        aSetEnvParam(cmd++, curReverbVol * 2, rampReverb, rampLeft, rampRight);
+        targetReverbVol = ((curReverbVolAndFlags & 0x7F) << 1);
+        aSetEnvParam(cmd++, targetReverbVol, rampReverb, rampLeft, rampRight);
         aSetEnvParam2(cmd++, curVolLeft, curVolRight);
         dmemDests = Env_Data_L3;
     }

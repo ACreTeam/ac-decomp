@@ -797,7 +797,7 @@ config.libs = [
             Object(Matching, "jaudio_NES/internal/channel.c"),
             Object(Matching, "jaudio_NES/internal/cmdstack.c"),
             Object(Matching, "jaudio_NES/internal/connect.c"),
-            Object(NonMatching, "jaudio_NES/internal/driver.c"),
+            Object(NonMatching, "jaudio_NES/internal/driver.c", extra_cflags=["-vector on"]),
             Object(Matching, "jaudio_NES/internal/driverinterface.c"),
             Object(Matching, "jaudio_NES/internal/dsp_cardunlock.c"),
             Object(Matching, "jaudio_NES/internal/dsp_GBAKey.c"),
