@@ -1298,27 +1298,28 @@ extern Acmd* Nas_Synth_Resample(Acmd* cmd, const driverch* driver, s32 size, u16
     return cmd;
 }
 
+// @non-matching - issues with aSetEnvParam2 macro
 extern Acmd* Nas_Synth_Envelope(Acmd* cmd, commonch* common, driverch* driver, s32 samples_per_update, u16 dmem, s32 haasEffectDelaySide, s32 flags) {
-    u16 targetVolRight;
-    u16 targetVolLeft;
+    s32 targetReverbVol = common->target_reverb_volume;
+    u32 curVolLeft = driver->current_volume_left & 0xFFFF;
+    u32 curVolRight = driver->current_volume_right & 0xFFFF;
+    u16 targetVolLeft = common->target_volume_left << 4;
+    u16 targetVolRight = common->target_volume_right << 4;
     u32 dmemDests;
-    u16 curVolLeft;
-    u16 curVolRight;
     s32 curReverbVolAndFlags;
     u16 curReverbVol;
-    s32 targetReverbVol;
     s16 rampLeft;
     s16 rampRight;
     s16 rampReverb;
     f32 defaultPanVolume;
 
     
-    targetReverbVol = common->target_reverb_volume;
-    curVolLeft = driver->current_volume_left;
-    curVolRight = driver->current_volume_right;
+    // targetReverbVol = common->target_reverb_volume;
+    // curVolLeft = driver->current_volume_left;
+    // curVolRight = driver->current_volume_right;
 
-    targetVolLeft = common->target_volume_left << 4;
-    targetVolRight = common->target_volume_right << 4;
+    // targetVolLeft = common->target_volume_left << 4;
+    // targetVolRight = common->target_volume_right << 4;
 
     if (AG.sound_mode == SOUND_OUTPUT_DOLBY_SURROUND) {
         u8 idx = common->surround_effect_idx;
@@ -1330,14 +1331,14 @@ extern Acmd* Nas_Synth_Envelope(Acmd* cmd, commonch* common, driverch* driver, s
         }
     }
 
-    if (targetVolLeft != curVolLeft) {
-        rampLeft = (targetVolLeft - curVolLeft) / (samples_per_update >> 3);
+    if (targetVolLeft != (u32)curVolLeft) {
+        rampLeft = (targetVolLeft - (s32)curVolLeft) / (samples_per_update >> 3);
     } else {
         rampLeft = 0;
     }
 
-    if (targetVolRight != curVolRight) {
-        rampRight = (targetVolRight - curVolRight) / (samples_per_update >> 3);
+    if (targetVolRight != (u32)curVolRight) {
+        rampRight = (targetVolRight - (s32)curVolRight) / (samples_per_update >> 3);
     } else {
         rampRight = 0;
     }
@@ -1355,9 +1356,9 @@ extern Acmd* Nas_Synth_Envelope(Acmd* cmd, commonch* common, driverch* driver, s
     driver->current_volume_right = curVolRight + (rampRight * (samples_per_update >> 3));
 
     if (common->use_haas_effect) {
+        // curReverbVol = curReverbVolAndFlags & 0x7F;
         Nas_ClearBuffer(cmd++, DMEM_HAAS_TEMP, DMEM_1CH_SIZE);
-        curReverbVol = curReverbVolAndFlags & 0x7F;
-        Nas_SetEnvParam(cmd++, curReverbVol * 2, rampReverb, rampLeft, rampRight);
+        Nas_SetEnvParam(cmd++, (curReverbVolAndFlags & 0x7F) * 2, rampReverb, rampLeft, rampRight);
         Nas_SetEnvParam2(cmd++, curVolLeft, curVolRight);
 
         switch (haasEffectDelaySide) {
@@ -1376,9 +1377,18 @@ extern Acmd* Nas_Synth_Envelope(Acmd* cmd, commonch* common, driverch* driver, s
                 break;
         }
     } else {
-        targetReverbVol = ((curReverbVolAndFlags & 0x7F) << 1);
-        aSetEnvParam(cmd++, targetReverbVol, rampReverb, rampLeft, rampRight);
-        aSetEnvParam2(cmd++, curVolLeft, curVolRight);
+        curReverbVol = (curReverbVolAndFlags << 1) & 0xFE;
+        aSetEnvParam(cmd++, (curReverbVol), rampReverb, rampLeft, rampRight);
+
+        {
+            cmd->words.w0 = _SHIFTL(A_CMD_SETENVPARAM2, 24, 8);
+            curVolLeft = _SHIFTL(curVolLeft, 16, 16);
+            curVolLeft |= _SHIFTL(curVolRight, 0, 16);
+            cmd->words.w1 = curVolLeft;
+            // cmd->words.w1 = ((curVolLeft & 0xFFFF) << 16) | (curVolRight & 0xFFFF);
+            cmd++;
+        }
+        // aSetEnvParam2(cmd++, curVolLeft & 0xFFFF, curVolRight & 0xFFFF);
         dmemDests = Env_Data_L3;
     }
 
