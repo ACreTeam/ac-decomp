@@ -104,7 +104,7 @@ typedef struct adpcmloop_ {
 typedef struct adpcmbook_ {
     /* 0x00 */ s32 order;
     /* 0x04 */ s32 n_predictors;
-    /* 0x08 */ s16 codebook[0]; /* variable length */
+    /* 0x08 */ s16 codebook[0]; /* variable length, length = order * n_predictors * 8 (VADPCM) */
 } adpcmbook;
 
 typedef struct smzwavetable_ {

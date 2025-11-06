@@ -88,7 +88,7 @@ extern void JC_JFWDisplay_beginRender(void* manager);
 extern void JC_JFWDisplay_endRender(void* manager);
 extern void JC_JFWDisplay_setClearColor(void* manager, GXColor color);
 extern int JC_JFWDisplay_startFadeOut(void* manager, int fadeout);
-extern void JC_JFWDisplay_clearEfb(void* manager, GXColor* color);
+extern void JC_JFWDisplay_clearEfb(void* manager, GXColor color);
 extern const GXRenderModeObj* JC_JFWDisplay_getRenderMode(void* manager);
 extern void* JC_JFWDisplay_changeToSingleXfb(void* manager, int index);
 extern void* JC_JFWDisplay_changeToDoubleXfb(void* manager);

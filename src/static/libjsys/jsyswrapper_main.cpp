@@ -289,8 +289,8 @@ extern void* JC_JFWDisplay_changeToDoubleXfb(void* manager) {
     return reinterpret_cast<JFWDisplay*>(manager)->changeToDoubleXfb();
 }
 
-extern void JC_JFWDisplay_clearEfb(void* manager, GXColor* color) {
-    reinterpret_cast<JFWDisplay*>(manager)->clearEfb(*color);
+extern void JC_JFWDisplay_clearEfb(void* manager, GXColor color) {
+    reinterpret_cast<JFWDisplay*>(manager)->clearEfb(color);
 }
 
 extern const GXRenderModeObj* JC_JFWDisplay_getRenderMode(void* manager) {

@@ -772,7 +772,7 @@ config.libs = [
         "objects": [
             Object(Matching, "jaudio_NES/internal/aictrl.c"),
             Object(Matching, "jaudio_NES/internal/astest.c"),
-            Object(Matching, "jaudio_NES/internal/audiothread.c"),
+            Object(Matching, "jaudio_NES/internal/audiothread.c", extra_cflags=["-sym off"]), # The entire lib probably has sym off
             Object(Matching, "jaudio_NES/internal/cpubuf.c"),
             Object(Matching, "jaudio_NES/internal/dspboot.c"),
             Object(Matching, "jaudio_NES/internal/dspbuf.c"),

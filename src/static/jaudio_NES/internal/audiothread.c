@@ -1,6 +1,7 @@
 #include "jaudio_NES/audiothread.h"
 
 #include "dolphin/os.h"
+#include "dolphin/os/OSFastCast.h"
 #include "dolphin/hw_regs.h"
 #include "dolphin/ai.h"
 #include "jaudio_NES/dspproc.h"
@@ -36,8 +37,6 @@ static OSMessageQueue audioproc_mq;
 static OSMessage msgbuf[AUDIOPROC_MQ_BUF_COUNT];
 static u32 audioproc_mq_init = FALSE;
 volatile int intcount = 0;
-
-extern void OSInitFastCast(void);
 
 extern void DspSyncCountClear(int count) {
     intcount = count;
@@ -144,25 +143,6 @@ static void* audioproc(void* param) {
                 break;
         }
     }
-}
-
-extern void OSInitFastCast(void) {
-#ifdef __MWERKS__ // clang-format off
-	asm {
-		li r3, 4
-		oris r3, r3, 4
-		mtspr 0x392, r3
-		li r3, 5
-		oris r3, r3, 5
-		mtspr 0x393, r3
-		li r3, 6
-		oris r3, r3, 6
-		mtspr 0x394, r3
-		li r3, 7
-		oris r3, r3, 7
-		mtspr 0x395, r3
-	}
-#endif // clang-format on
 }
 
 static BOOL priority_set = FALSE;
