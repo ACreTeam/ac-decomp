@@ -30,8 +30,6 @@ static void guMtxXFM1F_dol6w(MtxP mtx, GXProjectionType type, float x, float y, 
 void guMtxXFM1F_dol6w1(MtxP mtx, GXProjectionType type, float x, float y, float z, float w, float* ox, float* oy,
                        float* oz);
 
-extern void OSInitFastCast(void);
-
 static aflags_c aflags;
 u8 emu64::nChans = 0;
 static u8 texture_buffer_data[TEX_BUFFER_DATA_SIZE] ATTRIBUTE_ALIGN(32);

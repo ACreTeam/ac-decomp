@@ -6,6 +6,7 @@
 #include "dolphin/gx.h"
 #include "jsyswrap.h"
 #include "libc64/sprintf.h"
+#include "libjsys/jsyswrapper.h"
 #include "m_common_data.h"
 #include "m_debug.h"
 #include "m_malloc.h"
@@ -67,26 +68,22 @@ Famicom_MallocInfo my_malloc_func = {
 };
 
 extern void famicom_emu_main(GAME* famicom) {
-    static GXColor black_color = { 0, 0, 0, 0 };
-    GXColor t;
-    int i;
     int padid;
     pad_t* current_pad;
     u32 combo;
-    void* manager;
 
-    if (famicom_done == 0) {
+    if (!famicom_done) {
         if (famicom_rom_load_check() < 0) {
             Common_Set(my_room_message_control_flags, Common_Get(my_room_message_control_flags) | 1);
-            famicom_done = 1;
+            famicom_done = TRUE;
             famicom_done_countdown = 0;
         } else {
-            for (padid = 0, i = 4; i != 0; i--, padid++) {
+            for (padid = 0; padid < 4; padid++) {
                 current_pad = &gamePT->pads[padid];
                 combo = current_pad->now.button | current_pad->on.button;
 
                 if (combo == (BUTTON_L | BUTTON_R | BUTTON_Z) || combo == (BUTTON_L | BUTTON_R | BUTTON_X | BUTTON_Y)) {
-                    famicom_done = 1;
+                    famicom_done = TRUE;
                     famicom_done_countdown = 60;
                     JC_JFWDisplay_startFadeOut(JC_JFWDisplay_getManager(), famicom_done_countdown);
                     break;
@@ -94,23 +91,25 @@ extern void famicom_emu_main(GAME* famicom) {
             }
         }
     }
-    if (famicom_done != 0) {
+    
+    if (famicom_done) {
         if (famicom_done_countdown == 0) {
             return_emu_game(famicom);
         } else {
-            famicom_done_countdown -= 1;
+            famicom_done_countdown--;
         }
     }
 
     JW_BeginFrame();
     famicom->disable_display = 1;
 
-    if (famicom_done == 0) {
+    if (!famicom_done) {
         famicom_1frame();
     } else {
-        manager = JC_JFWDisplay_getManager();
-        t = black_color;
-        JC_JFWDisplay_clearEfb(manager, &t);
+        static GXColor black_color = { 0, 0, 0, 0 };
+        void* manager = JC_JFWDisplay_getManager();
+
+        JC_JFWDisplay_clearEfb(manager, black_color);
     }
     JW_EndFrame();
 }
@@ -122,7 +121,7 @@ extern void famicom_emu_init(GAME* game) {
     void* manager;
     const GXRenderModeObj* render;
 
-    famicom_done = 0;
+    famicom_done = FALSE;
     famicom_done_countdown = 0;
     game_resize_hyral(game, 0);
     Common_Set(famicom_287F9, 0);
