@@ -977,7 +977,7 @@ extern void mQst_NextSoccer(ACTOR* actor) {
                 looks = animal->id.looks;
             }
 
-            if ((*Common_Get(clip).npc_clip->force_call_req_proc)(npc_actor, 0x0D8B + looks) == TRUE) {
+            if ((*Common_Get(clip).npc_clip->force_call_req_proc)(npc_actor, MSG_3467 + looks) == TRUE) {
                 contest->base.progress = 1;
                 mPr_CopyPersonalID(&contest->player_id, &Common_Get(now_private)->player_ID);
             }

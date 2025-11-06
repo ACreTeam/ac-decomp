@@ -164,7 +164,7 @@ static void aTR0_schedule_proc(NPC_ACTOR* nactorx, GAME_PLAY* play, int type) {
 }
 
 static void aTR0_set_talk_info(ACTOR* actorx) {
-    static int msg_base[mNpc_LOOKS_NUM] = { 0x1F0A, 0x1F19, 0x1EFB, 0x1F28, 0x1F37, 0x1F46 };
+    static int msg_base[mNpc_LOOKS_NUM] = { MSG_7946, MSG_7961, MSG_7931, MSG_7976, MSG_7991, MSG_8006 };
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     u8 str[ANIMAL_NAME_LEN];
     int looks = mNpc_GetNpcLooks(actorx);

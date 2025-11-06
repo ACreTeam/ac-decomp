@@ -68,10 +68,10 @@ static void Player_actor_Complete_payment_demo_ct(ACTOR* actorx) {
 
     switch (Common_Get(complete_payment_type)) {
         case mPlayer_COMPLETE_PAYMENT_TYPE_ARBEIT:
-            msg_no = 0x17B6;
+            msg_no = MSG_6070;
             break;
         default:
-            msg_no = 0x17B7;
+            msg_no = MSG_6071;
             break;
     }
 

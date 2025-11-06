@@ -73,8 +73,9 @@ static void aEART_menu_close_wait(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
 
 static void aEART_msg_win_open_wait(EV_ARTIST_ACTOR* artist, GAME_PLAY* play) {
     static int msg_no[] = { 0x02F6, 0x02F9, 0x02F8, 0x02FC, 0x02F7 };
-    static int next_act_idx[] = { aEART_ACTION_TALK_END_WAIT, aEART_ACTION_DEMO_START_WAIT, aEART_ACTION_TALK_END_WAIT, aEART_ACTION_REFUSE_DEMO_START_WAIT, aEART_ACTION_TALK_END_WAIT };
-    
+    static int next_act_idx[] = { aEART_ACTION_TALK_END_WAIT, aEART_ACTION_DEMO_START_WAIT, aEART_ACTION_TALK_END_WAIT,
+                                  aEART_ACTION_REFUSE_DEMO_START_WAIT, aEART_ACTION_TALK_END_WAIT };
+
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
 
     if (mMsg_Check_not_series_main_wait(msg_p) == TRUE) {
@@ -156,10 +157,11 @@ static void aEART_demo_start_wait_init(EV_ARTIST_ACTOR* artist, GAME_PLAY* play)
     mEv_artist_c* ev_save_p = &Save_Get(event_save_data).special.event.artist;
     mActor_name_t present;
 
-    mSP_SelectRandomItem_New(NULL, &present, 1, ev_save_p->walls, ev_save_p->used, mSP_KIND_WALLPAPER, mSP_LISTTYPE_EVENT, FALSE);
+    mSP_SelectRandomItem_New(NULL, &present, 1, ev_save_p->walls, ev_save_p->used, mSP_KIND_WALLPAPER,
+                             mSP_LISTTYPE_EVENT, FALSE);
     artist->present = present;
     mPr_SetPossessionItem(Now_Private, item_p->slot_no, present, mPr_ITEM_COND_NORMAL);
-    
+
     if (ev_save_p->used == mEv_ARTIST_ENTRY_SAVE_NUM) {
         ev_save_p->used++;
     } else {
@@ -210,9 +212,9 @@ static void aEART_set_talk_info_talk_request(ACTOR* actorx) {
     int msg_no;
 
     if (aEART_check_present() == TRUE) {
-        msg_no = 0x02FB;
+        msg_no = MSG_763;
     } else {
-        msg_no = 0x02F5;
+        msg_no = MSG_757;
     }
 
     mDemo_Set_msg_num(msg_no);

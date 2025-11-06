@@ -329,7 +329,7 @@ static void aIHT_fly(ACTOR* actorx, GAME* game) {
         pos.y = actorx->world.position.y;
         pos.z = aIHT_TARGET_Z(insect);
 
-        aIHT_TARGET_ANGLE(insect) = search_position_angleY(&actorx->world.position, &pos) + (s16)(DEG2SHORT_ANGLE2(67.5f) - (int)RANDOM_F(DEG2SHORT_ANGLE2(135.0f)));
+        aIHT_TARGET_ANGLE(insect) = search_position_angleY(&actorx->world.position, &pos) + (s16)(DEG2SHORT_ANGLE2(67.5f) - RANDOM(DEG2SHORT_ANGLE2(135.0f)));
 
         if (insect->patience > 90.0f) {
             // The firefly is scared so fly away from the player if not too far from

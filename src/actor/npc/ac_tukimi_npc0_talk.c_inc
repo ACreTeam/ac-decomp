@@ -108,8 +108,8 @@ static void aTM0_schedule_proc(NPC_ACTOR* actorx, GAME_PLAY* play, int sche_proc
 }
 
 static void aTM0_set_talk_info(ACTOR* actorx) {
-    static int msg_base[mNpc_LOOKS_NUM] = { 0x1EB0, 0x1EBF, 0x1EA1, 0x1ECE, 0x1EDD, 0x1EEC };
-    static int msg_base2[mNpc_LOOKS_NUM] = { 0x3F46, 0x3F55, 0x3F37, 0x3F64, 0x3F73, 0x3F82 };
+    static int msg_base[mNpc_LOOKS_NUM] = { MSG_7856, MSG_7871, MSG_7841, MSG_7886, MSG_7901, MSG_7916 };
+    static int msg_base2[mNpc_LOOKS_NUM] = { MSG_16198, MSG_16213, MSG_16183, MSG_16228, MSG_16243, MSG_16258 };
     mMsg_Window_c* msg_p = mMsg_Get_base_window_p();
     u8 worldName[LAND_NAME_SIZE];
     mNpc_EventNpc_c* eventNpc;
@@ -149,6 +149,6 @@ static int aTM0_talk_end_chk(ACTOR* actorx, GAME* game) {
     if (!mDemo_Check(mDemo_TYPE_TALK, actorx)) {
         res = TRUE;
     }
-    
+
     return res;
 }

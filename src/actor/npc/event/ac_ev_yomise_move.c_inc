@@ -268,13 +268,13 @@ static void aEYMS_talk_select(EV_YOMISE_ACTOR* yomise, GAME_PLAY* play) {
 
 static void aEYMS_set_talk_info(ACTOR* actorx) {
     int sel_msg_no;
-    static s16 msg_no[] = { 0x1758, 0x1759, 0x175A };
+    static s16 msg_no[] = { MSG_5976, MSG_5977, MSG_5978 };
     aEv_yomise_save_c* save_p = get_yomise_save_area();
     EV_YOMISE_ACTOR* yomise = (EV_YOMISE_ACTOR*)actorx;
     static u16 price[] = { 780, 680, 480 };
 
     if (aYMS_check_goods_cnt(0) == 0) {
-        sel_msg_no = 0x1757;
+        sel_msg_no = MSG_5975;
         yomise->next_talk_action = aEYMS_TALK_END;
     } else {
         sel_msg_no = msg_no[save_p->kind];

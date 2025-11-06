@@ -700,11 +700,11 @@ static void aNRG2_change_talk_proc(NPC_RCN_GUIDE2_ACTOR* rcn_guide2, int talk_pr
 
 static void aNRG2_set_goods_talk_info(ACTOR* actorx) {
     NPC_RCN_GUIDE2_ACTOR* rcn_guide2 = (NPC_RCN_GUIDE2_ACTOR*)actorx;
-    int msg_no = 0x081C;
+    int msg_no = MSG_2076;
 
     /* Check if it's a raffle day */
     if (Common_Get(tanuki_shop_status) == mSP_TANUKI_SHOP_STATUS_FUKUBIKI) {
-        msg_no = 0x0833;
+        msg_no = MSG_2099;
     }
 
     mDemo_Set_msg_num(msg_no);
@@ -765,11 +765,11 @@ static int aNRG2_check_upstair(void) {
 
 static void aNRG2_set_force_talk_info(ACTOR* actorx) {
     static aNRG2_talk_info_c dt_tbl[] = {
-        { 0x07EE, &aNRG2_say_hello_talk_proc },    /* 'Well, finally you arrive!' */
-        { 0x07EF, &aNRG2_say_hello_talk_proc },    /* 'So you're back again today?' */
-        { 0x07EE, &aNRG2_say_hello_sp_talk_proc }, /* 'Well, finally you arrive!' (already wearing work uniform) */
-        { 0x0832, &aNRG2_cloth_chk_talk_proc },    /* 'Why did you change out of your uniform, hm?' */
-        { 0x0834, (aNRG2_TALK_PROC)&none_proc1 },  /* 'Stop right there!' (Going up to 2nd floor) */
+        { MSG_2030, &aNRG2_say_hello_talk_proc },    /* 'Well, finally you arrive!' */
+        { MSG_2031, &aNRG2_say_hello_talk_proc },    /* 'So you're back again today?' */
+        { MSG_2030, &aNRG2_say_hello_sp_talk_proc }, /* 'Well, finally you arrive!' (already wearing work uniform) */
+        { MSG_2098, &aNRG2_cloth_chk_talk_proc },    /* 'Why did you change out of your uniform, hm?' */
+        { MSG_2100, (aNRG2_TALK_PROC)&none_proc1 },  /* 'Stop right there!' (Going up to 2nd floor) */
     };
 
     aNRG2_talk_info_c* data;
@@ -809,50 +809,50 @@ static void aNRG2_force_talk_request(ACTOR* actorx, GAME* game) {
 static void aNRG2_set_norm_talk_info(ACTOR* actorx) {
     // clang-format off
     static aNRG2_talk_info_c dt_tbl[] = {
-        { 0x07F1, &aNRG2_job_start_talk_proc },
-        { 0x07F6, &aNRG2_job_start_talk_proc },
-        { 0x07FB, &aNRG2_job_start_talk_proc },
-        { 0x0802, &aNRG2_job_start_talk_proc },
-        { 0x080C, &aNRG2_job_start_talk_proc },
-        { 0x0830, &aNRG2_job_start_talk_proc },
-        { 0x0813, &aNRG2_job_start_talk_proc },
-        { 0x0818, &aNRG2_job_start_talk_proc },
-        { 0x0821, &aNRG2_job_start_talk_proc },
-        { 0x0827, &aNRG2_job_start_talk_proc },
-        { 0x07F0, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x07F5, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x07FA, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x07FA, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x07FA, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x0826, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x07FA, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x0818, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x07F3, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x081F, &aNRG2_job_start_talk_proc },
-        { 0x0835, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x07F8, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x07FE, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x07FF, &aNRG2_demo2_start_wait_talk_proc },
-        { 0x0807, &aNRG2_check_more_paper_talk_proc },
-        { 0x0808, &aNRG2_decide_new_target_talk_proc },
-        { 0x0804, &aNRG2_give_new_paper_talk_proc },
-        { 0x080F, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x0810, &aNRG2_demo2_start_wait_talk_proc },
-        { 0x0815, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x0816, &aNRG2_demo3_start_wait_talk_proc },
-        { 0x0819, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x0822, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x0829, (aNRG2_TALK_PROC)&none_proc1 },
-        { 0x07F4, &aNRG2_job_end_talk_proc },
-        { 0x07F9, &aNRG2_job_end_talk_proc },
-        { 0x0801, &aNRG2_3rd_job_end_talk_proc },
-        { 0x080B, &aNRG2_job_end_talk_proc },
-        { 0x0812, &aNRG2_job_end_talk_proc },
-        { 0x0818, &aNRG2_job_end_talk_proc },
-        { 0x081A, &aNRG2_all_job_end_talk_proc },
-        { 0x0828, &aNRG2_job_end_talk_proc },
-        { 0x0830, &aNRG2_job_end_talk_proc },
-        { 0x0836, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2033, &aNRG2_job_start_talk_proc },
+        { MSG_2038, &aNRG2_job_start_talk_proc },
+        { MSG_2043, &aNRG2_job_start_talk_proc },
+        { MSG_2050, &aNRG2_job_start_talk_proc },
+        { MSG_2060, &aNRG2_job_start_talk_proc },
+        { MSG_2096, &aNRG2_job_start_talk_proc },
+        { MSG_2067, &aNRG2_job_start_talk_proc },
+        { MSG_2072, &aNRG2_job_start_talk_proc },
+        { MSG_2081, &aNRG2_job_start_talk_proc },
+        { MSG_2087, &aNRG2_job_start_talk_proc },
+        { MSG_2032, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2037, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2042, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2042, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2042, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2086, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2042, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2072, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2035, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2079, &aNRG2_job_start_talk_proc },
+        { MSG_2101, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2040, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2046, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2047, &aNRG2_demo2_start_wait_talk_proc },
+        { MSG_2055, &aNRG2_check_more_paper_talk_proc },
+        { MSG_2056, &aNRG2_decide_new_target_talk_proc },
+        { MSG_2052, &aNRG2_give_new_paper_talk_proc },
+        { MSG_2063, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2064, &aNRG2_demo2_start_wait_talk_proc },
+        { MSG_2069, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2070, &aNRG2_demo3_start_wait_talk_proc },
+        { MSG_2073, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2082, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2089, (aNRG2_TALK_PROC)&none_proc1 },
+        { MSG_2036, &aNRG2_job_end_talk_proc },
+        { MSG_2041, &aNRG2_job_end_talk_proc },
+        { MSG_2049, &aNRG2_3rd_job_end_talk_proc },
+        { MSG_2059, &aNRG2_job_end_talk_proc },
+        { MSG_2066, &aNRG2_job_end_talk_proc },
+        { MSG_2072, &aNRG2_job_end_talk_proc },
+        { MSG_2074, &aNRG2_all_job_end_talk_proc },
+        { MSG_2088, &aNRG2_job_end_talk_proc },
+        { MSG_2096, &aNRG2_job_end_talk_proc },
+        { MSG_2102, (aNRG2_TALK_PROC)&none_proc1 },
     };
     // clang-format on
 

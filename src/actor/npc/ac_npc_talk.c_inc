@@ -541,9 +541,9 @@ static void aNPC_set_talk_info_talk_request_check(ACTOR* actorx) {
     int msg_no;
 
     if (mNpc_CheckIslandAnimal(nactorx->npc_info.animal) == TRUE) {
-        msg_no = 0x34AC + nactorx->npc_info.animal->id.looks * 3 + RANDOM(3);
+        msg_no = MSG_13484 + nactorx->npc_info.animal->id.looks * 3 + RANDOM(3);
     } else {
-        msg_no = 0x075F + nactorx->npc_info.animal->id.looks * 3 + RANDOM(3);
+        msg_no = MSG_1887 + nactorx->npc_info.animal->id.looks * 3 + RANDOM(3);
     }
 
     mDemo_Set_msg_num(msg_no);

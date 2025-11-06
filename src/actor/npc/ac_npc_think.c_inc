@@ -26,20 +26,20 @@ static int aNPC_check_uzai(NPC_ACTOR* nactorx, GAME_PLAY* play) {
     // clang-format off
     static int base_msg_no_table[][mNpc_LOOKS_NUM][2] = {
         {
-            {0x2E47, 0x2E11},
-            {0x2E52, 0x2E1C},
-            {0x2E42, 0x2E0C},
-            {0x2E5D, 0x2E27},
-            {0x2E62, 0x2E2C},
-            {0x2E6D, 0x2E37},
+            { MSG_11847, MSG_11793 },
+            { MSG_11858, MSG_11804 },
+            { MSG_11842, MSG_11788 },
+            { MSG_11869, MSG_11815 },
+            { MSG_11874, MSG_11820 },
+            { MSG_11885, MSG_11831 },
         },
         {
-            {0x358B, 0x3579},
-            {0x358E, 0x357C},
-            {0x3591, 0x357F},
-            {0x3594, 0x3582},
-            {0x3597, 0x3585},
-            {0x359A, 0x3588},
+            { MSG_13707, MSG_13689 },
+            { MSG_13710, MSG_13692 },
+            { MSG_13713, MSG_13695 },
+            { MSG_13716, MSG_13698 },
+            { MSG_13719, MSG_13701 },
+            { MSG_13722, MSG_13704 },
         },
     };
     // clang-format on
@@ -94,7 +94,7 @@ static int aNPC_check_uzai(NPC_ACTOR* nactorx, GAME_PLAY* play) {
                 }
 
                 msg_no = base_msg_no_table[islander][animal->id.looks][pushed];
-                if (aNPC_force_call_req_proc(nactorx, msg_no + (int)RANDOM_F(msg_max)) == TRUE) {
+                if (aNPC_force_call_req_proc(nactorx, msg_no + RANDOM(msg_max)) == TRUE) {
                     nactorx->uzai.tool = 0;
                     nactorx->uzai.cross = 1;
                     step = 0;

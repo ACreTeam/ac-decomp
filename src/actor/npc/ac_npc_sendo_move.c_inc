@@ -342,13 +342,13 @@ static void aSEN_schedule_proc(NPC_ACTOR* npc_actorx, GAME_PLAY* play, int sched
 }
 
 static int aSEN_get_msg_no(NPC_SENDO_ACTOR* sendo, int msg_no) {
-    static int msg_base_no[2][mPr_SEX_NUM] = { { 0x3091, 0x3163 }, { 0x3096, 0x3168 } };
+    static int msg_base_no[2][mPr_SEX_NUM] = { { MSG_12433, MSG_12643 }, { MSG_12438, MSG_12648 } };
 
     int msg_base;
     int msg;
     int msg_index;
 
-    if (msg_no == 0x3091 || msg_no == 0x3096) {
+    if (msg_no == MSG_12433 || msg_no == MSG_12438) {
         BOAT_DEMO_ACTOR* boat_demo = (BOAT_DEMO_ACTOR*)sendo->npc_class.actor_class.parent_actor;
 
         msg_base = msg_base_no[boat_demo->at_island][Common_Get(now_private)->gender];
@@ -1172,13 +1172,13 @@ static void aSEN_change_talk_proc(NPC_SENDO_ACTOR* sendo, u8 talk_idx) {
 
 static void aSEN_set_force_talk_info(ACTOR* actorx) {
     static aSEN_talk_request_c dt_tbl[7] = {
-        { 0x3077, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_END_WAIT },
-        { 0x30BF, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_END_WAIT },
-        { 0x3084, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_END_WAIT },
-        { 0x3091, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_SING_END_WAIT },
-        { 0x3096, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_SING_END_WAIT },
-        { 0x307A, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_END_WAIT },
-        { 0x308B, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_END_WAIT },
+        { MSG_12407, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_END_WAIT },
+        { MSG_12479, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_END_WAIT },
+        { MSG_12420, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_END_WAIT },
+        { MSG_12433, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_SING_END_WAIT },
+        { MSG_12438, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_SING_END_WAIT },
+        { MSG_12410, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_END_WAIT },
+        { MSG_12427, 0, CAMERA2_PROCESS_NORMAL, 2, aSEN_TALK_END_WAIT },
     };
 
     NPC_SENDO_ACTOR* sendo = (NPC_SENDO_ACTOR*)actorx;
@@ -1199,11 +1199,11 @@ static void aSEN_force_talk_request(ACTOR* actorx, GAME* game) {
 
 static void aSEN_set_norm_talk_info(ACTOR* actorx) {
     static aSEN_talk_request_c dt_tbl[7] = {
-        { 0x3073, 1, CAMERA2_PROCESS_TALK, 1, aSEN_TALK_PL_RIDE_ON_CHECK },
-        { 0x30B9, 1, CAMERA2_PROCESS_TALK, 1, aSEN_TALK_PL_RIDE_ON_CHECK },
-        { 0x3080, 1, CAMERA2_PROCESS_TALK, 1, aSEN_TALK_PL_RIDE_ON_CHECK2 },
-        { 0x307B, 1, CAMERA2_PROCESS_TALK, 1, aSEN_TALK_END_WAIT },
-        { 0x308C, 1, CAMERA2_PROCESS_TALK, 0, aSEN_TALK_END_WAIT },
+        { MSG_12403, 1, CAMERA2_PROCESS_TALK, 1, aSEN_TALK_PL_RIDE_ON_CHECK },
+        { MSG_12473, 1, CAMERA2_PROCESS_TALK, 1, aSEN_TALK_PL_RIDE_ON_CHECK },
+        { MSG_12416, 1, CAMERA2_PROCESS_TALK, 1, aSEN_TALK_PL_RIDE_ON_CHECK2 },
+        { MSG_12411, 1, CAMERA2_PROCESS_TALK, 1, aSEN_TALK_END_WAIT },
+        { MSG_12428, 1, CAMERA2_PROCESS_TALK, 0, aSEN_TALK_END_WAIT },
         // unused
         // unused
     };

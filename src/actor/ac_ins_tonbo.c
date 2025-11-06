@@ -202,9 +202,9 @@ static int aITB_BGcheck(ACTOR* actorx, GAME* game) {
 
         // Adjust angle based on collision
         if ((s16)(actorx->world.angle.y - angle) >= 0) {
-            angle += (int)RANDOM_F(DEG2SHORT_ANGLE2(45.0f));
+            angle += RANDOM(DEG2SHORT_ANGLE2(45.0f));
         } else {
-            angle -= (int)RANDOM_F(DEG2SHORT_ANGLE2(45.0f));
+            angle -= RANDOM(DEG2SHORT_ANGLE2(45.0f));
         }
         actorx->world.angle.y = angle;
 

@@ -87,14 +87,14 @@ static void aNRG_demand_payment_change_talk_proc(NPC_RCN_GUIDE_ACTOR* rcn_guide,
 static void aNRG_set_force_talk_info(ACTOR* actorx) {
     // clang-format off
     static aNRG_talk_data_c dt_tbl[] = {
-        { 0x07DE,  TRUE, CAMERA2_PROCESS_NORMAL,  TRUE,    (aNRG_TALK_PROC)&none_proc1 }, /* Step down from train station */
-        { 0x07DF,  TRUE,   CAMERA2_PROCESS_TALK, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Ask about call from Rover */
-        { 0x07E1,  TRUE,   CAMERA2_PROCESS_TALK, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Show houses */
-        { 0x07E2,  TRUE, CAMERA2_PROCESS_NORMAL, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player tries leaving acre */
-        { 0x07E4, FALSE, CAMERA2_PROCESS_NORMAL, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player enters empty house */
-        { 0x07E3, FALSE, CAMERA2_PROCESS_NORMAL, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player enters taken house */
-        { 0x07E5,  TRUE,   CAMERA2_PROCESS_TALK,  TRUE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player exits taken house */
-        { 0x07E6,  TRUE,   CAMERA2_PROCESS_TALK,  TRUE, &aNRG_demand_payment_talk_proc }, /* Player exits empty house */
+        { MSG_2014,  TRUE, CAMERA2_PROCESS_NORMAL,  TRUE,    (aNRG_TALK_PROC)&none_proc1 }, /* Step down from train station */
+        { MSG_2015,  TRUE,   CAMERA2_PROCESS_TALK, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Ask about call from Rover */
+        { MSG_2017,  TRUE,   CAMERA2_PROCESS_TALK, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Show houses */
+        { MSG_2018,  TRUE, CAMERA2_PROCESS_NORMAL, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player tries leaving acre */
+        { MSG_2020, FALSE, CAMERA2_PROCESS_NORMAL, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player enters empty house */
+        { MSG_2019, FALSE, CAMERA2_PROCESS_NORMAL, FALSE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player enters taken house */
+        { MSG_2021,  TRUE,   CAMERA2_PROCESS_TALK,  TRUE,    (aNRG_TALK_PROC)&none_proc1 }, /* Player exits taken house */
+        { MSG_2022,  TRUE,   CAMERA2_PROCESS_TALK,  TRUE, &aNRG_demand_payment_talk_proc }, /* Player exits empty house */
     };
     // clang-format on
 
@@ -124,7 +124,7 @@ static void aNRG_force_talk_request(ACTOR* actorx, GAME* game) {
 
 static void aNRG_set_norm_talk_info(ACTOR* actorx) {
     static aNRG_talk_data_c dt_tbl[] = {
-        { 0x0820, TRUE, CAMERA2_PROCESS_TALK, FALSE, (aNRG_TALK_PROC)&none_proc1 }, /* Normal talk about houses */
+        { MSG_2080, TRUE, CAMERA2_PROCESS_TALK, FALSE, (aNRG_TALK_PROC)&none_proc1 }, /* Normal talk about houses */
     };
 
     NPC_RCN_GUIDE_ACTOR* rcn_guide = (NPC_RCN_GUIDE_ACTOR*)actorx;

@@ -36,20 +36,20 @@ static void aNPC_check_uzai(NPC_ACTOR* nactorx) {
     // clang-format off
     static int base_msg_no_table[][mNpc_LOOKS_NUM] = {
         {
-            0x2E11,
-            0x2E1C,
-            0x2E0C,
-            0x2E27,
-            0x2E2C,
-            0x2E37,
+            MSG_11793,
+            MSG_11804,
+            MSG_11788,
+            MSG_11815,
+            MSG_11820,
+            MSG_11831,
         },
         {
-            0x3579,
-            0x357C,
-            0x357F,
-            0x3582,
-            0x3585,
-            0x3588,
+            MSG_13689,
+            MSG_13692,
+            MSG_13695,
+            MSG_13698,
+            MSG_13701,
+            MSG_13704,
         },
     };
     // clang-format on
@@ -82,7 +82,7 @@ static void aNPC_check_uzai(NPC_ACTOR* nactorx) {
 
                 mISL_SetNowPlayerAction(mISL_PLAYER_ACTION_UZAI_PUSHED);
                 msg_no = base_msg_no_table[islander][animal->id.looks];
-                if (aNPC_force_call_req_proc(nactorx, msg_no + (int)RANDOM_F(msg_max)) == TRUE) {
+                if (aNPC_force_call_req_proc(nactorx, msg_no + RANDOM(msg_max)) == TRUE) {
                     nactorx->uzai.tool = 0;
                     nactorx->uzai.cross = 1;
                     step = 0;
