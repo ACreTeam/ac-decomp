@@ -5,6 +5,7 @@
 #include <SDL2/SDL.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdlib.h>
 
 static VIRetraceCallback s_pre_retrace_cb  = nullptr;
 static VIRetraceCallback s_post_retrace_cb = nullptr;
@@ -13,6 +14,8 @@ static BOOL              s_blanked         = FALSE;
 
 extern "C" void plat_metal_init(void* layer_ptr); /* metal_renderer.mm */
 extern "C" void plat_metal_present_frame(void);
+extern "C" void plat_vi_create_window(int width, int height, const char* title);
+extern "C" int  plat_vi_pump_events(void);
 
 /* Called from vi_window.mm once the window and CAMetalLayer are ready */
 extern "C" void plat_vi_set_metal_layer(void* layer) {
@@ -22,9 +25,9 @@ extern "C" void plat_vi_set_metal_layer(void* layer) {
 extern "C" {
 
 void VIInit(void) {
-    /* TODO Stage 3: create SDL window + CAMetalLayer via vi_window.mm */
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
         fprintf(stderr, "[VI] SDL_Init video: %s\n", SDL_GetError());
+    plat_vi_create_window(640, 480, "Animal Crossing");
 }
 
 void VIConfigure(const struct _GXRenderModeObj* rm) {
@@ -41,6 +44,10 @@ void VISetBlack(BOOL black) {
 }
 
 void VIWaitForRetrace(void) {
+    if (plat_vi_pump_events()) {
+        exit(0);
+    }
+
     /* Stage 1: busy-sleep to ~60 FPS.
      * Stage 4: replace with CVDisplayLink / CADisplayLink semaphore. */
     SDL_Delay(16);

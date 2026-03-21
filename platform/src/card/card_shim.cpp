@@ -9,6 +9,8 @@
 #include <map>
 #include <string>
 #include <mutex>
+#include <sys/stat.h>
+#include <unistd.h>
 
 /* Side table: maps fileNo → file path (since CARDFileInfo has no extra storage) */
 static std::map<s32, std::string> s_file_paths;
@@ -25,6 +27,23 @@ static const char* save_dir(void) {
     else
         snprintf(dir, sizeof(dir), "./save");
     return dir;
+}
+
+static void ensure_save_dir(void) {
+    const char* path = save_dir();
+    char tmp[1024];
+    size_t n = strlen(path);
+    if (n >= sizeof(tmp)) return;
+    memcpy(tmp, path, n + 1);
+
+    for (size_t i = 1; i < n; i++) {
+        if (tmp[i] == '/') {
+            tmp[i] = '\0';
+            mkdir(tmp, 0755);
+            tmp[i] = '/';
+        }
+    }
+    mkdir(tmp, 0755);
 }
 
 extern "C" {
@@ -57,6 +76,7 @@ s32 CARDProbeEx(s32 chan, s32* memSize, s32* sectorSize) {
 
 s32 CARDOpen(s32 chan, const char* fileName, CARDFileInfo* fileInfo) {
     if (chan != 0 || !fileInfo) return CARD_RESULT_NOCARD;
+    ensure_save_dir();
     char path[2048];
     snprintf(path, sizeof(path), "%s/%s.gci", save_dir(), fileName);
     FILE* f = fopen(path, "rb");
@@ -133,12 +153,18 @@ s32 CARDWriteAsync(CARDFileInfo* fi, const void* addr, s32 len, s32 off, CARDCal
 
 s32 CARDCreate(s32 chan, const char* fileName, u32 size, CARDFileInfo* fileInfo) {
     if (chan != 0 || !fileInfo) return CARD_RESULT_NOCARD;
+    ensure_save_dir();
     char path[2048];
     snprintf(path, sizeof(path), "%s/%s.gci", save_dir(), fileName);
     FILE* f = fopen(path, "wb");
     if (!f) return CARD_RESULT_BROKEN;
-    void* zeros = calloc(1, size);
-    if (zeros) { fwrite(zeros, 1, size, f); free(zeros); }
+    if (size > 0) {
+        if (fseek(f, (long)size - 1, SEEK_SET) != 0) {
+            fclose(f);
+            return CARD_RESULT_BROKEN;
+        }
+        fputc(0, f);
+    }
     fclose(f);
     return CARDOpen(chan, fileName, fileInfo);
 }
@@ -177,8 +203,24 @@ s32 CARDFastDeleteAsync(s32 c, s32 fn, CARDCallback cb) {
     return r;
 }
 
-s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
-    (void)chan; (void)fileNo; (void)stat; return CARD_RESULT_READY;
+s32 CARDGetStatus(s32 chan, s32 fileNo, CARDStat* cardStat) {
+    if (chan != 0 || !cardStat) return CARD_RESULT_NOCARD;
+    std::string path = get_path(fileNo);
+    if (path.empty()) return CARD_RESULT_NOFILE;
+
+    struct stat st;
+    if (stat(path.c_str(), &st) != 0) return CARD_RESULT_NOFILE;
+
+    memset(cardStat, 0, sizeof(*cardStat));
+    cardStat->length = (u32)st.st_size;
+    const char* base = strrchr(path.c_str(), '/');
+    base = base ? base + 1 : path.c_str();
+    size_t len = strlen(base);
+    if (len > 4 && strcmp(base + len - 4, ".gci") == 0) len -= 4;
+    if (len >= CARD_FILENAME_MAX) len = CARD_FILENAME_MAX - 1;
+    memcpy(cardStat->fileName, base, len);
+    cardStat->fileName[len] = '\0';
+    return CARD_RESULT_READY;
 }
 s32 CARDSetStatus(s32 chan, s32 fileNo, CARDStat* stat) {
     (void)chan; (void)fileNo; (void)stat; return CARD_RESULT_READY;
@@ -216,7 +258,23 @@ s32 CARDSetAttributes(s32 c, s32 fn, u8 a)  { (void)c; (void)fn; (void)a; return
 s32 CARDSetAttributesAsync(s32 c, s32 fn, u8 a, CARDCallback cb) {
     s32 r = CARDSetAttributes(c, fn, a); if (cb) cb(c, r); return r;
 }
-s32 CARDRename(s32 c, const char* o, const char* n) { (void)c; (void)o; (void)n; return CARD_RESULT_READY; }
+s32 CARDRename(s32 c, const char* o, const char* n) {
+    if (c != 0 || !o || !n) return CARD_RESULT_NOCARD;
+    ensure_save_dir();
+    char old_path[2048];
+    char new_path[2048];
+    snprintf(old_path, sizeof(old_path), "%s/%s.gci", save_dir(), o);
+    snprintf(new_path, sizeof(new_path), "%s/%s.gci", save_dir(), n);
+    if (rename(old_path, new_path) != 0) return CARD_RESULT_NOFILE;
+
+    std::lock_guard<std::mutex> lk(s_file_map_lock);
+    for (auto& it : s_file_paths) {
+        if (it.second == old_path) {
+            it.second = new_path;
+        }
+    }
+    return CARD_RESULT_READY;
+}
 s32 CARDRenameAsync(s32 c, const char* o, const char* n, CARDCallback cb) {
     s32 r = CARDRename(c, o, n); if (cb) cb(c, r); return r;
 }

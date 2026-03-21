@@ -57,6 +57,10 @@ add_compile_options(
     -Wno-implicit-float-conversion
     # Ignore missing return from some game funcs
     -Wno-return-type
+    # K&R implicit-int declarations (extern _strip(f32) etc.) in unused decompiler stubs
+    -Wno-implicit-int
+    # gnu99: mixed declarations allowed; some code uses C++ bool/int mix
+    -Wno-int-conversion
 )
 
 # ---- SDL2 ----
@@ -93,8 +97,21 @@ file(GLOB_RECURSE GAME_SOURCES
     "${REPO_ROOT}/src/*.c"
 )
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/dolphin/.*\\.c$")
-# boot.c defines main(int, char**) which conflicts with src/main.c's main() after -Dmain=game_main
+# boot.c defines main(int, char**) which conflicts with src/main.c's main() after -Dmain=ac_main_entry
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/boot\\.c$")
+# MSL_C.PPCEABI.bare.H reimplements libc FILE/ftell/etc. that conflict with macOS libc
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/MSL_C\\.PPCEABI\\.bare\\.H/.*\\.c$")
+# Runtime.PPCEABI.H contains Metrowerks C++ runtime stubs that conflict with libc++
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/Runtime\\.PPCEABI\\.H/.*\\.c$")
+# TRK_MINNOW_DOLPHIN is the GC on-target debugger (pure PPC asm/hardware) — not portable
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/TRK_MINNOW_DOLPHIN/.*\\.c$")
+# bootdata/ is the Nintendo startup logo animation with inline vertex/texture data
+# not needed for game logic; stubs are incomplete without ROM assets
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/bootdata/.*\\.c$")
+# dsp_cardunlock.c uses private GC memory card internals not available on Apple
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/jaudio_NES/internal/dsp_cardunlock\\.c$")
+# ReconfigBATs.c is PPC BAT register configuration in Metrowerks asm{} syntax
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/libforest/ReconfigBATs\\.c$")
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/src/AUS/.*\\.c$")
 # Exclude .c files that are #included as data fragments, not standalone TUs
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/actor/npc/ac_npc_.*_anime\\.c$")
@@ -105,7 +122,22 @@ list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/src/furniture/.*\\.c$")
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/effect/ef_effect_lib\\.c$")
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/actor/ac_animal_logo_misc\\.c$")
 list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/game/m_item_debug\\.c$")
-list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/libforest/emu64/emu64_utility\\.c$")
+# emu64/ is the N64 emulator for Famicom games — requires C++ class header in C TUs; exclude all
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/libforest/emu64/.*\\.c$")
+# libultra integer-to-string helper files depend on missing Metrowerks compiler headers
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/libultra/xlitob\\.c$")
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/libultra/xldtob\\.c$")
+# libultra.c redefines bcopy/bcmp/bzero and conflicts with Apple secure string macros
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/libultra/ultra\\.c$")
+# nintendo_hi_0 depends on placeholder asset include content in this workspace state
+list(FILTER GAME_SOURCES EXCLUDE REGEX ".*/static/nintendo_hi_0\\.c$")
+# Explicit removals for robustness across CMake generator/path normalization differences
+list(REMOVE_ITEM GAME_SOURCES
+    "${REPO_ROOT}/src/static/libultra/xlitob.c"
+    "${REPO_ROOT}/src/static/libultra/xldtob.c"
+    "${REPO_ROOT}/src/static/libultra/ultra.c"
+    "${REPO_ROOT}/src/static/nintendo_hi_0.c"
+)
 
 # ---- Main executable ----
 add_executable(AnimalCrossing
@@ -126,11 +158,12 @@ target_include_directories(AnimalCrossing PRIVATE ${PLATFORM_INCLUDES})
 # C compile options applied only to game .c sources:
 # - Force-include platform.h so shadow header guards are set first
 # - -Dmain=game_main avoids conflict with SDL_main
-# - gnu89 (C89 + GNU extensions) allows K&R-style empty-parens definitions that
-#   follow prototype declarations — a common pattern in this decompiled code
+# - gnu99 allows C99 for-loop declarations and mixed declarations/code used in
+#   some source files, while still supporting K&R-style empty-parens definitions
+#   (these produce -Wstrict-prototypes warnings, suppressed by -Wno-strict-prototypes)
 set_source_files_properties(${GAME_SOURCES} PROPERTIES
     COMPILE_OPTIONS
-        "-include;${CMAKE_SOURCE_DIR}/include/platform/platform.h;-Dmain=ac_main_entry;-std=gnu89"
+        "-include;${CMAKE_SOURCE_DIR}/include/platform/platform.h;-Dmain=ac_main_entry;-std=gnu99"
 )
 
 # ---- Platform-specific link flags ----

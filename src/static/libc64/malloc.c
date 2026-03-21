@@ -15,11 +15,11 @@ extern void DisplayArena(void) {
     __osDisplayArena(&malloc_arena);
 }
 
-extern void GetFreeArena(u32* max, u32* free, u32* alloc) {
-    __osGetFreeArena(&malloc_arena, max, free, alloc);
+extern void GetFreeArena(size_t* max, size_t* free, size_t* alloc) {
+    __osGetFreeArena(&malloc_arena, (u32*)max, (u32*)free, (u32*)alloc);
 }
-extern void MallocInit(void* start, u32 size) {
-    __osMallocInit(&malloc_arena, start, size);
+extern void MallocInit(void* start, size_t size) {
+    __osMallocInit(&malloc_arena, start, (s32)size);
 }
 
 extern void MallocCleanup(void) {

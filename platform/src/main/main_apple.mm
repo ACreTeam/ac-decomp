@@ -15,6 +15,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_main.h>   /* defines: int main() → int SDL_main() */
 #include "platform/platform.h"
+#include <dolphin/pad.h>
+#include <string.h>
 
 /* Forward declarations for game entry points (src/main.c) */
 #include <dolphin/gx/GXFifo.h>   /* GXFifoObj */
@@ -31,6 +33,27 @@ extern "C" {
 }
 
 extern "C" void plat_vi_create_window(int w, int h, const char* title);
+
+static int wait_for_controller_connection(void) {
+    fprintf(stderr, "[PAD] Waiting for physical controller connection...\n");
+    while (true) {
+        SDL_Event e;
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) {
+                return 1;
+            }
+        }
+
+        PADStatus status[PAD_MAX_CONTROLLERS];
+        memset(status, 0, sizeof(status));
+        u32 connected = PADRead(status);
+        if (connected != 0) {
+            fprintf(stderr, "[PAD] Controller connected. Continuing boot.\n");
+            return 0;
+        }
+        SDL_Delay(250);
+    }
+}
 
 #if TARGET_OS_IPHONE
 static void configure_audio_session(void) {
@@ -63,6 +86,10 @@ int main(int argc, char* argv[]) {
     /* Initialise platform subsystems in GC boot order */
     DVDInit();
     PADInit();
+    if (wait_for_controller_connection() != 0) {
+        SDL_Quit();
+        return 0;
+    }
 
     /* Allocate a dummy GX FIFO and initialise the GX state machine */
     static uint8_t gx_fifo_buf[256 * 1024];

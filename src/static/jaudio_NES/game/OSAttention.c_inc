@@ -2,7 +2,10 @@
 
 #include "MSL_C/printf.h"
 
-extern "C" int OSAttention(const char* msg, ...) {
+#ifdef __cplusplus
+extern "C"
+#endif
+int OSAttention(const char* msg, ...) {
     va_list marker;
 
     va_start(marker, msg);

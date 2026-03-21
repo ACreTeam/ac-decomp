@@ -1,0 +1,14 @@
+# Animal Crossing Metal Port — settings template
+# Copy to ~/Library/Application Support/AnimalCrossing/settings.ini (macOS)
+# or to the app's Documents/ directory (iOS/iPadOS)
+
+# Path to the disc image (.iso or .gcm)
+disc=/path/to/Animal_Crossing.iso
+
+# Display
+# resolution_scale=1   ; 1=native, 2=2x Retina, 0=auto (uses nativeScale)
+# fullscreen=false      ; macOS only
+# vsync=true
+
+# Input
+# deadzone=8            ; analog stick deadzone radius (GC units, 0-127)

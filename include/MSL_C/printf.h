@@ -8,11 +8,15 @@
 extern "C" {
 #endif
 
+#ifndef __APPLE__
 extern int vprintf(const char*, va_list);
 extern int vsprintf(char*, const char*, va_list);
 extern int vsnprintf(char*, size_t, const char*, va_list);
 extern int printf(const char*, ...);
 int snprintf(char* s, size_t n, const char* format, ...);
+#else
+#include <stdio.h>
+#endif
 
 #ifdef __cplusplus
 }

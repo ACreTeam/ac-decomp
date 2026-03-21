@@ -11,6 +11,7 @@
 #include "platform/platform.h"
 
 static SDL_Window* g_window = nullptr;
+static CAMetalLayer* g_layer = nil;
 
 extern "C" void plat_vi_set_metal_layer(void* layer);
 
@@ -39,8 +40,11 @@ extern "C" void plat_vi_create_window(int width, int height, const char* title) 
             CAMetalLayer* ml = [CAMetalLayer layer];
             [view.layer addSublayer:ml];
             ml.frame = view.bounds;
+            ml.contentsScale = UIScreen.mainScreen.nativeScale;
+            g_layer = ml;
             plat_vi_set_metal_layer((__bridge void*)ml);
         } else {
+            g_layer = (CAMetalLayer*)view.layer;
             plat_vi_set_metal_layer((__bridge void*)view.layer);
         }
 #else
@@ -51,6 +55,7 @@ extern "C" void plat_vi_create_window(int width, int height, const char* title) 
         CAMetalLayer* ml = [CAMetalLayer layer];
         [view setLayer:ml];
         ml.contentsScale = [nswin backingScaleFactor];
+        g_layer = ml;
         plat_vi_set_metal_layer((__bridge void*)ml);
 #endif
     }
@@ -58,3 +63,31 @@ extern "C" void plat_vi_create_window(int width, int height, const char* title) 
 }
 
 extern "C" SDL_Window* plat_vi_get_window(void) { return g_window; }
+
+extern "C" int plat_vi_pump_events(void) {
+    SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+        if (e.type == SDL_QUIT) {
+            return 1;
+        }
+        if (e.type == SDL_WINDOWEVENT && e.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+            if (g_layer && g_window) {
+#if TARGET_OS_IPHONE
+                SDL_SysWMinfo wm;
+                SDL_VERSION(&wm.version);
+                if (SDL_GetWindowWMInfo(g_window, &wm)) {
+                    UIView* view = wm.info.uikit.window.rootViewController.view;
+                    g_layer.frame = view.bounds;
+                    g_layer.contentsScale = UIScreen.mainScreen.nativeScale;
+                }
+#else
+                int w = 0;
+                int h = 0;
+                SDL_GetWindowSize(g_window, &w, &h);
+                g_layer.frame = CGRectMake(0.0, 0.0, (CGFloat)w, (CGFloat)h);
+#endif
+            }
+        }
+    }
+    return 0;
+}

@@ -9,9 +9,34 @@ static PADSamplingCallback s_sampling_cb = nullptr;
 static SDL_GameController* s_controllers[PAD_MAX_CONTROLLERS] = {};
 
 static void open_controllers(void) {
-    for (int i = 0; i < SDL_NumJoysticks() && i < PAD_MAX_CONTROLLERS; i++) {
-        if (SDL_IsGameController(i) && !s_controllers[i])
-            s_controllers[i] = SDL_GameControllerOpen(i);
+    for (int c = 0; c < PAD_MAX_CONTROLLERS; c++) {
+        if (s_controllers[c] && !SDL_GameControllerGetAttached(s_controllers[c])) {
+            SDL_GameControllerClose(s_controllers[c]);
+            s_controllers[c] = nullptr;
+        }
+    }
+
+    for (int jid = 0; jid < SDL_NumJoysticks(); jid++) {
+        if (!SDL_IsGameController(jid)) continue;
+
+        bool already_open = false;
+        for (int c = 0; c < PAD_MAX_CONTROLLERS; c++) {
+            if (s_controllers[c]) {
+                SDL_Joystick* cjoy = SDL_GameControllerGetJoystick(s_controllers[c]);
+                if (cjoy && SDL_JoystickInstanceID(cjoy) == jid) {
+                    already_open = true;
+                    break;
+                }
+            }
+        }
+        if (already_open) continue;
+
+        for (int c = 0; c < PAD_MAX_CONTROLLERS; c++) {
+            if (!s_controllers[c]) {
+                s_controllers[c] = SDL_GameControllerOpen(jid);
+                break;
+            }
+        }
     }
 }
 
@@ -33,6 +58,7 @@ u32 PADRead(PADStatus* status) {
     if (!status) return 0;
     u32 connected = 0;
     SDL_GameControllerUpdate();
+    open_controllers();
     for (int c = 0; c < PAD_MAX_CONTROLLERS; c++) {
         memset(&status[c], 0, sizeof(PADStatus));
         SDL_GameController* gc = s_controllers[c];
@@ -98,10 +124,11 @@ void PADControlMotor(s32 chan, u32 cmd) {
 }
 
 void PADSetSpec(u32 spec)    { (void)spec; }
-u32  PADGetSpec(void)        { return 0; }
+u32  PADGetSpec(void)        { return 5; }
 BOOL PADGetType(s32 c, u32* type) {
-    if (type) *type = 0; /* PAD_TYPE_STANDARD not defined in this SDK version */
-    return s_controllers[c] != nullptr ? TRUE : FALSE;
+    if (c < 0 || c >= PAD_MAX_CONTROLLERS) return FALSE;
+    if (type) *type = 0;
+    return (s_controllers[c] && SDL_GameControllerGetAttached(s_controllers[c])) ? TRUE : FALSE;
 }
 
 void PADClamp(PADStatus* status) {

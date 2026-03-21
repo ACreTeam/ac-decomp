@@ -1,5 +1,6 @@
 #include "libc64/sprintf.h"
 
+#ifndef __APPLE__
 #include "libultra/xprintf.h"
 #include "_mem.h"
 
@@ -22,3 +23,4 @@ int sprintf(char* dst, const char* fmt, ...) {
 
     return ret;
 }
+#endif /* !__APPLE__ */

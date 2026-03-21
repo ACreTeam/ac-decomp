@@ -5,8 +5,12 @@
 extern "C" {
 #endif
 
+#ifndef __APPLE__
 void srand(unsigned long seed);
 int rand(void);
+#else
+#include <stdlib.h>
+#endif
 
 #ifdef __cplusplus
 }

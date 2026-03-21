@@ -70,3 +70,18 @@ typedef int BOOL;
 #include <stdlib.h>
 static inline int __abs(int x) { return x < 0 ? -x : x; }
 #endif
+
+/* C++ keywords used in some decompiled C files (compiled as gnu99, not C++) */
+#ifndef __cplusplus
+#ifndef true
+#define true  1
+#define false 0
+#endif
+#endif
+
+/* nullptr: C++ keyword used in some decompiled C files */
+#ifndef __cplusplus
+#ifndef nullptr
+#define nullptr ((void*)0)
+#endif
+#endif

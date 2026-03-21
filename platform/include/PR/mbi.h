@@ -1275,6 +1275,10 @@ typedef union {
         siz##_LOAD_BLOCK, siz##_LINE_BYTES, siz##_BYTES,                         \
         siz##_INCR, siz##_SHIFT,                                                 \
         width, height, pal, cms, cmt, masks, maskt, shifts, shiftt)
+#define gDPLoadTextureBlock_4b(pkt, timg, fmt, width, height, pal, cms, cmt, masks, maskt, shifts, shiftt) \
+    _gDPLoadTextureBlock_impl(pkt, timg, fmt, G_IM_SIZ_4b,               \
+        G_IM_SIZ_4b_LOAD_BLOCK, G_IM_SIZ_4b_LINE_BYTES,                 \
+        width, height, pal, cms, cmt, masks, maskt, shifts, shiftt)
 #define gsDPLoadTextureBlock_4b(timg, fmt, width, height, pal, cms, cmt, masks, maskt, shifts, shiftt) \
     _gsDPLoadTextureBlock_impl(timg, fmt, G_IM_SIZ_4b,                           \
         G_IM_SIZ_4b_LOAD_BLOCK, G_IM_SIZ_4b_LINE_BYTES, G_IM_SIZ_4b_BYTES,     \
@@ -1301,7 +1305,9 @@ typedef union {
 
 /* ---- Combine mode presets ---- */
 /* G_CC_MODULATEIDECALA: modulate with shade, pass alpha */
-#define G_CC_MODULATEIDECALA  TEXEL0, 0, SHADE, 0, 0, 0, 0, TEXEL0
+#define G_CC_MODULATEIDECALA       TEXEL0, 0, SHADE,     0, 0, 0, 0, TEXEL0
+/* G_CC_MODULATEIDECALA_PRIM: modulate with primitive color, pass alpha */
+#define G_CC_MODULATEIDECALA_PRIM  TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, TEXEL0
 #define G_CC_MODULATEIA       TEXEL0, 0, SHADE, 0, TEXEL0, 0, SHADE, 0
 #define G_CC_MODULATERGB      TEXEL0, 0, SHADE, 0, 1, 0, 0, 0
 #define G_CC_MODULATERGBA     TEXEL0, 0, SHADE, 0, TEXEL0, 0, SHADE, 0
@@ -1396,18 +1402,20 @@ typedef struct { NUMLIGHTS_STRUCT_MEMBER(7) } Lights7;
 /* Lookat */
 typedef struct {
     struct {
-        unsigned char col[3]; unsigned char pad;
-        unsigned char colc[3]; unsigned char pad2;
-        signed char dir[3]; unsigned char pad3;
+        struct {
+            unsigned char col[3];  unsigned char pad1;
+            unsigned char colc[3]; unsigned char pad2;
+            signed char   dir[3];  unsigned char pad3;
+        } l;
     } l[2];
 } LookAt;
 
 #define gdSPDefLookAt(rx, ry, rz, ux, uy, uz) \
-    { { { {0,0,0}, 0, {0,0,0}, 0, {rx, ry, rz}, 0 }, \
-        { {0,0,0}, 0, {0,0,0}, 0, {ux, uy, uz}, 0 } } }
+    { { { { {0,0,0}, 0, {0,0,0}, 0, {rx, ry, rz}, 0 } }, \
+        { { {0,0,0}, 0, {0,0,0}, 0, {ux, uy, uz}, 0 } } } }
 
 /* N64 Mtx (fixed-point 16.16 4x4) — struct so struct-assignment works */
-typedef struct { long long int m[4]; } Mtx;   /* 4 × 8 bytes = 32 bytes */
+typedef struct { int32_t m[4][4]; } Mtx;      /* 4x4 fixed-point matrix (64 bytes) */
 
 /* ---- Viewport ---- */
 typedef struct {

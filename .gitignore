@@ -22,6 +22,8 @@ orig/*/*
 build/
 .ninja_*
 build.ninja
+build_clean_*/
+platform/build_*/
 
 # decompctx output
 ctx.*
@@ -43,3 +45,5 @@ temp/
 include/PR/
 include/gcc/
 include/compiler/gcc/stdlib.h
+Animal Crossing (USA).rvz
+Animal Crossing (USA).iso
