@@ -22,9 +22,14 @@ extern "C" {
 
 typedef u64 Z_OSTime;
 
+#ifdef __APPLE__
+/* Apple libc already declares bcmp/bcopy/bzero; re-declaring conflicts. */
+#include <strings.h>
+#else
 int bcmp(void* v1, void* v2, u32 size);
 void bcopy(void* src, void* dst, size_t n);
 void bzero(void* ptr, size_t size);
+#endif
 void osSyncPrintf(const char* fmt, ...);
 void osWritebackDCache(void* vaddr, u32 nbytes);
 u32 osGetCount(void);
