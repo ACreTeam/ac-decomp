@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+    "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Data-only REL linking does NOT need JIT.
+         Add com.apple.security.cs.allow-jit here ONLY if the REL loader
+         must mark pages executable. On iOS, JIT requires a special entitlement
+         that is not available for App Store distribution. -->
+    <!-- <key>com.apple.security.cs.allow-jit</key> <true/> -->
+</dict>
+</plist>

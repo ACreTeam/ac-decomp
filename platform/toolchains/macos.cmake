@@ -1,0 +1,5 @@
+# macOS arm64 toolchain (for explicit use — the default Apple Clang is fine without this)
+set(CMAKE_SYSTEM_NAME Darwin)
+set(CMAKE_SYSTEM_PROCESSOR arm64)
+set(CMAKE_OSX_ARCHITECTURES arm64)
+set(CMAKE_OSX_DEPLOYMENT_TARGET "12.0")
