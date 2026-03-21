@@ -399,11 +399,11 @@ static void stateCheckID() {
     }
 }
 
-static void stateCheckID3() {
+static void stateCheckID3(executing) {
     DVDLowAudioBufferConfig(currID->streaming, 0xAU, cbForStateCheckID3);
 }
 
-static void stateCheckID2() {
+static void stateCheckID2(executing) {
     DVDLowRead(&tmpBuffer, 0x20U, 0x420, cbForStateCheckID2);
 }
 
